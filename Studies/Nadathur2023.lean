@@ -77,21 +77,22 @@ variable {U V : Type*} {α : V → Type*} (M : CausalModel U V α) [M.IsAcyclic]
 /-- `IsConsistentSupersituation M s s'` says that `s'` is a consistent supersituation of `s`
 (Definition 9b). It extends `s`, and to each variable with parents that it newly settles it gives
 the only value the strict development of `s` could settle there. -/
-def IsConsistentSupersituation (s s' : ∀ v, Flat (α v)) : Prop :=
-  s ≤ s' ∧ ∀ v, s v = ⊥ → (∃ w, M.graph.Adj w v) → ∀ x : α v, s' v = ↑x →
+def IsConsistentSupersituation (s s' : ∀ v, Part (α v)) : Prop :=
+  s ≤ s' ∧ ∀ v, s v = ⊥ → (∃ w, M.graph.Adj w v) → ∀ x : α v, s' v = Part.some x →
     ∀ z, M.CausallyEntails s v z → z = x
 
 variable {M}
 
-theorem isConsistentSupersituation_of_isExogenousSettlement {s s' : ∀ v, Flat (α v)}
+theorem isConsistentSupersituation_of_isExogenousSettlement {s s' : ∀ v, Part (α v)}
     (h : M.IsExogenousSettlement s s') : IsConsistentSupersituation M s s' :=
   ⟨h.1, fun v hv ⟨w, hw⟩ x hx _ _ ↦
-    absurd hw ((h.2 v hv (by rw [hx]; exact Flat.coe_ne_bot)).1 w)⟩
+    absurd hw ((h.2 v hv (by rw [hx]; exact Part.some_ne_bot)).1 w)⟩
 
 instance [Fintype U] [Inhabited U] [∀ v, Inhabited (α v)] [∀ v, DecidableEq (α v)] [Fintype V]
-    [∀ v, Fintype (α v)] [DecidableRel M.graph.Adj] (s s' : ∀ v, Flat (α v)) :
+    [∀ v, Fintype (α v)] [DecidableRel M.graph.Adj] (s s' : ∀ v, Part (α v))
+    [∀ v, Decidable (s v).Dom] [∀ v, Decidable (s' v).Dom] :
     Decidable (IsConsistentSupersituation M s s') :=
-  haveI : ∀ v, Decidable (s v = ⊥ → (∃ w, M.graph.Adj w v) → ∀ x : α v, s' v = ↑x →
+  haveI : ∀ v, Decidable (s v = ⊥ → (∃ w, M.graph.Adj w v) → ∀ x : α v, s' v = Part.some x →
       ∀ z, M.CausallyEntails s v z → z = x) := fun _ ↦ inferInstance
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -108,7 +109,7 @@ variable {U V : Type*} [DecidableEq V] (M : CausalModel U V fun _ ↦ Bool) [M.I
 fact is a variable with a value, and one fact is sufficient (Definition 10a) or necessary
 (Definition 10b, over the exogenous settlements) for another relative to `s`, which does not settle
 the first (the preamble of Definition 10). -/
-def causalInterpretation (s : V → Flat Bool) : Interpretation (V × Bool) (M.contexts s) where
+def causalInterpretation (s : V → Part Bool) : Interpretation (V × Bool) (M.contexts s) where
   Holds a u := M.solve u a.1 = a.2
   neg a := (a.1, !a.2)
   holds_neg a u := by rcases a with ⟨v, x⟩; cases x <;> simp
@@ -162,7 +163,7 @@ instance : dreyfusModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by d
 
 /-- In the background Dreyfus intends to spy and has already collected secrets (INT = SEC = 1),
 and NRV, LST and BRK are unresolved. -/
-def dreyfusBg : V → Flat Bool := [.INT ← true, .SEC ← true]
+abbrev dreyfusBg : V → Part Bool := [.INT ← true, .SEC ← true]
 
 instance : dreyfusModel.ContextAtRoots :=
   ⟨fun {v w} hw _ _ _ ↦ by cases v <;> first | rfl | (exfalso; revert hw; revert w; decide)⟩
@@ -185,7 +186,7 @@ COM true. -/
 
 section Equations
 
-variable {s : V → Flat Bool}
+variable {s : V → Part Bool}
 
 theorem nrv_of_msg (hs : s .MSG = ⊥) (h : dreyfusModel.CausallyEntails s .MSG true) :
     dreyfusModel.CausallyEntails s .NRV true :=
@@ -203,8 +204,9 @@ theorem com_of_spy (hs : s .SPY = ⊥) (h : dreyfusModel.CausallyEntails s .SPY 
 end Equations
 
 /-- The Dreyfus background with the nerve, listener and ungarbled message settled. -/
-def resolved : V → Flat Bool :=
-  Function.update (Function.update (Function.update dreyfusBg .NRV ↑true) .LST ↑true) .BRK ↑false
+abbrev resolved : V → Part Bool :=
+  Function.update (Function.update (Function.update dreyfusBg .NRV (Part.some true)) .LST
+    (Part.some true)) .BRK (Part.some false)
 
 theorem nrv_necessary_for_msg :
     ¬ dreyfusModel.CausallyEntails dreyfusBg .NRV true ∧
@@ -277,14 +279,14 @@ namespace Consistent
 
 /-- The Dreyfus background with the message sent, a German listening, and the message
 ungarbled. -/
-def messageSent : V → Flat Bool :=
+abbrev messageSent : V → Part Bool :=
   [.INT ← true, .SEC ← true, .MSG ← true, .LST ← true, .BRK ← false]
 
 -- (34a)
 theorem nrv_necessary_for_msg :
     dreyfusModel.CausallyNecessary (IsConsistentSupersituation dreyfusModel) dreyfusBg .NRV true
       .MSG true :=
-  ⟨by decide, ⟨Function.update dreyfusBg .NRV ↑true, by decide, by decide, by decide⟩,
+  ⟨by decide, ⟨Function.update dreyfusBg .NRV (Part.some true), by decide, by decide, by decide⟩,
     fun _ _ hc h ↦ nrv_of_msg hc h⟩
 
 /-- Over consistent supersituations NRV is not causally necessary for COM, against the paper's

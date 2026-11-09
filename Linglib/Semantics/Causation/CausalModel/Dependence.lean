@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Pi
 public import Linglib.Semantics.Causation.CausalModel.Development
-public import Linglib.Logic.Assignment
+public import Linglib.Core.Data.Fintype.Part
 
 /-!
 # Causal sufficiency and causal necessity
@@ -57,43 +57,43 @@ variable {U V : Type*} {α : V → Type*} (M : CausalModel U V α) [M.IsAcyclic]
 /-- `M.CausallySufficient s c x e y` says that `c = x` is causally sufficient for `e = y` relative
 to the background `s`. The background does not settle the effect, and the background together with
 the cause does. -/
-def CausallySufficient (s : ∀ v, Flat (α v)) (c : V) (x : α c) (e : V) (y : α e) : Prop :=
-  ¬ M.CausallyEntails s e y ∧ M.CausallyEntails (Function.update s c ↑x) e y
+def CausallySufficient (s : ∀ v, Part (α v)) (c : V) (x : α c) (e : V) (y : α e) : Prop :=
+  ¬ M.CausallyEntails s e y ∧ M.CausallyEntails (Function.update s c (Part.some x)) e y
 
 /-- `M.CausallyNecessary r s c x e y` says that `c = x` is causally necessary for `e = y` relative
 to the background `s`, where `r s s'` says that `s'` is a supersituation of `s`. The background
 does not settle the effect; some supersituation of the background with the cause added, leaving the
 effect open, settles the effect; and every supersituation of the background leaving the effect open
 that settles the effect settles the cause. -/
-def CausallyNecessary (r : (∀ v, Flat (α v)) → (∀ v, Flat (α v)) → Prop) (s : ∀ v, Flat (α v))
+def CausallyNecessary (r : (∀ v, Part (α v)) → (∀ v, Part (α v)) → Prop) (s : ∀ v, Part (α v))
     (c : V) (x : α c) (e : V) (y : α e) : Prop :=
   ¬ M.CausallyEntails s e y ∧
-  (∃ s', r (Function.update s c ↑x) s' ∧ s' e = ⊥ ∧ M.CausallyEntails s' e y) ∧
+  (∃ s', r (Function.update s c (Part.some x)) s' ∧ s' e = ⊥ ∧ M.CausallyEntails s' e y) ∧
   ∀ s', r s s' → s' e = ⊥ → M.CausallyEntails s' e y → M.CausallyEntails s' c x
 
 /-- `s'` settles the observation `s` further at exogenous variables only, those with no parents
 that the strict development of `s` leaves open. -/
-def IsExogenousSettlement (s s' : ∀ v, Flat (α v)) : Prop :=
+def IsExogenousSettlement (s s' : ∀ v, Part (α v)) : Prop :=
   s ≤ s' ∧ ∀ v, s v = ⊥ → s' v ≠ ⊥ → (∀ w, ¬ M.graph.Adj w v) ∧ ∀ x, ¬ M.CausallyEntails s v x
 
 variable {M}
 
 /-- A cause sufficient for an effect is an ancestor of it: without a path from the cause, adding
 it leaves the effect as the background left it. -/
-theorem CausallySufficient.reflTransGen {s : ∀ v, Flat (α v)} {c : V} {x : α c} {e : V}
+theorem CausallySufficient.reflTransGen {s : ∀ v, Part (α v)} {c : V} {x : α c} {e : V}
     {y : α e} (h : M.CausallySufficient s c x e y) : Relation.ReflTransGen M.graph.Adj c e :=
   Classical.byContradiction fun hce ↦ h.1 ((causallyEntails_update_of_not_reflTransGen hce _).1 h.2)
 
 omit [DecidableEq V] in
 /-- Settling exogenous variables settles no less. What the strict development of an observation
 settles, that of any exogenous settlement of it settles too. -/
-theorem CausallyEntails.of_isExogenousSettlement {s s' : ∀ v, Flat (α v)}
+theorem CausallyEntails.of_isExogenousSettlement {s s' : ∀ v, Part (α v)}
     (hs : M.IsExogenousSettlement s s') {v : V} {x : α v} (h : M.CausallyEntails s v x) :
     M.CausallyEntails s' v x := by
   induction v using ‹M.IsAcyclic›.induction with
   | _ v ih =>
     rcases causallyEntails_iff.1 h with hv | ⟨hv, hpar, heq⟩
-    · exact causallyEntails_iff.2 (.inl (Flat.coe_le_iff.1 (hv ▸ hs.1 v)))
+    · exact causallyEntails_iff.2 (.inl (Part.some_le_iff.1 (hv ▸ hs.1 v)))
     · have hv' : s' v = ⊥ := by
         by_contra hne
         exact (hs.2 v hv hne).2 x h
@@ -103,12 +103,12 @@ theorem CausallyEntails.of_isExogenousSettlement {s s' : ∀ v, Flat (α v)}
       · exact heq u y fun w hw z hz ↦ hy w hw z (ih w hw hz)
 
 /-- Settling an open exogenous variable is an exogenous settlement. -/
-theorem isExogenousSettlement_update {s : ∀ v, Flat (α v)} {p : V}
+theorem isExogenousSettlement_update {s : ∀ v, Part (α v)} {p : V}
     (hroot : ∀ w, ¬ M.graph.Adj w p) (hopen : ∀ x, ¬ M.CausallyEntails s p x) (x : α p) :
-    M.IsExogenousSettlement s (Function.update s p ↑x) := by
+    M.IsExogenousSettlement s (Function.update s p (Part.some x)) := by
   have hsp : s p = ⊥ := by
     by_contra h
-    obtain ⟨y, hy⟩ := Flat.ne_bot_iff_exists.1 h
+    obtain ⟨y, hy⟩ := Part.ne_bot_iff_exists.1 h
     exact hopen y (causallyEntails_iff.2 (.inl hy))
   refine ⟨fun v ↦ ?_, fun v hv hne ↦ ?_⟩
   · by_cases hvp : v = p
@@ -120,11 +120,11 @@ theorem isExogenousSettlement_update {s : ∀ v, Flat (α v)} {p : V}
 
 omit [DecidableEq V] in
 /-- Every observation is an exogenous settlement of itself. -/
-theorem IsExogenousSettlement.refl (s : ∀ v, Flat (α v)) : M.IsExogenousSettlement s s :=
+theorem IsExogenousSettlement.refl (s : ∀ v, Part (α v)) : M.IsExogenousSettlement s s :=
   ⟨le_rfl, fun _ hv hne ↦ absurd hv hne⟩
 
 omit [DecidableEq V] in
-theorem IsExogenousSettlement.eq_bot {s s' : ∀ v, Flat (α v)} (h : M.IsExogenousSettlement s s')
+theorem IsExogenousSettlement.eq_bot {s s' : ∀ v, Part (α v)} (h : M.IsExogenousSettlement s s')
     {v : V} (hv : s v = ⊥) (hpar : ∃ w, M.graph.Adj w v) : s' v = ⊥ := by
   by_contra hne
   obtain ⟨w, hw⟩ := hpar
@@ -132,7 +132,7 @@ theorem IsExogenousSettlement.eq_bot {s s' : ∀ v, Flat (α v)} (h : M.IsExogen
 
 omit [DecidableEq V] in
 /-- Exogenous settlements compose. -/
-theorem IsExogenousSettlement.trans {s s' s'' : ∀ v, Flat (α v)}
+theorem IsExogenousSettlement.trans {s s' s'' : ∀ v, Part (α v)}
     (h₁ : M.IsExogenousSettlement s s') (h₂ : M.IsExogenousSettlement s' s'') :
     M.IsExogenousSettlement s s'' := by
   refine ⟨h₁.1.trans h₂.1, fun v hv hne ↦ ?_⟩
@@ -147,7 +147,7 @@ section Contexts
 A relation of causal dependence relative to a background constrains the actual world of every
 context where the background holds. -/
 
-variable [∀ v, Nonempty (α v)] {s : ∀ v, Flat (α v)} {c : V} {x : α c} {e : V} {y : α e}
+variable [∀ v, Nonempty (α v)] {s : ∀ v, Part (α v)} {c : V} {x : α c} {e : V} {y : α e}
   {u : U}
 
 /-- A cause sufficient for an effect relative to a background brings the effect about in every
@@ -166,9 +166,9 @@ theorem CausallyNecessary.solve_eq [M.ContextAtRoots]
   classical
   obtain ⟨hne, ⟨s', -, hs'e, hent'⟩, hall⟩ := h
   -- settle every open and unsettled root at its value in `u`
-  set t : ∀ v, Flat (α v) := fun v ↦
+  set t : ∀ v, Part (α v) := fun v ↦
     if s v = ⊥ ∧ (∀ w, ¬ M.graph.Adj w v) ∧ ∀ z, ¬ M.CausallyEntails s v z then
-      ↑(M.solve u v) else s v with ht
+      Part.some (M.solve u v) else s v with ht
   have hset : M.IsExogenousSettlement s t := by
     refine ⟨fun v ↦ ?_, fun v hv hne ↦ ?_⟩
     · simp only [ht]; split_ifs with hcond
@@ -186,8 +186,8 @@ theorem CausallyNecessary.solve_eq [M.ContextAtRoots]
     · exact absurd ((causallyEntails_root_iff hcond.2.1 hcond.1).2
         ((causallyEntails_root_iff hcond.2.1 hs'e).1 hent')) hne
     · by_contra hse
-      obtain ⟨z, hz⟩ := Flat.ne_bot_iff_exists.1 hse
-      have hzy : z = y := (Flat.coe_le_coe.1 (hz ▸ hu e)).trans he
+      obtain ⟨z, hz⟩ := Part.ne_bot_iff_exists.1 hse
+      have hzy : z = y := (Part.some_le_some.1 (hz ▸ hu e)).trans he
       exact hne (causallyEntails_iff.2 (.inl (by rw [hz, hzy])))
   have hroot : ∀ v, (∀ w, ¬ M.graph.Adj w v) → ∃ z, M.CausallyEntails t v z := by
     intro v hv
@@ -199,7 +199,7 @@ theorem CausallyNecessary.solve_eq [M.ContextAtRoots]
       · obtain ⟨z, hz⟩ : ∃ z, M.CausallyEntails s v z := by
           by_contra hz; exact hcond ⟨hsv, hv, not_exists.1 hz⟩
         exact ⟨z, hz.of_isExogenousSettlement hset⟩
-      · obtain ⟨z, hz⟩ := Flat.ne_bot_iff_exists.1 hsv
+      · obtain ⟨z, hz⟩ := Part.ne_bot_iff_exists.1 hsv
         exact ⟨z, (causallyEntails_iff.2 (.inl hz)).of_isExogenousSettlement hset⟩
   exact (hall t hset hte (he ▸ causallyEntails_solve hroot hut e)).solve_eq hut
 
@@ -210,39 +210,25 @@ section Decidable
 variable [Fintype U] [Inhabited U] [∀ v, Inhabited (α v)] [∀ v, DecidableEq (α v)] [Fintype V]
   [DecidableRel M.graph.Adj]
 
-instance (s : ∀ v, Flat (α v)) (c : V) (x : α c) (e : V) (y : α e) :
+instance (s : ∀ v, Part (α v)) [∀ v, Decidable (s v).Dom] (c : V) (x : α c) (e : V) (y : α e) :
     Decidable (M.CausallySufficient s c x e y) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 variable [∀ v, Fintype (α v)]
 
-instance (s s' : ∀ v, Flat (α v)) : Decidable (M.IsExogenousSettlement s s') :=
+instance (s s' : ∀ v, Part (α v)) [∀ v, Decidable (s v).Dom] [∀ v, Decidable (s' v).Dom] :
+    Decidable (M.IsExogenousSettlement s s') :=
   haveI : ∀ v, Decidable (s v = ⊥ → s' v ≠ ⊥ →
       (∀ w, ¬ M.graph.Adj w v) ∧ ∀ x, ¬ M.CausallyEntails s v x) := fun _ ↦ inferInstance
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Partial assignments over finitely many variables of finite types are finitely many. Not an
-instance: a `Fintype` instance on `Flat` would change how `decide` evaluates flat-valued
-functions, so necessity installs this one locally. -/
-@[reducible] def fintypePartialAssignment : Fintype (∀ v, Flat (α v)) :=
-  inferInstanceAs (Fintype (∀ v, Option (α v)))
-
-/-- Over finitely many variables of a finite type, a claim about every partial assignment with a
-given domain is decided by the values on that domain. -/
-instance {Var D : Type*} [Fintype Var] [DecidableEq Var] [Fintype D] {X : Set Var}
-    [DecidablePred (· ∈ X)] (P : PartialAssignment Var D → Prop) [DecidablePred P] :
-    Decidable (∀ g, PartialAssignment.domain g = X → P g) :=
-  decidable_of_iff _ PartialAssignment.forall_domain_eq_iff.symm
-
-instance {Var D : Type*} [Fintype Var] [DecidableEq Var] [Fintype D] {X : Set Var}
-    [DecidablePred (· ∈ X)] (P : PartialAssignment Var D → Prop) [DecidablePred P] :
-    Decidable (∃ g, PartialAssignment.domain g = X ∧ P g) :=
-  decidable_of_iff _ PartialAssignment.exists_domain_eq_iff.symm
-
-instance (r : (∀ v, Flat (α v)) → (∀ v, Flat (α v)) → Prop) [∀ s s', Decidable (r s s')]
-    (s : ∀ v, Flat (α v)) (c : V) (x : α c) (e : V) (y : α e) :
+/-- Necessity quantifies over supersituations, which are decided through the families of options
+(`Part.decidableForallPi`). -/
+instance (r : (∀ v, Part (α v)) → (∀ v, Part (α v)) → Prop) (s : ∀ v, Part (α v))
+    [∀ v, Decidable (s v).Dom] (c : V) (x : α c) (e : V) (y : α e)
+    [∀ g : ∀ v, Option (α v), Decidable (r (Function.update s c (Part.some x)) fun v ↦ ↑(g v))]
+    [∀ g : ∀ v, Option (α v), Decidable (r s fun v ↦ ↑(g v))] :
     Decidable (M.CausallyNecessary r s c x e y) :=
-  letI := fintypePartialAssignment (α := α)
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 end Decidable

@@ -13,7 +13,12 @@ public import Mathlib.Data.Part
 Mirror of `Mathlib/Data/Part.lean`: the domain and the value of `Part.restrict p o h`, the partial
 value `o` defined exactly where `p` holds, and the value of a `Part.bind`, as `simp` lemmas. The
 value of a restriction does not depend on the proof of `p`, so `simp` rewrites under it, where it
-cannot under an anonymous `⟨p, fun h ↦ …⟩`. [UPSTREAM]
+cannot under an anonymous `⟨p, fun h ↦ …⟩`.
+
+Equality and the order of partial values are decidable when their domains are
+(`Part.decidableEqOfDom`, `Part.decidableLEOfDom`), and so are they for families of partial values
+over a finite index type. A type-level `DecidableEq (Part α)` cannot be computable, since it would
+decide every proposition `p` through `⟨p, fun _ ↦ ()⟩ = Part.some ()`. [UPSTREAM]
 -/
 
 @[expose] public section
@@ -30,4 +35,93 @@ variable {α : Type*} {p : Prop} {o : Part α} {H : p → o.Dom}
     (f.bind g).get h = (g (f.get (bind_dom.1 h).fst)).get (bind_dom.1 h).snd :=
   rfl
 
+/-! ### The order -/
+
+section Order
+
+variable {o o' : Part α} {a b : α}
+
+theorem bot_eq_none : (⊥ : Part α) = none := rfl
+
+@[simp] theorem bot_ne_some : (⊥ : Part α) ≠ some a := none_ne_some a
+
+@[simp] theorem some_ne_bot : some a ≠ (⊥ : Part α) := some_ne_none a
+
+theorem ne_bot_iff_exists : o ≠ ⊥ ↔ ∃ a, o = some a := ne_none_iff
+
+theorem eq_bot_iff_not_dom : o = ⊥ ↔ ¬o.Dom := eq_none_iff'
+
+theorem some_le_iff : some a ≤ o ↔ o = some a :=
+  ⟨fun h ↦ eq_some_iff.2 (h _ (mem_some a)), fun h ↦ h ▸ le_rfl⟩
+
+theorem some_le_some : some a ≤ some b ↔ a = b := by
+  rw [some_le_iff, some_inj, eq_comm]
+
+/-- A partial value below one that is defined only where it is, is equal to it. -/
+theorem eq_of_le (h : o ≤ o') (h' : o' ≠ ⊥ → o ≠ ⊥) : o = o' := by
+  rcases eq_none_or_eq_some o with rfl | ⟨a, rfl⟩
+  · exact (not_not.1 fun hne ↦ h' hne rfl).symm
+  · exact (some_le_iff.1 h).symm
+
+end Order
+
+/-! ### Deciding equality and order -/
+
+section Decidable
+
+variable {o o' : Part α}
+
+theorem toOption_inj [Decidable o.Dom] [Decidable o'.Dom] : o.toOption = o'.toOption ↔ o = o' :=
+  ⟨fun h ↦ Part.ext fun a ↦ by rw [← mem_toOption, ← mem_toOption, h], fun h ↦ by subst h; congr⟩
+
+/-- Partial values with decidable domains are decidably equal. -/
+instance decidableEqOfDom [DecidableEq α] (o o' : Part α) [Decidable o.Dom] [Decidable o'.Dom] :
+    Decidable (o = o') :=
+  decidable_of_iff _ toOption_inj
+
+theorem le_iff_not_dom_or_eq : o ≤ o' ↔ ¬o.Dom ∨ o = o' := by
+  refine ⟨fun h ↦ (em o.Dom).symm.imp_right fun ho ↦ Part.ext' ⟨fun _ ↦ dom_iff_mem.2
+    ⟨_, h _ (get_mem ho)⟩, fun _ ↦ ho⟩ fun h₁ h₂ ↦ mem_unique (h _ (get_mem h₁)) (get_mem h₂), ?_⟩
+  rintro (h | rfl)
+  · exact fun a ha ↦ absurd (dom_iff_mem.2 ⟨a, ha⟩) h
+  · exact le_rfl
+
+instance decidableLEOfDom [DecidableEq α] (o o' : Part α) [Decidable o.Dom] [Decidable o'.Dom] :
+    Decidable (o ≤ o') :=
+  decidable_of_iff _ le_iff_not_dom_or_eq.symm
+
+instance botDecidable : Decidable (⊥ : Part α).Dom :=
+  noneDecidable
+
+end Decidable
+
 end Part
+
+/-! ### Families of partial values -/
+
+section Pi
+
+variable {ι : Type*} {β : ι → Type*}
+
+instance Pi.botPartDecidable (i : ι) : Decidable ((⊥ : ∀ i, Part (β i)) i).Dom :=
+  Part.noneDecidable
+
+/-- One family extends another when it agrees with it wherever the other is defined. -/
+theorem Part.pi_le_iff {s t : ∀ i, Part (β i)} : s ≤ t ↔ ∀ i, s i ≠ ⊥ → t i = s i := by
+  refine ⟨fun h i hi ↦ ?_, fun h i a ha ↦ ?_⟩
+  · obtain ⟨a, ha⟩ := Part.ne_bot_iff_exists.1 hi
+    have hle := h i
+    rw [ha] at hle ⊢
+    exact Part.some_le_iff.1 hle
+  · have hi : s i ≠ ⊥ := fun hb ↦ Part.not_none_dom (hb ▸ Part.dom_iff_mem.2 ⟨a, ha⟩)
+    exact h i hi ▸ ha
+
+/-- The domain of an updated family is decided from the update and the family at the same index,
+so nested updates are decided index by index. -/
+instance Function.updatePartDecidable [DecidableEq ι] (f : ∀ i, Part (β i)) (c : ι)
+    (x : Part (β c)) (i : ι) [Decidable (f i).Dom] [Decidable x.Dom] :
+    Decidable (Function.update f c x i).Dom :=
+  if h : i = c then decidable_of_iff x.Dom (by subst h; rw [Function.update_self])
+  else decidable_of_iff (f i).Dom (by rw [Function.update_of_ne h])
+
+end Pi

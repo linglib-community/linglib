@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Combinatorics.Digraph.Basic
 public import Mathlib.Data.Finset.Update
-public import Linglib.Core.Order.Flat
+public import Linglib.Core.Data.Part
 public import Linglib.Core.Order.WellFoundedFixedPoint
 
 /-!
@@ -59,8 +59,8 @@ fields name what the paper leaves to the world (`structure Context where match :
 ⟨fun w v ↦ (w, v) ∈ edges⟩`, adjacency is decided by `fun w v ↦ inferInstanceAs (Decidable
 ((w, v) ∈ edges))`, and acyclicity by `Finite.wellFounded_of_irrefl_transGen (by decide)`.
 Interventions are written `M[c ← x]`, partial assignments `[c ← x, d ← y]`, and updates of a named
-assignment `Function.update s c ↑x`. A theorem quantifying over assignments or settlements
-(necessity, sufficient sets) is proved structurally through the equations rather than by
+assignment `Function.update s c (Part.some x)`. A theorem quantifying over assignments or
+settlements (necessity, sufficient sets) is proved structurally through the equations rather than by
 `decide`, which enumerates them.
 
 ## References
@@ -109,8 +109,8 @@ observation. -/
 scoped syntax (name := partialAssignment) "[" (term " ← " term),+ "]" : term
 
 macro_rules (kind := partialAssignment)
-  | `([$c ← $x]) => `(Function.update ⊥ $c (Flat.some $x))
-  | `([$c ← $x, $[$cs ← $xs],*]) => `(Function.update [$[$cs ← $xs],*] $c (Flat.some $x))
+  | `([$c ← $x]) => `(Function.update ⊥ $c (Part.some $x))
+  | `([$c ← $x, $[$cs ← $xs],*]) => `(Function.update [$[$cs ← $xs],*] $c (Part.some $x))
 
 /-- `M.step u y` applies the equations once in the context `u`, each variable taking the value its
 equation gives to `y`. -/

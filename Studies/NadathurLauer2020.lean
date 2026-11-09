@@ -60,33 +60,33 @@ variable {U V : Type*} {α : V → Type*} [DecidableEq V] [∀ v, Nonempty (α v
 /-- The *make* entry (25a) says that, with the cause removed from the background `s`, `c = x` is
 causally sufficient for `e = y`, and that the cause occurs in the actual world of the context
 `u`. -/
-def Make (s : ∀ v, Flat (α v)) (u : U) (c : V) (x : α c) (e : V) (y : α e) : Prop :=
+def Make (s : ∀ v, Part (α v)) (u : U) (c : V) (x : α c) (e : V) (y : α e) : Prop :=
   M.CausallySufficient (Function.update s c ⊥) c x e y ∧ M.solve u c = x
 
 /-- The *cause* entry (25b) says that, with the cause removed from the background `s`, `c = x`
 is causally necessary for `e = y`, and that cause and effect both occur in the actual world of the
 context `u`. -/
-def Cause (s : ∀ v, Flat (α v)) (u : U) (c : V) (x : α c) (e : V) (y : α e) : Prop :=
+def Cause (s : ∀ v, Part (α v)) (u : U) (c : V) (x : α c) (e : V) (y : α e) : Prop :=
   M.CausallyNecessary (· ≤ ·) (Function.update s c ⊥) c x e y ∧ M.solve u c = x ∧
     M.solve u e = y
 
 variable {M}
 
 /-- *Make* entails that the effect occurs (footnote 20). -/
-theorem Make.solve_eq {s : ∀ v, Flat (α v)} {u : U} {c : V} {x : α c} {e : V} {y : α e}
+theorem Make.solve_eq {s : ∀ v, Part (α v)} {u : U} {c : V} {x : α c} {e : V} {y : α e}
     (h : Make M s u c x e y) (hu : u ∈ M.contexts s) : M.solve u e = y :=
   h.1.solve_eq (contexts_anti (update_le_self_iff.2 bot_le) hu) h.2
 
 variable [Fintype U] [Inhabited U] [∀ v, Inhabited (α v)] [∀ v, DecidableEq (α v)] [Fintype V]
   [DecidableRel M.graph.Adj]
 
-instance (s : ∀ v, Flat (α v)) (u : U) (c : V) (x : α c) (e : V) (y : α e) :
-    Decidable (Make M s u c x e y) :=
+instance (s : ∀ v, Part (α v)) [∀ v, Decidable (s v).Dom] (u : U) (c : V) (x : α c) (e : V)
+    (y : α e) : Decidable (Make M s u c x e y) :=
   haveI : Decidable (M.solve u c = x) := decidableEqSolve u c x
   inferInstanceAs (Decidable (_ ∧ _))
 
-instance [∀ v, Fintype (α v)] (s : ∀ v, Flat (α v)) (u : U) (c : V) (x : α c) (e : V)
-    (y : α e) : Decidable (Cause M s u c x e y) :=
+instance [∀ v, Fintype (α v)] (s : ∀ v, Part (α v)) [∀ v, Decidable (s v).Dom] (u : U) (c : V)
+    (x : α c) (e : V) (y : α e) : Decidable (Cause M s u c x e y) :=
   haveI : Decidable (M.solve u c = x) := decidableEqSolve u c x
   haveI : Decidable (M.solve u e = y) := decidableEqSolve u e y
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
@@ -101,11 +101,11 @@ variable {U V : Type*} {α : V → Type*}
 
 /-- A background `s` meets the temporal location constraint (28) at the evaluation time `t` when
 every fact it fixes is settled by `t`, the time of each variable being given by `time`. -/
-def TemporalLocationConstraint (time : V → ℕ) (t : ℕ) (s : ∀ v, Flat (α v)) : Prop :=
+def TemporalLocationConstraint (time : V → ℕ) (t : ℕ) (s : ∀ v, Part (α v)) : Prop :=
   ∀ v, s v ≠ ⊥ → time v ≤ t
 
-instance [Fintype V] [∀ v, DecidableEq (α v)] (time : V → ℕ) (t : ℕ) (s : ∀ v, Flat (α v)) :
-    Decidable (TemporalLocationConstraint time t s) :=
+instance [Fintype V] [∀ v, DecidableEq (α v)] (time : V → ℕ) (t : ℕ) (s : ∀ v, Part (α v))
+    [∀ v, Decidable (s v).Dom] : Decidable (TemporalLocationConstraint time t s) :=
   inferInstanceAs (Decidable (∀ _, _))
 
 variable [DecidableEq V] (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
@@ -113,12 +113,12 @@ variable [DecidableEq V] (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
 /-- A *make* claim with cause `c` and effect `e` meets the constraint on volitional action (43)
 for the agent's intention `w` to perform `e` unless `w = 0` is sufficient for `e = 0` relative to
 the background `s` with the cause added and `w` is determined by `s` with the cause removed. -/
-def VolitionalActionConstraint (s : V → Flat Bool) (c e w : V) : Prop :=
-  ¬ (M.CausallySufficient (Function.update s c ↑true) w false e false ∧
+def VolitionalActionConstraint (s : V → Part Bool) (c e w : V) : Prop :=
+  ¬ (M.CausallySufficient (Function.update s c (Part.some true)) w false e false ∧
     ∃ z, M.CausallyEntails (Function.update s c ⊥) w z)
 
-instance [Fintype U] [Inhabited U] [Fintype V] [DecidableRel M.graph.Adj] (s : V → Flat Bool)
-    (c e w : V) : Decidable (VolitionalActionConstraint M s c e w) :=
+instance [Fintype U] [Inhabited U] [Fintype V] [DecidableRel M.graph.Adj] (s : V → Part Bool)
+    [∀ v, Decidable (s v).Dom] (c e w : V) : Decidable (VolitionalActionConstraint M s c e w) :=
   inferInstanceAs (Decidable (¬ (_ ∧ _)))
 
 end Constraints
@@ -198,12 +198,12 @@ instance : fireModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by deci
 def actual : Context := ⟨true, true, true⟩
 
 /-- The background `s_b` fixes the drought and the inflammable grass and leaves the line open. -/
-def s_b : V → Flat Bool := [.D ← true, .G ← true]
+abbrev s_b : V → Part Bool := [.D ← true, .G ← true]
 
 /-- The background `s_b1` also fixes the line as down. -/
-def s_b1 : V → Flat Bool := Function.update s_b .L ↑true
+abbrev s_b1 : V → Part Bool := Function.update s_b .L (Part.some true)
 
-theorem power_of_fire {s : V → Flat Bool} (hs : s .F = ⊥)
+theorem power_of_fire {s : V → Part Bool} (hs : s .F = ⊥)
     (h : fireModel.CausallyEntails s .F true) : fireModel.CausallyEntails s .P true :=
   h.parent_eq hs (by decide) fun _ y hy ↦ by
     simpa using (Bool.and_eq_true_iff.1 (Bool.and_eq_true_iff.1 hy).1).2
@@ -262,7 +262,7 @@ instance : busModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decid
 def actual : Context := ⟨true, true, true⟩
 
 /-- The background `s_b` fixes the visit and the forecast. -/
-def s_b : V → Flat Bool := [.Vis ← true, .Rn ← true]
+abbrev s_b : V → Part Bool := [.Vis ← true, .Rn ← true]
 
 -- (33a)
 theorem make : Make busModel s_b actual .Tr true .Bs true := by decide
@@ -310,11 +310,11 @@ def actual : Context := ⟨true, true⟩
 def time : V → ℕ
   | .Q => 0 | .S => 1 | .L => 2
 
-theorem earthquake_of_collapse {s : V → Flat Bool} (hs : s .L = ⊥)
+theorem earthquake_of_collapse {s : V → Part Bool} (hs : s .L = ⊥)
     (h : lighthouseModel.CausallyEntails s .L true) : lighthouseModel.CausallyEntails s .Q true :=
   h.parent_eq hs (by decide) fun _ y hy ↦ by simpa using (Bool.and_eq_true_iff.1 hy).1
 
-theorem storms_of_collapse {s : V → Flat Bool} (hs : s .L = ⊥)
+theorem storms_of_collapse {s : V → Part Bool} (hs : s .L = ⊥)
     (h : lighthouseModel.CausallyEntails s .L true) : lighthouseModel.CausallyEntails s .S true :=
   h.parent_eq hs (by decide) fun _ y hy ↦ by simpa using (Bool.and_eq_true_iff.1 hy).2
 
@@ -329,17 +329,17 @@ theorem cause_storms : Cause lighthouseModel ⊥ actual .S true .L true :=
     fun _ _ ↦ storms_of_collapse⟩, by decide, by decide⟩
 
 -- (35d)
-theorem make_storms : TemporalLocationConstraint time (time .S) ([.Q ← true] : V → Flat Bool) ∧
+theorem make_storms : TemporalLocationConstraint time (time .S) ([.Q ← true] : V → Part Bool) ∧
     Make lighthouseModel [.Q ← true] actual .S true .L true := by
   decide
 
 -- (35c)
-theorem not_make_earthquake (s : V → Flat Bool)
+theorem not_make_earthquake (s : V → Part Bool)
     (hs : TemporalLocationConstraint time (time .Q) s) :
     ¬ Make lighthouseModel s actual .Q true .L true := by
   rintro ⟨⟨-, h⟩, -⟩
   rw [Function.update_idem] at h
-  have hopen : ∀ v, v ≠ .Q → Function.update s .Q (↑true : Flat Bool) v = ⊥ := fun v hv ↦ by
+  have hopen : ∀ v, v ≠ .Q → Function.update s .Q (Part.some true) v = ⊥ := fun v hv ↦ by
     rw [Function.update_of_ne hv]
     by_contra hsv
     have := hs v hsv
@@ -355,14 +355,14 @@ end Lighthouse
 /-- Causal sufficiency does not imply causal necessity, by the bus scenario. -/
 theorem not_forall_causallySufficient_imp_causallyNecessary :
     ¬ ∀ (U V : Type) [DecidableEq V] (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
-      (s : V → Flat Bool) (c : V) (x : Bool) (e : V) (y : Bool),
+      (s : V → Part Bool) (c : V) (x : Bool) (e : V) (y : Bool),
       M.CausallySufficient s c x e y → M.CausallyNecessary (· ≤ ·) s c x e y :=
   fun h ↦ Bus.not_cause ⟨h _ _ _ _ _ _ _ _ Bus.make.1, Bus.make.2, by decide⟩
 
 /-- Causal necessity does not imply causal sufficiency, by the fire scenario. -/
 theorem not_forall_causallyNecessary_imp_causallySufficient :
     ¬ ∀ (U V : Type) [DecidableEq V] (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
-      (s : V → Flat Bool) (c : V) (x : Bool) (e : V) (y : Bool),
+      (s : V → Part Bool) (c : V) (x : Bool) (e : V) (y : Bool),
       M.CausallyNecessary (· ≤ ·) s c x e y → M.CausallySufficient s c x e y :=
   fun h ↦ Fire.not_make ⟨h _ _ _ _ _ _ _ _ Fire.cause.1, Fire.cause.2.1⟩
 

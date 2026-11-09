@@ -76,11 +76,12 @@ def LocallyNecessary (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
 
 /-- *C causes E* is assertable on the state of knowledge `k` when the cause is known and the effect
 holds in every context under every background that keeps what is known and leaves it open. -/
-def Cause (k : V → Flat Bool) (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
-  k C = ↑c ∧ ∀ u (X : Finset V) (ξ : X → Bool),
-    k ≤ Function.updateFinset ⊥ X (fun v ↦ ↑(ξ v)) → E ∉ X → (M.intervene X ξ).solve u E = e
+def Cause (k : V → Part Bool) (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
+  k C = Part.some c ∧ ∀ u (X : Finset V) (ξ : X → Bool),
+    k ≤ Function.updateFinset ⊥ X (fun v ↦ Part.some (ξ v)) → E ∉ X →
+      (M.intervene X ξ).solve u E = e
 
-variable {M} {C E : V} {c e : Bool} {k : V → Flat Bool}
+variable {M} {C E : V} {c e : Bool} {k : V → Part Bool}
 
 theorem globallyNecessary_iff :
     GloballyNecessary M C c E e ↔ GloballySufficient M C (!c) E (!e) := Iff.rfl
@@ -90,15 +91,16 @@ theorem locallyNecessary_iff :
 
 -- A background keeping what `k` settles holds each settled variable at its known value.
 private theorem mem_of_le_updateFinset {X : Finset V} {ξ : X → Bool}
-    (hk : k ≤ Function.updateFinset ⊥ X fun v ↦ ↑(ξ v)) {v : V} {a : Bool} (hv : k v = ↑a) :
+    (hk : k ≤ Function.updateFinset ⊥ X fun v ↦ Part.some (ξ v)) {v : V} {a : Bool}
+    (hv : k v = Part.some a) :
     ∃ h : v ∈ X, ξ ⟨v, h⟩ = a := by
-  have := Flat.pi_le_iff.1 hk v (hv ▸ Flat.coe_ne_bot)
+  have := Part.pi_le_iff.1 hk v (hv ▸ Part.some_ne_bot)
   rw [hv] at this
   by_cases h : v ∈ X
   · exact ⟨h, by simpa [Function.updateFinset, h] using this⟩
   · simp [Function.updateFinset, h] at this
 
-theorem Cause.of_globallySufficient (h : GloballySufficient M C c E e) (hk : k C = ↑c) :
+theorem Cause.of_globallySufficient (h : GloballySufficient M C c E e) (hk : k C = Part.some c) :
     Cause M k C c E e :=
   ⟨hk, fun u X ξ hkX hE ↦
     let ⟨hC, hξ⟩ := mem_of_le_updateFinset hkX hk
@@ -119,7 +121,7 @@ theorem LocallyNecessary.of_globally [Inhabited U] (hCE : C ≠ E)
 sufficient: the asymmetry of the paper's Table 2. -/
 theorem cause_update_bot_iff :
     Cause M [C ← c] C c E e ↔ GloballySufficient M C c E e := by
-  refine ⟨fun h u X ξ hE hC hξ ↦ h.2 u X ξ (Flat.pi_le_iff.2 fun v hv ↦ ?_) hE,
+  refine ⟨fun h u X ξ hE hC hξ ↦ h.2 u X ξ (Part.pi_le_iff.2 fun v hv ↦ ?_) hE,
     fun h ↦ Cause.of_globallySufficient h (Function.update_self ..)⟩
   rcases eq_or_ne v C with rfl | hvC
   · simp [Function.updateFinset, hC, hξ]
@@ -186,13 +188,13 @@ theorem not_s1_on_causes_on_uncertain :
   fun h ↦ s1_on_not_globallySufficient (cause_update_bot_iff.1 h)
 
 /-- The background with both switches on. -/
-def bothOn : V → Flat Bool := [.S1 ← true, .S2 ← true]
+abbrev bothOn : V → Part Bool := [.S1 ← true, .S2 ← true]
 
 -- Table 2
 theorem s1_on_causes_on_certain : Cause light bothOn .S1 true .L true := by
   refine ⟨by decide, fun u X ξ hk hL ↦ ?_⟩
-  obtain ⟨h1, h1'⟩ := mem_of_le_updateFinset hk (by decide : bothOn .S1 = ↑true)
-  obtain ⟨h2, h2'⟩ := mem_of_le_updateFinset hk (by decide : bothOn .S2 = ↑true)
+  obtain ⟨h1, h1'⟩ := mem_of_le_updateFinset hk (by decide : bothOn .S1 = Part.some true)
+  obtain ⟨h2, h2'⟩ := mem_of_le_updateFinset hk (by decide : bothOn .S2 = Part.some true)
   rw [solve_L hL, solve_intervene_of_mem h1, solve_intervene_of_mem h2, h1', h2']
   rfl
 
@@ -205,11 +207,12 @@ namespace Bus
 open NadathurLauer2020.Bus
 
 theorem glass_nl_diverge_on_bus :
-    Cause busModel (Function.update s_b .Tr ↑true) .Tr true .Bs true ∧
+    Cause busModel (Function.update s_b .Tr (Part.some true)) .Tr true .Bs true ∧
       ¬ NadathurLauer2020.Cause busModel s_b actual .Tr true .Bs true := by
   refine ⟨⟨by decide, fun u X ξ hk hBs ↦ ?_⟩, not_cause⟩
   obtain ⟨hRn, hRn'⟩ :=
-    mem_of_le_updateFinset hk (by decide : Function.update s_b .Tr ↑true .Rn = ↑true)
+    mem_of_le_updateFinset hk
+      (by decide : Function.update s_b .Tr (Part.some true) .Rn = Part.some true)
   rw [solve_intervene_of_notMem hBs]
   show ((busModel.intervene X ξ).solve u .Rn || (busModel.intervene X ξ).solve u .Bk) = true
   rw [solve_intervene_of_mem hRn, hRn']
