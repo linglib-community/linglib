@@ -12,8 +12,8 @@ public import Mathlib.Data.Finset.Sort
 This file defines the presheaf of basic discourse representation structures on the category of
 contexts. Sets of literals over contexts form a presheaf, restricting along a context morphism `f`
 by preimage under renaming, `F(f)(s) ⊢ ±A(x̄) ⟺ s ⊢ ±A(f(x̄))`; the consistent sets form a
-subpresheaf, whose sections at a context `(L, X)` are the basic DRSs `(X, s)`. `BasicDRS.toDRS`
-realises a section as a `DRS` whose conditions are literals.
+subpresheaf, whose sections at a context `(L, X)`, the DRSs over it, are the basic DRSs `(X, s)`.
+`Context.DRS.toDRS` realises a section as a `DRS` whose conditions are literals.
 
 ## Implementation notes
 
@@ -95,25 +95,28 @@ theorem Consistent.of_preimage {s : Finset (Literal c)}
 
 end Literal
 
-/-- A basic DRS over a context is a consistent set of its literals, a section of `presheaf`. -/
-abbrev BasicDRS (c : Context L V) := {s : Finset (Literal c) // Literal.Consistent s}
+namespace Context
 
-namespace BasicDRS
+/-- A DRS over a context is a consistent set of its literals, the conditions of the basic DRS
+`(X, s)` on the context's referents; a section of `Context.DRS.presheaf`. -/
+abbrev DRS (c : Context L V) := {s : Finset (Literal c) // Literal.Consistent s}
+
+namespace DRS
 
 variable {c : Context L V}
 
 /-- `s.toDRS` is the basic DRS `(X, s)`, with the context's referents and the literals as
 conditions. -/
-noncomputable def toDRS (s : BasicDRS c) : DRS L V :=
+noncomputable def toDRS (s : c.DRS) : DRT.DRS L V :=
   ⟨c.vars, s.1.toList.map Literal.toCondition⟩
 
-@[simp] theorem referents_toDRS (s : BasicDRS c) : s.toDRS.referents = c.vars := rfl
+@[simp] theorem referents_toDRS (s : c.DRS) : s.toDRS.referents = c.vars := rfl
 
-theorem coe_conditions_toDRS (s : BasicDRS c) :
+theorem coe_conditions_toDRS (s : c.DRS) :
     (s.toDRS.conditions : Multiset (Condition L V)) = s.1.val.map Literal.toCondition := by
   simp [toDRS, ← Multiset.map_coe]
 
-theorem isBasic_toDRS (s : BasicDRS c) : s.toDRS.IsBasic := by
+theorem isBasic_toDRS (s : c.DRS) : s.toDRS.IsBasic := by
   rintro _ hd
   obtain ⟨l, -, rfl⟩ := List.mem_map.1 hd
   unfold Literal.toCondition
@@ -121,7 +124,7 @@ theorem isBasic_toDRS (s : BasicDRS c) : s.toDRS.IsBasic := by
   · trivial
   · exact ⟨rfl, _, rfl⟩
 
-end BasicDRS
+end DRS
 
 variable (L V) [DecidableEq V] [∀ n, DecidableEq (L.Relations n)]
 
@@ -131,12 +134,12 @@ abbrev literalSets : (Context L V)ᵒᵖ ⥤ Type (max v w) where
   map f := TypeCat.ofHom (Literal.preimage f.unop)
 
 /-- The consistent sets of literals form a subpresheaf of the literal sets. -/
-def consistentLiterals : Subfunctor (literalSets L V) where
+def consistentLiteralSets : Subfunctor (literalSets L V) where
   obj _ := {s | Literal.Consistent s}
   map f _ hs := hs.preimage f.unop
 
-/-- Basic DRSs form the presheaf of consistent sets of literals. -/
-abbrev presheaf : (Context L V)ᵒᵖ ⥤ Type (max v w) := (consistentLiterals L V).toFunctor
+/-- DRSs over contexts form the presheaf of consistent sets of literals. -/
+abbrev DRS.presheaf : (Context L V)ᵒᵖ ⥤ Type (max v w) := (consistentLiteralSets L V).toFunctor
 
 variable {L V}
 
@@ -145,22 +148,24 @@ variable {L V}
     (literalSets L V).map f s = Literal.preimage f.unop s :=
   rfl
 
-namespace BasicDRS
+namespace DRS
 
 variable {c c' : Context L V}
 
 /-- `s.restrict f` holds `±A(x̄)` iff `s` holds `±A(f(x̄))`. -/
-def restrict (f : c ⟶ c') (s : BasicDRS c') : BasicDRS c :=
+def restrict (f : c ⟶ c') (s : c'.DRS) : c.DRS :=
   ⟨Literal.preimage f s.1, s.2.preimage f⟩
 
-@[simp] theorem mem_restrict {f : c ⟶ c'} {s : BasicDRS c'} {l : Literal c} :
+@[simp] theorem mem_restrict {f : c ⟶ c'} {s : c'.DRS} {l : Literal c} :
     l ∈ (s.restrict f).1 ↔ l.map f ∈ s.1 :=
   Literal.mem_preimage
 
-end BasicDRS
-
-@[simp] theorem presheaf_map {c c' : (Context L V)ᵒᵖ} (f : c ⟶ c') (s : BasicDRS c.unop) :
+@[simp] theorem presheaf_map {c c' : (Context L V)ᵒᵖ} (f : c ⟶ c') (s : c.unop.DRS) :
     (presheaf L V).map f s = s.restrict f.unop :=
   rfl
+
+end DRS
+
+end Context
 
 end DRT

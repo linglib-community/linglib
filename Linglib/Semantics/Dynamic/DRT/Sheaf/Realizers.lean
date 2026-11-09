@@ -8,12 +8,13 @@ public import Linglib.Semantics.Dynamic.DRT.Verification.Total
 
 A basic DRS is true under an assignment of its context's referents when each literal holds, and its
 realizers, the assignments that make it true, are the [verifying
-embeddings](##DRT.BasicDRS.verifies_toDRS_iff) of the DRS. Assignments form a presheaf on contexts
-that is a sheaf for a presieve [exactly when it is jointly surjective on
-referents](##DRT.isSheafFor_assignments_iff), the first of Abramsky and Sadrzadeh's two conditions
-on covers. An assignment [realizes the least gluing](##DRT.Cover.realizers_pushforward) of a
-family along a cover exactly when its restrictions realize the local DRSs, so the realizers of
-the gluing are [the compatible families of local realizers](##DRT.Cover.realizersEquiv).
+embeddings](##DRT.Context.DRS.verifies_toDRS_iff) of the DRS. Assignments form a presheaf on
+contexts that is a sheaf for a presieve [exactly when it is jointly surjective on
+referents](##DRT.Context.isSheafFor_assignments_iff), the first of Abramsky and Sadrzadeh's two
+conditions on covers. An assignment [realizes the least
+gluing](##DRT.Context.Cover.realizers_pushforward) of a family along a cover exactly when its
+restrictions realize the local DRSs, so the realizers of the gluing are [the compatible families of
+local realizers](##DRT.Context.Cover.realizersEquiv).
 
 ## Implementation notes
 
@@ -81,9 +82,11 @@ theorem comp_val_mem_realizers_iff (hpos : ∀ l ∈ S, l.pos) {g : V → M} :
 
 end Literal
 
-namespace BasicDRS
+namespace Context
 
-variable [L.Structure M] {s : BasicDRS c}
+namespace DRS
+
+variable [L.Structure M] {s : c.DRS}
 
 /-- An embedding verifies a basic DRS exactly when its restriction to the context's referents
 realizes its literals. -/
@@ -99,12 +102,12 @@ theorem verifies_toDRS_iff {g : V → M} :
 
 variable [DecidableEq V] [∀ n, DecidableEq (L.Relations n)]
 
-theorem comp_mem_realizers_restrict {f : c ⟶ c'} {s : BasicDRS c'} {g : c'.vars → M}
+theorem comp_mem_realizers_restrict {f : c ⟶ c'} {s : c'.DRS} {g : c'.vars → M}
     (h : g ∈ Literal.realizers M (s.1 : Set (Literal c'))) :
     g ∘ f.map ∈ Literal.realizers M ((s.restrict f).1 : Set (Literal c)) :=
   Literal.mem_realizers.2 fun _ hl ↦ Literal.mem_realizers.1 h _ (mem_restrict.1 hl)
 
-end BasicDRS
+end DRS
 
 /-! ### The sheaf of assignments -/
 
@@ -204,7 +207,7 @@ theorem presieve_mem_referentPrecoverage (C : Cover c ι) :
   (ofArrows_mem_comap_jointlySurjectivePrecoverage_iff _).2 C.exists_map_eq
 
 variable [L.Structure M] [Fintype ι] [DecidableEq V] [∀ n, DecidableEq (L.Relations n)]
-  (x : ∀ i, BasicDRS (C.part i))
+  (x : ∀ i, (C.part i).DRS)
 
 /-- An assignment makes the renamed local literals of a family true exactly when its restriction
 along every cover morphism realizes the local DRS. -/
@@ -224,5 +227,7 @@ noncomputable def realizersEquiv :
       (Set.ext_iff.1 (realizers_pushforward x) g).trans Set.mem_iInter
 
 end Cover
+
+end Context
 
 end DRT
