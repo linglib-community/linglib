@@ -1,0 +1,1042 @@
+[
+  {
+    "id": "kiparsky1998_1a_singular",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(1a)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Ammuin karhua",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ammu-i-n",
+        "shoot-Pst-1Sg"
+      ],
+      [
+        "karhu-a",
+        "bear-Part"
+      ]
+    ],
+    "translation": "I shot at the (a) bear",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "ampua"
+      ],
+      [
+        "object",
+        "singular"
+      ],
+      [
+        "case",
+        "part"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_1a_numeral",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(1a)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Ammuin kahta karhua",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ammu-i-n",
+        "shoot-Pst-1Sg"
+      ],
+      [
+        "kah-ta",
+        "two-Part"
+      ],
+      [
+        "karhu-a",
+        "bear-Part"
+      ]
+    ],
+    "translation": "I shot at (the) two bears",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "ampua"
+      ],
+      [
+        "object",
+        "numeral"
+      ],
+      [
+        "case",
+        "part"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_1a_plural",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(1a)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Ammuin karhuja",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ammu-i-n",
+        "shoot-Pst-1Sg"
+      ],
+      [
+        "karhu-j-a",
+        "bear-Pl-Part"
+      ]
+    ],
+    "translation": "I shot at (the) bears",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "ampua"
+      ],
+      [
+        "object",
+        "plural"
+      ],
+      [
+        "case",
+        "part"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_1b_singular",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(1b)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Ammuin karhun",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ammu-i-n",
+        "shoot-Pst-1Sg"
+      ],
+      [
+        "karhu-n",
+        "bear-Acc"
+      ]
+    ],
+    "translation": "I shot the (a) bear",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "ampua"
+      ],
+      [
+        "object",
+        "singular"
+      ],
+      [
+        "case",
+        "acc"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_1b_numeral",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(1b)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Ammuin kaksi karhua",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ammu-i-n",
+        "shoot-Pst-1Sg"
+      ],
+      [
+        "kaksi",
+        "two-Acc"
+      ],
+      [
+        "karhu-a",
+        "bear-Part"
+      ]
+    ],
+    "translation": "I shot two bears",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "ampua"
+      ],
+      [
+        "object",
+        "numeral"
+      ],
+      [
+        "case",
+        "acc"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_1b_plural",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(1b)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Ammuin karhut",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ammu-i-n",
+        "shoot-Pst-1Sg"
+      ],
+      [
+        "karhu-t",
+        "bear-PlAcc"
+      ]
+    ],
+    "translation": "I shot the bears",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "ampua"
+      ],
+      [
+        "object",
+        "plural"
+      ],
+      [
+        "case",
+        "acc"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_2a_singular",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(2a)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "saan karhua",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "saa-n",
+        "get-1Sg"
+      ],
+      [
+        "karhu-a",
+        "bear-Part"
+      ]
+    ],
+    "translation": "I'll get the (a) bear",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "saada"
+      ],
+      [
+        "object",
+        "singular"
+      ],
+      [
+        "case",
+        "part"
+      ]
+    ],
+    "comment": "Acceptable with 'bear' read as a mass noun, a quantity of bear meat (footnote 6).",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_2a_numeral",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(2a)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "saan kahta karhua",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "saa-n",
+        "get-1Sg"
+      ],
+      [
+        "kah-ta",
+        "two-Part"
+      ],
+      [
+        "karhu-a",
+        "bear-Part"
+      ]
+    ],
+    "translation": "I'll get (the) two bears",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "saada"
+      ],
+      [
+        "object",
+        "numeral"
+      ],
+      [
+        "case",
+        "part"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_2a_plural",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(2a)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "saan karhuja",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "saa-n",
+        "get-1Sg"
+      ],
+      [
+        "karhu-j-a",
+        "bear-Pl-Part"
+      ]
+    ],
+    "translation": "I'll get bears",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "saada"
+      ],
+      [
+        "object",
+        "plural"
+      ],
+      [
+        "case",
+        "part"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_2b_singular",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(2b)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "saan karhun",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "saa-n",
+        "get-1Sg"
+      ],
+      [
+        "karhu-n",
+        "bear-Acc"
+      ]
+    ],
+    "translation": "I'll get the (a) bear",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "saada"
+      ],
+      [
+        "object",
+        "singular"
+      ],
+      [
+        "case",
+        "acc"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_2b_numeral",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(2b)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "saan kaksi karhua",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "saa-n",
+        "get-1Sg"
+      ],
+      [
+        "kaksi",
+        "two-Acc"
+      ],
+      [
+        "karhu-a",
+        "bear-Part"
+      ]
+    ],
+    "translation": "I'll get two bears",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "saada"
+      ],
+      [
+        "object",
+        "numeral"
+      ],
+      [
+        "case",
+        "acc"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_2b_plural",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(2b)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "saan karhut",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "saa-n",
+        "get-1Sg"
+      ],
+      [
+        "karhu-t",
+        "bear-PlAcc"
+      ]
+    ],
+    "translation": "I'll get the bears",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "saada"
+      ],
+      [
+        "object",
+        "plural"
+      ],
+      [
+        "case",
+        "acc"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_3a_singular",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(3a)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "etsin karhua",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "etsi-n",
+        "seek-1Sg"
+      ],
+      [
+        "karhu-a",
+        "bear-Part"
+      ]
+    ],
+    "translation": "I'm looking for the (a) bear",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "etsiä"
+      ],
+      [
+        "object",
+        "singular"
+      ],
+      [
+        "case",
+        "part"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_3a_numeral",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(3a)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "etsin kahta karhua",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "etsi-n",
+        "seek-1Sg"
+      ],
+      [
+        "kah-ta",
+        "two-Part"
+      ],
+      [
+        "karhu-a",
+        "bear-Part"
+      ]
+    ],
+    "translation": "I'm looking for (the) two bears",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "etsiä"
+      ],
+      [
+        "object",
+        "numeral"
+      ],
+      [
+        "case",
+        "part"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_3a_plural",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(3a)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "etsin karhuja",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "etsi-n",
+        "seek-1Sg"
+      ],
+      [
+        "karhu-j-a",
+        "bear-Pl-Part"
+      ]
+    ],
+    "translation": "I'm looking for (the) bears",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "etsiä"
+      ],
+      [
+        "object",
+        "plural"
+      ],
+      [
+        "case",
+        "part"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_3b_singular",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(3b)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "etsin karhun",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "etsi-n",
+        "seek-1Sg"
+      ],
+      [
+        "karhu-n",
+        "bear-Acc"
+      ]
+    ],
+    "translation": "I'm looking for the (a) bear",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "etsiä"
+      ],
+      [
+        "object",
+        "singular"
+      ],
+      [
+        "case",
+        "acc"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_3b_numeral",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(3b)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "etsin kaksi karhua",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "etsi-n",
+        "seek-1Sg"
+      ],
+      [
+        "kaksi",
+        "two-Acc"
+      ],
+      [
+        "karhu-a",
+        "bear-Part"
+      ]
+    ],
+    "translation": "I'm looking for two bears",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "etsiä"
+      ],
+      [
+        "object",
+        "numeral"
+      ],
+      [
+        "case",
+        "acc"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_3b_plural",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(3b)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "etsin karhut",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "etsi-n",
+        "seek-1Sg"
+      ],
+      [
+        "karhu-t",
+        "bear-PlAcc"
+      ]
+    ],
+    "translation": "I'm looking for the bears",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "etsiä"
+      ],
+      [
+        "object",
+        "plural"
+      ],
+      [
+        "case",
+        "acc"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_4a_singular",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(4a)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "omistan karhua",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "omista-n",
+        "own-1Sg"
+      ],
+      [
+        "karhu-a",
+        "bear-Part"
+      ]
+    ],
+    "translation": "I own the (a) bear",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "omistaa"
+      ],
+      [
+        "object",
+        "singular"
+      ],
+      [
+        "case",
+        "part"
+      ]
+    ],
+    "comment": "Acceptable with 'bear' read as a mass noun, a quantity of bear meat (footnote 6).",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_4a_numeral",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(4a)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "omistan kahta karhua",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "omista-n",
+        "own-1Sg"
+      ],
+      [
+        "kah-ta",
+        "two-Part"
+      ],
+      [
+        "karhu-a",
+        "bear-Part"
+      ]
+    ],
+    "translation": "I own (the) two bears",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "omistaa"
+      ],
+      [
+        "object",
+        "numeral"
+      ],
+      [
+        "case",
+        "part"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_4a_plural",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(4a)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "omistan karhuja",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "omista-n",
+        "own-1Sg"
+      ],
+      [
+        "karhu-j-a",
+        "bear-Pl-Part"
+      ]
+    ],
+    "translation": "I own bears",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "omistaa"
+      ],
+      [
+        "object",
+        "plural"
+      ],
+      [
+        "case",
+        "part"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_4b_singular",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(4b)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "omistan karhun",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "omista-n",
+        "own-1Sg"
+      ],
+      [
+        "karhu-n",
+        "bear-Acc"
+      ]
+    ],
+    "translation": "I own the (a) bear",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "omistaa"
+      ],
+      [
+        "object",
+        "singular"
+      ],
+      [
+        "case",
+        "acc"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_4b_numeral",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(4b)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "omistan kaksi karhua",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "omista-n",
+        "own-1Sg"
+      ],
+      [
+        "kaksi",
+        "two-Acc"
+      ],
+      [
+        "karhu-a",
+        "bear-Part"
+      ]
+    ],
+    "translation": "I own two bears",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "omistaa"
+      ],
+      [
+        "object",
+        "numeral"
+      ],
+      [
+        "case",
+        "acc"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "kiparsky1998_4b_plural",
+    "source": {
+      "bibkey": "kiparsky-1998",
+      "paperLabel": "(4b)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "omistan karhut",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "omista-n",
+        "own-1Sg"
+      ],
+      [
+        "karhu-t",
+        "bear-PlAcc"
+      ]
+    ],
+    "translation": "I own the bears",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "omistaa"
+      ],
+      [
+        "object",
+        "plural"
+      ],
+      [
+        "case",
+        "acc"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]
