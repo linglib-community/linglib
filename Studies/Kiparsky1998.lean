@@ -25,6 +25,7 @@ the verbs by resultativity fails](##not_fits_resultativity).
 * The verbs' boundedness is the paper's lexical classification; the objects' is computed in a
   model of four individuals, whose null individual no predicate contains.
 * 'Few' and 'many' are pluralities of at most two and at least three individuals.
+* The paradigm does not separate unboundedness from non-quantization, which fits it as well.
 
 ## Errata
 
@@ -36,8 +37,6 @@ the verbs by resultativity fails](##not_fits_resultativity).
 
 ## TODO
 
-* The paradigm does not separate unboundedness from non-quantization, which fits it as well;
-  objects quantified by 'few' and 'many' would.
 * The partitive subjects of presentational verbs, and the coercion of bounded predicates.
 
 ## References
