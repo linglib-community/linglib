@@ -605,11 +605,13 @@ the subject raised and then the object over it, has the reading
 def tree_inverse : Tree Unit (QuantificationalDeterminer ⊕ String) :=
   (sentence.raise 1 ([0])).raise 2 ([1, 0, 1, 1])
 
-theorem isLogicalForm_tree_surface : IsLogicalForm sentence tree_surface :=
-  ((IsLogicalForm.refl sentence).raise rfl 2).raise rfl 1
+theorem isLogicalForm_tree_surface : IsLogicalForm ⊥ sentence tree_surface :=
+  ((IsLogicalForm.refl sentence).raise rfl (passesNoIsland_bot _ _) 2).raise rfl
+    (passesNoIsland_bot _ _) 1
 
-theorem isLogicalForm_tree_inverse : IsLogicalForm sentence tree_inverse :=
-  ((IsLogicalForm.refl sentence).raise rfl 1).raise rfl 2
+theorem isLogicalForm_tree_inverse : IsLogicalForm ⊥ sentence tree_inverse :=
+  ((IsLogicalForm.refl sentence).raise rfl (passesNoIsland_bot _ _) 1).raise rfl
+    (passesNoIsland_bot _ _) 2
 
 /-- A name's trace has the name's own type, so raising *John* in *John sleeps* changes nothing. -/
 example : interp toyLexicon g₀ ((tree% [⟨"John"⟩ ⟨"sleeps"⟩] : Tree Unit String).raise 1 ([0])) =

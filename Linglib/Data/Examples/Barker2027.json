@@ -1,0 +1,170 @@
+[
+  {
+    "id": "barker2027_18a",
+    "source": {
+      "bibkey": "barker-2027",
+      "paperLabel": "(18a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Someone asked everyone to leave.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "∃ > ∀",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "∀ > ∃",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "The universal is in an infinitival complement.",
+    "verified": "page-image"
+  },
+  {
+    "id": "barker2027_18b",
+    "source": {
+      "bibkey": "barker-2027",
+      "paperLabel": "(18b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Someone thought everyone left.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "∃ > ∀",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "∀ > ∃",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "The universal is in a tensed complement.",
+    "verified": "page-image"
+  },
+  {
+    "id": "barker2027_19a",
+    "source": {
+      "bibkey": "barker-2027",
+      "paperLabel": "(19a)"
+    },
+    "language": "stan1293",
+    "primaryText": "There is a bone in every corner of the house.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "∃ > ∀",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "∀ > ∃",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "barker2027_19b",
+    "source": {
+      "bibkey": "barker-2027",
+      "paperLabel": "(19b)"
+    },
+    "language": "stan1293",
+    "primaryText": "There is a bone that is in every corner of the house.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "∃ > ∀",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "∀ > ∃",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "The universal is in a relative clause.",
+    "verified": "page-image"
+  },
+  {
+    "id": "barker2027_20a",
+    "source": {
+      "bibkey": "barker-2027",
+      "paperLabel": "(20a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Someone needs to clean the room after each guest has left.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "∃ > ∀",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "∀ > ∃",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "The universal is in a tensed adjunct clause.",
+    "verified": "page-image"
+  },
+  {
+    "id": "barker2027_20b",
+    "source": {
+      "bibkey": "barker-2027",
+      "paperLabel": "(20b)"
+    },
+    "language": "stan1293",
+    "primaryText": "A student made sure that each speaker had a ride.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "∃ > ∀",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "∀ > ∃",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "The universal is in a tensed complement.",
+    "verified": "page-image"
+  }
+]

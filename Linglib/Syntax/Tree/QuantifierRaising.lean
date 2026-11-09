@@ -20,15 +20,18 @@ or raise what contains one, as in May's and Heim and Kratzer's theories.
 
 * `PhraseStructure.Tree.bindersAbove`: the indices of the binders dominating a position.
 * `PhraseStructure.Tree.raise`: the constituent at an address raised to the edge of the tree.
-* `PhraseStructure.Tree.Raises`: one step of raising, within any subtree.
+* `PhraseStructure.Tree.PassesNoIsland`: a constituent crosses no island on its way to the edge.
+* `PhraseStructure.Tree.Raises`: one step of raising, within any subtree, under a theory of
+  islands.
 * `PhraseStructure.Tree.IsLogicalForm`: the trees that raising derives from a tree.
 
 ## Implementation notes
 
 `raise` adjoins to the root, the mother an adjunction of the root's category whose host is the
 binder. It is total, as `RoseTree.replaceAt` is: an address outside the tree leaves the tree
-unchanged. No condition on the index or on the landing site is imposed; a step that binds a trace
-it should not, or crosses an island, is excluded by the theory that restricts `Raises`.
+unchanged. No condition on the index is imposed, so a step may bind a trace it should not. A
+landing site is the edge of a subtree, and adjoining there does not leave the subtree: the islands
+a step crosses are the subtrees properly between the landing site and the constituent.
 
 ## References
 
@@ -100,40 +103,78 @@ theorem yield_raise_perm (n : ℕ) (p : List ℕ) (t : Tree C W) :
     (t.raise n p).yield.Perm t.yield :=
   (terminals_raise_perm n p t).map _
 
-/-- One step of covert movement: a constituent of a subtree raises to that subtree's edge. -/
-inductive Raises : Tree C W → Tree C W → Prop
-  | intro {t s a : Tree C W} {q p : List ℕ} (n : ℕ) : t[q]? = some s → s[p]? = some a →
-      Raises t (t.replaceAt q (s.raise n p))
+/-! ### Islands
 
-/-- `t'` is a logical form of `t` when covert movement derives it. -/
-def IsLogicalForm : Tree C W → Tree C W → Prop := Relation.ReflTransGen Raises
+A theory of scope islands is a relation `I`, where `I a b` says that the subtree `b` is an island
+for the constituent `a`: islandhood may depend on what moves as well as on what it would leave. A
+step of raising is restricted by the islands it would cross, and the unrestricted theory is `⊥`. -/
+
+/-- The constituent at `p` passes no island of `I` on its way to the edge of `t`: no subtree
+properly between the root and the constituent is an island for it. -/
+def PassesNoIsland (I : Tree C W → Tree C W → Prop) (t : Tree C W) (p : List ℕ) : Prop :=
+  ∀ a ∈ t[p]?, ∀ k < p.length, 0 < k → ∀ b ∈ t[p.take k]?, ¬ I a b
+
+instance (I : Tree C W → Tree C W → Prop) [∀ a b, Decidable (I a b)] (t : Tree C W)
+    (p : List ℕ) : Decidable (t.PassesNoIsland I p) := by
+  unfold PassesNoIsland; infer_instance
+
+@[simp] theorem passesNoIsland_bot (t : Tree C W) (p : List ℕ) : t.PassesNoIsland ⊥ p :=
+  fun _ _ _ _ _ _ _ h ↦ h
+
+/-- With more islands, fewer constituents pass. -/
+theorem PassesNoIsland.mono {I I' : Tree C W → Tree C W → Prop} (h : I ≤ I') {t : Tree C W}
+    {p : List ℕ} (hp : t.PassesNoIsland I' p) : t.PassesNoIsland I p :=
+  fun a ha k hk hk' b hb hI ↦ hp a ha k hk hk' b hb (h a b hI)
+
+/-- One step of covert movement under the islands `I`: a constituent of a subtree raises to that
+subtree's edge, passing no island. -/
+inductive Raises (I : Tree C W → Tree C W → Prop) : Tree C W → Tree C W → Prop
+  | intro {t s a : Tree C W} {q p : List ℕ} (n : ℕ) : t[q]? = some s → s[p]? = some a →
+      s.PassesNoIsland I p → Raises I t (t.replaceAt q (s.raise n p))
+
+/-- `t'` is a logical form of `t` under the islands `I` when covert movement derives it. -/
+def IsLogicalForm (I : Tree C W → Tree C W → Prop) : Tree C W → Tree C W → Prop :=
+  Relation.ReflTransGen (Raises I)
+
+variable {I I' : Tree C W → Tree C W → Prop}
 
 /-- Raising to the edge of the whole tree is a step. -/
-theorem raises_raise {t a : Tree C W} {p : List ℕ} (h : t[p]? = some a) (n : ℕ) :
-    Raises t (t.raise n p) :=
-  .intro (q := []) n rfl h
+theorem raises_raise {t a : Tree C W} {p : List ℕ} (h : t[p]? = some a)
+    (hI : t.PassesNoIsland I p) (n : ℕ) : Raises I t (t.raise n p) :=
+  .intro (q := []) n rfl h hI
+
+theorem Raises.mono (h : I ≤ I') {t t' : Tree C W} (ht : Raises I' t t') : Raises I t t' := by
+  cases ht with | intro n hq hp hI => exact .intro n hq hp (hI.mono h)
 
 namespace IsLogicalForm
 
-@[refl] protected theorem refl (t : Tree C W) : IsLogicalForm t t := Relation.ReflTransGen.refl
+@[refl] protected theorem refl (t : Tree C W) : IsLogicalForm I t t := Relation.ReflTransGen.refl
 
-@[trans] protected theorem trans {t t' t'' : Tree C W} (h : IsLogicalForm t t')
-    (h' : IsLogicalForm t' t'') : IsLogicalForm t t'' :=
+@[trans] protected theorem trans {t t' t'' : Tree C W} (h : IsLogicalForm I t t')
+    (h' : IsLogicalForm I t' t'') : IsLogicalForm I t t'' :=
   Relation.ReflTransGen.trans h h'
 
 /-- A tree with a constituent raised to its edge is a logical form of it. -/
-protected theorem raise {t t' a : Tree C W} {p : List ℕ} (h : IsLogicalForm t t')
-    (ha : t'[p]? = some a) (n : ℕ) : IsLogicalForm t (t'.raise n p) :=
-  .tail h (raises_raise ha n)
+protected theorem raise {t t' a : Tree C W} {p : List ℕ} (h : IsLogicalForm I t t')
+    (ha : t'[p]? = some a) (hI : t'.PassesNoIsland I p) (n : ℕ) :
+    IsLogicalForm I t (t'.raise n p) :=
+  .tail h (raises_raise ha hI n)
+
+/-- With more islands, a tree has fewer logical forms. -/
+protected theorem mono (h : I ≤ I') {t t' : Tree C W} (ht : IsLogicalForm I' t t') :
+    IsLogicalForm I t t' := by
+  induction ht with
+  | refl => exact Relation.ReflTransGen.refl
+  | tail _ hr ih => exact Relation.ReflTransGen.tail ih (hr.mono h)
 
 end IsLogicalForm
 
-theorem Raises.isLogicalForm {t t' : Tree C W} (h : Raises t t') : IsLogicalForm t t' :=
+theorem Raises.isLogicalForm {t t' : Tree C W} (h : Raises I t t') : IsLogicalForm I t t' :=
   .single h
 
-theorem Raises.terminals_perm {t t' : Tree C W} (h : Raises t t') :
+theorem Raises.terminals_perm {t t' : Tree C W} (h : Raises I t t') :
     t'.terminals.Perm t.terminals := by
-  cases h with | @intro s a q p n hq hp => ?_
+  cases h with | @intro s a q p n hq hp _ => ?_
   have h₁ := RoseTree.leafList_replaceAt hq (s.raise n p)
   have h₂ := RoseTree.take_append_leafList_append_drop hq
   rw [terminals, terminals, h₁]
@@ -142,7 +183,7 @@ theorem Raises.terminals_perm {t t' : Tree C W} (h : Raises t t') :
   exact ((terminals_raise_perm n p s).append_left _).append_right _
 
 /-- A logical form has the words of the tree it is derived from. -/
-theorem IsLogicalForm.yield_perm {t t' : Tree C W} (h : IsLogicalForm t t') :
+theorem IsLogicalForm.yield_perm {t t' : Tree C W} (h : IsLogicalForm I t t') :
     t'.yield.Perm t.yield := by
   induction h with
   | refl => rfl
