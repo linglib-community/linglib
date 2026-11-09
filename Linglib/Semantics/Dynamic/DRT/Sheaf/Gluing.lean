@@ -10,37 +10,22 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 /-!
 # Gluing basic DRSs
 
-This file shows that basic DRSs form a sheaf and identifies the topology. A presieve on a context
-covers it when it is jointly surjective on literals: every literal of the context renames a
-literal of some member. A compatible family of local theories over any presieve has an
-amalgamation, the renamings of the local literals, and the amalgamation is unique iff the
-presieve covers; these covers form a coverage, for which basic DRSs are a sheaf.
-
-[abramsky-sadrzadeh-2014] glue along covers jointly surjective on referents and on the
-vocabulary. Along such a cover the renamings of the local literals are the least candidate: a
-gluing exists iff they are consistent and restrict back to every part, it is unique when the
-cover is jointly surjective on literals too, and it always exists when the local vocabularies are
-pairwise disjoint and the cover maps injective. Read on DRSs, it is then the merge of the renamed
-local DRSs: discourse representation theory's merge followed by unification of referents.
-
-## Main definitions
-
-* `DRT.literalCoverage`: the coverage of presieves jointly surjective on literals.
-* `DRT.amalgamate`: the amalgamation of a compatible family.
-* `DRT.Cover`, `DRT.Cover.IsGluing`: covers in the paper's sense, and gluing along them.
-
-## Main statements
-
-* `DRT.isSeparatedFor_iff`, `DRT.isSheafFor_iff`, `DRT.isSheaf_literalCoverage`: basic DRSs are
-  separated, and a sheaf, for a presieve iff it is jointly surjective on literals.
-* `DRT.Cover.exists_isGluing_iff`: a gluing exists iff the renamed local literals form one.
-* `DRT.Cover.coe_conditions_toDRS_glue`: under disjoint vocabularies and injective cover maps the
-  gluing is the merge of the renamed local DRSs.
+This file shows that basic DRSs form a sheaf. A presieve on a context is jointly surjective on
+literals when every literal of the context renames a literal of some member. Sets of literals
+amalgamate along any presieve and consistency is local, so basic DRSs are
+[separated](##DRT.Context.DRS.isSeparatedFor_iff), and [a sheaf](##DRT.Context.DRS.isSheafFor_iff),
+for a presieve exactly when it is jointly surjective on literals; these presieves form a coverage
+for which basic DRSs are [a sheaf](##DRT.Context.DRS.isSheaf_literalCoverage). Abramsky and
+Sadrzadeh glue along covers jointly surjective on referents and on the vocabulary: a family glues
+[exactly when it is compatible](##DRT.Context.Cover.exists_isGluing_iff_compatible), and the
+renamings of its local literals are then [the least
+gluing](##DRT.Context.Cover.exists_isGluing_iff). Under pairwise disjoint vocabularies and injective
+cover maps every family glues, to [the merge of the renamed local
+DRSs](##DRT.Context.Cover.coe_conditions_toDRS_glue).
 
 ## Implementation notes
 
-Compatibility is tested on contexts with fresh referents for the arguments of a relation, so
-amalgamation assumes that `V` has as many referents as each arity in the vocabulary;
+Amalgamation needs as many referents as each arity in the vocabulary, so
 `isSheaf_literalCoverage` assumes `V` infinite, like the paper's variables.
 
 ## References
@@ -58,6 +43,46 @@ namespace DRT
 universe u v w
 
 variable {L : Language.{u, v}} {V : Type w} {c : Context L V} {R : Presieve c}
+
+/-! ### Comparing literals
+
+Compatibility speaks of restrictions along maps out of a common context, not of literals. To
+compare a literal `l` of one member with a literal `m` of another that renames to the same literal,
+`freshCtx r e` supplies that context: its literal `freshLit r e p` has pairwise distinct
+arguments, so `freshHom` maps it onto both `l` and `m`. Distinct arguments need as many referents
+as the arity of `r`, the hypothesis amalgamation carries. -/
+
+namespace Literal
+
+variable [DecidableEq V]
+
+/-- `freshCtx r e` has the one relation symbol `r` and the distinct referents
+`e 0, …, e (n - 1)`. -/
+private def freshCtx (r : Σ n, L.Relations n) (e : Fin r.1 ↪ V) : Context L V :=
+  ⟨{r}, Finset.univ.map e⟩
+
+/-- `freshLit r e p` is the literal `±r(e 0, …, e (n - 1))`. -/
+private def freshLit (r : Σ n, L.Relations n) (e : Fin r.1 ↪ V) (p : Bool) :
+    Literal (freshCtx r e) :=
+  ⟨⟨r, Finset.mem_singleton_self r⟩, fun k ↦ ⟨e k, Finset.mem_map_of_mem _ (Finset.mem_univ k)⟩,
+    p⟩
+
+/-- `freshHom e hr a` sends `e k` to `a k`. -/
+private def freshHom {r : Σ n, L.Relations n} (e : Fin r.1 ↪ V) {d : Context L V}
+    (hr : r ∈ d.vocab) (a : Fin r.1 → d.vars) : freshCtx r e ⟶ d :=
+  ⟨Finset.singleton_subset_iff.2 hr, fun t ↦
+    a (e.invOfMemRange ⟨t, by obtain ⟨k, -, hk⟩ := Finset.mem_map.1 t.2; exact ⟨k, hk⟩⟩)⟩
+
+/-- `freshHom` maps `freshLit` onto any literal of `r` with the same sign. -/
+private theorem freshLit_map {r : Σ n, L.Relations n} (e : Fin r.1 ↪ V) {d : Context L V}
+    (hr : r ∈ d.vocab) (a : Fin r.1 → d.vars) (p : Bool) :
+    (freshLit r e p).map (freshHom e hr a) = ⟨⟨r, hr⟩, a, p⟩ := by
+  simp only [freshLit, freshHom, map, Function.comp_def,
+    Function.Embedding.right_inv_of_invOfMemRange]
+
+end Literal
+
+namespace Context
 
 /-! ### Literal covers -/
 
@@ -83,8 +108,7 @@ def literalCoverage : Coverage (Context L V) where
   toPrecoverage := literalPrecoverage L V
   pullback := by
     intro c d g S hS
-    refine ⟨fun Z h => ∃ (W : Context L V) (i : Z ⟶ W) (e : W ⟶ c), S e ∧ i ≫ e = h ≫ g, ?_,
-      fun Z h hh => hh⟩
+    refine ⟨((Sieve.generate S).pullback g).arrows, ?_, fun _ _ h ↦ h⟩
     change S ∈ literalPrecoverage L V c at hS
     rw [mem_literalPrecoverage_iff] at hS ⊢
     rintro ⟨⟨r, hr⟩, a, p⟩
@@ -92,14 +116,14 @@ def literalCoverage : Coverage (Context L V) where
     obtain ⟨h₁, h₂, rfl⟩ := Literal.mk.inj hm.symm
     obtain rfl : r = r' := congrArg Subtype.val h₁
     have ha : g.map ∘ a = e.map ∘ a' := eq_of_heq h₂
-    let Z : Context L V := ⟨{r}, Finset.univ.image fun k => (a k : V)⟩
+    let Z : Context L V := ⟨{r}, Finset.univ.image fun k ↦ (a k : V)⟩
     have hk (t : Z.vars) : ∃ k, (a k : V) = t := by
       obtain ⟨k, -, hk⟩ := Finset.mem_image.1 t.2; exact ⟨k, hk⟩
-    refine ⟨Z, ⟨Finset.singleton_subset_iff.2 hr, fun t => ⟨t, ?_⟩⟩,
-      ⟨W, ⟨Finset.singleton_subset_iff.2 hr', fun t => a' (hk t).choose⟩, e, he, ?_⟩,
-      ⟨⟨r, Finset.mem_singleton_self r⟩, fun k => ⟨a k, ?_⟩, p⟩, rfl⟩
+    refine ⟨Z, ⟨Finset.singleton_subset_iff.2 hr, fun t ↦ ⟨t, ?_⟩⟩,
+      ⟨W, ⟨Finset.singleton_subset_iff.2 hr', fun t ↦ a' (hk t).choose⟩, e, he, ?_⟩,
+      ⟨⟨r, Finset.mem_singleton_self r⟩, fun k ↦ ⟨a k, ?_⟩, p⟩, rfl⟩
     · obtain ⟨k, hk⟩ := hk t; exact hk ▸ (a k).2
-    · refine Context.hom_ext (funext fun t => ?_)
+    · refine Context.hom_ext (funext fun t ↦ ?_)
       have := congrFun ha (hk t).choose
       simp only [Function.comp_apply] at this
       simp only [Context.comp_map, Function.comp_apply, ← this]
@@ -108,116 +132,94 @@ def literalCoverage : Coverage (Context L V) where
 
 /-! ### Amalgamation -/
 
-namespace Literal
-
-/-- `testCtx r e` has the one relation symbol `r` and the referents `e 0, …, e (n - 1)`. -/
-private def testCtx (r : Σ n, L.Relations n) (e : Fin r.1 ↪ V) : Context L V :=
-  ⟨{r}, Finset.univ.map e⟩
-
-/-- `testLit r e p` is the literal `±r(e 0, …, e (n - 1))`. -/
-private def testLit (r : Σ n, L.Relations n) (e : Fin r.1 ↪ V) (p : Bool) :
-    Literal (testCtx r e) :=
-  ⟨⟨r, Finset.mem_singleton_self r⟩, fun k => ⟨e k, Finset.mem_map_of_mem _ (Finset.mem_univ k)⟩,
-    p⟩
-
-/-- `testHom e hr a` sends `e k` to `a k`. -/
-private def testHom {r : Σ n, L.Relations n} (e : Fin r.1 ↪ V) {d : Context L V}
-    (hr : r ∈ d.vocab) (a : Fin r.1 → d.vars) : testCtx r e ⟶ d :=
-  ⟨Finset.singleton_subset_iff.2 hr, fun t =>
-    a (e.invOfMemRange ⟨t, by obtain ⟨k, -, hk⟩ := Finset.mem_map.1 t.2; exact ⟨k, hk⟩⟩)⟩
-
-private theorem testLit_map {r : Σ n, L.Relations n} (e : Fin r.1 ↪ V) {d : Context L V}
-    (hr : r ∈ d.vocab) (a : Fin r.1 → d.vars) (p : Bool) :
-    (testLit r e p).map (testHom e hr a) = ⟨⟨r, hr⟩, a, p⟩ := by
-  simp only [testLit, testHom, map, Function.comp_def,
-    Function.Embedding.right_inv_of_invOfMemRange]
-
-end Literal
-
 open Literal
 
 variable [∀ n, DecidableEq (L.Relations n)]
 
-variable {x : FamilyOfElements (presheaf L V) R}
+section LiteralSets
 
-theorem mem_of_compatible (hx : x.Compatible) {Y₁ Y₂ : Context L V} {f₁ : Y₁ ⟶ c}
-    {f₂ : Y₂ ⟶ c} (h₁ : R f₁) (h₂ : R f₂) {l : Literal Y₁} {m : Literal Y₂}
-    (hlm : l.map f₁ = m.map f₂) (hm : m ∈ Theory.lits (x f₂ h₂)) (e : Fin l.rel.1.1 ↪ V) :
-    l ∈ Theory.lits (x f₁ h₁) := by
-  obtain ⟨⟨r, hr⟩, a, p⟩ := l
-  obtain ⟨⟨r', hr'⟩, a', p'⟩ := m
-  obtain ⟨h₁', h₂', rfl⟩ := Literal.mk.inj hlm
-  obtain rfl : r = r' := congrArg Subtype.val h₁'
-  have hc := hx (testHom e hr a) (testHom e hr' a') h₁ h₂ (Context.hom_ext (funext fun t => by
-    simpa [testHom] using congrFun (eq_of_heq h₂') _))
-  simp only [presheaf_map, Quiver.Hom.unop_op] at hc
-  have := Theory.mem_restrict.2 ((testLit_map e hr' a' p).symm ▸ hm :
-    (testLit r e p).map (testHom e hr' a') ∈ Theory.lits (x f₂ h₂))
-  rwa [← hc, Theory.mem_restrict, testLit_map] at this
+variable {x : FamilyOfElements (literalSets L V) R}
 
-variable (hx : x.Compatible) (hc : ∀ r ∈ c.vocab, Nonempty (Fin r.1 ↪ V))
-include hx hc
+/-- Members of a compatible family agree on literals whose arguments the presieve identifies. -/
+theorem mem_iff_of_compatible (hx : x.Compatible) {Y₁ Y₂ : Context L V} {f₁ : Y₁ ⟶ c}
+    {f₂ : Y₂ ⟶ c} (h₁ : R f₁) (h₂ : R f₂) {r : Σ n, L.Relations n} (hr₁ : r ∈ Y₁.vocab)
+    (hr₂ : r ∈ Y₂.vocab) {a₁ : Fin r.1 → Y₁.vars} {a₂ : Fin r.1 → Y₂.vars}
+    (ha : f₁.map ∘ a₁ = f₂.map ∘ a₂) (p : Bool) (e : Fin r.1 ↪ V) :
+    ⟨⟨r, hr₁⟩, a₁, p⟩ ∈ x f₁ h₁ ↔ ⟨⟨r, hr₂⟩, a₂, p⟩ ∈ x f₂ h₂ := by
+  have := hx (freshHom e hr₁ a₁) (freshHom e hr₂ a₂) h₁ h₂
+    (Context.hom_ext (funext fun t ↦ by simpa [freshHom] using congrFun ha _))
+  simpa [freshLit_map] using congrArg (freshLit r e p ∈ ·) this
 
-private theorem mem_of_compatible' {Y Z : Context L V} {f : Y ⟶ c} {g : Z ⟶ c} (hf : R f)
-    (hg : R g) {l : Literal Y} {m : Literal Z} (hlm : l.map f = m.map g)
-    (hm : m ∈ Theory.lits (x g hg)) : l ∈ Theory.lits (x f hf) :=
-  mem_of_compatible hx hf hg hlm hm (hc _ (f.incl l.rel.2)).some
+/-- `amalgamate x` holds the renamings of the literals of the members of `x`. -/
+noncomputable def amalgamate (x : FamilyOfElements (literalSets L V) R) : Finset (Literal c) := by
+  classical exact Finset.univ.filter fun l ↦
+    ∃ (Y : Context L V) (f : Y ⟶ c) (hf : R f), ∃ m ∈ x f hf, m.map f = l
 
-/-- The amalgamation of a compatible family holds the renamings of the local literals. -/
-noncomputable def amalgamate : Theory c where
-  lits := by classical exact Finset.univ.filter fun l =>
-    ∃ (Y : Context L V) (f : Y ⟶ c) (hf : R f), ∃ m ∈ Theory.lits (x f hf), m.map f = l
-  consistent l hl hn := by
-    classical
-    obtain ⟨Y, f, hf, m, hm, rfl⟩ := (Finset.mem_filter.1 hl).2
-    obtain ⟨Z, g, hg, m', hm', h⟩ := (Finset.mem_filter.1 hn).2
-    rw [neg_map] at h
-    exact Theory.consistent _ m hm (mem_of_compatible' hx hc hf hg h.symm hm')
+@[simp] theorem mem_amalgamate {l : Literal c} :
+    l ∈ amalgamate x ↔ ∃ (Y : Context L V) (f : Y ⟶ c) (hf : R f), ∃ m ∈ x f hf, m.map f = l := by
+  classical simp [amalgamate]
 
-theorem isAmalgamation_amalgamate : x.IsAmalgamation (amalgamate hx hc) := fun Y f hf => by
-  classical
-  refine Theory.ext (Finset.ext fun l => ?_)
-  simp only [presheaf_map, Quiver.Hom.unop_op, Theory.mem_restrict, amalgamate,
-    Finset.mem_filter, Finset.mem_univ, true_and]
-  exact ⟨fun ⟨Z, g, hg, m, hm, h⟩ => mem_of_compatible' hx hc hf hg h.symm hm,
-    fun hl => ⟨Y, f, hf, l, hl, rfl⟩⟩
+/-- Given as many referents as each arity in the vocabulary, a compatible family of sets of
+literals amalgamates to the renamings of its literals. -/
+theorem isAmalgamation_amalgamate (hx : x.Compatible)
+    (hc : ∀ r ∈ c.vocab, Nonempty (Fin r.1 ↪ V)) : x.IsAmalgamation (amalgamate x) :=
+  fun Y f hf ↦ by
+    change Literal.preimage f (amalgamate x) = x f hf
+    ext l
+    simp only [mem_preimage, mem_amalgamate]
+    refine ⟨fun ⟨Z, g, hg, m, hm, h⟩ ↦ ?_, fun hl ↦ ⟨Y, f, hf, l, hl, rfl⟩⟩
+    obtain ⟨⟨r, hr⟩, a, p⟩ := l
+    obtain ⟨⟨r', hr'⟩, a', p'⟩ := m
+    obtain ⟨h₁, h₂, rfl⟩ := Literal.mk.inj h
+    obtain rfl : r' = r := congrArg Subtype.val h₁
+    exact (mem_iff_of_compatible hx hf hg hr hr' (eq_of_heq h₂).symm _
+      (hc _ (f.incl hr)).some).2 hm
 
-omit hx hc
+theorem isSeparatedFor_literalSets (hR : R ∈ literalPrecoverage L V c) :
+    R.IsSeparatedFor (literalSets L V) := fun _ t₁ t₂ h₁ h₂ ↦ by
+  ext l
+  obtain ⟨Y, f, hf, m, rfl⟩ := mem_literalPrecoverage_iff.1 hR l
+  simpa using congrArg (m ∈ ·) ((h₁ f hf).trans (h₂ f hf).symm)
+
+end LiteralSets
 
 /-! ### The sheaf condition -/
 
+namespace DRS
+
+/-- Given as many referents as each arity in the vocabulary, a compatible family of basic DRSs has
+an amalgamation, consistent because each of its literals comes from a member. -/
+theorem exists_isAmalgamation {x : FamilyOfElements (presheaf L V) R} (hx : x.Compatible)
+    (hc : ∀ r ∈ c.vocab, Nonempty (Fin r.1 ↪ V)) : ∃ t, x.IsAmalgamation t := by
+  have ht := isAmalgamation_amalgamate (hx.map (consistentLiteralSets L V).ι) hc
+  refine ⟨⟨_, Consistent.of_preimage fun l hl ↦ ?_⟩, fun Y f hf ↦ Subtype.ext (ht f hf)⟩
+  obtain ⟨Y, f, hf, m, -, rfl⟩ := mem_amalgamate.1 hl
+  exact ⟨Y, f, ⟨m, rfl⟩, (congrArg Consistent (ht f hf)).mpr (x f hf).2⟩
+
 /-- Basic DRSs are separated for a presieve iff it is jointly surjective on literals. -/
 theorem isSeparatedFor_iff : R.IsSeparatedFor (presheaf L V) ↔ R ∈ literalPrecoverage L V c := by
-  rw [mem_literalPrecoverage_iff]
-  refine ⟨fun h l => by_contra fun hl => ?_, fun h x t₁ t₂ h₁ h₂ => ?_⟩
-  · push Not at hl
-    let t : Theory c := ⟨{l}, by
-      simp only [Literal.Consistent, Finset.mem_singleton]
-      rintro _ rfl
-      exact neg_ne_self _⟩
-    refine (show (⊥ : Theory c) ≠ t from fun h => by simpa [t] using congrArg Theory.lits h)
-      (h (fun _ _ _ => (⊥ : Theory _)) (⊥ : Theory c) t (fun _ f _ => Theory.restrict_bot f)
-        fun Y f hf => Theory.ext (Finset.ext fun m => ?_))
-    simp only [presheaf_map, Quiver.Hom.unop_op, Theory.mem_restrict, t, Finset.mem_singleton,
-      hl Y f hf m]
-    exact iff_of_false id (Finset.notMem_empty m)
-  · refine Theory.ext (Finset.ext fun l => ?_)
-    obtain ⟨Y, f, hf, m, rfl⟩ := h l
-    rw [← Theory.mem_restrict, ← Theory.mem_restrict]
-    change m ∈ ((presheaf L V).map f.op t₁).lits ↔ m ∈ ((presheaf L V).map f.op t₂).lits
-    rw [h₁ f hf, h₂ f hf]
+  refine ⟨fun h ↦ mem_literalPrecoverage_iff.2 fun l ↦ by_contra fun hl ↦ ?_, fun hR x _ _ h₁ h₂ ↦
+    Subtype.ext (isSeparatedFor_literalSets hR _ _ _ (h₁.map (consistentLiteralSets L V).ι)
+      (h₂.map (consistentLiteralSets L V).ι))⟩
+  push Not at hl
+  have := h (fun _ _ _ ↦ ⟨∅, consistent_empty⟩) ⟨∅, consistent_empty⟩ ⟨{l}, consistent_singleton l⟩
+    (fun _ _ _ ↦ Subtype.ext (by ext; simp))
+    fun Y f hf ↦ Subtype.ext (by ext m; simpa using hl Y f hf m)
+  simpa using congrArg Subtype.val this
 
 /-- Basic DRSs are a sheaf for a presieve iff it is jointly surjective on literals. -/
 theorem isSheafFor_iff (hc : ∀ r ∈ c.vocab, Nonempty (Fin r.1 ↪ V)) :
     R.IsSheafFor (presheaf L V) ↔ R ∈ literalPrecoverage L V c := by
   rw [← isSeparatedFor_iff, ← isSeparatedFor_and_exists_isAmalgamation_iff_isSheafFor]
-  exact and_iff_left fun x hx => ⟨_, isAmalgamation_amalgamate hx hc⟩
+  exact and_iff_left fun _ hx ↦ exists_isAmalgamation hx hc
 
 /-- Basic DRSs are a sheaf for the topology of covers jointly surjective on literals. -/
 theorem isSheaf_literalCoverage [Infinite V] :
     Presieve.IsSheaf (literalCoverage L V).toGrothendieck (presheaf L V) :=
-  (isSheaf_coverage _ _).2 fun _ hR => (isSheafFor_iff fun _ _ =>
+  (isSheaf_coverage _ _).2 fun _ hR ↦ (isSheafFor_iff fun _ _ ↦
     ⟨Fin.valEmbedding.trans (Infinite.natEmbedding V)⟩).2 hR
+
+end DRS
 
 end Sheaf
 
@@ -249,30 +251,58 @@ def IsGluing (P : (Context L V)ᵒᵖ ⥤ Type*) (x : ∀ i, P.obj (Opposite.op 
 
 variable {C}
 
+/-- A family with a gluing is compatible. -/
+theorem IsGluing.compatible {P : (Context L V)ᵒᵖ ⥤ Type*}
+    {x : ∀ i, P.obj (Opposite.op (C.part i))} {s : P.obj (Opposite.op c)} (hs : C.IsGluing P x s) :
+    Arrows.Compatible P C.map x :=
+  funext hs ▸ (Arrows.toCompatible P C.map s).2
+
+/-- A cover is jointly surjective on literals iff one part carries each relation symbol together
+with each tuple of its arguments, the sign playing no role; covers carry the symbols and the
+referents only separately. -/
 theorem presieve_mem_literalPrecoverage_iff : C.presieve ∈ literalPrecoverage L V c ↔
-    ∀ l : Literal c, ∃ i, ∃ m : Literal (C.part i), m.map (C.map i) = l := by
+    ∀ (r : c.vocab) (a : Fin r.1.1 → c.vars),
+      ∃ i, r.1 ∈ (C.part i).vocab ∧ ∃ a' : Fin r.1.1 → (C.part i).vars, (C.map i).map ∘ a' = a := by
   simp only [ofArrows_mem_comap_jointlySurjectivePrecoverage_iff, Set.mem_range,
     Literal.functor_map]
-  rfl
+  refine ⟨fun h r a ↦ ?_, fun h ⟨r, a, p⟩ ↦ ?_⟩
+  · obtain ⟨i, ⟨⟨r', hr'⟩, a', p'⟩, hm⟩ := h ⟨r, a, true⟩
+    obtain ⟨h₁, h₂, -⟩ := Literal.mk.inj hm
+    obtain rfl : r' = r.1 := congrArg Subtype.val h₁
+    exact ⟨i, hr', a', eq_of_heq h₂⟩
+  · obtain ⟨i, hr, a', rfl⟩ := h r a
+    exact ⟨i, ⟨⟨r.1, hr⟩, a', p⟩, rfl⟩
 
-theorem eq_of_map_eq (hdisj : Pairwise fun i j => Disjoint (C.part i).vocab (C.part j).vocab)
+theorem eq_of_map_eq (hdisj : Pairwise fun i j ↦ Disjoint (C.part i).vocab (C.part j).vocab)
     {i j : ι} {m : Literal (C.part i)} {m' : Literal (C.part j)}
     (h : m.map (C.map i) = m'.map (C.map j)) : i = j :=
-  by_contra fun hij => Finset.disjoint_left.1 (hdisj hij) m.rel.2
-    (by rw [show m.rel.1 = m'.rel.1 from congrArg (fun l : Literal c => l.rel.1) h]; exact m'.rel.2)
+  hdisj.eq <| Finset.not_disjoint_iff.2 ⟨_, m.rel.2, congrArg (·.rel.1) h ▸ m'.rel.2⟩
 
-variable [DecidableEq V] [∀ n, DecidableEq (L.Relations n)] {x : ∀ i, Theory (C.part i)}
-  {s s' : Theory c}
+variable [DecidableEq V] [∀ n, DecidableEq (L.Relations n)] {x : ∀ i, (C.part i).DRS}
+  {s s' : c.DRS}
 
-instance [Fintype ι] : Decidable (C.IsGluing (presheaf L V) x s) :=
+instance [Fintype ι] : Decidable (C.IsGluing (DRS.presheaf L V) x s) :=
   inferInstanceAs (Decidable (∀ i, s.restrict (C.map i) = x i))
 
+/-- Given as many referents as each arity in the vocabulary, a family glues iff it is
+compatible. -/
+theorem exists_isGluing_iff_compatible (hc : ∀ r ∈ c.vocab, Nonempty (Fin r.1 ↪ V)) :
+    (∃ s, C.IsGluing (DRS.presheaf L V) x s) ↔ Arrows.Compatible (DRS.presheaf L V) C.map x :=
+  ⟨fun ⟨_, hs⟩ ↦ hs.compatible, fun hx ↦
+    have ⟨t, ht⟩ := DRS.exists_isAmalgamation hx.familyOfElements_compatible hc
+    ⟨t, fun i ↦ (ht _ (ofArrows.mk i)).trans (hx.familyOfElements_ofArrows_mk i)⟩⟩
+
+/-- A gluing is unique along a cover jointly surjective on literals. -/
+theorem IsGluing.unique (hC : C.presieve ∈ literalPrecoverage L V c)
+    (hs : C.IsGluing (DRS.presheaf L V) x s) (hs' : C.IsGluing (DRS.presheaf L V) x s') : s = s' :=
+  (DRS.isSeparatedFor_iff.2 hC).ext fun _ _ ⟨i⟩ ↦ (hs i).trans (hs' i).symm
+
 /-- `C.pushforward x` holds the renamings of the local literals, `{±A(fᵢ(x̄)) | ±A(x̄) ∈ sᵢ}`. -/
-def pushforward [Fintype ι] (C : Cover c ι) (x : ∀ i, Theory (C.part i)) : Finset (Literal c) :=
-  Finset.univ.biUnion fun i => (x i).lits.image (Literal.map (C.map i))
+def pushforward [Fintype ι] (C : Cover c ι) (x : ∀ i, (C.part i).DRS) : Finset (Literal c) :=
+  Finset.univ.biUnion fun i ↦ (x i).1.image (Literal.map (C.map i))
 
 @[simp] theorem mem_pushforward [Fintype ι] {l : Literal c} :
-    l ∈ C.pushforward x ↔ ∃ i, ∃ m ∈ (x i).lits, m.map (C.map i) = l := by
+    l ∈ C.pushforward x ↔ ∃ i, ∃ m ∈ (x i).1, m.map (C.map i) = l := by
   simp [pushforward]
 
 variable [Fintype ι]
@@ -280,60 +310,49 @@ variable [Fintype ι]
 instance : Decidable (C.presieve ∈ literalPrecoverage L V c) :=
   decidable_of_iff _ presieve_mem_literalPrecoverage_iff.symm
 
-theorem IsGluing.pushforward_subset (hs : C.IsGluing (presheaf L V) x s) :
-    C.pushforward x ⊆ s.lits := by
+theorem IsGluing.pushforward_subset (hs : C.IsGluing (DRS.presheaf L V) x s) :
+    C.pushforward x ⊆ s.1 := by
   intro l hl
   obtain ⟨i, m, hm, rfl⟩ := mem_pushforward.1 hl
   rw [← hs i] at hm
-  exact Theory.mem_restrict.1 hm
+  exact DRS.mem_restrict.1 hm
 
 /-- A family glues iff the renamings of its local literals form a gluing, which is then the
 least one. -/
-theorem exists_isGluing_iff : (∃ s, C.IsGluing (presheaf L V) x s) ↔
-    ∃ h : Literal.Consistent (C.pushforward x), C.IsGluing (presheaf L V) x ⟨_, h⟩ := by
-  refine ⟨fun ⟨s, hs⟩ => ⟨s.consistent.mono hs.pushforward_subset, fun i => ?_⟩,
-    fun ⟨_, h⟩ => ⟨_, h⟩⟩
-  refine Theory.ext (Finset.ext fun l => ?_)
-  simp only [presheaf_map, Quiver.Hom.unop_op, Theory.mem_restrict]
-  refine ⟨fun hl => ?_, fun hl => mem_pushforward.2 ⟨i, l, hl, rfl⟩⟩
+theorem exists_isGluing_iff : (∃ s, C.IsGluing (DRS.presheaf L V) x s) ↔
+    ∃ h : Literal.Consistent (C.pushforward x), C.IsGluing (DRS.presheaf L V) x ⟨_, h⟩ := by
+  refine ⟨fun ⟨s, hs⟩ ↦ ⟨s.2.mono hs.pushforward_subset, fun i ↦ ?_⟩, fun ⟨_, h⟩ ↦ ⟨_, h⟩⟩
+  refine Subtype.ext (Finset.ext fun l ↦ ?_)
+  simp only [DRS.presheaf_map, Quiver.Hom.unop_op, DRS.mem_restrict]
+  refine ⟨fun hl ↦ ?_, fun hl ↦ mem_pushforward.2 ⟨i, l, hl, rfl⟩⟩
   rw [← hs i]
-  exact Theory.mem_restrict.2 (hs.pushforward_subset hl)
-
-theorem IsGluing.unique (hC : C.presieve ∈ literalPrecoverage L V c)
-    (hs : C.IsGluing (presheaf L V) x s) (hs' : C.IsGluing (presheaf L V) x s') : s = s' := by
-  have (t : Theory c) (ht : C.IsGluing (presheaf L V) x t) : t.lits = C.pushforward x :=
-    subset_antisymm (fun l hl => by
-      obtain ⟨i, m, rfl⟩ := presieve_mem_literalPrecoverage_iff.1 hC l
-      exact mem_pushforward.2 ⟨i, m, by rw [← ht i]; exact Theory.mem_restrict.2 hl, rfl⟩)
-      ht.pushforward_subset
-  exact Theory.ext ((this s hs).trans (this s' hs').symm)
+  exact DRS.mem_restrict.2 (hs.pushforward_subset hl)
 
 /-! ### Disjoint vocabularies -/
 
-/-- `C.glue` is the theory of the renamed local literals, consistent when the vocabularies are
+/-- `C.glue` is the basic DRS of the renamed local literals, consistent when the vocabularies are
 pairwise disjoint and the cover maps injective. -/
-def glue (C : Cover c ι) (hdisj : Pairwise fun i j => Disjoint (C.part i).vocab (C.part j).vocab)
-    (hinj : ∀ i, Function.Injective (C.map i).map) (x : ∀ i, Theory (C.part i)) : Theory c where
-  lits := C.pushforward x
-  consistent _ hl hn := by
+def glue (C : Cover c ι) (hdisj : Pairwise fun i j ↦ Disjoint (C.part i).vocab (C.part j).vocab)
+    (hinj : ∀ i, Function.Injective (C.map i).map) (x : ∀ i, (C.part i).DRS) : c.DRS :=
+  ⟨C.pushforward x, fun _ hl hn ↦ by
     obtain ⟨i, m, hm, rfl⟩ := mem_pushforward.1 hl
     obtain ⟨j, m', hm', h⟩ := mem_pushforward.1 hn
     rw [Literal.neg_map] at h
     obtain rfl : i = j := (eq_of_map_eq hdisj h).symm
-    exact (x i).consistent m hm (Literal.map_injective (hinj i) h ▸ hm')
+    exact (x i).2 m hm (Literal.map_injective (hinj i) h ▸ hm')⟩
 
-variable (hdisj : Pairwise fun i j => Disjoint (C.part i).vocab (C.part j).vocab)
+variable (hdisj : Pairwise fun i j ↦ Disjoint (C.part i).vocab (C.part j).vocab)
   (hinj : ∀ i, Function.Injective (C.map i).map) (x)
 
-theorem isGluing_glue : C.IsGluing (presheaf L V) x (C.glue hdisj hinj x) := fun i =>
-  Theory.ext (Finset.ext fun l => by
-    simp only [presheaf_map, Quiver.Hom.unop_op, Theory.mem_restrict, glue, mem_pushforward]
+theorem isGluing_glue : C.IsGluing (DRS.presheaf L V) x (C.glue hdisj hinj x) := fun i ↦
+  Subtype.ext (Finset.ext fun l ↦ by
+    simp only [DRS.presheaf_map, Quiver.Hom.unop_op, DRS.mem_restrict, glue, mem_pushforward]
     grind [eq_of_map_eq, Literal.map_injective])
 
 theorem referents_toDRS_glue : (C.glue hdisj hinj x).toDRS.referents =
-    Finset.univ.biUnion fun i => ((x i).toDRS.map (C.map i).extend).referents := by
+    Finset.univ.biUnion fun i ↦ ((x i).toDRS.map (C.map i).extend).referents := by
   ext t
-  simp only [Theory.referents_toDRS, DRS.referents_map, Finset.mem_biUnion, Finset.mem_univ,
+  simp only [DRS.referents_toDRS, DRS.referents_map, Finset.mem_biUnion, Finset.mem_univ,
     Finset.mem_image, true_and]
   constructor
   · intro ht
@@ -348,23 +367,24 @@ gluing is the merge of the local DRSs after unification of referents. -/
 theorem coe_conditions_toDRS_glue :
     ((C.glue hdisj hinj x).toDRS.conditions : Multiset (Condition L V)) =
       ∑ i, (((x i).toDRS.map (C.map i).extend).conditions : Multiset (Condition L V)) := by
-  have hpd : ((Finset.univ : Finset ι) : Set ι).PairwiseDisjoint
-      fun i => (x i).lits.image (Literal.map (C.map i)) := fun _ _ _ _ hij =>
-    Finset.disjoint_left.2 fun l hi hj => by
+  have key {Y : Context L V} (s : Finset (Literal Y)) (g : Literal Y → Condition L V) :
+      s.val.map g = ∑ l ∈ s, {g l} := by
+    rw [Finset.sum_eq_multiset_sum, ← Multiset.sum_map_singleton (s.val.map g), Multiset.map_map]
+    rfl
+  simp only [DRS.coe_conditions_toDRS, DRS.conditions_map, ← Multiset.map_coe,
+    Multiset.map_map]
+  simp only [key]
+  rw [show (C.glue hdisj hinj x).1 = C.pushforward x from rfl, pushforward, Finset.sum_biUnion
+    fun i _ j _ hij ↦ Finset.disjoint_left.2 fun l hi hj ↦ by
       obtain ⟨m, -, rfl⟩ := Finset.mem_image.1 hi
       obtain ⟨m', -, h⟩ := Finset.mem_image.1 hj
-      exact hij (eq_of_map_eq hdisj h.symm)
-  rw [Theory.coe_conditions_toDRS, Finset.sum_eq_multiset_sum]
-  change (Finset.univ.biUnion _).val.map _ = _
-  rw [← Finset.disjiUnion_eq_biUnion _ _ hpd, Finset.disjiUnion_val, Multiset.map_bind]
-  change (Finset.univ.val.map _).sum = _
-  refine congrArg _ (Multiset.map_congr rfl fun i _ => ?_)
-  rw [Finset.image_val,
-    Multiset.dedup_eq_self.2 ((x i).lits.nodup.map (Literal.map_injective (hinj i))),
-    Multiset.map_map, DRS.conditions_map, ← Multiset.map_coe, Theory.coe_conditions_toDRS,
-    Multiset.map_map]
-  exact Multiset.map_congr rfl fun l _ => Literal.toCondition_map _ l
+      exact hij (eq_of_map_eq hdisj h.symm)]
+  refine Finset.sum_congr rfl fun i _ ↦ ?_
+  rw [Finset.sum_image fun _ _ _ _ h ↦ Literal.map_injective (hinj i) h]
+  simp [Literal.toCondition_map]
 
 end Cover
+
+end Context
 
 end DRT
