@@ -26,10 +26,11 @@ roots would turn suppletion into rewriting; the caboodle item *cahoot* shows an 
 bound to one frame with no Elsewhere, so a root is not a concept either. `spellout` realizes a
 root at its insertion site, the index with the number of the internal argument below, by the
 Subset Principle over the Hiaki vocabulary; `run_isProperlySuppletive` and `cahoot_interp_gap`
-are the two flanks. `suppletion_not_agreement` is §3.3's argument that conditioning by the
-internal argument, an ergative–absolutive pattern in a nominative–accusative language, is
-Vocabulary-Item competition rather than agreement, and `unergative_elsewhere` its prediction
-that the suppletive intransitives are unaccusative.
+are the two flanks. Since [a root's form depends on its internal argument
+alone](##dependsOn_spellout), [suppletion is conditioned ergatively](##isErgative_conditions), an
+ergative–absolutive pattern in a nominative–accusative language that
+[agreement does not follow](##suppletion_not_agreement), and [the suppletive intransitives are
+unaccusative](##eq_internal_of_spellout_ne).
 
 The syntactic evidence of §3.1 that roots take complements is formalized on the configurations of
 `DistributedMorphology.RootCategorization`. With the argument the sister of the root and adjuncts
@@ -61,8 +62,7 @@ namespace Harley2014
 open DistributedMorphology
 open DistributedMorphology.Allosemy (toInterpreted embedding)
 open Morphology
-open Clause (Arguments)
-open Clause.Arguments (unaccusative unergative transitive empty)
+open Clause Clause.Arguments
 
 /-! ### List 1: roots as indices -/
 
@@ -148,29 +148,43 @@ theorem index_local (c : Arguments Number) : spellout c sing = none := by
 
 /-! ### §3.3 Conditioning by the internal argument -/
 
-theorem suppletion_ignores_external (obj subj subj' : Number) (r : Root) :
-    spellout (transitive obj subj) r = spellout (transitive obj subj') r := rfl
+-- §3.3
+theorem dependsOn_spellout : DependsOn spellout {.internal} := fun _ _ h ↦
+  funext fun _ ↦ by simp only [spellout, site, h .internal rfl]
 
-theorem unergative_elsewhere (n : Number) : spellout (unergative n) run = some "tenne" := rfl
+/-- **The suppletive intransitives are unaccusative** (§3.3): an argument whose number conditions
+the form of a root is internal. -/
+theorem eq_internal_of_spellout_ne {c : Arguments Number} {p : ArgumentStructure.ArgPosition}
+    {n n' : Number}
+    (h : spellout (Function.update c p (some n)) ≠ spellout (Function.update c p (some n'))) :
+    p = .internal :=
+  mem_of_dependsOn dependsOn_spellout h
 
-/-- Whether the number of an argument conditions Hiaki suppletion, read off `spellout`. That of
-the sole argument of an intransitive and of the object of a transitive does, and that of the
-transitive subject does not. -/
-def conditions : ArgumentRole → Bool
-  | .S => spellout (unaccusative .singular) run != spellout (unaccusative .plural) run
-  | .A => spellout (transitive .singular .singular) kill !=
-    spellout (transitive .singular .plural) kill
-  | .P => spellout (transitive .singular .singular) kill !=
-    spellout (transitive .plural .singular) kill
-  | .R | .T => false
+theorem conditions_S : Conditions spellout .S :=
+  ⟨unaccusative .singular, .internal, by decide, .singular, .plural,
+    fun h ↦ absurd (congrFun h run) (by decide)⟩
 
-theorem isErgative_conditions : Alignment.IsErgative conditions := by decide
+theorem conditions_P : Conditions spellout .P :=
+  ⟨transitive .singular .singular, .internal, by decide, .singular, .plural,
+    fun h ↦ absurd (congrFun h kill) (by decide)⟩
 
-/-- No accessibility setting makes accusative case control the conditioning of Hiaki suppletion, so
-suppletion is not agreement (29). -/
+theorem not_conditions_A : ¬ Conditions spellout .A := by
+  rintro ⟨c, p, hr, n, n', h⟩
+  obtain rfl := eq_internal_of_spellout_ne h
+  generalize c.valency = v at hr
+  revert v; decide
+
+/-- **Hiaki suppletion is conditioned ergatively** (§3.3): the number of the sole argument of an
+intransitive and of the object of a transitive conditions it, that of a transitive subject does
+not. -/
+theorem isErgative_conditions : Alignment.IsErgative (Conditions spellout) :=
+  ⟨propext (iff_of_true conditions_S conditions_P), fun h ↦ not_conditions_A (h ▸ conditions_S)⟩
+
+-- (29)
 theorem suppletion_not_agreement (t : Bobaljik2008.CaseCategory) :
-    Bobaljik2008.controls .accusative t ≠ conditions := fun h ↦
-  Bobaljik2008.not_isErgative_controls_accusative t (h ▸ isErgative_conditions)
+    ¬ ∀ r, (Bobaljik2008.controls .accusative t r ↔ Conditions spellout r) := fun h ↦
+  not_conditions_A <| (h .A).1 <|
+    (Bobaljik2008.isAccusative_controls_accusative t).1 ▸ (h .S).2 conditions_S
 
 /-! ### §2.3 Individuation is not semantic: the caboodle item -/
 
@@ -262,7 +276,7 @@ def oneData : List (Dependent × Judgment) :=
 
 theorem oneData_length : oneData.length = 2 := by decide +kernel
 
-/-- **One-replacement.** *one* strands exactly the dependents that (18) accepts stranded. -/
+-- (18)
 theorem oneStrands_iff : ∀ p ∈ oneData, p.2 = .acceptable ↔ OneStrands .complement p.1 := by
   decide +kernel
 
