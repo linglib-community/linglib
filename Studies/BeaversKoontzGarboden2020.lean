@@ -3,7 +3,6 @@ module
 public import Linglib.Semantics.ArgumentStructure.Root.Basic
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
-public import Linglib.Semantics.ArgumentStructure.Root.Kinds
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Presupposition.Again
@@ -25,12 +24,11 @@ fills [the cells that markedness and naturalness allow](##mem_attestedCells_iff)
 ## Implementation notes
 
 * The state entailments of a result root, and the result entailed by a cause, come from the
-  collocational closure of the signature (`Root.closedKinds`). The refutation of Manner/Result
+  collocational closure of the signature (`Root.close`). The refutation of Manner/Result
   Complementarity rests on the second: read on the signatures as given, the thesis
   [is consistent with the judgments](##exists_fits_not_mannerResult).
-* A root is its meaning; the six roots carry their signatures and leave their content
-  unannotated, so √hand and √drown coincide as values, and the position of each root is
-  recorded beside it in `sample`.
+* A root is its signature, so √hand and √drown coincide as values, and the position of each
+  root is recorded beside it in `sample`.
 * The third clause of `mem_attestedCells_iff` is the book's naturalness argument for the row
   with a manner and a state alone; for the row that adds a change without a cause the book leaves
   open whether a change and a manner can combine without causation.
@@ -59,33 +57,33 @@ fills [the cells that markedness and naturalness allow](##mem_attestedCells_iff)
 
 namespace BeaversKoontzGarboden2020
 
-open ArgumentStructure ArgumentStructure.Root.Kinds
+open ArgumentStructure ArgumentStructure.Root
 open scoped SetRel ModalLogic
 
 /-! ### The ontological kinds -/
 
 /-- The ontological kinds are all that the Bifurcation Thesis allows a root to carry. -/
-def ontological : Root.Kinds := {.state, .manner}
+def ontological : Root := {.state, .manner}
 
 /-! ### The typology -/
 
 /-- The seven rows of the typology (12). -/
-def typology : Finset Root.Kinds :=
+def typology : Finset Root :=
   {propertyConcept, pureResult, causativeResult, pureManner, {.state, .manner},
    {.state, .manner, .result}, fullSpec}
 
 -- (12), p. 227
 theorem wellFormed_iff_mem_typology :
-    ∀ s : Root.Kinds, s.WellFormed ↔ s = ∅ ∨ s ∈ typology := by decide
+    ∀ s : Root, s.WellFormed ↔ s = ∅ ∨ s ∈ typology := by decide
 
 /-- The filled cells of (12), pairs of a closed signature and a position. -/
-def attestedCells : Finset (Root.Kinds × Root.Position) :=
+def attestedCells : Finset (Root × Root.Position) :=
   {(propertyConcept, .complement), (pureResult, .complement), (causativeResult, .complement),
    (pureManner, .adjoined), (fullSpec, .adjoined), (fullSpec, .complement)}
 
 /-- The filled cells of (12) are those where an adjoined root is a manner, a complement root a
 state, and manner with state entails cause (pp. 229–230). -/
-theorem mem_attestedCells_iff : ∀ (s : Root.Kinds) (p : Root.Position),
+theorem mem_attestedCells_iff : ∀ (s : Root) (p : Root.Position),
     (s, p) ∈ attestedCells ↔ s ∈ typology ∧ (p = .adjoined → .manner ∈ s) ∧
       (p = .complement → .state ∈ s) ∧ (.manner ∈ s → .state ∈ s → .cause ∈ s) := by
   decide
@@ -178,7 +176,7 @@ theorem attestedRows_eq_kinds_templates :
       {state.kinds, act.kinds, achievement.kinds, causative.kinds, accomplishment.kinds} := by
   decide
 
-theorem kinds_ne_of_cause_not_mem {t : Template σ} {s : Root.Kinds} (hm : .manner ∈ s)
+theorem kinds_ne_of_cause_not_mem {t : Template σ} {s : Root} (hm : .manner ∈ s)
     (hs : .state ∈ s) (hc : .cause ∉ s) : t.kinds ≠ s := by
   rintro rfl; exact hc (hasCause_of_mem_kinds hm hs)
 
@@ -193,27 +191,27 @@ end Templates
 /-! ### The six representative roots -/
 
 /-- √flat is a pure state root. -/
-def flat : Root := { kinds := {.state} }
+def flat : Root := {.state}
 
 /-- √jog is a pure manner-of-motion root, its manner the jogging gait. -/
-def jog : Root := { kinds := {.manner} }
+def jog : Root := {.manner}
 
 /-- √blossom is a result root with no specified manner or cause, an internally caused change
 into flowering. -/
-def blossom : Root := { kinds := {.result} }
+def blossom : Root := {.result}
 
 /-- √crack is a caused-result root without a specified manner, a caused change into a fissured
 state. -/
-def crack : Root := { kinds := {.result, .cause} }
+def crack : Root := {.result, .cause}
 
 /-- √hand carries manner, cause and result, a transfer by hand into the recipient's possession.
 The possession result is not cancelable (*Mary handed John the book, #but it never came to be
 on his person*), so it is entailed by the root rather than implicated. -/
-def hand : Root := { kinds := {.manner, .result, .cause} }
+def hand : Root := {.manner, .result, .cause}
 
 /-- √drown is a manner-of-killing root, death by submersion in liquid, carrying manner, cause
 and result. -/
-def drown : Root := { kinds := {.manner, .result, .cause} }
+def drown : Root := {.manner, .result, .cause}
 
 /-- The six roots with the position each occupies in (12), √hand adjoined and √drown a
 complement. -/
@@ -225,24 +223,24 @@ def sample : List (Root × Root.Position) :=
 
 The closed signatures of the roots are the rows of the typology they fill. -/
 
-theorem flat_closedKinds : flat.closedKinds = propertyConcept := by decide
+theorem close_flat : close flat = propertyConcept := by decide
 
-theorem jog_closedKinds : jog.closedKinds = pureManner := by decide
+theorem close_jog : close jog = pureManner := by decide
 
-theorem blossom_closedKinds : blossom.closedKinds = pureResult := by decide
+theorem close_blossom : close blossom = pureResult := by decide
 
-theorem crack_closedKinds : crack.closedKinds = causativeResult := by decide
+theorem close_crack : close crack = causativeResult := by decide
 
-theorem hand_closedKinds : hand.closedKinds = fullSpec := by decide
+theorem close_hand : close hand = fullSpec := by decide
 
-theorem drown_closedKinds : drown.closedKinds = fullSpec := by decide
+theorem close_drown : close drown = fullSpec := by decide
 
 -- (12)
 theorem attestedCells_eq_sample :
-    attestedCells = (sample.map fun c ↦ (c.1.closedKinds, c.2)).toFinset := by decide
+    attestedCells = (sample.map fun c ↦ (close c.1, c.2)).toFinset := by decide
 
 theorem hand_drown_differ_in_position :
-    hand.closedKinds = drown.closedKinds ∧ (hand, .adjoined) ∈ sample ∧
+    close hand = close drown ∧ (hand, .adjoined) ∈ sample ∧
       (drown, .complement) ∈ sample := by decide
 
 /-! ### The entailments of the roots in a model
@@ -257,11 +255,11 @@ section Model
 variable {Entity State Event : Type*} {M : EventStructure.Interpretation Entity State Event}
   {P : Entity → State → Prop} {Q : Event → Prop} {x : Entity} {s : State}
 
-theorem crack_entails_cause (h : M.Respects P Q crack.kinds) (hs : P x s) :
+theorem crack_entails_cause (h : M.Respects P Q crack) (hs : P x s) :
     ◇[M.become] (◇[M.cause.inv] ⊤) s :=
   h .cause (by decide) x s hs
 
-theorem drown_entails_manner (h : M.Respects P Q drown.kinds) (hs : P x s) :
+theorem drown_entails_manner (h : M.Respects P Q drown) (hs : P x s) :
     ◇[M.become] (□[M.cause.inv] Q) s :=
   h .mannerOfCause (by decide) x s hs
 
@@ -280,11 +278,11 @@ def changing : ArgumentStructure.EventStructure.Interpretation Unit Unit Unit wh
   effector := ⊤
 
 theorem flat_not_entailsChange :
-    unchanging.Respects (fun _ _ ↦ True) (fun _ ↦ True) flat.kinds ∧
+    unchanging.Respects (fun _ _ ↦ True) (fun _ ↦ True) flat ∧
       ¬ unchanging.EntailsChange (fun _ _ ↦ True) :=
   ⟨fun p hp ↦ absurd hp (by cases p <;> decide), fun h ↦ let ⟨_, he, _⟩ := h () () trivial; he⟩
 
-private theorem changing_respects {ks : Root.Kinds}
+private theorem changing_respects {ks : Root}
     (h : ¬ (Root.Kind.manner ∈ ks ∧ Root.Kind.cause ∈ ks)) :
     changing.Respects (fun _ _ ↦ True) ⊥ ks := fun p hp ↦ by
   cases p with
@@ -296,8 +294,8 @@ private theorem changing_respects {ks : Root.Kinds}
       Finset.singleton_subset_iff.1 (Finset.insert_subset_iff.1 hp).2⟩ h
 
 theorem crack_respects :
-    changing.Respects (fun _ _ ↦ True) ⊥ crack.kinds ∧
-      ¬ unchanging.Respects (fun _ _ ↦ True) ⊥ crack.kinds :=
+    changing.Respects (fun _ _ ↦ True) ⊥ crack ∧
+      ¬ unchanging.Respects (fun _ _ ↦ True) ⊥ crack :=
   ⟨changing_respects (by decide),
     fun h ↦ let ⟨_, he, _⟩ := crack_entails_cause h (x := ()) (s := ()) trivial; he⟩
 
@@ -338,7 +336,7 @@ inductive Diagnostic
 
 /-- The kinds a root carries when it fails the diagnostic: a result for the two diagnostics of
 change, and a manner with a cause for the denial of action. -/
-def Diagnostic.detects : Diagnostic → Root.Kinds
+def Diagnostic.detects : Diagnostic → Finset Root.Kind
   | .changeDenial | .restitutive => {.result}
   | .actionDenial => {.manner, .cause}
 
@@ -374,7 +372,7 @@ theorem forged_restitutive :
   ⟨Presupposition.again_ne_undefined_iff.2 ⟨false, Bool.false_lt_true, trivial⟩,
     fun ⟨_, hlt, _, h, _⟩ ↦ by cases (h : _ = true); exact lt_irrefl true hlt⟩
 
-private theorem forged_respects {ks : Root.Kinds} (hr : Root.Kind.result ∉ close ks) :
+private theorem forged_respects {ks : Root} (hr : Root.Kind.result ∉ close ks) :
     forged.Respects sharp ⊥ ks := fun p hp ↦ by
   have hcause : Root.Kind.cause ∉ ks := fun hk ↦ hr (mem_close.2 ⟨_, hk, .result_cause⟩)
   cases p with
@@ -385,14 +383,14 @@ private theorem forged_respects {ks : Root.Kinds} (hr : Root.Kind.result ∉ clo
 
 /-- A root of signature `ks` passes the diagnostic when its state description passes it in some
 model that respects the signature, with some manner. -/
-def Passes (ks : Root.Kinds) (g : Diagnostic) : Prop :=
+def Passes (ks : Root) (g : Diagnostic) : Prop :=
   ∃ (State Event : Type) (M : ArgumentStructure.EventStructure.Interpretation Unit State Event)
     (P : Unit → State → Prop) (Q : Event → Prop) (R : SetRel State State),
     M.Respects P Q ks ∧ g.Passes M R P Q ()
 
 /-- A root passes a diagnostic exactly when its collocational closure lacks the kinds the
 diagnostic detects. -/
-theorem passes_iff {ks : Root.Kinds} (g : Diagnostic) :
+theorem passes_iff {ks : Root} (g : Diagnostic) :
     Passes ks g ↔ ¬ g.detects ⊆ close ks := by
   cases g with
   | changeDenial =>
@@ -416,7 +414,7 @@ theorem passes_iff {ks : Root.Kinds} (g : Diagnostic) :
         fun ⟨_, _, hbox⟩ ↦ hbox () trivial⟩⟩
 
 /-- The signature of a row's root, the least of the class the book assigns it. -/
-def kinds? (d : Datum) : Option Root.Kinds :=
+def kinds? (d : Datum) : Option Root :=
   d.parse? "root class" [("property concept", propertyConcept), ("result", pureResult)] <|>
     d.parse? "verb class" [("manner of killing", fullSpec)]
 
@@ -427,7 +425,7 @@ def diagnostic? (d : Datum) : Option Diagnostic :=
 
 /-- A lexicon, an assignment of a signature to the root of each row, fits the judgments when each
 row that tests a diagnostic is acceptable exactly when its root passes it. -/
-def Fits (σ : Datum → Root.Kinds) : Prop :=
+def Fits (σ : Datum → Root) : Prop :=
   ∀ d ∈ Examples.all, ∀ g ∈ diagnostic? d, (d.judgment = .acceptable ↔ Passes (σ d) g)
 
 /-- The book's root classes fit the judgments of (46)–(48) and (32). -/
@@ -439,9 +437,9 @@ theorem rows : Fits fun d ↦ (kinds? d).getD ∅ := by
 Thesis lets every root pass restitutive *again*, and the result root of *return* in (47a) does
 not. -/
 theorem bifurcation_thesis_false :
-    ¬ ∃ σ : Datum → Root.Kinds, (∀ d, close (σ d) ≤ ontological) ∧ Fits σ := by
+    ¬ ∃ σ : Datum → Root, (∀ d, close (σ d) ≤ ontological) ∧ Fits σ := by
   rintro ⟨σ, hσ, h⟩
-  have key : ∀ s : Root.Kinds, close s ≤ ontological →
+  have key : ∀ s : Root, close s ≤ ontological →
       ¬ Diagnostic.restitutive.detects ⊆ close s := by
     decide
   exact absurd ((h Examples.bkg2020_ch2_47a (by simp [Examples.all]) .restitutive (by decide)).2
@@ -451,19 +449,19 @@ theorem bifurcation_thesis_false :
 of action fails in (32b) only for a root whose manner is that of its cause, and a cause entails a
 result. -/
 theorem manner_result_complementarity_false :
-    ¬ ∃ σ : Datum → Root.Kinds,
-      (∀ d, ¬ ({.manner, .result} : Root.Kinds) ≤ close (σ d)) ∧ Fits σ := by
+    ¬ ∃ σ : Datum → Root,
+      (∀ d, ¬ ({.manner, .result} : Root) ≤ close (σ d)) ∧ Fits σ := by
   rintro ⟨σ, hσ, h⟩
-  have key : ∀ s : Root.Kinds, Diagnostic.actionDenial.detects ⊆ close s →
-      ({.manner, .result} : Root.Kinds) ≤ close s := by
+  have key : ∀ s : Root, Diagnostic.actionDenial.detects ⊆ close s →
+      ({.manner, .result} : Root) ≤ close s := by
     decide
   refine hσ Examples.bkg2020_ch4_32b (key _ ?_)
   by_contra hn
   exact absurd ((h Examples.bkg2020_ch4_32b (by simp [Examples.all]) .actionDenial (by decide)).2
     ((passes_iff _).2 hn)) (by decide)
 
-private theorem not_subset_erase_result (s : Root.Kinds) :
-    ¬ ({.manner, .result} : Root.Kinds) ⊆ if .manner ∈ s then s.erase .result else s := by
+private theorem not_subset_erase_result (s : Root) :
+    ¬ ({.manner, .result} : Root) ⊆ if .manner ∈ s then s.erase .result else s := by
   intro h
   have hm := h (Finset.mem_insert_self _ _)
   have hr := h (Finset.mem_insert_of_mem (Finset.mem_singleton_self _))
@@ -474,7 +472,7 @@ private theorem not_subset_erase_result (s : Root.Kinds) :
 -- Read on the signatures as given rather than on their closures, Manner/Result Complementarity
 -- fits the judgments: dropping the result from each root with a manner keeps its closure.
 theorem exists_fits_not_mannerResult :
-    ∃ σ : Datum → Root.Kinds, (∀ d, ¬ ({.manner, .result} : Root.Kinds) ≤ σ d) ∧ Fits σ := by
+    ∃ σ : Datum → Root, (∀ d, ¬ ({.manner, .result} : Root) ≤ σ d) ∧ Fits σ := by
   refine ⟨fun d ↦ if .manner ∈ (kinds? d).getD ∅ then ((kinds? d).getD ∅).erase .result
     else (kinds? d).getD ∅, fun d ↦ not_subset_erase_result _, ?_⟩
   simp only [Fits, passes_iff]
@@ -499,7 +497,7 @@ theorem attachment_rows : ∀ d ∈ Examples.all, ∀ s ∈ site? d,
 activity classes, causative-result roots for the externally caused changes of state, pure
 result roots for the internally caused ones, property concepts for the statives, the empty
 signature for roots with no structural entailment. -/
-def rootEntailments : LevinClass → Option Root.Kinds
+def rootEntailments : LevinClass → Option Root
   -- §9 Putting: template provides CAUSE+BECOME; root content varies
   | .put => none
   | .putDirection => none
@@ -646,7 +644,7 @@ def rootEntailments : LevinClass → Option Root.Kinds
   | .weather => none
   | _ => none
 
-theorem rootEntailments_wellFormed (c : LevinClass) (s : Root.Kinds)
+theorem rootEntailments_wellFormed (c : LevinClass) (s : Root)
     (h : rootEntailments c = some s) : s.WellFormed := by
   cases c <;> cases h <;> decide
 

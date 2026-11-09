@@ -1,44 +1,24 @@
 module
 
-public import Mathlib.Data.Fintype.Powerset
-public import Mathlib.Order.Closure
-public import Mathlib.Order.UpperLower.Closure
+public import Mathlib.Order.Basic
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Root kind signatures
+# Kinds of lexical entailment
 
-Which templatic components a root entails, the part of a root's meaning that fixes its
-class. The root typology
-of Beavers and Koontz-Garboden (§5.4.1) records which of four kinds of
-lexical entailment a root carries — state, manner, result, cause —
-under two collocational restrictions, that a change entails a state and a cause
-entails a change. The restrictions are the partial order `state ≤ result ≤ cause`
-on `Root.Kind`, with `manner` isolated. A root's kind signature is a
-`Finset Root.Kind`; it is well-formed when it is a lower set of that order, and
-the closure operator `close` sends any signature to its lower closure, the least
-well-formed signature containing it. The named signatures are the attested rows
-of the typology's display (12).
-
-## Main declarations
-
-* `Root.Kind`, with the collocational `PartialOrder`
-* `Root.Kinds`, `Root.Kinds.WellFormed`
-* `Root.Kinds.close`: the collocational closure, a `ClosureOperator` whose closed
-  signatures are the well-formed ones
-* `Root.Kinds.propertyConcept`, `pureResult`, `causativeResult`, `pureManner`,
-  `fullSpec`
+The root typology of Beavers and Koontz-Garboden (§5.4.1) records which of four kinds of lexical
+entailment a root carries, state, manner, result and cause, under two collocational restrictions:
+a change entails a state, and a cause entails a change. The restrictions are the partial order
+`state ≤ result ≤ cause` on `Root.Kind`, with `manner` isolated.
 
 ## References
 
-* [beavers-koontz-garboden-2020]: The Roots of Verbal Meaning.
+* [beavers-koontz-garboden-2020]
 -/
 
 @[expose] public section
 
 namespace ArgumentStructure
-
-/-! ### Kinds -/
 
 /-- The kinds of lexical entailment in the root typology of
 [beavers-koontz-garboden-2020]. -/
@@ -74,65 +54,5 @@ theorem isMax_manner : IsMax manner := by unfold IsMax; decide
 theorem isMax_cause : IsMax cause := by unfold IsMax; decide
 
 end Root.Kind
-
-/-! ### Signatures -/
-
-/-- A root kind signature, the set of kinds a root carries. -/
-abbrev Root.Kinds := Finset Root.Kind
-
-namespace Root.Kinds
-
-open Finset
-
-variable {s : Kinds} {k : Kind}
-
-/-- A signature is well-formed if it respects the collocational restrictions, that is,
-if it is a lower set of the kind order. -/
-def WellFormed (s : Kinds) : Prop := IsLowerSet (s : Set Kind)
-
-instance : DecidablePred WellFormed := fun s =>
-  inferInstanceAs (Decidable (∀ a b : Kind, b ≤ a → a ∈ s → b ∈ s))
-
-/-- The collocational closure of a signature, its lower closure in the kind order, whose
-closed signatures are the well-formed ones. -/
-@[simps! isClosed]
-def close : ClosureOperator Kinds := .ofPred (fun s ↦ univ.filter (∃ j ∈ s, · ≤ j)) WellFormed
-  (fun _ k hk ↦ by simpa using ⟨k, hk, le_rfl⟩)
-  (fun _ _ _ hba ha ↦ by
-    simp only [coe_filter, mem_univ, true_and, Set.mem_ofPred_eq] at ha ⊢
-    exact ha.imp fun _ hj ↦ ⟨hj.1, hba.trans hj.2⟩)
-  (fun _ _ hst ht _ hk ↦ by
-    obtain ⟨_, hj, hkj⟩ := by simpa using hk
-    exact ht hkj (hst hj))
-
-@[simp] theorem mem_close : k ∈ close s ↔ ∃ j ∈ s, k ≤ j := by
-  rw [show close s = univ.filter (∃ j ∈ s, · ≤ j) from rfl]; simp
-
-theorem mem_close_iff_of_isMax (hk : IsMax k) : k ∈ close s ↔ k ∈ s :=
-  ⟨fun h ↦ let ⟨_, hj, hkj⟩ := mem_close.1 h; le_antisymm (hk hkj) hkj ▸ hj,
-    fun h ↦ mem_close.2 ⟨k, h, le_rfl⟩⟩
-
-@[simp, norm_cast] theorem coe_close (s : Kinds) :
-    (close s : Set Kind) = lowerClosure (s : Set Kind) := by
-  ext; simp
-
-/-! ### The attested rows of the typology -/
-
-/-- The signature of property-concept roots (√flat). -/
-def propertyConcept : Kinds := {.state}
-
-/-- The signature of result roots without causation (√blossom). -/
-def pureResult : Kinds := {.state, .result}
-
-/-- The signature of caused-result roots (√crack). -/
-def causativeResult : Kinds := {.state, .result, .cause}
-
-/-- The signature of pure manner roots (√jog). -/
-def pureManner : Kinds := {.manner}
-
-/-- The signature of roots carrying every kind (√hand, √drown). -/
-def fullSpec : Kinds := univ
-
-end Root.Kinds
 
 end ArgumentStructure
