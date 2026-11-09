@@ -72,6 +72,11 @@ def target (p q q' : Atom) : Construction → Order → Formula Atom
 
 variable {p q q' : Atom} {C : Set W}
 
+/-- Each target sentence carries the one trigger `qq'`. -/
+theorem nodup_triggers_target (k : Construction) (o : Order) :
+    ((target p q q' k o).triggers.map Prod.snd).Nodup := by
+  cases k <;> cases o <;> simp [target, unlessThen, Formula.triggers]
+
 private theorem supervaluationAcceptable_incremental_iff_forall {F : Formula Atom} :
     SupervaluationAcceptable I .incremental C F ↔ ∀ w ∈ C, F.middleKleene I w ≠ .undefined :=
   (supervaluationAcceptable_incremental_iff I C F).trans Iff.rfl
@@ -96,11 +101,9 @@ theorem supervaluationAcceptable_incremental_canonical (k : Construction) :
 theorem supervaluationAcceptable_symmetric_canonical (k : Construction) :
     SupervaluationAcceptable I .symmetric C (target p q q' k .canonical) ↔
       C ⊆ {w | w ∈ I p → w ∈ I q} := by
-  cases k <;>
-    rw [supervaluationAcceptable_symmetric_iff_forall I
-      (by simp [target, unlessThen, Formula.triggers])] <;>
-    refine forall₂_congr fun w _ ↦ ?_ <;>
-    simp [target, unlessThen, Formula.strongKleene, Formula.eval] <;> tauto
+  rw [supervaluationAcceptable_symmetric_iff_forall I (nodup_triggers_target k _)]
+  refine forall₂_congr fun w _ ↦ ?_
+  cases k <;> simp [target, unlessThen, Formula.strongKleene, Formula.eval] <;> tauto
 
 /-- In the inverse order the incremental condition predicts the unconditional presupposition `q`
 ((13b)–(15b), p. 185). -/
@@ -115,11 +118,9 @@ theorem supervaluationAcceptable_incremental_inverse (k : Construction) :
 theorem supervaluationAcceptable_symmetric_inverse (k : Construction) :
     SupervaluationAcceptable I .symmetric C (target p q q' k .inverse) ↔
       C ⊆ {w | w ∈ I p → w ∈ I q} := by
-  cases k <;>
-    rw [supervaluationAcceptable_symmetric_iff_forall I
-      (by simp [target, unlessThen, Formula.triggers])] <;>
-    refine forall₂_congr fun w _ ↦ ?_ <;>
-    simp [target, unlessThen, Formula.strongKleene, Formula.eval] <;> tauto
+  rw [supervaluationAcceptable_symmetric_iff_forall I (nodup_triggers_target k _)]
+  refine forall₂_congr fun w _ ↦ ?_
+  cases k <;> simp [target, unlessThen, Formula.strongKleene, Formula.eval] <;> tauto
 
 /-- In the inverse order, any context that the Incremental Theory accepts entails the unconditional
 presupposition (§2.3.2). -/

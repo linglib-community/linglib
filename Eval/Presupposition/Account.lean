@@ -24,7 +24,8 @@ clauses (`Account.AcceptsClause`); dynamic semantics, filtering and Limited Symm
 the propositional fragment and are silent on them. A theory under development in `Lab` is
 scored the same way. A theory is stronger than another when every context that accepts a formula by
 the first accepts it by the second, so that it predicts presuppositions at least as strong
-(`Theory.Stronger`).
+(`Theory.Stronger`). Being stronger is a preorder, and two theories each stronger than the other
+coincide on the propositional fragment (`AntisymmRel Theory.Stronger`).
 
 ## References
 
@@ -68,6 +69,10 @@ theorem Stronger.refl (T : Theory) : T.Stronger T := fun _ _ _ _ _ h ↦ h
 theorem Stronger.trans {T T' T'' : Theory} (h : T.Stronger T') (h' : T'.Stronger T'') :
     T.Stronger T'' :=
   fun Atom W I C F hT ↦ h' Atom W I C F (h Atom W I C F hT)
+
+instance : IsPreorder Theory Stronger where
+  refl := Stronger.refl
+  trans _ _ _ := Stronger.trans
 
 /-- The linking hypothesis of inference tasks. A theory predicts the inference `φ` from `F` when,
 under every interpretation of the atoms, every context that accepts `F` entails `φ`, so that a
@@ -162,6 +167,10 @@ theorem Stronger.refl (a : Account) : a.Stronger a := Theory.Stronger.refl _
 theorem Stronger.trans {a b c : Account} (hab : a.Stronger b) (hbc : b.Stronger c) :
     a.Stronger c :=
   Theory.Stronger.trans hab hbc
+
+instance : IsPreorder Account Stronger where
+  refl := Stronger.refl
+  trans _ _ _ := Stronger.trans
 
 end Account
 

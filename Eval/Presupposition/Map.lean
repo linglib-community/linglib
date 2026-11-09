@@ -15,8 +15,9 @@ accounts' own definitions, taken from the study that proves it; a pair in neithe
 In the propositional fragment the incremental accounts coincide: dynamic semantics, filtering,
 incremental Transparency, incremental local satisfaction, and incremental Kleene and supervaluation
 acceptability are edges in both directions (Theorem 1, C.21 and C.22 of Local Contexts, and
-Theorem 36 of its manuscript). Each incremental account is stronger than its symmetric counterpart
-(item 20), and symmetric Kleene is stronger than symmetric supervaluation (Lemma 8). Symmetric
+Theorem 36 of its manuscript), so each is equivalent to filtering
+(`Account.antisymmRel_filtering_of_mem_incremental`). Each incremental account is stronger than its
+symmetric counterpart (item 20), and symmetric Kleene is stronger than symmetric supervaluation (Lemma 8). Symmetric
 Transparency is incomparable with symmetric Kleene and supervaluation in one direction (Theorem
 39a) and supervaluation is not stronger than Kleene (Lemma 11); the symmetric accounts are not
 stronger than the incremental ones (Chemla and Schlenker's (13b)). Kalomoiros's Limited
@@ -116,6 +117,31 @@ theorem limitedSymmetry_stronger_transparencySymmetric :
     limitedSymmetry.Stronger transparencySymmetric :=
   fun _ _ _ _ _ h ↦ Kalomoiros2023.LimitedSymmetry.transparency h
 
+/-- The incremental accounts: dynamic semantics, filtering, and Schlenker's Transparency, local
+satisfaction, Strong Kleene and supervaluation, checked after each trigger with every good final. -/
+def incremental : Finset Account :=
+  {dynamic, filtering, transparencyIncremental, satisfactionIncremental, kleeneIncremental,
+    supervaluationIncremental}
+
+/-- The incremental accounts coincide on the propositional fragment: each is stronger than
+filtering, and filtering is stronger than each. -/
+theorem antisymmRel_filtering_of_mem_incremental {a : Account} (ha : a ∈ incremental) :
+    AntisymmRel Stronger a filtering := by
+  have dyn : AntisymmRel Stronger dynamic filtering :=
+    ⟨dynamic_stronger_filtering, filtering_stronger_dynamic⟩
+  have tr : AntisymmRel Stronger transparencyIncremental filtering :=
+    .trans ⟨transparencyIncremental_stronger_dynamic, dynamic_stronger_transparencyIncremental⟩ dyn
+  simp only [incremental, Finset.mem_insert, Finset.mem_singleton] at ha
+  rcases ha with rfl | rfl | rfl | rfl | rfl | rfl
+  · exact dyn
+  · exact .rfl
+  · exact tr
+  · exact .trans ⟨satisfactionIncremental_stronger_transparencyIncremental,
+      transparencyIncremental_stronger_satisfactionIncremental⟩ tr
+  · exact ⟨kleeneIncremental_stronger_filtering, filtering_stronger_kleeneIncremental⟩
+  · exact ⟨supervaluationIncremental_stronger_filtering,
+      filtering_stronger_supervaluationIncremental⟩
+
 /-! ### Cuts -/
 
 /-- The context of Theorem 39a has a world where `p` and `q` fail and one where both hold. -/
@@ -169,7 +195,7 @@ theorem not_kleeneSymmetric_stronger_kleeneIncremental :
       (ChemlaSchlenker2012.target 0 1 2 .orSentence .inverse) :=
     (strongKleeneAcceptable_symmetric_iff interpEmpty _ _).2 fun w hw ↦
       (supervaluationDefined_iff_of_nodup interpEmpty
-        (by simp [ChemlaSchlenker2012.target, Formula.triggers])).1
+        (ChemlaSchlenker2012.nodup_triggers_target _ _)).1
         ((supervaluationAcceptable_symmetric_iff interpEmpty _ _).1 inverseOr.1 w hw)
   exact fun h ↦ inverseOr.2
     ((ChemlaSchlenker2012.supervaluationAcceptable_incremental_inverse interpEmpty .orSentence).1
@@ -208,7 +234,8 @@ theorem not_transparencySymmetric_stronger_limitedSymmetry :
   have ht : Transparency .symmetric Set.univ
       (Formula.occurrences I (.bin .conj (.trigger 0 1) (.atom 2))) :=
     (satisfaction_iff_transparency I .symmetric _ _).1
-      ((satisfaction_symmetric_and_left_iff I).2 fun w _ ↦ by simp [I, Formula.truth, Connective.eval])
+      ((satisfaction_symmetric_and_left_iff I).2 fun w _ ↦ by
+        simp [I, Formula.truth, Connective.eval])
   intro h
   have := (Kalomoiros2023.limitedSymmetry_and_left I).1 (h _ _ _ _ _ ht) (Set.mem_univ ())
   simp [I] at this
