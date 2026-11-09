@@ -475,8 +475,7 @@ theorem objectItem_inserted {i : VocabularyItem Feature String} (hi : i ∈ obje
 subject: obligatory when it is ergative in every position open to the object, optional when in
 some, and excluded when in none; number plays no part. -/
 def marking (s o : Person) : Obligatoriness :=
-  .ofAllowed ((positions o .inSitu).map fun pos ↦
-    decide (Ergative (s, .minimal) (o, .minimal) pos)).toFinset
+  .of (positions o .inSitu).toFinset fun pos ↦ decide (Ergative (s, .minimal) (o, .minimal) pos)
 
 -- Table 4
 theorem table4 :

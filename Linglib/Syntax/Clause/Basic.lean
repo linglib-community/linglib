@@ -203,7 +203,7 @@ variable (T : LeftEdge.Table)
 /-- The distribution of a property of left edges: in a recorded cell, the obligatoriness allowing
 the values the property takes on the edges admitted there. -/
 def distribution (p : LeftEdge → Bool) : Distribution :=
-  fun t e ↦ (T t e).map fun s ↦ .ofAllowed (s.image p)
+  fun t e ↦ (T t e).map (Obligatoriness.of · p)
 
 /-- The distribution of verb second. -/
 def verbSecond : Distribution := T.distribution LeftEdge.verbSecond

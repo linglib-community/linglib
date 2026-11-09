@@ -243,20 +243,16 @@ noncomputable def overtness (z w : Set (Animacy × DefinitenessScale)) :
 
 theorem fitsGraded_overtness_iff {z w : Set (Animacy × DefinitenessScale)} (h : z ⊆ w) :
     FitsGraded (overtness z w) ↔ IsUpperSet z ∧ IsUpperSet w := by
-  classical
-  have hP (c) : (.obligatory ≤ overtness z w .P c ↔ c ∈ z) ∧
-      (.optional ≤ overtness z w .P c ↔ c ∈ w) := by
-    by_cases hz : c ∈ z
-    · simp only [overtness, hz, h hz, ↓reduceIte, iff_true]; decide
-    · by_cases hw : c ∈ w <;> simp only [overtness, hz, hw, ↓reduceIte, iff_true,
-        iff_false] <;> decide
-  refine ⟨fun ⟨_, hm⟩ ↦ ⟨fun a b hab ha ↦ (hP b).1.1 (((hP a).1.2 ha).trans (hm hab)),
-    fun a b hab ha ↦ (hP b).2.1 (((hP a).2.2 ha).trans (hm hab))⟩,
-    fun ⟨hz, hw⟩ ↦ ⟨fun _ _ _ ↦ le_rfl, fun a b hab ↦ le_of_forall_le fun k hk ↦ ?_⟩⟩
-  cases k
-  · exact bot_le
-  · exact (hP b).2.2 (hw hab ((hP a).2.1 hk))
-  · exact (hP b).1.2 (hz hab ((hP a).1.1 hk))
+  have hr : Obligatoriness.required (overtness z w .P) = z := by
+    ext c; simp only [Obligatoriness.mem_required, overtness]; split_ifs <;> simp_all
+  have hp : Obligatoriness.possible (overtness z w .P) = w := by
+    ext c; simp only [Obligatoriness.mem_possible, overtness]
+    split_ifs with hz hw
+    · simpa using h hz
+    · simpa using hw
+    · simpa using hw
+  rw [FitsGraded, Obligatoriness.monotone_iff, hr, hp]
+  exact and_iff_right fun _ _ _ ↦ le_rfl
 
 -- §5, Figures 5–9: in each three-zone system the obligatory zone lies within the possible zone
 -- and the graded marking fits the prominence order, so the optional zones too are monotone.

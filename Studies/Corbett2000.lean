@@ -297,8 +297,8 @@ along the hierarchy, downwards in the substrate's order. -/
 abbrev Respects (r : Range) : Prop := Monotone r
 
 -- Constraint I
-theorem Respects.isUpperSet {r : Range} (h : r.Respects) : IsUpperSet {p | ⊥ < r p} :=
-  (isUpperSet_Ioi _).preimage h
+theorem Respects.isUpperSet {r : Range} (h : r.Respects) : IsUpperSet (Obligatoriness.possible r) :=
+  (Obligatoriness.monotone_iff.1 h).2
 
 /-- The range obligatory down to `o`, optional down to `f`, excluded below. -/
 def downTo (o f : AnimacyHierarchy) : Range :=
