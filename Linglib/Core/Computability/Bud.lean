@@ -30,6 +30,8 @@ partial composition grafts a tree onto a leaf.
 
 * `Bud.System.Derives.graft`: a derivation can be carried out at any input of a larger tree.
 * `Bud.System.Derives.node`: joining derivable trees under a cherry rule is derivable.
+* `Bud.System.Derives.of_rules`: a system derives whatever another derives once it derives the
+  other's rules.
 * `Bud.System.ofCherries_derives_leaf_iff`: in a system of cherries, a tree is derivable from the
   unit of its root color iff every vertex and its two children form a rule.
 
@@ -287,6 +289,21 @@ colored Merge of the cherry's colors. -/
 theorem Derives.node (hc : cherry c a b ∈ B.rules) (hl : B.Derives (leaf a) l)
     (hr : B.Derives (leaf b) r) : B.Derives (leaf c) (node c l r) :=
   (Produces.single ⟨_, hc, 0, rfl, rfl⟩).trans ((hl.node_left c _).trans (hr.node_right c l))
+
+/-- A grafting step of `B` is a derivation of `B'` when `B'` derives every rule of `B` from the unit
+of its output color. -/
+theorem Produces.derives_of_rules {B' : System Ω} (h : ∀ r ∈ B.rules, B'.Derives (leaf r.out) r)
+    (hxy : B.Produces x y) : B'.Derives x y := by
+  obtain ⟨r, hr, i, hi, rfl⟩ := hxy
+  simpa [graft_unit hi] using (h r hr).graft (x := x) (lt_numInputs_of_getElem?_eq_some hi)
+
+/-- A system that derives every rule of `B` from the unit of its output color derives whatever `B`
+derives. -/
+theorem Derives.of_rules {B' : System Ω} (h : ∀ r ∈ B.rules, B'.Derives (leaf r.out) r)
+    (hxy : B.Derives x y) : B'.Derives x y := by
+  induction hxy with
+  | refl => rfl
+  | tail _ hyz ih => exact ih.trans (hyz.derives_of_rules h)
 
 theorem Derives.nodeLocal (hB : ∀ r ∈ B.rules, r.NodeLocal P) (h : B.Derives x y)
     (hx : x.NodeLocal P) : y.NodeLocal P := by
