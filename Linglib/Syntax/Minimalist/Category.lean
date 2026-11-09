@@ -44,6 +44,8 @@ Chomsky's features first classified the noun, the verb and the adjective; the fo
 * [baker-2003]
 * [chomsky-2013]
 * [marantz-2001]
+* [pietraszko-2019]
+* [arregi-pietraszko-2021]
 -/
 
 @[expose] public section
@@ -123,6 +125,9 @@ inductive Cat where
   | Nmlz
   /-- The inherent-case shell ([newman-2024]): KP wraps DP for oblique or inherent case. -/
   | K
+  /-- The associative linker, above the determiner, which introduces a possessor or a relative
+  clause modifying a noun in Bantu ([pietraszko-2019], [arregi-pietraszko-2021]). -/
+  | Lnk
   deriving Repr, DecidableEq, Inhabited
 
 /-- The categorizers, little n, v and a, one of which merges with every root ([marantz-2001]). -/
@@ -157,7 +162,7 @@ def CatFamily.lexical : CatFamily → Cat
 def Cat.family : Cat → CatFamily
   | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA | .Say
   | .Force | .Neg | .Mod | .Mood | .Pol | .Asp | .InnerAsp | .Evid | .Nmlz => .verbal
-  | .N | .n | .Num | .Dem | .Q | .D | .K => .nominal
+  | .N | .n | .Num | .Dem | .Q | .D | .K | .Lnk => .nominal
   | .A | .a => .adjectival
   | .P | .Place | .Path => .adpositional
 

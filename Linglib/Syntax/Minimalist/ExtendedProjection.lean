@@ -71,6 +71,7 @@ demonstrative, so those pairs are incomparable.
 * [cinque-2005]
 * [newman-2024]
 * [dendikken-2010]
+* [arregi-pietraszko-2021]
 -/
 
 @[expose] public section
@@ -99,6 +100,7 @@ def citedSequences : List (List Cat) :=
     [.N, .Q, .Num, .D],                           -- [borer-2005] (8a), p. 96
     [.N, .Num, .Dem],                             -- [cinque-2005] (7a), p. 321
     [.D, .K],                                     -- [newman-2024] (217), p. 129
+    [.D, .Lnk],                                   -- [arregi-pietraszko-2021] (14), p. 250
     [.P, .Place, .Path]]                          -- [dendikken-2010] (20c), p. 81
 
 /-- The pairs of categories a source takes to be one head: Rizzi's *che* manifests the force
