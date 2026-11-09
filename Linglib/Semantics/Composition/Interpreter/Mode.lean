@@ -213,45 +213,45 @@ def Mode.lower? {l r : Ty B} : (Σ u, Mode basics.Rule l r u) → List (Σ u, Mo
 /-- `Ty.combine` to a bound on the depth of its recursion. -/
 def Ty.combineAux : ℕ → (l r : Ty B) → List (Σ u, Mode basics.Rule l r u)
   | 0, _, _ => []
-  | n + 1, l, r =>
+  | k + 1, l, r =>
     (((basics.find l r).map fun p ↦ (⟨p.1, .basic p.2⟩ : Σ u, Mode basics.Rule l r u)) ++
       (match r with
-        | .comp f y => (Ty.combineAux n l y).map fun p ↦ ⟨.comp f p.1, .mapR p.2⟩
+        | .comp f y => (Ty.combineAux k l y).map fun p ↦ ⟨.comp f p.1, .mapR p.2⟩
         | _ => []) ++
       (match l with
-        | .comp f x => (Ty.combineAux n x r).map fun p ↦ ⟨.comp f p.1, .mapL p.2⟩
+        | .comp f x => (Ty.combineAux k x r).map fun p ↦ ⟨.comp f p.1, .mapL p.2⟩
         | _ => []) ++
       (match l, r with
         | .comp f x, .comp g y =>
           if h : g = f then
             if ha : f.IsApplicative then
-              (Ty.combineAux n x y).map fun p ↦ ⟨.comp f p.1, by subst h; exact .ap ha p.2⟩
+              (Ty.combineAux k x y).map fun p ↦ ⟨.comp f p.1, by subst h; exact .ap ha p.2⟩
             else []
           else []
         | _, _ => []) ++
       (match l with
         | .fn (.comp f x) x' =>
           if ha : f.IsApplicative then
-            (Ty.combineAux n (x ⇒ x') r).map fun p ↦ ⟨p.1, .unitR ha p.2⟩
+            (Ty.combineAux k (x ⇒ x') r).map fun p ↦ ⟨p.1, .unitR ha p.2⟩
           else []
         | _ => []) ++
       (match r with
         | .fn (.comp f y) y' =>
           if ha : f.IsApplicative then
-            (Ty.combineAux n l (y ⇒ y')).map fun p ↦ ⟨p.1, .unitL ha p.2⟩
+            (Ty.combineAux k l (y ⇒ y')).map fun p ↦ ⟨p.1, .unitL ha p.2⟩
           else []
         | _ => []) ++
       (match l, r with
         | .comp (.W i) x, .comp (.R j) y =>
-          if h : j = i then (Ty.combineAux n x y).map fun p ↦ ⟨p.1, h ▸ .counit p.2⟩ else []
+          if h : j = i then (Ty.combineAux k x y).map fun p ↦ ⟨p.1, h ▸ .counit p.2⟩ else []
         | _, _ => []) ++
       (match r with
         | .fn x (.comp (.R i) y) =>
-          (Ty.combineAux n l (.comp (.R i) (x ⇒ y))).map fun p ↦ ⟨p.1, .ejectR p.2⟩
+          (Ty.combineAux k l (.comp (.R i) (x ⇒ y))).map fun p ↦ ⟨p.1, .ejectR p.2⟩
         | _ => []) ++
       (match l with
         | .fn x (.comp (.R i) y) =>
-          (Ty.combineAux n (.comp (.R i) (x ⇒ y)) r).map fun p ↦ ⟨p.1, .ejectL p.2⟩
+          (Ty.combineAux k (.comp (.R i) (x ⇒ y)) r).map fun p ↦ ⟨p.1, .ejectL p.2⟩
         | _ => [])).flatMap fun p ↦ p :: (Mode.join? basics p ++ Mode.lower? basics p)
 
 /-- Every mode by which a left daughter of type `l` and a right daughter of type `r` combine. -/

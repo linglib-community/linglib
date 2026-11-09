@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Voice.Basic
 public import Linglib.Semantics.Modality.Necessity
-public import Linglib.Semantics.Composition.Ty
+public import Linglib.Semantics.Composition.Interpreter.Sorts
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Mathlib.Tactic.FinCases
 
@@ -40,6 +40,8 @@ object.
 @[expose] public section
 
 namespace Chierchia1984
+
+open Interpreter
 
 open Modality
 
@@ -175,7 +177,7 @@ theorem passivizable_iff :
 
 /-- The semantic type of a clausal complement, a proposition for a finite clause and a property
 for a nonfinite one, the type distinction of chapter I. -/
-def complementTy (fr : ArgumentFrame) : Option Montague.Ty :=
+def complementTy (fr : ArgumentFrame) : Option (Ty Base) :=
   if fr.HasClausal then some (if fr.HasFinite then .t else .et) else none
 
 theorem control_complements_property :

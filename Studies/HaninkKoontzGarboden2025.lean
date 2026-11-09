@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Ty
+public import Linglib.Semantics.Composition.Interpreter.Sorts
 public import Linglib.Semantics.Possession.Relationalizer
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 public import Linglib.Fragments.Washo.PropertyConcepts
@@ -63,7 +63,7 @@ appendix also counts 35 Class 3 stems where its table lists 25, the seventy bein
 
 namespace HaninkKoontzGarboden2025
 
-open Montague Possession Washo
+open Interpreter Possession Washo
 
 /-! ### The two root meanings, section 4 -/
 
@@ -75,7 +75,7 @@ inductive RootType where
   deriving DecidableEq, Repr
 
 /-- The semantic type of each meaning. -/
-def RootType.ty : RootType → Ty
+def RootType.ty : RootType → Ty Base
   | .relation => .e ⇒ .v ⇒ .t
   | .quality => .v ⇒ .t
 
@@ -104,7 +104,7 @@ inductive Head where
   deriving DecidableEq, Repr
 
 /-- The type a head takes. -/
-def Head.input : Head → Ty
+def Head.input : Head → Ty Base
   | .zero => .e ⇒ .v ⇒ .t
   | .possess => .v ⇒ .t
   | .attr => .e ⇒ .v ⇒ .t
@@ -113,25 +113,25 @@ def Head.input : Head → Ty
 /-- The type a head returns is a predicate of individuals and states for the verbalizers, a
 predicate of states for *ʔil-*, and a relation of individuals to events of change for the bipartite
 head, of the same type, since states and events of change are both of type `v` (43). -/
-def Head.output : Head → Ty
+def Head.output : Head → Ty Base
   | .zero => .e ⇒ .v ⇒ .t
   | .possess => .e ⇒ .v ⇒ .t
   | .attr => .v ⇒ .t
   | .become => .e ⇒ .v ⇒ .t
 
 /-- A sequence of heads composes with a type when each takes what the last returns. -/
-def WellTyped : Ty → List Head → Prop
+def WellTyped : Ty Base → List Head → Prop
   | _, [] => True
   | τ, h :: hs => h.input = τ ∧ WellTyped h.output hs
 
-instance decWellTyped : (τ : Ty) → (hs : List Head) → Decidable (WellTyped τ hs)
+instance decWellTyped : (τ : Ty Base) → (hs : List Head) → Decidable (WellTyped τ hs)
   | _, [] => isTrue trivial
   | τ, h :: hs =>
     haveI := decWellTyped h.output hs
     inferInstanceAs (Decidable (h.input = τ ∧ WellTyped h.output hs))
 
 /-- The type a sequence of heads returns. -/
-def output (τ : Ty) : List Head → Ty
+def output (τ : Ty Base) : List Head → Ty Base
   | [] => τ
   | h :: hs => output h.output hs
 
