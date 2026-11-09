@@ -146,12 +146,10 @@ theorem compatible_assignments_iff {x : FamilyOfElements (assignments L V M) R} 
 theorem arrows_compatible_assignments_iff {ι : Type*} {Y : ι → Context L V} {π : ∀ i, Y i ⟶ c}
     {x : ∀ i, (Y i).vars → M} :
     Arrows.Compatible (assignments L V M) π x ↔
-      ∀ i j a b, (π i).map a = (π j).map b → x i a = x j b := by
-  refine ⟨fun hx i j a b hab ↦ ?_, fun hx i j Z gi gj hg ↦
-    funext fun z ↦ hx i j _ _ (congrFun (congrArg Context.Hom.map hg) z)⟩
-  have := hx i j ⟨∅, {(a : V)}⟩ ⟨Finset.empty_subset _, fun _ ↦ a⟩
-    ⟨Finset.empty_subset _, fun _ ↦ b⟩ (Context.hom_ext (funext fun _ ↦ hab))
-  exact congrFun this ⟨a, Finset.mem_singleton_self _⟩
+      ∀ i j a b, (π i).map a = (π j).map b → x i a = x j b :=
+  ⟨fun hx i j a b hab ↦ by
+    simpa using compatible_assignments_iff.1 hx.familyOfElements_compatible (.mk i) (.mk j) a b hab,
+    fun hx i j Z gi gj hg ↦ funext fun z ↦ hx i j _ _ (congrFun (congrArg Context.Hom.map hg) z)⟩
 
 /-- Assignments glue uniquely along a presieve jointly surjective on referents. -/
 theorem isSheafFor_assignments (hR : R ∈ referentPrecoverage L V c) :
@@ -181,8 +179,7 @@ def referentCoverage : Coverage (Context L V) where
   toPrecoverage := referentPrecoverage L V
   pullback := by
     intro c d g S hS
-    refine ⟨fun Z h ↦ ∃ (W : Context L V) (i : Z ⟶ W) (e : W ⟶ c), S e ∧ i ≫ e = h ≫ g, ?_,
-      fun Z h hh ↦ hh⟩
+    refine ⟨((Sieve.generate S).pullback g).arrows, ?_, fun _ _ h ↦ h⟩
     change S ∈ referentPrecoverage L V c at hS
     rw [mem_referentPrecoverage_iff] at hS ⊢
     intro t

@@ -67,8 +67,7 @@ def literalCoverage : Coverage (Context L V) where
   toPrecoverage := literalPrecoverage L V
   pullback := by
     intro c d g S hS
-    refine ⟨fun Z h ↦ ∃ (W : Context L V) (i : Z ⟶ W) (e : W ⟶ c), S e ∧ i ≫ e = h ≫ g, ?_,
-      fun Z h hh ↦ hh⟩
+    refine ⟨((Sieve.generate S).pullback g).arrows, ?_, fun _ _ h ↦ h⟩
     change S ∈ literalPrecoverage L V c at hS
     rw [mem_literalPrecoverage_iff] at hS ⊢
     rintro ⟨⟨r, hr⟩, a, p⟩
@@ -239,11 +238,21 @@ theorem IsGluing.compatible {P : (Context L V)ᵒᵖ ⥤ Type*}
     Arrows.Compatible P C.map x :=
   funext hs ▸ (Arrows.toCompatible P C.map s).2
 
+/-- A cover is jointly surjective on literals iff one part carries each relation symbol together
+with each tuple of its arguments, the sign playing no role; covers carry the symbols and the
+referents only separately. -/
 theorem presieve_mem_literalPrecoverage_iff : C.presieve ∈ literalPrecoverage L V c ↔
-    ∀ l : Literal c, ∃ i, ∃ m : Literal (C.part i), m.map (C.map i) = l := by
+    ∀ (r : c.vocab) (a : Fin r.1.1 → c.vars),
+      ∃ i, r.1 ∈ (C.part i).vocab ∧ ∃ a' : Fin r.1.1 → (C.part i).vars, (C.map i).map ∘ a' = a := by
   simp only [ofArrows_mem_comap_jointlySurjectivePrecoverage_iff, Set.mem_range,
     Literal.functor_map]
-  rfl
+  refine ⟨fun h r a ↦ ?_, fun h ⟨r, a, p⟩ ↦ ?_⟩
+  · obtain ⟨i, ⟨⟨r', hr'⟩, a', p'⟩, hm⟩ := h ⟨r, a, true⟩
+    obtain ⟨h₁, h₂, -⟩ := Literal.mk.inj hm
+    obtain rfl : r' = r.1 := congrArg Subtype.val h₁
+    exact ⟨i, hr', a', eq_of_heq h₂⟩
+  · obtain ⟨i, hr, a', rfl⟩ := h r a
+    exact ⟨i, ⟨⟨r.1, hr⟩, a', p⟩, rfl⟩
 
 theorem eq_of_map_eq (hdisj : Pairwise fun i j ↦ Disjoint (C.part i).vocab (C.part j).vocab)
     {i j : ι} {m : Literal (C.part i)} {m' : Literal (C.part j)}

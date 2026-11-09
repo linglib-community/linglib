@@ -12,16 +12,14 @@ public import Linglib.Data.Statistics.AbramskySadrzadeh2014
 # Abramsky and Sadrzadeh (2014): Semantic Unification: A Sheaf Theoretic Approach to Natural Language
 
 Abramsky and Sadrzadeh model basic discourse representation structures as a presheaf on
-contexts, finite vocabularies of relation symbols with finite sets of variables, and read anaphora
-resolution as gluing: the local theories of a discourse's parts glue along a cover, a choice of
-which referents to identify, when some global theory restricts to each of them. A family glues
-exactly when it is compatible, the condition their sheaf condition places on families and their
-gluing omits, so the paper's failed gluings are [incompatible families](##not_compatible_failures).
-Gluings are [unique](##not_isSeparatedFor_beats) only along covers jointly surjective on literals,
-the covers of the Grothendieck topology the paper asks for but leaves aside. A distribution over
-global theories glues a family of point masses [iff it is carried by the deterministic
-gluings](##map_restrict_eq_dirac_iff), and in the bananas discourse the corpus frequencies rank
-*ripe bananas, cheeky monkeys* [first](##gluingMeasure_le).
+contexts and read anaphora resolution as gluing along a cover, a choice of which referents to
+identify. Where the parts' vocabularies are disjoint, the paper's gluings [rename the local
+literals](##beatsGluing_eq_glue), merging the local DRSs and unifying referents. A family glues
+exactly when it is compatible, the condition the paper's gluing omits, so its failed gluings are
+[incompatible families](##not_compatible_failures); gluings are [unique](##not_isSeparatedFor_beats)
+only along covers jointly surjective on literals. A distribution glues point masses [iff it is
+carried by the deterministic gluings](##map_restrict_eq_dirac_iff), and the bananas discourse's
+corpus frequencies rank *ripe bananas, cheeky monkeys* [first](##gluingMeasure_le).
 
 ## Implementation notes
 
@@ -127,8 +125,14 @@ def snoresGluing : Theory snoresCtx :=
   ⟨{lit .john (fun _ => .z), lit .sleeps (fun _ => .z), lit .snores (fun _ => .z)},
     by decide +kernel⟩
 
-theorem isGluing_snores : snoresCover.IsGluing (presheaf lang Var) snoresSections snoresGluing := by
+-- The gluing renames the local literals along the cover, merging the local DRSs.
+theorem snoresGluing_eq_glue :
+    snoresGluing =
+      snoresCover.glue (by unfold Pairwise; decide +kernel) (by decide +kernel) snoresSections := by
   decide +kernel
+
+theorem isGluing_snores : snoresCover.IsGluing (presheaf lang Var) snoresSections snoresGluing := by
+  rw [snoresGluing_eq_glue]; exact Cover.isGluing_glue _ _ _
 
 theorem snores_unique {s : Theory snoresCtx}
     (hs : snoresCover.IsGluing (presheaf lang Var) snoresSections s) : s = snoresGluing :=
@@ -162,8 +166,14 @@ def beatsGluing : Theory beatsCtx :=
   ⟨{lit .john (fun _ => .a), lit .donkey (fun _ => .b), lit .owns ![.a, .b], lit .beats ![.a, .b]},
     by decide +kernel⟩
 
-theorem isGluing_beats : beatsCover.IsGluing (presheaf lang Var) beatsSections beatsGluing := by
+-- The paper's gluing is the least one, renaming the local literals along the cover.
+theorem beatsGluing_eq_glue :
+    beatsGluing =
+      beatsCover.glue (by unfold Pairwise; decide +kernel) (by decide +kernel) beatsSections := by
   decide +kernel
+
+theorem isGluing_beats : beatsCover.IsGluing (presheaf lang Var) beatsSections beatsGluing := by
+  rw [beatsGluing_eq_glue]; exact Cover.isGluing_glue _ _ _
 
 /-- `s ∪ {John(b)}` is a second gluing, since `John(b)` renames no literal of a part and adding
 it changes no restriction. -/
@@ -174,7 +184,8 @@ theorem isGluing_beats_insert :
     beatsCover.IsGluing (presheaf lang Var) beatsSections beatsGluing' := by
   decide +kernel
 
-/-- Proposition 1 fails for Example 2, whose cover is not jointly surjective on literals. -/
+/-- Proposition 1 fails for Example 2: its cover carries every relation symbol and every referent,
+but no part carries `John` with `b`. -/
 theorem not_isSeparatedFor_beats : ¬ beatsCover.presieve.IsSeparatedFor (presheaf lang Var) :=
   isSeparatedFor_iff.not.2 (by decide +kernel)
 
@@ -280,9 +291,15 @@ def brokeGluing (b : Broken) : Theory brokeCtx :=
     lit .broke ![.x, b.var] (h := Fin.forall_fin_two.2 ⟨by cases b <;> decide +kernel, b.var_mem⟩)},
     by cases b <;> decide +kernel⟩
 
-theorem isGluing_broke :
-    ∀ b, (brokeCover b).IsGluing (presheaf lang Var) brokeSections (brokeGluing b) := by
-  decide +kernel
+-- Each gluing renames the local literals along its cover, merging the local DRSs.
+theorem brokeGluing_eq_glue (b : Broken) :
+    brokeGluing b = (brokeCover b).glue (by unfold Pairwise; cases b <;> decide +kernel)
+      (by cases b <;> decide +kernel) brokeSections := by
+  cases b <;> decide +kernel
+
+theorem isGluing_broke (b : Broken) :
+    (brokeCover b).IsGluing (presheaf lang Var) brokeSections (brokeGluing b) := by
+  rw [brokeGluing_eq_glue]; exact Cover.isGluing_glue _ _ _
 
 -- Example 4
 theorem ex4_readings :
@@ -426,9 +443,16 @@ def ripeGluing (c : Noun × Noun) : Theory ripeCtx :=
     lit .cheeky (fun _ => c.2.var) (h := fun _ => c.2.var_mem)},
     by obtain ⟨a, b⟩ := c; cases a <;> cases b <;> decide +kernel⟩
 
-theorem isGluing_ripe :
-    ∀ c, (ripeCover c).IsGluing (presheaf lang Var) ripeSections (ripeGluing c) := by
-  decide +kernel
+-- Each candidate renames the local literals along its covering, merging the local DRSs.
+theorem ripeGluing_eq_glue (c : Noun × Noun) :
+    ripeGluing c = (ripeCover c).glue
+      (by unfold Pairwise; obtain ⟨a, b⟩ := c; cases a <;> cases b <;> decide +kernel)
+      (by obtain ⟨a, b⟩ := c; cases a <;> cases b <;> decide +kernel) ripeSections := by
+  obtain ⟨a, b⟩ := c; cases a <;> cases b <;> decide +kernel
+
+theorem isGluing_ripe (c : Noun × Noun) :
+    (ripeCover c).IsGluing (presheaf lang Var) ripeSections (ripeGluing c) := by
+  rw [ripeGluing_eq_glue]; exact Cover.isGluing_glue _ _ _
 
 theorem ripeGluing_injective : Function.Injective ripeGluing := by decide +kernel
 
