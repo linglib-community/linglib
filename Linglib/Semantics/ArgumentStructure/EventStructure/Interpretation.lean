@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Semantics.ArgumentStructure.Root.Kinds
+public import Linglib.Semantics.ArgumentStructure.Root.Basic
 
 /-!
 # Interpretations of the event-structure primitives
@@ -80,7 +80,7 @@ inductive Postulate
 /-- The kinds a signature carries when the postulate applies to it: a postulate for each kind
 but the state, which imposes nothing beyond the predicate, and the manner of the cause for a
 manner with a cause. -/
-def Postulate.trigger : Postulate → ArgumentStructure.Root.Kinds
+def Postulate.trigger : Postulate → Finset ArgumentStructure.Root.Kind
   | .change => {.result}
   | .cause => {.cause}
   | .manner => {.manner}
@@ -119,7 +119,7 @@ theorem vCause_mono (h : Q ≤ Q') : M.vCause Q ≤ M.vCause Q' :=
 section Postulates
 
 
-variable (M) (P : Entity → State → Prop) (Q : Event → Prop) {ks : Root.Kinds}
+variable (M) (P : Entity → State → Prop) (Q : Event → Prop) {ks : Finset Root.Kind}
 
 /-- The state predicate `P` entails change when every state of which it holds arises from a
 change. -/
@@ -146,7 +146,7 @@ def Holds : Postulate → Prop
 
 /-- The interpretation respects the kind signature `ks` for `P` and `Q` when every postulate that
 `ks` triggers holds. -/
-def Respects (ks : Root.Kinds) : Prop := ∀ p : Postulate, p.trigger ⊆ ks → M.Holds P Q p
+def Respects (ks : Finset Root.Kind) : Prop := ∀ p : Postulate, p.trigger ⊆ ks → M.Holds P Q p
 
 variable {M P Q}
 
@@ -157,19 +157,19 @@ theorem EntailsMannerOfCause.entailsChange (h : M.EntailsMannerOfCause P Q) :
     M.EntailsChange P :=
   fun x ↦ (h x).trans (diamond_mono _ le_top)
 
-theorem Respects.mono {ks' : Root.Kinds} (hks : ks ⊆ ks') (h : M.Respects P Q ks') :
+theorem Respects.mono {ks' : Finset Root.Kind} (hks : ks ⊆ ks') (h : M.Respects P Q ks') :
     M.Respects P Q ks :=
   fun p hp ↦ h p (hp.trans hks)
 
 /-- A signature is respected iff its collocational closure is: the closure adds a result only
 below a cause, whose postulate entails change, and adds no manner or cause. -/
-@[simp] theorem respects_close : M.Respects P Q (Root.Kinds.close ks) ↔ M.Respects P Q ks := by
-  refine ⟨Respects.mono (Root.Kinds.close.le_closure ks), fun h p hp ↦ ?_⟩
-  have hm := Root.Kinds.mem_close_iff_of_isMax (s := ks) Root.Kind.isMax_manner
-  have hc := Root.Kinds.mem_close_iff_of_isMax (s := ks) Root.Kind.isMax_cause
+@[simp] theorem respects_close : M.Respects P Q (Root.close ks) ↔ M.Respects P Q ks := by
+  refine ⟨Respects.mono (Root.close.le_closure ks), fun h p hp ↦ ?_⟩
+  have hm := Root.mem_close_iff_of_isMax (r := ks) Root.Kind.isMax_manner
+  have hc := Root.mem_close_iff_of_isMax (r := ks) Root.Kind.isMax_cause
   cases p with
   | change =>
-    obtain ⟨j, hj, hrj⟩ := Root.Kinds.mem_close.1 (Finset.singleton_subset_iff.1 hp)
+    obtain ⟨j, hj, hrj⟩ := Root.mem_close.1 (Finset.singleton_subset_iff.1 hp)
     cases hrj with
     | refl => exact h .change (Finset.singleton_subset_iff.2 hj)
     | result_cause => exact (h .cause (Finset.singleton_subset_iff.2 hj)).entailsChange
@@ -179,7 +179,7 @@ below a cause, whose postulate entails change, and adds no manner or cause. -/
     exact h .mannerOfCause (by simpa [Postulate.trigger, Finset.insert_subset_iff, hm, hc] using hp)
 
 theorem Respects.entailsChange (h : M.Respects P Q ks)
-    (hr : Root.Kind.result ∈ Root.Kinds.close ks) : M.EntailsChange P :=
+    (hr : Root.Kind.result ∈ Root.close ks) : M.EntailsChange P :=
   respects_close.2 h .change (Finset.singleton_subset_iff.2 hr)
 
 end Postulates

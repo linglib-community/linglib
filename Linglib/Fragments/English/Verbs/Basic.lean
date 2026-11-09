@@ -128,10 +128,6 @@ def run : Verb where
   passivizable := false
   vendlerClass := some .activity
   direction := some .place
-  root := { content := {
-    force := {.moderate}
-    agentControl := {.compatible}
-  } }
   levinClasses := {LevinClass.meander, .prepare, .run, .swarm}
 
 /-- "dance" — intransitive activity -/
@@ -201,10 +197,6 @@ def eat : Verb where
     [some accomplishmentSubjectProfile, some consumptionObject]
   vendlerClass := some .accomplishment
   incrementality := some .strict
-  root := { content := {
-    force := {.low, .moderate}
-    agentControl := {.compatible}
-  } }
   levinClasses := {LevinClass.eat}
 
 /-- "kick" — transitive -/
@@ -217,11 +209,6 @@ def kick : Verb where
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
     [some accomplishmentSubjectProfile, some contactObject, none, none]
   vendlerClass := some .activity
-  root := { content := {
-    force := {.moderate, .high}
-    forceDirection := {.unidirectional}
-    agentControl := {.neutral, .compatible}
-  } }
   levinClasses := {LevinClass.bodyInternalMotion, .carry, .crane, .hit, .split, .throw}
 
 /-- The conative *at* of *eat at* marks no value, so *eat* selects no spatial phrase, while the
@@ -361,10 +348,6 @@ def devour : Verb where
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   incrementality := some .strict
-  root := { content := {
-    force := {.moderate, .high}
-    agentControl := {.neutral}
-  } }
   levinClasses := {LevinClass.devour}
 
 /-- "drink" — Levin 39.1 Eat verbs. -/
@@ -447,11 +430,6 @@ def sweep : Verb where
     [some wipeManner.subjectProfile, none, none]
   vendlerClass := some .activity
   passivizable := true
-  root := { content := {
-    force := {.low, .moderate}
-    forceDirection := {.unidirectional}
-    agentControl := {.compatible}
-  } }
   levinClasses := {LevinClass.entitySpecificModeOfBeing, .funnel, .meander, .run, .wipeManner}
 
 /-- "sweep" instrument sense — obligatorily agentive, broom lexicalized. -/
@@ -468,11 +446,6 @@ def sweep_instr : Verb where
   vendlerClass := some .activity
   passivizable := true
   senseTag := .instrumental
-  root := { content := {
-    force := {.low, .moderate}
-    forceDirection := {.unidirectional}
-    agentControl := {.compatible}
-  } }
   levinClasses := {LevinClass.entitySpecificModeOfBeing, .funnel, .meander, .run, .wipeManner}
 
 /-! ### Words -/

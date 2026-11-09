@@ -93,10 +93,6 @@ def kill : Verb where
   morphs := [.root "kill"]
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
-  root := { content := {
-    resultGeometry := {.totalDestruction}
-    agentControl := {.neutral, .compatible}
-  } }
   levinClasses := {LevinClass.murder}
 
 /-- "break" — Levin 45.1 break verbs, a change in "material integrity" with no specification
@@ -110,24 +106,13 @@ def break_ : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2])]
   vendlerClass := some .accomplishment
-  root := { content := {
-    force := {.moderate, .high}
-    -- direction unconstrained: *break* covers snapping (bidirectional),
-    -- hammering (omnidirectional), and directed blows (unidirectional)
-    patientRobustness := {.moderate, .robust}
-    -- English speakers describe both snapping and smashing with *break*
-    -- ([majid-boster-bowerman-2008])
-    resultGeometry := {.fracture, .fragmentation}
-    agentControl := {.incompatible, .neutral}
-  } }
   levinClasses := {LevinClass.appear, .break_, .cheat, .hurt, .split}
 
-/-- *tear* is a break verb (Levin's 45.1) of separation in contrary directions with force. Unlike
-    *break*, it implies a direction, bidirectional or pulling apart, is compatible with careful
-    controlled action, and takes as patient any solid capable of irregular separation
-    ([spalek-mcnally-2026] §3.1–3.2). In [majid-boster-bowerman-2008] ten of twenty-eight
-    languages have a verb used only for tearing cloth by hand, and English speakers extend
-    *tear* to pulling yarn apart. -/
+/-- *tear* is a break verb (Levin's 45.1). It implies separation in contrary directions, often
+with some force, is compatible with careful action, and imposes few conditions on its patient, so
+that even thick solids can be torn ([spalek-mcnally-2026]). In [majid-boster-bowerman-2008] ten
+of twenty-eight languages have a verb used only for tearing cloth by hand, and English speakers
+extend *tear* to pulling yarn apart. -/
 def tear_ : Verb where
   morphs := [.root "tear"]
   past := "tore"
@@ -138,14 +123,6 @@ def tear_ : Verb where
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
-  root := { content := {
-    force := {.moderate, .high}
-    forceDirection := {.bidirectional, .unidirectional}
-    patientRobustness := {.flimsy, .moderate, .robust}
-    resultGeometry := {.separation}
-    agentControl := {.neutral, .compatible}
-    instrument := {.hands}
-  } }
   levinClasses := {LevinClass.break_, .run, .split}
 
 end English.Verbs

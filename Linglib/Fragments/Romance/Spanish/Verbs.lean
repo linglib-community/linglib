@@ -138,20 +138,13 @@ def mejorar : Verb :=
   { morphs := [.root "mejorar"],
     valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])] }
 
-/-- *rasgar* 'tear', with a marked intransitive. Unlike English *tear* it requires a flimsy or
-insubstantial patient and a unidirectional, gash-like separation, and it is incompatible with
-careful, controlled action ([spalek-mcnally-2026] §3.2). -/
+/-- *rasgar* 'tear', with a marked intransitive. Unlike English *tear* it wants a flimsy or
+insubstantial patient, or else leaves only a gash on a thicker one, and it implies linear motion
+rather than separation in contrary directions ([spalek-mcnally-2026]). -/
 def rasgar : Verb :=
   { morphs := [.root "rasgar"],
     valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
-      (forms := [none, some [.root "rasgar", .encl "se"]]),
-    root := { content := {
-      force := {.low, .moderate}
-      forceDirection := {.unidirectional}
-      patientRobustness := {.insubstantial, .flimsy}
-      resultGeometry := {.separation, .surfaceBreach}
-      agentControl := {.incompatible, .neutral}
-    } } }
+      (forms := [none, some [.root "rasgar", .encl "se"]]) }
 
 /-- *asesinar* 'assassinate', whose causer must be an agent, has no intransitive, since with
 the clitic it is only reflexive, *el senador se asesinó* 'the senator killed himself'

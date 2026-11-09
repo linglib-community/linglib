@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.Root.Kinds
+public import Linglib.Semantics.ArgumentStructure.Root.Basic
 public import Linglib.Semantics.ArgumentStructure.Valency
 
 /-!
@@ -47,7 +47,7 @@ inductive SalienceClass where
   | patient
   deriving DecidableEq, Fintype, Repr
 
-variable (s : Root.Kinds) (v : Valency)
+variable (s : Finset Root.Kind) (v : Valency)
 
 /-- Agent salient: intransitive manner-of-action root ("actions or
     activities that some entity undertakes"). -/
@@ -81,12 +81,12 @@ def SalienceClass.ofKinds : Option SalienceClass :=
     cause-free signatures: the only available closure edge is
     result→state, which no arm of the classifier consults. -/
 theorem SalienceClass.ofKinds_close (h : Root.Kind.cause ∉ s) :
-    ofKinds (Root.Kinds.close s) v = ofKinds s v := by
+    ofKinds (Root.close s) v = ofKinds s v := by
   revert s v; decide
 
 theorem SalienceClass.ofKinds_close_cause :
     ofKinds {.cause} ∅ = none ∧
-    ofKinds (Root.Kinds.close {.cause}) ∅ = some .patient := by
+    ofKinds (Root.close {.cause}) ∅ = some .patient := by
   decide
 
 /-! ### Stem valencies -/

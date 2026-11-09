@@ -51,13 +51,15 @@ namespace Lucy1994
 open ArgumentStructure Morphology CLDF.Wordlist
 
 /-- A sampled root, the meaning of a root with the form row that spells it. -/
-structure SampledRoot extends Root where
+structure SampledRoot where
+  /-- The kinds of entailment the root carries. -/
+  kinds : Root
   /-- The form row that spells the root. -/
   form : Form Wordlist.Cell
   deriving DecidableEq
 
 /-- The root of the sample that a form spells, with its kind signature. -/
-def ofForm (f : Form Wordlist.Cell) (kinds : Root.Kinds) : SampledRoot := { form := f, kinds }
+def ofForm (f : Form Wordlist.Cell) (kinds : Root) : SampledRoot := { form := f, kinds }
 
 /-! ### Agent-salient roots ((1a), p. 629) -/
 
@@ -355,7 +357,7 @@ theorem positional_crosscuts_transitiviser_classes :
 /-! ### Closure robustness -/
 
 theorem predictedClass_closure_invariant (r : SampledRoot) (h : Root.Kind.cause ∉ r.kinds) :
-    SalienceClass.ofKinds r.closedKinds (valency r) = predictedClass r :=
+    SalienceClass.ofKinds (Root.close r.kinds) (valency r) = predictedClass r :=
   SalienceClass.ofKinds_close r.kinds (valency r) h
 
 end Lucy1994

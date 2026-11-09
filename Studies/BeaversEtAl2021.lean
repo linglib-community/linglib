@@ -90,12 +90,12 @@ inductive AdjectivalStructure
 
 /-- The default realization of `vbecome` over a root is unmarked iff the root entails change. -/
 def verbRealization (r : Root) : Markedness :=
-  if Root.Kind.result ∈ r.closedKinds then .unmarked else .marked
+  if Root.Kind.result ∈ Root.close r then .unmarked else .marked
 
 /-- The default realization of the stative head is marked iff its complement entails change, as
 a `vbecome` phrase always does. -/
 def stativeRealization (r : Root) : AdjectivalStructure → Markedness
-  | .basic => if Root.Kind.result ∈ r.closedKinds then .marked else .unmarked
+  | .basic => if Root.Kind.result ∈ Root.close r then .marked else .unmarked
   | .result => .marked
 
 variable {r p : Root}
@@ -105,12 +105,12 @@ theorem verbRealization_ne_stativeRealization_basic :
   unfold verbRealization stativeRealization; split_ifs <;> decide
 
 theorem stativeRealization_eq_unmarked_iff {a : AdjectivalStructure} :
-    stativeRealization r a = .unmarked ↔ a = .basic ∧ Root.Kind.result ∉ r.closedKinds := by
+    stativeRealization r a = .unmarked ↔ a = .basic ∧ Root.Kind.result ∉ Root.close r := by
   cases a <;> simp [stativeRealization]
 
 theorem entailsChange_of_verbRealization_eq_unmarked {Entity State Event : Type*}
     {M : ArgumentStructure.EventStructure.Interpretation Entity State Event}
-    {P : Entity → State → Prop} {Q : Event → Prop} (h : M.Respects P Q r.kinds)
+    {P : Entity → State → Prop} {Q : Event → Prop} (h : M.Respects P Q r)
     (hr : verbRealization r = .unmarked) :
     M.EntailsChange P :=
   h.entailsChange (by unfold verbRealization at hr; split_ifs at hr with hk; exact hk)
@@ -129,7 +129,7 @@ theorem Exponence.trichotomy (L : Exponence) :
   have := L.overt_marked; tauto
 
 theorem Exponence.not_reverse_asymmetric (L : Exponence)
-    (hr : Root.Kind.result ∈ r.closedKinds) (hp : Root.Kind.result ∉ p.closedKinds) :
+    (hr : Root.Kind.result ∈ Root.close r) (hp : Root.Kind.result ∉ Root.close p) :
     ¬ (L.Overt (verbRealization r) ∧ ¬ L.Overt (verbRealization p)) := by
   simp only [verbRealization, hr, hp, ite_true, ite_false]
   exact fun ⟨h, hn⟩ ↦ hn (L.overt_marked h)

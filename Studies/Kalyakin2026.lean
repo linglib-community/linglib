@@ -24,7 +24,7 @@ Identity Requirement](##persian_verbalIdentity) rather than a larger site.
 
 * A root naming an end state merges with the direct object inside the complement of v, at the
   site of V; a root naming a manner adjoins to v and shares its site. The rows record the root's
-  content in Beavers and Koontz-Garboden's kinds of entailment, `ArgumentStructure.Root.Kinds`.
+  content in Beavers and Koontz-Garboden's kinds of entailment, `ArgumentStructure.Root`.
 * An example is read off its glosses: the light verbs of its two clauses, whether the
   antecedent's root is pronounced in the ellipsis clause, its object and whether it is
   antipassive. Only the root's content and a contrastive focus, which the paper marks in its
@@ -81,7 +81,7 @@ def rootSite : Root.Position → ClauseSpine.Site
 end state merges with the object. Antipassivization coerces every root into the position of a
 manner (§5.3). -/
 def position (r : Root) (antipassive : Bool) : Root.Position :=
-  if .manner ∈ r.kinds ∨ antipassive = true then .adjoined else .complement
+  if .manner ∈ r ∨ antipassive = true then .adjoined else .complement
 
 -- (56)
 theorem spares_rootSite_iff (p : Root.Position) :
@@ -95,7 +95,7 @@ antipassive: it is then part of the head bearing [E] and strands with the light 
 (85), (86)). -/
 theorem spares_rootSite_position_iff (r : Root) (antipassive : Bool) :
     vStrandingVPE.Spares (rootSite (position r antipassive)) ↔
-      .manner ∈ r.kinds ∨ antipassive = true := by
+      .manner ∈ r ∨ antipassive = true := by
   rw [spares_rootSite_iff, position]
   split_ifs with h <;> simp [h]
 
@@ -256,7 +256,7 @@ statements; the rest is read off the glosses: the light verbs of the two clauses
 antecedent's root is pronounced in the ellipsis clause, the object, and antipassivization, an
 elided argument marked ergative (81b). -/
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let k ← ex.parse? "root" [("state", ({.state} : Root.Kinds)), ("manner", {.manner})]
+  let k ← ex.parse? "root" [("state", ({.state} : Root)), ("manner", {.manner})]
   let focus := ex.feature? "contrastiveFocus" == some "yes"
   let (ante, target) := splitClauses ex.glossedTokens
   let la ← ante.findSome? (lightVerb? ·.2)
@@ -266,7 +266,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
   let silent := !p.any (·.form == nv.form)
   let a := ex.readings.findSome? fun (n, _) ↦
     [("repetitive", AgainReading.repetitive), ("restitutive", .restitutive)].lookup n
-  pure ⟨⟨{ kinds := k }, e.any Token.ergative, silent, objectStatus target lt focus, a, (la, lt)⟩,
+  pure ⟨⟨k, e.any Token.ergative, silent, objectStatus target lt focus, a, (la, lt)⟩,
     ex.judgment⟩
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum

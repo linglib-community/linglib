@@ -93,12 +93,6 @@ def burn : Verb where
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
-  root := { content := {
-    force := {.moderate, .high}
-    patientRobustness := {.flimsy, .moderate, .robust}
-    resultGeometry := {.totalDestruction, .deformation}
-    agentControl := {.neutral, .compatible}
-  } }
   levinClasses := {LevinClass.entitySpecificChangeOfState, .entitySpecificModeOfBeing, .hurt,
     .lightEmission, .otherChangeOfState, .tingle}
 
@@ -110,10 +104,6 @@ def destroy : Verb where
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .accomplishment
-  root := { content := {
-    resultGeometry := {.totalDestruction}
-    agentControl := {.neutral, .compatible}
-  } }
   levinClasses := {LevinClass.destroy}
 
 /-- "melt" — change of consistency by heat; Levin 45.4 other change-of-state verbs. A base
@@ -129,12 +119,6 @@ def melt : Verb where
      (ArgumentFrame.np_np, [0, 3, 1])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
-  root := { content := {
-    force := {.low, .moderate}
-    patientRobustness := {.moderate, .robust}
-    resultGeometry := {.deformation}
-    agentControl := {.compatible}
-  } }
   levinClasses := {LevinClass.knead, .otherChangeOfState}
 
 /-! ### Further change-of-state verbs

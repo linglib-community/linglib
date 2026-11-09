@@ -109,7 +109,7 @@ def accomplishment : Template .event := cause act achievement
 
 /-- The kinds of entailment a template's primitives contribute: a state, the manner of an
 action, the change of `BECOME` and the causation of `CAUSE`. -/
-def kinds : {σ : Eventuality} → Template σ → Root.Kinds
+def kinds : {σ : Eventuality} → Template σ → Finset Root.Kind
   | _, state => {.state}
   | _, act => {.manner}
   | _, effector => ∅
