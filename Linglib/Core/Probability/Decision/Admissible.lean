@@ -50,9 +50,6 @@ open scoped ENNReal
 
 namespace ProbabilityTheory
 
-open MeasureTheory.Measure (ofRealWeights ofRealWeights_real_singleton
-  isProbabilityMeasure_ofRealWeights)
-
 variable {Θ 𝓨 : Type*}
 
 /-! ### Helpers on finite types -/
@@ -248,13 +245,15 @@ private theorem bayes_of_real {ν : Measure 𝓨} [IsProbabilityMeasure ν] {x :
     (hx : ∀ θ, 0 ≤ x θ) (hx1 : ∑ θ, x θ = 1)
     (hD : ∀ y, ∑ θ, x θ * ((∫⁻ y, ℓ θ y ∂ν).toReal - (ℓ θ y).toReal) ≤ 0) :
     ∀ ν' : Measure 𝓨, IsProbabilityMeasure ν' →
-      ∫⁻ θ, ∫⁻ y, ℓ θ y ∂ν ∂(ofRealWeights x) ≤ ∫⁻ θ, ∫⁻ y, ℓ θ y ∂ν' ∂(ofRealWeights x) := by
+      ∫⁻ θ, ∫⁻ y, ℓ θ y ∂ν ∂(∑ θ, ENNReal.ofReal (x θ) • Measure.dirac θ) ≤
+        ∫⁻ θ, ∫⁻ y, ℓ θ y ∂ν' ∂(∑ θ, ENNReal.ofReal (x θ) • Measure.dirac θ) := by
   intro ν' hν'
-  have := isProbabilityMeasure_ofRealWeights hx hx1
+  have : IsProbabilityMeasure (∑ θ, ENNReal.ofReal (x θ) • Measure.dirac θ) :=
+    Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac hx hx1
   rw [← ENNReal.toReal_le_toReal (avg_ne_top (risk_ne_top hℓ ν) _)
     (avg_ne_top (risk_ne_top hℓ ν') _), toReal_avg (risk_ne_top hℓ ν),
     toReal_avg (risk_ne_top hℓ ν')]
-  simp_rw [ofRealWeights_real_singleton hx, toReal_risk hℓ ν']
+  simp_rw [Measure.finsetSum_ofReal_smul_dirac_real_singleton hx, toReal_risk hℓ ν']
   calc ∑ θ, x θ * (∫⁻ y, ℓ θ y ∂ν).toReal
       = ∑ y, ν'.real {y} * ∑ θ, x θ * (∫⁻ y, ℓ θ y ∂ν).toReal := by
         rw [← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul]
@@ -291,11 +290,13 @@ theorem exists_isBayesEstimator_iff_not_isStrictlyDominated (ν : Measure 𝓨)
       have := hpos θ₁
       simp [Matrix.vecMul, dotProduct, hzero] at this
     have hw' (y : 𝓨) : 0 ≤ w y * (∑ y, w y)⁻¹ := mul_nonneg (hw y) (inv_nonneg.2 hs.le)
-    have := isProbabilityMeasure_ofRealWeights hw'
-      (by rw [← Finset.sum_mul, mul_inv_cancel₀ hs.ne'])
-    refine hnd ⟨ofRealWeights fun y ↦ w y * (∑ y, w y)⁻¹, this, fun θ ↦ ?_⟩
+    have hw1 : ∑ y, w y * (∑ y, w y)⁻¹ = 1 := by rw [← Finset.sum_mul, mul_inv_cancel₀ hs.ne']
+    have : IsProbabilityMeasure
+        (∑ y, ENNReal.ofReal (w y * (∑ y, w y)⁻¹) • Measure.dirac y) :=
+      Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac hw' hw1
+    refine hnd ⟨_, this, fun θ ↦ ?_⟩
     rw [← ENNReal.toReal_lt_toReal (risk_ne_top hℓ _ θ) (risk_ne_top hℓ ν θ), toReal_risk hℓ]
-    simp_rw [ofRealWeights_real_singleton hw']
+    simp_rw [Measure.finsetSum_ofReal_smul_dirac_real_singleton hw']
     have hθ := hpos θ
     simp only [Matrix.vecMul, dotProduct, D, Matrix.of_apply, mul_sub, Finset.sum_sub_distrib,
       ← Finset.sum_mul] at hθ
@@ -304,7 +305,8 @@ theorem exists_isBayesEstimator_iff_not_isStrictlyDominated (ν : Measure 𝓨)
       rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun y _ ↦ by ring
     rw [this, inv_mul_lt_iff₀ hs]
     linarith
-  · exact ⟨ofRealWeights x, isProbabilityMeasure_ofRealWeights hx hx1,
+  · exact ⟨∑ θ, ENNReal.ofReal (x θ) • Measure.dirac θ,
+      Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac hx hx1,
       bayes_of_real hℓ hx hx1 fun y ↦ by
         simpa [Matrix.mulVec, dotProduct, D, mul_comm] using hxD y⟩
 
@@ -341,10 +343,10 @@ theorem isAdmissible_iff_exists_isBayesEstimator [Nonempty Θ] (ν : Measure �
         mul_nonneg (by linarith [hx1 θ]) (inv_nonneg.2 hS.le)
       have hp1 : ∑ θ, x θ * (∑ θ, x θ)⁻¹ = 1 := by
         rw [← Finset.sum_mul, mul_inv_cancel₀ hS.ne']
-      refine ⟨ofRealWeights fun θ ↦ x θ * (∑ θ, x θ)⁻¹,
-        isProbabilityMeasure_ofRealWeights hp hp1, fun θ ↦ ?_, bayes_of_real hℓ hp hp1 fun y ↦ ?_⟩
-      · rw [ofRealWeights, Measure.ofWeights_apply_singleton, ne_eq, ENNReal.ofReal_eq_zero,
-          not_le]
+      refine ⟨∑ θ, ENNReal.ofReal (x θ * (∑ θ, x θ)⁻¹) • Measure.dirac θ,
+        Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac hp hp1,
+        fun θ ↦ ?_, bayes_of_real hℓ hp hp1 fun y ↦ ?_⟩
+      · rw [Measure.finsetSum_smul_dirac_singleton, ne_eq, ENNReal.ofReal_eq_zero, not_le]
         exact mul_pos (by linarith [hx1 θ]) (inv_pos.2 hS)
       · have h : ∑ θ, x θ * (∑ θ, x θ)⁻¹ * ((∫⁻ y, ℓ θ y ∂ν).toReal - (ℓ θ y).toReal) =
             (∑ θ, x θ)⁻¹ * ∑ θ, x θ * D y θ := by
@@ -374,12 +376,15 @@ theorem isAdmissible_iff_exists_isBayesEstimator [Nonempty Θ] (ν : Measure �
         mul_nonneg (hz _) (inv_nonneg.2 hw.le)
       have hw1 : ∑ y, z (.inl y) * (∑ y, z (.inl y))⁻¹ = 1 := by
         rw [← Finset.sum_mul, mul_inv_cancel₀ hw.ne']
-      have := isProbabilityMeasure_ofRealWeights hw' hw1
-      have hrisk (θ : Θ) : (∫⁻ y, ℓ θ y ∂(ofRealWeights fun y ↦ z (.inl y) *
-          (∑ y, z (.inl y))⁻¹)).toReal =
+      set μ : Measure 𝓨 :=
+        ∑ y, ENNReal.ofReal (z (.inl y) * (∑ y, z (.inl y))⁻¹) • Measure.dirac y
+        with hμ
+      have : IsProbabilityMeasure μ :=
+        Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac hw' hw1
+      have hrisk (θ : Θ) : (∫⁻ y, ℓ θ y ∂μ).toReal =
             (∫⁻ y, ℓ θ y ∂ν).toReal - (∑ y, z (.inl y))⁻¹ * z (.inr θ) := by
         rw [toReal_risk hℓ, ← hcol θ]
-        simp_rw [ofRealWeights_real_singleton hw']
+        simp_rw [hμ, Measure.finsetSum_ofReal_smul_dirac_real_singleton hw']
         set R := (∫⁻ y, ℓ θ y ∂ν).toReal
         set c := ∑ y, z (.inl y)
         simp only [D, Matrix.of_apply]
@@ -387,8 +392,7 @@ theorem isAdmissible_iff_exists_isBayesEstimator [Nonempty Θ] (ν : Measure �
         rw [Finset.sum_congr rfl fun y _ ↦ show z (.inl y) * c⁻¹ * (ℓ θ y).toReal +
             c⁻¹ * (z (.inl y) * (R - (ℓ θ y).toReal)) = z (.inl y) * c⁻¹ * R by ring,
           ← Finset.sum_mul, hw1, one_mul]
-      have hle : ∀ θ, ∫⁻ y, ℓ θ y ∂(ofRealWeights fun y ↦ z (.inl y) * (∑ y, z (.inl y))⁻¹) ≤
-          ∫⁻ y, ℓ θ y ∂ν := fun θ ↦ by
+      have hle : ∀ θ, ∫⁻ y, ℓ θ y ∂μ ≤ ∫⁻ y, ℓ θ y ∂ν := fun θ ↦ by
         rw [← ENNReal.toReal_le_toReal (risk_ne_top hℓ _ θ) (risk_ne_top hℓ ν θ), hrisk]
         linarith [mul_nonneg (inv_nonneg.2 hw.le) (hz (.inr θ))]
       have heq := congrArg ENNReal.toReal (hadm _ this hle θ₀)

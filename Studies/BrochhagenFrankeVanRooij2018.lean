@@ -548,16 +548,17 @@ instance (k : ℕ) : IsMarkovKernel (produce lam k) :=
 
 /-- Fig. 2: the prior over types favouring those with `L_lack` by a factor `c`. -/
 noncomputable def biasedPrior (c : ℝ≥0) : Measure (Lex × Fin 2) :=
-  Measure.ofRealWeights fun t ↦ (if t.1 = .lack then (c : ℝ) else 1) / (2 * (c + 1))
+  ∑ t,
+    ENNReal.ofReal ((if t.1 = .lack then (c : ℝ) else 1) / (2 * (c + 1))) • Measure.dirac t
 
 private theorem lex_univ : (univ : Finset Lex) = {.bound, .lack} := by decide
 
 private theorem biasedPrior_real_singleton (c : ℝ≥0) (t : Lex × Fin 2) :
     (biasedPrior c).real {t} = (if t.1 = .lack then (c : ℝ) else 1) / (2 * (c + 1)) :=
-  Measure.ofRealWeights_real_singleton (fun t ↦ by positivity) t
+  Measure.finsetSum_ofReal_smul_dirac_real_singleton (fun t ↦ by positivity) t
 
 instance (c : ℝ≥0) : IsProbabilityMeasure (biasedPrior c) := by
-  refine Measure.isProbabilityMeasure_ofRealWeights (fun t ↦ by positivity) ?_
+  refine Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac (fun t ↦ by positivity) ?_
   rw [Fintype.sum_prod_type, lex_univ, sum_pair (by decide)]
   simp only [Fin.sum_univ_two, ↓reduceIte, reduceCtorEq]
   field_simp
@@ -818,7 +819,8 @@ def payoff : Sign → Sign → ℝ
 
 /-- App. A: the mutation that keeps a type with chance `0.9`. -/
 noncomputable def mutation : Kernel Sign Sign :=
-  Kernel.ofFunOfCountable fun j ↦ Measure.ofRealWeights fun i ↦ if i = j then 0.9 else 0.1
+  Kernel.ofFunOfCountable fun j ↦
+    ∑ i, ENNReal.ofReal (if i = j then 0.9 else 0.1) • Measure.dirac i
 
 theorem univ_eq : (univ : Finset Sign) = {negative, positive} := by decide
 
@@ -829,12 +831,13 @@ open Sign
 private theorem mutation_real_negative (j : Sign) :
     (mutation j).real {negative} = if negative = j then 0.9 else 0.1 := by
   rw [mutation, Kernel.ofFunOfCountable_apply,
-    Measure.ofRealWeights_real_singleton (fun i ↦ by split_ifs <;> norm_num)]
+    Measure.finsetSum_ofReal_smul_dirac_real_singleton (fun i ↦ by split_ifs <;> norm_num)]
 
 instance : IsMarkovKernel mutation :=
   ⟨fun j ↦ by
     rw [mutation, Kernel.ofFunOfCountable_apply]
-    refine Measure.isProbabilityMeasure_ofRealWeights (fun i ↦ by split_ifs <;> norm_num) ?_
+    refine Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac
+      (fun i ↦ by split_ifs <;> norm_num) ?_
     cases j <;> simp [univ_eq] <;> norm_num⟩
 
 private theorem real_positive (x : Measure Sign) [IsProbabilityMeasure x] :
@@ -910,11 +913,12 @@ def lhWeight (ε δ : ℝ) (i j : Fin 3) : ℝ :=
 
 /-- App. B: the production likelihood `LH`. -/
 noncomputable def lh (ε δ : ℝ) : Kernel (Fin 3) (Fin 3) :=
-  Kernel.ofFunOfCountable fun i ↦ Measure.ofRealWeights (lhWeight ε δ i)
+  Kernel.ofFunOfCountable fun i ↦
+    ∑ j, ENNReal.ofReal (lhWeight ε δ i j) • Measure.dirac j
 
 /-- App. B: the population `(δ, ε, ε) / (δ + 2ε)` over the three types. -/
 noncomputable def lhStationary (ε δ : ℝ) : Measure (Fin 3) :=
-  Measure.ofRealWeights fun i ↦ (if i = 0 then δ else ε) / (δ + 2 * ε)
+  ∑ i, ENNReal.ofReal ((if i = 0 then δ else ε) / (δ + 2 * ε)) • Measure.dirac i
 
 private theorem lhWeight_nonneg (hε : 0 ≤ ε) (hδ : 0 ≤ δ) (h : δ + 2 * ε < 1) (i j : Fin 3) :
     0 ≤ lhWeight ε δ i j := by
@@ -923,13 +927,13 @@ private theorem lhWeight_nonneg (hε : 0 ≤ ε) (hδ : 0 ≤ δ) (h : δ + 2 * 
 
 private theorem lh_apply_singleton (i j : Fin 3) :
     lh ε δ i {j} = ENNReal.ofReal (lhWeight ε δ i j) := by
-  rw [lh, Kernel.ofFunOfCountable_apply, Measure.ofRealWeights, Measure.ofWeights_apply_singleton]
+  rw [lh, Kernel.ofFunOfCountable_apply, Measure.finsetSum_smul_dirac_singleton]
 
 theorem isMarkovKernel_lh (hε : 0 ≤ ε) (hδ : 0 ≤ δ) (h : δ + 2 * ε < 1) :
     IsMarkovKernel (lh ε δ) := by
   refine ⟨fun i ↦ ?_⟩
   rw [lh, Kernel.ofFunOfCountable_apply]
-  refine Measure.isProbabilityMeasure_ofRealWeights (lhWeight_nonneg hε hδ h i) ?_
+  refine Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac (lhWeight_nonneg hε hδ h i) ?_
   fin_cases i <;> simp [Fin.sum_univ_three, lhWeight] <;> ring
 
 private theorem lh_real_singleton (hε : 0 ≤ ε) (hδ : 0 ≤ δ) (h : δ + 2 * ε < 1) (i j : Fin 3) :
@@ -953,14 +957,14 @@ theorem mapLearner_lh (hε : 0 ≤ ε) (hδ : 0 ≤ δ) (h : δ + 2 * ε < 1) :
 
 theorem isProbabilityMeasure_lhStationary (hε : 0 < ε) (hδ : 0 ≤ δ) :
     IsProbabilityMeasure (lhStationary ε δ) := by
-  refine Measure.isProbabilityMeasure_ofRealWeights (fun i ↦ by positivity) ?_
+  refine Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac (fun i ↦ by positivity) ?_
   simp only [Fin.sum_univ_three, Fin.isValue, ↓reduceIte, Fin.reduceEq]
   field_simp
   ring
 
 private theorem lhStationary_real_singleton (hε : 0 < ε) (hδ : 0 ≤ δ) (i : Fin 3) :
     (lhStationary ε δ).real {i} = (if i = 0 then δ else ε) / (δ + 2 * ε) :=
-  Measure.ofRealWeights_real_singleton (fun i ↦ by positivity) i
+  Measure.finsetSum_ofReal_smul_dirac_real_singleton (fun i ↦ by positivity) i
 
 private theorem real_add_three (ν : Measure (Fin 3)) [IsProbabilityMeasure ν] :
     ν.real {0} + ν.real {1} + ν.real {2} = 1 := by

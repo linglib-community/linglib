@@ -634,7 +634,7 @@ instance : IsZeroOrProbabilityMeasure (speaker α C L b o) :=
 
 theorem speaker_apply_univ_le_one : speaker α C L b o Set.univ ≤ 1 := by
   rw [speaker_eq_ofWeights]
-  exact Kernel.ofWeights_apply_univ_le_one _ o
+  exact prob_le_one
 
 theorem speaker_real_singleton_le_one (u : U) : (speaker α C L b o).real {u} ≤ 1 := by
   rw [measureReal_def, ← ENNReal.toReal_one]

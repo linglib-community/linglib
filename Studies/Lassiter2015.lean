@@ -267,30 +267,34 @@ theorem must_onlyBest [Finite W] (w₀ w : W) : Yalcin2010.must (onlyBest w₀) 
   bestWorlds_onlyBest w₀ w ▸ must_bestWorlds _ w
 
 /-- Masses `0.4`, `0.3`, `0.3` on three worlds, the countermodel of (46). -/
-noncomputable def skewed : Measure (Fin 3) := Measure.ofRealWeights ![4 / 10, 3 / 10, 3 / 10]
+noncomputable def skewed : Measure (Fin 3) :=
+  ∑ i, ENNReal.ofReal (![4 / 10, 3 / 10, 3 / 10] i) • Measure.dirac i
 
 private theorem skewed_nonneg (i : Fin 3) : 0 ≤ (![4 / 10, 3 / 10, 3 / 10] : Fin 3 → ℝ) i := by
   fin_cases i <;> norm_num
 
 instance : IsProbabilityMeasure skewed :=
-  Measure.isProbabilityMeasure_ofRealWeights skewed_nonneg (by simp [Fin.sum_univ_three]; norm_num)
+  Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac skewed_nonneg
+    (by simp [Fin.sum_univ_three]; norm_num)
 
 theorem skewed_real (A : Set (Fin 3)) :
     skewed.real A = ∑ i, A.indicator ![4 / 10, 3 / 10, 3 / 10] i :=
-  Measure.sum_ofReal_smul_dirac_real_apply skewed_nonneg A
+  Measure.finsetSum_ofReal_smul_dirac_real_apply skewed_nonneg A
 
 /-- Masses `0.6`, `0.2`, `0.2` on three worlds, the first outweighing the other two together. -/
-noncomputable def peaked : Measure (Fin 3) := Measure.ofRealWeights ![6 / 10, 2 / 10, 2 / 10]
+noncomputable def peaked : Measure (Fin 3) :=
+  ∑ i, ENNReal.ofReal (![6 / 10, 2 / 10, 2 / 10] i) • Measure.dirac i
 
 private theorem peaked_nonneg (i : Fin 3) : 0 ≤ (![6 / 10, 2 / 10, 2 / 10] : Fin 3 → ℝ) i := by
   fin_cases i <;> norm_num
 
 instance : IsProbabilityMeasure peaked :=
-  Measure.isProbabilityMeasure_ofRealWeights peaked_nonneg (by simp [Fin.sum_univ_three]; norm_num)
+  Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac peaked_nonneg
+    (by simp [Fin.sum_univ_three]; norm_num)
 
 theorem peaked_real (A : Set (Fin 3)) :
     peaked.real A = ∑ i, A.indicator ![6 / 10, 2 / 10, 2 / 10] i :=
-  Measure.sum_ofReal_smul_dirac_real_apply peaked_nonneg A
+  Measure.finsetSum_ofReal_smul_dirac_real_apply peaked_nonneg A
 
 theorem skewed_agrees : (premisePreorder (onlyBest 0)).le = (inducedGe skewed on fun u ↦ {u}) :=
   funext₂ fun u v ↦ propext <| by
@@ -495,18 +499,20 @@ theorem bridge3_refutes_V6 :
   ⟨bridge3_of_agree _ _ skewed_agrees, bridge2_refutes_V6.2⟩
 
 /-- Masses `0.5001` and `0.4999` on two worlds, the model of BR1 on p. 674. -/
-noncomputable def thin : Measure (Fin 2) := Measure.ofRealWeights ![5001 / 10000, 4999 / 10000]
+noncomputable def thin : Measure (Fin 2) :=
+  ∑ i, ENNReal.ofReal (![5001 / 10000, 4999 / 10000] i) • Measure.dirac i
 
 private theorem thin_nonneg (i : Fin 2) :
     0 ≤ (![5001 / 10000, 4999 / 10000] : Fin 2 → ℝ) i := by
   fin_cases i <;> norm_num
 
 instance : IsProbabilityMeasure thin :=
-  Measure.isProbabilityMeasure_ofRealWeights thin_nonneg (by simp [Fin.sum_univ_two]; norm_num)
+  Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac thin_nonneg
+    (by simp [Fin.sum_univ_two]; norm_num)
 
 theorem thin_real (A : Set (Fin 2)) :
     thin.real A = ∑ i, A.indicator ![5001 / 10000, 4999 / 10000] i :=
-  Measure.sum_ofReal_smul_dirac_real_apply thin_nonneg A
+  Measure.finsetSum_ofReal_smul_dirac_real_apply thin_nonneg A
 
 theorem bridge1_thin_margin :
     Bridge1 (premisePreorder (onlyBest 0)).le thin ∧

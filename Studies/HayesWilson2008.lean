@@ -264,10 +264,7 @@ variable [MeasurableSingletonClass Ω]
 
 theorem empirical_real_singleton (x : Ω) :
     (empirical D).real {x} = D x / ∑ y, (D y : ℝ) := by
-  classical
-  simp only [empirical, measureReal_def, Measure.coe_finsetSum, Finset.sum_apply,
-    Measure.smul_apply, smul_eq_mul]
-  rw [Finset.sum_eq_single x (fun y _ hy ↦ by simp [hy]) (by simp)]
+  rw [empirical, measureReal_def, Measure.finsetSum_smul_dirac_singleton]
   simp [ENNReal.toReal_div, ENNReal.toReal_sum fun _ _ ↦ ENNReal.natCast_ne_top _]
 
 theorem logLik_eq (hD : ∑ x, D x ≠ 0) :

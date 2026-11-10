@@ -230,10 +230,10 @@ theorem imperfective_more_source : aspectSource .perfective < aspectSource .impe
 
 /-- The measure on relations given by a printed column of frequencies. -/
 noncomputable def frequencies (d : Relation → Data.Statistics.Decimal) : Measure Relation :=
-  Measure.ofRealWeights fun c ↦ ((d c).toRat : ℝ)
+  ∑ c, ENNReal.ofReal ((d c).toRat : ℝ) • Measure.dirac c
 
 instance (d : Relation → Data.Statistics.Decimal) : IsFiniteMeasure (frequencies d) :=
-  inferInstanceAs (IsFiniteMeasure (Measure.ofRealWeights _))
+  inferInstanceAs (IsFiniteMeasure (∑ b, _ • Measure.dirac b))
 
 /-- The interpretation kernel of a column of Source biases in percent. -/
 noncomputable def interpretation (b : Relation → ℕ) : Kernel Relation Role :=
@@ -257,7 +257,7 @@ theorem interpretation_comp_real_source (d : Relation → Data.Statistics.Decima
     norm_num
   rw [Measure.comp_real_singleton]
   refine Finset.sum_congr rfl fun c _ ↦ ?_
-  rw [hk, frequencies, Measure.ofRealWeights_real_singleton hd]
+  rw [hk, frequencies, Measure.finsetSum_ofReal_smul_dirac_real_singleton hd]
   ring
 
 /-- The frequency of a relation in the perfective continuations of Table 2. -/
@@ -386,16 +386,17 @@ def arnoldLikelihood : Form → Role → ℕ
   | .other, r => 100 - (arnoldPronominalizations r.position).proportion.hundredths.toNat
 
 theorem arnold_prediction :
-    (61 / 100 < (Kernel.ofDensity (Measure.ofWeights (arnoldPrior ·))
+    (61 / 100 < (Kernel.ofDensity (∑ r, (arnoldPrior r : ℝ≥0∞) • Measure.dirac r)
           (fun u r ↦ (arnoldLikelihood u r : ℝ≥0∞)) .pronoun).real {.goal} ∧
-        (Kernel.ofDensity (Measure.ofWeights (arnoldPrior ·))
+        (Kernel.ofDensity (∑ r, (arnoldPrior r : ℝ≥0∞) • Measure.dirac r)
           (fun u r ↦ (arnoldLikelihood u r : ℝ≥0∞)) .pronoun).real {.goal} < 62 / 100) ∧
       RoundsTo (2784 / 10000) arnoldRow.pronounRate ∧
       RoundsTo ((20 / 100) * (86 / 100) / (28 / 100)) arnoldRow.goalInterpretation := by
   rw [Kernel.ofDensity_real_singleton _ _ _ (by simp),
     show (Finset.univ : Finset Role) = {.source, .goal} by decide, Finset.sum_pair (by decide)]
-  simp only [Measure.ofWeights_real_singleton, ENNReal.toReal_natCast, RoundsTo, arnoldPrior,
-    arnoldLikelihood, arnoldRow, arnoldPrediction, arnoldPronominalizations, Role.position,
+  simp only [measureReal_def, ENNReal.toReal_natCast, RoundsTo,
+    arnoldPrior, arnoldLikelihood,
+    arnoldRow, arnoldPrediction, arnoldPronominalizations, Role.position,
     Data.Statistics.Decimal.hundredths, Data.Statistics.Decimal.toRat, abs_le]
   norm_num
 
@@ -484,12 +485,13 @@ theorem voiceProduction_apply_singleton (v : Voice) (pos : Position) (f : Form) 
 /-- The predicted bias of an ambiguous pronoun toward the subject is the posterior (13) under the
 no-pronoun prior of Table 7 and the production kernel of Table 9. -/
 noncomputable def bayesSubject (v : Voice) : ℝ :=
-  (Kernel.ofDensity (Measure.ofWeights (voicePrior v ·)) (fun u r ↦ voiceProduction v r {u})
-    .pronoun).real {.subject}
+  (Kernel.ofDensity (∑ r, (voicePrior v r : ℝ≥0∞) • Measure.dirac r)
+    (fun u r ↦ voiceProduction v r {u}) .pronoun).real {.subject}
 
 theorem bayesSubject_eq_fst_cond {C : Type*} [MeasurableSpace C] [Fintype C]
     [DiscreteMeasurableSpace C] (v : Voice) (η : Kernel Position C) [IsMarkovKernel η] :
-    bayesSubject v = ((Measure.ofWeights (voicePrior v ·) ⊗ₘ (η ×ₖ voiceProduction v))[|
+    bayesSubject v = (((∑ r, (voicePrior v r : ℝ≥0∞) • Measure.dirac r) ⊗ₘ
+      (η ×ₖ voiceProduction v))[|
       {x | x.2.2 = .pronoun}]).fst.real {.subject} := by
   rw [fst_cond_compProd_prod]
   rfl
@@ -497,7 +499,7 @@ theorem bayesSubject_eq_fst_cond {C : Type*} [MeasurableSpace C] [Fintype C]
 theorem bayesSubject_eq : bayesSubject .active = 3658 / 4642 ∧
     bayesSubject .passive = 2088 / 3836 := by
   have key (v : Voice) : bayesSubject v =
-      (Kernel.ofDensity (Measure.ofWeights (voicePrior v ·))
+      (Kernel.ofDensity (∑ r, (voicePrior v r : ℝ≥0∞) • Measure.dirac r)
         (fun u r ↦ (voiceLikelihood v u r : ℝ≥0∞)) .pronoun).real {.subject} := by
     rw [bayesSubject, Kernel.ofDensity_apply_eq_of_eq_mul _ (c := 100⁻¹)
       (f := fun u r ↦ (voiceLikelihood v u r : ℝ≥0∞)) (by simp) (by simp)
@@ -506,8 +508,9 @@ theorem bayesSubject_eq : bayesSubject .active = 3658 / 4642 ∧
     Kernel.ofDensity_real_singleton _ _ _ (by simp),
     show (Finset.univ : Finset Position) = {.subject, .nonSubject} by decide,
     Finset.sum_pair (by decide)]
-  simp only [Measure.ofWeights_real_singleton, ENNReal.toReal_natCast, voicePrior, voiceLikelihood,
-    causalMention, causalMentions, pronominalizations, Data.Statistics.Decimal.hundredths]
+  simp only [measureReal_def, ENNReal.toReal_natCast, voicePrior,
+    voiceLikelihood, causalMention,
+    causalMentions, pronominalizations, Data.Statistics.Decimal.hundredths]
   norm_num
 
 theorem voice_predictions :

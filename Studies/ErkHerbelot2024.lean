@@ -107,7 +107,7 @@ omit [MeasurableSingletonClass C] in
 theorem emission_univ_le_one [∀ s, IsProbabilityMeasure (m.scenario s)] (s : S) :
     ∀ o : Option R, m.emission s o Set.univ ≤ 1
   | none => (measure_univ (μ := m.scenario s)).le
-  | some _ => Kernel.ofWeights_apply_univ_le_one _ _
+  | some r => prob_le_one (μ := Kernel.ofWeights _ (s, r))
 
 end Node
 
@@ -462,10 +462,11 @@ noncomputable def marryFiller : StarConcept → ℝ≥0∞
   | .ASTRONOMER => 19 / 40 | .STAR_PERSON => 19 / 40 | .STAR_SUN => 1 / 20 | .MARRY => 0
 
 /-- The selectional constraint of MARRY's roles as a measure. -/
-noncomputable def marryTheme : Measure StarConcept := ∑ c, marryFiller c • Measure.dirac c
+noncomputable def marryTheme : Measure StarConcept :=
+  ∑ c, marryFiller c • Measure.dirac c
 
 @[simp] theorem marryTheme_apply_singleton (c : StarConcept) : marryTheme {c} = marryFiller c :=
-  Measure.sum_smul_dirac_apply_singleton _ c
+  Measure.finsetSum_smul_dirac_singleton
 
 /-- The astronomer-sentence system with Dirichlet concentration `α`. -/
 noncomputable def starSDS (α : ℝ) (hα : 0 < α) : SDS StarScenario StarConcept StarRole where

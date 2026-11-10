@@ -345,7 +345,7 @@ noncomputable def table1 : Measure (Fin 9) :=
   (100 : ℝ≥0∞)⁻¹ • ∑ x, (table1Weight x : ℝ≥0∞) • Measure.dirac x
 
 theorem table1_apply_singleton (x : Fin 9) : table1 {x} = (100 : ℝ≥0∞)⁻¹ * table1Weight x := by
-  rw [table1, Measure.smul_apply, smul_eq_mul, Measure.sum_smul_dirac_apply_singleton]
+  rw [table1, Measure.smul_apply, smul_eq_mul, Measure.finsetSum_smul_dirac_singleton]
 
 theorem table1_real_singleton (x : Fin 9) : table1.real {x} = table1Weight x / 100 := by
   rw [measureReal_def, table1_apply_singleton, ENNReal.toReal_mul, ENNReal.toReal_inv,
@@ -353,9 +353,9 @@ theorem table1_real_singleton (x : Fin 9) : table1.real {x} = table1Weight x / 1
 
 instance : IsProbabilityMeasure table1 := by
   constructor
-  rw [table1, Measure.smul_apply, smul_eq_mul, Measure.finsetSum_apply]
-  simp only [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply_of_mem (Set.mem_univ _), mul_one]
-  rw [← Nat.cast_sum, show ∑ x : Fin 9, table1Weight x = 100 by decide]
+  rw [table1, Measure.smul_apply, smul_eq_mul, ← Finset.coe_univ,
+    Measure.finsetSum_smul_dirac_apply_finset, ← Nat.cast_sum,
+    show ∑ x : Fin 9, table1Weight x = 100 by decide]
   exact ENNReal.inv_mul_cancel (by norm_num) (by norm_num)
 
 theorem lintegral_count_meaning_around4 :

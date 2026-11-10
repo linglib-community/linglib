@@ -271,7 +271,7 @@ noncomputable def priorWeight : World → ℝ≥0∞
 noncomputable def prior : Measure World := ∑ w, s.priorWeight w • Measure.dirac w
 
 theorem prior_apply_singleton (w : World) : s.prior {w} = s.priorWeight w :=
-  Measure.sum_smul_dirac_apply_singleton _ w
+  Measure.finsetSum_smul_dirac_singleton
 
 theorem prior_wa : s.prior {.wa} = ENNReal.ofReal (1 - s.p) := prior_apply_singleton s .wa
 
@@ -595,7 +595,7 @@ theorem wonkySpeaker_apply (x : World × Background) : wonkySpeaker s x = bgSpea
 instance : IsFiniteKernel (wonkySpeaker s) :=
   ⟨⟨1, ENNReal.one_lt_top, fun x ↦ by
     rw [wonkySpeaker_apply, bgSpeaker, speaker, RSA.speaker]
-    exact Kernel.ofWeights_apply_univ_le_one _ _⟩⟩
+    exact prob_le_one⟩⟩
 
 /-- The world given the background. -/
 noncomputable def worldKernel : Kernel Background World := Kernel.ofFunOfCountable (worldPrior s)

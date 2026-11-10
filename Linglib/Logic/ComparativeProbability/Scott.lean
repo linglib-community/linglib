@@ -257,17 +257,20 @@ private theorem representable_of_feasible [IsQualitativeProbability r] {x : Fin 
   have hσR : (0 : ℝ) < ∑ j, (x j : ℝ) := by exact_mod_cast hσ
   have hw (j : Fin n) : 0 ≤ (x j : ℝ) / ∑ j, (x j : ℝ) :=
     div_nonneg (by exact_mod_cast hnn j) hσR.le
-  have := Measure.isProbabilityMeasure_sum_ofReal_smul_dirac hw
-    (by rw [← Finset.sum_div, div_self hσR.ne'])
+  have hw1 : ∑ j, (x j : ℝ) / ∑ j, (x j : ℝ) = 1 := by rw [← Finset.sum_div, div_self hσR.ne']
+  set μ : Measure (Fin n) :=
+    ∑ j, ENNReal.ofReal ((x j : ℝ) / ∑ j, (x j : ℝ)) • Measure.dirac j with hμ
+  have : IsProbabilityMeasure μ :=
+    Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac hw hw1
   have hm (A : Set (Fin n)) :
-      (∑ j, ENNReal.ofReal ((x j : ℝ) / ∑ j, (x j : ℝ)) • Measure.dirac j).real A =
+      μ.real A =
         ((∑ j, if j ∈ A then x j else 0 : ℚ) : ℝ) / ((∑ j, x j : ℚ) : ℝ) := by
-    rw [Measure.sum_ofReal_smul_dirac_real_apply hw]
+    rw [hμ, Measure.finsetSum_ofReal_smul_dirac_real_apply hw]
     push_cast
     rw [Finset.sum_div]
     refine Finset.sum_congr rfl fun j _ ↦ ?_
     by_cases hj : j ∈ A <;> simp [hj]
-  refine ⟨_, this, reduce_to_disjoint _ fun C D hCD ↦ ?_⟩
+  refine ⟨μ, this, reduce_to_disjoint _ fun C D hCD ↦ ?_⟩
   rw [← ENNReal.toReal_le_toReal (measure_ne_top _ _) (measure_ne_top _ _), ← measureReal_def,
     ← measureReal_def, hm, hm, div_le_div_iff_of_pos_right (by exact_mod_cast hσ), Rat.cast_le]
   constructor

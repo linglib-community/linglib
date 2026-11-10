@@ -54,42 +54,31 @@ the zero measure. -/
 noncomputable def ofWeights (w : α → β → ℝ≥0∞) : Kernel α β :=
   ofFunOfCountable fun a ↦ (∑ b, w a b)⁻¹ • ∑ b, w a b • Measure.dirac b
 
-theorem ofWeights_apply_univ_le_one (w : α → β → ℝ≥0∞) (a : α) :
-    ofWeights w a Set.univ ≤ 1 := by
-  show ((∑ b, w a b)⁻¹ • ∑ b, w a b • Measure.dirac b) Set.univ ≤ 1
-  simp only [Measure.smul_apply, Measure.finsetSum_apply, Measure.smul_apply,
-    measure_univ, smul_eq_mul, mul_one]
-  rcases eq_or_ne (∑ b, w a b) 0 with h0 | h0
-  · simp [h0]
-  · rcases eq_or_ne (∑ b, w a b) ∞ with htop | htop
-    · simp [htop]
-    · rw [ENNReal.inv_mul_cancel h0 htop]
+theorem ofWeights_apply (w : α → β → ℝ≥0∞) (a : α) :
+    ofWeights w a = (∑ b, w a b)⁻¹ • ∑ b, w a b • Measure.dirac b :=
+  rfl
 
-instance (w : α → β → ℝ≥0∞) : IsFiniteKernel (ofWeights w) :=
-  ⟨⟨1, ENNReal.one_lt_top, ofWeights_apply_univ_le_one w⟩⟩
+theorem ofWeights_apply_univ (w : α → β → ℝ≥0∞) (a : α) :
+    ofWeights w a Set.univ = (∑ b, w a b)⁻¹ * ∑ b, w a b := by
+  simp [ofWeights_apply]
 
 instance (w : α → β → ℝ≥0∞) (a : α) : IsZeroOrProbabilityMeasure (ofWeights w a) := by
-  have h : ofWeights w a Set.univ = (∑ b, w a b)⁻¹ * ∑ b, w a b := by
-    show ((∑ b, w a b)⁻¹ • ∑ b, w a b • Measure.dirac b) Set.univ = _
-    simp only [Measure.smul_apply, Measure.finsetSum_apply, measure_univ, smul_eq_mul, mul_one]
-  refine ⟨h ▸ ?_⟩
+  refine ⟨ofWeights_apply_univ w a ▸ ?_⟩
   rcases eq_or_ne (∑ b, w a b) 0 with h0 | h0
   · simp [h0]
   rcases eq_or_ne (∑ b, w a b) ∞ with htop | htop
   · simp [htop]
   · exact .inr (ENNReal.inv_mul_cancel h0 htop)
 
+instance (w : α → β → ℝ≥0∞) : IsFiniteKernel (ofWeights w) :=
+  ⟨⟨1, ENNReal.one_lt_top, fun _ ↦ prob_le_one⟩⟩
+
 theorem isProbabilityMeasure_ofWeights {w : α → β → ℝ≥0∞} {a : α} (h0 : ∃ b, w a b ≠ 0)
     (htop : ∀ b, w a b ≠ ∞) : IsProbabilityMeasure (ofWeights w a) := by
-  refine ⟨?_⟩
-  have hZ0 : (∑ b, w a b) ≠ 0 := by
-    obtain ⟨b, hb⟩ := h0
-    exact fun h ↦ hb (Finset.sum_eq_zero_iff.mp h b (Finset.mem_univ b))
-  have hZtop : (∑ b, w a b) ≠ ∞ := ENNReal.sum_ne_top.mpr fun b _ ↦ htop b
-  show ((∑ b, w a b)⁻¹ • ∑ b, w a b • Measure.dirac b) Set.univ = 1
-  simp only [Measure.smul_apply, Measure.finsetSum_apply, Measure.smul_apply,
-    measure_univ, smul_eq_mul, mul_one]
-  exact ENNReal.inv_mul_cancel hZ0 hZtop
+  obtain ⟨b, hb⟩ := h0
+  rw [isProbabilityMeasure_iff, ofWeights_apply_univ]
+  exact ENNReal.inv_mul_cancel (fun h ↦ hb (Finset.sum_eq_zero_iff.mp h b (Finset.mem_univ b)))
+    (ENNReal.sum_ne_top.mpr fun b _ ↦ htop b)
 
 theorem isMarkovKernel_ofWeights {w : α → β → ℝ≥0∞}
     (h0 : ∀ a, ∃ b, w a b ≠ 0) (htop : ∀ a b, w a b ≠ ∞) :
@@ -100,8 +89,7 @@ variable [MeasurableSingletonClass β]
 
 @[simp] theorem ofWeights_apply_singleton (w : α → β → ℝ≥0∞) (a : α) (b : β) :
     ofWeights w a {b} = w a b / ∑ b', w a b' := by
-  show ((∑ b', w a b')⁻¹ • ∑ b', w a b' • Measure.dirac b') {b} = _
-  rw [Measure.smul_apply, smul_eq_mul, Measure.sum_smul_dirac_apply_singleton,
+  rw [ofWeights_apply, Measure.smul_apply, smul_eq_mul, Measure.finsetSum_smul_dirac_singleton,
     ENNReal.div_eq_inv_mul]
 
 theorem ofWeights_apply_singleton_eq_zero {w : α → β → ℝ≥0∞} {a : α} {b : β} (h : w a b = 0) :

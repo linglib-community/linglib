@@ -92,19 +92,20 @@ variable {T : Type*} [MeasurableSpace T] [Fintype T] [MeasurableSingletonClass T
 /-- The type-shift process with transition probabilities `P k i`, the probability that a language
 of type `k` is of type `i` after a small time interval. -/
 noncomputable def typeShift (P : T → T → ℝ) : Kernel T T :=
-  Kernel.ofFunOfCountable fun k ↦ Measure.ofRealWeights (P k)
+  Kernel.ofFunOfCountable fun k ↦ ∑ i, ENNReal.ofReal (P k i) • Measure.dirac i
 
 theorem typeShift_apply_singleton (P : T → T → ℝ) (k i : T) :
     typeShift P k {i} = ENNReal.ofReal (P k i) :=
-  Measure.ofWeights_apply_singleton _ i
+  Measure.finsetSum_smul_dirac_singleton
 
 theorem typeShift_real_singleton {P : T → T → ℝ} (hP : ∀ k i, 0 ≤ P k i) (k i : T) :
     (typeShift P k).real {i} = P k i :=
-  Measure.ofRealWeights_real_singleton (hP k) i
+  Measure.finsetSum_ofReal_smul_dirac_real_singleton (hP k) i
 
 theorem isMarkovKernel_typeShift {P : T → T → ℝ} (hP : ∀ k i, 0 ≤ P k i)
     (hrow : ∀ k, ∑ i, P k i = 1) : IsMarkovKernel (typeShift P) :=
-  ⟨fun k ↦ Measure.isProbabilityMeasure_ofRealWeights (hP k) (hrow k)⟩
+  ⟨fun k ↦
+    Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac (hP k) (hrow k)⟩
 
 /-- A distributional universal is the stationary law of the type-shift process, the one law that
 languages changing independently keep once they reach it. -/
@@ -280,20 +281,24 @@ private theorem cycle_isIrreducible : IsIrreducible Measure.count cycle := by
 
 -- p. 313: type 0 is more probable than type 1, though the process shifts 0 to 1 and never 1 to 0
 theorem cycle_counterexample :
-    IsDistributionalUniversal cycle (Measure.ofRealWeights ![2 / 5, 1 / 5, 2 / 5]) ∧
-      (Measure.ofRealWeights ![2 / 5, 1 / 5, 2 / 5] : Measure (Fin 3)).real {1} <
-        (Measure.ofRealWeights ![2 / 5, 1 / 5, 2 / 5] : Measure (Fin 3)).real {0} ∧
+    let π : Measure (Fin 3) :=
+      ∑ i, ENNReal.ofReal (![2 / 5, 1 / 5, 2 / 5] i) • Measure.dirac i
+    IsDistributionalUniversal cycle π ∧ π.real {1} < π.real {0} ∧
       (cycle 1).real {0} < (cycle 0).real {1} := by
+  intro π
   have hw (i : Fin 3) : (0 : ℝ) ≤ ![2 / 5, 1 / 5, 2 / 5] i := by fin_cases i <;> norm_num
-  have : IsProbabilityMeasure (Measure.ofRealWeights ![(2 : ℝ) / 5, 1 / 5, 2 / 5]) :=
-    Measure.isProbabilityMeasure_ofRealWeights hw (by norm_num [Fin.sum_univ_three])
-  have hinv : cycle.Invariant (Measure.ofRealWeights ![2 / 5, 1 / 5, 2 / 5]) :=
+  have h1 : ∑ i, (![2 / 5, 1 / 5, 2 / 5] : Fin 3 → ℝ) i = 1 := by norm_num [Fin.sum_univ_three]
+  have : IsProbabilityMeasure π :=
+    Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac hw h1
+  have hπ (i : Fin 3) : π.real {i} = ![2 / 5, 1 / 5, 2 / 5] i :=
+    Measure.finsetSum_ofReal_smul_dirac_real_singleton hw i
+  have hinv : cycle.Invariant π :=
     invariant_iff_forall_real_singleton.2 fun b ↦ by
-      fin_cases b <;> norm_num [Fin.sum_univ_three, Measure.ofRealWeights_real_singleton hw,
+      fin_cases b <;> norm_num [Fin.sum_univ_three, hπ,
         cycle, typeShift_real_singleton cycle_nonneg]
   have hirr := cycle_isIrreducible
   refine ⟨⟨inferInstance, hinv, fun ν _ hν ↦ hν.eq_of_isIrreducible hinv⟩, ?_, ?_⟩
-  · norm_num [Measure.ofRealWeights_real_singleton hw]
+  · norm_num [hπ]
   · norm_num [cycle, typeShift_real_singleton cycle_nonneg]
 
 /-! ### Birth and death -/

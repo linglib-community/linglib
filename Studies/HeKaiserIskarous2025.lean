@@ -201,7 +201,7 @@ noncomputable def prior : Measure State :=
   ∑ st, ENNReal.ofReal (s.statePrior st) • Measure.dirac st
 
 theorem prior_apply_singleton (st : State) : s.prior {st} = ENNReal.ofReal (s.statePrior st) :=
-  Measure.sum_smul_dirac_apply_singleton _ st
+  Measure.finsetSum_smul_dirac_singleton
 
 theorem prior_real_singleton (st : State) : s.prior.real {st} = s.statePrior st := by
   rw [measureReal_def, prior_apply_singleton, ENNReal.toReal_ofReal (s.statePrior_pos st).le]

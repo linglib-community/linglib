@@ -71,23 +71,23 @@ theorem cost_zero : cost 0 = 0 := funext fun ⟨a, _⟩ ↦ by cases a <;> rfl
 /-- The salience prior `S` weights each object by the number of listeners who chose it when they
 could not understand the speaker. -/
 noncomputable def salience : Measure Object :=
-  Measure.ofWeights fun t ↦ ((listenerChoice .salience t).count : ℝ≥0∞)
+  ∑ t, ((listenerChoice .salience t).count : ℝ≥0∞) • Measure.dirac t
 
 instance : IsFiniteMeasure salience :=
-  Measure.isFiniteMeasure_ofWeights fun _ ↦ ENNReal.natCast_ne_top _
+  inferInstanceAs (IsFiniteMeasure (∑ b, _ • Measure.dirac b))
 
 theorem salience_real_singleton (t : Object) :
     salience.real {t} = (listenerChoice .salience t).count := by
-  rw [salience, Measure.ofWeights_real_singleton, ENNReal.toReal_natCast]
+  rw [salience, measureReal_def, Measure.finsetSum_smul_dirac_singleton, ENNReal.toReal_natCast]
 
 theorem salience_real_finset (s : Finset Object) :
     salience.real ↑s = ∑ t ∈ s, ((listenerChoice .salience t).count : ℝ) := by
-  rw [measureReal_def, salience, Measure.ofWeights_apply_finset,
+  rw [measureReal_def, salience, Measure.finsetSum_smul_dirac_apply_finset,
     ENNReal.toReal_sum fun _ _ ↦ ENNReal.natCast_ne_top _]
   simp only [ENNReal.toReal_natCast]
 
 theorem salience_apply_singleton_ne_zero (t : Object) : salience {t} ≠ 0 := by
-  rw [salience, Measure.ofWeights_apply_singleton]
+  rw [salience, Measure.finsetSum_smul_dirac_singleton]
   cases t <;> simp [listenerChoice]
 
 /-! ### The literal listener and the speakers -/

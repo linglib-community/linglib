@@ -91,10 +91,10 @@ noncomputable def exponentiatedPosterior [Countable D] [MeasurableSingletonClass
 
 /-- Methods: the distribution `P(h)^r / ∑ h', P(h')^r`. -/
 noncomputable def exponentiatedPrior (μ : Measure H) (r : ℝ) : Measure H :=
-  (Measure.ofWeights fun h ↦ μ {h} ^ r)[|Set.univ]
+  (∑ h, μ {h} ^ r • Measure.dirac h)[|Set.univ]
 
 instance (μ : Measure H) (r : ℝ) : IsFiniteMeasure (exponentiatedPrior μ r) :=
-  inferInstanceAs (IsFiniteMeasure ((Measure.ofWeights _)[|Set.univ]))
+  inferInstanceAs (IsFiniteMeasure ((∑ h, _ • Measure.dirac h)[|Set.univ]))
 
 theorem exponentiatedPosterior_apply_eq_zero [Countable D] [MeasurableSingletonClass D]
     [MeasurableSingletonClass H] {κ : Kernel H D} {μ : Measure H} {r : ℝ} (hr : 0 < r) {d : D}
@@ -141,13 +141,13 @@ variable [MeasurableSingletonClass H]
 
 theorem exponentiatedPrior_apply_singleton (μ : Measure H) (r : ℝ) (h : H) :
     exponentiatedPrior μ r {h} = (∑ h', μ {h'} ^ r)⁻¹ * μ {h} ^ r := by
-  rw [exponentiatedPrior, cond_apply .univ, Set.univ_inter, Measure.ofWeights_apply_singleton,
-    ← coe_univ, Measure.ofWeights_apply_finset]
+  rw [exponentiatedPrior, cond_apply .univ, Set.univ_inter, Measure.finsetSum_smul_dirac_singleton,
+    ← coe_univ, Measure.finsetSum_smul_dirac_apply_finset]
 
 theorem isProbabilityMeasure_exponentiatedPrior (μ : Measure H) [IsProbabilityMeasure μ] {r : ℝ}
     (hr : 0 ≤ r) : IsProbabilityMeasure (exponentiatedPrior μ r) := by
-  have hZ : Measure.ofWeights (fun h ↦ μ {h} ^ r) Set.univ = ∑ h, μ {h} ^ r := by
-    rw [← coe_univ, Measure.ofWeights_apply_finset]
+  have hZ : (∑ h, μ {h} ^ r • Measure.dirac h) Set.univ = ∑ h, μ {h} ^ r := by
+    rw [← coe_univ, Measure.finsetSum_smul_dirac_apply_finset]
   exact cond_isProbabilityMeasure_of_finite (hZ ▸ sum_rpow_ne_zero μ r)
     (hZ ▸ sum_rpow_ne_top μ hr)
 
@@ -269,15 +269,15 @@ theorem isProbabilityMeasure_prior [NeZero k] {α : ℝ} (hα : 0 < α) :
 /-- Eqs. (3)–(4): the data produced by a language. -/
 noncomputable def produce (P : Measure (Fin n)) (ε : ℝ) :
     Kernel (Fin n → Fin k) (Fin m → Fin n × Fin k) :=
-  Kernel.ofFunOfCountable fun h ↦ Measure.pi fun _ ↦ Measure.ofRealWeights fun d ↦
-    P.real {d.1} * if d.2 = h d.1 then 1 - ε else ε / (k - 1)
+  Kernel.ofFunOfCountable fun h ↦ Measure.pi fun _ ↦ ∑ d,
+    ENNReal.ofReal (P.real {d.1} * if d.2 = h d.1 then 1 - ε else ε / (k - 1)) • Measure.dirac d
 
 theorem produce_apply_singleton (P : Measure (Fin n)) (ε : ℝ) (h : Fin n → Fin k)
     (d : Fin m → Fin n × Fin k) :
     produce P ε h {d} = ∏ i, ENNReal.ofReal
       (P.real {(d i).1} * if (d i).2 = h (d i).1 then 1 - ε else ε / (k - 1)) := by
   rw [produce, Kernel.ofFunOfCountable_apply, Measure.pi_singleton]
-  simp only [Measure.ofRealWeights, Measure.ofWeights_apply_singleton]
+  simp only [Measure.finsetSum_smul_dirac_singleton]
 
 private theorem sub_one_pos (hk : 2 ≤ k) : (0 : ℝ) < k - 1 := by
   have : (2 : ℝ) ≤ k := by exact_mod_cast hk
@@ -299,9 +299,10 @@ theorem isMarkovKernel_produce (P : Measure (Fin n)) [IsProbabilityMeasure P] {�
     IsMarkovKernel (produce (n := n) (k := k) (m := m) P ε) := by
   have hk' := sub_one_pos hk
   refine ⟨fun h ↦ ?_⟩
-  have : ∀ i : Fin m, IsProbabilityMeasure (Measure.ofRealWeights fun d : Fin n × Fin k ↦
-      P.real {d.1} * if d.2 = h d.1 then 1 - ε else ε / (k - 1)) := fun _ ↦ by
-    refine Measure.isProbabilityMeasure_ofRealWeights
+  have : ∀ i : Fin m, IsProbabilityMeasure (∑ d : Fin n × Fin k,
+      ENNReal.ofReal (P.real {d.1} * if d.2 = h d.1 then 1 - ε else ε / (k - 1)) •
+        Measure.dirac d) := fun _ ↦ by
+    refine Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac
       (fun d ↦ mul_nonneg measureReal_nonneg (by split_ifs <;> first | linarith | positivity)) ?_
     rw [Fintype.sum_prod_type]
     simp_rw [← mul_sum, sum_ite_class hk, mul_one]

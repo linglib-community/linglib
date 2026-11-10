@@ -368,9 +368,13 @@ theorem exists_mem_possible_not_mem_might {θ : ℝ} (h0 : 0 < θ) (h1 : θ ≤ 
       A ∈ possible P ∧ A ∉ P.real ⁻¹' Set.Ioi θ := by
   have hw (i : Fin 2) : 0 ≤ (![θ, 1 - θ] : Fin 2 → ℝ) i := by
     fin_cases i <;> simp <;> linarith
-  set P : Measure (Fin 2) := ∑ i, ENNReal.ofReal (![θ, 1 - θ] i) • Measure.dirac i with hP
-  have hP0 : P.real {0} = θ := by rw [hP, Measure.sum_ofReal_smul_dirac_real_apply hw]; simp
-  refine ⟨P, Measure.isProbabilityMeasure_sum_ofReal_smul_dirac hw (by simp [Fin.sum_univ_two]),
+  set P : Measure (Fin 2) :=
+    ∑ i, ENNReal.ofReal (![θ, 1 - θ] i) • Measure.dirac i with hP
+  have hP0 : P.real {0} = θ := by
+    rw [hP, Measure.finsetSum_ofReal_smul_dirac_real_singleton hw]
+    simp
+  refine ⟨P, Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac hw
+      (by simp [Fin.sum_univ_two]),
     {0}, ?_, ?_⟩
   · rwa [mem_possible_iff, hP0]
   · simp only [Set.mem_preimage, Set.mem_Ioi, hP0, lt_irrefl, not_false_eq_true]

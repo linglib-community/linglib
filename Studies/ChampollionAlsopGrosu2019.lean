@@ -333,31 +333,24 @@ def biasedWeight : FCState → ℕ
   | _ => 1
 
 /-- The state prior. -/
-noncomputable def priorB : Measure FCState := ∑ w, (biasedWeight w : ℝ≥0∞) • Measure.dirac w
+noncomputable def priorB : Measure FCState :=
+  ∑ w, (biasedWeight w : ℝ≥0∞) • Measure.dirac w
 
 /-- The joint prior, the interpretation function drawn uniformly. -/
 noncomputable def jointPriorB : Measure (FCState × Interp) :=
   ∑ p, (biasedWeight p.1 : ℝ≥0∞) • Measure.dirac p
 
 theorem priorB_singleton (w : FCState) : priorB {w} = biasedWeight w :=
-  Measure.sum_smul_dirac_apply_singleton (fun w => (biasedWeight w : ℝ≥0∞)) w
+  Measure.finsetSum_smul_dirac_singleton
 
 theorem jointPriorB_singleton (p : FCState × Interp) : jointPriorB {p} = biasedWeight p.1 :=
-  Measure.sum_smul_dirac_apply_singleton (fun p : FCState × Interp => (biasedWeight p.1 : ℝ≥0∞)) p
+  Measure.finsetSum_smul_dirac_singleton
 
 instance : IsFiniteMeasure priorB :=
-  ⟨by
-    rw [priorB, Measure.finsetSum_apply]
-    exact ENNReal.sum_lt_top.mpr fun w _ => by
-      rw [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply_of_mem (Set.mem_univ _), mul_one]
-      exact ENNReal.natCast_lt_top _⟩
+  inferInstanceAs (IsFiniteMeasure (∑ b, _ • Measure.dirac b))
 
 instance : IsFiniteMeasure jointPriorB :=
-  ⟨by
-    rw [jointPriorB, Measure.finsetSum_apply]
-    exact ENNReal.sum_lt_top.mpr fun p _ => by
-      rw [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply_of_mem (Set.mem_univ _), mul_one]
-      exact ENNReal.natCast_lt_top _⟩
+  inferInstanceAs (IsFiniteMeasure (∑ b, _ • Measure.dirac b))
 
 /-- The pragmatic listener at the biased prior. -/
 noncomputable def listenerB (α : ℝ) : Kernel Utterance (FCState × Interp) :=

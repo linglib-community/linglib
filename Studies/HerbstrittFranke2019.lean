@@ -315,9 +315,7 @@ noncomputable def joint : Measure (State × (Obs × Access)) :=
 
 theorem joint_apply_singleton (x : State × (Obs × Access)) :
     joint P A {x} = P {x.1} * A {x.2.2} * obs x.2.2 x.1 {x.2.1} := by
-  simp only [joint, Measure.coe_finsetSum, Finset.sum_apply, Measure.coe_smul, Pi.smul_apply,
-    smul_eq_mul, Measure.dirac_apply, Set.indicator_apply, Set.mem_singleton_iff, Pi.one_apply,
-    mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
+  rw [joint, Measure.finsetSum_smul_dirac_singleton]
 
 variable [IsFiniteMeasure P] [IsFiniteMeasure A]
 
