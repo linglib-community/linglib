@@ -92,7 +92,7 @@ at the evaluation world if the antecedent is true there, and asserts that every 
 of the epistemic state is a consequent-world. -/
 def ifKP (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) where
   atIssue _ := ∀ w' ∈ EP, p.atIssue w' → q.atIssue w'
-  notAtIssue w := p.notAtIssue w ∧ (p.atIssue w → q.notAtIssue w)
+  notAtIssue := (p.impFilter q).notAtIssue
 
 theorem ifKP_notAtIssue_of_not_atIssue {p : TwoDim W (W → Prop)} (q : TwoDim W (W → Prop))
     {w : W} (hp : p.notAtIssue w) (h : ¬ p.atIssue w) : (ifKP EP p q).notAtIssue w :=

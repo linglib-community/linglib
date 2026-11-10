@@ -6,53 +6,41 @@ public import Linglib.Logic.Trivalent.Pointwise
 /-!
 # Conventional implicature
 
-This file defines two-dimensional meanings, the carrier of Potts's logic of conventional
-implicatures (CIs). A two-dimensional meaning has an at-issue value, which composes as usual,
-and not-at-issue content, a proposition the speaker contributes without putting it at issue;
-`TwoDim W α` pairs an at-issue value of type `α` with not-at-issue content over worlds `W`.
-Not-at-issue content only accumulates, so `TwoDim W` is the writer monad over propositions
-under meet. Applying an at-issue operator with `f <$> p` passes the not-at-issue content up
-(`map_notAtIssue`), and binding with `p >>= f` lets at-issue content feed later not-at-issue
-content but never the reverse (`bind_atIssue`). Potts's rule of CI application, which applies a
-CI functor `f` to an at-issue argument and returns the argument unmodified, is
-`p >>= fun a ↦ ⟨a, f a⟩`. The connectives `neg`, `and`, `or` and `imp` act on at-issue
-propositions and meet the not-at-issue content of their parts, so CIs project from under every
-connective.
+A two-dimensional meaning `TwoDim W α` pairs an at-issue value of type `α` with not-at-issue
+content, a proposition over worlds `W` that the speaker contributes without putting it at issue.
+Not-at-issue content only accumulates, so `TwoDim W` is the writer monad over propositions under
+meet. Potts's rule of [CI application](##ConventionalImplicature.TwoDim.ciApply) is a bind that
+hands its at-issue argument on unmodified, the connectives combine at-issue content
+applicatively, so that CIs project from under each of them, and [conjoining the CIs a parsetree
+logs](##ConventionalImplicature.TwoDim.ofWriter_bind) is a monad morphism.
 
-Potts collects the CIs of a parsetree at its root, and Giorgolo and Asudeh recast that
-collection as a writer monad whose log lists the CIs. The map `ofWriter` conjoins such a log.
-It is a monad morphism (`ofWriter_pure`, `ofWriter_bind`), so composing two-dimensional meanings
-node by node predicts what collecting at the root does. Conjoining forgets how the log was
-itemized, for instance how often a CI was contributed (`ofWriter_not_injective`).
-
-Karttunen and Peters treat presupposition the same way, as not-at-issue content. A
-two-dimensional proposition evaluates to a trivalent one (`toTrivalent`), undefined where its
-not-at-issue content fails, and the connectives here then evaluate to the Weak Kleene ones
-(`toTrivalent_and`). The two part at Karttunen's filtering: a filtering conditional presupposes
-at most what the unfiltered one does (`imp_notAtIssue_subset_compl_gapExt`), and less in
-general, because its antecedent's at-issue content can satisfy its consequent's presupposition,
-which no at-issue operator on two-dimensional meanings allows (`exists_notAtIssue_ne_compl_gapExt`).
-Two operations read the at-issue content where the not-at-issue content fails, and so are no
-trivalent operations: Karttunen and Peters's symmetric disjunction (`orKPSymmetric_not_trivalent`)
-and embedding under a negative factive (`negFactive`).
-
-## Main definitions
-
-* `TwoDim`: an at-issue value and not-at-issue content, with its `Monad` instance.
-* `TwoDim.neg`, `TwoDim.and`, `TwoDim.or`, `TwoDim.imp`: the connectives on propositions.
-* `TwoDim.ofWriter`: the conjunction of a writer's log of CIs.
-* `TwoDim.toTrivalent`: the trivalent proposition, undefined where the not-at-issue content fails.
-* `TwoDim.orKPSymmetric`, `TwoDim.negFactive`: the symmetric two-dimensional disjunction and
-  embedding under a negative factive.
+Read as a presupposition, the not-at-issue content makes a two-dimensional proposition
+[trivalent](##ConventionalImplicature.TwoDim.toTrivalent), and the connectives become the Weak
+Kleene ones. Karttunen's filtering conditional is
+[a bind](##ConventionalImplicature.TwoDim.impFilter), since its antecedent's at-issue content
+decides whether its consequent's presupposition projects; it evaluates to
+[the Middle Kleene conditional](##ConventionalImplicature.TwoDim.toTrivalent_impFilter), and [no
+applicative combination](##ConventionalImplicature.TwoDim.exists_seq_notAtIssue_ne_impFilter)
+presupposes what it does. The symmetric disjunction reads at-issue content where the not-at-issue
+content fails, and so is [no trivalent
+operation](##ConventionalImplicature.TwoDim.orKPSymmetric_not_trivalent).
 
 ## Implementation notes
 
-The not-at-issue dimension is the meet of the collected content rather than the collection, so a
-repeated CI adds nothing. That suits content whose repetition is redundant, but not the
-strengthening Potts reports for repeated expressives, which needs graded expressive content.
-The dimension also carries not-at-issue content that is not a CI in Potts's sense, such as the
-appositive impositions of AnderBois, Brasoveanu and Henderson and evidential content. How an
-utterance updates the context with each kind is not modelled here.
+* Potts interprets a parsetree as its root's at-issue term with the set of CI propositions on its
+  nodes. The not-at-issue dimension here is the meet of that collection, so [a repeated CI adds
+  nothing](##ConventionalImplicature.TwoDim.ofWriter_not_injective). That suits content whose
+  repetition is redundant, but not the strengthening Potts reports for repeated expressives,
+  which needs graded expressive content.
+* The dimension also carries not-at-issue content that is not a CI in Potts's sense, such as
+  presuppositions, the appositive impositions of AnderBois, Brasoveanu and Henderson, and
+  evidential content. How an utterance updates the context with each kind is not modelled here.
+
+## TODO
+
+* Yagi presents the symmetric disjunction as a departure from an asymmetric rule of Karttunen
+  and Peters, and Sharvit presents it as their rule. The 1979 chapter has not been checked, so
+  `orKPSymmetric` is attributed to neither reading.
 
 ## References
 
@@ -60,11 +48,14 @@ utterance updates the context with each kind is not modelled here.
 * [potts-2007b]
 * [giorgolo-asudeh-2012]
 * [karttunen-1973]
+* [peters-1979]
 * [anderbois-brasoveanu-henderson-2015]
 * [karttunen-peters-1979]
 * [yagi-2025]
+* [sharvit-2025]
 * [kalomoiros-schwarz-2021]
 * [heim-1992]
+* [van-der-sandt-1992]
 * [delpinal-bassi-sauerland-2024]
 -/
 
@@ -127,6 +118,18 @@ instance : LawfulMonad (TwoDim W) := LawfulMonad.mk' (TwoDim W)
   (bind_assoc := fun _ _ _ ↦ TwoDim.ext rfl (inf_assoc ..))
   (bind_pure_comp := fun _ _ ↦ TwoDim.ext rfl (inf_top_eq _))
   (bind_map := fun _ _ ↦ rfl)
+
+/-! ### CI application -/
+
+/-- CI application ([potts-2005]) applies a CI functor `f` to an at-issue argument, hands the
+argument on unmodified and adds the result to the not-at-issue content. -/
+def ciApply (f : α → W → Prop) (p : TwoDim W α) : TwoDim W α := p >>= fun a ↦ ⟨a, f a⟩
+
+@[simp] theorem ciApply_atIssue (f : α → W → Prop) (p : TwoDim W α) :
+    (p.ciApply f).atIssue = p.atIssue := rfl
+
+@[simp] theorem ciApply_notAtIssue (f : α → W → Prop) (p : TwoDim W α) :
+    (p.ciApply f).notAtIssue = p.notAtIssue ⊓ f p.atIssue := rfl
 
 /-! ### Connectives -/
 
@@ -235,26 +238,41 @@ theorem toTrivalent_imp :
   by_cases h : p.notAtIssue w <;> by_cases h' : q.notAtIssue w <;> by_cases a : p.atIssue w <;>
     by_cases b : q.atIssue w <;> simp [toTrivalent, h, h', a, b, himp_eq] <;> rfl
 
-theorem imp_notAtIssue_subset_compl_gapExt :
-    {w | (p.imp q).notAtIssue w} ⊆
-      (Trivalent.gapExt fun w ↦ (p.toTrivalent w)ᶜ.joinMiddle (q.toTrivalent w))ᶜ := fun w h ↦ by
-  simp only [Set.mem_ofPred_eq, imp_notAtIssue, Pi.inf_apply, inf_Prop_eq] at h
-  simp [h.1, h.2]
+/-- The filtering conditional presupposes what its antecedent does, and what its consequent does
+only where the antecedent's at-issue content holds. This is the conditional presupposition by
+which [peters-1979] renders the filter of [karttunen-1973], and the one [sharvit-2025] gives for
+the connectives of [karttunen-peters-1979]. -/
+def impFilter : TwoDim W (W → Prop) := p >>= fun a ↦ ⟨a ⇨ q.atIssue, a ⇨ q.notAtIssue⟩
 
-theorem exists_notAtIssue_ne_compl_gapExt [Nonempty W] :
+@[simp] theorem impFilter_atIssue : (p.impFilter q).atIssue = p.atIssue ⇨ q.atIssue := rfl
+
+@[simp] theorem impFilter_notAtIssue :
+    (p.impFilter q).notAtIssue = p.notAtIssue ⊓ (p.atIssue ⇨ q.notAtIssue) := rfl
+
+theorem imp_notAtIssue_le_impFilter_notAtIssue :
+    (p.imp q).notAtIssue ≤ (p.impFilter q).notAtIssue :=
+  inf_le_inf_left _ le_himp
+
+/-- The filtering conditional evaluates to the Middle Kleene conditional of [peters-1979]. -/
+theorem toTrivalent_impFilter :
+    (p.impFilter q).toTrivalent w = ((p.toTrivalent w)ᶜ).joinMiddle (q.toTrivalent w) := by
+  by_cases h : p.notAtIssue w <;> by_cases h' : q.notAtIssue w <;> by_cases a : p.atIssue w <;>
+    by_cases b : q.atIssue w <;> simp [toTrivalent, h, h', a, b, himp_eq]
+
+/-- Filtering needs the bind: an at-issue operator applied to two meanings presupposes the same
+whatever their at-issue content, so none presupposes what the filtering conditional does. -/
+theorem exists_seq_notAtIssue_ne_impFilter [Nonempty W] :
     ∃ p q : TwoDim W (W → Prop), ∀ f : (W → Prop) → (W → Prop) → W → Prop,
-      {w | (f <$> p <*> q).notAtIssue w} ≠
-        (Trivalent.gapExt fun w ↦ (p.toTrivalent w)ᶜ.joinMiddle (q.toTrivalent w))ᶜ := by
+      (f <$> p <*> q).notAtIssue ≠ (p.impFilter q).notAtIssue := by
   refine ⟨⟨⊥, ⊤⟩, ⟨⊥, ⊥⟩, fun f h ↦ ?_⟩
   obtain ⟨w⟩ := ‹Nonempty W›
-  have := congrArg (w ∈ ·) h
-  simp at this
+  simpa using congrFun h w
 
-/-- The symmetric two-dimensional disjunction of the [karttunen-peters-1979] tradition projects
-`(A(ψ) ∨ Π(φ)) ∧ (A(φ) ∨ Π(ψ))` and asserts `A(φ) ∨ A(ψ)`. The literal 1979 formulation was
-asymmetric, projecting the first disjunct's presupposition unconditionally; this is the symmetric
-variant of [yagi-2025]'s Definition 2, for whose symmetry [kalomoiros-schwarz-2021] give
-experimental support. -/
+/-- The symmetric two-dimensional disjunction presupposes `(A(ψ) ∨ Π(φ)) ∧ (A(φ) ∨ Π(ψ))` and
+asserts `A(φ) ∨ A(ψ)`: each disjunct's presupposition projects unless the other disjunct's
+at-issue content holds. It is [yagi-2025]'s Definition 2 and the disjunction [sharvit-2025]
+gives for the connectives of [karttunen-peters-1979]; [kalomoiros-schwarz-2021] give experimental
+support for the symmetry. -/
 def orKPSymmetric : TwoDim W (W → Prop) :=
   ⟨p.atIssue ⊔ q.atIssue, fun w ↦ (q.atIssue w ∨ p.notAtIssue w) ∧ (p.atIssue w ∨ q.notAtIssue w)⟩
 
@@ -281,10 +299,10 @@ theorem orKPSymmetric_not_trivalent (w : W) :
   exact absurd (h₁.trans h₂.symm) (by decide)
 
 /-- Embedding under a negative factive, *x is unaware that p*, presupposes that the complement
-holds and asserts that `x` does not believe its at-issue content. Presupposing that the complement
-holds, rather than only its at-issue content as [heim-1992] does for atomic complements, is
-[delpinal-bassi-sauerland-2024]'s treatment; the two part when the complement has its own
-presupposition. -/
+holds, its presupposition included, and asserts that `x` does not believe its at-issue content.
+The complement's presupposition so projects to the evaluation world, the transparent rule of
+[van-der-sandt-1992], and not into `x`'s beliefs, the opaque rule of [heim-1992];
+[delpinal-bassi-sauerland-2024] derive free choice under *unaware* with either. -/
 def negFactive (believes : (W → Prop) → W → Prop) : TwoDim W (W → Prop) :=
   ⟨fun w ↦ ¬ believes p.atIssue w, fun w ↦ p.notAtIssue w ∧ p.atIssue w⟩
 
