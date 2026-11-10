@@ -32,8 +32,8 @@ realization, and lives with the paper that draws it: Keenan and Comrie's ±case 
 resumptive pronouns, as a pronoun bound by the head or a pronounced copy of movement
 (`Studies/Scott2021.lean`).
 
-A restrictive relative clause needs no semantic rule of its own: the composition engine of
-`Semantics/Composition/Tree.lean` interprets it by Predicate Abstraction over the gap and
+A restrictive relative clause needs no semantic rule of its own: the interpreter of
+`Semantics/Composition/Interpreter` interprets it by Predicate Abstraction over the gap and
 Predicate Modification with the head, as `Studies/HeimKratzer1998.lean` computes.
 
 ## References

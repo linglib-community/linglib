@@ -733,8 +733,6 @@ import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Causation.Morphological
 import Linglib.Semantics.Composition.Assignment
-import Linglib.Semantics.Composition.Tree
-import Linglib.Semantics.Composition.Ty
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Conditionals.Counterfactual
 import Linglib.Semantics.Conditionals.Counterfactual.Alternatives

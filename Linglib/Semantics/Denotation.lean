@@ -10,9 +10,7 @@ This file defines `Denotes`, the class of objects that have a denotation, and th
 bracket notation `⟦x⟧` for it, Heim and Kratzer's. A lexical item, a reading, or a whole
 sentence denotes in whatever domain its instance names, so the class gives the library one name
 for the map from a semantic object to its meaning, whether that map is compositional or
-stipulated per object. An object that denotes in the Montague type system denotes in
-`Montague.Denotation E W M S`, a semantic type paired with a value in its domain, and is
-thereby a terminal for the composition engine.
+stipulated per object.
 
 ## Implementation notes
 
@@ -24,8 +22,9 @@ intension a `W → _`. Instance resolution requires every type parameter of `D` 
 `α`. An object interpreted relative to data its type does not mention denotes the family over
 that data, `D` quantifying over the model's types with the model's data as Reader arguments, as
 a lexical quantifier denotes a `Quantifier.Det.Family` and an article its readings on every model;
-a tree relative to a lexicon keeps an explicit interpretation function (`Composition.Tree.interp`,
-mathlib's `Term.realize`) and gains an instance once its type is indexed by that data.
+a tree relative to a lexicon keeps an explicit interpretation function
+(`PhraseStructure.Tree.values`, mathlib's `Term.realize`) and gains an instance once its type is
+indexed by that data.
 
 ## Main definitions
 
