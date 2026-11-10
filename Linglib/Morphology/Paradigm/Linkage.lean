@@ -47,8 +47,8 @@ takes the lexeme's root.
 
 `IsTotal`, `IsUnivalent`, and the per-lexeme `IsInvariant`, `IsSuppletive`, and
 `IsOverabundant` (Thornton's cell-mates) are inherited from `Realization`; defectiveness and
-syncretism are its `IsDefective` of the stems and `IsSyncretic` of the form correspondents. Taking `S = M` and
-`ι = id` recovers a single type of property sets. The universal default rule (5) is not a
+syncretism are its `IsDefective` of the stems and `IsSyncretic` of the form correspondents.
+Taking `S = M` and `ι = id` recovers a single type of property sets. The universal default rule (5) is not a
 listed rule of `ofRules` but the fallback of `RuleSet.realizeMinimalD`, the lexeme's
 root.
 
