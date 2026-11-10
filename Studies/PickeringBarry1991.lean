@@ -3,7 +3,6 @@ module
 public import Mathlib.Data.List.OfFn
 public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Syntax.CCG.Interface
-public import Linglib.Semantics.Composition.FirstOrder
 public import Linglib.Data.Examples.PickeringBarry1991
 public import Linglib.Data.Examples.Readers
 
@@ -35,9 +34,9 @@ empty-category account places them. A relative clause spans its empty categories
 The grammar is the paper's: application (76) and forward composition (80b). Its rule (80a),
 which combines a subject with a transitive verb before the object, is forward type raising of
 the subject composed with the verb, so the lexicon carries the raised subject, as in
-`Syntax/CCG/Derivation`. Logical forms are terms over a first-order signature of the names and
-the two transitive verbs, with a higher-order constant for *wonders*, so the lexicon is the same
-in every model of it. An embedded question denotes the property its wh-word abstracts, and a
+`Syntax/CCG/Derivation`. A logical form is a function of what its constants denote, the names,
+the two transitive verbs and *wonders*, so the lexicon is the same in every model of them. An
+embedded question denotes the property its wh-word abstracts, and a
 prepositional phrase the individual its preposition takes; the paper omits both meanings.
 
 ## References
@@ -570,68 +569,43 @@ def der82c : CCG.Derivation String flexible sent := wonders der85
 
 /-! ### Logical forms -/
 
-open Montague
+open Interpreter
 open CCG (LexEntry)
+
+/-- The type of individuals. -/
+abbrev ind : Ty Unit := .base ()
 
 /-- The semantic type of a basic category: a sentence denotes a truth value, a noun phrase and a
 prepositional phrase an individual, and an embedded question the property its wh-word
 abstracts. -/
-def atomTy : Basic → Ty
+def atomTy : Basic → Ty Unit
   | .S => .t
-  | .Q => .e ⇒ .t
-  | .NP => .e
-  | .PP => .e
+  | .Q => ind ⇒ .t
+  | .NP => ind
+  | .PP => ind
 
-/-- The function symbols of the fragment's signature are the names. -/
-inductive Func : ℕ → Type
-  | sue : Func 0
-  | john : Func 0
-  | mary : Func 0
-
-/-- The relation symbols of the fragment's signature are its transitive verbs, the paper's
-`saw(x,y)` and `talked-to(x,y)`, subject first. -/
-inductive Rel : ℕ → Type
-  | saw : Rel 2
-  | talkedTo : Rel 2
-
-/-- The first-order signature of the fragment. -/
-def lang : FirstOrder.Language :=
-  { Functions := Func
-    Relations := Rel }
-
-/-- The constants of the logical forms are the first-order constants of the signature and
-*wonders*, which relates an individual to the property an embedded question denotes. -/
-inductive Const : Ty → Type
-  | fo {ty : Ty} (c : FirstOrderConstant lang ty) : Const ty
-  | wonders : Const ((.e ⇒ .t) ⇒ .e ⇒ .t)
-
-/-- At the world `w` of a model `m`, the first-order constants denote what its structure gives
-them, and *wonders* denotes the relation `wo` between an individual and a property. -/
-def Const.interp (m : Model lang) (w : m.W) (wo : m.E → (m.E → Prop) → Prop) :
-    {ty : Ty} → Const ty → Ty.Domain m.E m.W ty
-  | _, .fo c => c.interp m w
-  | _, .wonders => fun q x ↦ wo x q
-
-/-- The typing of the variables of the logical forms: the index `0` ranges over individuals and
-the others over properties. -/
-def indices : ℕ → Ty
-  | 0 => .e
-  | _ + 1 => .e ⇒ .t
+/-- The constants of the logical forms: the names; the transitive verbs, the paper's `saw(x,y)`
+and `talked-to(x,y)`, taking their object first; and *wonders*, which relates the property an
+embedded question denotes to an individual. -/
+inductive Const : Ty Unit → Type
+  | sue : Const ind
+  | john : Const ind
+  | mary : Const ind
+  | saw : Const (ind ⇒ ind ⇒ .t)
+  | talkedTo : Const (ind ⇒ ind ⇒ .t)
+  | wonders : Const ((ind ⇒ .t) ⇒ ind ⇒ .t)
 
 /-- The lexicon of (79)–(85). A transitive verb denotes its relation object first, the paper's
 `λyλx[saw(x,y)]`. The raised *John*, through which rule (80a) combines the subject with a verb
 before its object, has the lift `λP[P(John)]`. The subject pronoun *who* takes a sentence missing
 its subject and the object pronoun *whom* one missing an object, each passing on the property
 it takes, as *to* passes on its individual. -/
-def lexicon : List (LexEntry String atomTy indices Const) :=
-  [⟨"Sue", np, .const (.fo (.name Func.sue))⟩, ⟨"John", np, .const (.fo (.name Func.john))⟩,
-   ⟨"John", sent / (sent \ np),
-      .lam 1 (.comp .functionalLeft (.var 1) (.const (.fo (.name Func.john))))⟩,
-   ⟨"Mary", np, .const (.fo (.name Func.mary))⟩,
-   ⟨"saw", (sent \ np) / np, .const (.fo (.rel₂ Rel.saw))⟩,
-   ⟨"talked", (sent \ np) / pp, .const (.fo (.rel₂ Rel.talkedTo))⟩,
-   ⟨"to", pp / np, .lam 0 (.var 0)⟩, ⟨"wonders", (sent \ np) / quest, .const .wonders⟩,
-   ⟨"who", quest / (sent \ np), .lam 1 (.var 1)⟩, ⟨"whom", quest / (sent / np), .lam 1 (.var 1)⟩]
+def lexicon : List (LexEntry String atomTy Const) :=
+  [⟨"Sue", np, fun I ↦ I .sue⟩, ⟨"John", np, fun I ↦ I .john⟩,
+   ⟨"John", sent / (sent \ np), fun I P ↦ P (I .john)⟩, ⟨"Mary", np, fun I ↦ I .mary⟩,
+   ⟨"saw", (sent \ np) / np, fun I ↦ I .saw⟩, ⟨"talked", (sent \ np) / pp, fun I ↦ I .talkedTo⟩,
+   ⟨"to", pp / np, fun _ x ↦ x⟩, ⟨"wonders", (sent \ np) / quest, fun I ↦ I .wonders⟩,
+   ⟨"who", quest / (sent \ np), fun _ P ↦ P⟩, ⟨"whom", quest / (sent / np), fun _ P ↦ P⟩]
 
 /-- The words of (82d) with the wh-word `w`. -/
 def words82d (w : String) : List String := ["Sue", "wonders", w, "John", "saw", "Mary"]
@@ -655,18 +629,15 @@ theorem no_der82d (R : CCG.RuleSystem Basic) (w : String) (hw : w = "who" ∨ w 
 
 section Semantics
 
-variable (m : Model lang) (w : m.W) (wo : m.E → (m.E → Prop) → Prop)
-  (g : ∀ n, Ty.Domain m.E m.W (indices n))
+variable {D : Unit → Type} (I : ∀ {ty : Ty Unit}, Const ty → ty.Dom D)
 
 -- (79), (81): in every model both derivations of *John saw Mary* mean `saw(John,Mary)`, the
 -- relation taking its object first.
 theorem der79_der81 :
     (der79.LexIn (lexicon.map LexEntry.toPair) ∧ der81.LexIn (lexicon.map LexEntry.toPair) ∧
       der79.yield = der81.yield) ∧
-    der79.interp lexicon (Const.interp m w wo) g =
-      some (m.pred₂ Rel.saw w (m.const Func.mary w) (m.const Func.john w)) ∧
-    der81.interp lexicon (Const.interp m w wo) g =
-      some (m.pred₂ Rel.saw w (m.const Func.mary w) (m.const Func.john w)) :=
+    der79.interp lexicon I = some (I .saw (I .mary) (I .john)) ∧
+    der81.interp lexicon I = some (I .saw (I .mary) (I .john)) :=
   ⟨by decide, rfl, rfl⟩
 
 /-- In every model, each wh-word of (82a–c) fills the argument role that its embedded verb or
@@ -675,16 +646,13 @@ over its object and over the object of *to*. -/
 theorem embedded_questions :
     (der82a.LexIn (lexicon.map LexEntry.toPair) ∧
       unwords der82a.yield ++ "." = ex82a.primaryText ∧
-      der82a.interp lexicon (Const.interp m w wo) g =
-        some (wo (m.const Func.sue w) fun x ↦ m.pred₂ Rel.saw w (m.const Func.mary w) x)) ∧
+      der82a.interp lexicon I = some (I .wonders (fun x ↦ I .saw (I .mary) x) (I .sue))) ∧
     (der82b.LexIn (lexicon.map LexEntry.toPair) ∧
       unwords der82b.yield ++ "." = ex82b.primaryText ∧
-      der82b.interp lexicon (Const.interp m w wo) g =
-        some (wo (m.const Func.sue w) fun y ↦ m.pred₂ Rel.saw w y (m.const Func.john w))) ∧
+      der82b.interp lexicon I = some (I .wonders (fun y ↦ I .saw y (I .john)) (I .sue))) ∧
     (der82c.LexIn (lexicon.map LexEntry.toPair) ∧
       unwords der82c.yield ++ "." = ex82c.primaryText ∧
-      der82c.interp lexicon (Const.interp m w wo) g =
-        some (wo (m.const Func.sue w) fun y ↦ m.pred₂ Rel.talkedTo w y (m.const Func.john w))) :=
+      der82c.interp lexicon I = some (I .wonders (fun y ↦ I .talkedTo y (I .john)) (I .sue))) :=
   ⟨⟨by decide, by decide +kernel, rfl⟩, ⟨by decide, by decide +kernel, rfl⟩,
     ⟨by decide, by decide +kernel, rfl⟩⟩
 
