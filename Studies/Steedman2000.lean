@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Steedman2000
 public import Studies.HeimKratzer1998
+public import Linglib.Semantics.Composition.FirstOrder
 public import Linglib.Fragments.English.Coordination
 public import Linglib.Semantics.Coordinator
 public import Linglib.Syntax.CCG.Derivation
@@ -141,6 +142,33 @@ The logical forms of the lexicons are closed, so their meanings do not depend on
 def assignment {E : Type} (x : E) : ∀ n, Ty.Domain E Unit (indices n)
   | 0 => x
   | _ + 1 => fun _ ↦ True
+
+/-- The toy composition model is extensional, with the toy structure of
+`Studies/HeimKratzer1998` at its one world. -/
+def toyModel : Model toyLang where
+  E := ToyEntity
+  W := Unit
+  interp _ := toyStructure
+
+namespace Toy
+
+/-! The per-symbol abbreviations have the types `toyLang.Constants` and `toyLang.Relations n`, so
+symbols elaborate without unfolding `toyLang`. -/
+
+abbrev johnConst : toyLang.Constants := .john
+abbrev maryConst : toyLang.Constants := .mary
+abbrev pizzaConst : toyLang.Constants := .pizza
+abbrev bookConst : toyLang.Constants := .book
+abbrev sleepRel : toyLang.Relations 1 := .sleep
+abbrev laughRel : toyLang.Relations 1 := .laugh
+abbrev studentRel : toyLang.Relations 1 := .student
+abbrev personRel : toyLang.Relations 1 := .person
+abbrev pizzaRel : toyLang.Relations 1 := .pizza
+abbrev seeRel : toyLang.Relations 2 := .see
+abbrev eatRel : toyLang.Relations 2 := .eat
+abbrev readRel : toyLang.Relations 2 := .read
+
+end Toy
 
 open Toy in
 /-- The toy English fragment over the signature of the toy model. Names, verbs and the

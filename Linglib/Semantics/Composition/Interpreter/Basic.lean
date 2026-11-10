@@ -73,7 +73,7 @@ inductive Sym (G : Grammar.{u, v} T) : Signature T → T → Type (max u v)
   | binary {a b c : T} (m : G.Binary a b c) : Sym G (.prod (.of a) (.of b)) c
 
 /-- The many-sorted language of a grammar. -/
-def language (G : Grammar.{u, v} T) : Language.{u, max u v} T := ⟨G.Sym⟩
+@[reducible] def language (G : Grammar.{u, v} T) : Language.{u, max u v} T := ⟨G.Sym⟩
 
 /-- The structure for a grammar's language that operations for its rules make. -/
 @[instance_reducible] def «structure» (unary : ∀ {a b : T}, G.Unary a b → D a → D b)
@@ -82,8 +82,17 @@ def language (G : Grammar.{u, v} T) : Language.{u, max u v} T := ⟨G.Sym⟩
     | .unary s, x => unary s x
     | .binary m, (x, y) => binary m x y
 
+@[simp] theorem structure_funMap_unary (unary : ∀ {a b : T}, G.Unary a b → D a → D b)
+    (binary : ∀ {a b c : T}, G.Binary a b c → D a → D b → D c) {a b : T} (s : G.Unary a b)
+    (x : D a) : (Grammar.structure unary binary).funMap (.unary s) x = unary s x := rfl
+
+@[simp] theorem structure_funMap_binary (unary : ∀ {a b : T}, G.Unary a b → D a → D b)
+    (binary : ∀ {a b c : T}, G.Binary a b c → D a → D b → D c) {a b c : T} (m : G.Binary a b c)
+    (p : D a × D b) : (Grammar.structure unary binary).funMap (.binary m) p = binary m p.1 p.2 :=
+  rfl
+
 /-- The rules of two grammars together. -/
-def sum (G H : Grammar.{u, v} T) : Grammar.{u, v} T where
+@[reducible] def sum (G H : Grammar.{u, v} T) : Grammar.{u, v} T where
   Unary a b := G.Unary a b ⊕ H.Unary a b
   Binary a b c := G.Binary a b c ⊕ H.Binary a b c
 
@@ -141,7 +150,47 @@ abbrev binary {a b c : T} (m : G.Binary a b c) (d₁ : Deriv G W a) (d₂ : Deri
     Deriv G W c :=
   .func (L := G.language) (Sym.binary m) (.prod d₁ d₂)
 
+variable (M : G.language.Structure D) (ρ : ∀ {a : T}, W a → D a)
+
+@[simp] theorem realize_leaf {a : T} (x : W a) : (leaf x : Deriv G W a).realize M ρ = ρ x := rfl
+
+@[simp] theorem realize_unary {a b : T} (s : G.Unary a b) (d : Deriv G W a) :
+    (unary s d).realize M ρ = M.funMap (.unary s) (d.realize M ρ) := rfl
+
+@[simp] theorem realize_binary {a b c : T} (m : G.Binary a b c) (d₁ : Deriv G W a)
+    (d₂ : Deriv G W b) :
+    (binary m d₁ d₂).realize M ρ = M.funMap (.binary m) (d₁.realize M ρ, d₂.realize M ρ) := rfl
+
 end Deriv
+
+/-- Induction on derivations: a property of every lexical item that the unary and the binary
+rules preserve holds of every derivation. -/
+theorem Deriv.induction {P : ∀ {a : T}, Deriv G W a → Prop}
+    (leaf : ∀ {a : T} (x : W a), P (Deriv.leaf x))
+    (unary : ∀ {a b : T} (s : G.Unary a b) (d : Deriv G W a), P d → P (Deriv.unary s d))
+    (binary : ∀ {a b c : T} (m : G.Binary a b c) (d₁ : Deriv G W a) (d₂ : Deriv G W b),
+      P d₁ → P d₂ → P (Deriv.binary m d₁ d₂)) {a : T} (d : Deriv G W a) : P d := by
+  have key : ∀ {σ : Signature T} (t : G.language.Term W σ),
+      (∀ a (h : σ = .of a), P (h ▸ t)) ∧
+        ∀ a b (h : σ = .prod (.of a) (.of b)),
+          ∃ d₁ d₂, h ▸ t = Language.Term.prod d₁ d₂ ∧ P d₁ ∧ P d₂ := by
+    intro σ t
+    induction t with
+    | var x => exact ⟨fun _ h ↦ by cases h; exact leaf x, fun _ _ h ↦ nomatch h⟩
+    | func f r ih =>
+      refine ⟨fun _ h ↦ ?_, fun _ _ h ↦ nomatch h⟩
+      cases h
+      cases f with
+      | unary s => exact unary s r (ih.1 _ rfl)
+      | binary m =>
+        obtain ⟨d₁, d₂, rfl, h₁, h₂⟩ := ih.2 _ _ rfl
+        exact binary m d₁ d₂ h₁ h₂
+    | prod t₁ t₂ ih₁ ih₂ =>
+      refine ⟨(fun _ h ↦ nomatch h), fun _ _ h ↦ ?_⟩
+      cases h
+      exact ⟨t₁, t₂, rfl, ih₁.1 _ rfl, ih₂.1 _ rfl⟩
+    | nil => exact ⟨(fun _ h ↦ nomatch h), fun _ _ h ↦ nomatch h⟩
+  exact (key d).1 a rfl
 
 /-- A bare structure over node labels `N` and leaves `L`: what a type-driven interpreter asks of
 the syntax. -/
@@ -188,6 +237,25 @@ def derivs (I : Interpreter G N) (lex : L → List (Σ a, W a)) :
   | .binary n s₁ s₂ => (I.derivs lex s₁).flatMap fun ⟨a, d₁⟩ ↦
       (I.derivs lex s₂).flatMap fun ⟨b, d₂⟩ ↦
         (I.binary n a b).map fun ⟨c, m⟩ ↦ ⟨c, .binary m d₁ d₂⟩
+
+/-- Where a node admits at most one rule for given daughters and a word is at most one item, a
+bare structure has at most one derivation. -/
+theorem length_derivs_le_one {I : Interpreter G N} {lex : L → List (Σ a, W a)}
+    (hu : ∀ n a, (I.unary n a).length ≤ 1) (hb : ∀ n l r, (I.binary n l r).length ≤ 1)
+    (hl : ∀ x, (lex x).length ≤ 1) : ∀ s : Skeleton N L, (I.derivs lex s).length ≤ 1
+  | .leaf x => by simpa [derivs] using hl x
+  | .unary n s => by
+    have ih := length_derivs_le_one hu hb hl s
+    match h : I.derivs lex s, ih with
+    | [], _ => simp [derivs, h]
+    | [⟨a, d⟩], _ => simpa [derivs, h] using hu n a
+  | .binary n s₁ s₂ => by
+    have ih₁ := length_derivs_le_one hu hb hl s₁
+    have ih₂ := length_derivs_le_one hu hb hl s₂
+    match h₁ : I.derivs lex s₁, h₂ : I.derivs lex s₂, ih₁, ih₂ with
+    | [], _, _, _ => simp [derivs, h₁]
+    | [_], [], _, _ => simp [derivs, h₁, h₂]
+    | [⟨a, d₁⟩], [⟨b, d₂⟩], _, _ => simpa [derivs, h₁, h₂] using hb n a b
 
 /-- The values of the derivations over a bare structure, for a lexicon of typed items whose
 values `ρ` gives. The derivations are found from the types alone. -/

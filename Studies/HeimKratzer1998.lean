@@ -1,13 +1,14 @@
 module
 
-public import Linglib.Semantics.Composition.Tree
-public import Linglib.Semantics.Composition.Readings
-public import Linglib.Semantics.Composition.QuantifierRaising
+public import Linglib.Syntax.Tree.QuantifierRaising
 public import Linglib.Semantics.Composition.Extensional
-public import Linglib.Semantics.Composition.Assignment
-public import Linglib.Semantics.Composition.FirstOrder
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Semantics.Composition.Partial
+public import Mathlib.ModelTheory.Basic
+public import Mathlib.Data.Fin.VecNotation
+public import Linglib.Semantics.Composition.Interpreter.CallByValue
+public import Linglib.Semantics.Composition.Interpreter.Constituency
+public import Linglib.Semantics.Composition.Interpreter.Sorts
+public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
 public import Linglib.Semantics.Quantification.Polyadic
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Data.Examples.HeimKratzer1998
@@ -16,58 +17,57 @@ public import Linglib.Data.Examples.HeimKratzer1998
 # Heim and Kratzer (1998): Semantics in Generative Grammar
 
 Heim and Kratzer interpret a tree by a few general rules: Functional Application, Predicate
-Modification, Predicate Abstraction over a binder index, and, from Chapter 4, partial
-denotations, with a Fregean definite article that may leave a node undefined. The library's
-engines `Tree.interp` and `Tree.interpPartial` implement these rules. Here the book's rules are
-transcribed as interpretation relations that the engines extend, and the engines are run on the
-toy model for the book's definite descriptions (Chapter 4), relative clauses (Chapter 5) and
-quantifier scope (Chapter 7). For attitude reports (Chapter 12) the words that vary with the world
-read one, after Bumford and Charlow, and Intensional Functional Application, which feeds *believes*
-the intension of its complement, is [application mapped over that
-reader](##propositions_maryBelievesJanIsLoyal), so that *Mary believes Jan is loyal* and *Jan is
-loyal*, *Dick is deceitful* can be true while *Mary believes Dick is deceitful* is false. Read at
-one world, a complement of *believes* is its truth value, and the verb's complement is a
-nonextensional context exactly when the subject's beliefs leave open another world.
+Modification, and Predicate Abstraction over a binder index. The rules are one grammar over the
+book's types, with two families of denotations: those of Chapter 3, and from Chapter 4 the
+partial functions that the Fregean article needs. [No two rules apply to the same
+daughters](##HeimKratzer1998.length_derivs_le_one), the "pedantic" rules [agree with the plain
+ones](##HeimKratzer1998.rel_realize) where no word is partial, a definite description may [have
+a derivation and no value](##HeimKratzer1998.pmeanings_theStudent), and a determiner's
+object-position entry [composes in situ](##HeimKratzer1998.derivs_inSitu). Quantifier Raising
+(Chapter 7) gives *every person sees some person* [two logical forms with different
+denotations](##HeimKratzer1998.meanings_surface_ne_inverse), and [changes nothing for a phrase
+that denotes an individual](##HeimKratzer1998.realize_raise). For attitude reports
+(Chapter 12) an extensional semantics [cannot tell two true complements
+apart](##HeimKratzer1998.emeanings_agree), and Intensional Functional Application gives
+*believes* [the proposition its complement
+expresses](##HeimKratzer1998.imeanings_maryBelievesJanIsLoyal).
 
 ## Implementation notes
 
-The toy fragment's words stand in for the book's: *student who sleeps* for *house which is
-empty*, *every person sees some person* for "Some publisher offended every linguist". The type
-`t` denotes in `Prop` (`Montague.Ty.Domain`), so the engines produce truth conditions as
-propositions. In Chapter 12 *is* is the identity on predicates, the book's emptiness of *is*, and
-(11d) is the falsity of (10) at the actual world, since the fragment has no negation.
+* The toy fragment's words stand in for the book's: *student who sleeps* for *house which is
+  empty*, *every person sees some person* for "Some publisher offended every linguist".
+* A partial function is a function into `Part`, at every function type
+  (`Interpreter.Ty.cbv`), and a partial assignment a function from indices into `Part`. A tree's
+  denotations are those of its derivations, so an uninterpretable tree has none and a
+  presupposition failure has one that is undefined.
+* The article is not a word of the plain rules, which have total denotations only.
+* In Chapter 12 *is* is the identity on predicates, the book's emptiness of *is*, and (11d) is
+  the falsity of (10) at the actual world, since the fragment has no negation.
 
 ## References
 
 * [heim-kratzer-1998]
-* [bumford-charlow-2026]
 -/
 
 @[expose] public section
 
 namespace HeimKratzer1998
 
-open Montague
-open scoped Assignment
 open PhraseStructure
 open PhraseStructure.Tree
 open Quantifier Quantifier.Det
 open Quantifier.Polyadic (iterate iterate_every_some_of_some_every)
 open scoped Denotes
 
-/-! ### Model and lexicon
+/-! ### Model
 
-`toyModel` is a small extensional model with four entities (John, Mary, a pizza and a book), one
-world, and a signature of four constants and eight content relations, which `toyStructure`
-interprets as equalities on the entities. The fragment is of the kind the book interprets, with
-proper names, intransitive and transitive verbs, and common nouns. The words `toyWords`
-translate English word forms to symbols, and the lexicon `toyLexicon` and the denotations
-`Toy.sleeps`, `Toy.sees`, … are read off the model. The signature follows mathlib's
-concrete-language idiom (`Mathlib/ModelTheory/Algebra/Ring/Basic.lean`), with arity-indexed
-symbol inductives and per-symbol abbreviations in `Toy`. The structure is a closed term, so a
-claim about particular entities reduces by `rfl` to an equality on `ToyEntity`. Binary relations
-take the subject first in the structure and the object first as transitive-verb denotations, as
-`Model.pred₂` does. -/
+A small model with four entities (John, Mary, a pizza and a book) and a signature of four
+constants and eight content relations, which `toyStructure` interprets as equalities on the
+entities. The signature follows mathlib's concrete-language idiom
+(`Mathlib/ModelTheory/Algebra/Ring/Basic.lean`), with arity-indexed symbol inductives, and the
+structure is a closed term, so a claim about particular entities reduces by `rfl`. Binary
+relations take the subject first in the structure and the object first as transitive-verb
+denotations. -/
 
 section ToyModel
 
@@ -125,490 +125,420 @@ abbrev toyStructure : toyLang.Structure ToyEntity where
     | .eat, v => (v 0 = .john ∨ v 0 = .mary) ∧ v 1 = .pizza
     | .read, v => (v 0 = .john ∨ v 0 = .mary) ∧ v 1 = .book
 
-/-- The toy composition model is extensional, with the toy structure at its one world. -/
-def toyModel : Model toyLang where
-  E := ToyEntity
-  W := Unit
-  interp _ := toyStructure
-
 namespace Toy
 
-/-! The per-symbol abbreviations have the types `toyLang.Constants` and `toyLang.Relations n`, so
-symbols elaborate without unfolding `toyLang`. -/
+/-! The denotations of the content words, read off the structure. -/
 
-abbrev johnConst : toyLang.Constants := .john
-abbrev maryConst : toyLang.Constants := .mary
-abbrev pizzaConst : toyLang.Constants := .pizza
-abbrev bookConst : toyLang.Constants := .book
-abbrev sleepRel : toyLang.Relations 1 := .sleep
-abbrev laughRel : toyLang.Relations 1 := .laugh
-abbrev studentRel : toyLang.Relations 1 := .student
-abbrev personRel : toyLang.Relations 1 := .person
-abbrev pizzaRel : toyLang.Relations 1 := .pizza
-abbrev seeRel : toyLang.Relations 2 := .see
-abbrev eatRel : toyLang.Relations 2 := .eat
-abbrev readRel : toyLang.Relations 2 := .read
-
-/-! The denotations of the toy content words are read off the model at its one world. -/
-
-def sleeps : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ sleepRel ()
-def laughs : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ laughRel ()
-def student : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ studentRel ()
-def person : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ personRel ()
-def pizza : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ pizzaRel ()
-def sees : Ty.Domain ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ seeRel ()
-def eats : Ty.Domain ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ eatRel ()
-def reads : Ty.Domain ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ readRel ()
+def sleeps (x : ToyEntity) : Prop := toyStructure.RelMap toyRel.sleep ![x]
+def student (x : ToyEntity) : Prop := toyStructure.RelMap toyRel.student ![x]
+def person (x : ToyEntity) : Prop := toyStructure.RelMap toyRel.person ![x]
+def sees (y x : ToyEntity) : Prop := toyStructure.RelMap toyRel.see ![x, y]
 
 end Toy
-
-open Toy in
-/-- The toy content words translate to the symbols of the toy signature. -/
-def toyWords : String → Option ((ty : Ty) × FirstOrderConstant toyLang ty)
-  | "John" => some ⟨_, .name johnConst⟩
-  | "Mary" => some ⟨_, .name maryConst⟩
-  | "sleeps" => some ⟨_, .rel₁ sleepRel⟩
-  | "laughs" => some ⟨_, .rel₁ laughRel⟩
-  | "student" => some ⟨_, .rel₁ studentRel⟩
-  | "person" => some ⟨_, .rel₁ personRel⟩
-  | "pizza" => some ⟨_, .rel₁ pizzaRel⟩
-  | "sees" => some ⟨_, .rel₂ seeRel⟩
-  | "eats" => some ⟨_, .rel₂ eatRel⟩
-  | "reads" => some ⟨_, .rel₂ readRel⟩
-  | _ => none
-
-/-- The toy lexicon is the lexicon the toy words induce over the toy model. -/
-def toyLexicon : Lexicon ToyEntity Unit := toyModel.lexicon toyWords ()
-
-theorem toyLexicon_fst {s : String} {d : Denotation ToyEntity Unit} (h : toyLexicon s = some d) :
-    d.1 = .e ∨ d.1 = (.e ⇒ .t) ∨ d.1 = (.e ⇒ .e ⇒ .t) := by
-  simp only [toyLexicon, Model.lexicon, Option.map_eq_some_iff] at h
-  obtain ⟨c, hc, rfl⟩ := h
-  unfold toyWords at hc
-  split at hc <;> cases hc <;> simp
-
-/-- "John sleeps" composes through `Tree.interp` over the toy lexicon to the model's fact. -/
-example :
-    Tree.interp toyLexicon (fun _ ↦ ToyEntity.john)
-      (.bin (.leaf "John") (.leaf "sleeps") : Tree Unit String) =
-        some ⟨.t, Toy.sleeps ToyEntity.john⟩ := rfl
 
 end ToyModel
 
 open Toy (student person)
 
-/-- A reading as a composition terminal on the entity domain `E`, at the determiner type. -/
-def toDenotation (d : Det.Family.{0}) (E W : Type) [Fintype E] : Denotation E W := ⟨Ty.det, d E⟩
+/-! ### Words and their denotations
 
-/-- The terminals of a set of readings on a domain. -/
-def terminals (s : Set Det.Family.{0}) (E W : Type) [Fintype E] : Set (Denotation E W) :=
-  (toDenotation · E W) '' s
+A word of the fragment is a symbol of the toy signature, a quantificational determiner of the
+English fragment, or the definite article. The words other than the article have total
+denotations, read off the toy structure, and a trace reads the assignment. -/
 
-/-- `objectShift D` is the object-position entry of the determiner `D`, which the book's lexical
-rule (§7.2.1) derives from the basic one. It takes an object-first two-place predicate and the
-subject and quantifies over the object. -/
-def objectShift {E : Type*} (D : Det E) : (E → Prop) → (E → E → Prop) → E → Prop :=
-  fun P R x ↦ D P fun y ↦ R y x
+section Composition
 
-@[simp] theorem objectShift_apply {E : Type*} (D : Det E) (P : E → Prop) (R : E → E → Prop)
-    (x : E) : objectShift D P R x = D P fun y ↦ R y x := rfl
+open Interpreter Interpreter.Grammar MSFirstOrder
 
-/-- The object-position entry of a terminal of the determiner type, the book's lexical rule
-applied to a lexical item, and `none` at any other type. -/
-def objectShift? {E W : Type} (d : Denotation E W) : Option (Denotation E W) :=
-  if h : d.1 = Ty.det then
-    Option.some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .e ⇒ .t) ⇒ .e ⇒ .t,
-      objectShift (h ▸ d.2 : Ty.Domain E W Ty.det)⟩
-  else none
+/-- The words of the fragment. -/
+inductive Word
+  /-- A proper name. -/
+  | name (c : toyFunc 0)
+  /-- A noun or an intransitive verb. -/
+  | pred (r : toyRel 1)
+  /-- A transitive verb. -/
+  | verb (r : toyRel 2)
+  /-- A quantificational determiner. -/
+  | det (w : QuantificationalDeterminer)
+  /-- The definite article. -/
+  | the
+  deriving DecidableEq
 
-/-- The object-position entries the lexical rule derives from a set of readings. -/
-def objectShifts {E W : Type} (s : Set (Denotation E W)) : Set (Denotation E W) :=
-  {d | ∃ d₁ ∈ s, objectShift? d₁ = some d}
+/-- A proper name as a tree. -/
+abbrev name (c : toyFunc 0) : Tree Unit Word := .leaf (.name c)
+/-- A noun or an intransitive verb as a tree. -/
+abbrev pred (r : toyRel 1) : Tree Unit Word := .leaf (.pred r)
+/-- A transitive verb as a tree. -/
+abbrev verb (r : toyRel 2) : Tree Unit Word := .leaf (.verb r)
+/-- A quantificational determiner as a tree. -/
+abbrev det (w : QuantificationalDeterminer) : Tree Unit Word := .leaf (.det w)
 
-/-- The study's stand on the quantificational determiners: *every* and *some*, the words of its
-trees, read as `every` and `Quantifier.Det.some` on the toy domain, and no other word. -/
-def quantifierReading (w : QuantificationalDeterminer) : Option (Denotation ToyEntity Unit) :=
-  if w = English.Determiners.every then some (toDenotation Family.every ToyEntity Unit)
-  else if w = English.Determiners.some_ then some (toDenotation Family.some ToyEntity Unit)
-  else none
+/-- The domains of the base sorts over the toy entities. -/
+abbrev Dom : Base → Type := Base.Dom ToyEntity Unit
 
-theorem quantifierReading_mem {w : QuantificationalDeterminer} {d : Denotation ToyEntity Unit}
-    (h : quantifierReading w = some d) : d ∈ terminals ⟦w⟧ ToyEntity Unit := by
-  simp only [quantifierReading] at h
-  split_ifs at h with he hs <;> cases h <;> subst w
-  · exact Set.mem_image_of_mem _ (QuantificationalDeterminer.denote_mem_denote (s := .every)
-      (by decide))
-  · exact Set.mem_image_of_mem _ (QuantificationalDeterminer.denote_mem_denote (s := .some)
-      (by decide))
+/-- The lexical items with total denotations, by type: names of type e, predicates of type
+⟨e,t⟩, transitive verbs of type ⟨e,⟨e,t⟩⟩, determiners of type ⟨⟨e,t⟩,⟨⟨e,t⟩,t⟩⟩, and traces,
+of type e. -/
+inductive Item : Ty Base → Type
+  | name (c : toyFunc 0) : Item .e
+  | pred (r : toyRel 1) : Item .et
+  | verb (r : toyRel 2) : Item .eet
+  | det (s : Det.Symbol) : Item .det
+  | trace (n : ℕ) : Item .e
 
-/-- The leaf interpretation reads the quantifier words through their readings and the toy
-fragment's nouns and verbs through the toy lexicon. -/
-def lex : QuantificationalDeterminer ⊕ String → Option (Denotation ToyEntity Unit) :=
-  Sum.elim quantifierReading toyLexicon
+/-- The definite article, of type ⟨⟨e,t⟩,e⟩. -/
+inductive Article : Ty Base → Type
+  | the : Article (.et ⇒ .e)
 
-/-- The assignment `g₀` sends every index to John. -/
-def g₀ : Assignment ToyEntity := fun _ ↦ .john
+/-- The readings a determiner may have. -/
+def symbols : List Det.Symbol := [.every, .some, .no, .most, .few, .half, .both, .neither]
+
+/-- The items a leaf may be: a determiner has the readings that its entry in the fragment
+records, a trace is the item of its index, and the article is no total item. -/
+def items : Word ⊕ ℕ → List (Σ a, Item a)
+  | .inl (.name c) => [⟨_, .name c⟩]
+  | .inl (.pred r) => [⟨_, .pred r⟩]
+  | .inl (.verb r) => [⟨_, .verb r⟩]
+  | .inl (.det w) => (symbols.filter (· ∈ w.readings)).map fun s ↦ ⟨_, .det s⟩
+  | .inl .the => []
+  | .inr n => [⟨_, .trace n⟩]
+
+/-- The items a leaf may be, with the article. -/
+def itemsThe : Word ⊕ ℕ → List (Σ a, Item a ⊕ Article a)
+  | .inl .the => [⟨_, .inr .the⟩]
+  | x => (items x).map fun ⟨a, i⟩ ↦ ⟨a, .inl i⟩
+
+/-- The denotation of an item under a total assignment: a transitive verb takes its object
+first, and a trace denotes what the assignment gives its index (the Traces and Pronouns Rule). -/
+noncomputable def Item.val : {a : Ty Base} → Item a → (ℕ → ToyEntity) → a.Dom Dom
+  | _, .name c => fun _ ↦ toyStructure.funMap c ![]
+  | _, .pred r => fun _ x ↦ toyStructure.RelMap r ![x]
+  | _, .verb r => fun _ y x ↦ toyStructure.RelMap r ![x, y]
+  | _, .det s => fun _ ↦ s.denote ToyEntity
+  | _, .trace n => fun g ↦ g n
+
+/-- The denotation of an item under a partial assignment, a partial function at every function
+type: a determiner is defined at partial predicates and reads where they are true, and a trace
+has a denotation where the assignment is defined at its index. -/
+def Item.pval : {a : Ty Base} → Item a → (ℕ → Part ToyEntity) → Part (a.cbv.Dom Dom)
+  | _, .name c => fun _ ↦ .some (toyStructure.funMap c ![])
+  | _, .pred r => fun _ ↦ .some fun x ↦ .some (toyStructure.RelMap r ![x])
+  | _, .verb r => fun _ ↦ .some fun y ↦ .some fun x ↦ .some (toyStructure.RelMap r ![x, y])
+  | _, .det s => fun _ ↦ .some fun f ↦ .some fun g ↦
+      .some (s.denote ToyEntity {x | True ∈ f x} {x | True ∈ g x})
+  | _, .trace n => fun g ↦ g n
+
+/-- The Fregean definite article (5) of §4.4.1: defined at a predicate true of exactly one
+individual, where it is that individual. -/
+noncomputable def the : (.et ⇒ .e : Ty Base).cbv.Dom Dom :=
+  fun f ↦ ⟨∃! x, True ∈ f x, fun h ↦ Classical.choose h⟩
+
+theorem the_dom (f : ToyEntity → Part Prop) : (the f).Dom ↔ ∃! x, True ∈ f x := Iff.rfl
+
+theorem the_eq_some {f : ToyEntity → Part Prop} {a : ToyEntity} (h : ∀ x, True ∈ f x ↔ x = a) :
+    the f = .some a :=
+  have hu : ∃! x, True ∈ f x := ⟨a, (h a).2 rfl, fun y hy ↦ (h y).1 hy⟩
+  Part.eq_some_iff.2 ⟨hu, (h _).1 (Classical.choose_spec hu).1⟩
+
+/-- At a total predicate true of one individual alone, the article is that individual. -/
+theorem the_some {P : ToyEntity → Prop} {a : ToyEntity} (h : ∀ x, P x ↔ x = a) :
+    the (fun x ↦ .some (P x)) = .some a :=
+  the_eq_some fun x ↦ by simp [← h x]
+
+/-- The denotation of an item or the article under a partial assignment. -/
+noncomputable def pval : {a : Ty Base} → Item a ⊕ Article a → (ℕ → Part ToyEntity) →
+    Part (a.cbv.Dom Dom)
+  | _, .inl i => i.pval
+  | _, .inr .the => fun _ ↦ .some the
 
 /-! ### The book's rules
 
-The extensional rules of Chapters 3 to 5, one constructor per rule. The engine at `M = Id`
-extends them. -/
+Functional Application, Predicate Modification and Predicate Abstraction are the rules of one
+grammar over the book's types. Its values relative to an assignment are the denotations of rules
+(11) to (16) of Chapter 5, and its values over partial functions those of the "pedantic" versions,
+which are application, predicate modification and abstraction where every function is partial. -/
 
-section Reference
+/-- The grammar of the book: Functional Application and Predicate Modification of sisters, and
+Predicate Abstraction (16) of §5.3 over individuals. -/
+abbrev grammar : Grammar (Ty Base) :=
+  (Grammar.application.sum .predicateModification).withAbstraction .e
 
-variable {C L E W : Type}
+/-- A denotation relative to a total assignment. -/
+abbrev Val (a : Ty Base) : Type := (ℕ → ToyEntity) → a.Dom Dom
 
-/-- The book's interpretation relation, relative to a leaf interpretation and an assignment. -/
-inductive Denotes (lex : L → Option (Denotation E W)) :
-    Assignment E → Tree C L → Denotation E W → Prop
-  /-- By Terminal Nodes, a leaf denotes what the lexicon gives it. -/
-  | tn {g : Assignment E} {c : C} {w : L} {d : Denotation E W} (h : lex w = some d) :
-      Denotes lex g (.terminal c w) d
-  /-- By Non-Branching Nodes, a node denotes what its only daughter does. -/
-  | nn {g : Assignment E} {c : C} {k : PhraseKind} {t : Tree C L} {d : Denotation E W}
-      (h : Denotes lex g t d) :
-      Denotes lex g (.phrase c k (t :: [])) d
-  /-- By Functional Application, a node whose left daughter is the function denotes its value. -/
-  | faLeft {g : Assignment E} {c : C} {k : PhraseKind} {t₁ t₂ : Tree C L} {σ τ : Ty}
-      {f : Ty.Domain E W (σ ⇒ τ)}
-      {a : Ty.Domain E W σ} (h₁ : Denotes lex g t₁ ⟨σ ⇒ τ, f⟩) (h₂ : Denotes lex g t₂ ⟨σ, a⟩) :
-      Denotes lex g (.phrase c k (t₁ :: t₂ :: [])) ⟨τ, f a⟩
-  /-- By Functional Application, a node whose right daughter is the function denotes its value. -/
-  | faRight {g : Assignment E} {c : C} {k : PhraseKind} {t₁ t₂ : Tree C L} {σ τ : Ty}
-      {a : Ty.Domain E W σ}
-      {f : Ty.Domain E W (σ ⇒ τ)} (h₁ : Denotes lex g t₁ ⟨σ, a⟩)
-      (h₂ : Denotes lex g t₂ ⟨σ ⇒ τ, f⟩) :
-      Denotes lex g (.phrase c k (t₁ :: t₂ :: [])) ⟨τ, f a⟩
-  /-- By Predicate Modification, two sister predicates conjoin. -/
-  | pm {g : Assignment E} {c : C} {k : PhraseKind} {t₁ t₂ : Tree C L}
-      {P Q : Ty.Domain E W (.e ⇒ .t)}
-      (h₁ : Denotes lex g t₁ ⟨.e ⇒ .t, P⟩) (h₂ : Denotes lex g t₂ ⟨.e ⇒ .t, Q⟩) :
-      Denotes lex g (.phrase c k (t₁ :: t₂ :: [])) ⟨.e ⇒ .t, fun x ↦ P x ∧ Q x⟩
-  /-- By the Traces and Pronouns Rule, a trace denotes the value of its index. -/
-  | trace {g : Assignment E} {n : ℕ} {c : C} : Denotes lex g (.trace n c) ⟨.e, g n⟩
-  /-- By Predicate Abstraction, a binder abstracts over its index in the body. -/
-  | pa {g : Assignment E} {n : ℕ} {c : C} {body : Tree C L} {τ : Ty} {F : E → Ty.Domain E W τ}
-      (h : ∀ x, Denotes lex (g[n ↦ x]) body ⟨τ, F x⟩) : Denotes lex g (.bind n c body) ⟨.e ⇒ τ, F⟩
+/-- A denotation relative to a partial assignment: it may be undefined, and its functions are
+partial. -/
+abbrev PVal (a : Ty Base) : Type := (ℕ → Part ToyEntity) → Ty.PDom Dom a
 
-/-- Where the book assigns a denotation, the engine at `M = Id` computes it. -/
-theorem interp_of_denotes {lex : L → Option (Denotation E W)} {g : Assignment E}
-    {t : Tree C L} {d : Denotation E W} (h : Denotes lex g t d) : interp lex g t = some d := by
-  induction h with
-  | tn h => rw [interp_terminal]; exact h
-  | nn _ ih => exact ih
-  | faLeft _ _ ih₁ ih₂ =>
-    rw [interp_phrase_binary, ih₁, ih₂, Option.bind_some, Option.bind_some, Mode.combine?_fn_left]
-    rfl
-  | faRight _ _ ih₁ ih₂ =>
-    rw [interp_phrase_binary, ih₁, ih₂, Option.bind_some, Option.bind_some, Mode.combine?_fn_right]
-    rfl
-  | pm _ _ ih₁ ih₂ =>
-    rw [interp_phrase_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
-      Mode.combine?_predicateModification .individual]
-    rfl
-  | trace => rfl
-  | @pa g n c body τ F _ ih =>
-    have hg := ih (g n)
-    rw [Function.update_eq_self] at hg
-    simp only [interp_bind, hg, Option.map_some]
-    show (some ⟨.e ⇒ τ, fun x ↦ valueAt τ (F (g n)) (interp lex (g[n ↦ x]) body)⟩ :
-      Option (Denotation E W)) = _
-    congr 2
-    funext x
-    simp [ih x]
+/-- Total assignments: the abstract at an individual is the body at the assignment modified to
+give it to the index. -/
+def assignments : Assignments (ℕ → ToyEntity) (Ty.Dom Dom) .e where
+  get g n := g n
+  set := Function.update
+  lam F := F
 
-theorem Denotes.unique {lex : L → Option (Denotation E W)} {g : Assignment E} {t : Tree C L}
-    {d d' : Denotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') : d = d' :=
-  Option.some.inj ((interp_of_denotes h).symm.trans (interp_of_denotes h'))
+/-- Partial assignments, (7) of §5.3.3: an abstract always has a denotation, a partial function
+defined at the individuals at which the body has one, (7) of §5.4. -/
+def partialAssignments : Assignments (ℕ → Part ToyEntity) (Ty.PDom Dom) .e where
+  get g n := g n
+  set := Function.update
+  lam F := .some fun x ↦ F (.some x)
 
-end Reference
+/-- The rules (13), (14) and (16) of Chapter 5: sisters combine at one assignment. -/
+abbrev total : grammar.language.Structure Val := Grammar.withAbstraction.structure assignments
 
-section FregeanArticle
+/-- The pedantic rules (13′) and (14′) of §5.2 and (7) and (9) of §5.4: a node has a denotation
+where its daughters do and the function is defined at the argument, and a modified predicate is
+defined where both predicates are. -/
+abbrev pedantic : grammar.language.Structure PVal :=
+  Grammar.withAbstraction.structure partialAssignments
 
-variable {E W : Type} {S : Sorts}
+/-- The interpreter of the book: an index admits abstraction over it, and sisters whichever of
+application and predicate modification their types allow. -/
+abbrev rules : Interpreter grammar Node :=
+  (typeDriven (.sum .application .predicateModification)).withAbstraction .e
 
-/-- The Fregean definite article (§4.4) maps a predicate true of exactly one individual to that
-individual and is undefined elsewhere. -/
-noncomputable def the : Ty.PDomain E W ((.e ⇒ .t) ⇒ .e) S :=
-  fun P ↦ ⟨∃! x, True ∈ P x, fun h ↦ Classical.choose h⟩
+/-- The denotations of a tree relative to total assignments, for the words with total
+denotations. -/
+noncomputable def meanings (t : Tree Unit Word) : List (Σ a, Val a) :=
+  t.values rules total Item.val items
 
-theorem the_dom (P : E →. Prop) : (the (W := W) (S := S) P).Dom ↔ ∃! x, True ∈ P x := Iff.rfl
+/-- The denotations of a tree by the pedantic rules, relative to partial assignments. -/
+noncomputable def pmeanings (t : Tree Unit Word) : List (Σ a, PVal a) :=
+  t.values rules pedantic pval itemsThe
 
-theorem the_lift_eq_some {P : E → Prop} {a : E} (h : ∀ x, P x ↔ x = a) :
-    the (W := W) (S := S) (PFun.lift P) = Part.some a := by
-  have hu : ∃! x, True ∈ PFun.lift P x := ⟨a, (PFun.true_mem_lift P a).mpr ((h a).mpr rfl),
-    fun y hy ↦ (h y).mp ((PFun.true_mem_lift P y).mp hy)⟩
-  exact Part.eq_some_iff.mpr
-    ⟨hu, (h _).mp ((PFun.true_mem_lift P _).mp (Classical.choose_spec hu).1)⟩
+/-- The empty assignment. A tree's semantic value is its value under the empty assignment, (11)
+of §5.3.3. -/
+def emptyAssignment : ℕ → Part ToyEntity := fun _ ↦ .none
 
-end FregeanArticle
+/-- "John sleeps" denotes, by Functional Application, what the model says. -/
+theorem meanings_johnSleeps :
+    meanings (.bin (name .john) (pred .sleep)) = [⟨.t, fun _ ↦ Toy.sleeps .john⟩] := rfl
+
+/-- A predicate with two subjects is uninterpretable, as the book's *Ann laughed Jan* (§3.3):
+no rule applies to a truth value and an individual, whatever the model. -/
+theorem derivs_johnSleepsMary :
+    Tree.derivs rules items (.bin (name .john) (.bin (pred .sleep) (name .mary))) = [] := rfl
+
+/-- The interpretation function is a function (§3.3): no two of the rules apply to the same
+daughters, so a tree whose words are each at most one item has at most one derivation. -/
+theorem length_derivs_le_one {W : Ty Base → Type} {lex : Word ⊕ ℕ → List (Σ a, W a)}
+    (hl : ∀ x, (lex x).length ≤ 1) (t : Tree Unit Word) :
+    (Tree.derivs rules lex t).length ≤ 1 := by
+  unfold Tree.derivs
+  split
+  · exact Interpreter.length_derivs_le_one
+      (fun n _ ↦ by
+        cases n <;> simp [Interpreter.withAbstraction, typeDriven, LocallyFinite.unaryRules])
+      (fun _ ↦ length_binaryRules_application_sum_predicateModification_le_one) hl _
+  · simp
+
+/-! ### Total and partial denotations
+
+A total denotation and the partial one that is it are related, and every rule keeps them so: the
+pedantic rules give a tree of words with total denotations a value wherever the assignment is
+total, and it is the value of the plain rules. So the book states the plain rules and turns to
+the pedantic ones where a word like the article is partial. -/
+
+/-- A denotation relative to total assignments and the pedantic denotation that is it: under a
+partial assignment that is a total one, defined, and the total denotation there. -/
+def Rel (a : Ty Base) (v : Val a) (v' : PVal a) : Prop :=
+  ∀ g g', (∀ i, g' i = .some (g i)) → Ty.PartRel a (v g) (v' g')
+
+/-- The plain rules and the pedantic rules are logically related. -/
+theorem isLogicalRel : total.IsLogicalRel pedantic Rel :=
+  Grammar.withAbstraction.isLogicalRel Grammar.isLogicalRel_partRel _
+    (fun g g' n v v' hg ⟨y, hy, hyr⟩ i ↦ by
+      cases hyr
+      by_cases hi : i = n <;> simp [assignments, partialAssignments, Function.update, hi, hg, hy])
+    (fun _ _ h ↦ ⟨_, rfl, fun x _ hx ↦ by cases hx; exact h x (.some x) ⟨x, rfl, rfl⟩⟩)
+
+/-- Each word with a total denotation has the pedantic denotation that is it. -/
+theorem rel_val : ∀ {a : Ty Base} (i : Item a), Rel a i.val i.pval
+  | _, .name _ => fun _ _ _ ↦ ⟨_, rfl, rfl⟩
+  | _, .pred _ => fun _ _ _ ↦ ⟨_, rfl, fun _ _ hx ↦ ⟨_, by cases hx; rfl, rfl⟩⟩
+  | _, .verb _ => fun _ _ _ ↦ ⟨_, rfl, fun _ _ hy ↦ ⟨_, by cases hy; rfl, fun _ _ hx ↦
+      ⟨_, by cases hx; rfl, rfl⟩⟩⟩
+  | _, .det s => fun _ _ _ ↦ ⟨_, rfl, fun A f hf ↦ ⟨_, rfl, fun B f' hf' ↦ ⟨_, rfl, by
+      have key {P : ToyEntity → Prop} {p : ToyEntity → Part Prop}
+          (h : Ty.CbvRel (D := Dom) .et P p) : {x | True ∈ p x} = P := by
+        ext x
+        obtain ⟨y, hy, hyr⟩ := h x x rfl
+        cases hyr
+        simp [hy]
+        rfl
+      show _ = s.denote ToyEntity {x | True ∈ f x} {x | True ∈ f' x}
+      rw [key hf, key hf']
+      rfl⟩⟩⟩
+  | _, .trace n => fun _ _ hg ↦ ⟨_, hg n, rfl⟩
+
+/-- A derivation from words with total denotations has, by the pedantic rules under an
+assignment that is total, a denotation, and it is the one the plain rules give. -/
+theorem rel_realize {a : Ty Base} (d : grammar.Deriv Item a) :
+    Rel a (d.realize total Item.val) (d.realize pedantic Item.pval) :=
+  isLogicalRel.realize rel_val d
+
+/-- No presupposition fails without a partial word: under a total assignment, a derivation from
+words with total denotations has a pedantic denotation. -/
+theorem dom_realize_pedantic {a : Ty Base} (d : grammar.Deriv Item a) (g : ℕ → ToyEntity) :
+    (d.realize pedantic Item.pval fun i ↦ .some (g i)).Dom :=
+  (rel_realize d g _ fun _ ↦ rfl).dom
 
 /-! ### Definite descriptions
 
-The Fregean article `the` is defined on predicates true of exactly one individual
-(§4.4). In the toy model, with two students and one pizza, *the student* is undefined and *the
-pizza* is not. -/
+The article is defined at predicates true of exactly one individual (§4.4). In the toy model,
+with two students and one pizza, *the pizza* denotes and *the student* has a derivation and no
+value: a presupposition failure, a contingent matter. *The John* has no derivation, whatever the
+model: it is uninterpretable (§4.4.4). -/
 
-section DefiniteArticle
-
-/-- The toy lexicon for the partial engine, which pairs the definite article with the fragment's
-nouns, *sleeps* and names lifted to partial denotations. -/
-noncomputable def partialLex : String → Option (PDenotation ToyEntity Unit)
-  | "the" => some ⟨(.e ⇒ .t) ⇒ .e, Part.some the⟩
-  | "student" => some ⟨.e ⇒ .t, Part.some (PFun.lift student)⟩
-  | "pizza" => some ⟨.e ⇒ .t, Part.some (PFun.lift Toy.pizza)⟩
-  | "sleeps" => some ⟨.e ⇒ .t, Part.some (PFun.lift Toy.sleeps)⟩
-  | "John" => some ⟨.e, Part.some .john⟩
-  | _ => none
-
-/-- *The student* is a presupposition failure in the toy model, which has two students. -/
-theorem the_student_fails :
-    PresupFailure partialLex g₀ (.bin (.leaf "the") (.leaf "student")) := by
-  refine ⟨⟨.e, the (PFun.lift student)⟩, ?_, fun ⟨x, _, huniq⟩ ↦ ?_⟩
-  · rw [interpPartial_phrase_binary, interpPartial_terminal, interpPartial_terminal]
-    exact Mode.combine?_evalPartial_fn_left the (PFun.lift student)
-  have hj := huniq .john ((PFun.true_mem_lift _ _).mpr (.inl rfl))
-  have hm := huniq .mary ((PFun.true_mem_lift _ _).mpr (.inr rfl))
-  exact ToyEntity.noConfusion (hj.trans hm.symm)
+/-- *The pizza* has one derivation, by Functional Application. -/
+theorem derivs_thePizza :
+    Tree.derivs rules itemsThe (.bin (.leaf .the) (pred .pizza)) =
+      [⟨.e, .binary (.inl .fa) (.leaf (.inr .the)) (.leaf (.inl (.pred .pizza)))⟩] := rfl
 
 /-- *The pizza* denotes the pizza, the toy model's unique one. -/
-theorem the_pizza : interpPartial partialLex g₀ (.bin (.leaf "the") (.leaf "pizza")) =
-    some ⟨.e, Part.some .pizza⟩ := by
-  rw [interpPartial_phrase_binary, interpPartial_terminal, interpPartial_terminal]
-  refine (Mode.combine?_evalPartial_fn_left the (PFun.lift Toy.pizza)).trans ?_
-  rw [the_lift_eq_some (P := Toy.pizza) (a := .pizza) fun _ ↦ Iff.rfl]
+theorem pmeanings_thePizza :
+    pmeanings (.bin (.leaf .the) (pred .pizza)) = [⟨.e, fun _ ↦ .some .pizza⟩] := by
+  have h := the_some (P := fun x ↦ toyStructure.RelMap toyRel.pizza ![x]) (a := .pizza)
+    fun _ ↦ Iff.rfl
+  simp [pmeanings, Tree.values, derivs_thePizza, pval, Item.pval, h]
 
-/-- *The John*, the article applied to an individual rather than a predicate, is
-uninterpretable, and the types alone decide it (§4.4.4). -/
-theorem the_john_uninterpretable :
-    Uninterpretable partialLex g₀ (.bin (.leaf "the") (.leaf "John")) := rfl
+/-- *The student* is a presupposition failure in the toy model, which has two students: it has
+a derivation, and no value under any assignment. -/
+theorem pmeanings_theStudent : ∃ v : PVal .e,
+    pmeanings (.bin (.leaf .the) (pred .student)) = [⟨.e, v⟩] ∧ ∀ g, ¬ (v g).Dom := by
+  refine ⟨_, rfl, fun g h ↦ ?_⟩
+  have h' : ((Part.some the).bind fun f ↦
+      (Part.some fun x ↦ Part.some (x = .john ∨ x = .mary)).bind f).Dom := h
+  simp only [Part.bind_some] at h'
+  obtain ⟨x, -, huniq⟩ := (the_dom _).1 h'
+  have hj := huniq .john (by simp)
+  have hm := huniq .mary (by simp)
+  exact ToyEntity.noConfusion (hj.trans hm.symm)
 
-end DefiniteArticle
-
-/-! ### The book's partial rules
-
-Chapter 4's revision of the rules for partial denotations, which the partial engine extends. -/
-
-section PartialReference
-
-namespace Partial
-
-variable {C L E W : Type}
-
-/-- The book's revised interpretation relation, relative to a leaf interpretation and an
-assignment. -/
-inductive Denotes (lex : L → Option (PDenotation E W)) :
-    Assignment E → Tree C L → PDenotation E W → Prop
-  /-- By Terminal Nodes, a leaf denotes what the lexicon gives it. -/
-  | tn {g : Assignment E} {c : C} {w : L} {d : PDenotation E W} (h : lex w = some d) :
-      Denotes lex g (.terminal c w) d
-  /-- By Non-Branching Nodes, a node denotes what its only daughter does. -/
-  | nn {g : Assignment E} {c : C} {t : Tree C L} {d : PDenotation E W}
-      (h : Denotes lex g t d) : Denotes lex g (.node c (t :: [])) d
-  /-- By Functional Application, a node whose left daughter is the function denotes its value,
-  defined or not. -/
-  | faLeft {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {σ τ : Ty}
-      {f : Ty.PDomain E W (σ ⇒ τ)} {a : Ty.PDomain E W σ}
-      (h₁ : Denotes lex g t₁ ⟨σ ⇒ τ, Part.some f⟩) (h₂ : Denotes lex g t₂ ⟨σ, Part.some a⟩) :
-      Denotes lex g (.node c (t₁ :: t₂ :: [])) ⟨τ, f a⟩
-  /-- By Functional Application, a node whose right daughter is the function denotes its value. -/
-  | faRight {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {σ τ : Ty} {a : Ty.PDomain E W σ}
-      {f : Ty.PDomain E W (σ ⇒ τ)} (h₁ : Denotes lex g t₁ ⟨σ, Part.some a⟩)
-      (h₂ : Denotes lex g t₂ ⟨σ ⇒ τ, Part.some f⟩) :
-      Denotes lex g (.node c (t₁ :: t₂ :: [])) ⟨τ, f a⟩
-  /-- By Predicate Modification, two sister predicates conjoin where both are defined. -/
-  | pm {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {P Q : Ty.PDomain E W (.e ⇒ .t)}
-      (h₁ : Denotes lex g t₁ ⟨.e ⇒ .t, Part.some P⟩)
-      (h₂ : Denotes lex g t₂ ⟨.e ⇒ .t, Part.some Q⟩) :
-      Denotes lex g (.node c (t₁ :: t₂ :: []))
-        ⟨.e ⇒ .t, Part.some fun x ↦ (P x).bind fun a ↦ (Q x).map fun b ↦ a ∧ b⟩
-  /-- By the Traces and Pronouns Rule, a trace denotes the value of its index. -/
-  | trace {g : Assignment E} {n : ℕ} {c : C} : Denotes lex g (.trace n c) ⟨.e, Part.some (g n)⟩
-  /-- By Predicate Abstraction, a binder abstracts over its index in the body, the abstract
-  defined at an individual where the body has a defined value under the modified assignment. -/
-  | pa {g : Assignment E} {n : ℕ} {c : C} {body : Tree C L} {τ : Ty}
-      {F : E → Part (Ty.PDomain E W τ)} (h : ∀ x, Denotes lex (g[n ↦ x]) body ⟨τ, F x⟩) :
-      Denotes lex g (.bind n c body) ⟨.e ⇒ τ, Part.some F⟩
-
-/-- Where the book's revised rules assign a value, the partial engine computes it. -/
-theorem interp_of_denotes {lex : L → Option (PDenotation E W)} {g : Assignment E}
-    {t : Tree C L} {d : PDenotation E W} (h : Denotes lex g t d) :
-    interpPartial lex g t = some d := by
-  induction h with
-  | tn h => rw [interpPartial_terminal]; exact h
-  | nn _ ih => exact ih
-  | faLeft _ _ ih₁ ih₂ =>
-    rw [interpPartial_phrase_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
-      Mode.combine?_evalPartial_fn_left]
-  | faRight _ _ ih₁ ih₂ =>
-    rw [interpPartial_phrase_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
-      Mode.combine?_evalPartial_fn_right]
-  | pm _ _ ih₁ ih₂ =>
-    rw [interpPartial_phrase_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
-      Mode.combine?_evalPartial_predicateModification]
-  | trace => rfl
-  | @pa g n c body τ F _ ih =>
-    have hg := ih (g n)
-    rw [Function.update_eq_self] at hg
-    rw [interpPartial_bind, hg, Option.map_some]
-    congr 3
-    funext x
-    simp [ih x]
-
-theorem Denotes.unique {lex : L → Option (PDenotation E W)} {g : Assignment E} {t : Tree C L}
-    {d d' : PDenotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') : d = d' :=
-  Option.some.inj ((interp_of_denotes h).symm.trans (interp_of_denotes h'))
-
-theorem denotes_the_pizza :
-    Denotes partialLex g₀ (.bin (.leaf "the") (.leaf "pizza")) ⟨.e, Part.some .pizza⟩ := by
-  have h : Denotes partialLex g₀ (.bin (.leaf "the") (.leaf "pizza"))
-      ⟨.e, the (PFun.lift Toy.pizza)⟩ :=
-    .faLeft (σ := .e ⇒ .t) (τ := .e) (f := the) (a := PFun.lift Toy.pizza)
-      (.tn rfl) (.tn rfl)
-  rwa [the_lift_eq_some (P := Toy.pizza) (a := .pizza) fun _ ↦ Iff.rfl] at h
-
-theorem denotes_the_student {v : Part ToyEntity}
-    (h : Denotes partialLex g₀ (.bin (.leaf "the") (.leaf "student")) ⟨.e, v⟩) : ¬ v.Dom := by
-  obtain ⟨d, hd, hdom⟩ := the_student_fails
-  cases Option.some.inj ((interp_of_denotes h).symm.trans hd)
-  exact hdom
-
-theorem toyLexicon_toPartial_noFailure (g : Assignment ToyEntity) (t : Tree Unit String) :
-    ¬ PresupFailure (fun w ↦ (toyLexicon w).map Denotation.toPartial) g t :=
-  not_presupFailure_map_toPartial (fun _ _ h ↦ by
-    rcases toyLexicon_fst h with h | h | h <;> rw [h] <;> repeat constructor) g t
-
-end Partial
-
-end PartialReference
+/-- *The John*, the article with an individual, is uninterpretable: the types alone decide
+it. -/
+theorem derivs_theJohn : Tree.derivs rules itemsThe (.bin (.leaf .the) (name .john)) = [] := rfl
 
 /-! ### Relative clauses
 
-A relative clause gets no rule of its own (p. 87): Predicate Abstraction over its trace makes it
-a predicate, which Predicate Modification intersects with the head noun (p. 88). The vacuous
-complementizer is a non-branching node, and the engine's abstraction is the indexed rule of
-§5.3.4. -/
+A relative clause gets no rule of its own: Predicate Abstraction over its trace makes it a
+predicate (§5.2.3), which Predicate Modification intersects with the head noun. The vacuous
+complementizer is a non-branching node. -/
 
-section RelativeClause
-
-/-- The subject relative `[CP who₁ [C̄ [S t₁ sleeps]]]` (p. 101). -/
-def tree_whoSleeps : Tree Unit String :=
-  .binder 1 (.node () (.bin (.tr 1) (.leaf "sleeps") :: []))
+/-- The subject relative `[CP who₁ [C̄ [S t₁ sleeps]]]`. -/
+def tree_whoSleeps : Tree Unit Word :=
+  .binder 1 (.node () (.bin (.tr 1) (pred .sleep) :: []))
 
 /-- The noun phrase `[NP student [CP who₁ [C̄ [S t₁ sleeps]]]]`, standing in for the book's
-*house which is empty* (p. 88). -/
-def tree_studentWhoSleeps : Tree Unit String :=
-  .bin (.leaf "student") tree_whoSleeps
+*house which is empty*. -/
+def tree_studentWhoSleeps : Tree Unit Word :=
+  .bin (pred .student) tree_whoSleeps
 
 /-- The open sentence `[S John [VP sees t₁]]`. -/
-def tree_johnSeesT : Tree Unit String :=
-  .bin (.leaf "John") (.bin (.leaf "sees") (.tr 1))
+def tree_johnSeesT : Tree Unit Word :=
+  .bin (name .john) (.bin (verb .see) (.tr 1))
 
 /-- The object relative `[CP which₁ [C̄ [S John [VP sees t₁]]]]`, standing in for the book's
-*which John abandoned t* (p. 96). -/
-def tree_whichJohnSees : Tree Unit String :=
+*which John abandoned t*. -/
+def tree_whichJohnSees : Tree Unit Word :=
   .binder 1 (.node () (tree_johnSeesT :: []))
 
--- p. 101
-theorem interp_whoSleeps (g : Assignment ToyEntity) :
-    interp toyLexicon g tree_whoSleeps = some ⟨.e ⇒ .t, Toy.sleeps⟩ := rfl
+theorem meanings_whoSleeps :
+    meanings tree_whoSleeps = [⟨.et, fun _ ↦ Toy.sleeps⟩] := rfl
 
 /-- The relative clause modifies its head intersectively, restrictive relatives being "just
-another kind of intersective modifier" (p. 88). -/
-theorem interp_studentWhoSleeps (g : Assignment ToyEntity) :
-    interp toyLexicon g tree_studentWhoSleeps =
-      some ⟨.e ⇒ .t, (Modifier.intersective student Toy.sleeps : ToyEntity → Prop)⟩ := rfl
+another kind of intersective modifier". -/
+theorem meanings_studentWhoSleeps :
+    meanings tree_studentWhoSleeps = [⟨.et, fun _ x ↦ Toy.student x ∧ Toy.sleeps x⟩] := rfl
 
-theorem denotes_studentWhoSleeps (g : Assignment ToyEntity) :
-    Denotes toyLexicon g tree_studentWhoSleeps ⟨.e ⇒ .t, fun x ↦ student x ∧ Toy.sleeps x⟩ :=
-  .pm (.tn rfl) <| .pa (τ := .t) fun x ↦ .nn <|
-    .faRight (lex := toyLexicon) (σ := .e) (τ := .t) (a := x) (f := Toy.sleeps) .trace (.tn rfl)
+/-- The open sentence denotes relative to an assignment, through its trace. -/
+theorem meanings_johnSeesT :
+    meanings tree_johnSeesT = [⟨.t, fun g ↦ Toy.sees (g 1) .john⟩] := rfl
 
--- (9), p. 94
-theorem interp_johnSeesT (g : Assignment ToyEntity) :
-    interp toyLexicon g tree_johnSeesT = some ⟨.t, Toy.sees (g 1) .john⟩ := rfl
+/-- The one derivation of the object relative: Predicate Abstraction over the index, above
+Functional Application of the verb to its trace and of the verb phrase to the subject. -/
+theorem derivs_whichJohnSees :
+    Tree.derivs rules items tree_whichJohnSees =
+      [⟨.et, .unary (.inl (.index 1 .t)) (.binary (.inl .ba) (.leaf (.name .john))
+        (.binary (.inl .fa) (.leaf (.verb .see)) (.leaf (.trace 1))))⟩] := rfl
 
-theorem interp_johnSeesT_ne :
-    interp toyLexicon (g₀[1 ↦ .mary]) tree_johnSeesT ≠ interp toyLexicon g₀ tree_johnSeesT := by
-  simp only [interp_johnSeesT, Function.update_self, ne_eq, Option.some.injEq, Sigma.mk.inj_iff,
-    heq_eq_eq, true_and]
-  intro h
-  rcases cast h (.inl ⟨rfl, rfl⟩) with ⟨_, h⟩ | ⟨h, _⟩ <;> cases h
+/-- The object relative is assignment-independent, and denotes the individuals John sees. -/
+theorem meanings_whichJohnSees :
+    meanings tree_whichJohnSees = [⟨.et, fun _ x ↦ Toy.sees x .john⟩] := rfl
 
-theorem interp_whichJohnSees (g : Assignment ToyEntity) :
-    interp toyLexicon g tree_whichJohnSees = some ⟨.e ⇒ .t, fun x ↦ Toy.sees x .john⟩ := rfl
+/-- By the pedantic rules the open sentence has no semantic value, its trace having none under
+the empty assignment, and has one under an assignment defined at its index. -/
+theorem pmeanings_johnSeesT : ∃ v : PVal .t,
+    pmeanings tree_johnSeesT = [⟨.t, v⟩] ∧ ¬ (v emptyAssignment).Dom ∧
+      ∀ (g : ℕ → Part ToyEntity) (x : ToyEntity), g 1 = .some x →
+        v g = .some (Toy.sees x .john) := by
+  refine ⟨fun g ↦ ((Part.some fun y ↦ Part.some fun x ↦ Part.some (Toy.sees y x)).bind
+    fun k ↦ (g 1).bind k).bind fun h ↦ (Part.some ToyEntity.john).bind h, rfl, ?_, ?_⟩
+  · simp [emptyAssignment]
+  · intro g x hx
+    simp [hx]
 
--- pp. 96-98
-theorem denotes_whichJohnSees (g : Assignment ToyEntity) :
-    Denotes toyLexicon g tree_whichJohnSees ⟨.e ⇒ .t, fun x ↦ Toy.sees x .john⟩ :=
-  .pa (τ := .t) fun x ↦ .nn <|
-    .faRight (lex := toyLexicon) (σ := .e) (τ := .t) (a := .john) (f := Toy.sees x) (.tn rfl) <|
-      .faLeft (lex := toyLexicon) (σ := .e) (τ := .e ⇒ .t) (f := Toy.sees) (a := x) (.tn rfl)
-        .trace
-
-theorem Partial.denotes_the_student_who_sleeps :
-    Partial.Denotes partialLex g₀ (.bin (.leaf "the") tree_studentWhoSleeps)
-      ⟨.e, Part.some .john⟩ := by
-  have h : Partial.Denotes partialLex g₀ (.bin (.leaf "the") tree_studentWhoSleeps)
-      ⟨.e, the fun x ↦
-        (PFun.lift student x).bind fun a ↦ (PFun.lift Toy.sleeps x).map fun b ↦ a ∧ b⟩ :=
-    .faLeft (σ := .e ⇒ .t) (τ := .e) (.tn rfl) <| .pm (.tn rfl) <| .pa (τ := .t) fun x ↦ .nn <|
-      .faRight (lex := partialLex) (σ := .e) (τ := .t) (a := x) (f := PFun.lift Toy.sleeps)
-        .trace (.tn rfl)
-  have hP : (fun x ↦ (PFun.lift student x).bind fun a ↦ (PFun.lift Toy.sleeps x).map (a ∧ ·)) =
-      PFun.lift fun x ↦ student x ∧ Toy.sleeps x := by
-    funext x; simp [PFun.lift]
-  rwa [hP, the_lift_eq_some (P := fun x ↦ student x ∧ Toy.sleeps x) (a := .john)
-    fun _ ↦ ⟨And.right, fun h ↦ h ▸ ⟨.inl rfl, rfl⟩⟩] at h
-
-/-- *The student who sleeps* denotes John, though *the student* is a presupposition failure (p. 88).
--/
-theorem the_student_who_sleeps :
-    interpPartial partialLex g₀ (.bin (.leaf "the") tree_studentWhoSleeps) =
-      some ⟨.e, Part.some .john⟩ :=
-  Partial.interp_of_denotes Partial.denotes_the_student_who_sleeps
-
-/-- Under the bracketing `[[the student] [who₁ [t₁ sleeps]]]` that §4.5 rejects, a sentence with the
-definite as subject is uninterpretable (p. 83). -/
-theorem det_noun_modifier_uninterpretable :
-    Uninterpretable partialLex g₀
-      (.bin (.bin (.bin (.leaf "the") (.leaf "student")) tree_whoSleeps) (.leaf "sleeps")) :=
+/-- *The student who sleeps* has one derivation: the article applies to the noun modified by
+the abstract over the trace. -/
+theorem derivs_theStudentWhoSleeps :
+    Tree.derivs rules itemsThe (.bin (.leaf .the) tree_studentWhoSleeps) =
+      [⟨.e, .binary (.inl .fa) (.leaf (.inr .the))
+        (.binary (.inr .pm) (.leaf (.inl (.pred .student)))
+          (.unary (.inl (.index 1 .t))
+            (.binary (.inl .ba) (.leaf (.inl (.trace 1))) (.leaf (.inl (.pred .sleep))))))⟩] :=
   rfl
 
-end RelativeClause
+/-- *The student who sleeps* denotes John, though *the student* is a presupposition failure. -/
+theorem pmeanings_theStudentWhoSleeps :
+    pmeanings (.bin (.leaf .the) tree_studentWhoSleeps) = [⟨.e, fun _ ↦ .some .john⟩] := by
+  have h := the_some (a := .john)
+    (P := fun x ↦ toyStructure.RelMap toyRel.student ![x] ∧ toyStructure.RelMap toyRel.sleep ![x])
+    fun x ↦ ⟨fun h ↦ h.2, fun h ↦ ⟨.inl h, h⟩⟩
+  simp [pmeanings, Tree.values, derivs_theStudentWhoSleeps, pval, Item.pval, partialAssignments, h]
+
+/-- Under the bracketing `[[the student] [who₁ [t₁ sleeps]]]`, which §4.5 rejects, a sentence
+with the definite as subject is uninterpretable. -/
+theorem derivs_detNounModifier :
+    Tree.derivs rules itemsThe (.bin (.bin (.bin (.leaf .the) (pred .student)) tree_whoSleeps)
+      (pred .sleep)) = [] := rfl
+
+end Composition
 
 /-! ### Quantifier scope
 
 A quantifier in object position is of the wrong type for its verb, so the sentence as it is
-pronounced has no denotation. Quantifier Raising (§7.3) leaves a trace and a binder index, so a
-raised quantifier takes the abstracted predicate as its scope, and the two orders in which the
-quantifiers of *every person sees some person* raise give its two scope readings. -/
+pronounced has no denotation (§7.1). Quantifier Raising adjoins a phrase to its clause and
+leaves a trace and a binder index (§7.3), so a raised quantifier takes the abstract over its
+trace as its scope, and the two orders in which the quantifiers of *every person sees some
+person* raise give its two scope readings (§7.5.1). A determiner is each reading its entry in
+the fragment records, so a tree's denotations are those of every resolution of its words. -/
+
+section QuantifierRaising
+
+open Interpreter Interpreter.Grammar MSFirstOrder
 
 /-- *Every person*. -/
-def everyPerson : Tree Unit (QuantificationalDeterminer ⊕ String) :=
-  .bin (.leaf (.inl English.Determiners.every)) (.leaf (.inr "person"))
+def everyPerson : Tree Unit Word := .bin (det English.Determiners.every) (pred .person)
 
 /-- *Some person*. -/
-def somePerson : Tree Unit (QuantificationalDeterminer ⊕ String) :=
-  .bin (.leaf (.inl English.Determiners.some_)) (.leaf (.inr "person"))
+def somePerson : Tree Unit Word := .bin (det English.Determiners.some_) (pred .person)
 
 /-- *Every person sees some person* as it is pronounced. -/
-def sentence : Tree Unit (QuantificationalDeterminer ⊕ String) :=
-  .bin everyPerson (.bin (.leaf (.inr "sees")) somePerson)
+def sentence : Tree Unit Word := .bin everyPerson (.bin (verb .see) somePerson)
 
-/-- The object quantifier cannot combine with the verb where it stands. -/
-theorem interp_sentence : interp lex g₀ sentence = none := rfl
+/-- The object quantifier cannot combine with the verb where it stands: the sentence as
+pronounced has no derivation. -/
+theorem derivs_sentence : Tree.derivs rules items sentence = [] := rfl
 
-/-- The surface-scope tree `[S [DP every person] [1 [S [DP some person] [2 [S t₁ [VP sees t₂]]]]]]`,
-the object raised and then the subject over it, has the reading
-∀x[person(x) → ∃y[person(y) ∧ sees(x,y)]]. -/
-def tree_surface : Tree Unit (QuantificationalDeterminer ⊕ String) :=
+/-- The surface-scope tree `[S [DP every person] [1 [S [DP some person] [2 [S t₁ [VP sees
+t₂]]]]]]`, the object raised and then the subject over it. -/
+def tree_surface : Tree Unit Word :=
   (sentence.raiseOf 2 somePerson).raiseOf 1 everyPerson
 
-/-- The inverse-scope tree `[S [DP some person] [2 [S [DP every person] [1 [S t₁ [VP sees t₂]]]]]]`,
-the subject raised and then the object over it, has the reading
-∃y[person(y) ∧ ∀x[person(x) → sees(x,y)]]. -/
-def tree_inverse : Tree Unit (QuantificationalDeterminer ⊕ String) :=
+/-- The inverse-scope tree `[S [DP some person] [2 [S [DP every person] [1 [S t₁ [VP sees
+t₂]]]]]]`, the subject raised and then the object over it. -/
+def tree_inverse : Tree Unit Word :=
   (sentence.raiseOf 1 everyPerson).raiseOf 2 somePerson
 
 theorem isLogicalForm_tree_surface : IsLogicalForm ⊥ sentence tree_surface :=
@@ -619,21 +549,57 @@ theorem isLogicalForm_tree_inverse : IsLogicalForm ⊥ sentence tree_inverse :=
   ((IsLogicalForm.refl sentence).raiseOf rfl (passesNoIsland_bot _ _) 1).raiseOf rfl
     (passesNoIsland_bot _ _) 2
 
-/-- A name's trace has the name's own type, so raising *John* in *John sleeps* changes nothing. -/
-example : interp toyLexicon g₀ ((tree% [⟨"John"⟩ ⟨"sleeps"⟩] : Tree Unit String).raise 1 ([0])) =
-    interp toyLexicon g₀ (tree% [⟨"John"⟩ ⟨"sleeps"⟩]) :=
-  interpWith_raise (v := ToyEntity.john) rfl (by decide) (by decide) (by decide) rfl
+/-- A name may raise as a quantifier does, and its trace has the name's own type, so raising
+*John* in *John sleeps* changes nothing, as (3) of §8.1 has the truth conditions of *John
+offended Mary*. -/
+theorem meanings_raise_name :
+    meanings ((.bin (name .john) (pred .sleep) : Tree Unit Word).raise 1 [0]) =
+      meanings (.bin (name .john) (pred .sleep)) := rfl
 
-/-- Raising needs a new index. In `[every person [1 [t₂ [sees t₁]]]]` the object trace is bound by
-*every person*; raising `t₂` under that binder with the index 1 again captures the object trace,
-and the quantifier's variable no longer occurs in its scope. -/
-example :
-    interp lex g₀ (tree% [[⟨.inl English.Determiners.every⟩ ⟨.inr "person"⟩]
-      [λ 1 [(.tr 2) [⟨.inr "sees"⟩ (.tr 1)]]]]) =
-        some ⟨Ty.t, every person fun x ↦ Toy.sees x .john⟩ ∧
-    interp lex g₀ (tree% [[⟨.inl English.Determiners.every⟩ ⟨.inr "person"⟩]
-      [λ 1 ((tree% [(.tr 2) [⟨.inr "sees"⟩ (.tr 1)]]).raise 1 ([0]))]]) =
-        some ⟨Ty.t, every person fun _ ↦ Toy.sees .john .john⟩ :=
+/-- A derivation with the individual-denoting derivation `a` in place of the traces of the
+index `n`. -/
+def substTrace (n : ℕ) (a : grammar.Deriv Item .e) : {c : Ty Base} → Item c → grammar.Deriv Item c
+  | _, .trace k => if k = n then a else Deriv.leaf (.trace k)
+  | _, .name c => Deriv.leaf (.name c)
+  | _, .pred r => Deriv.leaf (.pred r)
+  | _, .verb r => Deriv.leaf (.verb r)
+  | _, .det s => Deriv.leaf (.det s)
+
+/-- Raising an individual-denoting phrase is vacuous, in general: a derivation of type e
+combined with the abstract over an index has the denotation of the abstract's body with the
+derivation in place of the traces of that index, provided the body abstracts over no index that
+is the raised one or that the phrase depends on. A quantifier takes scope because its trace is
+not of its own type. -/
+theorem realize_raise {b : Ty Base} (n : ℕ) (a : grammar.Deriv Item .e)
+    (d : grammar.Deriv Item b)
+    (hd : ∀ m ∈ Grammar.withAbstraction.binders d, m ≠ n ∧
+      ∀ g u, a.realize total Item.val (Function.update g m u) = a.realize total Item.val g) :
+    (Deriv.binary (G := grammar) (Sum.inl Application.ba) a
+        (.unary (.inl (.index n b)) d)).realize total Item.val =
+      (d.bind (substTrace n a)).realize total Item.val :=
+  Grammar.withAbstraction.realize_raise assignments Item.val (substTrace n a) n
+    (Sum.inl Application.ba) (fun _ _ ↦ rfl) a
+    (fun w g ↦ by
+      cases w with
+      | trace k =>
+        by_cases hk : k = n
+        · subst hk
+          simp [substTrace, Item.val, assignments]
+        · simp [substTrace, hk, Item.val, assignments]
+      | _ => rfl)
+    (fun g m u v hm ↦
+      show Function.update (Function.update g n v) m u = _ from
+        Function.update_comm hm.symm v u g) d hd
+
+/-- Raising needs a new index. In `[every person [1 [t₂ [sees t₁]]]]` the object trace is bound
+by *every person*; raising `t₂` under that binder with the index 1 again captures the object
+trace, and the quantifier's variable no longer occurs in its scope. -/
+theorem meanings_raise_captures :
+    meanings (.bin everyPerson (.binder 1 (.bin (.tr 2) (.bin (verb .see) (.tr 1))))) =
+        [⟨.t, fun g ↦ every person fun x ↦ Toy.sees x (g 2)⟩] ∧
+      meanings (.bin everyPerson (.binder 1
+        ((.bin (.tr 2) (.bin (verb .see) (.tr 1)) : Tree Unit Word).raise 1 [0]))) =
+        [⟨.t, fun g ↦ every person fun _ ↦ Toy.sees (g 2) (g 2)⟩] :=
   ⟨rfl, rfl⟩
 
 /-- The surface-scope reading `∀ > ∃` puts `every` over `some`, with `x sees y`. -/
@@ -657,333 +623,266 @@ theorem inverse_scope_false : ¬inverseScopeProp := by
 theorem inverse_entails_surface : inverseScopeProp → surfaceScopeProp :=
   iterate_every_some_of_some_every _ _ _
 
-theorem interp_computes_surface :
-    interp lex g₀ tree_surface = some ⟨Ty.t, surfaceScopeProp⟩ := rfl
+/-- The one derivation of the surface-scope tree: each quantifier applies, by Functional
+Application, to the abstract over its own index. -/
+theorem derivs_surface :
+    Tree.derivs rules items tree_surface =
+      [⟨.t, .binary (.inl .fa)
+        (.binary (.inl .fa) (.leaf (.det .every)) (.leaf (.pred .person)))
+        (.unary (.inl (.index 1 .t)) (.binary (.inl .fa)
+          (.binary (.inl .fa) (.leaf (.det .some)) (.leaf (.pred .person)))
+          (.unary (.inl (.index 2 .t)) (.binary (.inl .ba) (.leaf (.trace 1))
+            (.binary (.inl .fa) (.leaf (.verb .see)) (.leaf (.trace 2)))))))⟩] := rfl
 
-theorem interp_computes_inverse :
-    interp lex g₀ tree_inverse = some ⟨Ty.t, inverseScopeProp⟩ := rfl
+theorem meanings_surface : meanings tree_surface = [⟨.t, fun _ ↦ surfaceScopeProp⟩] := rfl
 
-/-- The two QR derivations interpret to different meanings. -/
-theorem scope_ambiguity_computed : interp lex g₀ tree_surface ≠ interp lex g₀ tree_inverse := by
-  rw [interp_computes_surface, interp_computes_inverse]
+theorem meanings_inverse : meanings tree_inverse = [⟨.t, fun _ ↦ inverseScopeProp⟩] := rfl
+
+/-- The two logical forms of the sentence have different denotations. -/
+theorem meanings_surface_ne_inverse : meanings tree_surface ≠ meanings tree_inverse := by
+  rw [meanings_surface, meanings_inverse]
   intro h
-  have : surfaceScopeProp = inverseScopeProp := by injection h with h'; injection h'
-  exact inverse_scope_false (this ▸ surface_scope_true)
+  have h' : (fun _ : ℕ → ToyEntity ↦ surfaceScopeProp) = fun _ ↦ inverseScopeProp := by
+    simpa using h
+  exact inverse_scope_false (congrFun h' (fun _ ↦ .john) ▸ surface_scope_true)
 
-theorem denotes_surface : Denotes lex g₀ tree_surface ⟨Ty.t, surfaceScopeProp⟩ := by
-  show Denotes lex g₀ tree_surface
-    ⟨Ty.t, every person fun x ↦ Det.some person fun y ↦ Toy.sees y x⟩
-  refine .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := .t) (f := every person) ?_
-    (.pa (τ := .t) fun x ↦ ?_)
-  · exact .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := (.e ⇒ .t) ⇒ .t) (f := every)
-      (a := person) (.tn rfl) (.tn rfl)
-  · refine .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := .t) (f := Det.some person) ?_
-      (.pa (τ := .t) fun y ↦ ?_)
-    · exact .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := (.e ⇒ .t) ⇒ .t) (f := Det.some)
-        (a := person) (.tn rfl) (.tn rfl)
-    · exact .faRight (lex := lex) (σ := .e) (τ := .t) (a := x) (f := Toy.sees y) .trace
-        (.faLeft (lex := lex) (σ := .e) (τ := .e ⇒ .t) (f := Toy.sees) (a := y)
-          (.tn rfl) .trace)
+end QuantifierRaising
 
-/-! ### Readings of the ambiguous lexicon
+/-- `objectShift D` is the object-position entry of the determiner `D`, which the book's lexical
+rule (§7.2.1) derives from the basic one. It takes an object-first two-place predicate and the
+subject and quantifies over the object. -/
+def objectShift {E : Type*} (D : Det E) : (E → Prop) → (E → E → Prop) → E → Prop :=
+  fun P R x ↦ D P fun y ↦ R y x
 
-`Tree.readings` composes the words' available readings, one resolution per occurrence; the
-study's leaf interpretation is one such resolution. -/
+@[simp] theorem objectShift_apply {E : Type*} (D : Det E) (P : E → Prop) (R : E → E → Prop)
+    (x : E) : objectShift D P R x = D P fun y ↦ R y x := rfl
 
-section Readings
-
-/-- The words' available readings, the quantifier words through the terminals of theirs and
-the toy fragment's words through the toy lexicon. -/
-def lexReadings : QuantificationalDeterminer ⊕ String → Set (Denotation ToyEntity Unit) :=
-  Sum.elim (fun w ↦ terminals ⟦w⟧ ToyEntity Unit) fun s ↦ {d | toyLexicon s = some d}
-
-theorem lex_mem_lexReadings (w : QuantificationalDeterminer ⊕ String)
-    (d : Denotation ToyEntity Unit) (h : lex w = some d) : d ∈ lexReadings w := by
-  cases w with
-  | inl w => exact quantifierReading_mem h
-  | inr s => exact h
-
-theorem surfaceScopeProp_mem_readings :
-    ⟨Ty.t, surfaceScopeProp⟩ ∈ Tree.readings lexReadings g₀ tree_surface :=
-  Tree.interp_mem_readings lex_mem_lexReadings interp_computes_surface
-
-end Readings
 
 /-! ### Quantifiers in situ
 
-In §7.2.1's alternative to movement the book's lexical rule gives each determiner an
-object-position entry (`objectShift?`), and the flat tree composes by Functional Application
-alone. -/
+In §7.2.1's alternative to movement a lexical rule gives each determiner an object-position
+entry beside its basic one, and the flat tree composes by Functional Application alone, the
+types choosing the entry at each position. -/
 
 section InSitu
 
-/-- The words' readings closed under the lexical rule, each quantifier word making its
-object-position entry available beside its basic one. -/
-def lexFlex (w : QuantificationalDeterminer ⊕ String) : Set (Denotation ToyEntity Unit) :=
-  lexReadings w ∪ objectShifts (lexReadings w)
+open Interpreter Interpreter.Grammar MSFirstOrder
 
-/-- A resolution of the quantifier words, the words in `object` taking their object-position
-entry and the others their basic one. -/
-def resolve (object : QuantificationalDeterminer → Prop) [DecidablePred object] :
-    QuantificationalDeterminer ⊕ String → Option (Denotation ToyEntity Unit) :=
-  Sum.elim (fun w ↦ if object w then (quantifierReading w).bind objectShift?
-    else quantifierReading w) toyLexicon
+/-- The object-position entry of a determiner, of type ⟨⟨e,t⟩,⟨⟨e,⟨e,t⟩⟩,⟨e,t⟩⟩⟩. -/
+inductive ObjectDet : Ty Base → Type
+  | shift (s : Det.Symbol) : ObjectDet (.et ⇒ .eet ⇒ .et)
 
-theorem resolve_mem_lexFlex (object : QuantificationalDeterminer → Prop) [DecidablePred object]
-    (w : QuantificationalDeterminer ⊕ String) (d : Denotation ToyEntity Unit)
-    (h : resolve object w = some d) : d ∈ lexFlex w := by
-  cases w with
-  | inl w =>
-    simp only [resolve, Sum.elim_inl] at h
-    split_ifs at h with hw
-    · obtain ⟨d₁, h₁, h⟩ := Option.bind_eq_some_iff.mp h
-      exact .inr ⟨d₁, quantifierReading_mem h₁, h⟩
-    · exact .inl (quantifierReading_mem h)
-  | inr s => exact .inl h
+/-- The items a leaf may be under the lexical rule: a determiner is its basic entry or its
+object-position entry. -/
+def itemsFlex : Word ⊕ ℕ → List (Σ a, Item a ⊕ ObjectDet a)
+  | .inl (.det w) => (symbols.filter (· ∈ w.readings)).flatMap fun s ↦
+      [⟨_, .inl (.det s)⟩, ⟨_, .inr (.shift s)⟩]
+  | x => (items x).map fun ⟨a, i⟩ ↦ ⟨a, .inl i⟩
+
+/-- The denotation of an item or an object-position entry. -/
+noncomputable def flexVal : {a : Ty Base} → Item a ⊕ ObjectDet a → Val a
+  | _, .inl i => i.val
+  | _, .inr (.shift s) => fun _ ↦ objectShift (s.denote ToyEntity)
 
 /-- The book's in-situ tree on the toy fragment, `[S [DP every person] [VP sees [DP some
 person]]]`, with no movement. -/
-def tree_inSitu : Tree Unit (QuantificationalDeterminer ⊕ String) :=
-  .bin (.bin (.leaf (.inl English.Determiners.every)) (.leaf (.inr "person")))
-    (.bin (.leaf (.inr "sees"))
-      (.bin (.leaf (.inl English.Determiners.some_)) (.leaf (.inr "person"))))
+def tree_inSitu : Tree Unit Word :=
+  .bin (.bin (det English.Determiners.every) (pred .person))
+    (.bin (verb .see) (.bin (det English.Determiners.some_) (pred .person)))
 
-theorem interp_computes_inSitu :
-    interp (resolve (· = English.Determiners.some_)) g₀ tree_inSitu =
-      some ⟨Ty.t, surfaceScopeProp⟩ := rfl
+/-- The flat tree has one derivation, by Functional Application alone: the subject determiner
+is its basic entry and the object determiner its object-position entry. -/
+theorem derivs_inSitu :
+    Tree.derivs rules itemsFlex tree_inSitu =
+      [⟨.t, .binary (.inl .fa)
+        (.binary (.inl .fa) (.leaf (.inl (.det .every))) (.leaf (.inl (.pred .person))))
+        (.binary (.inl .ba) (.leaf (.inl (.verb .see)))
+          (.binary (.inl .fa) (.leaf (.inr (.shift .some))) (.leaf (.inl (.pred .person)))))⟩] :=
+  rfl
 
-theorem inSitu_eq_surface :
-    interp (resolve (· = English.Determiners.some_)) g₀ tree_inSitu = interp lex g₀ tree_surface :=
-  interp_computes_inSitu.trans interp_computes_surface.symm
+/-- The flat tree denotes the surface-scope reading. -/
+theorem meanings_inSitu :
+    tree_inSitu.values rules total flexVal itemsFlex =
+      [⟨.t, fun _ ↦ surfaceScopeProp⟩] := rfl
 
-/-- The surface-scope reading is among the readings of the flat tree under the lexical rule. -/
-theorem surfaceScopeProp_mem_readings_inSitu :
-    ⟨Ty.t, surfaceScopeProp⟩ ∈ Tree.readings lexFlex g₀ tree_inSitu :=
-  Tree.interp_mem_readings (resolve_mem_lexFlex _) interp_computes_inSitu
-
-theorem object_entry_in_subject_uninterpretable :
-    interp (resolve (· = English.Determiners.some_)) g₀
-      (.bin (.bin (.leaf (.inl English.Determiners.some_)) (.leaf (.inr "person")))
-        (.leaf (.inr "sleeps"))) = none := rfl
-
--- §7.1
-theorem basic_entry_in_object_uninterpretable :
-    interp (resolve fun _ ↦ False) g₀ (.bin (.leaf (.inr "John"))
-      (.bin (.leaf (.inr "sees"))
-        (.bin (.leaf (.inl English.Determiners.some_)) (.leaf (.inr "person"))))) = none := rfl
+/-- With the basic entries alone a quantifier in object position is uninterpretable (§7.1). -/
+theorem derivs_basicObject :
+    Tree.derivs rules items (.bin (name .john)
+      (.bin (verb .see) (.bin (det English.Determiners.some_) (pred .person)))) = [] := rfl
 
 end InSitu
 
-/-! ### Logical forms and their readback
-
-With the logical words, a quantifier-raised tree translates to its logical form, with the mode at
-each node, and the logical form reads back to the first-order formula of its truth conditions. -/
-
-section LogicalForm
-
-open FirstOrder
-
-/-- The English logical words translate to the logical first-order constants. -/
-def Toy.logicalWords {L : Language} : String → Option ((ty : Ty) × FirstOrderConstant L ty)
-  | "every" => some ⟨_, .every⟩
-  | "some" => some ⟨_, .some⟩
-  | "no" => some ⟨_, .no⟩
-  | "not" => some ⟨_, .neg⟩
-  | "and" => some ⟨_, .conj⟩
-  | "or" => some ⟨_, .disj⟩
-  | _ => none
-
-/-- The toy vocabulary translates the toy content words and the logical words. -/
-def toyVocabulary (s : String) : Option ((ty : Ty) × FirstOrderConstant toyLang ty) :=
-  toyWords s <|> Toy.logicalWords s
-
-/-- *Every student sleeps*, with the subject raised over the trace of index 1. -/
-def everyStudentSleeps : Tree Unit String :=
-  .bin (.bin (.leaf "every") (.leaf "student")) (.binder 1 (.bin (.tr 1) (.leaf "sleeps")))
-
-open Toy in
-theorem translate_everyStudentSleeps :
-    Tree.translate individualIndices toyVocabulary everyStudentSleeps =
-      some ⟨.t, .comp .functionalLeft
-        (.comp .functionalLeft (.const .every) (.const (.rel₁ studentRel)))
-        (.lam 1 (.comp .functionalRight (.var 1) (.const (.rel₁ sleepRel))))⟩ :=
-  rfl
-
-open Toy FirstOrder.Language in
-/-- The logical form of *every student sleeps* reads back to `∀ x, student x → sleeps x`. -/
-example : ∃ u, Tree.translate individualIndices toyVocabulary everyStudentSleeps = some ⟨.t, u⟩ ∧
-    u.toFormula = ((studentRel.boundedFormula₁ (var (.inr 0))).imp
-      (sleepRel.boundedFormula₁ (var (.inr 0)))).all :=
-  ⟨_, rfl, rfl⟩
-
-/-- *John John* translates to nothing, since no mode combines two individuals. -/
-example : Tree.translate individualIndices toyVocabulary
-    (.bin (.leaf "John") (.leaf "John") : Tree Unit String) = none := rfl
-
-/-- In *every student who sleeps laughs* the relative clause abstracts over its trace and
-intersects with the noun by predicate modification. -/
-def everyStudentWhoSleepsLaughs : Tree Unit String :=
-  .bin (.bin (.leaf "every") (.bin (.leaf "student") (.binder 2 (.bin (.tr 2) (.leaf "sleeps")))))
-    (.binder 1 (.bin (.tr 1) (.leaf "laughs")))
-
-open Toy FirstOrder.Language in
-/-- The relative clause reads back as a conjunct of the restrictor, in
-`∀ x, student x ∧ sleeps x → laughs x`. -/
-example : ∃ u,
-    Tree.translate individualIndices toyVocabulary everyStudentWhoSleepsLaughs = some ⟨.t, u⟩ ∧
-    u.toFormula = ((studentRel.boundedFormula₁ (var (.inr 0)) ⊓
-      sleepRel.boundedFormula₁ (var (.inr 0))).imp (laughRel.boundedFormula₁ (var (.inr 0)))).all :=
-  ⟨_, rfl, rfl⟩
-
-/-- *Every student who sleeps laughs* holds in the toy model, where the students are the ones
-who laugh. -/
-example (g : Assignment ToyEntity) :
-    Tree.HoldsAt (toyModel.lexicon toyVocabulary ()) g everyStudentWhoSleepsLaughs := by
-  rw [Tree.holdsAt_iff_eval toyModel () rfl]
-  exact fun _ hx ↦ hx.1
-
-end LogicalForm
-
 /-! ### Intensional semantics (Chapter 12)
 
-The interpretation function depends on a world as well as an assignment, predicates vary with
-the world, and an attitude verb is necessity along what its subject believes, knows or hopes,
-taking a proposition of type `⟨s,t⟩`. Typed as computations that read a world, the worldly words
-compose by application mapped over that reader, and a report has several derivations, among them
-the one Intensional Functional Application gives. -/
+Denotations are relative to a world as well as an assignment, predicates vary with the world,
+and an attitude verb takes a proposition, of type ⟨s,t⟩. The rules are as before, with one more:
+Intensional Functional Application, which gives a function of intensions the intension of its
+sister. The fragment has no traces, and its denotations are relative to a world alone. -/
 
 section Intensional
 
-open ModalLogic SetRel
+open Interpreter Interpreter.Grammar MSFirstOrder ModalLogic SetRel
 
-variable {E W : Type} (loyal deceitful : W → E → Prop) (believes : E → SetRel W W)
-  (mary jan dick : E)
+/-- Intensional Functional Application (9) of §12.3: a function of intensions applies to the
+intension of its sister, in either order. -/
+inductive IntensionalApplication : Ty Base → Ty Base → Ty Base → Type
+  /-- The function on the left. -/
+  | ifa {b c : Ty Base} : IntensionalApplication (.intens b ⇒ c) b c
+  /-- The function on the right. -/
+  | iba {b c : Ty Base} : IntensionalApplication b (.intens b ⇒ c) c
 
-/-- The fragment's words, those that vary with the world typed as computations that read one
-([bumford-charlow-2026]): names are individuals, *is* is empty, *loyal* and *deceitful* read a
-world for a property, and *believes* reads one for necessity along what its subject believes, a
-relation between a proposition, itself read off a world, and an individual. -/
-def lexicon : String → Option (Σ ty, Ty.Domain E W ty)
-  | "Mary" => some ⟨.e, mary⟩
-  | "Jan" => some ⟨.e, jan⟩
-  | "Dick" => some ⟨.e, dick⟩
-  | "is" => some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t, fun P ↦ P⟩
-  | "loyal" => some ⟨.comp (.reader .s) (.e ⇒ .t), fun w x ↦ loyal w x⟩
-  | "deceitful" => some ⟨.comp (.reader .s) (.e ⇒ .t), fun w x ↦ deceitful w x⟩
-  | "believes" => some ⟨.comp (.reader .s) (.comp (.reader .s) .t ⇒ .e ⇒ .t),
-      fun w p x ↦ □[believes x] p w⟩
-  | _ => none
+/-- The grammar of Intensional Functional Application. -/
+@[reducible] def intensionalApplication : Grammar (Ty Base) :=
+  ⟨fun _ _ ↦ Empty, IntensionalApplication⟩
+
+instance : intensionalApplication.LocallyFinite where
+  unaryRules _ := []
+  binaryRules l r :=
+    (match l with
+      | .fn (.fn (.base .s) b) c => if h : b = r then [⟨c, h ▸ .ifa⟩] else []
+      | _ => []) ++
+    match r with
+      | .fn (.fn (.base .s) b) c => if h : b = l then [⟨c, h ▸ .iba⟩] else []
+      | _ => []
+  mem_unaryRules := nofun
+  mem_binaryRules m := by cases m <;> simp
+
+variable {E W : Type}
+
+/-- A denotation relative to a world. -/
+abbrev IVal (E W : Type) (a : Ty Base) : Type := W → a.Dom (Base.Dom E W)
+
+/-- Functional Application relative to a world. -/
+@[instance_reducible] def extensional : Grammar.application.language.Structure (IVal E W) :=
+  Grammar.structure nofun fun m x y w ↦ Application.eval _ m (x w) (y w)
+
+/-- Functional Application and Intensional Functional Application relative to a world: the
+first combines sisters at one world, and the second gives the function at a world the whole
+intension of its sister. -/
+@[instance_reducible] def intensional :
+    (Grammar.application.sum intensionalApplication).language.Structure (IVal E W) :=
+  Grammar.structure nofun fun
+    | .inl m, x, y => fun w ↦ Application.eval _ m (x w) (y w)
+    | .inr .ifa, f, x => fun w ↦ f w x
+    | .inr .iba, x, f => fun w ↦ f w x
+
+/-- The words of the fragment. -/
+inductive IWord
+  | mary | jan | dick | is | loyal | deceitful | believes
+
+/-- The lexical items by type: names, the copula, two predicates, and for *believes* an entry
+that takes a proposition and, for the argument of §12.2, one that takes a truth value. -/
+inductive IItem : Ty Base → Type
+  | mary : IItem .e
+  | jan : IItem .e
+  | dick : IItem .e
+  | is : IItem (.et ⇒ .et)
+  | loyal : IItem .et
+  | deceitful : IItem .et
+  | believes : IItem (.intens .t ⇒ .e ⇒ .t)
+  | believesExt : IItem (.t ⇒ .e ⇒ .t)
+
+/-- The items of the words, *believes* taking a proposition. -/
+def iitems : IWord ⊕ ℕ → List (Σ a, IItem a)
+  | .inl .mary => [⟨_, .mary⟩]
+  | .inl .jan => [⟨_, .jan⟩]
+  | .inl .dick => [⟨_, .dick⟩]
+  | .inl .is => [⟨_, .is⟩]
+  | .inl .loyal => [⟨_, .loyal⟩]
+  | .inl .deceitful => [⟨_, .deceitful⟩]
+  | .inl .believes => [⟨_, .believes⟩]
+  | .inr _ => []
+
+/-- The items of the words in an extensional semantics, *believes* taking a truth value. -/
+def iitemsExt : IWord ⊕ ℕ → List (Σ a, IItem a)
+  | .inl .believes => [⟨_, .believesExt⟩]
+  | x => iitems x
+
+variable (loyal deceitful : W → E → Prop) (believes : E → SetRel W W) (mary jan dick : E)
+  (believesExt : W → Prop → E → Prop)
+
+/-- The denotations of the items (4), (5) and the entry for *believe* of §12.3: names are rigid,
+*is* is empty, predicates vary with the world, and *believes* holds of a proposition and an
+individual at a world where the proposition is true at every world compatible with what the
+individual believes there. -/
+def IItem.val : {a : Ty Base} → IItem a → IVal E W a
+  | _, .mary => fun _ ↦ mary
+  | _, .jan => fun _ ↦ jan
+  | _, .dick => fun _ ↦ dick
+  | _, .is => fun _ P ↦ P
+  | _, .loyal => fun w x ↦ loyal w x
+  | _, .deceitful => fun w x ↦ deceitful w x
+  | _, .believes => fun w p x ↦ □[believes x] p w
+  | _, .believesExt => fun w p x ↦ believesExt w p x
 
 /-- *Jan is loyal*. -/
-def janIsLoyal : Tree Unit String := .bin (.leaf "Jan") (.bin (.leaf "is") (.leaf "loyal"))
+def janIsLoyal : Tree Unit IWord := .bin (.leaf .jan) (.bin (.leaf .is) (.leaf .loyal))
 
 /-- *Dick is deceitful*. -/
-def dickIsDeceitful : Tree Unit String :=
-  .bin (.leaf "Dick") (.bin (.leaf "is") (.leaf "deceitful"))
+def dickIsDeceitful : Tree Unit IWord := .bin (.leaf .dick) (.bin (.leaf .is) (.leaf .deceitful))
 
 /-- *Mary believes Jan is loyal*. -/
-def maryBelievesJanIsLoyal : Tree Unit String :=
-  .bin (.leaf "Mary") (.bin (.leaf "believes") janIsLoyal)
+def maryBelievesJanIsLoyal : Tree Unit IWord :=
+  .bin (.leaf .mary) (.bin (.leaf .believes) janIsLoyal)
 
 /-- *Mary believes Dick is deceitful*. -/
-def maryBelievesDickIsDeceitful : Tree Unit String :=
-  .bin (.leaf "Mary") (.bin (.leaf "believes") dickIsDeceitful)
+def maryBelievesDickIsDeceitful : Tree Unit IWord :=
+  .bin (.leaf .mary) (.bin (.leaf .believes) dickIsDeceitful)
 
-/-- The propositions that the derivations of a tree from `lexicon` denote. -/
-def propositions (g : Assignment E) (t : Tree Unit String) : Set (Denotation E W) :=
-  {d | d ∈ ((Tree.translations individualIndices (lexicon loyal deceitful believes mary jan dick)
-    t).filter (·.1 = .comp (.reader .s) .t)).map fun d ↦ ⟨d.1, d.2.eval (fun c ↦ c) g⟩}
+/-- The denotations of a tree by Functional Application and Intensional Functional
+Application. -/
+def imeanings (t : Tree Unit IWord) : List (Σ a, IVal E W a) :=
+  t.values (typeDriven (.sum .application intensionalApplication)) intensional
+    (IItem.val loyal deceitful believes mary jan dick believesExt) iitems
 
-theorem propositions_janIsLoyal (g : Assignment E) :
-    propositions loyal deceitful believes mary jan dick g janIsLoyal =
-      {⟨.comp (.reader .s) .t, fun w ↦ loyal w jan⟩} := by
-  ext d
-  simp [propositions, Tree.translations, janIsLoyal, lexicon, Ty.modes, Ty.mode?,
-    Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
-    Mode.eventIdentification?, Eff.map, Mode.join?]
+/-- The denotations of a tree by Functional Application alone, in the extensional semantics
+where *believes* takes a truth value. -/
+def emeanings (t : Tree Unit IWord) : List (Σ a, IVal E W a) :=
+  t.values (typeDriven .application) extensional
+    (IItem.val loyal deceitful believes mary jan dick believesExt) iitemsExt
 
-theorem propositions_dickIsDeceitful (g : Assignment E) :
-    propositions loyal deceitful believes mary jan dick g dickIsDeceitful =
-      {⟨.comp (.reader .s) .t, fun w ↦ deceitful w dick⟩} := by
-  ext d
-  simp [propositions, Tree.translations, dickIsDeceitful, lexicon, Ty.modes, Ty.mode?,
-    Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
-    Mode.eventIdentification?, Eff.map, Mode.join?]
+theorem imeanings_janIsLoyal :
+    imeanings loyal deceitful believes mary jan dick believesExt janIsLoyal =
+      [⟨.t, fun w ↦ loyal w jan⟩] := rfl
 
-/-- Intensional Functional Application is application mapped over the reader of worlds: the
-derivations of *Mary believes Jan is loyal* denote two propositions, and the one mapping
-application over the verb's reader is true at `w` iff Jan is loyal at every world compatible with
-what Mary believes in `w` (8), p. 308. The others, by structured application or by joining a
-layered derivation, give the verb the constant intension of the complement's truth value at `w`,
-the report of an extensional semantics (p. 300). -/
-theorem propositions_maryBelievesJanIsLoyal (g : Assignment E) :
-    propositions loyal deceitful believes mary jan dick g maryBelievesJanIsLoyal =
-      {⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (loyal · jan) w⟩,
-       ⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (fun _ ↦ loyal w jan) w⟩} := by
-  ext d
-  simp [propositions, Tree.translations, maryBelievesJanIsLoyal, janIsLoyal, lexicon, Ty.modes,
-    Ty.mode?, Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
-    Mode.eventIdentification?, Eff.map, Eff.seq, Eff.pure, Mode.join?, Eff.join]
-  tauto
+/-- Functional Application cannot give *believes* its complement, a truth value where the verb
+wants a proposition. -/
+theorem derivs_maryBelievesJanIsLoyal_application :
+    Tree.derivs (typeDriven .application) iitems maryBelievesJanIsLoyal = [] := rfl
 
-theorem propositions_maryBelievesDickIsDeceitful (g : Assignment E) :
-    propositions loyal deceitful believes mary jan dick g maryBelievesDickIsDeceitful =
-      {⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (deceitful · dick) w⟩,
-       ⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (fun _ ↦ deceitful w dick) w⟩} := by
-  ext d
-  simp [propositions, Tree.translations, maryBelievesDickIsDeceitful, dickIsDeceitful, lexicon,
-    Ty.modes, Ty.mode?, Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
-    Mode.eventIdentification?, Eff.map, Eff.seq, Eff.pure, Mode.join?, Eff.join]
-  tauto
+/-- The one derivation of the report: Intensional Functional Application of the verb to its
+complement, and Functional Application elsewhere. -/
+theorem derivs_maryBelievesJanIsLoyal :
+    Tree.derivs (typeDriven (.sum .application intensionalApplication)) iitems
+        maryBelievesJanIsLoyal =
+      [⟨.t, .binary (.inl .ba) (.leaf .mary) (.binary (.inr .ifa) (.leaf .believes)
+        (.binary (.inl .ba) (.leaf .jan) (.binary (.inl .fa) (.leaf .is) (.leaf .loyal))))⟩] :=
+  rfl
 
--- p. 300: the other derivations layer the two readers, and read at one world twice each is the
--- report about the constant intension of the complement's truth value there
-theorem translations_maryBelievesJanIsLoyal_layered (g : Assignment E) :
-    ((Tree.translations individualIndices (lexicon loyal deceitful believes mary jan dick)
-      maryBelievesJanIsLoyal).filter (·.1 = .comp (.reader .s) (.comp (.reader .s) .t))).map
-        (fun d ↦ (⟨d.1, d.2.eval (fun c ↦ c) g⟩ : Denotation E W)) =
-      [⟨.comp (.reader .s) (.comp (.reader .s) .t),
-        fun u v ↦ □[believes mary] (fun _ ↦ loyal u jan) v⟩,
-       ⟨.comp (.reader .s) (.comp (.reader .s) .t),
-        fun v u ↦ □[believes mary] (fun _ ↦ loyal u jan) v⟩,
-       ⟨.comp (.reader .s) (.comp (.reader .s) .t),
-        fun v u ↦ □[believes mary] (fun _ ↦ loyal u jan) v⟩] := by
-  simp [Tree.translations, maryBelievesJanIsLoyal, janIsLoyal, lexicon, Ty.modes, Ty.mode?,
-    Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
-    Mode.eventIdentification?, Eff.map, Eff.pure, Mode.join?]
+/-- (8) of §12.3 is true at a world iff Jan is loyal at every world compatible with what Mary
+believes there. -/
+theorem imeanings_maryBelievesJanIsLoyal :
+    imeanings loyal deceitful believes mary jan dick believesExt maryBelievesJanIsLoyal =
+      [⟨.t, fun w ↦ □[believes mary] (fun w' ↦ loyal w' jan) w⟩] := rfl
 
-/-- The lexicon read at the world `w`: a word that reads a world gives its value there. -/
-def lexiconAt (w : W) (s : String) : Option (Σ ty, Ty.Domain E W ty) :=
-  (lexicon loyal deceitful believes mary jan dick s).map fun
-    | ⟨.comp (.reader .s) ty, x⟩ => ⟨ty, x w⟩
-    | d => d
+theorem imeanings_maryBelievesDickIsDeceitful :
+    imeanings loyal deceitful believes mary jan dick believesExt maryBelievesDickIsDeceitful =
+      [⟨.t, fun w ↦ □[believes mary] (fun w' ↦ deceitful w' dick) w⟩] := rfl
 
--- p. 300: read at one world, a complement of *believes* is its truth value, and the one
--- derivation, by Unit Right, gives the verb the constant intension of that truth value, so two
--- true complements make the reports agree
-theorem translations_lexiconAt_maryBelievesJanIsLoyal (w : W) (g : Assignment E) :
-    (Tree.translations individualIndices (lexiconAt loyal deceitful believes mary jan dick w)
-      maryBelievesJanIsLoyal).map (fun d ↦ (⟨d.1, d.2.eval (fun c ↦ c) g⟩ : Denotation E W)) =
-      [⟨.t, □[believes mary] (fun _ ↦ loyal w jan) w⟩] := by
-  simp [Tree.translations, maryBelievesJanIsLoyal, janIsLoyal, lexiconAt, lexicon, Ty.modes,
-    Ty.mode?, Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
-    Mode.eventIdentification?, Eff.pure, Mode.join?]
-
-/-- Application mapped over the reader of worlds gives the function at `w` its argument's whole
-intension, and Unit Right gives it the constant intension of the argument's value at `w`; the two
-agree at `w` on every argument exactly when the function, read as an operator on intensions, is
-extensional at `w`. -/
-theorem forall_eval_mapLeft_eq_eval_unitRight_iff {S : Sorts} {σ τ : Ty}
-    {f : W → (W → Ty.Domain E W σ S) → Ty.Domain E W τ S} {w : W} :
-    (∀ a, (Mode.mapLeft (f := .reader .s)
-        (.functionalLeft (σ := .comp (.reader .s) σ) (τ := τ))).eval f a w =
-        (Mode.unitRight (f := .reader .s) (.functionalLeft (σ := σ) (τ := τ))).eval (f w) (a w)) ↔
-      Montague.IsExtensionalAt (fun a w' ↦ f w' a) w :=
-  Montague.isExtensionalAt_iff_forall_const.symm
+/-- The problem of §12.2: in an extensional semantics, whatever *believes* denotes, the two
+reports have one truth value at a world where *Jan is loyal* and *Dick is deceitful* do. -/
+theorem emeanings_agree {w : W} (h : loyal w jan ↔ deceitful w dick) : ∃ p q : W → Prop,
+    emeanings loyal deceitful believes mary jan dick believesExt maryBelievesJanIsLoyal =
+        [⟨.t, p⟩] ∧
+      emeanings loyal deceitful believes mary jan dick believesExt maryBelievesDickIsDeceitful =
+        [⟨.t, q⟩] ∧ (p w ↔ q w) :=
+  ⟨_, _, rfl, rfl, by
+    show believesExt w (loyal w jan) mary ↔ believesExt w (deceitful w dick) mary
+    rw [propext h]⟩
 
 /-- An attitude verb's complement is a nonextensional context at `w` exactly when the subject's
-attitude at `w` leaves open a world other than `w`, so the truth value of the complement fixes the
-report only for a subject who rules out every other world (p. 300). -/
+attitude at `w` leaves open a world other than `w`: only for a subject who rules out every other
+world does the truth value of the complement fix the report. -/
 theorem believes_isExtensionalAt_iff {x : E} {w : W} :
     Montague.IsExtensionalAt (fun p w' ↦ □[believes x] p w') w ↔ ∀ v, w ~[believes x] v → v = w :=
   Montague.isExtensionalAt_box_iff
@@ -994,23 +893,18 @@ inductive Ch12World | actual | other
 /-- The individuals of the model for (11). -/
 inductive Ch12Person | mary | jan | dick
 
-/-- (11), p. 309: Jan is loyal and Dick deceitful at the actual world, Mary believes that Jan is
-loyal, and she does not believe that Dick is deceitful, since her beliefs leave open a world where
-he is not. The report about the constant intension of the complement's truth value is true of
-both, as p. 300 predicts of an extensional semantics. -/
-theorem janIsLoyal_dickIsDeceitful_maryBelieves (g : Assignment Ch12Person) :
-    let props := propositions (W := Ch12World) (fun _ x ↦ x = .jan)
-      (fun w x ↦ w = .actual ∧ x = .dick) (fun _ ↦ Set.univ) .mary .jan .dick g
-    let prop (p : Ch12World → Prop) : Denotation Ch12Person Ch12World :=
-      ⟨.comp (.reader .s) .t, p⟩
-    (∃ p, props janIsLoyal = {prop p} ∧ p .actual) ∧
-      (∃ p, props dickIsDeceitful = {prop p} ∧ p .actual) ∧
-      (∃ p q, props maryBelievesJanIsLoyal = {prop p, prop q} ∧ p .actual ∧ q .actual) ∧
-      ∃ p q, props maryBelievesDickIsDeceitful = {prop p, prop q} ∧ ¬ p .actual ∧ q .actual :=
-  ⟨⟨_, propositions_janIsLoyal .., rfl⟩, ⟨_, propositions_dickIsDeceitful .., rfl, rfl⟩,
-    ⟨_, _, propositions_maryBelievesJanIsLoyal .., fun _ _ ↦ rfl, fun _ _ ↦ rfl⟩,
-    ⟨_, _, propositions_maryBelievesDickIsDeceitful .., (fun h ↦ nomatch (h .other trivial).1),
-      fun _ _ ↦ ⟨rfl, rfl⟩⟩⟩
+/-- (11) of §12.3: Jan is loyal and Dick deceitful at the actual world, Mary believes that Jan is
+loyal, and she does not believe that Dick is deceitful, since her beliefs leave open a world
+where he is not. -/
+theorem janIsLoyal_dickIsDeceitful_maryBelieves (b : Ch12World → Prop → Ch12Person → Prop) :
+    let m := imeanings (W := Ch12World) (fun _ x ↦ x = .jan)
+      (fun w x ↦ w = .actual ∧ x = .dick) (fun _ ↦ Set.univ) Ch12Person.mary .jan .dick b
+    (∃ p, m janIsLoyal = [⟨.t, p⟩] ∧ p .actual) ∧
+      (∃ p, m dickIsDeceitful = [⟨.t, p⟩] ∧ p .actual) ∧
+      (∃ p, m maryBelievesJanIsLoyal = [⟨.t, p⟩] ∧ p .actual) ∧
+      ∃ p, m maryBelievesDickIsDeceitful = [⟨.t, p⟩] ∧ ¬ p .actual :=
+  ⟨⟨_, rfl, rfl⟩, ⟨_, rfl, rfl, rfl⟩, ⟨_, rfl, fun _ _ ↦ rfl⟩,
+    ⟨_, rfl, fun h ↦ nomatch (h .other trivial).1⟩⟩
 
 end Intensional
 
