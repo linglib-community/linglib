@@ -68,21 +68,23 @@ noncomputable def toTrivalent : W → Trivalent :=
 @[simp] theorem toTrivalent_eq_undefined_iff : p.toTrivalent w = .undefined ↔ ¬ p.notAtIssue w := by
   simp [toTrivalent]
 
-theorem toTrivalent_neg : p.neg.toTrivalent = p.toTrivalentᶜ := by
-  funext w; by_cases h : p.notAtIssue w <;> by_cases a : p.atIssue w <;> simp [toTrivalent, h, a]
+theorem toTrivalent_neg : p.neg.toTrivalent = p.toTrivalentᶜ :=
+  funext fun _ ↦ Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp) (by simp)
 
 theorem toTrivalent_and : (p.and q).toTrivalent w = (p.toTrivalent w).meetWeak (q.toTrivalent w) :=
-  by by_cases h : p.notAtIssue w <;> by_cases h' : q.notAtIssue w <;> by_cases a : p.atIssue w <;>
-    by_cases b : q.atIssue w <;> simp [toTrivalent, h, h', a, b] <;> rfl
+  Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp [imp_iff_not_or])
+    (by simp [and_and_and_comm])
 
 theorem toTrivalent_or : (p.or q).toTrivalent w = (p.toTrivalent w).joinWeak (q.toTrivalent w) :=
-  by by_cases h : p.notAtIssue w <;> by_cases h' : q.notAtIssue w <;> by_cases a : p.atIssue w <;>
-    by_cases b : q.atIssue w <;> simp [toTrivalent, h, h', a, b] <;> rfl
+  Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff
+    (by simp [Trivalent.joinWeak_eq_undefined_iff, imp_iff_not_or])
+    (by simp [Trivalent.joinWeak_eq_true_iff]; tauto)
 
 theorem toTrivalent_imp :
-    (p.imp q).toTrivalent w = ((p.toTrivalent w)ᶜ).joinWeak (q.toTrivalent w) := by
-  by_cases h : p.notAtIssue w <;> by_cases h' : q.notAtIssue w <;> by_cases a : p.atIssue w <;>
-    by_cases b : q.atIssue w <;> simp [toTrivalent, h, h', a, b, himp_eq] <;> rfl
+    (p.imp q).toTrivalent w = ((p.toTrivalent w)ᶜ).joinWeak (q.toTrivalent w) :=
+  Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff
+    (by simp [Trivalent.joinWeak_eq_undefined_iff, imp_iff_not_or])
+    (by simp [Trivalent.joinWeak_eq_true_iff, himp_eq]; tauto)
 
 /-- The filtering conditional presupposes what its antecedent does, and what its consequent does
 only where the antecedent's at-issue content holds. This is the conditional presupposition by
@@ -101,9 +103,9 @@ theorem imp_notAtIssue_le_impFilter_notAtIssue :
 
 /-- The filtering conditional evaluates to the Middle Kleene conditional of [peters-1979]. -/
 theorem toTrivalent_impFilter :
-    (p.impFilter q).toTrivalent w = ((p.toTrivalent w)ᶜ).joinMiddle (q.toTrivalent w) := by
-  by_cases h : p.notAtIssue w <;> by_cases h' : q.notAtIssue w <;> by_cases a : p.atIssue w <;>
-    by_cases b : q.atIssue w <;> simp [toTrivalent, h, h', a, b, himp_eq]
+    (p.impFilter q).toTrivalent w = ((p.toTrivalent w)ᶜ).joinMiddle (q.toTrivalent w) :=
+  Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp [himp_eq]; tauto)
+    (by simp [himp_eq]; tauto)
 
 /-- Filtering needs the bind: an at-issue operator applied to two meanings presupposes the same
 whatever their at-issue content, so none presupposes what the filtering conditional does. -/
@@ -119,6 +121,7 @@ asserts `A(φ) ∨ A(ψ)`: each disjunct's presupposition projects unless the ot
 at-issue content holds. It is [yagi-2025]'s Definition 2 and the disjunction [sharvit-2025]
 gives for the connectives of [karttunen-peters-1979]; [kalomoiros-schwarz-2021] give experimental
 support for the symmetry. -/
+@[simps]
 def orFilter : TwoDim W (W → Prop) :=
   ⟨p.atIssue ⊔ q.atIssue, fun w ↦ (q.atIssue w ∨ p.notAtIssue w) ∧ (p.atIssue w ∨ q.notAtIssue w)⟩
 
@@ -149,6 +152,7 @@ holds, its presupposition included, and asserts that `x` does not believe its at
 The complement's presupposition so projects to the evaluation world, the transparent rule of
 [van-der-sandt-1992], and not into `x`'s beliefs, the opaque rule of [heim-1992];
 [delpinal-bassi-sauerland-2024] derive free choice under *unaware* with either. -/
+@[simps]
 def negFactive (believes : (W → Prop) → W → Prop) : TwoDim W (W → Prop) :=
   ⟨fun w ↦ ¬ believes p.atIssue w, fun w ↦ p.notAtIssue w ∧ p.atIssue w⟩
 

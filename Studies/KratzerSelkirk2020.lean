@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Semantics.Focus.Control
 public import Linglib.Semantics.Focus.Marking
 public import Studies.HartmannZimmermann2007
@@ -65,7 +64,6 @@ the features in English (§6–§7) is prose.
 
 @[expose] public section
 
-open ConventionalImplicature (TwoDim)
 open Focus (Mark)
 open WithAlternatives (map₂ not_given_of_nontrivial)
 
@@ -78,11 +76,6 @@ is Given with respect to nothing. -/
 theorem not_given_mark_focused {α : Type*} [Nontrivial α] (d : WithAlternatives α) (a : α) :
     ¬ (d.mark .focused).Given a :=
   not_given_of_nontrivial (d.nontrivial_alternatives_mark_focused) a
-
-theorem useConditional_projects {W : Type*} (F : (W → Prop) → W → Prop)
-    (atIssue requirement : W → Prop) :
-    (F <$> (⟨atIssue, requirement⟩ : TwoDim W (W → Prop))).notAtIssue = requirement :=
-  rfl
 
 /-- (49) An expression `v i` represents a contrast with `a` when `a` is among its alternatives
 and differs from its ordinary value, and no variant `v j` with strictly fewer alternatives has

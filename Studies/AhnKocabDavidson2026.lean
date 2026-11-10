@@ -52,7 +52,7 @@ variable {E L W : Type*}
 
 /-- `⟦IX_LOC⟧ = λo λx. R(x, o)`: pointing at `o` predicates of `x` that it is associated with
 `o`, for whatever relation `R` the context supplies. -/
-def ixLoc (R : E → L → Prop) (o : L) : E → Prop := λ x => R x o
+def ixLoc (R : E → L → Prop) (o : L) : E → Prop := fun x ↦ R x o
 
 /-- The demonstrative `⟦that⟧ = λR λP. ιx. P(x) ∧ R(x)`: the unique entity meeting the
 spatial and the nominal restriction. -/
@@ -70,16 +70,16 @@ Deictic, metonymic, and abstract uses differ only in `R`: the location of the re
 location associated with it, or a location arbitrarily assigned to it by introduction. -/
 
 /-- Direct deixis: `x` is currently located at `o`. -/
-def locatedAt (at_ : E → L) : E → L → Prop := λ x o => at_ x = o
+def locatedAt (at_ : E → L) : E → L → Prop := fun x o ↦ at_ x = o
 
 /-- Arbitrary association by introduction: `x` has been assigned locus `o`. -/
-def assigned (assoc : E → Option L) : E → L → Prop := λ x o => assoc x = some o
+def assigned (assoc : E → Option L) : E → L → Prop := fun x o ↦ assoc x = some o
 
 theorem that_assigned_isSome (assoc : E → Option L) (h : ∀ x y o, assoc x = some o →
     assoc y = some o → x = y) (o : L) :
     (that (ixLoc (assigned assoc) o) ⊤).isSome ↔ ∃ x, assoc x = some o := by
   rw [that_isSome_iff]
-  exact ⟨λ ⟨x, hx, _⟩ => ⟨x, hx.2⟩, λ ⟨x, hx⟩ => ⟨x, ⟨trivial, hx⟩, λ y hy => h y x o hy.2 hx⟩⟩
+  exact ⟨fun ⟨x, hx, _⟩ ↦ ⟨x, hx.2⟩, fun ⟨x, hx⟩ ↦ ⟨x, ⟨trivial, hx⟩, fun y hy ↦ h y x o hy.2 hx⟩⟩
 
 /-! ### Introducing and anaphoric uses -/
 
@@ -102,13 +102,13 @@ theorem anaphoric_atIssue (P : W → E → Prop) (R : W → E → L → Prop) (o
     (h : (anaphoric P R o).notAtIssue w) :
     (anaphoric P R o).atIssue w ↔ ∀ x, R w x o → P w x := by
   obtain ⟨x, hx, hu⟩ := h
-  exact ⟨λ ⟨y, hy, hP⟩ z hz => hu z hz ▸ hu y hy ▸ hP, λ hall => ⟨x, hx, hall x hx⟩⟩
+  exact ⟨fun ⟨y, hy, hP⟩ z hz ↦ hu z hz ▸ hu y hy ▸ hP, fun hall ↦ ⟨x, hx, hall x hx⟩⟩
 
 /-! ### Incorporation into verbs -/
 
 /-- Locational modification `AVB`: the points restrict the verb's subject and object slots. -/
 def incorporate (V : E → E → Prop) (subj obj : E → Prop) : E → E → Prop :=
-  λ x y => Modifier.intersective subj (V · y) x ∧ obj y
+  fun x y ↦ Modifier.intersective subj (V · y) x ∧ obj y
 
 /-- Locational modification of an intransitive, `V_a`: the point restricts the sole slot. -/
 def incorporate₁ (V : E → Prop) (subj : E → Prop) : E → Prop := Modifier.intersective subj V
@@ -126,13 +126,13 @@ def scenario : Entity → Locus → Prop
   | .jin, .a | .sol, .b => True
   | _, _ => False
 
-instance : DecidableRel scenario := λ x o => by
+instance : DecidableRel scenario := fun x o ↦ by
   cases x <;> cases o <;> simp only [scenario] <;> infer_instance
 
 theorem scenario_help (help : Entity → Entity → Prop) [DecidableRel help] (h : help .jin .sol) :
     incorporate help (ixLoc scenario .a) (ixLoc scenario .b) .jin .sol ∧
       ¬ incorporate help (ixLoc scenario .a) (ixLoc scenario .b) .sol .jin :=
-  ⟨⟨⟨trivial, h⟩, trivial⟩, λ ⟨⟨hs, _⟩, _⟩ => hs⟩
+  ⟨⟨⟨trivial, h⟩, trivial⟩, fun ⟨⟨hs, _⟩, _⟩ ↦ hs⟩
 
 /-! ### Selection and Padden's classes -/
 

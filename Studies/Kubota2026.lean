@@ -3,8 +3,7 @@ module
 public import Linglib.Semantics.Reference.Rigidity
 public import Linglib.Syntax.Clause.Basic
 public import Linglib.Semantics.Modality.Basic
-public import Linglib.Logic.Trivalent.Pointwise
-public import Linglib.Semantics.ConventionalImplicature
+public import Linglib.Semantics.Presupposition.TwoDimensional
 public import Linglib.Data.Examples.Kubota2026
 public import Linglib.Data.Examples.Readers
 
@@ -82,10 +81,9 @@ namespace Outlook
 
 variable {W O : Type*}
 
-open Classical in
 /-- The presuppositional projection presupposes the counterstance and asserts the prejacent. -/
 noncomputable def toTrivalent (m : Outlook W O) : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (m.counterstance w)) (Trivalent.ofProp (m.prejacent w))
+  (⟨m.prejacent, m.counterstance⟩ : TwoDim W (W → Prop)).toTrivalent
 
 /-- The expressive projection at an outlook pairs the prejacent with the stance as its
 use-conditional dimension. -/
