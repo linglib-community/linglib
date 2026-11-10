@@ -80,7 +80,45 @@ theorem realize_places (M : L.Structure D) (σ : Signature S) (args : σ.Interpr
     simp only [places, realize, realize_bind]
     exact Prod.ext (ihσ args.1) (ihτ args.2)
 
+/-- A term with constants has the value of the term with extra variables that it is, the
+variables valued as the constants are interpreted. -/
+@[simp] theorem realize_constantsToVars {γ : S → Type v} {M : L.Structure D}
+    {M' : (L.withConstants γ).Structure D} (h : (L.lhomWithConstants γ).IsExpansionOn M M')
+    (v : ∀ {s : S}, α s → D s) {σ : Signature S} (t : (L.withConstants γ).Term α σ) :
+    t.constantsToVars.realize M
+        (fun {s} (x : γ s ⊕ α s) ↦ Sum.elim (fun c ↦ M'.funMap (L.con c) PUnit.unit) v x) =
+      t.realize M' v := by
+  induction t with
+  | var a => rfl
+  | @func σ _ f r ih =>
+    cases f with
+    | inl f => simp only [constantsToVars, realize, ih, ← h.map_onFunction f]; rfl
+    | inr c =>
+      cases σ with
+      | nil => cases r; rfl
+      | of _ => exact nomatch c
+      | prod _ _ => exact nomatch c
+  | prod a b iha ihb => simp only [constantsToVars, realize, iha, ihb]
+  | nil => rfl
+
 end Language.Term
+
+namespace Language.LHom
+
+variable {L' : Language.{u, v} S}
+
+/-- A term keeps its value along a language map, in a structure that expands the one it is
+evaluated in. -/
+@[simp] theorem realize_onTerm {φ : L →ᴸ L'} {M : L.Structure D} {M' : L'.Structure D}
+    (h : φ.IsExpansionOn M M') (ρ : ∀ {s : S}, α s → D s) {σ : Signature S} (t : L.Term α σ) :
+    (φ.onTerm t).realize M' ρ = t.realize M ρ := by
+  induction t with
+  | var x => rfl
+  | func f r ih => simp only [onTerm, Term.realize, ih, h.map_onFunction]
+  | prod a b iha ihb => simp only [onTerm, Term.realize, iha, ihb]
+  | nil => rfl
+
+end Language.LHom
 
 variable {D' : S → Type x'} {M : L.Structure D} {M' : L.Structure D'}
   {R : ∀ s, D s → D' s → Prop}

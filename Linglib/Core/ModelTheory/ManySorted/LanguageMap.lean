@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.ModelTheory.ManySorted.Semantics
+public import Linglib.Core.ModelTheory.ManySorted.Basic
 public import Mathlib.Tactic.Simps.Basic
 
 /-!
@@ -8,30 +8,31 @@ public import Mathlib.Tactic.Simps.Basic
 
 A map between two languages over the same sorts sends each symbol to a symbol with arguments of
 the same shape and a result of the same sort, as `FirstOrder.Language.LHom` does for the
-first-order languages of mathlib. Along a map a term of the first language is a term of the
-second, a structure for the second restricts to one for the first, and where a structure for the
-second expands one for the first, interpreting the image of each symbol as the symbol, [a term
-keeps its value](##ManySorted.Language.LHom.realize_onTerm). Each of two languages maps into
-their sum, whose structure expands both.
+first-order languages of mathlib. Along a map a structure for the second language restricts to
+one for the first, and a structure for the second expands one for the first when it interprets the
+image of each symbol as the symbol. Each of two languages maps into their sum, whose structure
+expands both, and a language with constants added is the sum of the language with a language of
+constants.
 
 ## Main definitions
 
 * `ManySorted.Language.LHom`: a map of symbols that preserves argument shape and result sort.
-* `ManySorted.Language.LHom.onTerm`: the term of the second language that a term of the first
-  is.
 * `ManySorted.Language.LHom.reduct`: the structure for the first language that a structure for
   the second restricts to.
 * `ManySorted.Language.LHom.IsExpansionOn`: a structure for the second language interprets the
   image of each symbol as a structure for the first interprets the symbol.
+* `ManySorted.Language.constantsOn`, `ManySorted.Language.withConstants`: a language of
+  constants of each sort, and a language with such constants added.
 
 ## Implementation notes
 
 The declarations are those of `Mathlib/ModelTheory/LanguageMap.lean`, in its order and under its
-names, for function symbols typed by shape and sort. Two things differ. The structures are
-arguments of `IsExpansionOn`, where mathlib takes them as instances, since a language here has
-several structures over the same domains; the instances of mathlib are theorems here. And
-`pi_isExpansionOn` has no counterpart, the structure on values that depend on a parameter being
-defined here.
+names, for function symbols typed by shape and sort; the constants of a language are a family
+over the sorts. Two things differ. The structures are arguments of `IsExpansionOn`, where mathlib
+takes them as instances, since a language here has several structures over the same domains; the
+instances of mathlib are theorems here. The notation `L[[γ]]` is not declared, its brackets being
+those of nested lists and of labelled trees. And `pi_isExpansionOn` has no counterpart, the
+structure on values that depend on a parameter being defined here.
 -/
 
 @[expose] public section
@@ -188,39 +189,100 @@ theorem pi_isExpansionOn {M : L.Structure D} {M' : L'.Structure D} (h : φ.IsExp
     (A : Type x) : φ.IsExpansionOn (M.pi A) (M'.pi A) :=
   ⟨fun _ _ f _ ↦ funext fun _ ↦ h.map_onFunction f _⟩
 
-/-! ### Terms -/
-
-/-- Maps a term's symbols along a language map. -/
-def onTerm (φ : L →ᴸ L') : {σ : Signature S} → L.Term α σ → L'.Term α σ
-  | _, .var x => .var x
-  | _, .func f r => .func (φ.onFunction f) (φ.onTerm r)
-  | _, .prod a b => .prod (φ.onTerm a) (φ.onTerm b)
-  | _, .nil => .nil
-
-@[simp] theorem id_onTerm {σ : Signature S} (t : L.Term α σ) : (LHom.id L).onTerm t = t := by
-  induction t with
-  | var x => rfl
-  | func f r ih => simp only [onTerm, ih, id_onFunction, id_eq]
-  | prod a b iha ihb => simp only [onTerm, iha, ihb]
-  | nil => rfl
-
-@[simp] theorem comp_onTerm (ψ : L' →ᴸ L'') (φ : L →ᴸ L') {σ : Signature S} (t : L.Term α σ) :
-    (ψ ∘ᴸ φ).onTerm t = ψ.onTerm (φ.onTerm t) := by
-  induction t with
-  | var x => rfl
-  | func f r ih => simp only [onTerm, ih, comp_onFunction]
-  | prod a b iha ihb => simp only [onTerm, iha, ihb]
-  | nil => rfl
-
-@[simp] theorem realize_onTerm {M : L.Structure D} {M' : L'.Structure D}
-    (h : φ.IsExpansionOn M M') (ρ : ∀ {s : S}, α s → D s) {σ : Signature S} (t : L.Term α σ) :
-    (φ.onTerm t).realize M' ρ = t.realize M ρ := by
-  induction t with
-  | var x => rfl
-  | func f r ih => simp only [onTerm, Term.realize, ih, h.map_onFunction]
-  | prod a b iha ihb => simp only [onTerm, Term.realize, iha, ihb]
-  | nil => rfl
-
 end LHom
+
+/-! ### Constants -/
+
+section ConstantsOn
+
+variable (γ : S → Type v)
+
+/-- The type of functions for a language consisting only of constant symbols. -/
+@[simp] def constantsOnFunc : Signature S → S → Type v
+  | .nil, t => γ t
+  | _, _ => PEmpty
+
+/-- A language with constants of each sort indexed by a type. -/
+@[reducible] def constantsOn : Language.{u, v} S := ⟨constantsOnFunc γ⟩
+
+variable {γ}
+
+/-- Gives a `constantsOn γ` structure to a family of domains by assigning each constant a
+value. -/
+@[instance_reducible] def constantsOn.structure (f : ∀ {s : S}, γ s → D s) :
+    (constantsOn γ).Structure D where
+  funMap {σ _} c _ :=
+    match σ, c with
+    | .nil, c => f c
+
+@[simp] theorem constantsOn.funMap_structure (f : ∀ {s : S}, γ s → D s) {s : S} (c : γ s)
+    (x : PUnit) : (constantsOn.structure (D := D) f).funMap (σ := .nil) (t := s) c x = f c := rfl
+
+variable {γ' : S → Type v}
+
+/-- A map between index types induces a map between constant languages. -/
+def LHom.constantsOnMap (f : ∀ {s : S}, γ s → γ' s) : constantsOn γ →ᴸ constantsOn γ' where
+  onFunction σ _ c :=
+    match σ, c with
+    | .nil, c => f c
+
+theorem constantsOnMap_isExpansionOn {f : ∀ {s : S}, γ s → γ' s} {fγ : ∀ {s : S}, γ s → D s}
+    {fγ' : ∀ {s : S}, γ' s → D s} (h : ∀ (s : S) (c : γ s), fγ' (f c) = fγ c) :
+    (LHom.constantsOnMap (γ := γ) (γ' := γ') f).IsExpansionOn (D := D)
+      (constantsOn.structure fγ) (constantsOn.structure fγ') :=
+  ⟨fun σ _ c _ ↦ match σ, c with
+    | .nil, c => h _ c⟩
+
+end ConstantsOn
+
+section WithConstants
+
+variable (L) (γ : S → Type v)
+
+/-- Extends a language with a constant of each sort for each element of a type. -/
+@[reducible] def withConstants : Language.{u, v} S := L.sum (constantsOn γ)
+
+/-- The language map adding constants. -/
+def lhomWithConstants : L →ᴸ L.withConstants γ := LHom.sumInl
+
+@[simp] theorem lhomWithConstants_onFunction {σ : Signature S} {t : S} (f : L.Functions σ t) :
+    (L.lhomWithConstants γ).onFunction f = .inl f := rfl
+
+variable {γ}
+
+/-- The constant symbol indexed by a particular element. -/
+protected def con {s : S} (c : γ s) : (L.withConstants γ).Functions .nil s := .inr c
+
+variable {L} (γ)
+
+/-- Adds constants to a language map. -/
+def LHom.addConstants (φ : L →ᴸ L') : L.withConstants γ →ᴸ L'.withConstants γ :=
+  φ.sumMap (LHom.id _)
+
+variable (L) {γ} {γ' : S → Type v}
+
+/-- The language map extending the constant set. -/
+def lhomWithConstantsMap (f : ∀ {s : S}, γ s → γ' s) :
+    L.withConstants γ →ᴸ L.withConstants γ' :=
+  LHom.sumMap (LHom.id L) (LHom.constantsOnMap f)
+
+@[simp] theorem LHom.map_constants_comp_sumInl {f : ∀ {s : S}, γ s → γ' s} :
+    (L.lhomWithConstantsMap f).comp LHom.sumInl = L.lhomWithConstants γ' := rfl
+
+/-- The structure for a language with constants that a structure for the language and values
+for the constants make. -/
+@[instance_reducible] def withConstantsStructure (M : L.Structure D)
+    (f : ∀ {s : S}, γ s → D s) : (L.withConstants γ).Structure D :=
+  M.sum (constantsOn.structure f)
+
+theorem withConstants_expansion (M : L.Structure D) (f : ∀ {s : S}, γ s → D s) :
+    (L.lhomWithConstants γ).IsExpansionOn M (L.withConstantsStructure M f) :=
+  ⟨fun _ _ _ _ ↦ rfl⟩
+
+@[simp] theorem withConstantsStructure_funMap_con (M : L.Structure D)
+    (f : ∀ {s : S}, γ s → D s) {s : S} (c : γ s) (x : PUnit) :
+    (L.withConstantsStructure M f).funMap (L.con c) x = f c := rfl
+
+end WithConstants
 
 end ManySorted.Language
