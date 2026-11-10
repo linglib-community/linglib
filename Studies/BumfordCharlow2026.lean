@@ -352,6 +352,26 @@ theorem baseGrammar_reads :
   | _, _, _, .inl .ba, hl, hr => absurd hl hr.1.not_reads
   | _, _, _, .inr .pm, hl, _ => hl
 
+/-- Application and predicate modification keep to the types without effects. -/
+theorem baseGrammar_effectFree : (baseGrammar B).EffectFree where
+  unary r := nomatch r
+  binary := @fun
+    | _, _, _, .inl .fa, hl, _ => hl.2
+    | _, _, _, .inl .ba, _, hr => hr.2
+    | _, _, _, .inr .pm, hl, _ => hl
+
+/-- Before any effect the book's interpreter is the deterministic one it starts from: over words
+with one item each, of types without effects, a structure has at most one value, although
+interpretation is relational once a word has an effect. -/
+theorem length_values_effectDriven_baseGrammar_le_one [DecidableEq B] {D : B → Type}
+    {Lx : Type} {W : Ty B → Type} (ρ : ∀ {a : Ty B}, W a → a.Dom D)
+    {lex : Lx → List (Σ a, W a)} (hlex : ∀ x, ∀ p ∈ lex x, p.1.EffectFree)
+    (h₁ : ∀ x, (lex x).length ≤ 1) (s : Skeleton Node Lx) :
+    ((effectDriven (baseGrammar B)).values effectGrammar.structure ρ lex s).length ≤ 1 := by
+  rw [values_effectDriven_of_effectFree baseGrammar_effectFree ρ hlex, values, List.length_map]
+  exact length_derivs_le_one (fun _ _ ↦ by simp [typeDriven])
+    (fun _ l r ↦ length_binaryRules_application_sum_predicateModification_le_one l r) h₁ s
+
 /-- Crossover (section 5.2): a left daughter that reads, combined with a right daughter that
 reads nothing, yields a type that still reads, whatever the modes. Only the co-unit mode removes
 a reading effect, and it takes the reader from the right daughter. -/
