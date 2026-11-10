@@ -30,9 +30,11 @@ center](##not_pronominalizationConstraint_accused).
   phrases](##criteria_lt_and_shortDefDescription_lt_iff), which the criteria rank below a short
   definite description and the scale above it. The chapter grants that some aspects of the scale
   are grammatically stipulated and notes a conflict between demonstratives, which code the higher
-  accessibility, and definite descriptions, which are the shorter; the partial names are
-  exceptions only because `informativity` credits a name with as much lexical information as a
-  description's noun, a comparison the chapter does not make.
+  accessibility, and definite descriptions, which are the shorter; of names against definite
+  descriptions Ariel's book already says that the criteria do not always give the scale.
+* The substrate's criteria draw [the distinctions the book credits to
+  informativity](##informativity_lt), [leave those it says informativity misses](##informativity_eq)
+  and give rigidity and attenuation [the ones it adds for them](##rigidity_lt_and_attenuation_lt).
 * The criteria tie proximate and distal demonstratives, which the scale [ranks
   apart](##distal_lt_proximate) on distributional evidence.
 * `givennessKind` reads the kind of form Gundel et al. list in their Table 1 off a class's
@@ -89,6 +91,29 @@ theorem not_antitone_informativity : ¬ Antitone informativity :=
 
 theorem not_antitone_rigidity : ¬ Antitone rigidity :=
   fun h ↦ absurd (h (show shortDefDescription ≤ lastName by decide)) (by decide)
+
+-- [ariel-1990] p. 80: the differences informativity predicts
+theorem informativity_lt :
+    ∀ p ∈ [(zero, unstressedPron), (unstressedPron, distalDemNP),
+        (unstressedPron, shortDefDescription), (distalDem, distalDemNP), (firstName, fullName),
+        (lastName, fullName), (fullName, fullNameMod), (shortDefDescription, longDefDescription),
+        (distalDemNP, distalDemMod)], informativity p.1 < informativity p.2 := by
+  decide +kernel
+
+-- [ariel-1990] p. 80: and those it does not
+theorem informativity_eq :
+    ∀ p ∈ [(shortDefDescription, distalDemNP), (distalDemNP, proxDemNP),
+        (stressedPron, unstressedPron), (verbalAgreement, cliticizedPron),
+        (verbalAgreement, unstressedPron)], informativity p.1 = informativity p.2 := by
+  decide +kernel
+
+-- [ariel-1990] p. 81: rigidity ranks the names, attenuation the stressed and the reduced forms
+theorem rigidity_lt_and_attenuation_lt :
+    [shortDefDescription, firstName, lastName, fullName].Pairwise (rigidity · < rigidity ·) ∧
+      informativity firstName = informativity lastName ∧
+      [stressedPron, unstressedPron, cliticizedPron, verbalAgreement, zero].Pairwise
+        (attenuation · < attenuation ·) := by
+  decide
 
 -- p. 51; Kirsner's Dutch demonstratives run the other way, p. 66
 theorem distal_lt_proximate (a b : AccessibilityLevel) (h : criteria a = criteria b)

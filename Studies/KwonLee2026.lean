@@ -76,14 +76,10 @@ def KoreanRefForm.toAccessibility : KoreanRefForm → AccessibilityLevel
   | .overt => .unstressedPron
   | .fullNP => .distalDemNP
 
-/-- The accessibility rank of a form. -/
-@[simp] def KoreanRefForm.rank (f : KoreanRefForm) : ℕ := f.toAccessibility.rank
-
 /-- The forms ordered by accessibility: `fullNP < overt < nullPro`. -/
 instance : LinearOrder KoreanRefForm :=
-  LinearOrder.lift' KoreanRefForm.rank
-    (λ a b h => by cases a <;> cases b <;>
-      simp_all [KoreanRefForm.toAccessibility, AccessibilityLevel.rank])
+  LinearOrder.lift' KoreanRefForm.toAccessibility
+    fun a b h ↦ by cases a <;> cases b <;> first | rfl | cases h
 
 theorem fullNP_lt_overt : (KoreanRefForm.fullNP : KoreanRefForm) < .overt := by decide
 
@@ -97,11 +93,11 @@ def KoreanRefForm.surface : KoreanRefForm → Option String
   | .fullNP => some "ku chinkwu"
 
 theorem attenuation_strictMono :
-    StrictMono (λ f : KoreanRefForm => f.toAccessibility.attenuation) := by
+    StrictMono fun f : KoreanRefForm ↦ f.toAccessibility.attenuation := by
   intro a b hab; cases a <;> cases b <;> revert hab <;> decide
 
 theorem informativity_antitone :
-    Antitone (λ f : KoreanRefForm => f.toAccessibility.informativity) := by
+    Antitone fun f : KoreanRefForm ↦ f.toAccessibility.informativity := by
   intro a b hab; cases a <;> cases b <;> revert hab <;> decide
 
 /-! ### Experiment 3: antecedent choice under global ambiguity -/
