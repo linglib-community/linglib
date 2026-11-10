@@ -111,8 +111,7 @@ def truth : Formula Atom → Set W
 defined where its presupposition holds. -/
 noncomputable def eval (C : Trivalent.Connectives) : Formula Atom → W → Trivalent
   | atom p => fun w ↦ Trivalent.ofProp (w ∈ I p)
-  | trigger p p' => fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (I p)))
-    (Trivalent.ofProp (w ∈ I p'))
+  | trigger p p' => Trivalent.condEvent (· ∈ I p) (· ∈ I p')
   | not F => (eval C F)ᶜ
   | bin c F G => fun w ↦ c.table C (eval C F w) (eval C G w)
 
@@ -169,7 +168,7 @@ theorem middleKleene_eq_ofProp {F : Formula Atom} (h : F.middleKleene I w ≠ .u
   induction F with
   | atom p => rfl
   | trigger p p' =>
-    by_cases hp : w ∈ I p <;> simp_all [middleKleene, eval, truth]
+    by_cases hp : w ∈ I p <;> simp_all [middleKleene, eval, truth, Trivalent.condEvent_apply]
   | not F ih =>
     simp only [middleKleene, eval, Pi.compl_apply, ne_eq, Trivalent.compl_eq_undefined_iff] at h ⊢
     simp [ih h, truth]

@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.FinCases
-public import Linglib.Semantics.ConventionalImplicature
+public import Linglib.Semantics.Presupposition.TwoDimensional
 public import Linglib.Semantics.Dynamic.Partial
 
 /-!
@@ -15,7 +15,7 @@ false. Four theories fail the second observation. Under Strong Kleene disjunctio
 is true whenever defined, so it is never false and its negation never true
 (`sup_ne_false`, `compl_sup_ne_true`); the symmetric two-dimensional disjunction in the
 tradition of Karttunen and Peters has a presupposition that entails the assertion
-(`orKPSymmetric_ne_false`), and replacing it by the disjunction of the presuppositions
+(`orFilter_ne_false`), and replacing it by the disjunction of the presuppositions
 (`orPresupOr`) fixes the case but predicts a tautologous presupposition for *either baldness is
 not hereditary or all of Bill's children are bald* (`orPresupOr_notAtIssue_of_left`); the update
 semantics of Heim and Beaver, with failure as a designated state, is defined only when the
@@ -83,10 +83,10 @@ theorem sup_ne_false (h : Conflict φ ψ) (w : W) : (φ ⊔ ψ) w ≠ .false := 
 theorem compl_sup_ne_true (h : Conflict φ ψ) (w : W) : ((φ ⊔ ψ)ᶜ) w ≠ .true := by
   simpa using sup_ne_false h w
 
-theorem orKPSymmetric_ne_false (h : Conflict p.toTrivalent q.toTrivalent) (w : W) :
-    (p.orKPSymmetric q).toTrivalent w ≠ .false := fun hn ↦ by
+theorem orFilter_ne_false (h : Conflict p.toTrivalent q.toTrivalent) (w : W) :
+    (p.orFilter q).toTrivalent w ≠ .false := fun hn ↦ by
   rw [TwoDim.toTrivalent_eq_false_iff] at hn
-  refine hn.2 (TwoDim.orKPSymmetric_atIssue_of_conflict p q (fun ⟨hp, hq⟩ ↦ ?_) hn.1)
+  refine hn.2 (TwoDim.orFilter_atIssue_of_conflict p q (fun ⟨hp, hq⟩ ↦ ?_) hn.1)
   rcases h w with h | h <;> simp_all
 
 /-- The two-dimensional disjunction whose presupposition is the disjunction of the
@@ -262,11 +262,11 @@ abbrev Buganda := Fin 4
 
 /-- *The King of Buganda is opening parliament*. -/
 noncomputable def kingOpens : Buganda → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w < 2)) (Trivalent.ofProp (w = 0))
+  Trivalent.condEvent (fun w ↦ w < 2) (fun w ↦ w = 0)
 
 /-- *The President of Buganda is conducting the ceremony*. -/
 noncomputable def presidentConducts : Buganda → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (2 ≤ w)) (Trivalent.ofProp (w = 2))
+  Trivalent.condEvent (fun w ↦ 2 ≤ w) (fun w ↦ w = 2)
 
 theorem conflict_buganda : Conflict kingOpens presidentConducts := by
   intro w; fin_cases w <;> simp [kingOpens, presidentConducts]
@@ -298,7 +298,7 @@ def noChild : Bill → Trivalent := fun w ↦ Trivalent.ofProp (w = 0)
 
 /-- *All of Bill's children are bald*, presupposing that Bill has children. -/
 noncomputable def allBald : Bill → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ≠ 0)) (Trivalent.ofProp (w = 1))
+  Trivalent.condEvent (fun w ↦ w ≠ 0) (fun w ↦ w = 1)
 
 /-- On the Bill input, accommodating tautologies leaves the update undefined, while accommodating
 the negated first disjunct for the second (15) is defined and genuine. -/

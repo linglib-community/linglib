@@ -86,9 +86,8 @@ open Classical in
 /-- A sortal classifier applied to a numeral, the paper's (4) and (7b), is at each world a
 trivalent property presupposing the plural closure of the sortal and asserting that the
 argument has the numeral's number of sortal atoms. -/
-noncomputable def Sortal.apply (c : Sortal W E) (n : W → ℕ) (w : W) : E → Trivalent := fun x ↦
-  Trivalent.transplication (Trivalent.ofProp (AlgClosure (c w) x))
-    (Trivalent.ofProp (atomCount c w x = n w))
+noncomputable def Sortal.apply (c : Sortal W E) (n : W → ℕ) (w : W) : E → Trivalent :=
+  Trivalent.condEvent (AlgClosure (c w)) (fun x ↦ atomCount c w x = n w)
 
 /-- The ∪-operator of the paper's (10) maps a numeral to its property correlate, having that
 many atomic parts. -/

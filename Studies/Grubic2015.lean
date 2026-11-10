@@ -79,8 +79,7 @@ open Classical in
 /-- *ke('e)* 'also' (45) makes no truth-conditional contribution and presupposes a salient
 antecedent about a different topic situation, one that need not itself be true (46). -/
 noncomputable def ke (salient : Set (Set W)) (topic : Set W → T) : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (∃ q ∈ salient, topic q ≠ topic p))
-    (Trivalent.ofProp (w ∈ p))
+  Trivalent.condEvent (fun _ ↦ ∃ q ∈ salient, topic q ≠ topic p) (· ∈ p)
 
 /-- When every salient antecedent is anaphoric to the host's topic situation, as parallel
 background-marked antecedents are by default, *ke('e)* is undefined ((44) and (49)). -/
@@ -98,9 +97,7 @@ open Classical in
 /-- *har('i)* 'even' (17) asserts the prejacent and presupposes that some contextual implication
 of it ranks highest among its alternatives on the salient scale. -/
 noncomputable def har (CG : Set W) (alt : Set W → Set (Set W)) : W → Trivalent :=
-  fun w ↦ Trivalent.transplication
-    (Trivalent.ofProp (∃ q, CImpl p CG q ∧ ∀ q' ∈ alt q, w ∈ q' → S q q'))
-    (Trivalent.ofProp (w ∈ p))
+  Trivalent.condEvent (fun w ↦ ∃ q, CImpl p CG q ∧ ∀ q' ∈ alt q, w ∈ q' → S q q') (· ∈ p)
 
 theorem har_impl_holds {CG : Set W} {alt : Set W → Set (Set W)} {w : W} (hw : w ∈ CG)
     (hp : w ∈ p) (h : har S p CG alt w ≠ .undefined) : ∃ q, CImpl p CG q ∧ w ∈ q :=

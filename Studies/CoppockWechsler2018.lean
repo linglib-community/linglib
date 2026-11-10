@@ -96,8 +96,7 @@ open Classical in
 /-- The meaning of a clause whose verb carries the egophoric suffix. It asserts that the subject
 has the property `V` and presupposes that the subject is the center. -/
 noncomputable def ego : CenteredProp W E :=
-  fun p ↦ Trivalent.transplication (Trivalent.ofProp (t c p.2 = p.2))
-    (Trivalent.ofProp (V (t c p.2) p.1))
+  Trivalent.condEvent (fun p ↦ t c p.2 = p.2) (fun p ↦ V (t c p.2) p.1)
 
 open Classical in
 /-- The meaning of a clause whose verb is in the plain form. It asserts that the subject has the
@@ -108,8 +107,7 @@ open Classical in
 /-- The meaning of an egophoric clause on the authority-indexical account, which presupposes
 that the subject is the authority of the context rather than the center. -/
 noncomputable def egoAuth : CenteredProp W E :=
-  fun p ↦ Trivalent.transplication (Trivalent.ofProp (t c p.2 = c.authority))
-    (Trivalent.ofProp (V (t c p.2) p.1))
+  Trivalent.condEvent (fun p ↦ t c p.2 = c.authority) (fun p ↦ V (t c p.2) p.1)
 
 /-- Filling in `x` as the center of a centered proposition gives an ordinary proposition, the
 set of worlds where it is defined and true of `x`. -/
@@ -314,7 +312,7 @@ theorem says_egoAuth_name_iff (hR : ∃ p, R (w, x) p) :
       z = x ∧ Says R x (plain V (name z) c) w := by
   obtain ⟨p₀, hp₀⟩ := hR
   simp only [Says, egoAuth, plain_eq_true_iff, name, authorityShift,
-    Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff]
+    Trivalent.condEvent_eq_true_iff]
   exact ⟨fun h ↦ ⟨(h p₀ hp₀).1, fun p hp ↦ (h p hp).2⟩, fun h p hp ↦ ⟨h.1, h.2 p hp⟩⟩
 
 /-! ### The unrecognized photograph

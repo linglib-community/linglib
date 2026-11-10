@@ -71,31 +71,29 @@ open Classical in
 /-- On atomic complements (18) is static, presupposing that `a` believes `φ`'s presupposition and
 asserting that `a` believes `φ` (24). -/
 theorem believes_ofTrivalent :
-    believes Dox a (ofTrivalent p) = ofTrivalent fun w ↦ Trivalent.transplication
-      (Trivalent.ofProp (ModalLogic.Box (.ofSuccessors (Dox a)) (· ∈ (Trivalent.gapExt p)ᶜ) w))
-      (Trivalent.ofProp (ModalLogic.Box (.ofSuccessors (Dox a)) (p · = .true) w)) := by
+    believes Dox a (ofTrivalent p) =
+      ofTrivalent (Trivalent.condEvent
+        (ModalLogic.Box (.ofSuccessors (Dox a)) (· ∈ (Trivalent.gapExt p)ᶜ))
+        (ModalLogic.Box (.ofSuccessors (Dox a)) (p · = .true))) := by
   funext c
   refine Part.ext' ?_ fun h _ ↦ Set.ext fun w ↦ ?_
   · simp [believes, ofTrivalent, Set.subset_def, ModalLogic.Box, admits_ofTrivalent]
   · simp only [believes, mem_ofTrivalent_self, Set.mem_ofPred_eq, ModalLogic.Box,
-      SetRel.mem_ofSuccessors, Trivalent.mem_compl_gapExt, ne_eq, ofTrivalent_get,
-      Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff, Set.sep_and,
-      Set.mem_inter_iff, iff_and_self, and_imp]
+    SetRel.mem_ofSuccessors, Trivalent.mem_compl_gapExt, ne_eq, ofTrivalent_get,
+    Trivalent.condEvent_eq_true_iff, Set.sep_and, Set.mem_inter_iff, iff_and_self, and_imp]
     exact fun hw h1 ↦ ⟨hw, fun v hv ↦ by simp [h1 v hv]⟩
 
 -- (20), (22)
 theorem believes_too_admits (m s : Set W) [DecidablePred (· ∈ m)] [DecidablePred (· ∈ s)] :
     (seq (believes Dox a (ofTrivalent fun w ↦ Trivalent.ofProp (w ∈ m)))
-      (believes Dox a (ofTrivalent fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ m))
-        (Trivalent.ofProp (w ∈ s))))).Admits c :=
+      (believes Dox a (ofTrivalent (Trivalent.condEvent (· ∈ m) (· ∈ s))))).Admits c :=
   ⟨fun _ _ _ _ ↦ Trivalent.ofProp_ne_undefined, fun _ hw v hv ↦ by
     simpa using (mem_ofTrivalent_self _ _).1 hw.2 v hv⟩
 
 -- (25)
 theorem doubt_too_admits_iff (m s : Set W) [DecidablePred (· ∈ m)] [DecidablePred (· ∈ s)] :
     (seq (neg (believes Dox a (ofTrivalent fun w ↦ Trivalent.ofProp (w ∈ m))))
-      (believes Dox a (ofTrivalent fun w ↦
-        Trivalent.transplication (Trivalent.ofProp (w ∈ m)) (Trivalent.ofProp (w ∈ s))))).Admits c ↔
+      (believes Dox a (ofTrivalent (Trivalent.condEvent (· ∈ m) (· ∈ s))))).Admits c ↔
       ∀ w ∈ c, Dox a w ⊆ m := by
   refine ⟨fun ⟨_, h⟩ w hw ↦ ?_,
     fun h ↦ ⟨fun _ _ _ _ ↦ Trivalent.ofProp_ne_undefined, fun w hw ↦ (hw.2 ⟨hw.1, ?_⟩).elim⟩⟩

@@ -130,8 +130,7 @@ open Classical in
 /-- `t.denote R P` asserts the result state of `P` at an index and presupposes its prior state
 at one of the indices that `R` relates it to, the earlier ones. -/
 noncomputable def denote (t : Phasal) (R : SetRel ι ι) (P : ι → Prop) : ι → Trivalent :=
-  fun i ↦ Trivalent.transplication (Trivalent.ofProp (◇[R] (fun i ↦ t.Prior (P i)) i))
-    (Trivalent.ofProp (t.Result (P i)))
+  Trivalent.condEvent (fun i ↦ ◇[R] (fun i ↦ t.Prior (P i)) i) (fun i ↦ t.Result (P i))
 
 variable {t : Phasal}
 
@@ -143,8 +142,7 @@ variable {t : Phasal}
 transition. -/
 theorem denote_eq_true_iff :
     t.denote R P i = .true ↔ ∃ i', i ~[R] i' ∧ t.Transition (P i') (P i) := by
-  simp only [denote, Trivalent.transplication_eq_true_iff,
-    Trivalent.ofProp_eq_true_iff]
+  simp only [denote, Trivalent.condEvent_eq_true_iff]
   exact ⟨fun ⟨⟨i', hr, hp⟩, hq⟩ ↦ ⟨i', hr, hp, hq⟩, fun ⟨i', hr, hp, hq⟩ ↦ ⟨⟨i', hr, hp⟩, hq⟩⟩
 
 theorem denote_inception_eq_true_iff : inception.denote R P i = .true ↔ Become R P i := by

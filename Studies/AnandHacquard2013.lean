@@ -229,23 +229,21 @@ Heimian alternative set `{φ, ¬φ}`, with `des w` the desirability ordering at 
 worlds where the complement is true against those where it is false. The comparison is between
 sets of worlds, so it is defined only when the complement is defined at every world. -/
 noncomputable def preferential (des : W → W → W → Prop) (φ : SProp W) : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (Trivalent.IsBivalent (φ ∅)))
-    (Trivalent.ofProp (Better (des w) (Trivalent.posExt (φ ∅)) (Trivalent.negExt (φ ∅))))
+  Trivalent.condEvent (fun _ ↦ Trivalent.IsBivalent (φ ∅))
+    (fun w ↦ Better (des w) (Trivalent.posExt (φ ∅)) (Trivalent.negExt (φ ∅)))
 
 open Classical in
 /-- An epistemic embedded under a desiderative or directive is undefined, whatever its
 complement (38). -/
 theorem preferential_modal_eq_undefined (des : W → W → W → Prop) (f : Force) (φ : SProp W)
     (w : W) : preferential des (f.modal φ) w = .undefined :=
-  Trivalent.transplication_eq_undefined_iff.2 <| .inl <|
-    Trivalent.ofProp_eq_true_iff.not.2 fun h ↦ h.ne_undefined w (by simp)
+  Trivalent.condEvent_eq_undefined_iff.2 fun h ↦ h.ne_undefined w (by simp)
 
 -- (39)
 theorem preferential_accordingTo_ne_undefined_iff (des : W → W → W → Prop) (T : Set W) (f : Force)
     (φ : SProp W) (w : W) :
     preferential des (accordingTo T (f.modal φ)) w ≠ .undefined ↔ T.Nonempty := by
-  simp only [preferential, accordingTo, ne_eq, Trivalent.transplication_eq_undefined_iff,
-    Trivalent.ofProp_eq_true_iff, Trivalent.ofProp_ne_undefined, or_false, not_not,
+  simp only [preferential, accordingTo, ne_eq, Trivalent.condEvent_eq_undefined_iff, not_not,
     Trivalent.isBivalent_iff_forall_ne_undefined, Force.modal_eq_undefined_iff,
     Set.nonempty_iff_ne_empty]
   exact ⟨fun h ↦ h w, fun h _ ↦ h⟩
@@ -342,15 +340,17 @@ verifiers are more desirable than the falsifiers. *fear* has the shape of `doubt
 desirability ordering. -/
 noncomputable def hope (des : W → W → W → Prop) (dox : W → Set W) (φ : SProp W) :
     W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (Uncertain φ (dox w))) (Trivalent.ofProp
-    (Possible φ (dox w) ∧ Better (Better (des w)) (verifiers φ (dox w)) (falsifiers φ (dox w))))
+  Trivalent.condEvent (fun w ↦ Uncertain φ (dox w))
+    (fun w ↦ Possible φ (dox w) ∧
+      Better (Better (des w)) (verifiers φ (dox w)) (falsifiers φ (dox w)))
 
 open Classical in
 /-- `a doubts that φ` (63) is as `hope`, with the falsifiers likelier than the verifiers. -/
 noncomputable def doubt (prob : W → W → W → Prop) (dox : W → Set W) (φ : SProp W) :
     W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (Uncertain φ (dox w))) (Trivalent.ofProp
-    (Possible φ (dox w) ∧ Better (Better (prob w)) (falsifiers φ (dox w)) (verifiers φ (dox w))))
+  Trivalent.condEvent (fun w ↦ Uncertain φ (dox w))
+    (fun w ↦ Possible φ (dox w) ∧
+      Better (Better (prob w)) (falsifiers φ (dox w)) (verifiers φ (dox w)))
 
 section Values
 

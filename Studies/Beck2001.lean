@@ -109,15 +109,14 @@ predicate is defined and true of what divides into parts where it is true. (115)
 and `**` are undefined; the other two clauses and `***` complete it, and all three are this
 operator on individuals, on pairs and on triples. -/
 noncomputable def pluralize (f : β → Trivalent) : β → Trivalent :=
-  fun x ↦ Trivalent.transplication (Trivalent.ofProp (AlgClosure (f · ≠ .undefined) x))
-    (Trivalent.ofProp (AlgClosure (f · = .true) x))
+  Trivalent.condEvent (fun x ↦ AlgClosure (f · ≠ .undefined) x) (fun x ↦ AlgClosure (f · = .true) x)
 
 theorem pluralize_eq_undefined_iff :
     pluralize f x = .undefined ↔ ¬ AlgClosure (f · ≠ .undefined) x := by
   simp [pluralize]
 
 theorem pluralize_eq_true_iff : pluralize f x = .true ↔ AlgClosure (f · = .true) x := by
-  simp only [pluralize, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff]
+  simp only [pluralize, Trivalent.condEvent_eq_true_iff]
   exact and_iff_right_of_imp (algClosure_mono (fun _ h ↦ ne_of_eq_of_ne h (by decide)) _)
 
 end Pluralize

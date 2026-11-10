@@ -138,13 +138,13 @@ open Classical in
 the agent in the event. The evaluation point of the trivalent proposition is the event. -/
 noncomputable def parAgentive (init : Entity → E → Prop) (High : Entity → E → Prop)
     (x : Entity) : E → Trivalent :=
-  fun e ↦ Trivalent.transplication (Trivalent.ofProp (High x e)) (Trivalent.ofProp (init x e))
+  Trivalent.condEvent (High x) (init x)
 
 open Classical in
 /-- *de* in a passive (35b) is the initiator relation, presupposing low proto-agentivity. -/
 noncomputable def deAgentive (init : Entity → E → Prop) (High : Entity → E → Prop)
     (x : Entity) : E → Trivalent :=
-  fun e ↦ Trivalent.transplication (Trivalent.ofProp (¬ High x e)) (Trivalent.ofProp (init x e))
+  Trivalent.condEvent (fun e ↦ ¬ High x e) (init x)
 
 variable (init : Entity → E → Prop) (High : Entity → E → Prop) (x : Entity)
 

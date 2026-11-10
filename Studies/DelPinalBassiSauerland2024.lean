@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.Presuppositional
 public import Linglib.Logic.Trivalent.Pointwise
-public import Linglib.Semantics.ConventionalImplicature
+public import Linglib.Semantics.Presupposition.TwoDimensional
 public import Linglib.Semantics.Homogeneity.Plural
 public import Studies.BarLevFox2020
 
@@ -352,16 +352,16 @@ theorem free_choice_presupposed (hF : FreeChoiceWitnesses R a b)
     (believes : (W → Prop) → W → Prop) :
     (TwoDim.negFactive (pexPossOrTwoDim R a b) believes).notAtIssue w ↔
       w ∈ R.preimage a ∧ w ∈ R.preimage b := by
-  rw [← free_choice hF, ← toTrivalent_pexPossOrTwoDim, TwoDim.toTrivalent_eq_true_iff]
-  rfl
+  rw [← free_choice hF, ← toTrivalent_pexPossOrTwoDim, TwoDim.toTrivalent_eq_true_iff,
+    TwoDim.negFactive_notAtIssue]
 
 -- (33a), (34c)
 theorem negative_free_choice_presupposed {T B : Set W} (hF : FreeChoiceWitnesses R Tᶜ Bᶜ)
     (believes : (W → Prop) → W → Prop) :
     (TwoDim.negFactive (pexPossOrTwoDim R Tᶜ Bᶜ) believes).notAtIssue w ↔
       w ∉ R.core T ∧ w ∉ R.core B := by
-  rw [← negative_free_choice hF, ← toTrivalent_pexPossOrTwoDim, TwoDim.toTrivalent_eq_true_iff]
-  rfl
+  rw [← negative_free_choice hF, ← toTrivalent_pexPossOrTwoDim, TwoDim.toTrivalent_eq_true_iff,
+    TwoDim.negFactive_notAtIssue]
 
 /-- A negative factive over `◇(a ∨ b)` asserts disbelief in each disjunct ((21b), (31d′); at `Tᶜ`
 and `Bᶜ`, (33b) and (34d)). -/
@@ -486,8 +486,7 @@ open Classical in
 /-- *Exactly one* `x` in `S` satisfies `φ x`, with universal projection. The sentence is defined
 where every instance in `S` is, and true where exactly one of them is true. -/
 noncomputable def exactlyOne {D : Type*} (S : D → Prop) (φ : D → W → Trivalent) : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (∀ x, S x → φ x w ≠ .undefined))
-    (Trivalent.ofProp (∃! x, S x ∧ φ x w = .true))
+  Trivalent.condEvent (fun w ↦ ∀ x, S x → φ x w ≠ .undefined) (fun w ↦ ∃! x, S x ∧ φ x w = .true)
 
 section Quantified
 
@@ -533,7 +532,7 @@ theorem exactly_one_free_choice
     (hw : exactlyOne S (fun x ↦ pexPossOr R (p x) (q x)) w = .true) :
     ∃ x, S x ∧ (w ∈ R.preimage (p x) ∧ w ∈ R.preimage (q x)) ∧
       ∀ y, S y → y ≠ x → w ∉ R.preimage (p y) ∧ w ∉ R.preimage (q y) := by
-  simp only [exactlyOne, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff] at hw
+  simp only [exactlyOne, Trivalent.condEvent_eq_true_iff] at hw
   obtain ⟨hpre, x, ⟨hx, ha⟩, huniq⟩ := hw
   refine ⟨x, hx, (free_choice (hF x hx)).1 ha, fun y hy hyx ↦ double_prohibition.1 ?_⟩
   have := hpre y hy
@@ -545,9 +544,8 @@ theorem exactly_one_double_prohibition
     (hw : exactlyOne S (fun x ↦ (pexPossOr R (p x) (q x))ᶜ) w = .true) :
     ∃ x, S x ∧ (w ∉ R.preimage (p x) ∧ w ∉ R.preimage (q x)) ∧
       ∀ y, S y → y ≠ x → w ∈ R.preimage (p y) ∧ w ∈ R.preimage (q y) := by
-  simp only [exactlyOne, Trivalent.transplication_eq_true_iff,
-    Trivalent.ofProp_eq_true_iff, Pi.compl_apply, ne_eq, Trivalent.compl_eq_undefined_iff,
-    Trivalent.compl_eq_true_iff] at hw
+  simp only [exactlyOne, Trivalent.condEvent_eq_true_iff, Pi.compl_apply, ne_eq,
+    Trivalent.compl_eq_undefined_iff, Trivalent.compl_eq_true_iff] at hw
   obtain ⟨hpre, x, ⟨hx, ha⟩, huniq⟩ := hw
   refine ⟨x, hx, double_prohibition.1 ha, fun y hy hyx ↦ (free_choice (hF y hy)).1 ?_⟩
   have := hpre y hy

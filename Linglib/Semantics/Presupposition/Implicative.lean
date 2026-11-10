@@ -96,10 +96,10 @@ fact `S`. It presupposes that `v` is sufficient for the complement `s` implies i
 context and necessary for the negation of the complement it implies in a negative context, and it
 asserts `v`. -/
 noncomputable def sentence (s : ImplicationSignature) (v S : F) : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp ((∀ q : Polarity, s.positive =
-      q → R.Sufficient v (R.signed q S) w) ∧
-    ∀ q : Polarity, s.negative =
-        q → R.Necessary v (R.signed (.negative * q) S) w)) (Trivalent.ofProp (R.Holds v w))
+  Trivalent.condEvent
+    (fun w ↦ (∀ q : Polarity, s.positive = q → R.Sufficient v (R.signed q S) w) ∧
+      ∀ q : Polarity, s.negative = q → R.Necessary v (R.signed (.negative * q) S) w)
+    (R.Holds v)
 
 variable {R} {s : ImplicationSignature} {v S : F} {w : W}
 
@@ -109,12 +109,10 @@ theorem holds_signed_of_implied_eq {m q : Polarity} (hq : s.implied m = q)
     (hs : (m • sentence R s v S) w = .true) : R.Holds (R.signed q S) w := by
   cases m
   · simp only [Pi.smul_apply, Polarity.positive_smul, sentence,
-      Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff] at hs
+    Trivalent.condEvent_eq_true_iff] at hs
     exact R.holds_of_sufficient (hs.1.1 q hq) hs.2
   · simp only [Pi.smul_apply, Polarity.negative_smul_trivalent, Trivalent.compl_eq_true_iff,
-      sentence,
-      Trivalent.transplication_eq_false_iff, Trivalent.ofProp_eq_true_iff,
-      Trivalent.ofProp_eq_false_iff] at hs
+    sentence, Trivalent.condEvent_eq_false_iff] at hs
     by_contra h
     exact hs.2 (R.holds_of_necessary (hs.1.2 q hq) (Interpretation.holds_signed_negative_mul.2 h))
 
@@ -123,9 +121,8 @@ variable (R v S) in
 as its signature descends. -/
 theorem antitone_compl_gapExt : Antitone fun s ↦ (Trivalent.gapExt (sentence R s v S))ᶜ := by
   intro s t h w hw
-  simp only [sentence, Trivalent.mem_compl_gapExt, ne_eq,
-    Trivalent.transplication_eq_undefined_iff, Trivalent.ofProp_eq_true_iff,
-    Trivalent.ofProp_ne_undefined, or_false, not_not] at hw ⊢
+  simp only [sentence, Trivalent.mem_compl_gapExt, ne_eq, Trivalent.condEvent_eq_undefined_iff,
+    not_not] at hw ⊢
   obtain ⟨hp, hn⟩ := hw
   have hst := ImplicationSignature.le_iff.1 h
   exact ⟨fun q hq ↦ hp q (Flat.coe_le_iff.1 (hq ▸ hst.1)),

@@ -46,8 +46,7 @@ open Classical in
 /-- *If p, would q* over a modal horizon presupposes that the horizon admits `p` and asserts the
 strict conditional over the horizon ([von-fintel-1999]'s (82) and (83)). -/
 noncomputable def horizonCounterfactual : I → Trivalent :=
-  fun i ↦ Trivalent.transplication (Trivalent.ofProp ((horizon i ∩ p).Nonempty))
-    (Trivalent.ofProp (i ∈ strictImp horizon p q))
+  Trivalent.condEvent (fun i ↦ (horizon i ∩ p).Nonempty) (· ∈ strictImp horizon p q)
 
 variable {horizon p q} {i : I}
 

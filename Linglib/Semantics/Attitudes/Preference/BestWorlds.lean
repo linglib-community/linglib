@@ -105,8 +105,7 @@ open Classical in
 and asserts that its best worlds under the ordering source `g` are `p`-worlds
 ([von-fintel-1999]'s (45)). -/
 noncomputable def want : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (IsContingent (base w) p))
-    (Trivalent.ofProp (Want (g w) (base w) p))
+  Trivalent.condEvent (fun w ↦ IsContingent (base w) p) (fun w ↦ Want (g w) (base w) p)
 
 open Classical in
 /-- *a is glad that p* presupposes, besides the presupposition of *want*, that `a` believes `p`

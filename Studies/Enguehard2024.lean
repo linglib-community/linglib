@@ -181,9 +181,8 @@ open Classical in
 /-- The negated indefinite of number `n`, where the conceivable witness cardinalities are `K`,
 asserts that there is no witness and presupposes that a cardinality its number fits is
 conceivable, (7). -/
-noncomputable def negated (K : Set ℕ) (n : Number) : ℕ → Trivalent := fun k ↦
-  Trivalent.transplication (Trivalent.ofProp (K ∩ inference n).Nonempty)
-    (Trivalent.ofProp (k ∈ weakᶜ))
+noncomputable def negated (K : Set ℕ) (n : Number) : ℕ → Trivalent :=
+  Trivalent.condEvent (fun _ ↦ (K ∩ inference n).Nonempty) (· ∈ weakᶜ)
 
 theorem negated_ne_undefined_iff {K : Set ℕ} {n : Number} {k : ℕ} :
     negated K n k ≠ .undefined ↔ (K ∩ inference n).Nonempty := by
@@ -191,7 +190,7 @@ theorem negated_ne_undefined_iff {K : Set ℕ} {n : Number} {k : ℕ} :
 
 theorem negated_eq_negated {K : Set ℕ} {n n' : Number} {k : ℕ} (h : negated K n k ≠ .undefined)
     (h' : negated K n' k ≠ .undefined) : negated K n k = negated K n' k := by
-  simp_all [negated]
+  simp_all [negated, Trivalent.condEvent_apply]
 
 -- §2
 theorem compl_gapExt_negated_projects (K : Set ℕ) (n : Number) (q : ℕ → Trivalent) :

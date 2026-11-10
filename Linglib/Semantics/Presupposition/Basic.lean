@@ -7,7 +7,7 @@ public import Linglib.Logic.Trivalent.Pointwise
 
 A sentence with a presupposition denotes a trivalent proposition `W → Trivalent`, true or false
 where its presupposition holds and undefined where it fails. A trigger presupposing `A` and
-asserting `B` is the transplication `fun w ↦ transplication (ofProp (A w)) (ofProp (B w))`, its
+asserting `B` is the conditional event `Trivalent.condEvent A B`, its
 presupposition is where it is defined, `(Trivalent.gapExt p)ᶜ`, and it holds at `w` when
 `p w = .true`. Theories of projection differ in their
 connectives: the classical connectives are Weak Kleene (`Trivalent.meetWeak`), Karttunen's filtering
@@ -17,7 +17,7 @@ are `⊓`, `⊔`, `Trivalent.meetBelnap` and `Trivalent.joinBelnap`. Each projec
 characterization of its connective (`Trivalent.meetMiddle_eq_undefined_iff` for Karttunen's
 filtering conjunction), and quantified presuppositions project by the trivalent quantifiers of
 `Logic/Trivalent/Pointwise.lean`. Two-dimensional accounts, which read an assertion where its
-presupposition fails, use `TwoDim` (`Semantics/ConventionalImplicature.lean`).
+presupposition fails, use `TwoDim` (`Semantics/Presupposition/TwoDimensional.lean`).
 
 ## Main definitions
 

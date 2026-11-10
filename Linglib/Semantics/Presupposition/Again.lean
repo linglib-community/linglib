@@ -45,19 +45,17 @@ open Classical in
 /-- `again R P` asserts `P` of an eventuality and presupposes that `P` holds of one of the
 eventualities that `R` relates it to, the earlier ones. -/
 noncomputable def again (R : SetRel ι ι) (P : ι → Prop) : ι → Trivalent :=
-  fun i ↦ Trivalent.transplication (Trivalent.ofProp (◇[R] P i)) (Trivalent.ofProp (P i))
+  Trivalent.condEvent (◇[R] P) P
 
 variable {i : ι}
 
 @[simp] theorem again_eq_undefined_iff :
-    again R P i = .undefined ↔ ¬ ◇[R] P i := by simp [again,
-        Trivalent.transplication_eq_undefined_iff]
+    again R P i = .undefined ↔ ¬ ◇[R] P i := by simp [again, Trivalent.condEvent_eq_undefined_iff]
 
 theorem again_ne_undefined_iff :
     again R P i ≠ .undefined ↔ ◇[R] P i := again_eq_undefined_iff.not_left
 
 @[simp] theorem again_eq_true_iff :
-    again R P i = .true ↔ ◇[R] P i ∧ P i := by simp [again,
-        Trivalent.transplication_eq_true_iff]
+    again R P i = .true ↔ ◇[R] P i ∧ P i := by simp [again, Trivalent.condEvent_eq_true_iff]
 
 end Presupposition

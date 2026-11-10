@@ -80,8 +80,7 @@ propositions. The hypothetical reading is `cond p q`, and the premise reading as
 `p` presupposed. -/
 noncomputable def denote : Reading → W → Trivalent
   | .hypothetical => fun w ↦ Trivalent.ofProp (w ∈ cond p q)
-  | .premise => fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ p))
-    (Trivalent.ofProp (w ∈ q))
+  | .premise => Trivalent.condEvent (· ∈ p) (· ∈ q)
 
 variable {cond p q} {w : W}
 

@@ -32,8 +32,7 @@ open Classical in
 before the evaluation time `t` and asserts that it has not held since ([von-fintel-1999], after
 Iatridou). -/
 noncomputable def since (p : Set T) : T → Trivalent :=
-  fun t ↦ Trivalent.transplication (Trivalent.ofProp (ago t ∈ p))
-    (Trivalent.ofProp (Disjoint (Set.Ioc (ago t) t) p))
+  Trivalent.condEvent (fun t ↦ ago t ∈ p) (fun t ↦ Disjoint (Set.Ioc (ago t) t) p)
 
 theorem isStrawsonAntiAdditive_since : IsStrawsonAntiAdditive (since ago) :=
   .of_isAntiAdditive (a := fun p t ↦ Disjoint (Set.Ioc (ago t) t) p)

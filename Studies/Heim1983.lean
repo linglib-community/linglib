@@ -87,12 +87,12 @@ variable (king son bald : W → Prop)
 open Classical in
 /-- *The king has a son* (1) presupposes a king and asserts that he has a son. -/
 noncomputable def kingHasSon : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (king w)) (Trivalent.ofProp (son w))
+  Trivalent.condEvent king son
 
 open Classical in
 /-- *The king's son is bald* (2) presupposes a king with a son. -/
 noncomputable def kingsSonBald : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (king w ∧ son w)) (Trivalent.ofProp (bald w))
+  Trivalent.condEvent (fun w ↦ king w ∧ son w) bald
 
 /-- (3) "If the king has a son, the king's son is bald", by (14). -/
 noncomputable def ifKingHasSon : CCP.Partial W :=
@@ -148,14 +148,12 @@ theorem globalNeg_entails {c c' : Set W} (h : c' ∈ globalNeg φ p c) : c' ⊆ 
 open Classical in
 /-- Under the local option, (16) entails only that France has no king or he did not come. -/
 theorem localNeg_entails {came : W → Prop} [DecidablePred came] {c c' : Set W}
-    (h : c' ∈ localNeg (ofTrivalent fun w ↦
-      Trivalent.transplication (Trivalent.ofProp (w ∈ p)) (Trivalent.ofProp (came w))) p c) :
+    (h : c' ∈ localNeg (ofTrivalent (Trivalent.condEvent (· ∈ p) came)) p c) :
     c' = {w ∈ c | w ∉ p ∨ ¬ came w} := by
   obtain ⟨t, ht, rfl⟩ := (Part.mem_map_iff _).1 h
   obtain ⟨-, rfl⟩ := (mem_ofTrivalent _ _ _).1 ht
   ext w
-  simp only [Set.mem_sdiff, Set.mem_ofPred_eq, Set.mem_inter_iff,
-    Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff]
+  simp only [Set.mem_sdiff, Set.mem_ofPred_eq, Set.mem_inter_iff, Trivalent.condEvent_eq_true_iff]
   tauto
 
 theorem globalNeg_disjoint {c c' : Set W} (h : c' ∈ globalNeg φ p c) : c' ∩ pᶜ = ∅ :=

@@ -67,6 +67,7 @@ structure CIItem (Person W : Type) where
 variable {Person W : Type} (item : CIItem Person W)
 
 /-- The two-dimensional meaning once the orientation variable is resolved to `o`. -/
+@[simps]
 def CIItem.resolve (o : Orientation Person) : TwoDim W (W → Prop) :=
   { atIssue := item.atIssue, notAtIssue := item.ciFor o }
 
@@ -74,7 +75,8 @@ def CIItem.resolve (o : Orientation Person) : TwoDim W (W → Prop) :=
 `o` commits the speaker to the at-issue content and `o` to the conventional implicature. -/
 def CIItem.utter (o : Orientation Person) (K : State (Orientation Person) W) :
     State (Orientation Person) W :=
-  insert (.speaker, {w | item.atIssue w}) (insert (o, {w | item.ciFor o w}) K)
+  insert (.speaker, {w | (item.resolve o).atIssue w})
+    (insert (o, {w | (item.resolve o).notAtIssue w}) K)
 
 variable (K : State (Orientation Person) W)
 

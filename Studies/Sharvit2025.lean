@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.ConventionalImplicature
+public import Linglib.Semantics.Presupposition.TwoDimensional
 public import Linglib.Core.Order.Minimals
 public import Linglib.Data.Examples.Sharvit2025
 
@@ -16,7 +16,7 @@ disjuncts. A disjunction that projects its left disjunct's presupposition, the K
 under CON-asymmetry (16)–(17), cannot deliver this: swapping the disjuncts changes what the
 antecedent presupposes (`orAsym_notAtIssue_ne`), and the paper argues that accommodation does
 not repair it. Karttunen and Peters's symmetric disjunction (102) does
-(`TwoDim.orKPSymmetric_comm`), but its Karttunen conditional presupposition, the consequent's
+(`TwoDim.orFilter_comm`), but its Karttunen conditional presupposition, the consequent's
 presupposition at the evaluation world if the antecedent is true there (100), is too weak for the
 ∀-over-if presupposition (`ifKP_notAtIssue_of_not_atIssue`), the Proviso Problem.
 
@@ -92,7 +92,7 @@ at the evaluation world if the antecedent is true there, and asserts that every 
 of the epistemic state is a consequent-world. -/
 def ifKP (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) where
   atIssue _ := ∀ w' ∈ EP, p.atIssue w' → q.atIssue w'
-  notAtIssue w := p.notAtIssue w ∧ (p.atIssue w → q.notAtIssue w)
+  notAtIssue := (p.impFilter q).notAtIssue
 
 theorem ifKP_notAtIssue_of_not_atIssue {p : TwoDim W (W → Prop)} (q : TwoDim W (W → Prop))
     {w : W} (hp : p.notAtIssue w) (h : ¬ p.atIssue w) : (ifKP EP p q).notAtIssue w :=

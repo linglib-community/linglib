@@ -599,10 +599,10 @@ consequent on its antecedent. -/
 noncomputable def ofAdams (φ : Adams1975.Formula W) : W → Trivalent :=
   fun w ↦ condAssert .lp (ofProp (w ∈ φ.ante)) (ofProp (w ∈ φ.cons))
 
-theorem ofAdams_eq_transplication (φ : Adams1975.Formula W) :
-    ofAdams φ = fun w ↦ transplication (ofProp (w ∈ φ.ante)) (ofProp (w ∈ φ.cons)) := by
+theorem ofAdams_eq_condEvent (φ : Adams1975.Formula W) :
+    ofAdams φ = condEvent (· ∈ φ.ante) (· ∈ φ.cons) := by
   funext w
-  by_cases h : w ∈ φ.ante <;> simp [ofAdams, h]
+  by_cases h : w ∈ φ.ante <;> simp [ofAdams, condEvent_apply, h]
 
 @[simp] theorem compl_gapExt_ofAdams (φ : Adams1975.Formula W) :
     (Trivalent.gapExt (ofAdams φ))ᶜ = φ.ante := by
@@ -613,16 +613,14 @@ theorem ofAdams_eq_transplication (φ : Adams1975.Formula W) :
 event of its truth on its definedness. -/
 theorem exists_ofAdams_eq (p : W → Trivalent) : ∃ φ : Adams1975.Formula W, ofAdams φ = p := by
   refine ⟨⟨(Trivalent.gapExt p)ᶜ, Trivalent.posExt p⟩, ?_⟩
-  rw [ofAdams_eq_transplication]
-  conv_rhs => rw [← transplication_definedness_truth p]
-  funext w
-  congr 2
+  rw [ofAdams_eq_condEvent]
+  convert condEvent_ne_undefined_eq_true p <;> rfl
 
 /-- Two Adams formulas denote the same proposition exactly when they have the same antecedent and
 agree on it, de Finetti's identity of conditional events. -/
 theorem ofAdams_eq_ofAdams_iff {φ ψ : Adams1975.Formula W} :
     ofAdams φ = ofAdams ψ ↔ φ.ante = ψ.ante ∧ φ.ante ∩ φ.cons = ψ.ante ∩ ψ.cons := by
-  rw [ofAdams_eq_transplication, ofAdams_eq_transplication, transplication_ofProp_eq_iff]
+  rw [ofAdams_eq_condEvent, ofAdams_eq_condEvent, condEvent_eq_condEvent_iff]
   rfl
 
 theorem value_cond_eq_ofAdams {A B : Formula ι} (hA : NoCond A) (hB : NoCond B)
@@ -641,7 +639,7 @@ variable [MeasurableSpace W] [DiscreteMeasurableSpace W] {μ : Measure W}
 probability. -/
 theorem prob_ofAdams {φ : Adams1975.Formula W} (h : μ φ.ante ≠ 0) :
     Trivalent.prob μ (ofAdams φ) = μ[φ.cons | φ.ante] := by
-  rw [ofAdams_eq_transplication, Trivalent.prob_transplication_ofProp _ _ h]
+  rw [ofAdams_eq_condEvent, Trivalent.prob_transplication_ofProp _ _ h]
   rfl
 
 /-- For conditional-free `A` and `B` with a live antecedent, the probability of `A → B` is the

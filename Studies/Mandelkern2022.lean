@@ -264,7 +264,7 @@ open Classical in
 where the bounds fail and otherwise the formula's truth value. -/
 noncomputable def toTrivalent (o : Order) (c : Set (Assign V Δ E × W)) (p : Formula L V Δ) :
     Assign V Δ E × W → Trivalent :=
-  fun i ↦ Trivalent.transplication (Trivalent.ofProp (p.Satt I o c i.1 i.2)) (Trivalent.ofProp (p.Realize I i.1 i.2))
+  Trivalent.condEvent (fun i ↦ p.Satt I o c i.1 i.2) (fun i ↦ p.Realize I i.1 i.2)
 
 /-- Updating `c` with `p` keeps the points of `c` at which `p` is true and satt (p. 1103). This
 set is also the local context `cᵖ` of the projection clauses. -/
