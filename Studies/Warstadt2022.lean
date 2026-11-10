@@ -114,7 +114,8 @@ variable [Fintype U] [MeasurableSpace U] [MeasurableSingletonClass U] (P : W →
 /-- The literal listener within a context set (3a) conditions the prior on the context set and
 on the utterance, and answers the question. -/
 noncomputable def L0 : Kernel U (Finset W) :=
-  (RSA.listener ((Measure.ofWeights (P ·)).restrict ↑C) (truthful sem)).map (cell q)
+  (RSA.listener ((Measure.sum fun w ↦ (P w : ℝ≥0∞) • Measure.dirac w).restrict ↑C)
+    (truthful sem)).map (cell q)
 
 instance : IsFiniteKernel (L0 P cell sem C q) := inferInstanceAs (IsFiniteKernel (Kernel.map _ _))
 
@@ -154,8 +155,8 @@ variable {P cell sem C q} [∀ u, DecidablePred (· ∈ sem u)] [DiscreteMeasura
 theorem L0_apply (h : w ∈ sem u) :
     L0 P cell sem C q u {cell q w}
       = ((weight P cell sem C q u w).1 : ℝ≥0∞) / (weight P cell sem C q u w).2 := by
-  rw [L0, listener_restrict_truthful_map_apply_singleton, Measure.ofWeights_apply_finset,
-    Measure.ofWeights_apply_finset]
+  rw [L0, listener_restrict_truthful_map_apply_singleton, Measure.sum_smul_dirac_apply_finset,
+    Measure.sum_smul_dirac_apply_finset]
   simp only [weight, ite_eq_left h, Nat.cast_sum]
 
 theorem L0_apply_eq_one_iff (h : w ∈ sem u) (hC : w ∈ C) (hP : P w ≠ 0) :

@@ -311,7 +311,7 @@ theorem finite_setOf_qudListener (μ : Measure M) :
     {ν : Measure M | ∃ (sem : U → Set M) (X : Type*) (q : M → X) (u : U),
       ν = qudListener (RSA.listener μ (truthful sem)) q u}.Finite :=
   (Set.finite_range fun p : Set M × (M → Set M) ↦
-      (∑ m, μ[|p.1] (p.2 m))⁻¹ • ∑ m, μ[|p.1] (p.2 m) • Measure.dirac m).subset <| by
+      (∑ m, μ[|p.1] (p.2 m))⁻¹ • Measure.sum fun m ↦ μ[|p.1] (p.2 m) • Measure.dirac m).subset <| by
     rintro ν ⟨sem, X, q, u, rfl⟩
     refine ⟨(sem u, fun m ↦ q ⁻¹' {q m}), ?_⟩
     simp only [qudListener, Kernel.ofWeights, Kernel.ofFunOfCountable_apply,

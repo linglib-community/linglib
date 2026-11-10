@@ -134,7 +134,7 @@ theorem speaker_real_singleton_le_one (s : Fin (N + 1)) (u : U) :
       _ ≤ ∑ k, hypergeometric N n s {k} := Finset.sum_le_sum fun k _ ↦ mul_le_of_le_one_right'
           ((measure_mono (Set.subset_univ _)).trans (RSA.speaker_apply_univ_le_one _ _ _ _ k))
       _ = hypergeometric N n s Set.univ := by rw [← Finset.coe_univ, sum_measure_singleton]
-      _ ≤ 1 := Kernel.ofWeights_apply_univ_le_one _ s
+      _ ≤ 1 := prob_le_one (μ := Kernel.ofWeights _ s)
   rw [measureReal_def, ← ENNReal.toReal_one]
   exact ENNReal.toReal_mono ENNReal.one_ne_top h
 

@@ -161,9 +161,11 @@ theorem exists_isProbabilityMeasure_invariant [Nonempty α] (κ : Kernel α α) 
     exact sum_pos' (fun a _ ↦ abs_nonneg _) ⟨a, mem_univ a, abs_pos.2 ha⟩
   set u : α → ℝ := fun a ↦ w a / ∑ a, w a
   have hu : ∀ a, 0 ≤ u a := fun a ↦ div_nonneg (abs_nonneg _) hS.le
-  have := Measure.isProbabilityMeasure_ofRealWeights hu (by rw [← sum_div, div_self hS.ne'])
-  refine ⟨Measure.ofRealWeights u, this, invariant_iff_forall_real_singleton.2 fun b ↦ ?_⟩
-  simp_rw [Measure.ofRealWeights_real_singleton hu]
+  have hu1 : ∑ a, u a = 1 := by rw [← sum_div, div_self hS.ne']
+  have : IsProbabilityMeasure (Measure.sum fun a ↦ ENNReal.ofReal (u a) • Measure.dirac a) :=
+    Measure.isProbabilityMeasure_sum_ofReal_smul_dirac hu hu1
+  refine ⟨_, this, invariant_iff_forall_real_singleton.2 fun b ↦ ?_⟩
+  simp_rw [Measure.sum_ofReal_smul_dirac_real_singleton hu]
   show ∑ a, w a / (∑ a, w a) * P a b = w b / ∑ a, w a
   rw [← hw b, sum_div]
   exact sum_congr rfl fun a _ ↦ div_mul_eq_mul_div _ _ _
@@ -180,16 +182,17 @@ theorem Invariant.eq_of_isIrreducible [IsMarkovKernel κ] [IsIrreducible Measure
   set w : α → ℝ := fun a ↦ ν.real {a} - c * μ.real {a}
   have hw a : 0 ≤ w a := sub_nonneg.2 ((le_div_iff₀ (hp a)).1 (ha₀ a (mem_univ a)))
   have hwa₀ : w a₀ = 0 := by simp only [w, c, div_mul_cancel₀ _ (hp a₀).ne', sub_self]
-  have hwinv : κ.Invariant (Measure.ofRealWeights w) :=
+  have hwinv : κ.Invariant (Measure.sum fun a ↦ ENNReal.ofReal (w a) • Measure.dirac a) :=
     invariant_iff_forall_real_singleton.2 fun b ↦ by
-      simp_rw [Measure.ofRealWeights_real_singleton hw]
+      simp_rw [Measure.sum_ofReal_smul_dirac_real_singleton hw]
       simp only [w, sub_mul, sum_sub_distrib, mul_assoc, ← mul_sum]
       rw [invariant_iff_forall_real_singleton.1 hν b, invariant_iff_forall_real_singleton.1 hμ b]
   have hw0 : ∀ a, w a = 0 := by
     by_contra! ⟨a, ha⟩
-    refine hwinv.measure_singleton_ne_zero (fun h0 ↦ ?_) a₀ (by simp [Measure.ofRealWeights, hwa₀])
+    refine hwinv.measure_singleton_ne_zero (fun h0 ↦ ?_) a₀ 
+      (by rw [Measure.sum_smul_dirac_singleton, hwa₀, ENNReal.ofReal_zero])
     have := congrArg (· {a}) h0
-    simp only [Measure.ofRealWeights, Measure.ofWeights_apply_singleton, Measure.coe_zero,
+    simp only [Measure.sum_smul_dirac_singleton, Measure.coe_zero,
       Pi.zero_apply, ENNReal.ofReal_eq_zero] at this
     exact ha (le_antisymm this (hw a))
   have hc : c = 1 := by

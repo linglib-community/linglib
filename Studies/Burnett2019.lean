@@ -103,19 +103,20 @@ end Game
 
 private theorem ofWeights_ne_zero {β : Type*} [Fintype β] [MeasurableSpace β]
     [MeasurableSingletonClass β] {w : β → ℕ} (hw : ∀ b, w b ≠ 0) (b : β) :
-    (Measure.ofWeights fun b ↦ (w b : ℝ≥0∞)) {b} ≠ 0 :=
-  Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw b))
+    (Measure.sum fun b ↦ (w b : ℝ≥0∞) • Measure.dirac b) {b} ≠ 0 := by
+  rw [Measure.sum_smul_dirac_singleton]
+  exact Nat.cast_ne_zero.2 (hw b)
 
 private theorem ofWeights_real_univ {β : Type*} [Fintype β] [MeasurableSpace β]
     [MeasurableSingletonClass β] (w : β → ℕ) :
-    (Measure.ofWeights fun b ↦ (w b : ℝ≥0∞)).real Set.univ = ((∑ b, w b : ℕ) : ℝ) := by
-  rw [measureReal_def, ← Finset.coe_univ, Measure.ofWeights_apply_finset, ← Nat.cast_sum,
+    (Measure.sum fun b ↦ (w b : ℝ≥0∞) • Measure.dirac b).real Set.univ = ((∑ b, w b : ℕ) : ℝ) := by
+  rw [measureReal_def, ← Finset.coe_univ, Measure.sum_smul_dirac_apply_finset, ← Nat.cast_sum,
     ENNReal.toReal_natCast]
 
 private theorem ofWeights_real_singleton {β : Type*} [Fintype β] [MeasurableSpace β]
     [MeasurableSingletonClass β] (w : β → ℕ) (b : β) :
-    (Measure.ofWeights fun b ↦ (w b : ℝ≥0∞)).real {b} = w b := by
-  rw [Measure.ofWeights_real_singleton, ENNReal.toReal_natCast]
+    (Measure.sum fun b ↦ (w b : ℝ≥0∞) • Measure.dirac b).real {b} = w b := by
+  rw [measureReal_def, Measure.sum_smul_dirac_singleton, ENNReal.toReal_natCast]
 
 /-! ### Binary variables
 
@@ -155,7 +156,7 @@ noncomputable def share (prior : Measure (Persona G)) (α : ℝ) : ℝ :=
       (prior.real Set.univ - prior.real {h.persona}) ^ α)
 
 theorem share_ofWeights (wt : Persona G → ℕ) :
-    share h (Measure.ofWeights (wt ·)) α =
+    share h (Measure.sum fun p ↦ (wt p : ℝ≥0∞) • Measure.dirac p) α =
       (((∑ p, wt p : ℕ) : ℝ) - wt h.persona) ^ α /
         ((((∑ p, wt p : ℕ) : ℝ) - wt h.symm.persona) ^ α +
           (((∑ p, wt p : ℕ) : ℝ) - wt h.persona) ^ α) := by
@@ -402,10 +403,12 @@ def casualWeight (π : Persona) : ℕ := if .aloof ∈ π.1 then 3 else 2
 def carefulWeight (π : Persona) : ℕ := if .incompetent ∈ π.1 then 3 else 2
 
 /-- The barbecue's prior. -/
-noncomputable abbrev casual : Measure Persona := Measure.ofWeights (casualWeight ·)
+noncomputable abbrev casual : Measure Persona :=
+  Measure.sum fun π ↦ (casualWeight π : ℝ≥0∞) • Measure.dirac π
 
 /-- The journalists' prior. -/
-noncomputable abbrev careful : Measure Persona := Measure.ofWeights (carefulWeight ·)
+noncomputable abbrev careful : Measure Persona :=
+  Measure.sum fun π ↦ (carefulWeight π : ℝ≥0∞) • Measure.dirac π
 
 private theorem casual_ne_zero : ∀ π, casual {π} ≠ 0 :=
   ofWeights_ne_zero fun π ↦ by unfold casualWeight; split_ifs <;> decide
@@ -525,7 +528,8 @@ functions of Table 8 order the classes as Labov's rates do (Table 7), whatever t
 rationalities. -/
 
 /-- The uniform prior of the sociolinguistic interview (p. 439). -/
-noncomputable abbrev uniform : Measure Persona := Measure.ofWeights fun _ ↦ ((1 : ℕ) : ℝ≥0∞)
+noncomputable abbrev uniform : Measure Persona :=
+  Measure.sum fun π ↦ ((1 : ℕ) : ℝ≥0∞) • Measure.dirac π
 
 private theorem uniform_ne_zero : ∀ π, uniform {π} ≠ 0 :=
   ofWeights_ne_zero fun _ ↦ one_ne_zero
@@ -557,7 +561,7 @@ theorem classRate_eq {α : ℝ} (hα : 0 < α) (α' : ℝ) (c : ValuedClass) :
       (select α' (classValue c)).real {sternLeader}) / 2 := by
   rw [classRate, comp_real_singleton ing.symm apical_or_velar hα uniform_ne_zero,
     ing_symm_persona, ing_persona, share_eq_half ing.symm (uniform_ne_zero _)
-      (by simp [Measure.ofWeights_apply_singleton]), probReal_univ]
+      (by simp), probReal_univ]
   ring
 
 private theorem strictMono_of_lt_half_eq_half_lt {f : ValuedClass → ℝ}
@@ -677,13 +681,14 @@ variable {α : ℝ}
 /-! #### Rice -/
 
 /-- Rice is unfamiliar, so the listener's beliefs about her are uniform (Table 10). -/
-noncomputable abbrev rice : Measure Persona := Measure.ofWeights fun _ ↦ ((1 : ℕ) : ℝ≥0∞)
+noncomputable abbrev rice : Measure Persona :=
+  Measure.sum fun π ↦ ((1 : ℕ) : ℝ≥0∞) • Measure.dirac π
 
 private theorem rice_ne_zero : ∀ π, rice {π} ≠ 0 :=
   ofWeights_ne_zero fun _ ↦ one_ne_zero
 
 private theorem rice_eq : rice {articulateAloof} = rice {inarticulateFriendly} := by
-  simp [Measure.ofWeights_apply_singleton]
+  simp
 
 private theorem rice_real (π : Persona) : rice.real {π} / rice.real Set.univ = 1 / 4 := by
   rw [ofWeights_real_singleton, ofWeights_real_univ, show ∑ _ : Persona, 1 = 4 by decide +kernel]
@@ -739,7 +744,8 @@ theorem rice_articulate (hα : 0 < α) :
         (L1 field α rice .flapped).real {articulateFriendly} = 1 / 4 := by
   obtain ⟨h₁, h₂, -⟩ := rice_released hα
   obtain ⟨h₃, h₄, -⟩ := rice_flapped hα
-  constructor <;> norm_num [*]
+  rw [h₁, h₂, h₃, h₄]
+  norm_num
 
 /-! #### Pelosi -/
 
@@ -747,7 +753,8 @@ theorem rice_articulate (hα : 0 < α) :
 def pelosiWeight (π : Persona) : ℕ := if .inarticulate ∈ π.1 then 9 else 1
 
 /-- The listener's beliefs about Pelosi. -/
-noncomputable abbrev pelosi : Measure Persona := Measure.ofWeights (pelosiWeight ·)
+noncomputable abbrev pelosi : Measure Persona :=
+  Measure.sum fun π ↦ (pelosiWeight π : ℝ≥0∞) • Measure.dirac π
 
 private theorem pelosi_ne_zero : ∀ π, pelosi {π} ≠ 0 :=
   ofWeights_ne_zero fun π ↦ by unfold pelosiWeight; split_ifs <;> decide
@@ -804,13 +811,14 @@ theorem pelosi_L1 : 4 / 5 < (L1 field 6 pelosi .released).real {inarticulateAloo
 def bushWeight (π : Persona) : ℕ := if π = inarticulateAloof then 97 else 1
 
 /-- The listener's beliefs about Bush. -/
-noncomputable abbrev bush : Measure Persona := Measure.ofWeights (bushWeight ·)
+noncomputable abbrev bush : Measure Persona :=
+  Measure.sum fun π ↦ (bushWeight π : ℝ≥0∞) • Measure.dirac π
 
 private theorem bush_ne_zero : ∀ π, bush {π} ≠ 0 :=
   ofWeights_ne_zero fun π ↦ by unfold bushWeight; split_ifs <;> decide
 
 private theorem bush_eq : bush {articulateAloof} = bush {inarticulateFriendly} := by
-  simp only [Measure.ofWeights_apply_singleton, bushWeight]
+  simp only [Measure.sum_smul_dirac_singleton, bushWeight]
   rfl
 
 /-- The listener remains 97% sure that Bush is inarticulate and aloof whatever variant he uses

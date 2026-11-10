@@ -66,17 +66,20 @@ variable {V U W : Type*} [MeasurableSpace U] [Fintype U] [MeasurableSpace W] [Fi
 /-- The geometric pool of the listener `L` over the channel `N` gives each state, at an intended
 utterance, the geometric mean over the utterance's perceptions of the listener's mass there. -/
 noncomputable def geomPool (N : V → Measure U) (L : U → Measure W) (v : V) : Measure W :=
-  Measure.ofWeights fun w ↦ (N v).geomMean fun u ↦ L u {w}
+  Measure.sum fun w ↦ ((N v).geomMean fun u ↦ L u {w}) • Measure.dirac w
 
 variable [MeasurableSingletonClass W]
 
+omit [Fintype W] in
 @[simp] theorem geomPool_apply_singleton (N : V → Measure U) (L : U → Measure W) (v : V) (w : W) :
     geomPool N L v {w} = (N v).geomMean fun u ↦ L u {w} :=
-  Measure.ofWeights_apply_singleton _ w
+  Measure.sum_smul_dirac_singleton
 
 instance (N : V → Measure U) (L : U → Measure W) [∀ u, IsFiniteMeasure (L u)] (v : V) :
     IsFiniteMeasure (geomPool N L v) :=
-  Measure.isFiniteMeasure_ofWeights fun _ ↦ Measure.geomMean_ne_top fun _ _ ↦ measure_ne_top _ _
+  have (w : W) := (Measure.dirac w).smul_finite
+    (Measure.geomMean_ne_top (μ := N v) fun u _ ↦ measure_ne_top (L u) {w})
+  inferInstanceAs (IsFiniteMeasure (Measure.sum _))
 
 /-- With no noise the geometric pool of a listener is the listener, so the speaker over the channel
 (eq. (7)) is the speaker of eq. (3). -/
