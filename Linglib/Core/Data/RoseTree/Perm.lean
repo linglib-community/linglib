@@ -5,7 +5,6 @@ Authors: Linglib contributors
 -/
 module
 
-public import Linglib.Core.Data.List.IsPerm
 public import Linglib.Core.Data.RoseTree.Basic
 public import Mathlib.Data.List.Perm.Basic
 public import Mathlib.Data.Multiset.MapFold
@@ -121,34 +120,69 @@ theorem Perm.node_of_perm {a : α} {cs ds : List (RoseTree α)} (h : cs.Perm ds)
 
 /-! ### Decidability
 
-`isPerm` is the fold that compares labels and matches the children greedily
-(`List.isPermBy`), as `List.isPerm` does for `List.Perm`. A fold recurses structurally, so the
-instance it gives reduces in the kernel. -/
+`isPerm` is the fold that compares labels and pairs the children greedily, as `List.isPerm` does
+for `List.Perm`. A fold recurses structurally, so the instance it gives reduces in the kernel. -/
 
 section Decidable
+
+/-- Greedy pairing of tests with elements: each test of `ps` is paired with the first element of
+`ds` still unpaired that passes it, and every test and element must be paired. The match is found
+with `findIdx?` and removed with `eraseIdx`, so each test is evaluated once per comparison. -/
+def isPermAux : List (β → Bool) → List β → Bool
+  | [], ds => ds.isEmpty
+  | p :: ps, ds =>
+    match ds.findIdx? p with
+    | some i => isPermAux ps (ds.eraseIdx i)
+    | none => false
+
+private theorem rel_perm_iff {F G : Multiset (RoseTree α)} :
+    Multiset.Rel Perm F G ↔ F.map (Quotient.mk isSetoid) = G.map (Quotient.mk isSetoid) := by
+  rw [← Multiset.rel_eq, Multiset.rel_map]
+  simp only [Quotient.eq]
+  exact Iff.rfl
+
+/-- Greedy pairing decides `Multiset.Rel Perm` once the tests decide `Perm` on the members of the
+two lists, which is what the induction hypothesis of `isPerm_iff` provides. -/
+private theorem isPermAux_iff {r : RoseTree α → RoseTree α → Bool} :
+    ∀ {cs ds : List (RoseTree α)}, (∀ c ∈ cs, ∀ d ∈ ds, r c d ↔ Perm c d) →
+      (isPermAux (cs.map r) ds ↔ Multiset.Rel Perm (↑cs : Multiset (RoseTree α)) ↑ds)
+  | [], ds, _ => by
+    rw [List.map_nil, isPermAux, List.isEmpty_iff, Multiset.coe_nil, Multiset.rel_zero_left,
+      Multiset.coe_eq_zero]
+  | c :: cs, ds, h => by
+    rw [List.map_cons, isPermAux]
+    split
+    · next i hi =>
+      obtain ⟨hil, hci, -⟩ := List.findIdx?_eq_some_iff_getElem.1 hi
+      have hcd := (h c List.mem_cons_self _ (List.getElem_mem hil)).1 hci
+      rw [isPermAux_iff fun x hx y hy ↦
+          h x (List.mem_cons_of_mem _ hx) y ((List.eraseIdx_sublist _ _).subset hy),
+        ← Multiset.coe_eq_coe.2 (List.getElem_cons_eraseIdx_perm hil), ← Multiset.cons_coe,
+        ← Multiset.cons_coe, rel_perm_iff, rel_perm_iff, Multiset.map_cons, Multiset.map_cons,
+        Quotient.sound hcd, Multiset.cons_inj_right]
+    · next hi =>
+      refine iff_of_false Bool.false_ne_true fun hr ↦ ?_
+      obtain ⟨d, G, hcd, -, he⟩ := Multiset.rel_cons_left.1 (Multiset.cons_coe c cs ▸ hr)
+      have hd : d ∈ ds := Multiset.mem_coe.1 (he ▸ Multiset.mem_cons_self d G)
+      simpa [(h c List.mem_cons_self d hd).2 hcd] using List.findIdx?_eq_none_iff.1 hi d hd
 
 variable [DecidableEq α] {t s : RoseTree α}
 
 /-- `isPerm t s` tests whether `t` and `s` are equal up to reordering the children of every
 vertex. -/
 def isPerm (t : RoseTree α) : RoseTree α → Bool :=
-  t.fold fun a ps s ↦ decide (a = s.value) && List.isPermBy (fun p ↦ p) ps s.children
+  t.fold fun a ps s ↦ decide (a = s.value) && isPermAux ps s.children
 
 theorem isPerm_node (a b : α) (cs ds : List (RoseTree α)) :
-    isPerm (node a cs) (node b ds) = (decide (a = b) && List.isPermBy isPerm cs ds) := by
-  rw [isPerm, fold_node, List.isPermBy_map_left]; rfl
+    isPerm (node a cs) (node b ds) = (decide (a = b) && isPermAux (cs.map isPerm) ds) := by
+  rw [isPerm, fold_node]; rfl
 
 theorem isPerm_iff : isPerm t s ↔ Perm t s := by
   induction t generalizing s with
   | node a cs ih =>
     obtain ⟨b, ds⟩ := s
     rw [isPerm_node, Bool.and_eq_true, decide_eq_true_eq, perm_node_iff,
-      List.isPermBy_iff (f := Quotient.mk isSetoid) (g := Quotient.mk isSetoid)
-        fun c hc d _ ↦ (ih c hc).trans (Quotient.eq (r := isSetoid)).symm,
-      ← Multiset.coe_eq_coe, ← Multiset.map_coe, ← Multiset.map_coe, ← Multiset.rel_eq,
-      Multiset.rel_map]
-    simp only [Quotient.eq]
-    exact Iff.rfl
+      isPermAux_iff fun c hc _ _ ↦ ih c hc]
 
 instance decidablePerm : DecidableRel (Perm (α := α)) :=
   fun _ _ ↦ decidable_of_iff _ isPerm_iff
