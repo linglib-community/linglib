@@ -33,10 +33,10 @@ and [Krifka's does not, whatever the cost of the covert morpheme](##krifka_refut
 * Communicated ranges are sets of Krifka's four regions, ordered along the scale. Horn's
   antonyms take the contrary denotation with thresholds at the two border regions, which form the
   semantic gap; Krifka's take the contradictory one.
-* NACH is a cost of the negative pole, the `k` of `AntonymForm.cost`. Weak optimality returns
-  Krifka's symmetric quadruplet for every such cost below that of sentential negation
-  (`Krifka2007b.superoptimal_quadruplet_iff`), since it compares two pairs only when they share a
-  form or an interpretation. NACH's
+* NACH is a complexity cost of the negative pole. Weak optimality returns Krifka's symmetric
+  quadruplet whenever each negated form costs more than the simple form of the other pole
+  (`Krifka2007b.superoptimal_quadruplet_iff`), whatever the negative pole costs besides, since it
+  compares two pairs only when they share a form or an interpretation. NACH's
   asymmetry is one of degree, the difference in stereotype deviation of the two negated forms.
 * A cell is interpreted asymmetrically when its Negation effect is significant at .05; the
   marginal effect for strong absolute pairs counts as no asymmetry, as in the paper.
@@ -55,7 +55,7 @@ and [Krifka's does not, whatever the cost of the covert morpheme](##krifka_refut
 namespace AlexandropoulouGotzner2024a
 
 open Krifka2007b English.Adjectives Data.Statistics
-open AntonymForm (cost contraryDenotation contraryDenotation_notNegative_diff_positive)
+open AntonymForm (contraryDenotation contraryDenotation_notNegative_diff_positive)
 
 variable {t : AdjectiveType} {s : Strength}
 
@@ -126,16 +126,23 @@ theorem krifkaRanges_symmetric : krifkaRanges.asymmetry = .symmetric := by decid
 
 /-! ### The Negative Adjectives Complexity Hypothesis -/
 
-/-- The stereotype deviation of a form is its excess cost over the co-extensive simple form, which
-the M principle turns into a non-stereotypical reading. Under NACH
-([ruytenbeek-verheyen-spector-2017]) the negative pole costs `k` more than the positive, as the
-covert negative morpheme of [buring-2007] would; without NACH, `k = 0`. -/
+/-- The complexity of a form whose sentential negation costs `n` and whose negative pole costs `k`
+more than its positive pole, as the covert negative morpheme of [buring-2007] would under NACH
+([ruytenbeek-verheyen-spector-2017]); without NACH, `k = 0`. -/
+def cost (n k : ℕ) : AntonymForm → ℕ
+  | .positive => 0
+  | .negative => k
+  | .notPositive => n
+  | .notNegative => n + k
+
+/-- The stereotype deviation of a form is its excess complexity over the co-extensive simple form,
+which the M principle turns into a non-stereotypical reading. -/
 def deviation (n k : ℕ) (f : AntonymForm) : ℤ := cost n k f - cost n k f.simple
 
 -- p. 378
 theorem deviation_eq_iff (n k : ℕ) :
     deviation n k .notPositive = deviation n k .notNegative ↔ k = 0 := by
-  simp only [deviation, AntonymForm.cost, AntonymForm.simple]
+  simp only [deviation, cost, AntonymForm.simple]
   omega
 
 /-! ### Predictions -/
