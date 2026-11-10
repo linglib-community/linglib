@@ -127,7 +127,7 @@ def matrix (c : Cat) (emb : LinearizedSyntacticObject) : LinearizedSyntacticObje
 
 /-- The DPs a probe with setting `p` on `host` finds in `t`, searching short of its horizon. -/
 def found (p : HorizonSetting) (host t : LinearizedSyntacticObject) : Finset SyntacticObject :=
-  t.goalsUnder (t.leafProbe .D) host (p.cut .raising t)
+  t.goalsUnder (t.leafProbe .D) host (p.cut headIndex? t)
 
 /-- (47), (58): the A-probe reaches into a vP complement only, wh-licensing into TP and vP, and
 the Ā-probe into all three; an opaque clause hides the DP at its edge as well. -/
@@ -158,7 +158,7 @@ theorem hyperraising_blocked :
 
 theorem hyperraising_iff (h : Option Cat) :
     (⟨.T, h⟩ : HorizonSetting).TransparentTo .cP ↔ ∀ c ∈ ClauseSpine.cP, h ≠ some c := by
-  simp only [HorizonSetting.TransparentTo, Option.mem_def, ne_eq]
+  rw [HorizonSetting.transparentTo_iff]
   exact ⟨fun H c hc e ↦ H c e hc, fun H c e hc ↦ H c hc e⟩
 
 /-! ### The Height-Locality Connection (Section 5) -/

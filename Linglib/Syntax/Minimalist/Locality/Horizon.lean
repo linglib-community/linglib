@@ -7,6 +7,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Clause.Spine
 public import Linglib.Syntax.Minimalist.Locality.Transfer
+public import Mathlib.Data.Finset.Option
 public import Mathlib.Order.Monotone.Defs
 
 /-!
@@ -18,15 +19,14 @@ extended projection, so a clause carries every head it projects and is transpare
 exactly when it does not project the horizon. Larger clauses are then
 [at least as opaque](##Minimalist.HorizonSetting.transparentTo_antitone), which is Upward
 Entailment. A probe whose horizon lies in its own complement is vacuous: its search ends at its
-sister. A nonvacuous probe therefore searches into
-[every clause inside its complement](##Minimalist.HorizonSetting.TransparentTo.of_not_isVacuousIn),
-and a horizon makes vacuous
-[every probe hosted above it](##Minimalist.HorizonSetting.IsVacuousIn.of_mem_below), the two
-halves of the Height–Locality Theorem.
+sister. On an extended projection the horizon of a nonvacuous probe is therefore
+[at or above its head](##Minimalist.HorizonSetting.extendsTo_of_not_isVacuousIn), the
+Height–Locality Theorem.
 
-On a tree, a node carries the [spine](##Minimalist.spineAt) of its extended projection, and the
-positions [behind a probe's horizon](##Minimalist.HorizonSetting.cut) are those under a node the
-probe c-commands that is [not transparent to it](##Minimalist.HorizonSetting.mem_cut_iff).
+On a tree, a node carries the [spine](##Minimalist.spineOf) of its extended projection, a phrase
+[inheriting its complement's categories](##Minimalist.spineOf_le_spineOf_node), and the positions
+[behind a probe's horizon](##Minimalist.HorizonSetting.cut) are those under a node the probe
+c-commands that is [not transparent to it](##Minimalist.HorizonSetting.mem_cut_iff).
 
 ## Implementation notes
 
@@ -34,11 +34,9 @@ Vacuity is relative to the spine that hosts the probe, and the probe's sister is
 `ClauseSpine.below` of its head. On a spine that does not project the probe's head the complement
 is the whole spine, so vacuity is meaningful only for a head the spine projects.
 
-The spine of a node is read off a head function: the category of the node's lexical head, over
-the spine of that head's sister when the head is functional and its sister's highest category
-extends to it, since a lexical head starts a new extended projection. A head merged with a
-specifier and no complement has the specifier for sister, which inherits only if it belongs to
-the head's own extended projection.
+The spine of a tree is a fold over it, given the index of each tree's head daughter. A head
+merged with a specifier and no complement has the specifier for sister, which it inherits from
+only if the specifier belongs to its own extended projection. Traces carry no spine.
 
 Unlike the domain Transfer seals, the complement of a phase head, a horizon closes the whole
 phrase, so no element escapes through its edge.
@@ -53,7 +51,7 @@ phrase, so no element escapes through its edge.
 
 namespace Minimalist
 
-open Core.Order RoseTree
+open Core.Order RoseTree SyntacticObject
 
 /-- A probe's horizon setting is the head that hosts it and the category that terminates its
 search, its horizon; a probe without horizon searches into any domain. -/
@@ -70,21 +68,26 @@ variable (p : HorizonSetting) {s t : ClauseSpine} {c d h : Cat} {o : Option Cat}
 
 /-! ### Transparency -/
 
-/-- A clause is transparent to `p` when `p` has no horizon or the clause does not project it. -/
-def TransparentTo (s : ClauseSpine) : Prop := ∀ h ∈ p.horizon, h ∉ s
+/-- A clause is transparent to `p` when its label is disjoint from the horizon of `p`. -/
+def TransparentTo (s : ClauseSpine) : Prop := Disjoint p.horizon.toFinset s.label
 
-instance : Decidable (p.TransparentTo s) := Option.decidableForallMem _
+instance : Decidable (p.TransparentTo s) := inferInstanceAs (Decidable (Disjoint _ _))
+
+variable {p} in
+theorem transparentTo_iff : p.TransparentTo s ↔ ∀ h ∈ p.horizon, h ∉ s := by
+  simp [TransparentTo, Finset.disjoint_left]
 
 @[simp] theorem transparentTo_mk_none : (HorizonSetting.mk c none).TransparentTo s := by
   simp [TransparentTo]
 
-@[simp] theorem transparentTo_mk_some : (HorizonSetting.mk c (some h)).TransparentTo s ↔ h ∉ s := by
+@[simp] theorem transparentTo_mk_some :
+    (HorizonSetting.mk c (some h)).TransparentTo s ↔ h ∉ s := by
   simp [TransparentTo]
 
 variable {p}
 
 theorem TransparentTo.anti (hst : s ≤ t) (ht : p.TransparentTo t) : p.TransparentTo s :=
-  fun c hc hm ↦ ht c hc (ClauseSpine.le_iff_forall_mem.1 hst c hm)
+  ht.mono_right hst
 
 variable (p) in
 /-- Upward Entailment: a clause opaque to a probe stays opaque when it projects more structure,
@@ -101,7 +104,7 @@ def IsVacuousIn (s : ClauseSpine) : Prop := ¬ p.TransparentTo (s.below p.head)
 instance : Decidable (p.IsVacuousIn s) := inferInstanceAs (Decidable (¬ _))
 
 theorem isVacuousIn_iff : p.IsVacuousIn s ↔ ∃ h ∈ p.horizon, h ∈ s.below p.head := by
-  simp [IsVacuousIn, TransparentTo]
+  simp [IsVacuousIn, transparentTo_iff]
 
 @[simp] theorem not_isVacuousIn_mk_none : ¬ (HorizonSetting.mk c none).IsVacuousIn s :=
   not_not_intro transparentTo_mk_none
@@ -126,94 +129,108 @@ theorem IsVacuousIn.of_mem_below (hp : (HorizonSetting.mk c o).IsVacuousIn s)
     (hc : c ∈ s.below d) : (HorizonSetting.mk d o).IsVacuousIn s :=
   fun ht ↦ hp (ht.anti (ClauseSpine.below_le_below hc))
 
+/-- The Height–Locality Theorem on an extended projection: the horizon of a nonvacuous probe is at
+or above the head that hosts it. -/
+theorem extendsTo_of_not_isVacuousIn (hs : s.IsExtendedProjection) (hc : c ∈ s) (hh : h ∈ s)
+    (hp : ¬ (HorizonSetting.mk c (some h)).IsVacuousIn s) : c.ExtendsTo h :=
+  (hs.mem_below_or_extendsTo hc hh).resolve_left (isVacuousIn_mk_some.not.1 hp)
+
+/-- A vacuous probe's horizon lies at or below the head that hosts it. -/
+theorem IsVacuousIn.extendsTo (hs : s.IsExtendedProjection) (hc : c ∈ s)
+    (hp : (HorizonSetting.mk c (some h)).IsVacuousIn s) : h.ExtendsTo c :=
+  hs.extendsTo_of_mem_below hc (isVacuousIn_mk_some.1 hp)
+
 end HorizonSetting
 
 /-! ### Horizons on trees -/
 
-variable (hd : HeadFunction) (t : LinearizedSyntacticObject)
+variable (η : RoseTree Vertex → Option ℕ) (t : LinearizedSyntacticObject)
 
-/-- The category of the pronounced head at a position. -/
-def catAt (p : TreePath) : Option Cat := ((tokenList t.val).find? (·.1 = p)).map (·.2.item.cat)
+/-- The lexical item at the root of a tree, if it is a pronounced leaf. -/
+def rootToken? : RoseTree Vertex → Option LexicalItem.Token
+  | .node (.inl tok) _ => tok
+  | _ => none
 
-/-- The heads of the extended projection of the phrase at `p`, bottom-up, to a bounded depth. -/
-def spineHeads : ℕ → TreePath → List Cat
-  | 0, _ => []
-  | n + 1, p =>
-    let h := lexicalHeadAt hd t p
-    match catAt t h with
-    | none => []
-    | some c =>
-      if h = p then [c] else
-        let below := spineHeads n (complement h)
-        (if c ≠ c.family.lexical ∧ ∃ d ∈ below.getLast?, d.ExtendsTo c then below else []) ++ [c]
+/-- The spine of a tree, the heads of its extended projection, given the index `η` of the head
+daughter of each tree: a head projects its category over the spine of its sister, and a phrase
+keeps the spine of its head daughter ([keine-2019]'s Category Inheritance). -/
+def spineOf : RoseTree Vertex → ClauseSpine
+  | .node (.inl (some tok)) _ => ⟨[tok.item.cat]⟩
+  | .node (.inl none) [l, r] =>
+    match η (.node (.inl none) [l, r]) with
+    | some 0 => (rootToken? l).elim (spineOf l) fun tok ↦ (spineOf r).project tok.item.cat
+    | some 1 => (rootToken? r).elim (spineOf r) fun tok ↦ (spineOf l).project tok.item.cat
+    | _ => ⟨[]⟩
+  | _ => ⟨[]⟩
 
-/-- The spine of the node at `p`, the heads of its extended projection, whose categories it
-inherits ([keine-2019]'s Category Inheritance). -/
-def spineAt (p : TreePath) : ClauseSpine := ⟨spineHeads hd t t.val.subtrees.length p⟩
+/-- The spine of the node at `p`. -/
+def spineAt (p : TreePath) : ClauseSpine := t.val[p]?.elim ⟨[]⟩ (spineOf η)
 
 /-- The positions behind the horizon `c` of the probe at `a`, those dominated by a node the probe
 c-commands whose spine contains `c` ([keine-2019]'s Horizons). -/
 def horizon (a : TreePath) (c : Cat) : Set TreePath :=
-  {q | ∃ x ∈ Finset.Iio q, t.val.CCommands a x ∧ c ∈ spineAt hd t x}
+  {q | ∃ x ∈ Finset.Iio q, t.val.CCommands a x ∧ c ∈ spineAt η t x}
 
-instance (a : TreePath) (c : Cat) : DecidablePred (· ∈ horizon hd t a c) :=
+instance (a : TreePath) (c : Cat) : DecidablePred (· ∈ horizon η t a c) :=
   fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The positions closed to the search of a probe with setting `p` at `a`, those behind its
 horizon; none when it has no horizon. -/
 def HorizonSetting.cut (p : HorizonSetting) (a : TreePath) : Set TreePath :=
-  {q | ∃ c ∈ p.horizon, q ∈ Minimalist.horizon hd t a c}
+  {q | ∃ c ∈ p.horizon, q ∈ Minimalist.horizon η t a c}
 
-instance (p : HorizonSetting) (a : TreePath) : DecidablePred (· ∈ p.cut hd t a) :=
+instance (p : HorizonSetting) (a : TreePath) : DecidablePred (· ∈ p.cut η t a) :=
   fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-variable {hd t} {a q : TreePath} {c : Cat} {p : HorizonSetting}
+variable {η t} {a q : TreePath} {c c' : Cat} {p : HorizonSetting} {l r : RoseTree Vertex}
+  {tok : LexicalItem.Token}
 
-theorem spineHeads_isChain (n : ℕ) (x : TreePath) :
-    (spineHeads hd t n x).IsChain Cat.ExtendsTo := by
-  induction n generalizing x with
-  | zero => exact .nil
-  | succ n ih =>
-    rw [spineHeads]
-    split
-    · exact .nil
-    · split
-      · exact .singleton _
-      · dsimp only
-        split
-        next h₂ =>
-          obtain ⟨d, hd', hdc⟩ := h₂.2
-          exact (ih _).append (.singleton _) fun e he b hb ↦ by
-            obtain rfl : e = d := Option.some.inj (he.symm.trans hd')
-            obtain rfl : _ = b := by simpa using hb
-            exact hdc
-        next => exact .singleton _
+/-- The spine of a tree is an extended projection. -/
+theorem isExtendedProjection_spineOf (s : RoseTree Vertex) :
+    (spineOf η s).IsExtendedProjection := by
+  fun_induction spineOf η s
+  case case1 => exact .singleton _
+  case case2 ihl ihr | case3 ihl ihr =>
+    cases rootToken? _ <;> first | assumption | exact .project ‹_› _
+  all_goals exact .nil
 
-/-- The spine of a node is an extended projection. -/
-theorem isExtendedProjection_spineAt (x : TreePath) : (spineAt hd t x).IsExtendedProjection :=
-  spineHeads_isChain _ x
+theorem spineOf_node_zero (h : η (.node (.inl none) [l, r]) = some 0) :
+    spineOf η (.node (.inl none) [l, r]) =
+      (rootToken? l).elim (spineOf η l) fun tok ↦ (spineOf η r).project tok.item.cat := by
+  simp [spineOf, h]
 
-theorem isUpperSet_horizon : IsUpperSet (horizon hd t a c) :=
+theorem spineOf_node_one (h : η (.node (.inl none) [l, r]) = some 1) :
+    spineOf η (.node (.inl none) [l, r]) =
+      (rootToken? r).elim (spineOf η r) fun tok ↦ (spineOf η l).project tok.item.cat := by
+  simp [spineOf, h]
+
+/-- Horizon inheritance: the phrase of a head that inherits from its complement carries every
+category the complement does, so it is a horizon for every probe the complement is. -/
+theorem spineOf_le_spineOf_node (h : η (.node (.inl none) [l, r]) = some 0)
+    (hl : rootToken? l = some tok) (hi : (spineOf η r).Inherits tok.item.cat) :
+    spineOf η r ≤ spineOf η (.node (.inl none) [l, r]) := by
+  simpa [spineOf_node_zero h, hl] using ClauseSpine.le_project hi
+
+theorem isUpperSet_horizon : IsUpperSet (horizon η t a c) :=
   fun _ _ hqr ⟨x, hx, h⟩ ↦ ⟨x, Finset.mem_Iio.2 ((Finset.mem_Iio.1 hx).trans_le hqr), h⟩
 
-@[simp] theorem HorizonSetting.cut_mk_none {c' : Cat} :
-    (HorizonSetting.mk c' none).cut hd t a = ∅ := by
+@[simp] theorem HorizonSetting.cut_mk_none : (HorizonSetting.mk c' none).cut η t a = ∅ := by
   simp [HorizonSetting.cut]
 
-@[simp] theorem HorizonSetting.cut_mk_some {c' : Cat} :
-    (HorizonSetting.mk c' (some c)).cut hd t a = Minimalist.horizon hd t a c := by
+@[simp] theorem HorizonSetting.cut_mk_some :
+    (HorizonSetting.mk c' (some c)).cut η t a = Minimalist.horizon η t a c := by
   simp [HorizonSetting.cut]
 
 /-- A position is behind a probe's horizon exactly when a node the probe c-commands dominates it
 and is not transparent to the probe. -/
 theorem HorizonSetting.mem_cut_iff :
-    q ∈ p.cut hd t a ↔ ∃ x < q, t.val.CCommands a x ∧ ¬ p.TransparentTo (spineAt hd t x) := by
+    q ∈ p.cut η t a ↔ ∃ x < q, t.val.CCommands a x ∧ ¬ p.TransparentTo (spineAt η t x) := by
   constructor
   · rintro ⟨c, hc, x, hx, ha, hm⟩
-    exact ⟨x, Finset.mem_Iio.1 hx, ha, fun ht ↦ ht c hc hm⟩
+    exact ⟨x, Finset.mem_Iio.1 hx, ha, fun ht ↦ transparentTo_iff.1 ht c hc hm⟩
   · rintro ⟨x, hx, ha, hnt⟩
-    obtain ⟨c, hc, hm⟩ : ∃ c ∈ p.horizon, c ∈ spineAt hd t x := by
-      simpa [HorizonSetting.TransparentTo] using hnt
+    obtain ⟨c, hc, hm⟩ : ∃ c ∈ p.horizon, c ∈ spineAt η t x := by
+      simpa [transparentTo_iff] using hnt
     exact ⟨c, hc, x, Finset.mem_Iio.2 hx, ha, hm⟩
 
 end Minimalist

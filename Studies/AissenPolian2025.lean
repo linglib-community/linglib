@@ -16,9 +16,9 @@ possessive's D layer, an agent, a specific subject or theme, or an occupied Spec
 it. Hence only non-specific possessums strand, and the possessor that reaches Spec,TP is the
 ψ-subject of a categorical judgment.
 
-Nominal opacity is the horizon setting `nominalOpacity` read through `Invisible`, the positions behind the
-probe's horizon (`HorizonSetting.cut`) under the raising head function, and C⁰'s wh-probe searches
-short of them (`whGoals`).
+Nominal opacity is the horizon setting `nominalOpacity` read through `Invisible`, the positions
+behind the probe's horizon (`HorizonSetting.cut`) under the raising head index, and C⁰'s wh-probe
+searches short of them (`whGoals`).
 Attract Closest is `dGoals`, the positional search for D leaves on the paper's structures,
 `judgment` reads the judgment type off the same search, and the paper's examples are the rows,
 over which `stranding_iff`, `piedPiping_specific` and `psi_no_piedPiping` hold.
@@ -62,7 +62,7 @@ lies behind its horizon for an occurrence of the probe. -/
 def Invisible (p : HorizonSetting) (t : LinearizedSyntacticObject)
     (probe target : SyntacticObject) : Prop :=
   ∃ a q : t.val.Positions,
-    t.termAt a = probe ∧ t.termAt q = target ∧ q.val ∈ p.cut .raising t a.val
+    t.termAt a = probe ∧ t.termAt q = target ∧ q.val ∈ p.cut headIndex? t a.val
 
 instance (p : HorizonSetting) (t : LinearizedSyntacticObject) (probe target : SyntacticObject) :
     Decidable (Invisible p t probe target) := by
@@ -160,7 +160,7 @@ def whProbe (t : LinearizedSyntacticObject) : Probe t.val.Positions :=
 
 /-- What C⁰'s wh-probe finds, searching short of its horizon at N⁰. -/
 def whGoals (t : LinearizedSyntacticObject) : Finset SyntacticObject :=
-  t.goalsUnder (whProbe t) C₀ (nominalOpacity.cut .raising t)
+  t.goalsUnder (whProbe t) C₀ (nominalOpacity.cut headIndex? t)
 
 /-- The possessor raised to Spec,TP out of a non-specific S_O. -/
 def psrRaised : LinearizedSyntacticObject := {Psr, unaccPossP}
