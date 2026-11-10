@@ -121,8 +121,9 @@ theorem anClause_not_informative (p : Set W) : ¬ (anClause p).IsInformative :=
 
 open Interpreter in
 theorem comp_over_na_type_clash (b : Ty Base) :
-    (Grammar.application.sum .predicateModification).motherTypes (.t ⇒ b) (.e ⇒ .t) = [] := by
-  cases b <;> simp [Grammar.motherTypes, Grammar.LocallyFinite.binaryRules]
+    (application.sum predicateModification).motherTypes (.t ⇒ b) (.e ⇒ .t) = [] := by
+  cases b <;> simp [ManySorted.Language.motherTypes, Application.rules,
+    PredicateModification.rules]
 
 /-! ### Selection -/
 

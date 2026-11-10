@@ -136,7 +136,7 @@ the *than*-clause binds. -/
 
 section Derivations
 
-open Interpreter Interpreter.Grammar
+open Interpreter
 open PhraseStructure (Tree)
 
 /-- The maximal degree of a set of degrees (38i): its greatest member, and an arbitrary degree
@@ -262,16 +262,17 @@ noncomputable def Item.val [LinearOrder D] [Nonempty D] [Nonempty Ent] (M : Mode
 
 /-- The rules: Functional Application, Predicate Modification, Event Identification, and
 abstraction over an index. -/
-abbrev rules : Interpreter (((Grammar.application.sum .predicateModification).sum
-    (.eventIdentification .e .v)).withAbstraction indexTy) Node :=
-  (typeDriven ((Grammar.application.sum .predicateModification).sum
-    (.eventIdentification .e .v))).withAbstraction indexTy
+abbrev rules : Interpreter (((application.sum predicateModification).sum
+    (eventIdentification .e .v)).withAbstraction indexTy) Node :=
+  (typeDriven ((application.sum predicateModification).sum
+    (eventIdentification .e .v))).withAbstraction indexTy
 
 /-- The denotations of a tree, relative to an assignment. -/
 noncomputable def meanings [LinearOrder D] [Nonempty D] [Nonempty Ent] (M : Model Ent Ev)
     (t : Tree Unit Word) :
     List (Σ a : Ty Base, Assignment Ent Ev D → a.Dom (Dom Ent Ev D)) :=
-  t.values rules (Grammar.withAbstraction.structure (Assignments.total (Dom Ent Ev D) indexTy))
+  t.values rules (ManySorted.Language.withAbstraction.structure (Assignments.total (Dom Ent Ev D)
+      indexTy))
     (Item.val M) items
 
 /-- A *than*-clause (39), (46), (62): *than* over the operator's λ, the closed clause below it. -/

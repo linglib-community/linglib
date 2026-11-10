@@ -8,12 +8,12 @@ public import Linglib.Core.ModelTheory.ManySorted.Semantics
 One structure simulates another over the same domains when each function of the second is the
 value of a term of the first over the argument places, a term operation. Then [every term of the
 second has a term of the first with its
-value](##MSFirstOrder.Language.Structure.Simulates.exists_term): the clone of term operations of
+value](##ManySorted.Language.Structure.Simulates.exists_term): the clone of term operations of
 the second is included in that of the first.
 
 ## Main definitions
 
-* `MSFirstOrder.Language.Structure.Simulates`: every function of one structure is a term operation
+* `ManySorted.Language.Structure.Simulates`: every function of one structure is a term operation
   of another.
 -/
 
@@ -21,7 +21,7 @@ the second is included in that of the first.
 
 universe u v w x
 
-namespace MSFirstOrder.Language.Structure
+namespace ManySorted.Language.Structure
 
 variable {S : Type u} {L L' L'' : Language.{u, v} S} {α : S → Type w} {D : S → Type x}
 
@@ -71,4 +71,4 @@ protected theorem trans {M'' : L''.Structure D} (h' : Simulates M'' M') (h : Sim
 
 end Simulates
 
-end MSFirstOrder.Language.Structure
+end ManySorted.Language.Structure

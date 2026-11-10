@@ -237,12 +237,12 @@ theorem partialControl_rows :
 complement is the FinP itself, and a logophoric one the FinP applied to the projected *pro*. -/
 def complementTy : Tier → List (Ty Base)
   | .predicative => [.et]
-  | .logophoric => Grammar.application.motherTypes .e .et
+  | .logophoric => application.motherTypes .e .et
 
 /-- Only a logophoric complement has the type of a FinP applied to an individual, as a lexical
 subject requires (72). -/
 theorem lexicalSubject_iff_logophoric (t : Tier) :
-    complementTy t = Grammar.application.motherTypes .e .et ↔ t = .logophoric := by
+    complementTy t = application.motherTypes .e .et ↔ t = .logophoric := by
   cases t <;> decide
 
 /-! ### Adjunct control (84), (89) -/
@@ -274,7 +274,7 @@ def AdjunctType.AdmitsNOC (a : AdjunctType) : Prop := .logophoric ∈ a.tiers
 /-- An adjunct has a propositional variant when its head selects a clause hosting a lexical
 subject, of the type of a FinP applied to an individual. -/
 def AdjunctType.HasPropositionalVariant (a : AdjunctType) : Prop :=
-  ∃ t ∈ a.tiers, complementTy t = Grammar.application.motherTypes .e .et
+  ∃ t ∈ a.tiers, complementTy t = application.motherTypes .e .et
 
 instance : DecidablePred AdjunctType.AdmitsNOC := fun a ↦
   inferInstanceAs (Decidable (Tier.logophoric ∈ a.tiers))

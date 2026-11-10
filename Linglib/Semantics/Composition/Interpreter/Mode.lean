@@ -54,6 +54,8 @@ size.
 
 @[expose] public section
 
+open ManySorted
+
 namespace Interpreter
 
 variable {B : Type}
@@ -95,9 +97,9 @@ variable {Rule : Ty B → Ty B → Ty B → Type}
 
 /-- The meaning of a mode over a grammar's rules, from a structure for the grammar: each
 meta-mode is the operation of its effect. -/
-def eval {G : Grammar (Ty B)} (D : B → Type) [M : G.language.Structure (Ty.Dom D)] :
+def eval {G : Language (Ty B)} (D : B → Type) [M : G.Structure (Ty.Dom D)] :
     {l r u : Ty B} → Mode G.Binary l r u → l.Dom D → r.Dom D → u.Dom D
-  | _, _, _, .basic b, x, y => M.funMap (.binary b) (x, y)
+  | _, _, _, .basic b, x, y => M.funMap b (x, y)
   | _, _, _, .mapR (f := f) m, a, b => Eff.map f (fun y ↦ m.eval D a y) b
   | _, _, _, .mapL (f := f) m, a, b => Eff.map f (fun x ↦ m.eval D x b) a
   | _, _, _, .ap (f := f) h m, a, b =>
@@ -199,25 +201,23 @@ instance Ty.decidableEvaluated : (a : Ty B) → Decidable a.Evaluated
   | .t | .base _ => isTrue trivial
 
 /-- The effect-driven grammar over a grammar: its type shifts, and the modes over its rules. -/
-def effectGrammar (G : Grammar (Ty B)) : Grammar (Ty B) where
-  Unary := G.Unary
-  Binary := Mode G.Binary
+def effectGrammar (G : Language (Ty B)) : Language (Ty B) := .mk₂ G.Unary (Mode G.Binary)
 
 /-- The structure of the effect-driven grammar over a grammar, from a structure for the
 grammar: a type shift means what it does there, and a mode what the effects make of the rules. -/
-instance effectGrammar.structure {G : Grammar (Ty B)} {D : B → Type}
-    [M : G.language.Structure (Ty.Dom D)] : (effectGrammar G).language.Structure (Ty.Dom D) :=
-  Grammar.structure (fun s x ↦ M.funMap (.unary s) x) fun m ↦ m.eval D
+instance effectGrammar.structure {G : Language (Ty B)} {D : B → Type}
+    [M : G.Structure (Ty.Dom D)] : (effectGrammar G).Structure (Ty.Dom D) :=
+  .mk₂ (fun s x ↦ M.funMap s x) fun m ↦ m.eval D
 
 /-- The effect-driven interpreter over a grammar, the book's: a node admits the type shifts of
 the grammar and every mode that `Ty.combine` finds for its daughters, and an island only the
 modes whose result is evaluated. -/
-def effectDriven [DecidableEq B] (G : Grammar (Ty B)) [G.LocallyFinite] :
+def effectDriven [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] :
     Interpreter (effectGrammar G) Node where
-  unary _ := Grammar.LocallyFinite.unaryRules (G := G)
+  unary _ := Language.LocallyFinite.unaryRules (L := G)
   binary
     | .island, l, r =>
-      (Ty.combine (Grammar.LocallyFinite.binaryRules (G := G)) l r).filter (·.1.Evaluated)
-    | _, l, r => Ty.combine (Grammar.LocallyFinite.binaryRules (G := G)) l r
+      (Ty.combine (Language.LocallyFinite.binaryRules (L := G)) l r).filter (·.1.Evaluated)
+    | _, l, r => Ty.combine (Language.LocallyFinite.binaryRules (L := G)) l r
 
 end Interpreter

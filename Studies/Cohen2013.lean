@@ -233,7 +233,7 @@ the lifted reading repairs, and a shift applies to a word, never to the phrase *
 
 section Engine
 
-open Interpreter Interpreter.Grammar PhraseStructure
+open Interpreter PhraseStructure
 
 variable {E : Type} (j : E) (need : ((E → Prop) → Prop) → E → Prop) (buy : E → E → Prop)
   (newCoat : E → Prop)
@@ -281,7 +281,7 @@ def lexicon (B : Set (Denotation E)) : Word → Set (Denotation E)
 
 /-- The readings of a tree by Functional Application, each word being any of its readings. -/
 def readings (B : Set (Denotation E)) (t : Tree Unit Word) : Set (Denotation E) :=
-  t.readings (typeDriven .application) inferInstance id fun
+  t.readings (typeDriven application) inferInstance id fun
     | .inl w => lexicon j need newCoat B w
     | .inr _ => ∅
 

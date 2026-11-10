@@ -260,7 +260,7 @@ brackets, and the theorems below give the truth conditions of each. -/
 
 section LogicalForms
 
-open Interpreter Interpreter.Grammar PhraseStructure Tree English.Coordination
+open Interpreter PhraseStructure Tree English.Coordination
 
 variable {E : Type} {N N' V : Set E} {R S : Set (Set E)}
 
@@ -326,22 +326,24 @@ noncomputable def lex (N N' V : Set E) (R S : Set (Set E)) : Word →
 
 /-- The rules: Functional Application, Predicate Modification, which intersects two properties
 of pluralities, and abstraction over an index. -/
-abbrev rules : Interpreter ((Grammar.application.sum .predicateModification).withAbstraction
+abbrev rules : Interpreter ((application.sum predicateModification).withAbstraction
     indexTy) Node :=
-  (typeDriven (.sum .application .predicateModification)).withAbstraction indexTy
+  (typeDriven (application.sum predicateModification)).withAbstraction indexTy
 
 /-- A logical form holds, under an assignment of choice functions to the indices, when it
 denotes a truth value that is true. -/
 def Holds (N N' V : Set E) (R S : Set (Set E)) (g : ∀ n, (indexTy n).Dom (Dom E))
     (t : Tree Unit Word) : Prop :=
-  ∃ p, t.values rules (Grammar.withAbstraction.structure (Assignments.total (Dom E) indexTy))
+  ∃ p, t.values rules (ManySorted.Language.withAbstraction.structure (Assignments.total (Dom E)
+      indexTy))
     (W := fun a ↦ (∀ n, (indexTy n).Dom (Dom E)) → a.Dom (Dom E)) id (fun
       | .inl w => (lex N N' V R S w).toList.map fun d ↦ ⟨d.1, fun _ ↦ d.2⟩
       | .inr n => [⟨indexTy n, fun g ↦ g n⟩]) = [⟨.t, p⟩] ∧ p g
 
 attribute [local simp] Holds lex indexTy Ty.Conjoinable Coordinator.reading_of_conjunctive
   Coordinator.reading_of_disjunctive and_ or_ Interpreter.withAbstraction typeDriven
-  Grammar.LocallyFinite.unaryRules Grammar.LocallyFinite.binaryRules Assignments.total
+  ManySorted.Language.LocallyFinite.unaryRules ManySorted.Language.LocallyFinite.binaryRules
+      Assignments.total
 
 /-- `[[a noun₁] [c [a noun₂]]]`: Existential Raising of each noun, coordinated by `c`. -/
 def raised (c : Word) : Tree Unit Word := tree% [[⟨.a e⟩ noun₁] [⟨c⟩ [⟨.a e⟩ noun₂]]]

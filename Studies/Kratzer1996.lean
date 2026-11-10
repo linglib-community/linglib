@@ -187,26 +187,28 @@ def Identification.eval (D : Base → Type) :
   | _, _, _, .left, f, g => identify f g
   | _, _, _, .right, g, f => identify f g
 
+/-- The rule of Event Identification that applies to two types. -/
+def Identification.rules (l r : Ty Base) : List (Σ u, Identification l r u) :=
+  (if h : l = (.e ⇒ pvt) ∧ r = pvt then
+    [⟨.comp .M (.e ⇒ pvt), by obtain ⟨rfl, rfl⟩ := h; exact .left⟩]
+  else []) ++
+  if h : l = pvt ∧ r = (.e ⇒ pvt) then
+    [⟨.comp .M (.e ⇒ pvt), by obtain ⟨rfl, rfl⟩ := h; exact .right⟩]
+  else []
+
+/-- Kratzer's Event Identification, as a language over the types. -/
+@[reducible] def identification : ManySorted.Language (Ty Base) :=
+  .mk₂ (fun _ _ ↦ PEmpty) Identification
+
+instance (D : Base → Type) : identification.Structure (Ty.Dom D) :=
+  .mk₂ nofun (Identification.eval D)
+
+instance : identification.LocallyFinite :=
+  .mk₂ (fun _ ↦ []) Identification.rules nofun fun m ↦ by
+    cases m <;> simp [Identification.rules]
+
 /-- The grammar of Functional Application and Kratzer's Event Identification. -/
-def partialGrammar : Grammar (Ty Base) :=
-  Grammar.application.sum ⟨fun _ _ ↦ Empty, Identification⟩
-
-instance (D : Base → Type) : partialGrammar.language.Structure (Ty.Dom D) :=
-  Grammar.sumStructure (M' := Grammar.structure nofun (Identification.eval D))
-
-instance : partialGrammar.LocallyFinite :=
-  letI : (⟨fun _ _ ↦ Empty, Identification⟩ : Grammar (Ty Base)).LocallyFinite :=
-    { unaryRules := fun _ ↦ []
-      binaryRules := fun l r ↦
-        (if h : l = (.e ⇒ pvt) ∧ r = pvt then
-          [⟨.comp .M (.e ⇒ pvt), by obtain ⟨rfl, rfl⟩ := h; exact .left⟩]
-        else []) ++
-        if h : l = pvt ∧ r = (.e ⇒ pvt) then
-          [⟨.comp .M (.e ⇒ pvt), by obtain ⟨rfl, rfl⟩ := h; exact .right⟩]
-        else []
-      mem_unaryRules := nofun
-      mem_binaryRules := fun m ↦ by cases m <;> simp }
-  inferInstanceAs ((Grammar.application.sum _).LocallyFinite)
+abbrev partialGrammar : ManySorted.Language (Ty Base) := application.sum identification
 
 /-- The words of (25) and (26), by semantic type. -/
 inductive PWord : Ty Base → Type

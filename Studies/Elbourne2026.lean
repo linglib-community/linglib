@@ -162,13 +162,13 @@ variable {E W : Type}
 
 /-- The meanings of a structure by Functional Application (9) alone, its leaves being their own
 lexical entries. -/
-def byApplication (s : Grammar.Skeleton Unit (Denotation E W)) : List (Denotation E W) :=
-  (typeDriven .application).meanings (D := Ty.Dom (Base.Dom E W)) (fun x ↦ [x]) s
+def byApplication (s : Skeleton Unit (Denotation E W)) : List (Denotation E W) :=
+  (typeDriven application).meanings (D := Ty.Dom (Base.Dom E W)) (fun x ↦ [x]) s
 
 /-- The meanings of a structure in the grammar of the ⟨e,t⟩ theory, which adds Predicate
 Modification to Functional Application (§3.1). -/
-def withModification (s : Grammar.Skeleton Unit (Denotation E W)) : List (Denotation E W) :=
-  (typeDriven (.sum .application .predicateModification)).meanings
+def withModification (s : Skeleton Unit (Denotation E W)) : List (Denotation E W) :=
+  (typeDriven (application.sum predicateModification)).meanings
     (D := Ty.Dom (Base.Dom E W)) (fun x ↦ [x]) s
 
 -- (24)–(26): *cute donkey* means by Functional Application alone, with *cute* a function on
@@ -203,10 +203,11 @@ def Lift.eval {B : Type} (D : B → Type) : {a b : Ty B} → Lift a b → a.Dom 
   | _, _, .lift, p => fun q x ↦ p x ∧ q x
 
 /-- The grammar whose one rule lifts a property. -/
-def lifting {B : Type} : Grammar (Ty B) := ⟨Lift, fun _ _ _ ↦ Empty⟩
+@[reducible] def lifting {B : Type} : ManySorted.Language (Ty B) :=
+  .mk₂ Lift fun _ _ _ ↦ PEmpty
 
-instance {B : Type} (D : B → Type) : (lifting (B := B)).language.Structure (Ty.Dom D) :=
-  Grammar.structure (Lift.eval D) nofun
+instance {B : Type} (D : B → Type) : (lifting (B := B)).Structure (Ty.Dom D) :=
+.mk₂ (Lift.eval D) nofun
 
 /-- Whatever the ⟨e,t⟩ theory derives with Functional Application and Predicate Modification,
 Functional Application derives with the same value once the modifier is lifted, at any type and
@@ -214,19 +215,22 @@ over any domains, so the theory does without Predicate Modification (§3.1) and 
 the ⟨e,t⟩ theory translates into it (§3.3). The lift is of words in Elbourne's lexicon and of
 any left daughter here; the converse fails for *former* (§3.4). -/
 theorem simulates_predicateModification {B : Type} (D : B → Type) :
-    MSFirstOrder.Language.Structure.Simulates
-      (inferInstance : (Grammar.application.sum lifting).language.Structure (Ty.Dom D))
+    ManySorted.Language.Structure.Simulates
+      (inferInstance : (application.sum lifting).Structure (Ty.Dom D))
       (inferInstance :
-        (Grammar.application.sum .predicateModification).language.Structure (Ty.Dom D)) where
-  funMap
-    | .unary (.inl s) => nomatch s
-    | .unary (.inr s) => nomatch s
-    | .binary (.inl m) =>
-      ⟨Grammar.Deriv.binary (.inl m) (.leaf (.left .here)) (.leaf (.right .here)), fun _ ↦ rfl⟩
-    | .binary (.inr .pm) =>
-      ⟨Grammar.Deriv.binary (.inl .fa)
-        (Grammar.Deriv.unary (.inr .lift) (.leaf (.left .here))) (.leaf (.right .here)),
-        fun _ ↦ rfl⟩
+        (application.sum predicateModification).Structure (Ty.Dom D)) where
+  funMap {σ _} f := by
+    obtain m | m := f
+    · rcases σ with _ | _ | ⟨_ | _ | _, _ | _ | _⟩ <;> first
+        | (cases m; done)
+        | exact ⟨ManySorted.Language.Deriv.binary (.inl m) (.leaf (.left .here))
+            (.leaf (.right .here)), fun _ ↦ rfl⟩
+    · rcases σ with _ | _ | ⟨_ | _ | _, _ | _ | _⟩ <;> first
+        | (cases m; done)
+        | (obtain ⟨⟩ := m
+           exact ⟨ManySorted.Language.Deriv.binary (.inl .fa)
+            (ManySorted.Language.Deriv.unary (.inr .lift) (.leaf (.left .here)))
+            (.leaf (.right .here)), fun _ ↦ rfl⟩)
 
 end Composition
 

@@ -11,18 +11,18 @@ sort is a term of the shape of that sort.
 
 ## Main definitions
 
-* `MSFirstOrder.Language.Term`: the terms over sorted variables, by shape.
-* `MSFirstOrder.Language.Term.bind`: substitution of terms for variables.
-* `MSFirstOrder.Signature.Place`: the argument places of a sort in a shape.
-* `MSFirstOrder.Language.Term.proj`: the component of a term at an argument place.
-* `MSFirstOrder.Language.Term.places`: the term whose components are the argument places.
+* `ManySorted.Language.Term`: the terms over sorted variables, by shape.
+* `ManySorted.Language.Term.bind`: substitution of terms for variables.
+* `ManySorted.Signature.Place`: the argument places of a sort in a shape.
+* `ManySorted.Language.Term.proj`: the component of a term at an argument place.
+* `ManySorted.Language.Term.places`: the term whose components are the argument places.
 -/
 
 @[expose] public section
 
 universe u v w w'
 
-namespace MSFirstOrder
+namespace ManySorted
 
 variable {S : Type u} {L : Language.{u, v} S} {α : S → Type w} {β : S → Type w'}
 
@@ -71,4 +71,4 @@ def places : (σ : Signature S) → L.Term σ.Place σ
 
 end Language.Term
 
-end MSFirstOrder
+end ManySorted

@@ -307,7 +307,7 @@ function applies to its sister where both are defined. -/
 noncomputable def meanings (B : Finset α) (t : Tree Cat Morpheme) :
     List (Σ a : Ty Unit, a.Dom (Dom α)) :=
   match t.skeleton (fun _ ↦ false) with
-  | some s => (partialValued .application).values
+  | some s => (partialValued application).values
       (D := Ty.Dom (Dom α)) (Item.val B) items s
   | none => []
 
@@ -321,17 +321,17 @@ def defined (t : Tree Cat Morpheme) : Set (Finset α) :=
   {B | ∃ d ∈ meanings B t, IsDefined d}
 
 /-- A total function applied to the partial value on its left. -/
-abbrev back (a b : Ty Unit) : Mode (Grammar.application (B := Unit)).Binary
+abbrev back (a b : Ty Unit) : Mode (application (B := Unit)).Binary
     (.comp .M a) (.comp .M (a ⇒ b)) (.comp .M b) :=
   .ap trivial (.basic .ba)
 
 /-- A total function applied to the partial value on its right. -/
-abbrev forth (a b : Ty Unit) : Mode (Grammar.application (B := Unit)).Binary
+abbrev forth (a b : Ty Unit) : Mode (application (B := Unit)).Binary
     (.comp .M (a ⇒ b)) (.comp .M a) (.comp .M b) :=
   .ap trivial (.basic .fa)
 
 /-- A partial function applied to the partial value on its left. -/
-abbrev backPartial (a b : Ty Unit) : Mode (Grammar.application (B := Unit)).Binary
+abbrev backPartial (a b : Ty Unit) : Mode (application (B := Unit)).Binary
     (.comp .M a) (.comp .M (a ⇒ .comp .M b)) (.comp .M b) :=
   .join trivial (.ap trivial (.basic .ba))
 
@@ -544,8 +544,8 @@ private theorem mem_defined_of_map {B : Finset α} {t : Tree Cat Morpheme}
     obtain ⟨_, ⟨⟨a, d⟩, hd, rfl⟩, hdef⟩ := h
     refine ⟨_, ⟨⟨a, d⟩, hd, rfl⟩, ?_⟩
     have hrel : Ty.LiftRel (rel σ) a _ _ :=
-      (effectGrammar.isLogicalRel (r := rel σ) (G := .application)
-        Grammar.application.isLogicalRel).realize (fun i ↦ liftRel_val (σ := σ) B i) d
+      (effectGrammar.isLogicalRel (r := rel σ) (G := application)
+        application.isLogicalRel).realize (fun i ↦ liftRel_val (σ := σ) B i) d
     match a, d, hrel, hdef with
     | .comp .M _, _, hrel, hdef => exact hrel.1.2 hdef
 
@@ -606,7 +606,7 @@ theorem Good.isDefined {d : Σ a : Ty Unit, a.Dom (Dom α)} (h : Good B d) : IsD
   cases h <;> trivial
 
 /-- A partial function applied to the partial value on its right. -/
-abbrev forthPartial (a b : Ty Unit) : Mode (Grammar.application (B := Unit)).Binary
+abbrev forthPartial (a b : Ty Unit) : Mode (application (B := Unit)).Binary
     (.comp .M (a ⇒ .comp .M b)) (.comp .M a) (.comp .M b) :=
   .join trivial (.ap trivial (.basic .fa))
 
@@ -616,11 +616,11 @@ theorem eval_forthPartial {a b : Ty Unit} (f : Part (a.Dom (Dom α) → Part (b.
   rw [Mode.eval_join_ap_basic]; rfl
 
 /-- The rules of the partial-valued interpreter. -/
-abbrev rules : Interpreter (effectGrammar (Grammar.application (B := Unit))) Node :=
-  partialValued .application
+abbrev rules : Interpreter (effectGrammar (application (B := Unit))) Node :=
+  partialValued application
 
 theorem Good.combine {d₁ d₂ : Σ a : Ty Unit, a.Dom (Dom α)} (h₁ : Good B d₁) (h₂ : Good B d₂)
-    {k : Node} {m : Σ u, Mode (Grammar.application (B := Unit)).Binary d₁.1 d₂.1 u}
+    {k : Node} {m : Σ u, Mode (application (B := Unit)).Binary d₁.1 d₂.1 u}
     (hm : m ∈ rules.binary k d₁.1 d₂.1) :
     Good B ⟨m.1, m.2.eval (Dom α) d₁.2 d₂.2⟩ := by
   rcases h₁ with @⟨X, hX⟩ | @⟨F, hF⟩ | @⟨F, hF⟩ <;>
@@ -678,7 +678,7 @@ theorem good_of_licensed (hB : 2 ≤ B.card) {t : Tree Cat Morpheme}
     intro d hd
     obtain ⟨⟨a, e⟩, he, rfl⟩ := List.mem_map.1 hd
     obtain ⟨⟨b, i⟩, hi, heq⟩ := List.mem_map.1
-      (show (⟨a, e⟩ : Σ a, Grammar.Deriv _ Item a) ∈ (items (.inl w)).map _ from he)
+      (show (⟨a, e⟩ : Σ a, ManySorted.Language.Deriv _ Item a) ∈ (items (.inl w)).map _ from he)
     cases heq
     exact good_val hB ht.rel_root hi
   | phrase c k cs ih =>
@@ -691,7 +691,7 @@ theorem good_of_licensed (hB : 2 ≤ B.card) {t : Tree Cat Morpheme}
       simp only [meanings] at hd ih₁ ih₂
       change d ∈ (match (Tree.skeleton (fun _ ↦ false) t₁).bind fun s₁ ↦
           (Tree.skeleton (fun _ ↦ false) t₂).bind fun s₂ ↦
-            some (Grammar.Skeleton.binary Node.branch s₁ s₂) with
+            some (Skeleton.binary Node.branch s₁ s₂) with
         | some s => _
         | none => []) at hd
       cases h₁ : Tree.skeleton (fun _ ↦ false) t₁ with

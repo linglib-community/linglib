@@ -189,10 +189,10 @@ abbrev applTy (f : Ty Base) : Ty Base := f ⇒ .e ⇒ .e ⇒ .vt
 
 -- (104)
 theorem motherTypes_appl :
-    Grammar.application.motherTypes (applTy .evt) .evt = [.e ⇒ .e ⇒ .vt] ∧
-      Grammar.application.motherTypes (applTy (.e ⇒ .evt)) (.e ⇒ .evt) = [.e ⇒ .e ⇒ .vt] ∧
-      Grammar.application.motherTypes (applTy .evt) .vt = [] ∧
-      Grammar.application.motherTypes (applTy (.e ⇒ .evt)) .vt = [] := by
+    application.motherTypes (applTy .evt) .evt = [.e ⇒ .e ⇒ .vt] ∧
+      application.motherTypes (applTy (.e ⇒ .evt)) (.e ⇒ .evt) = [.e ⇒ .e ⇒ .vt] ∧
+      application.motherTypes (applTy .evt) .vt = [] ∧
+      application.motherTypes (applTy (.e ⇒ .evt)) .vt = [] := by
   decide
 
 /-- No verb but *write* leaves its direct object implicit both in the double object and in the

@@ -9,15 +9,15 @@ public import Mathlib.Logic.Relator
 A term has a value in a structure, given the values of its variables, and the value of a
 substituted term is the value of the term at the values of what was substituted. A relation
 between the domains of two structures that every function respects [holds between the two values
-of every term](##MSFirstOrder.Language.Structure.IsLogicalRel.realize).
+of every term](##ManySorted.Language.Structure.IsLogicalRel.realize).
 
 ## Main definitions
 
-* `MSFirstOrder.Language.Term.realize`: the value of a term in a structure.
-* `MSFirstOrder.Signature.Place.val`: the argument at a place.
-* `MSFirstOrder.Signature.LiftRel`: a relation between two families of domains, between the
+* `ManySorted.Language.Term.realize`: the value of a term in a structure.
+* `ManySorted.Signature.Place.val`: the argument at a place.
+* `ManySorted.Signature.LiftRel`: a relation between two families of domains, between the
   arguments of a shape.
-* `MSFirstOrder.Language.Structure.IsLogicalRel`: a relation between the domains of two
+* `ManySorted.Language.Structure.IsLogicalRel`: a relation between the domains of two
   structures that every function respects.
 -/
 
@@ -25,7 +25,7 @@ of every term](##MSFirstOrder.Language.Structure.IsLogicalRel.realize).
 
 universe u v w w' x x'
 
-namespace MSFirstOrder
+namespace ManySorted
 
 variable {S : Type u} {L : Language.{u, v} S} {α : S → Type w} {β : S → Type w'}
   {D : S → Type x}
@@ -105,4 +105,54 @@ theorem Language.Structure.IsLogicalRel.realize (h : M.IsLogicalRel M' R)
   | prod a b iha ihb => exact ⟨iha, ihb⟩
   | nil => trivial
 
-end MSFirstOrder
+namespace Language.Structure.IsLogicalRel
+
+variable {L' : Language.{u, v} S} {N : L'.Structure D} {N' : L'.Structure D'}
+
+/-- Logical relations for two languages make one for their sum. -/
+theorem sum (h : M.IsLogicalRel M' R) (h' : N.IsLogicalRel N' R) :
+    (M.sum N).IsLogicalRel (M'.sum N') R where
+  funMap
+    | .inl f => h.funMap f
+    | .inr f => h'.funMap f
+
+/-- A relation that the unary and the binary functions respect is a logical relation between two
+structures for a language of unary and binary symbols. -/
+theorem mk₂ {U : S → S → Type v} {B : S → S → S → Type v}
+    {unary : ∀ {a b : S}, U a b → D a → D b} {binary : ∀ {a b c : S}, B a b c → D a → D b → D c}
+    {unary' : ∀ {a b : S}, U a b → D' a → D' b}
+    {binary' : ∀ {a b c : S}, B a b c → D' a → D' b → D' c}
+    (hu : ∀ {a b : S} (f : U a b) x x', R a x x' → R b (unary f x) (unary' f x'))
+    (hb : ∀ {a b c : S} (f : B a b c) x x' y y', R a x x' → R b y y' →
+      R c (binary f x y) (binary' f x' y')) :
+    (Language.Structure.mk₂ (U := U) (B := B) unary binary).IsLogicalRel
+      (Language.Structure.mk₂ unary' binary') R where
+  funMap {σ _} f :=
+    match σ, f with
+    | .of _, f => fun _ _ h ↦ hu f _ _ h
+    | .prod (.of _) (.of _), f => fun _ _ h ↦ hb f _ _ _ _ h.1 h.2
+    | .nil, f => nomatch f
+    | .prod .nil _, f => nomatch f
+    | .prod (.prod _ _) _, f => nomatch f
+    | .prod (.of _) .nil, f => nomatch f
+    | .prod (.of _) (.prod _ _), f => nomatch f
+
+variable {A : Type w} {A' : Type w'}
+
+private theorem liftRel_app (Q : A → A' → Prop) {g : A} {g' : A'} (hg : Q g g') :
+    ∀ {σ : Signature S} {p : σ.Interpret fun s ↦ A → D s} {p' : σ.Interpret fun s ↦ A' → D' s},
+      σ.LiftRel (fun s v v' ↦ ∀ g g', Q g g' → R s (v g) (v' g')) p p' →
+        σ.LiftRel R (Signature.Interpret.app p g) (Signature.Interpret.app p' g')
+  | .nil, _, _, _ => trivial
+  | .of _, _, _, h => h g g' hg
+  | .prod _ _, _, _, h => ⟨liftRel_app Q hg h.1, liftRel_app Q hg h.2⟩
+
+/-- A logical relation between two structures is one between the structures on values that
+depend on a parameter, at related values of the parameters. -/
+theorem pi (h : M.IsLogicalRel M' R) (Q : A → A' → Prop) :
+    (M.pi A).IsLogicalRel (M'.pi A') fun s v v' ↦ ∀ g g', Q g g' → R s (v g) (v' g') where
+  funMap f := fun _ _ hp _ _ hg ↦ h.funMap f (liftRel_app Q hg hp)
+
+end Language.Structure.IsLogicalRel
+
+end ManySorted
