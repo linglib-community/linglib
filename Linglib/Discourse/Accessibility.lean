@@ -14,33 +14,26 @@ public import Linglib.Syntax.Person.Basic
 /-!
 # Accessibility marking
 
-The Accessibility Marking Scale of [ariel-1990], as printed in [ariel-2001]: the classes of
-referring expression, from a modified full name to a zero, ordered by the accessibility of the
-referent they code, so that a more reduced form codes a more accessible referent
-(`AccessibilityLevel`). A form is classified by its head, whether it is modified, whether it
-carries lexical content, whether a name is full, its deixis, its stress and whether it is bound
-(`AccessibilityLevel.head` and the other features), and the three criteria the scale is claimed
-to reflect are read off the features: informativity, the lexical information a form carries;
-rigidity, its ability to pick out a referent by form alone; and attenuation, its phonological
-size. Each is compared, never counted: a form is more informative than another when it carries
-everything the other does. The chapter gives no rigidity or attenuation scale, so their orders
-here separate only names, descriptions and pronominal forms, and phrases, stressed and unstressed
-words, clitics, inflection and zero.
+This file defines Ariel's Accessibility Marking Scale. An accessibility level is a class of
+referring expression, from a modified full name to a zero, and the scale orders the classes by the
+accessibility of the referent they code. Three partially overlapping criteria motivate the scale,
+and each is read here off the features of a form class and compared rather than counted.
 
 ## Main definitions
 
 * `Discourse.AccessibilityLevel`: the scale, as a linear order.
-* `AccessibilityLevel.head`, `modified`, `lexical`, `full`, `deixis`, `stressed`, `bound`: the
-  features of a form class.
-* `AccessibilityLevel.informativity`, `rigidity`, `attenuation`: the criteria, from the
-  features, valued in the information a form carries (`Information`, ordered by inclusion),
-  its `Rigidity` and its `Attenuation`.
+* `AccessibilityLevel.informativity`: the information a form incorporates, ordered by inclusion.
+* `AccessibilityLevel.rigidity`: how unequivocally a name picks out its referent.
+* `AccessibilityLevel.attenuation`: the phonological size of a form.
+* `AccessibilityLevel.criteria`: the three jointly, in the product order.
 
 ## Implementation notes
 
-The scale is the paper's ordering of its English form classes, taken as data; informativity and
-rigidity are not individually antitone along it, and which comparisons the criteria predict
-jointly is the business of `Studies/Ariel2001.lean`.
+The scale is the ordering of English form classes, taken as data. The criteria are not
+individually antitone along it, and which comparisons they predict jointly is the business of
+`Studies/Ariel2001.lean`. Ariel says which distinctions each criterion draws, not what its values
+are: `Information` and `Attenuation` name just enough values to draw them, and a bare
+demonstrative is given the size of a stressed pronoun.
 
 ## References
 
@@ -91,33 +84,13 @@ inductive AccessibilityLevel where
   | verbalAgreement
   /-- A zero. -/
   | zero
-  deriving DecidableEq, Repr, Fintype, Inhabited
+  deriving DecidableEq, Repr, Fintype
 
 namespace AccessibilityLevel
 
-/-- The rank of a form class, higher for the more accessible referent. -/
-def rank : AccessibilityLevel → ℕ
-  | .fullNameMod         => 0
-  | .fullName            => 1
-  | .longDefDescription  => 2
-  | .shortDefDescription => 3
-  | .lastName            => 4
-  | .firstName           => 5
-  | .distalDemMod        => 6
-  | .proxDemMod          => 7
-  | .distalDemNP         => 8
-  | .proxDemNP           => 9
-  | .distalDem           => 10
-  | .proxDem             => 11
-  | .stressedPronGesture => 12
-  | .stressedPron        => 13
-  | .unstressedPron      => 14
-  | .cliticizedPron      => 15
-  | .verbalAgreement     => 16
-  | .zero                => 17
-
-/-- The scale orders the levels `fullNameMod < ⋯ < zero`. -/
-instance : LinearOrder AccessibilityLevel := LinearOrder.lift' rank (by decide)
+/-- The scale orders the levels `fullNameMod < ⋯ < zero`, the order of the constructors. -/
+instance : LinearOrder AccessibilityLevel :=
+  LinearOrder.lift' AccessibilityLevel.ctorIdx (by decide)
 
 /-! ### Features -/
 
@@ -182,8 +155,10 @@ instance : DecidablePred bound := fun l ↦ by cases l <;> unfold bound <;> infe
 
 /-! ### The criteria -/
 
-/-- A piece of the lexical information a form carries. -/
+/-- A piece of the information a form incorporates. -/
 inductive Information where
+  /-- Grammatical features, the person, number and gender that any overt form marks. -/
+  | grammatical
   /-- A lexical head, a noun or a name. -/
   | lexical
   /-- A modifier, or the long form of a description. -/
@@ -194,37 +169,43 @@ inductive Information where
 
 /-- A form carries a piece of information. -/
 def Information.CarriedBy : Information → AccessibilityLevel → Prop
+  | .grammatical, l => l ≠ zero
   | .lexical, l => l.lexical
   | .modifier, l => l.modified
   | .fullName, l => l.full
 
-instance (l : AccessibilityLevel) : DecidablePred (Information.CarriedBy · l) := fun i => by
+instance (l : AccessibilityLevel) : DecidablePred (Information.CarriedBy · l) := fun i ↦ by
   cases i <;> unfold Information.CarriedBy <;> infer_instance
 
-/-- The informativity of a form is the lexical information it carries, one form being more
-informative than another when it carries everything the other does. -/
+/-- The informativity of a form is the information it incorporates, one form being more
+informative than another when it carries everything the other does. It separates a zero from a
+pronoun, a pronoun or a bare demonstrative from a lexical phrase, a partial name from a full one
+and an unmodified form from a modified one, and nothing else. -/
 def informativity (l : AccessibilityLevel) : Finset Information :=
   Finset.univ.filter (Information.CarriedBy · l)
 
-/-- How far a form picks out its referent by its form alone. -/
+/-- How unequivocally a form picks out one referent among competitors. Names come close to
+rigid designation, and the more varied a kind of name the less ambiguous it is. -/
 inductive Rigidity where
-  /-- A pronominal form picks its referent out by features only. -/
-  | pronominal
-  /-- A lexical description picks its referent out by its content. -/
-  | descriptive
-  /-- A name. -/
-  | rigid
+  /-- A form that is not a name. -/
+  | nonName
+  /-- A first name. -/
+  | firstName
+  /-- A last name, less ambiguous than a first name, last names being the more varied. -/
+  | lastName
+  /-- A full name. -/
+  | fullName
   deriving DecidableEq, Repr, Fintype
 
-/-- `pronominal < descriptive < rigid`. -/
-instance : LinearOrder Rigidity :=
-  LinearOrder.lift' (fun r : Rigidity => match r with
-    | .pronominal => (0 : ℕ) | .descriptive => 1 | .rigid => 2) (by decide)
+/-- `nonName < firstName < lastName < fullName`, the order of the constructors. -/
+instance : LinearOrder Rigidity := LinearOrder.lift' Rigidity.ctorIdx (by decide)
 
-/-- The rigidity of a form is how it picks out its referent, by form alone for a name, by its
-content for a lexical description, and by features only for a pronominal form. -/
-def rigidity (l : AccessibilityLevel) : Rigidity :=
-  if l.head = .name then .rigid else if l.lexical then .descriptive else .pronominal
+/-- The rigidity of a form separates the names from the other forms and from one another. -/
+def rigidity : AccessibilityLevel → Rigidity
+  | .fullNameMod | .fullName => .fullName
+  | .lastName => .lastName
+  | .firstName => .firstName
+  | _ => .nonName
 
 /-- The phonological size of a form. -/
 inductive Attenuation where
@@ -243,11 +224,8 @@ inductive Attenuation where
   deriving DecidableEq, Repr, Fintype
 
 /-- The more attenuated a form, the higher it is in the order
-`phrase < stressedWord < unstressedWord < clitic < inflection < zero`. -/
-instance : LinearOrder Attenuation :=
-  LinearOrder.lift' (fun a : Attenuation => match a with
-    | .phrase => (0 : ℕ) | .stressedWord => 1 | .unstressedWord => 2 | .clitic => 3
-    | .inflection => 4 | .zero => 5) (by decide)
+`phrase < stressedWord < unstressedWord < clitic < inflection < zero` of the constructors. -/
+instance : LinearOrder Attenuation := LinearOrder.lift' Attenuation.ctorIdx (by decide)
 
 /-- The attenuation of a form is its phonological reduction, from a lexical phrase through bare
 demonstratives and stressed, unstressed and cliticized pronouns and verbal agreement to a
@@ -259,6 +237,11 @@ def attenuation (l : AccessibilityLevel) : Attenuation :=
   | .pronoun => if l.bound then .clitic else if l.stressed then .stressedWord else .unstressedWord
   | .demonstrative => if l.lexical then .phrase else .stressedWord
   | .name | .description => .phrase
+
+/-- The three criteria jointly, in the product order: the lower of two forms is at least as
+informative, as rigid and as unattenuated as the higher. -/
+def criteria (l : AccessibilityLevel) : (Finset Information)ᵒᵈ × Rigidityᵒᵈ × Attenuation :=
+  (OrderDual.toDual l.informativity, OrderDual.toDual l.rigidity, l.attenuation)
 
 end AccessibilityLevel
 

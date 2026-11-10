@@ -1,45 +1,61 @@
 module
 
+public import Linglib.Data.Statistics.KwonLee2026
 public import Linglib.Discourse.Accessibility
-public import Linglib.Fragments.Korean.Pronouns
-public import Mathlib.Tactic.NormNum
 
 /-!
 # Kwon and Lee (2026): Accessibility Markers in Korean
 
-This file formalizes [kwon-lee-2026]'s three experiments on Korean null pronouns, the
-colloquial overt pronoun *kyay*, and demonstrative-plus-noun full NPs as markers on
-[ariel-2001]'s Accessibility Marking Scale. `KoreanRefForm` places the three forms on the
-substrate's scale and inherits its linear order, so the form–function criteria, more accessible
-forms being more attenuated and less informative, are monotonicity statements
-(`attenuation_strictMono`, `informativity_antitone`). The paper's central finding, from the
-globally ambiguous contexts of Experiment 3, is that subject-antecedent choice increases
-strictly with accessibility (`subjectBias_strictMono`), separating the three forms
-(`three_way_split`) while naturalness stays flat (`exp3_naturalness_flat`). Experiment 1 finds
-the null pronoun most natural with a sole antecedent and no difference between the overt
-pronoun and the full NP (`exp1_null_most_natural`, `exp1_overt_fullNP_close`); Experiment 2
-finds only the null pronoun sensitive to a context biased against its subject preference, in
-comprehension accuracy and in naturalness alike (`exp2_only_null_context_sensitive`,
-`exp2_naturalness_only_null_asymmetric`), with trials interpreted as intended rated more
-natural (`correct_trials_more_natural`).
-
-The comparison the paper draws in its introduction with Italian ([carminati-2002]), Spanish
-([contemori-di-domenico-2021]), Chinese ([zhang-kwon-2022]), and the earlier Korean studies
-([kweon-2011], [choe-2021]) is recorded as `CrossLingProfile`s: the null pronoun is more
-subject-biased than the overt one in every study (`null_gt_overt_universally`), the spread is
-widest in Italian (`italian_widest_spread`), the present overt pronoun is object-biased as in
-[kweon-2011] and unlike [choe-2021] (`overt_object_biased_as_kweon`), and in Korean the
-null-versus-overt step in bias far exceeds the overt-versus-full-NP step (`null_nonnull_cliff`),
-the paper's conclusion that the primary accessibility contrast in Korean is between null and
-non-null forms.
+Korean has a null pronoun, the colloquial overt pronoun *kyay*, and demonstrative phrases such as
+*ku chinkwu* 'that friend'. Placed on the Accessibility Marking Scale, the three
+[meet its form–function criteria in order](##criteria_strictMono), so Accessibility Theory
+predicts that the more accessible the antecedent, here the subject rather than the object of the
+preceding sentence, the better the higher form fits it. Three experiments test the prediction
+with a sole antecedent, with two antecedents that gender tells apart, and with two that nothing
+tells apart. [Every contrast the paper finds has the predicted direction](##found_borne), but
+[the overt pronoun and the full noun phrase come apart only under global
+ambiguity](##found_iff): elsewhere only the null pronoun differs from the others, and
+[only the null pronoun responds to the context](##biasFound_iff). The overt pronoun of the
+ambiguous experiment prefers the object, [as in earlier work on Italian, Spanish and Korean, and
+unlike two studies of Chinese and Korean](##overt_objectBiased_iff).
 
 ## Implementation notes
 
-Percentages are rounded to whole points as the paper reports them, means on the seven-point
-scale to hundredths. *Kyay* is placed at the unstressed-pronoun level rather than at a
-demonstrative one, following the paper's argument that it has become a third-person pronoun,
-and the full NP at the distal-demonstrative-plus-noun level. Subject-bias values of the
-comparison studies are complements of the reported object biases where only those are given.
+* *Kyay* is placed at the unstressed-pronoun level, following the paper's argument that this
+  contraction of *ku ay* 'that child' is now a third-person pronoun. Korean demonstratives make
+  a three-way distinction and Ariel's scale a two-way one; *ku*, which is not speaker-proximate,
+  is placed with the distal demonstratives.
+* The paper credits *kyay* with more rigidity than the null pronoun, since it is used of
+  referents the speaker is familiar with. Ariel's rigidity separates names from other forms and
+  from one another, so [it does not separate the three forms](##rigidity_eq), which
+  informativity and attenuation do.
+* A contrast is found when the p-value printed for it is below .05; one the paper reports only as
+  not significant is not found. The printed estimates change sign with the coding of each model,
+  so the direction of a contrast is read from the means.
+* The accuracy of Experiment 2 is given the prediction the paper states for its naturalness
+  ratings, which are those of correctly answered trials. The naturalness ratings of Experiment
+  3, taken under whichever reading a participant chose, carry no prediction.
+* The earlier studies' figures are those the paper's introduction reports. Where it gives only
+  the share of object antecedents for an overt pronoun, the share of subject antecedents is its
+  complement.
+
+## Errata
+
+* With 52 participants and 36 items in six conditions, a condition of Experiment 2 has 312
+  trials. The error counts printed for the null pronoun give the printed error rates, and those
+  printed for the other two forms [do not](##errorRate_rounds_iff): 65 of 312 is 20.8%, printed
+  as 20.6%. Each printed accuracy is [the complement of the printed error
+  rate](##accuracy_add_errorRate).
+* The p-value of the contrast between the overt pronoun and the full noun phrase in the
+  antecedent choices of Experiment 3 is printed as below .015 and, in the next sentence, as .012.
+* The legends of the two figures of Experiment 2 label the subject-biased and object-biased
+  contexts as subject choice and object choice.
+
+## TODO
+
+* The stimuli the paper prints are not encoded as examples.
+* The earlier studies' figures should come from those studies' own tables once they are
+  formalized.
 
 ## References
 
@@ -56,237 +72,173 @@ comparison studies are complements of the reported object biases where only thos
 
 namespace KwonLee2026
 
-open Discourse
+open Discourse Data.Statistics
 
-/-! ### The three referential forms on the accessibility scale -/
+/-! ### The three forms on the scale -/
 
-/-- The three Korean referring expressions tested. -/
-inductive KoreanRefForm where
-  /-- The null pronoun. -/
-  | nullPro
-  /-- The colloquial gender-neutral third-person pronoun *kyay*. -/
-  | overt
-  /-- A demonstrative followed by a noun, such as *ku chinkwu* 'that friend'. -/
-  | fullNP
-  deriving DecidableEq, Repr
-
-/-- The position of each form on the Accessibility Marking Scale. -/
-def KoreanRefForm.toAccessibility : KoreanRefForm → AccessibilityLevel
+/-- The level of each form on the Accessibility Marking Scale. -/
+def Form.toAccessibility : Form → AccessibilityLevel
   | .nullPro => .zero
   | .overt => .unstressedPron
   | .fullNP => .distalDemNP
 
-/-- The accessibility rank of a form. -/
-@[simp] def KoreanRefForm.rank (f : KoreanRefForm) : ℕ := f.toAccessibility.rank
-
 /-- The forms ordered by accessibility: `fullNP < overt < nullPro`. -/
-instance : LinearOrder KoreanRefForm :=
-  LinearOrder.lift' KoreanRefForm.rank
-    (λ a b h => by cases a <;> cases b <;>
-      simp_all [KoreanRefForm.toAccessibility, AccessibilityLevel.rank])
+instance : LinearOrder Form :=
+  LinearOrder.lift' Form.toAccessibility
+    fun a b h ↦ by cases a <;> cases b <;> first | rfl | cases h
 
-theorem fullNP_lt_overt : (KoreanRefForm.fullNP : KoreanRefForm) < .overt := by decide
+/-- The three forms meet Ariel's criteria in the order of the scale: each more accessible form is
+no more informative or rigid and no less attenuated than the one below it, and differs from it. -/
+theorem criteria_strictMono : StrictMono fun f : Form ↦ f.toAccessibility.criteria := by
+  intro a b hab
+  cases a <;> cases b <;> revert hab <;> simp only [lt_iff_le_not_ge] <;> decide
 
-theorem overt_lt_nullPro : (KoreanRefForm.overt : KoreanRefForm) < .nullPro := by decide
+-- None of the three forms is a name, so rigidity does not tell them apart (p. 21 credits *kyay*
+-- with more of it than the null pronoun).
+theorem rigidity_eq (f : Form) : f.toAccessibility.rigidity = .nonName := by cases f <;> rfl
 
-/-- The surface form: the overt pronoun is the fragment's *gyae*; the full NP varies with the
-item. -/
-def KoreanRefForm.surface : KoreanRefForm → Option String
-  | .nullPro => none
-  | .overt => some Korean.Pronouns.gyae.form
-  | .fullNP => some "ku chinkwu"
+/-- The less accessible form of a pair. -/
+def Pair.lower : Pair → Form
+  | .nullVsOvert => .overt
+  | .nullVsFullNP | .overtVsFullNP => .fullNP
 
-theorem attenuation_strictMono :
-    StrictMono (λ f : KoreanRefForm => f.toAccessibility.attenuation) := by
-  intro a b hab; cases a <;> cases b <;> revert hab <;> decide
+/-- The more accessible form of a pair. -/
+def Pair.higher : Pair → Form
+  | .nullVsOvert | .nullVsFullNP => .nullPro
+  | .overtVsFullNP => .overt
 
-theorem informativity_antitone :
-    Antitone (λ f : KoreanRefForm => f.toAccessibility.informativity) := by
-  intro a b hab; cases a <;> cases b <;> revert hab <;> decide
+theorem Pair.lower_lt_higher (c : Pair) : c.lower < c.higher := by cases c <;> decide
 
-/-! ### Experiment 3: antecedent choice under global ambiguity -/
+/-! ### What the scale predicts and what the paper finds -/
 
-/-- Antecedent choice for one form, as percentages of subject and object choices (Figure 3). -/
-structure AntecedentChoice where
-  /-- The form. -/
-  form : KoreanRefForm
-  /-- The percentage of subject-antecedent choices. -/
-  subjectPercent : ℕ
-  /-- The percentage of object-antecedent choices. -/
-  objectPercent : ℕ
-  deriving Repr
+/-- The mean rating or the percentage of a form in a setting. -/
+def Setting.value (s : Setting) (f : Form) : ℚ := (means s f).value.toRat
 
-/-- The null pronoun: 70.6% subject choices. -/
-def exp3_pro : AntecedentChoice := ⟨.nullPro, 71, 29⟩
+/-- The antecedent a setting's measure is taken for: the sole antecedent of Experiment 1, a
+subject; the one gender picks in Experiment 2; the subject whose choices Experiment 3 counts. -/
+def Setting.antecedent : Setting → Option Bias
+  | .exp1Naturalness | .exp2AccuracySubject | .exp2NaturalnessSubject | .exp3SubjectChoice =>
+    some .subject
+  | .exp2AccuracyObject | .exp2NaturalnessObject => some .object
+  | .exp3Naturalness => none
 
-/-- *Kyay*: 42.8% subject choices. -/
-def exp3_overt : AntecedentChoice := ⟨.overt, 43, 57⟩
+/-- The means of a pair bear out the scale: the more accessible form scores higher where the
+antecedent is the subject, and lower where it is the object (pp. 8, 11, 17). -/
+def Setting.Borne (s : Setting) (c : Pair) : Prop :=
+  s.antecedent = some .subject ∧ s.value c.lower < s.value c.higher ∨
+    s.antecedent = some .object ∧ s.value c.higher < s.value c.lower
 
-/-- The full NP: 35.3% subject choices. -/
-def exp3_fullNP : AntecedentChoice := ⟨.fullNP, 35, 65⟩
+/-- The means of a pair go against the scale. -/
+def Setting.Reversed (s : Setting) (c : Pair) : Prop :=
+  s.antecedent = some .subject ∧ s.value c.higher < s.value c.lower ∨
+    s.antecedent = some .object ∧ s.value c.lower < s.value c.higher
 
-/-- Subject-antecedent bias by form. -/
-@[simp] def subjectBias : KoreanRefForm → ℕ
-  | .nullPro => exp3_pro.subjectPercent
-  | .overt => exp3_overt.subjectPercent
-  | .fullNP => exp3_fullNP.subjectPercent
+/-- The paper finds a contrast between two forms when the p-value it prints for it is below
+.05. -/
+def Setting.Found (s : Setting) (c : Pair) : Prop :=
+  ∃ p ∈ (contrasts s c).p, p.Significant (1 / 20)
 
-/-- Object-antecedent bias by form. -/
-@[simp] def objectBias : KoreanRefForm → ℕ
-  | .nullPro => exp3_pro.objectPercent
-  | .overt => exp3_overt.objectPercent
-  | .fullNP => exp3_fullNP.objectPercent
+instance (s : Setting) (c : Pair) : Decidable (s.Borne c) :=
+  inferInstanceAs (Decidable (_ ∨ _))
 
-theorem exp3_partitions (f : KoreanRefForm) : subjectBias f + objectBias f = 100 := by
-  cases f <;> decide
+instance (s : Setting) (c : Pair) : Decidable (s.Reversed c) :=
+  inferInstanceAs (Decidable (_ ∨ _))
 
-theorem subjectBias_strictMono : StrictMono subjectBias := by
-  intro a b hab; cases a <;> cases b <;> revert hab <;> decide
+instance (s : Setting) (c : Pair) : Decidable (s.Found c) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-theorem objectBias_strictAnti : StrictAnti objectBias := by
-  intro a b hab; cases a <;> cases b <;> revert hab <;> decide
+/-- The three forms are all told apart only in the antecedent choices of Experiment 3. Elsewhere
+the overt pronoun and the full noun phrase never differ, and the null pronoun differs from both
+except in the naturalness of a subject antecedent in Experiment 2 and in the naturalness
+ratings of Experiment 3 (p. 22). -/
+theorem found_iff (s : Setting) (c : Pair) :
+    s.Found c ↔ s = .exp3SubjectChoice ∨
+      c ≠ .overtVsFullNP ∧ s ≠ .exp2NaturalnessSubject ∧ s ≠ .exp3Naturalness := by
+  revert s c; decide +kernel
 
-theorem three_way_split : Function.Injective subjectBias :=
-  subjectBias_strictMono.injective
+/-- Every contrast the paper finds has the direction the scale predicts. -/
+theorem found_borne {s : Setting} {c : Pair} : s.Found c → s.Borne c := by
+  revert s c; decide +kernel
 
-/-- Mean naturalness on the seven-point scale (Table 5). -/
-def exp3_naturalness : KoreanRefForm → ℚ
-  | .nullPro => 53/10
-  | .overt => 53/10
-  | .fullNP => 54/10
+-- The means go against the scale twice, in neither case significantly: with a sole antecedent
+-- the full noun phrase is rated above the overt pronoun (p. 9), and with a subject antecedent in
+-- Experiment 2 the overt pronoun is rated above the null one.
+theorem reversed_iff (s : Setting) (c : Pair) :
+    s.Reversed c ↔ s = .exp1Naturalness ∧ c = .overtVsFullNP ∨
+      s = .exp2NaturalnessSubject ∧ c = .nullVsOvert := by
+  revert s c; decide +kernel
 
-theorem exp3_naturalness_flat (f g : KoreanRefForm) :
-    exp3_naturalness f - exp3_naturalness g ≤ 1/10 := by
-  cases f <;> cases g <;> norm_num [exp3_naturalness]
+/-! ### Experiment 2: the two contexts -/
 
-/-! ### Experiment 1: a sole antecedent -/
+/-- The setting of a measure of Experiment 2 in a context. -/
+def Measure.setting : Measure → Bias → Setting
+  | .accuracy, .subject => .exp2AccuracySubject
+  | .accuracy, .object => .exp2AccuracyObject
+  | .naturalness, .subject => .exp2NaturalnessSubject
+  | .naturalness, .object => .exp2NaturalnessObject
 
-/-- Mean naturalness on the seven-point scale with a single available antecedent (Table 1). -/
-def exp1_naturalness : KoreanRefForm → ℚ
-  | .nullPro => 641/100
-  | .overt => 618/100
-  | .fullNP => 623/100
+/-- The paper finds an effect of the context on a form when the p-value it prints for the
+comparison of the two contexts is below .05. -/
+def BiasFound (m : Measure) (f : Form) : Prop :=
+  ∃ p ∈ (biasContrasts m f).p, p.Significant (1 / 20)
 
-theorem exp1_null_most_natural :
-    exp1_naturalness .overt < exp1_naturalness .nullPro ∧
-      exp1_naturalness .fullNP < exp1_naturalness .nullPro := by
-  norm_num [exp1_naturalness]
+instance (m : Measure) (f : Form) : Decidable (BiasFound m f) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-theorem exp1_overt_fullNP_close :
-    exp1_naturalness .fullNP - exp1_naturalness .overt ≤ 1/10 := by
-  norm_num [exp1_naturalness]
+/-- In accuracy and in naturalness alike, whether gender picks the subject or the object matters
+for the null pronoun and for neither of the other forms (pp. 14–15). -/
+theorem biasFound_iff (m : Measure) (f : Form) : BiasFound m f ↔ f = .nullPro := by
+  revert m f; decide +kernel
 
-/-! ### Experiment 2: a context biased toward the subject or the object -/
+-- The null pronoun does better with the subject on both measures.
+theorem nullPro_object_lt_subject (m : Measure) :
+    (m.setting .object).value .nullPro < (m.setting .subject).value .nullPro := by
+  revert m; decide +kernel
 
-/-- One form's results in Experiment 2: comprehension accuracy (Figure 1, in percent) and mean
-naturalness (Figure 2) under a subject-biased and under an object-biased context. -/
-structure Exp2Result where
-  /-- The form. -/
-  form : KoreanRefForm
-  /-- Accuracy under a subject-biased context. -/
-  subjectAccuracy : ℕ
-  /-- Accuracy under an object-biased context. -/
-  objectAccuracy : ℕ
-  /-- Naturalness under a subject-biased context. -/
-  subjectNaturalness : ℚ
-  /-- Naturalness under an object-biased context. -/
-  objectNaturalness : ℚ
-  deriving Repr
+-- Trials answered as intended are rated more natural than the others (p. 16).
+theorem incorrect_lt_correct :
+    (byCorrectness .incorrect).mean.toRat < (byCorrectness .correct).mean.toRat := by
+  decide +kernel
 
-/-- The null pronoun: 92.9% against 60.3% accuracy, 4.58 against 3.94 naturalness. -/
-def exp2_pro : Exp2Result := ⟨.nullPro, 93, 60, 458/100, 394/100⟩
+-- Each printed accuracy is the complement of the printed error rate.
+theorem accuracy_add_errorRate (f : Form) (b : Bias) :
+    (Measure.accuracy.setting b).value f + (exp2Errors f b).rate.toRat = 100 := by
+  revert f b; decide +kernel
 
-/-- *Kyay*: 81.4% against 78.2% accuracy, 4.62 against 4.42 naturalness. -/
-def exp2_overt : Exp2Result := ⟨.overt, 81, 78, 462/100, 442/100⟩
+-- The printed error count gives the printed rate, on the trials of a balanced design, for the
+-- null pronoun only.
+theorem errorRate_rounds_iff (f : Form) (b : Bias) :
+    (exp2Errors f b).rate.RoundsPercent (exp2Errors f b).errors
+      (exp2Participants * exp2Items / 6) ↔ f = .nullPro := by
+  revert f b; decide +kernel
 
-/-- The full NP: 79.4% against 79.5% accuracy, 4.33 against 4.56 naturalness. -/
-def exp2_fullNP : Exp2Result := ⟨.fullNP, 79, 80, 433/100, 456/100⟩
+/-! ### The earlier studies -/
 
-/-- The accuracy gap between the two contexts. -/
-def Exp2Result.accuracyGap (r : Exp2Result) : ℕ :=
-  max r.subjectAccuracy r.objectAccuracy - min r.subjectAccuracy r.objectAccuracy
+/-- The share of subject antecedents for the null pronoun in an earlier study. -/
+def Study.nullSubject (s : Study) : ℚ := (priorStudies s).nullSubject.toRat
 
-/-- The naturalness gap between the two contexts. -/
-def Exp2Result.naturalnessGap (r : Exp2Result) : ℚ :=
-  max r.subjectNaturalness r.objectNaturalness - min r.subjectNaturalness r.objectNaturalness
+/-- The share of subject antecedents for the overt pronoun in an earlier study, the complement of
+the share of object antecedents where only that is reported. -/
+def Study.overtSubject (s : Study) : Option ℚ :=
+  (priorStudies s).overtSubject.map Decimal.toRat <|>
+    (priorStudies s).overtObject.map (100 - ·.toRat)
 
-/-- Only the null pronoun resists a context biased against its subject preference: its
-accuracy drops by over thirty points while the other forms move by at most five. -/
-theorem exp2_only_null_context_sensitive :
-    30 < exp2_pro.accuracyGap ∧ exp2_overt.accuracyGap ≤ 5 ∧ exp2_fullNP.accuracyGap ≤ 5 := by
-  decide
+-- In every earlier study, as in Experiment 3, the null pronoun takes the subject more often than
+-- the overt one (p. 5).
+theorem overtSubject_lt_nullSubject (s : Study) : ∃ o ∈ s.overtSubject, o < s.nullSubject := by
+  revert s; decide +kernel
 
-theorem exp2_naturalness_only_null_asymmetric :
-    1/2 < exp2_pro.naturalnessGap ∧ exp2_overt.naturalnessGap ≤ 1/4 ∧
-      exp2_fullNP.naturalnessGap ≤ 1/4 := by
-  norm_num [Exp2Result.naturalnessGap, exp2_pro, exp2_overt, exp2_fullNP]
+/-- The overt pronoun takes the object more often than the subject in the Italian and Spanish
+studies and in Kweon's Korean one, and the subject more often in Zhang and Kwon's Chinese and
+Choe's Korean ones (pp. 3–5). -/
+theorem overt_objectBiased_iff (s : Study) :
+    (∃ o ∈ s.overtSubject, o < 50) ↔ s ≠ .zhangKwon2022 ∧ s ≠ .choe2021 := by
+  revert s; decide +kernel
 
-/-- Mean naturalness of trials answered as intended, 4.40, and of the others, 4.05. -/
-def correctTrialNaturalness : ℚ := 440/100
-def incorrectTrialNaturalness : ℚ := 405/100
-
-theorem correct_trials_more_natural : incorrectTrialNaturalness < correctTrialNaturalness := by
-  norm_num [correctTrialNaturalness, incorrectTrialNaturalness]
-
-/-! ### The cross-linguistic comparison -/
-
-/-- A study's subject-antecedent bias for the null and the overt pronoun under global
-ambiguity, in percent. -/
-structure CrossLingProfile where
-  /-- The language and study. -/
-  study : String
-  /-- Subject choices for the null pronoun. -/
-  nullSubject : ℕ
-  /-- Subject choices for the overt pronoun. -/
-  overtSubject : ℕ
-  deriving Repr
-
-/-- Italian ([carminati-2002]): 80.72% subject for the null pronoun, 83.33% object for the
-overt one. -/
-def italian : CrossLingProfile := ⟨"Italian", 81, 17⟩
-
-/-- Spanish ([contemori-di-domenico-2021]): 62% subject for the null pronoun, 58% object for
-the overt one. -/
-def spanish : CrossLingProfile := ⟨"Spanish", 62, 42⟩
-
-/-- Chinese ([zhang-kwon-2022]): 84% and 65.3% subject. -/
-def chinese : CrossLingProfile := ⟨"Chinese", 84, 65⟩
-
-/-- Korean with *kyay*, Experiment 3. -/
-def korean : CrossLingProfile :=
-  ⟨"Korean", exp3_pro.subjectPercent, exp3_overt.subjectPercent⟩
-
-/-- Korean with *ku* and *kunye* ([kweon-2011]): 81.1% and 31.4% subject. -/
-def koreanKweon : CrossLingProfile := ⟨"Korean (Kweon 2011)", 81, 31⟩
-
-/-- Korean with *ku* and *kunye* ([choe-2021]): 91% and 73% subject. -/
-def koreanChoe : CrossLingProfile := ⟨"Korean (Choe 2021)", 91, 73⟩
-
-/-- The studies compared. -/
-def profiles : List CrossLingProfile :=
-  [italian, spanish, chinese, korean, koreanKweon, koreanChoe]
-
-theorem null_gt_overt_universally : ∀ p ∈ profiles, p.overtSubject < p.nullSubject := by
-  decide
-
-/-- The spread between the two pronouns. -/
-def CrossLingProfile.spread (p : CrossLingProfile) : ℕ := p.nullSubject - p.overtSubject
-
-theorem italian_widest_spread :
-    spanish.spread < italian.spread ∧ chinese.spread < italian.spread ∧
-      korean.spread < italian.spread := by
-  decide
-
-theorem overt_object_biased_as_kweon :
-    korean.overtSubject < 50 ∧ koreanKweon.overtSubject < 50 ∧ 50 < koreanChoe.overtSubject := by
-  decide
-
-/-- The spread in subject bias between two forms of Experiment 3. -/
-def biasSpread (a b : AntecedentChoice) : ℕ :=
-  max a.subjectPercent b.subjectPercent - min a.subjectPercent b.subjectPercent
-
-theorem null_nonnull_cliff :
-    3 * biasSpread exp3_overt exp3_fullNP < biasSpread exp3_pro exp3_overt := by
-  decide
+-- *Kyay* sides with the first group, and the null pronoun takes the subject (p. 22).
+theorem exp3_overt_lt_half_lt_nullPro :
+    Setting.exp3SubjectChoice.value .overt < 50 ∧
+      50 < Setting.exp3SubjectChoice.value .nullPro := by
+  decide +kernel
 
 end KwonLee2026

@@ -86,9 +86,7 @@ def desc (e : E) (r : GrammaticalRole) : Realization E GrammaticalRole Head := �
 def pron (e : E) (r : GrammaticalRole) : Realization E GrammaticalRole Head := ⟨e, r, .pronoun⟩
 
 /-- The forms Rule 1 governs, the pronouns. -/
-def pronouns : Set Head := {h | h = .pronoun}
-
-instance : DecidablePred (· ∈ pronouns) := fun h ↦ inferInstanceAs (Decidable (h = .pronoun))
+abbrev pronouns : Set Head := {.pronoun}
 
 /-- Rule 1, for the pronouns. -/
 abbrev Rule1 {E : Type*} [DecidableEq E] (prev cur : Utterance E GrammaticalRole Head) : Prop :=

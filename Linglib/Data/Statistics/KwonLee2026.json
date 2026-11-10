@@ -1,0 +1,246 @@
+{
+  "meta": {
+    "bibkey": "kwon-lee-2026",
+    "method": "experiment",
+    "description": "Three experiments on the Korean null pronoun, the colloquial overt pronoun kyay and a demonstrative with a noun, each the subject of a target sentence after a context sentence. Experiment 1 rates naturalness with a sole antecedent; Experiment 2 rates naturalness and asks a comprehension question where the gender of a noun picks the subject or the object of the context sentence as antecedent; Experiment 3 rates naturalness and asks for the antecedent where both are of the same gender. Means and percentages are given as printed, and each contrast with the estimate, standard error, z and p-value of the mixed model or Holm-adjusted comparison the paper reports for it. The subject-antecedent shares of earlier studies are those the paper's introduction reports.",
+    "rawData": [
+      {"url": "https://osf.io/8mv2w/files/osfstorage?view_only=53a39b26ad5840469cb969a942c521c3", "doc": "data and code for all analyses"}
+    ]
+  },
+  "types": [
+    {
+      "name": "Form",
+      "doc": "The referring expression in the subject position of the target sentence.",
+      "levels": [
+        {"name": "nullPro", "label": "null pronoun", "doc": "no overt subject"},
+        {"name": "overt", "label": "overt pronoun", "doc": "the colloquial gender-neutral third-person pronoun kyay"},
+        {"name": "fullNP", "label": "full NP", "doc": "the demonstrative ku with a noun, as ku chinkwu 'that friend'"}
+      ]
+    },
+    {
+      "name": "Bias",
+      "doc": "The antecedent that the context of a setting supplies.",
+      "levels": [
+        {"name": "subject", "label": "subject", "doc": "the subject of the context sentence"},
+        {"name": "object", "label": "object", "doc": "the object of the context sentence"}
+      ]
+    },
+    {
+      "name": "Setting",
+      "doc": "A measure in an experiment, apart for the two context biases of Experiment 2.",
+      "levels": [
+        {"name": "exp1Naturalness", "label": "Experiment 1, naturalness", "doc": "mean rating from 1 to 7 with a sole antecedent, the topic and subject of the context sentence"},
+        {"name": "exp2AccuracySubject", "label": "Experiment 2, accuracy, subject-biased", "doc": "percentage of comprehension questions answered with the subject where gender picks the subject"},
+        {"name": "exp2AccuracyObject", "label": "Experiment 2, accuracy, object-biased", "doc": "percentage of comprehension questions answered with the object where gender picks the object"},
+        {"name": "exp2NaturalnessSubject", "label": "Experiment 2, naturalness, subject-biased", "doc": "mean rating of correctly answered trials where gender picks the subject"},
+        {"name": "exp2NaturalnessObject", "label": "Experiment 2, naturalness, object-biased", "doc": "mean rating of correctly answered trials where gender picks the object"},
+        {"name": "exp3SubjectChoice", "label": "Experiment 3, subject choice", "doc": "percentage of subject antecedents chosen under global ambiguity"},
+        {"name": "exp3Naturalness", "label": "Experiment 3, naturalness", "doc": "mean rating under global ambiguity"}
+      ]
+    },
+    {
+      "name": "Pair",
+      "doc": "A pair of forms that a contrast compares.",
+      "levels": [
+        {"name": "nullVsOvert", "label": "null vs. overt pronoun", "doc": "the null and the overt pronoun"},
+        {"name": "nullVsFullNP", "label": "null pronoun vs. full NP", "doc": "the null pronoun and the full NP"},
+        {"name": "overtVsFullNP", "label": "overt pronoun vs. full NP", "doc": "the overt pronoun and the full NP"}
+      ]
+    },
+    {
+      "name": "Measure",
+      "doc": "A measure of Experiment 2.",
+      "levels": [
+        {"name": "accuracy", "label": "accuracy", "doc": "comprehension question accuracy"},
+        {"name": "naturalness", "label": "naturalness", "doc": "naturalness rating of correctly answered trials"}
+      ]
+    },
+    {
+      "name": "Correctness",
+      "doc": "Whether the comprehension question of an Experiment 2 trial was answered as intended.",
+      "levels": [
+        {"name": "correct", "label": "correct", "doc": "answered with the antecedent that gender picks"},
+        {"name": "incorrect", "label": "incorrect", "doc": "answered with the other antecedent"}
+      ]
+    },
+    {
+      "name": "Study",
+      "doc": "An earlier study of antecedent choice for null and overt pronouns in globally ambiguous sentences.",
+      "levels": [
+        {"name": "carminati2002", "label": "Carminati (2002)", "doc": "Italian"},
+        {"name": "contemoriDiDomenico2021Italian", "label": "Contemori and Di Domenico (2021), Italian", "doc": "Italian"},
+        {"name": "contemoriDiDomenico2021Spanish", "label": "Contemori and Di Domenico (2021), Spanish", "doc": "Spanish"},
+        {"name": "zhangKwon2022", "label": "Zhang and Kwon (2022)", "doc": "Chinese, Experiment 1"},
+        {"name": "kweon2011", "label": "Kweon (2011)", "doc": "Korean, with the overt pronoun ku"},
+        {"name": "choe2021", "label": "Choe (2021)", "doc": "Korean, with the overt pronouns ku and kunye"}
+      ]
+    }
+  ],
+  "constants": [
+    {"name": "exp2Participants", "type": "nat", "value": 52, "doc": "Participants in Experiment 2.", "locator": "Section 3.1.1, p. 11", "verified": "page-image"},
+    {"name": "exp2Items", "type": "nat", "value": 36, "doc": "Sets of stimuli in Experiment 2, distributed over its six conditions by a Latin square.", "locator": "Section 3.1.2, pp. 11-12", "verified": "page-image"}
+  ],
+  "tables": [
+    {
+      "name": "means",
+      "structure": "Mean",
+      "doc": "the mean rating or the percentage of a form in a setting.",
+      "locator": "Table 1, p. 10; Figure 1, p. 14; Figure 2, p. 15; Figure 3 and Table 5, p. 19",
+      "verified": "page-image",
+      "key": ["setting", "form"],
+      "columns": [
+        {"name": "setting", "type": "Setting", "doc": "The setting."},
+        {"name": "form", "type": "Form", "doc": "The form."},
+        {"name": "value", "type": "decimal", "doc": "The mean rating, or the percentage."},
+        {"name": "se", "type": "option decimal", "doc": "The standard error, where one is printed."}
+      ],
+      "rows": [
+        {"setting": "Experiment 1, naturalness", "form": "null pronoun", "value": "6.41", "se": "0.04", "note": "Table 1"},
+        {"setting": "Experiment 1, naturalness", "form": "overt pronoun", "value": "6.18", "se": "0.045"},
+        {"setting": "Experiment 1, naturalness", "form": "full NP", "value": "6.23", "se": "0.045"},
+        {"setting": "Experiment 2, accuracy, subject-biased", "form": "null pronoun", "value": "92.9", "se": null, "note": "Figure 1"},
+        {"setting": "Experiment 2, accuracy, subject-biased", "form": "overt pronoun", "value": "81.4", "se": null},
+        {"setting": "Experiment 2, accuracy, subject-biased", "form": "full NP", "value": "79.4", "se": null},
+        {"setting": "Experiment 2, accuracy, object-biased", "form": "null pronoun", "value": "60.3", "se": null},
+        {"setting": "Experiment 2, accuracy, object-biased", "form": "overt pronoun", "value": "78.2", "se": null},
+        {"setting": "Experiment 2, accuracy, object-biased", "form": "full NP", "value": "79.5", "se": null},
+        {"setting": "Experiment 2, naturalness, subject-biased", "form": "null pronoun", "value": "4.58", "se": null, "note": "Figure 2"},
+        {"setting": "Experiment 2, naturalness, subject-biased", "form": "overt pronoun", "value": "4.62", "se": null},
+        {"setting": "Experiment 2, naturalness, subject-biased", "form": "full NP", "value": "4.33", "se": null},
+        {"setting": "Experiment 2, naturalness, object-biased", "form": "null pronoun", "value": "3.94", "se": null},
+        {"setting": "Experiment 2, naturalness, object-biased", "form": "overt pronoun", "value": "4.42", "se": null},
+        {"setting": "Experiment 2, naturalness, object-biased", "form": "full NP", "value": "4.56", "se": null},
+        {"setting": "Experiment 3, subject choice", "form": "null pronoun", "value": "70.6", "se": null, "note": "Figure 3, which prints the object choices as 29.4, 57.2 and 64.7"},
+        {"setting": "Experiment 3, subject choice", "form": "overt pronoun", "value": "42.8", "se": null},
+        {"setting": "Experiment 3, subject choice", "form": "full NP", "value": "35.3", "se": null},
+        {"setting": "Experiment 3, naturalness", "form": "null pronoun", "value": "5.3", "se": "0.08", "note": "Table 5; the text gives the standard errors as 0.075, 0.069 and 0.071"},
+        {"setting": "Experiment 3, naturalness", "form": "overt pronoun", "value": "5.3", "se": "0.07"},
+        {"setting": "Experiment 3, naturalness", "form": "full NP", "value": "5.4", "se": "0.07"}
+      ]
+    },
+    {
+      "name": "contrasts",
+      "structure": "Contrast",
+      "doc": "the contrast between two forms in a setting: for the null pronoun against another form the simple contrast of the mixed model or the Holm-adjusted comparison within a context, and for the overt pronoun against the full NP the Holm-adjusted comparison.",
+      "locator": "Table 2, p. 10, and p. 9; pp. 14-16; Table 6, p. 20, and p. 19",
+      "verified": "page-image",
+      "key": ["setting", "pair"],
+      "columns": [
+        {"name": "setting", "type": "Setting", "doc": "The setting."},
+        {"name": "pair", "type": "Pair", "doc": "The forms compared."},
+        {"name": "estimate", "type": "option decimal", "doc": "The estimate, with the sign printed; none where the paper reports only that the forms do not differ."},
+        {"name": "se", "type": "option decimal", "doc": "Its standard error."},
+        {"name": "z", "type": "option decimal", "doc": "The z value."},
+        {"name": "p", "type": "option pvalue", "doc": "The p-value, none where the paper reports the contrast as not significant without one."}
+      ],
+      "rows": [
+        {"setting": "Experiment 1, naturalness", "pair": "null vs. overt pronoun", "estimate": "-0.958", "se": "0.29", "z": "-3.36", "p": "0.001", "note": "Table 2"},
+        {"setting": "Experiment 1, naturalness", "pair": "null pronoun vs. full NP", "estimate": "-0.762", "se": "0.29", "z": "-2.6", "p": "0.009"},
+        {"setting": "Experiment 1, naturalness", "pair": "overt pronoun vs. full NP", "estimate": "0.19", "se": "0.19", "z": "1.01", "p": null, "note": "p. 9: n.s."},
+        {"setting": "Experiment 2, accuracy, subject-biased", "pair": "null vs. overt pronoun", "estimate": "1.224", "se": "0.280", "z": "4.376", "p": "0.0001", "note": "p. 14"},
+        {"setting": "Experiment 2, accuracy, subject-biased", "pair": "null pronoun vs. full NP", "estimate": "1.417", "se": "0.276", "z": "5.137", "p": "< 0.0001"},
+        {"setting": "Experiment 2, accuracy, subject-biased", "pair": "overt pronoun vs. full NP", "estimate": null, "se": null, "z": null, "p": null, "note": "p. 14: no significant differences across all contextual conditions"},
+        {"setting": "Experiment 2, accuracy, object-biased", "pair": "null vs. overt pronoun", "estimate": "-1.085", "se": "0.200", "z": "-5.438", "p": "< 0.0001"},
+        {"setting": "Experiment 2, accuracy, object-biased", "pair": "null pronoun vs. full NP", "estimate": "-1.216", "se": "0.205", "z": "-5.923", "p": "< 0.0001"},
+        {"setting": "Experiment 2, accuracy, object-biased", "pair": "overt pronoun vs. full NP", "estimate": null, "se": null, "z": null, "p": null},
+        {"setting": "Experiment 2, naturalness, subject-biased", "pair": "null vs. overt pronoun", "estimate": "0.02", "se": "0.26", "z": "0.09", "p": "1.00", "note": "pp. 15-16"},
+        {"setting": "Experiment 2, naturalness, subject-biased", "pair": "null pronoun vs. full NP", "estimate": "0.50", "se": "0.24", "z": "2.07", "p": "0.381"},
+        {"setting": "Experiment 2, naturalness, subject-biased", "pair": "overt pronoun vs. full NP", "estimate": null, "se": null, "z": null, "p": null, "note": "p. 16: no significant difference across all context conditions"},
+        {"setting": "Experiment 2, naturalness, object-biased", "pair": "null vs. overt pronoun", "estimate": "-0.96", "se": "0.25", "z": "-3.77", "p": "0.002"},
+        {"setting": "Experiment 2, naturalness, object-biased", "pair": "null pronoun vs. full NP", "estimate": "-1.04", "se": "0.25", "z": "-4.24", "p": "< 0.001"},
+        {"setting": "Experiment 2, naturalness, object-biased", "pair": "overt pronoun vs. full NP", "estimate": null, "se": null, "z": null, "p": null},
+        {"setting": "Experiment 3, subject choice", "pair": "null vs. overt pronoun", "estimate": "1.745", "se": "0.180", "z": "9.69", "p": "0.0001", "note": "Table 6"},
+        {"setting": "Experiment 3, subject choice", "pair": "null pronoun vs. full NP", "estimate": "2.161", "se": "0.185", "z": "11.68", "p": "0.0001"},
+        {"setting": "Experiment 3, subject choice", "pair": "overt pronoun vs. full NP", "estimate": "0.416", "se": "0.166", "z": "2.507", "p": "0.012", "note": "p. 19, which prints the p-value once as < .015 and once as = .012"},
+        {"setting": "Experiment 3, naturalness", "pair": "null vs. overt pronoun", "estimate": "-0.028", "se": "0.2", "z": "-0.14", "p": "0.889", "note": "Table 6"},
+        {"setting": "Experiment 3, naturalness", "pair": "null pronoun vs. full NP", "estimate": "0.166", "se": "0.16", "z": "1.01", "p": "0.315"},
+        {"setting": "Experiment 3, naturalness", "pair": "overt pronoun vs. full NP", "estimate": null, "se": null, "z": null, "p": null, "note": "p. 19: ratings did not differ across the three types"}
+      ]
+    },
+    {
+      "name": "biasContrasts",
+      "structure": "BiasContrast",
+      "doc": "the Holm-adjusted comparison of the subject-biased with the object-biased context of Experiment 2, for a form on a measure.",
+      "locator": "pp. 14-15",
+      "verified": "page-image",
+      "key": ["measure", "form"],
+      "columns": [
+        {"name": "measure", "type": "Measure", "doc": "The measure."},
+        {"name": "form", "type": "Form", "doc": "The form."},
+        {"name": "estimate", "type": "decimal", "doc": "The estimate, with the sign printed."},
+        {"name": "se", "type": "decimal", "doc": "Its standard error."},
+        {"name": "z", "type": "decimal", "doc": "The z value."},
+        {"name": "p", "type": "option pvalue", "doc": "The p-value, none where printed as n.s."}
+      ],
+      "rows": [
+        {"measure": "accuracy", "form": "null pronoun", "estimate": "-2.575", "se": "0.269", "z": "-9.559", "p": "< 0.0001"},
+        {"measure": "accuracy", "form": "overt pronoun", "estimate": "-0.265", "se": "0.217", "z": "-1.22", "p": null},
+        {"measure": "accuracy", "form": "full NP", "estimate": "0.057", "se": "0.216", "z": "0.265", "p": null},
+        {"measure": "naturalness", "form": "null pronoun", "estimate": "-1.06", "se": "0.35", "z": "-3.04", "p": "0.028"},
+        {"measure": "naturalness", "form": "overt pronoun", "estimate": "-0.08", "se": "0.21", "z": "-0.37", "p": "1.00"},
+        {"measure": "naturalness", "form": "full NP", "estimate": "0.48", "se": "0.24", "z": "2.04", "p": "0.381"}
+      ]
+    },
+    {
+      "name": "exp2Errors",
+      "structure": "ErrorRate",
+      "doc": "the incorrect answers to the comprehension question of Experiment 2.",
+      "locator": "Section 3.2.1, p. 13",
+      "verified": "page-image",
+      "key": ["form", "bias"],
+      "columns": [
+        {"name": "form", "type": "Form", "doc": "The form."},
+        {"name": "bias", "type": "Bias", "doc": "The antecedent that gender picks."},
+        {"name": "errors", "type": "nat", "doc": "The number of incorrect responses."},
+        {"name": "rate", "type": "decimal", "doc": "The error rate, in percent."}
+      ],
+      "rows": [
+        {"form": "null pronoun", "bias": "subject", "errors": 22, "rate": "7.1"},
+        {"form": "null pronoun", "bias": "object", "errors": 124, "rate": "39.7"},
+        {"form": "overt pronoun", "bias": "subject", "errors": 57, "rate": "18.6"},
+        {"form": "overt pronoun", "bias": "object", "errors": 69, "rate": "21.8"},
+        {"form": "full NP", "bias": "subject", "errors": 65, "rate": "20.6"},
+        {"form": "full NP", "bias": "object", "errors": 63, "rate": "20.5"}
+      ]
+    },
+    {
+      "name": "byCorrectness",
+      "structure": "CorrectnessMean",
+      "doc": "the mean naturalness rating of the Experiment 2 trials answered as intended and of the others.",
+      "locator": "Section 3.2.2, p. 16",
+      "verified": "page-image",
+      "key": ["correctness"],
+      "columns": [
+        {"name": "correctness", "type": "Correctness", "doc": "Whether the trial was answered as intended."},
+        {"name": "mean", "type": "decimal", "doc": "The mean rating."},
+        {"name": "se", "type": "decimal", "doc": "Its standard error."}
+      ],
+      "rows": [
+        {"correctness": "correct", "mean": "4.40", "se": "0.04"},
+        {"correctness": "incorrect", "mean": "4.05", "se": "0.09", "note": "the effect of correctness: estimate 0.38, SE 0.13, z = 3.05, p = .002"}
+      ]
+    },
+    {
+      "name": "priorStudies",
+      "structure": "PriorStudy",
+      "doc": "the antecedent choices of an earlier study, in percent, as the paper reports them; a share the paper does not report is left out.",
+      "locator": "Section 1, pp. 3-5",
+      "verified": "page-image",
+      "key": ["study"],
+      "columns": [
+        {"name": "study", "type": "Study", "doc": "The study."},
+        {"name": "nullSubject", "type": "decimal", "doc": "Subject antecedents chosen for the null pronoun."},
+        {"name": "overtSubject", "type": "option decimal", "doc": "Subject antecedents chosen for the overt pronoun."},
+        {"name": "overtObject", "type": "option decimal", "doc": "Object antecedents chosen for the overt pronoun."}
+      ],
+      "rows": [
+        {"study": "Carminati (2002)", "nullSubject": "80.72", "overtSubject": null, "overtObject": "83.33", "note": "p. 3"},
+        {"study": "Contemori and Di Domenico (2021), Italian", "nullSubject": "75", "overtSubject": null, "overtObject": "78", "note": "p. 4"},
+        {"study": "Contemori and Di Domenico (2021), Spanish", "nullSubject": "62", "overtSubject": null, "overtObject": "58"},
+        {"study": "Zhang and Kwon (2022)", "nullSubject": "84", "overtSubject": "65.3", "overtObject": "34.7", "note": "p. 5"},
+        {"study": "Kweon (2011)", "nullSubject": "81.1", "overtSubject": "31.4", "overtObject": "68.6"},
+        {"study": "Choe (2021)", "nullSubject": "91", "overtSubject": "73", "overtObject": null}
+      ]
+    }
+  ]
+}
