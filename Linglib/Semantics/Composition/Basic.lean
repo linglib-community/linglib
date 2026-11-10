@@ -34,8 +34,9 @@ derivations over a bare structure are found from the types alone.
 `Interpreter.derivs` matches on the derivations of the daughters and does not project from them:
 a projection is unfolded again wherever it is inspected, which made checking a sentence's value
 some fifty times dearer. A lexicon gives each word typed items and their values separately. With
-the values inside the items, as `Interpreter.meanings` has them, a statement over a model with
-variables in it is still slow to check, and `Interpreter.values` is the form to use there.
+the values inside the items, a statement over a model with variables in it is still slow to
+check. A language has more than one structure on the same domains, values at an index and values
+that depend on it, so a structure is an argument and not an instance.
 
 ## References
 
@@ -181,16 +182,17 @@ theorem length_derivs_le_one {I : Interpreter L N} {lex : Lx → List (Σ a, W a
 
 /-- The values of the derivations over a bare structure, for a lexicon of typed items whose
 values `ρ` gives. The derivations are found from the types alone. -/
-def values (I : Interpreter L N) [M : L.Structure D] (ρ : ∀ {a : T}, W a → D a)
+def values (I : Interpreter L N) (M : L.Structure D) (ρ : ∀ {a : T}, W a → D a)
     (lex : Lx → List (Σ a, W a)) (s : Skeleton N Lx) : List (Σ a, D a) :=
   (I.derivs lex s).map fun ⟨a, d⟩ ↦ ⟨a, d.realize M ρ⟩
 
 /-- A value of a binary node is the value of a rule the node admits, at values of its
 daughters. -/
-theorem mem_values_binary {I : Interpreter L N} [M : L.Structure D]
+theorem mem_values_binary {I : Interpreter L N} {M : L.Structure D}
     {ρ : ∀ {a : T}, W a → D a} {lex : Lx → List (Σ a, W a)} {n : N} {s₁ s₂ : Skeleton N Lx}
     {d : Σ a, D a} :
-    d ∈ I.values ρ lex (.binary n s₁ s₂) ↔ ∃ d₁ ∈ I.values ρ lex s₁, ∃ d₂ ∈ I.values ρ lex s₂,
+    d ∈ I.values M ρ lex (.binary n s₁ s₂) ↔
+      ∃ d₁ ∈ I.values M ρ lex s₁, ∃ d₂ ∈ I.values M ρ lex s₂,
       ∃ m ∈ I.binary n d₁.1 d₂.1, d = ⟨m.1, M.funMap m.2 (d₁.2, d₂.2)⟩ := by
   simp only [values, derivs, List.mem_map, List.mem_flatMap]
   constructor
@@ -198,10 +200,5 @@ theorem mem_values_binary {I : Interpreter L N} [M : L.Structure D]
     exact ⟨_, ⟨⟨a, e₁⟩, h₁, rfl⟩, _, ⟨⟨b, e₂⟩, h₂, rfl⟩, ⟨u, m⟩, hm, rfl⟩
   · rintro ⟨_, ⟨⟨a, e₁⟩, h₁, rfl⟩, _, ⟨⟨b, e₂⟩, h₂, rfl⟩, ⟨u, m⟩, hm, rfl⟩
     exact ⟨_, ⟨⟨a, e₁⟩, h₁, ⟨b, e₂⟩, h₂, ⟨u, m⟩, hm, rfl⟩, rfl⟩
-
-/-- The meanings of a bare structure, for a lexicon whose items are their values. -/
-def meanings {D : T → Type w} (I : Interpreter L N) [L.Structure D]
-    (lex : Lx → List (Σ a, D a)) : Skeleton N Lx → List (Σ a, D a) :=
-  I.values id lex
 
 end Interpreter

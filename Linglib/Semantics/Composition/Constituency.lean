@@ -62,6 +62,22 @@ def values (I : Interpreter G Node) (M : G.Structure D) (ρ : ∀ {a : T}, W a �
     List (Σ a, D a) :=
   (t.derivs I lex island).map fun ⟨a, d⟩ ↦ ⟨a, d.realize M ρ⟩
 
+/-- A tree is uninterpretable for an interpreter and a lexicon when it has a bare structure and
+the interpreter admits no derivation over it. A tree with no bare structure, a phrase of it
+having no daughter or more than two, has no derivations either, and is not thereby
+uninterpretable. -/
+structure Uninterpretable (I : Interpreter G Node) (lex : L ⊕ ℕ → List (Σ a, W a))
+    (t : Tree C L) (island : C → Bool := fun _ ↦ false) : Prop where
+  /-- The tree has a bare structure. -/
+  isSome_skeleton : (t.skeleton island).isSome
+  /-- The interpreter admits no derivation over it. -/
+  derivs_eq_nil : t.derivs I lex island = []
+
+theorem Uninterpretable.values_eq_nil {I : Interpreter G Node} {lex : L ⊕ ℕ → List (Σ a, W a)}
+    {t : Tree C L} {island : C → Bool} (h : t.Uninterpretable I lex island) (M : G.Structure D)
+    (ρ : ∀ {a : T}, W a → D a) : t.values I M ρ lex island = [] := by
+  simp [values, h.derivs_eq_nil]
+
 /-! ### Values of a node from the values of its daughters -/
 
 section Compositional

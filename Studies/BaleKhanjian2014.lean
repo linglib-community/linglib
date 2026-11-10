@@ -308,7 +308,7 @@ noncomputable def meanings (B : Finset α) (t : Tree Cat Morpheme) :
     List (Σ a : Ty Unit, a.Dom (Dom α)) :=
   match t.skeleton (fun _ ↦ false) with
   | some s => (partialValued application).values
-      (D := Ty.Dom (Dom α)) (Item.val B) items s
+      (D := Ty.Dom (Dom α)) inferInstance (Item.val B) items s
   | none => []
 
 /-- A partial value that is defined. -/
@@ -703,7 +703,7 @@ theorem good_of_licensed (hB : 2 ≤ B.card) {t : Tree Cat Morpheme}
           rw [h₁, h₂] at hd
           rw [h₁] at ih₁
           rw [h₂] at ih₂
-          replace hd : d ∈ rules.values (D := Ty.Dom (Dom α)) (Item.val B) items
+          replace hd : d ∈ rules.values (D := Ty.Dom (Dom α)) inferInstance (Item.val B) items
               (.binary .branch s₁ s₂) := hd
           obtain ⟨d₁, hd₁, d₂, hd₂, m, hm, rfl⟩ := mem_values_binary.1 hd
           exact (ih₁ d₁ hd₁).combine (ih₂ d₂ hd₂) hm

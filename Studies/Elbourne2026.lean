@@ -163,13 +163,13 @@ variable {E W : Type}
 /-- The meanings of a structure by Functional Application (9) alone, its leaves being their own
 lexical entries. -/
 def byApplication (s : Skeleton Unit (Denotation E W)) : List (Denotation E W) :=
-  (typeDriven application).meanings (D := Ty.Dom (Base.Dom E W)) (fun x ↦ [x]) s
+  (typeDriven application).values (D := Ty.Dom (Base.Dom E W)) inferInstance id (fun x ↦ [x]) s
 
 /-- The meanings of a structure in the grammar of the ⟨e,t⟩ theory, which adds Predicate
 Modification to Functional Application (§3.1). -/
 def withModification (s : Skeleton Unit (Denotation E W)) : List (Denotation E W) :=
-  (typeDriven (application.sum predicateModification)).meanings
-    (D := Ty.Dom (Base.Dom E W)) (fun x ↦ [x]) s
+  (typeDriven (application.sum predicateModification)).values
+    (D := Ty.Dom (Base.Dom E W)) inferInstance id (fun x ↦ [x]) s
 
 -- (24)–(26): *cute donkey* means by Functional Application alone, with *cute* a function on
 -- noun meanings, what it means by Predicate Modification with *cute* a property.

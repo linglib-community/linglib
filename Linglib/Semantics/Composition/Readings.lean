@@ -52,22 +52,28 @@ theorem mem_derivs_iff {I : Interpreter G N} {lex : L → List (Σ a, W a)}
 
 /-- The readings of a bare structure when a leaf may be any of a set of items: the values of the
 derivations over it. -/
-def readings (I : Interpreter G N) [M : G.Structure D] (ρ : ∀ {a : T}, W a → D a)
+def readings (I : Interpreter G N) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
     (lex : L → Set (Σ a, W a)) (s : Skeleton N L) : Set (Σ a, D a) :=
   (fun d ↦ ⟨d.1, d.2.realize M ρ⟩) '' I.derivations lex s
 
-variable {I : Interpreter G N} [M : G.Structure D] {ρ : ∀ {a : T}, W a → D a}
+/-- The values an interpreter finds are the readings, for a lexicon of lists. -/
+theorem mem_values_iff {I : Interpreter G N} {M : G.Structure D} {ρ : ∀ {a : T}, W a → D a}
+    {lex : L → List (Σ a, W a)} {s : Skeleton N L} {d : Σ a, D a} :
+    d ∈ I.values M ρ lex s ↔ d ∈ I.readings M ρ (fun x ↦ {p | p ∈ lex x}) s := by
+  simp only [values, readings, List.mem_map, Set.mem_image, mem_derivs_iff]
+
+variable {I : Interpreter G N} {M : G.Structure D} {ρ : ∀ {a : T}, W a → D a}
   {d : Σ a, D a}
 
 @[simp] theorem readings_leaf (lex : L → Set (Σ a, W a)) (x : L) :
-    I.readings ρ lex (.leaf x) = (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex x := by
+    I.readings M ρ lex (.leaf x) = (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex x := by
   simp [readings, derivations, Set.image_image]
 
 /-- A reading of a unary node is the value of a rule the node admits, at a reading of its
 daughter. -/
 theorem mem_readings_unary {lex : L → Set (Σ a, W a)} {n : N} {s : Skeleton N L} :
-    d ∈ I.readings ρ lex (.unary n s) ↔
-      ∃ d₁ ∈ I.readings ρ lex s, ∃ r ∈ I.unary n d₁.1,
+    d ∈ I.readings M ρ lex (.unary n s) ↔
+      ∃ d₁ ∈ I.readings M ρ lex s, ∃ r ∈ I.unary n d₁.1,
         d = ⟨r.1, M.funMap r.2 d₁.2⟩ := by
   simp only [readings, derivations, Set.mem_image, Set.mem_ofPred_eq]
   constructor
@@ -79,8 +85,8 @@ theorem mem_readings_unary {lex : L → Set (Σ a, W a)} {n : N} {s : Skeleton N
 /-- A reading of a binary node is the value of a rule the node admits, at readings of its
 daughters. -/
 theorem mem_readings_binary {lex : L → Set (Σ a, W a)} {n : N} {s₁ s₂ : Skeleton N L} :
-    d ∈ I.readings ρ lex (.binary n s₁ s₂) ↔
-      ∃ d₁ ∈ I.readings ρ lex s₁, ∃ d₂ ∈ I.readings ρ lex s₂,
+    d ∈ I.readings M ρ lex (.binary n s₁ s₂) ↔
+      ∃ d₁ ∈ I.readings M ρ lex s₁, ∃ d₂ ∈ I.readings M ρ lex s₂,
         ∃ m ∈ I.binary n d₁.1 d₂.1, d = ⟨m.1, M.funMap m.2 (d₁.2, d₂.2)⟩ := by
   simp only [readings, derivations, Set.mem_image, Set.mem_ofPred_eq]
   constructor
@@ -102,7 +108,7 @@ def readings (I : Interpreter G Node) (M : G.Structure D) (ρ : ∀ {a : T}, W a
     (lex : L ⊕ ℕ → Set (Σ a, W a)) (t : Tree C L) (island : C → Bool := fun _ ↦ false) :
     Set (Σ a, D a) :=
   match t.skeleton island with
-  | some s => I.readings ρ lex s
+  | some s => I.readings M ρ lex s
   | none => ∅
 
 variable (I : Interpreter G Node) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)

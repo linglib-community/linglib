@@ -142,7 +142,8 @@ def meanings (t : LinearizedSyntacticObject) :
     List (Denotation Entity Unit { eventuality := V }) :=
   match (t.toTree (·.id)).skeleton (fun _ ↦ false) with
   | some s => (typeDriven Voice.grammar).values
-      (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V })) (Word.val ρ feedRel m d)
+      (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V })) inferInstance
+      (Word.val ρ feedRel m d)
       (entries lexicon) s
   | none => []
 
@@ -241,7 +242,7 @@ def partialMeanings (t : LinearizedSyntacticObject) :
     List (Denotation Entity Unit { eventuality := V }) :=
   match (t.toTree (·.id)).skeleton (fun _ ↦ false) with
   | some s => (typeDriven partialGrammar).values
-      (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V }))
+      (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V })) inferInstance
       (PWord.val IsAction IsState ρ ownRel d) (entries partialLexicon) s
   | none => []
 

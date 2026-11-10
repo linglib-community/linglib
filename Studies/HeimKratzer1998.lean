@@ -315,7 +315,8 @@ theorem meanings_johnSleeps :
 /-- A predicate with two subjects is uninterpretable, as the book's *Ann laughed Jan* (§3.3):
 no rule applies to a truth value and an individual, whatever the model. -/
 theorem derivs_johnSleepsMary :
-    Tree.derivs rules items (.bin (name .john) (.bin (pred .sleep) (name .mary))) = [] := rfl
+    Tree.Uninterpretable rules items (.bin (name .john) (.bin (pred .sleep) (name .mary))) :=
+  ⟨rfl, rfl⟩
 
 /-- The interpretation function is a function (§3.3): no two of the rules apply to the same
 daughters, so a tree whose words are each at most one item has at most one derivation. -/
@@ -420,7 +421,8 @@ theorem pmeanings_theStudent : ∃ v : PVal .e,
 
 /-- *The John*, the article with an individual, is uninterpretable: the types alone decide
 it. -/
-theorem derivs_theJohn : Tree.derivs rules itemsThe (.bin (.leaf .the) (name .john)) = [] := rfl
+theorem derivs_theJohn :
+    Tree.Uninterpretable rules itemsThe (.bin (.leaf .the) (name .john)) := ⟨rfl, rfl⟩
 
 /-! ### Relative clauses
 
@@ -504,8 +506,10 @@ theorem pmeanings_theStudentWhoSleeps :
 /-- Under the bracketing `[[the student] [who₁ [t₁ sleeps]]]`, which §4.5 rejects, a sentence
 with the definite as subject is uninterpretable. -/
 theorem derivs_detNounModifier :
-    Tree.derivs rules itemsThe (.bin (.bin (.bin (.leaf .the) (pred .student)) tree_whoSleeps)
-      (pred .sleep)) = [] := rfl
+    Tree.Uninterpretable rules itemsThe
+      (.bin (.bin (.bin (.leaf .the) (pred .student)) tree_whoSleeps)
+      (pred .sleep)) :=
+  ⟨rfl, rfl⟩
 
 end Composition
 
@@ -533,7 +537,7 @@ def sentence : Tree Unit Word := .bin everyPerson (.bin (verb .see) somePerson)
 
 /-- The object quantifier cannot combine with the verb where it stands: the sentence as
 pronounced has no derivation. -/
-theorem derivs_sentence : Tree.derivs rules items sentence = [] := rfl
+theorem derivs_sentence : Tree.Uninterpretable rules items sentence := ⟨rfl, rfl⟩
 
 /-- The surface-scope tree `[S [DP every person] [1 [S [DP some person] [2 [S t₁ [VP sees
 t₂]]]]]]`, the object raised and then the subject over it. -/
@@ -712,8 +716,9 @@ theorem meanings_inSitu :
 
 /-- With the basic entries alone a quantifier in object position is uninterpretable (§7.1). -/
 theorem derivs_basicObject :
-    Tree.derivs rules items (.bin (name .john)
-      (.bin (verb .see) (.bin (det English.Determiners.some_) (pred .person)))) = [] := rfl
+    Tree.Uninterpretable rules items (.bin (name .john)
+      (.bin (verb .see) (.bin (det English.Determiners.some_) (pred .person)))) :=
+  ⟨rfl, rfl⟩
 
 end InSitu
 
@@ -854,7 +859,7 @@ theorem imeanings_janIsLoyal :
 /-- Functional Application cannot give *believes* its complement, a truth value where the verb
 wants a proposition. -/
 theorem derivs_maryBelievesJanIsLoyal_application :
-    Tree.derivs (typeDriven application) iitems maryBelievesJanIsLoyal = [] := rfl
+    Tree.Uninterpretable (typeDriven application) iitems maryBelievesJanIsLoyal := ⟨rfl, rfl⟩
 
 /-- The one derivation of the report: Intensional Functional Application of the verb to its
 complement, and Functional Application elsewhere. -/
