@@ -173,6 +173,56 @@ theorem eq_superoptimalSet_of_isFixedPt (h : (f '' pairs).IsWF)
   exact le_antisymm (le_gfp _ hsq.ge)
     ((lfp_eq_superoptimalSet pairs f h).symm.trans_le (lfp_le_fixed _ hsq))
 
+/-! ### Locality of competition -/
+
+variable {e pairs f} {T : Set (F × M)}
+
+theorem competes_comm {p q : F × M} : Competes p q ↔ Competes q p := or_congr eq_comm eq_comm
+
+theorem blocks_union : Blocks e f (S ∪ T) p ↔ Blocks e f S p ∨ Blocks e f T p := by
+  simp only [Blocks, Set.mem_union, or_and_right, exists_or]
+
+/-- Generators that share no form and no meaning are evaluated separately. -/
+theorem superoptimalSet_union {A B : Set (F × M)} (hf : (f '' (A ∪ B)).IsWF)
+    (h : ∀ p ∈ A, ∀ q ∈ B, ¬ Competes p q) :
+    superoptimalSet (A ∪ B) f = superoptimalSet A f ∪ superoptimalSet B f := by
+  have hA := hf.mono (Set.image_mono Set.subset_union_left)
+  have hB := hf.mono (Set.image_mono Set.subset_union_right)
+  have hAB : ∀ {p}, p ∈ A → ¬ Blocks Competes f (superoptimalSet B f) p :=
+    fun hp ⟨q, hq, hc, _⟩ ↦ h _ hp q (superoptimalSet_subset B f hq) (competes_comm.1 hc)
+  have hBA : ∀ {p}, p ∈ B → ¬ Blocks Competes f (superoptimalSet A f) p :=
+    fun hp ⟨q, hq, hc, _⟩ ↦ h q (superoptimalSet_subset A f hq) _ hp hc
+  refine (eq_superoptimalSet_of_isFixedPt _ f hf ?_).symm
+  ext p
+  simp only [mem_unblockedSet, Set.mem_union, mem_superoptimalSet A f hA,
+    mem_superoptimalSet B f hB, blocks_union, not_or]
+  constructor
+  · rintro ⟨hp | hp, hbA, hbB⟩
+    · exact .inl ⟨hp, hbA⟩
+    · exact .inr ⟨hp, hbB⟩
+  · rintro (⟨hp, hb⟩ | ⟨hp, hb⟩)
+    · exact ⟨.inl hp, hb, hAB hp⟩
+    · exact ⟨.inr hp, hBA hp, hb⟩
+
+/-- Relabelling forms and meanings injectively relabels the super-optimal pairs. -/
+theorem superoptimalSet_image {F' : Type*} {M' : Type*} {φ : F' → F} {ψ : M' → M}
+    (hφ : Injective φ) (hψ : Injective ψ) (pairs : Set (F' × M'))
+    (hf : (f '' (Prod.map φ ψ '' pairs)).IsWF) :
+    superoptimalSet (Prod.map φ ψ '' pairs) f =
+      Prod.map φ ψ '' superoptimalSet pairs (f ∘ Prod.map φ ψ) := by
+  have hf' : ((f ∘ Prod.map φ ψ) '' pairs).IsWF := by rwa [Set.image_comp]
+  refine (eq_superoptimalSet_of_isFixedPt _ f hf ?_).symm
+  ext p
+  simp only [mem_unblockedSet, Set.mem_image]
+  constructor
+  · rintro ⟨⟨p, hp, rfl⟩, hb⟩
+    exact ⟨p, (mem_superoptimalSet _ _ hf').2 ⟨hp, fun ⟨q, hq, hc, hlt⟩ ↦
+      hb ⟨_, ⟨q, hq, rfl⟩, hc.imp (congrArg φ) (congrArg ψ), hlt⟩⟩, rfl⟩
+  · rintro ⟨p, hp, rfl⟩
+    obtain ⟨hp, hb⟩ := (mem_superoptimalSet _ _ hf').1 hp
+    exact ⟨⟨p, hp, rfl⟩, fun ⟨_, ⟨q, hq, rfl⟩, hc, hlt⟩ ↦
+      hb ⟨q, hq, hc.imp (@hφ _ _) (@hψ _ _), hlt⟩⟩
+
 end Step
 
 /-! ### Blutner's mutual recursion -/

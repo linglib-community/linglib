@@ -15,8 +15,8 @@ true, so the pair [is used as contraries exactly when the border is open](##isCo
 The gap this creates [divides at the speaker's border](##compl_safe_union) into a lower and an
 upper region, [ordered along the scale](##Region.lt_of_mem_degrees) between the two safe ones, and
 bidirectional optimality theory, read on [the literal meanings of the four
-regions](##mem_quadrupletPairs_iff), [gives the lower one to *not happy* and the upper one to
-*not unhappy*](##superoptimal_quadruplet).
+regions](##mem_quadrupletPairs_iff), gives the lower one to *not happy* and the upper one to
+*not unhappy* [exactly when *not* costs more than *un-*](##superoptimal_quadruplet_iff).
 
 ## Implementation notes
 
@@ -28,8 +28,9 @@ regions](##mem_quadrupletPairs_iff), [gives the lower one to *not happy* and the
   `BidirectionalOT.mem_superoptimalSet` and works it on McCawley's *kill* and *cause to die*,
   which is Blutner's schematic tableau.
   For the quadruplet it says only that each half is the configuration that triggers the M
-  implicature; the game here is that evaluation on the four forms and four regions, with the
-  product of form complexity and region markedness as harmony, no ranking between the two.
+  implicature; the game here is that evaluation on the four forms and four regions, two copies of
+  the tableau that share no form and no region, with the product of form cost and region
+  markedness as harmony, no ranking between the two.
 * The other uses of double negatives the paper sets aside (denial, irony, amplification) and
   the local strengthening of *neither happy nor unhappy* are not formalized.
 
@@ -208,13 +209,83 @@ def krifkaQuadruplet : Finset (AntonymForm × Region) :=
   {(.positive, .positive), (.notNegative, .plateauHigh),
     (.negative, .negative), (.notPositive, .plateauLow)}
 
+/-- The two forms with a pole's literal meaning, its simple form and the negated form of the other
+pole. -/
+def form : Polarity → Blutner2000.Form → AntonymForm
+  | .positive, .unmarked => .positive
+  | .positive, .marked => .notNegative
+  | .negative, .unmarked => .negative
+  | .negative, .marked => .notPositive
+
+/-- The two regions of a pole's literal meaning, the safe one and the border one. -/
+def region : Polarity → Blutner2000.Situation → Region
+  | .positive, .stereotypical => .positive
+  | .positive, .marked => .plateauHigh
+  | .negative, .stereotypical => .negative
+  | .negative, .marked => .plateauLow
+
+theorem form_injective (e : Polarity) : Function.Injective (form e) := by
+  cases e <;> decide
+
+theorem region_injective (e : Polarity) : Function.Injective (region e) := by
+  cases e <;> decide
+
+theorem coe_quadrupletPairs :
+    (↑quadrupletPairs : Set (AntonymForm × Region)) =
+      Prod.map (form .positive) (region .positive) '' Set.univ ∪
+        Prod.map (form .negative) (region .negative) '' Set.univ := by
+  ext ⟨a, r⟩
+  simp only [quadrupletPairs, Finset.coe_filter, Finset.mem_univ, true_and, Set.mem_ofPred_eq,
+    Set.image_univ, Set.mem_union, Set.mem_range, Prod.exists, Prod.map_apply, Prod.mk.injEq]
+  revert a r
+  decide
+
+private theorem strictMono_form {α : Type*} [Preorder α] {g : Blutner2000.Form → α}
+    (h : g .unmarked < g .marked) : StrictMono g := fun a b hab ↦ by
+  cases a <;> cases b <;> first | exact h | exact absurd hab (by decide)
+
+private theorem strictMono_situation {α : Type*} [Preorder α] {g : Blutner2000.Situation → α}
+    (h : g .stereotypical < g .marked) : StrictMono g := fun a b hab ↦ by
+  cases a <;> cases b <;> first | exact h | exact absurd hab (by decide)
+
 local instance : DecidableLT (ℕ × ℕ) := fun _ _ ↦ decidable_of_iff _ Prod.lt_iff.symm
 
-/-- Weak optimality over the quadruplet gives each half's simpler form the safe region and the more
-complex form the border region ((19), (20)). -/
-theorem superoptimal_quadruplet :
-    superoptimal quadrupletPairs (Prod.map AntonymForm.complexity Region.markedness) =
-      krifkaQuadruplet := by
-  decide
+/-- With sentential negation costing `n` and the negative prefix `k`, weak optimality gives each
+simple form the safe region and each negated form the border region ((19), (20)) exactly when the
+prefix is the cheaper, the assumption the paper makes for *unhappy* and *not happy*. -/
+theorem superoptimal_quadruplet_iff (n k : ℕ) :
+    superoptimal quadrupletPairs (Prod.map (AntonymForm.cost n k) Region.markedness) =
+      krifkaQuadruplet ↔ k < n := by
+  refine ⟨fun h ↦ not_le.1 fun hnk ↦ ?_, fun hk ↦ ?_⟩
+  · have hmem : (AntonymForm.notPositive, Region.negative) ∈ krifkaQuadruplet :=
+      h ▸ strongOptimal_subset_superoptimal _ _ (mem_strongOptimal.2 ⟨by decide, ?_⟩)
+    · exact absurd hmem (by decide)
+    · rintro ⟨⟨a, r⟩, hq, hc, hlt⟩
+      cases a <;> cases r <;> first
+        | exact absurd (Finset.mem_coe.1 hq) (by decide)
+        | (simp_all [AntonymForm.cost, Region.markedness, Competes, Prod.lt_iff]; try omega)
+  · have hsep : ∀ p ∈ Prod.map (form .positive) (region .positive) '' Set.univ,
+        ∀ q ∈ Prod.map (form .negative) (region .negative) '' Set.univ, ¬ Competes p q := by
+      rintro _ ⟨⟨a, b⟩, -, rfl⟩ _ ⟨⟨c, d⟩, -, rfl⟩
+      revert a b c d
+      decide
+    have hpos : StrictMono (Prod.map (AntonymForm.cost n k) Region.markedness ∘
+        Prod.map (form .positive) (region .positive)) :=
+      (strictMono_form (g := AntonymForm.cost n k ∘ form .positive)
+        (show 0 < n + k by omega)).prodMap
+          (strictMono_situation (g := Region.markedness ∘ region .positive) (by decide))
+    have hneg : StrictMono (Prod.map (AntonymForm.cost n k) Region.markedness ∘
+        Prod.map (form .negative) (region .negative)) :=
+      (strictMono_form (g := AntonymForm.cost n k ∘ form .negative) hk).prodMap
+        (strictMono_situation (g := Region.markedness ∘ region .negative) (by decide))
+    rw [← Finset.coe_inj, coe_superoptimal, coe_quadrupletPairs,
+      superoptimalSet_union (Set.toFinite _).isWF hsep,
+      superoptimalSet_image (form_injective _) (region_injective _) _ (Set.toFinite _).isWF,
+      superoptimalSet_image (form_injective _) (region_injective _) _ (Set.toFinite _).isWF,
+      Blutner2000.superoptimalSet_eq_iconic hpos, Blutner2000.superoptimalSet_eq_iconic hneg]
+    ext ⟨a, r⟩
+    simp only [Set.image_pair, Prod.map_apply, form, region, krifkaQuadruplet, Finset.coe_insert,
+      Finset.coe_singleton, Set.mem_union, Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
 
 end Krifka2007b

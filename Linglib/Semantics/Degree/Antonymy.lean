@@ -113,16 +113,15 @@ instance : MulAction Polarity AntonymForm :=
 
 @[simp] theorem negative_smul (f : AntonymForm) : Polarity.negative • f = f.flip := rfl
 
-/-- The morphosyntactic complexity of a form, with the negative prefix counted as 2 and sentential
-negation as 3, since [krifka-2007b] takes syntactic complexity to outweigh morphological, which
-makes *not happy* more complex than *unhappy*. -/
--- UNVERIFIED: the values are attributed to the utterance costs of [tessler-franke-2019], whose
--- main text states none; its supplement is unchecked.
-def complexity : AntonymForm → Nat
+/-- The cost of a form when sentential negation costs `n` and the negative pole `k` more than the
+positive, the two adding up in the double negative. [krifka-2007b] takes syntactic complexity to
+outweigh morphological, `k < n`, which makes *not happy* more complex than *unhappy*, and the
+supplement of [tessler-franke-2019] sets the prefix at 2 and the particle at 3. -/
+def cost (n k : ℕ) : AntonymForm → ℕ
   | .positive    => 0
-  | .negative    => 2
-  | .notPositive => 3
-  | .notNegative => 5
+  | .negative    => k
+  | .notPositive => n
+  | .notNegative => n + k
 
 /-- The simple form of a pole, *happy* for *not unhappy* and *unhappy* for *not happy*, which the
 negated form of the other pole shares its contradictory denotation with
@@ -130,9 +129,6 @@ negated form of the other pole shares its contradictory denotation with
 def simple : AntonymForm → AntonymForm
   | .positive | .notNegative => .positive
   | .negative | .notPositive => .negative
-
-theorem complexity_simple_le (f : AntonymForm) : f.simple.complexity ≤ f.complexity := by
-  cases f <;> decide
 
 section Denotation
 variable {D : Type*}
