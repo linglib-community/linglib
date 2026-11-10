@@ -30,8 +30,8 @@ and the shell above it.
 * `Minimalist.ClauseSpine.IsExtendedProjection`: a spine each of whose heads extends the one
   below it.
 * `Minimalist.ClauseSpine.append`: the spine with a nominal or adpositional shell over it.
-* `Minimalist.ClauseSpine.below`, `Minimalist.ClauseSpine.above`: the heads below the first
-  occurrence of a category, its complement, and above the last, the shell over it.
+* `Minimalist.ClauseSpine.below`, `Minimalist.ClauseSpine.above`: the spine below the first
+  occurrence of a category, its complement, and the heads above the last, the shell over it.
 * `Minimalist.ClauseSpine.vP`, `Minimalist.ClauseSpine.tP`, `Minimalist.ClauseSpine.cP`: the
   clause sizes of the verbal extended projection.
 
@@ -40,8 +40,8 @@ and the shell above it.
 * `Minimalist.ClauseSpine.le_def`: the extension order is inclusion of labels.
 * `Minimalist.ClauseSpine.IsExtendedProjection.pairwise`: in an extended projection every head
   extends each head below it.
-* `Minimalist.ClauseSpine.below_prefix`: the complement of a head lies inside the complement of
-  every head above it.
+* `Minimalist.ClauseSpine.below_le_below`: the complement of a head lies inside the complement
+  of every head above it.
 
 ## Implementation notes
 
@@ -132,8 +132,14 @@ theorem le_append (s : ClauseSpine) (l : List Cat) : s ≤ s.append l :=
 
 /-! ### Complements and shells of a head -/
 
-/-- The heads strictly below the first occurrence of `c`, the complement of `c`. -/
-def below (s : ClauseSpine) (c : Cat) : List Cat := s.heads.takeWhile (· != c)
+/-- The complement of the first occurrence of `c`, the spine of the heads strictly below it, so
+that `s.below .C` is the TP a finite clause's C⁰ selects. A spine that does not project `c` is its
+own complement. -/
+def below (s : ClauseSpine) (c : Cat) : ClauseSpine := ⟨s.heads.takeWhile (· != c)⟩
+
+@[simp] theorem heads_below (s : ClauseSpine) (c : Cat) :
+    (s.below c).heads = s.heads.takeWhile (· != c) :=
+  rfl
 
 /-- The heads strictly above the last occurrence of `c`, so that `s.above .C` is the shell over the
 CP of `s` and `[]` for a bare CP. -/
@@ -142,10 +148,16 @@ def above (s : ClauseSpine) (c : Cat) : List Cat := s.heads.rtakeWhile (· != c)
 theorem notMem_below_self (s : ClauseSpine) (c : Cat) : c ∉ s.below c := fun h ↦ by
   simpa using List.mem_takeWhile_imp h
 
+theorem below_le (s : ClauseSpine) (c : Cat) : s.below c ≤ s :=
+  le_iff_forall_mem.2 fun _ h ↦ (List.takeWhile_prefix _).subset h
+
 /-- The complement of a head lies inside the complement of every head above it. -/
-theorem below_prefix (h : c ∈ s.below d) : s.below c <+: s.below d :=
+theorem below_prefix (h : c ∈ s.below d) : (s.below c).heads <+: (s.below d).heads :=
   (List.prefix_or_prefix_of_prefix (List.takeWhile_prefix _)
     (List.takeWhile_prefix _)).resolve_right fun h' ↦ s.notMem_below_self c (h'.subset h)
+
+theorem below_le_below (h : c ∈ s.below d) : s.below c ≤ s.below d :=
+  le_iff_forall_mem.2 fun _ hx ↦ (below_prefix h).subset hx
 
 theorem above_append (s : ClauseSpine) (h : c ∉ l) : (s.append l).above c = s.above c ++ l := by
   induction l using List.reverseRecOn with
@@ -166,6 +178,12 @@ def tP : ClauseSpine := ⟨[.V, .v, .T]⟩
 
 /-- The CP-sized clause `[V, v, T, C]`, the finite clause. -/
 def cP : ClauseSpine := ⟨[.V, .v, .T, .C]⟩
+
+@[simp] theorem tP_below_T : tP.below .T = vP := by decide
+
+@[simp] theorem cP_below_T : cP.below .T = vP := by decide
+
+@[simp] theorem cP_below_C : cP.below .C = tP := by decide
 
 theorem vP_le_tP : vP ≤ tP := by decide
 

@@ -393,13 +393,13 @@ theorem resMovement_blocked_by_TP : ¬ WilliamsCycle .V .T := by decide +kernel
 def sotProbe : Probe.Profile := ⟨.T, some .Say⟩
 
 theorem sotProbe_clauseTypes :
-    sotProbe.TransparentTo ClauseSpine.tP.label ∧
-      ¬ sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc, .Say]).label := by
+    sotProbe.TransparentTo .tP ∧
+      ¬ sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc, .Say]) := by
   decide
 
 -- §4, footnote 9
 theorem horizon_admits_FocP :
-    sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc]).label ∧ ¬ WilliamsCycle .T .Foc := by
+    sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc]) ∧ ¬ WilliamsCycle .T .Foc := by
   decide +kernel
 
 /-! ### Recognition by witness

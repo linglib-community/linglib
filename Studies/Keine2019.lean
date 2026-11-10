@@ -29,10 +29,9 @@ and the horizon bounds the position, the Height-Locality Theorem ((65)) instanti
 
 ## Implementation notes
 
-Labels are the bilateral labels of the substrate's `ClauseSpine`s and transparency is
-`Probe.Profile.TransparentTo`; the article's probes are defined here, and vacuity is
-`Probe.Profile.IsVacuous`, which takes the sister of a probe on C⁰ to be TP and of one on T⁰ to
-be vP.
+Clauses are the substrate's `ClauseSpine`s and transparency is `Probe.Profile.TransparentTo`; the
+article's probes are defined here, and vacuity is `Probe.Profile.IsVacuousIn` the finite clause,
+where the sister of a probe on C⁰ is TP and of one on T⁰ is vP.
 
 ## References
 
@@ -44,15 +43,6 @@ be vP.
 namespace Keine2019
 
 open Minimalist
-
-/-- The label of a finite clause, the categories inherited up its extended projection ((44)). -/
-def cpLabel : Finset Cat := ClauseSpine.cP.label
-
-/-- The label of a large nonfinite clause. -/
-def tpLabel : Finset Cat := ClauseSpine.tP.label
-
-/-- The label of a small nonfinite clause. -/
-def vpLabel : Finset Cat := ClauseSpine.vP.label
 
 /-! ### Horizons and Upward Entailment (Section 4.1) -/
 
@@ -78,7 +68,7 @@ def ābarProbe : Probe.Profile := ⟨.C, none⟩
 /-- A probe's row of the transparency table over the finite, large nonfinite and small
 nonfinite clauses. -/
 def row (p : Probe.Profile) : List Bool :=
-  [cpLabel, tpLabel, vpLabel].map fun L ↦ decide (p.TransparentTo L)
+  [ClauseSpine.cP, .tP, .vP].map fun s ↦ decide (p.TransparentTo s)
 
 /-- (58): φ-agreement and A-movement search only into vP clauses, wh-licensing into TP and vP
 clauses, Ā-movement into all three. -/
@@ -94,14 +84,14 @@ theorem three_locality_types :
 
 -- (23), (49)
 theorem finite_clauses_selectively_opaque :
-    ¬ aProbe.TransparentTo cpLabel ∧ ¬ phiProbe.TransparentTo cpLabel ∧
-      ābarProbe.TransparentTo cpLabel := by
+    ¬ aProbe.TransparentTo .cP ∧ ¬ phiProbe.TransparentTo .cP ∧
+      ābarProbe.TransparentTo .cP := by
   decide
 
 -- (21), (50), (51)
 theorem a_extraction_forces_lda :
-    (∀ L ∈ [tpLabel, vpLabel], aProbe.TransparentTo L → L = vpLabel ∧ phiProbe.TransparentTo L) ∧
-      ābarProbe.TransparentTo tpLabel ∧ ¬ phiProbe.TransparentTo tpLabel := by
+    (∀ s ∈ [ClauseSpine.tP, .vP], aProbe.TransparentTo s → s = .vP ∧ phiProbe.TransparentTo s) ∧
+      ābarProbe.TransparentTo .tP ∧ ¬ phiProbe.TransparentTo .tP := by
   decide
 
 /-! ### Hyperraising (Section 4.2.3) -/
@@ -114,47 +104,50 @@ def extrapositionProbe : Probe.Profile := ⟨.T, some .T⟩
 
 -- (59)
 theorem hyperraising_blocked :
-    ¬ englishAProbe.TransparentTo cpLabel ∧ ābarProbe.TransparentTo cpLabel ∧
-      ¬ extrapositionProbe.TransparentTo tpLabel := by
+    ¬ englishAProbe.TransparentTo .cP ∧ ābarProbe.TransparentTo .cP ∧
+      ¬ extrapositionProbe.TransparentTo .tP := by
   decide
 
 theorem hyperraising_iff (h : Option Cat) :
-    (⟨.T, h⟩ : Probe.Profile).TransparentTo cpLabel ↔ ∀ c ∈ cpLabel, h ≠ some c := by
+    (⟨.T, h⟩ : Probe.Profile).TransparentTo .cP ↔ ∀ c ∈ ClauseSpine.cP, h ≠ some c := by
   simp only [Probe.Profile.TransparentTo, Option.mem_def, ne_eq]
   exact ⟨fun H c hc e ↦ H c e hc, fun H c e hc ↦ H c hc e⟩
 
 /-! ### The Height-Locality Connection (Section 5) -/
 
 -- (63)
-theorem vacuous_example : (⟨.C, some .T⟩ : Probe.Profile).IsVacuous := by decide
+theorem vacuous_example : (⟨.C, some .T⟩ : Probe.Profile).IsVacuousIn .cP := by decide
 
 -- (65a)
 theorem height_to_locality (h : Cat) :
-    (¬ (⟨.C, some h⟩ : Probe.Profile).IsVacuous → h ∉ tpLabel) ∧
-      (¬ (⟨.T, some h⟩ : Probe.Profile).IsVacuous → h ∉ vpLabel) := by
-  simp [Probe.Profile.IsVacuous, Probe.Profile.sisterLabel, tpLabel, vpLabel]
+    (¬ (⟨.C, some h⟩ : Probe.Profile).IsVacuousIn .cP → h ∉ ClauseSpine.tP) ∧
+      (¬ (⟨.T, some h⟩ : Probe.Profile).IsVacuousIn .cP → h ∉ ClauseSpine.vP) := by
+  simp
 
 -- (65b)
 theorem locality_to_height :
-    (⟨.C, some .T⟩ : Probe.Profile).IsVacuous ∧ (⟨.T, some .v⟩ : Probe.Profile).IsVacuous ∧
-      (⟨.C, some .v⟩ : Probe.Profile).IsVacuous := by
-  decide
+    (⟨.C, some .T⟩ : Probe.Profile).IsVacuousIn .cP ∧
+      (⟨.T, some .v⟩ : Probe.Profile).IsVacuousIn .cP ∧
+      (⟨.C, some .v⟩ : Probe.Profile).IsVacuousIn .cP :=
+  have h : (⟨.T, some .v⟩ : Probe.Profile).IsVacuousIn .cP := by decide
+  ⟨by decide, h, h.of_mem_below (by decide)⟩
 
 theorem nonvacuous_transparent (h : Option Cat) :
-    (¬ (⟨.C, h⟩ : Probe.Profile).IsVacuous →
-        (⟨.C, h⟩ : Probe.Profile).TransparentTo tpLabel ∧
-          (⟨.C, h⟩ : Probe.Profile).TransparentTo vpLabel) ∧
-      (¬ (⟨.T, h⟩ : Probe.Profile).IsVacuous →
-        (⟨.T, h⟩ : Probe.Profile).TransparentTo vpLabel) := by
-  simp only [Probe.Profile.IsVacuous, Probe.Profile.sisterLabel, not_not, tpLabel, vpLabel]
-  exact ⟨fun ht ↦ ⟨ht, ht.anti (ClauseSpine.le_def.1 ClauseSpine.vP_le_tP)⟩, id⟩
+    (¬ (⟨.C, h⟩ : Probe.Profile).IsVacuousIn .cP →
+        (⟨.C, h⟩ : Probe.Profile).TransparentTo .tP ∧
+          (⟨.C, h⟩ : Probe.Profile).TransparentTo .vP) ∧
+      (¬ (⟨.T, h⟩ : Probe.Profile).IsVacuousIn .cP →
+        (⟨.T, h⟩ : Probe.Profile).TransparentTo .vP) :=
+  ⟨fun hp ↦ ⟨.of_not_isVacuousIn hp (by simp),
+      .of_not_isVacuousIn hp (by simpa using ClauseSpine.vP_le_tP)⟩,
+    fun hp ↦ .of_not_isVacuousIn hp (by simp)⟩
 
 -- (21), (66), (67)
 theorem hindi_consequences :
-    (∀ p ∈ [phiProbe, aProbe, whLicensing, ābarProbe], ¬ p.IsVacuous) ∧
-      (∀ p ∈ [whLicensing, ābarProbe], p.TransparentTo tpLabel ∧ p.TransparentTo vpLabel) ∧
-      (∀ p ∈ [phiProbe, aProbe], p.TransparentTo vpLabel) ∧
-      (⟨.C, aProbe.horizon⟩ : Probe.Profile).IsVacuous := by
+    (∀ p ∈ [phiProbe, aProbe, whLicensing, ābarProbe], ¬ p.IsVacuousIn .cP) ∧
+      (∀ p ∈ [whLicensing, ābarProbe], p.TransparentTo .tP ∧ p.TransparentTo .vP) ∧
+      (∀ p ∈ [phiProbe, aProbe], p.TransparentTo .vP) ∧
+      (⟨.C, aProbe.horizon⟩ : Probe.Profile).IsVacuousIn .cP := by
   decide
 
 end Keine2019
