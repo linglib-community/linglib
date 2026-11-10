@@ -6,10 +6,12 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Probability.Kernel.IonescuTulcea.SeqLaw
-public import Linglib.Core.Probability.Moments.Convolution
+public import Linglib.Core.Probability.Moments.Variance
 public import Mathlib.Analysis.PSeries
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.MeasureTheory.Function.LpSeminorm.Prod
+public import Mathlib.MeasureTheory.Integral.Prod
 public import Mathlib.Probability.Kernel.Composition.Prod
 
 /-!
@@ -301,10 +303,8 @@ instance : IsMarkovKernel (produce γ tgt ν bias : Kernel (Fin (n + 1) → ℝ)
   Kernel.IsMarkovKernel.map _ (by fun_prop)
 
 theorem produce_apply (e : Fin (n + 1) → ℝ) :
-    produce γ tgt ν bias e = (target γ tgt e ∗ ν).map (· + bias) := by
-  rw [produce, Kernel.map_apply _ (by fun_prop), Kernel.prod_apply, Kernel.const_apply,
-    Measure.conv, Measure.map_map (by fun_prop) (by fun_prop)]
-  rfl
+    produce γ tgt ν bias e = ((target γ tgt e).prod ν).map fun p ↦ p.1 + p.2 + bias := by
+  rw [produce, Kernel.map_apply _ (by fun_prop), Kernel.prod_apply, Kernel.const_apply]
 
 theorem memLp_target (e : Fin (n + 1) → ℝ) : MemLp id 2 (target γ tgt e) := by
   cases tgt
@@ -334,29 +334,35 @@ include hν
 
 theorem memLp_produce (e : Fin (n + 1) → ℝ) : MemLp id 2 (produce γ tgt ν bias e) := by
   rw [produce_apply, memLp_map_measure_iff (by fun_prop) (by fun_prop)]
-  exact (memLp_id_conv (memLp_target γ tgt e) hν).add (memLp_const bias)
+  exact (((memLp_target γ tgt e).comp_fst ν).add (hν.comp_snd _)).add (memLp_const bias)
+
+-- A production inherits the spread of its target and adds the spread of the noise.
+theorem variance_produce (e : Fin (n + 1) → ℝ) :
+    Var[id; produce γ tgt ν bias e] = tgt.inherited * memorySpread γ e + Var[id; ν] := by
+  rw [produce_apply, variance_id_map (by fun_prop),
+    variance_add_const (X := fun p : ℝ × ℝ ↦ p.1 + p.2) (by fun_prop), ← variance_target]
+  exact variance_add_prod (X := id) (Y := id) (memLp_target γ tgt e) hν
 
 include hν0
 
 theorem integral_produce (e : Fin (n + 1) → ℝ) :
     ∫ x, x ∂produce γ tgt ν bias e = memoryMean γ e + bias := by
-  have h : Integrable (fun x : ℝ ↦ x) (target γ tgt e ∗ ν) :=
-    (memLp_id_conv (memLp_target γ tgt e) hν).integrable one_le_two
-  rw [produce_apply, integral_map (by fun_prop) (by fun_prop), integral_add h (integrable_const _),
-    integral_id_conv ((memLp_target γ tgt e).integrable one_le_two) (hν.integrable one_le_two),
+  have h1 : Integrable (fun p : ℝ × ℝ ↦ p.1) ((target γ tgt e).prod ν) :=
+    ((memLp_target γ tgt e).integrable one_le_two).comp_fst ν
+  have h2 : Integrable (fun p : ℝ × ℝ ↦ p.2) ((target γ tgt e).prod ν) :=
+    (hν.integrable one_le_two).comp_snd _
+  rw [produce_apply, integral_map (by fun_prop) (by fun_prop),
+    integral_add (f := fun p : ℝ × ℝ ↦ p.1 + p.2) (h1.add h2) (integrable_const _),
+    integral_add h1 h2, integral_fun_fst (fun t : ℝ ↦ t), integral_fun_snd (fun t : ℝ ↦ t),
     integral_target, hν0]
   simp
 
 theorem integral_produce_sub_sq (e : Fin (n + 1) → ℝ) :
     ∫ x, (x - memoryMean γ e) ^ 2 ∂produce γ tgt ν bias e =
       tgt.inherited * memorySpread γ e + Var[id; ν] + bias ^ 2 := by
-  have h := memLp_id_conv (memLp_target γ tgt e) hν
-  rw [produce_apply, integral_map (by fun_prop) (by fun_prop)]
-  simp only [show ∀ y, y + bias - memoryMean γ e = y - (memoryMean γ e - bias) from
-    fun y ↦ by ring]
-  rw [integral_sub_sq h, variance_id_conv (memLp_target γ tgt e) hν,
-    integral_id_conv ((memLp_target γ tgt e).integrable one_le_two) (hν.integrable one_le_two),
-    integral_target, hν0, variance_target]
+  have h := integral_sub_const_sq (memLp_produce γ tgt bias hν e) (memoryMean γ e)
+  simp only [id] at h
+  rw [h, variance_produce γ tgt bias hν, integral_produce γ tgt bias hν hν0]
   ring
 
 end Production
