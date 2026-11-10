@@ -5,64 +5,73 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Algebra.CharP.Basic
+public import Linglib.Core.Probability.Distributions.Bernoulli
 public import Mathlib.Probability.Distributions.Binomial
 
+import Mathlib.MeasureTheory.MeasurableSpace.NCard
+
 /-!
-# The binomial distribution on a carrier without characteristic zero
+# The binomial distribution: stochastic order and support
 
-Mathlib computes the point masses of `Bin(R, n, p)` for `CharZero R`. Characteristic zero is used
-only to keep the casts of `0, …, n` apart, so the same formula holds whenever
-[the cast is injective there](##ProbabilityTheory.map_cast_binomial_singleton_of_injOn).
-On `Fin (n + 1)` it is, which gives
-[the mass at every point](##ProbabilityTheory.map_cast_binomial_fin_singleton) of
-`Bin(Fin (n + 1), n, p)`, the binomial distribution on its own support.
+A higher success probability moves the binomial distribution up:
+[`Bin(n, p) ≤ₛₜ Bin(n, q)` for `p ≤ q`](##ProbabilityTheory.binomial_stochasticLE). The Bernoulli
+measure on a pair `y ≤ x` is monotone in the weight of `x`, the product of Bernoulli measures
+that picks a random subset inherits this
+([`setBernoulli_stochasticLE`](##ProbabilityTheory.setBernoulli_stochasticLE)), and the binomial
+is the law of that subset's cardinality. Strictly between `0` and `1`, the binomial
+[charges every count up to `n`](##ProbabilityTheory.binomial_singleton_pos). Both facts are also
+stated for `Bin(Fin (n + 1), n, p)`, the binomial on its own support.
 
-[UPSTREAM] candidates for `Mathlib.Probability.Distributions.Binomial`.
+[UPSTREAM] candidates for `Mathlib.Probability.Distributions.SetBernoulli` and
+`Mathlib.Probability.Distributions.Binomial`.
 -/
 
 public section
 
-open MeasureTheory unitInterval
+open MeasureTheory Measure Set unitInterval
 open scoped ProbabilityTheory Fin.NatCast
 
 namespace ProbabilityTheory
 
-section InjOn
+variable {ι : Type*} [Countable ι] {n : ℕ} {p q : I}
 
-variable {R : Type*} [MeasurableSpace R] [AddMonoidWithOne R] [MeasurableSingletonClass R]
-  {n k : ℕ} (p : I)
+/-- The random subset of `u` that takes each element with probability `p` grows with `p`. -/
+theorem setBernoulli_stochasticLE (u : Set ι) (hpq : p ≤ q) : setBer(u, p) ≤ₛₜ setBer(u, q) := by
+  choose γ hγ using fun i : ι ↦
+    exists_isMonotoneCoupling_bernoulliMeasure (x := i ∈ u) (y := False) False.elim hpq
+  rw [setBernoulli_eq_map, setBernoulli_eq_map]
+  exact (stochasticLE_infinitePi hγ).map (fun _ _ h i hi ↦ h i hi)
+    MeasurableEquiv.setOfPred.measurable
 
-/-- The mass `Bin(R, n, p)` gives the cast of `k ≤ n`, when the cast separates `0, …, n`. -/
-theorem map_cast_binomial_singleton_of_injOn (h : Set.InjOn (Nat.cast : ℕ → R) (Set.Iic n))
-    (hk : k ≤ n) :
-    Bin(R, n, p) {(k : R)} = ENNReal.ofReal (n.choose k * (p : ℝ) ^ k * (1 - p) ^ (n - k)) := by
-  rw [map_cast_binomial_eq_sum_dirac, Measure.finsetSum_apply,
-    Finset.sum_eq_single k (fun j hj hjk ↦ ?_) (absurd (Finset.mem_Iic.mpr hk)),
-    Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_singleton _), smul_eq_mul, mul_one]
-  rw [Measure.smul_apply, Measure.dirac_apply' _ (measurableSet_singleton _),
-    Set.indicator_of_notMem (fun hj' : (j : R) ∈ ({(k : R)} : Set R) ↦
-      hjk (h (Finset.mem_Iic.mp hj) hk hj')), smul_zero]
+/-- The binomial distribution is stochastically increasing in its success probability. -/
+theorem binomial_stochasticLE (n : ℕ) (hpq : p ≤ q) : Bin(n, p) ≤ₛₜ Bin(n, q) := by
+  have h : ∀ r : I, ncard =ᵐ[setBer(Iio n, r)] fun s ↦ (s ∩ Iio n).ncard := fun r ↦
+    setBernoulli_ae_subset.mono fun s hs ↦ congrArg ncard (inter_eq_left.2 hs).symm
+  exact (setBernoulli_stochasticLE _ hpq).map_of_ae_eq
+    (fun s t hst ↦ ncard_le_ncard (inter_subset_inter_left _ hst) ((finite_Iio n).inter_of_right _))
+    (measurable_ncard.comp <| measurable_set_iff.2 fun a ↦
+      (Measurable.of_discrete (f := (· ∧ a ∈ Iio n))).comp (measurable_set_mem a)) (h p) (h q)
 
-theorem map_cast_binomial_real_singleton_of_injOn (h : Set.InjOn (Nat.cast : ℕ → R) (Set.Iic n))
-    (hk : k ≤ n) :
-    Bin(R, n, p).real {(k : R)} = n.choose k * (p : ℝ) ^ k * (1 - p) ^ (n - k) := by
-  rw [measureReal_def, map_cast_binomial_singleton_of_injOn p h hk,
-    ENNReal.toReal_ofReal binomial_nonneg]
+theorem map_cast_binomial_fin_stochasticLE (n : ℕ) (hpq : p ≤ q) :
+    Bin(Fin (n + 1), n, p) ≤ₛₜ Bin(Fin (n + 1), n, q) := by
+  have h : ∀ r : I, (Nat.cast : ℕ → Fin (n + 1)) =ᵐ[Bin(n, r)] fun k ↦ Fin.clamp k n := fun r ↦
+    (ae_le_of_hasLaw_binomial (X := id) ⟨aemeasurable_id, map_id⟩).mono fun k hk ↦
+      Fin.ext ((Fin.val_cast_of_lt (Nat.lt_succ_of_le hk)).trans (min_eq_left hk).symm)
+  exact (binomial_stochasticLE n hpq).map_of_ae_eq
+    (fun a b hab ↦ Fin.mk_le_mk.2 (min_le_min_right n hab)) .of_discrete (h p) (h q)
 
-end InjOn
+/-- A binomial distribution with success probability strictly between `0` and `1` charges every
+count up to `n`. -/
+theorem binomial_singleton_pos (hp₀ : 0 < p) (hp₁ : p < 1) {k : ℕ} (hk : k ≤ n) :
+    0 < Bin(n, p) {k} := by
+  rw [binomial_singleton, ENNReal.ofReal_pos]
+  exact mul_pos (mul_pos (Nat.cast_pos.2 (Nat.choose_pos hk)) (pow_pos (coe_pos.2 hp₀) _))
+    (pow_pos (sub_pos.2 (coe_lt_one.2 hp₁)) _)
 
-variable (n : ℕ) (p : I)
-
-/-- The mass at a point of the binomial distribution on its support `Fin (n + 1)`. -/
-theorem map_cast_binomial_fin_singleton (k : Fin (n + 1)) :
-    Bin(Fin (n + 1), n, p) {k}
-      = ENNReal.ofReal (n.choose k * (p : ℝ) ^ (k : ℕ) * (1 - p) ^ (n - k)) := by
-  simpa using map_cast_binomial_singleton_of_injOn p
-    ((CharP.natCast_injOn_Iio (Fin (n + 1)) (n + 1)).mono fun _ ↦ Nat.lt_succ_of_le) k.is_le
-
-theorem map_cast_binomial_fin_real_singleton (k : Fin (n + 1)) :
-    Bin(Fin (n + 1), n, p).real {k} = n.choose k * (p : ℝ) ^ (k : ℕ) * (1 - p) ^ (n - k) := by
-  rw [measureReal_def, map_cast_binomial_fin_singleton, ENNReal.toReal_ofReal binomial_nonneg]
+theorem map_cast_binomial_fin_singleton_pos (hp₀ : 0 < p) (hp₁ : p < 1) (k : Fin (n + 1)) :
+    0 < Bin(Fin (n + 1), n, p) {k} := by
+  rw [map_apply .of_discrete (measurableSet_singleton k)]
+  exact (binomial_singleton_pos hp₀ hp₁ k.is_le).trans_le
+    (measure_mono (singleton_subset_iff.2 (Fin.cast_val_eq_self k)))
 
 end ProbabilityTheory
