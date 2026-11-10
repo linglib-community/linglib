@@ -2,7 +2,8 @@ module
 
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Data.Examples.Bruening2021
-public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Composition.Interpreter.Rules
+public import Linglib.Semantics.Composition.Interpreter.Sorts
 public import Linglib.Syntax.Minimalist.Category
 public import Linglib.Data.Examples.Readers
 
@@ -31,7 +32,7 @@ over the whole lexicon.
 
 The fragment places an implicit argument where the construction it is understood in would
 express it, so an alternating verb's implicit goal is a first object or a PP as its entry says.
-Semantic types are those of `Montague.Ty`, in which events share the type `e` with individuals.
+Events have their own type, written `v` here and `s` in the paper.
 
 ## TODO
 
@@ -51,7 +52,7 @@ arguments are not formalized.
 
 namespace Bruening2021
 
-open English.Verbs Minimalist Montague PhraseStructure.Tree
+open English.Verbs Minimalist Interpreter
 
 /-! ### Implicit arguments -/
 
@@ -181,9 +182,20 @@ theorem melt_build : ∀ v ∈ [melt, build],
     (∃ a, v.Alternates (.leaveImplicit .np 0 (some a))) ∧ .np_np ∈ v.valency.frames := by
   decide +kernel
 
-theorem combine?_appl :
-    Ty.combine? (Ty.eet ⇒ .e ⇒ .e ⇒ Ty.et) Ty.eet = some (.e ⇒ .e ⇒ Ty.et) ∧
-      Ty.combine? (Ty.eet ⇒ .e ⇒ .e ⇒ Ty.et) Ty.et = none := by
+/-- The type of Appl (79) over a verb of type `f`: it takes the verb and then the two
+individuals it relates. The paper's Appl takes a verb with one open individual argument or with
+two. -/
+abbrev applTy (f : Ty Base) : Ty Base := f ⇒ .e ⇒ .e ⇒ .vt
+
+-- (104)
+theorem binaryRules_appl :
+    ((Grammar.LocallyFinite.binaryRules (G := Grammar.application) (applTy .evt) .evt).map
+        (·.1) = [.e ⇒ .e ⇒ .vt]) ∧
+      ((Grammar.LocallyFinite.binaryRules (G := Grammar.application) (applTy (.e ⇒ .evt))
+        (.e ⇒ .evt)).map (·.1) = [.e ⇒ .e ⇒ .vt]) ∧
+      Grammar.LocallyFinite.binaryRules (G := Grammar.application) (applTy .evt) .vt = [] ∧
+      Grammar.LocallyFinite.binaryRules (G := Grammar.application) (applTy (.e ⇒ .evt)) .vt =
+        [] := by
   decide
 
 /-- No verb but *write* leaves its direct object implicit both in the double object and in the

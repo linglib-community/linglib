@@ -244,7 +244,7 @@ abbrev rules : Interpreter grammar Node := (typeDriven .application).withAbstrac
 /-- The denotations of a structure, relative to an assignment. -/
 def meanings (sc : Scenario) (t : Tree Unit Word) :
     List (Σ a : Ty Atom, Assignment → Ty.PDom Dom a) :=
-  t.values rules (Grammar.withAbstraction.structure (Assignments.pedantic Dom indexTy))
+  t.values rules (Grammar.withAbstraction.structure (Assignments.partial Dom indexTy))
     (Item.val sc) items
 
 /-- The context's assignment: `ssh₈` is the rounds of the game, and no other index has a
@@ -316,7 +316,7 @@ theorem holds_lf {sc : Scenario} {S T : Binder} :
         IsCanadian sc (brother (T.sit u s').world) (S.sit u s').world := by
   simp only [Holds, meanings, Tree.values, derivs_lf, List.map_cons, List.map_nil,
     List.mem_singleton, Sigma.mk.injEq, heq_eq_eq, true_and, exists_eq_left]
-  simp [Item.val, Assignments.pedantic]
+  simp [Item.val, Assignments.partial]
   cases S <;> cases T <;> simp [Binder.index, Binder.sit, dox, Function.update]
 
 -- (35b)
@@ -335,7 +335,7 @@ theorem holds_lfAlways {sc : Scenario} {S : Binder} :
           Won sc (brother s'.world) r := by
   simp only [Holds, meanings, Tree.values, derivs_lfAlways, List.map_cons, List.map_nil,
     List.mem_singleton, Sigma.mk.injEq, heq_eq_eq, true_and, exists_eq_left]
-  simp [Item.val, Assignments.pedantic]
+  simp [Item.val, Assignments.partial]
   cases S <;> simp [Binder.index, Binder.sit, dox, Function.update, g₀, Obj.prop?]
 
 /-- (26b) is true in a scenario iff the brother in the world the description's pronoun `T`
@@ -405,7 +405,7 @@ theorem not_isProposition_vpb_upper_upper (sc : Scenario) {u : Sit}
     List.mem_singleton, Sigma.mk.injEq, heq_eq_eq, true_and]
   refine ⟨_, _, rfl, rfl, fun hP ↦ ?_⟩
   have := hP (.ind .mary)
-  simp [Item.val, Assignments.pedantic, Binder.index, gAt, Function.update, h,
+  simp [Item.val, Assignments.partial, Binder.index, gAt, Function.update, h,
     Part.bind_dom] at this
   exact this trivial
 
@@ -417,7 +417,7 @@ theorem isProposition_vpb (sc : Scenario) {S T : Binder} (hST : S = .lower ∨ T
     List.mem_singleton, Sigma.mk.injEq, heq_eq_eq, true_and]
   refine ⟨_, _, rfl, rfl, fun x hx ↦ ?_⟩
   rcases hST with rfl | rfl <;> cases x <;>
-    simp_all [Item.val, Assignments.pedantic, Binder.index, gAt, Function.update,
+    simp_all [Item.val, Assignments.partial, Binder.index, gAt, Function.update,
       Part.bind_dom]
 
 /-- In (35b) with the pronoun of *always* bound by the higher λ, the indexing (37), the sister of
@@ -429,7 +429,7 @@ theorem not_isProposition_advp_upper (sc : Scenario) (u : Sit) :
     List.mem_singleton, Sigma.mk.injEq, heq_eq_eq, true_and]
   refine ⟨_, _, rfl, rfl, fun hP ↦ ?_⟩
   have := hP (.ind .mary)
-  simp [Item.val, Assignments.pedantic, Binder.index, gAt, Function.update, g₀, Obj.prop?] at this
+  simp [Item.val, Assignments.partial, Binder.index, gAt, Function.update, g₀, Obj.prop?] at this
 
 /-! ### Generalizations X and Y -/
 

@@ -24,7 +24,7 @@ constituent with no partial word in it never lacks a value.
   predicate modification on partial values of partial functions.
 * `Interpreter.Ty.PDom`: the partial values of a type whose functions are partial, with the
   structures of application and predicate modification on them.
-* `Interpreter.Assignments.pedantic`: partial assignments, with abstracts that are partial
+* `Interpreter.Assignments.partial`: partial assignments, with abstracts that are partial
   functions.
 * `Interpreter.partialValued`: constituents as partial values where only some words are partial,
   undefined where a daughter is.
@@ -197,7 +197,7 @@ theorem Grammar.isLogicalRel_partRel :
 
 /-- Partial assignments: an assignment may give an index no value, and an abstract always has a
 value, a partial function defined where its body has one. -/
-def Assignments.pedantic (D : B → Type) (Γ : ℕ → Ty B) :
+def Assignments.partial (D : B → Type) (Γ : ℕ → Ty B) :
     Assignments (∀ n, Ty.PDom D (Γ n)) (Ty.PDom D) Γ where
   get g n := g n
   set g n v := Function.update g n v

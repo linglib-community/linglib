@@ -279,7 +279,7 @@ def assignments : Assignments (ℕ → ToyEntity) (Ty.Dom Dom) fun _ ↦ .e :=
 /-- Partial assignments, (7) of §5.3.3: an abstract always has a denotation, a partial function
 defined at the individuals at which the body has one, (7) of §5.4. -/
 def partialAssignments : Assignments (ℕ → Part ToyEntity) (Ty.PDom Dom) fun _ ↦ .e :=
-  .pedantic Dom fun _ ↦ .e
+  .partial Dom fun _ ↦ .e
 
 /-- The rules (13), (14) and (16) of Chapter 5: sisters combine at one assignment. -/
 abbrev total : grammar.language.Structure Val := Grammar.withAbstraction.structure assignments
@@ -348,7 +348,7 @@ theorem isLogicalRel : total.IsLogicalRel pedantic Rel :=
     (fun g g' n v v' hg ⟨y, hy, hyr⟩ i ↦ by
       cases hyr
       by_cases hi : i = n <;>
-        simp [assignments, Assignments.total, partialAssignments, Assignments.pedantic,
+        simp [assignments, Assignments.total, partialAssignments, Assignments.partial,
           Function.update, hi, hg, hy])
     (fun _ _ h ↦ ⟨_, rfl, fun x x' hx ↦ h x (.some x') ⟨x', rfl, hx⟩⟩)
 
@@ -495,7 +495,7 @@ theorem pmeanings_theStudentWhoSleeps :
     (P := fun x ↦ toyStructure.RelMap toyRel.student ![x] ∧ toyStructure.RelMap toyRel.sleep ![x])
     fun x ↦ ⟨fun h ↦ h.2, fun h ↦ ⟨.inl h, h⟩⟩
   simp [pmeanings, Tree.values, derivs_theStudentWhoSleeps, pval, Item.pval, partialAssignments,
-    Assignments.pedantic, h]
+    Assignments.partial, h]
 
 /-- Under the bracketing `[[the student] [who₁ [t₁ sleeps]]]`, which §4.5 rejects, a sentence
 with the definite as subject is uninterpretable. -/

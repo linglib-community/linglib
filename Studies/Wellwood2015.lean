@@ -1,7 +1,10 @@
 module
 
 public import Linglib.Core.Algebra.Order.Group.Indicator
-public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Composition.Interpreter.Constituency
+public import Linglib.Semantics.Composition.Interpreter.Rules
+public import Linglib.Semantics.Composition.Interpreter.Sorts
+public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Mereology
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
@@ -15,7 +18,7 @@ Wellwood proposes that nominal, verbal and adjectival comparatives contain one
 degree-introducing morpheme, *much*, which denotes an assignment-supplied measure function, while
 *-er* and *as* compare the measure of what the base predicate applies to with the maximal degree
 of the than-clause, after von Stechow and Rullmann. The three domains share one truth condition,
-and the paper's derivations are one tree interpreted by Heim and Kratzer's engine at three
+and the paper's derivations are one tree interpreted by Heim and Kratzer's rules at three
 lexical cells, measuring coffee, running events or heat states. What *much* measures must be
 non-trivially ordered by part-whole structure, which a quantized domain is not, and measured
 monotonically, [in the strict sense](##monotoneOn_and_not_strictMonoOn) that excludes temperature
@@ -27,10 +30,10 @@ The obligatory *much* of *very* with nouns and verbs is Bresnan's Much Deletion.
 
 ## Implementation notes
 
-Degrees form an abstract preordered type, linearly ordered for the engine and a nontrivial linearly
-ordered additive group where dimensions are compared. Eventualities are an abstract type, the
-engine's eventuality sort `v` beside the individuals of `e`, as in the paper's sorted domains `D_e`
-and `D_v`, and the degree phrase modifies the base predicate by predicate modification at `⟨v,t⟩`,
+Degrees form an abstract preordered type, linearly ordered for the derivation and a nontrivial
+linearly ordered additive group where dimensions are compared. Eventualities are an abstract type,
+the eventuality sort `v` beside the individuals of `e`, as in the paper's sorted domains `D_e` and
+`D_v`, and the degree phrase modifies the base predicate by predicate modification at `⟨v,t⟩`,
 which the paper allows beside `⟨e,t⟩`. Existential closure is a lexical item. The paper's
 non-trivially structured domains are the predicates that are not quantized, `¬ QUA P`. An
 admissible measure is `StrictMono` on the type of what is measured, the ordered domain of (26), or
@@ -117,61 +120,104 @@ end Derivation
 
 section TypeDriven
 
-open PhraseStructure.Tree
-open Montague
+open Interpreter Interpreter.Grammar
 open PhraseStructure (Tree)
 
-variable {Ent α : Type}
+variable {Ent α D : Type}
 
-/-- In the lexicon *much* is the measure (7) of the eventualities, *-er* and *abs* the strict and
-weak degree heads ((27i), (38ii)), the role head composes by event identification
-([kratzer-1996]), and existential closure is an item. -/
-def lexicon {D : Type} [LinearOrder D] (role : Ent → α → Prop) (P : α → Prop) (μ0 : α → D)
-    (subj : Ent) (δ : D) : Lexicon Ent Unit Id { degree := D, eventuality := α } := fun w ↦
-  match w with
-  | "much" => some ⟨.v ⇒ .d, show α → D from μ0⟩
-  | "er" => some ⟨(.v ⇒ .d) ⇒ .d ⇒ .v ⇒ .t,
-      show (α → D) → D → α → Prop from fun m d e ↦ d < m e⟩
-  | "abs" => some ⟨(.v ⇒ .d) ⇒ .d ⇒ .v ⇒ .t,
-      show (α → D) → D → α → Prop from fun m d e ↦ d ≤ m e⟩
-  | "δ" => some ⟨.d, show D from δ⟩
-  | "pred" => some ⟨Ty.vt, show α → Prop from P⟩
-  | "role" => some ⟨Ty.evt, show Ent → α → Prop from role⟩
-  | "subj" => some ⟨.e, show Ent from subj⟩
-  | "EC" => some ⟨Ty.vt ⇒ .t, show (α → Prop) → Prop from fun p ↦ ∃ e, p e⟩
-  | _ => none
+/-- The words of the derivation: the degree heads *-er* and *abs*, a standard, the base
+predicate, the role head, the subject, and existential closure. *Much* is an indexed
+expression. -/
+inductive Word
+  | er
+  | abs
+  | standard
+  | pred
+  | role
+  | subj
+  | closure
+
+/-- The lexical items by type: *-er* and *abs* take a measure and a degree ((27i), (38ii)), the
+base predicate is of events, the role head relates an individual to them (34), and *much* with
+its index is a measure of them (7). -/
+inductive Item : Ty Base → Type
+  | er : Item ((.v ⇒ .d) ⇒ .d ⇒ .vt)
+  | abs : Item ((.v ⇒ .d) ⇒ .d ⇒ .vt)
+  | standard : Item .d
+  | pred : Item .vt
+  | role : Item .evt
+  | subj : Item .e
+  | closure : Item (.vt ⇒ .t)
+  | much (n : ℕ) : Item (.v ⇒ .d)
+
+/-- The item of a word, and of the index of *much*. -/
+def items : Word ⊕ ℕ → List (Σ a, Item a)
+  | .inl .er => [⟨_, .er⟩]
+  | .inl .abs => [⟨_, .abs⟩]
+  | .inl .standard => [⟨_, .standard⟩]
+  | .inl .pred => [⟨_, .pred⟩]
+  | .inl .role => [⟨_, .role⟩]
+  | .inl .subj => [⟨_, .subj⟩]
+  | .inl .closure => [⟨_, .closure⟩]
+  | .inr n => [⟨_, .much n⟩]
+
+/-- The domains: individuals, the degrees `D`, and what is measured as the eventualities. -/
+abbrev Dom (Ent α D : Type) : Base → Type :=
+  Base.Dom Ent Unit { degree := D, eventuality := α }
+
+/-- Every index is of the type of a measure: the assignment supplies the measure of *much*. -/
+abbrev indexTy : ℕ → Ty Base := fun _ ↦ .v ⇒ .d
+
+/-- The denotations: *-er* and *abs* are the strict and the weak comparison of a measure with a
+degree, and *much* with index `n` is the measure the assignment gives `n`. -/
+def Item.val [LinearOrder D] (role : Ent → α → Prop) (P : α → Prop) (subj : Ent) (δ : D) :
+    {a : Ty Base} → Item a → (∀ n, (indexTy n).Dom (Dom Ent α D)) → a.Dom (Dom Ent α D)
+  | _, .er => fun _ m d e ↦ d < m e
+  | _, .abs => fun _ m d e ↦ d ≤ m e
+  | _, .standard => fun _ ↦ δ
+  | _, .pred => fun _ ↦ P
+  | _, .role => fun _ ↦ role
+  | _, .subj => fun _ ↦ subj
+  | _, .closure => fun _ p ↦ ∃ e, p e
+  | _, .much n => fun g ↦ g n
+
+/-- The grammar: Functional Application, Predicate Modification, at ⟨v,t⟩ as at ⟨e,t⟩, and
+Event Identification, with indexed expressions. -/
+abbrev grammar : Grammar (Ty Base) :=
+  ((Grammar.application.sum .predicateModification).sum
+    (.eventIdentification .e .v)).withAbstraction indexTy
+
+/-- The denotations of a tree, relative to an assignment of measures to indices. -/
+def meanings [LinearOrder D] (role : Ent → α → Prop) (P : α → Prop) (subj : Ent) (δ : D)
+    (t : Tree Unit Word) :
+    List (Σ a : Ty Base, (∀ n, (indexTy n).Dom (Dom Ent α D)) → a.Dom (Dom Ent α D)) :=
+  t.values ((typeDriven ((Grammar.application.sum .predicateModification).sum
+      (.eventIdentification .e .v))).withAbstraction indexTy)
+    (Grammar.withAbstraction.structure (Assignments.total (Dom Ent α D) indexTy))
+    (Item.val role P subj δ) items
 
 /-- In the matrix tree, (36), (44), (60), the degree phrase modifies the base predicate, the role
 head adds the subject, and the event variable is closed. -/
-def matrixTree : Tree Unit String :=
-  .node () [.terminal () "EC",
-    .node () [.terminal () "subj",
-      .node () [.terminal () "role",
-        .node () [.terminal () "pred",
-          .node () [.node () [.terminal () "er", .terminal () "much"],
-            .terminal () "δ"]]]]]
+def matrixTree : Tree Unit Word :=
+  .bin (.leaf .closure) (.bin (.leaf .subj) (.bin (.leaf .role)
+    (.bin (.leaf .pred) (.bin (.bin (.leaf .er) (.tr 0)) (.leaf .standard)))))
 
 /-- The than-clause body, (39), (46), (62), is the matrix tree with *abs* for *-er*. -/
-def thanTree : Tree Unit String :=
-  .node () [.terminal () "EC",
-    .node () [.terminal () "subj",
-      .node () [.terminal () "role",
-        .node () [.terminal () "pred",
-          .node () [.node () [.terminal () "abs", .terminal () "much"],
-            .terminal () "δ"]]]]]
+def thanTree : Tree Unit Word :=
+  .bin (.leaf .closure) (.bin (.leaf .subj) (.bin (.leaf .role)
+    (.bin (.leaf .pred) (.bin (.bin (.leaf .abs) (.tr 0)) (.leaf .standard)))))
 
-/-- The engine derives the matrix clause (37), (45), (61). -/
-theorem matrix_derivation_denotes {D : Type} [LinearOrder D] (role : Ent → α → Prop)
-    (P : α → Prop) (μ0 : α → D) (a : Ent) (δ : D) (g : Assignment Ent) :
-    interp (lexicon role P μ0 a δ) g matrixTree =
-      some ⟨.t, pure (matrixClause role P μ0 a δ)⟩ :=
+/-- The rules derive the matrix clause (37), (45), (61), with the measure the assignment gives
+*much*. -/
+theorem meanings_matrixTree [LinearOrder D] (role : Ent → α → Prop) (P : α → Prop) (a : Ent)
+    (δ : D) :
+    meanings role P a δ matrixTree = [⟨.t, fun g ↦ matrixClause role P (g 0) a δ⟩] :=
   rfl
 
 -- (40), (47), (63)
-theorem than_derivation_denotes {D : Type} [LinearOrder D] (role : Ent → α → Prop)
-    (P : α → Prop) (μ0 : α → D) (b : Ent) (d : D) (g : Assignment Ent) :
-    interp (lexicon role P μ0 b d) g thanTree =
-      some ⟨.t, pure (d ∈ thanClause role P μ0 b)⟩ :=
+theorem meanings_thanTree [LinearOrder D] (role : Ent → α → Prop) (P : α → Prop) (b : Ent)
+    (d : D) :
+    meanings role P b d thanTree = [⟨.t, fun g ↦ d ∈ thanClause role P (g 0) b⟩] :=
   rfl
 
 end TypeDriven
