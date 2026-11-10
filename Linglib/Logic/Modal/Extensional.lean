@@ -17,9 +17,9 @@ itself](##isExtensionalAt_box_iff).
 
 ## Main definitions
 
-* `Montague.IsExtensionalAt O w`: the value of `O` at `w` depends only on the extension of its
+* `IsExtensionalAt O w`: the value of `O` at `w` depends only on the extension of its
   argument at `w`.
-* `Montague.IsExtensional O`: `O` is extensional at every index.
+* `IsExtensional O`: `O` is extensional at every index.
 
 ## Implementation notes
 
@@ -36,8 +36,6 @@ adjective is extensional requires.
 -/
 
 @[expose] public section
-
-namespace Montague
 
 open Function
 
@@ -133,5 +131,3 @@ theorem or {O O' : (W → α) → W → Prop} (h : IsExtensionalAt O w) (h' : Is
   h.comp₂ h' Or
 
 end IsExtensionalAt
-
-end Montague

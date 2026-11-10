@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Voice.Basic
 public import Linglib.Semantics.Modality.Necessity
-public import Linglib.Semantics.Composition.Interpreter.Sorts
+public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Mathlib.Tactic.FinCases
 

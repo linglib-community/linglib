@@ -1,15 +1,15 @@
 module
 
 public import Linglib.Syntax.Tree.QuantifierRaising
-public import Linglib.Semantics.Composition.Extensional
+public import Linglib.Logic.Modal.Extensional
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.ModelTheory.Basic
 public import Mathlib.Data.Fin.VecNotation
-public import Linglib.Semantics.Composition.Interpreter.Rules
-public import Linglib.Semantics.Composition.Interpreter.CallByValue
-public import Linglib.Semantics.Composition.Interpreter.Constituency
-public import Linglib.Semantics.Composition.Interpreter.Sorts
-public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
+public import Linglib.Semantics.Composition.Rules
+public import Linglib.Semantics.Composition.CallByValue
+public import Linglib.Semantics.Composition.Constituency
+public import Linglib.Semantics.Composition.Sorts
+public import Linglib.Semantics.Composition.PredicateAbstraction
 public import Linglib.Semantics.Quantification.Polyadic
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Data.Examples.HeimKratzer1998
@@ -890,8 +890,8 @@ theorem emeanings_agree {w : W} (h : loyal w jan ↔ deceitful w dick) : ∃ p q
 attitude at `w` leaves open a world other than `w`: only for a subject who rules out every other
 world does the truth value of the complement fix the report. -/
 theorem believes_isExtensionalAt_iff {x : E} {w : W} :
-    Montague.IsExtensionalAt (fun p w' ↦ □[believes x] p w') w ↔ ∀ v, w ~[believes x] v → v = w :=
-  Montague.isExtensionalAt_box_iff
+    IsExtensionalAt (fun p w' ↦ □[believes x] p w') w ↔ ∀ v, w ~[believes x] v → v = w :=
+  isExtensionalAt_box_iff
 
 /-- The two worlds of the model for (11). -/
 inductive Ch12World | actual | other

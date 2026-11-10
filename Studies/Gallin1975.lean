@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Interpreter.Effect
+public import Linglib.Semantics.Composition.Effect
 public import Linglib.Logic.Assignment
 public import Mathlib.Data.Finset.Basic
 

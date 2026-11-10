@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Interpreter.Effect
+public import Linglib.Semantics.Composition.Effect
 
 /-!
 # The base sorts and their domains

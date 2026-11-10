@@ -4,11 +4,11 @@ public import Mathlib.Logic.Equiv.Fintype
 public import Mathlib.Order.Interval.Set.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Alternatives.Structural
-public import Linglib.Semantics.Composition.Interpreter.Rules
-public import Linglib.Semantics.Composition.Interpreter.Mode
-public import Linglib.Semantics.Composition.Interpreter.CallByValue
-public import Linglib.Semantics.Composition.Interpreter.Constituency
-public import Linglib.Semantics.Composition.Interpreter.LiftRel
+public import Linglib.Semantics.Composition.Rules
+public import Linglib.Semantics.Composition.Mode
+public import Linglib.Semantics.Composition.CallByValue
+public import Linglib.Semantics.Composition.Constituency
+public import Linglib.Semantics.Composition.LiftRel
 public import Mathlib.Data.PFun
 public import Linglib.Semantics.Plurality.Number
 public import Linglib.Semantics.Presupposition.Strengthening

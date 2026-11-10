@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Composition.Interpreter.Mode
-public import Linglib.Semantics.Composition.Interpreter.Rules
+public import Linglib.Semantics.Composition.Mode
+public import Linglib.Semantics.Composition.Rules
 public import Mathlib.Logic.Relator
 
 /-!

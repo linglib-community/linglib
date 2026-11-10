@@ -1,8 +1,8 @@
 module
 
-public import Linglib.Semantics.Composition.Interpreter.Effect
-public import Linglib.Semantics.Composition.Interpreter.Basic
-public import Linglib.Semantics.Composition.EventIdentification
+public import Linglib.Semantics.Composition.Effect
+public import Linglib.Semantics.Composition.Basic
+public import Linglib.Semantics.ArgumentStructure.EventIdentification
 
 /-!
 # The basic rules of composition

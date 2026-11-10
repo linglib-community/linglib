@@ -6,10 +6,10 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Verbal.Voice
-public import Linglib.Semantics.Composition.EventIdentification
-public import Linglib.Semantics.Composition.Interpreter.Rules
-public import Linglib.Semantics.Composition.Interpreter.Mode
-public import Linglib.Semantics.Composition.Interpreter.Sorts
+public import Linglib.Semantics.ArgumentStructure.EventIdentification
+public import Linglib.Semantics.Composition.Rules
+public import Linglib.Semantics.Composition.Mode
+public import Linglib.Semantics.Composition.Sorts
 
 /-!
 # The denotation of Voice

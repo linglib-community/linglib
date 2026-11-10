@@ -1,10 +1,10 @@
 module
 
 public import Linglib.Core.Algebra.Order.Group.Indicator
-public import Linglib.Semantics.Composition.Interpreter.Constituency
-public import Linglib.Semantics.Composition.Interpreter.Rules
-public import Linglib.Semantics.Composition.Interpreter.Sorts
-public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
+public import Linglib.Semantics.Composition.Constituency
+public import Linglib.Semantics.Composition.Rules
+public import Linglib.Semantics.Composition.Sorts
+public import Linglib.Semantics.Composition.PredicateAbstraction
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Mereology
 public import Linglib.Semantics.ArgumentStructure.ThematicRole

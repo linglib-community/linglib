@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Examples.ParteeBorschev2001
-public import Linglib.Semantics.Composition.Interpreter.Rules
-public import Linglib.Semantics.Composition.Interpreter.Sorts
+public import Linglib.Semantics.Composition.Rules
+public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Modification.Classification
 public import Linglib.Semantics.Possession.Relationalizer
 

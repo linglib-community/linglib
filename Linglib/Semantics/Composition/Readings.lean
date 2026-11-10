@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Interpreter.Constituency
+public import Linglib.Semantics.Composition.Constituency
 public import Mathlib.Data.Set.Image
 
 /-!

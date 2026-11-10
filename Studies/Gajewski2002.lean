@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Interpreter.Sorts
+public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Quantification.Exceptive
 public import Linglib.Semantics.Quantification.Lindstrom
 public import Studies.BarwiseCooper1981
