@@ -3,7 +3,8 @@ module
 public import Linglib.Data.Examples.ChatainSchlenker2026
 public import Linglib.Logic.Trivalent.Knowledge
 public import Linglib.Logic.Trivalent.Part
-public import Linglib.Semantics.Composition.Partial
+public import Linglib.Semantics.Composition.Interpreter.Constituency
+public import Mathlib.Data.PFun
 public import Linglib.Semantics.Alternatives.WithAlternatives
 public import Linglib.Semantics.Modification.Basic
 public import Linglib.Data.Examples.Readers
@@ -22,11 +23,16 @@ can accommodate one of a trigger's two presuppositions while the other projects.
 
 A trivalent predicate `P : E → W → Trivalent` is undefined where its presupposition fails. Free
 Enrichment (62) is `Modifier.intersective` at `fun x w ↦ ofProp (R x w)`, written out below as
-`ofProp (R x w) ⊓ P x w`. On the partial composition engine, whose predicate modification is Weak
-Kleene, Free Enrichment is instead a map on the lexicon, `if R d w then P w d else false`, which
-agrees with the Strong Kleene conjunction because `R` is two-valued (`enrichment_eq_meetMiddle`);
-the composition rules (63) are then the engine's own. Since every mode of that engine is strict
-(`Montague.Mode.dom_right_of_dom_evalPartial`), `A` is no word meaning there.
+`ofProp (R x w) ⊓ P x w`. In the derivation of (26) *take out* is a function into a partial truth
+value, a gap being an effect that the other words are applied through, and Free Enrichment is a
+map on the lexicon, `if R d w then P w d else false`, which agrees with the Strong Kleene
+conjunction because `R` is two-valued (`enrichment_eq_meetMiddle`); the composition rules (63)
+are then functional application and abstraction. With partial truth values a type of their own,
+`A` is a possible word meaning, a function from them to truth values: the case against it is the
+parallelism of ellipsis, not its meaning.
+
+The paper's truth values are three, 1, 0 and #. In the derivation a partial truth value stands
+for them, undefined for #, and `Trivalent.ofPart` reads it back.
 
 ## TODO
 
@@ -183,13 +189,22 @@ end StrongKleene
 
 /-! ### Composition
 
-The derivation of `Examples.ex_26` on the partial engine. -/
+The derivation of `Examples.ex_26`. -/
 
 section Composition
 
-open Montague PhraseStructure PhraseStructure.Tree
+open Interpreter PhraseStructure PhraseStructure.Tree
 
-variable {D W : Type}
+/-- The base sorts of the derivation: the days, and the assignments of days to indices. -/
+inductive Atom
+  | e
+  | g
+  deriving DecidableEq
+
+/-- The domains of the base sorts over days `D`. -/
+abbrev Atom.Dom (D : Type) : Atom → Type
+  | .e => D
+  | .g => ℕ → D
 
 /-- The words of (26): the days, negation, and *take the lab rat out of its cage*. -/
 inductive Word (D : Type) where
@@ -197,14 +212,26 @@ inductive Word (D : Type) where
   | not
   | takeOut
 
-open Classical in
-/-- The lexicon of (26) at a world `w`, where *take out* is the partial predicate `P w` enriched
-by `R` (62). -/
-noncomputable def lexicon (P : W → D →. Prop) (R : D → W → Prop) (w : W) :
-    Word D → Option (PDenotation D Unit)
-  | .day d => some ⟨.e, Part.some d⟩
-  | .not => some ⟨.t ⇒ .t, Part.some fun p ↦ Part.some (¬ p)⟩
-  | .takeOut => some ⟨.e ⇒ .t, Part.some fun d ↦ if R d w then P w d else Part.some False⟩
+/-- The words and traces of (26) by semantic type: a day, negation of a truth value, *take out*
+a function from days to partial truth values, and a trace a reader of the assignment. -/
+inductive Item (D : Type) : Ty Atom → Type
+  | day (d : D) : Item D (.base .e)
+  | not : Item D (.t ⇒ .t)
+  | takeOut : Item D (.base .e ⇒ .comp .M .t)
+  | trace (n : ℕ) : Item D (.comp (.R (.base .g)) (.base .e))
+
+/-- The item a leaf is. -/
+def items {D : Type} : Word D ⊕ ℕ → List (Σ a, Item D a)
+  | .inl (.day d) => [⟨_, .day d⟩]
+  | .inl .not => [⟨_, .not⟩]
+  | .inl .takeOut => [⟨_, .takeOut⟩]
+  | .inr n => [⟨_, .trace n⟩]
+
+/-- Assignments of days to indices. -/
+def assignments {D : Type} : Assignments (Atom.Dom D) (.base .g) (.base .e) :=
+  ⟨fun i n ↦ i n, fun i n v ↦ Function.update i n v⟩
+
+variable {D W : Type}
 
 /-- The λ-abstract `[λ₁ [not [t₁ take-out]]]` that the antecedent and the elided clause share. -/
 def vp : Tree Unit (Word D) := .binder 1 (.bin (.leaf .not) (.bin (.tr 1) (.leaf .takeOut)))
@@ -212,59 +239,75 @@ def vp : Tree Unit (Word D) := .binder 1 (.bin (.leaf .not) (.bin (.tr 1) (.leaf
 /-- The clause `[d vp]`, the antecedent of (26) at Monday and its elided clause at Wednesday. -/
 def clause (d : D) : Tree Unit (Word D) := .bin (.leaf (.day d)) vp
 
-variable (P : W → D →. Prop) (R : D → W → Prop) (w : W) (g : Assignment D) (d : D)
+variable (P : W → D →. Prop) (R : D → W → Prop) (w : W) (g : ℕ → D) (d : D)
 
 open Classical in
--- (67)
-theorem interpPartial_clause : interpPartial (lexicon P R w) g (clause d) =
-    some ⟨.t, (if R d w then P w d else Part.some False).map Not⟩ := by
-  classical
-  have : interpPartial (lexicon P R w) g (clause d) =
-      some ⟨.t, (if R d w then P w d else Part.some False).bind fun p ↦ Part.some (¬ p)⟩ := by
-    simp only [clause, vp, interpPartial_phrase_binary, interpPartial_terminal, interpPartial_bind,
-      interpPartial_trace, lexicon, Option.bind_some, Option.map_some, Mode.combine?_fn_left,
-      Mode.combine?_fn_right, valueAt_some, Function.update_self,
-      Mode.evalPartial_functionalLeft, Mode.evalPartial_functionalRight, Part.bind_some]
-  rw [this, Part.bind_some_eq_map]
+/-- The lexicon of (26) at a world `w`, where *take out* is the partial predicate `P w` enriched
+by `R` (62). -/
+noncomputable def Item.val : {a : Ty Atom} → Item D a → a.Dom (Atom.Dom D)
+  | _, .day d => d
+  | _, .not => fun p ↦ ¬ p
+  | _, .takeOut => fun d ↦ if R d w then P w d else Part.some False
+  | _, .trace n => fun i ↦ i n
+
+/-- The meanings of a tree at a world, by functional application through effects and
+abstraction over an index. -/
+noncomputable def meanings (t : Tree Unit (Word D)) : List (Σ a : Ty Atom, a.Dom (Atom.Dom D)) :=
+  match t.skeleton (fun _ ↦ false) with
+  | some s => (effectDriven .application (.base .g) (.base .e)).values
+      (M := effectGrammar.structure (Abstraction.eval assignments)) (Item.val P R w) items s
+  | none => []
 
 open Classical in
-/-- The three-valued readout of the engine's denotation is the Strong Kleene negation of the
-enriched predicate, so the engine and `enrichment_projects_and_accommodates` describe one
+-- (67): the clause has one meaning, a partial truth value at each assignment.
+theorem meanings_clause : meanings P R w (clause d) =
+    [⟨.comp (.R (.base .g)) (.comp .M .t),
+      fun _ ↦ (if R d w then P w d else Part.some False).map Not⟩] :=
+  rfl
+
+open Classical in
+/-- The three-valued readout of the clause's meaning is the Strong Kleene negation of the
+enriched predicate, so the derivation and `enrichment_projects_and_accommodates` describe one
 object ((67)). -/
 theorem ofPart_clause :
     ofPart ((if R d w then P w d else Part.some False).map Not) =
       (ofProp (R d w) ⊓ ofPart (P w d))ᶜ := by
   rw [ofPart_map_not, ofPart_ite_some_false]
 
+/-- A clause fails of its presupposition at an assignment when it has a meaning undefined
+there. -/
+def PresupFailure : Prop :=
+  ∃ v, (⟨.comp (.R (.base .g)) (.comp .M .t), v⟩ : Σ a : Ty Atom, a.Dom (Atom.Dom D)) ∈
+    meanings P R w (clause d) ∧ ¬ (v g).Dom
+
 /-- The clause fails exactly where the enrichment holds and the predicate is undefined ((68),
 (70)). -/
-theorem presupFailure_clause :
-    PresupFailure (lexicon P R w) g (clause d) ↔ R d w ∧ ¬ (P w d).Dom := by
+theorem presupFailure_clause : PresupFailure P R w g d ↔ R d w ∧ ¬ (P w d).Dom := by
   classical
-  rw [presupFailure_iff_ofPart_eq_undefined _ _ (interpPartial_clause P R w g d), ofPart_clause]
-  simp [and_comm]
+  simp only [PresupFailure, meanings_clause, List.mem_singleton, Sigma.mk.injEq, heq_eq_eq,
+    true_and, exists_eq_left]
+  by_cases h : R d w <;> simp [h]
 
 /-- With an enrichment trivial at `Y` and entailing the presupposition at `X`, the clause shared
 by the antecedent and the elided clause fails at `Y` exactly where the presupposition does and
 never fails at `X` ((66)–(70)). -/
 theorem clause_projects_and_accommodates {X Y : D} (hY : ∀ w, R Y w)
     (hX : ∀ w, R X w → (P w X).Dom) :
-    (PresupFailure (lexicon P R w) g (clause Y) ↔ ¬ (P w Y).Dom) ∧
-      ¬ PresupFailure (lexicon P R w) g (clause X) := by
+    (PresupFailure P R w g Y ↔ ¬ (P w Y).Dom) ∧ ¬ PresupFailure P R w g X := by
   simp only [presupFailure_clause]
   exact ⟨and_iff_right (hY w), fun h ↦ h.2 (hX w h.1)⟩
 
 theorem presupFailure_clause_iff_mem_gapExt [DecidablePred (R d)] :
-    PresupFailure (lexicon P R w) g (clause d) ↔
-      w ∈ gapExt fun w ↦ ofProp (R d w) ⊓ ofPart (P w d) := by
+    PresupFailure P R w g d ↔ w ∈ gapExt fun w ↦ ofProp (R d w) ⊓ ofPart (P w d) := by
   rw [presupFailure_clause, gapExt_ofProp_inf, Set.mem_inter_iff, mem_gapExt,
     ofPart_eq_undefined_iff, Set.mem_ofPred_eq]
 
-/-- No word of type `⟨t,t⟩` turns an undefined argument into a defined value, so `A` is no word
-meaning on the partial engine. -/
-example (f : Part (Ty.PDomain D W (.t ⇒ .t))) {a : Part Prop} (ha : ¬ a.Dom) :
-    ¬ (Mode.functionalLeft.evalPartial f a).Dom :=
-  fun h ↦ ha (Mode.dom_right_of_dom_evalPartial _ h)
+/-- `A` (7) maps the value 1 to 1 and the other two values to 0, so it is a function from partial
+truth values to truth values, and a word of that type takes a partial truth value by functional
+application: `A` is a possible word meaning, as the paper has it. -/
+example : (typeDriven (.application (B := Atom))).binary () (.comp .M .t ⇒ .t) (.comp .M .t) =
+    [⟨.t, .fa⟩] :=
+  rfl
 
 end Composition
 
