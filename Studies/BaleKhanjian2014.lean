@@ -4,7 +4,9 @@ public import Mathlib.Logic.Equiv.Fintype
 public import Mathlib.Order.Interval.Set.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Alternatives.Structural
-public import Linglib.Semantics.Composition.Partial
+public import Linglib.Semantics.Composition.Interpreter.Constituency
+public import Linglib.Semantics.Composition.Interpreter.LiftRel
+public import Mathlib.Data.PFun
 public import Linglib.Semantics.Plurality.Number
 public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Reference.Iota
@@ -27,8 +29,11 @@ nothing to count](##numeral_atomsOf_eq_empty).
 
 ## Implementation notes
 
-Trees are interpreted by the partial engine of `Linglib/Semantics/Composition/Partial.lean`, over
-worlds that are sets of boys, and a tree's presupposition is the set of worlds where it is defined.
+Denotations are the paper's: a noun is a set of individuals, the number heads and the numeral are
+functions on sets, and *sup* and the choice function are partial functions, the only two. A tree
+is interpreted by functional application over worlds that are sets of boys, a function applied
+to an undefined argument being undefined, and a tree's presupposition is the set of worlds where
+it has a defined value.
 The plural is Harbour's $[-\text{atomic}]$, the paper's *sup* is the set of greatest members, and
 the null determiner +DEF is `iota`, the factoring of `Linglib/Semantics/Reference/Iota.lean`. The
 allomorphs *-n* and *-ə* are one morpheme and the verb's agreement is spelled out with the subject,
@@ -62,7 +67,7 @@ restrictor and in a bound possessive, and competition by informativeness are not
 
 namespace BaleKhanjian2014
 
-open Mereology Number Presupposition PhraseStructure Tree Montague
+open Mereology Number Presupposition PhraseStructure Tree Interpreter
 
 /-! ### Denotations -/
 
@@ -260,42 +265,138 @@ section Interpretation
 
 variable {α : Type} {B : Finset α} {n : NumberHead}
 
-/-- The partial denotations of the morphemes over the boys `B`. The number heads, *sup* and the
-numeral modify a predicate through its extension; *sup* is defined where the extension contains its
-supremum, and +DEF where it has one member. The verb and the existential are not interpreted. -/
-noncomputable def lex (B : Finset α) : Morpheme → Option (PDenotation (Finset α) Unit)
-  | .boy => some ⟨.e ⇒ .t, .some (PFun.lift (· ∈ boy B))⟩
-  | .num n => some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t,
-      .some fun P ↦ .some (PFun.lift (· ∈ n.denote {x | True ∈ P x}))⟩
-  | .def_ => some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t, .some fun P ↦ Part.restrict (sup {x | True ∈ P x}).Nonempty
-      (.some (PFun.lift (· ∈ sup {x | True ∈ P x}))) fun _ ↦ trivial⟩
-  | .plusDef => some ⟨(.e ⇒ .t) ⇒ .e, .some fun P ↦ ↑(iota {x | True ∈ P x})⟩
-  | .two => some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t,
-      .some fun P ↦ .some (PFun.lift (· ∈ numeral 2 {x | True ∈ P x}))⟩
-  | .exists_ | .run => none
+/-- The type of a set of individuals. -/
+abbrev setTy : Ty Unit := .base () ⇒ .t
+
+/-- The domains: the one base sort is the individuals, the sets of the atoms `α`. -/
+abbrev Dom (α : Type) : Unit → Type := fun _ ↦ Finset α
+
+/-- The interpreted morphemes by type. The noun is a set and the number heads and the numeral
+are functions on sets; *sup* and the choice function are partial. The verb and the existential
+are not interpreted. -/
+inductive Item : Ty Unit → Type
+  | boy : Item (.comp .M setTy)
+  | num (n : NumberHead) : Item (.comp .M (setTy ⇒ setTy))
+  | two : Item (.comp .M (setTy ⇒ setTy))
+  | def_ : Item (.comp .M (setTy ⇒ .comp .M setTy))
+  | plusDef : Item (.comp .M (setTy ⇒ .comp .M (.base ())))
+
+/-- The item a leaf is, if it is interpreted. -/
+def items : Morpheme ⊕ ℕ → List (Σ a, Item a)
+  | .inl .boy => [⟨_, .boy⟩]
+  | .inl (.num n) => [⟨_, .num n⟩]
+  | .inl .two => [⟨_, .two⟩]
+  | .inl .def_ => [⟨_, .def_⟩]
+  | .inl .plusDef => [⟨_, .plusDef⟩]
+  | _ => []
+
+/-- The denotations of the morphemes over the boys `B`: *sup* is defined at a set that contains
+its supremum, and the choice function +DEF at a set with one member. -/
+noncomputable def Item.val (B : Finset α) : {a : Ty Unit} → Item a → a.Dom (Dom α)
+  | _, .boy => .some (BaleKhanjian2014.boy B)
+  | _, .num n => .some n.denote
+  | _, .two => .some (numeral 2)
+  | _, .def_ => .some fun X ↦ Part.restrict (sup X).Nonempty (.some (sup X)) fun _ ↦ trivial
+  | _, .plusDef => .some fun X ↦ ↑(iota X)
+
+/-- There are no type shifts. -/
+def noShift {a b : Ty Unit} : Empty → a.Dom (Dom α) → b.Dom (Dom α) := nofun
+
+instance :
+    (effectGrammar (Grammar.application (B := Unit)).Binary fun _ _ ↦ Empty).language.Structure
+      (Ty.Dom (Dom α)) :=
+  effectGrammar.structure noShift
+
+/-- The meanings of a tree over the boys `B`: every constituent is a partial value, and a
+function applies to its sister where both are defined. -/
+noncomputable def meanings (B : Finset α) (t : Tree Cat Morpheme) :
+    List (Σ a : Ty Unit, a.Dom (Dom α)) :=
+  match t.skeleton (fun _ ↦ false) with
+  | some s => (partialValued .application (Shift := fun _ _ ↦ Empty)).values
+      (D := Ty.Dom (Dom α)) (Item.val B) items s
+  | none => []
+
+/-- A partial value that is defined. -/
+def IsDefined : (Σ a : Ty Unit, a.Dom (Dom α)) → Prop
+  | ⟨.comp .M _, x⟩ => x.Dom
+  | _ => False
 
 /-- The presupposition of a tree: the sets of boys over which it has a defined value. -/
 def defined (t : Tree Cat Morpheme) : Set (Finset α) :=
-  {B | (interpPartial (lex B) (fun _ ↦ ∅) t).elim False (·.2.Dom)}
+  {B | ∃ d ∈ meanings B t, IsDefined d}
 
-theorem mem_defined_iff {t : Tree Cat Morpheme} :
-    B ∈ defined t ↔ ∃ d, interpPartial (lex B) (fun _ ↦ ∅) t = some d ∧ d.2.Dom := by
-  rw [defined, Set.mem_ofPred_eq]
-  cases interpPartial (lex B) (fun _ ↦ ∅) t <;> simp
+/-- A total function applied to the partial value on its left. -/
+abbrev back (a b : Ty Unit) : Mode (Grammar.application (B := Unit)).Binary
+    (.comp .M a) (.comp .M (a ⇒ b)) (.comp .M b) :=
+  .ap trivial (.basic .ba)
 
-theorem interpPartial_numP :
-    interpPartial (lex B) (fun _ ↦ ∅) (numP n) =
-      some ⟨.e ⇒ .t, .some (PFun.lift (· ∈ n.denote (boy B)))⟩ := by
-  simp [numP, lex]
+/-- A total function applied to the partial value on its right. -/
+abbrev forth (a b : Ty Unit) : Mode (Grammar.application (B := Unit)).Binary
+    (.comp .M (a ⇒ b)) (.comp .M a) (.comp .M b) :=
+  .ap trivial (.basic .fa)
 
-theorem interpPartial_numPStar :
-    interpPartial (lex B) (fun _ ↦ ∅) (numPStar n) = some ⟨.e ⇒ .t,
-      Part.restrict (sup (n.denote (boy B))).Nonempty
-        (.some (PFun.lift (· ∈ sup (n.denote (boy B))))) fun _ ↦ trivial⟩ := by
-  simp [numPStar, interpPartial_numP, lex]
+/-- A partial function applied to the partial value on its left. -/
+abbrev backPartial (a b : Ty Unit) : Mode (Grammar.application (B := Unit)).Binary
+    (.comp .M a) (.comp .M (a ⇒ .comp .M b)) (.comp .M b) :=
+  .join trivial (.ap trivial (.basic .ba))
+
+theorem eval_back {a b : Ty Unit} (x : Part (a.Dom (Dom α)))
+    (f : Part (a.Dom (Dom α) → b.Dom (Dom α))) :
+    (back a b).eval (Dom α) x f = x.bind fun v ↦ f.map fun g ↦ g v := by
+  rw [Mode.eval_ap_basic]; rfl
+
+theorem eval_forth {a b : Ty Unit} (f : Part (a.Dom (Dom α) → b.Dom (Dom α)))
+    (x : Part (a.Dom (Dom α))) :
+    (forth a b).eval (Dom α) f x = f.bind fun g ↦ x.map fun v ↦ g v := by
+  rw [Mode.eval_ap_basic]; rfl
+
+theorem eval_backPartial {a b : Ty Unit} (x : Part (a.Dom (Dom α)))
+    (f : Part (a.Dom (Dom α) → Part (b.Dom (Dom α)))) :
+    (backPartial a b).eval (Dom α) x f = x.bind fun v ↦ f.bind fun g ↦ g v := by
+  rw [Mode.eval_join_ap_basic]; rfl
+
+/-- The value of the number phrase. -/
+noncomputable def numPVal (B : Finset α) (n : NumberHead) : Part (Set (Finset α)) :=
+  (back setTy setTy).eval (Dom α) (Item.val B .boy) (Item.val B (.num n))
+
+/-- The value of NumP*. -/
+noncomputable def numPStarVal (B : Finset α) (n : NumberHead) : Part (Set (Finset α)) :=
+  (backPartial setTy setTy).eval (Dom α) (numPVal B n) (Item.val B .def_)
+
+theorem numPVal_eq : numPVal B n = .some (n.denote (boy B)) := by
+  simp [numPVal, eval_back, Item.val]
+
+theorem numPStarVal_eq : numPStarVal B n =
+    Part.restrict (sup (n.denote (boy B))).Nonempty (.some (sup (n.denote (boy B))))
+      fun _ ↦ trivial := by
+  simp [numPStarVal, numPVal_eq, eval_backPartial, Item.val]
+
+theorem meanings_numP : meanings B (numP n) = [⟨.comp .M setTy, .some (n.denote (boy B))⟩] :=
+  (show meanings B (numP n) = [⟨.comp .M setTy, numPVal B n⟩] from rfl).trans
+    (by rw [numPVal_eq])
+
+theorem meanings_numPStar : meanings B (numPStar n) = [⟨.comp .M setTy,
+    Part.restrict (sup (n.denote (boy B))).Nonempty (.some (sup (n.denote (boy B))))
+      fun _ ↦ trivial⟩] :=
+  (show meanings B (numPStar n) = [⟨.comp .M setTy, numPStarVal B n⟩] from rfl).trans
+    (by rw [numPStarVal_eq])
+
+theorem meanings_definiteDP : meanings B (definiteDP n) = [⟨.comp .M (.base ()),
+    (backPartial setTy (.base ())).eval (Dom α) (numPStarVal B n) (Item.val B .plusDef)⟩] :=
+  rfl
+
+theorem meanings_bareDP : meanings B (bareDP n) = [⟨.comp .M (.base ()),
+    (backPartial setTy (.base ())).eval (Dom α) (numPVal B n) (Item.val B .plusDef)⟩] :=
+  rfl
+
+theorem meanings_numeralDP : meanings B (numeralDP n) = [⟨.comp .M (.base ()),
+    (backPartial setTy (.base ())).eval (Dom α)
+      ((forth setTy setTy).eval (Dom α) (Item.val B .two) (numPStarVal B n))
+      (Item.val B .plusDef)⟩] :=
+  rfl
 
 theorem mem_defined_numPStar : B ∈ defined (numPStar n) ↔ (sup (n.denote (boy B))).Nonempty := by
-  simp [defined, interpPartial_numPStar]
+  simp [defined, meanings_numPStar, IsDefined, Part.restrict]
 
 -- p. 22: the singular NumP* presupposes a boy, the plural two
 theorem defined_numPStar_sg : defined (α := α) (numPStar .sg) = {B | 1 ≤ B.card} :=
@@ -315,12 +416,14 @@ theorem defined_numPStar_pl_ssubset [Nonempty α] :
 -- the determiner adds no presupposition to NumP*
 theorem defined_definiteDP : defined (α := α) (definiteDP n) = defined (numPStar n) := by
   ext B
-  simp [defined, definiteDP, interpPartial_numPStar, lex]
+  simp [defined, meanings_definiteDP, meanings_numPStar, numPStarVal_eq, eval_backPartial,
+    IsDefined, Item.val, Part.restrict]
 
 theorem defined_bareDP_sg : defined (α := α) (bareDP .sg) = {B | B.card = 1} := by
   ext B
-  simp only [defined, bareDP, Set.mem_ofPred_eq]
-  simp [interpPartial_numP, lex, iota_isSome_iff, denote_sg_boy, Finset.card_eq_one]
+  simp only [defined, Set.mem_ofPred_eq]
+  simp [meanings_bareDP, numPVal_eq, eval_backPartial, IsDefined, Item.val, iota_isSome_iff,
+    denote_sg_boy, Finset.card_eq_one]
   constructor
   · rintro ⟨x, ⟨hxB, hx⟩, huniq⟩
     have hB := huniq B ⟨subset_rfl, hx.mono hxB⟩
@@ -340,14 +443,15 @@ theorem defined_numeralDP : defined (α := α) (numeralDP n) = {B | B.card = 2} 
     cases n
     exacts [⟨1, by omega, denote_sg_boy⟩, ⟨2, le_rfl, denote_pl_boy⟩]
   obtain ⟨k, hk2, hden⟩ := hk
-  simp [defined, numeralDP, interpPartial_numPStar, lex, hsub.iota_isSome_iff, hden, sup_card_le]
+  simp [defined, meanings_numeralDP, numPStarVal_eq, eval_backPartial, eval_forth, IsDefined,
+    Item.val, Part.restrict, hsub.iota_isSome_iff, hden, sup_card_le]
   exact ⟨fun ⟨_, _, ⟨rfl, _⟩, h⟩ ↦ h, fun h ↦ ⟨⟨B, rfl, by omega⟩, B, ⟨rfl, by omega⟩, h⟩⟩
 
 /-! ### Symmetry
 
 A permutation of the individuals carries each world to another of the same size, and the lexicon
-over the one to the lexicon over the other, morpheme by morpheme, so the engine gives every tree
-the same definedness in both (`PhraseStructure.Tree.interpPartial_rel`). -/
+over the one to the lexicon over the other, morpheme by morpheme, so every tree has the same
+definedness in both (`Interpreter.effectGrammar.isLogicalRel`). -/
 
 section Symmetry
 
@@ -406,56 +510,50 @@ private theorem Transports.iota (h : Transports σ X X') :
     rw [← map_map_symm σ y, huniq _ ((h.mem_iff' y).1 hy)]
 
 /-- Individuals related along `σ`. -/
-private def rel (σ : Equiv.Perm α) : Ty.BaseRel (Finset α) (Finset α) Unit Unit {} {} :=
-  ⟨fun x y ↦ y = x.map σ.toEmbedding, Eq, Eq, Eq⟩
+private def rel (σ : Equiv.Perm α) : ∀ _ : Unit, Finset α → Finset α → Prop :=
+  fun _ x y ↦ y = x.map σ.toEmbedding
 
-private theorem transports_of_liftRel {P P' : Finset α →. Prop}
-    (h : Ty.LiftRel PartRel (rel σ) (.e ⇒ .t) P P') :
-    Transports σ {x | True ∈ P x} {x | True ∈ P' x} := fun _ ↦
-  (h rfl).true_mem_iff
-
-private theorem liftRel_lift (h : Transports σ X X') :
-    Ty.LiftRel PartRel (rel σ) (.e ⇒ .t) (PFun.lift (· ∈ X)) (PFun.lift (· ∈ X')) := by
+private theorem liftRel_set (h : Transports σ X X') : Ty.LiftRel (rel σ) setTy X X' := by
   rintro x _ rfl
-  exact ⟨Iff.rfl, fun _ _ ↦ h x⟩
+  exact h x
 
-private theorem partRel_some {ty : Ty} {a a' : Ty.PDomain (Finset α) Unit ty}
-    (h : Ty.LiftRel PartRel (rel σ) ty a a') : PartRel (Ty.LiftRel PartRel (rel σ) ty) (.some a)
-      (.some a') :=
-  ⟨Iff.rfl, fun _ _ ↦ h⟩
+private theorem transports_of_liftRel (h : Ty.LiftRel (rel σ) setTy X X') : Transports σ X X' :=
+  fun _ ↦ h rfl
 
-private theorem partRel_none {ty : Ty} :
-    PartRel (Ty.LiftRel PartRel (rel σ) ty) (Part.none : Part (Ty.PDomain (Finset α) Unit ty))
-      Part.none :=
-  ⟨Iff.rfl, fun h ↦ absurd h Part.not_none_dom⟩
-
-private theorem lex_rel (B : Finset α) (w : Morpheme) (d' : PDenotation (Finset α) Unit)
-    (h : lex (B.map σ.toEmbedding) w = some d') :
-    ∃ c, lex B w = some ⟨d'.1, c⟩ ∧ PartRel (Ty.LiftRel PartRel (rel σ) d'.1) c d'.2 := by
-  cases w <;> cases h
-  · exact ⟨_, rfl, partRel_some (liftRel_lift (transports_boy B))⟩
-  · exact ⟨_, rfl, partRel_some fun _ _ hP ↦
-      partRel_some (liftRel_lift ((transports_of_liftRel hP).denote _))⟩
-  · refine ⟨_, rfl, partRel_some fun P P' hP ↦ ?_⟩
-    have hsup := (transports_of_liftRel hP).sup
-    have hne : (sup {x | True ∈ P x}).Nonempty ↔ (sup {x | True ∈ P' x}).Nonempty :=
-      ⟨fun ⟨x, hx⟩ ↦ ⟨_, (hsup x).1 hx⟩, fun ⟨y, hy⟩ ↦ ⟨_, (hsup.mem_iff' y).1 hy⟩⟩
-    exact ⟨hne, fun _ _ ↦ liftRel_lift hsup⟩
-  · refine ⟨_, rfl, partRel_some fun P P' hP ↦ ?_⟩
-    have hi := (transports_of_liftRel hP).iota
-    dsimp only
-    rcases hX : iota {x | True ∈ P x} with _ | _
-    · rw [← hi, hX]; exact partRel_none
-    · rw [← hi, hX]; exact partRel_some rfl
-  · exact ⟨_, rfl, partRel_some fun _ _ hP ↦
-      partRel_some (liftRel_lift ((transports_of_liftRel hP).numeral 2))⟩
+/-- The lexicon over the boys and the lexicon over the boys carried along `σ` are related,
+morpheme by morpheme. -/
+private theorem liftRel_val (B : Finset α) : ∀ {a : Ty Unit} (i : Item a),
+    Ty.LiftRel (rel σ) a (Item.val B i) (Item.val (B.map σ.toEmbedding) i)
+  | _, .boy => ⟨Iff.rfl, fun _ _ ↦ liftRel_set (transports_boy B)⟩
+  | _, .num n => ⟨Iff.rfl, fun _ _ _ _ hX ↦ liftRel_set ((transports_of_liftRel hX).denote n)⟩
+  | _, .two => ⟨Iff.rfl, fun _ _ _ _ hX ↦ liftRel_set ((transports_of_liftRel hX).numeral 2)⟩
+  | _, .def_ => ⟨Iff.rfl, fun _ _ X X' hX ↦
+      have hsup := (transports_of_liftRel hX).sup
+      ⟨⟨fun ⟨x, hx⟩ ↦ ⟨_, (hsup x).1 hx⟩, fun ⟨y, hy⟩ ↦ ⟨_, (hsup.mem_iff' y).1 hy⟩⟩,
+        fun _ _ ↦ liftRel_set hsup⟩⟩
+  | _, .plusDef => ⟨Iff.rfl, fun _ _ X X' hX ↦ by
+      have hi := (transports_of_liftRel hX).iota
+      show Eff.RelWith .M _ (rel σ ()) (↑(iota X) : Part (Finset α)) ↑(iota X')
+      rw [← hi]
+      cases iota X
+      · exact ⟨Iff.rfl, fun h ↦ absurd h Part.not_none_dom⟩
+      · exact ⟨Iff.rfl, fun _ _ ↦ rfl⟩⟩
 
 private theorem mem_defined_of_map {B : Finset α} {t : Tree Cat Morpheme}
     (h : B.map σ.toEmbedding ∈ defined t) : B ∈ defined t := by
-  obtain ⟨d', hd', hdom⟩ := mem_defined_iff.1 h
-  obtain ⟨c, hc, hrel⟩ := interpPartial_rel (r := rel σ) (lex_rel (σ := σ) B) (g := fun _ ↦ ∅)
-    (g' := fun _ ↦ ∅) (fun _ ↦ (Finset.map_empty _).symm) t hd'
-  exact mem_defined_iff.2 ⟨_, hc, hrel.1.2 hdom⟩
+  simp only [defined, meanings, Set.mem_ofPred_eq] at h ⊢
+  cases hs : t.skeleton (fun _ ↦ false) with
+  | none => simp [hs] at h
+  | some s =>
+    simp only [hs, Interpreter.values, List.mem_map] at h ⊢
+    obtain ⟨_, ⟨⟨a, d⟩, hd, rfl⟩, hdef⟩ := h
+    refine ⟨_, ⟨⟨a, d⟩, hd, rfl⟩, ?_⟩
+    have hrel : Ty.LiftRel (rel σ) a _ _ :=
+      (effectGrammar.isLogicalRel (r := rel σ) (G := .application)
+        (shift := noShift) (shift' := noShift) (fun b ↦ Application.rel_eval b)
+        (fun s ↦ nomatch s)).realize (fun i ↦ liftRel_val (σ := σ) B i) d
+    match a, d, hrel, hdef with
+    | .comp .M _, _, hrel, hdef => exact hrel.1.2 hdef
 
 end Symmetry
 
@@ -495,115 +593,160 @@ theorem licensed_of_mem_structuralAlternatives {ψ : Tree Cat Morpheme}
     (fun _ _ h ↦ h.cat) (forall_mem_substitutionSource.2 ⟨by decide, by cases n <;> decide⟩)
     (fun _ _ _ _ h ↦ h) (fun _ _ _ _ _ _ _ h ↦ h) (fun _ _ _ _ _ h ↦ h) (by cases n <;> decide) h
 
-/-- A predicate is good over the boys `B` when it is total, true of `B`, and true only of parts of
-`B`. -/
-structure GoodPred (B : Finset α) (P : Finset α →. Prop) : Prop where
-  dom : ∀ x, (P x).Dom
-  self : True ∈ P B
-  le : ∀ x, True ∈ P x → x ⊆ B
+/-- A set is good over the boys `B` when it contains `B` and only parts of `B`. -/
+structure GoodPred (B : Finset α) (X : Set (Finset α)) : Prop where
+  self : B ∈ X
+  le : ∀ x ∈ X, x ⊆ B
 
-/-- A value is good over the boys `B` when it is a good predicate, or a modifier taking good
-predicates to good predicates. -/
-inductive Good (B : Finset α) : PDenotation (Finset α) Unit → Prop
-  | pred {P : Finset α →. Prop} : GoodPred B P → Good B ⟨.e ⇒ .t, .some P⟩
-  | modifier {F : (Finset α →. Prop) → Part (Finset α →. Prop)} :
-      (∀ P, GoodPred B P → ∃ Q, F P = .some Q ∧ GoodPred B Q) →
-        Good B ⟨(.e ⇒ .t) ⇒ .e ⇒ .t, .some F⟩
+/-- A value is good over the boys `B` when it is a good set, or a function on sets, total or
+partial, that takes good sets to good sets. -/
+inductive Good (B : Finset α) : (Σ a : Ty Unit, a.Dom (Dom α)) → Prop
+  | pred {X : Set (Finset α)} : GoodPred B X → Good B ⟨.comp .M setTy, .some X⟩
+  | modifier {F : Set (Finset α) → Set (Finset α)} :
+      (∀ X, GoodPred B X → GoodPred B (F X)) → Good B ⟨.comp .M (setTy ⇒ setTy), .some F⟩
+  | partialModifier {F : Set (Finset α) → Part (Set (Finset α))} :
+      (∀ X, GoodPred B X → ∃ Y, F X = .some Y ∧ GoodPred B Y) →
+        Good B ⟨.comp .M (setTy ⇒ .comp .M setTy), .some F⟩
 
-theorem Good.dom {d : PDenotation (Finset α) Unit} (h : Good B d) : d.2.Dom := by
+theorem Good.isDefined {d : Σ a : Ty Unit, a.Dom (Dom α)} (h : Good B d) : IsDefined d := by
   cases h <;> trivial
 
-theorem Good.combine? {d₁ d₂ d : PDenotation (Finset α) Unit} (h₁ : Good B d₁) (h₂ : Good B d₂)
-    (h : Mode.combine? Mode.evalPartial d₁ d₂ = some d) : Good B d := by
-  rcases h₁ with @⟨P, hP⟩ | @⟨F, hF⟩ <;> rcases h₂ with @⟨Q, hQ⟩ | @⟨G, hG⟩
-  · rw [Mode.combine?_evalPartial_predicateModification] at h
-    cases h
-    refine .pred ⟨fun x ↦ ⟨hP.dom x, hQ.dom x⟩, ?_, fun x hx ↦ ?_⟩
-    · exact Part.mem_bind_iff.2 ⟨True, hP.self, (Part.mem_map_iff _).2 ⟨True, hQ.self, by simp⟩⟩
-    · obtain ⟨a, ha, hm⟩ := Part.mem_bind_iff.1 hx
-      obtain ⟨b, -, hab⟩ := (Part.mem_map_iff _).1 hm
-      exact hP.le x ((eq_true (of_eq_true hab).1) ▸ ha)
-  · rw [Mode.combine?_evalPartial_fn_right] at h
-    obtain ⟨R, hR, hgood⟩ := hG P hP
-    cases h
-    rw [hR]
-    exact .pred hgood
-  · rw [Mode.combine?_evalPartial_fn_left] at h
-    obtain ⟨R, hR, hgood⟩ := hF Q hQ
-    cases h
-    rw [hR]
-    exact .pred hgood
-  · cases h
+/-- A partial function applied to the partial value on its right. -/
+abbrev forthPartial (a b : Ty Unit) : Mode (Grammar.application (B := Unit)).Binary
+    (.comp .M (a ⇒ .comp .M b)) (.comp .M a) (.comp .M b) :=
+  .join trivial (.ap trivial (.basic .fa))
 
-theorem good_lex (hB : 2 ≤ B.card) {c : Cat} {w : Morpheme}
-    (hw : IsNominalLabel (.terminal c w)) {d : PDenotation (Finset α) Unit}
-    (h : lex B w = some d) : Good B d := by
+theorem eval_forthPartial {a b : Ty Unit} (f : Part (a.Dom (Dom α) → Part (b.Dom (Dom α))))
+    (x : Part (a.Dom (Dom α))) :
+    (forthPartial a b).eval (Dom α) f x = f.bind fun g ↦ x.bind fun v ↦ g v := by
+  rw [Mode.eval_join_ap_basic]; rfl
+
+/-- The rules of the partial-valued interpreter. -/
+abbrev rules : Interpreter (effectGrammar (Grammar.application (B := Unit)).Binary
+    fun _ _ ↦ Empty) Node := partialValued .application
+
+theorem Good.combine {d₁ d₂ : Σ a : Ty Unit, a.Dom (Dom α)} (h₁ : Good B d₁) (h₂ : Good B d₂)
+    {k : Node} {m : Σ u, Mode (Grammar.application (B := Unit)).Binary d₁.1 d₂.1 u}
+    (hm : m ∈ rules.binary k d₁.1 d₂.1) :
+    Good B ⟨m.1, m.2.eval (Dom α) d₁.2 d₂.2⟩ := by
+  rcases h₁ with @⟨X, hX⟩ | @⟨F, hF⟩ | @⟨F, hF⟩ <;>
+    rcases h₂ with @⟨Y, hY⟩ | @⟨G, hG⟩ | @⟨G, hG⟩
+  · exact absurd hm List.not_mem_nil
+  · obtain rfl : m = ⟨_, back setTy setTy⟩ := List.mem_singleton.1 hm
+    rw [eval_back, Part.bind_some, Part.map_some]
+    exact .pred (hG X hX)
+  · obtain rfl : m = ⟨_, backPartial setTy setTy⟩ := List.mem_singleton.1 hm
+    obtain ⟨Z, hZ, hgood⟩ := hG X hX
+    rw [eval_backPartial, Part.bind_some, Part.bind_some, hZ]
+    exact .pred hgood
+  · obtain rfl : m = ⟨_, forth setTy setTy⟩ := List.mem_singleton.1 hm
+    rw [eval_forth, Part.bind_some, Part.map_some]
+    exact .pred (hF Y hY)
+  · exact absurd hm List.not_mem_nil
+  · exact absurd hm List.not_mem_nil
+  · obtain rfl : m = ⟨_, forthPartial setTy setTy⟩ := List.mem_singleton.1 hm
+    obtain ⟨Z, hZ, hgood⟩ := hF Y hY
+    rw [eval_forthPartial, Part.bind_some, Part.bind_some, hZ]
+    exact .pred hgood
+  · exact absurd hm List.not_mem_nil
+  · exact absurd hm List.not_mem_nil
+
+theorem good_val (hB : 2 ≤ B.card) {c : Cat} {w : Morpheme}
+    (hw : IsNominalLabel (.terminal c w)) {i : Σ a, Item a} (hi : i ∈ items (.inl w)) :
+    Good B ⟨i.1, Item.val B i.2⟩ := by
   have hB' : B ∈ boy B := mem_boy.2 ⟨subset_rfl, by omega⟩
   cases w with
   | boy =>
-    cases h
-    exact .pred ⟨fun _ ↦ trivial, by simpa using hB', fun x hx ↦ (mem_boy.1 (by simpa using hx)).1⟩
+    obtain rfl := List.mem_singleton.1 hi
+    exact .pred ⟨hB', fun x hx ↦ (mem_boy.1 hx).1⟩
   | num m =>
-    cases h
-    refine .modifier fun P hP ↦ ⟨_, rfl, fun _ ↦ trivial, ?_, fun x hx ↦ ?_⟩
+    obtain rfl := List.mem_singleton.1 hi
+    refine .modifier fun X hX ↦ ⟨?_, fun x hx ↦ ?_⟩
     · cases m
-      · exact (PFun.true_mem_lift _ _).2 hP.self
-      · simpa [NumberHead.denote, nonAtomsOf, atom_finset_iff_card_eq_one, hP.self] using
+      · exact hX.self
+      · simpa [NumberHead.denote, nonAtomsOf, atom_finset_iff_card_eq_one, hX.self] using
           (by omega : B.card ≠ 1)
     · cases m <;> simp [NumberHead.denote, nonAtomsOf] at hx
-      · exact hP.le x hx
-      · exact hP.le x hx.1
+      · exact hX.le x hx
+      · exact hX.le x hx.1
   | def_ =>
-    cases h
-    refine .modifier fun P hP ↦ ?_
-    have hsup : B ∈ sup {x | True ∈ P x} := ⟨hP.self, fun x hx ↦ hP.le x hx⟩
-    exact ⟨PFun.lift (· ∈ sup {x | True ∈ P x}), Part.eq_some_iff.2 (by simpa using ⟨B, hsup⟩),
-      fun _ ↦ trivial,
-      by simpa using hsup, fun x hx ↦ hP.le x (show x ∈ sup {x | True ∈ P x} by simpa using hx).1⟩
+    obtain rfl := List.mem_singleton.1 hi
+    refine .partialModifier fun X hX ↦ ?_
+    have hsup : B ∈ sup X := ⟨hX.self, fun x hx ↦ hX.le x hx⟩
+    exact ⟨sup X, Part.eq_some_iff.2 ⟨⟨B, hsup⟩, rfl⟩, hsup, fun x hx ↦ hX.le x hx.1⟩
   | plusDef | exists_ | two | run => cases c <;> simp [IsNominalLabel] at hw
 
 theorem good_of_licensed (hB : 2 ≤ B.card) {t : Tree Cat Morpheme}
-    (ht : t.Licensed fun l _ ↦ IsNominalLabel l) {d : PDenotation (Finset α) Unit}
-    (h : interpPartial (lex B) (fun _ ↦ ∅) t = some d) : Good B d := by
-  induction t using Tree.rec' generalizing d with
+    (ht : t.Licensed fun l _ ↦ IsNominalLabel l) :
+    ∀ d ∈ meanings B t, Good B d := by
+  induction t using Tree.rec' with
   | terminal c w =>
-    rw [interpPartial_terminal] at h
-    exact good_lex hB ht.rel_root h
+    intro d hd
+    obtain ⟨⟨a, e⟩, he, rfl⟩ := List.mem_map.1 hd
+    obtain ⟨⟨b, i⟩, hi, heq⟩ := List.mem_map.1
+      (show (⟨a, e⟩ : Σ a, Grammar.Deriv _ Item a) ∈ (items (.inl w)).map _ from he)
+    cases heq
+    exact good_val hB ht.rel_root hi
   | phrase c k cs ih =>
-    match cs, ih, ht, h with
-    | [t], ih, ht, h =>
-      rw [interpPartial_phrase_unary] at h
-      exact ih t (by simp) (ht.of_mem (by simp)) h
-    | [t₁, t₂], ih, ht, h =>
-      rw [interpPartial_phrase_binary] at h
-      obtain ⟨d₁, h₁, h⟩ := Option.bind_eq_some_iff.1 h
-      obtain ⟨d₂, h₂, h⟩ := Option.bind_eq_some_iff.1 h
-      exact (ih t₁ (by simp) (ht.of_mem (by simp)) h₁).combine?
-        (ih t₂ (by simp) (ht.of_mem (by simp)) h₂) h
-    | [], _, _, h => cases h
-    | _ :: _ :: _ :: _, _, _, h => cases h
+    match cs, ih, ht with
+    | [t], ih, ht => exact ih t (by simp) (ht.of_mem (by simp))
+    | [t₁, t₂], ih, ht =>
+      intro d hd
+      have ih₁ := ih t₁ (by simp) (ht.of_mem (by simp))
+      have ih₂ := ih t₂ (by simp) (ht.of_mem (by simp))
+      simp only [meanings] at hd ih₁ ih₂
+      change d ∈ (match (Tree.skeleton (fun _ ↦ false) t₁).bind fun s₁ ↦
+          (Tree.skeleton (fun _ ↦ false) t₂).bind fun s₂ ↦
+            some (Grammar.Skeleton.binary Node.branch s₁ s₂) with
+        | some s => _
+        | none => []) at hd
+      cases h₁ : Tree.skeleton (fun _ ↦ false) t₁ with
+      | none => simp [h₁] at hd
+      | some s₁ =>
+        cases h₂ : Tree.skeleton (fun _ ↦ false) t₂ with
+        | none => simp [h₁, h₂] at hd
+        | some s₂ =>
+          rw [h₁, h₂] at hd
+          rw [h₁] at ih₁
+          rw [h₂] at ih₂
+          replace hd : d ∈ rules.values (D := Ty.Dom (Dom α)) (Item.val B) items
+              (.binary .branch s₁ s₂) := hd
+          obtain ⟨d₁, hd₁, d₂, hd₂, m, hm, rfl⟩ := mem_values_binary.1 hd
+          exact (ih₁ d₁ hd₁).combine (ih₂ d₂ hd₂) hm
+    | [], _, _ => exact fun _ hd ↦ absurd hd List.not_mem_nil
+    | _ :: _ :: _ :: _, _, _ => exact fun _ hd ↦ absurd hd List.not_mem_nil
   | trace n c => exact absurd ht.rel_root id
   | bind n c t _ => exact absurd ht.rel_root id
-  | junk l cs hl _ => rw [interpPartial_junk _ _ hl] at h; cases h
+  | junk l cs hl _ =>
+    intro d hd
+    have hs : Tree.skeleton (fun _ ↦ false) (RoseTree.node l cs) = none := by
+      cases l with
+      | terminal c w =>
+        cases cs with
+        | nil => simp [Label.Licenses] at hl
+        | cons => rfl
+      | phrase c k => simp [Label.Licenses] at hl
+      | trace n c => exact absurd ht.rel_root id
+      | bind n c => exact absurd ht.rel_root id
+    simp [meanings, hs] at hd
 
 -- every alternative of NumP* is uninterpretable, or defined wherever there are two boys
 theorem defined_eq_empty_or_subset {ψ : Tree Cat Morpheme}
     (h : ψ ∈ structuralAlternatives lexicon (numPStar n)) :
     defined (α := α) ψ = ∅ ∨ {B : Finset α | 2 ≤ B.card} ⊆ defined ψ := by
-  have htypes (B B' : Finset α) (w : Morpheme) :
-      (lex B w).map (·.1) = (lex B' w).map (·.1) := by
-    cases w <;> rfl
-  by_cases hu : Uninterpretable (lex (∅ : Finset α)) (fun _ ↦ ∅) ψ
-  · refine .inl (Set.eq_empty_of_forall_notMem fun B hB ↦ ?_)
-    obtain ⟨d, hd, -⟩ := mem_defined_iff.1 hB
-    have := (uninterpretable_congr _ (lex B) _ (fun _ ↦ ∅) (htypes ∅ B) ψ).1 hu
-    rw [Uninterpretable, hd] at this
-    cases this
+  have hlen (B B' : Finset α) : (meanings B ψ).length = (meanings B' ψ).length := by
+    simp only [meanings]
+    cases ψ.skeleton (fun _ ↦ false) <;> simp [Interpreter.values]
+  by_cases hu : meanings (∅ : Finset α) ψ = []
+  · refine .inl (Set.eq_empty_of_forall_notMem fun B ⟨d, hd, _⟩ ↦ ?_)
+    have := hlen B ∅
+    rw [hu, List.length_nil] at this
+    exact List.ne_nil_of_mem hd (List.length_eq_zero_iff.1 this)
   · refine .inr fun B hB ↦ ?_
-    obtain ⟨d, hd⟩ := Option.ne_none_iff_exists'.1
-      ((uninterpretable_congr _ (lex B) _ (fun _ ↦ ∅) (htypes ∅ B) ψ).not.1 hu)
-    exact mem_defined_iff.2
-      ⟨d, hd, (good_of_licensed hB (licensed_of_mem_structuralAlternatives h) hd).dom⟩
+    obtain ⟨d, hd⟩ := List.exists_mem_of_ne_nil (meanings B ψ) fun h0 ↦
+      hu ((List.length_eq_zero_iff (l := meanings (∅ : Finset α) ψ)).1
+        (by rw [hlen ∅ B, h0, List.length_nil]))
+    exact ⟨d, hd, (good_of_licensed hB (licensed_of_mem_structuralAlternatives h) d hd).isDefined⟩
 
 end Alternatives
 

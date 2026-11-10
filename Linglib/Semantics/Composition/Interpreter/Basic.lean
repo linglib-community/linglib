@@ -195,6 +195,20 @@ def values (I : Interpreter G N) [M : G.language.Structure D] (ρ : ∀ {a : T},
     (lex : L → List (Σ a, W a)) (s : Skeleton N L) : List (Σ a, D a) :=
   (I.derivs lex s).map fun ⟨a, d⟩ ↦ ⟨a, d.realize M ρ⟩
 
+/-- A value of a binary node is the value of a rule the node admits, at values of its
+daughters. -/
+theorem mem_values_binary {I : Interpreter G N} [M : G.language.Structure D]
+    {ρ : ∀ {a : T}, W a → D a} {lex : L → List (Σ a, W a)} {n : N} {s₁ s₂ : Skeleton N L}
+    {d : Σ a, D a} :
+    d ∈ I.values ρ lex (.binary n s₁ s₂) ↔ ∃ d₁ ∈ I.values ρ lex s₁, ∃ d₂ ∈ I.values ρ lex s₂,
+      ∃ m ∈ I.binary n d₁.1 d₂.1, d = ⟨m.1, M.funMap (.binary m.2) (d₁.2, d₂.2)⟩ := by
+  simp only [values, derivs, List.mem_map, List.mem_flatMap]
+  constructor
+  · rintro ⟨_, ⟨⟨a, e₁⟩, h₁, ⟨b, e₂⟩, h₂, ⟨u, m⟩, hm, rfl⟩, rfl⟩
+    exact ⟨_, ⟨⟨a, e₁⟩, h₁, rfl⟩, _, ⟨⟨b, e₂⟩, h₂, rfl⟩, ⟨u, m⟩, hm, rfl⟩
+  · rintro ⟨_, ⟨⟨a, e₁⟩, h₁, rfl⟩, _, ⟨⟨b, e₂⟩, h₂, rfl⟩, ⟨u, m⟩, hm, rfl⟩
+    exact ⟨_, ⟨⟨a, e₁⟩, h₁, ⟨b, e₂⟩, h₂, ⟨u, m⟩, hm, rfl⟩, rfl⟩
+
 /-- The meanings of a bare structure, for a lexicon whose items are their values. -/
 def meanings {D : T → Type w} (I : Interpreter G N) [G.language.Structure D]
     (lex : L → List (Σ a, D a)) : Skeleton N L → List (Σ a, D a) :=

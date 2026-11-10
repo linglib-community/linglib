@@ -25,6 +25,7 @@ and `Ty.combine` lists them all.
 * `Interpreter.Node`, `Interpreter.effectDriven`: what the semantics reads off a node, and the
   rules each kind of node admits.
 * `Interpreter.envSensitive`: Heim and Kratzer's grammar as a selection of those rules.
+* `Interpreter.partialValued`: constituents as partial values, undefined where a daughter is.
 * `Interpreter.effectGrammar`: the grammar whose binary rules are the modes.
 
 ## Implementation notes
@@ -107,6 +108,18 @@ instance [DecidableEq B] : (Grammar.application (B := B)).LocallyFinite where
       | _ => []
   mem_unaryRules := nofun
   mem_binaryRules m := by cases m <;> simp
+
+@[simp] theorem Grammar.application.funMap_fa {D : B → Type} {a b : Ty B} (f : (a ⇒ b).Dom D)
+    (x : a.Dom D) :
+    MSFirstOrder.Language.Structure.funMap (L := (Grammar.application (B := B)).language)
+      (D := Ty.Dom D) (Grammar.Sym.binary .fa) (f, x) = f x :=
+  rfl
+
+@[simp] theorem Grammar.application.funMap_ba {D : B → Type} {a b : Ty B} (x : a.Dom D)
+    (f : (a ⇒ b).Dom D) :
+    MSFirstOrder.Language.Structure.funMap (L := (Grammar.application (B := B)).language)
+      (D := Ty.Dom D) (Grammar.Sym.binary .ba) (x, f) = f x :=
+  rfl
 
 /-- The grammar of predicate modification. -/
 def Grammar.predicateModification : Grammar (Ty B) := ⟨fun _ _ ↦ Empty, PredicateModification⟩
@@ -405,6 +418,41 @@ def envSensitive [DecidableEq B] (G : Grammar (Ty B)) [G.LocallyFinite] (g x : T
           obtain ⟨rfl, rfl⟩ := h; exact .ap trivial (.basic p.2)⟩
       else []
     | _, _, _ => []
+
+/-- The partial-valued interpreter: every constituent is a partial value, and sisters combine by
+a rule of the grammar on their values where both are defined, a partial result of the rule
+flattened. A function applied to an undefined argument is undefined. -/
+def partialValued [DecidableEq B] (G : Grammar (Ty B)) [G.LocallyFinite]
+    {Shift : Ty B → Ty B → Type} {N : Type} : Interpreter (effectGrammar G.Binary Shift) N where
+  unary _ _ := []
+  binary
+    | _, .comp .M l, .comp .M r =>
+      (Grammar.LocallyFinite.binaryRules (G := G) l r).map fun
+        | ⟨.comp .M u, p⟩ => ⟨.comp .M u, .join trivial (.ap trivial (.basic p))⟩
+        | ⟨u, p⟩ => ⟨.comp .M u, .ap trivial (.basic p)⟩
+    | _, _, _ => []
+
+section PartialValued
+
+variable {G : Grammar (Ty B)} {D : B → Type} [M : G.language.Structure (Ty.Dom D)] {l r u : Ty B}
+
+/-- A rule on two partial values: defined where both are. -/
+theorem Mode.eval_ap_basic (p : G.Binary l r u) (x : Part (l.Dom D)) (y : Part (r.Dom D)) :
+    (Mode.ap trivial (.basic p) :
+      Mode G.Binary (.comp .M l) (.comp .M r) (.comp .M u)).eval D x y =
+      x.bind fun a ↦ y.map fun b ↦ M.funMap (.binary p) (a, b) := by
+  simp [Mode.eval, Eff.seq, Eff.map, Part.bind_map]
+
+/-- A rule with a partial result, on two partial values: defined where both are and the rule is
+at their values. -/
+theorem Mode.eval_join_ap_basic (p : G.Binary l r (.comp .M u)) (x : Part (l.Dom D))
+    (y : Part (r.Dom D)) :
+    (Mode.join trivial (.ap trivial (.basic p)) :
+      Mode G.Binary (.comp .M l) (.comp .M r) (.comp .M u)).eval D x y =
+      x.bind fun a ↦ y.bind fun b ↦ M.funMap (.binary p) (a, b) := by
+  simp [Mode.eval, Eff.join, Eff.seq, Eff.map, Part.bind_assoc, Part.bind_map]
+
+end PartialValued
 
 /-- A word that reads no assignment, as a constant reader. -/
 def Assignments.const (_ : Assignments D g x) {a : Ty B} (m : a.Dom D) : Σ a : Ty B, a.Dom D :=
