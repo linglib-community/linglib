@@ -327,7 +327,7 @@ noncomputable def lex (N N' V : Set E) (R S : Set (Set E)) : Word →
 /-- The rules: Functional Application, Predicate Modification, which intersects two properties
 of pluralities, and abstraction over an index. -/
 abbrev rules : Interpreter ((application.sum predicateModification).withAbstraction
-    indexTy) Node :=
+    indexTy) ℕ :=
   (typeDriven (application.sum predicateModification)).withAbstraction indexTy
 
 /-- A logical form holds, under an assignment of choice functions to the indices, when it

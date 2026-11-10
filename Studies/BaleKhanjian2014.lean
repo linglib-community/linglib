@@ -609,12 +609,12 @@ theorem eval_forthPartial {a b : Ty Unit} (f : Part (a.Dom (Dom α) → Part (b.
   rw [Mode.eval_join_ap_basic]; rfl
 
 /-- The rules of the partial-valued interpreter. -/
-abbrev rules : Interpreter (effectGrammar (application (B := Unit))) Node :=
+abbrev rules : Interpreter (effectGrammar (application (B := Unit))) ℕ :=
   partialValued application
 
 theorem Good.combine {d₁ d₂ : Σ a : Ty Unit, a.Dom (Dom α)} (h₁ : Good B d₁) (h₂ : Good B d₂)
-    {k : Node} {m : Σ u, Mode (application (B := Unit)).Binary d₁.1 d₂.1 u}
-    (hm : m ∈ rules.binary k d₁.1 d₂.1) :
+    {m : Σ u, Mode (application (B := Unit)).Binary d₁.1 d₂.1 u}
+    (hm : m ∈ rules.binary d₁.1 d₂.1) :
     Good B ⟨m.1, m.2.eval (Dom α) d₁.2 d₂.2⟩ := by
   rcases h₁ with @⟨X, hX⟩ | @⟨F, hF⟩ | @⟨F, hF⟩ <;>
     rcases h₂ with @⟨Y, hY⟩ | @⟨G, hG⟩ | @⟨G, hG⟩
@@ -682,7 +682,7 @@ theorem good_of_licensed (hB : 2 ≤ B.card) {t : Tree Cat Morpheme}
       have ih₁ := ih t₁ (by simp) (ht.of_mem (by simp))
       have ih₂ := ih t₂ (by simp) (ht.of_mem (by simp))
       simp only [meanings, Tree.values_eq_fold, RoseTree.fold_node, List.map_cons, List.map_nil,
-        Tree.nodeValues, Bool.false_eq_true, ↓reduceIte] at hd ih₁ ih₂
+        Tree.nodeValues] at hd ih₁ ih₂
       obtain ⟨d₁, hd₁, d₂, hd₂, m, hm, rfl⟩ := Interpreter.mem_binaryValues.1 hd
       exact (ih₁ d₁ hd₁).combine (ih₂ d₂ hd₂) hm
     | [], _, _ =>

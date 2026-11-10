@@ -40,8 +40,8 @@ structure Extends (J : Interpreter L' N) (I : Interpreter L N) (φ : L →ᴸ L'
   unary {n : N} {a : T} {r : Σ b, L.Unary a b} :
     r ∈ I.unary n a → ⟨r.1, φ.onFunction r.2⟩ ∈ J.unary n a
   /-- The binary rules. -/
-  binary {n : N} {l r : T} {m : Σ u, L.Binary l r u} :
-    m ∈ I.binary n l r → ⟨m.1, φ.onFunction m.2⟩ ∈ J.binary n l r
+  binary {l r : T} {m : Σ u, L.Binary l r u} :
+    m ∈ I.binary l r → ⟨m.1, φ.onFunction m.2⟩ ∈ J.binary l r
 
 section Values
 
@@ -68,8 +68,8 @@ theorem map_mem_binaryValues (hJ : J.Extends I φ)
     {X₁ X₂ : List (Σ a, D a)} {Y₁ Y₂ : List (Σ a, D' a)}
     (h₁ : ∀ d ∈ X₁, (⟨d.1, h d.1 d.2⟩ : Σ a, D' a) ∈ Y₁)
     (h₂ : ∀ d ∈ X₂, (⟨d.1, h d.1 d.2⟩ : Σ a, D' a) ∈ Y₂) {d : Σ a, D a}
-    (hd : d ∈ I.binaryValues M n X₁ X₂) :
-    (⟨d.1, h d.1 d.2⟩ : Σ a, D' a) ∈ J.binaryValues M' n Y₁ Y₂ := by
+    (hd : d ∈ I.binaryValues M X₁ X₂) :
+    (⟨d.1, h d.1 d.2⟩ : Σ a, D' a) ∈ J.binaryValues M' Y₁ Y₂ := by
   obtain ⟨d₁, hd₁, d₂, hd₂, m, hm, rfl⟩ := mem_binaryValues.1 hd
   exact mem_binaryValues.2 ⟨_, h₁ d₁ hd₁, _, h₂ d₂ hd₂, ⟨m.1, φ.onFunction m.2⟩, hJ.binary hm,
     congrArg (Sigma.mk m.1) (hh m.2 d₁.2 d₂.2)⟩
@@ -82,28 +82,20 @@ theorem typeDriven_sum_extends [L.LocallyFinite] [L'.LocallyFinite] :
   unary {_ _ r} hr := by
     obtain ⟨b, r⟩ := r
     exact List.mem_append_left _ (List.mem_map.2 ⟨⟨b, r⟩, hr, rfl⟩)
-  binary {_ _ _ m} hm := by
+  binary {_ _ m} hm := by
     obtain ⟨u, m⟩ := m
     exact List.mem_append_left _ (List.mem_map.2 ⟨⟨u, m⟩, hm, rfl⟩)
 
 /-- An extension is one of the interpreters with predicate abstraction, which the map leaves in
 place. -/
 theorem Extends.withAbstraction {B : Type} {L L' : Language.{0, 0} (Ty B)}
-    {I : Interpreter L Node} {J : Interpreter L' Node} {φ : L →ᴸ L'} (h : J.Extends I φ)
+    {I : Interpreter L ℕ} {J : Interpreter L' ℕ} {φ : L →ᴸ L'} (h : J.Extends I φ)
     (Γ : ℕ → Ty B) :
     (J.withAbstraction Γ).Extends (I.withAbstraction Γ) (φ.sumMap (LHom.id _)) where
   unary {n _ r} hr := by
-    cases n with
-    | index k =>
-      obtain rfl := List.mem_singleton.1 hr
-      exact List.mem_singleton.2 rfl
-    | branch =>
-      obtain ⟨⟨c, s⟩, hs, rfl⟩ := List.mem_map.1 hr
-      exact List.mem_map.2 ⟨⟨c, φ.onFunction s⟩, h.unary (r := ⟨c, s⟩) hs, rfl⟩
-    | island =>
-      obtain ⟨⟨c, s⟩, hs, rfl⟩ := List.mem_map.1 hr
-      exact List.mem_map.2 ⟨⟨c, φ.onFunction s⟩, h.unary (r := ⟨c, s⟩) hs, rfl⟩
-  binary {_ _ _ _} h₀ := by
+    obtain rfl := List.mem_singleton.1 hr
+    exact List.mem_singleton.2 rfl
+  binary {_ _ _} h₀ := by
     obtain ⟨⟨u, m⟩, hm, rfl⟩ := List.mem_map.1 h₀
     exact List.mem_map.2 ⟨⟨u, φ.onFunction m⟩, h.binary (m := ⟨u, m⟩) hm, rfl⟩
 
@@ -114,7 +106,7 @@ namespace PhraseStructure.Tree
 open Interpreter
 
 variable {C Lx : Type} {T : Type} {G G' : Language T} {W D : T → Type}
-  {I : Interpreter G Node} {J : Interpreter G' Node} {φ : G →ᴸ G'}
+  {I : Interpreter G ℕ} {J : Interpreter G' ℕ} {φ : G →ᴸ G'}
   {lex lex' : Lx ⊕ ℕ → List (Σ a, W a)}
 
 /-- A value of a tree survives an extension of the rules and of the lexicon, along a map of
@@ -127,8 +119,8 @@ theorem map_mem_values_of_le {D' : T → Type} {M : G.Structure D} {M' : G'.Stru
       h c (M.funMap m (x, y)) = M'.funMap (φ.onFunction m) (h a x, h b y))
     {ρ : ∀ {a : T}, W a → D a} {ρ' : ∀ {a : T}, W a → D' a}
     (hρ : ∀ {a : T} (x : W a), h a (ρ x) = ρ' x) (hl : ∀ x, lex x ⊆ lex' x)
-    (t : Tree C Lx) {island : C → Bool} {d : Σ a, D a} (hd : d ∈ t.values I M ρ lex island) :
-    (⟨d.1, h d.1 d.2⟩ : Σ a, D' a) ∈ t.values J M' ρ' lex' island := by
+    (t : Tree C Lx) {d : Σ a, D a} (hd : d ∈ t.values I M ρ lex) :
+    (⟨d.1, h d.1 d.2⟩ : Σ a, D' a) ∈ t.values J M' ρ' lex' := by
   rw [values_eq_fold] at hd ⊢
   refine RoseTree.rel_fold
     (fun (X : List (Σ a, D a)) (Y : List (Σ a, D' a)) ↦ ∀ d ∈ X, (⟨d.1, h d.1 d.2⟩ : Σ a, D' a) ∈ Y)
@@ -154,16 +146,16 @@ theorem map_mem_values_of_le {D' : T → Type} {M : G.Structure D} {M' : G'.Stru
 expands the one it was computed in. -/
 theorem mem_values_of_le {M : G.Structure D} {M' : G'.Structure D} (h : J.Extends I φ)
     (hM : φ.IsExpansionOn M M') (hl : ∀ x, lex x ⊆ lex' x) (ρ : ∀ {a : T}, W a → D a)
-    {t : Tree C Lx} {island : C → Bool} {d : Σ a, D a} (hd : d ∈ t.values I M ρ lex island) :
-    d ∈ t.values J M' ρ lex' island :=
+    {t : Tree C Lx} {d : Σ a, D a} (hd : d ∈ t.values I M ρ lex) :
+    d ∈ t.values J M' ρ lex' :=
   map_mem_values_of_le h (fun _ x ↦ x) (fun r x ↦ (hM.map_onFunction r x).symm)
     (fun m x y ↦ (hM.map_onFunction m (x, y)).symm) (fun _ ↦ rfl) hl t hd
 
 /-- A derivation of a tree survives an extension of the rules and of the lexicon: its image
 along the map is a derivation the extending interpreter admits. -/
 theorem mem_derivs_of_le (h : J.Extends I φ) (hl : ∀ x, lex x ⊆ lex' x) {t : Tree C Lx}
-    {island : C → Bool} {d : Σ a, Deriv G W a} (hd : d ∈ t.derivs I lex island) :
-    (⟨d.1, φ.onTerm d.2⟩ : Σ a, Deriv G' W a) ∈ t.derivs J lex' island := by
+    {d : Σ a, Deriv G W a} (hd : d ∈ t.derivs I lex) :
+    (⟨d.1, φ.onTerm d.2⟩ : Σ a, Deriv G' W a) ∈ t.derivs J lex' := by
   rw [derivs_eq_values] at hd ⊢
   exact map_mem_values_of_le h (fun _ d ↦ φ.onTerm d) (fun _ _ ↦ rfl) (fun _ _ _ ↦ rfl)
     (fun _ ↦ rfl) hl t hd

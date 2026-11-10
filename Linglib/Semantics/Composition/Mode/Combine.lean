@@ -9,8 +9,7 @@ The types of two daughters decide which modes of the effect-driven grammar combi
 `Ty.combine` lists them: each way of peeling effects off the two types down to a basic rule,
 with every Join and Lower the result allows. [It lists every mode of the
 grammar](##Interpreter.Ty.mem_combine), so the effect-driven interpreter [admits every mode at a
-node, and at an island those whose result is
-evaluated](##Interpreter.mem_binary_effectDriven).
+node](##Interpreter.mem_binary_effectDriven).
 
 ## Main definitions
 
@@ -376,26 +375,17 @@ theorem Ty.mem_combine
 end Complete
 
 /-- Bumford and Charlow's effect-driven interpreter over a grammar: a node admits the type
-shifts of the grammar and every mode that `Ty.combine` finds for its daughters, and an island
-only the modes whose result is evaluated. -/
-def effectDriven [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] :
-    Interpreter (effectGrammar G) Node where
+shifts of the grammar and every mode that `Ty.combine` finds for its daughters. -/
+def effectDriven [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] {N : Type} :
+    Interpreter (effectGrammar G) N where
   unary _ := Language.LocallyFinite.unaryRules (L := G)
-  binary
-    | .island, l, r =>
-      (Ty.combine (Language.LocallyFinite.binaryRules (L := G)) l r).filter (·.1.Evaluated)
-    | _, l, r => Ty.combine (Language.LocallyFinite.binaryRules (L := G)) l r
+  binary := Ty.combine (Language.LocallyFinite.binaryRules (L := G))
 
-/-- A node admits every mode of the grammar that combines its daughters, and an island those
-whose result is evaluated. -/
+/-- A node admits every mode of the grammar that combines its daughters. -/
 theorem mem_binary_effectDriven [DecidableEq B] {G : Language (Ty B)} [G.LocallyFinite]
-    {n : Node} {l r : Ty B} (m : Σ u, Mode G.Binary l r u) :
-    m ∈ (effectDriven G).binary n l r ↔ (n = .island → m.1.Evaluated) := by
-  obtain ⟨u, m⟩ := m
-  have hm : (⟨u, m⟩ : Σ u, Mode G.Binary l r u) ∈
-      Ty.combine (Language.LocallyFinite.binaryRules (L := G)) l r :=
-    Ty.mem_combine (find := Language.LocallyFinite.binaryRules (L := G))
-      (fun b ↦ Language.LocallyFinite.mem_symbols b) m
-  cases n <;> simp [effectDriven, hm]
+    {N : Type} {l r : Ty B} (m : Σ u, Mode G.Binary l r u) :
+    m ∈ (effectDriven G : Interpreter (effectGrammar G) N).binary l r :=
+  Ty.mem_combine (find := Language.LocallyFinite.binaryRules (L := G))
+    (fun b ↦ Language.LocallyFinite.mem_symbols b) m.2
 
 end Interpreter

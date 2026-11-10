@@ -38,11 +38,6 @@ def Ty.EffectFree : Ty B → Prop
   | .fn a b => a.EffectFree ∧ b.EffectFree
   | .comp _ _ => False
 
-/-- A type without effects has no continuation to close. -/
-theorem Ty.EffectFree.evaluated : ∀ {a : Ty B}, a.EffectFree → a.Evaluated
-  | .t, _ | .base _, _ => trivial
-  | .fn _ _, h => h.2.evaluated
-
 /-- A grammar keeps to the types without effects when its rules give daughters of such types a
 mother of one. -/
 structure _root_.ManySorted.Language.EffectFree (G : Language (Ty B)) : Prop where
@@ -122,9 +117,9 @@ theorem values_effectDriven_of_effectFree [DecidableEq B] {G : Language (Ty B)}
     [G.LocallyFinite] (hG : G.EffectFree) {D : B → Type} [M : G.Structure (Ty.Dom D)]
     {W : Ty B → Type} (ρ : ∀ {a : Ty B}, W a → a.Dom D)
     {lex : Lx ⊕ ℕ → List (Σ a, W a)} (hlex : ∀ x, ∀ p ∈ lex x, p.1.EffectFree)
-    (t : Tree C Lx) (island : C → Bool) :
-    t.values (effectDriven G) effectGrammar.structure ρ lex island =
-      t.values (typeDriven G) M ρ lex island := by
+    (t : Tree C Lx) :
+    t.values (effectDriven G) effectGrammar.structure ρ lex =
+      t.values (typeDriven G) M ρ lex := by
   rw [values_eq_fold, values_eq_fold]
   refine (RoseTree.rel_fold
     (fun (X Y : List (Σ a, Ty.Dom D a)) ↦ X = Y ∧ ∀ d ∈ Y, d.1.EffectFree)
@@ -148,15 +143,10 @@ theorem values_effectDriven_of_effectFree [DecidableEq B] {G : Language (Ty B)}
     · refine List.flatMap_congr fun ⟨a, x⟩ hd₁ ↦ List.flatMap_congr fun ⟨b, y⟩ hd₂ ↦ ?_
       have hl : a.EffectFree := h₁ _ hd₁
       have hr : b.EffectFree := h₂ _ hd₂
-      have hc : (effectDriven G).binary (if island c then .island else .branch) a b =
+      have hc : (effectDriven G : Interpreter (effectGrammar G) ℕ).binary a b =
           (Language.LocallyFinite.binaryRules (L := G) a b).map
             fun p ↦ ⟨p.1, .basic p.2⟩ := by
-        split
-        · simp only [effectDriven, Ty.combine_of_effectFree hG.binary hl hr]
-          refine List.filter_eq_self.2 fun p hp ↦ ?_
-          obtain ⟨q, -, rfl⟩ := List.mem_map.1 hp
-          exact decide_eq_true (hG.binary q.2 hl hr).evaluated
-        · simp only [effectDriven, Ty.combine_of_effectFree hG.binary hl hr]
+        simp only [effectDriven, Ty.combine_of_effectFree hG.binary hl hr]
       dsimp only
       rw [hc, List.map_map]
       rfl

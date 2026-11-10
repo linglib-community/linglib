@@ -63,8 +63,9 @@ April 2025.
 
 ## TODO
 
-* Islands (section 5.4): the book filters the results at an island node by a predicate on
-  their types; the derivations here are over types, not syntax trees.
+* Islands (section 5.4): the book keeps at an island the modes whose result is `Evaluated`,
+  which [leaves a quantified clause its closed reading](##BumfordCharlow2026.combine_island). No
+  tree here marks a category as an island.
 * The modes over Lean's classes, `mapL`, `counitMode` and the rest, are not yet shown to be the
   meanings `Interpreter.Mode.eval` gives the grammar's modes at each effect.
 
@@ -375,11 +376,11 @@ although interpretation is relational once a word has an effect. -/
 theorem length_values_effectDriven_baseGrammar_le_one [DecidableEq B] {D : B → Type}
     {C Lx : Type} {W : Ty B → Type} (ρ : ∀ {a : Ty B}, W a → a.Dom D)
     {lex : Lx ⊕ ℕ → List (Σ a, W a)} (hlex : ∀ x, ∀ p ∈ lex x, p.1.EffectFree)
-    (h₁ : ∀ x, (lex x).length ≤ 1) (t : PhraseStructure.Tree C Lx) (island : C → Bool) :
-    (t.values (effectDriven (baseGrammar B)) effectGrammar.structure ρ lex island).length ≤ 1 := by
+    (h₁ : ∀ x, (lex x).length ≤ 1) (t : PhraseStructure.Tree C Lx) :
+    (t.values (effectDriven (baseGrammar B)) effectGrammar.structure ρ lex).length ≤ 1 := by
   rw [PhraseStructure.Tree.values_effectDriven_of_effectFree baseGrammar_effectFree ρ hlex]
   exact PhraseStructure.Tree.length_values_le_one (fun _ _ ↦ by simp [typeDriven])
-    (fun _ l r ↦ length_binaryRules_application_sum_predicateModification_le_one l r) h₁ t
+    (fun l r ↦ length_binaryRules_application_sum_predicateModification_le_one l r) h₁ t
 
 /-- Crossover (section 5.2): a left daughter that reads, combined with a right daughter that
 reads nothing, yields a type that still reads, whatever the modes. Only the co-unit mode removes
@@ -423,6 +424,19 @@ example {u : Ty Unit}
       (.comp (.C .t) (.comp (.W e) (e ⇒ .t))) u) :
     Reads u :=
   Mode.reads baseGrammar_reads m (.inl trivial) ⟨id, id, trivial, trivial⟩
+
+/-- A type is evaluated when no continuation in it is still to be closed (section 5.4). -/
+def Evaluated : Ty B → Prop
+  | .comp (.C _) _ => False
+  | .comp .S a | .comp (.R _) a | .comp (.W _) a | .comp .M a => Evaluated a
+  | .fn _ b => Evaluated b
+  | .t | .base _ => True
+
+instance decidableEvaluated : (a : Ty B) → Decidable (Evaluated a)
+  | .comp (.C _) _ => isFalse id
+  | .comp .S a | .comp (.R _) a | .comp (.W _) a | .comp .M a => decidableEvaluated a
+  | .fn _ b => decidableEvaluated b
+  | .t | .base _ => isTrue trivial
 
 /-! ### The interpreter
 
@@ -501,6 +515,11 @@ theorem combine_read_store : combine (R e) (W (e ⇒ T)) =
 -- section 5.5: lowering
 theorem combine_lower : combine (T ⇒ T) (C T) = [(.mapR FA, C T), (.lower (.mapR FA), T)] := by
   decide
+
+/-- At an island the book keeps the modes whose result is evaluated: of the two ways a quantifier
+and its predicate combine, the one that lowers it. -/
+theorem combine_island :
+    (combine (C e) (e ⇒ T)).filter (fun p ↦ Evaluated p.2) = [(.lower (.mapL BA), T)] := by decide
 
 /-- The grammar has a mode that joins twice, flattening three layers of indeterminacy to one. -/
 example : Mode (baseGrammar Unit).Binary (e ⇒ S (S (S T))) e (S T) :=

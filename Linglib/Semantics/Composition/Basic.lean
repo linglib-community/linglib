@@ -13,7 +13,7 @@ gives each derivation a value.
 
 A derivation is all the semantics is given, and nothing is assumed of where it comes from: a
 syntactic theory says which derivations its objects have. One way is type-driven: an interpreter
-says which rules a node admits by its label and the types of its daughters, so that the
+says which rules a node admits by the types of its daughters, so that the
 derivations of a syntactic object are found from the types alone. What a node makes of its
 daughters' values is then an operation on lists of typed values, and a syntax folds its own
 objects by these operations.
@@ -23,8 +23,7 @@ objects by these operations.
 * `ManySorted.Language.Deriv`: the derivations of a type over typed lexical items.
 * `ManySorted.Language.LocallyFinite.unaryRules`, `binaryRules`: the rules that apply to given
   daughters, and `ManySorted.Language.motherTypes`, the types they give the mother.
-* `Interpreter.Node`: the labels a constituency tree gives its nodes.
-* `Interpreter`: the rules a node admits by its label and its daughters' types, and
+* `Interpreter`: the rules a node admits by its daughters' types, and
   `Interpreter.typeDriven`, the interpreter that admits every rule that applies.
 * `Interpreter.unaryValues`, `Interpreter.binaryValues`: the values of the rules a node admits,
   at the values of its daughters.
@@ -99,28 +98,14 @@ end Deriv
 
 end ManySorted.Language
 
-namespace Interpreter
-
-/-- What the semantics reads off a node of the syntax: a plain branching node, an island, or the
-index a moved phrase leaves. -/
-inductive Node where
-  /-- A plain node. -/
-  | branch
-  /-- An island for continuations. -/
-  | island
-  /-- The index `n` of a moved phrase. -/
-  | index (n : ℕ)
-  deriving DecidableEq, Repr
-
-end Interpreter
-
-/-- A type-driven interpreter for a language of rules: the rules a node admits, by its label and
-the types of its daughters. -/
+/-- A type-driven interpreter for a language of rules: the rules a node admits, by the types of
+its daughters. A unary node has a label, since the type of one daughter does not say which rule
+applies to it. -/
 structure Interpreter {T : Type u} (L : ManySorted.Language.{u, v} T) (N : Type v) where
   /-- The unary rules a node labelled `n` over a daughter of type `a` admits. -/
   unary : N → (a : T) → List (Σ b, L.Unary a b)
-  /-- The binary rules a node labelled `n` over daughters of types `l` and `r` admits. -/
-  binary : N → (l r : T) → List (Σ u, L.Binary l r u)
+  /-- The binary rules a node over daughters of types `l` and `r` admits. -/
+  binary : (l r : T) → List (Σ u, L.Binary l r u)
 
 namespace Interpreter
 
@@ -133,11 +118,11 @@ variable {T : Type u} {L : Language.{u, v} T} {N : Type v} {Lx : Type w} {W : T 
 types of its daughters, whatever its label. -/
 def typeDriven (L : Language.{u, v} T) [L.LocallyFinite] : Interpreter L N where
   unary _ := LocallyFinite.unaryRules
-  binary _ := LocallyFinite.binaryRules
+  binary := LocallyFinite.binaryRules
 
 /-- The type-driven interpreter admits every binary rule of the language. -/
-@[simp] theorem mem_binary_typeDriven [L.LocallyFinite] {n : N} {l r : T}
-    (m : Σ u, L.Binary l r u) : m ∈ (typeDriven L : Interpreter L N).binary n l r :=
+@[simp] theorem mem_binary_typeDriven [L.LocallyFinite] {l r : T}
+    (m : Σ u, L.Binary l r u) : m ∈ (typeDriven L : Interpreter L N).binary l r :=
   LocallyFinite.mem_symbols m.2
 
 /-- The values of the unary rules a node labelled `n` admits, at the values of its daughter. -/
@@ -145,12 +130,11 @@ def unaryValues (I : Interpreter L N) (M : L.Structure D) (n : N) (X : List (Σ 
     List (Σ a, D a) :=
   X.flatMap fun ⟨a, x⟩ ↦ (I.unary n a).map fun ⟨b, r⟩ ↦ ⟨b, M.funMap r x⟩
 
-/-- The values of the binary rules a node labelled `n` admits, at the values of its
-daughters. -/
-def binaryValues (I : Interpreter L N) (M : L.Structure D) (n : N) (X Y : List (Σ a, D a)) :
+/-- The values of the binary rules a node admits, at the values of its daughters. -/
+def binaryValues (I : Interpreter L N) (M : L.Structure D) (X Y : List (Σ a, D a)) :
     List (Σ a, D a) :=
   X.flatMap fun ⟨a, x⟩ ↦ Y.flatMap fun ⟨b, y⟩ ↦
-    (I.binary n a b).map fun ⟨c, m⟩ ↦ ⟨c, M.funMap m (x, y)⟩
+    (I.binary a b).map fun ⟨c, m⟩ ↦ ⟨c, M.funMap m (x, y)⟩
 
 variable {I : Interpreter L N} {M : L.Structure D} {n : N} {X Y : List (Σ a, D a)}
   {d : Σ a, D a}
@@ -164,7 +148,7 @@ theorem mem_unaryValues :
 /-- A value of a binary node is the value of a rule the node admits, at values of its
 daughters. -/
 theorem mem_binaryValues :
-    d ∈ I.binaryValues M n X Y ↔ ∃ d₁ ∈ X, ∃ d₂ ∈ Y, ∃ m ∈ I.binary n d₁.1 d₂.1,
+    d ∈ I.binaryValues M X Y ↔ ∃ d₁ ∈ X, ∃ d₂ ∈ Y, ∃ m ∈ I.binary d₁.1 d₂.1,
       d = ⟨m.1, M.funMap m.2 (d₁.2, d₂.2)⟩ := by
   simp only [binaryValues, List.mem_flatMap, List.mem_map, eq_comm]
 
@@ -178,8 +162,8 @@ theorem length_unaryValues_le_one (hu : ∀ a, (I.unary n a).length ≤ 1) (hX :
 
 /-- Where a node admits at most one binary rule for given daughters, daughters with at most one
 value each give it at most one. -/
-theorem length_binaryValues_le_one (hb : ∀ a b, (I.binary n a b).length ≤ 1)
-    (hX : X.length ≤ 1) (hY : Y.length ≤ 1) : (I.binaryValues M n X Y).length ≤ 1 := by
+theorem length_binaryValues_le_one (hb : ∀ a b, (I.binary a b).length ≤ 1)
+    (hX : X.length ≤ 1) (hY : Y.length ≤ 1) : (I.binaryValues M X Y).length ≤ 1 := by
   match X, Y, hX, hY with
   | [], _, _, _ => simp [binaryValues]
   | [_], [], _, _ => simp [binaryValues]
@@ -200,8 +184,8 @@ node. -/
 theorem map_binaryValues
     (hh : ∀ {a b c : T} (m : L.Binary a b c) (x : D a) (y : D b),
       h c (M.funMap m (x, y)) = M'.funMap m (h a x, h b y)) :
-    (I.binaryValues M n X Y).map (fun d ↦ ⟨d.1, h d.1 d.2⟩) =
-      I.binaryValues M' n (X.map fun d ↦ ⟨d.1, h d.1 d.2⟩) (Y.map fun d ↦ ⟨d.1, h d.1 d.2⟩) := by
+    (I.binaryValues M X Y).map (fun d ↦ ⟨d.1, h d.1 d.2⟩) =
+      I.binaryValues M' (X.map fun d ↦ ⟨d.1, h d.1 d.2⟩) (Y.map fun d ↦ ⟨d.1, h d.1 d.2⟩) := by
   simp [binaryValues, List.map_flatMap, List.flatMap_map, Function.comp_def, hh]
 
 end Interpreter

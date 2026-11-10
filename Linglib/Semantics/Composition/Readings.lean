@@ -38,11 +38,11 @@ def unaryReadings (I : Interpreter G N) (M : G.Structure D) (n : N) (X : Set (Σ
     Set (Σ a, D a) :=
   {d | ∃ d₁ ∈ X, ∃ r ∈ I.unary n d₁.1, d = ⟨r.1, M.funMap r.2 d₁.2⟩}
 
-/-- The readings of a binary node labelled `n` from those of its daughters: the values of the
-rules the node admits. -/
-def binaryReadings (I : Interpreter G N) (M : G.Structure D) (n : N) (X Y : Set (Σ a, D a)) :
+/-- The readings of a binary node from those of its daughters: the values of the rules the node
+admits. -/
+def binaryReadings (I : Interpreter G N) (M : G.Structure D) (X Y : Set (Σ a, D a)) :
     Set (Σ a, D a) :=
-  {d | ∃ d₁ ∈ X, ∃ d₂ ∈ Y, ∃ m ∈ I.binary n d₁.1 d₂.1, d = ⟨m.1, M.funMap m.2 (d₁.2, d₂.2)⟩}
+  {d | ∃ d₁ ∈ X, ∃ d₂ ∈ Y, ∃ m ∈ I.binary d₁.1 d₂.1, d = ⟨m.1, M.funMap m.2 (d₁.2, d₂.2)⟩}
 
 end Interpreter
 
@@ -53,74 +53,74 @@ open ManySorted ManySorted.Language Interpreter
 variable {C L : Type} {T : Type} {G : Language T} {W D : T → Type}
 
 /-- What a label makes of the readings of its daughters, as `nodeValues` does of their values. -/
-def nodeReadings (I : Interpreter G Node) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
-    (lex : L ⊕ ℕ → Set (Σ a, W a)) (island : C → Bool) :
+def nodeReadings (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
+    (lex : L ⊕ ℕ → Set (Σ a, W a)) :
     Label C L → List (Set (Σ a, D a)) → Set (Σ a, D a)
   | .terminal _ w, [] => (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex (.inl w)
   | .trace n _, [] => (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex (.inr n)
-  | .bind n _, [X] => I.unaryReadings M (.index n) X
+  | .bind n _, [X] => I.unaryReadings M n X
   | .phrase _ _, [X] => X
-  | .phrase c _, [X, Y] => I.binaryReadings M (if island c then .island else .branch) X Y
+  | .phrase c _, [X, Y] => I.binaryReadings M X Y
   | _, _ => ∅
 
 /-- The readings of a tree when a word or a trace may be any of a set of items. -/
-def readings (I : Interpreter G Node) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
-    (lex : L ⊕ ℕ → Set (Σ a, W a)) (t : Tree C L) (island : C → Bool := fun _ ↦ false) :
+def readings (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
+    (lex : L ⊕ ℕ → Set (Σ a, W a)) (t : Tree C L) :
     Set (Σ a, D a) :=
-  RoseTree.fold (nodeReadings I M ρ lex island) t
+  RoseTree.fold (nodeReadings I M ρ lex) t
 
-variable (I : Interpreter G Node) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
-  (lex : L ⊕ ℕ → Set (Σ a, W a)) (island : C → Bool)
+variable (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
+  (lex : L ⊕ ℕ → Set (Σ a, W a))
 
 /-- A word's readings are the values of the items it may be. -/
 @[simp] theorem readings_terminal (c : C) (w : L) :
-    (terminal c w).readings I M ρ lex island = (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex (.inl w) := by
+    (terminal c w).readings I M ρ lex = (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex (.inl w) := by
   simp [readings, nodeReadings]
 
 /-- A trace's readings are the values of the items its index may be. -/
 @[simp] theorem readings_trace (n : ℕ) (c : C) :
-    (trace n c : Tree C L).readings I M ρ lex island =
+    (trace n c : Tree C L).readings I M ρ lex =
       (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex (.inr n) := by
   simp [readings, nodeReadings]
 
 /-- A non-branching node has the readings of its daughter. -/
 @[simp] theorem readings_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
-    (phrase c k [t]).readings I M ρ lex island = t.readings I M ρ lex island := by
+    (phrase c k [t]).readings I M ρ lex = t.readings I M ρ lex := by
   simp [readings, nodeReadings]
 
-variable {I M ρ lex island}
+variable {I M ρ lex}
 
 /-- A reading of a binder is the value of a rule its index admits, at a reading of its body. -/
 theorem mem_readings_bind {n : ℕ} {c : C} {t : Tree C L} {d : Σ a, D a} :
-    d ∈ (bind n c t).readings I M ρ lex island ↔
-      ∃ d₁ ∈ t.readings I M ρ lex island, ∃ r ∈ I.unary (.index n) d₁.1,
+    d ∈ (bind n c t).readings I M ρ lex ↔
+      ∃ d₁ ∈ t.readings I M ρ lex, ∃ r ∈ I.unary n d₁.1,
         d = ⟨r.1, M.funMap r.2 d₁.2⟩ := by
   simp [readings, nodeReadings, unaryReadings]
 
 /-- A reading of a binary node is the value of a rule the node admits, at readings of its
 daughters. -/
 theorem mem_readings_phrase_binary {c : C} {k : PhraseKind} {t₁ t₂ : Tree C L} {d : Σ a, D a} :
-    d ∈ (phrase c k [t₁, t₂]).readings I M ρ lex island ↔
-      ∃ d₁ ∈ t₁.readings I M ρ lex island, ∃ d₂ ∈ t₂.readings I M ρ lex island,
-        ∃ m ∈ I.binary (if island c then .island else .branch) d₁.1 d₂.1,
+    d ∈ (phrase c k [t₁, t₂]).readings I M ρ lex ↔
+      ∃ d₁ ∈ t₁.readings I M ρ lex, ∃ d₂ ∈ t₂.readings I M ρ lex,
+        ∃ m ∈ I.binary d₁.1 d₂.1,
           d = ⟨m.1, M.funMap m.2 (d₁.2, d₂.2)⟩ := by
   simp [readings, nodeReadings, binaryReadings]
 
 /-- Under the type-driven interpreter, a reading of a binary node is the value of a rule of the
 grammar at readings of its daughters. -/
 theorem mem_readings_typeDriven_phrase_binary [G.LocallyFinite] {M : G.Structure D}
-    {ρ : ∀ {a : T}, W a → D a} {lex : L ⊕ ℕ → Set (Σ a, W a)} {island : C → Bool} {c : C}
+    {ρ : ∀ {a : T}, W a → D a} {lex : L ⊕ ℕ → Set (Σ a, W a)} {c : C}
     {k : PhraseKind} {t₁ t₂ : Tree C L} {d : Σ a, D a} :
-    d ∈ (phrase c k [t₁, t₂]).readings (typeDriven G) M ρ lex island ↔
-      ∃ d₁ ∈ t₁.readings (typeDriven G) M ρ lex island,
-        ∃ d₂ ∈ t₂.readings (typeDriven G) M ρ lex island,
+    d ∈ (phrase c k [t₁, t₂]).readings (typeDriven G) M ρ lex ↔
+      ∃ d₁ ∈ t₁.readings (typeDriven G) M ρ lex,
+        ∃ d₂ ∈ t₂.readings (typeDriven G) M ρ lex,
           ∃ (u : T) (m : G.Binary d₁.1 d₂.1 u), d = ⟨u, M.funMap m (d₁.2, d₂.2)⟩ := by
   simp [mem_readings_phrase_binary, Sigma.exists]
 
 /-- The values an interpreter finds over a lexicon of lists are the readings: what a label makes
 of lists has the members of what it makes of their sets. -/
 theorem mem_values_iff {lex : L ⊕ ℕ → List (Σ a, W a)} {d : Σ a, D a} (t : Tree C L) :
-    d ∈ t.values I M ρ lex island ↔ d ∈ t.readings I M ρ (fun x ↦ {p | p ∈ lex x}) island := by
+    d ∈ t.values I M ρ lex ↔ d ∈ t.readings I M ρ (fun x ↦ {p | p ∈ lex x}) := by
   rw [values_eq_fold]
   refine RoseTree.rel_fold (fun (X : List (Σ a, D a)) (S : Set (Σ a, D a)) ↦ ∀ d, d ∈ X ↔ d ∈ S)
     (fun l Xs Ss h ↦ ?_) t d

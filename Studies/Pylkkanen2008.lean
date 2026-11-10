@@ -122,7 +122,7 @@ Identification of a relation of individuals to events with a predicate of events
 abbrev grammar : ManySorted.Language (Ty Base) := Voice.grammar
 
 /-- The rules a node admits, by the types of its daughters: every rule that applies. -/
-abbrev rules {N : Type} : Interpreter grammar N := typeDriven grammar
+abbrev rules : Interpreter grammar ℕ := typeDriven grammar
 
 -- (17): no rule combines a low applicative, at any stage of saturation, with an unergative verb
 theorem lowAppl_not_composes_unergative :
@@ -135,7 +135,7 @@ theorem lowAppl_not_composes_unergative :
 
 -- (18): the low ApplP takes a transitive verb by Functional Application
 theorem lowApplP_composes_transitive :
-    rules.binary () (.evt ⇒ .vt) .evt = [⟨.vt, .inl (.inl .fa)⟩] :=
+    rules.binary (.evt ⇒ .vt) .evt = [⟨.vt, .inl (.inl .fa)⟩] :=
   rfl
 
 -- (103b): over a constituent whose open argument is the agent, the low ApplP holds of no event
@@ -473,8 +473,8 @@ abbrev causeTy : Ty Base := .vt ⇒ .vt
 
 -- (18), (16a), §3.2: Cause applies to an unaccusative, and Voice is identified with it
 theorem unaccusative_causative :
-    rules.binary () causeTy .vt = [⟨.vt, .inl (.inl .fa)⟩] ∧
-      rules.binary () .evt .vt = [⟨.evt, .inr .left⟩] :=
+    rules.binary causeTy .vt = [⟨.vt, .inl (.inl .fa)⟩] ∧
+      rules.binary .evt .vt = [⟨.evt, .inr .left⟩] :=
   ⟨rfl, rfl⟩
 
 -- (42), §3.3: no rule combines Cause with what Voice has been identified with, so that Voice

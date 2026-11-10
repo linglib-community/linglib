@@ -625,7 +625,7 @@ def lex : Word → Σ a : Ty Atom, a.Dom (Dom E W T)
 
 /-- The rules: Functional Application, the two rules of the fragment, and abstraction over the
 index of a trace, a variable over individuals. -/
-abbrev rules : Interpreter ((application.sum fragment).withAbstraction fun _ ↦ ent) Node :=
+abbrev rules : Interpreter ((application.sum fragment).withAbstraction fun _ ↦ ent) ℕ :=
   (typeDriven (application.sum fragment)).withAbstraction fun _ ↦ ent
 
 /-- The translations of an LF, relative to an assignment: a word has its translation, and a trace

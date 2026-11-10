@@ -16,7 +16,6 @@ continuation at its own result type.
 
 * `Interpreter.Mode`: the basic modes closed under the meta-modes.
 * `Interpreter.Mode.eval`: the meaning of a mode, by the operations of the effects.
-* `Interpreter.Ty.Evaluated`: the types with no continuation still to be closed.
 * `Interpreter.effectGrammar`: the grammar whose binary rules are the modes over a grammar's
   rules, with its structure.
 
@@ -87,19 +86,6 @@ def eval {G : Language (Ty B)} (D : B → Type) [M : G.Structure (Ty.Dom D)] :
   | _, _, _, .lower m, a, b => Eff.lower (m.eval D a b)
 
 end Mode
-
-/-- A type is evaluated when no continuation in it is still to be closed. -/
-def Ty.Evaluated : Ty B → Prop
-  | .comp (.C _) _ => False
-  | .comp .S a | .comp (.R _) a | .comp (.W _) a | .comp .M a => a.Evaluated
-  | .fn _ b => b.Evaluated
-  | .t | .base _ => True
-
-instance Ty.decidableEvaluated : (a : Ty B) → Decidable a.Evaluated
-  | .comp (.C _) _ => isFalse id
-  | .comp .S a | .comp (.R _) a | .comp (.W _) a | .comp .M a => decidableEvaluated a
-  | .fn _ b => decidableEvaluated b
-  | .t | .base _ => isTrue trivial
 
 /-- The effect-driven grammar over a grammar: its type shifts, and the modes over its rules. -/
 def effectGrammar (G : Language (Ty B)) : Language (Ty B) := .mk₂ G.Unary (Mode G.Binary)

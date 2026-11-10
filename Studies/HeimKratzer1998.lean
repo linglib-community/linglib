@@ -292,7 +292,7 @@ abbrev pedantic : grammar.Structure PVal :=
 
 /-- The interpreter of the book: an index admits abstraction over it, and sisters whichever of
 application and predicate modification their types allow. -/
-abbrev rules : Interpreter grammar Node :=
+abbrev rules : Interpreter grammar ℕ :=
   (typeDriven (application.sum predicateModification)).withAbstraction fun _ ↦ .e
 
 /-- The denotations of a tree relative to total assignments, for the words with total
@@ -328,7 +328,7 @@ theorem length_derivs_le_one {W : Ty Base → Type} {lex : Word ⊕ ℕ → List
     (fun n _ ↦ by
       cases n <;> simp [rules, Interpreter.withAbstraction, typeDriven,
         ManySorted.Language.LocallyFinite.symbols_sum])
-    (fun n l r ↦ by
+    (fun l r ↦ by
       simpa [rules, Interpreter.withAbstraction, typeDriven] using
         length_binaryRules_application_sum_predicateModification_le_one l r) hl t
 
