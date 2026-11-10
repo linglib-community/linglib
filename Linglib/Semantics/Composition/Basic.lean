@@ -55,11 +55,11 @@ namespace ManySorted.Language
 variable {T : Type u} {L : Language.{u, v} T} {W : T → Type w} {D : T → Type x}
 
 /-- The unary rules that apply to a daughter of type `a`. -/
-abbrev LocallyFinite.unaryRules [L.LocallyFinite] (a : T) : List (Σ b, L.Unary a b) :=
+abbrev LocallyFinite.unaryRules [L.LocallyFinite] (a : T) : List (Sigma (L.Unary a)) :=
   LocallyFinite.symbols (.of a)
 
 /-- The binary rules that apply to daughters of types `l` and `r`. -/
-abbrev LocallyFinite.binaryRules [L.LocallyFinite] (l r : T) : List (Σ u, L.Binary l r u) :=
+abbrev LocallyFinite.binaryRules [L.LocallyFinite] (l r : T) : List (Sigma (L.Binary l r)) :=
   LocallyFinite.symbols (.prod (.of l) (.of r))
 
 /-- The types of the mothers that the rules of a language give two daughters. -/
@@ -103,9 +103,9 @@ its daughters. A unary node has a label, since the type of one daughter does not
 applies to it. -/
 structure Interpreter {T : Type u} (L : ManySorted.Language.{u, v} T) (N : Type v) where
   /-- The unary rules a node labelled `n` over a daughter of type `a` admits. -/
-  unary : N → (a : T) → List (Σ b, L.Unary a b)
+  unary : N → (a : T) → List (Sigma (L.Unary a))
   /-- The binary rules a node over daughters of types `l` and `r` admits. -/
-  binary : (l r : T) → List (Σ u, L.Binary l r u)
+  binary : (l r : T) → List (Sigma (L.Binary l r))
 
 namespace Interpreter
 
@@ -122,22 +122,22 @@ def typeDriven (L : Language.{u, v} T) [L.LocallyFinite] : Interpreter L N where
 
 /-- The type-driven interpreter admits every binary rule of the language. -/
 @[simp] theorem mem_binary_typeDriven [L.LocallyFinite] {l r : T}
-    (m : Σ u, L.Binary l r u) : m ∈ (typeDriven L : Interpreter L N).binary l r :=
+    (m : Sigma (L.Binary l r)) : m ∈ (typeDriven L : Interpreter L N).binary l r :=
   LocallyFinite.mem_symbols m.2
 
 /-- The values of the unary rules a node labelled `n` admits, at the values of its daughter. -/
-def unaryValues (I : Interpreter L N) (M : L.Structure D) (n : N) (X : List (Σ a, D a)) :
-    List (Σ a, D a) :=
+def unaryValues (I : Interpreter L N) (M : L.Structure D) (n : N) (X : List (Sigma D)) :
+    List (Sigma D) :=
   X.flatMap fun ⟨a, x⟩ ↦ (I.unary n a).map fun ⟨b, r⟩ ↦ ⟨b, M.funMap r x⟩
 
 /-- The values of the binary rules a node admits, at the values of its daughters. -/
-def binaryValues (I : Interpreter L N) (M : L.Structure D) (X Y : List (Σ a, D a)) :
-    List (Σ a, D a) :=
+def binaryValues (I : Interpreter L N) (M : L.Structure D) (X Y : List (Sigma D)) :
+    List (Sigma D) :=
   X.flatMap fun ⟨a, x⟩ ↦ Y.flatMap fun ⟨b, y⟩ ↦
     (I.binary a b).map fun ⟨c, m⟩ ↦ ⟨c, M.funMap m (x, y)⟩
 
-variable {I : Interpreter L N} {M : L.Structure D} {n : N} {X Y : List (Σ a, D a)}
-  {d : Σ a, D a}
+variable {I : Interpreter L N} {M : L.Structure D} {n : N} {X Y : List (Sigma D)}
+  {d : Sigma D}
 
 /-- A value of a unary node is the value of a rule the node admits, at a value of its
 daughter. -/

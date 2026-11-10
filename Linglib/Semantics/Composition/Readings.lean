@@ -34,14 +34,14 @@ variable {T : Type u} {G : Language.{u, v} T} {N : Type v} {D : T → Type x}
 
 /-- The readings of a unary node labelled `n` from those of its daughter: the values of the
 rules the node admits. -/
-def unaryReadings (I : Interpreter G N) (M : G.Structure D) (n : N) (X : Set (Σ a, D a)) :
-    Set (Σ a, D a) :=
+def unaryReadings (I : Interpreter G N) (M : G.Structure D) (n : N) (X : Set (Sigma D)) :
+    Set (Sigma D) :=
   {d | ∃ d₁ ∈ X, ∃ r ∈ I.unary n d₁.1, d = ⟨r.1, M.funMap r.2 d₁.2⟩}
 
 /-- The readings of a binary node from those of its daughters: the values of the rules the node
 admits. -/
-def binaryReadings (I : Interpreter G N) (M : G.Structure D) (X Y : Set (Σ a, D a)) :
-    Set (Σ a, D a) :=
+def binaryReadings (I : Interpreter G N) (M : G.Structure D) (X Y : Set (Sigma D)) :
+    Set (Sigma D) :=
   {d | ∃ d₁ ∈ X, ∃ d₂ ∈ Y, ∃ m ∈ I.binary d₁.1 d₂.1, d = ⟨m.1, M.funMap m.2 (d₁.2, d₂.2)⟩}
 
 end Interpreter
@@ -54,8 +54,8 @@ variable {C L : Type} {T : Type} {G : Language T} {W D : T → Type}
 
 /-- What a label makes of the readings of its daughters, as `nodeValues` does of their values. -/
 def nodeReadings (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
-    (lex : L ⊕ ℕ → Set (Σ a, W a)) :
-    Label C L → List (Set (Σ a, D a)) → Set (Σ a, D a)
+    (lex : L ⊕ ℕ → Set (Sigma W)) :
+    Label C L → List (Set (Sigma D)) → Set (Sigma D)
   | .terminal _ w, [] => (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex (.inl w)
   | .trace n _, [] => (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex (.inr n)
   | .bind n _, [X] => I.unaryReadings M n X
@@ -65,12 +65,12 @@ def nodeReadings (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, 
 
 /-- The readings of a tree when a word or a trace may be any of a set of items. -/
 def readings (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
-    (lex : L ⊕ ℕ → Set (Σ a, W a)) (t : Tree C L) :
-    Set (Σ a, D a) :=
+    (lex : L ⊕ ℕ → Set (Sigma W)) (t : Tree C L) :
+    Set (Sigma D) :=
   RoseTree.fold (nodeReadings I M ρ lex) t
 
 variable (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
-  (lex : L ⊕ ℕ → Set (Σ a, W a))
+  (lex : L ⊕ ℕ → Set (Sigma W))
 
 /-- A word's readings are the values of the items it may be. -/
 @[simp] theorem readings_terminal (c : C) (w : L) :
@@ -91,7 +91,7 @@ variable (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, W a → 
 variable {I M ρ lex}
 
 /-- A reading of a binder is the value of a rule its index admits, at a reading of its body. -/
-theorem mem_readings_bind {n : ℕ} {c : C} {t : Tree C L} {d : Σ a, D a} :
+theorem mem_readings_bind {n : ℕ} {c : C} {t : Tree C L} {d : Sigma D} :
     d ∈ (bind n c t).readings I M ρ lex ↔
       ∃ d₁ ∈ t.readings I M ρ lex, ∃ r ∈ I.unary n d₁.1,
         d = ⟨r.1, M.funMap r.2 d₁.2⟩ := by
@@ -99,7 +99,7 @@ theorem mem_readings_bind {n : ℕ} {c : C} {t : Tree C L} {d : Σ a, D a} :
 
 /-- A reading of a binary node is the value of a rule the node admits, at readings of its
 daughters. -/
-theorem mem_readings_phrase_binary {c : C} {k : PhraseKind} {t₁ t₂ : Tree C L} {d : Σ a, D a} :
+theorem mem_readings_phrase_binary {c : C} {k : PhraseKind} {t₁ t₂ : Tree C L} {d : Sigma D} :
     d ∈ (phrase c k [t₁, t₂]).readings I M ρ lex ↔
       ∃ d₁ ∈ t₁.readings I M ρ lex, ∃ d₂ ∈ t₂.readings I M ρ lex,
         ∃ m ∈ I.binary d₁.1 d₂.1,
@@ -109,8 +109,8 @@ theorem mem_readings_phrase_binary {c : C} {k : PhraseKind} {t₁ t₂ : Tree C 
 /-- Under the type-driven interpreter, a reading of a binary node is the value of a rule of the
 grammar at readings of its daughters. -/
 theorem mem_readings_typeDriven_phrase_binary [G.LocallyFinite] {M : G.Structure D}
-    {ρ : ∀ {a : T}, W a → D a} {lex : L ⊕ ℕ → Set (Σ a, W a)} {c : C}
-    {k : PhraseKind} {t₁ t₂ : Tree C L} {d : Σ a, D a} :
+    {ρ : ∀ {a : T}, W a → D a} {lex : L ⊕ ℕ → Set (Sigma W)} {c : C}
+    {k : PhraseKind} {t₁ t₂ : Tree C L} {d : Sigma D} :
     d ∈ (phrase c k [t₁, t₂]).readings (typeDriven G) M ρ lex ↔
       ∃ d₁ ∈ t₁.readings (typeDriven G) M ρ lex,
         ∃ d₂ ∈ t₂.readings (typeDriven G) M ρ lex,
@@ -119,10 +119,10 @@ theorem mem_readings_typeDriven_phrase_binary [G.LocallyFinite] {M : G.Structure
 
 /-- The values an interpreter finds over a lexicon of lists are the readings: what a label makes
 of lists has the members of what it makes of their sets. -/
-theorem mem_values_iff {lex : L ⊕ ℕ → List (Σ a, W a)} {d : Σ a, D a} (t : Tree C L) :
+theorem mem_values_iff {lex : L ⊕ ℕ → List (Sigma W)} {d : Sigma D} (t : Tree C L) :
     d ∈ t.values I M ρ lex ↔ d ∈ t.readings I M ρ (fun x ↦ {p | p ∈ lex x}) := by
   rw [values_eq_fold]
-  refine RoseTree.rel_fold (fun (X : List (Σ a, D a)) (S : Set (Σ a, D a)) ↦ ∀ d, d ∈ X ↔ d ∈ S)
+  refine RoseTree.rel_fold (fun (X : List (Sigma D)) (S : Set (Sigma D)) ↦ ∀ d, d ∈ X ↔ d ∈ S)
     (fun l Xs Ss h ↦ ?_) t d
   match l, Xs, Ss, h with
   | .terminal _ w, [], [], _ => simp [nodeValues, nodeReadings, eq_comm]

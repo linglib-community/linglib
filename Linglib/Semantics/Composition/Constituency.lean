@@ -61,8 +61,8 @@ be, a binder's index and a binary node admit rules, and a non-branching node has
 its daughter. A phrase with no daughter or
 more than two has none. -/
 def nodeValues (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
-    (lex : L ⊕ ℕ → List (Σ a, W a)) :
-    Label C L → List (List (Σ a, D a)) → List (Σ a, D a)
+    (lex : L ⊕ ℕ → List (Sigma W)) :
+    Label C L → List (List (Sigma D)) → List (Sigma D)
   | .terminal _ w, [] => (lex (.inl w)).map fun ⟨a, x⟩ ↦ ⟨a, ρ x⟩
   | .trace n _, [] => (lex (.inr n)).map fun ⟨a, x⟩ ↦ ⟨a, ρ x⟩
   | .bind n _, [X] => I.unaryValues M n X
@@ -73,22 +73,22 @@ def nodeValues (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, W 
 /-- The derivations of a tree that an interpreter admits, given the typed items each word and
 each trace may be: the fold of the tree by what each label makes of its daughters' derivations,
 which are their values in the term algebra. -/
-def derivs (I : Interpreter G ℕ) (lex : L ⊕ ℕ → List (Σ a, W a)) (t : Tree C L)
-    : List (Σ a, Deriv G W a) :=
+def derivs (I : Interpreter G ℕ) (lex : L ⊕ ℕ → List (Sigma W)) (t : Tree C L)
+    : List (Sigma (Deriv G W)) :=
   RoseTree.fold (nodeValues I (Term.structure G W) Deriv.leaf lex) t
 
 /-- The values of the derivations of a tree, for a lexicon of typed items whose values `ρ`
 gives. -/
 def values (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
-    (lex : L ⊕ ℕ → List (Σ a, W a)) (t : Tree C L) :
-    List (Σ a, D a) :=
+    (lex : L ⊕ ℕ → List (Sigma W)) (t : Tree C L) :
+    List (Sigma D) :=
   (t.derivs I lex).map fun ⟨a, d⟩ ↦ ⟨a, d.realize M ρ⟩
 
 /-- A tree is uninterpretable for an interpreter and a lexicon when each of its nodes has the
 daughters an interpreter reads and the interpreter admits no derivation over it. A tree with a
 phrase of no daughter or more than two has no derivations either, and is not thereby
 uninterpretable. -/
-structure Uninterpretable (I : Interpreter G ℕ) (lex : L ⊕ ℕ → List (Σ a, W a))
+structure Uninterpretable (I : Interpreter G ℕ) (lex : L ⊕ ℕ → List (Sigma W))
     (t : Tree C L) : Prop where
   /-- Each node has the daughters an interpreter reads. -/
   licensed : t.Licensed Label.IsAtMostBinary
@@ -100,7 +100,7 @@ structure Uninterpretable (I : Interpreter G ℕ) (lex : L ⊕ ℕ → List (Σ 
 section Compositional
 
 variable (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
-  (lex : L ⊕ ℕ → List (Σ a, W a))
+  (lex : L ⊕ ℕ → List (Sigma W))
 
 /-- What a label makes of its daughters' values commutes with a map of domains that commutes
 with the rules and takes the values of the items to their values. -/
@@ -110,7 +110,7 @@ theorem map_nodeValues {D' : T → Type} {M' : G.Structure D'} {ρ' : ∀ {a : T
     (hb : ∀ {a b c : T} (m : G.Binary a b c) (x : D a) (y : D b),
       h c (M.funMap m (x, y)) = M'.funMap m (h a x, h b y))
     (hρ : ∀ {a : T} (x : W a), h a (ρ x) = ρ' x) (l : Label C L)
-    (Xs : List (List (Σ a, D a))) :
+    (Xs : List (List (Sigma D))) :
     (nodeValues I M ρ lex l Xs).map (fun d ↦ ⟨d.1, h d.1 d.2⟩) =
       nodeValues I M' ρ' lex l (Xs.map (List.map fun d ↦ ⟨d.1, h d.1 d.2⟩)) := by
   match l, Xs with
@@ -131,7 +131,7 @@ taking values commutes with the rules. -/
 theorem values_eq_fold (t : Tree C L) :
     t.values I M ρ lex = RoseTree.fold (nodeValues I M ρ lex) t :=
   RoseTree.fold_hom
-    (List.map fun d : Σ a, Deriv G W a ↦ (⟨d.1, d.2.realize M ρ⟩ : Σ a, D a))
+    (List.map fun d : Sigma (Deriv G W) ↦ (⟨d.1, d.2.realize M ρ⟩ : Sigma D))
     (fun l Xs ↦ map_nodeValues I (Term.structure G W) Deriv.leaf lex
       (fun _ d ↦ d.realize M ρ) (fun _ _ ↦ rfl) (fun _ _ _ ↦ rfl) (fun _ ↦ rfl) l Xs) t
 
@@ -202,15 +202,17 @@ theorem derivs_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
 
 end Compositional
 
+variable {I : Interpreter G ℕ} {M : G.Structure D} {ρ : ∀ {a : T}, W a → D a}
+  {lex : L ⊕ ℕ → List (Sigma W)}
+
 /-- Where a node admits at most one rule for given daughters and a word is at most one item, a
 tree has at most one value: interpretation is a function. -/
-theorem length_values_le_one {I : Interpreter G ℕ} {M : G.Structure D}
-    {ρ : ∀ {a : T}, W a → D a} {lex : L ⊕ ℕ → List (Σ a, W a)}
-    (hu : ∀ n a, (I.unary n a).length ≤ 1) (hb : ∀ a b, (I.binary a b).length ≤ 1)
-    (hl : ∀ x, (lex x).length ≤ 1) (t : Tree C L) : (t.values I M ρ lex).length ≤ 1 := by
+theorem length_values_le_one (hu : ∀ n a, (I.unary n a).length ≤ 1)
+    (hb : ∀ a b, (I.binary a b).length ≤ 1) (hl : ∀ x, (lex x).length ≤ 1) (t : Tree C L) :
+    (t.values I M ρ lex).length ≤ 1 := by
   rw [values_eq_fold]
   refine RoseTree.rel_fold (g := nodeValues I M ρ lex)
-    (fun (X _ : List (Σ a, D a)) ↦ X.length ≤ 1) (fun l Xs Ys h ↦ ?_) t
+    (fun (X _ : List (Sigma D)) ↦ X.length ≤ 1) (fun l Xs Ys h ↦ ?_) t
   match l, Xs, Ys, h with
   | .terminal _ w, [], [], _ => simpa [nodeValues] using hl _
   | .trace n _, [], [], _ => simpa [nodeValues] using hl _
@@ -226,18 +228,17 @@ theorem length_values_le_one {I : Interpreter G ℕ} {M : G.Structure D}
 /-- Two interpreters that give a node the same values wherever its daughters' values have types
 in a set, and values of types in the set, give a tree the same values over a lexicon of items of
 types in the set. -/
-theorem values_congr {G' : Language T} {I : Interpreter G ℕ} {J : Interpreter G' ℕ}
-    {M : G.Structure D} {M' : G'.Structure D} {ρ : ∀ {a : T}, W a → D a}
-    {lex : L ⊕ ℕ → List (Σ a, W a)} (P : T → Prop) (hlex : ∀ x, ∀ p ∈ lex x, P p.1)
-    (hu : ∀ n {X : List (Σ a, D a)}, (∀ d ∈ X, P d.1) →
+theorem values_congr {G' : Language T} {J : Interpreter G' ℕ} {M' : G'.Structure D}
+    (P : T → Prop) (hlex : ∀ x, ∀ p ∈ lex x, P p.1)
+    (hu : ∀ n {X : List (Sigma D)}, (∀ d ∈ X, P d.1) →
       I.unaryValues M n X = J.unaryValues M' n X ∧ ∀ d ∈ J.unaryValues M' n X, P d.1)
-    (hb : ∀ {X Y : List (Σ a, D a)}, (∀ d ∈ X, P d.1) → (∀ d ∈ Y, P d.1) →
+    (hb : ∀ {X Y : List (Sigma D)}, (∀ d ∈ X, P d.1) → (∀ d ∈ Y, P d.1) →
       I.binaryValues M X Y = J.binaryValues M' X Y ∧ ∀ d ∈ J.binaryValues M' X Y, P d.1)
     (t : Tree C L) : t.values I M ρ lex = t.values J M' ρ lex := by
   rw [values_eq_fold, values_eq_fold]
-  refine (RoseTree.rel_fold (fun (X Y : List (Σ a, D a)) ↦ X = Y ∧ ∀ d ∈ Y, P d.1)
+  refine (RoseTree.rel_fold (fun (X Y : List (Sigma D)) ↦ X = Y ∧ ∀ d ∈ Y, P d.1)
     (fun l Xs Ys h ↦ ?_) t).1
-  have hleaf (x : L ⊕ ℕ) : ∀ d ∈ (lex x).map fun ⟨a, w⟩ ↦ (⟨a, ρ w⟩ : Σ a, D a), P d.1 := by
+  have hleaf (x : L ⊕ ℕ) : ∀ d ∈ (lex x).map fun ⟨a, w⟩ ↦ (⟨a, ρ w⟩ : Sigma D), P d.1 := by
     intro d hd
     obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hd
     exact hlex x p hp
@@ -251,9 +252,8 @@ theorem values_congr {G' : Language T} {I : Interpreter G ℕ} {J : Interpreter 
   | .bind _ _, _ :: _ :: _, _ :: _ :: _, _ | .phrase _ _, [], [], _
   | .phrase _ _, _ :: _ :: _ :: _, _ :: _ :: _ :: _, _ => exact ⟨rfl, fun _ hd ↦ nomatch hd⟩
 
-theorem Uninterpretable.values_eq_nil {I : Interpreter G ℕ} {lex : L ⊕ ℕ → List (Σ a, W a)}
-    {t : Tree C L} (h : t.Uninterpretable I lex) (M : G.Structure D)
-    (ρ : ∀ {a : T}, W a → D a) : t.values I M ρ lex = [] := by
+theorem Uninterpretable.values_eq_nil {t : Tree C L} (h : t.Uninterpretable I lex)
+    (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a) : t.values I M ρ lex = [] := by
   simp [values, h.derivs_eq_nil]
 
 end PhraseStructure.Tree
