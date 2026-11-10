@@ -8,7 +8,7 @@ module
 public import Linglib.Syntax.Minimalist.Verbal.Voice
 public import Linglib.Semantics.ArgumentStructure.EventIdentification
 public import Linglib.Semantics.Composition.Rules
-public import Linglib.Semantics.Composition.Mode
+public import Linglib.Semantics.Composition.Mode.Basic
 public import Linglib.Semantics.Composition.Sorts
 
 /-!
