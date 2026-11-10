@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Finset.Option
+public import Mathlib.Logic.Relator
 public import Mathlib.Data.Set.Image
 public import Mathlib.Order.Setoid.Basic
 
@@ -14,19 +15,20 @@ public import Mathlib.Order.Setoid.Basic
 
 A realization assigns to an index `r` and a context `c` the finite set `realize r c` of forms that
 realize `r` in `c`: the exponent of a root at Vocabulary Insertion, the stem of a lexeme at a cell
-of its paradigm. An empty set says that `r` is not licensed in `c`, and a set of two forms is an
-overabundant cell. The forms of an index across all its contexts are its `exponents`; an index is
-invariant when they are at most one and suppletive when they are at least two, which happens
+of its paradigm. Each index thus has a relation `Rel r` between contexts and forms, and the
+deviations from one form per cell are the ways this relation fails to be a bijection: the index is
+defective where the relation is not total, overabundant where it is not single-valued, and
+syncretic where it is not injective. The forms of an index across its contexts are its `exponents`;
+it is invariant when they are at most one and suppletive when they are at least two, which happens
 [within one cell or across two](##isSuppletive_iff_isOverabundant_or_isProperlySuppletive).
-An interpreted realization pairs the forms with a second realization, of readings.
 
-A homomorphism merges indices and translates contexts so that the forms of each cell are
-preserved, so [the indices it merges have the same forms in every
-context](##Realization.Hom.ker_onIndex_le), and the quotient `reduce` by that equivalence merges
-[exactly those](##Realization.ker_reduceHom_onIndex), as an inflection class collects the lexemes
-that inflect alike. A lax homomorphism includes forms
-where a homomorphism preserves them; it still carries suppletion forward and invariance back.
-Homomorphisms of interpreted realizations treat readings the same way.
+Realizations with the same forms are ordered by inclusion of their cells, and `comap` pulls a
+realization back along maps of indices and contexts. A realization that equals a pullback of `T`
+has the forms of `T`, and one that is below a pullback has some of them, as a lexeme has some of
+the forms of its root; suppletion, overabundance and syncretism are monotone and so pass to `T`.
+A pullback [gives indices with the same image the same forms](##ker_le_ker_comap_realize), and
+every realization is [the pullback of its reduction](##comap_reduce), the quotient that merges
+exactly those indices, as an inflection class collects the lexemes that inflect alike.
 
 ## Implementation notes
 
@@ -34,13 +36,14 @@ Homomorphisms of interpreted realizations treat readings the same way.
   differently: a root of Distributed Morphology, a phonological index in Borer's sense, a lexeme of
   Paradigm Function Morphology, Spencer's lexemic index. The interface does not say whether indices
   are listed or constructed.
-* Invariance and suppletion are `Set.Subsingleton` and `Set.Nontrivial` of `exponents`, so that
-  mathlib's lemmas on images and inclusions give their behaviour under `map` and under
-  homomorphisms.
-* A homomorphism cannot consult the index when it translates contexts, so categorial information
-  has to sit in the context.
-* Profiles are extensional and underdetermine individuation. Criteria such as the locality of
-  first categorization are further structure on admissible mergers, which studies supply.
+* Totality, univalence and the absence of syncretism are `Relator.LeftTotal`, `Relator.RightUnique`
+  and `Relator.LeftUnique` of `Rel r`, and the same properties of the transpose compare indices in
+  one context. Invariance and suppletion are `Set.Subsingleton` and `Set.Nontrivial` of
+  `exponents`.
+* Syncretism is two contexts sharing a form. Where no cell has two forms this is the kernel of
+  `realize r`, an equivalence on contexts; with overabundant cells it need not be transitive.
+* A pullback translates contexts without consulting the index, so categorial information has to
+  sit in the context.
 
 ## References
 
@@ -66,7 +69,7 @@ Homomorphisms of interpreted realizations treat readings the same way.
 
 namespace Morphology
 
-open Function
+open Function Relator
 
 variable {R Ctx F G M K : Type*}
 
@@ -79,27 +82,117 @@ there, as Vocabulary Insertion, a paradigm function or spellout computes it. -/
 
 namespace Realization
 
-variable (S : Realization R Ctx F) {r r' : R} {c c' : Ctx} {f f' : F}
+variable (S : Realization R Ctx F) {T : Realization R Ctx F} {r r' : R} {c c' : Ctx} {f f' : F}
 
-/-! ### Licensing -/
+/-! ### The relation of an index -/
+
+/-- `Rel r` relates each context to the forms that realize `r` in it. -/
+def Rel (r : R) (c : Ctx) (f : F) : Prop := f ∈ S.realize r c
+
+@[simp] theorem rel_iff : S.Rel r c f ↔ f ∈ S.realize r c := Iff.rfl
 
 /-- `r` is licensed in `c` when some form realizes it there. -/
 def IsLicensed (r : R) (c : Ctx) : Prop := (S.realize r c).Nonempty
 
 /-- A realization is total when every index is licensed in every context, as a paradigm function
 is. -/
-def IsTotal : Prop := ∀ r c, S.IsLicensed r c
+def IsTotal : Prop := ∀ r, LeftTotal (S.Rel r)
 
 /-- A realization is univalent when no cell has more than one form, as the output of an engine
 that selects one exponent is. -/
-def IsUnivalent : Prop := ∀ r c, (S.realize r c).card ≤ 1
+def IsUnivalent : Prop := ∀ r, RightUnique (S.Rel r)
+
+/-- `r` is defective when some context does not license it, as a verb that lacks a tense is. -/
+def IsDefective (r : R) : Prop := ¬ LeftTotal (S.Rel r)
+
+/-- `r` is overabundant when one of its cells offers two forms, as *dived* and *dove* share a cell
+([thornton-2011]'s cell-mates). -/
+def IsOverabundant (r : R) : Prop := ¬ RightUnique (S.Rel r)
+
+/-- `r` is syncretic when two of its contexts share a form, as the nominative and the accusative
+of a Latin neuter do. Of the transpose this says that two indices share a form in one context. -/
+def IsSyncretic (r : R) : Prop := ¬ LeftUnique (S.Rel r)
 
 /-- `r` is cross-categorial when it is licensed in two contexts whose categories `k` differ, as a
 category-free root is ([marantz-1997], [arad-2005]). -/
 def IsCrossCategorial (k : Ctx → K) (r : R) : Prop :=
   ∃ c c', k c ≠ k c' ∧ S.IsLicensed r c ∧ S.IsLicensed r c'
 
+variable {S}
+
+theorem leftTotal_rel_iff : LeftTotal (S.Rel r) ↔ ∀ c, S.IsLicensed r c := Iff.rfl
+
+theorem isTotal_iff : S.IsTotal ↔ ∀ r c, S.IsLicensed r c := Iff.rfl
+
+theorem rightUnique_rel_iff : RightUnique (S.Rel r) ↔ ∀ c, (S.realize r c).card ≤ 1 :=
+  ⟨fun h _ ↦ Finset.card_le_one.2 fun _ hf _ hf' ↦ h hf hf',
+    fun h _ _ _ hf hf' ↦ Finset.card_le_one.1 (h _) _ hf _ hf'⟩
+
+theorem isUnivalent_iff_card : S.IsUnivalent ↔ ∀ r c, (S.realize r c).card ≤ 1 :=
+  forall_congr' fun _ ↦ rightUnique_rel_iff
+
+theorem leftUnique_rel_iff : LeftUnique (S.Rel r) ↔ Pairwise (Disjoint on S.realize r) :=
+  ⟨fun h _ _ hne ↦ Finset.disjoint_left.2 fun _ hf hf' ↦ hne (h hf hf'),
+    fun h _ _ _ hf hf' ↦ by_contra fun hne ↦ Finset.disjoint_left.1 (h hne) hf hf'⟩
+
+@[simp, push] theorem not_isDefective_iff : ¬ S.IsDefective r ↔ LeftTotal (S.Rel r) := not_not
+
+@[simp, push] theorem not_isOverabundant_iff : ¬ S.IsOverabundant r ↔ RightUnique (S.Rel r) :=
+  not_not
+
+@[simp, push] theorem not_isSyncretic_iff : ¬ S.IsSyncretic r ↔ LeftUnique (S.Rel r) := not_not
+
+theorem isDefective_iff : S.IsDefective r ↔ ∃ c, S.realize r c = ∅ := by
+  simp [IsDefective, LeftTotal, Finset.eq_empty_iff_forall_notMem]
+
+theorem isOverabundant_iff : S.IsOverabundant r ↔ ∃ c, (S.realize r c).Nontrivial := by
+  simp [IsOverabundant, rightUnique_rel_iff, ← Finset.one_lt_card_iff_nontrivial]
+
+theorem isSyncretic_iff :
+    S.IsSyncretic r ↔ ∃ c c', c ≠ c' ∧ ∃ f ∈ S.realize r c, f ∈ S.realize r c' := by
+  simp only [IsSyncretic, LeftUnique, rel_iff]; push Not
+  exact ⟨fun ⟨c, c', f, hf, hf', hne⟩ ↦ ⟨c, c', hne, f, hf, hf'⟩,
+    fun ⟨c, c', hne, f, hf, hf'⟩ ↦ ⟨c, c', f, hf, hf', hne⟩⟩
+
+@[simp, push] theorem not_isTotal_iff : ¬ S.IsTotal ↔ ∃ r, S.IsDefective r := by
+  simp [IsTotal, IsDefective]
+
+theorem isUnivalent_iff : S.IsUnivalent ↔ ∀ r, ¬ S.IsOverabundant r := by
+  simp [IsUnivalent]
+
+theorem isSyncretic_of_not_disjoint (hne : c ≠ c')
+    (h : ¬ Disjoint (S.realize r c) (S.realize r c')) : S.IsSyncretic r :=
+  fun hu ↦ h (leftUnique_rel_iff.1 hu hne)
+
+theorem isSyncretic_of_mem (hne : c ≠ c') (hf : f ∈ S.realize r c) (hf' : f ∈ S.realize r c') :
+    S.IsSyncretic r :=
+  isSyncretic_iff.2 ⟨c, c', hne, f, hf, hf'⟩
+
+/-- Two distinct contexts that realize a licensed index by the same forms make it syncretic. -/
+theorem isSyncretic_of_realize_eq (hne : c ≠ c') (hc : S.IsLicensed r c)
+    (h : S.realize r c = S.realize r c') : S.IsSyncretic r :=
+  let ⟨_, hf⟩ := hc
+  isSyncretic_of_mem hne hf (h ▸ hf)
+
+/-- Where no cell has two forms, the syncretic contexts of an index are those the kernel of its
+realization identifies. -/
+theorem IsUnivalent.isSyncretic_iff (h : S.IsUnivalent) : S.IsSyncretic r ↔
+    ∃ c c', c ≠ c' ∧ S.IsLicensed r c ∧ S.realize r c = S.realize r c' := by
+  refine ⟨fun hs ↦ ?_, fun ⟨c, c', hne, hc, he⟩ ↦ isSyncretic_of_realize_eq hne hc he⟩
+  obtain ⟨c, c', hne, f, hf, hf'⟩ := Realization.isSyncretic_iff.1 hs
+  have key {c} (hf : f ∈ S.realize r c) : S.realize r c = {f} :=
+    Finset.eq_singleton_iff_unique_mem.2 ⟨hf, fun _ hg ↦ h r hg hf⟩
+  exact ⟨c, c', hne, ⟨f, hf⟩, (key hf).trans (key hf').symm⟩
+
+/-- In a total realization with no cell of two forms, an index is syncretic exactly when its
+realization is not injective on contexts. -/
+theorem IsUnivalent.isSyncretic_iff_not_injective (h : S.IsUnivalent) (ht : S.IsTotal) :
+    S.IsSyncretic r ↔ ¬ Injective (S.realize r) := by
+  simp [h.isSyncretic_iff, leftTotal_rel_iff.1 (ht r) _, Function.not_injective_iff, and_comm]
+
 /-! ### Exponents, invariance and suppletion -/
+
+variable (S)
 
 /-- `exponents r` is the set of forms that realize `r` in some context, its allomorphs. -/
 def exponents (r : R) : Set F := {f | ∃ c, f ∈ S.realize r c}
@@ -120,10 +213,6 @@ an affix alike ([gouskova-bobaljik-2020]); when they are stems it is variance in
 lexical material, which is suppletion in [stump-2016]'s sense where no inflection class determines
 it (`IsClassDetermined`). -/
 def IsSuppletive (r : R) : Prop := (S.exponents r).Nontrivial
-
-/-- `r` is overabundant when one of its cells offers two forms, as *dived* and *dove* share a cell
-([thornton-2011]'s cell-mates). -/
-def IsOverabundant (r : R) : Prop := ∃ c, (S.realize r c).Nontrivial
 
 /-- `r` is properly suppletive when two contexts that license it realize it by different sets of
 forms, as √GO is realized by *go* and by *went*. An unlicensed cell never witnesses it. -/
@@ -152,8 +241,8 @@ theorem isSuppletive_iff : S.IsSuppletive r ↔
   ⟨fun ⟨f, ⟨c, hf⟩, f', ⟨c', hf'⟩, hne⟩ ↦ ⟨c, c', f, hf, f', hf', hne⟩,
     fun ⟨c, c', f, hf, f', hf', hne⟩ ↦ ⟨f, ⟨c, hf⟩, f', ⟨c', hf'⟩, hne⟩⟩
 
-theorem isSuppletive_of_mem (hf : f ∈ S.realize r c) (hf' : f' ∈ S.realize r c') (hne : f ≠ f') :
-    S.IsSuppletive r :=
+theorem isSuppletive_of_mem (hf : f ∈ S.realize r c) (hf' : f' ∈ S.realize r c')
+    (hne : f ≠ f') : S.IsSuppletive r :=
   ⟨f, ⟨c, hf⟩, f', ⟨c', hf'⟩, hne⟩
 
 @[simp, push] theorem not_isInvariant_iff : ¬ S.IsInvariant r ↔ S.IsSuppletive r :=
@@ -169,7 +258,7 @@ theorem IsInvariant.not_isSuppletive (h : S.IsInvariant r) : ¬ S.IsSuppletive r
   not_isSuppletive_iff.2 h
 
 theorem IsOverabundant.isSuppletive (h : S.IsOverabundant r) : S.IsSuppletive r :=
-  let ⟨c, hc⟩ := h
+  let ⟨c, hc⟩ := isOverabundant_iff.1 h
   Set.Nontrivial.mono hc fun _ hf ↦ ⟨c, hf⟩
 
 /-- An invariant index has the same forms in any two contexts that license it. -/
@@ -189,11 +278,8 @@ theorem isSuppletive_iff_isOverabundant_or_isProperlySuppletive :
   refine ⟨fun ⟨f, ⟨c, hf⟩, f', ⟨c', hf'⟩, hne⟩ ↦ ?_,
     fun h ↦ h.elim IsOverabundant.isSuppletive IsProperlySuppletive.isSuppletive⟩
   by_cases h : S.realize r c = S.realize r c'
-  · exact .inl ⟨c, f, hf, f', h ▸ hf', hne⟩
+  · exact .inl (isOverabundant_iff.2 ⟨c, f, hf, f', h ▸ hf', hne⟩)
   · exact .inr ⟨c, c', ⟨f, hf⟩, ⟨f', hf'⟩, h⟩
-
-theorem isUnivalent_iff : S.IsUnivalent ↔ ∀ r, ¬ S.IsOverabundant r := by
-  simp [IsUnivalent, IsOverabundant, ← Finset.one_lt_card_iff_nontrivial]
 
 /-- Where no cell has two forms, suppletion is suppletion across cells. -/
 theorem IsUnivalent.isSuppletive_iff (h : S.IsUnivalent) :
@@ -211,7 +297,8 @@ theorem isClassDetermined_range_const_iff [Nonempty F] :
     · exact ⟨_, ⟨Classical.arbitrary F, rfl⟩, fun c f hf ↦ (hr ▸ ⟨c, hf⟩ : f ∈ (∅ : Set F)).elim⟩
     · exact ⟨_, ⟨f₀, rfl⟩, fun c f hf ↦ h ⟨c, hf⟩ hf₀⟩
 
-theorem IsHomophonous.symm (h : S.IsHomophonous r r') : S.IsHomophonous r' r := ⟨h.1.symm, h.2.symm⟩
+theorem IsHomophonous.symm (h : S.IsHomophonous r r') : S.IsHomophonous r' r :=
+  ⟨h.1.symm, h.2.symm⟩
 
 /-- Some two indices are homophonous exactly when realization is not injective on indices. -/
 theorem exists_isHomophonous_iff : (∃ r r', S.IsHomophonous r r') ↔ ¬ Injective S.realize := by
@@ -219,8 +306,8 @@ theorem exists_isHomophonous_iff : (∃ r r', S.IsHomophonous r r') ↔ ¬ Injec
 
 /-! ### Decidability
 
-Invariance and suppletion are decided through `isInvariant_iff` and `isSuppletive_iff`, which
-quantify over contexts and their finite sets of forms, so they need no `Fintype F`. -/
+Each instance decides a characterization that quantifies over contexts and their finite sets of
+forms, so none needs a `Fintype F`. -/
 
 section Decidable
 
@@ -229,12 +316,25 @@ variable (S) [Fintype Ctx] [DecidableEq F]
 instance (r : R) (c : Ctx) : Decidable (S.IsLicensed r c) :=
   inferInstanceAs (Decidable (S.realize r c).Nonempty)
 
+instance (r : R) : Decidable (LeftTotal (S.Rel r)) :=
+  inferInstanceAs (Decidable (∀ c, S.IsLicensed r c))
+
+instance (r : R) : Decidable (RightUnique (S.Rel r)) := decidable_of_iff _ rightUnique_rel_iff.symm
+
+instance [DecidableEq Ctx] (r : R) : Decidable (LeftUnique (S.Rel r)) :=
+  decidable_of_iff (∀ c c', c ≠ c' → Disjoint (S.realize r c) (S.realize r c'))
+    leftUnique_rel_iff.symm
+
+instance (r : R) : Decidable (S.IsDefective r) := inferInstanceAs (Decidable (¬ _))
+
+instance (r : R) : Decidable (S.IsOverabundant r) := inferInstanceAs (Decidable (¬ _))
+
+instance [DecidableEq Ctx] (r : R) : Decidable (S.IsSyncretic r) :=
+  inferInstanceAs (Decidable (¬ _))
+
 instance (r : R) : Decidable (S.IsInvariant r) := decidable_of_iff _ isInvariant_iff.symm
 
 instance (r : R) : Decidable (S.IsSuppletive r) := decidable_of_iff _ isSuppletive_iff.symm
-
-instance (r : R) : Decidable (S.IsOverabundant r) :=
-  inferInstanceAs (Decidable (∃ c, (S.realize r c).Nontrivial))
 
 instance (r : R) : Decidable (S.IsProperlySuppletive r) :=
   inferInstanceAs (Decidable (∃ _ _, _ ∧ _ ∧ _))
@@ -247,11 +347,53 @@ instance [DecidableEq R] (r r' : R) : Decidable (S.IsHomophonous r r') :=
 
 variable [Fintype R]
 
-instance : Decidable S.IsTotal := inferInstanceAs (Decidable (∀ r c, S.IsLicensed r c))
+instance : Decidable S.IsTotal := inferInstanceAs (Decidable (∀ r, LeftTotal (S.Rel r)))
 
-instance : Decidable S.IsUnivalent := inferInstanceAs (Decidable (∀ r c, (S.realize r c).card ≤ 1))
+instance : Decidable S.IsUnivalent := inferInstanceAs (Decidable (∀ r, RightUnique (S.Rel r)))
 
 end Decidable
+
+/-! ### The order and its monotone properties -/
+
+/-- Realizations are ordered by inclusion of the forms of each cell. -/
+instance : PartialOrder (Realization R Ctx F) :=
+  PartialOrder.lift realize fun _ _ ↦ Realization.ext
+
+theorem le_def : S ≤ T ↔ ∀ r c, S.realize r c ⊆ T.realize r c := Iff.rfl
+
+section Mono
+
+variable (h : S ≤ T)
+include h
+
+theorem IsLicensed.mono (hc : S.IsLicensed r c) : T.IsLicensed r c :=
+  Finset.Nonempty.mono (h r c) hc
+
+theorem exponents_mono (r : R) : S.exponents r ⊆ T.exponents r := fun _ ⟨c, hf⟩ ↦ ⟨c, h r c hf⟩
+
+theorem IsSuppletive.mono (hs : S.IsSuppletive r) : T.IsSuppletive r :=
+  Set.Nontrivial.mono hs (exponents_mono h r)
+
+theorem IsInvariant.anti (ht : T.IsInvariant r) : S.IsInvariant r :=
+  Set.Subsingleton.anti ht (exponents_mono h r)
+
+theorem rightUnique_rel_anti (ht : RightUnique (T.Rel r)) : RightUnique (S.Rel r) :=
+  fun _ _ _ hf hf' ↦ ht (h r _ hf) (h r _ hf')
+
+theorem leftUnique_rel_anti (ht : LeftUnique (T.Rel r)) : LeftUnique (S.Rel r) :=
+  fun _ _ _ hf hf' ↦ ht (h r _ hf) (h r _ hf')
+
+theorem IsOverabundant.mono (hs : S.IsOverabundant r) : T.IsOverabundant r :=
+  mt (rightUnique_rel_anti h) hs
+
+theorem IsSyncretic.mono (hs : S.IsSyncretic r) : T.IsSyncretic r := mt (leftUnique_rel_anti h) hs
+
+theorem IsUnivalent.anti (ht : T.IsUnivalent) : S.IsUnivalent :=
+  fun r ↦ rightUnique_rel_anti h (ht r)
+
+theorem IsTotal.mono (hs : S.IsTotal) : T.IsTotal := fun r c ↦ IsLicensed.mono h (hs r c)
+
+end Mono
 
 /-! ### Transpose, image and composition -/
 
@@ -266,6 +408,12 @@ def transpose (S : Realization R Ctx F) : Realization Ctx R F := ⟨swap S.reali
   rfl
 
 @[simp] theorem transpose_transpose : S.transpose.transpose = S := rfl
+
+/-- The contexts that the transpose does not distinguish are those that every index realizes
+alike. -/
+theorem ker_transpose_realize_iff :
+    Setoid.ker S.transpose.realize c c' ↔ ∀ r, Setoid.ker (S.realize r) c c' := by
+  simp [Setoid.ker_def, funext_iff]
 
 /-- The image of `S` under a map of forms. -/
 def map [DecidableEq G] (g : F → G) (S : Realization R Ctx F) : Realization R Ctx G :=
@@ -286,6 +434,10 @@ variable {S}
 theorem IsInvariant.map (h : S.IsInvariant r) : (S.map g).IsInvariant r := by
   simpa [IsInvariant] using Set.Subsingleton.image h g
 
+theorem IsSyncretic.map (h : S.IsSyncretic r) : (S.map g).IsSyncretic r :=
+  let ⟨_, _, hne, _, hf, hf'⟩ := isSyncretic_iff.1 h
+  isSyncretic_of_mem hne (Finset.mem_image_of_mem g hf) (Finset.mem_image_of_mem g hf')
+
 variable {g}
 
 theorem IsSuppletive.of_map (h : (S.map g).IsSuppletive r) : S.IsSuppletive r :=
@@ -294,7 +446,7 @@ theorem IsSuppletive.of_map (h : (S.map g).IsSuppletive r) : S.IsSuppletive r :=
 @[simp] theorem isLicensed_map_iff : (S.map g).IsLicensed r c ↔ S.IsLicensed r c :=
   Finset.image_nonempty
 
-@[simp] theorem isTotal_map_iff : (S.map g).IsTotal ↔ S.IsTotal := by simp [IsTotal]
+@[simp] theorem isTotal_map_iff : (S.map g).IsTotal ↔ S.IsTotal := by simp [isTotal_iff]
 
 end Map
 
@@ -316,8 +468,9 @@ theorem mem_ofOption_realize : f ∈ (ofOption g).realize r c ↔ g r c = some f
 theorem isLicensed_ofOption_iff : (ofOption g).IsLicensed r c ↔ (g r c).isSome := by
   simp [IsLicensed, Finset.Nonempty, Option.isSome_iff_exists]
 
-theorem isUnivalent_ofOption (g : R → Ctx → Option F) : (ofOption g).IsUnivalent := fun r c ↦ by
-  rw [ofOption_realize, Option.card_toFinset]; cases g r c <;> simp
+theorem isUnivalent_ofOption (g : R → Ctx → Option F) : (ofOption g).IsUnivalent :=
+  fun _ _ _ _ hf hf' ↦ Option.some.inj ((mem_ofOption_realize.1 hf).symm.trans
+    (mem_ofOption_realize.1 hf'))
 
 /-- An index is suppletive exactly when two of its contexts select distinct forms. -/
 theorem isSuppletive_ofOption_iff : (ofOption g).IsSuppletive r ↔
@@ -353,108 +506,65 @@ theorem comp_assoc {H : Type*} [DecidableEq H] (S : Realization R Ctx F) (T : Re
 
 end Comp
 
-/-! ### Homomorphisms -/
+/-! ### Pullback -/
 
-section Hom
+section Comap
 
-variable {R₁ C₁ R₂ C₂ R₃ C₃ : Type*} {S₁ : Realization R₁ C₁ F} {S₂ : Realization R₂ C₂ F}
-  {S₃ : Realization R₃ C₃ F}
+variable {R₁ C₁ R₂ C₂ R₃ C₃ : Type*} (i : R₁ → R₂) (k : C₁ → C₂) (T T' : Realization R₂ C₂ F)
+  {r r' : R₁} {c : C₁}
 
-/-- A lax homomorphism of realizations merges indices and translates contexts so that the forms
-of each cell of the source are among those of its image, as the forms of a lexeme are among
-those of its root ([arad-2005]). -/
-@[ext] structure LaxHom (S : Realization R₁ C₁ F) (T : Realization R₂ C₂ F) where
-  /-- The translation of indices, which merges those it identifies. -/
-  onIndex : R₁ → R₂
-  /-- The translation of contexts. -/
-  onCtx : C₁ → C₂
-  /-- Forms are included. -/
-  realize_subset (r : R₁) (c : C₁) : S.realize r c ⊆ T.realize (onIndex r) (onCtx c)
+/-- The pullback of `T` along maps of indices and of contexts realizes each index in each context
+as `T` realizes their images. A realization equal to a pullback of `T` merges indices and
+translates contexts while keeping the forms of each cell, and one below a pullback has, in each
+cell, some of the forms `T` gives its image. -/
+def comap : Realization R₁ C₁ F := ⟨fun r c ↦ T.realize (i r) (k c)⟩
 
-/-- A homomorphism of realizations merges indices and translates contexts so that the forms of
-each cell are preserved. The translation of contexts does not consult the index, so the target
-context cannot encode the source index. -/
-@[ext] structure Hom (S : Realization R₁ C₁ F) (T : Realization R₂ C₂ F) where
-  /-- The translation of indices, which merges those it identifies. -/
-  onIndex : R₁ → R₂
-  /-- The translation of contexts. -/
-  onCtx : C₁ → C₂
-  /-- Forms are preserved. -/
-  realize_eq (r : R₁) (c : C₁) : T.realize (onIndex r) (onCtx c) = S.realize r c
+@[simp] theorem comap_realize (r : R₁) (c : C₁) :
+    (T.comap i k).realize r c = T.realize (i r) (k c) := rfl
 
-attribute [simp] Hom.realize_eq
+@[simp] theorem comap_id (S : Realization R Ctx F) : S.comap id id = S := rfl
 
-namespace LaxHom
+theorem comap_comap (j : R₂ → R₃) (l : C₂ → C₃) (U : Realization R₃ C₃ F) :
+    (U.comap j l).comap i k = U.comap (j ∘ i) (l ∘ k) := rfl
 
-/-- The identity lax homomorphism. -/
-@[simps] protected def id (S : Realization R Ctx F) : LaxHom S S := ⟨id, id, fun _ _ ↦ subset_rfl⟩
+variable {T T'} in
+@[gcongr] theorem comap_mono (h : T ≤ T') : T.comap i k ≤ T'.comap i k := fun _ _ ↦ h _ _
 
-/-- The composite of two lax homomorphisms. -/
-@[simps] def comp (ψ : LaxHom S₂ S₃) (φ : LaxHom S₁ S₂) : LaxHom S₁ S₃ :=
-  ⟨ψ.onIndex ∘ φ.onIndex, ψ.onCtx ∘ φ.onCtx,
-    fun r c ↦ (φ.realize_subset r c).trans (ψ.realize_subset _ _)⟩
+@[simp] theorem isLicensed_comap_iff : (T.comap i k).IsLicensed r c ↔ T.IsLicensed (i r) (k c) :=
+  Iff.rfl
 
-@[simp] theorem id_comp (φ : LaxHom S₁ S₂) : (LaxHom.id S₂).comp φ = φ := rfl
+/-- The allomorphs of an index of a pullback are among those of its image. -/
+theorem exponents_comap_subset (r : R₁) : (T.comap i k).exponents r ⊆ T.exponents (i r) :=
+  fun _ ⟨c, hf⟩ ↦ ⟨k c, hf⟩
 
-@[simp] theorem comp_id (φ : LaxHom S₁ S₂) : φ.comp (LaxHom.id S₁) = φ := rfl
+variable {i k T}
 
-variable (φ : LaxHom S₁ S₂) {r : R₁} {c : C₁}
+theorem IsSuppletive.of_comap (h : (T.comap i k).IsSuppletive r) : T.IsSuppletive (i r) :=
+  Set.Nontrivial.mono h (exponents_comap_subset i k T r)
 
-theorem isLicensed (h : S₁.IsLicensed r c) : S₂.IsLicensed (φ.onIndex r) (φ.onCtx c) :=
-  h.mono (φ.realize_subset r c)
+theorem IsInvariant.comap (h : T.IsInvariant (i r)) : (T.comap i k).IsInvariant r :=
+  Set.Subsingleton.anti h (exponents_comap_subset i k T r)
 
-/-- Merging indices can only enlarge their sets of allomorphs. -/
-theorem exponents_subset (r : R₁) : S₁.exponents r ⊆ S₂.exponents (φ.onIndex r) :=
-  fun _ ⟨c, hf⟩ ↦ ⟨φ.onCtx c, φ.realize_subset r c hf⟩
+theorem IsOverabundant.of_comap (h : (T.comap i k).IsOverabundant r) : T.IsOverabundant (i r) :=
+  mt (fun ht _ _ _ hf hf' ↦ ht hf hf') h
 
-theorem isSuppletive (h : S₁.IsSuppletive r) : S₂.IsSuppletive (φ.onIndex r) :=
-  h.mono (φ.exponents_subset r)
+/-- Syncretism passes from a pullback that keeps contexts apart. -/
+theorem IsSyncretic.of_comap (hk : Injective k) (h : (T.comap i k).IsSyncretic r) :
+    T.IsSyncretic (i r) :=
+  mt (fun ht _ _ _ hf hf' ↦ hk (ht hf hf')) h
 
-theorem isInvariant (h : S₂.IsInvariant (φ.onIndex r)) : S₁.IsInvariant r :=
-  h.anti (φ.exponents_subset r)
+theorem IsUnivalent.comap (h : T.IsUnivalent) : (T.comap i k).IsUnivalent :=
+  fun r _ _ _ hf hf' ↦ h (i r) hf hf'
 
-theorem isOverabundant (h : S₁.IsOverabundant r) : S₂.IsOverabundant (φ.onIndex r) :=
-  let ⟨c, hc⟩ := h
-  ⟨φ.onCtx c, Set.Nontrivial.mono hc (Finset.coe_subset.2 (φ.realize_subset r c))⟩
+theorem IsTotal.comap (h : T.IsTotal) : (T.comap i k).IsTotal := fun r c ↦ h (i r) (k c)
 
-end LaxHom
+variable (i k T)
 
-namespace Hom
+/-- A pullback gives indices with the same image the same forms in every context. -/
+theorem ker_le_ker_comap_realize : Setoid.ker i ≤ Setoid.ker (T.comap i k).realize :=
+  fun r r' (h : i r = i r') ↦ funext fun c ↦ by rw [comap_realize, comap_realize, h]
 
-/-- A homomorphism is lax. -/
-@[simps] def toLaxHom (φ : Hom S₁ S₂) : LaxHom S₁ S₂ :=
-  ⟨φ.onIndex, φ.onCtx, fun r c ↦ (φ.realize_eq r c).ge⟩
-
-/-- The identity homomorphism. -/
-@[simps] protected def id (S : Realization R Ctx F) : Hom S S := ⟨id, id, fun _ _ ↦ rfl⟩
-
-/-- The composite of two homomorphisms, so that coarsenings chain. -/
-@[simps] def comp (ψ : Hom S₂ S₃) (φ : Hom S₁ S₂) : Hom S₁ S₃ :=
-  ⟨ψ.onIndex ∘ φ.onIndex, ψ.onCtx ∘ φ.onCtx, fun r c ↦ by simp⟩
-
-@[simp] theorem id_comp (φ : Hom S₁ S₂) : (Hom.id S₂).comp φ = φ := rfl
-
-@[simp] theorem comp_id (φ : Hom S₁ S₂) : φ.comp (Hom.id S₁) = φ := rfl
-
-theorem comp_assoc {R₄ C₄ : Type*} {S₄ : Realization R₄ C₄ F} (χ : Hom S₃ S₄) (ψ : Hom S₂ S₃)
-    (φ : Hom S₁ S₂) : (χ.comp ψ).comp φ = χ.comp (ψ.comp φ) := rfl
-
-variable (φ : Hom S₁ S₂) {r r' : R₁} {c : C₁}
-
-@[simp] theorem isLicensed_iff : S₂.IsLicensed (φ.onIndex r) (φ.onCtx c) ↔ S₁.IsLicensed r c := by
-  simp [IsLicensed]
-
-/-- Indices that a homomorphism merges have the same forms in every context. -/
-theorem realize_eq_of_onIndex_eq (h : φ.onIndex r = φ.onIndex r') : S₁.realize r = S₁.realize r' :=
-  funext fun c ↦ by rw [← φ.realize_eq, ← φ.realize_eq r', h]
-
-/-- A homomorphism merges only indices with the same forms in every context. -/
-theorem ker_onIndex_le : Setoid.ker φ.onIndex ≤ Setoid.ker S₁.realize :=
-  fun _ _ ↦ φ.realize_eq_of_onIndex_eq
-
-end Hom
-
-end Hom
+end Comap
 
 /-! ### Reduction -/
 
@@ -464,16 +574,12 @@ def reduce : Realization (Quotient (Setoid.ker S.realize)) Ctx F := ⟨Setoid.ke
 
 @[simp] theorem reduce_realize_mk (r : R) : S.reduce.realize ⟦r⟧ = S.realize r := rfl
 
+/-- Every realization is the pullback of its reduction, which by `ker_le_ker_comap_realize` and
+`Setoid.ker_mk_eq` merges as many indices as a pullback can. -/
+@[simp] theorem comap_reduce : S.reduce.comap Quotient.mk'' id = S := rfl
+
 /-- Distinct indices of the reduction differ in their forms in some context. -/
 theorem reduce_realize_injective : Injective S.reduce.realize := Setoid.kerLift_injective _
-
-/-- The homomorphism from `S` to its reduction. -/
-@[simps] def reduceHom : Hom S S.reduce := ⟨Quotient.mk'', id, fun _ _ ↦ rfl⟩
-
-/-- Reduction merges exactly the indices with the same forms in every context, which by
-`Hom.ker_onIndex_le` is as much as a homomorphism can merge. -/
-theorem ker_reduceHom_onIndex : Setoid.ker S.reduceHom.onIndex = Setoid.ker S.realize :=
-  Setoid.ker_mk_eq _
 
 end Realization
 
@@ -486,7 +592,7 @@ structure Realization.Interpreted (R Ctx F M : Type*) extends Realization R Ctx 
 
 namespace Realization.Interpreted
 
-variable (S : Interpreted R Ctx F M) {r r' : R}
+variable (S : Interpreted R Ctx F M)
 
 /-- `r` is intrinsic when it has one reading wherever it has any, as a lexeme with a listed meaning
 does. -/
@@ -495,114 +601,6 @@ abbrev IsIntrinsic (r : R) : Prop := S.interp.IsInvariant r
 /-- `r` is allosemous when it has two distinct readings, the counterpart in meaning of
 suppletion. -/
 abbrev IsAllosemous (r : R) : Prop := S.interp.IsSuppletive r
-
-/-- The profile of `r` is its forms and its readings in every context. -/
-def profile (r : R) : (Ctx → Finset F) × (Ctx → Finset M) := (S.realize r, S.interp.realize r)
-
-@[simp] theorem profile_fst (r : R) : (S.profile r).1 = S.realize r := rfl
-
-@[simp] theorem profile_snd (r : R) : (S.profile r).2 = S.interp.realize r := rfl
-
-/-! ### Homomorphisms of interpreted realizations -/
-
-section Hom
-
-variable {R₁ C₁ R₂ C₂ R₃ C₃ : Type*} {S₁ : Interpreted R₁ C₁ F M} {S₂ : Interpreted R₂ C₂ F M}
-  {S₃ : Interpreted R₃ C₃ F M}
-
-/-- A lax homomorphism of interpreted realizations is a lax homomorphism of the realizations by
-forms that also includes readings, as the listed properties of a lexeme are among those of its
-root ([arad-2005]). -/
-structure LaxHom (S : Interpreted R₁ C₁ F M) (T : Interpreted R₂ C₂ F M) extends
-    Realization.LaxHom S.toRealization T.toRealization where
-  /-- Readings are included. -/
-  interp_subset (r : R₁) (c : C₁) :
-    S.interp.realize r c ⊆ T.interp.realize (onIndex r) (onCtx c)
-
-/-- A homomorphism of interpreted realizations is a homomorphism of the realizations by forms
-that also preserves readings. -/
-structure Hom (S : Interpreted R₁ C₁ F M) (T : Interpreted R₂ C₂ F M) extends
-    Realization.Hom S.toRealization T.toRealization where
-  /-- Readings are preserved. -/
-  interp_eq (r : R₁) (c : C₁) : T.interp.realize (onIndex r) (onCtx c) = S.interp.realize r c
-
-attribute [simp] Hom.interp_eq
-
-namespace LaxHom
-
-/-- The lax homomorphism of the realizations by readings. -/
-@[simps] def interpHom (φ : LaxHom S₁ S₂) : Realization.LaxHom S₁.interp S₂.interp :=
-  ⟨φ.onIndex, φ.onCtx, φ.interp_subset⟩
-
-/-- The identity lax homomorphism. -/
-protected def id (S : Interpreted R Ctx F M) : LaxHom S S :=
-  ⟨.id S.toRealization, fun _ _ ↦ subset_rfl⟩
-
-/-- The composite of two lax homomorphisms. -/
-def comp (ψ : LaxHom S₂ S₃) (φ : LaxHom S₁ S₂) : LaxHom S₁ S₃ :=
-  ⟨ψ.toLaxHom.comp φ.toLaxHom, (ψ.interpHom.comp φ.interpHom).realize_subset⟩
-
-variable (φ : LaxHom S₁ S₂) {r : R₁}
-
-theorem isAllosemous (h : S₁.IsAllosemous r) : S₂.IsAllosemous (φ.onIndex r) :=
-  φ.interpHom.isSuppletive h
-
-theorem isIntrinsic (h : S₂.IsIntrinsic (φ.onIndex r)) : S₁.IsIntrinsic r :=
-  φ.interpHom.isInvariant h
-
-end LaxHom
-
-namespace Hom
-
-/-- The homomorphism of the realizations by readings. -/
-@[simps] def interpHom (φ : Hom S₁ S₂) : Realization.Hom S₁.interp S₂.interp :=
-  ⟨φ.onIndex, φ.onCtx, φ.interp_eq⟩
-
-/-- A homomorphism of interpreted realizations is lax. -/
-def toLaxHom (φ : Hom S₁ S₂) : LaxHom S₁ S₂ :=
-  ⟨φ.toHom.toLaxHom, φ.interpHom.toLaxHom.realize_subset⟩
-
-/-- The identity homomorphism. -/
-protected def id (S : Interpreted R Ctx F M) : Hom S S := ⟨.id S.toRealization, fun _ _ ↦ rfl⟩
-
-/-- The composite of two homomorphisms. -/
-def comp (ψ : Hom S₂ S₃) (φ : Hom S₁ S₂) : Hom S₁ S₃ :=
-  ⟨ψ.toHom.comp φ.toHom, (ψ.interpHom.comp φ.interpHom).realize_eq⟩
-
-variable (φ : Hom S₁ S₂) {r r' : R₁}
-
-/-- Indices that a homomorphism merges have the same forms and readings in every context. -/
-theorem profile_eq_of_onIndex_eq (h : φ.onIndex r = φ.onIndex r') : S₁.profile r = S₁.profile r' :=
-  Prod.ext (φ.toHom.realize_eq_of_onIndex_eq h) (φ.interpHom.realize_eq_of_onIndex_eq h)
-
-/-- A homomorphism of interpreted realizations merges only indices with the same profile. -/
-theorem ker_onIndex_le : Setoid.ker φ.onIndex ≤ Setoid.ker S₁.profile :=
-  fun _ _ ↦ φ.profile_eq_of_onIndex_eq
-
-end Hom
-
-end Hom
-
-/-! ### Reduction of an interpreted realization -/
-
-/-- The reduction of `S` takes as its indices the profiles of `S`, merging the indices that have
-the same forms and readings in every context. -/
-def reduce : Interpreted (Quotient (Setoid.ker S.profile)) Ctx F M where
-  realize q := (Setoid.kerLift S.profile q).1
-  interp := ⟨fun q ↦ (Setoid.kerLift S.profile q).2⟩
-
-@[simp] theorem reduce_profile : S.reduce.profile = Setoid.kerLift S.profile := rfl
-
-/-- Distinct indices of the reduction have distinct profiles. -/
-theorem reduce_profile_injective : Injective S.reduce.profile := Setoid.kerLift_injective _
-
-/-- The homomorphism from `S` to its reduction. -/
-def reduceHom : Hom S S.reduce := ⟨⟨Quotient.mk'', id, fun _ _ ↦ rfl⟩, fun _ _ ↦ rfl⟩
-
-/-- Reduction merges exactly the indices with the same profile, which by `Hom.ker_onIndex_le` is as
-much as a homomorphism can merge. -/
-theorem ker_reduceHom_onIndex : Setoid.ker S.reduceHom.onIndex = Setoid.ker S.profile :=
-  Setoid.ker_mk_eq _
 
 end Realization.Interpreted
 

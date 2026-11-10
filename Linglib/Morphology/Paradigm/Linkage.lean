@@ -46,7 +46,8 @@ takes the lexeme's root.
 ## Implementation notes
 
 `IsTotal`, `IsUnivalent`, and the per-lexeme `IsInvariant`, `IsSuppletive`, and
-`IsOverabundant` (Thornton's cell-mates) are inherited from `Realization`. Taking `S = M` and
+`IsOverabundant` (Thornton's cell-mates) are inherited from `Realization`; defectiveness and
+syncretism are its `IsDefective` of the stems and `IsSyncretic` of the form correspondents. Taking `S = M` and
 `ι = id` recovers a single type of property sets. The universal default rule (5) is not a
 listed rule of `ofRules` but the fallback of `RuleSet.realizeMinimalD`, the lexeme's
 root.
@@ -98,6 +99,12 @@ def corr (l : L) (σ : S) : Finset (Z × M) := ℓ.realize l σ ×ˢ {ℓ.pm l �
 @[simp] theorem card_corr (l : L) (σ : S) : (ℓ.corr l σ).card = (ℓ.realize l σ).card := by
   simp [corr]
 
+/-- The realization of each content cell by its form correspondents. -/
+def correspondents : Realization L S (Z × M) := ⟨ℓ.corr⟩
+
+@[simp] theorem correspondents_realize (l : L) (σ : S) :
+    ℓ.correspondents.realize l σ = ℓ.corr l σ := rfl
+
 /-- The realized paradigm of a content cell realizes each form correspondent `⟨z, τ⟩` as
 `rf z τ`, keeping the property set `τ`. -/
 def realized [DecidableEq W] (rf : Z → M → W) (l : L) (σ : S) : Finset (W × M) :=
@@ -114,7 +121,7 @@ stem. -/
 def IsStemInvariant : Prop := ∀ l, ℓ.IsInvariant l
 
 /-- A linkage is injective when no two content cells of a lexeme share a form correspondent. -/
-def IsInjective : Prop := ∀ l ⦃σ₁ σ₂ : S⦄, σ₁ ≠ σ₂ → Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)
+def IsInjective : Prop := ∀ l, Relator.LeftUnique (ℓ.correspondents.Rel l)
 
 /-- A linkage is property-preserving relative to an identification `ι` of content with form
 property sets when every form correspondent carries the image under `ι` of its content cell's
@@ -138,11 +145,11 @@ structure IsCanonical (ι : S → M) : Prop where
 /-! ### Deviations from canonical linkage -/
 
 /-- A linkage is defective ([stump-2012-mmm8]) when some content cell has no stem. -/
-def IsDefective : Prop := ∃ l σ, ℓ.realize l σ = ∅
+def IsDefective : Prop := ∃ l, ℓ.toRealization.IsDefective l
 
 /-- A linkage is syncretic ([stump-2012-mmm8]) when two distinct content cells of a lexeme share
 a form correspondent. -/
-def IsSyncretic : Prop := ∃ l σ₁ σ₂, σ₁ ≠ σ₂ ∧ ¬ Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)
+def IsSyncretic : Prop := ∃ l, ℓ.correspondents.IsSyncretic l
 
 /-- A linkage is unfaithful ([stump-2012-mmm8]) relative to `ι` when some content cell's form
 correspondents carry a property set other than its image under `ι`, as under deponency and
@@ -152,11 +159,23 @@ def IsUnfaithful (ι : S → M) : Prop := ∃ l σ, ℓ.pm l σ ≠ ι σ
 /-- A form cell is virtual ([stump-2012-mmm8]) when no content cell corresponds to it. -/
 def IsVirtual (zτ : Z × M) : Prop := ∀ l σ, zτ ∉ ℓ.corr l σ
 
-@[simp, push] theorem not_isTotal_iff : ¬ ℓ.IsTotal ↔ ℓ.IsDefective := by
-  simp [IsDefective, Realization.IsTotal, Realization.IsLicensed]
+@[simp, push] theorem not_isTotal_iff : ¬ ℓ.IsTotal ↔ ℓ.IsDefective :=
+  Realization.not_isTotal_iff
 
 @[simp, push] theorem not_isInjective_iff : ¬ ℓ.IsInjective ↔ ℓ.IsSyncretic := by
-  simp [IsSyncretic, IsInjective]
+  simp [IsSyncretic, IsInjective, Realization.IsSyncretic]
+
+theorem isDefective_iff : ℓ.IsDefective ↔ ∃ l σ, ℓ.realize l σ = ∅ :=
+  exists_congr fun _ ↦ Realization.isDefective_iff
+
+theorem isInjective_iff :
+    ℓ.IsInjective ↔ ∀ l σ₁ σ₂, σ₁ ≠ σ₂ → Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂) :=
+  forall_congr' fun _ ↦ Realization.leftUnique_rel_iff
+
+variable {ℓ} in
+theorem isSyncretic_of_not_disjoint {l : L} {σ₁ σ₂ : S} (hne : σ₁ ≠ σ₂)
+    (h : ¬ Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)) : ℓ.IsSyncretic :=
+  ⟨l, Realization.isSyncretic_of_not_disjoint hne h⟩
 
 @[simp, push] theorem not_isPropertyPreserving_iff (ι : S → M) :
     ¬ ℓ.IsPropertyPreserving ι ↔ ℓ.IsUnfaithful ι := by
@@ -164,8 +183,7 @@ def IsVirtual (zτ : Z × M) : Prop := ∀ l σ, zτ ∉ ℓ.corr l σ
 
 theorem isInjective_of_injective_pm {ℓ : Linkage L Z S M}
     (h : ∀ l, Function.Injective (ℓ.pm l)) : ℓ.IsInjective :=
-  fun l _ _ hne ↦ Finset.disjoint_left.mpr fun _ h₁ h₂ ↦
-    hne (h l (((mem_corr ℓ).mp h₁).2.symm.trans ((mem_corr ℓ).mp h₂).2))
+  fun l _ _ _ h₁ h₂ ↦ h l (((mem_corr ℓ).mp h₁).2.symm.trans ((mem_corr ℓ).mp h₂).2)
 
 /-! ### Invariance along a projection -/
 
@@ -186,7 +204,8 @@ theorem isInvariantAlong_iff : ℓ.IsInvariantAlong p l ↔
 
 theorem isHeteroclite_iff : ℓ.IsHeteroclite cls l ↔
     ∃ σ σ', ∃ z ∈ ℓ.realize l σ, ∃ z' ∈ ℓ.realize l σ', cls z ≠ cls z' :=
-  ⟨by rintro ⟨_, ⟨z, ⟨σ, hz⟩, rfl⟩, _, ⟨z', ⟨σ', hz'⟩, rfl⟩, hne⟩; exact ⟨σ, σ', z, hz, z', hz', hne⟩,
+  ⟨by rintro ⟨_, ⟨z, ⟨σ, hz⟩, rfl⟩, _, ⟨z', ⟨σ', hz'⟩, rfl⟩, hne⟩
+      exact ⟨σ, σ', z, hz, z', hz', hne⟩,
     fun ⟨σ, σ', z, hz, z', hz', hne⟩ ↦ ⟨_, ⟨z, ⟨σ, hz⟩, rfl⟩, _, ⟨z', ⟨σ', hz'⟩, rfl⟩, hne⟩⟩
 
 theorem isInvariantAlong_id_iff : ℓ.IsInvariantAlong id l ↔ ℓ.IsInvariant l := by
@@ -240,18 +259,16 @@ instance [DecidableEq Z] : Decidable ℓ.IsStemInvariant :=
   inferInstanceAs (Decidable (∀ l, ℓ.IsInvariant l))
 
 instance [DecidableEq Z] [DecidableEq S] [DecidableEq M] : Decidable ℓ.IsInjective :=
-  inferInstanceAs
-    (Decidable (∀ l, ∀ σ₁ σ₂ : S, σ₁ ≠ σ₂ → Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)))
+  inferInstanceAs (Decidable (∀ l, Relator.LeftUnique (ℓ.correspondents.Rel l)))
 
 instance [DecidableEq M] (ι : S → M) : Decidable (ℓ.IsPropertyPreserving ι) :=
   inferInstanceAs (Decidable (∀ l σ, ℓ.pm l σ = ι σ))
 
 instance [DecidableEq Z] : Decidable ℓ.IsDefective :=
-  inferInstanceAs (Decidable (∃ l σ, ℓ.realize l σ = ∅))
+  inferInstanceAs (Decidable (∃ l, ℓ.toRealization.IsDefective l))
 
 instance [DecidableEq Z] [DecidableEq S] [DecidableEq M] : Decidable ℓ.IsSyncretic :=
-  inferInstanceAs
-    (Decidable (∃ l σ₁ σ₂, σ₁ ≠ σ₂ ∧ ¬ Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)))
+  inferInstanceAs (Decidable (∃ l, ℓ.correspondents.IsSyncretic l))
 
 instance [DecidableEq M] (ι : S → M) : Decidable (ℓ.IsUnfaithful ι) :=
   inferInstanceAs (Decidable (∃ l σ, ℓ.pm l σ ≠ ι σ))
@@ -284,7 +301,8 @@ end Realized
 
 /-- The inflectional paradigm of a linkage with realization rules `rf` builds the forms of each
 content cell from its form correspondents. -/
-def toInflectionalParadigm (rf : Z → M → W) : InflectionalParadigm L S Z M W := ⟨⟨ℓ.corr⟩, rf⟩
+def toInflectionalParadigm (rf : Z → M → W) : InflectionalParadigm L S Z M W :=
+  ⟨ℓ.correspondents, rf⟩
 
 section ToInflectionalParadigm
 
@@ -353,7 +371,8 @@ theorem ofFun_isCanonical_iff (hι : Function.Injective ι) :
   have key l : (ofFun ι f).IsInvariant l ↔ ∀ σ σ', f l σ = f l σ' := by
     simp [Realization.isInvariant_iff]
   exact ⟨fun h l ↦ (key l).1 (h.stemInvariant l), fun h ↦
-    ⟨fun _ _ ↦ Finset.singleton_nonempty _, fun _ _ ↦ (Finset.card_singleton _).le,
+    ⟨fun _ _ ↦ Finset.singleton_nonempty _,
+      Realization.isUnivalent_iff_card.2 fun _ _ ↦ (Finset.card_singleton _).le,
       fun l ↦ (key l).2 (h l), isInjective_of_injective_pm fun _ ↦ hι, fun _ _ ↦ rfl⟩⟩
 
 end OfFun

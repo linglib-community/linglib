@@ -17,7 +17,8 @@ inflection by comparing them: across the cells of a lexeme the stem stays the sa
 inflectional material differs, and across lexemes at one cell the stems differ while the
 inflectional material stays the same. A canonical paradigm satisfies the four comparisons and
 realizes every cell by exactly one form. When forms decompose uniquely, [the comparisons entail
-that every cell has its own form](##IsCanonical.realize_disjoint), as Stump observes, and a
+that every cell has its own form](##IsCanonical.leftUnique), as Stump observes, so that
+[no lexeme is syncretic](##IsCanonical.not_isSyncretic), and a
 canonical paradigm has [neither a suppletive stem nor a suppletive
 affix](##IsCanonical.not_isSuppletive) and [a single inflection
 class](##IsCanonical.inflection_realize_eq).
@@ -98,10 +99,10 @@ structure IsCanonical : Prop where
   isUnivalent : P.realization.IsUnivalent
   /-- Each lexeme's stems are the same across its cells. -/
   stem_isInvariant : ∀ l, P.stem.IsInvariant l
-  /-- Distinct lexemes have disjoint stems at each cell. -/
-  stem_disjoint : ∀ c, Pairwise (Disjoint on fun l ↦ P.stem.realize l c)
-  /-- Distinct cells of a lexeme have disjoint inflectional material. -/
-  inflection_disjoint : ∀ l, Pairwise (Disjoint on P.inflection.realize l)
+  /-- No two lexemes share a stem at a cell. -/
+  stem_leftUnique : ∀ c, Relator.LeftUnique (P.stem.transpose.Rel c)
+  /-- No two cells of a lexeme share inflectional material. -/
+  inflection_leftUnique : ∀ l, Relator.LeftUnique (P.inflection.Rel l)
   /-- Each cell's inflectional material is the same across lexemes. -/
   inflection_isInvariant : ∀ c, P.inflection.transpose.IsInvariant c
 
@@ -116,19 +117,25 @@ theorem exists_mem_of_mem_realization (hP : P.IsUnambiguous) {l l' : L} {c c' : 
   obtain ⟨y, hy, he⟩ := Finset.mem_image.1 hw'
   exact ⟨x, hx, hP ⟨_, _, hy⟩ ⟨_, _, hx⟩ he ▸ hy⟩
 
-/-- In an unambiguous canonical paradigm the distinct cells of a lexeme have distinct forms, and
-so do corresponding cells of distinct lexemes, Corbett's comparison of outcomes. -/
-theorem IsCanonical.realize_disjoint (h : P.IsCanonical) (hP : P.IsUnambiguous) :
-    (∀ l, Pairwise (Disjoint on P.realization.realize l)) ∧
-      ∀ c, Pairwise (Disjoint on fun l ↦ P.realization.realize l c) := by
-  refine ⟨fun l c c' hcc ↦ Finset.disjoint_left.2 fun w hw hw' ↦ ?_,
-    fun c l l' hll ↦ Finset.disjoint_left.2 fun w hw hw' ↦ ?_⟩
+/-- In an unambiguous canonical paradigm no two cells of a lexeme share a form, and no two lexemes
+share a form at a cell, Corbett's comparison of outcomes. -/
+theorem IsCanonical.leftUnique (h : P.IsCanonical) (hP : P.IsUnambiguous) :
+    (∀ l, Relator.LeftUnique (P.realization.Rel l)) ∧
+      ∀ c, Relator.LeftUnique (P.realization.transpose.Rel c) := by
+  refine ⟨fun l c c' w hw hw' ↦ ?_, fun c l l' w hw hw' ↦ ?_⟩
   · obtain ⟨x, hx, hx'⟩ := exists_mem_of_mem_realization hP hw hw'
-    exact Finset.disjoint_left.1 (h.inflection_disjoint l hcc)
-      (Finset.mem_image_of_mem Prod.snd hx) (Finset.mem_image_of_mem Prod.snd hx')
+    exact h.inflection_leftUnique l (Finset.mem_image_of_mem Prod.snd hx)
+      (Finset.mem_image_of_mem Prod.snd hx')
   · obtain ⟨x, hx, hx'⟩ := exists_mem_of_mem_realization hP hw hw'
-    exact Finset.disjoint_left.1 (h.stem_disjoint c hll)
-      (Finset.mem_image_of_mem Prod.fst hx) (Finset.mem_image_of_mem Prod.fst hx')
+    exact h.stem_leftUnique c (Finset.mem_image_of_mem Prod.fst hx)
+      (Finset.mem_image_of_mem Prod.fst hx')
+
+/-- An unambiguous canonical paradigm has no syncretic lexeme, and no cell at which two lexemes
+share a form. -/
+theorem IsCanonical.not_isSyncretic (h : P.IsCanonical) (hP : P.IsUnambiguous) :
+    (∀ l, ¬ P.realization.IsSyncretic l) ∧ ∀ c, ¬ P.realization.transpose.IsSyncretic c :=
+  ⟨fun l ↦ Realization.not_isSyncretic_iff.2 ((h.leftUnique hP).1 l),
+    fun c ↦ Realization.not_isSyncretic_iff.2 ((h.leftUnique hP).2 c)⟩
 
 /-- The lexemes of a canonical paradigm have the same inflectional material at every cell, so
 they make up one inflection class. -/

@@ -1257,7 +1257,8 @@ theorem neut_corr_nom_eq_acc : ∀ l, (sktEntry l).gender = .neut → ∀ n : Sk
     sktLinkage.corr l (⟨.nom, by decide⟩, n) = sktLinkage.corr l (⟨.acc, by decide⟩, n) := by decide
 
 theorem sktLinkage_isSyncretic : sktLinkage.IsSyncretic := by
-  refine ⟨.ahan, .of .nom .singular, .of .acc .singular, by decide, ?_⟩
+  refine Linkage.isSyncretic_of_not_disjoint (l := .ahan) (σ₁ := .of .nom .singular)
+    (σ₂ := .of .acc .singular) (by decide) ?_
   rw [SktCell.of, SktCell.of, neut_corr_nom_eq_acc .ahan rfl, disjoint_self_iff_empty,
     ← not_nonempty_iff_eq_empty, not_not, Linkage.corr_nonempty]
   exact singleton_nonempty _

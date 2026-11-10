@@ -294,17 +294,15 @@ theorem turkish_isCanonical : turkish.IsCanonical where
   isTotal := by decide
   isUnivalent := by decide
   stem_isInvariant := by decide
-  stem_disjoint := (by decide : ∀ c l l', l ≠ l' →
-    Disjoint (turkish.stem.realize l c) (turkish.stem.realize l' c))
-  inflection_disjoint := (by decide : ∀ l c c', c ≠ c' →
-    Disjoint (turkish.inflection.realize l c) (turkish.inflection.realize l c'))
+  stem_leftUnique := by decide
+  inflection_leftUnique := by decide
   inflection_isInvariant := by decide
 
 -- p. 32
-theorem turkish_realize_disjoint :
-    (∀ l, Pairwise (Disjoint on turkish.realization.realize l)) ∧
-      ∀ c, Pairwise (Disjoint on fun l ↦ turkish.realization.realize l c) :=
-  turkish_isCanonical.realize_disjoint (by decide)
+theorem turkish_not_isSyncretic :
+    (∀ l, ¬ turkish.realization.IsSyncretic l) ∧
+      ∀ c, ¬ turkish.realization.transpose.IsSyncretic c :=
+  turkish_isCanonical.not_isSyncretic (by decide)
 
 -- the two nouns take the same suffixes in every cell, so they are one inflection class
 theorem turkish_inflection_eq (l l' : TurkishNoun) :

@@ -81,8 +81,8 @@ def toRealization : Realization D Cell Form := ⟨fun d c ↦ {M d c}⟩
 
 theorem isTotal_toRealization : M.toRealization.IsTotal := fun _ _ ↦ Finset.singleton_nonempty _
 
-theorem isUnivalent_toRealization : M.toRealization.IsUnivalent := fun _ _ ↦
-  (Finset.card_singleton _).le
+theorem isUnivalent_toRealization : M.toRealization.IsUnivalent :=
+  Realization.isUnivalent_iff_card.2 fun _ _ ↦ (Finset.card_singleton _).le
 
 /-- A row is invariant exactly when it has one form at every cell. -/
 theorem isInvariant_toRealization_iff {d : D} :
@@ -93,6 +93,18 @@ theorem isInvariant_toRealization_iff {d : D} :
 theorem isSuppletive_toRealization_iff {d : D} :
     M.toRealization.IsSuppletive d ↔ ∃ c c', M d c ≠ M d c' := by
   simp [Realization.isSuppletive_iff]
+
+/-- A row is syncretic exactly when two of its cells have the same form. -/
+theorem isSyncretic_toRealization_iff {d : D} :
+    M.toRealization.IsSyncretic d ↔ ¬ Function.Injective (M d) := by
+  rw [M.isUnivalent_toRealization.isSyncretic_iff_not_injective M.isTotal_toRealization]
+  exact not_congr (Finset.singleton_injective.of_comp_iff (M d))
+
+/-- The cells that the realization of a row does not distinguish are its syncretic cells, the
+classes of `Setoid.ker (M d)`. -/
+theorem ker_toRealization_realize_apply (d : D) :
+    Setoid.ker (M.toRealization.realize d) = Setoid.ker (M d) :=
+  Setoid.ext fun _ _ ↦ Finset.singleton_inj
 
 /-- The rows that the realization of a paradigm system does not distinguish are its equal rows,
 so the reduction of an inflection-class table merges no two distinct classes. -/
