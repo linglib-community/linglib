@@ -287,7 +287,7 @@ def meanings (t : LinearizedSyntacticObject) :
     List (Denotation Entity Unit { eventuality := V }) :=
   match (t.toTree (·.id)).skeleton (fun _ ↦ false) with
   | some s => rules.values (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V }))
-      (Word.val M) words s
+      inferInstance (Word.val M) words s
   | none => []
 
 /-- (3): the Chaga benefactive means the event of eating the food of which he is the agent and
