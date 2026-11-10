@@ -353,6 +353,14 @@ theorem carries_classical_iff_le {F : OperatorFamily} {s₀ : Negation.Strength}
     (classical F).Carries s ↔ s ≤ s₀ := by
   rw [carries_classical_iff, h, and_iff_left hn]
 
+/-- A non-trivial licenser that is downward entailing modulo presupposition and holds exactly the
+strengths up to `s₀` once exhaustified carries exactly those strengths. -/
+theorem carries_iff_le {s₀ : Negation.Strength} (hde : L.IsStrawsonDE) (hn : ¬ L.IsStrawsonUE)
+    (h : ∀ s, L.exhaustified.Holds s.toProjectivitySignature ↔ s ≤ s₀) : L.Carries s ↔ s ≤ s₀ := by
+  cases s with
+  | weak => exact iff_of_true ⟨hde, hn⟩ (Negation.Strength.weak_le _)
+  | antiAdditive | antiMorphic => exact (and_iff_right ⟨hde, hn⟩).trans (h _)
+
 theorem holds_toProjectivitySignature_iff {s₀ : Negation.Strength}
     (h : L.Holds s₀.toProjectivitySignature)
     (hn : ∀ s, s₀ < s → ¬ L.Holds s.toProjectivitySignature) :
