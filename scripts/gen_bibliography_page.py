@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Generate the browsable bibliography published at linglib.io/bibliography/.
 
-Every entry of `references.bib` is shown with where linglib uses it. The places are read from
-the repository: the `[key]` citations in the tracked Lean files of `Linglib`, `Studies`, `Eval`
-and `Lab`, and the `bibkey` of the data files under `Linglib/Data`. Each entry is formalized,
-foundational or cited: formalized when its `role` says so or a study is named after it,
-foundational when its `role` says so, cited otherwise. TeX accents are rendered as Unicode;
-`--check` lists entries whose TeX the page cannot render.
+Every entry of `references.bib` is shown with where linglib uses it. The places are read from the
+repository: the `[key]` citations in the tracked Lean files of `Linglib` and `Studies`, and the
+`bibkey` of the data files under `Linglib/Data`. Each entry is formalized, foundational or cited:
+formalized when its `role` says so or a study is named after it, foundational when its `role` says
+so, cited otherwise. TeX accents are rendered as Unicode; `--check` lists entries whose TeX the page
+cannot render.
 
 Usage, from the repository root:
 
@@ -31,7 +31,7 @@ ROOT = Path(__file__).resolve().parent.parent
 BIB = ROOT / "references.bib"
 TEMPLATE = ROOT / "scripts" / "bibliography_page" / "template.html"
 DEFAULT_OUT = ROOT / ".lake" / "build" / "bibliography"
-LEAN_LIBS = ("Linglib", "Studies", "Eval", "Lab")
+LEAN_LIBS = ("Linglib", "Studies")
 REPO = "https://github.com/linglib-community/linglib"
 CITE = re.compile(r"\[([a-z0-9][a-z0-9-]*-\d{4}[a-z]?)\]")
 BIBKEY = re.compile(r'"bibkey"\s*:\s*"([^"]+)"')
@@ -301,7 +301,7 @@ def build(sha, docs_base):
     entries = parse_bib(BIB.read_text(encoding="utf-8"))
     used = citations({key for _, key, _ in entries})
     studies = study_names()
-    order = {"Studies": 0, "Eval": 1, "Lab": 2, "Linglib": 3}
+    order = {"Studies": 0, "Linglib": 1}
     rows, unrendered = [], []
     for kind, key, f in entries:
         for field in ("author", "editor", "title", "journal", "booktitle", "publisher", "note"):

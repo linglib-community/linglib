@@ -1114,7 +1114,6 @@ def landing(lib, template, site_root, sha):
         return file_tree(lib, [p for p in lib.modules if p.startswith(top + "/")], top)
 
     areas = "".join(fold(a, a, tree(f"Linglib/{a}")) for a in THEORY)
-    others = "".join(fold(t, t, tree(t)) for t in ("Eval", "Lab"))
     general = "".join(f'<li>{link(p, esc(label))}</li>' for p, label in
                       (("foundational_types.html", "Foundational types"), ("tactics.html", "Tactics"),
                        ("references.html", "References")))
@@ -1122,7 +1121,7 @@ def landing(lib, template, site_root, sha):
     sections = [("theory", "t", "Theory", areas), ("studies", "s", "Studies", studies),
                 ("fragments", "f", "Fragments", tree("Linglib/Fragments")),
                 ("data", "d", "Data", tree("Linglib/Data")), ("core", "d", "Core", tree("Linglib/Core")),
-                ("other", "d", "Other", f'{others}<ul>{general}</ul>')]
+                ("other", "d", "Other", f'<ul>{general}</ul>')]
     tree = "\n".join(f'<section id="{sid}"><h2 class="{cls}">{esc(title)}</h2>{body}</section>'
                      for sid, cls, title, body in sections)
     return site_shell.render(template, site_root, "Docs", sha).replace("<!--TREE-->", tree)

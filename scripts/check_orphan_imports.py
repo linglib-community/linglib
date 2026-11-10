@@ -6,7 +6,7 @@ CI on a fresh checkout.
 Usage:
     python3 scripts/check_orphan_imports.py
         Exits 0 with "OK" if every import of one of this repository's modules
-        (`Linglib.X.Y`, `Studies.X`, `Eval.X.Y`, `Lab.X.Y`) resolves to a git-tracked file.
+        (`Linglib.X.Y`, `Studies.X`) resolves to a git-tracked file.
         Exits 1 with a list of orphan imports otherwise.
 
 Install as a pre-push hook:
@@ -31,7 +31,7 @@ from pathlib import Path
 
 
 IMPORT_RE = re.compile(
-    r'^\s*(?:(?:public|private)\s+)?(?:meta\s+)?import\s+(?:all\s+)?((?:Linglib|Studies|Eval|Lab)(?:\.[A-Za-z0-9_]+)+)\s*$')
+    r'^\s*(?:(?:public|private)\s+)?(?:meta\s+)?import\s+(?:all\s+)?((?:Linglib|Studies)(?:\.[A-Za-z0-9_]+)+)\s*$')
 
 
 def tracked_lean_files() -> set[str]:

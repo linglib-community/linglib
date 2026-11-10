@@ -5,7 +5,7 @@ doc-gen4 resolves a `##name` link in three steps (`DocGen4/Output/DocString.lean
 the exact full name of a documented declaration, constructor or structure field; else a module
 name; else the first public declaration of the *same* module whose trailing name components
 agree with the link's. Anything else becomes a search link to nothing. The docs site documents
-only `Linglib`, `Studies`, `Eval` and `Lab`, so a link to a mathlib name never resolves, a
+only `Linglib` and `Studies`, so a link to a mathlib name never resolves, a
 `private` declaration is never a target, and a link into another module needs the full name.
 
 The checker parses declarations textually, as `check_headliners.py` does: namespaces, sections
@@ -29,7 +29,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DOCUMENTED = ("Linglib", "Studies", "Eval", "Lab")
+DOCUMENTED = ("Linglib", "Studies")
 CHECKED = ("Linglib", "Studies")
 LINK = re.compile(r"\]\(##([^)\s]+)\)")
 IDENT = r"[^\s:({\[\]|,]+"
