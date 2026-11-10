@@ -3,8 +3,9 @@ module
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Set.Functor
 public import Linglib.Semantics.Composition.Assignment
-public import Linglib.Semantics.Composition.Tree
-public import Linglib.Semantics.Composition.Readings
+public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
+public import Linglib.Semantics.Composition.Interpreter.Readings
+public import Linglib.Semantics.Composition.Interpreter.Rules
 public import Linglib.Semantics.Quantification.Predicative
 public import Linglib.Semantics.Reference.ChoiceFunction
 public import Studies.Charlow2014
@@ -19,9 +20,7 @@ and unions the results. They are the unit and bind of the set monad. Because bin
 an indefinite that takes scope at the edge of an island turns the island into a set of
 alternatives, and the island can then take scope in its turn, which gives exceptional scope
 without movement out of the island. Higher-order alternative sets let two indefinites on one
-island take scope independently; with the alternatives in the types, the composition engine
-[derives the island's two higher-order sets and their point-wise flattening](##translations_island)
-without moving either indefinite. Once assignments are added to the monad, an indefinite whose
+island take scope independently. Once assignments are added to the monad, an indefinite whose
 restrictor holds a bound pronoun cannot outscope the pronoun's binder.
 
 ## Main definitions
@@ -44,11 +43,10 @@ restrictor holds a bound pronoun cannot outscope the pronoun's binder.
   represented, so a reading the paper rules out is shown to differ from the derived ones.
 * `Si.cf_reading_iff` assumes that no two candidates wrote the same papers, which the paper's
   gloss of (69) needs and leaves implicit.
-* `Si.abstractChoice` is the first line of (74); the composition engine's set effect abstracts by
-  the second, and resolving words before interpretation gives the layering of (80) and (81) for
-  lexical alternatives that do not depend on the assignment. The engine's call-by-value
-  interpretation at the set monad abstracts by (73), and there the closure sits in the lexical
-  entry of the quantifier rather than in abstraction.
+* `Si.abstractChoice` is the first line of (74), and the second is `Set.pi` over every value of
+  the variable. The layering of (80) and (81), sets of meanings that depend on the assignment,
+  is `Si.alternatives`: each word is resolved to one alternative before abstraction, for lexical
+  alternatives that do not depend on the assignment.
 
 ## Errata
 
@@ -56,21 +54,21 @@ restrictor holds a bound pronoun cannot outscope the pronoun's binder.
   nonempty, and (75) and (76) equate the first with a Skolemized choice function. A choice
   function picks the same member from equal sets, so values of the variable with the same
   alternatives receive the same one under the first line but not under the second; distinct
-  alternatives at distinct values suffice for the two to agree (`Si.abstractChoice_eq_distribute`).
+  alternatives at distinct values suffice for the two to agree (`Si.abstractChoice_eq_pi`).
   With truth values as alternatives, two people who each met some but not all linguists already
   separate them: the first line gives `[λ₀ t₀ met a linguist]` the constant predicates, the second
-  line and the right-hand side of (75) every predicate (`Si.abstractChoice_ne_distribute`,
-  `Si.range_skolem_eq_distribute`). The verdict on (77) holds under either line
-  (`Si.nobody_met_iff`, `Si.sSup_interp_nobodyMet_iff`).
+  line and the right-hand side of (75) every predicate (`Si.abstractChoice_ne_pi`,
+  `Si.range_skolem_eq_pi`). The verdict on (77) holds under either line
+  (`Si.nobody_met_iff`, `Si.sSup_pi_nobodyMet_iff`).
 * Figure 9 prints `die X` for `die x`.
 
 ## TODO
 
 * (46), and point-wise composition with a closure inside the island (45) on (46) and (47).
 * (78), whose `wrote x y` puts the paper second where (69) and (82) put it first.
-* (79) and (82) on the composition engine, (88), and Appendix B.
-* The case against closure: with (51) or (79) at the set monad, an indefinite bound into an island
-  by a closing quantifier has no reading wider than the quantifier.
+* (79) and (82) under the layering of (80), (88), and Appendix B.
+* The case against closure: with the abstraction of (73) flattened by a closing quantifier, on
+  (51) or (79) an indefinite bound into an island has no reading wider than the quantifier.
 
 ## References
 
@@ -304,69 +302,6 @@ theorem seminar_paper (grad seminar paper : Set E) (disc : E → E → Prop) (jo
     eq_comm, -eq_iff_iff]
 
 end Selectivity
-
-/-! #### The island on the composition engine
-
-With the indefinites' alternatives in their types, the engine finds every way of composing the
-island of Figure 10 without moving either indefinite: mapping composition over the alternatives
-of one indefinite and then the other's gives the two higher-order islands, and structured
-application, which is point-wise application (11), merges the two sets of alternatives into one,
-the flattening of either. -/
-
-section SelectivityEngine
-
-open Montague PhraseStructure
-
-variable {E : Type} (lawyer rel : Set E) (visits : E → E → Prop)
-
-/-- The words of the island of Figure 10. -/
-inductive IslandWord
-  | aLawyer
-  | visits
-  | aRelative
-  deriving DecidableEq
-
-/-- The island's lexicon, each indefinite a computation whose alternatives are the members of its
-restrictor ([bumford-charlow-2026]). -/
-def islandLexicon : IslandWord → Option (Σ ty, Ty.Domain E Unit ty)
-  | .aLawyer => some ⟨.comp .set .e, lawyer⟩
-  | .visits => some ⟨.e ⇒ .e ⇒ .t, visits⟩
-  | .aRelative => some ⟨.comp .set .e, rel⟩
-
-/-- The island *a lawyer visits a relative*. -/
-def island : Tree Unit IslandWord :=
-  .bin (.leaf .aLawyer) (.bin (.leaf .visits) (.leaf .aRelative))
-
-/-- The island has the five derivations that [bumford-charlow-2026]'s `combine` finds for a set
-of individuals and a set of properties: the lawyer's alternatives mapped inside the relative's,
-the higher-order island of Figure 10, right, and its join; the relative's inside the lawyer's,
-Figure 10, left, and its join; and structured application. Each join, like structured
-application, is point-wise application (11), so either island flattens to it. -/
-theorem translations_island (g : Assignment E) :
-    (Tree.translations individualIndices (islandLexicon lawyer rel visits) island).map
-        (fun d ↦ (⟨d.1, d.2.eval (fun c ↦ c) g⟩ : Denotation E Unit)) =
-      [⟨.comp .set (.comp .set .t), relativeOuter lawyer rel visits⟩,
-       ⟨.comp .set .t, (pure visits <*> rel <*> lawyer : Set Prop)⟩,
-       ⟨.comp .set (.comp .set .t), lawyerOuter lawyer rel visits⟩,
-       ⟨.comp .set .t, (pure visits <*> rel <*> lawyer : Set Prop)⟩,
-       ⟨.comp .set .t, (pure visits <*> rel <*> lawyer : Set Prop)⟩] := by
-  simp [Tree.translations, island, islandLexicon, Ty.modes, Ty.mode?, Mode.functionalLeft?,
-    Mode.functionalRight?, Mode.predicateModification?, Mode.eventIdentification?, Eff.map,
-    Eff.seq, Mode.join?, Eff.join]
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · simp only [relativeOuter, bind_pure_comp, Set.fmap_eq_image, Set.image_image]
-  · refine Set.ext fun q ↦ ?_
-    simp only [Set.mem_iUnion, Set.mem_seq_iff, Set.mem_image, Set.mem_singleton_iff]
-    aesop
-  · simp only [lawyerOuter, bind_pure_comp, Set.fmap_eq_image, Set.image_image]
-  · refine Set.ext fun q ↦ ?_
-    simp only [Set.mem_iUnion, Set.mem_seq_iff, Set.mem_image, Set.mem_singleton_iff]
-    aesop
-  · refine Set.ext fun q ↦ ?_
-    simp only [Set.mem_seq_iff, Set.mem_image, Set.mem_singleton_iff]
-    aesop
-
-end SelectivityEngine
 
 -- (43)
 theorem lawyer_wide_ne_relative_wide : ¬ ∀ visits : Fin 4 → Fin 4 → Prop,
@@ -609,29 +544,29 @@ theorem nobody_met_iff (human phon : Set E) (met : E → E → Prop) (hphon : ph
     exact ⟨_, ⟨_, ⟨f, rfl⟩, rfl⟩, fun ⟨x, hx, hfx⟩ ↦ hf ⟨x, hx⟩ hfx⟩
 
 -- (74)
-theorem abstractChoice_subset_distribute (n : ℕ) (m : ReaderT (Assignment E) Set Prop)
+theorem abstractChoice_subset_pi (n : ℕ) (m : ReaderT (Assignment E) Set Prop)
     (g : Assignment E) (hm : ∀ x, (m (g[n ↦ x])).Nonempty) :
-    abstractChoice n m g ⊆ (distribute (M := SetM) fun x ↦ m (g[n ↦ x])).run := by
+    abstractChoice n m g ⊆ Set.univ.pi fun x ↦ m (g[n ↦ x]) := by
   rintro _ ⟨f, rfl⟩
-  exact SetM.mem_run_distribute.2 fun x ↦ f.apply_of_exists (hm x)
+  exact Set.mem_univ_pi.2 fun x ↦ f.apply_of_exists (hm x)
 
 /-- When the alternatives are nonempty and distinct values of the index give distinct ones, the
 two lines of (74) agree. -/
-theorem abstractChoice_eq_distribute (n : ℕ) (m : ReaderT (Assignment E) Set Prop)
+theorem abstractChoice_eq_pi (n : ℕ) (m : ReaderT (Assignment E) Set Prop)
     (g : Assignment E) (hm : ∀ x, (m (g[n ↦ x])).Nonempty)
     (hinj : Function.Injective fun x ↦ m (g[n ↦ x])) :
-    abstractChoice n m g = (distribute (M := SetM) fun x ↦ m (g[n ↦ x])).run := by
-  refine (abstractChoice_subset_distribute n m g hm).antisymm fun P hP ↦ ?_
+    abstractChoice n m g = Set.univ.pi fun x ↦ m (g[n ↦ x]) := by
+  refine (abstractChoice_subset_pi n m g hm).antisymm fun P hP ↦ ?_
   obtain ⟨f, hf⟩ := (ChoiceFunction.exists_forall_apply_iff_of_injective
     (R := fun x ↦ (· ∈ m (g[n ↦ x]))) (fun _ _ h ↦ hinj (Set.ext fun y ↦ iff_of_eq (congrFun h y)))
-    hm fun x ↦ (· = P x)).2 fun x ↦ ⟨P x, SetM.mem_run_distribute.1 hP x, rfl⟩
+    hm fun x ↦ (· = P x)).2 fun x ↦ ⟨P x, Set.mem_univ_pi.1 hP x, rfl⟩
   exact ⟨f, funext hf⟩
 
 -- (74)
 theorem abstractChoice_met_linguist (ling : Set E) (met : E → E → Prop)
     (h : ∀ x, (∃ y ∈ ling, met y x) ∧ ∃ y ∈ ling, ¬ met y x) (g : Assignment E) :
     abstractChoice 0 (fun g ↦ (fun y ↦ met y (g 0)) '' ling) g = Set.range (Function.const E) ∧
-      (distribute (M := SetM) fun x ↦ (fun y ↦ met y x) '' ling).run = Set.univ := by
+      (Set.univ.pi fun x ↦ (fun y ↦ met y x) '' ling) = Set.univ := by
   have hu (x : E) : (fun y ↦ met y x) '' ling = Set.univ := Set.eq_univ_of_forall fun p ↦ by
     by_cases hp : p
     · obtain ⟨y, hy, hm⟩ := (h x).1
@@ -639,17 +574,17 @@ theorem abstractChoice_met_linguist (ling : Set E) (met : E → E → Prop)
     · obtain ⟨y, hy, hm⟩ := (h x).2
       exact ⟨y, hy, propext ⟨fun h' ↦ (hm h').elim, fun h' ↦ (hp h').elim⟩⟩
   refine ⟨Set.ext fun P ↦ ?_, Set.eq_univ_of_forall fun P ↦
-    SetM.mem_run_distribute.2 fun x ↦ (hu x).symm ▸ Set.mem_univ (P x)⟩
+    Set.mem_univ_pi.2 fun x ↦ by rw [hu x]; exact Set.mem_univ _⟩
   simp only [abstractChoice, Function.update_self, hu, Set.mem_univ, Set.mem_range]
   refine ⟨fun ⟨f, hf⟩ ↦ ⟨f fun _ ↦ True, hf⟩, fun ⟨p, hp⟩ ↦ ?_⟩
   obtain ⟨f, hf⟩ := ChoiceFunction.exists_apply_eq (N := fun _ : Prop ↦ True) (x := p) trivial
   exact ⟨f, hf ▸ hp⟩
 
 -- (74)
-theorem abstractChoice_ne_distribute [Nontrivial E] (ling : Set E) (met : E → E → Prop)
+theorem abstractChoice_ne_pi [Nontrivial E] (ling : Set E) (met : E → E → Prop)
     (h : ∀ x, (∃ y ∈ ling, met y x) ∧ ∃ y ∈ ling, ¬ met y x) (g : Assignment E) :
     abstractChoice 0 (fun g ↦ (fun y ↦ met y (g 0)) '' ling) g ≠
-      (distribute (M := SetM) fun x ↦ (fun y ↦ met y x) '' ling).run := by
+      Set.univ.pi fun x ↦ (fun y ↦ met y x) '' ling := by
   rw [(abstractChoice_met_linguist ling met h g).1, (abstractChoice_met_linguist ling met h g).2]
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   intro hc
@@ -657,66 +592,35 @@ theorem abstractChoice_ne_distribute [Nontrivial E] (ling : Set E) (met : E → 
   exact hab (((congrFun hp b).symm.trans (congrFun hp a)).mpr rfl).symm
 
 -- (75), (74)
-theorem range_skolem_eq_distribute (ling : Set E) (met : E → E → Prop) (hling : ling.Nonempty) :
+theorem range_skolem_eq_pi (ling : Set E) (met : E → E → Prop) (hling : ling.Nonempty) :
     Set.range (fun F : E → ChoiceFunction E ↦ fun x ↦ met (F x (· ∈ ling)) x) =
-      (distribute (M := SetM) fun x ↦ (fun y ↦ met y x) '' ling).run := by
+      Set.univ.pi fun x ↦ (fun y ↦ met y x) '' ling := by
   ext P
-  refine ⟨fun ⟨F, hF⟩ ↦ hF ▸ SetM.mem_run_distribute.2 fun x ↦
+  refine ⟨fun ⟨F, hF⟩ ↦ hF ▸ Set.mem_univ_pi.2 fun x ↦
     ⟨_, (F x).apply_of_exists hling, rfl⟩, fun hP ↦ ?_⟩
-  choose y hy hyP using fun x ↦ (SetM.mem_run_distribute.1 hP x : ∃ y ∈ ling, met y x = P x)
+  choose y hy hyP using fun x ↦ (Set.mem_univ_pi.1 hP x : ∃ y ∈ ling, met y x = P x)
   choose F hF using fun x ↦ ChoiceFunction.exists_apply_eq (N := (· ∈ ling)) (hy x)
   exact ⟨F, funext fun x ↦ (congrArg (met · x) (hF x)).trans (hyP x)⟩
 
 end AlternativeSemantics
 
-/-! #### Alternatives on the composition engine
+/-! #### Alternatives over assignments
 
-On the composition engine, Kratzer and Shimoyama's lexicon, where an indefinite denotes the set
-of its restrictor, gives (77) the abstraction of the second line of (74). Resolving each
-occurrence of a word before interpretation, `PhraseStructure.Tree.readings`, gives it the layering
-of (80) and (81), which reads the indefinite as one phonologist at every value of the
-variable. -/
+With the second line of (74), (77) has the same verdict as with the first. Layering the
+alternatives over the assignments, as (80) and (81) do, abstracts over each alternative
+separately, which reads the indefinite as one phonologist at every value of the variable. -/
 
-section Engine
+section Layering
 
-open PhraseStructure
+open Interpreter Interpreter.Grammar PhraseStructure
 
 variable (human phon : Set E) (met : E → E → Prop)
 
-/-- The words of (77). -/
-inductive Word
-  | nobody
-  | met
-  | aPhonologist
-  deriving DecidableEq
-
-/-- The lexicon of (77), the indefinite denoting the set of phonologists. -/
-def lexicon : Word → Option (Denotation E Unit SetM)
-  | .nobody => some ⟨(.e ⇒ .t) ⇒ .t, pure fun P ↦ ¬ ∃ x ∈ human, P x⟩
-  | .met => some ⟨.e ⇒ .e ⇒ .t, pure met⟩
-  | .aPhonologist => some ⟨.e, phon⟩
-
-/-- (77), `Nobody [λ₀ t₀ met a phonologist]`. -/
-def nobodyMet : Tree Unit Word :=
-  .bin (.leaf .nobody) (.binder 0 (.bin (.tr 0) (.bin (.leaf .met) (.leaf .aPhonologist))))
-
-theorem interp_nobodyMet (g : Assignment E) :
-    Tree.interp (lexicon human phon met) g nobodyMet = some ⟨.t,
-      ((fun P ↦ ¬ ∃ x ∈ human, P x) '' Set.univ.pi fun x ↦ (fun y ↦ met y x) '' phon :
-        Set Prop)⟩ := by
-  refine congrArg (fun v : Set Prop ↦ some (⟨.t, v⟩ : Denotation E Unit SetM)) ?_
-  simp only [Mode.evalM, Set.pure_def, Set.fmap_eq_image, Set.image_singleton,
-    Term.realize, Interpretation.effectful, Function.update_self, Set.seq_eq_set_seq,
-    Set.singleton_seq, Set.image_image]
-  rfl
-
--- (77)
-theorem sSup_interp_nobodyMet_iff (hphon : phon.Nonempty) (g : Assignment E) {X : SetM Prop}
-    (hX : Tree.interp (lexicon human phon met) g nobodyMet = some ⟨.t, X⟩) :
-    sSup X.run ↔ ¬ ∃ x ∈ human, ∀ y ∈ phon, met y x := by
-  obtain rfl := sigma_mk_injective (Option.some_injective _
-    (hX.symm.trans (interp_nobodyMet human phon met g)))
-  simp only [SetM.run, sSup_Prop_eq, Set.mem_image, Set.mem_univ_pi]
+-- (77), with the abstraction of the second line of (74)
+theorem sSup_pi_nobodyMet_iff (hphon : phon.Nonempty) :
+    sSup ((fun P ↦ ¬ ∃ x ∈ human, P x) '' Set.univ.pi fun x ↦ (fun y ↦ met y x) '' phon) ↔
+      ¬ ∃ x ∈ human, ∀ y ∈ phon, met y x := by
+  simp only [sSup_Prop_eq, Set.mem_image, Set.mem_univ_pi]
   refine ⟨fun ⟨_, ⟨P, hP, hb⟩, h⟩ ⟨x, hx, hall⟩ ↦ ?_, fun h ↦ ?_⟩
   · obtain ⟨y, hy, hPy⟩ := hP x
     exact (hb ▸ h) ⟨x, hx, hPy ▸ hall y hy⟩
@@ -733,106 +637,70 @@ theorem sSup_interp_nobodyMet_iff (hphon : phon.Nonempty) (g : Assignment E) {X 
     exact ⟨_, ⟨fun x ↦ met (y x) x, fun x ↦ ⟨y x, hy x, rfl⟩, rfl⟩,
       fun ⟨x, hx, hm⟩ ↦ hn x hx hm⟩
 
-theorem readings_nobodyMet (g : Assignment E) :
-    Tree.readings (Tree.wordReadings (lexicon human phon met)) g nobodyMet =
-      (fun y ↦ (⟨.t, ¬ ∃ x ∈ human, met y x⟩ : Denotation E Unit Id)) '' phon := by
-  ext d
-  simp only [nobodyMet, Tree.mem_readings_phrase_binary, Tree.readings_terminal,
-    Tree.mem_readings_bind, Set.mem_image]
+/-- The words of (77). -/
+inductive Word
+  | nobody
+  | met
+  | aPhonologist
+  deriving DecidableEq
+
+/-- The domain of the one basic type, the individuals. -/
+abbrev Dom (E : Type) : Unit → Type := fun _ ↦ E
+
+/-- The type of individuals. -/
+abbrev ind : Ty Unit := .base ()
+
+/-- The lexicon of (77), the indefinite being any phonologist. -/
+def lexicon : Word → Set (Σ a : Ty Unit, a.Dom (Dom E))
+  | .nobody => {⟨(ind ⇒ .t) ⇒ .t, fun P ↦ ¬ ∃ x ∈ human, P x⟩}
+  | .met => {⟨ind ⇒ ind ⇒ .t, met⟩}
+  | .aPhonologist => (fun y ↦ ⟨ind, y⟩) '' phon
+
+/-- (77), `Nobody [λ₀ t₀ met a phonologist]`. -/
+def nobodyMet : Tree Unit Word :=
+  .bin (.leaf .nobody) (.binder 0 (.bin (.tr 0) (.bin (.leaf .met) (.leaf .aPhonologist))))
+
+/-- The alternatives of a tree under (80) and (81): its truth values, by Functional Application
+and abstraction, when each word is one of its alternatives at every assignment. -/
+def alternatives (g : ℕ → E) (t : Tree Unit Word) : Set Prop :=
+  {b | ∃ f : (ℕ → E) → Prop, (⟨.t, f⟩ : Σ a : Ty Unit, (ℕ → E) → a.Dom (Dom E)) ∈
+    t.readings ((typeDriven .application).withAbstraction fun _ ↦ ind)
+      (Grammar.withAbstraction.structure (Assignments.total (Dom E) fun _ ↦ ind))
+      (W := fun a ↦ (ℕ → E) → a.Dom (Dom E)) id (fun
+        | .inl w => (fun d ↦ ⟨d.1, fun _ ↦ d.2⟩) '' lexicon human phon met w
+        | .inr n => {⟨ind, fun g ↦ g n⟩}) ∧ f g = b}
+
+theorem alternatives_nobodyMet (g : ℕ → E) :
+    alternatives human phon met g nobodyMet = (fun y ↦ ¬ ∃ x ∈ human, met y x) '' phon := by
+  ext b
+  simp only [alternatives, nobodyMet, Tree.mem_readings_phrase_binary, Tree.mem_readings_bind,
+    Tree.readings_terminal, Tree.readings_trace, lexicon, Set.mem_ofPred_eq,
+    Set.mem_image, Set.mem_singleton_iff, id_eq, Sigma.eta, Set.image_id', exists_eq_left,
+    Interpreter.withAbstraction, typeDriven]
   constructor
-  · rintro ⟨⟨τ₁, v₁⟩, ⟨X₁, h₁, hm₁⟩, d₂, ⟨r, hr, hd₂⟩, hb⟩
-    simp only [lexicon, Option.some.injEq, Sigma.mk.inj_iff] at h₁
-    obtain ⟨rfl, h₁⟩ := h₁
-    obtain rfl := eq_of_heq h₁
-    obtain rfl : v₁ = _ := hm₁
-    obtain ⟨cs, rfl, hcs⟩ := Tree.map_eq_phrase_iff.1 hr
-    obtain ⟨r₁, cs₁, rfl, h₁, hcs₁⟩ := List.map_eq_cons_iff.mp hcs
-    obtain ⟨r₂, cs₂, rfl, h₂, hcs₂⟩ := List.map_eq_cons_iff.mp hcs₁
-    obtain rfl := List.map_eq_nil_iff.mp hcs₂
-    obtain rfl := Tree.map_eq_trace_iff.1 h₁
-    obtain ⟨cs', rfl, hcs'⟩ := Tree.map_eq_phrase_iff.1 h₂
-    obtain ⟨r₃, cs₃, rfl, h₃, hcs₃⟩ := List.map_eq_cons_iff.mp hcs'
-    obtain ⟨r₄, cs₄, rfl, h₄, hcs₄⟩ := List.map_eq_cons_iff.mp hcs₃
-    obtain rfl := List.map_eq_nil_iff.mp hcs₄
-    obtain ⟨⟨⟨w₃, τ₃, v₃⟩, X₃, hX₃, hv₃⟩, rfl, hw₃⟩ := Tree.map_eq_terminal_iff.1 h₃
-    obtain ⟨⟨⟨w₄, τ₄, v₄⟩, X₄, hX₄, hv₄⟩, rfl, hw₄⟩ := Tree.map_eq_terminal_iff.1 h₄
-    clear hr hcs hcs₁ hcs₂ h₁ h₂ hcs' hcs₃ hcs₄ h₃ h₄
-    obtain rfl : w₃ = .met := hw₃
-    obtain rfl : w₄ = .aPhonologist := hw₄
-    simp only [lexicon, Option.some.injEq, Sigma.mk.inj_iff] at hX₃ hX₄
-    obtain ⟨rfl, hX₃⟩ := hX₃
-    obtain rfl := eq_of_heq hX₃
-    obtain ⟨rfl, hX₄⟩ := hX₄
-    obtain rfl := eq_of_heq hX₄
-    have e₃ : met = v₃ := (id hv₃).symm
-    subst e₃
-    obtain rfl := Option.some.inj hd₂
-    obtain rfl := Option.some.inj hb
-    exact ⟨v₄, hv₄, rfl⟩
+  · rintro ⟨f, ⟨_, rfl, _, ⟨_, ⟨_, ⟨_, rfl, _, ⟨_, ⟨y, hy, rfl⟩, rfl⟩, ⟨u₁, m₁⟩, -, rfl⟩,
+      ⟨u₂, m₂⟩, -, rfl⟩, r, hr, rfl⟩, ⟨u₃, m₃⟩, -, h⟩, rfl⟩
+    cases m₁
+    cases m₂
+    simp only [LocallyFinite.unaryRules, List.map_nil, List.append_nil, List.mem_singleton] at hr
+    subst hr
+    cases m₃
+    cases h
+    exact ⟨y, hy, rfl⟩
   · rintro ⟨y, hy, rfl⟩
-    exact ⟨⟨(.e ⇒ .t) ⇒ .t, fun P ↦ ¬ ∃ x ∈ human, P x⟩, ⟨_, rfl, rfl⟩,
-      ⟨.e ⇒ .t, fun x ↦ met y x⟩,
-      ⟨.bin (.tr 0) (.bin (.leaf ⟨(.met, ⟨.e ⇒ .e ⇒ .t, met⟩), _, rfl, rfl⟩)
-        (.leaf ⟨(.aPhonologist, ⟨.e, y⟩), _, rfl, hy⟩)), rfl, rfl⟩, rfl⟩
+    exact ⟨_, ⟨_, rfl, _, ⟨_, ⟨_, ⟨_, rfl, _, ⟨_, ⟨y, hy, rfl⟩, rfl⟩, ⟨_, .fa⟩,
+      LocallyFinite.mem_binaryRules _, rfl⟩, ⟨_, .ba⟩, LocallyFinite.mem_binaryRules _, rfl⟩, _,
+      List.mem_append_left _ (List.mem_singleton_self _), rfl⟩, ⟨_, .fa⟩,
+      LocallyFinite.mem_binaryRules _, rfl⟩, rfl⟩
 
 /-- Under the layering of (80) and (81), (77) has a true alternative exactly when there is a
 phonologist nobody met, the wide-scope reading of the indefinite. -/
-theorem sSup_readings_nobodyMet_iff (g : Assignment E) :
-    sSup {b : Prop | (⟨.t, b⟩ : Denotation E Unit Id) ∈
-      Tree.readings (Tree.wordReadings (lexicon human phon met)) g nobodyMet} ↔
-      ∃ y ∈ phon, ¬ ∃ x ∈ human, met y x := by
-  simp only [readings_nobodyMet, Set.mem_image, Sigma.mk.inj_iff, heq_eq_eq, true_and,
-    sSup_Prop_eq, Set.mem_ofPred_eq]
+theorem sSup_alternatives_nobodyMet_iff (g : ℕ → E) :
+    sSup (alternatives human phon met g nobodyMet) ↔ ∃ y ∈ phon, ¬ ∃ x ∈ human, met y x := by
+  simp only [alternatives_nobodyMet, sSup_Prop_eq, Set.mem_image]
   exact ⟨fun ⟨_, ⟨y, hy, hb⟩, h⟩ ↦ ⟨y, hy, hb.mpr h⟩, fun ⟨y, hy, h⟩ ↦ ⟨_, ⟨y, hy, rfl⟩, h⟩⟩
 
-end Engine
-
-/-! #### Abstraction into sets
-
-The abstraction of (73) takes a set of alternatives to a set of functions into sets, as the
-engine's call-by-value interpretation at the set monad abstracts, and the paper notes that such a
-result cannot compose point-wise with a quantifier over properties. A quantifier over properties
-whose values are sets of alternatives can instead flatten each value by quantifying over its
-alternatives, the closure the paper sets aside because binding into an island would then end the
-percolation of alternatives out of it; (77) then has its narrow-scope reading. -/
-
-section Closure
-
-open PhraseStructure
-
-variable (human phon : Set E) (met : E → E → Prop)
-
-/-- The lexicon of (77) at the set monad: *nobody* takes a property whose values are sets of
-alternatives, and quantifies over each value's alternatives. -/
-def closureLexicon : Word → Option (Σ ty, SetM (Ty.DomainM SetM E Unit ty))
-  | .nobody => some ⟨(.e ⇒ .t) ⇒ .t, pure fun P ↦ pure (¬ ∃ x ∈ human, True ∈ (P x).run)⟩
-  | .met => some ⟨.e ⇒ .e ⇒ .t, pure fun y ↦ pure fun x ↦ pure (met y x)⟩
-  | .aPhonologist => some ⟨.e, (phon : SetM E)⟩
-
-/-- (77) composes under the abstraction of (73) with no choice function, and flattening each
-value of the abstract by quantifying over its alternatives gives the narrow-scope reading. -/
-theorem realize_closure_nobodyMet (g : Assignment E) :
-    Tree.realize (.kleisli SetM (K := fun ty ↦ SetM (Ty.DomainM SetM E Unit ty)) fun c ↦ c)
-      individualIndices (closureLexicon human phon met) g nobodyMet =
-      some ⟨.t, (pure (¬ ∃ x ∈ human, ∃ y ∈ phon, met y x) : SetM Prop)⟩ := by
-  have ht : Tree.translate individualIndices (closureLexicon human phon met) nobodyMet =
-      some ⟨.t, .comp .functionalLeft
-        (.const (ty := (.e ⇒ .t) ⇒ .t) (pure fun P ↦ pure (¬ ∃ x ∈ human, True ∈ (P x).run)))
-        (.lam 0 (.comp .functionalRight (.var 0)
-          (.comp .functionalLeft
-            (.const (ty := .e ⇒ .e ⇒ .t) (pure fun y ↦ pure fun x ↦ pure (met y x)))
-            (.const (ty := .e) (phon : SetM E)))))⟩ := rfl
-  simp only [Tree.realize, ht, Option.map_some]
-  congr 2
-  simp only [Term.realize, Interpretation.kleisli, Mode.evalKleisli, pure_bind]
-  congr 1
-  refine propext (not_congr (exists_congr fun x ↦ and_congr_right fun _ ↦ ?_))
-  simp only [Function.update_self]
-  change True ∈ ⋃ fv ∈ (⋃ y ∈ phon, ({fun x ↦ ({met y x} : Set Prop)} : Set (E → Set Prop))),
-    fv x ↔ _
-  simp
-
-end Closure
+end Layering
 
 end Si
 

@@ -485,6 +485,12 @@ theorem mem_combine_dynamic : (.mapL (.join (.mapL (.ejectR (.counit BA)))), R (
 theorem mem_combine_indefinites :
     (.join (.mapL (.counit (.mapR BA))), S T) ∈ combine (S (W e)) (R (S (e ⇒ T))) := by decide
 
+-- two indefinites, neither moved: the alternatives of each mapped inside the other's, each of
+-- these joined, and Structured App
+theorem combine_alternatives : combine (S e) (S (e ⇒ T)) =
+    [(.mapR (.mapL BA), S (S T)), (.join (.mapR (.mapL BA)), S T), (.mapL (.mapR BA), S (S T)),
+      (.join (.mapL (.mapR BA)), S T), (.ap BA, S T)] := by decide
+
 end Interpreter
 
 /-! ### Scope
