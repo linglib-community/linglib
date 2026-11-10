@@ -136,7 +136,7 @@ theorem map_mem_values_of_le {D' : T → Type} {M : G.Structure D} {M' : G'.Stru
     exact List.mem_map.2 ⟨p, hl _ hp, congrArg (Sigma.mk p.1) (hρ p.2).symm⟩
   | .bind n _, [X], [Y], .cons hX .nil => exact fun d hd ↦ map_mem_unaryValues h hJ hu hX hd
   | .phrase _ _, [X], [Y], .cons hX .nil => exact hX
-  | .phrase c _, [X₁, X₂], [Y₁, Y₂], .cons h₁ (.cons h₂ .nil) =>
+  | .phrase _ _, [X₁, X₂], [Y₁, Y₂], .cons h₁ (.cons h₂ .nil) =>
     exact fun d hd ↦ map_mem_binaryValues h hJ hb h₁ h₂ hd
   | .terminal _ _, _ :: _, _ :: _, _ | .trace _ _, _ :: _, _ :: _, _ | .bind _ _, [], [], _
   | .bind _ _, _ :: _ :: _, _ :: _ :: _, _ | .phrase _ _, [], [], _

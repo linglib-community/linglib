@@ -60,7 +60,7 @@ def nodeReadings (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, 
   | .trace n _, [] => (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex (.inr n)
   | .bind n _, [X] => I.unaryReadings M n X
   | .phrase _ _, [X] => X
-  | .phrase c _, [X, Y] => I.binaryReadings M X Y
+  | .phrase _ _, [X, Y] => I.binaryReadings M X Y
   | _, _ => ∅
 
 /-- The readings of a tree when a word or a trace may be any of a set of items. -/
@@ -130,7 +130,7 @@ theorem mem_values_iff {lex : L ⊕ ℕ → List (Σ a, W a)} {d : Σ a, D a} (t
   | .bind n _, [X], [S], .cons h .nil =>
     simp [nodeValues, nodeReadings, mem_unaryValues, unaryReadings, h]
   | .phrase _ _, [X], [S], .cons h .nil => exact h
-  | .phrase c _, [X, Y], [S, S'], .cons h (.cons h' .nil) =>
+  | .phrase _ _, [X, Y], [S, S'], .cons h (.cons h' .nil) =>
     simp [nodeValues, nodeReadings, mem_binaryValues, binaryReadings, h, h']
   | .terminal _ _, _ :: _, _ :: _, _ | .trace _ _, _ :: _, _ :: _, _ | .bind _ _, [], [], _
   | .bind _ _, _ :: _ :: _, _ :: _ :: _, _ | .phrase _ _, [], [], _

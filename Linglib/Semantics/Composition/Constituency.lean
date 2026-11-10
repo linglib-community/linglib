@@ -67,7 +67,7 @@ def nodeValues (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, W 
   | .trace n _, [] => (lex (.inr n)).map fun ⟨a, x⟩ ↦ ⟨a, ρ x⟩
   | .bind n _, [X] => I.unaryValues M n X
   | .phrase _ _, [X] => X
-  | .phrase c _, [X, Y] => I.binaryValues M X Y
+  | .phrase _ _, [X, Y] => I.binaryValues M X Y
   | _, _ => []
 
 /-- The derivations of a tree that an interpreter admits, given the typed items each word and
@@ -118,7 +118,7 @@ theorem map_nodeValues {D' : T → Type} {M' : G.Structure D'} {ρ' : ∀ {a : T
   | .trace n _, [] => simp [nodeValues, Function.comp_def, hρ]
   | .bind n _, [X] => exact map_unaryValues h hu
   | .phrase _ _, [X] => rfl
-  | .phrase c _, [X, Y] => exact map_binaryValues h hb
+  | .phrase _ _, [X, Y] => exact map_binaryValues h hb
   | .terminal _ _, _ :: _ | .trace _ _, _ :: _ | .bind _ _, [] | .bind _ _, _ :: _ :: _
   | .phrase _ _, [] | .phrase _ _, _ :: _ :: _ :: _ => rfl
 
@@ -216,12 +216,40 @@ theorem length_values_le_one {I : Interpreter G ℕ} {M : G.Structure D}
   | .trace n _, [], [], _ => simpa [nodeValues] using hl _
   | .bind n _, [X], [_], .cons hX .nil => exact length_unaryValues_le_one (hu _) hX
   | .phrase _ _, [X], [_], .cons hX .nil => exact hX
-  | .phrase c _, [X, Y], [_, _], .cons hX (.cons hY .nil) =>
+  | .phrase _ _, [X, Y], [_, _], .cons hX (.cons hY .nil) =>
     exact length_binaryValues_le_one hb hX hY
   | .terminal _ _, _ :: _, _ :: _, _ | .trace _ _, _ :: _, _ :: _, _ | .bind _ _, [], [], _
   | .bind _ _, _ :: _ :: _, _ :: _ :: _, _ | .phrase _ _, [], [], _
   | .phrase _ _, _ :: _ :: _ :: _, _ :: _ :: _ :: _, _ => exact Nat.zero_le _
 
+
+/-- Two interpreters that give a node the same values wherever its daughters' values have types
+in a set, and values of types in the set, give a tree the same values over a lexicon of items of
+types in the set. -/
+theorem values_congr {G' : Language T} {I : Interpreter G ℕ} {J : Interpreter G' ℕ}
+    {M : G.Structure D} {M' : G'.Structure D} {ρ : ∀ {a : T}, W a → D a}
+    {lex : L ⊕ ℕ → List (Σ a, W a)} (P : T → Prop) (hlex : ∀ x, ∀ p ∈ lex x, P p.1)
+    (hu : ∀ n {X : List (Σ a, D a)}, (∀ d ∈ X, P d.1) →
+      I.unaryValues M n X = J.unaryValues M' n X ∧ ∀ d ∈ J.unaryValues M' n X, P d.1)
+    (hb : ∀ {X Y : List (Σ a, D a)}, (∀ d ∈ X, P d.1) → (∀ d ∈ Y, P d.1) →
+      I.binaryValues M X Y = J.binaryValues M' X Y ∧ ∀ d ∈ J.binaryValues M' X Y, P d.1)
+    (t : Tree C L) : t.values I M ρ lex = t.values J M' ρ lex := by
+  rw [values_eq_fold, values_eq_fold]
+  refine (RoseTree.rel_fold (fun (X Y : List (Σ a, D a)) ↦ X = Y ∧ ∀ d ∈ Y, P d.1)
+    (fun l Xs Ys h ↦ ?_) t).1
+  have hleaf (x : L ⊕ ℕ) : ∀ d ∈ (lex x).map fun ⟨a, w⟩ ↦ (⟨a, ρ w⟩ : Σ a, D a), P d.1 := by
+    intro d hd
+    obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hd
+    exact hlex x p hp
+  match l, Xs, Ys, h with
+  | .terminal _ w, [], [], _ => exact ⟨rfl, hleaf _⟩
+  | .trace n _, [], [], _ => exact ⟨rfl, hleaf _⟩
+  | .bind n _, [_], [Y], .cons ⟨rfl, hY⟩ .nil => exact hu n hY
+  | .phrase _ _, [_], [Y], .cons h .nil => exact h
+  | .phrase _ _, [_, _], [Y₁, Y₂], .cons ⟨rfl, h₁⟩ (.cons ⟨rfl, h₂⟩ .nil) => exact hb h₁ h₂
+  | .terminal _ _, _ :: _, _ :: _, _ | .trace _ _, _ :: _, _ :: _, _ | .bind _ _, [], [], _
+  | .bind _ _, _ :: _ :: _, _ :: _ :: _, _ | .phrase _ _, [], [], _
+  | .phrase _ _, _ :: _ :: _ :: _, _ :: _ :: _ :: _, _ => exact ⟨rfl, fun _ hd ↦ nomatch hd⟩
 
 theorem Uninterpretable.values_eq_nil {I : Interpreter G ℕ} {lex : L ⊕ ℕ → List (Σ a, W a)}
     {t : Tree C L} (h : t.Uninterpretable I lex) (M : G.Structure D)
