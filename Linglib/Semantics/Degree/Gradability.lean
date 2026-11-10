@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Semantics.Degree.ScalarDimension
-public import Linglib.Semantics.Degree.Antonymy
+public import Linglib.Semantics.Degree.Boundedness
+public import Linglib.Semantics.Degree.Comparison
 
 /-!
 # Gradability

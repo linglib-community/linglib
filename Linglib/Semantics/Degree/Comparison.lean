@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Modification.Basic
+public import Linglib.Semantics.Negation.Polarity
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Order.UpperLower.Closure
 
@@ -183,6 +184,13 @@ def dual : Comparison → Comparison
 theorem dual_involutive : Function.Involutive dual := fun c ↦ by cases c <;> rfl
 
 @[simp] theorem dual_dual (c : Comparison) : c.dual.dual = c := dual_involutive c
+
+/-- The negative member of an antonym pair compares on the reversed scale, so its comparison is
+the dual one, so that *shorter* is `Polarity.negative • Comparison.gt`. -/
+instance : MulAction Polarity Comparison :=
+  .ofEndHom (Polarity.lift ⟨dual, dual_involutive.comp_self⟩)
+
+@[simp] theorem negative_smul (c : Comparison) : Polarity.negative • c = c.dual := rfl
 
 section Dual
 

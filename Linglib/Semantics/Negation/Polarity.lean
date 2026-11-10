@@ -154,6 +154,12 @@ instance : MulAction Polarity (Set α) := .ofEndHom (lift ⟨compl, compl_involu
 
 @[simp] theorem negative_smul_set (p : Set α) : negative • p = pᶜ := rfl
 
+instance decidableMemSMul (p : Polarity) (s : Set α) [DecidablePred (· ∈ s)] :
+    DecidablePred (· ∈ p • s) :=
+  match p with
+  | .positive => fun a ↦ inferInstanceAs (Decidable (a ∈ s))
+  | .negative => fun a ↦ inferInstanceAs (Decidable (a ∉ s))
+
 /-- Over a nonempty type the action on propositions is free, since no proposition is its own
 complement. -/
 instance [Nonempty α] : IsCancelSMul Polarity (Set α) :=

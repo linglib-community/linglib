@@ -92,12 +92,6 @@ def simple (f : AntonymForm) : AntonymForm := ⟨f.polarity * f.pole, .positive�
 section Denotation
 variable {D : Type*} {P N U : Set D}
 
-instance _root_.Polarity.decidableMemSMul (p : Polarity) (s : Set D) [DecidablePred (· ∈ s)] :
-    DecidablePred (· ∈ p • s) :=
-  match p with
-  | .positive => fun d ↦ inferInstanceAs (Decidable (d ∈ s))
-  | .negative => fun d ↦ inferInstanceAs (Decidable (d ∉ s))
-
 /-- The literal denotation of a form, given the extension `ext p` of each pole: the polarity of
 the sentence acts on the extension of the adjective's pole, sentential negation by complement.
 What lies in neither extension is the extension gap. The poles are contradictory when their

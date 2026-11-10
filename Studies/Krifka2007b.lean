@@ -1,7 +1,7 @@
 module
 
 public import Studies.Blutner2000
-public import Linglib.Semantics.Negation.AntonymForm
+public import Linglib.Semantics.Negation.Antonym
 
 /-!
 # Krifka (2007): Negated Antonyms: Creating and Filling the Gap
