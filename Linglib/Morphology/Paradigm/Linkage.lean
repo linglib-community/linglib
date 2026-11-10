@@ -128,14 +128,18 @@ property sets when every form correspondent carries the image under `ι` of its 
 property set. -/
 def IsPropertyPreserving (ι : S → M) : Prop := ∀ l σ, ℓ.pm l σ = ι σ
 
-/-- A linkage is canonical ([stump-2012-mmm8]) relative to an identification `ι` of content
-with form property sets when it satisfies all five axes. -/
+/-- (13): A linkage is canonical ([stump-2012-mmm8]) relative to an identification `ι` of content
+with form property sets when the relation between each lexeme's content cells and their form
+correspondents is a total function, (13a), drawn from one stem, (13b), and one-to-one, (13c), and
+every form correspondent is faithful to its content cell, (13d). Totality and univalence are
+stated of the stems, which is the same by `isTotal_correspondents_iff` and
+`isUnivalent_correspondents_iff`. -/
 structure IsCanonical (ι : S → M) : Prop where
   /-- Every content cell has a form correspondent. -/
   total : ℓ.IsTotal
   /-- No content cell has more than one form correspondent. -/
   univalent : ℓ.IsUnivalent
-  /-- Each lexeme draws on a single stem. -/
+  /-- All of a lexeme's form correspondents share one stem. -/
   stemInvariant : ℓ.IsStemInvariant
   /-- No two content cells of a lexeme share a form correspondent. -/
   injective : ℓ.IsInjective
@@ -164,6 +168,14 @@ def IsVirtual (zτ : Z × M) : Prop := ∀ l σ, zτ ∉ ℓ.corr l σ
 
 @[simp, push] theorem not_isInjective_iff : ¬ ℓ.IsInjective ↔ ℓ.IsSyncretic := by
   simp [IsSyncretic, IsInjective, Realization.IsSyncretic]
+
+/-- A content cell has a form correspondent exactly when it has a stem. -/
+theorem isTotal_correspondents_iff : ℓ.correspondents.IsTotal ↔ ℓ.IsTotal :=
+  forall₂_congr fun l σ ↦ ℓ.corr_nonempty l σ
+
+/-- A content cell has at most one form correspondent exactly when it has at most one stem. -/
+theorem isUnivalent_correspondents_iff : ℓ.correspondents.IsUnivalent ↔ ℓ.IsUnivalent := by
+  simp [Realization.isUnivalent_iff_card]
 
 theorem isDefective_iff : ℓ.IsDefective ↔ ∃ l σ, ℓ.realize l σ = ∅ :=
   exists_congr fun _ ↦ Realization.isDefective_iff

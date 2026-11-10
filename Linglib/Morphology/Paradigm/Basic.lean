@@ -106,8 +106,8 @@ theorem ker_toRealization_realize_apply (d : D) :
     Setoid.ker (M.toRealization.realize d) = Setoid.ker (M d) :=
   Setoid.ext fun _ _ ↦ Finset.singleton_inj
 
-/-- The rows that the realization of a paradigm system does not distinguish are its equal rows,
-so the reduction of an inflection-class table merges no two distinct classes. -/
+/-- The rows that the realization of a paradigm system does not distinguish are its equal
+rows. -/
 theorem ker_toRealization_realize : Setoid.ker M.toRealization.realize = Setoid.ker M := by
   ext d d'
   simp only [Setoid.ker_def, funext_iff, toRealization_realize, Finset.singleton_inj]

@@ -304,7 +304,7 @@ theorem turkish_not_isSyncretic :
       ∀ c, ¬ turkish.realization.transpose.IsSyncretic c :=
   turkish_isCanonical.not_isSyncretic (by decide)
 
--- the two nouns take the same suffixes in every cell, so they are one inflection class
+-- Table 2.3, row 3: the two nouns take the same suffixes in every cell
 theorem turkish_inflection_eq (l l' : TurkishNoun) :
     turkish.inflection.realize l = turkish.inflection.realize l' :=
   turkish_isCanonical.inflection_realize_eq l l'

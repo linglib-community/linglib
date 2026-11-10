@@ -28,7 +28,7 @@ has the forms of `T`, and one that is below a pullback has some of them, as a le
 the forms of its root; suppletion, overabundance and syncretism are monotone and so pass to `T`.
 A pullback [gives indices with the same image the same forms](##ker_le_ker_comap_realize), and
 every realization is [the pullback of its reduction](##comap_reduce), the quotient that merges
-exactly those indices, as an inflection class collects the lexemes that inflect alike.
+exactly those indices.
 
 ## Implementation notes
 
@@ -568,8 +568,7 @@ end Comap
 
 /-! ### Reduction -/
 
-/-- The reduction of `S` merges the indices that have the same forms in every context, as the
-lexemes that inflect alike make up an inflection class. -/
+/-- The reduction of `S` merges the indices that have the same forms in every context. -/
 def reduce : Realization (Quotient (Setoid.ker S.realize)) Ctx F := ⟨Setoid.kerLift S.realize⟩
 
 @[simp] theorem reduce_realize_mk (r : R) : S.reduce.realize ⟦r⟧ = S.realize r := rfl

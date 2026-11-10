@@ -20,8 +20,8 @@ realizes every cell by exactly one form. When forms decompose uniquely, [the com
 that every cell has its own form](##IsCanonical.leftUnique), as Stump observes, so that
 [no lexeme is syncretic](##IsCanonical.not_isSyncretic), and a
 canonical paradigm has [neither a suppletive stem nor a suppletive
-affix](##IsCanonical.not_isSuppletive) and [a single inflection
-class](##IsCanonical.inflection_realize_eq).
+affix](##IsCanonical.not_isSuppletive) and [the same inflectional material for every
+lexeme](##IsCanonical.inflection_realize_eq).
 
 ## Implementation notes
 
@@ -137,8 +137,7 @@ theorem IsCanonical.not_isSyncretic (h : P.IsCanonical) (hP : P.IsUnambiguous) :
   ⟨fun l ↦ Realization.not_isSyncretic_iff.2 ((h.leftUnique hP).1 l),
     fun c ↦ Realization.not_isSyncretic_iff.2 ((h.leftUnique hP).2 c)⟩
 
-/-- The lexemes of a canonical paradigm have the same inflectional material at every cell, so
-they make up one inflection class. -/
+/-- The lexemes of a canonical paradigm have the same inflectional material at every cell. -/
 theorem IsCanonical.inflection_realize_eq (h : P.IsCanonical) (l l' : L) :
     P.inflection.realize l = P.inflection.realize l' :=
   have hl (l : L) (c : C) : P.inflection.transpose.IsLicensed c l :=
