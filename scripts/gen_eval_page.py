@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the evaluations page, the `Eval` verdicts published at linglib.io/eval/.
+"""Generate the evaluations page, the `Eval` verdicts, which linglib.io does not publish.
 
 Every verdict on the page comes from `scripts/eval_page/Export.lean`, which reads the theorems of
 `Eval` and `Lab` about an `Eval.Experiment`, instantiates them at each theory and each cell, and

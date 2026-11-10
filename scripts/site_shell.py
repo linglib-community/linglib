@@ -17,8 +17,8 @@ ROOT = Path(__file__).resolve().parent.parent
 CSS = ROOT / "scripts" / "site.css"
 REPO = "https://github.com/linglib-community/linglib"
 # Label and address of each menu item, relative to the site's root unless absolute.
-MENU = [("Docs", "docs/"), ("Evaluations", "eval/"), ("Bibliography", "bibliography/"),
-        ("Random", "docs/random.html"), ("GitHub", REPO)]
+MENU = [("Docs", "docs/"), ("Bibliography", "bibliography/"), ("Random", "docs/random.html"),
+        ("GitHub", REPO)]
 
 TOGGLE = """<button id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">
         <svg id="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>

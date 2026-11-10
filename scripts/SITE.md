@@ -1,12 +1,12 @@
 # The pages of linglib.io
 
-The home page, `/eval/` and `/bibliography/` are written by `gen_home_page.py`,
-`gen_eval_page.py` and `gen_bibliography_page.py`. They share one chrome: `site.css` for the look,
-and `site_shell.py` for the header, menu, footer and theme toggle, which it fills into the
-placeholders of each template. A new page uses `site_shell.render` and adds itself to `MENU`; it
-does not copy the header or bring its own stylesheet. The API docs under `/docs/` are doc-gen4's,
-except the landing page and the study and theory pages, which `gen_docs_pages.py` writes over
-doc-gen4's.
+The home page and `/bibliography/` are written by `gen_home_page.py` and `gen_bibliography_page.py`;
+`gen_eval_page.py` writes an evaluations page the site does not publish. They share one chrome:
+`site.css` for the look, and `site_shell.py` for the header, menu, footer and theme toggle, which it
+fills into the placeholders of each template. A new page uses `site_shell.render` and adds itself to
+`MENU`; it does not copy the header or bring its own stylesheet. The API docs under `/docs/` are
+doc-gen4's, except the landing page and the study and theory pages, which `gen_docs_pages.py` writes
+over doc-gen4's.
 
 The look is that of Hugo's PaperMod theme, which the site began on:
 
