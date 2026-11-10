@@ -5,6 +5,7 @@ public import Linglib.Data.Examples.Readers
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Mode.Basic
+public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Modification.Classification
 public import Linglib.Semantics.Quantification.Basic
@@ -162,33 +163,35 @@ variable {E W : Type}
 
 /-- The meanings of a structure by Functional Application (9) alone, its leaves being their own
 lexical entries. -/
-def byApplication (s : Skeleton Unit (Denotation E W)) : List (Denotation E W) :=
-  (typeDriven application).values (D := Ty.Dom (Base.Dom E W)) inferInstance id (fun x ↦ [x]) s
+def byApplication (t : PhraseStructure.Tree Unit (Denotation E W)) : List (Denotation E W) :=
+  t.values (typeDriven application) (D := Ty.Dom (Base.Dom E W)) inferInstance id
+    (Sum.elim (fun x ↦ [x]) fun _ ↦ [])
 
 /-- The meanings of a structure in the grammar of the ⟨e,t⟩ theory, which adds Predicate
 Modification to Functional Application (§3.1). -/
-def withModification (s : Skeleton Unit (Denotation E W)) : List (Denotation E W) :=
-  (typeDriven (application.sum predicateModification)).values
-    (D := Ty.Dom (Base.Dom E W)) inferInstance id (fun x ↦ [x]) s
+def withModification (t : PhraseStructure.Tree Unit (Denotation E W)) :
+    List (Denotation E W) :=
+  t.values (typeDriven (application.sum predicateModification))
+    (D := Ty.Dom (Base.Dom E W)) inferInstance id (Sum.elim (fun x ↦ [x]) fun _ ↦ [])
 
 -- (24)–(26): *cute donkey* means by Functional Application alone, with *cute* a function on
 -- noun meanings, what it means by Predicate Modification with *cute* a property.
 theorem byApplication_cute_donkey (cute donkey : E → Prop) :
     byApplication (W := W)
-        (.binary () (.leaf ⟨.et ⇒ .et, intersective cute⟩) (.leaf ⟨.et, donkey⟩)) =
-      withModification (.binary () (.leaf ⟨.et, cute⟩) (.leaf ⟨.et, donkey⟩)) :=
+        (.bin (.leaf ⟨.et ⇒ .et, intersective cute⟩) (.leaf ⟨.et, donkey⟩)) =
+      withModification (.bin (.leaf ⟨.et, cute⟩) (.leaf ⟨.et, donkey⟩)) :=
   rfl
 
 -- (26): the one meaning of *cute donkey*, the conjunction.
 example (cute donkey : E → Prop) :
     byApplication (W := W)
-        (.binary () (.leaf ⟨.et ⇒ .et, intersective cute⟩) (.leaf ⟨.et, donkey⟩)) =
+        (.bin (.leaf ⟨.et ⇒ .et, intersective cute⟩) (.leaf ⟨.et, donkey⟩)) =
       [⟨.et, cute ⊓ donkey⟩] :=
   rfl
 
 -- Without the rule, two properties do not combine.
 example (cute donkey : E → Prop) :
-    byApplication (W := W) (.binary () (.leaf ⟨.et, cute⟩) (.leaf ⟨.et, donkey⟩)) = [] :=
+    byApplication (W := W) (.bin (.leaf ⟨.et, cute⟩) (.leaf ⟨.et, donkey⟩)) = [] :=
   rfl
 
 /-- The lift of a property to a function on noun meanings: what an adjective of the ⟨et,et⟩

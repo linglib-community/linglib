@@ -125,6 +125,7 @@ theorem values_effectDriven_of_effectFree [DecidableEq B] {G : Language (Ty B)}
     (t : Tree C Lx) (island : C → Bool) :
     t.values (effectDriven G) effectGrammar.structure ρ lex island =
       t.values (typeDriven G) M ρ lex island := by
+  rw [values_eq_fold, values_eq_fold]
   refine (RoseTree.rel_fold
     (fun (X Y : List (Σ a, Ty.Dom D a)) ↦ X = Y ∧ ∀ d ∈ Y, d.1.EffectFree)
     (fun l Xs Ys h ↦ ?_) t).1

@@ -285,10 +285,8 @@ def Word.val : {a : Ty Base} → Word a → a.Domain Entity Unit { eventuality :
 /-- The meanings of a syntactic object in a model, by the book's rules. -/
 def meanings (t : LinearizedSyntacticObject) :
     List (Denotation Entity Unit { eventuality := V }) :=
-  match (t.toTree (·.id)).skeleton (fun _ ↦ false) with
-  | some s => rules.values (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V }))
-      inferInstance (Word.val M) words s
-  | none => []
+  (t.toTree (·.id)).values rules (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V }))
+    inferInstance (Word.val M) words
 
 /-- (3): the Chaga benefactive means the event of eating the food of which he is the agent and
 his wife the beneficiary, by Functional Application of *eat* to *food*, Event Identification of

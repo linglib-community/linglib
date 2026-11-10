@@ -121,6 +121,7 @@ theorem mem_readings_typeDriven_phrase_binary [G.LocallyFinite] {M : G.Structure
 of lists has the members of what it makes of their sets. -/
 theorem mem_values_iff {lex : L ⊕ ℕ → List (Σ a, W a)} {d : Σ a, D a} (t : Tree C L) :
     d ∈ t.values I M ρ lex island ↔ d ∈ t.readings I M ρ (fun x ↦ {p | p ∈ lex x}) island := by
+  rw [values_eq_fold]
   refine RoseTree.rel_fold (fun (X : List (Σ a, D a)) (S : Set (Σ a, D a)) ↦ ∀ d, d ∈ X ↔ d ∈ S)
     (fun l Xs Ss h ↦ ?_) t d
   match l, Xs, Ss, h with

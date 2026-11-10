@@ -370,16 +370,16 @@ theorem baseGrammar_effectFree : (baseGrammar B).EffectFree where
     | _, _, _, .inr .pm, hl, _ => hl
 
 /-- Before any effect the effect-driven interpreter is the deterministic one it starts from:
-over words with one item each, of types without effects, a structure has at most one value,
+over words with one item each, of types without effects, a tree has at most one value,
 although interpretation is relational once a word has an effect. -/
 theorem length_values_effectDriven_baseGrammar_le_one [DecidableEq B] {D : B → Type}
-    {Lx : Type} {W : Ty B → Type} (ρ : ∀ {a : Ty B}, W a → a.Dom D)
-    {lex : Lx → List (Σ a, W a)} (hlex : ∀ x, ∀ p ∈ lex x, p.1.EffectFree)
-    (h₁ : ∀ x, (lex x).length ≤ 1) (s : Skeleton Node Lx) :
-    ((effectDriven (baseGrammar B)).values effectGrammar.structure ρ lex s).length ≤ 1 := by
-  rw [values_effectDriven_of_effectFree baseGrammar_effectFree ρ hlex, values, List.length_map]
-  exact length_derivs_le_one (fun _ _ ↦ by simp [typeDriven])
-    (fun _ l r ↦ length_binaryRules_application_sum_predicateModification_le_one l r) h₁ s
+    {C Lx : Type} {W : Ty B → Type} (ρ : ∀ {a : Ty B}, W a → a.Dom D)
+    {lex : Lx ⊕ ℕ → List (Σ a, W a)} (hlex : ∀ x, ∀ p ∈ lex x, p.1.EffectFree)
+    (h₁ : ∀ x, (lex x).length ≤ 1) (t : PhraseStructure.Tree C Lx) (island : C → Bool) :
+    (t.values (effectDriven (baseGrammar B)) effectGrammar.structure ρ lex island).length ≤ 1 := by
+  rw [PhraseStructure.Tree.values_effectDriven_of_effectFree baseGrammar_effectFree ρ hlex]
+  exact PhraseStructure.Tree.length_values_le_one (fun _ _ ↦ by simp [typeDriven])
+    (fun _ l r ↦ length_binaryRules_application_sum_predicateModification_le_one l r) h₁ t
 
 /-- Crossover (section 5.2): a left daughter that reads, combined with a right daughter that
 reads nothing, yields a type that still reads, whatever the modes. Only the co-unit mode removes

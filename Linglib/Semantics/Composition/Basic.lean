@@ -13,25 +13,25 @@ gives each derivation a value.
 
 A derivation is all the semantics is given, and nothing is assumed of where it comes from: a
 syntactic theory says which derivations its objects have. One way is type-driven: an interpreter
-reads a bare structure, the words in their constituency and order with a label at each node, and
 says which rules a node admits by its label and the types of its daughters, so that the
-derivations over a bare structure are found from the types alone.
+derivations of a syntactic object are found from the types alone. What a node makes of its
+daughters' values is then an operation on lists of typed values, and a syntax folds its own
+objects by these operations.
 
 ## Main definitions
 
 * `ManySorted.Language.Deriv`: the derivations of a type over typed lexical items.
 * `ManySorted.Language.LocallyFinite.unaryRules`, `binaryRules`: the rules that apply to given
   daughters, and `ManySorted.Language.motherTypes`, the types they give the mother.
-* `Interpreter.Skeleton`, `Interpreter.Node`: a bare structure, and the labels a constituency
-  tree gives its nodes.
+* `Interpreter.Node`: the labels a constituency tree gives its nodes.
 * `Interpreter`: the rules a node admits by its label and its daughters' types, and
   `Interpreter.typeDriven`, the interpreter that admits every rule that applies.
-* `Interpreter.derivs`, `Interpreter.values`: the derivations over a bare structure, and their
-  values.
+* `Interpreter.unaryValues`, `Interpreter.binaryValues`: the values of the rules a node admits,
+  at the values of its daughters.
 
 ## Implementation notes
 
-`Interpreter.derivs` matches on the derivations of the daughters and does not project from them:
+The node operations match on the values of the daughters and do not project from them:
 a projection is unfolded again wherever it is inspected, which made checking a sentence's value
 some fifty times dearer. A lexicon gives each word typed items and their values separately. With
 the values inside the items, a statement over a model with variables in it is still slow to

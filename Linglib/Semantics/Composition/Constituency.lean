@@ -4,19 +4,29 @@ public import Linglib.Syntax.Tree.Basic
 public import Linglib.Semantics.Composition.Basic
 
 /-!
-# The bare structure of a constituency tree
+# The interpretation of a constituency tree
 
 A constituency tree gives the semantics its words in their constituency and order, the indices of
-its moved phrases, and which of its nodes are islands. A terminal is a leaf, a trace a leaf that
-is its index, a binder the index over its body, a non-branching node its daughter, and a binary
-node a plain node or, at a category that is an island, an island.
+its moved phrases, and which of its nodes are islands. Its derivations are its fold by what each
+label makes of its daughters': a word and a trace are the items they may be, a binder's index
+and a binary node admit rules, and a non-branching node has what its daughter has. [Its values
+in a structure are the same fold there](##PhraseStructure.Tree.values_eq_fold), and where a node
+admits at most one rule [it has at most one](##PhraseStructure.Tree.length_values_le_one).
 
 ## Main definitions
 
-* `PhraseStructure.Tree.skeleton`: the bare structure of a tree.
+* `PhraseStructure.Tree.nodeValues`: what a label makes of the values of its daughters.
 * `PhraseStructure.Tree.derivs`, `PhraseStructure.Tree.values`: the derivations of a tree that an
   interpreter admits, and their values, with [the values of a node from those of its
   daughters](##PhraseStructure.Tree.values_phrase_binary).
+* `PhraseStructure.Tree.Uninterpretable`: a tree an interpreter reads and admits no derivation
+  over.
+
+## Implementation notes
+
+Values are defined as the values of the derivations and not as the fold in the structure. The
+derivations of a tree are closed terms, and over a model with variables in it the fold in the
+model is much slower to check.
 
 ## References
 
@@ -60,18 +70,19 @@ def nodeValues (I : Interpreter G Node) (M : G.Structure D) (ρ : ∀ {a : T}, W
   | .phrase c _, [X, Y] => I.binaryValues M (if island c then .island else .branch) X Y
   | _, _ => []
 
-/-- The values an interpreter gives a tree in a structure, for a lexicon of typed items whose
-values `ρ` gives: the fold of the tree by what each label makes of its daughters' values. -/
+/-- The derivations of a tree that an interpreter admits, given the typed items each word and
+each trace may be: the fold of the tree by what each label makes of its daughters' derivations,
+which are their values in the term algebra. -/
+def derivs (I : Interpreter G Node) (lex : L ⊕ ℕ → List (Σ a, W a)) (t : Tree C L)
+    (island : C → Bool := fun _ ↦ false) : List (Σ a, Deriv G W a) :=
+  RoseTree.fold (nodeValues I (Term.structure G W) Deriv.leaf lex island) t
+
+/-- The values of the derivations of a tree, for a lexicon of typed items whose values `ρ`
+gives. -/
 def values (I : Interpreter G Node) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
     (lex : L ⊕ ℕ → List (Σ a, W a)) (t : Tree C L) (island : C → Bool := fun _ ↦ false) :
     List (Σ a, D a) :=
-  RoseTree.fold (nodeValues I M ρ lex island) t
-
-/-- The derivations of a tree that an interpreter admits, given the typed items each word and
-each trace may be: its values in the term algebra. -/
-def derivs (I : Interpreter G Node) (lex : L ⊕ ℕ → List (Σ a, W a)) (t : Tree C L)
-    (island : C → Bool := fun _ ↦ false) : List (Σ a, Deriv G W a) :=
-  t.values I (Term.structure G W) Deriv.leaf lex island
+  (t.derivs I lex island).map fun ⟨a, d⟩ ↦ ⟨a, d.realize M ρ⟩
 
 /-- A tree is uninterpretable for an interpreter and a lexicon when each of its nodes has the
 daughters an interpreter reads and the interpreter admits no derivation over it. A tree with a
@@ -90,64 +101,6 @@ section Compositional
 
 variable (I : Interpreter G Node) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
   (lex : L ⊕ ℕ → List (Σ a, W a)) (island : C → Bool)
-
-/-- A word's values are the values of the items it may be. -/
-@[simp] theorem values_terminal (c : C) (w : L) :
-    (terminal c w).values I M ρ lex island = (lex (.inl w)).map fun ⟨a, x⟩ ↦ ⟨a, ρ x⟩ := by
-  simp [values, nodeValues]
-
-/-- A trace's values are the values of the items its index may be. -/
-@[simp] theorem values_trace (n : ℕ) (c : C) :
-    (trace n c : Tree C L).values I M ρ lex island =
-      (lex (.inr n)).map fun ⟨a, x⟩ ↦ ⟨a, ρ x⟩ := by
-  simp [values, nodeValues]
-
-/-- The values of a binder over an index are those of the unary rules its index admits, at the
-values of its body. -/
-@[simp] theorem values_bind (n : ℕ) (c : C) (t : Tree C L) :
-    (bind n c t).values I M ρ lex island = (t.values I M ρ lex island).flatMap fun ⟨a, x⟩ ↦
-      (I.unary (.index n) a).map fun ⟨b, r⟩ ↦ ⟨b, M.funMap r x⟩ := by
-  simp [values, nodeValues, unaryValues]
-
-/-- The values of a binary node are those of the rules the node admits for its daughters'
-types, at the values of its daughters. -/
-@[simp] theorem values_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
-    (phrase c k [t₁, t₂]).values I M ρ lex island =
-      (t₁.values I M ρ lex island).flatMap fun ⟨a, x⟩ ↦
-        (t₂.values I M ρ lex island).flatMap fun ⟨b, y⟩ ↦
-          (I.binary (if island c then .island else .branch) a b).map fun ⟨u, m⟩ ↦
-            ⟨u, M.funMap m (x, y)⟩ := by
-  simp [values, nodeValues, binaryValues]
-
-/-- A non-branching node has the values of its daughter. -/
-@[simp] theorem values_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
-    (phrase c k [t]).values I M ρ lex island = t.values I M ρ lex island := by
-  simp [values, nodeValues]
-
-theorem derivs_terminal (c : C) (w : L) :
-    (terminal c w).derivs I lex island = (lex (.inl w)).map fun ⟨a, x⟩ ↦ ⟨a, .leaf x⟩ :=
-  values_terminal ..
-
-theorem derivs_trace (n : ℕ) (c : C) :
-    (trace n c : Tree C L).derivs I lex island =
-      (lex (.inr n)).map fun ⟨a, x⟩ ↦ ⟨a, .leaf x⟩ :=
-  values_trace ..
-
-theorem derivs_bind (n : ℕ) (c : C) (t : Tree C L) :
-    (bind n c t).derivs I lex island = (t.derivs I lex island).flatMap fun ⟨a, d⟩ ↦
-      (I.unary (.index n) a).map fun ⟨b, r⟩ ↦ ⟨b, .unary r d⟩ :=
-  values_bind ..
-
-theorem derivs_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
-    (phrase c k [t₁, t₂]).derivs I lex island = (t₁.derivs I lex island).flatMap fun ⟨a, d₁⟩ ↦
-      (t₂.derivs I lex island).flatMap fun ⟨b, d₂⟩ ↦
-        (I.binary (if island c then .island else .branch) a b).map fun ⟨u, m⟩ ↦
-          ⟨u, .binary m d₁ d₂⟩ :=
-  values_phrase_binary ..
-
-theorem derivs_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
-    (phrase c k [t]).derivs I lex island = t.derivs I lex island :=
-  values_phrase_unary ..
 
 /-- What a label makes of its daughters' values commutes with a map of domains that commutes
 with the rules and takes the values of the items to their values. -/
@@ -169,20 +122,110 @@ theorem map_nodeValues {D' : T → Type} {M' : G.Structure D'} {ρ' : ∀ {a : T
   | .terminal _ _, _ :: _ | .trace _ _, _ :: _ | .bind _ _, [] | .bind _ _, _ :: _ :: _
   | .phrase _ _, [] | .phrase _ _, _ :: _ :: _ :: _ => rfl
 
-/-- The values of a tree are the values of its derivations. -/
 theorem values_eq_map_derivs (t : Tree C L) :
     t.values I M ρ lex island =
-      (t.derivs I lex island).map fun d ↦ ⟨d.1, d.2.realize M ρ⟩ :=
-  (RoseTree.fold_hom
+      (t.derivs I lex island).map fun d ↦ ⟨d.1, d.2.realize M ρ⟩ := rfl
+
+/-- The values of a tree are its fold by what each label makes of its daughters' values:
+taking values commutes with the rules. -/
+theorem values_eq_fold (t : Tree C L) :
+    t.values I M ρ lex island = RoseTree.fold (nodeValues I M ρ lex island) t :=
+  RoseTree.fold_hom
     (List.map fun d : Σ a, Deriv G W a ↦ (⟨d.1, d.2.realize M ρ⟩ : Σ a, D a))
     (fun l Xs ↦ map_nodeValues I (Term.structure G W) Deriv.leaf lex island
-      (fun _ d ↦ d.realize M ρ) (fun _ _ ↦ rfl) (fun _ _ _ ↦ rfl) (fun _ ↦ rfl) l Xs) t).symm
+      (fun _ d ↦ d.realize M ρ) (fun _ _ ↦ rfl) (fun _ _ _ ↦ rfl) (fun _ ↦ rfl) l Xs) t
+
+/-- The derivations of a tree are its values in the term algebra. -/
+theorem derivs_eq_values (t : Tree C L) :
+    t.derivs I lex island = t.values I (Term.structure G W) Deriv.leaf lex island :=
+  (values_eq_fold ..).symm
+
+/-- A word's values are the values of the items it may be. -/
+@[simp] theorem values_terminal (c : C) (w : L) :
+    (terminal c w).values I M ρ lex island = (lex (.inl w)).map fun ⟨a, x⟩ ↦ ⟨a, ρ x⟩ := by
+  simp [values_eq_fold, nodeValues]
+
+/-- A trace's values are the values of the items its index may be. -/
+@[simp] theorem values_trace (n : ℕ) (c : C) :
+    (trace n c : Tree C L).values I M ρ lex island =
+      (lex (.inr n)).map fun ⟨a, x⟩ ↦ ⟨a, ρ x⟩ := by
+  simp [values_eq_fold, nodeValues]
+
+/-- The values of a binder over an index are those of the unary rules its index admits, at the
+values of its body. -/
+@[simp] theorem values_bind (n : ℕ) (c : C) (t : Tree C L) :
+    (bind n c t).values I M ρ lex island = (t.values I M ρ lex island).flatMap fun ⟨a, x⟩ ↦
+      (I.unary (.index n) a).map fun ⟨b, r⟩ ↦ ⟨b, M.funMap r x⟩ := by
+  simp [values_eq_fold, nodeValues, unaryValues]
+
+/-- The values of a binary node are those of the rules the node admits for its daughters'
+types, at the values of its daughters. -/
+@[simp] theorem values_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
+    (phrase c k [t₁, t₂]).values I M ρ lex island =
+      (t₁.values I M ρ lex island).flatMap fun ⟨a, x⟩ ↦
+        (t₂.values I M ρ lex island).flatMap fun ⟨b, y⟩ ↦
+          (I.binary (if island c then .island else .branch) a b).map fun ⟨u, m⟩ ↦
+            ⟨u, M.funMap m (x, y)⟩ := by
+  simp [values_eq_fold, nodeValues, binaryValues]
+
+/-- A non-branching node has the values of its daughter. -/
+@[simp] theorem values_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
+    (phrase c k [t]).values I M ρ lex island = t.values I M ρ lex island := by
+  simp [values_eq_fold, nodeValues]
+
+theorem derivs_terminal (c : C) (w : L) :
+    (terminal c w).derivs I lex island = (lex (.inl w)).map fun ⟨a, x⟩ ↦ ⟨a, .leaf x⟩ := by
+  simp [derivs, nodeValues]
+
+theorem derivs_trace (n : ℕ) (c : C) :
+    (trace n c : Tree C L).derivs I lex island =
+      (lex (.inr n)).map fun ⟨a, x⟩ ↦ ⟨a, .leaf x⟩ := by
+  simp [derivs, nodeValues]
+
+theorem derivs_bind (n : ℕ) (c : C) (t : Tree C L) :
+    (bind n c t).derivs I lex island = (t.derivs I lex island).flatMap fun ⟨a, d⟩ ↦
+      (I.unary (.index n) a).map fun ⟨b, r⟩ ↦ ⟨b, .unary r d⟩ := by
+  simp [derivs, nodeValues, unaryValues]
+  rfl
+
+theorem derivs_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
+    (phrase c k [t₁, t₂]).derivs I lex island = (t₁.derivs I lex island).flatMap fun ⟨a, d₁⟩ ↦
+      (t₂.derivs I lex island).flatMap fun ⟨b, d₂⟩ ↦
+        (I.binary (if island c then .island else .branch) a b).map fun ⟨u, m⟩ ↦
+          ⟨u, .binary m d₁ d₂⟩ := by
+  simp [derivs, nodeValues, binaryValues]
+  rfl
+
+theorem derivs_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
+    (phrase c k [t]).derivs I lex island = t.derivs I lex island := by
+  simp [derivs, nodeValues]
 
 end Compositional
+
+/-- Where a node admits at most one rule for given daughters and a word is at most one item, a
+tree has at most one value: interpretation is a function. -/
+theorem length_values_le_one {I : Interpreter G Node} {M : G.Structure D}
+    {ρ : ∀ {a : T}, W a → D a} {lex : L ⊕ ℕ → List (Σ a, W a)} {island : C → Bool}
+    (hu : ∀ n a, (I.unary n a).length ≤ 1) (hb : ∀ n a b, (I.binary n a b).length ≤ 1)
+    (hl : ∀ x, (lex x).length ≤ 1) (t : Tree C L) : (t.values I M ρ lex island).length ≤ 1 := by
+  rw [values_eq_fold]
+  refine RoseTree.rel_fold (g := nodeValues I M ρ lex island)
+    (fun (X _ : List (Σ a, D a)) ↦ X.length ≤ 1) (fun l Xs Ys h ↦ ?_) t
+  match l, Xs, Ys, h with
+  | .terminal _ w, [], [], _ => simpa [nodeValues] using hl _
+  | .trace n _, [], [], _ => simpa [nodeValues] using hl _
+  | .bind n _, [X], [_], .cons hX .nil => exact length_unaryValues_le_one (hu _) hX
+  | .phrase _ _, [X], [_], .cons hX .nil => exact hX
+  | .phrase c _, [X, Y], [_, _], .cons hX (.cons hY .nil) =>
+    exact length_binaryValues_le_one (hb _) hX hY
+  | .terminal _ _, _ :: _, _ :: _, _ | .trace _ _, _ :: _, _ :: _, _ | .bind _ _, [], [], _
+  | .bind _ _, _ :: _ :: _, _ :: _ :: _, _ | .phrase _ _, [], [], _
+  | .phrase _ _, _ :: _ :: _ :: _, _ :: _ :: _ :: _, _ => exact Nat.zero_le _
+
 
 theorem Uninterpretable.values_eq_nil {I : Interpreter G Node} {lex : L ⊕ ℕ → List (Σ a, W a)}
     {t : Tree C L} {island : C → Bool} (h : t.Uninterpretable I lex island) (M : G.Structure D)
     (ρ : ∀ {a : T}, W a → D a) : t.values I M ρ lex island = [] := by
-  simp [values_eq_map_derivs, h.derivs_eq_nil]
+  simp [values, h.derivs_eq_nil]
 
 end PhraseStructure.Tree

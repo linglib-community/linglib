@@ -11,9 +11,9 @@ another, which may have more. Where an interpreter of the larger system admits a
 interpreter of the smaller admits there, and a larger lexicon has the items of a smaller, [every
 derivation of the smaller is one of the larger](##PhraseStructure.Tree.mem_derivs_of_le), and in
 a structure that expands the smaller one [it has the same
-value](##PhraseStructure.Tree.mem_values_of_le). A claim that a structure has a reading therefore holds in
-every extension. A claim that it has no other reading, or none, does not, and those are the claims
-an extension tests.
+value](##PhraseStructure.Tree.mem_values_of_le). A claim that a tree has a reading therefore
+holds in every extension. A claim that it has no other reading, or none, does not, and those are
+the claims an extension tests.
 
 ## Main definitions
 
@@ -129,6 +129,7 @@ theorem map_mem_values_of_le {D' : T → Type} {M : G.Structure D} {M' : G'.Stru
     (hρ : ∀ {a : T} (x : W a), h a (ρ x) = ρ' x) (hl : ∀ x, lex x ⊆ lex' x)
     (t : Tree C Lx) {island : C → Bool} {d : Σ a, D a} (hd : d ∈ t.values I M ρ lex island) :
     (⟨d.1, h d.1 d.2⟩ : Σ a, D' a) ∈ t.values J M' ρ' lex' island := by
+  rw [values_eq_fold] at hd ⊢
   refine RoseTree.rel_fold
     (fun (X : List (Σ a, D a)) (Y : List (Σ a, D' a)) ↦ ∀ d ∈ X, (⟨d.1, h d.1 d.2⟩ : Σ a, D' a) ∈ Y)
     (fun l Xs Ys hXY ↦ ?_) t d hd
@@ -162,8 +163,9 @@ theorem mem_values_of_le {M : G.Structure D} {M' : G'.Structure D} (h : J.Extend
 along the map is a derivation the extending interpreter admits. -/
 theorem mem_derivs_of_le (h : J.Extends I φ) (hl : ∀ x, lex x ⊆ lex' x) {t : Tree C Lx}
     {island : C → Bool} {d : Σ a, Deriv G W a} (hd : d ∈ t.derivs I lex island) :
-    (⟨d.1, φ.onTerm d.2⟩ : Σ a, Deriv G' W a) ∈ t.derivs J lex' island :=
-  map_mem_values_of_le h (fun _ d ↦ φ.onTerm d) (fun _ _ ↦ rfl) (fun _ _ _ ↦ rfl)
+    (⟨d.1, φ.onTerm d.2⟩ : Σ a, Deriv G' W a) ∈ t.derivs J lex' island := by
+  rw [derivs_eq_values] at hd ⊢
+  exact map_mem_values_of_le h (fun _ d ↦ φ.onTerm d) (fun _ _ ↦ rfl) (fun _ _ _ ↦ rfl)
     (fun _ ↦ rfl) hl t hd
 
 /-- The meanings of a tree by Heim and Kratzer's procedure over a language of rules are among its

@@ -158,7 +158,7 @@ theorem meanings_amySawEveryone :
 theorem uninterpretable_amySawEveryone :
     amySawEveryone.Uninterpretable ((typeDriven application).withAbstraction ind)
       (Leaf.lex items ind) :=
-  ⟨rfl, rfl⟩
+  ⟨by decide, rfl⟩
 
 /-- (5) *Someone saw everyone*. -/
 def someoneSawEveryone : Tree Unit Lexeme :=
