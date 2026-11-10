@@ -137,7 +137,7 @@ inductive DRefVal (World E : Type*)
   | undef
 
 /-- A heterogeneous assignment sends each index to a discourse-referent value. -/
-abbrev HAssign (World E : Type*) := Assignment (DRefVal World E)
+abbrev HAssign (World E : Type*) := ℕ → DRefVal World E
 
 /-- `entityIntro n body` introduces an entity referent at `n` existentially, as an indexed
 determiner does (40c), and leaves its restriction to `body`. -/

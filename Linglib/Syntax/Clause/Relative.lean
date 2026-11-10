@@ -33,7 +33,7 @@ resumptive pronouns, as a pronoun bound by the head or a pronounced copy of move
 (`Studies/Scott2021.lean`).
 
 A restrictive relative clause needs no semantic rule of its own: the interpreter of
-`Semantics/Composition/Interpreter` interprets it by Predicate Abstraction over the gap and
+`Semantics/Composition` interprets it by Predicate Abstraction over the gap and
 Predicate Modification with the head, as `Studies/HeimKratzer1998.lean` computes.
 
 ## References

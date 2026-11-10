@@ -12,7 +12,7 @@ public import Mathlib.Order.Minimal
 Muskens's compositional DRT with intensional discourse referents, in Hofmann's formulation of the
 flat update of Stone and Brasoveanu. An individual dref is an individual concept, a partial function
 from worlds to individuals that has a referent only at the worlds of its local context. A clause is
-a computation in `StateT (Assignment (W →. E)) Set` that returns its local context: from an input
+a computation in `StateT ((ℕ → (W →. E))) Set` that returns its local context: from an input
 assignment, the pairs of a context in which it holds and an output assignment. Maximization keeps
 the runs whose context is maximal, so the truth conditions of the operators compose
 (`Clause.HasTruthSet`). Flat update is the theorem that [negation keeps the drefs of its
@@ -45,7 +45,9 @@ universe u
 namespace ICDRT
 
 open DynamicSemantics SetRel
-open scoped Assignment
+
+/-- `g[v ↦ e]` is the assignment sending `v` to `e` and agreeing with `g` elsewhere. -/
+scoped notation:max g "[" v " ↦ " e "]" => Function.update g v e
 
 /-! ### Individual concepts and witnesses -/
 
@@ -109,14 +111,14 @@ theorem exists_isWitness_subset_sat_iff :
 
 end Witnesses
 
-variable {W E : Type u} {g h : Assignment (W →. E)} {s dc dc' A : Set W} {R S : E → W → Prop}
+variable {W E : Type u} {g h : ℕ → (W →. E)} {s dc dc' A : Set W} {R S : E → W → Prop}
   {v v' : ℕ} {a : E} {dox : E → W → Set W}
 
 /-! ### Clauses -/
 
 /-- A clause, of type `wt`, computes its local context: from an input assignment, the pairs of a
 context in which it holds and an output assignment. -/
-abbrev Clause (W E : Type u) := StateT (Assignment (W →. E)) Set (Set W)
+abbrev Clause (W E : Type u) := StateT ((ℕ → (W →. E))) Set (Set W)
 
 /-- Any context that entails `c`, with no change of assignment. -/
 def within (c : Set W) : Clause W E := fun g ↦ {p | p.1 ⊆ c ∧ p.2 = g}
@@ -173,11 +175,11 @@ def knows (dox : E → W → Set W) (P : Clause W E) (v : ℕ) : Clause W E :=
 
 /-- The declarative takes the maximal context of the clause, which the speaker's commitments `dc`
 entail ([hofmann-2025] (20a), App. C (19)). -/
-def dec (P : Clause W E) (dc : Set W) : Update (Assignment (W →. E)) :=
+def dec (P : Clause W E) (dc : Set W) : Update ((ℕ → (W →. E))) :=
   {p | ∃ s, (s, p.2) ∈ P.maximal p.1 ∧ dc ⊆ s}
 
 /-- A clause has truth set `T` if `T` is its greatest context. -/
-def HasTruthSet (P : Clause W E) (T : Assignment (W →. E) → Set W) : Prop :=
+def HasTruthSet (P : Clause W E) (T : (ℕ → (W →. E)) → Set W) : Prop :=
   ∀ g, IsGreatest (SetRel.dom (P g)) (T g)
 
 /-- Flat update: at its truth set `A`, the clause has assigned `v` a witness of `R`, however deeply
@@ -186,14 +188,14 @@ structure Introduces (P : Clause W E) (R : E → W → Prop) (v : ℕ) (A : Set 
   /-- The clause's greatest context is `A`. -/
   hasTruthSet : P.HasTruthSet fun _ ↦ A
   /-- The runs at `A` are the witnesses for `v`. -/
-  mem_iff {g h : Assignment (W →. E)} :
+  mem_iff {g h : ℕ → (W →. E)} :
     (A, h) ∈ P g ↔ ∃ e, IsWitness R (witnessed R) e ∧ h = g[v ↦ e]
 
 end Clause
 
 /-! ### Runs of the operators -/
 
-variable {P Q : Clause W E} {T : Assignment (W →. E) → Set W} {f : Set W → Set W → Set W}
+variable {P Q : Clause W E} {T : (ℕ → (W →. E)) → Set W} {f : Set W → Set W → Set W}
 
 theorem mem_it : (s, h) ∈ it S v g ↔ s ⊆ sat S (g v) ∧ h = g := Iff.rfl
 
@@ -259,7 +261,7 @@ theorem Clause.Introduces.mem_dec (hP : P.Introduces R v A) :
 
 /-- The one law of flat update: an antecedent, under any number of negations, followed by any update
 runs that update from a witness for the antecedent's dref. -/
-theorem Clause.Introduces.mem_comp {D : Update (Assignment (W →. E))} (hP : P.Introduces R v A) :
+theorem Clause.Introduces.mem_comp {D : Update ((ℕ → (W →. E)))} (hP : P.Introduces R v A) :
     g ~[P.dec dc ○ D] h ↔ dc ⊆ A ∧ ∃ e, IsWitness R (witnessed R) e ∧ g[v ↦ e] ~[D] h := by
   simp only [SetRel.mem_comp, hP.mem_dec]
   grind

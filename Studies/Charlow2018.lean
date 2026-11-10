@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Composition.Assignment
+public import Linglib.Logic.Assignment
+public import Mathlib.Logic.Function.DependsOn
 public import Mathlib.Control.Applicative
 public import Mathlib.Control.Basic
 public import Mathlib.Control.Monad.Cont
@@ -24,7 +25,7 @@ At the entity type the same applicative is Jacobson's variable-free semantics, w
 
 ## Implementation notes
 
-* `ρ`, `⊛` and `μ` are `pure`, `<*>` and `joinM` of `ReaderM (Assignment E)`, the paper's four
+* `ρ`, `⊛` and `μ` are `pure`, `<*>` and `joinM` of `ReaderM (ℕ → E)`, the paper's four
   applicative laws are its `LawfulApplicative` instance, and the composite of two applicatives is
   mathlib's `Functor.Comp`. Meanings are applied to an assignment directly, as in the paper, rather
   than through `ReaderT.run`, so `pure_apply`, `seq_apply` and `joinM_apply` restate the three
@@ -63,7 +64,6 @@ At the entity type the same applicative is Jacobson's variable-free semantics, w
 
 namespace Charlow2018
 
-open Montague
 open scoped Assignment
 
 variable {E : Type}
@@ -77,20 +77,20 @@ assignments, which the rule never supplies. -/
 /-- No denotation for `Λᵢ` binds under the standard rule (section 2.2), since whatever `L` is,
 `λg. L g (⟦α⟧ g)` sees `⟦α⟧` only at `g`, while binding needs `λg. λx. ⟦α⟧ g^{i→x}`. -/
 theorem not_exists_abstraction_denotation [Nontrivial E] (i : ℕ) :
-    ¬ ∃ L : Assignment E → Prop → E → Prop,
-      ∀ α : Assignment E → Prop, (fun g ↦ L g (α g)) = lambdaAbsG i α := by
+    ¬ ∃ L : (ℕ → E) → Prop → E → Prop,
+      ∀ α : (ℕ → E) → Prop, (fun g ↦ L g (α g)) = Λ[i] α := by
   rintro ⟨L, hL⟩
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   have h₁ := congrFun (congrFun (hL fun g ↦ g i = a) fun _ ↦ a) b
   have h₂ := congrFun (congrFun (hL fun _ ↦ True) fun _ ↦ a) b
-  simp only [lambdaAbsG, Function.update_self, eq_self] at h₁ h₂
+  simp only [Function.update_self, eq_self] at h₁ h₂
   exact hab (of_eq_true (h₁.symm.trans h₂)).symm
 
 /-! ### The reader applicative
 
 The lift `ρ x := λg. x` (11) and application `m ⊛ n := λg. m g (n g)` (12) are the `pure` and
 `<*>` of the reader monad, and the four laws of section 3.3 are its `LawfulApplicative` instance.
-Abstraction is the operation `Λᵢ f := λg. λx. f g^{i→x}` (13), `lambdaAbsG`. -/
+Abstraction is the operation `Λᵢ f := λg. λx. f g^{i→x}` (13), `Λ[n]`. -/
 
 section Reader
 
@@ -105,25 +105,25 @@ variable {G α β : Type}
 
 end Reader
 
-example : LawfulApplicative (ReaderM (Assignment E)) := inferInstance
+example : LawfulApplicative (ReaderM (ℕ → E)) := inferInstance
 
 -- *She₀ left* and *John saw her₀* (Fig. 3).
 example (left : E → Prop) :
-    (pure left <*> Function.eval 0 : ReaderM (Assignment E) Prop) = fun g ↦ left (g 0) := rfl
+    (pure left <*> Function.eval 0 : ReaderM (ℕ → E) Prop) = fun g ↦ left (g 0) := rfl
 
 example (saw : E → E → Prop) (j : E) :
-    (pure saw <*> Function.eval 0 <*> pure j : ReaderM (Assignment E) Prop) =
+    (pure saw <*> Function.eval 0 <*> pure j : ReaderM (ℕ → E) Prop) =
       fun g ↦ saw (g 0) j := rfl
 
 -- *Bill Λ₀ t₀ left* and *everyone Λ₀ t₀ likes their₀ mom* (Fig. 4).
 example (left : E → Prop) (b : E) :
-    (lambdaAbsG 0 (pure left <*> Function.eval 0 : ReaderM (Assignment E) Prop) <*> pure b :
-      ReaderM (Assignment E) Prop) = fun _ ↦ left b := rfl
+    (Λ[0] (pure left <*> Function.eval 0 : ReaderM (ℕ → E) Prop) <*> pure b :
+      ReaderM (ℕ → E) Prop) = fun _ ↦ left b := rfl
 
 example (likes : E → E → Prop) (mom : E → E) (everyone : (E → Prop) → Prop) :
-    (pure everyone <*> lambdaAbsG 0
+    (pure everyone <*> Λ[0]
         (pure likes <*> (pure mom <*> Function.eval 0) <*> Function.eval 0 :
-          ReaderM (Assignment E) Prop) : ReaderM (Assignment E) Prop) =
+          ReaderM (ℕ → E) Prop) : ReaderM (ℕ → E) Prop) =
       fun _ ↦ everyone fun x ↦ likes (mom x) x := rfl
 
 /-! ### Applicatives elsewhere in semantics -/
@@ -203,8 +203,8 @@ def abstraction {α β : Type} (shift : α → G → G) (f : ReaderM G β) : Rea
 @[simp] theorem abstraction_apply {α β : Type} (shift : α → G → G) (f : ReaderM G β) (g : G) :
     abstraction shift f g = fun x ↦ f (shift x g) := rfl
 
-example {α : Type} (i : ℕ) (f : ReaderM (Assignment E) α) :
-    abstraction (fun x g ↦ g[i ↦ x]) f = lambdaAbsG i f := rfl
+example {α : Type} (i : ℕ) (f : ReaderM (ℕ → E) α) :
+    abstraction (fun x g ↦ Function.update g i x) f = Λ[i] f := rfl
 
 section Derivations
 
@@ -236,9 +236,10 @@ end Derivations
 -- concepts, the type-homogeneous assignments of section 5, when a concept is stored as it reads
 -- the stored concepts at the time; there `reconstruction` gives the bound reading.
 example (likes : E → E → Prop) (mom : E → E) (everyBoy : (E → Prop) → Prop) (i j : ℕ)
-    (g : Assignment E × Assignment (Assignment E → E)) :=
+    (g : (ℕ → E) × (ℕ → (ℕ → E) → E)) :=
   reconstruction (i := i) (j := j) (fun i g ↦ g.1 i) (fun j g h ↦ g.2 j h.1)
-    (fun i x g ↦ (g.1[i ↦ x], g.2)) (fun j n g ↦ (g.1, g.2[j ↦ fun h ↦ n (h, g.2)]))
+    (fun i x g ↦ (Function.update g.1 i x, g.2))
+    (fun j n g ↦ (g.1, Function.update g.2 j fun h ↦ n (h, g.2)))
     (fun _ _ ↦ rfl) (fun _ _ ↦ Function.update_self ..) likes mom everyBoy g
     fun _ ↦ funext fun _ ↦ by simp
 
@@ -258,7 +259,7 @@ end HigherOrder
 
 /-! ### Type-homogeneous assignments
 
-Section 5 gives each type `r` its own assignments, `g_r := ℕ → r`, which is `Assignment r`. A
+Section 5 gives each type `r` its own assignments, `g_r := ℕ → r`. A
 meaning that depends on assignments of two sorts lives in the composite of two reader
 applicatives. -/
 
@@ -268,26 +269,26 @@ section TypeHomogeneous
 -- properties give `λg. λh. h₀ g₁`.
 example :
     (Functor.Comp.mk (fun _ h ↦ h 0) <*> Functor.Comp.mk (fun g _ ↦ g 1) :
-      Functor.Comp (ReaderM (Assignment E)) (ReaderM (Assignment (E → Prop))) Prop).run =
+      Functor.Comp (ReaderM (ℕ → E)) (ReaderM (ℕ → E → Prop)) Prop).run =
       fun g h ↦ h 0 (g 1) := rfl
 
 /-- The meanings that depend on an assignment of individual concepts and then on one of
 individuals, the composite `G_{G_e e} ∘ G_e` of section 5.2. -/
 abbrev ConceptThenIndividual (E : Type) : Type → Type :=
-  Functor.Comp (ReaderM (Assignment (Assignment E → E))) (ReaderM (Assignment E))
+  Functor.Comp (ReaderM (ℕ → (ℕ → E) → E)) (ReaderM (ℕ → E))
 
 /-- On type-homogeneous assignments (section 5.2) the paycheck reading has `her₁` read an
 intension from the outer assignment and evaluate it at the inner one, with `Λ₀` binding the
 subject's trace in the inner layer. The meaning is `λg. λh. likes (g₁ h^{0→b}) b`, with no
 flattener. -/
 theorem typed_paycheck (likes : E → E → Prop) (mom : E → E) (b : E)
-    (g : Assignment (Assignment E → E)) (h : Assignment E) (hg : g 1 = fun h ↦ mom (h 0)) :
-    (Functor.Comp.mk (lambdaAbsG 0 <$> (pure likes <*>
+    (g : ℕ → (ℕ → E) → E) (h : ℕ → E) (hg : g 1 = fun h ↦ mom (h 0)) :
+    (Functor.Comp.mk ((Λ[0] ·) <$> (pure likes <*>
           (Functor.Comp.mk fun g h ↦ g 1 h : ConceptThenIndividual E E) <*>
           (Functor.Comp.mk fun _ h ↦ h 0 : ConceptThenIndividual E E)).run) <*> pure b :
       ConceptThenIndividual E Prop).run g h = likes (mom b) b := by
   simp only [Functor.Comp.run_seq, Functor.Comp.run_pure, Functor.Comp.run_mk, seq_apply,
-    pure_apply, map_apply, lambdaAbsG_apply, hg, Function.update_self]
+    pure_apply, map_apply, hg, Function.update_self]
 
 end TypeHomogeneous
 
@@ -311,7 +312,7 @@ whose variable 0 is the outer individual and variable 1 the inner one. It preser
 so it maps each variable-free derivation to the variable-full derivation with the same lexical
 items. -/
 def toAssignment : ApplicativeTransformation (Functor.Comp (ReaderM E) (ReaderM E))
-    (ReaderM (Assignment E)) where
+    (ReaderM (ℕ → E)) where
   app _ m g := m.run (g 0) (g 1)
   preserves_pure' _ := rfl
   preserves_seq' _ _ := rfl
@@ -319,7 +320,7 @@ def toAssignment : ApplicativeTransformation (Functor.Comp (ReaderM E) (ReaderM 
 -- *She saw her* read variable-full is *she₀ saw her₁*.
 example (saw : E → E → Prop) :
     toAssignment (pure saw <*> Functor.Comp.mk (fun _ y ↦ y) <*> Functor.Comp.mk (fun x _ ↦ x)) =
-      (pure saw <*> Function.eval 1 <*> Function.eval 0 : ReaderM (Assignment E) Prop) := rfl
+      (pure saw <*> Function.eval 1 <*> Function.eval 0 : ReaderM (ℕ → E) Prop) := rfl
 
 /-- Variable-free and variable-full semantics generate the same meanings up to isomorphism
 (section 6): reading a variable-free meaning's two individuals as variables 0 and 1 is a bijection
@@ -330,8 +331,9 @@ theorem bijOn_toAssignment {α : Type} :
   · show m.run (g 0) (g 1) = m.run (g' 0) (g' 1)
     rw [h 0 (by simp), h 1 (by simp)]
   · refine Functor.Comp.ext (funext fun x ↦ funext fun y ↦ ?_)
-    simpa [toAssignment] using congrFun h ((fun _ ↦ y)[0 ↦ x])
-  · refine ⟨Functor.Comp.mk fun x y ↦ m ((fun _ ↦ y)[0 ↦ x]), trivial, funext fun g ↦ hm ?_⟩
+    simpa [toAssignment] using congrFun h (Function.update (fun _ ↦ y) 0 x)
+  · refine ⟨Functor.Comp.mk fun x y ↦ m (Function.update (fun _ ↦ y) 0 x), trivial,
+      funext fun g ↦ hm ?_⟩
     rintro i (rfl | rfl) <;> simp
 
 /-! ### Errata

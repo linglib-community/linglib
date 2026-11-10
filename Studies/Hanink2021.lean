@@ -1,5 +1,7 @@
 module
 
+public import Linglib.Logic.Assignment
+public import Linglib.Core.Logic.Function.DependsOn
 public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Modification.Basic
 public import Mathlib.Data.Finset.BooleanAlgebra
@@ -29,7 +31,7 @@ rather than Agree.
 ## Implementation notes
 
 The index is the substrate's assignment index, so the variable meaning is `idxVar` and the
-binder meaning `lambdaAbsG`; D's ι is `iota`, whose `∃!` presupposition is (34a)'s.
+binder meaning `Λ[n]`; D's ι is `iota`, whose `∃!` presupposition is (34a)'s.
 The R head of demonstratives (35) is the identity relation, so it is not represented. Ellipsis
 of a pronoun's NP is recorded as the complement lacking the feature that makes an NP overt
 (section 6.3). The quantified heads of section 5.1 and the German relative-clause parallel of
@@ -58,31 +60,31 @@ sets containing the speaker and the others.
 
 namespace Hanink2021
 
-open Montague DistributedMorphology Morphology
+open DistributedMorphology Morphology
+open scoped Assignment
 open scoped Denotes
 open DefiniteDescription (Restrictor)
-open scoped Assignment
 
 variable {E W : Type}
 
 /-! ### The two meanings of the index, (80) -/
 
 /-- The index as a variable, (80a) and (14), denotes the property of being its value. -/
-def idxVar (n : ℕ) : Assignment E → E → Prop := fun g x ↦ x = g n
+def idxVar (n : ℕ) : (ℕ → E) → E → Prop := fun g x ↦ x = g n
 
 /-- The index as a binder, (80b), takes the open proposition of its complement to the property of
 the values of the variable that verify it. It is the substrate's abstraction over `n`, achieved
 without movement. -/
-abbrev idxBind (n : ℕ) (φ : Assignment E → Prop) : Assignment E → E → Prop := lambdaAbsG n φ
+abbrev idxBind (n : ℕ) (φ : (ℕ → E) → Prop) : (ℕ → E) → E → Prop := Λ[n] φ
 
 /-- A familiar DP is the anaphoric description, denoting the antecedent if it satisfies the
 restriction ((15), (35b), (97) and (106)). -/
-theorem denote_anaphoric_eq_iota (R : Restrictor E W) (d : ℕ) (g : Assignment E) (s : W) :
+theorem denote_anaphoric_eq_iota (R : Restrictor E W) (d : ℕ) (g : ℕ → E) (s : W) :
     ⟦DefiniteDescription.anaphoric R d⟧ g s = iota (R g s ∩ Set.ofPred (idxVar d g)) := rfl
 
 /-- The demonstrative D heads *hádi* and *wídi* of (34b) and (34c) refer as the anaphoric DP does.
 -/
-theorem denote_demonstrative_eq_iota (R : Restrictor E W) (d : ℕ) (g : Assignment E) (s : W) :
+theorem denote_demonstrative_eq_iota (R : Restrictor E W) (d : ℕ) (g : ℕ → E) (s : W) :
     ⟦DefiniteDescription.demonstrative R d⟧ g s = iota (R g s ∩ Set.ofPred (idxVar d g)) :=
   rfl
 
@@ -91,29 +93,29 @@ theorem denote_demonstrative_eq_iota (R : Restrictor E W) (d : ℕ) (g : Assignm
 /-- The embedded clause of an internally headed relative, (69) and (70), is an open proposition
 whose semantic head is the restricted variable `n`. The restriction `P` holds of the variable's
 value, and the clause `ψ` says the rest of it. -/
-def openClause (n : ℕ) (P : E → Prop) (ψ : Assignment E → Prop) : Assignment E → Prop :=
+def openClause (n : ℕ) (P : E → Prop) (ψ : (ℕ → E) → Prop) : (ℕ → E) → Prop :=
   fun g ↦ P (g n) ∧ ψ g
 
 /-- The property (71) the index yields by binding in situ is the property (59) an externally headed
 relative builds. -/
-theorem idxBind_openClause (n : ℕ) (P : E → Prop) (ψ : Assignment E → Prop) (g : Assignment E) :
-    idxBind n (openClause n P ψ) g = Modifier.intersective P (lambdaAbsG n ψ g) := by
+theorem idxBind_openClause (n : ℕ) (P : E → Prop) (ψ : (ℕ → E) → Prop) (g : ℕ → E) :
+    idxBind n (openClause n P ψ) g = Modifier.intersective P (Λ[n] ψ g) := by
   funext x
-  simp only [idxBind, lambdaAbsG, openClause, Function.update_self, Modifier.intersective_apply,
-    Pi.inf_apply, inf_Prop_eq]
+  simp only [idxBind, openClause, Function.update_self,
+    Modifier.intersective_apply, Pi.inf_apply, inf_Prop_eq]
 
 /-- The silent D over the bound clause (72) refers to what the definite over the externally headed
 relative (60) refers to. -/
-theorem iota_idxBind (n : ℕ) (P : E → Prop) (ψ : Assignment E → Prop) (g : Assignment E) :
+theorem iota_idxBind (n : ℕ) (P : E → Prop) (ψ : (ℕ → E) → Prop) (g : ℕ → E) :
     iota (Set.ofPred (idxBind n (openClause n P ψ) g)) =
-      iota (Set.ofPred (Modifier.intersective P (lambdaAbsG n ψ g))) := by
+      iota (Set.ofPred (Modifier.intersective P (Λ[n] ψ g))) := by
   rw [idxBind_openClause]
 
 /-- If `φ` does not depend on the index, the binder meaning is constant, so by (86) a perception
 nominalization (106) is a familiar DP. -/
-theorem idxBind_eq_const {n : ℕ} {φ : Assignment E → Prop} (h : DependsOn φ {n}ᶜ)
-    (g : Assignment E) : idxBind n φ g = fun _ ↦ φ g :=
-  lambdaAbsG_eq_const_iff.2 h g
+theorem idxBind_eq_const {n : ℕ} {φ : (ℕ → E) → Prop} (h : DependsOn φ {n}ᶜ)
+    (g : ℕ → E) : idxBind n φ g = fun _ ↦ φ g :=
+  funext fun x ↦ dependsOn_compl_singleton_iff.1 h g x
 
 /-! ### The exponence of idx and D, section 6 -/
 

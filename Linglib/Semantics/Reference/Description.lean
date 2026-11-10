@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Assignment
+public import Linglib.Logic.Assignment
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Denotation
@@ -69,7 +69,7 @@ demonstrative's deictic content and the presupposition it imposes belong to the 
 open scoped Denotes
 
 /-- A restrictor is a set of entities at a situation, relative to an entity assignment. -/
-abbrev DefiniteDescription.Restrictor (E W : Type) := Assignment E → W → Set E
+abbrev DefiniteDescription.Restrictor (E W : Type) := (ℕ → E) → W → Set E
 
 /-- A definite description is the covert iota of a bare noun, the weak or the strong article of
 [schwarz-2009], a deictic demonstrative, or a possessive. -/
@@ -86,13 +86,13 @@ inductive DefiniteDescription (E W : Type) where
   | demonstrative (restrictor : DefiniteDescription.Restrictor E W) (discourseIdx : ℕ)
   /-- A possessive picks the unique satisfier of the restrictor that stands in `relation` to the
   `possessor`. -/
-  | possessive (restrictor : DefiniteDescription.Restrictor E W) (possessor : Assignment E → W → E)
-      (relation : Assignment E → W → E → E → Prop)
+  | possessive (restrictor : DefiniteDescription.Restrictor E W) (possessor : (ℕ → E) → W → E)
+      (relation : (ℕ → E) → W → E → E → Prop)
 
 namespace DefiniteDescription
 
 variable {E W : Type} (R : Restrictor E W) (d : ℕ)
-  (possessor : Assignment E → W → E) (rel : Assignment E → W → E → E → Prop) (g : Assignment E)
+  (possessor : (ℕ → E) → W → E) (rel : (ℕ → E) → W → E → E → Prop) (g : ℕ → E)
   (s : W) {x : E}
 
 /-! ### The Frame-free kind -/
@@ -128,10 +128,10 @@ def restrictor : DefiniteDescription E W → Restrictor E W
 
 /-- A description picks out, at an assignment and a resource situation, the Russellian iota over its
 restrictor ([schwarz-2009]). -/
-noncomputable def denote (k : DefiniteDescription E W) (g : Assignment E) (s : W) : Option E :=
+noncomputable def denote (k : DefiniteDescription E W) (g : ℕ → E) (s : W) : Option E :=
   iota (k.restrictor g s)
 
-noncomputable instance : Denotes (DefiniteDescription E W) (Assignment E → W → Option E) := ⟨denote⟩
+noncomputable instance : Denotes (DefiniteDescription E W) ((ℕ → E) → W → Option E) := ⟨denote⟩
 
 @[simp] theorem denote_bare : ⟦bare R⟧ g s = iota (R g s) := rfl
 

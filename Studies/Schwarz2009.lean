@@ -92,7 +92,7 @@ end Forms
 
 section Contrast
 
-variable {R : Restrictor E W} {d : ℕ} {g : Assignment E} {s : W}
+variable {R : Restrictor E W} {d : ℕ} {g : ℕ → E} {s : W}
 
 /-- Over a restrictor with a satisfier besides the antecedent, the weak article fails uniqueness and
 the strong article returns the antecedent. -/
@@ -114,7 +114,7 @@ def man : Restrictor Person (Fin 2) := fun _ l x ↦ x = .ornithologist l ∨ x 
 
 /-- The assignment on which the indefinite *ein Ornithologe* binds the index to a lecture's
 ornithologist. -/
-def boundTo (l : Fin 2) : Assignment Person := fun _ ↦ .ornithologist l
+def boundTo (l : Fin 2) : ℕ → Person := fun _ ↦ .ornithologist l
 
 /-- In (31) *#vom Mann* fails uniqueness at every lecture while *von dem Mann* denotes the bound
 ornithologist, (28) being the one-lecture case. -/
@@ -127,7 +127,7 @@ theorem covarying_anaphora (l : Fin 2) :
 
 section Covariation
 
-variable (f : W → E) (d : ℕ) (g : Assignment E) (s : W)
+variable (f : W → E) (d : ℕ) (g : ℕ → E) (s : W)
 
 /-- The weak article over a restrictor true at each situation of one entity denotes that entity, as
 *Gewinner* does in (48). -/
@@ -146,7 +146,7 @@ end Covariation
 
 section Relational
 
-variable (R : E → E → W → Prop) (d : ℕ) (g : Assignment E) (s : W)
+variable (R : E → E → W → Prop) (d : ℕ) (g : ℕ → E) (s : W)
 
 /-- The relational strong article (309) takes its index `d` as the relatum of the relational noun
 `R`, read as `R y x s` for referent `x` of relatum `y` at `s`, and so is the possessive description
@@ -177,7 +177,7 @@ def shift (R : S → S → S → Prop) : Restrictor S S := fun _ s ↦ {x | ∃ 
 *Bürgermeister* evaluated at a town holds of a mayor who is part of the town. -/
 def IsLocal (R : S → S → S → Prop) : Prop := ∀ y x s, R y x s → x ≤ s
 
-variable {R : S → S → S → Prop} {g : Assignment S} {s x y : S}
+variable {R : S → S → S → Prop} {g : ℕ → S} {s x y : S}
 
 /-- Π of a local relational noun picks out only parts of a whole that overlaps the situation. -/
 theorem exists_le_of_shift (hR : IsLocal R) (h : x ∈ shift R g s) :
@@ -191,7 +191,7 @@ theorem shift_of_le (hy : R y x y) (hys : y ≤ s) (hb : ¬ IsBot y) : x ∈ shi
 /-- The weak article over Π of a local relational noun whose referents are not part of their
 relata, as authors are not part of their books, is undefined. -/
 theorem unique_shift_eq_none (hR : IsLocal R) (hpart : ∀ y x s, R y x s → ¬ x ≤ y)
-    (g : Assignment S) (s : S) : ⟦DefiniteDescription.unique (shift R)⟧ g s = none :=
+    (g : ℕ → S) (s : S) : ⟦DefiniteDescription.unique (shift R)⟧ g s = none :=
   iota_eq_none_iff.2 fun ⟨x, ⟨y, hy, _⟩, _⟩ ↦ hpart y x y hy (hR y x y hy)
 
 end Shift
@@ -241,13 +241,13 @@ theorem not_le_of_authorOf {y x s : Sit} (h : authorOf y x s) : ¬ x ≤ y := by
   obtain ⟨⟨rfl, rfl⟩ | ⟨rfl, rfl | rfl⟩, -⟩ := h <;> decide
 
 -- (58)
-theorem partWhole_bridging (g : Assignment Sit) :
+theorem partWhole_bridging (g : ℕ → Sit) :
     ⟦DefiniteDescription.unique (shift crisperOf)⟧ g fridge = some {.crisper} :=
   (DefiniteDescription.denote_unique_eq_some_iff _ _ _).2
     ⟨shift_of_le ⟨rfl, rfl, by decide⟩ le_rfl (by simp [fridge]), fun _ ⟨_, ⟨_, h, _⟩, _⟩ ↦ h⟩
 
 -- (231)
-theorem larger_situation (g : Assignment Sit) :
+theorem larger_situation (g : ℕ → Sit) :
     ⟦DefiniteDescription.unique (shift mayorOf)⟧ g {.station} = some {.mayor} ∧
       ¬ ({.mayor} : Sit) ≤ {.station} :=
   ⟨(DefiniteDescription.denote_unique_eq_some_iff _ _ _).2
@@ -255,7 +255,7 @@ theorem larger_situation (g : Assignment Sit) :
       fun _ ⟨_, ⟨_, h, _⟩, _⟩ ↦ h⟩, by decide⟩
 
 -- (62), (275)
-theorem author_weak (g : Assignment Sit) (s : Sit) :
+theorem author_weak (g : ℕ → Sit) (s : Sit) :
     ⟦DefiniteDescription.unique (shift authorOf)⟧ g s = none :=
   unique_shift_eq_none isLocal_authorOf (fun _ _ _ ↦ not_le_of_authorOf) g s
 

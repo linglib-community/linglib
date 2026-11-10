@@ -44,7 +44,6 @@ translation is defined on every term and captures no variable.
 namespace Gallin1975
 
 open Interpreter
-open scoped Assignment
 
 universe u
 
@@ -94,7 +93,7 @@ noncomputable def eval (I : ∀ {α : Ty}, K α → Ty.Domain E W α) :
     {α : Ty} → Ty2.Term Γ K α → (∀ n, Ty.Domain E W (Γ n)) → Ty.Domain E W α
   | _, .const c, _ => I c
   | _, .var n, g => g n
-  | _, .lam n b, g => fun x ↦ b.eval I (g[n ↦ x])
+  | _, .lam n b, g => fun x ↦ b.eval I (Function.update g n x)
   | _, .app f a, g => f.eval I g (a.eval I g)
   | _, .ident a b, g => a.eval I g = b.eval I g
 
@@ -219,7 +218,7 @@ noncomputable def IL.Term.value (m : ∀ {α : Ty}, K α → W → Ty.Domain E W
   | g, _, _, .var n => g n
   | _, i, _, .const c => m c i
   | g, i, _, .app f a => f.value m g i (a.value m g i)
-  | g, i, _, .lam n b => fun x ↦ b.value m (g[n ↦ x]) i
+  | g, i, _, .lam n b => fun x ↦ b.value m (Function.update g n x) i
   | g, i, _, .ident a b => a.value m g i = b.value m g i
   | g, _, _, .up a => fun j ↦ a.value m g j
   | g, i, _, .down a => a.value m g i i
@@ -293,7 +292,7 @@ theorem eval_toTy2 (m : ∀ {α : Ty}, K α → W → Ty.Domain E W α)
   | app f a ihf iha => simp only [IL.Term.toTy2, Ty2.Term.eval, ihf, iha]; rfl
   | lam n b ih =>
     funext x
-    refine (ih (g[n + 1 ↦ x])).trans ?_
+    refine (ih (Function.update g (n + 1) x)).trans ?_
     rw [Function.update_comp_eq_of_injective' g Nat.succ_injective n x,
       Function.update_of_ne (Nat.succ_ne_zero n).symm]
     rfl
@@ -302,7 +301,7 @@ theorem eval_toTy2 (m : ∀ {α : Ty}, K α → W → Ty.Domain E W α)
     rfl
   | up a ih =>
     funext j
-    refine (ih (g[0 ↦ j])).trans ?_
+    refine (ih (Function.update g 0 j)).trans ?_
     rw [Function.update_comp_eq_of_forall_ne' g _ Nat.succ_ne_zero, Function.update_self]
     rfl
   | down a ih => simp only [IL.Term.toTy2, Ty2.Term.eval, ih]; rfl

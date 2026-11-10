@@ -56,9 +56,9 @@ variable {E : Type*}
 /-- Agreement on `V` relates the assignments equal on `V` (Definition 2.2); the reset `[x]` of
 the existential is agreement off `x`, the substrate's `randomAssign`
 (`mem_randomAssign_iff_eqOn`). -/
-def agreeOn (V : Set ℕ) : Update (Assignment E) := {(f, g) | Set.EqOn f g V}
+def agreeOn (V : Set ℕ) : Update (ℕ → E) := {(f, g) | Set.EqOn f g V}
 
-theorem subset_agreeOn_comp (R : Update (Assignment E)) (V W : Set ℕ) :
+theorem subset_agreeOn_comp (R : Update (ℕ → E)) (V W : Set ℕ) :
     R ⊆ agreeOn V ○ (R ○ agreeOn W) :=
   fun ⟨f, g⟩ hR ↦ ⟨f, Set.eqOn_refl _ _, g, hR, Set.eqOn_refl _ _⟩
 
@@ -83,7 +83,7 @@ theorem agreeOn_empty : agreeOn (E := E) ∅ = Set.univ := by
 
 /-- A relation has a context exactly when it is its own saturation by agreement on the inputs
 and on the outputs, within agreement off the blocks (Definition 3.4). -/
-theorem hasContext_iff_eq (R : Update (Assignment E)) (c : Context ℕ) :
+theorem hasContext_iff_eq (R : Update (ℕ → E)) (c : Context ℕ) :
     HasContext R c ↔
       R = (agreeOn ↑c.I ○ (R ○ agreeOn ↑c.O)) ∩ agreeOn (↑c.B)ᶜ := by
   rw [Set.Subset.antisymm_iff, Set.subset_inter_iff,
@@ -100,21 +100,21 @@ theorem hasContext_agreeOn_compl (c : Context ℕ) :
     HasContext (agreeOn (E := E) (↑c.B)ᶜ) c :=
   ⟨fun _ _ h ↦ h, fun _ _ _ _ _ _ _ hB ↦ hB⟩
 
-private theorem eqOn_update {f : Assignment E} {v : ℕ} {s : Set ℕ} (hv : v ∉ s) (e : E) :
+private theorem eqOn_update {f : ℕ → E} {v : ℕ} {s : Set ℕ} (hv : v ∉ s) (e : E) :
     Set.EqOn (Function.update f v e) f s :=
   fun _ hw ↦ Function.update_of_ne (ne_of_mem_of_not_mem hw hv) _ _
 
 /-- Over a domain with two elements, the information order is the inclusion of the typed
 relations: `c ≤ d` exactly when `d` types every relation `c` types (Theorem 3.5). -/
 theorem le_iff_forall_hasContext [Nontrivial E] {c d : Context ℕ} :
-    c ≤ d ↔ ∀ R : Update (Assignment E), HasContext R c → HasContext R d := by
+    c ≤ d ↔ ∀ R : Update (ℕ → E), HasContext R c → HasContext R d := by
   refine ⟨fun hcd _ hR ↦ hR.mono hcd, fun h ↦ ?_⟩
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
-  let f : Assignment E := fun _ ↦ a
+  let f : ℕ → E := fun _ ↦ a
   have hfb : ∀ v, f v ≠ Function.update f v b v := fun v ↦ by simpa [f] using hab
   have hB := h _ (hasContext_agreeOn_compl c)
   -- a test at `v` absorbed into `c` on the side where `c` reads, resp. writes, `v`
-  have hp : ∀ v, DependsOn (· ∈ {g : Assignment E | g v = a}) (↑({v} : Finset ℕ) : Set ℕ) :=
+  have hp : ∀ v, DependsOn (· ∈ {g : (ℕ → E) | g v = a}) (↑({v} : Finset ℕ) : Set ℕ) :=
     fun v _ _ hg ↦ congrArg (· = a) (hg v (by simp))
   refine ⟨fun v hv ↦ by_contra fun hvI ↦ ?_, fun v hv ↦ by_contra fun hvO ↦ ?_,
     fun v hv ↦ by_contra fun hv' ↦ hfb v ?_, fun v hv ↦ by_contra fun hv' ↦ ?_⟩
@@ -157,13 +157,13 @@ theorem le_iff_forall_hasContext [Nontrivial E] {c d : Context ℕ} :
 
 /-- The DPL-expressible relations (Definition 3.10) are generated under composition by the
 resets and the finitely restricted conditions. -/
-def dplExpressible : Submonoid (Update (Assignment E)) :=
-  Submonoid.closure ({R | ∃ (s : Finset ℕ) (p : Set (Assignment E)),
+def dplExpressible : Submonoid (Update (ℕ → E)) :=
+  Submonoid.closure ({R | ∃ (s : Finset ℕ) (p : Set (ℕ → E)),
     DependsOn (· ∈ p) (↑s : Set ℕ) ∧ R = test p} ∪
-    Set.range (randomAssign : ℕ → Update (Assignment E)))
+    Set.range (randomAssign : ℕ → Update (ℕ → E)))
 
 /-- Every DPL-expressible relation has a context (Theorem 3.11). -/
-theorem exists_hasContext {R : Update (Assignment E)} (h : R ∈ dplExpressible) :
+theorem exists_hasContext {R : Update (ℕ → E)} (h : R ∈ dplExpressible) :
     ∃ c, HasContext R c := by
   unfold dplExpressible at h
   induction h using Submonoid.closure_induction with

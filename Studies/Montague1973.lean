@@ -133,7 +133,7 @@ proper nouns translate to `j*`, …, that is `P̂ P{^j}`; `heₙ` to `P̂ P{xₙ
 individual concepts; the rules of functional application to `δ'(^β')`; and quantifying-in to
 `α'(x̂ₙ φ')`. -/
 def Analysis.realize (M : Interp E W) :
-    {A : Cat} → Analysis A → Assignment (W → E) → W → Ty.Domain E W A.ty
+    {A : Cat} → Analysis A → (ℕ → W → E) → W → Ty.Domain E W A.ty
   | _, .basic α, _, i => M.const α i
   | _, .name α, _, i => fun P ↦ P i (M.name α)
   | _, .he n, g, i => fun P ↦ P i (g n)
@@ -180,7 +180,7 @@ def extTV (S : W → E → E → Prop) : W → Ty.Domain E W Cat.TV.ty :=
 @[simp] theorem starTV_extTV (S : W → E → E → Prop) (i : W) : starTV (extTV S i) = S i := rfl
 
 -- (4)
-theorem realize_be (M : Interp E W) (g : Assignment (W → E)) :
+theorem realize_be (M : Interp E W) (g : ℕ → W → E) :
     (fun i ↦ (Analysis.be : Analysis .TV).realize M g i) = extTV fun _ v u ↦ u = v :=
   rfl
 
@@ -285,7 +285,7 @@ open Analysis Basic ProperNoun
 
 section Extensional
 
-variable {M : Interp E W} (h : M.LogicallyPossible) (g : Assignment (W → E)) (i : W)
+variable {M : Interp E W} (h : M.LogicallyPossible) (g : ℕ → W → E) (i : W)
 include h
 
 theorem bill_walks_iff :
@@ -353,7 +353,7 @@ namespace aWomanLovesEveryMan
 
 section
 
-variable {M : Interp E W} (h : M.LogicallyPossible) (g : Assignment (W → E)) (i : W)
+variable {M : Interp E W} (h : M.LogicallyPossible) (g : ℕ → W → E) (i : W)
 include h
 
 theorem direct_iff :
@@ -440,7 +440,7 @@ namespace johnSeeksAUnicorn
 
 section
 
-variable {M : Interp E W} (h : M.LogicallyPossible) (g : Assignment (W → E)) (i : W)
+variable {M : Interp E W} (h : M.LogicallyPossible) (g : ℕ → W → E) (i : W)
 include h
 
 theorem deDicto_iff :
@@ -464,7 +464,7 @@ theorem exists_unicorn_of_deRe (H : deRe.realize M g i) : ∃ u, starIV (M.const
 
 end
 
-theorem deDicto_without_unicorns (g : Assignment (Unit → ℕ)) :
+theorem deDicto_without_unicorns (g : ℕ → Unit → ℕ) :
     deDicto.realize staticInterp g () ∧ ∀ u, ¬ starIV (staticInterp.const unicorn ()) u :=
   ⟨trivial, fun _ h ↦ h.2⟩
 
@@ -492,7 +492,7 @@ def ninetyRises : Analysis .t := f4 (name ninety) (basic rise)
 
 section Symbolizations
 
-variable (M : Interp E W) (g : Assignment (W → E)) (i : W)
+variable (M : Interp E W) (g : ℕ → W → E) (i : W)
 
 theorem theTemperatureIsNinety_iff :
     theTemperatureIsNinety.realize M g i ↔
@@ -554,7 +554,7 @@ theorem not_entails_ninetyRises :
 /-- *a price rises* is true at the first moment of `temperatureInterp` while its
 individual-variable symbolization `∨u[price'*(u) ∧ rise'*(u)]` is false, so unlike *a man walks*
 it needs individual-concept variables. -/
-theorem a_price_rises_needs_concepts (g : Assignment (Fin 2 → ℕ)) :
+theorem a_price_rises_needs_concepts (g : ℕ → Fin 2 → ℕ) :
     (f4 (a (basic price)) (basic rise)).realize temperatureInterp g 0 ∧
       ¬ Det.some (starIV (temperatureInterp.const price 0))
         (starIV (temperatureInterp.const rise 0)) :=

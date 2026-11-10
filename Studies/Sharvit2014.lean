@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Sharvit2014
-public import Linglib.Semantics.Composition.Assignment
+public import Linglib.Logic.Assignment
 public import Linglib.Semantics.Tense.Allen
 public import Linglib.Semantics.Tense.Perspective
 public import Linglib.Semantics.Tense.Quantificational
@@ -64,7 +64,8 @@ a table of permissible languages, and three predictions.
 
 namespace Sharvit2014
 
-open ModalLogic Tense Montague
+open ModalLogic Tense
+open scoped Assignment
 open scoped Denotes
 open Sharvit2003 (Embedded)
 open scoped SetRel
@@ -176,24 +177,24 @@ def Reading.denote (SP : NonemptyInterval M) (q : Set (NonemptyInterval M)) :
 index `k`, as in (30a), says that the time of `k` stands to the time of `j` as the tense requires
 and that the predicate holds at it. -/
 def clause (τ : Embedded) (j k : ℕ) (q : Set (NonemptyInterval M)) :
-    Assignment (NonemptyInterval M) → Prop :=
+    (ℕ → NonemptyInterval M) → Prop :=
   fun g ↦ Perspective.Presup (Allen.ofPosition (cell τ)) (g j) (g k) ∧ g k ∈ q
 
-variable {τ : Embedded} {j k : ℕ} {g : Assignment (NonemptyInterval M)}
+variable {τ : Embedded} {j k : ℕ} {g : ℕ → NonemptyInterval M}
 
-theorem lambdaAbsG_clause (hjk : j ≠ k) :
-    {t | lambdaAbsG k (clause τ j k q) g t} = (Reading.pronominal τ).denote (g j) q := by
+theorem abstraction_clause (hjk : j ≠ k) :
+    {t | Λ[k] (clause τ j k q) g t} = (Reading.pronominal τ).denote (g j) q := by
   ext t
   simp [clause, Reading.denote, Function.update_of_ne hjk]
 
-theorem lambdaAbsG_exists_clause (hjk : j ≠ k) :
-    {t | lambdaAbsG j (fun g ↦ ∃ t', lambdaAbsG k (clause τ j k q) g t') g t} =
+theorem abstraction_exists_clause (hjk : j ≠ k) :
+    {t | Λ[j] (fun g ↦ ∃ t', Λ[k] (clause τ j k q) g t') g t} =
       (Reading.existential τ).denote SP q := by
   ext t
   simp [clause, Reading.denote, Diamond, Function.update_of_ne hjk]
 
-theorem lambdaAbsG_clause_self :
-    {t | lambdaAbsG k (clause .present k k q) g t} = Reading.null.denote SP q := by
+theorem abstraction_clause_self :
+    {t | Λ[k] (clause .present k k q) g t} = Reading.null.denote SP q := by
   ext t
   simp [clause, Reading.denote, cell, Tense.denote_present]
 

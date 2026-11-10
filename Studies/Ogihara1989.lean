@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Logic.Assignment
 public import Linglib.Data.Examples.Ogihara1989
 public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.Readers
@@ -106,14 +107,14 @@ attitude alone cannot](##minimal_pair), if the interval it occupies depends on t
 
 namespace Ogihara1989
 
-open Interpreter Montague ModalLogic Tense Partee1973 PhraseStructure
+open Interpreter ModalLogic Tense Partee1973 PhraseStructure
   PhraseStructure.Tree Core.Order
-open scoped Denotes SetRel
+open scoped Assignment Denotes SetRel
 
 section ReferenceInterval
 
 variable {T : Type*} [LinearOrder T] {P : NonemptyInterval T → Prop} {K σ : NonemptyInterval T}
-  {g : Assignment (NonemptyInterval T)} {n : ℕ}
+  {g : ℕ → NonemptyInterval T} {n : ℕ}
 
 /-- The past restricted to the salient interval `K` holds when the clause held at a past
 subinterval of `K`, as *Yes, I saw her* (`Examples.ex_1_57`) says of the day, (58) of chapter 1. It
@@ -121,7 +122,7 @@ is Partee's past tense with its index bound by an existential quantifier over th
 `K`. -/
 theorem restricted_iff_exists_past :
     ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ K ∧ P t) σ ↔
-      ∃ t ≤ K, lambdaAbsG n (Past n P σ) g t := by
+      ∃ t ≤ K, Λ[n] (Past n P σ) g t := by
   simp [Past, Diamond, and_left_comm]
 
 /-! ### The stove
@@ -147,7 +148,7 @@ theorem no_subinterval_entails_deictic (h : Past n (fun t ↦ ¬ ∃ t' ≤ t, P
 -- p. 49: a speaker who turned off the stove within the interval did not at the interval, so
 -- the referential reading is true where the sentence is false
 theorem deictic_too_weak :
-    ∃ (σ : NonemptyInterval ℤ) (g : Assignment (NonemptyInterval ℤ))
+    ∃ (σ : NonemptyInterval ℤ) (g : ℕ → NonemptyInterval ℤ)
       (P : NonemptyInterval ℤ → Prop),
       Past 0 (fun t ↦ ¬ P t) σ g ∧ ¬ Past 0 (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g :=
   ⟨.pure 10, fun _ ↦ ⟨(0, 5), by decide⟩, (· = .pure 3),
@@ -161,7 +162,7 @@ theorem never_entails_no_subinterval (hn : Perspective.Presup Allen.precedes σ 
 
 -- p. 41: the sentence is true of a speaker who turned off the stove before the interval
 theorem never_too_strong :
-    ∃ (σ : NonemptyInterval ℤ) (g : Assignment (NonemptyInterval ℤ))
+    ∃ (σ : NonemptyInterval ℤ) (g : ℕ → NonemptyInterval ℤ)
       (P : NonemptyInterval ℤ → Prop),
       Past 0 (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g ∧ ◇[Allen.toSetRel Allen.precedes] P σ := by
   refine ⟨.pure 10, fun _ ↦ ⟨(5, 6), by decide⟩, (· = .pure 1),
@@ -562,7 +563,7 @@ structure Model (E W T : Type) [LE T] where
 
 namespace Model
 
-variable (M : Model E W T) (g : Assignment E) {i : Index W T}
+variable (M : Model E W T) (g : ℕ → E) {i : Index W T}
 
 /-- The past restricted to the reference interval `n`: a time before the evaluation time within
 that interval at which `p` holds. -/
@@ -629,10 +630,10 @@ abbrev rules : Interpreter ((application.sum fragment).withAbstraction fun _ ↦
 
 /-- The translations of an LF, relative to an assignment: a word has its translation, and a trace
 is the quantifier of the individual of its index. -/
-def meanings (t : LF) : List (Σ a : Ty Atom, Assignment E → a.Dom (Dom E W T)) :=
+def meanings (t : LF) : List (Σ a : Ty Atom, (ℕ → E) → a.Dom (Dom E W T)) :=
   t.values rules (ManySorted.Language.withAbstraction.structure (Assignments.total (Dom E W T) fun
       _ ↦ ent))
-    (W := fun a ↦ Assignment E → a.Dom (Dom E W T)) id fun
+    (W := fun a ↦ (ℕ → E) → a.Dom (Dom E W T)) id fun
     | .inl w => [⟨(M.lex w).1, fun _ ↦ (M.lex w).2⟩]
     | .inr n => [⟨quant, fun g P ↦ P (g n)⟩]
 
