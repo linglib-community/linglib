@@ -41,9 +41,9 @@ decision.
 
 * The numerical predictions of the paper's figures, at unit rationality and its grid of priors,
   are not stated.
-* The base-rate result is proved at two horses, the paper's scenario. For any number of horses
-  it would follow from `production` being antitone and the binomial family being stochastically
-  increasing in its success probability.
+* The base-rate result is proved at two horses, the paper's scenario. The binomial prior is
+  stochastically increasing in its base rate for any number of horses, so the result extends
+  wherever `production` is antitone, which is shown only at two.
 
 ## References
 
@@ -58,7 +58,7 @@ decision.
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA Quantifier
-open scoped ENNReal unitInterval Fin.NatCast
+open scoped ENNReal unitInterval Fin.NatCast MeasureTheory.Measure
 
 namespace ScontrasPearl2021
 
@@ -453,6 +453,17 @@ theorem expectedProduction_eq_sum :
   rw [production, Finset.mul_sum]
   exact Finset.sum_congr rfl fun l _ ↦ by rw [Measure.prod_real_singleton, share, mul_assoc]
 
+theorem expectedProduction_eq_integral :
+    expectedProduction D n α μ ν = ∫ w, production D n α ν w ∂μ := by
+  rw [expectedProduction_eq_sum, integral_fintype .of_finite]
+  rfl
+
+theorem expectedProduction_anti {μ' : Measure (World n)} [IsProbabilityMeasure μ']
+    (h : μ ≤ₛₜ μ') (hprod : Antitone (production D n α ν)) :
+    expectedProduction D n α μ' ν ≤ expectedProduction D n α μ ν := by
+  rw [expectedProduction_eq_integral, expectedProduction_eq_integral]
+  exact h.integral_le_of_antitone (by simp) hprod .of_discrete .of_finite .of_finite
+
 theorem production_le_one (w : World n) : production D n α ν w ≤ 1 :=
   (Finset.sum_le_sum fun l _ ↦
     mul_le_of_le_one_right measureReal_nonneg (share_le_one D n α l w)).trans_eq
@@ -711,36 +722,25 @@ variable (ν : Measure (Scope × QUD)) [IsProbabilityMeasure ν]
 
 /-- Raising the base rate of the binomial world prior raises endorsement at every world (§3.2,
 Figure 2). -/
-theorem S2_real_amb_mono_baseRate (hα : 0 < α) {p p' : I} (hp : 0 < (p : ℝ))
-    (hpp' : (p : ℝ) ≤ p') (hp' : (p' : ℝ) < 1) (w : World 2) :
+theorem S2_real_amb_mono_baseRate (hα : 0 < α) {p p' : I} (hp : 0 < p) (hpp' : p ≤ p')
+    (hp' : p' < 1) (w : World 2) :
     (S2 NumberTree.all 2 α Bin(World 2, 2, p) ν w).real {.amb}
       ≤ (S2 NumberTree.all 2 α Bin(World 2, 2, p') ν w).real {.amb} := by
-  have hpos : ∀ (q : I), 0 < (q : ℝ) → (q : ℝ) < 1 → ∀ w : World 2, Bin(World 2, 2, q) {w} ≠ 0 :=
-    fun q hq hq1 w ↦ (measureReal_ne_zero_iff (measure_ne_top _ _)).mp (by
-      rw [map_cast_binomial_fin_real_singleton]
-      exact (mul_pos (mul_pos (Nat.cast_pos.mpr (Nat.choose_pos w.is_le)) (pow_pos hq _))
-        (pow_pos (sub_pos.2 hq1) _)).ne')
-  have hp1 : (p : ℝ) < 1 := hpp'.trans_lt hp'
-  have hp'0 : 0 < (p' : ℝ) := hp.trans_le hpp'
-  have hz0 : ∀ (q : I), 0 < (q : ℝ) → (q : ℝ) < 1 →
-      0 < expectedProduction NumberTree.all 2 α Bin(World 2, 2, q) ν := fun q hq hq1 ↦
-    expectedProduction_pos _ _ _ _ _ hα.le (hpos q hq hq1 0) fun l ↦ zero_mem_ext_every two_pos l.1
-  rw [S2_real_amb _ _ _ _ _ hα (hpos p hp hp1 w) (hz0 p hp hp1)
+  have hpos : ∀ {q : I}, 0 < q → q < 1 → ∀ w : World 2, Bin(World 2, 2, q) {w} ≠ 0 :=
+    fun hq hq1 w ↦ (map_cast_binomial_fin_singleton_pos hq hq1 w).ne'
+  have hp1 : p < 1 := hpp'.trans_lt hp'
+  have hp'0 : 0 < p' := hp.trans_le hpp'
+  have hz0 : ∀ {q : I}, 0 < q → q < 1 →
+      0 < expectedProduction NumberTree.all 2 α Bin(World 2, 2, q) ν := fun hq hq1 ↦
+    expectedProduction_pos _ _ _ _ _ hα.le (hpos hq hq1 0) fun l ↦ zero_mem_ext_every two_pos l.1
+  rw [S2_real_amb _ _ _ _ _ hα (hpos hp hp1 w) (hz0 hp hp1)
       (expectedProduction_lt_one _ _ _ _ _ hα.le),
-    S2_real_amb _ _ _ _ _ hα (hpos p' hp'0 hp' w) (hz0 p' hp'0 hp')
+    S2_real_amb _ _ _ _ _ hα (hpos hp'0 hp' w) (hz0 hp'0 hp')
       (expectedProduction_lt_one _ _ _ _ _ hα.le)]
-  refine endorse_antitone (production_nonneg _ _ _ _ _) (production_le_one _ _ _ _ _)
-    (hz0 p' hp'0 hp') (expectedProduction_lt_one _ _ _ _ _ hα.le) ?_
-  rw [expectedProduction_eq_sum, expectedProduction_eq_sum, Fin.sum_univ_three, Fin.sum_univ_three]
-  simp only [map_cast_binomial_fin_real_singleton, Fin.val_zero, Fin.val_one, Fin.val_two,
-    Nat.choose_zero_right, Nat.choose_one_right, Nat.choose_self, Nat.cast_one, Nat.cast_ofNat,
-    pow_zero, Nat.sub_zero, Nat.sub_self, Nat.reduceSub, one_mul, mul_one, pow_one]
-  have h10 := production_antitone α hα ν (show (0 : World 2) ≤ 1 by decide)
-  have h21 := production_antitone α hα ν (show (1 : World 2) ≤ 2 by decide)
-  nlinarith [mul_nonneg (mul_nonneg (sub_nonneg.2 hpp') (by linarith : (0 : ℝ) ≤ 2 - p - p'))
-      (sub_nonneg.2 h10),
-    mul_nonneg (mul_nonneg (sub_nonneg.2 hpp') (by linarith : (0 : ℝ) ≤ p + p'))
-      (sub_nonneg.2 h21)]
+  exact endorse_antitone (production_nonneg _ _ _ _ _) (production_le_one _ _ _ _ _)
+    (hz0 hp'0 hp') (expectedProduction_lt_one _ _ _ _ _ hα.le)
+    (expectedProduction_anti _ _ _ _ ν (map_cast_binomial_fin_stochasticLE 2 hpp')
+      (production_antitone α hα ν))
 
 end EveryNot
 

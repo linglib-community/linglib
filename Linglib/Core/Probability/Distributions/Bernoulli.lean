@@ -5,12 +5,13 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.MeasureTheory.Measure.StochasticOrder
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Mathlib.Probability.Distributions.Bernoulli
 public import Mathlib.Probability.Moments.Variance
 
 /-!
-# Bernoulli distribution: bind, variance, posterior
+# Bernoulli distribution: bind, variance, posterior, stochastic order
 
 Binding a kernel through `Ber(x, y, p)` is the `p`-mixture of its two values, as is a lower
 integral against it, and the variance of a real observable under `Ber(x, y, p)` is
@@ -26,6 +27,8 @@ positive likelihood, the posterior mass of a point is strictly increasing in its
   `Var[f; Ber(x, y, p)] = p * (1 - p) * (f x - f y) ^ 2`.
 * `ProbabilityTheory.strictMono_posterior_bernoulliMeasure`:
   `StrictMono fun p : I ↦ ((κ†Ber(x, y, p)) u).real {x}`.
+* `ProbabilityTheory.bernoulliMeasure_stochasticLE`: `Ber(x, y, p) ≤ₛₜ Ber(x, y, q)` for `y ≤ x`
+  and `p ≤ q`, through a monotone coupling.
 
 [UPSTREAM] candidates for `Mathlib.Probability.Distributions.Bernoulli` and
 `Mathlib.Probability.Kernel.Posterior`.
@@ -81,5 +84,43 @@ theorem strictMono_posterior_bernoulliMeasure (hxy : x ≠ y) (hκx : κ x {u} �
   simpa [hxy.symm] using hpq
 
 end Posterior
+
+section StochasticOrder
+
+open MeasureTheory.Measure
+
+variable [Preorder X] {x y} {p} {q : I}
+
+/-- Bernoulli measures on a pair `y ≤ x` are coupled monotonically in the weight of the upper
+point: the coupling moves the extra mass `q - p` from `y` up to `x`. -/
+theorem exists_isMonotoneCoupling_bernoulliMeasure (hyx : y ≤ x) (hpq : p ≤ q) :
+    ∃ γ, IsMonotoneCoupling γ Ber(x, y, p) Ber(x, y, q) := by
+  have hpq' : toNNReal p ≤ toNNReal q := hpq
+  have hq : toNNReal (σ q) = 1 - toNNReal q := eq_tsub_of_add_eq (toNNReal_symm_add_toNNReal q)
+  have hp : toNNReal (σ p) = 1 - toNNReal p := eq_tsub_of_add_eq (toNNReal_symm_add_toNNReal p)
+  have hq1 : toNNReal q ≤ 1 := q.2.2
+  refine ⟨toNNReal p • dirac (x, x) + ((toNNReal q - toNNReal p) • dirac (y, x)
+    + toNNReal (σ q) • dirac (y, y)), ?_, ?_, ?_⟩
+  · rw [Measure.map_add _ _ measurable_fst, Measure.map_add _ _ measurable_fst,
+      Measure.map_smul, Measure.map_smul, Measure.map_smul, map_dirac' measurable_fst,
+      map_dirac' measurable_fst, map_dirac' measurable_fst, ← add_smul, hq, add_comm (_ - _),
+      tsub_add_tsub_cancel hq1 hpq', bernoulliMeasure_def, hp]
+    all_goals fun_prop
+  · rw [Measure.map_add _ _ measurable_snd, Measure.map_add _ _ measurable_snd,
+      Measure.map_smul, Measure.map_smul, Measure.map_smul, map_dirac' measurable_snd,
+      map_dirac' measurable_snd, map_dirac' measurable_snd, ← add_assoc, ← add_smul,
+      add_tsub_cancel_of_le hpq', bernoulliMeasure_def]
+    all_goals fun_prop
+  · have key : ∀ a b : X, a ≤ b → ∀ᵐ z ∂dirac (a, b), z.1 ≤ z.2 := fun a b h ↦ by
+      simpa [ae_dirac_eq] using h
+    exact ae_add_measure_iff.2 ⟨ae_smul_measure (key x x le_rfl) _, ae_add_measure_iff.2
+      ⟨ae_smul_measure (key y x hyx) _, ae_smul_measure (key y y le_rfl) _⟩⟩
+
+/-- The Bernoulli measure on a pair `y ≤ x` is stochastically increasing in the weight of `x`. -/
+theorem bernoulliMeasure_stochasticLE (hyx : y ≤ x) (hpq : p ≤ q) : Ber(x, y, p) ≤ₛₜ Ber(x, y, q) :=
+  let ⟨_, hγ⟩ := exists_isMonotoneCoupling_bernoulliMeasure hyx hpq
+  hγ.stochasticLE
+
+end StochasticOrder
 
 end ProbabilityTheory
