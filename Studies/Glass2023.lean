@@ -94,7 +94,7 @@ private theorem mem_of_le_updateFinset {X : Finset V} {ξ : X → Bool}
     (hk : k ≤ Function.updateFinset ⊥ X fun v ↦ Part.some (ξ v)) {v : V} {a : Bool}
     (hv : k v = Part.some a) :
     ∃ h : v ∈ X, ξ ⟨v, h⟩ = a := by
-  have := Part.pi_le_iff.1 hk v (hv ▸ Part.some_ne_bot)
+  have := (Part.pi_le_iff.1 hk v (hv ▸ Part.some_dom a)).symm
   rw [hv] at this
   by_cases h : v ∈ X
   · exact ⟨h, by simpa [Function.updateFinset, h] using this⟩

@@ -42,6 +42,8 @@ variable {o o' : Part α} {a b : α}
 
 theorem bot_eq_none : (⊥ : Part α) = none := rfl
 
+@[simp] theorem not_bot_dom : ¬(⊥ : Part α).Dom := not_none_dom
+
 @[simp] theorem bot_ne_some : (⊥ : Part α) ≠ some a := none_ne_some a
 
 @[simp] theorem some_ne_bot : some a ≠ (⊥ : Part α) := some_ne_none a
@@ -135,15 +137,9 @@ variable {ι : Type*} {β : ι → Type*}
 instance Pi.botPartDecidable (i : ι) : Decidable ((⊥ : ∀ i, Part (β i)) i).Dom :=
   Part.noneDecidable
 
-/-- One family extends another when it agrees with it wherever the other is defined. -/
-theorem Part.pi_le_iff {s t : ∀ i, Part (β i)} : s ≤ t ↔ ∀ i, s i ≠ ⊥ → t i = s i := by
-  refine ⟨fun h i hi ↦ ?_, fun h i a ha ↦ ?_⟩
-  · obtain ⟨a, ha⟩ := Part.ne_bot_iff_exists.1 hi
-    have hle := h i
-    rw [ha] at hle ⊢
-    exact Part.some_le_iff.1 hle
-  · have hi : s i ≠ ⊥ := fun hb ↦ Part.not_none_dom (hb ▸ Part.dom_iff_mem.2 ⟨a, ha⟩)
-    exact h i hi ▸ ha
+/-- One family extends another iff the two agree wherever the first is defined. -/
+theorem Part.pi_le_iff {s t : ∀ i, Part (β i)} : s ≤ t ↔ ∀ i, (s i).Dom → s i = t i :=
+  forall_congr' fun _ ↦ Part.le_iff_not_dom_or_eq.trans imp_iff_not_or.symm
 
 /-- The domain of an updated family is decided from the update and the family at the same index,
 so nested updates are decided index by index. -/
@@ -171,7 +167,7 @@ theorem dom_mono (h : f ≤ g) : Dom f ⊆ Dom g := fun a ↦ Part.Dom.mono (h a
 
 /-- One partial function extends another iff they agree on the other's domain. -/
 theorem le_iff_eqOn_dom : f ≤ g ↔ Set.EqOn f g (Dom f) :=
-  forall_congr' fun _ ↦ Part.le_iff_not_dom_or_eq.trans imp_iff_not_or.symm
+  Part.pi_le_iff
 
 theorem eq_of_le_of_dom_subset (h : f ≤ g) (hdom : Dom g ⊆ Dom f) : f = g :=
   funext fun a ↦ Part.eq_of_le (h a) fun ha ↦ hdom ha
