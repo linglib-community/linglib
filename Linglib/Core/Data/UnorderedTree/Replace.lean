@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Data.RoseTree.Replace
-public import Linglib.Core.Data.UnorderedTree.DecEq
 public import Linglib.Core.Data.UnorderedTree.Basic
 public import Linglib.Core.Data.UnorderedTree.Subtree
 

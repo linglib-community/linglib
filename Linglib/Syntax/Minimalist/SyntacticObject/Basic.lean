@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 public import Linglib.Core.Data.Multiset.ZeroCons
-public import Linglib.Core.Data.UnorderedTree.DecEq
+public import Linglib.Core.Data.UnorderedTree.Basic
 public import Linglib.Core.Data.UnorderedTree.Licensed
 public import Linglib.Syntax.Minimalist.LexicalItem
 

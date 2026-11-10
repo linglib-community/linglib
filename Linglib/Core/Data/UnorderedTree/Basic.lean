@@ -64,6 +64,11 @@ theorem mk_eq_mk_iff {t s : RoseTree α} : mk t = mk s ↔ RoseTree.Perm t s :=
 
 @[simp] theorem quot_mk_eq_mk (t : RoseTree α) : (⟦t⟧ : UnorderedTree α) = mk t := rfl
 
+/-- Equality of unordered trees is decided by `RoseTree.isPerm` on representatives, so concrete
+equalities close by `decide`. -/
+instance instDecidableEq [DecidableEq α] : DecidableEq (UnorderedTree α) :=
+  inferInstanceAs (DecidableEq (Quotient (RoseTree.isSetoid (α := α))))
+
 /-! ### Leaves and lifted counts -/
 
 /-- A nonplanar leaf labeled `a`. -/
