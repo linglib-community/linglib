@@ -40,14 +40,16 @@ open AlexandropoulouGotzner2024a
 
 /-! ### Division of labour at a level of precision -/
 
-variable {D : Type*} (U : Set D) (core : Polarity → Set D)
+variable {D : Type*} (U : Set D) (stereotype : Polarity → Set D)
 
 /-- *Not dirty* and *not clean* have ranges apart from *clean* and *dirty* exactly when the
 simple forms are read at a precision that leaves out part of their literal meaning (p. 28); on
 the literal reading alone the negated forms have none. -/
 theorem degrees_plateau_nonempty_iff :
-    ((Krifka2007b.Region.plateauHigh.degrees core U).Nonempty ↔ ¬ U ⊆ core .positive) ∧
-      ((Krifka2007b.Region.plateauLow.degrees core U).Nonempty ↔ ¬ Uᶜ ⊆ core .negative) :=
+    ((Krifka2007b.Region.plateauHigh.degrees stereotype U).Nonempty ↔
+        ¬ U ⊆ stereotype .positive) ∧
+      ((Krifka2007b.Region.plateauLow.degrees stereotype U).Nonempty ↔
+        ¬ Uᶜ ⊆ stereotype .negative) :=
   ⟨Set.sdiff_nonempty, Set.sdiff_nonempty⟩
 
 /-! ### Rows -/

@@ -12,7 +12,7 @@ the whole middle ground that Horn's contrary analysis leaves it. The border betw
 *unhappy* is sharp but not agreed on, as on Williamson's epistemic view of vagueness, and the pair
 is literally contradictory. Speakers use a simple form only where every admissible border makes it
 true, so the pair [is used as contraries exactly when the border is open](##isContrary_safe_iff).
-The gap this creates [divides at the speaker's border](##compl_core_union) into a lower and an
+The gap this creates [divides at the speaker's border](##compl_stereotype_union) into a lower and an
 upper region, [ordered along the scale](##Region.lt_of_mem_degrees) between the two safe ones, and
 bidirectional optimality theory, read on [the literal meanings of the four
 regions](##mem_quadrupletPairs_iff), gives the lower one to *not happy* and the upper one to
@@ -61,7 +61,7 @@ namespace Krifka2007b
 open BidirectionalOT Aristotelian
 
 variable {D : Type*} {Θ : Set (Set D)} {U U₁ U₂ : Set D} {d d₁ d₂ : D} {f : AntonymForm}
-  {core : Polarity → Set D}
+  {stereotype : Polarity → Set D}
 
 /-! ### Safe use -/
 
@@ -136,15 +136,15 @@ def markedness : Region → ℕ
   | .plateauHigh | .plateauLow => 1
   | .positive | .negative => 0
 
-/-- The degrees of a region, given the border `U` and the stereotypical uses `core` of the two
-simple forms: the cores themselves, and between them what each leaves of its pole's literal
-meaning, which avoidance of synonymy gives to the negated form of the other pole (12). The cores
-are the safe uses `safe Θ` on the paper's account. -/
-def degrees (core : Polarity → Set D) (U : Set D) : Region → Set D
-  | .positive => core .positive
-  | .plateauHigh => U \ core .positive
-  | .plateauLow => Uᶜ \ core .negative
-  | .negative => core .negative
+/-- The degrees of a region, given the border `U` and the stereotype of each simple form, the
+uses it is restricted to: the stereotypes themselves, and between them what each leaves of its
+pole's literal meaning, which avoidance of synonymy gives to the negated form of the other pole
+(12). On the paper's account the stereotypes are the safe uses `safe Θ`. -/
+def degrees (stereotype : Polarity → Set D) (U : Set D) : Region → Set D
+  | .positive => stereotype .positive
+  | .plateauHigh => U \ stereotype .positive
+  | .plateauLow => Uᶜ \ stereotype .negative
+  | .negative => stereotype .negative
 
 -- (19)
 theorem mem_degrees_plateauHigh :
@@ -156,26 +156,27 @@ theorem mem_degrees_plateauLow :
     d ∈ plateauLow.degrees (safe Θ) U ↔ d ∉ U ∧ ∃ V ∈ Θ, d ∈ V := by
   simp [degrees, mem_safe_negative]
 
-theorem mem_iff_of_mem_degrees {r : Region} (hcore : ∀ p, core p ⊆ p • U)
-    (hd : d ∈ r.degrees core U) : d ∈ U ↔ plateauLow < r := by
+theorem mem_iff_of_mem_degrees {r : Region} (hst : ∀ p, stereotype p ⊆ p • U)
+    (hd : d ∈ r.degrees stereotype U) : d ∈ U ↔ plateauLow < r := by
   cases r
-  · exact iff_of_true (hcore .positive hd) (by decide)
+  · exact iff_of_true (hst .positive hd) (by decide)
   · exact iff_of_true hd.1 (by decide)
   · exact iff_of_false hd.1 (by decide)
-  · exact iff_of_false (hcore .negative hd) (by decide)
+  · exact iff_of_false (hst .negative hd) (by decide)
 
 /-- On a linear scale the regions lie in their order, so *unhappy* reports a more severe state
 than *not happy* (9) and *not unhappy* a higher level of happiness than *not happy* (20). -/
-theorem lt_of_mem_degrees [LinearOrder D] {r₁ r₂ : Region} (hcore : ∀ p, core p ⊆ p • U)
-    (hU : IsUpperSet U) (hp : IsUpperSet (core .positive)) (hn : IsLowerSet (core .negative))
-    (h : r₁ < r₂) (h₁ : d₁ ∈ r₁.degrees core U) (h₂ : d₂ ∈ r₂.degrees core U) : d₁ < d₂ := by
+theorem lt_of_mem_degrees [LinearOrder D] {r₁ r₂ : Region} (hst : ∀ p, stereotype p ⊆ p • U)
+    (hU : IsUpperSet U) (hp : IsUpperSet (stereotype .positive))
+    (hn : IsLowerSet (stereotype .negative)) (h : r₁ < r₂) (h₁ : d₁ ∈ r₁.degrees stereotype U)
+    (h₂ : d₂ ∈ r₂.degrees stereotype U) : d₁ < d₂ := by
   by_cases hr₁ : plateauLow < r₁ <;> by_cases hr₂ : plateauLow < r₂
   · obtain ⟨rfl, rfl⟩ : r₁ = plateauHigh ∧ r₂ = positive := by
       clear h₁ h₂; revert r₁ r₂; decide
     exact lt_of_not_ge fun hle ↦ h₁.2 (hp hle h₂)
   · exact absurd (hr₁.trans h) hr₂
-  · exact lt_of_not_ge fun hle ↦ mt (mem_iff_of_mem_degrees hcore h₁).1 hr₁
-      (hU hle ((mem_iff_of_mem_degrees hcore h₂).2 hr₂))
+  · exact lt_of_not_ge fun hle ↦ mt (mem_iff_of_mem_degrees hst h₁).1 hr₁
+      (hU hle ((mem_iff_of_mem_degrees hst h₂).2 hr₂))
   · obtain ⟨rfl, rfl⟩ : r₁ = negative ∧ r₂ = plateauLow := by
       clear h₁ h₂; revert r₁ r₂; decide
     exact lt_of_not_ge fun hle ↦ h₂.2 (hn hle h₁)
@@ -184,15 +185,15 @@ end Region
 
 /-- The gap that the stereotypical uses leave between *happy* and *unhappy* consists of the two
 border regions, so no part of it is left to a form meaning neither. -/
-theorem compl_core_union (hcore : ∀ p, core p ⊆ p • U) :
-    (core .positive ∪ core .negative)ᶜ =
-      Region.plateauLow.degrees core U ∪ Region.plateauHigh.degrees core U := by
+theorem compl_stereotype_union (hst : ∀ p, stereotype p ⊆ p • U) :
+    (stereotype .positive ∪ stereotype .negative)ᶜ =
+      Region.plateauLow.degrees stereotype U ∪ Region.plateauHigh.degrees stereotype U := by
   ext d
   simp only [Set.mem_compl_iff, Set.mem_union, not_or, Region.degrees, Set.mem_sdiff]
   refine ⟨fun ⟨hp, hn⟩ ↦ (em (d ∈ U)).elim (fun h ↦ .inr ⟨h, hp⟩) fun h ↦ .inl ⟨h, hn⟩, ?_⟩
   rintro (⟨h, hn⟩ | ⟨h, hp⟩)
-  · exact ⟨fun hp ↦ h (hcore .positive hp), hn⟩
-  · exact ⟨hp, fun hn ↦ hcore .negative hn h⟩
+  · exact ⟨fun hp ↦ h (hst .positive hp), hn⟩
+  · exact ⟨hp, fun hn ↦ hst .negative hn h⟩
 
 -- (20)
 theorem mem_degrees_plateau_of_mem_of_notMem (h₁ : U₁ ∈ Θ) (h₂ : U₂ ∈ Θ) (hd₁ : d ∈ U₁)
@@ -216,9 +217,10 @@ the border lying between the mildly unhappy and the mildly happy region. -/
 def quadrupletPairs : Finset (AntonymForm × Region) :=
   Finset.univ.filter fun p ↦ p.2 ∈ p.1.denotation (· • Set.Ioi Region.plateauLow)
 
-theorem mem_quadrupletPairs_iff {r : Region} (hcore : ∀ p, core p ⊆ p • U)
-    (hd : d ∈ r.degrees core U) : (f, r) ∈ quadrupletPairs ↔ d ∈ f.denotation (· • U) := by
-  have h := Region.mem_iff_of_mem_degrees hcore hd
+theorem mem_quadrupletPairs_iff {r : Region} (hst : ∀ p, stereotype p ⊆ p • U)
+    (hd : d ∈ r.degrees stereotype U) :
+    (f, r) ∈ quadrupletPairs ↔ d ∈ f.denotation (· • U) := by
+  have h := Region.mem_iff_of_mem_degrees hst hd
   cases f <;> simp [quadrupletPairs, AntonymForm.denotation, h]
 
 /-- Krifka's assignment gives the simple forms the safe regions and the complex forms the border
