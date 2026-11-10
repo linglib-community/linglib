@@ -470,10 +470,8 @@ private theorem exists_resolve_iff (F : Formula Atom) (K : SyntacticEnvironment 
       ⟨fun ⟨_, h⟩ hp ↦ h (.inl hp),
         fun h ↦ ⟨fun _ _ _ ↦ False, fun h' ↦ h'.elim h fun h'' ↦ h''.2⟩⟩
     refine ⟨e₁.trans ?_, e₀.trans ?_⟩ <;>
-      simp only [Formula.strongKleene, Formula.eval, ne_eq,
-        Trivalent.transplication_eq_false_iff, Trivalent.transplication_eq_true_iff,
-        Trivalent.ofProp_eq_false_iff,
-        Trivalent.ofProp_eq_true_iff]
+      simp only [Formula.strongKleene, Formula.eval, ne_eq, Trivalent.condEvent_eq_false_iff,
+        Trivalent.condEvent_eq_true_iff]
     tauto
   | not F ih =>
     simp only [resolve, Formula.strongKleene, Formula.eval, Pi.compl_apply, compl_ne_false,

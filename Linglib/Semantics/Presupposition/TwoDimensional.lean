@@ -54,8 +54,7 @@ variable (p q : TwoDim W (W → Prop)) {w : W}
 /-- A two-dimensional proposition evaluates to the trivalent proposition undefined where its
 not-at-issue content fails and the classical value of its at-issue content elsewhere. -/
 noncomputable def toTrivalent : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (p.notAtIssue w))
-    (Trivalent.ofProp (p.atIssue w))
+  Trivalent.condEvent p.notAtIssue p.atIssue
 
 @[simp] theorem toTrivalent_eq_true_iff :
     p.toTrivalent w = .true ↔ p.notAtIssue w ∧ p.atIssue w := by
@@ -144,7 +143,7 @@ theorem orFilter_not_trivalent (w : W) :
   rintro ⟨f, hf⟩
   have h₁ := hf ⟨fun _ ↦ True, fun _ ↦ False⟩ ⟨fun _ ↦ True, fun _ ↦ False⟩
   have h₂ := hf ⟨fun _ ↦ False, fun _ ↦ False⟩ ⟨fun _ ↦ True, fun _ ↦ False⟩
-  simp [orFilter, toTrivalent] at h₁ h₂
+  simp [orFilter, toTrivalent, Trivalent.condEvent_apply] at h₁ h₂
   exact absurd (h₁.trans h₂.symm) (by decide)
 
 /-- Embedding under a negative factive, *x is unaware that p*, presupposes that the complement

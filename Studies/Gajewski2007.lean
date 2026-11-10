@@ -83,9 +83,9 @@ throughout the heritage base `H`, and asserts the complement throughout the moda
 has its beliefs as both bases, *want* its desires as modal base and its beliefs as heritage
 base. -/
 noncomputable def nrp (R H : SetRel W W) (φ : W → Trivalent) : W → Trivalent :=
-  fun w ↦ Trivalent.transplication
-    (Trivalent.ofProp (□[H] (φ · ≠ .undefined) w ∧ (□[R] (φ · = .true) w ∨ □[R] (φ · ≠ .true) w)))
-    (Trivalent.ofProp (□[R] (φ · = .true) w))
+  Trivalent.condEvent
+    (fun w ↦ □[H] (φ · ≠ .undefined) w ∧ (□[R] (φ · = .true) w ∨ □[R] (φ · ≠ .true) w))
+    (□[R] (φ · = .true))
 
 variable {R H : SetRel W W} {φ : W → Trivalent} {w : W}
 
@@ -93,8 +93,7 @@ variable {R H : SetRel W W} {φ : W → Trivalent} {w : W}
 the heritage base and the complement fails throughout the nonempty modal base ((60)–(61)). -/
 theorem nrp_eq_false_iff :
     nrp R H φ w = .false ↔ □[H] (φ · ≠ .undefined) w ∧ (∃ u, w ~[R] u) ∧ □[R] (φ · ≠ .true) w := by
-  simp only [nrp, Trivalent.transplication_eq_false_iff, Trivalent.ofProp_eq_true_iff,
-    Trivalent.ofProp_eq_false_iff]
+  simp only [nrp, Trivalent.condEvent_eq_false_iff]
   refine ⟨fun ⟨⟨hH, hEM⟩, hna⟩ ↦ ⟨hH, ?_, hEM.resolve_left hna⟩,
     fun ⟨hH, ⟨u, hu⟩, hbox⟩ ↦ ⟨⟨hH, .inr hbox⟩, fun hall ↦ hbox u hu (hall u hu)⟩⟩
   by_contra hne
@@ -187,7 +186,7 @@ def negNRStressed (R : SetRel W W) (p : Set W) : Set W :=
 theorem negNRStressed_eq (R : SetRel W W) : negNRStressed R = negUniversal R := by
   ext p w
   simp only [negNRStressed, negUniversal, nrp, Trivalent.mem_posExt, Trivalent.compl_eq_true_iff,
-    Trivalent.ofProp_eq_false_iff, Trivalent.transplication_eq_true_iff, Set.mem_ofPred_eq,
+    Trivalent.ofProp_eq_false_iff, Trivalent.condEvent_eq_true_iff, Set.mem_ofPred_eq,
     Trivalent.ofProp_eq_true_iff, ne_eq, Trivalent.ofProp_ne_undefined, not_false_eq_true, Box,
     implies_true, true_and, not_and]
   exact ⟨fun h hall ↦ h (.inl hall) hall, fun h _ ↦ h⟩
@@ -270,10 +269,9 @@ theorem negStack_eq (R₁ H₁ R₂ : SetRel W W) (p : Set W) :
   ext w
   simp only [negStack, Trivalent.mem_posExt, Pi.compl_apply, Trivalent.compl_eq_true_iff,
     nrp_eq_false_iff, Set.mem_ofPred_eq]
-  simp only [ne_eq, nrp, Trivalent.transplication_eq_undefined_iff,
-    Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff,
-    Trivalent.ofProp_ne_undefined, or_false, not_false_eq_true, Box, implies_true, true_and,
-    not_not, not_and]
+  simp only [ne_eq, nrp, Trivalent.condEvent_eq_undefined_iff, Trivalent.condEvent_eq_true_iff,
+    Trivalent.ofProp_eq_true_iff, Trivalent.ofProp_ne_undefined, not_false_eq_true, Box,
+    implies_true, true_and, not_not, not_and]
   exact and_congr_right fun _ ↦ and_congr_right fun _ ↦ forall₂_congr fun u _ ↦
     ⟨fun h hall ↦ h (.inl hall) hall, fun h _ ↦ h⟩
 

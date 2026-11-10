@@ -79,7 +79,7 @@ open Classical in
 constraint is not part of what is asserted. -/
 noncomputable def meaning {W : Type*} (c : Constraint) (f : EvidentialFrame T) (φ : W → Prop) :
     W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (c.Holds f)) (Trivalent.ofProp (φ w))
+  Trivalent.condEvent (fun _ ↦ c.Holds f) φ
 
 /-- An evidential fixes the relation of the acquisition of the evidence to speech and turns
 the tense it combines with into a constraint on the evidential perspective (§3). -/

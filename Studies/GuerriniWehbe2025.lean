@@ -286,8 +286,7 @@ open Finset
 theorem judgments_9 :
     (Examples.ex_9a.judgment = .acceptable ↔
       PostAccommodationInformative {w : ℕ × Bool | w.2 = true}
-        (fun w ↦ Trivalent.transplication (Trivalent.ofProp (w.1 = 10))
-          (Trivalent.ofProp (w.2 = true)))) ∧
+        (Trivalent.condEvent (fun w ↦ w.1 = 10) (fun w ↦ w.2 = true))) ∧
     (Examples.ex_9b.judgment = .acceptable ↔
       PostAccommodationInformative {w : ℕ × Bool | w.2 = true}
         fun w ↦ Trivalent.ofProp (w.1 = 10 ∧ w.2 = true)) :=

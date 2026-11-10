@@ -62,8 +62,7 @@ propositions the speaker counts as indirect evidence, and `g` assigns the speake
 that evidence. The presupposition is that there is such evidence and that it does not establish `p`,
 and the assertion is that `p` holds in every accessible world closest to the beliefs. -/
 noncomputable def Ev (f g : Background W) (p : Set W) : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp ((f w).Nonempty ∧ ¬ Known f w p))
-    (Trivalent.ofProp (bestWorlds f g w ⊆ p))
+  Trivalent.condEvent (fun w ↦ (f w).Nonempty ∧ ¬ Known f w p) (fun w ↦ bestWorlds f g w ⊆ p)
 
 open Classical in
 /-- Epistemic *must* is the same necessity over what is known, with no presupposition about the kind
@@ -75,21 +74,22 @@ variable {f f' g : Background W} {p : Set W} {w : W}
 
 -- (8a)
 theorem ev_eq_must_of_ne_undefined (h : Ev f g p w ≠ .undefined) : Ev f g p w = must f g p w := by
-  simp only [Ev, ne_eq, Trivalent.transplication_eq_undefined_iff, not_or, not_not,
-    Trivalent.ofProp_eq_true_iff] at h
-  simp [Ev, must, h.1]
+  simp only [Ev, ne_eq, Trivalent.condEvent_eq_undefined_iff, not_not] at h
+  simp [Ev, must, Trivalent.condEvent_apply, h.1, h.2]
 
 -- (10), (11)
 theorem accessible_must_subset (h : f w ⊆ f' w) : f'.accessibleWorlds w ⊆ f.accessibleWorlds w :=
   Background.accessibleWorlds_anti h
 
+open Classical in
 -- (12), (13)
 theorem ev_eq_undefined_of_no_evidence (h : f w = ∅) : Ev f g p w = .undefined :=
-  Trivalent.transplication_eq_undefined_iff.2 (.inl (by simp [h]))
+  Trivalent.condEvent_eq_undefined_iff.2 (by simp [h])
 
+open Classical in
 -- (14)
 theorem ev_eq_undefined_of_known (h : Known f w p) : Ev f g p w = .undefined :=
-  Trivalent.transplication_eq_undefined_iff.2 (.inl (by simp [h]))
+  Trivalent.condEvent_eq_undefined_iff.2 (by simp [h])
 
 -- (15), (16)
 theorem gapExt_compl_ev : Trivalent.gapExt (Ev f g p)ᶜ = Trivalent.gapExt (Ev f g p) := by
@@ -117,7 +117,7 @@ theorem ev_not_entails :
     ∃ (f : Background (Fin 2)) (g : Background (Fin 2)) (p : Set (Fin 2)) (w : Fin 2),
       Ev f g p w = .true ∧ w ∉ p := by
   refine ⟨fun _ ↦ {.univ}, fun _ ↦ {{1}}, {1}, 0, ?_, by decide⟩
-  simp only [Ev, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff]
+  simp only [Ev, Trivalent.condEvent_eq_true_iff]
   refine ⟨⟨by simp, ?_⟩, ?_⟩
   · intro h
     exact absurd (h (a := 0) (by simp)) (by decide)

@@ -396,8 +396,8 @@ open Classical in
 /-- `only` presupposes the innocently includable alternatives and asserts that the innocently
 excludable ones are false (32). -/
 noncomputable def only (ALT : Set (Set W)) (φ : Set W) : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (∀ r, IsInnocentlyIncludable ALT φ r → w ∈ r))
-    (Trivalent.ofProp (∀ q, IsInnocentlyExcludable ALT φ q → w ∉ q))
+  Trivalent.condEvent (fun w ↦ ∀ r, IsInnocentlyIncludable ALT φ r → w ∈ r)
+    (fun w ↦ ∀ q, IsInnocentlyExcludable ALT φ q → w ∉ q)
 
 /-- Free choice under `only` is presupposed, since `only ◇(a ∨ b)` presupposes `◇a` and `◇b`. -/
 theorem compl_gapExt_only_fcAlts {R : SetRel W W} {a b : Set W}
@@ -405,8 +405,7 @@ theorem compl_gapExt_only_fcAlts {R : SetRel W W} {a b : Set W}
     (Trivalent.gapExt (only (fcAlts R a b) (R.preimage (a ∪ b))))ᶜ =
       R.preimage a ∩ R.preimage b := by
   ext w
-  simp only [Trivalent.mem_compl_gapExt, ne_eq, only, Trivalent.transplication_eq_undefined_iff,
-    Trivalent.ofProp_ne_undefined, or_false, Trivalent.ofProp_eq_true_iff, not_not,
+  simp only [Trivalent.mem_compl_gapExt, ne_eq, only, Trivalent.condEvent_eq_undefined_iff, not_not,
     isInnocentlyIncludable_fcAlts_iff hF, forall_eq_or_imp, forall_eq]
   exact ⟨fun h ↦ ⟨h.2.1, h.2.2⟩, fun h ↦ ⟨preimage_mono Set.subset_union_left h.1, h.1, h.2⟩⟩
 
@@ -419,8 +418,7 @@ theorem posExt_only_eq {ALT : Set (Set W)} {φ : Set W} (hφ : φ ∈ ALT)
       Trivalent.posExt (Focus.only (· ⊆ ·) ALT id φ) := by
   rw [Focus.posExt_only_subset hφ]
   ext w
-  simp only [Trivalent.mem_posExt, only, Trivalent.transplication_eq_true_iff,
-    Trivalent.ofProp_eq_true_iff, hII, forall_eq, hIE,
+  simp only [Trivalent.mem_posExt, only, Trivalent.condEvent_eq_true_iff, hII, forall_eq, hIE,
     and_imp, mem_exh]
   exact ⟨fun ⟨hw, h⟩ ↦ ⟨hw, fun q hq hwq ↦ by_contra fun hne ↦ h q hq hne hwq⟩,
     fun ⟨hw, h⟩ ↦ ⟨hw, fun q hq hne hwq ↦ hne (h q hq hwq)⟩⟩

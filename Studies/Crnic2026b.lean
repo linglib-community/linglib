@@ -105,9 +105,8 @@ open Classical in
 /-- (9): `exh` over a sentence `S X` whose focus alternatives are `S Y` for `Y ∈ F` presupposes
 that those built on the pluralities in its domain `R` that are innocently excludable are false,
 and asserts `S X`. -/
-noncomputable def pex (X : Finset α) : Finset α → Trivalent := fun w ↦
-  Trivalent.transplication (Trivalent.ofProp (w ∈ excludesIE (S '' F) (S X) (S '' R)))
-    (Trivalent.ofProp (w ∈ S X))
+noncomputable def pex (X : Finset α) : Finset α → Trivalent :=
+  Trivalent.condEvent (· ∈ excludesIE (S '' F) (S X) (S '' R)) (· ∈ S X)
 
 /-- (10): `exh` over the *only*-sentence. -/
 noncomputable abbrev exhOnly (X : Finset α) : Finset α → Trivalent := pex F R (only F C) X
@@ -152,9 +151,9 @@ theorem isInnocentlyExcludable_only_iff (hY : Y ∈ F) :
     only_subset_only_iff]
 
 open Classical in
-theorem exhOnly_eq_transplication (hR : R ⊆ F) : exhOnly F C R X = fun w ↦
-    Trivalent.transplication (Trivalent.ofProp (∀ Y ∈ R, w ∈ only F C Y → X ∈ only F C Y))
-      (Trivalent.ofProp (w ∈ only F C X)) := by
+theorem exhOnly_eq_condEvent (hR : R ⊆ F) :
+    exhOnly F C R X =
+      Trivalent.condEvent (fun w ↦ ∀ Y ∈ R, w ∈ only F C Y → X ∈ only F C Y) (· ∈ only F C X) := by
   funext w
   rw [exhOnly, pex, excludesIE_eq_excludes ⟨X, mem_exh_only⟩, inter_eq_right.2 (image_mono hR)]
   congr 2
@@ -162,15 +161,15 @@ theorem exhOnly_eq_transplication (hR : R ⊆ F) : exhOnly F C R X = fun w ↦
 
 theorem exhOnly_ne_undefined_iff (hR : R ⊆ F) :
     exhOnly F C R X w ≠ .undefined ↔ ∀ Y ∈ R, w ∈ only F C Y → X ∈ only F C Y := by
-  simp [exhOnly_eq_transplication R hR]
+  simp [exhOnly_eq_condEvent R hR]
 
 theorem exhOnly_eq_true_iff (hR : R ⊆ F) :
     exhOnly F C R X w = .true ↔ (∀ Y ∈ R, w ∈ only F C Y → X ∈ only F C Y) ∧ w ∈ only F C X := by
-  simp [exhOnly_eq_transplication R hR]
+  simp [exhOnly_eq_condEvent R hR]
 
 theorem exhOnly_eq_false_iff (hR : R ⊆ F) :
     exhOnly F C R X w = .false ↔ (∀ Y ∈ R, w ∈ only F C Y → X ∈ only F C Y) ∧ w ∉ only F C X := by
-  simp [exhOnly_eq_transplication R hR]
+  simp [exhOnly_eq_condEvent R hR]
 
 variable (F C) in
 /-- The pluralities on which the excludable alternatives of the *only*-sentence are built. -/
@@ -179,9 +178,9 @@ def excludable (X : Finset α) : Set (Finset α) := {Y ∈ F | X ∉ only F C Y}
 -- (32): the domain of `exh` matters only through its excludable alternatives
 theorem exhOnly_inter_excludable (hR : R ⊆ F) :
     exhOnly F C (R ∩ excludable F C X) X = exhOnly F C R X := by
-  rw [exhOnly_eq_transplication _ (inter_subset_left.trans hR), exhOnly_eq_transplication R hR]
+  rw [exhOnly_eq_condEvent _ (inter_subset_left.trans hR), exhOnly_eq_condEvent R hR]
+  congr 1
   funext w
-  congr 2
   exact propext ⟨fun h Y hY hw ↦ by_contra fun hX ↦ hX (h Y ⟨hY, hR hY, hX⟩ hw),
     fun h Y hY ↦ h Y hY.1⟩
 
@@ -201,10 +200,10 @@ the entry of [horn-1969] for *only* on the entailment scale, (13). -/
 theorem exhOnly_eq_only [Fintype α] [DecidableEq α] (hX : X ∈ C) (hC : C ⊆ F)
     (hsingle : ∀ x ∈ X, {x} ∈ C) (hco : ∀ x ∈ X, Finset.univ.erase x ∈ F) :
     exhOnly F C F X = Focus.only (· ⊆ ·) (Ici '' C) id (Ici X) := by
-  rw [Focus.only_subset_eq (mem_image_of_mem _ hX), exhOnly_eq_transplication F subset_rfl,
+  rw [Focus.only_subset_eq (mem_image_of_mem _ hX), exhOnly_eq_condEvent F subset_rfl,
     only_eq_excludes hC]
+  congr 1
   funext w
-  congr 2
   exact propext (forall_mem_only_iff hC hsingle hco)
 
 open Classical in
@@ -212,12 +211,12 @@ open Classical in
 presupposition that some alternative in the domain of *only* holds, the weak entry of
 [horn-1996], (44), (54), (82). -/
 theorem exhOnly_singleton_eq (hX : X ∈ C) (hC : C ⊆ F) (hY : Y ∈ F) (h : ∀ Z ∈ C, ¬ Z ⊆ Y) :
-    exhOnly F C {Y} X = fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ ⋃₀ (Ici '' C)))
-      (Trivalent.ofProp (w ∈ excludes (Ici '' C) (Ici X))) := by
-  rw [exhOnly_eq_transplication _ (singleton_subset_iff.2 hY), only_eq_excludes hC]
+    exhOnly F C {Y} X = Trivalent.condEvent (· ∈ ⋃₀ (Ici '' C))
+        (· ∈ excludes (Ici '' C) (Ici X)) := by
+  rw [exhOnly_eq_condEvent _ (singleton_subset_iff.2 hY), only_eq_excludes hC]
   have hXY : X ∉ only F C Y := fun hm ↦ h X hX ((mem_only_of_subset hC).1 hm X hX subset_rfl)
+  congr 1
   funext w
-  congr 2
   apply propext
   simp only [mem_singleton_iff, forall_eq]
   rw [imp_iff_not hXY, mem_only_of_subset hC]
@@ -368,9 +367,10 @@ theorem exhOnly_gal : exhOnly party partyOnly party {gal} =
 
 -- (50)–(54)
 open Classical in
-theorem exhOnly_charlie : exhOnly party partyOnly {{charlie}} {gal} = fun w ↦
-    Trivalent.transplication (Trivalent.ofProp (w ∈ ⋃₀ (Ici '' partyOnly)))
-      (Trivalent.ofProp (w ∈ excludes (Ici '' partyOnly) (Ici {gal}))) :=
+theorem exhOnly_charlie :
+    exhOnly party partyOnly {{charlie}} {gal} =
+      Trivalent.condEvent (· ∈ ⋃₀ (Ici '' partyOnly))
+        (· ∈ excludes (Ici '' partyOnly) (Ici {gal})) :=
   exhOnly_singleton_eq (by simp [partyOnly]) partyOnly_subset (Finset.singleton_nonempty _)
     (by rintro _ (rfl | rfl | rfl) <;> decide)
 

@@ -262,11 +262,11 @@ abbrev Buganda := Fin 4
 
 /-- *The King of Buganda is opening parliament*. -/
 noncomputable def kingOpens : Buganda → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w < 2)) (Trivalent.ofProp (w = 0))
+  Trivalent.condEvent (fun w ↦ w < 2) (fun w ↦ w = 0)
 
 /-- *The President of Buganda is conducting the ceremony*. -/
 noncomputable def presidentConducts : Buganda → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (2 ≤ w)) (Trivalent.ofProp (w = 2))
+  Trivalent.condEvent (fun w ↦ 2 ≤ w) (fun w ↦ w = 2)
 
 theorem conflict_buganda : Conflict kingOpens presidentConducts := by
   intro w; fin_cases w <;> simp [kingOpens, presidentConducts]
@@ -298,7 +298,7 @@ def noChild : Bill → Trivalent := fun w ↦ Trivalent.ofProp (w = 0)
 
 /-- *All of Bill's children are bald*, presupposing that Bill has children. -/
 noncomputable def allBald : Bill → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ≠ 0)) (Trivalent.ofProp (w = 1))
+  Trivalent.condEvent (fun w ↦ w ≠ 0) (fun w ↦ w = 1)
 
 /-- On the Bill input, accommodating tautologies leaves the update undefined, while accommodating
 the negated first disjunct for the second (15) is defined and genuine. -/

@@ -182,8 +182,8 @@ theorem prob_eq_zero_iff [IsFiniteMeasure μ] :
 the conditional probability of the consequent given `s`. -/
 theorem prob_transplication_ofProp (s : Set W) [DecidablePred (· ∈ s)] (B : W → Prop)
     [DecidablePred B] (h : μ s ≠ 0) :
-    prob μ (fun w ↦ transplication (ofProp (w ∈ s)) (ofProp (B w))) = μ[{w | B w} | s] := by
-  have hs : (gapExt fun w ↦ transplication (ofProp (w ∈ s)) (ofProp (B w)))ᶜ = s := by
+    prob μ (condEvent (· ∈ s) B) = μ[{w | B w} | s] := by
+  have hs : (gapExt (condEvent (· ∈ s) B))ᶜ = s := by
     ext w; by_cases hw : w ∈ s <;> simp [hw]
   rw [prob_of_measure_support_ne_zero (by rwa [hs]), hs, ← cond_inter_self .of_discrete {w | B w}]
   congr 1

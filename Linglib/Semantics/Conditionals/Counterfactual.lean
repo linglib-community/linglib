@@ -65,8 +65,7 @@ open Classical in
 /-- The homogeneity counterfactual, which asserts that every closest `p`-world is a `q`-world and
 presupposes that the closest `p`-worlds agree on `q`. -/
 noncomputable def homogeneityCounterfactual : W → Trivalent :=
-  fun v ↦ Trivalent.transplication (Trivalent.ofProp (v ∈ closestImp ord p q ∪ closestImp ord p qᶜ))
-    (Trivalent.ofProp (v ∈ closestImp ord p q))
+  Trivalent.condEvent (· ∈ closestImp ord p q ∪ closestImp ord p qᶜ) (· ∈ closestImp ord p q)
 
 variable {ord p q w}
 

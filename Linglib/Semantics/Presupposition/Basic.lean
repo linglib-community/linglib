@@ -7,7 +7,7 @@ public import Linglib.Logic.Trivalent.Pointwise
 
 A sentence with a presupposition denotes a trivalent proposition `W → Trivalent`, true or false
 where its presupposition holds and undefined where it fails. A trigger presupposing `A` and
-asserting `B` is the transplication `fun w ↦ transplication (ofProp (A w)) (ofProp (B w))`, its
+asserting `B` is the conditional event `Trivalent.condEvent A B`, its
 presupposition is where it is defined, `(Trivalent.gapExt p)ᶜ`, and it holds at `w` when
 `p w = .true`. Theories of projection differ in their
 connectives: the classical connectives are Weak Kleene (`Trivalent.meetWeak`), Karttunen's filtering

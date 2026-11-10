@@ -70,8 +70,7 @@ open Classical in
 /-- *x is the μ-est of C* presupposes that `x` is in the comparison class and asserts that it
 measures above every other member of the class ([von-fintel-1999]'s (79)). -/
 noncomputable def trivalentSuperlative (μ : α → D) (C : W → Set α) (x : α) : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (x ∈ C w))
-    (Trivalent.ofProp (∀ y ∈ C w, y ≠ x → μ y < μ x))
+  Trivalent.condEvent (fun w ↦ x ∈ C w) (fun w ↦ ∀ y ∈ C w, y ≠ x → μ y < μ x)
 
 variable {μ : α → D} {C : W → Set α} {x : α} {w : W}
 

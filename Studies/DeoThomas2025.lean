@@ -168,7 +168,7 @@ open Classical in
 /-- *Just* with the current question `cq` and prejacent `p` presupposes that `cq` is the optimal
 construal of the underspecified question and asserts `p`, (36). -/
 noncomputable def just (c : Context W) (cq : Question W) (p : Set W) : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (c.IsOptimal cq)) (Trivalent.ofProp (w ∈ p))
+  Trivalent.condEvent (fun _ ↦ c.IsOptimal cq) (· ∈ p)
 
 variable {c : Context W} {cq cq' : Question W} {p p' : Set W} {w w' : W}
 

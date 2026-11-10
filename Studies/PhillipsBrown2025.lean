@@ -88,8 +88,7 @@ open Classical in
 /-- Question-based *want* as a trivalent proposition, with its definedness conditions as
 presupposition. -/
 noncomputable def want : W → Trivalent :=
-  fun _ ↦ Trivalent.transplication (Trivalent.ofProp (Defined N s bel p))
-    (Trivalent.ofProp (Want G s bel p))
+  Trivalent.condEvent (fun _ ↦ Defined N s bel p) (fun _ ↦ Want G s bel p)
 
 section Decidable
 
@@ -135,9 +134,8 @@ theorem want_of_decides_of_not_exists (hc : s.Decides p) (hnp : ¬ ∃ w, s.cell
 `want p` entails `want q` for `p ⊆ q`. -/
 theorem want_strawsonEntails (hpq : p ⊆ q) :
     strawsonEntails (want G N s bel p) (want G N s bel q) := fun _ hp hq ↦ by
-  simp_all only [want, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff, ne_eq,
-    Trivalent.transplication_eq_undefined_iff, Trivalent.ofProp_ne_undefined, or_false, not_not,
-    true_and]
+  simp_all only [want, Trivalent.condEvent_eq_true_iff, ne_eq, Trivalent.condEvent_eq_undefined_iff,
+    not_not, true_and]
   exact hp.2.mono hpq
 
 /-- On the finest question, question-based *want* is best-worlds *want* (§3.4). -/

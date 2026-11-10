@@ -47,15 +47,14 @@ variable {W : Type*} (alts : Set (Set W)) (p : Set W)
 open Classical in
 /-- The Akan *nà* and Ga *ni* constructions, (75) and (76), assert the prejacent and presuppose
 conditional exhaustivity together with existence. -/
-noncomputable def cleft : W → Trivalent := fun w ↦
-  Trivalent.transplication (Trivalent.ofProp ((w ∈ p → w ∈ excludes alts p) ∧ w ∈ ⋃₀ alts))
-    (Trivalent.ofProp (w ∈ p))
+noncomputable def cleft : W → Trivalent :=
+  Trivalent.condEvent (fun w ↦ (w ∈ p → w ∈ excludes alts p) ∧ w ∈ ⋃₀ alts) (· ∈ p)
 
 open Classical in
 /-- The Ngamo *=i/ye* construction (78) asserts the prejacent and presupposes the salience of the
 background, the existential closure of the alternatives. -/
-noncomputable def marked (salient : Set W → Prop) : W → Trivalent := fun w ↦
-  Trivalent.transplication (Trivalent.ofProp (salient (⋃₀ alts))) (Trivalent.ofProp (w ∈ p))
+noncomputable def marked (salient : Set W → Prop) : W → Trivalent :=
+  Trivalent.condEvent (fun _ ↦ salient (⋃₀ alts)) (· ∈ p)
 
 /-! ### The exhaustive inference is not asserted, section 5.2.1 -/
 
@@ -86,7 +85,7 @@ theorem marked_exhaustivity_cancellable {salient : Set W → Prop} {q : Set W} {
 /-- Where defined and true, the cleft is exhaustive ((43), (44), (77)), so it cannot answer a
 mention-some question ((49), (50)). -/
 theorem cleft_exhaustive {w : W} (h : cleft alts p w = .true) : w ∈ excludes alts p := by
-  simp only [cleft, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff] at h
+  simp only [cleft, Trivalent.condEvent_eq_true_iff] at h
   exact h.1.1 h.2
 
 /-- A negated cleft is true where the prejacent fails and another alternative holds, so the
@@ -100,8 +99,7 @@ theorem cleft_compl_of_alt {q : Set W} {w : W} (hq : q ∈ alts) (hw : w ∈ q) 
 /-- The cleft presupposes that some alternative holds, so a focused negative quantifier clashes
 with it ((60) and (61)). -/
 theorem cleft_existence {w : W} (h : cleft alts p w ≠ .undefined) : w ∈ ⋃₀ alts := by
-  simp only [cleft, ne_eq, Trivalent.transplication_eq_undefined_iff,
-    Trivalent.ofProp_eq_true_iff, Trivalent.ofProp_ne_undefined, or_false, not_not] at h
+  simp only [cleft, ne_eq, Trivalent.condEvent_eq_undefined_iff, not_not] at h
   exact h.2
 
 /-- The Ngamo construction is defined at a world where no alternative holds, so it carries no

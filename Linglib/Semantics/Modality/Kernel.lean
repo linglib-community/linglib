@@ -64,13 +64,13 @@ theorem DirectlySettles.mono (hK : K ⊆ K') (h : DirectlySettles K P) : Directl
 open Classical in
 /-- *Must P* presupposes that `K` does not directly settle `P` and asserts `⋂₀ K ⊆ P`. -/
 noncomputable def kernelMust (K : Set (Set W)) (P : Set W) : W → Trivalent :=
-  fun _ ↦ .transplication (.ofProp (¬ DirectlySettles K P)) (.ofProp (⋂₀ K ⊆ P))
+  Trivalent.condEvent (fun _ ↦ ¬ DirectlySettles K P) (fun _ ↦ ⋂₀ K ⊆ P)
 
 open Classical in
 /-- *Might P* presupposes that `K` does not directly settle `P` and asserts that `⋂₀ K` meets
 `P`. -/
 noncomputable def kernelMight (K : Set (Set W)) (P : Set W) : W → Trivalent :=
-  fun _ ↦ .transplication (.ofProp (¬ DirectlySettles K P)) (.ofProp (⋂₀ K ∩ P).Nonempty)
+  Trivalent.condEvent (fun _ ↦ ¬ DirectlySettles K P) (fun _ ↦ (⋂₀ K ∩ P).Nonempty)
 
 /-- *Can't P* is *must* `Pᶜ`. -/
 noncomputable def kernelCant (K : Set (Set W)) (P : Set W) : W → Trivalent := kernelMust K Pᶜ

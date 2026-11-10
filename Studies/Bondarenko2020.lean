@@ -75,8 +75,8 @@ an individual of `Q` that pre-exists `t`, and presupposes that `Q` pre-exists `t
 noncomputable def thetaTh (τ : X → NonemptyInterval T) (about : E → X)
     (P : W → NonemptyInterval T → E → Prop) (Q : W → NonemptyInterval T → X → Prop)
     (t : NonemptyInterval T) (e : E) : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (PreExists τ (Q w t) t))
-    (Trivalent.ofProp (PreExists τ (fun x ↦ Q w t x ∧ P w t e ∧ about e = x) t))
+  Trivalent.condEvent (fun w ↦ PreExists τ (Q w t) t)
+    (fun w ↦ PreExists τ (fun x ↦ Q w t x ∧ P w t e ∧ about e = x) t)
 
 /-- The report (61) is the past tense (60), within the contextual interval `g₁`, over the
 existentially closed (58) θTh-report (57). -/
@@ -101,8 +101,7 @@ variable {τ : X → NonemptyInterval T} {about : E → X} {P : W → NonemptyIn
 theorem thetaTh_eq_true_iff {e : E} :
     thetaTh τ about P Q t e w = .true ↔
       PreExists τ (fun x ↦ Q w t x ∧ P w t e ∧ about e = x) t := by
-  simp only [thetaTh, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff,
-    and_iff_right_iff_imp]
+  simp only [thetaTh, Trivalent.condEvent_eq_true_iff, and_iff_right_iff_imp]
   exact PreExists.mono fun _ h ↦ h.1
 
 theorem thetaTh_ne_undefined_iff {e : E} :

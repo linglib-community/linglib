@@ -67,8 +67,8 @@ open Classical in
 /-- The set-comparison *glad* (52) has the presupposition of the best-worlds one and asserts that
 the belief worlds are strictly better than every relevant non-`p` world. -/
 noncomputable def gladBetter : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (Trivalent.gapExt (glad dox rel g p))ᶜ))
-    (Trivalent.ofProp (Better (g w) (dox w) (rel w \ p)))
+  Trivalent.condEvent (· ∈ (Trivalent.gapExt (glad dox rel g p))ᶜ)
+    (fun w ↦ Better (g w) (dox w) (rel w \ p))
 
 /-- The set-comparison *glad* is still Strawson upward entailing in its complement (§3.3). -/
 theorem isStrawsonUE_gladBetter : IsStrawsonUE (gladBetter dox rel g) :=
@@ -94,7 +94,7 @@ theorem not_gladBetter_of_want :
     simp only [Want, Set.subset_def, Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
       Set.mem_singleton_iff, forall_eq, Set.mem_univ, Set.mem_insert_iff]
     decide
-  · simp only [gladBetter, Trivalent.transplication_eq_false_iff, Trivalent.ofProp_eq_false_iff]
+  · simp only [gladBetter, Trivalent.condEvent_eq_false_iff]
     refine ⟨by simpa [glad] using ⟨⟨0, by simp⟩, ⟨2, by simp⟩⟩, ?_⟩
     simp only [Better, Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
       Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ, Set.mem_insert_iff]
@@ -104,8 +104,8 @@ open Classical in
 /-- The set-comparison *sorry* (54) has the presupposition of *glad* and asserts that every
 relevant non-`p` world is strictly better than every belief world. -/
 noncomputable def regretBetter : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (Trivalent.gapExt (glad dox rel g p))ᶜ))
-    (Trivalent.ofProp (Better (g w) (rel w \ p) (dox w)))
+  Trivalent.condEvent (· ∈ (Trivalent.gapExt (glad dox rel g p))ᶜ)
+    (fun w ↦ Better (g w) (rel w \ p) (dox w))
 
 /-- The set-comparison *sorry* is Strawson upward entailing in its complement. -/
 theorem isStrawsonUE_regretBetter : IsStrawsonUE (regretBetter dox rel g) :=
@@ -120,15 +120,15 @@ theorem not_isStrawsonDE_regretBetter :
     ¬ IsStrawsonDE (regretBetter (fun _ : Fin 3 ↦ {0}) (fun _ ↦ Set.univ) (fun _ ↦ {{2}})) :=
   fun h ↦ by
     have := h (p := {0}) (q := {0, 1}) (by simp) 0 (by
-        simp only [regretBetter, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff]
+        simp only [regretBetter, Trivalent.condEvent_eq_true_iff]
         refine ⟨by simpa [glad] using ⟨⟨0, by simp⟩, ⟨2, by simp⟩⟩, ?_⟩
         simp only [Better, Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
           Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ, Set.mem_insert_iff]
         decide)
       (by simpa [regretBetter, glad] using ⟨⟨0, by simp⟩, ⟨1, by simp⟩⟩)
-    simp only [regretBetter, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff,
-      Better, Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff, Set.mem_singleton_iff,
-      forall_eq, Set.mem_sdiff, Set.mem_univ, true_and] at this
+    simp only [regretBetter, Trivalent.condEvent_eq_true_iff, Better, Preorder.ofCriteria_lt_iff,
+      Preorder.ofCriteria_le_iff, Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ,
+      true_and] at this
     exact absurd (this.2 1 (by decide)) (by decide)
 
 end Attitudes
@@ -152,15 +152,13 @@ open Classical in
 /-- *Only* in the entry (68b) presupposes the prejacent and that no alternative is entailed by
 it, and asserts that every true alternative is the prejacent. -/
 noncomputable def only68b : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ p ∧ ¬ ∃ r ∈ C, p ⊆ r))
-    (Trivalent.ofProp (w ∈ atMost (· = ·) C id p))
+  Trivalent.condEvent (fun w ↦ w ∈ p ∧ ¬ ∃ r ∈ C, p ⊆ r) (· ∈ atMost (· = ·) C id p)
 
 open Classical in
 /-- With (68b), no downward inference within one set of alternatives can be assessed (p. 134). -/
 theorem only68b_eq_undefined {q : Set W} (hp : p ∈ C) (hqp : q ⊆ p) (w : W) :
     only68b C q w = .undefined :=
-  Trivalent.transplication_eq_undefined_iff.2 <| .inl <|
-    Trivalent.ofProp_eq_true_iff.not.2 fun h ↦ h.2 ⟨p, hp, hqp⟩
+  Trivalent.condEvent_eq_undefined_iff.2 fun h ↦ h.2 ⟨p, hp, hqp⟩
 
 end Only
 
@@ -192,8 +190,8 @@ open Classical in
 /-- *The μ-est C exceeds d* presupposes a superlative individual and asserts that every such
 individual exceeds `d`. -/
 noncomputable def theSuperlativeExceeds : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (∃ a, trivalentSuperlative μ C a w = .true))
-    (Trivalent.ofProp (∀ a, trivalentSuperlative μ C a w = .true → d < μ a))
+  Trivalent.condEvent (fun w ↦ ∃ a, trivalentSuperlative μ C a w = .true)
+    (fun w ↦ ∀ a, trivalentSuperlative μ C a w = .true → d < μ a)
 
 /-- The definite-description superlative is not Strawson downward entailing (80). -/
 theorem not_isStrawsonDE_theSuperlativeExceeds :
@@ -201,8 +199,7 @@ theorem not_isStrawsonDE_theSuperlativeExceeds :
   fun h ↦ by
     have := @h (fun _ ↦ {true}) (fun _ ↦ Set.univ) (fun _ _ _ ↦ trivial) ()
     simp only [theSuperlativeExceeds, trivalentSuperlative_eq_true_iff,
-      Trivalent.transplication_eq_true_iff, Trivalent.transplication_eq_undefined_iff, ne_eq,
-      Trivalent.ofProp_eq_true_iff, Trivalent.ofProp_ne_undefined, or_false, not_not,
+      Trivalent.condEvent_eq_true_iff, Trivalent.condEvent_eq_undefined_iff, ne_eq, not_not,
       Set.mem_singleton_iff, Set.mem_univ] at this
     revert this
     decide

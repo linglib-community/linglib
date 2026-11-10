@@ -18,7 +18,7 @@ crows.
 ## Implementation notes
 
 The conditional assertion `(A/B)` of (3) is the transplication
-`fun w ↦ transplication (ofProp (A w)) (ofProp (B w))`, a categorical atom (6) is
+`Trivalent.condEvent A B`, a categorical atom (6) is
 `fun w ↦ ofProp (A w)`, negation (7) is `ᶜ`, which preserves assertiveness, conjunction
 (8) and disjunction (9) are `Trivalent.meetBelnap` and `Trivalent.joinBelnap`, assertive iff some
 operand is, and the quantifiers (10) are `Trivalent.forallHaug` and `Trivalent.existsHaug`. The
@@ -47,13 +47,13 @@ open Classical in
 conditional assertions (Cx/Bx) (3), the A-form *All crows are black* read as a claim about each
 crow. -/
 noncomputable def restrictedForall (C B : Set E) : Trivalent :=
-  Trivalent.forallHaug (fun x ↦ Trivalent.transplication (Trivalent.ofProp (x ∈ C)) (Trivalent.ofProp (x ∈ B)))
+  Trivalent.forallHaug (Trivalent.condEvent (· ∈ C) (· ∈ B))
 
 open Classical in
 /-- Restricted existential quantification ∃x(Cx/Bx) (12) is the existential quantifier (10) over
 the conditional assertions (Cx/Bx) (3). -/
 noncomputable def restrictedExists (C B : Set E) : Trivalent :=
-  Trivalent.existsHaug (fun x ↦ Trivalent.transplication (Trivalent.ofProp (x ∈ C)) (Trivalent.ofProp (x ∈ B)))
+  Trivalent.existsHaug (Trivalent.condEvent (· ∈ C) (· ∈ B))
 
 variable {C B : Set E}
 

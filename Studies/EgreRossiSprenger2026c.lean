@@ -431,6 +431,7 @@ theorem forallInstances_singleton {D : Type} (A B : D → Set W) (w : W) :
   congr 1
   funext d
   beta_reduce
+  rw [condEvent_apply]
   by_cases h : w ∈ A d
   · rw [cond_apply_of_mem (by rw [update_ofSet]; exact ⟨rfl, h⟩),
       ofProp_eq_true_iff.2 (show d ∈ {x | w ∈ A x} from h), transplication_true_left]

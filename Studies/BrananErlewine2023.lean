@@ -68,7 +68,7 @@ open Classical in
 then with its scope `β`, presupposing `β α` and asserting that `β` is false of every other
 alternative to `α` in `C` ((72)). -/
 noncomputable def quantifierOnly (C : Set σ) (α : σ) (β : σ → Set W) : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (β α))) (Trivalent.ofProp (∀ γ ∈ C, γ ≠ α → w ∉ β γ))
+  Trivalent.condEvent (· ∈ β α) (fun w ↦ ∀ γ ∈ C, γ ≠ α → w ∉ β γ)
 
 -- (73)
 theorem quantifierOnly_eq_only (hα : α ∈ C) (hβ : Set.InjOn β C) :
@@ -95,7 +95,7 @@ theorem quantifierOnly_ne_only (C : Set σ) (hψ : ψ ∈ D) (hne : ψ ≠ β α
     quantifierOnly C α β ≠ only (· = ·) D id (β α) := by
   intro h
   have hq : quantifierOnly C α β w = .true := by
-    simp only [quantifierOnly, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff]
+    simp only [quantifierOnly, Trivalent.condEvent_eq_true_iff]
     exact ⟨hwα, fun γ _ hγ ↦ hβ γ hγ⟩
   rw [h, only_eq_true_iff] at hq
   exact notMem_atMost hψ hw hne.symm hq.2
@@ -111,8 +111,7 @@ theorem peter_read_only_hamlet :
     quantifierOnly Set.univ Book.hamlet read {.read .hamlet, .swim} = .true ∧
       only (· = ·) {read .hamlet, read .macbeth, swam} id (read .hamlet)
         {.read .hamlet, .swim} = .false := by
-  simp only [quantifierOnly, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff,
-    only_eq_false_iff]
+  simp only [quantifierOnly, Trivalent.condEvent_eq_true_iff, only_eq_false_iff]
   refine ⟨⟨by simp [read], ?_⟩, mem_atLeast.2 ⟨read .hamlet, by simp, by simp [read], rfl⟩,
     fun h ↦ ?_⟩
   · rintro (_ | _) - h

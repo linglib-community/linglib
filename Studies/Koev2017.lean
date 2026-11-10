@@ -76,7 +76,7 @@ condition of the learning event, which restricts the context set, (74b), and who
 is the core proposition, to which the declarative operator (72) commits the speaker. -/
 noncomputable def LearningScenario.toEvidentialProp (loc : E → L) (s : LearningScenario E)
     {W : Type*} (p : W → Prop) : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (spatiotemporallyDistant loc s.described s.learning)) (Trivalent.ofProp (p w))
+  Trivalent.condEvent (fun _ ↦ spatiotemporallyDistant loc s.described s.learning) p
 
 /-- Negation preserves the evidential presupposition while negating the core proposition,
 (78). -/

@@ -217,8 +217,7 @@ theorem nrv_necessary_for_msg :
 /-- *Dreyfus dared to send a message to the Germans* (34a) is felicitous. -/
 theorem dare_felicitous_for_msg (u : dreyfusModel.contexts dreyfusBg) :
     dare .MSG u ≠ .undefined := by
-  simp only [dare, sentence, ne_eq, Trivalent.transplication_eq_undefined_iff,
-    Trivalent.ofProp_eq_true_iff, Trivalent.ofProp_ne_undefined, or_false, not_not]
+  simp only [dare, sentence, ne_eq, Trivalent.condEvent_eq_undefined_iff, not_not]
   exact ⟨fun _ hq ↦ by obtain rfl := Flat.coe_inj.1 hq; exact nrv_sufficient_for_msg,
     fun _ hq ↦ by obtain rfl := Flat.coe_inj.1 hq; exact nrv_necessary_for_msg⟩
 
@@ -240,18 +239,16 @@ theorem not_msg_of_not_dare {u : dreyfusModel.contexts dreyfusBg}
 is not causally sufficient for COM. -/
 theorem dare_infelicitous_for_com (u : dreyfusModel.contexts dreyfusBg) :
     dare .COM u = .undefined := by
-  simp only [dare, sentence, Trivalent.transplication_eq_undefined_iff, ne_eq,
-    Trivalent.ofProp_eq_true_iff]
-  exact .inl fun h ↦ (by decide : ¬ dreyfusModel.CausallySufficient dreyfusBg .NRV true .COM true)
+  simp only [dare, sentence, Trivalent.condEvent_eq_undefined_iff]
+  exact fun h ↦ (by decide : ¬ dreyfusModel.CausallySufficient dreyfusBg .NRV true .COM true)
     (h.1 .positive rfl).2
 
 /-- *?/# Dreyfus dared to spy for the Germans* (34d) is infelicitous, since NRV is not causally
 sufficient for SPY. -/
 theorem dare_infelicitous_for_spy (u : dreyfusModel.contexts dreyfusBg) :
     dare .SPY u = .undefined := by
-  simp only [dare, sentence, Trivalent.transplication_eq_undefined_iff, ne_eq,
-    Trivalent.ofProp_eq_true_iff]
-  exact .inl fun h ↦ (by decide : ¬ dreyfusModel.CausallySufficient dreyfusBg .NRV true .SPY true)
+  simp only [dare, sentence, Trivalent.condEvent_eq_undefined_iff]
+  exact fun h ↦ (by decide : ¬ dreyfusModel.CausallySufficient dreyfusBg .NRV true .SPY true)
     (h.1 .positive rfl).2
 
 -- (34c)

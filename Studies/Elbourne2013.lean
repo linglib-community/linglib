@@ -216,14 +216,12 @@ complement is defined throughout the subject's doxastic alternatives, and true w
 complement is true throughout the verb's own alternatives, doxastic for *believe* and bouletic for
 *want*. -/
 noncomputable def attitude (dox R : S → Set S) (p : S → Trivalent) : S → Trivalent :=
-  fun s ↦ Trivalent.transplication (Trivalent.ofProp (∀ w ∈ dox s, p w ≠ .undefined))
-    (Trivalent.ofProp (∀ w ∈ R s, p w = .true))
+  Trivalent.condEvent (fun s ↦ ∀ w ∈ dox s, p w ≠ .undefined) (fun s ↦ ∀ w ∈ R s, p w = .true)
 
 -- (40), (41)
 theorem attitude_ne_undefined_iff (dox R : S → Set S) (f vp : E → S → Prop) (s : S) :
     attitude dox R (sentence id f vp) s ≠ .undefined ↔ ∀ w ∈ dox s, ∃! x, f x w := by
-  simp only [attitude, ne_eq, Trivalent.transplication_eq_undefined_iff,
-    Trivalent.ofProp_ne_undefined, or_false, not_not, Trivalent.ofProp_eq_true_iff]
+  simp only [attitude, ne_eq, Trivalent.condEvent_eq_undefined_iff, not_not]
   exact forall₂_congr fun w _ ↦ sentence_ne_undefined_iff id f vp w
 
 /-- A subject unsure whether there is a ghost in his attic cannot felicitously want the ghost to be

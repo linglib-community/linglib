@@ -106,9 +106,10 @@ alternatives in the relevance set `Rc` are false and that the innocently includa
 other than the prejacent, are homogeneous. -/
 noncomputable def pexIEII (ALT : Set (Set World)) (φ : Set World) (Rc : Set (Set World)) :
     World → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (excludesIE ALT φ Rc ∩
-    {w | Homogeneous {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} w})))
-    (Trivalent.ofProp (w ∈ φ))
+  Trivalent.condEvent
+    (· ∈ excludesIE ALT φ Rc ∩
+      {w | Homogeneous {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} w})
+    (· ∈ φ)
 
 variable {ALT : Set (Set World)} {φ : Set World} {Rc : Set (Set World)} {w : World}
 

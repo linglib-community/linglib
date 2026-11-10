@@ -78,8 +78,7 @@ open Classical in
 `P` is `id`; over individuals, with the identity scale, it is von Fintel's *only x is P*, which
 presupposes that `x` is `P` and asserts that nothing else is ([von-fintel-1999]'s (15)). -/
 noncomputable def only : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (atLeast S C P i)))
-    (Trivalent.ofProp (w ∈ atMost S C P i))
+  Trivalent.condEvent (· ∈ atLeast S C P i) (· ∈ atMost S C P i)
 
 variable {S C P i} {j : ι} {w : W}
 
@@ -137,8 +136,7 @@ open Classical in
 prejacent and asserts the exclusion ([von-fintel-1999]'s (68a)). -/
 theorem only_subset_eq (hp : p ∈ C) :
     only (· ⊆ ·) C id p =
-        fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ p))
-          (Trivalent.ofProp (w ∈ excludes C p)) := by
+        Trivalent.condEvent (· ∈ p) (· ∈ excludes C p) := by
   funext w; simp only [only, atLeast_subset_eq hp, atMost_subset]
 
 /-- On the entailment scale *only* is true exactly where the exhaustification
@@ -219,8 +217,7 @@ open Classical in
 /-- An additive particle, *too* or *also*, presupposes `additivePresup S C P i` and asserts its
 prejacent `P i`. -/
 noncomputable def additive : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (additivePresup S C P i)))
-    (Trivalent.ofProp (w ∈ P i))
+  Trivalent.condEvent (· ∈ additivePresup S C P i) (· ∈ P i)
 
 variable {S C P i} {j : ι} {w : W}
 

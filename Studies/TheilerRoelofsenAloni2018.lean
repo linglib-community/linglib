@@ -198,18 +198,18 @@ def certain (w : W) : Prop := ∀ v ∈ dox x w, dox x w ∈ f v
 open Classical in
 /-- *know* with its factivity presupposition, (43), presupposes that the nucleus is true. -/
 noncomputable def knowFactive : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp ((f w).Nonempty)) (Trivalent.ofProp (know dox f x w))
+  Trivalent.condEvent (fun w ↦ (f w).Nonempty) (know dox f x)
 
 open Classical in
 /-- *be right*, (59), presupposes *be certain* and asserts *know*. -/
 noncomputable def right : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (certain dox f x w)) (Trivalent.ofProp (know dox f x w))
+  Trivalent.condEvent (certain dox f x) (know dox f x)
 
 open Classical in
 /-- *be wrong*, (64), presupposes that the state is a truthful resolution at some world the
 subject considers possible and asserts that it is none at the world of evaluation. -/
 noncomputable def wrong : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (∃ v ∈ dox x w, dox x w ∈ f v)) (Trivalent.ofProp (dox x w ∉ f w))
+  Trivalent.condEvent (fun w ↦ ∃ v ∈ dox x w, dox x w ∈ f v) (fun w ↦ dox x w ∉ f w)
 
 /-- *be surprised* holds when some maximal truthful resolution at the world of evaluation is
 believed but was not expected (68). -/
@@ -221,7 +221,8 @@ open Classical in
 world the subject considers possible, and asserts that some maximal truthful resolution at
 some world is desired or undesired. -/
 noncomputable def care (bou : X → W → Set W) : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp ((f w).Nonempty ∧ ∀ v ∈ dox x w, (f v).Nonempty)) (Trivalent.ofProp (∃ v q, Maximal (· ∈ f v) q ∧ (bou x w ⊆ q ∨ Disjoint (bou x w) q)))
+  Trivalent.condEvent (fun w ↦ (f w).Nonempty ∧ ∀ v ∈ dox x w, (f v).Nonempty)
+    (fun w ↦ ∃ v q, Maximal (· ∈ f v) q ∧ (bou x w ⊆ q ∨ Disjoint (bou x w) q))
 
 variable {dox f x} {P : Question W} {q : Set W} {w : W}
 

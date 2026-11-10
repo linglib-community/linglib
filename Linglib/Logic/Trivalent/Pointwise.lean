@@ -28,6 +28,7 @@ into the negative extension. The file ends with the three families of trivalent 
 * `Trivalent.extensions`: the two extensions, as a bounded lattice hom into `Set W ⊙ Set W`, and
   `Trivalent.orderIsoDisjoint`: an order isomorphism onto the disjoint pairs.
 * `Trivalent.IsBivalent`: the proposition is never `undefined`.
+* `Trivalent.condEvent`: the conditional event `B | A`, `B` presupposing `A`.
 * `Trivalent.forallWeak`, `Trivalent.existsWeak`: the Weak Kleene quantifiers, undefined as
   soon as any instance is.
 * `Trivalent.forallStrong`, `Trivalent.existsStrong`: the Strong Kleene quantifiers, the
@@ -40,7 +41,7 @@ into the negative extension. The file ends with the three families of trivalent 
 * `Trivalent.extensions_compl`, `Trivalent.extensions_transplication`, `Trivalent.extensions_comp`:
   negation is the swap, transplication is Fitting's guard, and reindexing the worlds takes
   preimages.
-* `Trivalent.transplication_definedness_truth`, `Trivalent.transplication_ofProp_eq_iff`: every
+* `Trivalent.condEvent_ne_undefined_eq_true`, `Trivalent.condEvent_eq_condEvent_iff`: every
   trivalent proposition is the conditional event of its truth on its definedness, and two
   conditional events coincide exactly when they have the same condition and agree on it.
 
@@ -231,36 +232,65 @@ same condition and agree on it. -/
 
 section ConditionalEvent
 
+/-- The conditional event `B | A` of [de-finetti-1936], `B` presupposing `A`: the classical value
+of `B` where `A` holds and `undefined` elsewhere, the pointwise transplication of `B` on `A`. -/
+def condEvent (A B : W → Prop) [DecidablePred A] [DecidablePred B] : W → Trivalent :=
+  fun w ↦ transplication (ofProp (A w)) (ofProp (B w))
+
+section
+
+variable {A B : W → Prop} [DecidablePred A] [DecidablePred B] {w : W}
+
+theorem condEvent_apply : condEvent A B w = transplication (ofProp (A w)) (ofProp (B w)) := rfl
+
+@[simp] theorem condEvent_eq_true_iff : condEvent A B w = .true ↔ A w ∧ B w := by
+  simp [condEvent]
+
+@[simp] theorem condEvent_eq_false_iff : condEvent A B w = .false ↔ A w ∧ ¬ B w := by
+  simp [condEvent]
+
+@[simp] theorem condEvent_eq_undefined_iff : condEvent A B w = .undefined ↔ ¬ A w := by
+  simp [condEvent]
+
+@[simp] theorem posExt_condEvent : posExt (condEvent A B) = {w | A w ∧ B w} := by
+  ext w; simp
+
+@[simp] theorem negExt_condEvent : negExt (condEvent A B) = {w | A w ∧ ¬ B w} := by
+  ext w; simp
+
+@[simp] theorem gapExt_condEvent : gapExt (condEvent A B) = {w | ¬ A w} := by
+  ext w; simp
+
+/-- Negating a conditional event negates its content and keeps its condition. -/
+theorem compl_condEvent : (condEvent A B)ᶜ = condEvent A (fun w ↦ ¬ B w) :=
+  funext fun _ ↦ eq_of_eq_undefined_iff_of_eq_true_iff (by simp) (by simp)
+
+theorem isBivalent_condEvent_iff : IsBivalent (condEvent A B) ↔ ∀ w, A w := by
+  simp [isBivalent_iff_forall_ne_undefined]
+
+end
+
 /-- Every trivalent proposition is the conditional event of its truth on its definedness. -/
-theorem transplication_definedness_truth (p : W → Trivalent) :
-    (fun w ↦ transplication (ofProp (p w ≠ .undefined)) (ofProp (p w = .true))) = p := by
-  funext w; cases p w <;> rfl
+theorem condEvent_ne_undefined_eq_true (p : W → Trivalent) :
+    condEvent (p · ≠ .undefined) (p · = .true) = p := by
+  funext w; cases h : p w <;> simp [condEvent, h]
 
 /-- Two conditional events coincide exactly when they have the same condition and agree on it. -/
-theorem transplication_ofProp_eq_iff {A A' B B' : W → Prop} [DecidablePred A]
+theorem condEvent_eq_condEvent_iff {A A' B B' : W → Prop} [DecidablePred A]
     [DecidablePred A'] [DecidablePred B] [DecidablePred B'] :
-    (fun w ↦ transplication (ofProp (A w)) (ofProp (B w))) =
-        (fun w ↦ transplication (ofProp (A' w)) (ofProp (B' w))) ↔
+    condEvent A B = condEvent A' B' ↔
       {w | A w} = {w | A' w} ∧ {w | A w} ∩ {w | B w} = {w | A' w} ∩ {w | B' w} := by
   constructor
   · intro h
     have hgap := congrArg gapExt h
     have hpos := congrArg posExt h
-    simp only [Set.ext_iff, mem_gapExt, mem_posExt, transplication_eq_undefined_iff,
-      transplication_eq_true_iff, ne_eq, ofProp_eq_true_iff, ofProp_ne_undefined, or_false]
-      at hgap hpos
+    simp only [gapExt_condEvent, posExt_condEvent, Set.ext_iff, Set.mem_ofPred_eq] at hgap hpos
     exact ⟨Set.ext fun w ↦ not_iff_not.1 (hgap w), Set.ext fun w ↦ hpos w⟩
   · rintro ⟨hA, hAB⟩
     funext w
-    have h₁ := Set.ext_iff.1 hA w
-    have h₂ := Set.ext_iff.1 hAB w
-    simp only [Set.mem_ofPred_eq, Set.mem_inter_iff] at h₁ h₂
-    by_cases ha : A w
-    · have ha' := h₁.1 ha
-      simp only [ofProp, ha, ha', ite_true, transplication_true_left]
-      exact ofProp_congr ⟨fun hb ↦ (h₂.1 ⟨ha, hb⟩).2, fun hb ↦ (h₂.2 ⟨ha', hb⟩).2⟩
-    · have ha' : ¬ A' w := fun h ↦ ha (h₁.2 h)
-      simp only [ofProp, ha, ha', ite_false]; rfl
+    have h₁ : A w ↔ A' w := Set.ext_iff.1 hA w
+    have h₂ : A w ∧ B w ↔ A' w ∧ B' w := Set.ext_iff.1 hAB w
+    exact eq_of_eq_undefined_iff_of_eq_true_iff (by simp [h₁]) (by simp [h₂])
 
 end ConditionalEvent
 
