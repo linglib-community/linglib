@@ -1212,11 +1212,12 @@ theorem sktStem_mem_stems (l : SktLex) (σ : SktCell) : sktStem l σ ∈ (sktEnt
 -- §3.2
 theorem sktLinkage_isHeteroclite_iff {l : SktLex} :
     sktLinkage.IsHeteroclite SktStem.decl l ↔ ∃ σ τ, sktClass l σ ≠ sktClass l τ := by
-  simp [Linkage.IsHeteroclite, sktLinkage, sktClass]
+  simp [Linkage.isHeteroclite_iff, sktLinkage, sktClass]
 
 theorem not_isHeteroclite_of_stems {l : SktLex} {d : SktDecl}
     (h : ∀ z ∈ (sktEntry l).stems, z.decl = d) : ¬ sktLinkage.IsHeteroclite SktStem.decl l := by
-  rintro ⟨σ, σ', z, hz, z', hz', hne⟩
+  intro hh
+  obtain ⟨σ, σ', z, hz, z', hz', hne⟩ := Linkage.isHeteroclite_iff.1 hh
   rw [Finset.mem_singleton.mp hz, Finset.mem_singleton.mp hz'] at hne
   exact hne ((h _ (sktStem_mem_stems l σ)).trans (h _ (sktStem_mem_stems l σ')).symm)
 

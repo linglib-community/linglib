@@ -176,8 +176,7 @@ theorem coepisse_stemInvariant : coepisseLinkage.IsStemInvariant := by decide
 invariance. -/
 theorem coepisse_defective_not_suppletive :
     coepisseLinkage.IsDefective ∧ ¬ coepisseLinkage.IsSuppletive .coepisse :=
-  ⟨coepisse_defective, fun h ↦
-    coepisseLinkage.not_isInvariant_of_isSuppletive h (coepisse_stemInvariant _)⟩
+  ⟨coepisse_defective, (coepisse_stemInvariant _).not_isSuppletive⟩
 
 end Coepisse
 

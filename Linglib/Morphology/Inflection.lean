@@ -133,9 +133,8 @@ theorem IsCanonical.realize_disjoint (h : P.IsCanonical) (hP : P.IsUnambiguous) 
 suppletive across lexemes. -/
 theorem IsCanonical.not_isSuppletive (h : P.IsCanonical) :
     (∀ l, ¬ P.stem.IsSuppletive l) ∧ ∀ c, ¬ P.inflection.transpose.IsSuppletive c :=
-  ⟨fun l hs ↦ P.stem.not_isInvariant_of_isSuppletive hs (h.stem_isInvariant l),
-    fun c hs ↦ P.inflection.transpose.not_isInvariant_of_isSuppletive hs
-      (h.inflection_isInvariant c)⟩
+  ⟨fun l ↦ (h.stem_isInvariant l).not_isSuppletive,
+    fun c ↦ (h.inflection_isInvariant c).not_isSuppletive⟩
 
 end InflectionalParadigm
 

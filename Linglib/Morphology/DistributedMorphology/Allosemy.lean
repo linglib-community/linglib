@@ -321,7 +321,7 @@ def readingFromAllosemes : Verbalizer.Alloseme → Nominalizer.Alloseme → Opti
 An allosemic head is a List-3 object: a single morpheme whose
 interpretation is resolved in context by the shared exponence engine.
 `Realization.Interpreted` is exactly that carrier — an opaque index with
-a contextual `interp` map — with an empty List-2 form side, since
+a contextual realization `interp` by readings — with an empty List-2 form side, since
 allosemy is meaning-only. Contextual meaning variation, Benz's core
 claim that allosemy is allomorphy's LF analogue, is then literally
 `Realization.Interpreted.IsAllosemous`. -/
@@ -331,12 +331,13 @@ alloseme the Subset Principle picks. -/
 def toInterpreted {Sem : Type} (v : RuleSet (VocabularyItem Feature Sem)) :
     Morphology.Realization.Interpreted Unit (Neighborhood (Finset Feature)) Unit Sem where
   realize _ _ := ∅
-  interp := (toRealization v fun _ n ↦ n).realize
+  interp := toRealization v fun _ n ↦ n
 
 /-- The verbal categorizer is allosemous, eventive under an eventive complement and zero
 elsewhere. -/
 theorem Verbalizer.isAllosemous :
     (toInterpreted Verbalizer.vocabulary).IsAllosemous () :=
-  ⟨complement {.eventive}, ∅, .eventive, by decide, .zero, by decide, by decide⟩
+  Morphology.Realization.isSuppletive_of_mem (c := complement {.eventive}) (c' := ∅)
+    (f := .eventive) (f' := .zero) (by decide) (by decide) (by decide)
 
 end DistributedMorphology.Allosemy

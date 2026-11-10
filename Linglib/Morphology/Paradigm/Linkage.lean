@@ -153,7 +153,7 @@ def IsUnfaithful (ι : S → M) : Prop := ∃ l σ, ℓ.pm l σ ≠ ι σ
 def IsVirtual (zτ : Z × M) : Prop := ∀ l σ, zτ ∉ ℓ.corr l σ
 
 @[simp, push] theorem not_isTotal_iff : ¬ ℓ.IsTotal ↔ ℓ.IsDefective := by
-  simp [IsDefective, Realization.IsTotal, Finset.not_nonempty_iff_eq_empty]
+  simp [IsDefective, Realization.IsTotal, Realization.IsLicensed]
 
 @[simp, push] theorem not_isInjective_iff : ¬ ℓ.IsInjective ↔ ℓ.IsSyncretic := by
   simp [IsSyncretic, IsInjective]
@@ -171,61 +171,68 @@ theorem isInjective_of_injective_pm {ℓ : Linkage L Z S M}
 
 /-- A lexeme is invariant along `p` when the stems of all its cells have one image under `p`;
 along `id` this is `IsInvariant`. -/
-def IsInvariantAlong (p : Z → X) (l : L) : Prop :=
-  ∀ ⦃σ σ' : S⦄, ∀ z ∈ ℓ.realize l σ, ∀ z' ∈ ℓ.realize l σ', p z = p z'
+def IsInvariantAlong (p : Z → X) (l : L) : Prop := (p '' ℓ.exponents l).Subsingleton
 
 /-- A lexeme is heteroclite along a classification `cls` of stems ([stump-2006]) when two of
 its cells draw on stems of distinct classes; along `id` this is `IsSuppletive`. -/
-def IsHeteroclite (cls : Z → K) (l : L) : Prop :=
-  ∃ σ σ', ∃ z ∈ ℓ.realize l σ, ∃ z' ∈ ℓ.realize l σ', cls z ≠ cls z'
+def IsHeteroclite (cls : Z → K) (l : L) : Prop := (cls '' ℓ.exponents l).Nontrivial
 
 variable {ℓ} {p : Z → X} {cls : Z → K} {l : L}
 
-theorem isInvariantAlong_id_iff : ℓ.IsInvariantAlong id l ↔ ℓ.IsInvariant l := Iff.rfl
+theorem isInvariantAlong_iff : ℓ.IsInvariantAlong p l ↔
+    ∀ σ σ', ∀ z ∈ ℓ.realize l σ, ∀ z' ∈ ℓ.realize l σ', p z = p z' :=
+  ⟨fun h _ _ _ hz _ hz' ↦ h ⟨_, ⟨_, hz⟩, rfl⟩ ⟨_, ⟨_, hz'⟩, rfl⟩,
+    fun h ↦ by rintro _ ⟨z, ⟨σ, hz⟩, rfl⟩ _ ⟨z', ⟨σ', hz'⟩, rfl⟩; exact h σ σ' z hz z' hz'⟩
 
-theorem isHeteroclite_id_iff : ℓ.IsHeteroclite id l ↔ ℓ.IsSuppletive l := Iff.rfl
+theorem isHeteroclite_iff : ℓ.IsHeteroclite cls l ↔
+    ∃ σ σ', ∃ z ∈ ℓ.realize l σ, ∃ z' ∈ ℓ.realize l σ', cls z ≠ cls z' :=
+  ⟨by rintro ⟨_, ⟨z, ⟨σ, hz⟩, rfl⟩, _, ⟨z', ⟨σ', hz'⟩, rfl⟩, hne⟩; exact ⟨σ, σ', z, hz, z', hz', hne⟩,
+    fun ⟨σ, σ', z, hz, z', hz', hne⟩ ↦ ⟨_, ⟨z, ⟨σ, hz⟩, rfl⟩, _, ⟨z', ⟨σ', hz'⟩, rfl⟩, hne⟩⟩
+
+theorem isInvariantAlong_id_iff : ℓ.IsInvariantAlong id l ↔ ℓ.IsInvariant l := by
+  rw [IsInvariantAlong, Set.image_id, Realization.IsInvariant]
+
+theorem isHeteroclite_id_iff : ℓ.IsHeteroclite id l ↔ ℓ.IsSuppletive l := by
+  rw [IsHeteroclite, Set.image_id, Realization.IsSuppletive]
 
 @[simp, push] theorem not_isInvariantAlong_iff :
-    ¬ ℓ.IsInvariantAlong p l ↔ ℓ.IsHeteroclite p l := by
-  simp [IsInvariantAlong, IsHeteroclite]
+    ¬ ℓ.IsInvariantAlong p l ↔ ℓ.IsHeteroclite p l :=
+  Set.not_subsingleton_iff
 
 theorem IsInvariantAlong.comp (h : ℓ.IsInvariantAlong p l) (q : X → Y) :
-    ℓ.IsInvariantAlong (q ∘ p) l :=
-  fun _ _ z hz z' hz' ↦ congrArg q (h z hz z' hz')
+    ℓ.IsInvariantAlong (q ∘ p) l := by
+  rw [IsInvariantAlong, Set.image_comp]; exact h.image q
 
 theorem _root_.Morphology.Realization.IsInvariant.isInvariantAlong (h : ℓ.IsInvariant l)
     (p : Z → X) : ℓ.IsInvariantAlong p l :=
-  fun _ _ z hz z' hz' ↦ congrArg p (h z hz z' hz')
+  Set.Subsingleton.image h p
 
 /-- Heteroclisis entails suppletion, since stems of two classes are two stems. -/
 theorem IsHeteroclite.isSuppletive (h : ℓ.IsHeteroclite cls l) : ℓ.IsSuppletive l :=
-  let ⟨σ, σ', z, hz, z', hz', hne⟩ := h
-  ⟨σ, σ', z, hz, z', hz', ne_of_apply_ne cls hne⟩
+  Set.nontrivial_of_image cls _ h
 
 /-- When each pattern draws its stems from one class, a heteroclite lexeme's stems are not
 class-determined, so their alternation is suppletion in [stump-2016]'s sense. -/
 theorem IsHeteroclite.not_isClassDetermined {A : Set (S → Z)}
     (hA : ∀ p ∈ A, ∀ σ σ', cls (p σ) = cls (p σ')) (h : ℓ.IsHeteroclite cls l) :
     ¬ ℓ.IsClassDetermined A l := fun ⟨p, hp, hl⟩ ↦
-  let ⟨σ, σ', z, hz, z', hz', hne⟩ := h
+  let ⟨σ, σ', z, hz, z', hz', hne⟩ := isHeteroclite_iff.1 h
   hne (by rw [hl σ z hz, hl σ' z' hz']; exact hA p hp σ σ')
 
 /-! ### Decidability
 
-Each instance is `inferInstanceAs` on the definition's body, so that `decide` reduces in the
-kernel. The per-lexeme instances quantify over stem sets and need no `Fintype Z`. -/
+The per-lexeme instances quantify over cells and their finite sets of stems, so they need no
+`Fintype Z`. -/
 
 section Decidable
 
 variable (ℓ) [Fintype S]
 
 instance [DecidableEq X] (p : Z → X) (l : L) : Decidable (ℓ.IsInvariantAlong p l) :=
-  inferInstanceAs
-    (Decidable (∀ σ σ' : S, ∀ z ∈ ℓ.realize l σ, ∀ z' ∈ ℓ.realize l σ', p z = p z'))
+  decidable_of_iff _ isInvariantAlong_iff.symm
 
 instance [DecidableEq K] (cls : Z → K) (l : L) : Decidable (ℓ.IsHeteroclite cls l) :=
-  inferInstanceAs
-    (Decidable (∃ σ σ', ∃ z ∈ ℓ.realize l σ, ∃ z' ∈ ℓ.realize l σ', cls z ≠ cls z'))
+  decidable_of_iff _ isHeteroclite_iff.symm
 
 variable [Fintype L]
 
@@ -333,20 +340,21 @@ variable {ι f}
 
 @[simp] theorem ofFun_isInvariantAlong_iff :
     (ofFun ι f).IsInvariantAlong p l ↔ ∀ σ σ', p (f l σ) = p (f l σ') := by
-  simp [IsInvariantAlong]
+  simp [isInvariantAlong_iff]
 
 @[simp] theorem ofFun_isHeteroclite_iff :
     (ofFun ι f).IsHeteroclite cls l ↔ ∃ σ σ', cls (f l σ) ≠ cls (f l σ') := by
-  simp [IsHeteroclite]
+  simp [isHeteroclite_iff]
 
 /-- Under an injective identification, the linkage of a stem choice is canonical exactly when
 each lexeme's stem is independent of the property set. -/
 theorem ofFun_isCanonical_iff (hι : Function.Injective ι) :
-    (ofFun ι f).IsCanonical ι ↔ ∀ l σ σ', f l σ = f l σ' :=
-  ⟨fun h l ↦ ofFun_isInvariantAlong_iff.mp (h.stemInvariant l), fun h ↦
+    (ofFun ι f).IsCanonical ι ↔ ∀ l σ σ', f l σ = f l σ' := by
+  have key l : (ofFun ι f).IsInvariant l ↔ ∀ σ σ', f l σ = f l σ' := by
+    simp [Realization.isInvariant_iff]
+  exact ⟨fun h l ↦ (key l).1 (h.stemInvariant l), fun h ↦
     ⟨fun _ _ ↦ Finset.singleton_nonempty _, fun _ _ ↦ (Finset.card_singleton _).le,
-      fun l ↦ ofFun_isInvariantAlong_iff.mpr (h l), isInjective_of_injective_pm fun _ ↦ hι,
-      fun _ _ ↦ rfl⟩⟩
+      fun l ↦ (key l).2 (h l), isInjective_of_injective_pm fun _ ↦ hι, fun _ _ ↦ rfl⟩⟩
 
 end OfFun
 

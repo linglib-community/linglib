@@ -292,7 +292,7 @@ exponents. -/
 theorem toRealization_isSuppletive_iff : (toRealization items site).IsSuppletive r ↔
     ∃ c c' e e', subsetPrinciple items (site r c) = some e ∧
       subsetPrinciple items (site r c') = some e' ∧ e ≠ e' := by
-  simp [Morphology.Realization.IsSuppletive, Morphology.IsVariantIn]
+  simp [Morphology.Realization.isSuppletive_iff]
 
 end Realization
 
