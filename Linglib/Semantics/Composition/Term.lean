@@ -40,14 +40,12 @@ replacement denotes a value, as every term does under the total semantics, where
 
 The structure follows mathlib's `FirstOrder.Language.Term.realize`, defined once over any
 `L.Structure`: each semantics is an interpretation rather than its own evaluator, and `Rel.realize`
-relates two of them by induction on terms; the fundamental lemma of logical relations is its case
-in `Composition/LogicalRelation.lean`. Variables are named by the
+relates two of them by induction on terms. Variables are named by the
 trace indices, so a binder with index `n` translates to the abstraction over the variable `n`, and
 translation needs no fresh names. The typing `Γ : ℕ → Ty` is a parameter of the terms, so an
 assignment is a dependent function giving each index a value of its type; under
 `individualIndices` it is an ordinary assignment of individuals, and an assignment needs values
-only at the types the typing uses. Trees translate to terms in `Composition/Tree.lean`, and the
-partial denotation of a term is in `Composition/Partial.lean`.
+only at the types the typing uses. Trees translate to terms in `Composition/Tree.lean`.
 
 Under an effect, the body of an abstraction is a computation at each entity, and the abstract is
 the computation of a function that `Distributive` gives. Scope effects such as continuations do

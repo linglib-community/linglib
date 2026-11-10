@@ -34,8 +34,8 @@ it are a trace and a binder whose index has type $s$.
 The tree operations live in the namespace `PhraseStructure.Tree`, so that `t.interp lex g` works.
 `interp` is `interpWith` at `individualIndices`, as mathlib's `Formula.Realize` is
 `BoundedFormula.Realize` with no bound variables, since the typing cannot be inferred from an
-assignment of individuals. Both, and the partial engine's `interpPartial`, are `realize` at an
-interpretation, and their reduction lemmas are its, specialized.
+assignment of individuals. Both are `realize` at an interpretation, and their reduction lemmas
+are its, specialized.
 Translation is the only type-driven step and the only recursion on trees the semantics needs: the
 type of a tree is the type of its term, and the dependence of a denotation on the assignment and on
 the words is the term's (`freeVars_translate`, `translate_map`). Translation respects renaming and

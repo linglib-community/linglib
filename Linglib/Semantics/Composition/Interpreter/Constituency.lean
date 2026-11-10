@@ -14,6 +14,8 @@ node a plain node or, at a category that is an island, an island.
 ## Main definitions
 
 * `PhraseStructure.Tree.skeleton`: the bare structure of a tree.
+* `PhraseStructure.Tree.derivs`, `PhraseStructure.Tree.values`: the derivations of a tree that an
+  interpreter admits, and their values.
 
 ## References
 
@@ -41,5 +43,22 @@ def skeleton (island : C → Bool) : Tree C L → Option (Skeleton Node (L ⊕ �
     let s₂ ← skeleton island t₂
     pure (.binary (if island c then .island else .branch) s₁ s₂)
   | _ => none
+
+variable {T : Type} {G : Grammar T} {W D : T → Type}
+
+/-- The derivations of a tree that an interpreter admits, given the typed items a word or a
+trace may be. -/
+def derivs (I : Interpreter G Node) (lex : L ⊕ ℕ → List (Σ a, W a)) (t : Tree C L)
+    (island : C → Bool := fun _ ↦ false) : List (Σ a, Deriv G W a) :=
+  match t.skeleton island with
+  | some s => I.derivs lex s
+  | none => []
+
+/-- The values of the derivations of a tree, for a lexicon of typed items whose values `ρ`
+gives. -/
+def values (I : Interpreter G Node) (M : G.language.Structure D) (ρ : ∀ {a : T}, W a → D a)
+    (lex : L ⊕ ℕ → List (Σ a, W a)) (t : Tree C L) (island : C → Bool := fun _ ↦ false) :
+    List (Σ a, D a) :=
+  (t.derivs I lex island).map fun ⟨a, d⟩ ↦ ⟨a, d.realize M ρ⟩
 
 end PhraseStructure.Tree

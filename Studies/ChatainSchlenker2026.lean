@@ -228,8 +228,9 @@ def items {D : Type} : Word D ⊕ ℕ → List (Σ a, Item D a)
   | .inr n => [⟨_, .trace n⟩]
 
 /-- Assignments of days to indices. -/
-def assignments {D : Type} : Assignments (Atom.Dom D) (.base .g) (.base .e) :=
-  ⟨fun i n ↦ i n, fun i n v ↦ Function.update i n v⟩
+def assignments {D : Type} :
+    Assignments ((.base .g : Ty Atom).Dom (Atom.Dom D)) (Ty.Dom (Atom.Dom D)) (.base .e) :=
+  ⟨fun i n ↦ i n, fun i n v ↦ Function.update i n v, fun F ↦ F⟩
 
 variable {D W : Type}
 

@@ -18,13 +18,15 @@ and `Ty.combine` lists them all.
 * `Interpreter.Grammar.application`, `Interpreter.Grammar.predicateModification`,
   `Interpreter.Grammar.eventIdentification`: the grammars of functional application, predicate
   modification and event identification, each with its structure and the list of its rules.
+* `Interpreter.Grammar.length_binaryRules_application_sum_predicateModification_le_one`: at most
+  one rule of application and predicate modification applies to two types.
 * `Interpreter.Mode`: the basic modes closed under the meta-modes.
 * `Interpreter.Mode.eval`: the meaning of a mode, by the operations of the effects.
 * `Interpreter.Ty.combine`: every mode by which two types combine, the book's `combine`.
-* `Interpreter.Abstraction`, `Interpreter.Assignments`: abstraction over an index, and traces.
+* `Interpreter.Abstraction`, `Interpreter.Assignments`: abstraction over an index, and how
+  assignments give indices values and are modified.
 * `Interpreter.Node`, `Interpreter.effectDriven`: what the semantics reads off a node, and the
   rules each kind of node admits.
-* `Interpreter.envSensitive`: Heim and Kratzer's grammar as a selection of those rules.
 * `Interpreter.partialValued`: constituents as partial values, undefined where a daughter is.
 * `Interpreter.effectGrammar`: the grammar whose binary rules are the modes.
 
@@ -80,18 +82,18 @@ inductive PredicateModification : Ty B → Ty B → Ty B → Type
   | pm {a : Ty B} : PredicateModification (a ⇒ .t) (a ⇒ .t) (a ⇒ .t)
 
 /-- The meaning of application. -/
-def Application.eval (D : B → Type) :
+@[simp] def Application.eval (D : B → Type) :
     {l r u : Ty B} → Application l r u → l.Dom D → r.Dom D → u.Dom D
   | _, _, _, .fa, f, x => f x
   | _, _, _, .ba, x, f => f x
 
 /-- The meaning of predicate modification. -/
-def PredicateModification.eval (D : B → Type) :
+@[simp] def PredicateModification.eval (D : B → Type) :
     {l r u : Ty B} → PredicateModification l r u → l.Dom D → r.Dom D → u.Dom D
   | _, _, _, .pm, p, q => fun x ↦ p x ∧ q x
 
 /-- The grammar of functional application. -/
-def Grammar.application : Grammar (Ty B) := ⟨fun _ _ ↦ Empty, Application⟩
+@[reducible] def Grammar.application : Grammar (Ty B) := ⟨fun _ _ ↦ Empty, Application⟩
 
 instance (D : B → Type) : (Grammar.application (B := B)).language.Structure (Ty.Dom D) :=
   Grammar.structure nofun (Application.eval D)
@@ -122,7 +124,8 @@ instance [DecidableEq B] : (Grammar.application (B := B)).LocallyFinite where
   rfl
 
 /-- The grammar of predicate modification. -/
-def Grammar.predicateModification : Grammar (Ty B) := ⟨fun _ _ ↦ Empty, PredicateModification⟩
+@[reducible] def Grammar.predicateModification : Grammar (Ty B) :=
+  ⟨fun _ _ ↦ Empty, PredicateModification⟩
 
 instance (D : B → Type) :
     (Grammar.predicateModification (B := B)).language.Structure (Ty.Dom D) :=
@@ -137,6 +140,48 @@ instance [DecidableEq B] : (Grammar.predicateModification (B := B)).LocallyFinit
     | _ => []
   mem_unaryRules := nofun
   mem_binaryRules m := by cases m; simp
+
+@[simp] theorem Grammar.funMap_application_sum_predicateModification_inl {D : B → Type}
+    {l r u : Ty B} (m : Application l r u) (p : l.Dom D × r.Dom D) :
+    MSFirstOrder.Language.Structure.funMap
+      (L := (Grammar.application.sum .predicateModification).language) (D := Ty.Dom D)
+      (Grammar.Sym.binary
+        (Sum.inl (α := Application l r u) (β := PredicateModification l r u) m)) p =
+      Application.eval D m p.1 p.2 :=
+  rfl
+
+@[simp] theorem Grammar.funMap_application_sum_predicateModification_inr {D : B → Type}
+    {l r u : Ty B} (m : PredicateModification l r u) (p : l.Dom D × r.Dom D) :
+    MSFirstOrder.Language.Structure.funMap
+      (L := (Grammar.application.sum .predicateModification).language) (D := Ty.Dom D)
+      (Grammar.Sym.binary
+        (Sum.inr (α := Application l r u) (β := PredicateModification l r u) m)) p =
+      PredicateModification.eval D m p.1 p.2 :=
+  rfl
+
+theorem Ty.ne_fn_self (a b : Ty B) : a ≠ (a ⇒ b) := fun h ↦ by
+  have := congrArg Ty.size h
+  simp only [Ty.size] at this
+  omega
+
+theorem Ty.ne_fn_fn_self (a b c d : Ty B) (h : a = (c ⇒ d)) : c ≠ (a ⇒ b) := fun h' ↦ by
+  have := congrArg Ty.size h
+  have := congrArg Ty.size h'
+  simp only [Ty.size] at *
+  omega
+
+/-- At most one rule of application and predicate modification applies to two types: a type is
+not a function of itself, nor of a function of itself. -/
+theorem Grammar.length_binaryRules_application_sum_predicateModification_le_one [DecidableEq B]
+    (l r : Ty B) :
+    (Grammar.LocallyFinite.binaryRules (G := Grammar.application.sum .predicateModification)
+      l r).length ≤ 1 := by
+  simp only [Grammar.LocallyFinite.binaryRules, List.length_append, List.length_map]
+  rcases l with _ | _ | ⟨a, b⟩ | _ <;> rcases r with _ | _ | ⟨c, d⟩ | _ <;>
+    (try rcases b with _ | _ | _ | _) <;> simp <;> split_ifs <;> (try simp) <;>
+    first
+    | exact Ty.ne_fn_fn_self _ _ _ _ (by assumption) (by assumption)
+    | (obtain ⟨rfl, rfl⟩ := ‹_ ∧ _›; exact Ty.ne_fn_self _ _ (by assumption))
 
 /-- Event identification, for individuals of type `x` and events of type `s`: a relation of
 individuals to events and a predicate of events are conjoined at the event. -/
@@ -153,7 +198,7 @@ def EventIdentification.eval (D : B → Type) {x s : Ty B} :
   | _, _, _, .right, g, f => fun y e ↦ f y e ∧ g e
 
 /-- The grammar of event identification. -/
-def Grammar.eventIdentification (x s : Ty B) : Grammar (Ty B) :=
+@[reducible] def Grammar.eventIdentification (x s : Ty B) : Grammar (Ty B) :=
   ⟨fun _ _ ↦ Empty, EventIdentification x s⟩
 
 instance (x s : Ty B) (D : B → Type) :
@@ -340,22 +385,27 @@ inductive Abstraction (g x : Ty B) : Ty B → Ty B → Type
   /-- Abstraction over the index `n`. -/
   | index (n : ℕ) (b : Ty B) : Abstraction g x (.comp (.R g) b) (.comp (.R g) (x ⇒ b))
 
-/-- How assignments of type `g` hold values of type `x`. -/
-structure Assignments (D : B → Type) (g x : Ty B) where
+/-- Assignments `A` of values in the domains `D` to indices, of which the values of type `x` are
+bound: the value an assignment gives an index, an assignment modified at an index, and the value
+of function type that a function of the bound values is. -/
+structure Assignments (A : Type) (D : Ty B → Type) (x : Ty B) where
   /-- The value an assignment gives an index. -/
-  get : g.Dom D → ℕ → x.Dom D
-  /-- An assignment modified at an index. -/
-  set : g.Dom D → ℕ → x.Dom D → g.Dom D
+  get : A → ℕ → D x
+  /-- An assignment modified to give an index a value. -/
+  set : A → ℕ → D x → A
+  /-- The value of function type that a function of the bound values is. -/
+  lam : {b : Ty B} → (D x → D b) → D (x ⇒ b)
 
 variable {D : B → Type} {g x : Ty B}
 
-/-- The meaning of abstraction: the body at the assignment modified at the index. -/
-def Abstraction.eval (A : Assignments D g x) : {a b : Ty B} → Abstraction g x a b →
-    a.Dom D → b.Dom D
-  | _, _, .index n _, body => fun i v ↦ body (A.set i n v)
+/-- The meaning of abstraction: the function of the value the assignment is modified to give
+the index. -/
+def Abstraction.eval (A : Assignments (g.Dom D) (Ty.Dom D) x) : {a b : Ty B} →
+    Abstraction g x a b → a.Dom D → b.Dom D
+  | _, _, .index n _, body => fun i ↦ A.lam fun v ↦ body (A.set i n v)
 
 /-- A trace of index `n` reads the value the assignment gives it. -/
-def Assignments.trace (A : Assignments D g x) (n : ℕ) : Σ a : Ty B, a.Dom D :=
+def Assignments.trace (A : Assignments (g.Dom D) (Ty.Dom D) x) (n : ℕ) : Σ a : Ty B, a.Dom D :=
   ⟨.comp (.R g) x, fun i ↦ A.get i n⟩
 
 /-- A type is evaluated when no continuation in it is still to be closed. -/
@@ -405,20 +455,6 @@ def effectDriven [DecidableEq B] (G : Grammar (Ty B)) [G.LocallyFinite] (g x : T
       (Ty.combine (Grammar.LocallyFinite.binaryRules (G := G)) l r).filter (·.1.Evaluated)
     | _, l, r => Ty.combine (Grammar.LocallyFinite.binaryRules (G := G)) l r
 
-/-- The environment-sensitive interpreter of Heim and Kratzer, the book's Figure 5: every
-constituent reads an assignment, sisters combine by a rule of the grammar on their results at
-one assignment, and an index abstracts. -/
-def envSensitive [DecidableEq B] (G : Grammar (Ty B)) [G.LocallyFinite] (g x : Ty B) :
-    Interpreter (effectGrammar G.Binary (Abstraction g x)) Node where
-  unary := (effectDriven G g x).unary
-  binary
-    | _, .comp (.R i) l, .comp (.R j) r =>
-      if h : i = g ∧ j = g then
-        (Grammar.LocallyFinite.binaryRules (G := G) l r).map fun p ↦ ⟨.comp (.R g) p.1, by
-          obtain ⟨rfl, rfl⟩ := h; exact .ap trivial (.basic p.2)⟩
-      else []
-    | _, _, _ => []
-
 /-- The partial-valued interpreter: every constituent is a partial value, and sisters combine by
 a rule of the grammar on their values where both are defined, a partial result of the rule
 flattened. A function applied to an undefined argument is undefined. -/
@@ -453,9 +489,5 @@ theorem Mode.eval_join_ap_basic (p : G.Binary l r (.comp .M u)) (x : Part (l.Dom
   simp [Mode.eval, Eff.join, Eff.seq, Eff.map, Part.bind_assoc, Part.bind_map]
 
 end PartialValued
-
-/-- A word that reads no assignment, as a constant reader. -/
-def Assignments.const (_ : Assignments D g x) {a : Ty B} (m : a.Dom D) : Σ a : Ty B, a.Dom D :=
-  ⟨.comp (.R g) a, fun _ ↦ m⟩
 
 end Interpreter

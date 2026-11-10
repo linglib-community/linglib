@@ -1,0 +1,186 @@
+module
+
+public import Linglib.Semantics.Composition.Interpreter.Mode
+
+/-!
+# Partial functions
+
+Heim and Kratzer let a function be undefined at some of its arguments, as the definite article is
+at a predicate not true of exactly one individual, and from there on every function type is the
+type of partial functions. This is the call-by-value translation of types at the effect of
+partiality: a function returns a partial value, and a constituent has one. Functional
+application is then [Structured App followed by Join](##Interpreter.Application.evalCbv_fa), and
+predicate modification is defined where both predicates are. A total value has a partial value
+that is it, and [application](##Interpreter.Application.partRel_evalCbv) and [predicate
+modification](##Interpreter.PredicateModification.partRel_evalCbv) keep the two related, so a
+constituent with no partial word in it never lacks a value.
+
+## Main definitions
+
+* `Interpreter.Ty.cbv`: the type whose functions are partial.
+* `Interpreter.Application.evalCbv`, `Interpreter.PredicateModification.evalCbv`: application and
+  predicate modification on partial values of partial functions.
+* `Interpreter.Ty.PDom`: the partial values of a type whose functions are partial, with the
+  structures of application and predicate modification on them.
+* `Interpreter.Ty.CbvRel`, `Interpreter.Ty.PartRel`: a total value and the value, or partial
+  value, that is it.
+## References
+
+* [heim-kratzer-1998]
+* [moggi-1991]
+-/
+
+@[expose] public section
+
+namespace Interpreter
+
+variable {B : Type} {D : B → Type}
+
+namespace Ty
+
+/-- The call-by-value translation of a type at partiality: every function is a partial
+function. -/
+@[reducible] def cbv : Ty B → Ty B
+  | .fn a b => .fn a.cbv (.comp .M b.cbv)
+  | .t => .t
+  | .base b => .base b
+  | .comp f a => .comp f a
+
+@[simp] theorem cbv_fn (a b : Ty B) : (a ⇒ b).cbv = (a.cbv ⇒ .comp .M b.cbv) := rfl
+
+@[simp] theorem cbv_t : (.t : Ty B).cbv = .t := rfl
+
+@[simp] theorem cbv_base (b : B) : (.base b : Ty B).cbv = .base b := rfl
+
+/-- A total value and the value of the translated type that is it: a function and a partial
+function defined at every total argument, with the value that is the function's. -/
+def CbvRel : (a : Ty B) → a.Dom D → a.cbv.Dom D → Prop
+  | .fn a b, f, f' => ∀ x x', CbvRel a x x' → ∃ y, f' x' = .some y ∧ CbvRel b (f x) y
+  | .t, p, p' => p = p'
+  | .base _, x, x' => x = x'
+  | .comp _ _, x, x' => x = x'
+
+/-- A total value and the partial value that is it: defined, and it. -/
+def PartRel (a : Ty B) (x : a.Dom D) (x' : Part (a.cbv.Dom D)) : Prop :=
+  ∃ y, x' = .some y ∧ CbvRel a x y
+
+theorem PartRel.dom {a : Ty B} {x : a.Dom D} {x' : Part (a.cbv.Dom D)} (h : PartRel a x x') :
+    x'.Dom := by
+  obtain ⟨y, rfl, -⟩ := h
+  trivial
+
+theorem cbvRel_fn_iff {a b : Ty B} {f : (a ⇒ b).Dom D} {f' : (a ⇒ b).cbv.Dom D} :
+    CbvRel (a ⇒ b) f f' ↔ ∀ x x', CbvRel a x x' → PartRel b (f x) (f' x') :=
+  Iff.rfl
+
+@[simp] theorem cbvRel_t {p p' : Prop} : CbvRel (D := D) .t p p' ↔ p = p' := Iff.rfl
+
+@[simp] theorem cbvRel_base {b : B} {x x' : D b} : CbvRel (D := D) (.base b) x x' ↔ x = x' :=
+  Iff.rfl
+
+end Ty
+
+/-- Application of a partial value that is a partial function to a partial value: defined where
+both are and the function is at the argument. -/
+@[simp] def Application.evalCbv (D : B → Type) : {l r u : Ty B} → Application l r u →
+    Part (l.cbv.Dom D) → Part (r.cbv.Dom D) → Part (u.cbv.Dom D)
+  | _, _, _, .fa, f, x => f.bind fun g ↦ x.bind g
+  | _, _, _, .ba, x, f => f.bind fun g ↦ x.bind g
+
+/-- Predicate modification of two partial values that are partial predicates: defined where both
+are, a predicate defined at what both are defined at. -/
+@[simp] def PredicateModification.evalCbv (D : B → Type) : {l r u : Ty B} →
+    PredicateModification l r u → Part (l.cbv.Dom D) → Part (r.cbv.Dom D) → Part (u.cbv.Dom D)
+  | _, _, _, .pm, p, q => p.bind fun P ↦ q.map fun Q x ↦
+      (P x).bind fun u ↦ (Q x).map fun v ↦ u ∧ v
+
+/-- Application of a partial function is Structured App followed by Join. -/
+theorem Application.evalCbv_fa {a b : Ty B} (f : Part ((a ⇒ b).cbv.Dom D))
+    (x : Part (a.cbv.Dom D)) :
+    Application.evalCbv D .fa f x =
+      (.join trivial (.ap trivial (.basic .fa)) :
+        Mode (Grammar.application (B := B)).Binary (.comp .M (a.cbv ⇒ .comp .M b.cbv))
+          (.comp .M a.cbv) (.comp .M b.cbv)).eval D f x := by
+  simp [Application.evalCbv, Mode.eval, Eff.join, Eff.seq, Eff.map, Application.eval,
+    MSFirstOrder.Language.Structure.funMap, Part.bind_assoc, Part.bind_map]
+
+/-- Application takes total values and the partial values that are them to a total value and the
+partial value that is it. -/
+theorem Application.partRel_evalCbv : ∀ {l r u : Ty B} (m : Application l r u) {x : l.Dom D}
+    {x' : Part (l.cbv.Dom D)} {y : r.Dom D} {y' : Part (r.cbv.Dom D)},
+    Ty.PartRel l x x' → Ty.PartRel r y y' →
+      Ty.PartRel u (Application.eval D m x y) (Application.evalCbv D m x' y')
+  | _, _, _, .fa, _, _, _, _, ⟨g, hg, hgr⟩, ⟨y, hy, hyr⟩ => by
+    obtain ⟨z, hz, hzr⟩ := hgr _ _ hyr
+    refine ⟨z, ?_, hzr⟩
+    subst hg hy
+    exact (Part.bind_some _ _).trans ((Part.bind_some _ _).trans hz)
+  | _, _, _, .ba, _, _, _, _, ⟨y, hy, hyr⟩, ⟨g, hg, hgr⟩ => by
+    obtain ⟨z, hz, hzr⟩ := hgr _ _ hyr
+    refine ⟨z, ?_, hzr⟩
+    subst hg hy
+    exact (Part.bind_some _ _).trans ((Part.bind_some _ _).trans hz)
+
+/-- Predicate modification takes total predicates and the partial values that are them to a
+total predicate and the partial value that is it. -/
+theorem PredicateModification.partRel_evalCbv : ∀ {l r u : Ty B}
+    (m : PredicateModification l r u) {x : l.Dom D} {x' : Part (l.cbv.Dom D)} {y : r.Dom D}
+    {y' : Part (r.cbv.Dom D)}, Ty.PartRel l x x' → Ty.PartRel r y y' →
+      Ty.PartRel u (PredicateModification.eval D m x y) (PredicateModification.evalCbv D m x' y')
+  | _, _, _, .pm, _, _, _, _, ⟨P, hP, hPr⟩, ⟨Q, hQ, hQr⟩ => by
+    subst hP hQ
+    refine ⟨fun x ↦ (P x).bind fun u ↦ (Q x).map fun v ↦ u ∧ v,
+      by rw [PredicateModification.evalCbv, Part.bind_some, Part.map_some], fun x x' hx ↦ ?_⟩
+    obtain ⟨u, hu, hur⟩ := hPr _ _ hx
+    obtain ⟨v, hv, hvr⟩ := hQr _ _ hx
+    refine ⟨u ∧ v, ?_, ?_⟩
+    · show ((P x').bind fun u ↦ (Q x').map fun v ↦ u ∧ v) = _
+      rw [hu, Part.bind_some, hv]
+      exact Part.map_some _ _
+    · cases hur
+      cases hvr
+      rfl
+
+/-- The partial values of a type whose functions are partial. -/
+abbrev Ty.PDom (D : B → Type) (a : Ty B) : Type := Part (a.cbv.Dom D)
+
+instance (D : B → Type) : (Grammar.application (B := B)).language.Structure (Ty.PDom D) :=
+  Grammar.structure nofun (Application.evalCbv D)
+
+instance (D : B → Type) :
+    (Grammar.predicateModification (B := B)).language.Structure (Ty.PDom D) :=
+  Grammar.structure nofun (PredicateModification.evalCbv D)
+
+@[simp] theorem Grammar.funMap_application_sum_predicateModification_inl_cbv {l r u : Ty B}
+    (m : Application l r u) (p : Ty.PDom D l × Ty.PDom D r) :
+    MSFirstOrder.Language.Structure.funMap
+      (L := (Grammar.application.sum .predicateModification).language) (D := Ty.PDom D)
+      (Grammar.Sym.binary
+        (Sum.inl (α := Application l r u) (β := PredicateModification l r u) m)) p =
+      Application.evalCbv D m p.1 p.2 :=
+  rfl
+
+@[simp] theorem Grammar.funMap_application_sum_predicateModification_inr_cbv {l r u : Ty B}
+    (m : PredicateModification l r u) (p : Ty.PDom D l × Ty.PDom D r) :
+    MSFirstOrder.Language.Structure.funMap
+      (L := (Grammar.application.sum .predicateModification).language) (D := Ty.PDom D)
+      (Grammar.Sym.binary
+        (Sum.inr (α := Application l r u) (β := PredicateModification l r u) m)) p =
+      PredicateModification.evalCbv D m p.1 p.2 :=
+  rfl
+
+/-- Application and predicate modification on total values and on partial values of partial
+functions are logically related: a constituent of words with total values has the partial value
+that is its total one. -/
+theorem Grammar.isLogicalRel_partRel :
+    (inferInstance : (Grammar.application.sum .predicateModification).language.Structure
+      (Ty.Dom D)).IsLogicalRel
+      (inferInstance : (Grammar.application.sum .predicateModification).language.Structure
+        (Ty.PDom D)) Ty.PartRel where
+  funMap
+    | .unary (.inl s) => nomatch s
+    | .unary (.inr s) => nomatch s
+    | .binary (.inl m) => fun _ _ h ↦ m.partRel_evalCbv h.1 h.2
+    | .binary (.inr m) => fun _ _ h ↦ m.partRel_evalCbv h.1 h.2
+
+end Interpreter
