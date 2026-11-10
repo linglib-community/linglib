@@ -101,16 +101,6 @@ end ManySorted.Language
 
 namespace Interpreter
 
-/-- A bare structure over node labels `N` and leaves `L`: what a type-driven interpreter asks of
-the syntax. -/
-inductive Skeleton (N : Type v) (L : Type w) : Type (max v w)
-  /-- A leaf. -/
-  | leaf (x : L) : Skeleton N L
-  /-- A unary node. -/
-  | unary (n : N) (s : Skeleton N L) : Skeleton N L
-  /-- A binary node. -/
-  | binary (n : N) (s₁ s₂ : Skeleton N L) : Skeleton N L
-
 /-- What the semantics reads off a node of the syntax: a plain branching node, an island, or the
 index a moved phrase leaves. -/
 inductive Node where
@@ -150,78 +140,68 @@ def typeDriven (L : Language.{u, v} T) [L.LocallyFinite] : Interpreter L N where
     (m : Σ u, L.Binary l r u) : m ∈ (typeDriven L : Interpreter L N).binary n l r :=
   LocallyFinite.mem_symbols m.2
 
-/-- The derivations over a bare structure that an interpreter admits, given the typed items each
-word may be. -/
-def derivs (I : Interpreter L N) (lex : Lx → List (Σ a, W a)) :
-    Skeleton N Lx → List (Σ a, Deriv L W a)
-  | .leaf x => (lex x).map fun ⟨a, w⟩ ↦ ⟨a, .leaf w⟩
-  | .unary n s => (I.derivs lex s).flatMap fun ⟨a, d⟩ ↦
-      (I.unary n a).map fun ⟨b, r⟩ ↦ ⟨b, .unary r d⟩
-  | .binary n s₁ s₂ => (I.derivs lex s₁).flatMap fun ⟨a, d₁⟩ ↦
-      (I.derivs lex s₂).flatMap fun ⟨b, d₂⟩ ↦
-        (I.binary n a b).map fun ⟨c, m⟩ ↦ ⟨c, .binary m d₁ d₂⟩
+/-- The values of the unary rules a node labelled `n` admits, at the values of its daughter. -/
+def unaryValues (I : Interpreter L N) (M : L.Structure D) (n : N) (X : List (Σ a, D a)) :
+    List (Σ a, D a) :=
+  X.flatMap fun ⟨a, x⟩ ↦ (I.unary n a).map fun ⟨b, r⟩ ↦ ⟨b, M.funMap r x⟩
 
-/-- Where a node admits at most one rule for given daughters and a word is at most one item, a
-bare structure has at most one derivation. -/
-theorem length_derivs_le_one {I : Interpreter L N} {lex : Lx → List (Σ a, W a)}
-    (hu : ∀ n a, (I.unary n a).length ≤ 1) (hb : ∀ n l r, (I.binary n l r).length ≤ 1)
-    (hl : ∀ x, (lex x).length ≤ 1) : ∀ s : Skeleton N Lx, (I.derivs lex s).length ≤ 1
-  | .leaf x => by simpa [derivs] using hl x
-  | .unary n s => by
-    have ih := length_derivs_le_one hu hb hl s
-    match h : I.derivs lex s, ih with
-    | [], _ => simp [derivs, h]
-    | [⟨a, d⟩], _ => simpa [derivs, h] using hu n a
-  | .binary n s₁ s₂ => by
-    have ih₁ := length_derivs_le_one hu hb hl s₁
-    have ih₂ := length_derivs_le_one hu hb hl s₂
-    match h₁ : I.derivs lex s₁, h₂ : I.derivs lex s₂, ih₁, ih₂ with
-    | [], _, _, _ => simp [derivs, h₁]
-    | [_], [], _, _ => simp [derivs, h₁, h₂]
-    | [⟨a, d₁⟩], [⟨b, d₂⟩], _, _ => simpa [derivs, h₁, h₂] using hb n a b
-
-/-- The values of the derivations over a bare structure, for a lexicon of typed items whose
-values `ρ` gives. The derivations are found from the types alone. -/
-def values (I : Interpreter L N) (M : L.Structure D) (ρ : ∀ {a : T}, W a → D a)
-    (lex : Lx → List (Σ a, W a)) (s : Skeleton N Lx) : List (Σ a, D a) :=
-  (I.derivs lex s).map fun ⟨a, d⟩ ↦ ⟨a, d.realize M ρ⟩
-
-/-- The values of a leaf are the values of the items the word may be. -/
-theorem values_leaf (I : Interpreter L N) (M : L.Structure D) (ρ : ∀ {a : T}, W a → D a)
-    (lex : Lx → List (Σ a, W a)) (x : Lx) :
-    I.values M ρ lex (.leaf x) = (lex x).map fun p ↦ ⟨p.1, ρ p.2⟩ := by
-  simp [values, derivs, Function.comp_def]
-
-/-- The values of a unary node are those of the rules it admits at the values of its
-daughter. -/
-theorem values_unary (I : Interpreter L N) (M : L.Structure D) (ρ : ∀ {a : T}, W a → D a)
-    (lex : Lx → List (Σ a, W a)) (n : N) (s : Skeleton N Lx) :
-    I.values M ρ lex (.unary n s) = (I.values M ρ lex s).flatMap fun d ↦
-      (I.unary n d.1).map fun r ↦ ⟨r.1, M.funMap r.2 d.2⟩ := by
-  simp [values, derivs, List.map_flatMap, List.flatMap_map, Function.comp_def]
-
-/-- The values of a binary node are those of the rules it admits at the values of its
+/-- The values of the binary rules a node labelled `n` admits, at the values of its
 daughters. -/
-theorem values_binary (I : Interpreter L N) (M : L.Structure D) (ρ : ∀ {a : T}, W a → D a)
-    (lex : Lx → List (Σ a, W a)) (n : N) (s₁ s₂ : Skeleton N Lx) :
-    I.values M ρ lex (.binary n s₁ s₂) = (I.values M ρ lex s₁).flatMap fun d₁ ↦
-      (I.values M ρ lex s₂).flatMap fun d₂ ↦
-        (I.binary n d₁.1 d₂.1).map fun m ↦ ⟨m.1, M.funMap m.2 (d₁.2, d₂.2)⟩ := by
-  simp [values, derivs, List.map_flatMap, List.flatMap_map, Function.comp_def]
+def binaryValues (I : Interpreter L N) (M : L.Structure D) (n : N) (X Y : List (Σ a, D a)) :
+    List (Σ a, D a) :=
+  X.flatMap fun ⟨a, x⟩ ↦ Y.flatMap fun ⟨b, y⟩ ↦
+    (I.binary n a b).map fun ⟨c, m⟩ ↦ ⟨c, M.funMap m (x, y)⟩
+
+variable {I : Interpreter L N} {M : L.Structure D} {n : N} {X Y : List (Σ a, D a)}
+  {d : Σ a, D a}
+
+/-- A value of a unary node is the value of a rule the node admits, at a value of its
+daughter. -/
+theorem mem_unaryValues :
+    d ∈ I.unaryValues M n X ↔ ∃ d₁ ∈ X, ∃ r ∈ I.unary n d₁.1, d = ⟨r.1, M.funMap r.2 d₁.2⟩ := by
+  simp only [unaryValues, List.mem_flatMap, List.mem_map, eq_comm]
 
 /-- A value of a binary node is the value of a rule the node admits, at values of its
 daughters. -/
-theorem mem_values_binary {I : Interpreter L N} {M : L.Structure D}
-    {ρ : ∀ {a : T}, W a → D a} {lex : Lx → List (Σ a, W a)} {n : N} {s₁ s₂ : Skeleton N Lx}
-    {d : Σ a, D a} :
-    d ∈ I.values M ρ lex (.binary n s₁ s₂) ↔
-      ∃ d₁ ∈ I.values M ρ lex s₁, ∃ d₂ ∈ I.values M ρ lex s₂,
-      ∃ m ∈ I.binary n d₁.1 d₂.1, d = ⟨m.1, M.funMap m.2 (d₁.2, d₂.2)⟩ := by
-  simp only [values, derivs, List.mem_map, List.mem_flatMap]
-  constructor
-  · rintro ⟨_, ⟨⟨a, e₁⟩, h₁, ⟨b, e₂⟩, h₂, ⟨u, m⟩, hm, rfl⟩, rfl⟩
-    exact ⟨_, ⟨⟨a, e₁⟩, h₁, rfl⟩, _, ⟨⟨b, e₂⟩, h₂, rfl⟩, ⟨u, m⟩, hm, rfl⟩
-  · rintro ⟨_, ⟨⟨a, e₁⟩, h₁, rfl⟩, _, ⟨⟨b, e₂⟩, h₂, rfl⟩, ⟨u, m⟩, hm, rfl⟩
-    exact ⟨_, ⟨⟨a, e₁⟩, h₁, ⟨b, e₂⟩, h₂, ⟨u, m⟩, hm, rfl⟩, rfl⟩
+theorem mem_binaryValues :
+    d ∈ I.binaryValues M n X Y ↔ ∃ d₁ ∈ X, ∃ d₂ ∈ Y, ∃ m ∈ I.binary n d₁.1 d₂.1,
+      d = ⟨m.1, M.funMap m.2 (d₁.2, d₂.2)⟩ := by
+  simp only [binaryValues, List.mem_flatMap, List.mem_map, eq_comm]
+
+/-- Where a node admits at most one unary rule for a daughter, a daughter with at most one value
+gives it at most one. -/
+theorem length_unaryValues_le_one (hu : ∀ a, (I.unary n a).length ≤ 1) (hX : X.length ≤ 1) :
+    (I.unaryValues M n X).length ≤ 1 := by
+  match X, hX with
+  | [], _ => simp [unaryValues]
+  | [⟨a, x⟩], _ => simpa [unaryValues] using hu a
+
+/-- Where a node admits at most one binary rule for given daughters, daughters with at most one
+value each give it at most one. -/
+theorem length_binaryValues_le_one (hb : ∀ a b, (I.binary n a b).length ≤ 1)
+    (hX : X.length ≤ 1) (hY : Y.length ≤ 1) : (I.binaryValues M n X Y).length ≤ 1 := by
+  match X, Y, hX, hY with
+  | [], _, _, _ => simp [binaryValues]
+  | [_], [], _, _ => simp [binaryValues]
+  | [⟨a, x⟩], [⟨b, y⟩], _, _ => simpa [binaryValues] using hb a b
+
+variable {D' : T → Type x} {M' : L.Structure D'} (h : ∀ a, D a → D' a)
+
+/-- A map of domains that commutes with the unary rules commutes with the values of a unary
+node. -/
+theorem map_unaryValues
+    (hh : ∀ {a b : T} (r : L.Unary a b) (x : D a), h b (M.funMap r x) = M'.funMap r (h a x)) :
+    (I.unaryValues M n X).map (fun d ↦ ⟨d.1, h d.1 d.2⟩) =
+      I.unaryValues M' n (X.map fun d ↦ ⟨d.1, h d.1 d.2⟩) := by
+  simp [unaryValues, List.map_flatMap, List.flatMap_map, Function.comp_def, hh]
+
+/-- A map of domains that commutes with the binary rules commutes with the values of a binary
+node. -/
+theorem map_binaryValues
+    (hh : ∀ {a b c : T} (m : L.Binary a b c) (x : D a) (y : D b),
+      h c (M.funMap m (x, y)) = M'.funMap m (h a x, h b y)) :
+    (I.binaryValues M n X Y).map (fun d ↦ ⟨d.1, h d.1 d.2⟩) =
+      I.binaryValues M' n (X.map fun d ↦ ⟨d.1, h d.1 d.2⟩) (Y.map fun d ↦ ⟨d.1, h d.1 d.2⟩) := by
+  simp [binaryValues, List.map_flatMap, List.flatMap_map, Function.comp_def, hh]
 
 end Interpreter
