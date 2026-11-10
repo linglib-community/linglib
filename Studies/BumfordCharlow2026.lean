@@ -47,19 +47,13 @@ The modes act on Lean's type constructors; an adjunction is mathlib's `Adjunctio
 corresponding functors `ofTypeFunctor Ω ⊣ ofTypeFunctor Γ`, so the unit, co-unit and induced
 monad are mathlib's. The type-driven grammar is the library's `Interpreter.Mode` over application
 and predicate modification. The book's `combine` is `Interpreter.Ty.combineWith` with Join and
-Lower applied once to each result, checked here against the outputs the book prints. The base
+Lower applied once to each result, checked here against the outputs the book prints. The
+library's `Interpreter.Ty.combine` stacks them, and the two [differ at a type with three layers
+of one effect](##BumfordCharlow2026.combine_join_twice), which no entry of the book has. The base
 sort is `e`.
 
 The Element is forthcoming; equation, section and appendix locators are to the arXiv version of
 April 2025.
-
-## Errata
-
-* The book says its algorithm finds every interpretation a sentence has in the theory. It
-  applies Join and Lower once to each way of combining two daughters, so [a mode that joins twice
-  is not found](##BumfordCharlow2026.combine_join_twice): a function into three layers of
-  indeterminacy applies to its argument to give three layers and, joined once, two, but not one.
-  The library's `Interpreter.Ty.combine` stacks Join and Lower and finds every mode.
 
 ## TODO
 
@@ -506,8 +500,8 @@ theorem combine_lower : combine (T ⇒ T) (C T) = [(.mapR FA, C T), (.lower (.ma
 example : Mode (baseGrammar Unit).Binary (e ⇒ S (S (S T))) e (S T) :=
   .join trivial (.join trivial (.basic (.inl .fa)))
 
-/-- `combine` does not find it: it joins the result of application once and stops,
-so no mode it lists gives one layer. -/
+/-- The book's `combine` applies Join once to the result of application, and lists the modes that
+give three layers and two. -/
 theorem combine_join_twice :
     combine (e ⇒ S (S (S T))) e = [(FA, S (S (S T))), (.join FA, S (S T))] := by decide
 
