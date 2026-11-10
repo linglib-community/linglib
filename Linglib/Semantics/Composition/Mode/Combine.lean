@@ -29,13 +29,15 @@ stacks them, and the study of their book runs it with that step.
 
 ## TODO
 
-The meta-modes stand in for a grammar in which the unit, map, join and eject of each effect
-apply freely as silent operators. That every meaning such a grammar gives two daughters is the
-meaning of a mode is neither stated nor proved here.
+The meta-modes replace a grammar in which the map of an effect, a lift and the modes of
+combination themselves are silent items of the object language, placed in the tree as Jacobson's
+combinators are. Whether every meaning such a grammar gives a constituent is the meaning of a
+mode over the constituent without the silent items is neither stated nor proved here.
 
 ## References
 
 * [bumford-charlow-2026]
+* [jacobson-1999]
 -/
 
 @[expose] public section
