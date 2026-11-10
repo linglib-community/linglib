@@ -111,6 +111,30 @@ variable {U : S → S → Type v} {B : S → S → S → Type v}
     (Structure.mk₂ (U := U) (B := B) (D := D) unary binary).funMap
       (σ := .prod (.of a) (.of b)) (t := c) f p = binary f p.1 p.2 := rfl
 
+/-! ### Replacing the binary symbols -/
+
+/-- The language whose symbols of two arguments are those of a family, and whose other symbols
+are those of `L`. -/
+@[reducible] def withBinary (L : Language.{u, v} S) (B : S → S → S → Type v) :
+    Language.{u, v} S where
+  Functions
+    | .prod (.of a) (.of b), c => B a b c
+    | σ, c => L.Functions σ c
+
+/-- A structure for a language with its binary symbols replaced, from a structure for the
+language and a function for each new symbol. -/
+@[instance_reducible] def Structure.withBinary {B : S → S → S → Type v} (M : L.Structure D)
+    (binary : ∀ {a b c : S}, B a b c → D a → D b → D c) : (L.withBinary B).Structure D where
+  funMap {σ _} f x :=
+    match σ, f, x with
+    | .prod (.of _) (.of _), f, x => binary f x.1 x.2
+    | .nil, f, x => M.funMap f x
+    | .of _, f, x => M.funMap f x
+    | .prod .nil _, f, x => M.funMap f x
+    | .prod (.prod _ _) _, f, x => M.funMap f x
+    | .prod (.of _) .nil, f, x => M.funMap f x
+    | .prod (.of _) (.prod _ _), f, x => M.funMap f x
+
 /-! ### The sum of two languages -/
 
 /-- A symbol of one of two languages. It is indexed by the languages, where `_root_.Sum` would

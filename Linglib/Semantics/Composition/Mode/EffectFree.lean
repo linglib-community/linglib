@@ -9,8 +9,9 @@ public import Linglib.Semantics.Composition.Constituency
 A meta-mode needs an effect in a daughter, or a basic mode whose result has one. Daughters of
 types with no effect in them therefore [combine by a basic mode
 only](##Interpreter.Mode.exists_eq_basic), and over a lexicon of such types [the effect-driven
-interpreter gives the values of the grammar it was built
-over](##PhraseStructure.Tree.values_effectDriven_of_effectFree).
+interpreter admits the derivations of the grammar it was built
+over](##PhraseStructure.Tree.derivs_effectDriven_of_effectFree), so that [a tree has the same
+values in any structure](##PhraseStructure.Tree.values_effectDriven_of_effectFree).
 
 ## Main definitions
 
@@ -114,43 +115,55 @@ theorem binary_effectDriven_of_effectFree (hG : G.EffectFree) {l r : Ty B}
       (Language.LocallyFinite.binaryRules (L := G) l r).map fun p ↦ ⟨p.1, .basic p.2⟩ :=
   Ty.combine_of_effectFree hG.binary hl hr
 
-/-- At daughters whose values have types without effects, the effect-driven interpreter gives a
-binary node the values the grammar's type-driven interpreter gives it. -/
-theorem binaryValues_effectDriven_of_effectFree (hG : G.EffectFree)
-    {X Y : List (Sigma (Ty.Dom D))} (hX : ∀ d ∈ X, d.1.EffectFree) (hY : ∀ d ∈ Y, d.1.EffectFree) :
-    (effectDriven G : Interpreter (effectGrammar G) N).binaryValues effectGrammar.structure X Y =
-      (typeDriven G : Interpreter G N).binaryValues M X Y := by
-  refine List.flatMap_congr fun ⟨a, x⟩ h₁ ↦ List.flatMap_congr fun ⟨b, y⟩ h₂ ↦ ?_
-  dsimp only
-  rw [binary_effectDriven_of_effectFree hG (hX _ h₁) (hY _ h₂), List.map_map]
-  rfl
-
 end
 
 end Interpreter
 
 namespace PhraseStructure.Tree
 
-open ManySorted Interpreter
+open ManySorted ManySorted.Language Interpreter
 
 variable {B : Type} {C Lx : Type} [DecidableEq B] {G : Language (Ty B)} [G.LocallyFinite]
   {D : B → Type} [M : G.Structure (Ty.Dom D)] {W : Ty B → Type} {lex : Lx ⊕ ℕ → List (Sigma W)}
 
 /-- **The effect-driven grammar is conservative.** Over a lexicon whose items have types without
-effects, the effect-driven interpreter over a grammar that keeps to such types gives each tree
-the values the grammar's own type-driven interpreter gives it, in the same order: the meta-modes
-add no reading, and remove none. -/
+effects, the derivations the effect-driven interpreter admits over a tree are those of the
+grammar's own type-driven interpreter, each rule read as its basic mode, in the same order: the
+meta-modes add no derivation, and remove none. -/
+theorem derivs_effectDriven_of_effectFree (hG : G.EffectFree)
+    (hlex : ∀ x, ∀ p ∈ lex x, p.1.EffectFree) (t : Tree C Lx) :
+    t.derivs (effectDriven G) lex =
+      (t.derivs (typeDriven G) lex).map fun d ↦ ⟨d.1, (effectGrammar.basic G).onTerm d.2⟩ := by
+  have ha : (t.derivs (typeDriven G) lex).map (fun d ↦
+        (⟨d.1, (effectGrammar.basic G).onTerm d.2⟩ : Sigma (Deriv (effectGrammar G) W))) =
+      t.values (typeDriven G)
+        ((effectGrammar.basic G).reduct (Term.structure (effectGrammar G) W)) Deriv.leaf lex := by
+    rw [values_eq_fold]
+    exact RoseTree.fold_hom _ (fun l Xs ↦ map_nodeValues (typeDriven G) (Term.structure G W)
+      Deriv.leaf lex (fun _ d ↦ (effectGrammar.basic G).onTerm d) (fun _ _ ↦ rfl)
+      (fun _ _ _ ↦ rfl) (fun _ ↦ rfl) l Xs) t
+  rw [ha, derivs_eq_values]
+  refine values_congr (I := effectDriven G) (J := typeDriven G) Ty.EffectFree hlex
+    (fun n X hX ↦ ⟨rfl, fun d hd ↦ ?_⟩) (fun {X Y} hX hY ↦ ⟨?_, fun d hd ↦ ?_⟩) t
+  · obtain ⟨d₁, h₁, r, -, rfl⟩ := mem_unaryValues.1 hd
+    exact hG.unary r.2 (hX d₁ h₁)
+  · refine List.flatMap_congr fun ⟨a, x⟩ h₁ ↦ List.flatMap_congr fun ⟨b, y⟩ h₂ ↦ ?_
+    dsimp only
+    rw [binary_effectDriven_of_effectFree hG (hX _ h₁) (hY _ h₂), List.map_map]
+    rfl
+  · obtain ⟨d₁, h₁, d₂, h₂, m, -, rfl⟩ := mem_binaryValues.1 hd
+    exact hG.binary m.2 (hX d₁ h₁) (hY d₂ h₂)
+
+/-- Over a lexicon whose items have types without effects, the effect-driven interpreter gives
+each tree, in any structure, the values the grammar's type-driven interpreter gives it. -/
 theorem values_effectDriven_of_effectFree (hG : G.EffectFree)
     (ρ : ∀ {a : Ty B}, W a → a.Dom D) (hlex : ∀ x, ∀ p ∈ lex x, p.1.EffectFree)
     (t : Tree C Lx) :
     t.values (effectDriven G) effectGrammar.structure ρ lex =
       t.values (typeDriven G) M ρ lex := by
-  refine values_congr (I := effectDriven G) (J := typeDriven G) (M := effectGrammar.structure)
-    (M' := M) Ty.EffectFree hlex (fun n X hX ↦ ⟨rfl, fun d hd ↦ ?_⟩)
-    (fun {X Y} hX hY ↦ ⟨binaryValues_effectDriven_of_effectFree hG hX hY, fun d hd ↦ ?_⟩) t
-  · obtain ⟨d₁, h₁, r, -, rfl⟩ := mem_unaryValues.1 hd
-    exact hG.unary r.2 (hX d₁ h₁)
-  · obtain ⟨d₁, h₁, d₂, h₂, m, -, rfl⟩ := mem_binaryValues.1 hd
-    exact hG.binary m.2 (hX d₁ h₁) (hY d₂ h₂)
+  rw [values_eq_map_derivs, derivs_effectDriven_of_effectFree hG hlex, List.map_map,
+    values_eq_map_derivs]
+  exact List.map_congr_left fun d _ ↦ congrArg (Sigma.mk d.1)
+    (LHom.realize_onTerm effectGrammar.basic_isExpansionOn ρ d.2)
 
 end PhraseStructure.Tree
