@@ -3,7 +3,9 @@ module
 public import Linglib.Data.Examples.Ogihara1989
 public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.Readers
-public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Composition.Interpreter.Constituency
+public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
+public import Linglib.Semantics.Composition.Interpreter.Rules
 public import Linglib.Semantics.Events.Basic
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Semantics.Tense.Reichenbach
@@ -25,10 +27,16 @@ attitude alone cannot](##minimal_pair), if the interval it occupies depends on t
 
 ## Implementation notes
 
-* An LF is a `PhraseStructure.Tree` and is interpreted by `Tree.interp`, at indices of a world and
-  an interval, a clause denoting a proposition: the rule-by-rule translation of (40) comes out of
-  type-driven composition, with `who` and `poss` carrying rules (7b) and (8b) of chapter 3. The LFs
-  are written out after QR; QR is not an operation here.
+* The fragment translates each syntactic rule into intensional logic. Here a word denotes a
+  function that takes its index of a world and an interval last, so that the intension and
+  extension operators of the translations disappear and every rule that applies a translation to
+  the intension of another is Functional Application; `who` and `poss` carry rules (7b) and (8b)
+  of chapter 3. Three things are folded together: a tense denotes its Aux translation with the
+  existential closure that the rules for matrix sentences, complements, relatives and raised noun
+  phrases put on every S, so that a clause denotes a proposition and not a property of times; a
+  name denotes an individual, not the quantifier of the rule for names; and the rule for S, which
+  has three daughters, is the tense over the subject and the verb phrase. The LFs are written out
+  after QR; QR is not an operation here.
 * Chapter 2's *command* is `sCommand` and chapter 3's *c-command* is `RoseTree.cCommand`, so the two
   statements of the rule are one definition, `Deletable`, at two relations. The auxiliaries are
   stacked in the order of their scope, the alternative p. 259 allows to the flat Aux with its
@@ -75,6 +83,9 @@ attitude alone cannot](##minimal_pair), if the interval it occupies depends on t
 ## TODO
 
 * A theorem that composing the cells agrees with `Model.Holds` on every LF.
+* The translation rules of the fragment as the rules of the grammar, each chosen by the category
+  of its node: the closure rules on S, the quantifier of a name, and the flat Aux of three
+  daughters, none of which a rule chosen by the types of two daughters can state.
 * QR as an operation, so that a sentence's LFs are derived, and Aux copying (pp. 337-338), so that
   (64') and (69) are outputs.
 * Hypotheses 3 to 5 of chapter 4, with the counterfactual of (48), the case against (52) on
@@ -96,8 +107,9 @@ attitude alone cannot](##minimal_pair), if the interval it occupies depends on t
 
 namespace Ogihara1989
 
-open Montague ModalLogic Tense Partee1973 PhraseStructure PhraseStructure.Tree Core.Order
-open scoped Denotes SetRel Ty
+open Interpreter Interpreter.Grammar Montague ModalLogic Tense Partee1973 PhraseStructure
+  PhraseStructure.Tree Core.Order
+open scoped Denotes SetRel
 
 section ReferenceInterval
 
@@ -459,6 +471,22 @@ theorem rule_generates_metBuyer :
 /-- The index of evaluation is a world and an interval. -/
 abbrev Index (W T : Type*) [LE T] := W × NonemptyInterval T
 
+/-- The basic types: individuals and indices. -/
+inductive Atom
+  | e | s
+  deriving DecidableEq
+
+/-- The domains of the basic types. -/
+abbrev Dom (E W T : Type) [LE T] : Atom → Type
+  | .e => E
+  | .s => Index W T
+
+/-- The type of individuals. -/
+abbrev ent : Ty Atom := .base .e
+
+/-- The type of propositions. -/
+abbrev prop : Ty Atom := .base .s ⇒ .t
+
 section Interpretation
 
 variable {E W T : Type} [LinearOrder T]
@@ -513,28 +541,38 @@ theorem fut_iff {n : ℕ} {p : Index W T → Prop} :
 variable (M)
 
 /-- The translations of the words, (40) and the lexicon of chapter 3. -/
-def lex : Word → Denotation E (Index W T)
-  | .past n | .perf n => ⟨(.s ⇒ .t) ⇒ .s ⇒ .t, M.past n⟩
-  | .pres => ⟨(.s ⇒ .t) ⇒ .s ⇒ .t, M.now⟩
-  | .null | .ru => ⟨(.s ⇒ .t) ⇒ .s ⇒ .t, id⟩
-  | .woll n | .inf n => ⟨(.s ⇒ .t) ⇒ .s ⇒ .t, M.fut n⟩
-  | .earlier n => ⟨(.e ⇒ .s ⇒ .t) ⇒ .e ⇒ .s ⇒ .t,
-      fun (P : E → Index W T → Prop) x ↦ M.past n (P x)⟩
-  | .current => ⟨(.e ⇒ .s ⇒ .t) ⇒ .e ⇒ .s ⇒ .t, id⟩
-  | .name c => ⟨.e, M.name c⟩
-  | .pred c => ⟨.e ⇒ .s ⇒ .t, M.pred c⟩
-  | .tv c => ⟨.e ⇒ .e ⇒ .s ⇒ .t, fun y x ↦ M.tv c x y⟩
-  | .att c => ⟨(.s ⇒ .t) ⇒ .e ⇒ .s ⇒ .t, M.att c⟩
-  | .a => ⟨(.e ⇒ .s ⇒ .t) ⇒ (.e ⇒ .s ⇒ .t) ⇒ .s ⇒ .t,
-      fun (P Q : E → Index W T → Prop) i ↦ ∃ x, P x i ∧ Q x i⟩
-  | .poss => ⟨.e ⇒ (.e ⇒ .s ⇒ .t) ⇒ (.e ⇒ .s ⇒ .t) ⇒ .s ⇒ .t,
-      fun x (P Q : E → Index W T → Prop) i ↦ ∃ y, (∀ z, P z i ∧ M.poss x z i ↔ z = y) ∧ Q y i⟩
-  | .who => ⟨(.e ⇒ .s ⇒ .t) ⇒ (.e ⇒ .s ⇒ .t) ⇒ .e ⇒ .s ⇒ .t,
-      fun (Q P : E → Index W T → Prop) x i ↦ P x i ∧ Q x i⟩
+def lex : Word → Σ a : Ty Atom, a.Dom (Dom E W T)
+  | .past n | .perf n => ⟨prop ⇒ prop, M.past n⟩
+  | .pres => ⟨prop ⇒ prop, M.now⟩
+  | .null | .ru => ⟨prop ⇒ prop, id⟩
+  | .woll n | .inf n => ⟨prop ⇒ prop, M.fut n⟩
+  | .earlier n => ⟨(ent ⇒ prop) ⇒ ent ⇒ prop, fun P x ↦ M.past n (P x)⟩
+  | .current => ⟨(ent ⇒ prop) ⇒ ent ⇒ prop, id⟩
+  | .name c => ⟨ent, M.name c⟩
+  | .pred c => ⟨ent ⇒ prop, M.pred c⟩
+  | .tv c => ⟨ent ⇒ ent ⇒ prop, fun y x ↦ M.tv c x y⟩
+  | .att c => ⟨prop ⇒ ent ⇒ prop, M.att c⟩
+  | .a => ⟨(ent ⇒ prop) ⇒ (ent ⇒ prop) ⇒ prop, fun P Q i ↦ ∃ x, P x i ∧ Q x i⟩
+  | .poss => ⟨ent ⇒ (ent ⇒ prop) ⇒ (ent ⇒ prop) ⇒ prop,
+      fun x P Q i ↦ ∃ y, (∀ z, P z i ∧ M.poss x z i ↔ z = y) ∧ Q y i⟩
+  | .who => ⟨(ent ⇒ prop) ⇒ (ent ⇒ prop) ⇒ ent ⇒ prop, fun Q P x i ↦ P x i ∧ Q x i⟩
+
+/-- The rules: Functional Application, and abstraction over the index of a trace, a variable over
+individuals. -/
+abbrev rules : Interpreter (Grammar.application.withAbstraction fun _ ↦ ent) Node :=
+  (typeDriven .application).withAbstraction fun _ ↦ ent
+
+/-- The translations of an LF, relative to an assignment: a word has its translation, and a trace
+the individual of its index. -/
+def meanings (t : LF) : List (Σ a : Ty Atom, Assignment E → a.Dom (Dom E W T)) :=
+  t.values rules (Grammar.withAbstraction.structure (Assignments.total (Dom E W T) fun _ ↦ ent))
+    (W := fun a ↦ Assignment E → a.Dom (Dom E W T)) id fun
+    | .inl w => [⟨(M.lex w).1, fun _ ↦ (M.lex w).2⟩]
+    | .inr n => [⟨ent, fun g ↦ g n⟩]
 
 /-- An LF holds at an index under an assignment when it translates to a proposition true there. -/
 def Holds (t : LF) (i : Index W T) : Prop :=
-  ∃ p, Tree.interp (some ∘ M.lex) g t = some ⟨.s ⇒ .t, p⟩ ∧ p i
+  ∃ p, M.meanings t = [⟨prop, p⟩] ∧ p g i
 
 /-- The necessary condition (54) of chapter 2 on the saying relation: a speaker who stands in it to
 a proposition speaks the truth at the index exactly when the proposition is true there. -/
@@ -545,9 +583,10 @@ def Stable (c : Pred) : Prop := ∀ x i t, M.pred c x i ↔ M.pred c x (i.1, t)
 
 variable {M}
 
-attribute [local simp] Holds clause np untensed intrans complement aNoun relClause tvTrace
-  vpAdjoined raised report saidIll sawWide sawNarrow metWide metNarrow saidFish claimNP claimClause
-  lex
+attribute [local simp] Holds meanings clause np untensed intrans complement aNoun relClause
+  tvTrace vpAdjoined raised report saidIll sawWide sawNarrow metWide metNarrow saidFish claimNP
+  claimClause lex Interpreter.withAbstraction typeDriven Grammar.LocallyFinite.unaryRules
+  Grammar.LocallyFinite.binaryRules Assignments.total
 
 /-! ### Complement clauses -/
 
@@ -685,7 +724,7 @@ end Model
 
 -- `Word.cell` is what the translation says: a time in the cell at which the argument holds
 theorem position_mem_cell {M : Model E W T} {w : Word} {τ : (Index W T → Prop) → Index W T → Prop}
-    {p : Index W T → Prop} {i : Index W T} (h : M.lex w = ⟨(.s ⇒ .t) ⇒ .s ⇒ .t, τ⟩)
+    {p : Index W T → Prop} {i : Index W T} (h : M.lex w = ⟨prop ⇒ prop, τ⟩)
     (hw : w ≠ .pres) (hτ : τ p i) : ∃ t, t.position i.2 ∈ w.cell ∧ p (i.1, t) := by
   cases w <;> simp only [Model.lex, Sigma.mk.injEq, heq_eq_eq, true_and, reduceCtorEq, and_false,
     false_and, Ty.fn.injEq, and_true] at h <;> subst h
@@ -879,7 +918,9 @@ theorem would_can_follow_speech {a b c : T} (hab : a < b) (hbc : b < c) :
         ((), M.speech) :=
       Model.past_iff.2 ⟨.pure a, hab, le_sup_left, rfl,
         Model.fut_iff.2 ⟨.pure c, hab.trans hbc, le_sup_right, rfl⟩⟩
-    simpa [Model.Holds, report, clause, np, untensed, intrans, complement, Model.lex] using hs
+    simpa [Model.Holds, Model.meanings, report, clause, np, untensed, intrans, complement,
+      Model.lex, Interpreter.withAbstraction, typeDriven, Grammar.LocallyFinite.unaryRules,
+      Grammar.LocallyFinite.binaryRules, Assignments.total] using hs
   · rintro ⟨_, t⟩ _ h
     obtain rfl : t = .pure c := h
     exact hbc
