@@ -175,6 +175,28 @@ instance (n : ℕ) : IsProbabilityMeasure (recency γ (n + 1)) := by
     div_self (geom_sum_pos zero_le (Nat.succ_ne_zero n)).ne']
   simp
 
+-- Storing a token mixes the older exemplars, discounted once more, with a point mass at the
+-- new one.
+theorem recency_succ (n : ℕ) :
+    recency γ (n + 1) =
+      (γ * (∑ j ∈ range n, γ ^ j) / ∑ j ∈ range (n + 1), γ ^ j) • (recency γ n).map Fin.castSucc +
+        (∑ j ∈ range (n + 1), γ ^ j)⁻¹ • Measure.dirac (Fin.last n) := by
+  have hmap : (recency γ n).map Fin.castSucc =
+      ∑ i : Fin n, (γ ^ (i.rev : ℕ) / ∑ j ∈ range n, γ ^ j : ℝ≥0) •
+        Measure.dirac (Fin.castSucc i) := by
+    rw [recency, Measure.map_finset_sum' Measurable.of_discrete.aemeasurable]
+    simp [Measure.map_smul, Measurable.of_discrete.aemeasurable, Measure.map_dirac' .of_discrete]
+  rw [hmap, recency, Fin.sum_univ_castSucc, smul_sum]
+  simp only [Fin.rev_castSucc, Fin.rev_last, Fin.val_succ, Fin.val_zero, pow_zero, one_div,
+    smul_smul]
+  congr 2
+  funext i
+  have hS : ∑ j ∈ range n, γ ^ j ≠ 0 :=
+    (geom_sum_pos zero_le (Fin.pos i).ne').ne'
+  congr 1
+  rw [pow_succ]
+  field_simp
+
 /-- The memory-weighted mean of an exemplar list, its mean under the recency distribution. -/
 noncomputable def memoryMean (e : Fin n → ℝ) : ℝ := ∫ i, e i ∂recency γ n
 
@@ -199,25 +221,6 @@ theorem totalWeight_mul_memoryMean (e : Fin n → ℝ) :
   · simp [totalWeight]
   · rw [memoryMean_eq_sum, mul_div_cancel₀ _ (totalWeight_pos γ hn.ne').ne']
 
-theorem totalWeight_mul_memorySpread (e : Fin n → ℝ) :
-    totalWeight γ n * memorySpread γ e =
-      ∑ i, (γ : ℝ) ^ (i.rev : ℕ) * (e i - memoryMean γ e) ^ 2 := by
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp [totalWeight]
-  · rw [memorySpread_eq_sum, mul_div_cancel₀ _ (totalWeight_pos γ hn.ne').ne']
-
-theorem sum_mul_sub_sq (e : Fin n → ℝ) (c : ℝ) :
-    ∑ i, (γ : ℝ) ^ (i.rev : ℕ) * (e i - c) ^ 2 =
-      totalWeight γ n * memorySpread γ e + totalWeight γ n * (memoryMean γ e - c) ^ 2 := by
-  cases n with
-  | zero => simp [totalWeight]
-  | succ n =>
-    have h := integral_sub_const_sq (μ := recency γ (n + 1)) (X := e) .of_discrete c
-    rw [integral_recency] at h
-    rw [memorySpread, memoryMean, ← mul_add, ← h, mul_sum]
-    exact sum_congr rfl fun i _ ↦ by
-      field_simp [(totalWeight_pos γ (Nat.succ_ne_zero n)).ne']
-
 theorem memoryMean_snoc (e : Fin n → ℝ) (x : ℝ) :
     memoryMean γ (Fin.snoc e x : Fin (n + 1) → ℝ) =
       (γ * totalWeight γ n * memoryMean γ e + x) / totalWeight γ (n + 1) := by
@@ -231,24 +234,21 @@ theorem memorySpread_snoc (e : Fin n → ℝ) (x : ℝ) :
     memorySpread γ (Fin.snoc e x : Fin (n + 1) → ℝ) =
       γ * totalWeight γ n / totalWeight γ (n + 1) * memorySpread γ e +
         γ * totalWeight γ n / totalWeight γ (n + 1) ^ 2 * (x - memoryMean γ e) ^ 2 := by
-  have hS := totalWeight_pos γ (Nat.succ_ne_zero n)
-  have hsum : ∑ i : Fin (n + 1), (γ : ℝ) ^ (i.rev : ℕ) * ((Fin.snoc e x : Fin (n + 1) → ℝ) i -
-      memoryMean γ (Fin.snoc e x : Fin (n + 1) → ℝ)) ^ 2 =
-      γ * (totalWeight γ n * memorySpread γ e + totalWeight γ n *
-        (memoryMean γ e - memoryMean γ (Fin.snoc e x : Fin (n + 1) → ℝ)) ^ 2) +
-      (x - memoryMean γ (Fin.snoc e x : Fin (n + 1) → ℝ)) ^ 2 := by
-    rw [← sum_mul_sub_sq, mul_sum]
-    simp only [Fin.sum_univ_castSucc, Fin.snoc_castSucc, Fin.snoc_last, Fin.rev_castSucc,
-      Fin.rev_last, Fin.val_succ, Fin.val_zero, pow_zero, one_mul, pow_succ]
-    congr 1
-    exact sum_congr rfl fun i _ ↦ by ring
-  rw [memorySpread_eq_sum, hsum, memoryMean_snoc, totalWeight_succ]
-  rw [totalWeight_succ] at hS
-  generalize totalWeight γ n = S at *
-  generalize memoryMean γ e = M
-  generalize memorySpread γ e = V
-  field_simp
-  ring
+  cases n with
+  | zero => simp [memorySpread, recency, totalWeight]
+  | succ n =>
+    have : IsProbabilityMeasure ((recency γ (n + 1)).map Fin.castSucc) :=
+      (Measure.isProbabilityMeasure_map_iff Measurable.of_discrete.aemeasurable).2 inferInstance
+    have hS : ∑ j ∈ range (n + 2), γ ^ j ≠ 0 := (geom_sum_pos zero_le (by omega)).ne'
+    rw [memorySpread, recency_succ, variance_smul_add_smul_measure
+        (by rw [inv_eq_one_div, ← add_div, ← geom_sum_succ, div_self hS]) .of_discrete .of_discrete,
+      variance_map .of_discrete .of_discrete, integral_map .of_discrete .of_discrete,
+      integral_dirac, variance_dirac]
+    simp only [Function.comp_def, Fin.snoc_castSucc, Fin.snoc_last]
+    rw [memorySpread, memoryMean]
+    simp only [totalWeight]
+    push_cast
+    ring
 
 @[fun_prop] theorem measurable_memoryMean : Measurable (memoryMean γ : (Fin n → ℝ) → ℝ) := by
   rw [funext (memoryMean_eq_sum γ)]
