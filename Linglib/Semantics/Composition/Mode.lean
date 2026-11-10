@@ -11,7 +11,7 @@ them under meta-modes, each lifting a mode through an effect by the structure th
 Left and Map Right by its map, Structured App and the Unit modes where it is applicative, Join
 where it is a monad, Co-unit and Eject for the adjunction of storing and reading, and Lower for a
 continuation at its own result type. The types of two daughters decide which modes combine them,
-and `Ty.combine` is the book's procedure for listing them. Daughters of types without effects
+and `Ty.combine` is their procedure for listing them. Daughters of types without effects
 combine by a basic mode only, so [over a lexicon without effects the grammar gives the values of
 the rules it started from](##Interpreter.values_effectDriven_of_effectFree).
 
@@ -19,30 +19,23 @@ the rules it started from](##Interpreter.values_effectDriven_of_effectFree).
 
 * `Interpreter.Mode`: the basic modes closed under the meta-modes.
 * `Interpreter.Mode.eval`: the meaning of a mode, by the operations of the effects.
-* `Interpreter.Ty.combine`: the modes the book's `combine` finds for two types.
+* `Interpreter.Ty.combine`: the modes their `combine` finds for two types.
 * `Interpreter.Ty.Evaluated`: the types with no continuation still to be closed.
 * `Interpreter.effectGrammar`: the grammar whose binary rules are the modes over a grammar's
   rules, with its structure.
-* `Interpreter.effectDriven`: the book's interpreter, which admits every mode `Ty.combine` finds
+* `Interpreter.effectDriven`: their interpreter, which admits every mode `Ty.combine` finds
   and at an island only those with an evaluated result.
 * `Interpreter.Ty.EffectFree`, `ManySorted.Language.EffectFree`: the types with no effect in
   them, and the grammars whose rules keep to those types.
 
 ## Implementation notes
 
-`Ty.combine` follows the book's interpreter rule for rule and in its order. The two Eject rules
-do not make their types smaller, so the recursion is on a bound, three steps for each unit of
-size.
-
-## Errata
-
-* The book says its interpreter finds every interpretation a sentence has in the theory. It
-  applies Join and Lower once to each way of combining two daughters, so it does not find a mode
-  that joins twice: a function into three layers of one effect and its argument combine by
-  application into three layers and, joined once, into two, but not into one.
-* The book says neither Eject rule feeds itself or the other. Eject on one daughter may be
-  followed by Eject on the other; what cannot happen is two on one daughter, since the first
-  leaves a computation there and not an arrow.
+`Ty.combine` follows Bumford and Charlow's `combine` rule for rule and in its order. Like
+theirs, it applies Join and Lower once to each way of combining two daughters, so it does not
+list every mode: one that joins twice is a mode of the grammar that it does not find. The two
+Eject rules do not make their types smaller. An Eject leaves a computation where there was an
+arrow, so neither applies twice to one daughter, and the recursion is on a bound, three steps for
+each unit of size.
 
 ## TODO
 
@@ -183,9 +176,9 @@ def Ty.combineAux : ℕ → (l r : Ty B) → List (Σ u, Mode Rule l r u)
           (Ty.combineAux k (.comp (.R i) (x ⇒ y)) r).map fun p ↦ ⟨p.1, .ejectL p.2⟩
         | _ => [])).flatMap fun p ↦ p :: (Mode.joins p ++ Mode.lowers p)
 
-/-- The modes the book's interpreter finds for a left daughter of type `l` and a right daughter
-of type `r`: each way of peeling effects off the two types down to a basic rule, and its Join
-and its Lower where the result allows one. -/
+/-- The modes Bumford and Charlow's `combine` finds for a left daughter of type `l` and a right
+daughter of type `r`: each way of peeling effects off the two types down to a basic rule, and
+its Join and its Lower where the result allows one. -/
 def Ty.combine (l r : Ty B) : List (Σ u, Mode Rule l r u) :=
   Ty.combineAux find (3 * (l.size + r.size) + 3) l r
 
@@ -213,9 +206,9 @@ instance effectGrammar.structure {G : Language (Ty B)} {D : B → Type}
     [M : G.Structure (Ty.Dom D)] : (effectGrammar G).Structure (Ty.Dom D) :=
   .mk₂ (fun s x ↦ M.funMap s x) fun m ↦ m.eval D
 
-/-- The effect-driven interpreter over a grammar, the book's: a node admits the type shifts of
-the grammar and every mode that `Ty.combine` finds for its daughters, and an island only the
-modes whose result is evaluated. -/
+/-- Bumford and Charlow's effect-driven interpreter over a grammar: a node admits the type
+shifts of the grammar and every mode that `Ty.combine` finds for its daughters, and an island
+only the modes whose result is evaluated. -/
 def effectDriven [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] :
     Interpreter (effectGrammar G) Node where
   unary _ := Language.LocallyFinite.unaryRules (L := G)
@@ -266,8 +259,8 @@ theorem Mode.exists_eq_basic {Rule : Ty B → Ty B → Ty B → Type}
     obtain ⟨b, rfl⟩ := Mode.exists_eq_basic hR m hl hr
     exact (hR b hl hr).elim
 
-/-- For daughters of types without effects the book's interpreter finds the basic rules and
-nothing else. -/
+/-- For daughters of types without effects `Ty.combine` finds the basic rules and nothing
+else. -/
 theorem Ty.combine_of_effectFree [DecidableEq B] {Rule : Ty B → Ty B → Ty B → Type}
     {find : (l r : Ty B) → List (Σ u, Rule l r u)}
     (hR : ∀ {l r u : Ty B}, Rule l r u → l.EffectFree → r.EffectFree → u.EffectFree)

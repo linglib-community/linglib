@@ -52,6 +52,13 @@ the outputs the book prints. The base sort is `e`.
 The Element is forthcoming; equation, section and appendix locators are to the arXiv version of
 April 2025.
 
+## Errata
+
+* The book says its algorithm finds every interpretation a sentence has in the theory. It
+  applies Join and Lower once to each way of combining two daughters, so [a mode that joins twice
+  is not found](##BumfordCharlow2026.combine_join_twice): a function into three layers of
+  indeterminacy applies to its argument to give three layers and, joined once, two, but not one.
+
 ## TODO
 
 * Islands (section 5.4): the book filters the results at an island node by a predicate on
@@ -360,9 +367,9 @@ theorem baseGrammar_effectFree : (baseGrammar B).EffectFree where
     | _, _, _, .inl .ba, _, hr => hr.2
     | _, _, _, .inr .pm, hl, _ => hl
 
-/-- Before any effect the book's interpreter is the deterministic one it starts from: over words
-with one item each, of types without effects, a structure has at most one value, although
-interpretation is relational once a word has an effect. -/
+/-- Before any effect the effect-driven interpreter is the deterministic one it starts from:
+over words with one item each, of types without effects, a structure has at most one value,
+although interpretation is relational once a word has an effect. -/
 theorem length_values_effectDriven_baseGrammar_le_one [DecidableEq B] {D : B → Type}
     {Lx : Type} {W : Ty B → Type} (ρ : ∀ {a : Ty B}, W a → a.Dom D)
     {lex : Lx → List (Σ a, W a)} (hlex : ∀ x, ∀ p ∈ lex x, p.1.EffectFree)
@@ -493,6 +500,15 @@ theorem combine_read_store : combine (R e) (W (e ⇒ T)) =
 -- section 5.5: lowering
 theorem combine_lower : combine (T ⇒ T) (C T) = [(.mapR FA, C T), (.lower (.mapR FA), T)] := by
   decide
+
+/-- The grammar has a mode that joins twice, flattening three layers of indeterminacy to one. -/
+example : Mode (baseGrammar Unit).Binary (e ⇒ S (S (S T))) e (S T) :=
+  .join trivial (.join trivial (.basic (.inl .fa)))
+
+/-- `combine` does not find it: it joins the result of application once and stops,
+so no mode it lists gives one layer. -/
+theorem combine_join_twice :
+    combine (e ⇒ S (S (S T))) e = [(FA, S (S (S T))), (.join FA, S (S T))] := by decide
 
 -- section 5.3.4: the bind of the state monad is among the modes
 theorem mem_combine_state :
