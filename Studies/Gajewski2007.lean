@@ -26,9 +26,10 @@ exactly where the paper accepts it](##Gajewski2007.judgments_predicted), superla
 
 ## Implementation notes
 
-* The neg-raising predicate of Appendix 2 is the library's `NegRaising.sentence`, over a modal
-  base and a heritage base, and its negation over a presuppositionless complement is
-  `NegRaising.negation`, the licenser of `LicensingContext.superordinateNegation`.
+* The neg-raising predicate of Appendix 2 is the library's `NegRaising.box`, over a modal base
+  and the worlds into which the complement's presupposition projects. Its negation over a
+  presuppositionless complement is `NegRaising.negation`, the licenser of
+  `LicensingContext.superordinateNegation`.
 * An environment is a sentence as a function of the proposition in the NPI's clause, and its
   anti-additivity is `IsAntiAdditive` of the truth set (`Trivalent.posExt`): standard entailment,
   which Appendix 1 argues is the relevant notion. This is how `PolarityItem.Licenser.Holds` reads a
@@ -116,7 +117,7 @@ theorem not_isAntiAdditive_compl_core :
 
 /-! ### Negated neg-raising predicates ((57)–(65))
 
-The neg-raising predicate (59) is `NegRaising.sentence`. Its negation (60) is true exactly where
+The neg-raising predicate (59) is `NegRaising.box`. Its negation (60) is true exactly where
 the predicate holds of the negated complement (61), `NegRaising.posExt_negation`, which is
 EVERY(NOT(_)), and so it is anti-additive ((62)–(64)),
 `NegRaising.isAntiAdditive_posExt_negation`. -/
@@ -135,13 +136,13 @@ open Classical in
 /-- A neg-raising predicate under stressed negation, where the assertion operator cancels the
 excluded middle (fn. 7 (ii)). -/
 noncomputable def notNRStressed (R : SetRel W W) (p : Set W) : W → Trivalent := fun w ↦
-  (Trivalent.ofProp (sentence R R (fun u ↦ Trivalent.ofProp (u ∈ p)) w = .true))ᶜ
+  (Trivalent.ofProp (box R R (fun u ↦ Trivalent.ofProp (u ∈ p)) w = .true))ᶜ
 
 -- §2.1.3
 theorem posExt_notNRStressed (R : SetRel W W) (p : Set W) :
     Trivalent.posExt (notNRStressed R p) = (R.core p)ᶜ := by
   ext w
-  simp only [notNRStressed, sentence, Trivalent.mem_posExt, Trivalent.compl_eq_true_iff,
+  simp only [notNRStressed, box, Trivalent.mem_posExt, Trivalent.compl_eq_true_iff,
     Trivalent.ofProp_eq_false_iff, Trivalent.condEvent_eq_true_iff,
     Trivalent.ofProp_eq_true_iff, ne_eq, Trivalent.ofProp_ne_undefined, not_false_eq_true, Box,
     implies_true, true_and, not_and, Set.mem_compl_iff, mem_core]
@@ -173,13 +174,13 @@ open Classical in
 quantifier ([heim-1983]). -/
 noncomputable def noOneNR {E : Type*} (O : Set E) (B : E → SetRel W W) (p : Set W) :
     W → Trivalent := fun w ↦
-  (Trivalent.existsWeak fun x : O ↦ sentence (B x) (B x) (fun u ↦ Trivalent.ofProp (u ∈ p)) w)ᶜ
+  (Trivalent.existsWeak fun x : O ↦ box (B x) (B x) (fun u ↦ Trivalent.ofProp (u ∈ p)) w)ᶜ
 
 -- (87), (89)
 theorem posExt_noOneNR {E : Type*} (O : Set E) (B : E → SetRel W W) (p : Set W) :
     Trivalent.posExt (noOneNR O B p) = ⋂ x ∈ O, every (B x) pᶜ := by
   ext w
-  simp [noOneNR, sentence_eq_false_iff, Box]
+  simp [noOneNR, box_eq_false_iff, Box]
 
 -- (90)
 theorem isAntiAdditive_posExt_noOneNR {E : Type*} (O : Set E) (B : E → SetRel W W) :
@@ -194,18 +195,18 @@ theorem isAntiAdditive_posExt_noOneNR {E : Type*} (O : Set E) (B : E → SetRel 
 open Classical in
 /-- Negation over a neg-raising predicate over another. -/
 noncomputable def notStack (R₁ H₁ R₂ H₂ : SetRel W W) (p : Set W) : W → Trivalent :=
-  (sentence R₁ H₁ (sentence R₂ H₂ fun u ↦ Trivalent.ofProp (u ∈ p)))ᶜ
+  (box R₁ H₁ (box R₂ H₂ fun u ↦ Trivalent.ofProp (u ∈ p)))ᶜ
 
 open Classical in
 -- (107), (110), Appendix 2, (9), (13)
 theorem posExt_notStack_self (R₁ R₂ H₂ : SetRel W W) (p : Set W) :
     Trivalent.posExt (notStack R₁ R₁ R₂ H₂ p) = every R₁ (every R₂ pᶜ) := by
   ext w
-  have h u : sentence R₂ H₂ (fun u ↦ Trivalent.ofProp (u ∈ p)) u = .false ↔ u ∈ every R₂ pᶜ := by
+  have h u : box R₂ H₂ (fun u ↦ Trivalent.ofProp (u ∈ p)) u = .false ↔ u ∈ every R₂ pᶜ := by
     rw [← posExt_negation_eq_every R₂ H₂]
     simp [negation]
   simp only [notStack, Trivalent.mem_posExt, Pi.compl_apply, Trivalent.compl_eq_true_iff,
-    sentence_self_eq_false_iff, h, mem_every, Box]
+    box_self_eq_false_iff, h, mem_every, Box]
 
 -- (95)
 theorem posExt_notStack_self_subset (R₁ R₂ H₂ : SetRel W W) (p : Set W) :
@@ -225,8 +226,8 @@ theorem posExt_notStack (R₁ H₁ R₂ : SetRel W W) (p : Set W) :
       H₁.core (R₂.core p ∪ R₂.core pᶜ) ∩ every R₁ (R₂.core p)ᶜ := by
   ext w
   simp only [notStack, Trivalent.mem_posExt, Pi.compl_apply, Trivalent.compl_eq_true_iff,
-    sentence_eq_false_iff, Set.mem_inter_iff, mem_every, mem_core, Set.mem_union, Set.mem_compl_iff]
-  simp only [ne_eq, sentence, Trivalent.condEvent_eq_undefined_iff, Trivalent.condEvent_eq_true_iff,
+    box_eq_false_iff, Set.mem_inter_iff, mem_every, mem_core, Set.mem_union, Set.mem_compl_iff]
+  simp only [ne_eq, box, Trivalent.condEvent_eq_undefined_iff, Trivalent.condEvent_eq_true_iff,
     Trivalent.ofProp_eq_true_iff, Trivalent.ofProp_ne_undefined, not_false_eq_true, Box,
     implies_true, true_and, not_not, not_and]
   exact and_congr_right fun _ ↦ and_congr_right fun _ ↦ forall₂_congr fun u _ ↦
@@ -290,8 +291,8 @@ structure People where
   B : E → SetRel W W
   nonempty : O.Nonempty
 
-/-- Two stacked neg-raising predicates, of which one is doxastic and the other takes the heritage
-base. -/
+/-- Two stacked neg-raising predicates, of which one is doxastic and the other projects the
+presupposition of its complement into its subject's beliefs. -/
 structure Stack where
   /-- The worlds. -/
   W : Type
@@ -299,8 +300,8 @@ structure Stack where
   upper : SetRel W W
   /-- The modal base of the lower predicate. -/
   lower : SetRel W W
-  /-- The heritage base of the predicate that is not doxastic. -/
-  heritage : SetRel W W
+  /-- The belief alternatives of the subject of the predicate that is not doxastic. -/
+  beliefs : SetRel W W
 
 /-- The environments in which the paper places a strict NPI. -/
 inductive Environment
@@ -339,9 +340,9 @@ noncomputable def Environment.licenser : Environment → Licenser
   | .notKnow => .strawson ⟨Frame, fun p ↦ Set p.W, fun p ↦ p.W, fun p ↦ Gajewski2007.notKnow p.R⟩
   | .noOneThinks => .strawson ⟨People, fun p ↦ Set p.W, fun p ↦ p.W, fun p ↦ noOneNR p.O p.B⟩
   | .notThinkWant => .strawson
-      ⟨Stack, fun p ↦ Set p.W, fun p ↦ p.W, fun p ↦ notStack p.upper p.upper p.lower p.heritage⟩
+      ⟨Stack, fun p ↦ Set p.W, fun p ↦ p.W, fun p ↦ notStack p.upper p.upper p.lower p.beliefs⟩
   | .notWantThink => .strawson
-      ⟨Stack, fun p ↦ Set p.W, fun p ↦ p.W, fun p ↦ notStack p.upper p.heritage p.lower p.lower⟩
+      ⟨Stack, fun p ↦ Set p.W, fun p ↦ p.W, fun p ↦ notStack p.upper p.beliefs p.lower p.lower⟩
 
 section Carries
 
@@ -372,13 +373,13 @@ theorem carries_noOneThinks : Environment.noOneThinks.licenser.Carries .antiAddi
         simpa using Set.mem_iInter₂.1 hw x hx)
     ⟨⟨Unit, Unit, .univ, fun _ ↦ .univ, ⟨(), trivial⟩⟩,
       not_isStrawsonUE (w := ()) (Set.empty_subset Set.univ)
-        (by simp [noOneNR, sentence_eq_false_iff, Box]) (by simp [noOneNR, sentence, Box])⟩
+        (by simp [noOneNR, box_eq_false_iff, Box]) (by simp [noOneNR, box, Box])⟩
 
 theorem carries_notThinkWant : Environment.notThinkWant.licenser.Carries .antiAdditive :=
-  carries_antiAdditive (fun p ↦ isAntiAdditive_posExt_notStack_self p.upper p.lower p.heritage)
+  carries_antiAdditive (fun p ↦ isAntiAdditive_posExt_notStack_self p.upper p.lower p.beliefs)
     (fun p ↦ by simp [posExt_notStack_self])
     ⟨⟨Unit, .univ, .univ, .univ⟩, not_isStrawsonUE (w := ()) (Set.empty_subset Set.univ)
-      (by simp [notStack, sentence, Box]) (by simp [notStack, sentence, Box])⟩
+      (by simp [notStack, box, Box]) (by simp [notStack, box, Box])⟩
 
 theorem not_carries_notThinkStressed :
     ¬ Environment.notThinkStressed.licenser.Carries .antiAdditive :=

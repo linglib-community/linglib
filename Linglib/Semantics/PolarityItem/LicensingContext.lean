@@ -304,13 +304,14 @@ structure Accessibility where
 structure SerialAccessibility extends Accessibility where
   serial : ∃ v, (w, v) ∈ R
 
-/-- The modal base and the heritage base of a neg-raising attitude. -/
+/-- The modal base of a neg-raising attitude and the alternatives into which the presupposition
+of its complement projects. -/
 structure Bases where
   /-- The worlds. -/
   W : Type
   /-- The modal base. -/
   R : SetRel W W
-  /-- The heritage base, into which the presupposition of the complement projects. -/
+  /-- The alternatives into which the presupposition of the complement projects. -/
   H : SetRel W W
 
 /-- An accessibility relation over worlds. -/
@@ -648,8 +649,8 @@ theorem not_isStrawsonUE_superordinateNegation :
     ¬ superordinateNegation.licenser.IsStrawsonUE :=
   not_forall.2 ⟨⟨Unit, .univ, .univ⟩, Presupposition.not_isStrawsonUE (w := ())
     (Set.empty_subset Set.univ)
-    (by simp [NegRaising.negation, NegRaising.sentence_eq_false_iff, ModalLogic.Box])
-    (by simp [NegRaising.negation, NegRaising.sentence, ModalLogic.Box])⟩
+    (by simp [NegRaising.negation, NegRaising.box_eq_false_iff, ModalLogic.Box])
+    (by simp [NegRaising.negation, NegRaising.box, ModalLogic.Box])⟩
 
 theorem not_isStrawsonUE_onlyFocus : ¬ onlyFocus.licenser.IsStrawsonUE :=
   not_forall.2 ⟨⟨Bool, Unit, true⟩, Focus.not_isStrawsonUE_only_eq⟩
