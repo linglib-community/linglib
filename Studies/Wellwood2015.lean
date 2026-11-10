@@ -17,9 +17,10 @@ public import Studies.Bresnan1973
 Wellwood proposes that nominal, verbal and adjectival comparatives contain one
 degree-introducing morpheme, *much*, which denotes an assignment-supplied measure function, while
 *-er* and *as* compare the measure of what the base predicate applies to with the maximal degree
-of the than-clause, after von Stechow and Rullmann. The three domains share one truth condition,
-and the paper's derivations are one tree interpreted by Heim and Kratzer's rules at three
-lexical cells, measuring coffee, running events or heat states. What *much* measures must be
+of the than-clause, after von Stechow and Rullmann. The three comparatives are derived by one
+set of rules, [measuring coffee](##Wellwood2015.meanings_nominalTree), [running
+events](##Wellwood2015.meanings_verbalTree) or [heat
+states](##Wellwood2015.meanings_adjectivalTree). What *much* measures must be
 non-trivially ordered by part-whole structure, which a quantized domain is not, and measured
 monotonically, [in the strict sense](##monotoneOn_and_not_strictMonoOn) that excludes temperature
 for portions of coffee. Which dimensions a comparative allows follows from what is measured and
@@ -30,11 +31,21 @@ The obligatory *much* of *very* with nouns and verbs is Bresnan's Much Deletion.
 
 ## Implementation notes
 
-Degrees form an abstract preordered type, linearly ordered for the derivation and a nontrivial
-linearly ordered additive group where dimensions are compared. Eventualities are an abstract type,
-the eventuality sort `v` beside the individuals of `e`, as in the paper's sorted domains `D_e` and
-`D_v`, and the degree phrase modifies the base predicate by predicate modification at `⟨v,t⟩`,
-which the paper allows beside `⟨e,t⟩`. Existential closure is a lexical item. The paper's
+* Degrees form an abstract preordered type, linearly ordered for the derivations and a nontrivial
+  linearly ordered additive group where dimensions are compared. Eventualities are an abstract
+  type, the eventuality sort `v` beside the individuals of `e`, as in the paper's sorted domains
+  `D_e` and `D_v`.
+* The paper leaves open what closes the event variable; here a silent word does, at the top of
+  the sentence and below the operator of the *than*-clause, where (40) has the closure.
+* The maximal degree of *than* is the greatest member of its set, and an arbitrary degree where
+  there is none; the silent determiner *e* is Hilbert's ε, as in the paper.
+* *Much* carries index 1 where it measures individuals and index 2 where it measures
+  eventualities, and the operator of the *than*-clause binds index 0; the paper's assignment
+  gives one variable μ a measure of whichever type.
+* `nominalComparative` measures the theme of the agent's event, where the paper's (42), derived
+  here, measures the coffee its determiner chooses.
+
+The paper's
 non-trivially structured domains are the predicates that are not quantized, `¬ QUA P`. An
 admissible measure is `StrictMono` on the type of what is measured, the ordered domain of (26), or
 `StrictMonoOn` the satisfiers of a predicate. The bare-adjective, measure-phrase and scalar-change
@@ -116,111 +127,228 @@ theorem derivation_eq_comparativeTruth {Measured : Type*} [PartialOrder D] (role
 
 end Derivation
 
-/-! ### The derivation, type-driven -/
+/-! ### The derivations
 
-section TypeDriven
+The paper's three comparatives, (35), (43) and (59), each with its *than*-clause in place: the
+trees (36), (44) and (60) over (39), (46) and (62), by Functional Application, Predicate
+Modification, Event Identification and Predicate Abstraction over the degree the operator of
+the *than*-clause binds. -/
+
+section Derivations
 
 open Interpreter Interpreter.Grammar
 open PhraseStructure (Tree)
 
-variable {Ent α D : Type}
+/-- The maximal degree of a set of degrees (38i): its greatest member, and an arbitrary degree
+where it has none. -/
+noncomputable def maxDegree {D : Type} [LE D] [Nonempty D] (S : Set D) : D :=
+  Classical.epsilon fun d ↦ IsGreatest S d
 
-/-- The words of the derivation: the degree heads *-er* and *abs*, a standard, the base
-predicate, the role head, the subject, and existential closure. *Much* is an indexed
-expression. -/
+theorem maxDegree_eq {D : Type} [PartialOrder D] [Nonempty D] {S : Set D} {δ : D}
+    (h : IsGreatest S δ) : maxDegree S = δ :=
+  (Classical.epsilon_spec (p := fun d ↦ IsGreatest S d) ⟨δ, h⟩).unique h
+
+/-- A model of the three sentences: the thematic relations, the predicates, and the
+individuals. -/
+structure Model (Ent Ev : Type) where
+  agent : Ent → Ev → Prop
+  holder : Ent → Ev → Prop
+  drink : Ent → Ev → Prop
+  coffee : Ent → Prop
+  run : Ev → Prop
+  hot : Ev → Prop
+  al : Ent
+  bill : Ent
+  alsCoffee : Ent
+  billsCoffee : Ent
+
+/-- The words of (36), (39), (44), (46), (60) and (62). *Much* and the trace of the
+*than*-clause's operator are indexed expressions. -/
 inductive Word
-  | er
-  | abs
-  | standard
-  | pred
-  | role
-  | subj
+  | al | bill | alsCoffee | billsCoffee
+  /-- The head *v* that introduces the agent, and *v*ₛ that introduces the holder of a state. -/
+  | v | vS
+  | drank | coffee | run | hot
+  /-- The silent indefinite determiner *e*. -/
+  | e
+  | er | abs | than
+  /-- Existential closure of the event variable. -/
   | closure
 
-/-- The lexical items by type: *-er* and *abs* take a measure and a degree ((27i), (38ii)), the
-base predicate is of events, the role head relates an individual to them (34), and *much* with
-its index is a measure of them (7). -/
+/-- The lexical items by type. *-er* and *abs* (27i), (38ii) and *much* (28) measure individuals
+or eventualities; the determiner *e* (32) is a choice of an individual; *than* (38i) takes a set
+of degrees. -/
 inductive Item : Ty Base → Type
-  | er : Item ((.v ⇒ .d) ⇒ .d ⇒ .vt)
-  | abs : Item ((.v ⇒ .d) ⇒ .d ⇒ .vt)
-  | standard : Item .d
-  | pred : Item .vt
-  | role : Item .evt
-  | subj : Item .e
+  | al : Item .e
+  | bill : Item .e
+  | alsCoffee : Item .e
+  | billsCoffee : Item .e
+  | v : Item .evt
+  | vS : Item .evt
+  | drank : Item .evt
+  | coffee : Item .et
+  | run : Item .vt
+  | hot : Item .vt
+  | e : Item (.et ⇒ .e)
+  | er (a : Ty Base) : Item ((a ⇒ .d) ⇒ .d ⇒ a ⇒ .t)
+  | abs (a : Ty Base) : Item ((a ⇒ .d) ⇒ .d ⇒ a ⇒ .t)
+  | than : Item ((.d ⇒ .t) ⇒ .d)
   | closure : Item (.vt ⇒ .t)
-  | much (n : ℕ) : Item (.v ⇒ .d)
+  | degree (n : ℕ) : Item .d
+  | much (n : ℕ) (a : Ty Base) : Item (a ⇒ .d)
 
-/-- The item of a word, and of the index of *much*. -/
+/-- The typing of the indices: the operator of the *than*-clause binds index 0, a degree, and
+*much* has index 1 where it measures individuals and index 2 where it measures eventualities. -/
+def indexTy : ℕ → Ty Base
+  | 0 => .d
+  | 1 => .e ⇒ .d
+  | _ => .v ⇒ .d
+
+/-- The items of a word, and of an index: *-er* and *abs* are of either sort of what is
+measured. -/
 def items : Word ⊕ ℕ → List (Σ a, Item a)
-  | .inl .er => [⟨_, .er⟩]
-  | .inl .abs => [⟨_, .abs⟩]
-  | .inl .standard => [⟨_, .standard⟩]
-  | .inl .pred => [⟨_, .pred⟩]
-  | .inl .role => [⟨_, .role⟩]
-  | .inl .subj => [⟨_, .subj⟩]
+  | .inl .al => [⟨_, .al⟩]
+  | .inl .bill => [⟨_, .bill⟩]
+  | .inl .alsCoffee => [⟨_, .alsCoffee⟩]
+  | .inl .billsCoffee => [⟨_, .billsCoffee⟩]
+  | .inl .v => [⟨_, .v⟩]
+  | .inl .vS => [⟨_, .vS⟩]
+  | .inl .drank => [⟨_, .drank⟩]
+  | .inl .coffee => [⟨_, .coffee⟩]
+  | .inl .run => [⟨_, .run⟩]
+  | .inl .hot => [⟨_, .hot⟩]
+  | .inl .e => [⟨_, .e⟩]
+  | .inl .er => [⟨_, .er .e⟩, ⟨_, .er .v⟩]
+  | .inl .abs => [⟨_, .abs .e⟩, ⟨_, .abs .v⟩]
+  | .inl .than => [⟨_, .than⟩]
   | .inl .closure => [⟨_, .closure⟩]
-  | .inr n => [⟨_, .much n⟩]
+  | .inr 0 => [⟨_, .degree 0⟩]
+  | .inr 1 => [⟨_, .much 1 .e⟩]
+  | .inr (n + 2) => [⟨_, .much (n + 2) .v⟩]
 
-/-- The domains: individuals, the degrees `D`, and what is measured as the eventualities. -/
-abbrev Dom (Ent α D : Type) : Base → Type :=
-  Base.Dom Ent Unit { degree := D, eventuality := α }
+variable {Ent Ev D : Type}
 
-/-- Every index is of the type of a measure: the assignment supplies the measure of *much*. -/
-abbrev indexTy : ℕ → Ty Base := fun _ ↦ .v ⇒ .d
+/-- The domains: individuals, the degrees `D`, and events and states together as the
+eventualities. -/
+abbrev Dom (Ent Ev D : Type) : Base → Type :=
+  Base.Dom Ent Unit { degree := D, eventuality := Ev }
 
-/-- The denotations: *-er* and *abs* are the strict and the weak comparison of a measure with a
-degree, and *much* with index `n` is the measure the assignment gives `n`. -/
-def Item.val [LinearOrder D] (role : Ent → α → Prop) (P : α → Prop) (subj : Ent) (δ : D) :
-    {a : Ty Base} → Item a → (∀ n, (indexTy n).Dom (Dom Ent α D)) → a.Dom (Dom Ent α D)
-  | _, .er => fun _ m d e ↦ d < m e
-  | _, .abs => fun _ m d e ↦ d ≤ m e
-  | _, .standard => fun _ ↦ δ
-  | _, .pred => fun _ ↦ P
-  | _, .role => fun _ ↦ role
-  | _, .subj => fun _ ↦ subj
+/-- An assignment gives each index a value of its type: index 0 a degree, the others a measure. -/
+abbrev Assignment (Ent Ev D : Type) : Type := ∀ n, (indexTy n).Dom (Dom Ent Ev D)
+
+/-- The denotations (27), (28), (31)–(34), (38), (57), (58). -/
+noncomputable def Item.val [LinearOrder D] [Nonempty D] [Nonempty Ent] (M : Model Ent Ev) :
+    {a : Ty Base} → Item a → Assignment Ent Ev D → a.Dom (Dom Ent Ev D)
+  | _, .al => fun _ ↦ M.al
+  | _, .bill => fun _ ↦ M.bill
+  | _, .alsCoffee => fun _ ↦ M.alsCoffee
+  | _, .billsCoffee => fun _ ↦ M.billsCoffee
+  | _, .v => fun _ ↦ M.agent
+  | _, .vS => fun _ ↦ M.holder
+  | _, .drank => fun _ ↦ M.drink
+  | _, .coffee => fun _ ↦ M.coffee
+  | _, .run => fun _ ↦ M.run
+  | _, .hot => fun _ ↦ M.hot
+  | _, .e => fun _ P ↦ Classical.epsilon P
+  | _, .er _ => fun _ m d x ↦ d < m x
+  | _, .abs _ => fun _ m d x ↦ d ≤ m x
+  | _, .than => fun _ S ↦ maxDegree {d | S d}
   | _, .closure => fun _ p ↦ ∃ e, p e
-  | _, .much n => fun g ↦ g n
+  | _, .degree 0 => fun g ↦ g 0
+  | _, .degree (_ + 1) => fun g ↦ g 0
+  | _, .much 1 .e => fun g ↦ g 1
+  | _, .much (n + 2) .v => fun g ↦ g (n + 2)
+  | _, .much _ _ => fun _ _ ↦ Classical.arbitrary D
 
-/-- The grammar: Functional Application, Predicate Modification, at ⟨v,t⟩ as at ⟨e,t⟩, and
-Event Identification, with indexed expressions. -/
-abbrev grammar : Grammar (Ty Base) :=
-  ((Grammar.application.sum .predicateModification).sum
-    (.eventIdentification .e .v)).withAbstraction indexTy
+/-- The rules: Functional Application, Predicate Modification, Event Identification, and
+abstraction over an index. -/
+abbrev rules : Interpreter (((Grammar.application.sum .predicateModification).sum
+    (.eventIdentification .e .v)).withAbstraction indexTy) Node :=
+  (typeDriven ((Grammar.application.sum .predicateModification).sum
+    (.eventIdentification .e .v))).withAbstraction indexTy
 
-/-- The denotations of a tree, relative to an assignment of measures to indices. -/
-def meanings [LinearOrder D] (role : Ent → α → Prop) (P : α → Prop) (subj : Ent) (δ : D)
+/-- The denotations of a tree, relative to an assignment. -/
+noncomputable def meanings [LinearOrder D] [Nonempty D] [Nonempty Ent] (M : Model Ent Ev)
     (t : Tree Unit Word) :
-    List (Σ a : Ty Base, (∀ n, (indexTy n).Dom (Dom Ent α D)) → a.Dom (Dom Ent α D)) :=
-  t.values ((typeDriven ((Grammar.application.sum .predicateModification).sum
-      (.eventIdentification .e .v))).withAbstraction indexTy)
-    (Grammar.withAbstraction.structure (Assignments.total (Dom Ent α D) indexTy))
-    (Item.val role P subj δ) items
+    List (Σ a : Ty Base, Assignment Ent Ev D → a.Dom (Dom Ent Ev D)) :=
+  t.values rules (Grammar.withAbstraction.structure (Assignments.total (Dom Ent Ev D) indexTy))
+    (Item.val M) items
 
-/-- In the matrix tree, (36), (44), (60), the degree phrase modifies the base predicate, the role
-head adds the subject, and the event variable is closed. -/
-def matrixTree : Tree Unit Word :=
-  .bin (.leaf .closure) (.bin (.leaf .subj) (.bin (.leaf .role)
-    (.bin (.leaf .pred) (.bin (.bin (.leaf .er) (.tr 0)) (.leaf .standard)))))
+/-- A *than*-clause (39), (46), (62): *than* over the operator's λ, the closed clause below it. -/
+def thanP (clause : Tree Unit Word) : Tree Unit Word :=
+  .bin (.leaf .than) (.binder 0 (.bin (.leaf .closure) clause))
 
-/-- The than-clause body, (39), (46), (62), is the matrix tree with *abs* for *-er*. -/
-def thanTree : Tree Unit Word :=
-  .bin (.leaf .closure) (.bin (.leaf .subj) (.bin (.leaf .role)
-    (.bin (.leaf .pred) (.bin (.bin (.leaf .abs) (.tr 0)) (.leaf .standard)))))
+/-- The degree phrase of a *than*-clause, `[tᵢ [much ABS]]`, with the index of *much*. -/
+def absDegPTree (μ : ℕ) : Tree Unit Word := .bin (.tr 0) (.bin (.tr μ) (.leaf .abs))
 
-/-- The rules derive the matrix clause (37), (45), (61), with the measure the assignment gives
-*much*. -/
-theorem meanings_matrixTree [LinearOrder D] (role : Ent → α → Prop) (P : α → Prop) (a : Ent)
-    (δ : D) :
-    meanings role P a δ matrixTree = [⟨.t, fun g ↦ matrixClause role P (g 0) a δ⟩] :=
+/-- The degree phrase of a matrix clause, `[[much -er] thanP]`. -/
+def erDegPTree (μ : ℕ) (than : Tree Unit Word) : Tree Unit Word :=
+  .bin (.bin (.tr μ) (.leaf .er)) than
+
+/-- The clause of (36) and (39) with a subject and a degree phrase:
+`[subject [v [drank [e [coffee DegP]]]]]`. -/
+def drankCoffee (subject degP : Tree Unit Word) : Tree Unit Word :=
+  .bin subject (.bin (.leaf .v) (.bin (.leaf .drank) (.bin (.leaf .e)
+    (.bin (.leaf .coffee) degP))))
+
+/-- The clause of (44) and (46): `[subject [v [run DegP]]]`. -/
+def ranClause (subject degP : Tree Unit Word) : Tree Unit Word :=
+  .bin subject (.bin (.leaf .v) (.bin (.leaf .run) degP))
+
+/-- The clause of (60) and (62): `[subject [vₛ [hot DegP]]]`. -/
+def hotClause (subject degP : Tree Unit Word) : Tree Unit Word :=
+  .bin subject (.bin (.leaf .vS) (.bin (.leaf .hot) degP))
+
+/-- (35) *Al drank more coffee than Bill did*: (36) with (39) as its *than*-clause. -/
+def nominalTree : Tree Unit Word :=
+  .bin (.leaf .closure) (drankCoffee (.leaf .al)
+    (erDegPTree 1 (thanP (drankCoffee (.leaf .bill) (absDegPTree 1)))))
+
+/-- (43) *Al ran more than Bill did*: (44) with (46). -/
+def verbalTree : Tree Unit Word :=
+  .bin (.leaf .closure) (ranClause (.leaf .al)
+    (erDegPTree 2 (thanP (ranClause (.leaf .bill) (absDegPTree 2)))))
+
+/-- (59) *Al's coffee is hotter than Bill's is*: (60) with (62). -/
+def adjectivalTree : Tree Unit Word :=
+  .bin (.leaf .closure) (hotClause (.leaf .alsCoffee)
+    (erDegPTree 2 (thanP (hotClause (.leaf .billsCoffee) (absDegPTree 2)))))
+
+variable [LinearOrder D] [Nonempty D] [Nonempty Ent] (M : Model Ent Ev)
+
+/-- (42): Al is the agent of a drinking of some coffee whose measure exceeds the maximal degree
+that the measure of some coffee Bill drank reaches. The coffee is the determiner's choice. -/
+theorem meanings_nominalTree :
+    meanings (D := D) M nominalTree = [⟨.t, fun g ↦ ∃ e, M.agent M.al e ∧
+      M.drink (Classical.epsilon fun x ↦ M.coffee x ∧
+        maxDegree {d | ∃ e', M.agent M.bill e' ∧
+          M.drink (Classical.epsilon fun y ↦ M.coffee y ∧ d ≤ g 1 y) e'} < g 1 x) e⟩] :=
   rfl
 
--- (40), (47), (63)
-theorem meanings_thanTree [LinearOrder D] (role : Ent → α → Prop) (P : α → Prop) (b : Ent)
-    (d : D) :
-    meanings role P b d thanTree = [⟨.t, fun g ↦ d ∈ thanClause role P (g 0) b⟩] :=
+-- (48), (45), (47)
+theorem meanings_verbalTree :
+    meanings (D := D) M verbalTree = [⟨.t, fun g ↦
+      matrixClause M.agent M.run (g 2) M.al (maxDegree (thanClause M.agent M.run (g 2) M.bill))⟩] :=
   rfl
 
-end TypeDriven
+-- (65), (61), (64)
+theorem meanings_adjectivalTree :
+    meanings (D := D) M adjectivalTree = [⟨.t, fun g ↦ matrixClause M.holder M.hot (g 2)
+      M.alsCoffee (maxDegree (thanClause M.holder M.hot (g 2) M.billsCoffee))⟩] :=
+  rfl
+
+omit [Nonempty Ent] in
+/-- Where the *than*-clause has a maximal degree, the verbal comparative (48) is the comparison
+of the two agents' runnings by the measure the assignment gives *much*. -/
+theorem verbalTree_iff_comparativeTruth (μ : Ev → D)
+    (h : ∃ δ, IsGreatest (thanClause M.agent M.run μ M.bill) δ) :
+    matrixClause M.agent M.run μ M.al (maxDegree (thanClause M.agent M.run μ M.bill)) ↔
+      comparativeTruth M.agent M.run id μ M.al M.bill := by
+  obtain ⟨δ, hδ⟩ := h
+  rw [maxDegree_eq hδ, ← derivation_eq_comparativeTruth]
+  exact ⟨fun hm ↦ ⟨δ, hδ, hm⟩, fun ⟨δ', hδ', hm⟩ ↦ hδ.unique hδ' ▸ hm⟩
+
+end Derivations
 
 /-! ### The three domains -/
 
@@ -253,8 +381,6 @@ open Mereology
 
 variable {α D : Type*} [Preorder D]
 
-/-- A cumulative domain with two satisfiers is not quantized, since their sum has one of them as
-a proper part. -/
 theorem not_qua_of_cum [SemilatticeSup α] {P : α → Prop} (hC : CUM P) {x y : α} (hx : P x)
     (hy : P y) (hne : x ≠ y) : ¬ QUA P := fun hQ ↦
   hne <| (hQ.eq hx (hC hx hy) le_sup_left).trans (hQ.eq hy (hC hx hy) le_sup_right).symm
