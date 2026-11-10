@@ -15,8 +15,9 @@ and `Ty.combine` lists them all.
 
 ## Main definitions
 
-* `Interpreter.BasicModes`: a theory's basic modes of combination and their selection by type.
-* `Interpreter.Standard`: forward and backward application and predicate modification.
+* `Interpreter.Grammar.application`, `Interpreter.Grammar.predicateModification`,
+  `Interpreter.Grammar.eventIdentification`: the grammars of functional application, predicate
+  modification and event identification, each with its structure and the list of its rules.
 * `Interpreter.Mode`: the basic modes closed under the meta-modes.
 * `Interpreter.Mode.eval`: the meaning of a mode, by the operations of the effects.
 * `Interpreter.Ty.combine`: every mode by which two types combine, the book's `combine`.
@@ -24,6 +25,7 @@ and `Ty.combine` lists them all.
 * `Interpreter.Node`, `Interpreter.effectDriven`: what the semantics reads off a node, and the
   rules each kind of node admits.
 * `Interpreter.envSensitive`: Heim and Kratzer's grammar as a selection of those rules.
+* `Interpreter.partialValued`: constituents as partial values, undefined where a daughter is.
 * `Interpreter.effectGrammar`: the grammar whose binary rules are the modes.
 
 ## Implementation notes
@@ -40,6 +42,8 @@ interpretation, is not proved.
 ## References
 
 * [bumford-charlow-2026]
+* [heim-kratzer-1998]
+* [kratzer-1996]
 -/
 
 @[expose] public section
@@ -63,50 +67,112 @@ def Eff.size : Eff B → ℕ
 
 end
 
-/-- A theory's basic modes of combination: its rules, and those that apply to two types. -/
-structure BasicModes (B : Type) where
-  /-- The basic rules, typed by the daughters and the mother. -/
-  Rule : Ty B → Ty B → Ty B → Type
-  /-- The basic rules that apply to a left and a right daughter. -/
-  find : (l r : Ty B) → List (Σ u, Rule l r u)
-
-/-- Forward application, backward application and predicate modification. -/
-inductive Standard : Ty B → Ty B → Ty B → Type
+/-- Functional application, forward and backward. -/
+inductive Application : Ty B → Ty B → Ty B → Type
   /-- Forward application. -/
-  | fa {a b : Ty B} : Standard (a ⇒ b) a b
+  | fa {a b : Ty B} : Application (a ⇒ b) a b
   /-- Backward application. -/
-  | ba {a b : Ty B} : Standard a (a ⇒ b) b
+  | ba {a b : Ty B} : Application a (a ⇒ b) b
+
+/-- Predicate modification, the conjunction of two predicates of one type. -/
+inductive PredicateModification : Ty B → Ty B → Ty B → Type
   /-- Predicate modification. -/
-  | pm {a : Ty B} : Standard (a ⇒ .t) (a ⇒ .t) (a ⇒ .t)
+  | pm {a : Ty B} : PredicateModification (a ⇒ .t) (a ⇒ .t) (a ⇒ .t)
 
-namespace Standard
+/-- The meaning of application. -/
+def Application.eval (D : B → Type) :
+    {l r u : Ty B} → Application l r u → l.Dom D → r.Dom D → u.Dom D
+  | _, _, _, .fa, f, x => f x
+  | _, _, _, .ba, x, f => f x
 
-/-- The standard mode two types select: the first of forward application, backward application
-and predicate modification that applies. -/
-def find [DecidableEq B] (l r : Ty B) : List (Σ u, Standard l r u) :=
-  match l, r with
-  | .fn a b, r =>
-    if h : a = r then [⟨b, h ▸ fa⟩]
-    else match r with
-      | .fn a' b' =>
-        if h' : a' = .fn a b then [⟨b', h' ▸ ba⟩]
-        else if h'' : b = .t ∧ b' = .t ∧ a = a' then
-          [⟨a ⇒ .t, by obtain ⟨rfl, rfl, rfl⟩ := h''; exact pm⟩]
-        else []
+/-- The meaning of predicate modification. -/
+def PredicateModification.eval (D : B → Type) :
+    {l r u : Ty B} → PredicateModification l r u → l.Dom D → r.Dom D → u.Dom D
+  | _, _, _, .pm, p, q => fun x ↦ p x ∧ q x
+
+/-- The grammar of functional application. -/
+def Grammar.application : Grammar (Ty B) := ⟨fun _ _ ↦ Empty, Application⟩
+
+instance (D : B → Type) : (Grammar.application (B := B)).language.Structure (Ty.Dom D) :=
+  Grammar.structure nofun (Application.eval D)
+
+/-- Whichever daughter is a function of the other's type applies to it. -/
+instance [DecidableEq B] : (Grammar.application (B := B)).LocallyFinite where
+  unaryRules _ := []
+  binaryRules l r :=
+    (match l with
+      | .fn a b => if h : a = r then [⟨b, h ▸ .fa⟩] else []
+      | _ => []) ++
+    match r with
+      | .fn a b => if h : a = l then [⟨b, h ▸ .ba⟩] else []
       | _ => []
-  | l, .fn a b => if h : a = l then [⟨b, h ▸ ba⟩] else []
-  | _, _ => []
+  mem_unaryRules := nofun
+  mem_binaryRules m := by cases m <;> simp
 
-/-- The meaning of a standard mode. -/
-def eval (D : B → Type) : {l r u : Ty B} → Standard l r u → l.Dom D → r.Dom D → u.Dom D
-  | _, _, _, fa, f, x => f x
-  | _, _, _, ba, x, f => f x
-  | _, _, _, pm, p, q => fun x ↦ p x ∧ q x
+@[simp] theorem Grammar.application.funMap_fa {D : B → Type} {a b : Ty B} (f : (a ⇒ b).Dom D)
+    (x : a.Dom D) :
+    MSFirstOrder.Language.Structure.funMap (L := (Grammar.application (B := B)).language)
+      (D := Ty.Dom D) (Grammar.Sym.binary .fa) (f, x) = f x :=
+  rfl
 
-end Standard
+@[simp] theorem Grammar.application.funMap_ba {D : B → Type} {a b : Ty B} (x : a.Dom D)
+    (f : (a ⇒ b).Dom D) :
+    MSFirstOrder.Language.Structure.funMap (L := (Grammar.application (B := B)).language)
+      (D := Ty.Dom D) (Grammar.Sym.binary .ba) (x, f) = f x :=
+  rfl
 
-/-- The standard basic modes. -/
-def standard (B : Type) [DecidableEq B] : BasicModes B := ⟨Standard, Standard.find⟩
+/-- The grammar of predicate modification. -/
+def Grammar.predicateModification : Grammar (Ty B) := ⟨fun _ _ ↦ Empty, PredicateModification⟩
+
+instance (D : B → Type) :
+    (Grammar.predicateModification (B := B)).language.Structure (Ty.Dom D) :=
+  Grammar.structure nofun (PredicateModification.eval D)
+
+/-- Two predicates of one type are conjoined. -/
+instance [DecidableEq B] : (Grammar.predicateModification (B := B)).LocallyFinite where
+  unaryRules _ := []
+  binaryRules l r :=
+    match l with
+    | .fn a .t => if h : r = (a ⇒ .t) then [⟨a ⇒ .t, by subst h; exact .pm⟩] else []
+    | _ => []
+  mem_unaryRules := nofun
+  mem_binaryRules m := by cases m; simp
+
+/-- Event identification, for individuals of type `x` and events of type `s`: a relation of
+individuals to events and a predicate of events are conjoined at the event. -/
+inductive EventIdentification (x s : Ty B) : Ty B → Ty B → Ty B → Type
+  /-- Event identification, the relation on the left. -/
+  | left : EventIdentification x s (x ⇒ s ⇒ .t) (s ⇒ .t) (x ⇒ s ⇒ .t)
+  /-- Event identification, the relation on the right. -/
+  | right : EventIdentification x s (s ⇒ .t) (x ⇒ s ⇒ .t) (x ⇒ s ⇒ .t)
+
+/-- The meaning of event identification. -/
+def EventIdentification.eval (D : B → Type) {x s : Ty B} :
+    {l r u : Ty B} → EventIdentification x s l r u → l.Dom D → r.Dom D → u.Dom D
+  | _, _, _, .left, f, g => fun y e ↦ f y e ∧ g e
+  | _, _, _, .right, g, f => fun y e ↦ f y e ∧ g e
+
+/-- The grammar of event identification. -/
+def Grammar.eventIdentification (x s : Ty B) : Grammar (Ty B) :=
+  ⟨fun _ _ ↦ Empty, EventIdentification x s⟩
+
+instance (x s : Ty B) (D : B → Type) :
+    (Grammar.eventIdentification x s).language.Structure (Ty.Dom D) :=
+  Grammar.structure nofun (EventIdentification.eval D)
+
+/-- A relation of individuals to events is identified with a predicate of events, in either
+order. -/
+instance [DecidableEq B] (x s : Ty B) : (Grammar.eventIdentification x s).LocallyFinite where
+  unaryRules _ := []
+  binaryRules l r :=
+    (if h : l = (x ⇒ s ⇒ .t) ∧ r = (s ⇒ .t) then
+      [⟨x ⇒ s ⇒ .t, by obtain ⟨rfl, rfl⟩ := h; exact .left⟩]
+    else []) ++
+    if h : l = (s ⇒ .t) ∧ r = (x ⇒ s ⇒ .t) then
+      [⟨x ⇒ s ⇒ .t, by obtain ⟨rfl, rfl⟩ := h; exact .right⟩]
+    else []
+  mem_unaryRules := nofun
+  mem_binaryRules m := by cases m <;> simp
 
 /-- The modes of combination: a theory's basic modes closed under the meta-modes. -/
 inductive Mode (Rule : Ty B → Ty B → Ty B → Type) : Ty B → Ty B → Ty B → Type
@@ -143,23 +209,23 @@ namespace Mode
 
 variable {Rule : Ty B → Ty B → Ty B → Type}
 
-/-- The meaning of a mode, from the meanings of the basic modes: each meta-mode is the operation
-of its effect. -/
-def eval (D : B → Type) (basic : ∀ {l r u : Ty B}, Rule l r u → l.Dom D → r.Dom D → u.Dom D) :
-    {l r u : Ty B} → Mode Rule l r u → l.Dom D → r.Dom D → u.Dom D
-  | _, _, _, .basic b, x, y => basic b x y
-  | _, _, _, .mapR (f := f) m, a, b => Eff.map f (fun y ↦ m.eval D basic a y) b
-  | _, _, _, .mapL (f := f) m, a, b => Eff.map f (fun x ↦ m.eval D basic x b) a
+/-- The meaning of a mode over a grammar's rules, from a structure for the grammar: each
+meta-mode is the operation of its effect. -/
+def eval {G : Grammar (Ty B)} (D : B → Type) [M : G.language.Structure (Ty.Dom D)] :
+    {l r u : Ty B} → Mode G.Binary l r u → l.Dom D → r.Dom D → u.Dom D
+  | _, _, _, .basic b, x, y => M.funMap (.binary b) (x, y)
+  | _, _, _, .mapR (f := f) m, a, b => Eff.map f (fun y ↦ m.eval D a y) b
+  | _, _, _, .mapL (f := f) m, a, b => Eff.map f (fun x ↦ m.eval D x b) a
   | _, _, _, .ap (f := f) h m, a, b =>
-    Eff.seq f h (Eff.map f (fun x y ↦ m.eval D basic x y) a) b
-  | _, _, _, .unitR (f := f) h m, a, b => m.eval D basic (fun x ↦ a (Eff.pure f h x)) b
-  | _, _, _, .unitL (f := f) h m, a, b => m.eval D basic a fun y ↦ b (Eff.pure f h y)
+    Eff.seq f h (Eff.map f (fun x y ↦ m.eval D x y) a) b
+  | _, _, _, .unitR (f := f) h m, a, b => m.eval D (fun x ↦ a (Eff.pure f h x)) b
+  | _, _, _, .unitL (f := f) h m, a, b => m.eval D a fun y ↦ b (Eff.pure f h y)
   | _, _, _, .counit (i := i) m, a, b =>
-    Eff.counit (Eff.map (.W i) (fun x ↦ Eff.map (.R i) (fun y ↦ m.eval D basic x y) b) a)
-  | _, _, _, .ejectR m, a, b => m.eval D basic a (Eff.eject b)
-  | _, _, _, .ejectL m, a, b => m.eval D basic (Eff.eject a) b
-  | _, _, _, .join (f := f) h m, a, b => Eff.join f h (m.eval D basic a b)
-  | _, _, _, .lower m, a, b => Eff.lower (m.eval D basic a b)
+    Eff.counit (Eff.map (.W i) (fun x ↦ Eff.map (.R i) (fun y ↦ m.eval D x y) b) a)
+  | _, _, _, .ejectR m, a, b => m.eval D a (Eff.eject b)
+  | _, _, _, .ejectL m, a, b => m.eval D (Eff.eject a) b
+  | _, _, _, .join (f := f) h m, a, b => Eff.join f h (m.eval D a b)
+  | _, _, _, .lower m, a, b => Eff.lower (m.eval D a b)
 
 /-- The shape of a mode, forgetting its types. -/
 inductive Shape (β : Type) where
@@ -195,10 +261,11 @@ end Mode
 
 section Combine
 
-variable [DecidableEq B] (basics : BasicModes B)
+variable [DecidableEq B] {Rule : Ty B → Ty B → Ty B → Type}
+  (find : (l r : Ty B) → List (Σ u, Rule l r u))
 
 /-- The Join of a mode whose result has two layers of one monadic effect. -/
-def Mode.join? {l r : Ty B} : (Σ u, Mode basics.Rule l r u) → List (Σ u, Mode basics.Rule l r u)
+def Mode.join? {l r : Ty B} : (Σ u, Mode Rule l r u) → List (Σ u, Mode Rule l r u)
   | ⟨.comp f (.comp g a), m⟩ =>
     if h : g = f then
       if ha : f.IsApplicative then [⟨.comp f a, .join ha (h ▸ m)⟩] else []
@@ -206,57 +273,57 @@ def Mode.join? {l r : Ty B} : (Σ u, Mode basics.Rule l r u) → List (Σ u, Mod
   | _ => []
 
 /-- The Lower of a mode whose result is a continuation at its own result type. -/
-def Mode.lower? {l r : Ty B} : (Σ u, Mode basics.Rule l r u) → List (Σ u, Mode basics.Rule l r u)
+def Mode.lower? {l r : Ty B} : (Σ u, Mode Rule l r u) → List (Σ u, Mode Rule l r u)
   | ⟨.comp (.C o) a, m⟩ => if h : o = a then [⟨a, .lower (h ▸ m)⟩] else []
   | _ => []
 
 /-- `Ty.combine` to a bound on the depth of its recursion. -/
-def Ty.combineAux : ℕ → (l r : Ty B) → List (Σ u, Mode basics.Rule l r u)
+def Ty.combineAux : ℕ → (l r : Ty B) → List (Σ u, Mode Rule l r u)
   | 0, _, _ => []
-  | n + 1, l, r =>
-    (((basics.find l r).map fun p ↦ (⟨p.1, .basic p.2⟩ : Σ u, Mode basics.Rule l r u)) ++
+  | k + 1, l, r =>
+    (((find l r).map fun p ↦ (⟨p.1, .basic p.2⟩ : Σ u, Mode Rule l r u)) ++
       (match r with
-        | .comp f y => (Ty.combineAux n l y).map fun p ↦ ⟨.comp f p.1, .mapR p.2⟩
+        | .comp f y => (Ty.combineAux k l y).map fun p ↦ ⟨.comp f p.1, .mapR p.2⟩
         | _ => []) ++
       (match l with
-        | .comp f x => (Ty.combineAux n x r).map fun p ↦ ⟨.comp f p.1, .mapL p.2⟩
+        | .comp f x => (Ty.combineAux k x r).map fun p ↦ ⟨.comp f p.1, .mapL p.2⟩
         | _ => []) ++
       (match l, r with
         | .comp f x, .comp g y =>
           if h : g = f then
             if ha : f.IsApplicative then
-              (Ty.combineAux n x y).map fun p ↦ ⟨.comp f p.1, by subst h; exact .ap ha p.2⟩
+              (Ty.combineAux k x y).map fun p ↦ ⟨.comp f p.1, by subst h; exact .ap ha p.2⟩
             else []
           else []
         | _, _ => []) ++
       (match l with
         | .fn (.comp f x) x' =>
           if ha : f.IsApplicative then
-            (Ty.combineAux n (x ⇒ x') r).map fun p ↦ ⟨p.1, .unitR ha p.2⟩
+            (Ty.combineAux k (x ⇒ x') r).map fun p ↦ ⟨p.1, .unitR ha p.2⟩
           else []
         | _ => []) ++
       (match r with
         | .fn (.comp f y) y' =>
           if ha : f.IsApplicative then
-            (Ty.combineAux n l (y ⇒ y')).map fun p ↦ ⟨p.1, .unitL ha p.2⟩
+            (Ty.combineAux k l (y ⇒ y')).map fun p ↦ ⟨p.1, .unitL ha p.2⟩
           else []
         | _ => []) ++
       (match l, r with
         | .comp (.W i) x, .comp (.R j) y =>
-          if h : j = i then (Ty.combineAux n x y).map fun p ↦ ⟨p.1, h ▸ .counit p.2⟩ else []
+          if h : j = i then (Ty.combineAux k x y).map fun p ↦ ⟨p.1, h ▸ .counit p.2⟩ else []
         | _, _ => []) ++
       (match r with
         | .fn x (.comp (.R i) y) =>
-          (Ty.combineAux n l (.comp (.R i) (x ⇒ y))).map fun p ↦ ⟨p.1, .ejectR p.2⟩
+          (Ty.combineAux k l (.comp (.R i) (x ⇒ y))).map fun p ↦ ⟨p.1, .ejectR p.2⟩
         | _ => []) ++
       (match l with
         | .fn x (.comp (.R i) y) =>
-          (Ty.combineAux n (.comp (.R i) (x ⇒ y)) r).map fun p ↦ ⟨p.1, .ejectL p.2⟩
-        | _ => [])).flatMap fun p ↦ p :: (Mode.join? basics p ++ Mode.lower? basics p)
+          (Ty.combineAux k (.comp (.R i) (x ⇒ y)) r).map fun p ↦ ⟨p.1, .ejectL p.2⟩
+        | _ => [])).flatMap fun p ↦ p :: (Mode.join? p ++ Mode.lower? p)
 
 /-- Every mode by which a left daughter of type `l` and a right daughter of type `r` combine. -/
-def Ty.combine (l r : Ty B) : List (Σ u, Mode basics.Rule l r u) :=
-  Ty.combineAux basics (3 * (l.size + r.size) + 3) l r
+def Ty.combine (l r : Ty B) : List (Σ u, Mode Rule l r u) :=
+  Ty.combineAux find (3 * (l.size + r.size) + 3) l r
 
 end Combine
 
@@ -316,41 +383,76 @@ def effectGrammar (Rule : Ty B → Ty B → Ty B → Type) (Shift : Ty B → Ty 
   Unary := Shift
   Binary := Mode Rule
 
-/-- The structure of the effect-driven grammar, from the meanings of the basic modes and of the
-type shifts. -/
-def effectGrammar.structure (D : B → Type) {Rule : Ty B → Ty B → Ty B → Type}
-    {Shift : Ty B → Ty B → Type}
-    (basic : ∀ {l r u : Ty B}, Rule l r u → l.Dom D → r.Dom D → u.Dom D)
+/-- The structure of the effect-driven grammar over a grammar's rules, from a structure for the
+grammar and the meanings of the type shifts. -/
+@[instance_reducible] def effectGrammar.structure {G : Grammar (Ty B)} {D : B → Type}
+    [G.language.Structure (Ty.Dom D)] {Shift : Ty B → Ty B → Type}
     (shift : ∀ {a b : Ty B}, Shift a b → a.Dom D → b.Dom D) :
-    (effectGrammar Rule Shift).language.Structure (Ty.Dom D) :=
-  Grammar.structure shift fun m ↦ m.eval D basic
+    (effectGrammar G.Binary Shift).language.Structure (Ty.Dom D) :=
+  Grammar.structure shift fun m ↦ m.eval D
 
-/-- The effect-driven interpreter: a node admits every mode that combines its daughters, kept
-at an island only if its result is evaluated, and abstraction at an index over what reads
-assignments. -/
-def effectDriven [DecidableEq B] (basics : BasicModes B) (g x : Ty B) :
-    Interpreter (effectGrammar basics.Rule (Abstraction g x)) Node where
+/-- The effect-driven interpreter over a grammar: a node admits every mode that combines its
+daughters, kept at an island only if its result is evaluated, and abstraction at an index over
+what reads assignments. -/
+def effectDriven [DecidableEq B] (G : Grammar (Ty B)) [G.LocallyFinite] (g x : Ty B) :
+    Interpreter (effectGrammar G.Binary (Abstraction g x)) Node where
   unary
     | .index n, .comp (.R i) b =>
       if h : i = g then [⟨.comp (.R g) (x ⇒ b), h ▸ .index n b⟩] else []
     | _, _ => []
   binary
-    | .island, l, r => (Ty.combine basics l r).filter (·.1.Evaluated)
-    | _, l, r => Ty.combine basics l r
+    | .island, l, r =>
+      (Ty.combine (Grammar.LocallyFinite.binaryRules (G := G)) l r).filter (·.1.Evaluated)
+    | _, l, r => Ty.combine (Grammar.LocallyFinite.binaryRules (G := G)) l r
 
 /-- The environment-sensitive interpreter of Heim and Kratzer, the book's Figure 5: every
-constituent reads an assignment, sisters combine by a basic mode on their results at one
-assignment, and an index abstracts. At most one rule applies to a node. -/
-def envSensitive [DecidableEq B] (basics : BasicModes B) (g x : Ty B) :
-    Interpreter (effectGrammar basics.Rule (Abstraction g x)) Node where
-  unary := (effectDriven basics g x).unary
+constituent reads an assignment, sisters combine by a rule of the grammar on their results at
+one assignment, and an index abstracts. -/
+def envSensitive [DecidableEq B] (G : Grammar (Ty B)) [G.LocallyFinite] (g x : Ty B) :
+    Interpreter (effectGrammar G.Binary (Abstraction g x)) Node where
+  unary := (effectDriven G g x).unary
   binary
     | _, .comp (.R i) l, .comp (.R j) r =>
       if h : i = g ∧ j = g then
-        (basics.find l r).map fun p ↦ ⟨.comp (.R g) p.1, by
+        (Grammar.LocallyFinite.binaryRules (G := G) l r).map fun p ↦ ⟨.comp (.R g) p.1, by
           obtain ⟨rfl, rfl⟩ := h; exact .ap trivial (.basic p.2)⟩
       else []
     | _, _, _ => []
+
+/-- The partial-valued interpreter: every constituent is a partial value, and sisters combine by
+a rule of the grammar on their values where both are defined, a partial result of the rule
+flattened. A function applied to an undefined argument is undefined. -/
+def partialValued [DecidableEq B] (G : Grammar (Ty B)) [G.LocallyFinite]
+    {Shift : Ty B → Ty B → Type} {N : Type} : Interpreter (effectGrammar G.Binary Shift) N where
+  unary _ _ := []
+  binary
+    | _, .comp .M l, .comp .M r =>
+      (Grammar.LocallyFinite.binaryRules (G := G) l r).map fun
+        | ⟨.comp .M u, p⟩ => ⟨.comp .M u, .join trivial (.ap trivial (.basic p))⟩
+        | ⟨u, p⟩ => ⟨.comp .M u, .ap trivial (.basic p)⟩
+    | _, _, _ => []
+
+section PartialValued
+
+variable {G : Grammar (Ty B)} {D : B → Type} [M : G.language.Structure (Ty.Dom D)] {l r u : Ty B}
+
+/-- A rule on two partial values: defined where both are. -/
+theorem Mode.eval_ap_basic (p : G.Binary l r u) (x : Part (l.Dom D)) (y : Part (r.Dom D)) :
+    (Mode.ap trivial (.basic p) :
+      Mode G.Binary (.comp .M l) (.comp .M r) (.comp .M u)).eval D x y =
+      x.bind fun a ↦ y.map fun b ↦ M.funMap (.binary p) (a, b) := by
+  simp [Mode.eval, Eff.seq, Eff.map, Part.bind_map]
+
+/-- A rule with a partial result, on two partial values: defined where both are and the rule is
+at their values. -/
+theorem Mode.eval_join_ap_basic (p : G.Binary l r (.comp .M u)) (x : Part (l.Dom D))
+    (y : Part (r.Dom D)) :
+    (Mode.join trivial (.ap trivial (.basic p)) :
+      Mode G.Binary (.comp .M l) (.comp .M r) (.comp .M u)).eval D x y =
+      x.bind fun a ↦ y.bind fun b ↦ M.funMap (.binary p) (a, b) := by
+  simp [Mode.eval, Eff.join, Eff.seq, Eff.map, Part.bind_assoc, Part.bind_map]
+
+end PartialValued
 
 /-- A word that reads no assignment, as a constant reader. -/
 def Assignments.const (_ : Assignments D g x) {a : Ty B} (m : a.Dom D) : Σ a : Ty B, a.Dom D :=

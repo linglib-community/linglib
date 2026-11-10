@@ -55,7 +55,7 @@ structure Language (S : Type u) where
   Functions : Signature S → S → Type v
 
 /-- A structure for a language over the domains `D`: a function for each symbol. -/
-structure Language.Structure (L : Language.{u, v} S) (D : S → Type w) where
+class Language.Structure (L : Language.{u, v} S) (D : S → Type w) where
   /-- The function a symbol denotes. -/
   funMap {σ : Signature S} {t : S} : L.Functions σ t → σ.Interpret D → D t
 

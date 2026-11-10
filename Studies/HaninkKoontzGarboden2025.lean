@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Ty
+public import Linglib.Semantics.Composition.Interpreter.Sorts
 public import Linglib.Semantics.Possession.Relationalizer
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 public import Linglib.Fragments.Washo.PropertyConcepts
@@ -24,7 +24,7 @@ returns the range of a relation (57), `nabla`, a Duke-of-York derivation that gi
 root's own predication when possessing a state is holding it, `vHave_nabla_self`. One assignment
 of types to shapes, `RootType.ofShape`, then derives the morphology of each shape as its shortest
 well-typed verbalization, `derivation_minimal`, and the bipartite gap for the suffixed roots
-(49), `wellTyped_become_iff`. The change-of-state head is Beavers and Koontz-Garboden's
+(49), `isSome_output?_become_iff`. The change-of-state head is Beavers and Koontz-Garboden's
 inchoative operator, and the resultative entails the result state of its theme (46). The
 seventy stems of the appendix are the rows of `Washo.propertyConcepts`, whose class is read off
 their affixes, `Washo.PropertyConcept.shape`. Dixon's categories predict neither the class nor
@@ -63,7 +63,7 @@ appendix also counts 35 Class 3 stems where its table lists 25, the seventy bein
 
 namespace HaninkKoontzGarboden2025
 
-open Montague Possession Washo
+open Interpreter Possession Washo
 
 /-! ### The two root meanings, section 4 -/
 
@@ -75,7 +75,7 @@ inductive RootType where
   deriving DecidableEq, Repr
 
 /-- The semantic type of each meaning. -/
-def RootType.ty : RootType → Ty
+def RootType.ty : RootType → Ty Base
   | .relation => .e ⇒ .v ⇒ .t
   | .quality => .v ⇒ .t
 
@@ -104,7 +104,7 @@ inductive Head where
   deriving DecidableEq, Repr
 
 /-- The type a head takes. -/
-def Head.input : Head → Ty
+def Head.input : Head → Ty Base
   | .zero => .e ⇒ .v ⇒ .t
   | .possess => .v ⇒ .t
   | .attr => .e ⇒ .v ⇒ .t
@@ -113,35 +113,22 @@ def Head.input : Head → Ty
 /-- The type a head returns is a predicate of individuals and states for the verbalizers, a
 predicate of states for *ʔil-*, and a relation of individuals to events of change for the bipartite
 head, of the same type, since states and events of change are both of type `v` (43). -/
-def Head.output : Head → Ty
+def Head.output : Head → Ty Base
   | .zero => .e ⇒ .v ⇒ .t
   | .possess => .e ⇒ .v ⇒ .t
   | .attr => .v ⇒ .t
   | .become => .e ⇒ .v ⇒ .t
 
-/-- A sequence of heads composes with a type when each takes what the last returns. -/
-def WellTyped : Ty → List Head → Prop
-  | _, [] => True
-  | τ, h :: hs => h.input = τ ∧ WellTyped h.output hs
-
-instance decWellTyped : (τ : Ty) → (hs : List Head) → Decidable (WellTyped τ hs)
-  | _, [] => isTrue trivial
-  | τ, h :: hs =>
-    haveI := decWellTyped h.output hs
-    inferInstanceAs (Decidable (h.input = τ ∧ WellTyped h.output hs))
-
-/-- The type a sequence of heads returns. -/
-def output (τ : Ty) : List Head → Ty
-  | [] => τ
-  | h :: hs => output h.output hs
+/-- The type a sequence of heads returns from a type, if each takes what the last returns. -/
+def output? (τ : Ty Base) (hs : List Head) : Option (Ty Base) :=
+  hs.foldlM (fun τ h ↦ if h.input = τ then some h.output else none) τ
 
 /-- A verbalization of a root is a sequence of at least one head that is well-typed and returns
 a stative predicate, one without the change-of-state head, with zero categorization open only to
 a free root. -/
 def Verbalizes (sh : Shape) (hs : List Head) : Prop :=
-  hs ≠ [] ∧ WellTyped (RootType.ofShape sh).ty hs ∧
-    output (RootType.ofShape sh).ty hs = (.e ⇒ .v ⇒ .t) ∧ Head.become ∉ hs ∧
-      (Head.zero ∈ hs → sh = .bare)
+  hs ≠ [] ∧ output? (RootType.ofShape sh).ty hs = some (.e ⇒ .v ⇒ .t) ∧ Head.become ∉ hs ∧
+    (Head.zero ∈ hs → sh = .bare)
 
 instance (sh : Shape) (hs : List Head) : Decidable (Verbalizes sh hs) := by
   unfold Verbalizes; infer_instance
@@ -155,12 +142,12 @@ def derivation : Shape → List Head
 
 theorem derivation_verbalizes : ∀ sh, Verbalizes sh (derivation sh) := by decide
 
-theorem wellTyped_possess_iff (sh : Shape) :
-    WellTyped (RootType.ofShape sh).ty [.possess] ↔ sh = .suffixed := by
+theorem isSome_output?_possess_iff (sh : Shape) :
+    (output? (RootType.ofShape sh).ty [.possess]).isSome ↔ sh = .suffixed := by
   cases sh <;> decide
 
-theorem wellTyped_become_iff (sh : Shape) :
-    WellTyped (RootType.ofShape sh).ty [.become] ↔ sh ≠ .suffixed := by
+theorem isSome_output?_become_iff (sh : Shape) :
+    (output? (RootType.ofShape sh).ty [.become]).isSome ↔ sh ≠ .suffixed := by
   cases sh <;> decide
 
 theorem derivation_minimal (sh : Shape) (hs : List Head) (h : Verbalizes sh hs) :
@@ -170,7 +157,7 @@ theorem derivation_minimal (sh : Shape) (hs : List Head) (h : Verbalizes sh hs) 
   · exact List.length_pos_of_ne_nil h.1
   · rcases hs with _ | ⟨h₁, _ | ⟨h₂, t⟩⟩
     · exact absurd rfl h.1
-    · cases h₁ <;> simp [Verbalizes, WellTyped, output, Head.input, Head.output,
+    · cases h₁ <;> simp [Verbalizes, output?, Head.input, Head.output,
         RootType.ofShape, RootType.ty] at h
     · show 2 ≤ t.length + 1 + 1
       omega

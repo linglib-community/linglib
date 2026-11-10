@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Logic.Assignment
-public import Linglib.Semantics.Composition.Ty
+public import Linglib.Semantics.Composition.Interpreter.Sorts
 public import Linglib.Semantics.Reference.Rigidity
 public import Linglib.Semantics.Quantification.Polyadic
 public import Mathlib.Data.Fin.VecNotation
@@ -40,7 +40,7 @@ mention no word outside the fragment are imposed.
 
 namespace Montague1973
 
-open Montague Quantifier Polyadic
+open Interpreter Quantifier Polyadic
 
 /-! ### Categories and the category-to-type map -/
 
@@ -65,7 +65,7 @@ abbrev CN : Cat := .dslash .t .e
 
 /-- The category-to-type map `f` sends `e` to `e`, `t` to `t`, and both `A/B` and `A//B` to
 `⟨⟨s, f(B)⟩, f(A)⟩`. -/
-abbrev ty : Cat → Ty
+abbrev ty : Cat → Ty Base
   | .e => .e
   | .t => .t
   | .slash a b | .dslash a b => .intens b.ty ⇒ a.ty

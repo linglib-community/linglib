@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.Valency
-public import Linglib.Semantics.Composition.Ty
+public import Linglib.Semantics.Composition.Interpreter.Sorts
 public import Linglib.Syntax.Minimalist.Verbal.Voice.Diathesis
 public import Linglib.Data.Wordlist.Coon2019
 public import Linglib.Fragments.Mayan.Chuj.Voice
@@ -72,7 +72,7 @@ namespace Coon2019
 
 open Chuj Minimalist.Voice ArgumentStructure
 open Wordlist (RootClass)
-open scoped Montague
+open scoped Interpreter
 
 /-! ### Root classes -/
 
@@ -86,7 +86,7 @@ def Wordlist.RootClass.valency : RootClass → Valency
 /-- The semantic type of a root class, (3): transitive and intransitive roots are event
 predicates over an internal argument, positional roots measure functions after
 [henderson-2017] and nominal roots properties. -/
-def Wordlist.RootClass.ty : RootClass → Montague.Ty
+def Wordlist.RootClass.ty : RootClass → Interpreter.Ty Interpreter.Base
   | .tv | .itv => .e ⇒ .v ⇒ .t
   | .pos => .e ⇒ .v ⇒ .d
   | .nom => .e ⇒ .t

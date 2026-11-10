@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.Snyder2026
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Setoid.Basic
 public import Linglib.Data.Examples.Readers
-public import Linglib.Semantics.Composition.Ty
+public import Linglib.Semantics.Composition.Interpreter.Sorts
 
 /-!
 # Snyder (2026): Numbers as Kinds
@@ -61,6 +61,8 @@ carries its semantic function, and every function is attested (`functions_attest
 
 namespace Snyder2026
 
+open Interpreter
+
 /-! ### The three polymorphic analyses and the semantic functions -/
 
 /-- The three polymorphic analyses: the lexical meaning of *two* is a numeral (5), a
@@ -70,7 +72,7 @@ inductive PolymorphicAnalysis
   deriving DecidableEq
 
 /-- The lexical type of *two* under each analysis. -/
-def PolymorphicAnalysis.lexicalType : PolymorphicAnalysis → Montague.Ty
+def PolymorphicAnalysis.lexicalType : PolymorphicAnalysis → Ty Base
   | .substantivalism => .e
   | .adjectivalism => .et
   | .contextualism => .et
@@ -83,7 +85,7 @@ inductive SemanticFunction
   deriving DecidableEq
 
 /-- The type at which each function is used. -/
-def SemanticFunction.targetType : SemanticFunction → Montague.Ty
+def SemanticFunction.targetType : SemanticFunction → Ty Base
   | .predicative | .attributive | .tokenPredicate | .taxonomic => .et
   | .quantificational => .ett
   | .specificational | .numeral | .closeAppositive | .tokenRef | .kindRef => .e
@@ -108,20 +110,19 @@ inductive Operator
   deriving DecidableEq
 
 /-- The input type of a type-shifter. -/
-def Operator.input : Operator → Montague.Ty
+def Operator.input : Operator → Ty Base
   | .card | .ident => .e
   | .pm | .a | .nom | .iota => .et
 
 /-- The output type of a type-shifter. -/
-def Operator.output : Operator → Montague.Ty
+def Operator.output : Operator → Ty Base
   | .card | .pm | .ident => .et
   | .a => .ett
   | .nom | .iota => .e
 
 /-- The type a chain of type-shifters reaches from a type, if each composes with the last. -/
-def wellTyped : Montague.Ty → List Operator → Option Montague.Ty
-  | τ, [] => some τ
-  | τ, op :: ops => if τ = op.input then wellTyped op.output ops else none
+def wellTyped (τ : Ty Base) (ops : List Operator) : Option (Ty Base) :=
+  ops.foldlM (fun τ op ↦ if τ = op.input then some op.output else none) τ
 
 /-- The derivation map of each analysis, the diagrams of sections 2 and 5: the chain of
 type-shifters from the lexical meaning to a function, or none where the analysis does not

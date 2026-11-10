@@ -1,22 +1,29 @@
 module
 
 public import Linglib.Core.ModelTheory.ManySorted.Syntax
+public import Mathlib.Logic.Relator
 
 /-!
 # Realization of many-sorted terms
 
 A term has a value in a structure, given the values of its variables, and the value of a
-substituted term is the value of the term at the values of what was substituted.
+substituted term is the value of the term at the values of what was substituted. A relation
+between the domains of two structures that every function respects [holds between the two values
+of every term](##MSFirstOrder.Language.Structure.IsLogicalRel.realize).
 
 ## Main definitions
 
 * `MSFirstOrder.Language.Term.realize`: the value of a term in a structure.
 * `MSFirstOrder.Signature.Place.val`: the argument at a place.
+* `MSFirstOrder.Signature.LiftRel`: a relation between two families of domains, between the
+  arguments of a shape.
+* `MSFirstOrder.Language.Structure.IsLogicalRel`: a relation between the domains of two
+  structures that every function respects.
 -/
 
 @[expose] public section
 
-universe u v w w' x
+universe u v w w' x x'
 
 namespace MSFirstOrder
 
@@ -28,6 +35,14 @@ def Signature.Place.val : {σ : Signature S} → {s : S} → σ.Place s → σ.I
   | _, _, .here, x => x
   | _, _, .left p, x => p.val x.1
   | _, _, .right p, x => p.val x.2
+
+/-- A relation between two families of domains holds between the arguments of a shape when it
+holds between them place by place. -/
+def Signature.LiftRel {D' : S → Type x'} (R : ∀ s, D s → D' s → Prop) :
+    (σ : Signature S) → σ.Interpret D → σ.Interpret D' → Prop
+  | .nil, _, _ => True
+  | .of s, a, b => R s a b
+  | .prod σ τ, a, b => LiftRel R σ a.1 b.1 ∧ LiftRel R τ a.2 b.2
 
 namespace Language.Term
 
@@ -66,5 +81,28 @@ theorem realize_places (M : L.Structure D) (σ : Signature S) (args : σ.Interpr
     exact Prod.ext (ihσ args.1) (ihτ args.2)
 
 end Language.Term
+
+variable {D' : S → Type x'} {M : L.Structure D} {M' : L.Structure D'}
+  {R : ∀ s, D s → D' s → Prop}
+
+/-- A logical relation between two structures for one language: a relation between their domains
+that every function respects, taking related arguments to related values. -/
+structure Language.Structure.IsLogicalRel (M : L.Structure D) (M' : L.Structure D')
+    (R : ∀ s, D s → D' s → Prop) : Prop where
+  /-- Each function takes related arguments to related values. -/
+  funMap {σ : Signature S} {s : S} (f : L.Functions σ s) :
+    Relator.LiftFun (σ.LiftRel R) (R s) (M.funMap f) (M'.funMap f)
+
+/-- The basic lemma of logical relations: a logical relation holds between the two values of a
+term whose variables have related values. -/
+theorem Language.Structure.IsLogicalRel.realize (h : M.IsLogicalRel M' R)
+    {ρ : ∀ {s : S}, α s → D s} {ρ' : ∀ {s : S}, α s → D' s}
+    (hρ : ∀ {s : S} (a : α s), R s (ρ a) (ρ' a)) {σ : Signature S} (t : L.Term α σ) :
+    σ.LiftRel R (t.realize M ρ) (t.realize M' ρ') := by
+  induction t with
+  | var a => exact hρ a
+  | func f r ih => exact h.funMap f ih
+  | prod a b iha ihb => exact ⟨iha, ihb⟩
+  | nil => trivial
 
 end MSFirstOrder
