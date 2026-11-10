@@ -4,8 +4,8 @@ public import Mathlib.CategoryTheory.Monad.Adjunction
 public import Mathlib.CategoryTheory.Types.Basic
 public import Mathlib.Control.Basic
 public import Mathlib.Control.Functor
-public import Linglib.Semantics.Composition.Interpreter.Rules
-public import Linglib.Semantics.Composition.Interpreter.Mode
+public import Linglib.Semantics.Composition.Rules
+public import Linglib.Semantics.Composition.Mode
 
 /-!
 # Bumford and Charlow 2026: effect-driven interpretation

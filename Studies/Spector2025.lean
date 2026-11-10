@@ -5,9 +5,9 @@ public import Studies.Spector2017
 public import Linglib.Logic.Trivalent.Supervaluation
 public import Linglib.Semantics.Exhaustification.Presuppositional
 public import Linglib.Semantics.Presupposition.Context
-public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
-public import Linglib.Semantics.Composition.Interpreter.Readings
-public import Linglib.Semantics.Composition.Interpreter.Rules
+public import Linglib.Semantics.Composition.PredicateAbstraction
+public import Linglib.Semantics.Composition.Readings
+public import Linglib.Semantics.Composition.Rules
 public import Linglib.Data.Examples.Spector2025
 
 /-!

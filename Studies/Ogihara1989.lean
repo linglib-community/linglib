@@ -3,9 +3,9 @@ module
 public import Linglib.Data.Examples.Ogihara1989
 public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.Readers
-public import Linglib.Semantics.Composition.Interpreter.Constituency
-public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
-public import Linglib.Semantics.Composition.Interpreter.Rules
+public import Linglib.Semantics.Composition.Constituency
+public import Linglib.Semantics.Composition.PredicateAbstraction
+public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Events.Basic
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Semantics.Tense.Reichenbach

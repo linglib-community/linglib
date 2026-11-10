@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Interpreter.Sorts
+public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Possession.Relationalizer
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 public import Linglib.Fragments.Washo.PropertyConcepts

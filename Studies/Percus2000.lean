@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Composition.Interpreter.CallByValue
-public import Linglib.Semantics.Composition.Interpreter.Constituency
+public import Linglib.Semantics.Composition.CallByValue
+public import Linglib.Semantics.Composition.Constituency
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Tactic.DeriveFintype

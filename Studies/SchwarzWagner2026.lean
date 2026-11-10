@@ -2,8 +2,8 @@ module
 
 public import Linglib.Data.Examples.SchwarzWagner2026
 public import Linglib.Pragmatics.NeoGricean.Basic
-public import Linglib.Semantics.Composition.Interpreter.Constituency
-public import Linglib.Semantics.Composition.Interpreter.Rules
+public import Linglib.Semantics.Composition.Constituency
+public import Linglib.Semantics.Composition.Rules
 public import Linglib.Core.Data.RoseTree.Licensed
 public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Quantification.Basic

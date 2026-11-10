@@ -1,8 +1,8 @@
 module
 
-public import Linglib.Semantics.Composition.Interpreter.Constituency
-public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
-public import Linglib.Semantics.Composition.Interpreter.Rules
+public import Linglib.Semantics.Composition.Constituency
+public import Linglib.Semantics.Composition.PredicateAbstraction
+public import Linglib.Semantics.Composition.Rules
 
 /-!
 # Type-driven interpretation of a tree

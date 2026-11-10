@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Syntax.CCG.Derivation
-public import Linglib.Semantics.Composition.Interpreter.Effect
-public import Linglib.Semantics.Composition.Interpreter.Basic
+public import Linglib.Semantics.Composition.Effect
+public import Linglib.Semantics.Composition.Basic
 
 /-!
 # The CCG syntax-semantics interface

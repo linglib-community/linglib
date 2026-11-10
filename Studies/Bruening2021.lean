@@ -2,8 +2,8 @@ module
 
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Data.Examples.Bruening2021
-public import Linglib.Semantics.Composition.Interpreter.Rules
-public import Linglib.Semantics.Composition.Interpreter.Sorts
+public import Linglib.Semantics.Composition.Rules
+public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Syntax.Minimalist.Category
 public import Linglib.Data.Examples.Readers
 

@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.Snyder2026
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Setoid.Basic
 public import Linglib.Data.Examples.Readers
-public import Linglib.Semantics.Composition.Interpreter.Sorts
+public import Linglib.Semantics.Composition.Sorts
 
 /-!
 # Snyder (2026): Numbers as Kinds

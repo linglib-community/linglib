@@ -3,9 +3,9 @@ module
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Set.Functor
 public import Linglib.Semantics.Composition.Assignment
-public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
-public import Linglib.Semantics.Composition.Interpreter.Readings
-public import Linglib.Semantics.Composition.Interpreter.Rules
+public import Linglib.Semantics.Composition.PredicateAbstraction
+public import Linglib.Semantics.Composition.Readings
+public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Quantification.Predicative
 public import Linglib.Semantics.Reference.ChoiceFunction
 public import Studies.Charlow2014

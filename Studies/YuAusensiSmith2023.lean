@@ -1,7 +1,7 @@
 module
 
 public import Studies.BeaversEtAl2021
-public import Linglib.Semantics.Composition.EventIdentification
+public import Linglib.Semantics.ArgumentStructure.EventIdentification
 public import Linglib.Semantics.Events.Closure
 public import Linglib.Semantics.Mereology.Relation
 public import Linglib.Data.Examples.YuAusensiSmith2023

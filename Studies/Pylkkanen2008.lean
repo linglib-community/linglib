@@ -2,10 +2,10 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
-public import Linglib.Semantics.Composition.EventIdentification
-public import Linglib.Semantics.Composition.Interpreter.Rules
-public import Linglib.Semantics.Composition.Interpreter.Constituency
-public import Linglib.Semantics.Composition.Interpreter.Sorts
+public import Linglib.Semantics.ArgumentStructure.EventIdentification
+public import Linglib.Semantics.Composition.Rules
+public import Linglib.Semantics.Composition.Constituency
+public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 public import Linglib.Syntax.Minimalist.SyntacticObject.ToTree
 public import Linglib.Syntax.Minimalist.Clause.Size

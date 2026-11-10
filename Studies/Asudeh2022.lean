@@ -8,7 +8,7 @@ public import Mathlib.Logic.Equiv.Defs
 public import Linglib.Data.Examples.Asudeh2022
 public import Linglib.Semantics.Quantification.Polyadic
 public import Studies.HeimKratzer1998
-public import Linglib.Semantics.Composition.Interpreter.Sorts
+public import Linglib.Semantics.Composition.Sorts
 public import Studies.BresnanEtAl1982
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import Mathlib.Data.Fintype.Sigma

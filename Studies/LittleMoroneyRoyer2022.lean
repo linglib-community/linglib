@@ -1,9 +1,9 @@
 module
 
 public import Linglib.Semantics.Plurality.Algebra
-public import Linglib.Semantics.Composition.Interpreter.Constituency
-public import Linglib.Semantics.Composition.Interpreter.Rules
-public import Linglib.Semantics.Composition.Interpreter.Sorts
+public import Linglib.Semantics.Composition.Constituency
+public import Linglib.Semantics.Composition.Rules
+public import Linglib.Semantics.Composition.Sorts
 public import Studies.IoninMatushansky2006
 public import Linglib.Fragments.Mayan.Chol.Classifiers
 public import Linglib.Fragments.Shan.Classifiers

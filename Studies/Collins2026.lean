@@ -6,10 +6,10 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Data.Examples.Collins2026
-public import Linglib.Semantics.Composition.Interpreter.Constituency
-public import Linglib.Semantics.Composition.Interpreter.Rules
-public import Linglib.Semantics.Composition.Interpreter.Sorts
-public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
+public import Linglib.Semantics.Composition.Constituency
+public import Linglib.Semantics.Composition.Rules
+public import Linglib.Semantics.Composition.Sorts
+public import Linglib.Semantics.Composition.PredicateAbstraction
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Syntax.Minimalist.Copy.Cut
 public import Linglib.Syntax.Minimalist.Workspace.Basic

@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Logic.Assignment
-public import Linglib.Semantics.Composition.Interpreter.Sorts
+public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Reference.Rigidity
 public import Linglib.Semantics.Quantification.Polyadic
 public import Mathlib.Data.Fin.VecNotation
