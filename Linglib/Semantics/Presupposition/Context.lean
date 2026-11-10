@@ -23,7 +23,7 @@ connectives, Peters' Middle Kleene connectives, are admittance in it
 (`subset_compl_gapExt_meetMiddle_iff`), Heim's context change potentials evaluate their second
 argument in it (`Semantics/Dynamic/Partial.lean`), and Schlenker derives it from transparency. They
 part at disjunction, where the table is asymmetric and symmetric filtering is
-`TwoDim.orKPSymmetric`.
+`TwoDim.orFilter`.
 
 Accommodating a presupposition restricts the context to where the sentence is defined, and
 Doron and Wehbe require that the sentence then still be informative, which holds exactly when it

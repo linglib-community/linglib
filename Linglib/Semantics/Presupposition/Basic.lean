@@ -17,7 +17,7 @@ are `⊓`, `⊔`, `Trivalent.meetBelnap` and `Trivalent.joinBelnap`. Each projec
 characterization of its connective (`Trivalent.meetMiddle_eq_undefined_iff` for Karttunen's
 filtering conjunction), and quantified presuppositions project by the trivalent quantifiers of
 `Logic/Trivalent/Pointwise.lean`. Two-dimensional accounts, which read an assertion where its
-presupposition fails, use `TwoDim` (`Semantics/ConventionalImplicature.lean`).
+presupposition fails, use `TwoDim` (`Semantics/Presupposition/TwoDimensional.lean`).
 
 ## Main definitions
 

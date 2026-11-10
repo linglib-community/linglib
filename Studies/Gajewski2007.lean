@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Trivalent.Pointwise
-public import Linglib.Semantics.ConventionalImplicature
+public import Linglib.Semantics.Presupposition.TwoDimensional
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.Presupposition.Strawson
 public import Linglib.Semantics.Attitudes.Preference.BestWorlds
