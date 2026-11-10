@@ -2,9 +2,7 @@ module
 
 public import Linglib.Data.Examples.ArreguiKusumoto1998
 public import Linglib.Fragments.Japanese.TemporalConnectives
-public import Linglib.Semantics.Composition.Interpreter.Constituency
-public import Linglib.Semantics.Composition.Interpreter.Rules
-public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
+public import Linglib.Semantics.Composition.Interpret
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Semantics.Tense.Quantificational
@@ -65,7 +63,7 @@ which gives a past under *mae* and a present under *ato* no denotation.
 
 namespace ArreguiKusumoto1998
 
-open Interpreter Interpreter.Grammar PhraseStructure.Tree PhraseStructure ModalLogic Tense
+open Interpreter PhraseStructure.Tree PhraseStructure ModalLogic Tense
 open scoped Denotes
 open Japanese.TemporalConnectives (mae ato toki)
 open scoped SetRel
@@ -156,25 +154,23 @@ def Model.denote (M : Model T) : {a : Ty Unit} → Item a → Assignment T → a
   | _, .when_ => fun _ p ↦ p
   | _, .trace n => fun g ↦ g n
 
-/-- The rules: Functional Application, Predicate Modification of a verb phrase by an adjunct
-(17), and abstraction over the index of a relative pronoun or a tense variable. -/
-abbrev rules : Interpreter ((Grammar.application.sum .predicateModification).withAbstraction
-    fun _ ↦ i) Node :=
-  (typeDriven (.sum .application .predicateModification)).withAbstraction fun _ ↦ i
+/-- The rules: Functional Application and Predicate Modification of a verb phrase by an adjunct
+(17). -/
+abbrev rules : MSFirstOrder.Language (Ty Unit) := application.sum predicateModification
 
-/-- The denotations of a logical form in a model, relative to an assignment. -/
+/-- The denotations of a logical form in a model, relative to an assignment: by the rules, with
+abstraction over the index of a relative pronoun or a tense variable, a variable over times. -/
 def Model.meanings (M : Model T) (lf : LF) :
     List (Σ a : Ty Unit, Assignment T → a.Dom (Dom T)) :=
-  lf.values rules (Grammar.withAbstraction.structure (Assignments.total (Dom T) fun _ ↦ i))
-    M.denote items
+  lf.interpret rules (Dom T) (fun _ ↦ i) M.denote items
 
 /-- A logical form is interpretable when the rules give it a derivation. -/
-def Interpretable (lf : LF) : Prop := (lf.derivs rules items).length ≠ 0
+def Interpretable (lf : LF) : Prop := (lf.derive rules (fun _ ↦ i) items).length ≠ 0
 
 instance : DecidablePred Interpretable := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
 
 theorem interpretable_iff (M : Model T) (lf : LF) : Interpretable lf ↔ M.meanings lf ≠ [] := by
-  simp [Interpretable, Model.meanings, Tree.values]
+  simp [Interpretable, Model.meanings, Tree.interpret]
 
 /-- A logical form is true in a model when it denotes a truth value that is true, its free
 variables denoting the speech time, as an unbound tense variable does (12). -/
@@ -244,10 +240,7 @@ def clause : LF → LF → LF
   | τ, vp => .bin (.leaf .speechTime) (.bin τ vp)
 
 attribute [local simp] Model.Holds Model.extension Model.meanings Model.denote items Interpretable
-  Interpreter.withAbstraction typeDriven Grammar.LocallyFinite.unaryRules
-  Grammar.LocallyFinite.binaryRules Assignments.total clause pastOperator presentVariable
-  Tree.derivs_terminal Tree.derivs_trace Tree.derivs_bind Tree.derivs_phrase_binary
-  Tree.derivs_phrase_unary
+  Grammar.LocallyFinite.binaryRules clause pastOperator presentVariable
 
 -- (12)
 theorem holds_present : M.Holds (clause presentVariable (.leaf (.vp k))) ↔ M.vp k M.speechTime :=
