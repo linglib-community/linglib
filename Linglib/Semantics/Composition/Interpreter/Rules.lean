@@ -137,6 +137,51 @@ theorem Grammar.length_binaryRules_application_sum_predicateModification_le_one 
     | exact Ty.ne_fn_fn_self _ _ _ _ (by assumption) (by assumption)
     | (obtain ⟨rfl, rfl⟩ := ‹_ ∧ _›; exact Ty.ne_fn_self _ _ (by assumption))
 
+/-! ### The rule for given daughters -/
+
+section Selection
+
+private theorem Ty.ne_fn_fn (a b c : Ty B) : a ≠ ((a ⇒ b) ⇒ c) := fun h ↦ by
+  have := congrArg Ty.size h
+  simp only [Ty.size] at this
+  omega
+
+private theorem Ty.fn_ne_self (a b : Ty B) : (a ⇒ b) ≠ a := (Ty.ne_fn_self a b).symm
+
+variable [DecidableEq B]
+
+/-- A function and its argument combine by forward application alone. -/
+@[simp] theorem Grammar.binaryRules_application_fa (a b : Ty B) :
+    Grammar.LocallyFinite.binaryRules (G := Grammar.application) (a ⇒ b) a = [⟨b, .fa⟩] := by
+  cases a <;> simp [Grammar.LocallyFinite.binaryRules, Ty.ne_fn_fn]
+
+/-- An argument and its function combine by backward application alone. -/
+@[simp] theorem Grammar.binaryRules_application_ba (a b : Ty B) :
+    Grammar.LocallyFinite.binaryRules (G := Grammar.application) a (a ⇒ b) = [⟨b, .ba⟩] := by
+  cases a <;> simp [Grammar.LocallyFinite.binaryRules, Ty.ne_fn_fn]
+
+/-- With predicate modification available, a function and its argument still combine by forward
+application alone. -/
+@[simp] theorem Grammar.binaryRules_application_sum_predicateModification_fa (a b : Ty B) :
+    Grammar.LocallyFinite.binaryRules (G := Grammar.application.sum .predicateModification)
+      (a ⇒ b) a = [⟨b, .inl .fa⟩] := by
+  rcases a with _ | _ | ⟨a', _ | _ | _ | _⟩ | _ <;> cases b <;>
+    simp [Grammar.LocallyFinite.binaryRules, Ty.ne_fn_fn, Ty.ne_fn_self]
+
+@[simp] theorem Grammar.binaryRules_application_sum_predicateModification_ba (a b : Ty B) :
+    Grammar.LocallyFinite.binaryRules (G := Grammar.application.sum .predicateModification)
+      a (a ⇒ b) = [⟨b, .inl .ba⟩] := by
+  rcases a with _ | _ | ⟨a', _ | _ | _ | _⟩ | _ <;> cases b <;>
+    simp [Grammar.LocallyFinite.binaryRules, Ty.ne_fn_fn, Ty.fn_ne_self]
+
+/-- Two predicates of one type combine by predicate modification alone. -/
+@[simp] theorem Grammar.binaryRules_application_sum_predicateModification_pm (a : Ty B) :
+    Grammar.LocallyFinite.binaryRules (G := Grammar.application.sum .predicateModification)
+      (a ⇒ .t) (a ⇒ .t) = [⟨a ⇒ .t, .inr .pm⟩] := by
+  simp [Grammar.LocallyFinite.binaryRules, Ty.ne_fn_self]
+
+end Selection
+
 /-- Event identification, for individuals of type `x` and events of type `s`: a relation of
 individuals to events and a predicate of events are conjoined at the event. -/
 inductive EventIdentification (x s : Ty B) : Ty B → Ty B → Ty B → Type

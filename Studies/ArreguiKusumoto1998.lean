@@ -2,7 +2,10 @@ module
 
 public import Linglib.Data.Examples.ArreguiKusumoto1998
 public import Linglib.Fragments.Japanese.TemporalConnectives
-public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Composition.Interpreter.Constituency
+public import Linglib.Semantics.Composition.Interpreter.Rules
+public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
+public import Linglib.Syntax.Tree.Basic
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Semantics.Tense.Quantificational
 public import Linglib.Semantics.Tense.RunTimes
@@ -25,13 +28,14 @@ which gives a past under *mae* and a present under *ato* no denotation.
 
 ## Implementation notes
 
-* A time is an interval of moments, with precedence and inclusion. The entity type of the
-  composition engine is the type of times, so its type `e` is the paper's type of times.
+* A time is an interval of moments, with precedence and inclusion, and times are the one basic
+  type `i` besides truth values; every index is a variable over times.
 * An attitude verb comes with its subject and takes the property of times its complement
   denotes, as *say* does in the paper's sketch of the sequence-of-tense rule.
 * The downstairs reading of an adjunct that embeds a clause is identified by the *at*-phrase of
   the relative pronoun, which a selected clause lacks.
-* The *when* of the habitual logical form, a node with no denotation of its own, is left out.
+* The *when* of the habitual logical form, to which the paper assigns no entry, denotes the
+  identity on truth values.
 
 ## TODO
 
@@ -61,7 +65,7 @@ which gives a past under *mae* and a present under *ato* no denotation.
 
 namespace ArreguiKusumoto1998
 
-open Montague PhraseStructure.Tree PhraseStructure ModalLogic Tense
+open Interpreter Interpreter.Grammar PhraseStructure.Tree PhraseStructure ModalLogic Tense
 open scoped Denotes
 open Japanese.TemporalConnectives (mae ato toki)
 open scoped SetRel
@@ -75,6 +79,8 @@ inductive Word
   | vp (k : ℕ)
   | attitude (k : ℕ)
   | past | speechTime | at_ | before | after | adverb
+  /-- The *when* of (34c), a node with no denotation of its own. -/
+  | when_
   deriving DecidableEq
 
 /-- A logical form is a binary tree of words, traces and binders. -/
@@ -97,49 +103,101 @@ variable {T : Type} [LinearOrder T] {M : Model T} {X : NonemptyInterval T → Pr
 def before (X : NonemptyInterval T → Prop) (t : NonemptyInterval T) : Prop :=
   ∀ t', X t' → t.Precedes t'
 
-/-- The semantic type of a word. -/
-def Word.ty : Word → Ty
-  | .vp _ => .e ⇒ .t
-  | .attitude _ | .past | .after | .before => (.e ⇒ .t) ⇒ .e ⇒ .t
-  | .speechTime => .e
-  | .at_ => .e ⇒ .e ⇒ .t
-  | .adverb => (.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .e ⇒ .t
+/-- The type of times, the paper's *i*. -/
+abbrev i : Ty Unit := .base ()
 
-/-- The denotation of a word in a model. The past tense is Prior's operator (13), whose
+/-- The domain of the one base sort: the times, intervals of moments. -/
+abbrev Dom (T : Type) [LinearOrder T] : Unit → Type := fun _ ↦ NonemptyInterval T
+
+/-- The lexical items by type: a verb phrase is a property of times, the past tense, *before*,
+*after* and an attitude verb with its subject are functions on such properties, and a trace or a
+tense variable is a time. -/
+inductive Item : Ty Unit → Type
+  | vp (k : ℕ) : Item (i ⇒ .t)
+  | attitude (k : ℕ) : Item ((i ⇒ .t) ⇒ i ⇒ .t)
+  | past : Item ((i ⇒ .t) ⇒ i ⇒ .t)
+  | before : Item ((i ⇒ .t) ⇒ i ⇒ .t)
+  | after : Item ((i ⇒ .t) ⇒ i ⇒ .t)
+  | speechTime : Item i
+  | at_ : Item (i ⇒ i ⇒ .t)
+  | adverb : Item ((i ⇒ .t) ⇒ (i ⇒ .t) ⇒ i ⇒ .t)
+  | when_ : Item (.t ⇒ .t)
+  | trace (n : ℕ) : Item i
+
+/-- The item of a word, and of a trace or a tense variable. -/
+def items : Word ⊕ ℕ → List (Σ a, Item a)
+  | .inl (.vp k) => [⟨_, .vp k⟩]
+  | .inl (.attitude k) => [⟨_, .attitude k⟩]
+  | .inl .past => [⟨_, .past⟩]
+  | .inl .before => [⟨_, .before⟩]
+  | .inl .after => [⟨_, .after⟩]
+  | .inl .speechTime => [⟨_, .speechTime⟩]
+  | .inl .at_ => [⟨_, .at_⟩]
+  | .inl .adverb => [⟨_, .adverb⟩]
+  | .inl .when_ => [⟨_, .when_⟩]
+  | .inr n => [⟨_, .trace n⟩]
+
+/-- An assignment of times to indices. -/
+abbrev Assignment (T : Type) [LinearOrder T] : Type := ℕ → NonemptyInterval T
+
+/-- The denotation of an item in a model. The past tense is Prior's operator (13), whose
 denotation *after* shares (19), *at* identifies two times, and the adverb of quantification
 (34c) holds of a time when each time of its restrictor within it contains a time of its
 scope. -/
-def Model.denote (M : Model T) : (w : Word) → Ty.Domain (NonemptyInterval T) Unit w.ty
-  | .vp k => M.vp k
-  | .attitude k => M.attitude k
-  | .past | .after => ◇[Allen.toSetRel Allen.precedes]
-  | .before => before
-  | .speechTime => M.speechTime
-  | .at_ => fun t' t ↦ t = t'
-  | .adverb => fun X Y t ↦ ∀ t' ≤ t, X t' → ∃ t'' ≤ t', Y t''
+def Model.denote (M : Model T) : {a : Ty Unit} → Item a → Assignment T → a.Dom (Dom T)
+  | _, .vp k => fun _ ↦ M.vp k
+  | _, .attitude k => fun _ ↦ M.attitude k
+  | _, .past => fun _ ↦ ◇[Allen.toSetRel Allen.precedes]
+  | _, .after => fun _ ↦ ◇[Allen.toSetRel Allen.precedes]
+  | _, .before => fun _ ↦ before
+  | _, .speechTime => fun _ ↦ M.speechTime
+  | _, .at_ => fun _ t' t ↦ t = t'
+  | _, .adverb => fun _ X Y t ↦ ∀ t' ≤ t, X t' → ∃ t'' ≤ t', Y t''
+  | _, .when_ => fun _ p ↦ p
+  | _, .trace n => fun g ↦ g n
 
-/-- The lexicon of a model gives each word its type and its denotation. -/
-def Model.lex (M : Model T) (w : Word) : Option (Denotation (NonemptyInterval T) Unit) :=
-  some ⟨w.ty, M.denote w⟩
+/-- The rules: Functional Application, Predicate Modification of a verb phrase by an adjunct
+(17), and abstraction over the index of a relative pronoun or a tense variable. -/
+abbrev rules : Interpreter ((Grammar.application.sum .predicateModification).withAbstraction
+    fun _ ↦ i) Node :=
+  (typeDriven (.sum .application .predicateModification)).withAbstraction fun _ ↦ i
 
-/-- A logical form is interpretable when type-driven composition gives it a type. -/
-def Interpretable (lf : LF) : Prop := (ty? individualIndices (fun w ↦ some w.ty) lf).isSome
+/-- The denotations of a logical form in a model, relative to an assignment. -/
+def Model.meanings (M : Model T) (lf : LF) :
+    List (Σ a : Ty Unit, Assignment T → a.Dom (Dom T)) :=
+  lf.values rules (Grammar.withAbstraction.structure (Assignments.total (Dom T) fun _ ↦ i))
+    M.denote items
 
-instance : DecidablePred Interpretable := fun _ ↦ inferInstanceAs (Decidable (_ = true))
+/-- A logical form is interpretable when the rules give it a derivation. -/
+def Interpretable (lf : LF) : Prop := (lf.derivs rules items).length ≠ 0
 
-theorem interpretable_iff (M : Model T) (g : Assignment (NonemptyInterval T)) (lf : LF) :
-    Interpretable lf ↔ (interp M.lex g lf).isSome :=
-  Bool.eq_iff_iff.1 (isSome_interp (lex := M.lex) (fun _ ↦ rfl) g lf).symm
+instance : DecidablePred Interpretable := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
 
-/-- A logical form is true in a model when it composes to a true truth value, its free
+theorem interpretable_iff (M : Model T) (lf : LF) : Interpretable lf ↔ M.meanings lf ≠ [] := by
+  simp [Interpretable, Model.meanings, Tree.values]
+
+/-- A logical form is true in a model when it denotes a truth value that is true, its free
 variables denoting the speech time, as an unbound tense variable does (12). -/
 def Model.Holds (M : Model T) (lf : LF) : Prop :=
-  valueAt .t False (interp M.lex (fun _ ↦ M.speechTime) lf)
+  match M.meanings lf with
+  | [⟨.t, p⟩] => p fun _ ↦ M.speechTime
+  | _ => False
 
-/-- The extension of a logical form in a model is the set of times it composes to, its free
+/-- The extension of a logical form in a model is the set of times it denotes, its free
 variables denoting the speech time. -/
 def Model.extension (M : Model T) (lf : LF) : NonemptyInterval T → Prop :=
-  valueAt (.e ⇒ .t) (fun _ ↦ False) (interp M.lex (fun _ ↦ M.speechTime) lf)
+  match M.meanings lf with
+  | [⟨.fn (.base ()) .t, X⟩] => X fun _ ↦ M.speechTime
+  | _ => fun _ ↦ False
+
+theorem Model.holds_eq {M : Model T} {lf : LF} {p : Assignment T → Prop}
+    (h : M.meanings lf = [⟨.t, p⟩]) : M.Holds lf = p fun _ ↦ M.speechTime := by
+  simp [Model.Holds, h]
+
+theorem Model.extension_eq {M : Model T} {lf : LF}
+    {X : Assignment T → NonemptyInterval T → Prop} (h : M.meanings lf = [⟨i ⇒ .t, X⟩]) :
+    M.extension lf = X fun _ ↦ M.speechTime := by
+  simp [Model.extension, h]
 
 /-! ### Before and after -/
 
@@ -185,6 +243,12 @@ def clause : LF → LF → LF
   | .tr i, vp => .bin (.tr i) vp
   | τ, vp => .bin (.leaf .speechTime) (.bin τ vp)
 
+attribute [local simp] Model.Holds Model.extension Model.meanings Model.denote items Interpretable
+  Interpreter.withAbstraction typeDriven Grammar.LocallyFinite.unaryRules
+  Grammar.LocallyFinite.binaryRules Assignments.total clause pastOperator presentVariable
+  Tree.derivs_terminal Tree.derivs_trace Tree.derivs_bind Tree.derivs_phrase_binary
+  Tree.derivs_phrase_unary
+
 -- (12)
 theorem holds_present : M.Holds (clause presentVariable (.leaf (.vp k))) ↔ M.vp k M.speechTime :=
   .rfl
@@ -195,8 +259,8 @@ theorem holds_past :
   Allen.diamond_toSetRel_precedes
 
 theorem not_interpretable_speechTime_present :
-    ¬ Interpretable (.bin (.leaf .speechTime) (.bin presentVariable (.leaf (.vp k)))) :=
-  Bool.false_ne_true
+    ¬ Interpretable (.bin (.leaf .speechTime) (.bin presentVariable (.leaf (.vp k)))) := by
+  simp
 
 /-! ### Relative-clause adjuncts -/
 
@@ -210,8 +274,7 @@ def relative (τ vp : LF) : LF := .binder 1 (clause τ vp)
 /-- A past matrix clause whose verb phrase a temporal adjunct modifies (17). -/
 def matrix (vp adjunct : LF) : LF := clause pastOperator (.bin vp adjunct)
 
-attribute [local simp] Model.Holds Model.extension Model.lex Model.denote Word.ty clause relative
-  atTrace matrix pastOperator presentVariable
+attribute [local simp] relative atTrace matrix
 
 -- (16b)
 theorem extension_relative :
@@ -302,8 +365,8 @@ theorem interpretable_selected :
     Interpretable (.bin (.leaf .before) (.binder 0 (.bin presentVariable (.leaf (.vp k))))) ∧
       ¬ Interpretable (.bin (.leaf .before) (.binder 0 (.bin pastOperator (.leaf (.vp k))))) ∧
       Interpretable (.bin (.leaf .after) (.bin pastOperator (.leaf (.vp k)))) ∧
-      ¬ Interpretable (.bin (.leaf .after) (.bin presentVariable (.leaf (.vp k)))) :=
-  ⟨rfl, Bool.false_ne_true, rfl, Bool.false_ne_true⟩
+      ¬ Interpretable (.bin (.leaf .after) (.bin presentVariable (.leaf (.vp k)))) := by
+  simp
 
 -- (28)
 theorem holds_after_selected [DenselyOrdered T] :
@@ -358,19 +421,21 @@ theorem mem_freeIndices_selected :
 
 /-- The covert adverb of quantification with its restrictor, a clause of tense `τ` over whose
 tense variable the adverb abstracts (34c). -/
-def quantificational (τ vp : LF) : LF := .bin (.leaf .adverb) (.binder 0 (.bin τ vp))
+def quantificational (τ vp : LF) : LF :=
+  .bin (.leaf .adverb) (.binder 0 (.bin (.leaf .when_) (.bin τ vp)))
 
 -- (34)
 theorem holds_whenever :
     M.Holds (matrix (.leaf (.vp k)) (quantificational presentVariable (.leaf (.vp l)))) ↔
-      ∃ t, t.Precedes M.speechTime ∧ ∀ t' ≤ t, M.vp l t' → ∃ t'' ≤ t', M.vp k t'' :=
-  Allen.diamond_toSetRel_precedes
+      ∃ t, t.Precedes M.speechTime ∧ ∀ t' ≤ t, M.vp l t' → ∃ t'' ≤ t', M.vp k t'' := by
+  simp [quantificational, Diamond]
 
 -- (34b)
 theorem holds_whenever_of_forall_not (ht : t.Precedes M.speechTime)
     (h : ∀ t' ≤ t, ¬ M.vp l t') :
-    M.Holds (matrix (.leaf (.vp k)) (quantificational presentVariable (.leaf (.vp l)))) :=
-  holds_whenever.2 ⟨t, ht, fun t' ht' hl ↦ absurd hl (h t' ht')⟩
+    M.Holds (matrix (.leaf (.vp k)) (quantificational presentVariable (.leaf (.vp l)))) := by
+  rw [holds_whenever]
+  exact ⟨t, ht, fun t' ht' hl ↦ absurd hl (h t' ht')⟩
 
 /-! ### Languages -/
 
