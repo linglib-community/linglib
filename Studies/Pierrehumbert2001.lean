@@ -1036,7 +1036,8 @@ example : ¬ BddAbove (Set.range fun n ↦
 -- 1999 and 2000 times what noise and bias add, a standard deviation of about 2.6.
 example {γ : ℝ≥0} (hγ : (γ : ℝ) = Real.exp (-(2000 : ℝ)⁻¹)) :
     ∃ L ∈ Set.Icc (1999 * (103 / 30000) : ℝ) (2000 * (103 / 30000)), Tendsto (fun n ↦
-      ∫ e, memorySpread γ e ∂seqLaw (rule γ .exemplar noise (-(1 / 100)) 1) (n + 1)) atTop (𝓝 L) := by
+      ∫ e, memorySpread γ e ∂seqLaw (rule γ .exemplar noise (-(1 / 100)) 1) (n + 1)) atTop
+        (𝓝 L) := by
   have hpos : 0 < γ := NNReal.coe_pos.1 (hγ ▸ Real.exp_pos _)
   have hlt : γ < 1 := NNReal.coe_lt_one.1 (hγ ▸ Real.exp_lt_one_iff.2 (by norm_num))
   have hI := div_one_sub_mem_Icc_of_eq_exp (by norm_num : (0 : ℝ) < 2000) hγ
