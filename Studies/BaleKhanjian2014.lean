@@ -520,8 +520,8 @@ private theorem liftRel_set (h : Transports σ X X') : Ty.LiftRel (rel σ) setTy
 private theorem transports_of_liftRel (h : Ty.LiftRel (rel σ) setTy X X') : Transports σ X X' :=
   fun _ ↦ h rfl
 
-/-- The lexicon over the boys and the lexicon over the boys carried along `σ` are related,
-morpheme by morpheme. -/
+-- The lexicon over the boys and the lexicon over the boys carried along `σ` are related,
+-- morpheme by morpheme.
 private theorem liftRel_val (B : Finset α) : ∀ {a : Ty Unit} (i : Item a),
     Ty.LiftRel (rel σ) a (Item.val B i) (Item.val (B.map σ.toEmbedding) i)
   | _, .boy => ⟨Iff.rfl, fun _ _ ↦ liftRel_set (transports_boy B)⟩
