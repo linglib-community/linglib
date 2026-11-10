@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Composition.Mode.Combine
+public import Linglib.Semantics.Composition.Constituency
 
 /-!
 # The effect-driven grammar without effects
@@ -9,7 +10,7 @@ A meta-mode needs an effect in a daughter, or a basic mode whose result has one.
 types with no effect in them therefore [combine by a basic mode
 only](##Interpreter.Mode.exists_eq_basic), and over a lexicon of such types [the effect-driven
 interpreter gives the values of the grammar it was built
-over](##Interpreter.values_effectDriven_of_effectFree).
+over](##PhraseStructure.Tree.values_effectDriven_of_effectFree).
 
 ## Main definitions
 
@@ -105,62 +106,63 @@ theorem Ty.combine_of_effectFree [DecidableEq B] {Rule : Ty B → Ty B → Ty B 
     | exact hl.elim | exact hr.elim | exact hl.1.elim | exact hl.2.elim
     | exact hr.1.elim | exact hr.2.elim
 
-/-- Over a lexicon whose items have types without effects, the values a grammar that keeps to
-such types gives a bare structure have types without effects. -/
-theorem EffectFree.of_mem_values {G : Language (Ty B)} [G.LocallyFinite] (hG : G.EffectFree)
-    {D : Ty B → Type} (M : G.Structure D) {Lx : Type} {W : Ty B → Type}
-    (ρ : ∀ {a : Ty B}, W a → D a) {lex : Lx → List (Σ a, W a)}
-    (hlex : ∀ x, ∀ p ∈ lex x, p.1.EffectFree) :
-    ∀ (s : Skeleton Node Lx), ∀ d ∈ (typeDriven G).values M ρ lex s, d.1.EffectFree
-  | .leaf x, d, hd => by
-    rw [values_leaf] at hd
-    obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hd
-    exact hlex x p hp
-  | .unary n s, d, hd => by
-    rw [values_unary] at hd
-    obtain ⟨e, he, hd⟩ := List.mem_flatMap.1 hd
-    obtain ⟨r, -, rfl⟩ := List.mem_map.1 hd
-    exact hG.unary r.2 (EffectFree.of_mem_values hG M ρ hlex s e he)
-  | .binary n s₁ s₂, d, hd => by
-    rw [values_binary] at hd
-    obtain ⟨e₁, he₁, hd⟩ := List.mem_flatMap.1 hd
-    obtain ⟨e₂, he₂, hd⟩ := List.mem_flatMap.1 hd
-    obtain ⟨m, -, rfl⟩ := List.mem_map.1 hd
-    exact hG.binary m.2 (EffectFree.of_mem_values hG M ρ hlex s₁ e₁ he₁)
-      (EffectFree.of_mem_values hG M ρ hlex s₂ e₂ he₂)
+end Interpreter
+
+namespace PhraseStructure.Tree
+
+open ManySorted Interpreter
+
+variable {B : Type} {C Lx : Type}
 
 /-- **The effect-driven grammar is conservative.** Over a lexicon whose items have types without
-effects, the effect-driven interpreter over a grammar that keeps to such types gives each bare
-structure the values the grammar's own type-driven interpreter gives it, in the same order: the
-meta-modes add no reading, and remove none. -/
+effects, the effect-driven interpreter over a grammar that keeps to such types gives each tree
+the values the grammar's own type-driven interpreter gives it, in the same order: the meta-modes
+add no reading, and remove none. -/
 theorem values_effectDriven_of_effectFree [DecidableEq B] {G : Language (Ty B)}
     [G.LocallyFinite] (hG : G.EffectFree) {D : B → Type} [M : G.Structure (Ty.Dom D)]
-    {Lx : Type} {W : Ty B → Type} (ρ : ∀ {a : Ty B}, W a → a.Dom D)
-    {lex : Lx → List (Σ a, W a)} (hlex : ∀ x, ∀ p ∈ lex x, p.1.EffectFree) :
-    ∀ s : Skeleton Node Lx, (effectDriven G).values effectGrammar.structure ρ lex s =
-      (typeDriven G).values M ρ lex s
-  | .leaf x => by rw [values_leaf, values_leaf]
-  | .unary n s => by
-    rw [values_unary, values_unary, values_effectDriven_of_effectFree hG ρ hlex s]
-    rfl
-  | .binary n s₁ s₂ => by
-    rw [values_binary, values_binary, values_effectDriven_of_effectFree hG ρ hlex s₁,
-      values_effectDriven_of_effectFree hG ρ hlex s₂]
-    refine List.flatMap_congr fun d₁ h₁ ↦ List.flatMap_congr fun d₂ h₂ ↦ ?_
-    have hl := EffectFree.of_mem_values hG M ρ hlex s₁ d₁ h₁
-    have hr := EffectFree.of_mem_values hG M ρ hlex s₂ d₂ h₂
-    have hc : (effectDriven G).binary n d₁.1 d₂.1 =
-        (Language.LocallyFinite.binaryRules (L := G) d₁.1 d₂.1).map
-          fun p ↦ ⟨p.1, .basic p.2⟩ := by
-      cases n with
-      | island =>
-        simp only [effectDriven, Ty.combine_of_effectFree hG.binary hl hr]
-        refine List.filter_eq_self.2 fun p hp ↦ ?_
-        obtain ⟨q, -, rfl⟩ := List.mem_map.1 hp
-        exact decide_eq_true (hG.binary q.2 hl hr).evaluated
-      | branch => simp only [effectDriven, Ty.combine_of_effectFree hG.binary hl hr]
-      | index k => simp only [effectDriven, Ty.combine_of_effectFree hG.binary hl hr]
-    rw [hc, List.map_map]
-    rfl
+    {W : Ty B → Type} (ρ : ∀ {a : Ty B}, W a → a.Dom D)
+    {lex : Lx ⊕ ℕ → List (Σ a, W a)} (hlex : ∀ x, ∀ p ∈ lex x, p.1.EffectFree)
+    (t : Tree C Lx) (island : C → Bool) :
+    t.values (effectDriven G) effectGrammar.structure ρ lex island =
+      t.values (typeDriven G) M ρ lex island := by
+  refine (RoseTree.rel_fold
+    (fun (X Y : List (Σ a, Ty.Dom D a)) ↦ X = Y ∧ ∀ d ∈ Y, d.1.EffectFree)
+    (fun l Xs Ys h ↦ ?_) t).1
+  match l, Xs, Ys, h with
+  | .terminal _ w, [], [], _ =>
+    refine ⟨rfl, fun d hd ↦ ?_⟩
+    obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hd
+    exact hlex _ p hp
+  | .trace n _, [], [], _ =>
+    refine ⟨rfl, fun d hd ↦ ?_⟩
+    obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hd
+    exact hlex _ p hp
+  | .bind n _, [_], [Y], .cons ⟨rfl, hY⟩ .nil =>
+    refine ⟨rfl, fun d hd ↦ ?_⟩
+    obtain ⟨d₁, h₁, r, -, rfl⟩ := mem_unaryValues.1 hd
+    exact hG.unary r.2 (hY d₁ h₁)
+  | .phrase _ _, [_], [Y], .cons h .nil => exact h
+  | .phrase c _, [_, _], [Y₁, Y₂], .cons ⟨rfl, h₁⟩ (.cons ⟨rfl, h₂⟩ .nil) =>
+    refine ⟨?_, fun d hd ↦ ?_⟩
+    · refine List.flatMap_congr fun ⟨a, x⟩ hd₁ ↦ List.flatMap_congr fun ⟨b, y⟩ hd₂ ↦ ?_
+      have hl : a.EffectFree := h₁ _ hd₁
+      have hr : b.EffectFree := h₂ _ hd₂
+      have hc : (effectDriven G).binary (if island c then .island else .branch) a b =
+          (Language.LocallyFinite.binaryRules (L := G) a b).map
+            fun p ↦ ⟨p.1, .basic p.2⟩ := by
+        split
+        · simp only [effectDriven, Ty.combine_of_effectFree hG.binary hl hr]
+          refine List.filter_eq_self.2 fun p hp ↦ ?_
+          obtain ⟨q, -, rfl⟩ := List.mem_map.1 hp
+          exact decide_eq_true (hG.binary q.2 hl hr).evaluated
+        · simp only [effectDriven, Ty.combine_of_effectFree hG.binary hl hr]
+      dsimp only
+      rw [hc, List.map_map]
+      rfl
+    · obtain ⟨d₁, hd₁, d₂, hd₂, m, -, rfl⟩ := mem_binaryValues.1 hd
+      exact hG.binary m.2 (h₁ d₁ hd₁) (h₂ d₂ hd₂)
+  | .terminal _ _, _ :: _, _ :: _, _ | .trace _ _, _ :: _, _ :: _, _ | .bind _ _, [], [], _
+  | .bind _ _, _ :: _ :: _, _ :: _ :: _, _ | .phrase _ _, [], [], _
+  | .phrase _ _, _ :: _ :: _ :: _, _ :: _ :: _ :: _, _ => exact ⟨rfl, fun _ hd ↦ nomatch hd⟩
 
-end Interpreter
+end PhraseStructure.Tree

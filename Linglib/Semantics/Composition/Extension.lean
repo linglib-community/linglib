@@ -9,9 +9,9 @@ public import Linglib.Semantics.Composition.Interpret
 A system of rules is extended by a map of languages: the rules of one are among the rules of
 another, which may have more. Where an interpreter of the larger system admits at a node what an
 interpreter of the smaller admits there, and a larger lexicon has the items of a smaller, [every
-derivation of the smaller is one of the larger](##Interpreter.mem_derivs_of_le), and in a
-structure that expands the smaller one [it has the same
-value](##Interpreter.mem_values_of_le). A claim that a structure has a reading therefore holds in
+derivation of the smaller is one of the larger](##PhraseStructure.Tree.mem_derivs_of_le), and in
+a structure that expands the smaller one [it has the same
+value](##PhraseStructure.Tree.mem_values_of_le). A claim that a structure has a reading therefore holds in
 every extension. A claim that it has no other reading, or none, does not, and those are the claims
 an extension tests.
 
@@ -43,34 +43,38 @@ structure Extends (J : Interpreter L' N) (I : Interpreter L N) (φ : L →ᴸ L'
   binary {n : N} {l r : T} {m : Σ u, L.Binary l r u} :
     m ∈ I.binary n l r → ⟨m.1, φ.onFunction m.2⟩ ∈ J.binary n l r
 
-/-- A derivation survives an extension of the rules and of the lexicon: its image along the map
-is a derivation the extending interpreter finds. -/
-theorem mem_derivs_of_le (h : J.Extends I φ) (hl : ∀ x, lex x ⊆ lex' x) :
-    ∀ {s : Skeleton N Lx} {d : Σ a, Deriv L W a}, d ∈ I.derivs lex s →
-      (⟨d.1, φ.onTerm d.2⟩ : Σ a, Deriv L' W a) ∈ J.derivs lex' s
-  | .leaf x, d, hd => by
-    obtain ⟨⟨a, w⟩, hw, rfl⟩ := List.mem_map.1 hd
-    exact List.mem_map.2 ⟨⟨a, w⟩, hl x hw, rfl⟩
-  | .unary n s, d, hd => by
-    obtain ⟨⟨a, e⟩, he, hd⟩ := List.mem_flatMap.1 hd
-    obtain ⟨⟨b, r⟩, hr, rfl⟩ := List.mem_map.1 hd
-    exact List.mem_flatMap.2 ⟨_, mem_derivs_of_le h hl he, List.mem_map.2 ⟨_, h.unary hr, rfl⟩⟩
-  | .binary n s₁ s₂, d, hd => by
-    obtain ⟨⟨a, e₁⟩, he₁, hd⟩ := List.mem_flatMap.1 hd
-    obtain ⟨⟨b, e₂⟩, he₂, hd⟩ := List.mem_flatMap.1 hd
-    obtain ⟨⟨c, m⟩, hm, rfl⟩ := List.mem_map.1 hd
-    exact List.mem_flatMap.2 ⟨_, mem_derivs_of_le h hl he₁, List.mem_flatMap.2
-      ⟨_, mem_derivs_of_le h hl he₂, List.mem_map.2 ⟨_, h.binary hm, rfl⟩⟩⟩
+section Values
 
-/-- A value survives an extension of the rules and of the lexicon, in a structure that expands
-the one it was computed in. -/
-theorem mem_values_of_le {M : L.Structure D} {M' : L'.Structure D} (h : J.Extends I φ)
-    (hM : φ.IsExpansionOn M M') (hl : ∀ x, lex x ⊆ lex' x) (ρ : ∀ {a : T}, W a → D a)
-    {s : Skeleton N Lx} {d : Σ a, D a} (hd : d ∈ I.values M ρ lex s) :
-    d ∈ J.values M' ρ lex' s := by
-  obtain ⟨⟨a, e⟩, he, rfl⟩ := List.mem_map.1 hd
-  exact List.mem_map.2 ⟨_, mem_derivs_of_le h hl he,
-    congrArg (Sigma.mk a) (LHom.realize_onTerm hM ρ e)⟩
+variable {D' : T → Type x} {M : L.Structure D} {M' : L'.Structure D'} (h : ∀ a, D a → D' a)
+  {n : N}
+
+/-- A value of a unary node survives an extension of the rules, along a map of domains that
+commutes with them. -/
+theorem map_mem_unaryValues (hJ : J.Extends I φ)
+    (hh : ∀ {a b : T} (r : L.Unary a b) (x : D a),
+      h b (M.funMap r x) = M'.funMap (φ.onFunction r) (h a x))
+    {X : List (Σ a, D a)} {Y : List (Σ a, D' a)}
+    (hXY : ∀ d ∈ X, (⟨d.1, h d.1 d.2⟩ : Σ a, D' a) ∈ Y) {d : Σ a, D a}
+    (hd : d ∈ I.unaryValues M n X) : (⟨d.1, h d.1 d.2⟩ : Σ a, D' a) ∈ J.unaryValues M' n Y := by
+  obtain ⟨d₁, h₁, r, hr, rfl⟩ := mem_unaryValues.1 hd
+  exact mem_unaryValues.2 ⟨_, hXY d₁ h₁, ⟨r.1, φ.onFunction r.2⟩, hJ.unary hr,
+    congrArg (Sigma.mk r.1) (hh r.2 d₁.2)⟩
+
+/-- A value of a binary node survives an extension of the rules, along a map of domains that
+commutes with them. -/
+theorem map_mem_binaryValues (hJ : J.Extends I φ)
+    (hh : ∀ {a b c : T} (m : L.Binary a b c) (x : D a) (y : D b),
+      h c (M.funMap m (x, y)) = M'.funMap (φ.onFunction m) (h a x, h b y))
+    {X₁ X₂ : List (Σ a, D a)} {Y₁ Y₂ : List (Σ a, D' a)}
+    (h₁ : ∀ d ∈ X₁, (⟨d.1, h d.1 d.2⟩ : Σ a, D' a) ∈ Y₁)
+    (h₂ : ∀ d ∈ X₂, (⟨d.1, h d.1 d.2⟩ : Σ a, D' a) ∈ Y₂) {d : Σ a, D a}
+    (hd : d ∈ I.binaryValues M n X₁ X₂) :
+    (⟨d.1, h d.1 d.2⟩ : Σ a, D' a) ∈ J.binaryValues M' n Y₁ Y₂ := by
+  obtain ⟨d₁, hd₁, d₂, hd₂, m, hm, rfl⟩ := mem_binaryValues.1 hd
+  exact mem_binaryValues.2 ⟨_, h₁ d₁ hd₁, _, h₂ d₂ hd₂, ⟨m.1, φ.onFunction m.2⟩, hJ.binary hm,
+    congrArg (Sigma.mk m.1) (hh m.2 d₁.2 d₂.2)⟩
+
+end Values
 
 /-- The type-driven interpreter of the sum of two languages extends that of the first. -/
 theorem typeDriven_sum_extends [L.LocallyFinite] [L'.LocallyFinite] :
@@ -81,15 +85,6 @@ theorem typeDriven_sum_extends [L.LocallyFinite] [L'.LocallyFinite] :
   binary {_ _ _ m} hm := by
     obtain ⟨u, m⟩ := m
     exact List.mem_append_left _ (List.mem_map.2 ⟨⟨u, m⟩, hm, rfl⟩)
-
-/-- The values the type-driven interpreter of a language finds are found by that of its sum with
-another language, whatever rules the other adds. -/
-theorem mem_values_typeDriven_sum [L.LocallyFinite] [L'.LocallyFinite] (M : L.Structure D)
-    (M' : L'.Structure D) (ρ : ∀ {a : T}, W a → D a) {s : Skeleton N Lx} {d : Σ a, D a}
-    (hd : d ∈ (typeDriven L).values M ρ lex s) :
-    d ∈ (typeDriven (L.sum L')).values (M.sum M') ρ lex s :=
-  mem_values_of_le typeDriven_sum_extends (LHom.sumInl_isExpansionOn M M')
-    (fun _ ↦ List.Subset.refl _) ρ hd
 
 /-- An extension is one of the interpreters with predicate abstraction, which the map leaves in
 place. -/
@@ -122,17 +117,54 @@ variable {C Lx : Type} {T : Type} {G G' : Language T} {W D : T → Type}
   {I : Interpreter G Node} {J : Interpreter G' Node} {φ : G →ᴸ G'}
   {lex lex' : Lx ⊕ ℕ → List (Σ a, W a)}
 
-/-- A value of a tree survives an extension of the rules and of the lexicon. -/
+/-- A value of a tree survives an extension of the rules and of the lexicon, along a map of
+domains that commutes with the rules and takes the values of the items to their values. -/
+theorem map_mem_values_of_le {D' : T → Type} {M : G.Structure D} {M' : G'.Structure D'}
+    (hJ : J.Extends I φ) (h : ∀ a, D a → D' a)
+    (hu : ∀ {a b : T} (r : G.Unary a b) (x : D a),
+      h b (M.funMap r x) = M'.funMap (φ.onFunction r) (h a x))
+    (hb : ∀ {a b c : T} (m : G.Binary a b c) (x : D a) (y : D b),
+      h c (M.funMap m (x, y)) = M'.funMap (φ.onFunction m) (h a x, h b y))
+    {ρ : ∀ {a : T}, W a → D a} {ρ' : ∀ {a : T}, W a → D' a}
+    (hρ : ∀ {a : T} (x : W a), h a (ρ x) = ρ' x) (hl : ∀ x, lex x ⊆ lex' x)
+    (t : Tree C Lx) {island : C → Bool} {d : Σ a, D a} (hd : d ∈ t.values I M ρ lex island) :
+    (⟨d.1, h d.1 d.2⟩ : Σ a, D' a) ∈ t.values J M' ρ' lex' island := by
+  refine RoseTree.rel_fold
+    (fun (X : List (Σ a, D a)) (Y : List (Σ a, D' a)) ↦ ∀ d ∈ X, (⟨d.1, h d.1 d.2⟩ : Σ a, D' a) ∈ Y)
+    (fun l Xs Ys hXY ↦ ?_) t d hd
+  match l, Xs, Ys, hXY with
+  | .terminal _ w, [], [], _ =>
+    intro d hd
+    obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hd
+    exact List.mem_map.2 ⟨p, hl _ hp, congrArg (Sigma.mk p.1) (hρ p.2).symm⟩
+  | .trace n _, [], [], _ =>
+    intro d hd
+    obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hd
+    exact List.mem_map.2 ⟨p, hl _ hp, congrArg (Sigma.mk p.1) (hρ p.2).symm⟩
+  | .bind n _, [X], [Y], .cons hX .nil => exact fun d hd ↦ map_mem_unaryValues h hJ hu hX hd
+  | .phrase _ _, [X], [Y], .cons hX .nil => exact hX
+  | .phrase c _, [X₁, X₂], [Y₁, Y₂], .cons h₁ (.cons h₂ .nil) =>
+    exact fun d hd ↦ map_mem_binaryValues h hJ hb h₁ h₂ hd
+  | .terminal _ _, _ :: _, _ :: _, _ | .trace _ _, _ :: _, _ :: _, _ | .bind _ _, [], [], _
+  | .bind _ _, _ :: _ :: _, _ :: _ :: _, _ | .phrase _ _, [], [], _
+  | .phrase _ _, _ :: _ :: _ :: _, _ :: _ :: _ :: _, _ => exact fun _ hd ↦ nomatch hd
+
+/-- A value of a tree survives an extension of the rules and of the lexicon, in a structure that
+expands the one it was computed in. -/
 theorem mem_values_of_le {M : G.Structure D} {M' : G'.Structure D} (h : J.Extends I φ)
     (hM : φ.IsExpansionOn M M') (hl : ∀ x, lex x ⊆ lex' x) (ρ : ∀ {a : T}, W a → D a)
     {t : Tree C Lx} {island : C → Bool} {d : Σ a, D a} (hd : d ∈ t.values I M ρ lex island) :
-    d ∈ t.values J M' ρ lex' island := by
-  unfold values derivs at hd ⊢
-  cases hs : t.skeleton island with
-  | none => simp [hs] at hd
-  | some s =>
-    rw [hs] at hd
-    exact Interpreter.mem_values_of_le h hM hl ρ hd
+    d ∈ t.values J M' ρ lex' island :=
+  map_mem_values_of_le h (fun _ x ↦ x) (fun r x ↦ (hM.map_onFunction r x).symm)
+    (fun m x y ↦ (hM.map_onFunction m (x, y)).symm) (fun _ ↦ rfl) hl t hd
+
+/-- A derivation of a tree survives an extension of the rules and of the lexicon: its image
+along the map is a derivation the extending interpreter admits. -/
+theorem mem_derivs_of_le (h : J.Extends I φ) (hl : ∀ x, lex x ⊆ lex' x) {t : Tree C Lx}
+    {island : C → Bool} {d : Σ a, Deriv G W a} (hd : d ∈ t.derivs I lex island) :
+    (⟨d.1, φ.onTerm d.2⟩ : Σ a, Deriv G' W a) ∈ t.derivs J lex' island :=
+  map_mem_values_of_le h (fun _ d ↦ φ.onTerm d) (fun _ _ ↦ rfl) (fun _ _ _ ↦ rfl)
+    (fun _ ↦ rfl) hl t hd
 
 /-- The meanings of a tree by Heim and Kratzer's procedure over a language of rules are among its
 meanings over the sum of the language with another: adding rules loses no reading. -/

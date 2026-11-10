@@ -90,7 +90,8 @@ variable (L : Language.{0, 0} (Ty B)) [L.LocallyFinite] [M : L.Structure (Ty.Dom
 theorem interpret_eq_map (t : Tree C Lx) :
     t.interpret L D Γ ρ lex = (t.derive L Γ lex).map fun ⟨a, d⟩ ↦
       ⟨a, d.realize (Language.withAbstraction.structure (Assignments.total D Γ))
-        (Leaf.val ρ)⟩ := rfl
+        (Leaf.val ρ)⟩ :=
+  values_eq_map_derivs ..
 
 @[simp] theorem derive_terminal (c : C) (w : Lx) :
     (terminal c w).derive L Γ lex = (lex w).map fun ⟨a, x⟩ ↦ ⟨a, .leaf (.word x)⟩ := by
