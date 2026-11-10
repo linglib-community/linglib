@@ -8,7 +8,7 @@ public import Linglib.Fragments.Hungarian.Pronouns
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
-public import Linglib.Syntax.Minimalist.Probe.Profile
+public import Linglib.Syntax.Minimalist.Locality.Horizon
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -390,16 +390,16 @@ theorem ex18_predicted : Agrees ex_18 "deepest " ⟦past⟧ := by decide
 theorem resMovement_blocked_by_TP : ¬ WilliamsCycle .V .T := by decide +kernel
 
 /-- Sequence of Tense as a probe of [keine-2020]: a probe on T whose horizon is Say. -/
-def sotProbe : Probe.Profile := ⟨.T, some .Say⟩
+def sotProbe : HorizonSetting := ⟨.T, some .Say⟩
 
 theorem sotProbe_clauseTypes :
-    sotProbe.TransparentTo ClauseSpine.tP.label ∧
-      ¬ sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc, .Say]).label := by
+    sotProbe.TransparentTo .tP ∧
+      ¬ sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc, .Say]) := by
   decide
 
 -- §4, footnote 9
 theorem horizon_admits_FocP :
-    sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc]).label ∧ ¬ WilliamsCycle .T .Foc := by
+    sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc]) ∧ ¬ WilliamsCycle .T .Foc := by
   decide +kernel
 
 /-! ### Recognition by witness

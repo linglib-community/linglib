@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
 public import Linglib.Syntax.Minimalist.Locality.Horizon
-public import Linglib.Syntax.Minimalist.Probe.Profile
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Data.Examples.AissenPolian2025
 public import Linglib.Data.Examples.Readers
 
@@ -16,8 +16,9 @@ possessive's D layer, an agent, a specific subject or theme, or an occupied Spec
 it. Hence only non-specific possessums strand, and the possessor that reaches Spec,TP is the
 ψ-subject of a categorical judgment.
 
-Nominal opacity is the profile `nominalOpacity` read through `Invisible`, the positions behind the
-probe's horizon (`Minimalist.horizon`), and C⁰'s wh-probe searches short of them (`whGoals`).
+Nominal opacity is the horizon setting `nominalOpacity` read through `Invisible`, the positions
+behind the probe's horizon (`HorizonSetting.cut`) under the raising head index, and C⁰'s wh-probe
+searches short of them (`whGoals`).
 Attract Closest is `dGoals`, the positional search for D leaves on the paper's structures,
 `judgment` reads the judgment type off the same search, and the paper's examples are the rows,
 over which `stranding_iff`, `piedPiping_specific` and `psi_no_piedPiping` hold.
@@ -45,32 +46,34 @@ open Minimalist SyntacticObject LinearizedSyntacticObject
 
 /-- Nominal opacity: the wh-probe on C⁰ has every node in the extended projection of N⁰ as its
 horizon, `[wh]C⁰ ⊣‖ N`. -/
-def nominalOpacity : Probe.Profile := ⟨.C, some .N⟩
+def nominalOpacity : HorizonSetting := ⟨.C, some .N⟩
 
 /-- The [EPP:D] probe on T⁰, without horizon. -/
-def dProbeT : Probe.Profile := ⟨.T, none⟩
+def dProbeT : HorizonSetting := ⟨.T, none⟩
 
 /-- The [EPP:D] probe on Appl⁰, without horizon. -/
-def dProbeAppl : Probe.Profile := ⟨.Appl, none⟩
+def dProbeAppl : HorizonSetting := ⟨.Appl, none⟩
 
 /-- The [EPP:WH] probe on D⁰ that drives pied-piping with inversion, without horizon. -/
-def secondaryWh : Probe.Profile := ⟨.D, none⟩
+def secondaryWh : HorizonSetting := ⟨.D, none⟩
 
-/-- `target` is invisible in `t` to a probe with profile `p` on `probe` when an occurrence of it
-lies behind the profile's horizon for an occurrence of the probe. -/
-def Invisible (p : Probe.Profile) (t : LinearizedSyntacticObject) (probe target : SyntacticObject) :
-    Prop :=
-  ∃ c ∈ p.horizon, ∃ a q : t.val.Positions,
-    t.termAt a = probe ∧ t.termAt q = target ∧ q.val ∈ horizon t a.val c
+/-- `target` is invisible in `t` to a probe with setting `p` on `probe` when an occurrence of it
+lies behind its horizon for an occurrence of the probe. -/
+def Invisible (p : HorizonSetting) (t : LinearizedSyntacticObject)
+    (probe target : SyntacticObject) : Prop :=
+  ∃ a q : t.val.Positions,
+    t.termAt a = probe ∧ t.termAt q = target ∧ q.val ∈ p.cut headIndex? t a.val
 
-instance (p : Probe.Profile) (t : LinearizedSyntacticObject) (probe target : SyntacticObject) :
+instance (p : HorizonSetting) (t : LinearizedSyntacticObject) (probe target : SyntacticObject) :
     Decidable (Invisible p t probe target) := by
   unfold Invisible; infer_instance
 
 theorem not_invisible_of_horizon_none (t : LinearizedSyntacticObject)
-    (probe target : SyntacticObject) {p : Probe.Profile} (hp : p.horizon = none) :
+    (probe target : SyntacticObject) {p : HorizonSetting} (hp : p.horizon = none) :
     ¬ Invisible p t probe target := by
-  simp [Invisible, hp]
+  obtain ⟨head, _⟩ := p
+  subst hp
+  simp [Invisible]
 
 theorem dProbe_sees_through (t : LinearizedSyntacticObject) (probe target : SyntacticObject) :
     ¬ Invisible dProbeT t probe target ∧ ¬ Invisible dProbeAppl t probe target ∧
@@ -80,15 +83,15 @@ theorem dProbe_sees_through (t : LinearizedSyntacticObject) (probe target : Synt
 
 /-! ### The structures -/
 
-def C₀ : LinearizedSyntacticObject := .leaf ⟨.of .C [], 1⟩
-def T₀ : LinearizedSyntacticObject := .leaf ⟨.of .T [], 2⟩
-def V₀ : LinearizedSyntacticObject := .leaf ⟨.of .V [], 3⟩
-def v₀ : LinearizedSyntacticObject := .leaf ⟨.of .v [], 4⟩
-def Appl₀ : LinearizedSyntacticObject := .leaf ⟨.of .Appl [], 5⟩
-def P₀ : LinearizedSyntacticObject := .leaf ⟨.of .P [], 6⟩
+def C₀ : LinearizedSyntacticObject := .leaf ⟨.of .C [.T], 1⟩
+def T₀ : LinearizedSyntacticObject := .leaf ⟨.of .T [.V], 2⟩
+def V₀ : LinearizedSyntacticObject := .leaf ⟨.of .V [.N], 3⟩
+def v₀ : LinearizedSyntacticObject := .leaf ⟨.of .v [.V], 4⟩
+def Appl₀ : LinearizedSyntacticObject := .leaf ⟨.of .Appl [.V], 5⟩
+def P₀ : LinearizedSyntacticObject := .leaf ⟨.of .P [.N], 6⟩
 def Psr : LinearizedSyntacticObject := .leaf ⟨.of .D [], 7⟩
 def Psm : LinearizedSyntacticObject := .leaf ⟨.of .N [], 8⟩
-def D₀ : LinearizedSyntacticObject := .leaf ⟨.of .D [], 9⟩
+def D₀ : LinearizedSyntacticObject := .leaf ⟨.of .D [.N], 9⟩
 def Agt : LinearizedSyntacticObject := .leaf ⟨.of .D [], 10⟩
 def SubjD : LinearizedSyntacticObject := .leaf ⟨.of .D [], 11⟩
 def SubjN : LinearizedSyntacticObject := .leaf ⟨.of .N [], 12⟩
@@ -145,7 +148,11 @@ theorem psr_invisible_possP : Invisible nominalOpacity (cp unaccPossP) C₀ Psr 
 theorem psr_invisible_pp : Invisible nominalOpacity (cp (themeLoc ThemeN)) C₀ Psr := by
   decide +kernel
 
-theorem dHead_visible : ¬ Invisible nominalOpacity (cp unaccDP) C₀ D₀ := by decide +kernel
+/-- Opacity is inherited up the extended projection of N⁰, so the D⁰ of a specific possessive is
+behind the horizon with the rest of the DP, while the verb outside the nominal is not. -/
+theorem dp_opaque_verb_visible : Invisible nominalOpacity (cp unaccDP) C₀ D₀ ∧
+    ¬ Invisible nominalOpacity (cp unaccDP) C₀ V₀ := by
+  decide +kernel
 
 /-- C⁰'s wh-probe, satisfied by the wh-possessor. -/
 def whProbe (t : LinearizedSyntacticObject) : Probe t.val.Positions :=
@@ -153,7 +160,7 @@ def whProbe (t : LinearizedSyntacticObject) : Probe t.val.Positions :=
 
 /-- What C⁰'s wh-probe finds, searching short of its horizon at N⁰. -/
 def whGoals (t : LinearizedSyntacticObject) : Finset SyntacticObject :=
-  t.goalsUnder (whProbe t) C₀ (horizon t · .N)
+  t.goalsUnder (whProbe t) C₀ (nominalOpacity.cut headIndex? t)
 
 /-- The possessor raised to Spec,TP out of a non-specific S_O. -/
 def psrRaised : LinearizedSyntacticObject := {Psr, unaccPossP}

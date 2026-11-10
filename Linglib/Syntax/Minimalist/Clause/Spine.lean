@@ -30,8 +30,8 @@ and the shell above it.
 * `Minimalist.ClauseSpine.IsExtendedProjection`: a spine each of whose heads extends the one
   below it.
 * `Minimalist.ClauseSpine.append`: the spine with a nominal or adpositional shell over it.
-* `Minimalist.ClauseSpine.below`, `Minimalist.ClauseSpine.above`: the heads below the first
-  occurrence of a category, its complement, and above the last, the shell over it.
+* `Minimalist.ClauseSpine.below`, `Minimalist.ClauseSpine.above`: the spine below the first
+  occurrence of a category, its complement, and the heads above the last, the shell over it.
 * `Minimalist.ClauseSpine.vP`, `Minimalist.ClauseSpine.tP`, `Minimalist.ClauseSpine.cP`: the
   clause sizes of the verbal extended projection.
 
@@ -40,8 +40,8 @@ and the shell above it.
 * `Minimalist.ClauseSpine.le_def`: the extension order is inclusion of labels.
 * `Minimalist.ClauseSpine.IsExtendedProjection.pairwise`: in an extended projection every head
   extends each head below it.
-* `Minimalist.ClauseSpine.below_prefix`: the complement of a head lies inside the complement of
-  every head above it.
+* `Minimalist.ClauseSpine.below_le_below`: the complement of a head lies inside the complement
+  of every head above it.
 
 ## Implementation notes
 
@@ -130,10 +130,16 @@ def append (s : ClauseSpine) (l : List Cat) : ClauseSpine := ⟨s.heads ++ l⟩
 theorem le_append (s : ClauseSpine) (l : List Cat) : s ≤ s.append l :=
   le_iff_forall_mem.2 fun _ hc ↦ mem_append.2 (Or.inl hc)
 
-/-! ### Complements and shells of a head -/
+/-! ### Complements of a head -/
 
-/-- The heads strictly below the first occurrence of `c`, the complement of `c`. -/
-def below (s : ClauseSpine) (c : Cat) : List Cat := s.heads.takeWhile (· != c)
+/-- The complement of the first occurrence of `c`, the spine of the heads strictly below it, so
+that `s.below .C` is the TP a finite clause's C⁰ selects. A spine that does not project `c` is its
+own complement. -/
+def below (s : ClauseSpine) (c : Cat) : ClauseSpine := ⟨s.heads.takeWhile (· != c)⟩
+
+@[simp] theorem heads_below (s : ClauseSpine) (c : Cat) :
+    (s.below c).heads = s.heads.takeWhile (· != c) :=
+  rfl
 
 /-- The heads strictly above the last occurrence of `c`, so that `s.above .C` is the shell over the
 CP of `s` and `[]` for a bare CP. -/
@@ -142,10 +148,96 @@ def above (s : ClauseSpine) (c : Cat) : List Cat := s.heads.rtakeWhile (· != c)
 theorem notMem_below_self (s : ClauseSpine) (c : Cat) : c ∉ s.below c := fun h ↦ by
   simpa using List.mem_takeWhile_imp h
 
+theorem below_le (s : ClauseSpine) (c : Cat) : s.below c ≤ s :=
+  le_iff_forall_mem.2 fun _ h ↦ (List.takeWhile_prefix _).subset h
+
 /-- The complement of a head lies inside the complement of every head above it. -/
-theorem below_prefix (h : c ∈ s.below d) : s.below c <+: s.below d :=
+theorem below_prefix (h : c ∈ s.below d) : (s.below c).heads <+: (s.below d).heads :=
   (List.prefix_or_prefix_of_prefix (List.takeWhile_prefix _)
     (List.takeWhile_prefix _)).resolve_right fun h' ↦ s.notMem_below_self c (h'.subset h)
+
+theorem below_le_below (h : c ∈ s.below d) : s.below c ≤ s.below d :=
+  le_iff_forall_mem.2 fun _ hx ↦ (below_prefix h).subset hx
+
+private theorem mem_takeWhile_or_rel {r : Cat → Cat → Prop} [Std.Refl r] :
+    ∀ {l : List Cat}, l.Pairwise r → c ∈ l → d ∈ l → d ∈ l.takeWhile (· != c) ∨ r c d
+  | x :: l, hp, hc, hd => by
+    obtain ⟨hx, hl⟩ := List.pairwise_cons.1 hp
+    by_cases hxc : x = c
+    · subst hxc
+      rcases List.mem_cons.1 hd with rfl | hd
+      · exact .inr (refl _)
+      · exact .inr (hx d hd)
+    · have hc' : c ∈ l := (List.mem_cons.1 hc).resolve_left (Ne.symm hxc)
+      rw [List.takeWhile_cons_of_pos (by simpa using hxc)]
+      rcases List.mem_cons.1 hd with rfl | hd
+      · exact .inl List.mem_cons_self
+      · exact (mem_takeWhile_or_rel hl hc' hd).imp (List.mem_cons_of_mem _) id
+
+private theorem rel_of_mem_takeWhile {r : Cat → Cat → Prop} :
+    ∀ {l : List Cat}, l.Pairwise r → c ∈ l → d ∈ l.takeWhile (· != c) → r d c
+  | x :: l, hp, hc, hd => by
+    obtain ⟨hx, hl⟩ := List.pairwise_cons.1 hp
+    by_cases hxc : x = c
+    · simp [hxc] at hd
+    · have hc' : c ∈ l := (List.mem_cons.1 hc).resolve_left (Ne.symm hxc)
+      rw [List.takeWhile_cons_of_pos (by simpa using hxc)] at hd
+      rcases List.mem_cons.1 hd with rfl | hd
+      · exact hx c hc'
+      · exact rel_of_mem_takeWhile hl hc' hd
+
+/-- In an extended projection a head lies in the complement of another or extends it. -/
+theorem IsExtendedProjection.mem_below_or_extendsTo (hs : s.IsExtendedProjection) (hc : c ∈ s)
+    (hd : d ∈ s) : d ∈ s.below c ∨ c.ExtendsTo d :=
+  mem_takeWhile_or_rel hs.pairwise hc hd
+
+/-- In an extended projection a head extends every head in its complement. -/
+theorem IsExtendedProjection.extendsTo_of_mem_below (hs : s.IsExtendedProjection) (hc : c ∈ s)
+    (hd : d ∈ s.below c) : d.ExtendsTo c :=
+  rel_of_mem_takeWhile hs.pairwise hc hd
+
+/-! ### Category inheritance -/
+
+/-- A head of category `c` inherits the categories of a complement with spine `s` when it is
+functional and the highest head of `s` extends to it; a lexical head starts an extended projection
+of its own. -/
+def Inherits (s : ClauseSpine) (c : Cat) : Prop :=
+  c ≠ c.family.lexical ∧ ∃ d ∈ s.heads.getLast?, d.ExtendsTo c
+
+instance : Decidable (s.Inherits c) := inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The spine of the phrase a head of category `c` projects over a complement with spine `s`: the
+complement's heads, where the head inherits them, and `c`. -/
+def project (s : ClauseSpine) (c : Cat) : ClauseSpine :=
+  ⟨(if s.Inherits c then s.heads else []) ++ [c]⟩
+
+theorem mem_project_self (s : ClauseSpine) (c : Cat) : c ∈ s.project c := by simp [project]
+
+theorem le_project (h : s.Inherits c) : s ≤ s.project c :=
+  le_iff_forall_mem.2 fun d hd ↦ by simp [project, h, mem_def.1 hd]
+
+/-- The complement of a head in the phrase it projects over a complement it inherits from is that
+complement. -/
+theorem below_project (hi : s.Inherits c) (hc : c ∉ s) : (s.project c).below c = s := by
+  have h : s.heads.takeWhile (· != c) = s.heads :=
+    List.takeWhile_eq_self_iff.2 fun x hx ↦ bne_iff_ne.2 fun hxc ↦ hc (hxc ▸ hx)
+  cases s
+  simp only [below, project, hi, ite_true, List.takeWhile_append, mk.injEq] at h ⊢
+  simp [h]
+
+theorem IsExtendedProjection.project (hs : s.IsExtendedProjection) (c : Cat) :
+    (s.project c).IsExtendedProjection := by
+  unfold ClauseSpine.project IsExtendedProjection
+  split
+  next h =>
+    obtain ⟨d, hd, hdc⟩ := h.2
+    exact hs.append (.singleton _) fun e he b hb ↦ by
+      obtain rfl : e = d := Option.some.inj (he.symm.trans hd)
+      obtain rfl : _ = b := by simpa using hb
+      exact hdc
+  next => exact .singleton _
+
+/-! ### Shells of a head -/
 
 theorem above_append (s : ClauseSpine) (h : c ∉ l) : (s.append l).above c = s.above c ++ l := by
   induction l using List.reverseRecOn with
@@ -166,6 +258,12 @@ def tP : ClauseSpine := ⟨[.V, .v, .T]⟩
 
 /-- The CP-sized clause `[V, v, T, C]`, the finite clause. -/
 def cP : ClauseSpine := ⟨[.V, .v, .T, .C]⟩
+
+@[simp] theorem tP_below_T : tP.below .T = vP := by decide
+
+@[simp] theorem cP_below_T : cP.below .T = vP := by decide
+
+@[simp] theorem cP_below_C : cP.below .C = tP := by decide
 
 theorem vP_le_tP : vP ≤ tP := by decide
 
