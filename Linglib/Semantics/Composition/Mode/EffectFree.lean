@@ -134,25 +134,56 @@ theorem derivs_effectDriven_of_effectFree (hG : G.EffectFree)
     (hlex : ∀ x, ∀ p ∈ lex x, p.1.EffectFree) (t : Tree C Lx) :
     t.derivs (effectDriven G) lex =
       (t.derivs (typeDriven G) lex).map fun d ↦ ⟨d.1, (effectGrammar.basic G).onTerm d.2⟩ := by
-  have ha : (t.derivs (typeDriven G) lex).map (fun d ↦
-        (⟨d.1, (effectGrammar.basic G).onTerm d.2⟩ : Sigma (Deriv (effectGrammar G) W))) =
-      t.values (typeDriven G)
-        ((effectGrammar.basic G).reduct (Term.structure (effectGrammar G) W)) Deriv.leaf lex := by
-    rw [values_eq_fold]
-    exact RoseTree.fold_hom _ (fun l Xs ↦ map_nodeValues (typeDriven G) (Term.structure G W)
-      Deriv.leaf lex (fun _ d ↦ (effectGrammar.basic G).onTerm d) (fun _ _ ↦ rfl)
-      (fun _ _ _ ↦ rfl) (fun _ ↦ rfl) l Xs) t
-  rw [ha, derivs_eq_values]
-  refine values_congr (I := effectDriven G) (J := typeDriven G) Ty.EffectFree hlex
-    (fun n X hX ↦ ⟨rfl, fun d hd ↦ ?_⟩) (fun {X Y} hX hY ↦ ⟨?_, fun d hd ↦ ?_⟩) t
-  · obtain ⟨d₁, h₁, r, -, rfl⟩ := mem_unaryValues.1 hd
-    exact hG.unary r.2 (hX d₁ h₁)
-  · refine List.flatMap_congr fun ⟨a, x⟩ h₁ ↦ List.flatMap_congr fun ⟨b, y⟩ h₂ ↦ ?_
-    dsimp only
-    rw [binary_effectDriven_of_effectFree hG (hX _ h₁) (hY _ h₂), List.map_map]
+  refine (RoseTree.rel_fold
+    (fun (X : List (Sigma (Deriv (effectGrammar G) W))) (Y : List (Sigma (Deriv G W))) ↦
+      X = Y.map (fun d ↦ ⟨d.1, (effectGrammar.basic G).onTerm d.2⟩) ∧ ∀ d ∈ Y, d.1.EffectFree)
+    (fun l Xs Ys h ↦ ?_) t).1
+  have hleaf (x : Lx ⊕ ℕ) :
+      ∀ d ∈ (lex x).map fun ⟨a, w⟩ ↦ (⟨a, .leaf w⟩ : Sigma (Deriv G W)), d.1.EffectFree := by
+    intro d hd
+    obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hd
+    exact hlex x p hp
+  have hmap (x : Lx ⊕ ℕ) :
+      (lex x).map (fun ⟨a, w⟩ ↦ (⟨a, .leaf w⟩ : Sigma (Deriv (effectGrammar G) W))) =
+        ((lex x).map fun ⟨a, w⟩ ↦ (⟨a, .leaf w⟩ : Sigma (Deriv G W))).map
+          fun d ↦ ⟨d.1, (effectGrammar.basic G).onTerm d.2⟩ := by
+    rw [List.map_map]
     rfl
-  · obtain ⟨d₁, h₁, d₂, h₂, m, -, rfl⟩ := mem_binaryValues.1 hd
-    exact hG.binary m.2 (hX d₁ h₁) (hY d₂ h₂)
+  match l, Xs, Ys, h with
+  -- a word and a trace: the items they may be
+  | .terminal _ w, [], [], _ => exact ⟨hmap _, hleaf _⟩
+  | .trace n _, [], [], _ => exact ⟨hmap _, hleaf _⟩
+  -- a binder: abstraction is a rule of the grammar, and keeps to the types without effects
+  | .bind n _, [_], [Y], .cons ⟨rfl, hY⟩ .nil =>
+    refine ⟨(map_unaryValues (I := typeDriven G)
+      (M' := (effectGrammar.basic G).reduct (Term.structure (effectGrammar G) W))
+      (fun _ d ↦ (effectGrammar.basic G).onTerm d) (fun _ _ ↦ rfl)).symm, fun d hd ↦ ?_⟩
+    obtain ⟨d₁, h₁, r, -, rfl⟩ := mem_unaryValues.1 hd
+    exact hG.unary r.2 (hY d₁ h₁)
+  | .phrase _ _, [_], [Y], .cons h .nil => exact h
+  -- a binary node: its daughters' types have no effects, so only basic modes combine them
+  | .phrase _ _, [_, _], [Y₁, Y₂], .cons ⟨rfl, h₁⟩ (.cons ⟨rfl, h₂⟩ .nil) =>
+    refine ⟨?_, fun d hd ↦ ?_⟩
+    · rw [nodeValues, nodeValues, map_binaryValues (I := typeDriven G)
+        (M' := (effectGrammar.basic G).reduct (Term.structure (effectGrammar G) W))
+        (fun _ d ↦ (effectGrammar.basic G).onTerm d) (fun _ _ _ ↦ rfl)]
+      refine List.flatMap_congr fun ⟨a, x⟩ hx ↦ List.flatMap_congr fun ⟨b, y⟩ hy ↦ ?_
+      have ha : a.EffectFree := by
+        obtain ⟨d, hd, hde⟩ := List.mem_map.1 hx
+        cases hde
+        exact h₁ d hd
+      have hb : b.EffectFree := by
+        obtain ⟨d, hd, hde⟩ := List.mem_map.1 hy
+        cases hde
+        exact h₂ d hd
+      dsimp only
+      rw [binary_effectDriven_of_effectFree hG ha hb, List.map_map]
+      rfl
+    · obtain ⟨d₁, hd₁, d₂, hd₂, m, -, rfl⟩ := mem_binaryValues.1 hd
+      exact hG.binary m.2 (h₁ d₁ hd₁) (h₂ d₂ hd₂)
+  | .terminal _ _, _ :: _, _ :: _, _ | .trace _ _, _ :: _, _ :: _, _ | .bind _ _, [], [], _
+  | .bind _ _, _ :: _ :: _, _ :: _ :: _, _ | .phrase _ _, [], [], _
+  | .phrase _ _, _ :: _ :: _ :: _, _ :: _ :: _ :: _, _ => exact ⟨rfl, fun _ hd ↦ nomatch hd⟩
 
 /-- Over a lexicon whose items have types without effects, the effect-driven interpreter gives
 each tree, in any structure, the values the grammar's type-driven interpreter gives it. -/

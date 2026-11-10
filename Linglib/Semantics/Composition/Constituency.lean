@@ -225,33 +225,6 @@ theorem length_values_le_one (hu : ∀ n a, (I.unary n a).length ≤ 1)
   | .phrase _ _, _ :: _ :: _ :: _, _ :: _ :: _ :: _, _ => exact Nat.zero_le _
 
 
-/-- Two interpreters that give a node the same values wherever its daughters' values have types
-in a set, and values of types in the set, give a tree the same values over a lexicon of items of
-types in the set. -/
-theorem values_congr {G' : Language T} {J : Interpreter G' ℕ} {M' : G'.Structure D}
-    (P : T → Prop) (hlex : ∀ x, ∀ p ∈ lex x, P p.1)
-    (hu : ∀ n {X : List (Sigma D)}, (∀ d ∈ X, P d.1) →
-      I.unaryValues M n X = J.unaryValues M' n X ∧ ∀ d ∈ J.unaryValues M' n X, P d.1)
-    (hb : ∀ {X Y : List (Sigma D)}, (∀ d ∈ X, P d.1) → (∀ d ∈ Y, P d.1) →
-      I.binaryValues M X Y = J.binaryValues M' X Y ∧ ∀ d ∈ J.binaryValues M' X Y, P d.1)
-    (t : Tree C L) : t.values I M ρ lex = t.values J M' ρ lex := by
-  rw [values_eq_fold, values_eq_fold]
-  refine (RoseTree.rel_fold (fun (X Y : List (Sigma D)) ↦ X = Y ∧ ∀ d ∈ Y, P d.1)
-    (fun l Xs Ys h ↦ ?_) t).1
-  have hleaf (x : L ⊕ ℕ) : ∀ d ∈ (lex x).map fun ⟨a, w⟩ ↦ (⟨a, ρ w⟩ : Sigma D), P d.1 := by
-    intro d hd
-    obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hd
-    exact hlex x p hp
-  match l, Xs, Ys, h with
-  | .terminal _ w, [], [], _ => exact ⟨rfl, hleaf _⟩
-  | .trace n _, [], [], _ => exact ⟨rfl, hleaf _⟩
-  | .bind n _, [_], [Y], .cons ⟨rfl, hY⟩ .nil => exact hu n hY
-  | .phrase _ _, [_], [Y], .cons h .nil => exact h
-  | .phrase _ _, [_, _], [Y₁, Y₂], .cons ⟨rfl, h₁⟩ (.cons ⟨rfl, h₂⟩ .nil) => exact hb h₁ h₂
-  | .terminal _ _, _ :: _, _ :: _, _ | .trace _ _, _ :: _, _ :: _, _ | .bind _ _, [], [], _
-  | .bind _ _, _ :: _ :: _, _ :: _ :: _, _ | .phrase _ _, [], [], _
-  | .phrase _ _, _ :: _ :: _ :: _, _ :: _ :: _ :: _, _ => exact ⟨rfl, fun _ hd ↦ nomatch hd⟩
-
 theorem Uninterpretable.values_eq_nil {t : Tree C L} (h : t.Uninterpretable I lex)
     (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a) : t.values I M ρ lex = [] := by
   simp [values, h.derivs_eq_nil]
