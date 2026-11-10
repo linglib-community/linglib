@@ -4,7 +4,8 @@ public import Linglib.Fragments.Greek.StandardModern.Complementizers
 public import Linglib.Fragments.Greek.StandardModern.Verbs
 public import Linglib.Semantics.Questions.Polar
 public import Linglib.Logic.Trivalent.Pointwise
-public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Composition.Interpreter.Rules
+public import Linglib.Semantics.Composition.Interpreter.Sorts
 public import Linglib.Data.Examples.Roussou2010
 public import Linglib.Data.Examples.Readers
 
@@ -52,7 +53,6 @@ argument against uninterpretable features are not formalized.
 namespace Roussou2010
 
 open Greek.StandardModern.Complementizers Greek.StandardModern.Verbs
-open PhraseStructure.Tree
 
 /-! ### The lexical specification -/
 
@@ -119,11 +119,10 @@ theorem posExt_puClause_subset (p : Set W) :
 theorem anClause_not_informative (p : Set W) : ¬ (anClause p).IsInformative :=
   Question.not_isInformative_polar p
 
-theorem comp_over_na_type_clash (b : Montague.Ty) :
-    Montague.Ty.combine? (.fn .t b) (.fn .e .t) = none := by
-  simp [Montague.Ty.combine?, Montague.Ty.mode?, Montague.Mode.functionalLeft?,
-    Montague.Mode.functionalRight?, Montague.Mode.predicateModification?,
-    Montague.Mode.eventIdentification?]
+open Interpreter in
+theorem comp_over_na_type_clash (b : Ty Base) :
+    (Grammar.application.sum .predicateModification).motherTypes (.t ⇒ b) (.e ⇒ .t) = [] := by
+  cases b <;> simp [Grammar.motherTypes, Grammar.LocallyFinite.binaryRules]
 
 /-! ### Selection -/
 

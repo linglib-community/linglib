@@ -8,7 +8,7 @@ public import Mathlib.Logic.Equiv.Defs
 public import Linglib.Data.Examples.Asudeh2022
 public import Linglib.Semantics.Quantification.Polyadic
 public import Studies.HeimKratzer1998
-public import Linglib.Semantics.Composition.Ty
+public import Linglib.Semantics.Composition.Interpreter.Sorts
 public import Studies.BresnanEtAl1982
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import Mathlib.Data.Fintype.Sigma
@@ -904,14 +904,14 @@ theorem clause_from_quantifier
   fun h ↦ not_correct_of_clause_from_loves L h hL
 
 /-- Clause atoms denote propositions and argument atoms entities. -/
-def Label.ty : Label → Montague.Ty
+def Label.ty : Label → Interpreter.Ty Interpreter.Base
   | .l | .c | .d => .t
   | _ => .e
 
 /-- The premises mean *every person*, *love* and *some person*, the two quantifiers being the
     generalized quantifiers of the determiners. -/
 def scopeEnv {E : Type} (person : E → Prop) (love : E → E → Prop) :
-    Env (fun x ↦ Montague.Ty.Domain E Unit x.ty) everybodyLovesSomebody.flatten :=
+    Env (fun x ↦ Interpreter.Ty.Domain E Unit x.ty) everybodyLovesSomebody.flatten :=
   .cons (every person) (.cons love (.cons (Det.some person) .nil))
 
 /-- The surface proof means the surface-scope reading, every person loving some person. -/

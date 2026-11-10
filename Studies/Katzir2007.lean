@@ -3,8 +3,6 @@ module
 public import Linglib.Syntax.Cat
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Semantics.Alternatives.Symmetric
-public import Linglib.Semantics.Composition.Tree
-public import Linglib.Semantics.Quantification.Basic
 
 /-!
 # Katzir (2007): Structurally-Defined Alternatives
@@ -32,12 +30,12 @@ sentence is an alternative of the simpler (`moreThanWarmYesterday_mem_alternativ
 
 ## Implementation notes
 
-A sentence's truth conditions are its composition through `Tree.interp` over a lexicon reading a
-three-way and a four-way world type (`cakeLex`, `fruitLex`), and trees a lexicon does not interpret
-denote the contradiction, which never witnesses the principle. The engine composes binary nodes,
-so the trees are binary: a noun phrase is labelled by its noun, and a connective forms a clause with
-its second conjunct. The symmetric alternative places the conjunction of quantifiers at the
-determiner.
+The paper's principle (21) compares the propositions two sentences denote by strict inclusion,
+and takes the denotations of its examples as known: it gives them no lexical entries and no
+composition. So the meaning of a tree is a parameter here, and each implicature is stated under
+the inclusions the paper relies on. A noun phrase is labelled by its noun, and a connective forms
+a clause with its second conjunct. The symmetric alternative places the conjunction of
+quantifiers at the determiner.
 
 ## Errata
 
@@ -54,7 +52,7 @@ source (18), the lexicon alone, does bound size (`atMostAsComplex.numNodes_le`).
 
 @[expose] public section
 
-open PhraseStructure Tree Montague
+open PhraseStructure Tree
 
 namespace Katzir2007
 
@@ -122,91 +120,6 @@ theorem someButNotAll_not_mem_alternatives :
   (by decide : ¬ ∀ s ∈ someButNotAllSentence.subtrees, ¬ (s.value.IsPhrase ∧ Tree.cat s = Cat.Conj))
     (phrase_preservation _ Cat.Conj source_lacks_conjP (by decide) h)
 
-/-- The proposition a sentence denotes over the worlds its lexicon reads, the contradiction where
-the lexicon does not interpret it. -/
-def truth {E V : Type} (lx : Word → Option (Denotation E V (ReaderT V Id)))
-    (g : Assignment E) (t : Tree Cat Word) : Set V :=
-  {v | ∃ q : V → Prop, Tree.interp lx g t = some ⟨.t, q⟩ ∧ q v}
-
-theorem mem_truth {E V : Type} {lx : Word → Option (Denotation E V (ReaderT V Id))}
-    {g : Assignment E} {t : Tree Cat Word} {q : V → Prop} {v : V}
-    (h : Tree.interp lx g t = some ⟨.t, q⟩) : v ∈ truth lx g t ↔ q v :=
-  ⟨fun ⟨q', h', hv⟩ ↦ by
-    have hq : q = q' := eq_of_heq (Sigma.mk.inj_iff.1 (Option.some.inj (h.symm.trans h'))).2
-    subst hq
-    exact hv, fun hv ↦ ⟨q, h, hv⟩⟩
-
-/-- How much of the cake John ate. -/
-inductive Cake
-  | none | part | whole
-  deriving DecidableEq, Repr
-
-/-- John and the two parts of the cake. -/
-inductive Piece
-  | john | left | right
-  deriving DecidableEq, Repr
-
-/-- The parts John ate. -/
-def Cake.eaten : Cake → Set Piece
-  | .none => ∅
-  | .part => {.left}
-  | .whole => {.left, .right}
-
-/-- The words of (25), a transitive verb taking its object as a quantifier. -/
-def cakeLex : Word → Option (Denotation Piece Cake (ReaderT Cake Id))
-  | .john => some ⟨.e, fun _ ↦ .john⟩
-  | .ate => some ⟨Ty.ett ⇒ Ty.et, fun c Q x ↦ x = .john ∧ Q c.eaten⟩
-  | .some_ => some ⟨Ty.det, fun _ ↦ Quantifier.Det.some⟩
-  | .all_ => some ⟨Ty.det, fun _ ↦ Quantifier.Det.every⟩
-  | .cake => some ⟨Ty.et, fun _ y ↦ y ≠ .john⟩
-  | .but_ => some ⟨Ty.det ⇒ Ty.det ⇒ Ty.det,
-      fun _ D D' A B ↦ D A B ∧ D' A B⟩
-  | .not_ => some ⟨Ty.det ⇒ Ty.det, fun _ D A B ↦ ¬ D A B⟩
-  | _ => none
-
-/-- The truth conditions of (25), by composition. -/
-abbrev cakeMeaning : Tree Cat Word → Set Cake := truth cakeLex fun _ ↦ Piece.john
-
-private theorem some_eaten_iff {c : Cake} :
-    Quantifier.Det.some {y | y ≠ Piece.john} c.eaten ↔ c ≠ .none := by
-  cases c
-  · simp [Cake.eaten, Quantifier.Det.some]
-  · exact iff_of_true ⟨.left, by simp, by simp [Cake.eaten]⟩ (by simp)
-  · exact iff_of_true ⟨.left, by simp, by simp [Cake.eaten]⟩ (by simp)
-
-private theorem every_eaten_iff {c : Cake} :
-    Quantifier.Det.every {y | y ≠ Piece.john} c.eaten ↔ c = .whole := by
-  cases c
-  · exact iff_of_false (fun h ↦ by simpa [Cake.eaten] using h (show Piece.left ∈ _ by simp))
-      (by simp)
-  · exact iff_of_false (fun h ↦ by simpa [Cake.eaten] using h (show Piece.right ∈ _ by simp))
-      (by simp)
-  · exact iff_of_true (fun y hy ↦ by cases y <;> simp_all [Cake.eaten]) rfl
-
-theorem mem_cakeMeaning_some {c : Cake} : c ∈ cakeMeaning someSentence ↔ c ≠ .none := by
-  rw [mem_truth (q := fun c ↦ Piece.john = .john ∧ Quantifier.Det.some {y | y ≠ Piece.john} c.eaten)
-    rfl]
-  simp [some_eaten_iff]
-
-theorem mem_cakeMeaning_all {c : Cake} : c ∈ cakeMeaning allSentence ↔ c = .whole := by
-  rw [mem_truth (q := fun c ↦ Piece.john = .john ∧
-    Quantifier.Det.every {y | y ≠ Piece.john} c.eaten) rfl]
-  simp [every_eaten_iff]
-
--- (25a), (25b)
-theorem isSymmetric_cakeMeaning : Alternatives.IsSymmetric (cakeMeaning someSentence)
-    (cakeMeaning allSentence) (cakeMeaning someButNotAllSentence) := by
-  have hmid {c : Cake} : c ∈ cakeMeaning someButNotAllSentence ↔ c = .part := by
-    rw [mem_truth (q := fun c ↦ Piece.john = .john ∧
-      (¬ Quantifier.Det.every {y | y ≠ Piece.john} c.eaten ∧
-        Quantifier.Det.some {y | y ≠ Piece.john} c.eaten)) rfl]
-    simp only [every_eaten_iff, some_eaten_iff]
-    cases c <;> simp
-  refine ⟨Set.ext fun c ↦ ?_, Set.disjoint_left.2 fun c h₁ h₂ ↦ ?_⟩
-  · rw [Set.mem_union, mem_cakeMeaning_some, mem_cakeMeaning_all, hmid]
-    cases c <;> simp
-  · cases (mem_cakeMeaning_all.1 h₁).symm.trans (hmid.1 h₂)
-
 /-- The alternatives of (21) are the structural alternatives that are weakly assertable. -/
 def assertableAlts (wa : Tree Cat Word → Prop) (t : Tree Cat Word) : Set (Tree Cat Word) :=
   {t' ∈ structuralAlternatives lexicon t | wa t'}
@@ -216,18 +129,25 @@ def Blocked {M : Type*} (wa : Tree Cat Word → Prop) (m : Tree Cat Word → Set
     (t : Tree Cat Word) : Prop :=
   ∃ t' ∈ assertableAlts wa t, m t' ⊂ m t
 
-theorem blocked_of_weaklyAssertable_all {wa : Tree Cat Word → Prop} (h : wa allSentence) :
-    Blocked wa cakeMeaning someSentence :=
-  ⟨allSentence, ⟨all_mem_alternatives, h⟩, LE.le.ssubset_of_not_superset
-    (fun c hc ↦ mem_cakeMeaning_some.2 (by rw [mem_cakeMeaning_all.1 hc]; simp))
-    (Set.not_subset.2 ⟨.part, mem_cakeMeaning_some.2 (by simp),
-      fun hc ↦ by simpa using mem_cakeMeaning_all.1 hc⟩)⟩
+variable {M : Type*} {m : Tree Cat Word → Set M} {wa : Tree Cat Word → Prop}
 
-/-- In the primary implicature of (25a), a speaker who obeys the principle has *all* not weakly
-assertable; the symmetric alternative, being no alternative, licenses nothing. -/
-theorem primary_implicature_some {wa : Tree Cat Word → Prop}
-    (h : ¬ Blocked wa cakeMeaning someSentence) : ¬ wa allSentence :=
-  fun hwa ↦ h (blocked_of_weaklyAssertable_all hwa)
+theorem blocked_of_weaklyAssertable_all (hm : m allSentence ⊂ m someSentence)
+    (h : wa allSentence) : Blocked wa m someSentence :=
+  ⟨allSentence, ⟨all_mem_alternatives, h⟩, hm⟩
+
+/-- In the primary implicature of (25a), with *all* strictly stronger than *some*, a speaker who
+obeys the principle has *all* not weakly assertable; the symmetric alternative, being no
+alternative, licenses nothing. -/
+theorem primary_implicature_some (hm : m allSentence ⊂ m someSentence)
+    (h : ¬ Blocked wa m someSentence) : ¬ wa allSentence :=
+  fun hwa ↦ h (blocked_of_weaklyAssertable_all hm hwa)
+
+-- (25c): *some but not all* is the symmetric alternative of *all*, whatever the sentences denote,
+-- once it denotes what *some* does without what *all* does.
+theorem isSymmetric_someButNotAll (hm : m allSentence ⊆ m someSentence)
+    (hs : m someButNotAllSentence = m someSentence \ m allSentence) :
+    Alternatives.IsSymmetric (m someSentence) (m allSentence) (m someButNotAllSentence) :=
+  hs ▸ Alternatives.isSymmetric_sdiff hm
 
 /-! ### Disjunction (Section 4.2) -/
 
@@ -272,62 +192,16 @@ theorem rightDisjunct_mem_alternatives :
   refine Relation.ReflTransGen.head (StructuralOp.delete ⟨0, by simp⟩) ?_
   exact Relation.ReflTransGen.single (StructuralOp.contract (List.Mem.head _) rfl)
 
-/-- Which of the two fruits John ate. -/
-abbrev Fruits := Bool × Bool
-
-/-- John and the two fruits. -/
-inductive Fruit
-  | john | apple | pear
-  deriving DecidableEq, Repr
-
-/-- The words of (26) and (27), the connectives coordinating clauses. -/
-def fruitLex : Word → Option (Denotation Fruit Fruits (ReaderT Fruits Id))
-  | .john => some ⟨.e, fun _ ↦ .john⟩
-  | .apple => some ⟨.e, fun _ ↦ .apple⟩
-  | .pear => some ⟨.e, fun _ ↦ .pear⟩
-  | .ate => some ⟨.e ⇒ .e ⇒ .t, fun f y x ↦ x = .john ∧ (y = .apple ∧ f.1 ∨ y = .pear ∧ f.2)⟩
-  | .or_ => some ⟨.t ⇒ .t ⇒ .t, fun _ p q ↦ p ∨ q⟩
-  | .and_ => some ⟨.t ⇒ .t ⇒ .t, fun _ p q ↦ p ∧ q⟩
-  | _ => none
-
-/-- The truth conditions of (26) and (27), by composition. -/
-abbrev fruitMeaning : Tree Cat Word → Set Fruits := truth fruitLex fun _ ↦ Fruit.john
-
-private abbrev ateFruit (y : Fruit) (f : Fruits) : Prop :=
-  Fruit.john = .john ∧ (y = .apple ∧ f.1 = true ∨ y = .pear ∧ f.2 = true)
-
-theorem mem_fruitMeaning_left {f : Fruits} : f ∈ fruitMeaning leftDisjunct ↔ f.1 = true := by
-  rw [mem_truth (q := ateFruit .apple) rfl]; simp [ateFruit]
-
-theorem mem_fruitMeaning_right {f : Fruits} : f ∈ fruitMeaning rightDisjunct ↔ f.2 = true := by
-  rw [mem_truth (q := ateFruit .pear) rfl]; simp [ateFruit]
-
-theorem mem_fruitMeaning_or {f : Fruits} :
-    f ∈ fruitMeaning orSentence ↔ f.1 = true ∨ f.2 = true := by
-  rw [mem_truth (q := fun f ↦ ateFruit .pear f ∨ ateFruit .apple f) rfl]; simp [ateFruit, or_comm]
-
-theorem mem_fruitMeaning_and {f : Fruits} :
-    f ∈ fruitMeaning andSentence ↔ f.1 = true ∧ f.2 = true := by
-  rw [mem_truth (q := fun f ↦ ateFruit .pear f ∧ ateFruit .apple f) rfl]; simp [ateFruit, and_comm]
-
-/-- In the primary inferences (28), a speaker of the disjunction who obeys the principle has the
-conjunction and each disjunct not weakly assertable. -/
-theorem primary_inferences_or {wa : Tree Cat Word → Prop}
-    (h : ¬ Blocked wa fruitMeaning orSentence) :
-    ¬ wa andSentence ∧ ¬ wa leftDisjunct ∧ ¬ wa rightDisjunct := by
-  refine ⟨fun hwa ↦ h ⟨andSentence, ⟨and_mem_alternatives, hwa⟩,
-      LE.le.ssubset_of_not_superset ?_ (Set.not_subset.2 ⟨(true, false), ?_, ?_⟩)⟩,
-    fun hwa ↦ h ⟨leftDisjunct, ⟨leftDisjunct_mem_alternatives, hwa⟩,
-      LE.le.ssubset_of_not_superset ?_ (Set.not_subset.2 ⟨(false, true), ?_, ?_⟩)⟩,
-    fun hwa ↦ h ⟨rightDisjunct, ⟨rightDisjunct_mem_alternatives, hwa⟩,
-      LE.le.ssubset_of_not_superset ?_ (Set.not_subset.2 ⟨(true, false), ?_, ?_⟩)⟩⟩ <;>
-  first
-    | (intro f hf
-       simp only [mem_fruitMeaning_or, mem_fruitMeaning_and, mem_fruitMeaning_left,
-         mem_fruitMeaning_right] at hf ⊢
-       tauto)
-    | simp [mem_fruitMeaning_or, mem_fruitMeaning_and, mem_fruitMeaning_left,
-        mem_fruitMeaning_right]
+/-- In the primary inferences (28), with the conjunction and each disjunct strictly stronger than
+the disjunction, a speaker of the disjunction who obeys the principle has none of them weakly
+assertable. -/
+theorem primary_inferences_or (hand : m andSentence ⊂ m orSentence)
+    (hl : m leftDisjunct ⊂ m orSentence) (hr : m rightDisjunct ⊂ m orSentence)
+    (h : ¬ Blocked wa m orSentence) :
+    ¬ wa andSentence ∧ ¬ wa leftDisjunct ∧ ¬ wa rightDisjunct :=
+  ⟨fun hwa ↦ h ⟨andSentence, ⟨and_mem_alternatives, hwa⟩, hand⟩,
+    fun hwa ↦ h ⟨leftDisjunct, ⟨leftDisjunct_mem_alternatives, hwa⟩, hl⟩,
+    fun hwa ↦ h ⟨rightDisjunct, ⟨rightDisjunct_mem_alternatives, hwa⟩, hr⟩⟩
 
 /-! ### Strictly simpler alternatives (Section 4.3) -/
 

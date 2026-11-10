@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Semantics.Composition.Interpreter.Mode
+public import Linglib.Semantics.Composition.Interpreter.Rules
+public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
 
 /-!
 # Partial functions
@@ -22,6 +24,10 @@ constituent with no partial word in it never lacks a value.
   predicate modification on partial values of partial functions.
 * `Interpreter.Ty.PDom`: the partial values of a type whose functions are partial, with the
   structures of application and predicate modification on them.
+* `Interpreter.Assignments.partial`: partial assignments, with abstracts that are partial
+  functions.
+* `Interpreter.partialValued`: constituents as partial values where only some words are partial,
+  undefined where a daughter is.
 * `Interpreter.Ty.CbvRel`, `Interpreter.Ty.PartRel`: a total value and the value, or partial
   value, that is it.
 ## References
@@ -151,6 +157,12 @@ instance (D : B → Type) :
     (Grammar.predicateModification (B := B)).language.Structure (Ty.PDom D) :=
   Grammar.structure nofun (PredicateModification.evalCbv D)
 
+@[simp] theorem Grammar.funMap_application_cbv {l r u : Ty B} (m : Application l r u)
+    (p : Ty.PDom D l × Ty.PDom D r) :
+    MSFirstOrder.Language.Structure.funMap (L := (Grammar.application (B := B)).language)
+      (D := Ty.PDom D) (Grammar.Sym.binary m) p = Application.evalCbv D m p.1 p.2 :=
+  rfl
+
 @[simp] theorem Grammar.funMap_application_sum_predicateModification_inl_cbv {l r u : Ty B}
     (m : Application l r u) (p : Ty.PDom D l × Ty.PDom D r) :
     MSFirstOrder.Language.Structure.funMap
@@ -182,5 +194,53 @@ theorem Grammar.isLogicalRel_partRel :
     | .unary (.inr s) => nomatch s
     | .binary (.inl m) => fun _ _ h ↦ m.partRel_evalCbv h.1 h.2
     | .binary (.inr m) => fun _ _ h ↦ m.partRel_evalCbv h.1 h.2
+
+/-- Partial assignments: an assignment may give an index no value, and an abstract always has a
+value, a partial function defined where its body has one. -/
+def Assignments.partial (D : B → Type) (Γ : ℕ → Ty B) :
+    Assignments (∀ n, Ty.PDom D (Γ n)) (Ty.PDom D) Γ where
+  get g n := g n
+  set g n v := Function.update g n v
+  lam F := .some fun x ↦ F (.some x)
+
+/-! ### Partial values where a word has them
+
+Where only some words are partial, their types say so, and constituents are partial values
+combined by the rules of a grammar where both sisters are defined. -/
+
+/-- The partial-valued interpreter: every constituent is a partial value, and sisters combine by
+a rule of the grammar on their values where both are defined, a partial result of the rule
+flattened. A function applied to an undefined argument is undefined. -/
+def partialValued [DecidableEq B] (G : Grammar (Ty B)) [G.LocallyFinite] {N : Type} :
+    Interpreter (effectGrammar G) N where
+  unary _ _ := []
+  binary
+    | _, .comp .M l, .comp .M r =>
+      (Grammar.LocallyFinite.binaryRules (G := G) l r).map fun
+        | ⟨.comp .M u, p⟩ => ⟨.comp .M u, .join trivial (.ap trivial (.basic p))⟩
+        | ⟨u, p⟩ => ⟨.comp .M u, .ap trivial (.basic p)⟩
+    | _, _, _ => []
+
+section PartialValued
+
+variable {G : Grammar (Ty B)} {D : B → Type} [M : G.language.Structure (Ty.Dom D)] {l r u : Ty B}
+
+/-- A rule on two partial values: defined where both are. -/
+theorem Mode.eval_ap_basic (p : G.Binary l r u) (x : Part (l.Dom D)) (y : Part (r.Dom D)) :
+    (Mode.ap trivial (.basic p) :
+      Mode G.Binary (.comp .M l) (.comp .M r) (.comp .M u)).eval D x y =
+      x.bind fun a ↦ y.map fun b ↦ M.funMap (.binary p) (a, b) := by
+  simp [Mode.eval, Eff.seq, Eff.map, Part.bind_map]
+
+/-- A rule with a partial result, on two partial values: defined where both are and the rule is
+at their values. -/
+theorem Mode.eval_join_ap_basic (p : G.Binary l r (.comp .M u)) (x : Part (l.Dom D))
+    (y : Part (r.Dom D)) :
+    (Mode.join trivial (.ap trivial (.basic p)) :
+      Mode G.Binary (.comp .M l) (.comp .M r) (.comp .M u)).eval D x y =
+      x.bind fun a ↦ y.bind fun b ↦ M.funMap (.binary p) (a, b) := by
+  simp [Mode.eval, Eff.join, Eff.seq, Eff.map, Part.bind_assoc, Part.bind_map]
+
+end PartialValued
 
 end Interpreter

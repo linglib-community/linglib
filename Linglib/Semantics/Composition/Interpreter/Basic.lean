@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.ModelTheory.ManySorted.Simulation
+public import Mathlib.Data.Nat.Notation
 
 /-!
 # Type-driven interpreters
@@ -21,11 +22,15 @@ derivations over a bare structure are found from the types alone.
 * `Interpreter.Grammar`: the unary and binary rules over a type of semantic types.
 * `Interpreter.Grammar.language`, `Interpreter.Grammar.structure`: the many-sorted language of a
   grammar, and the structure that operations for its rules make.
+* `Interpreter.Grammar.piStructure`: values that depend on a parameter, the rules applying at
+  each value of it.
 * `Interpreter.Grammar.sum`: two grammars together, with the structure a structure for each makes.
 * `Interpreter.Grammar.LocallyFinite`, `Interpreter.typeDriven`: a grammar whose rules for given
   daughters can be listed, and the interpreter that admits every rule that applies.
+* `Interpreter.Grammar.motherTypes`: the types the rules give the mother of two daughters.
 * `Interpreter.Grammar.Deriv`: the derivations of a type over typed lexical items.
-* `Interpreter.Grammar.Skeleton`: a bare structure.
+* `Interpreter.Grammar.Skeleton`, `Interpreter.Node`: a bare structure, and the labels a
+  constituency tree gives its nodes.
 * `Interpreter`: the rules a node admits by its label and its daughters' types.
 * `Interpreter.derivs`, `Interpreter.values`: the derivations over a bare structure, and their
   values.
@@ -91,6 +96,13 @@ inductive Sym (G : Grammar.{u, v} T) : Signature T → T → Type (max u v)
     (p : D a × D b) : (Grammar.structure unary binary).funMap (.binary m) p = binary m p.1 p.2 :=
   rfl
 
+/-- The structure on values that depend on a parameter `A`, from a structure for the grammar:
+each rule applies at one value of the parameter. -/
+@[instance_reducible] def piStructure (A : Type*) [M : G.language.Structure D] :
+    G.language.Structure fun a ↦ A → D a :=
+  Grammar.structure (fun s v x ↦ M.funMap (.unary s) (v x))
+    fun m v w x ↦ M.funMap (.binary m) (v x, w x)
+
 /-- The rules of two grammars together. -/
 @[reducible] def sum (G H : Grammar.{u, v} T) : Grammar.{u, v} T where
   Unary a b := G.Unary a b ⊕ H.Unary a b
@@ -115,6 +127,10 @@ class LocallyFinite (G : Grammar.{u, v} T) where
   mem_unaryRules {a b : T} (s : G.Unary a b) : ⟨b, s⟩ ∈ unaryRules a
   /-- Every binary rule is listed. -/
   mem_binaryRules {l r u : T} (m : G.Binary l r u) : ⟨u, m⟩ ∈ binaryRules l r
+
+/-- The types of the mothers that the rules of a grammar give two daughters. -/
+def motherTypes (G : Grammar.{u, v} T) [G.LocallyFinite] (l r : T) : List T :=
+  (LocallyFinite.binaryRules (G := G) l r).map (·.1)
 
 instance {H : Grammar.{u, v} T} [G.LocallyFinite] [H.LocallyFinite] : (G.sum H).LocallyFinite where
   unaryRules a := (LocallyFinite.unaryRules a).map (fun ⟨b, s⟩ ↦ ⟨b, .inl s⟩) ++
@@ -204,6 +220,17 @@ inductive Skeleton (N : Type v) (L : Type w) : Type (max v w)
 
 end Grammar
 
+/-- What the semantics reads off a node of the syntax: a plain branching node, an island, or the
+index a moved phrase leaves. -/
+inductive Node where
+  /-- A plain node. -/
+  | branch
+  /-- An island for continuations. -/
+  | island
+  /-- The index `n` of a moved phrase. -/
+  | index (n : ℕ)
+  deriving DecidableEq, Repr
+
 end Interpreter
 
 /-- A type-driven interpreter for a grammar: the rules a node admits, by its label and the types
@@ -226,6 +253,11 @@ types of its daughters, whatever its label. -/
 def typeDriven (G : Grammar.{u, v} T) [G.LocallyFinite] : Interpreter G N where
   unary _ := LocallyFinite.unaryRules
   binary _ := LocallyFinite.binaryRules
+
+/-- The type-driven interpreter admits every binary rule of the grammar. -/
+@[simp] theorem mem_binary_typeDriven [G.LocallyFinite] {n : N} {l r : T}
+    (m : Σ u, G.Binary l r u) : m ∈ (typeDriven G : Interpreter G N).binary n l r :=
+  LocallyFinite.mem_binaryRules m.2
 
 /-- The derivations over a bare structure that an interpreter admits, given the typed items each
 word may be. -/

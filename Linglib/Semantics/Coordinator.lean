@@ -11,8 +11,8 @@ the infimum of the set for a conjunctive or adversative coordinator, its supremu
 disjunctive one, and the complement of its supremum for a negative one. Coordinating two
 constituents is the case of a two-element set, so one operation conjoins truth values,
 predicates and generalized quantifiers, coordinates lists of any length, and builds the
-quantifiers that Japanese *ka* and *mo* form from indeterminate pronouns. The composition engine
-applies it to two sisters of one conjoinable type in `Semantics/Composition/Coordination.lean`.
+quantifiers that Japanese *ka* and *mo* form from indeterminate pronouns. Its denotations at the
+conjoinable types are in `Semantics/Composition/Interpreter/Coordination.lean`.
 [Coordinating a constituent alone returns it](##denote_singleton), as
 [coordinating it with itself does](##denote_pair_self), except under negative coordination, and
 [the coordination of functions is computed pointwise](##denote_apply).

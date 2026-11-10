@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Composition.Mode
+public import Linglib.Semantics.Composition.Interpreter.Rules
+public import Linglib.Semantics.Composition.Interpreter.Sorts
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Studies.Landau2013
 public import Studies.Landau2015
@@ -63,7 +64,7 @@ only.
 
 namespace Landau2024a
 
-open Control Landau2015 Montague
+open Control Landau2015 Interpreter
 
 /-! ### The trichotomy (41) -/
 
@@ -234,14 +235,14 @@ theorem partialControl_rows :
 
 /-- The type of a tier's complement. A FinP is a property, a λ-abstract over PRO; a predicative
 complement is the FinP itself, and a logophoric one the FinP applied to the projected *pro*. -/
-def complementTy : Tier → Option Ty
-  | .predicative => some .et
-  | .logophoric => Ty.combine? .e .et
+def complementTy : Tier → List (Ty Base)
+  | .predicative => [.et]
+  | .logophoric => Grammar.application.motherTypes .e .et
 
 /-- Only a logophoric complement has the type of a FinP applied to an individual, as a lexical
 subject requires (72). -/
 theorem lexicalSubject_iff_logophoric (t : Tier) :
-    complementTy t = Ty.combine? .e .et ↔ t = .logophoric := by
+    complementTy t = Grammar.application.motherTypes .e .et ↔ t = .logophoric := by
   cases t <;> decide
 
 /-! ### Adjunct control (84), (89) -/
@@ -273,7 +274,7 @@ def AdjunctType.AdmitsNOC (a : AdjunctType) : Prop := .logophoric ∈ a.tiers
 /-- An adjunct has a propositional variant when its head selects a clause hosting a lexical
 subject, of the type of a FinP applied to an individual. -/
 def AdjunctType.HasPropositionalVariant (a : AdjunctType) : Prop :=
-  ∃ t ∈ a.tiers, complementTy t = Ty.combine? .e .et
+  ∃ t ∈ a.tiers, complementTy t = Grammar.application.motherTypes .e .et
 
 instance : DecidablePred AdjunctType.AdmitsNOC := fun a ↦
   inferInstanceAs (Decidable (Tier.logophoric ∈ a.tiers))

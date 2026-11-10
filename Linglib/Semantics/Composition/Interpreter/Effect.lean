@@ -24,6 +24,7 @@ contents is applicative and a monad; storing is left adjoint to reading, and
 * `Interpreter.Eff.IsApplicative`: the effects with a unit and an application.
 * `Interpreter.Eff.map`, `Interpreter.Eff.pure`, `Interpreter.Eff.seq`, `Interpreter.Eff.join`:
   the operations of an effect.
+* `Interpreter.Ty.size`, `Interpreter.Eff.size`: the size of a type and of an effect.
 * `Interpreter.Eff.counit`, `Interpreter.Eff.eject`, `Interpreter.Eff.lower`: the co-unit of
   storing and reading, the ejection of reading from a function, and the lowering of a
   continuation at its own result type.
@@ -171,5 +172,20 @@ theorem map_map (f : Eff B) (g : α → β) {γ : Type} (h : β → γ) (x : F D
   | _ => rfl
 
 end Eff
+
+mutual
+
+/-- The size of a type. -/
+def Ty.size : Ty B → ℕ
+  | .t | .base _ => 1
+  | .fn a b => a.size + b.size + 1
+  | .comp f a => f.size + a.size + 1
+
+/-- The size of an effect. -/
+def Eff.size : Eff B → ℕ
+  | .S | .M => 1
+  | .R i | .W i | .C i => i.size + 1
+
+end
 
 end Interpreter

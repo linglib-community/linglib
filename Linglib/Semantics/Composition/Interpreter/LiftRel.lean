@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Composition.Interpreter.Mode
+public import Linglib.Semantics.Composition.Interpreter.Rules
 public import Mathlib.Logic.Relator
 
 /-!
@@ -226,21 +227,26 @@ theorem EventIdentification.rel_eval {x s : Ty B} :
   | _, _, _, .left => fun _ _ hf _ _ hg _ _ hx _ _ he ↦ and_congr (hf hx he) (hg he)
   | _, _, _, .right => fun _ _ hg _ _ hf _ _ hx _ _ he ↦ and_congr (hf hx he) (hg he)
 
-/-- Where the rules of a grammar and the type shifts respect a relation between base domains, it
-is a logical relation between the two structures of the effect-driven grammar, so related
-lexicons give every derivation related values. -/
-theorem effectGrammar.isLogicalRel {Shift : Ty B → Ty B → Type}
-    {shift : ∀ {a b : Ty B}, Shift a b → a.Dom D → b.Dom D}
-    {shift' : ∀ {a b : Ty B}, Shift a b → a.Dom D' → b.Dom D'}
-    (hG : ∀ {l r' u : Ty B} (b : G.Binary l r' u), LiftFun (Ty.LiftRel r l)
-      (LiftFun (Ty.LiftRel r r') (Ty.LiftRel r u))
-      (fun x y ↦ M.funMap (.binary b) (x, y)) fun x y ↦ M'.funMap (.binary b) (x, y))
-    (hS : ∀ {a b : Ty B} (s : Shift a b),
-      LiftFun (Ty.LiftRel r a) (Ty.LiftRel r b) (shift s) (shift' s)) :
-    (effectGrammar.structure (G := G) shift).IsLogicalRel
-      (effectGrammar.structure (G := G) shift') (Ty.LiftRel r) where
+omit M M' in
+/-- Functional application on two families of domains is logically related by any relation
+between the base domains. -/
+theorem Grammar.application.isLogicalRel :
+    (inferInstance : (Grammar.application (B := B)).language.Structure (Ty.Dom D)).IsLogicalRel
+      (inferInstance : (Grammar.application (B := B)).language.Structure (Ty.Dom D'))
+      (Ty.LiftRel r) where
   funMap
-    | .unary s => fun _ _ h ↦ hS s h
-    | .binary m => fun _ _ h ↦ Mode.rel_eval hG m h.1 h.2
+    | .unary s => nomatch s
+    | .binary m => fun _ _ h ↦ Application.rel_eval m h.1 h.2
+
+/-- A logical relation between two structures for a grammar, lifted from a relation between base
+domains, is one between the two structures of the effect-driven grammar over it, so related
+lexicons give every derivation related values. -/
+theorem effectGrammar.isLogicalRel (h : M.IsLogicalRel M' (Ty.LiftRel r)) :
+    (effectGrammar.structure (G := G) (M := M)).IsLogicalRel
+      (effectGrammar.structure (G := G) (M := M')) (Ty.LiftRel r) where
+  funMap
+    | .unary s => fun _ _ hx ↦ h.funMap (.unary s) hx
+    | .binary m => fun _ _ hp ↦
+      Mode.rel_eval (fun b _ _ hx _ _ hy ↦ h.funMap (.binary b) ⟨hx, hy⟩) m hp.1 hp.2
 
 end Interpreter

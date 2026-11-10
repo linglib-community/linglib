@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.Valency
+public import Linglib.Semantics.Composition.Interpreter.Rules
 public import Linglib.Semantics.Composition.Interpreter.Sorts
 public import Linglib.Syntax.Minimalist.Verbal.Voice.Diathesis
 public import Linglib.Data.Wordlist.Coon2019

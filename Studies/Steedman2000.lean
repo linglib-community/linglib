@@ -1,8 +1,6 @@
 module
 
 public import Linglib.Data.Examples.Steedman2000
-public import Studies.HeimKratzer1998
-public import Linglib.Semantics.Composition.FirstOrder
 public import Linglib.Fragments.English.Coordination
 public import Linglib.Semantics.Coordinator
 public import Linglib.Syntax.CCG.Derivation
@@ -20,14 +18,14 @@ In Steedman's combinatory categorial grammar the slash directions of lexical cat
 word order, and composition and type-raising make strings such as a subject and a
 transitive verb into constituents. This file derives the book's analyses of non-constituent
 coordination, gapping, Dutch cross-serial dependencies, scope in verb clusters and
-intonational phrasing over the library's CCG, and interprets the derivations over the toy
-model of `Studies/HeimKratzer1998`.
+intonational phrasing over the library's CCG, and interprets the derivations in every model
+of their constants.
 
 ## Implementation notes
 
 * Type-raising and coordination are lexical in the library's CCG, so the book's raising rules
   appear as raised entries and its coordination rule `<Φ>` as a conjunction of category
-  `(X\⋆X)/⋆X`. Logical forms are terms over the signature of the toy model: a raised name has
+  `(X\⋆X)/⋆X`. A logical form is a function of what its constants denote: a raised name has
   the Montague lift, and coordination at `S/NP` Partee and Rooth's generalized conjunction.
 * The toy categories drop the book's features (subordination, case, agreement), so Dutch
   crossed composition is restricted to `VP` complements rather than the book's `VP_{-SUB}`.
@@ -53,8 +51,7 @@ model of `Studies/HeimKratzer1998`.
 
 namespace Steedman2000
 
-open CCG
-open scoped Montague
+open CCG Interpreter
 
 /-! ### Categories -/
 
@@ -77,11 +74,11 @@ def IV : Cat Atom := S \ NP
 def TV : Cat Atom := (S \ NP) / NP
 
 /-- The semantic type of an atom, truth values for sentences and entities for noun phrases. -/
-def atomTy : Atom → Montague.Ty
+def atomTy : Atom → Ty Unit
   | .S => .t
-  | .NP => .e
+  | .NP => .base ()
 
-example : TV.toTy atomTy = (.e ⇒ .e ⇒ .t) := rfl
+example : TV.toTy atomTy = (.base () ⇒ .base () ⇒ .t) := rfl
 
 /-! ### Word order
 
@@ -98,7 +95,6 @@ def john_sees_mary : Derivation String (.multimodal 2) S :=
 
 section Coordination
 
-open Montague HeimKratzer1998
 
 /-- The type-raised subject "John" is a lexical leaf of category `S/(S\NP)`. -/
 def john_tr : Derivation String (.multimodal 2) (S / (S \ NP)) := .lex "John" (S / (S \ NP))
@@ -131,67 +127,35 @@ theorem john_sees_and_mary_eats_pizza_yield :
     john_sees_and_mary_eats_pizza.yield = ["John", "sees", "and", "Mary", "eats", "pizza"] :=
   rfl
 
-/-- The typing of the variables of the logical forms: the index `0` ranges over individuals and
-the others over properties. -/
-def indices : ℕ → Ty
-  | 0 => .e
-  | _ + 1 => .e ⇒ .t
+/-- The type of individuals. -/
+abbrev ind : Ty Unit := .base ()
 
-/-- The assignment of `x` to the individual variable and of the trivial property to the others.
-The logical forms of the lexicons are closed, so their meanings do not depend on it. -/
-def assignment {E : Type} (x : E) : ∀ n, Ty.Domain E Unit (indices n)
-  | 0 => x
-  | _ + 1 => fun _ ↦ True
+/-- The constants of the logical forms: the names, the verbs and sentential conjunction. -/
+inductive Const : Ty Unit → Type
+  | john : Const ind
+  | mary : Const ind
+  | pizza : Const ind
+  | book : Const ind
+  | sleeps : Const (ind ⇒ .t)
+  | laughs : Const (ind ⇒ .t)
+  | sees : Const (ind ⇒ ind ⇒ .t)
+  | eats : Const (ind ⇒ ind ⇒ .t)
+  | reads : Const (ind ⇒ ind ⇒ .t)
+  | conj : Const (.t ⇒ .t ⇒ .t)
 
-/-- The toy composition model is extensional, with the toy structure of
-`Studies/HeimKratzer1998` at its one world. -/
-def toyModel : Model toyLang where
-  E := ToyEntity
-  W := Unit
-  interp _ := toyStructure
+/-- The toy English fragment. Names, verbs and the coordinator at `S` translate to constants; a
+raised name has the Montague lift `λP.P a`, and the coordinator at `S/NP` Partee and Rooth's
+generalized conjunction `λQλPλx.P x ∧ Q x`. -/
+def lexicon : List (LexEntry String atomTy Const) :=
+  [⟨"John", NP, fun I ↦ I .john⟩, ⟨"Mary", NP, fun I ↦ I .mary⟩,
+   ⟨"pizza", NP, fun I ↦ I .pizza⟩, ⟨"book", NP, fun I ↦ I .book⟩,
+   ⟨"John", S / (S \ NP), fun I P ↦ P (I .john)⟩, ⟨"Mary", S / (S \ NP), fun I P ↦ P (I .mary)⟩,
+   ⟨"sleeps", IV, fun I ↦ I .sleeps⟩, ⟨"laughs", IV, fun I ↦ I .laughs⟩,
+   ⟨"sees", TV, fun I ↦ I .sees⟩, ⟨"eats", TV, fun I ↦ I .eats⟩, ⟨"reads", TV, fun I ↦ I .reads⟩,
+   ⟨"and", conj S, fun I ↦ I .conj⟩,
+   ⟨"and", conj (S / NP), fun I Q P x ↦ I .conj (Q x) (P x)⟩]
 
-namespace Toy
-
-/-! The per-symbol abbreviations have the types `toyLang.Constants` and `toyLang.Relations n`, so
-symbols elaborate without unfolding `toyLang`. -/
-
-abbrev johnConst : toyLang.Constants := .john
-abbrev maryConst : toyLang.Constants := .mary
-abbrev pizzaConst : toyLang.Constants := .pizza
-abbrev bookConst : toyLang.Constants := .book
-abbrev sleepRel : toyLang.Relations 1 := .sleep
-abbrev laughRel : toyLang.Relations 1 := .laugh
-abbrev studentRel : toyLang.Relations 1 := .student
-abbrev personRel : toyLang.Relations 1 := .person
-abbrev pizzaRel : toyLang.Relations 1 := .pizza
-abbrev seeRel : toyLang.Relations 2 := .see
-abbrev eatRel : toyLang.Relations 2 := .eat
-abbrev readRel : toyLang.Relations 2 := .read
-
-end Toy
-
-open Toy in
-/-- The toy English fragment over the signature of the toy model. Names, verbs and the
-coordinator at `S` translate to its constants; a raised name has the Montague lift `λP.P a`, and
-the coordinator at `S/NP` Partee and Rooth's generalized conjunction `λQλPλx.P x ∧ Q x`. -/
-def lexicon : List (LexEntry String atomTy indices (FirstOrderConstant toyLang)) :=
-  [⟨"John", NP, .const (.name johnConst)⟩, ⟨"Mary", NP, .const (.name maryConst)⟩,
-   ⟨"pizza", NP, .const (.name pizzaConst)⟩, ⟨"book", NP, .const (.name bookConst)⟩,
-   ⟨"John", S / (S \ NP), .lam 1 (.comp .functionalLeft (.var 1) (.const (.name johnConst)))⟩,
-   ⟨"Mary", S / (S \ NP), .lam 1 (.comp .functionalLeft (.var 1) (.const (.name maryConst)))⟩,
-   ⟨"sleeps", IV, .const (.rel₁ sleepRel)⟩, ⟨"laughs", IV, .const (.rel₁ laughRel)⟩,
-   ⟨"sees", TV, .const (.rel₂ seeRel)⟩, ⟨"eats", TV, .const (.rel₂ eatRel)⟩,
-   ⟨"reads", TV, .const (.rel₂ readRel)⟩, ⟨"and", conj S, .const .conj⟩,
-   ⟨"and", conj (S / NP), .lam 2 (.lam 1 (.lam 0 (.comp .functionalLeft
-      (.comp .functionalLeft (.const .conj) (.comp .functionalLeft (.var 2) (.var 0)))
-      (.comp .functionalLeft (.var 1) (.var 0)))))⟩]
-
-/-- The constants of the toy signature denote what the toy model gives them. -/
-def toyConst {ty : Ty} (c : FirstOrderConstant toyLang ty) : Ty.Domain ToyEntity Unit ty :=
-  c.interp toyModel ()
-
-/-- The assignment of John to the individual variable. -/
-def toyAssignment : ∀ n, Ty.Domain ToyEntity Unit (indices n) := assignment .john
+variable {D : Unit → Type} (I : ∀ {ty : Ty Unit}, Const ty → ty.Dom D)
 
 /-- "John sees Mary" with a type-raised subject produces the same truth value as the
 canonical derivation. -/
@@ -199,14 +163,12 @@ def john_sees_mary_via_tr : Derivation String (.multimodal 2) S :=
   .fapp john_tr (.fapp (.lex "sees" TV) (.lex "Mary" NP))
 
 theorem interp_john_sees_mary_via_tr :
-    john_sees_mary_via_tr.interp lexicon toyConst toyAssignment =
-      john_sees_mary.interp lexicon toyConst toyAssignment := rfl
+    john_sees_mary_via_tr.interp lexicon I = john_sees_mary.interp lexicon I := rfl
 
-theorem coord_interp_pointwise (e : ToyEntity) :
-    (john_sees_and_mary_eats.interp lexicon toyConst toyAssignment).map (· e) =
-      (match john_sees.interp lexicon toyConst toyAssignment,
-          mary_eats.interp lexicon toyConst toyAssignment with
-        | some m₁, some m₂ => some (m₁ e ∧ m₂ e)
+theorem coord_interp_pointwise (e : D ()) :
+    (john_sees_and_mary_eats.interp lexicon I).map (· e) =
+      (match john_sees.interp lexicon I, mary_eats.interp lexicon I with
+        | some m₁, some m₂ => some (I .conj (m₂ e) (m₁ e))
         | _, _ => none) := rfl
 
 /-- The spelled-out paraphrase is "John sees pizza and Mary eats pizza". -/
@@ -219,11 +181,11 @@ def john_sees_pizza_and_mary_eats_pizza : Derivation String (.multimodal 2) S :=
 conditions, since the composed derivation yields the canonical predicate-argument
 structure. -/
 theorem nonConstituentCoord_eq_spelledOut :
-    john_sees_and_mary_eats_pizza.interp lexicon toyConst toyAssignment =
-      john_sees_pizza_and_mary_eats_pizza.interp lexicon toyConst toyAssignment := rfl
+    john_sees_and_mary_eats_pizza.interp lexicon I =
+      john_sees_pizza_and_mary_eats_pizza.interp lexicon I := rfl
 
 /-- The constants of a coordination fragment: two sentences and the two coordinators. -/
-inductive PQ : Ty → Type
+inductive PQ : Ty Unit → Type
   | p : PQ .t
   | q : PQ .t
   | conj : PQ (.t ⇒ .t ⇒ .t)
@@ -231,29 +193,27 @@ inductive PQ : Ty → Type
 
 /-- An interpretation of the coordination fragment in which `p` is true and `q` false, and the
 English coordinators denote the Boolean operation of their role. -/
-def pqConst : {ty : Ty} → PQ ty → Ty.Domain Unit Unit ty
+def pqConst : {ty : Ty Unit} → PQ ty → ty.Dom fun _ ↦ Unit
   | _, .p => True
   | _, .q => False
   | _, .conj => show Prop → Prop → Prop from fun q p ↦ English.Coordination.and_.denote {p, q}
   | _, .disj => show Prop → Prop → Prop from fun q p ↦ English.Coordination.or_.denote {p, q}
 
 /-- The lexicon of the coordination fragment. -/
-def pqLexicon : List (LexEntry String atomTy indices PQ) :=
-  [⟨"p", S, .const .p⟩, ⟨"q", S, .const .q⟩, ⟨"and", conj S, .const .conj⟩,
-   ⟨"or", conj S, .const .disj⟩]
+def pqLexicon : List (LexEntry String atomTy PQ) :=
+  [⟨"p", S, fun I ↦ I .p⟩, ⟨"q", S, fun I ↦ I .q⟩, ⟨"and", conj S, fun I ↦ I .conj⟩,
+   ⟨"or", conj S, fun I ↦ I .disj⟩]
 
 def dp : Derivation String (.multimodal 2) S := .lex "p" S
 def dq : Derivation String (.multimodal 2) S := .lex "q" S
 
 theorem coord_role_load_bearing :
-    (Derivation.bapp dp (.fapp (.lex "and" (conj S)) dq)).interp pqLexicon pqConst
-        (assignment ()) ≠
-      (Derivation.bapp dp (.fapp (.lex "or" (conj S)) dq)).interp pqLexicon pqConst
-        (assignment ()) := by
-  have hand : (Derivation.bapp dp (.fapp (.lex "and" (conj S)) dq)).interp pqLexicon pqConst
-      (assignment ()) = some (True ∧ False) := congrArg some (sInf_pair (a := True) (b := False))
-  have hor : (Derivation.bapp dp (.fapp (.lex "or" (conj S)) dq)).interp pqLexicon pqConst
-      (assignment ()) = some (True ∨ False) := congrArg some (sSup_pair (a := True) (b := False))
+    (Derivation.bapp dp (.fapp (.lex "and" (conj S)) dq)).interp pqLexicon pqConst ≠
+      (Derivation.bapp dp (.fapp (.lex "or" (conj S)) dq)).interp pqLexicon pqConst := by
+  have hand : (Derivation.bapp dp (.fapp (.lex "and" (conj S)) dq)).interp pqLexicon pqConst =
+      some (True ∧ False) := congrArg some (sInf_pair (a := True) (b := False))
+  have hor : (Derivation.bapp dp (.fapp (.lex "or" (conj S)) dq)).interp pqLexicon pqConst =
+      some (True ∨ False) := congrArg some (sSup_pair (a := True) (b := False))
   rw [hand, hor]
   exact fun h ↦ ((iff_of_eq (Option.some.inj h)).mpr (Or.inl trivial)).2
 
@@ -722,25 +682,23 @@ theorem annaMannyUtterance_infoStructure :
 
 end Intonation
 
-/-! ### Truth conditions
+/-! ### Meanings
 
-Derivations interpreted compositionally over the toy model: a true sentence and a false one. -/
+In every model of the constants, a derivation over the lexicon means what its predicate-argument
+structure says. -/
 
 section TruthConditions
 
+variable {D : Unit → Type} (I : ∀ {ty : Ty Unit}, Const ty → ty.Dom D)
+
 def mary_sleeps : Derivation String (.multimodal 2) S := .bapp (.lex "Mary" NP) (.lex "sleeps" IV)
 
-theorem ccg_predicts_john_sleeps :
-    ∃ p, john_sleeps.interp lexicon toyConst toyAssignment = some p ∧ p :=
-  ⟨_, rfl, rfl⟩
+theorem interp_john_sleeps : john_sleeps.interp lexicon I = some (I .sleeps (I .john)) := rfl
 
-theorem ccg_predicts_mary_sleeps :
-    ∃ p, mary_sleeps.interp lexicon toyConst toyAssignment = some p ∧ ¬ p :=
-  ⟨_, rfl, nofun⟩
+theorem interp_mary_sleeps : mary_sleeps.interp lexicon I = some (I .sleeps (I .mary)) := rfl
 
-theorem ccg_predicts_john_sees_mary :
-    ∃ p, john_sees_mary.interp lexicon toyConst toyAssignment = some p ∧ p :=
-  ⟨_, rfl, .inl ⟨rfl, rfl⟩⟩
+theorem interp_john_sees_mary :
+    john_sees_mary.interp lexicon I = some (I .sees (I .mary) (I .john)) := rfl
 
 end TruthConditions
 

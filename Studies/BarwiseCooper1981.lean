@@ -5,7 +5,6 @@ public import Linglib.Semantics.Quantification.Properties
 public import Linglib.Core.ModelTheory.Monadic
 public import Linglib.Semantics.Quantification.Witness
 public import Linglib.Fragments.English.Determiners
-public import Linglib.Semantics.Composition.FirstOrder
 public import Linglib.Data.Examples.BarwiseCooper1981
 public import Mathlib.Data.Finset.Fin
 public import Mathlib.Data.Set.Card
@@ -781,41 +780,5 @@ theorem most_sem_not_definable :
   rintro ⟨φ, hφ⟩
   exact more_than_half_not_definable ⟨φ, fun M _ _ S ↦
     (hφ M S).trans (mostUV_iff_most_sem _ _).symm⟩
-
-/-! ### The engine-level corollary: no tree means *most* -/
-
-open Montague PhraseStructure in
-/-- No tree means *most*. Under any translation of words into the first-order constants of the
-language of C12, no tree has, across all nonempty finite models and under every assignment, the
-truth conditions of `most`. A tree whose logical form has type `t` reads back to a first-order
-formula whose universal closure would define `most`, against C12; any other tree is true in no
-model, while `most` is true in the one-element model where both predicates hold. -/
-theorem no_tree_means_most {C X : Type}
-    (words : X → Option (Σ ty, FirstOrderConstant (Language.monadic (Fin 2)) ty)) :
-    ¬ ∃ t : PhraseStructure.Tree C X, ∀ (M : Type) [Fintype M] [Nonempty M]
-      (S : (Language.monadic (Fin 2)).Structure M) (g : Assignment M),
-        Tree.HoldsAt ((Model.ofStructure M S).lexicon words ()) g t ↔
-          Quantifier.Det.most {x | S.RelMap (.pred 1) ![x]} {x | S.RelMap (.pred 0) ![x]} := by
-  rintro ⟨t, ht⟩
-  obtain ⟨u, hu⟩ : ∃ u, Tree.translate individualIndices words t = some ⟨.t, u⟩ := by
-    let S₁ := monadic.structure fun (_ : Fin 2) (_ : Fin 1) ↦ True
-    obtain ⟨p, hp, -⟩ := (ht (Fin 1) S₁ fun _ ↦ 0).2 (by
-      show Quantifier.Det.most (Set.univ : Set (Fin 1)) Set.univ
-      decide)
-    unfold Model.lexicon at hp
-    rw [Tree.interp_eq_eval_translate (FirstOrderConstant.interp _ _)] at hp
-    obtain ⟨⟨ty, u⟩, hd, he⟩ := Option.map_eq_some_iff.1 hp
-    obtain ⟨rfl, -⟩ := Sigma.mk.inj_iff.1 he
-    exact ⟨u, hd⟩
-  refine most_sem_not_definable ⟨(u.readback FirstOrderConstant.readback 1
-    (fun _ ↦ Language.Term.var (.inr 0)) 1 le_rfl).all, fun M _ _ S ↦ ?_⟩
-  let m := Model.ofStructure M S
-  have key (a : M) := Term.realizes_readback (m.interp ()) (default : Empty → M)
-    (FirstOrderConstant.realizes_readback m () default) u (n := 1)
-    (ρ := fun _ ↦ Language.Term.var (.inr 0)) (xs := Fin.snoc default a) (g := fun _ ↦ a)
-    (fun _ ↦ rfl) 1 le_rfl (Fin.snoc default a) rfl
-  have hold (a : M) := (Tree.holdsAt_iff_eval m () hu fun _ ↦ a).symm.trans (ht M S fun _ ↦ a)
-  refine BoundedFormula.realize_all.trans ⟨fun h ↦ ?_, fun h a ↦ (key a).2 ((hold a).2 h)⟩
-  exact (hold (Classical.arbitrary M)).1 ((key _).1 (h _))
 
 end BarwiseCooper1981

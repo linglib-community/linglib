@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Composition.Interpreter.Rules
 public import Linglib.Semantics.Composition.Interpreter.Constituency
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 public import Linglib.Syntax.Minimalist.SyntacticObject.ToTree

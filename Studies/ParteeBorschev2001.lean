@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Data.Examples.ParteeBorschev2001
-public import Linglib.Semantics.Composition.Mode
+public import Linglib.Semantics.Composition.Interpreter.Rules
+public import Linglib.Semantics.Composition.Interpreter.Sorts
 public import Linglib.Semantics.Modification.Classification
 public import Linglib.Semantics.Possession.Relationalizer
 
@@ -49,7 +50,7 @@ allows](##readings_fit_fullNP), and a Russian possessive inside an NP
 
 namespace ParteeBorschev2001
 
-open Modifier Montague Possession
+open Modifier Interpreter Possession
 
 variable {ι α I E : Type*}
 
@@ -96,13 +97,13 @@ end Former
 
 /-- The types a noun has lexically, ⟨e,t⟩ for a CN and ⟨e,⟨e,t⟩⟩ for a TCN (p. 4): *teacher* has
 both (p. 10). -/
-def lexicalTypes : Examples.Noun → List Ty
+def lexicalTypes : Examples.Noun → List (Ty Base)
   | .team => [Ty.et]
   | .brother | .father | .favoriteMovie => [Ty.eet]
   | .teacher => [Ty.et, Ty.eet]
 
 /-- The type a subject wants of its noun: a demonstrative a CN (p. 9), a possessive a TCN. -/
-def wantedType : Examples.Subject → Ty
+def wantedType : Examples.Subject → Ty Base
   | .demonstrative => Ty.et
   | .possessive => Ty.eet
 
@@ -151,8 +152,12 @@ theorem freeRelationOnly_refuted :
 -- A possessive of type ⟨e,t⟩ composes with a CN by predicate modification and with a TCN not at
 -- all, while a TCN takes its possessor by application.
 theorem possessive_modes :
-    Ty.et.mode? Ty.et = some ⟨_, .predicateModification .individual⟩ ∧ Ty.et.mode? Ty.eet = none ∧
-      Ty.eet.mode? .e = some ⟨_, .functionalLeft⟩ :=
+    Grammar.LocallyFinite.binaryRules (G := Grammar.application.sum .predicateModification)
+        Ty.et Ty.et = [⟨Ty.et, .inr .pm⟩] ∧
+      Grammar.LocallyFinite.binaryRules (G := Grammar.application.sum .predicateModification)
+        Ty.et Ty.eet = [] ∧
+      Grammar.LocallyFinite.binaryRules (G := Grammar.application.sum .predicateModification)
+        Ty.eet .e = [⟨Ty.et, .inl .fa⟩] :=
   ⟨rfl, rfl, rfl⟩
 
 section Ubijca

@@ -2,9 +2,8 @@ module
 
 public import Linglib.Data.Examples.Cohen2013
 public import Linglib.Fragments.English.Coordination
-public import Linglib.Semantics.Composition.Coordination
-public import Linglib.Semantics.Composition.Tree
-public import Linglib.Semantics.Composition.Readings
+public import Linglib.Semantics.Composition.Interpreter.Coordination
+public import Linglib.Semantics.Composition.Interpreter.Readings
 public import Linglib.Semantics.Quantification.Basic
 public import Studies.Cohen1999
 public import Linglib.Data.Examples.Readers
@@ -20,7 +19,7 @@ habituals and lifts a verb conjoined with an intensional one, applies only where
 mismatch. [The readings each sentence allows are those its device allows](##readings_available).
 [Reinterpreting the verb under an indefinite object gives the stronger
 reading](##reading_word_le_phrase), so *Mary smokes a cigarette* [has only its implausible
-reading](##cigarette_no_true_reading_available). On the composition engine, where a coordinator
+reading](##cigarette_no_true_reading_available). Where a coordinator
 and negation are words of every conjoinable type and SHIFT gives a verb a second type, *John
 needed but didn't buy a new coat* [has only the reading with negation over the lifted
 verb](##readings_neededButDidntBuy), since a lexical shift cannot apply to a phrase. Focus fixes
@@ -39,9 +38,10 @@ nettles](##nettles_aux_focus_iff).
   plausible reading is true; plausibility itself is not modelled.
 * The rows name a reading by the scope of the reinterpreted element: `narrow` for the device
   applied to the verb, `wide` for the device applied to the phrase.
-* The locality of SHIFT is derived on the composition engine, which interprets SHIFT as a second
-  lexical reading of the verb; the locality of the habitual shift is the postulate
-  `Device.AppliesAt`, since the engine's types have no sorts for intervals and moments.
+* The chapter gives the logical forms of (23) and (25) and no trees or lexicon. The trees here
+  are composed by Functional Application over a lexicon of sets of readings, in which SHIFT is a
+  second reading of the verb, so that its locality is derived; the locality of the habitual shift
+  is the postulate `Device.AppliesAt`.
 
 ## Errata
 
@@ -59,7 +59,7 @@ nettles](##nettles_aux_focus_iff).
   intension, which these extensional models cannot state.
 * The wide-scope generic objects of (19)–(20), which refute a syntactic account, presuppose a
   subject–object asymmetry not encoded here.
-* Deriving the habitual shift's locality on the engine needs sorts for intervals and moments.
+* Deriving the habitual shift's locality by composition, with sorts for intervals and moments.
 
 ## References
 
@@ -227,25 +227,37 @@ theorem brand_true_reading_available : ∃ l, Device.typeShift.AppliesAt l ∧ b
 
 /-! ### John needed but didn't buy a new coat
 
-On the composition engine a coordinator and negation are words of every conjoinable type, and
+A coordinator and negation are words of every conjoinable type, and
 SHIFT is a second reading of *buy*. Coordinating *need* with *buy* is a type mismatch that only
 the lifted reading repairs, and a shift applies to a word, never to the phrase *didn't buy*. -/
 
 section Engine
 
-open Montague PhraseStructure
+open Interpreter Interpreter.Grammar PhraseStructure
 
 variable {E : Type} (j : E) (need : ((E → Prop) → Prop) → E → Prop) (buy : E → E → Prop)
   (newCoat : E → Prop)
 
+/-- The domain of the one basic type, the individuals. -/
+abbrev Dom (E : Type) : Unit → Type := fun _ ↦ E
+
+/-- The type of individuals. -/
+abbrev ind : Ty Unit := .base ()
+
+/-- The type of quantifiers over individuals. -/
+abbrev quant : Ty Unit := (ind ⇒ .t) ⇒ .t
+
+/-- A typed denotation. -/
+abbrev Denotation (E : Type) : Type := Σ a : Ty Unit, a.Dom (Dom E)
+
 /-- Negation at every conjoinable type, the complement in its Boolean algebra. -/
-def negation : Set (Denotation E Unit) :=
-  Set.range fun τ : {τ : Ty // τ.Conjoinable} ↦
-    ⟨τ.1 ⇒ τ.1, fun p ↦ letI := Ty.Domain.completeBooleanAlgebra E Unit τ.1 τ.2; pᶜ⟩
+def negation : Set (Denotation E) :=
+  Set.range fun τ : {τ : Ty Unit // τ.Conjoinable} ↦
+    ⟨τ.1 ⇒ τ.1, fun p ↦ letI := Ty.Dom.completeBooleanAlgebra (Dom E) τ.1 τ.2; pᶜ⟩
 
 /-- *Buy* at its own type and lifted by SHIFT. -/
-def buyReadings : Set (Denotation E Unit) :=
-  {⟨Ty.eet, fun y x ↦ buy x y⟩, ⟨Ty.ett ⇒ Ty.et, shift buy⟩}
+def buyReadings : Set (Denotation E) :=
+  {⟨ind ⇒ ind ⇒ .t, fun y x ↦ buy x y⟩, ⟨quant ⇒ ind ⇒ .t, shift buy⟩}
 
 /-- The words of (23) and (25a). -/
 inductive Word
@@ -258,14 +270,20 @@ inductive Word
   | aNewCoat
 
 /-- The lexicon, with `B` the readings of *buy* and *need* a relation to a quantifier. -/
-def lexicon (B : Set (Denotation E Unit)) : Word → Set (Denotation E Unit)
-  | .john => {⟨.e, j⟩}
-  | .needed => {⟨Ty.ett ⇒ Ty.et, need⟩}
+def lexicon (B : Set (Denotation E)) : Word → Set (Denotation E)
+  | .john => {⟨ind, j⟩}
+  | .needed => {⟨quant ⇒ ind ⇒ .t, need⟩}
   | .and => English.Coordination.and_.readings
   | .but => English.Coordination.but_.readings
   | .didnt => negation
   | .buy => B
-  | .aNewCoat => {⟨Ty.ett, Det.some newCoat⟩}
+  | .aNewCoat => {⟨quant, Det.some newCoat⟩}
+
+/-- The readings of a tree by Functional Application, each word being any of its readings. -/
+def readings (B : Set (Denotation E)) (t : Tree Unit Word) : Set (Denotation E) :=
+  t.readings (typeDriven .application) inferInstance id fun
+    | .inl w => lexicon j need newCoat B w
+    | .inr _ => ∅
 
 /-- (23), `John [[needed [and buy]] [a new coat]]`. -/
 def neededAndBought : Tree Unit Word :=
@@ -278,93 +296,63 @@ def neededButDidntBuy : Tree Unit Word :=
     (.leaf .buy)))) (.leaf .aNewCoat))
 
 -- (23)
-theorem readings_neededAndBought_unlifted (g : Assignment E) :
-    Tree.readings (lexicon j need newCoat {⟨Ty.eet, fun y x ↦ buy x y⟩}) g neededAndBought =
-      ∅ := by
+theorem readings_neededAndBought_unlifted :
+    readings j need newCoat {⟨ind ⇒ ind ⇒ .t, fun y x ↦ buy x y⟩} neededAndBought = ∅ := by
   refine Set.eq_empty_iff_forall_notMem.2 fun d ↦ ?_
-  simp only [neededAndBought, Tree.mem_readings_phrase_binary, Tree.readings_terminal, lexicon,
-    Set.mem_singleton_iff, Mode.combine?, Option.map_eq_some_iff]
-  rintro ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨τ, h⟩, rfl⟩, _, rfl, ⟨ρ₁, m₁⟩, hm₁, rfl⟩,
-    ⟨ρ₂, m₂⟩, hm₂, rfl⟩, _, rfl, ⟨ρ₃, m₃⟩, -, rfl⟩, ⟨ρ₄, m₄⟩, -, rfl⟩
-  have b₁ := Ty.mode?_eq_some_iff.mp hm₁
-  have b₂ := Ty.mode?_eq_some_iff.mp hm₂
-  clear hm₁ hm₂
+  simp only [readings, neededAndBought, Tree.mem_readings_typeDriven_phrase_binary,
+    Tree.readings_terminal, lexicon, id_eq, Sigma.eta, Set.image_id', Set.mem_singleton_iff,
+    Coordinator.readings, Set.mem_range]
+  rintro ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨τ, h⟩, rfl⟩, _, rfl, u₁, m₁, rfl⟩, u₂, m₂, rfl⟩,
+    _, rfl, u₃, m₃, rfl⟩, u₄, m₄, rfl⟩
   cases m₁
-  all_goals try simp only [Mode.IsBasic] at b₁
-  all_goals cases m₂
-  all_goals simp only [Mode.IsBasic] at b₂
+  cases m₂
 
 -- (23)
-theorem readings_neededAndBought (g : Assignment E) :
-    Tree.readings (lexicon j need newCoat (buyReadings buy)) g neededAndBought =
+theorem readings_neededAndBought :
+    readings j need newCoat (buyReadings buy) neededAndBought =
       {⟨.t, need (Det.some newCoat) j ∧ shift buy (Det.some newCoat) j⟩} := by
   ext d
-  simp only [neededAndBought, Tree.mem_readings_phrase_binary, Tree.readings_terminal, lexicon,
-    buyReadings, Set.mem_singleton_iff, Set.mem_insert_iff, Mode.combine?,
-    Option.map_eq_some_iff]
+  simp only [readings, neededAndBought, Tree.mem_readings_typeDriven_phrase_binary,
+    Tree.readings_terminal, lexicon, id_eq, Sigma.eta, Set.image_id', Set.mem_singleton_iff,
+    Coordinator.readings, Set.mem_range, buyReadings, Set.mem_insert_iff]
   constructor
-  · rintro ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨τ, h⟩, rfl⟩, _, hb, ⟨ρ₁, m₁⟩, hm₁, rfl⟩,
-      ⟨ρ₂, m₂⟩, hm₂, rfl⟩, _, rfl, ⟨ρ₃, m₃⟩, hm₃, rfl⟩, ⟨ρ₄, m₄⟩, hm₄, rfl⟩
-    have b₁ := Ty.mode?_eq_some_iff.mp hm₁
-    have b₂ := Ty.mode?_eq_some_iff.mp hm₂
-    have b₃ := Ty.mode?_eq_some_iff.mp hm₃
-    have b₄ := Ty.mode?_eq_some_iff.mp hm₄
-    clear hm₁ hm₂ hm₃ hm₄
-    rcases hb with rfl | rfl <;> cases m₁
-    all_goals try simp only [Mode.IsBasic] at b₁
-    all_goals cases m₂
-    all_goals try simp only [Mode.IsBasic] at b₂
-    all_goals cases m₃
-    all_goals try simp only [Mode.IsBasic] at b₃
-    all_goals cases m₄
-    all_goals try simp only [Mode.IsBasic] at b₄
+  · rintro ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨τ, h⟩, rfl⟩, _, hb, u₁, m₁, rfl⟩, u₂, m₂, rfl⟩,
+      _, rfl, u₃, m₃, rfl⟩, u₄, m₄, rfl⟩
+    rcases hb with rfl | rfl <;> cases m₁ <;> cases m₂
+    cases m₃
+    cases m₄
     simp [Coordinator.reading, Coordinator.denote_of_conjunctive (c := English.Coordination.and_)
       rfl]
   · rintro rfl
-    refine ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨Ty.ett ⇒ Ty.et, trivial⟩, rfl⟩, _, .inr rfl,
-      _, Mode.mode?_fn_left _ _, rfl⟩, _, Mode.mode?_fn_right _ _, rfl⟩, _, rfl, _,
-      Mode.mode?_fn_left _ _, rfl⟩, _, Mode.mode?_fn_right _ _, ?_⟩
+    refine ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨quant ⇒ ind ⇒ .t, trivial⟩, rfl⟩, _, .inr rfl,
+      _, .fa, rfl⟩, _, .ba, rfl⟩, _, rfl, _, .fa, rfl⟩, _, .ba, ?_⟩
     simp [Coordinator.reading, Coordinator.denote_of_conjunctive (c := English.Coordination.and_)
       rfl]
 
-/-- On the composition engine, *John needed but didn't buy a new coat* has only the reading with
-negation over the lifted verb. -/
-theorem readings_neededButDidntBuy (g : Assignment E) :
-    Tree.readings (lexicon j need newCoat (buyReadings buy)) g neededButDidntBuy =
+/-- *John needed but didn't buy a new coat* has only the reading with negation over the lifted
+verb. -/
+theorem readings_neededButDidntBuy :
+    readings j need newCoat (buyReadings buy) neededButDidntBuy =
       {⟨.t, need (Det.some newCoat) j ∧ ¬ shift buy (Det.some newCoat) j⟩} := by
   ext d
-  simp only [neededButDidntBuy, Tree.mem_readings_phrase_binary, Tree.readings_terminal, lexicon,
-    buyReadings, Set.mem_singleton_iff, Set.mem_insert_iff, Mode.combine?,
-    Option.map_eq_some_iff]
+  simp only [readings, neededButDidntBuy, Tree.mem_readings_typeDriven_phrase_binary,
+    Tree.readings_terminal, lexicon, id_eq, Sigma.eta, Set.image_id', Set.mem_singleton_iff,
+    Coordinator.readings, Set.mem_range, buyReadings, Set.mem_insert_iff, negation]
   constructor
   · rintro ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨τ₂, h₂⟩, rfl⟩, _, ⟨_, ⟨⟨τ₁, h₁⟩, rfl⟩, _, hb,
-      ⟨ρ₁, m₁⟩, hm₁, rfl⟩, ⟨ρ₂, m₂⟩, hm₂, rfl⟩, ⟨ρ₃, m₃⟩, hm₃, rfl⟩, _, rfl, ⟨ρ₄, m₄⟩, hm₄, rfl⟩,
-      ⟨ρ₅, m₅⟩, hm₅, rfl⟩
-    have b₁ := Ty.mode?_eq_some_iff.mp hm₁
-    have b₂ := Ty.mode?_eq_some_iff.mp hm₂
-    have b₃ := Ty.mode?_eq_some_iff.mp hm₃
-    have b₄ := Ty.mode?_eq_some_iff.mp hm₄
-    have b₅ := Ty.mode?_eq_some_iff.mp hm₅
-    clear hm₁ hm₂ hm₃ hm₄ hm₅
-    rcases hb with rfl | rfl <;> cases m₁
-    all_goals try simp only [Mode.IsBasic] at b₁
-    all_goals cases m₂
-    all_goals try simp only [Mode.IsBasic] at b₂
-    all_goals cases m₃
-    all_goals try simp only [Mode.IsBasic] at b₃
-    all_goals cases m₄
-    all_goals try simp only [Mode.IsBasic] at b₄
-    all_goals cases m₅
-    all_goals try simp only [Mode.IsBasic] at b₅
+      u₁, m₁, rfl⟩, u₂, m₂, rfl⟩, u₃, m₃, rfl⟩, _, rfl, u₄, m₄, rfl⟩, u₅, m₅, rfl⟩
+    rcases hb with rfl | rfl <;> cases m₁ <;> cases m₂ <;> cases m₃
+    cases m₄
+    cases m₅
     simp [Coordinator.reading, Coordinator.denote_of_adversative (c := English.Coordination.but_)
       rfl]
   · rintro rfl
-    refine ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨Ty.ett ⇒ Ty.et, trivial⟩, rfl⟩, _,
-      ⟨_, ⟨⟨Ty.ett ⇒ Ty.et, trivial⟩, rfl⟩, _, .inr rfl, _, Mode.mode?_fn_left _ _, rfl⟩, _,
-      Mode.mode?_fn_left _ _, rfl⟩, _, Mode.mode?_fn_right _ _, rfl⟩, _, rfl, _,
-      Mode.mode?_fn_left _ _, rfl⟩, _, Mode.mode?_fn_right _ _, ?_⟩
+    refine ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨quant ⇒ ind ⇒ .t, trivial⟩, rfl⟩, _,
+      ⟨_, ⟨⟨quant ⇒ ind ⇒ .t, trivial⟩, rfl⟩, _, .inr rfl, _, .fa, rfl⟩, _, .fa, rfl⟩,
+      _, .ba, rfl⟩, _, rfl, _, .fa, rfl⟩, _, .ba, ?_⟩
     simp [Coordinator.reading, Coordinator.denote_of_adversative (c := English.Coordination.but_)
       rfl]
+
 
 -- (25)
 theorem not_shift_ne_shift_not :

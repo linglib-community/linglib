@@ -5,8 +5,9 @@ public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Individual
 public import Linglib.Semantics.Quantification.Witness
 public import Linglib.Semantics.Reference.ChoiceFunction
-public import Linglib.Semantics.Composition.Coordination
-public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Composition.Interpreter.Constituency
+public import Linglib.Semantics.Composition.Interpreter.Coordination
+public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
 public import Linglib.Syntax.Command
 public import Linglib.Fragments.English.Coordination
 public import Mathlib.Data.Set.Card
@@ -31,7 +32,7 @@ excludes](##not_closureBelowNo_lf61). [*Or* is never collective](##minimal_some_
   *a* (`Quantifier.Det.some`) at the type of its argument, Minimization is `Minimal`, Choice
   Raising the Montague lift `Quantifier.individual` of the chosen member, Distributive Choice
   Raising *every* on the chosen plurality, and Predicate Distributivity `𝒫 S \ {∅}`.
-* The logical forms are trees interpreted by the composition engine under a typing of the
+* The logical forms are trees interpreted by Functional Application under a typing of the
   indices. *A*, *no*, *every*, *and* and *or* each have one entry, typed by a parameter, and
   Choice Closure one for each of the two types at which the paper uses (48), over choice functions
   on the type it binds. Their totality turns the definedness condition `N ≠ ∅` of Choice Raising
@@ -254,14 +255,26 @@ theorem determinerFitting_some_pairs_iff (N N' V : Set E) :
 
 /-! ### Logical forms
 
-The composition engine interprets the paper's logical forms, written in labelled brackets, and
-the theorems below give the truth conditions of each. -/
+Functional Application and abstraction interpret the paper's logical forms, written in labelled
+brackets, and the theorems below give the truth conditions of each. -/
 
 section LogicalForms
 
-open Montague PhraseStructure Tree English.Coordination
+open Interpreter Interpreter.Grammar PhraseStructure Tree English.Coordination
 
 variable {E : Type} {N N' V : Set E} {R S : Set (Set E)}
+
+/-- The domain of the one basic type, the individuals. -/
+abbrev Dom (E : Type) : Unit → Type := fun _ ↦ E
+
+/-- The type of individuals. -/
+abbrev e : Ty Unit := .base ()
+
+/-- The type of properties of individuals, and of pluralities. -/
+abbrev et : Ty Unit := e ⇒ .t
+
+/-- The type of properties of pluralities, and of quantifiers. -/
+abbrev ett : Ty Unit := et ⇒ .t
 
 /-- The words of the logical forms: two nouns, a predicate of individuals, a relative clause and
 a verb phrase that are predicates of pluralities, the numerals, and the overt and silent
@@ -269,14 +282,14 @@ operators, those the paper uses at several types typed by a parameter. -/
 inductive Word where
   | noun₁ | noun₂ | atom | relative | vp
   | numeral (n : ℕ)
-  | a (σ : Ty) | no (σ : Ty) | every (σ : Ty) | and (τ : Ty) | or (τ : Ty)
+  | a (σ : Ty Unit) | no (σ : Ty Unit) | every (σ : Ty Unit) | and (τ : Ty Unit) | or (τ : Ty Unit)
   | dfit | min | cr | dcr | pdist
-  | choiceClosure (σ : Ty) | choiceClosureSentence (σ : Ty)
+  | choiceClosure (σ : Ty Unit) | choiceClosureSentence (σ : Ty Unit)
   deriving DecidableEq
 
 /-- The type of an index: `1` and `2` range over choice functions on individuals, the others over
 choice functions on pluralities. -/
-def indexTy (n : ℕ) : Ty := if n ≤ 2 then .et ⇒ .e else .ett ⇒ .et
+def indexTy (n : ℕ) : Ty Unit := if n ≤ 2 then et ⇒ e else ett ⇒ et
 
 /-- The denotations, over two nouns `N`, `N'`, a predicate `V` of individuals and predicates `R`
 and `S` of pluralities: the numerals (70), *a* (23), *no* and *every* at the type `σ` of what
@@ -284,107 +297,124 @@ they quantify over, the coordinators at a conjoinable type, Determiner Fitting (
 (19), Choice Raising (46), Distributive Choice Raising (78), Predicate Distributivity (27), and
 Choice Closure over choice functions on `σ`, at a property of pluralities (49) and at a sentence
 (50). -/
-noncomputable def lex (N N' V : Set E) (R S : Set (Set E)) : Word → Option (Denotation E Unit)
-  | .noun₁ => some ⟨.et, N⟩
-  | .noun₂ => some ⟨.et, N'⟩
-  | .atom => some ⟨.et, V⟩
-  | .relative => some ⟨.ett, R⟩
-  | .vp => some ⟨.ett, S⟩
-  | .numeral n => some ⟨.ett, {P : Set E | P.ncard = n}⟩
-  | .a σ => some ⟨(σ ⇒ .t) ⇒ (σ ⇒ .t) ⇒ .t, (Det.some : Det (Ty.Domain E Unit σ))⟩
-  | .no σ => some ⟨(σ ⇒ .t) ⇒ (σ ⇒ .t) ⇒ .t, (Det.no : Det (Ty.Domain E Unit σ))⟩
-  | .every σ => some ⟨(σ ⇒ .t) ⇒ (σ ⇒ .t) ⇒ .t, (Det.every : Det (Ty.Domain E Unit σ))⟩
+noncomputable def lex (N N' V : Set E) (R S : Set (Set E)) : Word →
+    Option (Σ a : Ty Unit, a.Dom (Dom E))
+  | .noun₁ => some ⟨et, N⟩
+  | .noun₂ => some ⟨et, N'⟩
+  | .atom => some ⟨et, V⟩
+  | .relative => some ⟨ett, R⟩
+  | .vp => some ⟨ett, S⟩
+  | .numeral n => some ⟨ett, {P : Set E | P.ncard = n}⟩
+  | .a σ => some ⟨(σ ⇒ .t) ⇒ (σ ⇒ .t) ⇒ .t, (Det.some : Det (σ.Dom (Dom E)))⟩
+  | .no σ => some ⟨(σ ⇒ .t) ⇒ (σ ⇒ .t) ⇒ .t, (Det.no : Det (σ.Dom (Dom E)))⟩
+  | .every σ => some ⟨(σ ⇒ .t) ⇒ (σ ⇒ .t) ⇒ .t, (Det.every : Det (σ.Dom (Dom E)))⟩
   | .and τ => if h : τ.Conjoinable then some (and_.reading τ h) else none
   | .or τ => if h : τ.Conjoinable then some (or_.reading τ h) else none
-  | .dfit => some ⟨.det ⇒ .ett ⇒ .ett ⇒ .t,
+  | .dfit => some ⟨(et ⇒ ett) ⇒ ett ⇒ ett ⇒ .t,
       fun (D : Det E) (A B : Set (Set E)) ↦ determinerFitting D A B⟩
-  | .min => some ⟨.ett ⇒ .ett, fun (Q : Quantifier E) ↦ Minimal Q⟩
-  | .cr => some ⟨(.et ⇒ .e) ⇒ .et ⇒ .ett, fun (f : Set E → E) (N : Set E) ↦ individual (f N)⟩
-  | .dcr => some ⟨(.ett ⇒ .et) ⇒ .ett ⇒ .ett,
+  | .min => some ⟨ett ⇒ ett, fun (Q : Quantifier E) ↦ Minimal Q⟩
+  | .cr => some ⟨(et ⇒ e) ⇒ et ⇒ ett, fun (f : Set E → E) (N : Set E) ↦ individual (f N)⟩
+  | .dcr => some ⟨(ett ⇒ et) ⇒ ett ⇒ ett,
       fun (f : Set (Set E) → Set E) (N : Set (Set E)) ↦ Det.every (f N)⟩
-  | .pdist => some ⟨.et ⇒ .ett, fun (P : Set E) ↦ (𝒫 P \ {∅} : Set (Set E))⟩
-  | .choiceClosure σ => some ⟨(((σ ⇒ .t) ⇒ σ) ⇒ .ett) ⇒ .ett,
-      fun (A : ((Ty.Domain E Unit σ → Prop) → Ty.Domain E Unit σ) → Set E → Prop) (P : Set E) ↦
-        ∃ f : ChoiceFunction (Ty.Domain E Unit σ), A f P⟩
+  | .pdist => some ⟨et ⇒ ett, fun (P : Set E) ↦ (𝒫 P \ {∅} : Set (Set E))⟩
+  | .choiceClosure σ => some ⟨(((σ ⇒ .t) ⇒ σ) ⇒ ett) ⇒ ett,
+      fun (A : ((σ.Dom (Dom E) → Prop) → σ.Dom (Dom E)) → Set E → Prop) (P : Set E) ↦
+        ∃ f : ChoiceFunction (σ.Dom (Dom E)), A f P⟩
   | .choiceClosureSentence σ => some ⟨(((σ ⇒ .t) ⇒ σ) ⇒ .t) ⇒ .t,
-      fun (A : ((Ty.Domain E Unit σ → Prop) → Ty.Domain E Unit σ) → Prop) ↦
-        ∃ f : ChoiceFunction (Ty.Domain E Unit σ), A f⟩
+      fun (A : ((σ.Dom (Dom E) → Prop) → σ.Dom (Dom E)) → Prop) ↦
+        ∃ f : ChoiceFunction (σ.Dom (Dom E)), A f⟩
 
-attribute [local simp] HoldsAtWith lex indexTy Ty.Conjoinable Coordinator.reading_of_conjunctive
-  Coordinator.reading_of_disjunctive and_ or_
+/-- The rules: Functional Application, Predicate Modification, which intersects two properties
+of pluralities, and abstraction over an index. -/
+abbrev rules : Interpreter ((Grammar.application.sum .predicateModification).withAbstraction
+    indexTy) Node :=
+  (typeDriven (.sum .application .predicateModification)).withAbstraction indexTy
+
+/-- A logical form holds, under an assignment of choice functions to the indices, when it
+denotes a truth value that is true. -/
+def Holds (N N' V : Set E) (R S : Set (Set E)) (g : ∀ n, (indexTy n).Dom (Dom E))
+    (t : Tree Unit Word) : Prop :=
+  ∃ p, t.values rules (Grammar.withAbstraction.structure (Assignments.total (Dom E) indexTy))
+    (W := fun a ↦ (∀ n, (indexTy n).Dom (Dom E)) → a.Dom (Dom E)) id (fun
+      | .inl w => (lex N N' V R S w).toList.map fun d ↦ ⟨d.1, fun _ ↦ d.2⟩
+      | .inr n => [⟨indexTy n, fun g ↦ g n⟩]) = [⟨.t, p⟩] ∧ p g
+
+attribute [local simp] Holds lex indexTy Ty.Conjoinable Coordinator.reading_of_conjunctive
+  Coordinator.reading_of_disjunctive and_ or_ Interpreter.withAbstraction typeDriven
+  Grammar.LocallyFinite.unaryRules Grammar.LocallyFinite.binaryRules Assignments.total
 
 /-- `[[a noun₁] [c [a noun₂]]]`: Existential Raising of each noun, coordinated by `c`. -/
-def raised (c : Word) : Tree Unit Word := tree% [[⟨.a .e⟩ noun₁] [⟨c⟩ [⟨.a .e⟩ noun₂]]]
+def raised (c : Word) : Tree Unit Word := tree% [[⟨.a e⟩ noun₁] [⟨c⟩ [⟨.a e⟩ noun₂]]]
 
 /-- `[[CR t₁] noun₁] [and [[CR t₂] noun₂]]`. -/
-def crAnd : Tree Unit Word := tree% [[[cr (.tr 1)] noun₁] [⟨.and .ett⟩ [[cr (.tr 2)] noun₂]]]
+def crAnd : Tree Unit Word := tree% [[[cr (.tr 1)] noun₁] [⟨.and ett⟩ [[cr (.tr 2)] noun₂]]]
 
 /-- `[[DCR t₃] X] [and [[DCR t₄] Y]]`. -/
 def dcrAnd (X Y : Tree Unit Word) : Tree Unit Word :=
-  tree% [[[dcr (.tr 3)] (X)] [⟨.and .ett⟩ [[dcr (.tr 4)] (Y)]]]
+  tree% [[[dcr (.tr 3)] (X)] [⟨.and ett⟩ [[dcr (.tr 4)] (Y)]]]
 
 /-- `[PDIST w]`, the plural of `w` (72). -/
 def plural (w : Word) : Tree Unit Word := tree% [pdist ⟨w⟩]
 
 /-- `[∃₁ [λ₁ [∃₂ [λ₂ [MIN [[CR t₁] noun₁] [and [[CR t₂] noun₂]]]]]]]`. -/
 def closedAbove : Tree Unit Word :=
-  tree% [⟨.choiceClosure .e⟩ [λ 1 [⟨.choiceClosure .e⟩ [λ 2 [min (crAnd)]]]]]
+  tree% [⟨.choiceClosure e⟩ [λ 1 [⟨.choiceClosure e⟩ [λ 2 [min (crAnd)]]]]]
 
 /-- `[[[DFIT D] X] [PDIST atom]]`. -/
 def fitted (D : Word) (X : Tree Unit Word) : Tree Unit Word :=
   tree% [[[dfit ⟨D⟩] (X)] (plural .atom)]
 
 /-- The LF (24) of the hydra *a man and woman who dated met*. -/
-def lf24 : Tree Unit Word := tree% [[⟨.a .et⟩ [[min (raised (.and .ett))] relative]] vp]
+def lf24 : Tree Unit Word := tree% [[⟨.a et⟩ [[min (raised (.and ett))] relative]] vp]
 
 /-- The LF (29) of *a man and woman had a beer*. -/
-def lf29 : Tree Unit Word := tree% [[⟨.a .et⟩ [min (raised (.and .ett))]] (plural .atom)]
+def lf29 : Tree Unit Word := tree% [[⟨.a et⟩ [min (raised (.and ett))]] (plural .atom)]
 
 /-- The LF (56) of *a doctor and lawyer met*. -/
-def lf56 : Tree Unit Word := tree% [[⟨.a .et⟩ (closedAbove)] vp]
+def lf56 : Tree Unit Word := tree% [[⟨.a et⟩ (closedAbove)] vp]
 
 /-- *A doctor and lawyer met* with each Choice Closure directly above its Choice Raising. -/
 def lfLocal : Tree Unit Word :=
-  tree% [[⟨.a .et⟩ [min [[⟨.choiceClosure .e⟩ [λ 1 [[cr (.tr 1)] noun₁]]]
-    [⟨.and .ett⟩ [⟨.choiceClosure .e⟩ [λ 2 [[cr (.tr 2)] noun₂]]]]]]] vp]
+  tree% [[⟨.a et⟩ [min [[⟨.choiceClosure e⟩ [λ 1 [[cr (.tr 1)] noun₁]]]
+    [⟨.and ett⟩ [⟨.choiceClosure e⟩ [λ 2 [[cr (.tr 2)] noun₂]]]]]]] vp]
 
 /-- The LF of (60a) *no man and woman have a right …*, with Choice Closure below *no*. -/
-def lf60 : Tree Unit Word := tree% [[⟨.no .et⟩ (closedAbove)] vp]
+def lf60 : Tree Unit Word := tree% [[⟨.no et⟩ (closedAbove)] vp]
 
 /-- The LF (61), with Choice Closure above *no*. -/
 def lf61 : Tree Unit Word :=
-  tree% [⟨.choiceClosureSentence .e⟩ [λ 1 [⟨.choiceClosureSentence .e⟩ [λ 2
-    [[⟨.no .et⟩ [min (crAnd)]] vp]]]]]
+  tree% [⟨.choiceClosureSentence e⟩ [λ 1 [⟨.choiceClosureSentence e⟩ [λ 2
+    [[⟨.no et⟩ [min (crAnd)]] vp]]]]]
 
 /-- The LF (81) of *ten men and women got married today*. -/
 def lf81 : Tree Unit Word :=
-  tree% [[⟨.a .et⟩ [⟨.numeral 10⟩ [⟨.choiceClosure .et⟩ [λ 3 [⟨.choiceClosure .et⟩
+  tree% [[⟨.a et⟩ [⟨.numeral 10⟩ [⟨.choiceClosure et⟩ [λ 3 [⟨.choiceClosure et⟩
     [λ 4 [min (dcrAnd (plural .noun₁) (plural .noun₂))]]]]]]] vp]
 
 /-- The LF (83a) of *two Americans and three Russians made an excellent basketball team*. -/
 def lf83 : Tree Unit Word :=
-  tree% [⟨.choiceClosureSentence .et⟩ [λ 3 [⟨.choiceClosureSentence .et⟩ [λ 4 [[⟨.a .et⟩
+  tree% [⟨.choiceClosureSentence et⟩ [λ 3 [⟨.choiceClosureSentence et⟩ [λ 4 [[⟨.a et⟩
     [min (dcrAnd (tree% [⟨.numeral 2⟩ (plural .noun₁)]) (tree% [⟨.numeral 3⟩ (plural .noun₂)]))]]
     vp]]]]]
 
 /-- The LF (95a) of *every cat and dog is licensed*. -/
-def lf95 : Tree Unit Word := fitted (.every .e) (tree% [min (raised (.and .ett))])
+def lf95 : Tree Unit Word := fitted (.every e) (tree% [min (raised (.and ett))])
 
 /-- The LF (96a) of *every cat or dog is licensed*. -/
-def lf96 : Tree Unit Word := tree% [[⟨.every .e⟩ [noun₁ [⟨.or .et⟩ noun₂]]] atom]
+def lf96 : Tree Unit Word := tree% [[⟨.every e⟩ [noun₁ [⟨.or et⟩ noun₂]]] atom]
 
 /-- The LF (97a) of *a cat and dog came running in*. -/
-def lf97 : Tree Unit Word := fitted (.a .e) (tree% [min (raised (.and .ett))])
+def lf97 : Tree Unit Word := fitted (.a e) (tree% [min (raised (.and ett))])
 
 /-- The LF (98a) of *a cat or dog came running in*. -/
-def lf98 : Tree Unit Word := tree% [[⟨.a .e⟩ [noun₁ [⟨.or .et⟩ noun₂]]] atom]
+def lf98 : Tree Unit Word := tree% [[⟨.a e⟩ [noun₁ [⟨.or et⟩ noun₂]]] atom]
 
 /-- The LF of *every cat or dog is licensed* described in the prose and in (99b). -/
-def lf99 : Tree Unit Word := fitted (.every .e) (tree% [min (raised (.or .ett))])
+def lf99 : Tree Unit Word := fitted (.every e) (tree% [min (raised (.or ett))])
 
 /-- The LF as (99a) prints it, with Minimization under *or*. -/
 def lf99Printed : Tree Unit Word :=
-  fitted (.every .e) (tree% [[min [⟨.a .e⟩ noun₁]] [⟨.or .ett⟩ [min [⟨.a .e⟩ noun₂]]]])
+  fitted (.every e) (tree% [[min [⟨.a e⟩ noun₁]] [⟨.or ett⟩ [min [⟨.a e⟩ noun₂]]]])
 
 /-- No Choice Closure in `t` takes scope over *no*, the constraint the paper draws from (59) and
 (60). -/
@@ -398,11 +428,11 @@ instance : DecidablePred ClosureBelowNo := fun t ↦
     (p.2.2 matches .choiceClosure _ | .choiceClosureSentence _) → (q.2.2 matches .no _) →
       ¬ t.CCommands p.1 q.1))
 
-variable (g : ∀ n, Ty.Domain E Unit (indexTy n))
+variable (g : ∀ n, (indexTy n).Dom (Dom E))
 
 set_option hygiene false in
 /-- `⟦t⟧`: the logical form `t` holds in the model the variables `N N' V R S` give. -/
-local notation "⟦" t "⟧" => HoldsAtWith indexTy (lex N N' V R S) g t
+local notation "⟦" t "⟧" => Holds N N' V R S g t
 
 private theorem some_setOf_iff {φ : Set E → Prop} (h : ∀ P, φ P ↔ ∃ x ∈ N, ∃ y ∈ N', P = {x, y})
     (B : Set (Set E)) : Det.some {P | φ P} B ↔ ∃ x ∈ N, ∃ y ∈ N', {x, y} ∈ B := by
@@ -454,8 +484,8 @@ theorem holds_lfLocal (hN : N.Nonempty) (hN' : N'.Nonempty) :
 /- A doctor who is also a lawyer meets another lawyer: (56) holds and the LF with local Choice
 Closure does not. -/
 example {x y : E} (hx : x ∈ N ∩ N') (hy : y ∈ N') (hxy : x ≠ y) :
-    HoldsAtWith indexTy (lex N N' V R {{x, y}}) g lf56 ∧
-      ¬ HoldsAtWith indexTy (lex N N' V R {{x, y}}) g lfLocal := by
+    Holds N N' V R {{x, y}} g lf56 ∧
+      ¬ Holds N N' V R {{x, y}} g lfLocal := by
   refine ⟨(holds_lf56 g ⟨x, hx.1⟩ ⟨y, hy⟩).2 ⟨x, hx.1, y, hy, rfl⟩, fun h ↦ ?_⟩
   obtain ⟨P, hP, rfl⟩ := (holds_lfLocal g ⟨x, hx.1⟩ ⟨y, hy⟩).1 h
   rcases minimal_some_inf_some_iff.1 hP with ⟨z, -, hz⟩ | ⟨z, ⟨-, hzN'⟩, w, -, hzw⟩

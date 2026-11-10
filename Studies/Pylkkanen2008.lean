@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
 public import Linglib.Semantics.Composition.EventIdentification
+public import Linglib.Semantics.Composition.Interpreter.Rules
 public import Linglib.Semantics.Composition.Interpreter.Constituency
 public import Linglib.Semantics.Composition.Interpreter.Sorts
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term

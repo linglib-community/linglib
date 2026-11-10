@@ -3,6 +3,9 @@ module
 public import Linglib.Data.Examples.ChatainSchlenker2026
 public import Linglib.Logic.Trivalent.Knowledge
 public import Linglib.Logic.Trivalent.Part
+public import Linglib.Semantics.Composition.Interpreter.Rules
+public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
+public import Linglib.Semantics.Composition.Interpreter.Mode
 public import Linglib.Semantics.Composition.Interpreter.Constituency
 public import Mathlib.Data.PFun
 public import Linglib.Semantics.Alternatives.WithAlternatives
@@ -195,16 +198,14 @@ section Composition
 
 open Interpreter PhraseStructure PhraseStructure.Tree
 
-/-- The base sorts of the derivation: the days, and the assignments of days to indices. -/
+/-- The base sort of the derivation: the days. -/
 inductive Atom
   | e
-  | g
   deriving DecidableEq
 
-/-- The domains of the base sorts over days `D`. -/
+/-- The domain of the base sort over days `D`. -/
 abbrev Atom.Dom (D : Type) : Atom → Type
   | .e => D
-  | .g => ℕ → D
 
 /-- The words of (26): the days, negation, and *take the lab rat out of its cage*. -/
 inductive Word (D : Type) where
@@ -213,12 +214,12 @@ inductive Word (D : Type) where
   | takeOut
 
 /-- The words and traces of (26) by semantic type: a day, negation of a truth value, *take out*
-a function from days to partial truth values, and a trace a reader of the assignment. -/
+a function from days to partial truth values, and a trace a day. -/
 inductive Item (D : Type) : Ty Atom → Type
   | day (d : D) : Item D (.base .e)
   | not : Item D (.t ⇒ .t)
   | takeOut : Item D (.base .e ⇒ .comp .M .t)
-  | trace (n : ℕ) : Item D (.comp (.R (.base .g)) (.base .e))
+  | trace (n : ℕ) : Item D (.base .e)
 
 /-- The item a leaf is. -/
 def items {D : Type} : Word D ⊕ ℕ → List (Σ a, Item D a)
@@ -226,11 +227,6 @@ def items {D : Type} : Word D ⊕ ℕ → List (Σ a, Item D a)
   | .inl .not => [⟨_, .not⟩]
   | .inl .takeOut => [⟨_, .takeOut⟩]
   | .inr n => [⟨_, .trace n⟩]
-
-/-- Assignments of days to indices. -/
-def assignments {D : Type} :
-    Assignments ((.base .g : Ty Atom).Dom (Atom.Dom D)) (Ty.Dom (Atom.Dom D)) (.base .e) :=
-  ⟨fun i n ↦ i n, fun i n v ↦ Function.update i n v, fun F ↦ F⟩
 
 variable {D W : Type}
 
@@ -245,25 +241,24 @@ variable (P : W → D →. Prop) (R : D → W → Prop) (w : W) (g : ℕ → D) 
 open Classical in
 /-- The lexicon of (26) at a world `w`, where *take out* is the partial predicate `P w` enriched
 by `R` (62). -/
-noncomputable def Item.val : {a : Ty Atom} → Item D a → a.Dom (Atom.Dom D)
-  | _, .day d => d
-  | _, .not => fun p ↦ ¬ p
-  | _, .takeOut => fun d ↦ if R d w then P w d else Part.some False
+noncomputable def Item.val : {a : Ty Atom} → Item D a → (ℕ → D) → a.Dom (Atom.Dom D)
+  | _, .day d => fun _ ↦ d
+  | _, .not => fun _ p ↦ ¬ p
+  | _, .takeOut => fun _ d ↦ if R d w then P w d else Part.some False
   | _, .trace n => fun i ↦ i n
 
-/-- The meanings of a tree at a world, by functional application through effects and
-abstraction over an index. -/
-noncomputable def meanings (t : Tree Unit (Word D)) : List (Σ a : Ty Atom, a.Dom (Atom.Dom D)) :=
-  match t.skeleton (fun _ ↦ false) with
-  | some s => (effectDriven .application (.base .g) (.base .e)).values
-      (M := effectGrammar.structure (Abstraction.eval assignments)) (Item.val P R w) items s
-  | none => []
+/-- The meanings of a tree at a world, relative to an assignment of days to indices: by
+functional application through effects, and abstraction over an index. -/
+noncomputable def meanings (t : Tree Unit (Word D)) :
+    List (Σ a : Ty Atom, (ℕ → D) → a.Dom (Atom.Dom D)) :=
+  t.values ((effectDriven .application).withAbstraction fun _ ↦ .base .e)
+    (Grammar.withAbstraction.structure (Assignments.total (Atom.Dom D) fun _ ↦ .base .e))
+    (Item.val P R w) items
 
 open Classical in
 -- (67): the clause has one meaning, a partial truth value at each assignment.
 theorem meanings_clause : meanings P R w (clause d) =
-    [⟨.comp (.R (.base .g)) (.comp .M .t),
-      fun _ ↦ (if R d w then P w d else Part.some False).map Not⟩] :=
+    [⟨.comp .M .t, fun _ ↦ (if R d w then P w d else Part.some False).map Not⟩] :=
   rfl
 
 open Classical in
@@ -278,7 +273,7 @@ theorem ofPart_clause :
 /-- A clause fails of its presupposition at an assignment when it has a meaning undefined
 there. -/
 def PresupFailure : Prop :=
-  ∃ v, (⟨.comp (.R (.base .g)) (.comp .M .t), v⟩ : Σ a : Ty Atom, a.Dom (Atom.Dom D)) ∈
+  ∃ v, (⟨.comp .M .t, v⟩ : Σ a : Ty Atom, (ℕ → D) → a.Dom (Atom.Dom D)) ∈
     meanings P R w (clause d) ∧ ¬ (v g).Dom
 
 /-- The clause fails exactly where the enrichment holds and the predicate is undefined ((68),
