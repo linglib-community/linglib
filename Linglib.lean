@@ -886,7 +886,6 @@ import Linglib.Syntax.Minimalist.Linearization.Externalization
 import Linglib.Syntax.Minimalist.Linearization.Replay
 import Linglib.Syntax.Minimalist.Probe.Basic
 import Linglib.Syntax.Minimalist.Probe.Phi
-import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.SyntacticObject.Lift

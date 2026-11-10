@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Probe.Profile
+public import Linglib.Syntax.Minimalist.Locality.Horizon
 public import Linglib.Syntax.Minimalist.Clause.Spine
 
 /-!
@@ -46,7 +46,7 @@ namespace Keine2020
 open Minimalist
 
 /-- A probe's row of a transparency table over clause sizes. -/
-def row (sizes : List ClauseSpine) (p : Probe.Profile) : List Bool :=
+def row (sizes : List ClauseSpine) (p : HorizonSetting) : List Bool :=
   sizes.map fun s ↦ decide (p.TransparentTo s)
 
 /-- The Hindi nominalized clause `[V, v, T, Nmlz]`, a clause type distinct from CP (Chapter 2). -/
@@ -66,13 +66,13 @@ theorem sizes_le :
 /-- A language's probe settings for the four operations of the transparency tables. -/
 structure LanguageProbeConfig where
   /-- The φ-agreement probe. -/
-  phi : Probe.Profile
+  phi : HorizonSetting
   /-- The A-movement probe. -/
-  aMove : Probe.Profile
+  aMove : HorizonSetting
   /-- The wh-licensing probe. -/
-  wh : Probe.Profile
+  wh : HorizonSetting
   /-- The Ā-movement or topicalization probe. -/
-  ābar : Probe.Profile
+  ābar : HorizonSetting
   deriving Repr
 
 /-- The Hindi probes of (219) put A-movement and φ-agreement on T⁰ with horizon T, wh-licensing
@@ -87,14 +87,14 @@ def LanguageProbeConfig.english : LanguageProbeConfig :=
   { phi := ⟨.T, some .C⟩, aMove := ⟨.T, some .C⟩, wh := ⟨.C, none⟩, ābar := ⟨.C, none⟩ }
 
 /-- The English extraposition probe of (241), on T⁰ with horizon T. -/
-def englishExtr : Probe.Profile := ⟨.T, some .T⟩
+def englishExtr : HorizonSetting := ⟨.T, some .T⟩
 
 /-- The Lubukusu A-probe of (300), without horizon, so that it hyperraises out of finite
 clauses. -/
-def lubukusuAProbe : Probe.Profile := ⟨.T, none⟩
+def lubukusuAProbe : HorizonSetting := ⟨.T, none⟩
 
 /-- The default horizon of a probe on `X⁰` is `X` itself ((307)). -/
-def defaultHorizon (probeHead : Cat) : Probe.Profile := ⟨probeHead, some probeHead⟩
+def defaultHorizon (head : Cat) : HorizonSetting := ⟨head, some head⟩
 
 /-! ### Hindi (Chapters 2 and 3) -/
 
@@ -143,13 +143,13 @@ theorem english_table :
 /-- The German probes of (367) put scrambling on T⁰ with horizon T, relativization on C⁰ with
 horizon C, wh-movement into a verb-final clause on C⁰ with horizon Force, and topicalization on
 Force⁰ without a horizon. -/
-def germanScr : Probe.Profile := ⟨.T, some .T⟩
+def germanScr : HorizonSetting := ⟨.T, some .T⟩
 
-def germanRel : Probe.Profile := ⟨.C, some .C⟩
+def germanRel : HorizonSetting := ⟨.C, some .C⟩
 
-def germanWh : Probe.Profile := ⟨.C, some .Force⟩
+def germanWh : HorizonSetting := ⟨.C, some .Force⟩
 
-def germanTop : Probe.Profile := ⟨.Force, none⟩
+def germanTop : HorizonSetting := ⟨.Force, none⟩
 
 /-- The German clause sizes, whose verb-second clauses project ForceP above CP. -/
 def germanSizes : List ClauseSpine := [.vP, .tP, .cP, forceP]
@@ -165,14 +165,14 @@ theorem german_table :
 /-! ### Movement–agreement mismatches (Section 3.4.5) -/
 
 /-- The Itelmen probes of (269), φ-agreement with horizon T and movement without a horizon. -/
-def itelmenPhi (head : Cat) : Probe.Profile := ⟨head, some .T⟩
+def itelmenPhi (head : Cat) : HorizonSetting := ⟨head, some .T⟩
 
-def itelmenMove (head : Cat) : Probe.Profile := ⟨head, none⟩
+def itelmenMove (head : Cat) : HorizonSetting := ⟨head, none⟩
 
 /-- The Tsez probes of (271), φ-agreement with horizon Force and movement with horizon Top. -/
-def tsezPhi (head : Cat) : Probe.Profile := ⟨head, some .Force⟩
+def tsezPhi (head : Cat) : HorizonSetting := ⟨head, some .Force⟩
 
-def tsezMove (head : Cat) : Probe.Profile := ⟨head, some .Top⟩
+def tsezMove (head : Cat) : HorizonSetting := ⟨head, some .Top⟩
 
 /-- The Tsez clause sizes above TP are TopP and ForceP, which requires TopP below it. -/
 def tsezTopP : ClauseSpine := ⟨[.V, .v, .T, .Top]⟩
@@ -194,21 +194,21 @@ theorem mismatches (head : Cat) :
 
 -- (274), (278)
 theorem vacuous_on_C :
-    ∀ h ∈ ClauseSpine.tP, (⟨.C, some h⟩ : Probe.Profile).IsVacuousIn .cP := by
+    ∀ h ∈ ClauseSpine.tP, (⟨.C, some h⟩ : HorizonSetting).IsVacuousIn .cP := by
   decide
 
 /-- (279a), location to horizon: a probe on T⁰, C⁰ or Force⁰ with a horizon among the
 projections below it is vacuous. -/
 theorem hlt_location_to_horizon :
-    (∀ h ∈ ClauseSpine.vP, (⟨.T, some h⟩ : Probe.Profile).IsVacuousIn forceP) ∧
-      (∀ h ∈ ClauseSpine.tP, (⟨.C, some h⟩ : Probe.Profile).IsVacuousIn forceP) ∧
-      ∀ h ∈ ClauseSpine.cP, (⟨.Force, some h⟩ : Probe.Profile).IsVacuousIn forceP := by
+    (∀ h ∈ ClauseSpine.vP, (⟨.T, some h⟩ : HorizonSetting).IsVacuousIn forceP) ∧
+      (∀ h ∈ ClauseSpine.tP, (⟨.C, some h⟩ : HorizonSetting).IsVacuousIn forceP) ∧
+      ∀ h ∈ ClauseSpine.cP, (⟨.Force, some h⟩ : HorizonSetting).IsVacuousIn forceP := by
   decide
 
 -- (279b)
 theorem hlt_horizon_to_location {s : ClauseSpine} {c d h : Cat}
-    (hc : (⟨c, some h⟩ : Probe.Profile).IsVacuousIn s) (hd : c ∈ s.below d) :
-    (⟨d, some h⟩ : Probe.Profile).IsVacuousIn s :=
+    (hc : (⟨c, some h⟩ : HorizonSetting).IsVacuousIn s) (hd : c ∈ s.below d) :
+    (⟨d, some h⟩ : HorizonSetting).IsVacuousIn s :=
   hc.of_mem_below hd
 
 -- (219), (241), (367), (279)
@@ -224,12 +224,12 @@ T⁰ probes, English extraposition and German scrambling (307). -/
 theorem default_horizon_strictest :
     (∀ (X : Cat) (s : ClauseSpine), ¬ (defaultHorizon X).IsVacuousIn s) ∧
       (∀ (X h : Cat) (s : ClauseSpine), h ∈ s.below X →
-        (⟨X, some h⟩ : Probe.Profile).IsVacuousIn s) ∧
+        (⟨X, some h⟩ : HorizonSetting).IsVacuousIn s) ∧
       LanguageProbeConfig.hindi.phi = defaultHorizon .T ∧
       englishExtr = defaultHorizon .T ∧
       germanScr = defaultHorizon .T :=
-  ⟨fun _ _ ↦ Probe.Profile.not_isVacuousIn_mk_self,
-    fun _ _ _ ↦ Probe.Profile.isVacuousIn_mk_some.2, rfl, rfl, rfl⟩
+  ⟨fun _ _ ↦ HorizonSetting.not_isVacuousIn_mk_self,
+    fun _ _ _ ↦ HorizonSetting.isVacuousIn_mk_some.2, rfl, rfl, rfl⟩
 
 /-! ### Variation and improper movement (Sections 3.6, 3.4.3, 6.2) -/
 
@@ -242,7 +242,7 @@ theorem a_movement_chain (s : ClauseSpine) (hs : Cat.C ∈ s → Cat.T ∈ s) :
   simpa [LanguageProbeConfig.hindi, LanguageProbeConfig.english, lubukusuAProbe] using mt hs
 
 theorem improper_movement (h : Cat) (hh : h ∈ ClauseSpine.cP) :
-    ¬ (⟨.T, some h⟩ : Probe.Profile).TransparentTo ClauseSpine.cP := by
+    ¬ (⟨.T, some h⟩ : HorizonSetting).TransparentTo ClauseSpine.cP := by
   simpa using hh
 
 -- (300)

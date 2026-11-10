@@ -3,7 +3,6 @@ module
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
 public import Linglib.Syntax.Minimalist.Locality.Horizon
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
-public import Linglib.Syntax.Minimalist.Probe.Profile
 public import Linglib.Data.Examples.AissenPolian2025
 public import Linglib.Data.Examples.Readers
 
@@ -17,8 +16,8 @@ possessive's D layer, an agent, a specific subject or theme, or an occupied Spec
 it. Hence only non-specific possessums strand, and the possessor that reaches Spec,TP is the
 ψ-subject of a categorical judgment.
 
-Nominal opacity is the profile `nominalOpacity` read through `Invisible`, the positions behind the
-probe's horizon (`Probe.Profile.cut`) under the raising head function, and C⁰'s wh-probe searches
+Nominal opacity is the horizon setting `nominalOpacity` read through `Invisible`, the positions behind the
+probe's horizon (`HorizonSetting.cut`) under the raising head function, and C⁰'s wh-probe searches
 short of them (`whGoals`).
 Attract Closest is `dGoals`, the positional search for D leaves on the paper's structures,
 `judgment` reads the judgment type off the same search, and the paper's examples are the rows,
@@ -47,30 +46,30 @@ open Minimalist SyntacticObject LinearizedSyntacticObject
 
 /-- Nominal opacity: the wh-probe on C⁰ has every node in the extended projection of N⁰ as its
 horizon, `[wh]C⁰ ⊣‖ N`. -/
-def nominalOpacity : Probe.Profile := ⟨.C, some .N⟩
+def nominalOpacity : HorizonSetting := ⟨.C, some .N⟩
 
 /-- The [EPP:D] probe on T⁰, without horizon. -/
-def dProbeT : Probe.Profile := ⟨.T, none⟩
+def dProbeT : HorizonSetting := ⟨.T, none⟩
 
 /-- The [EPP:D] probe on Appl⁰, without horizon. -/
-def dProbeAppl : Probe.Profile := ⟨.Appl, none⟩
+def dProbeAppl : HorizonSetting := ⟨.Appl, none⟩
 
 /-- The [EPP:WH] probe on D⁰ that drives pied-piping with inversion, without horizon. -/
-def secondaryWh : Probe.Profile := ⟨.D, none⟩
+def secondaryWh : HorizonSetting := ⟨.D, none⟩
 
-/-- `target` is invisible in `t` to a probe with profile `p` on `probe` when an occurrence of it
-lies behind the profile's horizon for an occurrence of the probe. -/
-def Invisible (p : Probe.Profile) (t : LinearizedSyntacticObject) (probe target : SyntacticObject) :
-    Prop :=
+/-- `target` is invisible in `t` to a probe with setting `p` on `probe` when an occurrence of it
+lies behind its horizon for an occurrence of the probe. -/
+def Invisible (p : HorizonSetting) (t : LinearizedSyntacticObject)
+    (probe target : SyntacticObject) : Prop :=
   ∃ a q : t.val.Positions,
     t.termAt a = probe ∧ t.termAt q = target ∧ q.val ∈ p.cut .raising t a.val
 
-instance (p : Probe.Profile) (t : LinearizedSyntacticObject) (probe target : SyntacticObject) :
+instance (p : HorizonSetting) (t : LinearizedSyntacticObject) (probe target : SyntacticObject) :
     Decidable (Invisible p t probe target) := by
   unfold Invisible; infer_instance
 
 theorem not_invisible_of_horizon_none (t : LinearizedSyntacticObject)
-    (probe target : SyntacticObject) {p : Probe.Profile} (hp : p.horizon = none) :
+    (probe target : SyntacticObject) {p : HorizonSetting} (hp : p.horizon = none) :
     ¬ Invisible p t probe target := by
   obtain ⟨head, _⟩ := p
   subst hp

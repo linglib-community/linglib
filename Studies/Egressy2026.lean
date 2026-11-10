@@ -8,7 +8,7 @@ public import Linglib.Fragments.Hungarian.Pronouns
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
-public import Linglib.Syntax.Minimalist.Probe.Profile
+public import Linglib.Syntax.Minimalist.Locality.Horizon
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -390,7 +390,7 @@ theorem ex18_predicted : Agrees ex_18 "deepest " ⟦past⟧ := by decide
 theorem resMovement_blocked_by_TP : ¬ WilliamsCycle .V .T := by decide +kernel
 
 /-- Sequence of Tense as a probe of [keine-2020]: a probe on T whose horizon is Say. -/
-def sotProbe : Probe.Profile := ⟨.T, some .Say⟩
+def sotProbe : HorizonSetting := ⟨.T, some .Say⟩
 
 theorem sotProbe_clauseTypes :
     sotProbe.TransparentTo .tP ∧
