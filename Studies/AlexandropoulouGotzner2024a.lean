@@ -31,8 +31,8 @@ and [Krifka's does not, whatever the cost of the covert morpheme](##krifka_refut
 * A cell of the design is represented by the pair of its example item, *gigantic* for the relative
   adjectives and *pristine* for the absolute ones.
 * Communicated ranges are sets of Krifka's four regions, ordered along the scale. Horn's
-  antonyms take the contrary denotation with thresholds at the two border regions, which form the
-  semantic gap; Krifka's take the contradictory one.
+  antonyms have the outer regions as extensions and the two border regions as their semantic
+  gap; Krifka's are contradictory.
 * NACH is a complexity cost of the negative pole. Weak optimality returns Krifka's symmetric
   quadruplet whenever each negated form costs more than the simple form of the other pole
   (`Krifka2007b.superoptimal_quadruplet_iff`), whatever the negative pole costs besides, since it
@@ -55,7 +55,7 @@ and [Krifka's does not, whatever the cost of the covert morpheme](##krifka_refut
 namespace AlexandropoulouGotzner2024a
 
 open Krifka2007b English.Adjectives Data.Statistics
-open AntonymForm (contraryDenotation contraryDenotation_notNegative_diff_positive)
+open AntonymForm (denotation denotation_negative_sdiff)
 
 variable {t : AdjectiveType} {s : Strength}
 
@@ -100,21 +100,27 @@ instance (r : Ranges) : Decidable r.Symmetric := Fintype.decidableForallFintype
 def Ranges.asymmetry (r : Ranges) : Asymmetry :=
   if r.Symmetric then .symmetric else .asymmetric
 
-/-- Horn's antonyms are contrary, with the thresholds of `hornPair`, whose gap is the two border
-regions. -/
-def hornPair : ThresholdPair Region := ⟨.plateauHigh, .plateauLow⟩
+/-- Horn's antonyms are contrary: the extensions of the two poles are the outer regions, and the
+two border regions are their extension gap. -/
+def hornExt : Polarity → Set Region
+  | .positive => Set.Ioi .plateauHigh
+  | .negative => Set.Iio .plateauLow
+
+instance : ∀ p, DecidablePred (· ∈ hornExt p)
+  | .positive => fun r ↦ inferInstanceAs (Decidable (Region.plateauHigh < r))
+  | .negative => fun r ↦ inferInstanceAs (Decidable (r < Region.plateauLow))
 
 /-- Horn's ranges R-strengthen the negated positive to the antonym it conceals, a face-threatening
 statement, and Q/R-restrict the double negative to what its simpler antonym could not describe. -/
 def hornRanges : Ranges
-  | .notPositive => (contraryDenotation hornPair .negative).toFinset
-  | .notNegative => (contraryDenotation hornPair .notNegative \
-      contraryDenotation hornPair .positive).toFinset
-  | f => (contraryDenotation hornPair f).toFinset
+  | .notPositive => (hornExt .negative).toFinset
+  | .notNegative => (denotation hornExt .notNegative \ hornExt .positive).toFinset
+  | f => (denotation hornExt f).toFinset
 
 -- (7), p. 376
-theorem coe_hornRanges_notNegative : (hornRanges .notNegative : Set Region) = hornPair.gap :=
-  (Set.coe_toFinset _).trans (contraryDenotation_notNegative_diff_positive _)
+theorem coe_hornRanges_notNegative :
+    (hornRanges .notNegative : Set Region) = (hornExt .positive ∪ hornExt .negative)ᶜ :=
+  (Set.coe_toFinset _).trans (denotation_negative_sdiff hornExt .negative)
 
 /-- Krifka's ranges are the quadruplet that weak optimality selects
 (`Krifka2007b.superoptimal_quadruplet_iff`). -/

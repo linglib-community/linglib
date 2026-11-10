@@ -16,13 +16,12 @@ their truth-conditionally equivalent simple antonyms (*clean*, *dirty*).
 
 The relative pattern is Horn's: R-strengthening of *not large* needs no
 competitor, while the middling reading of *not small* rides on the semantic gap.
-For absolutes the paper proposes that competition among equivalent forms invites
-a precision-level reasoning: *clean* is read at a high precision, opening a gap
-the complex forms fill. On a two-threshold scale this is exactly the observed
-profile — both negated weak forms come apart from their simple antonyms
-(`relative_like`) yet the residues are mirror images (`residues_symmetric`),
-whereas at a single threshold neither distinction exists
-(`AntonymForm.contradictoryDenotation_simple`).
+For absolutes the paper keeps the standard semantics, on which the pair leaves no gap, and
+proposes a division of pragmatic labour at a level of precision: *clean* is read at a high
+precision, like *pristine*, and *dirty* like *filthy*, so that [each negated form is used apart
+from its simple antonym](##negated_apart), the two [on opposite sides of the
+border](##dividedUse_subset), whereas [without the precise reading neither has a use of its
+own](##AntonymForm.dividedUse_smul_self).
 
 ## References
 
@@ -38,25 +37,23 @@ namespace AlexandropoulouGotzner2024b
 
 open AlexandropoulouGotzner2024a
 
-/-! ### Precision-level gap -/
+/-! ### Division of labour at a level of precision -/
 
-variable {D : Type*} [LinearOrder D] (tp : ThresholdPair D)
+variable {D : Type*} (U : Set D) (core : Polarity → Set D)
 
-theorem residues_symmetric :
-    AntonymForm.contraryDenotation tp .notNegative \
-        AntonymForm.contraryDenotation tp .positive =
-      AntonymForm.contraryDenotation tp .notPositive \
-        AntonymForm.contraryDenotation tp .negative :=
-  (AntonymForm.contraryDenotation_notNegative_diff_positive tp).trans
-    (AntonymForm.contraryDenotation_notPositive_diff_negative tp).symm
+/-- A negated absolute is used apart from the simple antonym it is truth-conditionally equivalent
+to, *not dirty* from *clean* and *not clean* from *dirty* (p. 28). -/
+theorem negated_apart (p : Polarity) :
+    Disjoint (AntonymForm.dividedUse (· • U) core ⟨p, .negative⟩)
+      (AntonymForm.dividedUse (· • U) core ⟨.negative * p, .positive⟩) :=
+  AntonymForm.disjoint_dividedUse_flip ..
 
-theorem relative_like (h : tp.neg ≤ tp.pos) :
-    (AntonymForm.contraryDenotation tp .notNegative \
-        AntonymForm.contraryDenotation tp .positive).Nonempty ∧
-      (AntonymForm.contraryDenotation tp .notPositive \
-        AntonymForm.contraryDenotation tp .negative).Nonempty := by
-  rw [← residues_symmetric, and_self, AntonymForm.contraryDenotation_notNegative_diff_positive]
-  exact tp.gap_nonempty_iff.2 h
+/-- *Not dirty* stays on the clean side of the border and *not clean* on the dirty side, so the
+two negated forms communicate different ranges (p. 28). -/
+theorem dividedUse_subset :
+    AntonymForm.dividedUse (· • U) core .notNegative ⊆ U ∧
+      AntonymForm.dividedUse (· • U) core .notPositive ⊆ Uᶜ :=
+  ⟨fun _ h ↦ not_not.1 h.1, fun _ h ↦ h.1⟩
 
 /-! ### Rows -/
 

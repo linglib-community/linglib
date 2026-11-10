@@ -113,9 +113,6 @@ theorem neither_defective [NoMaxOrder D] (hμ : ∀ w' ∈ Acc w, μ x w' = μ x
   rw [acceptable_iff x w hμ]
   simp [Unacceptable]
 
-theorem good_gap (tp : ThresholdPair D) (h : tp.neg ≤ tp.pos) : tp.gap.Nonempty :=
-  tp.gap_nonempty_iff.2 h
-
 /-! ### Against the minimum-standard analysis -/
 
 theorem comparative_entails_minStandard [OrderBot D] {y : E} (h : μ y w < μ x w) :
