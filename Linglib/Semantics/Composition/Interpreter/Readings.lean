@@ -7,9 +7,9 @@ public import Mathlib.Data.Set.Image
 # Readings over a lexicon of sets
 
 A word may have infinitely many items, as a coordinator has one at every conjoinable type. The
-readings of a structure are then a set: the values of the rules its nodes admit at readings of
-their daughters. Where each word has finitely many items they are [the values of the
-derivations](##Interpreter.mem_readings_iff_mem_values).
+derivations an interpreter admits over a structure are then a set, which says what the search
+over a lexicon of lists is to find, and [it finds exactly those](##Interpreter.mem_derivs_iff).
+The readings of a structure are the values of these derivations.
 
 ## References
 
@@ -27,31 +27,54 @@ open Grammar
 variable {T : Type u} {G : Grammar.{u, v} T} {N : Type v} {L : Type w} {W : T → Type w}
   {D : T → Type x}
 
-/-- The values of a bare structure when a leaf may be any of a set of items. -/
-def readings (I : Interpreter G N) [M : G.language.Structure D] (ρ : ∀ {a : T}, W a → D a)
-    (lex : L → Set (Σ a, W a)) : Skeleton N L → Set (Σ a, D a)
-  | .leaf x => (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex x
-  | .unary n s => {d | ∃ d₁ ∈ I.readings ρ lex s, ∃ r ∈ I.unary n d₁.1,
-      d = ⟨r.1, M.funMap (.unary r.2) d₁.2⟩}
-  | .binary n s₁ s₂ => {d | ∃ d₁ ∈ I.readings ρ lex s₁, ∃ d₂ ∈ I.readings ρ lex s₂,
-      ∃ m ∈ I.binary n d₁.1 d₂.1, d = ⟨m.1, M.funMap (.binary m.2) (d₁.2, d₂.2)⟩}
+/-- The derivations an interpreter admits over a bare structure when a leaf may be any of a set
+of items: the specification that `Interpreter.derivs` computes for a lexicon of lists. -/
+def derivations (I : Interpreter G N) (lex : L → Set (Σ a, W a)) :
+    Skeleton N L → Set (Σ a, Deriv G W a)
+  | .leaf x => (fun p ↦ ⟨p.1, .leaf p.2⟩) '' lex x
+  | .unary n s => {d | ∃ d₁ ∈ I.derivations lex s, ∃ r ∈ I.unary n d₁.1,
+      d = ⟨r.1, .unary r.2 d₁.2⟩}
+  | .binary n s₁ s₂ => {d | ∃ d₁ ∈ I.derivations lex s₁, ∃ d₂ ∈ I.derivations lex s₂,
+      ∃ m ∈ I.binary n d₁.1 d₂.1, d = ⟨m.1, .binary m.2 d₁.2 d₂.2⟩}
 
-/-- Where each leaf has finitely many items, the readings are the values. -/
-theorem mem_readings_iff_mem_values {I : Interpreter G N} [M : G.language.Structure D]
-    {ρ : ∀ {a : T}, W a → D a} {lex : L → List (Σ a, W a)} {d : Σ a, D a} :
-    ∀ {s : Skeleton N L}, d ∈ I.readings ρ (fun x ↦ {p | p ∈ lex x}) s ↔ d ∈ I.values ρ lex s
-  | .leaf x => by simp [readings, values, derivs, eq_comm]
+/-- The derivations an interpreter finds are sound and complete: they are the derivations it
+admits. -/
+theorem mem_derivs_iff {I : Interpreter G N} {lex : L → List (Σ a, W a)}
+    {d : Σ a, Deriv G W a} :
+    ∀ {s : Skeleton N L}, d ∈ I.derivs lex s ↔ d ∈ I.derivations (fun x ↦ {p | p ∈ lex x}) s
+  | .leaf x => by simp [derivs, derivations, eq_comm]
   | .unary n s => by
-    simp only [readings, Set.mem_ofPred_eq, mem_readings_iff_mem_values (s := s)]
-    simp only [values, derivs, List.mem_map, List.mem_flatMap]
-    constructor
-    · rintro ⟨_, ⟨⟨a, e⟩, h, rfl⟩, ⟨b, r⟩, hr, rfl⟩
-      exact ⟨_, ⟨⟨a, e⟩, h, ⟨b, r⟩, hr, rfl⟩, rfl⟩
-    · rintro ⟨_, ⟨⟨a, e⟩, h, ⟨b, r⟩, hr, rfl⟩, rfl⟩
-      exact ⟨_, ⟨⟨a, e⟩, h, rfl⟩, ⟨b, r⟩, hr, rfl⟩
+    simp only [derivs, derivations, List.mem_flatMap, List.mem_map, Set.mem_ofPred_eq,
+      ← mem_derivs_iff (s := s), eq_comm]
   | .binary n s₁ s₂ => by
-    simp only [readings, Set.mem_ofPred_eq, mem_readings_iff_mem_values (s := s₁),
-      mem_readings_iff_mem_values (s := s₂), mem_values_binary]
+    simp only [derivs, derivations, List.mem_flatMap, List.mem_map, Set.mem_ofPred_eq,
+      ← mem_derivs_iff (s := s₁), ← mem_derivs_iff (s := s₂), eq_comm]
+
+/-- The readings of a bare structure when a leaf may be any of a set of items: the values of the
+derivations over it. -/
+def readings (I : Interpreter G N) [M : G.language.Structure D] (ρ : ∀ {a : T}, W a → D a)
+    (lex : L → Set (Σ a, W a)) (s : Skeleton N L) : Set (Σ a, D a) :=
+  (fun d ↦ ⟨d.1, d.2.realize M ρ⟩) '' I.derivations lex s
+
+variable {I : Interpreter G N} [M : G.language.Structure D] {ρ : ∀ {a : T}, W a → D a}
+  {d : Σ a, D a}
+
+@[simp] theorem readings_leaf (lex : L → Set (Σ a, W a)) (x : L) :
+    I.readings ρ lex (.leaf x) = (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex x := by
+  simp [readings, derivations, Set.image_image]
+
+/-- A reading of a binary node is the value of a rule the node admits, at readings of its
+daughters. -/
+theorem mem_readings_binary {lex : L → Set (Σ a, W a)} {n : N} {s₁ s₂ : Skeleton N L} :
+    d ∈ I.readings ρ lex (.binary n s₁ s₂) ↔
+      ∃ d₁ ∈ I.readings ρ lex s₁, ∃ d₂ ∈ I.readings ρ lex s₂,
+        ∃ m ∈ I.binary n d₁.1 d₂.1, d = ⟨m.1, M.funMap (.binary m.2) (d₁.2, d₂.2)⟩ := by
+  simp only [readings, derivations, Set.mem_image, Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨_, ⟨e₁, h₁, e₂, h₂, m, hm, rfl⟩, rfl⟩
+    exact ⟨_, ⟨e₁, h₁, rfl⟩, _, ⟨e₂, h₂, rfl⟩, m, hm, rfl⟩
+  · rintro ⟨_, ⟨e₁, h₁, rfl⟩, _, ⟨e₂, h₂, rfl⟩, m, hm, rfl⟩
+    exact ⟨_, ⟨e₁, h₁, e₂, h₂, m, hm, rfl⟩, rfl⟩
 
 end Interpreter
 
@@ -74,7 +97,8 @@ variable (I : Interpreter G Node) (M : G.language.Structure D) (ρ : ∀ {a : T}
 
 /-- A word's readings are the values of the items it may be. -/
 @[simp] theorem readings_terminal (c : C) (w : L) :
-    (terminal c w).readings I M ρ lex island = (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex (.inl w) := rfl
+    (terminal c w).readings I M ρ lex island = (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex (.inl w) :=
+  Interpreter.readings_leaf _ _
 
 variable {I M ρ lex island}
 
@@ -86,7 +110,7 @@ theorem mem_readings_phrase_binary {c : C} {k : PhraseKind} {t₁ t₂ : Tree C 
         ∃ m ∈ I.binary (if island c then .island else .branch) d₁.1 d₂.1,
           d = ⟨m.1, M.funMap (.binary m.2) (d₁.2, d₂.2)⟩ := by
   simp only [readings, skeleton]
-  cases skeleton island t₁ <;> cases skeleton island t₂ <;> simp [Interpreter.readings]
+  cases skeleton island t₁ <;> cases skeleton island t₂ <;> simp [Interpreter.mem_readings_binary]
 
 /-- Under the type-driven interpreter, a reading of a binary node is the value of a rule of the
 grammar at readings of its daughters. -/
@@ -97,8 +121,6 @@ theorem mem_readings_typeDriven_phrase_binary [G.LocallyFinite] {M : G.language.
       ∃ d₁ ∈ t₁.readings (typeDriven G) M ρ lex island,
         ∃ d₂ ∈ t₂.readings (typeDriven G) M ρ lex island,
           ∃ (u : T) (m : G.Binary d₁.1 d₂.1 u), d = ⟨u, M.funMap (.binary m) (d₁.2, d₂.2)⟩ := by
-  rw [mem_readings_phrase_binary]
-  exact ⟨fun ⟨d₁, h₁, d₂, h₂, ⟨u, m⟩, _, h⟩ ↦ ⟨d₁, h₁, d₂, h₂, u, m, h⟩,
-    fun ⟨d₁, h₁, d₂, h₂, u, m, h⟩ ↦ ⟨d₁, h₁, d₂, h₂, ⟨u, m⟩, LocallyFinite.mem_binaryRules m, h⟩⟩
+  simp [mem_readings_phrase_binary, Sigma.exists]
 
 end PhraseStructure.Tree

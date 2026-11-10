@@ -254,6 +254,11 @@ def typeDriven (G : Grammar.{u, v} T) [G.LocallyFinite] : Interpreter G N where
   unary _ := LocallyFinite.unaryRules
   binary _ := LocallyFinite.binaryRules
 
+/-- The type-driven interpreter admits every binary rule of the grammar. -/
+@[simp] theorem mem_binary_typeDriven [G.LocallyFinite] {n : N} {l r : T}
+    (m : Σ u, G.Binary l r u) : m ∈ (typeDriven G : Interpreter G N).binary n l r :=
+  LocallyFinite.mem_binaryRules m.2
+
 /-- The derivations over a bare structure that an interpreter admits, given the typed items each
 word may be. -/
 def derivs (I : Interpreter G N) (lex : L → List (Σ a, W a)) :
