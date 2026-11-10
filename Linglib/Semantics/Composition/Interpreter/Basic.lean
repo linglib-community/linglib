@@ -25,6 +25,7 @@ derivations over a bare structure are found from the types alone.
 * `Interpreter.Grammar.sum`: two grammars together, with the structure a structure for each makes.
 * `Interpreter.Grammar.LocallyFinite`, `Interpreter.typeDriven`: a grammar whose rules for given
   daughters can be listed, and the interpreter that admits every rule that applies.
+* `Interpreter.Grammar.motherTypes`: the types the rules give the mother of two daughters.
 * `Interpreter.Grammar.Deriv`: the derivations of a type over typed lexical items.
 * `Interpreter.Grammar.Skeleton`, `Interpreter.Node`: a bare structure, and the labels a
   constituency tree gives its nodes.
@@ -117,6 +118,10 @@ class LocallyFinite (G : Grammar.{u, v} T) where
   mem_unaryRules {a b : T} (s : G.Unary a b) : ⟨b, s⟩ ∈ unaryRules a
   /-- Every binary rule is listed. -/
   mem_binaryRules {l r u : T} (m : G.Binary l r u) : ⟨u, m⟩ ∈ binaryRules l r
+
+/-- The types of the mothers that the rules of a grammar give two daughters. -/
+def motherTypes (G : Grammar.{u, v} T) [G.LocallyFinite] (l r : T) : List T :=
+  (LocallyFinite.binaryRules (G := G) l r).map (·.1)
 
 instance {H : Grammar.{u, v} T} [G.LocallyFinite] [H.LocallyFinite] : (G.sum H).LocallyFinite where
   unaryRules a := (LocallyFinite.unaryRules a).map (fun ⟨b, s⟩ ↦ ⟨b, .inl s⟩) ++

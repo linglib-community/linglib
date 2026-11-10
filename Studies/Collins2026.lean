@@ -6,7 +6,10 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Data.Examples.Collins2026
-public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Composition.Interpreter.Constituency
+public import Linglib.Semantics.Composition.Interpreter.Rules
+public import Linglib.Semantics.Composition.Interpreter.Sorts
+public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Syntax.Minimalist.Copy.Cut
 public import Linglib.Syntax.Minimalist.Workspace.Basic
@@ -25,7 +28,8 @@ holds of a condition read off the final object: a condition evaluated at [some e
 stage](##binds_at_earlier_stage) binds the anaphor with traces alone. With the copies kept, a
 derivation has a reading for each choice of the chains read low: read low, [the antecedent binds the
 anaphor](##binds_at_low_reading) in the fronted phrase's lower copy, and (15) has [both its scope
-readings](##scope_readings) through the composition engine. Both cut the quantifier phrase from the
+readings](##scope_readings) by Functional Application and abstraction. Both cut the quantifier
+phrase from the
 copy object, and [the low reading is no term](##scope_readings_cut) of the coproduct the book sends
 to the semantic interface, which leaves a trace at every cut.
 
@@ -57,7 +61,7 @@ to the semantic interface, which leaves a trace at every cut.
 
 namespace Collins2026
 
-open Minimalist Minimalist.Derivation Montague PhraseStructure
+open Minimalist Minimalist.Derivation Interpreter PhraseStructure
 
 /-! ### Reconstruction for Principle A -/
 
@@ -191,45 +195,61 @@ theorem toTree?_high : everyDidntScore.toTree? (·.id) ∅ = some highTree := by
 
 section Interpretation
 
+open Interpreter.Grammar
+
 variable {E : Type} (pl sc : Set E)
 
-/-- The lexicon of (15), *every* being the determiner of the quantification substrate, for a set of
-players and a set of those who scored. -/
-def lex (tok : LexicalItem.Token) : Option (Denotation E Unit) :=
-  if tok = every then
-    some ⟨(Ty.e ⇒ Ty.t) ⇒ (Ty.e ⇒ Ty.t) ⇒ Ty.t,
-      fun P Q ↦ Quantifier.Det.every {x | P x} {x | Q x}⟩
-  else if tok = player then some ⟨Ty.e ⇒ Ty.t, (· ∈ pl)⟩
-  else if tok = didnt then some ⟨Ty.t ⇒ Ty.t, Not⟩
-  else if tok = score then some ⟨Ty.e ⇒ Ty.t, (· ∈ sc)⟩
-  else none
+/-- The lexical items of (15) by type, and the trace of an index. -/
+inductive Item : Ty Base → Type
+  | every : Item .det
+  | player : Item .et
+  | didnt : Item (.t ⇒ .t)
+  | score : Item .et
+  | trace (n : ℕ) : Item .e
 
-theorem lex_every : lex pl sc every =
-    some ⟨(Ty.e ⇒ Ty.t) ⇒ (Ty.e ⇒ Ty.t) ⇒ Ty.t,
-      fun P Q ↦ Quantifier.Det.every {x | P x} {x | Q x}⟩ :=
-  ite_eq_left rfl
+/-- The item of a token of (15), and of a trace. -/
+def items : LexicalItem.Token ⊕ ℕ → List (Σ a, Item a)
+  | .inl tok =>
+    if tok = every then [⟨_, .every⟩]
+    else if tok = player then [⟨_, .player⟩]
+    else if tok = didnt then [⟨_, .didnt⟩]
+    else if tok = score then [⟨_, .score⟩]
+    else []
+  | .inr n => [⟨_, .trace n⟩]
 
-theorem lex_player : lex pl sc player = some ⟨Ty.e ⇒ Ty.t, (· ∈ pl)⟩ := by
-  rw [lex, ite_eq_right (by decide), ite_eq_left rfl]
+/-- The denotations of (15), *every* being the determiner of the quantification substrate, for a
+set of players and a set of those who scored. -/
+def Item.val : {a : Ty Base} → Item a → (ℕ → E) → a.Dom (Base.Dom E Unit)
+  | _, .every => fun _ P Q ↦ Quantifier.Det.every {x | P x} {x | Q x}
+  | _, .player => fun _ ↦ (· ∈ pl)
+  | _, .didnt => fun _ ↦ Not
+  | _, .score => fun _ ↦ (· ∈ sc)
+  | _, .trace n => fun g ↦ g n
 
-theorem lex_didnt : lex pl sc didnt = some ⟨Ty.t ⇒ Ty.t, Not⟩ := by
-  rw [lex, ite_eq_right (by decide), ite_eq_right (by decide), ite_eq_left rfl]
+/-- The denotations of a tree, by Functional Application and abstraction over an index. -/
+def meanings (t : Tree Unit LexicalItem.Token) :
+    List (Σ a : Ty Base, (ℕ → E) → a.Dom (Base.Dom E Unit)) :=
+  t.values ((typeDriven .application).withAbstraction fun _ ↦ .e)
+    (Grammar.withAbstraction.structure (Assignments.total (Base.Dom E Unit) fun _ ↦ .e))
+    (Item.val pl sc) items
 
-theorem lex_score : lex pl sc score = some ⟨Ty.e ⇒ Ty.t, (· ∈ sc)⟩ := by
-  rw [lex, ite_eq_right (by decide), ite_eq_right (by decide), ite_eq_right (by decide),
-    ite_eq_left rfl]
+theorem meanings_lowTree :
+    meanings pl sc lowTree = [⟨.t, fun _ ↦ ¬ Quantifier.Det.every pl sc⟩] :=
+  rfl
 
-/-- One derivation of (15) has both scope readings through the composition engine: read low, not
-every player scored, the reading the paper describes in (16); read high, every player failed to. -/
-theorem scope_readings (g : Assignment E) :
+theorem meanings_highTree :
+    meanings pl sc highTree = [⟨.t, fun _ ↦ Quantifier.Det.every pl scᶜ⟩] :=
+  rfl
+
+/-- One derivation of (15) has both scope readings: read low, not every player scored, the
+reading the paper describes in (16); read high, every player failed to. -/
+theorem scope_readings :
     (∃ t ∈ everyDidntScore.toTree? (·.id) {everyPlayer.toSyntacticObject},
-      t.interp (lex pl sc) g = some ⟨.t, ¬ Quantifier.Det.every pl sc⟩) ∧
+      meanings pl sc t = [⟨.t, fun _ ↦ ¬ Quantifier.Det.every pl sc⟩]) ∧
     (∃ t ∈ everyDidntScore.toTree? (·.id) ∅,
-      t.interp (lex pl sc) g = some ⟨.t, Quantifier.Det.every pl scᶜ⟩) := by
-  refine ⟨⟨lowTree, toTree?_low, ?_⟩, ⟨highTree, toTree?_high, ?_⟩⟩
-  · simp [lowTree, lex_every, lex_player, lex_didnt, lex_score, Mode.combine?]
-  · simp [highTree, lex_every, lex_player, lex_didnt, lex_score, Mode.combine?]
-    rfl
+      meanings pl sc t = [⟨.t, fun _ ↦ Quantifier.Det.every pl scᶜ⟩]) :=
+  ⟨⟨lowTree, toTree?_low, meanings_lowTree pl sc⟩,
+    ⟨highTree, toTree?_high, meanings_highTree pl sc⟩⟩
 
 /-- The two readings come apart when some player scored and another did not. -/
 example : ¬ Quantifier.Det.every (Set.univ : Set Bool) {true} ∧
