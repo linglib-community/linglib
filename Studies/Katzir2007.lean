@@ -3,7 +3,9 @@ module
 public import Linglib.Syntax.Cat
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Semantics.Alternatives.Symmetric
-public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Composition.Interpreter.Constituency
+public import Linglib.Semantics.Composition.Interpreter.Rules
+public import Linglib.Semantics.Composition.Interpreter.Sorts
 public import Linglib.Semantics.Quantification.Basic
 
 /-!
@@ -32,12 +34,12 @@ sentence is an alternative of the simpler (`moreThanWarmYesterday_mem_alternativ
 
 ## Implementation notes
 
-A sentence's truth conditions are its composition through `Tree.interp` over a lexicon reading a
-three-way and a four-way world type (`cakeLex`, `fruitLex`), and trees a lexicon does not interpret
-denote the contradiction, which never witnesses the principle. The engine composes binary nodes,
-so the trees are binary: a noun phrase is labelled by its noun, and a connective forms a clause with
-its second conjunct. The symmetric alternative places the conjunction of quantifiers at the
-determiner.
+The paper gives its sentences no denotations. Here a sentence's truth conditions are its
+composition by Functional Application over a lexicon reading a three-way and a four-way world type
+(`CakeItem.val`, `FruitItem.val`), and a tree with no derivation denotes the contradiction, which
+never witnesses the principle. Sisters compose pairwise, so the trees are binary: a noun phrase is
+labelled by its noun, and a connective forms a clause with its second conjunct. The symmetric
+alternative places the conjunction of quantifiers at the determiner.
 
 ## Errata
 
@@ -54,7 +56,7 @@ source (18), the lexicon alone, does bound size (`atMostAsComplex.numNodes_le`).
 
 @[expose] public section
 
-open PhraseStructure Tree Montague
+open PhraseStructure Tree Interpreter
 
 namespace Katzir2007
 
@@ -122,19 +124,18 @@ theorem someButNotAll_not_mem_alternatives :
   (by decide : ¬ ∀ s ∈ someButNotAllSentence.subtrees, ¬ (s.value.IsPhrase ∧ Tree.cat s = Cat.Conj))
     (phrase_preservation _ Cat.Conj source_lacks_conjP (by decide) h)
 
-/-- The proposition a sentence denotes over the worlds its lexicon reads, the contradiction where
-the lexicon does not interpret it. -/
-def truth {E V : Type} (lx : Word → Option (Denotation E V (ReaderT V Id)))
-    (g : Assignment E) (t : Tree Cat Word) : Set V :=
-  {v | ∃ q : V → Prop, Tree.interp lx g t = some ⟨.t, q⟩ ∧ q v}
+/-- The proposition a sentence denotes over the worlds its lexicon reads, given the denotations
+of a tree relative to a world: the contradiction where the tree has none of type `t`. -/
+def truth {E V : Type}
+    (meanings : Tree Cat Word → List (Σ a : Ty Base, V → a.Dom (Base.Dom E Unit)))
+    (t : Tree Cat Word) : Set V :=
+  {v | ∃ q : V → Prop, ⟨.t, q⟩ ∈ meanings t ∧ q v}
 
-theorem mem_truth {E V : Type} {lx : Word → Option (Denotation E V (ReaderT V Id))}
-    {g : Assignment E} {t : Tree Cat Word} {q : V → Prop} {v : V}
-    (h : Tree.interp lx g t = some ⟨.t, q⟩) : v ∈ truth lx g t ↔ q v :=
-  ⟨fun ⟨q', h', hv⟩ ↦ by
-    have hq : q = q' := eq_of_heq (Sigma.mk.inj_iff.1 (Option.some.inj (h.symm.trans h'))).2
-    subst hq
-    exact hv, fun hv ↦ ⟨q, h, hv⟩⟩
+theorem mem_truth {E V : Type}
+    {meanings : Tree Cat Word → List (Σ a : Ty Base, V → a.Dom (Base.Dom E Unit))}
+    {t : Tree Cat Word} {q : V → Prop} {v : V} (h : meanings t = [⟨.t, q⟩]) :
+    v ∈ truth meanings t ↔ q v := by
+  simp [truth, h]
 
 /-- How much of the cake John ate. -/
 inductive Cake
@@ -152,20 +153,41 @@ def Cake.eaten : Cake → Set Piece
   | .part => {.left}
   | .whole => {.left, .right}
 
-/-- The words of (25), a transitive verb taking its object as a quantifier. -/
-def cakeLex : Word → Option (Denotation Piece Cake (ReaderT Cake Id))
-  | .john => some ⟨.e, fun _ ↦ .john⟩
-  | .ate => some ⟨Ty.ett ⇒ Ty.et, fun c Q x ↦ x = .john ∧ Q c.eaten⟩
-  | .some_ => some ⟨Ty.det, fun _ ↦ Quantifier.Det.some⟩
-  | .all_ => some ⟨Ty.det, fun _ ↦ Quantifier.Det.every⟩
-  | .cake => some ⟨Ty.et, fun _ y ↦ y ≠ .john⟩
-  | .but_ => some ⟨Ty.det ⇒ Ty.det ⇒ Ty.det,
-      fun _ D D' A B ↦ D A B ∧ D' A B⟩
-  | .not_ => some ⟨Ty.det ⇒ Ty.det, fun _ D A B ↦ ¬ D A B⟩
-  | _ => none
+/-- The words of (25) by type, a transitive verb taking its object as a quantifier. -/
+inductive CakeItem : Ty Base → Type
+  | john : CakeItem .e
+  | ate : CakeItem (.ett ⇒ .et)
+  | some_ : CakeItem .det
+  | all_ : CakeItem .det
+  | cake : CakeItem .et
+  | but_ : CakeItem (.det ⇒ .det ⇒ .det)
+  | not_ : CakeItem (.det ⇒ .det)
+
+/-- The item of a word of (25). -/
+def cakeItems : Word ⊕ ℕ → List (Σ a, CakeItem a)
+  | .inl .john => [⟨_, .john⟩]
+  | .inl .ate => [⟨_, .ate⟩]
+  | .inl .some_ => [⟨_, .some_⟩]
+  | .inl .all_ => [⟨_, .all_⟩]
+  | .inl .cake => [⟨_, .cake⟩]
+  | .inl .but_ => [⟨_, .but_⟩]
+  | .inl .not_ => [⟨_, .not_⟩]
+  | _ => []
+
+/-- The denotations of the words of (25), relative to how much of the cake John ate. -/
+def CakeItem.val : {a : Ty Base} → CakeItem a → Cake → a.Dom (Base.Dom Piece Unit)
+  | _, .john => fun _ ↦ Piece.john
+  | _, .ate => fun c Q x ↦ x = .john ∧ Q c.eaten
+  | _, .some_ => fun _ ↦ Quantifier.Det.some
+  | _, .all_ => fun _ ↦ Quantifier.Det.every
+  | _, .cake => fun _ y ↦ y ≠ .john
+  | _, .but_ => fun _ D D' A B ↦ D A B ∧ D' A B
+  | _, .not_ => fun _ D A B ↦ ¬ D A B
 
 /-- The truth conditions of (25), by composition. -/
-abbrev cakeMeaning : Tree Cat Word → Set Cake := truth cakeLex fun _ ↦ Piece.john
+abbrev cakeMeaning : Tree Cat Word → Set Cake :=
+  truth fun t ↦ t.values (typeDriven .application) (Grammar.piStructure Cake) CakeItem.val
+    cakeItems
 
 private theorem some_eaten_iff {c : Cake} :
     Quantifier.Det.some {y | y ≠ Piece.john} c.eaten ↔ c ≠ .none := by
@@ -280,18 +302,38 @@ inductive Fruit
   | john | apple | pear
   deriving DecidableEq, Repr
 
-/-- The words of (26) and (27), the connectives coordinating clauses. -/
-def fruitLex : Word → Option (Denotation Fruit Fruits (ReaderT Fruits Id))
-  | .john => some ⟨.e, fun _ ↦ .john⟩
-  | .apple => some ⟨.e, fun _ ↦ .apple⟩
-  | .pear => some ⟨.e, fun _ ↦ .pear⟩
-  | .ate => some ⟨.e ⇒ .e ⇒ .t, fun f y x ↦ x = .john ∧ (y = .apple ∧ f.1 ∨ y = .pear ∧ f.2)⟩
-  | .or_ => some ⟨.t ⇒ .t ⇒ .t, fun _ p q ↦ p ∨ q⟩
-  | .and_ => some ⟨.t ⇒ .t ⇒ .t, fun _ p q ↦ p ∧ q⟩
-  | _ => none
+/-- The words of (26) and (27) by type, the connectives coordinating clauses. -/
+inductive FruitItem : Ty Base → Type
+  | john : FruitItem .e
+  | apple : FruitItem .e
+  | pear : FruitItem .e
+  | ate : FruitItem .eet
+  | or_ : FruitItem (.t ⇒ .t ⇒ .t)
+  | and_ : FruitItem (.t ⇒ .t ⇒ .t)
+
+/-- The item of a word of (26) and (27). -/
+def fruitItems : Word ⊕ ℕ → List (Σ a, FruitItem a)
+  | .inl .john => [⟨_, .john⟩]
+  | .inl .apple => [⟨_, .apple⟩]
+  | .inl .pear => [⟨_, .pear⟩]
+  | .inl .ate => [⟨_, .ate⟩]
+  | .inl .or_ => [⟨_, .or_⟩]
+  | .inl .and_ => [⟨_, .and_⟩]
+  | _ => []
+
+/-- The denotations of the words of (26) and (27), relative to which fruits John ate. -/
+def FruitItem.val : {a : Ty Base} → FruitItem a → Fruits → a.Dom (Base.Dom Fruit Unit)
+  | _, .john => fun _ ↦ Fruit.john
+  | _, .apple => fun _ ↦ Fruit.apple
+  | _, .pear => fun _ ↦ Fruit.pear
+  | _, .ate => fun f y x ↦ x = .john ∧ (y = .apple ∧ f.1 ∨ y = .pear ∧ f.2)
+  | _, .or_ => fun _ p q ↦ p ∨ q
+  | _, .and_ => fun _ p q ↦ p ∧ q
 
 /-- The truth conditions of (26) and (27), by composition. -/
-abbrev fruitMeaning : Tree Cat Word → Set Fruits := truth fruitLex fun _ ↦ Fruit.john
+abbrev fruitMeaning : Tree Cat Word → Set Fruits :=
+  truth fun t ↦ t.values (typeDriven .application) (Grammar.piStructure Fruits) FruitItem.val
+    fruitItems
 
 private abbrev ateFruit (y : Fruit) (f : Fruits) : Prop :=
   Fruit.john = .john ∧ (y = .apple ∧ f.1 = true ∨ y = .pear ∧ f.2 = true)

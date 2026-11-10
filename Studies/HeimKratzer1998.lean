@@ -753,8 +753,8 @@ variable {E W : Type}
 abbrev IVal (E W : Type) (a : Ty Base) : Type := W → a.Dom (Base.Dom E W)
 
 /-- Functional Application relative to a world. -/
-@[instance_reducible] def extensional : Grammar.application.language.Structure (IVal E W) :=
-  Grammar.structure nofun fun m x y w ↦ Application.eval _ m (x w) (y w)
+abbrev extensional : Grammar.application.language.Structure (IVal E W) :=
+  Grammar.piStructure W
 
 /-- Functional Application and Intensional Functional Application relative to a world: the
 first combines sisters at one world, and the second gives the function at a world the whole

@@ -44,6 +44,9 @@ to the semantic interface, which leaves a trace at every cut.
 * That a condition at an earlier stage recovers the binding is not the paper's claim. It applies the
   derivational binding condition Cole and Hermon use, and says nothing about whether such a
   condition is available to the framework the paper criticizes.
+* The paper gives (15) no denotations: it describes the reading with negation over the quantifier
+  and the copy structure (16). The determiner, negation and predicates interpreted here are the
+  standard ones.
 * The reading with no chain read low is the book's contraction with a binder the book does not have.
   The low reading deletes the higher copy, where the book removes only the lower one, so the two
   scope readings are the copy theory's, not the framework's.

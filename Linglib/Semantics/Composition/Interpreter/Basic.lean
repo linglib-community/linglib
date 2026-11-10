@@ -22,6 +22,8 @@ derivations over a bare structure are found from the types alone.
 * `Interpreter.Grammar`: the unary and binary rules over a type of semantic types.
 * `Interpreter.Grammar.language`, `Interpreter.Grammar.structure`: the many-sorted language of a
   grammar, and the structure that operations for its rules make.
+* `Interpreter.Grammar.piStructure`: values that depend on a parameter, the rules applying at
+  each value of it.
 * `Interpreter.Grammar.sum`: two grammars together, with the structure a structure for each makes.
 * `Interpreter.Grammar.LocallyFinite`, `Interpreter.typeDriven`: a grammar whose rules for given
   daughters can be listed, and the interpreter that admits every rule that applies.
@@ -93,6 +95,13 @@ inductive Sym (G : Grammar.{u, v} T) : Signature T → T → Type (max u v)
     (binary : ∀ {a b c : T}, G.Binary a b c → D a → D b → D c) {a b c : T} (m : G.Binary a b c)
     (p : D a × D b) : (Grammar.structure unary binary).funMap (.binary m) p = binary m p.1 p.2 :=
   rfl
+
+/-- The structure on values that depend on a parameter `A`, from a structure for the grammar:
+each rule applies at one value of the parameter. -/
+@[instance_reducible] def piStructure (A : Type*) [M : G.language.Structure D] :
+    G.language.Structure fun a ↦ A → D a :=
+  Grammar.structure (fun s v x ↦ M.funMap (.unary s) (v x))
+    fun m v w x ↦ M.funMap (.binary m) (v x, w x)
 
 /-- The rules of two grammars together. -/
 @[reducible] def sum (G H : Grammar.{u, v} T) : Grammar.{u, v} T where

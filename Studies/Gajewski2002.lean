@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Ty
+public import Linglib.Semantics.Composition.Interpreter.Sorts
 public import Linglib.Semantics.Quantification.Exceptive
 public import Linglib.Semantics.Quantification.Lindstrom
 public import Studies.BarwiseCooper1981
@@ -21,7 +21,7 @@ halves of the paper.
 
 The logical items are the denotations invariant under permutations of the domain, the
 criterion of van Benthem: a permutation of the entity domain lifts through the
-`Montague.Ty` hierarchy (`permLift`), and an item is logical when every lifted permutation
+type hierarchy (`permLift`), and an item is logical when every lifted permutation
 fixes it (`PermutationInvariant`). Truth-functional conjunction is fixed because the lift is
 the identity at type `t` (`permutationInvariant_and`), expletive *there*, which denotes the
 whole domain, is fixed, and the domain and the empty set are the only invariant properties
@@ -33,7 +33,7 @@ stipulated. Von Fintel's *but* is a logical item too (`permutationInvariant_but`
 
 The logical skeleton of a sentence replaces each maximal constituent without logical items by
 a distinct variable of its semantic type; a skeleton is a predicate on type-sorted assignments
-(`Skeleton`, domains by `Montague.Ty.Domain`), and a sentence is L-analytic when its skeleton
+(`Skeleton`, domains by `Interpreter.Ty.Domain`), and a sentence is L-analytic when its skeleton
 receives one truth value under every assignment (`Skeleton.IsLAnalytic`). The principle puts
 two analyses on firmer ground. Barwise and Cooper explained Milsark's definiteness restriction on
 *there*-sentences by the tautology a strong determiner produces there: the
@@ -54,10 +54,10 @@ concedes and `exceptiveSkeleton_most_not_isLAnalytic` states.
 
 ## Implementation notes
 
-* The paper's type hierarchy has `e`, `t` and function types only; `permLift` extends it to
-  the rest of `Montague.Ty` by the identity at the degree, cardinality, eventuality and world
-  sorts, so pointwise at intensions, with `Unit` as the inert index sort of the extensional
-  fragment.
+* The paper's type hierarchy has `e`, `t` and function types only; `permLift` extends it to the
+  other types by the identity at the degree, cardinality, eventuality and world sorts and at
+  computation types, so pointwise at intensions, with `Unit` as the inert index sort of the
+  extensional fragment.
 * The denotation of *but* is the paper's schema factored compositionally, but where the
   printed uniqueness clause reads `g ⊆ j` the least-exception schema it factors requires
   `f ⊆ j`, so `but` is `IsExceptionSet` with the arguments rearranged; the exceptive skeleton
@@ -97,7 +97,7 @@ concedes and `exceptiveSkeleton_most_not_isLAnalytic` states.
 
 namespace Gajewski2002
 
-open Montague Quantifier Quantifier.Det Quantifier.Exceptive
+open Interpreter Quantifier Quantifier.Det Quantifier.Exceptive
 open scoped Denotes
 
 variable {E : Type}
@@ -105,17 +105,12 @@ variable {E : Type}
 /-! ### Logical items by permutation invariance (§3.1) -/
 
 /-- A permutation of the entity domain lifts to every type (17), as the permutation itself at
-`e`, the identity at `t`, conjugation at `⟨a,b⟩`, and the image at a set of alternatives. -/
-def permLift (π : Equiv.Perm E) : ∀ ty : Ty, Equiv.Perm (Ty.Domain E Unit ty)
-  | .e => π
-  | .t => Equiv.refl _
-  | .d => Equiv.refl _
-  | .n => Equiv.refl _
-  | .v => Equiv.refl _
-  | .s => Equiv.refl _
+`e`, the identity at `t`, and conjugation at `⟨a,b⟩`. -/
+def permLift (π : Equiv.Perm E) : ∀ ty : Ty Base, Equiv.Perm (Ty.Domain E Unit ty)
+  | .base .e => π
+  | .t | .base .d | .base .n | .base .v | .base .s => Equiv.refl _
   | .fn a b => (permLift π a).arrowCongr (permLift π b)
-  | .comp (.reader ι) b => (permLift π ι).arrowCongr (permLift π b)
-  | .comp .set b => (permLift π b).setCongr
+  | .comp _ _ => Equiv.refl _
 
 @[simp] theorem permLift_et_apply (π : Equiv.Perm E) (P : E → Prop) :
     permLift π Ty.et P = P ∘ ⇑π.symm :=
@@ -127,7 +122,7 @@ def permLift (π : Equiv.Perm E) : ∀ ty : Ty, Equiv.Perm (Ty.Domain E Unit ty)
 
 /-- An item is permutation invariant (18) when every lifted permutation fixes it, van
 Benthem's criterion for the logical items. -/
-def PermutationInvariant (ty : Ty) (x : Ty.Domain E Unit ty) : Prop :=
+def PermutationInvariant (ty : Ty Base) (x : Ty.Domain E Unit ty) : Prop :=
   ∀ π : Equiv.Perm E, permLift π ty x = x
 
 /-- Truth-functional conjunction is a logical item (20), preserved because the lift is the
@@ -206,12 +201,12 @@ theorem permutationInvariant_but :
 
 /-- A logical skeleton (24) carries one typed slot per maximal constituent without logical
 items, and the denotation the skeleton receives under a type-sorted assignment (26)–(27). -/
-structure Skeleton (E : Type) {ι : Type*} (τ : ι → Ty) where
+structure Skeleton (E : Type) {ι : Type*} (τ : ι → Ty Base) where
   interpret : ((i : ι) → Ty.Domain E Unit (τ i)) → Prop
 
 namespace Skeleton
 
-variable {ι : Type*} {τ : ι → Ty} (S : Skeleton E τ)
+variable {ι : Type*} {τ : ι → Ty Base} (S : Skeleton E τ)
 
 /-- The skeleton receives 1 under every assignment. -/
 def IsLTautology : Prop := ∀ g, S.interpret g
