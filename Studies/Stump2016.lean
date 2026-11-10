@@ -294,17 +294,20 @@ theorem turkish_isCanonical : turkish.IsCanonical where
   isTotal := by decide
   isUnivalent := by decide
   stem_isInvariant := by decide
-  stem_disjoint := (by decide : ∀ c l l', l ≠ l' →
-    Disjoint (turkish.stem.realize l c) (turkish.stem.realize l' c))
-  inflection_disjoint := (by decide : ∀ l c c', c ≠ c' →
-    Disjoint (turkish.inflection.realize l c) (turkish.inflection.realize l c'))
+  stem_leftUnique := by decide
+  inflection_leftUnique := by decide
   inflection_isInvariant := by decide
 
 -- p. 32
-theorem turkish_realize_disjoint :
-    (∀ l, Pairwise (Disjoint on turkish.realization.realize l)) ∧
-      ∀ c, Pairwise (Disjoint on fun l ↦ turkish.realization.realize l c) :=
-  turkish_isCanonical.realize_disjoint (by decide)
+theorem turkish_not_isSyncretic :
+    (∀ l, ¬ turkish.realization.IsSyncretic l) ∧
+      ∀ c, ¬ turkish.realization.transpose.IsSyncretic c :=
+  turkish_isCanonical.not_isSyncretic (by decide)
+
+-- Table 2.3, row 3: the two nouns take the same suffixes in every cell
+theorem turkish_inflection_eq (l l' : TurkishNoun) :
+    turkish.inflection.realize l = turkish.inflection.realize l' :=
+  turkish_isCanonical.inflection_realize_eq l l'
 
 /-- The genitive suffix -(n)In is the same after ADAM and after EV 'house', but vowel harmony
 spells it -ın and -in, so the paradigms share their inflectional marking only below vowel harmony

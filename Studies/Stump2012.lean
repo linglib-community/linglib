@@ -158,7 +158,8 @@ def perfEnding (a : Agr) : List String :=
 def coepRealize : CoepStem → SysCell → List String
   | _, σ => ["c", "o", "e", "p"] ++ perfEnding σ.agr
 
-theorem coepisse_defective : coepisseLinkage.IsDefective := ⟨.coepisse, ⟨.pres, .s1⟩, rfl⟩
+theorem coepisse_defective : coepisseLinkage.IsDefective :=
+  (Linkage.isDefective_iff _).2 ⟨.coepisse, ⟨.pres, .s1⟩, rfl⟩
 
 theorem coepisse_present_no_realization :
     coepisseLinkage.realized coepRealize .coepisse ⟨.pres, .s3⟩ = ∅ := by decide
@@ -176,8 +177,7 @@ theorem coepisse_stemInvariant : coepisseLinkage.IsStemInvariant := by decide
 invariance. -/
 theorem coepisse_defective_not_suppletive :
     coepisseLinkage.IsDefective ∧ ¬ coepisseLinkage.IsSuppletive .coepisse :=
-  ⟨coepisse_defective, fun h ↦
-    coepisseLinkage.not_isInvariant_of_isSuppletive h (coepisse_stemInvariant _)⟩
+  ⟨coepisse_defective, (coepisse_stemInvariant _).not_isSuppletive⟩
 
 end Coepisse
 
@@ -247,10 +247,12 @@ def bellRealize : BellumStem → BellumCell → List String
 /-- The nominative and accusative singular share a form correspondent, a directional
 syncretism. -/
 theorem bellum_nom_acc_syncretic : bellumLinkage.IsSyncretic :=
-  ⟨.bellum, ⟨.nom, .sg⟩, ⟨.acc, .sg⟩, by decide, by decide⟩
+  Linkage.isSyncretic_of_not_disjoint (l := .bellum) (σ₁ := ⟨.nom, .sg⟩) (σ₂ := ⟨.acc, .sg⟩)
+    (by decide) (by decide)
 
 theorem bellum_dat_abl_syncretic : bellumLinkage.IsSyncretic :=
-  ⟨.bellum, ⟨.dat, .sg⟩, ⟨.abl, .sg⟩, by decide, by decide⟩
+  Linkage.isSyncretic_of_not_disjoint (l := .bellum) (σ₁ := ⟨.dat, .sg⟩) (σ₂ := ⟨.abl, .sg⟩)
+    (by decide) (by decide)
 
 /-- The nominative and accusative singular have the same realization because they share a
 form correspondent, the paper's (26). -/
@@ -352,7 +354,8 @@ theorem depon_vs_regular (a : Agr) :
 
 /-- Deponency compounds with defectiveness, since the passive content cells of HORTĀRĪ lack a
 stem. -/
-theorem hortari_defective : latinLinkage.IsDefective := ⟨.hortari, ⟨.passive, .s1⟩, rfl⟩
+theorem hortari_defective : latinLinkage.IsDefective :=
+  (Linkage.isDefective_iff _).2 ⟨.hortari, ⟨.passive, .s1⟩, rfl⟩
 
 /-- The first singular active form cell of `hort` is virtual. No content cell corresponds to
 it, since active content maps to passive form and passive content has no correspondent. The

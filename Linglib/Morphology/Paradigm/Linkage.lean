@@ -46,8 +46,9 @@ takes the lexeme's root.
 ## Implementation notes
 
 `IsTotal`, `IsUnivalent`, and the per-lexeme `IsInvariant`, `IsSuppletive`, and
-`IsOverabundant` (Thornton's cell-mates) are inherited from `Realization`. Taking `S = M` and
-`ι = id` recovers a single type of property sets. The universal default rule (5) is not a
+`IsOverabundant` (Thornton's cell-mates) are inherited from `Realization`; defectiveness and
+syncretism are its `IsDefective` of the stems and `IsSyncretic` of the form correspondents.
+Taking `S = M` and `ι = id` recovers a single type of property sets. The universal default rule (5) is not a
 listed rule of `ofRules` but the fallback of `RuleSet.realizeMinimalD`, the lexeme's
 root.
 
@@ -98,6 +99,12 @@ def corr (l : L) (σ : S) : Finset (Z × M) := ℓ.realize l σ ×ˢ {ℓ.pm l �
 @[simp] theorem card_corr (l : L) (σ : S) : (ℓ.corr l σ).card = (ℓ.realize l σ).card := by
   simp [corr]
 
+/-- The realization of each content cell by its form correspondents. -/
+def correspondents : Realization L S (Z × M) := ⟨ℓ.corr⟩
+
+@[simp] theorem correspondents_realize (l : L) (σ : S) :
+    ℓ.correspondents.realize l σ = ℓ.corr l σ := rfl
+
 /-- The realized paradigm of a content cell realizes each form correspondent `⟨z, τ⟩` as
 `rf z τ`, keeping the property set `τ`. -/
 def realized [DecidableEq W] (rf : Z → M → W) (l : L) (σ : S) : Finset (W × M) :=
@@ -114,21 +121,25 @@ stem. -/
 def IsStemInvariant : Prop := ∀ l, ℓ.IsInvariant l
 
 /-- A linkage is injective when no two content cells of a lexeme share a form correspondent. -/
-def IsInjective : Prop := ∀ l ⦃σ₁ σ₂ : S⦄, σ₁ ≠ σ₂ → Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)
+def IsInjective : Prop := ∀ l, Relator.LeftUnique (ℓ.correspondents.Rel l)
 
 /-- A linkage is property-preserving relative to an identification `ι` of content with form
 property sets when every form correspondent carries the image under `ι` of its content cell's
 property set. -/
 def IsPropertyPreserving (ι : S → M) : Prop := ∀ l σ, ℓ.pm l σ = ι σ
 
-/-- A linkage is canonical ([stump-2012-mmm8]) relative to an identification `ι` of content
-with form property sets when it satisfies all five axes. -/
+/-- (13): A linkage is canonical ([stump-2012-mmm8]) relative to an identification `ι` of content
+with form property sets when the relation between each lexeme's content cells and their form
+correspondents is a total function, (13a), drawn from one stem, (13b), and one-to-one, (13c), and
+every form correspondent is faithful to its content cell, (13d). Totality and univalence are
+stated of the stems, which is the same by `isTotal_correspondents_iff` and
+`isUnivalent_correspondents_iff`. -/
 structure IsCanonical (ι : S → M) : Prop where
   /-- Every content cell has a form correspondent. -/
   total : ℓ.IsTotal
   /-- No content cell has more than one form correspondent. -/
   univalent : ℓ.IsUnivalent
-  /-- Each lexeme draws on a single stem. -/
+  /-- All of a lexeme's form correspondents share one stem. -/
   stemInvariant : ℓ.IsStemInvariant
   /-- No two content cells of a lexeme share a form correspondent. -/
   injective : ℓ.IsInjective
@@ -138,11 +149,11 @@ structure IsCanonical (ι : S → M) : Prop where
 /-! ### Deviations from canonical linkage -/
 
 /-- A linkage is defective ([stump-2012-mmm8]) when some content cell has no stem. -/
-def IsDefective : Prop := ∃ l σ, ℓ.realize l σ = ∅
+def IsDefective : Prop := ∃ l, ℓ.toRealization.IsDefective l
 
 /-- A linkage is syncretic ([stump-2012-mmm8]) when two distinct content cells of a lexeme share
 a form correspondent. -/
-def IsSyncretic : Prop := ∃ l σ₁ σ₂, σ₁ ≠ σ₂ ∧ ¬ Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)
+def IsSyncretic : Prop := ∃ l, ℓ.correspondents.IsSyncretic l
 
 /-- A linkage is unfaithful ([stump-2012-mmm8]) relative to `ι` when some content cell's form
 correspondents carry a property set other than its image under `ι`, as under deponency and
@@ -152,11 +163,31 @@ def IsUnfaithful (ι : S → M) : Prop := ∃ l σ, ℓ.pm l σ ≠ ι σ
 /-- A form cell is virtual ([stump-2012-mmm8]) when no content cell corresponds to it. -/
 def IsVirtual (zτ : Z × M) : Prop := ∀ l σ, zτ ∉ ℓ.corr l σ
 
-@[simp, push] theorem not_isTotal_iff : ¬ ℓ.IsTotal ↔ ℓ.IsDefective := by
-  simp [IsDefective, Realization.IsTotal, Finset.not_nonempty_iff_eq_empty]
+@[simp, push] theorem not_isTotal_iff : ¬ ℓ.IsTotal ↔ ℓ.IsDefective :=
+  Realization.not_isTotal_iff
 
 @[simp, push] theorem not_isInjective_iff : ¬ ℓ.IsInjective ↔ ℓ.IsSyncretic := by
-  simp [IsSyncretic, IsInjective]
+  simp [IsSyncretic, IsInjective, Realization.IsSyncretic]
+
+/-- A content cell has a form correspondent exactly when it has a stem. -/
+theorem isTotal_correspondents_iff : ℓ.correspondents.IsTotal ↔ ℓ.IsTotal :=
+  forall₂_congr fun l σ ↦ ℓ.corr_nonempty l σ
+
+/-- A content cell has at most one form correspondent exactly when it has at most one stem. -/
+theorem isUnivalent_correspondents_iff : ℓ.correspondents.IsUnivalent ↔ ℓ.IsUnivalent := by
+  simp [Realization.isUnivalent_iff_card]
+
+theorem isDefective_iff : ℓ.IsDefective ↔ ∃ l σ, ℓ.realize l σ = ∅ :=
+  exists_congr fun _ ↦ Realization.isDefective_iff
+
+theorem isInjective_iff :
+    ℓ.IsInjective ↔ ∀ l σ₁ σ₂, σ₁ ≠ σ₂ → Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂) :=
+  forall_congr' fun _ ↦ Realization.leftUnique_rel_iff
+
+variable {ℓ} in
+theorem isSyncretic_of_not_disjoint {l : L} {σ₁ σ₂ : S} (hne : σ₁ ≠ σ₂)
+    (h : ¬ Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)) : ℓ.IsSyncretic :=
+  ⟨l, Realization.isSyncretic_of_not_disjoint hne h⟩
 
 @[simp, push] theorem not_isPropertyPreserving_iff (ι : S → M) :
     ¬ ℓ.IsPropertyPreserving ι ↔ ℓ.IsUnfaithful ι := by
@@ -164,68 +195,75 @@ def IsVirtual (zτ : Z × M) : Prop := ∀ l σ, zτ ∉ ℓ.corr l σ
 
 theorem isInjective_of_injective_pm {ℓ : Linkage L Z S M}
     (h : ∀ l, Function.Injective (ℓ.pm l)) : ℓ.IsInjective :=
-  fun l _ _ hne ↦ Finset.disjoint_left.mpr fun _ h₁ h₂ ↦
-    hne (h l (((mem_corr ℓ).mp h₁).2.symm.trans ((mem_corr ℓ).mp h₂).2))
+  fun l _ _ _ h₁ h₂ ↦ h l (((mem_corr ℓ).mp h₁).2.symm.trans ((mem_corr ℓ).mp h₂).2)
 
 /-! ### Invariance along a projection -/
 
 /-- A lexeme is invariant along `p` when the stems of all its cells have one image under `p`;
 along `id` this is `IsInvariant`. -/
-def IsInvariantAlong (p : Z → X) (l : L) : Prop :=
-  ∀ ⦃σ σ' : S⦄, ∀ z ∈ ℓ.realize l σ, ∀ z' ∈ ℓ.realize l σ', p z = p z'
+def IsInvariantAlong (p : Z → X) (l : L) : Prop := (p '' ℓ.exponents l).Subsingleton
 
 /-- A lexeme is heteroclite along a classification `cls` of stems ([stump-2006]) when two of
 its cells draw on stems of distinct classes; along `id` this is `IsSuppletive`. -/
-def IsHeteroclite (cls : Z → K) (l : L) : Prop :=
-  ∃ σ σ', ∃ z ∈ ℓ.realize l σ, ∃ z' ∈ ℓ.realize l σ', cls z ≠ cls z'
+def IsHeteroclite (cls : Z → K) (l : L) : Prop := (cls '' ℓ.exponents l).Nontrivial
 
 variable {ℓ} {p : Z → X} {cls : Z → K} {l : L}
 
-theorem isInvariantAlong_id_iff : ℓ.IsInvariantAlong id l ↔ ℓ.IsInvariant l := Iff.rfl
+theorem isInvariantAlong_iff : ℓ.IsInvariantAlong p l ↔
+    ∀ σ σ', ∀ z ∈ ℓ.realize l σ, ∀ z' ∈ ℓ.realize l σ', p z = p z' :=
+  ⟨fun h _ _ _ hz _ hz' ↦ h ⟨_, ⟨_, hz⟩, rfl⟩ ⟨_, ⟨_, hz'⟩, rfl⟩,
+    fun h ↦ by rintro _ ⟨z, ⟨σ, hz⟩, rfl⟩ _ ⟨z', ⟨σ', hz'⟩, rfl⟩; exact h σ σ' z hz z' hz'⟩
 
-theorem isHeteroclite_id_iff : ℓ.IsHeteroclite id l ↔ ℓ.IsSuppletive l := Iff.rfl
+theorem isHeteroclite_iff : ℓ.IsHeteroclite cls l ↔
+    ∃ σ σ', ∃ z ∈ ℓ.realize l σ, ∃ z' ∈ ℓ.realize l σ', cls z ≠ cls z' :=
+  ⟨by rintro ⟨_, ⟨z, ⟨σ, hz⟩, rfl⟩, _, ⟨z', ⟨σ', hz'⟩, rfl⟩, hne⟩
+      exact ⟨σ, σ', z, hz, z', hz', hne⟩,
+    fun ⟨σ, σ', z, hz, z', hz', hne⟩ ↦ ⟨_, ⟨z, ⟨σ, hz⟩, rfl⟩, _, ⟨z', ⟨σ', hz'⟩, rfl⟩, hne⟩⟩
+
+theorem isInvariantAlong_id_iff : ℓ.IsInvariantAlong id l ↔ ℓ.IsInvariant l := by
+  rw [IsInvariantAlong, Set.image_id, Realization.IsInvariant]
+
+theorem isHeteroclite_id_iff : ℓ.IsHeteroclite id l ↔ ℓ.IsSuppletive l := by
+  rw [IsHeteroclite, Set.image_id, Realization.IsSuppletive]
 
 @[simp, push] theorem not_isInvariantAlong_iff :
-    ¬ ℓ.IsInvariantAlong p l ↔ ℓ.IsHeteroclite p l := by
-  simp [IsInvariantAlong, IsHeteroclite]
+    ¬ ℓ.IsInvariantAlong p l ↔ ℓ.IsHeteroclite p l :=
+  Set.not_subsingleton_iff
 
 theorem IsInvariantAlong.comp (h : ℓ.IsInvariantAlong p l) (q : X → Y) :
-    ℓ.IsInvariantAlong (q ∘ p) l :=
-  fun _ _ z hz z' hz' ↦ congrArg q (h z hz z' hz')
+    ℓ.IsInvariantAlong (q ∘ p) l := by
+  rw [IsInvariantAlong, Set.image_comp]; exact h.image q
 
 theorem _root_.Morphology.Realization.IsInvariant.isInvariantAlong (h : ℓ.IsInvariant l)
     (p : Z → X) : ℓ.IsInvariantAlong p l :=
-  fun _ _ z hz z' hz' ↦ congrArg p (h z hz z' hz')
+  Set.Subsingleton.image h p
 
 /-- Heteroclisis entails suppletion, since stems of two classes are two stems. -/
 theorem IsHeteroclite.isSuppletive (h : ℓ.IsHeteroclite cls l) : ℓ.IsSuppletive l :=
-  let ⟨σ, σ', z, hz, z', hz', hne⟩ := h
-  ⟨σ, σ', z, hz, z', hz', ne_of_apply_ne cls hne⟩
+  Set.nontrivial_of_image cls _ h
 
 /-- When each pattern draws its stems from one class, a heteroclite lexeme's stems are not
 class-determined, so their alternation is suppletion in [stump-2016]'s sense. -/
 theorem IsHeteroclite.not_isClassDetermined {A : Set (S → Z)}
     (hA : ∀ p ∈ A, ∀ σ σ', cls (p σ) = cls (p σ')) (h : ℓ.IsHeteroclite cls l) :
     ¬ ℓ.IsClassDetermined A l := fun ⟨p, hp, hl⟩ ↦
-  let ⟨σ, σ', z, hz, z', hz', hne⟩ := h
+  let ⟨σ, σ', z, hz, z', hz', hne⟩ := isHeteroclite_iff.1 h
   hne (by rw [hl σ z hz, hl σ' z' hz']; exact hA p hp σ σ')
 
 /-! ### Decidability
 
-Each instance is `inferInstanceAs` on the definition's body, so that `decide` reduces in the
-kernel. The per-lexeme instances quantify over stem sets and need no `Fintype Z`. -/
+The per-lexeme instances quantify over cells and their finite sets of stems, so they need no
+`Fintype Z`. -/
 
 section Decidable
 
 variable (ℓ) [Fintype S]
 
 instance [DecidableEq X] (p : Z → X) (l : L) : Decidable (ℓ.IsInvariantAlong p l) :=
-  inferInstanceAs
-    (Decidable (∀ σ σ' : S, ∀ z ∈ ℓ.realize l σ, ∀ z' ∈ ℓ.realize l σ', p z = p z'))
+  decidable_of_iff _ isInvariantAlong_iff.symm
 
 instance [DecidableEq K] (cls : Z → K) (l : L) : Decidable (ℓ.IsHeteroclite cls l) :=
-  inferInstanceAs
-    (Decidable (∃ σ σ', ∃ z ∈ ℓ.realize l σ, ∃ z' ∈ ℓ.realize l σ', cls z ≠ cls z'))
+  decidable_of_iff _ isHeteroclite_iff.symm
 
 variable [Fintype L]
 
@@ -233,18 +271,16 @@ instance [DecidableEq Z] : Decidable ℓ.IsStemInvariant :=
   inferInstanceAs (Decidable (∀ l, ℓ.IsInvariant l))
 
 instance [DecidableEq Z] [DecidableEq S] [DecidableEq M] : Decidable ℓ.IsInjective :=
-  inferInstanceAs
-    (Decidable (∀ l, ∀ σ₁ σ₂ : S, σ₁ ≠ σ₂ → Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)))
+  inferInstanceAs (Decidable (∀ l, Relator.LeftUnique (ℓ.correspondents.Rel l)))
 
 instance [DecidableEq M] (ι : S → M) : Decidable (ℓ.IsPropertyPreserving ι) :=
   inferInstanceAs (Decidable (∀ l σ, ℓ.pm l σ = ι σ))
 
 instance [DecidableEq Z] : Decidable ℓ.IsDefective :=
-  inferInstanceAs (Decidable (∃ l σ, ℓ.realize l σ = ∅))
+  inferInstanceAs (Decidable (∃ l, ℓ.toRealization.IsDefective l))
 
 instance [DecidableEq Z] [DecidableEq S] [DecidableEq M] : Decidable ℓ.IsSyncretic :=
-  inferInstanceAs
-    (Decidable (∃ l σ₁ σ₂, σ₁ ≠ σ₂ ∧ ¬ Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)))
+  inferInstanceAs (Decidable (∃ l, ℓ.correspondents.IsSyncretic l))
 
 instance [DecidableEq M] (ι : S → M) : Decidable (ℓ.IsUnfaithful ι) :=
   inferInstanceAs (Decidable (∃ l σ, ℓ.pm l σ ≠ ι σ))
@@ -277,7 +313,8 @@ end Realized
 
 /-- The inflectional paradigm of a linkage with realization rules `rf` builds the forms of each
 content cell from its form correspondents. -/
-def toInflectionalParadigm (rf : Z → M → W) : InflectionalParadigm L S Z M W := ⟨⟨ℓ.corr⟩, rf⟩
+def toInflectionalParadigm (rf : Z → M → W) : InflectionalParadigm L S Z M W :=
+  ⟨ℓ.correspondents, rf⟩
 
 section ToInflectionalParadigm
 
@@ -333,20 +370,22 @@ variable {ι f}
 
 @[simp] theorem ofFun_isInvariantAlong_iff :
     (ofFun ι f).IsInvariantAlong p l ↔ ∀ σ σ', p (f l σ) = p (f l σ') := by
-  simp [IsInvariantAlong]
+  simp [isInvariantAlong_iff]
 
 @[simp] theorem ofFun_isHeteroclite_iff :
     (ofFun ι f).IsHeteroclite cls l ↔ ∃ σ σ', cls (f l σ) ≠ cls (f l σ') := by
-  simp [IsHeteroclite]
+  simp [isHeteroclite_iff]
 
 /-- Under an injective identification, the linkage of a stem choice is canonical exactly when
 each lexeme's stem is independent of the property set. -/
 theorem ofFun_isCanonical_iff (hι : Function.Injective ι) :
-    (ofFun ι f).IsCanonical ι ↔ ∀ l σ σ', f l σ = f l σ' :=
-  ⟨fun h l ↦ ofFun_isInvariantAlong_iff.mp (h.stemInvariant l), fun h ↦
-    ⟨fun _ _ ↦ Finset.singleton_nonempty _, fun _ _ ↦ (Finset.card_singleton _).le,
-      fun l ↦ ofFun_isInvariantAlong_iff.mpr (h l), isInjective_of_injective_pm fun _ ↦ hι,
-      fun _ _ ↦ rfl⟩⟩
+    (ofFun ι f).IsCanonical ι ↔ ∀ l σ σ', f l σ = f l σ' := by
+  have key l : (ofFun ι f).IsInvariant l ↔ ∀ σ σ', f l σ = f l σ' := by
+    simp [Realization.isInvariant_iff]
+  exact ⟨fun h l ↦ (key l).1 (h.stemInvariant l), fun h ↦
+    ⟨fun _ _ ↦ Finset.singleton_nonempty _,
+      Realization.isUnivalent_iff_card.2 fun _ _ ↦ (Finset.card_singleton _).le,
+      fun l ↦ (key l).2 (h l), isInjective_of_injective_pm fun _ ↦ hι, fun _ _ ↦ rfl⟩⟩
 
 end OfFun
 

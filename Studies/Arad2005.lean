@@ -858,16 +858,19 @@ def rootMeanings (root pattern : String) : Finset String :=
 /-- `roots` is the interpreted realization system of roots over the patterns. -/
 def roots : Realization.Interpreted String String String String where
   realize := rootForms
-  interp := rootMeanings
+  interp := ⟨rootMeanings⟩
 
 -- Ch. 7, (2), (5)
 theorem roots_allosemous :
     roots.IsAllosemous "sgr" ∧ roots.IsAllosemous "qlt" ∧ roots.IsAllosemous "xšb" ∧
       roots.IsAllosemous "šmn" := by
-  refine ⟨⟨"1", "5", "close", ?_, "extradite", ?_, by decide⟩,
-    ⟨"CeCeC", "taCCiC", "input", ?_, "a_record", ?_, by decide⟩,
-    ⟨"1", "maCCeC", "to_think", ?_, "computer", ?_, by decide⟩,
-    ⟨"CeCeC", "CaCCeCet", "oil_grease", ?_, "cream", ?_, by decide⟩⟩ <;> decide +kernel
+  have mk {r c c' m m'} (h : m ∈ rootMeanings r c) (h' : m' ∈ rootMeanings r c') (hne : m ≠ m') :
+      roots.IsAllosemous r := Realization.isSuppletive_of_mem (S := roots.interp) h h' hne
+  refine ⟨mk (c := "1") (c' := "5") (m := "close") (m' := "extradite") ?_ ?_ (by decide),
+    mk (c := "CeCeC") (c' := "taCCiC") (m := "input") (m' := "a_record") ?_ ?_ (by decide),
+    mk (c := "1") (c' := "maCCeC") (m := "to_think") (m' := "computer") ?_ ?_ (by decide),
+    mk (c := "CeCeC") (c' := "CaCCeCet") (m := "oil_grease") (m' := "cream") ?_ ?_ (by decide)⟩ <;>
+    decide +kernel
 
 /-- `patternHead p` is the category head of a pattern, v for a binyan and n for a mišqal. -/
 def patternHead (p : String) : Head := if (binyan? p).isSome then .v else .n

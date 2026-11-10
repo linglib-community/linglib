@@ -219,8 +219,9 @@ theorem run_isProperlySuppletive : realization.IsProperlySuppletive run := by
   have hpl : realization.realize run (unaccusative .plural) = {"tenne"} := by
     show (spellout (unaccusative .plural) run).toFinset = _
     simp [run_pl]
-  refine ⟨unaccusative .singular, unaccusative .plural, hsg ▸ Finset.singleton_nonempty _,
-    hpl ▸ Finset.singleton_nonempty _, ?_⟩
+  refine ⟨unaccusative .singular, unaccusative .plural,
+    by simp [Morphology.Realization.IsLicensed, hsg],
+    by simp [Morphology.Realization.IsLicensed, hpl], ?_⟩
   rw [hsg, hpl, ne_eq, Finset.singleton_inj]; decide
 
 /-- √548 as a List-3 `Realization.Interpreted` view. -/
@@ -231,8 +232,8 @@ def cahootHead :
 /-- The idiom's root is interpreted only inside its frame, so elsewhere it fails licensing rather
 than showing allosemy (§2.3). -/
 theorem cahoot_interp_gap :
-    cahootHead.interp () (embedding {.cat .n}) = {"a conspiracy"} ∧
-      cahootHead.interp () ∅ = ∅ := by
+    cahootHead.interp.realize () (embedding {.cat .n}) = {"a conspiracy"} ∧
+      cahootHead.interp.realize () ∅ = ∅ := by
   refine ⟨?_, ?_⟩ <;> decide
 
 /-! ### One-replacement and the selection of objects -/

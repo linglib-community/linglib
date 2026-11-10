@@ -233,4 +233,8 @@ theorem go_went : english.realization.realize .go .past = {[went]} ∧
 
 theorem not_isCanonical : ¬ english.IsCanonical := fun h ↦ h.not_isSuppletive.1 .good suppletion.1
 
+-- *ox* and *card* differ in their plural, so they do not inflect alike
+example : english.inflection.realize .ox ≠ english.inflection.realize .card :=
+  fun h ↦ absurd (congrFun h .pl) (by decide)
+
 end Bloomfield1933

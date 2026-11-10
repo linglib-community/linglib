@@ -1212,11 +1212,12 @@ theorem sktStem_mem_stems (l : SktLex) (σ : SktCell) : sktStem l σ ∈ (sktEnt
 -- §3.2
 theorem sktLinkage_isHeteroclite_iff {l : SktLex} :
     sktLinkage.IsHeteroclite SktStem.decl l ↔ ∃ σ τ, sktClass l σ ≠ sktClass l τ := by
-  simp [Linkage.IsHeteroclite, sktLinkage, sktClass]
+  simp [Linkage.isHeteroclite_iff, sktLinkage, sktClass]
 
 theorem not_isHeteroclite_of_stems {l : SktLex} {d : SktDecl}
     (h : ∀ z ∈ (sktEntry l).stems, z.decl = d) : ¬ sktLinkage.IsHeteroclite SktStem.decl l := by
-  rintro ⟨σ, σ', z, hz, z', hz', hne⟩
+  intro hh
+  obtain ⟨σ, σ', z, hz, z', hz', hne⟩ := Linkage.isHeteroclite_iff.1 hh
   rw [Finset.mem_singleton.mp hz, Finset.mem_singleton.mp hz'] at hne
   exact hne ((h _ (sktStem_mem_stems l σ)).trans (h _ (sktStem_mem_stems l σ')).symm)
 
@@ -1256,7 +1257,8 @@ theorem neut_corr_nom_eq_acc : ∀ l, (sktEntry l).gender = .neut → ∀ n : Sk
     sktLinkage.corr l (⟨.nom, by decide⟩, n) = sktLinkage.corr l (⟨.acc, by decide⟩, n) := by decide
 
 theorem sktLinkage_isSyncretic : sktLinkage.IsSyncretic := by
-  refine ⟨.ahan, .of .nom .singular, .of .acc .singular, by decide, ?_⟩
+  refine Linkage.isSyncretic_of_not_disjoint (l := .ahan) (σ₁ := .of .nom .singular)
+    (σ₂ := .of .acc .singular) (by decide) ?_
   rw [SktCell.of, SktCell.of, neut_corr_nom_eq_acc .ahan rfl, disjoint_self_iff_empty,
     ← not_nonempty_iff_eq_empty, not_not, Linkage.corr_nonempty]
   exact singleton_nonempty _
