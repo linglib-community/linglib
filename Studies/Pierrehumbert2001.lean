@@ -102,14 +102,6 @@ theorem sum_pow_rev {R : Type*} [CommSemiring R] (x : R) :
 /-- The total weight of `n` exemplars, the `i`th youngest of which has weight `γ ^ i`. -/
 noncomputable def totalWeight (n : ℕ) : ℝ := ∑ i ∈ range n, (γ : ℝ) ^ i
 
-/-- The memory-weighted mean of an exemplar list. -/
-noncomputable def memoryMean (e : Fin n → ℝ) : ℝ :=
-  (∑ i, (γ : ℝ) ^ (i.rev : ℕ) * e i) / totalWeight γ n
-
-/-- The memory-weighted spread of an exemplar list about its mean. -/
-noncomputable def memorySpread (e : Fin n → ℝ) : ℝ :=
-  (∑ i, (γ : ℝ) ^ (i.rev : ℕ) * (e i - memoryMean γ e) ^ 2) / totalWeight γ n
-
 theorem totalWeight_succ : totalWeight γ (n + 1) = γ * totalWeight γ n + 1 := geom_sum_succ
 
 theorem totalWeight_succ' : totalWeight γ (n + 1) = γ ^ n + totalWeight γ n := geom_sum_succ'
@@ -161,34 +153,74 @@ private theorem totalWeight_pow_mul (r k : ℕ) :
       sum_range_add, add_comm, mul_sum]
     simp [pow_add, pow_mul]
 
+/-- The recency distribution of the appendix, picking a position with probability proportional
+to its weight. -/
+noncomputable def recency (n : ℕ) : Measure (Fin n) :=
+  ∑ i, (γ ^ (i.rev : ℕ) / ∑ j ∈ range n, γ ^ j : ℝ≥0) • Measure.dirac i
+
+theorem integral_recency (f : Fin n → ℝ) :
+    ∫ i, f i ∂recency γ n = ∑ i, (γ : ℝ) ^ (i.rev : ℕ) / totalWeight γ n * f i := by
+  rw [recency, integral_finsetSum_measure fun i _ ↦ .of_finite]
+  refine sum_congr rfl fun i _ ↦ ?_
+  rw [integral_smul_nnreal_measure, integral_dirac, NNReal.smul_def, smul_eq_mul]
+  simp [totalWeight]
+
+instance (n : ℕ) : IsProbabilityMeasure (recency γ (n + 1)) := by
+  constructor
+  rw [recency, Measure.coe_finsetSum, Finset.sum_apply]
+  simp only [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _), smul_eq_mul,
+    mul_one, ENNReal.smul_def]
+  rw [← ENNReal.ofNNReal_finsetSum, ← sum_div, sum_pow_rev,
+    div_self (geom_sum_pos zero_le (Nat.succ_ne_zero n)).ne']
+  simp
+
+/-- The memory-weighted mean of an exemplar list, its mean under the recency distribution. -/
+noncomputable def memoryMean (e : Fin n → ℝ) : ℝ := ∫ i, e i ∂recency γ n
+
+/-- The memory-weighted spread of an exemplar list, its variance under the recency
+distribution. -/
+noncomputable def memorySpread (e : Fin n → ℝ) : ℝ := Var[e; recency γ n]
+
+theorem memoryMean_eq_sum (e : Fin n → ℝ) :
+    memoryMean γ e = (∑ i, (γ : ℝ) ^ (i.rev : ℕ) * e i) / totalWeight γ n := by
+  rw [memoryMean, integral_recency, sum_div]
+  exact sum_congr rfl fun i _ ↦ by ring
+
+theorem memorySpread_eq_sum (e : Fin n → ℝ) :
+    memorySpread γ e =
+      (∑ i, (γ : ℝ) ^ (i.rev : ℕ) * (e i - memoryMean γ e) ^ 2) / totalWeight γ n := by
+  rw [memorySpread, variance_eq_integral (by fun_prop), integral_recency, sum_div]
+  exact sum_congr rfl fun i _ ↦ by rw [memoryMean]; ring
+
 theorem totalWeight_mul_memoryMean (e : Fin n → ℝ) :
     totalWeight γ n * memoryMean γ e = ∑ i, (γ : ℝ) ^ (i.rev : ℕ) * e i := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simp [totalWeight]
-  · exact mul_div_cancel₀ _ (totalWeight_pos γ hn.ne').ne'
+  · rw [memoryMean_eq_sum, mul_div_cancel₀ _ (totalWeight_pos γ hn.ne').ne']
 
 theorem totalWeight_mul_memorySpread (e : Fin n → ℝ) :
     totalWeight γ n * memorySpread γ e =
       ∑ i, (γ : ℝ) ^ (i.rev : ℕ) * (e i - memoryMean γ e) ^ 2 := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simp [totalWeight]
-  · exact mul_div_cancel₀ _ (totalWeight_pos γ hn.ne').ne'
+  · rw [memorySpread_eq_sum, mul_div_cancel₀ _ (totalWeight_pos γ hn.ne').ne']
 
 theorem sum_mul_sub_sq (e : Fin n → ℝ) (c : ℝ) :
     ∑ i, (γ : ℝ) ^ (i.rev : ℕ) * (e i - c) ^ 2 =
       totalWeight γ n * memorySpread γ e + totalWeight γ n * (memoryMean γ e - c) ^ 2 := by
-  have h : ∑ i, (γ : ℝ) ^ (i.rev : ℕ) * (e i - c) ^ 2 =
-      ∑ i, (γ : ℝ) ^ (i.rev : ℕ) * (e i - memoryMean γ e) ^ 2 +
-        2 * (memoryMean γ e - c) * (∑ i, (γ : ℝ) ^ (i.rev : ℕ) * e i -
-          totalWeight γ n * memoryMean γ e) + totalWeight γ n * (memoryMean γ e - c) ^ 2 := by
-    simp only [totalWeight, ← sum_pow_rev, mul_sum, sum_mul, ← sum_sub_distrib, ← sum_add_distrib]
-    exact sum_congr rfl fun i _ ↦ by ring
-  rw [h, totalWeight_mul_memoryMean, sub_self, mul_zero, add_zero, totalWeight_mul_memorySpread]
+  cases n with
+  | zero => simp [totalWeight]
+  | succ n =>
+    have h := integral_sub_const_sq (μ := recency γ (n + 1)) (X := e) .of_discrete c
+    rw [integral_recency] at h
+    rw [memorySpread, memoryMean, ← mul_add, ← h, mul_sum]
+    exact sum_congr rfl fun i _ ↦ by
+      field_simp [(totalWeight_pos γ (Nat.succ_ne_zero n)).ne']
 
 theorem memoryMean_snoc (e : Fin n → ℝ) (x : ℝ) :
     memoryMean γ (Fin.snoc e x : Fin (n + 1) → ℝ) =
       (γ * totalWeight γ n * memoryMean γ e + x) / totalWeight γ (n + 1) := by
-  rw [memoryMean, mul_assoc, totalWeight_mul_memoryMean, mul_sum]
+  rw [memoryMean_eq_sum, mul_assoc, totalWeight_mul_memoryMean, mul_sum]
   simp only [Fin.sum_univ_castSucc, Fin.snoc_castSucc, Fin.snoc_last, Fin.rev_castSucc,
     Fin.rev_last, Fin.val_succ, Fin.val_zero, pow_zero, one_mul, pow_succ]
   congr 2
@@ -209,7 +241,7 @@ theorem memorySpread_snoc (e : Fin n → ℝ) (x : ℝ) :
       Fin.rev_last, Fin.val_succ, Fin.val_zero, pow_zero, one_mul, pow_succ]
     congr 1
     exact sum_congr rfl fun i _ ↦ by ring
-  rw [memorySpread, hsum, memoryMean_snoc, totalWeight_succ]
+  rw [memorySpread_eq_sum, hsum, memoryMean_snoc, totalWeight_succ]
   rw [totalWeight_succ] at hS
   generalize totalWeight γ n = S at *
   generalize memoryMean γ e = M
@@ -218,7 +250,7 @@ theorem memorySpread_snoc (e : Fin n → ℝ) (x : ℝ) :
   ring
 
 @[fun_prop] theorem measurable_memoryMean : Measurable (memoryMean γ : (Fin n → ℝ) → ℝ) := by
-  unfold memoryMean
+  rw [funext (memoryMean_eq_sum γ)]
   fun_prop
 
 end Memory
@@ -228,32 +260,6 @@ end Memory
 section Production
 
 variable (γ : ℝ≥0) {n : ℕ}
-
-/-- The recency distribution of the appendix, picking a position with probability proportional
-to its weight. -/
-noncomputable def recency (n : ℕ) : Measure (Fin n) :=
-  ∑ i, (γ ^ (i.rev : ℕ) / ∑ j ∈ range n, γ ^ j : ℝ≥0) • Measure.dirac i
-
-theorem integral_recency (f : Fin n → ℝ) :
-    ∫ i, f i ∂recency γ n = ∑ i, (γ : ℝ) ^ (i.rev : ℕ) / totalWeight γ n * f i := by
-  rw [recency, integral_finsetSum_measure fun i _ ↦ .of_finite]
-  refine sum_congr rfl fun i _ ↦ ?_
-  rw [integral_smul_nnreal_measure, integral_dirac, NNReal.smul_def, smul_eq_mul]
-  simp [totalWeight]
-
-theorem integral_recency_eq_memoryMean (e : Fin n → ℝ) :
-    ∫ i, e i ∂recency γ n = memoryMean γ e := by
-  rw [integral_recency, memoryMean, sum_div]
-  exact sum_congr rfl fun i _ ↦ by ring
-
-instance (n : ℕ) : IsProbabilityMeasure (recency γ (n + 1)) := by
-  constructor
-  rw [recency, Measure.coe_finsetSum, Finset.sum_apply]
-  simp only [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _), smul_eq_mul,
-    mul_one, ENNReal.smul_def]
-  rw [← ENNReal.ofNNReal_finsetSum, ← sum_div, sum_pow_rev,
-    div_self (geom_sum_pos zero_le (Nat.succ_ne_zero n)).ne']
-  simp
 
 /-- The production target of the appendix, an exemplar picked by recency or the memory-weighted
 mean, to which entrenchment fixes the target in the limit of a large neighborhood. -/
@@ -317,16 +323,14 @@ theorem memLp_target (e : Fin (n + 1) → ℝ) : MemLp id 2 (target γ tgt e) :=
 theorem integral_target (e : Fin (n + 1) → ℝ) : ∫ t, t ∂target γ tgt e = memoryMean γ e := by
   cases tgt
   · rw [target_exemplar_apply, integral_map (by fun_prop) (by fun_prop),
-      integral_recency_eq_memoryMean]
+      memoryMean]
   · simp [target_average_apply]
 
 theorem variance_target (e : Fin (n + 1) → ℝ) :
     Var[id; target γ tgt e] = tgt.inherited * memorySpread γ e := by
   cases tgt
-  · rw [target_exemplar_apply, variance_id_map (by fun_prop), variance_eq_integral (by fun_prop),
-      integral_recency, memorySpread, sum_div, Target.inherited, one_mul]
-    simp only [integral_recency_eq_memoryMean]
-    exact sum_congr rfl fun i _ ↦ by ring
+  · rw [target_exemplar_apply, variance_id_map (by fun_prop), Target.inherited, one_mul,
+      memorySpread]
   · simp [target_average_apply, Target.inherited]
 
 variable (hν : MemLp id 2 ν) (hν0 : ∫ x, x ∂ν = 0)
@@ -408,10 +412,10 @@ theorem memLp_memoryMean : MemLp (memoryMean γ) 2 μ := by
   convert (memLp_finsetSum _ fun i _ ↦ (h i).const_mul ((γ : ℝ) ^ (i.rev : ℕ))).mul_const
     (totalWeight γ n)⁻¹ using 1
   funext e
-  rw [memoryMean, div_eq_mul_inv]
+  rw [memoryMean_eq_sum, div_eq_mul_inv]
 
 theorem integrable_memorySpread : Integrable (memorySpread γ) μ := by
-  unfold memorySpread
+  refine (integrable_congr (.of_forall (memorySpread_eq_sum γ))).2 ?_
   exact (integrable_finsetSum _ fun i _ ↦
     (((h i).sub (memLp_memoryMean h)).integrable_sq).const_mul _).div_const _
 
@@ -475,7 +479,7 @@ theorem integral_memoryMean (n : ℕ) :
   induction n with
   | zero =>
     rw [seqLaw_rule_one, integral_dirac]
-    simp [memoryMean, totalWeight]
+    simp [memoryMean_eq_sum, totalWeight]
   | succ n ih =>
     rw [integral_seqLaw_succ ((memLp_memoryMean (memLp_apply hν hν0 (n + 1))).integrable
       one_le_two)]
@@ -837,7 +841,7 @@ theorem integral_memorySpread (n : ℕ) :
   induction n with
   | zero =>
     rw [seqLaw_rule_one, integral_dirac]
-    simp [memorySpread, memoryMean, totalWeight, spreadGrowth]
+    simp [memorySpread_eq_sum, memoryMean_eq_sum, totalWeight, spreadGrowth]
   | succ n ih =>
     have hV : Integrable (memorySpread γ) (seqLaw (rule γ tgt ν bias seed) (n + 1)) :=
       integrable_memorySpread (memLp_apply hν hν0 n)
