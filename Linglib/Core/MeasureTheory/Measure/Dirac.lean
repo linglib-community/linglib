@@ -16,7 +16,7 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.ZeroOne
 
 A Dirac measure is a zero-one measure, and a measure concentrated at a point is a multiple of the
 Dirac measure there. A nonzero measure on a countable space charges some point. The measure
-`Measure.sum fun b ↦ w b • dirac b` gives a measurable set the total weight of its points.
+`∑ b, w b • dirac b` on a finite type gives a set the total weight of its points.
 `[UPSTREAM]` candidate for `Mathlib/MeasureTheory/Measure/Dirac/Basic.lean`.
 -/
 
@@ -54,40 +54,45 @@ alias ⟨eq_dirac_of_ae_eq, _⟩ := ae_eq_iff_eq_dirac
 
 end Dirac
 
-section Sum
+section FinsetSum
 
-variable {β : Type*} [MeasurableSpace β]
-
-/-- A sum of scaled Dirac measures gives a measurable set the total weight of its points. -/
-theorem sum_smul_dirac_apply (w : β → ℝ≥0∞) {s : Set β} (hs : MeasurableSet s) :
-    sum (fun b ↦ w b • dirac b) s = ∑' b, s.indicator w b := by
-  rw [sum_apply _ hs]
-  exact tsum_congr fun b ↦ by by_cases hb : b ∈ s <;> simp [dirac_apply' _ hs, hb]
+variable {β : Type*} [MeasurableSpace β] [Fintype β]
 
 /-- Nonnegative real weights on a finite type with sum one give a probability measure. -/
-theorem isProbabilityMeasure_sum_ofReal_smul_dirac [Fintype β] {w : β → ℝ} (hw : ∀ b, 0 ≤ w b)
-    (h : ∑ b, w b = 1) : IsProbabilityMeasure (sum fun b ↦ ENNReal.ofReal (w b) • dirac b) :=
-  (h ▸ hasSum_fintype w).isProbabilityMeasure_sum_dirac hw
+theorem isProbabilityMeasure_finsetSum_ofReal_smul_dirac {w : β → ℝ} (hw : ∀ b, 0 ≤ w b)
+    (h : ∑ b, w b = 1) : IsProbabilityMeasure (∑ b, ENNReal.ofReal (w b) • dirac b) :=
+  ⟨by simp [← ENNReal.ofReal_sum_of_nonneg fun b _ ↦ hw b, h]⟩
 
 variable [MeasurableSingletonClass β]
 
-theorem sum_smul_dirac_apply_finset (w : β → ℝ≥0∞) (s : Finset β) :
-    sum (fun b ↦ w b • dirac b) ↑s = ∑ b ∈ s, w b := by
+/-- A finite sum of scaled Dirac measures gives a set the total weight of its points. -/
+theorem finsetSum_smul_dirac_apply (w : β → ℝ≥0∞) (s : Set β) :
+    (∑ b, w b • dirac b) s = ∑ b, s.indicator w b := by
+  rw [finsetSum_apply]
+  exact Finset.sum_congr rfl fun b _ ↦ by by_cases hb : b ∈ s <;> simp [hb]
+
+/-- A finite sum of scaled Dirac measures gives a point its weight. -/
+theorem finsetSum_smul_dirac_singleton {w : β → ℝ≥0∞} {a : β} :
+    (∑ b, w b • dirac b) {a} = w a := by
+  classical
+  simp [finsetSum_smul_dirac_apply, Set.indicator_apply]
+
+theorem finsetSum_smul_dirac_apply_finset (w : β → ℝ≥0∞) (s : Finset β) :
+    (∑ b, w b • dirac b) ↑s = ∑ b ∈ s, w b := by
   rw [← sum_measure_singleton]
-  simp only [sum_smul_dirac_singleton]
+  simp only [finsetSum_smul_dirac_singleton]
 
-theorem sum_ofReal_smul_dirac_real_singleton {w : β → ℝ} (hw : ∀ b, 0 ≤ w b) (b : β) :
-    (sum fun b ↦ ENNReal.ofReal (w b) • dirac b).real {b} = w b := by
-  rw [measureReal_def, sum_smul_dirac_singleton, ENNReal.toReal_ofReal (hw b)]
+theorem finsetSum_ofReal_smul_dirac_real_singleton {w : β → ℝ} (hw : ∀ b, 0 ≤ w b) (b : β) :
+    (∑ b, ENNReal.ofReal (w b) • dirac b).real {b} = w b := by
+  rw [measureReal_def, finsetSum_smul_dirac_singleton, ENNReal.toReal_ofReal (hw b)]
 
-/-- With nonnegative real weights on a finite type, a set has the total weight of its points. -/
-theorem sum_ofReal_smul_dirac_real_apply [Fintype β] {w : β → ℝ} (hw : ∀ b, 0 ≤ w b)
-    (s : Set β) : (sum fun b ↦ ENNReal.ofReal (w b) • dirac b).real s = ∑ b, s.indicator w b := by
-  rw [← s.toFinite.coe_toFinset, measureReal_def, sum_smul_dirac_apply_finset,
-    ENNReal.toReal_sum fun _ _ ↦ ENNReal.ofReal_ne_top,
-    Finset.sum_indicator_subset _ (Finset.subset_univ _)]
-  simp only [ENNReal.toReal_ofReal (hw _)]
+/-- With nonnegative real weights, a set has the total weight of its points. -/
+theorem finsetSum_ofReal_smul_dirac_real_apply {w : β → ℝ} (hw : ∀ b, 0 ≤ w b) (s : Set β) :
+    (∑ b, ENNReal.ofReal (w b) • dirac b).real s = ∑ b, s.indicator w b := by
+  rw [measureReal_def, finsetSum_smul_dirac_apply, ENNReal.toReal_sum fun b _ ↦ by
+    by_cases hb : b ∈ s <;> simp [hb]]
+  exact Finset.sum_congr rfl fun b _ ↦ by by_cases hb : b ∈ s <;> simp [hb, hw b]
 
-end Sum
+end FinsetSum
 
 end MeasureTheory.Measure

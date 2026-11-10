@@ -463,10 +463,10 @@ noncomputable def marryFiller : StarConcept → ℝ≥0∞
 
 /-- The selectional constraint of MARRY's roles as a measure. -/
 noncomputable def marryTheme : Measure StarConcept :=
-  Measure.sum fun c ↦ marryFiller c • Measure.dirac c
+  ∑ c, marryFiller c • Measure.dirac c
 
 @[simp] theorem marryTheme_apply_singleton (c : StarConcept) : marryTheme {c} = marryFiller c :=
-  Measure.sum_smul_dirac_singleton
+  Measure.finsetSum_smul_dirac_singleton
 
 /-- The astronomer-sentence system with Dirichlet concentration `α`. -/
 noncomputable def starSDS (α : ℝ) (hα : 0 < α) : SDS StarScenario StarConcept StarRole where

@@ -251,7 +251,7 @@ variable [DecidableEq α] [Fintype α] [MeasurableSpace α] [MeasurableSingleton
 probability `polyaUrnPredictive θ (countVec s) c`. -/
 noncomputable def polyaUrnRule (n : ℕ) : Kernel (Fin n → α) α :=
   Kernel.ofFunOfCountable fun s ↦
-    Measure.sum fun c ↦ ENNReal.ofReal (polyaUrnPredictive θ (countVec s) c) • Measure.dirac c
+    ∑ c, ENNReal.ofReal (polyaUrnPredictive θ (countVec s) c) • Measure.dirac c
 
 /-- The *Pólya urn*: the law of the first `n` draws from the urn with weights `θ`. -/
 noncomputable def polyaUrn (n : ℕ) : Measure (Fin n → α) :=
@@ -259,13 +259,13 @@ noncomputable def polyaUrn (n : ℕ) : Measure (Fin n → α) :=
 
 theorem polyaUrnRule_apply_singleton {n : ℕ} (s : Fin n → α) (c : α) :
     polyaUrnRule θ n s {c} = ENNReal.ofReal (polyaUrnPredictive θ (countVec s) c) :=
-  Measure.sum_smul_dirac_singleton
+  Measure.finsetSum_smul_dirac_singleton
 
 variable {θ} [Nonempty α] (hθ : ∀ i, 0 < θ i)
 include hθ
 
 theorem isMarkovKernel_polyaUrnRule (n : ℕ) : IsMarkovKernel (polyaUrnRule θ n) :=
-  ⟨fun _ ↦ Measure.isProbabilityMeasure_sum_ofReal_smul_dirac
+  ⟨fun _ ↦ Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac
     (fun c ↦ polyaUrnPredictive_nonneg (fun i ↦ (hθ i).le) _ c)
     (sum_polyaUrnPredictive hθ _)⟩
 

@@ -52,10 +52,10 @@ variable [Countable α] [MeasurableSingletonClass α] [Fintype β]
 probability measure proportional to `w a`. A row of zero or infinite total weight collapses to
 the zero measure. -/
 noncomputable def ofWeights (w : α → β → ℝ≥0∞) : Kernel α β :=
-  ofFunOfCountable fun a ↦ (∑ b, w a b)⁻¹ • Measure.sum fun b ↦ w a b • Measure.dirac b
+  ofFunOfCountable fun a ↦ (∑ b, w a b)⁻¹ • ∑ b, w a b • Measure.dirac b
 
 theorem ofWeights_apply (w : α → β → ℝ≥0∞) (a : α) :
-    ofWeights w a = (∑ b, w a b)⁻¹ • Measure.sum fun b ↦ w a b • Measure.dirac b :=
+    ofWeights w a = (∑ b, w a b)⁻¹ • ∑ b, w a b • Measure.dirac b :=
   rfl
 
 theorem ofWeights_apply_univ (w : α → β → ℝ≥0∞) (a : α) :
@@ -89,7 +89,7 @@ variable [MeasurableSingletonClass β]
 
 @[simp] theorem ofWeights_apply_singleton (w : α → β → ℝ≥0∞) (a : α) (b : β) :
     ofWeights w a {b} = w a b / ∑ b', w a b' := by
-  rw [ofWeights_apply, Measure.smul_apply, smul_eq_mul, Measure.sum_smul_dirac_singleton,
+  rw [ofWeights_apply, Measure.smul_apply, smul_eq_mul, Measure.finsetSum_smul_dirac_singleton,
     ENNReal.div_eq_inv_mul]
 
 theorem ofWeights_apply_singleton_eq_zero {w : α → β → ℝ≥0∞} {a : α} {b : β} (h : w a b = 0) :

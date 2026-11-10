@@ -132,7 +132,7 @@ def answer (r : ℝ) (θ y : Bool) : ℝ := if y = θ then r else 1 - r
 /-- A yes/no question of reliability `r` answers correctly with probability `r`. -/
 noncomputable def question (r : ℝ) : Kernel Bool Bool :=
   Kernel.ofFunOfCountable fun θ ↦
-    Measure.sum fun y ↦ ENNReal.ofReal (answer r θ y) • Measure.dirac y
+    ∑ y, ENNReal.ofReal (answer r θ y) • Measure.dirac y
 
 theorem decisionValue_correct (μ : Measure Bool) [IsFiniteMeasure μ] :
     decisionValue correct μ = max (μ.real {true}) (μ.real {false}) := by
@@ -153,10 +153,10 @@ theorem answer_nonneg (θ y : Bool) : 0 ≤ answer r θ y := by
   split <;> linarith
 
 theorem question_real_singleton (θ y : Bool) : (question r θ).real {y} = answer r θ y :=
-  Measure.sum_ofReal_smul_dirac_real_singleton (answer_nonneg h₀ h₁ θ) y
+  Measure.finsetSum_ofReal_smul_dirac_real_singleton (answer_nonneg h₀ h₁ θ) y
 
 theorem isMarkovKernel_question : IsMarkovKernel (question r) :=
-  ⟨fun θ ↦ Measure.isProbabilityMeasure_sum_ofReal_smul_dirac (answer_nonneg h₀ h₁ θ)
+  ⟨fun θ ↦ Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac (answer_nonneg h₀ h₁ θ)
     (by cases θ <;> simp [answer])⟩
 
 theorem comp_question_real (y : Bool) :

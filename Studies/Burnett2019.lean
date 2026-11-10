@@ -103,20 +103,20 @@ end Game
 
 private theorem ofWeights_ne_zero {β : Type*} [Fintype β] [MeasurableSpace β]
     [MeasurableSingletonClass β] {w : β → ℕ} (hw : ∀ b, w b ≠ 0) (b : β) :
-    (Measure.sum fun b ↦ (w b : ℝ≥0∞) • Measure.dirac b) {b} ≠ 0 := by
-  rw [Measure.sum_smul_dirac_singleton]
+    (∑ b, (w b : ℝ≥0∞) • Measure.dirac b) {b} ≠ 0 := by
+  rw [Measure.finsetSum_smul_dirac_singleton]
   exact Nat.cast_ne_zero.2 (hw b)
 
 private theorem ofWeights_real_univ {β : Type*} [Fintype β] [MeasurableSpace β]
     [MeasurableSingletonClass β] (w : β → ℕ) :
-    (Measure.sum fun b ↦ (w b : ℝ≥0∞) • Measure.dirac b).real Set.univ = ((∑ b, w b : ℕ) : ℝ) := by
-  rw [measureReal_def, ← Finset.coe_univ, Measure.sum_smul_dirac_apply_finset, ← Nat.cast_sum,
+    (∑ b, (w b : ℝ≥0∞) • Measure.dirac b).real Set.univ = ((∑ b, w b : ℕ) : ℝ) := by
+  rw [measureReal_def, ← Finset.coe_univ, Measure.finsetSum_smul_dirac_apply_finset, ← Nat.cast_sum,
     ENNReal.toReal_natCast]
 
 private theorem ofWeights_real_singleton {β : Type*} [Fintype β] [MeasurableSpace β]
     [MeasurableSingletonClass β] (w : β → ℕ) (b : β) :
-    (Measure.sum fun b ↦ (w b : ℝ≥0∞) • Measure.dirac b).real {b} = w b := by
-  rw [measureReal_def, Measure.sum_smul_dirac_singleton, ENNReal.toReal_natCast]
+    (∑ b, (w b : ℝ≥0∞) • Measure.dirac b).real {b} = w b := by
+  rw [measureReal_def, Measure.finsetSum_smul_dirac_singleton, ENNReal.toReal_natCast]
 
 /-! ### Binary variables
 
@@ -156,7 +156,7 @@ noncomputable def share (prior : Measure (Persona G)) (α : ℝ) : ℝ :=
       (prior.real Set.univ - prior.real {h.persona}) ^ α)
 
 theorem share_ofWeights (wt : Persona G → ℕ) :
-    share h (Measure.sum fun p ↦ (wt p : ℝ≥0∞) • Measure.dirac p) α =
+    share h (∑ p, (wt p : ℝ≥0∞) • Measure.dirac p) α =
       (((∑ p, wt p : ℕ) : ℝ) - wt h.persona) ^ α /
         ((((∑ p, wt p : ℕ) : ℝ) - wt h.symm.persona) ^ α +
           (((∑ p, wt p : ℕ) : ℝ) - wt h.persona) ^ α) := by
@@ -404,11 +404,11 @@ def carefulWeight (π : Persona) : ℕ := if .incompetent ∈ π.1 then 3 else 2
 
 /-- The barbecue's prior. -/
 noncomputable abbrev casual : Measure Persona :=
-  Measure.sum fun π ↦ (casualWeight π : ℝ≥0∞) • Measure.dirac π
+  ∑ π, (casualWeight π : ℝ≥0∞) • Measure.dirac π
 
 /-- The journalists' prior. -/
 noncomputable abbrev careful : Measure Persona :=
-  Measure.sum fun π ↦ (carefulWeight π : ℝ≥0∞) • Measure.dirac π
+  ∑ π, (carefulWeight π : ℝ≥0∞) • Measure.dirac π
 
 private theorem casual_ne_zero : ∀ π, casual {π} ≠ 0 :=
   ofWeights_ne_zero fun π ↦ by unfold casualWeight; split_ifs <;> decide
@@ -529,7 +529,7 @@ rationalities. -/
 
 /-- The uniform prior of the sociolinguistic interview (p. 439). -/
 noncomputable abbrev uniform : Measure Persona :=
-  Measure.sum fun π ↦ ((1 : ℕ) : ℝ≥0∞) • Measure.dirac π
+  ∑ π, ((1 : ℕ) : ℝ≥0∞) • Measure.dirac π
 
 private theorem uniform_ne_zero : ∀ π, uniform {π} ≠ 0 :=
   ofWeights_ne_zero fun _ ↦ one_ne_zero
@@ -682,7 +682,7 @@ variable {α : ℝ}
 
 /-- Rice is unfamiliar, so the listener's beliefs about her are uniform (Table 10). -/
 noncomputable abbrev rice : Measure Persona :=
-  Measure.sum fun π ↦ ((1 : ℕ) : ℝ≥0∞) • Measure.dirac π
+  ∑ π, ((1 : ℕ) : ℝ≥0∞) • Measure.dirac π
 
 private theorem rice_ne_zero : ∀ π, rice {π} ≠ 0 :=
   ofWeights_ne_zero fun _ ↦ one_ne_zero
@@ -754,7 +754,7 @@ def pelosiWeight (π : Persona) : ℕ := if .inarticulate ∈ π.1 then 9 else 1
 
 /-- The listener's beliefs about Pelosi. -/
 noncomputable abbrev pelosi : Measure Persona :=
-  Measure.sum fun π ↦ (pelosiWeight π : ℝ≥0∞) • Measure.dirac π
+  ∑ π, (pelosiWeight π : ℝ≥0∞) • Measure.dirac π
 
 private theorem pelosi_ne_zero : ∀ π, pelosi {π} ≠ 0 :=
   ofWeights_ne_zero fun π ↦ by unfold pelosiWeight; split_ifs <;> decide
@@ -812,13 +812,13 @@ def bushWeight (π : Persona) : ℕ := if π = inarticulateAloof then 97 else 1
 
 /-- The listener's beliefs about Bush. -/
 noncomputable abbrev bush : Measure Persona :=
-  Measure.sum fun π ↦ (bushWeight π : ℝ≥0∞) • Measure.dirac π
+  ∑ π, (bushWeight π : ℝ≥0∞) • Measure.dirac π
 
 private theorem bush_ne_zero : ∀ π, bush {π} ≠ 0 :=
   ofWeights_ne_zero fun π ↦ by unfold bushWeight; split_ifs <;> decide
 
 private theorem bush_eq : bush {articulateAloof} = bush {inarticulateFriendly} := by
-  simp only [Measure.sum_smul_dirac_singleton, bushWeight]
+  simp only [Measure.finsetSum_smul_dirac_singleton, bushWeight]
   rfl
 
 /-- The listener remains 97% sure that Bush is inarticulate and aloof whatever variant he uses

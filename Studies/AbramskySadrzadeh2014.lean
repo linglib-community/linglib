@@ -469,7 +469,7 @@ instance : MeasurableSpace (Noun × Noun) := ⊤
 
 /-- The distribution over coverings weights each by its score, normalised. -/
 noncomputable def coveringMeasure : Measure (Noun × Noun) :=
-  (∑ c, (score c : ℝ≥0∞))⁻¹ • Measure.sum fun c ↦ (score c : ℝ≥0∞) • Measure.dirac c
+  (∑ c, (score c : ℝ≥0∞))⁻¹ • ∑ c, (score c : ℝ≥0∞) • Measure.dirac c
 
 /-- The paper's `d ∈ D_R F(L, X)` is the image of the covering distribution along `c ↦ t_c`. -/
 noncomputable def gluingMeasure : Measure (ripeCtx.DRS) := coveringMeasure.map ripeGluing
@@ -478,7 +478,7 @@ theorem gluingMeasure_apply (c : Noun × Noun) :
     gluingMeasure {ripeGluing c} = score c / 48 := by
   rw [gluingMeasure, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
     ← Set.image_singleton, ripeGluing_injective.preimage_image, coveringMeasure,
-    Measure.smul_apply, smul_eq_mul, Measure.sum_smul_dirac_singleton, ← Nat.cast_sum,
+    Measure.smul_apply, smul_eq_mul, Measure.finsetSum_smul_dirac_singleton, ← Nat.cast_sum,
     show ∑ c : Noun × Noun, score c = 48 from rfl, Nat.cast_ofNat, ENNReal.div_eq_inv_mul]
 
 /-- *Ripe bananas, cheeky monkeys* (`t₂`) is the most likely resolution, with probability `1/2`. -/

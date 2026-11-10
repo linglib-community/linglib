@@ -198,10 +198,10 @@ theorem statePrior_pos (st : State) : 0 < s.statePrior st := by
 
 /-- The measured prior over states. -/
 noncomputable def prior : Measure State :=
-  Measure.sum fun st ↦ ENNReal.ofReal (s.statePrior st) • Measure.dirac st
+  ∑ st, ENNReal.ofReal (s.statePrior st) • Measure.dirac st
 
 theorem prior_apply_singleton (st : State) : s.prior {st} = ENNReal.ofReal (s.statePrior st) :=
-  Measure.sum_smul_dirac_singleton
+  Measure.finsetSum_smul_dirac_singleton
 
 theorem prior_real_singleton (st : State) : s.prior.real {st} = s.statePrior st := by
   rw [measureReal_def, prior_apply_singleton, ENNReal.toReal_ofReal (s.statePrior_pos st).le]

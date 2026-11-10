@@ -111,15 +111,15 @@ Expectancy columns, and the Bayesian column that combines them. -/
 theorem objectReference_eq (c : RC) :
     ∃ m e : ℕ, RoundsTo ((mirror fun r ↦ (weights m r : ℝ≥0∞)).real {.object})
         (objectReference c).mirror ∧
-      RoundsTo ((expectancy (Measure.sum fun r ↦ (weights e r : ℝ≥0∞) • Measure.dirac r)).real
+      RoundsTo ((expectancy (∑ r, (weights e r : ℝ≥0∞) • Measure.dirac r)).real
         {.object}) (objectReference c).expectancy ∧
-      RoundsTo ((bayesian (Measure.sum fun r ↦ (weights e r : ℝ≥0∞) • Measure.dirac r)
+      RoundsTo ((bayesian (∑ r, (weights e r : ℝ≥0∞) • Measure.dirac r)
         fun r ↦ (weights m r : ℝ≥0∞)).real {.object}) (objectReference c).bayesian := by
   have hm (m : ℕ) : mirror (fun r ↦ (weights m r : ℝ≥0∞)) =
       bayesian Measure.count fun r ↦ (weights m r : ℝ≥0∞) :=
     (mirror_expectancy Measure.count _ one_ne_zero ENNReal.one_ne_top).1
-  have he (e : ℕ) : expectancy (Measure.sum fun r ↦ (weights e r : ℝ≥0∞) • Measure.dirac r) =
-      bayesian (Measure.sum fun r ↦ (weights e r : ℝ≥0∞) • Measure.dirac r) fun _ ↦ 1 :=
+  have he (e : ℕ) : expectancy (∑ r, (weights e r : ℝ≥0∞) • Measure.dirac r) =
+      bayesian (∑ r, (weights e r : ℝ≥0∞) • Measure.dirac r) fun _ ↦ 1 :=
     (mirror_expectancy _ (fun _ ↦ (1 : ℝ≥0∞)) one_ne_zero ENNReal.one_ne_top).2
   cases c
   on_goal 1 => refine ⟨3214, 3854, ?_, ?_, ?_⟩
@@ -127,7 +127,7 @@ theorem objectReference_eq (c : RC) :
   all_goals
     (try rw [hm]); (try rw [he])
     rw [bayesian_real_object _ _ (fun _ ↦ by simp)]
-    simp only [measureReal_def, Measure.sum_smul_dirac_singleton, weights,
+    simp only [measureReal_def, Measure.finsetSum_smul_dirac_singleton, weights,
       ENNReal.toReal_natCast, ENNReal.toReal_one, RoundsTo, objectReference,
       Data.Statistics.Decimal.toRat, abs_le]
     norm_num

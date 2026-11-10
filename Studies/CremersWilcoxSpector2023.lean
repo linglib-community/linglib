@@ -268,10 +268,10 @@ noncomputable def priorWeight : World → ℝ≥0∞
   | .wab => ENNReal.ofReal s.p
 
 /-- The measured prior over the two worlds. -/
-noncomputable def prior : Measure World := Measure.sum fun w ↦ s.priorWeight w • Measure.dirac w
+noncomputable def prior : Measure World := ∑ w, s.priorWeight w • Measure.dirac w
 
 theorem prior_apply_singleton (w : World) : s.prior {w} = s.priorWeight w :=
-  Measure.sum_smul_dirac_singleton
+  Measure.finsetSum_smul_dirac_singleton
 
 theorem prior_wa : s.prior {.wa} = ENNReal.ofReal (1 - s.p) := prior_apply_singleton s .wa
 

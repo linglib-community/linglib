@@ -215,15 +215,15 @@ variable {X : Type*} [Fintype X] [MeasurableSpace X] [MeasurableSingletonClass X
 
 /-- Eq. (20): the production kernel of the two-language model. -/
 noncomputable def produce : Kernel Language (X × Bool) :=
-  Kernel.ofFunOfCountable fun i ↦ Measure.sum fun d ↦
+  Kernel.ofFunOfCountable fun i ↦ ∑ d,
     ENNReal.ofReal (P.real {d.1} * if d.2 = decide (d.1 ∈ G i) then 1 - ε else ε) • Measure.dirac d
 
 /-- §3.2: the prior gives `L₁` probability `α`. -/
 noncomputable def prior (α : ℝ) : Measure Language :=
-  Measure.sum fun i ↦ ENNReal.ofReal (match i with | .one => α | .two => 1 - α) • Measure.dirac i
+  ∑ i, ENNReal.ofReal (match i with | .one => α | .two => 1 - α) • Measure.dirac i
 
 instance (i : Language) : IsFiniteMeasure (produce P G ε i) :=
-  inferInstanceAs (IsFiniteMeasure (Measure.sum _))
+  inferInstanceAs (IsFiniteMeasure (∑ b, _ • Measure.dirac b))
 
 instance : IsFiniteKernel (produce P G ε) :=
   ⟨⟨∑ i, produce P G ε i Set.univ, ENNReal.sum_lt_top.2 fun _ _ ↦ measure_lt_top _ _,
@@ -231,17 +231,16 @@ instance : IsFiniteKernel (produce P G ε) :=
       (mem_univ i)⟩⟩
 
 instance (α : ℝ) : IsFiniteMeasure (prior α) :=
-  inferInstanceAs (IsFiniteMeasure (Measure.sum _))
+  inferInstanceAs (IsFiniteMeasure (∑ b, _ • Measure.dirac b))
 
-omit [Fintype X] in
 theorem produce_apply_singleton (i : Language) (d : X × Bool) :
     produce P G ε i {d} =
       ENNReal.ofReal (P.real {d.1} * if d.2 = decide (d.1 ∈ G i) then 1 - ε else ε) :=
-  Measure.sum_smul_dirac_singleton
+  Measure.finsetSum_smul_dirac_singleton
 
 theorem isMarkovKernel_produce [IsProbabilityMeasure P] (h₀ : 0 ≤ ε) (h₁ : ε ≤ 1) :
     IsMarkovKernel (produce P G ε) := by
-  refine ⟨fun i ↦ Measure.isProbabilityMeasure_sum_ofReal_smul_dirac
+  refine ⟨fun i ↦ Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac
     (fun d ↦ mul_nonneg measureReal_nonneg (by split_ifs <;> linarith)) ?_⟩
   have (x : X) : (P.real {x} * if true = decide (x ∈ G i) then 1 - ε else ε) +
       (P.real {x} * if false = decide (x ∈ G i) then 1 - ε else ε) = P.real {x} := by
@@ -252,11 +251,12 @@ theorem isMarkovKernel_produce [IsProbabilityMeasure P] (h₀ : 0 ≤ ε) (h₁ 
 
 theorem prior_apply_singleton (α : ℝ) (i : Language) :
     prior α {i} = ENNReal.ofReal (match i with | .one => α | .two => 1 - α) :=
-  Measure.sum_smul_dirac_singleton
+  Measure.finsetSum_smul_dirac_singleton
 
 theorem isProbabilityMeasure_prior {α : ℝ} (h₀ : 0 ≤ α) (h₁ : α ≤ 1) :
     IsProbabilityMeasure (prior α) :=
-  Measure.isProbabilityMeasure_sum_ofReal_smul_dirac (fun i ↦ by cases i <;> dsimp <;> linarith)
+  Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac
+    (fun i ↦ by cases i <;> dsimp <;> linarith)
     (by simp [univ_eq])
 
 theorem prior_real_one {α : ℝ} (h : 0 ≤ α) : (prior α).real {one} = α := by
@@ -272,10 +272,9 @@ theorem prior_inj {α α' : ℝ} (h : 0 ≤ α) (h' : 0 ≤ α') : prior α = pr
 
 variable {P G ε}
 
-omit [Fintype X] in
 theorem produce_real_singleton (h₀ : 0 ≤ ε) (h₁ : ε ≤ 1) (i : Language) (d : X × Bool) :
     (produce P G ε i).real {d} = P.real {d.1} * if d.2 = decide (d.1 ∈ G i) then 1 - ε else ε :=
-  Measure.sum_ofReal_smul_dirac_real_singleton
+  Measure.finsetSum_ofReal_smul_dirac_real_singleton
     (fun d ↦ mul_nonneg measureReal_nonneg (by split_ifs <;> linarith)) d
 
 /-! #### MAP estimation with two languages -/
@@ -296,7 +295,6 @@ private theorem ite_eq_or (ε : ℝ) (c : Prop) [Decidable c] :
     (if c then 1 - ε else ε) = 1 - ε ∨ (if c then 1 - ε else ε) = ε := by
   split_ifs <;> simp
 
-omit [Fintype X] in
 -- §5.2: the MAP choice at each datum, in a form free of `α`.
 theorem argmax_prior_mul_produce {α : ℝ} (hα : 1 / 2 < α) (hαε : ε < 1 - α) (hε : 0 ≤ ε)
     (d : X × Bool) :

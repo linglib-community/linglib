@@ -223,39 +223,39 @@ def likelihoodWeight (savvy : Bool) : Message → Persona → ℕ
 /-- An anti-vaxxer knows the discourse, rewards an anti-vax speaker and punishes a pro-vax one,
 and slightly punishes a pro-corporate one. -/
 noncomputable def antiVaxxer : Listener Persona Message where
-  prior := .sum fun π ↦ (priorWeight π : ℝ≥0∞) • .dirac π
-  likelihood π := .sum fun m ↦ (likelihoodWeight true m π : ℝ≥0∞) • .dirac m
+  prior := ∑ π, (priorWeight π : ℝ≥0∞) • Measure.dirac π
+  likelihood π := ∑ m, (likelihoodWeight true m π : ℝ≥0∞) • Measure.dirac m
   approval π := (if .antiVax ∈ π.1 then 100 else -100) + (if .proCorporate ∈ π.1 then -25 else 0)
 
 /-- A savvy pro-vaxxer, the anti-vaxxer's mirror image. -/
 noncomputable def savvyProVaxxer : Listener Persona Message where
-  prior := .sum fun π ↦ (priorWeight π : ℝ≥0∞) • .dirac π
-  likelihood π := .sum fun m ↦ (likelihoodWeight true m π : ℝ≥0∞) • .dirac m
+  prior := ∑ π, (priorWeight π : ℝ≥0∞) • Measure.dirac π
+  likelihood π := ∑ m, (likelihoodWeight true m π : ℝ≥0∞) • Measure.dirac m
   approval π := (if .proVax ∈ π.1 then 100 else -100) + (if .proCorporate ∈ π.1 then -25 else 0)
 
 /-- An unsavvy pro-vaxxer does not know the discourse and, less invested, approves less of a
 pro-vax speaker. -/
 noncomputable def unsavvyProVaxxer : Listener Persona Message where
-  prior := .sum fun π ↦ (priorWeight π : ℝ≥0∞) • .dirac π
-  likelihood π := .sum fun m ↦ (likelihoodWeight false m π : ℝ≥0∞) • .dirac m
+  prior := ∑ π, (priorWeight π : ℝ≥0∞) • Measure.dirac π
+  likelihood π := ∑ m, (likelihoodWeight false m π : ℝ≥0∞) • Measure.dirac m
   approval π := (if .proVax ∈ π.1 then 75 else -100) + (if .proCorporate ∈ π.1 then -25 else 0)
 
 /-! ### Stein's choice -/
 
 private theorem L0_real_singleton (L : Listener Persona Message) (s : Bool)
-    (hp : L.prior = .sum fun π ↦ (priorWeight π : ℝ≥0∞) • .dirac π)
-    (hl : L.likelihood = fun π ↦ .sum fun m ↦ (likelihoodWeight s m π : ℝ≥0∞) • .dirac m)
+    (hp : L.prior = ∑ π, (priorWeight π : ℝ≥0∞) • Measure.dirac π)
+    (hl : L.likelihood = fun π ↦ ∑ m, (likelihoodWeight s m π : ℝ≥0∞) • Measure.dirac m)
     (m : Message) (π : Persona) :
     (L.L0 m).real {π} = (likelihoodWeight s m π * priorWeight π : ℝ) /
       ∑ π', (likelihoodWeight s m π' * priorWeight π' : ℝ) := by
   have hL (π : Persona) (m : Message) : L.likelihood π {m} = likelihoodWeight s m π := by
     rw [hl]
-    exact Measure.sum_smul_dirac_singleton
-  have : L.L0 = Kernel.ofDensity (Measure.sum fun π ↦ (priorWeight π : ℝ≥0∞) • Measure.dirac π)
+    exact Measure.finsetSum_smul_dirac_singleton
+  have : L.L0 = Kernel.ofDensity (∑ π, (priorWeight π : ℝ≥0∞) • Measure.dirac π)
       fun m π ↦ (likelihoodWeight s m π : ℝ≥0∞) := by
-    simp [Listener.L0, listener, hp, hL, -Measure.sum_fintype]
+    simp [Listener.L0, listener, hp, hL]
   rw [this, Kernel.ofDensity_real_singleton _ _ _ (by simp)]
-  simp only [measureReal_def, Measure.sum_smul_dirac_singleton, ENNReal.toReal_natCast]
+  simp only [measureReal_def, Measure.finsetSum_smul_dirac_singleton, ENNReal.toReal_natCast]
 
 private theorem sum_univ (f : Persona → ℝ) :
     ∑ π, f π = f proVaxProCorp + f proVaxAntiCorp + f antiVaxProCorp + f antiVaxAntiCorp := by

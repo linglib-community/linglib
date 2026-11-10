@@ -259,13 +259,13 @@ private theorem representable_of_feasible [IsQualitativeProbability r] {x : Fin 
     div_nonneg (by exact_mod_cast hnn j) hσR.le
   have hw1 : ∑ j, (x j : ℝ) / ∑ j, (x j : ℝ) = 1 := by rw [← Finset.sum_div, div_self hσR.ne']
   set μ : Measure (Fin n) :=
-    Measure.sum fun j ↦ ENNReal.ofReal ((x j : ℝ) / ∑ j, (x j : ℝ)) • Measure.dirac j with hμ
+    ∑ j, ENNReal.ofReal ((x j : ℝ) / ∑ j, (x j : ℝ)) • Measure.dirac j with hμ
   have : IsProbabilityMeasure μ :=
-    Measure.isProbabilityMeasure_sum_ofReal_smul_dirac hw hw1
+    Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac hw hw1
   have hm (A : Set (Fin n)) :
       μ.real A =
         ((∑ j, if j ∈ A then x j else 0 : ℚ) : ℝ) / ((∑ j, x j : ℚ) : ℝ) := by
-    rw [hμ, Measure.sum_ofReal_smul_dirac_real_apply hw]
+    rw [hμ, Measure.finsetSum_ofReal_smul_dirac_real_apply hw]
     push_cast
     rw [Finset.sum_div]
     refine Finset.sum_congr rfl fun j _ ↦ ?_

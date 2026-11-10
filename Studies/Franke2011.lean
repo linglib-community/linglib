@@ -1508,10 +1508,10 @@ theorem exists_isPBE_of_isFixedPt [Nonempty T] [IsFiniteMeasure G.prior]
     split_ifs with h
     · rw [sum_unbiased_real, ite_eq_left (hlit m)]
     · rw [← sum_div, div_self (hZ m h).ne']
-  have hμ (m : M) := Measure.sum_ofReal_smul_dirac_real_singleton (hpost0 m)
-  refine ⟨fun m ↦ Measure.sum fun t ↦ ENNReal.ofReal (post m t) • Measure.dirac t,
+  have hμ (m : M) := Measure.finsetSum_ofReal_smul_dirac_real_singleton (hpost0 m)
+  refine ⟨fun m ↦ ∑ t, ENNReal.ofReal (post m t) • Measure.dirac t,
     fun t m hm m' ↦ ?_, fun m t ht ↦ ?_,
-    fun m ↦ Measure.isProbabilityMeasure_sum_ofReal_smul_dirac (hpost0 m)
+    fun m ↦ Measure.isProbabilityMeasure_finsetSum_ofReal_smul_dirac (hpost0 m)
       (hpost1 m),
     fun m hm t ↦ ?_⟩
   · obtain ⟨-, hmax⟩ := mem_senderResponse.mp (unbiased_real_pos_iff.mp hm)

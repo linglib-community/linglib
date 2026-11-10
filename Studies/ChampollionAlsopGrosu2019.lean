@@ -334,23 +334,23 @@ def biasedWeight : FCState → ℕ
 
 /-- The state prior. -/
 noncomputable def priorB : Measure FCState :=
-  Measure.sum fun w ↦ (biasedWeight w : ℝ≥0∞) • Measure.dirac w
+  ∑ w, (biasedWeight w : ℝ≥0∞) • Measure.dirac w
 
 /-- The joint prior, the interpretation function drawn uniformly. -/
 noncomputable def jointPriorB : Measure (FCState × Interp) :=
-  Measure.sum fun p ↦ (biasedWeight p.1 : ℝ≥0∞) • Measure.dirac p
+  ∑ p, (biasedWeight p.1 : ℝ≥0∞) • Measure.dirac p
 
 theorem priorB_singleton (w : FCState) : priorB {w} = biasedWeight w :=
-  Measure.sum_smul_dirac_singleton
+  Measure.finsetSum_smul_dirac_singleton
 
 theorem jointPriorB_singleton (p : FCState × Interp) : jointPriorB {p} = biasedWeight p.1 :=
-  Measure.sum_smul_dirac_singleton
+  Measure.finsetSum_smul_dirac_singleton
 
 instance : IsFiniteMeasure priorB :=
-  inferInstanceAs (IsFiniteMeasure (Measure.sum _))
+  inferInstanceAs (IsFiniteMeasure (∑ b, _ • Measure.dirac b))
 
 instance : IsFiniteMeasure jointPriorB :=
-  inferInstanceAs (IsFiniteMeasure (Measure.sum _))
+  inferInstanceAs (IsFiniteMeasure (∑ b, _ • Measure.dirac b))
 
 /-- The pragmatic listener at the biased prior. -/
 noncomputable def listenerB (α : ℝ) : Kernel Utterance (FCState × Interp) :=
