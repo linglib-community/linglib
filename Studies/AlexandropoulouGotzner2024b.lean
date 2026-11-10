@@ -18,10 +18,11 @@ The relative pattern is Horn's: R-strengthening of *not large* needs no
 competitor, while the middling reading of *not small* rides on the semantic gap.
 For absolutes the paper keeps the standard semantics, on which the pair leaves no gap, and
 proposes a division of pragmatic labour at a level of precision: *clean* is read at a high
-precision, like *pristine*, and *dirty* like *filthy*, so that [each negated form is used apart
-from its simple antonym](##negated_apart), the two [on opposite sides of the
-border](##dividedUse_subset), whereas [without the precise reading neither has a use of its
-own](##AntonymForm.dividedUse_smul_self).
+precision, like *pristine*, and *dirty* like *filthy*, and each negated form takes what that
+reading leaves of the literal meaning it shares with its simple antonym. These are Krifka's four
+regions with the precise readings as the stereotypical uses, so a negated absolute [has a range
+of its own exactly when its simple antonym is read more strictly than it literally
+means](##degrees_plateau_nonempty_iff).
 
 ## References
 
@@ -41,19 +42,13 @@ open AlexandropoulouGotzner2024a
 
 variable {D : Type*} (U : Set D) (core : Polarity → Set D)
 
-/-- A negated absolute is used apart from the simple antonym it is truth-conditionally equivalent
-to, *not dirty* from *clean* and *not clean* from *dirty* (p. 28). -/
-theorem negated_apart (p : Polarity) :
-    Disjoint (AntonymForm.dividedUse (· • U) core ⟨p, .negative⟩)
-      (AntonymForm.dividedUse (· • U) core ⟨.negative * p, .positive⟩) :=
-  AntonymForm.disjoint_dividedUse_flip ..
-
-/-- *Not dirty* stays on the clean side of the border and *not clean* on the dirty side, so the
-two negated forms communicate different ranges (p. 28). -/
-theorem dividedUse_subset :
-    AntonymForm.dividedUse (· • U) core .notNegative ⊆ U ∧
-      AntonymForm.dividedUse (· • U) core .notPositive ⊆ Uᶜ :=
-  ⟨fun _ h ↦ not_not.1 h.1, fun _ h ↦ h.1⟩
+/-- *Not dirty* and *not clean* have ranges apart from *clean* and *dirty* exactly when the
+simple forms are read at a precision that leaves out part of their literal meaning (p. 28); on
+the literal reading alone the negated forms have none. -/
+theorem degrees_plateau_nonempty_iff :
+    ((Krifka2007b.Region.plateauHigh.degrees core U).Nonempty ↔ ¬ U ⊆ core .positive) ∧
+      ((Krifka2007b.Region.plateauLow.degrees core U).Nonempty ↔ ¬ Uᶜ ⊆ core .negative) :=
+  ⟨Set.sdiff_nonempty, Set.sdiff_nonempty⟩
 
 /-! ### Rows -/
 

@@ -1,7 +1,7 @@
 module
 
 public import Studies.Blutner2000
-public import Linglib.Pragmatics.NeoGricean.DivisionOfLabour
+public import Linglib.Semantics.Negation.AntonymForm
 
 /-!
 # Krifka (2007): Negated Antonyms: Creating and Filling the Gap
@@ -12,7 +12,7 @@ the whole middle ground that Horn's contrary analysis leaves it. The border betw
 *unhappy* is sharp but not agreed on, as on Williamson's epistemic view of vagueness, and the pair
 is literally contradictory. Speakers use a simple form only where every admissible border makes it
 true, so the pair [is used as contraries exactly when the border is open](##isContrary_safe_iff).
-The gap this creates [divides at the speaker's border](##compl_safe_union) into a lower and an
+The gap this creates [divides at the speaker's border](##compl_core_union) into a lower and an
 upper region, [ordered along the scale](##Region.lt_of_mem_degrees) between the two safe ones, and
 bidirectional optimality theory, read on [the literal meanings of the four
 regions](##mem_quadrupletPairs_iff), gives the lower one to *not happy* and the upper one to
@@ -23,17 +23,17 @@ pair](##superoptimal_quadruplet_iff).
 
 * A border is the set of degrees above it, the extension of *happy*, and literal meanings are the
   substrate's `AntonymForm.denotation` on it and its complement. The admissible borders are a
-  family `Θ` of such sets. Only the ordering of the regions uses the paper's linear scale, on which the
-  borders are upper sets.
+  family `Θ` of such sets. Only the ordering of the regions uses the paper's linear scale, on
+  which the borders are upper sets.
 * Safe use is a restriction on use, not a truth value: at the speaker's own border `U` every
   form stays true or false of every degree, which is where the account parts from
   supervaluation. The family `Θ` is fixed, although the paper lets the limits of safe use be
   vague and negotiated in turn.
 * The paper first derives the M principle by avoidance of synonymy, the complex form taking what
-  the safe use of the simple one leaves of their shared literal meaning, the substrate's
-  `AntonymForm.dividedUse`. The two border regions are defined that way, and [the two derivations
-  agree](##degrees_eq_dividedUse). It then derives the principle in bidirectional optimality
-  theory, stated as the fixed-point condition `BidirectionalOT.mem_superoptimalSet` and worked on McCawley's
+  the safe use of the simple one leaves of their shared literal meaning. The two border regions
+  are defined that way, for any stereotypical uses of the simple forms, of which safe use is the
+  paper's. It then derives the principle in bidirectional optimality theory, stated as the
+  fixed-point condition `BidirectionalOT.mem_superoptimalSet` and worked on McCawley's
   *kill* and *cause to die*, which is Blutner's schematic tableau. For the quadruplet it says only
   that each half is the configuration that triggers the M implicature; the game here is that
   evaluation on the four forms and four regions, two copies of the tableau that share no form and
@@ -61,6 +61,7 @@ namespace Krifka2007b
 open BidirectionalOT Aristotelian
 
 variable {D : Type*} {Θ : Set (Set D)} {U U₁ U₂ : Set D} {d d₁ d₂ : D} {f : AntonymForm}
+  {core : Polarity → Set D}
 
 /-! ### Safe use -/
 
@@ -71,6 +72,16 @@ def safe (Θ : Set (Set D)) (p : Polarity) : Set D := ⋂ U ∈ Θ, p • U
 theorem mem_safe_positive : d ∈ safe Θ .positive ↔ ∀ U ∈ Θ, d ∈ U := Set.mem_iInter₂
 
 theorem mem_safe_negative : d ∈ safe Θ .negative ↔ ∀ U ∈ Θ, d ∉ U := Set.mem_iInter₂
+
+theorem safe_subset (hU : U ∈ Θ) (p : Polarity) : safe Θ p ⊆ p • U := Set.biInter_subset_of_mem hU
+
+theorem isUpperSet_safe_positive [Preorder D] (hΘ : ∀ V ∈ Θ, IsUpperSet V) :
+    IsUpperSet (safe Θ .positive) :=
+  isUpperSet_iInter₂ hΘ
+
+theorem isLowerSet_safe_negative [Preorder D] (hΘ : ∀ V ∈ Θ, IsUpperSet V) :
+    IsLowerSet (safe Θ .negative) :=
+  isLowerSet_iInter₂ fun V hV ↦ (hΘ V hV).compl
 
 /-- The safe uses of *happy* and *unhappy* are contraries exactly when two borders are admissible,
 which is what makes *neither happy nor unhappy* (21) consistent although the literal pair is
@@ -125,68 +136,68 @@ def markedness : Region → ℕ
   | .plateauHigh | .plateauLow => 1
   | .positive | .negative => 0
 
-/-- The degrees of a region, given the admissible borders `Θ` and the speaker's border `U`: the
-safe uses of the two simple forms, and between them what safe use leaves of their literal
-meanings at `U`, which avoidance of synonymy gives to the negated forms (12). -/
-def degrees (Θ : Set (Set D)) (U : Set D) : Region → Set D
-  | .positive => safe Θ .positive
-  | .plateauHigh => U \ safe Θ .positive
-  | .plateauLow => Uᶜ \ safe Θ .negative
-  | .negative => safe Θ .negative
+/-- The degrees of a region, given the border `U` and the stereotypical uses `core` of the two
+simple forms: the cores themselves, and between them what each leaves of its pole's literal
+meaning, which avoidance of synonymy gives to the negated form of the other pole (12). The cores
+are the safe uses `safe Θ` on the paper's account. -/
+def degrees (core : Polarity → Set D) (U : Set D) : Region → Set D
+  | .positive => core .positive
+  | .plateauHigh => U \ core .positive
+  | .plateauLow => Uᶜ \ core .negative
+  | .negative => core .negative
 
 -- (19)
-theorem mem_degrees_plateauHigh : d ∈ plateauHigh.degrees Θ U ↔ d ∈ U ∧ ∃ V ∈ Θ, d ∉ V := by
+theorem mem_degrees_plateauHigh :
+    d ∈ plateauHigh.degrees (safe Θ) U ↔ d ∈ U ∧ ∃ V ∈ Θ, d ∉ V := by
   simp [degrees, mem_safe_positive]
 
 -- (20)
-theorem mem_degrees_plateauLow : d ∈ plateauLow.degrees Θ U ↔ d ∉ U ∧ ∃ V ∈ Θ, d ∈ V := by
+theorem mem_degrees_plateauLow :
+    d ∈ plateauLow.degrees (safe Θ) U ↔ d ∉ U ∧ ∃ V ∈ Θ, d ∈ V := by
   simp [degrees, mem_safe_negative]
 
-theorem mem_iff_of_mem_degrees {r : Region} (hU : U ∈ Θ) (hd : d ∈ r.degrees Θ U) :
-    d ∈ U ↔ plateauLow < r := by
+theorem mem_iff_of_mem_degrees {r : Region} (hcore : ∀ p, core p ⊆ p • U)
+    (hd : d ∈ r.degrees core U) : d ∈ U ↔ plateauLow < r := by
   cases r
-  · exact iff_of_true (mem_safe_positive.1 hd U hU) (by decide)
+  · exact iff_of_true (hcore .positive hd) (by decide)
   · exact iff_of_true hd.1 (by decide)
   · exact iff_of_false hd.1 (by decide)
-  · exact iff_of_false (mem_safe_negative.1 hd U hU) (by decide)
+  · exact iff_of_false (hcore .negative hd) (by decide)
 
-/-- On a linear scale whose borders are upper sets the regions lie in their order, so *unhappy*
-reports a more severe state than *not happy* (9) and *not unhappy* a higher level of happiness
-than *not happy* (20). -/
-theorem lt_of_mem_degrees [LinearOrder D] {r₁ r₂ : Region} (hΘ : ∀ V ∈ Θ, IsUpperSet V)
-    (hU : U ∈ Θ) (h : r₁ < r₂) (h₁ : d₁ ∈ r₁.degrees Θ U) (h₂ : d₂ ∈ r₂.degrees Θ U) :
-    d₁ < d₂ := by
-  have key : ∀ V ∈ Θ, d₁ ∉ V → d₂ ∈ V → d₁ < d₂ := fun V hV hn hm ↦
-    lt_of_not_ge fun hle ↦ hn (hΘ V hV hle hm)
+/-- On a linear scale the regions lie in their order, so *unhappy* reports a more severe state
+than *not happy* (9) and *not unhappy* a higher level of happiness than *not happy* (20). -/
+theorem lt_of_mem_degrees [LinearOrder D] {r₁ r₂ : Region} (hcore : ∀ p, core p ⊆ p • U)
+    (hU : IsUpperSet U) (hp : IsUpperSet (core .positive)) (hn : IsLowerSet (core .negative))
+    (h : r₁ < r₂) (h₁ : d₁ ∈ r₁.degrees core U) (h₂ : d₂ ∈ r₂.degrees core U) : d₁ < d₂ := by
   by_cases hr₁ : plateauLow < r₁ <;> by_cases hr₂ : plateauLow < r₂
   · obtain ⟨rfl, rfl⟩ : r₁ = plateauHigh ∧ r₂ = positive := by
       clear h₁ h₂; revert r₁ r₂; decide
-    obtain ⟨V, hV, hn⟩ := (mem_degrees_plateauHigh.1 h₁).2
-    exact key V hV hn (mem_safe_positive.1 h₂ V hV)
+    exact lt_of_not_ge fun hle ↦ h₁.2 (hp hle h₂)
   · exact absurd (hr₁.trans h) hr₂
-  · exact key U hU (mt (mem_iff_of_mem_degrees hU h₁).1 hr₁) ((mem_iff_of_mem_degrees hU h₂).2 hr₂)
+  · exact lt_of_not_ge fun hle ↦ mt (mem_iff_of_mem_degrees hcore h₁).1 hr₁
+      (hU hle ((mem_iff_of_mem_degrees hcore h₂).2 hr₂))
   · obtain ⟨rfl, rfl⟩ : r₁ = negative ∧ r₂ = plateauLow := by
       clear h₁ h₂; revert r₁ r₂; decide
-    obtain ⟨V, hV, hm⟩ := (mem_degrees_plateauLow.1 h₂).2
-    exact key V hV (mem_safe_negative.1 h₁ V hV) hm
+    exact lt_of_not_ge fun hle ↦ h₂.2 (hn hle h₁)
 
 end Region
 
-/-- The gap that safe use leaves between *happy* and *unhappy* consists of the two border regions,
-so no part of it is left to a form meaning neither. -/
-theorem compl_safe_union (hU : U ∈ Θ) :
-    (safe Θ .positive ∪ safe Θ .negative)ᶜ =
-      Region.plateauLow.degrees Θ U ∪ Region.plateauHigh.degrees Θ U := by
+/-- The gap that the stereotypical uses leave between *happy* and *unhappy* consists of the two
+border regions, so no part of it is left to a form meaning neither. -/
+theorem compl_core_union (hcore : ∀ p, core p ⊆ p • U) :
+    (core .positive ∪ core .negative)ᶜ =
+      Region.plateauLow.degrees core U ∪ Region.plateauHigh.degrees core U := by
   ext d
   simp only [Set.mem_compl_iff, Set.mem_union, not_or, Region.degrees, Set.mem_sdiff]
   refine ⟨fun ⟨hp, hn⟩ ↦ (em (d ∈ U)).elim (fun h ↦ .inr ⟨h, hp⟩) fun h ↦ .inl ⟨h, hn⟩, ?_⟩
   rintro (⟨h, hn⟩ | ⟨h, hp⟩)
-  · exact ⟨fun hp ↦ h (mem_safe_positive.1 hp U hU), hn⟩
-  · exact ⟨hp, fun hn ↦ mem_safe_negative.1 hn U hU h⟩
+  · exact ⟨fun hp ↦ h (hcore .positive hp), hn⟩
+  · exact ⟨hp, fun hn ↦ hcore .negative hn h⟩
 
 -- (20)
 theorem mem_degrees_plateau_of_mem_of_notMem (h₁ : U₁ ∈ Θ) (h₂ : U₂ ∈ Θ) (hd₁ : d ∈ U₁)
-    (hd₂ : d ∉ U₂) : d ∈ Region.plateauHigh.degrees Θ U₁ ∩ Region.plateauLow.degrees Θ U₂ :=
+    (hd₂ : d ∉ U₂) :
+    d ∈ Region.plateauHigh.degrees (safe Θ) U₁ ∩ Region.plateauLow.degrees (safe Θ) U₂ :=
   ⟨Region.mem_degrees_plateauHigh.2 ⟨hd₁, U₂, h₂, hd₂⟩,
     Region.mem_degrees_plateauLow.2 ⟨hd₂, U₁, h₁, hd₁⟩⟩
 
@@ -205,9 +216,9 @@ the border lying between the mildly unhappy and the mildly happy region. -/
 def quadrupletPairs : Finset (AntonymForm × Region) :=
   Finset.univ.filter fun p ↦ p.2 ∈ p.1.denotation (· • Set.Ioi Region.plateauLow)
 
-theorem mem_quadrupletPairs_iff {r : Region} (hU : U ∈ Θ) (hd : d ∈ r.degrees Θ U) :
-    (f, r) ∈ quadrupletPairs ↔ d ∈ f.denotation (· • U) := by
-  have h := Region.mem_iff_of_mem_degrees hU hd
+theorem mem_quadrupletPairs_iff {r : Region} (hcore : ∀ p, core p ⊆ p • U)
+    (hd : d ∈ r.degrees core U) : (f, r) ∈ quadrupletPairs ↔ d ∈ f.denotation (· • U) := by
+  have h := Region.mem_iff_of_mem_degrees hcore hd
   cases f <;> simp [quadrupletPairs, AntonymForm.denotation, h]
 
 /-- Krifka's assignment gives the simple forms the safe regions and the complex forms the border
@@ -215,14 +226,6 @@ regions on their side. -/
 def krifkaQuadruplet : Finset (AntonymForm × Region) :=
   {(.positive, .positive), (.notNegative, .plateauHigh),
     (.negative, .negative), (.notPositive, .plateauLow)}
-
-/-- Avoidance of synonymy and weak optimality agree: the region the assignment gives a form holds
-the degrees the division of labour leaves it, with safe use as the stereotype (12). -/
-theorem degrees_eq_dividedUse {r : Region} (h : (f, r) ∈ krifkaQuadruplet) :
-    r.degrees Θ U = AntonymForm.dividedUse (· • U) (safe Θ) f := by
-  simp only [krifkaQuadruplet, Finset.mem_insert, Finset.mem_singleton, Prod.mk.injEq] at h
-  rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
-    simp [Region.degrees, AntonymForm.dividedUse, AntonymForm.denotation]
 
 /-- The two forms with a pole's literal meaning, its simple form and the negated form of the other
 pole. -/
