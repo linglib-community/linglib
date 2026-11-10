@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Rett2015b
 public import Linglib.Fragments.English.Adjectives
-public import Linglib.Semantics.Degree.Antonymy
+public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Data.Examples.Readers
 
 /-!

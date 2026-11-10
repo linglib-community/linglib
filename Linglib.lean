@@ -737,7 +737,6 @@ import Linglib.Semantics.Conditionals.Counterfactual
 import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
 import Linglib.Semantics.Conditionals.Restrictor
 import Linglib.Semantics.Conditionals.SelectionFunction
-import Linglib.Semantics.Degree.Antonymy
 import Linglib.Semantics.Degree.Boundedness
 import Linglib.Semantics.Degree.Comparison
 import Linglib.Semantics.Degree.Granularity

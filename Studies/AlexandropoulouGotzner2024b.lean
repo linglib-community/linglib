@@ -16,13 +16,13 @@ their truth-conditionally equivalent simple antonyms (*clean*, *dirty*).
 
 The relative pattern is Horn's: R-strengthening of *not large* needs no
 competitor, while the middling reading of *not small* rides on the semantic gap.
-For absolutes the paper proposes that competition among equivalent forms invites
-a precision-level reasoning: *clean* is read at a high precision, opening a gap
-the complex forms fill. On a two-threshold scale this is exactly the observed
-profile — both negated weak forms come apart from their simple antonyms
-(`relative_like`) yet the residues are mirror images (`residues_symmetric`),
-whereas at a single threshold neither distinction exists
-(`AntonymForm.contradictoryDenotation_synonymy`).
+For absolutes the paper keeps the standard semantics, on which the pair leaves no gap, and
+proposes a division of pragmatic labour at a level of precision: *clean* is read at a high
+precision, like *pristine*, and *dirty* like *filthy*, and each negated form takes what that
+reading leaves of the literal meaning it shares with its simple antonym. These are Krifka's four
+regions with the precise readings as the stereotypical uses, so a negated absolute [has a range
+of its own exactly when its simple antonym is read more strictly than it literally
+means](##degrees_plateau_nonempty_iff).
 
 ## References
 
@@ -38,25 +38,19 @@ namespace AlexandropoulouGotzner2024b
 
 open AlexandropoulouGotzner2024a
 
-/-! ### Precision-level gap -/
+/-! ### Division of labour at a level of precision -/
 
-variable {D : Type*} [LinearOrder D] (tp : ThresholdPair D)
+variable {D : Type*} (U : Set D) (stereotype : Polarity → Set D)
 
-theorem residues_symmetric :
-    AntonymForm.strengthenedDenotation tp .notNegative \
-        AntonymForm.strengthenedDenotation tp .positive =
-      AntonymForm.strengthenedDenotation tp .notPositive \
-        AntonymForm.strengthenedDenotation tp .negative :=
-  (AntonymForm.strengthenedDenotation_notNegative_diff_positive tp).trans
-    (AntonymForm.strengthenedDenotation_notPositive_diff_negative tp).symm
-
-theorem relative_like (h : tp.neg ≤ tp.pos) :
-    (AntonymForm.strengthenedDenotation tp .notNegative \
-        AntonymForm.strengthenedDenotation tp .positive).Nonempty ∧
-      (AntonymForm.strengthenedDenotation tp .notPositive \
-        AntonymForm.strengthenedDenotation tp .negative).Nonempty := by
-  rw [← residues_symmetric, and_self, AntonymForm.strengthenedDenotation_notNegative_diff_positive]
-  exact tp.gap_nonempty_iff.2 h
+/-- *Not dirty* and *not clean* have ranges apart from *clean* and *dirty* exactly when the
+simple forms are read at a precision that leaves out part of their literal meaning (p. 28); on
+the literal reading alone the negated forms have none. -/
+theorem degrees_plateau_nonempty_iff :
+    ((Krifka2007b.Region.plateauHigh.degrees stereotype U).Nonempty ↔
+        ¬ U ⊆ stereotype .positive) ∧
+      ((Krifka2007b.Region.plateauLow.degrees stereotype U).Nonempty ↔
+        ¬ Uᶜ ⊆ stereotype .negative) :=
+  ⟨Set.sdiff_nonempty, Set.sdiff_nonempty⟩
 
 /-! ### Rows -/
 
