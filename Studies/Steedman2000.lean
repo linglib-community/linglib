@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Data.Examples.Steedman2000
-public import Studies.HeimKratzer1998
 public import Linglib.Fragments.English.Coordination
 public import Linglib.Semantics.Coordinator
 public import Linglib.Syntax.CCG.Derivation
@@ -96,7 +95,6 @@ def john_sees_mary : Derivation String (.multimodal 2) S :=
 
 section Coordination
 
-open HeimKratzer1998
 
 /-- The type-raised subject "John" is a lexical leaf of category `S/(S\NP)`. -/
 def john_tr : Derivation String (.multimodal 2) (S / (S \ NP)) := .lex "John" (S / (S \ NP))
@@ -156,21 +154,6 @@ def lexicon : List (LexEntry String atomTy Const) :=
    ⟨"sees", TV, fun I ↦ I .sees⟩, ⟨"eats", TV, fun I ↦ I .eats⟩, ⟨"reads", TV, fun I ↦ I .reads⟩,
    ⟨"and", conj S, fun I ↦ I .conj⟩,
    ⟨"and", conj (S / NP), fun I Q P x ↦ I .conj (Q x) (P x)⟩]
-
-/-- The constants in the toy structure of `Studies/HeimKratzer1998`: a transitive verb takes its
-object first, and conjunction its second conjunct first, as a right-branching coordination
-composes. -/
-noncomputable def toyConst : {ty : Ty Unit} → Const ty → ty.Dom fun _ ↦ ToyEntity
-  | _, .john => ToyEntity.john
-  | _, .mary => ToyEntity.mary
-  | _, .pizza => ToyEntity.pizza
-  | _, .book => ToyEntity.book
-  | _, .sleeps => fun x ↦ toyStructure.RelMap toyRel.sleep ![x]
-  | _, .laughs => fun x ↦ toyStructure.RelMap toyRel.laugh ![x]
-  | _, .sees => fun y x ↦ toyStructure.RelMap toyRel.see ![x, y]
-  | _, .eats => fun y x ↦ toyStructure.RelMap toyRel.eat ![x, y]
-  | _, .reads => fun y x ↦ toyStructure.RelMap toyRel.read ![x, y]
-  | _, .conj => fun q p ↦ p ∧ q
 
 variable {D : Unit → Type} (I : ∀ {ty : Ty Unit}, Const ty → ty.Dom D)
 
@@ -699,25 +682,23 @@ theorem annaMannyUtterance_infoStructure :
 
 end Intonation
 
-/-! ### Truth conditions
+/-! ### Meanings
 
-Derivations interpreted compositionally over the toy model: a true sentence and a false one. -/
+In every model of the constants, a derivation over the lexicon means what its predicate-argument
+structure says. -/
 
 section TruthConditions
 
+variable {D : Unit → Type} (I : ∀ {ty : Ty Unit}, Const ty → ty.Dom D)
+
 def mary_sleeps : Derivation String (.multimodal 2) S := .bapp (.lex "Mary" NP) (.lex "sleeps" IV)
 
-theorem ccg_predicts_john_sleeps :
-    ∃ p, john_sleeps.interp lexicon toyConst = some p ∧ p :=
-  ⟨_, rfl, rfl⟩
+theorem interp_john_sleeps : john_sleeps.interp lexicon I = some (I .sleeps (I .john)) := rfl
 
-theorem ccg_predicts_mary_sleeps :
-    ∃ p, mary_sleeps.interp lexicon toyConst = some p ∧ ¬ p :=
-  ⟨_, rfl, nofun⟩
+theorem interp_mary_sleeps : mary_sleeps.interp lexicon I = some (I .sleeps (I .mary)) := rfl
 
-theorem ccg_predicts_john_sees_mary :
-    ∃ p, john_sees_mary.interp lexicon toyConst = some p ∧ p :=
-  ⟨_, rfl, .inl ⟨rfl, rfl⟩⟩
+theorem interp_john_sees_mary :
+    john_sees_mary.interp lexicon I = some (I .sees (I .mary) (I .john)) := rfl
 
 end TruthConditions
 
