@@ -7,7 +7,6 @@ module
 
 public import Linglib.Core.Data.UnorderedTree.Basic
 public import Linglib.Core.Data.UnorderedTree.Count
-public import Linglib.Core.Data.UnorderedTree.DecEq
 public import Linglib.Core.Data.Multiset.Bind
 public import Linglib.Core.Data.Multiset.Convolution
 public import Linglib.Core.Data.RoseTree.Basic
@@ -327,32 +326,25 @@ private theorem childrenCuts_proj_perm (extract : RoseTree α → Option (List (
     exact (Multiset.conv_left_comm _ _ _).symm
   | trans _ _ ih1 ih2 => exact ih1.trans ih2
 
-mutual
 /-- For an invariant policy, the projected cuts of a tree depend only on the unordered tree. -/
-theorem rootCuts_proj_perm (hExt : ExtractInvariant extract) :
-    ∀ {t s : RoseTree α}, RoseTree.Perm t s →
-      (rootCuts extract t).map projCut = (rootCuts extract s).map projCut
-  | _, _, @RoseTree.Perm.node _ a cs ds h => by
-    have hL := congrArg (Multiset.map fun pf : Multiset (UnorderedTree α) ×
-      Multiset (UnorderedTree α) ↦ (pf.1, UnorderedTree.node a pf.2))
-      (childrenCuts_proj_permList hExt h)
-    simpa [Multiset.map_map, Function.comp_def, projCut_node] using hL
-  | _, _, .trans h₁ h₂ =>
-    (rootCuts_proj_perm hExt h₁).trans (rootCuts_proj_perm hExt h₂)
-
-private theorem childrenCuts_proj_permList (hExt : ExtractInvariant extract) :
-    ∀ {cs ds : List (RoseTree α)}, RoseTree.PermList cs ds →
-      (childrenCuts extract cs).map projChildrenCut = (childrenCuts extract ds).map projChildrenCut
-  | _, _, .nil => rfl
-  | _, _, @RoseTree.PermList.cons _ c d cs' ds' hcd hs => by
-    rw [childrenCuts_cons_proj, childrenCuts_cons_proj,
-      childCuts_proj_congr hExt (UnorderedTree.mk_eq_mk_iff.mpr hcd)
-        (rootCuts_proj_perm hExt hcd),
-      childrenCuts_proj_permList hExt hs]
-  | _, _, .swap c d cs => childrenCuts_proj_perm extract (List.Perm.swap c d cs)
-  | _, _, .trans h₁ h₂ =>
-    (childrenCuts_proj_permList hExt h₁).trans (childrenCuts_proj_permList hExt h₂)
-end
+theorem rootCuts_proj_perm (hExt : ExtractInvariant extract) {t s : RoseTree α}
+    (h : RoseTree.Perm t s) : (rootCuts extract t).map projCut = (rootCuts extract s).map projCut := by
+  refine h.induction_on fun a cs ds ih ↦ ?_
+  have hL : (childrenCuts extract cs).map projChildrenCut =
+      (childrenCuts extract ds).map projChildrenCut := by
+    induction cs generalizing ds with
+    | nil => rw [Multiset.coe_nil, Multiset.rel_zero_left, Multiset.coe_eq_zero] at ih; rw [ih]
+    | cons c cs ihcs =>
+      rw [← Multiset.cons_coe] at ih
+      obtain ⟨d, G, hcd, hG, he⟩ := Multiset.rel_cons_left.1 ih
+      induction G using Quotient.inductionOn with
+      | h ds' =>
+        rw [childrenCuts_proj_perm extract (Multiset.coe_eq_coe.1 he), childrenCuts_cons_proj,
+          childrenCuts_cons_proj,
+          childCuts_proj_congr hExt (UnorderedTree.mk_eq_mk_iff.mpr hcd.1) hcd.2, ihcs ds' hG]
+  have hL' := congrArg (Multiset.map fun pf : Multiset (UnorderedTree α) ×
+    Multiset (UnorderedTree α) ↦ (pf.1, UnorderedTree.node a pf.2)) hL
+  simpa [Multiset.map_map, Function.comp_def, projCut_node] using hL'
 
 variable (extract)
 

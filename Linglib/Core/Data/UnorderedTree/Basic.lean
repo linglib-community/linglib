@@ -64,6 +64,11 @@ theorem mk_eq_mk_iff {t s : RoseTree α} : mk t = mk s ↔ RoseTree.Perm t s :=
 
 @[simp] theorem quot_mk_eq_mk (t : RoseTree α) : (⟦t⟧ : UnorderedTree α) = mk t := rfl
 
+/-- Equality of unordered trees is decided by `RoseTree.isPerm` on representatives, so concrete
+equalities close by `decide`. -/
+instance instDecidableEq [DecidableEq α] : DecidableEq (UnorderedTree α) :=
+  inferInstanceAs (DecidableEq (Quotient (RoseTree.isSetoid (α := α))))
+
 /-! ### Leaves and lifted counts -/
 
 /-- A nonplanar leaf labeled `a`. -/
@@ -153,7 +158,7 @@ def cons (c t : UnorderedTree α) : UnorderedTree α :=
 instance : LeftCommutative (cons (α := α)) :=
   ⟨fun c d t ↦ Quotient.inductionOn₃ c d t fun _ _ t ↦ by
     obtain ⟨a, cs⟩ := t
-    exact mk_eq_mk_iff.mpr (.node (.swap ..))⟩
+    exact mk_eq_mk_iff.mpr (.node_of_perm (.swap ..))⟩
 
 /-- Build an unordered tree from a label and a multiset of children, by adjoining the children
 one at a time to the leaf. -/

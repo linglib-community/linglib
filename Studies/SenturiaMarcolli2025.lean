@@ -4,7 +4,7 @@ public import Linglib.Core.Data.UnorderedTree.Leaves
 public import Mathlib.Logic.Relation
 public import Linglib.Core.Algebra.Order.Group.Multiset
 public import Linglib.Core.Data.UnorderedTree.FilterMap
-public import Linglib.Core.Data.UnorderedTree.DecEq
+public import Linglib.Core.Data.UnorderedTree.Basic
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Finset.Lattice.Basic
 
