@@ -158,7 +158,7 @@ def cons (c t : UnorderedTree α) : UnorderedTree α :=
 instance : LeftCommutative (cons (α := α)) :=
   ⟨fun c d t ↦ Quotient.inductionOn₃ c d t fun _ _ t ↦ by
     obtain ⟨a, cs⟩ := t
-    exact mk_eq_mk_iff.mpr (.node (.swap ..))⟩
+    exact mk_eq_mk_iff.mpr (.node_of_perm (.swap ..))⟩
 
 /-- Build an unordered tree from a label and a multiset of children, by adjoining the children
 one at a time to the leaf. -/

@@ -140,9 +140,13 @@ theorem numUnary_perm {t s : RoseTree α} (h : Perm t s) : t.numUnary = s.numUna
 theorem Perm.contractUnary {t s : RoseTree α} (h : Perm t s) :
     Perm t.contractUnary s.contractUnary :=
   fold_rel (fun a {L₁ L₂} h' =>
-      match L₁, L₂, (PermList.of_rel h').length_eq, PermList.of_rel h' with
+      match L₁, L₂, Multiset.card_eq_card_of_rel h', h' with
       | [], [], _, _ => .refl _
-      | [_], [_], _, h => h.singleton_inv
+      | [c], [d], _, h => by
+        obtain ⟨b, hb, hcb⟩ :=
+          Multiset.exists_mem_of_rel_of_mem h (Multiset.mem_coe.2 (List.mem_singleton_self c))
+        obtain rfl : b = d := by simpa using hb
+        exact hcb
       | _ :: _ :: _, _ :: _ :: _, _, h => .node h
       | [], _ :: _, hl, _ | [_], [], hl, _ | [_], _ :: _ :: _, hl, _
       | _ :: _ :: _, [], hl, _ | _ :: _ :: _, [_], hl, _ => by simp at hl) h
