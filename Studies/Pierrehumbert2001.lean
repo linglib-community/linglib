@@ -37,8 +37,9 @@ expected spread [grows at every production](##spread_grows),
 * Every production is stored, the idealization of the paper's one-label figures. The single-label
   loop of its appendix stores a token only if its score is nonzero, a filter the theorems leave
   out.
-* Entrenchment is its large-neighborhood limit, the memory-weighted mean; the rule of the paper's
-  simulations, the mean of the 500 nearest exemplars, is not formalized.
+* Entrenchment is the memory-weighted mean of the whole list. That is the paper's rule exactly
+  whenever the neighborhood holds at least as many exemplars as the list, so for the first 500
+  productions of its simulations; the mean of the 500 nearest of a longer list is not formalized.
 * The decay factor `γ` is `exp (-1/τ)` for the paper's memory time `τ`, and `γ = 1` is no decay.
   The paper's score and recency decay in clock time, so a word used every `r` ticks has exemplars
   `r` ticks apart, its own tokens decay by `γ ^ r`, and `rule (γ ^ r)` is its law. Words picked at
@@ -66,8 +67,8 @@ expected spread [grows at every production](##spread_grows),
   paper's parameters, the means at 100,000 and 10,000 tokens differ by .45 at one decay per token,
   and by .024 at $\tau = 2000$ ticks and the same clock time.
 * A larger neighborhood is said to give the high-count case less variance than the low-count case
-  (§3.3). In the limit of the largest neighborhood [the expected spread still rises with every
-  production](##spread_grows), [toward $\gamma$ times what noise and bias
+  (§3.3). Once the neighborhood is as large as the list [the expected spread still rises with
+  every production](##spread_grows), [toward $\gamma$ times what noise and bias
   add](##tendsto_integral_memorySpread), so there the order of the two is not reversed.
 
 ## TODO
@@ -95,7 +96,7 @@ section Memory
 
 variable (γ : ℝ≥0) {n : ℕ}
 
-theorem sum_pow_rev {R : Type*} [CommSemiring R] (x : R) :
+private theorem sum_pow_rev {R : Type*} [CommSemiring R] (x : R) :
     ∑ i : Fin n, x ^ (i.rev : ℕ) = ∑ i ∈ range n, x ^ i :=
   (Equiv.sum_comp Fin.revPerm fun i : Fin n ↦ x ^ (i : ℕ)).trans (Fin.sum_univ_eq_sum_range _ n)
 
@@ -1030,6 +1031,18 @@ example : ¬ BddAbove (Set.range fun n ↦
   rw [bddAbove_integral_memorySpread_iff memLp_noise integral_noise one_pos le_rfl
     (by rw [variance_noise]; norm_num)]
   simp
+
+-- The first erratum at the paper's memory time of 2000: the expected spread converges, to between
+-- 1999 and 2000 times what noise and bias add, a standard deviation of about 2.6.
+example {γ : ℝ≥0} (hγ : (γ : ℝ) = Real.exp (-(2000 : ℝ)⁻¹)) :
+    ∃ L ∈ Set.Icc (1999 * (103 / 30000) : ℝ) (2000 * (103 / 30000)), Tendsto (fun n ↦
+      ∫ e, memorySpread γ e ∂seqLaw (rule γ .exemplar noise (-(1 / 100)) 1) (n + 1)) atTop (𝓝 L) := by
+  have hpos : 0 < γ := NNReal.coe_pos.1 (hγ ▸ Real.exp_pos _)
+  have hlt : γ < 1 := NNReal.coe_lt_one.1 (hγ ▸ Real.exp_lt_one_iff.2 (by norm_num))
+  have hI := div_one_sub_mem_Icc_of_eq_exp (by norm_num : (0 : ℝ) < 2000) hγ
+  refine ⟨_, ?_, tendsto_integral_memorySpread memLp_noise integral_noise hpos hlt⟩
+  rw [variance_noise, Target.inherited, one_mul]
+  constructor <;> nlinarith [hI.1, hI.2]
 
 -- What noise and bias add at a production, the unit of the expected spread.
 example : Var[id; noise] + (-(1 / 100) : ℝ) ^ 2 = 103 / 30000 := by
