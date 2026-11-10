@@ -612,7 +612,7 @@ separately, which reads the indefinite as one phonologist at every value of the 
 
 section Layering
 
-open Interpreter Interpreter.Grammar PhraseStructure
+open Interpreter PhraseStructure
 
 variable (human phon : Set E) (met : E → E → Prop)
 
@@ -664,8 +664,8 @@ def nobodyMet : Tree Unit Word :=
 and abstraction, when each word is one of its alternatives at every assignment. -/
 def alternatives (g : ℕ → E) (t : Tree Unit Word) : Set Prop :=
   {b | ∃ f : (ℕ → E) → Prop, (⟨.t, f⟩ : Σ a : Ty Unit, (ℕ → E) → a.Dom (Dom E)) ∈
-    t.readings ((typeDriven .application).withAbstraction fun _ ↦ ind)
-      (Grammar.withAbstraction.structure (Assignments.total (Dom E) fun _ ↦ ind))
+    t.readings ((typeDriven application).withAbstraction fun _ ↦ ind)
+      (ManySorted.Language.withAbstraction.structure (Assignments.total (Dom E) fun _ ↦ ind))
       (W := fun a ↦ (ℕ → E) → a.Dom (Dom E)) id (fun
         | .inl w => (fun d ↦ ⟨d.1, fun _ ↦ d.2⟩) '' lexicon human phon met w
         | .inr n => {⟨ind, fun g ↦ g n⟩}) ∧ f g = b}
@@ -680,18 +680,26 @@ theorem alternatives_nobodyMet (g : ℕ → E) :
   constructor
   · rintro ⟨f, ⟨_, rfl, _, ⟨_, ⟨_, ⟨_, rfl, _, ⟨_, ⟨y, hy, rfl⟩, rfl⟩, ⟨u₁, m₁⟩, -, rfl⟩,
       ⟨u₂, m₂⟩, -, rfl⟩, r, hr, rfl⟩, ⟨u₃, m₃⟩, -, h⟩, rfl⟩
-    cases m₁
-    cases m₂
-    simp only [LocallyFinite.unaryRules, List.map_nil, List.append_nil, List.mem_singleton] at hr
-    subst hr
-    cases m₃
-    cases h
-    exact ⟨y, hy, rfl⟩
+    obtain m₁ | m₁ := m₁
+    · cases m₁
+      obtain m₂ | m₂ := m₂
+      · cases m₂
+        obtain rfl := List.mem_singleton.1 hr
+        obtain m₃ | m₃ := m₃
+        · cases m₃
+          cases h
+          exact ⟨y, hy, rfl⟩
+        · exact nomatch m₃
+      · exact nomatch m₂
+    · exact nomatch m₁
   · rintro ⟨y, hy, rfl⟩
-    exact ⟨_, ⟨_, rfl, _, ⟨_, ⟨_, ⟨_, rfl, _, ⟨_, ⟨y, hy, rfl⟩, rfl⟩, ⟨_, .fa⟩,
-      LocallyFinite.mem_binaryRules _, rfl⟩, ⟨_, .ba⟩, LocallyFinite.mem_binaryRules _, rfl⟩, _,
-      List.mem_append_left _ (List.mem_singleton_self _), rfl⟩, ⟨_, .fa⟩,
-      LocallyFinite.mem_binaryRules _, rfl⟩, rfl⟩
+    have mem {l r u : Ty Unit} (m : Application l r u) :
+        (⟨u, ManySorted.Language.Sum.inl m⟩ : Σ u, (application.withAbstraction fun _ ↦ ind).Binary
+          l r u) ∈ (ManySorted.Language.LocallyFinite.binaryRules (L := application) l r).map
+            fun p ↦ ⟨p.1, .inl p.2⟩ :=
+      List.mem_map.2 ⟨⟨_, m⟩, ManySorted.Language.LocallyFinite.mem_symbols _, rfl⟩
+    exact ⟨_, ⟨_, rfl, _, ⟨_, ⟨_, ⟨_, rfl, _, ⟨_, ⟨y, hy, rfl⟩, rfl⟩, _, mem .fa, rfl⟩, _,
+      mem .ba, rfl⟩, _, List.mem_singleton.2 rfl, rfl⟩, _, mem .fa, rfl⟩, rfl⟩
 
 /-- Under the layering of (80) and (81), (77) has a true alternative exactly when there is a
 phonologist nobody met, the wide-scope reading of the indefinite. -/

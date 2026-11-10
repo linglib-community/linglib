@@ -106,7 +106,7 @@ attitude alone cannot](##minimal_pair), if the interval it occupies depends on t
 
 namespace Ogihara1989
 
-open Interpreter Interpreter.Grammar Montague ModalLogic Tense Partee1973 PhraseStructure
+open Interpreter Montague ModalLogic Tense Partee1973 PhraseStructure
   PhraseStructure.Tree Core.Order
 open scoped Denotes SetRel
 
@@ -514,39 +514,27 @@ inductive Rule : Ty Atom → Ty Atom → Ty Atom → Type
   | _, _, _, .relative, N, S => fun x i ↦ N x i ∧ S x i
   | _, _, _, .raising, Q, R => Q fun x i ↦ ∃ t, R x t i
 
-/-- The grammar of the two rules. -/
-@[reducible] def fragment : Grammar (Ty Atom) := ⟨fun _ _ ↦ Empty, Rule⟩
+/-- The rule of the two that applies to two types. -/
+def Rule.rules (l r : Ty Atom) : List (Σ u, Rule l r u) :=
+  (if h : l = predicate ∧ r = predicate then
+    [⟨predicate, by obtain ⟨rfl, rfl⟩ := h; exact .relative⟩]
+  else []) ++
+  if h : l = quant ∧ r = (ent ⇒ tensed) then
+    [⟨prop, by obtain ⟨rfl, rfl⟩ := h; exact .raising⟩]
+  else []
 
-instance (E W T : Type) [LE T] : fragment.language.Structure (Ty.Dom (Dom E W T)) :=
-  Grammar.structure nofun (Rule.eval E W T)
+/-- The two rules, as a language over the types. -/
+@[reducible] def fragment : ManySorted.Language (Ty Atom) := .mk₂ (fun _ _ ↦ PEmpty) Rule
 
-instance : fragment.LocallyFinite where
-  unaryRules _ := []
-  binaryRules l r :=
-    (if h : l = predicate ∧ r = predicate then
-      [⟨predicate, by obtain ⟨rfl, rfl⟩ := h; exact .relative⟩]
-    else []) ++
-    if h : l = quant ∧ r = (ent ⇒ tensed) then
-      [⟨prop, by obtain ⟨rfl, rfl⟩ := h; exact .raising⟩]
-    else []
-  mem_unaryRules := nofun
-  mem_binaryRules m := by cases m <;> simp
+instance (E W T : Type) [LE T] : fragment.Structure (Ty.Dom (Dom E W T)) :=
+  .mk₂ nofun (Rule.eval E W T)
 
-@[simp] theorem funMap_inl {E W T : Type} [LE T] {l r u : Ty Atom} (m : Application l r u)
-    (p : l.Dom (Dom E W T) × r.Dom (Dom E W T)) :
-    MSFirstOrder.Language.Structure.funMap
-      (L := (Grammar.application.sum fragment).language) (D := Ty.Dom (Dom E W T))
-      (Grammar.Sym.binary (Sum.inl (α := Application l r u) (β := Rule l r u) m)) p =
-      Application.eval _ m p.1 p.2 :=
-  rfl
+instance : fragment.LocallyFinite :=
+  .mk₂ (fun _ ↦ []) Rule.rules nofun fun m ↦ by cases m <;> simp [Rule.rules]
 
-@[simp] theorem funMap_inr {E W T : Type} [LE T] {l r u : Ty Atom} (m : Rule l r u)
-    (p : l.Dom (Dom E W T) × r.Dom (Dom E W T)) :
-    MSFirstOrder.Language.Structure.funMap
-      (L := (Grammar.application.sum fragment).language) (D := Ty.Dom (Dom E W T))
-      (Grammar.Sym.binary (Sum.inr (α := Application l r u) (β := Rule l r u) m)) p =
-      Rule.eval E W T m p.1 p.2 :=
-  rfl
+@[simp] theorem symbols_fragment (l r : Ty Atom) :
+    ManySorted.Language.LocallyFinite.symbols (L := fragment) (.prod (.of l) (.of r)) =
+      Rule.rules l r := rfl
 
 section Interpretation
 
@@ -636,13 +624,14 @@ def lex : Word → Σ a : Ty Atom, a.Dom (Dom E W T)
 
 /-- The rules: Functional Application, the two rules of the fragment, and abstraction over the
 index of a trace, a variable over individuals. -/
-abbrev rules : Interpreter ((Grammar.application.sum fragment).withAbstraction fun _ ↦ ent) Node :=
-  (typeDriven (.sum .application fragment)).withAbstraction fun _ ↦ ent
+abbrev rules : Interpreter ((application.sum fragment).withAbstraction fun _ ↦ ent) Node :=
+  (typeDriven (application.sum fragment)).withAbstraction fun _ ↦ ent
 
 /-- The translations of an LF, relative to an assignment: a word has its translation, and a trace
 is the quantifier of the individual of its index. -/
 def meanings (t : LF) : List (Σ a : Ty Atom, Assignment E → a.Dom (Dom E W T)) :=
-  t.values rules (Grammar.withAbstraction.structure (Assignments.total (Dom E W T) fun _ ↦ ent))
+  t.values rules (ManySorted.Language.withAbstraction.structure (Assignments.total (Dom E W T) fun
+      _ ↦ ent))
     (W := fun a ↦ Assignment E → a.Dom (Dom E W T)) id fun
     | .inl w => [⟨(M.lex w).1, fun _ ↦ (M.lex w).2⟩]
     | .inr n => [⟨quant, fun g P ↦ P (g n)⟩]
@@ -664,8 +653,8 @@ variable {M}
 
 attribute [local simp] Holds meanings clause np untensed intrans complement aNoun relClause
   tvTrace vpAdjoined raised report saidIll sawWide sawNarrow metWide metNarrow saidFish claimNP
-  claimClause lex Interpreter.withAbstraction typeDriven Grammar.LocallyFinite.unaryRules
-  Grammar.LocallyFinite.binaryRules Assignments.total past_eq fut_eq now_eq
+  claimClause lex Interpreter.withAbstraction typeDriven Assignments.total past_eq fut_eq now_eq
+  Application.rules Rule.rules
 
 /-! ### Complement clauses -/
 
@@ -1012,8 +1001,8 @@ theorem would_can_follow_speech {a b c : T} (hab : a < b) (hbc : b < c) :
       Model.past_iff.2 ⟨.pure a, hab, le_sup_left, rfl,
         Model.fut_iff.2 ⟨.pure c, hab.trans hbc, le_sup_right, rfl⟩⟩
     simpa [Model.Holds, Model.meanings, report, clause, np, untensed, intrans, complement,
-      Model.lex, Interpreter.withAbstraction, typeDriven, Grammar.LocallyFinite.unaryRules,
-      Grammar.LocallyFinite.binaryRules, Assignments.total, Model.past_eq, Model.fut_eq,
+      Model.lex, Interpreter.withAbstraction, typeDriven, Assignments.total, Application.rules,
+          Rule.rules, Model.past_eq, Model.fut_eq,
       Model.now_eq] using hs
   · rintro ⟨_, t⟩ _ h
     obtain rfl : t = .pure c := h

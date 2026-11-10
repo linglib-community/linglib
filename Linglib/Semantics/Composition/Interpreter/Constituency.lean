@@ -28,7 +28,7 @@ node a plain node or, at a category that is an island, an island.
 
 namespace PhraseStructure.Tree
 
-open Interpreter Interpreter.Grammar
+open ManySorted ManySorted.Language Interpreter
 
 variable {C L : Type}
 
@@ -45,7 +45,7 @@ def skeleton (island : C → Bool) : Tree C L → Option (Skeleton Node (L ⊕ �
     pure (.binary (if island c then .island else .branch) s₁ s₂)
   | _ => none
 
-variable {T : Type} {G : Grammar T} {W D : T → Type}
+variable {T : Type} {G : Language T} {W D : T → Type}
 
 /-- The derivations of a tree that an interpreter admits, given the typed items a word or a
 trace may be. -/
@@ -57,7 +57,7 @@ def derivs (I : Interpreter G Node) (lex : L ⊕ ℕ → List (Σ a, W a)) (t : 
 
 /-- The values of the derivations of a tree, for a lexicon of typed items whose values `ρ`
 gives. -/
-def values (I : Interpreter G Node) (M : G.language.Structure D) (ρ : ∀ {a : T}, W a → D a)
+def values (I : Interpreter G Node) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
     (lex : L ⊕ ℕ → List (Σ a, W a)) (t : Tree C L) (island : C → Bool := fun _ ↦ false) :
     List (Σ a, D a) :=
   (t.derivs I lex island).map fun ⟨a, d⟩ ↦ ⟨a, d.realize M ρ⟩
@@ -66,7 +66,7 @@ def values (I : Interpreter G Node) (M : G.language.Structure D) (ρ : ∀ {a : 
 
 section Compositional
 
-variable (I : Interpreter G Node) (M : G.language.Structure D) (ρ : ∀ {a : T}, W a → D a)
+variable (I : Interpreter G Node) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
   (lex : L ⊕ ℕ → List (Σ a, W a)) (island : C → Bool)
 
 theorem derivs_terminal (c : C) (w : L) :
@@ -109,7 +109,7 @@ theorem derivs_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
 values of its body. -/
 @[simp] theorem values_bind (n : ℕ) (c : C) (t : Tree C L) :
     (bind n c t).values I M ρ lex island = (t.values I M ρ lex island).flatMap fun ⟨a, x⟩ ↦
-      (I.unary (.index n) a).map fun ⟨b, r⟩ ↦ ⟨b, M.funMap (.unary r) x⟩ := by
+      (I.unary (.index n) a).map fun ⟨b, r⟩ ↦ ⟨b, M.funMap r x⟩ := by
   simp [values, derivs_bind, List.map_flatMap, List.flatMap_map, Function.comp_def]
 
 /-- The values of a binary node are those of the rules the node admits for its daughters'
@@ -119,7 +119,7 @@ types, at the values of its daughters. -/
       (t₁.values I M ρ lex island).flatMap fun ⟨a, x⟩ ↦
         (t₂.values I M ρ lex island).flatMap fun ⟨b, y⟩ ↦
           (I.binary (if island c then .island else .branch) a b).map fun ⟨u, m⟩ ↦
-            ⟨u, M.funMap (.binary m) (x, y)⟩ := by
+            ⟨u, M.funMap m (x, y)⟩ := by
   simp [values, derivs_phrase_binary, List.map_flatMap, List.flatMap_map, Function.comp_def]
 
 /-- A non-branching node has the values of its daughter. -/

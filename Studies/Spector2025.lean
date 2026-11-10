@@ -139,7 +139,7 @@ own. The two agree under a monotone or antitone quantifier and come apart under 
 
 section Quantifiers
 
-open Interpreter Interpreter.Grammar PhraseStructure
+open Interpreter PhraseStructure
 open Trivalent (Designation)
 
 /-- The words of a sentence whose quantifier is raised over a scalar predicate. -/
@@ -168,8 +168,8 @@ def raised : Tree Unit QWord := .bin (.leaf .quant) (.binder 1 (.bin (.tr 1) (.l
 each occurrence of a word is resolved to one of its readings. -/
 def parses (g : ℕ → E) (t : Tree Unit QWord) : Set Prop :=
   {b | ∃ f : (ℕ → E) → Prop, (⟨.t, f⟩ : Σ a : Ty Unit, (ℕ → E) → a.Dom (Dom E)) ∈
-    t.readings ((typeDriven .application).withAbstraction fun _ ↦ ind)
-      (Grammar.withAbstraction.structure (Assignments.total (Dom E) fun _ ↦ ind))
+    t.readings ((typeDriven application).withAbstraction fun _ ↦ ind)
+      (ManySorted.Language.withAbstraction.structure (Assignments.total (Dom E) fun _ ↦ ind))
       (W := fun a ↦ (ℕ → E) → a.Dom (Dom E)) id (fun
         | .inl w => (fun d ↦ ⟨d.1, fun _ ↦ d.2⟩) '' lexicon Q p w
         | .inr n => {⟨ind, fun g ↦ g n⟩}) ∧ f g = b}
@@ -185,17 +185,20 @@ theorem parses_raised (g : ℕ → E) :
     Set.mem_image, Set.mem_singleton_iff, id_eq, Sigma.eta, Set.image_id', exists_exists_eq_and,
     exists_eq_left, Interpreter.withAbstraction, typeDriven]
   constructor
-  · rintro ⟨f, ⟨_, rfl, _, ⟨_, ⟨d, ⟨u, m⟩, -, rfl⟩, r, hr, rfl⟩, ⟨u', m'⟩, -, h⟩, rfl⟩
-    cases m
-    simp only [LocallyFinite.unaryRules, List.map_nil, List.append_nil, List.mem_singleton] at hr
-    subst hr
-    cases m'
-    cases h
-    exact ⟨d, rfl⟩
+  · rintro ⟨f, ⟨_, rfl, _, ⟨_, ⟨d, ⟨u, m | m⟩, -, rfl⟩, r, hr, rfl⟩, ⟨u', m' | m'⟩, -, h⟩, rfl⟩
+    · cases m
+      obtain rfl := List.mem_singleton.1 hr
+      cases m'
+      cases h
+      exact ⟨d, rfl⟩
+    · exact nomatch m'
+    · exact nomatch m
+    · exact nomatch m
   · rintro ⟨d, rfl⟩
-    exact ⟨_, ⟨_, rfl, _, ⟨_, ⟨d, ⟨_, .ba⟩, LocallyFinite.mem_binaryRules _, rfl⟩, _,
-      List.mem_append_left _ (List.mem_singleton_self _), rfl⟩, ⟨_, .fa⟩,
-      LocallyFinite.mem_binaryRules _, rfl⟩, rfl⟩
+    exact ⟨_, ⟨_, rfl, _, ⟨_, ⟨d, ⟨_, .inl .ba⟩,
+      List.mem_map.2 ⟨⟨_, .ba⟩, ManySorted.Language.LocallyFinite.mem_symbols _, rfl⟩, rfl⟩, _,
+      List.mem_singleton.2 rfl, rfl⟩, ⟨_, .inl .fa⟩,
+      List.mem_map.2 ⟨⟨_, .fa⟩, ManySorted.Language.LocallyFinite.mem_symbols _, rfl⟩, rfl⟩, rfl⟩
 
 /-- Under the universal, reading each entity at a standard of its own is the Strong Kleene
 universal. -/

@@ -344,7 +344,7 @@ theorem InputFree.not_reads : ∀ {a : Ty B}, InputFree a → ¬ Reads a
 
 /-- The grammar the book starts from, before any effect: forward and backward application and
 predicate modification. -/
-abbrev baseGrammar (B : Type) : Grammar (Ty B) := .sum .application .predicateModification
+abbrev baseGrammar (B : Type) : ManySorted.Language (Ty B) := application.sum predicateModification
 
 theorem baseGrammar_reads :
     ∀ {l r u : Ty B}, (baseGrammar B).Binary l r u → Reads l → InputFree r → Reads u
@@ -444,7 +444,8 @@ def shape {B β : Type} {Rule : Ty B → Ty B → Ty B → Type}
 /-- The interpreter's output for two types: the modes that combine them, in the book's order,
 each with the type it yields. -/
 def combine (l r : Ty Unit) : List (Shape Name × Ty Unit) :=
-  (Ty.combine (Grammar.LocallyFinite.binaryRules (G := baseGrammar Unit)) l r).map fun p ↦
+  (Ty.combine (ManySorted.Language.LocallyFinite.binaryRules (L := baseGrammar Unit)) l r).map fun
+      p ↦
     (shape Name.of p.2, p.1)
 
 section Interpreter

@@ -54,7 +54,7 @@ always has one.
 
 namespace CCG
 
-open Interpreter Interpreter.Grammar
+open Interpreter ManySorted ManySorted.Language
 
 variable {T α : Type*} {B : Type}
 
@@ -130,13 +130,14 @@ def Rule.sem (τ : α → Ty B) {D : B → Type} {R : RuleSystem α} : {l r c : 
 
 /-- The combinatory rules of a rule system as the binary rules of a grammar over categories, so
 that a derivation is a derivation of that grammar. -/
-@[reducible] def grammar (R : RuleSystem α) : Grammar (Cat α) := ⟨fun _ _ ↦ PEmpty, Rule R⟩
+@[reducible] def grammar (R : RuleSystem α) : ManySorted.Language (Cat α) :=
+  .mk₂ (fun _ _ ↦ PEmpty) (Rule R)
 
 /-- A category's values are the meanings of its type, or none where a word has no entry; a rule
 combines the meanings of its daughters by `Rule.sem`. -/
 instance (R : RuleSystem α) (τ : α → Ty B) (D : B → Type) :
-    (grammar R).language.Structure fun c ↦ Option ((c.toTy τ).Dom D) :=
-  Grammar.structure nofun fun r a b ↦ do some (r.sem τ (← a) (← b))
+    (grammar R).Structure fun c ↦ Option ((c.toTy τ).Dom D) :=
+  .mk₂ nofun fun r a b ↦ do some (r.sem τ (← a) (← b))
 
 /-- A derivation as a derivation of the grammar of its rule system, over its words. -/
 def Derivation.toDeriv {R : RuleSystem α} : {c : Cat α} → Derivation T R c →
@@ -153,7 +154,7 @@ variable [DecidableEq T] [DecidableEq α] {R : RuleSystem α} {τ : α → Ty B}
 denote by `I`: the value of `d` as a derivation of the grammar of its rules, a leaf denoting the
 value of its logical form. -/
 def Derivation.interp {c : Cat α} (d : Derivation T R c) : Option ((c.toTy τ).Dom D) :=
-  d.toDeriv.realize (inferInstance : (grammar R).language.Structure fun c ↦
+  d.toDeriv.realize (inferInstance : (grammar R).Structure fun c ↦
     Option ((c.toTy τ).Dom D)) fun {c} t ↦ LexEntry.lookup L I t c
 
 @[simp] theorem Derivation.interp_lex (t : T) (c : Cat α) :

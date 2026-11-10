@@ -198,7 +198,7 @@ theorem toTree?_high : everyDidntScore.toTree? (·.id) ∅ = some highTree := by
 
 section Interpretation
 
-open Interpreter.Grammar
+
 
 variable {E : Type} (pl sc : Set E)
 
@@ -232,8 +232,8 @@ def Item.val : {a : Ty Base} → Item a → (ℕ → E) → a.Dom (Base.Dom E Un
 /-- The denotations of a tree, by Functional Application and abstraction over an index. -/
 def meanings (t : Tree Unit LexicalItem.Token) :
     List (Σ a : Ty Base, (ℕ → E) → a.Dom (Base.Dom E Unit)) :=
-  t.values ((typeDriven .application).withAbstraction fun _ ↦ .e)
-    (Grammar.withAbstraction.structure (Assignments.total (Base.Dom E Unit) fun _ ↦ .e))
+  t.values ((typeDriven application).withAbstraction fun _ ↦ .e)
+    (ManySorted.Language.withAbstraction.structure (Assignments.total (Base.Dom E Unit) fun _ ↦ .e))
     (Item.val pl sc) items
 
 theorem meanings_lowTree :

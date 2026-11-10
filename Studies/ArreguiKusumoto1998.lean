@@ -107,9 +107,8 @@ abbrev i : Ty Unit := .base ()
 /-- The domain of the one base sort: the times, intervals of moments. -/
 abbrev Dom (T : Type) [LinearOrder T] : Unit → Type := fun _ ↦ NonemptyInterval T
 
-/-- The lexical items by type: a verb phrase is a property of times, the past tense, *before*,
-*after* and an attitude verb with its subject are functions on such properties, and a trace or a
-tense variable is a time. -/
+/-- The lexical items by type: a verb phrase is a property of times, and the past tense,
+*before*, *after* and an attitude verb with its subject are functions on such properties. -/
 inductive Item : Ty Unit → Type
   | vp (k : ℕ) : Item (i ⇒ .t)
   | attitude (k : ℕ) : Item ((i ⇒ .t) ⇒ i ⇒ .t)
@@ -120,20 +119,18 @@ inductive Item : Ty Unit → Type
   | at_ : Item (i ⇒ i ⇒ .t)
   | adverb : Item ((i ⇒ .t) ⇒ (i ⇒ .t) ⇒ i ⇒ .t)
   | when_ : Item (.t ⇒ .t)
-  | trace (n : ℕ) : Item i
 
-/-- The item of a word, and of a trace or a tense variable. -/
-def items : Word ⊕ ℕ → List (Σ a, Item a)
-  | .inl (.vp k) => [⟨_, .vp k⟩]
-  | .inl (.attitude k) => [⟨_, .attitude k⟩]
-  | .inl .past => [⟨_, .past⟩]
-  | .inl .before => [⟨_, .before⟩]
-  | .inl .after => [⟨_, .after⟩]
-  | .inl .speechTime => [⟨_, .speechTime⟩]
-  | .inl .at_ => [⟨_, .at_⟩]
-  | .inl .adverb => [⟨_, .adverb⟩]
-  | .inl .when_ => [⟨_, .when_⟩]
-  | .inr n => [⟨_, .trace n⟩]
+/-- The item of a word. -/
+def items : Word → List (Σ a, Item a)
+  | .vp k => [⟨_, .vp k⟩]
+  | .attitude k => [⟨_, .attitude k⟩]
+  | .past => [⟨_, .past⟩]
+  | .before => [⟨_, .before⟩]
+  | .after => [⟨_, .after⟩]
+  | .speechTime => [⟨_, .speechTime⟩]
+  | .at_ => [⟨_, .at_⟩]
+  | .adverb => [⟨_, .adverb⟩]
+  | .when_ => [⟨_, .when_⟩]
 
 /-- An assignment of times to indices. -/
 abbrev Assignment (T : Type) [LinearOrder T] : Type := ℕ → NonemptyInterval T
@@ -152,25 +149,22 @@ def Model.denote (M : Model T) : {a : Ty Unit} → Item a → Assignment T → a
   | _, .at_ => fun _ t' t ↦ t = t'
   | _, .adverb => fun _ X Y t ↦ ∀ t' ≤ t, X t' → ∃ t'' ≤ t', Y t''
   | _, .when_ => fun _ p ↦ p
-  | _, .trace n => fun g ↦ g n
-
-/-- The rules: Functional Application and Predicate Modification of a verb phrase by an adjunct
-(17). -/
-abbrev rules : MSFirstOrder.Language (Ty Unit) := application.sum predicateModification
 
 /-- The denotations of a logical form in a model, relative to an assignment: by the rules, with
-abstraction over the index of a relative pronoun or a tense variable, a variable over times. -/
+abstraction over the index of a relative pronoun or a tense variable, a variable over times: by
+Functional Application and Predicate Modification of a verb phrase by an adjunct (17). -/
 def Model.meanings (M : Model T) (lf : LF) :
     List (Σ a : Ty Unit, Assignment T → a.Dom (Dom T)) :=
-  lf.interpret rules (Dom T) (fun _ ↦ i) M.denote items
+  lf.interpret (application.sum predicateModification) (Dom T) (fun _ ↦ i) M.denote items
 
 /-- A logical form is interpretable when the rules give it a derivation. -/
-def Interpretable (lf : LF) : Prop := (lf.derive rules (fun _ ↦ i) items).length ≠ 0
+def Interpretable (lf : LF) : Prop :=
+  (lf.derive (application.sum predicateModification) (fun _ ↦ i) items).length ≠ 0
 
 instance : DecidablePred Interpretable := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
 
 theorem interpretable_iff (M : Model T) (lf : LF) : Interpretable lf ↔ M.meanings lf ≠ [] := by
-  simp [Interpretable, Model.meanings, Tree.interpret]
+  simp [Interpretable, Model.meanings, Tree.interpret_eq_map]
 
 /-- A logical form is true in a model when it denotes a truth value that is true, its free
 variables denoting the speech time, as an unbound tense variable does (12). -/
@@ -240,7 +234,7 @@ def clause : LF → LF → LF
   | τ, vp => .bin (.leaf .speechTime) (.bin τ vp)
 
 attribute [local simp] Model.Holds Model.extension Model.meanings Model.denote items Interpretable
-  Grammar.LocallyFinite.binaryRules clause pastOperator presentVariable
+  clause pastOperator presentVariable
 
 -- (12)
 theorem holds_present : M.Holds (clause presentVariable (.leaf (.vp k))) ↔ M.vp k M.speechTime :=
@@ -253,7 +247,7 @@ theorem holds_past :
 
 theorem not_interpretable_speechTime_present :
     ¬ Interpretable (.bin (.leaf .speechTime) (.bin presentVariable (.leaf (.vp k)))) := by
-  simp
+  simp [Application.rules, PredicateModification.rules]
 
 /-! ### Relative-clause adjuncts -/
 
@@ -359,7 +353,7 @@ theorem interpretable_selected :
       ¬ Interpretable (.bin (.leaf .before) (.binder 0 (.bin pastOperator (.leaf (.vp k))))) ∧
       Interpretable (.bin (.leaf .after) (.bin pastOperator (.leaf (.vp k)))) ∧
       ¬ Interpretable (.bin (.leaf .after) (.bin presentVariable (.leaf (.vp k)))) := by
-  simp
+  simp [Application.rules, PredicateModification.rules]
 
 -- (28)
 theorem holds_after_selected [DenselyOrdered T] :

@@ -149,7 +149,7 @@ denotations, read off the toy structure, and a trace reads the assignment. -/
 
 section Composition
 
-open Interpreter Interpreter.Grammar MSFirstOrder
+open Interpreter ManySorted
 
 /-- The words of the fragment. -/
 inductive Word
@@ -261,8 +261,8 @@ which are application, predicate modification and abstraction where every functi
 
 /-- The grammar of the book: Functional Application and Predicate Modification of sisters, and
 Predicate Abstraction (16) of §5.3 over individuals. -/
-abbrev grammar : Grammar (Ty Base) :=
-  (Grammar.application.sum .predicateModification).withAbstraction fun _ ↦ .e
+abbrev grammar : ManySorted.Language (Ty Base) :=
+  (application.sum predicateModification).withAbstraction fun _ ↦ .e
 
 /-- A denotation relative to a total assignment. -/
 abbrev Val (a : Ty Base) : Type := (ℕ → ToyEntity) → a.Dom Dom
@@ -282,18 +282,18 @@ def partialAssignments : Assignments (ℕ → Part ToyEntity) (Ty.PDom Dom) fun 
   .partial Dom fun _ ↦ .e
 
 /-- The rules (13), (14) and (16) of Chapter 5: sisters combine at one assignment. -/
-abbrev total : grammar.language.Structure Val := Grammar.withAbstraction.structure assignments
+abbrev total : grammar.Structure Val := ManySorted.Language.withAbstraction.structure assignments
 
 /-- The pedantic rules (13′) and (14′) of §5.2 and (7) and (9) of §5.4: a node has a denotation
 where its daughters do and the function is defined at the argument, and a modified predicate is
 defined where both predicates are. -/
-abbrev pedantic : grammar.language.Structure PVal :=
-  Grammar.withAbstraction.structure partialAssignments
+abbrev pedantic : grammar.Structure PVal :=
+  ManySorted.Language.withAbstraction.structure partialAssignments
 
 /-- The interpreter of the book: an index admits abstraction over it, and sisters whichever of
 application and predicate modification their types allow. -/
 abbrev rules : Interpreter grammar Node :=
-  (typeDriven (.sum .application .predicateModification)).withAbstraction fun _ ↦ .e
+  (typeDriven (application.sum predicateModification)).withAbstraction fun _ ↦ .e
 
 /-- The denotations of a tree relative to total assignments, for the words with total
 denotations. -/
@@ -326,8 +326,11 @@ theorem length_derivs_le_one {W : Ty Base → Type} {lex : Word ⊕ ℕ → List
   split
   · exact Interpreter.length_derivs_le_one
       (fun n _ ↦ by
-        cases n <;> simp [Interpreter.withAbstraction, typeDriven, LocallyFinite.unaryRules])
-      (fun _ ↦ length_binaryRules_application_sum_predicateModification_le_one) hl _
+        cases n <;> simp [rules, Interpreter.withAbstraction, typeDriven,
+          ManySorted.Language.LocallyFinite.symbols_sum])
+      (fun n l r ↦ by
+        simpa [rules, Interpreter.withAbstraction, typeDriven] using
+          length_binaryRules_application_sum_predicateModification_le_one l r) hl _
   · simp
 
 /-! ### Total and partial denotations
@@ -344,7 +347,7 @@ def Rel (a : Ty Base) (v : Val a) (v' : PVal a) : Prop :=
 
 /-- The plain rules and the pedantic rules are logically related. -/
 theorem isLogicalRel : total.IsLogicalRel pedantic Rel :=
-  Grammar.withAbstraction.isLogicalRel Grammar.isLogicalRel_partRel _
+  ManySorted.Language.withAbstraction.isLogicalRel isLogicalRel_partRel _
     (fun g g' n v v' hg ⟨y, hy, hyr⟩ i ↦ by
       cases hyr
       by_cases hi : i = n <;>
@@ -393,7 +396,7 @@ model: it is uninterpretable (§4.4.4). -/
 /-- *The pizza* has one derivation, by Functional Application. -/
 theorem derivs_thePizza :
     Tree.derivs rules itemsThe (.bin (.leaf .the) (pred .pizza)) =
-      [⟨.e, .binary (.inl .fa) (.leaf (.inr .the)) (.leaf (.inl (.pred .pizza)))⟩] := rfl
+      [⟨.e, .binary (.inl (.inl .fa)) (.leaf (.inr .the)) (.leaf (.inl (.pred .pizza)))⟩] := rfl
 
 /-- *The pizza* denotes the pizza, the toy model's unique one. -/
 theorem pmeanings_thePizza :
@@ -459,8 +462,8 @@ theorem meanings_johnSeesT :
 Functional Application of the verb to its trace and of the verb phrase to the subject. -/
 theorem derivs_whichJohnSees :
     Tree.derivs rules items tree_whichJohnSees =
-      [⟨.et, .unary (.inl (.index 1 .t)) (.binary (.inl .ba) (.leaf (.name .john))
-        (.binary (.inl .fa) (.leaf (.verb .see)) (.leaf (.trace 1))))⟩] := rfl
+      [⟨.et, .unary (.inr (.index 1 .t)) (.binary (.inl (.inl .ba)) (.leaf (.name .john))
+        (.binary (.inl (.inl .fa)) (.leaf (.verb .see)) (.leaf (.trace 1))))⟩] := rfl
 
 /-- The object relative is assignment-independent, and denotes the individuals John sees. -/
 theorem meanings_whichJohnSees :
@@ -482,10 +485,11 @@ theorem pmeanings_johnSeesT : ∃ v : PVal .t,
 the abstract over the trace. -/
 theorem derivs_theStudentWhoSleeps :
     Tree.derivs rules itemsThe (.bin (.leaf .the) tree_studentWhoSleeps) =
-      [⟨.e, .binary (.inl .fa) (.leaf (.inr .the))
-        (.binary (.inr .pm) (.leaf (.inl (.pred .student)))
-          (.unary (.inl (.index 1 .t))
-            (.binary (.inl .ba) (.leaf (.inl (.trace 1))) (.leaf (.inl (.pred .sleep))))))⟩] :=
+      [⟨.e, .binary (.inl (.inl .fa)) (.leaf (.inr .the))
+        (.binary (.inl (.inr .pm)) (.leaf (.inl (.pred .student)))
+          (.unary (.inr (.index 1 .t))
+            (.binary (.inl (.inl .ba)) (.leaf (.inl (.trace 1))) (.leaf (.inl (.pred .sleep))))))⟩]
+                :=
   rfl
 
 /-- *The student who sleeps* denotes John, though *the student* is a presupposition failure. -/
@@ -516,7 +520,7 @@ the fragment records, so a tree's denotations are those of every resolution of i
 
 section QuantifierRaising
 
-open Interpreter Interpreter.Grammar MSFirstOrder
+open Interpreter ManySorted
 
 /-- *Every person*. -/
 def everyPerson : Tree Unit Word := .bin (det English.Determiners.every) (pred .person)
@@ -559,11 +563,11 @@ theorem meanings_raise_name :
 /-- A derivation with the individual-denoting derivation `a` in place of the traces of the
 index `n`. -/
 def substTrace (n : ℕ) (a : grammar.Deriv Item .e) : {c : Ty Base} → Item c → grammar.Deriv Item c
-  | _, .trace k => if k = n then a else Deriv.leaf (.trace k)
-  | _, .name c => Deriv.leaf (.name c)
-  | _, .pred r => Deriv.leaf (.pred r)
-  | _, .verb r => Deriv.leaf (.verb r)
-  | _, .det s => Deriv.leaf (.det s)
+  | _, .trace k => if k = n then a else ManySorted.Language.Deriv.leaf (.trace k)
+  | _, .name c => ManySorted.Language.Deriv.leaf (.name c)
+  | _, .pred r => ManySorted.Language.Deriv.leaf (.pred r)
+  | _, .verb r => ManySorted.Language.Deriv.leaf (.verb r)
+  | _, .det s => ManySorted.Language.Deriv.leaf (.det s)
 
 /-- Raising an individual-denoting phrase is vacuous, in general: a derivation of type e
 combined with the abstract over an index has the denotation of the abstract's body with the
@@ -572,13 +576,13 @@ is the raised one or that the phrase depends on. A quantifier takes scope becaus
 not of its own type. -/
 theorem realize_raise {b : Ty Base} (n : ℕ) (a : grammar.Deriv Item .e)
     (d : grammar.Deriv Item b)
-    (hd : ∀ m ∈ Grammar.withAbstraction.binders d, m ≠ n ∧
+    (hd : ∀ m ∈ ManySorted.Language.withAbstraction.binders d, m ≠ n ∧
       ∀ g u, a.realize total Item.val (Function.update g m u) = a.realize total Item.val g) :
-    (Deriv.binary (G := grammar) (Sum.inl Application.ba) a
-        (.unary (.inl (.index n b)) d)).realize total Item.val =
+    (ManySorted.Language.Deriv.binary (L := grammar) (.inl (.inl Application.ba)) a
+        (.unary (.inr (.index n b)) d)).realize total Item.val =
       (d.bind (substTrace n a)).realize total Item.val :=
-  Grammar.withAbstraction.realize_raise assignments Item.val (substTrace n a) n
-    (Sum.inl Application.ba) (fun _ _ ↦ rfl) a
+  ManySorted.Language.withAbstraction.realize_raise assignments Item.val (substTrace n a) n
+    (.inl Application.ba) (fun _ _ ↦ rfl) a
     (fun w g ↦ by
       cases w with
       | trace k =>
@@ -627,12 +631,12 @@ theorem inverse_entails_surface : inverseScopeProp → surfaceScopeProp :=
 Application, to the abstract over its own index. -/
 theorem derivs_surface :
     Tree.derivs rules items tree_surface =
-      [⟨.t, .binary (.inl .fa)
-        (.binary (.inl .fa) (.leaf (.det .every)) (.leaf (.pred .person)))
-        (.unary (.inl (.index 1 .t)) (.binary (.inl .fa)
-          (.binary (.inl .fa) (.leaf (.det .some)) (.leaf (.pred .person)))
-          (.unary (.inl (.index 2 .t)) (.binary (.inl .ba) (.leaf (.trace 1))
-            (.binary (.inl .fa) (.leaf (.verb .see)) (.leaf (.trace 2)))))))⟩] := rfl
+      [⟨.t, .binary (.inl (.inl .fa))
+        (.binary (.inl (.inl .fa)) (.leaf (.det .every)) (.leaf (.pred .person)))
+        (.unary (.inr (.index 1 .t)) (.binary (.inl (.inl .fa))
+          (.binary (.inl (.inl .fa)) (.leaf (.det .some)) (.leaf (.pred .person)))
+          (.unary (.inr (.index 2 .t)) (.binary (.inl (.inl .ba)) (.leaf (.trace 1))
+            (.binary (.inl (.inl .fa)) (.leaf (.verb .see)) (.leaf (.trace 2)))))))⟩] := rfl
 
 theorem meanings_surface : meanings tree_surface = [⟨.t, fun _ ↦ surfaceScopeProp⟩] := rfl
 
@@ -666,7 +670,7 @@ types choosing the entry at each position. -/
 
 section InSitu
 
-open Interpreter Interpreter.Grammar MSFirstOrder
+open Interpreter ManySorted
 
 /-- The object-position entry of a determiner, of type ⟨⟨e,t⟩,⟨⟨e,⟨e,t⟩⟩,⟨e,t⟩⟩⟩. -/
 inductive ObjectDet : Ty Base → Type
@@ -694,10 +698,11 @@ def tree_inSitu : Tree Unit Word :=
 is its basic entry and the object determiner its object-position entry. -/
 theorem derivs_inSitu :
     Tree.derivs rules itemsFlex tree_inSitu =
-      [⟨.t, .binary (.inl .fa)
-        (.binary (.inl .fa) (.leaf (.inl (.det .every))) (.leaf (.inl (.pred .person))))
-        (.binary (.inl .ba) (.leaf (.inl (.verb .see)))
-          (.binary (.inl .fa) (.leaf (.inr (.shift .some))) (.leaf (.inl (.pred .person)))))⟩] :=
+      [⟨.t, .binary (.inl (.inl .fa))
+        (.binary (.inl (.inl .fa)) (.leaf (.inl (.det .every))) (.leaf (.inl (.pred .person))))
+        (.binary (.inl (.inl .ba)) (.leaf (.inl (.verb .see)))
+          (.binary (.inl (.inl .fa)) (.leaf (.inr (.shift .some))) (.leaf (.inl (.pred
+              .person)))))⟩] :=
   rfl
 
 /-- The flat tree denotes the surface-scope reading. -/
@@ -721,7 +726,7 @@ sister. The fragment has no traces, and its denotations are relative to a world 
 
 section Intensional
 
-open Interpreter Interpreter.Grammar MSFirstOrder ModalLogic SetRel
+open Interpreter ManySorted ModalLogic SetRel
 
 /-- Intensional Functional Application (9) of §12.3: a function of intensions applies to the
 intension of its sister, in either order. -/
@@ -731,21 +736,22 @@ inductive IntensionalApplication : Ty Base → Ty Base → Ty Base → Type
   /-- The function on the right. -/
   | iba {b c : Ty Base} : IntensionalApplication b (.intens b ⇒ c) c
 
-/-- The grammar of Intensional Functional Application. -/
-@[reducible] def intensionalApplication : Grammar (Ty Base) :=
-  ⟨fun _ _ ↦ Empty, IntensionalApplication⟩
+/-- The rule of Intensional Functional Application that applies to two types. -/
+def IntensionalApplication.rules (l r : Ty Base) : List (Σ u, IntensionalApplication l r u) :=
+  (match l with
+    | .fn (.fn (.base .s) b) c => if h : b = r then [⟨c, h ▸ .ifa⟩] else []
+    | _ => []) ++
+  match r with
+    | .fn (.fn (.base .s) b) c => if h : b = l then [⟨c, h ▸ .iba⟩] else []
+    | _ => []
 
-instance : intensionalApplication.LocallyFinite where
-  unaryRules _ := []
-  binaryRules l r :=
-    (match l with
-      | .fn (.fn (.base .s) b) c => if h : b = r then [⟨c, h ▸ .ifa⟩] else []
-      | _ => []) ++
-    match r with
-      | .fn (.fn (.base .s) b) c => if h : b = l then [⟨c, h ▸ .iba⟩] else []
-      | _ => []
-  mem_unaryRules := nofun
-  mem_binaryRules m := by cases m <;> simp
+/-- Intensional Functional Application, as a language over the types. -/
+@[reducible] def intensionalApplication : ManySorted.Language (Ty Base) :=
+  .mk₂ (fun _ _ ↦ PEmpty) IntensionalApplication
+
+instance : intensionalApplication.LocallyFinite :=
+  .mk₂ (fun _ ↦ []) IntensionalApplication.rules nofun fun m ↦ by
+    cases m <;> simp [IntensionalApplication.rules]
 
 variable {E W : Type}
 
@@ -753,18 +759,18 @@ variable {E W : Type}
 abbrev IVal (E W : Type) (a : Ty Base) : Type := W → a.Dom (Base.Dom E W)
 
 /-- Functional Application relative to a world. -/
-abbrev extensional : Grammar.application.language.Structure (IVal E W) :=
-  Grammar.piStructure W
+abbrev extensional : application.Structure (IVal E W) :=
+  (inferInstance : application.Structure (Ty.Dom (Base.Dom E W))).pi W
 
 /-- Functional Application and Intensional Functional Application relative to a world: the
 first combines sisters at one world, and the second gives the function at a world the whole
 intension of its sister. -/
 @[instance_reducible] def intensional :
-    (Grammar.application.sum intensionalApplication).language.Structure (IVal E W) :=
-  Grammar.structure nofun fun
-    | .inl m, x, y => fun w ↦ Application.eval _ m (x w) (y w)
-    | .inr .ifa, f, x => fun w ↦ f w x
-    | .inr .iba, x, f => fun w ↦ f w x
+    (application.sum intensionalApplication).Structure (IVal E W) :=
+  ((inferInstance : application.Structure (Ty.Dom (Base.Dom E W))).pi W).sum
+    (.mk₂ nofun fun
+      | .ifa, f, x => fun w ↦ f w x
+      | .iba, x, f => fun w ↦ f w x)
 
 /-- The words of the fragment. -/
 inductive IWord
@@ -832,13 +838,13 @@ def maryBelievesDickIsDeceitful : Tree Unit IWord :=
 /-- The denotations of a tree by Functional Application and Intensional Functional
 Application. -/
 def imeanings (t : Tree Unit IWord) : List (Σ a, IVal E W a) :=
-  t.values (typeDriven (.sum .application intensionalApplication)) intensional
+  t.values (typeDriven (application.sum intensionalApplication)) intensional
     (IItem.val loyal deceitful believes mary jan dick believesExt) iitems
 
 /-- The denotations of a tree by Functional Application alone, in the extensional semantics
 where *believes* takes a truth value. -/
 def emeanings (t : Tree Unit IWord) : List (Σ a, IVal E W a) :=
-  t.values (typeDriven .application) extensional
+  t.values (typeDriven application) extensional
     (IItem.val loyal deceitful believes mary jan dick believesExt) iitemsExt
 
 theorem imeanings_janIsLoyal :
@@ -848,12 +854,12 @@ theorem imeanings_janIsLoyal :
 /-- Functional Application cannot give *believes* its complement, a truth value where the verb
 wants a proposition. -/
 theorem derivs_maryBelievesJanIsLoyal_application :
-    Tree.derivs (typeDriven .application) iitems maryBelievesJanIsLoyal = [] := rfl
+    Tree.derivs (typeDriven application) iitems maryBelievesJanIsLoyal = [] := rfl
 
 /-- The one derivation of the report: Intensional Functional Application of the verb to its
 complement, and Functional Application elsewhere. -/
 theorem derivs_maryBelievesJanIsLoyal :
-    Tree.derivs (typeDriven (.sum .application intensionalApplication)) iitems
+    Tree.derivs (typeDriven (application.sum intensionalApplication)) iitems
         maryBelievesJanIsLoyal =
       [⟨.t, .binary (.inl .ba) (.leaf .mary) (.binary (.inr .ifa) (.leaf .believes)
         (.binary (.inl .ba) (.leaf .jan) (.binary (.inl .fa) (.leaf .is) (.leaf .loyal))))⟩] :=

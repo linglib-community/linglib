@@ -60,7 +60,7 @@ pronouns, so the nearest λ is the nearest one of the kind Percus means.
 
 namespace Percus2000
 
-open Interpreter Interpreter.Grammar MSFirstOrder PhraseStructure Tree
+open Interpreter ManySorted PhraseStructure Tree
 
 /-! ### The model -/
 
@@ -236,15 +236,15 @@ def Item.val (sc : Scenario) : {a : Ty Atom} → Item a → Assignment → Ty.PD
 abbrev indexTy : ℕ → Ty Atom := fun _ ↦ .base .o
 
 /-- The grammar: Functional Application, and abstraction over an index. -/
-abbrev grammar : Grammar (Ty Atom) := Grammar.application.withAbstraction indexTy
+abbrev grammar : ManySorted.Language (Ty Atom) := application.withAbstraction indexTy
 
 /-- An indexed λ admits abstraction over its index, and sisters Functional Application. -/
-abbrev rules : Interpreter grammar Node := (typeDriven .application).withAbstraction indexTy
+abbrev rules : Interpreter grammar Node := (typeDriven application).withAbstraction indexTy
 
 /-- The denotations of a structure, relative to an assignment. -/
 def meanings (sc : Scenario) (t : Tree Unit Word) :
     List (Σ a : Ty Atom, Assignment → Ty.PDom Dom a) :=
-  t.values rules (Grammar.withAbstraction.structure (Assignments.partial Dom indexTy))
+  t.values rules (ManySorted.Language.withAbstraction.structure (Assignments.partial Dom indexTy))
     (Item.val sc) items
 
 /-- The context's assignment: `ssh₈` is the rounds of the game, and no other index has a
@@ -304,9 +304,10 @@ def Holds (sc : Scenario) (t : Tree Unit Word) : Prop :=
 
 -- (26b)
 theorem derivs_lf (S T : Binder) : Tree.derivs rules items (lf S T) =
-    [⟨propTy, .unary (.inl (.index 1 .t)) (.binary .ba (.leaf (.pro 1)) (.binary .ba (.leaf .mary)
-      (.binary .fa (.leaf .thinks) (.unary (.inl (.index 2 .t)) (.binary .ba
-        (.leaf (.pro S.index)) (.binary .ba (.binary .fa (.leaf .myBrother)
+    [⟨propTy, .unary (.inr (.index 1 .t)) (.binary (.inl .ba) (.leaf (.pro 1)) (.binary (.inl .ba)
+        (.leaf .mary)
+      (.binary (.inl .fa) (.leaf .thinks) (.unary (.inr (.index 2 .t)) (.binary (.inl .ba)
+        (.leaf (.pro S.index)) (.binary (.inl .ba) (.binary (.inl .fa) (.leaf .myBrother)
           (.leaf (.pro T.index))) (.leaf .isCanadian)))))))⟩] := by
   cases S <;> cases T <;> rfl
 
@@ -321,11 +322,13 @@ theorem holds_lf {sc : Scenario} {S T : Binder} :
 
 -- (35b)
 theorem derivs_lfAlways (S : Binder) : Tree.derivs rules items (lfAlways S) =
-    [⟨propTy, .unary (.inl (.index 1 .t)) (.binary .ba (.leaf (.pro 1)) (.binary .ba (.leaf .mary)
-      (.binary .fa (.leaf .thinks) (.unary (.inl (.index 2 .t)) (.binary .ba
-        (.leaf (.pro S.index)) (.binary .ba (.leaf (.ssh 8)) (.binary .fa (.leaf .always)
-          (.unary (.inl (.index 3 .t)) (.binary .ba (.leaf (.pro 3)) (.binary .ba
-            (.binary .fa (.leaf .myBrother) (.leaf (.pro 2))) (.leaf .won)))))))))))⟩] := by
+    [⟨propTy, .unary (.inr (.index 1 .t)) (.binary (.inl .ba) (.leaf (.pro 1)) (.binary (.inl .ba)
+        (.leaf .mary)
+      (.binary (.inl .fa) (.leaf .thinks) (.unary (.inr (.index 2 .t)) (.binary (.inl .ba)
+        (.leaf (.pro S.index)) (.binary (.inl .ba) (.leaf (.ssh 8)) (.binary (.inl .fa) (.leaf
+            .always)
+          (.unary (.inr (.index 3 .t)) (.binary (.inl .ba) (.leaf (.pro 3)) (.binary (.inl .ba)
+            (.binary (.inl .fa) (.leaf .myBrother) (.leaf (.pro 2))) (.leaf .won)))))))))))⟩] := by
   cases S <;> rfl
 
 theorem holds_lfAlways {sc : Scenario} {S : Binder} :
@@ -381,15 +384,19 @@ because the sister of *thinks* is then defined at other objects too. -/
 
 -- (26b)
 theorem derivs_vpb (S T : Binder) : Tree.derivs rules items (vpb S T) =
-    [⟨propTy, .unary (.inl (.index 2 .t)) (.binary .ba (.leaf (.pro S.index)) (.binary .ba
-      (.binary .fa (.leaf .myBrother) (.leaf (.pro T.index))) (.leaf .isCanadian)))⟩] := by
+    [⟨propTy, .unary (.inr (.index 2 .t)) (.binary (.inl .ba) (.leaf (.pro S.index)) (.binary (.inl
+        .ba)
+      (.binary (.inl .fa) (.leaf .myBrother) (.leaf (.pro T.index))) (.leaf .isCanadian)))⟩] := by
   cases S <;> cases T <;> rfl
 
 -- (35b)
 theorem derivs_advp (S : Binder) : Tree.derivs rules items (advp S) =
-    [⟨propTy, .unary (.inl (.index 2 .t)) (.binary .ba (.leaf (.pro S.index)) (.binary .ba
-      (.leaf (.ssh 8)) (.binary .fa (.leaf .always) (.unary (.inl (.index 3 .t)) (.binary .ba
-        (.leaf (.pro 3)) (.binary .ba (.binary .fa (.leaf .myBrother) (.leaf (.pro 2)))
+    [⟨propTy, .unary (.inr (.index 2 .t)) (.binary (.inl .ba) (.leaf (.pro S.index)) (.binary (.inl
+        .ba)
+      (.leaf (.ssh 8)) (.binary (.inl .fa) (.leaf .always) (.unary (.inr (.index 3 .t)) (.binary
+          (.inl .ba)
+        (.leaf (.pro 3)) (.binary (.inl .ba) (.binary (.inl .fa) (.leaf .myBrother) (.leaf (.pro
+            2)))
           (.leaf .won)))))))⟩] := by
   cases S <;> rfl
 

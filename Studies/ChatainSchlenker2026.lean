@@ -251,8 +251,9 @@ noncomputable def Item.val : {a : Ty Atom} → Item D a → (ℕ → D) → a.Do
 functional application through effects, and abstraction over an index. -/
 noncomputable def meanings (t : Tree Unit (Word D)) :
     List (Σ a : Ty Atom, (ℕ → D) → a.Dom (Atom.Dom D)) :=
-  t.values ((effectDriven .application).withAbstraction fun _ ↦ .base .e)
-    (Grammar.withAbstraction.structure (Assignments.total (Atom.Dom D) fun _ ↦ .base .e))
+  t.values ((effectDriven application).withAbstraction fun _ ↦ .base .e)
+    (ManySorted.Language.withAbstraction.structure (Assignments.total (Atom.Dom D) fun _ ↦ .base
+        .e))
     (Item.val P R w) items
 
 open Classical in
@@ -301,7 +302,7 @@ theorem presupFailure_clause_iff_mem_gapExt [DecidablePred (R d)] :
 /-- `A` (7) maps the value 1 to 1 and the other two values to 0, so it is a function from partial
 truth values to truth values, and a word of that type takes a partial truth value by functional
 application: `A` is a possible word meaning, as the paper has it. -/
-example : (typeDriven (.application (B := Atom))).binary () (.comp .M .t ⇒ .t) (.comp .M .t) =
+example : (typeDriven (application (B := Atom))).binary () (.comp .M .t ⇒ .t) (.comp .M .t) =
     [⟨.t, .fa⟩] :=
   rfl
 

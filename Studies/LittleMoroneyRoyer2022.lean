@@ -131,7 +131,7 @@ def Item.val : {a : Ty Base} → Item a → a.Dom (Base.Dom (Finset α) Unit)
 
 /-- The denotations of a tree, by Functional Application. -/
 def meanings (t : Tree Unit Word) : List (Σ a : Ty Base, a.Dom (Base.Dom (Finset α) Unit)) :=
-  t.values (typeDriven .application) inferInstance (Item.val dog) items
+  t.values (typeDriven application) inferInstance (Item.val dog) items
 
 /-! ### Ch'ol: classifier-for-numeral -/
 

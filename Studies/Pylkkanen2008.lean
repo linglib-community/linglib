@@ -119,7 +119,7 @@ abbrev lowApplTy : Ty Base := .e ⇒ .e ⇒ .evt ⇒ .vt
 
 /-- The book's rules of composition: Functional Application, Predicate Modification, and Event
 Identification of a relation of individuals to events with a predicate of events. -/
-abbrev grammar : Grammar (Ty Base) := Voice.grammar
+abbrev grammar : ManySorted.Language (Ty Base) := Voice.grammar
 
 /-- The rules a node admits, by the types of its daughters: every rule that applies. -/
 abbrev rules {N : Type} : Interpreter grammar N := typeDriven grammar

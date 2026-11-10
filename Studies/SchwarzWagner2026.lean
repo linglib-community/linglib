@@ -412,7 +412,7 @@ def prejacent : Case → Tree Cat Word
 
 section Interpretation
 
-open Quantifier Interpreter Interpreter.Grammar
+open Quantifier Interpreter
 
 variable {E W : Type} (A : Set E) (X : W → Set E)
 
@@ -447,7 +447,7 @@ def denotes : Word → Option (Denotation E W)
 
 /-- The meanings of a tree, by Functional Application at each world. -/
 def meanings (t : Tree Cat Word) : List (Denotation E W) :=
-  t.values (typeDriven .application) (Grammar.piStructure (D := Ty.Dom (Dom E)) W)
+  t.values (typeDriven application) ((inferInstance : application.Structure (Ty.Dom (Dom E))).pi W)
     (W := fun a ↦ W → a.Dom (Dom E)) id fun
     | .inl w => (denotes A X w).toList
     | .inr _ => []

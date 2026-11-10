@@ -33,6 +33,8 @@ the product of two structures. The many-sorted layer has neither products nor su
 
 @[expose] public section
 
+open ManySorted
+
 namespace Interpreter
 
 open Relator
@@ -171,15 +173,15 @@ theorem rel_lower {o : Ty B} :
 
 end Eff
 
-variable {r : ∀ b, D b → D' b → Prop} {G : Grammar (Ty B)}
-  [M : G.language.Structure (Ty.Dom D)] [M' : G.language.Structure (Ty.Dom D')]
+variable {r : ∀ b, D b → D' b → Prop} {G : Language (Ty B)}
+  [M : G.Structure (Ty.Dom D)] [M' : G.Structure (Ty.Dom D')]
 
 /-- Where the rules of a grammar respect a relation between base domains, every mode over them
 does. -/
 theorem Mode.rel_eval
     (hG : ∀ {l r' u : Ty B} (b : G.Binary l r' u), LiftFun (Ty.LiftRel r l)
       (LiftFun (Ty.LiftRel r r') (Ty.LiftRel r u))
-      (fun x y ↦ M.funMap (.binary b) (x, y)) fun x y ↦ M'.funMap (.binary b) (x, y)) :
+      (fun x y ↦ M.funMap b (x, y)) fun x y ↦ M'.funMap b (x, y)) :
     ∀ {l r' u : Ty B} (m : Mode G.Binary l r' u),
       LiftFun (Ty.LiftRel r l) (LiftFun (Ty.LiftRel r r') (Ty.LiftRel r u)) (m.eval D)
         (m.eval D')
@@ -230,23 +232,19 @@ theorem EventIdentification.rel_eval {x s : Ty B} :
 omit M M' in
 /-- Functional application on two families of domains is logically related by any relation
 between the base domains. -/
-theorem Grammar.application.isLogicalRel :
-    (inferInstance : (Grammar.application (B := B)).language.Structure (Ty.Dom D)).IsLogicalRel
-      (inferInstance : (Grammar.application (B := B)).language.Structure (Ty.Dom D'))
-      (Ty.LiftRel r) where
-  funMap
-    | .unary s => nomatch s
-    | .binary m => fun _ _ h ↦ Application.rel_eval m h.1 h.2
+theorem application.isLogicalRel :
+    (inferInstance : (application (B := B)).Structure (Ty.Dom D)).IsLogicalRel
+      (inferInstance : (application (B := B)).Structure (Ty.Dom D'))
+      (Ty.LiftRel r) :=
+  .mk₂ nofun fun m _ _ _ _ hx hy ↦ Application.rel_eval m hx hy
 
 /-- A logical relation between two structures for a grammar, lifted from a relation between base
 domains, is one between the two structures of the effect-driven grammar over it, so related
 lexicons give every derivation related values. -/
 theorem effectGrammar.isLogicalRel (h : M.IsLogicalRel M' (Ty.LiftRel r)) :
     (effectGrammar.structure (G := G) (M := M)).IsLogicalRel
-      (effectGrammar.structure (G := G) (M := M')) (Ty.LiftRel r) where
-  funMap
-    | .unary s => fun _ _ hx ↦ h.funMap (.unary s) hx
-    | .binary m => fun _ _ hp ↦
-      Mode.rel_eval (fun b _ _ hx _ _ hy ↦ h.funMap (.binary b) ⟨hx, hy⟩) m hp.1 hp.2
+      (effectGrammar.structure (G := G) (M := M')) (Ty.LiftRel r) :=
+  .mk₂ (fun s _ _ hx ↦ h.funMap s hx) fun m _ _ _ _ hx hy ↦
+    Mode.rel_eval (fun b _ _ hx _ _ hy ↦ h.funMap b ⟨hx, hy⟩) m hx hy
 
 end Interpreter

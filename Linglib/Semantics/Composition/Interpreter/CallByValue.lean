@@ -38,6 +38,8 @@ constituent with no partial word in it never lacks a value.
 
 @[expose] public section
 
+open ManySorted
+
 namespace Interpreter
 
 variable {B : Type} {D : B → Type}
@@ -105,10 +107,10 @@ theorem Application.evalCbv_fa {a b : Ty B} (f : Part ((a ⇒ b).cbv.Dom D))
     (x : Part (a.cbv.Dom D)) :
     Application.evalCbv D .fa f x =
       (.join trivial (.ap trivial (.basic .fa)) :
-        Mode (Grammar.application (B := B)).Binary (.comp .M (a.cbv ⇒ .comp .M b.cbv))
+        Mode (application (B := B)).Binary (.comp .M (a.cbv ⇒ .comp .M b.cbv))
           (.comp .M a.cbv) (.comp .M b.cbv)).eval D f x := by
   simp [Application.evalCbv, Mode.eval, Eff.join, Eff.seq, Eff.map, Application.eval,
-    MSFirstOrder.Language.Structure.funMap, Part.bind_assoc, Part.bind_map]
+    ManySorted.Language.Structure.funMap, Part.bind_assoc, Part.bind_map]
 
 /-- Application takes total values and the partial values that are them to a total value and the
 partial value that is it. -/
@@ -150,50 +152,22 @@ theorem PredicateModification.partRel_evalCbv : ∀ {l r u : Ty B}
 /-- The partial values of a type whose functions are partial. -/
 abbrev Ty.PDom (D : B → Type) (a : Ty B) : Type := Part (a.cbv.Dom D)
 
-instance (D : B → Type) : (Grammar.application (B := B)).language.Structure (Ty.PDom D) :=
-  Grammar.structure nofun (Application.evalCbv D)
+instance (D : B → Type) : (application (B := B)).Structure (Ty.PDom D) :=
+  .mk₂ nofun (Application.evalCbv D)
 
-instance (D : B → Type) :
-    (Grammar.predicateModification (B := B)).language.Structure (Ty.PDom D) :=
-  Grammar.structure nofun (PredicateModification.evalCbv D)
-
-@[simp] theorem Grammar.funMap_application_cbv {l r u : Ty B} (m : Application l r u)
-    (p : Ty.PDom D l × Ty.PDom D r) :
-    MSFirstOrder.Language.Structure.funMap (L := (Grammar.application (B := B)).language)
-      (D := Ty.PDom D) (Grammar.Sym.binary m) p = Application.evalCbv D m p.1 p.2 :=
-  rfl
-
-@[simp] theorem Grammar.funMap_application_sum_predicateModification_inl_cbv {l r u : Ty B}
-    (m : Application l r u) (p : Ty.PDom D l × Ty.PDom D r) :
-    MSFirstOrder.Language.Structure.funMap
-      (L := (Grammar.application.sum .predicateModification).language) (D := Ty.PDom D)
-      (Grammar.Sym.binary
-        (Sum.inl (α := Application l r u) (β := PredicateModification l r u) m)) p =
-      Application.evalCbv D m p.1 p.2 :=
-  rfl
-
-@[simp] theorem Grammar.funMap_application_sum_predicateModification_inr_cbv {l r u : Ty B}
-    (m : PredicateModification l r u) (p : Ty.PDom D l × Ty.PDom D r) :
-    MSFirstOrder.Language.Structure.funMap
-      (L := (Grammar.application.sum .predicateModification).language) (D := Ty.PDom D)
-      (Grammar.Sym.binary
-        (Sum.inr (α := Application l r u) (β := PredicateModification l r u) m)) p =
-      PredicateModification.evalCbv D m p.1 p.2 :=
-  rfl
+instance (D : B → Type) : (predicateModification (B := B)).Structure (Ty.PDom D) :=
+  .mk₂ nofun (PredicateModification.evalCbv D)
 
 /-- Application and predicate modification on total values and on partial values of partial
 functions are logically related: a constituent of words with total values has the partial value
 that is its total one. -/
-theorem Grammar.isLogicalRel_partRel :
-    (inferInstance : (Grammar.application.sum .predicateModification).language.Structure
+theorem isLogicalRel_partRel :
+    (inferInstance : (application.sum predicateModification).Structure
       (Ty.Dom D)).IsLogicalRel
-      (inferInstance : (Grammar.application.sum .predicateModification).language.Structure
-        (Ty.PDom D)) Ty.PartRel where
-  funMap
-    | .unary (.inl s) => nomatch s
-    | .unary (.inr s) => nomatch s
-    | .binary (.inl m) => fun _ _ h ↦ m.partRel_evalCbv h.1 h.2
-    | .binary (.inr m) => fun _ _ h ↦ m.partRel_evalCbv h.1 h.2
+      (inferInstance : (application.sum predicateModification).Structure
+        (Ty.PDom D)) Ty.PartRel :=
+  .sum (.mk₂ nofun fun m _ _ _ _ h₁ h₂ ↦ m.partRel_evalCbv h₁ h₂)
+    (.mk₂ nofun fun m _ _ _ _ h₁ h₂ ↦ m.partRel_evalCbv h₁ h₂)
 
 /-- Partial assignments: an assignment may give an index no value, and an abstract always has a
 value, a partial function defined where its body has one. -/
@@ -211,25 +185,25 @@ combined by the rules of a grammar where both sisters are defined. -/
 /-- The partial-valued interpreter: every constituent is a partial value, and sisters combine by
 a rule of the grammar on their values where both are defined, a partial result of the rule
 flattened. A function applied to an undefined argument is undefined. -/
-def partialValued [DecidableEq B] (G : Grammar (Ty B)) [G.LocallyFinite] {N : Type} :
+def partialValued [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] {N : Type} :
     Interpreter (effectGrammar G) N where
   unary _ _ := []
   binary
     | _, .comp .M l, .comp .M r =>
-      (Grammar.LocallyFinite.binaryRules (G := G) l r).map fun
+      (Language.LocallyFinite.binaryRules (L := G) l r).map fun
         | ⟨.comp .M u, p⟩ => ⟨.comp .M u, .join trivial (.ap trivial (.basic p))⟩
         | ⟨u, p⟩ => ⟨.comp .M u, .ap trivial (.basic p)⟩
     | _, _, _ => []
 
 section PartialValued
 
-variable {G : Grammar (Ty B)} {D : B → Type} [M : G.language.Structure (Ty.Dom D)] {l r u : Ty B}
+variable {G : Language (Ty B)} {D : B → Type} [M : G.Structure (Ty.Dom D)] {l r u : Ty B}
 
 /-- A rule on two partial values: defined where both are. -/
 theorem Mode.eval_ap_basic (p : G.Binary l r u) (x : Part (l.Dom D)) (y : Part (r.Dom D)) :
     (Mode.ap trivial (.basic p) :
       Mode G.Binary (.comp .M l) (.comp .M r) (.comp .M u)).eval D x y =
-      x.bind fun a ↦ y.map fun b ↦ M.funMap (.binary p) (a, b) := by
+      x.bind fun a ↦ y.map fun b ↦ M.funMap p (a, b) := by
   simp [Mode.eval, Eff.seq, Eff.map, Part.bind_map]
 
 /-- A rule with a partial result, on two partial values: defined where both are and the rule is
@@ -238,7 +212,7 @@ theorem Mode.eval_join_ap_basic (p : G.Binary l r (.comp .M u)) (x : Part (l.Dom
     (y : Part (r.Dom D)) :
     (Mode.join trivial (.ap trivial (.basic p)) :
       Mode G.Binary (.comp .M l) (.comp .M r) (.comp .M u)).eval D x y =
-      x.bind fun a ↦ y.bind fun b ↦ M.funMap (.binary p) (a, b) := by
+      x.bind fun a ↦ y.bind fun b ↦ M.funMap p (a, b) := by
   simp [Mode.eval, Eff.join, Eff.seq, Eff.map, Part.bind_assoc, Part.bind_map]
 
 end PartialValued

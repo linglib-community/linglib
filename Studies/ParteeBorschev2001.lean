@@ -152,11 +152,11 @@ theorem freeRelationOnly_refuted :
 -- A possessive of type ⟨e,t⟩ composes with a CN by predicate modification and with a TCN not at
 -- all, while a TCN takes its possessor by application.
 theorem possessive_modes :
-    Grammar.LocallyFinite.binaryRules (G := Grammar.application.sum .predicateModification)
+    ManySorted.Language.LocallyFinite.binaryRules (L := application.sum predicateModification)
         Ty.et Ty.et = [⟨Ty.et, .inr .pm⟩] ∧
-      Grammar.LocallyFinite.binaryRules (G := Grammar.application.sum .predicateModification)
+      ManySorted.Language.LocallyFinite.binaryRules (L := application.sum predicateModification)
         Ty.et Ty.eet = [] ∧
-      Grammar.LocallyFinite.binaryRules (G := Grammar.application.sum .predicateModification)
+      ManySorted.Language.LocallyFinite.binaryRules (L := application.sum predicateModification)
         Ty.eet .e = [⟨Ty.et, .inl .fa⟩] :=
   ⟨rfl, rfl, rfl⟩
 

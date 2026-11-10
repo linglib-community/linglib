@@ -13,15 +13,15 @@ gives each symbol a function from the product of domains that its shape describe
 
 ## Main definitions
 
-* `MSFirstOrder.Signature`: the shape of a symbol's arguments.
-* `MSFirstOrder.Signature.Interpret`: the arguments of a shape, over a family of domains.
-* `MSFirstOrder.Language`: function symbols by argument shape and result sort.
-* `MSFirstOrder.Language.Structure`: a function for each symbol, over a family of domains.
-* `MSFirstOrder.Language.mk₂`: the language of a family of unary and a family of binary symbols.
-* `MSFirstOrder.Language.sum`: the sum of two languages, with
-  [the function a symbol of one denotes in it](##MSFirstOrder.Language.Structure.funMap_sum_inl).
-* `MSFirstOrder.Language.Structure.pi`: the structure on values that depend on a parameter.
-* `MSFirstOrder.Language.LocallyFinite`: the symbols that take given arguments can be listed.
+* `ManySorted.Signature`: the shape of a symbol's arguments.
+* `ManySorted.Signature.Interpret`: the arguments of a shape, over a family of domains.
+* `ManySorted.Language`: function symbols by argument shape and result sort.
+* `ManySorted.Language.Structure`: a function for each symbol, over a family of domains.
+* `ManySorted.Language.mk₂`: the language of a family of unary and a family of binary symbols.
+* `ManySorted.Language.sum`: the sum of two languages, with
+  [the function a symbol of one denotes in it](##ManySorted.Language.Structure.funMap_sum_inl).
+* `ManySorted.Language.Structure.pi`: the structure on values that depend on a parameter.
+* `ManySorted.Language.LocallyFinite`: the symbols that take given arguments can be listed.
 
 ## Implementation notes
 
@@ -35,7 +35,7 @@ development calls algebraic. The domains are a parameter of a structure.
 
 universe u v w x
 
-namespace MSFirstOrder
+namespace ManySorted
 
 /-- The shape of a symbol's arguments over sorts `S`: none, one of a sort, or a pair of shapes. -/
 inductive Signature (S : Type u) where
@@ -133,6 +133,8 @@ inductive Sum (L L' : Language.{u, v} S) (σ : Signature S) (t : S) : Type v
     | .inl f => M.funMap f x
     | .inr f => M'.funMap f x
 
+instance [M : L.Structure D] [M' : L'.Structure D] : (L.sum L').Structure D := M.sum M'
+
 @[simp] theorem Structure.funMap_sum_inl (M : L.Structure D) (M' : L'.Structure D)
     {σ : Signature S} {t : S} (f : L.Functions σ t) (x : σ.Interpret D) :
     (M.sum M').funMap (Sum.inl f : (L.sum L').Functions σ t) x = M.funMap f x := rfl
@@ -144,11 +146,19 @@ inductive Sum (L L' : Language.{u, v} S) (σ : Signature S) (t : S) : Type v
 /-! ### Structures over a parameter -/
 
 /-- The arguments of a shape at one value of a parameter. -/
-def _root_.MSFirstOrder.Signature.Interpret.app {A : Type x} :
+def _root_.ManySorted.Signature.Interpret.app {A : Type x} :
     {σ : Signature S} → σ.Interpret (fun s ↦ A → D s) → A → σ.Interpret D
   | .nil, _, _ => ⟨⟩
   | .of _, f, g => f g
   | .prod _ _, p, g => (Signature.Interpret.app p.1 g, Signature.Interpret.app p.2 g)
+
+@[simp] theorem _root_.ManySorted.Signature.Interpret.app_of {A : Type x} {s : S}
+    (f : A → D s) (g : A) : Signature.Interpret.app (σ := .of s) f g = f g := rfl
+
+@[simp] theorem _root_.ManySorted.Signature.Interpret.app_prod {A : Type x} {σ τ : Signature S}
+    (p : (σ.prod τ).Interpret fun s ↦ A → D s) (g : A) :
+    Signature.Interpret.app p g =
+      (Signature.Interpret.app p.1 g, Signature.Interpret.app p.2 g) := rfl
 
 /-- The structure on values that depend on a parameter: each symbol applies at one value of the
 parameter. -/
@@ -156,9 +166,17 @@ parameter. -/
     L.Structure fun s ↦ A → D s where
   funMap f p := fun g ↦ M.funMap f (Signature.Interpret.app p g)
 
-@[simp] theorem Structure.funMap_pi {A : Type x} (M : L.Structure D) {σ : Signature S} {t : S}
+theorem Structure.funMap_pi {A : Type x} (M : L.Structure D) {σ : Signature S} {t : S}
     (f : L.Functions σ t) (p : σ.Interpret fun s ↦ A → D s) :
     (M.pi A).funMap f p = fun g ↦ M.funMap f (Signature.Interpret.app p g) := rfl
+
+@[simp] theorem Structure.funMap_pi_unary {A : Type x} (M : L.Structure D) {a b : S}
+    (f : L.Unary a b) (x : A → D a) :
+    (M.pi A).funMap (σ := .of a) f x = fun g ↦ M.funMap f (x g) := rfl
+
+@[simp] theorem Structure.funMap_pi_binary {A : Type x} (M : L.Structure D) {a b c : S}
+    (f : L.Binary a b c) (p : (A → D a) × (A → D b)) :
+    (M.pi A).funMap (σ := .prod (.of a) (.of b)) f p = fun g ↦ M.funMap f (p.1 g, p.2 g) := rfl
 
 /-! ### Listing the symbols that apply -/
 
@@ -190,8 +208,8 @@ that apply can be listed. -/
     | .prod (.of _) (.prod _ _), f => nomatch f
 
 instance [L.LocallyFinite] [L'.LocallyFinite] : (L.sum L').LocallyFinite where
-  symbols σ := ((LocallyFinite.symbols (L := L) σ).map fun p ↦ ⟨p.1, .inl p.2⟩) ++
-    (LocallyFinite.symbols (L := L') σ).map fun p ↦ ⟨p.1, .inr p.2⟩
+  symbols σ := ((LocallyFinite.symbols (L := L) σ).map fun ⟨t, f⟩ ↦ ⟨t, .inl f⟩) ++
+    (LocallyFinite.symbols (L := L') σ).map fun ⟨t, f⟩ ↦ ⟨t, .inr f⟩
   mem_symbols
     | .inl f => List.mem_append_left _ (List.mem_map.2 ⟨_, LocallyFinite.mem_symbols f, rfl⟩)
     | .inr f => List.mem_append_right _ (List.mem_map.2 ⟨_, LocallyFinite.mem_symbols f, rfl⟩)
@@ -199,9 +217,9 @@ instance [L.LocallyFinite] [L'.LocallyFinite] : (L.sum L').LocallyFinite where
 @[simp] theorem LocallyFinite.symbols_sum [L.LocallyFinite] [L'.LocallyFinite]
     (σ : Signature S) :
     LocallyFinite.symbols (L := L.sum L') σ =
-      ((LocallyFinite.symbols (L := L) σ).map fun p ↦ ⟨p.1, .inl p.2⟩) ++
-        (LocallyFinite.symbols (L := L') σ).map fun p ↦ ⟨p.1, .inr p.2⟩ := rfl
+      ((LocallyFinite.symbols (L := L) σ).map fun ⟨t, f⟩ ↦ ⟨t, .inl f⟩) ++
+        (LocallyFinite.symbols (L := L') σ).map fun ⟨t, f⟩ ↦ ⟨t, .inr f⟩ := rfl
 
 end Language
 
-end MSFirstOrder
+end ManySorted

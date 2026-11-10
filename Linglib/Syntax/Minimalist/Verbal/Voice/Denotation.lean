@@ -38,7 +38,7 @@ the verb.
 
 namespace Minimalist.Voice
 
-open Interpreter ArgumentStructure
+open ManySorted Interpreter ArgumentStructure
 
 /-- The semantic type of a Voice head with the given variable, implicit or not. -/
 def tyOf : Option Instruction → Bool → Ty Base
@@ -68,8 +68,8 @@ def Head.denote (h : Head) : h.ty.Domain E W S := valOf ρ h.thematic h.implicit
 /-- The rules by which a Voice head composes with its verb phrase: Functional Application,
 Predicate Modification, and Event Identification of a relation of individuals to eventualities
 with a predicate of eventualities ([kratzer-1996]). -/
-abbrev grammar : Grammar (Ty Base) :=
-  (Grammar.sum .application .predicateModification).sum (.eventIdentification .e .v)
+abbrev grammar : ManySorted.Language (Ty Base) :=
+  (application.sum predicateModification).sum (eventIdentification .e .v)
 
 /-- A thematic head with its variable saturated and a predicate of eventualities combine by Event
 Identification and no other rule. -/
