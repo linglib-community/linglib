@@ -306,6 +306,11 @@ theorem turkish_realize_disjoint :
       ∀ c, Pairwise (Disjoint on fun l ↦ turkish.realization.realize l c) :=
   turkish_isCanonical.realize_disjoint (by decide)
 
+-- the two nouns take the same suffixes in every cell, so they are one inflection class
+theorem turkish_inflection_eq (l l' : TurkishNoun) :
+    turkish.inflection.realize l = turkish.inflection.realize l' :=
+  turkish_isCanonical.inflection_realize_eq l l'
+
 /-- The genitive suffix -(n)In is the same after ADAM and after EV 'house', but vowel harmony
 spells it -ın and -in, so the paradigms share their inflectional marking only below vowel harmony
 (fn. 1). -/

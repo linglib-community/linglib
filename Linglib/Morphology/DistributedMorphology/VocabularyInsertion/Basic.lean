@@ -276,23 +276,22 @@ variable {F E R Ctx : Type*} [DecidableEq F] {items : RuleSet (VocabularyItem F 
 selects in the neighborhood `site r c`. -/
 def toRealization (items : RuleSet (VocabularyItem F E))
     (site : R → Ctx → Neighborhood (Finset F)) : Morphology.Realization R Ctx E :=
-  ⟨fun r c ↦ (subsetPrinciple items (site r c)).toFinset⟩
+  .ofOption fun r c ↦ subsetPrinciple items (site r c)
 
 @[simp] theorem toRealization_realize (r : R) (c : Ctx) :
     (toRealization items site).realize r c = (subsetPrinciple items (site r c)).toFinset := rfl
 
 /-- The Subset Principle selects one item, so Vocabulary Insertion realizes no cell
 overabundantly. -/
-theorem toRealization_isUnivalent : (toRealization items site).IsUnivalent := fun r c ↦ by
-  rw [toRealization_realize, Option.card_toFinset]
-  cases subsetPrinciple items (site r c) <;> simp
+theorem toRealization_isUnivalent : (toRealization items site).IsUnivalent :=
+  Morphology.Realization.isUnivalent_ofOption _
 
 /-- An index is suppletive exactly when two of its contexts select items with distinct
 exponents. -/
 theorem toRealization_isSuppletive_iff : (toRealization items site).IsSuppletive r ↔
     ∃ c c' e e', subsetPrinciple items (site r c) = some e ∧
-      subsetPrinciple items (site r c') = some e' ∧ e ≠ e' := by
-  simp [Morphology.Realization.isSuppletive_iff]
+      subsetPrinciple items (site r c') = some e' ∧ e ≠ e' :=
+  Morphology.Realization.isSuppletive_ofOption_iff
 
 end Realization
 

@@ -19,7 +19,8 @@ inflectional material stays the same. A canonical paradigm satisfies the four co
 realizes every cell by exactly one form. When forms decompose uniquely, [the comparisons entail
 that every cell has its own form](##IsCanonical.realize_disjoint), as Stump observes, and a
 canonical paradigm has [neither a suppletive stem nor a suppletive
-affix](##IsCanonical.not_isSuppletive).
+affix](##IsCanonical.not_isSuppletive) and [a single inflection
+class](##IsCanonical.inflection_realize_eq).
 
 ## Implementation notes
 
@@ -128,6 +129,14 @@ theorem IsCanonical.realize_disjoint (h : P.IsCanonical) (hP : P.IsUnambiguous) 
   · obtain ⟨x, hx, hx'⟩ := exists_mem_of_mem_realization hP hw hw'
     exact Finset.disjoint_left.1 (h.stem_disjoint c hll)
       (Finset.mem_image_of_mem Prod.fst hx) (Finset.mem_image_of_mem Prod.fst hx')
+
+/-- The lexemes of a canonical paradigm have the same inflectional material at every cell, so
+they make up one inflection class. -/
+theorem IsCanonical.inflection_realize_eq (h : P.IsCanonical) (l l' : L) :
+    P.inflection.realize l = P.inflection.realize l' :=
+  have hl (l : L) (c : C) : P.inflection.transpose.IsLicensed c l :=
+    Realization.isLicensed_map_iff.2 (Realization.isLicensed_map_iff.1 (h.isTotal l c))
+  funext fun c ↦ (h.inflection_isInvariant c).realize_eq (hl l c) (hl l' c)
 
 /-- A canonical paradigm has no suppletive stem, and no cell whose inflectional material is
 suppletive across lexemes. -/

@@ -5,8 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Data.Finset.Card
-public import Mathlib.Data.Finset.Union
+public import Mathlib.Data.Finset.Option
 public import Mathlib.Data.Set.Image
 public import Mathlib.Order.Setoid.Basic
 
@@ -21,13 +20,13 @@ invariant when they are at most one and suppletive when they are at least two, w
 [within one cell or across two](##isSuppletive_iff_isOverabundant_or_isProperlySuppletive).
 An interpreted realization pairs the forms with a second realization, of readings.
 
-A homomorphism merges indices and translates contexts so that realization is preserved; it carries
-suppletion forward and invariance back. The strict homomorphisms of interpreted realizations
-translate contexts independently of the index, so
-[the indices they merge have the same forms and readings](##Interpreted.Hom.ker_onIndex_le),
-and the quotient `Interpreted.reduce` by that equivalence merges
-[exactly those](##Interpreted.ker_reduceHom_onIndex). Lax homomorphisms
-include forms and readings where strict ones preserve them.
+A homomorphism merges indices and translates contexts so that the forms of each cell are
+preserved, so [the indices it merges have the same forms in every
+context](##Realization.Hom.ker_onIndex_le), and the quotient `reduce` by that equivalence merges
+[exactly those](##Realization.ker_reduceHom_onIndex), as an inflection class collects the lexemes
+that inflect alike. A lax homomorphism includes forms
+where a homomorphism preserves them; it still carries suppletion forward and invariance back.
+Homomorphisms of interpreted realizations treat readings the same way.
 
 ## Implementation notes
 
@@ -38,8 +37,8 @@ include forms and readings where strict ones preserve them.
 * Invariance and suppletion are `Set.Subsingleton` and `Set.Nontrivial` of `exponents`, so that
   mathlib's lemmas on images and inclusions give their behaviour under `map` and under
   homomorphisms.
-* A strict homomorphism cannot consult the index when it translates contexts, so categorial
-  information has to sit in the context.
+* A homomorphism cannot consult the index when it translates contexts, so categorial information
+  has to sit in the context.
 * Profiles are extensional and underdetermine individuation. Criteria such as the locality of
   first categorization are further structure on admissible mergers, which studies supply.
 
@@ -173,12 +172,16 @@ theorem IsOverabundant.isSuppletive (h : S.IsOverabundant r) : S.IsSuppletive r 
   let ⟨c, hc⟩ := h
   Set.Nontrivial.mono hc fun _ hf ↦ ⟨c, hf⟩
 
-theorem IsProperlySuppletive.isSuppletive (h : S.IsProperlySuppletive r) : S.IsSuppletive r := by
-  obtain ⟨c, c', ⟨f, hf⟩, ⟨f', hf'⟩, hne⟩ := h
-  by_contra hs
-  rw [not_isSuppletive_iff, isInvariant_iff] at hs
-  exact hne <| Finset.ext fun g ↦
-    ⟨fun hg ↦ hs c c' g hg f' hf' ▸ hf', fun hg ↦ hs c' c g hg f hf ▸ hf⟩
+/-- An invariant index has the same forms in any two contexts that license it. -/
+theorem IsInvariant.realize_eq (h : S.IsInvariant r) (hc : S.IsLicensed r c)
+    (hc' : S.IsLicensed r c') : S.realize r c = S.realize r c' :=
+  let ⟨_, hf⟩ := hc
+  let ⟨_, hf'⟩ := hc'
+  Finset.ext fun _ ↦ ⟨fun hg ↦ h ⟨c, hg⟩ ⟨c', hf'⟩ ▸ hf', fun hg ↦ h ⟨c', hg⟩ ⟨c, hf⟩ ▸ hf⟩
+
+theorem IsProperlySuppletive.isSuppletive (h : S.IsProperlySuppletive r) : S.IsSuppletive r :=
+  let ⟨_, _, hc, hc', hne⟩ := h
+  not_isInvariant_iff.1 fun hi ↦ hne (hi.realize_eq hc hc')
 
 /-- Variance of form at an index is overabundance in one cell or suppletion across two. -/
 theorem isSuppletive_iff_isOverabundant_or_isProperlySuppletive :
@@ -288,9 +291,40 @@ variable {g}
 theorem IsSuppletive.of_map (h : (S.map g).IsSuppletive r) : S.IsSuppletive r :=
   Set.nontrivial_of_image g _ (by simpa [IsSuppletive] using h)
 
-theorem IsTotal.map (h : S.IsTotal) : (S.map g).IsTotal := fun r c ↦ (h r c).image g
+@[simp] theorem isLicensed_map_iff : (S.map g).IsLicensed r c ↔ S.IsLicensed r c :=
+  Finset.image_nonempty
+
+@[simp] theorem isTotal_map_iff : (S.map g).IsTotal ↔ S.IsTotal := by simp [IsTotal]
 
 end Map
+
+/-! ### Realizations that select one form -/
+
+/-- The realization of a map that selects at most one form for each index and context, as an
+engine that picks one exponent does. -/
+def ofOption (g : R → Ctx → Option F) : Realization R Ctx F := ⟨fun r c ↦ (g r c).toFinset⟩
+
+section OfOption
+
+variable {g : R → Ctx → Option F}
+
+@[simp] theorem ofOption_realize (g : R → Ctx → Option F) (r : R) (c : Ctx) :
+    (ofOption g).realize r c = (g r c).toFinset := rfl
+
+theorem mem_ofOption_realize : f ∈ (ofOption g).realize r c ↔ g r c = some f := by simp
+
+theorem isLicensed_ofOption_iff : (ofOption g).IsLicensed r c ↔ (g r c).isSome := by
+  simp [IsLicensed, Finset.Nonempty, Option.isSome_iff_exists]
+
+theorem isUnivalent_ofOption (g : R → Ctx → Option F) : (ofOption g).IsUnivalent := fun r c ↦ by
+  rw [ofOption_realize, Option.card_toFinset]; cases g r c <;> simp
+
+/-- An index is suppletive exactly when two of its contexts select distinct forms. -/
+theorem isSuppletive_ofOption_iff : (ofOption g).IsSuppletive r ↔
+    ∃ c c' f f', g r c = some f ∧ g r c' = some f' ∧ f ≠ f' := by
+  simp [isSuppletive_iff]
+
+end OfOption
 
 /-- The composite `S.comp T` realizes an index through the intermediate forms of `S`, each
 realized in the same context by `T`: the Kleisli composition of `Finset`-valued maps. A
@@ -326,42 +360,52 @@ section Hom
 variable {R₁ C₁ R₂ C₂ R₃ C₃ : Type*} {S₁ : Realization R₁ C₁ F} {S₂ : Realization R₂ C₂ F}
   {S₃ : Realization R₃ C₃ F}
 
-/-- A homomorphism of realizations merges indices and translates contexts, possibly consulting the
-index, so that each cell of the source is a cell of the target. -/
+/-- A lax homomorphism of realizations merges indices and translates contexts so that the forms
+of each cell of the source are among those of its image, as the forms of a lexeme are among
+those of its root ([arad-2005]). -/
+@[ext] structure LaxHom (S : Realization R₁ C₁ F) (T : Realization R₂ C₂ F) where
+  /-- The translation of indices, which merges those it identifies. -/
+  onIndex : R₁ → R₂
+  /-- The translation of contexts. -/
+  onCtx : C₁ → C₂
+  /-- Forms are included. -/
+  realize_subset (r : R₁) (c : C₁) : S.realize r c ⊆ T.realize (onIndex r) (onCtx c)
+
+/-- A homomorphism of realizations merges indices and translates contexts so that the forms of
+each cell are preserved. The translation of contexts does not consult the index, so the target
+context cannot encode the source index. -/
 @[ext] structure Hom (S : Realization R₁ C₁ F) (T : Realization R₂ C₂ F) where
   /-- The translation of indices, which merges those it identifies. -/
   onIndex : R₁ → R₂
-  /-- The translation of the contexts of an index. -/
-  onCtx : R₁ → C₁ → C₂
-  /-- Realization is preserved. -/
-  realize_eq (r : R₁) (c : C₁) : T.realize (onIndex r) (onCtx r c) = S.realize r c
+  /-- The translation of contexts. -/
+  onCtx : C₁ → C₂
+  /-- Forms are preserved. -/
+  realize_eq (r : R₁) (c : C₁) : T.realize (onIndex r) (onCtx c) = S.realize r c
 
 attribute [simp] Hom.realize_eq
 
-namespace Hom
+namespace LaxHom
 
-/-- The identity homomorphism. -/
-@[simps] protected def id (S : Realization R Ctx F) : Hom S S := ⟨id, fun _ ↦ id, fun _ _ ↦ rfl⟩
+/-- The identity lax homomorphism. -/
+@[simps] protected def id (S : Realization R Ctx F) : LaxHom S S := ⟨id, id, fun _ _ ↦ subset_rfl⟩
 
-/-- The composite of two homomorphisms, so that coarsenings chain. -/
-@[simps] def comp (ψ : Hom S₂ S₃) (φ : Hom S₁ S₂) : Hom S₁ S₃ :=
-  ⟨ψ.onIndex ∘ φ.onIndex, fun r c ↦ ψ.onCtx (φ.onIndex r) (φ.onCtx r c), fun r c ↦ by simp⟩
+/-- The composite of two lax homomorphisms. -/
+@[simps] def comp (ψ : LaxHom S₂ S₃) (φ : LaxHom S₁ S₂) : LaxHom S₁ S₃ :=
+  ⟨ψ.onIndex ∘ φ.onIndex, ψ.onCtx ∘ φ.onCtx,
+    fun r c ↦ (φ.realize_subset r c).trans (ψ.realize_subset _ _)⟩
 
-@[simp] theorem id_comp (φ : Hom S₁ S₂) : (Hom.id S₂).comp φ = φ := rfl
+@[simp] theorem id_comp (φ : LaxHom S₁ S₂) : (LaxHom.id S₂).comp φ = φ := rfl
 
-@[simp] theorem comp_id (φ : Hom S₁ S₂) : φ.comp (Hom.id S₁) = φ := rfl
+@[simp] theorem comp_id (φ : LaxHom S₁ S₂) : φ.comp (LaxHom.id S₁) = φ := rfl
 
-theorem comp_assoc {R₄ C₄ : Type*} {S₄ : Realization R₄ C₄ F} (χ : Hom S₃ S₄) (ψ : Hom S₂ S₃)
-    (φ : Hom S₁ S₂) : (χ.comp ψ).comp φ = χ.comp (ψ.comp φ) := rfl
+variable (φ : LaxHom S₁ S₂) {r : R₁} {c : C₁}
 
-variable (φ : Hom S₁ S₂) {r : R₁} {c : C₁}
-
-@[simp] theorem isLicensed_iff : S₂.IsLicensed (φ.onIndex r) (φ.onCtx r c) ↔ S₁.IsLicensed r c := by
-  simp [IsLicensed]
+theorem isLicensed (h : S₁.IsLicensed r c) : S₂.IsLicensed (φ.onIndex r) (φ.onCtx c) :=
+  h.mono (φ.realize_subset r c)
 
 /-- Merging indices can only enlarge their sets of allomorphs. -/
 theorem exponents_subset (r : R₁) : S₁.exponents r ⊆ S₂.exponents (φ.onIndex r) :=
-  fun _ ⟨c, hf⟩ ↦ ⟨φ.onCtx r c, (φ.realize_eq r c).symm ▸ hf⟩
+  fun _ ⟨c, hf⟩ ↦ ⟨φ.onCtx c, φ.realize_subset r c hf⟩
 
 theorem isSuppletive (h : S₁.IsSuppletive r) : S₂.IsSuppletive (φ.onIndex r) :=
   h.mono (φ.exponents_subset r)
@@ -371,11 +415,65 @@ theorem isInvariant (h : S₂.IsInvariant (φ.onIndex r)) : S₁.IsInvariant r :
 
 theorem isOverabundant (h : S₁.IsOverabundant r) : S₂.IsOverabundant (φ.onIndex r) :=
   let ⟨c, hc⟩ := h
-  ⟨φ.onCtx r c, (φ.realize_eq r c).symm ▸ hc⟩
+  ⟨φ.onCtx c, Set.Nontrivial.mono hc (Finset.coe_subset.2 (φ.realize_subset r c))⟩
+
+end LaxHom
+
+namespace Hom
+
+/-- A homomorphism is lax. -/
+@[simps] def toLaxHom (φ : Hom S₁ S₂) : LaxHom S₁ S₂ :=
+  ⟨φ.onIndex, φ.onCtx, fun r c ↦ (φ.realize_eq r c).ge⟩
+
+/-- The identity homomorphism. -/
+@[simps] protected def id (S : Realization R Ctx F) : Hom S S := ⟨id, id, fun _ _ ↦ rfl⟩
+
+/-- The composite of two homomorphisms, so that coarsenings chain. -/
+@[simps] def comp (ψ : Hom S₂ S₃) (φ : Hom S₁ S₂) : Hom S₁ S₃ :=
+  ⟨ψ.onIndex ∘ φ.onIndex, ψ.onCtx ∘ φ.onCtx, fun r c ↦ by simp⟩
+
+@[simp] theorem id_comp (φ : Hom S₁ S₂) : (Hom.id S₂).comp φ = φ := rfl
+
+@[simp] theorem comp_id (φ : Hom S₁ S₂) : φ.comp (Hom.id S₁) = φ := rfl
+
+theorem comp_assoc {R₄ C₄ : Type*} {S₄ : Realization R₄ C₄ F} (χ : Hom S₃ S₄) (ψ : Hom S₂ S₃)
+    (φ : Hom S₁ S₂) : (χ.comp ψ).comp φ = χ.comp (ψ.comp φ) := rfl
+
+variable (φ : Hom S₁ S₂) {r r' : R₁} {c : C₁}
+
+@[simp] theorem isLicensed_iff : S₂.IsLicensed (φ.onIndex r) (φ.onCtx c) ↔ S₁.IsLicensed r c := by
+  simp [IsLicensed]
+
+/-- Indices that a homomorphism merges have the same forms in every context. -/
+theorem realize_eq_of_onIndex_eq (h : φ.onIndex r = φ.onIndex r') : S₁.realize r = S₁.realize r' :=
+  funext fun c ↦ by rw [← φ.realize_eq, ← φ.realize_eq r', h]
+
+/-- A homomorphism merges only indices with the same forms in every context. -/
+theorem ker_onIndex_le : Setoid.ker φ.onIndex ≤ Setoid.ker S₁.realize :=
+  fun _ _ ↦ φ.realize_eq_of_onIndex_eq
 
 end Hom
 
 end Hom
+
+/-! ### Reduction -/
+
+/-- The reduction of `S` merges the indices that have the same forms in every context, as the
+lexemes that inflect alike make up an inflection class. -/
+def reduce : Realization (Quotient (Setoid.ker S.realize)) Ctx F := ⟨Setoid.kerLift S.realize⟩
+
+@[simp] theorem reduce_realize_mk (r : R) : S.reduce.realize ⟦r⟧ = S.realize r := rfl
+
+/-- Distinct indices of the reduction differ in their forms in some context. -/
+theorem reduce_realize_injective : Injective S.reduce.realize := Setoid.kerLift_injective _
+
+/-- The homomorphism from `S` to its reduction. -/
+@[simps] def reduceHom : Hom S S.reduce := ⟨Quotient.mk'', id, fun _ _ ↦ rfl⟩
+
+/-- Reduction merges exactly the indices with the same forms in every context, which by
+`Hom.ker_onIndex_le` is as much as a homomorphism can merge. -/
+theorem ker_reduceHom_onIndex : Setoid.ker S.reduceHom.onIndex = Setoid.ker S.realize :=
+  Setoid.ker_mk_eq _
 
 end Realization
 
@@ -405,112 +503,79 @@ def profile (r : R) : (Ctx → Finset F) × (Ctx → Finset M) := (S.realize r, 
 
 @[simp] theorem profile_snd (r : R) : (S.profile r).2 = S.interp.realize r := rfl
 
-/-! ### Strict and lax homomorphisms -/
+/-! ### Homomorphisms of interpreted realizations -/
 
 section Hom
 
 variable {R₁ C₁ R₂ C₂ R₃ C₃ : Type*} {S₁ : Interpreted R₁ C₁ F M} {S₂ : Interpreted R₂ C₂ F M}
   {S₃ : Interpreted R₃ C₃ F M}
 
-/-- A lax homomorphism of interpreted realizations merges indices and translates contexts,
-independently of the index, so that the forms and the readings of each cell of the source are
-among those of its image, as the listed properties of a lexeme are among those of its root
-([arad-2005]). -/
-@[ext] structure LaxHom (S : Interpreted R₁ C₁ F M) (T : Interpreted R₂ C₂ F M) where
-  /-- The translation of indices, which merges those it identifies. -/
-  onIndex : R₁ → R₂
-  /-- The translation of contexts. -/
-  onCtx : C₁ → C₂
-  /-- Forms are included. -/
-  realize_subset (r : R₁) (c : C₁) : S.realize r c ⊆ T.realize (onIndex r) (onCtx c)
+/-- A lax homomorphism of interpreted realizations is a lax homomorphism of the realizations by
+forms that also includes readings, as the listed properties of a lexeme are among those of its
+root ([arad-2005]). -/
+structure LaxHom (S : Interpreted R₁ C₁ F M) (T : Interpreted R₂ C₂ F M) extends
+    Realization.LaxHom S.toRealization T.toRealization where
   /-- Readings are included. -/
   interp_subset (r : R₁) (c : C₁) :
     S.interp.realize r c ⊆ T.interp.realize (onIndex r) (onCtx c)
 
-/-- A strict homomorphism of interpreted realizations merges indices and translates contexts,
-independently of the index, so that forms and readings are preserved. The target context cannot
-then encode the source index. -/
-@[ext] structure Hom (S : Interpreted R₁ C₁ F M) (T : Interpreted R₂ C₂ F M) where
-  /-- The translation of indices, which merges those it identifies. -/
-  onIndex : R₁ → R₂
-  /-- The translation of contexts. -/
-  onCtx : C₁ → C₂
-  /-- Forms are preserved. -/
-  realize_eq (r : R₁) (c : C₁) : T.realize (onIndex r) (onCtx c) = S.realize r c
+/-- A homomorphism of interpreted realizations is a homomorphism of the realizations by forms
+that also preserves readings. -/
+structure Hom (S : Interpreted R₁ C₁ F M) (T : Interpreted R₂ C₂ F M) extends
+    Realization.Hom S.toRealization T.toRealization where
   /-- Readings are preserved. -/
   interp_eq (r : R₁) (c : C₁) : T.interp.realize (onIndex r) (onCtx c) = S.interp.realize r c
 
-attribute [simp] Hom.realize_eq Hom.interp_eq
+attribute [simp] Hom.interp_eq
 
 namespace LaxHom
 
+/-- The lax homomorphism of the realizations by readings. -/
+@[simps] def interpHom (φ : LaxHom S₁ S₂) : Realization.LaxHom S₁.interp S₂.interp :=
+  ⟨φ.onIndex, φ.onCtx, φ.interp_subset⟩
+
 /-- The identity lax homomorphism. -/
-@[simps] protected def id (S : Interpreted R Ctx F M) : LaxHom S S :=
-  ⟨id, id, fun _ _ ↦ subset_rfl, fun _ _ ↦ subset_rfl⟩
+protected def id (S : Interpreted R Ctx F M) : LaxHom S S :=
+  ⟨.id S.toRealization, fun _ _ ↦ subset_rfl⟩
 
 /-- The composite of two lax homomorphisms. -/
-@[simps] def comp (ψ : LaxHom S₂ S₃) (φ : LaxHom S₁ S₂) : LaxHom S₁ S₃ :=
-  ⟨ψ.onIndex ∘ φ.onIndex, ψ.onCtx ∘ φ.onCtx,
-    fun r c ↦ (φ.realize_subset r c).trans (ψ.realize_subset _ _),
-    fun r c ↦ (φ.interp_subset r c).trans (ψ.interp_subset _ _)⟩
-
-@[simp] theorem id_comp (φ : LaxHom S₁ S₂) : (LaxHom.id S₂).comp φ = φ := rfl
-
-@[simp] theorem comp_id (φ : LaxHom S₁ S₂) : φ.comp (LaxHom.id S₁) = φ := rfl
+def comp (ψ : LaxHom S₂ S₃) (φ : LaxHom S₁ S₂) : LaxHom S₁ S₃ :=
+  ⟨ψ.toLaxHom.comp φ.toLaxHom, (ψ.interpHom.comp φ.interpHom).realize_subset⟩
 
 variable (φ : LaxHom S₁ S₂) {r : R₁}
 
-theorem exponents_subset (r : R₁) : S₁.exponents r ⊆ S₂.exponents (φ.onIndex r) :=
-  fun _ ⟨c, hf⟩ ↦ ⟨φ.onCtx c, φ.realize_subset r c hf⟩
-
-theorem interp_exponents_subset (r : R₁) :
-    S₁.interp.exponents r ⊆ S₂.interp.exponents (φ.onIndex r) :=
-  fun _ ⟨c, hm⟩ ↦ ⟨φ.onCtx c, φ.interp_subset r c hm⟩
-
-theorem isSuppletive (h : S₁.IsSuppletive r) : S₂.IsSuppletive (φ.onIndex r) :=
-  h.mono (φ.exponents_subset r)
-
 theorem isAllosemous (h : S₁.IsAllosemous r) : S₂.IsAllosemous (φ.onIndex r) :=
-  h.mono (φ.interp_exponents_subset r)
+  φ.interpHom.isSuppletive h
 
 theorem isIntrinsic (h : S₂.IsIntrinsic (φ.onIndex r)) : S₁.IsIntrinsic r :=
-  h.anti (φ.interp_exponents_subset r)
+  φ.interpHom.isInvariant h
 
 end LaxHom
 
 namespace Hom
 
-/-- A strict homomorphism as a homomorphism of the realizations by forms. -/
-@[simps] def toHom (φ : Hom S₁ S₂) : Realization.Hom S₁.toRealization S₂.toRealization :=
-  ⟨φ.onIndex, fun _ ↦ φ.onCtx, φ.realize_eq⟩
+/-- The homomorphism of the realizations by readings. -/
+@[simps] def interpHom (φ : Hom S₁ S₂) : Realization.Hom S₁.interp S₂.interp :=
+  ⟨φ.onIndex, φ.onCtx, φ.interp_eq⟩
 
-/-- A strict homomorphism is lax. -/
-@[simps] def toLaxHom (φ : Hom S₁ S₂) : LaxHom S₁ S₂ :=
-  ⟨φ.onIndex, φ.onCtx, fun r c ↦ (φ.realize_eq r c).ge, fun r c ↦ (φ.interp_eq r c).ge⟩
+/-- A homomorphism of interpreted realizations is lax. -/
+def toLaxHom (φ : Hom S₁ S₂) : LaxHom S₁ S₂ :=
+  ⟨φ.toHom.toLaxHom, φ.interpHom.toLaxHom.realize_subset⟩
 
-/-- The identity strict homomorphism. -/
-@[simps] protected def id (S : Interpreted R Ctx F M) : Hom S S :=
-  ⟨id, id, fun _ _ ↦ rfl, fun _ _ ↦ rfl⟩
+/-- The identity homomorphism. -/
+protected def id (S : Interpreted R Ctx F M) : Hom S S := ⟨.id S.toRealization, fun _ _ ↦ rfl⟩
 
-/-- The composite of two strict homomorphisms. -/
-@[simps] def comp (ψ : Hom S₂ S₃) (φ : Hom S₁ S₂) : Hom S₁ S₃ :=
-  ⟨ψ.onIndex ∘ φ.onIndex, ψ.onCtx ∘ φ.onCtx, fun r c ↦ by simp, fun r c ↦ by simp⟩
-
-@[simp] theorem id_comp (φ : Hom S₁ S₂) : (Hom.id S₂).comp φ = φ := rfl
-
-@[simp] theorem comp_id (φ : Hom S₁ S₂) : φ.comp (Hom.id S₁) = φ := rfl
+/-- The composite of two homomorphisms. -/
+def comp (ψ : Hom S₂ S₃) (φ : Hom S₁ S₂) : Hom S₁ S₃ :=
+  ⟨ψ.toHom.comp φ.toHom, (ψ.interpHom.comp φ.interpHom).realize_eq⟩
 
 variable (φ : Hom S₁ S₂) {r r' : R₁}
 
-/-- Indices that a strict homomorphism merges have the same forms and readings in every
-context. -/
-theorem profile_eq_of_onIndex_eq (h : φ.onIndex r = φ.onIndex r') :
-    S₁.profile r = S₁.profile r' := by
-  ext c : 2
-  · rw [profile_fst, profile_fst, ← φ.realize_eq, ← φ.realize_eq r', h]
-  · rw [profile_snd, profile_snd, ← φ.interp_eq, ← φ.interp_eq r', h]
+/-- Indices that a homomorphism merges have the same forms and readings in every context. -/
+theorem profile_eq_of_onIndex_eq (h : φ.onIndex r = φ.onIndex r') : S₁.profile r = S₁.profile r' :=
+  Prod.ext (φ.toHom.realize_eq_of_onIndex_eq h) (φ.interpHom.realize_eq_of_onIndex_eq h)
 
-/-- A strict homomorphism merges only indices with the same profile. -/
+/-- A homomorphism of interpreted realizations merges only indices with the same profile. -/
 theorem ker_onIndex_le : Setoid.ker φ.onIndex ≤ Setoid.ker S₁.profile :=
   fun _ _ ↦ φ.profile_eq_of_onIndex_eq
 
@@ -518,7 +583,7 @@ end Hom
 
 end Hom
 
-/-! ### Reduction -/
+/-! ### Reduction of an interpreted realization -/
 
 /-- The reduction of `S` takes as its indices the profiles of `S`, merging the indices that have
 the same forms and readings in every context. -/
@@ -531,11 +596,11 @@ def reduce : Interpreted (Quotient (Setoid.ker S.profile)) Ctx F M where
 /-- Distinct indices of the reduction have distinct profiles. -/
 theorem reduce_profile_injective : Injective S.reduce.profile := Setoid.kerLift_injective _
 
-/-- The strict homomorphism from `S` to its reduction. -/
-@[simps] def reduceHom : Hom S S.reduce := ⟨Quotient.mk'', id, fun _ _ ↦ rfl, fun _ _ ↦ rfl⟩
+/-- The homomorphism from `S` to its reduction. -/
+def reduceHom : Hom S S.reduce := ⟨⟨Quotient.mk'', id, fun _ _ ↦ rfl⟩, fun _ _ ↦ rfl⟩
 
 /-- Reduction merges exactly the indices with the same profile, which by `Hom.ker_onIndex_le` is as
-much as a strict homomorphism can merge. -/
+much as a homomorphism can merge. -/
 theorem ker_reduceHom_onIndex : Setoid.ker S.reduceHom.onIndex = Setoid.ker S.profile :=
   Setoid.ker_mk_eq _
 

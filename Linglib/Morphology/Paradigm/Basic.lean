@@ -84,6 +84,22 @@ theorem isTotal_toRealization : M.toRealization.IsTotal := fun _ _ ↦ Finset.si
 theorem isUnivalent_toRealization : M.toRealization.IsUnivalent := fun _ _ ↦
   (Finset.card_singleton _).le
 
+/-- A row is invariant exactly when it has one form at every cell. -/
+theorem isInvariant_toRealization_iff {d : D} :
+    M.toRealization.IsInvariant d ↔ ∀ c c', M d c = M d c' := by
+  simp [Realization.isInvariant_iff]
+
+/-- A row is suppletive exactly when two of its cells have distinct forms. -/
+theorem isSuppletive_toRealization_iff {d : D} :
+    M.toRealization.IsSuppletive d ↔ ∃ c c', M d c ≠ M d c' := by
+  simp [Realization.isSuppletive_iff]
+
+/-- The rows that the realization of a paradigm system does not distinguish are its equal rows,
+so the reduction of an inflection-class table merges no two distinct classes. -/
+theorem ker_toRealization_realize : Setoid.ker M.toRealization.realize = Setoid.ker M := by
+  ext d d'
+  simp only [Setoid.ker_def, funext_iff, toRealization_realize, Finset.singleton_inj]
+
 end ParadigmSystem
 
 end Morphology
