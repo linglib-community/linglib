@@ -344,28 +344,8 @@ noncomputable def Environment.licenser : Environment → Licenser
   | .notWantThink => .strawson
       ⟨Stack, fun p ↦ Set p.W, fun p ↦ p.W, fun p ↦ notStack p.upper p.beliefs p.lower p.lower⟩
 
-section Carries
-
-variable {F : Licenser.PresupposingFamily}
-
-private theorem carries_antiAdditive
-    (h : ∀ p, IsAntiAdditive fun x ↦ Trivalent.posExt (F.op p x))
-    (ht : ∀ p, Trivalent.posExt (F.op p ⊤) = ⊥) (hn : ∃ p, ¬ IsStrawsonUE (F.op p)) :
-    (Licenser.strawson F).Carries .antiAdditive :=
-  have hh : (Licenser.strawson F).Holds .antiAdd := fun p ↦
-    ProjectivitySignature.holdsFor_antiAdd_iff.2 ⟨h p, ht p⟩
-  ⟨⟨Licenser.isStrawsonDE_of_holds_anti (hh.of_le (by decide)),
-    fun hu ↦ hn.elim fun p hp ↦ hp (hu p)⟩, hh⟩
-
-private theorem not_carries_antiAdditive
-    (h : ∃ p, ¬ IsAntiAdditive fun x ↦ Trivalent.posExt (F.op p x)) :
-    ¬ (Licenser.strawson F).Carries .antiAdditive :=
-  fun hc ↦ h.elim fun p hp ↦ hp (ProjectivitySignature.holdsFor_antiAdd_iff.1 (hc.2 p)).1
-
-end Carries
-
 theorem carries_noOneThinks : Environment.noOneThinks.licenser.Carries .antiAdditive :=
-  carries_antiAdditive (fun p ↦ isAntiAdditive_posExt_noOneNR p.O p.B)
+  Licenser.carries_strawson_antiAdditive (fun p ↦ isAntiAdditive_posExt_noOneNR p.O p.B)
     (fun p ↦ by
       obtain ⟨x, hx⟩ := p.nonempty
       exact Set.eq_empty_of_forall_notMem fun w hw ↦ by
@@ -376,21 +356,23 @@ theorem carries_noOneThinks : Environment.noOneThinks.licenser.Carries .antiAddi
         (by simp [noOneNR, box_eq_false_iff, Box]) (by simp [noOneNR, box, Box])⟩
 
 theorem carries_notThinkWant : Environment.notThinkWant.licenser.Carries .antiAdditive :=
-  carries_antiAdditive (fun p ↦ isAntiAdditive_posExt_notStack_self p.upper p.lower p.beliefs)
+  Licenser.carries_strawson_antiAdditive
+    (fun p ↦ isAntiAdditive_posExt_notStack_self p.upper p.lower p.beliefs)
     (fun p ↦ by simp [posExt_notStack_self])
     ⟨⟨Unit, .univ, .univ, .univ⟩, not_isStrawsonUE (w := ()) (Set.empty_subset Set.univ)
       (by simp [notStack, box, Box]) (by simp [notStack, box, Box])⟩
 
 theorem not_carries_notThinkStressed :
     ¬ Environment.notThinkStressed.licenser.Carries .antiAdditive :=
-  not_carries_antiAdditive ⟨⟨Bool, .univ⟩, by
+  Licenser.not_carries_strawson_antiAdditive ⟨⟨Bool, .univ⟩, by
     simpa only [posExt_notNRStressed] using not_isAntiAdditive_compl_core⟩
 
 theorem not_carries_notKnow : ¬ Environment.notKnow.licenser.Carries .antiAdditive :=
-  not_carries_antiAdditive ⟨⟨Fin 3, .univ⟩, not_isAntiAdditive_posExt_notKnow⟩
+  Licenser.not_carries_strawson_antiAdditive ⟨⟨Fin 3, .univ⟩, not_isAntiAdditive_posExt_notKnow⟩
 
 theorem not_carries_notWantThink : ¬ Environment.notWantThink.licenser.Carries .antiAdditive :=
-  not_carries_antiAdditive ⟨⟨Fin 8, desC, belA, belC⟩, not_isAntiAdditive_posExt_notStack⟩
+  Licenser.not_carries_strawson_antiAdditive
+    ⟨⟨Fin 8, desC, belA, belC⟩, not_isAntiAdditive_posExt_notStack⟩
 
 instance (e : Environment) : Decidable (e.licenser.Carries .antiAdditive) :=
   match e with
@@ -470,9 +452,7 @@ theorem judgments_predicted :
       (p.1.judgment = .acceptable ↔ p.2.environment.licenser.Admits p.2.item) :=
   fun p hp hs h74 ↦
     have ⟨hl, ha, hf⟩ := links_strict p hp
-    (links_carries p hp hs h74).trans <|
-      ((Licenser.admits_iff_licenses ha (.inl (by simp [PolarityItem.IsNPI, hl]))).trans
-        (Licenser.licenses_iff_carries hl (by decide) hf)).symm
+    (links_carries p hp hs h74).trans (Licenser.admits_iff_carries hl (by decide) ha hf).symm
 
 /-- Strict NPIs are acceptable in superlative relative clauses, which are Strawson downward
 entailing and not anti-additive, the exception the paper leaves open (132). -/
