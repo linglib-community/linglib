@@ -5,8 +5,9 @@ public import Studies.Spector2017
 public import Linglib.Logic.Trivalent.Supervaluation
 public import Linglib.Semantics.Exhaustification.Presuppositional
 public import Linglib.Semantics.Presupposition.Context
-public import Linglib.Semantics.Composition.Tree
-public import Linglib.Semantics.Composition.Readings
+public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
+public import Linglib.Semantics.Composition.Interpreter.Readings
+public import Linglib.Semantics.Composition.Interpreter.Rules
 public import Linglib.Data.Examples.Spector2025
 
 /-!
@@ -129,17 +130,16 @@ theorem eval_strongKleene_pexIE_eq_true_iff [DecidableEq U] (φ : Trivalent.Form
 
 end Readings
 
-/-! ### Quantifiers on the composition engine (§5)
+/-! ### Quantifiers (§5)
 
 Spector says that Truth on all parses extends to quantifiers. A parse resolves each occurrence of
-a word before interpretation (`PhraseStructure.Tree.readings`), so a raised quantifier's parses
-read its scalar predicate at one standard for every entity it ranges over. Strong Kleene reads
-each entity at a standard of its own, as the set effect does. The two agree under a monotone or
-antitone quantifier and come apart under *exactly two*. -/
+a word before interpretation, so a raised quantifier's parses read its scalar predicate at one
+standard for every entity it ranges over. Strong Kleene reads each entity at a standard of its
+own. The two agree under a monotone or antitone quantifier and come apart under *exactly two*. -/
 
 section Quantifiers
 
-open Montague PhraseStructure
+open Interpreter Interpreter.Grammar PhraseStructure
 open Trivalent (Designation)
 
 /-- The words of a sentence whose quantifier is raised over a scalar predicate. -/
@@ -150,93 +150,76 @@ inductive QWord
 
 variable {E : Type} (Q : (E → Prop) → Prop) (p : E → Trivalent)
 
-/-- The quantifier, and the trivalent scalar predicate read at both standards. -/
-def lexicon : QWord → Option (Denotation E Unit SetM)
-  | .quant => some ⟨(.e ⇒ .t) ⇒ .t, pure Q⟩
-  | .scalar => some ⟨.e ⇒ .t, Set.range fun (d : Designation) x ↦ d.threshold ≤ p x⟩
+/-- The domain of the one basic type, the individuals. -/
+abbrev Dom (E : Type) : Unit → Type := fun _ ↦ E
+
+/-- The type of individuals. -/
+abbrev ind : Ty Unit := .base ()
+
+/-- The quantifier, and the trivalent scalar predicate read at either standard. -/
+def lexicon : QWord → Set (Σ a : Ty Unit, a.Dom (Dom E))
+  | .quant => {⟨(ind ⇒ .t) ⇒ .t, Q⟩}
+  | .scalar => Set.range fun d : Designation ↦ ⟨ind ⇒ .t, fun x ↦ d.threshold ≤ p x⟩
 
 /-- The quantifier raised over the scalar predicate, `[Q [λ₁ [t₁ scalar]]]`. -/
 def raised : Tree Unit QWord := .bin (.leaf .quant) (.binder 1 (.bin (.tr 1) (.leaf .scalar)))
 
-/-- The parses of a sentence: its truth values when each occurrence of a word is resolved to one
-of the values its denotation collects. -/
-def parses (lex : QWord → Option (Denotation E Unit SetM)) (g : Assignment E)
-    (t : Tree Unit QWord) : Set Prop :=
-  {b | (⟨.t, b⟩ : Denotation E Unit Id) ∈ Tree.readings (Tree.wordReadings lex) g t}
+/-- The parses of a sentence: its truth values, by Functional Application and abstraction, when
+each occurrence of a word is resolved to one of its readings. -/
+def parses (g : ℕ → E) (t : Tree Unit QWord) : Set Prop :=
+  {b | ∃ f : (ℕ → E) → Prop, (⟨.t, f⟩ : Σ a : Ty Unit, (ℕ → E) → a.Dom (Dom E)) ∈
+    t.readings ((typeDriven .application).withAbstraction fun _ ↦ ind)
+      (Grammar.withAbstraction.structure (Assignments.total (Dom E) fun _ ↦ ind))
+      (W := fun a ↦ (ℕ → E) → a.Dom (Dom E)) id (fun
+        | .inl w => (fun d ↦ ⟨d.1, fun _ ↦ d.2⟩) '' lexicon Q p w
+        | .inr n => {⟨ind, fun g ↦ g n⟩}) ∧ f g = b}
 
-theorem parses_raised (g : Assignment E) :
-    parses (lexicon Q p) g raised =
-      Set.range fun d : Designation ↦ Q fun x ↦ d.threshold ≤ p x := by
+/-- The values of the raised sentence with each entity read at a standard of its own. -/
+def entitywise : Set Prop := Set.range fun c : E → Designation ↦ Q fun x ↦ (c x).threshold ≤ p x
+
+theorem parses_raised (g : ℕ → E) :
+    parses Q p g raised = Set.range fun d : Designation ↦ Q fun x ↦ d.threshold ≤ p x := by
   ext b
-  simp only [parses, raised, Set.mem_ofPred_eq, Tree.mem_readings_phrase_binary,
-    Tree.readings_terminal, Tree.mem_readings_bind, Set.mem_range]
+  simp only [parses, raised, Tree.mem_readings_phrase_binary, Tree.mem_readings_bind,
+    Tree.readings_terminal, Tree.readings_trace, lexicon, Set.mem_ofPred_eq, Set.mem_range,
+    Set.mem_image, Set.mem_singleton_iff, id_eq, Sigma.eta, Set.image_id', exists_exists_eq_and,
+    exists_eq_left, Interpreter.withAbstraction, typeDriven]
   constructor
-  · rintro ⟨⟨τ₁, v₁⟩, ⟨X₁, h₁, hm₁⟩, d₂, ⟨r, hr, hd₂⟩, hb⟩
-    simp only [lexicon, Option.some.injEq, Sigma.mk.inj_iff] at h₁
-    obtain ⟨rfl, h₁⟩ := h₁
-    obtain rfl := eq_of_heq h₁
-    obtain rfl : Q = v₁ := hm₁.symm
-    obtain ⟨cs, rfl, hcs⟩ := Tree.map_eq_phrase_iff.1 hr
-    obtain ⟨r₁, cs₁, rfl, h₁, hcs₁⟩ := List.map_eq_cons_iff.mp hcs
-    obtain ⟨r₂, cs₂, rfl, h₂, hcs₂⟩ := List.map_eq_cons_iff.mp hcs₁
-    obtain rfl := List.map_eq_nil_iff.mp hcs₂
-    obtain rfl := Tree.map_eq_trace_iff.1 h₁
-    obtain ⟨⟨⟨w, τ, v⟩, X, hX, hv⟩, rfl, hw⟩ := Tree.map_eq_terminal_iff.1 h₂
-    clear hr hcs hcs₁ hcs₂ h₁ h₂
-    obtain rfl : w = .scalar := hw
-    simp only [lexicon, Option.some.injEq, Sigma.mk.inj_iff] at hX
-    obtain ⟨rfl, hX⟩ := hX
-    obtain rfl := eq_of_heq hX
-    obtain ⟨d, hd⟩ := id hv
-    subst hd
-    obtain rfl := Option.some.inj hd₂
-    exact ⟨d, eq_of_heq (Sigma.mk.inj_iff.1 (Option.some.inj hb)).2⟩
+  · rintro ⟨f, ⟨_, rfl, _, ⟨_, ⟨d, ⟨u, m⟩, -, rfl⟩, r, hr, rfl⟩, ⟨u', m'⟩, -, h⟩, rfl⟩
+    cases m
+    simp only [LocallyFinite.unaryRules, List.map_nil, List.append_nil, List.mem_singleton] at hr
+    subst hr
+    cases m'
+    cases h
+    exact ⟨d, rfl⟩
   · rintro ⟨d, rfl⟩
-    exact ⟨⟨(.e ⇒ .t) ⇒ .t, Q⟩, ⟨_, rfl, rfl⟩, ⟨.e ⇒ .t, fun x ↦ d.threshold ≤ p x⟩,
-      ⟨.bin (.tr 1) (.leaf ⟨(.scalar, ⟨.e ⇒ .t, fun x ↦ d.threshold ≤ p x⟩), _, rfl, d, rfl⟩),
-        rfl, rfl⟩, rfl⟩
+    exact ⟨_, ⟨_, rfl, _, ⟨_, ⟨d, ⟨_, .ba⟩, LocallyFinite.mem_binaryRules _, rfl⟩, _,
+      List.mem_append_left _ (List.mem_singleton_self _), rfl⟩, ⟨_, .fa⟩,
+      LocallyFinite.mem_binaryRules _, rfl⟩, rfl⟩
 
-theorem interp_raised (g : Assignment E) :
-    Tree.interp (lexicon Q p) g raised = some ⟨.t,
-      (Set.range fun c : E → Designation ↦ Q fun x ↦ (c x).threshold ≤ p x : Set Prop)⟩ := by
-  refine congrArg (fun v : Set Prop ↦ some (⟨.t, v⟩ : Denotation E Unit SetM)) ?_
-  simp only [Mode.evalM, Set.pure_def, Set.fmap_eq_image, Set.image_singleton,
-    Term.realize, Interpretation.effectful, Function.update_self, Set.seq_eq_set_seq,
-    Set.singleton_seq, ← Set.range_comp]
-  change Q '' Set.univ.pi (fun x ↦ Set.range fun d : Designation ↦ d.threshold ≤ p x) = _
-  rw [← Set.range_piMap, ← Set.range_comp]
-  rfl
-
-/-- Under the universal, the set effect computes the Strong Kleene universal. -/
-example [Fintype E] [DecidableEq E] (g : Assignment E) {X : SetM Prop}
-    (hX : Tree.interp (lexicon (fun P ↦ ∀ x, P x) p) g raised = some ⟨.t, X⟩) :
-    Trivalent.supervaluationOn X.run id = Trivalent.forallStrong p := by
-  obtain rfl := sigma_mk_injective (Option.some_injective _ (hX.symm.trans (interp_raised _ p g)))
-  dsimp only [SetM.run]
-  rw [← Set.image_univ, Trivalent.supervaluationOn_image, Function.id_comp, ← Finset.coe_univ,
-    Trivalent.supervaluationOn_coe_finset, Trivalent.forallStrong_eq_supervaluation]
+/-- Under the universal, reading each entity at a standard of its own is the Strong Kleene
+universal. -/
+example [Fintype E] [DecidableEq E] :
+    Trivalent.supervaluationOn (entitywise (fun P ↦ ∀ x, P x) p) id = Trivalent.forallStrong p := by
+  rw [entitywise, ← Set.image_univ, Trivalent.supervaluationOn_image, Function.id_comp,
+    ← Finset.coe_univ, Trivalent.supervaluationOn_coe_finset,
+    Trivalent.forallStrong_eq_supervaluation]
 
 variable {Q}
 
 /-- Under a raised monotone quantifier, truth on all parses is the Strong Kleene value. -/
-theorem supervaluationOn_parses_eq_of_monotone (hQ : Monotone Q) (g : Assignment E)
-    {X : SetM Prop} (hX : Tree.interp (lexicon Q p) g raised = some ⟨.t, X⟩) :
-    Trivalent.supervaluationOn (parses (lexicon Q p) g raised) id =
-      Trivalent.supervaluationOn X.run id := by
-  obtain rfl := sigma_mk_injective (Option.some_injective _ (hX.symm.trans (interp_raised Q p g)))
-  dsimp only [SetM.run]
-  rw [parses_raised, ← Set.image_univ, ← Set.image_univ, Trivalent.supervaluationOn_image,
-    Trivalent.supervaluationOn_image]
+theorem supervaluationOn_parses_eq_of_monotone (hQ : Monotone Q) (g : ℕ → E) :
+    Trivalent.supervaluationOn (parses Q p g raised) id =
+      Trivalent.supervaluationOn (entitywise Q p) id := by
+  rw [parses_raised, entitywise, ← Set.image_univ, ← Set.image_univ,
+    Trivalent.supervaluationOn_image, Trivalent.supervaluationOn_image]
   exact (Trivalent.supervaluationOn_pi_eq_const_of_monotone p hQ).symm
 
-theorem supervaluationOn_parses_eq_of_antitone (hQ : Antitone Q) (g : Assignment E)
-    {X : SetM Prop} (hX : Tree.interp (lexicon Q p) g raised = some ⟨.t, X⟩) :
-    Trivalent.supervaluationOn (parses (lexicon Q p) g raised) id =
-      Trivalent.supervaluationOn X.run id := by
-  obtain rfl := sigma_mk_injective (Option.some_injective _ (hX.symm.trans (interp_raised Q p g)))
-  dsimp only [SetM.run]
-  rw [parses_raised, ← Set.image_univ, ← Set.image_univ, Trivalent.supervaluationOn_image,
-    Trivalent.supervaluationOn_image]
+theorem supervaluationOn_parses_eq_of_antitone (hQ : Antitone Q) (g : ℕ → E) :
+    Trivalent.supervaluationOn (parses Q p g raised) id =
+      Trivalent.supervaluationOn (entitywise Q p) id := by
+  rw [parses_raised, entitywise, ← Set.image_univ, ← Set.image_univ,
+    Trivalent.supervaluationOn_image, Trivalent.supervaluationOn_image]
   exact (Trivalent.supervaluationOn_pi_eq_const_of_antitone p hQ).symm
 
 end Quantifiers
@@ -482,15 +465,12 @@ def solved : Fin 3 → World := ![.all, .all, .justSome]
 parses (one student solved some but not all, three solved some), so false by Truth on all parses,
 and undefined entity-wise: reading *some* with the operator for one of the two who solved every
 problem leaves exactly two. -/
-theorem exactlyTwo_parses_false_entitywise_undefined (g : Assignment (Fin 3)) {X : SetM Prop}
-    (hX : PhraseStructure.Tree.interp (lexicon (fun P ↦ {x | P x}.ncard = 2)
-      fun x ↦ meaning .some (solved x)) g raised = some ⟨.t, X⟩) :
-    Trivalent.supervaluationOn (parses (lexicon (fun P ↦ {x | P x}.ncard = 2)
-      fun x ↦ meaning .some (solved x)) g raised) id = .false ∧
-      Trivalent.supervaluationOn X.run id = .undefined := by
-  obtain rfl := sigma_mk_injective (Option.some_injective _ (hX.symm.trans (interp_raised _ _ g)))
-  dsimp only [SetM.run]
-  rw [parses_raised]
+theorem exactlyTwo_parses_false_entitywise_undefined (g : ℕ → Fin 3) :
+    Trivalent.supervaluationOn (parses (fun P ↦ {x | P x}.ncard = 2)
+      (fun x ↦ meaning .some (solved x)) g raised) id = .false ∧
+      Trivalent.supervaluationOn (entitywise (fun P ↦ {x | P x}.ncard = 2)
+        fun x ↦ meaning .some (solved x)) id = .undefined := by
+  rw [parses_raised, entitywise]
   have hk3 (x : Fin 3) : .true ≤ meaning .some (solved x) ↔ x = 2 := by
     rw [show ∀ a : Trivalent, .true ≤ a ↔ a = .true by decide, meaning_some_eq_true_iff]
     fin_cases x <;> simp [solved]

@@ -63,6 +63,19 @@ variable {I : Interpreter G N} [M : G.language.Structure D] {ρ : ∀ {a : T}, W
     I.readings ρ lex (.leaf x) = (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex x := by
   simp [readings, derivations, Set.image_image]
 
+/-- A reading of a unary node is the value of a rule the node admits, at a reading of its
+daughter. -/
+theorem mem_readings_unary {lex : L → Set (Σ a, W a)} {n : N} {s : Skeleton N L} :
+    d ∈ I.readings ρ lex (.unary n s) ↔
+      ∃ d₁ ∈ I.readings ρ lex s, ∃ r ∈ I.unary n d₁.1,
+        d = ⟨r.1, M.funMap (.unary r.2) d₁.2⟩ := by
+  simp only [readings, derivations, Set.mem_image, Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨_, ⟨e, h, r, hr, rfl⟩, rfl⟩
+    exact ⟨_, ⟨e, h, rfl⟩, r, hr, rfl⟩
+  · rintro ⟨_, ⟨e, h, rfl⟩, r, hr, rfl⟩
+    exact ⟨_, ⟨e, h, r, hr, rfl⟩, rfl⟩
+
 /-- A reading of a binary node is the value of a rule the node admits, at readings of its
 daughters. -/
 theorem mem_readings_binary {lex : L → Set (Σ a, W a)} {n : N} {s₁ s₂ : Skeleton N L} :
@@ -100,7 +113,21 @@ variable (I : Interpreter G Node) (M : G.language.Structure D) (ρ : ∀ {a : T}
     (terminal c w).readings I M ρ lex island = (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex (.inl w) :=
   Interpreter.readings_leaf _ _
 
+/-- A trace's readings are the values of the items its index may be. -/
+@[simp] theorem readings_trace (n : ℕ) (c : C) :
+    (trace n c : Tree C L).readings I M ρ lex island =
+      (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex (.inr n) :=
+  Interpreter.readings_leaf _ _
+
 variable {I M ρ lex island}
+
+/-- A reading of a binder is the value of a rule its index admits, at a reading of its body. -/
+theorem mem_readings_bind {n : ℕ} {c : C} {t : Tree C L} {d : Σ a, D a} :
+    d ∈ (bind n c t).readings I M ρ lex island ↔
+      ∃ d₁ ∈ t.readings I M ρ lex island, ∃ r ∈ I.unary (.index n) d₁.1,
+        d = ⟨r.1, M.funMap (.unary r.2) d₁.2⟩ := by
+  simp only [readings, skeleton]
+  cases skeleton island t <;> simp [Interpreter.mem_readings_unary]
 
 /-- A reading of a binary node is the value of a rule the node admits, at readings of its
 daughters. -/
