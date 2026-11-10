@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate `[key]` citations in Lean sources against references.bib.
 
-Scans Linglib/**/*.lean, Studies/**/*.lean, Eval/**/*.lean and Lab/**/*.lean for reference-style `[bibkey]`
+Scans Linglib/**/*.lean and Studies/**/*.lean for reference-style `[bibkey]`
 brackets, checks them against the BibTeX entries, and warns about author-year-shaped
 brackets with no matching entry (likely citation typos).
 
@@ -16,7 +16,7 @@ from pathlib import Path
 from collections import defaultdict
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-LEAN_DIRS = [PROJECT_ROOT / d for d in ("Linglib", "Studies", "Eval", "Lab")]
+LEAN_DIRS = [PROJECT_ROOT / d for d in ("Linglib", "Studies")]
 BIB_PATH = PROJECT_ROOT / "references.bib"
 
 BRACKET_RE = re.compile(r"\[([^\[\]\n]+)\]")

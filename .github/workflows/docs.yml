@@ -50,7 +50,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .lake
-          key: lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-docs-${{ hashFiles('Linglib/**/*.lean', 'Studies/**/*.lean', 'Eval/**/*.lean', 'Lab/**/*.lean', 'Linglib.lean') }}
+          key: lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-docs-${{ hashFiles('Linglib/**/*.lean', 'Studies/**/*.lean', 'Linglib.lean') }}
           restore-keys: |
             lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-docs-
             lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-
@@ -99,7 +99,7 @@ jobs:
           # Document root module (may fail if Linglib.olean missing — non-fatal)
           $DOCGEN single --build "$BUILD" Linglib "$DB" "$SRC_URI/Linglib.lean" || true
 
-          # Document every module of Linglib, Studies, Eval and Lab in parallel (-P 4 cores).
+          # Document every module of Linglib and Studies in parallel (-P 4 cores).
           # Each invocation writes to a shared SQLite db with WAL +
           # 24h busy timeout (see doc-gen4/Main.lean:walCheckpoint),
           # and updateModuleDb uses immediate transactions per
@@ -107,7 +107,7 @@ jobs:
           # Memory: each `single` peaks ~3-4 GB (mathlib import closure);
           # 4 in parallel ≈ 12-16 GB on a 16 GB runner. If we OOM,
           # drop -P to 2.
-          find Linglib Studies Eval Lab -name '*.lean' | sort | \
+          find Linglib Studies -name '*.lean' | sort | \
             xargs -I{} -P 4 sh -c '
               f="$1"
               mod=$(echo "$f" | sed "s|/|.|g; s|\.lean$||")
@@ -137,8 +137,6 @@ jobs:
           cp -r .lake/build/doc/* .lake/build/doc-site/docs/
           # The landing page at /.
           python3 scripts/gen_home_page.py --out .lake/build/doc-site
-          # The evaluations at /eval/, its verdicts reduced from Eval's theorems.
-          python3 scripts/gen_eval_page.py --export --out .lake/build/doc-site/eval
           # The bibliography at /bibliography/, with where each work is cited.
           python3 scripts/gen_bibliography_page.py --out .lake/build/doc-site/bibliography
           # The rebuilt landing, study and theory pages, read from doc-gen4's untouched output and

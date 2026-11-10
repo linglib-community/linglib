@@ -771,7 +771,7 @@ def imported_wals_modules():
     """The `Linglib.Data.WALS.*` modules some module outside `Data/WALS/` imports.
     `Linglib.lean`, which imports the whole library, is not read."""
     mods = set()
-    for path in (p for d in ("Linglib", "Studies", "Eval") for p in (ROOT / d).rglob("*.lean")):
+    for path in (p for d in ("Linglib", "Studies") for p in (ROOT / d).rglob("*.lean")):
         if OUT in path.parents:
             continue
         for line in path.read_text(encoding="utf-8").splitlines():

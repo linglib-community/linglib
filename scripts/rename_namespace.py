@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rename a namespace prefix across all .lean files in Linglib/, Studies/ and Eval/.
+"""Rename a namespace prefix across all .lean files in Linglib/ and Studies/.
 
 Replaces `<old>` with `<new>` in non-import lines. Import lines use file
 paths (`import Linglib.X.Y`), not namespaces, so they're left alone — file
@@ -24,7 +24,7 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-SOURCE_DIRS = [REPO_ROOT / d for d in ("Linglib", "Studies", "Eval")]
+SOURCE_DIRS = [REPO_ROOT / d for d in ("Linglib", "Studies")]
 
 
 def rename_in_file(filepath: Path, old: str, new: str, dry_run: bool) -> int:

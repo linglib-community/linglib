@@ -39,22 +39,6 @@ lean_lib Linglib where
 lean_lib Studies where
   globs := #[.submodules `Studies]
 
-/-- Evaluation of the library's accounts against data: which judgments each registered theory
-    gets right, wrong, or says nothing about, and how the theories compare. A default target, so
-    that a change of verdict shows up in the pull request that causes it. -/
-@[default_target]
-lean_lib Eval where
-  globs := #[.submodules `Eval]
-
-/-- Theories under development: unpublished work, such as a collaboration's results in progress
-    or a theory an agent proposes, built on `Linglib`, `Studies` and `Eval` and scored by `Eval`
-    against the same data. Nothing outside `Lab` imports it, and a file leaves it for `Studies`
-    once a paper publishes its content. A default target, so that a change that breaks a theory
-    under development shows up in the pull request that causes it. -/
-@[default_target]
-lean_lib Lab where
-  globs := #[.submodules `Lab]
-
 /-- Blog essays: novel synthesis and explorations accompanying blog posts.
     These import from Linglib but are not part of the library proper. -/
 lean_lib PsychVerbs where

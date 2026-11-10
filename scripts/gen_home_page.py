@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate the landing page published at linglib.io/.
 
-The page links the API documentation, the evaluations, the bibliography and the repository.
+The page links the API documentation, the bibliography and the repository.
 
 Usage, from the repository root:
 
