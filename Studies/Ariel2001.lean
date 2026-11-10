@@ -25,8 +25,8 @@ center](##not_pronominalizationConstraint_accused).
 
 ## Implementation notes
 
-* `criteria` compares the substrate's `informativity`, `rigidity` and `attenuation` jointly, in
-  the product order. The exceptions are [the partial names and the modified demonstrative
+* The substrate's `criteria` compares informativity, rigidity and attenuation jointly, in the
+  product order. The exceptions are [the partial names and the modified demonstrative
   phrases](##criteria_lt_and_shortDefDescription_lt_iff), which the criteria rank below a short
   definite description and the scale above it. The chapter grants that some aspects of the scale
   are grammatically stipulated and notes a conflict between demonstratives, which code the higher
@@ -58,11 +58,6 @@ namespace Ariel2001
 open Discourse AccessibilityLevel
 
 /-! ### The criteria -/
-
-/-- The criteria a form meets, ordered so that the lower of two forms is at least as informative,
-as rigid and as unattenuated as the higher. -/
-def criteria (l : AccessibilityLevel) : (Finset Information)ᵒᵈ × Rigidityᵒᵈ × Attenuation :=
-  (OrderDual.toDual l.informativity, OrderDual.toDual l.rigidity, l.attenuation)
 
 /-- The more informative, rigid and unattenuated a form, the lower the accessibility it codes:
 where the criteria jointly rank one form below another, the scale does too, unless the higher is

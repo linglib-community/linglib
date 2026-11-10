@@ -60,9 +60,7 @@ inductive Entity
 abbrev Utt := Utterance Entity GrammaticalRole Head
 
 /-- The forms Rule 1 governs, the pronouns. -/
-def pronouns : Set Head := {h | h = .pronoun}
-
-instance : DecidablePred (· ∈ pronouns) := fun h ↦ inferInstanceAs (Decidable (h = .pronoun))
+abbrev pronouns : Set Head := {.pronoun}
 
 /-! ### The sample passages
 

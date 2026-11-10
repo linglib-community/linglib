@@ -11,8 +11,8 @@ This file formalizes [kwon-lee-2026]'s three experiments on Korean null pronouns
 colloquial overt pronoun *kyay*, and demonstrative-plus-noun full NPs as markers on
 [ariel-2001]'s Accessibility Marking Scale. `KoreanRefForm` places the three forms on the
 substrate's scale and inherits its linear order, so the form–function criteria, more accessible
-forms being more attenuated and less informative, are monotonicity statements
-(`attenuation_strictMono`, `informativity_antitone`). The paper's central finding, from the
+forms being more attenuated and less informative, are one monotonicity statement
+(`criteria_strictMono`). The paper's central finding, from the
 globally ambiguous contexts of Experiment 3, is that subject-antecedent choice increases
 strictly with accessibility (`subjectBias_strictMono`), separating the three forms
 (`three_way_split`) while naturalness stays flat (`exp3_naturalness_flat`). Experiment 1 finds
@@ -92,13 +92,11 @@ def KoreanRefForm.surface : KoreanRefForm → Option String
   | .overt => some Korean.Pronouns.gyae.form
   | .fullNP => some "ku chinkwu"
 
-theorem attenuation_strictMono :
-    StrictMono fun f : KoreanRefForm ↦ f.toAccessibility.attenuation := by
-  intro a b hab; cases a <;> cases b <;> revert hab <;> decide
-
-theorem informativity_antitone :
-    Antitone fun f : KoreanRefForm ↦ f.toAccessibility.informativity := by
-  intro a b hab; cases a <;> cases b <;> revert hab <;> decide
+/-- The three forms meet Ariel's criteria in the order of the scale: each more accessible form is
+no more informative or rigid and no less attenuated than the one below it, and differs from it. -/
+theorem criteria_strictMono : StrictMono fun f : KoreanRefForm ↦ f.toAccessibility.criteria := by
+  intro a b hab
+  cases a <;> cases b <;> revert hab <;> simp only [lt_iff_le_not_ge] <;> decide
 
 /-! ### Experiment 3: antecedent choice under global ambiguity -/
 

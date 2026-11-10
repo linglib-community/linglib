@@ -25,6 +25,7 @@ and each is read here off the features of a form class and compared rather than 
 * `AccessibilityLevel.informativity`: the information a form incorporates, ordered by inclusion.
 * `AccessibilityLevel.rigidity`: how unequivocally a name picks out its referent.
 * `AccessibilityLevel.attenuation`: the phonological size of a form.
+* `AccessibilityLevel.criteria`: the three jointly, in the product order.
 
 ## Implementation notes
 
@@ -236,6 +237,11 @@ def attenuation (l : AccessibilityLevel) : Attenuation :=
   | .pronoun => if l.bound then .clitic else if l.stressed then .stressedWord else .unstressedWord
   | .demonstrative => if l.lexical then .phrase else .stressedWord
   | .name | .description => .phrase
+
+/-- The three criteria jointly, in the product order: the lower of two forms is at least as
+informative, as rigid and as unattenuated as the higher. -/
+def criteria (l : AccessibilityLevel) : (Finset Information)ᵒᵈ × Rigidityᵒᵈ × Attenuation :=
+  (OrderDual.toDual l.informativity, OrderDual.toDual l.rigidity, l.attenuation)
 
 end AccessibilityLevel
 
