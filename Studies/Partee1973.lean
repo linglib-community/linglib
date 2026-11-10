@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Assignment
+public import Linglib.Logic.Assignment
 public import Linglib.Semantics.Tense.Perspective
 public import Linglib.Semantics.Tense.Quantificational
 
@@ -34,17 +34,18 @@ antecedent, which two existential pasts do not require.
 
 namespace Partee1973
 
-open Montague ModalLogic Tense
+open ModalLogic Tense
+open scoped Assignment
 open scoped Denotes
 open scoped SetRel
 
 variable {T : Type*} [LinearOrder T] {P Q : NonemptyInterval T → Prop} {σ : NonemptyInterval T}
-  {g : Assignment (NonemptyInterval T)} {n : ℕ}
+  {g : ℕ → NonemptyInterval T} {n : ℕ}
 
 /-- A clause in the past tense with index `n` says that the time of `n` precedes the speech time
 `σ` and that the clause holds at it. -/
 def Past (n : ℕ) (P : NonemptyInterval T → Prop) (σ : NonemptyInterval T) :
-    Assignment (NonemptyInterval T) → Prop :=
+    (ℕ → NonemptyInterval T) → Prop :=
   fun g ↦ Perspective.Presup Allen.precedes σ (g n) ∧ P (g n)
 
 theorem past_iff : Past n P σ g ↔ (g n).Precedes σ ∧ P (g n) := by
@@ -58,7 +59,7 @@ theorem Past.sometime (h : Past n P σ g) : ◇[Allen.toSetRel Allen.precedes] P
 
 /-- With its index bound by an existential quantifier, the past tense is Prior's past. -/
 theorem exists_past_iff_sometime :
-    (∃ t, lambdaAbsG n (Past n P σ) g t) ↔ ◇[Allen.toSetRel Allen.precedes] P σ := by
+    (∃ t, Λ[n] (Past n P σ) g t) ↔ ◇[Allen.toSetRel Allen.precedes] P σ := by
   simp [Past, Diamond]
 
 /-! ### The stove
@@ -79,7 +80,7 @@ theorem deictic_entails_sometime_not (h : Past n (fun t ↦ ¬ P t) σ g) :
 /-- The sentence is true of a speaker who turned off the stove on an earlier occasion and not at
 the salient time, so the reading on which the speaker never turned it off is too strong. -/
 theorem never_too_strong :
-    ∃ (σ : NonemptyInterval ℤ) (g : Assignment (NonemptyInterval ℤ))
+    ∃ (σ : NonemptyInterval ℤ) (g : ℕ → NonemptyInterval ℤ)
       (P : NonemptyInterval ℤ → Prop),
       Past 0 (fun t ↦ ¬ P t) σ g ∧ ◇[Allen.toSetRel Allen.precedes] P σ :=
   ⟨.pure 10, fun _ ↦ .pure 5, (· = .pure 1), ⟨Perspective.presup_precedes.2 (by decide), by decide⟩,
@@ -88,7 +89,7 @@ theorem never_too_strong :
 /-- The sentence is false of a speaker who turned off the stove at the salient time, although
 there are past times at which the speaker did not, so that reading is too weak. -/
 theorem sometime_not_too_weak :
-    ∃ (σ : NonemptyInterval ℤ) (g : Assignment (NonemptyInterval ℤ))
+    ∃ (σ : NonemptyInterval ℤ) (g : ℕ → NonemptyInterval ℤ)
       (P : NonemptyInterval ℤ → Prop),
       ◇[Allen.toSetRel Allen.precedes] (fun t ↦ ¬ P t) σ ∧
         Perspective.Presup Allen.precedes σ (g 0) ∧ ¬ Past 0 (fun t ↦ ¬ P t) σ g :=

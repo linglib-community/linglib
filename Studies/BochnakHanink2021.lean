@@ -82,7 +82,7 @@ theorem suus_selects_gumsuus_not : Selects suus ∧ ¬ Selects gumsuus := by
 
 /-! ### Denotations -/
 
-variable {E W : Type} (cont : E → W → Prop) (p q : W → Prop) (d : ℕ) (g : Assignment E) (s : W)
+variable {E W : Type} (cont : E → W → Prop) (p q : W → Prop) (d : ℕ) (g : ℕ → E) (s : W)
 
 /-- The FPROP type-shift, the property of the individuals whose content is `p` (76). -/
 def fprop : E → Prop := fun x ↦ cont x = p
@@ -101,7 +101,7 @@ theorem denote_complement_isSome_iff : (⟦complement cont p d⟧ g s).isSome �
 /-- The complement can be defined at a situation where its content is false: familiarity is
 not factivity (§5.3.1), the warrant for (86)–(87) in §5.3.2. -/
 theorem not_factive :
-    ∃ (cont : Unit → Bool → Prop) (p : Bool → Prop) (g : Assignment Unit) (s : Bool),
+    ∃ (cont : Unit → Bool → Prop) (p : Bool → Prop) (g : ℕ → Unit) (s : Bool),
       (⟦complement cont p 0⟧ g s).isSome ∧ ¬ p s :=
   ⟨fun _ ↦ (· = true), (· = true), fun _ ↦ (), false,
     (denote_complement_isSome_iff ..).2 rfl, Bool.false_ne_true⟩

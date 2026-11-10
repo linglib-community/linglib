@@ -39,7 +39,7 @@ of the demonstrative's participant sets: the χ-image of the preimage of those s
 
 ## Implementation notes
 
-Context is the entity assignment `Assignment E` and the world coordinate is the resource situation
+Context is the entity assignment `ℕ → E` and the world coordinate is the resource situation
 `W`, as for `PersonalPronoun.denote`. A demonstrative also reads the context of utterance, whose
 agent and addressee fix the participants of a referent, and a vicinity relation `χ : SetRel E E`.
 Harbour leaves the anchoring referent free; the presupposition closes it existentially, his reading
@@ -68,8 +68,8 @@ open Kaplan DefiniteDescription
 open scoped Denotes
 open scoped SetRel
 
-variable {E W : Type} (R : Restrictor E W) (d : ℕ) (possessor : Assignment E → W → E)
-  (rel : Assignment E → W → E → E → Prop)
+variable {E W : Type} (R : Restrictor E W) (d : ℕ) (possessor : (ℕ → E) → W → E)
+  (rel : (ℕ → E) → W → E → E → Prop)
 
 /-! ### Descriptions as nominal denotations -/
 
@@ -77,7 +77,7 @@ variable {E W : Type} (R : Restrictor E W) (d : ℕ) (possessor : Assignment E �
 presupposition is vacuous, a definite's only presupposition being that the selector is
 defined. -/
 noncomputable def DefiniteDescription.toNominal (k : DefiniteDescription E W) :
-    Nominal (Assignment E) W E where
+    Nominal (ℕ → E) W E where
   presup _ _ := True
   selector := ⟦k⟧
 
@@ -85,7 +85,7 @@ noncomputable def DefiniteDescription.toNominal (k : DefiniteDescription E W) :
     k.toNominal.selector = ⟦k⟧ := rfl
 
 @[simp] theorem DefiniteDescription.toNominal_presup (k : DefiniteDescription E W)
-    (g : Assignment E) (s : W) : k.toNominal.presup g s = True := rfl
+    (g : ℕ → E) (s : W) : k.toNominal.presup g s = True := rfl
 
 /-! ### The demonstrative determiner's denotation -/
 
@@ -97,7 +97,7 @@ variable {P T : Type} [PartialOrder E] (c : Context W E P T) (χ : SetRel E E)
 description at discourse index `d` and whose intrinsic presupposition is that the indexed referent
 `g d` lies in the vicinity of a referent whose participants form one of its participant sets. -/
 noncomputable def _root_.DemonstrativeDeterminer.denote (dem : DemonstrativeDeterminer) :
-    Nominal (Assignment E) W E where
+    Nominal (ℕ → E) W E where
   presup g _ := g d ∈ χ.image (c.participants ⁻¹' dem.deixis)
   selector := ⟦DefiniteDescription.demonstrative R d⟧
 
@@ -105,21 +105,21 @@ noncomputable def _root_.DemonstrativeDeterminer.denote (dem : DemonstrativeDete
 utterance and the vicinity relation being the Reader arguments of its domain. -/
 noncomputable instance : Denotes DemonstrativeDeterminer
     (∀ (E W P T : Type) [PartialOrder E], Restrictor E W → ℕ → Context W E P T → SetRel E E →
-      Nominal (Assignment E) W E) :=
+      Nominal (ℕ → E) W E) :=
   ⟨fun dem _ _ _ _ _ ↦ dem.denote⟩
 
 @[simp] theorem _root_.DemonstrativeDeterminer.denote_presup (dem : DemonstrativeDeterminer)
-    (g : Assignment E) (s : W) :
+    (g : ℕ → E) (s : W) :
     (dem.denote R d c χ).presup g s ↔ ∃ x, c.participants x ∈ dem.deixis ∧ x ~[χ] g d := by
   simp [DemonstrativeDeterminer.denote, SetRel.image]
 
 theorem _root_.DemonstrativeDeterminer.denote_presup_mono {dem₁ dem₂ : DemonstrativeDeterminer}
-    (h : dem₁.deixis ⊆ dem₂.deixis) {g : Assignment E} {s : W}
+    (h : dem₁.deixis ⊆ dem₂.deixis) {g : ℕ → E} {s : W}
     (hp : (dem₁.denote R d c χ).presup g s) : (dem₂.denote R d c χ).presup g s :=
   SetRel.image_mono (Set.preimage_mono (Finset.coe_subset.2 h)) hp
 
 theorem _root_.DemonstrativeDeterminer.denote_presup_or_iff_of_compl
-    {dem₁ dem₂ : DemonstrativeDeterminer} (h : dem₂.deixis = dem₁.deixisᶜ) (g : Assignment E)
+    {dem₁ dem₂ : DemonstrativeDeterminer} (h : dem₂.deixis = dem₁.deixisᶜ) (g : ℕ → E)
     (s : W) :
     (dem₁.denote R d c χ).presup g s ∨ (dem₂.denote R d c χ).presup g s ↔ ∃ x, x ~[χ] g d := by
   simp only [DemonstrativeDeterminer.denote_presup, h, Finset.mem_compl]
@@ -159,17 +159,17 @@ theorem _root_.Article.realizes_of_mem_toDescriptions (a : Article) (idx : ℕ)
 
 /-- The `Nominal`s an article can denote are those of its descriptions. -/
 def _root_.Article.denotations (a : Article) (R : Restrictor E W) (idx : ℕ) :
-    Set (Nominal (Assignment E) W E) :=
+    Set (Nominal (ℕ → E) W E) :=
   DefiniteDescription.toNominal '' a.toDescriptions R idx
 
 /-- An article denotes the set of its readings on every model, the restrictor and the index
 being the Reader arguments of its domain. -/
 noncomputable instance : Denotes Article
-    (∀ (E W : Type), Restrictor E W → ℕ → Set (Nominal (Assignment E) W E)) :=
+    (∀ (E W : Type), Restrictor E W → ℕ → Set (Nominal (ℕ → E) W E)) :=
   ⟨fun a _ _ ↦ a.denotations⟩
 
 theorem _root_.Article.denotations_realized (a : Article) (idx : ℕ)
-    (nd : Nominal (Assignment E) W E) (h : nd ∈ a.denotations R idx) :
+    (nd : Nominal (ℕ → E) W E) (h : nd ∈ a.denotations R idx) :
     ∃ k : DefiniteDescription E W,
       Determiner.Inventory.Realizes [.article a] k.kind ∧ nd = k.toNominal := by
   obtain ⟨k, hk, rfl⟩ := h
@@ -182,14 +182,14 @@ cat to which the possessor stands in `rel`. Its only presupposition is the defin
 quantified possessors see `Possession.PossNP`, which agrees with this description at an individual
 possessor (`DefiniteDescription.possNP_iff_exists_mem_denote_possessive`). -/
 noncomputable def _root_.PossessiveDeterminer.denote (_p : PossessiveDeterminer) :
-    Nominal (Assignment E) W E :=
+    Nominal (ℕ → E) W E :=
   (DefiniteDescription.possessive R possessor rel).toNominal
 
 /-- A possessive determiner denotes on every model, the restrictor, the possessor and the
 possession relation being the Reader arguments of its domain. -/
 noncomputable instance : Denotes PossessiveDeterminer
-    (∀ (E W : Type), Restrictor E W → (Assignment E → W → E) →
-      (Assignment E → W → E → E → Prop) → Nominal (Assignment E) W E) :=
+    (∀ (E W : Type), Restrictor E W → ((ℕ → E) → W → E) →
+      ((ℕ → E) → W → E → E → Prop) → Nominal (ℕ → E) W E) :=
   ⟨fun p _ _ ↦ p.denote⟩
 
 @[simp]

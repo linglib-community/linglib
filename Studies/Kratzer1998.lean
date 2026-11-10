@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Logic.Assignment
 public import Linglib.Syntax.Category.Verb.Tense
 public import Linglib.Semantics.Tense.Pronoun
 public import Linglib.Semantics.Aspect.Viewpoint
@@ -57,11 +58,11 @@ encoded, so neither is the derivation.
 namespace Kratzer1998
 
 open Event (τ)
+open scoped Assignment
 
 open scoped Denotes
 
 open Tense
-open Montague
 open Aspect (ofRel ofRel_mono UNBOUNDED PRFV ViewpointType)
 
 /-! ### The tenses (§4–§5) -/
@@ -73,32 +74,32 @@ variable {W T : Type*}
 /-- The indexical tense with cell `C` is the variable `n` presupposing that its reference stands
 to the utterance time, the time of the index `0`, in a position of `C`. The present and the past
 are the tenses of the cells `present` and `past`. -/
-abbrev tense [LT T] (C : Finset Ordering) (n : ℕ) : Nominal (Assignment T) W T :=
+abbrev tense [LT T] (C : Finset Ordering) (n : ℕ) : Nominal (ℕ → T) W T :=
   pronoun C n 0
 
 /-- The zero tense is a variable with no presupposition, bound by the next tense up. -/
-abbrev zeroTense [LT T] (n : ℕ) : Nominal (Assignment T) W T := pronoun ⊤ n 0
+abbrev zeroTense [LT T] (n : ℕ) : Nominal (ℕ → T) W T := pronoun ⊤ n 0
 
 /-- An out-of-the-blue context has no salient time but the utterance time, so every temporal
 variable resolves to it. -/
-def outOfTheBlue (t₀ : T) : Assignment T := Function.const ℕ t₀
+def outOfTheBlue (t₀ : T) : ℕ → T := Function.const ℕ t₀
 
 theorem tense_outOfTheBlue_iff [LinearOrder T] (C : Finset Ordering) (n : ℕ) (t₀ : T) (w : W) :
     (tense C n).presup (outOfTheBlue t₀) w ↔ .eq ∈ C :=
   pronoun_presup_const t₀
 
-theorem zeroTense_presup [LinearOrder T] (n : ℕ) (g : Assignment T) (w : W) :
+theorem zeroTense_presup [LinearOrder T] (n : ℕ) (g : ℕ → T) (w : W) :
     (zeroTense n).presup g w := by
   simp
 
 -- (31)
-theorem zeroTense_abstract [LT T] (n : ℕ) (g : Assignment T) (t : T) (w : W) :
-    lambdaAbsG n (fun g ↦ (zeroTense n).selector g w) g t = some t := by
+theorem zeroTense_abstract [LT T] (n : ℕ) (g : ℕ → T) (t : T) (w : W) :
+    Λ[n] (fun g ↦ (zeroTense n).selector g w) g t = some t := by
   simp
 
 theorem tense_not_abstracted [LT T] (C : Finset Ordering) {m n : ℕ} (hn : n ≠ m)
-    (g : Assignment T) (t : T) (w : W) :
-    lambdaAbsG m (fun g ↦ (tense C n).selector g w) g t = some (g n) := by
+    (g : ℕ → T) (t : T) (w : W) :
+    Λ[m] (fun g ↦ (tense C n).selector g w) g t = some (g n) := by
   simp [Function.update_of_ne hn]
 
 end Tenses
@@ -195,11 +196,11 @@ theorem AspectHead.IsAnterior.precedes {a : AspectHead} (ha : a.IsAnterior T)
 /-- Tense `C` on the variable `n` with aspect `a` is true of an event property when the tense is
 defined and the aspect holds of the property at the tense's reference. -/
 def denote (C : Finset Ordering) (a : AspectHead) (n : ℕ) (P : W → E → Prop)
-    (g : Assignment T) (w : W) : Prop :=
+    (g : ℕ → T) (w : W) : Prop :=
   (tense C n).presup g w ∧ .pure (g n) ∈ a.denote P w
 
 theorem denote_iff_holdsAlong (C : Finset Ordering) (a : AspectHead) (n : ℕ)
-    (P : W → E → Prop) (g : Assignment T) (w : W) :
+    (P : W → E → Prop) (g : ℕ → T) (w : W) :
     denote C a n P g w ↔ ∃ e : E, P w e ∧
       Allen.HoldsAlong [Allen.pure C, Allen.inv a.cell] (.pure (g 0)) [.pure (g n), τ e] := by
   simp only [Allen.HoldsAlong, Allen.toSetRel_inv, SetRel.mem_inv, and_true, ← a.rel_iff,

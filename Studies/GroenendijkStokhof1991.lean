@@ -114,8 +114,8 @@ theorem PEquiv.of_eq (h : φ = ψ) : PEquiv φ ψ := h ▸ rfl
 
 -- Fact 3
 theorem exists_sEquiv_pEquiv_ne {E : Type*} [Nontrivial E] :
-    ∃ φ ψ : Update (Assignment E), SEquiv φ ψ ∧ PEquiv φ ψ ∧ φ ≠ ψ := by
-  have hself (g : Assignment E) : g ~[dexists 0 (test Set.univ)] g :=
+    ∃ φ ψ : Update (ℕ → E), SEquiv φ ψ ∧ PEquiv φ ψ ∧ φ ≠ ψ := by
+  have hself (g : ℕ → E) : g ~[dexists 0 (test Set.univ)] g :=
     ⟨g, ⟨g 0, (Function.update_eq_self 0 g).symm⟩, rfl, trivial⟩
   refine ⟨test Set.univ, dexists 0 (test Set.univ), ?_, ?_, fun h ↦ ?_⟩
   · exact Set.ext fun g ↦ ⟨fun _ ↦ ⟨g, hself g⟩, fun _ ↦ ⟨g, rfl, trivial⟩⟩
@@ -253,7 +253,7 @@ end Quantifiers
 
 section Assignments
 
-variable {E : Type*} (x : ℕ) (φ ψ : Update (Assignment E))
+variable {E : Type*} (x : ℕ) (φ ψ : Update (ℕ → E))
 
 theorem isTest_dexists_iff [Nontrivial E] : IsTest (dexists x φ) ↔ Contradiction φ := by
   refine ⟨fun h g ⟨k, hφ⟩ ↦ ?_, fun hc ⟨_, _⟩ ⟨_, _, hφ⟩ ↦ (hc _ ⟨_, hφ⟩).elim⟩
@@ -281,12 +281,12 @@ theorem neg_neg_exists_eq_iff [Nontrivial E] :
   (neg_neg_eq_self_iff_isTest _).trans (isTest_dexists_iff x φ)
 
 theorem dne_fails_anaphora [Nontrivial E] :
-    ∃ (x : ℕ) (φ : Update (Assignment E)), ∼∼(dexists x φ) ≠ dexists x φ :=
+    ∃ (x : ℕ) (φ : Update (ℕ → E)), ∼∼(dexists x φ) ≠ dexists x φ :=
   ⟨0, test Set.univ, fun h ↦
     (neg_neg_exists_eq_iff 0 _).mp h (fun _ ↦ Classical.arbitrary E) ⟨_, rfl, trivial⟩⟩
 
 theorem not_sEquiv_comp_neg_disj_neg [Nontrivial E] :
-    ∃ φ ψ : Update (Assignment E), ¬ SEquiv (φ ○ ψ) ∼(∼φ ⋎ ∼ψ) := by
+    ∃ φ ψ : Update (ℕ → E), ¬ SEquiv (φ ○ ψ) ∼(∼φ ⋎ ∼ψ) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   refine ⟨dexists 0 (test {g | g 0 = a}), test {g | g 0 = a}, fun h ↦ ?_⟩
   have hb : (fun _ ↦ b) ∈ (dexists 0 (test {g | g 0 = a}) ○ test {g | g 0 = a}).dom :=
@@ -295,7 +295,7 @@ theorem not_sEquiv_comp_neg_disj_neg [Nontrivial E] :
   exact hb (.inr fun hba ↦ hab (by simpa using hba.symm))
 
 theorem not_sEquiv_impl_neg_disj [Nontrivial E] :
-    ∃ φ ψ : Update (Assignment E), ¬ SEquiv (φ ⇒ ψ) (∼φ ⋎ ψ) := by
+    ∃ φ ψ : Update (ℕ → E), ¬ SEquiv (φ ⇒ ψ) (∼φ ⋎ ψ) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   refine ⟨dexists 0 (test {g | g 0 = a}), test {g | g 0 = a}, fun h ↦ ?_⟩
   have hb : (fun _ ↦ b) ∈ (dexists 0 (test {g | g 0 = a}) ⇒ test {g | g 0 = a}).dom := by
@@ -307,7 +307,7 @@ theorem not_sEquiv_impl_neg_disj [Nontrivial E] :
   · exact hn ⟨_, _, ⟨a, rfl⟩, rfl, by simp⟩
   · exact hab (by simpa using hb.symm)
 
-theorem comp_not_comm [Nontrivial E] : ∃ φ ψ : Update (Assignment E), φ ○ ψ ≠ ψ ○ φ := by
+theorem comp_not_comm [Nontrivial E] : ∃ φ ψ : Update (ℕ → E), φ ○ ψ ≠ ψ ○ φ := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   refine ⟨dexists 0 (test Set.univ), test {g | g 0 = a}, fun h ↦ ?_⟩
   have hb : (fun _ ↦ b) ~[dexists 0 (test Set.univ) ○ test {g | g 0 = a}]
@@ -317,7 +317,7 @@ theorem comp_not_comm [Nontrivial E] : ∃ φ ψ : Update (Assignment E), φ ○
   obtain ⟨_, ⟨rfl, hb⟩, -⟩ := hb
   exact hab (by simpa using hb.symm)
 
-theorem comp_not_idem [Nontrivial E] : ∃ φ : Update (Assignment E), φ ○ φ ≠ φ := by
+theorem comp_not_idem [Nontrivial E] : ∃ φ : Update (ℕ → E), φ ○ φ ≠ φ := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   refine ⟨test {g | g 0 = a} ○ dexists 0 (test {g | g 0 = b}), fun h ↦ ?_⟩
   have hb : (fun _ ↦ a) ~[test {g | g 0 = a} ○ dexists 0 (test {g | g 0 = b})]
@@ -364,17 +364,17 @@ section Assignments
 variable {E : Type*} (x : ℕ)
 
 theorem entails_exists_atom (p : E → Prop) :
-    Entails (dexists x (test {g : Assignment E | p (g x)})) (test {g | p (g x)}) := by
+    Entails (dexists x (test {g : (ℕ → E) | p (g x)})) (test {g | p (g x)}) := by
   rintro _ ⟨_, _, -, rfl, hp⟩
   exact ⟨_, rfl, hp⟩
 
 theorem entails_atom_exists (p : E → Prop) :
-    Entails (test {g : Assignment E | p (g x)}) (dexists x (test {g | p (g x)})) := by
+    Entails (test {g : (ℕ → E) | p (g x)}) (dexists x (test {g | p (g x)})) := by
   rintro _ ⟨h, rfl, hp⟩
   exact ⟨h, h, ⟨h x, (Function.update_eq_self x h).symm⟩, rfl, hp⟩
 
 theorem not_sEntails_exists_atom [Nontrivial E] :
-    ∃ p : E → Prop, ¬ SEntails (dexists 0 (test {g : Assignment E | p (g 0)}))
+    ∃ p : E → Prop, ¬ SEntails (dexists 0 (test {g : (ℕ → E) | p (g 0)}))
       (test {g | p (g 0)}) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   refine ⟨(· = a), fun h ↦ ?_⟩
@@ -382,7 +382,7 @@ theorem not_sEntails_exists_atom [Nontrivial E] :
   exact hab (by simpa using hb.symm)
 
 -- p. 68, the counterexample to reflexivity before Fact 15
-theorem not_entails_self [Nontrivial E] : ∃ φ : Update (Assignment E), ¬ Entails φ φ := by
+theorem not_entails_self [Nontrivial E] : ∃ φ : Update (ℕ → E), ¬ Entails φ φ := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   refine ⟨test {g | g 0 = a} ○ dexists 0 (test Set.univ), fun h ↦ ?_⟩
   have hb : (fun _ ↦ a) ~[test {g | g 0 = a} ○ dexists 0 (test Set.univ)]
@@ -393,7 +393,7 @@ theorem not_entails_self [Nontrivial E] : ∃ φ : Update (Assignment E), ¬ Ent
 
 -- p. 69
 theorem not_entails_neg_neg_exists_atom [Nontrivial E] :
-    ∃ p : E → Prop, ¬ Entails ∼∼(dexists 0 (test {g : Assignment E | p (g 0)}))
+    ∃ p : E → Prop, ¬ Entails ∼∼(dexists 0 (test {g : (ℕ → E) | p (g 0)}))
       (test {g | p (g 0)}) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   refine ⟨(· = a), fun h ↦ ?_⟩
@@ -405,16 +405,16 @@ theorem not_entails_neg_neg_exists_atom [Nontrivial E] :
 `¬¬∃x Px` does not entail `Px`, since the double negation closes off the quantifier that binds
 the conclusion's `x` (p. 69). -/
 theorem not_entails_trans [Nontrivial E] :
-    ∃ φ ψ χ : Update (Assignment E), Entails φ ψ ∧ Entails ψ χ ∧ ¬ Entails φ χ :=
+    ∃ φ ψ χ : Update (ℕ → E), Entails φ ψ ∧ Entails ψ χ ∧ ¬ Entails φ χ :=
   let ⟨p, h⟩ := not_entails_neg_neg_exists_atom (E := E)
   ⟨_, _, _, entails_neg_neg_self _, entails_exists_atom 0 p, h⟩
 
 theorem not_entails_comp_exists [Nontrivial E] :
-    ∃ p : E → Prop, ¬ Entails (dexists 0 (test {g : Assignment E | p (g 0)}) ○
+    ∃ p : E → Prop, ¬ Entails (dexists 0 (test {g : (ℕ → E) | p (g 0)}) ○
       dexists 0 (test Set.univ)) (test {g | p (g 0)}) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   refine ⟨(· = a), fun h ↦ ?_⟩
-  have hc : (fun _ ↦ b) ~[dexists 0 (test {g : Assignment E | g 0 = a}) ○
+  have hc : (fun _ ↦ b) ~[dexists 0 (test {g : (ℕ → E) | g 0 = a}) ○
       dexists 0 (test Set.univ)] fun _ ↦ b :=
     ⟨_, ⟨_, ⟨a, rfl⟩, rfl, by simp⟩, _, ⟨b, by simp⟩, rfl, trivial⟩
   obtain ⟨_, rfl, hb⟩ := h ⟨_, hc⟩

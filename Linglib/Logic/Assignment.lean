@@ -15,15 +15,16 @@ Brasoveanu's compositional system and partial in van den Berg's.
 
 ## Main definitions
 
-* `Assignment E`: total assignments `ℕ → E`, indexed by numerals.
 * `PluralAssign Var D`: sets of partial assignments `Var → Part D`, with `PluralAssign.value` the
   values a variable takes across them and `PluralAssign.restrict` the substate where it takes a
   given value.
 
 ## Notation
 
-* `g[n ↦ x]`: `Function.update g n x`, overwriting the value of a total assignment, scoped to
-  `Assignment` (`open scoped Assignment`).
+* `Λ[n] body`: the abstraction of `body` over the index `n`, the function of an assignment `g` and
+  a value `x` that is `body` at `Function.update g n x`. It is the meaning of a binder with index
+  `n`, [Heim and Kratzer][heim-kratzer-1998]'s Predicate Abstraction and
+  [Charlow][charlow-2018]'s `Λᵢ`, scoped to `Assignment` (`open scoped Assignment`).
 
 ## Implementation notes
 
@@ -34,17 +35,15 @@ Brasoveanu's compositional system and partial in van den Berg's.
   (`PFun.le_iff_eqOn_dom`).
 * The assignments of [Heim and Kratzer][heim-kratzer-1998] are `ℕ → Part D`, and their modified
   assignment ((13)) is `Function.update g n (Part.some d)`, whose domain gains `n`
-  (`PFun.dom_update_some`). `Assignment E` and `g[n ↦ x]` are the total, overwriting
-  counterparts.
+  (`PFun.dom_update_some`). A total assignment is a plain function `ℕ → E`, modified by
+  `Function.update g n x`, which overwrites. Abstraction is notation, not a definition: it is
+  composition with `Function.update g n`, which mathlib writes out.
 * Equality and the order of partial assignments are decidable where their domains are
   (`Linglib/Core/Data/Part.lean`). A system whose states are `Finset`s of assignments needs
   `DecidableEq` on the assignments themselves and takes `Var → Option D`.
 * Random assignment `[x]`, relating assignments that agree off `x`, is
   `DynamicSemantics.Update.randomAssign` at the function-type register structure; it is not
   redefined here.
-* Use these names only for the variable-binding role — the state that quantifiers `update` and
-  free variables look up. A `ℕ → E` that is not variable-binding state (interpretation tables,
-  lookup arrays) should stay a plain function type.
 
 ## References
 
@@ -54,24 +53,19 @@ Brasoveanu's compositional system and partial in van den Berg's.
 * [van-den-berg-1996]
 * [brasoveanu-2008]
 * [haug-dalrymple-2020]
+* [charlow-2018]
 * [spector-2026]
 -/
 
 @[expose] public section
 
-/-! ### Total assignments -/
-
-/-- `Assignment E` is the type of total variable assignments, sending each index in `ℕ` to a value
-in `E`: an entity for entity pronouns, a situation index for situation pronouns, a time for
-temporal variables. Heim and Kratzer index by numerals too, but their assignments are partial,
-`ℕ → Part E`. -/
-abbrev Assignment (E : Type*) := ℕ → E
+/-! ### Abstraction -/
 
 namespace Assignment
 
-/-- `g[n ↦ x]` is the assignment sending `n` to `x` and agreeing with `g` elsewhere, overwriting
-any value `g` gave `n`. It is notation for `Function.update g n x`. -/
-scoped notation:max g "[" n " ↦ " x "]" => Function.update g n x
+/-- `Λ[n] body` is the abstraction of `body` over the index `n`: at the assignment `g` it maps `x`
+to the value of `body` at `g` updated to give `n` the value `x`. -/
+scoped notation:max "Λ[" n "] " body:max => fun g x ↦ body (Function.update g n x)
 
 end Assignment
 

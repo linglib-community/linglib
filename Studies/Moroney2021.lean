@@ -235,12 +235,12 @@ variable {W E P T : Type} [PartialOrder E] (c : Kaplan.Context W E P T) (χ : Se
 /-- The demonstrative of (147)–(148) presupposes, as the bare definite does, a unique `P` in the
 situation, and denotes the `P` in its deictic domain, `ιx[P(x) ∧ close.to.speaker(x)]` for
 *nâj*. -/
-noncomputable def demDenotation (R : Restrictor E W) (g : Assignment E) (s : W) : Option E :=
+noncomputable def demDenotation (R : Restrictor E W) (g : ℕ → E) (s : W) : Option E :=
   (⟦bare R⟧ g s).bind fun _ ↦ iota (R g s ∩ χ.image (c.participants ⁻¹' d.deixis))
 
 /-- A demonstrative refers to the bare noun's referent when that referent lies in its deictic
 domain. -/
-theorem demDenotation_eq_some_iff {R : Restrictor E W} {g : Assignment E} {s : W} {x : E} :
+theorem demDenotation_eq_some_iff {R : Restrictor E W} {g : ℕ → E} {s : W} {x : E} :
     demDenotation c χ d R g s = some x ↔
       ⟦bare R⟧ g s = some x ∧ x ∈ χ.image (c.participants ⁻¹' d.deixis) := by
   simp only [demDenotation, Option.bind_eq_some_iff, DefiniteDescription.denote_bare_eq_some_iff,
@@ -254,11 +254,11 @@ theorem demDenotation_eq_some_iff {R : Restrictor E W} {g : Assignment E} {s : W
 /-- A demonstrative agrees with the bare definite wherever that is defined exactly when its deictic
 domain holds every referent, so a demonstrative with spatial content is not the definite and
 blocks no definite reading of the bare noun (p. 62). -/
-theorem demDenotation_eq_bare_iff (g : Assignment E) (s : W) :
+theorem demDenotation_eq_bare_iff (g : ℕ → E) (s : W) :
     (∀ R : Restrictor E W, (⟦bare R⟧ g s).isSome → demDenotation c χ d R g s = ⟦bare R⟧ g s) ↔
       ∀ x, x ∈ χ.image (c.participants ⁻¹' d.deixis) := by
   refine ⟨fun h x ↦ ?_, fun h R hR ↦ ?_⟩
-  · have hb : ⟦bare fun (_ : Assignment E) (_ : W) y ↦ y = x⟧ g s = some x :=
+  · have hb : ⟦bare fun (_ : ℕ → E) (_ : W) y ↦ y = x⟧ g s = some x :=
       (DefiniteDescription.denote_bare_eq_some_iff _ g s).2 ⟨rfl, fun _ ↦ id⟩
     exact ((demDenotation_eq_some_iff c χ d).1
       ((h _ (Option.isSome_iff_exists.2 ⟨x, hb⟩)).trans hb)).2

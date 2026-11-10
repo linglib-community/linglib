@@ -292,7 +292,7 @@ end Bathroom
 -- (49) [groenendijk-stokhof-1991]
 theorem dne_bus_not_dpl [Nontrivial E] :
     (∀ φ : BilateralUpdate W V E, ~~φ = φ) ∧
-      ∃ (x : ℕ) (φ : Update (Assignment E)),
+      ∃ (x : ℕ) (φ : Update (ℕ → E)),
         Update.test (Update.neg (Update.test (Update.neg (Update.dexists x φ)))) ≠
           Update.dexists x φ :=
   ⟨BilateralUpdate.neg_neg, GroenendijkStokhof1991.dne_fails_anaphora⟩

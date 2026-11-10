@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Logic.Assignment
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Semantics.Tense.Pronoun
 public import Linglib.Semantics.Tense.Quantificational
@@ -40,10 +41,10 @@ verb, and the fourth type has no source of zero tense.
 namespace Sharvit2003
 
 open scoped Denotes
+open scoped Assignment
 
 open Tense
 open scoped ModalLogic
-open Montague
 
 variable {T : Type*}
 
@@ -141,7 +142,7 @@ theorem nonpastAvailable_past_iff (L : Language) :
 
 /-- A present bound by the attitude verb denotes the attitude's now, giving the nonpast reading of
 (5) and (12a). -/
-theorem boundPresent_nonpast {W : Type*} [LinearOrder T] (n e : ℕ) (g : Assignment T) (now : T)
+theorem boundPresent_nonpast {W : Type*} [LinearOrder T] (n e : ℕ) (g : ℕ → T) (now : T)
     (w : W) :
     (pronoun ⟦Tense.present⟧ n e).presup
       (Function.update (Function.update g e now) n now) w := by
@@ -149,7 +150,7 @@ theorem boundPresent_nonpast {W : Type*} [LinearOrder T] (n e : ℕ) (g : Assign
 
 /-- A matrix-indexical present under a past attitude verb fails its presupposition at the attitude's
 now, so (3) has only the double access reading. -/
-theorem indexicalPresent_no_nonpast {W : Type*} [LinearOrder T] {n e : ℕ} {g : Assignment T}
+theorem indexicalPresent_no_nonpast {W : Type*} [LinearOrder T] {n e : ℕ} {g : ℕ → T}
     {w : W} (hSpeech : (pronoun ⟦Tense.present⟧ n 0).presup g w) (hlt : g e < g 0) :
     ¬ (pronoun ⟦Tense.present⟧ n e).presup g w := by
   simp only [pronoun_presup, mem_toSetRel_present] at hSpeech ⊢
@@ -172,28 +173,26 @@ def attitude (compatible : T → Set T) (p : T → Prop) (t : T) : Prop :=
 relation of the future cell. -/
 def will [LT T] (p : T → Prop) (t : T) : Prop := ◇[toSetRel ⟦future⟧] p t
 
-/-- In the LF (7) of the nonpast reading of (1), the matrix past locates the deciding before the
-utterance time, the time of the index `0`, and each complement is a λ0-abstract that rebinds the
-zero tense read by the deleted past on *will*, the base-generated zero tense on *tell* and the
-deleted past on *miss*. -/
-def lf7 [LT T] (decides tells : T → Set T) (miss : T → Prop) (g : Assignment T) :
-    Prop :=
+/-- A verb with a zero tense, the `0-V` of (7): the verb holds of its complement at the time the
+assignment gives the index `0`. -/
+def zero {α : Type*} (V : α → T → Prop) (complement : (ℕ → T) → α) : (ℕ → T) → Prop :=
+  fun g ↦ V (complement g) (g 0)
+
+/-- The LF (7) of the nonpast reading of (1), `[John Past decide λ0[he 0-will λ0[0-tell his mother
+λ0[he 0-miss her]]]]`: the matrix past locates the deciding before the utterance time, the time
+of the index `0`, and each complement is a λ0-abstract that rebinds the zero tense read by the
+deleted past on *will*, the base-generated zero tense on *tell* and the deleted past on *miss*. -/
+def lf7 [LT T] (decides tells : T → Set T) (miss : T → Prop) (g : ℕ → T) : Prop :=
   ∃ t, t < g 0 ∧
     attitude decides
-      (lambdaAbsG 0 (fun g₁ ↦
-        will
-          (lambdaAbsG 0 (fun g₂ ↦
-            attitude tells (lambdaAbsG 0 (fun g₃ ↦ miss (g₃ 0)) g₂)
-              (g₂ 0)) g₁)
-          (g₁ 0)) g) t
+      (Λ[0] (zero will (Λ[0] (zero (attitude tells) (Λ[0] (fun g ↦ miss (g 0)))))) g) t
 
 /-- The LF (7) has the interpretation (10) ((1)). -/
 theorem lf7_iff [LT T] (decides tells : T → Set T) (miss : T → Prop)
-    (g : Assignment T) :
+    (g : ℕ → T) :
     lf7 decides tells miss g ↔
       ∃ t, t < g 0 ∧ ∀ t' ∈ decides t, ∃ t'', t' < t'' ∧ ∀ t''' ∈ tells t'', miss t''' := by
-  simp only [lf7, attitude, will, diamond_toSetRel_future, lambdaAbsG,
-    Function.update_self]
+  simp only [lf7, zero, attitude, will, diamond_toSetRel_future, Function.update_self]
 
 /-! ### The paper's examples -/
 

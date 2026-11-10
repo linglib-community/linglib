@@ -152,7 +152,7 @@ variable {E' W P T : Type} [PartialOrder E'] (c : Kaplan.Context W E' P T) (V : 
 vicinity of an anchor being NEAR its participants' atom, whenever every atom it admits is the
 participants of some referent. -/
 theorem locates_iff_presup (dem : DemonstrativeDeterminer) (R : DefiniteDescription.Restrictor E' W)
-    (d : ℕ) (g : Assignment E') (s : W) (h : ∀ a ∈ dem.deixis, ∃ x, c.participants x = a) :
+    (d : ℕ) (g : ℕ → E') (s : W) (h : ∀ a ∈ dem.deixis, ∃ x, c.participants x = a) :
     (dem.denote R d c {p | V.Near (c.participants p.1) p.2}).presup g s ↔
       (⟨dem.deixis, none⟩ : DeicticTerm).Locates V (g d) := by
   rw [DemonstrativeDeterminer.denote_presup]

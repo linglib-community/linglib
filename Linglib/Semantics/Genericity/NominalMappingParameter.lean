@@ -148,10 +148,10 @@ def Lexicalizes : Entry → CovertShift → Prop
   | .demonstrative dem, .iotaAnaphoric => ∀ (E W P T : Type) [PartialOrder E]
       (c : Kaplan.Context W E P T) (χ : SetRel E E) (R : Restrictor E W) (d : ℕ),
       dem.denote R d c χ = (anaphoric R d).toNominal
-  | .possessive p, .iota => ∀ (E W : Type) (R : Restrictor E W) (possessor : Assignment E → W → E)
-      (rel : Assignment E → W → E → E → Prop), p.denote R possessor rel = (bare R).toNominal
+  | .possessive p, .iota => ∀ (E W : Type) (R : Restrictor E W) (possessor : (ℕ → E) → W → E)
+      (rel : (ℕ → E) → W → E → E → Prop), p.denote R possessor rel = (bare R).toNominal
   | .possessive p, .iotaAnaphoric => ∀ (E W : Type) (R : Restrictor E W) (d : ℕ)
-      (possessor : Assignment E → W → E) (rel : Assignment E → W → E → E → Prop),
+      (possessor : (ℕ → E) → W → E) (rel : (ℕ → E) → W → E → E → Prop),
       p.denote R possessor rel = (anaphoric R d).toNominal
   | _, _ => False
 

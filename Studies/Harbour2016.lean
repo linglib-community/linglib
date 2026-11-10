@@ -422,7 +422,7 @@ def ctx : Kaplan.Context Unit (Finset (Fin 2)) Unit Unit := ⟨{0}, {1}, (), (),
 def near : SetRel (Finset (Fin 2)) (Finset (Fin 2)) := Set.univ
 
 /-- The assignment sends every index to the empty referent. -/
-def g₀ : Assignment (Finset (Fin 2)) := fun _ ↦ ∅
+def g₀ : ℕ → Finset (Fin 2) := fun _ ↦ ∅
 
 /-- *this* resolved with a trivial restrictor is defined and its deictic presupposition holds. -/
 example : (English.Determiners.this.denote (fun _ _ _ ↦ True) 0 ctx near).toTrivalent

@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Set.Functor
-public import Linglib.Semantics.Composition.Assignment
+public import Linglib.Logic.Assignment
 public import Linglib.Semantics.Composition.Interpreter.PredicateAbstraction
 public import Linglib.Semantics.Composition.Interpreter.Readings
 public import Linglib.Semantics.Composition.Interpreter.Rules
@@ -29,7 +29,7 @@ restrictor holds a bound pronoun cannot outscope the pronoun's binder.
   distributivity operator (41), each closing off the alternatives of its scope.
 * `lawyerOuter`, `relativeOuter`: the two higher-order islands of Figure 10.
 * `Si.pro`, `Si.beta`, `Si.det`: pronouns (58), `β`-binding (61) and determiners over
-  `ReaderT (Assignment E) Set`.
+  `ReaderT (ℕ → E) Set`.
 * `Si.a`, `Si.that`: the indefinite determiner (83) and the relative pronoun (87).
 * `Si.abstractChoice`: abstraction by a choice function in alternative semantics (74).
 
@@ -336,52 +336,50 @@ theorem lawyer_wide_not_pointwise :
 
 /-! ### Assignments
 
-The monad of (54)–(56) is `ReaderT (Assignment E) Set`, whose membership lemmas come from the
+The monad of (54)–(56) is `ReaderT (ℕ → E) Set`, whose membership lemmas come from the
 Reader.Set monad of `Charlow2014`. -/
 
 namespace Si
 
-open Montague
-open scoped Assignment
 
 variable {E α : Type}
 
-example : LawfulMonad (ReaderT (Assignment E) Set) := inferInstance
+example : LawfulMonad (ReaderT (ℕ → E) Set) := inferInstance
 
-@[simp] theorem monadLift_apply (m : Set α) (g : Assignment E) :
-    (monadLift m : ReaderT (Assignment E) Set α) g = m := rfl
+@[simp] theorem monadLift_apply (m : Set α) (g : ℕ → E) :
+    (monadLift m : ReaderT (ℕ → E) Set α) g = m := rfl
 
 /-- `pro n` is the pronoun `she_n` (58), the singleton of the value of index `n`. -/
-def pro (n : ℕ) : ReaderT (Assignment E) Set E := fun g ↦ {g n}
+def pro (n : ℕ) : ReaderT (ℕ → E) Set E := fun g ↦ {g n}
 
-@[simp] theorem pro_apply (n : ℕ) (g : Assignment E) : pro n g = {g n} := rfl
+@[simp] theorem pro_apply (n : ℕ) (g : ℕ → E) : pro n g = {g n} := rfl
 
 /-- `beta n f x` is the binder `βⁿ` (61), which evaluates the scope `f x` with index `n` anchored
 to `x`. -/
-def beta (n : ℕ) (f : E → ReaderT (Assignment E) Set α) (x : E) : ReaderT (Assignment E) Set α :=
-  withReader (·[n ↦ x]) (f x)
+def beta (n : ℕ) (f : E → ReaderT (ℕ → E) Set α) (x : E) : ReaderT (ℕ → E) Set α :=
+  withReader (Function.update · n x) (f x)
 
-@[simp] theorem beta_apply (n : ℕ) (f : E → ReaderT (Assignment E) Set α) (x : E)
-    (g : Assignment E) : beta n f x g = f x (g[n ↦ x]) := rfl
+@[simp] theorem beta_apply (n : ℕ) (f : E → ReaderT (ℕ → E) Set α) (x : E)
+    (g : ℕ → E) : beta n f x g = f x (Function.update g n x) := rfl
 
 /-- `det D P f` is the determiner `D` over `P` closing off its scope `f` at each assignment, as
 *everybody* (65) and the *no candidate* of Figure 14 do. -/
-def det (D : Det E) (P : Set E) (f : E → ReaderT (Assignment E) Set Prop) :
-    ReaderT (Assignment E) Set Prop :=
+def det (D : Det E) (P : Set E) (f : E → ReaderT (ℕ → E) Set Prop) :
+    ReaderT (ℕ → E) Set Prop :=
   fun g ↦ pure (D P {y | sSup (f y g)})
 
 variable (ling : Set E) (cited : E → E → Prop)
 
 -- (59), Figure 12
 theorem ling_cited_her :
-    (monadLift ling : ReaderT (Assignment E) Set E) >>=
+    (monadLift ling : ReaderT (ℕ → E) Set E) >>=
         (fun x ↦ pro 0 >>= fun y ↦ pure (cited y x)) =
       fun g ↦ (fun x ↦ cited (g 0) x) '' ling := by
   funext g; ext q; simp [eq_comm, -eq_iff_iff]
 
 -- Figure 12
 theorem ling_cited_herself :
-    (monadLift ling : ReaderT (Assignment E) Set E) >>=
+    (monadLift ling : ReaderT (ℕ → E) Set E) >>=
         beta 0 (fun x ↦ pro 0 >>= fun y ↦ pure (cited y x)) =
       fun _ ↦ (fun x ↦ cited x x) '' ling := by
   funext g; ext q; simp [eq_comm, -eq_iff_iff]
@@ -389,8 +387,8 @@ theorem ling_cited_herself :
 /-- `expertCites` is the higher-order island *a famous expert on indefinites cites her₀* of
 Figure 13, left, with the indefinite in the outer layer and the pronoun in the inner. -/
 def expertCites (exp : Set E) (cites : E → E → Prop) :
-    ReaderT (Assignment E) Set (ReaderT (Assignment E) Set Prop) :=
-  (monadLift exp : ReaderT (Assignment E) Set E) >>= fun x ↦
+    ReaderT (ℕ → E) Set (ReaderT (ℕ → E) Set Prop) :=
+  (monadLift exp : ReaderT (ℕ → E) Set E) >>= fun x ↦
     pure (pro 0 >>= fun y ↦ pure (cites y x))
 
 /-- Pied-piping the island over *everybody* while reconstructing its inner layer gives the
@@ -411,7 +409,7 @@ variable (cand paper : Set E) (wrote subm : E → E → Prop)
 
 /-- `paperBy paper wrote` is *a paper he₀ had written* (66), the papers written by the value of
 index 0. -/
-def paperBy : ReaderT (Assignment E) Set E := fun g ↦ {x | x ∈ paper ∧ wrote x (g 0)}
+def paperBy : ReaderT (ℕ → E) Set E := fun g ↦ {x | x ∈ paper ∧ wrote x (g 0)}
 
 /-- Scoped over *no candidate*, the indefinite leaves its pronoun free (Figure 14). -/
 theorem paper_wide :
@@ -466,7 +464,7 @@ theorem cf_reading_iff [Nonempty E] (hwrote : ∀ x ∈ cand, ∃ y ∈ paper, w
 
 /-- The reading (69) does not entail the bound reading of (53). -/
 theorem cf_reading_not_imp_bound :
-    ¬ ∀ (cand paper : Set (Fin 3)) (wrote subm : Fin 3 → Fin 3 → Prop) (g : Assignment (Fin 3)),
+    ¬ ∀ (cand paper : Set (Fin 3)) (wrote subm : Fin 3 → Fin 3 → Prop) (g : ℕ → Fin 3),
     (∃ f : ChoiceFunction (Fin 3),
         ¬ ∃ x ∈ cand, subm (f fun y ↦ y ∈ paper ∧ wrote y x) x) →
       sSup (det Det.no cand (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y))
@@ -488,12 +486,12 @@ section Determiners
 variable (paper : Set E) (wrote : E → E → Prop)
 
 /-- `a f` is the indefinite determiner (83), the set of individuals whose restrictor `f` holds. -/
-def a (f : E → ReaderT (Assignment E) Set Prop) : ReaderT (Assignment E) Set E :=
+def a (f : E → ReaderT (ℕ → E) Set Prop) : ReaderT (ℕ → E) Set E :=
   fun g ↦ {x | sSup (f x g)}
 
 /-- `that r l` is the relative pronoun (87), which conjoins two assignment-relative sets of
 propositions. -/
-def that (r l : ReaderT (Assignment E) Set Prop) : ReaderT (Assignment E) Set Prop :=
+def that (r l : ReaderT (ℕ → E) Set Prop) : ReaderT (ℕ → E) Set Prop :=
   fun g ↦ Set.image2 (· ∧ ·) (l g) (r g)
 
 -- (85)
@@ -516,14 +514,14 @@ section AlternativeSemantics
 
 /-- `abstractChoice n m` is abstraction over index `n` in alternative semantics (74), in which a
 choice function flattens the alternatives of `m` at each value of the index. -/
-def abstractChoice (n : ℕ) (m : ReaderT (Assignment E) Set Prop) :
-    ReaderT (Assignment E) Set (E → Prop) :=
-  fun g ↦ Set.range fun f : ChoiceFunction Prop ↦ fun x ↦ f (· ∈ m (g[n ↦ x]))
+def abstractChoice (n : ℕ) (m : ReaderT (ℕ → E) Set Prop) :
+    ReaderT (ℕ → E) Set (E → Prop) :=
+  fun g ↦ Set.range fun f : ChoiceFunction Prop ↦ fun x ↦ f (· ∈ m (Function.update g n x))
 
 /-- Composed point-wise with the abstraction (74), `nobody [λ₀ t₀ met a phonologist]` has a true
 alternative exactly when nobody met every phonologist (77). -/
 theorem nobody_met_iff (human phon : Set E) (met : E → E → Prop) (hphon : phon.Nonempty)
-    (g : Assignment E) :
+    (g : ℕ → E) :
     sSup ((fun P ↦ ¬ ∃ x ∈ human, P x) ''
         abstractChoice 0 (fun g ↦ (fun y ↦ met y (g 0)) '' phon) g) ↔
       ¬ ∃ x ∈ human, ∀ y ∈ phon, met y x := by
@@ -544,27 +542,28 @@ theorem nobody_met_iff (human phon : Set E) (met : E → E → Prop) (hphon : ph
     exact ⟨_, ⟨_, ⟨f, rfl⟩, rfl⟩, fun ⟨x, hx, hfx⟩ ↦ hf ⟨x, hx⟩ hfx⟩
 
 -- (74)
-theorem abstractChoice_subset_pi (n : ℕ) (m : ReaderT (Assignment E) Set Prop)
-    (g : Assignment E) (hm : ∀ x, (m (g[n ↦ x])).Nonempty) :
-    abstractChoice n m g ⊆ Set.univ.pi fun x ↦ m (g[n ↦ x]) := by
+theorem abstractChoice_subset_pi (n : ℕ) (m : ReaderT (ℕ → E) Set Prop)
+    (g : ℕ → E) (hm : ∀ x, (m (Function.update g n x)).Nonempty) :
+    abstractChoice n m g ⊆ Set.univ.pi fun x ↦ m (Function.update g n x) := by
   rintro _ ⟨f, rfl⟩
   exact Set.mem_univ_pi.2 fun x ↦ f.apply_of_exists (hm x)
 
 /-- When the alternatives are nonempty and distinct values of the index give distinct ones, the
 two lines of (74) agree. -/
-theorem abstractChoice_eq_pi (n : ℕ) (m : ReaderT (Assignment E) Set Prop)
-    (g : Assignment E) (hm : ∀ x, (m (g[n ↦ x])).Nonempty)
-    (hinj : Function.Injective fun x ↦ m (g[n ↦ x])) :
-    abstractChoice n m g = Set.univ.pi fun x ↦ m (g[n ↦ x]) := by
+theorem abstractChoice_eq_pi (n : ℕ) (m : ReaderT (ℕ → E) Set Prop)
+    (g : ℕ → E) (hm : ∀ x, (m (Function.update g n x)).Nonempty)
+    (hinj : Function.Injective fun x ↦ m (Function.update g n x)) :
+    abstractChoice n m g = Set.univ.pi fun x ↦ m (Function.update g n x) := by
   refine (abstractChoice_subset_pi n m g hm).antisymm fun P hP ↦ ?_
   obtain ⟨f, hf⟩ := (ChoiceFunction.exists_forall_apply_iff_of_injective
-    (R := fun x ↦ (· ∈ m (g[n ↦ x]))) (fun _ _ h ↦ hinj (Set.ext fun y ↦ iff_of_eq (congrFun h y)))
+    (R := fun x ↦ (· ∈ m (Function.update g n x)))
+    (fun _ _ h ↦ hinj (Set.ext fun y ↦ iff_of_eq (congrFun h y)))
     hm fun x ↦ (· = P x)).2 fun x ↦ ⟨P x, Set.mem_univ_pi.1 hP x, rfl⟩
   exact ⟨f, funext hf⟩
 
 -- (74)
 theorem abstractChoice_met_linguist (ling : Set E) (met : E → E → Prop)
-    (h : ∀ x, (∃ y ∈ ling, met y x) ∧ ∃ y ∈ ling, ¬ met y x) (g : Assignment E) :
+    (h : ∀ x, (∃ y ∈ ling, met y x) ∧ ∃ y ∈ ling, ¬ met y x) (g : ℕ → E) :
     abstractChoice 0 (fun g ↦ (fun y ↦ met y (g 0)) '' ling) g = Set.range (Function.const E) ∧
       (Set.univ.pi fun x ↦ (fun y ↦ met y x) '' ling) = Set.univ := by
   have hu (x : E) : (fun y ↦ met y x) '' ling = Set.univ := Set.eq_univ_of_forall fun p ↦ by
@@ -582,7 +581,7 @@ theorem abstractChoice_met_linguist (ling : Set E) (met : E → E → Prop)
 
 -- (74)
 theorem abstractChoice_ne_pi [Nontrivial E] (ling : Set E) (met : E → E → Prop)
-    (h : ∀ x, (∃ y ∈ ling, met y x) ∧ ∃ y ∈ ling, ¬ met y x) (g : Assignment E) :
+    (h : ∀ x, (∃ y ∈ ling, met y x) ∧ ∃ y ∈ ling, ¬ met y x) (g : ℕ → E) :
     abstractChoice 0 (fun g ↦ (fun y ↦ met y (g 0)) '' ling) g ≠
       Set.univ.pi fun x ↦ (fun y ↦ met y x) '' ling := by
   rw [(abstractChoice_met_linguist ling met h g).1, (abstractChoice_met_linguist ling met h g).2]

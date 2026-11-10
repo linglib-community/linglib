@@ -124,7 +124,7 @@ def Description.restrictor (D : Display) (d : Description) :
     DefiniteDescription.Restrictor (Fin 5) (Finset (Fin 5)) :=
   fun _ s ↦ {i | i ∈ s ∧ d.property D i}
 
-instance (D : Display) (d : Description) (g : Assignment (Fin 5)) (s : Finset (Fin 5)) :
+instance (D : Display) (d : Description) (g : ℕ → Fin 5) (s : Finset (Fin 5)) :
     DecidablePred (· ∈ d.restrictor D g s) := fun i ↦
   inferInstanceAs (Decidable (i ∈ s ∧ d.property D i))
 
