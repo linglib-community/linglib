@@ -10,16 +10,20 @@ has binary rules, the modes of combination, and unary rules, the type shifts. It
 language whose symbols take one argument or a pair, a derivation is a term of that language over
 typed lexical items, and a structure for it gives each derivation a value.
 
-What an interpreter asks of the syntax is a bare structure, the words in their constituency and
-order with a label at each node, and an interpreter says which rules a node admits, by its label
-and the types of its daughters. The derivations over a bare structure are found from the types
-alone. Two interpreters over one grammar are two theories of what a structure can mean.
+A derivation is all the semantics is given, and nothing is assumed of where it comes from: a
+syntactic theory says which derivations its objects have. One way is type-driven: an interpreter
+reads a bare structure, the words in their constituency and order with a label at each node, and
+says which rules a node admits by its label and the types of its daughters, so that the
+derivations over a bare structure are found from the types alone.
 
 ## Main definitions
 
 * `Interpreter.Grammar`: the unary and binary rules over a type of semantic types.
 * `Interpreter.Grammar.language`, `Interpreter.Grammar.structure`: the many-sorted language of a
   grammar, and the structure that operations for its rules make.
+* `Interpreter.Grammar.sum`: two grammars together, with the structure a structure for each makes.
+* `Interpreter.Grammar.LocallyFinite`, `Interpreter.typeDriven`: a grammar whose rules for given
+  daughters can be listed, and the interpreter that admits every rule that applies.
 * `Interpreter.Grammar.Deriv`: the derivations of a type over typed lexical items.
 * `Interpreter.Grammar.Skeleton`: a bare structure.
 * `Interpreter`: the rules a node admits by its label and its daughters' types.
@@ -72,11 +76,52 @@ inductive Sym (G : Grammar.{u, v} T) : Signature T → T → Type (max u v)
 def language (G : Grammar.{u, v} T) : Language.{u, max u v} T := ⟨G.Sym⟩
 
 /-- The structure for a grammar's language that operations for its rules make. -/
-def «structure» (unary : ∀ {a b : T}, G.Unary a b → D a → D b)
+@[instance_reducible] def «structure» (unary : ∀ {a b : T}, G.Unary a b → D a → D b)
     (binary : ∀ {a b c : T}, G.Binary a b c → D a → D b → D c) : G.language.Structure D where
   funMap
     | .unary s, x => unary s x
     | .binary m, (x, y) => binary m x y
+
+/-- The rules of two grammars together. -/
+def sum (G H : Grammar.{u, v} T) : Grammar.{u, v} T where
+  Unary a b := G.Unary a b ⊕ H.Unary a b
+  Binary a b c := G.Binary a b c ⊕ H.Binary a b c
+
+/-- The structure for two grammars together that a structure for each makes. -/
+instance sumStructure {H : Grammar.{u, v} T} [M : G.language.Structure D]
+    [M' : H.language.Structure D] : (G.sum H).language.Structure D where
+  funMap
+    | .unary (.inl s), x => M.funMap (.unary s) x
+    | .unary (.inr s), x => M'.funMap (.unary s) x
+    | .binary (.inl m), p => M.funMap (.binary m) p
+    | .binary (.inr m), p => M'.funMap (.binary m) p
+
+/-- A grammar is locally finite when the rules that apply to given daughters can be listed. -/
+class LocallyFinite (G : Grammar.{u, v} T) where
+  /-- The unary rules that apply to a daughter of type `a`. -/
+  unaryRules : (a : T) → List (Σ b, G.Unary a b)
+  /-- The binary rules that apply to daughters of types `l` and `r`. -/
+  binaryRules : (l r : T) → List (Σ u, G.Binary l r u)
+  /-- Every unary rule is listed. -/
+  mem_unaryRules {a b : T} (s : G.Unary a b) : ⟨b, s⟩ ∈ unaryRules a
+  /-- Every binary rule is listed. -/
+  mem_binaryRules {l r u : T} (m : G.Binary l r u) : ⟨u, m⟩ ∈ binaryRules l r
+
+instance {H : Grammar.{u, v} T} [G.LocallyFinite] [H.LocallyFinite] : (G.sum H).LocallyFinite where
+  unaryRules a := (LocallyFinite.unaryRules a).map (fun ⟨b, s⟩ ↦ ⟨b, .inl s⟩) ++
+    (LocallyFinite.unaryRules a).map fun ⟨b, s⟩ ↦ ⟨b, .inr s⟩
+  binaryRules l r := (LocallyFinite.binaryRules l r).map (fun ⟨u, m⟩ ↦ ⟨u, .inl m⟩) ++
+    (LocallyFinite.binaryRules l r).map fun ⟨u, m⟩ ↦ ⟨u, .inr m⟩
+  mem_unaryRules
+    | .inl s => List.mem_append_left _
+      (List.mem_map.2 ⟨_, LocallyFinite.mem_unaryRules s, rfl⟩)
+    | .inr s => List.mem_append_right _
+      (List.mem_map.2 ⟨_, LocallyFinite.mem_unaryRules s, rfl⟩)
+  mem_binaryRules
+    | .inl m => List.mem_append_left _
+      (List.mem_map.2 ⟨_, LocallyFinite.mem_binaryRules m, rfl⟩)
+    | .inr m => List.mem_append_right _
+      (List.mem_map.2 ⟨_, LocallyFinite.mem_binaryRules m, rfl⟩)
 
 /-- A derivation of a type from lexical items of the types `W` supplies. -/
 abbrev Deriv (G : Grammar.{u, v} T) (W : T → Type w) (a : T) : Type (max u v w) :=
@@ -127,6 +172,12 @@ open Grammar
 variable {T : Type u} {G : Grammar.{u, v} T} {N : Type v} {L : Type w} {W : T → Type w}
   {D : T → Type x}
 
+/-- The type-driven interpreter of a grammar: a node admits every rule that applies to the
+types of its daughters, whatever its label. -/
+def typeDriven (G : Grammar.{u, v} T) [G.LocallyFinite] : Interpreter G N where
+  unary _ := LocallyFinite.unaryRules
+  binary _ := LocallyFinite.binaryRules
+
 /-- The derivations over a bare structure that an interpreter admits, given the typed items each
 word may be. -/
 def derivs (I : Interpreter G N) (lex : L → List (Σ a, W a)) :
@@ -140,13 +191,13 @@ def derivs (I : Interpreter G N) (lex : L → List (Σ a, W a)) :
 
 /-- The values of the derivations over a bare structure, for a lexicon of typed items whose
 values `ρ` gives. The derivations are found from the types alone. -/
-def values (I : Interpreter G N) (M : G.language.Structure D) (ρ : ∀ {a : T}, W a → D a)
+def values (I : Interpreter G N) [M : G.language.Structure D] (ρ : ∀ {a : T}, W a → D a)
     (lex : L → List (Σ a, W a)) (s : Skeleton N L) : List (Σ a, D a) :=
   (I.derivs lex s).map fun ⟨a, d⟩ ↦ ⟨a, d.realize M ρ⟩
 
 /-- The meanings of a bare structure, for a lexicon whose items are their values. -/
-def meanings {D : T → Type w} (I : Interpreter G N) (M : G.language.Structure D)
+def meanings {D : T → Type w} (I : Interpreter G N) [G.language.Structure D]
     (lex : L → List (Σ a, D a)) : Skeleton N L → List (Σ a, D a) :=
-  I.values M id lex
+  I.values id lex
 
 end Interpreter

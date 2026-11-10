@@ -44,9 +44,9 @@ supplement effect, whose log is a monoid, is `Core/Control/Monad/Writer.lean`.
 
 The modes act on Lean's type constructors; an adjunction is mathlib's `Adjunction` between the
 corresponding functors `ofTypeFunctor Ω ⊣ ofTypeFunctor Γ`, so the unit, co-unit and induced
-monad are mathlib's. The type-driven grammar is the library's `Interpreter.Mode` over the standard
-basic modes, and the interpreter is `Interpreter.Ty.combine`, checked here against the outputs
-the book prints. The base sort is `e`.
+monad are mathlib's. The type-driven grammar is the library's `Interpreter.Mode` over application
+and predicate modification, and the interpreter is `Interpreter.Ty.combine`, checked here against
+the outputs the book prints. The base sort is `e`.
 
 The Element is forthcoming; equation, section and appendix locators are to the arXiv version of
 April 2025.
@@ -341,10 +341,15 @@ theorem InputFree.not_reads : ∀ {a : Ty B}, InputFree a → ¬ Reads a
   | .t, _ => id
   | .base _, _ => id
 
-theorem Standard.reads : ∀ {l r u : Ty B}, Standard l r u → Reads l → InputFree r → Reads u
-  | _, _, _, .fa, hl, _ => hl
-  | _, _, _, .ba, hl, hr => absurd hl hr.1.not_reads
-  | _, _, _, .pm, hl, _ => hl
+/-- The grammar the book starts from, before any effect: forward and backward application and
+predicate modification. -/
+abbrev baseGrammar (B : Type) : Grammar (Ty B) := .sum .application .predicateModification
+
+theorem baseGrammar_reads :
+    ∀ {l r u : Ty B}, (baseGrammar B).Binary l r u → Reads l → InputFree r → Reads u
+  | _, _, _, .inl .fa, hl, _ => hl
+  | _, _, _, .inl .ba, hl, hr => absurd hl hr.1.not_reads
+  | _, _, _, .inr .pm, hl, _ => hl
 
 /-- Crossover (section 5.2): a left daughter that reads, combined with a right daughter that
 reads nothing, yields a type that still reads, whatever the modes. Only the co-unit mode removes
@@ -369,43 +374,47 @@ abbrev e : Ty Unit := .base ()
 
 /-- An antecedent followed by a pronoun combines into a pure truth value by `C <`
 (section 5.5). -/
-example : Mode Standard (.comp (.W e) e) (.comp (.R e) (e ⇒ .t)) .t := .counit (.basic .ba)
+example : Mode (baseGrammar Unit).Binary (.comp (.W e) e) (.comp (.R e) (e ⇒ .t)) .t :=
+  .counit (.basic (.inl .ba))
 
 /-- An indefinite antecedent binds into an indefinite, `J F̄ C F̃ <` (5.12). -/
-example : Mode Standard (.comp .S (.comp (.W e) e)) (.comp (.R e) (.comp .S (e ⇒ .t)))
-    (.comp .S .t) :=
-  .join trivial (.mapL (.counit (.mapR (.basic .ba))))
+example : Mode (baseGrammar Unit).Binary (.comp .S (.comp (.W e) e))
+    (.comp (.R e) (.comp .S (e ⇒ .t))) (.comp .S .t) :=
+  .join trivial (.mapL (.counit (.mapR (.basic (.inl .ba)))))
 
 /-- A pronoun before its would-be antecedent stays unresolved (5.13), (5.14). -/
 example {u : Ty Unit}
-    (m : Mode Standard (.comp (.R e) e) (.comp .S (.comp (.W e) (e ⇒ .t))) u) : Reads u :=
-  Mode.reads Standard.reads m (.inl trivial) ⟨id, id, trivial, trivial⟩
+    (m : Mode (baseGrammar Unit).Binary (.comp (.R e) e) (.comp .S (.comp (.W e) (e ⇒ .t))) u) :
+    Reads u :=
+  Mode.reads baseGrammar_reads m (.inl trivial) ⟨id, id, trivial, trivial⟩
 
 example {u : Ty Unit}
-    (m : Mode Standard (.comp (.R e) (.comp .S e)) (.comp (.C .t) (.comp (.W e) (e ⇒ .t))) u) :
+    (m : Mode (baseGrammar Unit).Binary (.comp (.R e) (.comp .S e))
+      (.comp (.C .t) (.comp (.W e) (e ⇒ .t))) u) :
     Reads u :=
-  Mode.reads Standard.reads m (.inl trivial) ⟨id, id, trivial, trivial⟩
+  Mode.reads baseGrammar_reads m (.inl trivial) ⟨id, id, trivial, trivial⟩
 
 /-! ### The interpreter
 
 `Ty.combine` on the type combinations the book runs its interpreter on, with the modes named as
 the book prints them. -/
 
-/-- The names of the standard modes. -/
+/-- The names of the basic modes. -/
 inductive Name
   | FA | BA | PM
   deriving DecidableEq, Repr
 
-/-- The name of a standard mode. -/
-def Name.of : {l r u : Ty Unit} → Standard l r u → Name
-  | _, _, _, .fa => .FA
-  | _, _, _, .ba => .BA
-  | _, _, _, .pm => .PM
+/-- The name of a basic mode. -/
+def Name.of : {l r u : Ty Unit} → (baseGrammar Unit).Binary l r u → Name
+  | _, _, _, .inl .fa => .FA
+  | _, _, _, .inl .ba => .BA
+  | _, _, _, .inr .pm => .PM
 
 /-- The interpreter's output for two types: the modes that combine them, in the book's order,
 each with the type it yields. -/
 def combine (l r : Ty Unit) : List (Mode.Shape Name × Ty Unit) :=
-  (Ty.combine (standard Unit) l r).map fun p ↦ (p.2.shape Name.of, p.1)
+  (Ty.combine (Grammar.LocallyFinite.binaryRules (G := baseGrammar Unit)) l r).map fun p ↦
+    (p.2.shape Name.of, p.1)
 
 section Interpreter
 
@@ -462,20 +471,21 @@ local notation "C" => Ty.comp (Eff.C Ty.t)
 
 /-- *Admires everyone*: application mapped over the object. -/
 def admiresEveryone : (C (e ⇒ .t) : Ty Unit).Dom D :=
-  (Mode.mapR (.basic .fa) : Mode Standard (e ⇒ e ⇒ .t) (C e) (C (e ⇒ .t))).eval D
-    (Standard.eval D) admires fun c ↦ ∀ x, c x
+  (Mode.mapR (.basic (.inl .fa)) :
+    Mode (baseGrammar Unit).Binary (e ⇒ e ⇒ .t) (C e) (C (e ⇒ .t))).eval D admires fun c ↦ ∀ x, c x
 
 /-- The surface order: someone admires everyone. -/
 theorem eval_ap_iff :
-    ((Mode.ap trivial (.basic .ba) : Mode Standard (C e) (C (e ⇒ .t)) (C .t)).eval D
-      (Standard.eval D) (fun c ↦ ∃ y, c y) (admiresEveryone admires)) id ↔
+    ((Mode.ap trivial (.basic (.inl .ba)) :
+      Mode (baseGrammar Unit).Binary (C e) (C (e ⇒ .t)) (C .t)).eval D
+        (fun c ↦ ∃ y, c y) (admiresEveryone admires)) id ↔
       ∃ y, ∀ x, admires x y := Iff.rfl
 
 /-- The inverse order: everyone is admired by someone. -/
 theorem eval_join_mapR_mapL_iff :
-    ((Mode.join trivial (.mapR (.mapL (.basic .ba))) :
-      Mode Standard (C e) (C (e ⇒ .t)) (C .t)).eval D (Standard.eval D) (fun c ↦ ∃ y, c y)
-        (admiresEveryone admires)) id ↔ ∀ x, ∃ y, admires x y := Iff.rfl
+    ((Mode.join trivial (.mapR (.mapL (.basic (.inl .ba)))) :
+      Mode (baseGrammar Unit).Binary (C e) (C (e ⇒ .t)) (C .t)).eval D
+        (fun c ↦ ∃ y, c y) (admiresEveryone admires)) id ↔ ∀ x, ∃ y, admires x y := Iff.rfl
 
 end Scope
 

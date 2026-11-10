@@ -3,7 +3,8 @@ module
 public import Linglib.Data.Examples.Elbourne2026
 public import Linglib.Data.Examples.Readers
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
-public import Linglib.Semantics.Composition.Mode
+public import Linglib.Semantics.Composition.Interpreter.Mode
+public import Linglib.Semantics.Composition.Interpreter.Sorts
 public import Linglib.Semantics.Modification.Classification
 public import Linglib.Semantics.Quantification.Basic
 public import Mathlib.Data.Finset.Image
@@ -14,7 +15,7 @@ public import Mathlib.Data.Finset.Powerset
 
 Elbourne replaces syntactic categories by semantic types in a grammar that composes by functional
 application alone, and gives every adjective the type ⟨eit,eit⟩ of a function on noun meanings,
-which [admits no other rule of composition](##isSome_mode?_iff) even where one exists.
+where [application does the work of predicate modification](##simulates_predicateModification).
 [Nothing that takes a noun merges with an adjective](##not_merges_of_takes_noun), which excludes
 *Every red is attractive*, while [a copula takes just the adjectives without compulsory
 features](##merges_copula_iff), which excludes *The president is former*. The copula applies the
@@ -24,10 +25,10 @@ differ in their two orders](##exists_not_commute_former), a difference of scope 
 
 ## Implementation notes
 
-* The types are `Montague.Ty` over a type `i` of time intervals left as a variable, entity first
-  as printed. The meanings are `Modifier (I → E → Prop)`, times first as in the substrate's
-  `Modifier.former`, with conjuncts reordered, so that the second meaning (32) of *a* is
-  `Modifier.intersective`.
+* The types are those over `Interpreter.Base`, with the type `i` of time intervals left as a
+  variable, entity first as printed. The meanings are `Modifier (I → E → Prop)`, times first as
+  in the substrate's `Modifier.former`, with conjuncts reordered, so that the second meaning
+  (32) of *a* is `Modifier.intersective`.
 * The syntax of §2 enters through the selector features of (8) and External Merge (4a), which
   puts the bearer of `E_R` on the left as the function. Predicate Abstraction and traces are Lean
   binders; Scope Economy (7) is not represented.
@@ -60,12 +61,12 @@ differ in their two orders](##exists_not_commute_former), a difference of scope 
 
 namespace Elbourne2026
 
-open Montague Modifier Elbourne2026.Examples
+open Interpreter Modifier Elbourne2026.Examples
 
 /-! ### Types and selector features -/
 
 /-- The type ⟨e,it⟩ of nouns, where `i` is the type of time intervals. -/
-def eit (i : Ty) : Ty := .e ⇒ i ⇒ .t
+def eit (i : Ty Base) : Ty Base := .e ⇒ i ⇒ .t
 
 /-- The selector features `E_L` and `E_R` (1) trigger External Merge (4) with a constituent to
 the left or to the right. -/
@@ -140,47 +141,109 @@ end Features
 
 section Merge
 
-variable (i : Ty)
+variable (i : Ty Base)
 
-/-- An adjective with features `f` merges with a sister of type `σ` when Functional Application
-(9) applies with the left daughter, the bearer of `E_R` (4a), as the function: either the
-adjective takes the sister as its noun by `E_R`, or the sister takes the adjective, which by
-Argument Interpretability (6) then carries no feature. -/
-def Merges (f : Features) (σ : Ty) : Prop :=
-  (Mode.functionalLeft? (eit i ⇒ eit i) σ).isSome ∧ f.TakesNoun ∨
-    (Mode.functionalLeft? σ (eit i ⇒ eit i)).isSome ∧ f.Selectable
+/-- Functional Application (9), the one rule of composition: by External Merge (4a) the left
+daughter, the bearer of `E_R`, is the function, and its argument has the type of the right. -/
+def Applies (σ τ : Ty Base) : Prop := ∃ ρ, σ = (τ ⇒ ρ)
+
+/-- An adjective with features `f` merges with a sister of type `σ` when either it takes the
+sister as its noun by `E_R`, or the sister takes the adjective, which by Argument
+Interpretability (6) then carries no feature. -/
+def Merges (f : Features) (σ : Ty Base) : Prop :=
+  Applies (eit i ⇒ eit i) σ ∧ f.TakesNoun ∨ Applies σ (eit i ⇒ eit i) ∧ f.Selectable
 
 variable {i} {f : Features}
 
-/-- Even in a grammar with predicate modification and event identification, an adjective of type
-⟨eit,eit⟩ composes only by functional application, taking a noun or taken by its sister, so that
-the type alone keeps predicate modification out of attributive position (§3.1). -/
-theorem isSome_mode?_iff (σ : Ty) :
-    ((eit i ⇒ eit i).mode? σ).isSome ↔ σ = eit i ∨ ∃ ρ, σ = ((eit i ⇒ eit i) ⇒ ρ) := by
-  unfold eit
-  rw [Ty.isSome_mode?_iff]
-  constructor
-  · rintro ⟨⟨τ, m⟩, hm⟩
-    cases m <;> first | exact .inl rfl | exact .inr ⟨_, rfl⟩ | exact hm.elim
-  · rintro (rfl | ⟨ρ, rfl⟩)
-    · exact ⟨⟨_, .functionalLeft⟩, trivial⟩
-    · exact ⟨⟨_, .functionalRight⟩, trivial⟩
+section Composition
+
+variable {E W : Type}
+
+/-- The meanings of a structure by Functional Application (9) alone, its leaves being their own
+lexical entries. -/
+def byApplication (s : Grammar.Skeleton Unit (Denotation E W)) : List (Denotation E W) :=
+  (typeDriven .application).meanings (D := Ty.Dom (Base.Dom E W)) (fun x ↦ [x]) s
+
+/-- The meanings of a structure in the grammar of the ⟨e,t⟩ theory, which adds Predicate
+Modification to Functional Application (§3.1). -/
+def withModification (s : Grammar.Skeleton Unit (Denotation E W)) : List (Denotation E W) :=
+  (typeDriven (.sum .application .predicateModification)).meanings
+    (D := Ty.Dom (Base.Dom E W)) (fun x ↦ [x]) s
+
+-- (24)–(26): *cute donkey* means by Functional Application alone, with *cute* a function on
+-- noun meanings, what it means by Predicate Modification with *cute* a property.
+theorem byApplication_cute_donkey (cute donkey : E → Prop) :
+    byApplication (W := W)
+        (.binary () (.leaf ⟨.et ⇒ .et, intersective cute⟩) (.leaf ⟨.et, donkey⟩)) =
+      withModification (.binary () (.leaf ⟨.et, cute⟩) (.leaf ⟨.et, donkey⟩)) :=
+  rfl
+
+-- (26): the one meaning of *cute donkey*, the conjunction.
+example (cute donkey : E → Prop) :
+    byApplication (W := W)
+        (.binary () (.leaf ⟨.et ⇒ .et, intersective cute⟩) (.leaf ⟨.et, donkey⟩)) =
+      [⟨.et, cute ⊓ donkey⟩] :=
+  rfl
+
+-- Without the rule, two properties do not combine.
+example (cute donkey : E → Prop) :
+    byApplication (W := W) (.binary () (.leaf ⟨.et, cute⟩) (.leaf ⟨.et, donkey⟩)) = [] :=
+  rfl
+
+/-- The lift of a property to a function on noun meanings: what an adjective of the ⟨et,et⟩
+theory is to the adjective of the ⟨e,t⟩ theory, as *cute* (24b) is to the property of being
+cute. -/
+inductive Lift {B : Type} : Ty B → Ty B → Type
+  /-- The lift. -/
+  | lift {a : Ty B} : Lift (a ⇒ .t) ((a ⇒ .t) ⇒ a ⇒ .t)
+
+/-- A lifted property is the intersective modifier of that property. -/
+def Lift.eval {B : Type} (D : B → Type) : {a b : Ty B} → Lift a b → a.Dom D → b.Dom D
+  | _, _, .lift, p => fun q x ↦ p x ∧ q x
+
+/-- The grammar whose one rule lifts a property. -/
+def lifting {B : Type} : Grammar (Ty B) := ⟨Lift, fun _ _ _ ↦ Empty⟩
+
+instance {B : Type} (D : B → Type) : (lifting (B := B)).language.Structure (Ty.Dom D) :=
+  Grammar.structure (Lift.eval D) nofun
+
+/-- Whatever the ⟨e,t⟩ theory derives with Functional Application and Predicate Modification,
+Functional Application derives with the same value once the modifier is lifted, at any type and
+over any domains, so the theory does without Predicate Modification (§3.1) and research under
+the ⟨e,t⟩ theory translates into it (§3.3). The lift is of words in Elbourne's lexicon and of
+any left daughter here; the converse fails for *former* (§3.4). -/
+theorem simulates_predicateModification {B : Type} (D : B → Type) :
+    MSFirstOrder.Language.Structure.Simulates
+      (inferInstance : (Grammar.application.sum lifting).language.Structure (Ty.Dom D))
+      (inferInstance :
+        (Grammar.application.sum .predicateModification).language.Structure (Ty.Dom D)) where
+  funMap
+    | .unary (.inl s) => nomatch s
+    | .unary (.inr s) => nomatch s
+    | .binary (.inl m) =>
+      ⟨Grammar.Deriv.binary (.inl m) (.leaf (.left .here)) (.leaf (.right .here)), fun _ ↦ rfl⟩
+    | .binary (.inr .pm) =>
+      ⟨Grammar.Deriv.binary (.inl .fa)
+        (Grammar.Deriv.unary (.inr .lift) (.leaf (.left .here))) (.leaf (.right .here)),
+        fun _ ↦ rfl⟩
+
+end Composition
 
 -- §3.1: an adjective takes a noun in attributive position by its `E_R`.
 theorem merges_noun_iff : Merges i f (eit i) ↔ Selector.eR ∈ f.compulsory ∪ f.optional := by
-  simp [Merges, eit, Features.takesNoun_iff]
+  simp [Merges, Applies, eit, Features.takesNoun_iff]
 
 /-- Whatever takes an adjective as its argument, such as the copula with its tense, of type
 ⟨⟨eit,eit⟩,eit⟩, takes just the adjectives without compulsory features. The types work out for
 *The president is former* (42), and the compulsory `E_R` of *former* excludes it. -/
-theorem merges_copula_iff (ρ : Ty) : Merges i f ((eit i ⇒ eit i) ⇒ ρ) ↔ f.compulsory = ∅ := by
-  simp [Merges, eit, Features.selectable_iff]
+theorem merges_copula_iff (ρ : Ty Base) : Merges i f ((eit i ⇒ eit i) ⇒ ρ) ↔ f.compulsory = ∅ := by
+  simp [Merges, Applies, eit, Features.selectable_iff]
 
 /-- Nothing that takes a noun merges with an adjective in either role, neither a determiner, of
 type ⟨eit,⟨eit,it⟩⟩, nor the second meaning (32) of *a*, of type ⟨eit,⟨eit,eit⟩⟩. This excludes
 *Joe is a former* (36) and *Every red is attractive* (37) by type alone. -/
-theorem not_merges_of_takes_noun (ρ : Ty) : ¬ Merges i f (eit i ⇒ ρ) := by
-  simp [Merges, eit]
+theorem not_merges_of_takes_noun (ρ : Ty Base) : ¬ Merges i f (eit i ⇒ ρ) := by
+  simp [Merges, Applies, eit]
 
 /-- A row on the position of an adjective, read as the merge of the adjective with its sister. -/
 structure Row where
@@ -189,7 +252,7 @@ structure Row where
   /-- The features of its adjective. -/
   features : Features
   /-- The type of the adjective's sister. -/
-  sister : Ty
+  sister : Ty Base
 
 variable (i)
 
