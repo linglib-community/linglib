@@ -57,7 +57,7 @@ theorem support_singleton_iff_st (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
     (hNE : φ.NEFree) {k : ℕ}
     {i : Index W Var Domain} {v : Var → Domain} (u : ℕ → W)
-    (hv : ∀ y, i.assign y = ↑(v y)) (hu : u k = i.world) :
+    (hv : ∀ y, i.assign y = some (v y)) (hu : u k = i.world) :
     support M φ {i} ↔
       (letI := M.correspondence
        (φ.toModal.st k).Realize (stVal v u)) :=
@@ -68,7 +68,7 @@ theorem models_toSentence_of_support (M : Model W Domain Const Pred)
     (hNE : φ.NEFree)
     (hcl : (stClose 0 (φ.toModal.st 0)).freeVarFinset = ∅)
     {i : Index W Var Domain} {v : Var → Domain}
-    (hv : ∀ y, i.assign y = ↑(v y)) (hsupp : support M φ {i}) :
+    (hv : ∀ y, i.assign y = some (v y)) (hsupp : support M φ {i}) :
     (letI := M.correspondence
      (W ⊕ Domain) ⊨ (stClose 0 (φ.toModal.st 0)).toSentence hcl) := by
   let _S := M.correspondence
@@ -90,7 +90,7 @@ theorem exists_support_of_models_toSentence
     (h : letI := M.correspondence
          (W ⊕ Domain) ⊨ (stClose 0 (φ.toModal.st 0)).toSentence hcl) :
     ∃ (i : Index W Var Domain) (v : Var → Domain),
-      (∀ y, i.assign y = ↑(v y)) ∧ support M φ {i} := by
+      (∀ y, i.assign y = some (v y)) ∧ support M φ {i} := by
   let _S := M.correspondence
   have d₀ : Domain := default
   obtain ⟨w₀, -⟩ := (realize_stClose 0 (φ.toModal.st 0) _ fun _ => Iff.rfl).mp
@@ -100,7 +100,7 @@ theorem exists_support_of_models_toSentence
   rw [stVal_update_world] at hw
   have hmodal := (realize_st (u := Function.update (fun _ => w₀) 0 w) M).mpr hw
   rw [Function.update_self] at hmodal
-  exact ⟨⟨w, fun _ => ↑d₀⟩, fun _ => d₀, fun _ => rfl,
+  exact ⟨⟨w, fun _ => some d₀⟩, fun _ => d₀, fun _ => rfl,
     (support_singleton_iff_realize M hNE fun _ => rfl).mpr hmodal⟩
 
 /-! ### Compactness for the NE-free fragment -/
@@ -122,7 +122,7 @@ theorem isSatisfiable_stClose_of_support {Var : Type*} [DecidableEq Var] [Fintyp
     (hfin : ∀ s : Finset ι, ∃ (W Domain : Type max u v)
       (_ : DecidableEq W) (_ : DecidableEq Domain) (_ : Fintype Domain) (_ : Inhabited Domain)
       (M : Model W Domain Const Pred) (i : Index W Var Domain)
-      (v : Var → Domain), (∀ y, i.assign y = ↑(v y)) ∧
+      (v : Var → Domain), (∀ y, i.assign y = some (v y)) ∧
         ∀ j ∈ s, support M (φs j) {i}) :
     Theory.IsSatisfiable
       (Set.range fun i => (stClose 0 ((φs i).toModal.st 0)).toSentence (hcl i)) := by

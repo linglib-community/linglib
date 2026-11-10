@@ -1,17 +1,17 @@
 module
 
-public import Linglib.Logic.Assignment
+public import Linglib.Core.Data.Part
 public import Linglib.Semantics.Dynamic.DRT.Verification.Total
 public import Mathlib.Data.Finset.Piecewise
 
 /-!
 # Verification by partial embeddings
 
-This file defines verification in Kamp and Reyle's form. A pair of partial embeddings verifies a
-DRS when the output extends the input by exactly the universe of the DRS and verifies its
-conditions, an atomic condition requiring its referents to be valued. A DRS is true in a model
-when an embedding of its universe verifies it from the empty input. On DRSs that declare no
-referent twice this [agrees with verification by total
+This file defines verification in Kamp and Reyle's form. A pair of partial embeddings — families
+`V → Part M` — verifies a DRS when the output extends the input by exactly the universe of the
+DRS and verifies its conditions, an atomic condition requiring its referents to be valued. A DRS
+is true in a model when an embedding of its universe verifies it from the empty input. On DRSs
+that declare no referent twice this [agrees with verification by total
 assignments](##DRT.DRS.exists_extends_verifiesTotal_iff_exists_verifies).
 
 ## Main definitions
@@ -61,46 +61,46 @@ mutual
 `g` extends the input `f` by exactly the universe and verifies the conditions (Kamp, van Genabith
 and Reyle, Def. 19(i)). This packages how Def. 1.4.4(ii)(f) enters a sub-DRS; Def. 1.4.4(i), that
 `f` verifies `K`, is unary, and is `Condition.HoldsAll K.conditions f` here. -/
-def DRS.Verifies : DRS L V → PartialAssign V M → PartialAssign V M → Prop
-  | .mk U cs, f, g => f ≤ g ∧ g.domain = f.domain ∪ ↑U ∧ Condition.HoldsAll cs g
+def DRS.Verifies : DRS L V → (V → Part M) → (V → Part M) → Prop
+  | .mk U cs, f, g => f ≤ g ∧ PFun.Dom g = PFun.Dom f ∪ ↑U ∧ Condition.HoldsAll cs g
 /-- `Condition.Holds c g` says the partial embedding `g` verifies the DRS-condition `c`
 (Def. 1.4.4(ii)); an atomic condition requires its referents to be valued, and a sub-DRS is
 entered by extension. -/
-def Condition.Holds : Condition L V → PartialAssign V M → Prop
-  | .atom a, g => ∃ v : Fin a.arity → M, (∀ i, g (a.args i) = ↑(v i)) ∧ Structure.RelMap a.rel v
-  | .eq u v, g => ∃ m : M, g u = ↑m ∧ g v = ↑m
+def Condition.Holds : Condition L V → (V → Part M) → Prop
+  | .atom a, g => ∃ v : Fin a.arity → M, (∀ i, v i ∈ g (a.args i)) ∧ Structure.RelMap a.rel v
+  | .eq u v, g => ∃ m : M, m ∈ g u ∧ m ∈ g v
   | .neg K, g => ¬ ∃ g', DRS.Verifies K g g'
   | .imp a c, g => ∀ g', DRS.Verifies a g g' → ∃ g'', DRS.Verifies c g' g''
   | .dis l r, g => (∃ g', DRS.Verifies l g g') ∨ ∃ g', DRS.Verifies r g g'
 /-- `Condition.HoldsAll cs g` says `g` verifies every condition of `cs`. -/
-def Condition.HoldsAll : List (Condition L V) → PartialAssign V M → Prop
+def Condition.HoldsAll : List (Condition L V) → (V → Part M) → Prop
   | [], _ => True
   | c :: cs, g => Condition.Holds c g ∧ Condition.HoldsAll cs g
 end
 
-theorem DRS.verifies_iff {K : DRS L V} {f g : PartialAssign V M} :
+theorem DRS.verifies_iff {K : DRS L V} {f g : V → Part M} :
     K.Verifies f g ↔
-      f ≤ g ∧ g.domain = f.domain ∪ ↑K.referents ∧ Condition.HoldsAll K.conditions g := by
+      f ≤ g ∧ PFun.Dom g = PFun.Dom f ∪ ↑K.referents ∧ Condition.HoldsAll K.conditions g := by
   obtain ⟨U, cs⟩ := K
   exact Iff.rfl
 
 /-- A DRS is *true* in `M` when an embedding of its universe verifies it from the empty input
 (Def. 1.4.5). -/
 def DRS.IsTrue (K : DRS L V) (M : Type x) [L.Structure M] : Prop :=
-  ∃ g : PartialAssign V M, K.Verifies ⊥ g
+  ∃ g : V → Part M, K.Verifies ⊥ g
 
-variable {f g : PartialAssign V M}
+variable {f g : V → Part M}
 
 @[simp] theorem DRS.verifies_mk (U : Finset V) (cs : List (Condition L V)) :
     DRS.Verifies (.mk U cs) f g ↔
-      f ≤ g ∧ g.domain = f.domain ∪ ↑U ∧ Condition.HoldsAll cs g := Iff.rfl
+      f ≤ g ∧ PFun.Dom g = PFun.Dom f ∪ ↑U ∧ Condition.HoldsAll cs g := Iff.rfl
 
 @[simp] theorem Condition.holds_atom (a : L.Atom V) :
     (Condition.atom a).Holds g ↔
-      ∃ v : Fin a.arity → M, (∀ i, g (a.args i) = ↑(v i)) ∧ Structure.RelMap a.rel v := Iff.rfl
+      ∃ v : Fin a.arity → M, (∀ i, v i ∈ g (a.args i)) ∧ Structure.RelMap a.rel v := Iff.rfl
 
 @[simp] theorem Condition.holds_eq (u v : V) :
-    (Condition.eq u v : Condition L V).Holds g ↔ ∃ m : M, g u = ↑m ∧ g v = ↑m := Iff.rfl
+    (Condition.eq u v : Condition L V).Holds g ↔ ∃ m : M, m ∈ g u ∧ m ∈ g v := Iff.rfl
 
 @[simp] theorem Condition.holds_neg (K : DRS L V) :
     (Condition.neg K).Holds g ↔ ¬ ∃ g', K.Verifies g g' := Iff.rfl
@@ -136,7 +136,7 @@ theorem DRS.Verifies.le {K : DRS L V} (h : K.Verifies f g) : f ≤ g := by
   exact h.1
 
 theorem DRS.Verifies.domain_eq {K : DRS L V} (h : K.Verifies f g) :
-    g.domain = f.domain ∪ ↑K.referents := by
+    PFun.Dom g = PFun.Dom f ∪ ↑K.referents := by
   obtain ⟨U, cs⟩ := K
   exact h.2.1
 
@@ -148,51 +148,53 @@ theorem DRS.Verifies.holdsAll {K : DRS L V} (h : K.Verifies f g) :
 @[simp] theorem DRS.verifies_empty : (DRS.empty : DRS L V).Verifies f g ↔ g = f := by
   simp only [DRS.empty, DRS.verifies_mk, Condition.holdsAll_nil, and_true,
     Finset.coe_empty, Set.union_empty]
-  exact ⟨fun ⟨hle, hdom⟩ => PartialAssign.eq_of_le_of_domain_subset hle hdom.subset,
+  exact ⟨fun ⟨hle, hdom⟩ => (PFun.eq_of_le_of_dom_subset hle hdom.subset).symm,
     fun h => h ▸ ⟨le_rfl, rfl⟩⟩
 
 /-- Introducing a referent is a covering step of the extension order when the referent is novel,
 and inert when it is familiar. -/
 theorem DRS.verifies_singleton_nil_iff (u : V) :
     DRS.Verifies (.mk {u} [] : DRS L V) f g ↔
-      (f u = ⊥ ∧ f ⋖ g ∧ g u ≠ ⊥) ∨ (f u ≠ ⊥ ∧ g = f) := by
+      (¬(f u).Dom ∧ f ⋖ g ∧ (g u).Dom) ∨ ((f u).Dom ∧ g = f) := by
   simp only [DRS.verifies_mk, Condition.holdsAll_nil, and_true, Finset.coe_singleton]
   constructor
   · rintro ⟨hle, hdom⟩
-    by_cases hu : f u = ⊥
-    · have hgu : g u ≠ ⊥ := by
-        have hmem : u ∈ g.domain := by
+    by_cases hu : (f u).Dom
+    · refine .inr ⟨hu, (PFun.eq_of_le_of_dom_subset hle ?_).symm⟩
+      rw [hdom]
+      exact Set.union_subset subset_rfl (Set.singleton_subset_iff.2 hu)
+    · have hgu : (g u).Dom := by
+        have hmem : u ∈ PFun.Dom g := by
           rw [hdom]
           exact Set.mem_union_right _ rfl
         exact hmem
-      refine .inl ⟨hu, PartialAssign.covBy_iff.2 ⟨u, hu, hgu, fun y hy => ?_⟩, hgu⟩
-      by_cases hyf : f y = ⊥
-      · have hgy : g y = ⊥ := by
-          by_contra hgy
-          have hmem : y ∈ g.domain := PartialAssign.mem_domain.mpr hgy
+      refine .inl ⟨hu, Pi.covBy_iff.2 ⟨u, Part.covBy_iff.2 ⟨hu, hgu⟩, fun y hy => ?_⟩, hgu⟩
+      by_cases hyf : (f y).Dom
+      · exact PFun.le_iff_eqOn_dom.mp hle hyf
+      · have hgy : ¬(g y).Dom := fun hgy => by
+          have hmem : y ∈ PFun.Dom g := hgy
           rw [hdom] at hmem
           rcases hmem with h | h
-          · exact h hyf
+          · exact hyf h
           · exact hy h
-        rw [hyf, hgy]
-      · exact PartialAssign.le_iff_eqOn_domain.mp hle hyf
-    · refine .inr ⟨hu, PartialAssign.eq_of_le_of_domain_subset hle ?_⟩
-      rw [hdom]
-      exact Set.union_subset subset_rfl (Set.singleton_subset_iff.2 hu)
+        rw [Part.eq_bot_iff_not_dom.2 hyf, Part.eq_bot_iff_not_dom.2 hgy]
   · rintro (⟨hu, hcov, hgu⟩ | ⟨hu, rfl⟩)
-    · obtain ⟨x, hfx, hgx, hagree⟩ := PartialAssign.covBy_iff.1 hcov
+    · obtain ⟨x, hx, hagree⟩ := Pi.covBy_iff.1 hcov
+      obtain ⟨hfx, hgx⟩ := Part.covBy_iff.1 hx
       have hxu : x = u := by
         by_contra hxu
-        exact hgu ((hagree u fun h => hxu h.symm).symm.trans hu)
+        exact hu (by rw [hagree u fun h => hxu h.symm]; exact hgu)
       subst hxu
       refine ⟨hcov.le, Set.ext fun y => ?_⟩
       rw [Set.mem_union, Set.mem_singleton_iff]
       by_cases hyx : y = x
       · subst hyx
-        simp [hgx]
-      · simp only [PartialAssign.mem_domain, ← hagree y hyx]
+        exact iff_of_true hgx (.inr rfl)
+      · show (g y).Dom ↔ (f y).Dom ∨ y = x
+        rw [← hagree y hyx]
         exact ⟨Or.inl, fun h => h.resolve_right hyx⟩
-    · exact ⟨le_rfl, by rw [Set.union_eq_left.mpr (Set.singleton_subset_iff.2 hu)]⟩
+    · exact ⟨le_rfl, by
+        rw [Set.union_eq_left.mpr (Set.singleton_subset_iff.2 (show u ∈ PFun.Dom g from hu))]⟩
 
 /-! ### Coincidence
 
@@ -204,9 +206,9 @@ section Congruence
 variable [DecidableEq V]
 
 private theorem DRS.verifies_piecewise {U : Finset V} {cs : List (Condition L V)}
-    (hIH : ∀ {k k' : PartialAssign V M}, Set.EqOn k k' ↑(Condition.varFinsetL cs) →
+    (hIH : ∀ {k k' : V → Part M}, Set.EqOn k k' ↑(Condition.varFinsetL cs) →
       (Condition.HoldsAll cs k ↔ Condition.HoldsAll cs k'))
-    {f f' g' : PartialAssign V M}
+    {f f' g' : V → Part M}
     (h : Set.EqOn f f' ↑(DRS.varFinset (.mk U cs : DRS L V)))
     (hv : DRS.Verifies (.mk U cs) f' g') :
     DRS.Verifies (.mk U cs) f (U.piecewise g' f) ∧
@@ -217,26 +219,25 @@ private theorem DRS.verifies_piecewise {U : Finset V} {cs : List (Condition L V)
     by_cases hxU : x ∈ U
     · exact Finset.piecewise_eq_of_mem _ _ _ hxU
     · rw [Finset.piecewise_eq_of_notMem _ _ _ hxU, hx]
-      by_cases hxd : f' x = ⊥
-      · have hgb : g' x = ⊥ := by
-          by_contra hgx
-          have hmem : x ∈ g'.domain := PartialAssign.mem_domain.mpr hgx
+      by_cases hxd : (f' x).Dom
+      · exact PFun.le_iff_eqOn_dom.mp hle hxd
+      · have hgb : ¬(g' x).Dom := fun hgx => by
+          have hmem : x ∈ PFun.Dom g' := hgx
           rw [hdom] at hmem
           rcases hmem with hmem | hmem
-          · exact hmem hxd
+          · exact hxd hmem
           · exact hxU (Finset.mem_coe.mp hmem)
-        rw [hxd, hgb]
-      · exact PartialAssign.le_iff_eqOn_domain.mp hle hxd
+        rw [Part.eq_bot_iff_not_dom.2 hxd, Part.eq_bot_iff_not_dom.2 hgb]
   refine ⟨⟨Pi.le_def.mpr fun x => ?_, Set.ext fun x => ?_, ?_⟩, hag⟩
   · by_cases hxU : x ∈ U
     · rw [Finset.piecewise_eq_of_mem _ _ _ hxU]
       calc f x = f' x := h (by simp [hxU])
         _ ≤ g' x := hle x
     · rw [Finset.piecewise_eq_of_notMem _ _ _ hxU]
-  · simp only [PartialAssign.mem_domain]
+  · show (U.piecewise g' f x).Dom ↔ x ∈ PFun.Dom f ∪ ↑U
     by_cases hxU : x ∈ U
-    · have hgx : g' x ≠ ⊥ := by
-        have hmem : x ∈ g'.domain := by
+    · have hgx : (g' x).Dom := by
+        have hmem : x ∈ PFun.Dom g' := by
           rw [hdom]
           exact Set.mem_union_right _ (Finset.mem_coe.mpr hxU)
         exact hmem
@@ -244,28 +245,28 @@ private theorem DRS.verifies_piecewise {U : Finset V} {cs : List (Condition L V)
       exact iff_of_true hgx (Set.mem_union_right _ (Finset.mem_coe.mpr hxU))
     · rw [Finset.piecewise_eq_of_notMem _ _ _ hxU]
       constructor
-      · exact fun hfx => Set.mem_union_left _ (PartialAssign.mem_domain.mpr hfx)
+      · exact fun hfx => Set.mem_union_left _ hfx
       · intro hx
         rcases hx with hx | hx
-        · exact PartialAssign.mem_domain.mp hx
+        · exact hx
         · exact absurd (Finset.mem_coe.mp hx) hxU
   · refine (hIH fun x hx => ?_).mpr hh
     exact hag (h (by simp only [DRS.varFinset_mk, Finset.coe_union, Set.mem_union]; exact .inr hx))
 
 mutual
 /-- Whether some output verifies a DRS reads the input only at the occurring referents. -/
-theorem DRS.exists_verifies_congr (K : DRS L V) {f f' : PartialAssign V M}
+theorem DRS.exists_verifies_congr (K : DRS L V) {f f' : V → Part M}
     (h : Set.EqOn f f' ↑K.varFinset) :
     (∃ g, K.Verifies f g) ↔ ∃ g, K.Verifies f' g := by
   match K with
   | .mk U cs =>
-    have hIH : ∀ {k k' : PartialAssign V M}, Set.EqOn k k' ↑(Condition.varFinsetL cs) →
+    have hIH : ∀ {k k' : V → Part M}, Set.EqOn k k' ↑(Condition.varFinsetL cs) →
         (Condition.HoldsAll cs k ↔ Condition.HoldsAll cs k') :=
       fun hkk' => Condition.holdsAll_congr cs hkk'
     exact ⟨fun ⟨g, hg⟩ => ⟨_, (DRS.verifies_piecewise hIH h.symm hg).1⟩,
       fun ⟨g, hg⟩ => ⟨_, (DRS.verifies_piecewise hIH h hg).1⟩⟩
 /-- A condition reads an embedding only at its occurring referents. -/
-theorem Condition.holds_congr (c : Condition L V) {g g' : PartialAssign V M}
+theorem Condition.holds_congr (c : Condition L V) {g g' : V → Part M}
     (h : Set.EqOn g g' ↑c.varFinset) : c.Holds g ↔ c.Holds g' := by
   match c with
   | .atom a =>
@@ -284,7 +285,7 @@ theorem Condition.holds_congr (c : Condition L V) {g g' : PartialAssign V M}
     rw [Condition.varFinset_imp] at h
     have ha := h.mono (Finset.coe_subset.mpr Finset.subset_union_left)
     have hc := h.mono (Finset.coe_subset.mpr Finset.subset_union_right)
-    have hIHa : ∀ {k k' : PartialAssign V M}, Set.EqOn k k' ↑(Condition.varFinsetL csa) →
+    have hIHa : ∀ {k k' : V → Part M}, Set.EqOn k k' ↑(Condition.varFinsetL csa) →
         (Condition.HoldsAll csa k ↔ Condition.HoldsAll csa k') :=
       fun hkk' => Condition.holdsAll_congr csa hkk'
     simp only [Condition.holds_imp]
@@ -302,7 +303,7 @@ theorem Condition.holds_congr (c : Condition L V) {g g' : PartialAssign V M}
     exact or_congr
       (DRS.exists_verifies_congr l (h.mono (Finset.coe_subset.mpr Finset.subset_union_left)))
       (DRS.exists_verifies_congr r (h.mono (Finset.coe_subset.mpr Finset.subset_union_right)))
-theorem Condition.holdsAll_congr (cs : List (Condition L V)) {g g' : PartialAssign V M}
+theorem Condition.holdsAll_congr (cs : List (Condition L V)) {g g' : V → Part M}
     (h : Set.EqOn g g' ↑(Condition.varFinsetL cs)) :
     Condition.HoldsAll cs g ↔ Condition.HoldsAll cs g' := by
   match cs with
@@ -314,7 +315,7 @@ theorem Condition.holdsAll_congr (cs : List (Condition L V)) {g g' : PartialAssi
 end
 
 /-- An input valuing no occurring referent verifies a DRS exactly when the DRS is true. -/
-theorem DRS.exists_verifies_iff_isTrue {K : DRS L V} {f : PartialAssign V M}
+theorem DRS.exists_verifies_iff_isTrue {K : DRS L V} {f : V → Part M}
     (hf : ∀ x ∈ K.varFinset, f x = ⊥) : (∃ g, K.Verifies f g) ↔ K.IsTrue M :=
   DRS.exists_verifies_congr K fun x hx => hf x (Finset.mem_coe.mp hx)
 
@@ -334,29 +335,31 @@ theorem DRS.verifies_merge [DecidableEq V] (K₁ K₂ : DRS L V)
   simp only [DRS.merge, DRS.verifies_mk, Condition.holdsAll_append, Finset.coe_union]
   constructor
   · rintro ⟨hle, hdom, hh₁, hh₂⟩
-    set h : PartialAssign V M := (f.domain ∪ ↑U₁).piecewise g ⊥ with hdef
-    have happly : ∀ ⦃x⦄, x ∈ f.domain ∪ ↑U₁ → h x = g x := fun x hx =>
+    set h : V → Part M := (PFun.Dom f ∪ ↑U₁).piecewise g ⊥ with hdef
+    have happly : ∀ ⦃x⦄, x ∈ PFun.Dom f ∪ ↑U₁ → h x = g x := fun x hx =>
       Set.piecewise_eq_of_mem _ _ _ hx
-    have hbot : ∀ ⦃x⦄, x ∉ f.domain ∪ ↑U₁ → h x = ⊥ := fun x hx =>
+    have hbot : ∀ ⦃x⦄, x ∉ PFun.Dom f ∪ ↑U₁ → h x = ⊥ := fun x hx =>
       Set.piecewise_eq_of_notMem _ _ _ hx
-    have hsub : f.domain ∪ ↑U₁ ⊆ g.domain := by
+    have hsub : PFun.Dom f ∪ ↑U₁ ⊆ PFun.Dom g := by
       rw [hdom, ← Set.union_assoc]
       exact Set.subset_union_left
-    have hdomh : h.domain = f.domain ∪ ↑U₁ := by
+    have hdomh : PFun.Dom h = PFun.Dom f ∪ ↑U₁ := by
       ext x
-      simp only [PartialAssign.mem_domain]
-      by_cases hx : x ∈ f.domain ∪ ↑U₁
+      show (h x).Dom ↔ _
+      by_cases hx : x ∈ PFun.Dom f ∪ ↑U₁
       · rw [happly hx]
         exact iff_of_true (hsub hx) hx
       · rw [hbot hx]
-        exact iff_of_false (fun h => h rfl) hx
+        exact iff_of_false Part.not_none_dom hx
     have heq : Set.EqOn h g ↑(Condition.varFinsetL cs₁) := by
       intro x hx
-      by_cases hxm : x ∈ f.domain ∪ ↑U₁
+      by_cases hxm : x ∈ PFun.Dom f ∪ ↑U₁
       · exact happly hxm
       · rw [hbot hxm]
         by_contra hgx
-        have hxg : x ∈ g.domain := PartialAssign.mem_domain.mpr fun h => hgx h.symm
+        have hxg : x ∈ PFun.Dom g := by
+          by_contra hd
+          exact hgx (Part.eq_bot_iff_not_dom.2 hd).symm
         rw [hdom] at hxg
         rcases hxg with hmem | hmem | hmem
         · exact hxm (Or.inl hmem)
@@ -366,35 +369,34 @@ theorem DRS.verifies_merge [DecidableEq V] (K₁ K₂ : DRS L V)
     refine ⟨h, ⟨?_, hdomh, (Condition.holdsAll_congr cs₁ heq).mpr hh₁⟩,
       ?_, by rw [hdom, hdomh, Set.union_assoc], hh₂⟩
     · exact Pi.le_def.mpr fun x => by
-        by_cases hx : x ∈ f.domain ∪ ↑U₁
+        by_cases hx : x ∈ PFun.Dom f ∪ ↑U₁
         · rw [happly hx]
           exact hle x
         · rw [hbot (by exact hx)]
-          have : f x = ⊥ := by
-            by_contra hfx
-            exact hx (Or.inl hfx)
-          rw [this]
+          rw [Part.eq_bot_iff_not_dom.2 fun hfx => hx (Or.inl hfx)]
     · exact Pi.le_def.mpr fun x => by
-        by_cases hx : x ∈ f.domain ∪ ↑U₁
+        by_cases hx : x ∈ PFun.Dom f ∪ ↑U₁
         · exact (happly hx).le
         · exact (hbot hx) ▸ bot_le
   · rintro ⟨h, ⟨hle₁, hdom₁, hh₁⟩, hle₂, hdom₂, hh₂⟩
     have heq : Set.EqOn h g ↑(Condition.varFinsetL cs₁) := by
       intro x hx
-      by_cases hxh : h x = ⊥
-      · rw [hxh]
+      by_cases hxh : (h x).Dom
+      · exact PFun.le_iff_eqOn_dom.mp hle₂ hxh
+      · rw [Part.eq_bot_iff_not_dom.2 hxh]
         by_contra hgx
-        have hxg : x ∈ g.domain := PartialAssign.mem_domain.mpr fun h' => hgx h'.symm
+        have hxg : x ∈ PFun.Dom g := by
+          by_contra hd
+          exact hgx (Part.eq_bot_iff_not_dom.2 hd).symm
         rw [hdom₂] at hxg
         rcases hxg with hmem | hmem
-        · exact hmem hxh
+        · exact hxh hmem
         · refine Finset.disjoint_left.mp hfresh (Finset.mem_coe.mp hmem)
             (Finset.mem_sdiff.mpr ⟨hx, fun hU₁ => ?_⟩)
-          have hxd : x ∈ h.domain := by
+          have hxd : x ∈ PFun.Dom h := by
             rw [hdom₁]
             exact Set.mem_union_right _ (Finset.mem_coe.mpr hU₁)
-          exact hxd hxh
-      · exact PartialAssign.le_iff_eqOn_domain.mp hle₂ hxh
+          exact hxh hxd
     exact ⟨hle₁.trans hle₂, by rw [hdom₂, hdom₁, Set.union_assoc],
       (Condition.holdsAll_congr cs₁ heq).mp hh₁, hh₂⟩
 
@@ -502,120 +504,120 @@ section Agreement
 
 variable [DecidableEq V]
 
+omit [DecidableEq V] in
+private theorem dom_res {X : Set V} {f' : V → M} : PFun.Dom (PFun.res f' X) = X :=
+  PFun.dom_restrict _
+
+omit [DecidableEq V] in
+private theorem mem_res_of_mem {X : Set V} {f' : V → M} {x : V} (hx : x ∈ X) :
+    f' x ∈ PFun.res f' X x :=
+  (PFun.mem_res _ _ _ _).2 ⟨hx, rfl⟩
+
 open Classical in
-/-- The partial embedding with domain `X` reading the total assignment `f'`. -/
-private noncomputable def restrictTotal (X : Set V) (f' : V → M) : PartialAssign V M :=
-  fun x => if x ∈ X then ↑(f' x) else ⊥
+/-- Read a partial embedding totally, defaulting to `f'` off its domain. -/
+private noncomputable def toTotal (g : V → Part M) (f' : V → M) : V → M :=
+  fun x ↦ (g x).getOrElse (f' x)
 
+open Classical in
 omit [DecidableEq V] in
-private theorem restrictTotal_of_mem {X : Set V} {f' : V → M} {x : V} (hx : x ∈ X) :
-    restrictTotal X f' x = ↑(f' x) := by
-  simp [restrictTotal, hx]
+private theorem toTotal_mem {g : V → Part M} {f' : V → M} {x : V} (h : (g x).Dom) :
+    toTotal g f' x ∈ g x := by
+  show (g x).getOrElse (f' x) ∈ g x
+  rw [Part.getOrElse_of_dom _ h]
+  exact Part.get_mem h
 
+open Classical in
 omit [DecidableEq V] in
-private theorem restrictTotal_of_notMem {X : Set V} {f' : V → M} {x : V} (hx : x ∉ X) :
-    restrictTotal X f' x = ⊥ := by
-  simp [restrictTotal, hx]
+private theorem toTotal_of_not_dom {g : V → Part M} {f' : V → M} {x : V} (h : ¬(g x).Dom) :
+    toTotal g f' x = f' x :=
+  Part.getOrElse_of_not_dom _ h _
 
-omit [DecidableEq V] in
-private theorem domain_restrictTotal (X : Set V) (f' : V → M) :
-    (restrictTotal X f').domain = X := by
-  ext x
-  by_cases hx : x ∈ X <;> simp [restrictTotal, hx]
-
-private theorem verifies_restrictTotal {X U : Finset V} {cs : List (Condition L V)}
+private theorem verifies_res {X U : Finset V} {cs : List (Condition L V)}
     (hXU : Disjoint X U)
-    (hIH : ∀ (k : PartialAssign V M) (k' : V → M), k.domain = ↑(X ∪ U) →
-      (∀ x ∈ X ∪ U, k x = ↑(k' x)) → (VerifiesAllTotal k' cs ↔ Condition.HoldsAll cs k))
-    {f : PartialAssign V M} {f' g' : V → M}
-    (hdom : f.domain = ↑X) (hff' : ∀ x ∈ X, f x = ↑(f' x))
+    (hIH : ∀ (k : V → Part M) (k' : V → M), PFun.Dom k = ↑(X ∪ U) →
+      (∀ x ∈ X ∪ U, k' x ∈ k x) → (VerifiesAllTotal k' cs ↔ Condition.HoldsAll cs k))
+    {f : V → Part M} {f' g' : V → M}
+    (hdom : PFun.Dom f = ↑X) (hff' : ∀ x ∈ X, f' x ∈ f x)
     (hext : DRS.Extends (.mk U cs : DRS L V) f' g') (hv : VerifiesAllTotal g' cs) :
-    DRS.Verifies (.mk U cs) f (restrictTotal ↑(X ∪ U) g') := by
+    DRS.Verifies (.mk U cs) f (PFun.res g' ↑(X ∪ U)) := by
   have hagree : ∀ x ∈ X, g' x = f' x := fun x hx =>
     hext x (Finset.disjoint_left.mp hXU hx)
-  refine ⟨Pi.le_def.mpr fun x => ?_, by rw [domain_restrictTotal, hdom, Finset.coe_union], ?_⟩
-  · by_cases hx : f x = ⊥
-    · rw [hx]; exact bot_le
-    · have hxX : x ∈ X := by
-        have : x ∈ f.domain := hx
-        rwa [hdom] at this
-      rw [restrictTotal_of_mem (by simp [hxX]), hagree x hxX, hff' x hxX]
-  · refine (hIH _ g' (domain_restrictTotal _ _) fun x hx => restrictTotal_of_mem (by
-      simpa using hx)).mp hv
+  refine ⟨Pi.le_def.mpr fun x a ha => ?_, by rw [dom_res, hdom, Finset.coe_union], ?_⟩
+  · have hxX : x ∈ X := by
+      have hd : x ∈ PFun.Dom f := Part.dom_iff_mem.2 ⟨a, ha⟩
+      rwa [hdom, Finset.mem_coe] at hd
+    have hax : a = f' x := Part.mem_unique ha (hff' x hxX)
+    rw [hax, ← hagree x hxX]
+    exact mem_res_of_mem (by simp [hxX])
+  · exact (hIH _ g' dom_res fun x hx => mem_res_of_mem (by simpa using hx)).mp hv
 
-private theorem extends_verifiesTotal_unbotD {X U : Finset V} {cs : List (Condition L V)}
-    (hIH : ∀ (k : PartialAssign V M) (k' : V → M), k.domain = ↑(X ∪ U) →
-      (∀ x ∈ X ∪ U, k x = ↑(k' x)) → (VerifiesAllTotal k' cs ↔ Condition.HoldsAll cs k))
-    {f g : PartialAssign V M} {f' : V → M}
-    (hdom : f.domain = ↑X) (hff' : ∀ x ∈ X, f x = ↑(f' x))
+open Classical in
+private theorem extends_verifiesTotal_toTotal {X U : Finset V} {cs : List (Condition L V)}
+    (hIH : ∀ (k : V → Part M) (k' : V → M), PFun.Dom k = ↑(X ∪ U) →
+      (∀ x ∈ X ∪ U, k' x ∈ k x) → (VerifiesAllTotal k' cs ↔ Condition.HoldsAll cs k))
+    {f g : V → Part M} {f' : V → M}
+    (hdom : PFun.Dom f = ↑X) (hff' : ∀ x ∈ X, f' x ∈ f x)
     (hv : DRS.Verifies (.mk U cs) f g) :
-    DRS.Extends (.mk U cs : DRS L V) f' (fun x => (g x).unbotD (f' x)) ∧
-      VerifiesAllTotal (fun x => (g x).unbotD (f' x)) cs := by
+    DRS.Extends (.mk U cs : DRS L V) f' (toTotal g f') ∧ VerifiesAllTotal (toTotal g f') cs := by
   obtain ⟨hle, hdomg, hh⟩ := hv
-  have hval : ∀ x ∈ X ∪ U, g x = ↑((g x).unbotD (f' x)) := by
+  have hval : ∀ x ∈ X ∪ U, toTotal g f' x ∈ g x := by
     intro x hx
-    have hxg : x ∈ g.domain := by
-      rw [hdomg, hdom, ← Finset.coe_union]
-      exact Finset.mem_coe.mpr hx
-    obtain ⟨m, hm⟩ := Flat.ne_bot_iff_exists.mp hxg
-    rw [hm, Flat.unbotD_coe]
+    refine toTotal_mem ?_
+    show x ∈ PFun.Dom g
+    rw [hdomg, hdom, ← Finset.coe_union]
+    exact Finset.mem_coe.mpr hx
   constructor
   · intro x hxU
-    show Flat.unbotD (f' x) (g x) = f' x
-    by_cases hxg : g x = ⊥
-    · rw [hxg, Flat.unbotD_bot]
+    by_cases hxg : (g x).Dom
     · have hxX : x ∈ X := by
-        have hmem : x ∈ g.domain := PartialAssign.mem_domain.mpr hxg
+        have hmem : x ∈ PFun.Dom g := hxg
         rw [hdomg, hdom] at hmem
         rcases hmem with h | h
         · rwa [Finset.mem_coe] at h
         · exact absurd (Finset.mem_coe.mp h) hxU
-      have hgf : g x = f x := (PartialAssign.le_iff_eqOn_domain.mp hle (by
-        rw [hdom]; exact Finset.mem_coe.mpr hxX)).symm
-      rw [hgf, hff' x hxX, Flat.unbotD_coe]
+      have hfg : f x = g x := PFun.le_iff_eqOn_dom.mp hle
+        (show x ∈ PFun.Dom f by rw [hdom]; exact Finset.mem_coe.mpr hxX)
+      exact Part.mem_unique (toTotal_mem hxg) (hfg ▸ hff' x hxX)
+    · exact toTotal_of_not_dom hxg
   · exact (hIH g _ (by rw [hdomg, hdom, Finset.coe_union]) hval).mpr hh
 
 mutual
 theorem Condition.verifiesConditionTotal_iff_holds {X : Finset V} (c : Condition L V)
     (hrf : Condition.ReuseFreeAt X c) (hfv : c.freeVarFinset ⊆ X)
-    {f : PartialAssign V M} {f' : V → M}
-    (hdom : f.domain = ↑X) (hff' : ∀ x ∈ X, f x = ↑(f' x)) :
+    {f : V → Part M} {f' : V → M}
+    (hdom : PFun.Dom f = ↑X) (hff' : ∀ x ∈ X, f' x ∈ f x) :
     VerifiesConditionTotal f' c ↔ c.Holds f := by
   match c with
   | .atom a =>
     simp only [verifiesTotal_atom, Condition.holds_atom, Atom.Realize]
-    have hval : ∀ i, f (a.args i) = ↑(f' (a.args i)) := fun i =>
+    have hval : ∀ i, f' (a.args i) ∈ f (a.args i) := fun i =>
       hff' _ (hfv (by simp [Condition.freeVarFinset_atom]))
     constructor
     · exact fun h => ⟨f' ∘ a.args, hval, h⟩
     · rintro ⟨v, hv, hrel⟩
-      have : f' ∘ a.args = v := funext fun i =>
-        Flat.coe_injective ((hval i).symm.trans (hv i))
+      have : f' ∘ a.args = v := funext fun i => Part.mem_unique (hval i) (hv i)
       rwa [this]
   | .eq u v =>
     simp only [verifiesTotal_eq, Condition.holds_eq]
-    have hu : f u = ↑(f' u) := hff' u (hfv (by simp))
-    have hv : f v = ↑(f' v) := hff' v (hfv (by simp))
+    have hu : f' u ∈ f u := hff' u (hfv (by simp))
+    have hv : f' v ∈ f v := hff' v (hfv (by simp))
     constructor
-    · exact fun h => ⟨f' u, hu, by rw [hv, h]⟩
+    · exact fun h => ⟨f' u, hu, by rw [h]; exact hv⟩
     · rintro ⟨m, hum, hvm⟩
-      have h1 : f' u = m := Flat.coe_injective (hu.symm.trans hum)
-      have h2 : f' v = m := Flat.coe_injective (hv.symm.trans hvm)
-      rw [h1, h2]
+      rw [Part.mem_unique hu hum, Part.mem_unique hv hvm]
   | .neg K =>
     obtain ⟨U, cs⟩ := K
     rw [Condition.reuseFreeAt_neg, DRS.reuseFreeAt_mk] at hrf
     rw [Condition.freeVarFinset_neg] at hfv
     have hfvc := DRS.freeVarFinset_subset_iff.mp hfv
-    have hIH : ∀ (k : PartialAssign V M) (k' : V → M), k.domain = ↑(X ∪ U) →
-        (∀ x ∈ X ∪ U, k x = ↑(k' x)) → (VerifiesAllTotal k' cs ↔ Condition.HoldsAll cs k) :=
+    have hIH : ∀ (k : V → Part M) (k' : V → M), PFun.Dom k = ↑(X ∪ U) →
+        (∀ x ∈ X ∪ U, k' x ∈ k x) → (VerifiesAllTotal k' cs ↔ Condition.HoldsAll cs k) :=
       fun k k' hk hkk' => Condition.verifiesAllTotal_iff_holdsAll cs hrf.2 hfvc hk hkk'
     simp only [verifiesTotal_neg, Condition.holds_neg]
-    refine not_congr ⟨fun ⟨g', hg'⟩ => ⟨_, verifies_restrictTotal hrf.1 hIH hdom hff' hg'.1
+    refine not_congr ⟨fun ⟨g', hg'⟩ => ⟨_, verifies_res hrf.1 hIH hdom hff' hg'.1
       ((verifiesTotal_mk U cs).mp hg'.2 |> verifiesAllTotal_iff.mpr)⟩, fun ⟨g, hg⟩ => ?_⟩
-    obtain ⟨hext, hv⟩ := extends_verifiesTotal_unbotD hIH hdom hff' hg
-    exact ⟨_, hext, verifiesAllTotal_iff.mp (verifiesAllTotal_iff.mpr
-      (verifiesAllTotal_iff.mp hv)) |> (verifiesTotal_mk U cs).mpr⟩
+    obtain ⟨hext, hv⟩ := extends_verifiesTotal_toTotal hIH hdom hff' hg
+    exact ⟨_, hext, (verifiesTotal_mk U cs).mpr (verifiesAllTotal_iff.mp hv)⟩
   | .imp a c =>
     obtain ⟨Ua, csa⟩ := a
     obtain ⟨Uc, csc⟩ := c
@@ -633,40 +635,33 @@ theorem Condition.verifiesConditionTotal_iff_holds {X : Finset V} (c : Condition
         · refine Finset.mem_union_left _ (Finset.mem_union_left _ (hfvc' ?_))
           rw [DRS.freeVarFinset_mk, Finset.mem_sdiff, Finset.mem_sdiff]
           exact ⟨⟨hx, hxUc⟩, hxUa⟩
-    have hIHa : ∀ (k : PartialAssign V M) (k' : V → M), k.domain = ↑(X ∪ Ua) →
-        (∀ x ∈ X ∪ Ua, k x = ↑(k' x)) →
+    have hIHa : ∀ (k : V → Part M) (k' : V → M), PFun.Dom k = ↑(X ∪ Ua) →
+        (∀ x ∈ X ∪ Ua, k' x ∈ k x) →
           (VerifiesAllTotal k' csa ↔ Condition.HoldsAll csa k) :=
       fun k k' hk hkk' => Condition.verifiesAllTotal_iff_holdsAll csa hrfa hfvca hk hkk'
-    have hIHc : ∀ (k : PartialAssign V M) (k' : V → M), k.domain = ↑((X ∪ Ua) ∪ Uc) →
-        (∀ x ∈ (X ∪ Ua) ∪ Uc, k x = ↑(k' x)) →
+    have hIHc : ∀ (k : V → Part M) (k' : V → M), PFun.Dom k = ↑((X ∪ Ua) ∪ Uc) →
+        (∀ x ∈ (X ∪ Ua) ∪ Uc, k' x ∈ k x) →
           (VerifiesAllTotal k' csc ↔ Condition.HoldsAll csc k) :=
       fun k k' hk hkk' => Condition.verifiesAllTotal_iff_holdsAll csc hrfc hfvcc hk hkk'
     simp only [verifiesTotal_imp, Condition.holds_imp]
     constructor
     · intro hL g₁ hg₁
-      obtain ⟨hle₁, hdom₁, hh₁⟩ := hg₁
-      set g₁' : V → M := fun x => (g₁ x).unbotD (f' x) with hg₁'def
-      obtain ⟨hext₁, hv₁⟩ := extends_verifiesTotal_unbotD hIHa hdom hff'
-        ⟨hle₁, hdom₁, hh₁⟩
-      obtain ⟨h', hexth', hvh'⟩ := hL g₁' hext₁ ((verifiesTotal_mk Ua csa).mpr
+      obtain ⟨hext₁, hv₁⟩ := extends_verifiesTotal_toTotal hIHa hdom hff' hg₁
+      obtain ⟨h', hexth', hvh'⟩ := hL (toTotal g₁ f') hext₁ ((verifiesTotal_mk Ua csa).mpr
         (verifiesAllTotal_iff.mp hv₁))
-      have hdom₁' : g₁.domain = ↑(X ∪ Ua) := by rw [hdom₁, hdom, Finset.coe_union]
-      have hff₁ : ∀ x ∈ X ∪ Ua, g₁ x = ↑(g₁' x) := by
-        intro x hx
-        have hxg : x ∈ g₁.domain := by rw [hdom₁']; exact Finset.mem_coe.mpr hx
-        obtain ⟨m, hm⟩ := Flat.ne_bot_iff_exists.mp hxg
-        rw [hm, hg₁'def]
-        simp [hm]
-      exact ⟨_, verifies_restrictTotal hXUc hIHc hdom₁' hff₁ hexth'
+      obtain ⟨hle₁, hdom₁, hh₁⟩ := hg₁
+      have hdom₁' : PFun.Dom g₁ = ↑(X ∪ Ua) := by rw [hdom₁, hdom, Finset.coe_union]
+      have hff₁ : ∀ x ∈ X ∪ Ua, toTotal g₁ f' x ∈ g₁ x := fun x hx =>
+        toTotal_mem (show x ∈ PFun.Dom g₁ by rw [hdom₁']; exact Finset.mem_coe.mpr hx)
+      exact ⟨_, verifies_res hXUc hIHc hdom₁' hff₁ hexth'
         (verifiesAllTotal_iff.mpr ((verifiesTotal_mk Uc csc).mp hvh'))⟩
     · intro hR g₁' hext₁ hv₁
-      have hg₁ := verifies_restrictTotal hXUa hIHa hdom hff' hext₁
+      have hg₁ := verifies_res hXUa hIHa hdom hff' hext₁
         (verifiesAllTotal_iff.mpr ((verifiesTotal_mk Ua csa).mp hv₁))
       obtain ⟨g₂, hg₂⟩ := hR _ hg₁
-      have hff₁ : ∀ x ∈ X ∪ Ua, restrictTotal ↑(X ∪ Ua) g₁' x = ↑(g₁' x) := fun x hx =>
-        restrictTotal_of_mem (Finset.mem_coe.mpr hx)
-      obtain ⟨hext₂, hv₂⟩ := extends_verifiesTotal_unbotD hIHc
-        (domain_restrictTotal _ _) hff₁ hg₂
+      have hff₁ : ∀ x ∈ X ∪ Ua, g₁' x ∈ PFun.res g₁' ↑(X ∪ Ua) x := fun x hx =>
+        mem_res_of_mem (Finset.mem_coe.mpr hx)
+      obtain ⟨hext₂, hv₂⟩ := extends_verifiesTotal_toTotal hIHc dom_res hff₁ hg₂
       exact ⟨_, hext₂, (verifiesTotal_mk Uc csc).mpr (verifiesAllTotal_iff.mp hv₂)⟩
   | .dis l r =>
     obtain ⟨Ul, csl⟩ := l
@@ -676,27 +671,27 @@ theorem Condition.verifiesConditionTotal_iff_holds {X : Finset V} (c : Condition
     rw [Condition.freeVarFinset_dis, Finset.union_subset_iff] at hfv
     have hfvcl := DRS.freeVarFinset_subset_iff.mp hfv.1
     have hfvcr := DRS.freeVarFinset_subset_iff.mp hfv.2
-    have hIHl : ∀ (k : PartialAssign V M) (k' : V → M), k.domain = ↑(X ∪ Ul) →
-        (∀ x ∈ X ∪ Ul, k x = ↑(k' x)) →
+    have hIHl : ∀ (k : V → Part M) (k' : V → M), PFun.Dom k = ↑(X ∪ Ul) →
+        (∀ x ∈ X ∪ Ul, k' x ∈ k x) →
           (VerifiesAllTotal k' csl ↔ Condition.HoldsAll csl k) :=
       fun k k' hk hkk' => Condition.verifiesAllTotal_iff_holdsAll csl hrfl hfvcl hk hkk'
-    have hIHr : ∀ (k : PartialAssign V M) (k' : V → M), k.domain = ↑(X ∪ Ur) →
-        (∀ x ∈ X ∪ Ur, k x = ↑(k' x)) →
+    have hIHr : ∀ (k : V → Part M) (k' : V → M), PFun.Dom k = ↑(X ∪ Ur) →
+        (∀ x ∈ X ∪ Ur, k' x ∈ k x) →
           (VerifiesAllTotal k' csr ↔ Condition.HoldsAll csr k) :=
       fun k k' hk hkk' => Condition.verifiesAllTotal_iff_holdsAll csr hrfr hfvcr hk hkk'
     simp only [verifiesTotal_dis, Condition.holds_dis]
-    refine or_congr ⟨fun ⟨g', hext, hv⟩ => ⟨_, verifies_restrictTotal hXUl hIHl hdom hff' hext
+    refine or_congr ⟨fun ⟨g', hext, hv⟩ => ⟨_, verifies_res hXUl hIHl hdom hff' hext
         (verifiesAllTotal_iff.mpr ((verifiesTotal_mk Ul csl).mp hv))⟩, fun ⟨g, hg⟩ => ?_⟩
-      ⟨fun ⟨g', hext, hv⟩ => ⟨_, verifies_restrictTotal hXUr hIHr hdom hff' hext
+      ⟨fun ⟨g', hext, hv⟩ => ⟨_, verifies_res hXUr hIHr hdom hff' hext
         (verifiesAllTotal_iff.mpr ((verifiesTotal_mk Ur csr).mp hv))⟩, fun ⟨g, hg⟩ => ?_⟩
-    · obtain ⟨hext, hv⟩ := extends_verifiesTotal_unbotD hIHl hdom hff' hg
+    · obtain ⟨hext, hv⟩ := extends_verifiesTotal_toTotal hIHl hdom hff' hg
       exact ⟨_, hext, (verifiesTotal_mk Ul csl).mpr (verifiesAllTotal_iff.mp hv)⟩
-    · obtain ⟨hext, hv⟩ := extends_verifiesTotal_unbotD hIHr hdom hff' hg
+    · obtain ⟨hext, hv⟩ := extends_verifiesTotal_toTotal hIHr hdom hff' hg
       exact ⟨_, hext, (verifiesTotal_mk Ur csr).mpr (verifiesAllTotal_iff.mp hv)⟩
 theorem Condition.verifiesAllTotal_iff_holdsAll {X : Finset V} (cs : List (Condition L V))
     (hrf : Condition.ReuseFreeAllAt X cs) (hfv : Condition.freeVarFinsetL cs ⊆ X)
-    {f : PartialAssign V M} {f' : V → M}
-    (hdom : f.domain = ↑X) (hff' : ∀ x ∈ X, f x = ↑(f' x)) :
+    {f : V → Part M} {f' : V → M}
+    (hdom : PFun.Dom f = ↑X) (hff' : ∀ x ∈ X, f' x ∈ f x) :
     VerifiesAllTotal f' cs ↔ Condition.HoldsAll cs f := by
   match cs with
   | [] => exact Iff.rfl
@@ -712,21 +707,21 @@ end
 verifies `K` iff some partial output verifies it from the partial reading of `f'`. -/
 theorem DRS.exists_extends_verifiesTotal_iff_exists_verifies {X : Finset V} {K : DRS L V}
     (hrf : K.ReuseFreeAt X) (hfv : K.freeVarFinset ⊆ X)
-    {f : PartialAssign V M} {f' : V → M}
-    (hdom : f.domain = ↑X) (hff' : ∀ x ∈ X, f x = ↑(f' x)) :
+    {f : V → Part M} {f' : V → M}
+    (hdom : PFun.Dom f = ↑X) (hff' : ∀ x ∈ X, f' x ∈ f x) :
     (∃ g', K.Extends f' g' ∧ VerifiesTotal g' K) ↔ ∃ g, K.Verifies f g := by
   obtain ⟨U, cs⟩ := K
   rw [DRS.reuseFreeAt_mk] at hrf
   have hfvc := DRS.freeVarFinset_subset_iff.mp hfv
-  have hIH : ∀ (k : PartialAssign V M) (k' : V → M), k.domain = ↑(X ∪ U) →
-      (∀ x ∈ X ∪ U, k x = ↑(k' x)) → (VerifiesAllTotal k' cs ↔ Condition.HoldsAll cs k) :=
+  have hIH : ∀ (k : V → Part M) (k' : V → M), PFun.Dom k = ↑(X ∪ U) →
+      (∀ x ∈ X ∪ U, k' x ∈ k x) → (VerifiesAllTotal k' cs ↔ Condition.HoldsAll cs k) :=
     fun k k' hk hkk' => Condition.verifiesAllTotal_iff_holdsAll cs hrf.2 hfvc hk hkk'
   constructor
   · rintro ⟨g', hext, hv⟩
-    exact ⟨_, verifies_restrictTotal hrf.1 hIH hdom hff' hext
+    exact ⟨_, verifies_res hrf.1 hIH hdom hff' hext
       (verifiesAllTotal_iff.mpr ((verifiesTotal_mk U cs).mp hv))⟩
   · rintro ⟨g, hg⟩
-    obtain ⟨hext, hv⟩ := extends_verifiesTotal_unbotD hIH hdom hff' hg
+    obtain ⟨hext, hv⟩ := extends_verifiesTotal_toTotal hIH hdom hff' hg
     exact ⟨_, hext, (verifiesTotal_mk U cs).mpr (verifiesAllTotal_iff.mp hv)⟩
 
 end Agreement

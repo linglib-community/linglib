@@ -45,7 +45,7 @@ variable {W V M : Type*} {C : State W V M} {desc : W → M → Prop} {i : V}
 /-- A context entails of a referent that it has a descriptive content when every point assigns
 the referent a value with that content at its world. -/
 def Entails (C : State W V M) (desc : W → M → Prop) (k : V) : Prop :=
-  ∀ p ∈ C, ∃ m : M, p.assignment k = ↑m ∧ desc p.world m
+  ∀ p ∈ C, ∃ m ∈ p.assignment k, desc p.world m
 
 /-- The familiar referents a context entails to have a descriptive content. -/
 def candidates (C : State W V M) (desc : W → M → Prop) : Set V :=
@@ -93,15 +93,15 @@ inductive Man where
 
 /-- The point after *A strange man lives here, and another one lives down the block*, with
 referent 0 for the man here and 1 for the man down the block. -/
-def strangeMenPoint : Possibility Unit ℕ (Flat Man) :=
+def strangeMenPoint : Possibility Unit ℕ (Part Man) :=
   ⟨(), fun n ↦
-    if n = 0 then Flat.some Man.here else if n = 1 then Flat.some Man.downTheBlock else ⊥⟩
+    if n = 0 then Part.some Man.here else if n = 1 then Part.some Man.downTheBlock else ⊥⟩
 
 /-- The context of (33) and (35), whose only point is `strangeMenPoint`. -/
 def strangeMenContext : State Unit ℕ Man :=
-  ({strangeMenPoint} : Set (Possibility Unit ℕ (Flat Man)))
+  ({strangeMenPoint} : Set (Possibility Unit ℕ (Part Man)))
 
-private theorem mem_strangeMenContext {p : Possibility Unit ℕ (Flat Man)} :
+private theorem mem_strangeMenContext {p : Possibility Unit ℕ (Part Man)} :
     p ∈ strangeMenContext ↔ p = strangeMenPoint :=
   Iff.rfl
 
@@ -113,13 +113,13 @@ def strangeManHere : Unit → Man → Prop := fun _ m ↦ m = .here
 
 private theorem familiar_iff {k : ℕ} : State.Familiar strangeMenContext k ↔ k = 0 ∨ k = 1 := by
   simp only [State.Familiar, mem_strangeMenContext, forall_eq, strangeMenPoint]
-  rcases k with _ | _ | k <;> simp
+  rcases k with _ | _ | k <;> simp [Part.bot_eq_none, Part.not_none_dom]
 
 private theorem entails_iff {d : Unit → Man → Prop} {k : ℕ} :
     Entails strangeMenContext d k ↔
       (k = 0 ∧ d () .here) ∨ (k = 1 ∧ d () .downTheBlock) := by
   simp only [Entails, mem_strangeMenContext, forall_eq, strangeMenPoint]
-  rcases k with _ | _ | k <;> simp
+  rcases k with _ | _ | k <;> simp [Part.bot_eq_none, Part.notMem_none]
 
 /-- Familiarity admits *the strange man* beside a second strange man, but no referent is
 informationally unique for it, while *the strange man who lives here* is, as the judgments on

@@ -360,21 +360,22 @@ theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
 theorem fn4_not_isTrue : ¬ fn4.IsTrue (Fin 2) := by
   rintro ⟨g', -, hdom, himp, -⟩
   have hg' : g' = ⊥ :=
-    PartialAssign.eq_of_le_of_domain_subset bot_le (by rw [hdom]; simp)
+    (PFun.eq_of_le_of_dom_subset bot_le (by rw [hdom]; simp)).symm
   subst hg'
-  have hman : fn4Ante.Verifies (⊥ : PartialAssign ℕ (Fin 2)) (PartialAssign.single 0 0) := by
+  have hman :
+      fn4Ante.Verifies (⊥ : ℕ → Part (Fin 2)) (Function.update ⊥ 0 (Part.some 0)) := by
     rw [fn4Ante, DRS.verifies_mk]
     simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true, Condition.holds_atom]
     exact ⟨bot_le, by simp, ![0], fun i => by rw [Subsingleton.elim i 0]; simp, rfl⟩
   obtain ⟨g₂, hle₂, hdom₂, hmortal, -⟩ := himp _ hman
-  have hg₂ : g₂ = PartialAssign.single 0 0 :=
-    PartialAssign.eq_of_le_of_domain_subset hle₂ (by rw [hdom₂]; simp)
+  have hg₂ : g₂ = Function.update (⊥ : ℕ → Part (Fin 2)) 0 (Part.some 0) :=
+    (PFun.eq_of_le_of_dom_subset hle₂ (by rw [hdom₂]; simp)).symm
   obtain ⟨v, hv, hrel⟩ := hmortal
-  have h0 : g₂ 0 = ↑(v 0) := hv 0
-  rw [hg₂, PartialAssign.single_eq_same] at h0
-  have hv0 : (0 : Fin 2) = v 0 := Flat.coe_injective h0
+  have h0 : v 0 ∈ g₂ 0 := hv 0
+  rw [hg₂] at h0
+  have hv0 : v 0 = 0 := by simpa using h0
   have h1 : v 0 = 1 := hrel
-  rw [← hv0] at h1
+  rw [hv0] at h1
   exact absurd h1 (by decide)
 
 /-- The reconciliation `DRS.trueRel_iff_exists_verifies` fails on the witness. -/

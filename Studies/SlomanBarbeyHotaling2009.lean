@@ -81,20 +81,20 @@ def Enables (a b : V) : Prop :=
 
 /-- *A prevents B* on the observation `s` asserts a link from A to B along which A being on
 entails B off. -/
-def Prevents (s : V → Flat Bool) (a b : V) : Prop :=
-  M.graph.Adj a b ∧ M.CausallyEntails (Function.update s a ↑true) b false
+def Prevents (s : V → Part Bool) (a b : V) : Prop :=
+  M.graph.Adj a b ∧ M.CausallyEntails (Function.update s a (Part.some true)) b false
 
-instance [Fintype U] [Inhabited U] [Fintype V] [DecidableRel M.graph.Adj] (s : V → Flat Bool)
-    (a b : V) : Decidable (Prevents M s a b) :=
+instance [Fintype U] [Inhabited U] [Fintype V] [DecidableRel M.graph.Adj] (s : V → Part Bool)
+    [∀ v, Decidable (s v).Dom] (a b : V) : Decidable (Prevents M s a b) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The model realizes `c := a` on the observation `s`. -/
-def EqCauses (s : V → Flat Bool) (a c : V) : Prop :=
-  ∀ v : Bool, M.CausallyEntails (Function.update s a ↑v) c v
+def EqCauses (s : V → Part Bool) (a c : V) : Prop :=
+  ∀ v : Bool, M.CausallyEntails (Function.update s a (Part.some v)) c v
 
 /-- The model realizes `c := ¬a` on the observation `s`. -/
-def EqPrevents (s : V → Flat Bool) (a c : V) : Prop :=
-  ∀ v : Bool, M.CausallyEntails (Function.update s a ↑v) c (!v)
+def EqPrevents (s : V → Part Bool) (a c : V) : Prop :=
+  ∀ v : Bool, M.CausallyEntails (Function.update s a (Part.some v)) c (!v)
 
 variable {M}
 
@@ -104,7 +104,7 @@ theorem not_enables_of_forall_adj {a b : V} (h : ∀ x, M.graph.Adj x b → x = 
   exact hx (h x hxb)
 
 theorem EqCauses.not_eqPrevents [Fintype U] [Inhabited U] [Fintype V]
-    [DecidableRel M.graph.Adj] {s : V → Flat Bool} {a c : V} (h : EqCauses M s a c) :
+    [DecidableRel M.graph.Adj] {s : V → Part Bool} {a c : V} (h : EqCauses M s a c) :
     ¬ EqPrevents M s a c :=
   fun h' ↦ Bool.noConfusion ((h true).unique (h' true))
 
@@ -168,7 +168,7 @@ abbrev preventsNand : CausalModel Context V fun _ ↦ Bool :=
   twoLinkModel (fun a x ↦ !(a && x))
 
 /-- The accessory present. -/
-def accessory : V → Flat Bool := [.X ← true]
+abbrev accessory : V → Part Bool := [.X ← true]
 
 /-- *A causes B* holds of (2), and the model realizes `B := A`. -/
 theorem causes_Causes : Causes causes .A .B ∧ EqCauses causes ⊥ .A .B :=
@@ -193,7 +193,7 @@ theorem enables_not_entails :
   decide
 
 theorem enables_entails_of_accessory :
-    enables.CausallyEntails (Function.update accessory .A ↑true) .B true := by
+    enables.CausallyEntails (Function.update accessory .A (Part.some true)) .B true := by
   decide
 
 /-- (4a) prevents: turning A on entails B off. -/
@@ -260,7 +260,7 @@ instance (f : Bool → Bool → Bool) (g : Bool → Bool) : (composeTwo f g).IsA
   Finite.wellFounded_of_irrefl_transGen (r := fun w v ↦ (w, v) ∈ composeTwoEdges) (by decide)
 
 /-- The first premise's accessory present. -/
-def chainAccessory : W → Flat Bool := [.X ← true]
+abbrev chainAccessory : W → Part Bool := [.X ← true]
 
 /-- (5) and (6): *A causes B*, *B causes C* compose to `C := A`, the conclusion *A causes C*. -/
 theorem causesCauses_causes : EqCauses (composeOne id id) ⊥ .A .C :=

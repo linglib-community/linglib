@@ -127,8 +127,8 @@ theorem DRS.toRel_merge (K₁ K₂ : DRS L V)
 semantics from the partial reading of that input. -/
 theorem DRS.trueRel_iff_exists_verifies {X : Finset V} {K : DRS L V}
     (hrf : K.ReuseFreeAt X) (hfv : K.freeVarFinset ⊆ X)
-    {f : PartialAssign V M} {f' : V → M}
-    (hdom : f.domain = ↑X) (hff' : ∀ x ∈ X, f x = ↑(f' x)) :
+    {f : V → Part M} {f' : V → M}
+    (hdom : PFun.Dom f = ↑X) (hff' : ∀ x ∈ X, f' x ∈ f x) :
     DRS.trueRel K f' ↔ ∃ g, K.Verifies f g :=
   (DRS.trueRel_iff_exists_extends K f').trans
     (DRS.exists_extends_verifiesTotal_iff_exists_verifies hrf hfv hdom hff')

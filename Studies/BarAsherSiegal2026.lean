@@ -48,34 +48,34 @@ section Selection
 variable {U W : Type*} {α : W → Type*} [DecidableEq W] (M : CausalModel U W α) [M.IsAcyclic]
 
 /-- A sufficient set for `effect = xE` is a situation not settling the effect that forces it. -/
-def IsSufficientSet (S : ∀ v, Flat (α v)) (effect : W) (xE : α effect) : Prop :=
+def IsSufficientSet (S : ∀ v, Part (α v)) (effect : W) (xE : α effect) : Prop :=
   S effect = ⊥ ∧ M.Forced S effect xE
 
 /-- A sufficient set each of whose conditions is necessary within it. -/
-def IsMinimalSufficientSet (S : ∀ v, Flat (α v)) (effect : W) (xE : α effect) : Prop :=
+def IsMinimalSufficientSet (S : ∀ v, Part (α v)) (effect : W) (xE : α effect) : Prop :=
   IsSufficientSet M S effect xE ∧ ∀ v, S v ≠ ⊥ → ¬ M.Forced (Function.update S v ⊥) effect xE
 
 /-- `S` is the only minimal sufficient set completed in the world `w`. -/
-def IsTheCompletedSet (w S : ∀ v, Flat (α v)) (effect : W) (xE : α effect) : Prop :=
+def IsTheCompletedSet (w S : ∀ v, Part (α v)) (effect : W) (xE : α effect) : Prop :=
   S ≤ w ∧ IsMinimalSufficientSet M S effect xE ∧
     ∀ S', S' ≤ w → IsMinimalSufficientSet M S' effect xE → S' = S
 
 /-- The verb *cause* selects any condition of the completed sufficient set. -/
-def SelectsMember (w : ∀ v, Flat (α v)) (c effect : W) (xE : α effect) : Prop :=
+def SelectsMember (w : ∀ v, Part (α v)) (c effect : W) (xE : α effect) : Prop :=
   ∃ S, IsTheCompletedSet M w S effect xE ∧ S c ≠ ⊥
 
 /-- A change-of-state verb selects the temporally final condition of the completed sufficient
 set, `time` ordering the world's realizations. -/
-def SelectsFinal (w : ∀ v, Flat (α v)) (time : W → ℕ) (c effect : W) (xE : α effect) : Prop :=
+def SelectsFinal (w : ∀ v, Part (α v)) (time : W → ℕ) (c effect : W) (xE : α effect) : Prop :=
   ∃ S, IsTheCompletedSet M w S effect xE ∧ S c ≠ ⊥ ∧ ∀ v, S v ≠ ⊥ → time v ≤ time c
 
 variable {M} {effect : W} {xE : α effect}
 
-theorem SelectsFinal.selectsMember {w : ∀ v, Flat (α v)} {time : W → ℕ} {c : W}
+theorem SelectsFinal.selectsMember {w : ∀ v, Part (α v)} {time : W → ℕ} {c : W}
     (h : SelectsFinal M w time c effect xE) : SelectsMember M w c effect xE :=
   let ⟨S, hS, hc, _⟩ := h; ⟨S, hS, hc⟩
 
-theorem not_selectsMember_of_two {w S₁ S₂ : ∀ v, Flat (α v)} {c : W}
+theorem not_selectsMember_of_two {w S₁ S₂ : ∀ v, Part (α v)} {c : W}
     (h₁ : IsMinimalSufficientSet M S₁ effect xE) (h₂ : IsMinimalSufficientSet M S₂ effect xE)
     (hne : S₁ ≠ S₂) (hw₁ : S₁ ≤ w) (hw₂ : S₂ ≤ w) : ¬ SelectsMember M w c effect xE :=
   fun ⟨_, ⟨_, _, huniq⟩, _⟩ ↦ hne ((huniq S₁ hw₁ h₁).trans (huniq S₂ hw₂ h₂).symm)
@@ -85,31 +85,24 @@ section Decidable
 variable [Fintype U] [Inhabited U] [∀ v, Inhabited (α v)] [∀ v, DecidableEq (α v)]
   [∀ v, Fintype (α v)] [Fintype W] [DecidableRel M.graph.Adj]
 
-instance (S : ∀ v, Flat (α v)) : Decidable (IsSufficientSet M S effect xE) :=
+instance (S : ∀ v, Part (α v)) [∀ v, Decidable (S v).Dom] :
+    Decidable (IsSufficientSet M S effect xE) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-instance (S : ∀ v, Flat (α v)) : Decidable (IsMinimalSufficientSet M S effect xE) :=
-  haveI : ∀ v, Decidable (S v ≠ ⊥ → ¬ M.Forced (Function.update S v ⊥) effect xE) :=
-    fun _ ↦ inferInstance
+instance (S : ∀ v, Part (α v)) [∀ v, Decidable (S v).Dom] :
+    Decidable (IsMinimalSufficientSet M S effect xE) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-instance (w S : ∀ v, Flat (α v)) : Decidable (IsTheCompletedSet M w S effect xE) :=
-  letI := fintypePartialAssignment (α := α)
-  haveI : DecidablePred fun S' ↦ S' ≤ w → IsMinimalSufficientSet M S' effect xE → S' = S :=
-    fun _ ↦ inferInstance
+instance (w S : ∀ v, Part (α v)) [∀ v, Decidable (w v).Dom] [∀ v, Decidable (S v).Dom] :
+    Decidable (IsTheCompletedSet M w S effect xE) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-instance (w : ∀ v, Flat (α v)) (c : W) : Decidable (SelectsMember M w c effect xE) :=
-  letI := fintypePartialAssignment (α := α)
-  haveI : DecidablePred fun S ↦ IsTheCompletedSet M w S effect xE ∧ S c ≠ ⊥ :=
-    fun _ ↦ inferInstance
+instance (w : ∀ v, Part (α v)) [∀ v, Decidable (w v).Dom] (c : W) :
+    Decidable (SelectsMember M w c effect xE) :=
   inferInstanceAs (Decidable (∃ _, _))
 
-instance (w : ∀ v, Flat (α v)) (time : W → ℕ) (c : W) :
+instance (w : ∀ v, Part (α v)) [∀ v, Decidable (w v).Dom] (time : W → ℕ) (c : W) :
     Decidable (SelectsFinal M w time c effect xE) :=
-  letI := fintypePartialAssignment (α := α)
-  haveI : DecidablePred fun S ↦ IsTheCompletedSet M w S effect xE ∧ S c ≠ ⊥ ∧
-      ∀ v, S v ≠ ⊥ → time v ≤ time c := fun _ ↦ inferInstance
   inferInstanceAs (Decidable (∃ _, _))
 
 end Decidable
@@ -154,18 +147,18 @@ instance : DecidableRel model.graph.Adj := fun w v ↦ inferInstanceAs (Decidabl
 instance : model.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- Sufficient set I: handle on, lock off. -/
-def manual : V → Flat Bool := [.handle ← true, .lock ← false]
+abbrev manual : V → Part Bool := [.handle ← true, .lock ← false]
 
 /-- Sufficient set H: circuit and power on, lock off. -/
-def automatic : V → Flat Bool := [.circuit ← true, .electricity ← true, .lock ← false]
+abbrev automatic : V → Part Bool := [.circuit ← true, .electricity ← true, .lock ← false]
 
 /-- The world in which the handle is turned on an unlocked, unpowered door. -/
-def handleWorld : V → Flat Bool :=
+abbrev handleWorld : V → Part Bool :=
   [.handle ← true, .lock ← false, .button ← false, .electricity ← false, .circuit ← false,
     .doorOpens ← true]
 
 /-- The overdetermined world: handle turned and button pressed on a powered, unlocked door. -/
-def bothWorld : V → Flat Bool :=
+abbrev bothWorld : V → Part Bool :=
   [.handle ← true, .lock ← false, .button ← true, .electricity ← true, .circuit ← true,
     .doorOpens ← true]
 

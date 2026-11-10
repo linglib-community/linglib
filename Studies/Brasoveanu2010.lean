@@ -26,7 +26,7 @@ with the convention.
 
 ## Implementation notes
 
-* A row is an assignment `Dref → Flat E`, and ★ is `⊥`; lexical relations are predicates of `E`,
+* A row is an assignment `Dref → Part E`, and ★ is `⊥`; lexical relations are predicates of `E`,
   so they are false of ★ (fn. 5).
 * The lexical entries keep the distributivity operators that (85), (86), (95) and (96) omit as
   redundant, and `every` is (83), with the operators (74) that the paper substitutes for those of
@@ -68,7 +68,7 @@ inductive Dref where
 variable {E : Type*}
 
 /-- A row of a plural info state: an individual or ★ for each dref. -/
-abbrev Row (E : Type*) := Dref → Flat E
+abbrev Row (E : Type*) := Dref → Part E
 
 /-- A property, type `et`: a dref to an update. -/
 abbrev Pred (E : Type*) := Dref → Update (Set (Row E))
@@ -77,7 +77,7 @@ abbrev Pred (E : Type*) := Dref → Update (Set (Row E))
 abbrev Quant (E : Type*) := Pred E → Update (Set (Row E))
 
 /-- The row with the given values of `u₁, …, u₅` and ★ for `u` and `u'`. -/
-def row (a b c d e : Flat E) : Row E
+def row (a b c d e : Part E) : Row E
   | .u₁ => a
   | .u₂ => b
   | .u₃ => c
@@ -87,7 +87,7 @@ def row (a b c d e : Flat E) : Row E
 
 section Row
 
-variable {a b c d e x : Flat E}
+variable {a b c d e x : Part E}
 
 @[simp] theorem row_u₁ : row a b c d e Dref.u₁ = a := rfl
 @[simp] theorem row_u₂ : row a b c d e Dref.u₂ = b := rfl
@@ -158,8 +158,8 @@ theorem wolfDiscourse_true_iff (wolf comeIn : E → Prop) (eat : E → E → Pro
     exact ⟨x, by simpa using hwolf.2 x rfl, by simpa using hcome.2 x rfl,
       by simpa [h1, h2] using heat p hp⟩
   · rintro ⟨x, hw, hc, he⟩
-    set i₁ : Row E := Function.update iStar .u ↑x
-    set i₂ : Row E := Function.update i₁ .u' ↑harvey
+    set i₁ : Row E := Function.update iStar .u (.some x)
+    set i₂ : Row E := Function.update i₁ .u' (.some harvey)
     have hv₁ : value Dref.u {i₁} = {x} := value_singleton_of_eq (by simp [i₁])
     have hv₂ : value Dref.u' {i₂} = {harvey} := value_singleton_of_eq (by simp [i₂])
     have hd : dep Dref.u Dref.u' {i₂} = {(x, harvey)} :=
@@ -193,23 +193,25 @@ open Ind
 
 /-- (64) with the value-inclusion column: `u₃` holds `α₁, α₃, α₁, α₂`. -/
 def valueCol : Set (Row Ind) :=
-  {row α₁ β₁ α₁ ⊥ ⊥, row α₂ β₂ α₃ ⊥ ⊥, row α₃ β₃ α₁ ⊥ ⊥, row α₄ β₄ α₂ ⊥ ⊥}
+  {row (.some α₁) (.some β₁) (.some α₁) ⊥ ⊥, row (.some α₂) (.some β₂) (.some α₃) ⊥ ⊥,
+    row (.some α₃) (.some β₃) (.some α₁) ⊥ ⊥, row (.some α₄) (.some β₄) (.some α₂) ⊥ ⊥}
 
 /-- (64) with the structured column: `u₃` holds `α₁, α₂, ★, α₄`. -/
 def structCol : Set (Row Ind) :=
-  {row α₁ β₁ α₁ ⊥ ⊥, row α₂ β₂ α₂ ⊥ ⊥, row α₃ β₃ ⊥ ⊥ ⊥, row α₄ β₄ α₄ ⊥ ⊥}
+  {row (.some α₁) (.some β₁) (.some α₁) ⊥ ⊥, row (.some α₂) (.some β₂) (.some α₂) ⊥ ⊥,
+    row (.some α₃) (.some β₃) ⊥ ⊥ ⊥, row (.some α₄) (.some β₄) (.some α₄) ⊥ ⊥}
 
 -- (65)
 theorem value_subset_valueCol : value Dref.u₃ valueCol ⊆ value Dref.u₁ valueCol := by
   intro x
-  simp only [valueCol, mem_value, embed_flat, Set.mem_insert_iff, Set.mem_singleton_iff,
-    exists_eq_or_imp, exists_eq_left, val_apply, row_u₁, row_u₃, Flat.coe_inj]
+  simp only [valueCol, mem_value, embed_part, Set.mem_insert_iff, Set.mem_singleton_iff,
+    exists_eq_or_imp, exists_eq_left, val_apply, row_u₁, row_u₃, Part.some_inj]
   rintro (rfl | rfl | rfl | rfl) <;> simp
 
 theorem value_subset_structCol : value Dref.u₃ structCol ⊆ value Dref.u₁ structCol := by
   intro x
-  simp only [structCol, mem_value, embed_flat, Set.mem_insert_iff, Set.mem_singleton_iff,
-    exists_eq_or_imp, exists_eq_left, val_apply, row_u₁, row_u₃, Flat.coe_inj, Flat.bot_ne_coe,
+  simp only [structCol, mem_value, embed_part, Set.mem_insert_iff, Set.mem_singleton_iff,
+    exists_eq_or_imp, exists_eq_left, val_apply, row_u₁, row_u₃, Part.some_inj, Part.bot_ne_some,
     false_or]
   rintro (rfl | rfl | rfl) <;> simp
 
@@ -221,7 +223,7 @@ theorem valueCol_scrambles_dep :
 
 -- (66)
 theorem valueCol_not_structSub : valueCol ∉ structSub Dref.u₃ Dref.u₁ := fun h ↦ by
-  simpa using h (row α₂ β₂ α₃ ⊥ ⊥) (by simp [valueCol])
+  simpa using h (row (.some α₂) (.some β₂) (.some α₃) ⊥ ⊥) (by simp [valueCol])
 
 -- (68)
 theorem structCol_structSubAll : structCol ∈ structSubAll Dref.u₃ Dref.u₁ := by
@@ -305,14 +307,14 @@ def comeSentence (come : (E → E → Prop) → Quant E → Quant E → Update (
 /-! #### The first sentence -/
 
 private theorem exists_courtAt_of_mem_atom {h c : E} (hJ₁ : value Dref.u₁ J = {h})
-    (hc : cell Dref.u₃ c J ∈
+    (hc : cell Dref.u₃ (.some c) J ∈
       atom (fun x ↦ M.courtAt (x 0) (x 1) (x 2)) ![Dref.u₁, Dref.u₄, Dref.u₃]) :
-    ∃ w ∈ value Dref.u₄ (cell Dref.u₃ c J), M.courtAt h w c := by
+    ∃ w ∈ value Dref.u₄ (cell Dref.u₃ (.some c) J), M.courtAt h w c := by
   obtain ⟨⟨y, k, ⟨hk, hk₃⟩, hy⟩, hall⟩ := hc
   have h0 : y 0 = h := by
     have : y 0 ∈ value Dref.u₁ J := ⟨k, hk, hy 0⟩
     rwa [hJ₁] at this
-  have h2 : y 2 = c := Flat.coe_inj.1 ((hy 2).symm.trans hk₃)
+  have h2 : y 2 = c := Part.some_inj.1 ((hy 2).symm.trans hk₃)
   refine ⟨y 1, ⟨k, ⟨hk, hk₃⟩, hy 1⟩, ?_⟩
   simpa [h0, h2] using hall y ⟨k, ⟨hk, hk₃⟩, hy⟩
 
@@ -330,7 +332,7 @@ private theorem convention_mem_value {J₂ J₃ : Set (Row E)} (hJ₂ : J₂.Non
   simp only [mem_value, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨_, ⟨j, -, x, hx, rfl⟩, hc⟩
-    rw [val_extend_self, embed_flat, Flat.coe_inj] at hc
+    rw [val_extend_self, embed_part, Part.some_inj] at hc
     simpa [hc] using hx
   · exact fun hc ↦ ⟨_, ⟨i, hi, c, by simpa using hc, rfl⟩, val_extend_self ..⟩
 
@@ -338,7 +340,7 @@ private theorem convention_mem_value {J₂ J₃ : Set (Row E)} (hJ₂ : J₂.Non
 theorem courtAt₁_output (hJ : {iStar} ~[courtSentence M courtAt₁] J) :
     ∃ w, M.woman w ∧ (∀ c, M.convention c → M.courtAt M.harvey w c) ∧
       value Dref.u₃ J = {c | M.convention c} ∧ value Dref.u₄ J = {w} ∧
-      ∀ c, M.convention c → value Dref.u₄ (cell Dref.u₃ c J) = {w} := by
+      ∀ c, M.convention c → value Dref.u₄ (cell Dref.u₃ (.some c) J) = {w} := by
   simp only [courtSentence, name, courtAt₁, indef, every, noun, distrib_test_atom_self] at hJ
   simp only [distrib_test] at hJ
   obtain ⟨J₁, hJ₁, J₂, hJ₂, hJ₃⟩ := hJ
@@ -365,10 +367,10 @@ theorem courtAt₁_output (hJ : {iStar} ~[courtSentence M courtAt₁] J) :
       value_intro_of_ne (by decide) hi₄]
     exact hN
   have hconv (c : E) (hc : M.convention c) : c ∈ value Dref.u₃ K ∧ M.courtAt M.harvey w c ∧
-      value Dref.u₄ (cell Dref.u₃ c K) = {w} := by
+      value Dref.u₄ (cell Dref.u₃ (.some c) K) = {w} := by
     have hc₃ : c ∈ value Dref.u₃ K := @hev c (by rw [hv₂]; exact hc)
     obtain ⟨w', hw', hcourt⟩ := exists_courtAt_of_mem_atom M hv₁ (hCt.2 c hc₃)
-    have hsub' : value Dref.u₄ (cell Dref.u₃ c K) ⊆ {w} :=
+    have hsub' : value Dref.u₄ (cell Dref.u₃ (.some c) K) ⊆ {w} :=
       hv₄ ▸ value_mono fun _ hk ↦ hk.1
     obtain rfl : w' = w := hsub' hw'
     exact ⟨hc₃, hcourt, Set.eq_singleton_iff_unique_mem.2 ⟨hw', fun _ hx ↦ hsub' hx⟩⟩
@@ -383,7 +385,7 @@ theorem courtAt₁_output (hJ : {iStar} ~[courtSentence M courtAt₁] J) :
 -- (86)
 theorem courtAt₂_output (hJ : {iStar} ~[courtSentence M courtAt₂] J) :
     value Dref.u₃ J = {c | M.convention c} ∧ ∀ c, M.convention c →
-      ∃ w, M.woman w ∧ M.courtAt M.harvey w c ∧ value Dref.u₄ (cell Dref.u₃ c J) = {w} := by
+      ∃ w, M.woman w ∧ M.courtAt M.harvey w c ∧ value Dref.u₄ (cell Dref.u₃ (.some c) J) = {w} := by
   simp only [courtSentence, name, courtAt₂, indef, every, noun, distrib_test_atom_self] at hJ
   obtain ⟨J₁, hJ₁, hJ₃⟩ := hJ
   obtain ⟨-, hN⟩ := mem_comp_test.1 hJ₁
@@ -428,11 +430,13 @@ theorem exists_courtAt₁_output (hc : ∃ c, M.convention c) {w : E} (hw : M.wo
     (h : ∀ c, M.convention c → M.courtAt M.harvey w c) :
     ∃ J, {iStar} ~[courtSentence M courtAt₁] J ∧ value Dref.u₄ J = {w} := by
   obtain ⟨c₀, hc₀⟩ := hc
-  set r₁ : Row E := row ↑M.harvey ⊥ ⊥ ⊥ ⊥
-  set r₂ : Row E := row ↑M.harvey ⊥ ⊥ ↑w ⊥
-  set J₃ : Set (Row E) := (fun c : E ↦ row ↑M.harvey ↑c ⊥ ↑w ⊥) '' {c | M.convention c}
+  set r₁ : Row E := row (.some M.harvey) ⊥ ⊥ ⊥ ⊥
+  set r₂ : Row E := row (.some M.harvey) ⊥ ⊥ (.some w) ⊥
+  set J₃ : Set (Row E) :=
+    (fun c : E ↦ row (.some M.harvey) (.some c) ⊥ (.some w) ⊥) '' {c | M.convention c}
   have hcopy : copy Dref.u₃ Dref.u₂ J₃ =
-      (fun c : E ↦ row ↑M.harvey ↑c ↑c ↑w ⊥) '' {c | M.convention c} := by
+      (fun c : E ↦ row (.some M.harvey) (.some c) (.some c) (.some w) ⊥) ''
+        {c | M.convention c} := by
     ext j
     simp [copy, J₃]
   have hc : ∃ c, M.convention c := ⟨c₀, hc₀⟩
@@ -444,13 +448,14 @@ theorem exists_courtAt₁_output (hc : ∃ c, M.convention c) {w : E} (hw : M.wo
   simp only [courtSentence, name, courtAt₁, indef, every, noun, distrib_test_atom_self]
   simp only [distrib_test]
   refine ⟨{r₁}, mem_comp_test.2 ⟨?_, ?_⟩, {r₂}, ?_, mem_comp_test.2 ⟨⟨J₃, ?_, ?_⟩, ?_⟩⟩
-  · simpa [iStar_eq_row, r₁] using singleton_mem_intro (iStar : Row E) Dref.u₁ ↑M.harvey
+  · simpa [iStar_eq_row, r₁] using singleton_mem_intro (iStar : Row E) Dref.u₁ (.some M.harvey)
   · exact value_singleton_of_eq (by simp [r₁])
   · simp only [mem_comp_test]
-    exact ⟨⟨by simpa [r₁, r₂] using singleton_mem_intro r₁ Dref.u₄ ↑w, w, hv₄₂⟩,
+    exact ⟨⟨by simpa [r₁, r₂] using singleton_mem_intro r₁ Dref.u₄ (.some w), w, hv₄₂⟩,
       mem_atom_vec1.2 ⟨by simp [hv₄₂], by simp [hv₄₂, hw]⟩⟩
   · have hint : ({r₂} : Set (Row E)) ~[intro Dref.u₂] J₃ := by
-      refine ⟨fun i hi ↦ ⟨_, ⟨c₀, hc₀, rfl⟩, ↑c₀, ?_⟩, fun j ⟨c, hc, hj⟩ ↦ ⟨r₂, rfl, ↑c, ?_⟩⟩
+      refine ⟨fun i hi ↦ ⟨_, ⟨c₀, hc₀, rfl⟩, (.some c₀), ?_⟩,
+        fun j ⟨c, hc, hj⟩ ↦ ⟨r₂, rfl, (.some c), ?_⟩⟩
       · rw [Set.mem_singleton_iff.1 hi]
         simp [r₂]
       · simp [← hj, r₂]
@@ -472,13 +477,15 @@ theorem exists_courtAt₁_output (hc : ∃ c, M.convention c) {w : E} (hw : M.wo
     refine mem_maxSub_test_copy (by decide) ⟨by rw [value_copy_self, hv₂]; exact hc, ?_⟩
     rw [value_copy_self, hcopy, hv₂]
     intro c hc
-    have hcell : cell Dref.u₃ ↑c ((fun c : E ↦ row ↑M.harvey ↑c ↑c ↑w ⊥) '' {c | M.convention c}) =
-        ({row ↑M.harvey ↑c ↑c ↑w ⊥} : Set (Row E)) := by
+    have hcell : cell Dref.u₃ (.some c)
+        ((fun c : E ↦ row (.some M.harvey) (.some c) (.some c) (.some w) ⊥) ''
+          {c | M.convention c}) =
+        ({row (.some M.harvey) (.some c) (.some c) (.some w) ⊥} : Set (Row E)) := by
       ext j
       simp only [mem_cell, Set.mem_image, Set.mem_ofPred_eq, Set.mem_singleton_iff, val_apply]
       constructor
       · rintro ⟨⟨c', -, rfl⟩, h⟩
-        rw [row_u₃, Flat.coe_inj] at h
+        rw [row_u₃, Part.some_inj] at h
         rw [h]
       · rintro rfl
         exact ⟨⟨c, hc, rfl⟩, rfl⟩
@@ -491,48 +498,54 @@ theorem exists_courtAt₁_output (hc : ∃ c, M.convention c) {w : E} (hw : M.wo
 theorem exists_courtAt₂_output (hc : ∃ c, M.convention c) {f : E → E}
     (hf : ∀ c, M.convention c → M.woman (f c) ∧ M.courtAt M.harvey (f c) c) :
     ∃ J, {iStar} ~[courtSentence M courtAt₂] J ∧ value Dref.u₄ J = f '' {c | M.convention c} ∧
-      ∀ c, M.convention c → f c ∈ value Dref.u₄ (cell Dref.u₃ c J) := by
+      ∀ c, M.convention c → f c ∈ value Dref.u₄ (cell Dref.u₃ (.some c) J) := by
   obtain ⟨c₀, hc₀⟩ := hc
   have hc : ∃ c, M.convention c := ⟨c₀, hc₀⟩
-  set r₁ : Row E := row ↑M.harvey ⊥ ⊥ ⊥ ⊥
-  set J₃ : Set (Row E) := (fun c : E ↦ row ↑M.harvey ↑c ⊥ ⊥ ⊥) '' {c | M.convention c}
+  set r₁ : Row E := row (.some M.harvey) ⊥ ⊥ ⊥ ⊥
+  set J₃ : Set (Row E) := (fun c : E ↦ row (.some M.harvey) (.some c) ⊥ ⊥ ⊥) '' {c | M.convention c}
   set J : Set (Row E) := {j | ∃ c, M.convention c ∧
-    (j = row ↑M.harvey ↑c ↑c ⊥ ⊥ ∨ j = row ↑M.harvey ↑c ↑c ↑(f c) ⊥)}
+    (j = row (.some M.harvey) (.some c) (.some c) ⊥ ⊥ ∨
+      j = row (.some M.harvey) (.some c) (.some c) (.some (f c)) ⊥)}
   have hcopy : copy Dref.u₃ Dref.u₂ J₃ =
-      (fun c : E ↦ row ↑M.harvey ↑c ↑c ⊥ ⊥) '' {c | M.convention c} := by
+      (fun c : E ↦ row (.some M.harvey) (.some c) (.some c) ⊥ ⊥) '' {c | M.convention c} := by
     ext j
     simp [copy, J₃]
   have hv₂ : value Dref.u₂ J₃ = {c | M.convention c} := by
     ext x
     simp [J₃]
-  have hcellJ (c : E) (hc : M.convention c) : cell Dref.u₃ ↑c J =
-      ({row ↑M.harvey ↑c ↑c ⊥ ⊥, row ↑M.harvey ↑c ↑c ↑(f c) ⊥} : Set (Row E)) := by
+  have hcellJ (c : E) (hc : M.convention c) : cell Dref.u₃ (.some c) J =
+      ({row (.some M.harvey) (.some c) (.some c) ⊥ ⊥,
+        row (.some M.harvey) (.some c) (.some c) (.some (f c)) ⊥} : Set (Row E)) := by
     ext j
     simp only [J, mem_cell, Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff,
       val_apply]
     constructor
-    · rintro ⟨⟨c', -, rfl | rfl⟩, h⟩ <;> rw [row_u₃, Flat.coe_inj] at h <;> subst h <;> simp
+    · rintro ⟨⟨c', -, rfl | rfl⟩, h⟩ <;> rw [row_u₃, Part.some_inj] at h <;> subst h <;> simp
     · rintro (rfl | rfl)
       · exact ⟨⟨c, hc, .inl rfl⟩, rfl⟩
       · exact ⟨⟨c, hc, .inr rfl⟩, rfl⟩
   have hcellK (c : E) (hc : M.convention c) :
-      cell Dref.u₃ ↑c ((fun c : E ↦ row ↑M.harvey ↑c ↑c ⊥ ⊥) '' {c | M.convention c}) =
-        ({row ↑M.harvey ↑c ↑c ⊥ ⊥} : Set (Row E)) := by
+      cell Dref.u₃ (.some c)
+          ((fun c : E ↦ row (.some M.harvey) (.some c) (.some c) ⊥ ⊥) '' {c | M.convention c}) =
+        ({row (.some M.harvey) (.some c) (.some c) ⊥ ⊥} : Set (Row E)) := by
     ext j
     simp only [mem_cell, Set.mem_image, Set.mem_ofPred_eq, Set.mem_singleton_iff, val_apply]
     constructor
     · rintro ⟨⟨c', -, rfl⟩, h⟩
-      rw [row_u₃, Flat.coe_inj] at h
+      rw [row_u₃, Part.some_inj] at h
       rw [h]
     · rintro rfl
       exact ⟨⟨c, hc, rfl⟩, rfl⟩
   have hD (c : E) (hc : M.convention c) :
-      ({row ↑M.harvey ↑c ↑c ⊥ ⊥} : Set (Row E)) ~[((intro Dref.u₄ ○ test (sing Dref.u₄)) ○
+      ({row (.some M.harvey) (.some c) (.some c) ⊥ ⊥} : Set (Row E)) ~[((intro Dref.u₄ ○
+        test (sing Dref.u₄)) ○
         test (atom (fun x ↦ M.woman (x 0)) ![Dref.u₄])) ○
         test (atom (fun x ↦ M.courtAt (x 0) (x 1) (x 2)) ![Dref.u₁, Dref.u₄, Dref.u₃])]
-        ({row ↑M.harvey ↑c ↑c ⊥ ⊥, row ↑M.harvey ↑c ↑c ↑(f c) ⊥} : Set (Row E)) := by
+        ({row (.some M.harvey) (.some c) (.some c) ⊥ ⊥,
+          row (.some M.harvey) (.some c) (.some c) (.some (f c)) ⊥} : Set (Row E)) := by
     have hv : value Dref.u₄
-        ({row ↑M.harvey ↑c ↑c ⊥ ⊥, row ↑M.harvey ↑c ↑c ↑(f c) ⊥} : Set (Row E)) = {f c} := by
+        ({row (.some M.harvey) (.some c) (.some c) ⊥ ⊥,
+          row (.some M.harvey) (.some c) (.some c) (.some (f c)) ⊥} : Set (Row E)) = {f c} := by
       ext
       simp [eq_comm]
     simp only [mem_comp_test]
@@ -542,17 +555,18 @@ theorem exists_courtAt₂_output (hc : ∃ c, M.convention c) {f : E → E}
       simp
     · rcases hj with rfl | rfl
       · exact ⟨⊥, by simp⟩
-      · exact ⟨↑(f c), by simp⟩
+      · exact ⟨(.some (f c)), by simp⟩
     · rw [mem_atom, Set.insert_eq, tuples_union, tuples_singleton_of_eq_bot (k := 1) rfl,
         tuples_singleton_of_eq (y := ![M.harvey, f c, c]) fun k ↦ by fin_cases k <;> rfl]
       simpa using (hf c hc).2
   refine ⟨J, ?_, ?_, fun c hc ↦ ?_⟩
   · simp only [courtSentence, name, courtAt₂, indef, every, noun, distrib_test_atom_self]
     refine ⟨{r₁}, mem_comp_test.2 ⟨?_, ?_⟩, mem_comp_test.2 ⟨⟨J₃, ?_, ?_⟩, ?_⟩⟩
-    · simpa [iStar_eq_row, r₁] using singleton_mem_intro (iStar : Row E) Dref.u₁ ↑M.harvey
+    · simpa [iStar_eq_row, r₁] using singleton_mem_intro (iStar : Row E) Dref.u₁ (.some M.harvey)
     · exact value_singleton_of_eq (by simp [r₁])
     · have hint : ({r₁} : Set (Row E)) ~[intro Dref.u₂] J₃ := by
-        refine ⟨fun i hi ↦ ⟨_, ⟨c₀, hc₀, rfl⟩, ↑c₀, ?_⟩, fun j ⟨c, hc, hj⟩ ↦ ⟨r₁, rfl, ↑c, ?_⟩⟩
+        refine ⟨fun i hi ↦ ⟨_, ⟨c₀, hc₀, rfl⟩, (.some c₀), ?_⟩,
+          fun j ⟨c, hc, hj⟩ ↦ ⟨r₁, rfl, (.some c), ?_⟩⟩
         · rw [Set.mem_singleton_iff.1 hi]
           simp [r₁]
         · simp [← hj, r₁]
@@ -585,14 +599,15 @@ theorem exists_courtAt₂_output (hc : ∃ c, M.convention c) {f : E → E}
             exact ⟨_, ⟨c, hc, .inl rfl⟩, hx⟩
           · rintro ⟨_, ⟨c, hc, rfl | rfl⟩, hx⟩ <;> exact ⟨_, ⟨c, hc, rfl⟩, hx⟩
         · rintro c ⟨_, ⟨c', hc', rfl⟩, h⟩
-          simp only [val_apply, row_u₃, embed_flat, Flat.coe_inj] at h
+          simp only [val_apply, row_u₃, embed_part, Part.some_inj] at h
           subst h
           rw [hcellK c' hc', hcellJ c' hc']
           exact hD c' hc'
       · rintro K ⟨K₀, hi₃, hK⟩ hJK k ⟨hk, hk₃⟩
         obtain ⟨hss, hdist'⟩ := mem_test_comp.1 hK
         obtain ⟨-, -, hv, hcells⟩ := mem_distrib.1 hdist'
-        obtain ⟨c, hc⟩ := Flat.ne_bot_iff_exists.1 hk₃
+        obtain ⟨c, hc⟩ := Part.dom_iff_mem.1 hk₃
+        replace hc := Part.eq_some_iff.2 hc
         have hcK₀ : c ∈ value Dref.u₃ K₀ := hv ▸ ⟨k, hk, hc⟩
         have hDc := hcells c hcK₀
         simp only [mem_comp_test] at hDc
@@ -605,15 +620,14 @@ theorem exists_courtAt₂_output (hc : ∃ c, M.convention c) {f : E → E}
         subst hk₀₃
         obtain rfl : x = c := by
           rcases hss₀ with h | h
-          · exact (Flat.coe_inj.1 h).symm
+          · exact (Part.some_inj.1 h).symm
           · simp at h
         refine ⟨⟨x, hx, ?_⟩, by simp⟩
-        induction e using Flat.recBotCoe with
-        | bot => exact .inl rfl
-        | coe b =>
-          refine .inr ?_
-          have hb : b ∈ value Dref.u₄ (cell Dref.u₃ ↑x K) := ⟨_, ⟨hk, rfl⟩, rfl⟩
-          have hfx : f x ∈ value Dref.u₄ (cell Dref.u₃ ↑x K) :=
+        rcases e.eq_none_or_eq_some with rfl | ⟨b, rfl⟩
+        · exact .inl rfl
+        · refine .inr ?_
+          have hb : b ∈ value Dref.u₄ (cell Dref.u₃ (.some x) K) := ⟨_, ⟨hk, rfl⟩, rfl⟩
+          have hfx : f x ∈ value Dref.u₄ (cell Dref.u₃ (.some x) K) :=
             ⟨_, ⟨(hJK ⟨⟨x, hx, .inr rfl⟩, by simp⟩).1, rfl⟩, rfl⟩
           rw [hw'] at hb hfx
           rw [Set.mem_singleton_iff.1 hb, Set.mem_singleton_iff.1 hfx]
@@ -624,7 +638,7 @@ theorem exists_courtAt₂_output (hc : ∃ c, M.convention c) {f : E → E}
     constructor
     · rintro ⟨j, ⟨c, hc, rfl | rfl⟩, hx⟩
       · simp at hx
-      · exact ⟨c, hc, Flat.coe_inj.1 hx⟩
+      · exact ⟨c, hc, Part.some_inj.1 hx⟩
     · rintro ⟨c, hc, rfl⟩
       exact ⟨_, ⟨c, hc, .inr rfl⟩, rfl⟩
   · rw [hcellJ c hc]
@@ -649,7 +663,7 @@ private abbrev alwaysCome (C : Condition (Set (Row E))) : Update (Set (Row E)) :
 private theorem always_come {C : Condition (Set (Row E))}
     (hC : C ⊆ atom (fun x ↦ M.come (x 0) (x 1)) ![Dref.u₄, Dref.u₅])
     (h : J ∈ (alwaysCome C).dom) :
-    ∀ c ∈ value Dref.u₃ J, ∃ w ∈ value Dref.u₄ (cell Dref.u₃ c J), M.come w c := by
+    ∀ c ∈ value Dref.u₃ J, ∃ w ∈ value Dref.u₄ (cell Dref.u₃ (.some c) J), M.come w c := by
   obtain ⟨J', hJJ'⟩ := h
   obtain ⟨hmax, hev⟩ := mem_comp_test.1 hJJ'
   rw [distrib_test] at hmax
@@ -660,8 +674,8 @@ private theorem always_come {C : Condition (Set (Row E))}
   intro c hc
   have hc₅ : c ∈ value Dref.u₅ K := @hev c (hv₃.symm ▸ hc)
   obtain ⟨⟨p, k, ⟨hk, hk₅⟩, hp₁, hp₂⟩, hcome⟩ := mem_atom_vec2.1 (hC (hC5.2 c hc₅))
-  have hpc : p.2 = c := Flat.coe_inj.1 (hp₂.symm.trans hk₅)
-  have hk₃ : val Dref.u₃ k = ↑c := by
+  have hpc : p.2 = c := Part.some_inj.1 (hp₂.symm.trans hk₅)
+  have hk₃ : val Dref.u₃ k = (.some c) := by
     rcases hss.1 k hk with h | h
     · exact h.symm.trans hk₅
     · simp [h] at hk₅
@@ -670,7 +684,7 @@ private theorem always_come {C : Condition (Set (Row E))}
   simpa [hpc] using hcome ⟨p.1, p.2⟩ ⟨k, ⟨hk, hk₅⟩, hp₁, hp₂⟩
 
 private theorem always_come_of {C : Condition (Set (Row E))} (hne : (value Dref.u₃ J).Nonempty)
-    (hC : ∀ c ∈ value Dref.u₃ J, cell Dref.u₅ c (copy Dref.u₅ Dref.u₃ J) ∈ C) :
+    (hC : ∀ c ∈ value Dref.u₃ J, cell Dref.u₅ (.some c) (copy Dref.u₅ Dref.u₃ J) ∈ C) :
     J ∈ (alwaysCome C).dom := by
   refine ⟨copy Dref.u₅ Dref.u₃ J, mem_comp_test.2 ⟨?_, ?_⟩⟩
   · rw [distrib_test]
@@ -680,35 +694,35 @@ private theorem always_come_of {C : Condition (Set (Row E))} (hne : (value Dref.
   · simp only [mem_det, Det.every]
     rw [value_copy_self, value_copy_of_ne (by decide)]
 
-private theorem cell_copy_mem {c w : E} (hw : value Dref.u₄ (cell Dref.u₃ c J) = {w})
+private theorem cell_copy_mem {c w : E} (hw : value Dref.u₄ (cell Dref.u₃ (.some c) J) = {w})
     (hcome : M.come w c) :
-    cell Dref.u₅ c (copy Dref.u₅ Dref.u₃ J) ∈
+    cell Dref.u₅ (.some c) (copy Dref.u₅ Dref.u₃ J) ∈
       sing Dref.u₄ ∩ atom (fun x ↦ M.come (x 0) (x 1)) ![Dref.u₄, Dref.u₅] := by
   rw [cell_copy_self]
   refine ⟨⟨w, by rw [value_copy_of_ne (by decide), hw]⟩, mem_atom_vec2.2 ⟨?_, ?_⟩⟩
-  · obtain ⟨x, ⟨hx, hx₃⟩, hx₄⟩ := (hw ▸ rfl : w ∈ value Dref.u₄ (cell Dref.u₃ c J))
+  · obtain ⟨x, ⟨hx, hx₃⟩, hx₄⟩ := (hw ▸ rfl : w ∈ value Dref.u₄ (cell Dref.u₃ (.some c) J))
     exact ⟨(w, c), _, ⟨x, ⟨hx, hx₃⟩, rfl⟩, by simpa using hx₄, by simpa using hx₃⟩
   · rintro ⟨y, z⟩ ⟨_, ⟨x, ⟨hx, hx₃⟩, rfl⟩, hy, hz⟩
-    have hy' : y ∈ value Dref.u₄ (cell Dref.u₃ c J) := ⟨x, ⟨hx, hx₃⟩, by simpa using hy⟩
+    have hy' : y ∈ value Dref.u₄ (cell Dref.u₃ (.some c) J) := ⟨x, ⟨hx, hx₃⟩, by simpa using hy⟩
     rw [hw] at hy'
     obtain rfl := hy'
-    obtain rfl : z = c := Flat.coe_inj.1 (by simpa [hx₃] using hz.symm)
+    obtain rfl : z = c := Part.some_inj.1 (by simpa [hx₃] using hz.symm)
     simpa using hcome
 
 theorem comeSentence₁_imp (h : J ∈ (comeSentence M come₁).dom) : J ∈ sing Dref.u₄ ∧
-    ∀ c ∈ value Dref.u₃ J, ∃ w ∈ value Dref.u₄ (cell Dref.u₃ c J), M.come w c := by
+    ∀ c ∈ value Dref.u₃ J, ∃ w ∈ value Dref.u₄ (cell Dref.u₃ (.some c) J), M.come w c := by
   simp only [comeSentence, come₁, always, pron] at h
   obtain ⟨J', hJJ'⟩ := h
   obtain ⟨hs, hJJ'⟩ := mem_test_comp.1 (by simpa only [comp_assoc] using hJJ')
   exact ⟨hs, always_come M subset_rfl ⟨J', hJJ'⟩⟩
 
 theorem comeSentence₂_imp (h : J ∈ (comeSentence M come₂).dom) :
-    ∀ c ∈ value Dref.u₃ J, ∃ w ∈ value Dref.u₄ (cell Dref.u₃ c J), M.come w c := by
+    ∀ c ∈ value Dref.u₃ J, ∃ w ∈ value Dref.u₄ (cell Dref.u₃ (.some c) J), M.come w c := by
   simp only [comeSentence, come₂, always, pron, test_comp_test] at h
   exact always_come M Set.inter_subset_right h
 
 theorem mem_dom_comeSentence₁_of (hne : (value Dref.u₃ J).Nonempty) (hs : J ∈ sing Dref.u₄)
-    (h : ∀ c ∈ value Dref.u₃ J, ∃ w, value Dref.u₄ (cell Dref.u₃ c J) = {w} ∧ M.come w c) :
+    (h : ∀ c ∈ value Dref.u₃ J, ∃ w, value Dref.u₄ (cell Dref.u₃ (.some c) J) = {w} ∧ M.come w c) :
     J ∈ (comeSentence M come₁).dom := by
   simp only [comeSentence, come₁, always, pron]
   obtain ⟨J', hJJ'⟩ := always_come_of (C := atom (fun x ↦ M.come (x 0) (x 1)) ![Dref.u₄, Dref.u₅])
@@ -716,7 +730,7 @@ theorem mem_dom_comeSentence₁_of (hne : (value Dref.u₃ J).Nonempty) (hs : J 
   exact ⟨J', by simpa only [comp_assoc] using mem_test_comp.2 ⟨hs, hJJ'⟩⟩
 
 theorem mem_dom_comeSentence₂_of (hne : (value Dref.u₃ J).Nonempty)
-    (h : ∀ c ∈ value Dref.u₃ J, ∃ w, value Dref.u₄ (cell Dref.u₃ c J) = {w} ∧ M.come w c) :
+    (h : ∀ c ∈ value Dref.u₃ J, ∃ w, value Dref.u₄ (cell Dref.u₃ (.some c) J) = {w} ∧ M.come w c) :
     J ∈ (comeSentence M come₂).dom := by
   simp only [comeSentence, come₂, always, pron, test_comp_test]
   exact always_come_of hne fun c hc ↦ let ⟨w, hw, hcome⟩ := h c hc; cell_copy_mem M hw hcome
@@ -730,18 +744,18 @@ private theorem mem_dom_comp_iff {D D' : Update (Set (Row E))} :
 -- (6)
 private theorem comeSentence_iff {w : E} (hc : ∃ c, M.convention c)
     (hv₃ : value Dref.u₃ J = {c | M.convention c}) (hv₄ : value Dref.u₄ J = {w})
-    (hcell : ∀ c, M.convention c → value Dref.u₄ (cell Dref.u₃ c J) = {w}) :
+    (hcell : ∀ c, M.convention c → value Dref.u₄ (cell Dref.u₃ (.some c) J) = {w}) :
     (J ∈ (comeSentence M come₁).dom ↔ ∀ c, M.convention c → M.come w c) ∧
       (J ∈ (comeSentence M come₂).dom ↔ ∀ c, M.convention c → M.come w c) := by
   have hne : (value Dref.u₃ J).Nonempty := hv₃ ▸ hc
   have hconv {c : E} (h : c ∈ value Dref.u₃ J) : M.convention c := by rwa [hv₃] at h
-  have key (h : ∀ c ∈ value Dref.u₃ J, ∃ w' ∈ value Dref.u₄ (cell Dref.u₃ c J), M.come w' c)
+  have key (h : ∀ c ∈ value Dref.u₃ J, ∃ w' ∈ value Dref.u₄ (cell Dref.u₃ (.some c) J), M.come w' c)
       (c : E) (hc : M.convention c) : M.come w c := by
     obtain ⟨w', hw', hcome⟩ := h c (by rw [hv₃]; exact hc)
     rw [hcell c hc] at hw'
     rwa [← Set.mem_singleton_iff.1 hw']
   have hof (h : ∀ c, M.convention c → M.come w c) (c : E) (hc : c ∈ value Dref.u₃ J) :
-      ∃ w', value Dref.u₄ (cell Dref.u₃ c J) = {w'} ∧ M.come w' c :=
+      ∃ w', value Dref.u₄ (cell Dref.u₃ (.some c) J) = {w'} ∧ M.come w' c :=
     ⟨w, hcell c (hconv hc), h c (hconv hc)⟩
   exact ⟨⟨fun h ↦ key (comeSentence₁_imp M h).2,
       fun h ↦ mem_dom_comeSentence₁_of M hne ⟨w, hv₄⟩ (hof h)⟩,
@@ -751,10 +765,10 @@ private theorem courtAt₂_output' (hJ : {iStar} ~[courtSentence M courtAt₂] J
     (hv₄ : value Dref.u₄ J = {w}) :
     (∀ c, M.convention c → M.woman w ∧ M.courtAt M.harvey w c) ∧
       value Dref.u₃ J = {c | M.convention c} ∧
-      ∀ c, M.convention c → value Dref.u₄ (cell Dref.u₃ c J) = {w} := by
+      ∀ c, M.convention c → value Dref.u₄ (cell Dref.u₃ (.some c) J) = {w} := by
   obtain ⟨hv₃, h⟩ := courtAt₂_output M hJ
   have hw (c : E) (hc : M.convention c) :
-      M.woman w ∧ M.courtAt M.harvey w c ∧ value Dref.u₄ (cell Dref.u₃ c J) = {w} := by
+      M.woman w ∧ M.courtAt M.harvey w c ∧ value Dref.u₄ (cell Dref.u₃ (.some c) J) = {w} := by
     obtain ⟨w', hw', hcourt, hcell⟩ := h c hc
     have : w' ∈ value Dref.u₄ J := value_mono (fun _ hk ↦ hk.1) (hcell ▸ Set.mem_singleton w')
     rw [hv₄, Set.mem_singleton_iff] at this

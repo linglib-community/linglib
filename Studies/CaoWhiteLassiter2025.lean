@@ -171,7 +171,7 @@ noncomputable def modelIntention (ν : MeasureTheory.Measure U) (X : Finset V) (
 /-- SUF, Pearl's probability of sufficiency ([pearl-2019]), is the probability, among the
     contexts drawn from `ν` in which the observation `obs` holds, that setting `c := x` makes
     `e = y`. -/
-noncomputable def suf (ν : MeasureTheory.Measure U) (obs : ∀ v, Flat (α v)) (c : V) (x : α c)
+noncomputable def suf (ν : MeasureTheory.Measure U) (obs : ∀ v, Part (α v)) (c : V) (x : α c)
     (e : V) (y : α e) : ℝ≥0∞ :=
   ProbabilityTheory.cond ν (M.contexts obs) {u | M[c ← x].solve u e = y}
 

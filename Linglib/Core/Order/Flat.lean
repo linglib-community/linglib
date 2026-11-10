@@ -1,19 +1,17 @@
 module
 
 public import Mathlib.Order.Cover
-public import Mathlib.Data.Part
 public import Linglib.Core.Order.PartialUnify
 
 /-!
 # The flat order
 
-`Flat α` is `Option α` with the flat order: `⊥` below everything, distinct
-values incomparable. It is the lift of the discrete order on `α` — the order
-of partial values under extension — and is mathlib's order on `Part α`
-carried on its decidable twin `Option` (`le_iff_ofOption_le`), where it
-supports `DecidableEq`, `DecidableLE`, `#eval`, and constructor
-pattern-matching. "Flat domain" is the domain-theory name for this poset
-([winskel-1993]; the `flat` class of Isabelle/HOLCF).
+`Flat α` is `Option α` with the flat order: `⊥` below everything, distinct values incomparable.
+It is the lift of the discrete order on `α`, the domain-theory *flat domain* ([winskel-1993]; the
+`flat` class of Isabelle/HOLCF), and it is the order mathlib puts on partial values `Part α`, here
+carried by `Option` so that it supports `DecidableEq`, `DecidableLE`, `#eval` and constructor
+pattern-matching. Partial assignments and situations are mathlib's `Part`-valued families
+(`Linglib/Logic/Assignment.lean`); `Flat` is for slots that are matched on and decided.
 
 The flat order is bounded-complete but not a lattice: meets are total (`SemilatticeInf`), joins
 partial (`PartialUnify`). Linguistically it is one atomic feature slot, ordered by [shieber-1986]'s
@@ -38,7 +36,6 @@ The order skeleton follows the `WithBot` mold (`Mathlib/Order/TypeTags.lean`,
 * `Flat.compat_iff` — slot compatibility (`Compat`), characterized
 * `Flat.unify_eq_top_of_ne` — distinct atoms do not unify (the
   non-distributivity witness)
-* `Flat.pi_le_iff` — the order on families of slots, as extension of partial assignments
 -/
 
 @[expose] public section
@@ -118,13 +115,6 @@ def unbotD (d : α) (x : Flat α) : α :=
 
 @[simp] theorem unbotD_coe (d b : α) : unbotD d (b : Flat α) = b := rfl
 
-/-- The value of a committed slot. -/
-def get (x : Flat α) (h : x ≠ ⊥) : α := Option.get x (Option.isSome_iff_ne_none.2 h)
-
-@[simp] theorem coe_get (x : Flat α) (h : x ≠ ⊥) : (↑(x.get h) : Flat α) = x := Option.some_get _
-
-@[simp] theorem get_coe (a : α) (h : (a : Flat α) ≠ ⊥) : (a : Flat α).get h = a := rfl
-
 /-! ### The flat order -/
 
 /-- Auxiliary definition for the order on `Flat`. -/
@@ -202,20 +192,6 @@ theorem covBy_iff : x ⋖ y ↔ x = ⊥ ∧ y ≠ ⊥ := by
 
 @[simp] theorem bot_covBy_coe (a : α) : (⊥ : Flat α) ⋖ a :=
   covBy_iff.2 ⟨rfl, coe_ne_bot⟩
-
-theorem le_iff_ofOption_le :
-    x ≤ y ↔ Part.ofOption (x : Option α) ≤ Part.ofOption (y : Option α) := by
-  constructor
-  · rintro (_ | _)
-    · exact fun i hi => absurd (Part.mem_ofOption.mp hi) nofun
-    · exact le_rfl
-  · intro h
-    cases x with
-    | bot => exact bot_le
-    | coe a =>
-      obtain rfl : y = ↑a :=
-        Part.mem_ofOption.mp (h a (Part.mem_ofOption.mpr rfl))
-      exact le_rfl
 
 /-! ### Left-biased merge -/
 
@@ -380,16 +356,5 @@ atoms have no upper bound, so the join the law would require is undefined. -/
 
 theorem unify_eq_top_of_ne [DecidableEq α] (h : a ≠ b) : Flat.unify (↑a : Flat α) ↑b = ⊤ := by
   rw [unify_coe_coe, ite_eq_right h]
-
-/-! ### Families of slots -/
-
-/-- A family of slots lies below another exactly when the other agrees with it wherever it is
-committed: the extension order of partial assignments. -/
-theorem pi_le_iff {ι : Type*} {β : ι → Type*} {s t : ∀ i, Flat (β i)} :
-    s ≤ t ↔ ∀ i, s i ≠ ⊥ → t i = s i := by
-  refine forall_congr' fun i ↦ ?_
-  cases s i with
-  | bot => simp
-  | coe b => simp [coe_le_iff]
 
 end Flat

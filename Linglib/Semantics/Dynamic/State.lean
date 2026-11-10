@@ -60,13 +60,13 @@ variable {W V M : Type*}
 /-! ### Information states -/
 
 /-- An information state is a set of world–assignment pairs. -/
-def State (W V M : Type*) := Set (Possibility W V (Flat M))
+def State (W V M : Type*) := Set (Possibility W V (Part M))
 
 namespace State
 
-variable {s s' t : State W V M} {p q r : Possibility W V (Flat M)} {X Y : Set V}
+variable {s s' t : State W V M} {p q r : Possibility W V (Part M)} {X Y : Set V}
 
-@[reducible] instance : Membership (Possibility W V (Flat M)) (State W V M) :=
+@[reducible] instance : Membership (Possibility W V (Part M)) (State W V M) :=
   inferInstanceAs (Membership _ (Set _))
 
 instance : HasSubset (State W V M) := ⟨fun s s' => ∀ ⦃p⦄, p ∈ s → p ∈ s'⟩
@@ -86,7 +86,7 @@ instance : HasSubset (State W V M) := ⟨fun s s' => ∀ ⦃p⦄, p ∈ s → p 
 /-- `s ≤ s'` iff `s` carries at least as much information as `s'`. -/
 instance : Preorder (State W V M) :=
   .lift (OrderDual.toDual ∘ upperClosure :
-    State W V M → (UpperSet (Possibility W V (Flat M)))ᵒᵈ)
+    State W V M → (UpperSet (Possibility W V (Part M)))ᵒᵈ)
 
 /-- Every point of the stronger state lies above a point of the weaker. -/
 theorem le_def : s ≤ s' ↔ ∀ p ∈ s, ∃ q ∈ s', q ≤ p :=
@@ -139,8 +139,8 @@ theorem one_eq_top : (1 : State W V M) = ⊤ := rfl
 
 theorem mem_mul_iff_unify : r ∈ s * s' ↔ ∃ p ∈ s, ∃ q ∈ s', unify p q = ↑r := Iff.rfl
 
-theorem mem_mul : r ∈ s * s' ↔ ∃ p ∈ s, ∃ q ∈ s', Compat p q ∧ r = p.union q := by
-  simp only [mem_mul_iff_unify, Possibility.unify_eq_coe_iff]
+theorem mem_mul : r ∈ s * s' ↔ ∃ p ∈ s, ∃ q ∈ s', IsLUB {p, q} r := by
+  simp only [mem_mul_iff_unify, PartialUnify.unify_eq_coe_iff_isLUB]
 
 instance : CommMonoid (State W V M) where
   mul_assoc s t u := Set.ext fun r ↦
@@ -235,15 +235,15 @@ of states up to equivalence, and Def. 26's unrestricted
 of possibilities, ordered by inclusion. -/
 def antisymmetrizationOrderIso :
     Antisymmetrization (State W V M) (· ≤ ·) ≃o
-      (UpperSet (Possibility W V (Flat M)))ᵒᵈ where
+      (UpperSet (Possibility W V (Part M)))ᵒᵈ where
   toFun := Quotient.lift (fun s : State W V M => OrderDual.toDual (upperClosure s))
     fun _ _ h => le_antisymm (α := (UpperSet _)ᵒᵈ) h.1 h.2
   invFun U := toAntisymmetrization (· ≤ ·)
-    (↑(OrderDual.ofDual U) : Set (Possibility W V (Flat M)))
+    (↑(OrderDual.ofDual U) : Set (Possibility W V (Part M)))
   left_inv := by
     refine Quotient.ind fun s => Quotient.sound ?_
-    have key : upperClosure ↑(upperClosure (s : Set (Possibility W V (Flat M)))) =
-        upperClosure (s : Set (Possibility W V (Flat M))) :=
+    have key : upperClosure ↑(upperClosure (s : Set (Possibility W V (Part M)))) =
+        upperClosure (s : Set (Possibility W V (Part M))) :=
       SetLike.coe_injective (upperClosure _).upper'.upperClosure
     exact ⟨le_of_eq (α := UpperSet _) key.symm, le_of_eq (α := UpperSet _) key⟩
   right_inv U :=
@@ -260,11 +260,11 @@ The worldly content of a state — Def. 23(v)'s proposition,
 
 /-- A referent is *familiar* at a state: defined at every point. -/
 def Familiar (s : State W V M) (x : V) : Prop :=
-  ∀ p ∈ s, p.assignment x ≠ ⊥
+  ∀ p ∈ s, x ∈ p.domain
 
 /-- A referent is *novel* at a state: defined at no point. -/
 def Novel (s : State W V M) (x : V) : Prop :=
-  ∀ p ∈ s, p.assignment x = ⊥
+  ∀ p ∈ s, x ∉ p.domain
 
 theorem Familiar.mono {s s' : State W V M} {x : V} (h : Familiar s' x) (hs : s ⊆ s') :
     Familiar s x := fun p hp => h p (hs hp)
@@ -284,8 +284,9 @@ theorem Familiar.mul_right {x : V} (h : Familiar s' x) : Familiar (s * s') x :=
 
 theorem Novel.mul {x : V} (h : Novel s x) (h' : Novel s' x) : Novel (s * s') x := by
   intro r hr
-  obtain ⟨p, hp, q, hq, -, rfl⟩ := mem_mul.mp hr
-  simp [h p hp, h' q hq]
+  obtain ⟨p, hp, q, hq, hr⟩ := mem_mul.mp hr
+  rw [Possibility.domain_eq_of_isLUB hr]
+  exact fun hx ↦ hx.elim (h p hp) (h' q hq)
 
 /-! ### Strata
 
@@ -324,11 +325,11 @@ theorem mem_mul_stratum :
     r ∈ s * stratum X ↔ ∃ p ∈ s, p ≤ r ∧ r.domain = p.domain ∪ X := by
   rw [mem_mul]
   constructor
-  · rintro ⟨p, hp, q, hq, -, rfl⟩
-    exact ⟨p, hp, Possibility.le_union_left, by rw [Possibility.domain_union, mem_stratum.mp hq]⟩
+  · rintro ⟨p, hp, q, hq, hr⟩
+    exact ⟨p, hp, (Possibility.isLUB_pair_iff.mp hr).1,
+      by rw [Possibility.domain_eq_of_isLUB hr, mem_stratum.mp hq]⟩
   · rintro ⟨p, hp, hpr, hdom⟩
-    refine ⟨p, hp, r.restrict X, ?_, .of_le hpr Possibility.restrict_le,
-      Possibility.eq_union_restrict hpr hdom⟩
+    refine ⟨p, hp, r.restrict X, ?_, Possibility.isLUB_restrict hpr hdom⟩
     show (r.restrict X).domain = X
     rw [Possibility.domain_restrict, hdom, Set.inter_eq_left.mpr Set.subset_union_right]
 
@@ -366,36 +367,35 @@ theorem mul_eq_sep_of_uniformAt (hs' : UniformAt X s') :
   ext r
   rw [mem_mul]
   constructor
-  · rintro ⟨p, hp, q, hq, hpq, rfl⟩
-    refine ⟨mem_mul.mpr ⟨p, hp, q, hs' q hq, hpq, rfl⟩, ?_⟩
-    rwa [← (Possibility.le_iff_eq_restrict (hs' q hq)).mp (Possibility.le_union_right hpq)]
+  · rintro ⟨p, hp, q, hq, hr⟩
+    refine ⟨mem_mul.mpr ⟨p, hp, q, hs' q hq, hr⟩, ?_⟩
+    rwa [← (Possibility.le_iff_eq_restrict (hs' q hq)).mp (Possibility.isLUB_pair_iff.mp hr).2.1]
   · rintro ⟨hr, hq⟩
     obtain ⟨p, hp, hpr, hdom⟩ := mem_mul_stratum.mp hr
-    exact ⟨p, hp, _, hq, .of_le hpr Possibility.restrict_le,
-      Possibility.eq_union_restrict hpr hdom⟩
+    exact ⟨p, hp, _, hq, Possibility.isLUB_restrict hpr hdom⟩
 
 /-- The proposition state of an atomic predicate at card `x`: the points of
 the stratum `{x}` whose value at `x` satisfies the predicate at their world. -/
 def atomAt (x : V) (pred : W → M → Prop) : State W V M :=
-  {q ∈ (stratum {x} : State W V M) | ∃ m : M, q.assignment x = ↑m ∧ pred q.world m}
+  {q ∈ (stratum {x} : State W V M) | ∃ m ∈ q.assignment x, pred q.world m}
 
 theorem uniformAt_atomAt {x : V} {pred : W → M → Prop} :
     UniformAt {x} (atomAt x pred : State W V M) := fun _ h ↦ h.1
 
 theorem mul_atomAt {x : V} {pred : W → M → Prop} :
-    s * atomAt x pred = {r ∈ s * stratum {x} | ∃ m : M, r.assignment x = ↑m ∧ pred r.world m} := by
+    s * atomAt x pred = {r ∈ s * stratum {x} | ∃ m ∈ r.assignment x, pred r.world m} := by
   rw [mul_eq_sep_of_uniformAt uniformAt_atomAt]
   ext r
   refine and_congr_right fun hr ↦ ?_
   have hx : x ∈ r.domain := familiar_mul_stratum (Set.mem_singleton x) r hr
   show ((r.restrict {x}).domain = {x} ∧
-    ∃ m : M, (r.restrict {x}).assignment x = ↑m ∧ pred (r.restrict {x}).world m) ↔ _
+    ∃ m ∈ (r.restrict {x}).assignment x, pred (r.restrict {x}).world m) ↔ _
   rw [Possibility.restrict_assignment_of_mem (Set.mem_singleton x), Possibility.domain_restrict,
     Set.inter_eq_left.mpr (Set.singleton_subset_iff.mpr hx)]
   exact and_iff_right rfl
 
 theorem UniformAt.isAntichain (hs : UniformAt X s) :
-    IsAntichain (· ≤ ·) (s : Set (Possibility W V (Flat M))) :=
+    IsAntichain (· ≤ ·) (s : Set (Possibility W V (Part M))) :=
   fun p hp q hq hne hpq =>
     hne (Possibility.eq_of_le_of_domain_eq hpq ((hs p hp).trans (hs q hq).symm))
 
@@ -448,8 +448,8 @@ section Fibred
 theorem UniformAt.mul (hs : UniformAt X s) (hs' : UniformAt Y s') :
     UniformAt (X ∪ Y) (s * s') := by
   intro r hr
-  obtain ⟨p, hp, q, hq, -, rfl⟩ := mem_mul.mp hr
-  rw [Possibility.domain_union, hs p hp, hs' q hq]
+  obtain ⟨p, hp, q, hq, hr⟩ := mem_mul.mp hr
+  rw [Possibility.domain_eq_of_isLUB hr, hs p hp, hs' q hq]
 
 theorem UniformAt.lowerClosure_le_iff_restrict (hs : UniformAt X s) :
     lowerClosure s ≤ lowerClosure s' ↔ s ⊆ s'.restrict X :=
@@ -487,9 +487,9 @@ theorem restrict_restrict :
 /-! ### The uniform classification -/
 
 /-- Uniform states at `X` are sets of world–`X`-assignment pairs. -/
-noncomputable def uniformEquiv (X : Set V) :
+def uniformEquiv (X : Set V) :
     {I : State W V M // UniformAt X I} ≃ Set (W × (X → M)) :=
-  (Equiv.Set.powerset {p : Possibility W V (Flat M) | p.domain = X}).trans
+  (Equiv.Set.powerset {p : Possibility W V (Part M) | p.domain = X}).trans
     (Equiv.setCongr (Possibility.domainEquiv X))
 
 @[simp] theorem mem_uniformEquiv {I : {I : State W V M // UniformAt X I}}
@@ -500,10 +500,10 @@ noncomputable def uniformEquiv (X : Set V) :
 /-- A state with no discourse referents is a set of worlds, and informativeness is inclusion:
 the states of propositional update semantics. -/
 def worldOrderIso : State W Empty M ≃o Set W where
-  toEquiv := Equiv.setCongr (Possibility.worldEquiv W (Flat M))
+  toEquiv := Equiv.setCongr (Possibility.worldEquiv W (Part M))
   map_rel_iff' {s t} := by
     have hu (s : State W Empty M) : UniformAt ∅ s := fun _ _ ↦ Set.eq_empty_of_isEmpty _
-    exact (Set.image_subset_image_iff (Possibility.worldEquiv W (Flat M)).injective).trans
+    exact (Set.image_subset_image_iff (Possibility.worldEquiv W (Part M)).injective).trans
       ((hu s).le_iff_subset (hu t)).symm
 
 variable [DecidableEq V]
@@ -511,7 +511,7 @@ variable [DecidableEq V]
 /-- Random assignment: indeterministically extend each point to a
 defined value at `x`. -/
 def randomAssign (s : State W V M) (x : V) : State W V M :=
-  {p | ∃ q ∈ s, ∃ m : M, p = q.update x ↑m}
+  {p | ∃ q ∈ s, ∃ m : M, p = q.update x (.some m)}
 
 theorem familiar_randomAssign (s : State W V M) (x : V) :
     Familiar (s.randomAssign x) x := by
@@ -531,7 +531,7 @@ theorem Novel.randomAssign {s : State W V M} {y : V} (h : Novel s y) {x : V} (hy
   simpa [Possibility.update, Function.update_of_ne hyx] using h q hq
 
 theorem randomAssign_le {s : State W V M} {x : V} (h : Novel s x) : s.randomAssign x ≤ s :=
-  le_def.mpr fun _ ⟨p, hp, _, hq⟩ ↦ ⟨p, hp, hq ▸ Possibility.le_update_of_eq_bot (h p hp) _⟩
+  le_def.mpr fun _ ⟨p, hp, _, hq⟩ ↦ ⟨p, hp, hq ▸ Possibility.le_update_of_notMem (h p hp) _⟩
 
 theorem Novel.mul_stratum_singleton {s : State W V M} {x : V} (h : Novel s x) :
     s * stratum {x} = s.randomAssign x := by
@@ -540,11 +540,11 @@ theorem Novel.mul_stratum_singleton {s : State W V M} {x : V} (h : Novel s x) :
   constructor
   · rintro ⟨p, hp, hpr, hdom⟩
     rw [Set.union_singleton] at hdom
-    obtain ⟨m, hm⟩ := Flat.ne_bot_iff_exists.1 (show x ∈ r.domain from hdom ▸ Set.mem_insert x _)
-    exact ⟨p, hp, m, Possibility.eq_update_of_le hpr hdom hm⟩
+    obtain ⟨m, hm⟩ := Part.dom_iff_mem.1 (show x ∈ r.domain from hdom ▸ Set.mem_insert x _)
+    exact ⟨p, hp, m, Possibility.eq_update_of_le hpr hdom (Part.eq_some_iff.2 hm)⟩
   · rintro ⟨p, hp, m, rfl⟩
-    exact ⟨p, hp, Possibility.le_update_of_eq_bot (h p hp) _,
-      by rw [Possibility.domain_update_coe, Set.union_singleton]⟩
+    exact ⟨p, hp, Possibility.le_update_of_notMem (h p hp) _,
+      by rw [Possibility.domain_update_some, Set.union_singleton]⟩
 
 end State
 

@@ -34,12 +34,13 @@ under an intervention changes nothing. In the submodel of that intervention this
 and it needs no statement of its own.
 
 An observation is a situation in the sense of Schulz and Nadathur, a function to values or the
-undetermined value, `∀ v, Flat (α v)`, and one situation extends another (a supersituation) in the
-pointwise flat order, `Flat.pi_le_iff`. The situation of an intervention holding `X` at `x` is the
-everywhere undetermined situation updated on `X`, `Function.updateFinset ⊥ X fun v ↦ ↑(x v)`, as
-Schulz builds the situation of a set of literals; `[c ← x]` is its case for one variable. The
-contexts of an observation are the subteam of Barbero and Sandu: conditioning on it filters
-contexts, where an intervention changes the model.
+undetermined value, mathlib's partial values `∀ v, Part (α v)`, and one situation extends another
+(a supersituation) in the pointwise order of `Part`, `Part.pi_le_iff`. The situation of an
+intervention holding `X` at `x` is the everywhere undetermined situation updated on `X`,
+`Function.updateFinset ⊥ X fun v ↦ Part.some (x v)`, as Schulz builds the situation of a set of
+literals; `[c ← x]` is its case for one variable. The contexts of an observation are the subteam
+of Barbero and Sandu: conditioning on it filters contexts, where an intervention changes the
+model.
 
 ## References
 
@@ -120,13 +121,13 @@ end Intervention
 
 section Observation
 
-variable [∀ v, Nonempty (α v)] [M.IsAcyclic] {s : ∀ v, Flat (α v)} {u : U}
+variable [∀ v, Nonempty (α v)] [M.IsAcyclic] {s : ∀ v, Part (α v)} {u : U}
 
 variable (M) in
 /-- `M.contexts s` is the set of contexts in which the observation `s` holds, those whose actual
 world gives every variable `s` settles the value `s` settles it to. A counterfactual conditioned
 on `s` is evaluated over these contexts. -/
-def contexts (s : ∀ v, Flat (α v)) : Set U := {u | s ≤ fun v ↦ ↑(M.solve u v)}
+def contexts (s : ∀ v, Part (α v)) : Set U := {u | s ≤ fun v ↦ Part.some (M.solve u v)}
 
 @[simp] theorem contexts_bot : M.contexts ⊥ = Set.univ :=
   Set.eq_univ_of_forall fun _ _ ↦ bot_le
@@ -134,7 +135,7 @@ def contexts (s : ∀ v, Flat (α v)) : Set U := {u | s ≤ fun v ↦ ↑(M.solv
 theorem contexts_anti : Antitone M.contexts := fun _ _ h _ hu ↦ h.trans hu
 
 theorem mem_contexts_update [DecidableEq V] (hu : u ∈ M.contexts s) {c : V} {x : α c}
-    (hx : M.solve u c = x) : u ∈ M.contexts (Function.update s c ↑x) :=
+    (hx : M.solve u c = x) : u ∈ M.contexts (Function.update s c (Part.some x)) :=
   update_le_iff.2 ⟨by rw [hx], fun v _ ↦ hu v⟩
 
 end Observation

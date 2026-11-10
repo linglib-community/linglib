@@ -169,7 +169,7 @@ theorem ignorance {P Q : Pred} {c₁ c₂ : Const} (hSB : IsStateBased M.access 
       h₂.2 h₂.1⟩
 
 private theorem poss_of_subset_of_assign_eq {γ : Formula Var Const Pred}
-    {g : PartialAssign Var Domain} {t : Finset (Index W Var Domain)}
+    {g : Var → Option Domain} {t : Finset (Index W Var Domain)}
     (hSB : IsStateBased M.access (State.worldProj s)) (hg : ∀ i ∈ s, i.assign = g) (hts : t ⊆ s)
     (htne : t.Nonempty) (h : support M γ t) : support M (.poss γ) s :=
   support_poss_iff.mpr fun i hi ↦
@@ -180,7 +180,7 @@ private theorem poss_of_subset_of_assign_eq {γ : Formula Var Const Pred}
 
 /-- Ignorance `[α ∨ β]⁺ ⊨ ◇α ∧ ◇β` holds for `NE`-free `α`, `β` on a state-based `R` when the
 indices of the state share one assignment, the generalisation of Fact 3 to arbitrary disjuncts. -/
-theorem ignorance_of_assign_eq {g : PartialAssign Var Domain} (hα : α.NEFree) (hβ : β.NEFree)
+theorem ignorance_of_assign_eq {g : Var → Option Domain} (hα : α.NEFree) (hβ : β.NEFree)
     (hSB : IsStateBased M.access (State.worldProj s)) (hg : ∀ i ∈ s, i.assign = g)
     (h : support M (Formula.disj α β).enrich s) :
     support M (.poss α) s ∧ support M (.poss β) s :=
@@ -232,7 +232,7 @@ private theorem exi_poss_atom_of_subset_extendUniversal
   obtain ⟨i₀, hi₀s, d, hupd⟩ := State.mem_extendUniversal.mp (htsub hj₀)
   obtain ⟨d', hassign, hmem⟩ := hsupp j₀ hj₀
   rw [← hupd] at hassign hmem
-  simp only [Index.assign_update, PartialAssign.update_self, Flat.coe_inj] at hassign
+  simp only [Index.assign_update, Function.update_self, Option.some_inj] at hassign
   rw [← hassign] at hmem
   rw [Index.world_update] at hmem
   -- hmem : d ∈ M.relInterp₁ P i₀.world
@@ -254,7 +254,7 @@ private theorem exi_poss_atom_of_subset_extendUniversal
     rw [Finset.mem_singleton] at hkw
     refine ⟨d'', ?_, ?_⟩
     · rw [hka, ← hupd']
-      simp only [Index.assign_update, PartialAssign.update_self]
+      simp only [Index.assign_update, Function.update_self]
     · rw [hkw]
       exact hmem
 

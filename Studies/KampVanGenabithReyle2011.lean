@@ -86,7 +86,7 @@ private theorem marbleOut_isTrue_iff (w : Bool) :
     exact hout
   · rintro rfl
     letI := bag true
-    refine ⟨PartialAssign.single 0 0, ?_⟩
+    refine ⟨Function.update ⊥ 0 (.some 0), ?_⟩
     rw [marbleOut, DRS.verifies_mk]
     simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true, Condition.holds_atom]
     exact ⟨bot_le, by simp,
@@ -101,7 +101,7 @@ private theorem coinOut_isTrue_iff (w : Bool) :
     exact hout
   · rintro rfl
     letI := bag true
-    refine ⟨PartialAssign.single 0 1, ?_⟩
+    refine ⟨Function.update ⊥ 0 (.some 1), ?_⟩
     rw [coinOut, DRS.verifies_mk]
     simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true, Condition.holds_atom]
     exact ⟨bot_le, by simp,
@@ -116,13 +116,13 @@ theorem marble_worlds_eq_coin :
   exact (marbleOut_isTrue_iff w).trans (coinOut_isTrue_iff w).symm
 
 /-- The point of world `true` whose referent `0` carries the entity `d`. -/
-def witness (d : Fin 2) : Possibility Bool ℕ (Flat (Fin 2)) :=
-  ⟨true, PartialAssign.single 0 d⟩
+def witness (d : Fin 2) : Possibility Bool ℕ (Part (Fin 2)) :=
+  ⟨true, Function.update ⊥ 0 (.some d)⟩
 
 set_option linter.style.haveILetI false in
 theorem witness_mem_marbleOut : witness 0 ∈ marbleOut.state bag := by
   letI := bag true
-  show marbleOut.Verifies ⊥ (PartialAssign.single 0 0)
+  show marbleOut.Verifies ⊥ (Function.update ⊥ 0 (.some 0))
   rw [marbleOut, DRS.verifies_mk]
   simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true, Condition.holds_atom]
   exact ⟨bot_le, by simp,
@@ -131,11 +131,10 @@ theorem witness_mem_marbleOut : witness 0 ∈ marbleOut.state bag := by
 
 theorem witness_notMem_coinOut : witness 0 ∉ coinOut.state bag := by
   rintro ⟨-, -, ⟨v, hv, hcoin⟩, -⟩
-  have h0 : (witness 0).assignment 0 = ↑(v 0) := hv 0
-  have h1 : (witness 0).assignment 0 = ↑(0 : Fin 2) := by simp [witness]
-  have h2 : (0 : Fin 2) = v 0 := Flat.coe_injective (h1.symm.trans h0)
+  have h0 : v 0 ∈ (witness 0).assignment 0 := hv 0
+  have h2 : v 0 = 0 := by simpa [witness] using h0
   have h3 : v 0 = 1 := hcoin
-  rw [← h2] at h3
+  rw [h2] at h3
   exact absurd h3 (by decide)
 
 /-- But the states differ, since the marble witness is not a coin witness. With
@@ -194,7 +193,8 @@ theorem ccp_base {X : Set V} {I : State W V M} (hI : State.UniformAt X I) :
   intro q hq
   obtain ⟨p, hp, -, hv⟩ := (DRS.mem_ccp interp).mp hq
   have h := DRS.VerifiesAt.domain_eq interp hv
-  rwa [Possibility.domain_assignment, Possibility.domain_assignment, hI p hp] at h
+  have hpd : PFun.Dom p.assignment = X := hI p hp
+  rwa [hpd] at h
 
 -- p. 161, (iii)
 theorem ccp_distributive : CCP.IsDistributive (K.ccp interp) :=
@@ -207,8 +207,8 @@ theorem ccp_informative (I : State W V M) : K.ccp interp I ≤ I :=
 
 -- p. 162
 theorem ccp_extensional {I I' : State W V M} {w : W}
-    (h : ∀ p : Possibility W V (Flat M), p.world = w → (p ∈ I ↔ p ∈ I'))
-    {q : Possibility W V (Flat M)} (hq : q.world = w) :
+    (h : ∀ p : Possibility W V (Part M), p.world = w → (p ∈ I ↔ p ∈ I'))
+    {q : Possibility W V (Part M)} (hq : q.world = w) :
     q ∈ K.ccp interp I ↔ q ∈ K.ccp interp I' := by
   rw [DRS.mem_ccp, DRS.mem_ccp]
   exact exists_congr fun p => and_congr_left fun hrest => h p (hrest.1.trans hq)
@@ -216,7 +216,7 @@ theorem ccp_extensional {I I' : State W V M} {w : W}
 /-- (44): at an extension of a point of the input, the context change potential agrees with the
 state the DRS expresses relative to that point's assignment (Definition 29). -/
 theorem mem_ccp_iff_mem_relState {X : Set V} {I : State W V M} (hI : State.UniformAt X I)
-    {p q : Possibility W V (Flat M)} (hp : p ∈ I) (hpq : p ≤ q) :
+    {p q : Possibility W V (Part M)} (hp : p ∈ I) (hpq : p ≤ q) :
     q ∈ K.ccp interp I ↔ q ∈ K.relState interp p.assignment := by
   rw [DRS.mem_ccp, DRS.mem_relState]
   constructor

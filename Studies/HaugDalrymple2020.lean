@@ -50,6 +50,8 @@ allows (`maximizesAnaphora_iff`), hence Strong Reciprocity when the verb allows 
   `T` and `think` of (14), (46) are not defined, and each sample state is checked under
   the `Δ` its DRS induces. The `max` operator of (97) is likewise replaced by the static
   readings it yields.
+* Sample rows are `Option`-valued (`row`, read into assignments by `toPart`): `Part` has no
+  type-level decidable equality, so the transcribed conditions are decided over the options.
 * A DRS is true when some output state satisfies its conditions. `relCond` asks every state to
   value its discourse referents, which the partial introduction (6), (20) guarantees: the states
   `PPCDRT.introPartial` reaches from the empty state `{⊥}` are exactly those whose rows value
@@ -122,67 +124,95 @@ abbrev u₄ : ℕ := 4
 /-- The world discourse referent `w` of §3.1. -/
 abbrev w : ℕ := 5
 
-/-- A row of a sample state, from its defined discourse referents. -/
-def row {E : Type*} (l : List (ℕ × E)) : PartialAssign ℕ E :=
-  fun u ↦ (l.find? (·.1 == u)).elim ⊥ fun p ↦ ↑p.2
+/-- A row of a sample state, from its defined discourse referents; `Option`-valued so that the
+sample conditions can be decided, since `Part` has no type-level decidable equality. -/
+def row {E : Type*} (l : List (ℕ × E)) : ℕ → Option E :=
+  fun u ↦ (l.find? (·.1 == u)).map (·.2)
 
-theorem row_pair_left {E : Type*} (u v : ℕ) (a b : E) : row [(u, a), (v, b)] u = ↑a := by
+/-- The partial assignment a row denotes. -/
+abbrev toPart {E : Type*} (r : ℕ → Option E) : ℕ → Part E :=
+  fun u ↦ ↑(r u)
+
+@[simp] theorem mem_toPart {E : Type*} {r : ℕ → Option E} {u : ℕ} {a : E} :
+    a ∈ toPart r u ↔ r u = some a :=
+  Part.mem_ofOption.trans Option.mem_def
+
+@[simp] theorem toPart_eq_some_iff {E : Type*} {r : ℕ → Option E} {u : ℕ} {a : E} :
+    toPart r u = Part.some a ↔ r u = some a := by
+  rw [Part.eq_some_iff, Part.mem_ofOption, Option.mem_def]
+
+@[simp] theorem toPart_inj {E : Type*} {r t : ℕ → Option E} {u v : ℕ} :
+    toPart r u = toPart t v ↔ r u = t v :=
+  Part.ofOption_injective.eq_iff
+
+@[simp] theorem toPart_dom_iff {E : Type*} {r : ℕ → Option E} {u : ℕ} :
+    (toPart r u).Dom ↔ (r u).isSome :=
+  Part.ofOption_dom _
+
+theorem row_pair_left {E : Type*} (u v : ℕ) (a b : E) : row [(u, a), (v, b)] u = some a := by
   simp [row]
 
 theorem row_pair_right {E : Type*} {u v : ℕ} (h : u ≠ v) (a b : E) :
-    row [(u, a), (v, b)] v = ↑b := by
+    row [(u, a), (v, b)] v = some b := by
   simp [row, h]
 
 /-- The plural information state with the given rows. -/
-def ofRows (rows : List (PartialAssign ℕ Ind)) : PluralAssign ℕ Ind := {g | g ∈ rows}
+def ofRows (rows : List (ℕ → Option Ind)) : PluralAssign ℕ Ind := toPart '' {r | r ∈ rows}
 
 section Rows
 
-variable {rows : List (PartialAssign ℕ Ind)} {Δ : Set ℕ} {Δl : List ℕ} {u u' : ℕ}
+variable {rows : List (ℕ → Option Ind)} {Δ : Set ℕ} {Δl : List ℕ} {u u' : ℕ}
+
+theorem mem_ofRows {g : ℕ → Part Ind} : g ∈ ofRows rows ↔ ∃ r ∈ rows, toPart r = g :=
+  Iff.rfl
+
+theorem forall_ofRows {p : (ℕ → Part Ind) → Prop} :
+    (∀ g ∈ ofRows rows, p g) ↔ ∀ r ∈ rows, p (toPart r) :=
+  Set.forall_mem_image
 
 theorem bindingCond_ofRows : bindingCond u u' (ofRows rows) Δ ↔ ∀ s ∈ rows, s u = s u' := by
   simp [bindingCond, ofRows]
 
 theorem groupIdentityCond_ofRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) :
     groupIdentityCond u u' (ofRows rows) Δ ↔
-      ∀ s ∈ rows, ∀ d : Ind, (∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = ↑d) ↔
-        ∃ t ∈ rows, t u' = ↑d := by
+      ∀ s ∈ rows, ∀ d : Ind, (∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = some d) ↔
+        ∃ t ∈ rows, t u' = some d := by
   simp [groupIdentityCond, eqClass, ofRows, value, Set.ext_iff, hΔ, and_assoc]
 
 theorem distinct_ofRows :
-    (∀ s ∈ ofRows rows, ∀ a b : Ind, s u = ↑a → s u' = ↑b → a ≠ b) ↔
-      ∀ s ∈ rows, ∀ a b : Ind, s u = ↑a → s u' = ↑b → a ≠ b := by
-  simp [ofRows]
+    (∀ s ∈ ofRows rows, ∀ a ∈ s u, ∀ b ∈ s u', a ≠ b) ↔
+      ∀ s ∈ rows, ∀ a b : Ind, s u = some a → s u' = some b → a ≠ b := by
+  simp [ofRows, Option.mem_def]
+  exact forall₂_congr fun s _ ↦
+    ⟨fun h a b ha hb ↦ h a ha b hb, fun h a ha b hb ↦ h a b ha hb⟩
 
 theorem reciprocityCond_ofRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) :
     reciprocityCond u u' (ofRows rows) Δ ↔
-      (∀ s ∈ rows, ∀ d : Ind, (∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = ↑d) ↔
-        ∃ t ∈ rows, t u' = ↑d) ∧
-      ∀ s ∈ rows, ∀ a b : Ind, s u = ↑a → s u' = ↑b → a ≠ b :=
+      (∀ s ∈ rows, ∀ d : Ind, (∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = some d) ↔
+        ∃ t ∈ rows, t u' = some d) ∧
+      ∀ s ∈ rows, ∀ a b : Ind, s u = some a → s u' = some b → a ≠ b :=
   and_congr (groupIdentityCond_ofRows hΔ) distinct_ofRows
 
 theorem mem_dep_ofRows {a b : Ind} :
-    (a, b) ∈ dep u u' (ofRows rows) ↔ ∃ s ∈ rows, s u = ↑a ∧ s u' = ↑b := by
+    (a, b) ∈ dep u u' (ofRows rows) ↔ ∃ s ∈ rows, s u = some a ∧ s u' = some b := by
   simp [dep, ofRows]
 
-theorem mem_dep_eqClass_ofRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) {s : PartialAssign ℕ Ind}
+theorem mem_dep_eqClass_ofRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) {s : ℕ → Option Ind}
     {a b : Ind} :
-    (a, b) ∈ dep u u' (eqClass (ofRows rows) Δ s) ↔
-      ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = ↑a ∧ t u' = ↑b := by
+    (a, b) ∈ dep u u' (eqClass (ofRows rows) Δ (toPart s)) ↔
+      ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = some a ∧ t u' = some b := by
   simp [dep, eqClass, ofRows, hΔ, and_assoc]
 
 /-- The values of `u` summed over the `Δ`-class of `s`, as a finset. -/
-def sumRows (rows : List (PartialAssign ℕ Ind)) (Δl : List ℕ) (s : PartialAssign ℕ Ind)
+def sumRows (rows : List (ℕ → Option Ind)) (Δl : List ℕ) (s : ℕ → Option Ind)
     (u : ℕ) : Finset Ind :=
-  Finset.univ.filter fun d ↦ ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = ↑d
+  Finset.univ.filter fun d ↦ ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = some d
 
-theorem coe_sumRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) (s : PartialAssign ℕ Ind) :
+theorem coe_sumRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) (s : ℕ → Option Ind) :
     (↑(sumRows rows Δl s u) : Set Ind) =
-      value u (eqClass (ofRows rows) Δ s) := by
+      value u (eqClass (ofRows rows) Δ (toPart s)) := by
   ext d
   simp [sumRows, value, eqClass, ofRows, hΔ, and_assoc]
-
-theorem mem_ofRows {s : PartialAssign ℕ Ind} : s ∈ ofRows rows ↔ s ∈ rows := Iff.rfl
 
 theorem value_ofRows : value u (ofRows rows) = ↑(sumRows rows [] (row []) u) := by
   rw [coe_sumRows (Δ := ∅) (by simp), eqClass_empty]
@@ -194,50 +224,50 @@ state, the values of `u` summed over the state's class number `n` ((27), (28b)).
 def atomsCond (n : ℕ) (u : ℕ) : PPDRSCond Ind := fun S Δ ↦
   ∀ s ∈ S, (value u (eqClass S Δ s)).ncard = n
 
-theorem atomsCond_ofRows {rows : List (PartialAssign ℕ Ind)} {Δ : Set ℕ} {Δl : List ℕ}
+theorem atomsCond_ofRows {rows : List (ℕ → Option Ind)} {Δ : Set ℕ} {Δl : List ℕ}
     {n u : ℕ} (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) :
     atomsCond n u (ofRows rows) Δ ↔ ∀ s ∈ rows, (sumRows rows Δl s u).card = n := by
-  have key : ∀ s, (value u (eqClass (ofRows rows) Δ s)).ncard =
-      (sumRows rows Δl s u).card :=
-    fun s ↦ by rw [← coe_sumRows hΔ, Set.ncard_coe_finset]
-  simp only [atomsCond, key]
-  exact Iff.rfl
+  unfold atomsCond
+  rw [forall_ofRows]
+  exact forall₂_congr fun s _ ↦ by rw [← coe_sumRows hΔ, Set.ncard_coe_finset]
 
 /-- A lexical relation as a condition ((7), (27)) holds when the state is nonempty and every
 state gives `u` and `v` values that `P` relates. Distribution does not reach individual discourse
 referents, so `Δ` is idle. -/
 def relCond {E : Type*} (P : E → E → Prop) (u v : ℕ) : PPDRSCond E := fun S _ ↦
-  S.Nonempty ∧ ∀ s ∈ S, ∃ a b : E, s u = ↑a ∧ s v = ↑b ∧ P a b
+  S.Nonempty ∧ ∀ s ∈ S, ∃ a ∈ s u, ∃ b ∈ s v, P a b
 
-theorem relCond_ofRows {P : Ind → Ind → Prop} {rows : List (PartialAssign ℕ Ind)} {Δ : Set ℕ}
+theorem relCond_ofRows {P : Ind → Ind → Prop} {rows : List (ℕ → Option Ind)} {Δ : Set ℕ}
     {u v : ℕ} :
     relCond P u v (ofRows rows) Δ ↔
-      rows ≠ [] ∧ ∀ s ∈ rows, ∃ a b : Ind, s u = ↑a ∧ s v = ↑b ∧ P a b :=
-  and_congr ⟨fun ⟨_, hs⟩ ↦ List.ne_nil_of_mem hs, List.exists_mem_of_ne_nil _⟩ Iff.rfl
+      rows ≠ [] ∧ ∀ s ∈ rows, ∃ a b : Ind, s u = some a ∧ s v = some b ∧ P a b := by
+  refine and_congr ⟨fun ⟨_, r, hr, _⟩ ↦ List.ne_nil_of_mem hr, fun h ↦
+    have ⟨r, hr⟩ := List.exists_mem_of_ne_nil _ h; ⟨toPart r, r, hr, rfl⟩⟩ ?_
+  rw [forall_ofRows]
+  exact forall₂_congr fun s _ ↦ by simp [Option.mem_def]
 
 /-- Group identity read inside the distribution operator of (14), summing both sides over
 the class. This is the reading under which (23b) is not representable (§2.3). -/
 def distributedGroupIdentityCond (uAnaph uAnt : ℕ) : PPDRSCond Ind := fun S Δ ↦
   ∀ s ∈ S, value uAnaph (eqClass S Δ s) = value uAnt (eqClass S Δ s)
 
-theorem distributedGroupIdentityCond_ofRows {rows : List (PartialAssign ℕ Ind)} {Δ : Set ℕ}
+theorem distributedGroupIdentityCond_ofRows {rows : List (ℕ → Option Ind)} {Δ : Set ℕ}
     {Δl : List ℕ} {u u' : ℕ} (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) :
     distributedGroupIdentityCond u u' (ofRows rows) Δ ↔
-      ∀ s ∈ rows, ∀ d : Ind, (∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = ↑d) ↔
-        ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u' = ↑d := by
-  simp [distributedGroupIdentityCond, eqClass, ofRows, value, Set.ext_iff, hΔ,
-    and_assoc]
+      ∀ s ∈ rows, ∀ d : Ind, (∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = some d) ↔
+        ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u' = some d := by
+  simp [distributedGroupIdentityCond, eqClass, ofRows, value, Set.ext_iff, hΔ, and_assoc]
 
 /-! ### Anaphora under distribution (§2.3) -/
 
 /-- The lawyers hired secretaries they each liked, `u₃` bound to `u₁` (24c). -/
-def lawyersBound : List (PartialAssign ℕ Ind) :=
+def lawyersBound : List (ℕ → Option Ind) :=
   [row [(u₁, .lawyer1), (u₂, .secretary1), (u₃, .lawyer1)],
    row [(u₁, .lawyer2), (u₂, .secretary2), (u₃, .lawyer2)],
    row [(u₁, .lawyer3), (u₂, .secretary3), (u₃, .lawyer3)]]
 
 /-- The lawyers hired secretaries all of them liked, `∪u₃ → ∪u₁` under `δ_{u₁}` (31c). -/
-def lawyersGroup : List (PartialAssign ℕ Ind) :=
+def lawyersGroup : List (ℕ → Option Ind) :=
   [row [(u₁, .lawyer1), (u₂, .secretary1), (u₃, .lawyer1)],
    row [(u₁, .lawyer1), (u₂, .secretary1), (u₃, .lawyer2)],
    row [(u₁, .lawyer1), (u₂, .secretary1), (u₃, .lawyer3)],
@@ -280,16 +310,17 @@ variable {E : Type*} {P : E → E → Prop} {u v : ℕ} {S : PluralAssign ℕ E}
 /-- The state with a row for each pair of `D`, valuing `u` and `v` as its two components, so
 that its dependency between `u` and `v` is `D`. -/
 def ofDep (u v : ℕ) (D : SetRel E E) : PluralAssign ℕ E :=
-  (fun p ↦ row [(u, p.1), (v, p.2)]) '' D
+  (fun p ↦ toPart (row [(u, p.1), (v, p.2)])) '' D
 
 theorem dep_ofDep (h : u ≠ v) (D : SetRel E E) : dep u v (ofDep u v D) = D := by
   ext ⟨a, b⟩
-  refine ⟨?_, fun hab ↦ ⟨_, ⟨(a, b), hab, rfl⟩, row_pair_left u v a b, row_pair_right h a b⟩⟩
+  refine ⟨?_, fun hab ↦ ⟨_, ⟨(a, b), hab, rfl⟩, toPart_eq_some_iff.2 (row_pair_left u v a b),
+    toPart_eq_some_iff.2 (row_pair_right h a b)⟩⟩
   rintro ⟨_, ⟨⟨a', b'⟩, hab, rfl⟩, ha, hb⟩
-  change row [(u, a'), (v, b')] u = ↑a at ha
-  change row [(u, a'), (v, b')] v = ↑b at hb
-  rw [row_pair_left, Flat.coe_inj] at ha
-  rw [row_pair_right h, Flat.coe_inj] at hb
+  change toPart (row [(u, a'), (v, b')]) u = Part.some a at ha
+  change toPart (row [(u, a'), (v, b')]) v = Part.some b at hb
+  rw [toPart_eq_some_iff, row_pair_left, Option.some_inj] at ha
+  rw [toPart_eq_some_iff, row_pair_right h, Option.some_inj] at hb
   subst ha hb
   exact hab
 
@@ -297,34 +328,33 @@ theorem relCond_ofDep (h : u ≠ v) (hD : D ⊆ {p | P p.1 p.2}) (hne : D.Nonemp
     relCond P u v (ofDep u v D) ∅ :=
   ⟨hne.image _, by
     rintro _ ⟨⟨a, b⟩, hab, rfl⟩
-    exact ⟨a, b, row_pair_left u v a b, row_pair_right h a b, hD hab⟩⟩
+    exact ⟨a, mem_toPart.2 (row_pair_left u v a b),
+      b, mem_toPart.2 (row_pair_right h a b), hD hab⟩⟩
 
 theorem dep_of_relCond {Δ : Set ℕ} (hS : relCond P u v S Δ) :
     dep u v S ⊆ {p | P p.1 p.2} ∧ (dep u v S).dom = value u S ∧ (dep u v S).cod = value v S := by
   obtain ⟨-, hP⟩ := hS
   refine ⟨?_, dom_dep fun s hs _ ↦ ?_, cod_dep fun s hs _ ↦ ?_⟩
-  · rintro ⟨a, b⟩ ⟨s, hs, (ha : s u = ↑a), (hb : s v = ↑b)⟩
-    obtain ⟨a', b', ha', hb', hab⟩ := hP s hs
-    rw [ha', Flat.coe_inj] at ha
-    rw [hb', Flat.coe_inj] at hb
-    exact ha ▸ hb ▸ hab
-  · obtain ⟨-, b, -, hb, -⟩ := hP s hs
-    show s v ≠ ⊥
-    simp [hb]
-  · obtain ⟨a, -, ha, -, -⟩ := hP s hs
-    show s u ≠ ⊥
-    simp [ha]
+  · rintro ⟨a, b⟩ ⟨s, hs, (ha : s u = Part.some a), (hb : s v = Part.some b)⟩
+    obtain ⟨a', ha', b', hb', hab⟩ := hP s hs
+    obtain rfl : a' = a := Part.mem_unique ha' (Part.eq_some_iff.1 ha)
+    obtain rfl : b' = b := Part.mem_unique hb' (Part.eq_some_iff.1 hb)
+    exact hab
+  · obtain ⟨-, -, b, hb, -⟩ := hP s hs
+    exact Part.dom_iff_mem.2 ⟨b, hb⟩
+  · obtain ⟨a, ha, -⟩ := hP s hs
+    exact Part.dom_iff_mem.2 ⟨a, ha⟩
 
 theorem value_ofDep_left (h : u ≠ v) (D : SetRel E E) : value u (ofDep u v D) = D.dom := by
   rw [← dom_dep (v := v), dep_ofDep h]
   rintro _ ⟨p, -, rfl⟩ -
-  show row _ v ≠ ⊥
+  show (toPart (row [(u, p.1), (v, p.2)]) v).Dom
   simp [row_pair_right h]
 
 theorem value_ofDep_right (h : u ≠ v) (D : SetRel E E) : value v (ofDep u v D) = D.cod := by
   rw [← cod_dep (u := u), dep_ofDep h]
   rintro _ ⟨p, -, rfl⟩ -
-  show row _ u ≠ ⊥
+  show (toPart (row [(u, p.1), (v, p.2)]) u).Dom
   simp [row_pair_left]
 
 /-- A state satisfying `P(u, v)` relates the values of `u` and `v` cumulatively, and every
@@ -340,8 +370,8 @@ theorem cumulative_iff_exists_relCond (h : u ≠ v) {x y : Set E} :
   · rintro ⟨S, rfl, rfl, hS⟩
     obtain ⟨hP, hdom, hcod⟩ := dep_of_relCond hS
     obtain ⟨s, hs⟩ := hS.1
-    obtain ⟨a, -, ha, -⟩ := hS.2 s hs
-    exact ⟨⟨a, s, hs, ha⟩, dep u v S, hP, hdom, hcod⟩
+    obtain ⟨a, ha, -⟩ := hS.2 s hs
+    exact ⟨⟨a, s, hs, Part.eq_some_iff.2 ha⟩, dep u v S, hP, hdom, hcod⟩
 
 /-- By §4.1, (75), the cumulation operator `**` that [sternefeld-1998] applies to the predicate and
 the pointwise conditions of Plural CDRT give the same truth conditions. -/
@@ -363,16 +393,16 @@ theorem reciprocalDRS_iff {X : Set E} {u' : ℕ} :
   constructor
   · rintro ⟨hX, ⟨hne, hP⟩, hgi, hd⟩
     refine ⟨hX, hgi.trans hX, hne, fun s hs ↦ ?_⟩
-    obtain ⟨a, b, ha, hb, hab⟩ := hP s hs
-    exact ⟨a, b, ha, hb, hab, (hd s hs b a hb ha).symm⟩
+    obtain ⟨a, ha, b, hb, hab⟩ := hP s hs
+    exact ⟨a, ha, b, hb, hab, (hd s hs b hb a ha).symm⟩
   · rintro ⟨hX, hX', hne, hP⟩
-    refine ⟨hX, ⟨hne, fun s hs ↦ ?_⟩, hX'.trans hX.symm, fun s hs b a hb ha ↦ ?_⟩
-    · obtain ⟨a, b, ha, hb, hab, -⟩ := hP s hs
-      exact ⟨a, b, ha, hb, hab⟩
-    · obtain ⟨a', b', ha', hb', -, hne'⟩ := hP s hs
-      rw [ha', Flat.coe_inj] at ha
-      rw [hb', Flat.coe_inj] at hb
-      exact ha ▸ hb ▸ hne'.symm
+    refine ⟨hX, ⟨hne, fun s hs ↦ ?_⟩, hX'.trans hX.symm, fun s hs b hb a ha ↦ ?_⟩
+    · obtain ⟨a, ha, b, hb, hab, -⟩ := hP s hs
+      exact ⟨a, ha, b, hb, hab⟩
+    · obtain ⟨a', ha', b', hb', -, hne'⟩ := hP s hs
+      obtain rfl : a' = a := Part.mem_unique ha' ha
+      obtain rfl : b' = b := Part.mem_unique hb' hb
+      exact hne'.symm
 
 /-- Some state verifies the DRS of *the Xs `P` each other* exactly when `X` is weakly reciprocal
 under `P` (§2.4, §1, [langendoen-1978]). -/
@@ -401,7 +431,7 @@ variable {u' : ℕ} {O : PluralAssign ℕ E}
 on `u'` and `u` alone. -/
 theorem introPartial_comp_iff (h : u ≠ u') :
     ({⊥} : PluralAssign ℕ E) ~[introPartial u' ○ introPartial u] O ↔
-      O.Nonempty ∧ ∀ o ∈ O, ∀ v, o v ≠ ⊥ ↔ v = u' ∨ v = u := by
+      O.Nonempty ∧ ∀ o ∈ O, ∀ v, (o v).Dom ↔ v = u' ∨ v = u := by
   constructor
   · rintro ⟨K, ⟨-, -, hK⟩, hO, -, hback⟩
     refine ⟨hO, fun o ho v ↦ ?_⟩
@@ -417,20 +447,22 @@ theorem introPartial_comp_iff (h : u ≠ u') :
     · subst hvu'
       exact iff_of_true hku' (Or.inl rfl)
     rw [← hk' v hvu']
-    simp [hvu, hvu']
+    simp [Part.bot_eq_none, Part.not_none_dom, hvu, hvu']
   · rintro ⟨⟨o₀, ho₀⟩, hdom⟩
-    have hdef : ∀ o ∈ O, o u' ≠ ⊥ ∧ o u ≠ ⊥ := fun o ho ↦
+    have hdef : ∀ o ∈ O, (o u').Dom ∧ (o u).Dom := fun o ho ↦
       ⟨(hdom o ho u').2 (Or.inl rfl), (hdom o ho u).2 (Or.inr rfl)⟩
-    set k : PartialAssign ℕ E → PartialAssign ℕ E := fun o ↦ Function.update ⊥ u' (o u')
-    have hk : ∀ o ∈ O, (⊥ : PartialAssign ℕ E) ~[extend u'] k o := fun o ho ↦
-      mem_extend.2 ⟨rfl, by simpa [k] using (hdef o ho).1,
+    set k : (ℕ → Part E) → ℕ → Part E := fun o ↦ Function.update ⊥ u' (o u')
+    have hk : ∀ o ∈ O, (⊥ : ℕ → Part E) ~[extend u'] k o := fun o ho ↦
+      mem_extend.2 ⟨by simp [Part.bot_eq_none, Part.not_none_dom],
+        by simpa [k] using (hdef o ho).1,
         fun v hv ↦ by simp [k, Function.update_of_ne hv]⟩
     have hko : ∀ o ∈ O, k o ~[extend u] o := fun o ho ↦ by
-      refine mem_extend.2 ⟨by simp [k, Function.update_of_ne h], (hdef o ho).2, fun v hv ↦ ?_⟩
+      refine mem_extend.2 ⟨by simp [k, Function.update_of_ne h, Part.bot_eq_none,
+        Part.not_none_dom], (hdef o ho).2, fun v hv ↦ ?_⟩
       by_cases hvu' : v = u'
       · subst hvu'
         simp [k]
-      · have : o v = ⊥ := not_not.1 fun hne ↦ ((hdom o ho v).1 hne).elim hvu' hv
+      · have : o v = ⊥ := Part.eq_bot_iff_not_dom.2 fun hne ↦ ((hdom o ho v).1 hne).elim hvu' hv
         simp [k, Function.update_of_ne hvu', this]
     refine ⟨k '' O, ⟨⟨_, o₀, ho₀, rfl⟩, fun i hi ↦ ?_, ?_⟩, ⟨o₀, ho₀⟩, ?_, ?_⟩
     · obtain rfl := hi
@@ -450,7 +482,8 @@ theorem weakReciprocity_iff_exists_introPartial (h : u ≠ u') {X : Finset E} :
   rw [weakReciprocity_iff_exists_reciprocalDRS h]
   refine ⟨fun ⟨S, hS⟩ ↦ ?_, fun ⟨O, _, hO⟩ ↦ ⟨O, hO⟩⟩
   obtain ⟨hX, hX', hne, hP⟩ := reciprocalDRS_iff.1 hS
-  set r : PartialAssign ℕ E → PartialAssign ℕ E := fun s v ↦ if v = u' ∨ v = u then s v else ⊥
+  set r : (ℕ → Part E) → ℕ → Part E :=
+    fun s v ↦ if v = u' ∨ v = u then s v else ⊥
   have hr : ∀ s v, (v = u' ∨ v = u) → r s v = s v := fun _ _ hv ↦ ite_eq_left hv
   have hval : ∀ w, (w = u' ∨ w = u) → value w (r '' S) = value w S := fun w hw ↦ by
     ext x
@@ -463,24 +496,24 @@ theorem weakReciprocity_iff_exists_introPartial (h : u ≠ u') {X : Finset E} :
     reciprocalDRS_iff.2 ⟨(hval u' (.inl rfl)).trans hX, (hval u (.inr rfl)).trans hX',
       hne.image r, ?_⟩⟩
   · rintro _ ⟨s, hs, rfl⟩ v
-    obtain ⟨a, b, ha, hb, -⟩ := hP s hs
+    obtain ⟨a, ha, b, hb, -⟩ := hP s hs
     by_cases hv : v = u' ∨ v = u
     · rw [hr s v hv]
       refine iff_of_true ?_ hv
       rcases hv with rfl | rfl
-      · rw [ha]; exact Flat.coe_ne_bot
-      · rw [hb]; exact Flat.coe_ne_bot
-    · simp [r, hv]
+      · exact Part.dom_iff_mem.2 ⟨a, ha⟩
+      · exact Part.dom_iff_mem.2 ⟨b, hb⟩
+    · simp [r, hv, Part.bot_eq_none, Part.not_none_dom]
   · rintro _ ⟨s, hs, rfl⟩
-    obtain ⟨a, b, ha, hb, hab⟩ := hP s hs
-    exact ⟨a, b, (hr s u' (.inl rfl)).trans ha, (hr s u (.inr rfl)).trans hb, hab⟩
+    obtain ⟨a, ha, b, hb, hab⟩ := hP s hs
+    exact ⟨a, hr s u' (.inl rfl) ▸ ha, b, hr s u (.inr rfl) ▸ hb, hab⟩
 
 end Truth
 
 /-- Without distribution, the dependency between antecedent and reciprocal is weakly reciprocal on
 the antecedent's plurality, whatever the verb (§2.4, §4.5, cf. (92)). -/
 theorem weakReciprocity_dep_of_reciprocityCond {u' : ℕ} {X : Finset E}
-    (hdef : ∀ s ∈ S, s u ≠ ⊥ ↔ s u' ≠ ⊥) (hX : value u' S = ↑X)
+    (hdef : ∀ s ∈ S, (s u).Dom ↔ (s u').Dom) (hX : value u' S = ↑X)
     (h : reciprocityCond u u' S ∅) : WeakReciprocity (fun a b ↦ (a, b) ∈ dep u' u S) X := by
   obtain ⟨hdc, hirr⟩ := (reciprocityCond_empty_iff hdef).1 h
   have hdom : (dep u' u S).dom = ↑X := (dom_dep fun s hs ↦ (hdef s hs).2).trans hX
@@ -500,14 +533,14 @@ private theorem mem_u₁w : ∀ v, v ∈ ({u₁, w} : Set ℕ) ↔ v ∈ [u₁, 
 private theorem mem_w : ∀ v, v ∈ ({w} : Set ℕ) ↔ v ∈ [w] := by simp
 
 /-- Each girl thought "we will win", `∪u₂ → ∪u₁` under `δ_w` (49). -/
-def girlsNarrow : List (PartialAssign ℕ Ind) :=
+def girlsNarrow : List (ℕ → Option Ind) :=
   [row [(u₁, .girl1), (w, .world1), (u₂, .girl1)],
    row [(u₁, .girl1), (w, .world1), (u₂, .girl2)],
    row [(u₁, .girl2), (w, .world2), (u₂, .girl1)],
    row [(u₁, .girl2), (w, .world2), (u₂, .girl2)]]
 
 /-- Each girl thought "I will win", `u₂ → u₁` (51). -/
-def girlsWide : List (PartialAssign ℕ Ind) :=
+def girlsWide : List (ℕ → Option Ind) :=
   [row [(u₁, .girl1), (w, .world1), (u₂, .girl1)],
    row [(u₁, .girl2), (w, .world2), (u₂, .girl2)]]
 
@@ -522,7 +555,7 @@ theorem win_readings :
   decide
 
 /-- Each girl thought "we saw each other", the reciprocal inside the belief (53). -/
-def sawNarrow : List (PartialAssign ℕ Ind) :=
+def sawNarrow : List (ℕ → Option Ind) :=
   [row [(u₁, .girl1), (w, .world1), (u₂, .girl1), (u₃, .girl2)],
    row [(u₁, .girl1), (w, .world1), (u₂, .girl2), (u₃, .girl1)],
    row [(u₁, .girl2), (w, .world2), (u₂, .girl1), (u₃, .girl2)],
@@ -530,13 +563,13 @@ def sawNarrow : List (PartialAssign ℕ Ind) :=
 
 /-- Each girl thought "I saw her", the reciprocal and its antecedent lifted to the matrix DRS
 (55). -/
-def sawWide : List (PartialAssign ℕ Ind) :=
+def sawWide : List (ℕ → Option Ind) :=
   [row [(u₁, .girl1), (u₂, .girl1), (u₃, .girl2), (w, .world1)],
    row [(u₁, .girl2), (u₂, .girl2), (u₃, .girl1), (w, .world2)]]
 
 /-- In the crossed reading of (56), girl1 thought girl2 saw girl1 and girl2 thought girl1
 saw girl2. -/
-def sawCrossed : List (PartialAssign ℕ Ind) :=
+def sawCrossed : List (ℕ → Option Ind) :=
   [row [(u₁, .girl1), (u₂, .girl2), (u₃, .girl1), (w, .world1)],
    row [(u₁, .girl2), (u₂, .girl1), (u₃, .girl2), (w, .world2)]]
 
@@ -565,16 +598,18 @@ theorem saw_crossed :
 /-- A bound antecedent cannot cooccur with a low reciprocal (§3.3). -/
 theorem no_low_reciprocal_under_binding {E : Type*} {S : PluralAssign ℕ E} {Δ : Set ℕ}
     {v₁ v₂ v₃ : ℕ} (hΔ : v₁ ∈ Δ) (hb : bindingCond v₂ v₁ S Δ)
-    (hr : reciprocityCond v₃ v₂ S Δ) {s : PartialAssign ℕ E} (hs : s ∈ S) {d : E}
-    (hd : s v₂ = ↑d) : False := by
-  have hmem : d ∈ value v₂ S := ⟨s, hs, hd⟩
+    (hr : reciprocityCond v₃ v₂ S Δ) {s : ℕ → Part E} (hs : s ∈ S) {d : E}
+    (hd : d ∈ s v₂) : False := by
+  have hmem : d ∈ value v₂ S := ⟨s, hs, Part.eq_some_iff.2 hd⟩
   rw [← hr.1 s hs] at hmem
   obtain ⟨t, ⟨ht, hcls⟩, ht₃⟩ := hmem
-  have ht₂ : t v₂ = ↑d := by rw [hb t ht, hcls v₁ hΔ, ← hb s hs, hd]
-  exact hr.2 t ht d d ht₃ ht₂ rfl
+  have ht₂ : t v₂ = Part.some d := by
+    rw [hb t ht, hcls v₁ hΔ, ← hb s hs]
+    exact Part.eq_some_iff.2 hd
+  exact hr.2 t ht d (Part.eq_some_iff.1 ht₃) d (Part.eq_some_iff.1 ht₂) rfl
 
 /-- Example (69) distributed over two accessible worlds, with the reciprocal lifted above `◇`. -/
-def beatModal : List (PartialAssign ℕ Ind) :=
+def beatModal : List (ℕ → Option Ind) :=
   [row [(u₁, .tracy), (u₂, .chris), (w, .world1)],
    row [(u₁, .chris), (u₂, .tracy), (w, .world1)],
    row [(u₁, .tracy), (u₂, .chris), (w, .world2)],
@@ -584,8 +619,8 @@ def beatModal : List (PartialAssign ℕ Ind) :=
 theorem beat_modal :
     reciprocityCond u₂ u₁ (ofRows beatModal) ∅ ∧
       ∀ s ∈ beatModal,
-        (Ind.tracy, Ind.chris) ∈ dep u₁ u₂ (eqClass (ofRows beatModal) {w} s) ∧
-          (Ind.chris, Ind.tracy) ∈ dep u₁ u₂ (eqClass (ofRows beatModal) {w} s) := by
+        (Ind.tracy, Ind.chris) ∈ dep u₁ u₂ (eqClass (ofRows beatModal) {w} (toPart s)) ∧
+          (Ind.chris, Ind.tracy) ∈ dep u₁ u₂ (eqClass (ofRows beatModal) {w} (toPart s)) := by
   rw [reciprocityCond_ofRows mem_empty]
   simp only [mem_dep_eqClass_ofRows mem_w]
   decide
@@ -594,7 +629,7 @@ theorem beat_modal :
 
 /-- The mixed construal of the Cheyenne affix (78c) has one child scratching herself and two
 scratching each other. -/
-def scratchMixed : List (PartialAssign ℕ Ind) :=
+def scratchMixed : List (ℕ → Option Ind) :=
   [row [(u₁, .child1), (u₂, .child1)],
    row [(u₁, .child2), (u₂, .child3)],
    row [(u₁, .child3), (u₂, .child2)]]
@@ -610,13 +645,13 @@ theorem scratch_mixed :
 
 /-- Each girl gave the other a picture of herself, the second reciprocal anteceded by the
 first (85c). -/
-def picturesSecond : List (PartialAssign ℕ Ind) :=
+def picturesSecond : List (ℕ → Option Ind) :=
   [row [(u₁, .girl1), (u₂, .girl2), (u₃, .picture1), (u₄, .girl1)],
    row [(u₁, .girl2), (u₂, .girl1), (u₃, .picture2), (u₄, .girl2)]]
 
 /-- Each girl gave the other a picture of the other, both reciprocals anteceded by the
 subject (86c). -/
-def picturesSubject : List (PartialAssign ℕ Ind) :=
+def picturesSubject : List (ℕ → Option Ind) :=
   [row [(u₁, .girl1), (u₂, .girl2), (u₃, .picture1), (u₄, .girl2)],
    row [(u₁, .girl2), (u₂, .girl1), (u₃, .picture2), (u₄, .girl1)]]
 
@@ -634,7 +669,7 @@ theorem pictures_readings :
   exact ⟨⟨by decide, by decide, by decide⟩, by decide, by decide, by decide⟩
 
 /-- The forks propped against each other, each on one other (93). -/
-def forks : List (PartialAssign ℕ Ind) :=
+def forks : List (ℕ → Option Ind) :=
   [row [(u₁, .fork1), (u₂, .fork2)],
    row [(u₁, .fork2), (u₂, .fork3)],
    row [(u₁, .fork3), (u₂, .fork1)]]
@@ -650,14 +685,14 @@ theorem forks_weak :
       ¬ StrongReciprocity (fun a b ↦ (a, b) ∈ dep u₁ u₂ (ofRows forks)) threeForks := by
   have hr : reciprocityCond u₂ u₁ (ofRows forks) ∅ := by
     rw [reciprocityCond_ofRows mem_empty]; decide
-  refine ⟨hr, weakReciprocity_dep_of_reciprocityCond (by simp only [mem_ofRows]; decide)
+  refine ⟨hr, weakReciprocity_dep_of_reciprocityCond (by rw [forall_ofRows]; decide)
     (by rw [value_ofRows]; exact Finset.coe_inj.2 (by decide)) hr, ?_⟩
   rw [strongReciprocity_iff]
   simp only [mem_dep_ofRows]
   decide
 
 /-- The sailors worked together on each other's ships (96c). -/
-def sailors : List (PartialAssign ℕ Ind) :=
+def sailors : List (ℕ → Option Ind) :=
   [row [(u₁, .sailor1), (u₂, .ship1), (u₃, .sailor2)],
    row [(u₁, .sailor2), (u₂, .ship2), (u₃, .sailor3)],
    row [(u₁, .sailor3), (u₂, .ship3), (u₃, .sailor1)]]
@@ -815,8 +850,9 @@ theorem maximizesAnaphora_iff (h : u ≠ u') {X : Set E} :
   obtain ⟨hX, hX', hrel⟩ := reciprocalDRS_iff.1 hS
   obtain ⟨-, hdom, hcod⟩ := dep_of_relCond hrel
   obtain ⟨s, hs⟩ := hrel.1
-  obtain ⟨a, b, ha, hb, -⟩ := hrel.2 s hs
-  have hne : F.Nonempty := ⟨(a, b), hsub ⟨s, hs, ha, hb⟩⟩
+  obtain ⟨a, ha, b, hb, -⟩ := hrel.2 s hs
+  have hne : F.Nonempty :=
+    ⟨(a, b), hsub ⟨s, hs, Part.eq_some_iff.2 ha, Part.eq_some_iff.2 hb⟩⟩
   have hFdom : F.dom = X := Set.Subset.antisymm (fun _ ⟨_, hp⟩ ↦ hp.1)
     ((hdom.trans hX).symm.subset.trans (SetRel.dom_mono hsub))
   have hFcod : F.cod = X := Set.Subset.antisymm (fun _ ⟨_, hp⟩ ↦ hp.2.1)
@@ -846,13 +882,13 @@ nothing known against any two of them knowing each other. -/
 abbrev boysKnow : PluralAssign ℕ Ind → Prop := ReciprocalDRS (fun _ _ ↦ True) ↑boys u₂ u₁
 
 /-- A minimal state for (125), (126a). -/
-def boysMinimal : List (PartialAssign ℕ Ind) :=
+def boysMinimal : List (ℕ → Option Ind) :=
   [row [(u₁, .boy1), (u₂, .boy2)],
    row [(u₁, .boy2), (u₂, .boy3)],
    row [(u₁, .boy3), (u₂, .boy1)]]
 
 /-- The strong reciprocal reading (126b). -/
-def boysStrong : List (PartialAssign ℕ Ind) :=
+def boysStrong : List (ℕ → Option Ind) :=
   [row [(u₁, .boy1), (u₂, .boy2)],
    row [(u₁, .boy2), (u₂, .boy3)],
    row [(u₁, .boy3), (u₂, .boy1)],
@@ -889,7 +925,7 @@ theorem maximize_strong :
 
 /-- By §6.2, the classmates gave each other pictures of each other, each maximizing pairwise, so
 that each gave a picture of herself to each of the others. -/
-def classmates : List (PartialAssign ℕ Ind) :=
+def classmates : List (ℕ → Option Ind) :=
   [row [(u₁, .tracy), (u₂, .chris), (u₃, .picture1), (u₄, .tracy)],
    row [(u₁, .tracy), (u₂, .matty), (u₃, .picture1), (u₄, .tracy)],
    row [(u₁, .chris), (u₂, .tracy), (u₃, .picture2), (u₄, .chris)],
@@ -905,13 +941,13 @@ theorem classmates_pairwise :
     StrongReciprocity (fun a b ↦ (a, b) ∈ dep u₁ u₂ (ofRows classmates)) trio ∧
       StrongReciprocity (fun a b ↦ (a, b) ∈ dep u₂ u₄ (ofRows classmates)) trio ∧
       ¬ ∃ s ∈ classmates,
-        s u₁ = ↑Ind.tracy ∧ s u₂ = ↑Ind.chris ∧ s u₄ = ↑Ind.matty := by
+        s u₁ = some Ind.tracy ∧ s u₂ = some Ind.chris ∧ s u₄ = some Ind.matty := by
   simp only [strongReciprocity_iff, mem_dep_ofRows]
   decide
 
 /-- In the wide construal of (135), each of Tracy, Matty and Chris believes that she praised the
 two others (136). -/
-def praisedWide : List (PartialAssign ℕ Ind) :=
+def praisedWide : List (ℕ → Option Ind) :=
   [row [(u₁, .chris), (u₂, .chris), (u₃, .tracy), (w, .world1)],
    row [(u₁, .chris), (u₂, .chris), (u₃, .matty), (w, .world1)],
    row [(u₁, .tracy), (u₂, .tracy), (u₃, .chris), (w, .world2)],
@@ -924,7 +960,7 @@ theorem praised_wide :
     bindingCond u₂ u₁ (ofRows praisedWide) ∅ ∧
       reciprocityCond u₃ u₂ (ofRows praisedWide) ∅ ∧
       ∀ s ∈ praisedWide, ∀ d,
-        d ∈ sumRows praisedWide [w] s u₃ ↔ d ∈ trio ∧ ↑d ≠ s u₁ := by
+        d ∈ sumRows praisedWide [w] s u₃ ↔ d ∈ trio ∧ some d ≠ s u₁ := by
   rw [bindingCond_ofRows, reciprocityCond_ofRows mem_empty]
   decide
 

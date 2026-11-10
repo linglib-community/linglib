@@ -103,7 +103,7 @@ compatible points of a file merge into a third, so literal fixed points of asser
 than informational acceptance. -/
 theorem semiconj_ofState (A : State W V M) :
     Function.Semiconj
-      (OrderDual.toDual ∘ upperClosure : State W V M → (UpperSet (Possibility W V (Flat M)))ᵒᵈ)
+      (OrderDual.toDual ∘ upperClosure : State W V M → (UpperSet (Possibility W V (Part M)))ᵒᵈ)
       (· * A) (· ⊓ OrderDual.toDual (upperClosure A)) :=
   fun _ ↦ congrArg OrderDual.toDual State.upperClosure_mul
 
@@ -132,19 +132,19 @@ predicate: the satisfaction clause and the domain clause of [heim-1982]'s
 atomic rule, per point. -/
 theorem atomVar_eq (pred : M → Prop) (x : V) :
     atomVar pred x F =
-      Part.some {p ∈ F * State.stratum {x} | ∃ m : M, p.assignment x = ↑m ∧ pred m} := by
+      Part.some {p ∈ F * State.stratum {x} | ∃ m ∈ p.assignment x, pred m} := by
   rw [atomVar, ofState_apply, State.mul_atomAt]
 
 /-- At an established card the atom filters. -/
 theorem atomVar_eq_of_familiar (pred : M → Prop) (hfam : State.Familiar F x) :
-    atomVar pred x F = Part.some {p ∈ F | ∃ m : M, p.assignment x = ↑m ∧ pred m} := by
+    atomVar pred x F = Part.some {p ∈ F | ∃ m ∈ p.assignment x, pred m} := by
   rw [atomVar_eq, hfam.mul_stratum_singleton]
 
 /-- At a novel card the atom is random assignment followed by filtering, so
 the indefinite adds only the Novelty guard. -/
 theorem atomVar_eq_of_novel [DecidableEq V] (pred : M → Prop) (hnov : State.Novel F x) :
     atomVar pred x F =
-      Part.some {p ∈ F.randomAssign x | ∃ m : M, p.assignment x = ↑m ∧ pred m} := by
+      Part.some {p ∈ F.randomAssign x | ∃ m ∈ p.assignment x, pred m} := by
   rw [atomVar_eq, hnov.mul_stratum_singleton]
 
 /-! ### Connectives and felicity conditions -/
@@ -257,8 +257,8 @@ theorem neg_eq_partial_neg [DecidableEq V] {X : Finset V} (hF : State.UniformAt 
     (hφ : ∀ F' ∈ φ F, State.UniformAt X F') :
     neg φ F = CCP.Partial.neg φ F := by
   refine Part.ext' Iff.rfl fun h₁ h₂ ↦ ?_
-  show ({p ∈ (F : Set (Possibility W V (Flat M))) | p ∉ lowerClosure ((φ F).get h₁)} : Set _) =
-    (F : Set (Possibility W V (Flat M))) \ (φ F).get h₁
+  show ({p ∈ (F : Set (Possibility W V (Part M))) | p ∉ lowerClosure ((φ F).get h₁)} : Set _) =
+    (F : Set (Possibility W V (Part M))) \ (φ F).get h₁
   ext p
   exact and_congr_right fun hp ↦ not_congr
     ((hφ _ (Part.get_mem _)).mem_lowerClosure (hF p hp))
