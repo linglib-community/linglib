@@ -277,7 +277,7 @@ information state uniform at `X`, and on such files the clauses (19), (15) and (
 file change potentials of [heim-1982] on that stratum. -/
 
 /-- The point of a sequence–world pair at the cards `X` restricts the sequence to `X`. -/
-noncomputable def File.pointAt (X : Set ℕ) (gw : (ℕ → M) × W) : Possibility W ℕ (Flat M) :=
+noncomputable def File.pointAt (X : Set ℕ) (gw : (ℕ → M) × W) : Possibility W ℕ (Part M) :=
   ((Possibility.domainEquiv X).symm (gw.2, fun i ↦ gw.1 i.1)).1
 
 variable {X Y : Set ℕ} {g g' : ℕ → M} {w w' : W} {i : ℕ} {c c' cA cAB : File M W}
@@ -289,36 +289,38 @@ variable {X Y : Set ℕ} {g g' : ℕ → M} {w w' : W} {i : ℕ} {c c' cA cAB : 
 
 open Classical in
 theorem File.pointAt_assignment (gw : (ℕ → M) × W) (j : ℕ) :
-    (File.pointAt X gw).assignment j = if j ∈ X then ↑(gw.1 j) else ⊥ := by
-  by_cases hj : j ∈ X <;> simp [File.pointAt, Possibility.domainEquiv, hj]
+    (File.pointAt X gw).assignment j = if j ∈ X then Part.some (gw.1 j) else ⊥ := by
+  by_cases hj : j ∈ X
+  · rw [ite_eq_left hj]
+    exact Part.eq_some_iff.2 ⟨hj, rfl⟩
+  · rw [ite_eq_right hj]
+    exact Part.eq_bot_iff_not_dom.2 hj
 
-theorem File.pointAt_assignment_eq_coe_iff {m : M} :
-    (File.pointAt X (g, w)).assignment i = ↑m ↔ i ∈ X ∧ g i = m := by
+theorem File.mem_pointAt_assignment_iff {m : M} :
+    m ∈ (File.pointAt X (g, w)).assignment i ↔ i ∈ X ∧ g i = m := by
   classical
   rw [File.pointAt_assignment]
-  split_ifs with hi <;> simp [hi, Flat.coe_inj]
+  split_ifs with hi <;> simp [hi, Part.notMem_none, Part.bot_eq_none, eq_comm]
 
-theorem File.pointAt_eq_coe (hj : i ∈ X) :
-    (File.pointAt X (g, w)).assignment i = ↑(g i) :=
-  File.pointAt_assignment_eq_coe_iff.mpr ⟨hj, rfl⟩
+theorem File.mem_pointAt_assignment (hj : i ∈ X) :
+    g i ∈ (File.pointAt X (g, w)).assignment i :=
+  File.mem_pointAt_assignment_iff.mpr ⟨hj, rfl⟩
+
+theorem File.pointAt_eq_some (hj : i ∈ X) :
+    (File.pointAt X (g, w)).assignment i = Part.some (g i) :=
+  Part.eq_some_iff.2 (File.mem_pointAt_assignment hj)
 
 theorem File.pointAt_le_pointAt :
     File.pointAt X (g, w) ≤ File.pointAt Y (g', w') ↔ X ⊆ Y ∧ w = w' ∧ Set.EqOn g g' X := by
   constructor
   · rintro ⟨hw, h⟩
     refine ⟨fun j hj ↦ ?_, hw, fun j hj ↦ ?_⟩ <;>
-    · have hx : (File.pointAt X (g, w)).assignment j = ↑(g j) :=
-        File.pointAt_assignment_eq_coe_iff.mpr ⟨hj, rfl⟩
-      have := File.pointAt_assignment_eq_coe_iff.mp (Flat.coe_le_iff.1 (hx ▸ h j))
+    · have := File.mem_pointAt_assignment_iff.mp (h j _ (File.mem_pointAt_assignment hj))
       first | exact this.1 | exact this.2.symm
   · rintro ⟨hXY, rfl, heq⟩
-    refine ⟨rfl, fun j ↦ ?_⟩
-    classical
-    by_cases hj : j ∈ X
-    · rw [File.pointAt_eq_coe hj]
-      exact Flat.coe_le_iff.2 (File.pointAt_assignment_eq_coe_iff.mpr ⟨hXY hj, (heq hj).symm⟩)
-    · rw [File.pointAt_assignment, ite_eq_right hj]
-      exact bot_le
+    refine ⟨rfl, fun j a ha ↦ ?_⟩
+    obtain ⟨hj, rfl⟩ := File.mem_pointAt_assignment_iff.mp ha
+    exact File.mem_pointAt_assignment_iff.mpr ⟨hXY hj, (heq hj).symm⟩
 
 theorem File.pointAt_eq_pointAt :
     File.pointAt X (g, w) = File.pointAt X (g', w') ↔ w = w' ∧ Set.EqOn g g' X :=
@@ -329,7 +331,7 @@ theorem File.pointAt_eq_pointAt :
 /-- The state of a file at the cards `X`. -/
 def File.toState (X : Set ℕ) (c : File M W) : State W ℕ M := File.pointAt X '' c
 
-theorem File.mem_toState {p : Possibility W ℕ (Flat M)} :
+theorem File.mem_toState {p : Possibility W ℕ (Part M)} :
     p ∈ c.toState X ↔ ∃ gw ∈ c, File.pointAt X gw = p := Iff.rfl
 
 theorem File.uniformAt_toState : State.UniformAt X (c.toState X) := by
@@ -373,19 +375,18 @@ theorem File.toState_mul_stratum (hc : c.DeterminedBy X) :
   · rintro ⟨_, ⟨⟨g, w⟩, hg, rfl⟩, hpr, hdom⟩
     rw [File.domain_pointAt] at hdom
     classical
-    let g' : ℕ → M := fun j ↦ if h : r.assignment j ≠ ⊥ then (r.assignment j).get h else g j
-    have hval : ∀ j ∈ X, r.assignment j = ↑(g j) := fun j hj ↦
-      Flat.coe_le_iff.1 (File.pointAt_eq_coe (w := w) hj ▸ hpr.2 j)
+    let g' : ℕ → M := fun j ↦ if h : (r.assignment j).Dom then (r.assignment j).get h else g j
+    have hval : ∀ j ∈ X, r.assignment j = Part.some (g j) := fun j hj ↦
+      (Part.some_le_iff.1 (File.pointAt_eq_some (w := w) hj ▸ hpr.2 j))
     refine ⟨(g', w), hc (fun j hj ↦ ?_) hg, ?_⟩
     · simp [g', hval j hj]
     · refine Possibility.ext hpr.1 (funext fun j ↦ ?_)
       by_cases hj : j ∈ X ∪ Y
-      · have hd : r.assignment j ≠ ⊥ := show j ∈ r.domain by rw [hdom]; exact hj
-        rw [File.pointAt_eq_coe hj]
+      · have hd : (r.assignment j).Dom := show j ∈ r.domain by rw [hdom]; exact hj
+        rw [File.pointAt_eq_some hj]
         simp [g', hd]
-      · have hd : r.assignment j = ⊥ := by
-          by_contra hne
-          exact hj (hdom ▸ hne)
+      · have hd : r.assignment j = ⊥ :=
+          Part.eq_bot_iff_not_dom.2 fun hd ↦ hj (hdom ▸ (hd : j ∈ r.domain))
         rw [File.pointAt_assignment, ite_eq_right hj, hd]
   · rintro ⟨⟨g, w⟩, hg, rfl⟩
     exact ⟨File.pointAt X (g, w), ⟨_, hg, rfl⟩,
@@ -394,13 +395,13 @@ theorem File.toState_mul_stratum (hc : c.DeterminedBy X) :
 
 theorem File.toState_sep (hi : i ∈ X) (P : M → W → Prop) :
     File.toState X {gw ∈ c | P (gw.1 i) gw.2} =
-      {r ∈ c.toState X | ∃ m : M, r.assignment i = ↑m ∧ P m r.world} := by
+      {r ∈ c.toState X | ∃ m ∈ r.assignment i, P m r.world} := by
   ext r
   constructor
   · rintro ⟨⟨g, w⟩, ⟨hg, hP⟩, rfl⟩
-    exact ⟨⟨_, hg, rfl⟩, g i, File.pointAt_eq_coe hi, hP⟩
+    exact ⟨⟨_, hg, rfl⟩, g i, File.mem_pointAt_assignment hi, hP⟩
   · rintro ⟨⟨⟨g, w⟩, hg, rfl⟩, m, hm, hP⟩
-    obtain ⟨-, rfl⟩ := File.pointAt_assignment_eq_coe_iff.mp hm
+    obtain ⟨-, rfl⟩ := File.mem_pointAt_assignment_iff.mp hm
     exact ⟨(g, w), ⟨hg, hP⟩, rfl⟩
 
 /-- Under (19), the atomic rule of [heim-1982], updating a file merges its state with the atom's

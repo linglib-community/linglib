@@ -254,14 +254,14 @@ def Formula.toModal [DecidableEq Var] :
   | .univ x φ => .all x φ.toModal
 
 private lemma update_refines [DecidableEq Var] {i : Index W Var Domain} {v : Var → Domain}
-    (hv : ∀ y, i.assign y = ↑(v y)) (x : Var) (d : Domain) :
-    ∀ y, (i.update x d).assign y = ↑(Function.update v x d y) := by
+    (hv : ∀ y, i.assign y = some (v y)) (x : Var) (d : Domain) :
+    ∀ y, (i.update x d).assign y = some (Function.update v x d y) := by
   intro y
   rw [Index.assign_update]
   by_cases hy : y = x
   · subst hy
-    rw [PartialAssignment.update_self, Function.update_self]
-  · rw [PartialAssignment.update_of_ne hy, Function.update_of_ne hy]
+    rw [Function.update_self, Function.update_self]
+  · rw [Function.update_of_ne hy, Function.update_of_ne hy]
     exact hv y
 
 section Realize
@@ -278,7 +278,7 @@ private theorem con_den_eq_flat {φ : Formula Var Const Pred} (hNE : φ.NEFree)
 
 private theorem singleton_mem_den_iff_realize (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred} (hNE : φ.NEFree) {i : Index W Var Domain}
-    {v : Var → Domain} (hv : ∀ y, i.assign y = ↑(v y)) :
+    {v : Var → Domain} (hv : ∀ y, i.assign y = some (v y)) :
     ({i} ∈ (φ.den M).pro ↔ φ.toModal.Realize M i.world v) ∧
       ({i} ∈ (φ.den M).con ↔ ¬ φ.toModal.Realize M i.world v) := by
   induction hNE generalizing i v with
@@ -337,13 +337,13 @@ private theorem singleton_mem_den_iff_realize (M : Model W Domain Const Pred)
 index's world ([aloni-vanormondt-2023] Proposition 4.1, singleton case). -/
 theorem support_singleton_iff_realize (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred} (hNE : φ.NEFree) {i : Index W Var Domain} {v : Var → Domain}
-    (hv : ∀ y, i.assign y = ↑(v y)) :
+    (hv : ∀ y, i.assign y = some (v y)) :
     support M φ {i} ↔ φ.toModal.Realize M i.world v :=
   (singleton_mem_den_iff_realize M hNE hv).1
 
 theorem antiSupport_singleton_iff_realize (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred} (hNE : φ.NEFree) {i : Index W Var Domain} {v : Var → Domain}
-    (hv : ∀ y, i.assign y = ↑(v y)) :
+    (hv : ∀ y, i.assign y = some (v y)) :
     antiSupport M φ {i} ↔ ¬ φ.toModal.Realize M i.world v :=
   (singleton_mem_den_iff_realize M hNE hv).2
 
@@ -352,7 +352,7 @@ is, `M, s ⊨ φ(x̄)` iff `M, w ⊨_g φ(x̄)` for all `⟨w, g⟩ ∈ s` ([alo
 4.1). -/
 theorem support_iff_forall_realize (M : Model W Domain Const Pred) {φ : Formula Var Const Pred}
     (hNE : φ.NEFree) (s : Finset (Index W Var Domain)) (v : Index W Var Domain → Var → Domain)
-    (hv : ∀ i ∈ s, ∀ y, i.assign y = ↑(v i y)) :
+    (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
     support M φ s ↔ ∀ i ∈ s, φ.toModal.Realize M i.world (v i) := by
   rw [support_iff_forall_singleton hNE]
   exact forall₂_congr fun i hi ↦ support_singleton_iff_realize M hNE (hv i hi)

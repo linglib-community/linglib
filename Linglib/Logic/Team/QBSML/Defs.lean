@@ -2,7 +2,6 @@ module
 
 public import Mathlib.Data.Finset.Union
 public import Mathlib.Data.Fintype.Basic
-public import Linglib.Logic.Assignment
 public import Linglib.Logic.Modal.FirstOrder.Semantics
 public import Linglib.Core.ModelTheory.LanguageMap
 public import Linglib.Logic.Team.Operations
@@ -41,6 +40,9 @@ non-classical behaviour.
   lax quantifier of the paper's fn. 10; the universal clause `s[x] ⊨ φ` is the box over them.
 * The paper's requirement that the indices of a state share an assignment domain is not
   enforced; the state operations preserve it.
+* States are `Finset`s of indices, so assignments must carry decidable equality: an assignment
+  is `Var → Option Domain`, the decidable counterpart of the `Var → Part Domain` partial
+  assignments used elsewhere in the library, with `fun _ ↦ none` the empty assignment.
 
 ## References
 
@@ -69,13 +71,13 @@ variable {W Var Domain : Type*}
 
 /-- An index `⟨w, g⟩` pairs a world with a partial assignment ([aloni-vanormondt-2023]
 Definition 4.2). -/
-abbrev Index (W Var Domain : Type*) := W × PartialAssignment Var Domain
+abbrev Index (W Var Domain : Type*) := W × (Var → Option Domain)
 
 /-- The world component of an index. -/
 abbrev Index.world (i : Index W Var Domain) : W := i.1
 
 /-- The assignment component of an index. -/
-abbrev Index.assign (i : Index W Var Domain) : PartialAssignment Var Domain := i.2
+abbrev Index.assign (i : Index W Var Domain) : Var → Option Domain := i.2
 
 section Update
 
@@ -84,13 +86,13 @@ variable [DecidableEq Var]
 /-- The update `i[x/d] = ⟨wᵢ, gᵢ[x/d]⟩` of an index ([aloni-vanormondt-2023] Definitions 4.3
 and 4.4). -/
 def Index.update (i : Index W Var Domain) (x : Var) (d : Domain) : Index W Var Domain :=
-  (i.world, i.assign.update x d)
+  (i.world, Function.update i.assign x (some d))
 
 @[simp] theorem Index.world_update (i : Index W Var Domain) (x : Var) (d : Domain) :
     (i.update x d).world = i.world := rfl
 
 @[simp] theorem Index.assign_update (i : Index W Var Domain) (x : Var) (d : Domain) :
-    (i.update x d).assign = i.assign.update x d := rfl
+    (i.update x d).assign = Function.update i.assign x (some d) := rfl
 
 end Update
 
@@ -123,11 +125,11 @@ variable [DecidableEq W] [Fintype Var] [DecidableEq Domain]
 
 /-- The pairing `X[g] = {⟨w, g⟩ | w ∈ X}` of a set of worlds with one assignment
 ([aloni-vanormondt-2023] Definition 4.9). -/
-def State.modalLift (X : Finset W) (g : PartialAssignment Var Domain) :
+def State.modalLift (X : Finset W) (g : Var → Option Domain) :
     Finset (Index W Var Domain) :=
   X.image fun v ↦ (v, g)
 
-variable {s : Finset (Index W Var Domain)} {X : Finset W} {g : PartialAssignment Var Domain}
+variable {s : Finset (Index W Var Domain)} {X : Finset W} {g : Var → Option Domain}
 
 @[simp] theorem State.mem_modalLift {i : Index W Var Domain} :
     i ∈ State.modalLift X g ↔ i.world ∈ X ∧ i.assign = g where
@@ -138,7 +140,7 @@ variable {s : Finset (Index W Var Domain)} {X : Finset W} {g : PartialAssignment
     rintro ⟨h, rfl⟩
     exact Finset.mem_image.mpr ⟨i.world, h, rfl⟩
 
-@[simp] theorem State.modalLift_singleton (w : W) (g : PartialAssignment Var Domain) :
+@[simp] theorem State.modalLift_singleton (w : W) (g : Var → Option Domain) :
     State.modalLift {w} g = {(w, g)} :=
   Finset.image_singleton ..
 
@@ -359,8 +361,9 @@ assign one outside it; an index leaving the variable unassigned does neither. -/
 def Formula.den (M : Model W Domain Const Pred) :
     Formula Var Const Pred → TeamProperty (Index W Var Domain) ⊙ TeamProperty (Index W Var Domain)
   | .pred P x => .mk
-      (Team.flat fun i ↦ ∃ d : Domain, i.assign x = ↑d ∧ M.relInterp₁ (predSymb P) i.world d)
-      (Team.flat fun i ↦ ∃ d : Domain, i.assign x = ↑d ∧ ¬ M.relInterp₁ (predSymb P) i.world d)
+      (Team.flat fun i ↦ ∃ d : Domain, i.assign x = some d ∧ M.relInterp₁ (predSymb P) i.world d)
+      (Team.flat fun i ↦
+        ∃ d : Domain, i.assign x = some d ∧ ¬ M.relInterp₁ (predSymb P) i.world d)
   | .predc P c => Team.flatPair fun i ↦
       M.relInterp₁ (predSymb P) i.world (M.constInterp ((Language.monadic Pred).con c) i.world)
   | .ne => .mk Team.ne {∅}

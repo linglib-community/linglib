@@ -9,20 +9,15 @@ public import Mathlib.Data.PFun
 public import Linglib.Core.Order.LeftLinear
 
 /-!
-# Values of partial values
+# Partial values
 
-Mirror of `Mathlib/Data/Part.lean`: the domain and the value of `Part.restrict p o h`, the partial
-value `o` defined exactly where `p` holds, and the value of a `Part.bind`, as `simp` lemmas. The
-value of a restriction does not depend on the proof of `p`, so `simp` rewrites under it, where it
-cannot under an anonymous `⟨p, fun h ↦ …⟩`.
-
-Partial values are left-linear (`Part.isLeftLinear`): below a defined value lie only itself and
-`⊥`, so two values with a common upper bound are comparable.
-
-Equality and the order of partial values are decidable when their domains are
-(`Part.decidableEqOfDom`, `Part.decidableLEOfDom`), and so are they for families of partial values
-over a finite index type. A type-level `DecidableEq (Part α)` cannot be computable, since it would
-decide every proposition `p` through `⟨p, fun _ ↦ ()⟩ = Part.some ()`. [UPSTREAM]
+Supplements to `Mathlib/Data/Part.lean`. The domain and value of `Part.restrict` and `Part.bind`
+are `simp` lemmas, so `simp` rewrites under a restriction. Partial values are left-linear
+(`Part.isLeftLinear`): below a defined value lie only itself and `⊥`, so compatible values are
+comparable; a partial function `α → Part β` extends another iff the two agree on its domain
+(`PFun.le_iff_eqOn_dom`). Equality and order are decidable where domains are
+(`Part.decidableEqOfDom`, `Part.decidableLEOfDom`); a type-level `DecidableEq (Part α)` cannot be
+computable, since it would decide every `p` through `⟨p, fun _ ↦ ()⟩ = Part.some ()`. [UPSTREAM]
 -/
 
 @[expose] public section
@@ -104,6 +99,9 @@ variable {o o' : Part α}
 
 theorem toOption_inj [Decidable o.Dom] [Decidable o'.Dom] : o.toOption = o'.toOption ↔ o = o' :=
   ⟨fun h ↦ Part.ext fun a ↦ by rw [← mem_toOption, ← mem_toOption, h], fun h ↦ by subst h; congr⟩
+
+theorem ofOption_injective : Function.Injective (ofOption : Option α → Part α) := fun _ _ h ↦
+  Option.ext fun _ ↦ by rw [← Option.mem_def, ← Option.mem_def, ← mem_ofOption, h, mem_ofOption]
 
 /-- Partial values with decidable domains are decidably equal. -/
 instance decidableEqOfDom [DecidableEq α] (o o' : Part α) [Decidable o.Dom] [Decidable o'.Dom] :

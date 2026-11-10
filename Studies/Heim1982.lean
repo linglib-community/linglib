@@ -85,7 +85,7 @@ def pred₂ (R : M → M → Prop) (i j : ℕ) : LF M := atom (fun m ↦ R (m 0)
 /-- The proposition state of an atomic formula: the points with exactly the
 atom's cards, whose values stand in `ζ`. -/
 def atomState (ζ : (Fin n → M) → Prop) (args : Fin n → ℕ) : File W M :=
-  {q | q.domain = Set.range args ∧ ∃ m : Fin n → M, (∀ k, q.assignment (args k) = ↑(m k)) ∧ ζ m}
+  {q | q.domain = Set.range args ∧ ∃ m : Fin n → M, (∀ k, m k ∈ q.assignment (args k)) ∧ ζ m}
 
 /-- The file change of a one-place atom. -/
 def unary (N : M → Prop) (i : ℕ) : FCP W ℕ M :=
@@ -142,7 +142,7 @@ theorem supports_unary_true (F : File W M) {i : ℕ} (h : State.Familiar F i) :
     (unary (fun _ ↦ True) i).supports F := by
   rw [PartialUpdate.supports_iff_eq_some, unary_eq_atomVar, FCP.atomVar_eq_of_familiar _ h]
   exact congrArg Part.some (Set.sep_eq_self_iff_mem_true.mpr fun p hp ↦
-    let ⟨m, hm⟩ := Flat.ne_bot_iff_exists.1 (h p hp); ⟨m, hm, trivial⟩)
+    let ⟨m, hm⟩ := Part.dom_iff_mem.1 (h p hp); ⟨m, hm, trivial⟩)
 
 theorem fcp_pro (F : File W M) {i : ℕ} (h : State.Familiar F i) : (pro i).fcp F = Part.some F :=
   FCP.def_apply _ ⟨h, supports_unary_true F h⟩
@@ -151,14 +151,14 @@ theorem admits_pro (F : File W M) (i : ℕ) : (pro i).fcp.Admits F ↔ State.Fam
   ⟨fun ⟨h, _⟩ ↦ h.1, fun h ↦ by rw [PartialUpdate.Admits, fcp_pro F h]; trivial⟩
 
 theorem fcp_indef {F : File W M} {i : ℕ} (N : M → Prop) (h : State.Novel F i) :
-    (indef i N).fcp F = Part.some {p ∈ F.randomAssign i | ∃ m : M, p.assignment i = ↑m ∧ N m} := by
+    (indef i N).fcp F = Part.some {p ∈ F.randomAssign i | ∃ m ∈ p.assignment i, N m} := by
   show FCP.indef i (unary N i) F = _
   rw [FCP.indef_apply _ h, unary_eq_atomVar,
     FCP.atomVar_eq_of_familiar _ (State.familiar_randomAssign F i)]
 
 theorem mem_fcp_indef {F F' : File W M} {i : ℕ} {N : M → Prop} :
     F' ∈ (indef i N).fcp F ↔
-      State.Novel F i ∧ F' = {p ∈ F.randomAssign i | ∃ m : M, p.assignment i = ↑m ∧ N m} :=
+      State.Novel F i ∧ F' = {p ∈ F.randomAssign i | ∃ m ∈ p.assignment i, N m} :=
   ⟨fun h ↦ have hn : State.Novel F i := (Part.mem_assert_iff.mp h).1
     ⟨hn, Part.mem_some_iff.mp (fcp_indef N hn ▸ h)⟩,
    fun ⟨hn, hF⟩ ↦ hF ▸ fcp_indef N hn ▸ Part.mem_some _⟩
@@ -239,7 +239,7 @@ theorem familiar_of_mem_indef {F F' : File W M} {i : ℕ} {N : M → Prop}
 
 theorem novel_atomState {ζ : (Fin n → M) → Prop} {args : Fin n → ℕ} {j : ℕ}
     (hj : j ∉ Set.range args) : State.Novel (atomState (W := W) ζ args) j :=
-  fun _ ⟨hq, _⟩ ↦ by_contra fun hd ↦ hj (hq ▸ Possibility.mem_domain.mpr hd)
+  fun _ ⟨hq, _⟩ hd ↦ hj (hq ▸ hd)
 
 theorem novel_of_mem : ∀ {φ : LF M} {F F' : File W M} {j : ℕ}, j ∉ φ.cards →
     State.Novel F j → F' ∈ φ.fcp F → State.Novel F' j
@@ -270,13 +270,13 @@ theorem trueIn_indef {F : File W M} {i : ℕ} (N : M → Prop) (h : State.Novel 
   constructor
   · rintro ⟨p, hp, m', hm', hN⟩
     obtain ⟨q, hq, m, rfl⟩ := hp
-    obtain rfl : m = m' := by simpa [Possibility.update] using hm'
+    obtain rfl : m' = m := by simpa [Possibility.update] using hm'
     exact ⟨⟨q, hq⟩, _, hN⟩
   · rintro ⟨⟨q, hq⟩, m, hN⟩
-    exact ⟨q.update i ↑m, ⟨q, hq, m, rfl⟩, m, by simp [Possibility.update], hN⟩
+    exact ⟨q.update i (.some m), ⟨q, hq, m, rfl⟩, m, by simp [Possibility.update], hN⟩
 
 theorem trueIn_pro_pred {F : File W M} {i : ℕ} (N : M → Prop) (h : State.Familiar F i) :
-    FCP.trueIn F ((pro i).seq (pred₁ N i)).fcp ↔ ∃ p ∈ F, ∃ m : M, p.assignment i = ↑m ∧ N m := by
+    FCP.trueIn F ((pro i).seq (pred₁ N i)).fcp ↔ ∃ p ∈ F, ∃ m ∈ p.assignment i, N m := by
   have : ((pro i).seq (pred₁ N i)).fcp F = FCP.atomVar N i F := by
     show ((pro i).fcp F).bind _ = _
     rw [fcp_pro F h, Part.bind_some]
@@ -341,7 +341,7 @@ theorem not_admits_everyDog {F : File W M} (h : State.Novel F 1)
   obtain rfl := Part.get_eq_of_mem hF' hd
   obtain ⟨hpro, -⟩ := hrest
   have hf : State.Familiar _ 1 := hpro.1.1
-  exact hf p hp (h p (subset_of_mem_fcp_every hF' hp))
+  exact h p (subset_of_mem_fcp_every hF' hp) (hf p hp)
 
 -- (17)
 theorem not_admits_noDog {F : File W M} (h : State.Novel F 1)
@@ -352,7 +352,7 @@ theorem not_admits_noDog {F : File W M} (h : State.Novel F 1)
   obtain rfl := Part.get_eq_of_mem hF' hd
   obtain ⟨hpro, -⟩ := hrest
   have hf : State.Familiar _ 1 := hpro.1.1
-  exact hf p hp (h p (FCP.subset_of_mem_neg hF' hp))
+  exact h p (FCP.subset_of_mem_neg hF' hp) (hf p hp)
 
 -- §2.4, (5)
 theorem admits_womanDog {F : File W M} (h1 : State.Novel F 1) (h2 : State.Novel F 2) :
@@ -384,7 +384,7 @@ theorem novel_of_mem_kingLocal {F F' : File W M} {m i : ℕ} (h : State.Novel F 
 -- §5.2
 theorem familiar_of_mem_kingGlobal {F F' : File W M} {m i : ℕ}
     (hF' : F' ∈ (kingGlobal king lunch m i).fcp F) :
-    State.Familiar F' i ∧ ∀ p ∈ F', ∃ x : M, p.assignment i = ↑x ∧ king x := by
+    State.Familiar F' i ∧ ∀ p ∈ F', ∃ x ∈ p.assignment i, king x := by
   obtain ⟨F₁, h₁, h₂⟩ := mem_fcp_seq.mp hF'
   have hsub := FCP.subset_of_mem_neg h₂
   refine ⟨(familiar_of_mem_indef h₁).mono hsub, fun p hp ↦ ?_⟩

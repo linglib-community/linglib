@@ -75,16 +75,16 @@ variable (uAnaph uAnt : ℕ) (S : PluralAssign ℕ E) (Δ : Set ℕ)
 
 /-- The class of `s` under distribution over `Δ` ([haug-dalrymple-2020] (26)): the states of `S`
 agreeing with `s` on every dref in `Δ`. -/
-def eqClass (s : PartialAssignment ℕ E) : PluralAssign ℕ E :=
+def eqClass (s : ℕ → Part E) : PluralAssign ℕ E :=
   {t ∈ S | ∀ u ∈ Δ, t u = s u}
 
-@[simp] theorem eqClass_empty (s : PartialAssignment ℕ E) : eqClass S ∅ s = S := by
+@[simp] theorem eqClass_empty (s : ℕ → Part E) : eqClass S ∅ s = S := by
   ext t; simp [eqClass]
 
-theorem mem_eqClass {s t : PartialAssignment ℕ E} :
+theorem mem_eqClass {s t : ℕ → Part E} :
     t ∈ eqClass S Δ s ↔ t ∈ S ∧ ∀ u ∈ Δ, t u = s u := Iff.rfl
 
-theorem self_mem_eqClass {s : PartialAssignment ℕ E} (hs : s ∈ S) : s ∈ eqClass S Δ s :=
+theorem self_mem_eqClass {s : ℕ → Part E} (hs : s ∈ S) : s ∈ eqClass S Δ s :=
   ⟨hs, fun _ _ ↦ rfl⟩
 
 /-! ### Anaphoric relations -/
@@ -104,7 +104,7 @@ def groupIdentityCond : PPDRSCond E := fun S Δ ↦
 identity, with the two drefs distinct in every state where both are defined. -/
 def reciprocityCond : PPDRSCond E := fun S Δ ↦
   groupIdentityCond uAnaph uAnt S Δ ∧
-    ∀ s ∈ S, ∀ a b : E, s uAnaph = ↑a → s uAnt = ↑b → a ≠ b
+    ∀ s ∈ S, ∀ a ∈ s uAnaph, ∀ b ∈ s uAnt, a ≠ b
 
 /-- The underspecified reflexive/reciprocal ([haug-dalrymple-2020] (79b)): group identity
 without distinctness, admitting reflexive, reciprocal and mixed construals ([murray-2008],
@@ -134,10 +134,11 @@ theorem binding_implies_groupIdentity (h : bindingCond uAnaph uAnt S ∅) :
 /-- Reciprocity excludes binding once some state defines the anaphor: distinctness there
 contradicts pointwise equality. Without such a state both drefs may be undefined throughout, and
 binding and reciprocity hold together vacuously. -/
-theorem reciprocity_excludes_binding (hdef : ∃ s ∈ S, ∃ d : E, s uAnaph = ↑d)
-    (h : reciprocityCond uAnaph uAnt S Δ) : ¬ bindingCond uAnaph uAnt S Δ := fun hb ↦
-  let ⟨s, hs, d, hd⟩ := hdef
-  h.2 s hs d d hd ((hb s hs).symm.trans hd) rfl
+theorem reciprocity_excludes_binding (hdef : ∃ s ∈ S, (s uAnaph).Dom)
+    (h : reciprocityCond uAnaph uAnt S Δ) : ¬ bindingCond uAnaph uAnt S Δ := fun hb ↦ by
+  obtain ⟨s, hs, hd⟩ := hdef
+  obtain ⟨d, hd⟩ := Part.dom_iff_mem.1 hd
+  exact h.2 s hs d hd d (hb s hs ▸ hd) rfl
 
 theorem reciprocity_strengthens_underspecified (h : reciprocityCond uAnaph uAnt S Δ) :
     underspecifiedCond uAnaph uAnt S Δ := h.1
@@ -146,23 +147,25 @@ variable {uAnaph uAnt S Δ}
 
 /-- Without distribution, reciprocity says the antecedent-anaphor dependency is irreflexive with
 equal domain and codomain ([haug-dalrymple-2020]'s gloss of (39)). -/
-theorem reciprocityCond_empty_iff (hdef : ∀ s ∈ S, s uAnaph ≠ ⊥ ↔ s uAnt ≠ ⊥) :
+theorem reciprocityCond_empty_iff (hdef : ∀ s ∈ S, (s uAnaph).Dom ↔ (s uAnt).Dom) :
     reciprocityCond uAnaph uAnt S ∅ ↔
       (dep uAnt uAnaph S).dom = (dep uAnt uAnaph S).cod ∧ (dep uAnt uAnaph S).IsIrrefl := by
   rw [reciprocityCond, groupIdentityCond_empty,
     ← dom_dep (u := uAnt) (v := uAnaph) fun s hs ↦ (hdef s hs).2,
     ← cod_dep (u := uAnt) (v := uAnaph) fun s hs ↦ (hdef s hs).1, eq_comm]
-  refine and_congr_right' ⟨fun h ↦ ⟨fun a ⟨s, hs, ha, ha'⟩ ↦ h s hs a a ha' ha rfl⟩, ?_⟩
-  rintro h s hs a b ha hb rfl
-  exact h.irrefl _ ⟨s, hs, hb, ha⟩
+  refine and_congr_right' ⟨fun h ↦ ⟨fun a ⟨s, hs, ha, ha'⟩ ↦
+    h s hs a (Part.eq_some_iff.1 ha') a (Part.eq_some_iff.1 ha) rfl⟩, ?_⟩
+  rintro h s hs a ha b hb rfl
+  exact h.irrefl _ ⟨s, hs, Part.eq_some_iff.2 hb, Part.eq_some_iff.2 ha⟩
 
 /-- A reciprocal's antecedent denotes a plurality: at a state defining both drefs, the
 anaphor's value lies among the antecedent's by group identity and differs from the antecedent's
 value there. This holds under any distribution. -/
 theorem nontrivial_value_of_reciprocityCond (h : reciprocityCond uAnaph uAnt S Δ)
-    {s : PartialAssignment ℕ E} (hs : s ∈ S) {a b : E} (ha : s uAnaph = ↑a)
-    (hb : s uAnt = ↑b) : (value uAnt S).Nontrivial :=
-  ⟨a, h.1 s hs ▸ ⟨s, self_mem_eqClass S Δ hs, ha⟩, b, ⟨s, hs, hb⟩, h.2 s hs a b ha hb⟩
+    {s : ℕ → Part E} (hs : s ∈ S) {a b : E} (ha : a ∈ s uAnaph) (hb : b ∈ s uAnt) :
+    (value uAnt S).Nontrivial :=
+  ⟨a, h.1 s hs ▸ ⟨s, self_mem_eqClass S Δ hs, Part.eq_some_iff.2 ha⟩,
+    b, ⟨s, hs, Part.eq_some_iff.2 hb⟩, h.2 s hs a ha b hb⟩
 
 /-! ### Partial dref introduction -/
 
@@ -170,27 +173,28 @@ section Introduction
 
 open DynamicSemantics SetRel
 
-variable {Var D : Type*} {u : Var} {i o : PartialAssignment Var D}
+variable {Var D : Type*} {u : Var} {i o : Var → Part D}
 
 /-- Partial dref introduction `i[u]o` ([haug-dalrymple-2020] (20)): `i` leaves `u` unvalued, `o`
 values it, and the two agree on every other dref. -/
-def extend (u : Var) : Update (PartialAssignment Var D) :=
-  {p | p.1 u = ⊥ ∧ p.2 u ≠ ⊥ ∧ ∀ v ≠ u, p.1 v = p.2 v}
+def extend (u : Var) : Update (Var → Part D) :=
+  {p | ¬(p.1 u).Dom ∧ (p.2 u).Dom ∧ ∀ v ≠ u, p.1 v = p.2 v}
 
-theorem mem_extend : i ~[extend u] o ↔ i u = ⊥ ∧ o u ≠ ⊥ ∧ ∀ v ≠ u, i v = o v :=
+theorem mem_extend : i ~[extend u] o ↔ ¬(i u).Dom ∧ (o u).Dom ∧ ∀ v ≠ u, i v = o v :=
   Iff.rfl
 
 /-- Introducing `u` is a covering step of the extension order, the one that values `u`. -/
 theorem mem_extend_iff_covBy : i ~[extend u] o ↔ i ⋖ o ∧ i u ≠ o u := by
-  refine ⟨fun ⟨hi, ho, h⟩ ↦ ⟨PartialAssignment.covBy_iff.2 ⟨u, hi, ho, h⟩,
-    fun he ↦ ho (he.symm.trans hi)⟩,
+  refine ⟨fun ⟨hi, ho, h⟩ ↦ ⟨Pi.covBy_iff.2 ⟨u, Part.covBy_iff.2 ⟨hi, ho⟩, h⟩,
+    (Part.covBy_iff.2 ⟨hi, ho⟩).ne⟩,
     fun ⟨hcov, hne⟩ ↦ ?_⟩
-  obtain ⟨x, hi, ho, h⟩ := PartialAssignment.covBy_iff.1 hcov
+  obtain ⟨x, hx, h⟩ := Pi.covBy_iff.1 hcov
+  obtain ⟨hi, ho⟩ := Part.covBy_iff.1 hx
   obtain rfl : x = u := by_contra fun hxu ↦ hne (h u (Ne.symm hxu))
   exact ⟨hi, ho, h⟩
 
 theorem extend_subset_randomAssign [DecidableEq Var] :
-    extend u ⊆ Update.randomAssign (S := PartialAssignment Var D) u := by
+    extend u ⊆ Update.randomAssign (S := Var → Part D) u := by
   rintro ⟨i, o⟩ ⟨-, -, h⟩
   refine (Update.mem_randomAssign (i := i) (j := o) (r := u)).2 ⟨o u, funext fun v ↦ ?_⟩
   rw [RegisterStructure.extend_eq_update]
@@ -209,7 +213,7 @@ def introPartial (u : Var) : Update (PluralAssign Var D) :=
   {p | p.2.Nonempty ∧ p ∈ Update.cumul (extend u)}
 
 theorem introPartial_subset_intro [DecidableEq Var] :
-    introPartial u ⊆ PCDRT.intro (S := PartialAssignment Var D) (V := Flat D) u :=
+    introPartial u ⊆ PCDRT.intro (S := Var → Part D) (V := Part D) u :=
   fun _ hp ↦ Update.cumul_mono extend_subset_randomAssign hp.2
 
 end Introduction

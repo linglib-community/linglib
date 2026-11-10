@@ -58,18 +58,18 @@ namespace Elliott2023
 
 open DynamicSemantics BilateralUpdate
 
-variable {W V E : Type*} [DecidableEq V] {s : Set (Possibility W V (Flat E))} {x : V}
+variable {W V E : Type*} [DecidableEq V] {s : Set (Possibility W V (Part E))} {x : V}
 
 private theorem mem_pred1_pred1_randomAssign (P Q : E → W → Prop)
-    {t : Set (Possibility W V (Flat E))} {r : Possibility W V (Flat E)} :
+    {t : Set (Possibility W V (Part E))} {r : Possibility W V (Part E)} :
     r ∈ (pred1 Q x).positive ((pred1 P x).positive (State.randomAssign t x)) ↔
-      ∃ q ∈ t, ∃ e : E, r = q.update x ↑e ∧ P e q.world ∧ Q e q.world := by
+      ∃ q ∈ t, ∃ e : E, r = q.update x (.some e) ∧ P e q.world ∧ Q e q.world := by
   simp only [mem_positive_pred1]
   constructor
   · rintro ⟨⟨⟨q, hq, m, rfl⟩, e, he, hP⟩, e', he', hQ⟩
-    obtain rfl : m = e := by simpa using he
-    obtain rfl : m = e' := by simpa using he'
-    exact ⟨q, hq, m, rfl, hP, hQ⟩
+    obtain rfl : e = m := by simpa using he
+    obtain rfl : e' = e := by simpa using he'
+    exact ⟨q, hq, e', rfl, hP, hQ⟩
   · rintro ⟨q, hq, e, rfl, hP, hQ⟩
     exact ⟨⟨⟨q, hq, e, rfl⟩, e, by simp, hP⟩, e, by simp, hQ⟩
 
@@ -99,20 +99,20 @@ theorem firstPart_donkey (hx : State.Novel s x) :
 
 -- §2.4.3, before (31)
 theorem not_cover_pred1 :
-    ∃ s : Set (Possibility Unit ℕ (Flat Unit)),
+    ∃ s : Set (Possibility Unit ℕ (Part Unit)),
       (pred1 (fun _ _ ↦ True) 0).positive s ∪ (pred1 (fun _ _ ↦ True) 0).negative s ∪
         (pred1 (fun _ _ ↦ True) 0).unknownUpdate s ≠ s := by
-  let p₀ : Possibility Unit ℕ (Flat Unit) := Possibility.bot ()
-  have h₁ : p₀.update 0 ↑() ∈ (pred1 (fun _ _ ↦ True) 0).positive {p₀.update 0 ↑(), p₀} :=
-    by simp
-  refine ⟨{p₀.update 0 ↑(), p₀}, fun h ↦ ?_⟩
-  have hp : p₀ ∈ ({p₀.update 0 ↑(), p₀} : Set (Possibility Unit ℕ (Flat Unit))) :=
+  let p₀ : Possibility Unit ℕ (Part Unit) := Possibility.bot ()
+  have h₁ : p₀.update 0 (.some ()) ∈
+      (pred1 (fun _ _ ↦ True) 0).positive {p₀.update 0 (.some ()), p₀} := by simp
+  refine ⟨{p₀.update 0 (.some ()), p₀}, fun h ↦ ?_⟩
+  have hp : p₀ ∈ ({p₀.update 0 (.some ()), p₀} : Set (Possibility Unit ℕ (Part Unit))) :=
     Set.mem_insert_of_mem _ rfl
   rw [← h] at hp
   rcases hp with (hp | hp) | ⟨-, hpos, -⟩
-  · simp [p₀, Possibility.bot] at hp
-  · simp [p₀, Possibility.bot] at hp
-  · exact hpos ⟨_, h₁, Possibility.le_update_of_eq_bot rfl _⟩
+  · simp [p₀, Possibility.bot, Part.bot_eq_none, Part.notMem_none] at hp
+  · simp [p₀, Possibility.bot, Part.bot_eq_none, Part.notMem_none] at hp
+  · exact hpos ⟨_, h₁, Possibility.le_update_of_notMem (by simp [p₀]) _⟩
 
 -- (32), with the empty cell where both disjuncts are true
 theorem secondPart_donkey [Nonempty E] (hx : State.Novel s x) :
@@ -140,15 +140,15 @@ theorem negative_donkey :
     (donkey B U x).negative s = (pred1 U x).negative ((exists_ x (pred1 B x)).positive s) := by
   simp
 
-theorem mem_positive_donkey [Nonempty E] (hx : State.Novel s x) {p : Possibility W V (Flat E)} :
+theorem mem_positive_donkey [Nonempty E] (hx : State.Novel s x) {p : Possibility W V (Part E)} :
     p ∈ (donkey B U x).positive s ↔ (p ∈ s ∧ ∀ e, ¬ B e p.world) ∨
-      ∃ q ∈ s, ∃ e : E, p = q.update x ↑e ∧ B e q.world ∧ U e q.world := by
+      ∃ q ∈ s, ∃ e : E, p = q.update x (.some e) ∧ B e q.world ∧ U e q.world := by
   rw [positive_donkey B U hx]
   exact Iff.or Iff.rfl (mem_pred1_pred1_randomAssign B U)
 
-theorem mem_negative_donkey {r : Possibility W V (Flat E)} :
+theorem mem_negative_donkey {r : Possibility W V (Part E)} :
     r ∈ (donkey B U x).negative s ↔
-      ∃ q ∈ s, ∃ e : E, r = q.update x ↑e ∧ B e q.world ∧ ¬ U e q.world := by
+      ∃ q ∈ s, ∃ e : E, r = q.update x (.some e) ∧ B e q.world ∧ ¬ U e q.world := by
   rw [negative_donkey, negative_pred1]
   exact mem_pred1_pred1_randomAssign B _
 
@@ -160,11 +160,11 @@ theorem mem_world_negative_donkey {w : W} :
     obtain ⟨q, hq, e, rfl, hB, hU⟩ := (mem_negative_donkey B U).1 hr
     exact ⟨⟨q, hq, rfl⟩, e, hB, hU⟩
   · rintro ⟨⟨q, hq, rfl⟩, e, hB, hU⟩
-    exact ⟨q.update x ↑e, (mem_negative_donkey B U).2 ⟨q, hq, e, rfl, hB, hU⟩, rfl⟩
+    exact ⟨q.update x (.some e), (mem_negative_donkey B U).2 ⟨q, hq, e, rfl, hB, hU⟩, rfl⟩
 
 theorem assertable_donkey [Nonempty E] (hx : State.Novel s x) : (donkey B U x).Assertable s := by
   refine Set.eq_empty_of_forall_notMem fun p ⟨hp, hpos, hneg⟩ ↦ ?_
-  have hle (e : E) : p ≤ p.update x ↑e := Possibility.le_update_of_eq_bot (hx p hp) _
+  have hle (e : E) : p ≤ p.update x (.some e) := Possibility.le_update_of_notMem (hx p hp) _
   by_cases hb : ∃ e, B e p.world
   · obtain ⟨e, hB⟩ := hb
     by_cases hU : U e p.world
@@ -192,7 +192,7 @@ theorem nonempty_lnc_iff [Nonempty E] (hx : State.Novel s x) :
     · exact absurd hB (hno e)
     · exact ⟨p, hp, ⟨e', hB', hU'⟩, e, hB, hU⟩
   · rintro ⟨p, hp, ⟨e', hB', hU'⟩, e, hB, hU⟩
-    exact ⟨_, (mem_negative_donkey B U).2 ⟨p.update x ↑e',
+    exact ⟨_, (mem_negative_donkey B U).2 ⟨p.update x (.some e'),
       (mem_positive_donkey B U hx).2 (.inr ⟨p, hp, e', rfl, hB', hU'⟩), e, rfl, hB, hU⟩⟩
 
 /-! ### Exhaustive assertion (§3) -/
@@ -201,13 +201,13 @@ theorem nonempty_lnc_iff [Nonempty E] (hx : State.Novel s x) :
 points of the positive update whose world shares a cell of `Q` with a world of `c` that the
 negative update does not reach. At the fact-finding question `⊥` every world is its own cell,
 which is (45). -/
-def exhAssert (Q : Setoid W) (φ : BilateralUpdate W V E) (c : Set (Possibility W V (Flat E))) :
-    Set (Possibility W V (Flat E)) :=
+def exhAssert (Q : Setoid W) (φ : BilateralUpdate W V E) (c : Set (Possibility W V (Part E))) :
+    Set (Possibility W V (Part E)) :=
   {p ∈ φ.positive c | ∃ w ∈ Possibility.world '' c, Q p.world w ∧
     w ∉ Possibility.world '' φ.negative c}
 
 theorem world_mem_of_mem_positive_donkey [Nonempty E] (hx : State.Novel s x)
-    {p : Possibility W V (Flat E)} (hp : p ∈ (donkey B U x).positive s) :
+    {p : Possibility W V (Part E)} (hp : p ∈ (donkey B U x).positive s) :
     p.world ∈ Possibility.world '' s := by
   rcases (mem_positive_donkey B U hx).1 hp with ⟨hp, -⟩ | ⟨q, hq, e, rfl, -⟩
   exacts [⟨p, hp, rfl⟩, ⟨q, hq, rfl⟩]
@@ -230,7 +230,7 @@ theorem world_exhAssert_bot [Nonempty E] (hx : State.Novel s x) :
       hU (h e hB)
     by_cases hb : ∃ e, B e p.world
     · obtain ⟨e, hB⟩ := hb
-      exact ⟨p.update x ↑e, ⟨(mem_positive_donkey B U hx).2
+      exact ⟨p.update x (.some e), ⟨(mem_positive_donkey B U hx).2
         (.inr ⟨p, hp, e, rfl, hB, h e hB⟩), p.world, ⟨p, hp, rfl⟩, rfl, hneg⟩, rfl⟩
     · push Not at hb
       exact ⟨p, ⟨(mem_positive_donkey B U hx).2 (.inl ⟨hp, hb⟩), p.world, ⟨p, hp, rfl⟩, rfl,
@@ -244,7 +244,7 @@ theorem world_exhAssert_bot_neg [Nonempty E] (hx : State.Novel s x) :
   · rintro ⟨p, ⟨hp, w', -, hw', hpos⟩, rfl⟩
     obtain rfl : p.world = w' := hw'
     obtain ⟨⟨q, hq, hqw⟩, e, hB, -⟩ := (mem_world_negative_donkey B U).1 ⟨p, hp, rfl⟩
-    refine ⟨⟨q, hq, hqw⟩, ⟨e, hB⟩, fun e' hB' hU' ↦ hpos ⟨q.update x ↑e',
+    refine ⟨⟨q, hq, hqw⟩, ⟨e, hB⟩, fun e' hB' hU' ↦ hpos ⟨q.update x (.some e'),
       (mem_positive_donkey B U hx).2 (.inr ⟨q, hq, e', rfl, hqw ▸ hB', hqw ▸ hU'⟩), hqw⟩⟩
   · rintro ⟨⟨p, hp, rfl⟩, ⟨e, hB⟩, h⟩
     have hpos : p.world ∉ Possibility.world '' (donkey B U x).positive s := by
@@ -252,7 +252,7 @@ theorem world_exhAssert_bot_neg [Nonempty E] (hx : State.Novel s x) :
       rcases (mem_positive_donkey B U hx).1 hr with ⟨-, hno⟩ | ⟨q, -, e', rfl, hB', hU'⟩
       · exact hno e (hrw ▸ hB)
       · exact h e' (hrw ▸ hB') (hrw ▸ hU')
-    exact ⟨p.update x ↑e, ⟨(mem_negative_donkey B U).2 ⟨p, hp, e, rfl, hB, h e hB⟩, p.world,
+    exact ⟨p.update x (.some e), ⟨(mem_negative_donkey B U).2 ⟨p, hp, e, rfl, hB, h e hB⟩, p.world,
       ⟨p, hp, rfl⟩, rfl, hpos⟩, rfl⟩
 
 theorem ex12 [Nonempty E] (hx : State.Novel s x) :
@@ -276,7 +276,7 @@ omit [DecidableEq V] in
 -- (47)
 theorem lift_material_eq_disj (φ ψ : BilateralUpdate W V E) :
     lift (fun a b ↦ aᶜ ⊔ b) φ ψ = (~φ) ⊕ ψ := by
-  have key (c : Trivalent) (p : Possibility W V (Flat E)) (s) :
+  have key (c : Trivalent) (p : Possibility W V (Part E)) (s) :
       (∃ a b, aᶜ ⊔ b = c ∧ p ∈ ψ.update b (φ.update a s)) ↔
         ∃ a b, a ⊔ b = c ∧ p ∈ ψ.update b ((~φ).update a s) := by
     simp only [update_neg]
@@ -290,49 +290,44 @@ theorem lift_material_eq_disj (φ ψ : BilateralUpdate W V E) :
 
 -- (24)
 theorem familiar_positive_neg_neg_exists (P : E → W → Prop)
-    (s : Set (Possibility W V (Flat E))) :
+    (s : Set (Possibility W V (Part E))) :
     State.Familiar ((~~(exists_ x (pred1 P x))).positive s) x :=
   (State.familiar_randomAssign s x).mono Set.inter_subset_left
 
 theorem ex24 :
-    (∀ (s : Set (Possibility W V (Flat E))) (P : E → W → Prop),
+    (∀ (s : Set (Possibility W V (Part E))) (P : E → W → Prop),
       State.Familiar ((~~(exists_ x (pred1 P x))).positive s) x) ↔
       Examples.ex_24.judgment = .acceptable :=
   iff_of_true (fun s P ↦ familiar_positive_neg_neg_exists P s) rfl
 
 private theorem eq_of_le_update {X : Set V} (hs : State.UniformAt X s) (hx : x ∉ X)
-    {p q : Possibility W V (Flat E)} (hp : p ∈ s) (hq : q ∈ s) {m : Flat E}
+    {p q : Possibility W V (Part E)} (hp : p ∈ s) (hq : q ∈ s) {m : Part E}
     (h : p ≤ q.update x m) : p = q := by
   refine Possibility.eq_of_le_of_domain_eq (Possibility.le_def.mpr
     ⟨(Possibility.le_def.mp h).1, fun v ↦ ?_⟩) ((hs p hp).trans (hs q hq).symm)
   by_cases hv : v = x
   · subst hv
-    have : p.assignment v = ⊥ := by
-      by_contra hne
-      exact hx (hs p hp ▸ Possibility.mem_domain.mpr hne)
-    rw [this]
+    rw [Part.eq_bot_iff_not_dom.2 fun hd ↦ hx ((hs p hp).subset hd)]
     exact bot_le
   · simpa [Possibility.update, Function.update_of_ne hv] using (Possibility.le_def.mp h).2 v
 
 private theorem mem_lowerClosure_pred2_randomAssign {X : Set V} (hs : State.UniformAt X s)
-    (hx : x ∉ X) {y : V} (hyx : y ≠ x) (R : E → E → W → Prop) {p : Possibility W V (Flat E)}
+    (hx : x ∉ X) {y : V} (hyx : y ≠ x) (R : E → E → W → Prop) {p : Possibility W V (Part E)}
     (hp : p ∈ s) :
     p ∈ lowerClosure ((pred2 R x y).positive (State.randomAssign s x)) ↔
-      ∃ a : E, p.assignment y = ↑a ∧ ∃ e, R e a p.world := by
-  have hy (q : Possibility W V (Flat E)) (m : Flat E) :
+      ∃ a ∈ p.assignment y, ∃ e, R e a p.world := by
+  have hy (q : Possibility W V (Part E)) (m : Part E) :
       (q.update x m).assignment y = q.assignment y := by
     simp [Possibility.update, Function.update_of_ne hyx]
   constructor
   · rintro ⟨r, hr, hpr⟩
     obtain ⟨⟨q, hq, m, rfl⟩, e, -, a, ha, hR⟩ := mem_positive_pred2.1 hr
     obtain rfl := eq_of_le_update hs hx hp hq hpr
-    exact ⟨a, (hy p _).symm.trans ha, e, hR⟩
+    exact ⟨a, hy p _ ▸ ha, e, hR⟩
   · rintro ⟨a, ha, e, hR⟩
-    have hpx : p.assignment x = ⊥ := by
-      by_contra hne
-      exact hx (hs p hp ▸ Possibility.mem_domain.mpr hne)
-    exact ⟨p.update x ↑e, mem_positive_pred2.2 ⟨⟨p, hp, e, rfl⟩, e, by simp, a, (hy p _).trans ha,
-      hR⟩, Possibility.le_update_of_eq_bot hpx _⟩
+    exact ⟨p.update x (.some e), mem_positive_pred2.2 ⟨⟨p, hp, e, rfl⟩, e, by simp, a,
+      (hy p _).symm ▸ ha, hR⟩,
+      Possibility.le_update_of_notMem (fun hd ↦ hx ((hs p hp).subset hd)) _⟩
 
 /-- At a state whose points all define the same referents, the denial of `∃x R(x, y)` at a novel
 `x` keeps the points that define `y` and whose value for `y` nothing bears `R` to: the anaphoric
@@ -340,7 +335,7 @@ presupposition of `y` projects, (23). -/
 theorem negative_exists_pred2 [Nonempty E] (R : E → E → W → Prop) {X : Set V} {y : V}
     (hs : State.UniformAt X s) (hx : x ∉ X) (hyx : y ≠ x) :
     (exists_ x (pred2 R x y)).negative s =
-      {p ∈ s | ∃ a : E, p.assignment y = ↑a ∧ ∀ e, ¬ R e a p.world} := by
+      {p ∈ s | ∃ a ∈ p.assignment y, ∀ e, ¬ R e a p.world} := by
   ext p
   refine ⟨fun ⟨hp, hpos, hneg⟩ ↦ ?_, fun ⟨hp, a, ha, h⟩ ↦ ⟨hp, fun hpos ↦ ?_, ?_⟩⟩
   · rw [negative_pred2] at hneg
@@ -349,7 +344,7 @@ theorem negative_exists_pred2 [Nonempty E] (R : E → E → W → Prop) {X : Set
     exact ⟨hp, a, ha, fun e he ↦
       hpos ((mem_lowerClosure_pred2_randomAssign hs hx hyx R hp).2 ⟨a, ha, e, he⟩)⟩
   · obtain ⟨a', ha', e, he⟩ := (mem_lowerClosure_pred2_randomAssign hs hx hyx R hp).1 hpos
-    obtain rfl : a = a' := Flat.coe_injective (ha.symm.trans ha')
+    obtain rfl : a = a' := Part.mem_unique ha ha'
     exact h e he
   · obtain ⟨e⟩ := ‹Nonempty E›
     rw [negative_pred2]
@@ -358,41 +353,42 @@ theorem negative_exists_pred2 [Nonempty E] (R : E → E → W → Prop) {X : Set
 
 -- (23)
 theorem not_negative_exists_pred2 :
-    ∃ (W E : Type) (x y : ℕ) (R : E → E → W → Prop) (s : Set (Possibility W ℕ (Flat E))),
+    ∃ (W E : Type) (x y : ℕ) (R : E → E → W → Prop) (s : Set (Possibility W ℕ (Part E))),
       (exists_ x (pred2 R x y)).negative s ≠
-        {p ∈ s | ∃ a : E, p.assignment y = ↑a ∧ ∀ e, ¬ R e a p.world} := by
-  let p₀ : Possibility Unit ℕ (Flat Unit) := Possibility.bot ()
-  let s : Set (Possibility Unit ℕ (Flat Unit)) := {p₀, p₀.update 1 ↑()}
+        {p ∈ s | ∃ a ∈ p.assignment y, ∀ e, ¬ R e a p.world} := by
+  let p₀ : Possibility Unit ℕ (Part Unit) := Possibility.bot ()
+  let s : Set (Possibility Unit ℕ (Part Unit)) := {p₀, p₀.update 1 (.some ())}
   refine ⟨Unit, Unit, 0, 1, fun _ _ _ ↦ False, s, fun h ↦ ?_⟩
   have hmem : p₀ ∈ (exists_ 0 (pred2 (fun _ _ _ ↦ False) 0 1)).negative s := by
-    refine ⟨Set.mem_insert _ _, fun ⟨r, hr, _⟩ ↦ by simp at hr, (p₀.update 1 ↑()).update 0 ↑(),
+    refine ⟨Set.mem_insert _ _, fun ⟨r, hr, _⟩ ↦ by simp at hr,
+      (p₀.update 1 (.some ())).update 0 (.some ()),
       mem_negative_pred2.2 ⟨⟨_, Set.mem_insert_of_mem _ rfl, (), rfl⟩, (), by simp, (), by simp,
         not_false⟩, Possibility.bot_le⟩
   rw [h] at hmem
   obtain ⟨a, ha, -⟩ := hmem.2
-  simp [p₀, Possibility.bot] at ha
+  simp [p₀, Possibility.bot, Part.bot_eq_none, Part.notMem_none] at ha
 
 -- (41b)
 theorem not_egli_negative :
-    ∃ (W E : Type) (x : ℕ) (P Q : E → W → Prop) (s : Set (Possibility W ℕ (Flat E))),
+    ∃ (W E : Type) (x : ℕ) (P Q : E → W → Prop) (s : Set (Possibility W ℕ (Part E))),
       (exists_ x (pred1 P x ⊙ pred1 Q x)).negative s ≠
         (exists_ x (pred1 P x) ⊙ pred1 Q x).negative s := by
   refine ⟨Unit, Unit, 0, fun _ _ ↦ True, fun _ _ ↦ False, {Possibility.bot ()}, fun h ↦ ?_⟩
-  have hmem : (Possibility.bot () : Possibility Unit ℕ (Flat Unit)).update 0 ↑() ∈
+  have hmem : (Possibility.bot () : Possibility Unit ℕ (Part Unit)).update 0 (.some ()) ∈
       (exists_ 0 (pred1 (fun _ _ ↦ True) 0) ⊙ pred1 (fun _ _ ↦ False) 0).negative
         {Possibility.bot ()} := by
-    have h₁ : (Possibility.bot () : Possibility Unit ℕ (Flat Unit)).update 0 ↑() ∈
+    have h₁ : (Possibility.bot () : Possibility Unit ℕ (Part Unit)).update 0 (.some ()) ∈
         (pred1 (fun _ _ ↦ True) 0).positive
-          (State.randomAssign ({Possibility.bot ()} : Set (Possibility Unit ℕ (Flat Unit))) 0) :=
+          (State.randomAssign ({Possibility.bot ()} : Set (Possibility Unit ℕ (Part Unit))) 0) :=
       mem_positive_pred1.2 ⟨⟨_, rfl, (), rfl⟩, (), by simp, trivial⟩
-    have h₂ : (Possibility.bot () : Possibility Unit ℕ (Flat Unit)).update 0 ↑() ∈
+    have h₂ : (Possibility.bot () : Possibility Unit ℕ (Part Unit)).update 0 (.some ()) ∈
         (pred1 (fun _ _ ↦ False) 0).negative ((pred1 (fun _ _ ↦ True) 0).positive
-          (State.randomAssign ({Possibility.bot ()} : Set (Possibility Unit ℕ (Flat Unit))) 0)) :=
+          (State.randomAssign ({Possibility.bot ()} : Set (Possibility Unit ℕ (Part Unit))) 0)) :=
       mem_negative_pred1.2 ⟨h₁, (), by simp, not_false⟩
     simp only [conj, mem_negative_lift]
     exact ⟨.true, .false, rfl, by rw [update_false, update_true]; exact h₂⟩
   rw [← h] at hmem
-  have := congrArg (fun p : Possibility Unit ℕ (Flat Unit) ↦ p.assignment 0)
+  have := congrArg (fun p : Possibility Unit ℕ (Part Unit) ↦ p.assignment 0)
     (Set.mem_singleton_iff.mp (negative_exists_subset _ _ _ hmem))
   simp [Possibility.bot] at this
 
@@ -400,16 +396,16 @@ theorem not_egli_negative :
 
 -- §2.4.1, before (26)
 theorem assertable_not_familiar :
-    ∃ s : Set (Possibility Unit ℕ (Flat Unit)),
+    ∃ s : Set (Possibility Unit ℕ (Part Unit)),
       (pred1 (fun _ _ ↦ True) 0).Assertable s ∧ ¬ State.Familiar s 0 := by
-  let p₀ : Possibility Unit ℕ (Flat Unit) := Possibility.bot ()
-  have h₁ : p₀.update 0 ↑() ∈ (pred1 (fun _ _ ↦ True) 0).positive {p₀.update 0 ↑(), p₀} :=
-    by simp
-  refine ⟨{p₀.update 0 ↑(), p₀},
+  let p₀ : Possibility Unit ℕ (Part Unit) := Possibility.bot ()
+  have h₁ : p₀.update 0 (.some ()) ∈
+      (pred1 (fun _ _ ↦ True) 0).positive {p₀.update 0 (.some ()), p₀} := by simp
+  refine ⟨{p₀.update 0 (.some ()), p₀},
     Set.eq_empty_of_forall_notMem fun p ⟨hp, hpos, _⟩ ↦ hpos ?_,
-    fun h ↦ h p₀ (Set.mem_insert_of_mem _ rfl) rfl⟩
+    fun h ↦ by simpa [p₀] using h p₀ (Set.mem_insert_of_mem _ rfl)⟩
   rcases hp with rfl | rfl
   · exact subset_lowerClosure h₁
-  · exact ⟨_, h₁, Possibility.le_update_of_eq_bot rfl _⟩
+  · exact ⟨_, h₁, Possibility.le_update_of_notMem (by simp [p₀]) _⟩
 
 end Elliott2023

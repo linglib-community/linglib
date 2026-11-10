@@ -42,35 +42,35 @@ variable {L : Language.{u, v}} {V : Type w} {M : Type x} {W : Type y}
 variable (interp : W → L.Structure M)
 
 /-- `⟨f, g⟩` verifies `K` in the model at the world `w` (Def. 19). -/
-def DRS.VerifiesAt (w : W) (K : DRS L V) (f g : PartialAssignment V M) : Prop :=
+def DRS.VerifiesAt (w : W) (K : DRS L V) (f g : V → Part M) : Prop :=
   letI := interp w
   K.Verifies f g
 
-variable {K K₁ K₂ : DRS L V} {p q : Possibility W V (Flat M)} {I : State W V M}
+variable {K K₁ K₂ : DRS L V} {p q : Possibility W V (Part M)} {I : State W V M}
 
-theorem DRS.verifiesAt_iff {w : W} {f g : PartialAssignment V M} :
+theorem DRS.verifiesAt_iff {w : W} {f g : V → Part M} :
     K.VerifiesAt interp w f g ↔
-      f ≤ g ∧ g.domain = f.domain ∪ ↑K.referents ∧
+      f ≤ g ∧ PFun.Dom g = PFun.Dom f ∪ ↑K.referents ∧
         (letI := interp w; Condition.HoldsAll K.conditions g) :=
   letI := interp w
   DRS.verifies_iff
 
-theorem DRS.VerifiesAt.le {w : W} {f g : PartialAssignment V M}
+theorem DRS.VerifiesAt.le {w : W} {f g : V → Part M}
     (h : K.VerifiesAt interp w f g) : f ≤ g :=
   ((DRS.verifiesAt_iff interp).mp h).1
 
-theorem DRS.VerifiesAt.domain_eq {w : W} {f g : PartialAssignment V M}
-    (h : K.VerifiesAt interp w f g) : g.domain = f.domain ∪ ↑K.referents :=
+theorem DRS.VerifiesAt.domain_eq {w : W} {f g : V → Part M}
+    (h : K.VerifiesAt interp w f g) : PFun.Dom g = PFun.Dom f ∪ ↑K.referents :=
   ((DRS.verifiesAt_iff interp).mp h).2.1
 
-theorem DRS.VerifiesAt.holdsAll {w : W} {f g : PartialAssignment V M}
+theorem DRS.VerifiesAt.holdsAll {w : W} {f g : V → Part M}
     (h : K.VerifiesAt interp w f g) :
     letI := interp w; Condition.HoldsAll K.conditions g :=
   ((DRS.verifiesAt_iff interp).mp h).2.2
 
 /-- The dynamic value of a DRS on possibilities: worlds are preserved and assignments related by
 Def. 19. -/
-def DRS.update (K : DRS L V) : Update (Possibility W V (Flat M)) :=
+def DRS.update (K : DRS L V) : Update (Possibility W V (Part M)) :=
   {p | p.1.world = p.2.world ∧ K.VerifiesAt interp p.1.world p.1.assignment p.2.assignment}
 
 theorem DRS.mem_update :
@@ -88,10 +88,10 @@ theorem DRS.mem_ccp :
 
 /-- The information state a DRS expresses relative to an assignment of its free referents
 (Def. 29(ii)). -/
-def DRS.relState (K : DRS L V) (g : PartialAssignment V M) : State W V M :=
+def DRS.relState (K : DRS L V) (g : V → Part M) : State W V M :=
   {q | K.VerifiesAt interp q.world g q.assignment}
 
-theorem DRS.mem_relState {g : PartialAssignment V M} :
+theorem DRS.mem_relState {g : V → Part M} :
     q ∈ K.relState interp g ↔ K.VerifiesAt interp q.world g q.assignment := Iff.rfl
 
 /-- The information state a proper DRS expresses (Def. 22), the state relative to the empty
@@ -104,7 +104,7 @@ theorem DRS.mem_state : q ∈ K.state interp ↔ K.VerifiesAt interp q.world ⊥
 theorem DRS.uniformAt_state : State.UniformAt ↑K.referents (K.state interp) := by
   intro q hq
   have h := DRS.VerifiesAt.domain_eq interp hq
-  rwa [PartialAssignment.domain_bot, Set.empty_union, Possibility.domain_assignment] at h
+  rwa [PFun.dom_bot, Set.empty_union] at h
 
 /-- Def. 22 is the context change potential's value on the initial state. -/
 theorem DRS.ccp_top : K.ccp interp (⊤ : State W V M) = K.state interp := by
@@ -135,8 +135,8 @@ theorem DRS.mem_ccp_stratum {X : Set V} :
     have hdom := DRS.VerifiesAt.domain_eq interp hv
     have hh := DRS.VerifiesAt.holdsAll interp hv
     rw [hw] at hh
-    rw [Possibility.domain_assignment, Possibility.domain_assignment,
-      State.mem_stratum.mp hp] at hdom
+    have hpd : PFun.Dom p.assignment = X := State.mem_stratum.mp hp
+    rw [hpd] at hdom
     exact ⟨hdom, hh⟩
   · rintro ⟨hdom, hh⟩
     classical
@@ -145,8 +145,9 @@ theorem DRS.mem_ccp_stratum {X : Set V} :
       exact Set.inter_eq_left.mpr Set.subset_union_left
     refine ⟨q.restrict X, hr, Possibility.restrict_world, ?_⟩
     rw [Possibility.restrict_world, DRS.verifiesAt_iff]
-    exact ⟨fun x => (Possibility.restrict_le (X := X) (p := q)).2 x,
-      by rw [Possibility.domain_assignment, Possibility.domain_assignment, hr, hdom], hh⟩
+    refine ⟨fun x => (Possibility.restrict_le (X := X) (p := q)).2 x, ?_, hh⟩
+    show q.domain = (q.restrict X).domain ∪ ↑K.referents
+    rw [hr, hdom]
 
 /-- On a state uniform at a base, context change is merge with the potential's value on the
 stratum: the context change potential of Def. 24 is Heim's assertive update. -/
@@ -164,7 +165,8 @@ theorem DRS.ccp_eq_mul_ccp_stratum {X : Set V} (hI : State.UniformAt X I) :
     have hh := DRS.VerifiesAt.holdsAll interp hv
     have hpd : p.domain = X := hI p hp
     have hqd : q.domain = X ∪ ↑K.referents := by
-      rwa [Possibility.domain_assignment, Possibility.domain_assignment, hpd] at hdom
+      rw [← hpd]
+      exact hdom
     have hrest : q.restrict (X ∪ ↑K.referents) = q := Possibility.restrict_eq_self hqd
     refine ⟨State.mem_mul_stratum.mpr ⟨p, hp, ⟨hw, Pi.le_def.mp hle⟩, ?_⟩, ?_⟩
     · rw [hqd, hpd, ← Set.union_assoc, Set.union_self]
@@ -178,7 +180,8 @@ theorem DRS.ccp_eq_mul_ccp_stratum {X : Set V} (hI : State.UniformAt X I) :
       rw [hdom, hpd, ← Set.union_assoc, Set.union_self]
     rw [Possibility.restrict_eq_self hqd, DRS.mem_ccp_stratum] at hrest
     refine ⟨p, hp, hpq.1, (DRS.verifiesAt_iff interp).mpr ⟨hpq.2, ?_, ?_⟩⟩
-    · rw [Possibility.domain_assignment, Possibility.domain_assignment, hqd, hpd]
+    · show q.domain = p.domain ∪ ↑K.referents
+      rw [hqd, show p.domain = X from hI p hp]
     · rw [hpq.1]
       exact hrest.2
 

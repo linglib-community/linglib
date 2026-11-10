@@ -68,7 +68,7 @@ namespace ElliottSudo2025
 
 open DynamicSemantics BilateralUpdate
 
-variable {W V E : Type*} {s : Set (Possibility W V (Flat E))} {x : V}
+variable {W V E : Type*} {s : Set (Possibility W V (Part E))} {x : V}
 
 /-! ### The negative update of an existential (§3.2) -/
 
@@ -78,14 +78,14 @@ variable [DecidableEq V]
 
 /-- The negative update of `∃x φ` as (45) prints it: the points of `s` whose world the positive
 update does not reach and the negative update of the scope after random assignment does. -/
-def existsNegative (x : V) (φ : BilateralUpdate W V E) (s : Set (Possibility W V (Flat E))) :
-    Set (Possibility W V (Flat E)) :=
+def existsNegative (x : V) (φ : BilateralUpdate W V E) (s : Set (Possibility W V (Part E))) :
+    Set (Possibility W V (Part E)) :=
   {p ∈ s | p.world ∉ Possibility.world '' φ.positive (State.randomAssign s x) ∧
     p.world ∈ Possibility.world '' φ.negative (State.randomAssign s x)}
 
 omit [DecidableEq V] in
-theorem mem_lowerClosure_iff_of_eq_bot {p : Possibility W V (Flat E)}
-    (hp : ∀ v, p.assignment v = ⊥) (t : Set (Possibility W V (Flat E))) :
+theorem mem_lowerClosure_iff_of_eq_bot {p : Possibility W V (Part E)}
+    (hp : ∀ v, p.assignment v = ⊥) (t : Set (Possibility W V (Part E))) :
     p ∈ lowerClosure t ↔ p.world ∈ Possibility.world '' t :=
   ⟨fun ⟨q, hq, hpq⟩ ↦ ⟨q, hq, (Possibility.le_def.mp hpq).1.symm⟩,
     fun ⟨q, hq, hqw⟩ ↦ ⟨q, hq, Possibility.le_def.mpr ⟨hqw.symm, fun v ↦ hp v ▸ bot_le⟩⟩⟩
@@ -106,12 +106,12 @@ end ExistsNegative
 /-! ### Epistemic modals (§3.5) -/
 
 /-- `◇φ` passes positively when the positive update is consistent, (73a). -/
-def Possible (φ : BilateralUpdate W V E) (s : Set (Possibility W V (Flat E))) : Prop :=
+def Possible (φ : BilateralUpdate W V E) (s : Set (Possibility W V (Part E))) : Prop :=
   (φ.positive s).Nonempty
 
 /-- `◇φ` passes negatively when `¬φ` is already implicit in the state modulo anaphoric
 information: the state subsists in the negative update, (73b). -/
-def Settled (φ : BilateralUpdate W V E) (s : Set (Possibility W V (Flat E))) : Prop :=
+def Settled (φ : BilateralUpdate W V E) (s : Set (Possibility W V (Part E))) : Prop :=
   lowerClosure s ≤ lowerClosure (φ.negative s)
 
 /-- Epistemic possibility (73): both updates are tests, `◇φ` positively the test of `φ`'s
@@ -319,30 +319,30 @@ def pHolds : PEntity → PWorld → Prop
   | _, _ => False
 
 /-- The assignment `[x → e]`: register 0 defined, all else `∗`. -/
-def xTo (e : PEntity) : ℕ → Flat PEntity := fun n ↦ if n = 0 then ↑e else ⊥
+def xTo (e : PEntity) : ℕ → Part PEntity := fun n ↦ if n = 0 then .some e else ⊥
 
 /-- The initial assignment `[]`. -/
-def blank : ℕ → Flat PEntity := fun _ ↦ ⊥
+def blank : ℕ → Part PEntity := fun _ ↦ ⊥
 
 open PWorld in
 /-- The state of (56), where `x` is defined at the `P`-worlds only. -/
-def s56 : Set (Possibility PWorld ℕ (Flat PEntity)) :=
+def s56 : Set (Possibility PWorld ℕ (Part PEntity)) :=
   {⟨wa, xTo .a⟩, ⟨wa, xTo .b⟩, ⟨wb, xTo .a⟩, ⟨wb, xTo .b⟩, ⟨w0, blank⟩}
 
 -- (56a)
 theorem mem_positive_s56 :
-    (⟨.wa, xTo .a⟩ : Possibility PWorld ℕ (Flat PEntity)) ∈ (pred1 pHolds 0).positive s56 :=
+    (⟨.wa, xTo .a⟩ : Possibility PWorld ℕ (Part PEntity)) ∈ (pred1 pHolds 0).positive s56 :=
   mem_positive_pred1.2 ⟨by simp [s56], .a, by simp [xTo], trivial⟩
 
 -- (56c)
 theorem gap_mem_unknownUpdate_s56 :
-    (⟨.w0, blank⟩ : Possibility PWorld ℕ (Flat PEntity)) ∈ (pred1 pHolds 0).unknownUpdate s56 := by
-  have key (q : Possibility PWorld ℕ (Flat PEntity)) (hq : q ∈ s56) (hw : PWorld.w0 = q.world)
-      (e : PEntity) (he : q.assignment 0 = ↑e) : False := by
+    (⟨.w0, blank⟩ : Possibility PWorld ℕ (Part PEntity)) ∈ (pred1 pHolds 0).unknownUpdate s56 := by
+  have key (q : Possibility PWorld ℕ (Part PEntity)) (hq : q ∈ s56) (hw : PWorld.w0 = q.world)
+      (e : PEntity) (he : e ∈ q.assignment 0) : False := by
     rcases (by simpa [s56] using hq : q = _ ∨ q = _ ∨ q = _ ∨ q = _ ∨ q = _)
       with rfl | rfl | rfl | rfl | rfl <;>
       first
-        | exact absurd he Flat.bot_ne_coe
+        | exact Part.notMem_none e he
         | simp_all
   refine ⟨by simp [s56], fun ⟨q, hq, hle⟩ ↦ ?_, fun ⟨q, hq, hle⟩ ↦ ?_⟩
   · obtain ⟨hq, e, he, -⟩ := mem_positive_pred1.1 hq
@@ -355,26 +355,26 @@ theorem not_assertable_s56 : ¬ (pred1 pHolds 0).Assertable s56 := fun h ↦
   Set.notMem_empty _ (h ▸ gap_mem_unknownUpdate_s56)
 
 theorem not_familiar_s56 : ¬ State.Familiar s56 0 := fun h ↦
-  h ⟨.w0, blank⟩ (show ⟨PWorld.w0, blank⟩ ∈ s56 by simp [s56]) rfl
+  h ⟨.w0, blank⟩ (show ⟨PWorld.w0, blank⟩ ∈ s56 by simp [s56])
 
 open PWorld in
 /-- The state of (57): `x` is undefined at some possibility of each world but defined at another
 with the same world. -/
-def s57 : Set (Possibility PWorld ℕ (Flat PEntity)) :=
+def s57 : Set (Possibility PWorld ℕ (Part PEntity)) :=
   {⟨wa, xTo .a⟩, ⟨wa, blank⟩, ⟨wb, xTo .b⟩, ⟨wb, blank⟩}
 
 -- (57)
 theorem assertable_s57_not_familiar :
     (pred1 pHolds 0).Assertable s57 ∧ ¬ State.Familiar s57 0 := by
-  refine ⟨?_, fun h ↦ h ⟨.wa, blank⟩ (show ⟨PWorld.wa, blank⟩ ∈ s57 by simp [s57]) rfl⟩
+  refine ⟨?_, fun h ↦ h ⟨.wa, blank⟩ (show ⟨PWorld.wa, blank⟩ ∈ s57 by simp [s57])⟩
   apply Set.eq_empty_of_forall_notMem
   rintro p ⟨hp, hpos, -⟩
   apply hpos
-  have ha : (⟨.wa, xTo .a⟩ : Possibility PWorld ℕ (Flat PEntity)) ∈ (pred1 pHolds 0).positive s57 :=
+  have ha : (⟨.wa, xTo .a⟩ : Possibility PWorld ℕ (Part PEntity)) ∈ (pred1 pHolds 0).positive s57 :=
     mem_positive_pred1.2 ⟨by simp [s57], .a, by simp [xTo], trivial⟩
-  have hb : (⟨.wb, xTo .b⟩ : Possibility PWorld ℕ (Flat PEntity)) ∈ (pred1 pHolds 0).positive s57 :=
+  have hb : (⟨.wb, xTo .b⟩ : Possibility PWorld ℕ (Part PEntity)) ∈ (pred1 pHolds 0).positive s57 :=
     mem_positive_pred1.2 ⟨by simp [s57], .b, by simp [xTo], trivial⟩
-  have hle : ∀ w e, (⟨w, blank⟩ : Possibility PWorld ℕ (Flat PEntity)) ≤ ⟨w, xTo e⟩ :=
+  have hle : ∀ w e, (⟨w, blank⟩ : Possibility PWorld ℕ (Part PEntity)) ≤ ⟨w, xTo e⟩ :=
     fun w e ↦ Possibility.le_def.mpr ⟨rfl, fun _ ↦ bot_le⟩
   rcases (by simpa [s57] using hp : p = _ ∨ p = _ ∨ p = _ ∨ p = _) with rfl | rfl | rfl | rfl
   · exact subset_lowerClosure ha
@@ -383,11 +383,11 @@ theorem assertable_s57_not_familiar :
   · exact ⟨_, hb, hle _ _⟩
 
 /-- The state where `x` is `a` at one point of `wa` and `b` at another. -/
-def sab : Set (Possibility PWorld ℕ (Flat PEntity)) := {⟨.wa, xTo .a⟩, ⟨.wa, xTo .b⟩}
+def sab : Set (Possibility PWorld ℕ (Part PEntity)) := {⟨.wa, xTo .a⟩, ⟨.wa, xTo .b⟩}
 
 /-- State subsistence (Def. 3.4) with descent as Def. 3.3 prints it: every point of `s` has a point
 of `s'` at its world whose domain includes its own. -/
-def DomSubsists (s s' : Set (Possibility W V (Flat E))) : Prop :=
+def DomSubsists (s s' : Set (Possibility W V (Part E))) : Prop :=
   ∀ p ∈ s, ∃ q ∈ s', p.world = q.world ∧ p.domain ⊆ q.domain
 
 /-- With descent as printed, `◇P(x)` passes both positively and negatively at `sab`: the state
@@ -395,19 +395,18 @@ subsists in the negative update of `P(x)` by Def. 3.4, though not by extension. 
 theorem possible_and_domSubsists_negative :
     Possible (pred1 pHolds 0) sab ∧ DomSubsists sab ((pred1 pHolds 0).negative sab) ∧
       ¬ Settled (pred1 pHolds 0) sab := by
-  have hb : (⟨.wa, xTo .b⟩ : Possibility PWorld ℕ (Flat PEntity)) ∈
+  have hb : (⟨.wa, xTo .b⟩ : Possibility PWorld ℕ (Part PEntity)) ∈
       (pred1 pHolds 0).negative sab :=
     mem_negative_pred1.2 ⟨by simp [sab], .b, by simp [xTo], id⟩
   refine ⟨⟨⟨.wa, xTo .a⟩, mem_positive_pred1.2 ⟨by simp [sab], .a, by simp [xTo], trivial⟩⟩, ?_,
     fun h ↦ ?_⟩
   · rintro p (rfl | rfl) <;> refine ⟨_, hb, rfl, fun v hv ↦ ?_⟩ <;>
-      by_cases h : v = 0 <;> simp_all [xTo, Possibility.mem_domain]
+      by_cases h : v = 0 <;> simp_all [xTo, Possibility.mem_domain, Part.bot_eq_none]
   · obtain ⟨q, hq', hpq⟩ := h (subset_lowerClosure
-      (show (⟨.wa, xTo .a⟩ : Possibility PWorld ℕ (Flat PEntity)) ∈ sab from Or.inl rfl))
+      (show (⟨.wa, xTo .a⟩ : Possibility PWorld ℕ (Part PEntity)) ∈ sab from Or.inl rfl))
     obtain ⟨hq, e, he, hP⟩ := mem_negative_pred1.1 hq'
-    have h0 := (Possibility.le_def.mp hpq).2 0
-    rw [he] at h0
-    obtain rfl : PEntity.a = e := by simpa [xTo] using h0
+    have ha : PEntity.a ∈ q.assignment 0 := (Possibility.le_def.mp hpq).2 0 _ (by simp [xTo])
+    obtain rfl : e = PEntity.a := Part.mem_unique he ha
     rcases hq with rfl | rfl
     · exact hP trivial
     · simp [xTo] at he
@@ -437,32 +436,31 @@ def reads : Reader → Reader → Unit → Prop
   | _, _, _ => False
 
 /-- The initial state of a one-world scenario. -/
-def initR : Set (Possibility Unit ℕ (Flat Reader)) := {Possibility.bot ()}
+def initR : Set (Possibility Unit ℕ (Part Reader)) := {Possibility.bot ()}
 
 /-- Where Ann read the novel and Bea read nothing, (45) retains no point of `s[ε_y]` for the denial
 of `∃x R(y, x)`, though (121) requires some student who read no novel; the subsistence-based
 negative update retains Bea's point. -/
 theorem existsNegative_misses_reader :
     existsNegative 1 (pred2 reads 0 1) (State.randomAssign initR 0) = ∅ ∧
-      (Possibility.bot () : Possibility Unit ℕ (Flat Reader)).update 0 ↑Reader.bea ∈
+      (Possibility.bot () : Possibility Unit ℕ (Part Reader)).update 0 (.some Reader.bea) ∈
         (exists_ 1 (pred2 reads 0 1)).negative (State.randomAssign initR 0) := by
-  let b : Possibility Unit ℕ (Flat Reader) := Possibility.bot ()
+  let b : Possibility Unit ℕ (Part Reader) := Possibility.bot ()
   refine ⟨Set.eq_empty_of_forall_notMem fun p ⟨_, hno, _⟩ ↦ hno
-    ⟨(b.update 0 ↑Reader.ann).update 1 ↑Reader.novel, mem_positive_pred2.2
+    ⟨(b.update 0 (.some Reader.ann)).update 1 (.some Reader.novel), mem_positive_pred2.2
       ⟨⟨_, ⟨b, rfl, .ann, rfl⟩, .novel, rfl⟩, .ann, by simp, .novel, by simp, trivial⟩, rfl⟩,
     ⟨b, rfl, .bea, rfl⟩, ?_, ?_⟩
   · rintro ⟨q, hq, hpq⟩
     obtain ⟨-, e₁, he₁, e₂, -, hR⟩ := mem_positive_pred2.1 hq
-    have h0 := (Possibility.le_def.mp hpq).2 0
-    rw [he₁] at h0
-    obtain rfl : Reader.bea = e₁ := by simpa [Possibility.bot] using h0
+    have hb : Reader.bea ∈ q.assignment 0 := (Possibility.le_def.mp hpq).2 0 _ (by simp)
+    obtain rfl : e₁ = Reader.bea := Part.mem_unique he₁ hb
     exact hR
-  · exact ⟨(b.update 0 ↑Reader.bea).update 1 ↑Reader.ann, mem_negative_pred2.2
+  · exact ⟨(b.update 0 (.some Reader.bea)).update 1 (.some Reader.ann), mem_negative_pred2.2
       ⟨⟨_, ⟨b, rfl, .bea, rfl⟩, .ann, rfl⟩, .bea, by simp, .ann, by simp, id⟩,
-      Possibility.le_update_of_eq_bot (by simp [Possibility.bot]) _⟩
+      Possibility.le_update_of_notMem (by simp [Possibility.domain_update_some]) _⟩
 
 theorem ex116 :
-    (Possibility.bot () : Possibility Unit ℕ (Flat Reader)).update 0 ↑Reader.bea ∈
+    (Possibility.bot () : Possibility Unit ℕ (Part Reader)).update 0 (.some Reader.bea) ∈
         (exists_ 1 (pred2 reads 0 1)).negative (State.randomAssign initR 0) ↔
       ("entails: some student didn't read a novel", Judgment.acceptable) ∈
         Examples.ex_116.readings :=

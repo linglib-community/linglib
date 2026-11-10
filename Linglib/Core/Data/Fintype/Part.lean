@@ -28,8 +28,7 @@ variable {α : Type*}
 
 /-- The partial values of a finite type are the images of its options. -/
 instance fintype [Fintype α] : Fintype (Part α) where
-  elems := Finset.univ.map ⟨Part.ofOption, fun a b h ↦ Option.ext fun x ↦ by
-    rw [← Option.mem_def, ← Option.mem_def, ← Part.mem_ofOption, h, Part.mem_ofOption]⟩
+  elems := Finset.univ.map ⟨Part.ofOption, Part.ofOption_injective⟩
   complete o := by
     classical
     exact Finset.mem_map.2 ⟨o.toOption, Finset.mem_univ _, Part.of_toOption o⟩

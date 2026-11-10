@@ -85,20 +85,20 @@ inductive Order where
 partially, and a domain variable pairs every individual with an assignment. -/
 structure Assign (V Δ E : Type*) where
   /-- The values of the individual variables. -/
-  ind : PartialAssignment V E
+  ind : V → Part E
   /-- The value of each domain variable, pairing every individual with an assignment. -/
-  dom : Δ → E → PartialAssignment V E
+  dom : Δ → E → V → Part E
 
 namespace Assign
 
 variable {V Δ E : Type*}
 
-instance : CoeFun (Assign V Δ E) (fun _ ↦ V → Flat E) := ⟨fun g ↦ g.ind⟩
+instance : CoeFun (Assign V Δ E) (fun _ ↦ V → Part E) := ⟨fun g ↦ g.ind⟩
 
 /-- The assignment valuing no individual variable and pairing every individual with it. -/
 instance : Bot (Assign V Δ E) := ⟨⟨⊥, fun _ _ ↦ ⊥⟩⟩
 
-@[simp] theorem coe_mk (i : PartialAssignment V E) (d : Δ → E → PartialAssignment V E) (x : V) :
+@[simp] theorem coe_mk (i : V → Part E) (d : Δ → E → V → Part E) (x : V) :
     (⟨i, d⟩ : Assign V Δ E) x = i x := rfl
 
 @[simp] theorem bot_apply (x : V) : (⊥ : Assign V Δ E) x = ⊥ := rfl
@@ -106,25 +106,27 @@ instance : Bot (Assign V Δ E) := ⟨⟨⊥, fun _ _ ↦ ⊥⟩⟩
 variable [DecidableEq V] {g : Assign V Δ E} {x y : V} {a : E}
 
 /-- `g[x→a]`, the assignment resetting the individual variable `x` to `a`. -/
-def update (g : Assign V Δ E) (x : V) (a : E) : Assign V Δ E := ⟨g.ind.update x a, g.dom⟩
+def update (g : Assign V Δ E) (x : V) (a : E) : Assign V Δ E :=
+  ⟨Function.update g.ind x (Part.some a), g.dom⟩
 
-@[simp] theorem update_apply_self : g.update x a x = ↑a := PartialAssignment.update_self x a g.ind
+@[simp] theorem update_apply_self : g.update x a x = Part.some a := by simp [update]
 
-@[simp] theorem update_apply_of_ne (h : y ≠ x) : g.update x a y = g y :=
-  PartialAssignment.update_of_ne h a g.ind
+@[simp] theorem update_apply_of_ne (h : y ≠ x) : g.update x a y = g y := by
+  simp [update, Function.update_of_ne h]
 
-theorem update_eq_self (h : g x = ↑a) : g.update x a = g := by
+theorem update_eq_self (h : g x = Part.some a) : g.update x a = g := by
   cases g
   simp only [update, mk.injEq, and_true]
-  exact PartialAssignment.update_eq_self h
+  rw [← h]
+  exact Function.update_eq_self x _
 
 /-- The assignment at which a quantifier over the domain variable `δ` evaluates its restrictor
 and scope at the individual `a`, the paired assignment reset at `x` to `a` (p. 1110). -/
 def pair (g : Assign V Δ E) (δ : Δ) (x : V) (a : E) : Assign V Δ E :=
-  ⟨(g.dom δ a).update x a, g.dom⟩
+  ⟨Function.update (g.dom δ a) x (Part.some a), g.dom⟩
 
 @[simp] theorem pair_apply (δ : Δ) (a : E) (y : V) :
-    g.pair δ x a y = (g.dom δ a).update x a y := rfl
+    g.pair δ x a y = Function.update (g.dom δ a) x (Part.some a) y := rfl
 
 end Assign
 
@@ -165,6 +167,10 @@ theorem Order.junct_right {A W : Type*} {o : Order} {sp sq : Set (A × W) → A 
     sq {i ∈ c | kp i.1 i.2 ∧ sp c i.1 i.2} g w := by
   cases o <;> exact h.2
 
+/-- A defined partial value is not `⊥`. -/
+private theorem ne_bot_of_mem {α : Type*} {o : Part α} {a : α} (h : a ∈ o) : o ≠ ⊥ :=
+  Part.ne_bot_iff_exists.2 ⟨a, Part.eq_some_iff.2 h⟩
+
 /-- A variable is familiar in a context when every point of the context values it (p. 1103); the
 paper's *not novel* in the bounds of quantifiers. -/
 def Familiar {V Δ E W : Type*} (c : Set (Assign V Δ E × W)) (y : V) : Prop := ∀ i ∈ c, i.1 y ≠ ⊥
@@ -179,14 +185,14 @@ def extension (I : W → L.Structure E) (R : L.Relations 1) (w : W) : Set E :=
 
 /-- The points at which `x` has a value in `S`, as given at the point's world. -/
 def valuedIn (x : V) (S : W → Set E) : Set (Assign V Δ E × W) :=
-  {i | ∃ a ∈ S i.2, i.1 x = a}
+  {i | ∃ a ∈ S i.2, a ∈ i.1 x}
 
 variable {I : W → L.Structure E} {S T : W → Set E} {R : L.Relations 1} {x : V} {w : W}
 
 @[simp] theorem mem_extension {a : E} : a ∈ extension I R w ↔ (I w).RelMap R ![a] := Iff.rfl
 
 @[simp] theorem mem_valuedIn {i : Assign V Δ E × W} :
-    i ∈ valuedIn x S ↔ ∃ a ∈ S i.2, i.1 x = a :=
+    i ∈ valuedIn x S ↔ ∃ a ∈ S i.2, a ∈ i.1 x :=
   Iff.rfl
 
 theorem valuedIn_inter_valuedIn :
@@ -195,7 +201,7 @@ theorem valuedIn_inter_valuedIn :
   simp only [Set.mem_inter_iff, mem_valuedIn, Pi.inf_apply, Set.inf_eq_inter]
   constructor
   · rintro ⟨⟨a, hS, ha⟩, b, hT, hb⟩
-    obtain rfl : b = a := Flat.coe_injective (hb.symm.trans ha)
+    obtain rfl : b = a := Part.mem_unique hb ha
     exact ⟨b, ⟨hS, hT⟩, ha⟩
   · rintro ⟨a, ⟨hS, hT⟩, ha⟩
     exact ⟨⟨a, hS, ha⟩, a, hT, ha⟩
@@ -203,8 +209,9 @@ theorem valuedIn_inter_valuedIn :
 theorem valuedIn_mono (h : S ≤ T) : (valuedIn x S : Set (Assign V Δ E × W)) ⊆ valuedIn x T :=
   fun _ ⟨a, ha, hx⟩ ↦ ⟨a, h _ ha, hx⟩
 
-theorem ne_bot_of_mem_valuedIn {i : Assign V Δ E × W} (h : i ∈ valuedIn x S) : i.1 x ≠ ⊥ :=
-  Flat.ne_bot_iff_exists.2 (h.imp fun _ ↦ And.right)
+theorem ne_bot_of_mem_valuedIn {i : Assign V Δ E × W} (h : i ∈ valuedIn x S) : i.1 x ≠ ⊥ := by
+  obtain ⟨_, -, hx⟩ := h
+  exact ne_bot_of_mem hx
 
 end ValuedIn
 
@@ -217,7 +224,7 @@ variables are valued and their values stand in the relation, and `⊤x` is true 
 valued. A quantifier relates, by its number tree, the individuals whose paired assignments make
 the restrictor true to those that make the restrictor and scope true. -/
 def Realize : Formula L V Δ → Assign V Δ E → W → Prop
-  | atom R xs, g, w => ∃ es : Fin _ → E, (∀ i, g (xs i) = es i) ∧ (I w).RelMap R es
+  | atom R xs, g, w => ∃ es : Fin _ → E, (∀ i, es i ∈ g (xs i)) ∧ (I w).RelMap R es
   | top x, g, _ => g x ≠ ⊥
   | conj p q, g, w => p.Realize g w ∧ q.Realize g w
   | disj p q, g, w => p.Realize g w ∨ q.Realize g w
@@ -276,7 +283,7 @@ variable {I} {o : Order} {c : Set (Assign V Δ E × W)} {g : Assign V Δ E} {w :
 /-! ### Truth and bounds -/
 
 @[simp] theorem realize_atom {n : ℕ} {R : L.Relations n} {xs : Fin n → V} :
-    (atom R xs).Realize I g w ↔ ∃ es : Fin n → E, (∀ i, g (xs i) = es i) ∧ (I w).RelMap R es :=
+    (atom R xs).Realize I g w ↔ ∃ es : Fin n → E, (∀ i, es i ∈ g (xs i)) ∧ (I w).RelMap R es :=
   Iff.rfl
 
 @[simp] theorem realize_top : (top x : Formula L V Δ).Realize I g w ↔ g x ≠ ⊥ := Iff.rfl
@@ -359,7 +366,7 @@ theorem satt_iota :
 
 theorem realize_indef_of_ne_bot (hx : g x ≠ ⊥) (hp : p.Realize I g w) (hq : q.Realize I g w) :
     (indef x p q).Realize I g w := by
-  obtain ⟨a, ha⟩ := Flat.ne_bot_iff_exists.1 hx
+  obtain ⟨a, ha⟩ := Part.ne_bot_iff_exists.1 hx
   exact ⟨a, by rwa [Assign.update_eq_self ha], by rwa [Assign.update_eq_self ha]⟩
 
 theorem realize_conj_of_satt_indef (hs : (indef x p q).Satt I o c g w)
@@ -456,7 +463,7 @@ def atom₁ (R : L.Relations 1) (x : V) : Formula L V Δ := atom R ![x]
 
 variable {S : W → Set E} {R : L.Relations 1}
 
-@[simp] theorem realize_atom₁ : (atom₁ R x).Realize I g w ↔ ∃ a ∈ extension I R w, g x = a := by
+@[simp] theorem realize_atom₁ : (atom₁ R x).Realize I g w ↔ ∃ a ∈ extension I R w, a ∈ g x := by
   refine ⟨fun ⟨es, h, hR⟩ ↦ ⟨es 0, ?_, h 0⟩, fun ⟨a, ha, hx⟩ ↦ ⟨![a], fun i ↦ ?_, ha⟩⟩
   · rw [mem_extension]; convert hR; ext i; fin_cases i; rfl
   · fin_cases i; exact hx
@@ -472,7 +479,7 @@ def atom₂ (R : L.Relations 2) (x y : V) : Formula L V Δ := atom R ![x, y]
 
 theorem realize_atom₂ {R : L.Relations 2} {y : V} :
     (atom₂ R x y : Formula L V Δ).Realize I g w ↔
-      ∃ a b : E, g x = a ∧ g y = b ∧ (I w).RelMap R ![a, b] := by
+      ∃ a b : E, a ∈ g x ∧ b ∈ g y ∧ (I w).RelMap R ![a, b] := by
   refine ⟨fun ⟨es, h, hR⟩ ↦ ⟨es 0, es 1, h 0, h 1, ?_⟩,
     fun ⟨a, b, hx, hy, hR⟩ ↦ ⟨![a, b], fun k ↦ ?_, hR⟩⟩
   · convert hR; ext k; fin_cases k <;> rfl
@@ -532,17 +539,26 @@ theorem satt_indef_atom₁ [Nonempty E] : (indef x (atom₁ F x) (atom₁ G x)).
     ((extension I F w ∩ extension I G w).Nonempty →
       (g, w) ∈ valuedIn x (extension I F ⊓ extension I G)) := by
   obtain ⟨e⟩ := ‹Nonempty E›
-  have hg' : ∃ g' : Assign V Δ E, g' x ≠ ⊥ ∧ g' x ≠ ⊥ := ⟨⟨fun _ ↦ e, fun _ _ ↦ ⊥⟩, by simp⟩
-  rw [satt_indef, realize_indef_atom₁, ← valuedIn_inter_valuedIn]
-  simp only [satt_conj, satt_atom₁, hg', true_and, realize_conj, realize_atom₁, Set.mem_inter_iff,
-    mem_valuedIn]
-  grind [Flat.coe_ne_bot]
+  have hg' : ∃ g' : Assign V Δ E, g' x ≠ ⊥ ∧ g' x ≠ ⊥ :=
+    ⟨⟨fun _ ↦ Part.some e, fun _ _ ↦ ⊥⟩, by simp⟩
+  rw [satt_indef, realize_indef_atom₁]
+  simp only [satt_conj, satt_atom₁, hg', true_and, realize_conj, realize_atom₁, mem_valuedIn,
+    Pi.inf_apply, Set.inf_eq_inter, Set.mem_inter_iff]
+  constructor
+  · rintro h hne
+    obtain ⟨⟨⟨a, haF, hax⟩, b, hbG, hbx⟩, -, -⟩ := h hne
+    obtain rfl : a = b := Part.mem_unique hax hbx
+    exact ⟨a, ⟨haF, hbG⟩, hax⟩
+  · rintro h hne
+    obtain ⟨a, ⟨haF, haG⟩, hax⟩ := h hne
+    exact ⟨⟨⟨a, haF, hax⟩, a, haG, hax⟩, ne_bot_of_mem hax, ne_bot_of_mem hax⟩
 
 theorem exists_satt_indef_atom₁ [Nonempty E] (c : Set (Assign V Δ E × W)) (w : W) :
     ∃ g, (indef x (atom₁ F x) (atom₁ G x)).Satt I .asymmetric c g w := by
   obtain h | ⟨a, ha⟩ := (extension I F w ∩ extension I G w).eq_empty_or_nonempty
   · exact ⟨⊥, (satt_indef_atom₁ F G).2 fun hne ↦ absurd h hne.ne_empty⟩
-  · exact ⟨⟨fun _ ↦ a, fun _ _ ↦ ⊥⟩, (satt_indef_atom₁ F G).2 fun _ ↦ ⟨a, ha, rfl⟩⟩
+  · exact ⟨⟨fun _ ↦ Part.some a, fun _ _ ↦ ⊥⟩,
+      (satt_indef_atom₁ F G).2 fun _ ↦ ⟨a, ha, Part.mem_some a⟩⟩
 
 theorem posExt_indef_atom₁ :
     Trivalent.posExt ((indef x (atom₁ F x) (atom₁ G x)).toTrivalent I .asymmetric c) =
@@ -634,7 +650,7 @@ theorem update_null_neg_indef_then_it (h : ∃ w, extension I F w ∩ extension 
   cases isEmpty_or_nonempty E
   · refine Set.subset_eq_empty (update_subset.trans fun i hi ↦ ?_) rfl
     obtain ⟨⟨g', hg', -⟩, -⟩ := hi.2.2
-    obtain ⟨a, -⟩ := Flat.ne_bot_iff_exists.1 (satt_atom₁.1 hg')
+    obtain ⟨a, -⟩ := Part.ne_bot_iff_exists.1 (satt_atom₁.1 hg')
     exact isEmptyElim a
   obtain ⟨w, hw⟩ := h
   refine update_iota_top_eq_empty ⟨(⊥, w), ?_, rfl⟩
@@ -796,13 +812,13 @@ theorem posExt_ex20c :
 -- (20), (20-a), (20-b), p. 1108
 theorem realize_ex20a_and_not_realize_ex20b
     (h : (extension I F w ∩ extension I G w ∩ extension I H w).Nonempty) {b : E}
-    (hb : g x = b) (hH : b ∉ extension I H w) :
+    (hb : b ∈ g x) (hH : b ∉ extension I H w) :
     (ex20a x (atom₁ F x) (atom₁ G x) (atom₁ H x)).Realize I g w ∧
       ¬ (ex20b x (atom₁ F x) (atom₁ G x) (atom₁ H x)).Realize I g w := by
   obtain ⟨a, ⟨hF, hG⟩, haH⟩ := h
   refine ⟨⟨a, by simpa using hF, by simpa using hG, by simpa using haH⟩, fun ⟨_, _, h⟩ ↦ ?_⟩
   obtain ⟨c, hc, hgc⟩ := realize_atom₁.1 h
-  exact hH (Flat.coe_injective (hb.symm.trans hgc) ▸ hc)
+  exact hH (Part.mem_unique hgc hb ▸ hc)
 
 end OpenScope
 
@@ -846,13 +862,15 @@ theorem posExt_bathroom [Nonempty E] :
     satt_indef, satt_conj, satt_atom₁, realize_disj, realize_neg, realize_conj, realize_iota,
     realize_indef_atom₁, Set.mem_union, Set.mem_ofPred_eq, mem_valuedIn,
     ← Set.not_nonempty_iff_eq_empty]
-  simp only [show ∃ g' : Assign V Δ E, g' x ≠ ⊥ ∧ g' x ≠ ⊥ from ⟨⟨fun _ ↦ e, fun _ _ ↦ ⊥⟩, by simp⟩,
+  simp only [show ∃ g' : Assign V Δ E, g' x ≠ ⊥ ∧ g' x ≠ ⊥ from
+      ⟨⟨fun _ ↦ Part.some e, fun _ _ ↦ ⊥⟩, by simp⟩,
     true_and]
-  obtain hgx | ⟨b, hgx⟩ := (em (g x = ⊥)).imp_right Flat.ne_bot_iff_exists.1
-  · simp [hgx]
-  · simp only [Set.Nonempty, Set.mem_inter_iff, mem_extension, realize_atom₁, hgx, Flat.coe_inj,
-      exists_eq_right', ne_eq, Flat.coe_ne_bot, not_false_eq_true, and_self, and_true,
-      forall_exists_index, and_imp, not_exists, not_and, Pi.inf_apply, Set.inf_eq_inter]
+  obtain hgx | ⟨b, hgx⟩ := (em (g x = ⊥)).imp_right Part.ne_bot_iff_exists.1
+  · simp [hgx, Part.bot_eq_none, Part.notMem_none]
+  · simp only [Set.Nonempty, Set.mem_inter_iff, mem_extension, realize_atom₁, hgx,
+      Part.mem_some_iff, exists_eq_right, ne_eq, Part.some_ne_bot, not_false_eq_true, and_self,
+      and_true, forall_exists_index, and_imp, not_exists, not_and, Pi.inf_apply,
+      Set.inf_eq_inter]
     constructor
     · rintro ⟨h1, h2 | h2⟩
       · exact .inl h2
@@ -941,7 +959,7 @@ theorem logicallyEquivalent_hasChild_isParent
   · rintro g w ⟨b, h₁, h₂⟩
     obtain ⟨a, ha, hx⟩ := realize_atom₁.1 h₁
     obtain ⟨a', ha', hx'⟩ := realize_atom₁.1 h₂
-    obtain rfl := Flat.coe_injective (hx.symm.trans hx')
+    obtain rfl := Part.mem_unique hx hx'
     exact ⟨![], fun i ↦ i.elim0, (hPar w).2 ⟨a, ha, ha'⟩⟩
   · rintro g w ⟨es, -, hR⟩
     rw [Subsingleton.elim es ![]] at hR
@@ -997,18 +1015,18 @@ individual (p. 1111). -/
 theorem realize_ex21b_iff_of_familiar (hxy : x ≠ y)
     (hs : (ex21b Pa Lv x y δ Q).Satt I o c g w) (hy : Familiar c y) :
     (ex21b Pa Lv x y δ Q).Realize I g w ↔ Q.toDet (fun a ↦ (I w).RelMap Pa ![a])
-      (fun a ↦ (I w).RelMap Pa ![a] ∧ ∃ b : E, g y = ↑b ∧ (I w).RelMap Lv ![a, b]) := by
+      (fun a ↦ (I w).RelMap Pa ![a] ∧ ∃ b ∈ g y, (I w).RelMap Lv ![a, b]) := by
   have hdom : ∀ a, (g.pair δ x a) y = g y := fun a ↦ by
-    rw [Assign.pair_apply, PartialAssignment.update_of_ne (Ne.symm hxy), (hs a).2.2 y hy]
+    rw [Assign.pair_apply, Function.update_of_ne (Ne.symm hxy), (hs a).2.2 y hy]
   have hP : ∀ a, (atom₁ Pa x : Formula L V Δ).Realize I (g.pair δ x a) w ↔ (I w).RelMap Pa ![a] :=
     fun a ↦ by simp [Assign.pair_apply]
   have hL : ∀ a, (iota y (top y) (atom₂ Lv x y) : Formula L V Δ).Realize I (g.pair δ x a) w ↔
-      ∃ b : E, g y = ↑b ∧ (I w).RelMap Lv ![a, b] := fun a ↦ by
+      ∃ b ∈ g y, (I w).RelMap Lv ![a, b] := fun a ↦ by
     simp only [realize_iota, realize_top, realize_atom₂, hdom, Assign.pair_apply,
-      PartialAssignment.update_self, Flat.coe_inj]
+      Function.update_self, Part.mem_some_iff]
     constructor
     · rintro ⟨-, a', b, rfl, hb, hR⟩; exact ⟨b, hb, hR⟩
-    · rintro ⟨b, hb, hR⟩; exact ⟨by rw [hb]; exact Flat.coe_ne_bot, a, b, rfl, hb, hR⟩
+    · rintro ⟨b, hb, hR⟩; exact ⟨ne_bot_of_mem hb, a, b, rfl, hb, hR⟩
   simp only [ex21b, realize_quant, hP, hL]
 
 theorem satt_hasChildOf_iff [Nonempty E] :
@@ -1020,10 +1038,10 @@ theorem satt_hasChildOf_iff [Nonempty E] :
       o.junct ((atom₁ Ch y : Formula L V Δ).Satt I o) ((atom₂ Of y x).Satt I o)
         ((atom₁ Ch y).Realize I) ((atom₂ Of y x).Realize I) c g' w := fun g' hy hx ↦ by
     cases o <;> exact ⟨satt_atom₁.2 hy, satt_atom₂.2 ⟨hy, hx⟩⟩
-  refine ⟨fun h hr ↦ (h.2 hr).1, fun h ↦ ⟨⟨⟨fun _ ↦ e, fun _ _ ↦ ⊥⟩,
-    hj _ Flat.coe_ne_bot Flat.coe_ne_bot⟩, fun hr ↦ ⟨h hr, ?_⟩⟩⟩
+  refine ⟨fun h hr ↦ (h.2 hr).1, fun h ↦ ⟨⟨⟨fun _ ↦ Part.some e, fun _ _ ↦ ⊥⟩,
+    hj _ Part.some_ne_bot Part.some_ne_bot⟩, fun hr ↦ ⟨h hr, ?_⟩⟩⟩
   obtain ⟨a, b, ha, hb, -⟩ := realize_atom₂.1 (h hr).2
-  exact hj g (by rw [ha]; exact Flat.coe_ne_bot) (by rw [hb]; exact Flat.coe_ne_bot)
+  exact hj g (ne_bot_of_mem ha) (ne_bot_of_mem hb)
 
 -- (22-b), p. 1110
 theorem satt_ex22b_iff [Nonempty E] :
@@ -1051,27 +1069,27 @@ theorem realize_ex22b_iff (hxy : x ≠ y) :
     (ex22b Ch Of Lv x y δ Q).Realize I g w ↔
       Q.toDet (fun a ↦ ∃ b, (I w).RelMap Ch ![b] ∧ (I w).RelMap Of ![b, a])
         (fun a ↦ (∃ b, (I w).RelMap Ch ![b] ∧ (I w).RelMap Of ![b, a]) ∧
-          ∃ b : E, g.dom δ a y = ↑b ∧ (I w).RelMap Lv ![a, b]) := by
+          ∃ b ∈ g.dom δ a y, (I w).RelMap Lv ![a, b]) := by
   have hp : ∀ a, (hasChildOf Ch Of x y : Formula L V Δ).Realize I (g.pair δ x a) w ↔
       ∃ b, (I w).RelMap Ch ![b] ∧ (I w).RelMap Of ![b, a] := fun a ↦ by
     simp only [hasChildOf, realize_indef, realize_atom₁, realize_atom₂, mem_extension]
     constructor
     · rintro ⟨b, ⟨b', hb', hy'⟩, b₁, a₁, hb₁, ha₁, hOf⟩
-      rw [Assign.update_apply_self, Flat.coe_inj] at hy' hb₁
-      rw [Assign.update_apply_of_ne hxy, Assign.pair_apply, PartialAssignment.update_self,
-        Flat.coe_inj] at ha₁
-      subst hy' hb₁ ha₁
+      obtain rfl : b = b' := Eq.symm (by simpa using hy')
+      obtain rfl : b = b₁ := Eq.symm (by simpa using hb₁)
+      obtain rfl : a₁ = a := by
+        simpa [Assign.update_apply_of_ne hxy, Assign.pair_apply] using ha₁
       exact ⟨b, hb', hOf⟩
     · rintro ⟨b, hCh, hOf⟩
       exact ⟨b, ⟨b, hCh, by simp⟩, b, a, by simp, by
-        rw [Assign.update_apply_of_ne hxy, Assign.pair_apply, PartialAssignment.update_self], hOf⟩
+        simp [Assign.update_apply_of_ne hxy, Assign.pair_apply], hOf⟩
   have hq : ∀ a, (iota y (top y) (atom₂ Lv x y) : Formula L V Δ).Realize I (g.pair δ x a) w ↔
-      ∃ b : E, g.dom δ a y = ↑b ∧ (I w).RelMap Lv ![a, b] := fun a ↦ by
+      ∃ b ∈ g.dom δ a y, (I w).RelMap Lv ![a, b] := fun a ↦ by
     simp only [realize_iota, realize_top, realize_atom₂, Assign.pair_apply,
-      PartialAssignment.update_of_ne (Ne.symm hxy), PartialAssignment.update_self, Flat.coe_inj]
+      Function.update_of_ne (Ne.symm hxy), Function.update_self, Part.mem_some_iff]
     constructor
     · rintro ⟨-, a', b, rfl, hb, hR⟩; exact ⟨b, hb, hR⟩
-    · rintro ⟨b, hb, hR⟩; exact ⟨by rw [hb]; exact Flat.coe_ne_bot, a, b, rfl, hb, hR⟩
+    · rintro ⟨b, hb, hR⟩; exact ⟨ne_bot_of_mem hb, a, b, rfl, hb, hR⟩
   simp only [ex22b, realize_quant, hp, hq]
 
 end Quantifiers
@@ -1103,7 +1121,7 @@ theorem realize_bearsNothing_false (g : Assign ℕ Empty Unit) (w : Bool) :
   simp [bearsNothing]
 
 theorem realize_bearsNothing_bot (r w : Bool) : (bearsNothing r).Realize I₂ ⊥ w := by
-  simp [bearsNothing]
+  simp [bearsNothing, Part.bot_eq_none, Part.notMem_none]
 
 theorem realize_bearsNothing_true_iff (a : Unit) (w : Bool) :
     (bearsNothing true).Realize I₂ ((⊥ : Assign ℕ Empty Unit).update 0 a) w ↔ w = false := by
@@ -1111,12 +1129,12 @@ theorem realize_bearsNothing_true_iff (a : Unit) (w : Bool) :
 
 theorem satt_bearsNothing_false (c) (g : Assign ℕ Empty Unit) (w : Bool) :
     (bearsNothing false).Satt I₂ .asymmetric c g w :=
-  ⟨⟨⟨fun _ ↦ (↑() : Flat Unit), fun _ _ ↦ ⊥⟩, by simp, by simp⟩,
+  ⟨⟨⟨fun _ ↦ Part.some (), fun _ _ ↦ ⊥⟩, by simp, by simp⟩,
     fun h ↦ absurd h (realize_neg.1 (realize_bearsNothing_false g w))⟩
 
 theorem satt_bearsNothing_bot (r : Bool) (c) (w : Bool) :
     (bearsNothing r).Satt I₂ .asymmetric c ⊥ w :=
-  ⟨⟨⟨fun _ ↦ (↑() : Flat Unit), fun _ _ ↦ ⊥⟩, by simp, by simp⟩,
+  ⟨⟨⟨fun _ ↦ Part.some (), fun _ _ ↦ ⊥⟩, by simp, by simp⟩,
     fun h ↦ absurd h (realize_neg.1 (realize_bearsNothing_bot r w))⟩
 
 local notation "F₀" => bearsNothing false

@@ -14,9 +14,9 @@ Compositional DRT over plural information states ([van-den-berg-1996], [brasovea
 assignments and whose columns are drefs: a dref stores the set of its values in the rows, and the
 rows store the dependencies between the values of different drefs. A register holds a content of
 some type `V` into which the individuals `E` embed (`ValueEmbedding`): in [brasoveanu-2010] a dref
-takes the dummy value ★ in the rows where it has none, so `V` is `Flat E` and ★ is `⊥`, while in
+takes the dummy value ★ in the rows where it has none, so `V` is `Part E` and ★ is `⊥`, while in
 [minor-2022] every content is an individual and the embedding is the identity. The cells, ★ and
-the quantificational operators built on them are stated for `Flat E`.
+the quantificational operators built on them are stated for `Part E`.
 
 Every CDRT update lifts to plural states cumulatively: the lift is the relation lifting
 `Set.LiftRel` of the update, which is the cumulation `**` of [beck-sauerland-2000], each input row
@@ -63,6 +63,13 @@ and a static determiner relating the values of two drefs.
 * `PCDRT.mem_determiner_iff`: on a non-empty restrictor and a static determiner false of an empty
   nuclear scope, the generalized determiner needs only the distributivity operator `distrib`.
 
+## Implementation notes
+
+[brasoveanu-2010]'s states are total assignments into the individuals and ★, a dummy value, while
+[van-den-berg-1996]'s are partial. Here both are sets of partial assignments, the carrier of
+`PluralAssign`, with ★ the undefined value; the contrast survives in the operators, since `intro`
+may leave a register at ★ and `PPCDRT.introPartial` may not.
+
 ## References
 
 * [M. H. van den Berg, *Some aspects of the internal structure of discourse: the dynamics of
@@ -85,7 +92,7 @@ namespace PCDRT
 open DynamicSemantics DynamicSemantics.Update SetRel RegisterStructure
 
 /-- The individuals that registers with contents `V` hold: an embedding of `E` into `V`. Contents
-outside its image, such as the dummy ★ of [brasoveanu-2010] in `Flat E`, are no individual;
+outside its image, such as the dummy ★ of [brasoveanu-2010] in `Part E`, are no individual;
 where every content is an individual, as in [minor-2022], it is the identity. -/
 class ValueEmbedding (E : outParam Type*) (V : Type*) where
   /-- The register content of an individual. -/
@@ -94,7 +101,7 @@ class ValueEmbedding (E : outParam Type*) (V : Type*) where
 
 open ValueEmbedding (embed embed_injective)
 
-instance (E : Type*) : ValueEmbedding E (Flat E) := ⟨(↑), Flat.coe_injective⟩
+instance (E : Type*) : ValueEmbedding E (Part E) := ⟨Part.some, Part.some_injective⟩
 
 instance (priority := low) (V : Type*) : ValueEmbedding V V := ⟨id, Function.injective_id⟩
 
@@ -102,7 +109,7 @@ instance (priority := low) (V : Type*) : ValueEmbedding V V := ⟨id, Function.i
     (embed x : V) = embed y ↔ x = y :=
   embed_injective.eq_iff
 
-@[simp] theorem embed_flat {E : Type*} (x : E) : (embed x : Flat E) = ↑x := rfl
+@[simp] theorem embed_part {E : Type*} (x : E) : (embed x : Part E) = Part.some x := rfl
 
 @[simp] theorem embed_self {V : Type*} (x : V) : (embed x : V) = x := rfl
 
@@ -265,63 +272,63 @@ theorem value_intro_of_ne (h : v ≠ u) (hIJ : I ~[intro u] J) : value v J = val
 
 end Core
 
-section Flat
+section Part
 
 /-! ### Cells and the dummy ★
 
 From here on a register holds an individual or the dummy ★ of [brasoveanu-2010], `⊥` in
-`Flat E`. -/
+`Part E`. -/
 
-variable {R S E ι : Type*} [RegisterStructure R S (Flat E)] {u u' v : R} {w : ι → R}
+variable {R S E ι : Type*} [RegisterStructure R S (Part E)] {u u' v : R} {w : ι → R}
   {I J K : Set S} {D D' : Update (Set S)} {C : Condition (Set S)} {x : E}
 
 /-- The rows of `I` where `u` holds `e`, `I_{u=e}` ((71)); at `e = ★` the rows where `u` has no
 value. -/
-def cell (u : R) (e : Flat E) (I : Set S) : Set S := {i ∈ I | val u i = e}
+def cell (u : R) (e : Part E) (I : Set S) : Set S := {i ∈ I | val u i = e}
 
 /-- The rows of `I` where `u` has a value, the non-dummy substate `I_{u≠★}` ((29)). -/
-def nonDummy (u : R) (I : Set S) : Set S := {i ∈ I | val u i ≠ ⊥}
+def nonDummy (u : R) (I : Set S) : Set S := {i ∈ I | (val u i).Dom}
 
-@[simp] theorem mem_cell {e : Flat E} {i : S} : i ∈ cell u e I ↔ i ∈ I ∧ val u i = e := Iff.rfl
+@[simp] theorem mem_cell {e : Part E} {i : S} : i ∈ cell u e I ↔ i ∈ I ∧ val u i = e := Iff.rfl
 
-@[simp] theorem mem_nonDummy {i : S} : i ∈ nonDummy u I ↔ i ∈ I ∧ val u i ≠ ⊥ := Iff.rfl
+@[simp] theorem mem_nonDummy {i : S} : i ∈ nonDummy u I ↔ i ∈ I ∧ (val u i).Dom := Iff.rfl
 
-theorem cell_coe_eq_empty (h : x ∉ value u I) : cell u x I = ∅ :=
+theorem cell_some_eq_empty (h : x ∉ value u I) : cell u (.some x) I = ∅ :=
   Set.eq_empty_of_forall_notMem fun i hi ↦ h ⟨i, hi⟩
 
 theorem eq_of_forall_cell_eq (h : ∀ e, cell u e I = cell u e J) : I = J :=
   Set.ext fun i ↦ by simpa using Set.ext_iff.1 (h (val u i)) i
 
 theorem cell_bot_union_biUnion_cell (u : R) (I : Set S) :
-    cell u ⊥ I ∪ ⋃ x ∈ value u I, cell u x I = I := by
+    cell u ⊥ I ∪ ⋃ x ∈ value u I, cell u (.some x) I = I := by
   ext i
   simp only [Set.mem_union, mem_cell, Set.mem_iUnion, mem_value, exists_prop]
   refine ⟨by rintro (⟨hi, -⟩ | ⟨x, -, hi, -⟩) <;> exact hi, fun hi ↦ ?_⟩
   rcases eq_or_ne (val u i) ⊥ with h | h
   · exact .inl ⟨hi, h⟩
-  · obtain ⟨x, hx⟩ := Flat.ne_bot_iff_exists.1 h
+  · obtain ⟨x, hx⟩ := Part.ne_bot_iff_exists.1 h
     exact .inr ⟨x, ⟨i, hi, hx⟩, hi, hx⟩
 
-theorem value_cell_subset (u : R) (x : E) (I : Set S) : value u (cell u x I) ⊆ {x} :=
-  fun _ ⟨_, hi, hy⟩ ↦ Flat.coe_inj.1 (hy.symm.trans hi.2)
+theorem value_cell_subset (u : R) (x : E) (I : Set S) : value u (cell u (.some x) I) ⊆ {x} :=
+  fun _ ⟨_, hi, hy⟩ ↦ Part.some_inj.1 (hy.symm.trans hi.2)
 
-theorem value_cell (h : x ∈ value u I) : value u (cell u x I) = {x} :=
+theorem value_cell (h : x ∈ value u I) : value u (cell u (.some x) I) = {x} :=
   (value_cell_subset u x I).antisymm (by simpa using h)
 
 @[simp] theorem value_nonDummy : value u (nonDummy u I) = value u I :=
   Set.ext fun _ ↦ ⟨fun ⟨i, hi, h⟩ ↦ ⟨i, hi.1, h⟩,
-    fun ⟨i, hi, h⟩ ↦ ⟨i, ⟨hi, h ▸ Flat.coe_ne_bot⟩, h⟩⟩
+    fun ⟨i, hi, h⟩ ↦ ⟨i, ⟨hi, h ▸ Part.some_dom _⟩, h⟩⟩
 
-@[simp] theorem cell_coe_nonDummy : cell u x (nonDummy u I) = cell u x I :=
-  Set.ext fun _ ↦ ⟨fun h ↦ ⟨h.1.1, h.2⟩, fun h ↦ ⟨⟨h.1, h.2 ▸ Flat.coe_ne_bot⟩, h.2⟩⟩
+@[simp] theorem cell_some_nonDummy : cell u (.some x) (nonDummy u I) = cell u (.some x) I :=
+  Set.ext fun _ ↦ ⟨fun h ↦ ⟨h.1.1, h.2⟩, fun h ↦ ⟨⟨h.1, h.2 ▸ Part.some_dom _⟩, h.2⟩⟩
 
 theorem nonDummy_mono (h : I ⊆ J) : nonDummy u I ⊆ nonDummy u J :=
   fun _ hi ↦ ⟨h hi.1, hi.2⟩
 
 theorem nonDummy_nonempty_iff : (nonDummy u I).Nonempty ↔ (value u I).Nonempty := by
-  refine ⟨fun ⟨i, hi, hne⟩ ↦ ?_, fun ⟨x, i, hi, hx⟩ ↦ ⟨i, hi, hx ▸ Flat.coe_ne_bot⟩⟩
-  obtain ⟨x, hx⟩ := Flat.ne_bot_iff_exists.1 hne
-  exact ⟨x, i, hi, hx⟩
+  refine ⟨fun ⟨i, hi, hne⟩ ↦ ?_, fun ⟨x, i, hi, hx⟩ ↦ ⟨i, hi, hx ▸ Part.some_dom _⟩⟩
+  obtain ⟨x, hx⟩ := Part.dom_iff_mem.1 hne
+  exact ⟨x, i, hi, Part.eq_some_iff.2 hx⟩
 
 theorem tuples_singleton_of_eq_bot {i : S} (k : ι) (h : val (w k) i = ⊥) :
     tuples w {i} = (∅ : Set (ι → E)) :=
@@ -329,31 +336,31 @@ theorem tuples_singleton_of_eq_bot {i : S} (k : ι) (h : val (w k) i = ⊥) :
 
 /-- Where every row valuing `u` also values `v`, the values of `u` are the domain of the
 dependency between them. -/
-theorem dom_dep (h : ∀ i ∈ I, val u i ≠ ⊥ → val v i ≠ ⊥) :
+theorem dom_dep (h : ∀ i ∈ I, (val u i).Dom → (val v i).Dom) :
     (dep u v I).dom = value u I := by
   refine Set.ext fun x ↦ ⟨fun ⟨y, hp⟩ ↦ fst_mem_value_of_mem_dep hp, fun ⟨i, hi, hx⟩ ↦ ?_⟩
-  obtain ⟨y, hy⟩ := Flat.ne_bot_iff_exists.1 (h i hi (hx ▸ Flat.coe_ne_bot))
-  exact ⟨y, i, hi, hx, hy⟩
+  obtain ⟨y, hy⟩ := Part.dom_iff_mem.1 (h i hi (hx ▸ Part.some_dom _))
+  exact ⟨y, i, hi, hx, Part.eq_some_iff.2 hy⟩
 
 /-- Where every row valuing `v` also values `u`, the values of `v` are the codomain of the
 dependency between them. -/
-theorem cod_dep (h : ∀ i ∈ I, val v i ≠ ⊥ → val u i ≠ ⊥) :
+theorem cod_dep (h : ∀ i ∈ I, (val v i).Dom → (val u i).Dom) :
     (dep u v I).cod = value v I := by
   refine Set.ext fun y ↦ ⟨fun ⟨x, hp⟩ ↦ snd_mem_value_of_mem_dep hp, fun ⟨i, hi, hy⟩ ↦ ?_⟩
-  obtain ⟨x, hx⟩ := Flat.ne_bot_iff_exists.1 (h i hi (hy ▸ Flat.coe_ne_bot))
-  exact ⟨x, i, hi, hx, hy⟩
+  obtain ⟨x, hx⟩ := Part.dom_iff_mem.1 (h i hi (hy ▸ Part.some_dom _))
+  exact ⟨x, i, hi, Part.eq_some_iff.2 hx, hy⟩
 
 theorem cell_eq_restrict {Var D : Type*} [DecidableEq Var] (G : PluralAssign Var D) (x : Var)
-    (a : D) : cell x ↑a G = G.restrict x a :=
-  rfl
+    (a : D) : cell x (.some a) G = G.restrict x a :=
+  Set.ext fun _ ↦ and_congr_right fun _ ↦ Part.eq_some_iff
 
 theorem value_eq_pluralAssign_value {Var D : Type*} [DecidableEq Var] (G : PluralAssign Var D)
     (x : Var) : value x G = G.value x :=
-  rfl
+  Set.ext fun _ ↦ exists_congr fun _ ↦ and_congr_right fun _ ↦ Part.eq_some_iff
 
 theorem mem_sing_iff {Var D : Type*} [DecidableEq Var] {G : PluralAssign Var D} {x : Var} :
     G ∈ sing x ↔ ∃ d, G.value x = {d} :=
-  Iff.rfl
+  exists_congr fun _ ↦ by rw [value_eq_pluralAssign_value]
 
 /-! ### Structured inclusion -/
 
@@ -364,7 +371,7 @@ def structSub (u' u : R) : Condition (Set S) :=
 /-- Full structured inclusion `u' ⊑ u` ((68)) is structured inclusion that also keeps every row
 in which `u` has one of `u'`'s values. -/
 def structSubAll (u' u : R) : Condition (Set S) :=
-  {I | I ∈ structSub u' u ∧ ∀ i ∈ I, ∀ x ∈ value u' I, val u i = ↑x → val u' i = ↑x}
+  {I | I ∈ structSub u' u ∧ ∀ i ∈ I, ∀ x ∈ value u' I, val u i = .some x → val u' i = .some x}
 
 /-- A structured subset keeps only the superset's dependencies (p. 465), since whatever `u'` is
 paired with in a row, `u` is paired with there too. -/
@@ -391,7 +398,8 @@ theorem dep_eq_of_structSubAll (h : I ∈ structSubAll u' u) :
 /-- Distributivity `dist_u(D)` ((72)): `u` keeps its values, and `D` relates the cell of each
 value in the input to its cell in the output. -/
 def dist (u : R) (D : Update (Set S)) : Update (Set S) :=
-  {(I, J) | value u I = value u J ∧ ∀ x ∈ value u I, cell u x I ~[D] cell u x J}
+  {(I, J) | value u I = value u J ∧
+    ∀ x ∈ value u I, cell u (.some x) I ~[D] cell u (.some x) J}
 
 /-- The distributivity operator `_u(D)` ((74)): the rows where `u` is ★ pass unchanged, `u` has a
 value, and `D` updates the rest distributively over `u`. -/
@@ -400,24 +408,23 @@ def distrib (u : R) (D : Update (Set S)) : Update (Set S) :=
     nonDummy u I ~[dist u D] nonDummy u J}
 
 theorem mem_distrib : I ~[distrib u D] J ↔ cell u ⊥ I = cell u ⊥ J ∧ (value u I).Nonempty ∧
-    value u I = value u J ∧ ∀ x ∈ value u I, cell u x I ~[D] cell u x J := by
-  simp only [distrib, dist, Set.mem_ofPred_eq, value_nonDummy, cell_coe_nonDummy]
+    value u I = value u J ∧ ∀ x ∈ value u I, cell u (.some x) I ~[D] cell u (.some x) J := by
+  simp only [distrib, dist, Set.mem_ofPred_eq, value_nonDummy, cell_some_nonDummy]
 
 /-- Distributivity over a test tests every cell. -/
 theorem distrib_test (u : R) (C : Condition (Set S)) :
     distrib u (test C) =
-      test {I : Set S | (value u I).Nonempty ∧ ∀ x ∈ value u I, cell u ↑x I ∈ C} := by
+      test {I : Set S | (value u I).Nonempty ∧ ∀ x ∈ value u I, cell u (.some x) I ∈ C} := by
   ext ⟨I, J⟩
   simp only [mem_distrib, mem_test, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨hbot, hne, hv, hc⟩
     obtain rfl : I = J := eq_of_forall_cell_eq (u := u) fun e ↦ by
-      induction e using Flat.recBotCoe with
-      | bot => exact hbot
-      | coe x =>
-        by_cases hx : x ∈ value u I
+      rcases e.eq_none_or_eq_some with rfl | ⟨x, rfl⟩
+      · exact hbot
+      · by_cases hx : x ∈ value u I
         · exact (hc x hx).1
-        · rw [cell_coe_eq_empty hx, cell_coe_eq_empty (hv ▸ hx)]
+        · rw [cell_some_eq_empty hx, cell_some_eq_empty (hv ▸ hx)]
     exact ⟨rfl, hne, fun x hx ↦ (hc x hx).2⟩
   · rintro ⟨rfl, hne, hc⟩
     exact ⟨rfl, hne, rfl, fun x hx ↦ ⟨rfl, hc x hx⟩⟩
@@ -519,29 +526,30 @@ that satisfies it (p. 466): its outputs are the introductions of `u` whose non-d
 exactly those pairs. -/
 theorem mem_max_test_atom_self_iff {P : (Fin 1 → E) → Prop} (hI : I.Nonempty) (hP : ∃ x, P ![x]) :
     I ~[max u (test (atom P ![u]))] J ↔
-      I ~[intro u] J ∧ nonDummy u J = Set.image2 (fun i x ↦ extend i u ↑x) I {x | P ![x]} := by
-  set W : Set S := Set.image2 (fun i x ↦ extend i u ↑x) I {x | P ![x]}
+      I ~[intro u] J ∧
+        nonDummy u J = Set.image2 (fun i x ↦ extend i u (.some x)) I {x | P ![x]} := by
+  set W : Set S := Set.image2 (fun i x ↦ extend i u (.some x)) I {x | P ![x]}
   have hW : I ~[intro u ○ test (atom P ![u])] W := by
     obtain ⟨x₀, hx₀⟩ := hP
-    refine mem_comp_test.2 ⟨⟨fun i hi ↦ ⟨_, ⟨i, hi, x₀, hx₀, rfl⟩, ↑x₀, rfl⟩,
-      fun _ ⟨i, hi, x, _, hj⟩ ↦ ⟨i, hi, ↑x, hj.symm⟩⟩, mem_atom_vec1.2 ⟨?_, ?_⟩⟩
+    refine mem_comp_test.2 ⟨⟨fun i hi ↦ ⟨_, ⟨i, hi, x₀, hx₀, rfl⟩, .some x₀, rfl⟩,
+      fun _ ⟨i, hi, x, _, hj⟩ ↦ ⟨i, hi, .some x, hj.symm⟩⟩, mem_atom_vec1.2 ⟨?_, ?_⟩⟩
     · obtain ⟨i, hi⟩ := hI
       exact ⟨x₀, _, ⟨i, hi, x₀, hx₀, rfl⟩, val_extend_self ..⟩
     · rintro x ⟨_, ⟨i, -, y, hy, rfl⟩, hx⟩
-      rwa [← Flat.coe_inj.1 ((val_extend_self ..).symm.trans hx)]
+      rwa [← Part.some_inj.1 ((val_extend_self ..).symm.trans hx)]
   have hsub : ∀ K, I ~[intro u ○ test (atom P ![u])] K → nonDummy u K ⊆ W := by
     rintro K hK k ⟨hk, hne⟩
     obtain ⟨hIK, hKP⟩ := mem_comp_test.1 hK
     obtain ⟨i, hi, e, rfl⟩ := hIK.2 k hk
-    obtain ⟨x, hx⟩ := Flat.ne_bot_iff_exists.1 hne
+    obtain ⟨x, hx⟩ := Part.dom_iff_mem.1 hne
     rw [val_extend_self] at hx
-    subst hx
+    obtain rfl := Part.eq_some_iff.2 hx
     exact ⟨i, hi, x, (mem_atom_vec1.1 hKP).2 x ⟨_, hk, val_extend_self ..⟩, rfl⟩
   constructor
   · intro hJ
     have hJ' := mem_comp_test.1 (max_subset u _ hJ)
     refine ⟨hJ'.1, (hsub J (max_subset u _ hJ)).antisymm fun j hj ↦ ?_⟩
-    have hne : val u j ≠ ⊥ := by
+    have hne : (val u j).Dom := by
       obtain ⟨_, -, _, -, rfl⟩ := hj
       simp [val_extend_self]
     exact nonDummy_subset_of_mem_max (supClosed_atom _ _) hJ hW ⟨hj, hne⟩
@@ -568,7 +576,7 @@ theorem value_copy_self (I : Set S) : value u' (copy u' u I) = value u I := by
   ext x
   simp [copy, val_extend_self]
 
-theorem cell_copy_self (I : Set S) (e : Flat E) :
+theorem cell_copy_self (I : Set S) (e : Part E) :
     cell u' e (copy u' u I) = copy u' u (cell u e I) := by
   ext j
   simp only [copy, mem_cell, Set.mem_image]
@@ -596,7 +604,7 @@ theorem mem_maxSub_test_copy (hC : copy u' u I ∈ C) :
   rcases hK₀ _ hk with h | h
   · rw [val_extend_self, val_extend_of_ne _ _ _ _ hu] at h
     rw [h]
-  · exact absurd h hne
+  · exact absurd hne (Part.eq_bot_iff_not_dom.1 h)
 
 end Copy
 
@@ -691,6 +699,6 @@ theorem mem_determiner_iff {q : Quantifier.Det E} {P P' : R → Update (Set S)}
     exact ⟨⟨K, (hres K).2 hK, hKJ'⟩, hdet'⟩
 
 
-end Flat
+end Part
 
 end PCDRT

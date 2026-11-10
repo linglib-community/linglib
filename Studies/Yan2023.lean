@@ -136,9 +136,11 @@ private theorem den_within_disj_without (P Q : Pred) (x : Var) :
       rw [← hsplit] at hi
       exact (Finset.mem_union.mp hi).elim (hQ₁ i) (hQ₂ i)
     · intro hQ
-      refine ⟨s.filter (λ i => ∀ d : Domain, i.assign x = ↑d → M.relInterp₁ (predSymb P) i.world d),
+      refine ⟨s.filter
+          (fun i ↦ ∀ d : Domain, i.assign x = some d → M.relInterp₁ (predSymb P) i.world d),
         ⟨?_, ?_⟩,
-        s.filter (λ i => ¬ ∀ d : Domain, i.assign x = ↑d → M.relInterp₁ (predSymb P) i.world d),
+        s.filter
+          (fun i ↦ ¬ ∀ d : Domain, i.assign x = some d → M.relInterp₁ (predSymb P) i.world d),
         ⟨?_, ?_⟩, Finset.filter_union_filter_not_eq _ s⟩
       · intro i hi
         obtain ⟨his, hcond⟩ := Finset.mem_filter.mp hi
@@ -156,7 +158,7 @@ private theorem den_within_disj_without (P Q : Pred) (x : Var) :
       · rcases Finset.mem_union.mp (hsplit₂ ▸ hi) with hiu₁ | hiu₂
         · obtain ⟨d, hd, hnp⟩ := hnP i hit₁
           obtain ⟨d', hd', hp⟩ := hP i hiu₁
-          rw [hd, Flat.coe_inj] at hd'
+          rw [hd, Option.some_inj] at hd'
           exact absurd (hd' ▸ hp) hnp
         · exact hnQ₂ i hiu₂
       · exact hnQ₁ i hit₂
@@ -356,7 +358,7 @@ def rossModel : Model Unit Unit Unit RossPred :=
   .ofMonadic (λ _ => {()}) (λ _ _ => ()) (λ _ P _ => P = RossPred.send)
 
 /-- John's desire state is the desire world with the empty assignment. -/
-def rossState : Finset (Index Unit Var Unit) := {((), ⊥)}
+def rossState : Finset (Index Unit Var Unit) := {((), fun _ ↦ none)}
 
 -- (26a), (26b)
 theorem ross_monotone {s : Finset (Index Unit Var Unit)} (h : support rossModel sendL.nec s) :
@@ -394,7 +396,7 @@ def desireModel (Q : Pred) : Model Bool Unit Unit Pred :=
   .ofMonadic (λ _ => {true}) (λ _ _ => ()) (λ w P _ => P = Q ∨ w = true)
 
 /-- The desire state is the desire world with the empty assignment. -/
-def desireState : Finset (Index Bool Var Unit) := {(true, ⊥)}
+def desireState : Finset (Index Bool Var Unit) := {(true, fun _ ↦ none)}
 
 theorem isSubPred_desireModel {P Q : Pred} (h : P ≠ Q) : IsSubPred (desireModel Q) P Q :=
   ⟨λ _ _ _ => Or.inl rfl, false, (), Or.inl rfl, λ h' => h'.elim h Bool.false_ne_true⟩
