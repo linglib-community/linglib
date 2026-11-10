@@ -2,6 +2,9 @@ module
 
 public import Linglib.Syntax.Minimalist.Probe.Profile
 public import Linglib.Syntax.Minimalist.Clause.Spine
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
+public import Linglib.Syntax.Minimalist.Locality.Horizon
+public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
 
 /-!
 # Keine (2019): Selective Opacity
@@ -42,7 +45,7 @@ where the sister of a probe on C⁰ is TP and of one on T⁰ is vP.
 
 namespace Keine2019
 
-open Minimalist
+open Minimalist SyntacticObject LinearizedSyntacticObject
 
 /-! ### Horizons and Upward Entailment (Section 4.1) -/
 
@@ -93,6 +96,52 @@ theorem a_extraction_forces_lda :
     (∀ s ∈ [ClauseSpine.tP, .vP], aProbe.TransparentTo s → s = .vP ∧ phiProbe.TransparentTo s) ∧
       ābarProbe.TransparentTo .tP ∧ ¬ phiProbe.TransparentTo .tP := by
   decide
+
+/-! ### Search spaces on structures (Sections 4.1 and 4.2.1)
+
+A matrix clause over a finite, a large nonfinite and a small nonfinite complement, with a DP at
+the edge of each. A probe's search space is cut at every node it c-commands that inherits its
+horizon (`Probe.Profile.cut`), so the edge of an opaque clause is out of reach with the rest. -/
+
+def C₀ : LinearizedSyntacticObject := .leaf ⟨.of .C [.T], 1⟩
+def T₀ : LinearizedSyntacticObject := .leaf ⟨.of .T [.V], 2⟩
+def V₀ (c : Cat) : LinearizedSyntacticObject := .leaf ⟨.of .V [c], 3⟩
+def XP : LinearizedSyntacticObject := .leaf ⟨.of .D [], 4⟩
+def C₁ : LinearizedSyntacticObject := .leaf ⟨.of .C [.T], 5⟩
+def Subj : LinearizedSyntacticObject := .leaf ⟨.of .D [], 6⟩
+def T₁ : LinearizedSyntacticObject := .leaf ⟨.of .T [.v], 7⟩
+def v₁ : LinearizedSyntacticObject := .leaf ⟨.of .v [.D], 8⟩
+def Obj : LinearizedSyntacticObject := .leaf ⟨.of .D [], 9⟩
+
+/-- The small nonfinite complement, `[vP v DP]`. -/
+def embVP : LinearizedSyntacticObject := {v₁, Obj}
+
+/-- The large nonfinite complement, `[TP DP [T vP]]`. -/
+def embTP : LinearizedSyntacticObject := {Subj, {T₁, embVP}}
+
+/-- The finite complement, `[CP XP [C TP]]`. -/
+def embCP : LinearizedSyntacticObject := {XP, {C₁, embTP}}
+
+/-- The matrix clause over a complement of category `c`. -/
+def matrix (c : Cat) (emb : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
+  {C₀, {T₀, {V₀ c, emb}}}
+
+/-- The DPs a probe with profile `p` on `host` finds in `t`, searching short of its horizon. -/
+def found (p : Probe.Profile) (host t : LinearizedSyntacticObject) : Finset SyntacticObject :=
+  t.goalsUnder (t.leafProbe .D) host (p.cut .raising t)
+
+/-- (47), (58): the A-probe reaches into a vP complement only, wh-licensing into TP and vP, and
+the Ā-probe into all three; an opaque clause hides the DP at its edge as well. -/
+theorem found_table :
+    (found aProbe T₀ (matrix .C embCP) = ∅ ∧ found aProbe T₀ (matrix .T embTP) = ∅ ∧
+        found aProbe T₀ (matrix .v embVP) = {↑Obj}) ∧
+      (found whLicensing C₀ (matrix .C embCP) = ∅ ∧
+        found whLicensing C₀ (matrix .T embTP) = {↑Subj} ∧
+        found whLicensing C₀ (matrix .v embVP) = {↑Obj}) ∧
+      found ābarProbe C₀ (matrix .C embCP) = {↑XP} ∧
+        found ābarProbe C₀ (matrix .T embTP) = {↑Subj} ∧
+        found ābarProbe C₀ (matrix .v embVP) = {↑Obj} := by
+  decide +kernel
 
 /-! ### Hyperraising (Section 4.2.3) -/
 

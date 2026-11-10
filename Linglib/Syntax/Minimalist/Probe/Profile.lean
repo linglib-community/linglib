@@ -16,19 +16,14 @@ sister. A nonvacuous probe therefore searches into
 [every clause inside its complement](##Minimalist.Probe.Profile.TransparentTo.of_not_isVacuousIn),
 and a horizon makes vacuous
 [every probe hosted above it](##Minimalist.Probe.Profile.IsVacuousIn.of_mem_below), the two
-halves of the Height–Locality Theorem.
+halves of the Height–Locality Theorem. On trees a horizon cuts the positions under
+every node that inherits it, `Minimalist.Probe.Profile.cut`.
 
 ## Implementation notes
 
 Vacuity is relative to the spine that hosts the probe, and the probe's sister is
 `ClauseSpine.below` of its head. On a spine that does not project the probe's head the complement
 is the whole spine, so vacuity is meaningful only for a head the spine projects.
-
-## TODO
-
-* Transparency reads a clause's label; `Minimalist.horizon` cuts the positions of a tree behind a
-  head of the horizon category. No theorem yet says that the positions inside a clause opaque to
-  a probe lie behind its horizon, which needs projections labelled by their spines.
 
 ## References
 
