@@ -216,6 +216,15 @@ theorem mem_project_self (s : ClauseSpine) (c : Cat) : c ∈ s.project c := by s
 theorem le_project (h : s.Inherits c) : s ≤ s.project c :=
   le_iff_forall_mem.2 fun d hd ↦ by simp [project, h, mem_def.1 hd]
 
+/-- The complement of a head in the phrase it projects over a complement it inherits from is that
+complement. -/
+theorem below_project (hi : s.Inherits c) (hc : c ∉ s) : (s.project c).below c = s := by
+  have h : s.heads.takeWhile (· != c) = s.heads :=
+    List.takeWhile_eq_self_iff.2 fun x hx ↦ bne_iff_ne.2 fun hxc ↦ hc (hxc ▸ hx)
+  cases s
+  simp only [below, project, hi, ite_true, List.takeWhile_append, mk.injEq] at h ⊢
+  simp [h]
+
 theorem IsExtendedProjection.project (hs : s.IsExtendedProjection) (c : Cat) :
     (s.project c).IsExtendedProjection := by
   unfold ClauseSpine.project IsExtendedProjection

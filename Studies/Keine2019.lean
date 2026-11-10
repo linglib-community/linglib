@@ -142,6 +142,13 @@ theorem found_table :
         found ābarProbe C₀ (matrix .v embVP) = {↑Obj} := by
   decide +kernel
 
+/-- (63): a probe on C⁰ with horizon T finds no DP whatever the complement, since its sister TP is
+already a horizon. -/
+theorem vacuous_finds_nothing :
+    ∀ emb ∈ [(Cat.C, embCP), (.T, embTP), (.v, embVP)],
+      found ⟨.C, some .T⟩ C₀ (matrix emb.1 emb.2) = ∅ := by
+  decide +kernel
+
 /-! ### Hyperraising (Section 4.2.3) -/
 
 /-- The English A-probe, on T⁰ with horizon C. -/

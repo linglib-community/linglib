@@ -26,7 +26,8 @@ Height–Locality Theorem.
 On a tree, a node carries the [spine](##Minimalist.spineOf) of its extended projection, a phrase
 [inheriting its complement's categories](##Minimalist.spineOf_le_spineOf_node), and the positions
 [behind a probe's horizon](##Minimalist.HorizonSetting.cut) are those under a node the probe
-c-commands that is [not transparent to it](##Minimalist.HorizonSetting.mem_cut_iff).
+c-commands that is [not transparent to it](##Minimalist.HorizonSetting.mem_cut_iff). A vacuous probe
+[reaches nothing beyond its sister](##Minimalist.HorizonSetting.mem_cut_of_isVacuousIn).
 
 ## Implementation notes
 
@@ -232,5 +233,26 @@ theorem HorizonSetting.mem_cut_iff :
     obtain ⟨c, hc, hm⟩ : ∃ c ∈ p.horizon, c ∈ spineAt η t x := by
       simpa [transparentTo_iff] using hnt
     exact ⟨c, hc, x, Finset.mem_Iio.2 hx, ha, hm⟩
+
+/-- A probe whose sister is not transparent to it reaches nothing beyond its sister: every
+position it c-commands below the sister is behind its horizon. -/
+theorem HorizonSetting.mem_cut_of_not_transparentTo (ha : a ∈ t.val.validPaths) (ha0 : a ≠ ⊥)
+    (hq : q ∈ t.val.validPaths) (hc : t.val.CCommands a q) (hne : q ≠ complement a)
+    (hs : ¬ p.TransparentTo (spineAt η t (complement a))) : q ∈ p.cut η t a := by
+  have hle : complement a ≤ q := (mem_cCommandDomain_iff_complement_le ha ha0 hq).1 hc
+  have hv : complement a ∈ t.val.validPaths := isLowerSet_validPaths _ hle hq
+  exact mem_cut_iff.2 ⟨_, lt_of_le_of_ne hle (Ne.symm hne),
+    (mem_cCommandDomain_iff_complement_le ha ha0 hv).2 le_rfl, hs⟩
+
+/-- A vacuous probe reaches nothing beyond its sister: where the head of `p` inherits from its
+sister and `p` is vacuous in the phrase it projects, every position it c-commands below the sister
+is behind its horizon. -/
+theorem HorizonSetting.mem_cut_of_isVacuousIn (ha : a ∈ t.val.validPaths) (ha0 : a ≠ ⊥)
+    (hq : q ∈ t.val.validPaths) (hc : t.val.CCommands a q) (hne : q ≠ complement a)
+    (hi : (spineAt η t (complement a)).Inherits p.head)
+    (hn : p.head ∉ spineAt η t (complement a))
+    (hv : p.IsVacuousIn ((spineAt η t (complement a)).project p.head)) : q ∈ p.cut η t a :=
+  mem_cut_of_not_transparentTo ha ha0 hq hc hne (by
+    rwa [IsVacuousIn, ClauseSpine.below_project hi hn] at hv)
 
 end Minimalist
