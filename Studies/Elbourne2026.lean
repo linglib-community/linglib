@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Elbourne2026
 public import Linglib.Data.Examples.Readers
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
+public import Linglib.Semantics.Composition.Interpreter.Rules
 public import Linglib.Semantics.Composition.Interpreter.Mode
 public import Linglib.Semantics.Composition.Interpreter.Sorts
 public import Linglib.Semantics.Modification.Classification

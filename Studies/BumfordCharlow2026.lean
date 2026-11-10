@@ -4,6 +4,7 @@ public import Mathlib.CategoryTheory.Monad.Adjunction
 public import Mathlib.CategoryTheory.Types.Basic
 public import Mathlib.Control.Basic
 public import Mathlib.Control.Functor
+public import Linglib.Semantics.Composition.Interpreter.Rules
 public import Linglib.Semantics.Composition.Interpreter.Mode
 
 /-!
@@ -410,16 +411,46 @@ def Name.of : {l r u : Ty Unit} → (baseGrammar Unit).Binary l r u → Name
   | _, _, _, .inl .ba => .BA
   | _, _, _, .inr .pm => .PM
 
+/-- The shape of a mode, forgetting its types. -/
+inductive Shape (β : Type) where
+  | basic (b : β)
+  | mapR (m : Shape β)
+  | mapL (m : Shape β)
+  | ap (m : Shape β)
+  | unitR (m : Shape β)
+  | unitL (m : Shape β)
+  | counit (m : Shape β)
+  | ejectR (m : Shape β)
+  | ejectL (m : Shape β)
+  | join (m : Shape β)
+  | lower (m : Shape β)
+  deriving DecidableEq, Repr
+
+/-- The shape of a mode, given the names of the basic modes. -/
+def shape {B β : Type} {Rule : Ty B → Ty B → Ty B → Type}
+    (name : ∀ {l r u : Ty B}, Rule l r u → β) : {l r u : Ty B} → Mode Rule l r u → Shape β
+  | _, _, _, .basic b => .basic (name b)
+  | _, _, _, .mapR m => .mapR (shape name m)
+  | _, _, _, .mapL m => .mapL (shape name m)
+  | _, _, _, .ap _ m => .ap (shape name m)
+  | _, _, _, .unitR _ m => .unitR (shape name m)
+  | _, _, _, .unitL _ m => .unitL (shape name m)
+  | _, _, _, .counit m => .counit (shape name m)
+  | _, _, _, .ejectR m => .ejectR (shape name m)
+  | _, _, _, .ejectL m => .ejectL (shape name m)
+  | _, _, _, .join _ m => .join (shape name m)
+  | _, _, _, .lower m => .lower (shape name m)
+
 /-- The interpreter's output for two types: the modes that combine them, in the book's order,
 each with the type it yields. -/
-def combine (l r : Ty Unit) : List (Mode.Shape Name × Ty Unit) :=
+def combine (l r : Ty Unit) : List (Shape Name × Ty Unit) :=
   (Ty.combine (Grammar.LocallyFinite.binaryRules (G := baseGrammar Unit)) l r).map fun p ↦
-    (p.2.shape Name.of, p.1)
+    (shape Name.of p.2, p.1)
 
 section Interpreter
 
-local notation "FA" => Mode.Shape.basic Name.FA
-local notation "BA" => Mode.Shape.basic Name.BA
+local notation "FA" => Shape.basic Name.FA
+local notation "BA" => Shape.basic Name.BA
 local notation "S" => Ty.comp Eff.S
 local notation "R" => Ty.comp (Eff.R e)
 local notation "W" => Ty.comp (Eff.W e)

@@ -4,6 +4,9 @@ public import Mathlib.Logic.Equiv.Fintype
 public import Mathlib.Order.Interval.Set.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Alternatives.Structural
+public import Linglib.Semantics.Composition.Interpreter.Rules
+public import Linglib.Semantics.Composition.Interpreter.Mode
+public import Linglib.Semantics.Composition.Interpreter.CallByValue
 public import Linglib.Semantics.Composition.Interpreter.Constituency
 public import Linglib.Semantics.Composition.Interpreter.LiftRel
 public import Mathlib.Data.PFun
@@ -299,20 +302,12 @@ noncomputable def Item.val (B : Finset α) : {a : Ty Unit} → Item a → a.Dom 
   | _, .def_ => .some fun X ↦ Part.restrict (sup X).Nonempty (.some (sup X)) fun _ ↦ trivial
   | _, .plusDef => .some fun X ↦ ↑(iota X)
 
-/-- There are no type shifts. -/
-def noShift {a b : Ty Unit} : Empty → a.Dom (Dom α) → b.Dom (Dom α) := nofun
-
-instance :
-    (effectGrammar (Grammar.application (B := Unit)).Binary fun _ _ ↦ Empty).language.Structure
-      (Ty.Dom (Dom α)) :=
-  effectGrammar.structure noShift
-
 /-- The meanings of a tree over the boys `B`: every constituent is a partial value, and a
 function applies to its sister where both are defined. -/
 noncomputable def meanings (B : Finset α) (t : Tree Cat Morpheme) :
     List (Σ a : Ty Unit, a.Dom (Dom α)) :=
   match t.skeleton (fun _ ↦ false) with
-  | some s => (partialValued .application (Shift := fun _ _ ↦ Empty)).values
+  | some s => (partialValued .application).values
       (D := Ty.Dom (Dom α)) (Item.val B) items s
   | none => []
 
@@ -550,8 +545,7 @@ private theorem mem_defined_of_map {B : Finset α} {t : Tree Cat Morpheme}
     refine ⟨_, ⟨⟨a, d⟩, hd, rfl⟩, ?_⟩
     have hrel : Ty.LiftRel (rel σ) a _ _ :=
       (effectGrammar.isLogicalRel (r := rel σ) (G := .application)
-        (shift := noShift) (shift' := noShift) (fun b ↦ Application.rel_eval b)
-        (fun s ↦ nomatch s)).realize (fun i ↦ liftRel_val (σ := σ) B i) d
+        Grammar.application.isLogicalRel).realize (fun i ↦ liftRel_val (σ := σ) B i) d
     match a, d, hrel, hdef with
     | .comp .M _, _, hrel, hdef => exact hrel.1.2 hdef
 
@@ -622,8 +616,8 @@ theorem eval_forthPartial {a b : Ty Unit} (f : Part (a.Dom (Dom α) → Part (b.
   rw [Mode.eval_join_ap_basic]; rfl
 
 /-- The rules of the partial-valued interpreter. -/
-abbrev rules : Interpreter (effectGrammar (Grammar.application (B := Unit)).Binary
-    fun _ _ ↦ Empty) Node := partialValued .application
+abbrev rules : Interpreter (effectGrammar (Grammar.application (B := Unit))) Node :=
+  partialValued .application
 
 theorem Good.combine {d₁ d₂ : Σ a : Ty Unit, a.Dom (Dom α)} (h₁ : Good B d₁) (h₂ : Good B d₂)
     {k : Node} {m : Σ u, Mode (Grammar.application (B := Unit)).Binary d₁.1 d₂.1 u}

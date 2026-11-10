@@ -5,6 +5,7 @@ public import Linglib.Semantics.Composition.Extensional
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.ModelTheory.Basic
 public import Mathlib.Data.Fin.VecNotation
+public import Linglib.Semantics.Composition.Interpreter.Rules
 public import Linglib.Semantics.Composition.Interpreter.CallByValue
 public import Linglib.Semantics.Composition.Interpreter.Constituency
 public import Linglib.Semantics.Composition.Interpreter.Sorts
@@ -261,7 +262,7 @@ which are application, predicate modification and abstraction where every functi
 /-- The grammar of the book: Functional Application and Predicate Modification of sisters, and
 Predicate Abstraction (16) of §5.3 over individuals. -/
 abbrev grammar : Grammar (Ty Base) :=
-  (Grammar.application.sum .predicateModification).withAbstraction .e
+  (Grammar.application.sum .predicateModification).withAbstraction fun _ ↦ .e
 
 /-- A denotation relative to a total assignment. -/
 abbrev Val (a : Ty Base) : Type := (ℕ → ToyEntity) → a.Dom Dom
@@ -272,17 +273,13 @@ abbrev PVal (a : Ty Base) : Type := (ℕ → Part ToyEntity) → Ty.PDom Dom a
 
 /-- Total assignments: the abstract at an individual is the body at the assignment modified to
 give it to the index. -/
-def assignments : Assignments (ℕ → ToyEntity) (Ty.Dom Dom) .e where
-  get g n := g n
-  set := Function.update
-  lam F := F
+def assignments : Assignments (ℕ → ToyEntity) (Ty.Dom Dom) fun _ ↦ .e :=
+  .total Dom fun _ ↦ .e
 
 /-- Partial assignments, (7) of §5.3.3: an abstract always has a denotation, a partial function
 defined at the individuals at which the body has one, (7) of §5.4. -/
-def partialAssignments : Assignments (ℕ → Part ToyEntity) (Ty.PDom Dom) .e where
-  get g n := g n
-  set := Function.update
-  lam F := .some fun x ↦ F (.some x)
+def partialAssignments : Assignments (ℕ → Part ToyEntity) (Ty.PDom Dom) fun _ ↦ .e :=
+  .pedantic Dom fun _ ↦ .e
 
 /-- The rules (13), (14) and (16) of Chapter 5: sisters combine at one assignment. -/
 abbrev total : grammar.language.Structure Val := Grammar.withAbstraction.structure assignments
@@ -296,7 +293,7 @@ abbrev pedantic : grammar.language.Structure PVal :=
 /-- The interpreter of the book: an index admits abstraction over it, and sisters whichever of
 application and predicate modification their types allow. -/
 abbrev rules : Interpreter grammar Node :=
-  (typeDriven (.sum .application .predicateModification)).withAbstraction .e
+  (typeDriven (.sum .application .predicateModification)).withAbstraction fun _ ↦ .e
 
 /-- The denotations of a tree relative to total assignments, for the words with total
 denotations. -/
@@ -350,8 +347,10 @@ theorem isLogicalRel : total.IsLogicalRel pedantic Rel :=
   Grammar.withAbstraction.isLogicalRel Grammar.isLogicalRel_partRel _
     (fun g g' n v v' hg ⟨y, hy, hyr⟩ i ↦ by
       cases hyr
-      by_cases hi : i = n <;> simp [assignments, partialAssignments, Function.update, hi, hg, hy])
-    (fun _ _ h ↦ ⟨_, rfl, fun x _ hx ↦ by cases hx; exact h x (.some x) ⟨x, rfl, rfl⟩⟩)
+      by_cases hi : i = n <;>
+        simp [assignments, Assignments.total, partialAssignments, Assignments.pedantic,
+          Function.update, hi, hg, hy])
+    (fun _ _ h ↦ ⟨_, rfl, fun x x' hx ↦ h x (.some x') ⟨x', rfl, hx⟩⟩)
 
 /-- Each word with a total denotation has the pedantic denotation that is it. -/
 theorem rel_val : ∀ {a : Ty Base} (i : Item a), Rel a i.val i.pval
@@ -495,7 +494,8 @@ theorem pmeanings_theStudentWhoSleeps :
   have h := the_some (a := .john)
     (P := fun x ↦ toyStructure.RelMap toyRel.student ![x] ∧ toyStructure.RelMap toyRel.sleep ![x])
     fun x ↦ ⟨fun h ↦ h.2, fun h ↦ ⟨.inl h, h⟩⟩
-  simp [pmeanings, Tree.values, derivs_theStudentWhoSleeps, pval, Item.pval, partialAssignments, h]
+  simp [pmeanings, Tree.values, derivs_theStudentWhoSleeps, pval, Item.pval, partialAssignments,
+    Assignments.pedantic, h]
 
 /-- Under the bracketing `[[the student] [who₁ [t₁ sleeps]]]`, which §4.5 rejects, a sentence
 with the definite as subject is uninterpretable. -/
@@ -584,8 +584,8 @@ theorem realize_raise {b : Ty Base} (n : ℕ) (a : grammar.Deriv Item .e)
       | trace k =>
         by_cases hk : k = n
         · subst hk
-          simp [substTrace, Item.val, assignments]
-        · simp [substTrace, hk, Item.val, assignments]
+          simp [substTrace, Item.val, assignments, Assignments.total]
+        · simp [substTrace, hk, Item.val, assignments, Assignments.total]
       | _ => rfl)
     (fun g m u v hm ↦
       show Function.update (Function.update g n v) m u = _ from

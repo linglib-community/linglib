@@ -7,6 +7,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Verbal.Voice
 public import Linglib.Semantics.Composition.EventIdentification
+public import Linglib.Semantics.Composition.Interpreter.Rules
 public import Linglib.Semantics.Composition.Interpreter.Mode
 public import Linglib.Semantics.Composition.Interpreter.Sorts
 

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.ModelTheory.ManySorted.Simulation
+public import Mathlib.Data.Nat.Notation
 
 /-!
 # Type-driven interpreters
@@ -25,7 +26,8 @@ derivations over a bare structure are found from the types alone.
 * `Interpreter.Grammar.LocallyFinite`, `Interpreter.typeDriven`: a grammar whose rules for given
   daughters can be listed, and the interpreter that admits every rule that applies.
 * `Interpreter.Grammar.Deriv`: the derivations of a type over typed lexical items.
-* `Interpreter.Grammar.Skeleton`: a bare structure.
+* `Interpreter.Grammar.Skeleton`, `Interpreter.Node`: a bare structure, and the labels a
+  constituency tree gives its nodes.
 * `Interpreter`: the rules a node admits by its label and its daughters' types.
 * `Interpreter.derivs`, `Interpreter.values`: the derivations over a bare structure, and their
   values.
@@ -203,6 +205,17 @@ inductive Skeleton (N : Type v) (L : Type w) : Type (max v w)
   | binary (n : N) (s₁ s₂ : Skeleton N L) : Skeleton N L
 
 end Grammar
+
+/-- What the semantics reads off a node of the syntax: a plain branching node, an island, or the
+index a moved phrase leaves. -/
+inductive Node where
+  /-- A plain node. -/
+  | branch
+  /-- An island for continuations. -/
+  | island
+  /-- The index `n` of a moved phrase. -/
+  | index (n : ℕ)
+  deriving DecidableEq, Repr
 
 end Interpreter
 
