@@ -104,7 +104,7 @@ theorem german_weakAndStrong :
 
 section Divergence
 
-variable {E W : Type} {R : Restrictor E W} {i : ℕ} {g : Assignment E} {s : W}
+variable {E W : Type} {R : Restrictor E W} {i : ℕ} {g : ℕ → E} {s : W}
 
 theorem der_er_can_diverge {y : E} (hi : g i ∈ R g s) (hy : y ∈ R g s) (hne : y ≠ g i) :
     ⟦DefiniteDescription.ofStrength .uniqueness R i⟧ g s ≠

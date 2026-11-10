@@ -59,7 +59,6 @@ context improper (`not_proper_of_defined_lamPres`).
 namespace Schlenker2004a
 
 open Kaplan
-open scoped Assignment
 
 /-! ### Terms -/
 
@@ -74,18 +73,18 @@ inductive Term (C : Type*) (α : Type*)
 
 namespace Term
 
-variable {C α : Type*} {s : Assignment α} {cu ct : C} {k : ℕ} {D : C → α → Prop} {f : C → α}
+variable {C α : Type*} {s : ℕ → α} {cu ct : C} {k : ℕ} {D : C → α → Prop} {f : C → α}
 
 /-- The value of a term: the assignment's value at a variable, the Context of Thought's at an
 indexical. The Context of Utterance plays no role. -/
-def value : Term C α → Assignment α → C → α
+def value : Term C α → (ℕ → α) → C → α
   | var k, s, _ => s k
   | sorted k _, s, _ => s k
   | indexical f, _, ct => f ct
 
 /-- A term is defined unless it is a sorted variable whose value lies outside its domain at
 the Context of Utterance. The Context of Thought plays no role. -/
-def Defined : Term C α → Assignment α → C → Prop
+def Defined : Term C α → (ℕ → α) → C → Prop
   | sorted k D, s, cu => D cu (s k)
   | _, _, _ => True
 
@@ -114,7 +113,7 @@ def name (a : α) : Term C α := indexical λ _ => a
 
 end Term
 
-variable {W E P T : Type*} {sE : Assignment E} {sT : Assignment T} {c cu ct : Context W E P T}
+variable {W E P T : Type*} {sE : ℕ → E} {sT : ℕ → T} {c cu ct : Context W E P T}
   {k : ℕ}
 
 /-! ### The lexicon of (20) and (21)
@@ -201,11 +200,11 @@ namespace Formula
 
 /-- Truth at an assignment and a Context of Thought. The Context of Utterance plays no role:
 this signature is the paper's Elimination of the Context of Utterance. -/
-def Realize : Formula W E P T → Assignment E → Assignment T → Context W E P T → Prop
+def Realize : Formula W E P T → (ℕ → E) → (ℕ → T) → Context W E P T → Prop
   | atom₀ R t, _, sT, ct => R (t.value sT ct) ct.world
   | atom₁ Q i t, sE, sT, ct => Q (i.value sE ct) (t.value sT ct) ct.world
-  | lamE i k φ, sE, sT, ct => φ.Realize (sE[k ↦ i.value sE ct]) sT ct
-  | lamT t k φ, sE, sT, ct => φ.Realize sE (sT[k ↦ t.value sT ct]) ct
+  | lamE i k φ, sE, sT, ct => φ.Realize (Function.update sE k (i.value sE ct)) sT ct
+  | lamT t k φ, sE, sT, ct => φ.Realize sE (Function.update sT k (t.value sT ct)) ct
   | not φ, sE, sT, ct => ¬ φ.Realize sE sT ct
   | and φ ψ, sE, sT, ct => φ.Realize sE sT ct ∧ ψ.Realize sE sT ct
   | or φ ψ, sE, sT, ct => φ.Realize sE sT ct ∨ ψ.Realize sE sT ct
@@ -213,12 +212,14 @@ def Realize : Formula W E P T → Assignment E → Assignment T → Context W E 
 /-- Definedness, the negation of the paper's *weird*, at an assignment, a Context of Utterance
 and a Context of Thought: every sorted variable, under the values the abstractions bind, lies
 in its domain at the Context of Utterance. -/
-def Defined : Formula W E P T → Assignment E → Assignment T →
+def Defined : Formula W E P T → (ℕ → E) → (ℕ → T) →
     Context W E P T → Context W E P T → Prop
   | atom₀ _ t, _, sT, cu, _ => t.Defined sT cu
   | atom₁ _ i t, sE, sT, cu, _ => i.Defined sE cu ∧ t.Defined sT cu
-  | lamE i k φ, sE, sT, cu, ct => i.Defined sE cu ∧ φ.Defined (sE[k ↦ i.value sE ct]) sT cu ct
-  | lamT t k φ, sE, sT, cu, ct => t.Defined sT cu ∧ φ.Defined sE (sT[k ↦ t.value sT ct]) cu ct
+  | lamE i k φ, sE, sT, cu, ct =>
+    i.Defined sE cu ∧ φ.Defined (Function.update sE k (i.value sE ct)) sT cu ct
+  | lamT t k φ, sE, sT, cu, ct =>
+    t.Defined sT cu ∧ φ.Defined sE (Function.update sT k (t.value sT ct)) cu ct
   | not φ, sE, sT, cu, ct => φ.Defined sE sT cu ct
   | and φ ψ, sE, sT, cu, ct => φ.Defined sE sT cu ct ∧ ψ.Defined sE sT cu ct
   | or φ ψ, sE, sT, cu, ct => φ.Defined sE sT cu ct ∧ ψ.Defined sE sT cu ct
@@ -235,12 +236,12 @@ def strip : Formula W E P T → Formula W E P T
   | or φ ψ => or φ.strip ψ.strip
 
 /-- A stripped formula never fails to refer. -/
-theorem defined_strip (φ : Formula W E P T) (sE : Assignment E) (sT : Assignment T) :
+theorem defined_strip (φ : Formula W E P T) (sE : ℕ → E) (sT : ℕ → T) :
     φ.strip.Defined sE sT cu ct := by
   induction φ generalizing sE sT <;> simp_all [strip, Defined]
 
 /-- Stripping the Context of Utterance preserves truth (23). -/
-theorem realize_strip (φ : Formula W E P T) (sE : Assignment E) (sT : Assignment T) :
+theorem realize_strip (φ : Formula W E P T) (sE : ℕ → E) (sT : ℕ → T) :
     φ.strip.Realize sE sT ct ↔ φ.Realize sE sT ct := by
   induction φ generalizing sE sT <;> simp_all [strip, Realize]
 

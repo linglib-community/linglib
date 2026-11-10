@@ -35,7 +35,7 @@ the updates that only change assignments.
 
 ## Implementation notes
 
-A dynamic proposition is an `Update (Assignment E)`, the paper's functions from assignments to
+A dynamic proposition is an `Update (ℕ → E)`, the paper's functions from assignments to
 sets of assignments uncurried; the operators of the modular analysis are stated in the paper's
 curried form, with `upDynamic_eq_test` relating the two. The paper's cells are the maximal
 subsets of a state with one assignment, which are the nonempty fibres of the projection to
@@ -58,7 +58,7 @@ open DynamicSemantics DynamicSemantics.Update SetRel
 
 section DestructiveUpdate
 
-variable {E : Type*} {P Q : E → Prop} {g h : Assignment E}
+variable {E : Type*} {P Q : E → Prop} {g h : ℕ → E}
 
 /-- *A linguist⁶ entered the room. A linguist⁶ was already there*: the outputs map the index to
 a witness of the second indefinite, the value the first gave it being overwritten. -/
@@ -91,29 +91,29 @@ variable {E ρ : Type*}
 
 /-- A superscripted individual is a scope-taker that evaluates its scope at the assignment
 shifted to map its index to it. -/
-def sup (n : ℕ) (x : E) (c : E → Assignment E → ρ) : Assignment E → ρ :=
+def sup (n : ℕ) (x : E) (c : E → (ℕ → E) → ρ) : (ℕ → E) → ρ :=
   fun g ↦ c x (Function.update g n x)
 
 /-- A pronoun passes the value of its index to its scope (18). -/
-def pro (n : ℕ) (c : E → Assignment E → ρ) : Assignment E → ρ :=
+def pro (n : ℕ) (c : E → (ℕ → E) → ρ) : (ℕ → E) → ρ :=
   fun g ↦ c (g n) g
 
 /-- The static `↑` returns the truth value and drops the assignment. -/
-def upStatic (p : Prop) : Assignment E → Prop :=
+def upStatic (p : Prop) : (ℕ → E) → Prop :=
   fun _ ↦ p
 
 /-- The dynamic `↑` returns the assignment, conditional on the truth value. -/
-def upDynamic (p : Prop) : Assignment E → Set (Assignment E) :=
+def upDynamic (p : Prop) : (ℕ → E) → Set (ℕ → E) :=
   fun g ↦ {h | h = g ∧ p}
 
 /-- The dynamic `↑` is the test of the static one. -/
 theorem upDynamic_eq_test (p : Prop) :
-    {i : Assignment E × Assignment E | i.2 ∈ upDynamic p i.1} = test {g | upStatic p g} := by
+    {i : (ℕ → E) × (ℕ → E) | i.2 ∈ upDynamic p i.1} = test {g | upStatic p g} := by
   ext ⟨g, h⟩
   exact ⟨fun ⟨hgh, hp⟩ ↦ ⟨hgh.symm, hp⟩, fun ⟨hgh, hp⟩ ↦ ⟨hgh.symm, hp⟩⟩
 
 /-- A dynamic proposition built with `↑` is true where the static one is. -/
-theorem nonempty_upDynamic_iff (p : Prop) (g : Assignment E) :
+theorem nonempty_upDynamic_iff (p : Prop) (g : ℕ → E) :
     (upDynamic p g).Nonempty ↔ upStatic p g :=
   ⟨fun ⟨_, _, hp⟩ ↦ hp, fun hp ↦ ⟨g, rfl, hp⟩⟩
 
@@ -121,11 +121,11 @@ variable (gave : E → E → E → Prop) (polly anna : E)
 
 /-- *Polly⁵ gave Anna⁵ her₅ paper* (20), statically: `gave x y z` says `x` gave `y` the paper of
 `z`. -/
-def pollyAnnaStatic : Assignment E → Prop :=
+def pollyAnnaStatic : (ℕ → E) → Prop :=
   sup 5 polly fun x ↦ sup 5 anna fun y ↦ pro 5 fun z ↦ upStatic (gave x y z)
 
 /-- *Polly⁵ gave Anna⁵ her₅ paper* (20), dynamically. -/
-def pollyAnnaDynamic : Assignment E → Set (Assignment E) :=
+def pollyAnnaDynamic : (ℕ → E) → Set (ℕ → E) :=
   sup 5 polly fun x ↦ sup 5 anna fun y ↦ pro 5 fun z ↦ upDynamic (gave x y z)
 
 /-- The static meaning (22): the pronoun is Anna, and the shifted assignment is gone. -/
@@ -136,7 +136,7 @@ theorem pollyAnnaStatic_eq :
 
 /-- The dynamic meaning (23): the same truth condition, with the doubly shifted assignment
 returned, in which Polly's update is overwritten by Anna's. -/
-theorem pollyAnnaDynamic_eq (g : Assignment E) :
+theorem pollyAnnaDynamic_eq (g : ℕ → E) :
     pollyAnnaDynamic gave polly anna g =
       {h | h = Function.update g 5 anna ∧ gave polly anna anna} := by
   simp [pollyAnnaDynamic, sup, pro, upDynamic]
@@ -149,15 +149,15 @@ section Reachability
 
 open FirstOrder DPL DPL.Formula
 
-variable {L : Language} {E : Type*} [L.Structure E] {g h k : Assignment E}
+variable {L : Language} {E : Type*} [L.Structure E] {g h k : ℕ → E}
 
 variable (L) in
 /-- An assignment is reachable from another when some formula of dynamic predicate logic takes
 the one to the other (24). -/
-def reachable (g h : Assignment E) : Prop :=
+def reachable (g h : ℕ → E) : Prop :=
   ∃ φ : Formula L ℕ, g ~[φ.eval E] h
 
-theorem reachable_refl (g : Assignment E) : reachable L g g :=
+theorem reachable_refl (g : ℕ → E) : reachable L g g :=
   ⟨.top, rfl⟩
 
 theorem reachable_trans (hgh : reachable L g h) (hhk : reachable L h k) : reachable L g k := by
@@ -187,7 +187,7 @@ theorem reachable_symm (hgh : reachable L g h) : reachable L h g := by
 /-- Antisymmetry fails: distinct assignments are reachable from one another, an overwritten
 variable being overwritten again with its old value. -/
 theorem antisymmetry_fails [Nontrivial E] :
-    ∃ g h : Assignment E, g ≠ h ∧ reachable L g h ∧ reachable L h g := by
+    ∃ g h : (ℕ → E), g ≠ h ∧ reachable L g h ∧ reachable L h g := by
   obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
   have hr : reachable L (fun _ ↦ e₁) (Function.update (fun _ ↦ e₁) 0 e₂) :=
     ⟨∃[0] .top, mem_dexists.mpr ⟨e₂, rfl⟩⟩

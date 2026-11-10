@@ -93,9 +93,8 @@ open DynamicSemantics
 open DynamicSemantics.Update
   (test box maxAt Fixes mem_box_singleton mem_box_singleton_comp randomAssign)
 open ICDRT SetRel
-open scoped Assignment
 
-variable {W E : Type u} {g h : Assignment (W →. E)} {s t dc dc' A : Set W} {R S : E → W → Prop}
+variable {W E : Type u} {g h : ℕ → (W →. E)} {s t dc dc' A : Set W} {R S : E → W → Prop}
   {v v' : ℕ} {a : E} {dox : E → W → Set W} {P : Clause W E}
 
 /-! ### Antecedent and anaphor -/
@@ -203,7 +202,7 @@ theorem eq_empty_of_subset_ccp_neg {X : Type*} {f g : CCP X} {c : Set X} (hg : g
 /-! ### Acceptability (§3.3.1) -/
 
 /-- The null assignment holds no information: no dref has a referent (32). -/
-def nullAssignment : Assignment (W →. E) := fun _ _ ↦ Part.none
+def nullAssignment : ℕ → (W →. E) := fun _ _ ↦ Part.none
 
 /-- A discourse is acceptable if some nonempty commitment set satisfies it (31), (33). Nested, it
 gives each interlocutor a commitment set of their own. -/
@@ -225,22 +224,22 @@ def υ : ℕ := 0
 @[inherit_doc υ] def υ₂ : ℕ := 1
 
 /-- *There is an `R`.* (19a) -/
-abbrev thereIs (R : E → W → Prop) (dc : Set W) : Update (Assignment (W →. E)) :=
+abbrev thereIs (R : E → W → Prop) (dc : Set W) : Update ((ℕ → (W →. E))) :=
   (existential R υ).dec dc
 
 /-- *There isn't an `R`.* (41) -/
-abbrev thereIsnt (R : E → W → Prop) (dc : Set W) : Update (Assignment (W →. E)) :=
+abbrev thereIsnt (R : E → W → Prop) (dc : Set W) : Update ((ℕ → (W →. E))) :=
   (existential R υ).not.dec dc
 
 /-- *It isn't the case that there isn't an `R`.* (2a), (42a) -/
-abbrev notThereIsnt (R : E → W → Prop) (dc : Set W) : Update (Assignment (W →. E)) :=
+abbrev notThereIsnt (R : E → W → Prop) (dc : Set W) : Update ((ℕ → (W →. E))) :=
   (existential R υ).not.not.dec dc
 
 /-- *It is `S`.* (30) -/
-abbrev itIs (S : E → W → Prop) (dc : Set W) : Update (Assignment (W →. E)) := (it S υ).dec dc
+abbrev itIs (S : E → W → Prop) (dc : Set W) : Update ((ℕ → (W →. E))) := (it S υ).dec dc
 
 /-- *There isn't an `R`, or it is `S`.* (2b), (42b) -/
-abbrev thereIsntOr (R S : E → W → Prop) (dc : Set W) : Update (Assignment (W →. E)) :=
+abbrev thereIsntOr (R S : E → W → Prop) (dc : Set W) : Update ((ℕ → (W →. E))) :=
   ((existential R υ).not.or (it S υ)).dec dc
 
 /-! ### The status of antecedent and anaphor (16), (36), (37) -/
@@ -367,7 +366,7 @@ theorem mem_dec_atom (hP : P.Introduces (atom b s) v A) :
   simp [hP.mem_dec, isWitness_atom_iff]
 
 -- the outputs of an antecedent and a pronoun: Figures 6, 10
-theorem mem_comp_atom {D : Update (Assignment (W →. E))} (hP : P.Introduces (atom b s) v A) :
+theorem mem_comp_atom {D : Update ((ℕ → (W →. E)))} (hP : P.Introduces (atom b s) v A) :
     g ~[P.dec dc ○ D] h ↔ dc ⊆ A ∧ g[v ↦ refer b s] ~[D] h := by
   simp [hP.mem_comp, isWitness_atom_iff]
 
@@ -419,7 +418,7 @@ theorem introduces_not_bathroom : (existential bathroom υ).not.Introduces bathr
 
 section M₁
 
-variable {g h : Assignment (World →. Ent)} {dc dc' s : Set World}
+variable {g h : ℕ → (World →. Ent)} {dc dc' s : Set World}
 
 -- Table 1: assertion eliminates the commitment sets that are not subsets of the bathroom worlds
 theorem mem_thereIs_bathroom :
@@ -508,7 +507,7 @@ dref and a proposition to each propositional dref, so a variable update `[δ]` i
 `Update.randomAssign` at either sort and a DRS `[δ | C]` is `Update.box {δ} C`. -/
 @[ext] structure State (W E : Type*) where
   /-- The individual concept of an individual dref. -/
-  indiv : Assignment (W →. E)
+  indiv : ℕ → (W →. E)
   /-- The proposition of a propositional dref. -/
   prop : PVar → Set W
 
@@ -587,7 +586,7 @@ end Registers
 
 section Printed
 
-variable {h : Assignment (World →. Ent)} {s : Set World}
+variable {h : ℕ → (World →. Ent)} {s : Set World}
 
 /-- The registers of the printed formulas: the contexts of (41) and (30), and the commitment set. -/
 def φ₁ : PVar := ⟨1⟩
@@ -692,7 +691,7 @@ theorem sat_refer_upstairs₃ :
   cases w <;> simp
 
 -- Figure 11
-theorem mem_modalSub {g h : Assignment (World₃ →. Ent)} {dc : Set World₃} :
+theorem mem_modalSub {g h : ℕ → (World₃ →. Ent)} {dc : Set World₃} :
     g ~[thereIsnt bathroom₃ dc ○ (believes .sue dox₃ upstairs₃ υ υ₂).dec dc] h ↔
       dc ⊆ {.wus, .ws} ∧
         h = g[υ ↦ refer .b {.wbus, .wbu, .wbs, .wb}][υ₂ ↦ PFun.lift fun _ ↦ .sue] := by
@@ -769,7 +768,7 @@ theorem rows_knows (a : E) (dox : E → W → Set W) :
 -- first's; Hurford's constraint "might be viewed" as the pragmatic filter on it (p. 34)
 theorem rows_45 (h : (witnessed R).Nonempty) :
     (Acceptable fun dc ↦ nullAssignment ∈ (((existential R υ).or (it S υ)).dec dc).dom) ∧
-      (∀ (g h : Assignment (W →. E)) dc, g ~[((existential R υ).or (it S υ)).dec dc] h →
+      (∀ (g h : ℕ → (W →. E)) dc, g ~[((existential R υ).or (it S υ)).dec dc] h →
         sat S (h υ) ⊆ witnessed R) ∧ ex45.judgment = .unacceptable :=
   ⟨(acceptable_iff_nonempty fun _ ↦ mem_dom_or_existential_it).mpr h,
     fun _ _ _ ↦ subset_of_mem_or_existential_it, rfl⟩

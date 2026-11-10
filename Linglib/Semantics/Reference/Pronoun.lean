@@ -9,7 +9,7 @@ public import Linglib.Syntax.Category.Pronoun.Personal
 public import Linglib.Semantics.Denotation
 public import Linglib.Semantics.Reference.Nominal
 public import Linglib.Semantics.Presupposition.PhiFeatures
-public import Linglib.Semantics.Composition.Assignment
+public import Linglib.Logic.Assignment
 
 /-!
 # The denotation of a pronoun
@@ -22,7 +22,7 @@ utterance with `Number.dom` and `Gender.dom` at the entry's referential person a
 gender. The selector does not vary with the world of evaluation
 (`PersonalPronoun.isRigid_denote_selector`), so a pronoun refers directly. This is the account
 Büring surveys: one denotation serves the bound, anaphoric and deictic uses, binding is abstraction
-over the assignment (`Montague.lambdaAbsG`), and, as Sauerland proposes, an absent or unmarked
+over the assignment (`Λ[n]`), and, as Sauerland proposes, an absent or unmarked
 feature restricts nothing.
 
 ## Implementation notes
@@ -70,7 +70,7 @@ theorem phiDom_congr {e₁ e₂ : PersonalPronoun} (hr : e₁.referential = e₂
 /-- A pronoun denotes the nominal whose selector is the value `g i` of its index, always defined
 under a total assignment, and whose intrinsic presupposition is that the resolved
 referent `g i` lies in the φ-domain. -/
-def denote : Nominal (Assignment E) W E where
+def denote : Nominal (ℕ → E) W E where
   presup g _ := g i ∈ e.phiDom c
   selector g _ := some (g i)
 
@@ -80,18 +80,18 @@ universe u
 arguments of its domain. -/
 instance : Denotes PersonalPronoun
     (∀ (E W P T : Type u) [PartialOrder E] [Gendered E], ℕ → Context W E P T →
-      Nominal (Assignment E) W E) :=
+      Nominal (ℕ → E) W E) :=
   ⟨fun e _ _ _ _ _ _ ↦ e.denote⟩
 
-@[simp] theorem denote_presup (g : Assignment E) (w : W) :
+@[simp] theorem denote_presup (g : ℕ → E) (w : W) :
     (e.denote i c).presup g w = (g i ∈ e.phiDom c) :=
   rfl
 
-@[simp] theorem denote_selector (g : Assignment E) (w : W) :
+@[simp] theorem denote_selector (g : ℕ → E) (w : W) :
     (e.denote i c).selector g w = some (g i) :=
   rfl
 
-theorem isRigid_denote_selector (g : Assignment E) :
+theorem isRigid_denote_selector (g : ℕ → E) :
     IsRigid ((e.denote i c).selector g) :=
   isRigid_const _
 

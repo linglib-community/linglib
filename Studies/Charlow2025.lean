@@ -268,19 +268,19 @@ section DPL
 
 variable {E : Type*}
 
-instance : Substrate (Update (Assignment E)) where
+instance : Substrate (Update (ℕ → E)) where
   conj := SetRel.comp
   neg φ := Update.test (Update.neg φ)
 
 /-- Program disjunction on DPL relations is the union of the outputs. -/
-instance : ProgramDisj (Update (Assignment E)) where
+instance : ProgramDisj (Update (ℕ → E)) where
   pdisj φ ψ := φ ∪ ψ
 
-instance : Truth (Update (Assignment E)) (ℕ → E) where
+instance : Truth (Update (ℕ → E)) (ℕ → E) where
   truth φ g := g ∈ φ.dom
   restrict m p := {q | p q.1 ∧ q ∈ m}
 
-private theorem rel_ext {φ ψ : Update (Assignment E)} (h : ∀ g k, (g, k) ∈ φ ↔ (g, k) ∈ ψ) :
+private theorem rel_ext {φ ψ : Update (ℕ → E)} (h : ∀ g k, (g, k) ∈ φ ↔ (g, k) ∈ ψ) :
     φ = ψ :=
   Set.ext λ ⟨g, k⟩ => h g k
 
@@ -330,8 +330,8 @@ instance : Lift δ (Decomposed δ) where
 
 variable {E : Type*}
 
-theorem down_up (m : Update (Assignment E)) :
-    Lift.down (Lift.up (Δ := Decomposed (Update (Assignment E))) m) = m :=
+theorem down_up (m : Update (ℕ → E)) :
+    Lift.down (Lift.up (Δ := Decomposed (Update (ℕ → E))) m) = m :=
   rel_ext λ g h => by
     constructor
     · rintro ⟨k, ⟨rfl, hnn⟩, hm | ⟨rfl, hno⟩⟩
@@ -339,8 +339,8 @@ theorem down_up (m : Update (Assignment E)) :
       · exact absurd ⟨g, rfl, hno⟩ hnn
     · exact λ hm => ⟨g, ⟨rfl, λ ⟨_, e, hno⟩ => hno ⟨h, e ▸ hm⟩⟩, .inl hm⟩
 
-theorem down_neg_up (m : Update (Assignment E)) :
-    Lift.down (Lift.neg (Lift.up (Δ := Decomposed (Update (Assignment E))) m)) =
+theorem down_neg_up (m : Update (ℕ → E)) :
+    Lift.down (Lift.neg (Lift.up (Δ := Decomposed (Update (ℕ → E))) m)) =
       Update.test (Update.neg m) :=
   rel_ext λ g h => by
     constructor
@@ -351,13 +351,13 @@ theorem down_neg_up (m : Update (Assignment E)) :
       exact ⟨g, ⟨rfl, λ ⟨_, e, hnn⟩ => hnn ⟨_, rfl, e ▸ hno⟩⟩, .inr ⟨rfl, hno⟩⟩
 
 theorem not_neg_neg [Nontrivial E] :
-    ∃ M : Decomposed (Update (Assignment E)), Lift.neg (Lift.neg M) ≠ M := by
+    ∃ M : Decomposed (Update (ℕ → E)), Lift.neg (Lift.neg M) ≠ M := by
   obtain ⟨x, φ, h⟩ := GroenendijkStokhof1991.dne_fails_anaphora (E := E)
   exact ⟨⟨Update.dexists x φ, Update.dexists x φ⟩, λ e => h (congrArg atIssue e)⟩
 
-theorem exists_atIssue_eq_neg {Atom : Type*} (ia : Atom → Update (Assignment E))
-    (ie : ℕ → Update (Assignment E)) (φ : Formula Atom) :
-    ∃ X, (liftInterp (Δ := Decomposed (Update (Assignment E))) ia ie φ).atIssue =
+theorem exists_atIssue_eq_neg {Atom : Type*} (ia : Atom → Update (ℕ → E))
+    (ie : ℕ → Update (ℕ → E)) (φ : Formula Atom) :
+    ∃ X, (liftInterp (Δ := Decomposed (Update (ℕ → E))) ia ie φ).atIssue =
       Update.test (Update.neg X) := by
   induction φ with
   | atom a => exact ⟨_, rfl⟩
@@ -365,12 +365,12 @@ theorem exists_atIssue_eq_neg {Atom : Type*} (ia : Atom → Update (Assignment E
   | conj φ ψ _ _ => exact ⟨_, rfl⟩
   | neg φ _ => exact ⟨_, rfl⟩
 
-theorem neg_neg_liftInterp {Atom : Type*} (ia : Atom → Update (Assignment E))
-    (ie : ℕ → Update (Assignment E)) (φ : Formula Atom) :
-    Lift.neg (Lift.neg (liftInterp (Δ := Decomposed (Update (Assignment E))) ia ie φ)) =
+theorem neg_neg_liftInterp {Atom : Type*} (ia : Atom → Update (ℕ → E))
+    (ie : ℕ → Update (ℕ → E)) (φ : Formula Atom) :
+    Lift.neg (Lift.neg (liftInterp (Δ := Decomposed (Update (ℕ → E))) ia ie φ)) =
       liftInterp ia ie φ := by
   obtain ⟨X, hX⟩ := exists_atIssue_eq_neg ia ie φ
-  generalize liftInterp (Δ := Decomposed (Update (Assignment E))) ia ie φ = M at hX ⊢
+  generalize liftInterp (Δ := Decomposed (Update (ℕ → E))) ia ie φ = M at hX ⊢
   cases M with
   | mk t n =>
     simp only at hX
@@ -402,7 +402,7 @@ instance : Lift δ (Staged δ i) where
 variable {E : Type*}
 
 /-- Over DPL the staged lift obeys all three laws. -/
-instance : LawfulLift (Update (Assignment E)) (Staged (Update (Assignment E)) (ℕ → E)) where
+instance : LawfulLift (Update (ℕ → E)) (Staged (Update (ℕ → E)) (ℕ → E)) where
   down_up m := rel_ext λ g h => by
     constructor
     · rintro ⟨⟨j, hj⟩, hm | ⟨rfl, hno⟩⟩

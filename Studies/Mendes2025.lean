@@ -43,7 +43,7 @@ variable {W T : Type*}
 /-! ### Types -/
 
 /-- A state assigns situations to drefs. -/
-abbrev State (W T : Type*) := Assignment (Index W T)
+abbrev State (W T : Type*) := ℕ → Index W T
 
 /-- A situation dref, the type `s`. -/
 abbrev Sit (W T : Type*) := State W T → Index W T
