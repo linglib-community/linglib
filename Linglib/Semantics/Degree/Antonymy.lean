@@ -17,7 +17,7 @@ degrees under inverse orderings, so an adjective's `Polarity` says which member 
 [boundedness](##Boundedness.negative_smul) and on [comparisons](##Comparison.negative_smul) through
 the order dual. The positive forms of the members are
 [contradictory](##AntonymForm.isCompl_contradictoryDenotation), as *clean* and *dirty* are, or
-[contrary](##AntonymForm.isContrary_strengthenedDenotation), as *tall* and *short* are, two cells of
+[contrary](##AntonymForm.isContrary_contraryDenotation), as *tall* and *short* are, two cells of
 the Aristotelian square. The contrary case is a `ThresholdPair` on a linearly ordered scale, and
 [its gap](##ThresholdPair.gap_nonempty_iff) keeps *not unhappy* apart from *happy* in the quadruplet
 `AntonymForm`.
@@ -40,7 +40,7 @@ the Aristotelian square. The contrary case is a `ThresholdPair` on a linearly or
 ordering, so the antonym of *short* is *tall*. Markedness is a separate matter, since equipollent
 pairs like *hot* and *cold* have no unmarked member. Sentential negation acts on the adjective's
 denotation by complement instead, so *not short* is the contradictory of *short* and does not
-entail *tall* (`AntonymForm.strengthenedDenotation`). -/
+entail *tall* (`AntonymForm.contraryDenotation`). -/
 instance : MulAction Polarity Boundedness :=
   .ofEndHom (Polarity.lift ⟨Boundedness.dual, Boundedness.dual_involutive.comp_self⟩)
 
@@ -113,13 +113,26 @@ instance : MulAction Polarity AntonymForm :=
 
 @[simp] theorem negative_smul (f : AntonymForm) : Polarity.negative • f = f.flip := rfl
 
-/-- The morphosyntactic complexity of a form, the number of negations counted as
-[krifka-2007b] orders them, `0 < 2 < 3 < 5`, matching [tessler-franke-2019]'s utterance cost. -/
+/-- The morphosyntactic complexity of a form, with the negative prefix counted as 2 and sentential
+negation as 3, since [krifka-2007b] takes syntactic complexity to outweigh morphological, which
+makes *not happy* more complex than *unhappy*. -/
+-- UNVERIFIED: the values are attributed to the utterance costs of [tessler-franke-2019], whose
+-- main text states none; its supplement is unchecked.
 def complexity : AntonymForm → Nat
   | .positive    => 0
   | .negative    => 2
   | .notPositive => 3
   | .notNegative => 5
+
+/-- The simple form of a pole, *happy* for *not unhappy* and *unhappy* for *not happy*, which the
+negated form of the other pole shares its contradictory denotation with
+(`contradictoryDenotation_simple`). -/
+def simple : AntonymForm → AntonymForm
+  | .positive | .notNegative => .positive
+  | .negative | .notPositive => .negative
+
+theorem complexity_simple_le (f : AntonymForm) : f.simple.complexity ≤ f.complexity := by
+  cases f <;> decide
 
 section Denotation
 variable {D : Type*}
@@ -132,10 +145,11 @@ def contradictoryDenotation [Preorder D] (θ : D) : AntonymForm → Set D
   | .positive | .notNegative => Set.Ioi θ
   | .notPositive | .negative => Set.Iic θ
 
-/-- The strengthened denotation of a form on a threshold pair, whose gap lifts *not unhappy*
-away from *happy* and *not happy* away from *unhappy*. This is the effective semantics after
-strengthening ([krifka-2007b]) or the lexical one ([alexandropoulou-gotzner-2024a]). -/
-def strengthenedDenotation [Preorder D] (tp : ThresholdPair D) : AntonymForm → Set D
+/-- The contrary denotation of a form on a threshold pair, whose gap lifts *not unhappy* away from
+*happy* and *not happy* away from *unhappy*. This is the lexical semantics of [horn-1989]'s
+contrary analysis, on which a negated form covers the gap and the opposite pole; [krifka-2007b]
+argues against it and derives the gap pragmatically from `contradictoryDenotation`. -/
+def contraryDenotation [Preorder D] (tp : ThresholdPair D) : AntonymForm → Set D
   | .positive => Set.Ioi tp.pos
   | .notPositive => Set.Iic tp.pos
   | .negative => Set.Iio tp.neg
@@ -148,17 +162,17 @@ instance decidableMemContradictoryDenotation :
   | .positive | .notNegative => fun d ↦ inferInstanceAs (Decidable (θ < d))
   | .notPositive | .negative => fun d ↦ inferInstanceAs (Decidable (d ≤ θ))
 
-instance decidableMemStrengthenedDenotation :
-    ∀ f, DecidablePred (· ∈ strengthenedDenotation tp f)
+instance decidableMemContraryDenotation :
+    ∀ f, DecidablePred (· ∈ contraryDenotation tp f)
   | .positive => fun d ↦ inferInstanceAs (Decidable (tp.pos < d))
   | .notPositive => fun d ↦ inferInstanceAs (Decidable (d ≤ tp.pos))
   | .negative => fun d ↦ inferInstanceAs (Decidable (d < tp.neg))
   | .notNegative => fun d ↦ inferInstanceAs (Decidable (tp.neg ≤ d))
 
-theorem contradictoryDenotation_synonymy :
-    contradictoryDenotation θ .negative = contradictoryDenotation θ .notPositive ∧
-      contradictoryDenotation θ .notNegative = contradictoryDenotation θ .positive :=
-  ⟨rfl, rfl⟩
+/-- With one threshold each negated form is synonymous with the simple form of the other pole. -/
+@[simp] theorem contradictoryDenotation_simple (f : AntonymForm) :
+    contradictoryDenotation θ f.simple = contradictoryDenotation θ f := by
+  cases f <;> rfl
 
 /-- Contradictory negation is the complement of the positive form, so double negation
 eliminates and *not unhappy* is *happy*, the puzzle Krifka solves pragmatically. -/
@@ -167,15 +181,15 @@ theorem contradictoryDenotation_notPositive :
   Set.compl_Ioi.symm
 
 /-- What *not unhappy* adds to *happy* under the strengthened denotation is the gap. -/
-theorem strengthenedDenotation_notNegative_diff_positive :
-    strengthenedDenotation tp .notNegative \ strengthenedDenotation tp .positive = tp.gap := by
-  rw [strengthenedDenotation, strengthenedDenotation, Set.sdiff_eq, Set.compl_Ioi,
+theorem contraryDenotation_notNegative_diff_positive :
+    contraryDenotation tp .notNegative \ contraryDenotation tp .positive = tp.gap := by
+  rw [contraryDenotation, contraryDenotation, Set.sdiff_eq, Set.compl_Ioi,
     Set.Ici_inter_Iic, ThresholdPair.gap]
 
 /-- What *not happy* adds to *unhappy* under the strengthened denotation is the gap too. -/
-theorem strengthenedDenotation_notPositive_diff_negative :
-    strengthenedDenotation tp .notPositive \ strengthenedDenotation tp .negative = tp.gap := by
-  rw [strengthenedDenotation, strengthenedDenotation, Set.sdiff_eq, Set.compl_Iio, Set.inter_comm,
+theorem contraryDenotation_notPositive_diff_negative :
+    contraryDenotation tp .notPositive \ contraryDenotation tp .negative = tp.gap := by
+  rw [contraryDenotation, contraryDenotation, Set.sdiff_eq, Set.compl_Iio, Set.inter_comm,
     Set.Ici_inter_Iic, ThresholdPair.gap]
 
 /-- With one threshold the negative form is the complement of the positive form, so the pair is
@@ -187,11 +201,11 @@ theorem isCompl_contradictoryDenotation :
 open Aristotelian in
 /-- With a pair that leaves a gap the positive and negative forms are disjoint but not
 exhaustive, so the pair is contrary. -/
-theorem isContrary_strengthenedDenotation (h : tp.neg ≤ tp.pos) :
-    IsContrary (strengthenedDenotation tp .positive) (strengthenedDenotation tp .negative) :=
+theorem isContrary_contraryDenotation (h : tp.neg ≤ tp.pos) :
+    IsContrary (contraryDenotation tp .positive) (contraryDenotation tp .negative) :=
   ⟨Set.Ioi_disjoint_Iio_of_le h, fun hco ↦ by
     have hmem :
-        tp.neg ∈ strengthenedDenotation tp .positive ⊔ strengthenedDenotation tp .negative := by
+        tp.neg ∈ contraryDenotation tp .positive ⊔ contraryDenotation tp .negative := by
       rw [hco.eq_top]; trivial
     exact hmem.elim (fun hp ↦ h.not_gt hp) (lt_irrefl _)⟩
 

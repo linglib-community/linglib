@@ -54,7 +54,7 @@ and [Krifka's does not, whatever the cost of the covert morpheme](##krifka_refut
 namespace AlexandropoulouGotzner2024a
 
 open Krifka2007b English.Adjectives Data.Statistics
-open AntonymForm (strengthenedDenotation strengthenedDenotation_notNegative_diff_positive)
+open AntonymForm (contraryDenotation contraryDenotation_notNegative_diff_positive)
 
 variable {t : AdjectiveType} {s : Strength}
 
@@ -106,14 +106,14 @@ def hornPair : ThresholdPair Region := ⟨.plateauHigh, .plateauLow⟩
 /-- Horn's ranges R-strengthen the negated positive to the antonym it conceals, a face-threatening
 statement, and Q/R-restrict the double negative to what its simpler antonym could not describe. -/
 def hornRanges : Ranges
-  | .notPositive => (strengthenedDenotation hornPair .negative).toFinset
-  | .notNegative => (strengthenedDenotation hornPair .notNegative \
-      strengthenedDenotation hornPair .positive).toFinset
-  | f => (strengthenedDenotation hornPair f).toFinset
+  | .notPositive => (contraryDenotation hornPair .negative).toFinset
+  | .notNegative => (contraryDenotation hornPair .notNegative \
+      contraryDenotation hornPair .positive).toFinset
+  | f => (contraryDenotation hornPair f).toFinset
 
 -- (7), p. 376
 theorem coe_hornRanges_notNegative : (hornRanges .notNegative : Set Region) = hornPair.gap :=
-  (Set.coe_toFinset _).trans (strengthenedDenotation_notNegative_diff_positive _)
+  (Set.coe_toFinset _).trans (contraryDenotation_notNegative_diff_positive _)
 
 /-- Krifka's ranges are the quadruplet that weak optimality selects
 (`Krifka2007b.superoptimal_quadruplet`). -/
@@ -139,12 +139,12 @@ theorem complexity_eq_cost : AntonymForm.complexity = cost 3 2 := by
 
 /-- The stereotype deviation of a form is its excess complexity over the co-extensive simple form,
 which the M principle turns into a non-stereotypical reading. -/
-def deviation (n k : ℕ) (f : AntonymForm) : ℤ := cost n k f - cost n k (simple f)
+def deviation (n k : ℕ) (f : AntonymForm) : ℤ := cost n k f - cost n k f.simple
 
 -- p. 378
 theorem deviation_eq_iff (n k : ℕ) :
     deviation n k .notPositive = deviation n k .notNegative ↔ k = 0 := by
-  simp only [deviation, cost, simple]
+  simp only [deviation, cost, AntonymForm.simple]
   omega
 
 /-! ### Predictions -/

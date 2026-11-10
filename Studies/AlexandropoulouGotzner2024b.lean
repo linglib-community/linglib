@@ -22,7 +22,7 @@ the complex forms fill. On a two-threshold scale this is exactly the observed
 profile — both negated weak forms come apart from their simple antonyms
 (`relative_like`) yet the residues are mirror images (`residues_symmetric`),
 whereas at a single threshold neither distinction exists
-(`AntonymForm.contradictoryDenotation_synonymy`).
+(`AntonymForm.contradictoryDenotation_simple`).
 
 ## References
 
@@ -43,19 +43,19 @@ open AlexandropoulouGotzner2024a
 variable {D : Type*} [LinearOrder D] (tp : ThresholdPair D)
 
 theorem residues_symmetric :
-    AntonymForm.strengthenedDenotation tp .notNegative \
-        AntonymForm.strengthenedDenotation tp .positive =
-      AntonymForm.strengthenedDenotation tp .notPositive \
-        AntonymForm.strengthenedDenotation tp .negative :=
-  (AntonymForm.strengthenedDenotation_notNegative_diff_positive tp).trans
-    (AntonymForm.strengthenedDenotation_notPositive_diff_negative tp).symm
+    AntonymForm.contraryDenotation tp .notNegative \
+        AntonymForm.contraryDenotation tp .positive =
+      AntonymForm.contraryDenotation tp .notPositive \
+        AntonymForm.contraryDenotation tp .negative :=
+  (AntonymForm.contraryDenotation_notNegative_diff_positive tp).trans
+    (AntonymForm.contraryDenotation_notPositive_diff_negative tp).symm
 
 theorem relative_like (h : tp.neg ≤ tp.pos) :
-    (AntonymForm.strengthenedDenotation tp .notNegative \
-        AntonymForm.strengthenedDenotation tp .positive).Nonempty ∧
-      (AntonymForm.strengthenedDenotation tp .notPositive \
-        AntonymForm.strengthenedDenotation tp .negative).Nonempty := by
-  rw [← residues_symmetric, and_self, AntonymForm.strengthenedDenotation_notNegative_diff_positive]
+    (AntonymForm.contraryDenotation tp .notNegative \
+        AntonymForm.contraryDenotation tp .positive).Nonempty ∧
+      (AntonymForm.contraryDenotation tp .notPositive \
+        AntonymForm.contraryDenotation tp .negative).Nonempty := by
+  rw [← residues_symmetric, and_self, AntonymForm.contraryDenotation_notNegative_diff_positive]
   exact tp.gap_nonempty_iff.2 h
 
 /-! ### Rows -/
