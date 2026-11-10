@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Tree.QuantifierRaising
-public import Linglib.Semantics.Composition.Interpret
+public import Linglib.Semantics.Composition.Extension
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Syntax.Cat
@@ -194,6 +194,14 @@ theorem isLogicalForm_not_coherent :
     IsLogicalForm ⊥ someoneSawEveryone (someoneSawEveryone.raiseOf 2 (.leaf .someone)) ∧
       ¬ Coherent ind (someoneSawEveryone.raiseOf 2 (.leaf .someone)) :=
   ⟨(IsLogicalForm.refl _).raiseOf rfl (passesNoIsland_bot _ _) 2, fun h ↦ h rfl⟩
+
+-- §3.1.3: other modes of combination can be added, and a logical form keeps its meanings
+theorem mem_interpret_withModification {Γ : ℕ → Ty Base} {t : Tree Unit Lexeme}
+    {d : Σ a : Ty Base, (∀ n, (Γ n).Dom (Base.Dom E Unit)) → a.Dom (Base.Dom E Unit)}
+    (hd : d ∈ meanings M Γ t) :
+    d ∈ t.interpret (application.sum predicateModification) (Base.Dom E Unit) Γ
+      (fun i _ ↦ i.val M) items :=
+  Tree.mem_interpret_sum Γ _ items hd
 
 /-! ### Lift and Flexible Montague Grammar
 
