@@ -80,6 +80,10 @@ April 2025.
 * Islands (section 5.4): the book keeps at an island the modes whose result is `Evaluated`,
   which [leaves a quantified clause its closed reading](##BumfordCharlow2026.combine_island). No
   tree here marks a category as an island.
+* Heim and Kratzer's partial denotations and partial assignments, which give the definite article
+  its presupposition, as reading with partiality.
+* The abstraction operator over words with effects, (4.8) to (4.11), where it gives a function
+  into computations that Join merges with its specifier.
 
 ## References
 
@@ -621,10 +625,13 @@ end Reading
 
 /-! ### Heim and Kratzer's grammar
 
-Heim and Kratzer's grammar is the environment-sensitive grammar with the abstraction operator
-(4.7): each of their words read as a function of the assignment, sisters combined by Structured
-App, and the index of a moved phrase the binder. Its values for a tree are theirs, so their two
-scopes of *every person sees some person* are derived with the assignment in the types. -/
+The total fragment of Heim and Kratzer's grammar, with total assignments and without the
+definite article, is the environment-sensitive grammar with the abstraction operator of (4.7):
+each of their words read as a function of the assignment, sisters combined by Structured App, and
+the index of a moved phrase the binder. The binder is here a rule at the index, as their
+Predicate Abstraction is, where the book's operator is a word combined by application. The values
+of a tree are theirs, so their two scopes of *every person sees some person* are derived with the
+assignment in the types. -/
 
 section HeimKratzer
 
@@ -654,7 +661,8 @@ abbrev heimKratzer : Interpreter ((effectGrammar (baseGrammar Base)).sum
     assignment fun _ ↦ .e
 
 /-- The values of a tree in the environment-sensitive grammar with the binder (4.7) are its
-denotations by Heim and Kratzer's rules, as functions of the assignment. -/
+denotations by Heim and Kratzer's rules for the words with total denotations, as functions of a
+total assignment. A tree with the definite article has no value on either side. -/
 theorem values_heimKratzer (t : Tree Unit Word) :
     t.values heimKratzer (effectGrammar.structure.sum (binding.structure assignments))
         Reader.val readerItems =

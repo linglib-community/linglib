@@ -252,12 +252,13 @@ theorem values_withBinder (hf : P (.R g)) (E : Assignments (g.Dom D) (Ty.Dom D) 
     List.map_map]
   rfl
 
-/-- **Heim and Kratzer's grammar is the pointwise grammar of reading an assignment.** Over words
-and indices of types without effects, each word read as the computation that ignores or consults
-the assignment, the values of a tree in the effect-driven grammar pointwise at reading, with the
-binder at its indices, are its values by the rules of the grammar at one assignment, with
-abstraction over its indices. -/
-theorem values_withBinder_of_effectFree (hf : P (.R g)) (hL : L.EffectFree)
+/-- **Rules at one assignment are the pointwise grammar of reading an assignment.** For a grammar
+that keeps to the types without effects and has no rule for two readers, over words and indices of
+such types, each word read as the computation that ignores or consults the assignment, the values
+of a tree in the effect-driven grammar pointwise at reading, with the binder at its indices, are
+its values by the rules of the grammar at one assignment, with abstraction over its indices. The
+domains are total: a grammar of partial denotations is not an instance. -/
+theorem values_withBinder_of_effectFree [L.IsBinary] (hf : P (.R g)) (hL : L.EffectFree)
     (hΓ : ∀ n, (Γ n).EffectFree) (E : Assignments (g.Dom D) (Ty.Dom D) Γ)
     (hlex : ∀ x, (lex' x).map (fun p ↦ (⟨p.1, ρ' p.2⟩ : Sigma (Ty.Dom D))) =
       (lex x).map fun p ↦ ⟨.comp (.R g) p.1, ρ p.2⟩)
@@ -266,16 +267,18 @@ theorem values_withBinder_of_effectFree (hf : P (.R g)) (hL : L.EffectFree)
         (effectGrammar.structure.sum (binding.structure E)) ρ' lex' =
       (t.values ((typeDriven L).withAbstraction Γ) (withAbstraction.structure E) ρ lex).map
         fun d ↦ ⟨.comp (.R g) d.1, d.2⟩ := by
-  refine values_eq_map_of_types (Ty.comp (.R g)) Ty.EffectFree hlex hfree
-    (fun _ _ _ _ ↦ by simp [withBinder, Interpreter.withAbstraction])
-    (fun n a ha r hr ↦ ?_) (fun a b ha hb _ _ ↦ ?_) (fun a b ha hb m hm ↦ ?_) t
+  refine values_eq_map_values (withAbstraction.toBinding_isExpansionOn E)
+    (Q := Ty.EffectFree) ⟨fun n a ha r hr ↦ ?_, fun a b ha hb m hm ↦ ?_⟩ hlex hfree
+    (fun _ _ _ ↦ by simp [withBinder, Interpreter.withAbstraction, withAbstraction.toBinding,
+      LHom.ofMk₂])
+    (fun a b ha hb ↦ ?_) t
   · obtain rfl := List.mem_singleton.1 hr
     exact ⟨hΓ n, ha⟩
+  · obtain ⟨m, -, rfl⟩ := List.mem_map.1 hm
+    exact hL.binary m.2 ha hb
   · simp only [withBinder, Interpreter.withAbstraction, typeDriven,
       binary_effectDrivenWithin_pointwise hf,
       binary_effectDrivenWithin_of_effectFree _ hL ha hb, List.map_map]
     rfl
-  · obtain ⟨m, -, rfl⟩ := List.mem_map.1 hm
-    exact hL.binary m.2 ha hb
 
 end PhraseStructure.Tree

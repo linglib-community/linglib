@@ -25,10 +25,19 @@ value](##ManySorted.Language.withAbstraction.realize_toBinding).
 
 ## Implementation notes
 
-Reading is an effect for each type of datum, so the assignments that traces read and the
-referents that pronouns read are data of different types and their effects are different
-effects. The binder is a rule of the grammar, as abstraction is, and not a word: a word has
-finitely many types, and the binder applies to a computation of any type.
+The binder is a rule of the grammar, as Heim and Kratzer's abstraction is, where the book has a
+word of type `V β → V (e → β)` that combines by application: a word of the library's lexicon has
+finitely many types. The map into the grammar with the binder is for grammars all of whose rules
+take two arguments, since a rule of one argument has no mode that lifts it through reading. The
+book keeps the assignments that bind traces apart from those that bind pronouns by giving them
+effects of different names. Reading is here one effect for each type of datum, so the two are
+apart only where traces and pronouns read data of different types, and the binder binds every
+reader of its assignment's type.
+
+## TODO
+
+* An effect of reading for traces that is distinct from the one for pronouns at the same type of
+  datum.
 
 ## References
 
@@ -69,11 +78,13 @@ def Binder.rules [DecidableEq B] (g : Ty B) (Γ : ℕ → Ty B) (n : ℕ) :
 
 variable {D : B → Type}
 
-/-- The meaning of the binder of an index: the computation that, at an assignment, returns the
-function of the value the assignment is modified to give the index. -/
+/-- The meaning of the binder of an index is that of abstraction over the index, a value that
+depends on an assignment being a computation that reads one. -/
 @[instance_reducible] def binding.structure (E : Assignments (g.Dom D) (Ty.Dom D) Γ) :
     (binding g Γ).Structure (Ty.Dom D) :=
-  .mk₂ (fun | .index n _, body => fun i ↦ E.lam fun v ↦ body (E.set i n v)) nofun
+  .mk₂ (fun
+    | .index n b, body =>
+      (abstraction.structure E).funMap (σ := .of b) (PredicateAbstraction.index n b) body) nofun
 
 @[simp] theorem binding.funMap_index (E : Assignments (g.Dom D) (Ty.Dom D) Γ) (n : ℕ) (b : Ty B)
     (body : (Ty.comp (.R g) b).Dom D) :
@@ -100,17 +111,10 @@ variable {B : Type} {L : Language.{0, 0} (Ty B)} [L.IsBinary] {g : Ty B} {Γ : �
 types of the computations that read an assignment: a rule is its Structured App, and abstraction
 over an index is the binder of the index. -/
 def toBinding (L : Language.{0, 0} (Ty B)) [L.IsBinary] (g : Ty B) (Γ : ℕ → Ty B) :
-    L.withAbstraction Γ →ᴸ ((effectGrammar L).sum (binding g Γ)).comap (Ty.comp (.R g)) where
-  onFunction σ u f :=
-    match σ, u, f with
-    | .prod (.of _) (.of _), _, .inl f => .inl (Mode.ap (.basic f))
-    | .of _, _, .inr (.index n b) => .inr (Binder.index n b)
-    | .of _, _, .inl f => isEmptyElim f
-    | .nil, _, .inl f => isEmptyElim f
-    | .prod .nil _, _, .inl f => isEmptyElim f
-    | .prod (.prod _ _) _, _, .inl f => isEmptyElim f
-    | .prod (.of _) .nil, _, .inl f => isEmptyElim f
-    | .prod (.of _) (.prod _ _), _, .inl f => isEmptyElim f
+    L.withAbstraction Γ →ᴸ ((effectGrammar L).sum (binding g Γ)).comap (Ty.comp (.R g)) :=
+  (LHom.ofBinary (L'' := ((effectGrammar L).sum (binding g Γ)).comap (Ty.comp (.R g)))
+      fun f ↦ Language.Sum.inl (Mode.ap (.basic f))).sumElim
+    (LHom.ofMk₂ (fun | .index n b => Language.Sum.inr (Binder.index n b)) nofun)
 
 variable {D : B → Type} [M : L.Structure (Ty.Dom D)]
 
@@ -119,21 +123,15 @@ relative to assignments: Structured App of a rule at reading is the rule at one 
 the binder of an index is abstraction over it. -/
 theorem toBinding_isExpansionOn (E : Assignments (g.Dom D) (Ty.Dom D) Γ) :
     (toBinding L g Γ).IsExpansionOn (withAbstraction.structure E)
-      ((effectGrammar.structure.sum (binding.structure E)).comap (Ty.comp (.R g))) where
-  map_onFunction σ u f _ :=
-    match σ, u, f with
-    | .prod (.of _) (.of _), _, .inl _ => rfl
-    | .of _, _, .inr (.index _ _) => rfl
-    | .of _, _, .inl f => isEmptyElim f
-    | .nil, _, .inl f => isEmptyElim f
-    | .prod .nil _, _, .inl f => isEmptyElim f
-    | .prod (.prod _ _) _, _, .inl f => isEmptyElim f
-    | .prod (.of _) .nil, _, .inl f => isEmptyElim f
-    | .prod (.of _) (.prod _ _), _, .inl f => isEmptyElim f
+      ((effectGrammar.structure.sum (binding.structure E)).comap (Ty.comp (.R g))) :=
+  LHom.sumElim_isExpansionOn (LHom.ofBinary_isExpansionOn fun _ _ _ ↦ rfl)
+    (LHom.ofMk₂_isExpansionOn (fun | .index _ _, _ => rfl) nofun)
 
-/-- **Assignments are an effect, for derivations.** A derivation of a grammar with abstraction
-has, read in the effect-driven grammar with the binder at the types of readers, the value it has
-relative to assignments. -/
+/-- **Assignments are an effect, for derivations.** A derivation of a grammar of binary rules
+with abstraction has, read in the effect-driven grammar with the binder at the types of readers,
+the value it has relative to assignments. The value is taken in the structure pulled back along
+the map of types, and the statement is of values: at reading, Structured App of a rule has the
+value of any other mode that merges the two readers. -/
 theorem realize_toBinding (E : Assignments (g.Dom D) (Ty.Dom D) Γ) {W : Ty B → Type}
     (ρ : ∀ {a : Ty B}, W a → g.Dom D → a.Dom D) {a : Ty B}
     (d : (L.withAbstraction Γ).Deriv W a) :

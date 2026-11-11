@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Semantics.Composition.Interpreter
+public import Linglib.Core.ModelTheory.ManySorted.Comap
 
 /-!
 # The interpretation of a constituency tree
@@ -307,5 +308,40 @@ theorem values_eq_map_of_types {T' : Type} {G' : Language T'} {W' D' : T' → Ty
         rw [hb d₁.1 d₂.1 (h₁ d₁ hd₁) (h₂ d₂ hd₂) d₁.2 d₂.2, List.map_map]; rfl
     · obtain ⟨d₁, hd₁, d₂, hd₂, m, hm, rfl⟩ := mem_binaryValues.1 hd
       exact hQb d₁.1 d₂.1 (h₁ d₁ hd₁) (h₂ d₂ hd₂) m hm
+
+/-- An interpreter keeps to the types satisfying `Q` when the rules it admits for daughters of
+such types give a mother of one. -/
+structure _root_.Interpreter.KeepsTo (I : Interpreter G ℕ) (Q : T → Prop) : Prop where
+  /-- The rules of a binder. -/
+  bind : ∀ (n : ℕ) (a : T), Q a → ∀ r ∈ I.bind n a, Q r.1
+  /-- The rules of a binary node. -/
+  binary : ∀ a b : T, Q a → Q b → ∀ m ∈ I.binary a b, Q m.1
+
+/-- A map of grammars along a map of types gives a tree the same values. Where the structure of
+the second grammar, pulled back along the map of types, expands that of the first, and on the
+types satisfying `Q`, to which the first interpreter keeps, the second interpreter admits at the
+images the images of the rules the first admits, the values of a tree by the second are its
+values by the first, retyped. -/
+theorem values_eq_map_values {T' : Type} {G' : Language T'} {W' D' : T' → Type} {ι : T → T'}
+    {φ : G →ᴸ G'.comap ι} {M : G.Structure fun a ↦ D' (ι a)} {M' : G'.Structure D'}
+    (hφ : φ.IsExpansionOn M (M'.comap ι)) {Q : T → Prop} {I : Interpreter G ℕ}
+    {J : Interpreter G' ℕ} (hI : I.KeepsTo Q)
+    {ρ : ∀ {a : T}, W a → D' (ι a)} {ρ' : ∀ {a : T'}, W' a → D' a}
+    {lex : L ⊕ ℕ → List (Sigma W)} {lex' : L ⊕ ℕ → List (Sigma W')}
+    (hlex : ∀ x, (lex' x).map (fun p ↦ (⟨p.1, ρ' p.2⟩ : Sigma D')) =
+      (lex x).map fun p ↦ ⟨ι p.1, ρ p.2⟩)
+    (hQ : ∀ x, ∀ p ∈ lex x, Q p.1)
+    (hbind : ∀ (n : ℕ) (a : T), Q a →
+      J.bind n (ι a) = (I.bind n a).map fun r ↦ ⟨ι r.1, φ.onFunction r.2⟩)
+    (hbinary : ∀ a b : T, Q a → Q b →
+      J.binary (ι a) (ι b) = (I.binary a b).map fun m ↦ ⟨ι m.1, φ.onFunction m.2⟩)
+    (t : Tree C L) :
+    t.values J M' ρ' lex' = (t.values I M ρ lex).map fun d ↦ ⟨ι d.1, d.2⟩ := by
+  refine values_eq_map_of_types ι Q hlex hQ (fun n a ha x ↦ ?_) hI.bind
+    (fun a b ha hb x y ↦ ?_) hI.binary t
+  · rw [hbind n a ha, List.map_map]
+    exact List.map_congr_left fun r _ ↦ congrArg (Sigma.mk _) (hφ.map_onFunction r.2 x)
+  · rw [hbinary a b ha hb, List.map_map]
+    exact List.map_congr_left fun m _ ↦ congrArg (Sigma.mk _) (hφ.map_onFunction m.2 (x, y))
 
 end PhraseStructure.Tree
