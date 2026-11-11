@@ -8,9 +8,8 @@ public import Linglib.Semantics.Composition.Mode.Basic
 The types of two daughters decide which modes of the effect-driven grammar combine them.
 `Ty.combine` lists them: each way of peeling effects off the two types down to a basic rule,
 with every Join and Lower the result allows. [It lists every mode of the
-grammar](##Interpreter.Ty.mem_combine), so the effect-driven interpreter [admits every mode at a
-node](##Interpreter.mem_binary_effectDriven), and with an inventory of meta-modes
-[exactly the modes that keep to it](##Interpreter.mem_binary_effectDrivenWithin). The modes for
+grammar](##Interpreter.Ty.mem_combine), and with an inventory of meta-modes [exactly the modes
+that keep to it](##Interpreter.Ty.mem_combineWithin). The modes for
 two types are [one step of the search from the modes for smaller
 types](##Interpreter.Ty.combineWith_eq_combineStep).
 
@@ -23,8 +22,6 @@ types](##Interpreter.Ty.combineWith_eq_combineStep).
   `Mode.closure`.
 * `Interpreter.Ty.combineWithin`: the modes of a grammar with an inventory of meta-modes, which
   are [exactly those that keep to it](##Interpreter.Ty.mem_combineWithin).
-* `Interpreter.effectDriven`: the interpreter that admits the modes `Ty.combine` lists, and
-  `Interpreter.effectDrivenWithin`, the one that admits those that keep to an inventory.
 
 ## Implementation notes
 
@@ -560,37 +557,5 @@ theorem Ty.mem_combineWithin
       m.2 h hk
 
 end Complete
-
-/-- The interpreter of Bumford and Charlow's effect-driven grammar over a grammar: a binary node
-admits every mode that `Ty.combine` finds for its daughters, which are all the modes of the
-grammar. -/
-def effectDriven [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] {N : Type} :
-    Interpreter (effectGrammar G) N where
-  bind _ _ := []
-  binary := Ty.combine (Language.LocallyFinite.binaryRules (L := G))
-
-/-- A node admits every mode of the grammar that combines its daughters. -/
-theorem mem_binary_effectDriven [DecidableEq B] {G : Language (Ty B)} [G.LocallyFinite]
-    {N : Type} {l r : Ty B} (m : Sigma (Mode G.Binary l r)) :
-    m ∈ (effectDriven G : Interpreter (effectGrammar G) N).binary l r :=
-  Ty.mem_combine (find := Language.LocallyFinite.binaryRules (L := G))
-    (fun b ↦ Language.LocallyFinite.mem_symbols b) m.2
-
-/-- The effect-driven interpreter of a grammar with an inventory of meta-modes: a node admits the
-modes for its daughters that keep to the inventory. -/
-def effectDrivenWithin [DecidableEq B] (inv : MetaMode → Eff B → Prop)
-    [DecidableRel inv] (G : Language (Ty B)) [G.LocallyFinite] {N : Type} :
-    Interpreter (effectGrammar G) N where
-  bind _ _ := []
-  binary := Ty.combineWithin inv (Language.LocallyFinite.binaryRules (L := G))
-
-/-- A node admits exactly the modes that keep to the inventory. -/
-theorem mem_binary_effectDrivenWithin [DecidableEq B] {G : Language (Ty B)} [G.LocallyFinite]
-    {N : Type} {inv : MetaMode → Eff B → Prop} [DecidableRel inv] {l r : Ty B}
-    {m : Sigma (Mode G.Binary l r)} :
-    m ∈ (effectDrivenWithin inv G : Interpreter (effectGrammar G) N).binary l r ↔
-      m.2.Within inv :=
-  Ty.mem_combineWithin (find := Language.LocallyFinite.binaryRules (L := G))
-    fun b ↦ Language.LocallyFinite.mem_symbols b
 
 end Interpreter

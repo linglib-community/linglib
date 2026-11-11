@@ -15,6 +15,7 @@ public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Reference.Iota
 public import Linglib.Data.Examples.BaleKhanjian2014
 public import Linglib.Data.Examples.Readers
+public import Linglib.Semantics.Composition.Mode.Interpreter
 
 /-!
 # Bale and Khanjian 2014: syntactic complexity and competition in Western Armenian

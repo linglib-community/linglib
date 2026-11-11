@@ -10,6 +10,7 @@ public import Linglib.Semantics.Mereology
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
 public import Linglib.Data.Examples.Wellwood2015
 public import Studies.Bresnan1973
+public import Linglib.Semantics.Composition.Interpret
 
 /-!
 # Wellwood (2015): On the Semantics of Comparison Across Categories

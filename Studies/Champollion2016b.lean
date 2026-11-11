@@ -11,6 +11,7 @@ public import Linglib.Semantics.Composition.PredicateAbstraction
 public import Linglib.Syntax.Command
 public import Linglib.Fragments.English.Coordination
 public import Mathlib.Data.Set.Card
+public import Linglib.Semantics.Composition.Interpret
 
 /-!
 # Champollion (2016): Ten Men and Women Got Married Today: Noun Coordination and the Intersective Theory of Conjunction

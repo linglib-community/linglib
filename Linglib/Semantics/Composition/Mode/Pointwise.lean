@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Composition.Mode.Combine
-public import Linglib.Semantics.Composition.Constituency
 
 /-!
 # The pointwise grammar of an effect
@@ -10,9 +9,8 @@ A grammar is pointwise at an effect when its inventory has Structured App and no
 there: the grammars in which every constituent is evaluated at an assignment, or denotes a set of
 alternatives, are essentially of this kind. Two daughters that carry the effect then [combine by
 Structured App alone](##Interpreter.Mode.Within.exists_eq_ap), [the search lists for them the
-Structured Apps of what it lists for their results](##Interpreter.Ty.combineWithin_pointwise),
-and over a lexicon whose every item carries the effect [a tree has its values in the structure on
-computations](##PhraseStructure.Tree.values_effectDrivenWithin_pointwise). Structured App is
+Structured Apps of what it lists for their results](##Interpreter.Ty.combineWithin_pointwise).
+Structured App is
 [evaluation at one datum](##Interpreter.Mode.eval_ap_R) at reading, where the structure on
 computations [is the structure on functions of the
 datum](##Interpreter.effectGrammar.pointwise_R), [Hamblin's
@@ -127,16 +125,6 @@ theorem eval_ap_F (m : Mode G.Binary l r u) (a : (Ty.comp .F l).Dom D)
 
 end Mode
 
-theorem binary_effectDrivenWithin_pointwise [DecidableEq B] {P : Eff B → Prop} [DecidablePred P]
-    {G : Language (Ty B)} [G.LocallyFinite] {N : Type} {f : Eff B} (hf : P f)
-    [ha : f.IsApplicative] {l r : Ty B}
-    [∀ u : Ty B, IsEmpty (G.Binary (.comp f l) (.comp f r) u)] :
-    (effectDrivenWithin (MetaMode.pointwise P) G : Interpreter (effectGrammar G) N).binary
-        (.comp f l) (.comp f r) =
-      ((effectDrivenWithin (MetaMode.pointwise P) G : Interpreter (effectGrammar G) N).binary
-        l r).map fun p ↦ ⟨.comp f p.1, .ap p.2 ha⟩ :=
-  Ty.combineWithin_pointwise hf (List.eq_nil_iff_forall_not_mem.2 fun p _ ↦ isEmptyElim p.2)
-
 /-! ### The pointwise grammar as a grammar on computations -/
 
 namespace Eff
@@ -191,33 +179,3 @@ theorem effectGrammar.pointwise_R {G : Language (Ty B)} {D : B → Type}
     exact congrArg (Eff.map (.R i) (M.funMap g)) (Eff.sequence_R i _ x)
 
 end Interpreter
-
-namespace PhraseStructure.Tree
-
-open ManySorted.Language Interpreter
-
-variable {B : Type} [DecidableEq B] {P : Eff B → Prop} [DecidablePred P] {G : Language (Ty B)}
-  [G.LocallyFinite] {D : B → Type} [M : G.Structure (Ty.Dom D)] {C Lx : Type}
-  {W W' : Ty B → Type} {f : Eff B}
-
-/-- In a grammar pointwise at `f`, with no basic rule for two daughters that
-carry `f`, the values of a tree over a lexicon whose items all carry `f` are its values in
-`effectGrammar.pointwise f` over the results of the items. -/
-theorem values_effectDrivenWithin_pointwise
-    [∀ l r u : Ty B, IsEmpty (G.Binary (.comp f l) (.comp f r) u)] (hf : P f)
-    [ha : f.IsApplicative]
-    {ρ : ∀ {a : Ty B}, W a → (Ty.comp f a).Dom D} {ρ' : ∀ {a : Ty B}, W' a → a.Dom D}
-    {lex : Lx ⊕ ℕ → List (Sigma W)} {lex' : Lx ⊕ ℕ → List (Sigma W')}
-    (hlex : ∀ x, (lex' x).map (fun p ↦ (⟨p.1, ρ' p.2⟩ : Sigma (Ty.Dom D))) =
-      (lex x).map fun p ↦ ⟨.comp f p.1, ρ p.2⟩)
-    (t : Tree C Lx) :
-    t.values (effectDrivenWithin (MetaMode.pointwise P) G) effectGrammar.structure ρ' lex' =
-      (t.values (effectDrivenWithin (MetaMode.pointwise P) G) (effectGrammar.pointwise f)
-        ρ lex).map fun d ↦ ⟨.comp f d.1, d.2⟩ := by
-  refine values_eq_map_of_types (Ty.comp f) (fun _ ↦ True) hlex (fun _ _ _ ↦ trivial)
-    (fun _ _ _ _ ↦ rfl) (fun _ _ _ _ _ ↦ trivial)
-    (fun _ _ _ _ _ _ ↦ ?_) (fun _ _ _ _ _ _ ↦ trivial) t
-  rw [binary_effectDrivenWithin_pointwise hf, List.map_map]
-  rfl
-
-end PhraseStructure.Tree

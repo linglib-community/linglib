@@ -10,6 +10,7 @@ public import Linglib.Semantics.ArgumentStructure.EventIdentification
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Mode.Basic
 public import Linglib.Semantics.Composition.Sorts
+public import Linglib.Semantics.Composition.Constituency
 
 /-!
 # The denotation of Voice

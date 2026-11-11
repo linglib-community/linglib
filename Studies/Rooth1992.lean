@@ -10,6 +10,7 @@ public import Linglib.Semantics.Composition.Value
 public import Linglib.Semantics.Composition.Mode.Combine
 public import Linglib.Semantics.Composition.Mode.Pointwise
 public import Linglib.Semantics.Composition.Rules
+public import Linglib.Semantics.Composition.Mode.Interpreter
 
 /-!
 # Rooth (1992): A theory of focus interpretation

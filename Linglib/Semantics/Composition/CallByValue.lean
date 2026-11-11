@@ -26,8 +26,6 @@ constituent with no partial word in it never lacks a value.
   structures of application and predicate modification on them.
 * `Interpreter.Assignments.partial`: partial assignments, with abstracts that are partial
   functions.
-* `Interpreter.partialValued`: constituents as partial values where only some words are partial,
-  undefined where a daughter is.
 * `Interpreter.Ty.CbvRel`, `Interpreter.Ty.PartRel`: a total value and the value, or partial
   value, that is it.
 ## References
@@ -183,19 +181,6 @@ def Assignments.partial (D : B → Type) (Γ : ℕ → Ty B) :
 
 Where only some words are partial, their types say so, and constituents are partial values
 combined by the rules of a grammar where both sisters are defined. -/
-
-/-- The partial-valued interpreter: every constituent is a partial value, and sisters combine by
-a rule of the grammar on their values where both are defined, a partial result of the rule
-flattened. A function applied to an undefined argument is undefined. -/
-def partialValued [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] {N : Type} :
-    Interpreter (effectGrammar G) N where
-  bind _ _ := []
-  binary
-    | .comp .M l, .comp .M r =>
-      (Language.LocallyFinite.binaryRules (L := G) l r).map fun
-        | ⟨.comp .M u, p⟩ => ⟨.comp .M u, .join (.ap (.basic p))⟩
-        | ⟨u, p⟩ => ⟨.comp .M u, .ap (.basic p)⟩
-    | _, _ => []
 
 section PartialValued
 

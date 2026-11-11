@@ -8,6 +8,7 @@ public import Linglib.Semantics.Composition.Mode.Binder
 public import Studies.HeimKratzer1998
 public import Linglib.Semantics.Composition.Mode.Normal
 public import Linglib.Semantics.Composition.MetaCombinator.Adjunction
+public import Linglib.Semantics.Composition.Mode.Interpreter
 
 /-!
 # Bumford and Charlow 2026: effect-driven interpretation

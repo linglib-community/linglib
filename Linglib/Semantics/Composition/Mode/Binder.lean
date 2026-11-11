@@ -14,17 +14,12 @@ computation, sisters combine by Structured App, and abstraction is an operator o
 the binder of an index takes a computation to the computation of a function of the value the
 assignment is modified to give the index. A grammar with abstraction maps into the grammar with
 the binder, and [a derivation keeps its
-value](##ManySorted.Language.withAbstraction.realize_toBinding). For trees, the grammar with the
-assignment in its types [gives the values of the grammar relative to
-assignments](##PhraseStructure.Tree.values_withBinder), whatever other effects its words have, and
-over words without effects [the values of Heim and Kratzer's
-rules](##PhraseStructure.Tree.values_withBinder_of_effectFree).
+value](##ManySorted.Language.withAbstraction.realize_toBinding).
 
 ## Main definitions
 
 * `Interpreter.Binder`, `Interpreter.binding`: the binder of an index, an operator on the
   computations that read an assignment.
-* `Interpreter.withBinder`: an interpreter that admits the binder at an index.
 * `ManySorted.Language.withAbstraction.toBinding`: the map of a grammar with abstraction into
   the grammar with the binder, at the types of readers.
 
@@ -32,9 +27,8 @@ rules](##PhraseStructure.Tree.values_withBinder_of_effectFree).
 
 Reading is an effect for each type of datum, so the assignments that traces read and the
 referents that pronouns read are data of different types and their effects are different
-effects. The binder is a rule a node labelled by an index admits, as abstraction is in
-`Interpreter.withAbstraction`, and not a word: a word has finitely many types, and the binder
-applies to a computation of any type.
+effects. The binder is a rule of the grammar, as abstraction is, and not a word: a word has
+finitely many types, and the binder applies to a computation of any type.
 
 ## References
 
@@ -86,13 +80,6 @@ function of the value the assignment is modified to give the index. -/
     (binding.structure E).funMap (σ := .of (.comp (.R g) b)) (t := .comp (.R g) (Γ n ⇒ b))
         (Binder.index n b) body =
       fun i ↦ E.lam fun v ↦ body (E.set i n v) := rfl
-
-/-- An interpreter with the binder: a binder node admits the binder of its index,
-and a binary node admits what the interpreter admits. -/
-def withBinder [DecidableEq B] {L : Language.{0, 0} (Ty B)} (I : Interpreter L ℕ) (g : Ty B)
-    (Γ : ℕ → Ty B) : Interpreter (L.sum (binding g Γ)) ℕ where
-  bind n a := (Binder.rules g Γ n a).map fun r ↦ ⟨r.1, Language.Sum.inr r.2⟩
-  binary l r := (I.binary l r).map fun m ↦ ⟨m.1, .inl m.2⟩
 
 end Interpreter
 
@@ -156,62 +143,3 @@ theorem realize_toBinding (E : Assignments (g.Dom D) (Ty.Dom D) Γ) {W : Ty B �
   LHom.realize_onTerm (toBinding_isExpansionOn E) ρ d
 
 end ManySorted.Language.withAbstraction
-
-namespace PhraseStructure.Tree
-
-open ManySorted.Language Interpreter
-
-variable {B : Type} [DecidableEq B] {P : Eff B → Prop} [DecidablePred P]
-  {L : Language.{0, 0} (Ty B)} [L.LocallyFinite] {D : B → Type} [M : L.Structure (Ty.Dom D)]
-  {C Lx : Type} {W W' : Ty B → Type} {g : Ty B} {Γ : ℕ → Ty B}
-  [∀ l r u : Ty B, IsEmpty (L.Binary (.comp (.R g) l) (.comp (.R g) r) u)]
-  {ρ : ∀ {a : Ty B}, W a → (Ty.comp (.R g) a).Dom D} {ρ' : ∀ {a : Ty B}, W' a → a.Dom D}
-  {lex : Lx ⊕ ℕ → List (Sigma W)} {lex' : Lx ⊕ ℕ → List (Sigma W')}
-
-/-- **Assignments are an effect.** In a grammar pointwise at reading an assignment, over a
-lexicon whose every item reads one, the values of a tree with the binder at its indices are its
-values relative to assignments, with abstraction over its indices: the assignment may be a
-parameter of the interpretation or a datum in the types. -/
-theorem values_withBinder (hf : P (.R g)) (E : Assignments (g.Dom D) (Ty.Dom D) Γ)
-    (hlex : ∀ x, (lex' x).map (fun p ↦ (⟨p.1, ρ' p.2⟩ : Sigma (Ty.Dom D))) =
-      (lex x).map fun p ↦ ⟨.comp (.R g) p.1, ρ p.2⟩)
-    (t : Tree C Lx) :
-    t.values ((effectDrivenWithin (MetaMode.pointwise P) L).withBinder g Γ)
-        (effectGrammar.structure.sum (binding.structure E)) ρ' lex' =
-      (t.values ((effectDrivenWithin (MetaMode.pointwise P) L).withAbstraction Γ)
-        (withAbstraction.structure (M := effectGrammar.structure) E) ρ lex).map
-          fun d ↦ ⟨.comp (.R g) d.1, d.2⟩ := by
-  refine values_eq_map_of_types (Ty.comp (.R g)) (fun _ ↦ True) hlex (fun _ _ _ ↦ trivial)
-    (fun _ _ _ _ ↦ by simp [withBinder, Interpreter.withAbstraction])
-    (fun _ _ _ _ _ ↦ trivial) (fun _ _ _ _ _ _ ↦ ?_) (fun _ _ _ _ _ _ ↦ trivial) t
-  simp only [withBinder, Interpreter.withAbstraction, binary_effectDrivenWithin_pointwise hf,
-    List.map_map]
-  rfl
-
-/-- **Heim and Kratzer's grammar is the pointwise grammar of reading an assignment.** Over words
-and indices of types without effects, each word read as the computation that ignores or consults
-the assignment, the values of a tree in the effect-driven grammar pointwise at reading, with the
-binder at its indices, are its values by the rules of the grammar at one assignment, with
-abstraction over its indices. -/
-theorem values_withBinder_of_effectFree (hf : P (.R g)) (hL : L.EffectFree)
-    (hΓ : ∀ n, (Γ n).EffectFree) (E : Assignments (g.Dom D) (Ty.Dom D) Γ)
-    (hlex : ∀ x, (lex' x).map (fun p ↦ (⟨p.1, ρ' p.2⟩ : Sigma (Ty.Dom D))) =
-      (lex x).map fun p ↦ ⟨.comp (.R g) p.1, ρ p.2⟩)
-    (hfree : ∀ x, ∀ p ∈ lex x, p.1.EffectFree) (t : Tree C Lx) :
-    t.values ((effectDrivenWithin (MetaMode.pointwise P) L).withBinder g Γ)
-        (effectGrammar.structure.sum (binding.structure E)) ρ' lex' =
-      (t.values ((typeDriven L).withAbstraction Γ) (withAbstraction.structure E) ρ lex).map
-        fun d ↦ ⟨.comp (.R g) d.1, d.2⟩ := by
-  refine values_eq_map_of_types (Ty.comp (.R g)) Ty.EffectFree hlex hfree
-    (fun _ _ _ _ ↦ by simp [withBinder, Interpreter.withAbstraction])
-    (fun n a ha r hr ↦ ?_) (fun a b ha hb _ _ ↦ ?_) (fun a b ha hb m hm ↦ ?_) t
-  · obtain rfl := List.mem_singleton.1 hr
-    exact ⟨hΓ n, ha⟩
-  · simp only [withBinder, Interpreter.withAbstraction, typeDriven,
-      binary_effectDrivenWithin_pointwise hf,
-      binary_effectDrivenWithin_of_effectFree _ hL ha hb, List.map_map]
-    rfl
-  · obtain ⟨m, -, rfl⟩ := List.mem_map.1 hm
-    exact hL.binary m.2 ha hb
-
-end PhraseStructure.Tree
