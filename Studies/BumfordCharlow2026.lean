@@ -472,6 +472,15 @@ theorem combineWithin_pointwise :
     combineWithin (MetaMode.pointwise fun _ ↦ True) (S e) (S (e ⇒ T)) = [(.ap BA, S T)] := by
   decide
 
+-- section 3.4: the same at reading, where the applicative grammar has three modes for two
+-- readers and the pointwise grammar the one that evaluates them at one datum
+theorem combineWithin_applicative_readers : combineWithin applicative (R e) (R (e ⇒ T)) =
+    [(.mapR (.mapL BA), R (R T)), (.mapL (.mapR BA), R (R T)), (.ap BA, R T)] := by decide
+
+theorem combineWithin_pointwise_readers :
+    combineWithin (MetaMode.pointwise fun _ ↦ True) (R e) (R (e ⇒ T)) = [(.ap BA, R T)] := by
+  decide
+
 -- section 3.4: and a closure operator captures the effect of its prejacent
 theorem combineWithin_pointwise_closure :
     combineWithin (MetaMode.pointwise fun _ ↦ True) (S T ⇒ T) (S T) = [(FA, T)] := by decide
@@ -620,6 +629,31 @@ theorem interpret_sheCalledHer :
         (fun | .called => [⟨_, .called⟩]) =
       [⟨.t, fun g ↦ call (g 1) (g 0)⟩] := by
   simp [sheCalledHer, EnvItem.val]
+
+theorem application_effectFree : (application (B := EnvSort)).EffectFree where
+  unary r := nomatch r
+  binary := @fun
+    | _, _, _, .fa, hl, _ => hl.2
+    | _, _, _, .ba, _, hr => hr.2
+
+/-- The environment-sensitive grammar with the binder gives *she called her* the function Heim
+and Kratzer's rules give it, as a reader: the two are one by the general theorem, and not by
+comparing what each computes. -/
+theorem values_withBinder_sheCalledHer :
+    sheCalledHer.values (environmentSensitive.withBinder env fun _ ↦ ind)
+        (effectGrammar.structure.sum
+          (binding.structure (g := env) (Assignments.total D fun _ ↦ ind)))
+        (fun {_} ↦ ReaderItem.val call) readers =
+      (sheCalledHer.interpret application D (fun _ ↦ ind) (fun {_} ↦ EnvItem.val call)
+        (fun | .called => [⟨_, .called⟩])).map fun d ↦ ⟨.comp (.R env) d.1, d.2⟩ :=
+  Tree.values_withBinder_of_effectFree (P := (· = .R env)) (g := env) (Γ := fun _ ↦ ind) rfl
+    application_effectFree (fun _ ↦ trivial) _
+    (fun x ↦ by rcases x with _ | _ <;> rfl)
+    (fun x p hp ↦ by
+      rcases x with _ | _ <;> simp only [Leaf.lex, List.map_cons, List.map_nil,
+        List.mem_singleton] at hp <;> subst hp
+      · exact ⟨trivial, trivial, trivial⟩
+      · trivial) _
 
 end Reading
 
