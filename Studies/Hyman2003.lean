@@ -232,7 +232,7 @@ namespace Grammar
 variable (G : Grammar)
 
 /-- The linear extensions of the grammar's order. -/
-def rankings : Finset (Ranking (Fin G.n) G.n) := consistentTotalOrders G.order
+def rankings : Finset (Ranking (Fin G.n) G.n) := Ranking.linearExtensions G.order
 
 /-- The licensors in the order of a ranking, most dominant first. -/
 def ranked (σ : Ranking (Fin G.n) G.n) : List Licensor :=

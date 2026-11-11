@@ -145,10 +145,10 @@ theorem tdDeletion_gen (ctx : Context) : tdDeletion.gen ctx = {.delete, .retain}
 /-! ### Categorical systems (12) -/
 
 /-- Ranking `σ` deletes in `ctx` if deletion is its unique optimum. -/
-def Deletes (σ : Ranking (Fin 4) 4) (ctx : Context) : Prop := PicksAt tdDeletion σ ctx .delete
+def Deletes (σ : Ranking (Fin 4) 4) (ctx : Context) : Prop := tdDeletion.PicksAt σ ctx .delete
 
 instance (σ : Ranking (Fin 4) 4) (ctx : Context) : Decidable (Deletes σ ctx) :=
-  inferInstanceAs (Decidable (PicksAt tdDeletion σ ctx .delete))
+  inferInstanceAs (Decidable (tdDeletion.PicksAt σ ctx .delete))
 
 theorem deletes_preC_iff : ∀ σ : Ranking (Fin 4) 4, Deletes σ .preC ↔ σ.Dominates 0 1 := by decide
 
@@ -212,7 +212,7 @@ private theorem deletionProb_eq_div {g : ImposedRanking} {ctx : Context} {q : �
 theorem deletionProb_none (ctx : Context) :
     deletionProb .none ctx = ((active con ctx .delete .retain).card : ℝ)⁻¹ := by
   rw [deletionProb, extensions, coe_univ,
-    show {σ | Deletes σ ctx} = {σ | PicksAt tdDeletion σ ctx .delete} from rfl,
+    show {σ | Deletes σ ctx} = {σ | tdDeletion.PicksAt σ ctx .delete} from rfl,
     uniformOn_real_picksAt_discrete_binary (tdDeletion_gen ctx) (by decide),
     show tdDeletion.con = con from rfl, favoring_eq,
     card_singleton, Nat.cast_one, one_div]
@@ -272,17 +272,17 @@ theorem deletionProb_maxPreVOverStarCT_preC_not_mem :
 theorem five_le_of_real_picksAt_eq {n : ℕ} {Input Output : Type*} [DecidableEq Output]
     {S : ConstraintSystem Input Output (Fin n)}
     {r : Fin n → Fin n → Prop} [DecidableRel r] {i : Input} {o : Output}
-    (h : (uniformOn (consistentTotalOrders r : Set (Ranking (Fin n) n))).real
-      {σ | PicksAt S σ i o} = 1/100) : 5 ≤ n := by
+    (h : (uniformOn (Ranking.linearExtensions r : Set (Ranking (Fin n) n))).real
+      {σ | S.PicksAt σ i o} = 1/100) : 5 ≤ n := by
   rw [uniformOn_finset_real_setOf] at h
-  have ht : (consistentTotalOrders r).card ≤ n.factorial := (card_le_univ _).trans_eq (by
+  have ht : (Ranking.linearExtensions r).card ≤ n.factorial := (card_le_univ _).trans_eq (by
     rw [show Fintype.card (Ranking (Fin n) n) = Fintype.card (Equiv.Perm (Fin n)) from rfl,
       Fintype.card_perm, Fintype.card_fin])
-  have h0 : (consistentTotalOrders r).card ≠ 0 := by
+  have h0 : (Ranking.linearExtensions r).card ≠ 0 := by
     rintro h0; rw [h0, Nat.cast_zero, div_zero] at h; norm_num at h
   rw [div_eq_div_iff (by exact_mod_cast h0) (by norm_num)] at h
-  generalize ((consistentTotalOrders r).filter (PicksAt S · i o)).card = k at h
-  generalize (consistentTotalOrders r).card = t at h ht h0
+  generalize ((Ranking.linearExtensions r).filter (S.PicksAt · i o)).card = k at h
+  generalize (Ranking.linearExtensions r).card = t at h ht h0
   have hkt : 100 * k = t := by exact_mod_cast (by linarith : (100 * k : ℝ) = t)
   by_contra hn
   have := Nat.factorial_le (show n ≤ 4 by omega)
@@ -291,12 +291,12 @@ theorem five_le_of_real_picksAt_eq {n : ℕ} {Input Output : Type*} [DecidableEq
 
 theorem uniformOn_univ_real_picksAt_ne {Input Output : Type*} [DecidableEq Output]
     (S : ConstraintSystem Input Output (Fin 5)) (i : Input) (o : Output) :
-    (uniformOn (Set.univ : Set (Ranking (Fin 5) 5))).real {σ | PicksAt S σ i o} ≠
+    (uniformOn (Set.univ : Set (Ranking (Fin 5) 5))).real {σ | S.PicksAt σ i o} ≠
       1/100 := by
   rw [← coe_univ, uniformOn_finset_real_setOf, card_univ, Fintype.card_perm, Fintype.card_fin]
   intro h
   rw [div_eq_div_iff (by positivity) (by norm_num)] at h
-  generalize (univ.filter fun σ : Ranking (Fin 5) 5 ↦ PicksAt S σ i o).card = k at h
+  generalize (univ.filter fun σ : Ranking (Fin 5) 5 ↦ S.PicksAt σ i o).card = k at h
   norm_num [Nat.factorial] at h
   have : k * 100 = 120 := by exact_mod_cast h
   omega
@@ -518,7 +518,7 @@ theorem loanwordDevoicing_not_isOTRealizable : ¬ loanwordDevoicing.IsOTRealizab
 
 /-- Ranking `σ` devoices loanword `l`. -/
 def Devoices (σ : Ranking (Fin 3) 3) (l : Loan) : Prop :=
-  PicksAt loanwordDevoicing.toConstraintSystem σ l .devoiced
+  loanwordDevoicing.toConstraintSystem.PicksAt σ l .devoiced
 
 -- p. 18
 theorem setOf_devoices_guddo :
