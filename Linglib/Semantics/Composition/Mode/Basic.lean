@@ -17,8 +17,8 @@ continuation at its own result type.
 
 * `Interpreter.Mode`: the basic modes closed under the meta-modes.
 * `Interpreter.Mode.eval`: the meaning of a mode, by the operations of the effects.
-* `Interpreter.Mode.Equiv`: two modes mean the same in every structure, written `m ≈ m'`; each
-  meta-mode respects it.
+* `Interpreter.Mode.Equiv`: two modes mean the same in every structure, the relation of the
+  setoid of modes, `m ≈ m'`; each meta-mode respects it.
 * `Interpreter.MetaMode`, `Interpreter.Mode.Within`: the meta-modes, and the modes that keep to
   an inventory of them at each effect.
 * `Interpreter.effectGrammar`: the grammar whose binary rules are the modes over a grammar's
@@ -151,25 +151,32 @@ grammar. -/
 protected def Equiv {G : Language (Ty B)} {l r u : Ty B} (m m' : Mode G.Binary l r u) : Prop :=
   ∀ (D : B → Type) [G.Structure (Ty.Dom D)], m.eval D = m'.eval D
 
-end Mode
+namespace Equiv
 
-@[inherit_doc] scoped infix:50 " ≈ " => Mode.Equiv
+variable {G : Language (Ty B)} {l r u : Ty B} {m m' m'' : Mode G.Binary l r u}
+
+@[refl] protected theorem refl (m : Mode G.Binary l r u) : m.Equiv m := fun _ _ ↦ rfl
+
+@[symm] protected theorem symm (h : m.Equiv m') : m'.Equiv m := fun D _ ↦ (h D).symm
+
+@[trans] protected theorem trans (h : m.Equiv m') (h' : m'.Equiv m'') : m.Equiv m'' :=
+  fun D _ ↦ (h D).trans (h' D)
+
+end Equiv
+
+/-- Modes up to sameness of meaning. -/
+instance setoid {G : Language (Ty B)} {l r u : Ty B} : Setoid (Mode G.Binary l r u) where
+  r := Mode.Equiv
+  iseqv := ⟨Equiv.refl, Equiv.symm, Equiv.trans⟩
+
+theorem equiv_def {G : Language (Ty B)} {l r u : Ty B} {m m' : Mode G.Binary l r u} :
+    m ≈ m' ↔ ∀ (D : B → Type) [G.Structure (Ty.Dom D)], m.eval D = m'.eval D := Iff.rfl
+
+end Mode
 
 namespace Mode.Equiv
 
 variable {G : Language (Ty B)} {f : Eff B} {i l l' r r' u : Ty B}
-
-@[refl] protected theorem refl (m : Mode G.Binary l r u) : m ≈ m := fun _ _ ↦ rfl
-
-@[symm] protected theorem symm {m m' : Mode G.Binary l r u} (h : m ≈ m') : m' ≈ m :=
-  fun D _ ↦ (h D).symm
-
-@[trans] protected theorem trans {m m' m'' : Mode G.Binary l r u} (h : m ≈ m') (h' : m' ≈ m'') :
-    m ≈ m'' :=
-  fun D _ ↦ (h D).trans (h' D)
-
-instance : Trans (Mode.Equiv (G := G) (l := l) (r := r) (u := u)) Mode.Equiv Mode.Equiv :=
-  ⟨Equiv.trans⟩
 
 /-! Each meta-mode respects sameness of meaning. -/
 
