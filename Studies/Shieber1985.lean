@@ -39,10 +39,6 @@ schema of Claim 2 and `f` do; the prose of Claim 2 puts the datives first. In th
 requires the case of its entry in `German.Zurich.Verbs`, and a noun phrase bears the case its
 gloss marks.
 
-## TODO
-
-Stating the counterexample to note 4 needs the closure of the context-free languages under union.
-
 ## References
 
 * [shieber-1985]
