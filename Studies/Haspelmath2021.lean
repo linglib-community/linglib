@@ -651,22 +651,24 @@ def bauleT : Scenario Nominality → ℕ := below .downstream ∘ Scenario.kind
 private def featuresUpTo (r : WithBot Person.Feature) : ℕ :=
   (Finset.univ.filter fun f : Person.Feature ↦ (f : WithBot Person.Feature) ≤ r).card
 
-theorem kashmiri_rank (p : Person) : BejarRezac2009.kashmiri.rank p = p.toFeatures.card + 1 := by
+theorem kashmiri_rank (p : Person) :
+    Minimalist.CyclicAgree.rank BejarRezac2009.kashmiri p = p.toFeatures.card + 1 := by
   cases p <;> decide
 
 private theorem kashmiri_rank_eq :
-    BejarRezac2009.kashmiri.rank = (featuresUpTo · + 1) ∘ Person.prominence := by
+    Minimalist.CyclicAgree.rank BejarRezac2009.kashmiri =
+      (featuresUpTo · + 1) ∘ Person.prominence := by
   funext p; cases p <;> decide
 
 open Minimalist.CyclicAgree in
 -- (47), Table 11 [bejar-rezac-2009]
 theorem kashmiriP_iff_isInverse (s : Scenario Person) :
-    kashmiriP (s.map Person.prominence) = 1 ↔ BejarRezac2009.kashmiri.IsInverse s := by
+    kashmiriP (s.map Person.prominence) = 1 ↔ IsInverse BejarRezac2009.kashmiri s := by
   have hm : StrictMono (featuresUpTo · + 1) := by decide
   have hs : s.map ((featuresUpTo · + 1) ∘ Person.prominence) =
       (s.map Person.prominence).map (featuresUpTo · + 1) := rfl
-  rw [AgreementSystem.IsInverse, AgreementSystem.isDirect_iff_kind_eq_downstream _ _
-    PersonGeometry.standard_isChain, kashmiri_rank_eq, hs, Scenario.kind_map hm]
+  rw [← not_isDirect, isDirect_iff_kind_eq_downstream (P := BejarRezac2009.kashmiri)
+    (Phi.PersonSegment.isChain_Iic _), kashmiri_rank_eq, hs, Scenario.kind_map hm]
   simp only [kashmiriP, Function.comp_apply]
   generalize (s.map Person.prominence).kind = k
   revert k; decide

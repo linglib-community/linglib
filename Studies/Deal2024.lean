@@ -89,9 +89,10 @@ private theorem interacted_run_pair_aux {α : Type*} (g : Grammar) (person : α 
       split_ifs <;> simp_all
 
 /-- A combination is licit exactly when the direct object does not satisfy the probe and the
-indirect object bears the dynamic features of the direct object. -/
+indirect object is at least as specified as the direct object relative to the dynamic features. -/
 theorem licit_iff (g : Grammar) (s : Scenario Person) :
-    Licit g s ↔ (∀ x ∈ g.satisfaction, x ∉ spec s.low) ∧ g.dynamic ∩ spec s.low ⊆ spec s.high := by
+    Licit g s ↔
+      (∀ x ∈ g.satisfaction, x ∉ spec s.low) ∧ SpecLE g.dynamic (spec s.low) (spec s.high) := by
   have h := interacted_run_pair_aux g Prod.fst (s.low, 0) (s.high, 1)
   change (run g Prod.fst [(s.low, 0), (s.high, 1)]).interacted.map (·.2) = [0, 1] ↔ _
   rw [h]
@@ -112,8 +113,7 @@ theorem interacted_run_pair {α : Type*} (g : Grammar) (person : α → Person) 
 theorem Licit.mono {g : Grammar} {s t : Scenario Person} (hl : spec t.low ⊆ spec s.low)
     (hh : spec s.high ⊆ spec t.high) (h : Licit g s) : Licit g t := by
   rw [licit_iff] at h ⊢
-  exact ⟨fun x hx hxt ↦ h.1 x hx (hl hxt),
-    (Finset.inter_subset_inter_left hl).trans (h.2.trans hh)⟩
+  exact ⟨fun x hx hxt ↦ h.1 x hx (hl hxt), (SpecLE.of_subset hl).trans (h.2.trans (.of_subset hh))⟩
 
 /-- A grammar licensing anything licenses a third-person direct object under any indirect object,
 since the third person bears only the root. -/
@@ -121,14 +121,10 @@ theorem Licit.third {g : Grammar} {s : Scenario Person} (h : Licit g s) (p : Per
     Licit g ⟨p, .third⟩ := by
   have hthird : spec Person.third = {pi} := by decide
   rw [licit_iff] at h ⊢
-  refine ⟨fun x hx hxt ↦ h.1 x hx ?_, fun x hx ↦ ?_⟩
-  · dsimp only at hxt
-    rw [hthird, Finset.mem_singleton] at hxt
-    exact hxt ▸ pi_mem_spec _
-  · rw [Finset.mem_inter] at hx
-    dsimp only at hx
-    rw [hthird, Finset.mem_singleton] at hx
-    exact hx.2 ▸ pi_mem_spec _
+  refine ⟨fun x hx hxt ↦ h.1 x hx ?_, specLE_third _ _⟩
+  dsimp only at hxt
+  rw [hthird, Finset.mem_singleton] at hxt
+  exact hxt ▸ pi_mem_spec _
 
 /-! ### The grammars -/
 

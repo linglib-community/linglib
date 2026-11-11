@@ -2,41 +2,28 @@ module
 
 public import Linglib.Syntax.Agreement.PersonSegment
 public import Linglib.Syntax.Clause.Scenario
-public import Linglib.Syntax.Minimalist.Probe.Basic
-public import Mathlib.Order.Preorder.Chain
+public import Linglib.Syntax.Minimalist.Probe.Agree
 
 /-!
 # Cyclic Agree over articulated person probes
 
-Person is decomposed into the privative segments of `Phi.PersonSegment`. Every person
-bears `π`, speech-act participants also `participant`, and the innermost segments `speaker` and
-`addressee` distinguish first from second person according to a geometry, which fixes which
-segments a language uses. A probe is a list of unvalued segments. A probe on v first meets the
-internal argument and checks every segment it bears; the segments left over, its residue, probe
-again from the next projection of v, where the external argument is the closest goal. The context
-is direct when the external argument checks some residue, and inverse otherwise, when the core
-probe never Agrees with it and its person goes unlicensed. A context is a scenario
-(`Clause.Scenario`) of the external over the internal argument, and under a chain geometry it is
-direct exactly when it is downstream on the number of probe segments each person bears.
+An articulated person probe is a set of unvalued person segments, in the simplest case a segment
+together with the segments it entails, `Finset.Iic x`. A probe on v first meets the internal
+argument, which checks every segment it bears; the segments left over, the residue, probe again
+from the next projection of v, where the external argument is the closest goal. A context, the
+scenario of the external over the internal argument, is inverse when the internal argument is at
+least as specified as the external one relative to the probe (`Phi.SpecLE`) and
+direct otherwise, and [the core probe licenses the external argument exactly in direct
+contexts](##eaLicensed_iff_isDirect). When the segments of the probe form a chain of entailments,
+[a context is direct exactly when it is downstream](##isDirect_iff_kind_eq_downstream) on the
+number of probe segments each person bears, the person hierarchy of the language.
 
-## Main definitions
+## Implementation notes
 
-* `Minimalist.CyclicAgree.PersonGeometry`: the standard, addressee and branching geometries.
-* `Minimalist.CyclicAgree.personSpec`: the segments a person bears under a geometry.
-* `Minimalist.CyclicAgree.AgreementSystem`: a geometry and an articulated probe, with the residue,
-  the direct and inverse contexts, the controller of the agreement slot, person licensing of the
-  external argument, and the rank of a person, the number of probe segments it bears.
-
-## Main results
-
-* `Minimalist.CyclicAgree.AgreementSystem.eaLicensed_iff_isDirect`: the core probe licenses the
-  external argument exactly in direct contexts.
-* `Minimalist.CyclicAgree.AgreementSystem.isDirect_iff_kind_eq_downstream`: under a chain geometry
-  a context is direct iff it is downstream on the system's rank.
-* `Minimalist.CyclicAgree.AgreementSystem.IsDirect.mono`: a more articulated probe has more direct
-  contexts.
-* `Minimalist.CyclicAgree.AgreementSystem.flat_isInverse`: a flat probe makes every context
-  inverse.
+A person bears its whole specification `Phi.PersonSegment.spec`, and a probe sees of it the
+segments the probe has. Whether a language tells first from second person by [speaker] or by
+[addressee] is therefore carried by its probe, `Finset.Iic .speaker` or `Finset.Iic .addressee`,
+and not by a second parameter for the specifications of its nominals.
 
 ## References
 
@@ -48,192 +35,125 @@ direct exactly when it is downstream on the number of probe segments each person
 
 namespace Minimalist.CyclicAgree
 
-open Phi (PersonSegment)
-
-/-! ### Person geometries -/
-
-/-- A person geometry fixes which innermost segment distinguishes first from second person. It is
-`speaker` under `standard` and `addressee` under `addressee`, and under `branching` both are sister
-leaves of `participant` ([harley-ritter-2002]). -/
-inductive PersonGeometry where
-  | standard
-  | addressee
-  | branching
-  deriving DecidableEq, Repr, Fintype
-
-/-- The segments a geometry uses, from the root down. -/
-def PersonGeometry.nodes : PersonGeometry → List PersonSegment
-  | .standard => [.pi, .participant, .speaker]
-  | .addressee => [.pi, .participant, .addressee]
-  | .branching => [.pi, .participant, .speaker, .addressee]
-
-/-- The segments a person bears under a geometry, from the root down. -/
-def personSpec (geom : PersonGeometry) (p : Person) : List PersonSegment :=
-  geom.nodes.filter (· ∈ PersonSegment.spec p)
-
-theorem pi_mem_personSpec (geom : PersonGeometry) (p : Person) :
-    PersonSegment.pi ∈ personSpec geom p := by
-  cases geom <;> simp [personSpec, PersonGeometry.nodes]
-
-/-- A geometry is a chain when the persons' specifications are linearly ordered by inclusion. -/
-def PersonGeometry.IsChain (geom : PersonGeometry) : Prop :=
-  _root_.IsChain (fun l m : List PersonSegment ↦ l ⊆ m) (Set.range (personSpec geom))
-
-theorem PersonGeometry.standard_isChain : PersonGeometry.standard.IsChain := by
-  simp only [PersonGeometry.IsChain, _root_.IsChain, Set.Pairwise, Set.forall_mem_range]
-  decide +kernel
-
-theorem PersonGeometry.addressee_isChain : PersonGeometry.addressee.IsChain := by
-  simp only [PersonGeometry.IsChain, _root_.IsChain, Set.Pairwise, Set.forall_mem_range]
-  decide +kernel
-
-theorem PersonGeometry.not_branching_isChain : ¬ PersonGeometry.branching.IsChain := by
-  simp only [PersonGeometry.IsChain, _root_.IsChain, Set.Pairwise, Set.forall_mem_range]
-  decide +kernel
-
-/-! ### Articulated probes and agreement systems -/
-
-/-- An articulated probe is a list of unvalued segments, from the most general to the most
-specific. -/
-abbrev Articulation := List PersonSegment
-
-/-- The flat probe `[uπ]`. -/
-def flatProbe : Articulation := [.pi]
-
-/-- The partial probe `[uπ, uparticipant]`, which distinguishes participants from third person. -/
-def partialProbe : Articulation := [.pi, .participant]
-
-/-- The full probe of a geometry, every segment the geometry uses. -/
-def fullProbe (geom : PersonGeometry) : Articulation := geom.nodes
-
-/-- A language's agreement system is a person geometry together with an articulated probe. -/
-structure AgreementSystem where
-  /-- The person geometry. -/
-  geometry : PersonGeometry
-  /-- The articulated probe. -/
-  probe : Articulation
-  deriving DecidableEq, Repr
-
-/-- One of the two arguments of a transitive clause. -/
-inductive Argument where
-  | ia
-  | ea
-  deriving DecidableEq, Repr
-
-namespace AgreementSystem
-
+open Phi PersonSegment
 open Clause (Scenario)
 
-variable (sys : AgreementSystem) (s : Scenario Person)
+variable (P : Finset PersonSegment) (s : Scenario Person) (p q : Person) {x : PersonSegment}
 
-/-- The segments a person bears under the system's geometry. -/
-abbrev spec (p : Person) : List PersonSegment := personSpec sys.geometry p
+/-! ### The residue and the two kinds of context -/
 
-/-- The residue of the probe after Agree with the internal argument, the segments it does not
-bear. -/
-def residue (ia : Person) : Articulation := sys.probe.filter fun x ↦ decide (x ∉ sys.spec ia)
+/-- The residue of a probe after Agree with a goal, the segments the goal does not bear. -/
+def residue : Finset PersonSegment := P \ spec p
 
-/-- A context, the scenario of the external over the internal argument, is direct when the
-external argument bears some segment of the residue. -/
-def IsDirect : Prop := ∃ x ∈ sys.residue s.low, x ∈ sys.spec s.high
+variable {P p} in
+@[simp] theorem mem_residue : x ∈ residue P p ↔ x ∈ P ∧ x ∉ spec p := Finset.mem_sdiff
 
-/-- A context is inverse when it is not direct. -/
-def IsInverse : Prop := ¬ sys.IsDirect s
+/-- A context, the scenario of the external over the internal argument, is inverse when the
+internal argument is at least as specified as the external one relative to the probe, so that it
+leaves no residue the external argument could check. -/
+def IsInverse : Prop := SpecLE P (spec s.high) (spec s.low)
 
-instance : DecidablePred sys.IsDirect := fun _ ↦ List.decidableBEx _ _
+/-- A context is direct when it is not inverse: the external argument bears some segment of the
+residue the internal argument leaves. -/
+def IsDirect : Prop := ¬ IsInverse P s
 
-instance : DecidablePred sys.IsInverse := fun _ ↦ instDecidableNot
+instance : DecidablePred (IsInverse P) := fun _ ↦ inferInstanceAs (Decidable (SpecLE P _ _))
 
-theorem isDirect_iff :
-    sys.IsDirect s ↔ ∃ x ∈ sys.probe, x ∉ sys.spec s.low ∧ x ∈ sys.spec s.high := by
-  simp only [IsDirect, residue, List.mem_filter, decide_eq_true_eq]
-  exact ⟨fun ⟨x, ⟨h1, h2⟩, h3⟩ ↦ ⟨x, h1, h2, h3⟩, fun ⟨x, h1, h2, h3⟩ ↦ ⟨x, ⟨h1, h2⟩, h3⟩⟩
+instance : DecidablePred (IsDirect P) := fun _ ↦ inferInstanceAs (Decidable (¬ _))
 
-/-- The argument controlling the agreement slot, the external argument in a direct context. -/
-def controller : Argument := if sys.IsDirect s then .ea else .ia
+variable {P s}
 
-/-- The person the agreement slot realizes. -/
-def value : Person := if sys.IsDirect s then s.high else s.low
+@[simp] theorem not_isDirect : ¬ IsDirect P s ↔ IsInverse P s := not_not
 
-/-- The segments checked on each cycle, by the internal argument and then by the external one
-out of the residue. -/
-def cycles : Articulation × Articulation :=
-  (sys.probe.filter (· ∈ sys.spec s.low), (sys.residue s.low).filter (· ∈ sys.spec s.high))
+theorem isDirect_iff : IsDirect P s ↔ ∃ x ∈ P, x ∉ spec s.low ∧ x ∈ spec s.high := by
+  simp only [IsDirect, IsInverse, specLE_iff, not_forall]
+  exact ⟨fun ⟨x, hx, hh, hl⟩ ↦ ⟨x, hx, hl, hh⟩, fun ⟨x, hx, hl, hh⟩ ↦ ⟨x, hx, hh, hl⟩⟩
 
-/-- The rank of a person on the system's scale is the number of probe segments it bears. -/
-def rank (p : Person) : ℕ := (sys.probe.filter (· ∈ sys.spec p)).length
+/-- A context is direct iff the external argument bears some segment of the residue. -/
+theorem isDirect_iff_nonempty : IsDirect P s ↔ (residue P s.low ∩ spec s.high).Nonempty := by
+  simp [isDirect_iff, Finset.Nonempty, and_assoc]
 
-/-- A segment of the probe searches its domain, halting at the closest goal, which bears `π` and
-so intervenes for every segment, and Agrees with that goal iff it bears the segment. -/
-def segProbe (s : PersonSegment) : Probe Person := .ofInt fun p ↦ decide (s ∈ sys.spec p)
-
-/-- The external argument is licensed by the core probe when some segment of the residue Agrees
-with it from the next projection of v, whose domain has the external argument closest and the
-internal one below. -/
-def EALicensed : Prop :=
-  ∃ x ∈ sys.residue s.low, (sys.segProbe x).goal [s.high, s.low] = some s.high
-
-instance : DecidablePred sys.EALicensed := fun _ ↦ List.decidableBEx _ _
-
-/-- The core probe licenses the external argument exactly in direct contexts. -/
-theorem eaLicensed_iff_isDirect : sys.EALicensed s ↔ sys.IsDirect s := by
-  simp only [EALicensed, IsDirect, segProbe, Probe.ofInt_goal_eq_some_iff, List.head?_cons,
-    true_and, decide_eq_true_eq]
-
-theorem isInverse_self (p : Person) : sys.IsInverse ⟨p, p⟩ := fun h ↦
-  let ⟨_, _, hn, hm⟩ := (sys.isDirect_iff ⟨p, p⟩).1 h
-  hn hm
+variable (P) in
+theorem isInverse_self : IsInverse P ⟨p, p⟩ := .refl P _
 
 /-- A probe with more segments has more direct contexts. -/
-theorem IsDirect.mono {sys' : AgreementSystem} (hg : sys'.geometry = sys.geometry)
-    (hp : sys.probe ⊆ sys'.probe) (h : sys.IsDirect s) : sys'.IsDirect s := by
-  rw [isDirect_iff] at h ⊢
-  obtain ⟨x, hx, h⟩ := h
-  exact ⟨x, hp hx, by simpa [spec, hg] using h⟩
+theorem IsDirect.mono {Q : Finset PersonSegment} (h : P ⊆ Q) (hd : IsDirect P s) :
+    IsDirect Q s :=
+  fun hi ↦ hd (hi.anti h)
 
-/-- A flat probe leaves no residue, since every internal argument bears `π`, so every context is
-inverse. -/
-theorem flat_isInverse (geom : PersonGeometry) :
-    (⟨geom, flatProbe⟩ : AgreementSystem).IsInverse s := by
-  rintro ⟨x, hx, -⟩
-  simp [residue, flatProbe, spec, pi_mem_personSpec] at hx
+/-- An internal argument bearing every segment of the probe leaves no residue. -/
+theorem isInverse_of_subset (h : P ⊆ spec s.low) : IsInverse P s :=
+  Finset.inter_subset_left.trans h
 
-theorem spec_subset_or_subset {geom : PersonGeometry} (h : geom.IsChain) (p q : Person) :
-    personSpec geom p ⊆ personSpec geom q ∨ personSpec geom q ⊆ personSpec geom p := by
-  by_cases hpq : personSpec geom p = personSpec geom q
-  · exact Or.inl (hpq ▸ List.Subset.refl _)
-  · exact h (Set.mem_range_self p) (Set.mem_range_self q) hpq
+variable (s) in
+/-- The flat probe `[uπ]` makes every context inverse, since every internal argument bears `π`. -/
+theorem isInverse_Iic_bot : IsInverse (Finset.Iic ⊥) s :=
+  isInverse_of_subset fun x hx ↦ by
+    rw [Finset.mem_Iic, le_bot_iff] at hx
+    exact hx ▸ pi_mem_spec s.low
 
-theorem isDirect_iff_rank_lt (h : sys.geometry.IsChain) :
-    sys.IsDirect s ↔ sys.rank s.low < sys.rank s.high := by
-  rcases spec_subset_or_subset h s.low s.high with hsub | hsub
-  · have key : sys.probe.filter (· ∈ sys.spec s.low) =
-        (sys.probe.filter (· ∈ sys.spec s.high)).filter (· ∈ sys.spec s.low) := by
-      rw [List.filter_filter]
-      exact List.filter_congr fun x _ ↦ by
-        by_cases hi : x ∈ sys.spec s.low
-        · simp [hi, hsub hi]
-        · simp [hi]
-    rw [rank, rank, key, List.length_filter_lt_length_iff_exists, isDirect_iff]
-    simp only [List.mem_filter, decide_eq_true_eq]
-    exact ⟨fun ⟨x, hx, hi, he⟩ ↦ ⟨x, ⟨hx, he⟩, hi⟩, fun ⟨x, ⟨hx, he⟩, hi⟩ ↦ ⟨x, hx, hi, he⟩⟩
-  · constructor
-    · intro h
-      obtain ⟨x, _, hn, hm⟩ := (sys.isDirect_iff s).1 h
-      exact absurd (hsub hm) hn
-    · intro hlt
-      have := List.countP_mono_left (l := sys.probe) (p := fun x ↦ decide (x ∈ sys.spec s.high))
-        (q := fun x ↦ decide (x ∈ sys.spec s.low)) fun x _ h ↦ by
-          simpa using hsub (by simpa using h)
-      simp only [List.countP_eq_length_filter] at this
-      exact absurd this (not_le.2 hlt)
+variable (P s)
 
-/-- Under a chain geometry a context is direct iff it is downstream on the system's rank, so the
-inverse contexts are the balanced and upstream scenarios. -/
-theorem isDirect_iff_kind_eq_downstream (h : sys.geometry.IsChain) :
-    sys.IsDirect s ↔ (s.map sys.rank).kind = .downstream :=
-  (sys.isDirect_iff_rank_lt s h).trans (Scenario.kind_eq_downstream_iff (s := s.map sys.rank)).symm
+/-- The person the agreement slot realizes, the external argument's in a direct context and the
+internal argument's in an inverse one. -/
+def value : Person := if IsDirect P s then s.high else s.low
 
-end AgreementSystem
+/-! ### The person hierarchy of a probe -/
+
+/-- The rank of a person on a probe's scale, the number of probe segments it bears. -/
+def rank : ℕ := (P ∩ spec p).card
+
+variable {P s}
+
+theorem isDirect_of_rank_lt (h : rank P s.low < rank P s.high) : IsDirect P s :=
+  fun hi ↦ h.not_ge hi.card_le
+
+/-- When the segments of the probe form a chain, a context is direct iff the external argument
+outranks the internal one. -/
+theorem isDirect_iff_rank_lt (hP : IsChain (· ≤ ·) (P : Set PersonSegment)) :
+    IsDirect P s ↔ rank P s.low < rank P s.high :=
+  (not_congr (specLE_iff_card_le hP (spec_isLowerSet _) (spec_isLowerSet _))).trans not_le
+
+/-- When the segments of the probe form a chain, a context is direct iff it is downstream on the
+probe's rank, so the inverse contexts are the balanced and upstream scenarios. -/
+theorem isDirect_iff_kind_eq_downstream (hP : IsChain (· ≤ ·) (P : Set PersonSegment)) :
+    IsDirect P s ↔ (s.map (rank P)).kind = .downstream :=
+  (isDirect_iff_rank_lt hP).trans (Scenario.kind_eq_downstream_iff (s := s.map (rank P))).symm
+
+/-! ### Licensing the external argument -/
+
+/-- The segment `[uF]` of a probe, as a probe over persons: it interacts with the persons bearing
+`F` and is satisfied by any person, since every person bears the root `π`, so that its search
+halts at the closest goal whether or not that goal bears `F`. -/
+def segmentProbe (x : PersonSegment) : Probe Person := (Probe.Spec.ofGeometry x ⊥).toProbe spec
+
+variable (x) in
+theorem segmentProbe_int : (segmentProbe x).int p ↔ x ∈ spec p :=
+  Probe.Spec.ofGeometry_toProbe_int_iff fun _ hy _ hzy ↦ spec_isLowerSet p hzy hy
+
+variable (x) in
+theorem segmentProbe_sat : (segmentProbe x).sat p :=
+  Probe.Spec.ofFeatures_toProbe_sat.2
+    ⟨⊥, Finset.mem_inter.2 ⟨pi_mem_spec p, Finset.mem_singleton_self _⟩⟩
+
+variable (x) in
+/-- A segment Agrees with the closest goal iff that goal bears it, and with no other. -/
+theorem segmentProbe_goal_cons (l : List Person) :
+    (segmentProbe x).goal (p :: l) = if x ∈ spec p then some p else none := by
+  simp [Probe.goal, Probe.search, segmentProbe_sat, segmentProbe_int, Option.filter]
+
+variable (P s) in
+/-- The external argument's person is licensed by the core probe when some segment of the residue
+Agrees with it from the next projection of v, whose domain has the external argument closest and
+the internal one below. -/
+def EALicensed : Prop :=
+  ∃ x ∈ residue P s.low, (segmentProbe x).goal [s.high, s.low] = some s.high
+
+instance : DecidablePred (EALicensed P) := fun _ ↦
+  inferInstanceAs (Decidable (∃ x ∈ residue P _, _))
+
+/-- The core probe licenses the external argument exactly in direct contexts. -/
+theorem eaLicensed_iff_isDirect : EALicensed P s ↔ IsDirect P s := by
+  simp [EALicensed, isDirect_iff_nonempty, Finset.Nonempty, segmentProbe_goal_cons]
 
 end Minimalist.CyclicAgree
