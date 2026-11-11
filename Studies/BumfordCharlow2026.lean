@@ -1,13 +1,10 @@
 module
 
-public import Mathlib.CategoryTheory.Monad.Adjunction
-public import Mathlib.CategoryTheory.Types.Basic
-public import Mathlib.Control.Basic
-public import Mathlib.Control.Functor
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Mode.EffectFree
 public import Linglib.Semantics.Composition.Mode.Pointwise
 public import Linglib.Semantics.Composition.Mode.Normal
+public import Linglib.Semantics.Composition.MetaCombinator
 
 /-!
 # Bumford and Charlow 2026: effect-driven interpretation
@@ -16,8 +13,9 @@ public import Linglib.Semantics.Composition.Mode.Normal
 with effects, and the modes of semantic combination as higher-order operations that lift a basic
 combinator through the algebra of an effect: maps for functors (chapter 2), structured
 application for applicatives (chapter 3), join for monads (chapter 4), and co-unit and eject for
-adjunctions (chapter 5). This file states the modes over Lean's `Functor`, `Applicative` and
-`Monad` classes and mathlib's adjunctions, and proves the results of chapter 5 about them.
+adjunctions (chapter 5). This file proves the results of chapter 5 about those modes, over
+Lean's `Functor`, `Applicative` and `Monad` classes and mathlib's adjunctions, and states the
+outputs of the book's interpreter.
 
 A pronoun reads a referent and an antecedent stores one. Storing is left adjoint to reading,
 with currying as the hom-equivalence, and the co-unit mode cancels the two effects, so a
@@ -45,21 +43,19 @@ its prejacent, or [is given a prejacent with none](##BumfordCharlow2026.eval_uni
 
 ## Main definitions
 
-* `mapL`, `mapR`, `structuredApp`, `joinMode`: the map, structured application and join modes
-* `Output`, `outputInput`: the storing effect `W` and the adjunction `W ⊣ R`
-* `counitMode`, `eject`, `ejectL`, `ejectR`: the modes an adjunction adds
+* `store`, `pronoun`: the antecedent operator and the pronoun
 * `Reads`, `InputFree`: a type still requests a datum, or reads nothing anywhere
+* `combine`, `combineWithin`: the book's interpreter on two types
 
 ## Implementation notes
 
-The storing effect `Output ι α = α × ι` is a functor and not mathlib's `WriterT`, whose functor
-comes only with a monad over a monoid of logs. A single stored referent cannot be merged with
-another, which is the book's reason that this `W` is not a monad (section 5.3.4). The
-supplement effect, whose log is a monoid, is `Core/Control/Monad/Writer.lean`.
+The meta-combinators over Lean's `Functor`, `Applicative` and `Monad` classes and mathlib's
+adjunctions are the library's `Interpreter.MetaCombinator`, and each mode of the type-driven
+grammar means its meta-combinator. A single stored referent cannot be merged with another, which
+is the book's reason that `W` is not a monad (section 5.3.4). The supplement effect, whose log is
+a monoid, is `Core/Control/Monad/Writer.lean`.
 
-The modes act on Lean's type constructors; an adjunction is mathlib's `Adjunction` between the
-corresponding functors `ofTypeFunctor Ω ⊣ ofTypeFunctor Γ`, so the unit, co-unit and induced
-monad are mathlib's. The type-driven grammar is the library's `Interpreter.Mode` over application
+The type-driven grammar is the library's `Interpreter.Mode` over application
 and predicate modification. The book's final `combine` (Appendix B) is
 `Interpreter.Ty.combineWith` with Join and Lower applied once to each result, and the
 interpreters of its chapters 2 to 4 are that search kept to the meta-modes the chapter has. Each
@@ -76,8 +72,6 @@ April 2025.
 * Islands (section 5.4): the book keeps at an island the modes whose result is `Evaluated`,
   which [leaves a quantified clause its closed reading](##BumfordCharlow2026.combine_island). No
   tree here marks a category as an island.
-* The modes over Lean's classes, `mapL`, `counitMode` and the rest, are not yet shown to be the
-  meanings `Interpreter.Mode.eval` gives the grammar's modes at each effect.
 
 ## References
 
@@ -89,111 +83,33 @@ April 2025.
 
 namespace BumfordCharlow2026
 
-open CategoryTheory
-
 universe u v
+
+open Interpreter.MetaCombinator
 
 /-! ### Modes of combination
 
 A mode of combination takes a basic combinator `(∗) : σ → τ → ω` and returns one that works when
-a daughter carries an effect. -/
-
-section Modes
-
-variable {σ τ ω α β : Type u}
-
-/-- Forward application `(>)`. -/
-def fa (f : α → β) (x : α) : β := f x
-
-/-- Backward application `(<)`. -/
-def ba (x : α) (f : α → β) : β := f x
-
-section Functor
-
-variable {F : Type u → Type v} [Functor F]
-
-/-- Map Left (2.17a): map the combinator over an effectful left daughter. -/
-def mapL (star : σ → τ → ω) (e₁ : F σ) (e₂ : τ) : F ω := (fun a => star a e₂) <$> e₁
-
-/-- Map Right (2.17b): map the combinator over an effectful right daughter. -/
-def mapR (star : σ → τ → ω) (e₁ : σ) (e₂ : F τ) : F ω := (fun b => star e₁ b) <$> e₂
-
--- (2.18)
-theorem mapR_fa (f : α → β) (x : F α) : mapR fa f x = f <$> x := rfl
-
-theorem mapL_ba (x : F α) (f : α → β) : mapL ba x f = f <$> x := rfl
-
--- (2.24)
-theorem mapR_mapR_fa {G : Type u → Type u} [Functor G] (f : α → β) (x : F (G α)) :
-    mapR (mapR fa) f x = (f <$> Functor.Comp.mk x).run := rfl
-
-end Functor
-
-/-- Structured Application `A` (3.10): combine two daughters carrying the same applicative
-effect, merging the effects. -/
-def structuredApp {F : Type u → Type v} [Applicative F] (star : σ → τ → ω) (e₁ : F σ)
-    (e₂ : F τ) : F ω :=
-  pure star <*> e₁ <*> e₂
-
-theorem structuredApp_fa {F : Type u → Type v} [Applicative F] [LawfulApplicative F]
-    (f : F (α → β)) (x : F α) : structuredApp fa f x = f <*> x := by
-  rw [structuredApp, pure_seq]
-  exact congrArg (· <*> x) (id_map f)
-
-section Monad
-
-variable {M : Type u → Type u} [Monad M]
-
-/-- Join `J` (4.22): flatten the doubled effect a combinator returns, `J(∗) E₁ E₂ := μ(E₁ ∗ E₂)`.
--/
-def joinMode (star : σ → τ → M (M ω)) (e₁ : σ) (e₂ : τ) : M ω := joinM (star e₁ e₂)
-
-variable [LawfulMonad M]
-
-/-- Join over Map Left of backward application is bind (after (4.22)). -/
-theorem joinMode_mapL_ba (m : M α) (k : α → M β) : joinMode (mapL ba) m k = m >>= k :=
-  bind_map_left _ _ _
-
-/-- Join over Map Right of forward application is bind with its arguments flipped, the book's
-`(=>>)` (after (4.22)). -/
-theorem joinMode_mapR_fa (k : α → M β) (m : M α) : joinMode (mapR fa) k m = m >>= k :=
-  bind_map_left _ _ _
-
-end Monad
+a daughter carries an effect: Map Left and Map Right (2.17), Structured App (3.10), Join (4.22),
+the Co-unit (5.8) and the ejections (5.25). They are the library's
+`Interpreter.MetaCombinator`. -/
 
 /-- The order of the maps sets the priority of the effects (2.22): mapping over the left
 daughter first gives its request the outer position. -/
 example {E : Type} (saw : E → E → Prop) :
-    mapL (F := ReaderM E) (mapR (F := ReaderM E) ba) (fun y => y) (fun x => saw x) =
-      fun y x => saw x y := rfl
+    mapL (F := ReaderM E) (mapR (F := ReaderM E) ba) (fun y ↦ y) (fun x ↦ saw x) =
+      fun y x ↦ saw x y := rfl
 
 example {E : Type} (saw : E → E → Prop) :
-    mapR (F := ReaderM E) (mapL (F := ReaderM E) ba) (fun y => y) (fun x => saw x) =
-      fun x y => saw x y := rfl
-
-end Modes
+    mapR (F := ReaderM E) (mapL (F := ReaderM E) ba) (fun y ↦ y) (fun x ↦ saw x) =
+      fun x y ↦ saw x y := rfl
 
 /-! ### Storing and reading
 
 A pronoun reads a referent from its context (5.1a), a computation of type `R α = ι → α`, and an
 antecedent stores its referent alongside its value (5.1b), one of type `W α = α × ι`. Functions
-out of `W α` are functions into `R β` by currying (5.3), which makes `W` left adjoint to `R`. -/
-
-/-- The storing effect `W`: a value paired with a stored datum. -/
-def Output (ι α : Type u) : Type u := α × ι
-
-namespace Output
-
-variable {ι α β : Type u}
-
-/-- Map the value, keeping the stored datum. -/
-protected def map (f : α → β) (p : Output ι α) : Output ι β := (f p.1, p.2)
-
-instance functor : Functor (Output ι) where map := Output.map
-
-instance lawfulFunctor : LawfulFunctor (Output ι) := by constructor <;> intros <;> rfl
-
-end Output
+out of `W α` are functions into `R β` by currying (5.3), which makes `W` left adjoint to `R`,
+with the unit and co-unit of (5.4). -/
 
 variable {ι α β : Type u}
 
@@ -201,42 +117,7 @@ variable {ι α β : Type u}
 def store (x : ι) : Output ι ι := (x, x)
 
 /-- The pronoun (5.1a): read the referent. -/
-def pronoun : ReaderM ι ι := fun i => i
-
-/-- Storing is left adjoint to reading (5.3): the hom-equivalence `Φ` is currying. -/
-def outputInput (ι : Type u) : ofTypeFunctor (Output ι) ⊣ ofTypeFunctor (ReaderM ι) :=
-  Adjunction.mkOfHomEquiv
-    { homEquiv := fun α β =>
-        TypeCat.homEquiv.trans ((Equiv.curry α ι β).trans TypeCat.homEquiv.symm)
-      homEquiv_naturality_left_symm := fun _ _ => rfl
-      homEquiv_naturality_right := fun _ _ => rfl }
-
-theorem outputInput_homEquiv_apply (f : Output ι α ⟶ β) (a : α) (x : ι) :
-    (outputInput ι).homEquiv α β f a x = f (a, x) := rfl
-
--- (5.4)
-theorem outputInput_unit_app (a : α) (x : ι) : (outputInput ι).unit.app α a x = (a, x) := rfl
-
-theorem outputInput_counit_app (f : ReaderM ι α) (x : ι) :
-    (outputInput ι).counit.app α (f, x) = f x := rfl
-
-/-! ### The co-unit mode
-
-For any adjunction `Ω ⊣ Γ`, the co-unit mode maps the combinator over both daughters and applies
-the co-unit to the result. -/
-
-section Adjunction
-
-variable {Ω Γ : Type u → Type u} [Functor Ω] [LawfulFunctor Ω] [Functor Γ] [LawfulFunctor Γ]
-
-/-- The co-unit mode `C` (5.8): `C(∗) E₁ E₂ := ε((λl. (λr. l ∗ r) • E₂) • E₁)`. It takes the
-left adjoint from the left daughter and the right adjoint from the right one. -/
-def counitMode (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) {σ τ ω : Type u} (star : σ → τ → ω)
-    (e₁ : Ω σ) (e₂ : Γ τ) : ω :=
-  adj.counit.app ω ((fun l => (fun r => star l r) <$> e₂) <$> e₁ : Ω (Γ ω))
-
-theorem counitMode_outputInput {σ τ ω : Type u} (star : σ → τ → ω) (p : Output ι σ)
-    (r : ReaderM ι τ) : counitMode (outputInput ι) star p r = star p.1 (r p.2) := rfl
+def pronoun : ReaderM ι ι := fun i ↦ i
 
 /-- The co-unit of `W ⊣ R` binds a pronoun to a preceding antecedent (5.5), and the same
 daughters combined by maps alone keep both effects (5.2). -/
@@ -246,65 +127,7 @@ example {E : Type} (moon spot : E → E) (obscure : E → E → Prop) (j : E) :
 
 example {E : Type} (moon spot : E → E) (obscure : E → E → Prop) (j : E) :
     mapL (mapR ba) (mapL ba (store j) moon) (mapR fa obscure (mapL ba pronoun spot)) =
-      ((fun x => obscure (spot x) (moon j), j) : Output E (ReaderM E Prop)) := rfl
-
-/-- Eject `Υ` (5.24): for a right adjoint `Γ` on types, functions into `Γ β` are `Γ` of
-functions. -/
-def eject (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) : (α → Γ β) ≃ Γ (α → β) where
-  toFun k := (adj.homEquiv PUnit (α → β)
-    (↾fun w a => (adj.homEquiv PUnit β).symm (↾fun _ => k a) w) PUnit.unit : Γ (α → β))
-  invFun m a := (fun f => f a) <$> m
-  left_inv k := by
-    funext a
-    change ((ofTypeFunctor Γ).map (↾fun f : α → β => f a)) (adj.homEquiv PUnit (α → β)
-      (↾fun w a => (adj.homEquiv PUnit β).symm (↾fun _ => k a) w) PUnit.unit) = k a
-    rw [← ConcreteCategory.comp_apply, ← adj.homEquiv_naturality_right]
-    change adj.homEquiv PUnit β ((adj.homEquiv PUnit β).symm (↾fun _ => k a)) PUnit.unit = _
-    rw [Equiv.apply_symm_apply]
-    rfl
-  right_inv m := by
-    have h (a : α) : (adj.homEquiv PUnit β).symm (↾fun _ => ((fun f : α → β => f a) <$> m : Γ β)) =
-        (adj.homEquiv PUnit (α → β)).symm (↾fun _ => m) ≫ ↾fun f : α → β => f a :=
-      adj.homEquiv_naturality_right_symm (↾fun _ => m) (↾fun f : α → β => f a)
-    simp only [h]
-    change adj.homEquiv PUnit (α → β) ((adj.homEquiv PUnit (α → β)).symm (↾fun _ => m))
-      PUnit.unit = m
-    rw [Equiv.apply_symm_apply]
-    rfl
-
--- (5.22)
-theorem eject_outputInput (k : α → ReaderM ι β) : eject (outputInput ι) k = fun i a => k a i :=
-  rfl
-
-/-- Eject Left (5.25a): eject the effect of a left daughter that is a function into a right
-adjoint. -/
-def ejectL (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) {σ σ' τ υ : Type u}
-    (star : Γ (σ → σ') → τ → υ) (e₁ : σ → Γ σ') (e₂ : τ) : υ :=
-  star (eject adj e₁) e₂
-
-/-- Eject Right (5.25b). -/
-def ejectR (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) {σ τ τ' υ : Type u}
-    (star : σ → Γ (τ → τ') → υ) (e₁ : σ) (e₂ : τ → Γ τ') : υ :=
-  star e₁ (eject adj e₂)
-
-theorem counitMode_ba_eject (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) (a : Ω α)
-    (k : α → Γ β) : counitMode adj ba a (eject adj k) = adj.counit.app β (k <$> a : Ω (Γ β)) := by
-  have h : (fun l => (fun r => ba l r) <$> eject adj k) = k := (eject adj).left_inv k
-  simp only [counitMode, h]
-
-/-- Every adjunction gives rise to a monad through the grammar (section 5.3.4): Map Left over
-Eject Right over the Co-unit of backward application is the bind of the monad `Γ Ω` the
-adjunction induces. -/
-theorem mapL_ejectR_counitMode (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) (m : Γ (Ω α))
-    (k : α → Γ (Ω β)) :
-    mapL (ejectR adj (counitMode adj ba)) m k = adj.toMonad.μ.app β (adj.toMonad.map (↾k) m) := by
-  simp only [mapL, ejectR, counitMode_ba_eject]
-  change _ = (fun x : Ω (Γ (Ω β)) => adj.counit.app (Ω β) x) <$>
-    ((fun a : Ω α => (k <$> a : Ω (Γ (Ω β)))) <$> m)
-  rw [← comp_map]
-  rfl
-
-end Adjunction
+      ((fun x ↦ obscure (spot x) (moon j), j) : Output E (ReaderM E Prop)) := rfl
 
 /-! ### Monads from storing and reading -/
 
