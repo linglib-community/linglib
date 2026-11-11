@@ -30,14 +30,11 @@
       [
         "negator_kind",
         "dedicated"
-      ],
-      [
-        "entrenched",
-        "high"
       ]
     ],
     "comment": "",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "introspection"
   },
   {
     "id": "jk2021_3",
@@ -61,7 +58,8 @@
       ]
     ],
     "comment": "wish is not a trigger: the negator is licensed by the meaning of fear.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "introspection"
   },
   {
     "id": "jk2021_4",
@@ -314,14 +312,11 @@
       [
         "negator_kind",
         "dedicated"
-      ],
-      [
-        "entrenched",
-        "high"
       ]
     ],
     "comment": "French DENY-class predicates must be questioned or negated for EN.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "introspection"
   },
   {
     "id": "jk2021_20",
@@ -357,7 +352,8 @@
       ]
     ],
     "comment": "",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "jk2021_21",
@@ -433,7 +429,8 @@
       ]
     ],
     "comment": "",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "jk2021_23",
@@ -469,7 +466,8 @@
       ]
     ],
     "comment": "",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "jk2021_24",
@@ -505,7 +503,8 @@
       ]
     ],
     "comment": "",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "jk2021_25",
@@ -541,7 +540,8 @@
       ]
     ],
     "comment": "",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "jk2021_26",
@@ -613,7 +613,8 @@
       ]
     ],
     "comment": "",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "introspection"
   },
   {
     "id": "jk2021_28",
@@ -646,14 +647,11 @@
       [
         "negator_kind",
         "dedicated"
-      ],
-      [
-        "entrenched",
-        "high"
       ]
     ],
-    "comment": "",
-    "verified": "page-image"
+    "comment": "Cited from Muller (1991: 435).",
+    "verified": "page-image",
+    "method": "description"
   },
   {
     "id": "jk2021_29",
