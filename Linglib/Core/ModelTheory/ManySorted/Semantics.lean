@@ -80,7 +80,18 @@ theorem realize_places (M : L.Structure D) (σ : Signature S) (args : σ.Interpr
     simp only [places, realize, realize_bind]
     exact Prod.ext (ihσ args.1) (ihτ args.2)
 
+/-- Terms for the arguments of a shape, as one term of that shape. -/
+def ofArgs : (σ : Signature S) → σ.Interpret (fun s ↦ L.Term α (.of s)) → L.Term α σ
+  | .nil, _ => nil
+  | .of _, t => t
+  | .prod σ τ, x => prod (ofArgs σ x.1) (ofArgs τ x.2)
+
 end Language.Term
+
+/-- The term algebra: a symbol denotes its application to terms. -/
+@[reducible] def Language.Term.structure (L : Language.{u, v} S) (α : S → Type w) :
+    L.Structure fun s ↦ L.Term α (.of s) where
+  funMap f x := .func f (.ofArgs _ x)
 
 variable {D' : S → Type x'} {M : L.Structure D} {M' : L.Structure D'}
   {R : ∀ s, D s → D' s → Prop}
@@ -136,6 +147,23 @@ theorem mk₂ {U : S → S → Type v} {B : S → S → S → Type v}
     | .prod (.prod _ _) _, f => nomatch f
     | .prod (.of _) .nil, f => nomatch f
     | .prod (.of _) (.prod _ _), f => nomatch f
+
+/-- A logical relation between two structures that the new binary functions respect is one
+between the two structures for the language with its binary symbols replaced. -/
+theorem withBinary {B : S → S → S → Type v} {binary : ∀ {a b c : S}, B a b c → D a → D b → D c}
+    {binary' : ∀ {a b c : S}, B a b c → D' a → D' b → D' c} (h : M.IsLogicalRel M' R)
+    (hb : ∀ {a b c : S} (f : B a b c) x x' y y', R a x x' → R b y y' →
+      R c (binary f x y) (binary' f x' y')) :
+    (M.withBinary binary).IsLogicalRel (M'.withBinary binary') R where
+  funMap {σ _} f :=
+    match σ, f with
+    | .prod (.of _) (.of _), f => fun _ _ h' ↦ hb f _ _ _ _ h'.1 h'.2
+    | .nil, f => h.funMap f
+    | .of _, f => h.funMap f
+    | .prod .nil _, f => h.funMap f
+    | .prod (.prod _ _) _, f => h.funMap f
+    | .prod (.of _) .nil, f => h.funMap f
+    | .prod (.of _) (.prod _ _), f => h.funMap f
 
 variable {A : Type w} {A' : Type w'}
 

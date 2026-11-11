@@ -159,6 +159,17 @@ theorem fold_hom (h : β → γ) {f : α → List β → β} {g : α → List γ
     rw [fold_node, fold_node, hfg, List.map_map]
     exact congrArg (g a) (List.map_congr_left fun c hc ↦ ih c hc)
 
+/-- A relation that two algebras respect, taking children related in order to related results,
+holds between the two folds of a tree. -/
+theorem rel_fold (R : β → γ → Prop) {f : α → List β → β} {g : α → List γ → γ}
+    (hfg : ∀ a xs ys, List.Forall₂ R xs ys → R (f a xs) (g a ys)) (t : RoseTree α) :
+    R (fold f t) (fold g t) := by
+  induction t with
+  | node a cs ih =>
+    rw [fold_node, fold_node]
+    exact hfg a _ _ (List.forall₂_map_left_iff.2 (List.forall₂_map_right_iff.2
+      (List.forall₂_same.2 ih)))
+
 /-! ### Functoriality -/
 
 /-- Relabel every node by `f`, preserving shape. -/

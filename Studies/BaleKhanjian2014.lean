@@ -306,10 +306,7 @@ noncomputable def Item.val (B : Finset α) : {a : Ty Unit} → Item a → a.Dom 
 function applies to its sister where both are defined. -/
 noncomputable def meanings (B : Finset α) (t : Tree Cat Morpheme) :
     List (Σ a : Ty Unit, a.Dom (Dom α)) :=
-  match t.skeleton (fun _ ↦ false) with
-  | some s => (partialValued application).values
-      (D := Ty.Dom (Dom α)) inferInstance (Item.val B) items s
-  | none => []
+  t.values (partialValued application) (D := Ty.Dom (Dom α)) inferInstance (Item.val B) items
 
 /-- A partial value that is defined. -/
 def IsDefined : (Σ a : Ty Unit, a.Dom (Dom α)) → Prop
@@ -536,18 +533,14 @@ private theorem liftRel_val (B : Finset α) : ∀ {a : Ty Unit} (i : Item a),
 
 private theorem mem_defined_of_map {B : Finset α} {t : Tree Cat Morpheme}
     (h : B.map σ.toEmbedding ∈ defined t) : B ∈ defined t := by
-  simp only [defined, meanings, Set.mem_ofPred_eq] at h ⊢
-  cases hs : t.skeleton (fun _ ↦ false) with
-  | none => simp [hs] at h
-  | some s =>
-    simp only [hs, Interpreter.values, List.mem_map] at h ⊢
-    obtain ⟨_, ⟨⟨a, d⟩, hd, rfl⟩, hdef⟩ := h
-    refine ⟨_, ⟨⟨a, d⟩, hd, rfl⟩, ?_⟩
-    have hrel : Ty.LiftRel (rel σ) a _ _ :=
-      (effectGrammar.isLogicalRel (r := rel σ) (G := application)
-        application.isLogicalRel).realize (fun i ↦ liftRel_val (σ := σ) B i) d
-    match a, d, hrel, hdef with
-    | .comp .M _, _, hrel, hdef => exact hrel.1.2 hdef
+  simp only [defined, meanings, Tree.values, Set.mem_ofPred_eq, List.mem_map] at h ⊢
+  obtain ⟨_, ⟨⟨a, d⟩, hd, rfl⟩, hdef⟩ := h
+  refine ⟨_, ⟨⟨a, d⟩, hd, rfl⟩, ?_⟩
+  have hrel : Ty.LiftRel (rel σ) a _ _ :=
+    (effectGrammar.isLogicalRel (r := rel σ) (G := application)
+      application.isLogicalRel).realize (fun i ↦ liftRel_val (σ := σ) B i) d
+  match a, d, hrel, hdef with
+  | .comp .M _, _, hrel, hdef => exact hrel.1.2 hdef
 
 end Symmetry
 
@@ -616,12 +609,12 @@ theorem eval_forthPartial {a b : Ty Unit} (f : Part (a.Dom (Dom α) → Part (b.
   rw [Mode.eval_join_ap_basic]; rfl
 
 /-- The rules of the partial-valued interpreter. -/
-abbrev rules : Interpreter (effectGrammar (application (B := Unit))) Node :=
+abbrev rules : Interpreter (effectGrammar (application (B := Unit))) ℕ :=
   partialValued application
 
 theorem Good.combine {d₁ d₂ : Σ a : Ty Unit, a.Dom (Dom α)} (h₁ : Good B d₁) (h₂ : Good B d₂)
-    {k : Node} {m : Σ u, Mode (application (B := Unit)).Binary d₁.1 d₂.1 u}
-    (hm : m ∈ rules.binary k d₁.1 d₂.1) :
+    {m : Σ u, Mode (application (B := Unit)).Binary d₁.1 d₂.1 u}
+    (hm : m ∈ rules.binary d₁.1 d₂.1) :
     Good B ⟨m.1, m.2.eval (Dom α) d₁.2 d₂.2⟩ := by
   rcases h₁ with @⟨X, hX⟩ | @⟨F, hF⟩ | @⟨F, hF⟩ <;>
     rcases h₂ with @⟨Y, hY⟩ | @⟨G, hG⟩ | @⟨G, hG⟩
@@ -677,8 +670,8 @@ theorem good_of_licensed (hB : 2 ≤ B.card) {t : Tree Cat Morpheme}
   | terminal c w =>
     intro d hd
     obtain ⟨⟨a, e⟩, he, rfl⟩ := List.mem_map.1 hd
-    obtain ⟨⟨b, i⟩, hi, heq⟩ := List.mem_map.1
-      (show (⟨a, e⟩ : Σ a, ManySorted.Language.Deriv _ Item a) ∈ (items (.inl w)).map _ from he)
+    rw [Tree.derivs_terminal] at he
+    obtain ⟨⟨b, i⟩, hi, heq⟩ := List.mem_map.1 he
     cases heq
     exact good_val hB ht.rel_root hi
   | phrase c k cs ih =>
@@ -688,49 +681,33 @@ theorem good_of_licensed (hB : 2 ≤ B.card) {t : Tree Cat Morpheme}
       intro d hd
       have ih₁ := ih t₁ (by simp) (ht.of_mem (by simp))
       have ih₂ := ih t₂ (by simp) (ht.of_mem (by simp))
-      simp only [meanings] at hd ih₁ ih₂
-      change d ∈ (match (Tree.skeleton (fun _ ↦ false) t₁).bind fun s₁ ↦
-          (Tree.skeleton (fun _ ↦ false) t₂).bind fun s₂ ↦
-            some (Skeleton.binary Node.branch s₁ s₂) with
-        | some s => _
-        | none => []) at hd
-      cases h₁ : Tree.skeleton (fun _ ↦ false) t₁ with
-      | none => simp [h₁] at hd
-      | some s₁ =>
-        cases h₂ : Tree.skeleton (fun _ ↦ false) t₂ with
-        | none => simp [h₁, h₂] at hd
-        | some s₂ =>
-          rw [h₁, h₂] at hd
-          rw [h₁] at ih₁
-          rw [h₂] at ih₂
-          replace hd : d ∈ rules.values (D := Ty.Dom (Dom α)) inferInstance (Item.val B) items
-              (.binary .branch s₁ s₂) := hd
-          obtain ⟨d₁, hd₁, d₂, hd₂, m, hm, rfl⟩ := mem_values_binary.1 hd
-          exact (ih₁ d₁ hd₁).combine (ih₂ d₂ hd₂) hm
-    | [], _, _ => exact fun _ hd ↦ absurd hd List.not_mem_nil
-    | _ :: _ :: _ :: _, _, _ => exact fun _ hd ↦ absurd hd List.not_mem_nil
+      simp only [meanings, Tree.values_eq_fold, RoseTree.fold_node, List.map_cons, List.map_nil,
+        Tree.nodeValues] at hd ih₁ ih₂
+      obtain ⟨d₁, hd₁, d₂, hd₂, m, hm, rfl⟩ := Interpreter.mem_binaryValues.1 hd
+      exact (ih₁ d₁ hd₁).combine (ih₂ d₂ hd₂) hm
+    | [], _, _ =>
+      exact fun _ hd ↦ by simp [meanings, Tree.values_eq_fold, Tree.nodeValues] at hd
+    | _ :: _ :: _ :: _, _, _ =>
+      exact fun _ hd ↦ by simp [meanings, Tree.values_eq_fold, Tree.nodeValues] at hd
   | trace n c => exact absurd ht.rel_root id
   | bind n c t _ => exact absurd ht.rel_root id
   | junk l cs hl _ =>
     intro d hd
-    have hs : Tree.skeleton (fun _ ↦ false) (RoseTree.node l cs) = none := by
-      cases l with
-      | terminal c w =>
-        cases cs with
-        | nil => simp [Label.Licenses] at hl
-        | cons => rfl
-      | phrase c k => simp [Label.Licenses] at hl
-      | trace n c => exact absurd ht.rel_root id
-      | bind n c => exact absurd ht.rel_root id
-    simp [meanings, hs] at hd
+    cases l with
+    | terminal c w =>
+      cases cs with
+      | nil => simp [Label.Licenses] at hl
+      | cons => simp [meanings, Tree.values_eq_fold, Tree.nodeValues] at hd
+    | phrase c k => simp [Label.Licenses] at hl
+    | trace n c => exact absurd ht.rel_root id
+    | bind n c => exact absurd ht.rel_root id
 
 -- every alternative of NumP* is uninterpretable, or defined wherever there are two boys
 theorem defined_eq_empty_or_subset {ψ : Tree Cat Morpheme}
     (h : ψ ∈ structuralAlternatives lexicon (numPStar n)) :
     defined (α := α) ψ = ∅ ∨ {B : Finset α | 2 ≤ B.card} ⊆ defined ψ := by
   have hlen (B B' : Finset α) : (meanings B ψ).length = (meanings B' ψ).length := by
-    simp only [meanings]
-    cases ψ.skeleton (fun _ ↦ false) <;> simp [Interpreter.values]
+    simp [meanings, Tree.values]
   by_cases hu : meanings (∅ : Finset α) ψ = []
   · refine .inl (Set.eq_empty_of_forall_notMem fun B ⟨d, hd, _⟩ ↦ ?_)
     have := hlen B ∅

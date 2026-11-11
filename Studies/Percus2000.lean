@@ -239,7 +239,7 @@ abbrev indexTy : ℕ → Ty Atom := fun _ ↦ .base .o
 abbrev grammar : ManySorted.Language (Ty Atom) := application.withAbstraction indexTy
 
 /-- An indexed λ admits abstraction over its index, and sisters Functional Application. -/
-abbrev rules : Interpreter grammar Node := (typeDriven application).withAbstraction indexTy
+abbrev rules : Interpreter grammar ℕ := (typeDriven application).withAbstraction indexTy
 
 /-- The denotations of a structure, relative to an assignment. -/
 def meanings (sc : Scenario) (t : Tree Unit Word) :

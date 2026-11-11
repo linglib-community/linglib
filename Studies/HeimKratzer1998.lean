@@ -292,7 +292,7 @@ abbrev pedantic : grammar.Structure PVal :=
 
 /-- The interpreter of the book: an index admits abstraction over it, and sisters whichever of
 application and predicate modification their types allow. -/
-abbrev rules : Interpreter grammar Node :=
+abbrev rules : Interpreter grammar ℕ :=
   (typeDriven (application.sum predicateModification)).withAbstraction fun _ ↦ .e
 
 /-- The denotations of a tree relative to total assignments, for the words with total
@@ -316,23 +316,21 @@ theorem meanings_johnSleeps :
 no rule applies to a truth value and an individual, whatever the model. -/
 theorem derivs_johnSleepsMary :
     Tree.Uninterpretable rules items (.bin (name .john) (.bin (pred .sleep) (name .mary))) :=
-  ⟨rfl, rfl⟩
+  ⟨by decide, rfl⟩
 
 /-- The interpretation function is a function (§3.3): no two of the rules apply to the same
 daughters, so a tree whose words are each at most one item has at most one derivation. -/
 theorem length_derivs_le_one {W : Ty Base → Type} {lex : Word ⊕ ℕ → List (Σ a, W a)}
     (hl : ∀ x, (lex x).length ≤ 1) (t : Tree Unit Word) :
     (Tree.derivs rules lex t).length ≤ 1 := by
-  unfold Tree.derivs
-  split
-  · exact Interpreter.length_derivs_le_one
-      (fun n _ ↦ by
-        cases n <;> simp [rules, Interpreter.withAbstraction, typeDriven,
-          ManySorted.Language.LocallyFinite.symbols_sum])
-      (fun n l r ↦ by
-        simpa [rules, Interpreter.withAbstraction, typeDriven] using
-          length_binaryRules_application_sum_predicateModification_le_one l r) hl _
-  · simp
+  rw [Tree.derivs_eq_values]
+  exact Tree.length_values_le_one
+    (fun n _ ↦ by
+      cases n <;> simp [rules, Interpreter.withAbstraction, typeDriven,
+        ManySorted.Language.LocallyFinite.symbols_sum])
+    (fun l r ↦ by
+      simpa [rules, Interpreter.withAbstraction, typeDriven] using
+        length_binaryRules_application_sum_predicateModification_le_one l r) hl t
 
 /-! ### Total and partial denotations
 
@@ -404,7 +402,7 @@ theorem pmeanings_thePizza :
     pmeanings (.bin (.leaf .the) (pred .pizza)) = [⟨.e, fun _ ↦ .some .pizza⟩] := by
   have h := the_some (P := fun x ↦ toyStructure.RelMap toyRel.pizza ![x]) (a := .pizza)
     fun _ ↦ Iff.rfl
-  simp [pmeanings, Tree.values, derivs_thePizza, pval, Item.pval, h]
+  simp [pmeanings, Tree.values_eq_map_derivs, derivs_thePizza, pval, Item.pval, h]
 
 /-- *The student* is a presupposition failure in the toy model, which has two students: it has
 a derivation, and no value under any assignment. -/
@@ -422,7 +420,7 @@ theorem pmeanings_theStudent : ∃ v : PVal .e,
 /-- *The John*, the article with an individual, is uninterpretable: the types alone decide
 it. -/
 theorem derivs_theJohn :
-    Tree.Uninterpretable rules itemsThe (.bin (.leaf .the) (name .john)) := ⟨rfl, rfl⟩
+    Tree.Uninterpretable rules itemsThe (.bin (.leaf .the) (name .john)) := ⟨by decide, rfl⟩
 
 /-! ### Relative clauses
 
@@ -500,8 +498,8 @@ theorem pmeanings_theStudentWhoSleeps :
   have h := the_some (a := .john)
     (P := fun x ↦ toyStructure.RelMap toyRel.student ![x] ∧ toyStructure.RelMap toyRel.sleep ![x])
     fun x ↦ ⟨fun h ↦ h.2, fun h ↦ ⟨.inl h, h⟩⟩
-  simp [pmeanings, Tree.values, derivs_theStudentWhoSleeps, pval, Item.pval, partialAssignments,
-    Assignments.partial, h]
+  simp [pmeanings, Tree.values_eq_map_derivs, derivs_theStudentWhoSleeps, pval, Item.pval,
+    partialAssignments, Assignments.partial, h]
 
 /-- Under the bracketing `[[the student] [who₁ [t₁ sleeps]]]`, which §4.5 rejects, a sentence
 with the definite as subject is uninterpretable. -/
@@ -509,7 +507,7 @@ theorem derivs_detNounModifier :
     Tree.Uninterpretable rules itemsThe
       (.bin (.bin (.bin (.leaf .the) (pred .student)) tree_whoSleeps)
       (pred .sleep)) :=
-  ⟨rfl, rfl⟩
+  ⟨by decide, rfl⟩
 
 end Composition
 
@@ -537,7 +535,7 @@ def sentence : Tree Unit Word := .bin everyPerson (.bin (verb .see) somePerson)
 
 /-- The object quantifier cannot combine with the verb where it stands: the sentence as
 pronounced has no derivation. -/
-theorem derivs_sentence : Tree.Uninterpretable rules items sentence := ⟨rfl, rfl⟩
+theorem derivs_sentence : Tree.Uninterpretable rules items sentence := ⟨by decide, rfl⟩
 
 /-- The surface-scope tree `[S [DP every person] [1 [S [DP some person] [2 [S t₁ [VP sees
 t₂]]]]]]`, the object raised and then the subject over it. -/
@@ -718,7 +716,7 @@ theorem meanings_inSitu :
 theorem derivs_basicObject :
     Tree.Uninterpretable rules items (.bin (name .john)
       (.bin (verb .see) (.bin (det English.Determiners.some_) (pred .person)))) :=
-  ⟨rfl, rfl⟩
+  ⟨by decide, rfl⟩
 
 end InSitu
 
@@ -859,7 +857,7 @@ theorem imeanings_janIsLoyal :
 /-- Functional Application cannot give *believes* its complement, a truth value where the verb
 wants a proposition. -/
 theorem derivs_maryBelievesJanIsLoyal_application :
-    Tree.Uninterpretable (typeDriven application) iitems maryBelievesJanIsLoyal := ⟨rfl, rfl⟩
+    Tree.Uninterpretable (typeDriven application) iitems maryBelievesJanIsLoyal := ⟨by decide, rfl⟩
 
 /-- The one derivation of the report: Intensional Functional Application of the verb to its
 complement, and Functional Application elsewhere. -/

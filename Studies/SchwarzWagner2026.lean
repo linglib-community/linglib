@@ -554,21 +554,21 @@ theorem meanings_mem_of_licensed {R : Tree.Label Cat Word → List (Tree.Label C
   cases l with
   | terminal c w =>
     rcases cs with _ | ⟨c', r⟩
-    · simp only [meanings, Tree.values, Tree.derivs, Tree.skeleton, Interpreter.derivs,
-        List.map_map, List.mem_map, Option.mem_toList] at hd
+    · simp only [meanings, Tree.values_eq_fold, RoseTree.fold_node, List.map_nil,
+        Tree.nodeValues, List.mem_map, Option.mem_toList] at hd
       obtain ⟨⟨a, x⟩, hx, rfl⟩ := hd
       exact hT c w _ hr hx
-    · simp [meanings, Tree.values, Tree.derivs, Tree.skeleton] at hd
+    · simp [meanings, Tree.values_eq_fold, Tree.nodeValues] at hd
   | phrase c k =>
     rcases cs with _ | ⟨t₁, _ | ⟨t₂, _ | ⟨t₃, r⟩⟩⟩
-    · simp [meanings, Tree.values, Tree.derivs, Tree.skeleton] at hd
+    · simp [meanings, Tree.values_eq_fold, Tree.nodeValues] at hd
     · exact h1 c k _ hr (ih t₁ (by simp) (hc t₁ (by simp)) d
         (by simpa [meanings, Tree.values_phrase_unary] using hd))
     · simp only [meanings, Tree.values_phrase_binary, List.mem_flatMap, List.mem_map] at hd
       obtain ⟨x, hx, y, hy, ⟨u, m⟩, -, rfl⟩ := hd
       exact h2 c k _ _ hr x (ih t₁ (by simp) (hc t₁ (by simp)) x hx) y
         (ih t₂ (by simp) (hc t₂ (by simp)) y hy) u m
-    · simp [meanings, Tree.values, Tree.derivs, Tree.skeleton] at hd
+    · simp [meanings, Tree.values_eq_fold, Tree.nodeValues] at hd
   | trace n c => exact absurd hr (hne n c _).1
   | bind n c => exact absurd hr (hne n c _).2
 
