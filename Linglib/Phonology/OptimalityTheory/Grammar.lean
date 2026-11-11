@@ -32,6 +32,7 @@ hypothesis `G.extent.Nonempty` of the statements that need it.
 * [N. Merchant, J. Riggle, *OT grammars, beyond partial orders: ERC sets and antimatroids*
   (2016)][merchant-riggle-2016]
 * [R. P. Dilworth, *Lattices with unique irreducible decompositions* (1940)][dilworth-1940]
+* [N. Merchant and A. Prince, *The Mother of All Tableaux* (2022)][merchant-prince-2022]
 -/
 
 @[expose] public section
@@ -98,6 +99,15 @@ theorem toAntimatroid_ofERCs_isFeasible (h : (ofERCs E).extent.Nonempty) (S : Se
   toAntimatroid_isFeasible h S
 
 end Grammar
+
+/-! ### The grammars of a typology -/
+
+/-- Each class of a typology is the set of rankings of a grammar: the rankings with a given
+language are those satisfying its ERC grammar ([merchant-prince-2022]). -/
+theorem ConstraintSystem.isExtent_setOf_typology {I O ι : Type*} (S : ConstraintSystem I O ι)
+    (r : Ranking ι n) : Order.IsExtent ERC.SatisfiedBy {r' | S.typology r r'} :=
+  ⟨S.ercGrammar r, Set.ext fun _ ↦
+    ConstraintSystem.forall_ercGrammar_satisfiedBy_iff.trans eq_comm⟩
 
 /-! ### The grammar of a relation
 

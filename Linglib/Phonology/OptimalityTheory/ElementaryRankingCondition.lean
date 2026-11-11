@@ -79,6 +79,7 @@ absorbing, `e` the identity, and each value idempotent. Its main results, in ter
   (2009)][riggle-2009a]
 * [N. Merchant, J. Riggle, *OT grammars, beyond partial orders: ERC sets and antimatroids*
   (2016)][merchant-riggle-2016]
+* [N. Merchant and A. Prince, *The Mother of All Tableaux* (2022)][merchant-prince-2022]
 -/
 
 @[expose] public section
@@ -572,5 +573,33 @@ theorem ConstraintSystem.picksAt_iff_forall_ercs_satisfiedBy {I O : Type*}
   · refine lt_of_le_of_ne ((satisfiedBy_ercOfProfiles_iff_le σ _ _).1
       (h _ ⟨o', ho', hne, rfl⟩)) fun heq ↦ hvp o' ho' hne (funext fun c ↦ ?_)
     simpa using congrFun (toLex_inj.1 heq) (σ.symm c)
+
+/-- The *ERC grammar* of the language of a ranking: the ERC of each winner of each input against
+every candidate of that input ([merchant-prince-2022]). -/
+def ConstraintSystem.ercGrammar {I O : Type*} (S : ConstraintSystem I O ι) (r : Ranking ι n) :
+    Set (ERC ι) :=
+  {α | ∃ i, ∃ w ∈ S.language r i, ∃ o ∈ S.gen i,
+    ercOfProfiles (S.con · (i, w)) (S.con · (i, o)) = α}
+
+/-- The rankings that satisfy the ERC grammar of a language are exactly those with that
+language, so the ERC grammar characterizes the ranking grammar ([merchant-prince-2022]). -/
+theorem ConstraintSystem.forall_ercGrammar_satisfiedBy_iff {I O : Type*}
+    {S : ConstraintSystem I O ι} {r r' : Ranking ι n} :
+    (∀ α ∈ S.ercGrammar r, α.SatisfiedBy r') ↔ S.language r' = S.language r := by
+  refine ⟨fun h ↦ funext fun i ↦ ?_, fun h α hα ↦ ?_⟩
+  · rcases (S.gen i).eq_empty_or_nonempty with he | hne
+    · have h0 (ρ : Ranking ι n) : S.language ρ i = ∅ :=
+        Finset.eq_empty_of_forall_notMem fun o ho ↦
+          Finset.notMem_empty o (he ▸ (Tableau.optimal_subset ho : o ∈ S.gen i))
+      rw [h0, h0]
+    · obtain ⟨w, hw⟩ := ConstraintSystem.language_nonempty (r := r) hne
+      have hw' : w ∈ S.language r' i :=
+        (Tableau.ofRanking_mem_optimal_iff_satisfiedBy (S.conAt i) r' (S.gen i) w).2
+          ⟨Tableau.optimal_subset hw, fun o ho ↦ h _ ⟨i, w, hw, o, ho, rfl⟩⟩
+      ext o
+      rw [ConstraintSystem.mem_language_iff_of_mem hw', ConstraintSystem.mem_language_iff_of_mem hw]
+  · obtain ⟨i, w, hw, o, ho, rfl⟩ := hα
+    exact ((Tableau.ofRanking_mem_optimal_iff_satisfiedBy (S.conAt i) r' (S.gen i) w).1
+      (by rw [h]; exact hw : w ∈ S.language r' i)).2 o ho
 
 end OptimalityTheory

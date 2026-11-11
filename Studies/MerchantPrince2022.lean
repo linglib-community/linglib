@@ -342,6 +342,12 @@ private theorem exists_lt_of_language_ne {I O : Type*} (S : ConstraintSystem I O
   obtain ⟨h₁, h₂, -⟩ := Pi.eq_and_lt_and_gt_of_toLex_comp_swap r hcov hlt hlt'
   exact ⟨x, hx, y, hy, h₁, h₂⟩
 
+-- A partition with a block that is not a grammar is not a typology.
+theorem IsTypology.isExtent_setOf_rel (h : IsTypology π) (r : Ranking ι n) :
+    Order.IsExtent ERC.SatisfiedBy {r' | π r r'} := by
+  obtain ⟨I, O, S, rfl⟩ := h
+  exact S.isExtent_setOf_typology r
+
 -- (290)
 theorem IsTypology.isAcyclic (h : IsTypology π) : IsAcyclic π := by
   obtain ⟨I, O, S, rfl⟩ := h
