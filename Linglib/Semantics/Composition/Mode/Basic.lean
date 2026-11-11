@@ -17,6 +17,8 @@ continuation at its own result type.
 
 * `Interpreter.Mode`: the basic modes closed under the meta-modes.
 * `Interpreter.Mode.eval`: the meaning of a mode, by the operations of the effects.
+* `Interpreter.MetaMode`, `Interpreter.Mode.Within`: the meta-modes, and the modes that keep to
+  an inventory of them at each effect.
 * `Interpreter.effectGrammar`: the grammar whose binary rules are the modes over a grammar's
   rules, with its structure, and `Interpreter.effectGrammar.basic`, the map of the grammar into
   it.
@@ -65,9 +67,64 @@ inductive Mode (Rule : Ty B → Ty B → Ty B → Type) : Ty B → Ty B → Ty B
   /-- Lower: a continuation at its own result type in the result is run at the identity. -/
   | lower {l r u : Ty B} (m : Mode Rule l r (.comp (.C u) u)) : Mode Rule l r u
 
+/-- The meta-modes, by the structure of an effect each one uses: its map, its application, its
+unit, its join, and for storing and reading the co-unit and the ejection, and for a continuation
+its lowering. -/
+inductive MetaMode
+  /-- Map Left and Map Right. -/
+  | map
+  /-- Structured App. -/
+  | ap
+  /-- Unit Left and Unit Right. -/
+  | unit
+  /-- Join. -/
+  | join
+  /-- Co-unit. -/
+  | counit
+  /-- Eject Left and Eject Right. -/
+  | eject
+  /-- Lower. -/
+  | lower
+  deriving DecidableEq, Repr
+
 namespace Mode
 
 variable {Rule : Ty B → Ty B → Ty B → Type}
+
+/-- A mode keeps to an inventory of meta-modes when each meta-mode in it is one the inventory has
+at the effect it lifts through. The co-unit and the ejections are asked of the reader, and the
+lowering of the continuation. A grammar need not have every meta-mode at every effect: one with
+only Structured App at an effect is the pointwise grammar of that effect, in which an operator on
+the effect captures all of it in its prejacent. -/
+def Within (inv : MetaMode → Eff B → Prop) : {l r u : Ty B} → Mode Rule l r u → Prop
+  | _, _, _, .basic _ => True
+  | _, _, _, .mapR (f := f) m => inv .map f ∧ m.Within inv
+  | _, _, _, .mapL (f := f) m => inv .map f ∧ m.Within inv
+  | _, _, _, .ap (f := f) _ m => inv .ap f ∧ m.Within inv
+  | _, _, _, .unitR (f := f) _ m => inv .unit f ∧ m.Within inv
+  | _, _, _, .unitL (f := f) _ m => inv .unit f ∧ m.Within inv
+  | _, _, _, .counit (i := i) m => inv .counit (.R i) ∧ m.Within inv
+  | _, _, _, .ejectR (i := i) m => inv .eject (.R i) ∧ m.Within inv
+  | _, _, _, .ejectL (i := i) m => inv .eject (.R i) ∧ m.Within inv
+  | _, _, _, .join (f := f) _ m => inv .join f ∧ m.Within inv
+  | _, _, _, .lower (u := u) m => inv .lower (.C u) ∧ m.Within inv
+
+instance decidableWithin (inv : MetaMode → Eff B → Prop) [∀ k f, Decidable (inv k f)] :
+    {l r u : Ty B} → (m : Mode Rule l r u) → Decidable (m.Within inv)
+  | _, _, _, .basic _ => isTrue trivial
+  | _, _, _, .mapR m | _, _, _, .mapL m | _, _, _, .ap _ m | _, _, _, .unitR _ m
+  | _, _, _, .unitL _ m | _, _, _, .counit m | _, _, _, .ejectR m | _, _, _, .ejectL m
+  | _, _, _, .join _ m | _, _, _, .lower m =>
+    haveI := decidableWithin inv m
+    inferInstanceAs (Decidable (_ ∧ _))
+
+/-- Every mode keeps to the inventory with every meta-mode at every effect. -/
+theorem within_of_forall {inv : MetaMode → Eff B → Prop} (h : ∀ k f, inv k f) :
+    ∀ {l r u : Ty B} (m : Mode Rule l r u), m.Within inv
+  | _, _, _, .basic _ => trivial
+  | _, _, _, .mapR m | _, _, _, .mapL m | _, _, _, .ap _ m | _, _, _, .unitR _ m
+  | _, _, _, .unitL _ m | _, _, _, .counit m | _, _, _, .ejectR m | _, _, _, .ejectL m
+  | _, _, _, .join _ m | _, _, _, .lower m => ⟨h _ _, within_of_forall h m⟩
 
 /-- The meaning of a mode over a grammar's rules, from a structure for the grammar: each
 meta-mode is the operation of its effect. -/

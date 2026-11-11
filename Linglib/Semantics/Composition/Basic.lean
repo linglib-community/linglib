@@ -24,7 +24,8 @@ objects by these operations.
 * `ManySorted.Language.LocallyFinite.unaryRules`, `binaryRules`: the rules that apply to given
   daughters, and `ManySorted.Language.motherTypes`, the types they give the mother.
 * `Interpreter`: the rules a node admits by its daughters' types, and
-  `Interpreter.typeDriven`, the interpreter that admits every rule that applies.
+  `Interpreter.typeDriven`, the interpreter that admits every rule that applies. An interpreter
+  restricted to the binary rules satisfying a condition is `Interpreter.filterBinary`.
 * `Interpreter.unaryValues`, `Interpreter.binaryValues`: the values of the rules a node admits,
   at the values of its daughters.
 
@@ -124,6 +125,19 @@ def typeDriven (L : Language.{u, v} T) [L.LocallyFinite] : Interpreter L N where
 @[simp] theorem mem_binary_typeDriven [L.LocallyFinite] {l r : T}
     (m : Sigma (L.Binary l r)) : m ∈ (typeDriven L : Interpreter L N).binary l r :=
   LocallyFinite.mem_symbols m.2
+
+/-- The interpreter that admits the unary rules `I` admits and, of its binary rules, those that
+satisfy `p`. -/
+def filterBinary (I : Interpreter L N) (p : ∀ {l r : T}, Sigma (L.Binary l r) → Prop)
+    [∀ l r, DecidablePred (p (l := l) (r := r))] : Interpreter L N where
+  unary := I.unary
+  binary l r := (I.binary l r).filter (p ·)
+
+@[simp] theorem mem_binary_filterBinary {I : Interpreter L N}
+    {p : ∀ {l r : T}, Sigma (L.Binary l r) → Prop} [∀ l r, DecidablePred (p (l := l) (r := r))]
+    {l r : T} {m : Sigma (L.Binary l r)} :
+    m ∈ (I.filterBinary p).binary l r ↔ m ∈ I.binary l r ∧ p m := by
+  simp [filterBinary]
 
 /-- The values of the unary rules a node labelled `n` admits, at the values of its daughter. -/
 def unaryValues (I : Interpreter L N) (M : L.Structure D) (n : N) (X : List (Sigma D)) :

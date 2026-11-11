@@ -9,7 +9,8 @@ The types of two daughters decide which modes of the effect-driven grammar combi
 `Ty.combine` lists them: each way of peeling effects off the two types down to a basic rule,
 with every Join and Lower the result allows. [It lists every mode of the
 grammar](##Interpreter.Ty.mem_combine), so the effect-driven interpreter [admits every mode at a
-node](##Interpreter.mem_binary_effectDriven).
+node](##Interpreter.mem_binary_effectDriven), and restricted to an inventory of meta-modes
+[exactly the modes that keep to it](##Interpreter.mem_binary_effectDriven_filterBinary).
 
 ## Main definitions
 
@@ -387,5 +388,14 @@ theorem mem_binary_effectDriven [DecidableEq B] {G : Language (Ty B)} [G.Locally
     m ∈ (effectDriven G : Interpreter (effectGrammar G) N).binary l r :=
   Ty.mem_combine (find := Language.LocallyFinite.binaryRules (L := G))
     (fun b ↦ Language.LocallyFinite.mem_symbols b) m.2
+
+/-- Restricted to the modes that keep to an inventory of meta-modes, the effect-driven
+interpreter admits exactly those. -/
+theorem mem_binary_effectDriven_filterBinary [DecidableEq B] {G : Language (Ty B)}
+    [G.LocallyFinite] {N : Type} (inv : MetaMode → Eff B → Prop) [∀ k f, Decidable (inv k f)]
+    {l r : Ty B} (m : Sigma (Mode G.Binary l r)) :
+    m ∈ ((effectDriven G : Interpreter (effectGrammar G) N).filterBinary
+      fun p ↦ p.2.Within inv).binary l r ↔ m.2.Within inv :=
+  Interpreter.mem_binary_filterBinary.trans (and_iff_right (mem_binary_effectDriven m))
 
 end Interpreter

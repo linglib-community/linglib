@@ -29,6 +29,11 @@ bind of the monad that any adjunction induces, which for storing and reading is 
 monad, and, with indeterminacy in between, the state transformer over sets that dynamic
 semantics is built on.
 
+A grammar need not have every meta-mode at every effect (section 3.4). With Structured App
+alone [a closure operator captures the effect of its
+prejacent](##BumfordCharlow2026.combineWithin_ap_closure), and without the Unit modes [it has no
+prejacent that lacks the effect](##BumfordCharlow2026.combineWithin_ne_unit_closure).
+
 A focused phrase evokes alternatives to its value, and an operator such as *only* associates
 with that effect as existential closure does with indeterminacy: it captures the alternatives of
 its prejacent, or [is given a prejacent with none](##BumfordCharlow2026.eval_unitR_only_iff).
@@ -483,11 +488,21 @@ def shape {B β : Type} {Rule : Ty B → Ty B → Ty B → Type}
   | _, _, _, .join _ m => .join (shape name m)
   | _, _, _, .lower m => .lower (shape name m)
 
+/-- The modes the book's `combine` finds for two types, in its order. -/
+def modes (l r : Ty Unit) : List (Sigma (Mode (baseGrammar Unit).Binary l r)) :=
+  Ty.combineWith (ManySorted.Language.LocallyFinite.binaryRules (L := baseGrammar Unit))
+    (fun p ↦ p :: (Mode.joins p ++ Mode.lowers p)) l r
+
 /-- The interpreter's output for two types: the modes that combine them, in the book's order,
 each with the type it yields. -/
 def combine (l r : Ty Unit) : List (Shape Name × Ty Unit) :=
-  (Ty.combineWith (ManySorted.Language.LocallyFinite.binaryRules (L := baseGrammar Unit))
-    (fun p ↦ p :: (Mode.joins p ++ Mode.lowers p)) l r).map fun p ↦ (shape Name.of p.2, p.1)
+  (modes l r).map fun p ↦ (shape Name.of p.2, p.1)
+
+/-- The interpreter's output in a grammar with the inventory `inv` of meta-modes
+(section 3.4). -/
+def combineWithin (inv : MetaMode → Eff Unit → Prop) [∀ k f, Decidable (inv k f)]
+    (l r : Ty Unit) : List (Shape Name × Ty Unit) :=
+  ((modes l r).filter fun p ↦ p.2.Within inv).map fun p ↦ (shape Name.of p.2, p.1)
 
 section Interpreter
 
@@ -559,6 +574,23 @@ theorem combine_alternatives : combine (S e) (S (e ⇒ T)) =
 -- given a pure one, lets through
 theorem combine_focus_closure : combine (F T ⇒ T) (F T) =
     [(FA, T), (.mapR (.unitR FA), F T), (.unitR (.mapR FA), F T)] := by decide
+
+-- section 3.4: with Structured App alone, the pointwise grammars of Figures 5 and 6, two
+-- indefinites combine in one way
+theorem combineWithin_ap : combineWithin (fun k _ ↦ k = .ap) (S e) (S (e ⇒ T)) =
+    [(.ap BA, S T)] := by decide
+
+-- section 3.4: and a closure operator captures the effect of its prejacent
+theorem combineWithin_ap_closure : combineWithin (fun k _ ↦ k = .ap) (S T ⇒ T) (S T) =
+    [(FA, T)] := by decide
+
+-- section 3.4: with the maps alone a closure operator associates with one layer, the inner
+theorem combineWithin_map_closure : combineWithin (fun k _ ↦ k = .map) (S T ⇒ T) (S (S T)) =
+    [(.mapR FA, S T)] := by decide
+
+-- section 3.4: without the Unit modes a closure operator has no prejacent without the effect
+theorem combineWithin_ne_unit_closure : combineWithin (fun k _ ↦ k ≠ .unit) (S T ⇒ T) T = [] ∧
+    combine (S T ⇒ T) T = [(.unitR FA, T)] := by decide
 
 -- two focused daughters: as with two indefinites, Structured App evokes their alternatives at once
 theorem combine_foci : combine (F e) (F (e ⇒ T)) =
