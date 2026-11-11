@@ -7,7 +7,7 @@ public import Mathlib.Control.Functor
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Mode.EffectFree
 public import Linglib.Semantics.Composition.Mode.Pointwise
-public import Linglib.Semantics.Composition.Lawful
+public import Linglib.Semantics.Composition.Mode.Normal
 
 /-!
 # Bumford and Charlow 2026: effect-driven interpretation
@@ -651,6 +651,26 @@ theorem combineWithin_ne_unit_closure : combineWithin (fun k _ ↦ k ≠ .unit) 
 theorem combine_foci : combine (F e) (F (e ⇒ T)) =
     [(.mapR (.mapL BA), F (F T)), (.join (.mapR (.mapL BA)), F T), (.mapL (.mapR BA), F (F T)),
       (.join (.mapL (.mapR BA)), F T), (.ap BA, F T)] := by decide
+
+/-- The normal forms of the modes the book's `combine` finds for two types with a result of type
+`u`. -/
+def normalForms (l r u : Ty Unit) : List (Shape Name) :=
+  ((modes l r).filter fun p ↦ p.1 = u).map fun p ↦ shape Name.of p.2.normalize
+
+-- two indefinites: the three modes that give a set of truth values have one normal form, and so
+-- one meaning
+theorem normalForms_alternatives :
+    normalForms (S e) (S (e ⇒ T)) (S T) = [.ap BA, .ap BA, .ap BA] := by decide
+
+-- and so do those for two foci
+theorem normalForms_foci : normalForms (F e) (F (e ⇒ T)) (F T) = [.ap BA, .ap BA, .ap BA] := by
+  decide
+
+-- two quantifiers: the Join that maps over the object last is its own normal form, the inverse
+-- scope of (4.45b), beside Structured App and the two modes that lower one quantifier first
+theorem normalForms_quantifiers : normalForms (C e) (C (e ⇒ T)) (C T) =
+    [.join (.mapR (.mapL BA)), .mapR (.lower (.mapL BA)), .ap BA, .mapL (.lower (.mapR BA)),
+      .ap BA] := by decide
 
 end Interpreter
 
