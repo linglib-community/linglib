@@ -69,4 +69,20 @@ def evenNew (n : ℕ) : Prop := ∃ m, n = ChecksFixtureDeps.double m
 set_option linter.deprecated false in
 def evenAddSelf (n : ℕ) : Prop := ∃ m, n = ChecksFixtureDeps.addSelf m
 
+
+/-! Content hashes: a renamed definition, and what uses it, keep theirs. -/
+
+def aboveThree (n : Nat) : Prop := n > 3
+def overThree (n : Nat) : Prop := n > 3
+def aboveFour (n : Nat) : Prop := n > 4
+theorem five_aboveThree : aboveThree 5 := by unfold aboveThree; decide
+theorem five_overThree : overThree 5 := by unfold overThree; decide
+theorem five_aboveFour : aboveFour 5 := by unfold aboveFour; decide
+
+inductive Colour | red | green
+inductive Color | red | green
+def Colour.rank : Colour → Nat | .red => 0 | .green => 1
+def Colour.score : Colour → Nat | .red => 0 | .green => 1
+def Colour.flipped : Colour → Nat | .red => 1 | .green => 0
+
 end ChecksFixture

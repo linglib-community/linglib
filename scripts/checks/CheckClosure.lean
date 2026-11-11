@@ -201,21 +201,154 @@ def aliases (env : Environment) (mentioned : NameSet) : Array Json := Id.run do
           ("since", toJson since)])
   return out.qsort (·.compress < ·.compress)
 
-def run (renames : NameMap Name) (names : List Name) : MetaM Json := do
+/-! ### Content hashes
+
+A content hash names a project declaration by what it says instead of by what it is called: the
+hash of its erased term, in which every project constant is replaced by that constant's own
+content hash. Renaming or moving a definition or a theorem, or one it uses, then changes no hash.
+The primitives keep their names, since nothing else says what they stand for: an inductive type
+is hashed with its mutual block under its own name and those of its constructors and fields, and
+an axiom or an opaque constant under its name. -/
+
+structure ContentState where
+  hashes : Std.HashMap Name String := {}
+  inProgress : NameSet := {}
+
+abbrev ContentM := StateT ContentState MetaM
+
+def digest (s : String) : String :=
+  String.ofList (Nat.toDigits 16 (hash s).toNat ++ Nat.toDigits 16 (hash (s ++ "\x00salt")).toNat)
+
+/-- `serialize`, with project constants and structure names read through `ref`. -/
+partial def serializeBy (ref : Name → Option String) (e : Expr) : String := Id.run do
+  let rec go (e : Expr) : StateM (Std.HashMap Expr Nat × Array String) Nat := do
+    if let .mdata _ b := e then return ← go b
+    if let some i := (← get).1.get? e then return i
+    let line ← match e with
+      | .bvar i => pure s!"bvar {i}"
+      | .fvar _ | .mvar _ => pure "open"
+      | .sort u => pure s!"sort {u}"
+      | .const n us => pure (match ref n with
+          | some h => s!"ref {h} {us}"
+          | none => s!"const {n} {us}")
+      | .app f a => do pure s!"app {← go f} {← go a}"
+      | .lam _ t b _ => do pure s!"lam {← go t} {← go b}"
+      | .forallE _ t b _ => do pure s!"pi {← go t} {← go b}"
+      | .letE _ t v b _ => do pure s!"let {← go t} {← go v} {← go b}"
+      | .lit (.natVal n) => pure s!"nat {n}"
+      | .lit (.strVal s) => pure s!"str {s.quote}"
+      | .mdata .. => pure "mdata"
+      | .proj n i b => do pure s!"proj {(ref n).getD n.toString} {i} {← go b}"
+    let (m, lines) ← get
+    set (m.insert e lines.size, lines.push line)
+    return lines.size
+  let (_, _, lines) := (go e).run ({}, #[])
+  return "\n".intercalate lines.toList
+
+/-- The term with its universe parameters named by position. -/
+def positional (c : ConstantInfo) (e : Expr) : Expr :=
+  e.instantiateLevelParams c.levelParams
+    ((List.range c.levelParams.length).map fun i ↦ .param (.mkNum `u i))
+
+/-- The structures an erased term projects from. -/
+partial def projStructs (e : Expr) : NameSet := Id.run do
+  let rec go (e : Expr) : StateM (Std.HashSet Expr × NameSet) Unit := do
+    if (← get).1.contains e then return
+    modify fun (seen, acc) ↦ (seen.insert e, acc)
+    match e with
+    | .proj n _ b => modify (fun (seen, acc) ↦ (seen, acc.insert n)); go b
+    | .app f a => go f; go a
+    | .lam _ t b _ | .forallE _ t b _ => go t; go b
+    | .letE _ t v b _ => go t; go v; go b
+    | .mdata _ b => go b
+    | _ => pure ()
+  let ((), _, acc) := (go e).run ({}, {})
+  return acc
+
+/-- The project constants an erased term mentions, including the structures it projects from. -/
+def projectConstants (env : Environment) (e : Expr) : Array Name :=
+  (e.getUsedConstants ++ (projStructs e).toArray).filter (isProject env)
+
+mutual
+
+/-- The serialization of an erased term, its project constants read as content hashes, except
+those in `self`, the block being hashed. -/
+partial def contentTerm (renames : NameMap Name) (self : NameMap String) (c : ConstantInfo)
+    (e : Expr) : ContentM String := do
+  let env ← getEnv
+  let e := positional c (canonicalize renames (← eraseProofs e))
+  let mut refs : NameMap String := self
+  for n in projectConstants env e do
+    unless refs.contains n do
+      refs := refs.insert n (← contentHash renames n)
+  return serializeBy refs.find? e
+
+partial def contentHash (renames : NameMap Name) (n : Name) : ContentM String := do
+  if let some h := (← get).hashes.get? n then return h
+  if (← get).inProgress.contains n then return s!"cycle {n}"
+  let env ← getEnv
+  let some c := env.find? n | return s!"unknown {n}"
+  modify fun s ↦ { s with inProgress := s.inProgress.insert n }
+  let h ← match c with
+    | .inductInfo i => do
+      let mut self : NameMap String := {}
+      let mut k := 0
+      for ind in i.all do
+        self := self.insert ind s!"self.{k}"
+        if let some (.inductInfo j) := env.find? ind then
+          let mut m := 0
+          for ctor in j.ctors do
+            self := self.insert ctor s!"self.{k}.c{m}"
+            m := m + 1
+        k := k + 1
+      let mut text := ""
+      for ind in i.all do
+        if let some ci@(.inductInfo j) := env.find? ind then
+          let fields := if isStructure env ind then getStructureFields env ind else #[]
+          text := text ++ s!"\nind {ind} {j.numParams} {j.numIndices} {fields}\n{← contentTerm renames self ci ci.type}"
+          for ctor in j.ctors do
+            if let some cc := env.find? ctor then
+              text := text ++ s!"\nctor {ctor}\n{← contentTerm renames self cc cc.type}"
+      let g := digest text
+      for (name, tag) in self.toList do
+        modify fun s ↦ { s with hashes := s.hashes.insert name s!"{g}.{tag}" }
+      for ind in i.all do
+        modify fun s ↦ { s with hashes := s.hashes.insert (ind ++ `rec) s!"{g}.{(self.find? ind).getD ""}.rec" }
+      pure s!"{g}.{(self.find? n).getD ""}"
+    | .ctorInfo k => do
+      discard <| contentHash renames k.induct
+      pure (((← get).hashes.get? n).getD s!"ctor {n}")
+    | .recInfo r => do
+      discard <| contentHash renames r.all.head!
+      pure (((← get).hashes.get? n).getD s!"rec {n}")
+    | .defnInfo d => do
+      pure (digest s!"def\n{← contentTerm renames {} c d.type}\n:=\n{← contentTerm renames {} c d.value}")
+    | .thmInfo _ => do pure (digest s!"thm\n{← contentTerm renames {} c c.type}")
+    | _ => do pure (digest s!"nominal {n}\n{← contentTerm renames {} c c.type}")
+  modify fun s ↦ { s with hashes := s.hashes.insert n h, inProgress := s.inProgress.erase n }
+  return h
+
+end
+
+def run (renames : NameMap Name) (names : List Name) (all : Bool) : MetaM Json := do
   let env ← getEnv
   let mut roots : Array (String × Json) := #[]
   let mut st : ClosureState := {}
+  let mut cs : ContentState := {}
   for n in names do
     if env.contains n then
       (_, st) ← (visit renames n).run st
   for n in names do
     if env.contains n then
       let doc := (← findDocString? env n).getD ""
+      let (content, cs') ← (contentHash renames n).run cs
+      cs := cs'
       let range ← findDeclarationRanges? n
       roots := roots.push (n.toString, Json.mkObj [
         ("found", true),
         ("module", toJson ((moduleOf? env n).getD .anonymous).toString),
         ("doc", doc),
+        ("content", content),
         ("line", toJson (range.map (·.range.pos.line))),
         ("closure", toJson ((reach st.edges n).map Name.toString)),
         ("axioms", toJson ((← collectAxioms n).map Name.toString))])
@@ -225,8 +358,15 @@ def run (renames : NameMap Name) (names : List Name) : MetaM Json := do
     (n.toString, Json.mkObj [
       ("module", node.module.toString), ("kind", node.kind), ("text", node.text),
       ("term", node.term)])
+  let mut every : Array (String × Json) := #[]
+  if all then
+    for (n, c) in env.constants.toList do
+      if isProject env n && !n.isInternal && !(c matches .recInfo _) then
+        let (h, cs') ← (contentHash renames n).run cs
+        cs := cs'
+        every := every.push (h, n.toString)
   return Json.mkObj [("roots", Json.mkObj roots.toList), ("nodes", Json.mkObj nodes.toList),
-    ("aliases", toJson (aliases env st.mentioned))]
+    ("aliases", toJson (aliases env st.mentioned)), ("all", Json.mkObj every.toList)]
 
 /-- The map from names to names in the JSON object of the file at `path`. -/
 def readRenames (path : String) : IO (NameMap Name) := do
@@ -240,12 +380,15 @@ def main (args : List String) : IO UInt32 := do
   let ((renames : NameMap Name), args) ← match args with
     | "--renames" :: path :: rest => do pure (← readRenames path, rest)
     | _ => pure ({}, args)
+  let (all, args) := match args with
+    | "--all" :: rest => (true, rest)
+    | _ => (false, args)
   let (mods, names) := args.span (· != "--")
   let names := names.drop 1
   initSearchPath (← findSysroot)
   let env ← importModules (mods.map fun m ↦ { module := m.toName }).toArray {}
     (trustLevel := 1024)
   let ctx : Core.Context := { fileName := "<checks>", fileMap := default, maxHeartbeats := 0 }
-  let (json, _) ← ((run renames (names.map String.toName)).run' {} {}).toIO ctx { env }
+  let (json, _) ← ((run renames (names.map String.toName) all).run' {} {}).toIO ctx { env }
   IO.println json.compress
   return 0
