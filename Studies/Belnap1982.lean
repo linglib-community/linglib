@@ -22,12 +22,6 @@ answer `Question.weakAnswer`, and the Distributivity Principle is `Question.Know
 inquisitive `Question.alt` keeps only maximal answers, and so loses *three apples* beside *some
 apples* (`alt_generate_basket`, p. 172).
 
-## Errata
-
-* The two definitions of presupposition can coincide without the Assumption, against p. 176
-  (`exists_presuppositions_eq_not_assumption`).
-* The premise added on p. 192 must be known to Peter (`not_knowsSomeAnswer_of_presupposition`).
-
 ## TODO
 
 * Multiple *which* (§4), *where*, *who* and *what* (§5), and the scope readings of §3.

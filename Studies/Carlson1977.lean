@@ -26,11 +26,6 @@ everywhere](##Model.everywhere_iff).
 * Belief is necessity along a doxastic accessibility relation. Only the properties of stages vary
   with the world; the realization relation and the name of a kind are rigid.
 
-## Errata
-
-* The progressive, p. 450, prints `R(x, y)`, its arguments reversed from pp. 449 and 451.
-* The translation of (135c), p. 454, prints `R(x, d)` with `x` free, for `R(z, d)`.
-
 ## TODO
 
 * The anaphora facts of §1.5 and §2.2 need a dynamic layer.

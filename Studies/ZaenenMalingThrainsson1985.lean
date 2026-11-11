@@ -54,16 +54,6 @@ argument tested is assigned SUBJ.
   receives none; no verb of the paper presents one. The agent phrase of (53a) is dropped, as the
   paper drops it.
 
-## Errata
-
-* The principles (61), with (61a) fixing no order, [also let the nominative of *þykja* be
-  SUBJ](##allows_thykja) for any roles but an agentive dative, against the tests (21c), (23d),
-  (25c) and (27b), though the paper says they account for (62b). Its p. 469 welcomes both
-  orders for many dative–nominative verbs; §2 shows that the nominative of *þykja* is no
-  subject.
-* The fifth item of (83) is printed as a second (83c); (37e) prints *goðs* for *góðs* and (64a)
-  *hanni* for *hana*.
-
 ## References
 
 * [zaenen-maling-thrainsson-1985]

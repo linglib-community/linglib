@@ -23,11 +23,6 @@ but `⊞?p` is a statement that [no `\\/`-free formula expresses](##ent_polarQ_n
 * The two models separating `⊞?p` from the classical formulas have two worlds and make every atom
   true at one of them, so the separation holds over any set of atoms.
 
-## Errata
-
-* The text introducing $\Box\forall x?Px \equiv \forall x(\Box Px \vee \Box\neg Px)$ refers to it
-  as the knowing-whether ascription (3-b) (p. 252); it is the knowing-who ascription (3-c).
-
 ## TODO
 
 * Knowing who (3-c) and the failure of $\boxplus\exists xPx \equiv \exists x\boxplus Px$ need the

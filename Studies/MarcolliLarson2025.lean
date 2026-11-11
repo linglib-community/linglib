@@ -19,16 +19,6 @@ theta position](##gaveRaised_notMem_language).
 The trace of the moved verb is a leaf anchored by the verb's trace, as the contraction quotient
 of Internal Merge leaves it, colored by the verb's grid. Sentences take the non-theta root.
 
-## Errata
-
-* The bare theta structures need not satisfy the theta criterion, against the paper's lemma:
-  [one comb filling an argument slot of another](##knowsLeft_not_satisfiesCriterion) leaves two
-  leaves with giver grids. The proof establishes the recursive criterion of its later section.
-* The criterion as printed asks only that each received role occur in the head's grid, which two
-  agent arguments of an agent-theme head pass; its gloss asks for the bijection encoded here.
-* The comb generators end with a role $\theta_{I,n}$ beyond the hierarchy
-  $\theta_{I,1} > \dots > \theta_{I,n-1}$ the paper fixes for them.
-
 ## TODO
 
 * The balanced theta structures, cut at the first non-theta position on every path, and the

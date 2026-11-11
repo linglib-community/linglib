@@ -50,15 +50,6 @@ anymore*](##form_predicts).
 * The complexity of a competitor is the number of heads in its logical form, the simple present
   being the universal perfect with `PERF` deleted.
 
-## Errata
-
-* The account does not exclude an experiential parse of the focused perfect. Its alternatives are
-  ordered by the earliest time of the domain, covert *even* over them is consistent, and the parse
-  [survives the competition](##focused_experiential_available), so the account admits *but she's
-  not anymore* after a focused *has been sick* and a focused perfect of *run*, which the paper
-  judges infelicitous. That narrow focus yields a universal perfect is the conclusion of the
-  paper's diagnostics, which its analysis assumes rather than derives.
-
 ## TODO
 
 * The permanent states of *be dead*, the predicate classes under focus and the unavailable

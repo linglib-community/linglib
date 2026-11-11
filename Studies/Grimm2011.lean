@@ -27,14 +27,6 @@ The entailments of a node, which subject selection counts, are its agentivity an
 features (`entailmentCount`). The subject of *kiss* dominates its object at any common
 persistence level, since kissing changes neither (`kiss_subject_dominates`).
 
-## Errata
-
-* Subject selection picks "the argument which has the greater number of entailments, or
-  equivalently, the dominant or higher position in the lattice structure" (p. 527). The two are
-  not equivalent: dominance implies the greater count (`entailmentCount_strictMono`), but two
-  nodes of the lattice with different counts may be incomparable
-  (`exists_entailmentCount_lt_incomparable`), so the count selects where dominance does not.
-
 ## References
 
 * [grimm-2011]

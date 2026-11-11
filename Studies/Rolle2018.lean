@@ -28,11 +28,6 @@ tune](##omxobm_stem_unvalued).
 * Positions are the three of one configuration; a trigger–target pair on a larger spine is read
   at the configuration containing both.
 
-## Errata
-
-* The discussion of the table summarizing the dominant-tone asymmetry calls the reverse of its
-  row a. "row b."; it is row f.
-
 ## TODO
 
 * The Izon and Hausa case studies and the treatment of apparent outward dominance.

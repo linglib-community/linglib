@@ -32,12 +32,6 @@ point on, `none` for an epistemically vague one: a numeral's scale is the order 
 adjective's that of its English fragment entry. *Absolutely* and *totally* share the entry of
 *completely* (p. 135). The rows are the cited judgments on terms with fragment entries.
 
-## Errata
-
-The entries (38) and (46) refer to the maximum of the adjective's scale, so *more or less* does
-not apply to *wet*, whose scale has a minimum but no maximum, and [leaves *approximately wet*
-unblocked](##approximately_wet), which §6.4.1 calls unnatural.
-
 ## References
 
 * [sauerland-stateva-2011]

@@ -31,12 +31,6 @@ numeral is stated over the library's `Plurality.GroupStructure`, whose `up` form
 from a sum of individuals, which is why a group can be counted again. The paper's Table 1, the
 twenty-two nouns derived by *-í*, is lexical data for the Czech Fragment and is not retyped here.
 
-## Errata
-
-The entry for *-ice* (55a), `λnλPλx[↑x ∧ P(x)(n)]`, conjoins the group `↑x` with a formula, as do
-(55c) and footnote 22 (ii). `iceSem` takes the reading the text describes, the groups formed from
-sums of `n` members of `P`: `λnλPλx∃y[x = ↑y ∧ P(y)(n)]`.
-
 ## References
 
 * [grimm-docekal-2021]

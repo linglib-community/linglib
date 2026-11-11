@@ -27,15 +27,6 @@ image](##navajoSibilantHarmony_language_eq).
 * The Samala words are read for their sibilants, by the transcription reader of `Hansson2010`.
 * The chart gives labials no [anterior] value, so t stands in for the paper's p, b, m.
 
-## Errata
-
-* Section 4: the grammar forbidding aa, bb and c admits the word a, outside (ab)+ and (ba)+
-  (`abGrammar_errata`).
-* Section 6: that grammar and the grammar forbidding aa, bb, ac, bc, cc, ca and cb differ on the
-  word c (`abGrammar_errata`).
-* Remark 1: the `k`-subfactors of a word longer than `k` need not be directed (ab and bc in abc,
-  `k = 2`), so they form no principal ideal.
-
 ## References
 
 * [chandlee-eyraud-heinz-jardine-rawski-2019]
@@ -173,7 +164,7 @@ def twoLetterGrammar : Set ((wordLanguage Char).Factor 2) :=
   {pair 'a' 'a', pair 'b' 'b', pair 'a' 'c', pair 'b' 'c', pair 'c' 'c', pair 'c' 'a',
     pair 'c' 'b'}
 
-theorem abGrammar_errata :
+theorem mem_language_abGrammar_twoLetterGrammar :
     ['a'] ∈ language (WordModel · (· ⋖ ·)) abGrammar ∧
       ['c'] ∉ language (WordModel · (· ⋖ ·)) abGrammar ∧
         ['c'] ∈ language (WordModel · (· ⋖ ·)) twoLetterGrammar := by

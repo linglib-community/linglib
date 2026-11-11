@@ -76,11 +76,6 @@ non-monotonic embeddings such as the paper's (22). Strong relevance is the subst
 gloss of (25). The reading-list example (26)–(28) is stated for any thresholds
 `0 < lo ≤ hi ≤ |books|` in place of the paper's 3, 8, and 10.
 
-## Errata
-
-* The prose under (100) assigns the pronoun the index `j`, but in (100) the verb is `like⟨j,k⟩`,
-  whose object index is `k` by the convention of (53b).
-
 ## TODO
 
 * Negation below cumulation, as in Beck's (121c): the paper's proof that negation's scope does not

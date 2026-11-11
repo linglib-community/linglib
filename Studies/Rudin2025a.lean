@@ -27,17 +27,6 @@ condition, removing no world not needed to reach `MI`. Khoo's vignettes are two 
 assertor's evidence leaving both open and the participant knowing the actual one. The ordering
 *might* update assumes a finite frame, the limit assumption.
 
-## Errata
-
-* (27b), (28), (54b) and (69c) omit the absurd state, which every `MI` contains (`MI_might`);
-  compatibility asks for a nonempty refinement, so no prediction changes.
-* Conservativity (17) compares denotations world by world. A commensurate update for a contingent
-  `p` guarantees *must p*, false at an unsettled context, so (15) assigns `p` no update
-  (`not_conservative_of_commensurate`); informational consequence repairs this
-  (`IsAssertiveUpdate.informationalConsequence`).
-* Ordering propositions overlapping the prejacent can leave a non-prejacent world best, against
-  the argument for (64), so its update is not commensurate (`not_commensurate_mustOrdUpdate`).
-
 ## References
 
 * [rudin-2025a]

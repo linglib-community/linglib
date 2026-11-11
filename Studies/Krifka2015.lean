@@ -40,11 +40,6 @@ a reverse tag disjoins it with the monopolar question of the negation.
   is the proposition, everything, or its complement, and under any prior on which the issue is
   live it has the relevance sign it is built from (`relevanceSign_evidence`).
 
-## Errata
-
-* The last stage of (28b) prints the addressee's commitment to `φ` after *No*; since *no*
-  asserts the negation, it is the commitment to `¬φ` here.
-
 ## TODO
 
 * After the second update of an assertion, contradicting it needs a rejection in the paper,

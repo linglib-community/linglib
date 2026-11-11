@@ -28,14 +28,6 @@ implements it by indexing each node when it is visited.
   traversal came from as long as no node is remerged to the right of a lower position of itself,
   as the paper assumes in denying rightward movement (p. 345).
 
-## Errata
-
-* (71) indexes a node before deciding whether to linearize it, so a parent whose linearization was
-  omitted counts as traversed. In `double`, α is shared by γ₁ = [g α] and γ₂ = [w α], and γ₂ by δ₁
-  and δ₂, with δ₁ before γ₁ before δ₂. α is linearized under γ₁, γ₂ having been traversed, and
-  omitted, under δ₁, and again under γ₂ once δ₂ linearizes it, against the paper's requirement that
-  only one occurrence of a linguistic object be overtly realized (p. 376).
-
 ## References
 
 * [de-vries-2009]

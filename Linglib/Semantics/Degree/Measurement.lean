@@ -24,11 +24,6 @@ On an ordinal scale [only the zero differential](##differentialComparative_comp_
 A differential takes degrees in an additive torsor and amounts in its group, so dates or degrees
 Celsius need no origin; a factor multiplies degrees and so needs a ring.
 
-## Errata
-
-* [stevens-1946] gives the interval group as $x' = ax + b$ with no sign condition, but also says it
-  lies in the isotonic group of increasing maps, which needs $a > 0$.
-
 ## References
 
 * [stevens-1946]

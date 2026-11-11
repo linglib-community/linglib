@@ -31,12 +31,6 @@ The atoms are finite and there is at least one, which drops the source's case of
 `range_support_neFree_eq` would fail there; `⊥` and `⊤` are `p ∧ ¬p` and `p ∨ ¬p` for some
 atom.
 
-## Errata
-
-Anttila's thesis misprints two statements this file encodes: invariance under bounded bisimulation
-(p. 24) omits the antecedent $(M, s) ∈ P$, and the conclusion of Lemma 3.3.2 (p. 80) prints the
-characteristic formula for $\mathbb{D}$ where its hypothesis and proof use the one for $\mathbb{F}$.
-
 ## TODO
 
 Theorem 3.3.7 of Anttila's thesis proper, for the fragments without bilateral negation, and the

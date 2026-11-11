@@ -24,11 +24,6 @@ postulate](##spohnRevision_c1_c2_c3_c4_not_cb), and an operator moving disbeliev
   to an operator by Spohn's revision elsewhere, which a faithful assignment still represents when
   the table's revised belief worlds are the least evidence-worlds of the prior (`patch_faithful`).
 
-## Errata
-
-* The proof of Theorem 15 derives (C1) for `◇` from part (1) of Lemma B.2 "according to Theorem
-  14", but the theorem that equates (C1) with condition (CR1) is Theorem 13.
-
 ## References
 
 * [darwiche-pearl-1997]

@@ -30,11 +30,6 @@ sentences by the indefensibility of their believed and known forms
 * The judged sentences are formulas in one atom `𝐩` whose agents are the discourse roles, `none`
   being a third person.
 
-## Errata
-
-* Section 1.5 (pp. 10–11) glosses `C a` as "it is compatible with everything a knows that"; (7)
-  of Section 1.1 and the conditions of Section 3.5 make it the dual of belief.
-
 ## TODO
 
 * Chapter 6's quantified model sets.

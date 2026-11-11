@@ -40,18 +40,6 @@ five](##clusterScore_gap). Fragments confirm [Map 107.2](##relativePronouns_frag
 * "The great majority" is read as three quarters, and [two thirds selects the same
   features](##twoThirds_iff). "Lack" is literal, and the "perhaps" of Afro-Asiatic excludes it.
 
-## Errata
-
-* §2.1 denies neighbouring languages both articles; Map 107.1 encloses Breton.
-* §2.2 denies eastern Indo-European the strategy; Map 107.2 encloses Armenian, and [Hindi-Urdu has
-  it](##hindiUrdu_relativePronoun).
-* §2.5 denies Hungarian a passive and Celtic this one; Map 107.5 encloses Hungarian, Irish, Breton.
-* §2.6 prints 68% for Georgian and Map 107.6 prints 67%.
-* §2.9 prints a sample of 19, less than its own counts need (`surveys` has Stassen's 110), and 13
-  European particle comparatives where [Map 107.9 encloses 12](##card_isogloss_particleComparative).
-* §2.10 lists Finnish and Georgian as relative-based; [Map 107.10 leaves them out](##rows_agree).
-* Map 107.4 leaves out Mari at 0.79, against its cut of 0.8.
-
 ## TODO
 
 * The surveys and Table 107.1 of §3, the features of §3.6, and the five origins §5 weighs.

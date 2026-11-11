@@ -40,17 +40,6 @@ context sorts (48).
   both, so the readings of (48) are unaffected; the trivalent propositions `beforeP` and `afterP`
   keep the definedness condition for von Fintel's Strawson entailment.
 
-## Errata
-
-* Proposition 1 identifies Heinämäki's *before* with Anscombe's on any instantiated, left-bounded
-  temporal clause, but passing from (36) to (37) replaces the interval `K`, of which a time
-  precedes all times, by the whole of `B`. On a temporal clause that holds at two intervals the
-  two come apart, since Heinämäki's *before* needs to precede only one of them
-  ([the counterexample](##not_forall_some_before_iff_beforeEver)). [It holds on a clause with one
-  interval](##some_before_iff_beforeEver), and [in general relative to an
-  interval](##some_before_iff_exists_beforeEver). The statement for *after* [is
-  correct](##some_after_iff_after).
-
 ## References
 
 * [beaver-condoravdi-2003]

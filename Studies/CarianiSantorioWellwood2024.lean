@@ -30,20 +30,6 @@ monotonicity [needs a total one](##CarianiSantorioWellwood2023.not_mem_image_Ici
 * The paper takes the ordering to be a total preorder; the theorems that need totality assume it.
 * The paper states no semantics for *doubt*, so (63c) is not formalized.
 
-## Errata
-
-* §4.6 would drop Connectedness (56) by replacing the total order of confidence states with a
-  partial order. Connectedness compares degrees on a linear scale and survives any background
-  (`maxComparative_ge_total`); a partial order costs the inference (53) instead
-  (`CarianiSantorioWellwood2023.not_mem_image_Ici_of_not_le`).
-* (40) puts the state at or above the contrast state, though its prose says "ordered higher".
-  With the contrast of a proposition its negation, the corollary that no one is confident of both
-  `p` and `¬p`, and the entailment (59), need the strict reading (`maxComparative_compl_of_lt`): a
-  tie between the `p`-state and the `¬p`-state satisfies (59a) for both and refutes (59b).
-* The upper bound that (68) draws for certainty needs a monotone measure
-  (`not_maxComparative_of_isMax`): (21) constrains only strictly ordered states, and the tied
-  maximal states of Figure 3 can be measured apart.
-
 ## TODO
 
 * The objections to the negation as contrast, (60) and fn. 31.

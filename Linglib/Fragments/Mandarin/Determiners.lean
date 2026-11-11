@@ -39,12 +39,6 @@ verb *yǒu* introduces phrases with *yīxiē*, *hěnduō* and *shǎoshù* and no
   alternatives that *dōu* closes. That reading lives at another type and is not among the sets
   recorded here.
 
-## Errata
-
-* Kuo and Yu state that the generalized existential quantifiers other than *yīxiē* and
-  *méiyǒu* require a classifier (p. 666), but give *hěnduō yìngzhēngzhě* 'many applicants' in
-  (3a) and *yǒu hěnduō xuéshēng* 'there are many students' in (26a).
-
 ## References
 
 * [kuo-yu-2012]

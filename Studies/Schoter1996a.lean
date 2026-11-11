@@ -40,18 +40,6 @@ presupposition a contradiction after a negative carrier as well as a positive on
 * The journal version condenses chapters 3 and 6: its Definitions 17, 27 and 29 are Definitions
   3.24, 6.1 and 6.5, its §4.1 is §3.7.3, and its (13) and (14) are (6.11) and (6.12).
 
-## Errata
-
-* Definition 3.8 makes `σᵢ(⟨a, b⟩)` true when `a ≤ b` and `i < b` (the journal version's
-  Definition 17 also has `a < b`), but glosses it as evidence "at least as strong as `i`", and
-  §3.7.3 passes the `½` evidence for John's adulthood on to his employment. Read strictly, no link
-  could fire at the top level, a presumed antecedent would pass nothing on, and the weak Tweety
-  triangle would come out `P⁻` rather than `C`. The file reads `σᵢ` with `i ≤ b`.
-* §3.5.6 claims that an assertion with neither defeasible nor inconsistent components, such as
-  `ψ ∧ ¬ψ`, is exactly true after closure in `E⊥`. The lexicon's links can still make it
-  inconsistent: (6.12c) asserts `R ∧ ¬F` and both conjuncts come out `I`
-  (`consistent_assertion_eq_I`). The weaker claim, at least true, holds in any state.
-
 ## TODO
 
 * Epistemic states of several setups (Definition 3.27), disjunction and the pragmatic

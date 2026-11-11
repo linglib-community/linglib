@@ -39,14 +39,6 @@ decides it](##initialIdentity_not_factorsThrough). English speakers carry doubli
 * Mandarin enters as any spoken language without plural morphology, the property the paper
   credits for the result.
 
-## Errata
-
-* The cross-modal experiments are said to present novel signs to "speakers who are sign-native"
-  (p. 13); the participants were sign-naïve English speakers, as the abstract and the surrounding
-  argument have it.
-* The preference for doubled signs in the morphological context is referred to Figure 1B
-  (p. 15); it is plotted in Figure 2B.
-
 ## References
 
 * [berent-2026]

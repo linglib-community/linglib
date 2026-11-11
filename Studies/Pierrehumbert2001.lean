@@ -49,28 +49,6 @@ expected spread [grows at every production](##spread_grows),
   two targets share one recursion; only the values 0 and 1 are the paper's.
 * Locators are those of the author's manuscript of June 2000.
 
-## Errata
-
-* The bare model is said to admit no parameter setting on which a category fills out without the
-  spreading going on indefinitely (§3.3). In fact its expected spread is [bounded whenever memory
-  decays](##bddAbove_integral_memorySpread_iff). It [converges](##tendsto_integral_memorySpread) to
-  $\gamma/(1-\gamma)$, [between $\tau-1$ and $\tau$](##div_one_sub_mem_Icc_of_eq_exp), times what
-  noise and bias add at a production, and [a production closes](##spreadGrowth_succ) a share of
-  about $\tau^{-2}$ of the distance. With the paper's noise and bias that is a standard deviation of
-  .41 at $\tau = 50$ and 2.6 at the paper's own 2000.
-* Fig. 3 is read synchronically as words of 10,000 to 100,000 tokens (§3.2), which takes one decay
-  per own token for every word. The appendix instead holds $\tau$ fixed for all labels in clock
-  time and notes without quantifying that rare words then reach less of their list. That effect
-  almost cancels the fewer applications of the bias: the frequent word's [lead is bounded at every
-  moment](##lenition_lead_le), and its [clock speed](##tendsto_clockSpeed) exceeds a rarer word's by
-  at most [a factor $\gamma^{-(r-1)}$](##totalWeight_div_mem_Icc). Evaluating the closed form at the
-  paper's parameters, the means at 100,000 and 10,000 tokens differ by .45 at one decay per token,
-  and by .024 at $\tau = 2000$ ticks and the same clock time.
-* A larger neighborhood is said to give the high-count case less variance than the low-count case
-  (§3.3). Once the neighborhood is as large as the list [the expected spread still rises with
-  every production](##spread_grows), [toward $\gamma$ times what noise and bias
-  add](##tendsto_integral_memorySpread), so there the order of the two is not reversed.
-
 ## TODO
 
 * The score function (1), the two-label loop of the appendix, and the neutralization of §4 (Fig. 5),
@@ -1025,14 +1003,14 @@ example (γ : ℝ≥0) (tgt : Target) (n : ℕ) :
   rw [integral_memoryMean memLp_noise integral_noise]
   simp
 
--- The first erratum at the paper's noise and bias: no decay spreads without bound.
+-- At the paper's noise and bias: no decay spreads without bound.
 example : ¬ BddAbove (Set.range fun n ↦
     ∫ e, memorySpread 1 e ∂seqLaw (rule 1 .exemplar noise (-(1 / 100)) 1) (n + 1)) := by
   rw [bddAbove_integral_memorySpread_iff memLp_noise integral_noise one_pos le_rfl
     (by rw [variance_noise]; norm_num)]
   simp
 
--- The first erratum at the paper's memory time of 2000: the expected spread converges, to between
+-- At the paper's memory time of 2000: the expected spread converges, to between
 -- 1999 and 2000 times what noise and bias add, a standard deviation of about 2.6.
 example {γ : ℝ≥0} (hγ : (γ : ℝ) = Real.exp (-(2000 : ℝ)⁻¹)) :
     ∃ L ∈ Set.Icc (1999 * (103 / 30000) : ℝ) (2000 * (103 / 30000)), Tendsto (fun n ↦

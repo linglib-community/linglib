@@ -33,15 +33,6 @@ sponsored by its position in the phrase, as the source colours each stem; the ta
 rankings, and serial derivations are the substrate's harmonic-serialism and tableau
 apparatus.
 
-## Errata
-
-* For `/kāk^H + rī^H/` the paragraph introducing the support (59) requires the weight of MAX(H)
-  to be less than half the sum of the other three weights. The violation profiles of (58b) and
-  (58c) require only that it be less than the sum, since (58b) also deletes an H; that no
-  weighting fits both inputs is unaffected.
-* Row (59a) writes the loser (57b) before the winner (57c), the reverse of row (59b), though its
-  W and L are read with (57c) as the winner.
-
 ## References
 
 * [mcpherson-lamont-2026]

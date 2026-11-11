@@ -26,13 +26,6 @@ one apple it [takes *on the towel* as the destination](##supports_oneReferent_if
 * *The towel* in *on the towel* is read as some towel, since every display has two.
 * The fixations of Experiment 3 are not formalized.
 
-## Errata
-
-* p. 561 places the over-descriptions in "the former", two-referent, condition; [they are in the
-  one-referent display](##observesQuantity_instructions).
-* pp. 554 and 570 say listeners did not rate over-descriptions worse, but Experiment 2 [rated (6)
-  below (4) beyond the interval](##overDescribes_rated_lower_exp2) (p. 563).
-
 ## References
 
 * [engelhardt-etal-2006]
@@ -282,7 +275,7 @@ theorem listeners_penalize_underDescription :
       ¬ Found .exp2b .instruction (some .oneReferent) := by
   decide +kernel
 
--- p. 563; see Errata
+-- p. 563
 theorem overDescribes_rated_lower_exp2 :
     OverDescribes oneReferent univ 0 InstructionType.modified.target ∧
       ∃ c ∈ comparisons, c.higherInstruction = .bare ∧ c.higherLocation = .different ∧

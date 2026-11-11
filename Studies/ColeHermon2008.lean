@@ -51,14 +51,6 @@ smuggling passive for English](##adjunct_only).
   caveat on extraction from moved complements is the paper's.
 * Binding at a stage is decided on the replay, which forgets to the derivation's own stage.
 
-## Errata
-
-* p. 159: "(28)–(39)" for (37)–(39), the passive subjects antecedent to passive agents.
-* p. 190: the structure (97) is proposed for "an English passive like (96)", but it is the
-  structure of (95); (99) is that of (96).
-* p. 162: (44) glosses *mang-atuk* 'ACT-see'; its translation and (43) have 'hit'.
-* p. 192: "(91)", twice, for (100); (91) is the unordered Toba Batak vP of §6.
-
 ## TODO
 
 * Adverbials ((15)–(16), (47)–(48)), which fn. 25 evacuates like the goal, the NP- and

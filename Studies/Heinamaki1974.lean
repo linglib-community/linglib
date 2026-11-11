@@ -18,7 +18,8 @@ $K$ is a moment](##forall_before_iff_after_iff_isPoint). The co-temporal connect
 [*as long as* strengthens *while*](##not_forall_while_imp_asLongAs), which asks only for overlap,
 and [*as soon as* strengthens *after*](##not_forall_after_imp_asSoonAs), since it speaks of where
 the main clause begins. The formulas [fit the paper's judgments of *while*, *as long as* and
-*until*](##rows_predicted), but for the accomplishment main clauses of the errata.
+*until*](##rows_predicted), but for the accomplishment main clauses of *as long as* and
+*until*.
 
 ## Implementation notes
 
@@ -35,19 +36,6 @@ the main clause begins. The formulas [fit the paper's judgments of *while*, *as 
   (128), and the single-event *whenever* of (36), which quantifies over possible times.
 * Non-factual *before* (§4.2.2), in which $B$ never holds, and the implicatures of chapter VI are
   not formalized.
-
-## Errata
-
-* (12) and (93) ask that the main clause not specify a moment, inferred from (5) and (88) (pp. 54,
-  120), but the accomplishments of those sentences do not specify moments (p. 26), so [the formulas
-  admit both](##rows_accomplishment_admitted). The prose has the right condition, that the main
-  clause be durative.
-* The main clause of (12) is to hold up to the reference point (p. 122), but as moments are
-  intervals (p. 24), `J'` can be one, and [(12) holds of a main clause that only begins
-  there](##until_of_fst_eq).
-* "Any type of verb can occur in the main clause" of *while* (p. 49), but with an accomplishment
-  in the *while*-clause (80) puts its interval inside the main clause, which then
-  [cannot be an achievement](##not_while_of_isPoint_of_accomplishment).
 
 ## References
 

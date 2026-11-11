@@ -44,14 +44,6 @@ all*.
   alternatives.
 * Priors, rationality and costs are arguments, of which the paper's tables are instances.
 
-## Errata
-
-* Footnote 13 says that the normalizing sum is positive exactly when at each world some message is
-  true "under a certain parse". The MaxiMin speaker gives no weight to a message false under one
-  of its parses, nor at a world of prior probability zero (`speaker_apply_singleton_ne_zero_iff`),
-  so the condition is that at each world of positive prior some message be true under all its
-  parses.
-
 ## TODO
 
 * Under a downward-entailing operator the least informative parse reads the item with the

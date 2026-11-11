@@ -24,12 +24,6 @@ negation, the negations being [disjoint](##MacCartneyManning2009.negated_factive
 monotonicity class is [that of the two-way implicative it
 weakens](##MacCartneyManning2009.monotonicity_eq).
 
-## Errata
-
-* The signature `−/◦` is said to project `^` as `|` and both `|` and `⌣` as `#`, and is classed
-  as downward monotone. An antitone operator that projects `^` as `|`
-  [projects `⌣` as `|`](##MacCartneyManning2009.alternation_of_cover), so `⌣` cannot go to `#`.
-
 ## TODO
 
 * The projectivity table for the quantifiers and the inference procedure that chains edits.

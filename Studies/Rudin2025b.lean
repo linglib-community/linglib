@@ -47,14 +47,6 @@ view that it denotes a proposition and on the view that it denotes a question al
   *claim* require an assertion, the property its discussion of them invokes. Interrogative grunts
   are not represented.
 
-## Errata
-
-* The content postulates (66) and (80) are printed as biconditionals, but the prose glosses only
-  the left-to-right direction. Read right to left, (80) makes every event an asking with every
-  question as its content, so under (86) every reenactment is an asking and the paper's own (60),
-  a quoted falling declarative under *say*, is
-  [contradictory](##not_report_say_of_printed). `not_report` uses the left-to-right reading.
-
 ## References
 
 * [rudin-2025b]

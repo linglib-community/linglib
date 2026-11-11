@@ -40,16 +40,6 @@ plurality of propositions a disjunction denotes is not formalized.
 * Figures 1 and 2 reprint those of [booth-2022a] and are formalized there
   (`Booth2022a.Figures`).
 
-## Errata
-
-* The meta-language Facts 6 and 7 are stated for every non-Hurford disjunction (Def 22), but their
-  proofs assume that no alternative of either disjunct is a state of the other,
-  `Disjoint (alt ⟦φ⟧⁺) ⟦ψ⟧⁺`, which is strictly stronger. Under Def 22 both facts fail on
-  three-world models ([Fact 7](##not_forall_disjoint_of_nonHurford),
-  [Fact 6](##not_forall_independence_of_nonHurford)); under the alternative-wise condition the
-  proofs go through. For atoms the two conditions coincide, so the object-language Facts 7–13
-  stand.
-
 ## References
 
 * [booth-2022b]

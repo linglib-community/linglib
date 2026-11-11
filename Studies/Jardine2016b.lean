@@ -31,13 +31,6 @@ agrees with `Rvoice` (`rows_agree`).
 * `Rvoice` is written as the rule (7.1) applied pointwise, `voiceRule`, a `p` between two `a`s
   surfacing as `b`.
 
-## Errata
-
-* The text leaves to the reader that `R(CG(φ_apba)) = Rvoice`. The identity fails: no subgraph of
-  (7.22) mentions a `b` beside the target, so the grammar [admits](##voicing_bpa_bba)
-  `bpa ↦ bba`, which the rule (7.1) does not, and the two relations
-  [differ](##voicing_ne_voiceRule).
-
 ## References
 
 * [jardine-2016b]

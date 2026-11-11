@@ -67,12 +67,6 @@ not, so that diagnostic is recorded in the data rows only.
 The Voice-bundling status of the Bemba, Luganda, and Venda causatives is unknown (Table 3.1,
 note a), so only the English, Japanese, and Finnish heads are given as `CauseHead` values.
 
-## Errata
-
-In (103b) the printed Voice′ denotation `λx.λe. running(e) & agent(e,y)` binds `x` and uses `y`;
-the printed VoiceP denotation, with `agent(e,Mary)`, requires `agent(e,x)`, as the study reads
-it.
-
 ## TODO
 
 The second applicative diagnostic (18), that low applicatives are nonsensical with completely

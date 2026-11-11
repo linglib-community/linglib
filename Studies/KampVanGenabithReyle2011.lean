@@ -24,13 +24,6 @@ referent fails. Definition 22 is Definition 29 at the empty assignment by defini
 (`DRS.state`), the generalisation to improper DRSs of p. 161. Distributivity and extensionality
 follow from the form of Definition 24(ii) alone and do not use the absence of `□` and `◇`.
 
-## Errata
-
-Definition 27(i) defines a regular context change potential on the states whose base includes its
-own base, where the informal condition (i) it summarises (p. 160) and Definition 24(i) use its
-referential presupposition, for a DRS the free referents: for the update of (43), `{z, u}`
-against `{x, y}`. `update_bound` is Definition 24(i)'s condition for (43).
-
 ## References
 
 * [kamp-vangenabith-reyle-2011]

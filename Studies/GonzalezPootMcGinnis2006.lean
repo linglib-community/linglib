@@ -43,12 +43,6 @@ works no derivation through (A4). We read discharge the same way: an item that d
 [Addressee] discharges [Participant] with it. Were [Participant] left behind, the residue of a
 second-person plural object would match *-en*, which (20) lacks.
 
-## Errata
-
-(A4) lists *-éːš* above *-oʔon*, so strict scansion gives *-éːš -oʔon* where (19) has
-*-oʔon -éːš*. (27) lists them the other way round, and (A4) can too without disturbing the order
-the appendix requires of *-éːš* over *-etš*.
-
 ## References
 
 * [gonzalez-poot-mcginnis-2006]

@@ -48,11 +48,6 @@ reaches (`rows_predicted`).
 * The examples are `Data.Examples.FuscoSgrizzi2026`; the lexical entries are those of
   `Fragments/Romance/Italian/Verbs.lean`.
 
-## Errata
-
-* The top nodes of (25) and (26) read `Have-a-Child(e, w) ∧ Agent(e, PRO, w′)`, and the vP of (26)
-  the reverse, crossing world variables (23a) keeps together; `aP` and `diP` read both at `w′`.
-
 ## References
 
 * [fusco-sgrizzi-2026]

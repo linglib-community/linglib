@@ -43,14 +43,6 @@ later *maaloo* changes what a past activity has been](##credited_exchange).
 * The comparison of rates reads the "little simplification" of Figure 14.3 and the "rarely" of
   p. 351, not the "do not use" of p. 350.
 
-## Errata
-
-* The chapter first says that *ze* and *wa* pragmatically presuppose the sex of the speaker
-  (p. 339), then that features used by both sexes cannot be said to do so (p. 340), and that one sex
-  may assume the "voice" of the other (p. 343), without saying which holds of the two particles. On
-  the model the first holds [only if the stance is closed to the other
-  sex](##ExclusivelyIndexes.comp_iff), which rules out the last.
-
 ## TODO
 
 * Precontextualization, the expectations a first pair part sets up (pp. 345-346), and markedness,

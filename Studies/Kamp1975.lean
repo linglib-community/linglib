@@ -28,14 +28,6 @@ two agree. Before this, Kamp argues that no many-valued logic handles borderline
   asymmetric, and the witness shows the incomparability and the forced verdict, not the
   paper's specific outcome.
 
-## Errata
-
-* Definition (7) asks for a single function $F'$ on extensions with $F(P)(w) = F'(P(w))$ at
-  every world, while the gloss after it and the claim that every predicative adjective is
-  extensional need $F'$ to vary with the world. A predicative adjective whose property differs
-  between worlds, such as `grayAdj`, satisfies (4) and the gloss but not (7) as printed. The
-  study reads (7) by its gloss, `IsExtensional`.
-
 ## References
 
 * [kamp-1975]

@@ -40,13 +40,6 @@ from the modal's domain (§6.2).
   worlds to be nonempty ([`mem_must_singleton_iff`](##Simons2005.mem_must_singleton_iff)), which
   (14) does not.
 
-## Errata
-
-* p. 308: Alternativeness entails Non-Containment only when the disjuncts denote at least two
-  propositions. A single proposition, the argument fn. 10 allows a modal, or the denotation of an
-  *or* coordination of synonymous disjuncts, satisfies Alternativeness on a set inside it while
-  violating Non-Containment there (`alternativeness_singleton`).
-
 ## TODO
 
 * The syntax of §§3–4, ATB movement of the modal and the Rule of Independent Composition (51),

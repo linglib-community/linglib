@@ -24,22 +24,6 @@ the root, `C_c` (Definition 13) being again a space with root `c`. Theorem 32, p
 the totality of `update`. The well-definedness of the assertion update rests on
 `le_restrictCommitment_of_mem`, its root case included.
 
-## Errata
-
-* Theorem 31(1) omits `a ≠ b`: for `a = b` the confirmation repeats the assertion, which
-  Theorem 29 makes redundant, so it is never cooperative (`not_cooperative_assert_self`).
-* The witness for Theorem 27(2) takes `O_{a,b} = B_a ∪ {(w, w)}` with `B_a = {(w, w'), (w', w')}`,
-  which is not Euclidean (`w O w` and `w O w'` without `w' O w`), so it is not a commitment state
-  of Definition 2; `buffet` is a witness that is.
-* Competence (Definition 5) quantifies over all pairs of agents, `v B_y w` entailing `v B_x w`
-  for every `x` and `y`, and so forces one shared belief relation (`Frame.competent_iff`).
-* The root of the assertion update of Definition 10 is the update of Definition 4, which the
-  thesis says does not suffice for sincere states, since it leaves beliefs unchanged; the sincere
-  update of Definition 6 is not used. So an assertion keeps a sincere root sincere only if the
-  speaker already believed its content (`Frame.sincere_restrictCommitment_iff`), no speech act
-  changes a belief (`root_update_belief`), and the informative update 2, which holds in sincere,
-  competent states, is brought about by no speech act.
-
 ## TODO
 
 * Theorem 36, the cooperativity of answering a question, and speech act entailment

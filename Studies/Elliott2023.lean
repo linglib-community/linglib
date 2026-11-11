@@ -30,20 +30,6 @@ scope projects](##Elliott2023.negative_exists_pred2).
   referents; where two points of one world differ in whether they define `y`, the one that does
   not subsists in the updates of the one that does.
 
-## Errata
-
-* Assertion (26a) and exhaustive assertion (45a), (46a) are defined when the unknown update is
-  nonempty; the surrounding prose requires it to be empty, and that is how they are read here.
-* Descent (21) requires only a larger domain, though the prose glosses it as extension; the
-  substrate takes extension.
-* Heimian familiarity is said to follow from (26), but [an open sentence can be assertable where its
-  variable is not familiar](##Elliott2023.assertable_not_familiar).
-* (23) is said to hold of every state, but [a point that does not define `y` can survive the
-  denial of `∃x R(x, y)`](##Elliott2023.not_negative_exists_pred2); it holds where the points
-  define the same referents.
-* (31) is justified by the updates of `U(x)` partitioning their input, but [they need not cover
-  it](##Elliott2023.not_cover_pred1); they do where `x` is novel, as in (31).
-
 ## References
 
 * [elliott-2023]

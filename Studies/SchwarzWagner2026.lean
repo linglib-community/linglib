@@ -51,16 +51,6 @@ the paper does not discuss.
 * What is not simplex comes from a table of what each category can denote
   (`meanings_mem_of_licensed`), not from listing the trees.
 
-## Errata
-
-Section 4.1 says that under strict symmetry the complexity filter and blocking "are necessarily
-aligned", reasoning from the equalities (70) that blocking prohibits a strengthening only if the
-other alternative is simplex. That holds of the first version (14), not of the revised (67) the
-section quotes, which [also reads every simplex meaning strictly
-between](##IsSymmetric.blocked_sdiff_iff), and [the alignment fails](##exists_isSymmetric_blocked).
-Section 4.3's extension to entailment symmetry, whose proof the paper omits, inherits this. The
-paper offers no example with such a meaning.
-
 ## TODO
 
 The contextual cases (23), (58), (59), the disjunction (29), the embedding (79), the question

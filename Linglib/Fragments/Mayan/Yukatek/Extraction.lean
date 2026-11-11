@@ -27,11 +27,6 @@ as lacking the status suffix as well as Set A. Hofling glosses the optional *j-*
 the masculine clitic, and it is not recorded. The extraction of an object is not exemplified and
 is left undescribed.
 
-## Errata
-
-Hofling's example (24) labels its Yucatec questions a, b, b and its Southern Lacandon ones d, d,
-e; the question with *ti'* is the second (24b).
-
 ## References
 
 * [hofling-2017]

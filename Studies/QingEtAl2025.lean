@@ -39,12 +39,6 @@ its felicity judgments otherwise; the attested *hope whether* examples are recor
 *temer* with a polar question and *haipa* with a constituent question are recorded but not
 predicted.
 
-## Errata
-
-* Non-distributivity is said to block triviality (pp. 10, 13, 16), but the examples refute only the
-  inference from the question to an answer, and [a predicate can fail it and stay
-  L-analytic](##QingEtAl2025.isLAnalytic_degreeComparisonOr).
-
 ## References
 
 * [qing-uegaki-2025]

@@ -36,12 +36,6 @@ The converbs of §8.5.2.2 are those of `Turkish.Converb` on the grammar's verbs,
 The possessive and locative existential sentences of §12.1.1.2 are those of
 `Turkish.Possession`, with the possessive suffix on the possessee obligatory (§14.4).
 
-## Errata
-
-Among the examples of §11.1.1.5, *Gittiler mı?* should be *Gittiler mi?*, since fronting
-harmony gives a front vowel after *gittiler* (§3.2.1), and *Baslasın mı?* should be
-*Başlasın mı?*.
-
 ## References
 
 * [A. Göksel and C. Kerslake, *Turkish: A Comprehensive Grammar* (2005)][goksel-kerslake-2005]

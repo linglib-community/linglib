@@ -51,18 +51,6 @@ models](##context_rows), and with the sums it [mispredicts four](##sums_mispredi
   antecedents or under pretended ignorance; the unremarkable readings and the predicative uses
   (§5) are row data.
 
-## Errata
-
-* With the noun's extension closed under sums (fn. 14), the modal component of (59) holds only if
-  the anchor projects a world where the whole domain satisfies the scope, as the gloss "maybe all
-  did" of (22) has it. It then predicts (22) false in (23a), where the speaker knows that not
-  everyone danced, and (37), (41) and (82) false in (38a), (42a) and (49), where the agent is to
-  choose one at random; the paper judges all four acceptable. Restricted to atoms, the component
-  predicts them.
-* (75) and (92) write `agent(y)(e)`, the actual event, for `agent(y)(e′)`.
-* The discussion of (39) cites (40c) for the scenario in which it rained everywhere, which is
-  (40b).
-
 ## TODO
 
 * Under an overt possibility modal *un N qualsiasi* has an epistemic reading (Chierchia's

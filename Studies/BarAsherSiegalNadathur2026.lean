@@ -30,28 +30,6 @@ sufficient sets [drop the door's button](##electronic_differs). *Nur is opening 
   its variables that turns the handle back also engages the lock (`handle_alternatives_lock`), so
   the handle is necessary there only by way of a locked door.
 
-## Errata
-
-* (26) prints the light's equation as $S_1 \wedge S_2$, but Figure 1b and (25a) give the
-  biconditional $S_1 \leftrightarrow S_2$. The two disagree on Figure 1b's fifth line, both switches
-  down with the light on, and on its fourth, the first switch down with the light undetermined,
-  which the conjunction settles off (`Lifschitz.printed_contradicts`).
-* (30a) quantifies over every consistent situation over the same variables that changes the cause,
-  so a sufficient set must be the only consistent situation over its variables that gives the effect
-  its value (`isSufficient_iff`). The circuit's two settings that light the lamp share their
-  variables, as do the two that leave it off, so the light has no sufficient set at all, against the
-  four listed after (30), and ⟨S₁,0⟩ is not necessary for the light off in (25b)
-  (`Lifschitz.not_isSufficient`). The argument given there, that changing $S_1$ requires changing
-  the light, holds once the other switch is held fixed (`Lifschitz.light_changes_of_s₂_fixed`).
-  Holding fixed what does not descend from the cause does not repair (30a), though: on the door it
-  leaves the handle of (38a) with no consistent alternative at all (`handle_alternatives_lock`), so
-  the door's verdicts would hold only vacuously.
-* (39b) and (39c) are printed without the effect fact ⟨O,0⟩, which (30b) puts in every sufficient
-  set and (39a) includes; as printed they are not sufficient (`not_sufficient_as_printed`).
-* After Table 2 the paper says the table shows a circuit known to be closed settling the door with
-  the button unknown. No row of Table 2 settles the circuit with the button open, and by (29) no
-  consistent situation does (`button_dom_of_circuit`).
-
 ## TODO
 
 * The paper's repair for the realistic context of (40), which lets a sufficient set for

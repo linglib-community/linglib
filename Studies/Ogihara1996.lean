@@ -45,11 +45,6 @@ book's sentences [have exactly these readings](##rows_readings).
   them. The rows judge only the simultaneous and the shifted readings, so the future reading of a
   Japanese present under a past is predicted but untested.
 
-## Errata
-
-The note to the chart of tenses says that the English present *-s* surfaces only with a first
-person singular subject; it is the third person singular.
-
 ## TODO
 
 The interpretation of the English absolute present *-s* and the double-access sentences it gives

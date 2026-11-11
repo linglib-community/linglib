@@ -32,11 +32,6 @@ that overlap but differ](##ese_readings), as Harbour observes of person- and dis
   person term. The paper describes Mundari's third term as measuring distance from both
   participants; it anchors on the others' atom, as the non-participant term does throughout.
 
-## Errata
-
-* The classes of vector lengths are bounded by strict inequalities on both sides, which leaves the
-  cut-off lengths themselves in no class; each class here is closed at its lower cut-off.
-
 ## TODO
 
 * The change from ternary to binary systems as the loss of the last person feature to enter the

@@ -34,11 +34,6 @@ in a downward-entailing environment. Exhaustifying under *whenever*, above a req
 * Prosody, the metalinguistic use of negation and the acquisition and processing evidence the
   paper reviews are not formalized.
 
-## Errata
-
-* p. 284: "In both (36b) and (27)" means (36b) and (37), the obligation to read two papers, as the
-  sentence after it shows.
-
 ## References
 
 * [spector-2013]

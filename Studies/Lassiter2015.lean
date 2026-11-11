@@ -34,11 +34,6 @@ likely to win as not; the lottery's probability measure makes the first true and
   values.
 * In §4 the measure lives on the epistemic space: almost every world is accessible.
 
-## Errata
-
-* p. 674: when the world order is not connected, the best worlds need not strictly dominate their
-  complement under the revised lift (`not_asymmRel_kratzer_bestWorlds`).
-
 ## References
 
 * [lassiter-2015]
