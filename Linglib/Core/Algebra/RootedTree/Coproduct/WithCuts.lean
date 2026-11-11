@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Algebra.BigOperators.Multiset
+public import Linglib.Core.Algebra.BigOperators.Ring.Multiset
 public import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 public import Linglib.Core.Combinatorics.RootedTree.Cut
 public import Linglib.Core.Data.UnorderedTree.Basic
@@ -139,9 +139,8 @@ theorem comulForestOfCuts_eq_sum
     show (1 : _) = of' (R := R) (0 : Forest (UnorderedTree α)) ⊗ₜ[R] of' 0
     rw [of'_zero, Algebra.TensorProduct.one_def]
   | cons T F ih =>
-    rw [comulForestOfCuts_cons, comulTreeOfCuts_eq_sum, ih, forestCuts_cons, Multiset.conv,
-      Multiset.map_map, ← Multiset.sum_map_product_mul]
-    exact congrArg Multiset.sum <| Multiset.map_congr rfl fun p _ ↦ (cutTensor_add p.1 p.2).symm
+    rw [comulForestOfCuts_cons, comulTreeOfCuts_eq_sum, ih, forestCuts_cons,
+      Multiset.sum_map_conv _ _ cutTensor_add]
 
 /-! ### The policy-indexed carrier `WithCuts`
 

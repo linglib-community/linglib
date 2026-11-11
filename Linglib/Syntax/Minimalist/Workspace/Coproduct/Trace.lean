@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.BigOperators.Multiset
+public import Linglib.Core.Algebra.BigOperators.Group.Multiset.Basic
 public import Linglib.Syntax.Minimalist.Workspace.Coproduct.DoubleCut
 public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 public import Mathlib.RingTheory.Bialgebra.Basic

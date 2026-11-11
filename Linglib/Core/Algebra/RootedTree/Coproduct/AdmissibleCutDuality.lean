@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.BigOperators.Multiset
+public import Linglib.Core.Algebra.BigOperators.Ring.Multiset
 public import Linglib.Core.Algebra.RootedTree.BMinus
 public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
@@ -91,7 +91,7 @@ private lemma pairing₂_of'_of'_mul (A B : Forest (UnorderedTree α))
     | add V₁ V₂ ih₁ ih₂ => simp only [mul_add, map_add, ih₁, ih₂, Multiset.sum_map_add]
     | tmul v₁ v₂ =>
       rw [Algebra.TensorProduct.tmul_mul_tmul, pairing₂_tmul_tmul, pairing_of'_mul B u₁ v₁,
-        pairing_of'_mul A u₂ v₂, mul_comm, ← Multiset.sum_map_product_mul]
+        pairing_of'_mul A u₂ v₂, mul_comm, Multiset.sum_map_mul_sum_map]
       exact congrArg Multiset.sum <| Multiset.map_congr rfl fun _ _ ↦ by
         simp only [pairing₂_tmul_tmul]; ring
 
