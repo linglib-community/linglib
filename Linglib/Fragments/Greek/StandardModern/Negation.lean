@@ -6,14 +6,17 @@ public import Linglib.Syntax.Clause.Complementation
 /-!
 # Greek negation
 
-Standard Modern Greek has two sentential negation markers in complementary distribution by
-mood: *dhen* (δεν) negates indicative clauses, and *min* (μην) negates the subjunctive clauses of
-non-veridical environments, among them the negative imperative, which Greek forms with a
-subjunctive verb. The analysis of the two as standard and modal negation, and of their
-non-negative uses, is [tsiakmakis-2025]'s and lives in that study.
+Standard Modern Greek forms sentence negation differently in the indicative and the subjunctive.
+*dhen* (δεν) negates an indicative clause, standing before the verb and its particles. *min* (μην)
+negates a subjunctive clause, standing after the subjunctive marker *na* or *as*, and *na* may be
+left out, as in *Min tu dhosis ala lefta* 'Do not give him any more money'. A verb in the
+imperative cannot be negated, so a prohibition is a negative subjunctive. The analysis of the two
+as standard and modal negation, and of their non-negative uses, is [tsiakmakis-2025]'s and lives
+in that study.
 
 ## References
 
+* [holton-mackridge-philippaki-warburton-spyropoulos-2012]
 * [tsiakmakis-2025]
 -/
 
@@ -35,7 +38,7 @@ structure Negator where
 /-- *dhen* (δεν), the negator of indicative clauses. -/
 def dhen : Negator := { marker := { pieces := [[.free "dhen"]] }, mood := .indicative }
 
-/-- *min* (μην), the negator of subjunctive clauses and of the negative imperative. -/
+/-- *min* (μην), the negator of subjunctive clauses, among them prohibitions. -/
 def min : Negator := { marker := { pieces := [[.free "min"]] }, mood := .subjunctive }
 
 /-- The sentential negators. -/
