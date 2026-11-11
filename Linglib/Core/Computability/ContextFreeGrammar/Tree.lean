@@ -248,6 +248,47 @@ theorem Licensed.sum_ruleCount_eq_count_values [DecidableEq T] {g : ContextFreeG
       simp [hrule, add_comm]
     · simp [hB]
 
+/-- In a licensed tree, a quantity on symbols that vanishes at terminals has the same total over
+the left-hand sides of the rule applications as over their right-hand sides together with the
+root, since every node but the root is a child in exactly one rule application. -/
+theorem Licensed.sum_ruleCount_nsmul_input {M : Type*} [AddCommMonoid M] [DecidableEq T]
+    {g : ContextFreeGrammar T} [DecidableEq g.NT] {t : RoseTree (Symbol T g.NT)}
+    (ht : t.Licensed g.Licenses) {q : Symbol T g.NT → M} (hq : ∀ a, q (.terminal a) = 0) :
+    ∑ r ∈ g.rules, ruleCount r t • q (.nonterminal r.input) =
+      ∑ r ∈ g.rules, ruleCount r t • (r.output.map q).sum + q t.value := by
+  induction ht using Licensed.grammar_induction with
+  | terminal a => simp [leaf, ruleCount_node_terminal, hq]
+  | nonterminal A cs hrule hcs ih =>
+    have hsum (f : ContextFreeRule T g.NT → M) :
+        ∑ r ∈ g.rules, (cs.map (ruleCount r)).sum • f r =
+          (cs.map fun c ↦ ∑ r ∈ g.rules, ruleCount r c • f r).sum := by
+      clear ih hcs hrule
+      induction cs with
+      | nil => simp
+      | cons c cs ihl => simp [add_nsmul, Finset.sum_add_distrib, ihl]
+    simp only [ruleCount_node_nonterminal, add_nsmul, Finset.sum_add_distrib, ite_smul, one_nsmul,
+      zero_nsmul, Finset.sum_ite_eq', ite_eq_left hrule, hsum, value_node, List.map_map]
+    rw [List.map_congr_left ih, List.sum_map_add]
+    exact (add_comm _ _).trans (congrArg (· + _) (add_comm _ _))
+
+/-- Over a corpus of licensed trees, a quantity on symbols that vanishes at terminals has the same
+total over the left-hand sides of the rule applications as over their right-hand sides together
+with the roots of the trees. -/
+theorem sum_ruleCounts_nsmul_input {M : Type*} [AddCommMonoid M] [DecidableEq T]
+    {g : ContextFreeGrammar T} [DecidableEq g.NT] {D : Multiset (RoseTree (Symbol T g.NT))}
+    (hD : ∀ t ∈ D, t.Licensed g.Licenses) {q : Symbol T g.NT → M} (hq : ∀ a, q (.terminal a) = 0) :
+    ∑ r ∈ g.rules, ruleCounts D r • q (.nonterminal r.input) =
+      ∑ r ∈ g.rules, ruleCounts D r • (r.output.map q).sum + (D.map fun t ↦ q t.value).sum := by
+  induction D using Multiset.induction_on with
+  | empty => simp
+  | cons t D ih =>
+    rw [← Multiset.singleton_add, map_add]
+    simp only [Pi.add_apply, add_nsmul, Finset.sum_add_distrib, ruleCounts_singleton,
+      Multiset.map_add, Multiset.map_singleton, Multiset.sum_add, Multiset.sum_singleton,
+      ih fun t' ht' ↦ hD t' (Multiset.mem_cons_of_mem ht'),
+      (hD t (Multiset.mem_cons_self t D)).sum_ruleCount_nsmul_input hq]
+    exact add_add_add_comm ..
+
 theorem Licensed.exists_getElem?_take {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
     (ht : t.Licensed g.Licenses) {p : List ℕ} {s : RoseTree (Symbol T g.NT)}
     (hs : t[p]? = some s)

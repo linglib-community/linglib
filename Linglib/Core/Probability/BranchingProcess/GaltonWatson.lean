@@ -444,6 +444,14 @@ variable (ξ)
 family trees, which for Markov offspring is the probability that the family tree is finite. -/
 noncomputable def extinctionProb (i : ι) : ℝ≥0∞ := law ξ i Set.univ
 
+/-- The extinction probabilities are a fixed point of the offspring generating function: a family
+tree is finite exactly when the family trees of all the offspring are. -/
+theorem extinctionProb_eq_lintegral (i : ι) :
+    extinctionProb ξ i = ∫⁻ js, (js.map (extinctionProb ξ)).prod ∂ξ i := by
+  conv_lhs => rw [extinctionProb, ← expand_law, expand_apply']
+  simp only [Set.preimage_univ, fillList_apply, Measure.listProd_univ, List.map_map]
+  rfl
+
 /-! ### Generations -/
 
 /-- The `n`-th Kleene iterate fills a partial tree exactly as `n` synchronous generations do,

@@ -115,14 +115,21 @@ theorem isProbabilityMeasure_listProd {μs : List (Measure α)}
 
 variable [Countable α] [MeasurableSingletonClass α]
 
-theorem listProd_univ_le_one {μs : List (Measure α)} (h : ∀ μ ∈ μs, μ Set.univ ≤ 1) :
-    listProd μs Set.univ ≤ 1 := by
+/-- The total mass of a product of a list of measures is the product of their total masses. -/
+theorem listProd_univ (μs : List (Measure α)) :
+    listProd μs Set.univ = (μs.map (· Set.univ)).prod := by
   induction μs with
   | nil => simp
   | cons μ μs ih =>
     rw [listProd_cons, map_apply .of_discrete .univ, Set.preimage_univ, ← Set.univ_prod_univ,
-      prod_prod]
-    exact mul_le_one' (h μ (List.mem_cons_self ..)) (ih fun ν hν => h ν (List.mem_cons_of_mem _ hν))
+      prod_prod, ih, List.map_cons, List.prod_cons]
+
+theorem listProd_univ_le_one {μs : List (Measure α)} (h : ∀ μ ∈ μs, μ Set.univ ≤ 1) :
+    listProd μs Set.univ ≤ 1 := by
+  rw [listProd_univ]
+  refine (List.prod_le_pow_length _ 1 fun x hx ↦ ?_).trans_eq (one_pow _)
+  obtain ⟨μ, hμ, rfl⟩ := List.mem_map.mp hx
+  exact h μ hμ
 
 @[simp] theorem listProd_cons_singleton_nil (μ : Measure α) (μs : List (Measure α)) :
     listProd (μ :: μs) {[]} = 0 := by
