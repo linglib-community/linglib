@@ -170,7 +170,7 @@ theorem dependentCase_sd_iff (a b : Arg) :
       .speaker ∉ spec (nom a).1 ∧
         (.participant ∈ spec (nom a).1 → .participant ∈ spec (nom b).1) := by
   by_cases h : .participant ∈ spec (nom a).1 <;>
-    simp [dependentCase_pair_iff, licit_iff, specLE_iff, strictlyDescending, h]
+    simp [dependentCase_pair_iff, licit_iff, Phi.specLE_iff, strictlyDescending, h]
 
 end Flags
 

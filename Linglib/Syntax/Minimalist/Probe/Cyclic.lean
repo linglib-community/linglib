@@ -12,7 +12,7 @@ together with the segments it entails, `Finset.Iic x`. A probe on v first meets 
 argument, which checks every segment it bears; the segments left over, the residue, probe again
 from the next projection of v, where the external argument is the closest goal. A context, the
 scenario of the external over the internal argument, is inverse when the internal argument is at
-least as specified as the external one relative to the probe (`Phi.PersonSegment.SpecLE`) and
+least as specified as the external one relative to the probe (`Phi.SpecLE`) and
 direct otherwise, and [the core probe licenses the external argument exactly in direct
 contexts](##eaLicensed_iff_isDirect). When the segments of the probe form a chain of entailments,
 [a context is direct exactly when it is downstream](##isDirect_iff_kind_eq_downstream) on the
@@ -51,13 +51,13 @@ variable {P p} in
 /-- A context, the scenario of the external over the internal argument, is inverse when the
 internal argument is at least as specified as the external one relative to the probe, so that it
 leaves no residue the external argument could check. -/
-def IsInverse : Prop := SpecLE P s.high s.low
+def IsInverse : Prop := SpecLE P (spec s.high) (spec s.low)
 
 /-- A context is direct when it is not inverse: the external argument bears some segment of the
 residue the internal argument leaves. -/
 def IsDirect : Prop := ¬ IsInverse P s
 
-instance : DecidablePred (IsInverse P) := fun _ ↦ inferInstanceAs (Decidable (SpecLE _ _ _))
+instance : DecidablePred (IsInverse P) := fun _ ↦ inferInstanceAs (Decidable (SpecLE P _ _))
 
 instance : DecidablePred (IsDirect P) := fun _ ↦ inferInstanceAs (Decidable (¬ _))
 
@@ -74,7 +74,7 @@ theorem isDirect_iff_nonempty : IsDirect P s ↔ (residue P s.low ∩ spec s.hig
   simp [isDirect_iff, Finset.Nonempty, and_assoc]
 
 variable (P) in
-theorem isInverse_self : IsInverse P ⟨p, p⟩ := .refl P p
+theorem isInverse_self : IsInverse P ⟨p, p⟩ := .refl P _
 
 /-- A probe with more segments has more direct contexts. -/
 theorem IsDirect.mono {Q : Finset PersonSegment} (h : P ⊆ Q) (hd : IsDirect P s) :
@@ -112,7 +112,7 @@ theorem isDirect_of_rank_lt (h : rank P s.low < rank P s.high) : IsDirect P s :=
 outranks the internal one. -/
 theorem isDirect_iff_rank_lt (hP : IsChain (· ≤ ·) (P : Set PersonSegment)) :
     IsDirect P s ↔ rank P s.low < rank P s.high :=
-  (not_congr (specLE_iff_card_le hP)).trans not_le
+  (not_congr (specLE_iff_card_le hP (spec_isLowerSet _) (spec_isLowerSet _))).trans not_le
 
 /-- When the segments of the probe form a chain, a context is direct iff it is downstream on the
 probe's rank, so the inverse contexts are the balanced and upstream scenarios. -/

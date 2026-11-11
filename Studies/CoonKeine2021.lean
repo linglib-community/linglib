@@ -194,9 +194,12 @@ theorem segmentAgree_pair_eq_lower_iff {hi lo : Goal} :
     segmentAgree geo s [hi, lo] = some (lo, 1) ↔ s ∉ geo hi ∧ s ∈ geo lo := by
   rw [segmentAgree_pair]; split_ifs <;> simp_all
 
+/-- Over two goals a probe is gluttonous iff the higher goal has some feature of the probe and is
+not at least as specified as the lower one relative to the probe. -/
 theorem gluttonous_pair_iff {hi lo : Goal} :
-    Gluttonous geo P [hi, lo] ↔
-      (∃ s ∈ P, s ∈ geo hi) ∧ ∃ s ∈ P, s ∉ geo hi ∧ s ∈ geo lo := by
+    Gluttonous geo P [hi, lo] ↔ (P ∩ geo hi).Nonempty ∧ ¬ SpecLE P (geo lo) (geo hi) := by
+  rw [specLE_iff]
+  push Not
   constructor
   · rintro ⟨t, ht, u, hu, hne⟩
     obtain ⟨ht₀, s₁, hs₁, h₁⟩ := mem_agreed.1 ht
@@ -205,19 +208,20 @@ theorem gluttonous_pair_iff {hi lo : Goal} :
       or_false] at ht₀ hu₀
     rcases ht₀ with rfl | rfl <;> rcases hu₀ with rfl | rfl
     · exact absurd rfl hne
-    · exact ⟨⟨s₁, hs₁, segmentAgree_pair_eq_higher_iff.1 h₁⟩,
-        s₂, hs₂, segmentAgree_pair_eq_lower_iff.1 h₂⟩
-    · exact ⟨⟨s₂, hs₂, segmentAgree_pair_eq_higher_iff.1 h₂⟩,
-        s₁, hs₁, segmentAgree_pair_eq_lower_iff.1 h₁⟩
+    · exact ⟨⟨s₁, Finset.mem_inter.2 ⟨hs₁, segmentAgree_pair_eq_higher_iff.1 h₁⟩⟩,
+        s₂, hs₂, (segmentAgree_pair_eq_lower_iff.1 h₂).symm⟩
+    · exact ⟨⟨s₂, Finset.mem_inter.2 ⟨hs₂, segmentAgree_pair_eq_higher_iff.1 h₂⟩⟩,
+        s₁, hs₁, (segmentAgree_pair_eq_lower_iff.1 h₁).symm⟩
     · exact absurd rfl hne
-  · rintro ⟨⟨s, hs, hsh⟩, s', hs', hs'h, hs'l⟩
+  · rintro ⟨⟨s, hs⟩, s', hs', hs'l, hs'h⟩
+    obtain ⟨hs, hsh⟩ := Finset.mem_inter.1 hs
     exact ⟨(hi, 0), mem_agreed.2 ⟨by simp, s, hs, segmentAgree_pair_eq_higher_iff.2 hsh⟩,
       (lo, 1), mem_agreed.2 ⟨by simp, s', hs', segmentAgree_pair_eq_lower_iff.2 ⟨hs'h, hs'l⟩⟩,
       by simp⟩
 
 theorem not_gluttonous_of_subset {hi lo : Goal} (h : geo lo ⊆ geo hi) :
     ¬ Gluttonous geo P [hi, lo] :=
-  fun hg ↦ let ⟨_, _, _, hsh, hsl⟩ := gluttonous_pair_iff.1 hg; hsh (h hsl)
+  fun hg ↦ (gluttonous_pair_iff.1 hg).2 (.of_subset h)
 
 -- §3.5, (86)
 theorem not_gluttonous_of_length_le_one (h : goals.length ≤ 1) : ¬ Gluttonous geo P goals := by
@@ -240,10 +244,11 @@ end Agree
 theorem gluttonous_third_of_gluttonous {P : Finset PersonSegment} {hi lo : Goal}
     (hpi : PersonSegment.pi ∈ P) (h : Gluttonous Goal.personSegments P [hi, lo]) :
     Gluttonous Goal.personSegments P [dp .third, lo] := by
-  obtain ⟨-, s, hs, hsh, hsl⟩ := gluttonous_pair_iff.1 h
-  refine gluttonous_pair_iff.2 ⟨⟨.pi, hpi, pi_mem_personSegments _⟩, s, hs, fun hmem ↦ ?_, hsl⟩
-  rw [show (dp .third).personSegments = {.pi} by decide, Finset.mem_singleton] at hmem
-  exact hsh (hmem ▸ pi_mem_personSegments hi)
+  have hsub : (dp .third).personSegments ⊆ hi.personSegments := by
+    rw [show (dp .third).personSegments = {.pi} by decide, Finset.singleton_subset_iff]
+    exact pi_mem_personSegments hi
+  exact gluttonous_pair_iff.2 ⟨⟨.pi, Finset.mem_inter.2 ⟨hpi, pi_mem_personSegments _⟩⟩,
+    fun h3 ↦ (gluttonous_pair_iff.1 h).2 (h3.trans (.of_subset hsub))⟩
 
 /-! ### The Person Case Constraint from probe articulation (§3) -/
 
@@ -313,11 +318,10 @@ the indirect object is not at least as specified as the direct object relative t
 lower DP "being featurally more specified" than the higher "relative to the specification of the
 probe" (p. 658). -/
 theorem pccViolation_iff_not_specLE {P : Finset PersonSegment} (hpi : PersonSegment.pi ∈ P)
-    (s : Clause.Scenario Person) : PCCViolation P false s ↔ ¬ SpecLE P s.low s.high := by
-  rw [PCCViolation, gluttonous_pair_iff, specLE_iff]
-  push Not
-  exact ⟨fun ⟨_, x, hx, hh, hl⟩ ↦ ⟨x, hx, hl, hh⟩,
-    fun ⟨x, hx, hl, hh⟩ ↦ ⟨⟨.pi, hpi, pi_mem_personSegments _⟩, x, hx, hh, hl⟩⟩
+    (s : Clause.Scenario Person) :
+    PCCViolation P false s ↔ ¬ SpecLE P (spec s.low) (spec s.high) := by
+  rw [PCCViolation, gluttonous_pair_iff]
+  exact and_iff_right ⟨.pi, Finset.mem_inter.2 ⟨hpi, pi_mem_personSegments _⟩⟩
 
 /-- The configurations a gluttonous probe bans are the direct contexts of [bejar-rezac-2009] with
 the lower argument in the place of the external one: where cyclic Agree displaces agreement to the

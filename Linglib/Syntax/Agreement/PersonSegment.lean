@@ -24,15 +24,15 @@ default.
 * `Phi.PersonSegment`: the person segments, ordered by the dominance of the geometry.
 * `Phi.PersonSegment.toNode`: a segment as a node of the geometry.
 * `Phi.PersonSegment.spec`: the segments a person bears.
-* `Phi.PersonSegment.SpecLE`: one person is at least as specified as another relative to a set
-  of segments.
+* `Phi.SpecLE`: one feature set is at least as specified as another relative to a set of
+  features.
 
 ## Main results
 
 * `Phi.PersonSegment.spec_isLowerSet`: a person bears whatever its segments depend on.
 * `Phi.PersonSegment.isChain_Iic`: a segment and the segments it depends on form a chain.
-* `Phi.PersonSegment.specLE_total`, `Phi.PersonSegment.specLE_iff_card_le`: on a chain of segments
-  persons are totally ordered, by the number of the segments they bear.
+* `Phi.specLE_total`, `Phi.specLE_iff_card_le`: on a chain of features lower sets are totally
+  ordered, by the number of the features they have.
 * `Phi.PersonSegment.participant_mem_spec_iff`,
   `Phi.PersonSegment.speaker_mem_spec_iff`: the segments [participant] and [speaker] are
   `Person.IsSAP` and `Person.IncludesSpeaker`.
@@ -54,6 +54,59 @@ default.
 namespace Phi
 
 open Phi.Geometry
+
+/-! ### Specification relative to a set of features -/
+
+section SpecLE
+
+variable {F : Type*} [DecidableEq F] {P Q s t u : Finset F}
+
+/-- Relative to the features `P`, the feature set `t` is at least as specified as `s`: it has
+every feature of `P` that `s` has. With `P` the segments of a probe, this compares two goals
+"relative to the specification of the probe" ([coon-keine-2021]). -/
+def SpecLE (P s t : Finset F) : Prop := P ∩ s ⊆ t
+
+instance : Decidable (SpecLE P s t) := inferInstanceAs (Decidable (P ∩ s ⊆ t))
+
+theorem specLE_iff : SpecLE P s t ↔ ∀ x ∈ P, x ∈ s → x ∈ t := by
+  simp [SpecLE, Finset.subset_iff]
+
+@[refl] theorem SpecLE.refl (P s : Finset F) : SpecLE P s s := Finset.inter_subset_right
+
+@[trans] theorem SpecLE.trans (h₁ : SpecLE P s t) (h₂ : SpecLE P t u) : SpecLE P s u :=
+  fun _ hx ↦ h₂ (Finset.mem_inter.2 ⟨(Finset.mem_inter.1 hx).1, h₁ hx⟩)
+
+/-- Fewer features tell fewer feature sets apart. -/
+theorem SpecLE.anti (h : P ⊆ Q) (hQ : SpecLE Q s t) : SpecLE P s t :=
+  (Finset.inter_subset_inter_right h).trans hQ
+
+theorem SpecLE.of_subset (h : s ⊆ t) : SpecLE P s t := Finset.inter_subset_right.trans h
+
+@[simp] theorem specLE_univ [Fintype F] : SpecLE Finset.univ s t ↔ s ⊆ t := by simp [SpecLE]
+
+theorem SpecLE.card_le (h : SpecLE P s t) : (P ∩ s).card ≤ (P ∩ t).card :=
+  Finset.card_le_card (Finset.subset_inter Finset.inter_subset_left h)
+
+variable [Preorder F]
+
+/-- On a chain of features any two lower sets are comparable. -/
+theorem specLE_total (hP : IsChain (· ≤ ·) (P : Set F)) (hs : IsLowerSet (s : Set F))
+    (ht : IsLowerSet (t : Set F)) : SpecLE P s t ∨ SpecLE P t s := by
+  by_contra! h
+  simp only [SpecLE, Finset.not_subset, Finset.mem_inter] at h
+  obtain ⟨⟨x, ⟨hx, hxs⟩, hxt⟩, y, ⟨hy, hyt⟩, hys⟩ := h
+  rcases hP.total hx hy with hxy | hyx
+  · exact hxt (ht hxy hyt)
+  · exact hys (hs hyx hxs)
+
+/-- On a chain of features lower sets are compared by how many of the features they have. -/
+theorem specLE_iff_card_le (hP : IsChain (· ≤ ·) (P : Set F)) (hs : IsLowerSet (s : Set F))
+    (ht : IsLowerSet (t : Set F)) : SpecLE P s t ↔ (P ∩ s).card ≤ (P ∩ t).card := by
+  refine ⟨SpecLE.card_le, fun h ↦ (specLE_total hP hs ht).elim id fun hts ↦ ?_⟩
+  rw [SpecLE, ← Finset.eq_of_subset_of_card_le (Finset.subset_inter Finset.inter_subset_left hts) h]
+  exact Finset.inter_subset_right
+
+end SpecLE
 
 /-- A segment of the person feature, a person node of the geometry of [harley-ritter-2002]. -/
 inductive PersonSegment where
@@ -125,60 +178,12 @@ by default. -/
 theorem speaker_mem_spec_iff {p : Person} : speaker ∈ spec p ↔ p.IncludesSpeaker := by
   revert p; decide
 
-/-! ### Specification relative to a set of segments -/
-
-/-- Relative to the segments `P`, the person `q` is at least as specified as `p`: it bears every
-segment of `P` that `p` bears. With `P` the segments of a probe, this compares two goals
-"relative to the specification of the probe" ([coon-keine-2021]). -/
-def SpecLE (P : Finset PersonSegment) (p q : Person) : Prop := P ∩ spec p ⊆ spec q
-
-variable {P Q : Finset PersonSegment} {p q r : Person}
-
-instance : Decidable (SpecLE P p q) := inferInstanceAs (Decidable (P ∩ spec p ⊆ spec q))
-
-theorem specLE_iff : SpecLE P p q ↔ ∀ x ∈ P, x ∈ spec p → x ∈ spec q := by
-  simp [SpecLE, Finset.subset_iff]
-
-@[refl] theorem SpecLE.refl (P : Finset PersonSegment) (p : Person) : SpecLE P p p :=
-  Finset.inter_subset_right
-
-@[trans] theorem SpecLE.trans (h₁ : SpecLE P p q) (h₂ : SpecLE P q r) : SpecLE P p r :=
-  fun _ hx ↦ h₂ (Finset.mem_inter.2 ⟨(Finset.mem_inter.1 hx).1, h₁ hx⟩)
-
-/-- Fewer segments compare fewer persons apart. -/
-theorem SpecLE.anti (h : P ⊆ Q) (hq : SpecLE Q p q) : SpecLE P p q :=
-  (Finset.inter_subset_inter_right h).trans hq
-
-theorem SpecLE.of_subset (h : spec p ⊆ spec q) : SpecLE P p q := Finset.inter_subset_right.trans h
-
-@[simp] theorem specLE_univ : SpecLE Finset.univ p q ↔ spec p ⊆ spec q := by simp [SpecLE]
-
 /-- The third person, bearing the root alone, is the least specified person on any segments. -/
-theorem specLE_third (P : Finset PersonSegment) (q : Person) : SpecLE P .third q :=
+theorem specLE_third (P : Finset PersonSegment) (q : Person) :
+    SpecLE P (spec .third) (spec q) :=
   .of_subset fun x hx ↦ by
     rw [show spec Person.third = {pi} by decide, Finset.mem_singleton] at hx
     exact hx ▸ pi_mem_spec q
-
-/-- On a chain of segments any two persons are comparable, since a person's segments are closed
-under dependence. -/
-theorem specLE_total (hP : IsChain (· ≤ ·) (P : Set PersonSegment)) (p q : Person) :
-    SpecLE P p q ∨ SpecLE P q p := by
-  by_contra! h
-  simp only [SpecLE, Finset.not_subset, Finset.mem_inter] at h
-  obtain ⟨⟨x, ⟨hx, hxp⟩, hxq⟩, y, ⟨hy, hyq⟩, hyp⟩ := h
-  rcases hP.total hx hy with hxy | hyx
-  · exact hxq (spec_isLowerSet q hxy hyq)
-  · exact hyp (spec_isLowerSet p hyx hxp)
-
-theorem SpecLE.card_le (h : SpecLE P p q) : (P ∩ spec p).card ≤ (P ∩ spec q).card :=
-  Finset.card_le_card (Finset.subset_inter Finset.inter_subset_left h)
-
-/-- On a chain of segments persons are compared by how many of the segments they bear. -/
-theorem specLE_iff_card_le (hP : IsChain (· ≤ ·) (P : Set PersonSegment)) :
-    SpecLE P p q ↔ (P ∩ spec p).card ≤ (P ∩ spec q).card := by
-  refine ⟨SpecLE.card_le, fun h ↦ (specLE_total hP p q).elim id fun hqp ↦ ?_⟩
-  rw [SpecLE, ← Finset.eq_of_subset_of_card_le (Finset.subset_inter Finset.inter_subset_left hqp) h]
-  exact Finset.inter_subset_right
 
 end PersonSegment
 

@@ -91,7 +91,8 @@ private theorem interacted_run_pair_aux {α : Type*} (g : Grammar) (person : α 
 /-- A combination is licit exactly when the direct object does not satisfy the probe and the
 indirect object is at least as specified as the direct object relative to the dynamic features. -/
 theorem licit_iff (g : Grammar) (s : Scenario Person) :
-    Licit g s ↔ (∀ x ∈ g.satisfaction, x ∉ spec s.low) ∧ SpecLE g.dynamic s.low s.high := by
+    Licit g s ↔
+      (∀ x ∈ g.satisfaction, x ∉ spec s.low) ∧ SpecLE g.dynamic (spec s.low) (spec s.high) := by
   have h := interacted_run_pair_aux g Prod.fst (s.low, 0) (s.high, 1)
   change (run g Prod.fst [(s.low, 0), (s.high, 1)]).interacted.map (·.2) = [0, 1] ↔ _
   rw [h]
