@@ -17,7 +17,7 @@ ordering source. Both have uses in which they seem to negate nothing, and Tsiakm
 the two differ in kind. Expletive *dhen* is *dhen*, its negation masked at the level of the
 utterance. Expletive *min* keeps the modal component and drops the negation, so that [*dhen* under
 it gives back negative *min*](##Tsiakmakis2025.Negator.expletive_neg2_compl), it [conveys a bias
-for the proposition](##Tsiakmakis2025.Negator.bias_of_mem_expletive_neg2), and, being upward
+for the proposition](##Tsiakmakis2025.Negator.bias_of_expletive_neg2), and, being upward
 entailing, it [licenses no emphatic
 n-word](##Tsiakmakis2025.Negator.licenses_expletive_tipota_iff). The hosts of expletive negation
 across languages divide accordingly into apparent hosts and hosts proper, and [each Greek host
@@ -25,13 +25,13 @@ spells out the negator of its class](##Tsiakmakis2025.greek_negators).
 
 ## Implementation notes
 
-* The paper evaluates *min* at the worlds verifying every premise of an ordering source, a
-  simplification of Kratzer's best worlds that leaves out the modal base. The negators are stated
-  here over human necessity with a modal base, of which the paper's formula is [the instance with
-  an empty modal base and a consistent ordering
-  source](##Tsiakmakis2025.Negator.mem_expletive_neg2_bot_iff). The flavour of the ordering source
-  varies by host and language, epistemic for Greek *min* and deontic for French fear-predicate
-  *ne*, and is not fixed.
+* The modal component of *min* is necessity along an accessibility relation, and the results need
+  only that the relation be serial. The paper's best worlds, those verifying every premise of an
+  ordering source, are [the worlds accessible under it as a
+  background](##Tsiakmakis2025.Negator.expletive_neg2_accessible_iff), serial when the ordering
+  source is consistent; Kratzer's best worlds are the relation `Modality.bestAccessible`. The
+  flavour of the modality varies by host and language, epistemic for Greek *min* and deontic for
+  French fear-predicate *ne*, and is not fixed.
 * The paper says that canonical negative markers license negative concord items and that
   expletive *min* does not. The licensing condition is the library's: an emphatic n-word needs an
   anti-additive licenser, the strength that negation and *xoris* 'without' share.
@@ -58,7 +58,7 @@ spells out the negator of its class](##Tsiakmakis2025.greek_negators).
 
 namespace Tsiakmakis2025
 
-open Modality Filter PolarityItem NaturalLogic
+open Modality ModalLogic PolarityItem NaturalLogic
 
 /-- The two sentential negators, which Greek tells apart morphologically: NEG₁ is standard
 negation, and NEG₂ is the modal negation that a nonveridical operator licenses. -/
@@ -75,87 +75,60 @@ namespace Negator
 
 section Denotation
 
-variable {W : Type*} (f g : Background W) {p : Set W} {w : W}
+variable {W : Type*} (R : SetRel W W) {p : W → Prop} {w : W}
 
 /-- The negative use of a negator. NEG₁ returns the complementary proposition, (7). NEG₂ makes the
-complementary proposition a necessity of the ordering source, (13). -/
-def negative : Negator → Set W → Set W
+complementary proposition necessary, (13). -/
+def negative : Negator → (W → Prop) → W → Prop
   | neg1, p => pᶜ
-  | neg2, p => {w | pᶜ ∈ humanNecessity f g w}
+  | neg2, p => □[R] pᶜ
 
 /-- The expletive use of a negator. Expletive NEG₁ is NEG₁, (37). Expletive NEG₂ keeps the modal
 component of NEG₂ and drops its negation, (58), (94). -/
-def expletive : Negator → Set W → Set W
+def expletive : Negator → (W → Prop) → W → Prop
   | neg1, p => pᶜ
-  | neg2, p => {w | p ∈ humanNecessity f g w}
+  | neg2, p => □[R] p
 
-@[simp] theorem mem_negative_neg2 : w ∈ neg2.negative f g p ↔ pᶜ ∈ humanNecessity f g w := .rfl
-
-@[simp] theorem mem_expletive_neg2 : w ∈ neg2.expletive f g p ↔ p ∈ humanNecessity f g w := .rfl
-
-variable {g} in
-/-- With no modal base and a consistent ordering source, expletive NEG₂ is truth at the worlds
-verifying every premise of the ordering source, the paper's best worlds, (12). -/
-theorem mem_expletive_neg2_bot_iff (h : (g.accessibleWorlds w).Nonempty) :
-    w ∈ neg2.expletive ⊥ g p ↔ g.accessibleWorlds w ⊆ p := by
-  rw [mem_expletive_neg2, humanNecessity_eq_simpleNecessity_sup (by rwa [bot_sup_eq]), bot_sup_eq,
-    mem_simpleNecessity]
+/-- Along the worlds verifying every premise of an ordering source, the paper's best worlds,
+expletive NEG₂ is its formula (58): the proposition holds at each of them, (12). -/
+theorem expletive_neg2_accessible_iff {g : Background W} :
+    neg2.expletive g.accessible p w ↔ ∀ v ∈ g.accessibleWorlds w, p v := .rfl
 
 /-! ### Co-occurrence with canonical negation (section 4) -/
 
 /-- Canonical *dhen* under expletive *min* is negative *min*, so that *min dhen* conveys a single
 negation, (39), (47), (53). -/
-theorem expletive_neg2_compl (p : Set W) : neg2.expletive f g pᶜ = neg2.negative f g p := rfl
+theorem expletive_neg2_compl (p : W → Prop) : neg2.expletive R pᶜ = neg2.negative R p := rfl
 
-theorem negative_neg2_compl (p : Set W) : neg2.negative f g pᶜ = neg2.expletive f g p :=
-  Set.ext fun _ ↦ by rw [mem_negative_neg2, compl_compl, mem_expletive_neg2]
+theorem negative_neg2_compl (p : W → Prop) : neg2.negative R pᶜ = neg2.expletive R p :=
+  congrArg □[R] (compl_compl p)
 
 /-! ### Entailment properties -/
 
-theorem isAntiAdditive_negative : ∀ n : Negator, IsAntiAdditive (n.negative f g)
+theorem isAntiAdditive_negative : ∀ n : Negator, IsAntiAdditive (n.negative R)
   | neg1 => isAntiAdditive_compl
-  | neg2 => fun p q ↦ Set.ext fun w ↦ by
-    simp only [mem_negative_neg2, Set.sup_eq_union, Set.inf_eq_inter, Set.compl_union,
-      inter_mem_iff, Set.mem_inter_iff]
+  | neg2 => isAntiAdditive_compl.map_inf_comp fun _ _ ↦ box_inf R
 
-theorem negative_empty : ∀ n : Negator, n.negative f g ∅ = Set.univ
-  | neg1 => Set.compl_empty
-  | neg2 => Set.eq_univ_of_forall fun w ↦ by rw [mem_negative_neg2, Set.compl_empty]; exact univ_mem
+theorem negative_bot : ∀ n : Negator, n.negative R ⊥ = ⊤
+  | neg1 => compl_bot
+  | neg2 => (congrArg □[R] compl_bot).trans (box_top R)
 
-theorem monotone_expletive_neg2 : Monotone (neg2.expletive f g) :=
-  fun _ _ h _ hw ↦ (mem_expletive_neg2 f g).2 (mem_of_superset ((mem_expletive_neg2 f g).1 hw) h)
+theorem negative_top [IsSerial R] : ∀ n : Negator, n.negative R ⊤ = ⊥
+  | neg1 => compl_top
+  | neg2 => funext fun w ↦ eq_false fun h ↦
+    let ⟨v, hv⟩ := IsSerial.serial (R := R) w; h v hv trivial
 
-variable {f}
-
-private theorem humanNecessity_neBot (h : (f.accessibleWorlds w).Nonempty) :
-    (humanNecessity f g w).NeBot :=
-  letI := premisePreorder (g w); atBotOn_neBot_iff.2 h
-
-theorem negative_univ (hf : f.IsConsistent) : ∀ n : Negator, n.negative f g Set.univ = ∅
-  | neg1 => Set.compl_univ
-  | neg2 => Set.eq_empty_of_forall_notMem fun w hw ↦
-    (humanNecessity_neBot g (hf w)).ne <| empty_mem_iff_bot.1 <| by
-      rwa [mem_negative_neg2, Set.compl_univ] at hw
-
-theorem disjoint_expletive_negative_neg2 (hf : f.IsConsistent) (p : Set W) :
-    Disjoint (neg2.expletive f g p) (neg2.negative f g p) :=
-  Set.disjoint_left.2 fun w h ↦
-    haveI := humanNecessity_neBot g (hf w); compl_notMem ((mem_expletive_neg2 f g).1 h)
+theorem monotone_expletive_neg2 : Monotone (neg2.expletive R) := box_mono R
 
 /-! ### Bias (section 4) -/
 
-theorem mem_expletive_neg2_iff_not_humanPossibility_compl :
-    w ∈ neg2.expletive f g p ↔ ¬ humanPossibility f g w pᶜ := by
-  rw [humanPossibility_iff_compl_notMem, compl_compl, not_not, mem_expletive_neg2]
-
+variable {R} in
 /-- Expletive *min* conveys positive bias: the proposition is possible and its negation is not.
 A question with expletive *min* is therefore not the question of an ignorant speaker, for whom
 both are possible, (55). -/
-theorem bias_of_mem_expletive_neg2 (hf : (f.accessibleWorlds w).Nonempty)
-    (h : w ∈ neg2.expletive f g p) :
-    humanPossibility f g w p ∧ ¬ humanPossibility f g w pᶜ :=
-  ⟨haveI := humanNecessity_neBot g hf; Eventually.frequently h,
-    (mem_expletive_neg2_iff_not_humanPossibility_compl g).1 h⟩
+theorem bias_of_expletive_neg2 [IsSerial R] (h : neg2.expletive R p w) :
+    ◇[R] p w ∧ ¬ ◇[R] pᶜ w :=
+  ⟨box_D h, fun ⟨v, hv, hn⟩ ↦ hn (h v hv)⟩
 
 end Denotation
 
@@ -165,34 +138,35 @@ section Licensing
 
 open Greek.StandardModern.PolarityItems
 
-variable {W : Type} [Nonempty W] {f : Background W} (g : Background W)
+variable {W : Type} [Nonempty W] (R : SetRel W W)
 
-theorem carries_negative (hf : f.IsConsistent) (n : Negator) :
-    (Licenser.ofOperator (n.negative f g)).Carries .antiAdditive :=
+theorem carries_negative [IsSerial R] (n : Negator) :
+    (Licenser.ofOperator (n.negative R)).Carries .antiAdditive :=
   Licenser.carries_ofOperator_iff.2
-    ⟨ProjectivitySignature.holdsFor_antiAdd_iff.2
-        ⟨isAntiAdditive_negative f g n, negative_univ g hf n⟩,
-      fun hm ↦ Set.empty_ne_univ <| (negative_univ g hf n).symm.trans <| Set.univ_subset_iff.1 <|
-        (negative_empty f g n).symm.trans_subset (hm (Set.empty_subset _))⟩
+    ⟨ProjectivitySignature.holdsFor_antiAdd_iff.2 ⟨isAntiAdditive_negative R n, negative_top R n⟩,
+      fun hm ↦ by
+        have h := hm (bot_le : (⊥ : W → Prop) ≤ ⊤)
+        rw [negative_bot, negative_top] at h
+        exact h (Classical.arbitrary W) trivial⟩
 
 omit [Nonempty W] in
 theorem not_carries_expletive_neg2 (s : Negation.Strength) :
-    ¬ (Licenser.ofOperator (neg2.expletive f g)).Carries s :=
-  fun h ↦ (Licenser.carries_ofOperator_iff.1 h).2 (monotone_expletive_neg2 f g)
+    ¬ (Licenser.ofOperator (neg2.expletive R)).Carries s :=
+  fun h ↦ (Licenser.carries_ofOperator_iff.1 h).2 (monotone_expletive_neg2 R)
 
 /-- Of the two expletive negators only NEG₁ licenses an emphatic n-word: *TIPOTA* is out under
 expletive *min*, (40), (46), (52). With canonical *dhen* added the clause denotes negative *min*,
 which licenses it, (41). -/
-theorem licenses_expletive_tipota_iff (hf : f.IsConsistent) {n : Negator} :
-    (Licenser.ofOperator (n.expletive f g)).Licenses tipota ↔ n = neg1 := by
+theorem licenses_expletive_tipota_iff [IsSerial R] {n : Negator} :
+    (Licenser.ofOperator (n.expletive R)).Licenses tipota ↔ n = neg1 := by
   rw [Licenser.licenses_iff_carries (r := .antiAdditive) rfl (by decide) (by decide)]
   cases n
-  · exact iff_of_true (carries_negative g hf neg1) rfl
-  · exact iff_of_false (not_carries_expletive_neg2 g _) (by decide)
+  · exact iff_of_true (carries_negative R neg1) rfl
+  · exact iff_of_false (not_carries_expletive_neg2 R _) (by decide)
 
-theorem licenses_negative_tipota (hf : f.IsConsistent) (n : Negator) :
-    (Licenser.ofOperator (n.negative f g)).Licenses tipota :=
-  (Licenser.licenses_iff_carries rfl (by decide) (by decide)).2 (carries_negative g hf n)
+theorem licenses_negative_tipota [IsSerial R] (n : Negator) :
+    (Licenser.ofOperator (n.negative R)).Licenses tipota :=
+  (Licenser.licenses_iff_carries rfl (by decide) (by decide)).2 (carries_negative R n)
 
 end Licensing
 
