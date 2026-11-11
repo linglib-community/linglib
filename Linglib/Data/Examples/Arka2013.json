@@ -8,18 +8,16 @@
     "glossedTokens": [
       ["Dia", "3s"], ["datang", "come"]
     ],
-    "translation": "",
+    "translation": "S/he came. / S/he is coming. / S/he will come.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "S/he came.", "judgment": "acceptable"},
-      {"name": "S/he is coming.", "judgment": "acceptable"},
-      {"name": "S/he will come.", "judgment": "acceptable"}
+      {"name": "past", "judgment": "acceptable"},
+      {"name": "present", "judgment": "acceptable"},
+      {"name": "future", "judgment": "acceptable"}
     ],
-    "paperFeatures": [
-      ["tam", "contextual"]
-    ],
+    "paperFeatures": [],
     "comment": "Contextual TAM: the bare verb is anchored by context alone.",
     "verified": "page-image"
   },
@@ -38,8 +36,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["frame", "S<E-R"],
-      ["adjunct", "besok"]
+      ["frame", "S<E-R"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -59,8 +56,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["frame", "E-R<S"],
-      ["adjunct", "kemarin"]
+      ["frame", "E-R<S"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -80,8 +76,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["frame", "E-R-S"],
-      ["adjunct", "sekarang"]
+      ["frame", "E-R-S"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -101,7 +96,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["aux", "sudah"],
       ["frame", "E<S,R"]
     ],
     "comment": "",
@@ -122,9 +116,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["aux", "sudah"],
-      ["frame", "E<R<S"],
-      ["adjunct", "kemarin"]
+      ["frame", "E<R<S"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -144,11 +136,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["aux", "sedang"],
-      ["aspect", "progressive"],
-      ["marking", "applicative -i"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -167,11 +155,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["aux", "sedang"],
-      ["aspect", "progressive"],
-      ["marking", "reduplication"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -190,10 +174,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["marking", "reduplication"],
-      ["meaning", "unrealised expectation"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -211,10 +192,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["aspect", "progressive"],
-      ["tam", "contextual"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -233,10 +211,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["aux", "akan"],
-      ["frame", "S<E-R"],
-      ["withAux", "acceptable"],
-      ["clause", "root"]
+      ["frame", "S<E-R"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -257,10 +232,7 @@
       {"form": "Mereka ingin [akan datang besok].", "judgment": "ungrammatical"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["withAux", "ungrammatical"],
-      ["matrix", "ingin"]
-    ],
+    "paperFeatures": [],
     "comment": "(11b) is the starred alternative.",
     "verified": "page-image"
   },
@@ -279,12 +251,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["aux", "akan"],
-      ["withAux", "acceptable"],
-      ["matrix", "tahu"],
-      ["subordinator", "bahwa"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -292,21 +259,21 @@
     "id": "arka2013_12a",
     "source": {"bibkey": "arka-2013", "paperLabel": "(12a)"},
     "language": "indo1316",
-    "primaryText": "Dia akan/sudah/sedang makan.",
+    "primaryText": "Dia akan makan.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Dia", "3s"], ["akan/sudah/sedang", "FUT/PERF/PROG"], ["makan", "eat"]
+      ["Dia", "3s"], ["akan", "FUT"], ["makan", "eat"]
     ],
     "translation": "S/he will eat/has eaten/is eating.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["withAux", "acceptable"],
-      ["clause", "root"]
+    "alternatives": [
+      {"form": "Dia sudah makan.", "judgment": "acceptable"},
+      {"form": "Dia sedang makan.", "judgment": "acceptable"}
     ],
-    "comment": "",
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "(12a) prints the three auxiliaries as akan/sudah/sedang, glossed FUT/PERF/PROG, with the label (finite clause).",
     "verified": "page-image"
   },
   {
@@ -322,13 +289,12 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Saya menyuruh dia [akan/sudah/sedang makan].", "judgment": "ungrammatical"}
+      {"form": "Saya menyuruh dia [akan makan].", "judgment": "ungrammatical"},
+      {"form": "Saya menyuruh dia [sudah makan].", "judgment": "ungrammatical"},
+      {"form": "Saya menyuruh dia [sedang makan].", "judgment": "ungrammatical"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["withAux", "ungrammatical"],
-      ["matrix", "menyuruh"]
-    ],
+    "paperFeatures": [],
     "comment": "(12c) is the starred alternative.",
     "verified": "page-image"
   },
@@ -346,16 +312,12 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {
-        "form": "Orang itu mendorong saya [ _ akan/sedang/sudah jatuh].",
-        "judgment": "ungrammatical"
-      }
+      {"form": "Orang itu mendorong saya [ _ akan jatuh].", "judgment": "ungrammatical"},
+      {"form": "Orang itu mendorong saya [ _ sedang jatuh].", "judgment": "ungrammatical"},
+      {"form": "Orang itu mendorong saya [ _ sudah jatuh].", "judgment": "ungrammatical"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["withAux", "ungrammatical"],
-      ["matrix", "mendorong"]
-    ],
+    "paperFeatures": [],
     "comment": "(13b) is the starred alternative. The paper prints medorong in (13b).",
     "verified": "page-image"
   },
@@ -372,16 +334,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {
-        "form": "Dia datang [(sambil) sedang menangis].",
-        "judgment": "ungrammatical"
-      }
+      {"form": "Dia datang [(sambil) sedang menangis].", "judgment": "ungrammatical"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["withAux", "ungrammatical"],
-      ["adjunct", "sambil"]
-    ],
+    "paperFeatures": [],
     "comment": "(14b) is marked ?*; recorded as ungrammatical, the severe part of the mark.",
     "verified": "page-image"
   },
@@ -398,16 +354,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {
-        "form": "Saya belajar bisa [menembak].",
-        "judgment": "ungrammatical"
-      }
+      {"form": "Saya belajar bisa [menembak].", "judgment": "ungrammatical"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["withAux", "ungrammatical"],
-      ["matrix", "belajar"]
-    ],
+    "paperFeatures": [],
     "comment": "(15b) is marked ?*; recorded as ungrammatical, the severe part of the mark.",
     "verified": "page-image"
   },
@@ -426,10 +376,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["withAux", "acceptable"],
-      ["subordinator", "agar"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -449,10 +396,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["aux", "sedang"],
-      ["voice", "AV"]
-    ],
+    "paperFeatures": [],
     "comment": "Google-attested; the actor voice verb with sedang.",
     "verified": "page-image"
   },
@@ -469,10 +413,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["aux", "sudah"],
-      ["voice", "passive"]
-    ],
+    "paperFeatures": [],
     "comment": "Google-attested; the passive verb with sudah.",
     "verified": "page-image"
   },
@@ -485,22 +426,17 @@
     "glossedTokens": [
       ["Siapa", "who"], ["itu", "that"], ["tanya=nya", "ask=NYA"]
     ],
-    "translation": "'Who is that?', he asked.",
+    "translation": "'Who is that?', he asked. / #he will ask.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
       {"form": "'Siapa itu?' akan tanyanya (nanti).", "judgment": "ungrammatical"}
     ],
     "readings": [
-      {"name": "he asked", "judgment": "acceptable"},
-      {"name": "he will ask", "judgment": "unacceptable"}
+      {"name": "past", "judgment": "acceptable"},
+      {"name": "future", "judgment": "unacceptable"}
     ],
-    "paperFeatures": [
-      ["nominalised", "true"],
-      ["axis", "past"],
-      ["predicate", "nominal"],
-      ["withAux", "ungrammatical"]
-    ],
+    "paperFeatures": [],
     "comment": "(34c) is the starred alternative: the nominalised verb takes no auxiliary.",
     "verified": "page-image"
   },
@@ -517,12 +453,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["nominalised", "true"],
-      ["axis", "future"],
-      ["adjunct", "nanti"]
+    "readings": [
+      {"name": "future", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -541,11 +475,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["aux", "akan"],
-      ["withAux", "acceptable"],
-      ["clause", "root"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -558,22 +488,17 @@
     "glossedTokens": [
       ["Kapan", "when"], ["beli=nya", "buy=NYA"]
     ],
-    "translation": "",
+    "translation": "(i) When did you buy it? (ii) When are you going to buy it?",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
       {"form": "kapan akan beli=nya?", "judgment": "ungrammatical"}
     ],
     "readings": [
-      {"name": "When did you buy it?", "judgment": "acceptable"},
-      {"name": "When are you going to buy it?", "judgment": "unacceptable"}
+      {"name": "past", "judgment": "acceptable"},
+      {"name": "future", "judgment": "unacceptable"}
     ],
-    "paperFeatures": [
-      ["nominalised", "true"],
-      ["axis", "past"],
-      ["predicate", "nominal"],
-      ["withAux", "ungrammatical"]
-    ],
+    "paperFeatures": [],
     "comment": "(35b) is the starred alternative. Reading (ii) is printed unmarked; the prose says kapan asks for a past point, 'not reading (ii)'.",
     "verified": "page-image"
   },
@@ -591,11 +516,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["aux", "akan"],
-      ["withAux", "acceptable"],
-      ["clause", "root"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -608,22 +529,17 @@
     "glossedTokens": [
       ["Kapan", "when"], ["lahirnya", "birth=3s"]
     ],
-    "translation": "",
+    "translation": "(i) When was s/he born? (ii) When is s/he going to be born?",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
       {"form": "Kapan akan lahirnya?", "judgment": "ungrammatical"}
     ],
     "readings": [
-      {"name": "When was s/he born?", "judgment": "acceptable"},
-      {"name": "When is s/he going to be born?", "judgment": "unacceptable"}
+      {"name": "past", "judgment": "acceptable"},
+      {"name": "future", "judgment": "unacceptable"}
     ],
-    "paperFeatures": [
-      ["nominalised", "true"],
-      ["axis", "past"],
-      ["predicate", "nominal"],
-      ["withAux", "ungrammatical"]
-    ],
+    "paperFeatures": [],
     "comment": "(36b) is the starred alternative.",
     "verified": "page-image"
   },
@@ -641,11 +557,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["aux", "akan"],
-      ["withAux", "acceptable"],
-      ["clause", "root"]
-    ],
+    "paperFeatures": [],
     "comment": "Printed under (36) after (36b) without a letter of its own.",
     "verified": "page-image"
   },
@@ -664,8 +576,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["modal", "harus"],
-      ["nominalised", "false"],
       ["soa", "future"],
       ["evaluation", "deontic"]
     ],
@@ -687,8 +597,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["modal", "harus"],
-      ["nominalised", "true"],
       ["soa", "past"],
       ["evaluation", "counterfactual"]
     ],
@@ -710,8 +618,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["modal", "bisa"],
-      ["nominalised", "false"],
       ["soa", "future"],
       ["evaluation", "epistemic"]
     ],
@@ -733,8 +639,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["modal", "bisa"],
-      ["nominalised", "true"],
       ["soa", "past"],
       ["evaluation", "past ability"]
     ],
@@ -756,8 +660,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["modal", "mau"],
-      ["nominalised", "false"],
       ["soa", "future"]
     ],
     "comment": "",
@@ -778,10 +680,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["modal", "mau"],
-      ["nominalised", "true"],
-      ["soa", "present/past"],
-      ["evaluation", "counterfactual"]
+      ["evaluation", "counterfactual"],
+      ["soa", "present"],
+      ["soa", "past"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -802,12 +703,7 @@
       {"form": "sedang tampak=nya [ada orang datang].", "judgment": "ungrammatical"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["nominalised", "true"],
-      ["withAux", "ungrammatical"],
-      ["evidential", "visual"],
-      ["predicate", "nominal"]
-    ],
+    "paperFeatures": [],
     "comment": "(40b) is the starred alternative.",
     "verified": "page-image"
   },
@@ -825,9 +721,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["nominalised", "false"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -845,9 +739,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["evidential", "none"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -865,10 +757,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["evidential", "reportative"],
-      ["nominalised", "true"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -886,10 +775,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["evidential", "reportative"],
-      ["nominalised", "true"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -907,10 +793,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["evidential", "none"],
-      ["nominalised", "true"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -930,10 +813,7 @@
       {"form": "Dia adalah tidur.", "judgment": "ungrammatical"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "verbal"],
-      ["adalah", "ungrammatical"]
-    ],
+    "paperFeatures": [],
     "comment": "(44b) is the starred alternative.",
     "verified": "page-image"
   },
@@ -951,10 +831,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "nominal"],
-      ["adalah", "acceptable"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -970,10 +847,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "nominal"],
-      ["adalah", "acceptable"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -991,11 +865,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "nominal"],
-      ["nominalised", "true"],
-      ["adalah", "acceptable"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -1013,11 +883,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "nominal"],
-      ["nominalised", "true"],
-      ["adalah", "acceptable"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -1025,7 +891,7 @@
     "id": "arka2013_47a",
     "source": {"bibkey": "arka-2013", "paperLabel": "(47a)"},
     "language": "indo1316",
-    "primaryText": "Ali bukan/*tidak guru itu.",
+    "primaryText": "Ali bukan guru itu.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Ali", "Ali"], ["bukan", "NEG"], ["guru", "teacher"], ["itu", "that"]
@@ -1033,13 +899,11 @@
     "translation": "Ali is not the teacher.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "nominal"],
-      ["bukan", "acceptable"],
-      ["tidak", "ungrammatical"]
+    "alternatives": [
+      {"form": "Ali tidak guru itu.", "judgment": "ungrammatical"}
     ],
+    "readings": [],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -1047,19 +911,17 @@
     "id": "arka2013_47b",
     "source": {"bibkey": "arka-2013", "paperLabel": "(47b)"},
     "language": "indo1316",
-    "primaryText": "Guru itu bukan/*tidak Ali.",
+    "primaryText": "Guru itu bukan Ali.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "The teacher is not Ali.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "nominal"],
-      ["bukan", "acceptable"],
-      ["tidak", "ungrammatical"]
+    "alternatives": [
+      {"form": "Guru itu tidak Ali.", "judgment": "ungrammatical"}
     ],
+    "readings": [],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -1067,7 +929,7 @@
     "id": "arka2013_48a",
     "source": {"bibkey": "arka-2013", "paperLabel": "(48a)"},
     "language": "indo1316",
-    "primaryText": "[_ tidur] bukan/*tidak mau=nya",
+    "primaryText": "[_ tidur] bukan mau=nya",
     "discourseSegments": [],
     "glossedTokens": [
       ["tidur", "sleep"], ["bukan", "NEG"], ["mau=nya", "want=DEF"]
@@ -1075,14 +937,11 @@
     "translation": "To sleep was not the/his/her wish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "nominal"],
-      ["nominalised", "true"],
-      ["bukan", "acceptable"],
-      ["tidak", "ungrammatical"]
+    "alternatives": [
+      {"form": "[_ tidur] tidak mau=nya", "judgment": "ungrammatical"}
     ],
+    "readings": [],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -1090,26 +949,77 @@
     "id": "arka2013_48b",
     "source": {"bibkey": "arka-2013", "paperLabel": "(48b)"},
     "language": "indo1316",
-    "primaryText": "Mau=nya bukan / tidak tidur",
+    "primaryText": "Mau=nya bukan tidur",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mau=nya", "want=DEF"], ["bukan/tidak", "NEG"], ["tidur", "sleep"]
+      ["Mau=nya", "want=DEF"], ["bukan", "NEG"], ["tidur", "sleep"]
     ],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [
+      {"form": "Mau=nya tidak tidur", "judgment": "acceptable"}
+    ],
     "readings": [
       {"name": "The/his/her/my wish was not to sleep.", "judgment": "acceptable"},
       {"name": "It is the/her/his/your wish that (I/you/(s)he) would not sleep (but I did sleep).", "judgment": "acceptable"}
     ],
-    "paperFeatures": [
-      ["predicate", "nominal"],
-      ["nominalised", "true"],
-      ["bukan", "acceptable"],
-      ["tidak", "acceptable"]
-    ],
+    "paperFeatures": [],
     "comment": "tidak negates the internal clause headed by tidur.",
+    "verified": "page-image"
+  },
+  {
+    "id": "arka2013_52a",
+    "source": {"bibkey": "arka-2013", "paperLabel": "(52a)"},
+    "language": "indo1316",
+    "primaryText": "[Kamu pembohong] kata=nya",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kamu", "2"], ["pembohong", "peN.lie"], ["kata=nya", "word=DEF"]
+    ],
+    "translation": "You're a liar, I heard.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "[Kamu pembohong] adalah katanya.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "(52e), with adalah, is marked ?*; recorded as ungrammatical, the severe part of the mark.",
+    "verified": "page-image"
+  },
+  {
+    "id": "arka2013_52b",
+    "source": {"bibkey": "arka-2013", "paperLabel": "(52b)"},
+    "language": "indo1316",
+    "primaryText": "Katanya [kamu pembohong]",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "katanya adalah [kamu pembohong].", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "(52d), with adalah, is marked ?*; recorded as ungrammatical, the severe part of the mark.",
+    "verified": "page-image"
+  },
+  {
+    "id": "arka2013_53",
+    "source": {"bibkey": "arka-2013", "paperLabel": "(53)"},
+    "language": "indo1316",
+    "primaryText": "[Kamu] katanya [pembohong]",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You're a liar, I heard.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
     "verified": "page-image"
   }
 ]

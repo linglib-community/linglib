@@ -25,8 +25,8 @@ def ex_3 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("S/he came.", .acceptable), ("S/he is coming.", .acceptable), ("S/he will come.", .acceptable)]
-    paperFeatures := [("tam", "contextual")] }
+    readings := [("past", .acceptable), ("present", .acceptable), ("future", .acceptable)]
+    paperFeatures := [] }
 
 def ex_4a : Datum :=
   { id := "arka2013_4a"
@@ -39,7 +39,7 @@ def ex_4a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("frame", "S<E-R"), ("adjunct", "besok")] }
+    paperFeatures := [("frame", "S<E-R")] }
 
 def ex_4b : Datum :=
   { id := "arka2013_4b"
@@ -52,7 +52,7 @@ def ex_4b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("frame", "E-R<S"), ("adjunct", "kemarin")] }
+    paperFeatures := [("frame", "E-R<S")] }
 
 def ex_4c : Datum :=
   { id := "arka2013_4c"
@@ -65,7 +65,7 @@ def ex_4c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("frame", "E-R-S"), ("adjunct", "sekarang")] }
+    paperFeatures := [("frame", "E-R-S")] }
 
 def ex_5a : Datum :=
   { id := "arka2013_5a"
@@ -78,7 +78,7 @@ def ex_5a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("aux", "sudah"), ("frame", "E<S,R")] }
+    paperFeatures := [("frame", "E<S,R")] }
 
 def ex_5b : Datum :=
   { id := "arka2013_5b"
@@ -91,7 +91,7 @@ def ex_5b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("aux", "sudah"), ("frame", "E<R<S"), ("adjunct", "kemarin")] }
+    paperFeatures := [("frame", "E<R<S")] }
 
 def ex_6a : Datum :=
   { id := "arka2013_6a"
@@ -104,7 +104,7 @@ def ex_6a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("aux", "sedang"), ("aspect", "progressive"), ("marking", "applicative -i")] }
+    paperFeatures := [] }
 
 def ex_6b : Datum :=
   { id := "arka2013_6b"
@@ -117,7 +117,7 @@ def ex_6b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("aux", "sedang"), ("aspect", "progressive"), ("marking", "reduplication")] }
+    paperFeatures := [] }
 
 def ex_7 : Datum :=
   { id := "arka2013_7"
@@ -130,7 +130,7 @@ def ex_7 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("marking", "reduplication"), ("meaning", "unrealised expectation")] }
+    paperFeatures := [] }
 
 def ex_8 : Datum :=
   { id := "arka2013_8"
@@ -143,7 +143,7 @@ def ex_8 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("aspect", "progressive"), ("tam", "contextual")] }
+    paperFeatures := [] }
 
 def ex_10 : Datum :=
   { id := "arka2013_10"
@@ -156,7 +156,7 @@ def ex_10 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("aux", "akan"), ("frame", "S<E-R"), ("withAux", "acceptable"), ("clause", "root")] }
+    paperFeatures := [("frame", "S<E-R")] }
 
 def ex_11a : Datum :=
   { id := "arka2013_11a"
@@ -169,7 +169,7 @@ def ex_11a : Datum :=
     judgment := .acceptable
     alternatives := [("Mereka ingin [akan datang besok].", .ungrammatical)]
     readings := []
-    paperFeatures := [("withAux", "ungrammatical"), ("matrix", "ingin")] }
+    paperFeatures := [] }
 
 def ex_11c : Datum :=
   { id := "arka2013_11c"
@@ -182,20 +182,20 @@ def ex_11c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("aux", "akan"), ("withAux", "acceptable"), ("matrix", "tahu"), ("subordinator", "bahwa")] }
+    paperFeatures := [] }
 
 def ex_12a : Datum :=
   { id := "arka2013_12a"
     source := ⟨"arka-2013", "(12a)"⟩
     reportedIn := none
     language := "indo1316"
-    primaryText := "Dia akan/sudah/sedang makan."
-    glossedTokens := [("Dia", "3s"), ("akan/sudah/sedang", "FUT/PERF/PROG"), ("makan", "eat")]
+    primaryText := "Dia akan makan."
+    glossedTokens := [("Dia", "3s"), ("akan", "FUT"), ("makan", "eat")]
     context := ""
     judgment := .acceptable
-    alternatives := []
+    alternatives := [("Dia sudah makan.", .acceptable), ("Dia sedang makan.", .acceptable)]
     readings := []
-    paperFeatures := [("withAux", "acceptable"), ("clause", "root")] }
+    paperFeatures := [] }
 
 def ex_12b : Datum :=
   { id := "arka2013_12b"
@@ -206,9 +206,9 @@ def ex_12b : Datum :=
     glossedTokens := [("Saya", "1s"), ("menyuruh", "AV.ask"), ("dia", "3s"), ("makan", "eat")]
     context := ""
     judgment := .acceptable
-    alternatives := [("Saya menyuruh dia [akan/sudah/sedang makan].", .ungrammatical)]
+    alternatives := [("Saya menyuruh dia [akan makan].", .ungrammatical), ("Saya menyuruh dia [sudah makan].", .ungrammatical), ("Saya menyuruh dia [sedang makan].", .ungrammatical)]
     readings := []
-    paperFeatures := [("withAux", "ungrammatical"), ("matrix", "menyuruh")] }
+    paperFeatures := [] }
 
 def ex_13a : Datum :=
   { id := "arka2013_13a"
@@ -219,9 +219,9 @@ def ex_13a : Datum :=
     glossedTokens := [("Orang", "person"), ("itu", "that"), ("mendorong", "AV.push"), ("saya", "1s"), ("jatuh", "fall")]
     context := ""
     judgment := .acceptable
-    alternatives := [("Orang itu mendorong saya [ _ akan/sedang/sudah jatuh].", .ungrammatical)]
+    alternatives := [("Orang itu mendorong saya [ _ akan jatuh].", .ungrammatical), ("Orang itu mendorong saya [ _ sedang jatuh].", .ungrammatical), ("Orang itu mendorong saya [ _ sudah jatuh].", .ungrammatical)]
     readings := []
-    paperFeatures := [("withAux", "ungrammatical"), ("matrix", "mendorong")] }
+    paperFeatures := [] }
 
 def ex_14a : Datum :=
   { id := "arka2013_14a"
@@ -234,7 +234,7 @@ def ex_14a : Datum :=
     judgment := .acceptable
     alternatives := [("Dia datang [(sambil) sedang menangis].", .ungrammatical)]
     readings := []
-    paperFeatures := [("withAux", "ungrammatical"), ("adjunct", "sambil")] }
+    paperFeatures := [] }
 
 def ex_15a : Datum :=
   { id := "arka2013_15a"
@@ -247,7 +247,7 @@ def ex_15a : Datum :=
     judgment := .acceptable
     alternatives := [("Saya belajar bisa [menembak].", .ungrammatical)]
     readings := []
-    paperFeatures := [("withAux", "ungrammatical"), ("matrix", "belajar")] }
+    paperFeatures := [] }
 
 def ex_15c : Datum :=
   { id := "arka2013_15c"
@@ -260,7 +260,7 @@ def ex_15c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("withAux", "acceptable"), ("subordinator", "agar")] }
+    paperFeatures := [] }
 
 def ex_18a : Datum :=
   { id := "arka2013_18a"
@@ -274,7 +274,7 @@ def ex_18a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("aux", "sedang"), ("voice", "AV")] }
+    paperFeatures := [] }
 
 def ex_18b : Datum :=
   { id := "arka2013_18b"
@@ -288,7 +288,7 @@ def ex_18b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("aux", "sudah"), ("voice", "passive")] }
+    paperFeatures := [] }
 
 def ex_34a : Datum :=
   { id := "arka2013_34a"
@@ -300,8 +300,8 @@ def ex_34a : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := [("'Siapa itu?' akan tanyanya (nanti).", .ungrammatical)]
-    readings := [("he asked", .acceptable), ("he will ask", .unacceptable)]
-    paperFeatures := [("nominalised", "true"), ("axis", "past"), ("predicate", "nominal"), ("withAux", "ungrammatical")] }
+    readings := [("past", .acceptable), ("future", .unacceptable)]
+    paperFeatures := [] }
 
 def ex_34b : Datum :=
   { id := "arka2013_34b"
@@ -313,8 +313,8 @@ def ex_34b : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := []
-    paperFeatures := [("nominalised", "true"), ("axis", "future"), ("adjunct", "nanti")] }
+    readings := [("future", .acceptable)]
+    paperFeatures := [] }
 
 def ex_34d : Datum :=
   { id := "arka2013_34d"
@@ -327,7 +327,7 @@ def ex_34d : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("aux", "akan"), ("withAux", "acceptable"), ("clause", "root")] }
+    paperFeatures := [] }
 
 def ex_35a : Datum :=
   { id := "arka2013_35a"
@@ -339,8 +339,8 @@ def ex_35a : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := [("kapan akan beli=nya?", .ungrammatical)]
-    readings := [("When did you buy it?", .acceptable), ("When are you going to buy it?", .unacceptable)]
-    paperFeatures := [("nominalised", "true"), ("axis", "past"), ("predicate", "nominal"), ("withAux", "ungrammatical")] }
+    readings := [("past", .acceptable), ("future", .unacceptable)]
+    paperFeatures := [] }
 
 def ex_35c : Datum :=
   { id := "arka2013_35c"
@@ -353,7 +353,7 @@ def ex_35c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("aux", "akan"), ("withAux", "acceptable"), ("clause", "root")] }
+    paperFeatures := [] }
 
 def ex_36a : Datum :=
   { id := "arka2013_36a"
@@ -365,8 +365,8 @@ def ex_36a : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := [("Kapan akan lahirnya?", .ungrammatical)]
-    readings := [("When was s/he born?", .acceptable), ("When is s/he going to be born?", .unacceptable)]
-    paperFeatures := [("nominalised", "true"), ("axis", "past"), ("predicate", "nominal"), ("withAux", "ungrammatical")] }
+    readings := [("past", .acceptable), ("future", .unacceptable)]
+    paperFeatures := [] }
 
 def ex_36c : Datum :=
   { id := "arka2013_36c"
@@ -379,7 +379,7 @@ def ex_36c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("aux", "akan"), ("withAux", "acceptable"), ("clause", "root")] }
+    paperFeatures := [] }
 
 def ex_37a : Datum :=
   { id := "arka2013_37a"
@@ -392,7 +392,7 @@ def ex_37a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("modal", "harus"), ("nominalised", "false"), ("soa", "future"), ("evaluation", "deontic")] }
+    paperFeatures := [("soa", "future"), ("evaluation", "deontic")] }
 
 def ex_37b : Datum :=
   { id := "arka2013_37b"
@@ -405,7 +405,7 @@ def ex_37b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("modal", "harus"), ("nominalised", "true"), ("soa", "past"), ("evaluation", "counterfactual")] }
+    paperFeatures := [("soa", "past"), ("evaluation", "counterfactual")] }
 
 def ex_38a : Datum :=
   { id := "arka2013_38a"
@@ -418,7 +418,7 @@ def ex_38a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("modal", "bisa"), ("nominalised", "false"), ("soa", "future"), ("evaluation", "epistemic")] }
+    paperFeatures := [("soa", "future"), ("evaluation", "epistemic")] }
 
 def ex_38b : Datum :=
   { id := "arka2013_38b"
@@ -431,7 +431,7 @@ def ex_38b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("modal", "bisa"), ("nominalised", "true"), ("soa", "past"), ("evaluation", "past ability")] }
+    paperFeatures := [("soa", "past"), ("evaluation", "past ability")] }
 
 def ex_39a : Datum :=
   { id := "arka2013_39a"
@@ -444,7 +444,7 @@ def ex_39a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("modal", "mau"), ("nominalised", "false"), ("soa", "future")] }
+    paperFeatures := [("soa", "future")] }
 
 def ex_39b : Datum :=
   { id := "arka2013_39b"
@@ -457,7 +457,7 @@ def ex_39b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("modal", "mau"), ("nominalised", "true"), ("soa", "present/past"), ("evaluation", "counterfactual")] }
+    paperFeatures := [("evaluation", "counterfactual"), ("soa", "present"), ("soa", "past")] }
 
 def ex_40a : Datum :=
   { id := "arka2013_40a"
@@ -470,7 +470,7 @@ def ex_40a : Datum :=
     judgment := .acceptable
     alternatives := [("sedang tampak=nya [ada orang datang].", .ungrammatical)]
     readings := []
-    paperFeatures := [("nominalised", "true"), ("withAux", "ungrammatical"), ("evidential", "visual"), ("predicate", "nominal")] }
+    paperFeatures := [] }
 
 def ex_41 : Datum :=
   { id := "arka2013_41"
@@ -483,7 +483,7 @@ def ex_41 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("nominalised", "false")] }
+    paperFeatures := [] }
 
 def ex_42a : Datum :=
   { id := "arka2013_42a"
@@ -496,7 +496,7 @@ def ex_42a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("evidential", "none")] }
+    paperFeatures := [] }
 
 def ex_42b : Datum :=
   { id := "arka2013_42b"
@@ -509,7 +509,7 @@ def ex_42b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("evidential", "reportative"), ("nominalised", "true")] }
+    paperFeatures := [] }
 
 def ex_43a : Datum :=
   { id := "arka2013_43a"
@@ -522,7 +522,7 @@ def ex_43a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("evidential", "reportative"), ("nominalised", "true")] }
+    paperFeatures := [] }
 
 def ex_43b : Datum :=
   { id := "arka2013_43b"
@@ -535,7 +535,7 @@ def ex_43b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("evidential", "none"), ("nominalised", "true")] }
+    paperFeatures := [] }
 
 def ex_44a : Datum :=
   { id := "arka2013_44a"
@@ -548,7 +548,7 @@ def ex_44a : Datum :=
     judgment := .acceptable
     alternatives := [("Dia adalah tidur.", .ungrammatical)]
     readings := []
-    paperFeatures := [("predicate", "verbal"), ("adalah", "ungrammatical")] }
+    paperFeatures := [] }
 
 def ex_45a : Datum :=
   { id := "arka2013_45a"
@@ -561,7 +561,7 @@ def ex_45a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "nominal"), ("adalah", "acceptable")] }
+    paperFeatures := [] }
 
 def ex_45b : Datum :=
   { id := "arka2013_45b"
@@ -574,7 +574,7 @@ def ex_45b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "nominal"), ("adalah", "acceptable")] }
+    paperFeatures := [] }
 
 def ex_46a : Datum :=
   { id := "arka2013_46a"
@@ -587,7 +587,7 @@ def ex_46a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "nominal"), ("nominalised", "true"), ("adalah", "acceptable")] }
+    paperFeatures := [] }
 
 def ex_46b : Datum :=
   { id := "arka2013_46b"
@@ -600,60 +600,99 @@ def ex_46b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "nominal"), ("nominalised", "true"), ("adalah", "acceptable")] }
+    paperFeatures := [] }
 
 def ex_47a : Datum :=
   { id := "arka2013_47a"
     source := ⟨"arka-2013", "(47a)"⟩
     reportedIn := none
     language := "indo1316"
-    primaryText := "Ali bukan/*tidak guru itu."
+    primaryText := "Ali bukan guru itu."
     glossedTokens := [("Ali", "Ali"), ("bukan", "NEG"), ("guru", "teacher"), ("itu", "that")]
     context := ""
     judgment := .acceptable
-    alternatives := []
+    alternatives := [("Ali tidak guru itu.", .ungrammatical)]
     readings := []
-    paperFeatures := [("predicate", "nominal"), ("bukan", "acceptable"), ("tidak", "ungrammatical")] }
+    paperFeatures := [] }
 
 def ex_47b : Datum :=
   { id := "arka2013_47b"
     source := ⟨"arka-2013", "(47b)"⟩
     reportedIn := none
     language := "indo1316"
-    primaryText := "Guru itu bukan/*tidak Ali."
+    primaryText := "Guru itu bukan Ali."
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    alternatives := [("Guru itu tidak Ali.", .ungrammatical)]
     readings := []
-    paperFeatures := [("predicate", "nominal"), ("bukan", "acceptable"), ("tidak", "ungrammatical")] }
+    paperFeatures := [] }
 
 def ex_48a : Datum :=
   { id := "arka2013_48a"
     source := ⟨"arka-2013", "(48a)"⟩
     reportedIn := none
     language := "indo1316"
-    primaryText := "[_ tidur] bukan/*tidak mau=nya"
+    primaryText := "[_ tidur] bukan mau=nya"
     glossedTokens := [("tidur", "sleep"), ("bukan", "NEG"), ("mau=nya", "want=DEF")]
     context := ""
     judgment := .acceptable
-    alternatives := []
+    alternatives := [("[_ tidur] tidak mau=nya", .ungrammatical)]
     readings := []
-    paperFeatures := [("predicate", "nominal"), ("nominalised", "true"), ("bukan", "acceptable"), ("tidak", "ungrammatical")] }
+    paperFeatures := [] }
 
 def ex_48b : Datum :=
   { id := "arka2013_48b"
     source := ⟨"arka-2013", "(48b)"⟩
     reportedIn := none
     language := "indo1316"
-    primaryText := "Mau=nya bukan / tidak tidur"
-    glossedTokens := [("Mau=nya", "want=DEF"), ("bukan/tidak", "NEG"), ("tidur", "sleep")]
+    primaryText := "Mau=nya bukan tidur"
+    glossedTokens := [("Mau=nya", "want=DEF"), ("bukan", "NEG"), ("tidur", "sleep")]
+    context := ""
+    judgment := .acceptable
+    alternatives := [("Mau=nya tidak tidur", .acceptable)]
+    readings := [("The/his/her/my wish was not to sleep.", .acceptable), ("It is the/her/his/your wish that (I/you/(s)he) would not sleep (but I did sleep).", .acceptable)]
+    paperFeatures := [] }
+
+def ex_52a : Datum :=
+  { id := "arka2013_52a"
+    source := ⟨"arka-2013", "(52a)"⟩
+    reportedIn := none
+    language := "indo1316"
+    primaryText := "[Kamu pembohong] kata=nya"
+    glossedTokens := [("Kamu", "2"), ("pembohong", "peN.lie"), ("kata=nya", "word=DEF")]
+    context := ""
+    judgment := .acceptable
+    alternatives := [("[Kamu pembohong] adalah katanya.", .ungrammatical)]
+    readings := []
+    paperFeatures := [] }
+
+def ex_52b : Datum :=
+  { id := "arka2013_52b"
+    source := ⟨"arka-2013", "(52b)"⟩
+    reportedIn := none
+    language := "indo1316"
+    primaryText := "Katanya [kamu pembohong]"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := [("katanya adalah [kamu pembohong].", .ungrammatical)]
+    readings := []
+    paperFeatures := [] }
+
+def ex_53 : Datum :=
+  { id := "arka2013_53"
+    source := ⟨"arka-2013", "(53)"⟩
+    reportedIn := none
+    language := "indo1316"
+    primaryText := "[Kamu] katanya [pembohong]"
+    glossedTokens := []
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("The/his/her/my wish was not to sleep.", .acceptable), ("It is the/her/his/your wish that (I/you/(s)he) would not sleep (but I did sleep).", .acceptable)]
-    paperFeatures := [("predicate", "nominal"), ("nominalised", "true"), ("bukan", "acceptable"), ("tidak", "acceptable")] }
+    readings := []
+    paperFeatures := [] }
 
-def all : List Datum := [ex_3, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_6a, ex_6b, ex_7, ex_8, ex_10, ex_11a, ex_11c, ex_12a, ex_12b, ex_13a, ex_14a, ex_15a, ex_15c, ex_18a, ex_18b, ex_34a, ex_34b, ex_34d, ex_35a, ex_35c, ex_36a, ex_36c, ex_37a, ex_37b, ex_38a, ex_38b, ex_39a, ex_39b, ex_40a, ex_41, ex_42a, ex_42b, ex_43a, ex_43b, ex_44a, ex_45a, ex_45b, ex_46a, ex_46b, ex_47a, ex_47b, ex_48a, ex_48b]
+def all : List Datum := [ex_3, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_6a, ex_6b, ex_7, ex_8, ex_10, ex_11a, ex_11c, ex_12a, ex_12b, ex_13a, ex_14a, ex_15a, ex_15c, ex_18a, ex_18b, ex_34a, ex_34b, ex_34d, ex_35a, ex_35c, ex_36a, ex_36c, ex_37a, ex_37b, ex_38a, ex_38b, ex_39a, ex_39b, ex_40a, ex_41, ex_42a, ex_42b, ex_43a, ex_43b, ex_44a, ex_45a, ex_45b, ex_46a, ex_46b, ex_47a, ex_47b, ex_48a, ex_48b, ex_52a, ex_52b, ex_53]
 
 end Arka2013.Examples

@@ -30,7 +30,6 @@ Angelopoulos2026
 Anscombe1964
 Anttila1997
 Aremu2025b
-Arka2013
 Arnold2026
 ArregiPietraszko2021
 ArreguiKusumoto1998
@@ -437,7 +436,6 @@ Siloni2012
 SiptarTorkenczy2000
 SlomanBarbeyHotaling2009
 Smith1997
-Sneddon1996
 SolstadBott2022
 SoltWaldon2019
 Song1996

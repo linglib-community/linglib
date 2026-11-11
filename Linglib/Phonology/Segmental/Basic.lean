@@ -120,6 +120,12 @@ theorem Segment.restrict_eq_restrict_iff {s s' : Segment} :
     · simp [Segment.restrict, Finset.piecewise_eq_of_mem _ _ _ hf, h (Finset.mem_coe.2 hf)]
     · simp [Segment.restrict, Finset.piecewise_eq_of_notMem _ _ _ hf]
 
+/-- Restricting to a feature set a segment that has taken another's values on the set keeps
+the other's values. -/
+theorem Segment.restrict_piecewise (s t : Segment) :
+    Segment.restrict C (C.piecewise s t) = Segment.restrict C s :=
+  Finset.piecewise_idem_left ..
+
 /-- Restricting to one feature set and then another keeps the features in both. -/
 theorem Segment.restrict_restrict (s : Segment) :
     Segment.restrict D (Segment.restrict C s) = Segment.restrict (C ∩ D) s := by

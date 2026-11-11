@@ -132,6 +132,12 @@ def trigger : Segment := Segment.ofSpecs [(.consonantal, true), (.nasal, false)]
 consonant. -/
 def assimilate : List Segment → List Segment := NasalSubstitution.assimilate consonants trigger ŋ
 
+/-- Each consonant that the nasal assimilates to has exactly one nasal at its place, except the
+glottal stop, which has none. -/
+theorem card_homorganicNasals_eq_one_iff : ∀ x ∈ consonants, trigger ≤ x →
+    ((NasalSubstitution.homorganicNasals consonants x).card = 1 ↔ x ≠ «ʔ») := by
+  decide
+
 /-- `substitute x` is the nasal that the prefix nasal and a stem-initial `x` surface as under
 substitution. -/
 def substitute : Segment → Segment := NasalSubstitution.substitute consonants trigger ŋ
