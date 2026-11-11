@@ -99,8 +99,11 @@ instance (d : Derivation) (x y : SyntacticObject) : Decidable (d.BindsAtLF x y) 
 /-- Binding at some stage is binding at the copy object, where every stage survives. -/
 theorem BindsAtSomeStage.bindsAtLF {x y : LexicalItem.Token} (hxy : x ≠ y)
     (hd : d.replay?.isSome) (h : d.BindsAtSomeStage ↑x ↑y) : d.BindsAtLF ↑x ↑y := by
-  obtain ⟨n, -, p, hp, hc⟩ := h
-  rw [Option.mem_def, externalize?_eq_map_replayWithCopies?] at hp
+  obtain ⟨n, -, hc⟩ := h
+  obtain ⟨p, hp⟩ := Option.isSome_iff_exists.1 (show ((d.take n).externalize?).isSome by
+    rw [externalize?, Option.isSome_map]; exact isSome_replay?_take hd n)
+  rw [CCommandsAt, ← d.externalize?_take_faithful n hp] at hc
+  rw [externalize?_eq_map_replayWithCopies?] at hp
   obtain ⟨c, hc', rfl⟩ := Option.map_eq_some_iff.1 hp
   have h1 := Marked.cCommands_unmark_of_cCommands_contract hxy hc
   obtain ⟨C', hC'⟩ := Option.isSome_iff_exists.1 (show (d.copyObject?).isSome by
@@ -158,8 +161,10 @@ theorem BindsAtLF.bindsAtSomeStage {x y : LexicalItem.Token} (hxy : x ≠ y)
       hT ▸ mem_lexTokens_of_mem_yield_copyObject? hdC (mem_yield_iff.2 ht)
     have hfinal : ∀ cT', (d.append [s]).replay? = some cT' →
         CCommands cT'.current.toSyntacticObject ↑x ↑y → (d.append [s]).BindsAtSomeStage ↑x ↑y :=
-      fun cT' h1 h2 ↦ ⟨(d.append [s]).length, le_rfl, cT'.current,
-        by rw [take_length, externalize?, h1]; rfl, h2⟩
+      fun cT' h1 h2 ↦ ⟨(d.append [s]).length, le_rfl, by
+        rw [CCommandsAt, ← externalize?_take_faithful _ _ (p := cT'.current)
+          (by rw [take_length, externalize?, h1]; rfl)]
+        exact h2⟩
     have hne : ∀ T : SyntacticObject, leaf y ∈ T.terms → (↑x : SyntacticObject) ≠ T :=
       fun T hy he ↦ by
         rw [← he, terms_leaf, Multiset.mem_singleton, leaf_inj] at hy

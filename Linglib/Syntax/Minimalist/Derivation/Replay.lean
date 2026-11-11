@@ -11,24 +11,27 @@ public import Linglib.Core.Data.List.Monadic
 /-!
 # Replaying a derivation
 
-The stages of a derivation are noncomputable, their objects being quotients, so what holds at a
-stage is decided on a replay. `Derivation.replay?` runs the steps by Merge on linearized objects,
-each new daughter on the side its step records, and [a successful replay forgets to the
-derivation's own configuration](##Minimalist.Derivation.replay?_faithful). When no token is merged
-twice, [the replay pronounces each merged token once](##Minimalist.Derivation.yield_replay?).
-`Derivation.CCommandsAt` is c-command in the object the replay reaches after a number of steps,
-[the derivation's own stage](##Minimalist.Derivation.CCommandsAt.cCommands_stageAt).
+`Derivation.replay?` runs the steps of a derivation by Merge on linearized objects, each new
+daughter on the side its step records, and [a successful replay forgets to the derivation's own
+configuration](##Minimalist.Derivation.replay?_faithful). A step applies to a configuration when
+what it moves is there to move, and a derivation is valid, `Derivation.IsValid`, when it starts
+from a leaf, each step applies to the configuration it meets, and no token is merged twice. [The
+replay succeeds exactly when the steps apply](##Minimalist.Derivation.isSome_replay?_iff), and
+[a valid derivation pronounces each merged token once](##Minimalist.Derivation.yield_replay?).
+`Derivation.CCommandsAt` is c-command at a stage of the derivation.
 
 ## Implementation notes
 
 * The replay is partial, `none` when the initial object is not a leaf, when a mover is absent, or
-  when nothing is left to merge back. An externally merged item replays in the order it was built
-  in.
-* `CCommandsAt` reads the replay under the default trace encoder, the head by selection.
+  when nothing is left to merge back, where `Derivation.run` is total. An externally merged item
+  replays in the order it was built in.
+* `CCommandsAt` and validity are decided on the replay, which is cheaper to evaluate than the
+  unordered stage.
 
 ## References
 
 * [marcolli-chomsky-berwick-2025], §1.13 (Lemma 1.13.1)
+* [collins-stabler-2016]
 -/
 
 @[expose] public section
@@ -200,6 +203,106 @@ theorem Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
     p.toSyntacticObject = d.stageAt n τ :=
   externalize?_faithful (d.take n) h
 
+/-! ### Validity
+
+A step applies to a configuration when what it moves is there to move. A derivation is valid when
+it starts from a lexical item, each step applies to the configuration it meets, and no token is
+merged twice; the replay succeeds exactly on the derivations whose steps apply. -/
+
+/-- The step applies to the configuration: an Internal Merge or an extraction moves a term of the
+object, and `remerge` finds a copy on the stack. -/
+def Step.AppliesTo (c : Cfg SyntacticObject) : Step → Prop
+  | .em _ _ => True
+  | .im mover _ | .extract mover => mover ∈ c.current.terms
+  | .remerge _ => c.stack ≠ []
+
+/-- Each step of the list applies to the configuration the earlier ones reach. -/
+def Step.ApplyFrom (τ : SyntacticObject → Option LexicalItem.Token) :
+    List Step → Cfg SyntacticObject → Prop
+  | [], _ => True
+  | step :: steps, c => step.AppliesTo c ∧ Step.ApplyFrom τ steps (step.run c τ)
+
+/-- A step replays exactly when it applies to the configuration replayed so far. -/
+theorem Step.isSome_replay?_iff (step : Step) (c : Cfg LinearizedSyntacticObject) :
+    (step.replay? c τ).isSome ↔
+      step.AppliesTo (c.map LinearizedSyntacticObject.toSyntacticObject) := by
+  obtain ⟨p, st⟩ := c
+  cases step with
+  | em side item => simp [Step.replay?, Step.AppliesTo]
+  | im mover side =>
+    simp [Step.replay?, Step.AppliesTo, LinearizedSyntacticObject.isSome_find?_iff]
+  | extract mover =>
+    simp [Step.replay?, Step.AppliesTo, LinearizedSyntacticObject.isSome_find?_iff]
+  | remerge side => cases st <;> simp [Step.replay?, Step.AppliesTo]
+
+theorem Step.isSome_foldlM_replay?_iff :
+    ∀ (steps : List Step) (c : Cfg LinearizedSyntacticObject),
+      (steps.foldlM (fun c (step : Step) ↦ step.replay? c τ) c).isSome ↔
+        Step.ApplyFrom τ steps (c.map LinearizedSyntacticObject.toSyntacticObject)
+  | [], _ => by simp [Step.ApplyFrom]
+  | step :: steps, c => by
+    rw [List.foldlM_cons, Step.ApplyFrom, ← Step.isSome_replay?_iff (τ := τ)]
+    cases h : step.replay? c τ with
+    | none => simp
+    | some c₁ =>
+      have ih := Step.isSome_foldlM_replay?_iff steps c₁
+      rw [Step.map_of_replay? h] at ih
+      simpa using ih
+
+namespace Derivation
+
+/-- A derivation is valid when it starts from a lexical item or a trace, each step applies to the
+configuration it meets, and no token is merged twice. -/
+structure IsValid (d : Derivation) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
+    Prop where
+  /-- The initial object is a leaf. -/
+  initial : d.initial.toLinearizedLeaf?.isSome
+  /-- Each step applies to the configuration it meets. -/
+  steps : Step.ApplyFrom τ d.steps ⟨d.initial, []⟩
+  /-- No token is merged twice. -/
+  nodup : d.lexTokens.Nodup
+
+/-- The replay succeeds exactly when the derivation starts from a leaf and each step applies. -/
+theorem isSome_replay?_iff {d : Derivation} :
+    (d.replay? τ).isSome ↔
+      d.initial.toLinearizedLeaf?.isSome ∧ Step.ApplyFrom τ d.steps ⟨d.initial, []⟩ := by
+  rw [replay?]
+  cases h : d.initial.toLinearizedLeaf? with
+  | none => simp
+  | some p =>
+    rw [Option.bind_some, Step.isSome_foldlM_replay?_iff]
+    simp [Cfg.map, SyntacticObject.toSyntacticObject_of_toLinearizedLeaf? h]
+
+
+theorem IsValid.isSome_replay? {d : Derivation} (h : d.IsValid τ) : (d.replay? τ).isSome :=
+  isSome_replay?_iff.2 ⟨h.initial, h.steps⟩
+
+/-- Validity is decided on the replay. -/
+instance (d : Derivation) : Decidable (d.IsValid τ) :=
+  decidable_of_iff
+    (d.initial.toLinearizedLeaf?.isSome ∧ (d.replay? τ).isSome ∧ d.lexTokens.Nodup)
+    ⟨fun ⟨hi, hr, hn⟩ ↦ ⟨hi, (isSome_replay?_iff.1 hr).2, hn⟩,
+      fun h ↦ ⟨h.initial, h.isSome_replay?, h.nodup⟩⟩
+
+theorem _root_.Minimalist.Step.ApplyFrom.take :
+    ∀ {steps : List Step} {c : Cfg SyntacticObject} (n : Nat),
+      Step.ApplyFrom τ steps c → Step.ApplyFrom τ (steps.take n) c
+  | _, _, 0, _ => by simp [Step.ApplyFrom]
+  | [], _, _ + 1, _ => by simp [Step.ApplyFrom]
+  | _ :: _, _, n + 1, ⟨h, hs⟩ => ⟨h, Step.ApplyFrom.take n hs⟩
+
+/-- The replay of an initial segment succeeds when the replay of the whole does. -/
+theorem isSome_replay?_take {d : Derivation} (h : (d.replay? τ).isSome) (n : Nat) :
+    ((d.take n).replay? τ).isSome :=
+  let ⟨hi, hs⟩ := isSome_replay?_iff.1 h
+  isSome_replay?_iff.2 ⟨hi, hs.take n⟩
+
+/-- An initial segment of a valid derivation is valid. -/
+theorem IsValid.take {d : Derivation} (h : d.IsValid τ) (n : Nat) : (d.take n).IsValid τ :=
+  ⟨h.initial, h.steps.take n, Multiset.nodup_of_le (d.lexTokens_take_le n) h.nodup⟩
+
+end Derivation
+
 /-! ### Pronounced tokens -/
 
 section Yield
@@ -267,48 +370,44 @@ theorem Derivation.yield_replay? {d : Derivation} {c : Cfg LinearizedSyntacticOb
 
 end Yield
 
+/-- No configuration a valid derivation reaches pronounces a token twice. -/
+theorem Derivation.IsValid.nodup_yield_run_take {d : Derivation} (h : d.IsValid τ) (n : Nat) :
+    ((d.take n).run τ).yield.Nodup := by
+  obtain ⟨c, hc⟩ := Option.isSome_iff_exists.1 (h.take n).isSome_replay?
+  rw [← replay?_faithful _ hc, yield_replay? (h.take n).nodup hc]
+  exact (h.take n).nodup
+
 /-! ### C-command at a stage -/
 
 namespace Derivation
 
 variable {d : Derivation} {steps : List Step} {n : Nat} {x y : SyntacticObject}
 
-/-- `x` c-commands `y` at stage `n` of `d`: in the ordered object the replay reaches after `n`
-steps. -/
+/-- `x` c-commands `y` at stage `n` of `d`. -/
 def CCommandsAt (d : Derivation) (n : Nat) (x y : SyntacticObject) : Prop :=
-  ∃ p ∈ (d.take n).externalize?, CCommands p x y
+  CCommands (d.stageAt n) x y
 
+/-- Decided on the replayed object when the replay succeeds, which is cheaper to evaluate than the
+stage itself. -/
 instance (d : Derivation) (n : Nat) (x y : SyntacticObject) :
     Decidable (d.CCommandsAt n x y) :=
-  inferInstanceAs (Decidable (∃ p ∈ (d.take n).externalize?, _))
+  match h : (d.take n).externalize? with
+  | some p => decidable_of_iff (CCommands (↑p) x y) (by
+      rw [CCommandsAt, ← d.externalize?_take_faithful n h])
+  | none => inferInstanceAs (Decidable (CCommands (d.stageAt n) x y))
 
-/-- The stage the predicate looks at is the derivation's own. -/
 theorem CCommandsAt.cCommands_stageAt (h : d.CCommandsAt n x y) :
-    CCommands (d.stageAt n) x y :=
-  let ⟨_, hp, hc⟩ := h
-  d.externalize?_take_faithful n hp ▸ hc
+    CCommands (d.stageAt n) x y := h
 
-/-- A stage at which something c-commands pronounces no token twice, when the derivation merges
-none twice. -/
-theorem CCommandsAt.nodup_yield_run_take (h : d.CCommandsAt n x y) (hd : d.lexTokens.Nodup) :
-    ((d.take n).run).yield.Nodup := by
-  obtain ⟨_, hp, -⟩ := h
-  obtain ⟨c, hc, -⟩ := Option.map_eq_some_iff.1 hp
-  have hd' := Multiset.nodup_of_le (d.lexTokens_take_le n) hd
-  rwa [← replay?_faithful _ hc, yield_replay? hd' hc]
-
-/-- The early stages of an extended derivation are the original's. -/
 theorem cCommandsAt_append_of_le (h : n ≤ d.length) :
     (d.append steps).CCommandsAt n x y ↔ d.CCommandsAt n x y := by
-  rw [CCommandsAt, CCommandsAt, take_append_of_le h]
+  rw [CCommandsAt, CCommandsAt, stageAt_append_of_le h]
 
 theorem cCommandsAt_map_iff {f : LexicalItem.Token → LexicalItem.Token} (hf : Function.Injective f)
     (hsel : LexicalItem.Token.PreservesSelection f) :
     (d.map f).CCommandsAt n (x.map f) (y.map f) ↔ d.CCommandsAt n x y := by
-  rw [CCommandsAt, CCommandsAt, take_map,
-    externalize?_map hf fun s ↦ SyntacticObject.selHead_map s hsel]
-  cases (d.take n).externalize? <;>
-    simp [LinearizedSyntacticObject.toSyntacticObject_map, cCommands_map_iff hf]
+  rw [CCommandsAt, CCommandsAt, stageAt_map d hf (fun s ↦ s.selHead_map hsel),
+    cCommands_map_iff hf]
 
 end Derivation
 

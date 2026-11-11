@@ -154,8 +154,13 @@ instance (d : Derivation) (low : Finset SyntacticObject) (x y : SyntacticObject)
   rw [lf?, externalize?, ← map_contract_replayWithCopies?, Option.map_map]
   exact Option.map_congr fun c _ ↦ Marked.lf_empty c.current
 
-/-- Binding at the reading with no chain read low is surface binding. -/
-theorem bindsAtReading_empty_iff : d.BindsAtReading ∅ x y ↔ d.BindsAtSurface x y := by
-  simp [BindsAtReading, BindsAtSurface, CCommandsAt]
+/-- Binding at the reading with no chain read low is surface binding, when the replay succeeds. -/
+theorem bindsAtReading_empty_iff (hd : d.replay?.isSome) :
+    d.BindsAtReading ∅ x y ↔ d.BindsAtSurface x y := by
+  obtain ⟨c, hc⟩ := Option.isSome_iff_exists.1 hd
+  have hp : d.externalize? = some c.current := by rw [externalize?, hc]; rfl
+  have hstage : d.stageAt d.length = c.current.toSyntacticObject := by
+    rw [← d.externalize?_take_faithful d.length (by rwa [take_length])]
+  simp [BindsAtReading, BindsAtSurface, CCommandsAt, hp, hstage]
 
 end Minimalist.Derivation

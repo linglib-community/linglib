@@ -199,6 +199,35 @@ theorem headTrace_val (s : SyntacticObject) (τ : SyntacticObject → Option Lex
     (s.headTrace τ).val = UnorderedTree.leaf (Sum.inr (τ s)) := by
   unfold headTrace; cases τ s <;> rfl
 
+section Map
+
+variable {f : LexicalItem.Token → LexicalItem.Token}
+
+/-- Replacement commutes with an injective relabelling. -/
+theorem replace_map (hf : Function.Injective f) (s target replacement : SyntacticObject) :
+    (s.replace target replacement).map f =
+      (s.map f).replace (target.map f) (replacement.map f) := by
+  have hmem (x : SyntacticObject) : target.map f ∈ (x.map f).terms ↔ target ∈ x.terms := by
+    rw [terms_map, Multiset.mem_map_of_injective (map_injective hf)]
+  have leafCase (x : SyntacticObject) (hx : x.terms = {x}) :
+      (x.replace target replacement).map f =
+        (x.map f).replace (target.map f) (replacement.map f) := by
+    by_cases h : x = target
+    · subst h; rw [replace_self, replace_self]
+    · have hn : target ∉ x.terms := by rw [hx, Multiset.mem_singleton]; exact fun e ↦ h e.symm
+      rw [replace_of_notMem_terms hn, replace_of_notMem_terms ((hmem x).not.2 hn)]
+  induction s using ind with
+  | leaf a => exact leafCase _ (terms_leaf a)
+  | trace => exact leafCase _ terms_trace
+  | traceOf a => exact leafCase _ (terms_traceOf a)
+  | merge l r ihl ihr =>
+    by_cases h : merge l r = target
+    · subst h; rw [replace_self, replace_self]
+    · rw [replace_merge_of_ne h, map_merge, map_merge,
+        replace_merge_of_ne fun e ↦ h (map_injective hf (by rwa [map_merge])), ihl, ihr]
+
+end Map
+
 /-- The remainder `T/mover`, the current object with the mover's occurrences replaced by the trace
     of its head under `τ`. -/
 def deleteAccessible (mover current : SyntacticObject)

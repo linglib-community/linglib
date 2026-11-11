@@ -26,8 +26,6 @@ ignores](##Minimalist.Step.apply_em) and only the replay reads.
 
 * Which item heads the mover is a theory's choice, so the steps and stages take the trace encoder
   as a parameter, by default the head by selection.
-* `node` is noncomputable, so `Step.apply` and `Derivation.final` are too; the movers are read
-  off the steps.
 
 ## References
 
@@ -94,7 +92,7 @@ end Derivation.Cfg
 /-- The object a step builds from the current one, the copies on the stack aside. External Merge
     adds the item, Internal Merge merges the remainder and the mover, leaving the trace of its head
     under `τ`, and an extraction leaves the remainder. `remerge` needs the stack (`Step.run`). -/
-noncomputable def Step.apply (step : Step) (current : SyntacticObject)
+def Step.apply (step : Step) (current : SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token := selHead) : SyntacticObject :=
   match step with
   | .em _ item => merge item current
@@ -104,7 +102,7 @@ noncomputable def Step.apply (step : Step) (current : SyntacticObject)
 
 /-- A step on a configuration. An extraction pushes the mover's copy onto the stack, `remerge`
     merges the copy on top back by External Merge, and the other steps leave the stack alone. -/
-noncomputable def Step.run (step : Step) (c : Derivation.Cfg SyntacticObject)
+def Step.run (step : Step) (c : Derivation.Cfg SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token := selHead) : Derivation.Cfg SyntacticObject :=
   match step, c.stack with
   | .extract mover, st => ⟨step.apply c.current τ, mover :: st⟩
@@ -281,12 +279,12 @@ structure Derivation where
 namespace Derivation
 
 /-- The configuration after every step, under the trace encoder `τ`. -/
-noncomputable def run (d : Derivation) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
+def run (d : Derivation) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
     Cfg SyntacticObject :=
   d.steps.foldl (fun c step ↦ step.run c τ) ⟨d.initial, []⟩
 
 /-- The object after every step, under the trace encoder `τ`. -/
-noncomputable def final (d : Derivation)
+def final (d : Derivation)
     (τ : SyntacticObject → Option LexicalItem.Token := selHead) : SyntacticObject :=
   (d.run τ).current
 
@@ -306,7 +304,7 @@ def take (d : Derivation) (n : Nat) : Derivation := ⟨d.initial, d.steps.take n
 def append (d : Derivation) (steps : List Step) : Derivation := ⟨d.initial, d.steps ++ steps⟩
 
 /-- The object after the first `n` steps, under the trace encoder `τ`. -/
-noncomputable def stageAt (d : Derivation) (n : Nat)
+def stageAt (d : Derivation) (n : Nat)
     (τ : SyntacticObject → Option LexicalItem.Token := selHead) : SyntacticObject :=
   (d.take n).final τ
 
@@ -462,6 +460,38 @@ variable (d : Derivation)
 @[simp] theorem append_map (steps : List Step) :
     (d.append steps).map f = (d.map f).append (steps.map (Step.map f)) := by
   simp [map, append]
+
+variable {f} {τ' : SyntacticObject → Option LexicalItem.Token}
+
+theorem _root_.Minimalist.Step.run_map (hf : Function.Injective f)
+    (hτ : ∀ s, τ' (s.map f) = (τ s).map f) (step : Step) (c : Cfg SyntacticObject) :
+    (step.map f).run (c.map (SyntacticObject.map f)) τ' =
+      (step.run c τ).map (SyntacticObject.map f) := by
+  rcases c with ⟨cur, _ | ⟨m, st⟩⟩ <;> cases step <;>
+    simp [Step.map, Step.run, Step.apply, Cfg.map, deleteAccessible, replace_map hf,
+      headTrace_map hτ]
+
+/-- A relabelled derivation reaches the relabelled configuration, under an injective relabelling
+the trace encoder commutes with. -/
+theorem run_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f) = (τ s).map f) :
+    (d.map f).run τ' = (d.run τ).map (SyntacticObject.map f) := by
+  have key : ∀ (steps : List Step) (c : Cfg SyntacticObject),
+      (steps.map (Step.map f)).foldl (fun c step ↦ step.run c τ')
+          (c.map (SyntacticObject.map f)) =
+        (steps.foldl (fun c step ↦ step.run c τ) c).map (SyntacticObject.map f) := by
+    intro steps
+    induction steps with
+    | nil => intro c; rfl
+    | cons step steps ih =>
+      intro c
+      rw [List.map_cons, List.foldl_cons, List.foldl_cons, Step.run_map hf hτ, ih]
+  exact key d.steps ⟨d.initial, []⟩
+
+theorem stageAt_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f) = (τ s).map f)
+    (n : Nat) : (d.map f).stageAt n τ' = (d.stageAt n τ).map f := by
+  rw [stageAt, stageAt, take_map, final, final, run_map (d.take n) hf hτ, Cfg.map_current]
+
+variable (f)
 
 theorem movedItems_map : (d.map f).movedItems = d.movedItems.map (SyntacticObject.map f) := by
   simp [movedItems, map, List.filterMap_map, List.map_filterMap]

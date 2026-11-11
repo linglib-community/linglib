@@ -16,8 +16,10 @@ The smuggler YP *smuggles* the smugglee XP past the blocker W when YP contains X
 relation between XP and something higher, and YP moves to a position c-commanding W. This is a
 property of one movement, `SyntacticObject.Smuggles`, and [the blocker no longer c-commands the
 smugglee after it](##Minimalist.SyntacticObject.Smuggles.not_cCommands) when the smuggler and the
-remainder share no token. `Derivation.IsSmugglingStep` says of a step, on the replay, that [it is
-such a movement](##Minimalist.Derivation.IsSmugglingStep.smuggles). The step [freezes the
+remainder share no token, as in [a valid
+derivation](##Minimalist.Derivation.IsSmugglingStep.not_cCommandsAt_succ).
+`Derivation.IsSmugglingStep` says of a step that [it is such a
+movement](##Minimalist.Derivation.IsSmugglingStep.smuggles). The step [freezes the
 smugglee](##Minimalist.Derivation.IsSmugglingStep.frozen), so [a derivation that goes on to move it
 violates Freezing](##Minimalist.Derivation.IsSmugglingStep.not_obeysFreezing), which smuggling
 accounts must lift. Remnant movement is the converse, its mover having lost a phrase where the
@@ -133,21 +135,20 @@ theorem IsSmugglingStep.smuggles (h : d.IsSmugglingStep i xp w) :
   exact ⟨m, hm, hmx, hwx.cCommands_stageAt, (hstage ▸ hmw.cCommands_stageAt).mono
     (Step.terms_current_run_subset (τ := selHead) hsm (d.take i).run)⟩
 
-/-- In a derivation that merges no token twice, the blocker no longer c-commands the smugglee
-after a smuggling step, neither being a bare trace. -/
+/-- In a valid derivation the blocker no longer c-commands the smugglee after a smuggling step,
+neither being a bare trace. -/
 theorem IsSmugglingStep.not_cCommandsAt_succ (h : d.IsSmugglingStep i xp w)
-    (hd : d.lexTokens.Nodup) (hxp : xp.yield ≠ 0) (hw : w.yield ≠ 0) :
+    (hv : d.IsValid) (hxp : xp.yield ≠ 0) (hw : w.yield ≠ 0) :
     ¬ d.CCommandsAt (i + 1) w xp := by
   obtain ⟨m, hm, hsm⟩ := h.smuggles
-  obtain ⟨m', hm', -, -, hmw⟩ := h
-  obtain rfl := Option.mem_unique hm hm'
   obtain ⟨step, hs, hstep⟩ := Option.bind_eq_some_iff.1 hm
-  have hnd := run_take_succ hs ▸ hmw.nodup_yield_run_take hd
+  have hnd := run_take_succ hs ▸ hv.nodup_yield_run_take (i + 1)
   have hstage : d.stageAt (i + 1) = (step.run (d.take i).run).current :=
     congrArg Cfg.current (run_take_succ hs)
   have hdisj := (Multiset.nodup_add.1 <|
     Multiset.nodup_of_le (Step.yield_add_yield_le_yield_run hstep _) hnd).2.2
-  exact fun hc ↦ hsm.not_cCommands hdisj hxp hw ((hstage ▸ hc.cCommands_stageAt).mono (Step.terms_current_run_subset hstep _))
+  exact fun hc ↦ hsm.not_cCommands hdisj hxp hw
+    ((hstage ▸ hc.cCommands_stageAt).mono (Step.terms_current_run_subset hstep _))
 
 /-- A smuggling step freezes what it smuggles. -/
 theorem IsSmugglingStep.frozen (h : d.IsSmugglingStep i xp w) : d.Frozen xp :=

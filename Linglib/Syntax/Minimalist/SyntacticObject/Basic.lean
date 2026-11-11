@@ -211,10 +211,8 @@ theorem isSyntacticObject_merge_iff (a b : UnorderedTree (Vertex L)) :
         = Multiset.ofList ([pa, pb].map UnorderedTree.mk) from rfl, UnorderedTree.node_mk_tree_list]
   exact isSyntacticObject_mk_merge pa pb
 
-/-- Merge on the carrier, the bare binary node over two syntactic objects, also written `*`.
-    Noncomputable, since it goes through the smart constructor `UnorderedTree.node`; concrete
-    results are built ordered and forgotten by `LinearizedSyntacticObject.toSyntacticObject`. -/
-noncomputable def merge (l r : SyntacticObject L) : SyntacticObject L :=
+/-- Merge on the carrier, the bare binary node over two syntactic objects, also written `*`. -/
+def merge (l r : SyntacticObject L) : SyntacticObject L :=
   ⟨UnorderedTree.node Vertex.bare {l.val, r.val}, (isSyntacticObject_merge_iff _ _).2 ⟨l.2, r.2⟩⟩
 
 @[simp] theorem merge_val (l r : SyntacticObject L) :
