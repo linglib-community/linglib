@@ -1,31 +1,13 @@
 [
   {
     "id": "creissels2024_1_13a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 1 (13a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 1 (13a)"},
     "reportedIn": null,
     "language": "mand1436",
     "primaryText": "Kèê yè fòolèesúwòo dádâa.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Kèê",
-        "man.D"
-      ],
-      [
-        "yè",
-        "CPL.TR"
-      ],
-      [
-        "fòolèesúwòo",
-        "bicycle.D"
-      ],
-      [
-        "dádâa",
-        "repair"
-      ]
+      ["Kèê", "man.D"], ["yè", "CPL.TR"], ["fòolèesúwòo", "bicycle.D"], ["dádâa", "repair"]
     ],
     "translation": "The man repaired the bicycle.",
     "context": "",
@@ -33,61 +15,25 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "1.13"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "man,bicycle"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ]
+      ["example", "1.13"],
+      ["variant", "a"],
+      ["participants", "man,bicycle"],
+      ["p1", "A"],
+      ["p2", "P"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_1_13b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 1 (13b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 1 (13b)"},
     "reportedIn": null,
     "language": "mand1436",
     "primaryText": "Kěe ñìná-tá ŋ́ tòo lá.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Kěe",
-        "man.D"
-      ],
-      [
-        "ñìná-tá",
-        "forget-CPL.ITR"
-      ],
-      [
-        "ŋ́",
-        "1SG"
-      ],
-      [
-        "tòo",
-        "name.D"
-      ],
-      [
-        "lá",
-        "POSTP"
-      ]
+      ["Kěe", "man.D"], ["ñìná-tá", "forget-CPL.ITR"], ["ŋ́", "1SG"], ["tòo", "name.D"],
+      ["lá", "POSTP"]
     ],
     "translation": "The man forgot my name.",
     "context": "",
@@ -95,53 +41,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "1.13"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "man,name"
-      ],
-      [
-        "p1",
-        "S"
-      ],
-      [
-        "p2",
-        "X"
-      ]
+      ["example", "1.13"],
+      ["variant", "b"],
+      ["participants", "man,name"],
+      ["p1", "S"],
+      ["p2", "X"]
     ],
     "comment": "The name is a postpositional phrase, so the clause has S and X, not A and P.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_1_22a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 1 (22a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 1 (22a)"},
     "reportedIn": null,
     "language": "basq1248",
     "primaryText": "Ispilu-a erori da.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Ispilu-a",
-        "mirror-SG"
-      ],
-      [
-        "erori",
-        "fall.CPL"
-      ],
-      [
-        "da",
-        "be.PRS.IZER:3SG"
-      ]
+      ["Ispilu-a", "mirror-SG"], ["erori", "fall.CPL"], ["da", "be.PRS.IZER:3SG"]
     ],
     "translation": "The mirror has fallen down.",
     "context": "",
@@ -149,45 +66,22 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "1.22"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "S",
-        "zero"
-      ]
+      ["example", "1.22"],
+      ["variant", "a"],
+      ["S", "zero"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_1_22b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 1 (22b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 1 (22b)"},
     "reportedIn": null,
     "language": "basq1248",
     "primaryText": "Ur-ak irakin du.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Ur-ak",
-        "water-SG.ERG"
-      ],
-      [
-        "irakin",
-        "boil.CPL"
-      ],
-      [
-        "du",
-        "have.PRS.IERG:3SG"
-      ]
+      ["Ur-ak", "water-SG.ERG"], ["irakin", "boil.CPL"], ["du", "have.PRS.IERG:3SG"]
     ],
     "translation": "The water has boiled.",
     "context": "",
@@ -195,49 +89,23 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "1.22"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "S",
-        "ergative"
-      ]
+      ["example", "1.22"],
+      ["variant", "b"],
+      ["S", "ergative"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_1_22c",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 1 (22c)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 1 (22c)"},
     "reportedIn": null,
     "language": "basq1248",
     "primaryText": "Haurr-ak ispilu-a puskatu du.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Haurr-ak",
-        "child-SG.ERG"
-      ],
-      [
-        "ispilu-a",
-        "mirror-SG"
-      ],
-      [
-        "puskatu",
-        "break.CPL"
-      ],
-      [
-        "du",
-        "have.PRS.IERG:3SG.IZER:3SG"
-      ]
+      ["Haurr-ak", "child-SG.ERG"], ["ispilu-a", "mirror-SG"], ["puskatu", "break.CPL"],
+      ["du", "have.PRS.IERG:3SG.IZER:3SG"]
     ],
     "translation": "The child has broken the mirror.",
     "context": "",
@@ -245,45 +113,23 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "1.22"
-      ],
-      [
-        "variant",
-        "c"
-      ],
-      [
-        "A",
-        "ergative"
-      ],
-      [
-        "P",
-        "zero"
-      ]
+      ["example", "1.22"],
+      ["variant", "c"],
+      ["A", "ergative"],
+      ["P", "zero"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_1_23a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 1 (23a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 1 (23a)"},
     "reportedIn": null,
     "language": "russ1263",
     "primaryText": "Devuška priš-l-a.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Devuška",
-        "girl(F)"
-      ],
-      [
-        "priš-l-a",
-        "come.PFV-PST-IS/A:SG.F"
-      ]
+      ["Devuška", "girl(F)"], ["priš-l-a", "come.PFV-PST-IS/A:SG.F"]
     ],
     "translation": "The girl came.",
     "context": "",
@@ -291,41 +137,22 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "1.23"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "S",
-        "zero"
-      ]
+      ["example", "1.23"],
+      ["variant", "a"],
+      ["S", "zero"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_1_23b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 1 (23b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 1 (23b)"},
     "reportedIn": null,
     "language": "russ1263",
     "primaryText": "Doktor priš-ël-Ø.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Doktor",
-        "doctor(M)"
-      ],
-      [
-        "priš-ël-Ø",
-        "come.PFV-PST-IS/A:SG.M"
-      ]
+      ["Doktor", "doctor(M)"], ["priš-ël-Ø", "come.PFV-PST-IS/A:SG.M"]
     ],
     "translation": "The doctor came.",
     "context": "",
@@ -333,45 +160,23 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "1.23"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "S",
-        "zero"
-      ]
+      ["example", "1.23"],
+      ["variant", "b"],
+      ["S", "zero"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_1_23c",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 1 (23c)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 1 (23c)"},
     "reportedIn": null,
     "language": "russ1263",
     "primaryText": "Doktor vyleči-l-Ø devušku.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Doktor",
-        "doctor(M)"
-      ],
-      [
-        "vyleči-l-Ø",
-        "heal.PFV-PST-IS/A:SG.M"
-      ],
-      [
-        "devušku",
-        "girl(F).ACC"
-      ]
+      ["Doktor", "doctor(M)"], ["vyleči-l-Ø", "heal.PFV-PST-IS/A:SG.M"],
+      ["devušku", "girl(F).ACC"]
     ],
     "translation": "The doctor healed the girl.",
     "context": "",
@@ -379,45 +184,23 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "1.23"
-      ],
-      [
-        "variant",
-        "c"
-      ],
-      [
-        "A",
-        "zero"
-      ],
-      [
-        "P",
-        "accusative"
-      ]
+      ["example", "1.23"],
+      ["variant", "c"],
+      ["A", "zero"],
+      ["P", "accusative"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_1_24a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 1 (24a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 1 (24a)"},
     "reportedIn": null,
     "language": "avar1256",
     "primaryText": "Pat'imat j-ač'-ana.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Pat'imat",
-        "PRN(F)"
-      ],
-      [
-        "j-ač'-ana",
-        "IS/P:SG.F-come-CPL"
-      ]
+      ["Pat'imat", "PRN(F)"], ["j-ač'-ana", "IS/P:SG.F-come-CPL"]
     ],
     "translation": "Patimat came.",
     "context": "",
@@ -425,41 +208,22 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "1.24"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "S",
-        "zero"
-      ]
+      ["example", "1.24"],
+      ["variant", "a"],
+      ["S", "zero"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_1_24b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 1 (24b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 1 (24b)"},
     "reportedIn": null,
     "language": "avar1256",
     "primaryText": "Aħmad w-ač'-ana.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Aħmad",
-        "PRN(M)"
-      ],
-      [
-        "w-ač'-ana",
-        "IS/P:SG.M-come-CPL"
-      ]
+      ["Aħmad", "PRN(M)"], ["w-ač'-ana", "IS/P:SG.M-come-CPL"]
     ],
     "translation": "Ahmad came.",
     "context": "",
@@ -467,45 +231,22 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "1.24"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "S",
-        "zero"
-      ]
+      ["example", "1.24"],
+      ["variant", "b"],
+      ["S", "zero"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_1_24c",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 1 (24c)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 1 (24c)"},
     "reportedIn": null,
     "language": "avar1256",
     "primaryText": "Aħmad-i-ca χur b-eƛ'-ana.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Aħmad-i-ca",
-        "PRN(M)-OF-ERG"
-      ],
-      [
-        "χur",
-        "field(N)"
-      ],
-      [
-        "b-eƛ'-ana",
-        "IS/P:SG.N-plough-CPL"
-      ]
+      ["Aħmad-i-ca", "PRN(M)-OF-ERG"], ["χur", "field(N)"], ["b-eƛ'-ana", "IS/P:SG.N-plough-CPL"]
     ],
     "translation": "Ahmad ploughed the field.",
     "context": "",
@@ -513,49 +254,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "1.24"
-      ],
-      [
-        "variant",
-        "c"
-      ],
-      [
-        "A",
-        "ergative"
-      ],
-      [
-        "P",
-        "zero"
-      ]
+      ["example", "1.24"],
+      ["variant", "c"],
+      ["A", "ergative"],
+      ["P", "zero"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_1a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (1a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (1a)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Kítsɔ́ !ʊ́-tɬáà-kwál-á lʊ̀-kwâːlɔ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Kítsɔ́",
-        "PRN(cl1)"
-      ],
-      [
-        "!ʊ́-tɬáà-kwál-á",
-        "IS/A:cl1-FUT-write-FV"
-      ],
-      [
-        "lʊ̀-kwâːlɔ̀",
-        "SG-letter(cl11)"
-      ]
+      ["Kítsɔ́", "PRN(cl1)"], ["!ʊ́-tɬáà-kwál-á", "IS/A:cl1-FUT-write-FV"],
+      ["lʊ̀-kwâːlɔ̀", "SG-letter(cl11)"]
     ],
     "translation": "Kitso will write the letter.",
     "context": "",
@@ -563,57 +279,25 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.1"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "writer,letter"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ]
+      ["example", "8.1"],
+      ["variant", "a"],
+      ["participants", "writer,letter"],
+      ["p1", "A"],
+      ["p2", "P"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_1b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (1b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (1b)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Lʊ̀-kwálɔ́ !lʊ́-tɬáà-kwál-w-à kɪ́ !Kîːtsɔ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Lʊ̀-kwálɔ́",
-        "SG-letter(cl11)"
-      ],
-      [
-        "!lʊ́-tɬáà-kwál-w-à",
-        "IS/A:cl1-FUT-write-PASS-FV"
-      ],
-      [
-        "kɪ́",
-        "by"
-      ],
-      [
-        "!Kîːtsɔ̀",
-        "PRN(cl1)"
-      ]
+      ["Lʊ̀-kwálɔ́", "SG-letter(cl11)"], ["!lʊ́-tɬáà-kwál-w-à", "IS/A:cl1-FUT-write-PASS-FV"],
+      ["kɪ́", "by"], ["!Kîːtsɔ̀", "PRN(cl1)"]
     ],
     "translation": "The letter will be written by Kitso.",
     "context": "",
@@ -621,73 +305,28 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.1"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "writer,letter"
-      ],
-      [
-        "p1",
-        "X"
-      ],
-      [
-        "p2",
-        "S"
-      ],
-      [
-        "marker",
-        "-w"
-      ],
-      [
-        "alternation",
-        "passivization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ]
+      ["example", "8.1"],
+      ["variant", "b"],
+      ["participants", "writer,letter"],
+      ["p1", "X"],
+      ["p2", "S"],
+      ["marker", "-w"],
+      ["alternation", "passivization"],
+      ["initial", "a"],
+      ["marking", "synthetic"]
     ],
     "comment": "The index is printed cl1; (6c) prints cl11 for the same form.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_2a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (2a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (2a)"},
     "reportedIn": null,
     "language": "bamb1269",
     "primaryText": "Sékù bɛ́nà bàtàkí !sɛ́bɛ́n.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Sékù",
-        "PRN"
-      ],
-      [
-        "bɛ́nà",
-        "FUT"
-      ],
-      [
-        "bàtàkí",
-        "letter.D"
-      ],
-      [
-        "!sɛ́bɛ́n",
-        "write"
-      ]
+      ["Sékù", "PRN"], ["bɛ́nà", "FUT"], ["bàtàkí", "letter.D"], ["!sɛ́bɛ́n", "write"]
     ],
     "translation": "Sékou will write the letter.",
     "context": "",
@@ -695,61 +334,25 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.2"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "writer,letter"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ]
+      ["example", "8.2"],
+      ["variant", "a"],
+      ["participants", "writer,letter"],
+      ["p1", "A"],
+      ["p2", "P"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_2b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (2b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (2b)"},
     "reportedIn": null,
     "language": "bamb1269",
     "primaryText": "Bàtàkí !bɛ́nà sɛ́bɛ́n Sékù fɛ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Bàtàkí",
-        "letter.D"
-      ],
-      [
-        "!bɛ́nà",
-        "FUT"
-      ],
-      [
-        "sɛ́bɛ́n",
-        "write"
-      ],
-      [
-        "Sékù",
-        "PRN"
-      ],
-      [
-        "fɛ̀",
-        "by"
-      ]
+      ["Bàtàkí", "letter.D"], ["!bɛ́nà", "FUT"], ["sɛ́bɛ́n", "write"], ["Sékù", "PRN"],
+      ["fɛ̀", "by"]
     ],
     "translation": "The letter will be written by Sékou.",
     "context": "",
@@ -757,65 +360,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.2"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "writer,letter"
-      ],
-      [
-        "p1",
-        "X"
-      ],
-      [
-        "p2",
-        "S"
-      ],
-      [
-        "marking",
-        "uncoded"
-      ],
-      [
-        "transitive",
-        "a"
-      ]
+      ["example", "8.2"],
+      ["variant", "b"],
+      ["participants", "writer,letter"],
+      ["p1", "X"],
+      ["p2", "S"],
+      ["marking", "uncoded"],
+      ["transitive", "a"]
     ],
     "comment": "No verbal marking: a flexivalency alternation the book describes in the same terms as the Tswana passive (1), with the agent optionally an oblique.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_3a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (3a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (3a)"},
     "reportedIn": null,
     "language": "bamb1269",
     "primaryText": "Sékù yé bàtàkí !sɛ́bɛ́n.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Sékù",
-        "PRN"
-      ],
-      [
-        "yé",
-        "CPL.TR"
-      ],
-      [
-        "bàtàkí",
-        "letter.D"
-      ],
-      [
-        "!sɛ́bɛ́n",
-        "write"
-      ]
+      ["Sékù", "PRN"], ["yé", "CPL.TR"], ["bàtàkí", "letter.D"], ["!sɛ́bɛ́n", "write"]
     ],
     "translation": "Sékou wrote the letter.",
     "context": "",
@@ -823,57 +387,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.3"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "writer,letter"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ]
+      ["example", "8.3"],
+      ["variant", "a"],
+      ["participants", "writer,letter"],
+      ["p1", "A"],
+      ["p2", "P"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_3b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (3b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (3b)"},
     "reportedIn": null,
     "language": "bamb1269",
     "primaryText": "Bàtàkí !sɛ́bɛ́n-ná Sékù fɛ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Bàtàkí",
-        "letter.D"
-      ],
-      [
-        "!sɛ́bɛ́n-ná",
-        "write-CPL.ITR"
-      ],
-      [
-        "Sékù",
-        "PRN"
-      ],
-      [
-        "fɛ̀",
-        "by"
-      ]
+      ["Bàtàkí", "letter.D"], ["!sɛ́bɛ́n-ná", "write-CPL.ITR"], ["Sékù", "PRN"], ["fɛ̀", "by"]
     ],
     "translation": "The letter was written by Sékou.",
     "context": "",
@@ -881,65 +412,27 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.3"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "writer,letter"
-      ],
-      [
-        "p1",
-        "X"
-      ],
-      [
-        "p2",
-        "S"
-      ],
-      [
-        "marking",
-        "uncoded"
-      ],
-      [
-        "transitive",
-        "a"
-      ]
+      ["example", "8.3"],
+      ["variant", "b"],
+      ["participants", "writer,letter"],
+      ["p1", "X"],
+      ["p2", "S"],
+      ["marking", "uncoded"],
+      ["transitive", "a"]
     ],
     "comment": "The completive positive is marked differently in transitive and intransitive constructions independently of any valency alternation; the suffix is not voice marking.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_4a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (4a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (4a)"},
     "reportedIn": null,
     "language": "basq1248",
     "primaryText": "Haurrak ispilua puskatu du.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Haurrak",
-        "child.SG.ERG"
-      ],
-      [
-        "ispilua",
-        "mirror.SG"
-      ],
-      [
-        "puskatu",
-        "break.CPL"
-      ],
-      [
-        "du",
-        "have.IERG:3SG.IZER:3SG"
-      ]
+      ["Haurrak", "child.SG.ERG"], ["ispilua", "mirror.SG"], ["puskatu", "break.CPL"],
+      ["du", "have.IERG:3SG.IZER:3SG"]
     ],
     "translation": "The children broke the mirror.",
     "context": "",
@@ -947,53 +440,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.4"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "child,mirror"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ]
+      ["example", "8.4"],
+      ["variant", "a"],
+      ["participants", "child,mirror"],
+      ["p1", "A"],
+      ["p2", "P"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_4b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (4b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (4b)"},
     "reportedIn": null,
     "language": "basq1248",
     "primaryText": "Ispilua puskatu da.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Ispilua",
-        "mirror.SG"
-      ],
-      [
-        "puskatu",
-        "break.CPL"
-      ],
-      [
-        "da",
-        "be.IZER:3SG"
-      ]
+      ["Ispilua", "mirror.SG"], ["puskatu", "break.CPL"], ["da", "be.IZER:3SG"]
     ],
     "translation": "The mirror broke.",
     "context": "",
@@ -1001,65 +465,27 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.4"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "child,mirror"
-      ],
-      [
-        "p1",
-        "absent"
-      ],
-      [
-        "p2",
-        "S"
-      ],
-      [
-        "marking",
-        "uncoded"
-      ],
-      [
-        "transitive",
-        "a"
-      ],
-      [
-        "ambitransitivity",
-        "P-ambitransitivity"
-      ]
+      ["example", "8.4"],
+      ["variant", "b"],
+      ["participants", "child,mirror"],
+      ["p1", "absent"],
+      ["p2", "S"],
+      ["marking", "uncoded"],
+      ["transitive", "a"],
+      ["ambitransitivity", "P-ambitransitivity"]
     ],
     "comment": "Auxiliary selection registers the presence of an ergative slot, not the alternation: P-ambitransitivity, not equipollent voice marking.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_5a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (5a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (5a)"},
     "reportedIn": null,
     "language": "haus1257",
     "primaryText": "Zaa-mù nèemi aikìi.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Zaa-mù",
-        "FUT-IS/A:1PL"
-      ],
-      [
-        "nèemi",
-        "seek"
-      ],
-      [
-        "aikìi",
-        "work"
-      ]
+      ["Zaa-mù", "FUT-IS/A:1PL"], ["nèemi", "seek"], ["aikìi", "work"]
     ],
     "translation": "We will seek work.",
     "context": "",
@@ -1067,65 +493,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.5"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "we,work,friend"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "absent"
-      ]
+      ["example", "8.5"],
+      ["variant", "a"],
+      ["participants", "we,work,friend"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "absent"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_5b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (5b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (5b)"},
     "reportedIn": null,
     "language": "haus1257",
     "primaryText": "Zaa-mù neemàa wa àbooki-n-kà aikìi.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Zaa-mù",
-        "FUT-IS/A:1PL"
-      ],
-      [
-        "neemàa",
-        "seek.APPL"
-      ],
-      [
-        "wa",
-        "DAT"
-      ],
-      [
-        "àbooki-n-kà",
-        "friend-CSTR-IADP:2SG.M"
-      ],
-      [
-        "aikìi",
-        "work"
-      ]
+      ["Zaa-mù", "FUT-IS/A:1PL"], ["neemàa", "seek.APPL"], ["wa", "DAT"],
+      ["àbooki-n-kà", "friend-CSTR-IADP:2SG.M"], ["aikìi", "work"]
     ],
     "translation": "We will seek work for your friend.",
     "context": "",
@@ -1133,73 +520,30 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.5"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "we,work,friend"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "dative"
-      ],
-      [
-        "marker",
-        "grade"
-      ],
-      [
-        "alternation",
-        "dApplicativization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "equipollent"
-      ],
-      [
-        "new",
-        "p3"
-      ]
+      ["example", "8.5"],
+      ["variant", "b"],
+      ["participants", "we,work,friend"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "dative"],
+      ["marker", "grade"],
+      ["alternation", "dApplicativization"],
+      ["initial", "a"],
+      ["marking", "equipollent"],
+      ["new", "p3"]
     ],
     "comment": "Neither stem is derived from the other: equipollent marking, the construction without the beneficiary taken as initial by semantic markedness.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_6a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (6a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (6a)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Kɪ̀-tɬàà-kwál-á lʊ̀-kwâːlɔ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Kɪ̀-tɬàà-kwál-á",
-        "IS/A:1SG-FUT-write-FV"
-      ],
-      [
-        "lʊ̀-kwâːlɔ̀",
-        "SG-letter(cl11)"
-      ]
+      ["Kɪ̀-tɬàà-kwál-á", "IS/A:1SG-FUT-write-FV"], ["lʊ̀-kwâːlɔ̀", "SG-letter(cl11)"]
     ],
     "translation": "I'll write the letter.",
     "context": "",
@@ -1207,61 +551,27 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.6"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "writer,letter,Kitso,causer"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "absent"
-      ],
-      [
-        "p4",
-        "absent"
-      ]
+      ["example", "8.6"],
+      ["variant", "a"],
+      ["participants", "writer,letter,Kitso,causer"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "absent"],
+      ["p4", "absent"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_6b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (6b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (6b)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Kɪ̀-tɬàà-kwál-ɛ́l-á !Kítsɔ́ lʊ̀-kwâːlɔ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Kɪ̀-tɬàà-kwál-ɛ́l-á",
-        "IS/A:1SG-FUT-write-APPL-FV"
-      ],
-      [
-        "!Kítsɔ́",
-        "PRN(cl1)"
-      ],
-      [
-        "lʊ̀-kwâːlɔ̀",
-        "SG-letter(cl11)"
-      ]
+      ["Kɪ̀-tɬàà-kwál-ɛ́l-á", "IS/A:1SG-FUT-write-APPL-FV"], ["!Kítsɔ́", "PRN(cl1)"],
+      ["lʊ̀-kwâːlɔ̀", "SG-letter(cl11)"]
     ],
     "translation": "I'll write the letter to/for Kitso.",
     "context": "",
@@ -1269,85 +579,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.6"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "writer,letter,Kitso,causer"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "P"
-      ],
-      [
-        "p4",
-        "absent"
-      ],
-      [
-        "marker",
-        "-ɛl"
-      ],
-      [
-        "alternation",
-        "pApplicativization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "new",
-        "p3"
-      ]
+      ["example", "8.6"],
+      ["variant", "b"],
+      ["participants", "writer,letter,Kitso,causer"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "P"],
+      ["p4", "absent"],
+      ["marker", "-ɛl"],
+      ["alternation", "pApplicativization"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["new", "p3"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_6c",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (6c)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (6c)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Lʊ̀-kwálɔ́ !lʊ́-tɬáà-kwál-w-à kɪ́ ǹːná.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Lʊ̀-kwálɔ́",
-        "SG-letter(cl11)"
-      ],
-      [
-        "!lʊ́-tɬáà-kwál-w-à",
-        "IS/A:cl11-FUT-write-PASS-FV"
-      ],
-      [
-        "kɪ́",
-        "by"
-      ],
-      [
-        "ǹːná",
-        "1SG"
-      ]
+      ["Lʊ̀-kwálɔ́", "SG-letter(cl11)"], ["!lʊ́-tɬáà-kwál-w-à", "IS/A:cl11-FUT-write-PASS-FV"],
+      ["kɪ́", "by"], ["ǹːná", "1SG"]
     ],
     "translation": "The letter will be written by me.",
     "context": "",
@@ -1355,73 +612,31 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.6"
-      ],
-      [
-        "variant",
-        "c"
-      ],
-      [
-        "participants",
-        "writer,letter,Kitso,causer"
-      ],
-      [
-        "p1",
-        "X"
-      ],
-      [
-        "p2",
-        "S"
-      ],
-      [
-        "p3",
-        "absent"
-      ],
-      [
-        "p4",
-        "absent"
-      ],
-      [
-        "marker",
-        "-w"
-      ],
-      [
-        "alternation",
-        "passivization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ]
+      ["example", "8.6"],
+      ["variant", "c"],
+      ["participants", "writer,letter,Kitso,causer"],
+      ["p1", "X"],
+      ["p2", "S"],
+      ["p3", "absent"],
+      ["p4", "absent"],
+      ["marker", "-w"],
+      ["alternation", "passivization"],
+      ["initial", "a"],
+      ["marking", "synthetic"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_6d",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (6d)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (6d)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Bá-tɬáá-ŋ̀-kwád-ís-á lʊ̀-kwâːlɔ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Bá-tɬáá-ŋ̀-kwád-ís-á",
-        "IS/A:cl2-FUT-IP:1SG-write-CAUS-FV"
-      ],
-      [
-        "lʊ̀-kwâːlɔ̀",
-        "SG-letter(cl11)"
-      ]
+      ["Bá-tɬáá-ŋ̀-kwád-ís-á", "IS/A:cl2-FUT-IP:1SG-write-CAUS-FV"],
+      ["lʊ̀-kwâːlɔ̀", "SG-letter(cl11)"]
     ],
     "translation": "They will make me write the letter.",
     "context": "",
@@ -1429,89 +644,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.6"
-      ],
-      [
-        "variant",
-        "d"
-      ],
-      [
-        "participants",
-        "writer,letter,Kitso,causer"
-      ],
-      [
-        "p1",
-        "P"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "absent"
-      ],
-      [
-        "p4",
-        "A"
-      ],
-      [
-        "marker",
-        "-is"
-      ],
-      [
-        "alternation",
-        "causativization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "new",
-        "p4"
-      ]
+      ["example", "8.6"],
+      ["variant", "d"],
+      ["participants", "writer,letter,Kitso,causer"],
+      ["p1", "P"],
+      ["p2", "P"],
+      ["p3", "absent"],
+      ["p4", "A"],
+      ["marker", "-is"],
+      ["alternation", "causativization"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["new", "p4"]
     ],
     "comment": "The initial A is coded as P: still a core term, so not denucleativized.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_13a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (13a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (13a)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Mʊ̀-àpèì ʊ́-ʃáb-á bʊ̀-χɔ́bɛ́ !ká nâːmà.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Mʊ̀-àpèì",
-        "SG-cook(cl1)"
-      ],
-      [
-        "ʊ́-ʃáb-á",
-        "IS/A:cl1-flavor-FV"
-      ],
-      [
-        "bʊ̀-χɔ́bɛ́",
-        "SG-porridge(cl14)"
-      ],
-      [
-        "!ká",
-        "with"
-      ],
-      [
-        "nâːmà",
-        "meat(cl9)"
-      ]
+      ["Mʊ̀-àpèì", "SG-cook(cl1)"], ["ʊ́-ʃáb-á", "IS/A:cl1-flavor-FV"],
+      ["bʊ̀-χɔ́bɛ́", "SG-porridge(cl14)"], ["!ká", "with"], ["nâːmà", "meat(cl9)"]
     ],
     "translation": "The cook flavors the porridge with meat.",
     "context": "",
@@ -1519,57 +677,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.13"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "cook,porridge,meat"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "X"
-      ]
+      ["example", "8.13"],
+      ["variant", "a"],
+      ["participants", "cook,porridge,meat"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "X"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_13b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (13b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (13b)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Nàmà ɪ́-ʃáb-ɛ́l-à bʊ̀-χɔ̂ːbɛ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Nàmà",
-        "meat(cl9)"
-      ],
-      [
-        "ɪ́-ʃáb-ɛ́l-à",
-        "IS/A:cl9-flavor-NUCLA-FV"
-      ],
-      [
-        "bʊ̀-χɔ̂ːbɛ̀",
-        "SG-porridge(cl14)"
-      ]
+      ["Nàmà", "meat(cl9)"], ["ɪ́-ʃáb-ɛ́l-à", "IS/A:cl9-flavor-NUCLA-FV"],
+      ["bʊ̀-χɔ̂ːbɛ̀", "SG-porridge(cl14)"]
     ],
     "translation": "Meat gives flavor to the porridge.",
     "context": "",
@@ -1577,77 +704,31 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.13"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "cook,porridge,meat"
-      ],
-      [
-        "p1",
-        "implicit"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "A"
-      ],
-      [
-        "marker",
-        "-ɛl"
-      ],
-      [
-        "alternation",
-        "aNucleativization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "new",
-        "p3"
-      ]
+      ["example", "8.13"],
+      ["variant", "b"],
+      ["participants", "cook,porridge,meat"],
+      ["p1", "implicit"],
+      ["p2", "P"],
+      ["p3", "A"],
+      ["marker", "-ɛl"],
+      ["alternation", "aNucleativization"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["new", "p3"]
     ],
     "comment": "The same suffix as in P-applicativization; the instrument takes over the A role and the initial A cannot be expressed, understood as non-specific.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_14a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (14a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (14a)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Kítsɔ́ !ʊ́-tɬáà-kwál-á lʊ̀-kwâːlɔ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Kítsɔ́",
-        "PRN(cl1)"
-      ],
-      [
-        "!ʊ́-tɬáà-kwál-á",
-        "IS/A:cl1-FUT-write-FV"
-      ],
-      [
-        "lʊ̀-kwâːlɔ̀",
-        "SG-letter(cl11)"
-      ]
+      ["Kítsɔ́", "PRN(cl1)"], ["!ʊ́-tɬáà-kwál-á", "IS/A:cl1-FUT-write-FV"],
+      ["lʊ̀-kwâːlɔ̀", "SG-letter(cl11)"]
     ],
     "translation": "Kitso will write the letter.",
     "context": "",
@@ -1655,61 +736,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.14"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "Kitso,letter,women"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "absent"
-      ]
+      ["example", "8.14"],
+      ["variant", "a"],
+      ["participants", "Kitso,letter,women"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "absent"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_14b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (14b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (14b)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Lʊ̀-kwálɔ́ !lʊ́-tɬáà-kwál-w-à kɪ́ !Kîːtsɔ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Lʊ̀-kwálɔ́",
-        "SG-letter(cl11)"
-      ],
-      [
-        "!lʊ́-tɬáà-kwál-w-à",
-        "IS/A:cl1-FUT-write-PASS-FV"
-      ],
-      [
-        "kɪ́",
-        "by"
-      ],
-      [
-        "!Kîːtsɔ̀",
-        "PRN(cl1)"
-      ]
+      ["Lʊ̀-kwálɔ́", "SG-letter(cl11)"], ["!lʊ́-tɬáà-kwál-w-à", "IS/A:cl1-FUT-write-PASS-FV"],
+      ["kɪ́", "by"], ["!Kîːtsɔ̀", "PRN(cl1)"]
     ],
     "translation": "The letter will be written by Kitso.",
     "context": "",
@@ -1717,69 +763,30 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.14"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "Kitso,letter,women"
-      ],
-      [
-        "p1",
-        "X"
-      ],
-      [
-        "p2",
-        "S"
-      ],
-      [
-        "p3",
-        "absent"
-      ],
-      [
-        "marker",
-        "-w"
-      ],
-      [
-        "alternation",
-        "passivization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ]
+      ["example", "8.14"],
+      ["variant", "b"],
+      ["participants", "Kitso,letter,women"],
+      ["p1", "X"],
+      ["p2", "S"],
+      ["p3", "absent"],
+      ["marker", "-w"],
+      ["alternation", "passivization"],
+      ["initial", "a"],
+      ["marking", "synthetic"]
     ],
     "comment": "The index is printed cl1; (6c) prints cl11 for the same form.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_14c",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (14c)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (14c)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "χʊ́-tɬáà-kwál-w-á lʊ̀-kwâːlɔ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "χʊ́-tɬáà-kwál-w-á",
-        "IS/A:cl17EXPL-FUT-write-IPASS-FV"
-      ],
-      [
-        "lʊ̀-kwâːlɔ̀",
-        "SG-letter(cl11)"
-      ]
+      ["χʊ́-tɬáà-kwál-w-á", "IS/A:cl17EXPL-FUT-write-IPASS-FV"],
+      ["lʊ̀-kwâːlɔ̀", "SG-letter(cl11)"]
     ],
     "translation": "A letter will be written.",
     "context": "",
@@ -1787,69 +794,29 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.14"
-      ],
-      [
-        "variant",
-        "c"
-      ],
-      [
-        "participants",
-        "Kitso,letter,women"
-      ],
-      [
-        "p1",
-        "implicit"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "absent"
-      ],
-      [
-        "marker",
-        "-w"
-      ],
-      [
-        "alternation",
-        "impersonalPassivization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ]
+      ["example", "8.14"],
+      ["variant", "c"],
+      ["participants", "Kitso,letter,women"],
+      ["p1", "implicit"],
+      ["p2", "P"],
+      ["p3", "absent"],
+      ["marker", "-w"],
+      ["alternation", "impersonalPassivization"],
+      ["initial", "a"],
+      ["marking", "synthetic"]
     ],
     "comment": "P keeps its coding; the A/S index slot holds an expletive.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_14d",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (14d)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (14d)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Bà-sádí !bá-tɬáá-lɪ̀ːl-à.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Bà-sádí",
-        "PL-woman(cl2)"
-      ],
-      [
-        "!bá-tɬáá-lɪ̀ːl-à",
-        "IS/A:cl2-FUT-cry-FV"
-      ]
+      ["Bà-sádí", "PL-woman(cl2)"], ["!bá-tɬáá-lɪ̀ːl-à", "IS/A:cl2-FUT-cry-FV"]
     ],
     "translation": "The women will cry.",
     "context": "",
@@ -1857,49 +824,25 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.14"
-      ],
-      [
-        "variant",
-        "d"
-      ],
-      [
-        "participants",
-        "Kitso,letter,women"
-      ],
-      [
-        "p1",
-        "absent"
-      ],
-      [
-        "p2",
-        "absent"
-      ],
-      [
-        "p3",
-        "S"
-      ]
+      ["example", "8.14"],
+      ["variant", "d"],
+      ["participants", "Kitso,letter,women"],
+      ["p1", "absent"],
+      ["p2", "absent"],
+      ["p3", "S"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_14e",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (14e)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (14e)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "χʊ́-tɬáá-lɪ̀ːl-w-à.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "χʊ́-tɬáá-lɪ̀ːl-w-à",
-        "IS/A:cl17EXPL-FUT-cry-DENUCLS-FV"
-      ]
+      ["χʊ́-tɬáá-lɪ̀ːl-w-à", "IS/A:cl17EXPL-FUT-cry-DENUCLS-FV"]
     ],
     "translation": "The people will cry.",
     "context": "",
@@ -1907,77 +850,29 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.14"
-      ],
-      [
-        "variant",
-        "e"
-      ],
-      [
-        "participants",
-        "Kitso,letter,women"
-      ],
-      [
-        "p1",
-        "absent"
-      ],
-      [
-        "p2",
-        "absent"
-      ],
-      [
-        "p3",
-        "implicit"
-      ],
-      [
-        "marker",
-        "-w"
-      ],
-      [
-        "alternation",
-        "sDenucleativization"
-      ],
-      [
-        "initial",
-        "d"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ]
+      ["example", "8.14"],
+      ["variant", "e"],
+      ["participants", "Kitso,letter,women"],
+      ["p1", "absent"],
+      ["p2", "absent"],
+      ["p3", "implicit"],
+      ["marker", "-w"],
+      ["alternation", "sDenucleativization"],
+      ["initial", "d"],
+      ["marking", "synthetic"]
     ],
     "comment": "Literally 'There will be cried'.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_15a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (15a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (15a)"},
     "reportedIn": null,
     "language": "koyr1240",
     "primaryText": "Musa ŋa tasu di.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Musa",
-        "PRN"
-      ],
-      [
-        "ŋa",
-        "eat"
-      ],
-      [
-        "tasu",
-        "rice"
-      ],
-      [
-        "di",
-        "D"
-      ]
+      ["Musa", "PRN"], ["ŋa", "eat"], ["tasu", "rice"], ["di", "D"]
     ],
     "translation": "Moussa ate the rice.",
     "context": "",
@@ -1985,69 +880,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.15"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "Moussa,rice,Ali"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "absent"
-      ]
+      ["example", "8.15"],
+      ["variant", "a"],
+      ["participants", "Moussa,rice,Ali"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "absent"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_15b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (15b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (15b)"},
     "reportedIn": null,
     "language": "koyr1240",
     "primaryText": "Ali ŋa-ndi tasu di Musa se.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Ali",
-        "PRN"
-      ],
-      [
-        "ŋa-ndi",
-        "eat-CAUS"
-      ],
-      [
-        "tasu",
-        "rice"
-      ],
-      [
-        "di",
-        "D"
-      ],
-      [
-        "Musa",
-        "PRN"
-      ],
-      [
-        "se",
-        "to"
-      ]
+      ["Ali", "PRN"], ["ŋa-ndi", "eat-CAUS"], ["tasu", "rice"], ["di", "D"], ["Musa", "PRN"],
+      ["se", "to"]
     ],
     "translation": "Ali had Moussa eat the rice.",
     "context": "",
@@ -2055,77 +907,30 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.15"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "Moussa,rice,Ali"
-      ],
-      [
-        "p1",
-        "dative"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "A"
-      ],
-      [
-        "marker",
-        "-ndi"
-      ],
-      [
-        "alternation",
-        "causativization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "new",
-        "p3"
-      ]
+      ["example", "8.15"],
+      ["variant", "b"],
+      ["participants", "Moussa,rice,Ali"],
+      ["p1", "dative"],
+      ["p2", "P"],
+      ["p3", "A"],
+      ["marker", "-ndi"],
+      ["alternation", "causativization"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["new", "p3"]
     ],
     "comment": "The causee takes the dative postposition.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_15c",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (15c)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (15c)"},
     "reportedIn": null,
     "language": "koyr1240",
     "primaryText": "Tasu di ŋa-ndi.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Tasu",
-        "rice"
-      ],
-      [
-        "di",
-        "D"
-      ],
-      [
-        "ŋa-ndi",
-        "eat-PASS"
-      ]
+      ["Tasu", "rice"], ["di", "D"], ["ŋa-ndi", "eat-PASS"]
     ],
     "translation": "The rice was eaten.",
     "context": "",
@@ -2133,73 +938,29 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.15"
-      ],
-      [
-        "variant",
-        "c"
-      ],
-      [
-        "participants",
-        "Moussa,rice,Ali"
-      ],
-      [
-        "p1",
-        "implicit"
-      ],
-      [
-        "p2",
-        "S"
-      ],
-      [
-        "p3",
-        "absent"
-      ],
-      [
-        "marker",
-        "-ndi"
-      ],
-      [
-        "alternation",
-        "passivization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ]
+      ["example", "8.15"],
+      ["variant", "c"],
+      ["participants", "Moussa,rice,Ali"],
+      ["p1", "implicit"],
+      ["p2", "S"],
+      ["p3", "absent"],
+      ["marker", "-ndi"],
+      ["alternation", "passivization"],
+      ["initial", "a"],
+      ["marking", "synthetic"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_16a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (16a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (16a)"},
     "reportedIn": null,
     "language": "hung1274",
     "primaryText": "Péter nevet-ett-Ø János-on.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Péter",
-        "PRN"
-      ],
-      [
-        "nevet-ett-Ø",
-        "laugh-PST-IS/A:3SG"
-      ],
-      [
-        "János-on",
-        "PRN-SUPESS"
-      ]
+      ["Péter", "PRN"], ["nevet-ett-Ø", "laugh-PST-IS/A:3SG"], ["János-on", "PRN-SUPESS"]
     ],
     "translation": "Péter was laughing at János.",
     "context": "",
@@ -2207,53 +968,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.16"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "Péter,János"
-      ],
-      [
-        "p1",
-        "S"
-      ],
-      [
-        "p2",
-        "X"
-      ]
+      ["example", "8.16"],
+      ["variant", "a"],
+      ["participants", "Péter,János"],
+      ["p1", "S"],
+      ["p2", "X"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_16b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (16b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (16b)"},
     "reportedIn": null,
     "language": "hung1274",
     "primaryText": "Péter ki-nevet-t-e János-t.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Péter",
-        "PRN"
-      ],
-      [
-        "ki-nevet-t-e",
-        "APPL-laugh-PST-IS/A:3SG-IP:3D"
-      ],
-      [
-        "János-t",
-        "PRN-ACC"
-      ]
+      ["Péter", "PRN"], ["ki-nevet-t-e", "APPL-laugh-PST-IS/A:3SG-IP:3D"], ["János-t", "PRN-ACC"]
     ],
     "translation": "Péter laughed at János.",
     "context": "",
@@ -2261,81 +993,30 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.16"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "Péter,János"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "marker",
-        "ki-"
-      ],
-      [
-        "alternation",
-        "pApplicativization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "new",
-        "p2"
-      ]
+      ["example", "8.16"],
+      ["variant", "b"],
+      ["participants", "Péter,János"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["marker", "ki-"],
+      ["alternation", "pApplicativization"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["new", "p2"]
     ],
     "comment": "The preverb also bounds the event; in (17) it changes aktionsart alone.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_18a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (18a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (18a)"},
     "reportedIn": null,
     "language": "mand1436",
     "primaryText": "Í lá dèndìkôo nôo-tá lè.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Í",
-        "2SG"
-      ],
-      [
-        "lá",
-        "GEN"
-      ],
-      [
-        "dèndìkôo",
-        "cloth.D"
-      ],
-      [
-        "nôo-tá",
-        "be/become.dirty-CPL.ITR"
-      ],
-      [
-        "lè",
-        "FOC"
-      ]
+      ["Í", "2SG"], ["lá", "GEN"], ["dèndìkôo", "cloth.D"], ["nôo-tá", "be/become.dirty-CPL.ITR"],
+      ["lè", "FOC"]
     ],
     "translation": "Your cloth is dirty.",
     "context": "",
@@ -2343,69 +1024,25 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.18"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "cloth,causer"
-      ],
-      [
-        "p1",
-        "S"
-      ],
-      [
-        "p2",
-        "absent"
-      ]
+      ["example", "8.18"],
+      ["variant", "a"],
+      ["participants", "cloth,causer"],
+      ["p1", "S"],
+      ["p2", "absent"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_18b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (18b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (18b)"},
     "reportedIn": null,
     "language": "mand1436",
     "primaryText": "Í yé í lá dèndìkôo nó-ndì lè.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Í",
-        "2SG"
-      ],
-      [
-        "yé",
-        "CPL.TR"
-      ],
-      [
-        "í",
-        "2SG"
-      ],
-      [
-        "lá",
-        "GEN"
-      ],
-      [
-        "dèndìkôo",
-        "cloth.D"
-      ],
-      [
-        "nó-ndì",
-        "be/become.dirty-CAUS"
-      ],
-      [
-        "lè",
-        "FOC"
-      ]
+      ["Í", "2SG"], ["yé", "CPL.TR"], ["í", "2SG"], ["lá", "GEN"], ["dèndìkôo", "cloth.D"],
+      ["nó-ndì", "be/become.dirty-CAUS"], ["lè", "FOC"]
     ],
     "translation": "You have soiled your cloth.",
     "context": "",
@@ -2413,73 +1050,30 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.18"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "cloth,causer"
-      ],
-      [
-        "p1",
-        "P"
-      ],
-      [
-        "p2",
-        "A"
-      ],
-      [
-        "marker",
-        "-ndi"
-      ],
-      [
-        "alternation",
-        "causativization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "new",
-        "p2"
-      ]
+      ["example", "8.18"],
+      ["variant", "b"],
+      ["participants", "cloth,causer"],
+      ["p1", "P"],
+      ["p2", "A"],
+      ["marker", "-ndi"],
+      ["alternation", "causativization"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["new", "p2"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_19a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (19a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (19a)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Ŋw-àná ʊ́-tʰùb-íl-é màː-ɪ́.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Ŋw-àná",
-        "SG-child(cl1)"
-      ],
-      [
-        "ʊ́-tʰùb-íl-é",
-        "IS/A:cl1-break-PRF-FV"
-      ],
-      [
-        "màː-ɪ́",
-        "PL-egg(cl6)"
-      ]
+      ["Ŋw-àná", "SG-child(cl1)"], ["ʊ́-tʰùb-íl-é", "IS/A:cl1-break-PRF-FV"],
+      ["màː-ɪ́", "PL-egg(cl6)"]
     ],
     "translation": "The child broke the eggs.",
     "context": "",
@@ -2487,49 +1081,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.19"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "child,eggs"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ]
+      ["example", "8.19"],
+      ["variant", "a"],
+      ["participants", "child,eggs"],
+      ["p1", "A"],
+      ["p2", "P"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_19b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (19b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (19b)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Mà-ɪ́ !á-tʰúb-èχ-ìːl-è.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Mà-ɪ́",
-        "PL-egg(cl6)"
-      ],
-      [
-        "!á-tʰúb-èχ-ìːl-è",
-        "IS:cl6-break-DECAUS-PRF-FV"
-      ]
+      ["Mà-ɪ́", "PL-egg(cl6)"], ["!á-tʰúb-èχ-ìːl-è", "IS:cl6-break-DECAUS-PRF-FV"]
     ],
     "translation": "The eggs broke.",
     "context": "",
@@ -2537,69 +1106,28 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.19"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "child,eggs"
-      ],
-      [
-        "p1",
-        "absent"
-      ],
-      [
-        "p2",
-        "S"
-      ],
-      [
-        "marker",
-        "-ɛχ"
-      ],
-      [
-        "alternation",
-        "decausativization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ]
+      ["example", "8.19"],
+      ["variant", "b"],
+      ["participants", "child,eggs"],
+      ["p1", "absent"],
+      ["p2", "S"],
+      ["marker", "-ɛχ"],
+      ["alternation", "decausativization"],
+      ["initial", "a"],
+      ["marking", "synthetic"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_21a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (21a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (21a)"},
     "reportedIn": null,
     "language": "cent2127",
     "primaryText": "Arna-m allg-aa 'lumarraq.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Arna-m",
-        "woman-ERG"
-      ],
-      [
-        "allg-aa",
-        "tear-DECL.IA:3SG.IP:3SG"
-      ],
-      [
-        "'lumarraq",
-        "shirt"
-      ]
+      ["Arna-m", "woman-ERG"], ["allg-aa", "tear-DECL.IA:3SG.IP:3SG"], ["'lumarraq", "shirt"]
     ],
     "translation": "The woman tears the shirt.",
     "context": "",
@@ -2607,53 +1135,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.21"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "woman,shirt"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ]
+      ["example", "8.21"],
+      ["variant", "a"],
+      ["participants", "woman,shirt"],
+      ["p1", "A"],
+      ["p2", "P"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_21b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (21b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (21b)"},
     "reportedIn": null,
     "language": "cent2127",
     "primaryText": "Arnaq allg-i-uq 'lumarra-mek.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Arnaq",
-        "woman"
-      ],
-      [
-        "allg-i-uq",
-        "tear-ANTIP-DECL.IS:3SG"
-      ],
-      [
-        "'lumarra-mek",
-        "shirt-ABL"
-      ]
+      ["Arnaq", "woman"], ["allg-i-uq", "tear-ANTIP-DECL.IS:3SG"], ["'lumarra-mek", "shirt-ABL"]
     ],
     "translation": "The woman tears a shirt.",
     "context": "",
@@ -2661,69 +1160,28 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.21"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "woman,shirt"
-      ],
-      [
-        "p1",
-        "S"
-      ],
-      [
-        "p2",
-        "X"
-      ],
-      [
-        "marker",
-        "-i"
-      ],
-      [
-        "alternation",
-        "antipassivization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ]
+      ["example", "8.21"],
+      ["variant", "b"],
+      ["participants", "woman,shirt"],
+      ["p1", "S"],
+      ["p2", "X"],
+      ["marker", "-i"],
+      ["alternation", "antipassivization"],
+      ["initial", "a"],
+      ["marking", "synthetic"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_23a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (23a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (23a)"},
     "reportedIn": null,
     "language": "band1340",
     "primaryText": "Gáleto na-lluj-e Atejo.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Gáleto",
-        "PRN(clA)"
-      ],
-      [
-        "na-lluj-e",
-        "IS/A:clA-look-CPL"
-      ],
-      [
-        "Atejo",
-        "PRN(clA)"
-      ]
+      ["Gáleto", "PRN(clA)"], ["na-lluj-e", "IS/A:clA-look-CPL"], ["Atejo", "PRN(clA)"]
     ],
     "translation": "Gáleto looked at Atejo.",
     "context": "",
@@ -2731,57 +1189,25 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.23"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "looker,looked-at"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ]
+      ["example", "8.23"],
+      ["variant", "a"],
+      ["participants", "looker,looked-at"],
+      ["p1", "A"],
+      ["p2", "P"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_23b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (23b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (23b)"},
     "reportedIn": null,
     "language": "band1340",
     "primaryText": "Gáleto na-lluj-oro-e bala a-púr.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Gáleto",
-        "PRN(clA)"
-      ],
-      [
-        "na-lluj-oro-e",
-        "IS:clA-look-REFL-CPL"
-      ],
-      [
-        "bala",
-        "before"
-      ],
-      [
-        "a-púr",
-        "IS/A:clA-go.out"
-      ]
+      ["Gáleto", "PRN(clA)"], ["na-lluj-oro-e", "IS:clA-look-REFL-CPL"], ["bala", "before"],
+      ["a-púr", "IS/A:clA-go.out"]
     ],
     "translation": "Gáleto looked at himself (in the mirror) before going out.",
     "context": "",
@@ -2789,69 +1215,28 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.23"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "looker,looked-at"
-      ],
-      [
-        "p1",
-        "S"
-      ],
-      [
-        "p2",
-        "S"
-      ],
-      [
-        "marker",
-        "-oro"
-      ],
-      [
-        "alternation",
-        "reflexivization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ]
+      ["example", "8.23"],
+      ["variant", "b"],
+      ["participants", "looker,looked-at"],
+      ["p1", "S"],
+      ["p2", "S"],
+      ["marker", "-oro"],
+      ["alternation", "reflexivization"],
+      ["initial", "a"],
+      ["marking", "synthetic"]
     ],
     "comment": "The two participant roles are cumulated by the single S term.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_24a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (24a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (24a)"},
     "reportedIn": null,
     "language": "band1340",
     "primaryText": "Gáleto na-ssaf-e Atejo.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Gáleto",
-        "PRN(clA)"
-      ],
-      [
-        "na-ssaf-e",
-        "IA:clA-greet-CPL"
-      ],
-      [
-        "Atejo",
-        "PRN(clA)"
-      ]
+      ["Gáleto", "PRN(clA)"], ["na-ssaf-e", "IA:clA-greet-CPL"], ["Atejo", "PRN(clA)"]
     ],
     "translation": "Gáleto greeted Atejo.",
     "context": "",
@@ -2859,57 +1244,25 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.24"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "greeter,greeted"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ]
+      ["example", "8.24"],
+      ["variant", "a"],
+      ["participants", "greeter,greeted"],
+      ["p1", "A"],
+      ["p2", "P"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_24b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (24b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (24b)"},
     "reportedIn": null,
     "language": "band1340",
     "primaryText": "Gáleto ni Atejo gu-ssaf-or-e.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Gáleto",
-        "PRN(clA)"
-      ],
-      [
-        "ni",
-        "and"
-      ],
-      [
-        "Atejo",
-        "PRN(clA)"
-      ],
-      [
-        "gu-ssaf-or-e",
-        "IA:clBG-greet-REC-CPL"
-      ]
+      ["Gáleto", "PRN(clA)"], ["ni", "and"], ["Atejo", "PRN(clA)"],
+      ["gu-ssaf-or-e", "IA:clBG-greet-REC-CPL"]
     ],
     "translation": "Gáleto and Atejo greeted (each other).",
     "context": "",
@@ -2917,65 +1270,28 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.24"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "greeter,greeted"
-      ],
-      [
-        "p1",
-        "S"
-      ],
-      [
-        "p2",
-        "S"
-      ],
-      [
-        "marker",
-        "-or"
-      ],
-      [
-        "alternation",
-        "reciprocalization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ]
+      ["example", "8.24"],
+      ["variant", "b"],
+      ["participants", "greeter,greeted"],
+      ["p1", "S"],
+      ["p2", "S"],
+      ["marker", "-or"],
+      ["alternation", "reciprocalization"],
+      ["initial", "a"],
+      ["marking", "synthetic"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_27a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (27a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (27a)"},
     "reportedIn": null,
     "language": "cent2127",
     "primaryText": "Kicaq kit'-uq.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Kicaq",
-        "anchor.SG"
-      ],
-      [
-        "kit'-uq",
-        "sink-IND.IS:3SG"
-      ]
+      ["Kicaq", "anchor.SG"], ["kit'-uq", "sink-IND.IS:3SG"]
     ],
     "translation": "The anchor sank.",
     "context": "",
@@ -2983,49 +1299,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.27"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "anchor,concernee"
-      ],
-      [
-        "p1",
-        "S"
-      ],
-      [
-        "p2",
-        "absent"
-      ]
+      ["example", "8.27"],
+      ["variant", "a"],
+      ["participants", "anchor,concernee"],
+      ["p1", "S"],
+      ["p2", "absent"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_27b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (27b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (27b)"},
     "reportedIn": null,
     "language": "cent2127",
     "primaryText": "Kit'-i-aqa kicaq.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Kit'-i-aqa",
-        "sink-CCN-IND.IA:1SG.IP:3SG"
-      ],
-      [
-        "kicaq",
-        "anchor.SG"
-      ]
+      ["Kit'-i-aqa", "sink-CCN-IND.IA:1SG.IP:3SG"], ["kicaq", "anchor.SG"]
     ],
     "translation": "I had the anchor sunk (me negatively affected).",
     "context": "",
@@ -3033,69 +1324,29 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.27"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "anchor,concernee"
-      ],
-      [
-        "p1",
-        "P"
-      ],
-      [
-        "p2",
-        "A"
-      ],
-      [
-        "marker",
-        "-i-"
-      ],
-      [
-        "alternation",
-        "concernativization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "new",
-        "p2"
-      ]
+      ["example", "8.27"],
+      ["variant", "b"],
+      ["participants", "anchor,concernee"],
+      ["p1", "P"],
+      ["p2", "A"],
+      ["marker", "-i-"],
+      ["alternation", "concernativization"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["new", "p2"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_28a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (28a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (28a)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Ŋw-àná !ʊ́-kâː-w-à.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Ŋw-àná",
-        "SG-child(cl1)"
-      ],
-      [
-        "!ʊ́-kâː-w-à",
-        "IS:cl1-POT-fall-FV"
-      ]
+      ["Ŋw-àná", "SG-child(cl1)"], ["!ʊ́-kâː-w-à", "IS:cl1-POT-fall-FV"]
     ],
     "translation": "(Be careful,) the child might fall down.",
     "context": "",
@@ -3103,57 +1354,25 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.28"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "child,well"
-      ],
-      [
-        "p1",
-        "S"
-      ],
-      [
-        "p2",
-        "absent"
-      ]
+      ["example", "8.28"],
+      ["variant", "a"],
+      ["participants", "child,well"],
+      ["p1", "S"],
+      ["p2", "absent"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_28b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (28b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (28b)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Ŋw-àná !ʊ́-ká-w-ɛ́l-à mó sɪ̀-díbêː-ŋ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Ŋw-àná",
-        "SG-child(cl1)"
-      ],
-      [
-        "!ʊ́-ká-w-ɛ́l-à",
-        "IS:cl1-POT-fall-APPL-FV"
-      ],
-      [
-        "mó",
-        "LOC"
-      ],
-      [
-        "sɪ̀-díbêː-ŋ̀",
-        "SG-well(cl7)-LOC"
-      ]
+      ["Ŋw-àná", "SG-child(cl1)"], ["!ʊ́-ká-w-ɛ́l-à", "IS:cl1-POT-fall-APPL-FV"], ["mó", "LOC"],
+      ["sɪ̀-díbêː-ŋ̀", "SG-well(cl7)-LOC"]
     ],
     "translation": "(Be careful,) the child might fall into the well.",
     "context": "",
@@ -3161,65 +1380,29 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.28"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "child,well"
-      ],
-      [
-        "p1",
-        "S"
-      ],
-      [
-        "p2",
-        "X"
-      ],
-      [
-        "marker",
-        "-ɛl"
-      ],
-      [
-        "alternation",
-        "xApplicativization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "new",
-        "p2"
-      ]
+      ["example", "8.28"],
+      ["variant", "b"],
+      ["participants", "child,well"],
+      ["p1", "S"],
+      ["p2", "X"],
+      ["marker", "-ɛl"],
+      ["alternation", "xApplicativization"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["new", "p2"]
     ],
     "comment": "The destination cannot be expressed with the underived verb.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_33a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (33a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (33a)"},
     "reportedIn": null,
     "language": "cadd1256",
     "primaryText": "Ci-ˀa=d(ih)-ˀaˀ.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Ci-ˀa=d(ih)-ˀaˀ",
-        "IA:1SG-go-FUT"
-      ]
+      ["Ci-ˀa=d(ih)-ˀaˀ", "IA:1SG-go-FUT"]
     ],
     "translation": "I will go.",
     "context": "",
@@ -3227,45 +1410,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.33"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "goer,carried"
-      ],
-      [
-        "p1",
-        "S"
-      ],
-      [
-        "p2",
-        "absent"
-      ]
+      ["example", "8.33"],
+      ["variant", "a"],
+      ["participants", "goer,carried"],
+      ["p1", "S"],
+      ["p2", "absent"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_33b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (33b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (33b)"},
     "reportedIn": null,
     "language": "cadd1256",
     "primaryText": "Ci-ni-ˀa=d(ih)-ˀaˀ.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Ci-ni-ˀa=d(ih)-ˀaˀ",
-        "IA:1SG-PORT-go-FUT"
-      ]
+      ["Ci-ni-ˀa=d(ih)-ˀaˀ", "IA:1SG-PORT-go-FUT"]
     ],
     "translation": "I will take it.",
     "context": "",
@@ -3273,69 +1435,29 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.33"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "goer,carried"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "marker",
-        "ni-"
-      ],
-      [
-        "alternation",
-        "portative"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "new",
-        "p2"
-      ]
+      ["example", "8.33"],
+      ["variant", "b"],
+      ["participants", "goer,carried"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["marker", "ni-"],
+      ["alternation", "portative"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["new", "p2"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_38a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (38a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (38a)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Kɪ̀-tɬàà-kwál-á lʊ̀-kwâːlɔ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Kɪ̀-tɬàà-kwál-á",
-        "IS/A:1SG-FUT-write-FV"
-      ],
-      [
-        "lʊ̀-kwâːlɔ̀",
-        "SG-letter(cl11)"
-      ]
+      ["Kɪ̀-tɬàà-kwál-á", "IS/A:1SG-FUT-write-FV"], ["lʊ̀-kwâːlɔ̀", "SG-letter(cl11)"]
     ],
     "translation": "I'll write a letter.",
     "context": "",
@@ -3343,57 +1465,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.38"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "writer,letter,causer,recipient"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "absent"
-      ],
-      [
-        "p4",
-        "absent"
-      ]
+      ["example", "8.38"],
+      ["variant", "a"],
+      ["participants", "writer,letter,causer,recipient"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "absent"],
+      ["p4", "absent"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_38b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (38b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (38b)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Lʊ̀-kwálɔ́ !lʊ́-tɬáà-kwâːl-w-à.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Lʊ̀-kwálɔ́",
-        "SG-letter(cl11)"
-      ],
-      [
-        "!lʊ́-tɬáà-kwâːl-w-à",
-        "IS/A:cl11-FUT-write-PASS-FV"
-      ]
+      ["Lʊ̀-kwálɔ́", "SG-letter(cl11)"], ["!lʊ́-tɬáà-kwâːl-w-à", "IS/A:cl11-FUT-write-PASS-FV"]
     ],
     "translation": "The letter will be written.",
     "context": "",
@@ -3401,77 +1492,31 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.38"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "writer,letter,causer,recipient"
-      ],
-      [
-        "p1",
-        "implicit"
-      ],
-      [
-        "p2",
-        "S"
-      ],
-      [
-        "p3",
-        "absent"
-      ],
-      [
-        "p4",
-        "absent"
-      ],
-      [
-        "marker",
-        "-w"
-      ],
-      [
-        "alternation",
-        "passivization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ]
+      ["example", "8.38"],
+      ["variant", "b"],
+      ["participants", "writer,letter,causer,recipient"],
+      ["p1", "implicit"],
+      ["p2", "S"],
+      ["p3", "absent"],
+      ["p4", "absent"],
+      ["marker", "-w"],
+      ["alternation", "passivization"],
+      ["initial", "a"],
+      ["marking", "synthetic"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_38c",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (38c)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (38c)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Kɪ̀-tɬàà-kwál-ɛ́l-á M̀pʰɔ́ lʊ̀-kwâːlɔ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Kɪ̀-tɬàà-kwál-ɛ́l-á",
-        "IS/A:1SG-FUT-write-APPL-FV"
-      ],
-      [
-        "M̀pʰɔ́",
-        "PRN(cl1)"
-      ],
-      [
-        "lʊ̀-kwâːlɔ̀",
-        "SG-letter(cl11)"
-      ]
+      ["Kɪ̀-tɬàà-kwál-ɛ́l-á", "IS/A:1SG-FUT-write-APPL-FV"], ["M̀pʰɔ́", "PRN(cl1)"],
+      ["lʊ̀-kwâːlɔ̀", "SG-letter(cl11)"]
     ],
     "translation": "I'll write the letter to Mpho.",
     "context": "",
@@ -3479,81 +1524,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.38"
-      ],
-      [
-        "variant",
-        "c"
-      ],
-      [
-        "participants",
-        "writer,letter,causer,recipient"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "absent"
-      ],
-      [
-        "p4",
-        "P"
-      ],
-      [
-        "marker",
-        "-ɛl"
-      ],
-      [
-        "alternation",
-        "pApplicativization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "new",
-        "p4"
-      ]
+      ["example", "8.38"],
+      ["variant", "c"],
+      ["participants", "writer,letter,causer,recipient"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "absent"],
+      ["p4", "P"],
+      ["marker", "-ɛl"],
+      ["alternation", "pApplicativization"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["new", "p4"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_38d",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (38d)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (38d)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Kítsɔ́ !ʊ́-tɬáá-ŋ̀-kwád-ís-á lʊ̀-kwâːlɔ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Kítsɔ́",
-        "PRN(cl1)"
-      ],
-      [
-        "!ʊ́-tɬáá-ŋ̀-kwád-ís-á",
-        "IS/A:cl1-FUT-IP:1SG-write-CAUS-FV"
-      ],
-      [
-        "lʊ̀-kwâːlɔ̀",
-        "SG-letter(cl11)"
-      ]
+      ["Kítsɔ́", "PRN(cl1)"], ["!ʊ́-tɬáá-ŋ̀-kwád-ís-á", "IS/A:cl1-FUT-IP:1SG-write-CAUS-FV"],
+      ["lʊ̀-kwâːlɔ̀", "SG-letter(cl11)"]
     ],
     "translation": "Kitso will make me write the letter.",
     "context": "",
@@ -3561,85 +1557,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.38"
-      ],
-      [
-        "variant",
-        "d"
-      ],
-      [
-        "participants",
-        "writer,letter,causer,recipient"
-      ],
-      [
-        "p1",
-        "P"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "A"
-      ],
-      [
-        "p4",
-        "absent"
-      ],
-      [
-        "marker",
-        "-is"
-      ],
-      [
-        "alternation",
-        "causativization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "new",
-        "p3"
-      ]
+      ["example", "8.38"],
+      ["variant", "d"],
+      ["participants", "writer,letter,causer,recipient"],
+      ["p1", "P"],
+      ["p2", "P"],
+      ["p3", "A"],
+      ["p4", "absent"],
+      ["marker", "-is"],
+      ["alternation", "causativization"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["new", "p3"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_38e",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (38e)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (38e)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Kítsɔ́ !ʊ́-tɬáà-kwád-ís-éts-à M̀pʰɔ́ lʊ̀-kwâːlɔ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Kítsɔ́",
-        "PRN(cl1)"
-      ],
-      [
-        "!ʊ́-tɬáà-kwád-ís-éts-à",
-        "IS/A:cl1-FUT-write-CAUS-APPL-FV"
-      ],
-      [
-        "M̀pʰɔ́",
-        "PRN(cl1)"
-      ],
-      [
-        "lʊ̀-kwâːlɔ̀",
-        "SG-letter(cl11)"
-      ]
+      ["Kítsɔ́", "PRN(cl1)"], ["!ʊ́-tɬáà-kwád-ís-éts-à", "IS/A:cl1-FUT-write-CAUS-APPL-FV"],
+      ["M̀pʰɔ́", "PRN(cl1)"], ["lʊ̀-kwâːlɔ̀", "SG-letter(cl11)"]
     ],
     "translation": "Kitso will make someone write a letter to Mpho.",
     "context": "",
@@ -3647,81 +1590,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.38"
-      ],
-      [
-        "variant",
-        "e"
-      ],
-      [
-        "participants",
-        "writer,letter,causer,recipient"
-      ],
-      [
-        "p1",
-        "implicit"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "A"
-      ],
-      [
-        "p4",
-        "P"
-      ],
-      [
-        "marker",
-        "-is-ets"
-      ],
-      [
-        "alternation",
-        "pApplicativization"
-      ],
-      [
-        "initial",
-        "d"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "new",
-        "p4"
-      ]
+      ["example", "8.38"],
+      ["variant", "e"],
+      ["participants", "writer,letter,causer,recipient"],
+      ["p1", "implicit"],
+      ["p2", "P"],
+      ["p3", "A"],
+      ["p4", "P"],
+      ["marker", "-is-ets"],
+      ["alternation", "pApplicativization"],
+      ["initial", "d"],
+      ["marking", "synthetic"],
+      ["new", "p4"]
     ],
     "comment": "The initial A is not mentioned but could be coded as a third P.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_38f",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (38f)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (38f)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "M̀pʰɔ́ !ʊ́-tɬáà-kwál-ɛ́l-w-á lʊ̀-kwâːlɔ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "M̀pʰɔ́",
-        "PRN(cl1)"
-      ],
-      [
-        "!ʊ́-tɬáà-kwál-ɛ́l-w-á",
-        "IS/A:cl1-FUT-write-APPL-PASS-FV"
-      ],
-      [
-        "lʊ̀-kwâːlɔ̀",
-        "SG-letter(cl11)"
-      ]
+      ["M̀pʰɔ́", "PRN(cl1)"], ["!ʊ́-tɬáà-kwál-ɛ́l-w-á", "IS/A:cl1-FUT-write-APPL-PASS-FV"],
+      ["lʊ̀-kwâːlɔ̀", "SG-letter(cl11)"]
     ],
     "translation": "A letter will be written to Mpho.",
     "context": "",
@@ -3729,73 +1623,31 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.38"
-      ],
-      [
-        "variant",
-        "f"
-      ],
-      [
-        "participants",
-        "writer,letter,causer,recipient"
-      ],
-      [
-        "p1",
-        "implicit"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "absent"
-      ],
-      [
-        "p4",
-        "A"
-      ],
-      [
-        "marker",
-        "-ɛl-w"
-      ],
-      [
-        "alternation",
-        "passivization"
-      ],
-      [
-        "initial",
-        "c"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ]
+      ["example", "8.38"],
+      ["variant", "f"],
+      ["participants", "writer,letter,causer,recipient"],
+      ["p1", "implicit"],
+      ["p2", "P"],
+      ["p3", "absent"],
+      ["p4", "A"],
+      ["marker", "-ɛl-w"],
+      ["alternation", "passivization"],
+      ["initial", "c"],
+      ["marking", "synthetic"]
     ],
     "comment": "Literally 'Mpho will be written.to a letter': the applied P takes A coding and the construction stays transitive.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_38g",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (38g)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (38g)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Kɪ̀-tɬàà-kwád-ís-íw-à lʊ̀-kwâːlɔ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Kɪ̀-tɬàà-kwád-ís-íw-à",
-        "IS/A:1SG-FUT-write-CAUS-PASS-FV"
-      ],
-      [
-        "lʊ̀-kwâːlɔ̀",
-        "SG-letter(cl11)"
-      ]
+      ["Kɪ̀-tɬàà-kwád-ís-íw-à", "IS/A:1SG-FUT-write-CAUS-PASS-FV"],
+      ["lʊ̀-kwâːlɔ̀", "SG-letter(cl11)"]
     ],
     "translation": "Someone will make me write a letter.",
     "context": "",
@@ -3803,77 +1655,31 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.38"
-      ],
-      [
-        "variant",
-        "g"
-      ],
-      [
-        "participants",
-        "writer,letter,causer,recipient"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "implicit"
-      ],
-      [
-        "p4",
-        "absent"
-      ],
-      [
-        "marker",
-        "-is-iw"
-      ],
-      [
-        "alternation",
-        "passivization"
-      ],
-      [
-        "initial",
-        "d"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ]
+      ["example", "8.38"],
+      ["variant", "g"],
+      ["participants", "writer,letter,causer,recipient"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "implicit"],
+      ["p4", "absent"],
+      ["marker", "-is-iw"],
+      ["alternation", "passivization"],
+      ["initial", "d"],
+      ["marking", "synthetic"]
     ],
     "comment": "Literally 'I will be made to write a letter': the initial A regains A coding.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_38h",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (38h)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (38h)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "M̀pʰɔ́ !ʊ́-tɬáà-kwád-ís-éd-ìw-à lʊ̀-kwâːlɔ̀.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "M̀pʰɔ́",
-        "PRN(cl1)"
-      ],
-      [
-        "!ʊ́-tɬáà-kwád-ís-éd-ìw-à",
-        "IS/A:cl1-FUT-write-CAUS-APPL-PASS-FV"
-      ],
-      [
-        "lʊ̀-kwâːlɔ̀",
-        "SG-letter(cl11)"
-      ]
+      ["M̀pʰɔ́", "PRN(cl1)"], ["!ʊ́-tɬáà-kwád-ís-éd-ìw-à", "IS/A:cl1-FUT-write-CAUS-APPL-PASS-FV"],
+      ["lʊ̀-kwâːlɔ̀", "SG-letter(cl11)"]
     ],
     "translation": "Someone will make someone else write a letter to Mpho.",
     "context": "",
@@ -3881,77 +1687,30 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.38"
-      ],
-      [
-        "variant",
-        "h"
-      ],
-      [
-        "participants",
-        "writer,letter,causer,recipient"
-      ],
-      [
-        "p1",
-        "implicit"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "implicit"
-      ],
-      [
-        "p4",
-        "A"
-      ],
-      [
-        "marker",
-        "-is-ed-iw"
-      ],
-      [
-        "alternation",
-        "passivization"
-      ],
-      [
-        "initial",
-        "e"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ]
+      ["example", "8.38"],
+      ["variant", "h"],
+      ["participants", "writer,letter,causer,recipient"],
+      ["p1", "implicit"],
+      ["p2", "P"],
+      ["p3", "implicit"],
+      ["p4", "A"],
+      ["marker", "-is-ed-iw"],
+      ["alternation", "passivization"],
+      ["initial", "e"],
+      ["marking", "synthetic"]
     ],
     "comment": "Literally 'Mpho will be made written.to a letter'.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_39a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (39a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (39a)"},
     "reportedIn": null,
     "language": "clas1250",
     "primaryText": "Ti-c-cua in nacatl.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Ti-c-cua",
-        "IS/A:2SG-IP:3SG-eat"
-      ],
-      [
-        "in",
-        "D"
-      ],
-      [
-        "nacatl",
-        "meat"
-      ]
+      ["Ti-c-cua", "IS/A:2SG-IP:3SG-eat"], ["in", "D"], ["nacatl", "meat"]
     ],
     "translation": "You are eating the meat.",
     "context": "",
@@ -3959,57 +1718,25 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.39"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "eater,meat,causer"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "absent"
-      ]
+      ["example", "8.39"],
+      ["variant", "a"],
+      ["participants", "eater,meat,causer"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "absent"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_39b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (39b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (39b)"},
     "reportedIn": null,
     "language": "clas1250",
     "primaryText": "Ni-mitz-cua-ltia in nacatl.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Ni-mitz-cua-ltia",
-        "IS/A:1SG-IP:2SG-eat-CAUS"
-      ],
-      [
-        "in",
-        "D"
-      ],
-      [
-        "nacatl",
-        "meat"
-      ]
+      ["Ni-mitz-cua-ltia", "IS/A:1SG-IP:2SG-eat-CAUS"], ["in", "D"], ["nacatl", "meat"]
     ],
     "translation": "I am making you eat the meat.",
     "context": "",
@@ -4017,69 +1744,30 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.39"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "eater,meat,causer"
-      ],
-      [
-        "p1",
-        "P"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "A"
-      ],
-      [
-        "marker",
-        "-ltia"
-      ],
-      [
-        "alternation",
-        "causativization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "new",
-        "p3"
-      ]
+      ["example", "8.39"],
+      ["variant", "b"],
+      ["participants", "eater,meat,causer"],
+      ["p1", "P"],
+      ["p2", "P"],
+      ["p3", "A"],
+      ["marker", "-ltia"],
+      ["alternation", "causativization"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["new", "p3"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_39c",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (39c)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (39c)"},
     "reportedIn": null,
     "language": "clas1250",
     "primaryText": "Ni-mitz-tla-cua-ltia.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Ni-mitz-tla-cua-ltia",
-        "IS/A:1SG-ANTIP-eat-CAUS"
-      ]
+      ["Ni-mitz-tla-cua-ltia", "IS/A:1SG-ANTIP-eat-CAUS"]
     ],
     "translation": "I am making you eat (unspecified things).",
     "context": "",
@@ -4087,73 +1775,29 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.39"
-      ],
-      [
-        "variant",
-        "c"
-      ],
-      [
-        "participants",
-        "eater,meat,causer"
-      ],
-      [
-        "p1",
-        "P"
-      ],
-      [
-        "p2",
-        "implicit"
-      ],
-      [
-        "p3",
-        "A"
-      ],
-      [
-        "marker",
-        "tla-"
-      ],
-      [
-        "alternation",
-        "antipassivization"
-      ],
-      [
-        "initial",
-        "b"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ]
+      ["example", "8.39"],
+      ["variant", "c"],
+      ["participants", "eater,meat,causer"],
+      ["p1", "P"],
+      ["p2", "implicit"],
+      ["p3", "A"],
+      ["marker", "tla-"],
+      ["alternation", "antipassivization"],
+      ["initial", "b"],
+      ["marking", "synthetic"]
     ],
     "comment": "Antipassivization of a double-P construction: the derived construction stays transitive.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_39d",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (39d)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (39d)"},
     "reportedIn": null,
     "language": "clas1250",
     "primaryText": "Ti-cua-ltī-lo in nacatl.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Ti-cua-ltī-lo",
-        "IS/A:2SG-eat-CAUS-PASS"
-      ],
-      [
-        "in",
-        "D"
-      ],
-      [
-        "nacatl",
-        "meat"
-      ]
+      ["Ti-cua-ltī-lo", "IS/A:2SG-eat-CAUS-PASS"], ["in", "D"], ["nacatl", "meat"]
     ],
     "translation": "They are making you eat the meat.",
     "context": "",
@@ -4161,65 +1805,29 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.39"
-      ],
-      [
-        "variant",
-        "d"
-      ],
-      [
-        "participants",
-        "eater,meat,causer"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "implicit"
-      ],
-      [
-        "marker",
-        "-lo"
-      ],
-      [
-        "alternation",
-        "passivization"
-      ],
-      [
-        "initial",
-        "b"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ]
+      ["example", "8.39"],
+      ["variant", "d"],
+      ["participants", "eater,meat,causer"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "implicit"],
+      ["marker", "-lo"],
+      ["alternation", "passivization"],
+      ["initial", "b"],
+      ["marking", "synthetic"]
     ],
     "comment": "Literally 'You are made to eat the meat'; 'they' is non-specific. UNVERIFIED: the meat's P status follows the analysis of Tswana (38f); the verb shows no P index.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_39e",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (39e)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (39e)"},
     "reportedIn": null,
     "language": "clas1250",
     "primaryText": "Ti-tla-cua-ltī-lo.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Ti-tla-cua-ltī-lo",
-        "IS/A:2SG-ANTIP-eat-CAUS-PASS"
-      ]
+      ["Ti-tla-cua-ltī-lo", "IS/A:2SG-ANTIP-eat-CAUS-PASS"]
     ],
     "translation": "They are making you eat (unspecified things).",
     "context": "",
@@ -4227,77 +1835,29 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.39"
-      ],
-      [
-        "variant",
-        "e"
-      ],
-      [
-        "participants",
-        "eater,meat,causer"
-      ],
-      [
-        "p1",
-        "S"
-      ],
-      [
-        "p2",
-        "implicit"
-      ],
-      [
-        "p3",
-        "implicit"
-      ],
-      [
-        "marker",
-        "-lo"
-      ],
-      [
-        "alternation",
-        "passivization"
-      ],
-      [
-        "initial",
-        "c"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ]
+      ["example", "8.39"],
+      ["variant", "e"],
+      ["participants", "eater,meat,causer"],
+      ["p1", "S"],
+      ["p2", "implicit"],
+      ["p3", "implicit"],
+      ["marker", "-lo"],
+      ["alternation", "passivization"],
+      ["initial", "c"],
+      ["marking", "synthetic"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_47a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (47a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (47a)"},
     "reportedIn": null,
     "language": "bali1278",
     "primaryText": "Cang nyemak baju ento.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Cang",
-        "1SG"
-      ],
-      [
-        "nyemak",
-        "AV.take"
-      ],
-      [
-        "baju",
-        "shirt"
-      ],
-      [
-        "ento",
-        "DEM"
-      ]
+      ["Cang", "1SG"], ["nyemak", "AV.take"], ["baju", "shirt"], ["ento", "DEM"]
     ],
     "translation": "I took the shirt.",
     "context": "",
@@ -4305,77 +1865,29 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.47"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "taker,shirt"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "marker",
-        "N-"
-      ],
-      [
-        "alternation",
-        "symmetrical"
-      ],
-      [
-        "initial",
-        "b"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "pivot",
-        "p1"
-      ]
+      ["example", "8.47"],
+      ["variant", "a"],
+      ["participants", "taker,shirt"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["marker", "N-"],
+      ["alternation", "symmetrical"],
+      ["initial", "b"],
+      ["marking", "synthetic"],
+      ["pivot", "p1"]
     ],
     "comment": "Agent voice, derived by prefixing a nasal to the patient-voice form.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_47b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (47b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (47b)"},
     "reportedIn": null,
     "language": "bali1278",
     "primaryText": "Baju ento jemak cang.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Baju",
-        "shirt"
-      ],
-      [
-        "ento",
-        "DEM"
-      ],
-      [
-        "jemak",
-        "PV.take"
-      ],
-      [
-        "cang",
-        "1SG"
-      ]
+      ["Baju", "shirt"], ["ento", "DEM"], ["jemak", "PV.take"], ["cang", "1SG"]
     ],
     "translation": "I took the shirt.",
     "context": "",
@@ -4383,73 +1895,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.47"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "taker,shirt"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "pivot",
-        "p2"
-      ]
+      ["example", "8.47"],
+      ["variant", "b"],
+      ["participants", "taker,shirt"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["pivot", "p2"]
     ],
     "comment": "Patient voice: the pivot is the preverbal phrase.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_48a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (48a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (48a)"},
     "reportedIn": null,
     "language": "taga1270",
     "primaryText": "B<um>ili ang lalake ng isda sa tindahan.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "B<um>ili",
-        "buy<AV>"
-      ],
-      [
-        "ang",
-        "PIV"
-      ],
-      [
-        "lalake",
-        "man"
-      ],
-      [
-        "ng",
-        "NPIV"
-      ],
-      [
-        "isda",
-        "fish"
-      ],
-      [
-        "sa",
-        "OBL"
-      ],
-      [
-        "tindahan",
-        "store"
-      ]
+      ["B<um>ili", "buy<AV>"], ["ang", "PIV"], ["lalake", "man"], ["ng", "NPIV"], ["isda", "fish"],
+      ["sa", "OBL"], ["tindahan", "store"]
     ],
     "translation": "The man bought fish at the store.",
     "context": "",
@@ -4457,85 +1922,29 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.48"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "man,fish,store,child,money"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "X"
-      ],
-      [
-        "p4",
-        "absent"
-      ],
-      [
-        "p5",
-        "absent"
-      ],
-      [
-        "pivot",
-        "p1"
-      ]
+      ["example", "8.48"],
+      ["variant", "a"],
+      ["participants", "man,fish,store,child,money"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "X"],
+      ["p4", "absent"],
+      ["p5", "absent"],
+      ["pivot", "p1"]
     ],
     "comment": "Agent voice.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_48b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (48b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (48b)"},
     "reportedIn": null,
     "language": "taga1270",
     "primaryText": "B<in>ili-Ø ng lalake ang isda sa tindahan.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "B<in>ili-Ø",
-        "buy<REAL>-PV"
-      ],
-      [
-        "ng",
-        "NPIV"
-      ],
-      [
-        "lalake",
-        "man"
-      ],
-      [
-        "ang",
-        "PIV"
-      ],
-      [
-        "isda",
-        "fish"
-      ],
-      [
-        "sa",
-        "OBL"
-      ],
-      [
-        "tindahan",
-        "store"
-      ]
+      ["B<in>ili-Ø", "buy<REAL>-PV"], ["ng", "NPIV"], ["lalake", "man"], ["ang", "PIV"],
+      ["isda", "fish"], ["sa", "OBL"], ["tindahan", "store"]
     ],
     "translation": "The man bought fish at the store.",
     "context": "",
@@ -4543,101 +1952,33 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.48"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "man,fish,store,child,money"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "X"
-      ],
-      [
-        "p4",
-        "absent"
-      ],
-      [
-        "p5",
-        "absent"
-      ],
-      [
-        "marker",
-        "-Ø"
-      ],
-      [
-        "alternation",
-        "symmetrical"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "pivot",
-        "p2"
-      ]
+      ["example", "8.48"],
+      ["variant", "b"],
+      ["participants", "man,fish,store,child,money"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "X"],
+      ["p4", "absent"],
+      ["p5", "absent"],
+      ["marker", "-Ø"],
+      ["alternation", "symmetrical"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["pivot", "p2"]
     ],
     "comment": "Patient voice; the system has no basic voice, and the agent voice is taken as initial for the comparison only.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_48c",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (48c)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (48c)"},
     "reportedIn": null,
     "language": "taga1270",
     "primaryText": "B<in>ilh-an ng lalake ng isda ang tindahan.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "B<in>ilh-an",
-        "buy<REAL>-LV"
-      ],
-      [
-        "ng",
-        "NPIV"
-      ],
-      [
-        "lalake",
-        "man"
-      ],
-      [
-        "ng",
-        "NPIV"
-      ],
-      [
-        "isda",
-        "fish"
-      ],
-      [
-        "ang",
-        "PIV"
-      ],
-      [
-        "tindahan",
-        "store"
-      ]
+      ["B<in>ilh-an", "buy<REAL>-LV"], ["ng", "NPIV"], ["lalake", "man"], ["ng", "NPIV"],
+      ["isda", "fish"], ["ang", "PIV"], ["tindahan", "store"]
     ],
     "translation": "The man bought fish at the store.",
     "context": "",
@@ -4645,101 +1986,33 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.48"
-      ],
-      [
-        "variant",
-        "c"
-      ],
-      [
-        "participants",
-        "man,fish,store,child,money"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "X"
-      ],
-      [
-        "p4",
-        "absent"
-      ],
-      [
-        "p5",
-        "absent"
-      ],
-      [
-        "marker",
-        "-an"
-      ],
-      [
-        "alternation",
-        "symmetrical"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "pivot",
-        "p3"
-      ]
+      ["example", "8.48"],
+      ["variant", "c"],
+      ["participants", "man,fish,store,child,money"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "X"],
+      ["p4", "absent"],
+      ["p5", "absent"],
+      ["marker", "-an"],
+      ["alternation", "symmetrical"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["pivot", "p3"]
     ],
     "comment": "Locative voice.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_48d",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (48d)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (48d)"},
     "reportedIn": null,
     "language": "taga1270",
     "primaryText": "I-b<in>ili ng lalake ng isda ang bata.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "I-b<in>ili",
-        "CV-buy<REAL>"
-      ],
-      [
-        "ng",
-        "NPIV"
-      ],
-      [
-        "lalake",
-        "man"
-      ],
-      [
-        "ng",
-        "NPIV"
-      ],
-      [
-        "isda",
-        "fish"
-      ],
-      [
-        "ang",
-        "PIV"
-      ],
-      [
-        "bata",
-        "child"
-      ]
+      ["I-b<in>ili", "CV-buy<REAL>"], ["ng", "NPIV"], ["lalake", "man"], ["ng", "NPIV"],
+      ["isda", "fish"], ["ang", "PIV"], ["bata", "child"]
     ],
     "translation": "The man bought fish for the child.",
     "context": "",
@@ -4747,101 +2020,33 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.48"
-      ],
-      [
-        "variant",
-        "d"
-      ],
-      [
-        "participants",
-        "man,fish,store,child,money"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "absent"
-      ],
-      [
-        "p4",
-        "X"
-      ],
-      [
-        "p5",
-        "absent"
-      ],
-      [
-        "marker",
-        "i-"
-      ],
-      [
-        "alternation",
-        "symmetrical"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "pivot",
-        "p4"
-      ]
+      ["example", "8.48"],
+      ["variant", "d"],
+      ["participants", "man,fish,store,child,money"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "absent"],
+      ["p4", "X"],
+      ["p5", "absent"],
+      ["marker", "i-"],
+      ["alternation", "symmetrical"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["pivot", "p4"]
     ],
     "comment": "Conveyance voice.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_48e",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (48e)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (48e)"},
     "reportedIn": null,
     "language": "taga1270",
     "primaryText": "Ip<in>am-bili ng lalake ng isda ang pera.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Ip<in>am-bili",
-        "IV<REAL>-buy"
-      ],
-      [
-        "ng",
-        "NPIV"
-      ],
-      [
-        "lalake",
-        "man"
-      ],
-      [
-        "ng",
-        "NPIV"
-      ],
-      [
-        "isda",
-        "fish"
-      ],
-      [
-        "ang",
-        "PIV"
-      ],
-      [
-        "pera",
-        "money"
-      ]
+      ["Ip<in>am-bili", "IV<REAL>-buy"], ["ng", "NPIV"], ["lalake", "man"], ["ng", "NPIV"],
+      ["isda", "fish"], ["ang", "PIV"], ["pera", "money"]
     ],
     "translation": "The man bought fish with the money.",
     "context": "",
@@ -4849,101 +2054,33 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.48"
-      ],
-      [
-        "variant",
-        "e"
-      ],
-      [
-        "participants",
-        "man,fish,store,child,money"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "absent"
-      ],
-      [
-        "p4",
-        "absent"
-      ],
-      [
-        "p5",
-        "X"
-      ],
-      [
-        "marker",
-        "ipaN-"
-      ],
-      [
-        "alternation",
-        "symmetrical"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "pivot",
-        "p5"
-      ]
+      ["example", "8.48"],
+      ["variant", "e"],
+      ["participants", "man,fish,store,child,money"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "absent"],
+      ["p4", "absent"],
+      ["p5", "X"],
+      ["marker", "ipaN-"],
+      ["alternation", "symmetrical"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["pivot", "p5"]
     ],
     "comment": "Instrumental voice.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_50a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (50a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (50a)"},
     "reportedIn": null,
     "language": "bali1278",
     "primaryText": "I meme meli nasi sig anak-e ento.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "I",
-        "PERSART"
-      ],
-      [
-        "meme",
-        "mother"
-      ],
-      [
-        "meli",
-        "AV.buy"
-      ],
-      [
-        "nasi",
-        "rice"
-      ],
-      [
-        "sig",
-        "at"
-      ],
-      [
-        "anak-e",
-        "person-D"
-      ],
-      [
-        "ento",
-        "DEM"
-      ]
+      ["I", "PERSART"], ["meme", "mother"], ["meli", "AV.buy"], ["nasi", "rice"], ["sig", "at"],
+      ["anak-e", "person-D"], ["ento", "DEM"]
     ],
     "translation": "Mother bought rice from that person.",
     "context": "",
@@ -4951,69 +2088,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.50"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "mother,rice,person"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "X"
-      ]
+      ["example", "8.50"],
+      ["variant", "a"],
+      ["participants", "mother,rice,person"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "X"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_50b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (50b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (50b)"},
     "reportedIn": null,
     "language": "bali1278",
     "primaryText": "I meme meli-in anak-e ento nasi.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "I",
-        "PERSART"
-      ],
-      [
-        "meme",
-        "mother"
-      ],
-      [
-        "meli-in",
-        "AV.buy-APPL"
-      ],
-      [
-        "anak-e",
-        "person-D"
-      ],
-      [
-        "ento",
-        "DEM"
-      ],
-      [
-        "nasi",
-        "rice"
-      ]
+      ["I", "PERSART"], ["meme", "mother"], ["meli-in", "AV.buy-APPL"], ["anak-e", "person-D"],
+      ["ento", "DEM"], ["nasi", "rice"]
     ],
     "translation": "Mother bought rice from that person.",
     "context": "",
@@ -5021,77 +2115,30 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.50"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "mother,rice,person"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "P"
-      ],
-      [
-        "marker",
-        "-in"
-      ],
-      [
-        "alternation",
-        "pApplicativization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "new",
-        "p3"
-      ]
+      ["example", "8.50"],
+      ["variant", "b"],
+      ["participants", "mother,rice,person"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "P"],
+      ["marker", "-in"],
+      ["alternation", "pApplicativization"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["new", "p3"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_51a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (51a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (51a)"},
     "reportedIn": null,
     "language": "bali1278",
     "primaryText": "Ia niman adin-ne.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Ia",
-        "3SG"
-      ],
-      [
-        "niman",
-        "AV.kiss"
-      ],
-      [
-        "adin-ne",
-        "little.sibling-IADP:3"
-      ]
+      ["Ia", "3SG"], ["niman", "AV.kiss"], ["adin-ne", "little.sibling-IADP:3"]
     ],
     "translation": "S/he kissed his/her little brother/sister.",
     "context": "",
@@ -5099,65 +2146,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.51"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "kisser,sibling,causer"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "p3",
-        "absent"
-      ]
+      ["example", "8.51"],
+      ["variant", "a"],
+      ["participants", "kisser,sibling,causer"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["p3", "absent"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_8_51b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 8 (51b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (51b)"},
     "reportedIn": null,
     "language": "bali1278",
     "primaryText": "Tiang niman-ang ia sig adin-ne.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Tiang",
-        "1SG"
-      ],
-      [
-        "niman-ang",
-        "AV.kiss-CAUS"
-      ],
-      [
-        "ia",
-        "3SG"
-      ],
-      [
-        "sig",
-        "at"
-      ],
-      [
-        "adin-ne",
-        "little.sibling-IADP:3"
-      ]
+      ["Tiang", "1SG"], ["niman-ang", "AV.kiss-CAUS"], ["ia", "3SG"], ["sig", "at"],
+      ["adin-ne", "little.sibling-IADP:3"]
     ],
     "translation": "I made him/her kiss his/her little brother/sister.",
     "context": "",
@@ -5165,77 +2173,110 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "8.51"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "kisser,sibling,causer"
-      ],
-      [
-        "p1",
-        "P"
-      ],
-      [
-        "p2",
-        "X"
-      ],
-      [
-        "p3",
-        "A"
-      ],
-      [
-        "marker",
-        "-ang"
-      ],
-      [
-        "alternation",
-        "causativization"
-      ],
-      [
-        "initial",
-        "a"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "new",
-        "p3"
-      ]
+      ["example", "8.51"],
+      ["variant", "b"],
+      ["participants", "kisser,sibling,causer"],
+      ["p1", "P"],
+      ["p2", "X"],
+      ["p3", "A"],
+      ["marker", "-ang"],
+      ["alternation", "causativization"],
+      ["initial", "a"],
+      ["marking", "synthetic"],
+      ["new", "p3"]
     ],
     "comment": "The initial P is denucleativized: valency is unchanged although a participant is nucleativized.",
     "verified": "page-image"
   },
   {
+    "id": "creissels2024_8_52a",
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (52a)"},
+    "reportedIn": null,
+    "language": "indo1316",
+    "primaryText": "Mereka sudah men-jemput Tomo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mereka", "3PL"], ["sudah", "PRF"], ["men-jemput", "AV/TR-meet"], ["Tomo", "PRN"]
+    ],
+    "translation": "They have met Tomo.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["example", "8.52"],
+      ["variant", "a"],
+      ["participants", "meeter,met"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["pivot", "p1"]
+    ],
+    "comment": "The prefix is glossed as an agent voice or a transitivity marker.",
+    "verified": "page-image"
+  },
+  {
+    "id": "creissels2024_8_52b",
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (52b)"},
+    "reportedIn": null,
+    "language": "indo1316",
+    "primaryText": "Tomo sudah di-jemput mereka.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tomo", "PRN"], ["sudah", "PRF"], ["di-jemput", "PV-meet"], ["mereka", "3PL"]
+    ],
+    "translation": "They have met Tomo.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["example", "8.52"],
+      ["variant", "b"],
+      ["participants", "meeter,met"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["pivot", "p2"]
+    ],
+    "comment": "The noun phrase after the verb is unflagged; di- is glossed as a patient voice.",
+    "verified": "page-image"
+  },
+  {
+    "id": "creissels2024_8_52c",
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 8 (52c)"},
+    "reportedIn": null,
+    "language": "indo1316",
+    "primaryText": "Tomo sudah di-jemput oleh mereka.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tomo", "PRN"], ["sudah", "PRF"], ["di-jemput", "PASS-meet"], ["oleh", "by"],
+      ["mereka", "3PL"]
+    ],
+    "translation": "Tomo has been met by them.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["example", "8.52"],
+      ["variant", "c"],
+      ["participants", "meeter,met"],
+      ["p1", "X"],
+      ["p2", "S"],
+      ["pivot", "p2"]
+    ],
+    "comment": "The noun phrase after the verb is flagged by oleh; di- is glossed as a passive. The source is given as Sneddon 1996: 255, 257.",
+    "verified": "page-image"
+  },
+  {
     "id": "creissels2024_12_2a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 12 (2a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 12 (2a)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Mʊ̀-sádí !ʊ́-lɪ̀d-ís-íts-é ŋw-àːná.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Mʊ̀-sádí",
-        "SG-woman(cl1)"
-      ],
-      [
-        "!ʊ́-lɪ̀d-ís-íts-é",
-        "IS/A:cl1-cry-CAUS-PRF-FV"
-      ],
-      [
-        "ŋw-àːná",
-        "SG-child(cl1)"
-      ]
+      ["Mʊ̀-sádí", "SG-woman(cl1)"], ["!ʊ́-lɪ̀d-ís-íts-é", "IS/A:cl1-cry-CAUS-PRF-FV"],
+      ["ŋw-àːná", "SG-child(cl1)"]
     ],
     "translation": "The woman made the child cry.",
     "context": "",
@@ -5243,69 +2284,29 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "12.2"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "child,woman"
-      ],
-      [
-        "p1",
-        "P"
-      ],
-      [
-        "p2",
-        "A"
-      ],
-      [
-        "marker",
-        "-is"
-      ],
-      [
-        "alternation",
-        "causativization"
-      ],
-      [
-        "initial",
-        "b"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "new",
-        "p2"
-      ]
+      ["example", "12.2"],
+      ["variant", "a"],
+      ["participants", "child,woman"],
+      ["p1", "P"],
+      ["p2", "A"],
+      ["marker", "-is"],
+      ["alternation", "causativization"],
+      ["initial", "b"],
+      ["marking", "synthetic"],
+      ["new", "p2"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_12_2b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 12 (2b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 12 (2b)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Ŋw-àná !ʊ́-lɪ̂ːts-è.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Ŋw-àná",
-        "SG-child(cl1)"
-      ],
-      [
-        "!ʊ́-lɪ̂ːts-è",
-        "IS/A:cl1-cry.PRF-FV"
-      ]
+      ["Ŋw-àná", "SG-child(cl1)"], ["!ʊ́-lɪ̂ːts-è", "IS/A:cl1-cry.PRF-FV"]
     ],
     "translation": "The child cried.",
     "context": "",
@@ -5313,53 +2314,25 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "12.2"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "child,woman"
-      ],
-      [
-        "p1",
-        "S"
-      ],
-      [
-        "p2",
-        "absent"
-      ]
+      ["example", "12.2"],
+      ["variant", "b"],
+      ["participants", "child,woman"],
+      ["p1", "S"],
+      ["p2", "absent"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_12_3a",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 12 (3a)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 12 (3a)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Mʊ̀-sádí ʊ́-tɬ-ìs-íts-é dìː-dʒɔ́.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Mʊ̀-sádí",
-        "SG-woman(cl1)"
-      ],
-      [
-        "ʊ́-tɬ-ìs-íts-é",
-        "IS/A:cl1-come-CAUS-PRF-FV"
-      ],
-      [
-        "dìː-dʒɔ́",
-        "PL-food(cl8)"
-      ]
+      ["Mʊ̀-sádí", "SG-woman(cl1)"], ["ʊ́-tɬ-ìs-íts-é", "IS/A:cl1-come-CAUS-PRF-FV"],
+      ["dìː-dʒɔ́", "PL-food(cl8)"]
     ],
     "translation": "The woman brought the food.",
     "context": "",
@@ -5367,69 +2340,29 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "12.3"
-      ],
-      [
-        "variant",
-        "a"
-      ],
-      [
-        "participants",
-        "woman,food"
-      ],
-      [
-        "p1",
-        "A"
-      ],
-      [
-        "p2",
-        "P"
-      ],
-      [
-        "marker",
-        "-is"
-      ],
-      [
-        "alternation",
-        "portative"
-      ],
-      [
-        "initial",
-        "b"
-      ],
-      [
-        "marking",
-        "synthetic"
-      ],
-      [
-        "new",
-        "p2"
-      ]
+      ["example", "12.3"],
+      ["variant", "a"],
+      ["participants", "woman,food"],
+      ["p1", "A"],
+      ["p2", "P"],
+      ["marker", "-is"],
+      ["alternation", "portative"],
+      ["initial", "b"],
+      ["marking", "synthetic"],
+      ["new", "p2"]
     ],
     "comment": "The same suffix as the causative of (2): 'The woman brought the food' implies 'The woman came'. Chapter 12 counts this use as causativization in the broad sense, portative derivation being a variety of it.",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_12_3b",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 12 (3b)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 12 (3b)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Mʊ̀-sádí !ʊ́-tɬ-îːl-è.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Mʊ̀-sádí",
-        "SG-woman(cl1)"
-      ],
-      [
-        "!ʊ́-tɬ-îːl-è",
-        "IS/A:cl1-come-PRF-FV"
-      ]
+      ["Mʊ̀-sádí", "SG-woman(cl1)"], ["!ʊ́-tɬ-îːl-è", "IS/A:cl1-come-PRF-FV"]
     ],
     "translation": "The woman came.",
     "context": "",
@@ -5437,49 +2370,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "12.3"
-      ],
-      [
-        "variant",
-        "b"
-      ],
-      [
-        "participants",
-        "woman,food"
-      ],
-      [
-        "p1",
-        "S"
-      ],
-      [
-        "p2",
-        "absent"
-      ]
+      ["example", "12.3"],
+      ["variant", "b"],
+      ["participants", "woman,food"],
+      ["p1", "S"],
+      ["p2", "absent"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "creissels2024_12_3c",
-    "source": {
-      "bibkey": "creissels-2024",
-      "paperLabel": "ch. 12 (3c)"
-    },
+    "source": {"bibkey": "creissels-2024", "paperLabel": "ch. 12 (3c)"},
     "reportedIn": null,
     "language": "tswa1253",
     "primaryText": "Dì-dʒɔ́ !dí-tɬ-îːl-è.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Dì-dʒɔ́",
-        "PL-food(cl8)"
-      ],
-      [
-        "!dí-tɬ-îːl-è",
-        "IS/A:cl8-come-PRF-FV"
-      ]
+      ["Dì-dʒɔ́", "PL-food(cl8)"], ["!dí-tɬ-îːl-è", "IS/A:cl8-come-PRF-FV"]
     ],
     "translation": "The food came.",
     "context": "",
@@ -5487,26 +2395,11 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "example",
-        "12.3"
-      ],
-      [
-        "variant",
-        "c"
-      ],
-      [
-        "participants",
-        "woman,food"
-      ],
-      [
-        "p1",
-        "absent"
-      ],
-      [
-        "p2",
-        "S"
-      ]
+      ["example", "12.3"],
+      ["variant", "c"],
+      ["participants", "woman,food"],
+      ["p1", "absent"],
+      ["p2", "S"]
     ],
     "comment": "Inanimate objects can be brought but cannot come: the food is not the initial S.",
     "verified": "page-image"
