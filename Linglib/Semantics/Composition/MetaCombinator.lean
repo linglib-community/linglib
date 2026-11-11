@@ -15,15 +15,15 @@ Structured App and the units of an applicative, Join of a monad, and the co-unit
 of an adjunction. They are stated here for any functor, applicative, monad and adjunction on
 types, and [each meta-mode of the effect-driven grammar means its
 meta-combinator](##Interpreter.Mode.eval_ap) at the effect it lifts through. Every adjunction
-[induces a monad through the grammar](##Interpreter.MetaCombinator.mapL_ejectR_counitMode).
+[induces a monad through the grammar](##Interpreter.MetaCombinator.mapL_ejectR_counit).
 
 ## Main definitions
 
-* `Interpreter.MetaCombinator.mapL`, `mapR`, `structuredApp`, `unitL`, `unitR`, `joinMode`: the
+* `Interpreter.MetaCombinator.mapL`, `mapR`, `ap`, `unitL`, `unitR`, `join`: the
   meta-combinators of a functor, an applicative and a monad.
 * `Interpreter.MetaCombinator.Output`, `outputInput`: the storing effect and its adjunction with
   reading.
-* `Interpreter.MetaCombinator.counitMode`, `eject`, `ejectL`, `ejectR`: the meta-combinators of
+* `Interpreter.MetaCombinator.counit`, `eject`, `ejectL`, `ejectR`: the meta-combinators of
   an adjunction.
 * `Interpreter.Eff.functor`: the functor of an effect.
 
@@ -84,7 +84,7 @@ variable {F : Type u → Type v} [Applicative F]
 
 /-- Structured App: combine two daughters carrying the same applicative effect, merging the
 effects with the left daughter's first. -/
-def structuredApp (star : σ → τ → ω) (e₁ : F σ) (e₂ : F τ) : F ω := star <$> e₁ <*> e₂
+def ap (star : σ → τ → ω) (e₁ : F σ) (e₂ : F τ) : F ω := star <$> e₁ <*> e₂
 
 /-- Unit Left: a right daughter expecting a computation is given a pure one. -/
 def unitL {τ' : Type u} (star : σ → (τ → τ') → ω) (e₁ : σ) (e₂ : F τ → τ') : ω :=
@@ -94,8 +94,8 @@ def unitL {τ' : Type u} (star : σ → (τ → τ') → ω) (e₁ : σ) (e₂ :
 def unitR {σ' : Type u} (star : (σ → σ') → τ → ω) (e₁ : F σ → σ') (e₂ : τ) : ω :=
   star (fun a ↦ e₁ (pure a)) e₂
 
-theorem structuredApp_fa [LawfulApplicative F] (f : F (α → β)) (x : F α) :
-    structuredApp fa f x = f <*> x :=
+theorem ap_fa [LawfulApplicative F] (f : F (α → β)) (x : F α) :
+    ap fa f x = f <*> x :=
   congrArg (· <*> x) (id_map f)
 
 end Applicative
@@ -105,16 +105,16 @@ section Monad
 variable {M : Type u → Type u} [Monad M]
 
 /-- Join: flatten the doubled effect a combinator returns. -/
-def joinMode (star : σ → τ → M (M ω)) (e₁ : σ) (e₂ : τ) : M ω := star e₁ e₂ >>= id
+def join (star : σ → τ → M (M ω)) (e₁ : σ) (e₂ : τ) : M ω := joinM (star e₁ e₂)
 
 variable [LawfulMonad M]
 
 /-- Join over Map Left of backward application is bind. -/
-theorem joinMode_mapL_ba (m : M α) (k : α → M β) : joinMode (mapL ba) m k = m >>= k :=
+theorem join_mapL_ba (m : M α) (k : α → M β) : join (mapL ba) m k = m >>= k :=
   bind_map_left _ _ _
 
 /-- Join over Map Right of forward application is bind with its arguments flipped. -/
-theorem joinMode_mapR_fa (k : α → M β) (m : M α) : joinMode (mapR fa) k m = m >>= k :=
+theorem join_mapR_fa (k : α → M β) (m : M α) : join (mapR fa) k m = m >>= k :=
   bind_map_left _ _ _
 
 end Monad
@@ -163,12 +163,12 @@ variable {Ω Γ : Type u → Type u} [Functor Ω] [LawfulFunctor Ω] [Functor Γ
 
 /-- Co-unit: map the combinator over both daughters and apply the co-unit to the result. It
 takes the left adjoint from the left daughter and the right adjoint from the right one. -/
-def counitMode (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) (star : σ → τ → ω)
+def counit (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) (star : σ → τ → ω)
     (e₁ : Ω σ) (e₂ : Γ τ) : ω :=
   adj.counit.app ω ((fun l ↦ (fun r ↦ star l r) <$> e₂) <$> e₁ : Ω (Γ ω))
 
-theorem counitMode_outputInput (star : σ → τ → ω) (p : Output ι σ) (r : ReaderM ι τ) :
-    counitMode (outputInput ι) star p r = star p.1 (r p.2) := rfl
+theorem counit_outputInput (star : σ → τ → ω) (p : Output ι σ) (r : ReaderM ι τ) :
+    counit (outputInput ι) star p r = star p.1 (r p.2) := rfl
 
 /-- Eject: for a right adjoint `Γ` on types, functions into `Γ β` are `Γ` of functions. -/
 def eject (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) : (α → Γ β) ≃ Γ (α → β) where
@@ -206,17 +206,17 @@ def ejectR (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) {τ' υ : Type u}
     (star : σ → Γ (τ → τ') → υ) (e₁ : σ) (e₂ : τ → Γ τ') : υ :=
   star e₁ (eject adj e₂)
 
-theorem counitMode_ba_eject (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) (a : Ω α)
-    (k : α → Γ β) : counitMode adj ba a (eject adj k) = adj.counit.app β (k <$> a : Ω (Γ β)) := by
+theorem counit_ba_eject (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) (a : Ω α)
+    (k : α → Γ β) : counit adj ba a (eject adj k) = adj.counit.app β (k <$> a : Ω (Γ β)) := by
   have h : (fun l ↦ (fun r ↦ ba l r) <$> eject adj k) = k := (eject adj).left_inv k
-  simp only [counitMode, h]
+  simp only [counit, h]
 
 /-- Every adjunction gives rise to a monad through the grammar: Map Left over Eject Right over
 the Co-unit of backward application is the bind of the monad `Γ Ω` the adjunction induces. -/
-theorem mapL_ejectR_counitMode (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) (m : Γ (Ω α))
+theorem mapL_ejectR_counit (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) (m : Γ (Ω α))
     (k : α → Γ (Ω β)) :
-    mapL (ejectR adj (counitMode adj ba)) m k = adj.toMonad.μ.app β (adj.toMonad.map (↾k) m) := by
-  simp only [mapL, ejectR, counitMode_ba_eject]
+    mapL (ejectR adj (counit adj ba)) m k = adj.toMonad.μ.app β (adj.toMonad.map (↾k) m) := by
+  simp only [mapL, ejectR, counit_ba_eject]
   change _ = (fun x : Ω (Γ (Ω β)) ↦ adj.counit.app (Ω β) x) <$>
     ((fun a : Ω α ↦ (k <$> a : Ω (Γ (Ω β)))) <$> m)
   rw [← comp_map]
@@ -234,7 +234,7 @@ end MetaCombinator
 
 namespace Mode
 
-open ManySorted MetaCombinator
+open ManySorted
 
 variable {B : Type} {D : B → Type} {G : Language (Ty B)} [M : G.Structure (Ty.Dom D)]
   {f : Eff B} {i l l' r r' u : Ty B}
@@ -249,7 +249,7 @@ theorem eval_mapL (m : Mode G.Binary l r u) :
 
 theorem eval_ap (h : f.IsApplicative) (m : Mode G.Binary l r u) :
     letI := Eff.monad (D := D) f h
-    (Mode.ap h m).eval D = structuredApp (m.eval D) := rfl
+    (Mode.ap h m).eval D = MetaCombinator.ap (m.eval D) := rfl
 
 theorem eval_unitR (h : f.IsApplicative) (m : Mode G.Binary (l ⇒ l') r u) :
     letI := Eff.monad (D := D) f h
@@ -263,7 +263,7 @@ theorem eval_unitL (h : f.IsApplicative) (m : Mode G.Binary l (r ⇒ r') u) :
 after its map at the identity. -/
 theorem eval_join (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f (.comp f u))) :
     letI := Eff.monad (D := D) f h
-    (Mode.join h m).eval D = joinMode (m.eval D) :=
+    (Mode.join h m).eval D = MetaCombinator.join (m.eval D) :=
   funext₂ fun a b ↦ congrArg (Eff.join f h) (Eff.map_id f (m.eval D a b)).symm
 
 /-- Join over Map Left is the bind of the effect's monad. -/
@@ -279,15 +279,16 @@ theorem eval_join_mapR (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f u))
     (Mode.join h (.mapR m)).eval D a b = b >>= fun y ↦ m.eval D a y := rfl
 
 theorem eval_counit (m : Mode G.Binary l r u) :
-    (Mode.counit (i := i) m).eval D = counitMode (outputInput (i.Dom D)) (m.eval D) := rfl
+    (Mode.counit (i := i) m).eval D =
+      MetaCombinator.counit (MetaCombinator.outputInput (i.Dom D)) (m.eval D) := rfl
 
 theorem eval_ejectR (m : Mode G.Binary l (.comp (.R i) (r ⇒ r')) u) :
     (Mode.ejectR m).eval D =
-      MetaCombinator.ejectR (outputInput (i.Dom D)) (m.eval D) := rfl
+      MetaCombinator.ejectR (MetaCombinator.outputInput (i.Dom D)) (m.eval D) := rfl
 
 theorem eval_ejectL (m : Mode G.Binary (.comp (.R i) (l ⇒ l')) r u) :
     (Mode.ejectL m).eval D =
-      MetaCombinator.ejectL (outputInput (i.Dom D)) (m.eval D) := rfl
+      MetaCombinator.ejectL (MetaCombinator.outputInput (i.Dom D)) (m.eval D) := rfl
 
 end Mode
 

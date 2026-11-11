@@ -138,7 +138,7 @@ def map : (f : Eff B) → (α → β) → Obj D f α → Obj D f β
 def pure : (f : Eff B) → f.IsApplicative → α → Obj D f α
   | .S, _, a => {a}
   | .R _, _, a => fun _ ↦ a
-  | .W _, h, a => (a, cast (by rw [h]) True)
+  | .W _, rfl, a => (a, True)
   | .C _, _, a => fun c ↦ c a
   | .M, _, a => Part.some a
   | .F, _, a => .unfeatured a
@@ -149,7 +149,7 @@ def seq : (f : Eff B) → f.IsApplicative → Obj D f (α → β) → Obj D f α
     Obj D f β
   | .S, _, g, x => Set.seq g x
   | .R _, _, g, x => fun i ↦ g i (x i)
-  | .W o, h, g, x => (g.1 x.1, by subst h; exact g.2 ∧ x.2)
+  | .W _, rfl, g, x => (g.1 x.1, g.2 ∧ x.2)
   | .C _, _, g, x => fun c ↦ g fun k ↦ x fun a ↦ c (k a)
   | .M, _, g, x => g.bind fun k ↦ x.map k
   | .F, _, g, x => Seq.seq (f := WithAlternatives) g fun _ ↦ x
@@ -158,7 +158,7 @@ def seq : (f : Eff B) → f.IsApplicative → Obj D f (α → β) → Obj D f α
 def join : (f : Eff B) → f.IsApplicative → Obj D f (Obj D f α) → Obj D f α
   | .S, _, x => ⋃₀ x
   | .R _, _, x => fun i ↦ x i i
-  | .W o, h, x => (x.1.1, by subst h; exact x.2 ∧ x.1.2)
+  | .W _, rfl, x => (x.1.1, x.2 ∧ x.1.2)
   | .C _, _, x => fun c ↦ x fun m ↦ m c
   | .M, _, x => x.bind id
   | .F, _, x => Bind.bind (m := WithAlternatives) x id

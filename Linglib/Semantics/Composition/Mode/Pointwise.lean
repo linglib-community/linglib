@@ -67,21 +67,21 @@ variable {Rule : Ty B → Ty B → Ty B → Type} {P : Eff B → Prop} {f : Eff 
 /-- In a grammar pointwise at `f`, with no basic rule for two daughters carrying `f`, the two
 combine by Structured App alone, of a mode of the grammar for the types of their results. -/
 theorem Within.exists_eq_ap (hf : P f)
-    (hR : ∀ {u : Ty B}, Rule (.comp f l) (.comp f r) u → False) :
+    [hR : ∀ u : Ty B, IsEmpty (Rule (.comp f l) (.comp f r) u)] :
     ∀ {u : Ty B} (m : Mode Rule (.comp f l) (.comp f r) u), m.Within (MetaMode.pointwise P) →
       ∃ (u' : Ty B) (ha : f.IsApplicative) (m' : Mode Rule l r u'),
         m'.Within (MetaMode.pointwise P) ∧
           (⟨u, m⟩ : Sigma (Mode Rule (.comp f l) (.comp f r))) = ⟨.comp f u', .ap ha m'⟩
-  | _, .basic b, _ => (hR b).elim
+  | _, .basic b, _ => isEmptyElim b
   | _, .mapR _, h => absurd (h.1 hf) (by decide)
   | _, .mapL _, h => absurd (h.1 hf) (by decide)
   | _, .ap ha m, h => ⟨_, ha, m, h.2, rfl⟩
   | _, .join _ m, h => by
-    obtain ⟨u', _, m', _, he⟩ := Within.exists_eq_ap hf hR m h.2
+    obtain ⟨u', _, m', _, he⟩ := Within.exists_eq_ap hf m h.2
     obtain ⟨rfl, -⟩ := Ty.comp.inj (congrArg Sigma.fst he)
     exact absurd (h.1 hf) (by decide)
   | _, .lower m, h => by
-    obtain ⟨u', _, m', _, he⟩ := Within.exists_eq_ap hf hR m h.2
+    obtain ⟨u', _, m', _, he⟩ := Within.exists_eq_ap hf m h.2
     obtain ⟨rfl, -⟩ := Ty.comp.inj (congrArg Sigma.fst he)
     exact absurd (h.1 hf) (by decide)
 
@@ -102,7 +102,7 @@ theorem _root_.Interpreter.Ty.combineWithin_pointwise [DecidableEq B] [Decidable
       hap, ha, ↓reduceIte, ↓reduceDIte]
   all_goals
     rw [List.flatMap_map, List.map_eq_flatMap]
-    exact List.flatMap_congr fun p hp ↦ Mode.filter_within_closure
+    exact List.flatMap_congr fun p hp ↦ Mode.filter_within_closure_eq_singleton
       ⟨hap, Ty.within_of_mem_combineWithin hp⟩ (hk (by decide)) (hk (by decide))
 
 /-- In a grammar pointwise at `f`, with no basic rule for two daughters carrying `f`, a mode is
@@ -148,12 +148,12 @@ results. -/
 theorem binary_effectDrivenWithin_pointwise [DecidableEq B] {P : Eff B → Prop} [DecidablePred P]
     {G : Language (Ty B)} [G.LocallyFinite] {N : Type} {f : Eff B} (hf : P f)
     (ha : f.IsApplicative) {l r : Ty B}
-    (hG : ∀ {u : Ty B}, G.Binary (.comp f l) (.comp f r) u → False) :
+    [∀ u : Ty B, IsEmpty (G.Binary (.comp f l) (.comp f r) u)] :
     (effectDrivenWithin (MetaMode.pointwise P) G : Interpreter (effectGrammar G) N).binary
         (.comp f l) (.comp f r) =
       ((effectDrivenWithin (MetaMode.pointwise P) G : Interpreter (effectGrammar G) N).binary
         l r).map fun p ↦ ⟨.comp f p.1, .ap ha p.2⟩ :=
-  Ty.combineWithin_pointwise hf ha (List.eq_nil_iff_forall_not_mem.2 fun p _ ↦ hG p.2)
+  Ty.combineWithin_pointwise hf ha (List.eq_nil_iff_forall_not_mem.2 fun p _ ↦ isEmptyElim p.2)
 
 /-! ### The pointwise grammar as a grammar on computations -/
 
@@ -198,9 +198,9 @@ no type shifts and no basic rule for two daughters carrying `f`, and a lexicon w
 carries `f`. The values of a tree are then its values over the results of the items in the
 structure on computations, where every node means Structured App of the mode that combines the
 results: the effects of the words are merged into one layer at each node. -/
-theorem values_effectDrivenWithin_pointwise [∀ a b : Ty B, IsEmpty (G.Unary a b)] (hf : P f)
+theorem values_effectDrivenWithin_pointwise [∀ a b : Ty B, IsEmpty (G.Unary a b)]
+    [∀ l r u : Ty B, IsEmpty (G.Binary (.comp f l) (.comp f r) u)] (hf : P f)
     (ha : f.IsApplicative)
-    (hG : ∀ {l r u : Ty B}, G.Binary (.comp f l) (.comp f r) u → False)
     {ρ : ∀ {a : Ty B}, W a → (Ty.comp f a).Dom D} {ρ' : ∀ {a : Ty B}, W' a → a.Dom D}
     {lex : Lx ⊕ ℕ → List (Sigma W)} {lex' : Lx ⊕ ℕ → List (Sigma W')}
     (hlex : ∀ x, (lex' x).map (fun p ↦ (⟨p.1, ρ' p.2⟩ : Sigma (Ty.Dom D))) =
@@ -232,7 +232,7 @@ theorem values_effectDrivenWithin_pointwise [∀ a b : Ty B, IsEmpty (G.Unary a 
   | .phrase _ _, [_, _], [Y₁, Y₂], .cons rfl (.cons rfl .nil) =>
     simp only [nodeValues, binaryValues, List.flatMap_map, List.map_flatMap]
     refine List.flatMap_congr fun ⟨a, x⟩ _ ↦ List.flatMap_congr fun ⟨b, y⟩ _ ↦ ?_
-    rw [binary_effectDrivenWithin_pointwise hf ha hG, List.map_map, List.map_map]
+    rw [binary_effectDrivenWithin_pointwise hf ha, List.map_map, List.map_map]
     rfl
   | .terminal _ _, _ :: _, _ :: _, _ | .trace _ _, _ :: _, _ :: _, _ | .bind _ _, [], [], _
   | .bind _ _, _ :: _ :: _, _ :: _ :: _, _ | .phrase _ _, [], [], _

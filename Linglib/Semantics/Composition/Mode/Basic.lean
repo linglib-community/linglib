@@ -111,7 +111,7 @@ def Within (inv : MetaMode → Eff B → Prop) : {l r u : Ty B} → Mode Rule l 
   | _, _, _, .join (f := f) _ m => inv .join f ∧ m.Within inv
   | _, _, _, .lower (u := u) m => inv .lower (.C u) ∧ m.Within inv
 
-instance decidableWithin (inv : MetaMode → Eff B → Prop) [∀ k f, Decidable (inv k f)] :
+instance decidableWithin (inv : MetaMode → Eff B → Prop) [DecidableRel inv] :
     {l r u : Ty B} → (m : Mode Rule l r u) → Decidable (m.Within inv)
   | _, _, _, .basic _ => isTrue trivial
   | _, _, _, .mapR m | _, _, _, .mapL m | _, _, _, .ap _ m | _, _, _, .unitR _ m
@@ -181,11 +181,11 @@ variable {G : Language (Ty B)} {f : Eff B} {i l l' r r' u : Ty B}
 /-! Each meta-mode respects sameness of meaning. -/
 
 protected theorem mapR {m m' : Mode G.Binary l r u} (h : m ≈ m') :
-    (.mapR m : Mode G.Binary l (.comp f r) (.comp f u)) ≈ .mapR m' :=
+    Mode.mapR (f := f) m ≈ .mapR m' :=
   fun D _ ↦ funext₂ fun a b ↦ by simp only [eval, h D]
 
 protected theorem mapL {m m' : Mode G.Binary l r u} (h : m ≈ m') :
-    (.mapL m : Mode G.Binary (.comp f l) r (.comp f u)) ≈ .mapL m' :=
+    Mode.mapL (f := f) m ≈ .mapL m' :=
   fun D _ ↦ funext₂ fun a b ↦ by simp only [eval, h D]
 
 protected theorem ap (hf : f.IsApplicative) {m m' : Mode G.Binary l r u} (h : m ≈ m') :
@@ -201,7 +201,7 @@ protected theorem unitL (hf : f.IsApplicative) {m m' : Mode G.Binary l (r ⇒ r'
   fun D _ ↦ funext₂ fun a b ↦ by simp only [eval, h D]
 
 protected theorem counit {m m' : Mode G.Binary l r u} (h : m ≈ m') :
-    (.counit m : Mode G.Binary (.comp (.W i) l) (.comp (.R i) r) u) ≈ .counit m' :=
+    Mode.counit (i := i) m ≈ .counit m' :=
   fun D _ ↦ funext₂ fun a b ↦ by simp only [eval, h D]
 
 protected theorem ejectR {m m' : Mode G.Binary l (.comp (.R i) (r ⇒ r')) u} (h : m ≈ m') :

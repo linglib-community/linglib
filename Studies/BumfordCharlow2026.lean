@@ -126,7 +126,7 @@ def pronoun : ReaderM ι ι := fun i ↦ i
 /-- The co-unit of `W ⊣ R` binds a pronoun to a preceding antecedent (5.5), and the same
 daughters combined by maps alone keep both effects (5.2). -/
 example {E : Type} (moon spot : E → E) (obscure : E → E → Prop) (j : E) :
-    counitMode (outputInput E) ba (mapL ba (store j) moon)
+    counit (outputInput E) ba (mapL ba (store j) moon)
       (mapR fa obscure (mapL ba pronoun spot)) = obscure (spot j) (moon j) := rfl
 
 example {E : Type} (moon spot : E → E) (obscure : E → E → Prop) (j : E) :
@@ -137,26 +137,26 @@ example {E : Type} (moon spot : E → E) (obscure : E → E → Prop) (j : E) :
 
 /-- The state monad is the monad of `W ⊣ R`, and its bind is Map Left over Eject Right over the
 Co-unit of backward application (5.37), (5.38). -/
-theorem mapL_ejectR_counitMode_outputInput (m : StateM ι α) (k : α → StateM ι β) :
-    mapL (F := ReaderM ι) (ejectR (outputInput ι) (counitMode (outputInput ι) ba)) m k =
+theorem mapL_ejectR_counit_outputInput (m : StateM ι α) (k : α → StateM ι β) :
+    mapL (F := ReaderM ι) (ejectR (outputInput ι) (counit (outputInput ι) ba)) m k =
       m >>= k := rfl
 
 /-- With a monad in between, the same mode with a Join and a second Map Left around the
 ejection is the bind of the state transformer (5.39). -/
-theorem mapL_joinMode_mapL_ejectR_counitMode {M : Type u → Type u} [Monad M] [LawfulMonad M]
+theorem mapL_join_mapL_ejectR_counit {M : Type u → Type u} [Monad M] [LawfulMonad M]
     (m : StateT ι M α) (k : α → StateT ι M β) :
     mapL (F := ReaderM ι)
-      (joinMode (mapL (ejectR (outputInput ι) (counitMode (outputInput ι) ba)))) m k =
+      (join (mapL (ejectR (outputInput ι) (counit (outputInput ι) ba)))) m k =
       m >>= k := by
   funext s
   exact bind_map_left
-    (fun p : Output ι α => ejectR (outputInput ι) (counitMode (outputInput ι) ba) p k) (m s) id
+    (fun p : Output ι α => ejectR (outputInput ι) (counit (outputInput ι) ba) p k) (m s) id
 
 /-- Eject Left over Structured App over the Join of Map Right of forward application is the
 bind of the reader transformer (5.28), (5.29). -/
-theorem ejectL_structuredApp_joinMode_mapR {M : Type u → Type u} [Monad M] [LawfulMonad M]
+theorem ejectL_ap_join_mapR {M : Type u → Type u} [Monad M] [LawfulMonad M]
     (m : ReaderT ι M α) (k : α → ReaderT ι M β) :
-    ejectL (outputInput ι) (structuredApp (F := ReaderM ι) (joinMode (mapR fa))) k m =
+    ejectL (outputInput ι) (ap (F := ReaderM ι) (join (mapR fa))) k m =
       m >>= k := by
   funext s
   exact bind_map_left (fun b => k b s) (m s) id
@@ -340,7 +340,7 @@ def combine (l r : Ty Unit) : List (Shape Name × Ty Unit) :=
 
 /-- The interpreter's output in a grammar with the inventory `inv` of meta-modes
 (section 3.4). -/
-def combineWithin (inv : MetaMode → Eff Unit → Prop) [∀ k f, Decidable (inv k f)]
+def combineWithin (inv : MetaMode → Eff Unit → Prop) [DecidableRel inv]
     (l r : Ty Unit) : List (Shape Name × Ty Unit) :=
   ((modes l r).filter fun p ↦ p.2.Within inv).map fun p ↦ (shape Name.of p.2, p.1)
 
@@ -579,7 +579,7 @@ theorem values_whichDogChasedWhichCat :
         (fun {_} ↦ SetItem.val dog cat chase) sets =
       [⟨.comp .S .t, {p | ∃ c, cat c ∧ ∃ d, dog d ∧ p = chase c d}⟩] := by
   have h := Tree.values_effectDrivenWithin_pointwise (P := (· = .S)) (f := .S)
-    (G := application (B := Unit)) rfl trivial (fun b ↦ by cases b)
+    (G := application (B := Unit)) rfl trivial
     (ρ := fun {_} ↦ Item.val dog cat chase) (ρ' := fun {_} ↦ SetItem.val dog cat chase)
     (lex := results) (lex' := sets) (fun x ↦ by rcases x with (_ | _ | _) | _ <;> rfl)
     whichDogChasedWhichCat

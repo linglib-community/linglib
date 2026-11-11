@@ -52,7 +52,7 @@ def joinMapL (h : f.IsApplicative) :
 theorem joinMapL_equiv (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f u)) :
     joinMapL h m ≈ Mode.join h (.mapL m) := by
   cases m with
-  | mapR m => exact (join_mapL_mapR h m).symm
+  | mapR m => exact (join_mapL_mapR_equiv_ap h m).symm
   | _ => exact .refl _
 
 variable [DecidableEq B]
@@ -93,7 +93,7 @@ theorem joinMapR_equiv (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f u))
   | mapL m =>
     show (if f.IsCommutative then Mode.ap h m else .join h (.mapR (.mapL m))) ≈ _
     split_ifs with hc
-    · exact (join_mapR_mapL hc m).symm
+    · exact (join_mapR_mapL_equiv_ap hc m).symm
     · exact .refl _
   | _ => exact .refl _
 

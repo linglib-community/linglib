@@ -31,9 +31,9 @@ types](##Interpreter.Ty.combineWith_eq_combineStep).
 The two Eject rules do not make their types smaller. An Eject leaves a computation where there
 was an arrow, so neither applies twice to one daughter, and the recursion is on a bound, three
 steps for each unit of size, [which the result does not depend
-on](##Interpreter.Ty.combineAux_eq). `Ty.combineWith` takes the step that closes a result as an
-argument: Bumford and Charlow's own `combine` applies Join and Lower once where `Mode.closure`
-stacks them, and the study of their book runs it with that step.
+on](##Interpreter.Ty.combineAux_eq_of_depthBound_lt). `Ty.combineWith` takes the step that
+closes a result as an argument: Bumford and Charlow's own `combine` applies Join and Lower once
+where `Mode.closure` stacks them, and the study of their book runs it with that step.
 
 ## TODO
 
@@ -56,12 +56,30 @@ namespace Interpreter
 
 variable {B : Type}
 
+/-- One for a type an Eject applies to, a function into a reader, and zero for any other. -/
+def Ty.ejectable : Ty B → ℕ
+  | .fn _ (.comp (.R _) _) => 1
+  | _ => 0
+
+theorem Ty.ejectable_le_one (a : Ty B) : a.ejectable ≤ 1 := by
+  unfold Ty.ejectable
+  split <;> simp
+
+@[simp] theorem Ty.ejectable_comp (f : Eff B) (a : Ty B) : (Ty.comp f a).ejectable = 0 := rfl
+
+@[simp] theorem Ty.ejectable_fn_reader (a i b : Ty B) :
+    (a ⇒ .comp (.R i) b).ejectable = 1 := rfl
+
+/-- A bound on the depth of the modes for two types: three steps for each unit of size, and one
+for each daughter an Eject applies to. -/
+def Ty.depthBound (l r : Ty B) : ℕ := 3 * (l.size + r.size) + l.ejectable + r.ejectable
+
 section Combine
 
 variable [DecidableEq B] {Rule : Ty B → Ty B → Ty B → Type}
 
 /-- The Join of a mode whose result has two layers of one monadic effect. -/
-def Mode.joins {l r : Ty B} : (Sigma (Mode Rule l r)) → List (Sigma (Mode Rule l r))
+def Mode.joins {l r : Ty B} : Sigma (Mode Rule l r) → List (Sigma (Mode Rule l r))
   | ⟨.comp f (.comp g a), m⟩ =>
     if h : g = f then
       if ha : f.IsApplicative then [⟨.comp f a, .join ha (h ▸ m)⟩] else []
@@ -69,13 +87,13 @@ def Mode.joins {l r : Ty B} : (Sigma (Mode Rule l r)) → List (Sigma (Mode Rule
   | _ => []
 
 /-- The Lower of a mode whose result is a continuation at its own result type. -/
-def Mode.lowers {l r : Ty B} : (Sigma (Mode Rule l r)) → List (Sigma (Mode Rule l r))
+def Mode.lowers {l r : Ty B} : Sigma (Mode Rule l r) → List (Sigma (Mode Rule l r))
   | ⟨.comp (.C o) a, m⟩ => if h : o = a then [⟨a, .lower (h ▸ m)⟩] else []
   | _ => []
 
 /-- A mode with the Joins and Lowers its result allows, and those theirs allow, to a bound on how
 many are stacked. -/
-def Mode.closureAux {l r : Ty B} : ℕ → (Sigma (Mode Rule l r)) → List (Sigma (Mode Rule l r))
+def Mode.closureAux {l r : Ty B} : ℕ → Sigma (Mode Rule l r) → List (Sigma (Mode Rule l r))
   | 0, p => [p]
   | k + 1, p => p :: (Mode.joins p ++ Mode.lowers p).flatMap (Mode.closureAux k)
 
@@ -84,9 +102,9 @@ the result smaller, so its size bounds how many are stacked. -/
 def Mode.closure {l r : Ty B} (p : Sigma (Mode Rule l r)) : List (Sigma (Mode Rule l r)) :=
   Mode.closureAux p.1.size p
 
-variable (inv : MetaMode → Eff B → Prop) [∀ k f, Decidable (inv k f)]
+variable (inv : MetaMode → Eff B → Prop) [DecidableRel inv]
   (find : (l r : Ty B) → List (Sigma (Rule l r)))
-  (close : {l r : Ty B} → (Sigma (Mode Rule l r)) → List (Sigma (Mode Rule l r)))
+  (close : {l r : Ty B} → Sigma (Mode Rule l r) → List (Sigma (Mode Rule l r)))
 
 /-- One step of the search for the modes for two types, given the modes for the types the step
 peels them down to: a basic rule, or a meta-mode of the inventory over a mode for the types under
@@ -158,7 +176,7 @@ def Ty.combineAux : ℕ → (l r : Ty B) → List (Sigma (Mode Rule l r))
 peeling effects off the two types down to a basic rule by the meta-modes of the inventory, with
 the results `close` gives each. -/
 def Ty.combineWith (l r : Ty B) : List (Sigma (Mode Rule l r)) :=
-  Ty.combineAux inv find close (3 * (l.size + r.size) + 3) l r
+  Ty.combineAux inv find close (Ty.depthBound l r + 1) l r
 
 /-- The modes that combine a left daughter of type `l` and a right daughter of type `r`: each way
 of peeling effects off the two types down to a basic rule, with every Join and Lower. -/
@@ -239,34 +257,6 @@ def Mode.depth {l r u : Ty B} : Mode Rule l r u → ℕ
   | .ejectL m => m.depth + 1
   | .join _ m | .lower m => m.depth
 
-/-- One for a type an Eject applies to, a function into a reader, and zero for any other. -/
-def Ty.ejectable : Ty B → ℕ
-  | .fn _ (.comp (.R _) _) => 1
-  | _ => 0
-
-omit [DecidableEq B] in
-theorem Ty.ejectable_le_one (a : Ty B) : a.ejectable ≤ 1 := by
-  unfold Ty.ejectable
-  split <;> simp
-
-omit [DecidableEq B] in
-@[simp] theorem Ty.ejectable_comp (f : Eff B) (a : Ty B) : (Ty.comp f a).ejectable = 0 := rfl
-
-omit [DecidableEq B] in
-@[simp] theorem Ty.ejectable_fn_reader (a i b : Ty B) :
-    (a ⇒ .comp (.R i) b).ejectable = 1 := rfl
-
-/-- A bound on the depth of the modes for two types: three steps for each unit of size, and one
-for each daughter an Eject applies to. -/
-def Ty.depthBound (l r : Ty B) : ℕ := 3 * (l.size + r.size) + l.ejectable + r.ejectable
-
-omit [DecidableEq B] in
-theorem Ty.depthBound_lt (l r : Ty B) : Ty.depthBound l r < 3 * (l.size + r.size) + 3 := by
-  have := l.ejectable_le_one
-  have := r.ejectable_le_one
-  unfold Ty.depthBound
-  omega
-
 omit [DecidableEq B] in
 /-- Each meta-mode but an Eject makes a daughter smaller, and an Eject leaves one fewer daughter
 to eject from, so the types of the daughters bound the depth of a mode. -/
@@ -309,9 +299,9 @@ theorem Mode.depth_le {l r u : Ty B} (m : Mode Rule l r u) : m.depth ≤ Ty.dept
   | join h m ih => exact ih
   | lower m ih => exact ih
 
-variable {inv : MetaMode → Eff B → Prop} [∀ k f, Decidable (inv k f)]
+variable {inv : MetaMode → Eff B → Prop} [DecidableRel inv]
   {find : (l r : Ty B) → List (Sigma (Rule l r))}
-  {close : {l r : Ty B} → (Sigma (Mode Rule l r)) → List (Sigma (Mode Rule l r))}
+  {close : {l r : Ty B} → Sigma (Mode Rule l r) → List (Sigma (Mode Rule l r))}
 
 /-- A mode that keeps to the inventory is found once the bound exceeds its depth, where the
 closing step keeps such a mode and the Joins and Lowers of its results that keep to it. -/
@@ -418,7 +408,7 @@ theorem Ty.mem_combineAux
     exact List.mem_flatMap.2 ⟨q, hq,
       hstep hm' (List.mem_append_right _ (Mode.mem_lowers m)) hm⟩
 
-omit [∀ k f, Decidable (inv k f)] in
+omit [DecidableRel inv] in
 /-- A mode with a Join of it that keeps to an inventory keeps to it, and the inventory has Join
 at the effect of its result. -/
 theorem Mode.within_of_mem_joins {p q : Sigma (Mode Rule l r)} (h : q ∈ Mode.joins p)
@@ -430,7 +420,7 @@ theorem Mode.within_of_mem_joins {p q : Sigma (Mode Rule l r)} (h : q ∈ Mode.j
   obtain ⟨rfl, -, rfl⟩ := h
   exact fun hq ↦ ⟨hq.2, _, _, rfl, hq.1⟩
 
-omit [∀ k f, Decidable (inv k f)] in
+omit [DecidableRel inv] in
 /-- A mode with a Lower of it that keeps to an inventory keeps to it, and the inventory has Lower
 at the effect of its result. -/
 theorem Mode.within_of_mem_lowers {p q : Sigma (Mode Rule l r)} (h : q ∈ Mode.lowers p)
@@ -442,7 +432,7 @@ theorem Mode.within_of_mem_lowers {p q : Sigma (Mode Rule l r)} (h : q ∈ Mode.
   obtain ⟨rfl, rfl⟩ := h
   exact fun hq ↦ ⟨hq.2, _, _, rfl, hq.1⟩
 
-omit [∀ k f, Decidable (inv k f)] in
+omit [DecidableRel inv] in
 /-- A mode with a stack of Joins and Lowers on it that keeps to an inventory keeps to it. -/
 theorem Mode.within_of_mem_closureAux : ∀ (k : ℕ) {p q : Sigma (Mode Rule l r)},
     q ∈ Mode.closureAux k p → q.2.Within inv → p.2.Within inv
@@ -458,8 +448,8 @@ theorem Mode.within_of_mem_closureAux : ∀ (k : ℕ) {p q : Sigma (Mode Rule l 
 
 /-- Closing a mode that keeps to an inventory with neither Join nor Lower at the effect of its
 result adds nothing to it. -/
-theorem Mode.filter_within_closure {f : Eff B} {u : Ty B} {m : Mode Rule l r (.comp f u)}
-    (hm : m.Within inv) (hj : ¬ inv .join f) (hl : ¬ inv .lower f) :
+theorem Mode.filter_within_closure_eq_singleton {f : Eff B} {u : Ty B}
+    {m : Mode Rule l r (.comp f u)} (hm : m.Within inv) (hj : ¬ inv .join f) (hl : ¬ inv .lower f) :
     (Mode.closure (⟨_, m⟩ : Sigma (Mode Rule l r))).filter (fun q ↦ q.2.Within inv) =
       [⟨_, m⟩] := by
   rw [Mode.closure, show (Ty.comp f u).size = f.size + u.size + 1 from rfl, Mode.closureAux,
@@ -540,22 +530,20 @@ theorem Ty.combineStep_congr {rec rec' : (l r : Ty B) → List (Sigma (Mode Rule
 
 /-- Past the depth the types of two daughters allow, the search finds the same modes in the same
 order whatever its bound. -/
-theorem Ty.combineAux_eq : ∀ {k k' : ℕ} {l r : Ty B}, Ty.depthBound l r < k →
+theorem Ty.combineAux_eq_of_depthBound_lt : ∀ {k k' : ℕ} {l r : Ty B}, Ty.depthBound l r < k →
     Ty.depthBound l r < k' →
       Ty.combineAux inv find close k l r = Ty.combineAux inv find close k' l r
   | 0, _, _, _, h, _ => absurd h (Nat.not_lt_zero _)
   | _ + 1, 0, _, _, _, h => absurd h (Nat.not_lt_zero _)
   | _ + 1, _ + 1, _, _, hk, hk' =>
-    Ty.combineStep_congr fun _ _ h ↦ Ty.combineAux_eq (by omega) (by omega)
+    Ty.combineStep_congr fun _ _ h ↦ Ty.combineAux_eq_of_depthBound_lt (by omega) (by omega)
 
 /-- **The search does not depend on its bound.** The modes for two types are a step of the
 search from the modes for the types the step peels them down to. -/
 theorem Ty.combineWith_eq_combineStep (l r : Ty B) :
     Ty.combineWith inv find close l r =
       Ty.combineStep inv find close (Ty.combineWith inv find close) l r :=
-  Ty.combineStep_congr fun l' r' h ↦ by
-    have := Ty.depthBound_lt l r
-    exact Ty.combineAux_eq (by omega) (Ty.depthBound_lt l' r')
+  Ty.combineStep_congr fun _ _ h ↦ Ty.combineAux_eq_of_depthBound_lt h (Nat.lt_succ_self _)
 
 /-- **The search is complete.** Every mode of the grammar that combines two daughters is among
 those `Ty.combine` lists for their types, given every basic rule is among those listed. -/
@@ -563,7 +551,7 @@ theorem Ty.mem_combine
     (hfind : ∀ {l r u : Ty B} (b : Rule l r u), (⟨u, b⟩ : Sigma (Rule l r)) ∈ find l r)
     {l r u : Ty B} (m : Mode Rule l r u) :
     (⟨u, m⟩ : Sigma (Mode Rule l r)) ∈ Ty.combine find l r := by
-  have hk : m.depth < 3 * (l.size + r.size) + 3 := m.depth_le.trans_lt (Ty.depthBound_lt l r)
+  have hk : m.depth < Ty.depthBound l r + 1 := Nat.lt_succ_of_le m.depth_le
   exact Ty.mem_combineAux (inv := fun _ _ ↦ True) (find := find) (close := Mode.closure)
     (fun b ↦ hfind b) (fun p _ ↦ Mode.mem_closure_self p)
     (fun hp hp' _ ↦ Mode.mem_closureAux_of_mem _ le_rfl hp hp') m
@@ -579,8 +567,7 @@ theorem Ty.mem_combineWithin
   constructor
   · exact Ty.within_of_mem_combineWithin
   · intro h
-    have hk : m.2.depth < 3 * (l.size + r.size) + 3 :=
-      m.2.depth_le.trans_lt (Ty.depthBound_lt l r)
+    have hk : m.2.depth < Ty.depthBound l r + 1 := Nat.lt_succ_of_le m.2.depth_le
     exact Ty.mem_combineAux (find := find) (fun b ↦ hfind b)
       (fun p hp ↦ List.mem_filter.2 ⟨Mode.mem_closure_self p, decide_eq_true hp⟩)
       (fun hp hp' hw ↦ List.mem_filter.2
@@ -607,14 +594,14 @@ theorem mem_binary_effectDriven [DecidableEq B] {G : Language (Ty B)} [G.Locally
 /-- The effect-driven interpreter of a grammar with an inventory of meta-modes: a node admits the
 modes for its daughters that keep to the inventory. -/
 def effectDrivenWithin [DecidableEq B] (inv : MetaMode → Eff B → Prop)
-    [∀ k f, Decidable (inv k f)] (G : Language (Ty B)) [G.LocallyFinite] {N : Type} :
+    [DecidableRel inv] (G : Language (Ty B)) [G.LocallyFinite] {N : Type} :
     Interpreter (effectGrammar G) N where
   unary _ := Language.LocallyFinite.unaryRules (L := G)
   binary := Ty.combineWithin inv (Language.LocallyFinite.binaryRules (L := G))
 
 /-- A node admits exactly the modes that keep to the inventory. -/
 theorem mem_binary_effectDrivenWithin [DecidableEq B] {G : Language (Ty B)} [G.LocallyFinite]
-    {N : Type} {inv : MetaMode → Eff B → Prop} [∀ k f, Decidable (inv k f)] {l r : Ty B}
+    {N : Type} {inv : MetaMode → Eff B → Prop} [DecidableRel inv] {l r : Ty B}
     {m : Sigma (Mode G.Binary l r)} :
     m ∈ (effectDrivenWithin inv G : Interpreter (effectGrammar G) N).binary l r ↔
       m.2.Within inv :=
