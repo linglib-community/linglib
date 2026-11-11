@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Algebra.BigOperators.Group.Multiset.Basic
 public import Linglib.Core.Algebra.BigOperators.Ring.Multiset
 public import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 public import Linglib.Core.Combinatorics.RootedTree.Cut
@@ -25,6 +26,9 @@ cuts. This file defines the shape once, as the algebra homomorphism
 
 ## Main results
 
+* `ConnesKreimer.lTensor_counit_comp_comulOfCuts`: the left counit law, at every cut enumeration.
+* `ConnesKreimer.rTensor_counit_comp_comulOfCuts`: the right counit law, when the empty cut is
+  the only cut with an empty crown.
 * `ConnesKreimer.comulTreeOfCuts_eq_sum`, `ConnesKreimer.comulForestOfCuts_eq_sum`: the coproduct as
   one sum over the cut convolutions `treeCuts` and `forestCuts`.
 
@@ -43,39 +47,31 @@ namespace ConnesKreimer
 open scoped TensorProduct
 
 variable {R : Type*} [CommSemiring R] {α : Type*}
+  (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
 
 /-- The generic admissible-cut coproduct on a tree, for a cut enumeration `cuts`. At the admissible
     cuts `admissibleCuts` it is the Connes–Kreimer coproduct. -/
-noncomputable def comulTreeOfCuts
-    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
-    (T : UnorderedTree α) :
+noncomputable def comulTreeOfCuts (T : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
   ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α))
   + ((cuts T).map (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum
 
 /-- Forest-level generic coproduct (multiplicative extension). -/
-noncomputable def comulForestOfCuts
-    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
-    (F : Forest (UnorderedTree α)) :
+noncomputable def comulForestOfCuts (F : Forest (UnorderedTree α)) :
     ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
   (F.map (comulTreeOfCuts (R := R) cuts)).prod
 
-@[simp] theorem comulForestOfCuts_zero
-    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)) :
+@[simp] theorem comulForestOfCuts_zero :
     comulForestOfCuts (R := R) cuts (0 : Forest (UnorderedTree α)) = 1 := by
   simp only [comulForestOfCuts, Multiset.map_zero, Multiset.prod_zero]
 
-@[simp] theorem comulForestOfCuts_add
-    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
-    (F G : Forest (UnorderedTree α)) :
+@[simp] theorem comulForestOfCuts_add (F G : Forest (UnorderedTree α)) :
     comulForestOfCuts (R := R) cuts (F + G) =
       comulForestOfCuts (R := R) cuts F * comulForestOfCuts (R := R) cuts G := by
   unfold comulForestOfCuts
   rw [Multiset.map_add, Multiset.prod_add]
 
-@[simp] theorem comulForestOfCuts_cons
-    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
-    (T : UnorderedTree α) (F : Forest (UnorderedTree α)) :
+@[simp] theorem comulForestOfCuts_cons (T : UnorderedTree α) (F : Forest (UnorderedTree α)) :
     comulForestOfCuts (R := R) cuts (T ::ₘ F) =
       comulTreeOfCuts (R := R) cuts T * comulForestOfCuts (R := R) cuts F := by
   unfold comulForestOfCuts
@@ -83,23 +79,39 @@ noncomputable def comulForestOfCuts
 
 /-- The **generic admissible-cut coproduct as an algebra hom**, parameterized by
     the cut enumeration `cuts`. -/
-noncomputable def comulOfCuts
-    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)) :
+noncomputable def comulOfCuts :
     ConnesKreimer R (UnorderedTree α) →ₐ[R]
       ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
   aeval (comulTreeOfCuts cuts)
 
-@[simp] theorem comulOfCuts_apply_of'
-    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
-    (F : Forest (UnorderedTree α)) :
+@[simp] theorem comulOfCuts_apply_of' (F : Forest (UnorderedTree α)) :
     comulOfCuts (R := R) cuts (of' F) = comulForestOfCuts cuts F :=
   aeval_of' _ F
 
-@[simp] theorem comulOfCuts_apply_ofTree
-    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
-    (T : UnorderedTree α) :
+@[simp] theorem comulOfCuts_apply_ofTree (T : UnorderedTree α) :
     comulOfCuts (R := R) cuts (ofTree T) = comulTreeOfCuts cuts T :=
   aeval_ofTree _ T
+
+/-! ### Counit laws
+
+A trunk is a single tree, which the counit sends to `0`, so the left counit law holds at every
+cut enumeration. The right counit law holds when the empty cut is the only cut with an empty
+crown. -/
+
+theorem lTensor_counit_comp_comulOfCuts :
+    (Algebra.TensorProduct.map (.id R _) counit).comp (comulOfCuts (R := R) cuts) =
+      (Algebra.TensorProduct.rid R R (ConnesKreimer R (UnorderedTree α))).symm :=
+  algHom_ext_ofTree fun T ↦ by
+    simp [comulTreeOfCuts, map_multiset_sum, Multiset.map_map]
+
+variable {cuts} in
+theorem rTensor_counit_comp_comulOfCuts
+    (h : ∀ T, (cuts T).filter (fun p ↦ p.1.card = 0) = {(0, T)}) :
+    (Algebra.TensorProduct.map counit (.id R _)).comp (comulOfCuts (R := R) cuts) =
+      (Algebra.TensorProduct.lid R (ConnesKreimer R (UnorderedTree α))).symm :=
+  algHom_ext_ofTree fun T ↦ by
+    simp [comulTreeOfCuts, map_multiset_sum, Multiset.map_map, TensorProduct.ite_tmul,
+      ← Multiset.sum_map_filter, h]
 
 /-! ### The generic coproduct as a sum over cut convolutions
 
@@ -117,9 +129,7 @@ theorem cutTensor_add (p q : Forest (UnorderedTree α) × Forest (UnorderedTree 
   simp only [cutTensor, Prod.fst_add, Prod.snd_add, of'_add, Algebra.TensorProduct.tmul_mul_tmul]
 
 /-- `comulTreeOfCuts` as a single multiset sum over `treeCuts`. -/
-theorem comulTreeOfCuts_eq_sum
-    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
-    (T : UnorderedTree α) :
+theorem comulTreeOfCuts_eq_sum (T : UnorderedTree α) :
     comulTreeOfCuts (R := R) cuts T =
       ((treeCuts cuts T).map (cutTensor (R := R))).sum := by
   unfold comulTreeOfCuts treeCuts
@@ -127,9 +137,7 @@ theorem comulTreeOfCuts_eq_sum
   congr 1
 
 /-- `comulForestOfCuts` as a single multiset sum over `forestCuts`. -/
-theorem comulForestOfCuts_eq_sum
-    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
-    (F : Forest (UnorderedTree α)) :
+theorem comulForestOfCuts_eq_sum (F : Forest (UnorderedTree α)) :
     comulForestOfCuts (R := R) cuts F =
       ((forestCuts cuts F).map (cutTensor (R := R))).sum := by
   induction F using Multiset.induction with
@@ -156,8 +164,6 @@ def WithCuts (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) 
     Type _ :=
   ConnesKreimer R (UnorderedTree α)
 
-variable (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α))
-
 noncomputable instance : CommSemiring (WithCuts R cuts) :=
   inferInstanceAs (CommSemiring (ConnesKreimer R (UnorderedTree α)))
 
@@ -165,9 +171,9 @@ noncomputable instance : Algebra R (WithCuts R cuts) :=
   inferInstanceAs (Algebra R (ConnesKreimer R (UnorderedTree α)))
 
 /-- A cut policy is admissible when the generic coproduct `comulOfCuts cuts` is
-coassociative and counital, uniformly in the coefficient ring. Gates the
-`Bialgebra` instance on `WithCuts` (the `Fact`-style mixin of the `WithLp`
-pattern). -/
+coassociative and right counital, uniformly in the coefficient ring. It is left counital at
+every policy (`lTensor_counit_comp_comulOfCuts`). Gates the `Bialgebra` instance on `WithCuts`
+(the `Fact`-style mixin of the `WithLp` pattern). -/
 class IsBialgebraCuts : Prop where
   coassoc : ∀ (R : Type*) [CommRing R],
     (Algebra.TensorProduct.assoc R R R
@@ -177,14 +183,10 @@ class IsBialgebraCuts : Prop where
         (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))).comp (comulOfCuts cuts)) =
     (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
       (comulOfCuts (R := R) cuts)).comp (comulOfCuts cuts)
-  counit_rTensor : ∀ (R : Type*) [CommSemiring R],
+  rTensor_counit_comp_comul : ∀ (R : Type*) [CommSemiring R],
     (Algebra.TensorProduct.map (counit (R := R))
         (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))).comp (comulOfCuts cuts) =
       (Algebra.TensorProduct.lid R (ConnesKreimer R (UnorderedTree α))).symm.toAlgHom
-  counit_lTensor : ∀ (R : Type*) [CommSemiring R],
-    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
-        (counit (R := R))).comp (comulOfCuts cuts) =
-      (Algebra.TensorProduct.rid R R (ConnesKreimer R (UnorderedTree α))).symm.toAlgHom
 
 /-- Any admissible cut policy makes `WithCuts R cuts` a bialgebra. -/
 noncomputable instance WithCuts.instBialgebra
@@ -192,7 +194,7 @@ noncomputable instance WithCuts.instBialgebra
     Bialgebra R (WithCuts R cuts) :=
   Bialgebra.ofAlgHom (A := WithCuts R cuts) (comulOfCuts cuts) counit
     (IsBialgebraCuts.coassoc (cuts := cuts) R)
-    (IsBialgebraCuts.counit_rTensor (cuts := cuts) R)
-    (IsBialgebraCuts.counit_lTensor (cuts := cuts) R)
+    (IsBialgebraCuts.rTensor_counit_comp_comul (cuts := cuts) R)
+    (lTensor_counit_comp_comulOfCuts cuts)
 
 end ConnesKreimer

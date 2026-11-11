@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.BigOperators.Group.Multiset.Basic
 public import Linglib.Syntax.Minimalist.Workspace.Coproduct.DoubleCut
 public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 public import Mathlib.RingTheory.Bialgebra.Basic
@@ -28,8 +27,8 @@ their Lemma 1.2.10: disjoint union and `Δ^c` make a graded bialgebra.
 ## Main results
 
 * `ConnesKreimer.traceComul_coassoc`: `Δ^c` is coassociative for a coherent encoder.
-* `ConnesKreimer.instIsBialgebraCutsTraceCuts`: the counit laws and coassociativity, which give
-  `WithCuts R (traceCuts τ)` its `Bialgebra` instance.
+* `ConnesKreimer.instIsBialgebraCutsTraceCuts`: coassociativity and the right counit law, which
+  give `WithCuts R (traceCuts τ)` its `Bialgebra` instance.
 
 ## Implementation notes
 
@@ -300,11 +299,12 @@ theorem traceComul_coassoc
 
 end CoassocCommRing
 
-/-! ### Counit laws and the bialgebra
+/-! ### The bialgebra
 
-The counit laws follow from the uniqueness of the empty cut (`traceCuts_filter_empty`). -/
+The right counit law follows from the uniqueness of the empty cut (`traceCuts_filter_empty`), and
+the left one holds at every cut enumeration. -/
 
-section BialgebraInst
+section Bialgebra
 variable {R' : Type*} [CommRing R'] {α' β' : Type*}
 
 /-- The AlgHom form of Δ^c coassociativity under trace coherence. -/
@@ -317,210 +317,8 @@ theorem traceComulAlgHom_coassoc_algHom
       ((Algebra.TensorProduct.map (traceComulAlgHom (R := R') τ) (AlgHom.id R' _)).comp
         (traceComulAlgHom (R := R') τ)) =
     (Algebra.TensorProduct.map (AlgHom.id R' _) (traceComulAlgHom (R := R') τ)).comp
-      (traceComulAlgHom (R := R') τ) := by
-  apply AlgHom.toLinearMap_injective
-  -- The .toLinearMap of both AlgHom expressions equals the corresponding
-  -- LinearMap composition. `traceComul_coassoc` gives the equality.
-  exact traceComul_coassoc τ hτ
-
-end BialgebraInst
-
-/-! ### Counit laws on trees and forests
-
-As for the Connes–Kreimer coproduct, the laws are proved on trees and extended to forests
-multiplicatively, over a commutative semiring. -/
-
-section CounitLaws
-variable {R' : Type*} [CommSemiring R'] {α' β' : Type*}
-
-private theorem counit_rTensor_comulTree (τ : UnorderedTree (α' ⊕ β') → β')
-    (T : UnorderedTree (α' ⊕ β')) :
-    (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R')
-        (AlgHom.id R' (ConnesKreimer R' (UnorderedTree (α' ⊕ β')))))
-      (comulTreeOfCuts (traceCuts τ) T) = (1 : R') ⊗ₜ ConnesKreimer.ofTree T := by
-  -- Expand comulTreeOfCuts (traceCuts τ) T.
-  unfold comulTreeOfCuts
-  rw [map_add]
-  -- First summand: (counit ⊗ id)(ofTree T ⊗ 1) = counit(ofTree T) ⊗ 1 = 0 ⊗ 1 = 0.
-  rw [show (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R')
-              (AlgHom.id R' (ConnesKreimer R' (UnorderedTree (α' ⊕ β')))))
-            (ConnesKreimer.ofTree T ⊗ₜ[R']
-              (1 : ConnesKreimer R' (UnorderedTree (α' ⊕ β')))) = 0 from by
-    rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, ConnesKreimer.counit_ofTree,
-        TensorProduct.zero_tmul]]
-  rw [zero_add]
-  -- Distribute (counit ⊗ id) through the multiset sum.
-  rw [map_multiset_sum
-        (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R')
-          (AlgHom.id R' (ConnesKreimer R' (UnorderedTree (α' ⊕ β')))))]
-  simp only [Multiset.map_map]
-  -- Each summand: (counit ⊗ id)(of' p.1 ⊗ ofTree p.2) =
-  --   (if p.1.card = 0 then 1 else 0) ⊗ ofTree p.2.
-  rw [show ((Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R')
-              (AlgHom.id R' (ConnesKreimer R' (UnorderedTree (α' ⊕ β'))))) ∘
-            (fun p : Forest (UnorderedTree (α' ⊕ β')) × UnorderedTree (α' ⊕ β') =>
-              ConnesKreimer.of' (R := R') p.1 ⊗ₜ[R'] ConnesKreimer.ofTree p.2)) =
-            (fun p => (if p.1.card = 0 then (1 : R') else 0) ⊗ₜ[R']
-                       ConnesKreimer.ofTree p.2) from by
-    funext p
-    show (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R')
-            (AlgHom.id R' _))
-          (ConnesKreimer.of' (R := R') p.1 ⊗ₜ[R'] ConnesKreimer.ofTree p.2) = _
-    rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, ConnesKreimer.counit_of']]
-  -- Pull the if outside the tensor product: (if h then 1 else 0) ⊗ y = if h then 1 ⊗ y else 0.
-  rw [show (fun p : Forest (UnorderedTree (α' ⊕ β')) × UnorderedTree (α' ⊕ β') =>
-              (if p.1.card = 0 then (1 : R') else 0) ⊗ₜ[R']
-                ConnesKreimer.ofTree p.2) =
-            (fun p =>
-              if p.1.card = 0 then
-                ((1 : R') ⊗ₜ[R'] ConnesKreimer.ofTree p.2 :
-                  R' ⊗[R'] ConnesKreimer R' (UnorderedTree (α' ⊕ β')))
-              else 0) from by
-    funext p
-    by_cases hp : p.1.card = 0
-    · rw [ite_eq_left hp, ite_eq_left hp]
-    · rw [ite_eq_right hp, ite_eq_right hp, TensorProduct.zero_tmul]]
-  rw [← Multiset.sum_map_filter]
-  -- Filter equals {(0, T)} by traceCuts_filter_empty.
-  rw [ConnesKreimer.traceCuts_filter_empty τ T,
-      Multiset.map_singleton, Multiset.sum_singleton]
-
-private theorem counit_lTensor_comulTree (τ : UnorderedTree (α' ⊕ β') → β')
-    (T : UnorderedTree (α' ⊕ β')) :
-    (Algebra.TensorProduct.map (AlgHom.id R' (ConnesKreimer R' (UnorderedTree (α' ⊕ β'))))
-        ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R'))
-      (comulTreeOfCuts (traceCuts τ) T) = ConnesKreimer.ofTree T ⊗ₜ (1 : R') := by
-  unfold comulTreeOfCuts
-  rw [map_add]
-  -- First summand: (id ⊗ counit)(ofTree T ⊗ 1) = ofTree T ⊗ counit(1) = ofTree T ⊗ 1.
-  rw [show (Algebra.TensorProduct.map
-              (AlgHom.id R' (ConnesKreimer R' (UnorderedTree (α' ⊕ β'))))
-              ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R'))
-            (ConnesKreimer.ofTree T ⊗ₜ[R']
-              (1 : ConnesKreimer R' (UnorderedTree (α' ⊕ β')))) =
-          ConnesKreimer.ofTree T ⊗ₜ[R'] (1 : R') from by
-    rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, map_one]]
-  -- Second summand: distribute via map_multiset_sum, then show the entire sum is 0.
-  rw [map_multiset_sum
-        (Algebra.TensorProduct.map (AlgHom.id R' (ConnesKreimer R' (UnorderedTree (α' ⊕ β'))))
-          ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R'))]
-  simp only [Multiset.map_map]
-  -- Each summand: (id ⊗ counit)(of' p.1 ⊗ ofTree p.2) = of' p.1 ⊗ counit(ofTree p.2)
-  --              = of' p.1 ⊗ 0 = 0.
-  rw [show ((Algebra.TensorProduct.map
-              (AlgHom.id R' (ConnesKreimer R' (UnorderedTree (α' ⊕ β'))))
-              ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R')) ∘
-            (fun p : Forest (UnorderedTree (α' ⊕ β')) × UnorderedTree (α' ⊕ β') =>
-              ConnesKreimer.of' (R := R') p.1 ⊗ₜ[R'] ConnesKreimer.ofTree p.2)) =
-            (fun _ => (0 : ConnesKreimer R' (UnorderedTree (α' ⊕ β')) ⊗[R'] R')) from by
-    funext p
-    show (Algebra.TensorProduct.map
-            (AlgHom.id R' _) ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R'))
-          (ConnesKreimer.of' (R := R') p.1 ⊗ₜ[R'] ConnesKreimer.ofTree p.2) = _
-    rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, ConnesKreimer.counit_ofTree,
-        TensorProduct.tmul_zero]]
-  -- The sum of all zeros over a multiset is 0.
-  rw [show ((traceCuts τ T).map
-      (fun _ : Forest (UnorderedTree (α' ⊕ β')) × UnorderedTree (α' ⊕ β') =>
-        (0 : ConnesKreimer R' (UnorderedTree (α' ⊕ β')) ⊗[R'] R'))).sum = 0 from by
-    induction (traceCuts τ T) using Multiset.induction with
-    | empty => simp
-    | cons _ _ ih => rw [Multiset.map_cons, Multiset.sum_cons, ih, add_zero]]
-  rw [add_zero]
-
-private theorem counit_rTensor_comulForest (τ : UnorderedTree (α' ⊕ β') → β')
-    (F : Forest (UnorderedTree (α' ⊕ β')))
-    (hF : ∀ T ∈ F, (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R')
-        (AlgHom.id R' (ConnesKreimer R' (UnorderedTree (α' ⊕ β')))))
-        (comulTreeOfCuts (traceCuts τ) T) = (1 : R') ⊗ₜ ConnesKreimer.ofTree T) :
-    (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R')
-        (AlgHom.id R' (ConnesKreimer R' (UnorderedTree (α' ⊕ β')))))
-      (comulForestOfCuts (R := R') (traceCuts τ) F) = (1 : R') ⊗ₜ ConnesKreimer.of' F := by
-  induction F using Multiset.induction with
-  | empty =>
-    rw [comulForestOfCuts_zero, map_one, ConnesKreimer.of'_zero,
-        Algebra.TensorProduct.one_def]
-  | cons T F' ih =>
-    have ih' := ih (fun T' hT' => hF T' (Multiset.mem_cons_of_mem hT'))
-    have hT := hF T (Multiset.mem_cons_self T F')
-    have hForest : (ConnesKreimer.ofTree T : ConnesKreimer R' (UnorderedTree (α' ⊕ β')))
-                    * ConnesKreimer.of' F' = ConnesKreimer.of' (T ::ₘ F') :=
-      (ConnesKreimer.of'_cons T F').symm
-    rw [comulForestOfCuts_cons, map_mul, hT, ih',
-        Algebra.TensorProduct.tmul_mul_tmul, _root_.mul_one, hForest]
-
-private theorem counit_lTensor_comulForest (τ : UnorderedTree (α' ⊕ β') → β')
-    (F : Forest (UnorderedTree (α' ⊕ β')))
-    (hF : ∀ T ∈ F, (Algebra.TensorProduct.map
-        (AlgHom.id R' (ConnesKreimer R' (UnorderedTree (α' ⊕ β'))))
-        ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R'))
-        (comulTreeOfCuts (traceCuts τ) T) = ConnesKreimer.ofTree T ⊗ₜ (1 : R')) :
-    (Algebra.TensorProduct.map (AlgHom.id R' (ConnesKreimer R' (UnorderedTree (α' ⊕ β'))))
-        ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R'))
-      (comulForestOfCuts (R := R') (traceCuts τ) F) = ConnesKreimer.of' F ⊗ₜ (1 : R') := by
-  induction F using Multiset.induction with
-  | empty =>
-    rw [comulForestOfCuts_zero, map_one, ConnesKreimer.of'_zero,
-        Algebra.TensorProduct.one_def]
-  | cons T F' ih =>
-    have ih' := ih (fun T' hT' => hF T' (Multiset.mem_cons_of_mem hT'))
-    have hT := hF T (Multiset.mem_cons_self T F')
-    have hForest : (ConnesKreimer.ofTree T : ConnesKreimer R' (UnorderedTree (α' ⊕ β')))
-                    * ConnesKreimer.of' F' = ConnesKreimer.of' (T ::ₘ F') :=
-      (ConnesKreimer.of'_cons T F').symm
-    rw [comulForestOfCuts_cons, map_mul, hT, ih',
-        Algebra.TensorProduct.tmul_mul_tmul, _root_.one_mul, hForest]
-
-/-- The right counit law for Δ^c. -/
-theorem counit_rTensor_traceComulAlgHom (τ : UnorderedTree (α' ⊕ β') → β') :
-    (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R')
-        (AlgHom.id R' _)).comp (traceComulAlgHom (R := R') τ) =
-      (Algebra.TensorProduct.lid R'
-        (ConnesKreimer R' (UnorderedTree (α' ⊕ β')))).symm.toAlgHom := by
-  apply ConnesKreimer.algHom_ext
-  intro F
-  show (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R')
-          (AlgHom.id R' (ConnesKreimer R' (UnorderedTree (α' ⊕ β')))))
-        (traceComulAlgHom (R := R') τ (ConnesKreimer.of' F)) =
-       (Algebra.TensorProduct.lid R'
-        (ConnesKreimer R' (UnorderedTree (α' ⊕ β')))).symm (ConnesKreimer.of' F)
-  rw [traceComulAlgHom_apply_of', Algebra.TensorProduct.lid_symm_apply]
-  exact counit_rTensor_comulForest τ F (fun T _ => counit_rTensor_comulTree τ T)
-
-/-- The left counit law for Δ^c. -/
-theorem counit_lTensor_traceComulAlgHom (τ : UnorderedTree (α' ⊕ β') → β') :
-    (Algebra.TensorProduct.map (AlgHom.id R' _)
-        ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R')).comp
-        (traceComulAlgHom (R := R') τ) =
-      (Algebra.TensorProduct.rid R' R'
-        (ConnesKreimer R' (UnorderedTree (α' ⊕ β')))).symm.toAlgHom := by
-  apply ConnesKreimer.algHom_ext
-  intro F
-  show (Algebra.TensorProduct.map (AlgHom.id R' (ConnesKreimer R' (UnorderedTree (α' ⊕ β'))))
-          ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R'] R'))
-        (traceComulAlgHom (R := R') τ (ConnesKreimer.of' F)) =
-       (Algebra.TensorProduct.rid R' R'
-        (ConnesKreimer R' (UnorderedTree (α' ⊕ β')))).symm (ConnesKreimer.of' F)
-  rw [traceComulAlgHom_apply_of', Algebra.TensorProduct.rid_symm_apply]
-  exact counit_lTensor_comulForest τ F (fun T _ => counit_lTensor_comulTree τ T)
+      (traceComulAlgHom (R := R') τ) :=
+  AlgHom.toLinearMap_injective (traceComul_coassoc τ hτ)
 
 /-- `Δ^c` is the admissible-cut coproduct at the cuts `traceCuts τ`. -/
 theorem traceComulAlgHom_eq_comulOfCuts {R : Type*} [CommSemiring R]
@@ -533,16 +331,8 @@ Coherence enters through `Fact`, since instance search cannot find the hypothesi
 instance instIsBialgebraCutsTraceCuts (τ : UnorderedTree (α' ⊕ β') → β')
     [Fact (TraceCoherent τ)] :
     IsBialgebraCuts (traceCuts τ) where
-  coassoc := by
-    intro R _
-    rw [← traceComulAlgHom_eq_comulOfCuts]
-    exact traceComulAlgHom_coassoc_algHom τ Fact.out
-  counit_rTensor := by
-    intro R _
-    exact counit_rTensor_traceComulAlgHom τ
-  counit_lTensor := by
-    intro R _
-    exact counit_lTensor_traceComulAlgHom τ
+  coassoc _ _ := traceComulAlgHom_coassoc_algHom τ Fact.out
+  rTensor_counit_comp_comul _ _ := rTensor_counit_comp_comulOfCuts (traceCuts_filter_empty τ)
 
 /-- A coherent trace encoder gives the bialgebra of `Δ^c` by instance search. -/
 noncomputable example {R : Type*} [CommRing R]
@@ -551,6 +341,6 @@ noncomputable example {R : Type*} [CommRing R]
   haveI : Fact (TraceCoherent τ) := ⟨hτ⟩
   inferInstance
 
-end CounitLaws
+end Bialgebra
 
 end ConnesKreimer

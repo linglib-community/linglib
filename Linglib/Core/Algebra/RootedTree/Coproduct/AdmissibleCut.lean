@@ -17,7 +17,8 @@ public import Mathlib.RingTheory.TensorProduct.Maps
 
 The Connes–Kreimer coproduct on unordered rooted trees, summing over admissible cuts, which leave
 nothing in place of the subtrees they remove. Grafting `B⁺_a` is a Hochschild 1-cocycle for it, and
-the counit laws and coassociativity follow from the cocycle by induction on trees.
+coassociativity follows from the cocycle by induction on trees. The counit laws are those of the
+generic coproduct, since the empty cut is the only admissible cut with an empty crown.
 
 ## Main definitions
 
@@ -29,8 +30,6 @@ the counit laws and coassociativity follow from the cocycle by induction on tree
 
 * `ConnesKreimer.comulAlgHom_bPlus_cocycle`: the Hochschild 1-cocycle law
   `Δ^ρ (B⁺_a x) = B⁺_a x ⊗ 1 + (id ⊗ B⁺_a) (Δ^ρ x)`.
-* `ConnesKreimer.counit_rTensor_comulAlgHom`, `ConnesKreimer.counit_lTensor_comulAlgHom`: the
-  counit laws.
 * `ConnesKreimer.comulAlgHom_coassoc_algHom`: coassociativity.
 * `ConnesKreimer.instBialgebra`: the Δ^ρ `Bialgebra`, over any `CommSemiring`; the admissible
   cuts are admissible (`ConnesKreimer.instIsBialgebraCutsAdmissibleCuts`).
@@ -119,42 +118,6 @@ theorem comulAlgHom_bPlus_cocycle (a : α) (x : ConnesKreimer R (UnorderedTree �
     lhom_ext' fun F ↦ by simp [comulTreeOfCuts_admissibleCuts_node]
   exact congr($h x)
 
-/-! ### Counit laws
-
-`(ε ⊗ id) ∘ Δ^ρ = lid⁻¹` and `(id ⊗ ε) ∘ Δ^ρ = rid⁻¹`, checked on trees through the cocycle
-`comulTreeOfCuts_admissibleCuts_node`. The left law needs induction on the tree. -/
-
-private theorem counit_bPlus (a : α) (y : ConnesKreimer R (UnorderedTree α)) :
-    counit (R := R) (bPlus (R := R) a y) = 0 := by
-  have h : (counit (R := R)).toLinearMap ∘ₗ bPlus (R := R) a = 0 :=
-    lhom_ext' fun F ↦ by simp
-  exact congr($h y)
-
-theorem counit_rTensor_comulAlgHom :
-    (Algebra.TensorProduct.map (counit (R := R)) (AlgHom.id R _)).comp comulAlgHom =
-      (Algebra.TensorProduct.lid R (ConnesKreimer R (UnorderedTree α))).symm.toAlgHom := by
-  refine algHom_ext_ofTree fun T ↦ ?_
-  induction T with
-  | node a F ih =>
-    have hF := algHom_of'_eq_of_ofTree ih
-    have h (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
-        Algebra.TensorProduct.map counit (AlgHom.id R _)
-          (LinearMap.lTensor _ (bPlus (R := R) a) z) =
-        LinearMap.lTensor R (bPlus a) (Algebra.TensorProduct.map counit (AlgHom.id R _) z) := by
-      induction z using TensorProduct.inductionOn <;> simp_all
-    simp [comulTreeOfCuts_admissibleCuts_node, h, by simpa using hF]
-
-theorem counit_lTensor_comulAlgHom :
-    (Algebra.TensorProduct.map (AlgHom.id R _) (counit (R := R))).comp comulAlgHom =
-      (Algebra.TensorProduct.rid R R (ConnesKreimer R (UnorderedTree α))).symm.toAlgHom := by
-  refine algHom_ext_ofTree fun T ↦ ?_
-  obtain ⟨a, F, rfl⟩ : ∃ a F, T = UnorderedTree.node a F := ⟨_, _, (node_eta T).symm⟩
-  have h (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
-      Algebra.TensorProduct.map (AlgHom.id R _) counit
-        (LinearMap.lTensor _ (bPlus (R := R) a) z) = 0 := by
-    induction z using TensorProduct.inductionOn <;> simp_all [counit_bPlus]
-  simp [comulTreeOfCuts_admissibleCuts_node, h]
-
 /-! ### Coassociativity
 
 Both sides of coassociativity are algebra homomorphisms, so it is enough that they agree on every
@@ -215,13 +178,12 @@ noncomputable instance instBialgebra :
     Bialgebra R (ConnesKreimer R (UnorderedTree α)) :=
   Bialgebra.ofAlgHom (A := ConnesKreimer R (UnorderedTree α)) comulAlgHom counit
     comulAlgHom_coassoc_algHom
-    counit_rTensor_comulAlgHom
-    counit_lTensor_comulAlgHom
+    (rTensor_counit_comp_comulOfCuts admissibleCuts_filter_empty)
+    (lTensor_counit_comp_comulOfCuts _)
 
 instance instIsBialgebraCutsAdmissibleCuts : IsBialgebraCuts (admissibleCuts (α := α)) where
   coassoc _ _ := comulAlgHom_coassoc_algHom
-  counit_rTensor _ _ := counit_rTensor_comulAlgHom
-  counit_lTensor _ _ := counit_lTensor_comulAlgHom
+  rTensor_counit_comp_comul _ _ := rTensor_counit_comp_comulOfCuts admissibleCuts_filter_empty
 
 theorem coalgebra_comul_apply (x : ConnesKreimer R (UnorderedTree α)) :
     Coalgebra.comul (R := R) x = comulAlgHom x := rfl
