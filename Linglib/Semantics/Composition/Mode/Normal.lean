@@ -44,33 +44,33 @@ namespace Mode
 variable {Rule : Ty B → Ty B → Ty B → Type} {G : Language (Ty B)} {f : Eff B} {l r u : Ty B}
 
 /-- Join over Map Left of a mode: Structured App, where the mode is a Map Right. -/
-def joinMapL (h : f.IsApplicative) :
+def joinMapL [f.IsApplicative] :
     {l r u : Ty B} → Mode Rule l r (.comp f u) → Mode Rule (.comp f l) r (.comp f u)
-  | _, _, _, .mapR m => .ap h m
-  | _, _, _, m => .join h (.mapL m)
+  | _, _, _, .mapR m => .ap m
+  | _, _, _, m => .join (.mapL m)
 
-theorem joinMapL_equiv (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f u)) :
-    joinMapL h m ≈ Mode.join h (.mapL m) := by
+theorem joinMapL_equiv [f.IsApplicative] (m : Mode G.Binary l r (.comp f u)) :
+    joinMapL m ≈ Mode.join (f := f) (.mapL m) := by
   cases m with
-  | mapR m => exact (join_mapL_mapR_equiv_ap h m).symm
+  | mapR m => exact (join_mapL_mapR_equiv_ap m).symm
   | _ => exact .refl _
 
 variable [DecidableEq B]
 
 /-- Join over Map Right of a mode: Structured App, where the mode is a Map Left and the effect
 is commutative. -/
-def joinMapR (h : f.IsApplicative) :
+def joinMapR [f.IsApplicative] :
     {l r u : Ty B} → Mode Rule l r (.comp f u) → Mode Rule l (.comp f r) (.comp f u)
-  | _, _, _, .mapL m => if f.IsCommutative then .ap h m else .join h (.mapR (.mapL m))
-  | _, _, _, m => .join h (.mapR m)
+  | _, _, _, .mapL m => if f.IsCommutative then .ap m else .join (.mapR (.mapL m))
+  | _, _, _, m => .join (.mapR m)
 
 /-- Join of a mode: Structured App, where the mode is the two maps in an order that merges the
 effects as Structured App does. -/
-def joinNormal (h : f.IsApplicative) :
+def joinNormal [f.IsApplicative] :
     {l r u : Ty B} → Mode Rule l r (.comp f (.comp f u)) → Mode Rule l r (.comp f u)
-  | _, _, _, .mapL m => joinMapL h m
-  | _, _, _, .mapR m => joinMapR h m
-  | _, _, _, m => .join h m
+  | _, _, _, .mapL m => joinMapL m
+  | _, _, _, .mapR m => joinMapR m
+  | _, _, _, m => .join m
 
 /-- The normal form of a mode: Structured App for each Join over Map Left over Map Right, and at
 a commutative effect for each Join over Map Right over Map Left. -/
@@ -78,30 +78,30 @@ def normalize : {l r u : Ty B} → Mode Rule l r u → Mode Rule l r u
   | _, _, _, .basic b => .basic b
   | _, _, _, .mapR m => .mapR m.normalize
   | _, _, _, .mapL m => .mapL m.normalize
-  | _, _, _, .ap h m => .ap h m.normalize
-  | _, _, _, .unitR h m => .unitR h m.normalize
-  | _, _, _, .unitL h m => .unitL h m.normalize
+  | _, _, _, .ap m h => .ap m.normalize h
+  | _, _, _, .unitR m h => .unitR m.normalize h
+  | _, _, _, .unitL m h => .unitL m.normalize h
   | _, _, _, .counit m => .counit m.normalize
   | _, _, _, .ejectR m => .ejectR m.normalize
   | _, _, _, .ejectL m => .ejectL m.normalize
-  | _, _, _, .join h m => joinNormal h m.normalize
+  | _, _, _, .join m _ => joinNormal m.normalize
   | _, _, _, .lower m => .lower m.normalize
 
-theorem joinMapR_equiv (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f u)) :
-    joinMapR h m ≈ Mode.join h (.mapR m) := by
+theorem joinMapR_equiv [f.IsApplicative] (m : Mode G.Binary l r (.comp f u)) :
+    joinMapR m ≈ Mode.join (f := f) (.mapR m) := by
   cases m with
   | mapL m =>
-    show (if f.IsCommutative then Mode.ap h m else .join h (.mapR (.mapL m))) ≈ _
+    show (if f.IsCommutative then Mode.ap m else .join (.mapR (.mapL m))) ≈ _
     split_ifs with hc
-    · exact (join_mapR_mapL_equiv_ap hc m).symm
+    · exact (join_mapR_mapL_equiv_ap m).symm
     · exact .refl _
   | _ => exact .refl _
 
-theorem joinNormal_equiv (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f (.comp f u))) :
-    joinNormal h m ≈ Mode.join h m := by
+theorem joinNormal_equiv [f.IsApplicative] (m : Mode G.Binary l r (.comp f (.comp f u))) :
+    joinNormal m ≈ Mode.join (f := f) m := by
   cases m with
-  | mapL m => exact joinMapL_equiv h m
-  | mapR m => exact joinMapR_equiv h m
+  | mapL m => exact joinMapL_equiv m
+  | mapR m => exact joinMapR_equiv m
   | _ => exact .refl _
 
 /-- A mode and its normal form mean the same. -/
@@ -109,13 +109,13 @@ theorem normalize_equiv : ∀ {l r u : Ty B} (m : Mode G.Binary l r u), m.normal
   | _, _, _, .basic _ => .refl _
   | _, _, _, .mapR m => (normalize_equiv m).mapR
   | _, _, _, .mapL m => (normalize_equiv m).mapL
-  | _, _, _, .ap h m => (normalize_equiv m).ap h
-  | _, _, _, .unitR h m => (normalize_equiv m).unitR h
-  | _, _, _, .unitL h m => (normalize_equiv m).unitL h
+  | _, _, _, .ap m _ => (normalize_equiv m).ap
+  | _, _, _, .unitR m _ => (normalize_equiv m).unitR
+  | _, _, _, .unitL m _ => (normalize_equiv m).unitL
   | _, _, _, .counit m => (normalize_equiv m).counit
   | _, _, _, .ejectR m => (normalize_equiv m).ejectR
   | _, _, _, .ejectL m => (normalize_equiv m).ejectL
-  | _, _, _, .join h m => (joinNormal_equiv h _).trans ((normalize_equiv m).join h)
+  | _, _, _, .join m _ => (joinNormal_equiv _).trans (normalize_equiv m).join
   | _, _, _, .lower m => (normalize_equiv m).lower
 
 end Mode

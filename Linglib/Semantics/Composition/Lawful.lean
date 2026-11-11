@@ -165,8 +165,8 @@ variable {B : Type} {G : Language (Ty B)} {f : Eff B} {l r u : Ty B}
 /-- At every effect with a unit and an application, Join over Map Left over Map Right of a mode
 is Structured App of the mode: the two daughters' effects are merged with the left daughter's
 outermost. -/
-theorem join_mapL_mapR_equiv_ap (h : f.IsApplicative) (m : Mode G.Binary l r u) :
-    Mode.join h (.mapL (.mapR m)) ≈ .ap h m := fun D _ ↦ funext₂ fun a b ↦ by
+theorem join_mapL_mapR_equiv_ap [f.IsApplicative] (m : Mode G.Binary l r u) :
+    Mode.join (f := f) (.mapL (.mapR m)) ≈ .ap m := fun D _ ↦ funext₂ fun a b ↦ by
   simp only [eval, MetaCombinator.join, MetaCombinator.mapL, MetaCombinator.mapR,
     MetaCombinator.ap, joinM, seq_eq_bind_map, bind_map_left]
   rfl
@@ -174,8 +174,8 @@ theorem join_mapL_mapR_equiv_ap (h : f.IsApplicative) (m : Mode G.Binary l r u) 
 /-- At a commutative effect, Join over Map Right over Map Left of a mode is Structured App of
 the mode too: the effects are merged with the right daughter's outermost, and the order makes no
 difference. -/
-theorem join_mapR_mapL_equiv_ap (hc : f.IsCommutative) (m : Mode G.Binary l r u) :
-    Mode.join hc.toIsApplicative (.mapR (.mapL m)) ≈ .ap hc.toIsApplicative m :=
+theorem join_mapR_mapL_equiv_ap [f.IsCommutative] (m : Mode G.Binary l r u) :
+    Mode.join (f := f) (.mapR (.mapL m)) ≈ .ap m :=
   fun D _ ↦ funext₂ fun a b ↦ by
     rw [eval, eval, ← MetaCombinator.ap_flip]
     simp only [eval, MetaCombinator.join, MetaCombinator.mapL, MetaCombinator.mapR,
@@ -185,22 +185,22 @@ theorem join_mapR_mapL_equiv_ap (hc : f.IsCommutative) (m : Mode G.Binary l r u)
 variable {D : B → Type} [M : G.Structure (Ty.Dom D)]
 
 /-- Join over Map Left is the bind of the effect's monad. -/
-theorem eval_join_mapL (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f u))
+theorem eval_join_mapL [f.IsApplicative] (m : Mode G.Binary l r (.comp f u))
     (a : (Ty.comp f l).Dom D) (b : r.Dom D) :
-    (Mode.join h (.mapL m)).eval D a b = a >>= fun x ↦ m.eval D x b :=
+    (Mode.join (f := f) (.mapL m)).eval D a b = a >>= fun x ↦ m.eval D x b :=
   bind_map_left _ _ _
 
 /-- Join over Map Right is the bind of the effect's monad. -/
-theorem eval_join_mapR (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f u))
+theorem eval_join_mapR [f.IsApplicative] (m : Mode G.Binary l r (.comp f u))
     (a : l.Dom D) (b : (Ty.comp f r).Dom D) :
-    (Mode.join h (.mapR m)).eval D a b = b >>= fun y ↦ m.eval D a y :=
+    (Mode.join (f := f) (.mapR m)).eval D a b = b >>= fun y ↦ m.eval D a y :=
   bind_map_left _ _ _
 
 /-- At a commutative effect it does not matter which daughter is on the left: Structured App of
 a mode is Structured App of its mirror image at the daughters in the other order. -/
-theorem eval_ap_comm (hc : f.IsCommutative) {m : Mode G.Binary l r u} {m' : Mode G.Binary r l u}
+theorem eval_ap_comm [f.IsCommutative] {m : Mode G.Binary l r u} {m' : Mode G.Binary r l u}
     (hm : m.eval D = flip (m'.eval D)) :
-    (Mode.ap hc.toIsApplicative m).eval D = flip ((Mode.ap hc.toIsApplicative m').eval D) :=
+    (Mode.ap (f := f) m).eval D = flip ((Mode.ap (f := f) m').eval D) :=
   funext₂ fun a b ↦ by
     rw [eval, hm]
     exact MetaCombinator.ap_flip (m'.eval D) b a
@@ -210,7 +210,7 @@ type has two values, merging the effects with the right daughter's outermost is 
 App, whatever the mode. -/
 theorem not_join_mapR_mapL_equiv_ap {o : Ty B} [Nontrivial (o.Dom D)]
     (m : Mode G.Binary l r u) :
-    ¬ Mode.join (f := .C o) inferInstance (.mapR (.mapL m)) ≈ .ap inferInstance m := fun h ↦ by
+    ¬ Mode.join (f := .C o) (.mapR (.mapL m)) ≈ .ap m := fun h ↦ by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne (o.Dom D)
   exact hxy (congrFun (congrFun₂ (h D) (fun _ ↦ x) fun _ ↦ y) fun _ ↦ x).symm
 

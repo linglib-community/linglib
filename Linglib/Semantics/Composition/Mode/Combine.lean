@@ -82,7 +82,7 @@ variable [DecidableEq B] {Rule : Ty B → Ty B → Ty B → Type}
 def Mode.joins {l r : Ty B} : Sigma (Mode Rule l r) → List (Sigma (Mode Rule l r))
   | ⟨.comp f (.comp g a), m⟩ =>
     if h : g = f then
-      if ha : f.IsApplicative then [⟨.comp f a, .join ha (h ▸ m)⟩] else []
+      if ha : f.IsApplicative then [⟨.comp f a, .join (h ▸ m) ha⟩] else []
     else []
   | _ => []
 
@@ -126,7 +126,7 @@ def Ty.combineStep (rec : (l r : Ty B) → List (Sigma (Mode Rule l r))) (l r : 
         if h : g = f then
           if ha : f.IsApplicative then
             if inv .ap f then
-              (rec x y).map fun p ↦ ⟨.comp f p.1, by subst h; exact .ap ha p.2⟩
+              (rec x y).map fun p ↦ ⟨.comp f p.1, by subst h; exact .ap p.2 ha⟩
             else []
           else []
         else []
@@ -134,14 +134,14 @@ def Ty.combineStep (rec : (l r : Ty B) → List (Sigma (Mode Rule l r))) (l r : 
     (match l with
       | .fn (.comp f x) x' =>
         if ha : f.IsApplicative then
-          if inv .unit f then (rec (x ⇒ x') r).map fun p ↦ ⟨p.1, .unitR ha p.2⟩
+          if inv .unit f then (rec (x ⇒ x') r).map fun p ↦ ⟨p.1, .unitR p.2 ha⟩
           else []
         else []
       | _ => []) ++
     (match r with
       | .fn (.comp f y) y' =>
         if ha : f.IsApplicative then
-          if inv .unit f then (rec l (y ⇒ y')).map fun p ↦ ⟨p.1, .unitL ha p.2⟩
+          if inv .unit f then (rec l (y ⇒ y')).map fun p ↦ ⟨p.1, .unitL p.2 ha⟩
           else []
         else []
       | _ => []) ++
@@ -208,7 +208,7 @@ theorem Mode.mem_closureAux_self (k : ℕ) (p : Sigma (Mode Rule l r)) :
 
 theorem Mode.mem_joins {f : Eff B} {u : Ty B} (h : f.IsApplicative)
     (m : Mode Rule l r (.comp f (.comp f u))) :
-    (⟨.comp f u, .join h m⟩ : Sigma (Mode Rule l r)) ∈ Mode.joins ⟨_, m⟩ := by
+    (⟨.comp f u, .join m h⟩ : Sigma (Mode Rule l r)) ∈ Mode.joins ⟨_, m⟩ := by
   simp [Mode.joins, h]
 
 theorem Mode.mem_lowers {u : Ty B} (m : Mode Rule l r (.comp (.C u) u)) :
@@ -253,9 +253,9 @@ theorem Mode.mem_closure_self (p : Sigma (Mode Rule l r)) : p ∈ Mode.closure p
 /-- The number of meta-modes other than Join and Lower stacked on a basic mode. -/
 def Mode.depth {l r u : Ty B} : Mode Rule l r u → ℕ
   | .basic _ => 0
-  | .mapR m | .mapL m | .ap _ m | .unitR _ m | .unitL _ m | .counit m | .ejectR m
+  | .mapR m | .mapL m | .ap m _ | .unitR m _ | .unitL m _ | .counit m | .ejectR m
   | .ejectL m => m.depth + 1
-  | .join _ m | .lower m => m.depth
+  | .join m _ | .lower m => m.depth
 
 omit [DecidableEq B] in
 /-- Each meta-mode but an Eject makes a daughter smaller, and an Eject leaves one fewer daughter
@@ -272,16 +272,16 @@ theorem Mode.depth_le {l r u : Ty B} (m : Mode Rule l r u) : m.depth ≤ Ty.dept
     have := l.ejectable_le_one
     simp only [Mode.depth, Ty.size, Ty.ejectable_comp] at *
     omega
-  | @ap f l r u h m ih =>
+  | @ap f l r u m h ih =>
     have := l.ejectable_le_one
     have := r.ejectable_le_one
     simp only [Mode.depth, Ty.size, Ty.ejectable_comp] at *
     omega
-  | @unitR f l l' r u h m ih =>
+  | @unitR f l l' r u m h ih =>
     have := (l ⇒ l').ejectable_le_one
     simp only [Mode.depth, Ty.size] at *
     omega
-  | @unitL f l r r' u h m ih =>
+  | @unitL f l r r' u m h ih =>
     have := (r ⇒ r').ejectable_le_one
     simp only [Mode.depth, Ty.size] at *
     omega
@@ -296,7 +296,7 @@ theorem Mode.depth_le {l r u : Ty B} (m : Mode Rule l r u) : m.depth ≤ Ty.dept
   | @ejectL i l l' r u m ih =>
     simp only [Mode.depth, Ty.size, Eff.size, Ty.ejectable_comp, Ty.ejectable_fn_reader] at *
     omega
-  | join h m ih => exact ih
+  | join m h ih => exact ih
   | lower m ih => exact ih
 
 variable {inv : MetaMode → Eff B → Prop} [DecidableRel inv]
@@ -338,7 +338,7 @@ theorem Ty.mem_combineAux
     apply List.mem_append_right
     simp only [hm.1, ↓reduceIte]
     exact List.mem_map.2 ⟨_, ih hm.2 (Nat.lt_of_succ_lt_succ hk), rfl⟩
-  | ap h m ih =>
+  | ap m h ih =>
     intro hm k hk
     obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (n := k) (by omega)
     show _ ∈ List.flatMap _ _
@@ -347,7 +347,7 @@ theorem Ty.mem_combineAux
     apply List.mem_append_right
     simp only [h, hm.1, ↓reduceDIte, ↓reduceIte]
     exact List.mem_map.2 ⟨_, ih hm.2 (Nat.lt_of_succ_lt_succ hk), rfl⟩
-  | unitR h m ih =>
+  | unitR m h ih =>
     intro hm k hk
     obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (n := k) (by omega)
     show _ ∈ List.flatMap _ _
@@ -356,7 +356,7 @@ theorem Ty.mem_combineAux
     apply List.mem_append_right
     simp only [h, hm.1, ↓reduceDIte, ↓reduceIte]
     exact List.mem_map.2 ⟨_, ih hm.2 (Nat.lt_of_succ_lt_succ hk), rfl⟩
-  | unitL h m ih =>
+  | unitL m h ih =>
     intro hm k hk
     obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (n := k) (by omega)
     show _ ∈ List.flatMap _ _
@@ -391,7 +391,7 @@ theorem Ty.mem_combineAux
     apply List.mem_append_right
     simp only [hm.1, ↓reduceIte]
     exact List.mem_map.2 ⟨_, ih hm.2 (Nat.lt_of_succ_lt_succ hk), rfl⟩
-  | join h m ih =>
+  | join m h ih =>
     intro hm k hk
     obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (n := k) (by omega)
     have hm' := ih hm.2 hk

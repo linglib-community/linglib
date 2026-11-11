@@ -48,14 +48,14 @@ inductive Mode (Rule : Ty B → Ty B → Ty B → Type) : Ty B → Ty B → Ty B
   /-- Map Left: a mode under the effect of the left daughter. -/
   | mapL {f : Eff B} {l r u : Ty B} (m : Mode Rule l r u) : Mode Rule (.comp f l) r (.comp f u)
   /-- Structured App: a mode on the results of two daughters with one applicative effect. -/
-  | ap {f : Eff B} {l r u : Ty B} (h : f.IsApplicative) (m : Mode Rule l r u) :
-      Mode Rule (.comp f l) (.comp f r) (.comp f u)
+  | ap {f : Eff B} {l r u : Ty B} (m : Mode Rule l r u)
+      (h : f.IsApplicative := by infer_instance) : Mode Rule (.comp f l) (.comp f r) (.comp f u)
   /-- Unit Right: a left daughter expecting a computation is given a pure one. -/
-  | unitR {f : Eff B} {l l' r u : Ty B} (h : f.IsApplicative) (m : Mode Rule (l ⇒ l') r u) :
-      Mode Rule (.comp f l ⇒ l') r u
+  | unitR {f : Eff B} {l l' r u : Ty B} (m : Mode Rule (l ⇒ l') r u)
+      (h : f.IsApplicative := by infer_instance) : Mode Rule (.comp f l ⇒ l') r u
   /-- Unit Left: a right daughter expecting a computation is given a pure one. -/
-  | unitL {f : Eff B} {l r r' u : Ty B} (h : f.IsApplicative) (m : Mode Rule l (r ⇒ r') u) :
-      Mode Rule l (.comp f r ⇒ r') u
+  | unitL {f : Eff B} {l r r' u : Ty B} (m : Mode Rule l (r ⇒ r') u)
+      (h : f.IsApplicative := by infer_instance) : Mode Rule l (.comp f r ⇒ r') u
   /-- Co-unit: what the left daughter stores is given to what the right daughter reads. -/
   | counit {i l r u : Ty B} (m : Mode Rule l r u) : Mode Rule (.comp (.W i) l) (.comp (.R i) r) u
   /-- Eject Right: reading is ejected from a right daughter that is a function into a reader. -/
@@ -65,8 +65,8 @@ inductive Mode (Rule : Ty B → Ty B → Ty B → Type) : Ty B → Ty B → Ty B
   | ejectL {i l l' r u : Ty B} (m : Mode Rule (.comp (.R i) (l ⇒ l')) r u) :
       Mode Rule (l ⇒ .comp (.R i) l') r u
   /-- Join: two layers of one monadic effect in the result are flattened. -/
-  | join {f : Eff B} {l r u : Ty B} (h : f.IsApplicative)
-      (m : Mode Rule l r (.comp f (.comp f u))) : Mode Rule l r (.comp f u)
+  | join {f : Eff B} {l r u : Ty B} (m : Mode Rule l r (.comp f (.comp f u)))
+      (h : f.IsApplicative := by infer_instance) : Mode Rule l r (.comp f u)
   /-- Lower: a continuation at its own result type in the result is run at the identity. -/
   | lower {l r u : Ty B} (m : Mode Rule l r (.comp (.C u) u)) : Mode Rule l r u
 
@@ -103,21 +103,21 @@ def Within (inv : MetaMode → Eff B → Prop) : {l r u : Ty B} → Mode Rule l 
   | _, _, _, .basic _ => True
   | _, _, _, .mapR (f := f) m => inv .map f ∧ m.Within inv
   | _, _, _, .mapL (f := f) m => inv .map f ∧ m.Within inv
-  | _, _, _, .ap (f := f) _ m => inv .ap f ∧ m.Within inv
-  | _, _, _, .unitR (f := f) _ m => inv .unit f ∧ m.Within inv
-  | _, _, _, .unitL (f := f) _ m => inv .unit f ∧ m.Within inv
+  | _, _, _, .ap (f := f) m _ => inv .ap f ∧ m.Within inv
+  | _, _, _, .unitR (f := f) m _ => inv .unit f ∧ m.Within inv
+  | _, _, _, .unitL (f := f) m _ => inv .unit f ∧ m.Within inv
   | _, _, _, .counit (i := i) m => inv .counit (.R i) ∧ m.Within inv
   | _, _, _, .ejectR (i := i) m => inv .eject (.R i) ∧ m.Within inv
   | _, _, _, .ejectL (i := i) m => inv .eject (.R i) ∧ m.Within inv
-  | _, _, _, .join (f := f) _ m => inv .join f ∧ m.Within inv
+  | _, _, _, .join (f := f) m _ => inv .join f ∧ m.Within inv
   | _, _, _, .lower (u := u) m => inv .lower (.C u) ∧ m.Within inv
 
 instance decidableWithin (inv : MetaMode → Eff B → Prop) [DecidableRel inv] :
     {l r u : Ty B} → (m : Mode Rule l r u) → Decidable (m.Within inv)
   | _, _, _, .basic _ => isTrue trivial
-  | _, _, _, .mapR m | _, _, _, .mapL m | _, _, _, .ap _ m | _, _, _, .unitR _ m
-  | _, _, _, .unitL _ m | _, _, _, .counit m | _, _, _, .ejectR m | _, _, _, .ejectL m
-  | _, _, _, .join _ m | _, _, _, .lower m =>
+  | _, _, _, .mapR m | _, _, _, .mapL m | _, _, _, .ap m _ | _, _, _, .unitR m _
+  | _, _, _, .unitL m _ | _, _, _, .counit m | _, _, _, .ejectR m | _, _, _, .ejectL m
+  | _, _, _, .join m _ | _, _, _, .lower m =>
     haveI := decidableWithin inv m
     inferInstanceAs (Decidable (_ ∧ _))
 
@@ -125,9 +125,9 @@ instance decidableWithin (inv : MetaMode → Eff B → Prop) [DecidableRel inv] 
 theorem within_of_forall {inv : MetaMode → Eff B → Prop} (h : ∀ k f, inv k f) :
     ∀ {l r u : Ty B} (m : Mode Rule l r u), m.Within inv
   | _, _, _, .basic _ => trivial
-  | _, _, _, .mapR m | _, _, _, .mapL m | _, _, _, .ap _ m | _, _, _, .unitR _ m
-  | _, _, _, .unitL _ m | _, _, _, .counit m | _, _, _, .ejectR m | _, _, _, .ejectL m
-  | _, _, _, .join _ m | _, _, _, .lower m => ⟨h _ _, within_of_forall h m⟩
+  | _, _, _, .mapR m | _, _, _, .mapL m | _, _, _, .ap m _ | _, _, _, .unitR m _
+  | _, _, _, .unitL m _ | _, _, _, .counit m | _, _, _, .ejectR m | _, _, _, .ejectL m
+  | _, _, _, .join m _ | _, _, _, .lower m => ⟨h _ _, within_of_forall h m⟩
 
 /-- The meaning of a mode over a grammar's rules, from a structure for the grammar: each
 meta-mode is the meta-combinator of its effect's functor or monad, and for storing and reading
@@ -137,14 +137,14 @@ def eval {G : Language (Ty B)} (D : B → Type) [M : G.Structure (Ty.Dom D)] :
   | _, _, _, .basic b => fun x y ↦ M.funMap b (x, y)
   | _, _, _, .mapR (f := f) m => MetaCombinator.mapR (F := Eff.Obj D f) (m.eval D)
   | _, _, _, .mapL (f := f) m => MetaCombinator.mapL (F := Eff.Obj D f) (m.eval D)
-  | _, _, _, .ap (f := f) _ m => MetaCombinator.ap (F := Eff.Obj D f) (m.eval D)
-  | _, _, _, .unitR (f := f) _ m => MetaCombinator.unitR (F := Eff.Obj D f) (m.eval D)
-  | _, _, _, .unitL (f := f) _ m => MetaCombinator.unitL (F := Eff.Obj D f) (m.eval D)
+  | _, _, _, .ap (f := f) m _ => MetaCombinator.ap (F := Eff.Obj D f) (m.eval D)
+  | _, _, _, .unitR (f := f) m _ => MetaCombinator.unitR (F := Eff.Obj D f) (m.eval D)
+  | _, _, _, .unitL (f := f) m _ => MetaCombinator.unitL (F := Eff.Obj D f) (m.eval D)
   | _, _, _, .counit (i := i) m => fun a b ↦
     Eff.counit (Eff.map (.W i) (fun x ↦ Eff.map (.R i) (fun y ↦ m.eval D x y) b) a)
   | _, _, _, .ejectR m => fun a b ↦ m.eval D a (Eff.eject b)
   | _, _, _, .ejectL m => fun a b ↦ m.eval D (Eff.eject a) b
-  | _, _, _, .join (f := f) _ m => MetaCombinator.join (M := Eff.Obj D f) (m.eval D)
+  | _, _, _, .join (f := f) m _ => MetaCombinator.join (M := Eff.Obj D f) (m.eval D)
   | _, _, _, .lower m => fun a b ↦ Eff.lower (m.eval D a b)
 
 /-- Two modes mean the same when they combine their daughters alike in every structure for the
@@ -189,16 +189,16 @@ protected theorem mapL {m m' : Mode G.Binary l r u} (h : m ≈ m') :
     Mode.mapL (f := f) m ≈ .mapL m' :=
   fun D _ ↦ by simp only [eval, h D]
 
-protected theorem ap (hf : f.IsApplicative) {m m' : Mode G.Binary l r u} (h : m ≈ m') :
-    Mode.ap hf m ≈ .ap hf m' :=
+protected theorem ap {hf : f.IsApplicative} {m m' : Mode G.Binary l r u} (h : m ≈ m') :
+    Mode.ap m hf ≈ .ap m' hf :=
   fun D _ ↦ by simp only [eval, h D]
 
-protected theorem unitR (hf : f.IsApplicative) {m m' : Mode G.Binary (l ⇒ l') r u}
-    (h : m ≈ m') : Mode.unitR hf m ≈ .unitR hf m' :=
+protected theorem unitR {hf : f.IsApplicative} {m m' : Mode G.Binary (l ⇒ l') r u}
+    (h : m ≈ m') : Mode.unitR m hf ≈ .unitR m' hf :=
   fun D _ ↦ by simp only [eval, h D]
 
-protected theorem unitL (hf : f.IsApplicative) {m m' : Mode G.Binary l (r ⇒ r') u}
-    (h : m ≈ m') : Mode.unitL hf m ≈ .unitL hf m' :=
+protected theorem unitL {hf : f.IsApplicative} {m m' : Mode G.Binary l (r ⇒ r') u}
+    (h : m ≈ m') : Mode.unitL m hf ≈ .unitL m' hf :=
   fun D _ ↦ by simp only [eval, h D]
 
 protected theorem counit {m m' : Mode G.Binary l r u} (h : m ≈ m') :
@@ -213,8 +213,8 @@ protected theorem ejectL {m m' : Mode G.Binary (.comp (.R i) (l ⇒ l')) r u} (h
     Mode.ejectL m ≈ .ejectL m' :=
   fun D _ ↦ by simp only [eval, h D]
 
-protected theorem join (hf : f.IsApplicative) {m m' : Mode G.Binary l r (.comp f (.comp f u))}
-    (h : m ≈ m') : Mode.join hf m ≈ .join hf m' :=
+protected theorem join {hf : f.IsApplicative} {m m' : Mode G.Binary l r (.comp f (.comp f u))}
+    (h : m ≈ m') : Mode.join m hf ≈ .join m' hf :=
   fun D _ ↦ by simp only [eval, h D]
 
 protected theorem lower {m m' : Mode G.Binary l r (.comp (.C u) u)} (h : m ≈ m') :

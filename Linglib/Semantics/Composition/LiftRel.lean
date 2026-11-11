@@ -223,20 +223,20 @@ theorem Mode.rel_eval
   | _, _, _, .mapL (f := f) m => fun _ _ ha _ _ hb ↦
     Eff.rel_map (R := Ty.LiftRel r _) (S := Ty.LiftRel r _) f
       (fun _ _ hx ↦ Mode.rel_eval hG m hx hb) ha
-  | _, _, _, .ap (f := f) h m => fun _ _ ha _ _ hb ↦
+  | _, _, _, .ap (f := f) m h => fun _ _ ha _ _ hb ↦
     Eff.rel_seq (R := Ty.LiftRel r _) (S := Ty.LiftRel r _) f h
       (Eff.rel_map (R := Ty.LiftRel r _) (S := LiftFun (Ty.LiftRel r _) (Ty.LiftRel r _)) f
         (fun _ _ hx _ _ hy ↦ Mode.rel_eval hG m hx hy) ha) hb
-  | _, _, _, .unitR (f := f) h m => fun _ _ ha _ _ hb ↦
+  | _, _, _, .unitR (f := f) m h => fun _ _ ha _ _ hb ↦
     Mode.rel_eval hG m (fun _ _ hx ↦ ha (Eff.rel_pure f h hx)) hb
-  | _, _, _, .unitL (f := f) h m => fun _ _ ha _ _ hb ↦
+  | _, _, _, .unitL (f := f) m h => fun _ _ ha _ _ hb ↦
     Mode.rel_eval hG m ha fun _ _ hy ↦ hb (Eff.rel_pure f h hy)
   | _, _, _, .counit (i := i) m => fun _ _ ha _ _ hb ↦
     Eff.rel_counit (Eff.rel_map (.W i)
       (fun _ _ hx ↦ Eff.rel_map (.R i) (fun _ _ hy ↦ Mode.rel_eval hG m hx hy) hb) ha)
   | _, _, _, .ejectR m => fun _ _ ha _ _ hb ↦ Mode.rel_eval hG m ha (Eff.rel_eject hb)
   | _, _, _, .ejectL m => fun _ _ ha _ _ hb ↦ Mode.rel_eval hG m (Eff.rel_eject ha) hb
-  | _, _, _, .join (f := f) h m => fun _ _ ha _ _ hb ↦
+  | _, _, _, .join (f := f) m h => fun _ _ ha _ _ hb ↦
     Eff.rel_join f h (Eff.rel_map f (fun _ _ hx ↦ hx) (Mode.rel_eval hG m ha hb))
   | _, _, _, .lower m => fun _ _ ha _ _ hb ↦ Eff.rel_lower (Mode.rel_eval hG m ha hb)
 

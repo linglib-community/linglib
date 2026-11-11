@@ -61,7 +61,7 @@ theorem Mode.exists_eq_basic {Rule : Ty B → Ty B → Ty B → Type}
   | _, _, _, .counit _, hl, _ => hl.elim
   | _, _, _, .ejectR _, _, hr => hr.2.elim
   | _, _, _, .ejectL _, hl, _ => hl.2.elim
-  | _, _, _, .join _ m, hl, hr => by
+  | _, _, _, .join m _, hl, hr => by
     obtain ⟨b, rfl⟩ := Mode.exists_eq_basic hR m hl hr
     exact (hR b hl hr).elim
   | _, _, _, .lower m, hl, hr => by

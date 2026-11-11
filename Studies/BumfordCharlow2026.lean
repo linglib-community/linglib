@@ -232,13 +232,13 @@ theorem Mode.reads {Rule : Ty B → Ty B → Ty B → Type}
   | _, _, _, .basic b, hl, hr => hbasic b hl hr
   | _, _, _, .mapR m, hl, hr => .inr (Mode.reads hbasic m hl hr.2)
   | _, _, _, .mapL m, hl, hr => hl.imp_right (Mode.reads hbasic m · hr)
-  | _, _, _, .ap _ m, hl, hr => .inr (Mode.reads hbasic m (hl.resolve_left hr.1) hr.2)
-  | _, _, _, .unitR _ m, hl, hr => Mode.reads hbasic m hl hr
-  | _, _, _, .unitL _ m, hl, hr => Mode.reads hbasic m hl ⟨hr.1.2, hr.2⟩
+  | _, _, _, .ap m _, hl, hr => .inr (Mode.reads hbasic m (hl.resolve_left hr.1) hr.2)
+  | _, _, _, .unitR m _, hl, hr => Mode.reads hbasic m hl hr
+  | _, _, _, .unitL m _, hl, hr => Mode.reads hbasic m hl ⟨hr.1.2, hr.2⟩
   | _, _, _, .counit _, _, hr => absurd trivial hr.1
   | _, _, _, .ejectR _, _, hr => absurd trivial hr.2.1
   | _, _, _, .ejectL m, hl, hr => Mode.reads hbasic m hl hr
-  | _, _, _, .join _ m, hl, hr => (Mode.reads hbasic m hl hr).elim .inl id
+  | _, _, _, .join m _, hl, hr => (Mode.reads hbasic m hl hr).elim .inl id
   | _, _, _, .lower m, hl, hr => (Mode.reads hbasic m hl hr).resolve_left id
 
 /-- The base sort of the book's interpreter. -/
@@ -253,7 +253,7 @@ example : Mode (baseGrammar Unit).Binary (.comp (.W e) e) (.comp (.R e) (e ⇒ .
 Map Right of backward application (5.12). -/
 example : Mode (baseGrammar Unit).Binary (.comp .S (.comp (.W e) e))
     (.comp (.R e) (.comp .S (e ⇒ .t))) (.comp .S .t) :=
-  .join inferInstance (.mapL (.counit (.mapR (.basic (.inl .ba)))))
+  .join (.mapL (.counit (.mapR (.basic (.inl .ba)))))
 
 /-- A pronoun before its would-be antecedent stays unresolved (5.13), (5.14). -/
 example {u : Ty Unit}
@@ -318,13 +318,13 @@ def shape {B β : Type} {Rule : Ty B → Ty B → Ty B → Type}
   | _, _, _, .basic b => .basic (name b)
   | _, _, _, .mapR m => .mapR (shape name m)
   | _, _, _, .mapL m => .mapL (shape name m)
-  | _, _, _, .ap _ m => .ap (shape name m)
-  | _, _, _, .unitR _ m => .unitR (shape name m)
-  | _, _, _, .unitL _ m => .unitL (shape name m)
+  | _, _, _, .ap m _ => .ap (shape name m)
+  | _, _, _, .unitR m _ => .unitR (shape name m)
+  | _, _, _, .unitL m _ => .unitL (shape name m)
   | _, _, _, .counit m => .counit (shape name m)
   | _, _, _, .ejectR m => .ejectR (shape name m)
   | _, _, _, .ejectL m => .ejectL (shape name m)
-  | _, _, _, .join _ m => .join (shape name m)
+  | _, _, _, .join m _ => .join (shape name m)
   | _, _, _, .lower m => .lower (shape name m)
 
 /-- The modes the book's `combine` finds for two types, in its order. -/
@@ -388,7 +388,7 @@ theorem combine_island :
 
 /-- The grammar has a mode that joins twice, flattening three layers of indeterminacy to one. -/
 example : Mode (baseGrammar Unit).Binary (e ⇒ S (S (S T))) e (S T) :=
-  .join inferInstance (.join inferInstance (.basic (.inl .fa)))
+  .join (.join (.basic (.inl .fa)))
 
 /-- The book's `combine` applies Join once to the result of application, and lists the modes that
 give three layers and two. -/
@@ -396,7 +396,7 @@ theorem combine_join_twice :
     combine (e ⇒ S (S (S T))) e = [(FA, S (S (S T))), (.join FA, S (S T))] := by decide
 
 /-- The search that stacks Join and Lower finds it. -/
-example : (⟨S T, .join inferInstance (.join inferInstance (.basic (.inl .fa)))⟩ :
+example : (⟨S T, .join (.join (.basic (.inl .fa)))⟩ :
       Σ u, Mode (baseGrammar Unit).Binary (e ⇒ S (S (S T))) e u) ∈
     Ty.combine (ManySorted.Language.LocallyFinite.binaryRules (L := baseGrammar Unit)) _ _ :=
   Ty.mem_combine (find := ManySorted.Language.LocallyFinite.binaryRules (L := baseGrammar Unit))
@@ -617,24 +617,24 @@ def admiresEveryone : (C (e ⇒ .t) : Ty Unit).Dom D :=
 
 /-- The surface order: someone admires everyone. -/
 theorem eval_ap_iff :
-    ((Mode.ap inferInstance (.basic (.inl .ba)) :
+    ((Mode.ap (.basic (.inl .ba)) :
       Mode (baseGrammar Unit).Binary (C e) (C (e ⇒ .t)) (C .t)).eval D
         (fun c ↦ ∃ y, c y) (admiresEveryone admires)) id ↔
       ∃ y, ∀ x, admires x y := Iff.rfl
 
 /-- The inverse order: everyone is admired by someone. -/
 theorem eval_join_mapR_mapL_iff :
-    ((Mode.join inferInstance (.mapR (.mapL (.basic (.inl .ba)))) :
+    ((Mode.join (.mapR (.mapL (.basic (.inl .ba)))) :
       Mode (baseGrammar Unit).Binary (C e) (C (e ⇒ .t)) (C .t)).eval D
         (fun c ↦ ∃ y, c y) (admiresEveryone admires)) id ↔ ∀ x, ∃ y, admires x y := Iff.rfl
 
 /-- The two orders are two readings: where each of two people admires only themself, everyone
 is admired by someone and no one admires everyone. -/
 example :
-    ((Mode.join inferInstance (.mapR (.mapL (.basic (.inl .ba)))) :
+    ((Mode.join (.mapR (.mapL (.basic (.inl .ba)))) :
       Mode (baseGrammar Unit).Binary (C e) (C (e ⇒ .t)) (C .t)).eval (fun _ ↦ Bool)
         (fun c ↦ ∃ y, c y) (admiresEveryone (· = ·))) id ∧
-    ¬ ((Mode.ap inferInstance (.basic (.inl .ba)) :
+    ¬ ((Mode.ap (.basic (.inl .ba)) :
       Mode (baseGrammar Unit).Binary (C e) (C (e ⇒ .t)) (C .t)).eval (fun _ ↦ Bool)
         (fun c ↦ ∃ y, c y) (admiresEveryone (· = ·))) id :=
   ⟨fun x ↦ ⟨x, rfl⟩, fun ⟨_, hy⟩ ↦ Bool.noConfusion ((hy true).trans (hy false).symm)⟩
@@ -653,25 +653,25 @@ section Commutative
 variable {D : B → Type} {f : Eff B} {a b : Ty B}
 
 -- (3.26)
-theorem eval_ap_fa_eq_eval_ap_ba (hc : f.IsCommutative) (F : (Ty.comp f (a ⇒ b)).Dom D)
+theorem eval_ap_fa_eq_eval_ap_ba [f.IsCommutative] (F : (Ty.comp f (a ⇒ b)).Dom D)
     (X : (Ty.comp f a).Dom D) :
-    (Mode.ap hc.toIsApplicative (.basic (.inl .fa)) :
+    (Mode.ap (.basic (.inl .fa)) :
       Mode (baseGrammar B).Binary (.comp f (a ⇒ b)) (.comp f a) (.comp f b)).eval D F X =
-    (Mode.ap hc.toIsApplicative (.basic (.inl .ba)) :
+    (Mode.ap (.basic (.inl .ba)) :
       Mode (baseGrammar B).Binary (.comp f a) (.comp f (a ⇒ b)) (.comp f b)).eval D X F :=
-  congrFun₂ (Mode.eval_ap_comm hc rfl) F X
+  congrFun₂ (Mode.eval_ap_comm rfl) F X
 
 variable {o : Ty B}
 
 -- (3.31a)
 theorem eval_ap_fa_C (F : (Ty.comp (.C o) (a ⇒ b)).Dom D) (X : (Ty.comp (.C o) a).Dom D) :
-    (Mode.ap (f := .C o) inferInstance (.basic (.inl .fa)) :
+    (Mode.ap (f := .C o) (.basic (.inl .fa)) :
       Mode (baseGrammar B).Binary (.comp (.C o) (a ⇒ b)) (.comp (.C o) a) (.comp (.C o) b)).eval
         D F X = fun c ↦ F fun g ↦ X fun x ↦ c (g x) := rfl
 
 -- (3.31b)
 theorem eval_ap_ba_C (X : (Ty.comp (.C o) a).Dom D) (F : (Ty.comp (.C o) (a ⇒ b)).Dom D) :
-    (Mode.ap (f := .C o) inferInstance (.basic (.inl .ba)) :
+    (Mode.ap (f := .C o) (.basic (.inl .ba)) :
       Mode (baseGrammar B).Binary (.comp (.C o) a) (.comp (.C o) (a ⇒ b)) (.comp (.C o) b)).eval
         D X F = fun c ↦ X fun x ↦ F fun g ↦ c (g x) := rfl
 
@@ -696,7 +696,7 @@ def only : (F .t ⇒ .t : Ty Unit).Dom D := fun m ↦ {p ∈ m.alternatives | p}
 
 /-- *Only* over a prejacent with no focus in it is the prejacent. -/
 theorem eval_unitR_only_iff (p : Prop) :
-    (Mode.unitR inferInstance (.basic (.inl .fa)) :
+    (Mode.unitR (.basic (.inl .fa)) :
       Mode (baseGrammar Unit).Binary (F .t ⇒ .t) .t .t).eval D (only (E := E)) p ↔ p := by
   change {q ∈ ({p} : Set Prop) | q} = {p} ↔ p
   refine ⟨fun h ↦ (h.ge rfl).2, fun hp ↦ Set.ext fun q ↦ ⟨And.left, fun hq ↦ ⟨hq, ?_⟩⟩⟩

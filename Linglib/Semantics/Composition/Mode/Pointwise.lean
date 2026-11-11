@@ -71,12 +71,12 @@ theorem Within.exists_eq_ap (hf : P f)
     ∀ {u : Ty B} (m : Mode Rule (.comp f l) (.comp f r) u), m.Within (MetaMode.pointwise P) →
       ∃ (u' : Ty B) (ha : f.IsApplicative) (m' : Mode Rule l r u'),
         m'.Within (MetaMode.pointwise P) ∧
-          (⟨u, m⟩ : Sigma (Mode Rule (.comp f l) (.comp f r))) = ⟨.comp f u', .ap ha m'⟩
+          (⟨u, m⟩ : Sigma (Mode Rule (.comp f l) (.comp f r))) = ⟨.comp f u', .ap m' ha⟩
   | _, .basic b, _ => isEmptyElim b
   | _, .mapR _, h => absurd (h.1 hf) (by decide)
   | _, .mapL _, h => absurd (h.1 hf) (by decide)
-  | _, .ap ha m, h => ⟨_, ha, m, h.2, rfl⟩
-  | _, .join _ m, h => by
+  | _, .ap m ha, h => ⟨_, ha, m, h.2, rfl⟩
+  | _, .join m _, h => by
     obtain ⟨u', _, m', _, he⟩ := Within.exists_eq_ap hf m h.2
     obtain ⟨rfl, -⟩ := Ty.comp.inj (congrArg Sigma.fst he)
     exact absurd (h.1 hf) (by decide)
@@ -93,7 +93,7 @@ theorem _root_.Interpreter.Ty.combineWithin_pointwise [DecidableEq B] [Decidable
     (hfind : find (.comp f l) (.comp f r) = []) :
     Ty.combineWithin (MetaMode.pointwise P) find (.comp f l) (.comp f r) =
       (Ty.combineWithin (MetaMode.pointwise P) find l r).map fun p ↦
-        ⟨.comp f p.1, .ap ha p.2⟩ := by
+        ⟨.comp f p.1, .ap p.2 ha⟩ := by
   have hk {k : MetaMode} (h : k ≠ .ap) : ¬ MetaMode.pointwise P k f := fun h' ↦ h (h' hf)
   have hap : MetaMode.pointwise P .ap f := fun _ ↦ rfl
   rw [Ty.combineWithin, Ty.combineWith_eq_combineStep, Ty.combineStep, hfind]
@@ -114,7 +114,7 @@ theorem _root_.Interpreter.Ty.mem_combineWithin_pointwise [DecidableEq B] [Decid
     {m : Sigma (Mode Rule (.comp f l) (.comp f r))} :
     m ∈ Ty.combineWithin (MetaMode.pointwise P) find (.comp f l) (.comp f r) ↔
       ∃ m' ∈ Ty.combineWithin (MetaMode.pointwise P) find l r,
-        m = ⟨.comp f m'.1, .ap ha m'.2⟩ := by
+        m = ⟨.comp f m'.1, .ap m'.2 ha⟩ := by
   rw [Ty.combineWithin_pointwise hf hfind, List.mem_map]
   exact exists_congr fun _ ↦ and_congr_right fun _ ↦ eq_comm
 
@@ -124,20 +124,20 @@ variable {G : Language (Ty B)} {D : B → Type} [M : G.Structure (Ty.Dom D)] {u 
 rules do at one assignment. -/
 theorem eval_ap_R {i : Ty B} (m : Mode G.Binary l r u) (a : (Ty.comp (.R i) l).Dom D)
     (b : (Ty.comp (.R i) r).Dom D) :
-    (Mode.ap (f := .R i) inferInstance m).eval D a b = fun j ↦ m.eval D (a j) (b j) := rfl
+    (Mode.ap (f := .R i) m).eval D a b = fun j ↦ m.eval D (a j) (b j) := rfl
 
 /-- Structured App at indeterminacy combines each alternative of one daughter with each of the
 other: Hamblin's rule. -/
 theorem eval_ap_S (m : Mode G.Binary l r u) (a : (Ty.comp .S l).Dom D)
     (b : (Ty.comp .S r).Dom D) :
-    (Mode.ap (f := .S) inferInstance m).eval D a b = Set.image2 (m.eval D) a b :=
+    (Mode.ap (f := .S) m).eval D a b = Set.image2 (m.eval D) a b :=
   (Set.image2_eq_seq _ a b).symm
 
 /-- Structured App at alternatives combines the ordinary values, and each alternative of one
 daughter with each of the other: Rooth's rule. -/
 theorem eval_ap_F (m : Mode G.Binary l r u) (a : (Ty.comp .F l).Dom D)
     (b : (Ty.comp .F r).Dom D) :
-    (Mode.ap (f := .F) inferInstance m).eval D a b = WithAlternatives.map₂ (m.eval D) a b :=
+    (Mode.ap (f := .F) m).eval D a b = WithAlternatives.map₂ (m.eval D) a b :=
   (WithAlternatives.map₂_eq_seq _ a b).symm
 
 end Mode
@@ -152,7 +152,7 @@ theorem binary_effectDrivenWithin_pointwise [DecidableEq B] {P : Eff B → Prop}
     (effectDrivenWithin (MetaMode.pointwise P) G : Interpreter (effectGrammar G) N).binary
         (.comp f l) (.comp f r) =
       ((effectDrivenWithin (MetaMode.pointwise P) G : Interpreter (effectGrammar G) N).binary
-        l r).map fun p ↦ ⟨.comp f p.1, .ap ha p.2⟩ :=
+        l r).map fun p ↦ ⟨.comp f p.1, .ap p.2 ha⟩ :=
   Ty.combineWithin_pointwise hf (List.eq_nil_iff_forall_not_mem.2 fun p _ ↦ isEmptyElim p.2)
 
 /-! ### The pointwise grammar as a grammar on computations -/
@@ -181,7 +181,7 @@ the sets of values. -/
     (effectGrammar G).Structure fun a ↦ (Ty.comp f a).Dom D :=
   Language.Structure.withBinary
     ⟨fun g x ↦ Eff.map f (M.funMap g) (Eff.sequence f _ x)⟩
-    fun m x y ↦ (Mode.ap h m).eval D x y
+    fun m x y ↦ (Mode.ap m h).eval D x y
 
 end Interpreter
 

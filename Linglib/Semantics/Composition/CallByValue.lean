@@ -106,7 +106,7 @@ are, a predicate defined at what both are defined at. -/
 theorem Application.evalCbv_fa {a b : Ty B} (f : Part ((a ⇒ b).cbv.Dom D))
     (x : Part (a.cbv.Dom D)) :
     Application.evalCbv D .fa f x =
-      (.join inferInstance (.ap inferInstance (.basic .fa)) :
+      (.join (.ap (.basic .fa)) :
         Mode (application (B := B)).Binary (.comp .M (a.cbv ⇒ .comp .M b.cbv))
           (.comp .M a.cbv) (.comp .M b.cbv)).eval D f x := by
   change _ = Eff.join .M inferInstance (Eff.map .M id (Eff.seq .M inferInstance
@@ -193,8 +193,8 @@ def partialValued [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] {N : T
   binary
     | .comp .M l, .comp .M r =>
       (Language.LocallyFinite.binaryRules (L := G) l r).map fun
-        | ⟨.comp .M u, p⟩ => ⟨.comp .M u, .join inferInstance (.ap inferInstance (.basic p))⟩
-        | ⟨u, p⟩ => ⟨.comp .M u, .ap inferInstance (.basic p)⟩
+        | ⟨.comp .M u, p⟩ => ⟨.comp .M u, .join (.ap (.basic p))⟩
+        | ⟨u, p⟩ => ⟨.comp .M u, .ap (.basic p)⟩
     | _, _ => []
 
 section PartialValued
@@ -203,7 +203,7 @@ variable {G : Language (Ty B)} {D : B → Type} [M : G.Structure (Ty.Dom D)] {l 
 
 /-- A rule on two partial values: defined where both are. -/
 theorem Mode.eval_ap_basic (p : G.Binary l r u) (x : Part (l.Dom D)) (y : Part (r.Dom D)) :
-    (Mode.ap inferInstance (.basic p) :
+    (Mode.ap (.basic p) :
       Mode G.Binary (.comp .M l) (.comp .M r) (.comp .M u)).eval D x y =
       x.bind fun a ↦ y.map fun b ↦ M.funMap p (a, b) := by
   change Eff.seq .M inferInstance (Eff.map .M (fun a b ↦ M.funMap p (a, b)) x) y = _
@@ -213,7 +213,7 @@ theorem Mode.eval_ap_basic (p : G.Binary l r u) (x : Part (l.Dom D)) (y : Part (
 at their values. -/
 theorem Mode.eval_join_ap_basic (p : G.Binary l r (.comp .M u)) (x : Part (l.Dom D))
     (y : Part (r.Dom D)) :
-    (Mode.join inferInstance (.ap inferInstance (.basic p)) :
+    (Mode.join (.ap (.basic p)) :
       Mode G.Binary (.comp .M l) (.comp .M r) (.comp .M u)).eval D x y =
       x.bind fun a ↦ y.bind fun b ↦ M.funMap p (a, b) := by
   change Eff.join .M inferInstance (Eff.map .M id (Eff.seq .M inferInstance
