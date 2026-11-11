@@ -170,7 +170,7 @@ theorem dependentCase_sd_iff (a b : Arg) :
       .speaker ∉ spec (nom a).1 ∧
         (.participant ∈ spec (nom a).1 → .participant ∈ spec (nom b).1) := by
   by_cases h : .participant ∈ spec (nom a).1 <;>
-    simp [dependentCase_pair_iff, licit_iff, strictlyDescending, h]
+    simp [dependentCase_pair_iff, licit_iff, specLE_iff, strictlyDescending, h]
 
 end Flags
 
@@ -681,11 +681,11 @@ theorem not_forall_agree_iff_swap (g : Grammar) {t : PCCType} (ht : ¬ t.Licit �
 /-! ### Cyclic Agree (§3.1) -/
 
 /-- The cyclic probes of [bejar-rezac-2009] compared with Deal's, on the six cells only: every
-reflexive cell is inverse (`Minimalist.CyclicAgree.not_isDirect_self`), where a third-person first
+reflexive cell is inverse (`Minimalist.CyclicAgree.isInverse_self`), where a third-person first
 goal lets Deal's probes go on, as Table 4's row g and the Kolyma Yukaghir 3→3 require. -/
 example : Minimalist.CyclicAgree.IsInverse BejarRezac2009.kashmiri ⟨.third, .third⟩ ∧
     Licit strictlyDescending ⟨.third, .third⟩ ∧ Licit weak ⟨.third, .third⟩ :=
-  ⟨Minimalist.CyclicAgree.not_isDirect_self _ _, by decide, by decide⟩
+  ⟨Minimalist.CyclicAgree.isInverse_self _ _, by decide, by decide⟩
 
 -- §3.1
 theorem kashmiri_isDirect_iff (s : Scenario Person) (hs : s ∈ PCC.distinctPairs) :

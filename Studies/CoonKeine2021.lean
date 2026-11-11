@@ -33,7 +33,8 @@ segment's Agree is the relativized search of the probe substrate over that list,
 two-goal characterization of gluttony rests on the substrate's search. Person geometries are
 the specifications of `Phi.PersonSegment.spec`, probes are sets of segments as in the cyclic-Agree
 substrate, and number is the two-segment geometry of the paper; the model pairs a number probe
-with every person probe, one direction of the paper's probe-specification hierarchy. A K-encapsulated dative exposes its person node and no number:
+with every person probe, one direction of the paper's probe-specification hierarchy. A
+K-encapsulated dative exposes its person node and no number:
 the paper leaves the dative's number open in a footnote and says a quirky DP externally bears
 at most a person feature, and the choice is what puts the nominative's number in the context
 the paper's diagrams caption. The crash of a gluttonous clitic-doubling probe is taken as the
@@ -308,14 +309,22 @@ theorem pccViolation_third_of_pccViolation {P : Finset PersonSegment} (hpi : Per
   gluttonous_third_of_gluttonous hpi h
 
 /-- Over a transparent indirect object, a probe with the root segment is gluttonous exactly when
-the direct object checks residue the indirect object leaves, a direct context of
-[bejar-rezac-2009] with the lower argument in the place of the external one: the configuration in
-which cyclic Agree displaces agreement is the one in which a probe above both goals takes too
-much. -/
+the indirect object is not at least as specified as the direct object relative to the probe, the
+lower DP "being featurally more specified" than the higher "relative to the specification of the
+probe" (p. 658). -/
+theorem pccViolation_iff_not_specLE {P : Finset PersonSegment} (hpi : PersonSegment.pi ∈ P)
+    (s : Clause.Scenario Person) : PCCViolation P false s ↔ ¬ SpecLE P s.low s.high := by
+  rw [PCCViolation, gluttonous_pair_iff, specLE_iff]
+  push Not
+  exact ⟨fun ⟨_, x, hx, hh, hl⟩ ↦ ⟨x, hx, hl, hh⟩,
+    fun ⟨x, hx, hl, hh⟩ ↦ ⟨⟨.pi, hpi, pi_mem_personSegments _⟩, x, hx, hh, hl⟩⟩
+
+/-- The configurations a gluttonous probe bans are the direct contexts of [bejar-rezac-2009] with
+the lower argument in the place of the external one: where cyclic Agree displaces agreement to the
+argument met second, a probe above both arguments takes too much. -/
 theorem pccViolation_iff_isDirect {P : Finset PersonSegment} (hpi : PersonSegment.pi ∈ P)
-    (s : Clause.Scenario Person) : PCCViolation P false s ↔ IsDirect P ⟨s.low, s.high⟩ := by
-  rw [PCCViolation, gluttonous_pair_iff, isDirect_iff]
-  exact ⟨fun h ↦ h.2, fun h ↦ ⟨⟨.pi, hpi, pi_mem_personSegments _⟩, h⟩⟩
+    (s : Clause.Scenario Person) : PCCViolation P false s ↔ IsDirect P ⟨s.low, s.high⟩ :=
+  pccViolation_iff_not_specLE hpi s
 
 section Typology
 

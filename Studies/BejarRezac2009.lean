@@ -153,7 +153,7 @@ theorem nishnaabemwin_isDirect_iff (s : Scenario Person) :
   decide +kernel
 
 /-- Every Swahili context is inverse (22a). -/
-example (s : Scenario Person) : IsInverse swahili s := not_isDirect_Iic_bot s
+example (s : Scenario Person) : IsInverse swahili s := isInverse_Iic_bot s
 
 -- p. 62
 theorem basque_isDirect_imp_kashmiri {s : Scenario Person} (h : IsDirect basque s) :
@@ -203,8 +203,8 @@ instance (P : Finset PersonSegment) (hasP : Bool) : DecidablePred (Converges P h
 Table 6). -/
 theorem converges_iff (P : Finset PersonSegment) (hasP : Bool) (s : Scenario Person) :
     Converges P hasP s ↔ (hasP = true ↔ IsInverse P s) := by
-  unfold Converges valuations IsInverse
-  rw [eaLicensed_iff_isDirect]
+  unfold Converges valuations
+  rw [eaLicensed_iff_isDirect, ← not_isDirect]
   by_cases hd : IsDirect P s <;> cases hasP <;> split_ifs <;> simp_all
 
 -- (25): 2N1 converges with the added probe, 1N2 does not; fn. 11: 3N3 converges, its two
@@ -223,8 +223,8 @@ def highestValue (P : Finset PersonSegment) (hasP : Bool) (s : Scenario Person) 
 -/
 theorem highestValue_eq_spec {P : Finset PersonSegment} {hasP : Bool} {s : Scenario Person}
     (h : Converges P hasP s) : highestValue P hasP s = some (spec s.high) := by
-  rw [converges_iff] at h
-  unfold highestValue valuations IsInverse at *
+  rw [converges_iff, ← not_isDirect] at h
+  unfold highestValue valuations
   by_cases hd : IsDirect P s <;> cases hasP <;> split_ifs <;> simp_all
 
 /-! ### The Person Case Constraint (14), (15) -/

@@ -11,12 +11,12 @@ An articulated person probe is a set of unvalued person segments, in the simples
 together with the segments it entails, `Finset.Iic x`. A probe on v first meets the internal
 argument, which checks every segment it bears; the segments left over, the residue, probe again
 from the next projection of v, where the external argument is the closest goal. A context, the
-scenario of the external over the internal argument, is direct when the external argument checks
-some of the residue and inverse otherwise, and [the core probe licenses the external argument
-exactly in direct contexts](##eaLicensed_iff_isDirect). When the segments of the probe form a chain
-of entailments, [a context is direct exactly when it is
-downstream](##isDirect_iff_kind_eq_downstream) on the number of probe segments each person bears,
-the person hierarchy of the language.
+scenario of the external over the internal argument, is inverse when the internal argument is at
+least as specified as the external one relative to the probe (`Phi.PersonSegment.SpecLE`) and
+direct otherwise, and [the core probe licenses the external argument exactly in direct
+contexts](##eaLicensed_iff_isDirect). When the segments of the probe form a chain of entailments,
+[a context is direct exactly when it is downstream](##isDirect_iff_kind_eq_downstream) on the
+number of probe segments each person bears, the person hierarchy of the language.
 
 ## Implementation notes
 
@@ -48,44 +48,47 @@ def residue : Finset PersonSegment := P \ spec p
 variable {P p} in
 @[simp] theorem mem_residue : x ∈ residue P p ↔ x ∈ P ∧ x ∉ spec p := Finset.mem_sdiff
 
-/-- A context, the scenario of the external over the internal argument, is direct when the
-external argument bears some segment of the residue the internal argument leaves. -/
-def IsDirect : Prop := (residue P s.low ∩ spec s.high).Nonempty
+/-- A context, the scenario of the external over the internal argument, is inverse when the
+internal argument is at least as specified as the external one relative to the probe, so that it
+leaves no residue the external argument could check. -/
+def IsInverse : Prop := SpecLE P s.high s.low
 
-/-- A context is inverse when it is not direct. -/
-abbrev IsInverse : Prop := ¬ IsDirect P s
+/-- A context is direct when it is not inverse: the external argument bears some segment of the
+residue the internal argument leaves. -/
+def IsDirect : Prop := ¬ IsInverse P s
 
-instance : DecidablePred (IsDirect P) := fun _ ↦ inferInstanceAs (Decidable (Finset.Nonempty _))
+instance : DecidablePred (IsInverse P) := fun _ ↦ inferInstanceAs (Decidable (SpecLE _ _ _))
+
+instance : DecidablePred (IsDirect P) := fun _ ↦ inferInstanceAs (Decidable (¬ _))
 
 variable {P s}
 
-theorem isDirect_iff : IsDirect P s ↔ ∃ x ∈ P, x ∉ spec s.low ∧ x ∈ spec s.high := by
-  simp [IsDirect, Finset.Nonempty, and_assoc]
+@[simp] theorem not_isDirect : ¬ IsDirect P s ↔ IsInverse P s := not_not
 
-/-- A context is direct when the internal argument does not bear every probe segment the external
-argument bears. -/
-theorem isDirect_iff_not_subset : IsDirect P s ↔ ¬ P ∩ spec s.high ⊆ spec s.low := by
-  simp only [isDirect_iff, Finset.not_subset, Finset.mem_inter]
-  exact ⟨fun ⟨x, hx, hl, hh⟩ ↦ ⟨x, ⟨hx, hh⟩, hl⟩, fun ⟨x, ⟨hx, hh⟩, hl⟩ ↦ ⟨x, hx, hl, hh⟩⟩
+theorem isDirect_iff : IsDirect P s ↔ ∃ x ∈ P, x ∉ spec s.low ∧ x ∈ spec s.high := by
+  simp only [IsDirect, IsInverse, specLE_iff, not_forall]
+  exact ⟨fun ⟨x, hx, hh, hl⟩ ↦ ⟨x, hx, hl, hh⟩, fun ⟨x, hx, hl, hh⟩ ↦ ⟨x, hx, hh, hl⟩⟩
+
+/-- A context is direct iff the external argument bears some segment of the residue. -/
+theorem isDirect_iff_nonempty : IsDirect P s ↔ (residue P s.low ∩ spec s.high).Nonempty := by
+  simp [isDirect_iff, Finset.Nonempty, and_assoc]
 
 variable (P) in
-theorem not_isDirect_self : ¬ IsDirect P ⟨p, p⟩ := fun h ↦
-  isDirect_iff_not_subset.1 h Finset.inter_subset_right
+theorem isInverse_self : IsInverse P ⟨p, p⟩ := .refl P p
 
 /-- A probe with more segments has more direct contexts. -/
 theorem IsDirect.mono {Q : Finset PersonSegment} (h : P ⊆ Q) (hd : IsDirect P s) :
     IsDirect Q s :=
-  let ⟨x, hx, hl, hh⟩ := isDirect_iff.1 hd
-  isDirect_iff.2 ⟨x, h hx, hl, hh⟩
+  fun hi ↦ hd (hi.anti h)
 
 /-- An internal argument bearing every segment of the probe leaves no residue. -/
-theorem not_isDirect_of_subset (h : P ⊆ spec s.low) : ¬ IsDirect P s := fun hd ↦
-  isDirect_iff_not_subset.1 hd (Finset.inter_subset_left.trans h)
+theorem isInverse_of_subset (h : P ⊆ spec s.low) : IsInverse P s :=
+  Finset.inter_subset_left.trans h
 
 variable (s) in
 /-- The flat probe `[uπ]` makes every context inverse, since every internal argument bears `π`. -/
-theorem not_isDirect_Iic_bot : ¬ IsDirect (Finset.Iic ⊥) s :=
-  not_isDirect_of_subset fun x hx ↦ by
+theorem isInverse_Iic_bot : IsInverse (Finset.Iic ⊥) s :=
+  isInverse_of_subset fun x hx ↦ by
     rw [Finset.mem_Iic, le_bot_iff] at hx
     exact hx ▸ pi_mem_spec s.low
 
@@ -102,30 +105,14 @@ def rank : ℕ := (P ∩ spec p).card
 
 variable {P s}
 
-/-- Of two persons, one bears every segment of a chain that the other bears. -/
-private theorem inter_spec_subset_or (hP : IsChain (· ≤ ·) (P : Set PersonSegment)) :
-    P ∩ spec p ⊆ spec q ∨ P ∩ spec q ⊆ spec p := by
-  by_contra! h
-  simp only [Finset.not_subset, Finset.mem_inter] at h
-  obtain ⟨⟨x, ⟨hx, hxp⟩, hxq⟩, y, ⟨hy, hyq⟩, hyp⟩ := h
-  rcases hP.total hx hy with hxy | hyx
-  · exact hxq (spec_isLowerSet q hxy hyq)
-  · exact hyp (spec_isLowerSet p hyx hxp)
-
 theorem isDirect_of_rank_lt (h : rank P s.low < rank P s.high) : IsDirect P s :=
-  isDirect_iff_not_subset.2 fun hsub ↦
-    h.not_ge (Finset.card_le_card (Finset.subset_inter Finset.inter_subset_left hsub))
+  fun hi ↦ h.not_ge hi.card_le
 
 /-- When the segments of the probe form a chain, a context is direct iff the external argument
 outranks the internal one. -/
 theorem isDirect_iff_rank_lt (hP : IsChain (· ≤ ·) (P : Set PersonSegment)) :
-    IsDirect P s ↔ rank P s.low < rank P s.high := by
-  refine ⟨fun h ↦ ?_, isDirect_of_rank_lt⟩
-  rw [isDirect_iff_not_subset] at h
-  have hsub := (inter_spec_subset_or s.high s.low hP).resolve_left h
-  exact Finset.card_lt_card
-    ⟨Finset.subset_inter Finset.inter_subset_left hsub,
-      fun h' ↦ h (h'.trans Finset.inter_subset_right)⟩
+    IsDirect P s ↔ rank P s.low < rank P s.high :=
+  (not_congr (specLE_iff_card_le hP)).trans not_le
 
 /-- When the segments of the probe form a chain, a context is direct iff it is downstream on the
 probe's rank, so the inverse contexts are the balanced and upstream scenarios. -/
@@ -167,6 +154,6 @@ instance : DecidablePred (EALicensed P) := fun _ ↦
 
 /-- The core probe licenses the external argument exactly in direct contexts. -/
 theorem eaLicensed_iff_isDirect : EALicensed P s ↔ IsDirect P s := by
-  simp [EALicensed, IsDirect, Finset.Nonempty, segmentProbe_goal_cons]
+  simp [EALicensed, isDirect_iff_nonempty, Finset.Nonempty, segmentProbe_goal_cons]
 
 end Minimalist.CyclicAgree
