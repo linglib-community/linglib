@@ -82,6 +82,27 @@ theorem tsum_measure_setOf_prefix :
 
 end Prefixes
 
+/-! ### Sums of lists of measures -/
+
+section Sum
+
+variable {α : Type*} [MeasurableSpace α]
+
+theorem lintegral_listSum_measure (μs : List (Measure α)) (f : α → ℝ≥0∞) :
+    ∫⁻ a, f a ∂μs.sum = (μs.map fun μ ↦ ∫⁻ a, f a ∂μ).sum := by
+  induction μs with
+  | nil => simp
+  | cons μ μs ih => rw [List.sum_cons, lintegral_add_measure, ih, List.map_cons, List.sum_cons]
+
+theorem lintegral_multisetSum_measure (μs : Multiset (Measure α)) (f : α → ℝ≥0∞) :
+    ∫⁻ a, f a ∂μs.sum = (μs.map fun μ ↦ ∫⁻ a, f a ∂μ).sum := by
+  induction μs using Multiset.induction_on with
+  | empty => simp
+  | cons μ μs ih =>
+    rw [Multiset.sum_cons, lintegral_add_measure, ih, Multiset.map_cons, Multiset.sum_cons]
+
+end Sum
+
 /-! ### Products of lists of measures -/
 
 section ListProd

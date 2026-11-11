@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Computability.ContextFreeGrammar.Measure
 public import Linglib.Core.InformationTheory.Surprisal
 public import Linglib.Processing.Surprisal.PrefixProbability
 
@@ -28,7 +27,7 @@ times the one after it (section 6.1), and the subject and object relative asymme
 along a sentence (`disconfirmed_mono`) and word-level surprisals telescope to the negative log of
 the sentence's prefix mass (`totalSurprisal_nil_eq`). The consistency the first level assumes
 holds of any grammar whose weights are relative frequencies in a treebank
-(`disconfirmed_relFreq`), by the theorem of [chi-geman-1998].
+(`PCFG.isProbabilityMeasure_derivationMeasure_relFreq`), by the theorem of [chi-geman-1998].
 
 ## Implementation notes
 
@@ -140,25 +139,5 @@ theorem totalSurprisal_nil_eq :
     totalSurprisal P str [] ws = (-ENNReal.log (P (consistent str ws))).toENNReal := by
   rw [totalSurprisal_eq P str (by simp), consistent_nil, measure_univ, one_div, ENNReal.log_inv,
     List.nil_append]
-
-/-! ### Grammars estimated from a treebank -/
-
-section Treebank
-
-variable {V : Type*} [DecidableEq V] [Countable V] {G : ContextFreeGrammar V} [DecidableEq G.NT]
-  [Countable G.NT] {D : Multiset (RoseTree (Symbol V G.NT))}
-
-/-- The grammar of section 6.3 has every rule observed in a sample of parsed text, weighted by its
-relative frequency there. Such a grammar is consistent at the root symbol of the sample's trees
-(`PCFG.derivationMeasure_relFreq_univ`), so its load at a prefix is one minus the prefix
-probability with no assumption on the grammar. -/
-theorem disconfirmed_relFreq (hD : ∀ t ∈ D, t.Licensed G.Licenses)
-    {t : RoseTree (Symbol V G.NT)} (ht : t ∈ D) (ws : List V) :
-    disconfirmed ((PCFG.relFreq D).derivationMeasure t.value) RoseTree.yield ws =
-      1 - (PCFG.relFreq D).derivationMeasure t.value (consistent RoseTree.yield ws) :=
-  have := PCFG.isProbabilityMeasure_derivationMeasure_relFreq hD ht
-  disconfirmed_eq_one_sub _ _ _
-
-end Treebank
 
 end Hale2001

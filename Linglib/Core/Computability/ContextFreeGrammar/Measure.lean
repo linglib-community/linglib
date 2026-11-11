@@ -24,8 +24,6 @@ treebank is tight in this sense ([chi-geman-1998]).
 
 * `PCFG.galtonWatson`: the offspring kernel of a PCFG.
 * `PCFG.derivationMeasure`: the law of the derivation tree at each symbol, as a kernel.
-* `PCFG.IsTight`: total mass one at every symbol, which is more than tightness at the start
-  symbol.
 
 ## Main results
 
@@ -35,11 +33,13 @@ treebank is tight in this sense ([chi-geman-1998]).
 * `PCFG.derivationMeasure_singleton`: a tree rooted at `s` has probability `derivProb` under the
   derivation measure at `s`, and trees rooted elsewhere have probability `0`.
 * `PCFG.derivationMeasure_apply_univ_le_one`: the derivation measure is a sub-probability
-  kernel; `PCFG.isTight_iff` says it is Markov exactly when the grammar is tight.
+  kernel, a probability measure at a symbol exactly when the grammar is tight there.
 * `PCFG.derivationMeasure_nonterminal_univ`: the termination probabilities satisfy the
   first-step equations of the grammar.
-* `PCFG.derivationMeasure_relFreq_univ`: the relative-frequency estimate from a corpus of
-  licensed trees terminates almost surely from the root symbol of every tree of the corpus.
+* `PCFG.sum_mul_lintegral_offspring_ofCounts`: relative frequencies match the moments of the
+  counts they are estimated from.
+* `PCFG.isProbabilityMeasure_derivationMeasure_relFreq`: the relative-frequency estimate from a
+  corpus of licensed trees is tight at the root symbol of every tree of the corpus.
 
 ## References
 
@@ -158,105 +158,62 @@ theorem derivationMeasure_apply_univ_le_one (s : Symbol T G.NT) :
 instance : IsFiniteKernel W.derivationMeasure :=
   ⟨⟨1, ENNReal.one_lt_top, W.derivationMeasure_apply_univ_le_one⟩⟩
 
-/-- A PCFG is tight when the derivation measure has total mass one at every symbol: the grammar
-almost surely produces a finite derivation from every nonterminal. Total mass one at the start
-symbol alone, which Booth and Thompson call consistency, is weaker: it constrains only the
-nonterminals a derivation from the start symbol reaches. -/
-def IsTight : Prop := ∀ s, GaltonWatson.extinctionProb W.galtonWatson s = 1
+/-! ### Expectations over the offspring -/
 
-theorem isTight_iff : W.IsTight ↔ IsMarkovKernel W.derivationMeasure :=
-  ⟨fun h ↦ ⟨fun s ↦ ⟨h s⟩⟩, fun h s ↦ (h.isProbabilityMeasure s).measure_univ⟩
-
-/-! ### Termination probabilities -/
-
-/-- A terminal is a finished derivation. -/
-@[simp] theorem derivationMeasure_terminal_univ (a : T) :
-    W.derivationMeasure (.terminal a) Set.univ = 1 := by
-  show GaltonWatson.extinctionProb W.galtonWatson _ = 1
-  rw [GaltonWatson.extinctionProb_eq_lintegral]
-  simp [offspring]
+omit [Countable T] [Countable G.NT] in
+theorem lintegral_offspring_nonterminal (A : G.NT) (F : List (Symbol T G.NT) → ℝ≥0∞) :
+    ∫⁻ l, F l ∂W.offspring (.nonterminal A) =
+      ∑ r ∈ G.rules.filter (·.input = A), W.weight r * F r.output := by
+  rw [offspring, lintegral_map .of_discrete .of_discrete, ruleMeasure,
+    lintegral_finsetSum_measure]
+  simp only [lintegral_smul_measure, lintegral_dirac, smul_eq_mul]
 
 /-- A derivation from a nonterminal terminates when the rule chosen there has a right-hand side
 all of whose symbols found terminating derivations. -/
 theorem derivationMeasure_nonterminal_univ (A : G.NT) :
     W.derivationMeasure (.nonterminal A) Set.univ =
       ∑ r ∈ G.rules.filter (·.input = A),
-        W.weight r * (r.output.map fun s ↦ W.derivationMeasure s Set.univ).prod := by
-  show GaltonWatson.extinctionProb W.galtonWatson _ = _
-  rw [GaltonWatson.extinctionProb_eq_lintegral, galtonWatson_apply, offspring,
-    lintegral_map .of_discrete .of_discrete, ruleMeasure, lintegral_finsetSum_measure]
-  simp only [lintegral_smul_measure, lintegral_dirac, smul_eq_mul]
-  rfl
+        W.weight r * (r.output.map fun s ↦ W.derivationMeasure s Set.univ).prod :=
+  (GaltonWatson.extinctionProb_eq_lintegral W.galtonWatson _).trans
+    (W.lintegral_offspring_nonterminal A _)
 
-/-- Independent events of probabilities `f a` fail jointly with probability at most the sum of
-bounds `g a` on their failure probabilities. -/
-private theorem one_le_prod_add_sum {α : Type*} {f g : α → ℝ≥0∞} :
-    ∀ {l : List α}, (∀ a ∈ l, f a ≤ 1) → (∀ a ∈ l, 1 ≤ f a + g a) →
-      1 ≤ (l.map f).prod + (l.map g).sum
-  | [], _, _ => by simp
-  | a :: l, hf, hfg => by
-    have ih := one_le_prod_add_sum (l := l) (fun b hb ↦ hf b (.tail _ hb))
-      fun b hb ↦ hfg b (.tail _ hb)
-    calc 1 ≤ f a + g a := hfg a (.head _)
-      _ ≤ f a * ((l.map f).prod + (l.map g).sum) + g a := by
-        gcongr; exact le_mul_of_one_le_right' ih
-      _ ≤ f a * (l.map f).prod + (l.map g).sum + g a := by
-        rw [mul_add]; gcongr; exact mul_le_of_le_one_left' (hf a (.head _))
-      _ = ((a :: l).map f).prod + ((a :: l).map g).sum := by
-        rw [List.map_cons, List.map_cons, List.prod_cons, List.sum_cons, add_assoc,
-          add_comm (List.sum _)]
-
-/-- The probability that a derivation from a nonterminal fails to terminate is at most the
-expected sum of those probabilities over the right-hand side of the rule chosen there. -/
-theorem one_sub_derivationMeasure_nonterminal_univ_le {A : G.NT}
-    (hA : A ∈ G.rules.image (·.input)) :
-    1 - W.derivationMeasure (.nonterminal A) Set.univ ≤
-      ∑ r ∈ G.rules.filter (·.input = A),
-        W.weight r * (r.output.map fun s ↦ 1 - W.derivationMeasure s Set.univ).sum := by
-  have he1 := W.derivationMeasure_apply_univ_le_one
-  refine (ENNReal.add_le_add_iff_left (ne_top_of_le_ne_top ENNReal.one_ne_top
-    (he1 (.nonterminal A)))).mp ?_
-  rw [add_tsub_cancel_of_le (he1 _), derivationMeasure_nonterminal_univ, ← Finset.sum_add_distrib]
-  refine (W.sum_weight A hA).ge.trans (Finset.sum_le_sum fun r _ ↦ ?_)
-  rw [← mul_add]
-  exact le_mul_of_one_le_right' (one_le_prod_add_sum (fun s _ ↦ he1 s) fun s _ ↦
-    (add_tsub_cancel_of_le (he1 s)).ge)
+/-! ### Relative frequencies -/
 
 section RelFreq
 
 variable [DecidableEq T]
 
-local notation "q[" W "]" => fun s ↦ 1 - derivationMeasure W s Set.univ
-
-/-- Under relative frequencies of rule counts, the counts weight the non-termination
-probabilities of left-hand sides by no more than those of right-hand sides. -/
-private theorem sum_ofCounts_mul_le (x : ContextFreeRule T G.NT → ℕ) :
-    ∑ r ∈ G.rules, (x r : ℝ≥0∞) * q[ofCounts x] (.nonterminal r.input) ≤
-      ∑ r ∈ G.rules, (x r : ℝ≥0∞) * (r.output.map q[ofCounts x]).sum := by
-  rw [← Finset.sum_fiberwise_of_maps_to (g := (·.input)) fun r hr ↦ Finset.mem_image_of_mem _ hr,
-    ← Finset.sum_fiberwise_of_maps_to (s := G.rules) (g := (·.input))
-      (f := fun r ↦ (x r : ℝ≥0∞) * (r.output.map q[ofCounts x]).sum)
-      fun r hr ↦ Finset.mem_image_of_mem _ hr]
-  refine Finset.sum_le_sum (N := ℝ≥0∞) fun A hA ↦ ?_
+omit [Countable T] [Countable G.NT] in
+/-- Relative frequencies match moments: totalled over the rule applications counted by `x`, the
+expectation of a statistic of the right-hand side under the relative frequencies of `x` is its
+total over the right-hand sides applied. -/
+theorem sum_mul_lintegral_offspring_ofCounts (x : ContextFreeRule T G.NT → ℕ)
+    (F : List (Symbol T G.NT) → ℝ≥0∞) :
+    ∑ r ∈ G.rules, (x r : ℝ≥0∞) * ∫⁻ l, F l ∂(ofCounts x).offspring (.nonterminal r.input) =
+      ∑ r ∈ G.rules, (x r : ℝ≥0∞) * F r.output := by
+  rw [← Finset.sum_fiberwise_of_maps_to (g := ContextFreeRule.input) fun r hr ↦
+      Finset.mem_image_of_mem _ hr,
+    ← Finset.sum_fiberwise_of_maps_to (s := G.rules) (g := ContextFreeRule.input)
+      (f := fun r ↦ (x r : ℝ≥0∞) * F r.output) fun r hr ↦ Finset.mem_image_of_mem _ hr]
+  refine Finset.sum_congr rfl fun A _ ↦ ?_
   by_cases hn : ∑ r ∈ G.rules.filter (·.input = A), x r = 0
-  · refine (Finset.sum_eq_zero fun r hr ↦ ?_).trans_le zero_le
-    rw [Nat.eq_zero_of_le_zero <| (Finset.single_le_sum (f := x) (fun _ _ ↦ Nat.zero_le _)
-      hr).trans_eq hn, Nat.cast_zero, zero_mul]
+  · have hx : ∀ r ∈ G.rules.filter (·.input = A), x r = 0 := fun r hr ↦
+      Nat.eq_zero_of_le_zero <|
+        (Finset.single_le_sum (f := x) (fun _ _ ↦ Nat.zero_le _) hr).trans_eq hn
+    rw [Finset.sum_eq_zero fun r hr ↦ by rw [hx r hr, Nat.cast_zero, zero_mul],
+      Finset.sum_eq_zero fun r hr ↦ by rw [hx r hr, Nat.cast_zero, zero_mul]]
   have hn0 : ∑ r ∈ G.rules.filter (·.input = A), (x r : ℝ≥0∞) ≠ 0 := by
     rw [← Nat.cast_sum]; exact_mod_cast hn
   have hntop : ∑ r ∈ G.rules.filter (·.input = A), (x r : ℝ≥0∞) ≠ ⊤ := by
     rw [← Nat.cast_sum]; exact ENNReal.natCast_ne_top _
-  calc ∑ r ∈ G.rules.filter (·.input = A), (x r : ℝ≥0∞) * q[ofCounts x] (.nonterminal r.input)
+  calc ∑ r ∈ G.rules.filter (·.input = A),
+        (x r : ℝ≥0∞) * ∫⁻ l, F l ∂(ofCounts x).offspring (.nonterminal r.input)
       = (∑ r ∈ G.rules.filter (·.input = A), (x r : ℝ≥0∞)) *
-          q[ofCounts x] (.nonterminal A) := by
+          ∫⁻ l, F l ∂(ofCounts x).offspring (.nonterminal A) := by
         rw [Finset.sum_mul]
         exact Finset.sum_congr rfl fun r hr ↦ by rw [(Finset.mem_filter.mp hr).2]
-    _ ≤ (∑ r ∈ G.rules.filter (·.input = A), (x r : ℝ≥0∞)) *
-          ∑ r ∈ G.rules.filter (·.input = A),
-            (ofCounts x).weight r * (r.output.map q[ofCounts x]).sum :=
-        mul_le_mul_right ((ofCounts x).one_sub_derivationMeasure_nonterminal_univ_le hA) _
-    _ = ∑ r ∈ G.rules.filter (·.input = A), (x r : ℝ≥0∞) * (r.output.map q[ofCounts x]).sum := by
-        rw [Finset.mul_sum]
+    _ = ∑ r ∈ G.rules.filter (·.input = A), (x r : ℝ≥0∞) * F r.output := by
+        rw [lintegral_offspring_nonterminal, Finset.mul_sum]
         refine Finset.sum_congr rfl fun r hr ↦ ?_
         obtain ⟨hmem, rfl⟩ := Finset.mem_filter.mp hr
         rw [ofCounts_weight hmem hn, ← mul_assoc, ENNReal.mul_div_cancel hn0 hntop]
@@ -265,39 +222,55 @@ variable {D : Multiset (RoseTree (Symbol T G.NT))}
 
 /-- **Relative-frequency grammars are tight** ([chi-geman-1998]): under the PCFG estimated from a
 corpus of licensed derivation trees, a derivation from the root symbol of any tree of the corpus
-terminates almost surely. Nonterminals the corpus does not use carry arbitrary weights, uniform
-ones under `relFreq`, and derivations from them need not terminate, so the estimate need not be
-`IsTight`. -/
-theorem derivationMeasure_relFreq_univ (hD : ∀ t ∈ D, t.Licensed G.Licenses)
-    {t : RoseTree (Symbol T G.NT)} (ht : t ∈ D) :
-    (relFreq D).derivationMeasure t.value Set.univ = 1 := by
-  show (ofCounts (RoseTree.ruleCounts D)).derivationMeasure t.value Set.univ = 1
-  have he1 := (ofCounts (RoseTree.ruleCounts D)).derivationMeasure_apply_univ_le_one
-  have hle := sum_ofCounts_mul_le (G := G) (RoseTree.ruleCounts D)
-  have hid := RoseTree.sum_ruleCounts_nsmul_input hD
-    (q := q[ofCounts (RoseTree.ruleCounts D)]) fun a ↦ by
-      simp only [derivationMeasure_terminal_univ, tsub_self]
-  simp only [nsmul_eq_mul] at hid
-  have hfin : ∑ r ∈ G.rules, (RoseTree.ruleCounts D r : ℝ≥0∞) *
-      (r.output.map q[ofCounts (RoseTree.ruleCounts D)]).sum ≠ ⊤ :=
-    ENNReal.sum_ne_top.mpr fun r _ ↦ ENNReal.mul_ne_top (ENNReal.natCast_ne_top _) <|
-      ne_top_of_le_ne_top (ENNReal.natCast_ne_top _) <|
-        (List.sum_le_length_nsmul _ 1 fun y hy ↦ by
-          obtain ⟨s, -, rfl⟩ := List.mem_map.mp hy
-          exact tsub_le_self).trans_eq (nsmul_one _)
-  rw [hid] at hle
-  have hroot := le_zero_iff.mp <|
-    (ENNReal.add_le_add_iff_left hfin).mp (hle.trans_eq (add_zero _).symm)
-  have hq : 1 - (ofCounts (RoseTree.ruleCounts D)).derivationMeasure t.value Set.univ = 0 :=
-    Multiset.sum_eq_zero_iff.mp hroot _ (Multiset.mem_map.mpr ⟨t, ht, rfl⟩)
-  exact le_antisymm (he1 _) (tsub_eq_zero_iff_le.mp hq)
-
-/-- Under the grammar estimated from a corpus of licensed trees, the derivations from the root
-symbol of a tree of the corpus form a probability space. -/
+terminates almost surely, since the node counts of the corpus are a finite excessive measure for
+the estimated branching process. Nonterminals the corpus does not use carry arbitrary weights,
+uniform ones under `relFreq`, and derivations from them need not terminate. -/
 theorem isProbabilityMeasure_derivationMeasure_relFreq (hD : ∀ t ∈ D, t.Licensed G.Licenses)
     {t : RoseTree (Symbol T G.NT)} (ht : t ∈ D) :
-    IsProbabilityMeasure ((relFreq D).derivationMeasure t.value) :=
-  ⟨derivationMeasure_relFreq_univ hD ht⟩
+    IsProbabilityMeasure ((relFreq D).derivationMeasure t.value) := by
+  let ν : Measure (Symbol T G.NT) := (D.map fun t' ↦ (t'.values.map Measure.dirac).sum).sum
+  have hint (f : Symbol T G.NT → ℝ≥0∞) :
+      ∫⁻ s, f s ∂ν = (D.map fun t' ↦ (t'.values.map f).sum).sum := by
+    simp only [ν, Measure.lintegral_multisetSum_measure, Measure.lintegral_listSum_measure,
+      Multiset.map_map, List.map_map, Function.comp_def, lintegral_dirac]
+  have hfin : IsFiniteMeasure ν := ⟨by
+    rw [← lintegral_one, hint]
+    simpa [Nat.cast_multiset_sum, Multiset.map_map, Function.comp_def] using
+      ENNReal.natCast_lt_top (D.map fun t' ↦ t'.values.length).sum⟩
+  have hν : ∀ᵐ s ∂ν, (relFreq D).galtonWatson s Set.univ = 1 := by
+    rw [ae_iff, ← lintegral_indicator_one .of_discrete, hint]
+    refine Multiset.sum_eq_zero fun y hy ↦ ?_
+    obtain ⟨t', ht', rfl⟩ := Multiset.mem_map.mp hy
+    refine List.sum_eq_zero fun z hz ↦ ?_
+    obtain ⟨s, hs, rfl⟩ := List.mem_map.mp hz
+    refine Set.indicator_of_notMem (not_not.mpr ?_) _
+    rw [← t'.map_fst_localTrees] at hs
+    obtain ⟨⟨s, ks⟩, hp, rfl⟩ := List.mem_map.mp hs
+    have hlic := licensed_iff_forall_mem_localTrees.mp (hD t' ht') _ hp
+    cases s with
+    | terminal a => simp [offspring]
+    | nonterminal A =>
+      exact ((relFreq D).offspring_nonterminal_univ A).trans
+        ((relFreq D).sum_weight A (Finset.mem_image.mpr ⟨_, hlic, rfl⟩))
+  have h : Measure.dirac t.value + GaltonWatson.mean (relFreq D).galtonWatson ∘ₘ ν ≤ ν := by
+    refine Measure.le_iff.mpr fun S hS ↦ ?_
+    rw [← lintegral_indicator_one hS, ← lintegral_indicator_one hS, lintegral_add_measure,
+      lintegral_dirac, Measure.lintegral_bind (Kernel.aemeasurable _) .of_discrete, hint, hint]
+    simp only [RoseTree.sum_map_values (S.indicator 1), Multiset.sum_map_add]
+    simp only [GaltonWatson.lintegral_mean, galtonWatson_apply, ← RoseTree.map_fst_localTrees,
+      List.map_map, Function.comp_def]
+    refine add_le_add (Multiset.single_le_sum (fun _ _ ↦ zero_le) _
+      (Multiset.mem_map_of_mem (fun t' ↦ S.indicator 1 t'.value) ht)) (le_of_eq ?_)
+    rw [RoseTree.sum_map_localTrees_eq_sum_ruleCounts hD
+        (F := fun p ↦ ∫⁻ l, (l.map (S.indicator 1)).sum ∂(relFreq D).offspring p.1)
+        fun a ↦ by simp [offspring],
+      RoseTree.sum_map_localTrees_eq_sum_ruleCounts hD
+        (F := fun p ↦ (p.2.map (S.indicator 1)).sum) fun a ↦ by simp]
+    simp only [nsmul_eq_mul]
+    exact sum_mul_lintegral_offspring_ofCounts _ _
+  have hae := GaltonWatson.ae_extinctionProb_eq_one (relFreq D).offspring_univ_le_one hν h
+  exact ⟨(ae_dirac_iff (p := fun s ↦ (relFreq D).derivationMeasure s Set.univ = 1)
+    .of_discrete).mp hae⟩
 
 end RelFreq
 

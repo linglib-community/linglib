@@ -254,6 +254,22 @@ theorem length_localTrees (t : RoseTree α) : t.localTrees.length = t.numNodes :
     rw [show (cs.map fun c ↦ c.localTrees.length) = cs.map numNodes from
       List.map_congr_left ih]
 
+theorem map_fst_localTrees (t : RoseTree α) : t.localTrees.map Prod.fst = t.values := by
+  induction t with
+  | node a cs ih =>
+    simp only [localTrees_node, values_node, List.map_cons, List.map_flatten, List.map_map,
+      Function.comp_def]
+    rw [List.map_congr_left ih]
+
+/-- Every node of a tree is its root or a child in exactly one local tree. -/
+theorem sum_map_values {M : Type*} [AddCommMonoid M] (f : α → M) (t : RoseTree α) :
+    (t.values.map f).sum = f t.value + (t.localTrees.map fun p ↦ (p.2.map f).sum).sum := by
+  induction t with
+  | node a cs ih =>
+    simp only [values_node, localTrees_node, value_node, List.map_cons, List.sum_cons,
+      List.map_flatten, List.sum_flatten, List.map_map, Function.comp_def]
+    rw [List.map_congr_left ih, List.sum_map_add]
+
 /-- The ordered frontier lists the leaf values from left to right. -/
 def leafList : RoseTree α → List α :=
   fold fun a ls ↦ match ls with

@@ -39,6 +39,7 @@ weight; see `PCFG.galtonWatson`.
   the offspring probability there.
 * `GaltonWatson.extinctionProb`: the total mass of `law`, the probability that the family tree
   is finite.
+* `GaltonWatson.mean`: the mean kernel, the expected number of offspring of each type.
 * `GaltonWatson.chainKernel`, `GaltonWatson.trajectory`: with Markov offspring, the generation
   chain in Ionescu–Tulcea form and, through `ProbabilityTheory.Kernel.traj`, the law of its
   whole trajectory.
@@ -51,6 +52,10 @@ weight; see `PCFG.galtonWatson`.
   the law at `i`, and trees rooted elsewhere have probability `0`.
 * `GaltonWatson.law_univ_le_one`: with sub-probability offspring the law is a sub-probability
   kernel.
+* `GaltonWatson.extinctionProb_eq_lintegral`: the extinction probabilities are a fixed point of
+  the offspring generating function.
+* `GaltonWatson.ae_extinctionProb_eq_one`: a finite measure on types that dominates its own mean
+  offspring together with `ρ` forces extinction from `ρ`-almost every type.
 * `GaltonWatson.fill_expand`: filling with one more generation is one generation followed by
   filling, so `GaltonWatson.fill_iterate` identifies the Kleene iterates with the completed part
   of the generation chain and `GaltonWatson.law_eq_iSup_generation` expresses the law as their
@@ -68,7 +73,8 @@ s-finite kernel; Fubini then needs no finiteness hypotheses. Partial trees are
 killing, and the grammar instance produces the zero measure at a nonterminal no rule expands. The
 extinction probability is the least fixed point of the offspring generating function and equals
 one exactly when the mean matrix is subcritical or critical ([athreya-ney-1972]); that theorem is
-not proved here.
+not proved here, only the sufficient condition `GaltonWatson.ae_extinctionProb_eq_one`, which a
+subcritical mean matrix meets with the expected numbers of individuals of each type.
 
 ## References
 
@@ -451,6 +457,79 @@ theorem extinctionProb_eq_lintegral (i : ι) :
   conv_lhs => rw [extinctionProb, ← expand_law, expand_apply']
   simp only [Set.preimage_univ, fillList_apply, Measure.listProd_univ, List.map_map]
   rfl
+
+/-! ### The mean offspring -/
+
+/-- The mean kernel of the process: the expected number of offspring of each type. -/
+noncomputable def mean : Kernel ι ι :=
+  ofFunOfCountable fun i => (ξ i).bind fun js => (js.map Measure.dirac).sum
+
+theorem lintegral_mean (f : ι → ℝ≥0∞) (i : ι) :
+    ∫⁻ j, f j ∂mean ξ i = ∫⁻ js, (js.map f).sum ∂ξ i := by
+  show ∫⁻ j, f j ∂(ξ i).bind _ = _
+  rw [Measure.lintegral_bind Measurable.of_discrete.aemeasurable
+    Measurable.of_discrete.aemeasurable]
+  simp only [Measure.lintegral_listSum_measure, List.map_map, Function.comp_def, lintegral_dirac]
+
+variable {ξ}
+
+/-- Independent events of probabilities `f a` fail jointly with probability at most the sum of
+bounds `g a` on their failure probabilities. -/
+private theorem one_le_prod_add_sum {α : Type*} {f g : α → ℝ≥0∞} :
+    ∀ {l : List α}, (∀ a ∈ l, f a ≤ 1) → (∀ a ∈ l, 1 ≤ f a + g a) →
+      1 ≤ (l.map f).prod + (l.map g).sum
+  | [], _, _ => by simp
+  | a :: l, hf, hfg => by
+    have ih := one_le_prod_add_sum (l := l) (fun b hb => hf b (.tail _ hb))
+      fun b hb => hfg b (.tail _ hb)
+    calc 1 ≤ f a + g a := hfg a (.head _)
+      _ ≤ f a * ((l.map f).prod + (l.map g).sum) + g a := by
+        gcongr; exact le_mul_of_one_le_right' ih
+      _ ≤ f a * (l.map f).prod + (l.map g).sum + g a := by
+        rw [mul_add]; gcongr; exact mul_le_of_le_one_left' (hf a (.head _))
+      _ = ((a :: l).map f).prod + ((a :: l).map g).sum := by
+        rw [List.map_cons, List.map_cons, List.prod_cons, List.sum_cons, add_assoc,
+          add_comm (List.sum _)]
+
+/-- The survival probability is subharmonic for the mean kernel: an individual whose family
+survives has an offspring whose family survives. -/
+theorem one_sub_extinctionProb_le_lintegral_mean (hξ : ∀ i, ξ i Set.univ ≤ 1) {i : ι}
+    (hi : ξ i Set.univ = 1) :
+    1 - extinctionProb ξ i ≤ ∫⁻ j, 1 - extinctionProb ξ j ∂mean ξ i := by
+  have he : ∀ j, extinctionProb ξ j ≤ 1 := law_univ_le_one hξ
+  refine (ENNReal.add_le_add_iff_left (ne_top_of_le_ne_top ENNReal.one_ne_top (he i))).mp ?_
+  rw [add_tsub_cancel_of_le (he i), lintegral_mean, extinctionProb_eq_lintegral ξ i,
+    ← lintegral_add_left .of_discrete]
+  calc 1 = ∫⁻ _, 1 ∂ξ i := by rw [lintegral_one, hi]
+    _ ≤ _ := lintegral_mono fun js => one_le_prod_add_sum (fun j _ => he j) fun j _ =>
+      (add_tsub_cancel_of_le (he j)).ge
+
+/-- **A finite excessive measure forces extinction.** If a finite measure `ν` on types dominates
+`ρ` together with the mean offspring of `ν`, as the expected numbers of individuals of each type
+in a family founded from `ρ` do when they are finite, then a family founded at `ρ`-almost every
+type is finite almost surely. -/
+theorem ae_extinctionProb_eq_one (hξ : ∀ i, ξ i Set.univ ≤ 1) {ν ρ : Measure ι}
+    [IsFiniteMeasure ν] (hν : ∀ᵐ i ∂ν, ξ i Set.univ = 1) (h : ρ + mean ξ ∘ₘ ν ≤ ν) :
+    ∀ᵐ i ∂ρ, extinctionProb ξ i = 1 := by
+  have he : ∀ j, extinctionProb ξ j ≤ 1 := law_univ_le_one hξ
+  have hsub : ∫⁻ i, 1 - extinctionProb ξ i ∂ν ≤ ∫⁻ i, 1 - extinctionProb ξ i ∂(mean ξ ∘ₘ ν) := by
+    rw [Measure.lintegral_bind (Kernel.aemeasurable _) Measurable.of_discrete.aemeasurable]
+    exact lintegral_mono_ae (hν.mono fun i hi => one_sub_extinctionProb_le_lintegral_mean hξ hi)
+  have hfin : ∫⁻ i, 1 - extinctionProb ξ i ∂(mean ξ ∘ₘ ν) ≠ ⊤ :=
+    ne_top_of_le_ne_top (measure_ne_top ν Set.univ) <|
+      (lintegral_mono' ((Measure.le_add_left le_rfl).trans h) fun _ => tsub_le_self).trans_eq
+        lintegral_one
+  have hsum : ∫⁻ i, 1 - extinctionProb ξ i ∂ρ + ∫⁻ i, 1 - extinctionProb ξ i ∂(mean ξ ∘ₘ ν) ≤
+      ∫⁻ i, 1 - extinctionProb ξ i ∂ν := by
+    rw [← lintegral_add_measure]
+    exact lintegral_mono' h le_rfl
+  have h0 : ∫⁻ i, 1 - extinctionProb ξ i ∂ρ = 0 :=
+    le_zero_iff.mp <| (ENNReal.add_le_add_iff_right hfin).mp <| by
+      rw [zero_add]; exact hsum.trans hsub
+  filter_upwards [(lintegral_eq_zero_iff .of_discrete).mp h0] with i hi
+  exact le_antisymm (he i) (tsub_eq_zero_iff_le.mp hi)
+
+variable (ξ)
 
 /-! ### Generations -/
 
