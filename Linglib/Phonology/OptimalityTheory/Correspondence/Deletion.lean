@@ -56,9 +56,8 @@ variable {s t : List α} {f : Fin t.length → Fin s.length}
 
 @[simp] theorem deletion_form_rhs : (deletion s t f).form .rhs = t := rfl
 
-theorem mem_deletion_edge {j : Fin t.length} {k : Fin s.length} :
-    (j, k) ∈ (deletion s t f).edge .rhs .lhs ↔ f j = k :=
-  mem_ofFun_edge
+theorem rel_deletion : (deletion s t f).rel .rhs .lhs = Function.graph f :=
+  rel_ofFun t s f
 
 theorem deletion_isSymmetric : (deletion s t f).IsSymmetric :=
   (ofFun_isSymmetric _ _ _).swap
@@ -67,17 +66,17 @@ theorem deletion_isSymmetric : (deletion s t f).IsSymmetric :=
 theorem maxViolAt_deletion (P : ℕ → Prop) [DecidablePred P] :
     (deletion s t f).maxViolAt P .lhs .rhs =
       ((Finset.univ.filter fun i : Fin s.length ↦ P i) \ Finset.univ.image f).card := by
-  rw [deletion_isSymmetric.maxViolAt_eq .rhs .lhs, depViolAt_of_graph fun _ _ ↦ mem_deletion_edge]
+  rw [deletion_isSymmetric.maxViolAt_eq .rhs .lhs, depViolAt_of_graph rel_deletion]
   rfl
 
 theorem depViol_deletion : (deletion s t f).depViol .lhs .rhs = 0 := by
   rw [← deletion_isSymmetric.maxViol_eq]
-  exact maxViol_eq_zero_of_graph fun _ _ ↦ mem_deletion_edge
+  exact maxViol_eq_zero_of_graph rel_deletion
 
 theorem identViol_deletion_eq_zero_iff [DecidableEq α] :
     (deletion s t f).identViol .lhs .rhs = 0 ↔ ∀ j, t[j] = s[f j] := by
   rw [← deletion_isSymmetric.identViol_eq,
-    identViol_eq_zero_iff_of_graph fun _ _ ↦ mem_deletion_edge]
+    identViol_eq_zero_iff_of_graph rel_deletion]
   rfl
 
 /-- A deletion along `Fin.succAbove p` violates a positional MAX exactly when the constraint
