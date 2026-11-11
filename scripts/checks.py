@@ -32,6 +32,7 @@ Usage, from the repository root:
     python3 scripts/checks.py core [--json]
     python3 scripts/checks.py sign SOURCE (--all | --items ID,ID,...) --by GITHUB_HANDLE
     python3 scripts/checks.py selftest   # after changing `checkClosure` or Lean
+    python3 scripts/checks.py renames    # after upgrading Lean or Mathlib
     python3 scripts/checks.py gloss SOURCE --command CMD [--items ID,ID,...]
 
 `gloss` prints, for each item, a blind English gloss of its Lean statement, to help a reviewer who
@@ -39,6 +40,12 @@ does not read Lean. A model of the reviewer's choice, run by the shell command C
 the statement closure alone, with the declarations' names hidden and no access to docstrings,
 files or tools, so that it says what the Lean says rather than what it is meant to say. A gloss is an aid to review and never evidence for a
 sign-off: the sign-off is of the Lean. Glosses are cached in `.cache/checks/glosses/`.
+
+`renames` records in `checks/renames.toml` the renames of Lean and Mathlib constants that the
+items' statements use, under the old name or the new one, where the old name is a deprecated alias
+of the new. In the hashed terms all the names of a renamed constant stand for one, so a sign-off
+stays current when a statement switches to the new name. Run it after an upgrade, while the
+aliases still exist; `status` says when there is something to record.
 
 Sign-offs are made by people. `sign` refuses to run inside an agent session (`CLAUDECODE`).
 """
@@ -52,6 +59,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 import tomllib
 from pathlib import Path
 
@@ -62,12 +70,61 @@ KINDS = {"definition", "result", "datum"}
 RELATIONS = {"exact", "generalizes", "specializes", "variant", "refutes", "missing"}
 HASH_VERSION = "v2"
 STANDARD_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
+RENAMES = CHECKS / "renames.toml"
+
+
+def load_renames():
+    """The recorded renames of Lean and Mathlib constants, oldest first."""
+    if not RENAMES.exists():
+        return []
+    with RENAMES.open("rb") as f:
+        renames = tomllib.load(f).get("rename", [])
+    for r in renames:
+        if not (isinstance(r.get("old"), str) and isinstance(r.get("new"), str)
+                and r["old"] != r["new"]):
+            sys.exit(f"{RENAMES}: a rename needs distinct `old` and `new` names, not {r}")
+    return renames
+
+
+def canonical_names(renames):
+    """The name that stands for each renamed constant in a term, for every constant that is not
+    its own: all the names linked by renames stand for one, the earliest recorded. Since a rename
+    is recorded under its old name first, a term that uses a constant's old name keeps its hash
+    when it switches to the new one. Recording a rename changes the name standing for a constant
+    only if the rename adds the constant to a group, or joins its group to an earlier one, and
+    `renames` reports any sign-off that this makes stale."""
+    parent, order = {}, {}
+
+    def find(n):
+        while parent[n] != n:
+            parent[n] = parent[parent[n]]
+            n = parent[n]
+        return n
+
+    for r in renames:
+        for n in (r["old"], r["new"]):
+            parent.setdefault(n, n)
+            order.setdefault(n, len(order))
+        a, b = find(r["old"]), find(r["new"])
+        if a != b:
+            first, second = (a, b) if order[a] < order[b] else (b, a)
+            parent[second] = first
+    return {n: find(n) for n in parent if find(n) != n}
+
+
+def unrecorded(data, renames):
+    """The renames that `checkClosure` found among the closures' constants and that are not yet
+    recorded."""
+    known = {(r["old"], r["new"]) for r in renames}
+    return [a for a in data.get("aliases", []) if (a["old"], a["new"]) not in known]
 
 
 def load_sources(keys=None):
     """The check files, keyed by source, each with its path and items."""
     sources = {}
     for path in sorted(CHECKS.glob("*.toml")):
+        if path == RENAMES:
+            continue
         with path.open("rb") as f:
             data = tomllib.load(f)
         key = data.get("source")
@@ -129,21 +186,29 @@ def candidate_modules(names):
     return sorted(modules)
 
 
-def closures(names):
+def check_closure(modules, names, renames):
+    """The output of `checkClosure` on built modules, with the recorded renames applied."""
+    with tempfile.NamedTemporaryFile("w", suffix=".json") as f:
+        json.dump(canonical_names(renames), f)
+        f.flush()
+        out = subprocess.run(["lake", "exe", "checkClosure", "--renames", f.name, *modules, "--",
+                              *names], cwd=ROOT, check=True, capture_output=True, text=True).stdout
+    return json.loads(out)
+
+
+def closures(names, renames=None):
     """Run `checkClosure` on the names, building the modules that may declare them."""
     if not names:
-        return {"roots": {}, "nodes": {}}
+        return {"roots": {}, "nodes": {}, "aliases": []}
     modules = candidate_modules(names)
     if not modules:
-        return {"roots": {n: {"found": False} for n in names}, "nodes": {}}
+        return {"roots": {n: {"found": False} for n in names}, "nodes": {}, "aliases": []}
     build = subprocess.run(["lake", "build", "checkClosure", *modules], cwd=ROOT,
                            capture_output=True, text=True)
     if build.returncode:
         errors = [l for l in build.stdout.splitlines() if l.startswith("error")]
         sys.exit("the modules declaring the items do not build:\n" + "\n".join(errors[:20]))
-    out = subprocess.run(["lake", "exe", "checkClosure", *modules, "--", *names], cwd=ROOT,
-                         check=True, capture_output=True, text=True).stdout
-    return json.loads(out)
+    return check_closure(modules, names, load_renames() if renames is None else renames)
 
 
 def item_hash(item, data):
@@ -159,11 +224,11 @@ def item_hash(item, data):
     return h.hexdigest()[:16]
 
 
-def evaluate(sources):
+def evaluate(sources, renames=None):
     """The status and details of every item, keyed by `(source, id)`, and the closures."""
     names = sorted({d for src in sources.values() for c in src["items"]
                     for d in c.get("decls", [])})
-    data = closures(names)
+    data = closures(names, renames)
     covering = {}
     for key, src in sources.items():
         for item in src["items"]:
@@ -250,7 +315,11 @@ def cmd_status(args):
         return 0
     for p in problems:
         print(f"invalid: {p}")
-    status, info, _ = evaluate(sources)
+    status, info, data = evaluate(sources)
+    pending = unrecorded(data, load_renames())
+    if pending:
+        print(f"{len(pending)} rename(s) of constants these items use are not recorded, and stale "
+              "sign-offs may be current once they are: run `checks.py renames`", file=sys.stderr)
     for key in sources if not args.sources else args.sources:
         refs = [r for r in status if r[0] == key]
         counts = {}
@@ -317,6 +386,42 @@ def cmd_diff(args):
     return subprocess.run(["git", "diff", last["commit"], "--", *files], cwd=ROOT).returncode
 
 
+RENAMES_HEADER = """\
+# Renames of Lean and Mathlib constants, recorded by `python3 scripts/checks.py renames`.
+#
+# Each is a constant that an upgrade renamed, keeping the old name as a deprecated alias of the
+# new one, so that the two mean the same. In the terms that sign-offs hash, every name linked by
+# these renames stands for the earliest recorded, so a sign-off stays current when a statement
+# switches from a constant's old name to its new one, even after the alias is removed. Entries are
+# never removed or reordered, since that would change the hashes.
+"""
+
+
+def cmd_renames(args):
+    sources = load_sources()
+    problems = validate(sources)
+    if problems:
+        sys.exit("fix the check files first:\n" + "\n".join(problems))
+    renames = load_renames()
+    before, info_before, data = evaluate(sources, renames)
+    pending = unrecorded(data, renames)
+    if not pending:
+        print("every rename of the constants the items use is recorded")
+        return 0
+    text = RENAMES.read_text(encoding="utf-8") if RENAMES.exists() else RENAMES_HEADER
+    for a in pending:
+        since = f'\nsince = "{a["since"]}"' if a.get("since") else ""
+        text += f'\n[[rename]]\nold   = "{a["old"]}"\nnew   = "{a["new"]}"{since}\n'
+        print(f"recorded {a['old']} -> {a['new']}")
+    RENAMES.write_text(text, encoding="utf-8")
+    _, info_after, _ = evaluate(sources, load_renames())
+    for ref in info_before:
+        was, now = info_before[ref].get("signoff"), info_after[ref].get("signoff")
+        if was != now and "signed" in (was, now):
+            print(f"  {ref[0]}/{ref[1]}: {was} -> {now}")
+    return 0
+
+
 def insert_check(text, cid, entry):
     """The TOML text with `entry` appended to the item with id `cid`."""
     lines = text.splitlines(keepends=True)
@@ -342,7 +447,13 @@ def cmd_sign(args):
     problems = [p for p in validate(sources)]
     if problems:
         sys.exit("fix the check file first:\n" + "\n".join(problems))
-    status, info, _ = evaluate(sources)
+    status, info, data = evaluate(sources)
+    # A rename recorded after a sign-off would change the name standing for a constant that the
+    # signed statement already uses under its new name, and make the sign-off stale.
+    pending = unrecorded(data, load_renames())
+    if pending:
+        sys.exit("record the renames of the constants these items use first, with "
+                 "`checks.py renames`: " + ", ".join(f"{a['old']} -> {a['new']}" for a in pending))
     items = sources[args.source]["items"]
     ids = [c["id"] for c in items] if args.all else args.items.split(",")
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, check=True,
@@ -496,32 +607,62 @@ SELFTEST_GROUPS = [
     ("a theorem's proof", True, ["subset_explicit", "subset_otherProof"]),
     ("a proof in a definition's body", True, ["positiveByDecide", "positiveByLemma"]),
     ("a proof in a statement", True, ["val_byDecide", "val_byLemma"]),
+    ("a constant's unrecorded rename", False, ["evenOld", "evenNew"]),
 ]
 # Declarations whose closures must leave out a declaration that only their proofs use.
 SELFTEST_UNUSED = [("positiveByLemma", "one_pos")]
+# The rename in `scripts/checks/ChecksFixtureDeps.lean`, and groups whose terms, once it is
+# recorded, must all be equal or all differ.
+SELFTEST_RENAME = {"old": "ChecksFixtureDeps.twice", "new": "ChecksFixtureDeps.double"}
+SELFTEST_RENAMED_GROUPS = [
+    ("a constant's recorded rename", True, ["evenOld", "evenNew"]),
+    ("a deprecation that is no rename", False, ["evenNew", "evenAddSelf"]),
+]
+# Recorded renames, as (old, new) pairs, and the name that must stand for each renamed constant.
+SELFTEST_CANONICAL = [
+    ([("a", "b"), ("b", "c")], {"b": "a", "c": "a"}),
+    ([("a", "b"), ("c", "d"), ("d", "b")], {"b": "a", "c": "a", "d": "a"}),
+]
 
 
-def cmd_selftest(args):
-    names = sorted({f"ChecksFixture.{n}" for _, _, ns in SELFTEST_GROUPS for n in ns}
-                   | {f"ChecksFixture.{n}" for n, _ in SELFTEST_UNUSED})
-    build = subprocess.run(["lake", "build", "checkClosure", "ChecksFixture"], cwd=ROOT,
-                           capture_output=True, text=True)
-    if build.returncode:
-        sys.exit("the fixture does not build:\n" + build.stdout[-2000:])
-    data = json.loads(subprocess.run(["lake", "exe", "checkClosure", "ChecksFixture", "--", *names],
-                                     cwd=ROOT, check=True, capture_output=True, text=True).stdout)
+def selftest_groups(data, groups):
     failures = 0
-    for what, same, group in SELFTEST_GROUPS:
+    for what, same, group in groups:
         terms = [data["nodes"][f"ChecksFixture.{n}"]["term"] for n in group]
         ok = len(set(terms)) == 1 if same else len(set(terms)) == len(terms)
         failures += not ok
         effect = "keeps" if same else "changes"
         print(f"{'ok  ' if ok else 'FAIL'}  {what} {effect} the term  ({', '.join(group)})")
+    return failures
+
+
+def cmd_selftest(args):
+    names = sorted({f"ChecksFixture.{n}" for _, _, ns in SELFTEST_GROUPS + SELFTEST_RENAMED_GROUPS
+                    for n in ns} | {f"ChecksFixture.{n}" for n, _ in SELFTEST_UNUSED})
+    build = subprocess.run(["lake", "build", "checkClosure", "ChecksFixture"], cwd=ROOT,
+                           capture_output=True, text=True)
+    if build.returncode:
+        sys.exit("the fixture does not build:\n" + build.stdout[-2000:])
+    data = check_closure(["ChecksFixture"], names, [])
+    failures = selftest_groups(data, SELFTEST_GROUPS)
     for name, unused in SELFTEST_UNUSED:
         ok = f"ChecksFixture.{unused}" not in data["roots"][f"ChecksFixture.{name}"]["closure"]
         failures += not ok
         print(f"{'ok  ' if ok else 'FAIL'}  a declaration used only in a proof is not in the "
               f"closure  ({unused} in {name})")
+    found = [{"old": a["old"], "new": a["new"]} for a in data["aliases"]]
+    ok = found == [SELFTEST_RENAME]
+    failures += not ok
+    print(f"{'ok  ' if ok else 'FAIL'}  a deprecated alias is found as a rename, and a deprecation "
+          f"that is no alias is not  ({', '.join(a['old'] for a in found) or 'none found'})")
+    data = check_closure(["ChecksFixture"], names, [SELFTEST_RENAME])
+    failures += selftest_groups(data, SELFTEST_RENAMED_GROUPS)
+    for pairs, expected in SELFTEST_CANONICAL:
+        got = canonical_names([{"old": o, "new": n} for o, n in pairs])
+        ok = got == expected
+        failures += not ok
+        print(f"{'ok  ' if ok else 'FAIL'}  renames {', '.join(f'{o}->{n}' for o, n in pairs)} "
+              f"stand for the earliest name  ({got})")
     return 1 if failures else 0
 
 
@@ -555,6 +696,8 @@ def main():
     p.add_argument("--jobs", type=int, default=4, help="glosses written at once")
     p.add_argument("--refresh", action="store_true", help="rewrite cached glosses")
     p.set_defaults(func=cmd_gloss)
+    p = sub.add_parser("renames", help="record the renames of constants the items use")
+    p.set_defaults(func=cmd_renames)
     p = sub.add_parser("selftest", help="check that the hash changes exactly when it should")
     p.set_defaults(func=cmd_selftest)
     args = parser.parse_args()

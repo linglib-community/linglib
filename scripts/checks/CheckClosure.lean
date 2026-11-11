@@ -13,11 +13,12 @@ covers a declaration's statement closure: its type and docstring, and every decl
 project that the statement mentions, followed through the bodies of definitions but never into
 proofs. Mathlib and Lean are trusted and not followed.
 
-    lake exe checkClosure Mod₁ Mod₂ … -- name₁ name₂ …
+    lake exe checkClosure [--renames FILE] Mod₁ Mod₂ … -- name₁ name₂ …
 
 imports the modules, and prints as JSON, for each name, whether it resolves, its module, its
 docstring, its closure and the axioms it rests on, together with the text and the term of every
-declaration in a closure. The axioms are collected through proofs as well as statements, so that a
+declaration in a closure, and the renamed constants among those the closures mention (`aliases`,
+below). The axioms are collected through proofs as well as statements, so that a
 `sorry` or an unproved assumption anywhere beneath a declaration shows.
 
 The term of a declaration is what a check is hashed over: a serialization of its elaborated type,
@@ -27,6 +28,14 @@ pretty-printer would hide still changes it, while the names of bound variables a
 annotations, which do not change what a statement says, do not. The closure is followed through
 the erased terms, so a declaration used only in a proof is not in it. The text of a declaration is
 its pretty-printed type and value, with full names, for people to read.
+
+A Lean or Mathlib upgrade often renames a constant, keeping the old name for a while as a
+deprecated alias of the new one. So that such a rename does not change a term, every name of a
+recorded rename (`checks/renames.toml`) is replaced in a term by a single one of them, as the JSON
+object that `--renames` names maps them (`canonicalize`). A rename is recorded only if the old name
+is an alias of the new one (`renameOf?`), so the replacement does not change what a term says.
+`aliases` lists every such rename of a constant that the closures mention under either name, so
+that `checks.py` can record it before the alias is removed.
 -/
 
 open Lean Meta
@@ -93,27 +102,52 @@ partial def serialize (e : Expr) : String := Id.run do
   let (_, _, lines) := (go e).run ({}, #[])
   return "\n".intercalate lines.toList
 
-/-- The kind, text and term of a declaration, and the declarations its erased statement or body
-mentions. -/
-def describe (c : ConstantInfo) : MetaM (String × String × String × Array Name) := do
+/-- `e` with every constant that `renames` maps replaced by its image. -/
+def canonicalize (renames : NameMap Name) (e : Expr) : Expr :=
+  if renames.isEmpty then e else
+    e.replace fun
+      | .const n us => (renames.find? n).map (.const · us)
+      | _ => none
+
+/-- The new name of `old`, if `old` is a Lean or Mathlib constant deprecated in favour of a
+constant of which it is an alias: a definition whose value is that constant, up to eta, at the
+same universe levels and with the same type. A deprecation may point to a constant that means
+something else, and is then not a rename. -/
+def renameOf? (env : Environment) (old : Name) : Option Name := do
+  let new ← (← Linter.deprecatedAttr.getParam? env old).newName?
+  guard (!isProject env old && !isProject env new)
+  let .defnInfo d ← env.find? old | none
+  let c ← env.find? new
+  guard (c.levelParams.length == d.levelParams.length)
+  let us := d.levelParams.map Level.param
+  guard (d.value.eta == .const new us)
+  guard (c.type.instantiateLevelParams c.levelParams us == d.type)
+  return new
+
+/-- The kind, text and term of a declaration, the latter with `renames` applied, and the
+declarations its erased statement or body mentions. Since a rename is of Lean and Mathlib
+constants, it makes no difference to the project declarations mentioned. -/
+def describe (renames : NameMap Name) (c : ConstantInfo) :
+    MetaM (String × String × String × Array Name) := do
   let deps (es : List Expr) : Array Name :=
     es.foldl (fun acc e ↦ e.getUsedConstants.foldl (fun acc n ↦ acc.push n) acc) #[]
+  let ser (e : Expr) : String := serialize (canonicalize renames e)
   let ty ← eraseProofs c.type
   match c with
   | .defnInfo d =>
     let val ← eraseProofs d.value
     return ("def", s!"{← ppText d.type}\n:=\n{← ppText d.value}",
-      s!"{serialize ty}\n:=\n{serialize val}", deps [ty, val])
-  | .thmInfo _ => return ("theorem", ← ppText c.type, serialize ty, deps [ty])
-  | .opaqueInfo _ => return ("opaque", ← ppText c.type, serialize ty, deps [ty])
-  | .axiomInfo _ => return ("axiom", ← ppText c.type, serialize ty, deps [ty])
+      s!"{ser ty}\n:=\n{ser val}", deps [ty, val])
+  | .thmInfo _ => return ("theorem", ← ppText c.type, ser ty, deps [ty])
+  | .opaqueInfo _ => return ("opaque", ← ppText c.type, ser ty, deps [ty])
+  | .axiomInfo _ => return ("axiom", ← ppText c.type, ser ty, deps [ty])
   | .inductInfo i =>
     return ("inductive", s!"{← ppText c.type}\nconstructors: {i.ctors}",
-      s!"{serialize ty}\nparams {i.numParams}\nconstructors {i.ctors}",
+      s!"{ser ty}\nparams {i.numParams}\nconstructors {i.ctors}",
       (deps [ty]) ++ i.ctors.toArray)
-  | .ctorInfo k => return ("constructor", ← ppText c.type, serialize ty, (deps [ty]).push k.induct)
-  | .recInfo _ => return ("recursor", ← ppText c.type, serialize ty, deps [ty])
-  | .quotInfo _ => return ("quot", ← ppText c.type, serialize ty, deps [ty])
+  | .ctorInfo k => return ("constructor", ← ppText c.type, ser ty, (deps [ty]).push k.induct)
+  | .recInfo _ => return ("recursor", ← ppText c.type, ser ty, deps [ty])
+  | .quotInfo _ => return ("quot", ← ppText c.type, ser ty, deps [ty])
 
 structure Node where
   module : Name
@@ -125,17 +159,21 @@ structure ClosureState where
   nodes : Std.HashMap Name Node := {}
   /-- The direct project dependencies of each visited declaration. -/
   edges : Std.HashMap Name (Array Name) := {}
+  /-- The Lean and Mathlib constants that the visited declarations mention. -/
+  mentioned : NameSet := {}
 
-partial def visit (n : Name) : StateT ClosureState MetaM Unit := do
+partial def visit (renames : NameMap Name) (n : Name) : StateT ClosureState MetaM Unit := do
   if (← get).nodes.contains n then return
   let env ← getEnv
   let some c := env.find? n | return
-  let (kind, text, term, deps) ← describe c
-  let deps := deps.filter (isProject env) |>.toList.eraseDups.toArray
+  let (kind, text, term, used) ← describe renames c
+  let deps := used.filter (isProject env) |>.toList.eraseDups.toArray
   modify fun s ↦ { s with
     nodes := s.nodes.insert n ⟨(moduleOf? env n).getD .anonymous, kind, text, term⟩
-    edges := s.edges.insert n deps }
-  for d in deps do visit d
+    edges := s.edges.insert n deps
+    mentioned := used.foldl (fun acc m ↦ if isProject env m then acc else acc.insert m)
+      s.mentioned }
+  for d in deps do visit renames d
 
 /-- The declarations reachable from `n`, without `n` itself. -/
 partial def reach (edges : Std.HashMap Name (Array Name)) (n : Name) : Array Name := Id.run do
@@ -151,13 +189,25 @@ partial def reach (edges : Std.HashMap Name (Array Name)) (n : Name) : Array Nam
         todo := (edges.getD m #[]).toList ++ todo
   return seen.toArray.qsort (·.toString < ·.toString)
 
-def run (names : List Name) : MetaM Json := do
+/-- The renames (`renameOf?`) in which a constant of `mentioned` is the old name or the new one,
+with the date of each deprecation. -/
+def aliases (env : Environment) (mentioned : NameSet) : Array Json := Id.run do
+  let mut out := #[]
+  for (old, _) in env.constants.toList do
+    if let some new := renameOf? env old then
+      if mentioned.contains old || mentioned.contains new then
+        let since := (Linter.deprecatedAttr.getParam? env old).bind (·.since?)
+        out := out.push (Json.mkObj [("old", old.toString), ("new", new.toString),
+          ("since", toJson since)])
+  return out.qsort (·.compress < ·.compress)
+
+def run (renames : NameMap Name) (names : List Name) : MetaM Json := do
   let env ← getEnv
   let mut roots : Array (String × Json) := #[]
   let mut st : ClosureState := {}
   for n in names do
     if env.contains n then
-      (_, st) ← (visit n).run st
+      (_, st) ← (visit renames n).run st
   for n in names do
     if env.contains n then
       let doc := (← findDocString? env n).getD ""
@@ -175,15 +225,27 @@ def run (names : List Name) : MetaM Json := do
     (n.toString, Json.mkObj [
       ("module", node.module.toString), ("kind", node.kind), ("text", node.text),
       ("term", node.term)])
-  return Json.mkObj [("roots", Json.mkObj roots.toList), ("nodes", Json.mkObj nodes.toList)]
+  return Json.mkObj [("roots", Json.mkObj roots.toList), ("nodes", Json.mkObj nodes.toList),
+    ("aliases", toJson (aliases env st.mentioned))]
+
+/-- The map from names to names in the JSON object of the file at `path`. -/
+def readRenames (path : String) : IO (NameMap Name) := do
+  let json ← IO.ofExcept (Json.parse (← IO.FS.readFile path))
+  let obj ← IO.ofExcept json.getObj?
+  obj.foldlM (init := {}) fun acc k v ↦ do
+    let v ← IO.ofExcept v.getStr?
+    return acc.insert k.toName v.toName
 
 def main (args : List String) : IO UInt32 := do
+  let ((renames : NameMap Name), args) ← match args with
+    | "--renames" :: path :: rest => do pure (← readRenames path, rest)
+    | _ => pure ({}, args)
   let (mods, names) := args.span (· != "--")
   let names := names.drop 1
   initSearchPath (← findSysroot)
   let env ← importModules (mods.map fun m ↦ { module := m.toName }).toArray {}
     (trustLevel := 1024)
   let ctx : Core.Context := { fileName := "<checks>", fileMap := default, maxHeartbeats := 0 }
-  let (json, _) ← ((run (names.map String.toName)).run' {} {}).toIO ctx { env }
+  let (json, _) ← ((run renames (names.map String.toName)).run' {} {}).toIO ctx { env }
   IO.println json.compress
   return 0

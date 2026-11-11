@@ -62,6 +62,7 @@ python3 scripts/checks.py sign SOURCE --items ex-22,ex-23 --by HANDLE
 python3 scripts/checks.py sign SOURCE --all --by HANDLE
 python3 scripts/checks.py diff SOURCE ITEM
 python3 scripts/checks.py core [--json]
+python3 scripts/checks.py renames
 python3 scripts/checks.py selftest
 ```
 
@@ -80,10 +81,34 @@ The hash is taken over the elaborated terms, not their printed form. A change th
 hide, such as to the type of a bound variable, still makes a sign-off stale. Renaming a bound
 variable or changing a binder between explicit and implicit does not, since neither changes what
 a statement says. A Lean or Mathlib upgrade that changes how a statement elaborates, for instance
-by renaming an instance it uses, also makes the sign-off stale.
+by renaming an instance it uses, also makes the sign-off stale, unless the change is a recorded
+rename.
+
+### Renames
+
+An upgrade often renames a constant and keeps the old name for a while as a deprecated alias of the
+new one, as Mathlib did when `setOf` became `Set.ofPred`. Since the two names mean the same, a
+statement that switches from one to the other should keep its sign-off. `renames.toml` records
+such renames, and in the hashed terms every name linked by them stands for the one recorded
+first. A sign-off made while a statement used `setOf` is then still current once the statement
+uses `Set.ofPred`, even after Mathlib removes the alias.
+
+```
+python3 scripts/checks.py renames
+```
+
+records every rename of a Lean or Mathlib constant that an item's statement closure uses, under
+either name. A rename is recorded only if the old name is a definition whose value is the new
+one (up to eta), at the same universe levels and with the same type; a deprecation that points to
+a constant meaning something else is not a rename. Run it after an upgrade, while the aliases
+still exist; `status` says when there is a rename to record, and `sign` refuses to sign until it
+is recorded, since recording it later could make the new sign-off stale. Entries are never
+removed or reordered. Renames that an upgrade does not mark with a deprecated alias, such as of an
+automatically named instance, still make a sign-off stale.
 
 `selftest` checks that the hash behaves this way, on pairs of declarations in
-`scripts/checks/ChecksFixture.lean` that differ in one respect each. Run it after changing
+`scripts/checks/ChecksFixture.lean` that differ in one respect each, with a stand-in for Mathlib
+in `scripts/checks/ChecksFixtureDeps.lean`. Run it after changing
 `scripts/checks/CheckClosure.lean` or upgrading Lean.
 
 `status` reports each item as one of the following:
