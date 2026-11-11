@@ -154,6 +154,12 @@ def sonorantConsonant : Segment := Segment.ofSpecs [(.sonorant, true), (.syllabi
 /-- `assimilate w` is the word `w` with each nasal assimilated to a following obstruent. -/
 def assimilate : List Segment → List Segment := NasalSubstitution.assimilate consonants trigger ng
 
+/-- Each obstruent has exactly one nasal at its place, so the prefix nasal assimilates to every
+obstruent. -/
+theorem card_homorganicNasals : ∀ x ∈ consonants, trigger ≤ x →
+    (NasalSubstitution.homorganicNasals consonants x).card = 1 := by
+  decide
+
 /-! ### Nasal substitution -/
 
 /-- The root-initial consonants that fuse with the prefix nasal. -/
