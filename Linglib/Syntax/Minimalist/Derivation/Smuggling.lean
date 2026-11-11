@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Syntax.Minimalist.Derivation.CCommand
 public import Linglib.Syntax.Minimalist.Derivation.Freezing
 public import Linglib.Syntax.Minimalist.Derivation.Movement
 public import Linglib.Syntax.Minimalist.Derivation.Remnant

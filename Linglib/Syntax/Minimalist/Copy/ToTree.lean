@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Copy.Reading
-public import Linglib.Syntax.Minimalist.Derivation.Reconstruction
+public import Linglib.Syntax.Minimalist.Derivation.Binding
 public import Linglib.Syntax.Minimalist.SyntacticObject.ToTree
 
 /-!

@@ -16,9 +16,9 @@ An ordered derivation is an initial syntactic object with a sequence of steps. E
 an item built in its own workspace, and Internal Merge raises a mover, re-merging it with the
 current object in which its occurrences are replaced by the trace of its head; [it is also an
 extraction followed by merging the copy back](##Minimalist.Step.run_im), the two stages `extract`
-and `remerge` passing through a stack of copies. [A Merge step is MERGE on the
-workspace](##Minimalist.Step.apply_im_eq_mergeWith), and that an admissible derivation is the
-iterated algebraic Merge is proved in `Workspace/Derivation.lean`. The side on which a step places
+and `remerge` passing through a stack of copies. That a Merge step is MERGE on the workspace, and
+an admissible derivation the iterated algebraic Merge, is proved in `Workspace/Derivation.lean`.
+The side on which a step places
 its daughter, and the order of an item's daughters, are linearization data that [the derived object
 ignores](##Minimalist.Step.apply_em) and only the replay reads.
 
@@ -210,46 +210,6 @@ def Step.itemsList (steps : List Step) : Workspace :=
     Step.itemsList (step :: steps) = step.items + Step.itemsList steps := by
   simp [Step.itemsList]
 
-/-! ### Steps as MERGE
-
-A Merge step is MERGE on the workspace of the current object, the items it introduces and the
-spectators: External Merge leaving copies (`Workspace.merge`), and Internal Merge leaving the trace
-of the mover's head (`Workspace.mergeWith`). Of the two stages of Internal Merge, `extract`
-contracts and puts the mover's copy on the stack, and `remerge` is MERGE of that copy and the
-current object on the workspace that holds the stack. -/
-
-/-- External Merge is MERGE of the item and the current object. -/
-theorem Step.apply_em_eq_merge (side : Edge) (item : LinearizedSyntacticObject)
-    (current : SyntacticObject) (W : Workspace) :
-    {(Step.em side item).apply current τ} + W =
-      ({current} + (Step.em side item).items + W).merge ↑item current := by
-  have h : ({current} + {↑item} + W : Workspace) = ({↑item} + {current}) + W := by abel
-  rw [Step.apply_em, Step.items, Workspace.merge_def, h, Multiset.insert_eq_cons,
-    ← Multiset.singleton_add, add_tsub_cancel_left, add_comm]
-
-/-- Internal Merge is MERGE of the mover and the current object leaving the trace of the mover's
-    head. -/
-theorem Step.apply_im_eq_mergeWith (side : Edge) {mover current : SyntacticObject} {W : Workspace}
-    (hmc : mover ∈ current.terms) (hne : current ≠ mover) (hW : ∀ U ∈ W, mover ∉ U.terms) :
-    {(Step.im mover side).apply current τ} + W =
-      ({current} + W).mergeWith (·.headTrace τ) mover current := by
-  rw [Workspace.mergeWith_internal hmc hne hW, add_comm, merge_comm]
-  rfl
-
-/-- Merging the copy on top of the stack back is MERGE of the copy and the current object, on the
-    workspace of the object, its stack and the spectators. -/
-theorem Step.run_remerge_eq_merge (side : Edge) (current m : SyntacticObject)
-    (st : List SyntacticObject) (W : Workspace) :
-    {((Step.remerge side).run ⟨current, m :: st⟩ τ).current} +
-        ↑((Step.remerge side).run ⟨current, m :: st⟩ τ).stack + W =
-      ({current} + ↑(m :: st) + W).merge m current := by
-  show {merge m current} + ↑st + W = _
-  have h : ({current} + ↑(m :: st) + W : Workspace) = ({m} + {current}) + (↑st + W) := by
-    rw [← Multiset.cons_coe, ← Multiset.singleton_add]; abel
-  rw [Workspace.merge_def, h, Multiset.insert_eq_cons, ← Multiset.singleton_add,
-    add_tsub_cancel_left]
-  abel
-
 /-! ### Derivations -/
 
 /-- An initial syntactic object with a sequence of steps. -/
@@ -410,82 +370,5 @@ theorem lexTokens_take_le (d : Derivation) (n : Nat) : (d.take n).lexTokens ≤ 
   exact Multiset.le_add_right _ _
 
 end Derivation
-
-/-! ### Relabelling -/
-
-section Map
-
-variable (f : LexicalItem.Token → LexicalItem.Token)
-
-/-- The step with its tokens relabelled by `f`. -/
-def Step.map : Step → Step
-  | .em side item => .em side (item.map f)
-  | .im mover side => .im (mover.map f) side
-  | .extract mover => .extract (mover.map f)
-  | .remerge side => .remerge side
-
-@[simp] theorem Step.mover?_map (step : Step) :
-    (step.map f).mover? = step.mover?.map (SyntacticObject.map f) := by
-  cases step <;> rfl
-
-namespace Derivation
-
-/-- The derivation with its tokens relabelled by `f`. -/
-def map (d : Derivation) : Derivation := ⟨d.initial.map f, d.steps.map (Step.map f)⟩
-
-variable (d : Derivation)
-
-@[simp] theorem length_map : (d.map f).length = d.length := List.length_map _
-
-@[simp] theorem take_map (n : Nat) : (d.map f).take n = (d.take n).map f := by
-  simp [map, take, List.map_take]
-
-@[simp] theorem append_map (steps : List Step) :
-    (d.append steps).map f = (d.map f).append (steps.map (Step.map f)) := by
-  simp [map, append]
-
-variable {f} {τ' : SyntacticObject → Option LexicalItem.Token}
-
-theorem _root_.Minimalist.Step.run_map (hf : Function.Injective f)
-    (hτ : ∀ s, τ' (s.map f) = (τ s).map f) (step : Step) (c : Cfg SyntacticObject) :
-    (step.map f).run (c.map (SyntacticObject.map f)) τ' =
-      (step.run c τ).map (SyntacticObject.map f) := by
-  rcases c with ⟨cur, _ | ⟨m, st⟩⟩ <;> cases step <;>
-    simp [Step.map, Step.run, Step.apply, Cfg.map, deleteAccessible, replace_map hf,
-      headTrace_map hτ]
-
-/-- A relabelled derivation reaches the relabelled configuration, under an injective relabelling
-the trace encoder commutes with. -/
-theorem run_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f) = (τ s).map f) :
-    (d.map f).run τ' = (d.run τ).map (SyntacticObject.map f) := by
-  have key : ∀ (steps : List Step) (c : Cfg SyntacticObject),
-      (steps.map (Step.map f)).foldl (fun c step ↦ step.run c τ')
-          (c.map (SyntacticObject.map f)) =
-        (steps.foldl (fun c step ↦ step.run c τ) c).map (SyntacticObject.map f) := by
-    intro steps
-    induction steps with
-    | nil => intro c; rfl
-    | cons step steps ih =>
-      intro c
-      rw [List.map_cons, List.foldl_cons, List.foldl_cons, Step.run_map hf hτ, ih]
-  exact key d.steps ⟨d.initial, []⟩
-
-theorem stageAt_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f) = (τ s).map f)
-    (n : Nat) : (d.map f).stageAt n τ' = (d.stageAt n τ).map f := by
-  rw [stageAt, stageAt, take_map, final, final, run_map (d.take n) hf hτ, Cfg.map_current]
-
-variable (f)
-
-theorem movedItems_map : (d.map f).movedItems = d.movedItems.map (SyntacticObject.map f) := by
-  simp [movedItems, map, List.filterMap_map, List.map_filterMap]
-
-theorem mover?_map (i : ℕ) : (d.map f).mover? i = (d.mover? i).map (SyntacticObject.map f) := by
-  rw [mover?, mover?, map]
-  simp only [List.getElem?_map]
-  cases d.steps[i]? <;> simp
-
-end Derivation
-
-end Map
 
 end Minimalist

@@ -9,7 +9,7 @@ public import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
 public import Linglib.Core.RingTheory.HahnSeries.RotaBaxter
 public import Linglib.Syntax.Minimalist.Linearization.Replay
-public import Linglib.Syntax.Minimalist.Workspace.Derivation
+public import Linglib.Syntax.Minimalist.Workspace.Economy
 public import Linglib.Syntax.Minimalist.Workspace.Merge.MinimalSearch
 public import Linglib.Syntax.Minimalist.Workspace.Merge.Sideward
 public import Linglib.Syntax.Minimalist.Label.Selection

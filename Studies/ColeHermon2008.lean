@@ -10,7 +10,7 @@ public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Minimalist.Copy.Replay
 public import Linglib.Syntax.Minimalist.Linearization.ChainReduction
 public import Linglib.Syntax.Minimalist.Derivation.Freezing
-public import Linglib.Syntax.Minimalist.Derivation.Reconstruction
+public import Linglib.Syntax.Minimalist.Derivation.Binding
 public import Linglib.Syntax.Minimalist.Derivation.Remnant
 public import Linglib.Syntax.Minimalist.Copy.Chain
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
