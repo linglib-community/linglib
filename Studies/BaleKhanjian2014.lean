@@ -320,17 +320,17 @@ def defined (t : Tree Cat Morpheme) : Set (Finset α) :=
 /-- A total function applied to the partial value on its left. -/
 abbrev back (a b : Ty Unit) : Mode (application (B := Unit)).Binary
     (.comp .M a) (.comp .M (a ⇒ b)) (.comp .M b) :=
-  .ap trivial (.basic .ba)
+  .ap (.basic .ba)
 
 /-- A total function applied to the partial value on its right. -/
 abbrev forth (a b : Ty Unit) : Mode (application (B := Unit)).Binary
     (.comp .M (a ⇒ b)) (.comp .M a) (.comp .M b) :=
-  .ap trivial (.basic .fa)
+  .ap (.basic .fa)
 
 /-- A partial function applied to the partial value on its left. -/
 abbrev backPartial (a b : Ty Unit) : Mode (application (B := Unit)).Binary
     (.comp .M a) (.comp .M (a ⇒ .comp .M b)) (.comp .M b) :=
-  .join trivial (.ap trivial (.basic .ba))
+  .join (.ap (.basic .ba))
 
 theorem eval_back {a b : Ty Unit} (x : Part (a.Dom (Dom α)))
     (f : Part (a.Dom (Dom α) → b.Dom (Dom α))) :
@@ -601,7 +601,7 @@ theorem Good.isDefined {d : Σ a : Ty Unit, a.Dom (Dom α)} (h : Good B d) : IsD
 /-- A partial function applied to the partial value on its right. -/
 abbrev forthPartial (a b : Ty Unit) : Mode (application (B := Unit)).Binary
     (.comp .M (a ⇒ .comp .M b)) (.comp .M a) (.comp .M b) :=
-  .join trivial (.ap trivial (.basic .fa))
+  .join (.ap (.basic .fa))
 
 theorem eval_forthPartial {a b : Ty Unit} (f : Part (a.Dom (Dom α) → Part (b.Dom (Dom α))))
     (x : Part (a.Dom (Dom α))) :

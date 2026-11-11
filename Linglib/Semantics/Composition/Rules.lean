@@ -44,6 +44,9 @@ inductive Application : Ty B → Ty B → Ty B → Type
   /-- Backward application. -/
   | ba {a b : Ty B} : Application a (a ⇒ b) b
 
+instance (f g : Eff B) (l r u : Ty B) : IsEmpty (Application (.comp f l) (.comp g r) u) :=
+  ⟨nofun⟩
+
 /-- Predicate modification, the conjunction of two predicates of one type. -/
 inductive PredicateModification : Ty B → Ty B → Ty B → Type
   /-- Predicate modification. -/

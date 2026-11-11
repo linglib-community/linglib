@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Composition.Effect
+public import Linglib.Semantics.Composition.MetaCombinator.Basic
 public import Linglib.Semantics.Composition.Basic
 public import Linglib.Core.ModelTheory.ManySorted.LanguageMap
 
@@ -16,7 +17,11 @@ continuation at its own result type.
 ## Main definitions
 
 * `Interpreter.Mode`: the basic modes closed under the meta-modes.
-* `Interpreter.Mode.eval`: the meaning of a mode, by the operations of the effects.
+* `Interpreter.Mode.eval`: the meaning of a mode, by the meta-combinators of the effects.
+* `Interpreter.Mode.Equiv`: two modes have the same meaning in every structure, written
+  `m ≈ m'`.
+* `Interpreter.MetaMode`, `Interpreter.Mode.Within`: the meta-modes, and the modes that keep to
+  an inventory of them at each effect.
 * `Interpreter.effectGrammar`: the grammar whose binary rules are the modes over a grammar's
   rules, with its structure, and `Interpreter.effectGrammar.basic`, the map of the grammar into
   it.
@@ -43,14 +48,14 @@ inductive Mode (Rule : Ty B → Ty B → Ty B → Type) : Ty B → Ty B → Ty B
   /-- Map Left: a mode under the effect of the left daughter. -/
   | mapL {f : Eff B} {l r u : Ty B} (m : Mode Rule l r u) : Mode Rule (.comp f l) r (.comp f u)
   /-- Structured App: a mode on the results of two daughters with one applicative effect. -/
-  | ap {f : Eff B} {l r u : Ty B} (h : f.IsApplicative) (m : Mode Rule l r u) :
-      Mode Rule (.comp f l) (.comp f r) (.comp f u)
+  | ap {f : Eff B} {l r u : Ty B} (m : Mode Rule l r u)
+      (h : f.IsApplicative := by infer_instance) : Mode Rule (.comp f l) (.comp f r) (.comp f u)
   /-- Unit Right: a left daughter expecting a computation is given a pure one. -/
-  | unitR {f : Eff B} {l l' r u : Ty B} (h : f.IsApplicative) (m : Mode Rule (l ⇒ l') r u) :
-      Mode Rule (.comp f l ⇒ l') r u
+  | unitR {f : Eff B} {l l' r u : Ty B} (m : Mode Rule (l ⇒ l') r u)
+      (h : f.IsApplicative := by infer_instance) : Mode Rule (.comp f l ⇒ l') r u
   /-- Unit Left: a right daughter expecting a computation is given a pure one. -/
-  | unitL {f : Eff B} {l r r' u : Ty B} (h : f.IsApplicative) (m : Mode Rule l (r ⇒ r') u) :
-      Mode Rule l (.comp f r ⇒ r') u
+  | unitL {f : Eff B} {l r r' u : Ty B} (m : Mode Rule l (r ⇒ r') u)
+      (h : f.IsApplicative := by infer_instance) : Mode Rule l (.comp f r ⇒ r') u
   /-- Co-unit: what the left daughter stores is given to what the right daughter reads. -/
   | counit {i l r u : Ty B} (m : Mode Rule l r u) : Mode Rule (.comp (.W i) l) (.comp (.R i) r) u
   /-- Eject Right: reading is ejected from a right daughter that is a function into a reader. -/
@@ -60,34 +65,166 @@ inductive Mode (Rule : Ty B → Ty B → Ty B → Type) : Ty B → Ty B → Ty B
   | ejectL {i l l' r u : Ty B} (m : Mode Rule (.comp (.R i) (l ⇒ l')) r u) :
       Mode Rule (l ⇒ .comp (.R i) l') r u
   /-- Join: two layers of one monadic effect in the result are flattened. -/
-  | join {f : Eff B} {l r u : Ty B} (h : f.IsApplicative)
-      (m : Mode Rule l r (.comp f (.comp f u))) : Mode Rule l r (.comp f u)
+  | join {f : Eff B} {l r u : Ty B} (m : Mode Rule l r (.comp f (.comp f u)))
+      (h : f.IsApplicative := by infer_instance) : Mode Rule l r (.comp f u)
   /-- Lower: a continuation at its own result type in the result is run at the identity. -/
   | lower {l r u : Ty B} (m : Mode Rule l r (.comp (.C u) u)) : Mode Rule l r u
+
+/-- The meta-modes, by the structure of an effect each one uses: its map, its application, its
+unit, its join, and for storing and reading the co-unit and the ejection, and for a continuation
+its lowering. -/
+inductive MetaMode
+  /-- Map Left and Map Right. -/
+  | map
+  /-- Structured App. -/
+  | ap
+  /-- Unit Left and Unit Right. -/
+  | unit
+  /-- Join. -/
+  | join
+  /-- Co-unit. -/
+  | counit
+  /-- Eject Left and Eject Right. -/
+  | eject
+  /-- Lower. -/
+  | lower
+  deriving DecidableEq, Repr
 
 namespace Mode
 
 variable {Rule : Ty B → Ty B → Ty B → Type}
 
-/-- The meaning of a mode over a grammar's rules, from a structure for the grammar: each
-meta-mode is the operation of its effect. -/
+/-- A mode keeps to an inventory of meta-modes when each meta-mode in it is one the inventory has
+at the effect it lifts through. The co-unit and the ejections are asked of the reader, and the
+lowering of the continuation. A grammar need not have every meta-mode at every effect: one with
+only Structured App at an effect, and every lexical item carrying the effect, is the pointwise
+grammar of that effect, in which an operator on the effect captures all of it in its prejacent. -/
+def Within (inv : MetaMode → Eff B → Prop) : {l r u : Ty B} → Mode Rule l r u → Prop
+  | _, _, _, .basic _ => True
+  | _, _, _, .mapR (f := f) m => inv .map f ∧ m.Within inv
+  | _, _, _, .mapL (f := f) m => inv .map f ∧ m.Within inv
+  | _, _, _, .ap (f := f) m _ => inv .ap f ∧ m.Within inv
+  | _, _, _, .unitR (f := f) m _ => inv .unit f ∧ m.Within inv
+  | _, _, _, .unitL (f := f) m _ => inv .unit f ∧ m.Within inv
+  | _, _, _, .counit (i := i) m => inv .counit (.R i) ∧ m.Within inv
+  | _, _, _, .ejectR (i := i) m => inv .eject (.R i) ∧ m.Within inv
+  | _, _, _, .ejectL (i := i) m => inv .eject (.R i) ∧ m.Within inv
+  | _, _, _, .join (f := f) m _ => inv .join f ∧ m.Within inv
+  | _, _, _, .lower (u := u) m => inv .lower (.C u) ∧ m.Within inv
+
+instance decidableWithin (inv : MetaMode → Eff B → Prop) [DecidableRel inv] :
+    {l r u : Ty B} → (m : Mode Rule l r u) → Decidable (m.Within inv)
+  | _, _, _, .basic _ => isTrue trivial
+  | _, _, _, .mapR m | _, _, _, .mapL m | _, _, _, .ap m _ | _, _, _, .unitR m _
+  | _, _, _, .unitL m _ | _, _, _, .counit m | _, _, _, .ejectR m | _, _, _, .ejectL m
+  | _, _, _, .join m _ | _, _, _, .lower m =>
+    haveI := decidableWithin inv m
+    inferInstanceAs (Decidable (_ ∧ _))
+
+/-- Every mode keeps to the inventory with every meta-mode at every effect. -/
+theorem within_of_forall {inv : MetaMode → Eff B → Prop} (h : ∀ k f, inv k f) :
+    ∀ {l r u : Ty B} (m : Mode Rule l r u), m.Within inv
+  | _, _, _, .basic _ => trivial
+  | _, _, _, .mapR m | _, _, _, .mapL m | _, _, _, .ap m _ | _, _, _, .unitR m _
+  | _, _, _, .unitL m _ | _, _, _, .counit m | _, _, _, .ejectR m | _, _, _, .ejectL m
+  | _, _, _, .join m _ | _, _, _, .lower m => ⟨h _ _, within_of_forall h m⟩
+
+/-- The meaning of a mode in a structure for the grammar. A basic mode means its rule, and a
+meta-mode the `MetaCombinator` of its effect, or for storing and reading the co-unit and the
+ejection. -/
 def eval {G : Language (Ty B)} (D : B → Type) [M : G.Structure (Ty.Dom D)] :
     {l r u : Ty B} → Mode G.Binary l r u → l.Dom D → r.Dom D → u.Dom D
-  | _, _, _, .basic b, x, y => M.funMap b (x, y)
-  | _, _, _, .mapR (f := f) m, a, b => Eff.map f (fun y ↦ m.eval D a y) b
-  | _, _, _, .mapL (f := f) m, a, b => Eff.map f (fun x ↦ m.eval D x b) a
-  | _, _, _, .ap (f := f) h m, a, b =>
-    Eff.seq f h (Eff.map f (fun x y ↦ m.eval D x y) a) b
-  | _, _, _, .unitR (f := f) h m, a, b => m.eval D (fun x ↦ a (Eff.pure f h x)) b
-  | _, _, _, .unitL (f := f) h m, a, b => m.eval D a fun y ↦ b (Eff.pure f h y)
-  | _, _, _, .counit (i := i) m, a, b =>
+  | _, _, _, .basic b => fun x y ↦ M.funMap b (x, y)
+  | _, _, _, .mapR (f := f) m => MetaCombinator.mapR (F := Eff.Obj D f) (m.eval D)
+  | _, _, _, .mapL (f := f) m => MetaCombinator.mapL (F := Eff.Obj D f) (m.eval D)
+  | _, _, _, .ap (f := f) m _ => MetaCombinator.ap (F := Eff.Obj D f) (m.eval D)
+  | _, _, _, .unitR (f := f) m _ => MetaCombinator.unitR (F := Eff.Obj D f) (m.eval D)
+  | _, _, _, .unitL (f := f) m _ => MetaCombinator.unitL (F := Eff.Obj D f) (m.eval D)
+  | _, _, _, .counit (i := i) m => fun a b ↦
     Eff.counit (Eff.map (.W i) (fun x ↦ Eff.map (.R i) (fun y ↦ m.eval D x y) b) a)
-  | _, _, _, .ejectR m, a, b => m.eval D a (Eff.eject b)
-  | _, _, _, .ejectL m, a, b => m.eval D (Eff.eject a) b
-  | _, _, _, .join (f := f) h m, a, b => Eff.join f h (m.eval D a b)
-  | _, _, _, .lower m, a, b => Eff.lower (m.eval D a b)
+  | _, _, _, .ejectR m => fun a b ↦ m.eval D a (Eff.eject b)
+  | _, _, _, .ejectL m => fun a b ↦ m.eval D (Eff.eject a) b
+  | _, _, _, .join (f := f) m _ => MetaCombinator.join (M := Eff.Obj D f) (m.eval D)
+  | _, _, _, .lower m => fun a b ↦ Eff.lower (m.eval D a b)
+
+/-- Join of a mode flattens its result by the join of the effect. -/
+theorem eval_join {G : Language (Ty B)} {D : B → Type} [M : G.Structure (Ty.Dom D)] {f : Eff B}
+    [h : f.IsApplicative] {l r u : Ty B} (m : Mode G.Binary l r (.comp f (.comp f u)))
+    (a : l.Dom D) (b : r.Dom D) :
+    (Mode.join m).eval D a b = Eff.join f h (m.eval D a b) :=
+  congrArg (Eff.join f h) (Eff.map_id f _)
+
+/-- Two modes are equivalent if they have the same `eval` in every structure for the grammar. -/
+protected def Equiv {G : Language (Ty B)} {l r u : Ty B} (m m' : Mode G.Binary l r u) : Prop :=
+  ∀ (D : B → Type) [G.Structure (Ty.Dom D)], m.eval D = m'.eval D
+
+namespace Equiv
+
+variable {G : Language (Ty B)} {l r u : Ty B} {m m' m'' : Mode G.Binary l r u}
+
+@[refl] protected theorem refl (m : Mode G.Binary l r u) : m.Equiv m := fun _ _ ↦ rfl
+
+@[symm] protected theorem symm (h : m.Equiv m') : m'.Equiv m := fun D _ ↦ (h D).symm
+
+@[trans] protected theorem trans (h : m.Equiv m') (h' : m'.Equiv m'') : m.Equiv m'' :=
+  fun D _ ↦ (h D).trans (h' D)
+
+end Equiv
+
+/-- The setoid of modes under `Mode.Equiv`. -/
+instance setoid {G : Language (Ty B)} {l r u : Ty B} : Setoid (Mode G.Binary l r u) where
+  r := Mode.Equiv
+  iseqv := ⟨Equiv.refl, Equiv.symm, Equiv.trans⟩
 
 end Mode
+
+namespace Mode.Equiv
+
+variable {G : Language (Ty B)} {f : Eff B} {i l l' r r' u : Ty B}
+
+/-! Each meta-mode respects equivalence. -/
+
+protected theorem mapR {m m' : Mode G.Binary l r u} (h : m ≈ m') :
+    Mode.mapR (f := f) m ≈ .mapR m' :=
+  fun D _ ↦ by simp only [eval, h D]
+
+protected theorem mapL {m m' : Mode G.Binary l r u} (h : m ≈ m') :
+    Mode.mapL (f := f) m ≈ .mapL m' :=
+  fun D _ ↦ by simp only [eval, h D]
+
+protected theorem ap {hf : f.IsApplicative} {m m' : Mode G.Binary l r u} (h : m ≈ m') :
+    Mode.ap m hf ≈ .ap m' hf :=
+  fun D _ ↦ by simp only [eval, h D]
+
+protected theorem unitR {hf : f.IsApplicative} {m m' : Mode G.Binary (l ⇒ l') r u}
+    (h : m ≈ m') : Mode.unitR m hf ≈ .unitR m' hf :=
+  fun D _ ↦ by simp only [eval, h D]
+
+protected theorem unitL {hf : f.IsApplicative} {m m' : Mode G.Binary l (r ⇒ r') u}
+    (h : m ≈ m') : Mode.unitL m hf ≈ .unitL m' hf :=
+  fun D _ ↦ by simp only [eval, h D]
+
+protected theorem counit {m m' : Mode G.Binary l r u} (h : m ≈ m') :
+    Mode.counit (i := i) m ≈ .counit m' :=
+  fun D _ ↦ by simp only [eval, h D]
+
+protected theorem ejectR {m m' : Mode G.Binary l (.comp (.R i) (r ⇒ r')) u} (h : m ≈ m') :
+    Mode.ejectR m ≈ .ejectR m' :=
+  fun D _ ↦ by simp only [eval, h D]
+
+protected theorem ejectL {m m' : Mode G.Binary (.comp (.R i) (l ⇒ l')) r u} (h : m ≈ m') :
+    Mode.ejectL m ≈ .ejectL m' :=
+  fun D _ ↦ by simp only [eval, h D]
+
+protected theorem join {hf : f.IsApplicative} {m m' : Mode G.Binary l r (.comp f (.comp f u))}
+    (h : m ≈ m') : Mode.join m hf ≈ .join m' hf :=
+  fun D _ ↦ by simp only [eval, h D]
+
+protected theorem lower {m m' : Mode G.Binary l r (.comp (.C u) u)} (h : m ≈ m') :
+    Mode.lower m ≈ .lower m' :=
+  fun D _ ↦ by simp only [eval, h D]
+
+end Mode.Equiv
 
 /-- The effect-driven grammar over a grammar: its binary rules are replaced by the modes over
 them, and its other symbols are kept. -/
@@ -107,15 +244,7 @@ def effectGrammar.basic (G : Language (Ty B)) : G →ᴸ effectGrammar G := .wit
 that of the grammar. -/
 theorem effectGrammar.basic_isExpansionOn {G : Language (Ty B)} {D : B → Type}
     [M : G.Structure (Ty.Dom D)] :
-    (effectGrammar.basic G).IsExpansionOn M effectGrammar.structure where
-  map_onFunction σ _ f _ :=
-    match σ, f with
-    | .prod (.of _) (.of _), _ => rfl
-    | .nil, _ => rfl
-    | .of _, _ => rfl
-    | .prod .nil _, _ => rfl
-    | .prod (.prod _ _) _, _ => rfl
-    | .prod (.of _) .nil, _ => rfl
-    | .prod (.of _) (.prod _ _), _ => rfl
+    (effectGrammar.basic G).IsExpansionOn M effectGrammar.structure :=
+  Language.LHom.withBinary_isExpansionOn fun _ _ _ ↦ rfl
 
 end Interpreter
