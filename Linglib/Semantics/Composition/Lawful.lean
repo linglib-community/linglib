@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Composition.Mode.Basic
 public import Mathlib.Control.Basic
+public import Mathlib.Basic.Nontrivial.Defs
 
 /-!
 # The effects as lawful monads
@@ -12,9 +13,17 @@ statement about the modes that follows from the functor, applicative or monad la
 holds at every such effect at once: [Structured App is Join over the two maps, the left
 daughter's effect first](##Interpreter.Mode.eval_join_mapL_mapR).
 
+Reading, indeterminacy, partiality, alternatives and the storing of truth values are
+[commutative](##Interpreter.Eff.commApplicative): at these [the right daughter's effect may as
+well come first](##Interpreter.Mode.eval_join_mapR_mapL), and [the daughters may change
+places](##Interpreter.Mode.eval_ap_comm). Quantifying over continuations
+[is not](##Interpreter.Eff.not_commApplicative_C), and there [the order of the maps is a
+difference of scope](##Interpreter.Mode.exists_eval_join_mapR_mapL_ne).
+
 ## Main definitions
 
 * `Interpreter.Eff.monad`: the monad of an applicative effect.
+* `Interpreter.Eff.IsCommutative`: the effects whose application is commutative.
 
 ## References
 
@@ -104,6 +113,52 @@ theorem lawfulMonad (f : Eff B) (h : f.IsApplicative) :
     | F => clear this; exact join_map_map (m := WithAlternatives) g x
     | _ => rfl
 
+/-- The effects whose application does not depend on the order of its two computations: those
+with a unit and an application, but for quantifying over continuations. -/
+def IsCommutative : Eff B → Prop
+  | .C _ => False
+  | f => f.IsApplicative
+
+theorem IsCommutative.isApplicative : ∀ {f : Eff B}, f.IsCommutative → f.IsApplicative
+  | .S, _ | .R _, _ | .M, _ | .F, _ => trivial
+  | .W _, h => h
+
+instance [DecidableEq B] : DecidablePred (IsCommutative (B := B))
+  | .C _ => isFalse id
+  | .W o => inferInstanceAs (Decidable (o = .t))
+  | .S | .R _ | .M | .F => isTrue trivial
+
+private theorem seq_map_prodMk_comm {f : Eff B} (hc : f.IsCommutative) {α β : Type}
+    (a : Obj D f α) (b : Obj D f β) :
+    seq f hc.isApplicative (map f Prod.mk a) b =
+      seq f hc.isApplicative (map f (fun b a ↦ (a, b)) b) a := by
+  cases f with
+  | S => exact CommApplicative.commutative_prod (m := Set) a b
+  | R i => rfl
+  | W o => cases hc; exact Prod.ext rfl (propext and_comm)
+  | C r => exact hc.elim
+  | M =>
+    ext p
+    simp only [seq, map, Part.mem_bind_iff, Part.mem_map_iff, exists_exists_and_eq_and]
+    exact ⟨fun ⟨x, hx, y, hy, h⟩ ↦ ⟨y, hy, x, hx, h⟩, fun ⟨y, hy, x, hx, h⟩ ↦ ⟨x, hx, y, hy, h⟩⟩
+  | F => exact CommApplicative.commutative_prod (m := WithAlternatives) a b
+
+/-- The application of a commutative effect is commutative: its two computations can be run in
+either order. -/
+theorem commApplicative {f : Eff B} (hc : f.IsCommutative) :
+    @CommApplicative (Obj D f) (monad f hc.isApplicative).toApplicative :=
+  let := monad (D := D) f hc.isApplicative
+  have := lawfulMonad (D := D) f hc.isApplicative
+  { commutative_prod := seq_map_prodMk_comm hc }
+
+/-- Quantifying over continuations is not commutative where the result type has two values: of
+two quantifiers that ignore their scopes, the application returns what the first does. -/
+theorem not_commApplicative_C (r : Ty B) [Nontrivial (r.Dom D)] :
+    ¬ @CommApplicative (Obj D (.C r)) (monad (.C r) trivial).toApplicative := fun h ↦ by
+  obtain ⟨x, y, hxy⟩ := exists_pair_ne (r.Dom D)
+  exact hxy (congrFun (@CommApplicative.commutative_prod _ _ h Unit Unit (fun _ ↦ x) fun _ ↦ y)
+    fun _ ↦ x)
+
 end Interpreter.Eff
 
 namespace Interpreter.Mode
@@ -123,5 +178,43 @@ theorem eval_join_mapL_mapR (h : f.IsApplicative) (m : Mode G.Binary l r u)
   have := Eff.lawfulMonad (D := D) f h
   show a >>= (fun x ↦ (fun y ↦ m.eval D x y) <$> b) = (fun x y ↦ m.eval D x y) <$> a <*> b
   simp only [seq_eq_bind_map, bind_map_left]
+
+/-- At a commutative effect it does not matter which daughter is on the left: Structured App of
+a mode is Structured App of its mirror image at the daughters in the other order. -/
+theorem eval_ap_comm (hc : f.IsCommutative) (m : Mode G.Binary l r u) (m' : Mode G.Binary r l u)
+    (hm : ∀ x y, m.eval D x y = m'.eval D y x) (a : (Ty.comp f l).Dom D)
+    (b : (Ty.comp f r).Dom D) :
+    (Mode.ap hc.isApplicative m).eval D a b = (Mode.ap hc.isApplicative m').eval D b a := by
+  let := Eff.monad (D := D) f hc.isApplicative
+  have := Eff.commApplicative (D := D) hc
+  show (fun x y ↦ m.eval D x y) <$> a <*> b = (fun y x ↦ m'.eval D y x) <$> b <*> a
+  rw [CommApplicative.commutative_map]
+  exact congrArg (fun k ↦ k <$> b <*> a) (funext₂ fun y x ↦ hm x y)
+
+/-- At a commutative effect, mapping a mode over the left daughter, then over the right, and
+joining, is Structured App of the mode too: the effects are merged with the right daughter's
+first, and the order makes no difference. -/
+theorem eval_join_mapR_mapL (hc : f.IsCommutative) (m : Mode G.Binary l r u)
+    (a : (Ty.comp f l).Dom D) (b : (Ty.comp f r).Dom D) :
+    (Mode.join hc.isApplicative (.mapR (.mapL m))).eval D a b =
+      (Mode.ap hc.isApplicative m).eval D a b := by
+  let := Eff.monad (D := D) f hc.isApplicative
+  have := Eff.lawfulMonad (D := D) f hc.isApplicative
+  have := Eff.commApplicative (D := D) hc
+  show b >>= (fun y ↦ (fun x ↦ m.eval D x y) <$> a) = (fun x y ↦ m.eval D x y) <$> a <*> b
+  rw [CommApplicative.commutative_map]
+  simp only [seq_eq_bind_map, bind_map_left]
+  rfl
+
+/-- At quantification over continuations the order of the two effects matters: where the result
+type has two values, the two daughters' effects merged with the right daughter's first differ
+from Structured App of the mode at some daughters, whatever the mode. -/
+theorem exists_eval_join_mapR_mapL_ne {o : Ty B} [Nontrivial (o.Dom D)]
+    (m : Mode G.Binary l r u) :
+    ∃ (a : (Ty.comp (.C o) l).Dom D) (b : (Ty.comp (.C o) r).Dom D),
+      (Mode.join (f := .C o) trivial (.mapR (.mapL m))).eval D a b ≠
+        (Mode.ap (f := .C o) trivial m).eval D a b := by
+  obtain ⟨x, y, hxy⟩ := exists_pair_ne (o.Dom D)
+  exact ⟨fun _ ↦ x, fun _ ↦ y, fun h ↦ hxy (congrFun h fun _ ↦ x).symm⟩
 
 end Interpreter.Mode

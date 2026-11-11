@@ -7,6 +7,7 @@ public import Mathlib.Control.Functor
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Mode.EffectFree
 public import Linglib.Semantics.Composition.Mode.Pointwise
+public import Linglib.Semantics.Composition.Lawful
 
 /-!
 # Bumford and Charlow 2026: effect-driven interpretation
@@ -684,7 +685,54 @@ theorem eval_join_mapR_mapL_iff :
       Mode (baseGrammar Unit).Binary (C e) (C (e ⇒ .t)) (C .t)).eval D
         (fun c ↦ ∃ y, c y) (admiresEveryone admires)) id ↔ ∀ x, ∃ y, admires x y := Iff.rfl
 
+/-- The two orders are two readings: where each of two people admires only themself, everyone
+is admired by someone and no one admires everyone. -/
+example :
+    ((Mode.join trivial (.mapR (.mapL (.basic (.inl .ba)))) :
+      Mode (baseGrammar Unit).Binary (C e) (C (e ⇒ .t)) (C .t)).eval (fun _ ↦ Bool)
+        (fun c ↦ ∃ y, c y) (admiresEveryone (· = ·))) id ∧
+    ¬ ((Mode.ap trivial (.basic (.inl .ba)) :
+      Mode (baseGrammar Unit).Binary (C e) (C (e ⇒ .t)) (C .t)).eval (fun _ ↦ Bool)
+        (fun c ↦ ∃ y, c y) (admiresEveryone (· = ·))) id :=
+  ⟨fun x ↦ ⟨x, rfl⟩, fun ⟨_, hy⟩ ↦ Bool.noConfusion ((hy true).trans (hy false).symm)⟩
+
 end Scope
+
+/-! ### Commutative effects
+
+At reading and at indeterminacy it does not matter to Structured App which daughter is on the
+left (3.26), and so at every effect whose application is commutative. At quantification it
+does: the function's quantifier takes scope over the argument's when the function is on the
+left, and under it when the argument is (3.31). -/
+
+section Commutative
+
+variable {D : B → Type} {f : Eff B} {a b : Ty B}
+
+-- (3.26)
+theorem eval_ap_fa_eq_eval_ap_ba (hc : f.IsCommutative) (F : (Ty.comp f (a ⇒ b)).Dom D)
+    (X : (Ty.comp f a).Dom D) :
+    (Mode.ap hc.isApplicative (.basic (.inl .fa)) :
+      Mode (baseGrammar B).Binary (.comp f (a ⇒ b)) (.comp f a) (.comp f b)).eval D F X =
+    (Mode.ap hc.isApplicative (.basic (.inl .ba)) :
+      Mode (baseGrammar B).Binary (.comp f a) (.comp f (a ⇒ b)) (.comp f b)).eval D X F :=
+  Mode.eval_ap_comm hc _ _ (fun _ _ ↦ rfl) F X
+
+variable {o : Ty B}
+
+-- (3.31a)
+theorem eval_ap_fa_C (F : (Ty.comp (.C o) (a ⇒ b)).Dom D) (X : (Ty.comp (.C o) a).Dom D) :
+    (Mode.ap (f := .C o) trivial (.basic (.inl .fa)) :
+      Mode (baseGrammar B).Binary (.comp (.C o) (a ⇒ b)) (.comp (.C o) a) (.comp (.C o) b)).eval
+        D F X = fun c ↦ F fun g ↦ X fun x ↦ c (g x) := rfl
+
+-- (3.31b)
+theorem eval_ap_ba_C (X : (Ty.comp (.C o) a).Dom D) (F : (Ty.comp (.C o) (a ⇒ b)).Dom D) :
+    (Mode.ap (f := .C o) trivial (.basic (.inl .ba)) :
+      Mode (baseGrammar B).Binary (.comp (.C o) a) (.comp (.C o) (a ⇒ b)) (.comp (.C o) b)).eval
+        D X F = fun c ↦ X fun x ↦ F fun g ↦ c (g x) := rfl
+
+end Commutative
 
 /-! ### Focus
 
