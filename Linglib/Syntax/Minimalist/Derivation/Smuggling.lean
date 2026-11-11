@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Derivation.Freezing
+public import Linglib.Syntax.Minimalist.Derivation.Movement
 public import Linglib.Syntax.Minimalist.Derivation.Remnant
 
 /-!
@@ -14,17 +15,15 @@ public import Linglib.Syntax.Minimalist.Derivation.Remnant
 A phrase that a blocker keeps out of reach can be carried past the blocker inside a larger one.
 The smuggler YP *smuggles* the smugglee XP past the blocker W when YP contains XP, W blocks a
 relation between XP and something higher, and YP moves to a position c-commanding W. This is a
-property of one movement, `SyntacticObject.Smuggles`, and [the blocker no longer c-commands the
-smugglee after it](##Minimalist.SyntacticObject.Smuggles.not_cCommands) when the smuggler and the
-remainder share no token, as in [a valid
-derivation](##Minimalist.Derivation.IsSmugglingStep.not_cCommandsAt_succ).
-`Derivation.IsSmugglingStep` says of a step that [it is such a
-movement](##Minimalist.Derivation.IsSmugglingStep.smuggles). The step [freezes the
+property of one movement, `Movement.Smuggles`, and [the blocker no longer c-commands the smugglee
+after it](##Minimalist.Movement.Smuggles.not_cCommands) when the source pronounces no token twice,
+as in [a valid derivation](##Minimalist.Derivation.IsSmugglingStep.not_cCommandsAt_succ).
+`Derivation.IsSmugglingStep` says that the movement of a step smuggles. The step [freezes the
 smugglee](##Minimalist.Derivation.IsSmugglingStep.frozen), so [a derivation that goes on to move it
 violates Freezing](##Minimalist.Derivation.IsSmugglingStep.not_obeysFreezing), which smuggling
 accounts must lift. Remnant movement is the converse, its mover having lost a phrase where the
 smuggler carries one, and [no smuggler is a remnant of what it
-carries](##Minimalist.SyntacticObject.Smuggles.not_isRemnantOf).
+carries](##Minimalist.Movement.Smuggles.not_isRemnantOf).
 
 ## Implementation notes
 
@@ -40,56 +39,63 @@ carries](##Minimalist.SyntacticObject.Smuggles.not_isRemnantOf).
 
 @[expose] public section
 
-namespace Minimalist.SyntacticObject
+namespace Minimalist.Movement
 
-variable {T m t xp w : SyntacticObject}
+open SyntacticObject
 
-/-- Moving `m` to the root of `T`, leaving `t` in its place, smuggles `xp` past `w`. -/
-structure Smuggles (T m t xp w : SyntacticObject) : Prop where
+variable {μ : Movement} {τ : SyntacticObject → Option LexicalItem.Token} {xp w : SyntacticObject}
+
+/-- The movement smuggles `xp` past `w`. -/
+@[mk_iff]
+structure Smuggles (μ : Movement) (xp w : SyntacticObject)
+    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : Prop where
   /-- The smuggler contains the smugglee. -/
-  contains : Contains m xp
+  contains : Contains μ.mover xp
   /-- The blocker c-commands the smugglee before the movement. -/
-  blocked : CCommands T w xp
+  blocked : CCommands μ.source w xp
   /-- The smuggler c-commands the blocker after it. -/
-  cCommands : CCommands (merge (T.replace m t) m) m w
+  cCommands : CCommands (μ.result τ) μ.mover w
 
-/-- Smuggling works: the blocker no longer c-commands the smugglee after the movement, when no
-token of the remainder is pronounced in the smuggler as well and neither is a bare trace. -/
-theorem Smuggles.not_cCommands (h : Smuggles T m t xp w)
-    (hd : Disjoint (T.replace m t).yield m.yield) (hxp : xp.yield ≠ 0) (hw : w.yield ≠ 0) :
-    ¬ CCommands (merge (T.replace m t) m) w xp := by
-  have key {u : SyntacticObject} (hu : u.yield ≠ 0) (hR : u ∈ (T.replace m t).terms)
-      (hm : u ∈ m.terms) : False :=
+instance : Decidable (μ.Smuggles xp w τ) := decidable_of_iff _ (smuggles_iff μ xp w τ).symm
+
+/-- Smuggling works: the blocker no longer c-commands the smugglee after the movement, when the
+source pronounces no token twice and neither is a bare trace. -/
+theorem Smuggles.not_cCommands (h : μ.Smuggles xp w τ) (hs : μ.source.yield.Nodup)
+    (hxp : xp.yield ≠ 0) (hw : w.yield ≠ 0) : ¬ CCommands (μ.result τ) w xp := by
+  have hd := disjoint_yield τ hs
+  show ¬ CCommands (merge (μ.remainder τ) μ.mover) w xp
+  have key {u : SyntacticObject} (hu : u.yield ≠ 0) (hR : u ∈ (μ.remainder τ).terms)
+      (hm : u ∈ μ.mover.terms) : False :=
     let ⟨a, ha⟩ := Multiset.exists_mem_of_ne_zero hu
     Multiset.disjoint_left.1 hd (Multiset.mem_of_le (yield_le_of_mem_terms hR) ha)
       (Multiset.mem_of_le (yield_le_of_mem_terms hm) ha)
-  have hxm : xp ∈ m.terms := mem_terms.2 h.contains.to_reflTransGen
-  have hm0 : m.yield ≠ 0 := fun h ↦ hxp (Multiset.le_zero.1 (h ▸ yield_le_of_mem_terms hxm))
+  have hxm : xp ∈ μ.mover.terms := mem_terms.2 h.contains.to_reflTransGen
+  have hm0 : μ.mover.yield ≠ 0 := fun h ↦ hxp (Multiset.le_zero.1 (h ▸ yield_le_of_mem_terms hxm))
   have hparent {root x z : SyntacticObject} (h : Sisters root x z) : Contains root x :=
     let ⟨_, hy, hyx, _, _⟩ := h
     Relation.TransGen.tail' (mem_terms.1 hy) hyx
-  have hwR : w ∈ (T.replace m t).terms := by
+  have hwR : w ∈ (μ.remainder τ).terms := by
     obtain ⟨z, -, hs, hzw⟩ := h.cCommands
     rcases Sisters.of_merge hs with h | h | ⟨h, -⟩ | ⟨-, rfl⟩
-    · exact (key hm0 h.mem_left (self_mem_terms m)).elim
-    · exact (contains_irrefl m (hparent h)).elim
-    · exact (key hm0 (h ▸ self_mem_terms m) (self_mem_terms m)).elim
+    · exact (key hm0 h.mem_left (self_mem_terms μ.mover)).elim
+    · exact (contains_irrefl μ.mover (hparent h)).elim
+    · exact (key hm0 (h ▸ self_mem_terms μ.mover) (self_mem_terms μ.mover)).elim
     · exact mem_terms.2 hzw
-  have hwm : w ∉ m.terms := key hw hwR
-  have hmw' : m ∉ w.terms := fun h ↦
-    key hm0 (terms_subset_terms (mem_terms.1 hwR) h) (self_mem_terms m)
+  have hwm : w ∉ μ.mover.terms := key hw hwR
+  have hmw' : μ.mover ∉ w.terms := fun h ↦
+    key hm0 (terms_subset_terms (mem_terms.1 hwR) h) (self_mem_terms μ.mover)
   obtain ⟨z, -, hs, -⟩ := h.blocked
   rw [merge_comm]
   exact not_cCommands_merge_of_notMem_terms hwm
     (contains_iff_containsOrEq_and_ne.1 ((hparent hs).replace hwm hmw')).2 (key hxp · hxm)
 
 /-- The smuggler is no remnant of what the smugglee pronounces. -/
-theorem Smuggles.not_isRemnantOf (h : Smuggles T m t xp w) {tok : LexicalItem.Token}
-    (ht : tok ∈ xp.yield) : ¬ m.IsRemnantOf tok :=
+theorem Smuggles.not_isRemnantOf (h : μ.Smuggles xp w τ) {tok : LexicalItem.Token}
+    (ht : tok ∈ xp.yield) : ¬ μ.mover.IsRemnantOf tok :=
   fun hr ↦ hr.2 <| Multiset.mem_of_le
     (yield_le_of_mem_terms (mem_terms.2 h.contains.to_reflTransGen)) ht
 
-end Minimalist.SyntacticObject
+end Minimalist.Movement
 
 namespace Minimalist.Derivation
 
@@ -97,23 +103,33 @@ open SyntacticObject
 
 variable {d : Derivation} {steps : List Step} {i j : Nat} {xp w : SyntacticObject}
 
-/-- Step `i` of `d` smuggles `xp` past `w`: its mover contains `xp`, which `w` c-commands before
-the step, and c-commands `w` after it. -/
+/-- Step `i` of `d` smuggles `xp` past `w`: its movement does. -/
 def IsSmugglingStep (d : Derivation) (i : Nat) (xp w : SyntacticObject) : Prop :=
-  ∃ m ∈ d.mover? i, Contains m xp ∧ d.CCommandsAt i w xp ∧ d.CCommandsAt (i + 1) m w
+  ∃ μ ∈ d.movement? i, μ.Smuggles xp w
+
+/-- A smuggling step in terms of its mover and its stage. -/
+theorem isSmugglingStep_iff :
+    d.IsSmugglingStep i xp w ↔ ∃ m ∈ d.mover? i, Contains (d.stageAt i) m ∧ Contains m xp ∧
+      CCommands (d.stageAt i) w xp ∧
+        CCommands (merge (deleteAccessible m (d.stageAt i)) m) m w := by
+  constructor
+  · rintro ⟨μ, hμ, hs⟩
+    obtain ⟨hm, hsrc⟩ := mem_movement?_iff.1 hμ
+    exact ⟨μ.mover, hm, hsrc ▸ μ.contains, hs.contains, hsrc ▸ hs.blocked, hsrc ▸ hs.cCommands⟩
+  · rintro ⟨m, hm, hc, hmx, hwx, hmw⟩
+    exact ⟨⟨d.stageAt i, m, hc⟩, mem_movement?_iff.2 ⟨hm, rfl⟩, hmx, hwx, hmw⟩
 
 instance (d : Derivation) (i : Nat) (xp w : SyntacticObject) :
     Decidable (d.IsSmugglingStep i xp w) :=
-  inferInstanceAs (Decidable (∃ m ∈ d.mover? i, _))
+  decidable_of_iff _ isSmugglingStep_iff.symm
 
 theorem IsSmugglingStep.lt_length (h : d.IsSmugglingStep i xp w) : i < d.length :=
-  let ⟨_, hm, _⟩ := h
-  lt_length_of_mem_mover? hm
+  let ⟨_, hμ, _⟩ := h
+  lt_length_of_mem_movement? hμ
 
 theorem isSmugglingStep_append_of_lt (hi : i < d.length) :
     (d.append steps).IsSmugglingStep i xp w ↔ d.IsSmugglingStep i xp w := by
-  rw [IsSmugglingStep, IsSmugglingStep, mover?_append_of_lt hi, cCommandsAt_append_of_le hi.le]
-  simp only [cCommandsAt_append_of_le (Nat.succ_le_of_lt hi)]
+  rw [IsSmugglingStep, IsSmugglingStep, movement?_append_of_lt hi]
 
 theorem IsSmugglingStep.append (h : d.IsSmugglingStep i xp w) :
     (d.append steps).IsSmugglingStep i xp w :=
@@ -122,49 +138,47 @@ theorem IsSmugglingStep.append (h : d.IsSmugglingStep i xp w) :
 theorem isSmugglingStep_map_iff {f : LexicalItem.Token → LexicalItem.Token}
     (hf : Function.Injective f) (hsel : LexicalItem.Token.PreservesSelection f) :
     (d.map f).IsSmugglingStep i (xp.map f) (w.map f) ↔ d.IsSmugglingStep i xp w := by
+  have hτ : ∀ s : SyntacticObject, selHead (s.map f) = (selHead s).map f :=
+    fun s ↦ s.selHead_map hsel
+  rw [isSmugglingStep_iff, isSmugglingStep_iff]
   cases h : d.mover? i <;>
-    simp [IsSmugglingStep, mover?_map, h, contains_map_iff hf, cCommandsAt_map_iff hf hsel]
-
-/-- A smuggling step is a smuggling movement at its stage of the derivation. -/
-theorem IsSmugglingStep.smuggles (h : d.IsSmugglingStep i xp w) :
-    ∃ m ∈ d.mover? i, (d.stageAt i).Smuggles m (m.headTrace selHead) xp w := by
-  obtain ⟨m, hm, hmx, hwx, hmw⟩ := h
-  obtain ⟨step, hs, hsm⟩ := Option.bind_eq_some_iff.1 hm
-  have hstage : d.stageAt (i + 1) = (step.run (d.take i).run).current :=
-    congrArg Cfg.current (run_take_succ hs)
-  exact ⟨m, hm, hmx, hwx.cCommands_stageAt, (hstage ▸ hmw.cCommands_stageAt).mono
-    (Step.terms_current_run_subset (τ := selHead) hsm (d.take i).run)⟩
+    simp [mover?_map, h, stageAt_map d hf hτ, contains_map_iff hf, cCommands_map_iff hf,
+      deleteAccessible, ← replace_map hf, ← SyntacticObject.headTrace_map hτ, ← map_merge]
 
 /-- In a valid derivation the blocker no longer c-commands the smugglee after a smuggling step,
 neither being a bare trace. -/
 theorem IsSmugglingStep.not_cCommandsAt_succ (h : d.IsSmugglingStep i xp w)
     (hv : d.IsValid) (hxp : xp.yield ≠ 0) (hw : w.yield ≠ 0) :
     ¬ d.CCommandsAt (i + 1) w xp := by
-  obtain ⟨m, hm, hsm⟩ := h.smuggles
-  obtain ⟨step, hs, hstep⟩ := Option.bind_eq_some_iff.1 hm
-  have hnd := run_take_succ hs ▸ hv.nodup_yield_run_take (i + 1)
+  obtain ⟨μ, hμ, hs⟩ := h
+  obtain ⟨hm, hsrc⟩ := mem_movement?_iff.1 hμ
+  obtain ⟨step, hstep, hmv⟩ := Option.bind_eq_some_iff.1 hm
+  have hnd : μ.source.yield.Nodup := hsrc ▸
+    Multiset.nodup_of_le (Multiset.le_add_right _ _) (hv.nodup_yield_run_take i)
   have hstage : d.stageAt (i + 1) = (step.run (d.take i).run).current :=
-    congrArg Cfg.current (run_take_succ hs)
-  have hdisj := (Multiset.nodup_add.1 <|
-    Multiset.nodup_of_le (Step.yield_add_yield_le_yield_run hstep _) hnd).2.2
-  exact fun hc ↦ hsm.not_cCommands hdisj hxp hw
-    ((hstage ▸ hc.cCommands_stageAt).mono (Step.terms_current_run_subset hstep _))
+    congrArg Cfg.current (run_take_succ hstep)
+  intro hc
+  have := (hstage ▸ hc.cCommands_stageAt).mono (Step.terms_current_run_subset hmv _)
+  exact hs.not_cCommands hnd hxp hw (by
+    rw [Movement.result, Movement.remainder, hsrc]; exact this)
 
 /-- A smuggling step freezes what it smuggles. -/
 theorem IsSmugglingStep.frozen (h : d.IsSmugglingStep i xp w) : d.Frozen xp :=
-  let ⟨m, hm, hc, _⟩ := h
-  ⟨m, mem_movedItems_of_mem_mover? hm, hc⟩
+  let ⟨μ, hμ, hs⟩ := h
+  ⟨μ.mover, mem_movedItems_of_mem_mover? (mem_movement?_iff.1 hμ).1, hs.contains⟩
 
 /-- A derivation that smuggles a phrase and goes on to move it violates Freezing. -/
 theorem IsSmugglingStep.not_obeysFreezing (h : d.IsSmugglingStep i xp w) (hij : i < j)
     (hj : xp ∈ d.mover? j) : ¬ d.ObeysFreezing :=
-  let ⟨m, hm, hc, _⟩ := h
-  fun hf ↦ obeysFreezing_iff_forall_mover?.1 hf hij m hm xp hj hc
+  let ⟨μ, hμ, hs⟩ := h
+  fun hf ↦ obeysFreezing_iff_forall_mover?.1 hf hij μ.mover (mem_movement?_iff.1 hμ).1 xp hj
+    hs.contains
 
 /-- A step does not move a remnant of what the phrase it smuggles pronounces. -/
 theorem IsSmugglingStep.not_isRemnantStep (h : d.IsSmugglingStep i xp w) {t : LexicalItem.Token}
     (ht : t ∈ xp.yield) : ¬ d.IsRemnantStep i t :=
-  let ⟨_, hm, hs⟩ := h.smuggles
-  fun ⟨_, hm', hr⟩ ↦ hs.not_isRemnantOf ht (Option.mem_unique hm' hm ▸ hr)
+  let ⟨_, hμ, hs⟩ := h
+  fun ⟨_, hm', hr⟩ ↦
+    hs.not_isRemnantOf ht (Option.mem_unique hm' (mem_movement?_iff.1 hμ).1 ▸ hr)
 
 end Minimalist.Derivation

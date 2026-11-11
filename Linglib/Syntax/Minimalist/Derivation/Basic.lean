@@ -155,23 +155,6 @@ theorem Step.terms_current_run_subset {step : Step} {m : SyntacticObject} (h : m
     exact fun u hu ↦ by
       rw [terms_merge]; exact Multiset.mem_cons_of_mem (Multiset.mem_add.2 (.inl hu))
 
-/-- A step with mover `m` leaves a configuration that pronounces the remainder and `m`, in its
-object or on its stack. -/
-theorem Step.yield_add_yield_le_yield_run {step : Step} {m : SyntacticObject}
-    (h : m ∈ step.mover?) (c : Derivation.Cfg SyntacticObject) :
-    (deleteAccessible m c.current τ).yield + m.yield ≤ (step.run c τ).yield := by
-  obtain ⟨cur, st⟩ := c
-  cases step with
-  | em _ _ | remerge _ => cases h
-  | im mover side =>
-    obtain rfl := Option.some.inj h
-    exact (Multiset.le_add_right _ (st.map yield).sum).trans_eq <| by
-      simp [Derivation.Cfg.yield, Step.run, Step.apply]
-  | extract mover =>
-    obtain rfl := Option.some.inj h
-    exact (Multiset.le_add_right _ (st.map yield).sum).trans_eq <| by
-      simp [Derivation.Cfg.yield, Step.run, Step.apply, add_assoc]
-
 /-- The step with its new daughter on the left. -/
 def Step.leftward : Step → Step
   | .em _ item => .em .left item

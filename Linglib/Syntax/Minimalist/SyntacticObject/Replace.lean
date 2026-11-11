@@ -199,6 +199,45 @@ theorem headTrace_val (s : SyntacticObject) (τ : SyntacticObject → Option Lex
     (s.headTrace τ).val = UnorderedTree.leaf (Sum.inr (τ s)) := by
   unfold headTrace; cases τ s <;> rfl
 
+/-- Replacing the occurrences of a term by a silent object removes its tokens and no others, in
+an object that pronounces no token twice. -/
+theorem yield_replace_add_yield {s m t : SyntacticObject} (hs : s.yield.Nodup)
+    (hm : m ∈ s.terms) (ht : t.yield = 0) : (s.replace m t).yield + m.yield = s.yield := by
+  induction s using ind with
+  | leaf a =>
+    obtain rfl : m = leaf a := by simpa using hm
+    rw [replace_self, ht, zero_add]
+  | trace =>
+    obtain rfl : m = trace := by simpa using hm
+    rw [replace_self, ht, zero_add]
+  | traceOf a =>
+    obtain rfl : m = traceOf a := by simpa using hm
+    rw [replace_self, ht, zero_add]
+  | merge l r ihl ihr =>
+    by_cases h : merge l r = m
+    · subst h; rw [replace_self, ht, zero_add]
+    · rw [yield_merge] at hs
+      obtain ⟨hl, hr, hdisj⟩ := Multiset.nodup_add.1 hs
+      have hm' : m ∈ l.terms ∨ m ∈ r.terms := by
+        rw [terms_merge, Multiset.mem_cons, Multiset.mem_add] at hm
+        exact hm.resolve_left fun e ↦ h e.symm
+      rw [replace_merge_of_ne h, yield_merge, yield_merge]
+      by_cases hml : m ∈ l.terms <;> by_cases hmr : m ∈ r.terms
+      · have h0 : m.yield = 0 := Multiset.eq_zero_of_forall_notMem fun a ha ↦
+          Multiset.disjoint_left.1 hdisj (Multiset.mem_of_le (yield_le_of_mem_terms hml) ha)
+            (Multiset.mem_of_le (yield_le_of_mem_terms hmr) ha)
+        have el := ihl hl hml
+        have er := ihr hr hmr
+        rw [h0, add_zero] at el er ⊢
+        rw [el, er]
+      · rw [replace_of_notMem_terms hmr, add_right_comm, ihl hl hml]
+      · rw [replace_of_notMem_terms hml, add_assoc, ihr hr hmr]
+      · exact (hm'.elim hml hmr).elim
+
+theorem yield_headTrace (s : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token) :
+    (s.headTrace τ).yield = 0 := by
+  unfold headTrace; cases τ s <;> rfl
+
 section Map
 
 variable {f : LexicalItem.Token → LexicalItem.Token}
