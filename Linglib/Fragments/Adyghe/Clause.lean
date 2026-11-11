@@ -31,13 +31,6 @@ predicate concepts; the relative clauses carry no presupposition of their own.
 argue that *ze-re-* is no complementizer, and the entry's morphs are the relativizer and the
 high applicative. Deal's relativization analysis is in `Studies/Deal2026.lean`.
 
-## Errata
-
-* (109)–(111) spell the matrix verb *ə-gʷəreʁ*, (108) *ə-gʷərəʔʷeʁ*, all glossed
-  '3SG.ERG-understood'; the entry follows (108).
-* The text before (73) says the plain noun phrase under 'ask' bears the oblique *-m*, but
-  *sə-c̣e* 'my name' in (73) and (103) has no case suffix.
-
 ## References
 
 * [caponigro-polinsky-2011]

@@ -33,14 +33,6 @@ Lambert's anchored models. Under Heinz, Rawal and Tanner's single boundary, a wo
 projection has fewer than `k - 2` symbols has no `k`-factors and so lies in every language of
 width `k`.
 
-## Errata
-
-In Heinz, Rawal and Tanner's paper:
-* The permitted set of the dissimilation language on p. 60 omits `⋊⋉` as well as `bb` and `cc`,
-  so the language excludes the words with no tier symbol.
-* Strictly local languages are not closed under prefixes and suffixes (§4.3): their own
-  `aa*(b + c)` on p. 59 contains `aab` but neither `aa` nor `b`.
-
 ## References
 
 * [heinz-rawal-tanner-2011]

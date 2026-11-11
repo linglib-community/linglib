@@ -70,21 +70,6 @@ regular closure for regular propositions only and his de Morgan laws for regular
 hold without regularity. The law for conjunctions needs no distributivity, only that the conjuncts
 have verifiers and that the null state verifies none of them.
 
-## Errata
-
-Fine's de Morgan law for conjunctions (Lemma 24(ii)) asks only that the conjuncts be regular and
-verifiable, and his Theorem 25 lifts double negation from single states to every proposition. Both
-fail for a proposition that the null state verifies: nothing excludes the null state, so the
-exclusionary negation of such a proposition has no verifiers. Under mirror exclusion in the
-canonical space, which satisfies Upward and Null Exclusion and Downward Exclusion with the regular
-closure that Fine's own proofs use, the negation of the conjunction of `{□, q}` and `{p}` has the
-verifier `p̄ ⊔ q̄`, which the disjunction of their negations lacks
-(`Canonical.exclusionaryNeg_iSups_ne`), and the double negation of `{□, q}` is `{□}` although every
-single state is its own double negation (`Canonical.exclusionaryNeg_exclusionaryNeg_ne`). Fine's
-proof of Lemma 24(ii) breaks where it distributes the conjunction over disjunctions with the empty
-negation of the null state as a disjunct. The theorems here add the condition that the null state
-verify none of the propositions.
-
 ## References
 
 * [K. Fine, *A Theory of Truthmaker Content I: Conjunction, Disjunction and Negation*
