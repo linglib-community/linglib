@@ -11,9 +11,10 @@ A Lean 4 library for formal linguistics across semantics, syntax, pragmatics, mo
 
 ## About
 
-Linglib is a community-driven library of linguistic theory in [Lean 4](https://lean-lang.org/). It states definitions and results from the literature on shared foundations, so that work in one area can be built on and checked against work in another.
+Linglib is a community-maintained library of linguistic theory in [Lean 4](https://lean-lang.org/). 
+It states definitions and results from the literature on shared foundations, so that work in one area can be cumulatively built on and compared against work in another.
 
-Most of it was drafted with AI assistance and has not yet been reviewed by specialists, so treat a statement as unchecked until it is marked as reviewed. Report problems on the [issue tracker](https://github.com/linglib-community/linglib/issues). Authors whose work appears here can ask for a correction or for its removal.
+Linglib is under active development. Finding the right foundational definitions is an iterative, trial-and-error process that requires extensive discussion within the community. Most of the code in the library was written with AI assistance and needs more extensive review. Please report problems on the [issue tracker](https://github.com/linglib-community/linglib/issues). Authors whose work appears here can ask for a correction or for its removal.
 
 ## Building
 
