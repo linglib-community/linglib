@@ -44,6 +44,7 @@ needs no side condition that some constraint be non-neutral.
 * [A. Prince, *Entailed Ranking Arguments* (2002)][prince-2002]
 * [N. Merchant and J. Riggle, *OT grammars, beyond partial orders: ERC sets and antimatroids*
   (2016)][merchant-riggle-2016]
+* [J. Riggle, *Sampling Rankings* (2010)][riggle-2010]
 -/
 
 @[expose] public section
@@ -118,7 +119,7 @@ theorem card_filter_picksAt_binary_add [DecidableEq Output] [DecidableRel r] {o�
 The uniform measure is defined on the rankings of any grammar. With pairwise distinct violation
 profiles a candidate is picked exactly by the rankings that satisfy its ERC against each rival, so
 its probability is the number of rankings of the grammar that satisfy those ERCs over the number
-of all its rankings, the two counts that [merchant-riggle-2016] call r-volumes. -/
+of all its rankings, the two counts that [riggle-2010] calls r-volumes. -/
 
 section Grammar
 
@@ -339,7 +340,8 @@ theorem uniformOn_real_picksAt_binary [IsPartialOrder (Fin n) r] [DecidableRel r
   exact ERC.uniformOn_real_lex_pos hD h_lead h_aut
 
 /-- Under the discrete grammar, with every ranking a linear extension, the uniform measure on
-rankings picks `chosen` at the rate `|favoring| / |active|`. -/
+rankings picks `chosen` at the rate `|favoring| / |active|`, the r-volume of a candidate of a
+pair in [riggle-2010]. -/
 theorem uniformOn_real_picksAt_discrete_binary
     (h_two : S.gen i = {chosen, other}) (h_ne : chosen ≠ other) :
     (uniformOn (Set.univ : Set (Ranking (Fin n) n))).real {σ | S.PicksAt σ i chosen} =
