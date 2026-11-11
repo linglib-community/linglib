@@ -29,6 +29,7 @@ candidate sets minimizes each summand (`Finset.mem_argmin_piFinset_sum`).
 * `ConstraintSystem.tableau`: the tableau of an input under a ranking.
 * `ConstraintSystem.language`: the winners of each input under a ranking.
 * `ConstraintSystem.typology`: the partition of the rankings by their languages.
+* `ConstraintSystem.PicksAt`: a ranking has a given output as its sole winner at an input.
 
 ## Main results
 
@@ -100,6 +101,35 @@ theorem mem_language_iff_of_mem {o' : O} (ho : o ∈ S.language r i) :
     simp only [tableau, Tableau.profile, ViolationProfile.of, Tableau.ofRanking_constraints,
       Function.comp_apply, conAt_apply, he]
   exact Tableau.mem_optimal_iff.2 ⟨hg, fun d hd ↦ hp ▸ Tableau.le_of_mem_optimal ho hd⟩
+
+/-! ### Sole winners -/
+
+variable (S r i o) in
+/-- The ranking `r` *picks* the output `o` for the input `i` when `o` alone is the language of `r`
+at `i`, the sole winner of the input's tableau. -/
+def PicksAt : Prop := S.language r i = {o}
+
+/-- A ranking picks `o` iff `o` is a candidate whose violations, read in rank order, are
+lexicographically below every other candidate's. -/
+theorem picksAt_iff : S.PicksAt r i o ↔ o ∈ S.gen i ∧ ∀ o' ∈ S.gen i, o' ≠ o →
+    toLex (fun k ↦ S.con (r k) (i, o)) < toLex (fun k ↦ S.con (r k) (i, o')) :=
+  language_eq_singleton_iff
+
+/-- Picking is decided by comparing the candidate with each rival, without computing the set of
+winners. -/
+instance [DecidableEq O] : Decidable (S.PicksAt r i o) := decidable_of_iff _ picksAt_iff.symm
+
+theorem PicksAt.unique {o' : O} (h : S.PicksAt r i o) (h' : S.PicksAt r i o') : o = o' :=
+  Finset.singleton_injective (h.symm.trans h')
+
+/-- A ranking picks some candidate at an input whose candidates have distinct violations. -/
+theorem exists_picksAt (h : (S.gen i).Nonempty)
+    (hinj : Set.InjOn (fun o ↦ (S.con · (i, o))) (S.gen i)) (r : Ranking ι n) :
+    ∃ o ∈ S.gen i, S.PicksAt r i o := by
+  obtain ⟨o, ho⟩ := language_nonempty (r := r) h
+  refine ⟨o, Tableau.optimal_subset ho, Finset.eq_singleton_iff_unique_mem.2 ⟨ho, fun o' ho' ↦ ?_⟩⟩
+  exact hinj (Tableau.optimal_subset ho') (Tableau.optimal_subset ho)
+    (funext (con_eq_of_mem_language ho' ho))
 
 section Joint
 

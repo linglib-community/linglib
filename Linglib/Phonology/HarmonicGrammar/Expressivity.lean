@@ -239,7 +239,7 @@ def IsHGRealizable [Fintype ι] (P : RealizationProblem Input Output ι) : Prop 
 /-- The ranking `σ` *OT-realizes* the target when on every input it picks the target, the sole
     winner of the input's tableau under `σ`. -/
 def realizedByRanking (P : RealizationProblem Input Output ι) (σ : Ranking ι n) : Prop :=
-  ∀ i ∈ P.inputs, PicksAt P.toConstraintSystem σ i (P.target i)
+  ∀ i ∈ P.inputs, P.toConstraintSystem.PicksAt σ i (P.target i)
 
 /-- A problem is OT-realizable when some constraint ranking realizes its target. -/
 def IsOTRealizable (P : RealizationProblem Input Output (Fin n)) : Prop :=
@@ -280,9 +280,9 @@ theorem realizedByRanking_iff_satisfiedBy [Fintype ι] [DecidableEq Output]
   · intro h α hα
     obtain ⟨i, hi, o, ho, hone, rfl⟩ := mem_ercs.mp hα
     exact (satisfiedBy_ercOfProfiles_iff_le σ _ _).mpr
-      ((picksAt_iff.1 (h i hi)).2 o ho hone).le
+      ((ConstraintSystem.picksAt_iff.1 (h i hi)).2 o ho hone).le
   · intro h i hi
-    refine picksAt_iff.2 ⟨P.target_mem i hi, fun o ho hone ↦ ?_⟩
+    refine ConstraintSystem.picksAt_iff.2 ⟨P.target_mem i hi, fun o ho hone ↦ ?_⟩
     refine lt_of_le_of_ne ((satisfiedBy_ercOfProfiles_iff_le σ _ _).mp
       (h _ (mem_ercs.mpr ⟨i, hi, o, ho, hone, rfl⟩))) fun heq ↦ hvp i hi o ho hone ?_
     exact funext fun c ↦ by simpa using congrFun (toLex_inj.mp heq) (σ.symm c)
@@ -374,10 +374,10 @@ namespace RealizationProblem
 
 /-- A grammar `r` **POC-realizes** the target if every consistent extension
     realizes it. Since consistent extensions always exist
-    (`exists_isConsistent`), this is never vacuous. -/
+    (`exists_isLinearExtension`), this is never vacuous. -/
 def realizedByPartialOrder (P : RealizationProblem Input Output (Fin n))
     (r : Fin n → Fin n → Prop) : Prop :=
-  ∀ σ, IsConsistent r σ → P.realizedByRanking σ
+  ∀ σ, IsLinearExtension r σ → P.realizedByRanking σ
 
 /-- A `RealizationProblem` is **POC-realizable** if some partial order
     categorically realizes the target. -/
@@ -393,7 +393,7 @@ theorem RealizationProblem.IsPartialOrderRealizable.isOTRealizable
     (h : P.IsPartialOrderRealizable) : P.IsOTRealizable := by
   obtain ⟨r, hpo, hreal⟩ := h
   have := hpo
-  obtain ⟨σ, hσ⟩ := exists_isConsistent r
+  obtain ⟨σ, hσ⟩ := exists_isLinearExtension r
   exact ⟨σ, hreal σ hσ⟩
 
 theorem RealizationProblem.IsOTRealizable.isPartialOrderRealizable
