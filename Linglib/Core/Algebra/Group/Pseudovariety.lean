@@ -22,28 +22,17 @@ public import Mathlib.Order.CompleteLattice.Defs
 /-!
 # Pseudovarieties of finite monoids and semigroups
 
-This file defines pseudovarieties of finite monoids and of finite semigroups. A *pseudovariety* is
-a class of finite monoids, or of finite semigroups, closed under submonoids or subsemigroups,
-quotients and finite direct products, the empty product being the trivial one. Pseudovarieties are
-the algebraic side of Eilenberg's variety theorem, which matches the monoid ones with the
-varieties of regular languages and the semigroup ones with the varieties of languages of nonempty
-words.
-
-## Main definitions
-
-* `Monoid.Pseudovariety`, `Semigroup.Pseudovariety`: classes of finite monoids, respectively
-  semigroups, closed under substructures, quotients and products.
-* `Monoid.Pseudovariety.generated`: the least pseudovariety containing a class of finite monoids.
-* `Monoid.aperiodicVariety`: the pseudovariety of finite aperiodic monoids.
-* `Semigroup.definiteVariety`, `Semigroup.reverseDefiniteVariety`,
-  `Semigroup.locallyTrivialVariety`: the pseudovarieties **D**, **K** and **LI**.
-
-## Main results
-
-* `Monoid.Pseudovariety.pi_mem`: closure under finite dependent products.
-* `Monoid.Pseudovariety.mem_quotient_of_le`, `mem_quotient_ker`, `mem_quotient_inf` and their
-  semigroup counterparts: closure properties of quotients by congruences.
-* The pseudovarieties of finite monoids form a complete lattice, with infimum the intersection.
+A *pseudovariety* is a class of finite monoids, or of finite semigroups, closed under submonoids or
+subsemigroups, quotients and finite direct products, the empty product being the trivial one.
+Pseudovarieties are the algebraic side of Eilenberg's variety theorem, which matches the monoid
+ones with the varieties of regular languages and the semigroup ones with the varieties of
+languages of nonempty words. A pseudovariety is closed under
+[finite dependent products](##Monoid.Pseudovariety.pi_mem), and the quotient by a congruence is a
+member when [a finer quotient is](##Monoid.Pseudovariety.mem_quotient_of_le), when the congruence
+is [the kernel of a homomorphism into a member](##Monoid.Pseudovariety.mem_quotient_ker), or when
+it is [the meet of two congruences with member quotients](##Monoid.Pseudovariety.mem_quotient_inf).
+The pseudovarieties of finite monoids form a complete lattice whose infimum is intersection, in
+which a class of finite monoids [generates](##Monoid.Pseudovariety.generated) a least member.
 
 ## Implementation notes
 

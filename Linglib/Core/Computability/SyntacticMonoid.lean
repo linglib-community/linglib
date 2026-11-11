@@ -22,31 +22,14 @@ public import Linglib.Core.Logic.Function.FactorsThrough
 # The syntactic monoid of a language
 
 The *syntactic monoid* of a language `L : Language α` is the quotient of the free monoid
-`FreeMonoid α` by the *syntactic congruence* `Con.syntactic` of `L`: two words are identified when
-no two-sided context distinguishes them as `L`-members, `∀ x y, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L`.
-
-It is the coarsest congruence saturating `L`, so the syntactic morphism factors through every
-recognizing homomorphism, and the quotient is finite exactly when `L` is regular. This is the
-two-sided refinement of the one-sided right-Nerode quotient `Language.leftQuotient`, carrying a
-monoid structure rather than a bare set of states.
-
-## Main definitions
-
-* `Language.syntacticCon`: the syntactic congruence of `L` as a subset of the free monoid.
-* `Language.SyntacticMonoid`: the quotient monoid `(syntacticCon L).Quotient`.
-* `Language.toSyntacticMonoid`: the projection `FreeMonoid α →* L.SyntacticMonoid`.
-* `Language.syntacticClass`: the syntactic class of a word.
-* `Language.Recognizes`: `φ` recognizes `L` when `L` is a union of `φ`-fibres.
-* `Language.rightQuotient`: the right-quotient dual of `Language.leftQuotient`.
-
-## Main results
-
-* `Language.recognizes_iff_ker_le`: a homomorphism recognizes `L` exactly when its kernel refines
-  the syntactic congruence.
-* `Language.syntacticMonoidEquivTransitionMonoid`: the syntactic monoid is the transition monoid
-  of the minimal DFA `L.toDFA`.
-* `Language.isRegular_iff_finite_syntacticMonoid`: a language is regular exactly when its
-  syntactic monoid is finite.
+`FreeMonoid α` by the *syntactic congruence* `Con.syntactic` of `L`, which identifies two words
+when [no two-sided context distinguishes them](##Language.syntacticCon_iff) as members of `L`. It
+is the coarsest congruence saturating `L`: a homomorphism recognizes `L` exactly when
+[its kernel refines the syntactic congruence](##Language.recognizes_iff_ker_le), so the syntactic
+monoid [divides every recognizer](##Language.Recognizes.syntacticMonoid_isSubquotient). The
+syntactic monoid is
+[the transition monoid of the minimal automaton](##Language.syntacticMonoidEquivTransitionMonoid),
+and it is finite [exactly when `L` is regular](##Language.isRegular_iff_finite_syntacticMonoid).
 
 ## References
 

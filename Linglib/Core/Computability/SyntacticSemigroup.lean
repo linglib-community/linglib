@@ -16,30 +16,18 @@ public import Linglib.Core.GroupTheory.Congruence.Hom
 
 The *syntactic semigroup* of a language `L` is the quotient of the free semigroup, whose elements
 are the nonempty words, by the syntactic congruence `Con.syntactic` of the nonempty words of `L`.
-It is the restriction of the syntactic congruence of the free monoid, so the syntactic semigroup
-embeds in the syntactic monoid, which adds to it at most the class of the empty word.
+That congruence is [the restriction](##Language.syntacticSemigroupCon_eq_comap) of the syntactic
+congruence of the free monoid, so the syntactic semigroup
+[embeds in the syntactic monoid](##Language.syntacticSemigroupToMonoid_injective), which adds to it
+at most the class of the empty word, and is finite
+[exactly when `L` is regular](##Language.isRegular_iff_finite_syntacticSemigroup). A homomorphism
+recognizes `L` exactly when
+[its kernel refines the syntactic congruence](##Language.recognizesSemigroup_iff_ker_le), and
+[adjoining the empty word](##Language.syntacticSemigroupCon_insert_nil) to `L` changes nothing.
 
-The definite, reverse definite and locally trivial pseudovarieties consist of semigroups, and
-their languages are read off the syntactic semigroup. A monoid satisfying the defining condition
-of any of the three is trivial, because the condition applies to the idempotent `1`.
-
-## Main definitions
-
-* `Language.syntacticSemigroupCon`: the syntactic congruence of the nonempty words of `L`.
-* `Language.SyntacticSemigroup`: the quotient semigroup.
-* `Language.toSyntacticSemigroup`: the projection, as a `MulHom`.
-* `Language.RecognizesSemigroup`: recognition of a language by a homomorphism to a semigroup.
-
-## Main results
-
-* `Language.syntacticSemigroupToMonoid_injective`: the syntactic semigroup embeds in the syntactic
-  monoid.
-* `Language.isRegular_iff_finite_syntacticSemigroup`: a language is regular exactly when its
-  syntactic semigroup is finite.
-* `Language.recognizesSemigroup_iff_ker_le`: a homomorphism recognizes `L` exactly when its kernel
-  refines the syntactic congruence.
-* `Language.syntacticSemigroupCon_insert_nil`: adjoining the empty word leaves the syntactic
-  semigroup unchanged.
+The definite, reverse definite and locally trivial pseudovarieties consist of semigroups, since a
+monoid satisfying any of the three conditions is trivial, so their languages are read off the
+syntactic semigroup.
 
 ## References
 
