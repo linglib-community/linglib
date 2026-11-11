@@ -397,11 +397,11 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(20b)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(20b)"},
     "language": "chim1312",
-    "primaryText": "skuñi, Aɾi m-pik-ish-iɾiz-e: muke n̯ama",
+    "primaryText": "skuñi, Aɾi m-pik-ish-iʀiz-e: muke nama",
     "discourseSegments": [],
     "glossedTokens": [
-      ["skuñi", "firewood"], ["Aɾi", "Ali"], ["m-pik-ish-iɾiz-e:", "he-cook-CAUS-APP"],
-      ["muke", "woman"], ["n̯ama", "meat"]
+      ["skuñi", "firewood"], ["Aɾi", "Ali"], ["m-pik-ish-iʀiz-e:", "he-cook-CAUS-APP"],
+      ["muke", "woman"], ["nama", "meat"]
     ],
     "translation": "firewood, Ali made the woman cook meat (with it)",
     "context": "",
@@ -413,7 +413,7 @@
       ["scope", "AC"],
       ["suffixes", "CA"]
     ],
-    "comment": "Chimwiini causativized applicative: the instrument acts on the cooking, within the scope of the causation, yet the order is the templatic -ish-iɾiz-. The preprint prints the flap ɾ and an arch below n in an SIL IPA font; the arch is recorded as an inverted breve below, since the page does not settle whether a dental bridge is meant.",
+    "comment": "Chimwiini causativized applicative: the instrument acts on the cooking, within the scope of the causation, yet the order is the templatic causative-applicative. (20b) prints the applicative as -iʀiz- where (20a) prints -iɾiz-, and the noun as nama; the tree (21) prints the noun with an arch below n.",
     "method": "description",
     "verified": "page-image"
   },
@@ -508,7 +508,7 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(23b)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(23b)"},
     "language": "nyan1308",
-    "primaryText": "aná a-ná-lím-its-il-idw-á mákásu",
+    "primaryText": "aná á-ná-lím-its-il-idw-á mákásu",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "the children were made to cultivate with hoes",
@@ -598,10 +598,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
     "language": "nyan1308",
-    "primaryText": "mang-an-il-an-its-",
+    "primaryText": "mang-an-il-an-its",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-an-il-an-its-", "tie-REC-APP-REC-CAUS"]
+      ["mang-an-il-an-its", "tie-REC-APP-REC-CAUS"]
     ],
     "translation": "",
     "context": "",
@@ -621,10 +621,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
     "language": "nyan1308",
-    "primaryText": "mang-an-il-an-its-",
+    "primaryText": "mang-an-il-an-its",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-an-il-an-its-", "tie-REC-APP-REC-CAUS"]
+      ["mang-an-il-an-its", "tie-REC-APP-REC-CAUS"]
     ],
     "translation": "",
     "context": "",
@@ -644,10 +644,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
     "language": "nyan1308",
-    "primaryText": "mang-an-il-an-its-",
+    "primaryText": "mang-an-il-an-its",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-an-il-an-its-", "tie-REC-APP-REC-CAUS"]
+      ["mang-an-il-an-its", "tie-REC-APP-REC-CAUS"]
     ],
     "translation": "",
     "context": "",
@@ -667,10 +667,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
     "language": "nyan1308",
-    "primaryText": "mang-an-il-an-its-",
+    "primaryText": "mang-an-il-an-its",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-an-il-an-its-", "tie-REC-APP-REC-CAUS"]
+      ["mang-an-il-an-its", "tie-REC-APP-REC-CAUS"]
     ],
     "translation": "",
     "context": "",
@@ -690,10 +690,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
     "language": "nyan1308",
-    "primaryText": "mang-an-il-an-its-",
+    "primaryText": "mang-an-il-an-its",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-an-il-an-its-", "tie-REC-APP-REC-CAUS"]
+      ["mang-an-il-an-its", "tie-REC-APP-REC-CAUS"]
     ],
     "translation": "",
     "context": "",
@@ -713,10 +713,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
     "language": "nyan1308",
-    "primaryText": "mang-an-il-an-its-",
+    "primaryText": "mang-an-il-an-its",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-an-il-an-its-", "tie-REC-APP-REC-CAUS"]
+      ["mang-an-il-an-its", "tie-REC-APP-REC-CAUS"]
     ],
     "translation": "",
     "context": "",
@@ -736,10 +736,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
     "language": "nyan1308",
-    "primaryText": "mang-il-an-its-",
+    "primaryText": "mang-il-an-its",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-il-an-its-", "tie-APP-REC-CAUS"]
+      ["mang-il-an-its", "tie-APP-REC-CAUS"]
     ],
     "translation": "",
     "context": "",
@@ -759,10 +759,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
     "language": "nyan1308",
-    "primaryText": "mang-il-an-its-",
+    "primaryText": "mang-il-an-its",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-il-an-its-", "tie-APP-REC-CAUS"]
+      ["mang-il-an-its", "tie-APP-REC-CAUS"]
     ],
     "translation": "",
     "context": "",
@@ -782,10 +782,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
     "language": "nyan1308",
-    "primaryText": "mang-il-an-its-",
+    "primaryText": "mang-il-an-its",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-il-an-its-", "tie-APP-REC-CAUS"]
+      ["mang-il-an-its", "tie-APP-REC-CAUS"]
     ],
     "translation": "",
     "context": "",
@@ -805,10 +805,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
     "language": "nyan1308",
-    "primaryText": "mang-il-an-its-",
+    "primaryText": "mang-il-an-its",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-il-an-its-", "tie-APP-REC-CAUS"]
+      ["mang-il-an-its", "tie-APP-REC-CAUS"]
     ],
     "translation": "",
     "context": "",
@@ -828,10 +828,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
     "language": "nyan1308",
-    "primaryText": "mang-il-an-its-",
+    "primaryText": "mang-il-an-its",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-il-an-its-", "tie-APP-REC-CAUS"]
+      ["mang-il-an-its", "tie-APP-REC-CAUS"]
     ],
     "translation": "",
     "context": "",
@@ -851,10 +851,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
     "language": "nyan1308",
-    "primaryText": "mang-il-an-its-",
+    "primaryText": "mang-il-an-its",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-il-an-its-", "tie-APP-REC-CAUS"]
+      ["mang-il-an-its", "tie-APP-REC-CAUS"]
     ],
     "translation": "",
     "context": "",
@@ -874,10 +874,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
     "language": "nyan1308",
-    "primaryText": "mang-its-il-an-",
+    "primaryText": "mang-its-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-its-il-an-", "tie-CAUS-APP-REC"]
+      ["mang-its-il-an", "tie-CAUS-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -897,10 +897,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
     "language": "nyan1308",
-    "primaryText": "mang-its-il-an-",
+    "primaryText": "mang-its-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-its-il-an-", "tie-CAUS-APP-REC"]
+      ["mang-its-il-an", "tie-CAUS-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -920,10 +920,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
     "language": "nyan1308",
-    "primaryText": "mang-its-il-an-",
+    "primaryText": "mang-its-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-its-il-an-", "tie-CAUS-APP-REC"]
+      ["mang-its-il-an", "tie-CAUS-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -943,10 +943,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
     "language": "nyan1308",
-    "primaryText": "mang-its-il-an-",
+    "primaryText": "mang-its-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-its-il-an-", "tie-CAUS-APP-REC"]
+      ["mang-its-il-an", "tie-CAUS-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -966,10 +966,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
     "language": "nyan1308",
-    "primaryText": "mang-its-il-an-",
+    "primaryText": "mang-its-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-its-il-an-", "tie-CAUS-APP-REC"]
+      ["mang-its-il-an", "tie-CAUS-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -989,10 +989,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
     "language": "nyan1308",
-    "primaryText": "mang-its-il-an-",
+    "primaryText": "mang-its-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-its-il-an-", "tie-CAUS-APP-REC"]
+      ["mang-its-il-an", "tie-CAUS-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -1012,10 +1012,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
     "language": "nyan1308",
-    "primaryText": "mang-its-an-il-an-",
+    "primaryText": "mang-its-an-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-its-an-il-an-", "tie-CAUS-REC-APP-REC"]
+      ["mang-its-an-il-an", "tie-CAUS-REC-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -1035,10 +1035,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
     "language": "nyan1308",
-    "primaryText": "mang-its-an-il-an-",
+    "primaryText": "mang-its-an-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-its-an-il-an-", "tie-CAUS-REC-APP-REC"]
+      ["mang-its-an-il-an", "tie-CAUS-REC-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -1058,10 +1058,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
     "language": "nyan1308",
-    "primaryText": "mang-its-an-il-an-",
+    "primaryText": "mang-its-an-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-its-an-il-an-", "tie-CAUS-REC-APP-REC"]
+      ["mang-its-an-il-an", "tie-CAUS-REC-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -1081,10 +1081,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
     "language": "nyan1308",
-    "primaryText": "mang-its-an-il-an-",
+    "primaryText": "mang-its-an-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-its-an-il-an-", "tie-CAUS-REC-APP-REC"]
+      ["mang-its-an-il-an", "tie-CAUS-REC-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -1104,10 +1104,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
     "language": "nyan1308",
-    "primaryText": "mang-its-an-il-an-",
+    "primaryText": "mang-its-an-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-its-an-il-an-", "tie-CAUS-REC-APP-REC"]
+      ["mang-its-an-il-an", "tie-CAUS-REC-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -1127,10 +1127,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
     "language": "nyan1308",
-    "primaryText": "mang-its-an-il-an-",
+    "primaryText": "mang-its-an-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-its-an-il-an-", "tie-CAUS-REC-APP-REC"]
+      ["mang-its-an-il-an", "tie-CAUS-REC-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -1150,10 +1150,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
     "language": "nyan1308",
-    "primaryText": "mang-an-its-il-an-",
+    "primaryText": "mang-an-its-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-an-its-il-an-", "tie-REC-CAUS-APP-REC"]
+      ["mang-an-its-il-an", "tie-REC-CAUS-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -1173,10 +1173,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
     "language": "nyan1308",
-    "primaryText": "mang-an-its-il-an-",
+    "primaryText": "mang-an-its-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-an-its-il-an-", "tie-REC-CAUS-APP-REC"]
+      ["mang-an-its-il-an", "tie-REC-CAUS-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -1196,10 +1196,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
     "language": "nyan1308",
-    "primaryText": "mang-an-its-il-an-",
+    "primaryText": "mang-an-its-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-an-its-il-an-", "tie-REC-CAUS-APP-REC"]
+      ["mang-an-its-il-an", "tie-REC-CAUS-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -1219,10 +1219,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
     "language": "nyan1308",
-    "primaryText": "mang-an-its-il-an-",
+    "primaryText": "mang-an-its-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-an-its-il-an-", "tie-REC-CAUS-APP-REC"]
+      ["mang-an-its-il-an", "tie-REC-CAUS-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -1242,10 +1242,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
     "language": "nyan1308",
-    "primaryText": "mang-an-its-il-an-",
+    "primaryText": "mang-an-its-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-an-its-il-an-", "tie-REC-CAUS-APP-REC"]
+      ["mang-an-its-il-an", "tie-REC-CAUS-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -1265,10 +1265,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
     "language": "nyan1308",
-    "primaryText": "mang-an-its-il-an-",
+    "primaryText": "mang-an-its-il-an",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-an-its-il-an-", "tie-REC-CAUS-APP-REC"]
+      ["mang-an-its-il-an", "tie-REC-CAUS-APP-REC"]
     ],
     "translation": "",
     "context": "",
@@ -1303,7 +1303,7 @@
       ["scope", "CRA"],
       ["suffixes", "CRA"]
     ],
-    "comment": "The prose under (48) stars *mang-its-an-il-, so that (48d) requires the doubling of -an-.",
+    "comment": "The prose under (48) stars *mang-its-an-il-, so that (48d) requires the doubling of -an-. The star is outright; the row records one of the scopes of that doubled form.",
     "verified": "page-image"
   },
   {
@@ -1326,7 +1326,7 @@
       ["scope", "RCA"],
       ["suffixes", "CRA"]
     ],
-    "comment": "The prose under (48) stars *mang-its-an-il-, so that (48d) requires the doubling of -an-.",
+    "comment": "The prose under (48) stars *mang-its-an-il-, so that (48d) requires the doubling of -an-. The star is outright; the row records one of the scopes of that doubled form.",
     "verified": "page-image"
   },
   {
@@ -1349,7 +1349,7 @@
       ["scope", "RAC"],
       ["suffixes", "CRA"]
     ],
-    "comment": "The prose under (48) stars *mang-its-an-il-, so that (48d) requires the doubling of -an-.",
+    "comment": "The prose under (48) stars *mang-its-an-il-, so that (48d) requires the doubling of -an-. The star is outright; the row records one of the scopes of that doubled form.",
     "verified": "page-image"
   },
   {
@@ -1372,7 +1372,7 @@
       ["scope", "RCA"],
       ["suffixes", "RCA"]
     ],
-    "comment": "The prose under (48) stars *mang-an-its-il-, so that (48e) requires the doubling of -an-.",
+    "comment": "The prose under (48) stars *mang-an-its-il-, so that (48e) requires the doubling of -an-. The star is outright; the row records one of the scopes of that doubled form.",
     "verified": "page-image"
   },
   {
@@ -1395,7 +1395,7 @@
       ["scope", "RAC"],
       ["suffixes", "RCA"]
     ],
-    "comment": "The prose under (48) stars *mang-an-its-il-, so that (48e) requires the doubling of -an-.",
+    "comment": "The prose under (48) stars *mang-an-its-il-, so that (48e) requires the doubling of -an-. The star is outright; the row records one of the scopes of that doubled form.",
     "verified": "page-image"
   },
   {
@@ -1403,10 +1403,10 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(48)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48)"},
     "language": "nyan1308",
-    "primaryText": "mang-il-its-an-",
+    "primaryText": "-il-its-an-",
     "discourseSegments": [],
     "glossedTokens": [
-      ["mang-il-its-an-", "tie-APP-CAUS-REC"]
+      ["-il-its-an-", "APP-CAUS-REC"]
     ],
     "translation": "",
     "context": "",
@@ -1414,11 +1414,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["root", "tie"],
       ["scope", "ACR"],
       ["suffixes", "ACR"]
     ],
-    "comment": "The prose under (48) stars *-il-its-an- for its APP-CAUS sequence.",
+    "comment": "The prose under (48) stars *-il-its-an- for its APP-CAUS sequence, under every scope; the row records the scope the order would mirror.",
     "verified": "page-image"
   }
 ]
