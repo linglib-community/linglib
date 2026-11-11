@@ -22,7 +22,10 @@ namespace Multiset
 
 variable {ι M : Type*} [CommMonoid M] {s : Multiset ι}
 
-@[to_additive]
+/-- The product of `f` over `s.filter p` is the product over `s` of `f` where `p` holds and `1`
+elsewhere (`Finset.prod_filter` for multisets). -/
+@[to_additive /-- The sum of `f` over `s.filter p` is the sum over `s` of `f` where `p` holds and
+`0` elsewhere (`Finset.sum_filter` for multisets). -/]
 theorem prod_map_filter (p : ι → Prop) [DecidablePred p] (f : ι → M) :
     ((s.filter p).map f).prod = (s.map fun a ↦ if p a then f a else 1).prod :=
   Multiset.induction_on s (by simp) fun a s ih ↦ by by_cases h : p a <;> simp [h, ih]

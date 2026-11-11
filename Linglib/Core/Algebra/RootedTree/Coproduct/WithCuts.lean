@@ -92,12 +92,10 @@ noncomputable def comulOfCuts :
     comulOfCuts (R := R) cuts (ofTree T) = comulTreeOfCuts cuts T :=
   aeval_ofTree _ T
 
-/-! ### Counit laws
+/-! ### Counit laws -/
 
-A trunk is a single tree, which the counit sends to `0`, so the left counit law holds at every
-cut enumeration. The right counit law holds when the empty cut is the only cut with an empty
-crown. -/
-
+/-- The left counit law `(id ⊗ ε) ∘ Δ = rid⁻¹` holds at every cut enumeration: each trunk is a
+single tree, which the counit sends to `0`. -/
 theorem lTensor_counit_comp_comulOfCuts :
     (Algebra.TensorProduct.map (.id R _) counit).comp (comulOfCuts (R := R) cuts) =
       (Algebra.TensorProduct.rid R R (ConnesKreimer R (UnorderedTree α))).symm :=
@@ -105,6 +103,8 @@ theorem lTensor_counit_comp_comulOfCuts :
     simp [comulTreeOfCuts, map_multiset_sum, Multiset.map_map]
 
 variable {cuts} in
+/-- The right counit law `(ε ⊗ id) ∘ Δ = lid⁻¹` holds when the empty cut is the only cut with an
+empty crown. -/
 theorem rTensor_counit_comp_comulOfCuts
     (h : ∀ T, (cuts T).filter (fun p ↦ p.1.card = 0) = {(0, T)}) :
     (Algebra.TensorProduct.map counit (.id R _)).comp (comulOfCuts (R := R) cuts) =
