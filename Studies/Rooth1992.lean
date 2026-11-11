@@ -545,8 +545,8 @@ def meanings (t : Tree Unit (Σ a, Item E a)) : List (Σ a : Ty Sort', a.Dom (So
 
 /-- Two daughters with alternatives combine as their results do, by Structured App. -/
 private theorem binary_F (l r : Ty Sort') :
-    grammar.binary (F l) (F r) = (grammar.binary l r).map fun q ↦ ⟨F q.1, .ap trivial q.2⟩ :=
-  binary_effectDrivenWithin_pointwise (P := (· = .F)) rfl trivial
+    grammar.binary (F l) (F r) = (grammar.binary l r).map fun q ↦ ⟨F q.1, .ap inferInstance q.2⟩ :=
+  binary_effectDrivenWithin_pointwise (P := (· = .F)) rfl
 
 private theorem binary_fa₃ : grammar.binary (e ⇒ e ⇒ e ⇒ p) e = [⟨e ⇒ e ⇒ p, .basic .fa⟩] := rfl
 

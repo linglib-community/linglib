@@ -89,7 +89,7 @@ theorem Within.exists_eq_ap (hf : P f)
 carrying `f`, the search lists for the two the Structured Apps of the modes it lists for the
 types of their results, in the same order. -/
 theorem _root_.Interpreter.Ty.combineWithin_pointwise [DecidableEq B] [DecidablePred P]
-    {find : (l r : Ty B) → List (Sigma (Rule l r))} (hf : P f) (ha : f.IsApplicative)
+    {find : (l r : Ty B) → List (Sigma (Rule l r))} (hf : P f) [ha : f.IsApplicative]
     (hfind : find (.comp f l) (.comp f r) = []) :
     Ty.combineWithin (MetaMode.pointwise P) find (.comp f l) (.comp f r) =
       (Ty.combineWithin (MetaMode.pointwise P) find l r).map fun p ↦
@@ -109,13 +109,13 @@ theorem _root_.Interpreter.Ty.combineWithin_pointwise [DecidableEq B] [Decidable
 listed for the two exactly when it is Structured App of a mode listed for the types of their
 results. -/
 theorem _root_.Interpreter.Ty.mem_combineWithin_pointwise [DecidableEq B] [DecidablePred P]
-    {find : (l r : Ty B) → List (Sigma (Rule l r))} (hf : P f) (ha : f.IsApplicative)
+    {find : (l r : Ty B) → List (Sigma (Rule l r))} (hf : P f) [ha : f.IsApplicative]
     (hfind : find (.comp f l) (.comp f r) = [])
     {m : Sigma (Mode Rule (.comp f l) (.comp f r))} :
     m ∈ Ty.combineWithin (MetaMode.pointwise P) find (.comp f l) (.comp f r) ↔
       ∃ m' ∈ Ty.combineWithin (MetaMode.pointwise P) find l r,
         m = ⟨.comp f m'.1, .ap ha m'.2⟩ := by
-  rw [Ty.combineWithin_pointwise hf ha hfind, List.mem_map]
+  rw [Ty.combineWithin_pointwise hf hfind, List.mem_map]
   exact exists_congr fun _ ↦ and_congr_right fun _ ↦ eq_comm
 
 variable {G : Language (Ty B)} {D : B → Type} [M : G.Structure (Ty.Dom D)] {u : Ty B}
@@ -124,20 +124,20 @@ variable {G : Language (Ty B)} {D : B → Type} [M : G.Structure (Ty.Dom D)] {u 
 rules do at one assignment. -/
 theorem eval_ap_R {i : Ty B} (m : Mode G.Binary l r u) (a : (Ty.comp (.R i) l).Dom D)
     (b : (Ty.comp (.R i) r).Dom D) :
-    (Mode.ap (f := .R i) trivial m).eval D a b = fun j ↦ m.eval D (a j) (b j) := rfl
+    (Mode.ap (f := .R i) inferInstance m).eval D a b = fun j ↦ m.eval D (a j) (b j) := rfl
 
 /-- Structured App at indeterminacy combines each alternative of one daughter with each of the
 other: Hamblin's rule. -/
 theorem eval_ap_S (m : Mode G.Binary l r u) (a : (Ty.comp .S l).Dom D)
     (b : (Ty.comp .S r).Dom D) :
-    (Mode.ap (f := .S) trivial m).eval D a b = Set.image2 (m.eval D) a b :=
+    (Mode.ap (f := .S) inferInstance m).eval D a b = Set.image2 (m.eval D) a b :=
   (Set.image2_eq_seq _ a b).symm
 
 /-- Structured App at alternatives combines the ordinary values, and each alternative of one
 daughter with each of the other: Rooth's rule. -/
 theorem eval_ap_F (m : Mode G.Binary l r u) (a : (Ty.comp .F l).Dom D)
     (b : (Ty.comp .F r).Dom D) :
-    (Mode.ap (f := .F) trivial m).eval D a b = WithAlternatives.map₂ (m.eval D) a b :=
+    (Mode.ap (f := .F) inferInstance m).eval D a b = WithAlternatives.map₂ (m.eval D) a b :=
   (WithAlternatives.map₂_eq_seq _ a b).symm
 
 end Mode
@@ -147,13 +147,13 @@ pointwise at `f` admits the Structured Apps of the modes it admits for the types
 results. -/
 theorem binary_effectDrivenWithin_pointwise [DecidableEq B] {P : Eff B → Prop} [DecidablePred P]
     {G : Language (Ty B)} [G.LocallyFinite] {N : Type} {f : Eff B} (hf : P f)
-    (ha : f.IsApplicative) {l r : Ty B}
+    [ha : f.IsApplicative] {l r : Ty B}
     [∀ u : Ty B, IsEmpty (G.Binary (.comp f l) (.comp f r) u)] :
     (effectDrivenWithin (MetaMode.pointwise P) G : Interpreter (effectGrammar G) N).binary
         (.comp f l) (.comp f r) =
       ((effectDrivenWithin (MetaMode.pointwise P) G : Interpreter (effectGrammar G) N).binary
         l r).map fun p ↦ ⟨.comp f p.1, .ap ha p.2⟩ :=
-  Ty.combineWithin_pointwise hf ha (List.eq_nil_iff_forall_not_mem.2 fun p _ ↦ isEmptyElim p.2)
+  Ty.combineWithin_pointwise hf (List.eq_nil_iff_forall_not_mem.2 fun p _ ↦ isEmptyElim p.2)
 
 /-! ### The pointwise grammar as a grammar on computations -/
 
@@ -163,12 +163,12 @@ variable {D : B → Type}
 
 /-- Computations of the arguments of a shape as one computation of the arguments, the effects of
 the earlier arguments first. -/
-def sequence (f : Eff B) (h : f.IsApplicative) :
+def sequence (f : Eff B) [h : f.IsApplicative] :
     (σ : Signature (Ty B)) → σ.Interpret (fun a ↦ (Ty.comp f a).Dom D) →
       Obj D f (σ.Interpret (Ty.Dom D))
   | .nil, _ => pure f h PUnit.unit
   | .of _, x => x
-  | .prod σ τ, x => seq f h (map f Prod.mk (sequence f h σ x.1)) (sequence f h τ x.2)
+  | .prod σ τ, x => seq f h (map f Prod.mk (sequence f σ x.1)) (sequence f τ x.2)
 
 end Eff
 
@@ -177,10 +177,10 @@ mode means Structured App of it, and any other symbol applies its function to th
 arguments. For reading these are the values that depend on the datum read, and for indeterminacy
 the sets of values. -/
 @[instance_reducible] def effectGrammar.pointwise {G : Language (Ty B)} {D : B → Type}
-    [M : G.Structure (Ty.Dom D)] (f : Eff B) (h : f.IsApplicative) :
+    [M : G.Structure (Ty.Dom D)] (f : Eff B) [h : f.IsApplicative] :
     (effectGrammar G).Structure fun a ↦ (Ty.comp f a).Dom D :=
   Language.Structure.withBinary
-    ⟨fun g x ↦ Eff.map f (M.funMap g) (Eff.sequence f h _ x)⟩
+    ⟨fun g x ↦ Eff.map f (M.funMap g) (Eff.sequence f _ x)⟩
     fun m x y ↦ (Mode.ap h m).eval D x y
 
 end Interpreter
@@ -200,14 +200,14 @@ structure on computations, where every node means Structured App of the mode tha
 results: the effects of the words are merged into one layer at each node. -/
 theorem values_effectDrivenWithin_pointwise [∀ a b : Ty B, IsEmpty (G.Unary a b)]
     [∀ l r u : Ty B, IsEmpty (G.Binary (.comp f l) (.comp f r) u)] (hf : P f)
-    (ha : f.IsApplicative)
+    [ha : f.IsApplicative]
     {ρ : ∀ {a : Ty B}, W a → (Ty.comp f a).Dom D} {ρ' : ∀ {a : Ty B}, W' a → a.Dom D}
     {lex : Lx ⊕ ℕ → List (Sigma W)} {lex' : Lx ⊕ ℕ → List (Sigma W')}
     (hlex : ∀ x, (lex' x).map (fun p ↦ (⟨p.1, ρ' p.2⟩ : Sigma (Ty.Dom D))) =
       (lex x).map fun p ↦ ⟨.comp f p.1, ρ p.2⟩)
     (t : Tree C Lx) :
     t.values (effectDrivenWithin (MetaMode.pointwise P) G) effectGrammar.structure ρ' lex' =
-      (t.values (effectDrivenWithin (MetaMode.pointwise P) G) (effectGrammar.pointwise f ha)
+      (t.values (effectDrivenWithin (MetaMode.pointwise P) G) (effectGrammar.pointwise f)
         ρ lex).map fun d ↦ ⟨.comp f d.1, d.2⟩ := by
   rw [values_eq_fold, values_eq_fold]
   refine RoseTree.rel_fold
@@ -232,7 +232,7 @@ theorem values_effectDrivenWithin_pointwise [∀ a b : Ty B, IsEmpty (G.Unary a 
   | .phrase _ _, [_, _], [Y₁, Y₂], .cons rfl (.cons rfl .nil) =>
     simp only [nodeValues, binaryValues, List.flatMap_map, List.map_flatMap]
     refine List.flatMap_congr fun ⟨a, x⟩ _ ↦ List.flatMap_congr fun ⟨b, y⟩ _ ↦ ?_
-    rw [binary_effectDrivenWithin_pointwise hf ha, List.map_map, List.map_map]
+    rw [binary_effectDrivenWithin_pointwise hf, List.map_map, List.map_map]
     rfl
   | .terminal _ _, _ :: _, _ :: _, _ | .trace _ _, _ :: _, _ :: _, _ | .bind _ _, [], [], _
   | .bind _ _, _ :: _ :: _, _ :: _ :: _, _ | .phrase _ _, [], [], _

@@ -125,32 +125,16 @@ namespace effectGrammar
 variable [DecidableEq B] {G : Language (Ty B)} {D : B → Type}
 
 /-- The map of the effect-driven grammar into itself that takes each mode to its normal form. -/
-def normalize (G : Language (Ty B)) : effectGrammar G →ᴸ effectGrammar G where
-  onFunction σ _ g :=
-    match σ, g with
-    | .prod (.of _) (.of _), g => Mode.normalize g
-    | .nil, g => g
-    | .of _, g => g
-    | .prod .nil _, g => g
-    | .prod (.prod _ _) _, g => g
-    | .prod (.of _) .nil, g => g
-    | .prod (.of _) (.prod _ _), g => g
+def normalize (G : Language (Ty B)) : effectGrammar G →ᴸ effectGrammar G :=
+  .mapBinary Mode.normalize
 
 /-- **Equal meanings.** Taking normal forms keeps the meaning of every symbol of the
 effect-driven grammar, so a derivation and its normal form have one value, and so do two
 derivations with one normal form: they differ, at some of their nodes, in the order in which
 commuting effects are merged. -/
 theorem normalize_isExpansionOn [M : G.Structure (Ty.Dom D)] :
-    (normalize G).IsExpansionOn (effectGrammar.structure (M := M)) effectGrammar.structure where
-  map_onFunction σ _ g x :=
-    match σ, g with
-    | .prod (.of _) (.of _), g => congrFun₂ (Mode.normalize_equiv g D) x.1 x.2
-    | .nil, _ => rfl
-    | .of _, _ => rfl
-    | .prod .nil _, _ => rfl
-    | .prod (.prod _ _) _, _ => rfl
-    | .prod (.of _) .nil, _ => rfl
-    | .prod (.of _) (.prod _ _), _ => rfl
+    (normalize G).IsExpansionOn (effectGrammar.structure (M := M)) effectGrammar.structure :=
+  Language.LHom.mapBinary_isExpansionOn fun g ↦ Mode.normalize_equiv g D
 
 end effectGrammar
 

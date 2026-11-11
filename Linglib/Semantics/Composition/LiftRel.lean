@@ -122,7 +122,7 @@ theorem rel_pure (f : Eff B) (h : f.IsApplicative) :
   cases f with
   | S => exact ⟨fun _ ha ↦ ⟨b, rfl, ha ▸ hab⟩, fun _ hb ↦ ⟨a, rfl, hb ▸ hab⟩⟩
   | R i => exact fun _ _ _ ↦ hab
-  | W o => cases h; exact ⟨hab, Iff.rfl⟩
+  | W o => obtain ⟨rfl⟩ := h; exact ⟨hab, Iff.rfl⟩
   | C o => exact fun _ _ hc ↦ hc hab
   | M => exact ⟨Iff.rfl, fun _ _ ↦ hab⟩
   | F => exact ⟨hab, fun _ ha ↦ ⟨b, rfl, ha ▸ hab⟩, fun _ hb ↦ ⟨a, rfl, hb ▸ hab⟩⟩
@@ -143,7 +143,7 @@ theorem rel_seq (f : Eff B) (h : f.IsApplicative) :
       obtain ⟨a, ha, hab⟩ := hx.2 b hb
       exact ⟨k a, ⟨k, hk, a, ha, rfl⟩, hkk hab⟩
   | R i => exact fun _ _ hi ↦ hg hi (hx hi)
-  | W o => cases h; exact ⟨hg.1 hx.1, and_congr hg.2 hx.2⟩
+  | W o => obtain ⟨rfl⟩ := h; exact ⟨hg.1 hx.1, and_congr hg.2 hx.2⟩
   | C o => exact fun _ _ hc ↦ hg fun _ _ hk ↦ hx fun _ _ hab ↦ hc (hk hab)
   | M =>
     exact ⟨⟨fun ⟨h₁, h₂⟩ ↦ ⟨hg.1.1 h₁, hx.1.1 h₂⟩, fun ⟨h₁, h₂⟩ ↦ ⟨hg.1.2 h₁, hx.1.2 h₂⟩⟩,
@@ -174,7 +174,7 @@ theorem rel_join (f : Eff B) (h : f.IsApplicative) :
       obtain ⟨a, ha, hab⟩ := hss.2 b hb
       exact ⟨a, ⟨s, hs, ha⟩, hab⟩
   | R i => exact fun _ _ hi ↦ hx hi hi
-  | W o => cases h; exact ⟨hx.1.1, and_congr hx.2 hx.1.2⟩
+  | W o => obtain ⟨rfl⟩ := h; exact ⟨hx.1.1, and_congr hx.2 hx.1.2⟩
   | C o => exact fun _ _ hc ↦ hx fun _ _ hm ↦ hm hc
   | M =>
     exact ⟨⟨fun ⟨h₁, h₂⟩ ↦ ⟨hx.1.1 h₁, (hx.2 h₁ _).1.1 h₂⟩,
@@ -237,7 +237,7 @@ theorem Mode.rel_eval
   | _, _, _, .ejectR m => fun _ _ ha _ _ hb ↦ Mode.rel_eval hG m ha (Eff.rel_eject hb)
   | _, _, _, .ejectL m => fun _ _ ha _ _ hb ↦ Mode.rel_eval hG m (Eff.rel_eject ha) hb
   | _, _, _, .join (f := f) h m => fun _ _ ha _ _ hb ↦
-    Eff.rel_join f h (Mode.rel_eval hG m ha hb)
+    Eff.rel_join f h (Eff.rel_map f (fun _ _ hx ↦ hx) (Mode.rel_eval hG m ha hb))
   | _, _, _, .lower m => fun _ _ ha _ _ hb ↦ Eff.rel_lower (Mode.rel_eval hG m ha hb)
 
 omit M M' in

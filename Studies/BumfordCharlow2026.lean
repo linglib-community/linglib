@@ -4,7 +4,7 @@ public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Mode.EffectFree
 public import Linglib.Semantics.Composition.Mode.Pointwise
 public import Linglib.Semantics.Composition.Mode.Normal
-public import Linglib.Semantics.Composition.MetaCombinator
+public import Linglib.Semantics.Composition.MetaCombinator.Adjunction
 
 /-!
 # Bumford and Charlow 2026: effect-driven interpretation
@@ -253,7 +253,7 @@ example : Mode (baseGrammar Unit).Binary (.comp (.W e) e) (.comp (.R e) (e ⇒ .
 Map Right of backward application (5.12). -/
 example : Mode (baseGrammar Unit).Binary (.comp .S (.comp (.W e) e))
     (.comp (.R e) (.comp .S (e ⇒ .t))) (.comp .S .t) :=
-  .join trivial (.mapL (.counit (.mapR (.basic (.inl .ba)))))
+  .join inferInstance (.mapL (.counit (.mapR (.basic (.inl .ba)))))
 
 /-- A pronoun before its would-be antecedent stays unresolved (5.13), (5.14). -/
 example {u : Ty Unit}
@@ -388,7 +388,7 @@ theorem combine_island :
 
 /-- The grammar has a mode that joins twice, flattening three layers of indeterminacy to one. -/
 example : Mode (baseGrammar Unit).Binary (e ⇒ S (S (S T))) e (S T) :=
-  .join trivial (.join trivial (.basic (.inl .fa)))
+  .join inferInstance (.join inferInstance (.basic (.inl .fa)))
 
 /-- The book's `combine` applies Join once to the result of application, and lists the modes that
 give three layers and two. -/
@@ -396,7 +396,7 @@ theorem combine_join_twice :
     combine (e ⇒ S (S (S T))) e = [(FA, S (S (S T))), (.join FA, S (S T))] := by decide
 
 /-- The search that stacks Join and Lower finds it. -/
-example : (⟨S T, .join trivial (.join trivial (.basic (.inl .fa)))⟩ :
+example : (⟨S T, .join inferInstance (.join inferInstance (.basic (.inl .fa)))⟩ :
       Σ u, Mode (baseGrammar Unit).Binary (e ⇒ S (S (S T))) e u) ∈
     Ty.combine (ManySorted.Language.LocallyFinite.binaryRules (L := baseGrammar Unit)) _ _ :=
   Ty.mem_combine (find := ManySorted.Language.LocallyFinite.binaryRules (L := baseGrammar Unit))
@@ -579,7 +579,7 @@ theorem values_whichDogChasedWhichCat :
         (fun {_} ↦ SetItem.val dog cat chase) sets =
       [⟨.comp .S .t, {p | ∃ c, cat c ∧ ∃ d, dog d ∧ p = chase c d}⟩] := by
   have h := Tree.values_effectDrivenWithin_pointwise (P := (· = .S)) (f := .S)
-    (G := application (B := Unit)) rfl trivial
+    (G := application (B := Unit)) rfl
     (ρ := fun {_} ↦ Item.val dog cat chase) (ρ' := fun {_} ↦ SetItem.val dog cat chase)
     (lex := results) (lex' := sets) (fun x ↦ by rcases x with (_ | _ | _) | _ <;> rfl)
     whichDogChasedWhichCat
@@ -617,24 +617,24 @@ def admiresEveryone : (C (e ⇒ .t) : Ty Unit).Dom D :=
 
 /-- The surface order: someone admires everyone. -/
 theorem eval_ap_iff :
-    ((Mode.ap trivial (.basic (.inl .ba)) :
+    ((Mode.ap inferInstance (.basic (.inl .ba)) :
       Mode (baseGrammar Unit).Binary (C e) (C (e ⇒ .t)) (C .t)).eval D
         (fun c ↦ ∃ y, c y) (admiresEveryone admires)) id ↔
       ∃ y, ∀ x, admires x y := Iff.rfl
 
 /-- The inverse order: everyone is admired by someone. -/
 theorem eval_join_mapR_mapL_iff :
-    ((Mode.join trivial (.mapR (.mapL (.basic (.inl .ba)))) :
+    ((Mode.join inferInstance (.mapR (.mapL (.basic (.inl .ba)))) :
       Mode (baseGrammar Unit).Binary (C e) (C (e ⇒ .t)) (C .t)).eval D
         (fun c ↦ ∃ y, c y) (admiresEveryone admires)) id ↔ ∀ x, ∃ y, admires x y := Iff.rfl
 
 /-- The two orders are two readings: where each of two people admires only themself, everyone
 is admired by someone and no one admires everyone. -/
 example :
-    ((Mode.join trivial (.mapR (.mapL (.basic (.inl .ba)))) :
+    ((Mode.join inferInstance (.mapR (.mapL (.basic (.inl .ba)))) :
       Mode (baseGrammar Unit).Binary (C e) (C (e ⇒ .t)) (C .t)).eval (fun _ ↦ Bool)
         (fun c ↦ ∃ y, c y) (admiresEveryone (· = ·))) id ∧
-    ¬ ((Mode.ap trivial (.basic (.inl .ba)) :
+    ¬ ((Mode.ap inferInstance (.basic (.inl .ba)) :
       Mode (baseGrammar Unit).Binary (C e) (C (e ⇒ .t)) (C .t)).eval (fun _ ↦ Bool)
         (fun c ↦ ∃ y, c y) (admiresEveryone (· = ·))) id :=
   ⟨fun x ↦ ⟨x, rfl⟩, fun ⟨_, hy⟩ ↦ Bool.noConfusion ((hy true).trans (hy false).symm)⟩
@@ -655,9 +655,9 @@ variable {D : B → Type} {f : Eff B} {a b : Ty B}
 -- (3.26)
 theorem eval_ap_fa_eq_eval_ap_ba (hc : f.IsCommutative) (F : (Ty.comp f (a ⇒ b)).Dom D)
     (X : (Ty.comp f a).Dom D) :
-    (Mode.ap hc.isApplicative (.basic (.inl .fa)) :
+    (Mode.ap hc.toIsApplicative (.basic (.inl .fa)) :
       Mode (baseGrammar B).Binary (.comp f (a ⇒ b)) (.comp f a) (.comp f b)).eval D F X =
-    (Mode.ap hc.isApplicative (.basic (.inl .ba)) :
+    (Mode.ap hc.toIsApplicative (.basic (.inl .ba)) :
       Mode (baseGrammar B).Binary (.comp f a) (.comp f (a ⇒ b)) (.comp f b)).eval D X F :=
   congrFun₂ (Mode.eval_ap_comm hc rfl) F X
 
@@ -665,13 +665,13 @@ variable {o : Ty B}
 
 -- (3.31a)
 theorem eval_ap_fa_C (F : (Ty.comp (.C o) (a ⇒ b)).Dom D) (X : (Ty.comp (.C o) a).Dom D) :
-    (Mode.ap (f := .C o) trivial (.basic (.inl .fa)) :
+    (Mode.ap (f := .C o) inferInstance (.basic (.inl .fa)) :
       Mode (baseGrammar B).Binary (.comp (.C o) (a ⇒ b)) (.comp (.C o) a) (.comp (.C o) b)).eval
         D F X = fun c ↦ F fun g ↦ X fun x ↦ c (g x) := rfl
 
 -- (3.31b)
 theorem eval_ap_ba_C (X : (Ty.comp (.C o) a).Dom D) (F : (Ty.comp (.C o) (a ⇒ b)).Dom D) :
-    (Mode.ap (f := .C o) trivial (.basic (.inl .ba)) :
+    (Mode.ap (f := .C o) inferInstance (.basic (.inl .ba)) :
       Mode (baseGrammar B).Binary (.comp (.C o) a) (.comp (.C o) (a ⇒ b)) (.comp (.C o) b)).eval
         D X F = fun c ↦ X fun x ↦ F fun g ↦ c (g x) := rfl
 
@@ -696,7 +696,7 @@ def only : (F .t ⇒ .t : Ty Unit).Dom D := fun m ↦ {p ∈ m.alternatives | p}
 
 /-- *Only* over a prejacent with no focus in it is the prejacent. -/
 theorem eval_unitR_only_iff (p : Prop) :
-    (Mode.unitR trivial (.basic (.inl .fa)) :
+    (Mode.unitR inferInstance (.basic (.inl .fa)) :
       Mode (baseGrammar Unit).Binary (F .t ⇒ .t) .t .t).eval D (only (E := E)) p ↔ p := by
   change {q ∈ ({p} : Set Prop) | q} = {p} ↔ p
   refine ⟨fun h ↦ (h.ge rfl).2, fun hp ↦ Set.ext fun q ↦ ⟨And.left, fun hq ↦ ⟨hq, ?_⟩⟩⟩

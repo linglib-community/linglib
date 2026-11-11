@@ -106,11 +106,13 @@ are, a predicate defined at what both are defined at. -/
 theorem Application.evalCbv_fa {a b : Ty B} (f : Part ((a ⇒ b).cbv.Dom D))
     (x : Part (a.cbv.Dom D)) :
     Application.evalCbv D .fa f x =
-      (.join trivial (.ap trivial (.basic .fa)) :
+      (.join inferInstance (.ap inferInstance (.basic .fa)) :
         Mode (application (B := B)).Binary (.comp .M (a.cbv ⇒ .comp .M b.cbv))
           (.comp .M a.cbv) (.comp .M b.cbv)).eval D f x := by
-  simp [Application.evalCbv, Mode.eval, Eff.join, Eff.seq, Eff.map, Application.eval,
-    ManySorted.Language.Structure.funMap, Part.bind_assoc, Part.bind_map]
+  change _ = Eff.join .M inferInstance (Eff.map .M id (Eff.seq .M inferInstance
+    (Eff.map .M (fun g y ↦ Application.eval D .fa g y) f) x))
+  simp [Application.evalCbv, Eff.join, Eff.seq, Eff.map, Application.eval, Part.bind_assoc,
+    Part.bind_map]
 
 /-- Application takes total values and the partial values that are them to a total value and the
 partial value that is it. -/
@@ -191,8 +193,8 @@ def partialValued [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] {N : T
   binary
     | .comp .M l, .comp .M r =>
       (Language.LocallyFinite.binaryRules (L := G) l r).map fun
-        | ⟨.comp .M u, p⟩ => ⟨.comp .M u, .join trivial (.ap trivial (.basic p))⟩
-        | ⟨u, p⟩ => ⟨.comp .M u, .ap trivial (.basic p)⟩
+        | ⟨.comp .M u, p⟩ => ⟨.comp .M u, .join inferInstance (.ap inferInstance (.basic p))⟩
+        | ⟨u, p⟩ => ⟨.comp .M u, .ap inferInstance (.basic p)⟩
     | _, _ => []
 
 section PartialValued
@@ -201,19 +203,22 @@ variable {G : Language (Ty B)} {D : B → Type} [M : G.Structure (Ty.Dom D)] {l 
 
 /-- A rule on two partial values: defined where both are. -/
 theorem Mode.eval_ap_basic (p : G.Binary l r u) (x : Part (l.Dom D)) (y : Part (r.Dom D)) :
-    (Mode.ap trivial (.basic p) :
+    (Mode.ap inferInstance (.basic p) :
       Mode G.Binary (.comp .M l) (.comp .M r) (.comp .M u)).eval D x y =
       x.bind fun a ↦ y.map fun b ↦ M.funMap p (a, b) := by
-  simp [Mode.eval, Eff.seq, Eff.map, Part.bind_map]
+  change Eff.seq .M inferInstance (Eff.map .M (fun a b ↦ M.funMap p (a, b)) x) y = _
+  simp [Eff.seq, Eff.map, Part.bind_map]
 
 /-- A rule with a partial result, on two partial values: defined where both are and the rule is
 at their values. -/
 theorem Mode.eval_join_ap_basic (p : G.Binary l r (.comp .M u)) (x : Part (l.Dom D))
     (y : Part (r.Dom D)) :
-    (Mode.join trivial (.ap trivial (.basic p)) :
+    (Mode.join inferInstance (.ap inferInstance (.basic p)) :
       Mode G.Binary (.comp .M l) (.comp .M r) (.comp .M u)).eval D x y =
       x.bind fun a ↦ y.bind fun b ↦ M.funMap p (a, b) := by
-  simp [Mode.eval, Eff.join, Eff.seq, Eff.map, Part.bind_assoc, Part.bind_map]
+  change Eff.join .M inferInstance (Eff.map .M id (Eff.seq .M inferInstance
+    (Eff.map .M (fun a b ↦ M.funMap p (a, b)) x) y)) = _
+  simp [Eff.join, Eff.seq, Eff.map, Part.bind_assoc, Part.bind_map]
 
 end PartialValued
 

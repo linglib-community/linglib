@@ -24,6 +24,8 @@ adjoint to reading, and
 * `Interpreter.Ty.Dom`, `Interpreter.Eff.Obj`: the domain of a type and the carrier of an effect,
   given the domains of the base sorts.
 * `Interpreter.Eff.IsApplicative`: the effects with a unit and an application.
+* `Interpreter.Eff.functor`, `Interpreter.Eff.monad`: the functor of an effect, and the monad of
+  one with a unit and an application.
 * `Interpreter.Eff.map`, `Interpreter.Eff.pure`, `Interpreter.Eff.seq`, `Interpreter.Eff.join`:
   the operations of an effect.
 * `Interpreter.Ty.size`, `Interpreter.Eff.size`: the size of a type and of an effect.
@@ -117,13 +119,27 @@ variable {D : B → Type} {α β : Type}
 
 /-- The effects with a unit and an application: all but storing at a type other than the truth
 values, the one type here whose stored contents are merged. -/
-def IsApplicative : Eff B → Prop
-  | .W o => o = .t
-  | _ => True
+class IsApplicative (f : Eff B) : Prop where
+  /-- Stored contents are truth values. -/
+  out : match f with
+    | .W o => o = .t
+    | _ => True
+
+instance : IsApplicative (.S : Eff B) := ⟨trivial⟩
+
+instance (i : Ty B) : IsApplicative (.R i) := ⟨trivial⟩
+
+instance : IsApplicative (.W .t : Eff B) := ⟨rfl⟩
+
+instance (r : Ty B) : IsApplicative (.C r) := ⟨trivial⟩
+
+instance : IsApplicative (.M : Eff B) := ⟨trivial⟩
+
+instance : IsApplicative (.F : Eff B) := ⟨trivial⟩
 
 instance [DecidableEq B] : DecidablePred (IsApplicative (B := B))
-  | .W o => inferInstanceAs (Decidable (o = .t))
-  | .S | .R _ | .C _ | .M | .F => isTrue trivial
+  | .W o => decidable_of_iff (o = .t) ⟨fun h ↦ ⟨h⟩, fun h ↦ h.out⟩
+  | .S | .R _ | .C _ | .M | .F => isTrue ⟨trivial⟩
 
 /-- An effect's map. -/
 def map : (f : Eff B) → (α → β) → Obj D f α → Obj D f β
@@ -138,7 +154,7 @@ def map : (f : Eff B) → (α → β) → Obj D f α → Obj D f β
 def pure : (f : Eff B) → f.IsApplicative → α → Obj D f α
   | .S, _, a => {a}
   | .R _, _, a => fun _ ↦ a
-  | .W _, rfl, a => (a, True)
+  | .W _, ⟨rfl⟩, a => (a, True)
   | .C _, _, a => fun c ↦ c a
   | .M, _, a => Part.some a
   | .F, _, a => .unfeatured a
@@ -149,7 +165,7 @@ def seq : (f : Eff B) → f.IsApplicative → Obj D f (α → β) → Obj D f α
     Obj D f β
   | .S, _, g, x => Set.seq g x
   | .R _, _, g, x => fun i ↦ g i (x i)
-  | .W _, rfl, g, x => (g.1 x.1, g.2 ∧ x.2)
+  | .W _, ⟨rfl⟩, g, x => (g.1 x.1, g.2 ∧ x.2)
   | .C _, _, g, x => fun c ↦ g fun k ↦ x fun a ↦ c (k a)
   | .M, _, g, x => g.bind fun k ↦ x.map k
   | .F, _, g, x => Seq.seq (f := WithAlternatives) g fun _ ↦ x
@@ -158,10 +174,22 @@ def seq : (f : Eff B) → f.IsApplicative → Obj D f (α → β) → Obj D f α
 def join : (f : Eff B) → f.IsApplicative → Obj D f (Obj D f α) → Obj D f α
   | .S, _, x => ⋃₀ x
   | .R _, _, x => fun i ↦ x i i
-  | .W _, rfl, x => (x.1.1, x.2 ∧ x.1.2)
+  | .W _, ⟨rfl⟩, x => (x.1.1, x.2 ∧ x.1.2)
   | .C _, _, x => fun c ↦ x fun m ↦ m c
   | .M, _, x => x.bind id
   | .F, _, x => Bind.bind (m := WithAlternatives) x id
+
+/-- The functor of an effect. -/
+instance functor (f : Eff B) : Functor (Obj D f) where
+  map := map f
+
+/-- The monad of an effect with a unit and an application: its map, its unit, its application,
+and as bind its join after its map. -/
+instance monad (f : Eff B) [h : f.IsApplicative] : Monad (Obj D f) where
+  map := map f
+  pure := pure f h
+  seq g x := seq f h g (x ())
+  bind m k := join f h (map f k m)
 
 /-- The co-unit of storing and reading: the stored datum is given to the reader. -/
 def counit {i : Ty B} (x : Obj D (.W i) (Obj D (.R i) α)) : α := x.1 x.2

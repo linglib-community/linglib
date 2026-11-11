@@ -2,39 +2,31 @@ module
 
 public import Mathlib.CategoryTheory.Monad.Adjunction
 public import Mathlib.CategoryTheory.Types.Basic
-public import Mathlib.Control.Basic
-public import Mathlib.Control.Functor
-public import Linglib.Semantics.Composition.Lawful
+public import Linglib.Semantics.Composition.Mode.Basic
 
 /-!
-# The meta-combinators over a functor, an applicative, a monad and an adjunction
+# The meta-combinators of an adjunction
 
-Bumford and Charlow's meta-combinators take a basic combinator `(∗) : σ → τ → ω` and return one
-for daughters that carry an effect, by the structure the effect has: the maps of a functor,
-Structured App and the units of an applicative, Join of a monad, and the co-unit and ejections
-of an adjunction. They are stated here for any functor, applicative, monad and adjunction on
-types, and [each meta-mode of the effect-driven grammar means its
-meta-combinator](##Interpreter.Mode.eval_ap) at the effect it lifts through. Every adjunction
-[induces a monad through the grammar](##Interpreter.MetaCombinator.mapL_ejectR_counit).
+Storing is left adjoint to reading, and an adjunction adds two meta-combinators to those of a
+functor: the co-unit, which cancels the left adjoint of one daughter against the right adjoint
+of the other, and the ejection of a right adjoint from a function. They are stated here for any
+adjunction on types, and [the Co-unit](##Interpreter.Mode.eval_counit) and Eject modes of the
+effect-driven grammar mean them at storing and reading. Every adjunction [induces a monad through
+the grammar](##Interpreter.MetaCombinator.mapL_ejectR_counit).
 
 ## Main definitions
 
-* `Interpreter.MetaCombinator.mapL`, `mapR`, `ap`, `unitL`, `unitR`, `join`: the
-  meta-combinators of a functor, an applicative and a monad.
 * `Interpreter.MetaCombinator.Output`, `outputInput`: the storing effect and its adjunction with
   reading.
-* `Interpreter.MetaCombinator.counit`, `eject`, `ejectL`, `ejectR`: the meta-combinators of
-  an adjunction.
-* `Interpreter.Eff.functor`: the functor of an effect.
+* `Interpreter.MetaCombinator.counit`, `eject`, `ejectL`, `ejectR`: the meta-combinators of an
+  adjunction.
 
 ## Implementation notes
 
 The storing effect `Output ι α = α × ι` is a functor and not mathlib's `WriterT`, whose functor
 comes only with a monad over a monoid of logs. An adjunction is mathlib's `Adjunction` between
 the functors `ofTypeFunctor Ω ⊣ ofTypeFunctor Γ`, so the unit, co-unit and induced monad are
-mathlib's. The flattening of a monad is `(· >>= id)`, which is the Join of an effect after its
-map at the identity: [Join means the meta-combinator](##Interpreter.Mode.eval_join) by the
-identity law of the functor, and Join over a map is bind with no law.
+mathlib's.
 
 ## References
 
@@ -49,75 +41,9 @@ namespace MetaCombinator
 
 open CategoryTheory
 
-universe u v
+universe u
 
 variable {σ τ ω α β : Type u}
-
-/-- Forward application `(>)`. -/
-def fa (f : α → β) (x : α) : β := f x
-
-/-- Backward application `(<)`. -/
-def ba (x : α) (f : α → β) : β := f x
-
-section Functor
-
-variable {F : Type u → Type v} [Functor F]
-
-/-- Map Left: map the combinator over an effectful left daughter. -/
-def mapL (star : σ → τ → ω) (e₁ : F σ) (e₂ : τ) : F ω := (fun a ↦ star a e₂) <$> e₁
-
-/-- Map Right: map the combinator over an effectful right daughter. -/
-def mapR (star : σ → τ → ω) (e₁ : σ) (e₂ : F τ) : F ω := (fun b ↦ star e₁ b) <$> e₂
-
-theorem mapR_fa (f : α → β) (x : F α) : mapR fa f x = f <$> x := rfl
-
-theorem mapL_ba (x : F α) (f : α → β) : mapL ba x f = f <$> x := rfl
-
-theorem mapR_mapR_fa {G : Type u → Type u} [Functor G] (f : α → β) (x : F (G α)) :
-    mapR (mapR fa) f x = (f <$> Functor.Comp.mk x).run := rfl
-
-end Functor
-
-section Applicative
-
-variable {F : Type u → Type v} [Applicative F]
-
-/-- Structured App: combine two daughters carrying the same applicative effect, merging the
-effects with the left daughter's first. -/
-def ap (star : σ → τ → ω) (e₁ : F σ) (e₂ : F τ) : F ω := star <$> e₁ <*> e₂
-
-/-- Unit Left: a right daughter expecting a computation is given a pure one. -/
-def unitL {τ' : Type u} (star : σ → (τ → τ') → ω) (e₁ : σ) (e₂ : F τ → τ') : ω :=
-  star e₁ fun b ↦ e₂ (pure b)
-
-/-- Unit Right: a left daughter expecting a computation is given a pure one. -/
-def unitR {σ' : Type u} (star : (σ → σ') → τ → ω) (e₁ : F σ → σ') (e₂ : τ) : ω :=
-  star (fun a ↦ e₁ (pure a)) e₂
-
-theorem ap_fa [LawfulApplicative F] (f : F (α → β)) (x : F α) :
-    ap fa f x = f <*> x :=
-  congrArg (· <*> x) (id_map f)
-
-end Applicative
-
-section Monad
-
-variable {M : Type u → Type u} [Monad M]
-
-/-- Join: flatten the doubled effect a combinator returns. -/
-def join (star : σ → τ → M (M ω)) (e₁ : σ) (e₂ : τ) : M ω := joinM (star e₁ e₂)
-
-variable [LawfulMonad M]
-
-/-- Join over Map Left of backward application is bind. -/
-theorem join_mapL_ba (m : M α) (k : α → M β) : join (mapL ba) m k = m >>= k :=
-  bind_map_left _ _ _
-
-/-- Join over Map Right of forward application is bind with its arguments flipped. -/
-theorem join_mapR_fa (k : α → M β) (m : M α) : join (mapR fa) k m = m >>= k :=
-  bind_map_left _ _ _
-
-end Monad
 
 /-! ### Storing and reading -/
 
@@ -226,57 +152,12 @@ end Adjunction
 
 end MetaCombinator
 
-/-! ### The meta-modes mean the meta-combinators -/
-
-/-- The functor of an effect. -/
-@[reducible] def Eff.functor {B : Type} {D : B → Type} (f : Eff B) : Functor (Eff.Obj D f) where
-  map := Eff.map f
-
 namespace Mode
 
 open ManySorted
 
 variable {B : Type} {D : B → Type} {G : Language (Ty B)} [M : G.Structure (Ty.Dom D)]
-  {f : Eff B} {i l l' r r' u : Ty B}
-
-theorem eval_mapR (m : Mode G.Binary l r u) :
-    letI := Eff.functor (D := D) f
-    (Mode.mapR (f := f) m).eval D = MetaCombinator.mapR (m.eval D) := rfl
-
-theorem eval_mapL (m : Mode G.Binary l r u) :
-    letI := Eff.functor (D := D) f
-    (Mode.mapL (f := f) m).eval D = MetaCombinator.mapL (m.eval D) := rfl
-
-theorem eval_ap (h : f.IsApplicative) (m : Mode G.Binary l r u) :
-    letI := Eff.monad (D := D) f h
-    (Mode.ap h m).eval D = MetaCombinator.ap (m.eval D) := rfl
-
-theorem eval_unitR (h : f.IsApplicative) (m : Mode G.Binary (l ⇒ l') r u) :
-    letI := Eff.monad (D := D) f h
-    (Mode.unitR h m).eval D = MetaCombinator.unitR (m.eval D) := rfl
-
-theorem eval_unitL (h : f.IsApplicative) (m : Mode G.Binary l (r ⇒ r') u) :
-    letI := Eff.monad (D := D) f h
-    (Mode.unitL h m).eval D = MetaCombinator.unitL (m.eval D) := rfl
-
-/-- Join means the meta-combinator of the effect's monad, whose flattening is the effect's join
-after its map at the identity. -/
-theorem eval_join (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f (.comp f u))) :
-    letI := Eff.monad (D := D) f h
-    (Mode.join h m).eval D = MetaCombinator.join (m.eval D) :=
-  funext₂ fun a b ↦ congrArg (Eff.join f h) (Eff.map_id f (m.eval D a b)).symm
-
-/-- Join over Map Left is the bind of the effect's monad. -/
-theorem eval_join_mapL (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f u))
-    (a : (Ty.comp f l).Dom D) (b : r.Dom D) :
-    letI := Eff.monad (D := D) f h
-    (Mode.join h (.mapL m)).eval D a b = a >>= fun x ↦ m.eval D x b := rfl
-
-/-- Join over Map Right is the bind of the effect's monad. -/
-theorem eval_join_mapR (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f u))
-    (a : l.Dom D) (b : (Ty.comp f r).Dom D) :
-    letI := Eff.monad (D := D) f h
-    (Mode.join h (.mapR m)).eval D a b = b >>= fun y ↦ m.eval D a y := rfl
+  {i l l' r r' u : Ty B}
 
 theorem eval_counit (m : Mode G.Binary l r u) :
     (Mode.counit (i := i) m).eval D =
