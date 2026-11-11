@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.Elbourne2026
 public import Linglib.Data.Examples.Readers
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
 public import Linglib.Semantics.Composition.Rules
-public import Linglib.Semantics.Composition.Mode
+public import Linglib.Semantics.Composition.Mode.Basic
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Modification.Classification
 public import Linglib.Semantics.Quantification.Basic

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Mode
+public import Linglib.Semantics.Composition.Mode.Basic
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.PredicateAbstraction
 

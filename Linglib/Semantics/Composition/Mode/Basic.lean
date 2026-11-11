@@ -10,42 +10,15 @@ Bumford and Charlow's grammar takes whatever basic modes of combination a theory
 them under meta-modes, each lifting a mode through an effect by the structure the effect has: Map
 Left and Map Right by its map, Structured App and the Unit modes where it is applicative, Join
 where it is a monad, Co-unit and Eject for the adjunction of storing and reading, and Lower for a
-continuation at its own result type. The types of two daughters decide which modes combine them,
-and `Ty.combine` is the book's procedure for listing them.
+continuation at its own result type.
 
 ## Main definitions
 
 * `Interpreter.Mode`: the basic modes closed under the meta-modes.
 * `Interpreter.Mode.eval`: the meaning of a mode, by the operations of the effects.
-* `Interpreter.Ty.combine`: the modes the book's `combine` finds for two types.
 * `Interpreter.Ty.Evaluated`: the types with no continuation still to be closed.
 * `Interpreter.effectGrammar`: the grammar whose binary rules are the modes over a grammar's
   rules, with its structure.
-* `Interpreter.effectDriven`: the book's interpreter, which admits every mode `Ty.combine` finds
-  and at an island only those with an evaluated result.
-
-## Implementation notes
-
-`Ty.combine` follows the book's interpreter rule for rule and in its order. The two Eject rules
-do not make their types smaller, so the recursion is on a bound, three steps for each unit of
-size.
-
-## Errata
-
-* The book says its interpreter finds every interpretation a sentence has in the theory. It
-  applies Join and Lower once to each way of combining two daughters, so it does not find a mode
-  that joins twice: a function into three layers of one effect and its argument combine by
-  application into three layers and, joined once, into two, but not into one.
-* The book says neither Eject rule feeds itself or the other. Eject on one daughter may be
-  followed by Eject on the other; what cannot happen is two on one daughter, since the first
-  leaves a computation there and not an arrow.
-
-## TODO
-
-* That `Ty.combineAux` is the same at every bound from `3 * (l.size + r.size) + 3` on is not
-  proved.
-* A statement of what `Ty.combine` does find, every mode in which no Join or Lower is applied to
-  a Join or a Lower, is not proved.
 
 ## References
 
@@ -115,78 +88,6 @@ def eval {G : Language (Ty B)} (D : B → Type) [M : G.Structure (Ty.Dom D)] :
 
 end Mode
 
-section Combine
-
-variable [DecidableEq B] {Rule : Ty B → Ty B → Ty B → Type}
-  (find : (l r : Ty B) → List (Σ u, Rule l r u))
-
-/-- The Join of a mode whose result has two layers of one monadic effect. -/
-def Mode.joins {l r : Ty B} : (Σ u, Mode Rule l r u) → List (Σ u, Mode Rule l r u)
-  | ⟨.comp f (.comp g a), m⟩ =>
-    if h : g = f then
-      if ha : f.IsApplicative then [⟨.comp f a, .join ha (h ▸ m)⟩] else []
-    else []
-  | _ => []
-
-/-- The Lower of a mode whose result is a continuation at its own result type. -/
-def Mode.lowers {l r : Ty B} : (Σ u, Mode Rule l r u) → List (Σ u, Mode Rule l r u)
-  | ⟨.comp (.C o) a, m⟩ => if h : o = a then [⟨a, .lower (h ▸ m)⟩] else []
-  | _ => []
-
-/-- `Ty.combine` to a bound on the depth of its recursion. Every rule but the two Ejects recurses
-on smaller types, and an Eject turns an arrow into a computation, so at most one Eject on each
-daughter comes between two rules that shrink a type. -/
-def Ty.combineAux : ℕ → (l r : Ty B) → List (Σ u, Mode Rule l r u)
-  | 0, _, _ => []
-  | k + 1, l, r =>
-    (((find l r).map fun p ↦ (⟨p.1, .basic p.2⟩ : Σ u, Mode Rule l r u)) ++
-      (match r with
-        | .comp f y => (Ty.combineAux k l y).map fun p ↦ ⟨.comp f p.1, .mapR p.2⟩
-        | _ => []) ++
-      (match l with
-        | .comp f x => (Ty.combineAux k x r).map fun p ↦ ⟨.comp f p.1, .mapL p.2⟩
-        | _ => []) ++
-      (match l, r with
-        | .comp f x, .comp g y =>
-          if h : g = f then
-            if ha : f.IsApplicative then
-              (Ty.combineAux k x y).map fun p ↦ ⟨.comp f p.1, by subst h; exact .ap ha p.2⟩
-            else []
-          else []
-        | _, _ => []) ++
-      (match l with
-        | .fn (.comp f x) x' =>
-          if ha : f.IsApplicative then
-            (Ty.combineAux k (x ⇒ x') r).map fun p ↦ ⟨p.1, .unitR ha p.2⟩
-          else []
-        | _ => []) ++
-      (match r with
-        | .fn (.comp f y) y' =>
-          if ha : f.IsApplicative then
-            (Ty.combineAux k l (y ⇒ y')).map fun p ↦ ⟨p.1, .unitL ha p.2⟩
-          else []
-        | _ => []) ++
-      (match l, r with
-        | .comp (.W i) x, .comp (.R j) y =>
-          if h : j = i then (Ty.combineAux k x y).map fun p ↦ ⟨p.1, h ▸ .counit p.2⟩ else []
-        | _, _ => []) ++
-      (match r with
-        | .fn x (.comp (.R i) y) =>
-          (Ty.combineAux k l (.comp (.R i) (x ⇒ y))).map fun p ↦ ⟨p.1, .ejectR p.2⟩
-        | _ => []) ++
-      (match l with
-        | .fn x (.comp (.R i) y) =>
-          (Ty.combineAux k (.comp (.R i) (x ⇒ y)) r).map fun p ↦ ⟨p.1, .ejectL p.2⟩
-        | _ => [])).flatMap fun p ↦ p :: (Mode.joins p ++ Mode.lowers p)
-
-/-- The modes the book's interpreter finds for a left daughter of type `l` and a right daughter
-of type `r`: each way of peeling effects off the two types down to a basic rule, and its Join
-and its Lower where the result allows one. -/
-def Ty.combine (l r : Ty B) : List (Σ u, Mode Rule l r u) :=
-  Ty.combineAux find (3 * (l.size + r.size) + 3) l r
-
-end Combine
-
 /-- A type is evaluated when no continuation in it is still to be closed. -/
 def Ty.Evaluated : Ty B → Prop
   | .comp (.C _) _ => False
@@ -208,16 +109,5 @@ grammar: a type shift means what it does there, and a mode what the effects make
 instance effectGrammar.structure {G : Language (Ty B)} {D : B → Type}
     [M : G.Structure (Ty.Dom D)] : (effectGrammar G).Structure (Ty.Dom D) :=
   .mk₂ (fun s x ↦ M.funMap s x) fun m ↦ m.eval D
-
-/-- The effect-driven interpreter over a grammar, the book's: a node admits the type shifts of
-the grammar and every mode that `Ty.combine` finds for its daughters, and an island only the
-modes whose result is evaluated. -/
-def effectDriven [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] :
-    Interpreter (effectGrammar G) Node where
-  unary _ := Language.LocallyFinite.unaryRules (L := G)
-  binary
-    | .island, l, r =>
-      (Ty.combine (Language.LocallyFinite.binaryRules (L := G)) l r).filter (·.1.Evaluated)
-    | _, l, r => Ty.combine (Language.LocallyFinite.binaryRules (L := G)) l r
 
 end Interpreter

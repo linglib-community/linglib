@@ -186,6 +186,29 @@ def values (I : Interpreter L N) (M : L.Structure D) (ρ : ∀ {a : T}, W a → 
     (lex : Lx → List (Σ a, W a)) (s : Skeleton N Lx) : List (Σ a, D a) :=
   (I.derivs lex s).map fun ⟨a, d⟩ ↦ ⟨a, d.realize M ρ⟩
 
+/-- The values of a leaf are the values of the items the word may be. -/
+theorem values_leaf (I : Interpreter L N) (M : L.Structure D) (ρ : ∀ {a : T}, W a → D a)
+    (lex : Lx → List (Σ a, W a)) (x : Lx) :
+    I.values M ρ lex (.leaf x) = (lex x).map fun p ↦ ⟨p.1, ρ p.2⟩ := by
+  simp [values, derivs, Function.comp_def]
+
+/-- The values of a unary node are those of the rules it admits at the values of its
+daughter. -/
+theorem values_unary (I : Interpreter L N) (M : L.Structure D) (ρ : ∀ {a : T}, W a → D a)
+    (lex : Lx → List (Σ a, W a)) (n : N) (s : Skeleton N Lx) :
+    I.values M ρ lex (.unary n s) = (I.values M ρ lex s).flatMap fun d ↦
+      (I.unary n d.1).map fun r ↦ ⟨r.1, M.funMap r.2 d.2⟩ := by
+  simp [values, derivs, List.map_flatMap, List.flatMap_map, Function.comp_def]
+
+/-- The values of a binary node are those of the rules it admits at the values of its
+daughters. -/
+theorem values_binary (I : Interpreter L N) (M : L.Structure D) (ρ : ∀ {a : T}, W a → D a)
+    (lex : Lx → List (Σ a, W a)) (n : N) (s₁ s₂ : Skeleton N Lx) :
+    I.values M ρ lex (.binary n s₁ s₂) = (I.values M ρ lex s₁).flatMap fun d₁ ↦
+      (I.values M ρ lex s₂).flatMap fun d₂ ↦
+        (I.binary n d₁.1 d₂.1).map fun m ↦ ⟨m.1, M.funMap m.2 (d₁.2, d₂.2)⟩ := by
+  simp [values, derivs, List.map_flatMap, List.flatMap_map, Function.comp_def]
+
 /-- A value of a binary node is the value of a rule the node admits, at values of its
 daughters. -/
 theorem mem_values_binary {I : Interpreter L N} {M : L.Structure D}
