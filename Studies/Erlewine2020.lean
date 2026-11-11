@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Erlewine2020
-public import Linglib.Syntax.Minimalist.Locality.AntiLocality
+public import Linglib.Syntax.Minimalist.Copy.AntiLocality
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Data.Examples.Readers
 

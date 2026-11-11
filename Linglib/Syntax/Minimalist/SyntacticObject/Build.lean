@@ -56,7 +56,7 @@ instance : Inhabited (SyntacticObject L) := ⟨trace⟩
 /-! ### Merge as multiplication -/
 
 /-- Merge on the carrier is written `l * r`, the commutative magma of the objects. -/
-noncomputable instance : CommMagma (SyntacticObject L) where
+instance : CommMagma (SyntacticObject L) where
   mul := merge
   mul_comm := merge_comm
 
@@ -67,7 +67,7 @@ instance : Coe L (SyntacticObject L) := ⟨leaf⟩
 
 /-- Merge in braces, as [marcolli-chomsky-berwick-2025] writes it: `{l, r} = merge l r`, with
     `{s} = s`. -/
-noncomputable instance : Insert (SyntacticObject L) (SyntacticObject L) := ⟨merge⟩
+instance : Insert (SyntacticObject L) (SyntacticObject L) := ⟨merge⟩
 
 instance : Singleton (SyntacticObject L) (SyntacticObject L) := ⟨id⟩
 

@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.Erlewine2016
 public import Linglib.Syntax.Person.Basic
 public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
 public import Linglib.Phonology.OptimalityTheory.Tableau
-public import Linglib.Syntax.Minimalist.Locality.AntiLocality
+public import Linglib.Syntax.Minimalist.Copy.AntiLocality
 public import Studies.CoonMateoPedroPreminger2014
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Data.Examples.Readers

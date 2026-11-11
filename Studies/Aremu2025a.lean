@@ -8,7 +8,7 @@ public import Linglib.Fragments.Yoruba.Relativization
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
-public import Linglib.Syntax.Minimalist.Locality.AntiLocality
+public import Linglib.Syntax.Minimalist.Copy.AntiLocality
 public import Linglib.Syntax.Reflex
 public import Studies.BrananErlewine2023
 

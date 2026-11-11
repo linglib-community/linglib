@@ -13,6 +13,7 @@ public import Linglib.Semantics.Composition.PredicateAbstraction
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Syntax.Minimalist.Copy.Cut
 public import Linglib.Syntax.Minimalist.Workspace.Basic
+public import Linglib.Syntax.Minimalist.Workspace.Coproduct.TraceConservation
 
 /-!
 # Collins (2026): Reconstruction and the New Minimalism
@@ -171,7 +172,8 @@ example : everyDidntScore.replay?.isSome ∧
 theorem binds_at_low_reading :
     fronted.BindsAtReading {picturesOfHimself.toSyntacticObject} ↑john ↑himself ∧
       ¬ fronted.BindsAtReading ∅ ↑john ↑himself :=
-  ⟨by decide +kernel, fun h ↦ no_reconstruction.2 (bindsAtReading_empty_iff.1 h)⟩
+  ⟨by decide +kernel, fun h ↦
+    no_reconstruction.2 ((bindsAtReading_empty_iff (by decide +kernel)).1 h)⟩
 
 /-- Read low, the fronted phrase is where it started: the object is that of *John loves pictures of
 himself*. -/

@@ -5,50 +5,30 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Derivation.Basic
-public import Linglib.Core.Data.List.Monadic
+public import Linglib.Syntax.Minimalist.Derivation.Replay
 public import Linglib.Syntax.Minimalist.Linearization.Externalization
 
 /-!
-# Replaying a derivation on linearized objects
+# The word order of a derivation
 
 Free symmetric Merge builds unordered objects, so the surface order is not recoverable from
-`Derivation.final`, but each step records the side its new daughter takes. `Derivation.replay?`
-replays the steps by Merge on linearized objects, and a successful replay forgets to the
-derivation's own configuration, so the readouts `surfaceTokens`, `surfaceCats` and `surfacePhon` are
-the word order of the derived object. The order is a datum of the derivation rather than of its
-object, and a derivation whose daughters take the head side exactly when they project records the
-harmonic linearization of its object.
-
-## Main definitions
-
-* `Minimalist.Step.replay?`, `Minimalist.Derivation.replay?`, `externalize?`: the replay.
-* `Minimalist.Step.Harmonic`, `Step.HarmonicList`: steps that place the projecting daughter on
-  the head side.
-* `Minimalist.Derivation.surfaceTokens`, `surfaceCats`, `surfacePhon`.
-
-## Main results
-
-* `Minimalist.Derivation.replay?_faithful`, `externalize?_faithful`: a successful replay forgets
-  to `run` and `final`.
-* `Minimalist.Derivation.not_factorsThrough_final`: the linearized object does not factor through
-  the derived object.
-* `Minimalist.Derivation.externalize?_eq_linearize?`: a harmonic derivation records the harmonic
-  linearization of its object.
-* `Minimalist.Derivation.externalize?_map`: a relabelled derivation externalizes to the relabelled
-  object, under an injective relabelling the trace encoder commutes with.
+`Derivation.final`, but each step records the side its new daughter takes and the replay of
+`Derivation/Replay.lean` keeps it. The readouts `surfaceTokens`, `surfaceCats` and `surfacePhon`
+are the word order of the replayed object. The order is a datum of the derivation and not of its
+object: [the linearized object does not factor through the derived
+one](##Minimalist.Derivation.not_factorsThrough_final), and a derivation whose daughters take the
+head side exactly when they project [records the harmonic linearization of its
+object](##Minimalist.Derivation.externalize?_eq_linearize?).
 
 ## Implementation notes
 
-* The replay is partial, `none` when the initial object is not a leaf, when a mover is absent, or
-  when nothing is left to merge back. An externally merged item replays in the order it was built
-  in. Traces are unpronounced.
+* Traces are unpronounced.
 * Sibling accounts of linearization are the selection-induced harmonic order
   (`Linearization/Externalization.lean`) and cyclic linearization (`Linearization/Cyclic.lean`).
 
 ## References
 
-* [marcolli-chomsky-berwick-2025], §1.12 and §1.13 (Lemmas 1.13.1 and 1.13.5)
+* [marcolli-chomsky-berwick-2025], §1.12 and §1.13 (Lemma 1.13.5)
 -/
 
 @[expose] public section
@@ -70,38 +50,13 @@ theorem linearize?_headTrace (s : SyntacticObject)
   unfold headTrace traceLinearized; cases τ s <;> rfl
 
 
-/-! ### The replay -/
+/-! ### Surface readouts -/
 
 open Derivation (Cfg)
 
-/-- A step on a linearized configuration, `Step.run` with each new daughter on its side. Internal
-    Merge raises the leftmost occurrence of the mover, leaving the trace of its head under `τ`,
-    and an extraction stacks it; `none` when the mover is absent or the stack is empty. -/
-def Step.replay? (step : Step) (c : Cfg LinearizedSyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
-    Option (Cfg LinearizedSyntacticObject) :=
-  match step, c with
-  | .em side item, ⟨p, st⟩ => some ⟨p.attach side item, st⟩
-  | .im mover side, ⟨p, st⟩ =>
-      (p.find? mover).map fun s ↦ ⟨(p.replace mover (mover.traceLinearized τ)).attach side s, st⟩
-  | .extract mover, ⟨p, st⟩ =>
-      (p.find? mover).map fun s ↦ ⟨p.replace mover (mover.traceLinearized τ), s :: st⟩
-  | .remerge side, ⟨p, m :: st⟩ => some ⟨p.attach side m, st⟩
-  | .remerge _, ⟨_, []⟩ => none
+variable {τ : SyntacticObject → Option LexicalItem.Token}
 
 namespace Derivation
-
-/-- The derivation's linearized configuration under the trace encoder `τ`, or `none` if the initial
-    object is not a leaf, a mover is absent, or `remerge` finds the stack empty. -/
-def replay? (d : Derivation) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
-    Option (Cfg LinearizedSyntacticObject) :=
-  d.initial.toLinearizedLeaf?.bind fun p ↦ d.steps.foldlM (fun c step ↦ step.replay? c τ) ⟨p, []⟩
-
-/-- The derivation's linearized object under the trace encoder `τ`; copies still on the stack are
-    not part of it. -/
-def externalize? (d : Derivation) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
-    Option LinearizedSyntacticObject :=
-  (d.replay? τ).map (·.current)
 
 /-- The pronounced tokens, left to right; empty if the replay fails. -/
 def surfaceTokens (d : Derivation) : List LexicalItem.Token :=
@@ -115,134 +70,6 @@ def surfacePhon (d : Derivation) : List String :=
   d.surfaceTokens.filterMap (·.item.phonForm?)
 
 end Derivation
-
-/-! ### Faithfulness -/
-
-variable {τ : SyntacticObject → Option LexicalItem.Token}
-
-namespace Derivation
-
-theorem replay?_append_singleton (d : Derivation) (step : Step) :
-    (d.append [step]).replay? = d.replay?.bind (step.replay? ·) := by
-  simp only [replay?, append, List.foldlM_append, List.foldlM_cons, List.foldlM_nil,
-    Option.bind_assoc]
-  congr 1
-  funext p
-  congr 1
-  funext c
-  cases step.replay? c <;> rfl
-
-theorem stack_eq_nil_of_replay? {d : Derivation} {c : Cfg LinearizedSyntacticObject}
-    (hm : ∀ step ∈ d.steps, step.IsMerge) (h : d.replay? τ = some c) : c.stack = [] := by
-  obtain ⟨p, -, h⟩ := Option.bind_eq_some_iff.1 h
-  have key : ∀ (steps : List Step) (c₀ c : Cfg LinearizedSyntacticObject),
-      (∀ step ∈ steps, step.IsMerge) → c₀.stack = [] →
-        steps.foldlM (fun c step ↦ step.replay? c τ) c₀ = some c → c.stack = [] := by
-    intro steps
-    induction steps with
-    | nil => intro c₀ c _ h₀ h; obtain rfl := Option.some.inj h; exact h₀
-    | cons step steps ih =>
-      intro c₀ c hm h₀ h
-      obtain ⟨c₁, h₁, h⟩ := Option.bind_eq_some_iff.1 h
-      refine ih c₁ c (fun s hs ↦ hm s (List.mem_cons_of_mem _ hs)) ?_ h
-      obtain ⟨p₀, st₀⟩ := c₀
-      cases h₀
-      have := hm step List.mem_cons_self
-      cases step with
-      | em side item => obtain rfl := Option.some.inj h₁; rfl
-      | im mover side => obtain ⟨s, -, rfl⟩ := Option.map_eq_some_iff.1 h₁; rfl
-      | extract mover => exact this.elim
-      | remerge side => exact this.elim
-  exact key _ _ _ hm rfl h
-
-end Derivation
-
-/-! ### Relabelling -/
-
-section Map
-
-variable {f : LexicalItem.Token → LexicalItem.Token}
-  {τ' : SyntacticObject → Option LexicalItem.Token}
-
-theorem Step.replay?_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f) = (τ s).map f)
-    (step : Step) (c : Cfg LinearizedSyntacticObject) :
-    (step.map f).replay? (c.map (LinearizedSyntacticObject.map f)) τ' =
-      (step.replay? c τ).map (Cfg.map (LinearizedSyntacticObject.map f)) := by
-  rcases c with ⟨p, _ | ⟨m, st⟩⟩ <;> cases step <;>
-    simp [Step.map, Step.replay?, Cfg.map, LinearizedSyntacticObject.find?_map hf,
-      LinearizedSyntacticObject.replace_map hf, SyntacticObject.traceLinearized_map hτ,
-      Function.comp_def]
-
-namespace Derivation
-
-theorem replay?_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f) = (τ s).map f)
-    (d : Derivation) :
-    (d.map f).replay? τ' = (d.replay? τ).map (Cfg.map (LinearizedSyntacticObject.map f)) := by
-  simp only [replay?, map, SyntacticObject.toLinearizedLeaf?_map]
-  cases d.initial.toLinearizedLeaf? with
-  | none => rfl
-  | some p =>
-    simp only [Option.map_some, Option.bind_some, List.foldlM_map]
-    exact (List.map_foldlM (f := fun c step ↦ step.replay? c τ)
-      (g := fun c step ↦ (step.map f).replay? c τ')
-      (fun c step ↦ (Step.replay?_map hf hτ step c).symm) d.steps ⟨p, []⟩).symm
-
-theorem externalize?_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f) = (τ s).map f)
-    (d : Derivation) :
-    (d.map f).externalize? τ' = (d.externalize? τ).map (LinearizedSyntacticObject.map f) := by
-  rw [externalize?, externalize?, replay?_map hf hτ, Option.map_map, Option.map_map]
-  rfl
-
-end Derivation
-
-end Map
-
-private theorem Step.map_of_replay? {c c' : Cfg LinearizedSyntacticObject} {step : Step}
-    (h : step.replay? c τ = some c') :
-    c'.map LinearizedSyntacticObject.toSyntacticObject
-      = step.run (c.map LinearizedSyntacticObject.toSyntacticObject) τ := by
-  obtain ⟨p, st⟩ := c
-  cases step with
-  | em side item =>
-    obtain rfl := Option.some.inj h
-    simp [Cfg.map, Step.run, Step.apply_em]
-  | im mover side =>
-    obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
-    simp [Cfg.map, Step.run, Step.apply_im, deleteAccessible,
-      LinearizedSyntacticObject.toSyntacticObject_find? hs, SyntacticObject.merge_comm]
-  | extract mover =>
-    obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
-    simp [Cfg.map, Step.run, Step.apply, deleteAccessible,
-      LinearizedSyntacticObject.toSyntacticObject_find? hs]
-  | remerge side =>
-    rcases st with _ | ⟨m, st⟩
-    · cases h
-    · obtain rfl := Option.some.inj h
-      simp [Cfg.map, Step.run]
-
-/-- A successful replay forgets to the configuration of the derivation
-([marcolli-chomsky-berwick-2025] Lemma 1.13.1). -/
-theorem Derivation.replay?_faithful (d : Derivation) {c : Cfg LinearizedSyntacticObject}
-    (h : d.replay? τ = some c) :
-    c.map LinearizedSyntacticObject.toSyntacticObject = d.run τ := by
-  obtain ⟨p, hp, h⟩ := Option.bind_eq_some_iff.1 h
-  rw [List.foldl_eq_of_foldlM_eq_some (f := fun c (step : Step) ↦ step.replay? c τ)
-    (g := fun c (step : Step) ↦ step.run c τ)
-    (π := Cfg.map LinearizedSyntacticObject.toSyntacticObject)
-    (fun _ _ _ ↦ Step.map_of_replay?) h, Derivation.run, Cfg.map, List.map_nil,
-    toSyntacticObject_of_toLinearizedLeaf? hp]
-
-/-- A successful externalization forgets to the derived object, so the surface readouts are the
-    word order of `final` itself. -/
-theorem Derivation.externalize?_faithful (d : Derivation) {p : LinearizedSyntacticObject}
-    (h : d.externalize? τ = some p) : p.toSyntacticObject = d.final τ := by
-  obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 h
-  rw [Derivation.final, ← d.replay?_faithful hc, Cfg.map_current]
-
-theorem Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
-    {p : LinearizedSyntacticObject} (h : (d.take n).externalize? τ = some p) :
-    p.toSyntacticObject = d.stageAt n τ :=
-  externalize?_faithful (d.take n) h
 
 /-! ### Harmonic derivations
 

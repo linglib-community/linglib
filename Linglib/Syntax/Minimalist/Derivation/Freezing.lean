@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Linearization.Replay
+public import Linglib.Syntax.Minimalist.Derivation.Replay
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
@@ -14,27 +14,16 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 A constituent that has moved is an island for later extraction, though it may itself move again.
 This is the Freezing condition, and it is what makes VP-raising analyses of VOS order testable,
 since whatever a raised VP still contains cannot be extracted and whatever left it before it
-raised can. `Frozen d x` says that `x` sits inside some
-mover of `d`, and `ObeysFreezing d` that no mover of `d` sits inside an earlier one, a pairwise
-condition on the list of movers in the shape of `List.Nodup`. Movers carry the traces of what
+raised can. `Frozen d x` says that `x` sits inside some mover of `d`, and `ObeysFreezing d` that
+[no step moves a constituent that the mover of an earlier step
+contains](##Minimalist.Derivation.obeysFreezing_iff_forall_mover?), so that [a further movement
+obeys Freezing exactly when its mover is not
+frozen](##Minimalist.Derivation.obeysFreezing_append_im_iff). Movers carry the traces of what
 evacuated them earlier, not the evacuees, so a remnant freezes nothing that left it. Its rival, the
-Unlabeled Immobility Condition, lets a moved constituent be extracted from and instead bars a
-constituent from moving when it is unlabeled in the object built so far, as a phrase whose specifier
-does not agree with it is.
-
-## Main definitions
-
-* `Minimalist.Derivation.Frozen`, `Minimalist.Derivation.ObeysFreezing`
-* `Minimalist.Derivation.ObeysUIC`: every mover is labeled when it moves.
-
-## Main results
-
-* `Minimalist.Derivation.frozen_append_iff`: extending a derivation freezes what its new movers
-  contain and nothing else.
-* `Minimalist.Derivation.obeysFreezing_append_im_iff`: a further movement obeys Freezing exactly
-  when its mover is not frozen.
-* `Minimalist.Derivation.obeysUIC_append_im_iff`: a further movement obeys the Unlabeled
-  Immobility Condition exactly when its mover is labeled.
+Unlabeled Immobility Condition `ObeysUIC`, lets a moved constituent be extracted from and instead
+bars a constituent from moving when it is unlabeled in the object built so far, as a phrase whose
+specifier does not agree with it is; [a further movement obeys it exactly when its mover is
+labeled](##Minimalist.Derivation.obeysUIC_append_im_iff).
 
 ## References
 
@@ -78,6 +67,23 @@ def ObeysFreezing (d : Derivation) : Prop :=
 
 instance (d : Derivation) : Decidable d.ObeysFreezing :=
   inferInstanceAs (Decidable (d.movedItems.Pairwise _))
+
+/-- A derivation obeys Freezing exactly when no step moves a constituent that the mover of an
+earlier step contains. -/
+theorem obeysFreezing_iff_forall_mover? :
+    d.ObeysFreezing ↔
+      ∀ ⦃i j : ℕ⦄, i < j → ∀ m ∈ d.mover? i, ∀ m' ∈ d.mover? j, ¬ Contains m m' := by
+  rw [ObeysFreezing, movedItems, List.pairwise_filterMap, List.pairwise_iff_getElem]
+  constructor
+  · intro h i j hij m hm m' hm'
+    have hj := lt_length_of_mem_mover? hm'
+    have hi : i < d.steps.length := hij.trans hj
+    rw [mover?, List.getElem?_eq_getElem hi] at hm
+    rw [mover?, List.getElem?_eq_getElem hj] at hm'
+    exact h i j hi hj hij m hm m' hm'
+  · intro h i j hi hj hij m hm m' hm'
+    exact h hij m (by rw [mover?, List.getElem?_eq_getElem hi]; exact hm)
+      m' (by rw [mover?, List.getElem?_eq_getElem hj]; exact hm')
 
 theorem obeysFreezing_append_iff :
     (d.append steps).ObeysFreezing ↔ d.ObeysFreezing ∧
