@@ -180,39 +180,6 @@ theorem Contains.replace {s x target replacement : SyntacticObject} (h : Contain
     · rw [replace_of_notMem_terms ht]; exact h
     · exact (ihr h).to_reflTransGen
 
-/-- Moving `m` to the root of `cur` takes what it contains out of the c-command domain of what it
-c-commands from there: if `w` c-commanded a term `xp` of `m` before, and no token of the remainder
-is pronounced in `m` as well, `w` does not c-command `xp` after. -/
-theorem not_cCommands_merge_replace {cur m t w xp : SyntacticObject}
-    (hd : Disjoint (cur.replace m t).yield m.yield) (hxp : xp.yield ≠ 0) (hw : w.yield ≠ 0)
-    (hmx : Contains m xp) (hwx : CCommands cur w xp)
-    (hmw : CCommands (merge (cur.replace m t) m) m w) :
-    ¬ CCommands (merge (cur.replace m t) m) w xp := by
-  have key {u : SyntacticObject} (hu : u.yield ≠ 0) (hR : u ∈ (cur.replace m t).terms)
-      (hm : u ∈ m.terms) : False :=
-    let ⟨a, ha⟩ := Multiset.exists_mem_of_ne_zero hu
-    Multiset.disjoint_left.1 hd (Multiset.mem_of_le (yield_le_of_mem_terms hR) ha)
-      (Multiset.mem_of_le (yield_le_of_mem_terms hm) ha)
-  have hxm : xp ∈ m.terms := mem_terms.2 hmx.to_reflTransGen
-  have hm0 : m.yield ≠ 0 := fun h ↦ hxp (Multiset.le_zero.1 (h ▸ yield_le_of_mem_terms hxm))
-  have hparent {root x z : SyntacticObject} (h : Sisters root x z) : Contains root x :=
-    let ⟨_, hy, hyx, _, _⟩ := h
-    Relation.TransGen.tail' (mem_terms.1 hy) hyx
-  have hwR : w ∈ (cur.replace m t).terms := by
-    obtain ⟨z, -, hs, hzw⟩ := hmw
-    rcases Sisters.of_merge hs with h | h | ⟨h, -⟩ | ⟨-, rfl⟩
-    · exact (key hm0 h.mem_left (self_mem_terms m)).elim
-    · exact (contains_irrefl m (hparent h)).elim
-    · exact (key hm0 (h ▸ self_mem_terms m) (self_mem_terms m)).elim
-    · exact mem_terms.2 hzw
-  have hwm : w ∉ m.terms := key hw hwR
-  have hmw' : m ∉ w.terms := fun h ↦
-    key hm0 (terms_subset_terms (mem_terms.1 hwR) h) (self_mem_terms m)
-  obtain ⟨z, -, hs, -⟩ := hwx
-  rw [merge_comm]
-  exact not_cCommands_merge_of_notMem_terms hwm
-    (contains_iff_containsOrEq_and_ne.1 ((hparent hs).replace hwm hmw')).2 (key hxp · hxm)
-
 /-- Moving the daughter `r` out of `[l r]` and leaving a trace yields `[l′ t]`, with `l′` the
     substituted left daughter; a tree is never its own daughter, taken here as a hypothesis. -/
 example (l r : SyntacticObject) (h : merge l r ≠ r) :

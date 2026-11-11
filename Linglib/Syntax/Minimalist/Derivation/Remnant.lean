@@ -14,10 +14,11 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 A *remnant* is a constituent that something has moved out of, and *remnant movement* moves it
 afterwards, so that what moves carries a trace whose antecedent lies outside it: a VP fronted after
 its object has scrambled away, a predicate cleft fronting the VP after the verb has raised, VoiceP
-raising after its subject has left. A trace remembers the head of the phrase that left it, so step
-`i` of a derivation moves a remnant of the phrase headed by `h`, `Derivation.IsRemnantStep`, when
-its mover holds a trace of `h` but does not pronounce `h`. A mover that carried the phrase along,
-as when the phrase moved only to the mover's own edge, pronounces `h` and is no remnant of it.
+raising after its subject has left. A trace remembers the head of the phrase that left it, so an
+object is a remnant of the phrase headed by `h`, `SyntacticObject.IsRemnantOf`, when it holds a
+trace of `h` but does not pronounce `h`, and a step of a derivation moves a remnant,
+`Derivation.IsRemnantStep`, when its mover is one. A mover that carried the phrase along, as when
+the phrase moved only to the mover's own edge, pronounces `h` and is no remnant of it.
 
 ## Implementation notes
 
@@ -47,16 +48,35 @@ as when the phrase moved only to the mover's own edge, pronounces `h` and is no 
 
 @[expose] public section
 
+namespace Minimalist.SyntacticObject
+
+variable {m : SyntacticObject} {h : LexicalItem.Token}
+
+/-- `m` is a remnant of the phrase headed by `h`: it holds a trace of `h` but does not pronounce
+`h`. -/
+def IsRemnantOf (m : SyntacticObject) (h : LexicalItem.Token) : Prop :=
+  traceOf h ∈ m.terms ∧ h ∉ m.yield
+
+instance : Decidable (m.IsRemnantOf h) := inferInstanceAs (Decidable (_ ∧ _))
+
+theorem isRemnantOf_map_iff {f : LexicalItem.Token → LexicalItem.Token}
+    (hf : Function.Injective f) : (m.map f).IsRemnantOf (f h) ↔ m.IsRemnantOf h := by
+  have hmem (x : SyntacticObject) : x.map f ∈ (m.map f).terms ↔ x ∈ m.terms := by
+    rw [terms_map, Multiset.mem_map_of_injective (map_injective hf)]
+  rw [IsRemnantOf, IsRemnantOf, mem_yield_iff, mem_yield_iff, ← map_traceOf, ← map_leaf, hmem,
+    hmem]
+
+end Minimalist.SyntacticObject
+
 namespace Minimalist.Derivation
 
 open SyntacticObject
 
 variable {d : Derivation} {steps : List Step} {i : Nat} {h : LexicalItem.Token}
 
-/-- Step `i` of `d` moves a remnant of the phrase headed by `h`: its mover holds a trace of `h` but
-does not pronounce `h`. -/
+/-- Step `i` of `d` moves a remnant of the phrase headed by `h`. -/
 def IsRemnantStep (d : Derivation) (i : Nat) (h : LexicalItem.Token) : Prop :=
-  ∃ m ∈ d.mover? i, traceOf h ∈ m.terms ∧ h ∉ m.yield
+  ∃ m ∈ d.mover? i, m.IsRemnantOf h
 
 instance (d : Derivation) (i : Nat) (h : LexicalItem.Token) : Decidable (d.IsRemnantStep i h) :=
   inferInstanceAs (Decidable (∃ m ∈ d.mover? i, _))
@@ -74,13 +94,6 @@ theorem IsRemnantStep.append (hr : d.IsRemnantStep i h) : (d.append steps).IsRem
 
 theorem isRemnantStep_map_iff {f : LexicalItem.Token → LexicalItem.Token}
     (hf : Function.Injective f) : (d.map f).IsRemnantStep i (f h) ↔ d.IsRemnantStep i h := by
-  have hmem (m x : SyntacticObject) : x.map f ∈ (m.map f).terms ↔ x ∈ m.terms := by
-    rw [terms_map, Multiset.mem_map_of_injective (map_injective hf)]
-  cases hm : d.mover? i with
-  | none => simp [IsRemnantStep, mover?_map, hm]
-  | some m =>
-    simp only [IsRemnantStep, mover?_map, hm, Option.map_some, Option.mem_def, Option.some.injEq,
-      exists_eq_left', mem_yield_iff]
-    rw [← map_traceOf, ← map_leaf, hmem, hmem]
+  cases hm : d.mover? i <;> simp [IsRemnantStep, mover?_map, hm, isRemnantOf_map_iff hf]
 
 end Minimalist.Derivation
