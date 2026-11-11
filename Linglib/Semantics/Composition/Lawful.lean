@@ -7,18 +7,14 @@ public import Mathlib.Basic.Nontrivial.Defs
 /-!
 # The effects as lawful monads
 
-Each effect with a unit and an application is a monad, with its map, its unit, its application
-and its join as the operations, and [the monad is lawful](##Interpreter.Eff.lawfulMonad). A
-statement about the modes that follows from the functor, applicative or monad laws therefore
-holds at every such effect at once: [Structured App is Join over the two maps, the left
-daughter's effect outermost](##Interpreter.Mode.join_mapL_mapR_equiv_ap).
-
-Reading, indeterminacy, partiality, alternatives and the storing of truth values are
-[commutative](##Interpreter.Eff.commApplicative): at these [the right daughter's effect may as
-well be outermost](##Interpreter.Mode.join_mapR_mapL_equiv_ap), and [the daughters may change
-places](##Interpreter.Mode.eval_ap_comm). Quantifying over continuations
-[is not](##Interpreter.Eff.not_commApplicative_C), and there [the order of the maps is a
-difference of scope](##Interpreter.Mode.not_join_mapR_mapL_equiv_ap).
+An applicative effect is [a lawful monad](##Interpreter.Eff.lawfulMonad), so a statement that
+follows from the monad laws holds at every such effect: [`.join (.mapL (.mapR m))` is equivalent
+to `.ap m`](##Interpreter.Mode.join_mapL_mapR_equiv_ap). Every applicative effect but
+quantification over continuations is [commutative](##Interpreter.Eff.commApplicative), and at
+these [so is `.join (.mapR (.mapL m))`](##Interpreter.Mode.join_mapR_mapL_equiv_ap) and [the
+daughters may change places](##Interpreter.Mode.eval_ap_comm). At continuations [it is
+not](##Interpreter.Mode.not_join_mapR_mapL_equiv_ap): the order of the two maps is a difference
+of scope.
 
 ## Main definitions
 
@@ -103,10 +99,9 @@ instance lawfulMonad (f : Eff B) [h : f.IsApplicative] : LawfulMonad (Obj D f) :
     | F => exact join_map_map (m := WithAlternatives) g x
     | _ => rfl
 
-/-- An applicative effect is commutative when combining two computations gives the same result
-whichever of the two is run first. Every applicative effect here is, with one exception. Of two
-quantifiers the one run first takes scope over the other, so quantifying over continuations is
-left out: it is commutative only where the result type has at most one value. -/
+/-- An effect is commutative if it is applicative and is not quantification over continuations
+(`.C r`). The `seq` of a commutative effect does not depend on the order of its two computations
+(`Eff.commApplicative`). -/
 class IsCommutative (f : Eff B) : Prop extends IsApplicative f where
   /-- The effect is not quantification over continuations. -/
   ne_C : ∀ r : Ty B, f ≠ .C r
@@ -142,13 +137,12 @@ private theorem seq_map_prodMk_comm {f : Eff B} (hc : f.IsCommutative) {α β : 
     exact ⟨fun ⟨x, hx, y, hy, h⟩ ↦ ⟨y, hy, x, hx, h⟩, fun ⟨y, hy, x, hx, h⟩ ↦ ⟨x, hx, y, hy, h⟩⟩
   | F => exact CommApplicative.commutative_prod (m := WithAlternatives) a b
 
-/-- The application of a commutative effect is commutative: its two computations can be run in
-either order. -/
+/-- The `seq` of a commutative effect does not depend on the order of its two computations. -/
 instance commApplicative (f : Eff B) [hc : f.IsCommutative] : CommApplicative (Obj D f) where
   commutative_prod := seq_map_prodMk_comm hc
 
-/-- Quantifying over continuations is not commutative where the result type has two values: of
-two quantifiers that ignore their scopes, the application returns what the first does. -/
+/-- Quantification over continuations with result type `r` is not commutative if `r.Dom D` has
+two elements. -/
 theorem not_commApplicative_C (r : Ty B) [Nontrivial (r.Dom D)] :
     ¬ @CommApplicative (Obj D (.C r)) (monad (.C r)).toApplicative := fun h ↦ by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne (r.Dom D)
@@ -163,18 +157,15 @@ open ManySorted
 
 variable {B : Type} {G : Language (Ty B)} {f : Eff B} {l r u : Ty B}
 
-/-- At every effect with a unit and an application, Join over Map Left over Map Right of a mode
-is Structured App of the mode: the two daughters' effects are merged with the left daughter's
-outermost. -/
+/-- At an applicative effect, `.join (.mapL (.mapR m))` is equivalent to `.ap m`: both merge the
+effects of the two daughters with the left daughter's outermost. -/
 theorem join_mapL_mapR_equiv_ap [f.IsApplicative] (m : Mode G.Binary l r u) :
     Mode.join (f := f) (.mapL (.mapR m)) ≈ .ap m := fun D _ ↦ funext₂ fun a b ↦ by
   simp only [eval, MetaCombinator.join, MetaCombinator.mapL, MetaCombinator.mapR,
     MetaCombinator.ap, joinM, seq_eq_bind_map, bind_map_left]
   rfl
 
-/-- At a commutative effect, Join over Map Right over Map Left of a mode is Structured App of
-the mode too: the effects are merged with the right daughter's outermost, and the order makes no
-difference. -/
+/-- At a commutative effect, `.join (.mapR (.mapL m))` is equivalent to `.ap m`. -/
 theorem join_mapR_mapL_equiv_ap [f.IsCommutative] (m : Mode G.Binary l r u) :
     Mode.join (f := f) (.mapR (.mapL m)) ≈ .ap m :=
   fun D _ ↦ funext₂ fun a b ↦ by
@@ -185,20 +176,18 @@ theorem join_mapR_mapL_equiv_ap [f.IsCommutative] (m : Mode G.Binary l r u) :
 
 variable {D : B → Type} [M : G.Structure (Ty.Dom D)]
 
-/-- Join over Map Left is the bind of the effect's monad. -/
 theorem eval_join_mapL [f.IsApplicative] (m : Mode G.Binary l r (.comp f u))
     (a : (Ty.comp f l).Dom D) (b : r.Dom D) :
     (Mode.join (f := f) (.mapL m)).eval D a b = a >>= fun x ↦ m.eval D x b :=
   bind_map_left _ _ _
 
-/-- Join over Map Right is the bind of the effect's monad. -/
 theorem eval_join_mapR [f.IsApplicative] (m : Mode G.Binary l r (.comp f u))
     (a : l.Dom D) (b : (Ty.comp f r).Dom D) :
     (Mode.join (f := f) (.mapR m)).eval D a b = b >>= fun y ↦ m.eval D a y :=
   bind_map_left _ _ _
 
-/-- At a commutative effect it does not matter which daughter is on the left: Structured App of
-a mode is Structured App of its mirror image at the daughters in the other order. -/
+/-- At a commutative effect, Structured App of a mode is Structured App of its mirror image with
+the daughters exchanged. -/
 theorem eval_ap_comm [f.IsCommutative] {m : Mode G.Binary l r u} {m' : Mode G.Binary r l u}
     (hm : m.eval D = flip (m'.eval D)) :
     (Mode.ap (f := f) m).eval D = flip ((Mode.ap (f := f) m').eval D) :=
@@ -206,9 +195,8 @@ theorem eval_ap_comm [f.IsCommutative] {m : Mode G.Binary l r u} {m' : Mode G.Bi
     rw [eval, hm]
     exact MetaCombinator.ap_flip (m'.eval D) b a
 
-/-- At quantification over continuations the order of the two effects matters: where the result
-type has two values, merging the effects with the right daughter's outermost is not Structured
-App, whatever the mode. -/
+/-- At quantification over continuations with result type `o`, `.join (.mapR (.mapL m))` is not
+equivalent to `.ap m` if `o.Dom D` has two elements. -/
 theorem not_join_mapR_mapL_equiv_ap {o : Ty B} [Nontrivial (o.Dom D)]
     (m : Mode G.Binary l r u) :
     ¬ Mode.join (f := .C o) (.mapR (.mapL m)) ≈ .ap m := fun h ↦ by

@@ -157,8 +157,7 @@ def withBinary {B : S → S → S → Type v} (f : ∀ {a b c : S}, L.Binary a b
     | .prod (.of _) .nil, g => g
     | .prod (.of _) (.prod _ _), g => g
 
-/-- The map between two replacements of the binary symbols of a language, from a map of the new
-symbols: every other symbol is itself. -/
+/-- The map from `L.withBinary B` to `L.withBinary B'` given by a map of the binary symbols. -/
 def mapBinary {B B' : S → S → S → Type v} (f : ∀ {a b c : S}, B a b c → B' a b c) :
     L.withBinary B →ᴸ L.withBinary B' where
   onFunction σ _ g :=
@@ -216,8 +215,6 @@ theorem pi_isExpansionOn {M : L.Structure D} {M' : L'.Structure D} (h : φ.IsExp
     (A : Type x) : φ.IsExpansionOn (M.pi A) (M'.pi A) :=
   ⟨fun _ _ f _ ↦ funext fun _ ↦ h.map_onFunction f _⟩
 
-/-- Replacing the binary symbols expands a structure where each new symbol means what the symbol
-it replaces does. -/
 theorem withBinary_isExpansionOn {B : S → S → S → Type v} {M : L.Structure D}
     {f : ∀ {a b c : S}, L.Binary a b c → B a b c}
     {binary : ∀ {a b c : S}, B a b c → D a → D b → D c}
@@ -234,7 +231,6 @@ theorem withBinary_isExpansionOn {B : S → S → S → Type v} {M : L.Structure
     | .prod (.of _) .nil, _ => rfl
     | .prod (.of _) (.prod _ _), _ => rfl
 
-/-- A map of the binary symbols that keeps their meanings is an expansion. -/
 theorem mapBinary_isExpansionOn {B B' : S → S → S → Type v} {M : L.Structure D}
     {f : ∀ {a b c : S}, B a b c → B' a b c}
     {binary : ∀ {a b c : S}, B a b c → D a → D b → D c}

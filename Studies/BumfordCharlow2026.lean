@@ -548,7 +548,7 @@ variable {E : Type} (dog cat : E → Prop) (chase : E → E → Prop)
 
 local notation "D" => fun _ : Unit ↦ E
 
-/-- The set each word denotes: a *wh*-phrase its restrictor, and the verb its one value. -/
+/-- The set each word denotes, the restrictor of a *wh*-phrase and the singleton of the verb. -/
 def Item.val : {a : Ty Unit} → Item a → (Ty.comp .S a).Dom D
   | _, .whichDog => {d | dog d}
   | _, .chased => {chase}
@@ -560,7 +560,7 @@ def SetItem.val : {a : Ty Unit} → SetItem a → a.Dom D
   | _, .chased => {chase}
   | _, .whichCat => {c | cat c}
 
-/-- Hamblin's grammar: application, pointwise at indeterminacy. -/
+/-- Hamblin's grammar, application pointwise at indeterminacy. -/
 def hamblin : Interpreter (effectGrammar (application (B := Unit))) ℕ :=
   effectDrivenWithin (MetaMode.pointwise (· = .S)) application
 
@@ -572,8 +572,8 @@ private theorem binary_fa : hamblin.binary (e ⇒ e ⇒ .t) e = [⟨e ⇒ .t, .b
 
 private theorem binary_ba : hamblin.binary e (e ⇒ .t) = [⟨.t, .basic .ba⟩] := rfl
 
-/-- (3.2): the sentence denotes the set of propositions that a dog chased a cat, one for each dog
-and each cat, by Structured App at each node. -/
+/-- (3.2): *which dog chased which cat* denotes the set of the propositions `chase c d` for `c` a
+cat and `d` a dog. -/
 theorem values_whichDogChasedWhichCat :
     whichDogChasedWhichCat.values hamblin effectGrammar.structure
         (fun {_} ↦ SetItem.val dog cat chase) sets =

@@ -117,14 +117,11 @@ namespace Eff
 
 variable {D : B → Type} {α β : Type}
 
-/-- An effect is applicative when a plain value can be given it, and two computations that carry
-it can be combined into one that carries it once. Every effect here is, with one exception. Two
-computations that each store something leave two things stored, and they combine only if the two
-are merged into one. Truth values are merged, by conjunction, and nothing else is. So storing a
-truth value is applicative, and storing an individual, as an antecedent does for a later pronoun,
-is not. -/
+/-- An effect `f` is applicative if `Eff.Obj D f` has a `pure` and a `seq`. Every effect is,
+except storing (`.W o`) at a type `o` other than `.t`: two stored truth values are merged by
+conjunction, and other stored data are not merged. -/
 class IsApplicative (f : Eff B) : Prop where
-  /-- Where the effect is storing, what is stored is a truth value. -/
+  /-- A stored datum is a truth value. -/
   out : match f with
     | .W o => o = .t
     | _ => True
@@ -187,8 +184,7 @@ def join : (f : Eff B) → f.IsApplicative → Obj D f (Obj D f α) → Obj D f 
 instance functor (f : Eff B) : Functor (Obj D f) where
   map := map f
 
-/-- The monad of an effect with a unit and an application: its map, its unit, its application,
-and as bind its join after its map. -/
+/-- The monad of an applicative effect. Its bind is `Eff.join` after `Eff.map`. -/
 instance monad (f : Eff B) [h : f.IsApplicative] : Monad (Obj D f) where
   map := map f
   pure := pure f h

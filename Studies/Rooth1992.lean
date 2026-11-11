@@ -493,8 +493,8 @@ local notation "M" => Ty.comp Eff.M
 
 variable {E : Type}
 
-/-- The words of (31) by type. The feature and ~ are words that take a constituent of any type
-with its alternatives; *only* and ~ come with the value of their variable. -/
+/-- The words of (31) by type. The feature F and ~ take a constituent of any type, and *only* and
+~ carry the value of their variable. -/
 inductive Item (E : Type) : Ty Sort' → Type
   | name (x : E) : Item E (F e)
   | introduced : Item E (F (e ⇒ e ⇒ e ⇒ p))
@@ -508,9 +508,9 @@ def items : (Σ a, Item E a) ⊕ ℕ → List (Σ a, Item E a)
   | .inl w => [w]
   | .inr _ => []
 
-/-- The lexicon. A word evokes its own value; the feature is `WithAlternatives.mark` (2); *only*
-is (30b), the exclusive's assertion over a domain of properties; and ~ presupposes (40) of its
-variable and returns the ordinary value of its phrase with no alternatives (42). -/
+/-- The value of each word. A name and the verb evoke their own value, the feature is
+`WithAlternatives.mark` (2), *only* is (30b), and ~ presupposes (40) of its variable and returns
+the ordinary value of its phrase with no alternatives (42). -/
 def Item.val : {a : Ty Sort'} → Item E a → a.Dom (Sort'.Dom E)
   | _, .name x => .unfeatured x
   | _, .introduced => .unfeatured fun y z x ↦ intro x y z
@@ -543,7 +543,6 @@ def lf (C : Set (E → Set (Set (E × E × E)))) (m b s : E) (kb ks : Mark) :
 def meanings (t : Tree Unit (Σ a, Item E a)) : List (Σ a : Ty Sort', a.Dom (Sort'.Dom E)) :=
   t.values grammar effectGrammar.structure Item.val items
 
-/-- Two daughters with alternatives combine as their results do, by Structured App. -/
 private theorem binary_F (l r : Ty Sort') :
     grammar.binary (F l) (F r) = (grammar.binary l r).map fun q ↦ ⟨F q.1, .ap q.2⟩ :=
   binary_effectDrivenWithin_pointwise (P := (· = .F)) rfl
@@ -565,7 +564,6 @@ private theorem binary_squiggle : grammar.binary (F (e ⇒ p)) (F (e ⇒ p) ⇒ 
 
 variable (C : Set (E → Set (Set (E × E × E)))) (m b t s : E) (kb ks : Mark)
 
-/-- A marked name means the name's value under its mark. -/
 theorem meanings_marked (k : Mark) (x : E) :
     meanings (marked k x) = [⟨F e, (WithAlternatives.unfeatured x).mark k⟩] := by
   simp only [meanings, marked, Tree.values_phrase_binary, Tree.values_terminal, items,
@@ -573,8 +571,8 @@ theorem meanings_marked (k : Mark) (x : E) :
     binary_feature]
   rfl
 
-/-- The VP of (31) means the property of introducing Bill to Sue, and evokes what the marks on
-*Bill* and *Sue* compose: the focus semantic value of the VP. -/
+-- the VP of (31) means the property of introducing Bill to Sue, with the focus semantic value
+-- that the marks on *Bill* and *Sue* compose
 theorem meanings_vp : meanings (vp b s kb ks) =
     [⟨F (e ⇒ p), WithAlternatives.map₂ (fun y z x ↦ intro x y z)
       ((WithAlternatives.unfeatured b).mark kb) ((WithAlternatives.unfeatured s).mark ks)⟩] := by
@@ -592,10 +590,8 @@ theorem meanings_vp : meanings (vp b s kb ks) =
   exact ⟨fun ⟨_, ⟨_, ⟨_, rfl, y, hy, rfl⟩, rfl⟩, z, hz, h⟩ ↦ ⟨y, hy, z, hz, h⟩,
     fun ⟨y, hy, z, hz, h⟩ ↦ ⟨_, ⟨_, ⟨_, rfl, y, hy, rfl⟩, rfl⟩, z, hz, h⟩⟩
 
-/-- **(31) has one meaning.** It evokes no alternatives (42); it is defined where `C` is a set of
-properties in the focus semantic value of the VP that contains 'introducing Bill to Sue' and
-another (40); and it is then the proposition that any property in `C` that Mary has is that
-one (30b). -/
+/-- (31) has one meaning. It evokes no alternatives (42), is defined where `C` satisfies the
+presupposition of ~ at the VP (40), and is then the assertion of *only* over `C` (30b). -/
 theorem value?_lf :
     (lf C m b s kb ks).value? grammar effectGrammar.structure Item.val items (F (M p)) =
       some (.unfeatured
@@ -623,8 +619,6 @@ theorem value?_lf :
   · rintro rfl
     exact ⟨_, rfl, _, ⟨_, rfl, rfl⟩, by cases kb <;> cases ks <;> rfl⟩
 
-/-- The exclusive's assertion over properties, at an individual, is its assertion over the
-propositions that the individual has them, where having one of the properties decides which. -/
 private theorem atMost_apply {ι W : Type} (g : ι → E → Set W)
     (hg : ∀ i j, g i m = g j m → g i = g j) (i : ι) :
     atMost (· = ·) (Set.range g) (fun P ↦ P m) (g i) =
@@ -633,8 +627,8 @@ private theorem atMost_apply {ι W : Type} (g : ι → E → Set W)
   simp only [mem_atMost, Set.forall_mem_range, id]
   exact forall_congr' fun j ↦ imp_congr_right fun _ ↦ ⟨fun h ↦ congrFun h m, hg i j⟩
 
-/-- (3a) through its logical form. With F on *Bill* and the domain of *only* the focus semantic
-value of the VP, the presupposition of ~ holds, and the sentence is false in the scenario. -/
+/-- (3a): with F on *Bill* and `C` the focus semantic value of the VP, (31) is defined and false
+in the scenario. -/
 theorem lf_object_scenario (hbt : b ≠ t) :
     ∃ v, (lf (Set.range fun y x ↦ intro x y s) m b s .focused .unfeatured).value? grammar
         effectGrammar.structure Item.val items (F (M p)) = some (.unfeatured v) ∧
@@ -649,8 +643,8 @@ theorem lf_object_scenario (hbt : b ≠ t) :
       rw [(Prod.mk.inj (Prod.mk.inj (atom_injective h)).2).1]) b]
     exact three_a m b t s hbt
 
-/-- (3b) through its logical form. With F on *Sue* the same tree, with the domain of *only* the
-focus semantic value of its VP, is true in the scenario. -/
+/-- (3b): with F on *Sue* and `C` the focus semantic value of the VP, (31) is defined and true in
+the scenario. -/
 theorem lf_goal_scenario (hbt : b ≠ t) (hst : s ≠ t) :
     ∃ v, (lf (Set.range fun z x ↦ intro x b z) m b s .unfeatured .focused).value? grammar
         effectGrammar.structure Item.val items (F (M p)) = some (.unfeatured v) ∧
@@ -668,8 +662,7 @@ theorem lf_goal_scenario (hbt : b ≠ t) (hst : s ≠ t) :
 private theorem binary_squiggle_e : grammar.binary (F e) (F e ⇒ F (M e)) =
     [⟨F (M e), .basic .ba⟩] := rfl
 
-/-- The individual case of ~, on a name with the antecedent another individual (40). The phrase
-is defined where the antecedent is an alternative to the name distinct from it. -/
+-- the individual case of (40), on a name
 theorem value?_contrast (k : Mark) :
     (Tree.bin (marked k b) (.leaf ⟨_, .squiggleInd e t⟩)).value? grammar effectGrammar.structure
         Item.val items (F (M e)) =
@@ -682,8 +675,7 @@ theorem value?_contrast (k : Mark) :
     List.map_nil, List.flatMap_cons, List.flatMap_nil, List.append_nil, binary_squiggle_e]
   cases k <;> rfl
 
-/-- With F on the name every other individual is an antecedent for it, and without F none is:
-focus is what licenses the contrast. -/
+-- with F on the name every other individual is an antecedent for it, and without F none is
 theorem squiggleInd_marked_iff (k : Mark) :
     SquiggleInd b ((WithAlternatives.unfeatured b).mark k).alternatives t ↔
       k = .focused ∧ t ≠ b := by

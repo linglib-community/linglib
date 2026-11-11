@@ -43,7 +43,7 @@ namespace Mode
 
 variable {Rule : Ty B → Ty B → Ty B → Type} {G : Language (Ty B)} {f : Eff B} {l r u : Ty B}
 
-/-- Join over Map Left of a mode: Structured App, where the mode is a Map Right. -/
+/-- `joinMapL m` is `.join (.mapL m)`, or `.ap m'` if `m` is `.mapR m'`. -/
 def joinMapL [f.IsApplicative] :
     {l r u : Ty B} → Mode Rule l r (.comp f u) → Mode Rule (.comp f l) r (.comp f u)
   | _, _, _, .mapR m => .ap m
@@ -57,23 +57,22 @@ theorem joinMapL_equiv [f.IsApplicative] (m : Mode G.Binary l r (.comp f u)) :
 
 variable [DecidableEq B]
 
-/-- Join over Map Right of a mode: Structured App, where the mode is a Map Left and the effect
-is commutative. -/
+/-- `joinMapR m` is `.join (.mapR m)`, or `.ap m'` if `m` is `.mapL m'` and the effect is
+commutative. -/
 def joinMapR [f.IsApplicative] :
     {l r u : Ty B} → Mode Rule l r (.comp f u) → Mode Rule l (.comp f r) (.comp f u)
   | _, _, _, .mapL m => if f.IsCommutative then .ap m else .join (.mapR (.mapL m))
   | _, _, _, m => .join (.mapR m)
 
-/-- Join of a mode: Structured App, where the mode is the two maps in an order that merges the
-effects as Structured App does. -/
+/-- `joinNormal m` is `.join m`, with `joinMapL` or `joinMapR` where `m` is a map. -/
 def joinNormal [f.IsApplicative] :
     {l r u : Ty B} → Mode Rule l r (.comp f (.comp f u)) → Mode Rule l r (.comp f u)
   | _, _, _, .mapL m => joinMapL m
   | _, _, _, .mapR m => joinMapR m
   | _, _, _, m => .join m
 
-/-- The normal form of a mode: Structured App for each Join over Map Left over Map Right, and at
-a commutative effect for each Join over Map Right over Map Left. -/
+/-- The normal form of a mode, with `.ap m` for each `.join (.mapL (.mapR m))` and, at a
+commutative effect, for each `.join (.mapR (.mapL m))`. -/
 def normalize : {l r u : Ty B} → Mode Rule l r u → Mode Rule l r u
   | _, _, _, .basic b => .basic b
   | _, _, _, .mapR m => .mapR m.normalize
@@ -104,7 +103,7 @@ theorem joinNormal_equiv [f.IsApplicative] (m : Mode G.Binary l r (.comp f (.com
   | mapR m => exact joinMapR_equiv m
   | _ => exact .refl _
 
-/-- A mode and its normal form mean the same. -/
+/-- A mode is equivalent to its normal form. -/
 theorem normalize_equiv : ∀ {l r u : Ty B} (m : Mode G.Binary l r u), m.normalize ≈ m
   | _, _, _, .basic _ => .refl _
   | _, _, _, .mapR m => (normalize_equiv m).mapR
@@ -128,10 +127,8 @@ variable [DecidableEq B] {G : Language (Ty B)} {D : B → Type}
 def normalize (G : Language (Ty B)) : effectGrammar G →ᴸ effectGrammar G :=
   .mapBinary Mode.normalize
 
-/-- **Equal meanings.** Taking normal forms keeps the meaning of every symbol of the
-effect-driven grammar, so a derivation and its normal form have one value, and so do two
-derivations with one normal form: they differ, at some of their nodes, in the order in which
-commuting effects are merged. -/
+/-- Taking normal forms keeps the meaning of every symbol of the effect-driven grammar, so a
+derivation and its normal form have the same value (`LHom.realize_onTerm`). -/
 theorem normalize_isExpansionOn [M : G.Structure (Ty.Dom D)] :
     (normalize G).IsExpansionOn (effectGrammar.structure (M := M)) effectGrammar.structure :=
   Language.LHom.mapBinary_isExpansionOn fun g ↦ Mode.normalize_equiv g D

@@ -6,19 +6,16 @@ public import Linglib.Semantics.Composition.Constituency
 /-!
 # The pointwise grammar of an effect
 
-In Heim and Kratzer's grammar every constituent is evaluated at an assignment, and in a Hamblin
-grammar every constituent denotes a set of alternatives; two sisters are combined at one
-assignment, or alternative by alternative. Bumford and Charlow observe that a grammar with
-Structured App and neither the maps nor the units is essentially these. The inventory here has
-Structured App and no other meta-mode at the effect in question. In such a grammar two daughters
-carrying the effect [combine by Structured App alone](##Interpreter.Mode.Within.exists_eq_ap), so
-[the search lists for them the Structured Apps of what it lists for their
-results](##Interpreter.Ty.combineWithin_pointwise), and over a lexicon whose every item carries
-the effect [a tree is interpreted in the structure on
-computations](##PhraseStructure.Tree.values_effectDrivenWithin_pointwise). Structured App is the
-pointwise rule of the effect: [evaluation at one datum](##Interpreter.Mode.eval_ap_R) for
-reading, [Hamblin's rule](##Interpreter.Mode.eval_ap_S) for indeterminacy, and
-[Rooth's](##Interpreter.Mode.eval_ap_F) for alternatives.
+A grammar is pointwise at an effect when its inventory has Structured App and no other meta-mode
+there: the grammars in which every constituent is evaluated at an assignment, or denotes a set of
+alternatives, are essentially of this kind. Two daughters that carry the effect then [combine by
+Structured App alone](##Interpreter.Mode.Within.exists_eq_ap), [the search lists for them the
+Structured Apps of what it lists for their results](##Interpreter.Ty.combineWithin_pointwise),
+and over a lexicon whose every item carries the effect [a tree has its values in the structure on
+computations](##PhraseStructure.Tree.values_effectDrivenWithin_pointwise). Structured App is
+[evaluation at one datum](##Interpreter.Mode.eval_ap_R) at reading, [Hamblin's
+rule](##Interpreter.Mode.eval_ap_S) at indeterminacy and [Rooth's](##Interpreter.Mode.eval_ap_F)
+at alternatives.
 
 ## Main definitions
 
@@ -85,9 +82,9 @@ theorem Within.exists_eq_ap (hf : P f)
     obtain ⟨rfl, -⟩ := Ty.comp.inj (congrArg Sigma.fst he)
     exact absurd (h.1 hf) (by decide)
 
-/-- **The pointwise node.** In a grammar pointwise at `f`, with no basic rule for two daughters
-carrying `f`, the search lists for the two the Structured Apps of the modes it lists for the
-types of their results, in the same order. -/
+/-- In a grammar pointwise at `f`, with no basic rule for daughters of types `.comp f l` and
+`.comp f r`, the modes listed for them are `.ap m` for the modes `m` listed for `l` and `r`, in
+the same order. -/
 theorem _root_.Interpreter.Ty.combineWithin_pointwise [DecidableEq B] [DecidablePred P]
     {find : (l r : Ty B) → List (Sigma (Rule l r))} (hf : P f) [ha : f.IsApplicative]
     (hfind : find (.comp f l) (.comp f r) = []) :
@@ -104,19 +101,6 @@ theorem _root_.Interpreter.Ty.combineWithin_pointwise [DecidableEq B] [Decidable
     rw [List.flatMap_map, List.map_eq_flatMap]
     exact List.flatMap_congr fun p hp ↦ Mode.filter_within_closure_eq_singleton
       ⟨hap, Ty.within_of_mem_combineWithin hp⟩ (hk (by decide)) (hk (by decide))
-
-/-- In a grammar pointwise at `f`, with no basic rule for two daughters carrying `f`, a mode is
-listed for the two exactly when it is Structured App of a mode listed for the types of their
-results. -/
-theorem _root_.Interpreter.Ty.mem_combineWithin_pointwise [DecidableEq B] [DecidablePred P]
-    {find : (l r : Ty B) → List (Sigma (Rule l r))} (hf : P f) [ha : f.IsApplicative]
-    (hfind : find (.comp f l) (.comp f r) = [])
-    {m : Sigma (Mode Rule (.comp f l) (.comp f r))} :
-    m ∈ Ty.combineWithin (MetaMode.pointwise P) find (.comp f l) (.comp f r) ↔
-      ∃ m' ∈ Ty.combineWithin (MetaMode.pointwise P) find l r,
-        m = ⟨.comp f m'.1, .ap m'.2 ha⟩ := by
-  rw [Ty.combineWithin_pointwise hf hfind, List.mem_map]
-  exact exists_congr fun _ ↦ and_congr_right fun _ ↦ eq_comm
 
 variable {G : Language (Ty B)} {D : B → Type} [M : G.Structure (Ty.Dom D)] {u : Ty B}
 
@@ -142,9 +126,6 @@ theorem eval_ap_F (m : Mode G.Binary l r u) (a : (Ty.comp .F l).Dom D)
 
 end Mode
 
-/-- At two daughters carrying `f`, with no basic rule for them, the interpreter of a grammar
-pointwise at `f` admits the Structured Apps of the modes it admits for the types of their
-results. -/
 theorem binary_effectDrivenWithin_pointwise [DecidableEq B] {P : Eff B → Prop} [DecidablePred P]
     {G : Language (Ty B)} [G.LocallyFinite] {N : Type} {f : Eff B} (hf : P f)
     [ha : f.IsApplicative] {l r : Ty B}
@@ -161,8 +142,8 @@ namespace Eff
 
 variable {D : B → Type}
 
-/-- Computations of the arguments of a shape as one computation of the arguments, the effects of
-the earlier arguments first. -/
+/-- The computation of the arguments of a shape from a computation of each, the effects of the
+earlier arguments first. -/
 def sequence (f : Eff B) [h : f.IsApplicative] :
     (σ : Signature (Ty B)) → σ.Interpret (fun a ↦ (Ty.comp f a).Dom D) →
       Obj D f (σ.Interpret (Ty.Dom D))
@@ -193,11 +174,9 @@ variable {B : Type} [DecidableEq B] {P : Eff B → Prop} [DecidablePred P] {G : 
   [G.LocallyFinite] {D : B → Type} [M : G.Structure (Ty.Dom D)] {C Lx : Type}
   {W W' : Ty B → Type} {f : Eff B}
 
-/-- **A pointwise grammar is the grammar on computations.** Take a grammar pointwise at `f`, with
-no type shifts and no basic rule for two daughters carrying `f`, and a lexicon whose every item
-carries `f`. The values of a tree are then its values over the results of the items in the
-structure on computations, where every node means Structured App of the mode that combines the
-results: the effects of the words are merged into one layer at each node. -/
+/-- In a grammar pointwise at `f`, with no type shift and no basic rule for two daughters that
+carry `f`, the values of a tree over a lexicon whose items all carry `f` are its values in
+`effectGrammar.pointwise f` over the results of the items. -/
 theorem values_effectDrivenWithin_pointwise [∀ a b : Ty B, IsEmpty (G.Unary a b)]
     [∀ l r u : Ty B, IsEmpty (G.Binary (.comp f l) (.comp f r) u)] (hf : P f)
     [ha : f.IsApplicative]

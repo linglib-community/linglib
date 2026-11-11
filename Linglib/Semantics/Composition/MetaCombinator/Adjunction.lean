@@ -47,14 +47,14 @@ variable {σ τ ω α β : Type u}
 
 /-! ### Storing and reading -/
 
-/-- The storing effect: a value paired with a stored datum. -/
+/-- The storing effect, a value paired with a stored datum. -/
 def Output (ι α : Type u) : Type u := α × ι
 
 namespace Output
 
 variable {ι : Type u}
 
-/-- Map the value, keeping the stored datum. -/
+/-- The map of the storing effect, on the value. -/
 protected def map (f : α → β) (p : Output ι α) : Output ι β := (f p.1, p.2)
 
 instance functor : Functor (Output ι) where map := Output.map
@@ -65,7 +65,7 @@ end Output
 
 variable {ι : Type u}
 
-/-- Storing is left adjoint to reading: the hom-equivalence is currying. -/
+/-- Storing is left adjoint to reading, with currying as the hom-equivalence. -/
 def outputInput (ι : Type u) : ofTypeFunctor (Output ι) ⊣ ofTypeFunctor (ReaderM ι) :=
   Adjunction.mkOfHomEquiv
     { homEquiv := fun α β ↦
@@ -87,8 +87,9 @@ section Adjunction
 
 variable {Ω Γ : Type u → Type u} [Functor Ω] [LawfulFunctor Ω] [Functor Γ] [LawfulFunctor Γ]
 
-/-- Co-unit: map the combinator over both daughters and apply the co-unit to the result. It
-takes the left adjoint from the left daughter and the right adjoint from the right one. -/
+/-- The Co-unit of a combinator maps it over both daughters and applies the co-unit of the
+adjunction to the result. The left adjoint comes from the left daughter and the right adjoint
+from the right. -/
 def counit (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) (star : σ → τ → ω)
     (e₁ : Ω σ) (e₂ : Γ τ) : ω :=
   adj.counit.app ω ((fun l ↦ (fun r ↦ star l r) <$> e₂) <$> e₁ : Ω (Γ ω))
@@ -96,7 +97,7 @@ def counit (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) (star : σ → τ → �
 theorem counit_outputInput (star : σ → τ → ω) (p : Output ι σ) (r : ReaderM ι τ) :
     counit (outputInput ι) star p r = star p.1 (r p.2) := rfl
 
-/-- Eject: for a right adjoint `Γ` on types, functions into `Γ β` are `Γ` of functions. -/
+/-- For a right adjoint `Γ` on types, functions into `Γ β` are `Γ` of functions. -/
 def eject (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) : (α → Γ β) ≃ Γ (α → β) where
   toFun k := (adj.homEquiv PUnit (α → β)
     (↾fun w a ↦ (adj.homEquiv PUnit β).symm (↾fun _ ↦ k a) w) PUnit.unit : Γ (α → β))
@@ -122,12 +123,14 @@ def eject (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) : (α → Γ β) ≃ Γ 
 theorem eject_outputInput (k : α → ReaderM ι β) : eject (outputInput ι) k = fun i a ↦ k a i :=
   rfl
 
-/-- Eject Left: eject the effect of a left daughter that is a function into a right adjoint. -/
+/-- Eject Left of a combinator ejects the right adjoint from a left daughter that is a function
+into it. -/
 def ejectL (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) {σ' υ : Type u}
     (star : Γ (σ → σ') → τ → υ) (e₁ : σ → Γ σ') (e₂ : τ) : υ :=
   star (eject adj e₁) e₂
 
-/-- Eject Right: eject the effect of a right daughter that is a function into a right adjoint. -/
+/-- Eject Right of a combinator ejects the right adjoint from a right daughter that is a function
+into it. -/
 def ejectR (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) {τ' υ : Type u}
     (star : σ → Γ (τ → τ') → υ) (e₁ : σ) (e₂ : τ → Γ τ') : υ :=
   star e₁ (eject adj e₂)
@@ -137,8 +140,8 @@ theorem counit_ba_eject (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) (a : Ω α
   have h : (fun l ↦ (fun r ↦ ba l r) <$> eject adj k) = k := (eject adj).left_inv k
   simp only [counit, h]
 
-/-- Every adjunction gives rise to a monad through the grammar: Map Left over Eject Right over
-the Co-unit of backward application is the bind of the monad `Γ Ω` the adjunction induces. -/
+/-- Map Left over Eject Right over the Co-unit of backward application is the bind of the monad
+`Γ Ω` that the adjunction induces. -/
 theorem mapL_ejectR_counit (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) (m : Γ (Ω α))
     (k : α → Γ (Ω β)) :
     mapL (ejectR adj (counit adj ba)) m k = adj.toMonad.μ.app β (adj.toMonad.map (↾k) m) := by

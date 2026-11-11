@@ -25,8 +25,8 @@ open ManySorted ManySorted.Language Interpreter
 
 variable {C L : Type} {T : Type} [DecidableEq T] {G : Language T} {W D : T → Type}
 
-/-- The value of a tree at a type, where the interpreter admits exactly one derivation of that
-type over it. -/
+/-- The value of a tree at a type, if the interpreter admits exactly one derivation of that type
+over it. -/
 def value? (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a)
     (lex : L ⊕ ℕ → List (Sigma W)) (t : Tree C L) (a : T) : Option (D a) :=
   match (t.values I M ρ lex).lookupAll a with
@@ -36,8 +36,6 @@ def value? (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, W a �
 variable {I : Interpreter G ℕ} {M : G.Structure D} {ρ : ∀ {a : T}, W a → D a}
   {lex : L ⊕ ℕ → List (Sigma W)} {t : Tree C L} {a : T} {x : D a}
 
-/-- A tree has the value `x` at a type exactly when `x` is the value of its one derivation of
-that type. -/
 theorem value?_eq_some_iff :
     t.value? I M ρ lex a = some x ↔ (t.values I M ρ lex).lookupAll a = [x] := by
   unfold value?
@@ -45,7 +43,6 @@ theorem value?_eq_some_iff :
   · next h => simp [h]
   · next h => simpa using fun h' ↦ h x h'
 
-/-- A tree with one value in all has it as its value at its type. -/
 theorem value?_eq_some_of_values_eq (h : t.values I M ρ lex = [⟨a, x⟩]) :
     t.value? I M ρ lex a = some x :=
   value?_eq_some_iff.2 (by rw [h, List.lookupAll_cons_eq, List.lookupAll_nil])

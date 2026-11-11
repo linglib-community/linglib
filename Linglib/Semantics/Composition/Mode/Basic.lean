@@ -18,8 +18,8 @@ continuation at its own result type.
 
 * `Interpreter.Mode`: the basic modes closed under the meta-modes.
 * `Interpreter.Mode.eval`: the meaning of a mode, by the meta-combinators of the effects.
-* `Interpreter.Mode.Equiv`: two modes mean the same in every structure, the relation of the
-  setoid of modes, `m ≈ m'`; each meta-mode respects it.
+* `Interpreter.Mode.Equiv`: two modes have the same meaning in every structure, written
+  `m ≈ m'`.
 * `Interpreter.MetaMode`, `Interpreter.Mode.Within`: the meta-modes, and the modes that keep to
   an inventory of them at each effect.
 * `Interpreter.effectGrammar`: the grammar whose binary rules are the modes over a grammar's
@@ -129,9 +129,9 @@ theorem within_of_forall {inv : MetaMode → Eff B → Prop} (h : ∀ k f, inv k
   | _, _, _, .unitL m _ | _, _, _, .counit m | _, _, _, .ejectR m | _, _, _, .ejectL m
   | _, _, _, .join m _ | _, _, _, .lower m => ⟨h _ _, within_of_forall h m⟩
 
-/-- The meaning of a mode over a grammar's rules, from a structure for the grammar: each
-meta-mode is the meta-combinator of its effect's functor or monad, and for storing and reading
-the co-unit and the ejection. -/
+/-- The meaning of a mode in a structure for the grammar. A basic mode means its rule, and a
+meta-mode the `MetaCombinator` of its effect, or for storing and reading the co-unit and the
+ejection. -/
 def eval {G : Language (Ty B)} (D : B → Type) [M : G.Structure (Ty.Dom D)] :
     {l r u : Ty B} → Mode G.Binary l r u → l.Dom D → r.Dom D → u.Dom D
   | _, _, _, .basic b => fun x y ↦ M.funMap b (x, y)
@@ -147,8 +147,7 @@ def eval {G : Language (Ty B)} (D : B → Type) [M : G.Structure (Ty.Dom D)] :
   | _, _, _, .join (f := f) m _ => MetaCombinator.join (M := Eff.Obj D f) (m.eval D)
   | _, _, _, .lower m => fun a b ↦ Eff.lower (m.eval D a b)
 
-/-- Two modes mean the same when they combine their daughters alike in every structure for the
-grammar. -/
+/-- Two modes are equivalent if they have the same `eval` in every structure for the grammar. -/
 protected def Equiv {G : Language (Ty B)} {l r u : Ty B} (m m' : Mode G.Binary l r u) : Prop :=
   ∀ (D : B → Type) [G.Structure (Ty.Dom D)], m.eval D = m'.eval D
 
@@ -165,13 +164,10 @@ variable {G : Language (Ty B)} {l r u : Ty B} {m m' m'' : Mode G.Binary l r u}
 
 end Equiv
 
-/-- Modes up to sameness of meaning. -/
+/-- The setoid of modes under `Mode.Equiv`. -/
 instance setoid {G : Language (Ty B)} {l r u : Ty B} : Setoid (Mode G.Binary l r u) where
   r := Mode.Equiv
   iseqv := ⟨Equiv.refl, Equiv.symm, Equiv.trans⟩
-
-theorem equiv_def {G : Language (Ty B)} {l r u : Ty B} {m m' : Mode G.Binary l r u} :
-    m ≈ m' ↔ ∀ (D : B → Type) [G.Structure (Ty.Dom D)], m.eval D = m'.eval D := Iff.rfl
 
 end Mode
 
@@ -179,7 +175,7 @@ namespace Mode.Equiv
 
 variable {G : Language (Ty B)} {f : Eff B} {i l l' r r' u : Ty B}
 
-/-! Each meta-mode respects sameness of meaning. -/
+/-! Each meta-mode respects equivalence. -/
 
 protected theorem mapR {m m' : Mode G.Binary l r u} (h : m ≈ m') :
     Mode.mapR (f := f) m ≈ .mapR m' :=
