@@ -143,6 +143,10 @@ theorem alternatives_seq (mf : WithAlternatives (α → β)) (ma : WithAlternati
     (mf <*> ma).alternatives = mf.alternatives.seq ma.alternatives := by
   ext b; simp only [mem_alternatives_seq, Set.mem_seq_iff]
 
+theorem mem_alternatives_bind {m : WithAlternatives α} {f : α → WithAlternatives β} {b : β} :
+    b ∈ (m >>= f).alternatives ↔ ∃ a ∈ m.alternatives, b ∈ (f a).alternatives := by
+  simp [Bind.bind]
+
 theorem alternatives_bind (m : WithAlternatives α) (f : α → WithAlternatives β) :
     (m >>= f).alternatives = {b | ∃ a ∈ m.alternatives, b ∈ (f a).alternatives} := by
   ext b; simp [Bind.bind, bind]

@@ -29,6 +29,10 @@ bind of the monad that any adjunction induces, which for storing and reading is 
 monad, and, with indeterminacy in between, the state transformer over sets that dynamic
 semantics is built on.
 
+A focused phrase evokes alternatives to its value, and an operator such as *only* associates
+with that effect as existential closure does with indeterminacy: it captures the alternatives of
+its prejacent, or [is given a prejacent with none](##BumfordCharlow2026.eval_unitR_only_iff).
+
 ## Main definitions
 
 * `mapL`, `mapR`, `structuredApp`, `joinMode`: the map, structured application and join modes
@@ -422,13 +426,14 @@ example {u : Ty Unit}
 /-- A type is evaluated when no continuation in it is still to be closed (section 5.4). -/
 def Evaluated : Ty B → Prop
   | .comp (.C _) _ => False
-  | .comp .S a | .comp (.R _) a | .comp (.W _) a | .comp .M a => Evaluated a
+  | .comp .S a | .comp (.R _) a | .comp (.W _) a | .comp .M a | .comp .F a => Evaluated a
   | .fn _ b => Evaluated b
   | .t | .base _ => True
 
 instance decidableEvaluated : (a : Ty B) → Decidable (Evaluated a)
   | .comp (.C _) _ => isFalse id
-  | .comp .S a | .comp (.R _) a | .comp (.W _) a | .comp .M a => decidableEvaluated a
+  | .comp .S a | .comp (.R _) a | .comp (.W _) a | .comp .M a | .comp .F a =>
+    decidableEvaluated a
   | .fn _ b => decidableEvaluated b
   | .t | .base _ => isTrue trivial
 
@@ -492,6 +497,7 @@ local notation "S" => Ty.comp Eff.S
 local notation "R" => Ty.comp (Eff.R e)
 local notation "W" => Ty.comp (Eff.W e)
 local notation "C" => Ty.comp (Eff.C Ty.t)
+local notation "F" => Ty.comp Eff.F
 local notation "T" => (Ty.t : Ty Unit)
 
 -- section 3.6: a closure operator and its prejacent
@@ -549,6 +555,16 @@ theorem combine_alternatives : combine (S e) (S (e ⇒ T)) =
     [(.mapR (.mapL BA), S (S T)), (.join (.mapR (.mapL BA)), S T), (.mapL (.mapR BA), S (S T)),
       (.join (.mapL (.mapR BA)), S T), (.ap BA, S T)] := by decide
 
+-- section 3.3: an operator that associates with focus and its prejacent, which it captures or,
+-- given a pure one, lets through
+theorem combine_focus_closure : combine (F T ⇒ T) (F T) =
+    [(FA, T), (.mapR (.unitR FA), F T), (.unitR (.mapR FA), F T)] := by decide
+
+-- two focused daughters: as with two indefinites, Structured App evokes their alternatives at once
+theorem combine_foci : combine (F e) (F (e ⇒ T)) =
+    [(.mapR (.mapL BA), F (F T)), (.join (.mapR (.mapL BA)), F T), (.mapL (.mapR BA), F (F T)),
+      (.join (.mapL (.mapR BA)), F T), (.ap BA, F T)] := by decide
+
 end Interpreter
 
 /-! ### Scope
@@ -583,5 +599,32 @@ theorem eval_join_mapR_mapL_iff :
         (fun c ↦ ∃ y, c y) (admiresEveryone admires)) id ↔ ∀ x, ∃ y, admires x y := Iff.rfl
 
 end Scope
+
+/-! ### Focus
+
+A focused phrase names a value and evokes alternatives to it, and *only* associates with the
+effect: it takes a proposition with its alternatives (3.15a). Given a prejacent with no focus
+in it, Unit Right makes the proposition its own sole alternative, and *only* then says no more
+than the prejacent does. -/
+
+section Focus
+
+variable {E : Type}
+
+local notation "D" => fun _ : Unit ↦ E
+local notation "F" => Ty.comp Eff.F
+
+/-- *Only* (3.15a): of the alternatives to its prejacent, the prejacent alone is true. -/
+def only : (F .t ⇒ .t : Ty Unit).Dom D := fun m ↦ {p ∈ m.alternatives | p} = {m.ordinary}
+
+/-- *Only* over a prejacent with no focus in it is the prejacent. -/
+theorem eval_unitR_only_iff (p : Prop) :
+    (Mode.unitR trivial (.basic (.inl .fa)) :
+      Mode (baseGrammar Unit).Binary (F .t ⇒ .t) .t .t).eval D (only (E := E)) p ↔ p := by
+  change {q ∈ ({p} : Set Prop) | q} = {p} ↔ p
+  refine ⟨fun h ↦ (h.ge rfl).2, fun hp ↦ Set.ext fun q ↦ ⟨And.left, fun hq ↦ ⟨hq, ?_⟩⟩⟩
+  rwa [Set.mem_singleton_iff.1 hq]
+
+end Focus
 
 end BumfordCharlow2026

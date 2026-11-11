@@ -44,19 +44,22 @@ variable {B : Type} {D D' : B → Type}
 /-- The datum of an effect: what a reader reads, a store holds, or a continuation returns. -/
 abbrev Eff.Datum (D : B → Type) : Eff B → Type
   | .R i | .W i | .C i => i.Dom D
-  | .S | .M => Unit
+  | .S | .M | .F => Unit
 
 /-- A relation between results through an effect, given a relation between its data:
 alternatives matched on each side, readers that agree at related data, stored pairs related in
-both parts, continuations that agree at related continuations, and partial values defined
-together and then related. -/
+both parts, continuations that agree at related continuations, partial values defined together
+and then related, and focused values related with their alternatives matched on each side. -/
 def Eff.RelWith : (f : Eff B) → (f.Datum D → f.Datum D' → Prop) → {α β : Type} →
-    (α → β → Prop) → Eff.F D f α → Eff.F D' f β → Prop
+    (α → β → Prop) → Eff.Obj D f α → Eff.Obj D' f β → Prop
   | .S, _, _, _, q => fun s s' ↦ (∀ a ∈ s, ∃ b ∈ s', q a b) ∧ ∀ b ∈ s', ∃ a ∈ s, q a b
   | .R _, rd, _, _, q => LiftFun rd q
   | .W _, rd, _, _, q => fun x y ↦ q x.1 y.1 ∧ rd x.2 y.2
   | .C _, rd, _, _, q => LiftFun (LiftFun q rd) rd
   | .M, _, _, _, q => fun x y ↦ (x.Dom ↔ y.Dom) ∧ ∀ hx hy, q (x.get hx) (y.get hy)
+  | .F, _, _, _, q => fun x y ↦ q x.ordinary y.ordinary ∧
+    (∀ a ∈ x.alternatives, ∃ b ∈ y.alternatives, q a b) ∧
+      ∀ b ∈ y.alternatives, ∃ a ∈ x.alternatives, q a b
 
 mutual
 
@@ -73,14 +76,14 @@ termination_by structural a
 def Eff.DatumRel (r : ∀ b, D b → D' b → Prop) (f : Eff B) : f.Datum D → f.Datum D' → Prop :=
   match f with
   | .R i | .W i | .C i => Ty.LiftRel r i
-  | .S | .M => fun _ _ ↦ True
+  | .S | .M | .F => fun _ _ ↦ True
 termination_by structural f
 
 end
 
 /-- A relation between results, through an effect. -/
 abbrev Eff.LiftRel (r : ∀ b, D b → D' b → Prop) (f : Eff B) {α β : Type} (R : α → β → Prop) :
-    Eff.F D f α → Eff.F D' f β → Prop :=
+    Eff.Obj D f α → Eff.Obj D' f β → Prop :=
   Eff.RelWith f (Eff.DatumRel r f) R
 
 namespace Eff
@@ -104,6 +107,14 @@ theorem rel_map (f : Eff B) :
   | W o => exact ⟨hg hx.1, hx.2⟩
   | C o => exact fun _ _ hc ↦ hx fun _ _ hab ↦ hc (hg hab)
   | M => exact ⟨hx.1, fun hx₁ hx₂ ↦ hg (hx.2 hx₁ hx₂)⟩
+  | F =>
+    refine ⟨hg hx.1, fun _ hy ↦ ?_, fun _ hy ↦ ?_⟩
+    · obtain ⟨a, ha, rfl⟩ := WithAlternatives.mem_alternatives_map.1 hy
+      obtain ⟨b, hb, hab⟩ := hx.2.1 a ha
+      exact ⟨g' b, WithAlternatives.mem_alternatives_map.2 ⟨b, hb, rfl⟩, hg hab⟩
+    · obtain ⟨b, hb, rfl⟩ := WithAlternatives.mem_alternatives_map.1 hy
+      obtain ⟨a, ha, hab⟩ := hx.2.2 b hb
+      exact ⟨g a, WithAlternatives.mem_alternatives_map.2 ⟨a, ha, rfl⟩, hg hab⟩
 
 theorem rel_pure (f : Eff B) (h : f.IsApplicative) :
     LiftFun R (LiftRel r f R) (pure f h) (pure f h) := by
@@ -114,6 +125,7 @@ theorem rel_pure (f : Eff B) (h : f.IsApplicative) :
   | W o => cases h; exact ⟨hab, Iff.rfl⟩
   | C o => exact fun _ _ hc ↦ hc hab
   | M => exact ⟨Iff.rfl, fun _ _ ↦ hab⟩
+  | F => exact ⟨hab, fun _ ha ↦ ⟨b, rfl, ha ▸ hab⟩, fun _ hb ↦ ⟨a, rfl, hb ▸ hab⟩⟩
 
 theorem rel_seq (f : Eff B) (h : f.IsApplicative) :
     LiftFun (LiftRel r f (LiftFun R S)) (LiftFun (LiftRel r f R) (LiftRel r f S))
@@ -136,6 +148,16 @@ theorem rel_seq (f : Eff B) (h : f.IsApplicative) :
   | M =>
     exact ⟨⟨fun ⟨h₁, h₂⟩ ↦ ⟨hg.1.1 h₁, hx.1.1 h₂⟩, fun ⟨h₁, h₂⟩ ↦ ⟨hg.1.2 h₁, hx.1.2 h₂⟩⟩,
       fun ⟨h₁, h₂⟩ ⟨h₁', h₂'⟩ ↦ hg.2 h₁ h₁' (hx.2 h₂ h₂')⟩
+  | F =>
+    refine ⟨hg.1 hx.1, fun _ hy ↦ ?_, fun _ hy ↦ ?_⟩
+    · obtain ⟨k, hk, a, ha, rfl⟩ := WithAlternatives.mem_alternatives_seq.1 hy
+      obtain ⟨k', hk', hkk⟩ := hg.2.1 k hk
+      obtain ⟨b, hb, hab⟩ := hx.2.1 a ha
+      exact ⟨k' b, WithAlternatives.mem_alternatives_seq.2 ⟨k', hk', b, hb, rfl⟩, hkk hab⟩
+    · obtain ⟨k', hk', b, hb, rfl⟩ := WithAlternatives.mem_alternatives_seq.1 hy
+      obtain ⟨k, hk, hkk⟩ := hg.2.2 k' hk'
+      obtain ⟨a, ha, hab⟩ := hx.2.2 b hb
+      exact ⟨k a, WithAlternatives.mem_alternatives_seq.2 ⟨k, hk, a, ha, rfl⟩, hkk hab⟩
 
 theorem rel_join (f : Eff B) (h : f.IsApplicative) :
     LiftFun (LiftRel r f (LiftRel r f R)) (LiftRel r f R) (join f h) (join f h) := by
@@ -158,6 +180,16 @@ theorem rel_join (f : Eff B) (h : f.IsApplicative) :
     exact ⟨⟨fun ⟨h₁, h₂⟩ ↦ ⟨hx.1.1 h₁, (hx.2 h₁ _).1.1 h₂⟩,
         fun ⟨h₁, h₂⟩ ↦ ⟨hx.1.2 h₁, (hx.2 _ h₁).1.2 h₂⟩⟩,
       fun ⟨h₁, h₂⟩ ⟨h₁', h₂'⟩ ↦ (hx.2 h₁ h₁').2 h₂ h₂'⟩
+  | F =>
+    refine ⟨hx.1.1, fun a hy ↦ ?_, fun b hy ↦ ?_⟩
+    · obtain ⟨s, hs, ha⟩ := WithAlternatives.mem_alternatives_bind.1 hy
+      obtain ⟨s', hs', hss⟩ := hx.2.1 s hs
+      obtain ⟨b, hb, hab⟩ := hss.2.1 a ha
+      exact ⟨b, WithAlternatives.mem_alternatives_bind.2 ⟨s', hs', hb⟩, hab⟩
+    · obtain ⟨s', hs', hb⟩ := WithAlternatives.mem_alternatives_bind.1 hy
+      obtain ⟨s, hs, hss⟩ := hx.2.2 s' hs'
+      obtain ⟨a, ha, hab⟩ := hss.2.2 b hb
+      exact ⟨a, WithAlternatives.mem_alternatives_bind.2 ⟨s, hs, ha⟩, hab⟩
 
 theorem rel_counit {i : Ty B} :
     LiftFun (LiftRel r (.W i) (LiftRel r (.R i) R)) R counit counit :=

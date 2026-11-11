@@ -171,7 +171,7 @@ theorem Mode.size_lt_of_mem_joins {p q : Sigma (Mode Rule l r)} (h : q ∈ Mode.
 theorem Mode.size_lt_of_mem_lowers {p q : Sigma (Mode Rule l r)} (h : q ∈ Mode.lowers p) :
     q.1.size < p.1.size := by
   obtain ⟨u, m⟩ := p
-  rcases u with _ | _ | _ | ⟨_ | _ | _ | o | _, a⟩ <;> simp [Mode.lowers] at h
+  rcases u with _ | _ | _ | ⟨_ | _ | _ | o | _ | _, a⟩ <;> simp [Mode.lowers] at h
   obtain ⟨rfl, rfl⟩ := h
   simp only [Ty.size, Eff.size]
   omega
