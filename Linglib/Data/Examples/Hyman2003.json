@@ -389,6 +389,7 @@
       ["suffixes", "CA"]
     ],
     "comment": "Chimwiini applicativized causative: the instrument acts on the causation, and the templatic order -ish-iriz- is compositional. The paper does not attribute (20) to a source; (19) quotes Abasheikh 1978.",
+    "method": "description",
     "verified": "page-image"
   },
   {
@@ -396,11 +397,11 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(20b)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(20b)"},
     "language": "chim1312",
-    "primaryText": "skuñi, Aɾi m-pik-ish-iɾiz-e: muke n̯ama",
+    "primaryText": "skuñi, Aɾi m-pik-ish-iʀiz-e: muke nama",
     "discourseSegments": [],
     "glossedTokens": [
-      ["skuñi", "firewood"], ["Aɾi", "Ali"], ["m-pik-ish-iɾiz-e:", "he-cook-CAUS-APP"],
-      ["muke", "woman"], ["n̯ama", "meat"]
+      ["skuñi", "firewood"], ["Aɾi", "Ali"], ["m-pik-ish-iʀiz-e:", "he-cook-CAUS-APP"],
+      ["muke", "woman"], ["nama", "meat"]
     ],
     "translation": "firewood, Ali made the woman cook meat (with it)",
     "context": "",
@@ -412,7 +413,8 @@
       ["scope", "AC"],
       ["suffixes", "CA"]
     ],
-    "comment": "Chimwiini causativized applicative: the instrument acts on the cooking, within the scope of the causation, yet the order is the templatic -ish-iɾiz-. The preprint prints the flap ɾ and an arch below n in an SIL IPA font; the arch is recorded as an inverted breve below, since the page does not settle whether a dental bridge is meant.",
+    "comment": "Chimwiini causativized applicative: the instrument acts on the cooking, within the scope of the causation, yet the order is the templatic causative-applicative. (20b) prints the applicative as -iʀiz- where (20a) prints -iɾiz-, and the noun as nama; the tree (21) prints the noun with an arch below n.",
+    "method": "description",
     "verified": "page-image"
   },
   {
@@ -506,7 +508,7 @@
     "source": {"bibkey": "hyman-2003", "paperLabel": "(23b)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(23b)"},
     "language": "nyan1308",
-    "primaryText": "aná a-ná-lím-its-il-idw-á mákásu",
+    "primaryText": "aná á-ná-lím-its-il-idw-á mákásu",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "the children were made to cultivate with hoes",
@@ -589,6 +591,833 @@
       ["suffixes", "CA"]
     ],
     "comment": "The causative is interfixed into its templatic position inside the lexicalized applicative. Hyman & Mchombo 1992 print uk-its-ir-a.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48a_car",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
+    "language": "nyan1308",
+    "primaryText": "mang-an-il-an-its",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-an-il-an-its", "tie-REC-APP-REC-CAUS"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "CAR"],
+      ["suffixes", "RARC"]
+    ],
+    "comment": "Table (48), column CAR: the form is not marked as a realization of the scope [[[[verb] C] A] R].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48a_acr",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
+    "language": "nyan1308",
+    "primaryText": "mang-an-il-an-its",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-an-il-an-its", "tie-REC-APP-REC-CAUS"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "ACR"],
+      ["suffixes", "RARC"]
+    ],
+    "comment": "Table (48), column ACR: the form is not marked as a realization of the scope [[[[verb] A] C] R].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48a_cra",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
+    "language": "nyan1308",
+    "primaryText": "mang-an-il-an-its",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-an-il-an-its", "tie-REC-APP-REC-CAUS"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "CRA"],
+      ["suffixes", "RARC"]
+    ],
+    "comment": "Table (48), column CRA: the form is not marked as a realization of the scope [[[[verb] C] R] A].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48a_arc",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
+    "language": "nyan1308",
+    "primaryText": "mang-an-il-an-its",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-an-il-an-its", "tie-REC-APP-REC-CAUS"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "ARC"],
+      ["suffixes", "RARC"]
+    ],
+    "comment": "Table (48), column ARC: the form is not marked as a realization of the scope [[[[verb] A] R] C].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48a_rca",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
+    "language": "nyan1308",
+    "primaryText": "mang-an-il-an-its",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-an-il-an-its", "tie-REC-APP-REC-CAUS"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "RCA"],
+      ["suffixes", "RARC"]
+    ],
+    "comment": "Table (48), column RCA: the form is marked as a realization of the scope [[[[verb] R] C] A].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48a_rac",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48a)"},
+    "language": "nyan1308",
+    "primaryText": "mang-an-il-an-its",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-an-il-an-its", "tie-REC-APP-REC-CAUS"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "RAC"],
+      ["suffixes", "RARC"]
+    ],
+    "comment": "Table (48), column RAC: the form is marked as a realization of the scope [[[[verb] R] A] C].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48b_car",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
+    "language": "nyan1308",
+    "primaryText": "mang-il-an-its",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-il-an-its", "tie-APP-REC-CAUS"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "CAR"],
+      ["suffixes", "ARC"]
+    ],
+    "comment": "Table (48), column CAR: the form is not marked as a realization of the scope [[[[verb] C] A] R].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48b_acr",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
+    "language": "nyan1308",
+    "primaryText": "mang-il-an-its",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-il-an-its", "tie-APP-REC-CAUS"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "ACR"],
+      ["suffixes", "ARC"]
+    ],
+    "comment": "Table (48), column ACR: the form is not marked as a realization of the scope [[[[verb] A] C] R].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48b_cra",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
+    "language": "nyan1308",
+    "primaryText": "mang-il-an-its",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-il-an-its", "tie-APP-REC-CAUS"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "CRA"],
+      ["suffixes", "ARC"]
+    ],
+    "comment": "Table (48), column CRA: the form is not marked as a realization of the scope [[[[verb] C] R] A].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48b_arc",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
+    "language": "nyan1308",
+    "primaryText": "mang-il-an-its",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-il-an-its", "tie-APP-REC-CAUS"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "ARC"],
+      ["suffixes", "ARC"]
+    ],
+    "comment": "Table (48), column ARC: the form is marked as a realization of the scope [[[[verb] A] R] C].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48b_rca",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
+    "language": "nyan1308",
+    "primaryText": "mang-il-an-its",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-il-an-its", "tie-APP-REC-CAUS"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "RCA"],
+      ["suffixes", "ARC"]
+    ],
+    "comment": "Table (48), column RCA: the form is marked as a realization of the scope [[[[verb] R] C] A].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48b_rac",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48b)"},
+    "language": "nyan1308",
+    "primaryText": "mang-il-an-its",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-il-an-its", "tie-APP-REC-CAUS"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "RAC"],
+      ["suffixes", "ARC"]
+    ],
+    "comment": "Table (48), column RAC: the form is marked as a realization of the scope [[[[verb] R] A] C].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48c_car",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
+    "language": "nyan1308",
+    "primaryText": "mang-its-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-its-il-an", "tie-CAUS-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "CAR"],
+      ["suffixes", "CAR"]
+    ],
+    "comment": "Table (48), column CAR: the form is marked as a realization of the scope [[[[verb] C] A] R].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48c_acr",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
+    "language": "nyan1308",
+    "primaryText": "mang-its-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-its-il-an", "tie-CAUS-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "ACR"],
+      ["suffixes", "CAR"]
+    ],
+    "comment": "Table (48), column ACR: the form is marked as a realization of the scope [[[[verb] A] C] R].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48c_cra",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
+    "language": "nyan1308",
+    "primaryText": "mang-its-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-its-il-an", "tie-CAUS-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "CRA"],
+      ["suffixes", "CAR"]
+    ],
+    "comment": "Table (48), column CRA: the form is marked as a realization of the scope [[[[verb] C] R] A].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48c_arc",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
+    "language": "nyan1308",
+    "primaryText": "mang-its-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-its-il-an", "tie-CAUS-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "ARC"],
+      ["suffixes", "CAR"]
+    ],
+    "comment": "Table (48), column ARC: the form is marked as a realization of the scope [[[[verb] A] R] C].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48c_rca",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
+    "language": "nyan1308",
+    "primaryText": "mang-its-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-its-il-an", "tie-CAUS-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "RCA"],
+      ["suffixes", "CAR"]
+    ],
+    "comment": "Table (48), column RCA: the form is marked as a realization of the scope [[[[verb] R] C] A].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48c_rac",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48c)"},
+    "language": "nyan1308",
+    "primaryText": "mang-its-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-its-il-an", "tie-CAUS-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "RAC"],
+      ["suffixes", "CAR"]
+    ],
+    "comment": "Table (48), column RAC: the form is marked as a realization of the scope [[[[verb] R] A] C].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48d_car",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
+    "language": "nyan1308",
+    "primaryText": "mang-its-an-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-its-an-il-an", "tie-CAUS-REC-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "CAR"],
+      ["suffixes", "CRAR"]
+    ],
+    "comment": "Table (48), column CAR: the form is not marked as a realization of the scope [[[[verb] C] A] R].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48d_acr",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
+    "language": "nyan1308",
+    "primaryText": "mang-its-an-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-its-an-il-an", "tie-CAUS-REC-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "ACR"],
+      ["suffixes", "CRAR"]
+    ],
+    "comment": "Table (48), column ACR: the form is not marked as a realization of the scope [[[[verb] A] C] R].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48d_cra",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
+    "language": "nyan1308",
+    "primaryText": "mang-its-an-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-its-an-il-an", "tie-CAUS-REC-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "CRA"],
+      ["suffixes", "CRAR"]
+    ],
+    "comment": "Table (48), column CRA: the form is marked as a realization of the scope [[[[verb] C] R] A].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48d_arc",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
+    "language": "nyan1308",
+    "primaryText": "mang-its-an-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-its-an-il-an", "tie-CAUS-REC-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "ARC"],
+      ["suffixes", "CRAR"]
+    ],
+    "comment": "Table (48), column ARC: the form is not marked as a realization of the scope [[[[verb] A] R] C].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48d_rca",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
+    "language": "nyan1308",
+    "primaryText": "mang-its-an-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-its-an-il-an", "tie-CAUS-REC-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "RCA"],
+      ["suffixes", "CRAR"]
+    ],
+    "comment": "Table (48), column RCA: the form is marked as a realization of the scope [[[[verb] R] C] A].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48d_rac",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48d)"},
+    "language": "nyan1308",
+    "primaryText": "mang-its-an-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-its-an-il-an", "tie-CAUS-REC-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "RAC"],
+      ["suffixes", "CRAR"]
+    ],
+    "comment": "Table (48), column RAC: the form is marked as a realization of the scope [[[[verb] R] A] C].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48e_car",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
+    "language": "nyan1308",
+    "primaryText": "mang-an-its-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-an-its-il-an", "tie-REC-CAUS-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "CAR"],
+      ["suffixes", "RCAR"]
+    ],
+    "comment": "Table (48), column CAR: the form is not marked as a realization of the scope [[[[verb] C] A] R].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48e_acr",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
+    "language": "nyan1308",
+    "primaryText": "mang-an-its-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-an-its-il-an", "tie-REC-CAUS-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "ACR"],
+      ["suffixes", "RCAR"]
+    ],
+    "comment": "Table (48), column ACR: the form is not marked as a realization of the scope [[[[verb] A] C] R].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48e_cra",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
+    "language": "nyan1308",
+    "primaryText": "mang-an-its-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-an-its-il-an", "tie-REC-CAUS-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "CRA"],
+      ["suffixes", "RCAR"]
+    ],
+    "comment": "Table (48), column CRA: the form is not marked as a realization of the scope [[[[verb] C] R] A].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48e_arc",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
+    "language": "nyan1308",
+    "primaryText": "mang-an-its-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-an-its-il-an", "tie-REC-CAUS-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "ARC"],
+      ["suffixes", "RCAR"]
+    ],
+    "comment": "Table (48), column ARC: the form is not marked as a realization of the scope [[[[verb] A] R] C].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48e_rca",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
+    "language": "nyan1308",
+    "primaryText": "mang-an-its-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-an-its-il-an", "tie-REC-CAUS-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "RCA"],
+      ["suffixes", "RCAR"]
+    ],
+    "comment": "Table (48), column RCA: the form is marked as a realization of the scope [[[[verb] R] C] A].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48e_rac",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48e)"},
+    "language": "nyan1308",
+    "primaryText": "mang-an-its-il-an",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-an-its-il-an", "tie-REC-CAUS-APP-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "RAC"],
+      ["suffixes", "RCAR"]
+    ],
+    "comment": "Table (48), column RAC: the form is marked as a realization of the scope [[[[verb] R] A] C].",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48_star_cra_cra",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48)"},
+    "language": "nyan1308",
+    "primaryText": "mang-its-an-il-",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-its-an-il-", "tie-CAUS-REC-APP"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "CRA"],
+      ["suffixes", "CRA"]
+    ],
+    "comment": "The prose under (48) stars *mang-its-an-il-, so that (48d) requires the doubling of -an-. The star is outright; the row records one of the scopes of that doubled form.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48_star_cra_rca",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48)"},
+    "language": "nyan1308",
+    "primaryText": "mang-its-an-il-",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-its-an-il-", "tie-CAUS-REC-APP"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "RCA"],
+      ["suffixes", "CRA"]
+    ],
+    "comment": "The prose under (48) stars *mang-its-an-il-, so that (48d) requires the doubling of -an-. The star is outright; the row records one of the scopes of that doubled form.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48_star_cra_rac",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48)"},
+    "language": "nyan1308",
+    "primaryText": "mang-its-an-il-",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-its-an-il-", "tie-CAUS-REC-APP"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "RAC"],
+      ["suffixes", "CRA"]
+    ],
+    "comment": "The prose under (48) stars *mang-its-an-il-, so that (48d) requires the doubling of -an-. The star is outright; the row records one of the scopes of that doubled form.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48_star_rca_rca",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48)"},
+    "language": "nyan1308",
+    "primaryText": "mang-an-its-il-",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-an-its-il-", "tie-REC-CAUS-APP"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "RCA"],
+      ["suffixes", "RCA"]
+    ],
+    "comment": "The prose under (48) stars *mang-an-its-il-, so that (48e) requires the doubling of -an-. The star is outright; the row records one of the scopes of that doubled form.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48_star_rca_rac",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48)"},
+    "language": "nyan1308",
+    "primaryText": "mang-an-its-il-",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["mang-an-its-il-", "tie-REC-CAUS-APP"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "tie"],
+      ["scope", "RAC"],
+      ["suffixes", "RCA"]
+    ],
+    "comment": "The prose under (48) stars *mang-an-its-il-, so that (48e) requires the doubling of -an-. The star is outright; the row records one of the scopes of that doubled form.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hyman2003_48_star_acr",
+    "source": {"bibkey": "hyman-2003", "paperLabel": "(48)"},
+    "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(48)"},
+    "language": "nyan1308",
+    "primaryText": "-il-its-an-",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["-il-its-an-", "APP-CAUS-REC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["scope", "ACR"],
+      ["suffixes", "ACR"]
+    ],
+    "comment": "The prose under (48) stars *-il-its-an- for its APP-CAUS sequence, under every scope; the row records the scope the order would mirror.",
     "verified": "page-image"
   }
 ]
