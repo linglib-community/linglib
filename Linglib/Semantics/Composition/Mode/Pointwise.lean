@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Mode.Basic
+public import Linglib.Semantics.Composition.Mode.Combine
 
 /-!
 # The pointwise grammar of an effect
@@ -10,7 +10,9 @@ grammar every constituent denotes a set of alternatives; two sisters are combine
 assignment, or alternative by alternative. Bumford and Charlow read these as the grammar that has,
 at the effect in question, Structured App and no other meta-mode. In such a grammar two daughters
 carrying the effect [combine by Structured App alone](##Interpreter.Mode.Within.exists_eq_ap),
-and Structured App is the pointwise rule of the effect: [evaluation at one
+so [the ways they combine are the ways their results
+do](##Interpreter.Ty.mem_combineWithin_pointwise), and Structured App is the pointwise rule of
+the effect: [evaluation at one
 datum](##Interpreter.Mode.eval_ap_R) for reading, [Hamblin's
 rule](##Interpreter.Mode.eval_ap_S) for indeterminacy, and [Rooth's](##Interpreter.Mode.eval_ap_F)
 for alternatives.
@@ -74,6 +76,29 @@ theorem Within.exists_eq_ap (hf : P f)
     obtain ⟨u', _, m', _, he⟩ := Within.exists_eq_ap hf hR m h.2
     obtain ⟨rfl, -⟩ := Ty.comp.inj (congrArg Sigma.fst he)
     exact absurd (h.1 hf) (by decide)
+
+/-- In a grammar pointwise at `f`, with no basic rule for two daughters carrying `f`, the modes
+the search lists for the two are the Structured Apps of the modes it lists for the types of their
+results. -/
+theorem _root_.Interpreter.Ty.mem_combineWithin_pointwise [DecidableEq B] [DecidablePred P]
+    {find : (l r : Ty B) → List (Sigma (Rule l r))}
+    (hfind : ∀ {l r u : Ty B} (b : Rule l r u), (⟨u, b⟩ : Sigma (Rule l r)) ∈ find l r)
+    (hf : P f) (ha : f.IsApplicative)
+    (hR : ∀ {u : Ty B}, Rule (.comp f l) (.comp f r) u → False)
+    {m : Sigma (Mode Rule (.comp f l) (.comp f r))} :
+    m ∈ Ty.combineWithin (MetaMode.pointwise P) find (.comp f l) (.comp f r) ↔
+      ∃ m' ∈ Ty.combineWithin (MetaMode.pointwise P) find l r,
+        m = ⟨.comp f m'.1, .ap ha m'.2⟩ := by
+  have key {l r : Ty B} {m : Sigma (Mode Rule l r)} :=
+    Ty.mem_combineWithin (inv := MetaMode.pointwise P) (find := find) (fun b ↦ hfind b)
+      (l := l) (r := r) (m := m)
+  obtain ⟨u, m⟩ := m
+  refine key.trans ⟨fun h ↦ ?_, ?_⟩
+  · obtain ⟨u', _, m', hm', he⟩ := Within.exists_eq_ap hf hR m h
+    exact ⟨⟨u', m'⟩, key.2 hm', he⟩
+  · rintro ⟨m', hm', he⟩
+    cases he
+    exact ⟨fun _ ↦ rfl, key.1 hm'⟩
 
 variable {G : Language (Ty B)} {D : B → Type} [M : G.Structure (Ty.Dom D)] {u : Ty B}
 
