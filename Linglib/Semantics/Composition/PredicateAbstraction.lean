@@ -231,11 +231,11 @@ namespace Interpreter
 
 variable {B : Type} {L : Language.{0, 0} (Ty B)}
 
-/-- An interpreter with predicate abstraction: a unary node is labelled by an index and admits
-abstraction over it, and a binary node admits what the interpreter admits. -/
+/-- An interpreter with predicate abstraction: a binder node admits abstraction over its index,
+and a binary node admits what the interpreter admits. -/
 def withAbstraction (I : Interpreter L ℕ) (Γ : ℕ → Ty B) :
     Interpreter (L.withAbstraction Γ) ℕ where
-  unary n b := [⟨Γ n ⇒ b, Language.Sum.inr (PredicateAbstraction.index n b)⟩]
+  bind n b := [⟨Γ n ⇒ b, Language.Sum.inr (PredicateAbstraction.index n b)⟩]
   binary l r := (I.binary l r).map fun ⟨u, m⟩ ↦ ⟨u, .inl m⟩
 
 end Interpreter

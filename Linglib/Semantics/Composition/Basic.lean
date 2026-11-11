@@ -25,7 +25,7 @@ objects by these operations.
   daughters, and `ManySorted.Language.motherTypes`, the types they give the mother.
 * `Interpreter`: the rules a node admits by its daughters' types, and
   `Interpreter.typeDriven`, the interpreter that admits every rule that applies.
-* `Interpreter.unaryValues`, `Interpreter.binaryValues`: the values of the rules a node admits,
+* `Interpreter.bindValues`, `Interpreter.binaryValues`: the values of the rules a node admits,
   at the values of its daughters.
 
 ## Implementation notes
@@ -98,12 +98,13 @@ end Deriv
 
 end ManySorted.Language
 
-/-- A type-driven interpreter for a language of rules: the rules a node admits, by the types of
-its daughters. A unary node has a label, since the type of one daughter does not say which rule
-applies to it. -/
+/-- An interpreter for a language of rules: the rules a node admits. A binary node admits rules
+by the types of its daughters. A binder admits them by its label and the type of its daughter,
+since the type of one daughter does not say what binds it. A rule of one argument that no binder
+admits, such as a type shift, is a step of a derivation that no node of a tree stands for. -/
 structure Interpreter {T : Type u} (L : ManySorted.Language.{u, v} T) (N : Type v) where
-  /-- The unary rules a node labelled `n` over a daughter of type `a` admits. -/
-  unary : N → (a : T) → List (Sigma (L.Unary a))
+  /-- The rules a binder labelled `n` over a daughter of type `a` admits. -/
+  bind : N → (a : T) → List (Sigma (L.Unary a))
   /-- The binary rules a node over daughters of types `l` and `r` admits. -/
   binary : (l r : T) → List (Sigma (L.Binary l r))
 
@@ -114,10 +115,10 @@ open ManySorted.Language
 variable {T : Type u} {L : Language.{u, v} T} {N : Type v} {Lx : Type w} {W : T → Type w}
   {D : T → Type x}
 
-/-- The type-driven interpreter of a language: a node admits every rule that applies to the
-types of its daughters, whatever its label. -/
+/-- The type-driven interpreter of a language: a binary node admits every rule that applies to
+the types of its daughters, and a binder admits none. -/
 def typeDriven (L : Language.{u, v} T) [L.LocallyFinite] : Interpreter L N where
-  unary _ := LocallyFinite.unaryRules
+  bind _ _ := []
   binary := LocallyFinite.binaryRules
 
 /-- The type-driven interpreter admits every binary rule of the language. -/
@@ -125,10 +126,10 @@ def typeDriven (L : Language.{u, v} T) [L.LocallyFinite] : Interpreter L N where
     (m : Sigma (L.Binary l r)) : m ∈ (typeDriven L : Interpreter L N).binary l r :=
   LocallyFinite.mem_symbols m.2
 
-/-- The values of the unary rules a node labelled `n` admits, at the values of its daughter. -/
-def unaryValues (I : Interpreter L N) (M : L.Structure D) (n : N) (X : List (Sigma D)) :
+/-- The values of the rules a binder labelled `n` admits, at the values of its daughter. -/
+def bindValues (I : Interpreter L N) (M : L.Structure D) (n : N) (X : List (Sigma D)) :
     List (Sigma D) :=
-  X.flatMap fun ⟨a, x⟩ ↦ (I.unary n a).map fun ⟨b, r⟩ ↦ ⟨b, M.funMap r x⟩
+  X.flatMap fun ⟨a, x⟩ ↦ (I.bind n a).map fun ⟨b, r⟩ ↦ ⟨b, M.funMap r x⟩
 
 /-- The values of the binary rules a node admits, at the values of its daughters. -/
 def binaryValues (I : Interpreter L N) (M : L.Structure D) (X Y : List (Sigma D)) :
@@ -139,11 +140,10 @@ def binaryValues (I : Interpreter L N) (M : L.Structure D) (X Y : List (Sigma D)
 variable {I : Interpreter L N} {M : L.Structure D} {n : N} {X Y : List (Sigma D)}
   {d : Sigma D}
 
-/-- A value of a unary node is the value of a rule the node admits, at a value of its
-daughter. -/
-theorem mem_unaryValues :
-    d ∈ I.unaryValues M n X ↔ ∃ d₁ ∈ X, ∃ r ∈ I.unary n d₁.1, d = ⟨r.1, M.funMap r.2 d₁.2⟩ := by
-  simp only [unaryValues, List.mem_flatMap, List.mem_map, eq_comm]
+/-- A value of a binder is the value of a rule it admits, at a value of its daughter. -/
+theorem mem_bindValues :
+    d ∈ I.bindValues M n X ↔ ∃ d₁ ∈ X, ∃ r ∈ I.bind n d₁.1, d = ⟨r.1, M.funMap r.2 d₁.2⟩ := by
+  simp only [bindValues, List.mem_flatMap, List.mem_map, eq_comm]
 
 /-- A value of a binary node is the value of a rule the node admits, at values of its
 daughters. -/
@@ -152,13 +152,17 @@ theorem mem_binaryValues :
       d = ⟨m.1, M.funMap m.2 (d₁.2, d₂.2)⟩ := by
   simp only [binaryValues, List.mem_flatMap, List.mem_map, eq_comm]
 
-/-- Where a node admits at most one unary rule for a daughter, a daughter with at most one value
+/-- A binder that admits no rule has no value. -/
+theorem bindValues_eq_nil (h : ∀ a, I.bind n a = []) : I.bindValues M n X = [] := by
+  simp [bindValues, h]
+
+/-- Where a binder admits at most one rule for a daughter, a daughter with at most one value
 gives it at most one. -/
-theorem length_unaryValues_le_one (hu : ∀ a, (I.unary n a).length ≤ 1) (hX : X.length ≤ 1) :
-    (I.unaryValues M n X).length ≤ 1 := by
+theorem length_bindValues_le_one (hu : ∀ a, (I.bind n a).length ≤ 1) (hX : X.length ≤ 1) :
+    (I.bindValues M n X).length ≤ 1 := by
   match X, hX with
-  | [], _ => simp [unaryValues]
-  | [⟨a, x⟩], _ => simpa [unaryValues] using hu a
+  | [], _ => simp [bindValues]
+  | [⟨a, x⟩], _ => simpa [bindValues] using hu a
 
 /-- Where a node admits at most one binary rule for given daughters, daughters with at most one
 value each give it at most one. -/
@@ -171,13 +175,13 @@ theorem length_binaryValues_le_one (hb : ∀ a b, (I.binary a b).length ≤ 1)
 
 variable {D' : T → Type x} {M' : L.Structure D'} (h : ∀ a, D a → D' a)
 
-/-- A map of domains that commutes with the unary rules commutes with the values of a unary
-node. -/
-theorem map_unaryValues
+/-- A map of domains that commutes with the unary rules commutes with the values of a
+binder. -/
+theorem map_bindValues
     (hh : ∀ {a b : T} (r : L.Unary a b) (x : D a), h b (M.funMap r x) = M'.funMap r (h a x)) :
-    (I.unaryValues M n X).map (fun d ↦ ⟨d.1, h d.1 d.2⟩) =
-      I.unaryValues M' n (X.map fun d ↦ ⟨d.1, h d.1 d.2⟩) := by
-  simp [unaryValues, List.map_flatMap, List.flatMap_map, Function.comp_def, hh]
+    (I.bindValues M n X).map (fun d ↦ ⟨d.1, h d.1 d.2⟩) =
+      I.bindValues M' n (X.map fun d ↦ ⟨d.1, h d.1 d.2⟩) := by
+  simp [bindValues, List.map_flatMap, List.flatMap_map, Function.comp_def, hh]
 
 /-- A map of domains that commutes with the binary rules commutes with the values of a binary
 node. -/

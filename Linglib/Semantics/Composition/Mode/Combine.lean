@@ -561,12 +561,12 @@ theorem Ty.mem_combineWithin
 
 end Complete
 
-/-- The interpreter of Bumford and Charlow's effect-driven grammar over a grammar: a node admits
-the type shifts of the grammar and every mode that `Ty.combine` finds for its daughters, which
-are all the modes of the grammar. -/
+/-- The interpreter of Bumford and Charlow's effect-driven grammar over a grammar: a binary node
+admits every mode that `Ty.combine` finds for its daughters, which are all the modes of the
+grammar. -/
 def effectDriven [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] {N : Type} :
     Interpreter (effectGrammar G) N where
-  unary _ := Language.LocallyFinite.unaryRules (L := G)
+  bind _ _ := []
   binary := Ty.combine (Language.LocallyFinite.binaryRules (L := G))
 
 /-- A node admits every mode of the grammar that combines its daughters. -/
@@ -581,7 +581,7 @@ modes for its daughters that keep to the inventory. -/
 def effectDrivenWithin [DecidableEq B] (inv : MetaMode → Eff B → Prop)
     [DecidableRel inv] (G : Language (Ty B)) [G.LocallyFinite] {N : Type} :
     Interpreter (effectGrammar G) N where
-  unary _ := Language.LocallyFinite.unaryRules (L := G)
+  bind _ _ := []
   binary := Ty.combineWithin inv (Language.LocallyFinite.binaryRules (L := G))
 
 /-- A node admits exactly the modes that keep to the inventory. -/

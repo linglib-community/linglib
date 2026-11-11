@@ -81,11 +81,11 @@ function of the value the assignment is modified to give the index. -/
         (Binder.index n b) body =
       fun i ↦ E.lam fun v ↦ body (E.set i n v) := rfl
 
-/-- An interpreter with the binder: a unary node is labelled by an index and admits its binder,
+/-- An interpreter with the binder: a binder node admits the binder of its index,
 and a binary node admits what the interpreter admits. -/
 def withBinder [DecidableEq B] {L : Language.{0, 0} (Ty B)} (I : Interpreter L ℕ) (g : Ty B)
     (Γ : ℕ → Ty B) : Interpreter (L.sum (binding g Γ)) ℕ where
-  unary n a := (Binder.rules g Γ n a).map fun r ↦ ⟨r.1, Language.Sum.inr r.2⟩
+  bind n a := (Binder.rules g Γ n a).map fun r ↦ ⟨r.1, Language.Sum.inr r.2⟩
   binary l r := (I.binary l r).map fun m ↦ ⟨m.1, .inl m.2⟩
 
 end Interpreter

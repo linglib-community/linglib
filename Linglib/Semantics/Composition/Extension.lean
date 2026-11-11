@@ -36,9 +36,9 @@ variable {T : Type u} {L L' : Language.{u, v} T} {N : Type v} {Lx : Type w} {W :
 /-- An interpreter extends another along a map of languages when it admits at each node the
 images of the rules the other admits there. -/
 structure Extends (J : Interpreter L' N) (I : Interpreter L N) (φ : L →ᴸ L') : Prop where
-  /-- The unary rules. -/
-  unary {n : N} {a : T} {r : Sigma (L.Unary a)} :
-    r ∈ I.unary n a → ⟨r.1, φ.onFunction r.2⟩ ∈ J.unary n a
+  /-- The rules of a binder. -/
+  bind {n : N} {a : T} {r : Sigma (L.Unary a)} :
+    r ∈ I.bind n a → ⟨r.1, φ.onFunction r.2⟩ ∈ J.bind n a
   /-- The binary rules. -/
   binary {l r : T} {m : Sigma (L.Binary l r)} :
     m ∈ I.binary l r → ⟨m.1, φ.onFunction m.2⟩ ∈ J.binary l r
@@ -48,16 +48,16 @@ section Values
 variable {D' : T → Type x} {M : L.Structure D} {M' : L'.Structure D'} (h : ∀ a, D a → D' a)
   {n : N}
 
-/-- A value of a unary node survives an extension of the rules, along a map of domains that
+/-- A value of a binder survives an extension of the rules, along a map of domains that
 commutes with them. -/
-theorem map_mem_unaryValues (hJ : J.Extends I φ)
+theorem map_mem_bindValues (hJ : J.Extends I φ)
     (hh : ∀ {a b : T} (r : L.Unary a b) (x : D a),
       h b (M.funMap r x) = M'.funMap (φ.onFunction r) (h a x))
     {X : List (Sigma D)} {Y : List (Sigma D')}
     (hXY : ∀ d ∈ X, (⟨d.1, h d.1 d.2⟩ : Sigma D') ∈ Y) {d : Sigma D}
-    (hd : d ∈ I.unaryValues M n X) : (⟨d.1, h d.1 d.2⟩ : Sigma D') ∈ J.unaryValues M' n Y := by
-  obtain ⟨d₁, h₁, r, hr, rfl⟩ := mem_unaryValues.1 hd
-  exact mem_unaryValues.2 ⟨_, hXY d₁ h₁, ⟨r.1, φ.onFunction r.2⟩, hJ.unary hr,
+    (hd : d ∈ I.bindValues M n X) : (⟨d.1, h d.1 d.2⟩ : Sigma D') ∈ J.bindValues M' n Y := by
+  obtain ⟨d₁, h₁, r, hr, rfl⟩ := mem_bindValues.1 hd
+  exact mem_bindValues.2 ⟨_, hXY d₁ h₁, ⟨r.1, φ.onFunction r.2⟩, hJ.bind hr,
     congrArg (Sigma.mk r.1) (hh r.2 d₁.2)⟩
 
 /-- A value of a binary node survives an extension of the rules, along a map of domains that
@@ -79,9 +79,7 @@ end Values
 /-- The type-driven interpreter of the sum of two languages extends that of the first. -/
 theorem typeDriven_sum_extends [L.LocallyFinite] [L'.LocallyFinite] :
     (typeDriven (L.sum L') : Interpreter (L.sum L') N).Extends (typeDriven L) LHom.sumInl where
-  unary {_ _ r} hr := by
-    obtain ⟨b, r⟩ := r
-    exact List.mem_append_left _ (List.mem_map.2 ⟨⟨b, r⟩, hr, rfl⟩)
+  bind hr := nomatch hr
   binary {_ _ m} hm := by
     obtain ⟨u, m⟩ := m
     exact List.mem_append_left _ (List.mem_map.2 ⟨⟨u, m⟩, hm, rfl⟩)
@@ -92,7 +90,7 @@ theorem Extends.withAbstraction {B : Type} {L L' : Language.{0, 0} (Ty B)}
     {I : Interpreter L ℕ} {J : Interpreter L' ℕ} {φ : L →ᴸ L'} (h : J.Extends I φ)
     (Γ : ℕ → Ty B) :
     (J.withAbstraction Γ).Extends (I.withAbstraction Γ) (φ.sumMap (LHom.id _)) where
-  unary {n _ r} hr := by
+  bind {n _ r} hr := by
     obtain rfl := List.mem_singleton.1 hr
     exact List.mem_singleton.2 rfl
   binary {_ _ _} h₀ := by
@@ -121,26 +119,12 @@ theorem map_mem_values_of_le {D' : T → Type} {M : G.Structure D} {M' : G'.Stru
     (hρ : ∀ {a : T} (x : W a), h a (ρ x) = ρ' x) (hl : ∀ x, lex x ⊆ lex' x)
     (t : Tree C Lx) {d : Sigma D} (hd : d ∈ t.values I M ρ lex) :
     (⟨d.1, h d.1 d.2⟩ : Sigma D') ∈ t.values J M' ρ' lex' := by
-  rw [values_eq_fold] at hd ⊢
-  refine RoseTree.rel_fold
+  refine values_rel
     (fun (X : List (Sigma D)) (Y : List (Sigma D')) ↦ ∀ d ∈ X, (⟨d.1, h d.1 d.2⟩ : Sigma D') ∈ Y)
-    (fun l Xs Ys hXY ↦ ?_) t d hd
-  match l, Xs, Ys, hXY with
-  | .terminal _ w, [], [], _ =>
-    intro d hd
-    obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hd
-    exact List.mem_map.2 ⟨p, hl _ hp, congrArg (Sigma.mk p.1) (hρ p.2).symm⟩
-  | .trace n _, [], [], _ =>
-    intro d hd
-    obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hd
-    exact List.mem_map.2 ⟨p, hl _ hp, congrArg (Sigma.mk p.1) (hρ p.2).symm⟩
-  | .bind n _, [X], [Y], .cons hX .nil => exact fun d hd ↦ map_mem_unaryValues h hJ hu hX hd
-  | .phrase _ _, [X], [Y], .cons hX .nil => exact hX
-  | .phrase _ _, [X₁, X₂], [Y₁, Y₂], .cons h₁ (.cons h₂ .nil) =>
-    exact fun d hd ↦ map_mem_binaryValues h hJ hb h₁ h₂ hd
-  | .terminal _ _, _ :: _, _ :: _, _ | .trace _ _, _ :: _, _ :: _, _ | .bind _ _, [], [], _
-  | .bind _ _, _ :: _ :: _, _ :: _ :: _, _ | .phrase _ _, [], [], _
-  | .phrase _ _, _ :: _ :: _ :: _, _ :: _ :: _ :: _, _ => exact fun _ hd ↦ nomatch hd
+    (fun _ hd ↦ nomatch hd) (fun x d hd ↦ ?_) (fun _ _ _ hX d hd ↦ map_mem_bindValues h hJ hu hX hd)
+    (fun _ _ _ _ h₁ h₂ d hd ↦ map_mem_binaryValues h hJ hb h₁ h₂ hd) t d hd
+  obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hd
+  exact List.mem_map.2 ⟨p, hl _ hp, congrArg (Sigma.mk p.1) (hρ p.2).symm⟩
 
 /-- A value of a tree survives an extension of the rules and of the lexicon, in a structure that
 expands the one it was computed in. -/

@@ -31,9 +31,8 @@ at alternatives.
 An inventory is pointwise at some effects and has every meta-mode at the others, where each of
 the two grammars above has one effect. The tree-level statement is for a lexicon whose every
 item carries the effect, so it does not cover a tree with an operator that takes a computation
-as its argument, as a closure operator does. It is for a grammar with no type shifts. A type
-shift on a computation, such as abstraction over an index, is not the shift on its result mapped
-over the effect, and the effect-driven grammar has no meta-mode that maps one.
+as its argument, as a closure operator does. The binder of an index is not a rule mapped over
+the effect: it is an operator on computations, in `Mode/Binder.lean`.
 
 ## References
 
@@ -201,10 +200,10 @@ variable {B : Type} [DecidableEq B] {P : Eff B → Prop} [DecidablePred P] {G : 
   [G.LocallyFinite] {D : B → Type} [M : G.Structure (Ty.Dom D)] {C Lx : Type}
   {W W' : Ty B → Type} {f : Eff B}
 
-/-- In a grammar pointwise at `f`, with no type shift and no basic rule for two daughters that
+/-- In a grammar pointwise at `f`, with no basic rule for two daughters that
 carry `f`, the values of a tree over a lexicon whose items all carry `f` are its values in
 `effectGrammar.pointwise f` over the results of the items. -/
-theorem values_effectDrivenWithin_pointwise [∀ a b : Ty B, IsEmpty (G.Unary a b)]
+theorem values_effectDrivenWithin_pointwise
     [∀ l r u : Ty B, IsEmpty (G.Binary (.comp f l) (.comp f r) u)] (hf : P f)
     [ha : f.IsApplicative]
     {ρ : ∀ {a : Ty B}, W a → (Ty.comp f a).Dom D} {ρ' : ∀ {a : Ty B}, W' a → a.Dom D}
@@ -215,10 +214,8 @@ theorem values_effectDrivenWithin_pointwise [∀ a b : Ty B, IsEmpty (G.Unary a 
     t.values (effectDrivenWithin (MetaMode.pointwise P) G) effectGrammar.structure ρ' lex' =
       (t.values (effectDrivenWithin (MetaMode.pointwise P) G) (effectGrammar.pointwise f)
         ρ lex).map fun d ↦ ⟨.comp f d.1, d.2⟩ := by
-  have hU (a : Ty B) : Language.LocallyFinite.unaryRules (L := G) a = [] :=
-    List.eq_nil_iff_forall_not_mem.2 fun p _ ↦ isEmptyElim p.2
   refine values_eq_map_of_types (Ty.comp f) (fun _ ↦ True) hlex (fun _ _ _ ↦ trivial)
-    (fun _ _ _ _ ↦ by simp [effectDrivenWithin, hU]) (fun _ _ _ _ _ ↦ trivial)
+    (fun _ _ _ _ ↦ rfl) (fun _ _ _ _ _ ↦ trivial)
     (fun _ _ _ _ _ _ ↦ ?_) (fun _ _ _ _ _ _ ↦ trivial) t
   rw [binary_effectDrivenWithin_pointwise hf, List.map_map]
   rfl

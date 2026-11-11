@@ -13,7 +13,7 @@ readings](##PhraseStructure.Tree.mem_values_iff).
 
 ## Main definitions
 
-* `Interpreter.unaryReadings`, `Interpreter.binaryReadings`: the readings of a node from the
+* `Interpreter.bindReadings`, `Interpreter.binaryReadings`: the readings of a node from the
   readings of its daughters.
 * `PhraseStructure.Tree.readings`: the readings of a tree.
 
@@ -32,11 +32,11 @@ open ManySorted ManySorted.Language
 
 variable {T : Type u} {G : Language.{u, v} T} {N : Type v} {D : T → Type x}
 
-/-- The readings of a unary node labelled `n` from those of its daughter: the values of the
+/-- The readings of a binder labelled `n` from those of its daughter: the values of the
 rules the node admits. -/
-def unaryReadings (I : Interpreter G N) (M : G.Structure D) (n : N) (X : Set (Sigma D)) :
+def bindReadings (I : Interpreter G N) (M : G.Structure D) (n : N) (X : Set (Sigma D)) :
     Set (Sigma D) :=
-  {d | ∃ d₁ ∈ X, ∃ r ∈ I.unary n d₁.1, d = ⟨r.1, M.funMap r.2 d₁.2⟩}
+  {d | ∃ d₁ ∈ X, ∃ r ∈ I.bind n d₁.1, d = ⟨r.1, M.funMap r.2 d₁.2⟩}
 
 /-- The readings of a binary node from those of its daughters: the values of the rules the node
 admits. -/
@@ -58,7 +58,7 @@ def nodeReadings (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, 
     Label C L → List (Set (Sigma D)) → Set (Sigma D)
   | .terminal _ w, [] => (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex (.inl w)
   | .trace n _, [] => (fun p ↦ ⟨p.1, ρ p.2⟩) '' lex (.inr n)
-  | .bind n _, [X] => I.unaryReadings M n X
+  | .bind n _, [X] => I.bindReadings M n X
   | .phrase _ _, [X] => X
   | .phrase _ _, [X, Y] => I.binaryReadings M X Y
   | _, _ => ∅
@@ -93,9 +93,9 @@ variable {I M ρ lex}
 /-- A reading of a binder is the value of a rule its index admits, at a reading of its body. -/
 theorem mem_readings_bind {n : ℕ} {c : C} {t : Tree C L} {d : Sigma D} :
     d ∈ (bind n c t).readings I M ρ lex ↔
-      ∃ d₁ ∈ t.readings I M ρ lex, ∃ r ∈ I.unary n d₁.1,
+      ∃ d₁ ∈ t.readings I M ρ lex, ∃ r ∈ I.bind n d₁.1,
         d = ⟨r.1, M.funMap r.2 d₁.2⟩ := by
-  simp [readings, nodeReadings, unaryReadings]
+  simp [readings, nodeReadings, bindReadings]
 
 /-- A reading of a binary node is the value of a rule the node admits, at readings of its
 daughters. -/
@@ -128,7 +128,7 @@ theorem mem_values_iff {lex : L ⊕ ℕ → List (Sigma W)} {d : Sigma D} (t : T
   | .terminal _ w, [], [], _ => simp [nodeValues, nodeReadings, eq_comm]
   | .trace n _, [], [], _ => simp [nodeValues, nodeReadings, eq_comm]
   | .bind n _, [X], [S], .cons h .nil =>
-    simp [nodeValues, nodeReadings, mem_unaryValues, unaryReadings, h]
+    simp [nodeValues, nodeReadings, mem_bindValues, bindReadings, h]
   | .phrase _ _, [X], [S], .cons h .nil => exact h
   | .phrase _ _, [X, Y], [S, S'], .cons h (.cons h' .nil) =>
     simp [nodeValues, nodeReadings, mem_binaryValues, binaryReadings, h, h']

@@ -49,7 +49,7 @@ theorem value?_eq_some_of_values_eq (h : t.values I M ρ lex = [⟨a, x⟩]) :
 
 /-- Where a node admits at most one rule for given daughters and a word is at most one item, a
 value of a tree is its value. -/
-theorem value?_eq_some_of_mem (hu : ∀ n a, (I.unary n a).length ≤ 1)
+theorem value?_eq_some_of_mem (hu : ∀ n a, (I.bind n a).length ≤ 1)
     (hb : ∀ a b, (I.binary a b).length ≤ 1) (hl : ∀ x, (lex x).length ≤ 1)
     (h : (⟨a, x⟩ : Sigma D) ∈ t.values I M ρ lex) : t.value? I M ρ lex a = some x := by
   have hlen := length_values_le_one (M := M) (ρ := ρ) hu hb hl t
