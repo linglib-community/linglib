@@ -97,7 +97,7 @@ theorem card_filter_inv (R : Correspondence ι κ) (q : κ × ι → Prop) [Deci
   rw [inv, Finset.filter_map, Finset.card_map]
   rfl
 
-theorem image_fst_inv [DecidableEq ι] [DecidableEq κ] (R : Correspondence ι κ) :
+theorem image_fst_inv [DecidableEq κ] (R : Correspondence ι κ) :
     R.inv.image Prod.fst = R.image Prod.snd := by
   ext j; simp
 
@@ -150,9 +150,83 @@ def graph [Fintype ι] (f : ι → κ) : Correspondence ι κ :=
 @[simp] theorem rel_graph [Fintype ι] (f : ι → κ) : (graph f).rel = Function.graph f :=
   Set.ext fun _ ↦ mem_graph
 
-variable [Fintype ι] [LinearOrder ι] [Fintype κ] [LinearOrder κ]
+theorem mem_iff_of_graph {R : Correspondence ι κ} {f : ι → κ} (hf : R.rel = Function.graph f)
+    {i : ι} {j : κ} : (i, j) ∈ R ↔ f i = j := by
+  rw [← mem_rel, hf, Function.mem_graph]
 
-/-! ### Constraint families -/
+/-! ### IDENT
+
+Only this family reads segments, through a labelling of each position type. -/
+
+section Ident
+
+variable {F : Type*} [DecidableEq F]
+
+/-- IDENT counts the corresponding pairs that differ under the labellings `s` and `t`, which
+give each position its segment or the value of one of its features. -/
+def identViol (s : ι → F) (t : κ → F) (R : Correspondence ι κ) : ℕ :=
+  (R.filter fun x ↦ s x.1 ≠ t x.2).card
+
+@[simp] theorem identViol_empty (s : ι → F) (t : κ → F) : identViol s t ∅ = 0 := rfl
+
+@[simp] theorem identViol_inv (R : Correspondence ι κ) (s : ι → F) (t : κ → F) :
+    R.inv.identViol t s = R.identViol s t := by
+  rw [identViol, card_filter_inv]
+  exact congrArg Finset.card (Finset.filter_congr fun _ _ ↦ ne_comm)
+
+theorem identViol_eq_zero_iff_of_graph {R : Correspondence ι κ} {f : ι → κ}
+    (hf : R.rel = Function.graph f) (s : ι → F) (t : κ → F) :
+    R.identViol s t = 0 ↔ ∀ i, s i = t (f i) := by
+  simp only [identViol, Finset.card_eq_zero, Finset.filter_eq_empty_iff, not_not]
+  refine ⟨fun H i ↦ H ((mem_iff_of_graph hf).2 rfl), ?_⟩
+  rintro H ⟨i, j⟩ hij
+  rw [← (mem_iff_of_graph hf).1 hij]
+  exact H i
+
+end Ident
+
+section Feature
+
+variable (p : ι → Prop) (q : κ → Prop) [DecidablePred p] [DecidablePred q]
+
+/-- MAX of a privative property counts the corresponding pairs whose first member has it and
+whose second lacks it, the autosegment being lost. -/
+def maxViolFeature (R : Correspondence ι κ) : ℕ :=
+  (R.filter fun x ↦ p x.1 ∧ ¬ q x.2).card
+
+/-- DEP of a privative property counts the corresponding pairs whose second member has it and
+whose first lacks it, the autosegment being inserted. -/
+def depViolFeature (R : Correspondence ι κ) : ℕ :=
+  (R.filter fun x ↦ ¬ p x.1 ∧ q x.2).card
+
+@[simp] theorem maxViolFeature_empty : maxViolFeature p q ∅ = 0 := rfl
+
+@[simp] theorem depViolFeature_empty : depViolFeature p q ∅ = 0 := rfl
+
+@[simp] theorem maxViolFeature_inv (R : Correspondence ι κ) :
+    R.inv.maxViolFeature q p = R.depViolFeature p q := by
+  rw [maxViolFeature, card_filter_inv]
+  exact congrArg Finset.card (Finset.filter_congr fun _ _ ↦ and_comm)
+
+@[simp] theorem depViolFeature_inv (R : Correspondence ι κ) :
+    R.inv.depViolFeature q p = R.maxViolFeature p q := by
+  rw [depViolFeature, card_filter_inv]
+  exact congrArg Finset.card (Finset.filter_congr fun _ _ ↦ and_comm)
+
+theorem maxViolFeature_pos_iff (R : Correspondence ι κ) :
+    0 < R.maxViolFeature p q ↔ ∃ x ∈ R, p x.1 ∧ ¬ q x.2 := by
+  simp [maxViolFeature, Finset.card_pos, Finset.filter_nonempty_iff]
+
+end Feature
+
+/-! ### MAX and INTEGRITY
+
+The constraints on the domain: MAX vanishes iff the domain is everything, and INTEGRITY iff the
+relation is right-unique. -/
+
+section Domain
+
+variable [Fintype ι] [DecidableEq ι]
 
 /-- MAX restricted to the positions satisfying `P` counts those without a correspondent, as in
 MAX-V, MAX-C, and the positional faithfulness constraints. -/
@@ -163,6 +237,51 @@ def maxViolOn (P : ι → Prop) [DecidablePred P] (R : Correspondence ι κ) : �
 def maxViol (R : Correspondence ι κ) : ℕ :=
   (Finset.univ \ R.image Prod.fst).card
 
+/-- INTEGRITY counts the positions of the first string with more than one correspondent. -/
+def integrityViol (R : Correspondence ι κ) : ℕ :=
+  (Finset.univ.filter fun i ↦ 1 < (R.filter fun x ↦ x.1 = i).card).card
+
+@[simp] theorem maxViolOn_true (R : Correspondence ι κ) : R.maxViolOn (fun _ ↦ True) = R.maxViol := by
+  simp [maxViolOn, maxViol]
+
+theorem maxViol_eq_zero_iff (R : Correspondence ι κ) : R.maxViol = 0 ↔ R.rel.dom = Set.univ := by
+  rw [maxViol, Finset.card_eq_zero, Finset.sdiff_eq_empty_iff_subset, Finset.univ_subset_iff,
+    dom_rel, Finset.coe_eq_univ]
+
+theorem integrityViol_eq_zero_iff (R : Correspondence ι κ) :
+    R.integrityViol = 0 ↔ Relator.RightUnique (· ~[R.rel] ·) := by
+  simp only [integrityViol, Finset.card_eq_zero, Finset.filter_eq_empty_iff, Finset.mem_univ,
+    forall_const, not_lt, Finset.card_le_one, Finset.mem_filter, and_imp, Prod.forall,
+    Prod.mk.injEq]
+  exact ⟨fun h i j j' hj hj' ↦ (h i j hj rfl i j' hj' rfl).2,
+    fun h i a j hj ha a' j' hj' ha' ↦ by subst ha ha'; exact ⟨rfl, h hj hj'⟩⟩
+
+variable {R : Correspondence ι κ} {f : ι → κ}
+
+theorem maxViol_eq_zero_of_graph (hf : R.rel = Function.graph f) : R.maxViol = 0 :=
+  R.maxViol_eq_zero_iff.2 <| hf ▸ Set.eq_univ_of_forall fun i ↦ ⟨f i, rfl⟩
+
+theorem integrityViol_eq_zero_of_graph (hf : R.rel = Function.graph f) : R.integrityViol = 0 :=
+  R.integrityViol_eq_zero_iff.2 <| hf ▸ fun _ _ _ h h' ↦ h.symm.trans h'
+
+/-- A relation with no MAX or INTEGRITY violation is the graph of a map of positions. -/
+theorem exists_rel_eq_graph (hmax : R.maxViol = 0) (hint : R.integrityViol = 0) :
+    ∃ f : ι → κ, R.rel = Function.graph f := by
+  rw [maxViol_eq_zero_iff] at hmax
+  rw [integrityViol_eq_zero_iff] at hint
+  choose f hf using Set.eq_univ_iff_forall.1 hmax
+  exact ⟨f, Set.ext fun ⟨i, j⟩ ↦ ⟨fun h ↦ hint (hf i) h, fun (h : f i = j) ↦ h ▸ hf i⟩⟩
+
+end Domain
+
+/-! ### DEP and UNIFORMITY
+
+Each constraint on the range is the constraint on the domain of the converse. -/
+
+section Range
+
+variable [Fintype κ] [DecidableEq κ]
+
 /-- DEP restricted to the positions of the second string satisfying `P`. -/
 def depViolOn (P : κ → Prop) [DecidablePred P] (R : Correspondence ι κ) : ℕ :=
   R.inv.maxViolOn P
@@ -171,47 +290,92 @@ def depViolOn (P : κ → Prop) [DecidablePred P] (R : Correspondence ι κ) : �
 def depViol (R : Correspondence ι κ) : ℕ :=
   R.inv.maxViol
 
-/-- IDENT counts the corresponding pairs that differ under the labellings `s` and `t`, which
-give each position its segment or the value of one of its features. -/
-def identViol {F : Type*} [DecidableEq F] (s : ι → F) (t : κ → F) (R : Correspondence ι κ) : ℕ :=
-  (R.filter fun x ↦ s x.1 ≠ t x.2).card
-
-/-- MAX of a privative property counts the corresponding pairs whose first member has it and
-whose second lacks it, the autosegment being lost. -/
-def maxViolFeature (p : ι → Prop) (q : κ → Prop) [DecidablePred p] [DecidablePred q]
-    (R : Correspondence ι κ) : ℕ :=
-  (R.filter fun x ↦ p x.1 ∧ ¬ q x.2).card
-
-/-- DEP of a privative property counts the corresponding pairs whose second member has it and
-whose first lacks it, the autosegment being inserted. -/
-def depViolFeature (p : ι → Prop) (q : κ → Prop) [DecidablePred p] [DecidablePred q]
-    (R : Correspondence ι κ) : ℕ :=
-  (R.filter fun x ↦ ¬ p x.1 ∧ q x.2).card
-
-omit [Fintype ι] [LinearOrder ι] [Fintype κ] [LinearOrder κ] in
-@[simp] theorem identViol_empty {F : Type*} [DecidableEq F] (s : ι → F) (t : κ → F) :
-    identViol s t ∅ = 0 := rfl
-
-omit [Fintype ι] [LinearOrder ι] [Fintype κ] [LinearOrder κ] in
-@[simp] theorem maxViolFeature_empty (p : ι → Prop) (q : κ → Prop) [DecidablePred p]
-    [DecidablePred q] : maxViolFeature p q ∅ = 0 := rfl
-
-omit [Fintype ι] [LinearOrder ι] [Fintype κ] [LinearOrder κ] in
-@[simp] theorem depViolFeature_empty (p : ι → Prop) (q : κ → Prop) [DecidablePred p]
-    [DecidablePred q] : depViolFeature p q ∅ = 0 := rfl
-
-/-- INTEGRITY counts the positions of the first string with more than one correspondent. -/
-def integrityViol (R : Correspondence ι κ) : ℕ :=
-  (Finset.univ.filter fun i ↦ 1 < (R.filter fun x ↦ x.1 = i).card).card
-
 /-- UNIFORMITY counts the positions of the second string with more than one correspondent. -/
 def uniformityViol (R : Correspondence ι κ) : ℕ :=
   R.inv.integrityViol
+
+variable (R : Correspondence ι κ) (S : Correspondence κ ι)
+
+@[simp] theorem maxViol_inv : R.inv.maxViol = R.depViol := rfl
+
+@[simp] theorem depViol_inv : S.inv.depViol = S.maxViol := by rw [depViol, inv_inv]
+
+@[simp] theorem maxViolOn_inv (P : κ → Prop) [DecidablePred P] :
+    R.inv.maxViolOn P = R.depViolOn P := rfl
+
+@[simp] theorem depViolOn_inv (P : κ → Prop) [DecidablePred P] :
+    S.inv.depViolOn P = S.maxViolOn P := by rw [depViolOn, inv_inv]
+
+@[simp] theorem integrityViol_inv : R.inv.integrityViol = R.uniformityViol := rfl
+
+@[simp] theorem uniformityViol_inv : S.inv.uniformityViol = S.integrityViol := by
+  rw [uniformityViol, inv_inv]
+
+theorem depViolOn_eq (P : κ → Prop) [DecidablePred P] :
+    R.depViolOn P = (Finset.univ.filter P \ R.image Prod.snd).card := by
+  rw [depViolOn, maxViolOn, image_fst_inv]
+
+theorem depViol_eq : R.depViol = (Finset.univ \ R.image Prod.snd).card := by
+  rw [depViol, maxViol, image_fst_inv]
+
+@[simp] theorem depViolOn_true : R.depViolOn (fun _ ↦ True) = R.depViol :=
+  maxViolOn_true R.inv
+
+theorem depViol_eq_zero_iff : R.depViol = 0 ↔ R.rel.cod = Set.univ := by
+  rw [depViol, maxViol_eq_zero_iff, rel_inv, SetRel.dom_inv]
+
+theorem uniformityViol_eq_zero_iff :
+    R.uniformityViol = 0 ↔ Relator.LeftUnique (· ~[R.rel] ·) := by
+  rw [uniformityViol, integrityViol_eq_zero_iff, rel_inv]
+  exact ⟨fun h _ _ _ h₁ h₂ ↦ h h₁ h₂, fun h _ _ _ h₁ h₂ ↦ h h₁ h₂⟩
+
+variable {R} {f : ι → κ}
+
+theorem depViol_eq_zero_of_graph (hf : R.rel = Function.graph f) (hsurj : Function.Surjective f) :
+    R.depViol = 0 :=
+  R.depViol_eq_zero_iff.2 <| hf ▸ Set.eq_univ_of_forall hsurj
+
+theorem depViolOn_of_graph [Fintype ι] (hf : R.rel = Function.graph f) (P : κ → Prop)
+    [DecidablePred P] : R.depViolOn P = (Finset.univ.filter P \ Finset.univ.image f).card := by
+  rw [depViolOn_eq]
+  congr 2
+  ext j
+  simp [mem_iff_of_graph hf]
+
+theorem uniformityViol_eq_zero_of_graph (hf : R.rel = Function.graph f)
+    (hinj : Function.Injective f) : R.uniformityViol = 0 :=
+  R.uniformityViol_eq_zero_iff.2 <| hf ▸ fun _ _ _ h h' ↦ hinj (h.trans h'.symm)
+
+end Range
+
+/-! ### LINEARITY -/
+
+section Linearity
+
+variable [LinearOrder ι] [LinearOrder κ]
 
 /-- LINEARITY counts the pairs of correspondences `(i₁, j₁)` and `(i₂, j₂)` with `i₁ < i₂` but
 `j₂ < j₁`. -/
 def linearityViol (R : Correspondence ι κ) : ℕ :=
   ((R ×ˢ R).filter fun xy ↦ xy.1.1 < xy.2.1 ∧ xy.2.2 < xy.1.2).card
+
+theorem linearityViol_eq_zero_iff (R : Correspondence ι κ) :
+    R.linearityViol = 0 ↔ ∀ ⦃i j⦄, i ~[R.rel] j → ∀ ⦃i' j'⦄, i' ~[R.rel] j' → i < i' → j ≤ j' := by
+  simp only [linearityViol, Finset.card_eq_zero, Finset.filter_eq_empty_iff, Finset.mem_product,
+    and_imp, not_and, not_lt, Prod.forall, mem_rel]
+  exact ⟨fun h i j hij i' j' hij' ↦ h i j i' j' hij hij', fun h i j i' j' hij hij' ↦ h hij hij'⟩
+
+theorem linearityViol_eq_zero_of_graph {R : Correspondence ι κ} {f : ι → κ}
+    (hf : R.rel = Function.graph f) (hmono : Monotone f) : R.linearityViol = 0 :=
+  R.linearityViol_eq_zero_iff.2 <| hf ▸ fun _ _ h _ _ h' hlt ↦ h ▸ h' ▸ hmono hlt.le
+
+end Linearity
+
+/-! ### CONTIGUITY -/
+
+section ContigI
+
+variable [Fintype ι] [LinearOrder ι]
 
 /-- I-CONTIG is violated once unless the domain of the relation is a contiguous substring of
 the first string. -/
@@ -219,10 +383,46 @@ def contigIViol (R : Correspondence ι κ) : ℕ :=
   if ∀ i ∈ R.image Prod.fst, ∀ k ∈ R.image Prod.fst, ∀ j, i ≤ j → j ≤ k → j ∈ R.image Prod.fst
   then 0 else 1
 
+theorem contigIViol_eq_zero_iff (R : Correspondence ι κ) :
+    R.contigIViol = 0 ↔ R.rel.dom.OrdConnected := by
+  rw [Set.ordConnected_def, dom_rel, contigIViol, ite_eq_left_iff]
+  simp only [one_ne_zero, imp_false, not_not, Finset.mem_coe, Set.subset_def, Set.mem_Icc, and_imp]
+
+/-- A relation that deletes nothing skips nothing. -/
+theorem contigIViol_eq_zero_of_maxViol_eq_zero {R : Correspondence ι κ} (h : R.maxViol = 0) :
+    R.contigIViol = 0 :=
+  R.contigIViol_eq_zero_iff.2 <| R.maxViol_eq_zero_iff.1 h ▸ Set.ordConnected_univ
+
+end ContigI
+
+section ContigO
+
+variable [Fintype κ] [LinearOrder κ]
+
 /-- O-CONTIG is violated once unless the range of the relation is a contiguous substring of the
 second string. -/
 def contigOViol (R : Correspondence ι κ) : ℕ :=
   R.inv.contigIViol
+
+@[simp] theorem contigIViol_inv (R : Correspondence ι κ) : R.inv.contigIViol = R.contigOViol := rfl
+
+@[simp] theorem contigOViol_inv (S : Correspondence κ ι) : S.inv.contigOViol = S.contigIViol := by
+  rw [contigOViol, inv_inv]
+
+theorem contigOViol_eq_zero_iff (R : Correspondence ι κ) :
+    R.contigOViol = 0 ↔ R.rel.cod.OrdConnected := by
+  rw [contigOViol, contigIViol_eq_zero_iff, rel_inv, SetRel.dom_inv]
+
+/-- A relation that inserts nothing intrudes nowhere. -/
+theorem contigOViol_eq_zero_of_depViol_eq_zero {R : Correspondence ι κ} (h : R.depViol = 0) :
+    R.contigOViol = 0 :=
+  contigIViol_eq_zero_of_maxViol_eq_zero h
+
+end ContigO
+
+variable [Fintype ι] [LinearOrder ι] [Fintype κ] [LinearOrder κ] {R : Correspondence ι κ}
+
+/-! ### ANCHORING -/
 
 /-- L-ANCHOR is violated once unless the leftmost positions of the two strings correspond. -/
 def anchorLViol (R : Correspondence ι κ) : ℕ :=
@@ -232,200 +432,19 @@ def anchorLViol (R : Correspondence ι κ) : ℕ :=
 def anchorRViol (R : Correspondence ι κ) : ℕ :=
   if ∀ i j, (∀ k, k ≤ i) → (∀ k, k ≤ j) → (i, j) ∈ R then 0 else 1
 
-variable (R : Correspondence ι κ)
-
-/-! ### The converse -/
-
-omit [Fintype ι] [LinearOrder ι] in
-@[simp] theorem maxViol_inv : R.inv.maxViol = R.depViol := rfl
-
-omit [Fintype κ] [LinearOrder κ] in
-@[simp] theorem depViol_inv : R.inv.depViol = R.maxViol := by rw [depViol, inv_inv]
-
-omit [Fintype ι] [LinearOrder ι] in
-@[simp] theorem maxViolOn_inv (P : κ → Prop) [DecidablePred P] :
-    R.inv.maxViolOn P = R.depViolOn P := rfl
-
-omit [Fintype κ] [LinearOrder κ] in
-@[simp] theorem depViolOn_inv (P : ι → Prop) [DecidablePred P] :
-    R.inv.depViolOn P = R.maxViolOn P := by rw [depViolOn, inv_inv]
-
-omit [Fintype ι] [LinearOrder ι] in
-@[simp] theorem integrityViol_inv : R.inv.integrityViol = R.uniformityViol := rfl
-
-omit [Fintype κ] [LinearOrder κ] in
-@[simp] theorem uniformityViol_inv : R.inv.uniformityViol = R.integrityViol := by
-  rw [uniformityViol, inv_inv]
-
-omit [Fintype ι] [LinearOrder ι] in
-@[simp] theorem contigIViol_inv : R.inv.contigIViol = R.contigOViol := rfl
-
-omit [Fintype κ] [LinearOrder κ] in
-@[simp] theorem contigOViol_inv : R.inv.contigOViol = R.contigIViol := by
-  rw [contigOViol, inv_inv]
-
-omit [Fintype ι] [LinearOrder ι] [Fintype κ] [LinearOrder κ] in
-@[simp] theorem identViol_inv {F : Type*} [DecidableEq F] (s : ι → F) (t : κ → F) :
-    R.inv.identViol t s = R.identViol s t := by
-  rw [identViol, card_filter_inv]
-  exact congrArg Finset.card (Finset.filter_congr fun _ _ ↦ ne_comm)
-
-omit [Fintype ι] [LinearOrder ι] [Fintype κ] [LinearOrder κ] in
-@[simp] theorem maxViolFeature_inv (p : ι → Prop) (q : κ → Prop) [DecidablePred p]
-    [DecidablePred q] : R.inv.maxViolFeature q p = R.depViolFeature p q := by
-  rw [maxViolFeature, card_filter_inv]
-  exact congrArg Finset.card (Finset.filter_congr fun _ _ ↦ and_comm)
-
-omit [Fintype ι] [LinearOrder ι] [Fintype κ] [LinearOrder κ] in
-@[simp] theorem depViolFeature_inv (p : ι → Prop) (q : κ → Prop) [DecidablePred p]
-    [DecidablePred q] : R.inv.depViolFeature q p = R.maxViolFeature p q := by
-  rw [depViolFeature, card_filter_inv]
-  exact congrArg Finset.card (Finset.filter_congr fun _ _ ↦ and_comm)
-
-omit [Fintype ι] in
-theorem depViolOn_eq (P : κ → Prop) [DecidablePred P] :
-    R.depViolOn P = (Finset.univ.filter P \ R.image Prod.snd).card := by
-  rw [depViolOn, maxViolOn, image_fst_inv]
-
-omit [Fintype ι] in
-theorem depViol_eq : R.depViol = (Finset.univ \ R.image Prod.snd).card := by
-  rw [depViol, maxViol, image_fst_inv]
-
-omit [Fintype κ] [LinearOrder κ] in
-@[simp] theorem maxViolOn_true : R.maxViolOn (fun _ ↦ True) = R.maxViol := by
-  simp [maxViolOn, maxViol]
-
-omit [Fintype ι] [LinearOrder ι] in
-@[simp] theorem depViolOn_true : R.depViolOn (fun _ ↦ True) = R.depViol :=
-  maxViolOn_true R.inv
-
-omit [Fintype ι] [LinearOrder ι] [Fintype κ] [LinearOrder κ] in
-theorem maxViolFeature_pos_iff (p : ι → Prop) (q : κ → Prop) [DecidablePred p] [DecidablePred q] :
-    0 < R.maxViolFeature p q ↔ ∃ x ∈ R, p x.1 ∧ ¬ q x.2 := by
-  simp [maxViolFeature, Finset.card_pos, Finset.filter_nonempty_iff]
-
-/-! ### Vanishing characterizations
-
-Each constraint vanishes iff the relation has the corresponding property: its domain or range is
-everything, it is right-unique or left-unique, it preserves precedence, its domain or range is an
-interval, the leftmost or rightmost positions correspond. -/
-
-omit [Fintype κ] [LinearOrder κ] in
-theorem maxViol_eq_zero_iff : R.maxViol = 0 ↔ R.rel.dom = Set.univ := by
-  rw [maxViol, Finset.card_eq_zero, Finset.sdiff_eq_empty_iff_subset, Finset.univ_subset_iff,
-    dom_rel, Finset.coe_eq_univ]
-
-omit [Fintype ι] [LinearOrder ι] in
-theorem depViol_eq_zero_iff : R.depViol = 0 ↔ R.rel.cod = Set.univ := by
-  rw [depViol, maxViol_eq_zero_iff, rel_inv, SetRel.dom_inv]
-
-omit [Fintype κ] [LinearOrder κ] in
-theorem integrityViol_eq_zero_iff :
-    R.integrityViol = 0 ↔ Relator.RightUnique (· ~[R.rel] ·) := by
-  simp only [integrityViol, Finset.card_eq_zero, Finset.filter_eq_empty_iff, Finset.mem_univ,
-    forall_const, not_lt, Finset.card_le_one, Finset.mem_filter, and_imp, Prod.forall,
-    Prod.mk.injEq]
-  exact ⟨fun h i j j' hj hj' ↦ (h i j hj rfl i j' hj' rfl).2,
-    fun h i a j hj ha a' j' hj' ha' ↦ by subst ha ha'; exact ⟨rfl, h hj hj'⟩⟩
-
-omit [Fintype ι] [LinearOrder ι] in
-theorem uniformityViol_eq_zero_iff :
-    R.uniformityViol = 0 ↔ Relator.LeftUnique (· ~[R.rel] ·) := by
-  rw [uniformityViol, integrityViol_eq_zero_iff, rel_inv]
-  exact ⟨fun h _ _ _ h₁ h₂ ↦ h h₁ h₂, fun h _ _ _ h₁ h₂ ↦ h h₁ h₂⟩
-
-omit [Fintype ι] [Fintype κ] in
-theorem linearityViol_eq_zero_iff :
-    R.linearityViol = 0 ↔ ∀ ⦃i j⦄, i ~[R.rel] j → ∀ ⦃i' j'⦄, i' ~[R.rel] j' → i < i' → j ≤ j' := by
-  simp only [linearityViol, Finset.card_eq_zero, Finset.filter_eq_empty_iff, Finset.mem_product,
-    and_imp, not_and, not_lt, Prod.forall, mem_rel]
-  exact ⟨fun h i j hij i' j' hij' ↦ h i j i' j' hij hij', fun h i j i' j' hij hij' ↦ h hij hij'⟩
-
-omit [Fintype κ] [LinearOrder κ] in
-theorem contigIViol_eq_zero_iff : R.contigIViol = 0 ↔ R.rel.dom.OrdConnected := by
-  rw [Set.ordConnected_def, dom_rel, contigIViol, ite_eq_left_iff]
-  simp only [one_ne_zero, imp_false, not_not, Finset.mem_coe, Set.subset_def, Set.mem_Icc, and_imp]
-
-omit [Fintype ι] [LinearOrder ι] in
-theorem contigOViol_eq_zero_iff : R.contigOViol = 0 ↔ R.rel.cod.OrdConnected := by
-  rw [contigOViol, contigIViol_eq_zero_iff, rel_inv, SetRel.dom_inv]
-
+variable (R) in
 theorem anchorLViol_eq_zero_iff :
     R.anchorLViol = 0 ↔ ∀ ⦃i j⦄, IsBot i → IsBot j → i ~[R.rel] j := by
   rw [anchorLViol, ite_eq_left_iff]
   simp only [one_ne_zero, imp_false, not_not]
   exact ⟨fun h i j ↦ h i j, fun h i j ↦ @h i j⟩
 
+variable (R) in
 theorem anchorRViol_eq_zero_iff :
     R.anchorRViol = 0 ↔ ∀ ⦃i j⦄, IsTop i → IsTop j → i ~[R.rel] j := by
   rw [anchorRViol, ite_eq_left_iff]
   simp only [one_ne_zero, imp_false, not_not]
   exact ⟨fun h i j ↦ h i j, fun h i j ↦ @h i j⟩
-
-variable {R}
-
-omit [Fintype κ] [LinearOrder κ] in
-/-- A relation that deletes nothing skips nothing. -/
-theorem contigIViol_eq_zero_of_maxViol_eq_zero (h : R.maxViol = 0) : R.contigIViol = 0 :=
-  R.contigIViol_eq_zero_iff.2 <| R.maxViol_eq_zero_iff.1 h ▸ Set.ordConnected_univ
-
-omit [Fintype ι] [LinearOrder ι] in
-/-- A relation that inserts nothing intrudes nowhere. -/
-theorem contigOViol_eq_zero_of_depViol_eq_zero (h : R.depViol = 0) : R.contigOViol = 0 :=
-  contigIViol_eq_zero_of_maxViol_eq_zero h
-
-/-! ### Correspondences that are graphs
-
-When `R.rel` is the graph of a map `f` of positions, `R` violates neither MAX nor INTEGRITY, DEP
-counts the positions off the range of `f`, and UNIFORMITY and LINEARITY hold when `f` is injective
-and monotone. -/
-
-section Graph
-
-variable {f : ι → κ} (hf : R.rel = Function.graph f)
-include hf
-
-omit [Fintype ι] [LinearOrder ι] [Fintype κ] [LinearOrder κ] in
-theorem mem_iff_of_graph {i : ι} {j : κ} : (i, j) ∈ R ↔ f i = j := by
-  rw [← mem_rel, hf, Function.mem_graph]
-
-omit [Fintype κ] [LinearOrder κ] in
-theorem maxViol_eq_zero_of_graph : R.maxViol = 0 :=
-  R.maxViol_eq_zero_iff.2 <| hf ▸ Set.eq_univ_of_forall fun i ↦ ⟨f i, rfl⟩
-
-omit [Fintype ι] [LinearOrder ι] in
-theorem depViol_eq_zero_of_graph (hsurj : Function.Surjective f) : R.depViol = 0 :=
-  R.depViol_eq_zero_iff.2 <| hf ▸ Set.eq_univ_of_forall hsurj
-
-theorem depViolOn_of_graph (P : κ → Prop) [DecidablePred P] :
-    R.depViolOn P = (Finset.univ.filter P \ Finset.univ.image f).card := by
-  rw [depViolOn_eq]
-  congr 2
-  ext j
-  simp [mem_iff_of_graph hf]
-
-omit [Fintype κ] [LinearOrder κ] in
-theorem integrityViol_eq_zero_of_graph : R.integrityViol = 0 :=
-  R.integrityViol_eq_zero_iff.2 <| hf ▸ fun _ _ _ h h' ↦ h.symm.trans h'
-
-omit [Fintype ι] [LinearOrder ι] in
-theorem uniformityViol_eq_zero_of_graph (hinj : Function.Injective f) : R.uniformityViol = 0 :=
-  R.uniformityViol_eq_zero_iff.2 <| hf ▸ fun _ _ _ h h' ↦ hinj (h.trans h'.symm)
-
-omit [Fintype ι] [Fintype κ] in
-theorem linearityViol_eq_zero_of_graph (hmono : Monotone f) : R.linearityViol = 0 :=
-  R.linearityViol_eq_zero_iff.2 <| hf ▸ fun _ _ h _ _ h' hlt ↦ h ▸ h' ▸ hmono hlt.le
-
-omit [Fintype ι] [LinearOrder ι] [Fintype κ] [LinearOrder κ] in
-theorem identViol_eq_zero_iff_of_graph {F : Type*} [DecidableEq F] (s : ι → F) (t : κ → F) :
-    R.identViol s t = 0 ↔ ∀ i, s i = t (f i) := by
-  simp only [identViol, Finset.card_eq_zero, Finset.filter_eq_empty_iff, not_not]
-  refine ⟨fun H i ↦ H ((mem_iff_of_graph hf).2 rfl), ?_⟩
-  rintro H ⟨i, j⟩ hij
-  rw [← (mem_iff_of_graph hf).1 hij]
-  exact H i
-
-end Graph
 
 /-! ### Faithfulness as order isomorphism -/
 
@@ -438,15 +457,6 @@ structure IsFaithful : Prop where
   integrity : R.integrityViol = 0
   uniformity : R.uniformityViol = 0
   linearity : R.linearityViol = 0
-
-omit [Fintype κ] [LinearOrder κ] in
-/-- A relation with no MAX or INTEGRITY violation is the graph of a map of positions. -/
-theorem exists_rel_eq_graph (hmax : R.maxViol = 0) (hint : R.integrityViol = 0) :
-    ∃ f : ι → κ, R.rel = Function.graph f := by
-  rw [maxViol_eq_zero_iff] at hmax
-  rw [integrityViol_eq_zero_iff] at hint
-  choose f hf using Set.eq_univ_iff_forall.1 hmax
-  exact ⟨f, Set.ext fun ⟨i, j⟩ ↦ ⟨fun h ↦ hint (hf i) h, fun (h : f i = j) ↦ h ▸ hf i⟩⟩
 
 /-- With no UNIFORMITY or LINEARITY violation either, the map is an order embedding: UNIFORMITY
 rules out collisions and LINEARITY inversions. -/
