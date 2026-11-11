@@ -6,6 +6,7 @@ public import Mathlib.Control.Basic
 public import Mathlib.Control.Functor
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Mode.EffectFree
+public import Linglib.Semantics.Composition.Mode.Pointwise
 
 /-!
 # Bumford and Charlow 2026: effect-driven interpretation
@@ -31,9 +32,9 @@ monad, and, with indeterminacy in between, the state transformer over sets that 
 semantics is built on.
 
 A grammar need not have every meta-mode at every effect (section 3.4). With Structured App
-alone [a closure operator captures the effect of its
-prejacent](##BumfordCharlow2026.combineWithin_ap_closure), and without the Unit modes [it has no
-prejacent that lacks the effect](##BumfordCharlow2026.combineWithin_ne_unit_closure).
+alone, the pointwise grammar, [a closure operator captures the effect of its
+prejacent](##BumfordCharlow2026.combineWithin_pointwise_closure), and without the Unit modes
+[it has no prejacent that lacks the effect](##BumfordCharlow2026.combineWithin_ne_unit_closure).
 
 A focused phrase evokes alternatives to its value, and an operator such as *only* associates
 with that effect as existential closure does with indeterminacy: it captures the alternatives of
@@ -628,12 +629,13 @@ theorem length_combine_quantifiers :
 
 -- section 3.4: with Structured App alone, the pointwise grammars of Figures 5 and 6, two
 -- indefinites combine in one way
-theorem combineWithin_ap : combineWithin (fun k _ ↦ k = .ap) (S e) (S (e ⇒ T)) =
-    [(.ap BA, S T)] := by decide
+theorem combineWithin_pointwise :
+    combineWithin (MetaMode.pointwise fun _ ↦ True) (S e) (S (e ⇒ T)) = [(.ap BA, S T)] := by
+  decide
 
 -- section 3.4: and a closure operator captures the effect of its prejacent
-theorem combineWithin_ap_closure : combineWithin (fun k _ ↦ k = .ap) (S T ⇒ T) (S T) =
-    [(FA, T)] := by decide
+theorem combineWithin_pointwise_closure :
+    combineWithin (MetaMode.pointwise fun _ ↦ True) (S T ⇒ T) (S T) = [(FA, T)] := by decide
 
 -- section 3.4: with the maps alone a closure operator associates with one layer, the inner
 theorem combineWithin_map_closure : combineWithin (fun k _ ↦ k = .map) (S T ⇒ T) (S (S T)) =
