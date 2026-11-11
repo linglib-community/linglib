@@ -267,7 +267,8 @@ theorem exists_finite_realize [L.IsMonadic] [Finite L.Symbols] {φ : L.Sentence}
   have hfin : Finite (L.Relations 1) :=
     Finite.of_injective (fun R ↦ (Sum.inr ⟨1, R⟩ : L.Symbols)) fun R S e ↦ by simpa using e
   choose T hTsub hTcard using fun S : L.Relations 1 → Prop ↦
-    Set.exists_subset_encard_eq (min_le_right (φ.qr : ℕ∞) (L.unaryType ⁻¹' {S} : Set M).encard)
+    Set.exists_subset_encard_eq
+      (min_le_right (φ.quantifierRank : ℕ∞) (L.unaryType ⁻¹' {S} : Set M).encard)
   let U : L.Substructure M := ⟨⋃ S, T S, fun f ↦ isEmptyElim f⟩
   have htype (x : U) : L.unaryType x = L.unaryType (x : M) := funext fun R ↦ by
     change Structure.RelMap R (fun i ↦ ((![x] i : U) : M)) = Structure.RelMap R ![(x : M)]
@@ -282,7 +283,8 @@ theorem exists_finite_realize [L.IsMonadic] [Finite L.Symbols] {φ : L.Sentence}
       have : S' = S := (hmem hS').symm.trans ((htype y).symm.trans hy)
       exact this ▸ hS'
     · exact fun hx ↦ ⟨⟨x, Set.mem_iUnion.2 ⟨S, hx⟩⟩, (htype _).trans (hmem hx), rfl⟩
-  have hequiv : M ≅[L, φ.qr] U := elementarilyEquivalentUpTo_iff_min_encard_eq.2 fun S ↦ by
+  have hequiv : M ≅[L, φ.quantifierRank] U :=
+      elementarilyEquivalentUpTo_iff_min_encard_eq.2 fun S ↦ by
     rw [← Subtype.val_injective.encard_image (L.unaryType ⁻¹' {S} : Set U), hfib, hTcard]
     simp
   have hU : (U : Set M).Finite := Set.finite_iUnion fun S ↦

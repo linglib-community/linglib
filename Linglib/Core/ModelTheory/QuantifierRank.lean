@@ -6,18 +6,18 @@ public import Mathlib.ModelTheory.Complexity
 # Quantifier rank of first-order formulas
 
 `[UPSTREAM]` candidate. mathlib's `ModelTheory` has formula *complexity classes*
-(`IsQF`, `IsPrenex`, `IsUniversal`) but no quantifier-*rank* function. `qr φ` is the
+(`IsQF`, `IsPrenex`, `IsUniversal`) but no quantifier-*rank* function. `quantifierRank φ` is the
 maximal nesting depth of quantifiers in `φ` ([libkin-2004] Definition 3.8; [hodges-1993]
 §3.3), the measure indexing Ehrenfeucht–Fraïssé games and `≡ₙ` n-equivalence. It is bounded by
 the number of quantifiers, and the gap can be exponential.
 
 mathlib has the `∞`-rank apparatus (`ElementarilyEquivalent`, the unbounded
-back-and-forth `IsExtensionPair`); `qr` is the bottom of the missing finite-rank
+back-and-forth `IsExtensionPair`); `quantifierRank` is the bottom of the missing finite-rank
 layer.
 
 ## Main definitions
 
-* `FirstOrder.Language.BoundedFormula.qr`: quantifier rank (max quantifier nesting).
+* `FirstOrder.Language.BoundedFormula.quantifierRank`: quantifier rank (max quantifier nesting).
 
 ## References
 
@@ -33,81 +33,97 @@ variable {L : Language} {α : Type*} {n : ℕ}
 
 /-- The quantifier rank of a formula is the maximal nesting depth of its quantifiers. Atomic
 formulas have rank `0`, an implication has the larger rank of its two sides, and `all` adds one. -/
-def qr : ∀ {n : ℕ}, L.BoundedFormula α n → ℕ
+def quantifierRank : ∀ {n : ℕ}, L.BoundedFormula α n → ℕ
   | _, .falsum => 0
   | _, .equal _ _ => 0
   | _, .rel _ _ => 0
-  | _, .imp f₁ f₂ => max (qr f₁) (qr f₂)
-  | _, .all f => qr f + 1
+  | _, .imp f₁ f₂ => max (quantifierRank f₁) (quantifierRank f₂)
+  | _, .all f => quantifierRank f + 1
 
-@[simp] theorem qr_falsum : (falsum : L.BoundedFormula α n).qr = 0 := rfl
+variable (φ ψ : L.BoundedFormula α n)
 
-@[simp] theorem qr_bot : (⊥ : L.BoundedFormula α n).qr = 0 := rfl
+@[simp] theorem quantifierRank_falsum : (falsum : L.BoundedFormula α n).quantifierRank = 0 := rfl
 
-@[simp] theorem qr_equal (t₁ t₂ : L.Term (α ⊕ (Fin n))) :
-    (equal t₁ t₂ : L.BoundedFormula α n).qr = 0 := rfl
+@[simp] theorem quantifierRank_bot : (⊥ : L.BoundedFormula α n).quantifierRank = 0 := rfl
 
-@[simp] theorem qr_rel {l : ℕ} (R : L.Relations l) (ts : Fin l → L.Term (α ⊕ (Fin n))) :
-    (rel R ts).qr = 0 := rfl
+@[simp] theorem quantifierRank_equal (t₁ t₂ : L.Term (α ⊕ (Fin n))) :
+    (equal t₁ t₂ : L.BoundedFormula α n).quantifierRank = 0 := rfl
 
-@[simp] theorem qr_imp (φ ψ : L.BoundedFormula α n) : (φ.imp ψ).qr = max φ.qr ψ.qr := rfl
+@[simp] theorem quantifierRank_rel {l : ℕ} (R : L.Relations l)
+    (ts : Fin l → L.Term (α ⊕ (Fin n))) : (rel R ts).quantifierRank = 0 := rfl
 
-@[simp] theorem qr_all (φ : L.BoundedFormula α (n + 1)) : φ.all.qr = φ.qr + 1 := rfl
+@[simp] theorem quantifierRank_imp :
+    (φ.imp ψ).quantifierRank = max φ.quantifierRank ψ.quantifierRank := rfl
 
-@[simp] theorem qr_not (φ : L.BoundedFormula α n) : φ.not.qr = φ.qr := by
+@[simp] theorem quantifierRank_all (φ : L.BoundedFormula α (n + 1)) :
+    φ.all.quantifierRank = φ.quantifierRank + 1 := rfl
+
+@[simp] theorem quantifierRank_not : φ.not.quantifierRank = φ.quantifierRank := by
   simp [BoundedFormula.not]
 
-@[simp] theorem qr_top : (⊤ : L.BoundedFormula α n).qr = 0 := by
+@[simp] theorem quantifierRank_top : (⊤ : L.BoundedFormula α n).quantifierRank = 0 := by
   simp [Top.top]
 
-@[simp] theorem qr_inf (φ ψ : L.BoundedFormula α n) : (φ ⊓ ψ).qr = max φ.qr ψ.qr := by
-  change ((φ.imp ψ.not).not).qr = _; simp
+@[simp] theorem quantifierRank_inf :
+    (φ ⊓ ψ).quantifierRank = max φ.quantifierRank ψ.quantifierRank := by
+  change ((φ.imp ψ.not).not).quantifierRank = _; simp
 
-@[simp] theorem qr_sup (φ ψ : L.BoundedFormula α n) : (φ ⊔ ψ).qr = max φ.qr ψ.qr := by
-  change (φ.not.imp ψ).qr = _; simp
+@[simp] theorem quantifierRank_sup :
+    (φ ⊔ ψ).quantifierRank = max φ.quantifierRank ψ.quantifierRank := by
+  change (φ.not.imp ψ).quantifierRank = _; simp
 
-@[simp] theorem qr_iff (φ ψ : L.BoundedFormula α n) : (φ.iff ψ).qr = max φ.qr ψ.qr := by
-  simp only [BoundedFormula.iff, qr_inf, qr_imp, max_comm ψ.qr φ.qr, max_self]
+@[simp] theorem quantifierRank_iff :
+    (φ.iff ψ).quantifierRank = max φ.quantifierRank ψ.quantifierRank := by
+  simp only [BoundedFormula.iff, quantifierRank_inf, quantifierRank_imp,
+    max_comm ψ.quantifierRank φ.quantifierRank, max_self]
 
-@[simp] theorem qr_ex (φ : L.BoundedFormula α (n + 1)) : φ.ex.qr = φ.qr + 1 := by
+@[simp] theorem quantifierRank_ex (φ : L.BoundedFormula α (n + 1)) :
+    φ.ex.quantifierRank = φ.quantifierRank + 1 := by
   simp [BoundedFormula.ex]
 
-@[simp] theorem qr_relabelEquiv {β : Type*} (g : α ≃ β) :
-    ∀ {n : ℕ} (φ : L.BoundedFormula α n), (relabelEquiv g φ).qr = φ.qr
+@[simp] theorem quantifierRank_relabelEquiv {β : Type*} (g : α ≃ β) :
+    ∀ {n : ℕ} (φ : L.BoundedFormula α n), (relabelEquiv g φ).quantifierRank = φ.quantifierRank
   | _, .falsum => rfl
   | _, .equal _ _ => rfl
   | _, .rel _ _ => rfl
   | _, .imp f₁ f₂ => by
       have : relabelEquiv g (f₁.imp f₂) = (relabelEquiv g f₁).imp (relabelEquiv g f₂) := rfl
-      rw [this, qr_imp, qr_imp, qr_relabelEquiv g f₁, qr_relabelEquiv g f₂]
+      rw [this, quantifierRank_imp, quantifierRank_imp, quantifierRank_relabelEquiv g f₁,
+        quantifierRank_relabelEquiv g f₂]
   | _, .all f => by
       have : relabelEquiv g f.all = (relabelEquiv g f).all := rfl
-      rw [this, qr_all, qr_all, qr_relabelEquiv g f]
+      rw [this, quantifierRank_all, quantifierRank_all, quantifierRank_relabelEquiv g f]
 
-private theorem qr_foldr_le {f : L.BoundedFormula α n → L.BoundedFormula α n →
-    L.BoundedFormula α n} {e : L.BoundedFormula α n} {k : ℕ}
-    (hf : ∀ φ ψ, (f φ ψ).qr = max φ.qr ψ.qr) (he : e.qr = 0) :
-    ∀ {l : List (L.BoundedFormula α n)}, (∀ φ ∈ l, φ.qr ≤ k) → (l.foldr f e).qr ≤ k
+variable {φ} {k : ℕ}
+
+private theorem quantifierRank_foldr_le
+    {f : L.BoundedFormula α n → L.BoundedFormula α n → L.BoundedFormula α n}
+    {e : L.BoundedFormula α n}
+    (hf : ∀ φ ψ, (f φ ψ).quantifierRank = max φ.quantifierRank ψ.quantifierRank)
+    (he : e.quantifierRank = 0) : ∀ {l : List (L.BoundedFormula α n)},
+      (∀ φ ∈ l, φ.quantifierRank ≤ k) → (l.foldr f e).quantifierRank ≤ k
   | [], _ => he ▸ k.zero_le
   | φ :: l, h => by
       rw [List.foldr_cons, hf, max_le_iff]
-      exact ⟨h φ List.mem_cons_self, qr_foldr_le hf he fun ψ hψ => h ψ (.tail _ hψ)⟩
+      exact ⟨h φ List.mem_cons_self, quantifierRank_foldr_le hf he fun ψ hψ ↦ h ψ (.tail _ hψ)⟩
 
-theorem qr_iInf_le {β : Type*} [Finite β] {f : β → L.BoundedFormula α n} {k : ℕ}
-    (h : ∀ b, (f b).qr ≤ k) : (iInf f).qr ≤ k :=
-  qr_foldr_le qr_inf qr_top fun φ hφ => by obtain ⟨b, -, rfl⟩ := List.mem_map.1 hφ; exact h b
+theorem quantifierRank_iInf_le {β : Type*} [Finite β] {f : β → L.BoundedFormula α n}
+    (h : ∀ b, (f b).quantifierRank ≤ k) : (iInf f).quantifierRank ≤ k :=
+  quantifierRank_foldr_le quantifierRank_inf quantifierRank_top fun φ hφ ↦ by
+    obtain ⟨b, -, rfl⟩ := List.mem_map.1 hφ; exact h b
 
-theorem qr_iSup_le {β : Type*} [Finite β] {f : β → L.BoundedFormula α n} {k : ℕ}
-    (h : ∀ b, (f b).qr ≤ k) : (iSup f).qr ≤ k :=
-  qr_foldr_le qr_sup qr_bot fun φ hφ => by obtain ⟨b, -, rfl⟩ := List.mem_map.1 hφ; exact h b
+theorem quantifierRank_iSup_le {β : Type*} [Finite β] {f : β → L.BoundedFormula α n}
+    (h : ∀ b, (f b).quantifierRank ≤ k) : (iSup f).quantifierRank ≤ k :=
+  quantifierRank_foldr_le quantifierRank_sup quantifierRank_bot fun φ hφ ↦ by
+    obtain ⟨b, -, rfl⟩ := List.mem_map.1 hφ; exact h b
 
-theorem IsAtomic.qr_eq_zero {φ : L.BoundedFormula α n} (h : φ.IsAtomic) : φ.qr = 0 := by
+theorem IsAtomic.quantifierRank_eq_zero (h : φ.IsAtomic) : φ.quantifierRank = 0 := by
   cases h <;> rfl
 
-theorem IsQF.qr_eq_zero {φ : L.BoundedFormula α n} (h : φ.IsQF) : φ.qr = 0 := by
+theorem IsQF.quantifierRank_eq_zero (h : φ.IsQF) : φ.quantifierRank = 0 := by
   induction h with
   | falsum => rfl
-  | of_isAtomic h => exact h.qr_eq_zero
+  | of_isAtomic h => exact h.quantifierRank_eq_zero
   | imp _ _ ih₁ ih₂ => simp [ih₁, ih₂]
 
 end FirstOrder.Language.BoundedFormula

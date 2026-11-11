@@ -77,7 +77,7 @@ variable (L : Language.{u, v}) {M : Type w} {N : Type w'} {P : Type w''}
 same sentences of quantifier rank `≤ n`. -/
 def ElementarilyEquivalentUpTo (n : ℕ) (M : Type w) (N : Type w') [L.Structure M]
     [L.Structure N] : Prop :=
-  ∀ φ : L.Sentence, φ.qr ≤ n → (M ⊨ φ ↔ N ⊨ φ)
+  ∀ φ : L.Sentence, φ.quantifierRank ≤ n → (M ⊨ φ ↔ N ⊨ φ)
 
 @[inherit_doc FirstOrder.Language.ElementarilyEquivalentUpTo]
 scoped[FirstOrder] notation:25 A " ≅[" L ", " n "] " B:50 =>
@@ -108,7 +108,7 @@ end ElementarilyEquivalentUpTo
 theorem elementarilyEquivalent_iff_forall_elementarilyEquivalentUpTo :
     M ≅[L] N ↔ ∀ n, M ≅[L, n] N :=
   ⟨fun h _ φ _ ↦ h.realize_sentence φ,
-    fun h ↦ elementarilyEquivalent_iff.2 fun φ ↦ h φ.qr φ le_rfl⟩
+    fun h ↦ elementarilyEquivalent_iff.2 fun φ ↦ h φ.quantifierRank φ le_rfl⟩
 
 /-- **The Ehrenfeucht–Fraïssé method.** If for every rank `n` some structure in `K` with
 property `P` is `n`-equivalent to one in `K` without it, then `P` is not definable within `K`,
@@ -116,7 +116,7 @@ since a defining sentence would be fooled at its own quantifier rank. -/
 theorem not_foDefinable_of_elementarilyEquivalentUpTo {K P : Set (Bundled.{w} L.Structure)}
     (h : ∀ n, ∃ M ∈ K, ∃ N ∈ K, (M ≅[L, n] N) ∧ M ∈ P ∧ N ∉ P) : ¬ L.FODefinable K P := by
   rintro ⟨φ, hφ⟩
-  obtain ⟨M, hM, N, hN, hMN, hP, hnP⟩ := h φ.qr
+  obtain ⟨M, hM, N, hN, hMN, hP, hnP⟩ := h φ.quantifierRank
   exact hnP ((hφ N hN).2 ((hMN φ le_rfl).1 ((hφ M hM).1 hP)))
 
 /-! ### The Ehrenfeucht–Fraïssé game -/
@@ -180,15 +180,15 @@ theorem mono (hkl : k ≤ l) (h : L.DuplicatorWins l v w) : L.DuplicatorWins k v
 `≤ k`. Atomic formulas agree by the atomic condition, and quantified ones by the *back* and
 *forth* moves. -/
 theorem realize_iff : ∀ {n} {φ : L.BoundedFormula Empty n} {k} {v : Fin n → M} {w : Fin n → N},
-    L.DuplicatorWins k v w → φ.qr ≤ k → (φ.Realize default v ↔ φ.Realize default w)
+    L.DuplicatorWins k v w → φ.quantifierRank ≤ k → (φ.Realize default v ↔ φ.Realize default w)
   | _, .falsum, _, _, _, _, _ => Iff.rfl
   | _, .equal _ _, _, _, _, h, _ => h.realize_iff_of_isAtomic (.equal _ _)
   | _, .rel _ _, _, _, _, h, _ => h.realize_iff_of_isAtomic (.rel _ _)
   | _, .imp _ _, _, _, _, h, hφ => by
-      rw [qr_imp, max_le_iff] at hφ
+      rw [quantifierRank_imp, max_le_iff] at hφ
       exact imp_congr (realize_iff h hφ.1) (realize_iff h hφ.2)
   | _, .all _, _ + 1, _, _, h, hφ => by
-      rw [qr_all, Nat.add_le_add_iff_right] at hφ
+      rw [quantifierRank_all, Nat.add_le_add_iff_right] at hφ
       simp only [realize_all]
       exact ⟨fun hv b ↦ (h.back b).elim fun a hab ↦ (realize_iff hab hφ).1 (hv a),
         fun hw a ↦ (h.forth a).elim fun b hab ↦ (realize_iff hab hφ).2 (hw b)⟩
@@ -338,8 +338,10 @@ theorem realize_atomicType_iff_duplicatorWins [L.IsRelational] (v : Fin n → M)
   exact ⟨fun h φ hφ ↦ by obtain ⟨i, rfl⟩ := hφ.exists_eq_atom; exact (h i).symm,
     fun h i ↦ (h _ (atom_isAtomic i)).symm⟩
 
-theorem qr_atomicType (S : Set (L.AtomIndex n)) : (L.atomicType S).qr = 0 :=
-  Nat.le_zero.1 <| qr_iInf_le fun i ↦ by split_ifs <;> simp [(atom_isAtomic i).qr_eq_zero]
+theorem quantifierRank_atomicType (S : Set (L.AtomIndex n)) :
+    (L.atomicType S).quantifierRank = 0 :=
+  Nat.le_zero.1 <| quantifierRank_iInf_le fun i ↦ by
+    split_ifs <;> simp [(atom_isAtomic i).quantifierRank_eq_zero]
 
 omit [Finite L.Symbols] in
 theorem realize_gameNormal : (L.gameNormal θ₀ X).Realize default w ↔ θ₀.Realize default w ∧
@@ -349,11 +351,12 @@ theorem realize_gameNormal : (L.gameNormal θ₀ X).Realize default w ↔ θ₀.
     Subtype.forall, Subtype.exists, and_assoc, exists_prop]
 
 omit [Finite L.Symbols] in
-theorem qr_gameNormal_le (h₀ : θ₀.qr ≤ k + 1) (hX : ∀ θ ∈ X, θ.qr ≤ k) :
-    (L.gameNormal θ₀ X).qr ≤ k + 1 := by
-  simp only [gameNormal, qr_inf, qr_all, max_le_iff]
-  exact ⟨⟨h₀, qr_iInf_le fun θ ↦ by rw [qr_ex]; exact Nat.succ_le_succ (hX _ θ.2)⟩,
-    Nat.succ_le_succ (qr_iSup_le fun θ ↦ hX _ θ.2)⟩
+theorem quantifierRank_gameNormal_le (h₀ : θ₀.quantifierRank ≤ k + 1)
+    (hX : ∀ θ ∈ X, θ.quantifierRank ≤ k) : (L.gameNormal θ₀ X).quantifierRank ≤ k + 1 := by
+  simp only [gameNormal, quantifierRank_inf, quantifierRank_all, max_le_iff]
+  exact ⟨⟨h₀, quantifierRank_iInf_le fun θ ↦ by
+      rw [quantifierRank_ex]; exact Nat.succ_le_succ (hX _ θ.2)⟩,
+    Nat.succ_le_succ (quantifierRank_iSup_le fun θ ↦ hX _ θ.2)⟩
 
 theorem mem_hintikkaSet_zero : θ ∈ L.hintikkaSet 0 n ↔ ∃ S, L.atomicType S = θ := by
   simp [hintikkaSet]
@@ -367,23 +370,23 @@ theorem mem_hintikkaExtensions {θ : L.BoundedFormula Empty (n + 1)} :
       θ ∈ L.hintikkaSet k (n + 1) ∧ ∃ a, θ.Realize default (Fin.snoc v a) := by
   classical exact Finset.mem_filter
 
-theorem qr_le_of_mem_hintikkaSet :
-    ∀ {k n} {θ : L.BoundedFormula Empty n}, θ ∈ L.hintikkaSet k n → θ.qr ≤ k
+theorem quantifierRank_le_of_mem_hintikkaSet :
+    ∀ {k n} {θ : L.BoundedFormula Empty n}, θ ∈ L.hintikkaSet k n → θ.quantifierRank ≤ k
   | 0, _, _, hθ => by
       obtain ⟨S, rfl⟩ := mem_hintikkaSet_zero.1 hθ
-      exact (qr_atomicType S).le
+      exact (quantifierRank_atomicType S).le
   | k + 1, _, _, hθ => by
       obtain ⟨S, X, hX, rfl⟩ := mem_hintikkaSet_succ.1 hθ
-      exact qr_gameNormal_le ((qr_atomicType S).le.trans (Nat.zero_le _))
-        fun θ hθ ↦ qr_le_of_mem_hintikkaSet (hX hθ)
+      exact quantifierRank_gameNormal_le ((quantifierRank_atomicType S).le.trans (Nat.zero_le _))
+        fun θ hθ ↦ quantifierRank_le_of_mem_hintikkaSet (hX hθ)
 
 theorem hintikka_mem : ∀ (k : ℕ) {n} (v : Fin n → M), L.hintikka k v ∈ L.hintikkaSet k n
   | 0, _, _ => mem_hintikkaSet_zero.2 ⟨_, rfl⟩
   | _ + 1, _, _ =>
       mem_hintikkaSet_succ.2 ⟨_, _, fun _ h ↦ (mem_hintikkaExtensions.1 h).1, rfl⟩
 
-theorem qr_hintikka_le (k : ℕ) (v : Fin n → M) : (L.hintikka k v).qr ≤ k :=
-  qr_le_of_mem_hintikkaSet (hintikka_mem k v)
+theorem quantifierRank_hintikka_le (k : ℕ) (v : Fin n → M) : (L.hintikka k v).quantifierRank ≤ k :=
+  quantifierRank_le_of_mem_hintikkaSet (hintikka_mem k v)
 
 theorem realize_hintikka_self : ∀ (k : ℕ) {n} (v : Fin n → M), (L.hintikka k v).Realize default v
   | 0, _, _ => realize_atomicType.2 rfl
@@ -442,9 +445,10 @@ decreasing_by all_goals omega
 at most `k` ([libkin-2004] Theorem 3.18). -/
 theorem duplicatorWins_iff_realize_iff (v : Fin n → M) (w : Fin n → N) :
     L.DuplicatorWins k v w ↔
-      ∀ φ : L.BoundedFormula Empty n, φ.qr ≤ k → (φ.Realize default v ↔ φ.Realize default w) :=
+      ∀ φ : L.BoundedFormula Empty n, φ.quantifierRank ≤ k →
+        (φ.Realize default v ↔ φ.Realize default w) :=
   ⟨fun h _ hφ ↦ h.realize_iff hφ, fun h ↦ (realize_hintikka_iff v w).1
-    ((h _ (qr_hintikka_le k v)).1 (realize_hintikka_self k v))⟩
+    ((h _ (quantifierRank_hintikka_le k v)).1 (realize_hintikka_self k v))⟩
 
 theorem elementarilyEquivalentUpTo_iff_duplicatorWins :
     (M ≅[L, k] N) ↔ L.DuplicatorWins k (default : Fin 0 → M) (default : Fin 0 → N) :=
@@ -456,7 +460,7 @@ for some `k` ([libkin-2004] Corollary 3.17). -/
 theorem foDefinable_iff_exists_elementarilyEquivalentUpTo {K P : Set (Bundled.{w} L.Structure)} :
     L.FODefinable K P ↔ ∃ k, ∀ M ∈ K, ∀ N ∈ K, (M ≅[L, k] N) → M ∈ P → N ∈ P := by
   classical
-  refine ⟨fun ⟨φ, hφ⟩ ↦ ⟨φ.qr, fun M hM N hN h hP ↦ (hφ N hN).2 ((h φ le_rfl).1
+  refine ⟨fun ⟨φ, hφ⟩ ↦ ⟨φ.quantifierRank, fun M hM N hN h hP ↦ (hφ N hN).2 ((h φ le_rfl).1
     ((hφ M hM).1 hP))⟩, fun ⟨k, hk⟩ ↦ ⟨iSup fun θ : (L.hintikkaSet k 0).filter
       (fun θ ↦ ∃ N ∈ K, N ∈ P ∧ θ.Realize (default : Empty → N) default) ↦ θ.1,
         fun M hM ↦ ?_⟩⟩

@@ -20,7 +20,7 @@ of quantifier rank `≤ k`.
 ## Main definitions
 
 * `FirstOrder.Language.MonFormula L n`: formulas of `FO(Mon)` with `n` free variables, with
-  satisfaction `MonFormula.Realize` and quantifier rank `MonFormula.qr`.
+  satisfaction `MonFormula.Realize` and quantifier rank `MonFormula.quantifierRank`.
 * `FirstOrder.Language.MonDefinable K P`: some sentence of `FO(Mon)` defines `P` within `K`.
 * `FirstOrder.Language.DuplicatorWinsBijective`: duplicator wins the `k`-round bijective game.
 
@@ -79,12 +79,12 @@ def Realize : ∀ {n}, L.MonFormula n → (Fin n → M) → Prop
       Bundled.{w} (Language.monadic (Fin _)).Structure)⟧ ∈ Q
 
 /-- The quantifier rank of a formula of `FO(Mon)`, the greatest nesting depth of quantifiers. -/
-def qr : ∀ {n}, L.MonFormula n → ℕ
+def quantifierRank : ∀ {n}, L.MonFormula n → ℕ
   | _, equal _ _ => 0
   | _, rel _ _ => 0
   | _, falsum => 0
-  | _, imp φ ψ => max φ.qr ψ.qr
-  | _, quant _ ψ => (Finset.univ.sup fun i ↦ (ψ i).qr) + 1
+  | _, imp φ ψ => max φ.quantifierRank ψ.quantifierRank
+  | _, quant _ ψ => (Finset.univ.sup fun i ↦ (ψ i).quantifierRank) + 1
 
 end MonFormula
 
@@ -118,17 +118,17 @@ theorem duplicatorWins_zero : ∀ {k n} {v : Fin n → M} {w : Fin n → N},
 /-- A position from which duplicator wins `k` rounds of the bijective game satisfies the same
 formulas of `FO(Mon)` of quantifier rank `≤ k`. -/
 theorem realize_iff : ∀ {n} {φ : L.MonFormula n} {k} {v : Fin n → M} {w : Fin n → N},
-    L.DuplicatorWinsBijective k v w → φ.qr ≤ k → (φ.Realize v ↔ φ.Realize w)
+    L.DuplicatorWinsBijective k v w → φ.quantifierRank ≤ k → (φ.Realize v ↔ φ.Realize w)
   | _, .equal t₁ t₂, _, _, _, h, _ => h.duplicatorWins_zero.realize_iff_of_isAtomic (.equal t₁ t₂)
   | _, .rel R ts, _, _, _, h, _ => h.duplicatorWins_zero.realize_iff_of_isAtomic (.rel R ts)
   | _, .falsum, _, _, _, _, _ => Iff.rfl
   | _, .imp _ _, _, _, _, h, hφ =>
     imp_congr (realize_iff h (le_of_max_le_left hφ)) (realize_iff h (le_of_max_le_right hφ))
-  | _, .quant _ _, 0, _, _, _, hφ => absurd hφ (by simp [MonFormula.qr])
+  | _, .quant _ _, 0, _, _, _, hφ => absurd hφ (by simp [MonFormula.quantifierRank])
   | _, .quant Q ψ, _ + 1, v, w, h, hφ => by
     obtain ⟨-, g, hg⟩ := h
-    have hψ (i) : (ψ i).qr ≤ _ :=
-      (Finset.le_sup (f := fun i ↦ (ψ i).qr) (Finset.mem_univ i)).trans
+    have hψ (i) : (ψ i).quantifierRank ≤ _ :=
+      (Finset.le_sup (f := fun i ↦ (ψ i).quantifierRank) (Finset.mem_univ i)).trans
         (Nat.le_of_succ_le_succ hφ)
     refine Q.is_equiv_invariant ⟨monadic.structureEquiv
       (P := fun i a ↦ (ψ i).Realize (Fin.snoc v a))
@@ -144,7 +144,7 @@ theorem not_monDefinable_of_duplicatorWinsBijective {K P : Set (Bundled.{w} L.St
     (h : ∀ k, ∃ M ∈ K, ∃ N ∈ K, L.DuplicatorWinsBijective k (default : Fin 0 → M)
       (default : Fin 0 → N) ∧ M ∈ P ∧ N ∉ P) : ¬ L.MonDefinable K P := by
   rintro ⟨φ, hφ⟩
-  obtain ⟨M, hM, N, hN, hMN, hP, hnP⟩ := h φ.qr
+  obtain ⟨M, hM, N, hN, hMN, hP, hnP⟩ := h φ.quantifierRank
   exact hnP ((hφ N hN).2 ((hMN.realize_iff le_rfl).1 ((hφ M hM).1 hP)))
 
 /-! ### Successor graphs of permutations
