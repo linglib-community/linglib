@@ -358,6 +358,23 @@ example :
   Step.noComplexityLoss (step := .em .left theAppleLinearized) (W := 0) (by simp [Step.Admissible])
     (by decide) (by simp only [Step.items, Multiset.mem_singleton, forall_eq]; decide)
 
+private def admTok (i : Nat) : LexicalItem.Token := ⟨.of .N [], i⟩
+
+/-- Raising the item a derivation has just merged is admissible, so `mergeOpList_initial` applies
+    to it. -/
+example :
+    (Derivation.mk (admTok 0) [Step.em .left (admTok 1), Step.im (admTok 1)]).Admissible := by
+  have hne : merge ↑(admTok 1) ↑(admTok 0) ≠ (↑(admTok 1) : SyntacticObject) := fun h ↦ by
+    have := congrArg (fun s : SyntacticObject ↦ s.val.numNodes) h
+    simp at this
+  simp only [Derivation.Admissible, Step.AdmissibleList, Step.Admissible, Step.itemsList_cons,
+    Step.itemsList_nil, Step.items, Step.apply_em, add_zero, Multiset.notMem_zero,
+    IsEmpty.forall_iff, implies_true, and_true, true_and, ne_eq,
+    LinearizedSyntacticObject.toSyntacticObject_leaf, hne, not_false_eq_true]
+  refine ⟨rfl, ?_⟩
+  rw [terms_merge, Multiset.count_cons_of_ne hne.symm]
+  simp [admTok]
+
 private theorem admissibleCuts_theApple : admissibleCuts theApple.val =
     {({theD.val, appleN.val}, UnorderedTree.leaf Vertex.bare),
       ({theD.val}, UnorderedTree.node Vertex.bare {appleN.val}),

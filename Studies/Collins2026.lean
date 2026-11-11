@@ -13,6 +13,7 @@ public import Linglib.Semantics.Composition.PredicateAbstraction
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Syntax.Minimalist.Copy.Cut
 public import Linglib.Syntax.Minimalist.Workspace.Basic
+public import Linglib.Syntax.Minimalist.Workspace.Coproduct.TraceConservation
 
 /-!
 # Collins (2026): Reconstruction and the New Minimalism

@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Computability.Edge
-public import Linglib.Syntax.Minimalist.Workspace.Merge.SyntacticObject
+public import Linglib.Syntax.Minimalist.Workspace.Basic
 
 /-!
 # Derivations
@@ -15,17 +15,16 @@ public import Linglib.Syntax.Minimalist.Workspace.Merge.SyntacticObject
 An ordered derivation is an initial syntactic object with a sequence of steps. External Merge adds
 an item built in its own workspace, and Internal Merge raises a mover, re-merging it with the
 current object in which its occurrences are replaced by the trace of its head; Internal Merge also
-comes in two stages, `extract` and `remerge`, through a stack of copies. An admissible derivation is
-the iterated algebraic Merge on the workspace of its initial object and its items. The side on which
-a step places its daughter, and the order of an item's daughters, are linearization data that only
-externalization reads.
+comes in two stages, `extract` and `remerge`, through a stack of copies. The side on which a step
+places its daughter, and the order of an item's daughters, are linearization data that only
+externalization reads. That an admissible derivation is the iterated algebraic Merge on its
+workspace is proved in `Workspace/Derivation.lean`.
 
 ## Main definitions
 
-* `Minimalist.Step`, `Step.apply`, `Step.run`, `Step.mover?`, `Step.IsMerge`, `Step.mergeOp`,
-  `Step.Admissible`
+* `Minimalist.Step`, `Step.apply`, `Step.run`, `Step.mover?`, `Step.IsMerge`
 * `Minimalist.Derivation`, `Derivation.Cfg`, `Derivation.run`, `final`, `stageAt`, `movedItems`,
-  `mover?`, `take`, `append`, `leftward`, `items`, `lexTokens`, `Admissible`
+  `mover?`, `take`, `append`, `leftward`, `items`, `lexTokens`
 * `Minimalist.Derivation.Cfg.yield`: the tokens a configuration pronounces.
 * `Minimalist.Step.map`, `Minimalist.Derivation.map`: relabelling the tokens of a derivation.
 
@@ -33,12 +32,8 @@ externalization reads.
 
 * `Minimalist.Step.apply_em`: the sides build the same object.
 * `Minimalist.Step.run_im`: Internal Merge is an extraction followed by merging back.
-* `Minimalist.Step.mergeOp_workspace`: an admissible step is the algebraic Merge
-  on the workspace.
 * `Minimalist.Step.apply_em_eq_merge`, `Step.apply_im_eq_mergeWith`, `Step.run_remerge_eq_merge`:
   a Merge step is MERGE, Internal Merge leaving the trace of the mover's head.
-* `Minimalist.Derivation.mergeOpList_initial`: an admissible derivation is the
-  iterated algebraic Merge.
 * `Minimalist.Derivation.stageAt_append_of_le`, `movedItems_append`: extension
   keeps the early stages and the movers.
 * `Minimalist.Derivation.stageAt_leftward`, `movedItems_leftward`: the sides
@@ -51,15 +46,9 @@ externalization reads.
 * `node` is noncomputable, so `Step.apply` and `Derivation.final` are too; the movers are read
   off the steps.
 
-## TODO
-
-* Extend `Step.Admissible` and `Step.mergeOp_workspace` to `extract` and `remerge`, the two stages
-  of Internal Merge, on the workspace of the object, its stack and the items still to come.
-
 ## References
 
-* [marcolli-chomsky-berwick-2025], §1.2 (Definition 1.2.6) and §1.4 (Lemma 1.4.1,
-  Proposition 1.4.2)
+* [marcolli-chomsky-berwick-2025], §1.4 (Proposition 1.4.2)
 -/
 
 @[expose] public section
@@ -210,15 +199,7 @@ theorem Step.run_im (mover : SyntacticObject) (side : Edge) (c : Derivation.Cfg 
   rw [Step.apply_im, merge_comm]
   rfl
 
-/-! ### Derivations as workspace Merges
-
-A step merges the current object with the items it introduces, beside a spectator workspace of the
-items still to come. When it matches no accessible term of the spectators, and an Internal Merge
-raises a uniquely accessible proper term, the step is the algebraic Merge on the workspace
-(`Step.mergeOp_workspace`), and a derivation is the iterated algebraic Merge on the workspace of its
-initial object and its items (`mergeOpList_initial`). The two stages of Internal Merge, `extract`
-and `remerge`, act on the stack beside the object, which this workspace leaves out, so they are not
-admissible here. -/
+/-! ### Items -/
 
 /-- The item an External Merge step introduces. -/
 def Step.items : Step → Workspace
@@ -234,86 +215,6 @@ def Step.itemsList (steps : List Step) : Workspace :=
 @[simp] theorem Step.itemsList_cons (step : Step) (steps : List Step) :
     Step.itemsList (step :: steps) = step.items + Step.itemsList steps := by
   simp [Step.itemsList]
-
-/-- A step applies an algebraic Merge at the current object, External Merge with the item or the
-    unit stage followed by External Merge of the remainder with the mover. -/
-noncomputable def Step.mergeOp (step : Step)
-    (current : SyntacticObject) :
-    ConnesKreimer ℤ (UnorderedTree Vertex) →ₗ[ℤ] ConnesKreimer ℤ (UnorderedTree Vertex) :=
-  match step with
-  | .em _ item => Merge.traceMergeOp traceEncoder Vertex.bare current.val item.toSyntacticObject.val
-  | .im mover _ => Merge.traceMergeOp traceEncoder Vertex.bare (deleteAccessible mover current).val
-      mover.val ∘ₗ Merge.traceMergeOpUnit traceEncoder mover.val
-  | .extract mover => Merge.traceMergeOpUnit traceEncoder mover.val
-  | .remerge _ => 0
-
-/-- A step at the current object is admissible beside a spectator workspace `W` when it matches
-    no accessible term of `W`, and an Internal Merge raises a uniquely accessible proper term that
-    is not a trace. -/
-def Step.Admissible (current : SyntacticObject)
-    (W : Workspace) : Step → Prop
-  | .em _ item => ∀ U ∈ W, current ∉ U.terms ∧ ↑item ∉ U.terms
-  | .im mover _ => mover.val.value.isLeft ∧ current.terms.count mover = 1 ∧ current ≠ mover ∧
-      ∀ U ∈ W, deleteAccessible mover current ∉ U.terms ∧ mover ∉ U.terms
-  | .extract _ | .remerge _ => False
-
-/-- An admissible step is the algebraic Merge on the workspace of the current object, the items
-    it introduces, and the spectators. -/
-theorem Step.mergeOp_workspace {step : Step}
-    {current : SyntacticObject} {W : Workspace} (h : step.Admissible current W) :
-    step.mergeOp current (ConnesKreimer.of' (({current} + step.items + W).map Subtype.val))
-      = ConnesKreimer.of' (({step.apply current} + W).map Subtype.val) := by
-  cases step with
-  | em side item =>
-    rw [Step.apply_em, merge_comm]
-    exact traceMergeOp_node_residual traceEncoder current ↑item h
-  | im mover _ =>
-    obtain ⟨hm, hc, hne, hW⟩ := h
-    exact traceMergeOp_im_residual hm hc hne hW
-  | extract _ | remerge _ => exact h.elim
-
-/-- The algebraic Merges of a list of steps from the current object, composed in order. -/
-noncomputable def Step.mergeOpList :
-    List Step → SyntacticObject →
-      ConnesKreimer ℤ (UnorderedTree Vertex) →ₗ[ℤ] ConnesKreimer ℤ (UnorderedTree Vertex)
-  | [], _ => LinearMap.id
-  | step :: steps, current => Step.mergeOpList steps (step.apply current) ∘ₗ step.mergeOp current
-
-/-- Every step of a list is admissible beside the items still to come. -/
-def Step.AdmissibleList : List Step → SyntacticObject → Prop
-  | [], _ => True
-  | step :: steps, current =>
-      step.Admissible current (Step.itemsList steps) ∧
-        Step.AdmissibleList steps (step.apply current)
-
-/-- Admissible steps compose to the algebraic Merge from the workspace of the current object and
-    the items they introduce to the object they build. -/
-theorem Step.mergeOpList_workspace :
-    ∀ (steps : List Step) (current : SyntacticObject), Step.AdmissibleList steps current →
-      Step.mergeOpList steps current
-          (ConnesKreimer.of' (({current} + Step.itemsList steps).map Subtype.val))
-        = ConnesKreimer.of' {(steps.foldl (fun so step => step.apply so) current).val}
-  | [], current, _ => by
-    simp [Step.mergeOpList]
-  | step :: steps, current, ⟨h, hs⟩ => by
-    rw [Step.mergeOpList, LinearMap.comp_apply, Step.itemsList_cons, ← add_assoc,
-      Step.mergeOp_workspace h, List.foldl_cons]
-    exact Step.mergeOpList_workspace steps (step.apply current) hs
-
-/-- Admissible steps leave the stack alone and build what they build on the object. -/
-theorem Step.foldl_run_of_admissibleList :
-    ∀ (steps : List Step) (current : SyntacticObject) (st : List SyntacticObject),
-      Step.AdmissibleList steps current →
-      steps.foldl (fun c step ↦ step.run c) ⟨current, st⟩
-        = ⟨steps.foldl (fun so step ↦ step.apply so) current, st⟩
-  | [], _, _, _ => rfl
-  | step :: steps, current, st, ⟨h, hs⟩ => by
-    have : step.run ⟨current, st⟩ = ⟨step.apply current, st⟩ := by
-      cases step with
-      | em _ _ | im _ _ => rfl
-      | extract _ | remerge _ => exact h.elim
-    rw [List.foldl_cons, List.foldl_cons, this]
-    exact Step.foldl_run_of_admissibleList steps _ st hs
 
 /-! ### Steps as MERGE
 
@@ -509,17 +410,6 @@ theorem lexTokens_take_le (d : Derivation) (n : Nat) : (d.take n).lexTokens ≤ 
   conv_rhs => rw [← d.take_append_drop n, lexTokens_append]
   exact Multiset.le_add_right _ _
 
-/-- A derivation is admissible when each of its steps is, beside the items still to come. -/
-def Admissible (d : Derivation) : Prop := Step.AdmissibleList d.steps d.initial
-
-/-- An admissible derivation is the iterated algebraic Merge on the workspace of its initial object
-    and its items: the composite of its steps' Merges sends that workspace to its final object. -/
-theorem mergeOpList_initial {d : Derivation} (hd : d.Admissible) :
-    Step.mergeOpList d.steps d.initial (ConnesKreimer.of' (({d.initial} + d.items).map Subtype.val))
-      = ConnesKreimer.of' {d.final.val} :=
-  (Step.mergeOpList_workspace d.steps d.initial hd).trans <| by
-    rw [final, run, Step.foldl_run_of_admissibleList d.steps d.initial [] hd]
-
 end Derivation
 
 /-! ### Relabelling -/
@@ -584,20 +474,5 @@ example :
     ((Derivation.mk (demoTok 0) [Step.em .left (demoTok 1)]).append
       [Step.im (demoTok 1)]).movedItems = [↑(demoTok 1)] := by
   simp [Derivation.movedItems, Derivation.append]
-
-/-- Raising the item a derivation has just merged is admissible, so `mergeOpList_initial` applies
-    to it. -/
-example :
-    (Derivation.mk (demoTok 0) [Step.em .left (demoTok 1), Step.im (demoTok 1)]).Admissible := by
-  have hne : merge ↑(demoTok 1) ↑(demoTok 0) ≠ (↑(demoTok 1) : SyntacticObject) := fun h ↦ by
-    have := congrArg (fun s : SyntacticObject ↦ s.val.numNodes) h
-    simp at this
-  simp only [Derivation.Admissible, Step.AdmissibleList, Step.Admissible, Step.itemsList_cons,
-    Step.itemsList_nil, Step.items, Step.apply_em, add_zero, Multiset.notMem_zero,
-    IsEmpty.forall_iff, implies_true, and_true, true_and, ne_eq,
-    LinearizedSyntacticObject.toSyntacticObject_leaf, hne, not_false_eq_true]
-  refine ⟨rfl, ?_⟩
-  rw [terms_merge, Multiset.count_cons_of_ne hne.symm]
-  simp [demoTok]
 
 end Minimalist
