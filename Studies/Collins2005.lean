@@ -5,7 +5,7 @@ public import Linglib.Data.Examples.Collins2005
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
-public import Linglib.Syntax.Minimalist.Locality.Freezing
+public import Linglib.Syntax.Minimalist.Derivation.Freezing
 public import Linglib.Syntax.Minimalist.Derivation.Remnant
 public import Linglib.Syntax.Minimalist.Copy.BindingAtReading
 public import Linglib.Syntax.Minimalist.Derivation.Smuggling

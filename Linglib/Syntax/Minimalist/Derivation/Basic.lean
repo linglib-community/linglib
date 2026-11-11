@@ -14,30 +14,13 @@ public import Linglib.Syntax.Minimalist.Workspace.Basic
 
 An ordered derivation is an initial syntactic object with a sequence of steps. External Merge adds
 an item built in its own workspace, and Internal Merge raises a mover, re-merging it with the
-current object in which its occurrences are replaced by the trace of its head; Internal Merge also
-comes in two stages, `extract` and `remerge`, through a stack of copies. The side on which a step
-places its daughter, and the order of an item's daughters, are linearization data that only
-externalization reads. That an admissible derivation is the iterated algebraic Merge on its
-workspace is proved in `Workspace/Derivation.lean`.
-
-## Main definitions
-
-* `Minimalist.Step`, `Step.apply`, `Step.run`, `Step.mover?`, `Step.IsMerge`
-* `Minimalist.Derivation`, `Derivation.Cfg`, `Derivation.run`, `final`, `stageAt`, `movedItems`,
-  `mover?`, `take`, `append`, `leftward`, `items`, `lexTokens`
-* `Minimalist.Derivation.Cfg.yield`: the tokens a configuration pronounces.
-* `Minimalist.Step.map`, `Minimalist.Derivation.map`: relabelling the tokens of a derivation.
-
-## Main results
-
-* `Minimalist.Step.apply_em`: the sides build the same object.
-* `Minimalist.Step.run_im`: Internal Merge is an extraction followed by merging back.
-* `Minimalist.Step.apply_em_eq_merge`, `Step.apply_im_eq_mergeWith`, `Step.run_remerge_eq_merge`:
-  a Merge step is MERGE, Internal Merge leaving the trace of the mover's head.
-* `Minimalist.Derivation.stageAt_append_of_le`, `movedItems_append`: extension
-  keeps the early stages and the movers.
-* `Minimalist.Derivation.stageAt_leftward`, `movedItems_leftward`: the sides
-  change no stage and no mover.
+current object in which its occurrences are replaced by the trace of its head; [it is also an
+extraction followed by merging the copy back](##Minimalist.Step.run_im), the two stages `extract`
+and `remerge` passing through a stack of copies. [A Merge step is MERGE on the
+workspace](##Minimalist.Step.apply_im_eq_mergeWith), and that an admissible derivation is the
+iterated algebraic Merge is proved in `Workspace/Derivation.lean`. The side on which a step places
+its daughter, and the order of an item's daughters, are linearization data that [the derived object
+ignores](##Minimalist.Step.apply_em) and only the replay reads.
 
 ## Implementation notes
 
@@ -456,23 +439,5 @@ theorem mover?_map (i : ℕ) : (d.map f).mover? i = (d.mover? i).map (SyntacticO
 end Derivation
 
 end Map
-
-/-! ### Carrier tests -/
-
-private def demoTok (i : Nat) : LexicalItem.Token := ⟨.of .N [], i⟩
-
-example :
-    (Derivation.mk (demoTok 0)
-      [Step.em .left (demoTok 1), Step.im (demoTok 1), Step.em .right (demoTok 2),
-        Step.im (demoTok 2) .right]).movedItems = [↑(demoTok 1), ↑(demoTok 2)] := by
-  simp [Derivation.movedItems]
-
-example : (Derivation.mk (demoTok 0) [Step.em .left (demoTok 1)]).length = 1 := rfl
-
-/-- Extension keeps the movers and adds the new ones. -/
-example :
-    ((Derivation.mk (demoTok 0) [Step.em .left (demoTok 1)]).append
-      [Step.im (demoTok 1)]).movedItems = [↑(demoTok 1)] := by
-  simp [Derivation.movedItems, Derivation.append]
 
 end Minimalist

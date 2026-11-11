@@ -2,7 +2,7 @@ module
 
 public import Studies.Chomsky2013
 public import Linglib.Data.Examples.Chomsky2015
-public import Linglib.Syntax.Minimalist.Locality.Transfer
+public import Linglib.Syntax.Minimalist.Phase.Transfer
 public import Linglib.Syntax.Minimalist.Label.MinimalSearch
 public import Linglib.Data.Examples.Languages
 

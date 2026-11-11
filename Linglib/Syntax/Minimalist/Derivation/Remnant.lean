@@ -15,14 +15,9 @@ A *remnant* is a constituent that something has moved out of, and *remnant movem
 afterwards, so that what moves carries a trace whose antecedent lies outside it: a VP fronted after
 its object has scrambled away, a predicate cleft fronting the VP after the verb has raised, VoiceP
 raising after its subject has left. A trace remembers the head of the phrase that left it, so step
-`i` of a derivation moves a remnant of the phrase headed by `h` when its mover holds a trace of `h`
-but does not pronounce `h`. A mover that carried the phrase along, as when the phrase moved only to
-the mover's own edge, pronounces `h` and is no remnant of it.
-
-## Main definitions
-
-* `Minimalist.Derivation.IsRemnantStep`: step `i` of a derivation moves a remnant of the phrase
-  headed by `h`.
+`i` of a derivation moves a remnant of the phrase headed by `h`, `Derivation.IsRemnantStep`, when
+its mover holds a trace of `h` but does not pronounce `h`. A mover that carried the phrase along,
+as when the phrase moved only to the mover's own edge, pronounces `h` and is no remnant of it.
 
 ## Implementation notes
 
