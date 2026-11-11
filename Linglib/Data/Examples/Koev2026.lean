@@ -27,7 +27,7 @@ def ex_2 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "believe"), ("contrast", "sure")] }
+    paperFeatures := [] }
 
 def ex_7 : Datum :=
   { id := "koev2026_7"
@@ -41,7 +41,7 @@ def ex_7 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "believe"), ("degreeConstruction", "equative")] }
+    paperFeatures := [] }
 
 def ex_8 : Datum :=
   { id := "koev2026_8"
@@ -55,7 +55,7 @@ def ex_8 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "believe"), ("degreeConstruction", "comparative")] }
+    paperFeatures := [] }
 
 def ex_9 : Datum :=
   { id := "koev2026_9"
@@ -69,7 +69,7 @@ def ex_9 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "believe"), ("degreeConstruction", "superlative")] }
+    paperFeatures := [] }
 
 def ex_10a : Datum :=
   { id := "koev2026_10a"
@@ -83,7 +83,7 @@ def ex_10a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "believe"), ("degreeConstruction", "comparative")] }
+    paperFeatures := [] }
 
 def ex_10b : Datum :=
   { id := "koev2026_10b"
@@ -97,7 +97,7 @@ def ex_10b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "believe"), ("degreeConstruction", "comparative")] }
+    paperFeatures := [] }
 
 def ex_12a : Datum :=
   { id := "koev2026_12a"
@@ -111,7 +111,7 @@ def ex_12a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "believe")] }
+    paperFeatures := [] }
 
 def ex_12b : Datum :=
   { id := "koev2026_12b"
@@ -125,7 +125,7 @@ def ex_12b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "believe")] }
+    paperFeatures := [] }
 
 def ex_12c : Datum :=
   { id := "koev2026_12c"
@@ -139,7 +139,7 @@ def ex_12c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "believe")] }
+    paperFeatures := [] }
 
 def multidim : Datum :=
   { id := "koev2026_multidim"
@@ -153,7 +153,7 @@ def multidim : Datum :=
     judgment := .marginal
     alternatives := [("Kim believes in most respects that it is raining outside.", .marginal), ("Kim believes in all respects that it is raining outside.", .marginal)]
     readings := []
-    paperFeatures := [("predicate", "believe"), ("respects", "overt")] }
+    paperFeatures := [] }
 
 def fn4 : Datum :=
   { id := "koev2026_fn4"
@@ -167,7 +167,7 @@ def fn4 : Datum :=
     judgment := .questionable
     alternatives := [("John believes a bit that the Patriots will win.", .questionable)]
     readings := []
-    paperFeatures := [("predicate", "believe")] }
+    paperFeatures := [] }
 
 def ex_13a : Datum :=
   { id := "koev2026_13a"
@@ -181,7 +181,7 @@ def ex_13a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "tall"), ("comparisonClass", "overt")] }
+    paperFeatures := [("comparisonClass", "overt")] }
 
 def ex_13b : Datum :=
   { id := "koev2026_13b"
@@ -195,7 +195,7 @@ def ex_13b : Datum :=
     judgment := .questionable
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "full"), ("comparisonClass", "overt")] }
+    paperFeatures := [("comparisonClass", "overt")] }
 
 def ex_14a : Datum :=
   { id := "koev2026_14a"
@@ -209,7 +209,7 @@ def ex_14a : Datum :=
     judgment := .marginal
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "likely"), ("comparisonClass", "overt")] }
+    paperFeatures := [("comparisonClass", "overt")] }
 
 def ex_14b : Datum :=
   { id := "koev2026_14b"
@@ -223,7 +223,7 @@ def ex_14b : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "believe"), ("comparisonClass", "overt")] }
+    paperFeatures := [("comparisonClass", "overt")] }
 
 def fn6 : Datum :=
   { id := "koev2026_fn6"
@@ -237,7 +237,7 @@ def fn6 : Datum :=
     judgment := .marginal
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "full"), ("comparisonClass", "overt")] }
+    paperFeatures := [("comparisonClass", "overt")] }
 
 def ex_15a : Datum :=
   { id := "koev2026_15a"
@@ -251,7 +251,7 @@ def ex_15a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("negated", "bent"), ("antonym", "straight"), ("relation", "entails")] }
+    paperFeatures := [("relation", "entails")] }
 
 def ex_15b : Datum :=
   { id := "koev2026_15b"
@@ -265,7 +265,7 @@ def ex_15b : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("negated", "bent"), ("antonym", "straight"), ("construction", "doubleDenial")] }
+    paperFeatures := [] }
 
 def ex_16a : Datum :=
   { id := "koev2026_16a"
@@ -279,7 +279,7 @@ def ex_16a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("negated", "tall"), ("antonym", "short"), ("relation", "does_not_entail")] }
+    paperFeatures := [("relation", "does_not_entail")] }
 
 def ex_16b : Datum :=
   { id := "koev2026_16b"
@@ -293,7 +293,7 @@ def ex_16b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("negated", "tall"), ("antonym", "short"), ("construction", "doubleDenial")] }
+    paperFeatures := [] }
 
 def ex_17a : Datum :=
   { id := "koev2026_17a"
@@ -307,7 +307,7 @@ def ex_17a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("negated", "doubt"), ("antonym", "believe"), ("relation", "entails")] }
+    paperFeatures := [("relation", "entails")] }
 
 def ex_17b : Datum :=
   { id := "koev2026_17b"
@@ -321,7 +321,7 @@ def ex_17b : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("negated", "believe"), ("antonym", "doubt"), ("construction", "doubleDenial")] }
+    paperFeatures := [] }
 
 def ex_18a : Datum :=
   { id := "koev2026_18a"
@@ -336,7 +336,7 @@ def ex_18a : Datum :=
     verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "likely")] }
+    paperFeatures := [] }
 
 def ex_18b : Datum :=
   { id := "koev2026_18b"
@@ -351,7 +351,7 @@ def ex_18b : Datum :=
     verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "unlikely")] }
+    paperFeatures := [] }
 
 def ex_19a : Datum :=
   { id := "koev2026_19a"
@@ -365,7 +365,7 @@ def ex_19a : Datum :=
     judgment := .acceptable
     alternatives := [("It's 5 percent certain that Biden will win.", .questionable), ("It's 50 percent certain that Biden will win.", .marginal)]
     readings := []
-    paperFeatures := [("predicate", "certain"), ("modifier", "percentage")] }
+    paperFeatures := [] }
 
 def ex_19b : Datum :=
   { id := "koev2026_19b"
@@ -379,7 +379,7 @@ def ex_19b : Datum :=
     judgment := .acceptable
     alternatives := [("It's 5 percent likely that Biden will win.", .marginal), ("It's 50 percent likely that Biden will win.", .acceptable)]
     readings := []
-    paperFeatures := [("predicate", "likely"), ("modifier", "percentage")] }
+    paperFeatures := [] }
 
 def ex_20 : Datum :=
   { id := "koev2026_20"
@@ -393,7 +393,7 @@ def ex_20 : Datum :=
     judgment := .variable
     alternatives := [("I believe 5 percent that Biden will win.", .unacceptable), ("I believe 50 percent that Biden will win.", .unacceptable)]
     readings := []
-    paperFeatures := [("predicate", "believe"), ("modifier", "percentage")] }
+    paperFeatures := [] }
 
 def fn10i : Datum :=
   { id := "koev2026_fn10i"
@@ -407,7 +407,7 @@ def fn10i : Datum :=
     judgment := .marginal
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "sure"), ("reading", "subjective")] }
+    paperFeatures := [("reading", "subjective")] }
 
 def fn10ii : Datum :=
   { id := "koev2026_fn10ii"
@@ -421,7 +421,7 @@ def fn10ii : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("predicate", "sure"), ("reading", "subjective")] }
+    paperFeatures := [("reading", "subjective")] }
 
 def all : List Datum := [ex_2, ex_7, ex_8, ex_9, ex_10a, ex_10b, ex_12a, ex_12b, ex_12c, multidim, fn4, ex_13a, ex_13b, ex_14a, ex_14b, fn6, ex_15a, ex_15b, ex_16a, ex_16b, ex_17a, ex_17b, ex_18a, ex_18b, ex_19a, ex_19b, ex_20, fn10i, fn10ii]
 
