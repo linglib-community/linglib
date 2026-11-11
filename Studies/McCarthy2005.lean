@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Diagram
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Data.Wordlist.McCarthy2005
 public import Studies.Benua1997
@@ -69,7 +69,7 @@ def Paradigm.io (P : Paradigm α ι) (i : ℕ) : List (ℕ × ℕ) :=
 between the stems of distinct members ℛ_OP, the relation their input correspondences induce
 (`Correspondence.ooPairs`): the positions realising the same input position, and the epenthetic
 positions at the same site. -/
-def Paradigm.corr (P : Paradigm α ι) : Correspondence Role α :=
+def Paradigm.corr (P : Paradigm α ι) : Correspondence.Diagram Role α :=
   .ofPairs (fun | .input => P.input | .member i => P.stem i)
     fun | .input, .member i => P.io i
         | .member i, .member j =>
@@ -82,12 +82,12 @@ def markedness (m : ι → List α → ℕ) : Constraint (Paradigm α ι) :=
   fun P ↦ (P.members.map fun x ↦ m x.cell x.stem).sum
 
 /-- An input–output faithfulness constraint summed over the members (2b). -/
-def ioFaith (f : Correspondence Role α → Role → Role → ℕ) : Constraint (Paradigm α ι) :=
+def ioFaith (f : Correspondence.Diagram Role α → Role → Role → ℕ) : Constraint (Paradigm α ι) :=
   fun P ↦ ((List.range P.members.length).map fun i ↦ f P.corr .input (.member i)).sum
 
 /-- An OP faithfulness constraint (2d): a correspondence constraint summed over the ordered
 pairs of distinct members. -/
-def opFaith (f : Correspondence Role α → Role → Role → ℕ) : Constraint (Paradigm α ι) :=
+def opFaith (f : Correspondence.Diagram Role α → Role → Role → ℕ) : Constraint (Paradigm α ι) :=
   fun P ↦ ((List.range P.members.length).flatMap fun i ↦ (List.range P.members.length).map fun j ↦
     if i = j then 0 else f P.corr (.member i) (.member j)).sum
 
@@ -118,14 +118,15 @@ def mat : Paradigm Seg (List Seg) :=
   ⟨[.m, .a, .t], [⟨[], [.m, .a, .t], Correspondence.diagonalPairs 3⟩,
     ⟨[.i], [.m, .a, .ch], Correspondence.diagonalPairs 3⟩]⟩
 
-example : opFaith (Correspondence.identViolFeature high) mat = 2 := by decide
+example : opFaith (Correspondence.Diagram.identViolFeature high) mat = 2 := by decide
 
 /-- ⟨ma, maʧi⟩. -/
 def ma : Paradigm Seg (List Seg) :=
   ⟨[.m, .a, .t], [⟨[], [.m, .a], Correspondence.diagonalPairs 2⟩,
     ⟨[.i], [.m, .a, .ch], Correspondence.diagonalPairs 3⟩]⟩
 
-example : opFaith Correspondence.maxViol ma = 1 ∧ opFaith Correspondence.depViol ma = 1 := by
+example : opFaith Correspondence.Diagram.maxViol ma = 1 ∧
+    opFaith Correspondence.Diagram.depViol ma = 1 := by
   decide
 
 end Palatalization
@@ -249,20 +250,20 @@ def swpParadigm : Constraint (Paradigm Seg Cell) := markedness fun c s ↦ swp (
 
 def alignLParadigm : Constraint (Paradigm Seg Cell) := markedness fun _ s ↦ alignL s
 
-def opDepV : Constraint (Paradigm Seg Cell) := opFaith (Correspondence.depViolOn IsVowel)
+def opDepV : Constraint (Paradigm Seg Cell) := opFaith (Correspondence.Diagram.depViolOn IsVowel)
 
 def opIdentWt : Constraint (Paradigm Seg Cell) :=
-  opFaith (Correspondence.identViolFeature weight)
+  opFaith (Correspondence.Diagram.identViolFeature weight)
 
-def ioDepV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.depViolOn IsVowel)
+def ioDepV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.Diagram.depViolOn IsVowel)
 
-def ioMaxV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.maxViolOn IsVowel)
+def ioMaxV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.Diagram.maxViolOn IsVowel)
 
 def ioMaxC : Constraint (Paradigm Seg Cell) :=
-  ioFaith (Correspondence.maxViolOn fun c ↦ ¬IsVowel c)
+  ioFaith (Correspondence.Diagram.maxViolOn fun c ↦ ¬IsVowel c)
 
 def ioIdentWt : Constraint (Paradigm Seg Cell) :=
-  ioFaith (Correspondence.identViolFeature weight)
+  ioFaith (Correspondence.Diagram.identViolFeature weight)
 
 /-- The summary ranking (21): IO-MAX-V, OP-DEP-V, \*µµµ]σ, \*APP-σ, IO-MAX-C, OP-IDENT-WT >>
 SWP >> ALIGN-L(Stem, σ) >> IO-DEP-V >> IO-IDENT-WT. -/
@@ -408,7 +409,7 @@ theorem two_attractors : (Tableau.ofLabels tenth {.a, .b, .c, .d, .e} ranking).o
 Geminate verbs delete the vowel between their identical consonants before V-initial
 suffixes, *ħmarra ~ ħmarartu*, so \*.CᵢV.CᵢV dominates IO-MAX-V and OP-MAX-V (29). -/
 
-def opMaxV : Constraint (Paradigm Seg Cell) := opFaith (Correspondence.maxViolOn IsVowel)
+def opMaxV : Constraint (Paradigm Seg Cell) := opFaith (Correspondence.Diagram.maxViolOn IsVowel)
 
 /-- The paradigms of /ħmarar/ in (29): the vowel deleted before V-initial suffixes, or kept
 throughout. -/
@@ -498,8 +499,9 @@ theorem sonCon_nouns :
 /-- The ranking of (32): \*ə]σ, \*CCC >> OP-MAX-V >> SONCON >> IO-MAX-V, IO-DEP-V. -/
 def moroccanRanking : List (Constraint (Paradigm Seg (List Seg))) :=
   [markedness fun suf s ↦ schwaOpen (s ++ suf), markedness fun suf s ↦ ccc (s ++ suf),
-   opFaith (Correspondence.maxViolOn IsVowel), markedness fun suf s ↦ sonCon (s ++ suf),
-   ioFaith (Correspondence.maxViolOn IsVowel), ioFaith (Correspondence.depViolOn IsVowel)]
+   opFaith (Correspondence.Diagram.maxViolOn IsVowel), markedness fun suf s ↦ sonCon (s ++ suf),
+   ioFaith (Correspondence.Diagram.maxViolOn IsVowel),
+   ioFaith (Correspondence.Diagram.depViolOn IsVowel)]
 
 /-- A CCəC member from /ʃərb/: the input schwa deleted, a schwa epenthesized. -/
 def ccec (suffix : List Seg) : Member Seg (List Seg) :=
@@ -554,7 +556,7 @@ def twoSidedOpen : List Seg → ℕ
 /-- \*VCəCV, SON-CON >> OP-MAX-V >> \*CC#. -/
 def ranking : List (Constraint (Paradigm Seg Unit)) :=
   [markedness fun _ s ↦ twoSidedOpen s, markedness fun _ s ↦ sonCon s,
-   opFaith (Correspondence.maxViolOn (· = .vowel)), markedness fun _ s ↦ complexCoda s]
+   opFaith (Correspondence.Diagram.maxViolOn (· = .vowel)), markedness fun _ s ↦ complexCoda s]
 
 /-- The paradigms of an imperfective and its truncated jussive from a stem ending in the
 cluster `x y`: the cluster kept, epenthesis throughout, or epenthesis in the jussive alone. -/

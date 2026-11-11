@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Indonesian.Phonology
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Diagram
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Data.PHOIBLE.Inventories.Muna
 public import Linglib.Data.Wordlist.Pater2001
@@ -83,7 +83,7 @@ A candidate is an input and an output related as Pater's subscripts relate them,
 correspondence from the input to the output. -/
 
 /-- A candidate, a correspondence from the input to the output. -/
-abbrev Cand := Correspondence BinaryRole Segment
+abbrev Cand := Correspondence.Diagram BinaryRole Segment
 
 /-- *NC̥: a nasal before a voiceless obstruent. -/
 def nc : Constraint Cand := fun c ↦

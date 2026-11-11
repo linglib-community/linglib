@@ -71,13 +71,13 @@ theorem naturalClass_interior : interior.naturalClass Shiwilu.inventory = {«ɘ�
 the output. -/
 structure Candidate where
   /-- The input–output correspondence. -/
-  io : Correspondence BinaryRole Segment
+  io : Correspondence.Diagram BinaryRole Segment
   /-- The prosodic structure of the output. -/
   form : MoraicForm Segment
 
 /-- The candidate with correspondence `io` whose output form, over the output string of `io`, has
 the given lines. -/
-def Candidate.ofIO (io : Correspondence BinaryRole Segment)
+def Candidate.ofIO (io : Correspondence.Diagram BinaryRole Segment)
     (wordSyllable : Finset (ℕ × ℕ) := ∅) (syllableMora : Finset (ℕ × Mora) := ∅)
     (wordSegment : Finset (ℕ × ℕ) := ∅) (syllableSegment : Finset (ℕ × ℕ) := ∅)
     (moraSegment : Finset (Mora × ℕ) := ∅) : Candidate :=

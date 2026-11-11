@@ -64,8 +64,8 @@ def resolve (D : Finset ElidedVowel) : List Segment :=
 
 /-- `corr c D` is the correspondence between the unrepaired concatenation and the form that the
 candidate `D` gives, the deletion of the positions of its vowels. -/
-def corr (D : Finset ElidedVowel) : Correspondence BinaryRole Segment :=
-  Correspondence.eraseIdxs c.input (deleted c D)
+def corr (D : Finset ElidedVowel) : Correspondence.Diagram BinaryRole Segment :=
+  Correspondence.Diagram.eraseIdxs c.input (deleted c D)
 
 /-- The output of each correspondence is the form of its candidate. -/
 theorem corr_form_rhs (D : Finset ElidedVowel) : (corr c D).form .rhs = resolve c D := by
@@ -77,7 +77,7 @@ theorem corr_form_rhs (D : Finset ElidedVowel) : (corr c D).form .rhs = resolve 
   have hkeep (l : List Segment) (k : ℕ) (hk : ∀ p ∈ l.zipIdx k, p.2 ∉ deleted c D) :
       (l.zipIdx k).filter (fun p ↦ p.2 ∉ deleted c D) = l.zipIdx k :=
     List.filter_eq_self.2 fun p hp ↦ decide_eq_true (hk p hp)
-  rw [corr, Correspondence.eraseIdxs_form_rhs, Juncture.input, List.zipIdx_append,
+  rw [corr, Correspondence.Diagram.eraseIdxs_form_rhs, Juncture.input, List.zipIdx_append,
     List.zipIdx_cons, List.zipIdx_cons, List.filter_append,
     hkeep _ _ fun p hp ↦ ?stem, List.filter_cons, List.filter_cons,
     hkeep _ _ fun p hp ↦ ?suffix]

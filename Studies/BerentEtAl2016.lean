@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Diagram
 public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
@@ -88,7 +88,7 @@ theorem surface_reduplicated (base : List α) :
 /-- The correspondence diagram of a parse against an input treats a simplex name as all
 stem, and the copy of a reduplicated name as its reduplicant. -/
 def correspondence (input : List α) :
-    Parse α → Correspondence ReduplicationRole α
+    Parse α → Correspondence.Diagram ReduplicationRole α
   | simplex form => .reduplication input form []
   | reduplicated base => .reduplication input base base
 
@@ -126,13 +126,13 @@ def dep (base : Option (List α)) : Constraint (Parse α) := fun p ↦
 
 @[simp] theorem dep_some_simplex (b form : List α) :
     dep (some b) (.simplex form) = form.length - b.length :=
-  Correspondence.depViol_of_diagonal (.reduplication b form []) .input .base
-    (Correspondence.reduplication_edge _ _ _ (by decide))
+  Correspondence.Diagram.depViol_of_diagonal (.reduplication b form []) .input .base
+    (Correspondence.Diagram.reduplication_edge _ _ _ (by decide))
 
 @[simp] theorem dep_some_reduplicated (b base : List α) :
     dep (some b) (.reduplicated base) = base.length - b.length :=
-  Correspondence.depViol_of_diagonal (.reduplication b base base) .input .base
-    (Correspondence.reduplication_edge _ _ _ (by decide))
+  Correspondence.Diagram.depViol_of_diagonal (.reduplication b base base) .input .base
+    (Correspondence.Diagram.reduplication_edge _ _ _ (by decide))
 
 variable [DecidableEq α]
 

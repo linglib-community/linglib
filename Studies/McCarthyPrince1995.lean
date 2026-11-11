@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Akan.Phonology
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Diagram
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Mathlib.Tactic.FinCases
 
@@ -80,7 +80,7 @@ The paper illustrates the two contiguity constraints of its Appendix A on maps b
 inserting a final segment violates neither. -/
 
 /-- The map from the string `s` to the string `t` relating the positions paired in `l`. -/
-private def map (s t : List Char) (l : List (ℕ × ℕ)) : Correspondence BinaryRole Char :=
+private def map (s t : List Char) (l : List (ℕ × ℕ)) : Correspondence.Diagram BinaryRole Char :=
   .ofPairs (fun | .lhs => s | .rhs => t) fun | .lhs, .rhs => l | _, _ => []
 
 /-- The map *xyz* → *xz* skips *y* and violates I-CONTIG. -/
@@ -144,7 +144,7 @@ def reduplicant : Candidate → List Seg
   | overapplication | normalApplication => stemNoH
 
 /-- The correspondence of a candidate between the stem, its base and its reduplicant. -/
-def correspondence (c : Candidate) : Correspondence ReduplicationRole Seg :=
+def correspondence (c : Candidate) : Correspondence.Diagram ReduplicationRole Seg :=
   .reduplication stem c.base c.reduplicant
 
 /-- The surface string, the base followed by the reduplicant and the suffix. -/
@@ -278,7 +278,7 @@ def reduplicant : Candidate → List Seg
   | unfaithfulBase | codalessReduplicant => stemNoCoda
 
 /-- The correspondence of a candidate between the stem, its base and its reduplicant. -/
-def correspondence (c : Candidate) : Correspondence ReduplicationRole Seg :=
+def correspondence (c : Candidate) : Correspondence.Diagram ReduplicationRole Seg :=
   .reduplication stem c.base c.reduplicant
 
 /-- The surface string, the reduplicant followed by the base. -/
@@ -404,7 +404,7 @@ def reduplicant : Candidate → List Segment
   | overapplication | normalApplication => [tcCurl, smallCapitalI]
 
 /-- The correspondence of a candidate between the stem, its base and its reduplicant. -/
-def correspondence (c : Candidate) : Correspondence ReduplicationRole Segment :=
+def correspondence (c : Candidate) : Correspondence.Diagram ReduplicationRole Segment :=
   .reduplication stem c.base c.reduplicant
 
 /-- The surface string, the reduplicant followed by the base. -/

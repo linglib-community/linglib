@@ -66,14 +66,14 @@ theorem maxAt_insert {k : ℕ} {D : Finset ℕ} (hk : k ∉ D) :
 /-- On the deletion of one position from a string, `maxAt P` counts the input segments in `P`
 that have no correspondent in the output. -/
 theorem maxAt_singleton_eq_maxViolAt {α : Type*} {s : List α} (k : Fin s.length) :
-    maxAt P {(k : ℕ)} = (Correspondence.eraseIdx s k).maxViolAt P .lhs .rhs := by
-  rw [maxAt_singleton, Correspondence.maxViolAt_eraseIdx]
+    maxAt P {(k : ℕ)} = (Correspondence.Diagram.eraseIdx s k).maxViolAt P .lhs .rhs := by
+  rw [maxAt_singleton, Correspondence.Diagram.maxViolAt_eraseIdx]
 
 /-- On the deletion of the positions `D` from a string, `maxAt P` counts the input segments in `P`
 that have no correspondent in the output. -/
 theorem maxAt_eq_maxViolAt {α : Type*} {s : List α} {D : Finset ℕ} (hD : ∀ k ∈ D, k < s.length) :
-    maxAt P D = (Correspondence.eraseIdxs s D).maxViolAt P .lhs .rhs :=
-  (Correspondence.maxViolAt_eraseIdxs hD P).symm
+    maxAt P D = (Correspondence.Diagram.eraseIdxs s D).maxViolAt P .lhs .rhs :=
+  (Correspondence.Diagram.maxViolAt_eraseIdxs hD P).symm
 
 end MaxAt
 

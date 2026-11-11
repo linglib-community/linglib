@@ -1,42 +1,29 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Diagram
 
 /-!
 # Deletion and insertion
 
 A deletion relates each position of the shorter string to the position of the longer one it comes
-from, and an insertion is the converse. Deleting the segment at position `i` goes along
-`Fin.succAbove i`, so it violates MAX once, at `i`; deleting the positions `D` violates MAX once
-at each of them. When no other segment changes, neither deletion nor insertion violates IDENT.
-
-## Main definitions
-
-* `Correspondence.deletion`: the deletion along a map of positions, the other segments free to
-  change.
-* `Correspondence.eraseIdx`, `Correspondence.eraseIdxs`: the deletion of the segment at a position,
-  and of the segments at a set of positions, the other segments unchanged.
-* `Correspondence.insertIdx`: the insertion of a segment, the converse of a deletion.
-
-## Main results
-
-* `Correspondence.maxViolAt_deletion`: a deletion violates a positional MAX at the protected
-  positions off the range of its map; `maxViolAt_deletion_succAbove` is the case of one position.
-* `Correspondence.maxViolAt_eraseIdxs`: deleting the positions `D` violates a positional MAX once
-  for each protected position in `D`.
-* `Correspondence.depViolAt_insertIdx`: an insertion violates a positional DEP exactly when the
-  constraint covers the inserted position.
-* `Correspondence.identViol_eraseIdx`, `identViol_eraseIdxs`, `identViol_insertIdx`: none of them
-  changes another segment.
+from: its edge from the output is the graph of that map, and its edge from the input the converse.
+It [violates a positional MAX](##OptimalityTheory.Correspondence.Diagram.maxViolAt_deletion) at
+the protected positions off the range of the map, so deleting the segment at position `i`, along
+`Fin.succAbove i`, violates MAX once at `i`, and deleting the positions `D`
+[once at each of them](##OptimalityTheory.Correspondence.Diagram.maxViolAt_eraseIdxs). An
+insertion is a deletion with its strings exchanged, and
+[violates a positional DEP](##OptimalityTheory.Correspondence.Diagram.depViolAt_insertIdx) at the
+inserted position. When no other segment changes, neither violates IDENT.
 
 ## References
 
-* [mccarthy-prince-1995]
+* [J. J. McCarthy and A. Prince, *Faithfulness and Reduplicative Identity*
+  (1995)][mccarthy-prince-1995]
 -/
 
 @[expose] public section
 
-namespace OptimalityTheory.Correspondence
+namespace OptimalityTheory.Correspondence.Diagram
 
 variable {α : Type*}
 
@@ -45,7 +32,7 @@ variable {α : Type*}
 /-- `deletion s t f` relates `s` to the string `t` along `f`: each position `j` of `t` corresponds
 to position `f j` of `s` alone, and the positions of `s` off the range of `f` are deleted. The
 segments of `t` need not be those of `s`, so a deletion may come with changes elsewhere. -/
-def deletion (s t : List α) (f : Fin t.length → Fin s.length) : Correspondence BinaryRole α :=
+def deletion (s t : List α) (f : Fin t.length → Fin s.length) : Diagram BinaryRole α :=
   (ofFun t s f).swap
 
 section deletion
@@ -56,8 +43,9 @@ variable {s t : List α} {f : Fin t.length → Fin s.length}
 
 @[simp] theorem deletion_form_rhs : (deletion s t f).form .rhs = t := rfl
 
-theorem rel_deletion : (deletion s t f).rel .rhs .lhs = Function.graph f :=
-  rel_ofFun t s f
+@[simp] theorem deletion_edge_rhs_lhs : (deletion s t f).edge .rhs .lhs = graph f := rfl
+
+@[simp] theorem deletion_edge_lhs_rhs : (deletion s t f).edge .lhs .rhs = (graph f).inv := rfl
 
 theorem deletion_isSymmetric : (deletion s t f).IsSymmetric :=
   (ofFun_isSymmetric _ _ _).swap
@@ -65,19 +53,16 @@ theorem deletion_isSymmetric : (deletion s t f).IsSymmetric :=
 /-- A deletion violates a positional MAX at the protected positions off the range of its map. -/
 theorem maxViolAt_deletion (P : ℕ → Prop) [DecidablePred P] :
     (deletion s t f).maxViolAt P .lhs .rhs =
-      ((Finset.univ.filter fun i : Fin s.length ↦ P i) \ Finset.univ.image f).card := by
-  rw [deletion_isSymmetric.maxViolAt_eq .rhs .lhs, depViolAt_of_graph rel_deletion]
-  rfl
+      ((Finset.univ.filter fun i : Fin s.length ↦ P i) \ Finset.univ.image f).card :=
+  depViolOn_of_graph (rel_graph f) _
 
-theorem depViol_deletion : (deletion s t f).depViol .lhs .rhs = 0 := by
-  rw [← deletion_isSymmetric.maxViol_eq]
-  exact maxViol_eq_zero_of_graph rel_deletion
+theorem depViol_deletion : (deletion s t f).depViol .lhs .rhs = 0 :=
+  (depViol_inv _).trans (maxViol_eq_zero_of_graph (rel_graph f))
 
 theorem identViol_deletion_eq_zero_iff [DecidableEq α] :
     (deletion s t f).identViol .lhs .rhs = 0 ↔ ∀ j, t[j] = s[f j] := by
-  rw [← deletion_isSymmetric.identViol_eq,
-    identViol_eq_zero_iff_of_graph rel_deletion]
-  rfl
+  rw [identViol, identViolFeature, deletion_edge_lhs_rhs, identViol_inv]
+  exact identViol_eq_zero_iff_of_graph (rel_graph f) _ _
 
 /-- A deletion along `Fin.succAbove p` violates a positional MAX exactly when the constraint
 protects position `p`. -/
@@ -99,14 +84,14 @@ end deletion
 
 /-- `eraseIdx s i` is the deletion of the segment at position `i` of `s` with every other segment
 unchanged. -/
-def eraseIdx (s : List α) (i : Fin s.length) : Correspondence BinaryRole α :=
+def eraseIdx (s : List α) (i : Fin s.length) : Diagram BinaryRole α :=
   have h : (s.eraseIdx i).length + 1 = s.length := by
     rw [List.length_eraseIdx_of_lt i.2]; have := i.2; omega
   deletion s (s.eraseIdx i) fun j ↦ ((i.cast h.symm).succAbove j).cast h
 
 /-- `insertIdx s i a` is the insertion of the segment `a` at position `i` of `s`, the converse of
 the deletion of position `i` from the longer string. -/
-def insertIdx (s : List α) (i : Fin (s.length + 1)) (a : α) : Correspondence BinaryRole α :=
+def insertIdx (s : List α) (i : Fin (s.length + 1)) (a : α) : Diagram BinaryRole α :=
   (deletion (s.insertIdx i a) s fun j ↦
     (i.succAbove j).cast (List.length_insertIdx_of_le_length i.is_le a).symm).swap
 
@@ -176,7 +161,7 @@ end insertIdx
 /-- `eraseIdxs s D` is the deletion of the segments at the positions `D` of `s` with every other
 segment unchanged, each surviving segment corresponding to itself. Positions past the end of `s`
 delete nothing. -/
-def eraseIdxs (s : List α) (D : Finset ℕ) : Correspondence BinaryRole α :=
+def eraseIdxs (s : List α) (D : Finset ℕ) : Diagram BinaryRole α :=
   let L := s.zipIdx.filter fun p ↦ p.2 ∉ D
   deletion s (L.map Prod.fst) fun j ↦
     have hj : (j : ℕ) < L.length := j.2.trans_eq (List.length_map _)
@@ -221,4 +206,4 @@ theorem identViol_eraseIdxs [DecidableEq α] : (eraseIdxs s D).identViol .lhs .r
 
 end eraseIdxs
 
-end OptimalityTheory.Correspondence
+end OptimalityTheory.Correspondence.Diagram

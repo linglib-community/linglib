@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.Guebie.ParticleVerbs
 public import Linglib.Phonology.Harmony.Basic
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Diagram
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Syntax.Minimalist.Linearization.Cyclic
 public import Linglib.Syntax.Minimalist.Linearization.SpelloutDomain
@@ -172,7 +172,7 @@ def atrHarm : Constraint (List Phonology.Segment) := .binary fun out ↦ ¬ atrP
 /-- IDENT-IO(ATR) (46) is violated once by each vowel whose [ATR] value departs from its
 input. -/
 def identIO (input : List Phonology.Segment) : Constraint (List Phonology.Segment) := fun out ↦
-  (Correspondence.parallel input out).identViolFeature atr .lhs .rhs
+  (Correspondence.Diagram.parallel input out).identViolFeature atr .lhs .rhs
 
 /-- A revaluation of a string of vowels gives each vowel either [ATR] value. -/
 def revaluations (l : List Phonology.Segment) : List (List Phonology.Segment) :=
