@@ -7,44 +7,32 @@ public import Linglib.Phonology.NasalSubstitution
 /-!
 # Indonesian phonology
 
-This file defines the segments of Standard Indonesian and the alternation of the nasal that
-ends the prefixes *meN-* and *peN-*.
+This file defines the segments of Standard Indonesian, named by their spelling, with `e` the
+schwa and `é` the vowel /e/, and the alternation of the nasal that ends the prefixes *meN-* and
+*peN-*.
 
-The nasal is a velar /ŋ/. It takes the place of a following obstruent, as in *membeli* from
-*beli*, and it is lost before a nasal, a liquid or a glide, as in *melihat* from *lihat*. A
-root-initial *p*, *t*, *k* or *s* fuses with it into one nasal, as in *memakai* from *pakai*,
-which is called nasal substitution. Following Pater, assimilation applies throughout the word
-and fusion only at the left edge of the root.
-
-## Main definitions
-
-* `consonants`, `vowels`: the phonemes, named by their spelling. `e` is the schwa and `é` is /e/.
-* `assimilate`: each nasal of a word takes the place of a following obstruent, by the rules of
-  `Phonology/NasalSubstitution.lean`.
-* `substituting`, `fuse`: the consonants that fuse with the prefix nasal, and the nasal that
-  results.
-* `juncture`: what the prefix nasal and the base-initial segment surface as.
-* `meN`, `peN`: the two prefixes attached to a base.
-
-## Main results
-
-* `subset_ind`: the phonemes are those of PHOIBLE's Standard Indonesian inventory.
+The nasal is a velar /ŋ/. It [takes the place of a following obstruent](##assimilate), as in
+*membeli* from *beli*, and it is lost before a nasal, a liquid or a glide, as in *melihat* from
+*lihat*. A root-initial *p*, *t*, *k* or *s* [fuses with it into one nasal](##fuse), as in
+*memakai* from *pakai*, which is called nasal substitution. A base that keeps such an initial, as
+borrowings may, has [the nasal before it](##junctureRetained), as in *mentraktir* from *traktir*.
+Following Pater, assimilation applies throughout the word and fusion only at the left edge of
+the root.
 
 ## Implementation notes
 
 That *c* does not fuse and that *s* fuses into the palatal *ny* are the two exceptions that
 McDonnell and colleagues list for the standard language. The *menge-* of one-syllable bases is
-not defined.
+not defined. [Every phoneme but the palatal glide](##subset_ind) is a segment of PHOIBLE's
+Standard Indonesian inventory.
 
 ## References
 
-* [J. N. Sneddon, *Indonesian: A comprehensive grammar* (1996)][sneddon-1996]
-* [B. McDonnell, J. Wu, T. McKinnon and A. Adelaar, *Malayic languages*
-  (2024)][mcdonnell-wu-mckinnon-adelaar-2024]
-* [M. Donohue, *Phonotactics and morphophonology* (2024)][donohue-2024]
-* [J. Pater, *Austronesian nasal substitution revisited: what's wrong with \*NC (and what's
-  not)* (2001)][pater-2001]
-* [S. Moran and D. McCloy, *PHOIBLE 2.0*][moran-mccloy-2019]
+* [sneddon-1996]
+* [mcdonnell-wu-mckinnon-adelaar-2024]
+* [donohue-2024]
+* [pater-2001]
+* [moran-mccloy-2019]
 -/
 
 @[expose] public section
@@ -176,23 +164,34 @@ except that with `s` it is the palatal `ny`. -/
 def fuse (x : Segment) : Segment :=
   if x = s then ny else NasalSubstitution.substitute consonants trigger ng x
 
-/-- What the prefix nasal and the base-initial segment `x` surface as. A substituting
-consonant fuses with the nasal, the nasal is lost before a sonorant consonant, and otherwise it
-assimilates. -/
-def juncture (x : Segment) : List Segment :=
-  if x ∈ substituting then [fuse x]
-  else if sonorantConsonant ≤ x then [x]
-  else assimilate [ng, x]
+/-- What the prefix nasal and a base-initial `x` that is kept surface as: the nasal is lost
+before a sonorant consonant and otherwise assimilates. -/
+def junctureRetained (x : Segment) : List Segment :=
+  if sonorantConsonant ≤ x then [x] else assimilate [ng, x]
 
-/-- `prefixN pre base` attaches to `base` the prefix that consists of `pre` and the nasal. -/
-def prefixN (pre : List Segment) : List Segment → List Segment
+/-- What the prefix nasal and the base-initial segment `x` surface as. A substituting consonant
+fuses with the nasal, and any other is kept. -/
+def juncture (x : Segment) : List Segment :=
+  if x ∈ substituting then [fuse x] else junctureRetained x
+
+/-- `prefixN J pre base` attaches to `base` the prefix that consists of `pre` and the nasal,
+which surfaces with the base-initial segment as `J` gives. -/
+def prefixN (J : Segment → List Segment) (pre : List Segment) : List Segment → List Segment
   | [] => pre ++ [ng]
-  | x :: rest => pre ++ juncture x ++ rest
+  | x :: rest => pre ++ J x ++ rest
+
+@[simp] theorem prefixN_nil (J : Segment → List Segment) (pre : List Segment) :
+    prefixN J pre [] = pre ++ [ng] :=
+  rfl
+
+@[simp] theorem prefixN_cons (J : Segment → List Segment) (pre : List Segment) (x : Segment)
+    (rest : List Segment) : prefixN J pre (x :: rest) = pre ++ J x ++ rest :=
+  rfl
 
 /-- The verbal prefix *meN-*. -/
-def meN : List Segment → List Segment := prefixN [m, e]
+def meN : List Segment → List Segment := prefixN juncture [m, e]
 
 /-- The nominal prefix *peN-*. -/
-def peN : List Segment → List Segment := prefixN [p, e]
+def peN : List Segment → List Segment := prefixN juncture [p, e]
 
 end Indonesian.Phonology
