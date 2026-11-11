@@ -6,7 +6,7 @@ public import Linglib.Semantics.Focus.Control
 public import Linglib.Semantics.Focus.Marking
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Data.Examples.Readers
-public import Linglib.Semantics.Composition.Constituency
+public import Linglib.Semantics.Composition.Value
 public import Linglib.Semantics.Composition.Mode.Combine
 public import Linglib.Semantics.Composition.Mode.Pointwise
 public import Linglib.Semantics.Composition.Rules
@@ -24,7 +24,9 @@ operator ~ presupposes `Focus.SquiggleSet` or `Focus.SquiggleInd` of a free vari
 antecedent is a `Focus.Antecedent`. In the logical form of an *only* sentence, with ~ adjoined to
 the VP and its variable the domain of *only*, the two-dimensional grammar puts the words together
 in one way, and the sentence is [defined where the domain satisfies the presupposition of ~ and
-then says what *only* says](##Rooth1992.meanings_lf_object).
+then says what *only* says](##Rooth1992.value?_lf), which in the introduction scenario is
+[false with F on the object](##Rooth1992.lf_object_scenario) and [true with F on the
+goal](##Rooth1992.lf_goal_scenario).
 
 ## Implementation notes
 
@@ -36,9 +38,11 @@ then says what *only* says](##Rooth1992.meanings_lf_object).
   arguments of its predication, and its focus semantic value is their composition
   (`WithAlternatives.map₂`).
 * The logical form (31) is interpreted by the effect-driven grammar that is pointwise at
-  alternatives: every word carries an ordinary value with its alternatives, sisters combine by
-  Structured App, and ~ is the one word whose type takes a meaning with alternatives as its
-  argument. The presupposition of ~ is partiality of its value.
+  alternatives: every word carries an ordinary value with its alternatives, and sisters combine
+  by Structured App. The feature F and the operator ~ are words whose type takes a meaning with
+  alternatives as its argument, at any type; F is `WithAlternatives.mark`, and ~ has a word for
+  its set case and one for its individual case. The presupposition of ~ is partiality of its
+  value.
 * *Only* is the substrate's exclusive assertion on the identity scale,
   `Focus.atMost (· = ·)`, which is (4b) with the equation reversed. Footnote 2 leaves
   open whether the prejacent belongs in the presupposition or the assertion, and suggests that
@@ -462,8 +466,10 @@ theorem qa_rows : ∀ d ∈ qaData,
 /-! ### The logical form of association with *only* (§3–§4)
 
 (31): `[S Mary [VP only(C) [VP [VP introduced Bill to Sue] ~ C]]]`, with F on *Bill* or on *Sue*.
-Every word has an ordinary value and its alternatives, and ~ closes them off: its value has the
-VP's ordinary value alone, and is defined where the presupposition (40) holds of `C`. -/
+Every word has an ordinary value and its alternatives. The feature F and the operator ~ apply to
+a constituent of any type: F makes its alternatives the whole type (2), and ~ closes them off
+(42) and is defined where the presupposition (40) holds of its variable, a set or an individual.
+*Only* is (30b). -/
 
 section LogicalForm
 
@@ -487,113 +493,203 @@ local notation "M" => Ty.comp Eff.M
 
 variable {E : Type}
 
-/-- The words of (31) by type. A name and an F-marked name each carry alternatives; *only* and ~
-come with the value of their variable `C`. -/
+/-- The words of (31) by type. The feature and ~ are words that take a constituent of any type
+with its alternatives; *only* and ~ come with the value of their variable. -/
 inductive Item (E : Type) : Ty Sort' → Type
   | name (x : E) : Item E (F e)
-  | focus (x : E) : Item E (F e)
   | introduced : Item E (F (e ⇒ e ⇒ e ⇒ p))
+  | feature (k : Mark) (a : Ty Sort') : Item E (F a ⇒ F a)
   | only (C : Set (E → Set (Set (E × E × E)))) : Item E (F ((e ⇒ p) ⇒ e ⇒ p))
-  | squiggle (C : Set (E → Set (Set (E × E × E)))) : Item E (F (e ⇒ p) ⇒ F (M (e ⇒ p)))
+  | squiggleSet (a : Ty Sort') (Γ : Set (a.Dom (Sort'.Dom E))) : Item E (F a ⇒ F (M a))
+  | squiggleInd (a : Ty Sort') (γ : a.Dom (Sort'.Dom E)) : Item E (F a ⇒ F (M a))
 
 /-- A leaf is a typed word. -/
 def items : (Σ a, Item E a) ⊕ ℕ → List (Σ a, Item E a)
   | .inl w => [w]
   | .inr _ => []
 
-/-- The lexicon. An unfocused word evokes its own value and an F-marked one every value of its
-type (2); *only* is (30b); and ~ presupposes (40) of `C` and returns the ordinary value of its
-phrase with no alternatives (42). -/
+/-- The lexicon. A word evokes its own value; the feature is `WithAlternatives.mark` (2); *only*
+is (30b), the exclusive's assertion over a domain of properties; and ~ presupposes (40) of its
+variable and returns the ordinary value of its phrase with no alternatives (42). -/
 def Item.val : {a : Ty Sort'} → Item E a → a.Dom (Sort'.Dom E)
   | _, .name x => .unfeatured x
-  | _, .focus x => .focused x
   | _, .introduced => .unfeatured fun y z x ↦ intro x y z
-  | _, .only C => .unfeatured fun VP x ↦ {w | ∀ P ∈ C, w ∈ P x → P = VP}
-  | _, .squiggle C => fun φ ↦
-    .unfeatured ⟨SquiggleSet φ.ordinary φ.alternatives C, fun _ ↦ φ.ordinary⟩
+  | _, .feature k _ => fun φ ↦ φ.mark k
+  | _, .only C => .unfeatured fun VP x ↦ atMost (· = ·) C (fun P ↦ P x) VP
+  | _, .squiggleSet _ Γ => fun φ ↦
+    .unfeatured ⟨SquiggleSet φ.ordinary φ.alternatives Γ, fun _ ↦ φ.ordinary⟩
+  | _, .squiggleInd _ γ => fun φ ↦
+    .unfeatured ⟨SquiggleInd φ.ordinary φ.alternatives γ, fun _ ↦ φ.ordinary⟩
 
 /-- The grammar: functional application, pointwise at alternatives. -/
 def grammar : Interpreter (effectGrammar (application (B := Sort'))) ℕ :=
   effectDrivenWithin (MetaMode.pointwise (· = .F)) application
 
-/-- (31), with the object and the goal as given. -/
-def lf (C : Set (E → Set (Set (E × E × E)))) (m : E) (obj goal : Item E (F e)) :
+/-- A name bearing a mark. -/
+def marked (k : Mark) (x : E) : Tree Unit (Σ a, Item E a) :=
+  .bin (.leaf ⟨_, .feature k e⟩) (.leaf ⟨_, .name x⟩)
+
+/-- The VP of (31), *introduced Bill to Sue*, with the marks of the object and the goal. -/
+def vp (b s : E) (kb ks : Mark) : Tree Unit (Σ a, Item E a) :=
+  .bin (.bin (.leaf ⟨_, .introduced⟩) (marked kb b)) (marked ks s)
+
+/-- (31), with the marks of the object and the goal. -/
+def lf (C : Set (E → Set (Set (E × E × E)))) (m b s : E) (kb ks : Mark) :
     Tree Unit (Σ a, Item E a) :=
   .bin (.leaf ⟨_, .name m⟩)
-    (.bin (.leaf ⟨_, .only C⟩)
-      (.bin (.bin (.bin (.leaf ⟨_, .introduced⟩) (.leaf ⟨_, obj⟩)) (.leaf ⟨_, goal⟩))
-        (.leaf ⟨_, .squiggle C⟩)))
+    (.bin (.leaf ⟨_, .only C⟩) (.bin (vp b s kb ks) (.leaf ⟨_, .squiggleSet (e ⇒ p) C⟩)))
 
 /-- The meanings of a tree. -/
 def meanings (t : Tree Unit (Σ a, Item E a)) : List (Σ a : Ty Sort', a.Dom (Sort'.Dom E)) :=
   t.values grammar effectGrammar.structure Item.val items
 
-private theorem binary_fa₃ : grammar.binary (F (e ⇒ e ⇒ e ⇒ p)) (F e) =
-    [⟨F (e ⇒ e ⇒ p), .ap trivial (.basic .fa)⟩] := rfl
+/-- Two daughters with alternatives combine as their results do, by Structured App. -/
+private theorem binary_F (l r : Ty Sort') :
+    grammar.binary (F l) (F r) = (grammar.binary l r).map fun q ↦ ⟨F q.1, .ap trivial q.2⟩ :=
+  binary_effectDrivenWithin_pointwise (P := (· = .F)) rfl trivial fun b ↦ by cases b
 
-private theorem binary_fa₂ : grammar.binary (F (e ⇒ e ⇒ p)) (F e) =
-    [⟨F (e ⇒ p), .ap trivial (.basic .fa)⟩] := rfl
+private theorem binary_fa₃ : grammar.binary (e ⇒ e ⇒ e ⇒ p) e = [⟨e ⇒ e ⇒ p, .basic .fa⟩] := rfl
+
+private theorem binary_fa₂ : grammar.binary (e ⇒ e ⇒ p) e = [⟨e ⇒ p, .basic .fa⟩] := rfl
+
+private theorem binary_only : grammar.binary ((e ⇒ p) ⇒ e ⇒ p) (M (e ⇒ p)) =
+    [⟨M (e ⇒ p), .mapR (.basic .fa)⟩] := rfl
+
+private theorem binary_subject : grammar.binary e (M (e ⇒ p)) =
+    [⟨M p, .mapR (.basic .ba)⟩] := rfl
+
+private theorem binary_feature : grammar.binary (F e ⇒ F e) (F e) = [⟨F e, .basic .fa⟩] := rfl
 
 private theorem binary_squiggle : grammar.binary (F (e ⇒ p)) (F (e ⇒ p) ⇒ F (M (e ⇒ p))) =
     [⟨F (M (e ⇒ p)), .basic .ba⟩] := rfl
 
-private theorem binary_only : grammar.binary (F ((e ⇒ p) ⇒ e ⇒ p)) (F (M (e ⇒ p))) =
-    [⟨F (M (e ⇒ p)), .ap trivial (.mapR (.basic .fa))⟩] := rfl
+variable (C : Set (E → Set (Set (E × E × E)))) (m b t s : E) (kb ks : Mark)
 
-private theorem binary_subject : grammar.binary (F e) (F (M (e ⇒ p))) =
-    [⟨F (M p), .ap trivial (.mapR (.basic .ba))⟩] := rfl
-
-variable (C : Set (E → Set (Set (E × E × E)))) (m b s : E)
-
-/-- (31) with F on the object has one meaning. It is defined where `C` is a set of properties of
-the form 'introducing y to Sue' that contains 'introducing Bill to Sue' and another, and it is
-then the proposition that any property in `C` that Mary has is that one: (6), with (5a)
-constraining `C`. -/
-theorem meanings_lf_object : ∀ d ∈ meanings (lf C m (.focus b) (.name s)),
-    ∃ v : WithAlternatives (Part (Set (Set (E × E × E)))), d = ⟨F (M p), v⟩ ∧
-      (v.ordinary.Dom ↔
-        SquiggleSet (fun x ↦ intro x b s) (Set.range fun y x ↦ intro x y s) C) ∧
-      ∀ h, v.ordinary.get h = {w | ∀ P ∈ C, w ∈ P m → P = fun x ↦ intro x b s} := by
-  simp only [meanings, lf, Tree.values_phrase_binary, Tree.values_terminal, items,
+/-- A marked name means the name's value under its mark. -/
+theorem meanings_marked (k : Mark) (x : E) :
+    meanings (marked k x) = [⟨F e, (WithAlternatives.unfeatured x).mark k⟩] := by
+  simp only [meanings, marked, Tree.values_phrase_binary, Tree.values_terminal, items,
     List.map_cons, List.map_nil, List.flatMap_cons, List.flatMap_nil, List.append_nil,
-    binary_fa₃, binary_fa₂, binary_squiggle, binary_only, binary_subject, List.mem_singleton]
-  rintro _ rfl
-  refine ⟨_, rfl, Iff.of_eq (congrArg (SquiggleSet _ · C) (Set.ext fun P ↦ ?_)), fun _ ↦ rfl⟩
-  show P ∈ WithAlternatives.alternatives
-    (_ <$> (_ <$> WithAlternatives.unfeatured _ <*> WithAlternatives.focused b) <*>
-      WithAlternatives.unfeatured s) ↔ _
-  simp only [mem_alternatives_seq, mem_alternatives_map, unfeatured_alternatives,
-    focused_alternatives, Set.mem_singleton_iff, Set.mem_univ, true_and, exists_eq_left,
-    Set.mem_range]
-  constructor
-  · rintro ⟨_, ⟨_, ⟨_, rfl, y, rfl⟩, rfl⟩, rfl⟩
-    exact ⟨y, rfl⟩
-  · rintro ⟨y, rfl⟩
-    exact ⟨_, ⟨_, ⟨_, rfl, y, rfl⟩, rfl⟩, rfl⟩
+    binary_feature]
+  rfl
 
-/-- (31) with F on the goal: the same tree and the same assertion, with `C` constrained to
-properties of the form 'introducing Bill to z', (5b). -/
-theorem meanings_lf_goal : ∀ d ∈ meanings (lf C m (.name b) (.focus s)),
-    ∃ v : WithAlternatives (Part (Set (Set (E × E × E)))), d = ⟨F (M p), v⟩ ∧
-      (v.ordinary.Dom ↔
-        SquiggleSet (fun x ↦ intro x b s) (Set.range fun z x ↦ intro x b z) C) ∧
-      ∀ h, v.ordinary.get h = {w | ∀ P ∈ C, w ∈ P m → P = fun x ↦ intro x b s} := by
-  simp only [meanings, lf, Tree.values_phrase_binary, Tree.values_terminal, items,
+/-- The VP of (31) means the property of introducing Bill to Sue, and evokes what the marks on
+*Bill* and *Sue* compose: the focus semantic value of the VP. -/
+theorem meanings_vp : meanings (vp b s kb ks) =
+    [⟨F (e ⇒ p), WithAlternatives.map₂ (fun y z x ↦ intro x y z)
+      ((WithAlternatives.unfeatured b).mark kb) ((WithAlternatives.unfeatured s).mark ks)⟩] := by
+  have h := meanings_marked (E := E)
+  simp only [meanings] at h
+  simp only [meanings, vp, Tree.values_phrase_binary, Tree.values_terminal, items, h,
     List.map_cons, List.map_nil, List.flatMap_cons, List.flatMap_nil, List.append_nil,
-    binary_fa₃, binary_fa₂, binary_squiggle, binary_only, binary_subject, List.mem_singleton]
-  rintro _ rfl
-  refine ⟨_, rfl, Iff.of_eq (congrArg (SquiggleSet _ · C) (Set.ext fun P ↦ ?_)), fun _ ↦ rfl⟩
+    binary_F, binary_fa₃, binary_fa₂]
+  refine congrArg (fun x ↦ [(⟨F (e ⇒ p), x⟩ : Σ a : Ty Sort', a.Dom (Sort'.Dom E))]) ?_
+  refine WithAlternatives.ext rfl (Set.ext fun P ↦ ?_)
   show P ∈ WithAlternatives.alternatives
-    (_ <$> (_ <$> WithAlternatives.unfeatured _ <*> WithAlternatives.unfeatured b) <*>
-      WithAlternatives.focused s) ↔ _
+    (_ <$> (_ <$> WithAlternatives.unfeatured _ <*> _) <*> _) ↔ P ∈ Set.image2 _ _ _
   simp only [mem_alternatives_seq, mem_alternatives_map, unfeatured_alternatives,
-    focused_alternatives, Set.mem_singleton_iff, Set.mem_univ, true_and, exists_eq_left,
-    Set.mem_range]
+    Set.mem_singleton_iff, exists_eq_left, Set.mem_image2]
+  exact ⟨fun ⟨_, ⟨_, ⟨_, rfl, y, hy, rfl⟩, rfl⟩, z, hz, h⟩ ↦ ⟨y, hy, z, hz, h⟩,
+    fun ⟨y, hy, z, hz, h⟩ ↦ ⟨_, ⟨_, ⟨_, rfl, y, hy, rfl⟩, rfl⟩, z, hz, h⟩⟩
+
+/-- **(31) has one meaning.** It evokes no alternatives (42); it is defined where `C` is a set of
+properties in the focus semantic value of the VP that contains 'introducing Bill to Sue' and
+another (40); and it is then the proposition that any property in `C` that Mary has is that
+one (30b). -/
+theorem value?_lf :
+    (lf C m b s kb ks).value? grammar effectGrammar.structure Item.val items (F (M p)) =
+      some (.unfeatured
+        ⟨SquiggleSet (fun x ↦ intro x b s)
+            (WithAlternatives.map₂ (fun y z x ↦ intro x y z)
+              ((WithAlternatives.unfeatured b).mark kb)
+              ((WithAlternatives.unfeatured s).mark ks)).alternatives C,
+          fun _ ↦ atMost (· = ·) C (fun P ↦ P m) fun x ↦ intro x b s⟩) := by
+  have h := meanings_vp (E := E)
+  simp only [meanings] at h
+  refine value?_eq_some_of_values_eq ?_
+  simp only [lf, Tree.values_phrase_binary, Tree.values_terminal, items, h,
+    List.map_cons, List.map_nil, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+    binary_F, binary_squiggle, binary_only, binary_subject]
+  refine congrArg (fun x ↦ [(⟨F (M p), x⟩ : Σ a : Ty Sort', a.Dom (Sort'.Dom E))])
+    (WithAlternatives.ext (by cases kb <;> cases ks <;> rfl) (Set.ext fun q ↦ ?_))
+  show q ∈ WithAlternatives.alternatives (_ <$> WithAlternatives.unfeatured _ <*>
+    (_ <$> WithAlternatives.unfeatured _ <*> WithAlternatives.unfeatured _)) ↔
+      q ∈ (WithAlternatives.unfeatured _).alternatives
+  simp only [mem_alternatives_seq, mem_alternatives_map, unfeatured_alternatives,
+    Set.mem_singleton_iff, exists_eq_left]
   constructor
-  · rintro ⟨_, ⟨_, ⟨_, rfl, rfl⟩, rfl⟩, z, rfl⟩
-    exact ⟨z, rfl⟩
-  · rintro ⟨z, rfl⟩
-    exact ⟨_, ⟨_, ⟨_, rfl, rfl⟩, rfl⟩, z, rfl⟩
+  · rintro ⟨_, rfl, _, ⟨_, rfl, rfl⟩, rfl⟩
+    cases kb <;> cases ks <;> rfl
+  · rintro rfl
+    exact ⟨_, rfl, _, ⟨_, rfl, rfl⟩, by cases kb <;> cases ks <;> rfl⟩
+
+/-- The exclusive's assertion over properties, at an individual, is its assertion over the
+propositions that the individual has them, where having one of the properties decides which. -/
+private theorem atMost_apply {ι W : Type} (g : ι → E → Set W)
+    (hg : ∀ i j, g i m = g j m → g i = g j) (i : ι) :
+    atMost (· = ·) (Set.range g) (fun P ↦ P m) (g i) =
+      atMost (· = ·) (Set.range fun j ↦ g j m) id (g i m) := by
+  ext w
+  simp only [mem_atMost, Set.forall_mem_range, id]
+  exact forall_congr' fun j ↦ imp_congr_right fun _ ↦ ⟨fun h ↦ congrFun h m, hg i j⟩
+
+/-- (3a) through its logical form. With F on *Bill* and the domain of *only* the focus semantic
+value of the VP, the presupposition of ~ holds, and the sentence is false in the scenario. -/
+theorem lf_object_scenario (hbt : b ≠ t) :
+    ∃ v, (lf (Set.range fun y x ↦ intro x y s) m b s .focused .unfeatured).value? grammar
+        effectGrammar.structure Item.val items (F (M p)) = some (.unfeatured v) ∧
+      ∃ h : v.Dom, scenario m b t s ∉ v.get h := by
+  refine ⟨_, value?_lf _ m b s _ _, ?_, ?_⟩
+  · rw [alternatives_map₂_focused_unfeatured]
+    exact ⟨subset_rfl, ⟨b, rfl⟩, _, ⟨t, rfl⟩, fun h ↦
+      hbt (Prod.mk.inj (Prod.mk.inj (atom_injective (congrFun h m))).2).1.symm⟩
+  · show scenario m b t s ∉ atMost (· = ·) (Set.range fun y x ↦ intro x y s) (fun P ↦ P m)
+      fun x ↦ intro x b s
+    rw [atMost_apply m (fun y x ↦ intro x y s) (fun i j h ↦ by
+      rw [(Prod.mk.inj (Prod.mk.inj (atom_injective h)).2).1]) b]
+    exact three_a m b t s hbt
+
+/-- (3b) through its logical form. With F on *Sue* the same tree, with the domain of *only* the
+focus semantic value of its VP, is true in the scenario. -/
+theorem lf_goal_scenario (hbt : b ≠ t) (hst : s ≠ t) :
+    ∃ v, (lf (Set.range fun z x ↦ intro x b z) m b s .unfeatured .focused).value? grammar
+        effectGrammar.structure Item.val items (F (M p)) = some (.unfeatured v) ∧
+      ∃ h : v.Dom, scenario m b t s ∈ v.get h := by
+  refine ⟨_, value?_lf _ m b s _ _, ?_, ?_⟩
+  · rw [alternatives_map₂_unfeatured_focused]
+    exact ⟨subset_rfl, ⟨s, rfl⟩, _, ⟨t, rfl⟩, fun h ↦
+      hst (Prod.mk.inj (Prod.mk.inj (atom_injective (congrFun h m))).2).2.symm⟩
+  · show scenario m b t s ∈ atMost (· = ·) (Set.range fun z x ↦ intro x b z) (fun P ↦ P m)
+      fun x ↦ intro x b s
+    rw [atMost_apply m (fun z x ↦ intro x b z) (fun i j h ↦ by
+      rw [(Prod.mk.inj (Prod.mk.inj (atom_injective h)).2).2]) s]
+    exact three_b m b t s hbt
+
+private theorem binary_squiggle_e : grammar.binary (F e) (F e ⇒ F (M e)) =
+    [⟨F (M e), .basic .ba⟩] := rfl
+
+/-- The individual case of ~, on a name with the antecedent another individual (40). The phrase
+is defined where the antecedent is an alternative to the name distinct from it. -/
+theorem value?_contrast (k : Mark) :
+    (Tree.bin (marked k b) (.leaf ⟨_, .squiggleInd e t⟩)).value? grammar effectGrammar.structure
+        Item.val items (F (M e)) =
+      some (.unfeatured ⟨SquiggleInd b ((WithAlternatives.unfeatured b).mark k).alternatives t,
+        fun _ ↦ b⟩) := by
+  have h := meanings_marked (E := E)
+  simp only [meanings] at h
+  refine value?_eq_some_of_values_eq ?_
+  simp only [Tree.values_phrase_binary, Tree.values_terminal, items, h, List.map_cons,
+    List.map_nil, List.flatMap_cons, List.flatMap_nil, List.append_nil, binary_squiggle_e]
+  cases k <;> rfl
+
+/-- With F on the name every other individual is an antecedent for it, and without F none is:
+focus is what licenses the contrast. -/
+theorem squiggleInd_marked_iff (k : Mark) :
+    SquiggleInd b ((WithAlternatives.unfeatured b).mark k).alternatives t ↔
+      k = .focused ∧ t ≠ b := by
+  cases k
+  · simp [SquiggleInd, eq_comm]
+  · simp [SquiggleInd]
 
 end LogicalForm
 
