@@ -23,13 +23,13 @@ quantitatively: a candidate that wins under $n$ of the $t$ linear extensions has
 $n/t$, so the grammar is the uniform measure on `linearExtensions r` and the
 [probabilities of the candidates sum to one](##sum_measure_setOf_picksAt).
 
-A competition between two candidates is decided by the
-[earliest constraint that distinguishes them](##picksAt_binary_iff_exists_favoring_isMinOn). When
-the grammar ranks a set `D` of such constraints above the others and leaves `D` itself freely
-ranked, each member of `D` comes first equally often, and the candidate wins at the rate
-[$|W ∩ D| / |D|$](##uniformOn_real_picksAt_binary) for `W` the constraints that favor it. Free
-ranking of all the constraints and Tesar and Smolensky's stratified hierarchies are the two cases
-used in practice.
+A ranking satisfies an ERC strictly when its earliest non-neutral constraint is winner-preferring.
+When the grammar ranks a set `D` of the non-neutral constraints above the others and its
+automorphisms act transitively on `D`, each member of `D` comes first equally often, and the ERC
+holds at the rate [$|W ∩ D| / |D|$](##uniformOn_real_lex_pos). A competition between two
+candidates is [strict satisfaction of their ERC](##picksAt_binary_iff_lex_pos), so this is the
+rate at which a candidate wins. Free ranking of all the constraints and Tesar and Smolensky's
+stratified hierarchies are the two cases used in practice.
 
 ## Implementation notes
 
@@ -38,8 +38,13 @@ never `PartialOrder (Fin n)` values, since a class-typed binder would become a l
 capture the `≤` and `<` notation that must keep meaning the positional order of `Fin n`. This is
 mathlib's idiom for orders treated as data, as in `extend_partialOrder`.
 
-The free ranking of a set `D` is stated as invariance of the grammar under the transpositions of
-`D`, `Equiv.swap d d' ⁻¹'o r = r`, so that the linear extensions are closed under them.
+A permutation `g` of the constraints is an automorphism of the grammar when `g ⁻¹'o r = r`, and
+the rate theorems ask that the automorphisms preserving `D` act transitively on `D`. For a freely
+ranked `D` the transpositions of `D` are such automorphisms.
+
+Sole winners need strict satisfaction of an ERC, `toLex 0 < toLex (α ∘ σ)`, where
+`ERC.SatisfiedBy` is the weak inequality. The rate theorems are stated for the strict form, which
+needs no side condition that some constraint be non-neutral.
 
 ## References
 
@@ -344,94 +349,39 @@ theorem IsLinearExtension.picksAt (hσ : IsLinearExtension r σ) (ho : o ∈ S.g
     (h o' ho' hne).imp fun w ⟨hw, hl⟩ ↦ ⟨hw, fun l hlt ↦ lt_of_le_of_ne (hσ w l (hl l hlt))
       fun heq ↦ lt_asymm hw (σ.symm.injective heq ▸ hlt)⟩⟩
 
-/-! ### Binary competitions
+/-! ### The rate of an ERC
 
-For a candidate set `{chosen, other}`, picking `chosen` is lexicographic domination of the two
-violation profiles read in rank order, which is decided at the first position where they differ.
-So `chosen` wins exactly when the earliest of the constraints active on the pair, the one at which
-`σ.symm` is least, favors it. -/
+A ranking satisfies an ERC strictly when its earliest non-neutral constraint is winner-preferring
+(`ERC.lex_pos_iff_exists_isMinOn`). Suppose a grammar ranks a set `D` of the non-neutral
+constraints above the remaining ones, and its automorphisms that preserve `D` act transitively on
+`D`, as when `D` is freely ranked. Then every linear extension decides the ERC at its earliest
+member of `D`, and the linear extensions put each member of `D` earliest equally often
+(`Equiv.Perm.card_filter_isMinOn_symm_mul_card`), so the ERC holds in the fraction
+`|W ∩ D| / |D|` of them. -/
 
-/-- The constraints *active* on the candidates `o` and `o'` of the input `i` are those assigning
-them different violations, the non-neutral constraints of the winner–loser ERC of `o` against
-`o'`. An inactive constraint cannot affect the competition ([anttila-1997]). -/
-def active (con : ConstraintSet (Input × Output) (Fin n)) (i : Input) (o o' : Output) :
-    Finset (Fin n) :=
-  {c | ercOfProfiles (con · (i, o)) (con · (i, o')) c ≠ .e}
+section Rate
 
-/-- The constraints *favoring* `o` over `o'` at the input `i` are those assigning `o` strictly
-fewer violations, the winner-preferring constraints of the winner–loser ERC of `o` against
-`o'`. -/
-def favoring (con : ConstraintSet (Input × Output) (Fin n)) (i : Input) (o o' : Output) :
-    Finset (Fin n) :=
-  {c | ercOfProfiles (con · (i, o)) (con · (i, o')) c = .W}
+variable {α : ERC (Fin n)} {D : Finset (Fin n)}
 
-@[simp] theorem mem_active {c : Fin n} :
-    c ∈ active con i o o' ↔ con c (i, o) ≠ con c (i, o') := by
-  rw [active, mem_filter, ne_eq, ercOfProfiles_eq_e_iff]
-  exact and_iff_right (mem_univ c)
-
-@[simp] theorem mem_favoring {c : Fin n} :
-    c ∈ favoring con i o o' ↔ con c (i, o) < con c (i, o') := by
-  rw [favoring, mem_filter, ercOfProfiles_eq_W_iff]
-  exact and_iff_right (mem_univ c)
-
-theorem favoring_subset_active : favoring con i o o' ⊆ active con i o o' :=
-  fun _ hc ↦ mem_active.mpr (Nat.ne_of_lt (mem_favoring.mp hc))
-
-theorem lex_lt_iff_exists_favoring_isMinOn (σ : Ranking (Fin n) n) :
-    toLex (fun k : Fin n ↦ con (σ k) (i, o)) < toLex (fun k : Fin n ↦ con (σ k) (i, o')) ↔
-      ∃ x ∈ favoring con i o o', IsMinOn σ.symm (active con i o o') x := by
-  have hle := satisfiedBy_ercOfProfiles_iff_le σ (con · (i, o)) (con · (i, o'))
-  refine ⟨fun hlt ↦ ?_, fun ⟨x, hxf, hmin⟩ ↦ ?_⟩
-  · have hne : ∃ k, ercOfProfiles (con · (i, o)) (con · (i, o')) k ≠ .e := by
-      by_contra! h
-      exact hlt.ne (congrArg toLex (funext fun k ↦ (ercOfProfiles_eq_e_iff _ _ _).1 (h (σ k))))
-    obtain ⟨x, hx, hmin⟩ := (ERC.satisfiedBy_iff_exists_isMinOn hne).1 (hle.2 hlt.le)
-    exact ⟨x, mem_filter.2 ⟨mem_univ x, hx⟩, hmin⟩
-  · have hxa := favoring_subset_active hxf
-    refine lt_of_le_of_ne (hle.1 ((ERC.satisfiedBy_iff_exists_isMinOn
-      ⟨x, (mem_filter.1 hxa).2⟩).2 ⟨x, (mem_filter.1 hxf).2, hmin⟩)) fun heq ↦ mem_active.1 hxa ?_
-    simpa using show con (σ (σ.symm x)) (i, o) = con (σ (σ.symm x)) (i, o') from
-      congrFun heq (σ.symm x)
-
-variable [DecidableEq Output]
-
-/-- A ranking picks `chosen` from the candidates `{chosen, other}` exactly when the earliest
-constraint active on the pair favors `chosen`. -/
-theorem picksAt_binary_iff_exists_favoring_isMinOn
-    (h_two : S.gen i = {chosen, other}) (h_ne : chosen ≠ other) (σ : Ranking (Fin n) n) :
-    S.PicksAt σ i chosen ↔
-      ∃ x ∈ favoring S.con i chosen other, IsMinOn σ.symm (active S.con i chosen other) x :=
-  (Tableau.optimal_eq_singleton_iff_pair h_two h_ne).trans (lex_lt_iff_exists_favoring_isMinOn σ)
-
-/-! ### Rates of binary competitions
-
-Suppose the grammar ranks a set `D` of the active constraints above the remaining active ones and
-is invariant under the transpositions of `D`. Then every linear extension decides the competition
-at its earliest member of `D`, and the linear extensions put each member of `D` earliest equally
-often (`Equiv.Perm.card_filter_isMinOn_symm_mul_card`), so `chosen` wins in the fraction
-`|favoring ∩ D| / |D|` of them. This is Anttila's observation that the tableaux need not be drawn:
-the count of the freely ranked constraints on each side gives the result. -/
-
-/-- The linear extensions that pick `chosen`, counted against all of them, when the grammar ranks
-the freely ranked set `D` of active constraints above the other active constraints: their number
-times `|D|` is the number of linear extensions times `|favoring ∩ D|`. -/
-theorem card_filter_picksAt_mul_card [DecidableRel r] {D : Finset (Fin n)}
-    (h_two : S.gen i = {chosen, other}) (h_ne : chosen ≠ other)
-    (hD : D ⊆ active S.con i chosen other)
-    (h_lead : ∀ a ∈ active S.con i chosen other, a ∉ D → ∃ d ∈ D, r d a)
-    (h_swap : ∀ d ∈ D, ∀ d' ∈ D, Equiv.swap d d' ⁻¹'o r = r) :
-    #{σ ∈ linearExtensions r | S.PicksAt σ i chosen} * #D =
-      #(linearExtensions r) * #(favoring S.con i chosen other ∩ D) := by
+/-- The linear extensions of a grammar that strictly satisfy an ERC, counted against all of them,
+when the grammar ranks a set `D` of non-neutral constraints above the other non-neutral ones and
+its automorphisms preserving `D` act transitively on `D`: their number times `|D|` is the number
+of linear extensions times `|W ∩ D|`. -/
+theorem card_filter_lex_pos_mul_card [DecidableRel r] (hD : D ⊆ α.support)
+    (h_lead : ∀ a ∈ α.support, a ∉ D → ∃ d ∈ D, r d a)
+    (h_aut : ∀ d ∈ D, ∀ d' ∈ D, ∃ g : Equiv.Perm (Fin n),
+      g d = d' ∧ (∀ z, g z ∈ D ↔ z ∈ D) ∧ g ⁻¹'o r = r) :
+    #((linearExtensions r).filter fun σ : Ranking (Fin n) n ↦ toLex 0 < toLex (α ∘ σ)) * #D =
+      #(linearExtensions r) * #(α.W ∩ D) := by
   classical
   have key (σ) (hσ : σ ∈ linearExtensions r) :
-      S.PicksAt σ i chosen ↔ ∃ x ∈ favoring S.con i chosen other ∩ D, IsMinOn σ.symm D x := by
+      toLex 0 < toLex (α ∘ σ) ↔ ∃ x ∈ α.W ∩ D, IsMinOn σ.symm D x := by
     rw [mem_linearExtensions] at hσ
-    rw [picksAt_binary_iff_exists_favoring_isMinOn h_two h_ne σ]
+    rw [ERC.lex_pos_iff_exists_isMinOn]
     refine ⟨fun ⟨x, hx, hmin⟩ ↦ ?_, fun ⟨x, hx, hmin⟩ ↦ ?_⟩
     · have hxD : x ∈ D := by
         by_contra hxD
-        obtain ⟨d, hd, hdx⟩ := h_lead x (favoring_subset_active hx) hxD
+        obtain ⟨d, hd, hdx⟩ := h_lead x (ERC.W_subset_support hx) hxD
         exact hxD (σ.symm.injective ((hσ d x hdx).antisymm (isMinOn_iff.1 hmin d (hD hd))) ▸ hd)
       exact ⟨x, mem_inter.2 ⟨hx, hxD⟩, hmin.of_subset (coe_subset.2 hD)⟩
     · refine ⟨x, (mem_inter.1 hx).1, isMinOn_iff.2 fun a ha ↦ ?_⟩
@@ -439,33 +389,132 @@ theorem card_filter_picksAt_mul_card [DecidableRel r] {D : Finset (Fin n)}
       · exact isMinOn_iff.1 hmin a haD
       · obtain ⟨d, hd, hda⟩ := h_lead a ha haD
         exact (isMinOn_iff.1 hmin d hd).trans (hσ d a hda)
+  have hS : ∀ d ∈ D, ∀ d' ∈ D, ∃ g : Equiv.Perm (Fin n), g d = d' ∧ (∀ z, g z ∈ D ↔ z ∈ D) ∧
+      ∀ σ, g * σ ∈ linearExtensions r ↔ σ ∈ linearExtensions r := fun d hd d' hd' ↦ by
+    obtain ⟨g, hgd, hgD, hg⟩ := h_aut d hd d' hd'
+    exact ⟨g, hgd, hgD, fun σ ↦ by
+      rw [mem_linearExtensions, mem_linearExtensions, isLinearExtension_mul_iff, hg]⟩
   rw [filter_congr key]
-  convert Equiv.Perm.card_filter_isMinOn_symm_mul_card _ D _ fun d hd d' hd' σ hσ ↦
-    mem_linearExtensions.2 ((mem_linearExtensions.1 hσ).mul (h_swap d hd d' hd'))
+  convert Equiv.Perm.card_filter_isMinOn_symm_mul_card _ D _ hS
 
-/-- When a grammar ranks a freely ranked set `D` of active constraints above the other active
-constraints, the uniform measure on its linear extensions picks `chosen` at the rate
-`|favoring ∩ D| / |D|`. -/
+/-- When a grammar ranks a set `D` of non-neutral constraints above the other non-neutral ones
+and its automorphisms preserving `D` act transitively on `D`, the uniform measure on its linear
+extensions strictly satisfies the ERC at the rate `|W ∩ D| / |D|`. -/
+theorem uniformOn_real_lex_pos [IsPartialOrder (Fin n) r] [DecidableRel r]
+    (hD : D ⊆ α.support) (h_lead : ∀ a ∈ α.support, a ∉ D → ∃ d ∈ D, r d a)
+    (h_aut : ∀ d ∈ D, ∀ d' ∈ D, ∃ g : Equiv.Perm (Fin n),
+      g d = d' ∧ (∀ z, g z ∈ D ↔ z ∈ D) ∧ g ⁻¹'o r = r) :
+    (uniformOn (linearExtensions r : Set (Ranking (Fin n) n))).real
+        {σ : Ranking (Fin n) n | toLex 0 < toLex (α ∘ σ)} = (#(α.W ∩ D) : ℝ) / #D := by
+  rw [uniformOn_finset_real_setOf]
+  rcases D.eq_empty_or_nonempty with rfl | hne
+  · -- every constraint is neutral, so no ranking satisfies the ERC strictly
+    have : (linearExtensions r).filter (fun σ : Ranking (Fin n) n ↦ toLex 0 < toLex (α ∘ σ)) = ∅ :=
+      filter_eq_empty_iff.2 fun σ _ hσ ↦ by
+        obtain ⟨x, hx, -⟩ := ERC.lex_pos_iff_exists_isMinOn.1 hσ
+        obtain ⟨d, hd, -⟩ := h_lead x (ERC.W_subset_support hx) (notMem_empty x)
+        exact notMem_empty d hd
+    rw [this, card_empty, inter_empty, card_empty, Nat.cast_zero, zero_div, div_zero]
+  · rw [div_eq_div_iff (by exact_mod_cast (linearExtensions_nonempty r).card_pos.ne')
+      (by exact_mod_cast hne.card_pos.ne')]
+    exact_mod_cast (card_filter_lex_pos_mul_card hD h_lead h_aut).trans (Nat.mul_comm _ _)
+
+/-- A uniformly random ranking satisfies an ERC with a non-neutral constraint at the rate
+`|W| / |W ∪ L|`. -/
+theorem ERC.uniformOn_real_satisfiedBy (α : ERC (Fin n)) (h : ∃ k, α k ≠ .e) :
+    (uniformOn (Set.univ : Set (Ranking (Fin n) n))).real {σ | α.SatisfiedBy σ} =
+      (#α.W : ℝ) / #α.support := by
+  obtain ⟨k, hk⟩ := h
+  rw [← Finset.coe_univ, uniformOn_finset_real_setOf, Finset.card_univ, Fintype.card_perm,
+    Fintype.card_fin, div_eq_div_iff (by positivity)
+      (by exact_mod_cast (Finset.card_pos.2 ⟨k, ERC.mem_support.2 hk⟩).ne')]
+  exact_mod_cast α.card_filter_satisfiedBy_mul_card.trans (Nat.mul_comm _ _)
+
+end Rate
+
+/-! ### Binary competitions
+
+For a candidate set `{chosen, other}`, picking `chosen` is strict satisfaction of the winner–loser
+ERC of `chosen` against `other`. So `chosen` wins exactly when the earliest of the constraints
+active on the pair favors it, and the rates of an ERC are the rates at which `chosen` wins. This is
+Anttila's observation that the tableaux need not be drawn: the count of the freely ranked
+constraints on each side gives the result. -/
+
+/-- The constraints *active* on the candidates `o` and `o'` of the input `i` are those assigning
+them different violations, the non-neutral constraints of the winner–loser ERC of `o` against
+`o'`. An inactive constraint cannot affect the competition ([anttila-1997]). -/
+def active (con : ConstraintSet (Input × Output) (Fin n)) (i : Input) (o o' : Output) :
+    Finset (Fin n) :=
+  (ercOfProfiles (con · (i, o)) (con · (i, o'))).support
+
+/-- The constraints *favoring* `o` over `o'` at the input `i` are those assigning `o` strictly
+fewer violations, the winner-preferring constraints of the winner–loser ERC of `o` against
+`o'`. -/
+def favoring (con : ConstraintSet (Input × Output) (Fin n)) (i : Input) (o o' : Output) :
+    Finset (Fin n) :=
+  (ercOfProfiles (con · (i, o)) (con · (i, o'))).W
+
+@[simp] theorem mem_active {c : Fin n} :
+    c ∈ active con i o o' ↔ con c (i, o) ≠ con c (i, o') :=
+  mem_support_ercOfProfiles
+
+@[simp] theorem mem_favoring {c : Fin n} :
+    c ∈ favoring con i o o' ↔ con c (i, o) < con c (i, o') :=
+  mem_W_ercOfProfiles
+
+theorem favoring_subset_active : favoring con i o o' ⊆ active con i o o' :=
+  ERC.W_subset_support
+
+variable [DecidableEq Output]
+
+/-- A ranking picks `chosen` from the candidates `{chosen, other}` exactly when it strictly
+satisfies the winner–loser ERC of `chosen` against `other`. -/
+theorem picksAt_binary_iff_lex_pos (h_two : S.gen i = {chosen, other}) (h_ne : chosen ≠ other)
+    (σ : Ranking (Fin n) n) :
+    S.PicksAt σ i chosen ↔
+      toLex 0 < toLex (ercOfProfiles (S.con · (i, chosen)) (S.con · (i, other)) ∘ σ) :=
+  (Tableau.optimal_eq_singleton_iff_pair h_two h_ne).trans
+    (lex_pos_ercOfProfiles_iff_lt σ (S.con · (i, chosen)) (S.con · (i, other))).symm
+
+/-- A ranking picks `chosen` from the candidates `{chosen, other}` exactly when the earliest
+constraint active on the pair favors `chosen`. -/
+theorem picksAt_binary_iff_exists_favoring_isMinOn
+    (h_two : S.gen i = {chosen, other}) (h_ne : chosen ≠ other) (σ : Ranking (Fin n) n) :
+    S.PicksAt σ i chosen ↔
+      ∃ x ∈ favoring S.con i chosen other, IsMinOn σ.symm (active S.con i chosen other) x :=
+  (picksAt_binary_iff_lex_pos h_two h_ne σ).trans ERC.lex_pos_iff_exists_isMinOn
+
+/-- The linear extensions that pick `chosen`, counted against all of them, when the grammar ranks
+a set `D` of active constraints above the other active ones and its automorphisms preserving `D`
+act transitively on `D`: their number times `|D|` is the number of linear extensions times
+`|favoring ∩ D|`. -/
+theorem card_filter_picksAt_mul_card [DecidableRel r] {D : Finset (Fin n)}
+    (h_two : S.gen i = {chosen, other}) (h_ne : chosen ≠ other)
+    (hD : D ⊆ active S.con i chosen other)
+    (h_lead : ∀ a ∈ active S.con i chosen other, a ∉ D → ∃ d ∈ D, r d a)
+    (h_aut : ∀ d ∈ D, ∀ d' ∈ D, ∃ g : Equiv.Perm (Fin n),
+      g d = d' ∧ (∀ z, g z ∈ D ↔ z ∈ D) ∧ g ⁻¹'o r = r) :
+    #{σ ∈ linearExtensions r | S.PicksAt σ i chosen} * #D =
+      #(linearExtensions r) * #(favoring S.con i chosen other ∩ D) := by
+  rw [filter_congr fun σ _ ↦ picksAt_binary_iff_lex_pos h_two h_ne σ]
+  exact card_filter_lex_pos_mul_card hD h_lead h_aut
+
+/-- Under the same hypotheses, the uniform measure on the linear extensions picks `chosen` at the
+rate `|favoring ∩ D| / |D|`. -/
 theorem uniformOn_real_picksAt_binary [IsPartialOrder (Fin n) r] [DecidableRel r]
     {D : Finset (Fin n)} (h_two : S.gen i = {chosen, other}) (h_ne : chosen ≠ other)
     (hD : D ⊆ active S.con i chosen other)
     (h_lead : ∀ a ∈ active S.con i chosen other, a ∉ D → ∃ d ∈ D, r d a)
-    (h_swap : ∀ d ∈ D, ∀ d' ∈ D, Equiv.swap d d' ⁻¹'o r = r) :
+    (h_aut : ∀ d ∈ D, ∀ d' ∈ D, ∃ g : Equiv.Perm (Fin n),
+      g d = d' ∧ (∀ z, g z ∈ D ↔ z ∈ D) ∧ g ⁻¹'o r = r) :
     (uniformOn (linearExtensions r : Set (Ranking (Fin n) n))).real {σ | S.PicksAt σ i chosen} =
       (#(favoring S.con i chosen other ∩ D) : ℝ) / #D := by
-  rw [uniformOn_finset_real_setOf]
-  rcases D.eq_empty_or_nonempty with rfl | hne
-  · -- no constraint is active, so no ranking picks `chosen`
-    have : {σ ∈ linearExtensions r | S.PicksAt σ i chosen} = ∅ :=
-      filter_eq_empty_iff.2 fun σ _ hσ ↦ by
-        obtain ⟨x, hx, -⟩ := (picksAt_binary_iff_exists_favoring_isMinOn h_two h_ne σ).1 hσ
-        obtain ⟨d, hd, -⟩ := h_lead x (favoring_subset_active hx) (notMem_empty x)
-        exact notMem_empty d hd
-    simp [this]
-  · rw [div_eq_div_iff (by exact_mod_cast (linearExtensions_nonempty r).card_pos.ne')
-      (by exact_mod_cast hne.card_pos.ne')]
-    exact_mod_cast (card_filter_picksAt_mul_card h_two h_ne hD h_lead h_swap).trans
-      (Nat.mul_comm _ _)
+  have h : {σ | S.PicksAt σ i chosen} =
+      {σ : Ranking (Fin n) n |
+        toLex 0 < toLex (ercOfProfiles (S.con · (i, chosen)) (S.con · (i, other)) ∘ σ)} :=
+    Set.ext fun σ ↦ picksAt_binary_iff_lex_pos h_two h_ne σ
+  rw [h]
+  exact uniformOn_real_lex_pos hD h_lead h_aut
 
 /-- Under the discrete grammar, with every ranking a linear extension, the uniform measure on
 rankings picks `chosen` at the rate `|favoring| / |active|`. -/
@@ -474,9 +523,10 @@ theorem uniformOn_real_picksAt_discrete_binary
     (uniformOn (Set.univ : Set (Ranking (Fin n) n))).real {σ | S.PicksAt σ i chosen} =
       (#(favoring S.con i chosen other) : ℝ) / #(active S.con i chosen other) := by
   have h := uniformOn_real_picksAt_binary (r := (· = ·)) h_two h_ne Subset.rfl
-    (fun a ha h ↦ absurd ha h) fun d _ d' _ ↦ by
-      ext a b
-      exact (Equiv.swap d d').injective.eq_iff
+    (fun a ha h ↦ absurd ha h) fun d hd d' hd' ↦
+      ⟨Equiv.swap d d', Equiv.swap_apply_left d d', Equiv.Perm.swap_apply_mem_iff hd hd', by
+        ext a b
+        exact (Equiv.swap d d').injective.eq_iff⟩
   rwa [linearExtensions_eq, coe_univ, inter_eq_left.2 favoring_subset_active] at h
 
 section Stratified
@@ -499,7 +549,9 @@ theorem card_filter_picksAt_stratified_binary [IsPartialOrder (Fin n) inner] [De
           (active S.con i chosen other).filter (stratumOf · = k)) := by
   obtain ⟨d, hd⟩ := h_dec
   refine card_filter_picksAt_mul_card h_two h_ne (filter_subset _ _) (fun a ha haD ↦ ?_)
-    fun d hd d' hd' ↦ swap_preimage_stratified h_triv (mem_filter.1 hd).2 (mem_filter.1 hd').2
+    fun d hd d' hd' ↦ ⟨Equiv.swap d d', Equiv.swap_apply_left d d',
+      Equiv.Perm.swap_apply_mem_iff hd hd',
+      swap_preimage_stratified h_triv (mem_filter.1 hd).2 (mem_filter.1 hd').2⟩
   refine ⟨d, hd, stratified_iff.2 (.inl ?_)⟩
   rw [(mem_filter.1 hd).2]
   exact lt_of_le_of_ne (not_lt.1 fun hlt ↦ mem_active.1 ha (h_tie a hlt))
@@ -554,18 +606,5 @@ theorem uniformOn_picksAt_stratified_eq_one [IsPartialOrder (Fin n) inner] [Deci
     picksAt_stratified_of_dominates (mem_linearExtensions.1 (mem_coe.1 hσ)) ho h
 
 end Stratified
-
-/-! ### The rate of an ERC -/
-
-/-- A uniformly random ranking satisfies an ERC with a non-neutral constraint at the rate
-`|W| / |W ∪ L|`. -/
-theorem ERC.uniformOn_real_satisfiedBy (α : ERC (Fin n)) (h : ∃ k, α k ≠ .e) :
-    (uniformOn (Set.univ : Set (Ranking (Fin n) n))).real {σ | α.SatisfiedBy σ} =
-      (#{k | α k = .W} : ℝ) / #{k | α k ≠ .e} := by
-  obtain ⟨k, hk⟩ := h
-  rw [← Finset.coe_univ, uniformOn_finset_real_setOf, Finset.card_univ, Fintype.card_perm,
-    Fintype.card_fin, div_eq_div_iff (by positivity)
-      (by exact_mod_cast (Finset.card_pos.2 ⟨k, mem_filter.2 ⟨mem_univ k, hk⟩⟩).ne')]
-  exact_mod_cast α.card_filter_satisfiedBy_mul_card.trans (Nat.mul_comm _ _)
 
 end OptimalityTheory
