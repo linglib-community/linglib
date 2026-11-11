@@ -149,11 +149,11 @@ open Greek.StandardModern.PolarityItems in
 theorem licenses_negative_tipota (n : Negator) : n.negativeContext.licenser.Licenses tipota := by
   cases n <;> decide
 
-open Greek.StandardModern.Negation in
-/-- Greek spells NEG₁ *dhen* and NEG₂ *min*. -/
-def greek : Negator → Negation.Marker
-  | neg1 => dhen
-  | neg2 => min
+/-- NEG₁ is the negator of indicative clauses and NEG₂ that of subjunctive clauses. -/
+def ofMood : Clause.ComplementType → Option Negator
+  | .indicative => some neg1
+  | .subjunctive => some neg2
+  | _ => none
 
 end Negator
 
@@ -221,10 +221,12 @@ def predicted? (e : Datum) : Option (List Negator) :=
     some (h.negator :: c)
   else none
 
-/-- The negators of Greek among the words of a row's sentence, in order. -/
+/-- The negators among the words of a row's sentence, in order: the entries of the Greek fragment,
+classed by the mood they negate. -/
 def negators (e : Datum) : List Negator :=
   (Datum.wordsOf e.primaryText).filterMap fun w ↦
-    [Negator.neg1, .neg2].find? fun n ↦ n.greek.morphs.map (·.form.toList) = [w]
+    (Greek.StandardModern.Negation.negators.find? fun n ↦
+      n.marker.morphs.map (·.form.toList) = [w]).bind (Negator.ofMood ·.mood)
 
 /-- Each Greek host of expletive negation spells out the negator of its class, *dhen* in the
 apparent hosts and *min* in the hosts proper, (20), and canonical *dhen* follows expletive *min*
