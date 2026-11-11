@@ -24,8 +24,9 @@ operator ~ presupposes `Focus.SquiggleSet` or `Focus.SquiggleInd` of a free vari
 antecedent is a `Focus.Antecedent`. In the logical form of an *only* sentence, with ~ adjoined to
 the VP and its variable the domain of *only*, the two-dimensional grammar puts the words together
 in one way, and the sentence is [defined where the domain satisfies the presupposition of ~ and
-then says what *only* says](##Rooth1992.value?_lf), which in the introduction scenario is
-[false with F on the object](##Rooth1992.lf_object_scenario) and [true with F on the
+then says what *only* says](##Rooth1992.value?_lf). With the domain the focus semantic value of
+the VP, it is in the introduction scenario [false with F on the
+object](##Rooth1992.lf_object_scenario) and [true with F on the
 goal](##Rooth1992.lf_goal_scenario).
 
 ## Implementation notes
@@ -42,9 +43,15 @@ goal](##Rooth1992.lf_goal_scenario).
   by Structured App. The feature F and the operator ~ are words whose type takes a meaning with
   alternatives as its argument, at any type; F is `WithAlternatives.mark`, and ~ has a word for
   its set case and one for its individual case. The presupposition of ~ is partiality of its
-  value.
+  value. The tree is binary, with the goal a bare name and the feature a sister of the phrase it
+  marks, where (31) is drawn with a ternary VP, a PP for the goal, and F on *Bill*. The scenario
+  theorems set the domain of *only* to the whole focus semantic value of the VP, as the paper
+  does for (5) and (6); under (40) alone the domain is free, and the verdict for (3a) turns on
+  whether it contains 'introducing Tom to Sue'. The individual case of ~ on a bare name is this
+  file's illustration of (40).
 * *Only* is the substrate's exclusive assertion on the identity scale,
-  `Focus.atMost (· = ·)`, which is (4b) with the equation reversed. Footnote 2 leaves
+  `Focus.atMost (· = ·)`, which is (4b) with the equation reversed. The entry of the logical
+  form abstracts over the subject, where (30b) is printed with `m`. Footnote 2 leaves
   open whether the prejacent belongs in the presupposition or the assertion, and suggests that
   the property may only need to be the strongest in the domain, the entailment scale.
 
@@ -467,9 +474,9 @@ theorem qa_rows : ∀ d ∈ qaData,
 
 (31): `[S Mary [VP only(C) [VP [VP introduced Bill to Sue] ~ C]]]`, with F on *Bill* or on *Sue*.
 Every word has an ordinary value and its alternatives. The feature F and the operator ~ apply to
-a constituent of any type: F makes its alternatives the whole type (2), and ~ closes them off
-(42) and is defined where the presupposition (40) holds of its variable, a set or an individual.
-*Only* is (30b). -/
+a constituent of any type: F makes its alternatives the whole type, as (2) illustrates, and ~
+closes them off (42) and is defined where the presupposition (40) holds of its variable, a set
+or an individual. *Only* is (30b) abstracted over its subject. -/
 
 section LogicalForm
 
@@ -509,8 +516,8 @@ def items : (Σ a, Item E a) ⊕ ℕ → List (Σ a, Item E a)
   | .inr _ => []
 
 /-- The value of each word. A name and the verb evoke their own value, the feature is
-`WithAlternatives.mark` (2), *only* is (30b), and ~ presupposes (40) of its variable and returns
-the ordinary value of its phrase with no alternatives (42). -/
+`WithAlternatives.mark`, *only* is (30b) abstracted over its subject, and ~ presupposes (40) of
+its variable and returns the ordinary value of its phrase with no alternatives (42). -/
 def Item.val : {a : Ty Sort'} → Item E a → a.Dom (Sort'.Dom E)
   | _, .name x => .unfeatured x
   | _, .introduced => .unfeatured fun y z x ↦ intro x y z
@@ -662,7 +669,7 @@ theorem lf_goal_scenario (hbt : b ≠ t) (hst : s ≠ t) :
 private theorem binary_squiggle_e : grammar.binary (F e) (F e ⇒ F (M e)) =
     [⟨F (M e), .basic .ba⟩] := rfl
 
--- the individual case of (40), on a name
+-- the individual case of (40), on a name: an illustration, not an example of the paper
 theorem value?_contrast (k : Mark) :
     (Tree.bin (marked k b) (.leaf ⟨_, .squiggleInd e t⟩)).value? grammar effectGrammar.structure
         Item.val items (F (M e)) =

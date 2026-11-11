@@ -237,7 +237,8 @@ theorem Mode.rel_eval
   | _, _, _, .ejectR m => fun _ _ ha _ _ hb ↦ Mode.rel_eval hG m ha (Eff.rel_eject hb)
   | _, _, _, .ejectL m => fun _ _ ha _ _ hb ↦ Mode.rel_eval hG m (Eff.rel_eject ha) hb
   | _, _, _, .join (f := f) m h => fun _ _ ha _ _ hb ↦
-    Eff.rel_join f h (Eff.rel_map f (fun _ _ hx ↦ hx) (Mode.rel_eval hG m ha hb))
+    (Mode.eval_join (D := D) m _ _).symm ▸ (Mode.eval_join (D := D') m _ _).symm ▸
+      Eff.rel_join f h (Mode.rel_eval hG m ha hb)
   | _, _, _, .lower m => fun _ _ ha _ _ hb ↦ Eff.rel_lower (Mode.rel_eval hG m ha hb)
 
 omit M M' in

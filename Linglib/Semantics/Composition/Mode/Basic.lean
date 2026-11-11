@@ -147,6 +147,13 @@ def eval {G : Language (Ty B)} (D : B → Type) [M : G.Structure (Ty.Dom D)] :
   | _, _, _, .join (f := f) m _ => MetaCombinator.join (M := Eff.Obj D f) (m.eval D)
   | _, _, _, .lower m => fun a b ↦ Eff.lower (m.eval D a b)
 
+/-- Join of a mode flattens its result by the join of the effect. -/
+theorem eval_join {G : Language (Ty B)} {D : B → Type} [M : G.Structure (Ty.Dom D)] {f : Eff B}
+    [h : f.IsApplicative] {l r u : Ty B} (m : Mode G.Binary l r (.comp f (.comp f u)))
+    (a : l.Dom D) (b : r.Dom D) :
+    (Mode.join m).eval D a b = Eff.join f h (m.eval D a b) :=
+  congrArg (Eff.join f h) (Eff.map_id f _)
+
 /-- Two modes are equivalent if they have the same `eval` in every structure for the grammar. -/
 protected def Equiv {G : Language (Ty B)} {l r u : Ty B} (m m' : Mode G.Binary l r u) : Prop :=
   ∀ (D : B → Type) [G.Structure (Ty.Dom D)], m.eval D = m'.eval D

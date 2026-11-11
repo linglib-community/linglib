@@ -119,7 +119,7 @@ variable {D : B → Type} {α β : Type}
 
 /-- An effect `f` is applicative if `Eff.Obj D f` has a `pure` and a `seq`. Every effect is,
 except storing (`.W o`) at a type `o` other than `.t`: two stored truth values are merged by
-conjunction, and other stored data are not merged. -/
+conjunction, with `True` stored by `pure`, and other stored data are not merged. -/
 class IsApplicative (f : Eff B) : Prop where
   /-- A stored datum is a truth value. -/
   out : match f with
