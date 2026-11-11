@@ -21,6 +21,7 @@
   {
     "id": "koev2026_7",
     "source": {"bibkey": "koev-2026", "paperLabel": "(7)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "Each [farmer] believes as strongly as the other that his crops will not survive another week without water, and each cares as much as the other about the survival of his crops.",
     "discourseSegments": [],
@@ -40,6 +41,7 @@
   {
     "id": "koev2026_8",
     "source": {"bibkey": "koev-2026", "paperLabel": "(8)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "He believes more strongly than I do that the organization of the executive branch of the federal government matters a great deal.",
     "discourseSegments": [],
@@ -59,6 +61,7 @@
   {
     "id": "koev2026_9",
     "source": {"bibkey": "koev-2026", "paperLabel": "(9)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "What group on this map most strongly believes that climate change is not real?",
     "discourseSegments": [],
@@ -78,6 +81,7 @@
   {
     "id": "koev2026_10a",
     "source": {"bibkey": "koev-2026", "paperLabel": "(10a)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "No one believes more than me that fitness should be a top priority in our lives.",
     "discourseSegments": [],
@@ -97,6 +101,7 @@
   {
     "id": "koev2026_10b",
     "source": {"bibkey": "koev-2026", "paperLabel": "(10b)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "What do you believe more, that the CIA killed JFK or that the government did 9/11?",
     "discourseSegments": [],
@@ -116,6 +121,7 @@
   {
     "id": "koev2026_12a",
     "source": {"bibkey": "koev-2026", "paperLabel": "(12a)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "My boss fully believes that family comes first.",
     "discourseSegments": [],
@@ -126,9 +132,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["predicate", "believe"],
-      ["modifier", "maximizer"],
-      ["adverb", "fully"]
+      ["predicate", "believe"]
     ],
     "comment": "Naturally occurring, collected via Google search in 2018.",
     "verified": "page-image"
@@ -136,6 +140,7 @@
   {
     "id": "koev2026_12b",
     "source": {"bibkey": "koev-2026", "paperLabel": "(12b)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "For one, I completely believe that Walmart is a monopoly, if you thought I was defending Walmart.",
     "discourseSegments": [],
@@ -146,9 +151,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["predicate", "believe"],
-      ["modifier", "maximizer"],
-      ["adverb", "completely"]
+      ["predicate", "believe"]
     ],
     "comment": "Naturally occurring, collected via Google search in 2018.",
     "verified": "page-image"
@@ -156,6 +159,7 @@
   {
     "id": "koev2026_12c",
     "source": {"bibkey": "koev-2026", "paperLabel": "(12c)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "But Kathleen didn't entirely believe it.",
     "discourseSegments": [],
@@ -166,9 +170,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["predicate", "believe"],
-      ["modifier", "maximizer"],
-      ["adverb", "entirely"]
+      ["predicate", "believe"]
     ],
     "comment": "Naturally occurring, collected via Google search in 2018.",
     "verified": "page-image"
@@ -210,9 +212,7 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["predicate", "believe"],
-      ["modifier", "minimizer"],
-      ["adverb", "slightly"]
+      ["predicate", "believe"]
     ],
     "comment": "Printed ??John slightly believes/believes a bit that the Patriots will win, after a reviewer: believe is not lower closed.",
     "verified": "page-image"
@@ -448,11 +448,11 @@
     "translation": "",
     "context": "The chance that Jill is at the party is exactly 50 percent.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["predicate", "likely"],
-      ["truthValue", "false"]
+      ["predicate", "likely"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -467,11 +467,11 @@
     "translation": "",
     "context": "The chance that Jill is at the party is exactly 50 percent.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["predicate", "unlikely"],
-      ["truthValue", "false"]
+      ["predicate", "unlikely"]
     ],
     "comment": "",
     "verified": "page-image"

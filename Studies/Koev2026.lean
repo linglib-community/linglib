@@ -1,6 +1,5 @@
 module
 
-public import Mathlib.MeasureTheory.Measure.Count
 public import Studies.Kennedy2007
 public import Studies.Lassiter2017
 public import Linglib.Fragments.English.Verbs.Attitude
@@ -11,27 +10,34 @@ public import Linglib.Data.Examples.Readers
 /-!
 # Koev (2026): a strong force semantics of *believe*
 
-Koev renders the weak semantics of Hawthorne, Rothschild and Spectre as a relation between the
-holder's credence in the complement and a degree (4), and argues that its scale gives *believe*
-strong force. *Believe* takes maximizers and no minimizers, so its scale is upper closed, and
-Interpretive Economy gives it the maximum standard, the force of Hintikka's semantics (1). Three
-tentative pieces of further evidence, comparison classes, the antonym *doubt* and percentage
-modifiers, pattern it with maximum-standard adjectives. This file checks the paper's judgments
-against the fragment's *believe* and *doubt*.
+Hawthorne, Rothschild and Spectre take *believe* to hold when its holder's credence in the
+complement exceeds a contextual threshold, the positive form of a relative predicate. Koev keeps
+the credence scale and argues from its shape for a strong force. *Believe* takes maximizers and no
+minimizers, which [only an upper closed scale licenses](##Koev2026.fitsModifiers_iff), and on such
+a scale Interpretive Economy selects the maximum standard, so that unmodified *believe* is
+[Hintikka's universal quantification](##Koev2026.holdsAt_hintikka_iff) over the worlds the
+credence leaves open. Comparison classes and the antonym *doubt*
+[place its standard at an endpoint](##Koev2026.furtherEvidence_iff) as well, where *believe* and
+*doubt* are contradictories while *likely* and *unlikely*
+[leave a gap](##Koev2026.not_likely_and_not_unlikely).
 
 ## Implementation notes
 
-Rows name predicates by form, looked up as a `Gradability` among the fragment's adjectives
-and its *believe* and *doubt*. Credences are degrees of a linear order with a top, and probability
-measures over a countable discrete space for the comparison with Hintikka.
+The positive form at a standard is the preimage of the standard under the measure, as in
+`Semantics/Degree/PositiveStandard.lean`, and credences are probability measures where the
+comparison with Hintikka needs them. A row's endpoint modifier is read off its words; the
+predicates of the antonym and comparison-class rows are named by form and looked up in a table
+built from the fragment's entries. The fragment has no *likely*, whose scale is disputed, so the
+comparison-class row for *likely* is not read and the gap of *likely* and *unlikely* is stated on
+Lassiter's threshold semantics.
 
 ## TODO
 
-* (21): the objective reading of *sure*, measuring commitment, which (2) needs; the fragment's
-  *sure* shares the scale of *believe*, so (2) does not yet come out consistent.
-* The percentage judgments (19)–(20) and the ratings of fn. 9, the second condition of
-  [hawthorne-rothschild-spectre-2016] that fn. 1 sets aside, and fn. 8's exhaustification of
-  *doubt*.
+* The objective reading of *sure*, a measure of commitment beside the credence, which makes *I
+  believe it but I'm not sure* consistent; the fragment's *sure* shares the scale of *believe*.
+* The percentage judgments and their ratings, the second condition of
+  [hawthorne-rothschild-spectre-2016] that the paper sets aside, and the exhaustification that
+  strengthens unembedded *doubt*.
 
 ## References
 
@@ -48,158 +54,137 @@ measures over a countable discrete space for the comparison with Hintikka.
 
 namespace Koev2026
 
-
-/-! ### The fragment's predicates -/
-
-/-- The verbs of the paper. -/
-def verbs : List Verb := [English.Verbs.believe.toVerb, English.Verbs.doubt.toVerb]
-
-/-- The degree semantics of the predicate a row names, among the fragment's adjectives and the
-verbs `vs`. -/
-def gradabilityIn (vs : List Verb) (form : String) : Option Gradability :=
-  (English.Adjectives.lookup form).bind (·.gradability?) <|>
-    (vs.find? (·.form == form)).bind (·.gradability?)
-
-/-- The positive standard of the predicate a row names. -/
-def standardOf (form : String) : Option PositiveStandard :=
-  (gradabilityIn verbs form).map (·.standard)
-
-/-- The endpoint modifier a row's `modifier` feature names. -/
-def modifierOf : String → Option EndpointModifier
-  | "maximizer" => some .maximizer
-  | "minimizer" => some .minimizer
-  | _ => none
+open English.Verbs English.Adjectives
 
 /-! ### The scale of *believe* (§2) -/
 
--- (7), (10)
-theorem degreeConstruction_rows :
-    ∀ row ∈ Examples.all, row.feature? "degreeConstruction" ≠ none →
-      ∀ f ∈ row.feature? "predicate", gradabilityIn verbs f ≠ none := by
+/-- The endpoint modifiers of the paper's examples, by form. -/
+def endpointModifiers : List (String × EndpointModifier) :=
+  [("fully", .maximizer), ("completely", .maximizer), ("entirely", .maximizer),
+    ("slightly", .minimizer)]
+
+/-- The endpoint modifier among the words of a row about *believe*. -/
+def modifier? (e : Datum) : Option EndpointModifier :=
+  if e.feature? "predicate" = some believe.form then
+    (Datum.wordsOf e.primaryText).findSome? fun w ↦
+      (endpointModifiers.find? (·.1.toList = w)).map (·.2)
+  else none
+
+/-- A scale fits the modifier judgments of *believe* when each of the rows (12a)–(12c) and fn. 4
+is accepted exactly if the scale licenses its modifier. -/
+def FitsModifiers (b : Boundedness) : Prop :=
+  Datum.Checks modifier? (fun m ↦ .ofProp (b.Licenses m)) Examples.all 4
+
+instance : DecidablePred FitsModifiers :=
+  fun b ↦ inferInstanceAs (Decidable (Datum.Checks modifier? (fun m ↦ .ofProp (b.Licenses m)) _ _))
+
+/-- The modifier judgments fit the upper closed scale and no other, since the maximizers of (12)
+need a maximum and the minimizer of fn. 4 excludes a minimum. -/
+theorem fitsModifiers_iff {b : Boundedness} : FitsModifiers b ↔ b = .upperClosed := by
+  cases b <;> decide +kernel
+
+-- §2: Interpretive Economy selects the maximum standard on that scale and excludes the contextual
+-- standard of the weak semantics, (6b).
+theorem defaultStandard_of_fitsModifiers {b : Boundedness} (h : FitsModifiers b) :
+    b.defaultStandard = .maxEndpoint ∧ ¬ b.Admits .contextual := by
+  obtain rfl := fitsModifiers_iff.1 h
   decide
 
-/-- A scale fits the modifier judgments of *believe* when each modifier row is acceptable exactly
-if the scale licenses its modifier, the maximizers of (12) and the minimizer of fn. 4. -/
-def FitsModifierRows (b : Boundedness) : Prop :=
-  ∀ row ∈ Examples.all, row.feature? "predicate" = some "believe" →
-    ∀ m ∈ (row.feature? "modifier").bind modifierOf, (row.judgment = .acceptable ↔ b.Licenses m)
+theorem believe_fitsModifiers : ∃ b ∈ believe.boundedness, FitsModifiers b := by
+  decide +kernel
 
-instance : DecidablePred FitsModifierRows := fun _ ↦ by unfold FitsModifierRows; infer_instance
+-- §2, first remark: licensed by the standard of the positive form, as [lassiter-2017] licenses
+-- them, the modifiers fix the maximum standard without Interpretive Economy.
+theorem checks_licensesPos_iff {s : PositiveStandard} :
+    Datum.Checks modifier? (fun m ↦ .ofProp (Lassiter2017.LicensesPos m s)) Examples.all 4 ↔
+      s = .maxEndpoint := by
+  cases s <;> decide +kernel
 
-/-- The judgments fit the upper closed scale and no other, since (12) needs a maximum and fn. 4
-excludes a minimum. -/
-theorem fitsModifierRows_iff {b : Boundedness} : FitsModifierRows b ↔ b = .upperClosed := by
-  cases b <;> decide
-
--- §2, (1)
-theorem defaultStandard_eq_maxEndpoint_of_fitsModifierRows {b : Boundedness}
-    (h : FitsModifierRows b) : b.defaultStandard = .maxEndpoint :=
-  Boundedness.defaultStandard_eq_maxEndpoint_iff.2
-    (Boundedness.eq_upperClosed_iff.1 (fitsModifierRows_iff.1 h)).1
-
-theorem fitsModifierRows_believe :
-    ∃ b ∈ English.Verbs.believe.boundedness, FitsModifierRows b := by
-  decide
-
-/-- A standard fits the modifier judgments of *believe* when each modifier row is acceptable
-exactly if the positive form at the standard licenses its modifier, as [lassiter-2017] reads
-maximizers and minimizers. -/
-def FitsModifierRowsPos (s : PositiveStandard) : Prop :=
-  ∀ row ∈ Examples.all, row.feature? "predicate" = some "believe" →
-    ∀ m ∈ (row.feature? "modifier").bind modifierOf,
-      (row.judgment = .acceptable ↔ Lassiter2017.LicensesPos m s)
-
-instance : DecidablePred FitsModifierRowsPos := fun _ ↦ by
-  unfold FitsModifierRowsPos; infer_instance
-
-/-- The positive-form judgments fix the maximum standard without Interpretive Economy (§2), though
-*confident* takes *completely* with a contextual standard ([cariani-santorio-wellwood-2024]). -/
-theorem fitsModifierRowsPos_iff {s : PositiveStandard} :
-    FitsModifierRowsPos s ↔ s = .maxEndpoint := by
-  cases s <;> decide
-
-/-- The weak semantics of [hawthorne-rothschild-spectre-2016] is *believe* with a contextual
-standard fixed in its lexicon. -/
-def weakBelieve : Verb := { English.Verbs.believe.toVerb with lexicalStandard := some .contextual }
-
-/-- The weak semantics gives *believe* the degree semantics of the fragment's *confident*
-([cariani-santorio-wellwood-2024]). -/
-theorem gradability_weakBelieve :
-    weakBelieve.gradability? = English.Adjectives.confident.gradability? := by
-  decide
-
-/-- Read off the scale, the judgments leave the weak semantics open: its scale fits them, and
-only Interpretive Economy, which does not admit its standard, excludes it. -/
-theorem weakBelieve_fitsModifierRows :
-    ∃ γ ∈ weakBelieve.gradability?,
-      FitsModifierRows γ.boundedness ∧ ¬ γ.boundedness.Admits γ.standard := by
+/-- The weak semantics makes *believe* a verbal *confident*: the fragment's *confident* is on the
+scale of *believe* with the contextual standard of [cariani-santorio-wellwood-2024], a standard
+Interpretive Economy does not admit there, so the argument from the scale does not extend to it. -/
+theorem confident_not_admits :
+    ∃ g ∈ confident.gradability?, believe.boundedness = some g.boundedness ∧
+      g.standard = .contextual ∧ ¬ g.boundedness.Admits g.standard := by
   decide
 
 /-! ### Further evidence (§3) -/
 
-/-- The comparison-class rows are judged as the standards `σ` predict: acceptable exactly with a
-standard that needs a comparison class. -/
-def ComparisonClassRows (σ : String → Option PositiveStandard) : Prop :=
-  ∀ row ∈ Examples.all, row.feature? "comparisonClass" = some "overt" →
-    ∀ s ∈ (row.feature? "predicate").bind σ,
-      (row.judgment = .acceptable ↔ s.RequiresComparisonClass)
+/-- The positive standards of the predicates of §3 by form, the fragment's for the adjectives and
+`s` and `t` for *believe* and *doubt*. -/
+def standards (s t : PositiveStandard) : List (String × PositiveStandard) :=
+  [tall, short, bent, straight, full].filterMap (fun a ↦ a.standard.map (a.form, ·)) ++
+    [(believe.form, s), (doubt.form, t)]
 
-/-- The entailment rows are judged as the standards `σ` predict: denying a pole entails its
-antonym exactly when the two standards are complementary. -/
-def EntailmentRows (σ : String → Option PositiveStandard) : Prop :=
-  ∀ row ∈ Examples.all, ∀ r ∈ row.feature? "relation",
-    ∀ s ∈ (row.feature? "negated").bind σ, ∀ t ∈ (row.feature? "antonym").bind σ,
-      (r = "entails" ↔ s.Complementary t)
+variable (σ : List (String × PositiveStandard))
 
-/-- The double-denial rows are judged as the standards `σ` predict: denying both poles is
-felicitous exactly when their standards leave a gap. -/
-def DoubleDenialRows (σ : String → Option PositiveStandard) : Prop :=
-  ∀ row ∈ Examples.all, row.feature? "construction" = some "doubleDenial" →
-    ∀ s ∈ (row.feature? "negated").bind σ, ∀ t ∈ (row.feature? "antonym").bind σ,
-      (row.judgment = .acceptable ↔ ¬ s.Complementary t)
+/-- The standard of the predicate of a row with an overt comparison class. -/
+def comparisonClass? (e : Datum) : Option PositiveStandard :=
+  if e.feature? "comparisonClass" = some "overt" then e.parse? "predicate" σ else none
 
-instance (σ : String → Option PositiveStandard) : Decidable (ComparisonClassRows σ) := by
-  unfold ComparisonClassRows; infer_instance
+/-- The standards of the pole a row denies and of its antonym. -/
+def denial? (e : Datum) : Option (PositiveStandard × PositiveStandard) :=
+  (e.parse? "negated" σ).bind fun s ↦ (e.parse? "antonym" σ).map (s, ·)
 
-instance (σ : String → Option PositiveStandard) : Decidable (EntailmentRows σ) := by
-  unfold EntailmentRows; infer_instance
+/-- The judgments of §3 are as the standards `σ` predict. An overt comparison class is acceptable
+exactly with a standard that requires one ((13), (14b), fn. 6); denying a pole entails its antonym
+exactly when the two standards are complementary ((15a), (16a), (17a)); and denying both poles is
+acceptable exactly when they are not ((15b), (16b), (17b)). -/
+def FurtherEvidence : Prop :=
+  (∀ e ∈ Examples.all, ∀ s ∈ comparisonClass? σ e,
+    (e.judgment = .acceptable ↔ s.RequiresComparisonClass)) ∧
+  (∀ e ∈ Examples.all, ∀ p ∈ denial? σ e, ∀ r ∈ e.feature? "relation",
+    (r = "entails" ↔ p.1.Complementary p.2)) ∧
+  (∀ e ∈ Examples.all, e.feature? "construction" = some "doubleDenial" → ∀ p ∈ denial? σ e,
+    (e.judgment = .acceptable ↔ ¬ p.1.Complementary p.2)) ∧
+  Datum.ReadCount (comparisonClass? σ) Examples.all 4 ∧ Datum.ReadCount (denial? σ) Examples.all 6
 
-instance (σ : String → Option PositiveStandard) : Decidable (DoubleDenialRows σ) := by
-  unfold DoubleDenialRows; infer_instance
+instance : Decidable (FurtherEvidence σ) := by unfold FurtherEvidence; infer_instance
 
--- (13a), fn. 6, (14b), (15a), (16a), (17a), (15b), (17b), (14a)
-theorem rows_standardOf :
-    ComparisonClassRows standardOf ∧ EntailmentRows standardOf ∧ DoubleDenialRows standardOf := by
-  decide
+variable {σ}
 
-/-- The fragment's standards, with *believe* and *doubt* fixing `s` and `t` in their lexicon. -/
-def standardWith (s t : PositiveStandard) (form : String) : Option PositiveStandard :=
-  (gradabilityIn [{ English.Verbs.believe.toVerb with lexicalStandard := some s },
-    { English.Verbs.doubt.toVerb with lexicalStandard := some t }] form).map (·.standard)
-
-/-- The rows of §3 hold of *believe* and *doubt* exactly when their standards are complementary
-endpoints, excluding the contextual standard of [hawthorne-rothschild-spectre-2016]. -/
+/-- The judgments of §3 hold of *believe* and *doubt* exactly when their standards are
+complementary endpoints, which excludes the contextual standard of the weak semantics but not a
+minimum for *believe* with a maximum for *doubt*; the modifiers of §2 decide between the two. -/
 theorem furtherEvidence_iff {s t : PositiveStandard} :
-    ComparisonClassRows (standardWith s t) ∧ EntailmentRows (standardWith s t) ∧
-      DoubleDenialRows (standardWith s t) ↔ s.Complementary t := by
+    FurtherEvidence (standards s t) ↔ s.Complementary t := by
   cases s <;> cases t <;> decide +kernel
+
+theorem furtherEvidence_fragment :
+    ∃ s ∈ believe.standard, ∃ t ∈ doubt.standard, FurtherEvidence (standards s t) := by
+  decide +kernel
 
 section Credence
 variable {α D : Type*} [LinearOrder D] [OrderTop D] (Cr : α → D)
 
--- (17)
+-- (17): *believe* at the maximum standard and *doubt* at the minimum of the reversed scale.
 theorem isCompl_maxStandard_minStandard_dual :
     IsCompl (Cr ⁻¹' Set.Ici ⊤) ((OrderDual.toDual ∘ Cr) ⁻¹' Set.Ioi ⊥) :=
   (Kennedy2007.antonyms_isCompl (OrderDual.toDual ∘ Cr)).symm
 
 end Credence
 
--- (17), fn. 4 [lassiter-2017]
+section Likelihood
+open MeasureTheory
+variable {W : Type*} [MeasurableSpace W] (P : Measure W) {A : Set W} {θ θ' : ℝ}
+
+/-- At a chance of exactly one half a proposition is neither *likely* nor *unlikely* (18), whatever
+thresholds the two take on either side of it: relative antonyms leave the gap that *believe* and
+*doubt* do not. -/
+theorem not_likely_and_not_unlikely (hθ' : θ' ≤ 1 / 2) (hθ : 1 / 2 ≤ θ) (h : P.real A = 1 / 2) :
+    A ∉ Lassiter2017.likely P θ ∧ A ∉ P.real ⁻¹' Set.Iio θ' :=
+  ⟨(h.trans_le hθ).not_gt, (hθ'.trans_eq h.symm).not_gt⟩
+
+end Likelihood
+
+-- fn. 7: on the totally closed probability scale of [lassiter-2017] both poles would take the
+-- maximum, as *full* and *empty* do, and not be contradictory.
 theorem not_complementary_probability :
     ¬ (Boundedness.ofOrder Lassiter2017.Probability).defaultStandard.Complementary
         (Boundedness.ofOrder Lassiter2017.Probability).dual.defaultStandard := by
   simp [Lassiter2017.ofOrder_probability, Boundedness.complementary_defaultStandard_dual_iff]
 
+-- fn. 4: without the minimum they are.
 theorem complementary_Ioc :
     (Boundedness.ofOrder (Set.Ioc (0 : ℝ) 1)).defaultStandard.Complementary
       (Boundedness.ofOrder (Set.Ioc (0 : ℝ) 1)).dual.defaultStandard := by
@@ -212,8 +197,7 @@ open MeasureTheory ModalLogic
 variable {E W : Type*} [MeasurableSpace W] (Cr : E → W → Measure W)
 
 /-- Hintikka's *believe* (1) over the worlds to which a credence gives positive mass, the
-identification of doxastic alternatives with the credence's support that relates (1) to (4)
-([hintikka-1969]). -/
+doxastic alternatives being the credence's support ([hintikka-1969]). -/
 def hintikka : Doxastic.DoxasticPredicate W E where
   access x := {(w, v) | Cr x w {v} ≠ 0}
 
@@ -223,8 +207,8 @@ theorem holdsAt_hintikka_iff [DiscreteMeasurableSpace W] [Countable W]
     [∀ x w, IsProbabilityMeasure (Cr x w)] (x : E) (p : Set W) (w : W) :
     (hintikka Cr).HoldsAt x (· ∈ p) w ↔ p ∈ Lassiter2017.likelihood (Cr x w) ⁻¹' Set.Ici ⊤ := by
   rw [← Lassiter2017.certain_eq_preimage, Lassiter2017.mem_certain_iff,
-    measureReal_def, ENNReal.toReal_eq_one_iff, ← prob_compl_eq_zero_iff .of_discrete,
-    ← mem_ae_iff, ← Filter.eventually_mem_set, ae_iff_of_countable]
+    measureReal_def, ENNReal.toReal_eq_one_iff, ← mem_ae_iff_prob_eq_one .of_discrete,
+    ← Filter.eventually_mem_set, ae_iff_of_countable]
   simp [Doxastic.DoxasticPredicate.holdsAt_iff, hintikka, box_iff]
 
 end Hintikka
