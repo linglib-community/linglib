@@ -103,9 +103,10 @@ instance lawfulMonad (f : Eff B) [h : f.IsApplicative] : LawfulMonad (Obj D f) :
     | F => exact join_map_map (m := WithAlternatives) g x
     | _ => rfl
 
-/-- The effects whose application does not depend on the order of its two computations,
-whatever the domains: those with a unit and an application, but for quantifying over
-continuations, which is commutative only at a result type with at most one value. -/
+/-- An applicative effect is commutative when combining two computations gives the same result
+whichever of the two is run first. Every applicative effect here is, with one exception. Of two
+quantifiers the one run first takes scope over the other, so quantifying over continuations is
+left out: it is commutative only where the result type has at most one value. -/
 class IsCommutative (f : Eff B) : Prop extends IsApplicative f where
   /-- The effect is not quantification over continuations. -/
   ne_C : ∀ r : Ty B, f ≠ .C r

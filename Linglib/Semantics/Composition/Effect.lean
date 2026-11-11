@@ -117,10 +117,14 @@ namespace Eff
 
 variable {D : B → Type} {α β : Type}
 
-/-- The effects with a unit and an application: all but storing at a type other than the truth
-values, the one type here whose stored contents are merged. -/
+/-- An effect is applicative when a plain value can be given it, and two computations that carry
+it can be combined into one that carries it once. Every effect here is, with one exception. Two
+computations that each store something leave two things stored, and they combine only if the two
+are merged into one. Truth values are merged, by conjunction, and nothing else is. So storing a
+truth value is applicative, and storing an individual, as an antecedent does for a later pronoun,
+is not. -/
 class IsApplicative (f : Eff B) : Prop where
-  /-- Stored contents are truth values. -/
+  /-- Where the effect is storing, what is stored is a truth value. -/
   out : match f with
     | .W o => o = .t
     | _ => True
