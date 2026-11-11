@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Mode.EffectFree
 public import Linglib.Semantics.Composition.Mode.Pointwise
+public import Linglib.Semantics.Composition.Interpret
 public import Linglib.Semantics.Composition.Mode.Normal
 public import Linglib.Semantics.Composition.MetaCombinator.Adjunction
 
@@ -503,11 +504,117 @@ theorem normalForms_quantifiers : normalForms (C e) (C (e ⇒ T)) (C T) =
 
 end Interpreter
 
-/-! ### A pointwise grammar
+/-! ### The pointwise grammars
 
-Hamblin's grammar (Figure 6) is the grammar with Structured App alone at indeterminacy, every
-word a set. Its derivation of *which dog chased which cat* (3.2) puts the words together by
-application in the structure on sets of values. -/
+The environment-sensitive grammar (Figure 5) is the grammar with Structured App alone at reading
+an environment, every word a function of the environment and a pronoun the coordinate of its
+index. Its derivation of *she called her* (3.2) evaluates the words at one environment, and
+Heim and Kratzer's rules give the sentence the same function of the assignment. Hamblin's
+grammar (Figure 6) is the grammar with Structured App alone at indeterminacy, every word a set.
+Its derivation of *which dog chased which cat* (3.2) puts the words together by application in
+the structure on sets of values. -/
+
+section Reading
+
+open PhraseStructure
+
+/-- The base sorts of the environment-sensitive grammar: individuals, and the sequences of
+individuals that are environments. -/
+inductive EnvSort
+  | ind | env
+  deriving DecidableEq
+
+/-- The domains of the sorts over individuals `E`: an environment is a sequence of them. -/
+abbrev EnvSort.Dom (E : Type) : EnvSort → Type
+  | .ind => E
+  | .env => ℕ → E
+
+/-- The type of individuals. -/
+abbrev ind : Ty EnvSort := .base .ind
+
+/-- The type of environments. -/
+abbrev env : Ty EnvSort := .base .env
+
+/-- The verb of (3.2). Its pronouns are the indexed leaves of the tree. -/
+inductive Verb
+  | called
+  deriving DecidableEq
+
+/-- The verb and the pronouns by the type of their results. -/
+inductive EnvItem : Ty EnvSort → Type
+  | called : EnvItem (ind ⇒ ind ⇒ .t)
+  | pro (n : ℕ) : EnvItem ind
+
+/-- The verb and the pronouns by type in the environment-sensitive grammar, where each reads an
+environment. -/
+inductive ReaderItem : Ty EnvSort → Type
+  | called : ReaderItem (.comp (.R env) (ind ⇒ ind ⇒ .t))
+  | pro (n : ℕ) : ReaderItem (.comp (.R env) ind)
+
+/-- The result of the verb and of the pronoun of each index. -/
+def envResults : Verb ⊕ ℕ → List (Sigma EnvItem)
+  | .inl .called => [⟨_, .called⟩]
+  | .inr n => [⟨_, .pro n⟩]
+
+/-- The lexicon of the environment-sensitive grammar. -/
+def readers : Verb ⊕ ℕ → List (Sigma ReaderItem)
+  | .inl .called => [⟨_, .called⟩]
+  | .inr n => [⟨_, .pro n⟩]
+
+variable {E : Type} (call : E → E → Prop)
+
+local notation "D" => EnvSort.Dom E
+
+/-- The function of the environment each item denotes: the verb ignores it, and a pronoun
+returns the coordinate of its index. -/
+def EnvItem.val : {a : Ty EnvSort} → EnvItem a → (Ty.comp (.R env) a).Dom D
+  | _, .called => fun _ ↦ call
+  | _, .pro n => fun i ↦ i n
+
+/-- The same functions, of the items typed as the environment-sensitive grammar types them. -/
+def ReaderItem.val : {a : Ty EnvSort} → ReaderItem a → a.Dom D
+  | _, .called => fun _ ↦ call
+  | _, .pro n => fun i ↦ i n
+
+/-- The environment-sensitive grammar, application pointwise at reading an environment. -/
+def environmentSensitive : Interpreter (effectGrammar (application (B := EnvSort))) ℕ :=
+  effectDrivenWithin (MetaMode.pointwise (· = .R env)) application
+
+/-- (3.2): *she called her*, the subject of index 0 and the object of index 1. -/
+def sheCalledHer : Tree Unit Verb := .bin (.tr 0) (.bin (.leaf .called) (.tr 1))
+
+private theorem environmentSensitive_fa :
+    environmentSensitive.binary (ind ⇒ ind ⇒ .t) ind = [⟨ind ⇒ .t, .basic .fa⟩] := rfl
+
+private theorem environmentSensitive_ba :
+    environmentSensitive.binary ind (ind ⇒ .t) = [⟨.t, .basic .ba⟩] := rfl
+
+/-- (3.2): *she called her* denotes the function of the environment `i` that is `call i₁ i₀`. -/
+theorem values_sheCalledHer :
+    sheCalledHer.values environmentSensitive effectGrammar.structure
+        (fun {_} ↦ ReaderItem.val call) readers =
+      [⟨.comp (.R env) .t, fun i ↦ call (i 1) (i 0)⟩] := by
+  have h := Tree.values_effectDrivenWithin_pointwise (P := (· = .R env)) (f := .R env)
+    (G := application (B := EnvSort)) rfl
+    (ρ := fun {_} ↦ EnvItem.val call) (ρ' := fun {_} ↦ ReaderItem.val call)
+    (lex := envResults) (lex' := readers) (fun x ↦ by rcases x with _ | _ <;> rfl)
+    sheCalledHer
+  refine h.trans ?_
+  change (sheCalledHer.values environmentSensitive _ _ envResults).map _ = _
+  simp only [sheCalledHer, Tree.values_phrase_binary, Tree.values_terminal, Tree.values_trace,
+    envResults, List.map_cons, List.map_nil, List.flatMap_cons, List.flatMap_nil,
+    List.append_nil, environmentSensitive_fa, environmentSensitive_ba]
+  rfl
+
+/-- Heim and Kratzer's rules, application at one assignment with an indexed leaf the value the
+assignment gives its index, give *she called her* the same function of the assignment. -/
+theorem interpret_sheCalledHer :
+    sheCalledHer.interpret application D (fun _ ↦ ind) (fun {_} ↦ EnvItem.val call)
+        (fun | .called => [⟨_, .called⟩]) =
+      [⟨.t, fun g ↦ call (g 1) (g 0)⟩] := by
+  simp [sheCalledHer, EnvItem.val]
+
+end Reading
 
 section Hamblin
 

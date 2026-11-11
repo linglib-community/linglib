@@ -13,7 +13,9 @@ Structured App alone](##Interpreter.Mode.Within.exists_eq_ap), [the search lists
 Structured Apps of what it lists for their results](##Interpreter.Ty.combineWithin_pointwise),
 and over a lexicon whose every item carries the effect [a tree has its values in the structure on
 computations](##PhraseStructure.Tree.values_effectDrivenWithin_pointwise). Structured App is
-[evaluation at one datum](##Interpreter.Mode.eval_ap_R) at reading, [Hamblin's
+[evaluation at one datum](##Interpreter.Mode.eval_ap_R) at reading, where the structure on
+computations [is the grammar's on functions of the
+datum](##Interpreter.effectGrammar.basic_isExpansionOn_pointwise_R), [Hamblin's
 rule](##Interpreter.Mode.eval_ap_S) at indeterminacy and [Rooth's](##Interpreter.Mode.eval_ap_F)
 at alternatives.
 
@@ -163,6 +165,29 @@ the sets of values. -/
   Language.Structure.withBinary
     ⟨fun g x ↦ Eff.map f (M.funMap g) (Eff.sequence f _ x)⟩
     fun m x y ↦ (Mode.ap m h).eval D x y
+
+/-- At reading, the computation of the arguments of a shape is the arguments at each datum. -/
+theorem Eff.sequence_R {D : B → Type} (i : Ty B) :
+    ∀ (σ : Signature (Ty B)) (x : σ.Interpret fun a ↦ (Ty.comp (.R i) a).Dom D),
+      Eff.sequence (.R i) σ x = fun j ↦ Signature.Interpret.app x j
+  | .nil, _ => rfl
+  | .of _, _ => rfl
+  | .prod σ τ, x => by
+    rw [Eff.sequence, Eff.sequence_R i σ, Eff.sequence_R i τ]
+    rfl
+
+/-- At reading, the structure on computations gives a rule of the grammar its meaning at each
+datum read: it expands the grammar's structure on the values that depend on the datum, in which
+Heim and Kratzer's sisters combine at one assignment. -/
+theorem effectGrammar.basic_isExpansionOn_pointwise_R {G : Language (Ty B)} {D : B → Type}
+    [M : G.Structure (Ty.Dom D)] (i : Ty B) :
+    (effectGrammar.basic G).IsExpansionOn (M.pi (i.Dom D)) (effectGrammar.pointwise (.R i)) where
+  map_onFunction σ _ g x :=
+    match σ, g with
+    | .prod (.of _) (.of _), _ => rfl
+    | .nil, g | .of _, g | .prod .nil _, g | .prod (.prod _ _) _, g | .prod (.of _) .nil, g
+    | .prod (.of _) (.prod _ _), g =>
+      congrArg (Eff.map (.R i) (M.funMap g)) (Eff.sequence_R i _ x)
 
 end Interpreter
 
