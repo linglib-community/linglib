@@ -76,7 +76,7 @@ theorem toSyntacticSemigroup_eq_iff {u v : FreeSemigroup α} :
 
 theorem toSyntacticSemigroup_surjective (L : Language α) :
     Function.Surjective L.toSyntacticSemigroup :=
-  Con.mkMulHom_surjective _
+  Con.mkMulHom_surjective
 
 theorem ker_toSyntacticSemigroup (L : Language α) :
     Con.ker L.toSyntacticSemigroup = L.syntacticSemigroupCon :=
@@ -110,7 +110,8 @@ theorem syntacticSemigroupToMonoid_mk (L : Language α) (a : α) (l : List α) :
 
 theorem syntacticSemigroupToMonoid_injective (L : Language α) :
     Function.Injective L.syntacticSemigroupToMonoid :=
-  Con.liftMulHom_injective fun _ _ h ↦ syntacticSemigroupCon_iff.2 (toSyntacticMonoid_eq_iff.mp h)
+  Con.liftMulHom_injective_iff.2 fun _ _ h ↦
+    syntacticSemigroupCon_iff.2 (toSyntacticMonoid_eq_iff.mp h)
 
 instance [Finite L.SyntacticMonoid] : Finite L.SyntacticSemigroup :=
   .of_injective _ L.syntacticSemigroupToMonoid_injective

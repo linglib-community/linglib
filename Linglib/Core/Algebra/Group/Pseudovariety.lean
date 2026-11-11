@@ -10,6 +10,7 @@ module
 public import Linglib.Core.Algebra.Group.Aperiodic
 public import Linglib.Core.Algebra.Group.LocallyTrivial
 public import Linglib.Core.Algebra.Group.Subquotient
+public import Linglib.Core.GroupTheory.Congruence.Basic
 public import Linglib.Core.GroupTheory.Congruence.Hom
 public import Mathlib.Algebra.Group.Pi.Lemmas
 public import Mathlib.Algebra.Group.Prod
@@ -270,7 +271,7 @@ theorem mem_of_mulEquiv {S T : Type u} [Semigroup S] [Semigroup T] (e : S ≃* T
 /-- Membership of a quotient descends along a coarsening of congruences. -/
 theorem mem_quotient_of_le {S : Type u} [Semigroup S] {c d : Con S} (h : c ≤ d)
     (hc : V.mem c.Quotient) : V.mem d.Quotient :=
-  V.quot (Con.mapMulHom_surjective c d h) hc
+  V.quot (Con.mapMulHom_surjective h) hc
 
 /-- The quotient by the kernel of a homomorphism into a member is a member. -/
 theorem mem_quotient_ker {S T : Type u} [Semigroup S] [Semigroup T] (f : S →ₙ* T)

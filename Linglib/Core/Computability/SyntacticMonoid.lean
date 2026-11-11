@@ -13,7 +13,6 @@ public import Mathlib.Computability.MyhillNerode
 public import Mathlib.GroupTheory.Congruence.Basic
 public import Mathlib.Data.Set.Finite.Range
 public import Linglib.Core.Computability.TransitionMonoid
-public import Linglib.Core.GroupTheory.Congruence.Hom
 public import Linglib.Core.GroupTheory.Congruence.Syntactic
 public import Linglib.Core.Algebra.Group.Subquotient
 public import Linglib.Core.Algebra.FreeMonoid.Basic

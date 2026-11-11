@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.GroupTheory.Congruence.Hom
 public import Mathlib.Algebra.Free
-public import Mathlib.GroupTheory.Congruence.Defs
 
 /-!
 # The free commutative magma
@@ -58,16 +58,11 @@ private theorem eq_of_iff_of_commCon {x y : FreeMagma α} (h : commCon α x y) (
 @[simp] theorem commCon_of_iff {a : α} {y : FreeMagma α} : commCon α (.of a) y ↔ y = .of a :=
   ⟨fun h ↦ (eq_of_iff_of_commCon h a).1 rfl, fun h ↦ h ▸ (commCon α).refl _⟩
 
-theorem lift_congr {M : Type v} [CommMagma M] (f : α → M) {x y : FreeMagma α}
-    (h : commCon α x y) : lift f x = lift f y := by
-  induction h with
-  | of x y h =>
-    obtain ⟨a, b, rfl, rfl⟩ := h
-    simp only [map_mul, mul_comm]
-  | refl => rfl
-  | symm _ ih => exact ih.symm
-  | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
-  | mul _ _ ih₁ ih₂ => simp only [map_mul, ih₁, ih₂]
+/-- A map into a commutative magma extends to a homomorphism that is constant on the classes of
+`commCon`. -/
+theorem commCon_le_ker_lift {M : Type v} [CommMagma M] (f : α → M) :
+    commCon α ≤ Con.ker (lift f) :=
+  Con.conGen_le.2 <| by rintro _ _ ⟨a, b, rfl, rfl⟩; simp only [Con.ker_rel, map_mul, mul_comm]
 
 end FreeMagma
 
@@ -85,9 +80,8 @@ instance : CommMagma (FreeCommMagma α) where
     exact (Con.eq _).2 (ConGen.Rel.of _ _ ⟨x, y, rfl, rfl⟩)
 
 /-- The projection from the free magma, forgetting the bracketing order. -/
-def ofMagma : FreeMagma α →ₙ* FreeCommMagma α where
-  toFun x := (↑x : (FreeMagma.commCon α).Quotient)
-  map_mul' _ _ := rfl
+def ofMagma : FreeMagma α →ₙ* FreeCommMagma α :=
+  (FreeMagma.commCon α).mkMulHom
 
 /-- The generator `a`. -/
 def of (a : α) : FreeCommMagma α := ofMagma (FreeMagma.of a)
@@ -97,7 +91,7 @@ instance [Inhabited α] : Inhabited (FreeCommMagma α) := ⟨of default⟩
 @[simp] theorem ofMagma_of (a : α) : ofMagma (FreeMagma.of a) = of a := rfl
 
 theorem ofMagma_surjective : Function.Surjective (ofMagma : FreeMagma α → FreeCommMagma α) :=
-  fun x ↦ by rcases x with ⟨a⟩; exact ⟨a, rfl⟩
+  Con.mkMulHom_surjective
 
 @[elab_as_elim, induction_eliminator]
 theorem inductionOn {motive : FreeCommMagma α → Prop} (x : FreeCommMagma α)
@@ -112,10 +106,7 @@ theorem inductionOn {motive : FreeCommMagma α → Prop} (x : FreeCommMagma α)
 @[ext]
 theorem hom_ext {M : Type v} [Mul M] {f g : FreeCommMagma α →ₙ* M}
     (h : ∀ a, f (of a) = g (of a)) : f = g :=
-  MulHom.ext fun x ↦ by
-    induction x with
-    | of a => exact h a
-    | mul x y ihx ihy => simp only [map_mul, ihx, ihy]
+  Con.mulHom_ext <| FreeMagma.hom_ext <| funext h
 
 section Lift
 
@@ -124,9 +115,7 @@ variable {M : Type v} [CommMagma M]
 /-- The universal property of the free commutative magma: maps from `α` into a commutative magma
 correspond to magma homomorphisms out of `FreeCommMagma α`. -/
 def lift : (α → M) ≃ (FreeCommMagma α →ₙ* M) where
-  toFun f :=
-    { toFun := fun x ↦ Con.liftOn x (FreeMagma.lift f) fun _ _ h ↦ FreeMagma.lift_congr f h
-      map_mul' := by rintro ⟨x⟩ ⟨y⟩; exact map_mul (FreeMagma.lift f) x y }
+  toFun f := (FreeMagma.commCon α).liftMulHom (FreeMagma.lift f) (FreeMagma.commCon_le_ker_lift f)
   invFun F := F ∘ of
   left_inv _ := rfl
   right_inv _ := hom_ext fun _ ↦ rfl
