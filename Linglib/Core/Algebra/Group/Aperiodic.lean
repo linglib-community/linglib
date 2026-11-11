@@ -19,19 +19,12 @@ public import Mathlib.Order.MinMax
 
 A monoid is *aperiodic* when a single power stabilizes every element, `x ^ (n + 1) = x ^ n`.
 Schützenberger introduced these monoids as the ones with only trivial subgroups, and they are the
-algebraic counterpart of the star-free languages.
-
-## Main definitions
-
-* `Monoid.IsAperiodic`: some power stabilizes every element.
-
-## Main results
-
-* `Monoid.isAperiodic_iff_forall_exists`: a finite monoid is aperiodic when the powers of each
-  element stabilize.
-* `Monoid.IsAperiodic.pow_mul_eq_of_isIdempotentElem`: an idempotent power of `x` absorbs `x`.
-* `Monoid.IsAperiodic.of_injective`, `Monoid.IsAperiodic.of_surjective`, `Monoid.IsAperiodic.prod`:
-  closure under submonoids, quotients and products.
+algebraic counterpart of the star-free languages. A finite monoid is aperiodic as soon as
+[the powers of each element stabilize](##Monoid.isAperiodic_iff_forall_exists). In an aperiodic
+monoid an idempotent power of `x`
+[absorbs `x`](##Monoid.IsAperiodic.pow_mul_eq_of_isIdempotentElem), and aperiodicity passes to
+[submonoids](##Monoid.IsAperiodic.of_injective),
+[quotients](##Monoid.IsAperiodic.of_surjective) and [products](##Monoid.IsAperiodic.prod).
 
 ## References
 
