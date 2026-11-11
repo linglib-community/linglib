@@ -26,7 +26,7 @@ def ex_12a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "positive"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def ex_12b : Datum :=
   { id := "gajewski2007_12b"
@@ -39,7 +39,7 @@ def ex_12b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "negation"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def ex_13a : Datum :=
   { id := "gajewski2007_13a"
@@ -52,7 +52,7 @@ def ex_13a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "positive"), ("npi", "in years")] }
+    paperFeatures := [] }
 
 def ex_13b : Datum :=
   { id := "gajewski2007_13b"
@@ -65,7 +65,7 @@ def ex_13b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "negation"), ("npi", "in years")] }
+    paperFeatures := [] }
 
 def ex_14a : Datum :=
   { id := "gajewski2007_14a"
@@ -78,7 +78,7 @@ def ex_14a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notEvery"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def ex_14b : Datum :=
   { id := "gajewski2007_14b"
@@ -91,7 +91,7 @@ def ex_14b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notEvery"), ("npi", "in years")] }
+    paperFeatures := [] }
 
 def ex_15a : Datum :=
   { id := "gajewski2007_15a"
@@ -104,7 +104,7 @@ def ex_15a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notThink"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def ex_15b : Datum :=
   { id := "gajewski2007_15b"
@@ -117,7 +117,7 @@ def ex_15b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notThink"), ("npi", "in years")] }
+    paperFeatures := [] }
 
 def ex_54a : Datum :=
   { id := "gajewski2007_54a"
@@ -130,7 +130,7 @@ def ex_54a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notSome"), ("npi", "in years")] }
+    paperFeatures := [] }
 
 def ex_54b : Datum :=
   { id := "gajewski2007_54b"
@@ -143,7 +143,7 @@ def ex_54b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notEvery"), ("npi", "in years")] }
+    paperFeatures := [] }
 
 def ex_57 : Datum :=
   { id := "gajewski2007_57"
@@ -156,7 +156,7 @@ def ex_57 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notThink"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def ex_58a : Datum :=
   { id := "gajewski2007_58a"
@@ -169,7 +169,7 @@ def ex_58a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notThink"), ("npi", "in years")] }
+    paperFeatures := [] }
 
 def ex_58b : Datum :=
   { id := "gajewski2007_58b"
@@ -182,7 +182,7 @@ def ex_58b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notKnow"), ("npi", "in years")] }
+    paperFeatures := [] }
 
 def ex_68a : Datum :=
   { id := "gajewski2007_68a"
@@ -195,7 +195,7 @@ def ex_68a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notEvery"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def ex_68b : Datum :=
   { id := "gajewski2007_68b"
@@ -208,7 +208,7 @@ def ex_68b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notSome"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def ex_69a : Datum :=
   { id := "gajewski2007_69a"
@@ -221,7 +221,7 @@ def ex_69a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notEvery"), ("npi", "in years")] }
+    paperFeatures := [] }
 
 def ex_69b : Datum :=
   { id := "gajewski2007_69b"
@@ -234,7 +234,7 @@ def ex_69b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notSome"), ("npi", "in years")] }
+    paperFeatures := [] }
 
 def ex_71a : Datum :=
   { id := "gajewski2007_71a"
@@ -247,7 +247,7 @@ def ex_71a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notSome"), ("npi", "in years"), ("clause", "nonfinite")] }
+    paperFeatures := [] }
 
 def ex_71b : Datum :=
   { id := "gajewski2007_71b"
@@ -260,7 +260,7 @@ def ex_71b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notSome"), ("npi", "in years"), ("clause", "nonfinite")] }
+    paperFeatures := [] }
 
 def ex_72a : Datum :=
   { id := "gajewski2007_72a"
@@ -273,7 +273,7 @@ def ex_72a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notEvery"), ("npi", "in years"), ("clause", "nonfinite")] }
+    paperFeatures := [] }
 
 def ex_72b : Datum :=
   { id := "gajewski2007_72b"
@@ -286,7 +286,7 @@ def ex_72b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notEvery"), ("npi", "in years"), ("clause", "nonfinite")] }
+    paperFeatures := [] }
 
 def ex_73 : Datum :=
   { id := "gajewski2007_73"
@@ -299,7 +299,7 @@ def ex_73 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notEvery"), ("npi", "in years"), ("clause", "finite")] }
+    paperFeatures := [] }
 
 def ex_74 : Datum :=
   { id := "gajewski2007_74"
@@ -312,7 +312,7 @@ def ex_74 : Datum :=
     judgment := .questionable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notSome"), ("npi", "in years"), ("clause", "finite")] }
+    paperFeatures := [] }
 
 def ex_83 : Datum :=
   { id := "gajewski2007_83"
@@ -325,7 +325,7 @@ def ex_83 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "noOneThinks"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def ex_97a : Datum :=
   { id := "gajewski2007_97a"
@@ -338,7 +338,7 @@ def ex_97a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notThinkWant"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def ex_97b : Datum :=
   { id := "gajewski2007_97b"
@@ -351,7 +351,7 @@ def ex_97b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notWantThink"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def ex_98a : Datum :=
   { id := "gajewski2007_98a"
@@ -364,7 +364,7 @@ def ex_98a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notThinkWant"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def ex_98b : Datum :=
   { id := "gajewski2007_98b"
@@ -377,7 +377,7 @@ def ex_98b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notWantThink"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def ex_99a : Datum :=
   { id := "gajewski2007_99a"
@@ -390,7 +390,7 @@ def ex_99a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notThinkWant"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def ex_99b : Datum :=
   { id := "gajewski2007_99b"
@@ -403,7 +403,7 @@ def ex_99b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notWantThink"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def ex_123a : Datum :=
   { id := "gajewski2007_123a"
@@ -416,7 +416,7 @@ def ex_123a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "only"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def ex_123b : Datum :=
   { id := "gajewski2007_123b"
@@ -429,7 +429,7 @@ def ex_123b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "only"), ("npi", "in years")] }
+    paperFeatures := [] }
 
 def ex_123c : Datum :=
   { id := "gajewski2007_123c"
@@ -442,7 +442,7 @@ def ex_123c : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "only"), ("npi", "either")] }
+    paperFeatures := [] }
 
 def ex_126a : Datum :=
   { id := "gajewski2007_126a"
@@ -455,7 +455,7 @@ def ex_126a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "adversative"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def ex_126b : Datum :=
   { id := "gajewski2007_126b"
@@ -468,7 +468,7 @@ def ex_126b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "adversative"), ("npi", "in years")] }
+    paperFeatures := [] }
 
 def ex_127a : Datum :=
   { id := "gajewski2007_127a"
@@ -481,7 +481,7 @@ def ex_127a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "conditional"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def ex_127b : Datum :=
   { id := "gajewski2007_127b"
@@ -494,7 +494,7 @@ def ex_127b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "conditional"), ("npi", "in years")] }
+    paperFeatures := [] }
 
 def ex_132a : Datum :=
   { id := "gajewski2007_132a"
@@ -507,7 +507,7 @@ def ex_132a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "superlative"), ("npi", "in years")] }
+    paperFeatures := [] }
 
 def ex_132b : Datum :=
   { id := "gajewski2007_132b"
@@ -520,7 +520,7 @@ def ex_132b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "superlative"), ("npi", "until")] }
+    paperFeatures := [] }
 
 def fn7ii : Datum :=
   { id := "gajewski2007_fn7ii"
@@ -533,7 +533,7 @@ def fn7ii : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "notThinkStressed"), ("npi", "in years")] }
+    paperFeatures := [] }
 
 def all : List Datum := [ex_12a, ex_12b, ex_13a, ex_13b, ex_14a, ex_14b, ex_15a, ex_15b, ex_54a, ex_54b, ex_57, ex_58a, ex_58b, ex_68a, ex_68b, ex_69a, ex_69b, ex_71a, ex_71b, ex_72a, ex_72b, ex_73, ex_74, ex_83, ex_97a, ex_97b, ex_98a, ex_98b, ex_99a, ex_99b, ex_123a, ex_123b, ex_123c, ex_126a, ex_126b, ex_127a, ex_127b, ex_132a, ex_132b, fn7ii]
 

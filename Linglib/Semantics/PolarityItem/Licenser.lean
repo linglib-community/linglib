@@ -353,6 +353,29 @@ theorem carries_classical_iff_le {F : OperatorFamily} {s₀ : Negation.Strength}
     (classical F).Carries s ↔ s ≤ s₀ := by
   rw [carries_classical_iff, h, and_iff_left hn]
 
+/-- A non-trivial licenser that is downward entailing modulo presupposition and holds exactly the
+strengths up to `s₀` once exhaustified carries exactly those strengths. -/
+theorem carries_iff_le {s₀ : Negation.Strength} (hde : L.IsStrawsonDE) (hn : ¬ L.IsStrawsonUE)
+    (h : ∀ s, L.exhaustified.Holds s.toProjectivitySignature ↔ s ≤ s₀) : L.Carries s ↔ s ≤ s₀ := by
+  cases s with
+  | weak => exact iff_of_true ⟨hde, hn⟩ (Negation.Strength.weak_le _)
+  | antiAdditive | antiMorphic => exact (and_iff_right ⟨hde, hn⟩).trans (h _)
+
+/-- A presupposing licenser carries anti-additive strength when its truth sets are anti-additive
+and empty at the trivial argument, and one of its operators is not upward entailing. -/
+theorem carries_strawson_antiAdditive {F : PresupposingFamily}
+    (h : ∀ p, IsAntiAdditive fun x ↦ Trivalent.posExt (F.op p x))
+    (ht : ∀ p, Trivalent.posExt (F.op p ⊤) = ⊥)
+    (hn : ∃ p, ¬ Presupposition.IsStrawsonUE (F.op p)) : (strawson F).Carries .antiAdditive :=
+  have hh : (strawson F).Holds .antiAdd := fun p ↦
+    ProjectivitySignature.holdsFor_antiAdd_iff.2 ⟨h p, ht p⟩
+  ⟨⟨isStrawsonDE_of_holds_anti (hh.of_le (by decide)), fun hu ↦ hn.elim fun p hp ↦ hp (hu p)⟩, hh⟩
+
+theorem not_carries_strawson_antiAdditive {F : PresupposingFamily}
+    (h : ∃ p, ¬ IsAntiAdditive fun x ↦ Trivalent.posExt (F.op p x)) :
+    ¬ (strawson F).Carries .antiAdditive :=
+  fun hc ↦ h.elim fun p hp ↦ hp (ProjectivitySignature.holdsFor_antiAdd_iff.1 (hc.2 p)).1
+
 theorem holds_toProjectivitySignature_iff {s₀ : Negation.Strength}
     (h : L.Holds s₀.toProjectivitySignature)
     (hn : ∀ s, s₀ < s → ¬ L.Holds s.toProjectivitySignature) :
@@ -488,6 +511,12 @@ by the contexts whose licenser carries that strength. -/
 theorem licenses_iff_carries (he : e.licensor = some r) (hr : r ≠ .weak) (hf : ¬ e.IsFCI) :
     L.Licenses e ↔ L.Carries r := by
   simp [Licenses, he, hr, hf]
+
+/-- An item that only requires a strength above weak is admitted exactly by the contexts whose
+licenser carries that strength. -/
+theorem admits_iff_carries (he : e.licensor = some r) (hr : r ≠ .weak)
+    (ha : e.antiLicensor = none) (hf : ¬ e.IsFCI) : L.Admits e ↔ L.Carries r :=
+  (admits_iff_licenses ha (.inl (by simp [IsNPI, he]))).trans (licenses_iff_carries he hr hf)
 
 theorem antiLicenses_iff_holds (he : e.antiLicensor = some r) :
     L.AntiLicenses e ↔ L.Holds r.toProjectivitySignature := by

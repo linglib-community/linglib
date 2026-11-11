@@ -7,6 +7,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.PolarityItem.Licenser
+public import Linglib.Semantics.Attitudes.NegRaising
 public import Linglib.Semantics.Attitudes.Preference.BestWorlds
 public import Linglib.Semantics.Conditionals.Horizon
 public import Linglib.Semantics.Degree.Superlative
@@ -56,7 +57,8 @@ constructions are the shared inventory that lexical entries cite.
   classically, is a function of the name. Distinct constructions can share a licenser. The
   necessity modal, the imperative, the generic, and the free relative are all necessities. The
   clausal comparative and *too … to* both place the compared individual above the degrees of the
-  clause, and *deny* and negation over a neg-raising attitude both assert that the attitude holds
+  clause, and *deny* asserts, as negation over a neg-raising attitude presupposes and asserts,
+  that the attitude holds
   of the negated complement.
 * The inventory consists of the contexts to which the library gives a semantics, and it is not an
   exhaustive list. It realizes seven of Haspelmath's nine functions, with the necessity modal and
@@ -189,8 +191,8 @@ inductive LicensingContext where
   complement. -/
   | denyVerb
   /-- Negation over a neg-raising attitude in a superordinate clause, as in *I don't think that*.
-  With the excluded middle of the attitude, it is read as the attitude toward the negated
-  complement ([gajewski-2007]). -/
+  The attitude presupposes the excluded middle, so its negation is true where the attitude holds
+  of the negated complement ([gajewski-2007]). -/
   | superordinateNegation
   /-- The scope of focus *only*, in von Fintel's analysis. -/
   | onlyFocus
@@ -302,6 +304,16 @@ structure Accessibility where
 structure SerialAccessibility extends Accessibility where
   serial : ∃ v, (w, v) ∈ R
 
+/-- The modal base of a neg-raising attitude and the alternatives into which the presupposition
+of its complement projects. -/
+structure Bases where
+  /-- The worlds. -/
+  W : Type
+  /-- The modal base. -/
+  R : SetRel W W
+  /-- The alternatives into which the presupposition of the complement projects. -/
+  H : SetRel W W
+
 /-- An accessibility relation over worlds. -/
 structure Frame where
   /-- The worlds. -/
@@ -398,8 +410,10 @@ noncomputable def licenser : LicensingContext → Licenser
   | clausalComparative | tooTo => .classical exceedsFamily
   | doubtVerb => .classical
       ⟨Accessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∉ p.R.core P⟩
-  | denyVerb | superordinateNegation => .classical
+  | denyVerb => .classical
       ⟨SerialAccessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∈ p.R.core Pᶜ⟩
+  | superordinateNegation => .strawson
+      ⟨Bases, fun p ↦ Set p.W, fun p ↦ p.W, fun p ↦ NegRaising.negation p.R p.H⟩
   | onlyFocus => .strawson ⟨Focus, fun p ↦ p.ι → Set p.W, fun p ↦ p.W,
       fun p P ↦ Focus.only (· = ·) Set.univ P p.x⟩
   | adversative => .strawson ⟨Attitude, fun p ↦ Set p.W, fun p ↦ p.W,
@@ -567,6 +581,19 @@ theorem holds_denyVerb_iff {s : Negation.Strength} :
     (fun p ↦ holdsFor_mult_mem_core p.serial)
     ⟨⟨⟨Bool, .univ, true⟩, ⟨true, trivial⟩⟩, not_holdsFor_additive_mem_core⟩
 
+/-- Negation over a neg-raising attitude is anti-additive. It is not anti-morphic, since it is
+false of every complement where the modal base is empty. -/
+theorem holds_superordinateNegation_iff {s : Negation.Strength} :
+    superordinateNegation.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
+  holds_toProjectivitySignature_iff
+    (fun p ↦ ProjectivitySignature.holdsFor_antiAdd_iff.2
+      ⟨NegRaising.isAntiAdditive_posExt_negation p.R p.H,
+        NegRaising.posExt_negation_univ p.R p.H⟩)
+    fun s hs h ↦ by
+      obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
+      have := (ProjectivitySignature.holdsFor_antiAddMult_iff.1 (h ⟨Unit, ∅, ∅⟩)).2.2
+      simpa [NegRaising.posExt_negation] using congrArg (() ∈ ·) this
+
 /-! ### Non-triviality
 
 Each downward entailing licenser has an operator that is not upward entailing. It is therefore not
@@ -617,6 +644,13 @@ theorem not_isStrawsonUE_denyVerb : ¬ denyVerb.licenser.IsStrawsonUE :=
   not_forall.2 ⟨⟨⟨Bool, .univ, true⟩, ⟨true, trivial⟩⟩, fun h ↦
     h (bot_le (a := ⊤)) (fun _ _ ↦ Set.notMem_empty _) (Set.mem_univ (true, true))
       (Set.mem_univ true)⟩
+
+theorem not_isStrawsonUE_superordinateNegation :
+    ¬ superordinateNegation.licenser.IsStrawsonUE :=
+  not_forall.2 ⟨⟨Unit, .univ, .univ⟩, Presupposition.not_isStrawsonUE (w := ())
+    (Set.empty_subset Set.univ)
+    (by simp [NegRaising.negation, NegRaising.box_eq_false_iff, ModalLogic.Box])
+    (by simp [NegRaising.negation, NegRaising.box, ModalLogic.Box])⟩
 
 theorem not_isStrawsonUE_onlyFocus : ¬ onlyFocus.licenser.IsStrawsonUE :=
   not_forall.2 ⟨⟨Bool, Unit, true⟩, Focus.not_isStrawsonUE_only_eq⟩
@@ -769,8 +803,11 @@ instance (c : LicensingContext) : DecidablePred c.licenser.Carries := fun _ ↦
       not_isStrawsonUE_exceedsFamily fun _ ↦ holds_exceedsFamily_iff)
   | doubtVerb => decidable_of_iff' _ (carries_classical_iff_le
       not_isStrawsonUE_doubtVerb fun _ ↦ holds_doubtVerb_iff)
-  | denyVerb | superordinateNegation => decidable_of_iff' _ (carries_classical_iff_le
+  | denyVerb => decidable_of_iff' _ (carries_classical_iff_le
       not_isStrawsonUE_denyVerb fun _ ↦ holds_denyVerb_iff)
+  | superordinateNegation => decidable_of_iff' _ (carries_iff_le
+      (isStrawsonDE_of_holds_anti (holds_superordinateNegation_iff.2 bot_le))
+      not_isStrawsonUE_superordinateNegation fun _ ↦ holds_superordinateNegation_iff)
   | onlyFocus => decidable_of_iff' _ (carries_iff_eq_weak isStrawsonDE_onlyFocus
       not_isStrawsonUE_onlyFocus not_holds_onlyFocus)
   | adversative => decidable_of_iff' _ (carries_iff_eq_weak isStrawsonDE_adversative
@@ -800,7 +837,8 @@ instance (c : LicensingContext) (s : Negation.Strength) :
   | beforeClause => decidable_of_iff' _ holds_beforeClause_iff
   | clausalComparative | tooTo => decidable_of_iff' _ holds_exceedsFamily_iff
   | doubtVerb => decidable_of_iff' _ holds_doubtVerb_iff
-  | denyVerb | superordinateNegation => decidable_of_iff' _ holds_denyVerb_iff
+  | denyVerb => decidable_of_iff' _ holds_denyVerb_iff
+  | superordinateNegation => decidable_of_iff' _ holds_superordinateNegation_iff
   | onlyFocus => isFalse (not_holds_toProjectivitySignature not_holds_onlyFocus)
   | adversative => isFalse (not_holds_toProjectivitySignature not_holds_adversative)
   | superlative => isFalse (not_holds_toProjectivitySignature not_holds_superlative)
