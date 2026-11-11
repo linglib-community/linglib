@@ -271,7 +271,8 @@ theorem mem_of_mulEquiv {S T : Type u} [Semigroup S] [Semigroup T] (e : S ≃* T
 /-- Membership of a quotient descends along a coarsening of congruences. -/
 theorem mem_quotient_of_le {S : Type u} [Semigroup S] {c d : Con S} (h : c ≤ d)
     (hc : V.mem c.Quotient) : V.mem d.Quotient :=
-  V.quot (Con.mapMulHom_surjective h) hc
+  V.quot (f := Con.mapMulHom c d h)
+    (Con.liftMulHom_surjective_of_surjective _ Con.mkMulHom_surjective) hc
 
 /-- The quotient by the kernel of a homomorphism into a member is a member. -/
 theorem mem_quotient_ker {S T : Type u} [Semigroup S] [Semigroup T] (f : S →ₙ* T)

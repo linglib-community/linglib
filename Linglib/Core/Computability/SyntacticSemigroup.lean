@@ -94,11 +94,16 @@ theorem syntacticSemigroupCon_iff {u v : FreeSemigroup α} :
     L.syntacticSemigroupCon u v ↔ L.syntacticCon u.toFreeMonoid v.toFreeMonoid := by
   rw [syntacticSemigroupCon_eq_comap]; rfl
 
+/-- The syntactic congruence of `L` on the free semigroup is the kernel of the map sending a
+nonempty word to its class in the syntactic monoid. -/
+theorem syntacticSemigroupCon_eq_ker (L : Language α) :
+    L.syntacticSemigroupCon = Con.ker (L.toSyntacticMonoid.toMulHom.comp toFreeMonoid) :=
+  Con.ext fun _ _ ↦ syntacticSemigroupCon_iff.trans toSyntacticMonoid_eq_iff.symm
+
 /-- The embedding of the syntactic semigroup into the syntactic monoid sends the class of a
 nonempty word to its class in the monoid. -/
 def syntacticSemigroupToMonoid (L : Language α) : L.SyntacticSemigroup →ₙ* L.SyntacticMonoid :=
-  L.syntacticSemigroupCon.liftMulHom (L.toSyntacticMonoid.toMulHom.comp toFreeMonoid)
-    fun _ _ h ↦ toSyntacticMonoid_eq_iff.mpr (syntacticSemigroupCon_iff.1 h)
+  L.syntacticSemigroupCon.liftMulHom _ L.syntacticSemigroupCon_eq_ker.le
 
 @[simp] theorem syntacticSemigroupToMonoid_apply (L : Language α) (u : FreeSemigroup α) :
     L.syntacticSemigroupToMonoid (L.toSyntacticSemigroup u) =
@@ -110,8 +115,7 @@ theorem syntacticSemigroupToMonoid_mk (L : Language α) (a : α) (l : List α) :
 
 theorem syntacticSemigroupToMonoid_injective (L : Language α) :
     Function.Injective L.syntacticSemigroupToMonoid :=
-  Con.liftMulHom_injective_iff.2 fun _ _ h ↦
-    syntacticSemigroupCon_iff.2 (toSyntacticMonoid_eq_iff.mp h)
+  Con.liftMulHom_injective_iff.2 L.syntacticSemigroupCon_eq_ker
 
 instance [Finite L.SyntacticMonoid] : Finite L.SyntacticSemigroup :=
   .of_injective _ L.syntacticSemigroupToMonoid_injective

@@ -20,7 +20,7 @@ file states them for a bare multiplication. A `MulHom` constant on the classes o
 [lifts](##Con.liftMulHom) to `c.Quotient`, and uniquely, since homomorphisms out of the quotient
 are [determined](##Con.mulHom_ext) by their composite with the quotient map. The lift is
 [surjective](##Con.liftMulHom_surjective_iff) exactly when the homomorphism is, and
-[injective](##Con.liftMulHom_injective_iff) exactly when `c` contains its kernel. The
+[injective](##Con.liftMulHom_injective_iff) exactly when `c` is its kernel. The
 [kernel lift](##Con.kerLiftMulHom) and the [map induced by a coarsening](##Con.mapMulHom) are
 special cases.
 -/
@@ -95,13 +95,21 @@ theorem liftMulHom_surjective_iff {H : c ≤ ker f} :
     Surjective (c.liftMulHom f H) ↔ Surjective f :=
   Quot.surjective_lift _
 
-/-- The homomorphism induced on the quotient by `c` is injective exactly when `c` contains the
-kernel of the homomorphism, hence is the kernel. -/
-@[to_additive /-- The homomorphism induced on the quotient by `c` is injective exactly when `c`
-contains the kernel of the homomorphism, hence is the kernel. -/]
-theorem liftMulHom_injective_iff {H : c ≤ ker f} : Injective (c.liftMulHom f H) ↔ ker f ≤ c :=
-  ⟨fun h _ _ hxy ↦ c.eq.1 (h hxy),
-    fun h x y ↦ Con.induction_on₂ x y fun _ _ hxy ↦ c.eq.2 (h hxy)⟩
+/-- Surjective homomorphisms constant on a congruence relation `c`'s equivalence classes induce a
+surjective homomorphism on `c`'s quotient. -/
+@[to_additive /-- Surjective homomorphisms constant on an additive congruence relation `c`'s
+equivalence classes induce a surjective homomorphism on `c`'s quotient. -/]
+theorem liftMulHom_surjective_of_surjective (H : c ≤ ker f) (hf : Surjective f) :
+    Surjective (c.liftMulHom f H) :=
+  liftMulHom_surjective_iff.2 hf
+
+/-- The homomorphism induced on the quotient by `c` is injective exactly when `c` is the kernel of
+the homomorphism. -/
+@[to_additive /-- The homomorphism induced on the quotient by `c` is injective exactly when `c` is
+the kernel of the homomorphism. -/]
+theorem liftMulHom_injective_iff {H : c ≤ ker f} : Injective (c.liftMulHom f H) ↔ c = ker f :=
+  (Setoid.lift_injective_iff_ker_eq_of_le H).trans
+    ⟨fun h ↦ (toSetoid_injective h).symm, fun h ↦ h ▸ rfl⟩
 
 /-! ### The kernel lift -/
 
@@ -124,7 +132,7 @@ theorem kerLiftMulHom_mk (x : M) : kerLiftMulHom f x = f x :=
 @[to_additive /-- A homomorphism `f` induces an injective homomorphism on the quotient by `f`'s
 kernel. -/]
 theorem kerLiftMulHom_injective (f : M →ₙ* N) : Injective (kerLiftMulHom f) :=
-  liftMulHom_injective_iff.2 le_rfl
+  liftMulHom_injective_iff.2 rfl
 
 /-! ### The map induced by a coarsening -/
 
@@ -140,9 +148,5 @@ def mapMulHom (h : c ≤ d) : c.Quotient →ₙ* d.Quotient :=
 @[to_additive (attr := simp)]
 theorem mapMulHom_coe (h : c ≤ d) (x : M) : c.mapMulHom d h x = x :=
   rfl
-
-@[to_additive]
-theorem mapMulHom_surjective (h : c ≤ d) : Surjective (c.mapMulHom d h) :=
-  liftMulHom_surjective_iff.2 mkMulHom_surjective
 
 end Con
