@@ -64,7 +64,7 @@ where
 /-- The constraints (8) in McCarthy's ranking: \*ə]σ, \*CCC >> OP-MAX-V >> SONCON. -/
 def ranking : List (Constraint (Paradigm Seg (List Seg))) :=
   [markedness λ suf s => schwaOpen (s ++ suf), markedness λ suf s => ccc (s ++ suf),
-   opFaith (Correspondence.maxViolOn IsVowel), markedness λ suf s => sonCon (s ++ suf)]
+   opFaith (Correspondence.Diagram.maxViolOn IsVowel), markedness λ suf s => sonCon (s ++ suf)]
 
 /-! ### Moroccan Arabic (§2) -/
 

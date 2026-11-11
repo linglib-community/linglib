@@ -64,7 +64,7 @@ variable {α ρ : Type*} [DecidableEq ρ]
 /-- The subparadigm of a suffixed word ((8), [benua-1997] (11)) has a base that surfaces as its
 input, the derivative and its input, and pairs positions from the left edge in every
 correspondence relation. -/
-def derivation (base input d : List α) : Correspondence Role α :=
+def derivation (base input d : List α) : Correspondence.Diagram Role α :=
   paradigmOfPairs base base input d (Correspondence.diagonalPairs base.length)
     (Correspondence.diagonalPairs input.length) (Correspondence.diagonalPairs base.length)
 
@@ -83,11 +83,12 @@ variable {b i d : List α}
 /-- The anti-faithfulness constraint `¬OO_rel-F` ((9), (19)) is the counterpart of the OO
 constraint `ooIdentity rel f`. A derived word bearing `rel` satisfies it exactly when its OO
 relation violates `F`, and it is vacuous at the base and on words bearing another relation. -/
-def ooAnti (rel : ρ) (f : Correspondence Role α → Role → Role → ℕ) : ρ → ParadigmConstraint α :=
+def ooAnti (rel : ρ) (f : Correspondence.Diagram Role α → Role → Role → ℕ) :
+    ρ → ParadigmConstraint α :=
   fun r ↦ ⟨fun _ ↦ 0, fun c ↦
     if r = rel then Constraint.antifaithful (f · .base .derivative) c else 0⟩
 
-theorem ooAnti_atDerived (rel : ρ) (f : Correspondence Role α → Role → Role → ℕ) :
+theorem ooAnti_atDerived (rel : ρ) (f : Correspondence.Diagram Role α → Role → Role → ℕ) :
     (ooAnti rel f rel).atDerived = Constraint.antifaithful (ooIdentity rel f rel).atDerived := by
   ext c
   simp [ooAnti, ooIdentity]
@@ -95,19 +96,20 @@ theorem ooAnti_atDerived (rel : ρ) (f : Correspondence Role α → Role → Rol
 /-- Anti-faithfulness is not faithfulness (§2.1.2), since the fully faithful candidate violates
 ¬MAX. -/
 theorem not_isFaithfulness_antifaithful_maxViol :
-    ¬ Correspondence.IsFaithfulness
-      (Constraint.antifaithful fun c : Correspondence BinaryRole α ↦ c.maxViol .lhs .rhs) :=
-  Correspondence.isFaithfulness_maxViol.not_antifaithful
+    ¬ Correspondence.Diagram.IsFaithfulness
+      (Constraint.antifaithful fun c : Correspondence.Diagram BinaryRole α ↦ c.maxViol .lhs .rhs) :=
+  Correspondence.Diagram.isFaithfulness_maxViol.not_antifaithful
 
 /-- Anti-faithfulness is not markedness either (§2.1.2), since two candidates with one output rate
 differently on ¬MAX. -/
 theorem not_isMarkedness_antifaithful_maxViol [Inhabited α] :
-    ¬ Correspondence.IsMarkedness .rhs
-      (Constraint.antifaithful fun c : Correspondence BinaryRole α ↦ c.maxViol .lhs .rhs) := by
+    ¬ Correspondence.Diagram.IsMarkedness .rhs
+      (Constraint.antifaithful fun c : Correspondence.Diagram BinaryRole α ↦
+        c.maxViol .lhs .rhs) := by
   intro h
   have := h (a := .identity []) (b := .parallel [default] []) rfl
-  simp [Constraint.antifaithful, Correspondence.maxViol_of_diagonal _ _ _
-    (Correspondence.parallel_edge_lhs_rhs _ _)] at this
+  simp [Constraint.antifaithful, Correspondence.Diagram.maxViol_of_diagonal _ _ _
+    (Correspondence.Diagram.parallel_edge_lhs_rhs _ _)] at this
 
 /-! #### Strict base mutation (§3.2) -/
 
@@ -138,26 +140,26 @@ def zipDep (x y : List α) : ℕ := (x.zip y).countP fun p ↦ ¬ P p.1 ∧ P p.
 
 theorem maxViolFeature_base :
     (derivation b i d).maxViolFeature P .base .derivative = zipMax P b d :=
-  Correspondence.maxViolFeature_of_diagonal _ _ _ P derivation_edge_base
+  Correspondence.Diagram.maxViolFeature_of_diagonal _ _ _ P derivation_edge_base
 
 theorem maxViolFeature_input :
     (derivation b i d).maxViolFeature P .derivInput .derivative = zipMax P i d :=
-  Correspondence.maxViolFeature_of_diagonal _ _ _ P derivation_edge_input
+  Correspondence.Diagram.maxViolFeature_of_diagonal _ _ _ P derivation_edge_input
 
 theorem depViolFeature_base :
     (derivation b i d).depViolFeature P .base .derivative = zipDep P b d :=
-  Correspondence.depViolFeature_of_diagonal _ _ _ P derivation_edge_base
+  Correspondence.Diagram.depViolFeature_of_diagonal _ _ _ P derivation_edge_base
 
 theorem depViolFeature_input :
     (derivation b i d).depViolFeature P .derivInput .derivative = zipDep P i d :=
-  Correspondence.depViolFeature_of_diagonal _ _ _ P derivation_edge_input
+  Correspondence.Diagram.depViolFeature_of_diagonal _ _ _ P derivation_edge_input
 
 /-- Derivatives that differ only in their affixes rate alike on ¬OO-MAX(P), which gives strict base
 mutation (27). -/
 theorem ooAnti_eq_of_take_eq (rel r : ρ) {i' d' : List α}
     (h : d.take b.length = d'.take b.length) :
-    (ooAnti rel (Correspondence.maxViolFeature P) r).atDerived (derivation b i d) =
-      (ooAnti rel (Correspondence.maxViolFeature P) r).atDerived (derivation b i' d') := by
+    (ooAnti rel (Correspondence.Diagram.maxViolFeature P) r).atDerived (derivation b i d) =
+      (ooAnti rel (Correspondence.Diagram.maxViolFeature P) r).atDerived (derivation b i' d') := by
   simp only [ooAnti, Constraint.antifaithful, Constraint.binary, maxViolFeature_base, zipMax,
     ← zip_take_length b d, ← zip_take_length b d', h]
 
@@ -207,12 +209,12 @@ def deaccent : Char → Char
 def accentAt (w : List Char) (i : Fin w.length) : List Char := w.set i (accent w[i])
 
 /-- MAX(Accent) (14a), and NOFLOP(Tone) (35d) on the links of an H tone. -/
-abbrev maxAccent : Correspondence Role Char → Role → Role → ℕ :=
-  Correspondence.maxViolFeature IsAccented
+abbrev maxAccent : Correspondence.Diagram Role Char → Role → Role → ℕ :=
+  Correspondence.Diagram.maxViolFeature IsAccented
 
 /-- DEP(Accent) (14b), and NOSPREAD(Tone) (35c) on the links of an H tone. -/
-abbrev depAccent : Correspondence Role Char → Role → Role → ℕ :=
-  Correspondence.depViolFeature IsAccented
+abbrev depAccent : Correspondence.Diagram Role Char → Role → Role → ℕ :=
+  Correspondence.Diagram.depViolFeature IsAccented
 
 /-! ### Luo: the voicing exchange (§2.2.2) -/
 
@@ -243,8 +245,8 @@ def voicings (w : List Segment) : Finset (List Segment) :=
   (w.map fun s ↦ if s.IsObstruent then [s, toggleVoice s] else [s]).sections.toFinset
 
 /-- IDENT[voice] (10a). -/
-abbrev identVoice : Correspondence Role Segment → Role → Role → ℕ :=
-  Correspondence.identViolFeature (· .voice)
+abbrev identVoice : Correspondence.Diagram Role Segment → Role → Role → ℕ :=
+  Correspondence.Diagram.identViolFeature (· .voice)
 
 /-- The exchange ranking (11), `¬OO_Ex-IDENT[voice] ≫ OO_Ex-IDENT[voice]`. -/
 def exchange : List (OORelation → ParadigmConstraint Segment) :=

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Diagram
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Data.Examples.RoseWalker2004
 public import Mathlib.Tactic.DeriveFintype
@@ -139,7 +139,7 @@ structure Cand where
 /-- The correspondence of a candidate to an input: input and output correspond position by
 position, and the consonants of the output correspond as the candidate coindexes them, each pair
 read left to right. -/
-def Cand.correspondence (input : List Seg) (c : Cand) : Correspondence BinaryRole Seg :=
+def Cand.correspondence (input : List Seg) (c : Cand) : Correspondence.Diagram BinaryRole Seg :=
   .ofPairs (fun | .lhs => input | .rhs => c.out) fun
     | .lhs, .rhs | .rhs, .lhs => Correspondence.diagonalPairs input.length
     | .rhs, .rhs => c.corr
@@ -147,54 +147,55 @@ def Cand.correspondence (input : List Seg) (c : Cand) : Correspondence BinaryRol
 
 /-- CORR at stratum `k` of the nasal correspondence hierarchy (47): a violation for each pair of
 output consonants at least as similar as the stratum, left first, that do not correspond. -/
-def corr (k : Fin 4) : Constraint (Correspondence BinaryRole Seg) := fun c ↦
+def corr (k : Fin 4) : Constraint (Correspondence.Diagram BinaryRole Seg) := fun c ↦
   let C := Finset.univ.filter fun i : Fin (c.form .rhs).length ↦ (c.form .rhs)[i].IsConsonant
   ((C ×ˢ C).filter fun p ↦ p.1 < p.2 ∧ AtLeast k (c.form .rhs)[p.1] (c.form .rhs)[p.2] ∧
     p ∉ c.edge .rhs .rhs).card
 
 /-- IDENT-CLCR(nas) (51a): MAX of [nasal] along the correspondence of the output read left to
 right, a violation for each nasal with an oral correspondent to its right. -/
-def identCLCR : Constraint (Correspondence BinaryRole Seg) :=
+def identCLCR : Constraint (Correspondence.Diagram BinaryRole Seg) :=
   (·.maxViolFeature Seg.IsNasal .rhs .rhs)
 
 /-- IDENT-CRCL(nas) (51b): DEP of [nasal] along the correspondence of the output read left to
 right, a violation for each nasal with an oral correspondent to its left. -/
-def identCRCL : Constraint (Correspondence BinaryRole Seg) :=
+def identCRCL : Constraint (Correspondence.Diagram BinaryRole Seg) :=
   (·.depViolFeature Seg.IsNasal .rhs .rhs)
 
 /-- IDENT-OI(nas): DEP of [nasal] from input to output, a violation for each segment nasal in the
 output but not in the input. -/
-def identOI : Constraint (Correspondence BinaryRole Seg) :=
+def identOI : Constraint (Correspondence.Diagram BinaryRole Seg) :=
   (·.depViolFeature Seg.IsNasal .lhs .rhs)
 
 /-- The nasal correspondence hierarchy with IDENT-OI(nas) interpolated below stratum `k`, under
 the IDENT-CC constraints `top` and above `bottom`. -/
-def hierarchy (top : List (Constraint (Correspondence BinaryRole Seg))) (k : Fin 4)
-    (bottom : List (Constraint (Correspondence BinaryRole Seg))) :
-    List (Constraint (Correspondence BinaryRole Seg)) :=
+def hierarchy (top : List (Constraint (Correspondence.Diagram BinaryRole Seg))) (k : Fin 4)
+    (bottom : List (Constraint (Correspondence.Diagram BinaryRole Seg))) :
+    List (Constraint (Correspondence.Diagram BinaryRole Seg)) :=
   top ++ ((List.finRange 4).map corr).insertIdx (k.val + 1) identOI ++ bottom
 
 /-- The Ngbaka ranking (57b): both directional IDENT-CC constraints undominated and
 IDENT-OI(nas) below the homorganic nasal–prenasal stratum. -/
-def ngbaka : List (Constraint (Correspondence BinaryRole Seg)) :=
+def ngbaka : List (Constraint (Correspondence.Diagram BinaryRole Seg)) :=
   hierarchy [identCLCR, identCRCL] 1 []
 
 /-- The Kikongo ranking (57a): IDENT-CLCR undominated, IDENT-OI(nas) below every stratum, and
 IDENT-CRCL at the bottom. -/
-def kikongo : List (Constraint (Correspondence BinaryRole Seg)) :=
+def kikongo : List (Constraint (Correspondence.Diagram BinaryRole Seg)) :=
   hierarchy [identCLCR] 3 [identCRCL]
 
 /-! ### Faithfulness and correspondence -/
 
-theorem isFaithfulness_identCLCR : Correspondence.IsFaithfulness identCLCR := fun s ↦ by
-  simp [identCLCR, Correspondence.maxViolFeature, Correspondence.identity]
+theorem isFaithfulness_identCLCR : Correspondence.Diagram.IsFaithfulness identCLCR := fun s ↦ by
+  simp [identCLCR, Correspondence.Diagram.maxViolFeature, Correspondence.Diagram.identity]
 
-theorem isFaithfulness_identCRCL : Correspondence.IsFaithfulness identCRCL := fun s ↦ by
-  simp [identCRCL, Correspondence.depViolFeature, Correspondence.identity]
+theorem isFaithfulness_identCRCL : Correspondence.Diagram.IsFaithfulness identCRCL := fun s ↦ by
+  simp [identCRCL, Correspondence.Diagram.depViolFeature, Correspondence.Diagram.identity]
 
-theorem isFaithfulness_identOI : Correspondence.IsFaithfulness identOI := fun s ↦ by
-  rw [identOI, Correspondence.identity, Correspondence.depViolFeature_of_diagonal _ _ _ _
-    (Correspondence.parallel_edge_lhs_rhs s s)]
+theorem isFaithfulness_identOI : Correspondence.Diagram.IsFaithfulness identOI := fun s ↦ by
+  rw [identOI, Correspondence.Diagram.identity,
+    Correspondence.Diagram.depViolFeature_of_diagonal _ _ _ _
+    (Correspondence.Diagram.parallel_edge_lhs_rhs s s)]
   induction s with
   | nil => rfl
   | cons a s ih => simpa [List.countP_cons] using ih
@@ -202,12 +203,13 @@ theorem isFaithfulness_identOI : Correspondence.IsFaithfulness identOI := fun s 
 /-- CORR is neither faithfulness, since the fully faithful candidate of two identical nasals
 violates it, nor markedness, since two candidates with the same output can differ on it: it
 demands correspondence itself. -/
-theorem not_isFaithfulness_corr (k : Fin 4) : ¬ Correspondence.IsFaithfulness (corr k) := by
+theorem not_isFaithfulness_corr (k : Fin 4) : ¬ Correspondence.Diagram.IsFaithfulness (corr k) := by
   have : ∀ k, corr k (.identity [.stop .coronal .nasal, .vocoid, .stop .coronal .nasal]) ≠ 0 := by
     decide
   exact fun h ↦ this k (h _)
 
-theorem not_isMarkedness_corr (k : Fin 4) : ¬ Correspondence.IsMarkedness .rhs (corr k) := by
+theorem not_isMarkedness_corr (k : Fin 4) :
+    ¬ Correspondence.Diagram.IsMarkedness .rhs (corr k) := by
   let w : List Seg := [.stop .coronal .nasal, .vocoid, .stop .coronal .nasal]
   have : ∀ k, corr k ((⟨w, []⟩ : Cand).correspondence []) ≠
       corr k ((⟨w, [(0, 2)]⟩ : Cand).correspondence []) := by
@@ -239,7 +241,8 @@ def gen (input : List Seg) : List Cand :=
 
 /-- The tableau of an input under a ranking, over GEN, each candidate evaluated as its
 correspondence to the input. -/
-def tableau (ranking : List (Constraint (Correspondence BinaryRole Seg))) (input : List Seg) :=
+def tableau (ranking : List (Constraint (Correspondence.Diagram BinaryRole Seg)))
+    (input : List Seg) :=
   Tableau.ofList (gen input).toFinset (ranking.map (·.comap (Cand.correspondence input)))
 
 /-! ### The typology of the cut -/
@@ -248,7 +251,7 @@ def tableau (ranking : List (Constraint (Correspondence BinaryRole Seg))) (input
 def pair (a b : Seg) : List Seg := [a, .vocoid, b]
 
 /-- Both directional IDENT-CC constraints undominated and IDENT-OI(nasal) below stratum `k`. -/
-def cut (k : Fin 4) : List (Constraint (Correspondence BinaryRole Seg)) :=
+def cut (k : Fin 4) : List (Constraint (Correspondence.Diagram BinaryRole Seg)) :=
   hierarchy [identCLCR, identCRCL] k []
 
 /-- The typology: a nasal followed by an oral consonant agrees with it, the two corresponding,
@@ -306,11 +309,11 @@ def parse : List Char → List Seg
 
 /-- The words of a language as the fixed points of its grammar: some optimal candidate has the
 input as its output. -/
-def IsFixedPoint (ranking : List (Constraint (Correspondence BinaryRole Seg))) (w : List Seg) :
-    Prop :=
+def IsFixedPoint (ranking : List (Constraint (Correspondence.Diagram BinaryRole Seg)))
+    (w : List Seg) : Prop :=
   ∃ c ∈ (tableau ranking w).optimal, c.out = w
 
-instance (ranking : List (Constraint (Correspondence BinaryRole Seg))) (w : List Seg) :
+instance (ranking : List (Constraint (Correspondence.Diagram BinaryRole Seg))) (w : List Seg) :
     Decidable (IsFixedPoint ranking w) :=
   inferInstanceAs (Decidable (∃ c ∈ (tableau ranking w).optimal, c.out = w))
 

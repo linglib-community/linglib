@@ -127,11 +127,12 @@ def starHiatus : Constraint (Hiatus.Juncture × Resolution) := fun c ↦
 /-- `corr o j` is the correspondence between the unrepaired concatenation and the candidate
 `o`, which is the identity for faithful hiatus, the insertion of a glottal stop before the
 suffix vowel for epenthesis, and the deletion of the suffix vowel for elision. -/
-def corr : Resolution → Hiatus.Juncture → Correspondence BinaryRole Segment
-  | .hiatus, j => Correspondence.identity j.input
+def corr : Resolution → Hiatus.Juncture → Correspondence.Diagram BinaryRole Segment
+  | .hiatus, j => Correspondence.Diagram.identity j.input
   | .epenthesis, j =>
-    Correspondence.insertIdx j.input ⟨j.v2Idx, j.v2Idx_lt_length_input.trans (by omega)⟩ glottalStop
-  | .deletion, j => Correspondence.eraseIdx j.input ⟨j.v2Idx, j.v2Idx_lt_length_input⟩
+    Correspondence.Diagram.insertIdx j.input
+      ⟨j.v2Idx, j.v2Idx_lt_length_input.trans (by omega)⟩ glottalStop
+  | .deletion, j => Correspondence.Diagram.eraseIdx j.input ⟨j.v2Idx, j.v2Idx_lt_length_input⟩
 
 theorem corr_form_rhs (o : Resolution) (j : Hiatus.Juncture) :
     (corr o j).form .rhs = resolve o j := by
@@ -151,16 +152,16 @@ def maxConstraint : Constraint (Hiatus.Juncture × Resolution) := fun c ↦
 theorem depConstraint_eq (j : Hiatus.Juncture) (o : Resolution) :
     depConstraint (j, o) = if o = .epenthesis then 1 else 0 := by
   cases o
-  · exact Correspondence.depViol_identity _
-  · exact Correspondence.depViol_insertIdx
-  · exact Correspondence.depViol_eraseIdx
+  · exact Correspondence.Diagram.depViol_identity _
+  · exact Correspondence.Diagram.depViol_insertIdx
+  · exact Correspondence.Diagram.depViol_eraseIdx
 
 theorem maxConstraint_eq (j : Hiatus.Juncture) (o : Resolution) :
     maxConstraint (j, o) = if o = .deletion then 1 else 0 := by
   cases o
-  · exact Correspondence.maxViol_identity _
-  · exact Correspondence.maxViol_insertIdx
-  · exact Correspondence.maxViol_eraseIdx
+  · exact Correspondence.Diagram.maxViol_identity _
+  · exact Correspondence.Diagram.maxViol_insertIdx
+  · exact Correspondence.Diagram.maxViol_eraseIdx
 
 theorem starHiatus_eq (k : Fin 2) (o : Resolution) :
     starHiatus (inputs k, o) = if o = .hiatus then 1 else 0 := by
