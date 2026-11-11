@@ -9,15 +9,16 @@ The types of two daughters decide which modes of the effect-driven grammar combi
 `Ty.combine` lists them: each way of peeling effects off the two types down to a basic rule,
 with every Join and Lower the result allows. [It lists every mode of the
 grammar](##Interpreter.Ty.mem_combine), so the effect-driven interpreter [admits every mode at a
-node](##Interpreter.mem_binary_effectDriven), and restricted to an inventory of meta-modes
-[exactly the modes that keep to it](##Interpreter.mem_binary_effectDriven_filterBinary).
+node](##Interpreter.mem_binary_effectDriven), and with an inventory of meta-modes
+[exactly the modes that keep to it](##Interpreter.mem_binary_effectDrivenWithin).
 
 ## Main definitions
 
 * `Interpreter.Mode.closure`: a mode with every Join and Lower stacked on it.
 * `Interpreter.Ty.combineWith`, `Interpreter.Ty.combine`: the modes for two types, with a given
   way of closing each result and with `Mode.closure`.
-* `Interpreter.effectDriven`: the interpreter that admits the modes `Ty.combine` lists.
+* `Interpreter.effectDriven`: the interpreter that admits the modes `Ty.combine` lists, and
+  `Interpreter.effectDrivenWithin`, the one that admits those that keep to an inventory.
 
 ## Implementation notes
 
@@ -390,13 +391,23 @@ theorem mem_binary_effectDriven [DecidableEq B] {G : Language (Ty B)} [G.Locally
   Ty.mem_combine (find := Language.LocallyFinite.binaryRules (L := G))
     (fun b ↦ Language.LocallyFinite.mem_symbols b) m.2
 
-/-- Restricted to the modes that keep to an inventory of meta-modes, the effect-driven
-interpreter admits exactly those. -/
-theorem mem_binary_effectDriven_filterBinary [DecidableEq B] {G : Language (Ty B)}
-    [G.LocallyFinite] {N : Type} (inv : MetaMode → Eff B → Prop) [∀ k f, Decidable (inv k f)]
-    {l r : Ty B} (m : Sigma (Mode G.Binary l r)) :
-    m ∈ ((effectDriven G : Interpreter (effectGrammar G) N).filterBinary
-      fun p ↦ p.2.Within inv).binary l r ↔ m.2.Within inv :=
-  Interpreter.mem_binary_filterBinary.trans (and_iff_right (mem_binary_effectDriven m))
+/-- The effect-driven interpreter of a grammar with an inventory of meta-modes: a node admits the
+modes for its daughters that keep to the inventory. -/
+def effectDrivenWithin [DecidableEq B] (inv : MetaMode → Eff B → Prop)
+    [∀ k f, Decidable (inv k f)] (G : Language (Ty B)) [G.LocallyFinite] {N : Type} :
+    Interpreter (effectGrammar G) N where
+  unary _ := Language.LocallyFinite.unaryRules (L := G)
+  binary l r := (Ty.combine (Language.LocallyFinite.binaryRules (L := G)) l r).filter
+    fun p ↦ p.2.Within inv
+
+/-- A node admits exactly the modes that keep to the inventory. -/
+theorem mem_binary_effectDrivenWithin [DecidableEq B] {G : Language (Ty B)} [G.LocallyFinite]
+    {N : Type} {inv : MetaMode → Eff B → Prop} [∀ k f, Decidable (inv k f)] {l r : Ty B}
+    {m : Sigma (Mode G.Binary l r)} :
+    m ∈ (effectDrivenWithin inv G : Interpreter (effectGrammar G) N).binary l r ↔
+      m.2.Within inv := by
+  refine List.mem_filter.trans ?_
+  simp only [decide_eq_true_eq, and_iff_right_iff_imp]
+  exact fun _ ↦ mem_binary_effectDriven (N := N) m
 
 end Interpreter
