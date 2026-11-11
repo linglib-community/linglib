@@ -4,6 +4,8 @@ public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Mode.EffectFree
 public import Linglib.Semantics.Composition.Mode.Pointwise
 public import Linglib.Semantics.Composition.Interpret
+public import Linglib.Semantics.Composition.Mode.Binder
+public import Studies.HeimKratzer1998
 public import Linglib.Semantics.Composition.Mode.Normal
 public import Linglib.Semantics.Composition.MetaCombinator.Adjunction
 
@@ -615,6 +617,78 @@ theorem interpret_sheCalledHer :
   simp [sheCalledHer, EnvItem.val]
 
 end Reading
+
+/-! ### Heim and Kratzer's grammar
+
+Heim and Kratzer's grammar is the environment-sensitive grammar with the abstraction operator
+(4.7): each of their words read as a function of the assignment, sisters combined by Structured
+App, and the index of a moved phrase the binder. Its values for a tree are theirs, so their two
+scopes of *every person sees some person* are derived with the assignment in the types. -/
+
+section HeimKratzer
+
+open PhraseStructure HeimKratzer1998
+
+/-- The type of assignments: a function from indices to individuals. -/
+abbrev assignment : Ty Base := .base .n ⇒ .e
+
+/-- Heim and Kratzer's items by type in the environment-sensitive grammar, where each reads an
+assignment. -/
+inductive Reader : Ty Base → Type
+  | of {a : Ty Base} (i : Item a) : Reader (.comp (.R assignment) a)
+
+/-- The function of the assignment an item denotes. -/
+noncomputable def Reader.val : {a : Ty Base} → Reader a → a.Dom HeimKratzer1998.Dom
+  | _, .of i => i.val
+
+/-- The lexicon of the environment-sensitive grammar: Heim and Kratzer's, each item a reader. -/
+def readerItems (x : Word ⊕ ℕ) : List (Sigma Reader) :=
+  (items x).map fun p ↦ ⟨_, .of p.2⟩
+
+/-- The environment-sensitive grammar with abstraction: application and predicate modification
+pointwise at reading an assignment, and the binder at an index. -/
+abbrev heimKratzer : Interpreter ((effectGrammar (baseGrammar Base)).sum
+    (binding assignment fun _ ↦ .e)) ℕ :=
+  (effectDrivenWithin (MetaMode.pointwise (· = .R assignment)) (baseGrammar Base)).withBinder
+    assignment fun _ ↦ .e
+
+/-- The values of a tree in the environment-sensitive grammar with the binder (4.7) are its
+denotations by Heim and Kratzer's rules, as functions of the assignment. -/
+theorem values_heimKratzer (t : Tree Unit Word) :
+    t.values heimKratzer (effectGrammar.structure.sum (binding.structure assignments))
+        Reader.val readerItems =
+      (meanings t).map fun d ↦ ⟨.comp (.R assignment) d.1, d.2⟩ := by
+  rw [meanings]
+  exact Tree.values_withBinder_of_effectFree (P := (· = .R assignment)) (g := assignment)
+    (Γ := fun _ ↦ .e) (ρ := fun {_} i ↦ Item.val i) (ρ' := fun {_} ↦ Reader.val) (lex := items)
+    (lex' := readerItems) rfl baseGrammar_effectFree (fun _ ↦ trivial) assignments
+    (fun x ↦ by simp only [readerItems, List.map_map]; rfl)
+    (fun x p hp ↦ by
+      rcases x with (_ | _ | _ | _ | _) | _ <;>
+        simp only [items, List.mem_map, List.mem_singleton, List.not_mem_nil] at hp
+      all_goals first
+        | (obtain rfl := hp; exact ⟨trivial, trivial⟩)
+        | (obtain rfl := hp; trivial)
+        | (obtain ⟨_, -, rfl⟩ := hp; exact ⟨⟨trivial, trivial⟩, ⟨trivial, trivial⟩, trivial⟩)) t
+
+/-- The surface scope of *every person sees some person*, the two quantifiers raised over their
+binders. -/
+theorem values_heimKratzer_surface :
+    tree_surface.values heimKratzer (effectGrammar.structure.sum (binding.structure assignments))
+        Reader.val readerItems =
+      [⟨.comp (.R assignment) .t, fun _ ↦ surfaceScopeProp⟩] := by
+  rw [values_heimKratzer, meanings_surface]
+  rfl
+
+/-- The inverse scope, the object raised over the subject. -/
+theorem values_heimKratzer_inverse :
+    tree_inverse.values heimKratzer (effectGrammar.structure.sum (binding.structure assignments))
+        Reader.val readerItems =
+      [⟨.comp (.R assignment) .t, fun _ ↦ inverseScopeProp⟩] := by
+  rw [values_heimKratzer, meanings_inverse]
+  rfl
+
+end HeimKratzer
 
 section Hamblin
 

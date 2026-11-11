@@ -52,6 +52,13 @@ inductive PredicateModification : Ty B → Ty B → Ty B → Type
   /-- Predicate modification. -/
   | pm {a : Ty B} : PredicateModification (a ⇒ .t) (a ⇒ .t) (a ⇒ .t)
 
+instance (f : Eff B) (l r u : Ty B) : IsEmpty (PredicateModification (.comp f l) r u) :=
+  ⟨nofun⟩
+
+instance {L L' : Language (Ty B)} {σ : Signature (Ty B)} {u : Ty B} [IsEmpty (L.Functions σ u)]
+    [IsEmpty (L'.Functions σ u)] : IsEmpty (Language.Sum L L' σ u) :=
+  ⟨fun | .inl f => isEmptyElim f | .inr f => isEmptyElim f⟩
+
 /-- The meaning of application. -/
 @[simp] def Application.eval (D : B → Type) :
     {l r u : Ty B} → Application l r u → l.Dom D → r.Dom D → u.Dom D

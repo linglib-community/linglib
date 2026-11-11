@@ -229,4 +229,59 @@ theorem Uninterpretable.values_eq_nil {t : Tree C L} (h : t.Uninterpretable I le
     (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a) : t.values I M ρ lex = [] := by
   simp [values, h.derivs_eq_nil]
 
+/-- Two interpreters that agree along a map of types give a tree the same values. The second
+interprets at the image `ι a` what the first interprets at `a`, the values of the first at `a`
+being values of the second at `ι a`. Where, on the types satisfying `Q`, the items of each word
+and the values of the rules each node admits correspond, and the rules of the first keep to
+those types, the values of a tree by the second are its values by the first, retyped. -/
+theorem values_eq_map_of_types {T' : Type} {G' : Language T'} {W' D' : T' → Type} (ι : T → T')
+    (Q : T → Prop) {I : Interpreter G ℕ} {J : Interpreter G' ℕ}
+    {M : G.Structure fun a ↦ D' (ι a)} {M' : G'.Structure D'}
+    {ρ : ∀ {a : T}, W a → D' (ι a)} {ρ' : ∀ {a : T'}, W' a → D' a}
+    {lex : L ⊕ ℕ → List (Sigma W)} {lex' : L ⊕ ℕ → List (Sigma W')}
+    (hlex : ∀ x, (lex' x).map (fun p ↦ (⟨p.1, ρ' p.2⟩ : Sigma D')) =
+      (lex x).map fun p ↦ ⟨ι p.1, ρ p.2⟩)
+    (hQ : ∀ x, ∀ p ∈ lex x, Q p.1)
+    (hu : ∀ (n : ℕ) (a : T), Q a → ∀ x : D' (ι a),
+      (J.unary n (ι a)).map (fun r ↦ (⟨r.1, M'.funMap r.2 x⟩ : Sigma D')) =
+        (I.unary n a).map fun r ↦ ⟨ι r.1, M.funMap (σ := .of a) r.2 x⟩)
+    (hQu : ∀ (n : ℕ) (a : T), Q a → ∀ r ∈ I.unary n a, Q r.1)
+    (hb : ∀ a b : T, Q a → Q b → ∀ (x : D' (ι a)) (y : D' (ι b)),
+      (J.binary (ι a) (ι b)).map (fun m ↦ (⟨m.1, M'.funMap m.2 (x, y)⟩ : Sigma D')) =
+        (I.binary a b).map fun m ↦ ⟨ι m.1, M.funMap (σ := .prod (.of a) (.of b)) m.2 (x, y)⟩)
+    (hQb : ∀ a b : T, Q a → Q b → ∀ m ∈ I.binary a b, Q m.1) (t : Tree C L) :
+    t.values J M' ρ' lex' = (t.values I M ρ lex).map fun d ↦ ⟨ι d.1, d.2⟩ := by
+  rw [values_eq_fold, values_eq_fold]
+  refine (RoseTree.rel_fold
+    (fun (X : List (Sigma D')) (Y : List (Sigma fun a ↦ D' (ι a))) ↦
+      X = Y.map (fun d ↦ ⟨ι d.1, d.2⟩) ∧ ∀ d ∈ Y, Q d.1) (fun l Xs Ys h ↦ ?_) t).1
+  have hleaf (x : L ⊕ ℕ) :
+      (lex' x).map (fun p ↦ (⟨p.1, ρ' p.2⟩ : Sigma D')) =
+          ((lex x).map fun p ↦ (⟨p.1, ρ p.2⟩ : Sigma fun a ↦ D' (ι a))).map
+            (fun d ↦ ⟨ι d.1, d.2⟩) ∧
+        ∀ d ∈ (lex x).map fun p ↦ (⟨p.1, ρ p.2⟩ : Sigma fun a ↦ D' (ι a)), Q d.1 := by
+    refine ⟨by rw [hlex, List.map_map]; rfl, fun d hd ↦ ?_⟩
+    obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hd
+    exact hQ x p hp
+  match l, Xs, Ys, h with
+  | .terminal _ w, [], [], _ => exact hleaf _
+  | .trace n _, [], [], _ => exact hleaf _
+  | .bind n _, [_], [Y], .cons ⟨rfl, hY⟩ .nil =>
+    refine ⟨?_, fun d hd ↦ ?_⟩
+    · simp only [nodeValues, unaryValues, List.flatMap_map, List.map_flatMap]
+      exact List.flatMap_congr fun d hd ↦ by rw [hu n d.1 (hY d hd) d.2, List.map_map]; rfl
+    · obtain ⟨d₁, h₁, r, hr, rfl⟩ := mem_unaryValues.1 hd
+      exact hQu n d₁.1 (hY d₁ h₁) r hr
+  | .phrase _ _, [_], [Y], .cons h .nil => exact h
+  | .phrase _ _, [_, _], [Y₁, Y₂], .cons ⟨rfl, h₁⟩ (.cons ⟨rfl, h₂⟩ .nil) =>
+    refine ⟨?_, fun d hd ↦ ?_⟩
+    · simp only [nodeValues, binaryValues, List.flatMap_map, List.map_flatMap]
+      exact List.flatMap_congr fun d₁ hd₁ ↦ List.flatMap_congr fun d₂ hd₂ ↦ by
+        rw [hb d₁.1 d₂.1 (h₁ d₁ hd₁) (h₂ d₂ hd₂) d₁.2 d₂.2, List.map_map]; rfl
+    · obtain ⟨d₁, hd₁, d₂, hd₂, m, hm, rfl⟩ := mem_binaryValues.1 hd
+      exact hQb d₁.1 d₂.1 (h₁ d₁ hd₁) (h₂ d₂ hd₂) m hm
+  | .terminal _ _, _ :: _, _ :: _, _ | .trace _ _, _ :: _, _ :: _, _ | .bind _ _, [], [], _
+  | .bind _ _, _ :: _ :: _, _ :: _ :: _, _ | .phrase _ _, [], [], _
+  | .phrase _ _, _ :: _ :: _ :: _, _ :: _ :: _ :: _, _ => exact ⟨rfl, fun _ hd ↦ nomatch hd⟩
+
 end PhraseStructure.Tree

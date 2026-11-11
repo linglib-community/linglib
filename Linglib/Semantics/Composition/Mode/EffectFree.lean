@@ -100,10 +100,54 @@ theorem Ty.combine_of_effectFree [DecidableEq B] {Rule : Ty B → Ty B → Ty B 
     | exact hl.elim | exact hr.elim | exact hl.1.elim | exact hl.2.elim
     | exact hr.1.elim | exact hr.2.elim
 
+/-- For daughters of types without effects the search of any inventory finds the basic rules
+and nothing else. -/
+theorem Ty.combineWithin_of_effectFree [DecidableEq B] {Rule : Ty B → Ty B → Ty B → Type}
+    (inv : MetaMode → Eff B → Prop) [DecidableRel inv]
+    {find : (l r : Ty B) → List (Sigma (Rule l r))}
+    (hR : ∀ {l r u : Ty B}, Rule l r u → l.EffectFree → r.EffectFree → u.EffectFree)
+    {l r : Ty B} (hl : l.EffectFree) (hr : r.EffectFree) :
+    Ty.combineWithin inv find l r = (find l r).map fun p ↦ ⟨p.1, .basic p.2⟩ := by
+  have hj (p : Sigma (Rule l r)) :
+      (Mode.closure (⟨p.1, .basic p.2⟩ : Sigma (Mode Rule l r))).filter
+        (fun q ↦ q.2.Within inv) = [⟨p.1, .basic p.2⟩] := by
+    obtain ⟨u, b⟩ := p
+    have hu := hR b hl hr
+    rcases u with _ | _ | _ | _
+    · rfl
+    · rfl
+    · simp [Mode.closure, Ty.size, Mode.closureAux, Mode.joins, Mode.lowers, Mode.Within]
+    · exact hu.elim
+  have hbasic : ((find l r).map fun p ↦ (⟨p.1, .basic p.2⟩ : Sigma (Mode Rule l r))).flatMap
+      (fun p ↦ (Mode.closure p).filter fun q ↦ q.2.Within inv) =
+        (find l r).map fun p ↦ ⟨p.1, .basic p.2⟩ := by
+    rw [List.flatMap_map]
+    simp only [hj]
+    exact List.map_eq_flatMap.symm
+  rw [← hbasic]
+  unfold Ty.combineWithin
+  rw [Ty.combineWith_eq_combineStep, Ty.combineStep]
+  congr 1
+  all_goals simp_all
+  all_goals
+    intros; intro h; subst h
+    first
+    | exact hl.elim | exact hr.elim | exact hl.1.elim | exact hl.2.elim
+    | exact hr.1.elim | exact hr.2.elim
+
 section
 
 variable [DecidableEq B] {G : Language (Ty B)} [G.LocallyFinite] {D : B → Type}
   [M : G.Structure (Ty.Dom D)] {N : Type}
+
+/-- On daughters of types without effects the effect-driven interpreter of any inventory admits
+the basic rules of the grammar and nothing else. -/
+theorem binary_effectDrivenWithin_of_effectFree (inv : MetaMode → Eff B → Prop)
+    [DecidableRel inv] (hG : G.EffectFree) {l r : Ty B} (hl : l.EffectFree)
+    (hr : r.EffectFree) :
+    (effectDrivenWithin inv G : Interpreter (effectGrammar G) N).binary l r =
+      (Language.LocallyFinite.binaryRules (L := G) l r).map fun p ↦ ⟨p.1, .basic p.2⟩ :=
+  Ty.combineWithin_of_effectFree inv hG.binary hl hr
 
 /-- On daughters of types without effects the effect-driven interpreter admits the basic rules
 of the grammar and nothing else. -/

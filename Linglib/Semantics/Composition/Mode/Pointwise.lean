@@ -14,8 +14,8 @@ Structured Apps of what it lists for their results](##Interpreter.Ty.combineWith
 and over a lexicon whose every item carries the effect [a tree has its values in the structure on
 computations](##PhraseStructure.Tree.values_effectDrivenWithin_pointwise). Structured App is
 [evaluation at one datum](##Interpreter.Mode.eval_ap_R) at reading, where the structure on
-computations [is the grammar's on functions of the
-datum](##Interpreter.effectGrammar.basic_isExpansionOn_pointwise_R), [Hamblin's
+computations [is the structure on functions of the
+datum](##Interpreter.effectGrammar.pointwise_R), [Hamblin's
 rule](##Interpreter.Mode.eval_ap_S) at indeterminacy and [Rooth's](##Interpreter.Mode.eval_ap_F)
 at alternatives.
 
@@ -176,18 +176,20 @@ theorem Eff.sequence_R {D : B → Type} (i : Ty B) :
     rw [Eff.sequence, Eff.sequence_R i σ, Eff.sequence_R i τ]
     rfl
 
-/-- At reading, the structure on computations gives a rule of the grammar its meaning at each
-datum read: it expands the grammar's structure on the values that depend on the datum, in which
-Heim and Kratzer's sisters combine at one assignment. -/
-theorem effectGrammar.basic_isExpansionOn_pointwise_R {G : Language (Ty B)} {D : B → Type}
+/-- At reading, the structure on computations is the structure of the effect-driven grammar on
+the values that depend on the datum read, in which Heim and Kratzer's sisters combine at one
+assignment. -/
+theorem effectGrammar.pointwise_R {G : Language (Ty B)} {D : B → Type}
     [M : G.Structure (Ty.Dom D)] (i : Ty B) :
-    (effectGrammar.basic G).IsExpansionOn (M.pi (i.Dom D)) (effectGrammar.pointwise (.R i)) where
-  map_onFunction σ _ g x :=
-    match σ, g with
-    | .prod (.of _) (.of _), _ => rfl
-    | .nil, g | .of _, g | .prod .nil _, g | .prod (.prod _ _) _, g | .prod (.of _) .nil, g
-    | .prod (.of _) (.prod _ _), g =>
-      congrArg (Eff.map (.R i) (M.funMap g)) (Eff.sequence_R i _ x)
+    effectGrammar.pointwise (G := G) (D := D) (.R i) =
+      (effectGrammar.structure (G := G) (D := D)).pi (i.Dom D) := by
+  refine congrArg Language.Structure.mk ?_
+  funext σ _ g x
+  match σ, g with
+  | .prod (.of _) (.of _), _ => rfl
+  | .nil, g | .of _, g | .prod .nil _, g | .prod (.prod _ _) _, g | .prod (.of _) .nil, g
+  | .prod (.of _) (.prod _ _), g =>
+    exact congrArg (Eff.map (.R i) (M.funMap g)) (Eff.sequence_R i _ x)
 
 end Interpreter
 
@@ -213,33 +215,12 @@ theorem values_effectDrivenWithin_pointwise [∀ a b : Ty B, IsEmpty (G.Unary a 
     t.values (effectDrivenWithin (MetaMode.pointwise P) G) effectGrammar.structure ρ' lex' =
       (t.values (effectDrivenWithin (MetaMode.pointwise P) G) (effectGrammar.pointwise f)
         ρ lex).map fun d ↦ ⟨.comp f d.1, d.2⟩ := by
-  rw [values_eq_fold, values_eq_fold]
-  refine RoseTree.rel_fold
-    (fun (X : List (Sigma (Ty.Dom D))) (Y : List (Σ a : Ty B, (Ty.comp f a).Dom D)) ↦
-      X = Y.map fun d ↦ ⟨.comp f d.1, d.2⟩) (fun l Xs Ys h ↦ ?_) t
-  match l, Xs, Ys, h with
-  | .terminal _ w, [], [], _ =>
-    show (lex' _).map _ = ((lex _).map _).map _
-    rw [List.map_map]
-    exact hlex _
-  | .trace n _, [], [], _ =>
-    show (lex' _).map _ = ((lex _).map _).map _
-    rw [List.map_map]
-    exact hlex _
-  | .bind n _, [_], [Y], .cons rfl .nil =>
-    have hnil {α β : Type} (l : List α) : l.flatMap (fun _ ↦ ([] : List β)) = [] :=
-      List.flatMap_eq_nil_iff.2 fun _ _ ↦ rfl
-    have hU (a : Ty B) : Language.LocallyFinite.unaryRules (L := G) a = [] :=
-      List.eq_nil_iff_forall_not_mem.2 fun p _ ↦ isEmptyElim p.2
-    simp [nodeValues, unaryValues, effectDrivenWithin, hU, hnil]
-  | .phrase _ _, [_], [Y], .cons h .nil => exact h
-  | .phrase _ _, [_, _], [Y₁, Y₂], .cons rfl (.cons rfl .nil) =>
-    simp only [nodeValues, binaryValues, List.flatMap_map, List.map_flatMap]
-    refine List.flatMap_congr fun ⟨a, x⟩ _ ↦ List.flatMap_congr fun ⟨b, y⟩ _ ↦ ?_
-    rw [binary_effectDrivenWithin_pointwise hf, List.map_map, List.map_map]
-    rfl
-  | .terminal _ _, _ :: _, _ :: _, _ | .trace _ _, _ :: _, _ :: _, _ | .bind _ _, [], [], _
-  | .bind _ _, _ :: _ :: _, _ :: _ :: _, _ | .phrase _ _, [], [], _
-  | .phrase _ _, _ :: _ :: _ :: _, _ :: _ :: _ :: _, _ => rfl
+  have hU (a : Ty B) : Language.LocallyFinite.unaryRules (L := G) a = [] :=
+    List.eq_nil_iff_forall_not_mem.2 fun p _ ↦ isEmptyElim p.2
+  refine values_eq_map_of_types (Ty.comp f) (fun _ ↦ True) hlex (fun _ _ _ ↦ trivial)
+    (fun _ _ _ _ ↦ by simp [effectDrivenWithin, hU]) (fun _ _ _ _ _ ↦ trivial)
+    (fun _ _ _ _ _ _ ↦ ?_) (fun _ _ _ _ _ _ ↦ trivial) t
+  rw [binary_effectDrivenWithin_pointwise hf, List.map_map]
+  rfl
 
 end PhraseStructure.Tree
