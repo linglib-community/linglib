@@ -681,29 +681,29 @@ theorem not_forall_agree_iff_swap (g : Grammar) {t : PCCType} (ht : ¬ t.Licit �
 /-! ### Cyclic Agree (§3.1) -/
 
 /-- The cyclic probes of [bejar-rezac-2009] compared with Deal's, on the six cells only: every
-reflexive cell is inverse (`AgreementSystem.isInverse_self`), where a third-person first goal lets
-Deal's probes go on, as Table 4's row g and the Kolyma Yukaghir 3→3 require. -/
-example : (BejarRezac2009.kashmiri).IsInverse ⟨.third, .third⟩ ∧
+reflexive cell is inverse (`Minimalist.CyclicAgree.not_isDirect_self`), where a third-person first
+goal lets Deal's probes go on, as Table 4's row g and the Kolyma Yukaghir 3→3 require. -/
+example : Minimalist.CyclicAgree.IsInverse BejarRezac2009.kashmiri ⟨.third, .third⟩ ∧
     Licit strictlyDescending ⟨.third, .third⟩ ∧ Licit weak ⟨.third, .third⟩ :=
-  ⟨Minimalist.CyclicAgree.AgreementSystem.isInverse_self _ _, by decide, by decide⟩
+  ⟨Minimalist.CyclicAgree.not_isDirect_self _ _, by decide, by decide⟩
 
 -- §3.1
 theorem kashmiri_isDirect_iff (s : Scenario Person) (hs : s ∈ PCC.distinctPairs) :
-    BejarRezac2009.kashmiri.IsDirect s ↔ Licit strictlyDescending s := by
+    Minimalist.CyclicAgree.IsDirect BejarRezac2009.kashmiri s ↔ Licit strictlyDescending s := by
   revert s; decide +kernel
 
 -- §3.1
-theorem not_isDirect_of_isChain (sys : Minimalist.CyclicAgree.AgreementSystem)
-    (h : sys.geometry.IsChain) :
-    ¬ (sys.IsDirect ⟨.first, .second⟩ ∧ sys.IsDirect ⟨.second, .first⟩) :=
-  fun ⟨h₁, h₂⟩ ↦ lt_asymm
-    ((Minimalist.CyclicAgree.AgreementSystem.isDirect_iff_rank_lt sys ⟨.first, .second⟩ h).1 h₁)
-    ((Minimalist.CyclicAgree.AgreementSystem.isDirect_iff_rank_lt sys ⟨.second, .first⟩ h).1 h₂)
+open Minimalist.CyclicAgree in
+theorem not_isDirect_of_isChain (P : Finset Phi.PersonSegment)
+    (h : IsChain (· ≤ ·) (P : Set Phi.PersonSegment)) :
+    ¬ (IsDirect P ⟨.first, .second⟩ ∧ IsDirect P ⟨.second, .first⟩) :=
+  fun ⟨h₁, h₂⟩ ↦ by
+    rw [isDirect_iff_rank_lt h] at h₁ h₂
+    exact lt_asymm h₁ h₂
 
 -- §3.1 [harley-ritter-2002]
 theorem branching_isDirect_iff (s : Scenario Person) (hs : s ∈ PCC.distinctPairs) :
-    (⟨.branching, Minimalist.CyclicAgree.fullProbe .branching⟩ :
-      Minimalist.CyclicAgree.AgreementSystem).IsDirect s ↔ Licit weak s := by
+    Minimalist.CyclicAgree.IsDirect Finset.univ s ↔ Licit weak s := by
   revert s; decide +kernel
 
 end ClemDeal2026

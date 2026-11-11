@@ -7,6 +7,7 @@ module
 
 public import Linglib.Syntax.Agreement.Geometry
 public import Mathlib.Order.Interval.Finset.Defs
+public import Mathlib.Order.Preorder.Chain
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -27,6 +28,7 @@ default.
 ## Main results
 
 * `Phi.PersonSegment.spec_isLowerSet`: a person bears whatever its segments depend on.
+* `Phi.PersonSegment.isChain_Iic`: a segment and the segments it depends on form a chain.
 * `Phi.PersonSegment.participant_mem_spec_iff`,
   `Phi.PersonSegment.speaker_mem_spec_iff`: the segments [participant] and [speaker] are
   `Person.IsSAP` and `Person.IncludesSpeaker`.
@@ -83,6 +85,19 @@ instance : OrderBot PersonSegment where
 /-- `Finset.Ici a` is the segment `a` and the segments it dominates. -/
 instance : LocallyFiniteOrderTop PersonSegment :=
   .ofIci' PersonSegment (fun a ↦ Finset.univ.filter (a ≤ ·)) fun _ _ ↦ by simp
+
+/-- `Finset.Iic a` is the segment `a` and the segments it depends on, the least feature structure
+containing `a`. -/
+instance : LocallyFiniteOrderBot PersonSegment :=
+  .ofIic' PersonSegment (fun a ↦ Finset.univ.filter (· ≤ a)) fun _ _ ↦ by simp
+
+/-- The geometry is a tree: the segments a segment depends on are comparable. -/
+theorem le_total_of_le {a b c : PersonSegment} : a ≤ c → b ≤ c → a ≤ b ∨ b ≤ a := by
+  decide +revert
+
+/-- A segment and the segments it depends on form a chain. -/
+theorem isChain_Iic (a : PersonSegment) : IsChain (· ≤ ·) (↑(Finset.Iic a) : Set PersonSegment) :=
+  fun _ hb _ hc _ ↦ le_total_of_le (Finset.mem_Iic.1 hb) (Finset.mem_Iic.1 hc)
 
 /-- The segments a person bears, the nodes of its geometry. -/
 def spec (p : Person) : Finset PersonSegment := Finset.univ.filter (·.toNode ∈ personFeatures p)

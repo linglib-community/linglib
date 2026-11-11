@@ -31,9 +31,9 @@ absence of the effects there follows without the caveats a Person Licensing Cond
 Goals are position-indexed so that two DPs with the same features stay distinct, and a
 segment's Agree is the relativized search of the probe substrate over that list, so the
 two-goal characterization of gluttony rests on the substrate's search. Person geometries are
-the branching geometry of the cyclic-Agree substrate and number the two-segment geometry of the
-paper; the model pairs a number probe with every person probe, one direction of the paper's
-probe-specification hierarchy. A K-encapsulated dative exposes its person node and no number:
+the specifications of `Phi.PersonSegment.spec`, probes are sets of segments as in the cyclic-Agree
+substrate, and number is the two-segment geometry of the paper; the model pairs a number probe
+with every person probe, one direction of the paper's probe-specification hierarchy. A K-encapsulated dative exposes its person node and no number:
 the paper leaves the dative's number open in a footnote and says a quirky DP externally bears
 at most a person feature, and the choice is what puts the nominative's number in the context
 the paper's diagrams caption. The crash of a gluttonous clitic-doubling probe is taken as the
@@ -87,7 +87,7 @@ no configuration and enter no theorem.
 
 namespace CoonKeine2021
 
-open Minimalist Minimalist.CyclicAgree Morphology Phi
+open Minimalist Minimalist.CyclicAgree Morphology Phi Phi.PersonSegment
 
 /-! ### Goals and their visible geometries -/
 
@@ -115,8 +115,8 @@ def dpPl (p : Person) : Goal := { person := p, number := ⟨.plural, by decide�
 def dat (p : Person) : Goal := { person := p, encapsulated := true }
 
 /-- A goal exposes the person segments of its geometry under (11), or its person node alone. -/
-def Goal.personSegments (g : Goal) : List PersonSegment :=
-  if g.encapsulated then [.pi] else personSpec .branching g.person
+def Goal.personSegments (g : Goal) : Finset PersonSegment :=
+  if g.encapsulated then {.pi} else spec g.person
 
 /-- Number geometry (12). -/
 inductive NumberSegment where
@@ -127,12 +127,12 @@ inductive NumberSegment where
   deriving DecidableEq, Repr
 
 /-- The number segments a goal exposes; an encapsulated goal exposes none. -/
-def Goal.numberSegments (g : Goal) : List NumberSegment :=
-  if g.encapsulated then [] else Number.elim numberSystem [.num] [.num, .pl] (n := g.number)
+def Goal.numberSegments (g : Goal) : Finset NumberSegment :=
+  if g.encapsulated then ∅ else Number.elim numberSystem {.num} {.num, .pl} (n := g.number)
 
 theorem pi_mem_personSegments (g : Goal) : PersonSegment.pi ∈ g.personSegments := by
   unfold Goal.personSegments
-  split <;> [exact .head _; exact pi_mem_personSpec _ _]
+  split <;> [exact Finset.mem_singleton_self _; exact pi_mem_spec _]
 
 /-- A goal read as a nominal of [bejar-rezac-2003] has its Case valued and its person licensed by
 its own head when it is an encapsulated dative, and neither when it is transparent. -/
@@ -148,31 +148,31 @@ variable {σ : Type*} [DecidableEq σ]
 
 /-- A probe segment is the relativized probe over position-indexed goals that sees the goals
 whose geometry bears it. -/
-def segmentProbe (geo : Goal → List σ) (s : σ) : Probe (Goal × ℕ) :=
-  .relativized fun t ↦ decide (s ∈ geo t.1)
+def segmentProbe (geo : Goal → Finset σ) (s : σ) : Probe (Goal × ℕ) :=
+  .relativized fun t ↦ s ∈ geo t.1
 
 /-- Agree (14) for one probe segment finds the closest accessible goal whose geometry bears it. -/
-def segmentAgree (geo : Goal → List σ) (s : σ) (goals : List Goal) : Option (Goal × ℕ) :=
+def segmentAgree (geo : Goal → Finset σ) (s : σ) (goals : List Goal) : Option (Goal × ℕ) :=
   (segmentProbe geo s).search goals.zipIdx
 
 /-- The goals some segment of the probe has agreed with. -/
-def agreed (geo : Goal → List σ) (P : List σ) (goals : List Goal) : List (Goal × ℕ) :=
-  goals.zipIdx.filter fun t ↦ P.any fun s ↦ segmentAgree geo s goals == some t
+def agreed (geo : Goal → Finset σ) (P : Finset σ) (goals : List Goal) : List (Goal × ℕ) :=
+  goals.zipIdx.filter fun t ↦ ∃ s ∈ P, segmentAgree geo s goals = some t
 
 /-- Feature gluttony (16) is the probe's having agreed with more than one DP. -/
-def Gluttonous (geo : Goal → List σ) (P : List σ) (goals : List Goal) : Prop :=
+def Gluttonous (geo : Goal → Finset σ) (P : Finset σ) (goals : List Goal) : Prop :=
   ∃ t ∈ agreed geo P goals, ∃ u ∈ agreed geo P goals, t ≠ u
 
-instance (geo : Goal → List σ) (P : List σ) (goals : List Goal) :
+instance (geo : Goal → Finset σ) (P : Finset σ) (goals : List Goal) :
     Decidable (Gluttonous geo P goals) := by
   unfold Gluttonous; infer_instance
 
 /-- The values the probe carries after Agree, one whole geometry per agreed goal ((16),
 (58)). -/
-def values (geo : Goal → List σ) (P : List σ) (goals : List Goal) : List (List σ) :=
+def values (geo : Goal → Finset σ) (P : Finset σ) (goals : List Goal) : List (Finset σ) :=
   (agreed geo P goals).map (geo ·.1)
 
-variable {geo : Goal → List σ} {P : List σ} {goals : List Goal} {s : σ}
+variable {geo : Goal → Finset σ} {P : Finset σ} {goals : List Goal} {s : σ}
 
 theorem mem_agreed {t : Goal × ℕ} :
     t ∈ agreed geo P goals ↔
@@ -229,19 +229,19 @@ theorem not_gluttonous_of_length_le_one (h : goals.length ≤ 1) : ¬ Gluttonous
   · simp at h
 
 -- fn. 21
-theorem not_gluttonous_singleton : ¬ Gluttonous geo [s] goals := by
+theorem not_gluttonous_singleton : ¬ Gluttonous geo {s} goals := by
   rintro ⟨t, ht, u, hu, hne⟩
-  simp only [mem_agreed, List.mem_singleton, exists_eq_left] at ht hu
+  simp only [mem_agreed, Finset.mem_singleton, exists_eq_left] at ht hu
   exact hne (Option.some.inj (ht.2.symm.trans hu.2))
 
 end Agree
 
-theorem gluttonous_third_of_gluttonous {P : Articulation} {hi lo : Goal}
+theorem gluttonous_third_of_gluttonous {P : Finset PersonSegment} {hi lo : Goal}
     (hpi : PersonSegment.pi ∈ P) (h : Gluttonous Goal.personSegments P [hi, lo]) :
     Gluttonous Goal.personSegments P [dp .third, lo] := by
   obtain ⟨-, s, hs, hsh, hsl⟩ := gluttonous_pair_iff.1 h
   refine gluttonous_pair_iff.2 ⟨⟨.pi, hpi, pi_mem_personSegments _⟩, s, hs, fun hmem ↦ ?_, hsl⟩
-  rw [show (dp .third).personSegments = [.pi] from rfl, List.mem_singleton] at hmem
+  rw [show (dp .third).personSegments = {.pi} by decide, Finset.mem_singleton] at hmem
   exact hsh (hmem ▸ pi_mem_personSegments hi)
 
 /-! ### The Person Case Constraint from probe articulation (§3) -/
@@ -249,26 +249,26 @@ theorem gluttonous_third_of_gluttonous {P : Articulation} {hi lo : Goal}
 /-- The PCC configuration is a clitic-doubling probe over IO > DO, the IO optionally K-encapsulated.
 By (30) each agreed-with DP must cliticize, which a gluttonous probe cannot satisfy, so gluttony is
 the violation. -/
-def PCCViolation (P : Articulation) (ioOpaque : Bool) (s : Clause.Scenario Person) : Prop :=
+def PCCViolation (P : Finset PersonSegment) (ioOpaque : Bool) (s : Clause.Scenario Person) : Prop :=
   Gluttonous Goal.personSegments P [{ person := s.high, encapsulated := ioOpaque }, dp s.low]
 
-instance (P : Articulation) (b : Bool) : DecidablePred (PCCViolation P b) :=
+instance (P : Finset PersonSegment) (b : Bool) : DecidablePred (PCCViolation P b) :=
   fun _ ↦ inferInstanceAs (Decidable (Gluttonous _ _ _))
 
 /-- The probe [uPERS [uPART]] of (39a) yields the Weak PCC, and is the person probe of German and
 Icelandic T ((55), (79)). -/
-abbrev weakProbe : Articulation := partialProbe
+abbrev weakProbe : Finset PersonSegment := .Iic .participant
 
 /-- The probe [uPERS [uPART [uSPKR]]] of (39b) yields the Ultrastrong PCC. -/
-abbrev ultrastrongProbe : Articulation := fullProbe .standard
+abbrev ultrastrongProbe : Finset PersonSegment := .Iic .speaker
 
 /-- The probe [uPERS [uSPKR]] of (39c) yields the Me-First PCC, with a missing intermediate segment.
 -/
-def meFirstProbe : Articulation := [.pi, .speaker]
+def meFirstProbe : Finset PersonSegment := {.pi, .speaker}
 
 /-- The probe [uPERS [uPART [uSPKR] [uADDR]]] of fn. 22 (i) yields the Strong PCC over transparent
 datives, and Slovenian's reversible Strong PCC (fn. 26). -/
-def branchingProbe : Articulation := [.pi, .participant, .speaker, .addressee]
+def branchingProbe : Finset PersonSegment := .univ
 
 -- (22)
 theorem weak_pcc : ∀ s ∈ PCC.cliticPairs,
@@ -295,17 +295,27 @@ theorem branching_pcc : ∀ s ∈ PCC.cliticPairs,
   decide +kernel
 
 -- §3.4.2
-theorem direct_never_banned (P : Articulation) (b : Bool) (io : Person) :
+theorem direct_never_banned (P : Finset PersonSegment) (b : Bool) (io : Person) :
     ¬ PCCViolation P b ⟨io, .third⟩ :=
   not_gluttonous_of_subset fun s hs ↦ by
-    rw [show (dp .third).personSegments = [.pi] from rfl, List.mem_singleton] at hs
+    rw [show (dp .third).personSegments = {.pi} by decide, Finset.mem_singleton] at hs
     exact hs ▸ pi_mem_personSegments _
 
 -- §3.4.2
-theorem pccViolation_third_of_pccViolation {P : Articulation} (hpi : PersonSegment.pi ∈ P)
+theorem pccViolation_third_of_pccViolation {P : Finset PersonSegment} (hpi : PersonSegment.pi ∈ P)
     {b : Bool} {s : Clause.Scenario Person} (h : PCCViolation P b s) :
     PCCViolation P false ⟨.third, s.low⟩ :=
   gluttonous_third_of_gluttonous hpi h
+
+/-- Over a transparent indirect object, a probe with the root segment is gluttonous exactly when
+the direct object checks residue the indirect object leaves, a direct context of
+[bejar-rezac-2009] with the lower argument in the place of the external one: the configuration in
+which cyclic Agree displaces agreement is the one in which a probe above both goals takes too
+much. -/
+theorem pccViolation_iff_isDirect {P : Finset PersonSegment} (hpi : PersonSegment.pi ∈ P)
+    (s : Clause.Scenario Person) : PCCViolation P false s ↔ IsDirect P ⟨s.low, s.high⟩ := by
+  rw [PCCViolation, gluttonous_pair_iff, isDirect_iff]
+  exact ⟨fun h ↦ h.2, fun h ↦ ⟨⟨.pi, hpi, pi_mem_personSegments _⟩, h⟩⟩
 
 section Typology
 
@@ -354,7 +364,7 @@ instance (F? : Option BejarRezac2003.Head) (ns : List BejarRezac2003.Nominal) :
 -- (10), (9)
 theorem nonfinite_obviation :
     PCCViolation weakProbe true ⟨.third, .first⟩ ∧
-    ¬ Gluttonous Goal.personSegments [] [dat .third, dp .first] ∧
+    ¬ Gluttonous Goal.personSegments ∅ [dat .third, dp .first] ∧
     ¬ BejarRezac2003.PLC (BejarRezac2003.v.derive ([dat .third, dp .first].map Goal.toNominal)) ∧
     ¬ BejarRezac2003.PLC [(dp .first).toNominal] ∧
     RevisedPLC none [(dp .first).toNominal] := by
@@ -364,16 +374,16 @@ theorem nonfinite_obviation :
 
 /-- The articulated number probe [uNUM [uPL]] of (23) and (55) comes paired with a person probe,
 since the probe-specification hierarchy (40) makes a number probe entail a person one. -/
-def numberProbe (P : Articulation) : List NumberSegment :=
-  if P = [] then [] else [.num, .pl]
+def numberProbe (P : Finset PersonSegment) : Finset NumberSegment :=
+  if P = ∅ then ∅ else {.num, .pl}
 
 /-- Clitic doubling removes the doubled DP from later probing (§3.2), which fixes what the number
 probe sees after the person probe. -/
-def afterDoubling (P : Articulation) (goals : List Goal) : List Goal :=
+def afterDoubling (P : Finset PersonSegment) (goals : List Goal) : List Goal :=
   (goals.zipIdx.filter (· ∉ agreed Goal.personSegments P goals)).map (·.1)
 
 -- (40), (42)
-theorem no_number_case_constraint {P : Articulation} (hpi : PersonSegment.pi ∈ P)
+theorem no_number_case_constraint {P : Finset PersonSegment} (hpi : PersonSegment.pi ∈ P)
     {goals : List Goal} (h : goals.length ≤ 2) :
     ¬ Gluttonous Goal.numberSegments (numberProbe P) (afterDoubling P goals) := by
   apply not_gluttonous_of_length_le_one
@@ -402,38 +412,38 @@ theorem copula_number :
 
 /-- A Vocabulary item for an agreement head. -/
 structure VI (σ : Type*) where
-  /-- The geometry the item is specified for; `[]` is the elsewhere item. -/
-  spec : List σ
+  /-- The geometry the item is specified for; `∅` is the elsewhere item. -/
+  spec : Finset σ
   /-- The form inserted. -/
   exponent : String
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 section RuleSet
 
 variable {σ : Type*} [DecidableEq σ]
 
 /-- An item applies to a value when its specification is a subset of the value. -/
-instance : ExponenceRule (VI σ) (List σ) String where
+instance : ExponenceRule (VI σ) (Finset σ) String where
   exponent := VI.exponent
   Applies vi value := vi.spec ⊆ value
 
-instance : DecidableRel (Applies : VI σ → List σ → Prop) := fun vi value ↦
+instance : DecidableRel (Applies : VI σ → Finset σ → Prop) := fun vi value ↦
   inferInstanceAs (Decidable (vi.spec ⊆ value))
 
 /-- A value demands the most specific applicable item. -/
-abbrev demand (vocab : RuleSet (VI σ)) (value : List σ) : Option (VI σ) :=
-  vocab.selectBy (·.spec.length) value
+abbrev demand (vocab : RuleSet (VI σ)) (value : Finset σ) : Option (VI σ) :=
+  vocab.selectBy (·.spec.card) value
 
 /-- The values a probe carries are resolvable when the items they demand are all the same one
 (85); a value that demands no item, as in (88), competes with nothing. -/
-def Resolvable (vocab : RuleSet (VI σ)) (vals : List (List σ)) : Prop :=
+def Resolvable (vocab : RuleSet (VI σ)) (vals : List (Finset σ)) : Prop :=
   (vals.filterMap (demand vocab)).Pairwise (· = ·)
 
-instance (vocab : RuleSet (VI σ)) (vals : List (List σ)) : Decidable (Resolvable vocab vals) :=
+instance (vocab : RuleSet (VI σ)) (vals : List (Finset σ)) : Decidable (Resolvable vocab vals) :=
   inferInstanceAs (Decidable (List.Pairwise _ _))
 
 /-- The exponent inserted for resolvable values. -/
-def realization (vocab : RuleSet (VI σ)) (vals : List (List σ)) : Option String :=
+def realization (vocab : RuleSet (VI σ)) (vals : List (Finset σ)) : Option String :=
   (vals.filterMap (demand vocab)).head?.map (·.exponent)
 
 end RuleSet
@@ -461,9 +471,11 @@ inductive Paradigm where
   | portuguesePresent
   deriving DecidableEq, Repr
 
-def spkr : List PersonSegment := [.pi, .participant, .speaker]
+/-- The geometry of a speaker item. -/
+def spkr : Finset PersonSegment := .Iic .speaker
 
-def addr : List PersonSegment := [.pi, .participant, .addressee]
+/-- The geometry of an addressee item. -/
+def addr : Finset PersonSegment := .Iic .addressee
 
 /-- The person items of a paradigm in the context of the number probe's value (82), undefined
 where the paper glosses no forms. -/
@@ -471,30 +483,30 @@ def Paradigm.person (par : Paradigm) (n : numberSystem) :
     Option (RuleSet (VI PersonSegment)) :=
   match par with
   | .icelandicMediopassivePast =>
-    Number.elim numberSystem (some [⟨[], "-ist"⟩]) (some [⟨[], "-ust"⟩, ⟨spkr, "-umst"⟩]) (n := n)
+    Number.elim numberSystem (some [⟨∅, "-ist"⟩]) (some [⟨∅, "-ust"⟩, ⟨spkr, "-umst"⟩]) (n := n)
   | .icelandicLikaPast =>
-    Number.elim numberSystem (some [⟨[], "líkaði"⟩, ⟨addr, "líkaðir"⟩]) none (n := n)
+    Number.elim numberSystem (some [⟨∅, "líkaði"⟩, ⟨addr, "líkaðir"⟩]) none (n := n)
   | .icelandicThykjaPresent =>
-    Number.elim numberSystem (some [⟨[], "þykir"⟩, ⟨spkr, "þyki"⟩]) (some [⟨[], "þykja"⟩]) (n := n)
+    Number.elim numberSystem (some [⟨∅, "þykir"⟩, ⟨spkr, "þyki"⟩]) (some [⟨∅, "þykja"⟩]) (n := n)
   | .germanPresent =>
-    Number.elim numberSystem (some [⟨[], "ist"⟩, ⟨spkr, "bin"⟩, ⟨addr, "bist"⟩])
-      (some [⟨[], "sind"⟩])
+    Number.elim numberSystem (some [⟨∅, "ist"⟩, ⟨spkr, "bin"⟩, ⟨addr, "bist"⟩])
+      (some [⟨∅, "sind"⟩])
       (n := n)
-  | .germanPast => Number.elim numberSystem (some [⟨[], "war"⟩]) none (n := n)
+  | .germanPast => Number.elim numberSystem (some [⟨∅, "war"⟩]) none (n := n)
   | .hindiPresent =>
-    Number.elim numberSystem (some [⟨[], "hai"⟩, ⟨spkr, "hũ:"⟩]) (some [⟨[], "hẼ"⟩]) (n := n)
-  | .hindiPast => Number.elim numberSystem (some [⟨[], "tha:"⟩]) none (n := n)
-  | .portuguesePresent => Number.elim numberSystem (some [⟨[], "é"⟩, ⟨spkr, "sou"⟩]) none (n := n)
+    Number.elim numberSystem (some [⟨∅, "hai"⟩, ⟨spkr, "hũ:"⟩]) (some [⟨∅, "hẼ"⟩]) (n := n)
+  | .hindiPast => Number.elim numberSystem (some [⟨∅, "tha:"⟩]) none (n := n)
+  | .portuguesePresent => Number.elim numberSystem (some [⟨∅, "é"⟩, ⟨spkr, "sou"⟩]) none (n := n)
 
 /-- The number items of a paradigm, where the paper gives them. -/
 def Paradigm.number : Paradigm → RuleSet (VI NumberSegment)
-  | .germanPresent => [⟨[.num], "ist"⟩, ⟨[.num, .pl], "sind"⟩]
-  | .hindiPresent => [⟨[.num], "hai"⟩, ⟨[.num, .pl], "hẼ"⟩]
+  | .germanPresent => [⟨{.num}, "ist"⟩, ⟨{.num, .pl}, "sind"⟩]
+  | .hindiPresent => [⟨{.num}, "hai"⟩, ⟨{.num, .pl}, "hẼ"⟩]
   | _ => []
 
 /-- The number context of person insertion is the plural when the number probe's first value is
 plural, and the singular otherwise. -/
-def numberContext (P : Articulation) (goals : List Goal) : numberSystem :=
+def numberContext (P : Finset PersonSegment) (goals : List Goal) : numberSystem :=
   if ∃ v ∈ (values Goal.numberSegments (numberProbe P) goals).head?, NumberSegment.pl ∈ v then
     ⟨.plural, by decide⟩
   else ⟨.singular, by decide⟩
@@ -510,14 +522,14 @@ inductive Aftermath where
 
 /-- A person probe converges over its goals when a clitic-doubling probe does not glutton, and when
 an agreement probe's person and number demands are resolvable in a glossed number context. -/
-def Aftermath.Converges : Aftermath → Articulation → List Goal → Prop
+def Aftermath.Converges : Aftermath → Finset PersonSegment → List Goal → Prop
   | .cliticize, P, goals => ¬ Gluttonous Goal.personSegments P goals
   | .realize par, P, goals =>
       (∃ vocab ∈ par.person (numberContext P goals),
         Resolvable vocab (values Goal.personSegments P goals)) ∧
         Resolvable par.number (values Goal.numberSegments (numberProbe P) goals)
 
-instance (a : Aftermath) (P : Articulation) (goals : List Goal) :
+instance (a : Aftermath) (P : Finset PersonSegment) (goals : List Goal) :
     Decidable (a.Converges P goals) := by
   cases a <;> simp only [Aftermath.Converges] <;> infer_instance
 
@@ -532,7 +544,7 @@ theorem icelandic_syncretism :
   decide +kernel
 
 /-- Kichean Agent Focus number agreement (88) has one item, realizing plural. -/
-def kicheanAgentFocus : RuleSet (VI NumberSegment) := [⟨[.num, .pl], "-e"⟩]
+def kicheanAgentFocus : RuleSet (VI NumberSegment) := [⟨{.num, .pl}, "-e"⟩]
 
 /-- Two 3rd person goals of the given numbers, the cells of (88). -/
 def kicheanGoals (s o : numberSystem) : List Goal :=
@@ -556,7 +568,7 @@ theorem kichean_omnivorous :
 /-- A configuration the paper assigns an example. -/
 structure Config where
   /-- The person probe, empty when the clause has none. -/
-  probe : Articulation
+  probe : Finset PersonSegment
   /-- The accessible goals from higher to lower. -/
   goals : List Goal
   /-- What follows Agree. -/
@@ -569,8 +581,8 @@ def Config.Converges (c : Config) : Prop := c.aftermath.Converges c.probe c.goal
 instance (c : Config) : Decidable c.Converges :=
   inferInstanceAs (Decidable (Aftermath.Converges _ _ _))
 
-def probes : List (String × Articulation) :=
-  [("weak", weakProbe), ("branching", branchingProbe), ("none", [])]
+def probes : List (String × Finset PersonSegment) :=
+  [("weak", weakProbe), ("branching", branchingProbe), ("none", ∅)]
 
 def paradigms : List (String × Paradigm) :=
   [("icelandicMediopassivePast", .icelandicMediopassivePast),
