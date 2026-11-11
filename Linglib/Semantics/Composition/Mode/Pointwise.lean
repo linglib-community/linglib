@@ -8,8 +8,9 @@ public import Linglib.Semantics.Composition.Constituency
 
 In Heim and Kratzer's grammar every constituent is evaluated at an assignment, and in a Hamblin
 grammar every constituent denotes a set of alternatives; two sisters are combined at one
-assignment, or alternative by alternative. Bumford and Charlow read these as the grammar that has,
-at the effect in question, Structured App and no other meta-mode. In such a grammar two daughters
+assignment, or alternative by alternative. Bumford and Charlow observe that a grammar with
+Structured App and neither the maps nor the units is essentially these. The inventory here has
+Structured App and no other meta-mode at the effect in question. In such a grammar two daughters
 carrying the effect [combine by Structured App alone](##Interpreter.Mode.Within.exists_eq_ap), so
 [the search lists for them the Structured Apps of what it lists for their
 results](##Interpreter.Ty.combineWithin_pointwise), and over a lexicon whose every item carries
@@ -28,9 +29,12 @@ reading, [Hamblin's rule](##Interpreter.Mode.eval_ap_S) for indeterminacy, and
 
 ## Implementation notes
 
-The tree-level statement is for a grammar with no type shifts. A type shift on a computation,
-such as abstraction over an index, is not the shift on its result mapped over the effect, and
-the effect-driven grammar has no meta-mode that maps one.
+An inventory is pointwise at some effects and has every meta-mode at the others, where each of
+the two grammars above has one effect. The tree-level statement is for a lexicon whose every
+item carries the effect, so it does not cover a tree with an operator that takes a computation
+as its argument, as a closure operator does. It is for a grammar with no type shifts. A type
+shift on a computation, such as abstraction over an index, is not the shift on its result mapped
+over the effect, and the effect-driven grammar has no meta-mode that maps one.
 
 ## References
 

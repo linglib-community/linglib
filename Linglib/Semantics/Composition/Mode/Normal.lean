@@ -6,10 +6,10 @@ public import Linglib.Semantics.Composition.Lawful
 # Derivations that differ in the order of commuting effects
 
 Two daughters carrying one effect combine by Structured App, or by the two maps in either order
-followed by Join. Mapped right first, the Join is Structured App, and at a commutative effect so
-is the other: the effect-driven grammar gives one meaning several derivations. The normal form of
-a mode has Structured App for each such Join, and [means what the mode
-does](##Interpreter.Mode.normalize_equiv), so [derivations with one normal form have one
+followed by Join. With the left daughter's map outermost the Join is Structured App, and at a
+commutative effect so is the other: the effect-driven grammar gives one meaning several
+derivations. The normal form of a mode has Structured App for each such Join, and [means what
+the mode does](##Interpreter.Mode.normalize_equiv), so [derivations with one normal form have one
 value](##Interpreter.effectGrammar.normalize_isExpansionOn).
 
 ## Main definitions
@@ -23,7 +23,8 @@ value](##Interpreter.effectGrammar.normalize_isExpansionOn).
 Bumford and Charlow's implementation is said to avoid spurious ambiguity by a notion of
 normal-form derivation, which the book does not define. The normal form here removes the two
 Joins that the applicative and commutative laws identify with Structured App, and no other
-redundancy among derivations.
+redundancy among derivations: the two layerings of Map Right and Unit Right over a closure
+operator, which the book notes are equivalent, keep two normal forms.
 
 ## References
 

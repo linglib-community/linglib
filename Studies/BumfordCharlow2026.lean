@@ -60,9 +60,13 @@ and predicate modification. The book's final `combine` (Appendix B) is
 `Interpreter.Ty.combineWith` with Join and Lower applied once to each result, and the
 interpreters of its chapters 2 to 4 are that search kept to the meta-modes the chapter has. Each
 list the book prints in full is checked here, and of the lists it abridges, the mode it singles
-out. The library's `Interpreter.Ty.combine` stacks Join and Lower and so lists more modes: [one
-that joins twice](##BumfordCharlow2026.combine_join_twice), and for two quantifiers [a Lower on
-each Join](##BumfordCharlow2026.length_combine_quantifiers). The base sort is `e`.
+out. The first session of section 4.4 is run at an indefinite and a function from individuals
+into sets of truth values, the Kleisli arrow of the text around it. The book's interpreter runs
+at indeterminacy, reading, storing and continuations: the lists at alternatives, and *only* over
+a prejacent without focus, are this file's. The library's `Interpreter.Ty.combine` stacks Join
+and Lower and so lists more modes: [one that joins
+twice](##BumfordCharlow2026.combine_join_twice), and for two quantifiers [a Lower on each
+Join](##BumfordCharlow2026.length_combine_quantifiers). The base sort is `e`.
 
 The Element is forthcoming; equation, section and appendix locators are to the arXiv version of
 April 2025.
@@ -416,8 +420,8 @@ theorem combine_alternatives : combine (S e) (S (e ⇒ T)) =
     [(.mapR (.mapL BA), S (S T)), (.join (.mapR (.mapL BA)), S T), (.mapL (.mapR BA), S (S T)),
       (.join (.mapL (.mapR BA)), S T), (.ap BA, S T)] := by decide
 
--- section 3.3: an operator that associates with focus and its prejacent, which it captures or,
--- given a pure one, lets through
+-- an operator that associates with focus (3.15a) and its prejacent, which it captures or, given
+-- a pure one, lets through: the list for a closure operator, at alternatives
 theorem combine_focus_closure : combine (F T ⇒ T) (F T) =
     [(FA, T), (.mapR (.unitR FA), F T), (.unitR (.mapR FA), F T)] := by decide
 
@@ -491,8 +495,8 @@ theorem normalForms_alternatives :
 theorem normalForms_foci : normalForms (F e) (F (e ⇒ T)) (F T) = [.ap BA, .ap BA, .ap BA] := by
   decide
 
--- two quantifiers: the Join that maps over the object last is its own normal form, the inverse
--- scope of (4.45b), beside Structured App and the two modes that lower one quantifier first
+-- two quantifiers: the Join with the object's map outermost is its own normal form, the inverse
+-- scope of (4.45b), beside Structured App and the two modes that lower one quantifier inside
 theorem normalForms_quantifiers : normalForms (C e) (C (e ⇒ T)) (C T) =
     [.join (.mapR (.mapL BA)), .mapR (.lower (.mapL BA)), .ap BA, .mapL (.lower (.mapR BA)),
       .ap BA] := by decide
@@ -596,7 +600,7 @@ end Hamblin
 /-! ### Scope
 
 Two quantifiers combine by Structured App, in their surface order, or by the two orders of the
-maps followed by Join, of which the one that maps over the right daughter last gives the object
+maps followed by Join, of which the one with the right daughter's map outermost gives the object
 wide scope (4.45). -/
 
 section Scope

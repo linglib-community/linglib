@@ -33,12 +33,13 @@ adjoint to reading, and
 
 ## Implementation notes
 
-Truth values are a type of their own and not a base sort, since predicate modification, lowering
-and the merging of stored truth values name them. The carriers are the standard ones, `Set`,
+Truth values are a type of their own and not a base sort, since predicate modification and the
+merging of stored truth values name them. The carriers are the standard ones, `Set`,
 functions, products, `Cont`, `Part` and `WithAlternatives`, and the operations are theirs.
 Storing is applicative only at the truth values, merged by conjunction, as in the book's
-interpreter. State and dynamic state are not effects here: the book derives them from storing and
-reading.
+interpreter, which runs at indeterminacy, reading, storing and continuations; partiality and
+alternatives are effects of the book that it does not run. State and dynamic state are not
+effects here: the book derives them from storing and reading.
 
 ## References
 
