@@ -115,7 +115,7 @@ namespace Eff
 variable {D : B → Type} {α β : Type}
 
 /-- The effects with a unit and an application: all but storing at a type other than the truth
-values, whose stored contents cannot be merged. -/
+values, the one type here whose stored contents are merged. -/
 def IsApplicative : Eff B → Prop
   | .W o => o = .t
   | _ => True

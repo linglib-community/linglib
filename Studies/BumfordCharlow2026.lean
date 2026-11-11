@@ -21,7 +21,8 @@ A pronoun reads a referent and an antecedent stores one. Storing is left adjoint
 with currying as the hom-equivalence, and the co-unit mode cancels the two effects, so a
 sentence whose pronouns are bound denotes a pure value. The co-unit mode takes the left adjoint
 from the left daughter, so an antecedent must precede the pronoun it binds however the scopes
-are inverted: this is crossover, proved here over the book's type-driven grammar.
+are inverted: this is crossover, proved here over the book's type-driven grammar for a pronoun
+whose would-be antecedent is in a right daughter that reads nothing.
 
 Every right adjoint on types distributes over function types, and the eject modes use this.
 With them the grammar derives, with no new machinery, the bind of the reader transformer, the
@@ -55,11 +56,13 @@ supplement effect, whose log is a monoid, is `Core/Control/Monad/Writer.lean`.
 The modes act on Lean's type constructors; an adjunction is mathlib's `Adjunction` between the
 corresponding functors `ofTypeFunctor Ω ⊣ ofTypeFunctor Γ`, so the unit, co-unit and induced
 monad are mathlib's. The type-driven grammar is the library's `Interpreter.Mode` over application
-and predicate modification. The book's `combine` is `Interpreter.Ty.combineWith` with Join and
-Lower applied once to each result, checked here against the outputs the book prints. The
-library's `Interpreter.Ty.combine` stacks them, and the two [differ at a type with three layers
-of one effect](##BumfordCharlow2026.combine_join_twice), which no entry of the book has. The base
-sort is `e`.
+and predicate modification. The book's final `combine` (Appendix B) is
+`Interpreter.Ty.combineWith` with Join and Lower applied once to each result, and the
+interpreters of its chapters 2 to 4 are that search kept to the meta-modes the chapter has. Each
+list the book prints in full is checked here, and of the lists it abridges, the mode it singles
+out. The library's `Interpreter.Ty.combine` stacks Join and Lower and so lists more modes: [one
+that joins twice](##BumfordCharlow2026.combine_join_twice), and for two quantifiers [a Lower on
+each Join](##BumfordCharlow2026.length_combine_quantifiers). The base sort is `e`.
 
 The Element is forthcoming; equation, section and appendix locators are to the arXiv version of
 April 2025.
@@ -105,10 +108,10 @@ section Functor
 
 variable {F : Type u → Type v} [Functor F]
 
-/-- Map Left `F̄` (2.17a): map the combinator over an effectful left daughter. -/
+/-- Map Left (2.17a): map the combinator over an effectful left daughter. -/
 def mapL (star : σ → τ → ω) (e₁ : F σ) (e₂ : τ) : F ω := (fun a => star a e₂) <$> e₁
 
-/-- Map Right `F̃` (2.17b): map the combinator over an effectful right daughter. -/
+/-- Map Right (2.17b): map the combinator over an effectful right daughter. -/
 def mapR (star : σ → τ → ω) (e₁ : σ) (e₂ : F τ) : F ω := (fun b => star e₁ b) <$> e₂
 
 -- (2.18)
@@ -143,11 +146,12 @@ def joinMode (star : σ → τ → M (M ω)) (e₁ : σ) (e₂ : τ) : M ω := j
 
 variable [LawfulMonad M]
 
-/-- `J(F̄ <)` is bind (after (4.22)). -/
+/-- Join over Map Left of backward application is bind (after (4.22)). -/
 theorem joinMode_mapL_ba (m : M α) (k : α → M β) : joinMode (mapL ba) m k = m >>= k :=
   bind_map_left _ _ _
 
-/-- `J(F̃ >)` is bind with its arguments flipped, the book's `(=>>)` (after (4.22)). -/
+/-- Join over Map Right of forward application is bind with its arguments flipped, the book's
+`(=>>)` (after (4.22)). -/
 theorem joinMode_mapR_fa (k : α → M β) (m : M α) : joinMode (mapR fa) k m = m >>= k :=
   bind_map_left _ _ _
 
@@ -167,9 +171,9 @@ end Modes
 
 /-! ### Storing and reading
 
-A pronoun reads a referent from its context, `R α = ι → α` (5.1a), and an antecedent stores its
-referent alongside its value, `W α = α × ι` (5.1b). Functions out of `W α` are functions into
-`R β` by currying (5.3), which makes `W` left adjoint to `R`. -/
+A pronoun reads a referent from its context (5.1a), a computation of type `R α = ι → α`, and an
+antecedent stores its referent alongside its value (5.1b), one of type `W α = α × ι`. Functions
+out of `W α` are functions into `R β` by currying (5.3), which makes `W` left adjoint to `R`. -/
 
 /-- The storing effect `W`: a value paired with a stored datum. -/
 def Output (ι α : Type u) : Type u := α × ι
@@ -284,8 +288,9 @@ theorem counitMode_ba_eject (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) (a : �
   have h : (fun l => (fun r => ba l r) <$> eject adj k) = k := (eject adj).left_inv k
   simp only [counitMode, h]
 
-/-- Every adjunction gives rise to a monad through the grammar (section 5.3.4): the mode
-`F̄ ® C <` is the bind of the monad `Γ Ω` the adjunction induces. -/
+/-- Every adjunction gives rise to a monad through the grammar (section 5.3.4): Map Left over
+Eject Right over the Co-unit of backward application is the bind of the monad `Γ Ω` the
+adjunction induces. -/
 theorem mapL_ejectR_counitMode (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) (m : Γ (Ω α))
     (k : α → Γ (Ω β)) :
     mapL (ejectR adj (counitMode adj ba)) m k = adj.toMonad.μ.app β (adj.toMonad.map (↾k) m) := by
@@ -299,12 +304,14 @@ end Adjunction
 
 /-! ### Monads from storing and reading -/
 
-/-- The state monad is the monad of `W ⊣ R`, and its bind is `F̄ ® C <` (5.37), (5.38). -/
+/-- The state monad is the monad of `W ⊣ R`, and its bind is Map Left over Eject Right over the
+Co-unit of backward application (5.37), (5.38). -/
 theorem mapL_ejectR_counitMode_outputInput (m : StateM ι α) (k : α → StateM ι β) :
     mapL (F := ReaderM ι) (ejectR (outputInput ι) (counitMode (outputInput ι) ba)) m k =
       m >>= k := rfl
 
-/-- With a monad in between, `F̄ J F̄ ® C <` is the bind of the state transformer (5.39). -/
+/-- With a monad in between, the same mode with a Join and a second Map Left around the
+ejection is the bind of the state transformer (5.39). -/
 theorem mapL_joinMode_mapL_ejectR_counitMode {M : Type u → Type u} [Monad M] [LawfulMonad M]
     (m : StateT ι M α) (k : α → StateT ι M β) :
     mapL (F := ReaderM ι)
@@ -314,8 +321,8 @@ theorem mapL_joinMode_mapL_ejectR_counitMode {M : Type u → Type u} [Monad M] [
   exact bind_map_left
     (fun p : Output ι α => ejectR (outputInput ι) (counitMode (outputInput ι) ba) p k) (m s) id
 
-/-- Ejecting the reader from a function into it, `® A J F̃ >` is the bind of the reader
-transformer (5.28), (5.29). -/
+/-- Eject Left over Structured App over the Join of Map Right of forward application is the
+bind of the reader transformer (5.28), (5.29). -/
 theorem ejectL_structuredApp_joinMode_mapR {M : Type u → Type u} [Monad M] [LawfulMonad M]
     (m : ReaderT ι M α) (k : α → ReaderT ι M β) :
     ejectL (outputInput ι) (structuredApp (F := ReaderM ι) (joinMode (mapR fa))) k m =
@@ -355,7 +362,7 @@ theorem InputFree.not_reads : ∀ {a : Ty B}, InputFree a → ¬ Reads a
   | .t, _ => id
   | .base _, _ => id
 
-/-- The grammar the book starts from, before any effect: forward and backward application and
+/-- The basic modes of the book's interpreter (Appendix B): forward and backward application and
 predicate modification. -/
 abbrev baseGrammar (B : Type) : ManySorted.Language (Ty B) := application.sum predicateModification
 
@@ -411,7 +418,8 @@ abbrev e : Ty Unit := .base ()
 example : Mode (baseGrammar Unit).Binary (.comp (.W e) e) (.comp (.R e) (e ⇒ .t)) .t :=
   .counit (.basic (.inl .ba))
 
-/-- An indefinite antecedent binds into an indefinite, `J F̄ C F̃ <` (5.12). -/
+/-- An indefinite antecedent binds into an indefinite, by Join over Map Left over the Co-unit of
+Map Right of backward application (5.12). -/
 example : Mode (baseGrammar Unit).Binary (.comp .S (.comp (.W e) e))
     (.comp (.R e) (.comp .S (e ⇒ .t))) (.comp .S .t) :=
   .join trivial (.mapL (.counit (.mapR (.basic (.inl .ba)))))
@@ -428,7 +436,7 @@ example {u : Ty Unit}
     Reads u :=
   Mode.reads baseGrammar_reads m (.inl trivial) ⟨id, id, trivial, trivial⟩
 
-/-- A type is evaluated when no continuation in it is still to be closed (section 5.4). -/
+/-- A type is evaluated when no continuation in it is still to be closed (section 5.5). -/
 def Evaluated : Ty B → Prop
   | .comp (.C _) _ => False
   | .comp .S a | .comp (.R _) a | .comp (.W _) a | .comp .M a | .comp .F a => Evaluated a
@@ -504,6 +512,16 @@ def combineWithin (inv : MetaMode → Eff Unit → Prop) [∀ k f, Decidable (in
     (l r : Ty Unit) : List (Shape Name × Ty Unit) :=
   ((modes l r).filter fun p ↦ p.2.Within inv).map fun p ↦ (shape Name.of p.2, p.1)
 
+/-- The meta-modes of the grammar of Figure 4: the maps. -/
+abbrev functorial : MetaMode → Eff Unit → Prop := fun k _ ↦ k = .map
+
+/-- The meta-modes of the grammar of Figure 7: the maps, Structured App and the Unit modes. -/
+abbrev applicative : MetaMode → Eff Unit → Prop := fun k _ ↦ k = .map ∨ k = .ap ∨ k = .unit
+
+/-- The meta-modes of the grammar of Figure 8: those of Figure 7 and Join. -/
+abbrev monadic : MetaMode → Eff Unit → Prop :=
+  fun k _ ↦ k = .map ∨ k = .ap ∨ k = .unit ∨ k = .join
+
 section Interpreter
 
 local notation "FA" => Shape.basic Name.FA
@@ -564,8 +582,8 @@ theorem mem_combine_dynamic : (.mapL (.join (.mapL (.ejectR (.counit BA)))), R (
 theorem mem_combine_indefinites :
     (.join (.mapL (.counit (.mapR BA))), S T) ∈ combine (S (W e)) (R (S (e ⇒ T))) := by decide
 
--- two indefinites, neither moved: the alternatives of each mapped inside the other's, each of
--- these joined, and Structured App
+-- two indefinites, neither moved, under the final `combine`: the alternatives of each mapped
+-- inside the other's, each of these joined, and Structured App
 theorem combine_alternatives : combine (S e) (S (e ⇒ T)) =
     [(.mapR (.mapL BA), S (S T)), (.join (.mapR (.mapL BA)), S T), (.mapL (.mapR BA), S (S T)),
       (.join (.mapL (.mapR BA)), S T), (.ap BA, S T)] := by decide
@@ -574,6 +592,39 @@ theorem combine_alternatives : combine (S e) (S (e ⇒ T)) =
 -- given a pure one, lets through
 theorem combine_focus_closure : combine (F T ⇒ T) (F T) =
     [(FA, T), (.mapR (.unitR FA), F T), (.unitR (.mapR FA), F T)] := by decide
+
+-- section 2.5: the four outputs of the chapter's interpreter, which has the maps
+theorem combineWithin_functorial_subject : combineWithin functorial (R e) (e ⇒ T) =
+    [(.mapL BA, R T)] := by decide
+
+theorem combineWithin_functorial_object : combineWithin functorial e (R (e ⇒ T)) =
+    [(.mapR BA, R T)] := by decide
+
+theorem combineWithin_functorial_pronouns : combineWithin functorial (R e) (R (e ⇒ T)) =
+    [(.mapR (.mapL BA), R (R T)), (.mapL (.mapR BA), R (R T))] := by decide
+
+theorem combineWithin_functorial_wh : combineWithin functorial (S e) (R (e ⇒ T)) =
+    [(.mapR (.mapL BA), R (S T)), (.mapL (.mapR BA), S (R T))] := by decide
+
+-- section 3.6: two indefinites under the chapter's interpreter, which adds Structured App and
+-- the Unit modes
+theorem combineWithin_applicative_alternatives : combineWithin applicative (S e) (S (e ⇒ T)) =
+    [(.mapR (.mapL BA), S (S T)), (.mapL (.mapR BA), S (S T)), (.ap BA, S T)] := by decide
+
+-- section 4.4: an indefinite and a function into indeterminacy, and two quantifiers, under the
+-- chapter's interpreter, which adds Join
+theorem combineWithin_monadic_kleisli : combineWithin monadic (S e) (e ⇒ S T) =
+    [(.mapL BA, S (S T)), (.join (.mapL BA), S T)] := by decide
+
+theorem combineWithin_monadic_quantifiers : combineWithin monadic (C e) (C (e ⇒ T)) =
+    [(.mapR (.mapL BA), C (C T)), (.join (.mapR (.mapL BA)), C T),
+      (.mapL (.mapR BA), C (C T)), (.join (.mapL (.mapR BA)), C T), (.ap BA, C T)] := by decide
+
+/-- For two quantifiers the library's search lists twelve modes and the book's final `combine`
+ten: the two more are a Lower on each Join of the maps. -/
+theorem length_combine_quantifiers :
+    (Ty.combine (ManySorted.Language.LocallyFinite.binaryRules (L := baseGrammar Unit))
+      (C e) (C (e ⇒ T))).length = 12 ∧ (combine (C e) (C (e ⇒ T))).length = 10 := by decide
 
 -- section 3.4: with Structured App alone, the pointwise grammars of Figures 5 and 6, two
 -- indefinites combine in one way

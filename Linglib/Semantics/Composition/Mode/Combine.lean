@@ -375,8 +375,9 @@ theorem Ty.mem_combine
 
 end Complete
 
-/-- Bumford and Charlow's effect-driven interpreter over a grammar: a node admits the type
-shifts of the grammar and every mode that `Ty.combine` finds for its daughters. -/
+/-- The interpreter of Bumford and Charlow's effect-driven grammar over a grammar: a node admits
+the type shifts of the grammar and every mode that `Ty.combine` finds for its daughters, which
+are all the modes of the grammar. -/
 def effectDriven [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] {N : Type} :
     Interpreter (effectGrammar G) N where
   unary _ := Language.LocallyFinite.unaryRules (L := G)

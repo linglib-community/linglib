@@ -94,8 +94,8 @@ variable {Rule : Ty B → Ty B → Ty B → Type}
 /-- A mode keeps to an inventory of meta-modes when each meta-mode in it is one the inventory has
 at the effect it lifts through. The co-unit and the ejections are asked of the reader, and the
 lowering of the continuation. A grammar need not have every meta-mode at every effect: one with
-only Structured App at an effect is the pointwise grammar of that effect, in which an operator on
-the effect captures all of it in its prejacent. -/
+only Structured App at an effect, and every lexical item carrying the effect, is the pointwise
+grammar of that effect, in which an operator on the effect captures all of it in its prejacent. -/
 def Within (inv : MetaMode → Eff B → Prop) : {l r u : Ty B} → Mode Rule l r u → Prop
   | _, _, _, .basic _ => True
   | _, _, _, .mapR (f := f) m => inv .map f ∧ m.Within inv
