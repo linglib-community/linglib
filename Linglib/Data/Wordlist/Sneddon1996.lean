@@ -22,11 +22,17 @@ inductive Prefix where
   | meN
   /-- The nominal prefix, `peN-` in the source. -/
   | peN
+  /-- The prefix, `ber-` in the source. -/
+  | ber
+  /-- The prefix, `per-` in the source. -/
+  | per
+  /-- The prefix, `ter-` in the source. -/
+  | ter
   deriving DecidableEq, Repr
 
 /-- The values of `Inner` the source distinguishes. -/
 inductive Inner where
-  /-- The prefix between the nasal prefix and the base, `per-` in the source. -/
+  /-- The prefix *per-* between a nasal prefix and the base, `per-` in the source. -/
   | per
   deriving DecidableEq, Repr
 
@@ -49,8 +55,83 @@ inductive Origin where
 /-- A cell of the source's tables, by its Universal Dependencies features. -/
 abbrev Cell := UD.MorphFeatures
 
+def Lexemes.renang : Lexeme :=
+  { id := "renang", languageId := "indo1316", parameterId := "renang" }
+
+def Lexemes.berenang : Lexeme :=
+  { id := "berenang", languageId := "indo1316", parameterId := "berenang" }
+
+def Lexemes.rusak : Lexeme :=
+  { id := "rusak", languageId := "indo1316", parameterId := "rusak" }
+
+def Lexemes.perusak : Lexeme :=
+  { id := "perusak", languageId := "indo1316", parameterId := "perusak" }
+
+def Lexemes.rasa : Lexeme :=
+  { id := "rasa", languageId := "indo1316", parameterId := "rasa" }
+
+def Lexemes.terasa : Lexeme :=
+  { id := "terasa", languageId := "indo1316", parameterId := "terasa" }
+
+def Lexemes.serta : Lexeme :=
+  { id := "serta", languageId := "indo1316", parameterId := "serta" }
+
+def Lexemes.beserta : Lexeme :=
+  { id := "beserta", languageId := "indo1316", parameterId := "beserta" }
+
+def Lexemes.terbang : Lexeme :=
+  { id := "terbang", languageId := "indo1316", parameterId := "terbang" }
+
+def Lexemes.beterbangan : Lexeme :=
+  { id := "beterbangan", languageId := "indo1316", parameterId := "beterbangan" }
+
+def Lexemes.kerja : Lexeme :=
+  { id := "kerja", languageId := "indo1316", parameterId := "kerja" }
+
+def Lexemes.pekerjaan : Lexeme :=
+  { id := "pekerjaan", languageId := "indo1316", parameterId := "pekerjaan" }
+
+def Lexemes.pergok : Lexeme :=
+  { id := "pergok", languageId := "indo1316", parameterId := "pergok" }
+
+def Lexemes.tepergok : Lexeme :=
+  { id := "tepergok", languageId := "indo1316", parameterId := "tepergok" }
+
+def Lexemes.percaya : Lexeme :=
+  { id := "percaya", languageId := "indo1316", parameterId := "percaya" }
+
+def Lexemes.tepercaya : Lexeme :=
+  { id := "tepercaya", languageId := "indo1316", parameterId := "tepercaya" }
+
+def Lexemes.terpercaya : Lexeme :=
+  { id := "terpercaya", languageId := "indo1316", parameterId := "terpercaya" }
+
+def Lexemes.lanjur : Lexeme :=
+  { id := "lanjur", languageId := "indo1316", parameterId := "lanjur" }
+
+def Lexemes.telanjur : Lexeme :=
+  { id := "telanjur", languageId := "indo1316", parameterId := "telanjur" }
+
+def Lexemes.terlanjur : Lexeme :=
+  { id := "terlanjur", languageId := "indo1316", parameterId := "terlanjur" }
+
+def Lexemes.lantar : Lexeme :=
+  { id := "lantar", languageId := "indo1316", parameterId := "lantar" }
+
+def Lexemes.telantar : Lexeme :=
+  { id := "telantar", languageId := "indo1316", parameterId := "telantar" }
+
+def Lexemes.terlantar : Lexeme :=
+  { id := "terlantar", languageId := "indo1316", parameterId := "terlantar" }
+
 def Lexemes.ajar : Lexeme :=
   { id := "ajar", languageId := "indo1316", parameterId := "ajar" }
+
+def Lexemes.belajar : Lexeme :=
+  { id := "belajar", languageId := "indo1316", parameterId := "belajar" }
+
+def Lexemes.pelajaran : Lexeme :=
+  { id := "pelajaran", languageId := "indo1316", parameterId := "pelajaran" }
 
 def Lexemes.mengajar : Lexeme :=
   { id := "mengajar", languageId := "indo1316", parameterId := "mengajar" }
@@ -169,9 +250,6 @@ def Lexemes.lihat : Lexeme :=
 def Lexemes.melihat : Lexeme :=
   { id := "melihat", languageId := "indo1316", parameterId := "melihat" }
 
-def Lexemes.rasa : Lexeme :=
-  { id := "rasa", languageId := "indo1316", parameterId := "rasa" }
-
 def Lexemes.merasa : Lexeme :=
   { id := "merasa", languageId := "indo1316", parameterId := "merasa" }
 
@@ -241,14 +319,8 @@ def Lexemes.oleh : Lexeme :=
 def Lexemes.memperoleh : Lexeme :=
   { id := "memperoleh", languageId := "indo1316", parameterId := "memperoleh" }
 
-def Lexemes.percaya : Lexeme :=
-  { id := "percaya", languageId := "indo1316", parameterId := "percaya" }
-
 def Lexemes.mempercayai : Lexeme :=
   { id := "mempercayai", languageId := "indo1316", parameterId := "mempercayai" }
-
-def Lexemes.pergok : Lexeme :=
-  { id := "pergok", languageId := "indo1316", parameterId := "pergok" }
 
 def Lexemes.mempergoki : Lexeme :=
   { id := "mempergoki", languageId := "indo1316", parameterId := "mempergoki" }
@@ -400,12 +472,262 @@ def Lexemes.besar : Lexeme :=
 def Lexemes.memperbesar : Lexeme :=
   { id := "memperbesar", languageId := "indo1316", parameterId := "memperbesar" }
 
+def renang : Form Cell :=
+  { id := "sneddon1996_renang"
+    lexeme := Lexemes.renang
+    cell := {}
+    form := "renang"
+    segments := ["r", "ə", "n", "a", "ŋ"]
+    source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] }
+
+def berenang : Form Cell :=
+  { id := "sneddon1996_berenang"
+    lexeme := Lexemes.berenang
+    cell := {}
+    form := "berenang"
+    segments := ["b", "ə", "r", "ə", "n", "a", "ŋ"]
+    source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] }
+
+def rusak : Form Cell :=
+  { id := "sneddon1996_rusak"
+    lexeme := Lexemes.rusak
+    cell := {}
+    form := "rusak"
+    segments := ["r", "u", "s", "a", "k"]
+    source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] }
+
+def perusak : Form Cell :=
+  { id := "sneddon1996_perusak"
+    lexeme := Lexemes.perusak
+    cell := {}
+    form := "perusak"
+    segments := ["p", "ə", "r", "u", "s", "a", "k"]
+    source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] }
+
+def rasa : Form Cell :=
+  { id := "sneddon1996_rasa"
+    lexeme := Lexemes.rasa
+    cell := {}
+    form := "rasa"
+    segments := ["r", "a", "s", "a"]
+    source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] }
+
+def terasa : Form Cell :=
+  { id := "sneddon1996_terasa"
+    lexeme := Lexemes.terasa
+    cell := {}
+    form := "terasa"
+    segments := ["t", "ə", "r", "a", "s", "a"]
+    source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] }
+
+def serta : Form Cell :=
+  { id := "sneddon1996_serta"
+    lexeme := Lexemes.serta
+    cell := {}
+    form := "serta"
+    segments := ["s", "ə", "r", "t", "a"]
+    source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] }
+
+def beserta : Form Cell :=
+  { id := "sneddon1996_beserta"
+    lexeme := Lexemes.beserta
+    cell := {}
+    form := "beserta"
+    segments := ["b", "ə", "s", "ə", "r", "t", "a"]
+    source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] }
+
+def terbang : Form Cell :=
+  { id := "sneddon1996_terbang"
+    lexeme := Lexemes.terbang
+    cell := {}
+    form := "terbang"
+    segments := ["t", "ə", "r", "b", "a", "ŋ"]
+    source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] }
+
+def beterbangan : Form Cell :=
+  { id := "sneddon1996_beterbangan"
+    lexeme := Lexemes.beterbangan
+    cell := {}
+    form := "beterbangan"
+    segments := ["b", "ə", "t", "ə", "r", "b", "a", "ŋ", "a", "n"]
+    source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] }
+
+def kerja : Form Cell :=
+  { id := "sneddon1996_kerja"
+    lexeme := Lexemes.kerja
+    cell := {}
+    form := "kerja"
+    segments := ["k", "ə", "r", "d̠ʒ", "a"]
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] }
+
+def pekerjaan : Form Cell :=
+  { id := "sneddon1996_pekerjaan"
+    lexeme := Lexemes.pekerjaan
+    cell := {}
+    form := "pekerjaan"
+    segments := ["p", "ə", "k", "ə", "r", "d̠ʒ", "a", "a", "n"]
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] }
+
+def pergok : Form Cell :=
+  { id := "sneddon1996_pergok"
+    lexeme := Lexemes.pergok
+    cell := {}
+    form := "pergok"
+    segments := ["p", "ə", "r", "ɡ", "o", "k"]
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] }
+
+def tepergok : Form Cell :=
+  { id := "sneddon1996_tepergok"
+    lexeme := Lexemes.tepergok
+    cell := {}
+    form := "tepergok"
+    segments := ["t", "ə", "p", "ə", "r", "ɡ", "o", "k"]
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] }
+
+def percaya : Form Cell :=
+  { id := "sneddon1996_percaya"
+    lexeme := Lexemes.percaya
+    cell := {}
+    form := "percaya"
+    segments := ["p", "ə", "r", "t̠ʃ", "a", "j", "a"]
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] }
+
+def tepercaya : Form Cell :=
+  { id := "sneddon1996_tepercaya"
+    lexeme := Lexemes.tepercaya
+    cell := {}
+    form := "tepercaya"
+    segments := ["t", "ə", "p", "ə", "r", "t̠ʃ", "a", "j", "a"]
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] }
+
+def terpercaya : Form Cell :=
+  { id := "sneddon1996_terpercaya"
+    lexeme := Lexemes.terpercaya
+    cell := {}
+    form := "terpercaya"
+    segments := ["t", "ə", "r", "p", "ə", "r", "t̠ʃ", "a", "j", "a"]
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] }
+
+def lanjur : Form Cell :=
+  { id := "sneddon1996_lanjur"
+    lexeme := Lexemes.lanjur
+    cell := {}
+    form := "lanjur"
+    segments := ["l", "a", "n", "d̠ʒ", "u", "r"]
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] }
+
+def telanjur : Form Cell :=
+  { id := "sneddon1996_telanjur"
+    lexeme := Lexemes.telanjur
+    cell := {}
+    form := "telanjur"
+    segments := ["t", "ə", "l", "a", "n", "d̠ʒ", "u", "r"]
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] }
+
+def terlanjur : Form Cell :=
+  { id := "sneddon1996_terlanjur"
+    lexeme := Lexemes.terlanjur
+    cell := {}
+    form := "terlanjur"
+    segments := ["t", "ə", "r", "l", "a", "n", "d̠ʒ", "u", "r"]
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] }
+
+def lantar : Form Cell :=
+  { id := "sneddon1996_lantar"
+    lexeme := Lexemes.lantar
+    cell := {}
+    form := "lantar"
+    segments := ["l", "a", "n", "t", "a", "r"]
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] }
+
+def telantar : Form Cell :=
+  { id := "sneddon1996_telantar"
+    lexeme := Lexemes.telantar
+    cell := {}
+    form := "telantar"
+    segments := ["t", "ə", "l", "a", "n", "t", "a", "r"]
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] }
+
+def terlantar : Form Cell :=
+  { id := "sneddon1996_terlantar"
+    lexeme := Lexemes.terlantar
+    cell := {}
+    form := "terlantar"
+    segments := ["t", "ə", "r", "l", "a", "n", "t", "a", "r"]
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] }
+
 def ajar : Form Cell :=
   { id := "sneddon1996_ajar"
     lexeme := Lexemes.ajar
     cell := {}
     form := "ajar"
     segments := ["a", "d̠ʒ", "a", "r"]
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] }
+
+def belajar : Form Cell :=
+  { id := "sneddon1996_belajar"
+    lexeme := Lexemes.belajar
+    cell := {}
+    form := "belajar"
+    segments := ["b", "ə", "l", "a", "d̠ʒ", "a", "r"]
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] }
+
+def pelajaran : Form Cell :=
+  { id := "sneddon1996_pelajaran"
+    lexeme := Lexemes.pelajaran
+    cell := {}
+    form := "pelajaran"
+    segments := ["p", "ə", "l", "a", "d̠ʒ", "a", "r", "a", "n"]
     source := [
       ⟨"sneddon-1996", "p. 9"⟩
     ] }
@@ -800,16 +1122,6 @@ def melihat : Form Cell :=
       ⟨"sneddon-1996", "p. 10"⟩
     ] }
 
-def rasa : Form Cell :=
-  { id := "sneddon1996_rasa"
-    lexeme := Lexemes.rasa
-    cell := {}
-    form := "rasa"
-    segments := ["r", "a", "s", "a"]
-    source := [
-      ⟨"sneddon-1996", "p. 10"⟩
-    ] }
-
 def merasa : Form Cell :=
   { id := "sneddon1996_merasa"
     lexeme := Lexemes.merasa
@@ -1040,32 +1352,12 @@ def memperoleh : Form Cell :=
       ⟨"sneddon-1996", "p. 11"⟩
     ] }
 
-def percaya : Form Cell :=
-  { id := "sneddon1996_percaya"
-    lexeme := Lexemes.percaya
-    cell := {}
-    form := "percaya"
-    segments := ["p", "ə", "r", "t̠ʃ", "a", "j", "a"]
-    source := [
-      ⟨"sneddon-1996", "p. 11"⟩
-    ] }
-
 def mempercayai : Form Cell :=
   { id := "sneddon1996_mempercayai"
     lexeme := Lexemes.mempercayai
     cell := {}
     form := "mempercayai"
     segments := ["m", "ə", "m", "p", "ə", "r", "t̠ʃ", "a", "j", "a", "i"]
-    source := [
-      ⟨"sneddon-1996", "p. 11"⟩
-    ] }
-
-def pergok : Form Cell :=
-  { id := "sneddon1996_pergok"
-    lexeme := Lexemes.pergok
-    cell := {}
-    form := "pergok"
-    segments := ["p", "ə", "r", "ɡ", "o", "k"]
     source := [
       ⟨"sneddon-1996", "p. 11"⟩
     ] }
@@ -1575,9 +1867,9 @@ def memperbesar : Form Cell :=
 structure Analysis where
   /-- The form analysed. -/
   form : Form Cell
-  /-- The `Prefix` column, the nasal prefix the grammar attaches to the base. -/
+  /-- The `Prefix` column, the prefix the grammar attaches to the base. -/
   pre : Option Prefix := none
-  /-- The `Inner` column, the prefix the grammar puts between the nasal prefix and the base. -/
+  /-- The `Inner` column, the prefix the grammar puts between that prefix and the base. -/
   inner : Option Inner := none
   /-- The `Suffix` column, the suffix the grammar attaches after the base. -/
   suffix : Option Suffix := none
@@ -1585,8 +1877,101 @@ structure Analysis where
   origin : Option Origin := none
   deriving DecidableEq, Repr
 
+def renang.analysis : Analysis :=
+  { form := renang }
+
+def berenang.analysis : Analysis :=
+  { form := berenang,
+    pre := some Prefix.ber }
+
+def rusak.analysis : Analysis :=
+  { form := rusak }
+
+def perusak.analysis : Analysis :=
+  { form := perusak,
+    pre := some Prefix.per }
+
+def rasa.analysis : Analysis :=
+  { form := rasa }
+
+def terasa.analysis : Analysis :=
+  { form := terasa,
+    pre := some Prefix.ter }
+
+def serta.analysis : Analysis :=
+  { form := serta }
+
+def beserta.analysis : Analysis :=
+  { form := beserta,
+    pre := some Prefix.ber }
+
+def terbang.analysis : Analysis :=
+  { form := terbang }
+
+def beterbangan.analysis : Analysis :=
+  { form := beterbangan,
+    pre := some Prefix.ber,
+    suffix := some Suffix.an }
+
+def kerja.analysis : Analysis :=
+  { form := kerja }
+
+def pekerjaan.analysis : Analysis :=
+  { form := pekerjaan,
+    pre := some Prefix.per,
+    suffix := some Suffix.an }
+
+def pergok.analysis : Analysis :=
+  { form := pergok }
+
+def tepergok.analysis : Analysis :=
+  { form := tepergok,
+    pre := some Prefix.ter }
+
+def percaya.analysis : Analysis :=
+  { form := percaya }
+
+def tepercaya.analysis : Analysis :=
+  { form := tepercaya,
+    pre := some Prefix.ter }
+
+def terpercaya.analysis : Analysis :=
+  { form := terpercaya,
+    pre := some Prefix.ter }
+
+def lanjur.analysis : Analysis :=
+  { form := lanjur }
+
+def telanjur.analysis : Analysis :=
+  { form := telanjur,
+    pre := some Prefix.ter }
+
+def terlanjur.analysis : Analysis :=
+  { form := terlanjur,
+    pre := some Prefix.ter }
+
+def lantar.analysis : Analysis :=
+  { form := lantar }
+
+def telantar.analysis : Analysis :=
+  { form := telantar,
+    pre := some Prefix.ter }
+
+def terlantar.analysis : Analysis :=
+  { form := terlantar,
+    pre := some Prefix.ter }
+
 def ajar.analysis : Analysis :=
   { form := ajar }
+
+def belajar.analysis : Analysis :=
+  { form := belajar,
+    pre := some Prefix.ber }
+
+def pelajaran.analysis : Analysis :=
+  { form := pelajaran,
+    pre := some Prefix.per,
+    suffix := some Suffix.an }
 
 def mengajar.analysis : Analysis :=
   { form := mengajar,
@@ -1728,9 +2113,6 @@ def melihat.analysis : Analysis :=
   { form := melihat,
     pre := some Prefix.meN }
 
-def rasa.analysis : Analysis :=
-  { form := rasa }
-
 def merasa.analysis : Analysis :=
   { form := merasa,
     pre := some Prefix.meN }
@@ -1818,16 +2200,10 @@ def memperoleh.analysis : Analysis :=
     pre := some Prefix.meN,
     inner := some Inner.per }
 
-def percaya.analysis : Analysis :=
-  { form := percaya }
-
 def mempercayai.analysis : Analysis :=
   { form := mempercayai,
     pre := some Prefix.meN,
     suffix := some Suffix.i }
-
-def pergok.analysis : Analysis :=
-  { form := pergok }
 
 def mempergoki.analysis : Analysis :=
   { form := mempergoki,
@@ -2041,51 +2417,116 @@ def memperbesar.analysis : Analysis :=
     inner := some Inner.per }
 
 /-- Every lexeme of the data. -/
-def lexemes : List Lexeme := [Lexemes.ajar, Lexemes.mengajar, Lexemes.ekspor, Lexemes.mengekspor,
+def lexemes : List Lexeme := [Lexemes.renang, Lexemes.berenang, Lexemes.rusak, Lexemes.perusak,
+  Lexemes.rasa, Lexemes.terasa, Lexemes.serta, Lexemes.beserta, Lexemes.terbang,
+  Lexemes.beterbangan, Lexemes.kerja, Lexemes.pekerjaan, Lexemes.pergok, Lexemes.tepergok,
+  Lexemes.percaya, Lexemes.tepercaya, Lexemes.terpercaya, Lexemes.lanjur, Lexemes.telanjur,
+  Lexemes.terlanjur, Lexemes.lantar, Lexemes.telantar, Lexemes.terlantar, Lexemes.ajar,
+  Lexemes.belajar, Lexemes.pelajaran, Lexemes.mengajar, Lexemes.ekspor, Lexemes.mengekspor,
   Lexemes.erang, Lexemes.mengerang, Lexemes.olah, Lexemes.mengolah, Lexemes.urus, Lexemes.mengurus,
   Lexemes.beli, Lexemes.membeli, Lexemes.pakai, Lexemes.memakai, Lexemes.fitnah, Lexemes.memfitnah,
   Lexemes.dengar, Lexemes.mendengar, Lexemes.tulis, Lexemes.menulis, Lexemes.cari, Lexemes.mencari,
   Lexemes.jual, Lexemes.menjual, Lexemes.syarat, Lexemes.mensyaratkan, Lexemes.ziarah,
   Lexemes.menziarahi, Lexemes.sewa, Lexemes.menyewa, Lexemes.ganggu, Lexemes.mengganggu,
   Lexemes.kirim, Lexemes.mengirim, Lexemes.hilang, Lexemes.menghilang, Lexemes.khawatir,
-  Lexemes.mengkhawatirkan, Lexemes.lihat, Lexemes.melihat, Lexemes.rasa, Lexemes.merasa,
-  Lexemes.masak, Lexemes.memasak, Lexemes.nanti, Lexemes.menanti, Lexemes.nyanyi, Lexemes.menyanyi,
-  Lexemes.nganga, Lexemes.menganga, Lexemes.wakil, Lexemes.mewakili, Lexemes.yakin,
-  Lexemes.meyakini, Lexemes.karang, Lexemes.mengarang_karang, Lexemes.arang,
-  Lexemes.mengarang_arang, Lexemes.penulis, Lexemes.penulisan, Lexemes.lebar, Lexemes.memperlebar,
-  Lexemes.oleh, Lexemes.memperoleh, Lexemes.percaya, Lexemes.mempercayai, Lexemes.pergok,
-  Lexemes.mempergoki, Lexemes.memergoki, Lexemes.percik, Lexemes.memerciki, Lexemes.satu,
-  Lexemes.pemersatu, Lexemes.pemerolehan, Lexemes.perkosa, Lexemes.pemerkosa, Lexemes.proklamasi,
-  Lexemes.memproklamasikan, Lexemes.traktir, Lexemes.mentraktir, Lexemes.swadaya,
-  Lexemes.menswadayakan, Lexemes.klasifikasi, Lexemes.mengklasifikasikan, Lexemes.protes,
-  Lexemes.memprotes, Lexemes.memrotes, Lexemes.taat, Lexemes.mentaati, Lexemes.menaati,
-  Lexemes.sukses, Lexemes.mensukseskan, Lexemes.menyukseskan, Lexemes.kritik, Lexemes.mengkritik,
-  Lexemes.mengritik, Lexemes.pengaruh, Lexemes.mempengaruhi, Lexemes.punya, Lexemes.mempunyai,
-  Lexemes.kaji, Lexemes.mengaji, Lexemes.mengkaji, Lexemes.pengajian, Lexemes.pengkajian,
-  Lexemes.penglihatan, Lexemes.rajin, Lexemes.pengrajin, Lexemes.perajin, Lexemes.lepas,
-  Lexemes.penglepasan, Lexemes.pelepasan, Lexemes.syair, Lexemes.menyair, Lexemes.penyair,
-  Lexemes.besar, Lexemes.memperbesar]
+  Lexemes.mengkhawatirkan, Lexemes.lihat, Lexemes.melihat, Lexemes.merasa, Lexemes.masak,
+  Lexemes.memasak, Lexemes.nanti, Lexemes.menanti, Lexemes.nyanyi, Lexemes.menyanyi, Lexemes.nganga,
+  Lexemes.menganga, Lexemes.wakil, Lexemes.mewakili, Lexemes.yakin, Lexemes.meyakini,
+  Lexemes.karang, Lexemes.mengarang_karang, Lexemes.arang, Lexemes.mengarang_arang, Lexemes.penulis,
+  Lexemes.penulisan, Lexemes.lebar, Lexemes.memperlebar, Lexemes.oleh, Lexemes.memperoleh,
+  Lexemes.mempercayai, Lexemes.mempergoki, Lexemes.memergoki, Lexemes.percik, Lexemes.memerciki,
+  Lexemes.satu, Lexemes.pemersatu, Lexemes.pemerolehan, Lexemes.perkosa, Lexemes.pemerkosa,
+  Lexemes.proklamasi, Lexemes.memproklamasikan, Lexemes.traktir, Lexemes.mentraktir,
+  Lexemes.swadaya, Lexemes.menswadayakan, Lexemes.klasifikasi, Lexemes.mengklasifikasikan,
+  Lexemes.protes, Lexemes.memprotes, Lexemes.memrotes, Lexemes.taat, Lexemes.mentaati,
+  Lexemes.menaati, Lexemes.sukses, Lexemes.mensukseskan, Lexemes.menyukseskan, Lexemes.kritik,
+  Lexemes.mengkritik, Lexemes.mengritik, Lexemes.pengaruh, Lexemes.mempengaruhi, Lexemes.punya,
+  Lexemes.mempunyai, Lexemes.kaji, Lexemes.mengaji, Lexemes.mengkaji, Lexemes.pengajian,
+  Lexemes.pengkajian, Lexemes.penglihatan, Lexemes.rajin, Lexemes.pengrajin, Lexemes.perajin,
+  Lexemes.lepas, Lexemes.penglepasan, Lexemes.pelepasan, Lexemes.syair, Lexemes.menyair,
+  Lexemes.penyair, Lexemes.besar, Lexemes.memperbesar]
 
 /-- Every form the sources accept. -/
-def all : List (Form Cell) := [ajar, mengajar, ekspor, mengekspor, erang, mengerang, olah, mengolah,
-  urus, mengurus, beli, membeli, pakai, memakai, fitnah, memfitnah, dengar, mendengar, tulis,
-  menulis, cari, mencari, jual, menjual, syarat, mensyaratkan, ziarah, menziarahi, sewa, menyewa,
-  ganggu, mengganggu, kirim, mengirim, hilang, menghilang, khawatir, mengkhawatirkan, lihat,
-  melihat, rasa, merasa, masak, memasak, nanti, menanti, nyanyi, menyanyi, nganga, menganga, wakil,
-  mewakili, yakin, meyakini, karang, mengarang_karang, arang, mengarang_arang, penulis, penulisan,
-  lebar, memperlebar, oleh, memperoleh, percaya, mempercayai, pergok, mempergoki, memergoki, percik,
-  memerciki, satu, pemersatu, pemerolehan, perkosa, pemerkosa, proklamasi, memproklamasikan,
-  traktir, mentraktir, swadaya, menswadayakan, klasifikasi, mengklasifikasikan, protes, memprotes,
-  memrotes, taat, mentaati, menaati, sukses, mensukseskan, menyukseskan, kritik, mengkritik,
-  mengritik, pengaruh, mempengaruhi, punya, mempunyai, kaji, mengaji, mengkaji, pengajian,
-  pengkajian, penglihatan, rajin, pengrajin, perajin, lepas, penglepasan, pelepasan, syair, menyair,
-  penyair, besar, memperbesar]
+def all : List (Form Cell) := [renang, berenang, rusak, perusak, rasa, terasa, serta, beserta,
+  terbang, beterbangan, kerja, pekerjaan, pergok, tepergok, percaya, tepercaya, terpercaya, lanjur,
+  telanjur, terlanjur, lantar, telantar, terlantar, ajar, belajar, pelajaran, mengajar, ekspor,
+  mengekspor, erang, mengerang, olah, mengolah, urus, mengurus, beli, membeli, pakai, memakai,
+  fitnah, memfitnah, dengar, mendengar, tulis, menulis, cari, mencari, jual, menjual, syarat,
+  mensyaratkan, ziarah, menziarahi, sewa, menyewa, ganggu, mengganggu, kirim, mengirim, hilang,
+  menghilang, khawatir, mengkhawatirkan, lihat, melihat, merasa, masak, memasak, nanti, menanti,
+  nyanyi, menyanyi, nganga, menganga, wakil, mewakili, yakin, meyakini, karang, mengarang_karang,
+  arang, mengarang_arang, penulis, penulisan, lebar, memperlebar, oleh, memperoleh, mempercayai,
+  mempergoki, memergoki, percik, memerciki, satu, pemersatu, pemerolehan, perkosa, pemerkosa,
+  proklamasi, memproklamasikan, traktir, mentraktir, swadaya, menswadayakan, klasifikasi,
+  mengklasifikasikan, protes, memprotes, memrotes, taat, mentaati, menaati, sukses, mensukseskan,
+  menyukseskan, kritik, mengkritik, mengritik, pengaruh, mempengaruhi, punya, mempunyai, kaji,
+  mengaji, mengkaji, pengajian, pengkajian, penglihatan, rajin, pengrajin, perajin, lepas,
+  penglepasan, pelepasan, syair, menyair, penyair, besar, memperbesar]
 
 /-- Every form a source marks, as marginal, questionable, unacceptable or ungrammatical. -/
 def marked : List (Form Cell) := []
 
 /-- Every relation the sources assert between forms. -/
 def relations : List (FormRelation (Form Cell)) := [
+  { id := "sneddon1996_renang_berenang", form := renang, target := berenang, relation := "ber-",
+    source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] },
+  { id := "sneddon1996_rusak_perusak", form := rusak, target := perusak, relation := "per-",
+    source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] },
+  { id := "sneddon1996_rasa_terasa", form := rasa, target := terasa, relation := "ter-", source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] },
+  { id := "sneddon1996_serta_beserta", form := serta, target := beserta, relation := "ber-",
+    source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] },
+  { id := "sneddon1996_terbang_beterbangan", form := terbang, target := beterbangan,
+    relation := "ber- -an", source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] },
+  { id := "sneddon1996_kerja_pekerjaan", form := kerja, target := pekerjaan, relation := "per- -an",
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_pergok_tepergok", form := pergok, target := tepergok, relation := "ter-",
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_percaya_tepercaya", form := percaya, target := tepercaya, relation := "ter-",
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_percaya_terpercaya", form := percaya, target := terpercaya,
+    relation := "ter-", source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_lanjur_telanjur", form := lanjur, target := telanjur, relation := "ter-",
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_lanjur_terlanjur", form := lanjur, target := terlanjur, relation := "ter-",
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_lantar_telantar", form := lantar, target := telantar, relation := "ter-",
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_lantar_terlantar", form := lantar, target := terlantar, relation := "ter-",
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_ajar_belajar", form := ajar, target := belajar, relation := "ber-",
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_ajar_pelajaran", form := ajar, target := pelajaran, relation := "per- -an",
+    source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
   { id := "sneddon1996_ajar_mengajar", form := ajar, target := mengajar, relation := "meN-",
     source := [
       ⟨"sneddon-1996", "p. 9"⟩
@@ -2352,6 +2793,66 @@ def relations : List (FormRelation (Form Cell)) := [
 
 /-- Every relation the sources assert, between the forms' analyses. -/
 def analysisRelations : List (FormRelation Analysis) := [
+  { id := "sneddon1996_renang_berenang", form := renang.analysis, target := berenang.analysis,
+    relation := "ber-", source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] },
+  { id := "sneddon1996_rusak_perusak", form := rusak.analysis, target := perusak.analysis,
+    relation := "per-", source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] },
+  { id := "sneddon1996_rasa_terasa", form := rasa.analysis, target := terasa.analysis,
+    relation := "ter-", source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] },
+  { id := "sneddon1996_serta_beserta", form := serta.analysis, target := beserta.analysis,
+    relation := "ber-", source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] },
+  { id := "sneddon1996_terbang_beterbangan", form := terbang.analysis,
+    target := beterbangan.analysis, relation := "ber- -an", source := [
+      ⟨"sneddon-1996", "p. 8"⟩
+    ] },
+  { id := "sneddon1996_kerja_pekerjaan", form := kerja.analysis, target := pekerjaan.analysis,
+    relation := "per- -an", source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_pergok_tepergok", form := pergok.analysis, target := tepergok.analysis,
+    relation := "ter-", source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_percaya_tepercaya", form := percaya.analysis, target := tepercaya.analysis,
+    relation := "ter-", source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_percaya_terpercaya", form := percaya.analysis, target := terpercaya.analysis,
+    relation := "ter-", source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_lanjur_telanjur", form := lanjur.analysis, target := telanjur.analysis,
+    relation := "ter-", source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_lanjur_terlanjur", form := lanjur.analysis, target := terlanjur.analysis,
+    relation := "ter-", source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_lantar_telantar", form := lantar.analysis, target := telantar.analysis,
+    relation := "ter-", source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_lantar_terlantar", form := lantar.analysis, target := terlantar.analysis,
+    relation := "ter-", source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_ajar_belajar", form := ajar.analysis, target := belajar.analysis,
+    relation := "ber-", source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
+  { id := "sneddon1996_ajar_pelajaran", form := ajar.analysis, target := pelajaran.analysis,
+    relation := "per- -an", source := [
+      ⟨"sneddon-1996", "p. 9"⟩
+    ] },
   { id := "sneddon1996_ajar_mengajar", form := ajar.analysis, target := mengajar.analysis,
     relation := "meN-", source := [
       ⟨"sneddon-1996", "p. 9"⟩
@@ -2618,7 +3119,10 @@ def analysisRelations : List (FormRelation Analysis) := [
     ] }]
 
 /-- Every analysis of the data. -/
-def analyses : List Analysis := [mengajar.analysis, mengekspor.analysis, mengerang.analysis,
+def analyses : List Analysis := [berenang.analysis, perusak.analysis, terasa.analysis,
+  beserta.analysis, beterbangan.analysis, pekerjaan.analysis, tepergok.analysis, tepercaya.analysis,
+  terpercaya.analysis, telanjur.analysis, terlanjur.analysis, telantar.analysis, terlantar.analysis,
+  belajar.analysis, pelajaran.analysis, mengajar.analysis, mengekspor.analysis, mengerang.analysis,
   mengolah.analysis, mengurus.analysis, membeli.analysis, memakai.analysis, memfitnah.analysis,
   mendengar.analysis, menulis.analysis, mencari.analysis, menjual.analysis, mensyaratkan.analysis,
   menziarahi.analysis, menyewa.analysis, mengganggu.analysis, mengirim.analysis,

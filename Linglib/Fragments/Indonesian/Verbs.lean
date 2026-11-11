@@ -94,11 +94,11 @@ def di (v : Verb) : List Segment := [d, i] ++ v.rootSegments
 
 /-- The middle in *ber-*, for a root that has one. -/
 def ber? (v : Verb) : Option (List Segment) :=
-  if v.ber then some ([b, e, r] ++ v.rootSegments) else none
+  if v.ber then some (Phonology.ber v.rootSegments) else none
 
 /-- The form in *ter-*, for a root that has one. -/
 def ter? (v : Verb) : Option (List Segment) :=
-  v.terClass.map fun _ ↦ [t, e, r] ++ v.rootSegments
+  v.terClass.map fun _ ↦ Phonology.ter v.rootSegments
 
 end Verb
 

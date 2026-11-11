@@ -5,7 +5,7 @@ public import Linglib.Phonology.Segmental.NaturalClass
 public import Linglib.Data.Wordlist.Sneddon1996
 
 /-!
-# Sneddon (1996): the prefixes *meN-* and *peN-*
+# Sneddon (1996): sound changes in complex words
 
 Sneddon's grammar of Indonesian gives the nasal that ends the prefixes *meN-* and *peN-* by
 lists of the sounds a base may begin with: *m* before *b*, *p*, *f*; *n* before *d*, *t*, *c*,
@@ -16,8 +16,9 @@ agree on every phoneme](##juncture_eq_of_mem_rules): each list's nasal [is homor
 obstruents](##homorganic_iff_of_mem_rules), the palatal before *s* excepted. Since *k* and *s*
 are lost, [a derived form does not determine its base](##prefixN_k_cons). A base that keeps
 its initial, as borrowings may, has [the nasal of the same place](##junctureRetained_eq_iff),
-so that a kept *s* follows *n*. Of the derivations the grammar prints for these rules and
-their exceptions, [the rules give all but those it calls irregular](##derived_iff).
+so that a kept *s* follows *n*. The prefixes *ber-*, *per-* and *ter-* lose their *r* before a
+base in *r* and before one such as *serta*. Of the derivations the grammar prints for these
+rules and their exceptions, [the rules give all but those it calls irregular](##derived_iff).
 
 ## Implementation notes
 
@@ -27,8 +28,8 @@ their exceptions, [the rules give all but those it calls irregular](##derived_if
   the palatal glide. [Every form is read](##segmentsOf_all), so no derivation holds for want of
   a reading.
 * The bases marked as borrowed are the eight the grammar gives as borrowings that keep their
-  initial. A base in *per* and a consonant keeps its *p* irregularly after *meN-*, so both
-  outcomes are allowed for it.
+  initial. Where the grammar calls a loss irregular, of the *p* of a base such as *percaya*
+  after *meN-* or of the *r* of a prefix before one, both outcomes are allowed.
 
 ## TODO
 
@@ -125,12 +126,19 @@ theorem segmentsOf_all :
     ∀ w ∈ all, ∃ ss ∈ segmentsOf w, ∀ x ∈ ss, x ∈ consonants ∪ vowels := by
   decide +kernel
 
-/-- The segments of a prefix before its nasal. -/
+/-- The segments of a prefix before its nasal or its *r*. -/
 def Wordlist.Prefix.segments : Prefix → List Segment
   | .meN => [m, e]
-  | .peN => [p, e]
+  | .peN | .per => [p, e]
+  | .ber => [b, e]
+  | .ter => [t, e]
 
-/-- The segments of the prefix *per-*. -/
+/-- The prefixes that end in the nasal. -/
+def Wordlist.Prefix.IsNasal (pre : Prefix) : Prop := pre = .meN ∨ pre = .peN
+
+instance : DecidablePred Prefix.IsNasal := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The segments of the prefix *per-* after a nasal prefix. -/
 def Wordlist.Inner.segments : Inner → List Segment
   | .per => [p, e, r]
 
@@ -140,30 +148,37 @@ def Wordlist.Suffix.segments : Suffix → List Segment
   | .i => [Indonesian.Phonology.i]
   | .an => [a, n]
 
-/-- `derive J a base` is the form that the analysis `a` builds on `base`: its prefix, whose
-nasal surfaces with the next sound as `J` gives, then *per-* where the analysis has it, the
-base and the suffix. An analysis without a prefix builds none. -/
-def derive (J : Segment → List Segment) (a : Analysis) (base : List Segment) :
+/-- `build stem a base` is the form that the analysis `a` builds on `base`: its prefix, attached
+as `stem` gives to *per-*, where the analysis has it, and the base, and then the suffix. An
+analysis without a prefix builds none. -/
+def build (stem : Prefix → List Segment → List Segment) (a : Analysis) (base : List Segment) :
     Option (List Segment) :=
   a.pre.map fun pre ↦
-    prefixN J pre.segments (a.inner.elim [] Inner.segments ++ base) ++
-      a.suffix.elim [] Suffix.segments
+    stem pre (a.inner.elim [] Inner.segments ++ base) ++ a.suffix.elim [] Suffix.segments
 
 /-- The form the rules give. "If prefix *meN-* is followed by prefix *per-* the initial *p* of
 *per-* is not lost", and it "is lost following prefix *peN-*" (p. 11). -/
 def regular (a : Analysis) : List Segment → Option (List Segment) :=
-  derive (if a.pre = some .meN ∧ a.inner = some .per then junctureRetained else juncture) a
+  build (fun pre ↦
+    if pre.IsNasal then
+      prefixN (if pre = .meN ∧ a.inner = some .per then junctureRetained else juncture)
+        pre.segments
+    else prefixR pre.segments) a
 
-/-- The form that keeps the sound after the prefix. -/
+/-- The form that keeps what the rules drop, the sound after a nasal prefix or the *r* of the
+prefix. -/
 def retained : Analysis → List Segment → Option (List Segment) :=
-  derive junctureRetained
+  build fun pre ↦
+    if pre.IsNasal then prefixN junctureRetained pre.segments else (pre.segments ++ r :: ·)
 
-/-- A base may keep its initial when the grammar gives it as a borrowing, or after *meN-* when
-it begins with *per* and a consonant, where "the initial *p* is lost irregularly"
-(pp. 11–12). The base has the analysis `b` and the derived form the analysis `a`. -/
+/-- A base may keep its initial when the grammar gives it as a borrowing. One that begins with
+a consonant, the schwa, *r* and a consonant may keep its *p* after *meN-*, where "the initial
+*p* is lost irregularly" (p. 11), and may keep the *r* of *ber-*, *per-* and *ter-*, whose loss
+"is not entirely regular" (p. 9). The base has the analysis `b` and the derived form the
+analysis `a`. -/
 def MayRetain (b a : Analysis) (base : List Segment) : Prop :=
   b.origin = some .borrowed ∨
-    a.pre = some .meN ∧ [p, e, r] <+: base ∧ ∃ x ∈ base[3]?, x ∈ consonants
+    (a.pre = some .meN ∧ base.head? = some p ∨ ∃ pre ∈ a.pre, ¬ pre.IsNasal) ∧ BeginsCerC base
 
 instance (b a : Analysis) (base : List Segment) : Decidable (MayRetain b a base) :=
   inferInstanceAs (Decidable (_ ∨ _))
@@ -177,16 +192,17 @@ def Derived (r : FormRelation Analysis) : Prop :=
 
 instance : DecidablePred Derived := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- The forms the grammar sets apart from its rules (pp. 12–13): *mempengaruhi*, *mempunyai*
-and the *mengkaji* of research, which keep the initial of a base it does not give as borrowed,
-the *peng-* of *penglihatan*, *pengrajin* and *penglepasan*, and *menyair* and *penyair*, which
-lose an initial *sy*. -/
+/-- The forms the grammar sets apart from its rules (pp. 9, 12–13): *telanjur* and *telantar*,
+which lose the *r* of *ter-* before *l*, and *belajar* and *pelajaran*, which have *l* for the
+*r*; *mempengaruhi*, *mempunyai* and the *mengkaji* of research, which keep the initial of a
+base it does not give as borrowed; the *peng-* of *penglihatan*, *pengrajin* and *penglepasan*;
+and *menyair* and *penyair*, which lose an initial *sy*. -/
 def exceptions : List (Form Cell) :=
-  [mempengaruhi, mempunyai, mengkaji, pengkajian, penglihatan, pengrajin, penglepasan, menyair,
-    penyair]
+  [telanjur, telantar, belajar, pelajaran, mempengaruhi, mempunyai, mengkaji, pengkajian,
+    penglihatan, pengrajin, penglepasan, menyair, penyair]
 
 /-- The rules derive each form the grammar prints for them and for their exceptions in *per-*
-and in borrowings, and none of the forms it sets apart (pp. 9–13, 26). -/
+and in borrowings, and none of the forms it sets apart (pp. 8–13, 26). -/
 theorem derived_iff : ∀ r ∈ analysisRelations, Derived r ↔ r.target.form ∉ exceptions := by
   decide +kernel
 

@@ -19,12 +19,15 @@ borrowings may, has [the nasal before it](##junctureRetained), as in *mentraktir
 Following Pater, assimilation applies throughout the word and fusion only at the left edge of
 the root.
 
+The prefixes *ber-*, *per-* and *ter-* [lose their *r*](##prefixR) before a base in *r*, as in
+*berenang* from *renang*, and before one such as *serta* or *kerja*, as in *beserta*.
+
 ## Implementation notes
 
 That *c* does not fuse and that *s* fuses into the palatal *ny* are the two exceptions that
 McDonnell and colleagues list for the standard language. The *menge-* of one-syllable bases is
-not defined. [Every phoneme but the palatal glide](##subset_ind) is a segment of PHOIBLE's
-Standard Indonesian inventory.
+not defined, nor is the *l* of *belajar* from *ajar*. [Every phoneme but the palatal
+glide](##subset_ind) is a segment of PHOIBLE's Standard Indonesian inventory.
 
 ## References
 
@@ -199,5 +202,29 @@ def meN : List Segment → List Segment := prefixN juncture [m, e]
 
 /-- The nominal prefix *peN-*. -/
 def peN : List Segment → List Segment := prefixN juncture [p, e]
+
+/-! ### The prefixes in *r* -/
+
+/-- A base begins with a consonant, the schwa, *r* and a consonant, as *serta* and *kerja* do. -/
+def BeginsCerC (base : List Segment) : Prop :=
+  (∃ x ∈ base[0]?, x ∈ consonants) ∧ base[1]? = some e ∧ base[2]? = some r ∧
+    ∃ x ∈ base[3]?, x ∈ consonants
+
+instance : DecidablePred BeginsCerC := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- `prefixR pre base` attaches to `base` the prefix that consists of `pre` and *r*, whose *r*
+is lost before a base in *r* and before one that begins with a consonant, the schwa, *r* and a
+consonant. -/
+def prefixR (pre base : List Segment) : List Segment :=
+  if base.head? = some r ∨ BeginsCerC base then pre ++ base else pre ++ r :: base
+
+/-- The prefix *ber-*. -/
+def ber : List Segment → List Segment := prefixR [b, e]
+
+/-- The prefix *per-*. -/
+def per : List Segment → List Segment := prefixR [p, e]
+
+/-- The prefix *ter-*. -/
+def ter : List Segment → List Segment := prefixR [t, e]
 
 end Indonesian.Phonology
