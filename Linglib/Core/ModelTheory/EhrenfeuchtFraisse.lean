@@ -22,6 +22,8 @@ holds, witnessed by Hintikka formulas. This is the rank-bounded counterpart of m
 * `FirstOrder.Language.ElementarilyEquivalentUpTo`: `n`-equivalence of structures.
 * `FirstOrder.Language.FODefinable`: definability of a class of structures within a class.
 * `FirstOrder.Language.DuplicatorWins`: duplicator wins the `k`-round game from a pair of tuples.
+* `FirstOrder.Language.gameNormal`, `FirstOrder.Language.hintikkaSet`: the game-normal formulas
+  of each rank, finitely many over a finite relational signature.
 * `FirstOrder.Language.hintikka`: the rank-`k` Hintikka formula of a tuple.
 
 ## Main results
@@ -42,7 +44,9 @@ holds, witnessed by Hintikka formulas. This is the rank-bounded counterpart of m
 Tuples are the bound variables of `L.BoundedFormula Empty n`, so the `Fin.snoc` in `realize_all`
 is a round of the game and sentences are the case `n = 0`. As in Hodges's back-and-forth systems,
 the atomic condition holds at every rank; Libkin states it at rank `0` only, which agrees on
-nonempty structures (`duplicatorWins_succ_iff`) but makes soundness fail on empty ones.
+nonempty structures (`duplicatorWins_succ_iff`) but makes soundness fail on empty ones, where a
+nullary relation symbol can tell two structures apart with no move to play. For the same reason a
+game-normal formula of positive rank carries an atomic type, which Hodges's omit.
 
 ## References
 
@@ -219,6 +223,11 @@ theorem duplicatorWins_succ_iff [Nonempty M] :
 
 /-! ### Hintikka formulas and completeness -/
 
+theorem Term.exists_eq_var [L.IsRelational] {α : Type*} [IsEmpty α] (t : L.Term (α ⊕ Fin n)) :
+    ∃ i, t = &i := by
+  rcases t with (x | i) | ⟨f, _⟩
+  exacts [isEmptyElim x, ⟨i, rfl⟩, isEmptyElim f]
+
 section Hintikka
 
 variable (L)
@@ -245,169 +254,167 @@ theorem atom_isAtomic (i : L.AtomIndex n) : (L.atom i).IsAtomic := by
 variable {L} in
 theorem BoundedFormula.IsAtomic.exists_eq_atom [L.IsRelational] {φ : L.BoundedFormula Empty n}
     (hφ : φ.IsAtomic) : ∃ i, φ = L.atom i := by
-  have hvar : ∀ t : L.Term (Empty ⊕ Fin n), ∃ i, t = &i := by
-    rintro (⟨x | i⟩ | ⟨f, _⟩)
-    exacts [x.elim, ⟨i, rfl⟩, isEmptyElim f]
   cases hφ with
   | equal t₁ t₂ =>
-    obtain ⟨i, rfl⟩ := hvar t₁
-    obtain ⟨j, rfl⟩ := hvar t₂
+    obtain ⟨i, rfl⟩ := t₁.exists_eq_var
+    obtain ⟨j, rfl⟩ := t₂.exists_eq_var
     exact ⟨.inl (i, j), rfl⟩
   | @rel l R ts =>
-    choose f hf using fun i => hvar (ts i)
+    choose f hf using fun i => (ts i).exists_eq_var
     exact ⟨.inr ⟨⟨l, R⟩, f⟩, by simp [atom, Relations.boundedFormula, funext hf]⟩
 
 variable [Finite L.Symbols]
 
 open Classical in
-/-- The atomic type of a tuple is the conjunction of the atoms it satisfies and the negations of
-the others. -/
-noncomputable def atomicType (v : Fin n → M) : L.BoundedFormula Empty n :=
-  iInf fun i : L.AtomIndex n => if (L.atom i).Realize default v then L.atom i else (L.atom i).not
+/-- The atomic type `S` is the conjunction of the atoms in `S` and the negations of the others. -/
+noncomputable def atomicType (S : Set (L.AtomIndex n)) : L.BoundedFormula Empty n :=
+  iInf fun i => if i ∈ S then L.atom i else (L.atom i).not
+
+/-- The game-normal formula built from `θ₀` and a set `X` of formulas in one more variable says
+that `θ₀` holds, each member of `X` is realized by some extension of the tuple, and every extension
+realizes some member of `X` ([hodges-1993] (3.7), there without `θ₀`). -/
+noncomputable def gameNormal (θ₀ : L.BoundedFormula Empty n)
+    (X : Finset (L.BoundedFormula Empty (n + 1))) : L.BoundedFormula Empty n :=
+  θ₀ ⊓ (iInf fun θ : X => θ.1.ex) ⊓ (iSup fun θ : X => θ.1).all
 
 open Classical in
-/-- `hintikkaSet k n` is the finite set of game-normal formulas of rank `k` in `n` variables. At
-rank `0` they are the atomic types. At rank `k + 1` each joins an atomic type to a set `X` of
-rank-`k` formulas in `n + 1` variables, saying that each member of `X` is realized by some
-extension and every extension realizes some member of `X`. -/
+/-- `hintikkaSet k n` is the finite set of game-normal formulas of rank `k` in `n` variables: the
+atomic types at rank `0`, and at rank `k + 1` the game-normal formulas built from an atomic type
+and a set of game-normal formulas of rank `k` in `n + 1` variables. -/
 noncomputable def hintikkaSet : (k n : ℕ) → Finset (L.BoundedFormula Empty n)
   | 0, n =>
-      letI := Fintype.ofFinite (L.AtomIndex n → Bool)
-      Finset.univ.image fun s : L.AtomIndex n → Bool =>
-        iInf fun i => if s i then L.atom i else (L.atom i).not
+      letI := Fintype.ofFinite (Set (L.AtomIndex n))
+      Finset.univ.image L.atomicType
   | k + 1, n =>
-      (hintikkaSet 0 n ×ˢ (hintikkaSet k (n + 1)).powerset).image fun p =>
-        p.1 ⊓ (iInf fun θ : p.2 => θ.1.ex) ⊓ (iSup fun θ : p.2 => θ.1).all
+      letI := Fintype.ofFinite (Set (L.AtomIndex n))
+      (Finset.univ ×ˢ (hintikkaSet k (n + 1)).powerset).image fun p =>
+        L.gameNormal (L.atomicType p.1) p.2
 
 open Classical in
-/-- The rank-`k` Hintikka formula of `v` is the game-normal formula of rank `k` it satisfies. -/
-noncomputable def hintikka : (k : ℕ) → {n : ℕ} → (Fin n → M) →
-    L.BoundedFormula Empty n
-  | 0, _, v => L.atomicType v
-  | k + 1, n, v =>
-      L.atomicType v ⊓
-        (iInf fun θ : (L.hintikkaSet k (n + 1)).filter
-            (fun θ => ∃ a, θ.Realize default (Fin.snoc v a)) => θ.1.ex) ⊓
-        (iSup fun θ : (L.hintikkaSet k (n + 1)).filter
-            (fun θ => ∃ a, θ.Realize default (Fin.snoc v a)) => θ.1).all
+/-- The game-normal formulas of rank `k` realized by the extensions of `v` by one element. -/
+noncomputable def hintikkaExtensions (k : ℕ) (v : Fin n → M) :
+    Finset (L.BoundedFormula Empty (n + 1)) :=
+  (L.hintikkaSet k (n + 1)).filter fun θ => ∃ a, θ.Realize default (Fin.snoc v a)
 
-variable {L}
+/-- The rank-`k` Hintikka formula of `v` is the game-normal formula of rank `k` it satisfies: its
+atomic type, joined at rank `k + 1` to the game-normal formulas of rank `k` of its extensions. -/
+noncomputable def hintikka : (k : ℕ) → {n : ℕ} → (Fin n → M) → L.BoundedFormula Empty n
+  | 0, _, v => L.atomicType {i | (L.atom i).Realize default v}
+  | k + 1, _, v => L.gameNormal (L.atomicType {i | (L.atom i).Realize default v})
+      (L.hintikkaExtensions k v)
 
-theorem realize_atomicType_iff [L.IsRelational] (v : Fin n → M) (w : Fin n → N) :
-    (L.atomicType v).Realize default w ↔ L.DuplicatorWins 0 v w := by
+variable {L} {S : Set (L.AtomIndex n)} {θ θ₀ : L.BoundedFormula Empty n}
+  {X : Finset (L.BoundedFormula Empty (n + 1))}
+
+theorem realize_atomicType : (L.atomicType S).Realize default w ↔
+    {i | (L.atom i).Realize default w} = S := by
   classical
-  simp only [atomicType, realize_iInf]
-  refine ⟨fun h φ hφ => ?_, fun h i => ?_⟩
-  · obtain ⟨i, rfl⟩ := hφ.exists_eq_atom
-    have := h i
-    split_ifs at this with hi
-    exacts [iff_of_true hi this, iff_of_false hi (realize_not.1 this)]
-  · split_ifs with hi
-    exacts [(h _ (atom_isAtomic i)).1 hi, realize_not.2 fun hw => hi ((h _ (atom_isAtomic i)).2 hw)]
+  simp only [atomicType, realize_iInf, Set.ext_iff, Set.mem_ofPred_eq]
+  refine forall_congr' fun i => ?_
+  split_ifs with hi <;> simp [hi]
 
-theorem qr_atomicType (v : Fin n → M) : (L.atomicType v).qr = 0 :=
+theorem realize_atomicType_iff_duplicatorWins [L.IsRelational] (v : Fin n → M) (w : Fin n → N) :
+    (L.atomicType {i | (L.atom i).Realize default v}).Realize default w ↔
+      L.DuplicatorWins 0 v w := by
+  rw [realize_atomicType, Set.ext_iff]
+  exact ⟨fun h φ hφ => by obtain ⟨i, rfl⟩ := hφ.exists_eq_atom; exact (h i).symm,
+    fun h i => (h _ (atom_isAtomic i)).symm⟩
+
+theorem qr_atomicType (S : Set (L.AtomIndex n)) : (L.atomicType S).qr = 0 :=
   Nat.le_zero.1 <| qr_iInf_le fun i => by split_ifs <;> simp [(atom_isAtomic i).qr_eq_zero]
+
+omit [Finite L.Symbols] in
+theorem realize_gameNormal : (L.gameNormal θ₀ X).Realize default w ↔ θ₀.Realize default w ∧
+    (∀ θ ∈ X, ∃ b, θ.Realize default (Fin.snoc w b)) ∧
+      ∀ b, ∃ θ ∈ X, θ.Realize default (Fin.snoc w b) := by
+  simp only [gameNormal, realize_inf, realize_iInf, realize_iSup, realize_all, realize_ex,
+    Subtype.forall, Subtype.exists, and_assoc, exists_prop]
+
+omit [Finite L.Symbols] in
+theorem qr_gameNormal_le (h₀ : θ₀.qr ≤ k + 1) (hX : ∀ θ ∈ X, θ.qr ≤ k) :
+    (L.gameNormal θ₀ X).qr ≤ k + 1 := by
+  simp only [gameNormal, qr_inf, qr_all, max_le_iff]
+  exact ⟨⟨h₀, qr_iInf_le fun θ => by rw [qr_ex]; exact Nat.succ_le_succ (hX _ θ.2)⟩,
+    Nat.succ_le_succ (qr_iSup_le fun θ => hX _ θ.2)⟩
+
+theorem mem_hintikkaSet_zero : θ ∈ L.hintikkaSet 0 n ↔ ∃ S, L.atomicType S = θ := by
+  simp [hintikkaSet]
+
+theorem mem_hintikkaSet_succ : θ ∈ L.hintikkaSet (k + 1) n ↔
+    ∃ S, ∃ X ⊆ L.hintikkaSet k (n + 1), L.gameNormal (L.atomicType S) X = θ := by
+  simp [hintikkaSet]
+
+theorem mem_hintikkaExtensions {θ : L.BoundedFormula Empty (n + 1)} :
+    θ ∈ L.hintikkaExtensions k v ↔
+      θ ∈ L.hintikkaSet k (n + 1) ∧ ∃ a, θ.Realize default (Fin.snoc v a) := by
+  classical exact Finset.mem_filter
 
 theorem qr_le_of_mem_hintikkaSet :
     ∀ {k n} {θ : L.BoundedFormula Empty n}, θ ∈ L.hintikkaSet k n → θ.qr ≤ k
-  | 0, n, θ, hθ => by
-      classical
-      unfold hintikkaSet at hθ
-      obtain ⟨s, -, rfl⟩ := Finset.mem_image.1 hθ
-      exact qr_iInf_le fun i => by split_ifs <;> simp [(atom_isAtomic i).qr_eq_zero]
-  | k + 1, n, θ, hθ => by
-      classical
-      unfold hintikkaSet at hθ
-      obtain ⟨⟨θ₀, X⟩, hp, rfl⟩ := Finset.mem_image.1 hθ
-      rw [Finset.mem_product, Finset.mem_powerset] at hp
-      simp only [qr_inf, qr_all, max_le_iff]
-      refine ⟨⟨(qr_le_of_mem_hintikkaSet hp.1).trans k.succ.zero_le, qr_iInf_le fun θ' => ?_⟩,
-        Nat.succ_le_succ (qr_iSup_le fun θ' => qr_le_of_mem_hintikkaSet (hp.2 θ'.2))⟩
-      rw [qr_ex]
-      exact Nat.succ_le_succ (qr_le_of_mem_hintikkaSet (hp.2 θ'.2))
+  | 0, _, _, hθ => by
+      obtain ⟨S, rfl⟩ := mem_hintikkaSet_zero.1 hθ
+      exact (qr_atomicType S).le
+  | k + 1, _, _, hθ => by
+      obtain ⟨S, X, hX, rfl⟩ := mem_hintikkaSet_succ.1 hθ
+      exact qr_gameNormal_le ((qr_atomicType S).le.trans (Nat.zero_le _))
+        fun θ hθ => qr_le_of_mem_hintikkaSet (hX hθ)
 
 theorem hintikka_mem : ∀ (k : ℕ) {n} (v : Fin n → M), L.hintikka k v ∈ L.hintikkaSet k n
-  | 0, n, v => by
-      classical
-      unfold hintikkaSet hintikka atomicType
-      let _ := Fintype.ofFinite (L.AtomIndex n → Bool)
-      refine Finset.mem_image.2 ⟨fun i => decide ((L.atom i).Realize default v),
-        Finset.mem_univ _, congrArg _ (funext fun i => ?_)⟩
-      simp only [decide_eq_true_eq]
-  | k + 1, n, v => by
-      classical
-      unfold hintikkaSet hintikka
-      exact Finset.mem_image.2 ⟨(L.atomicType v, _), Finset.mem_product.2
-        ⟨hintikka_mem 0 v, Finset.mem_powerset.2 (Finset.filter_subset _ _)⟩, rfl⟩
+  | 0, _, _ => mem_hintikkaSet_zero.2 ⟨_, rfl⟩
+  | _ + 1, _, _ =>
+      mem_hintikkaSet_succ.2 ⟨_, _, fun _ h => (mem_hintikkaExtensions.1 h).1, rfl⟩
 
 theorem qr_hintikka_le (k : ℕ) (v : Fin n → M) : (L.hintikka k v).qr ≤ k :=
   qr_le_of_mem_hintikkaSet (hintikka_mem k v)
+
+theorem realize_hintikka_self : ∀ (k : ℕ) {n} (v : Fin n → M), (L.hintikka k v).Realize default v
+  | 0, _, _ => realize_atomicType.2 rfl
+  | k + 1, _, v => realize_gameNormal.2 ⟨realize_hintikka_self 0 v,
+      fun _ hθ => (mem_hintikkaExtensions.1 hθ).2, fun a => ⟨_, mem_hintikkaExtensions.2
+        ⟨hintikka_mem k _, a, realize_hintikka_self k _⟩, realize_hintikka_self k _⟩⟩
 
 /-- A tuple satisfies exactly one game-normal formula of each rank, its Hintikka formula
 ([hodges-1993] Theorem 3.3.2 (a)). -/
 theorem eq_hintikka_of_realize : ∀ {k n} {θ : L.BoundedFormula Empty n} (u : Fin n → M),
     θ ∈ L.hintikkaSet k n → θ.Realize default u → θ = L.hintikka k u
-  | 0, n, θ, u, hθ, h => by
-      classical
-      unfold hintikkaSet at hθ
-      obtain ⟨s, -, rfl⟩ := Finset.mem_image.1 hθ
-      simp only [realize_iInf] at h
-      refine congrArg _ (funext fun i => ?_)
-      have hi := h i
-      cases hs : s i <;>
-        simp only [hs, Bool.false_eq_true, ite_true, ite_false, realize_not] at hi ⊢ <;> simp [hi]
-  | k + 1, n, θ, u, hθ, h => by
-      classical
-      unfold hintikkaSet at hθ
-      obtain ⟨⟨θ₀, X⟩, hp, rfl⟩ := Finset.mem_image.1 hθ
-      rw [Finset.mem_product, Finset.mem_powerset] at hp
-      simp only [realize_inf, realize_iInf, realize_iSup, realize_all, realize_ex,
-        Subtype.forall, Subtype.exists] at h
-      obtain ⟨⟨h₀, h₁⟩, h₂⟩ := h
-      obtain rfl := eq_hintikka_of_realize u hp.1 h₀
-      have hX : X = (L.hintikkaSet k (n + 1)).filter
-          (fun θ => ∃ a, θ.Realize default (Fin.snoc u a)) := by
-        ext θ'
-        rw [Finset.mem_filter]
-        refine ⟨fun hX => ⟨hp.2 hX, h₁ θ' hX⟩, fun ⟨hθ', a, ha⟩ => ?_⟩
-        obtain ⟨θ'', hθ'', ha''⟩ := h₂ a
-        rw [eq_hintikka_of_realize _ hθ' ha, ← eq_hintikka_of_realize _ (hp.2 hθ'') ha'']
-        exact hθ''
-      subst hX
-      rfl
+  | 0, _, _, _, hθ, h => by
+      obtain ⟨S, rfl⟩ := mem_hintikkaSet_zero.1 hθ
+      exact congrArg _ (realize_atomicType.1 h).symm
+  | k + 1, n, _, u, hθ, h => by
+      obtain ⟨S, X, hX, rfl⟩ := mem_hintikkaSet_succ.1 hθ
+      obtain ⟨h₀, h₁, h₂⟩ := realize_gameNormal.1 h
+      obtain rfl := realize_atomicType.1 h₀
+      change L.gameNormal _ X = L.gameNormal _ _
+      congr 1
+      ext θ'
+      rw [mem_hintikkaExtensions]
+      refine ⟨fun hθ' => ⟨hX hθ', h₁ θ' hθ'⟩, fun ⟨hθ', a, ha⟩ => ?_⟩
+      obtain ⟨θ'', hθ'', ha''⟩ := h₂ a
+      rwa [eq_hintikka_of_realize _ hθ' ha, ← eq_hintikka_of_realize _ (hX hθ'') ha'']
 
 variable [L.IsRelational]
-
-theorem realize_hintikka_self : ∀ (k : ℕ) {n} (v : Fin n → M), (L.hintikka k v).Realize default v
-  | 0, _, v => (realize_atomicType_iff v v).2 (DuplicatorWins.refl 0 v)
-  | k + 1, n, v => by
-      classical
-      simp only [hintikka, realize_inf, realize_iInf, realize_iSup, realize_all, realize_ex,
-        Subtype.forall, Subtype.exists, Finset.mem_filter]
-      exact ⟨⟨realize_hintikka_self 0 v, fun θ ⟨_, a, ha⟩ => ⟨a, ha⟩⟩,
-        fun a => ⟨_, ⟨hintikka_mem k _, a, realize_hintikka_self k _⟩, realize_hintikka_self k _⟩⟩
 
 /-- The Hintikka formula of `v` holds of `w` iff duplicator wins `k` rounds from the tuples
 ([hodges-1993] Theorem 3.3.2 (b)). -/
 theorem realize_hintikka_iff : ∀ {k n} (v : Fin n → M) (w : Fin n → N),
     (L.hintikka k v).Realize default w ↔ L.DuplicatorWins k v w
-  | 0, _, v, w => realize_atomicType_iff v w
+  | 0, _, v, w => realize_atomicType_iff_duplicatorWins v w
   | k + 1, n, v, w => by
-      classical
-      simp only [hintikka, realize_inf, realize_atomicType_iff, realize_iInf, realize_iSup,
-        realize_all, realize_ex, Subtype.forall, Subtype.exists, Finset.mem_filter, DuplicatorWins,
-        and_assoc]
-      refine and_congr_right fun _ => ⟨fun ⟨h₁, h₂⟩ => ⟨fun a => ?_, fun b => ?_⟩,
-        fun ⟨h₁, h₂⟩ => ⟨fun θ ⟨hθ, a, ha⟩ => ?_, fun b => ?_⟩⟩
-      · obtain ⟨b, hb⟩ := h₁ _ ⟨hintikka_mem k _, a, realize_hintikka_self k _⟩
+      change (L.gameNormal _ _).Realize default w ↔ _
+      rw [realize_gameNormal, realize_atomicType_iff_duplicatorWins]
+      refine ⟨fun ⟨h₀, h₁, h₂⟩ => ⟨h₀, fun a => ?_, fun b => ?_⟩,
+        fun h => ⟨h.zero, fun θ hθ => ?_, fun b => ?_⟩⟩
+      · obtain ⟨b, hb⟩ := h₁ _ (mem_hintikkaExtensions.2
+          ⟨hintikka_mem k _, a, realize_hintikka_self k _⟩)
         exact ⟨b, (realize_hintikka_iff _ _).1 hb⟩
-      · obtain ⟨θ, ⟨hθ, a, ha⟩, hb⟩ := h₂ b
-        refine ⟨a, (realize_hintikka_iff _ _).1 ?_⟩
-        rwa [← eq_hintikka_of_realize _ hθ ha]
-      · obtain ⟨b, hb⟩ := h₁ a
+      · obtain ⟨θ, hθ, hb⟩ := h₂ b
+        obtain ⟨hθ, a, ha⟩ := mem_hintikkaExtensions.1 hθ
+        exact ⟨a, (realize_hintikka_iff _ _).1 (by rwa [← eq_hintikka_of_realize _ hθ ha])⟩
+      · obtain ⟨hθ, a, ha⟩ := mem_hintikkaExtensions.1 hθ
+        obtain ⟨b, hb⟩ := h.forth a
         exact ⟨b, eq_hintikka_of_realize _ hθ ha ▸ (realize_hintikka_iff _ _).2 hb⟩
-      · obtain ⟨a, ha⟩ := h₂ b
-        exact ⟨_, ⟨hintikka_mem k _, a, realize_hintikka_self k _⟩,
+      · obtain ⟨a, ha⟩ := h.back b
+        exact ⟨_, mem_hintikkaExtensions.2 ⟨hintikka_mem k _, a, realize_hintikka_self k _⟩,
           (realize_hintikka_iff _ _).2 ha⟩
 termination_by k _ => k
 decreasing_by all_goals omega

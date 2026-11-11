@@ -137,17 +137,14 @@ variable [L.IsMonadic]
 
 theorem realize_iff_of_isAtomic (h : L.MonadicMatch v w) {φ : L.BoundedFormula Empty n}
     (hφ : φ.IsAtomic) : φ.Realize default v ↔ φ.Realize default w := by
-  have hvar : ∀ t : L.Term (Empty ⊕ Fin n), ∃ i, t = &i := by
-    rintro (⟨x | i⟩ | ⟨f, _⟩)
-    exacts [x.elim, ⟨i, rfl⟩, isEmptyElim f]
   cases hφ with
   | equal t₁ t₂ =>
-    obtain ⟨i, rfl⟩ := hvar t₁
-    obtain ⟨j, rfl⟩ := hvar t₂
+    obtain ⟨i, rfl⟩ := t₁.exists_eq_var
+    obtain ⟨j, rfl⟩ := t₂.exists_eq_var
     exact h.eq_iff i j
   | @rel l R ts =>
     obtain rfl : l = 1 := by_contra fun hl => (IsMonadic.isEmpty_relations l hl).elim R
-    obtain ⟨i, hi⟩ := hvar (ts 0)
+    obtain ⟨i, hi⟩ := (ts 0).exists_eq_var
     have hv : (fun k => (ts k).realize (Sum.elim default v)) = ![v i] := by
       funext k; obtain rfl := Subsingleton.elim k 0; simp [hi]
     have hw : (fun k => (ts k).realize (Sum.elim default w)) = ![w i] := by
