@@ -499,7 +499,8 @@ def shape {B β : Type} {Rule : Ty B → Ty B → Ty B → Type}
 
 /-- The modes the book's `combine` finds for two types, in its order. -/
 def modes (l r : Ty Unit) : List (Sigma (Mode (baseGrammar Unit).Binary l r)) :=
-  Ty.combineWith (ManySorted.Language.LocallyFinite.binaryRules (L := baseGrammar Unit))
+  Ty.combineWith (fun _ _ ↦ True)
+    (ManySorted.Language.LocallyFinite.binaryRules (L := baseGrammar Unit))
     (fun p ↦ p :: (Mode.joins p ++ Mode.lowers p)) l r
 
 /-- The interpreter's output for two types: the modes that combine them, in the book's order,

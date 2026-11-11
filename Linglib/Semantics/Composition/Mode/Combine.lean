@@ -16,7 +16,10 @@ node](##Interpreter.mem_binary_effectDriven), and with an inventory of meta-mode
 
 * `Interpreter.Mode.closure`: a mode with every Join and Lower stacked on it.
 * `Interpreter.Ty.combineWith`, `Interpreter.Ty.combine`: the modes for two types, with a given
-  way of closing each result and with `Mode.closure`.
+  inventory of meta-modes and way of closing each result, and with every meta-mode and
+  `Mode.closure`.
+* `Interpreter.Ty.combineWithin`: the modes of a grammar with an inventory of meta-modes, which
+  are [exactly those that keep to it](##Interpreter.Ty.mem_combineWithin).
 * `Interpreter.effectDriven`: the interpreter that admits the modes `Ty.combine` lists, and
   `Interpreter.effectDrivenWithin`, the one that admits those that keep to an inventory.
 
@@ -77,64 +80,86 @@ the result smaller, so its size bounds how many are stacked. -/
 def Mode.closure {l r : Ty B} (p : Sigma (Mode Rule l r)) : List (Sigma (Mode Rule l r)) :=
   Mode.closureAux p.1.size p
 
-variable (find : (l r : Ty B) → List (Sigma (Rule l r)))
+variable (inv : MetaMode → Eff B → Prop) [∀ k f, Decidable (inv k f)]
+  (find : (l r : Ty B) → List (Sigma (Rule l r)))
   (close : {l r : Ty B} → (Sigma (Mode Rule l r)) → List (Sigma (Mode Rule l r)))
 
 /-- `Ty.combineWith` to a bound on the depth of its recursion. Every rule but the two Ejects
 recurses on smaller types, and an Eject turns an arrow into a computation, so at most one Eject
-on each daughter comes between two rules that shrink a type. -/
+on each daughter comes between two rules that shrink a type. A meta-mode the inventory lacks at
+an effect is not tried there. -/
 def Ty.combineAux : ℕ → (l r : Ty B) → List (Sigma (Mode Rule l r))
   | 0, _, _ => []
   | k + 1, l, r =>
     (((find l r).map fun p ↦ (⟨p.1, .basic p.2⟩ : Sigma (Mode Rule l r))) ++
       (match r with
-        | .comp f y => (Ty.combineAux k l y).map fun p ↦ ⟨.comp f p.1, .mapR p.2⟩
+        | .comp f y =>
+          if inv .map f then (Ty.combineAux k l y).map fun p ↦ ⟨.comp f p.1, .mapR p.2⟩ else []
         | _ => []) ++
       (match l with
-        | .comp f x => (Ty.combineAux k x r).map fun p ↦ ⟨.comp f p.1, .mapL p.2⟩
+        | .comp f x =>
+          if inv .map f then (Ty.combineAux k x r).map fun p ↦ ⟨.comp f p.1, .mapL p.2⟩ else []
         | _ => []) ++
       (match l, r with
         | .comp f x, .comp g y =>
           if h : g = f then
             if ha : f.IsApplicative then
-              (Ty.combineAux k x y).map fun p ↦ ⟨.comp f p.1, by subst h; exact .ap ha p.2⟩
+              if inv .ap f then
+                (Ty.combineAux k x y).map fun p ↦ ⟨.comp f p.1, by subst h; exact .ap ha p.2⟩
+              else []
             else []
           else []
         | _, _ => []) ++
       (match l with
         | .fn (.comp f x) x' =>
           if ha : f.IsApplicative then
-            (Ty.combineAux k (x ⇒ x') r).map fun p ↦ ⟨p.1, .unitR ha p.2⟩
+            if inv .unit f then (Ty.combineAux k (x ⇒ x') r).map fun p ↦ ⟨p.1, .unitR ha p.2⟩
+            else []
           else []
         | _ => []) ++
       (match r with
         | .fn (.comp f y) y' =>
           if ha : f.IsApplicative then
-            (Ty.combineAux k l (y ⇒ y')).map fun p ↦ ⟨p.1, .unitL ha p.2⟩
+            if inv .unit f then (Ty.combineAux k l (y ⇒ y')).map fun p ↦ ⟨p.1, .unitL ha p.2⟩
+            else []
           else []
         | _ => []) ++
       (match l, r with
         | .comp (.W i) x, .comp (.R j) y =>
-          if h : j = i then (Ty.combineAux k x y).map fun p ↦ ⟨p.1, h ▸ .counit p.2⟩ else []
+          if h : j = i then
+            if inv .counit (.R i) then (Ty.combineAux k x y).map fun p ↦ ⟨p.1, h ▸ .counit p.2⟩
+            else []
+          else []
         | _, _ => []) ++
       (match r with
         | .fn x (.comp (.R i) y) =>
-          (Ty.combineAux k l (.comp (.R i) (x ⇒ y))).map fun p ↦ ⟨p.1, .ejectR p.2⟩
+          if inv .eject (.R i) then
+            (Ty.combineAux k l (.comp (.R i) (x ⇒ y))).map fun p ↦ ⟨p.1, .ejectR p.2⟩
+          else []
         | _ => []) ++
       (match l with
         | .fn x (.comp (.R i) y) =>
-          (Ty.combineAux k (.comp (.R i) (x ⇒ y)) r).map fun p ↦ ⟨p.1, .ejectL p.2⟩
+          if inv .eject (.R i) then
+            (Ty.combineAux k (.comp (.R i) (x ⇒ y)) r).map fun p ↦ ⟨p.1, .ejectL p.2⟩
+          else []
         | _ => [])).flatMap close
 
 /-- The modes for a left daughter of type `l` and a right daughter of type `r`: each way of
-peeling effects off the two types down to a basic rule, with the results `close` gives each. -/
+peeling effects off the two types down to a basic rule by the meta-modes of the inventory, with
+the results `close` gives each. -/
 def Ty.combineWith (l r : Ty B) : List (Sigma (Mode Rule l r)) :=
-  Ty.combineAux find close (3 * (l.size + r.size) + 3) l r
+  Ty.combineAux inv find close (3 * (l.size + r.size) + 3) l r
 
 /-- The modes that combine a left daughter of type `l` and a right daughter of type `r`: each way
 of peeling effects off the two types down to a basic rule, with every Join and Lower. -/
 def Ty.combine (l r : Ty B) : List (Sigma (Mode Rule l r)) :=
-  Ty.combineWith find Mode.closure l r
+  Ty.combineWith (fun _ _ ↦ True) find Mode.closure l r
+
+/-- The modes of a grammar with an inventory of meta-modes that combine two types: the search
+tries a meta-mode only at the effects where the inventory has it, and keeps the Joins and Lowers
+the inventory has. -/
+def Ty.combineWithin (l r : Ty B) : List (Sigma (Mode Rule l r)) :=
+  Ty.combineWith inv find (fun p ↦ (Mode.closure p).filter fun q ↦ q.2.Within inv) l r
 
 end Combine
 
@@ -263,104 +288,114 @@ theorem Mode.depth_le {l r u : Ty B} (m : Mode Rule l r u) :
   | join h m ih => exact ih
   | lower m ih => exact ih
 
-variable {find : (l r : Ty B) → List (Sigma (Rule l r))}
+variable {inv : MetaMode → Eff B → Prop} [∀ k f, Decidable (inv k f)]
+  {find : (l r : Ty B) → List (Sigma (Rule l r))}
+  {close : {l r : Ty B} → (Sigma (Mode Rule l r)) → List (Sigma (Mode Rule l r))}
 
-/-- A mode is found once the bound exceeds its depth. -/
+/-- A mode that keeps to the inventory is found once the bound exceeds its depth, where the
+closing step keeps such a mode and the Joins and Lowers of its results that keep to it. -/
 theorem Ty.mem_combineAux
     (hfind : ∀ {l r u : Ty B} (b : Rule l r u), (⟨u, b⟩ : Sigma (Rule l r)) ∈ find l r)
-    {l r u : Ty B} (m : Mode Rule l r u) : ∀ {k : ℕ}, m.depth < k →
-      (⟨u, m⟩ : Sigma (Mode Rule l r)) ∈ Ty.combineAux find Mode.closure k l r := by
+    (hself : ∀ {l r : Ty B} (p : Sigma (Mode Rule l r)), p.2.Within inv → p ∈ close p)
+    (hstep : ∀ {l r : Ty B} {q p p' : Sigma (Mode Rule l r)}, p ∈ close q →
+      p' ∈ Mode.joins p ++ Mode.lowers p → p'.2.Within inv → p' ∈ close q)
+    {l r u : Ty B} (m : Mode Rule l r u) : m.Within inv → ∀ {k : ℕ}, m.depth < k →
+      (⟨u, m⟩ : Sigma (Mode Rule l r)) ∈ Ty.combineAux inv find close k l r := by
   induction m with
   | basic b =>
-    intro k hk
+    intro hm k hk
     obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (n := k) (by omega)
     show _ ∈ List.flatMap _ _
-    refine List.mem_flatMap.2 ⟨_, ?_, Mode.mem_closure_self _⟩
+    refine List.mem_flatMap.2 ⟨_, ?_, hself _ hm⟩
     iterate 8 apply List.mem_append_left
     exact List.mem_map.2 ⟨_, hfind b, rfl⟩
   | mapR m ih =>
-    intro k hk
+    intro hm k hk
     obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (n := k) (by omega)
     show _ ∈ List.flatMap _ _
-    refine List.mem_flatMap.2 ⟨_, ?_, Mode.mem_closure_self _⟩
+    refine List.mem_flatMap.2 ⟨_, ?_, hself _ hm⟩
     iterate 7 apply List.mem_append_left
     apply List.mem_append_right
-    exact List.mem_map.2 ⟨_, ih (Nat.lt_of_succ_lt_succ hk), rfl⟩
+    simp only [hm.1, ↓reduceIte]
+    exact List.mem_map.2 ⟨_, ih hm.2 (Nat.lt_of_succ_lt_succ hk), rfl⟩
   | mapL m ih =>
-    intro k hk
+    intro hm k hk
     obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (n := k) (by omega)
     show _ ∈ List.flatMap _ _
-    refine List.mem_flatMap.2 ⟨_, ?_, Mode.mem_closure_self _⟩
+    refine List.mem_flatMap.2 ⟨_, ?_, hself _ hm⟩
     iterate 6 apply List.mem_append_left
     apply List.mem_append_right
-    exact List.mem_map.2 ⟨_, ih (Nat.lt_of_succ_lt_succ hk), rfl⟩
+    simp only [hm.1, ↓reduceIte]
+    exact List.mem_map.2 ⟨_, ih hm.2 (Nat.lt_of_succ_lt_succ hk), rfl⟩
   | ap h m ih =>
-    intro k hk
+    intro hm k hk
     obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (n := k) (by omega)
     show _ ∈ List.flatMap _ _
-    refine List.mem_flatMap.2 ⟨_, ?_, Mode.mem_closure_self _⟩
+    refine List.mem_flatMap.2 ⟨_, ?_, hself _ hm⟩
     iterate 5 apply List.mem_append_left
     apply List.mem_append_right
-    simp only [h, ↓reduceDIte]
-    exact List.mem_map.2 ⟨_, ih (Nat.lt_of_succ_lt_succ hk), rfl⟩
+    simp only [h, hm.1, ↓reduceDIte, ↓reduceIte]
+    exact List.mem_map.2 ⟨_, ih hm.2 (Nat.lt_of_succ_lt_succ hk), rfl⟩
   | unitR h m ih =>
-    intro k hk
+    intro hm k hk
     obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (n := k) (by omega)
     show _ ∈ List.flatMap _ _
-    refine List.mem_flatMap.2 ⟨_, ?_, Mode.mem_closure_self _⟩
+    refine List.mem_flatMap.2 ⟨_, ?_, hself _ hm⟩
     iterate 4 apply List.mem_append_left
     apply List.mem_append_right
-    simp only [h, ↓reduceDIte]
-    exact List.mem_map.2 ⟨_, ih (Nat.lt_of_succ_lt_succ hk), rfl⟩
+    simp only [h, hm.1, ↓reduceDIte, ↓reduceIte]
+    exact List.mem_map.2 ⟨_, ih hm.2 (Nat.lt_of_succ_lt_succ hk), rfl⟩
   | unitL h m ih =>
-    intro k hk
+    intro hm k hk
     obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (n := k) (by omega)
     show _ ∈ List.flatMap _ _
-    refine List.mem_flatMap.2 ⟨_, ?_, Mode.mem_closure_self _⟩
+    refine List.mem_flatMap.2 ⟨_, ?_, hself _ hm⟩
     iterate 3 apply List.mem_append_left
     apply List.mem_append_right
-    simp only [h, ↓reduceDIte]
-    exact List.mem_map.2 ⟨_, ih (Nat.lt_of_succ_lt_succ hk), rfl⟩
+    simp only [h, hm.1, ↓reduceDIte, ↓reduceIte]
+    exact List.mem_map.2 ⟨_, ih hm.2 (Nat.lt_of_succ_lt_succ hk), rfl⟩
   | counit m ih =>
-    intro k hk
+    intro hm k hk
     obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (n := k) (by omega)
     show _ ∈ List.flatMap _ _
-    refine List.mem_flatMap.2 ⟨_, ?_, Mode.mem_closure_self _⟩
+    refine List.mem_flatMap.2 ⟨_, ?_, hself _ hm⟩
     iterate 2 apply List.mem_append_left
     apply List.mem_append_right
-    simp only [dite_true]
-    exact List.mem_map.2 ⟨_, ih (Nat.lt_of_succ_lt_succ hk), rfl⟩
+    simp only [dite_true, hm.1, ↓reduceIte]
+    exact List.mem_map.2 ⟨_, ih hm.2 (Nat.lt_of_succ_lt_succ hk), rfl⟩
   | ejectR m ih =>
-    intro k hk
+    intro hm k hk
     obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (n := k) (by omega)
     show _ ∈ List.flatMap _ _
-    refine List.mem_flatMap.2 ⟨_, ?_, Mode.mem_closure_self _⟩
+    refine List.mem_flatMap.2 ⟨_, ?_, hself _ hm⟩
     apply List.mem_append_left
     apply List.mem_append_right
-    exact List.mem_map.2 ⟨_, ih (Nat.lt_of_succ_lt_succ hk), rfl⟩
+    simp only [hm.1, ↓reduceIte]
+    exact List.mem_map.2 ⟨_, ih hm.2 (Nat.lt_of_succ_lt_succ hk), rfl⟩
   | ejectL m ih =>
-    intro k hk
+    intro hm k hk
     obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (n := k) (by omega)
     show _ ∈ List.flatMap _ _
-    refine List.mem_flatMap.2 ⟨_, ?_, Mode.mem_closure_self _⟩
+    refine List.mem_flatMap.2 ⟨_, ?_, hself _ hm⟩
     apply List.mem_append_right
-    exact List.mem_map.2 ⟨_, ih (Nat.lt_of_succ_lt_succ hk), rfl⟩
+    simp only [hm.1, ↓reduceIte]
+    exact List.mem_map.2 ⟨_, ih hm.2 (Nat.lt_of_succ_lt_succ hk), rfl⟩
   | join h m ih =>
-    intro k hk
+    intro hm k hk
     obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (n := k) (by omega)
-    have hm := ih hk
-    obtain ⟨q, hq, hm⟩ := List.mem_flatMap.1 (show _ ∈ List.flatMap _ _ from hm)
+    have hm' := ih hm.2 hk
+    obtain ⟨q, hq, hm'⟩ := List.mem_flatMap.1 (show _ ∈ List.flatMap _ _ from hm')
     show _ ∈ List.flatMap _ _
-    exact List.mem_flatMap.2 ⟨q, hq, Mode.mem_closureAux_of_mem _ le_rfl hm
-      (List.mem_append_left _ (Mode.mem_joins h m))⟩
+    exact List.mem_flatMap.2 ⟨q, hq,
+      hstep hm' (List.mem_append_left _ (Mode.mem_joins h m)) hm⟩
   | lower m ih =>
-    intro k hk
+    intro hm k hk
     obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (n := k) (by omega)
-    have hm := ih hk
-    obtain ⟨q, hq, hm⟩ := List.mem_flatMap.1 (show _ ∈ List.flatMap _ _ from hm)
+    have hm' := ih hm.2 hk
+    obtain ⟨q, hq, hm'⟩ := List.mem_flatMap.1 (show _ ∈ List.flatMap _ _ from hm')
     show _ ∈ List.flatMap _ _
-    exact List.mem_flatMap.2 ⟨q, hq, Mode.mem_closureAux_of_mem _ le_rfl hm
-      (List.mem_append_right _ (Mode.mem_lowers m))⟩
+    exact List.mem_flatMap.2 ⟨q, hq,
+      hstep hm' (List.mem_append_right _ (Mode.mem_lowers m)) hm⟩
 
 /-- **The search is complete.** Every mode of the grammar that combines two daughters is among
 those `Ty.combine` lists for their types, given every basic rule is among those listed. -/
@@ -372,7 +407,32 @@ theorem Ty.mem_combine
   have := l.ejectable_le_one
   have := r.ejectable_le_one
   have hk : m.depth < 3 * (l.size + r.size) + 3 := by omega
-  exact Ty.mem_combineAux (find := find) (fun b ↦ hfind b) (l := l) (r := r) (u := u) m hk
+  exact Ty.mem_combineAux (inv := fun _ _ ↦ True) (find := find) (close := Mode.closure)
+    (fun b ↦ hfind b) (fun p _ ↦ Mode.mem_closure_self p)
+    (fun hp hp' _ ↦ Mode.mem_closureAux_of_mem _ le_rfl hp hp') m
+    (Mode.within_of_forall (fun _ _ ↦ trivial) m) hk
+
+/-- **The search of a grammar with an inventory is sound and complete.** The modes
+`Ty.combineWithin` lists for two types are exactly the modes of the grammar that keep to the
+inventory, given every basic rule is among those listed. -/
+theorem Ty.mem_combineWithin
+    (hfind : ∀ {l r u : Ty B} (b : Rule l r u), (⟨u, b⟩ : Sigma (Rule l r)) ∈ find l r)
+    {l r : Ty B} {m : Sigma (Mode Rule l r)} :
+    m ∈ Ty.combineWithin inv find l r ↔ m.2.Within inv := by
+  constructor
+  · intro h
+    obtain ⟨q, -, hq⟩ := List.mem_flatMap.1 (show m ∈ List.flatMap _ _ from h)
+    exact of_decide_eq_true (List.mem_filter.1 hq).2
+  · intro h
+    have := m.2.depth_le
+    have := l.ejectable_le_one
+    have := r.ejectable_le_one
+    have hk : m.2.depth < 3 * (l.size + r.size) + 3 := by omega
+    exact Ty.mem_combineAux (find := find) (fun b ↦ hfind b)
+      (fun p hp ↦ List.mem_filter.2 ⟨Mode.mem_closure_self p, decide_eq_true hp⟩)
+      (fun hp hp' hw ↦ List.mem_filter.2
+        ⟨Mode.mem_closureAux_of_mem _ le_rfl (List.mem_filter.1 hp).1 hp', decide_eq_true hw⟩)
+      m.2 h hk
 
 end Complete
 
@@ -397,17 +457,15 @@ def effectDrivenWithin [DecidableEq B] (inv : MetaMode → Eff B → Prop)
     [∀ k f, Decidable (inv k f)] (G : Language (Ty B)) [G.LocallyFinite] {N : Type} :
     Interpreter (effectGrammar G) N where
   unary _ := Language.LocallyFinite.unaryRules (L := G)
-  binary l r := (Ty.combine (Language.LocallyFinite.binaryRules (L := G)) l r).filter
-    fun p ↦ p.2.Within inv
+  binary := Ty.combineWithin inv (Language.LocallyFinite.binaryRules (L := G))
 
 /-- A node admits exactly the modes that keep to the inventory. -/
 theorem mem_binary_effectDrivenWithin [DecidableEq B] {G : Language (Ty B)} [G.LocallyFinite]
     {N : Type} {inv : MetaMode → Eff B → Prop} [∀ k f, Decidable (inv k f)] {l r : Ty B}
     {m : Sigma (Mode G.Binary l r)} :
     m ∈ (effectDrivenWithin inv G : Interpreter (effectGrammar G) N).binary l r ↔
-      m.2.Within inv := by
-  refine List.mem_filter.trans ?_
-  simp only [decide_eq_true_eq, and_iff_right_iff_imp]
-  exact fun _ ↦ mem_binary_effectDriven (N := N) m
+      m.2.Within inv :=
+  Ty.mem_combineWithin (find := Language.LocallyFinite.binaryRules (L := G))
+    fun b ↦ Language.LocallyFinite.mem_symbols b
 
 end Interpreter
