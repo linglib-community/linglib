@@ -16,9 +16,9 @@ public import Mathlib.RingTheory.TensorProduct.Maps
 # The Connes–Kreimer coproduct Δ^ρ
 
 The Connes–Kreimer coproduct on unordered rooted trees, summing over admissible cuts, which leave
-nothing in place of the subtrees they remove. Grafting `B⁺_a` is a Hochschild 1-cocycle for it, and
-coassociativity follows from the cocycle by induction on trees. The counit laws are those of the
-generic coproduct, since the empty cut is the only admissible cut with an empty crown.
+nothing in place of the subtrees they remove. Grafting `B⁺_a` is a Hochschild 1-cocycle for it.
+The bialgebra laws are those of the generic coproduct: nested admissible cuts can be taken in
+either order, and the empty cut is the only admissible cut with an empty crown.
 
 ## Main definitions
 
@@ -30,7 +30,6 @@ generic coproduct, since the empty cut is the only admissible cut with an empty 
 
 * `ConnesKreimer.comulAlgHom_bPlus_cocycle`: the Hochschild 1-cocycle law
   `Δ^ρ (B⁺_a x) = B⁺_a x ⊗ 1 + (id ⊗ B⁺_a) (Δ^ρ x)`.
-* `ConnesKreimer.comulAlgHom_coassoc_algHom`: coassociativity.
 * `ConnesKreimer.instBialgebra`: the Δ^ρ `Bialgebra`, over any `CommSemiring`; the admissible
   cuts are admissible (`ConnesKreimer.instIsBialgebraCutsAdmissibleCuts`).
 
@@ -118,72 +117,20 @@ theorem comulAlgHom_bPlus_cocycle (a : α) (x : ConnesKreimer R (UnorderedTree �
     lhom_ext' fun F ↦ by simp [comulTreeOfCuts_admissibleCuts_node]
   exact congr($h x)
 
-/-! ### Coassociativity
-
-Both sides of coassociativity are algebra homomorphisms, so it is enough that they agree on every
-tree. By induction they agree on the children of `node a F`, hence on the forest `F`, and the
-cocycle carries the agreement from `F` to `B⁺_a F`. -/
-
-private theorem coassoc_bPlus (a : α) {x : ConnesKreimer R (UnorderedTree α)}
-    (hx : Algebra.TensorProduct.assoc R R R _ _ _
-        (Algebra.TensorProduct.map comulAlgHom (AlgHom.id R _) (comulAlgHom x)) =
-      Algebra.TensorProduct.map (AlgHom.id R _) comulAlgHom (comulAlgHom x)) :
-    Algebra.TensorProduct.assoc R R R _ _ _
-        (Algebra.TensorProduct.map comulAlgHom (AlgHom.id R _)
-          (comulAlgHom (bPlus (R := R) a x))) =
-      Algebra.TensorProduct.map (AlgHom.id R _) comulAlgHom (comulAlgHom (bPlus a x)) := by
-  have h₁ (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
-      Algebra.TensorProduct.map comulAlgHom (AlgHom.id R _) (LinearMap.lTensor _ (bPlus a) z) =
-        LinearMap.lTensor _ (bPlus (R := R) a)
-          (Algebra.TensorProduct.map comulAlgHom (AlgHom.id R _) z) := by
-    induction z using TensorProduct.inductionOn <;> simp_all
-  have h₂ (z : (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) ⊗[R]
-      ConnesKreimer R (UnorderedTree α)) :
-      Algebra.TensorProduct.assoc R R R _ _ _ (LinearMap.lTensor _ (bPlus a) z) =
-        LinearMap.lTensor _ (LinearMap.lTensor _ (bPlus (R := R) a))
-          (Algebra.TensorProduct.assoc R R R _ _ _ z) := by
-    induction z using TensorProduct.inductionOn with
-    | tmul w c => induction w using TensorProduct.inductionOn <;> simp_all [TensorProduct.add_tmul]
-    | _ => simp_all
-  have h₃ (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
-      Algebra.TensorProduct.map (AlgHom.id R _) comulAlgHom (LinearMap.lTensor _ (bPlus a) z) =
-        Algebra.TensorProduct.assoc R R R _ _ _ (LinearMap.lTensor _ (bPlus a) z ⊗ₜ 1) +
-          LinearMap.lTensor _ (LinearMap.lTensor _ (bPlus (R := R) a))
-            (Algebra.TensorProduct.map (AlgHom.id R _) comulAlgHom z) := by
-    induction z using TensorProduct.inductionOn with
-    | add z₁ z₂ ih₁ ih₂ => simp only [map_add, TensorProduct.add_tmul, ih₁, ih₂]; abel
-    | _ => simp [comulAlgHom_bPlus_cocycle, TensorProduct.tmul_add]
-  rw [comulAlgHom_bPlus_cocycle, map_add, map_add, map_add, h₁, h₂, hx, h₃,
-    Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.map_tmul, AlgHom.id_apply,
-    AlgHom.id_apply, map_one, comulAlgHom_bPlus_cocycle, TensorProduct.add_tmul, map_add,
-    Algebra.TensorProduct.assoc_tmul, Algebra.TensorProduct.one_def]
-  abel
-
-theorem comulAlgHom_coassoc_algHom :
-    (Algebra.TensorProduct.assoc R R R (ConnesKreimer R (UnorderedTree α))
-        (ConnesKreimer R (UnorderedTree α)) (ConnesKreimer R (UnorderedTree α))).toAlgHom.comp
-      ((Algebra.TensorProduct.map (comulAlgHom (R := R) (α := α))
-        (AlgHom.id R _)).comp comulAlgHom) =
-    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
-      (comulAlgHom (R := R) (α := α))).comp comulAlgHom := by
-  refine algHom_ext_ofTree fun T ↦ ?_
-  induction T with
-  | node a F ih =>
-    rw [← bPlus_of']
-    exact coassoc_bPlus a (algHom_of'_eq_of_ofTree ih)
+/-! ### The bialgebra -/
 
 /-- The Connes–Kreimer coproduct makes `ConnesKreimer R (UnorderedTree α)` a bialgebra over any
 commutative semiring. -/
 noncomputable instance instBialgebra :
     Bialgebra R (ConnesKreimer R (UnorderedTree α)) :=
   Bialgebra.ofAlgHom (A := ConnesKreimer R (UnorderedTree α)) comulAlgHom counit
-    comulAlgHom_coassoc_algHom
+    (comulOfCuts_coassoc doubleCutsCrown_admissibleCuts)
     (rTensor_counit_comp_comulOfCuts admissibleCuts_filter_empty)
     (lTensor_counit_comp_comulOfCuts _)
 
 instance instIsBialgebraCutsAdmissibleCuts : IsBialgebraCuts (admissibleCuts (α := α)) where
-  coassoc _ _ := comulAlgHom_coassoc_algHom
-  rTensor_counit_comp_comul _ _ := rTensor_counit_comp_comulOfCuts admissibleCuts_filter_empty
+  doubleCutsCrown_eq := doubleCutsCrown_admissibleCuts
+  filter_card_eq_zero := admissibleCuts_filter_empty
 
 theorem coalgebra_comul_apply (x : ConnesKreimer R (UnorderedTree α)) :
     Coalgebra.comul (R := R) x = comulAlgHom x := rfl
