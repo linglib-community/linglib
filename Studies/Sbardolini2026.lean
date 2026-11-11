@@ -367,7 +367,7 @@ end Rivals
 
 /-! ### Possibility modals -/
 
-section Errata
+section Possibility
 
 variable {W : Type*}
 
@@ -384,6 +384,6 @@ theorem not_isSUM_modal_some {R : SetRel W W} {w u v : W} (hu : (w, u) ∈ R) (h
   have := h {{u}, {v}} (by simp) ∅ (by simp [Finset.inf'_insert, huv]) w
   simp [modal, Det.some, hu, hv] at this
 
-end Errata
+end Possibility
 
 end Sbardolini2026

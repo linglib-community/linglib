@@ -290,7 +290,7 @@ theorem not_admits_contextual {D : Type*} [LinearOrder D] [OrderBot D] :
 
 /-! ### The degree binder of (72) -/
 
-section Errata
+section DegreeBinder
 variable {β D : Type*} [LinearOrder D] [OrderBot D]
 
 -- (72)
@@ -305,6 +305,6 @@ theorem eq72_gloss_weaker :
       ¬ ∃ d : ℕ, ⊥ < d ∧ ∀ y : Fin 2, ![1, 2] y = d :=
   ⟨⟨1, by decide, by decide⟩, fun ⟨_, _, hd⟩ ↦ absurd ((hd 0).trans (hd 1).symm) (by decide)⟩
 
-end Errata
+end DegreeBinder
 
 end Grano2026

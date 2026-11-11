@@ -164,7 +164,7 @@ def twoLetterGrammar : Set ((wordLanguage Char).Factor 2) :=
   {pair 'a' 'a', pair 'b' 'b', pair 'a' 'c', pair 'b' 'c', pair 'c' 'c', pair 'c' 'a',
     pair 'c' 'b'}
 
-theorem abGrammar_errata :
+theorem mem_language_abGrammar_twoLetterGrammar :
     ['a'] ∈ language (WordModel · (· ⋖ ·)) abGrammar ∧
       ['c'] ∉ language (WordModel · (· ⋖ ·)) abGrammar ∧
         ['c'] ∈ language (WordModel · (· ⋖ ·)) twoLetterGrammar := by
