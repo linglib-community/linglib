@@ -161,6 +161,25 @@ theorem replace_of_val_eq_leaf {s target replacement : SyntacticObject} {a : Ver
   rw [replace, subst_of_val_eq_leaf hs, ite_eq_right h]
   rfl
 
+/-- Replacing `target` keeps what an object contains apart from `target`: a term that neither
+lies inside `target` nor holds it. -/
+theorem Contains.replace {s x target replacement : SyntacticObject} (h : Contains s x)
+    (hx : x ∉ target.terms) (ht : target ∉ x.terms) :
+    Contains (s.replace target replacement) x := by
+  induction s using ind with
+  | leaf a => simp at h
+  | trace => simp at h
+  | traceOf a => simp at h
+  | merge l r ihl ihr =>
+    have hne : merge l r ≠ target := fun e ↦ hx (e ▸ mem_terms.2 h.to_reflTransGen)
+    rw [replace_merge_of_ne hne, contains_merge]
+    refine (contains_merge.1 h).imp (fun h ↦ ?_) fun h ↦ ?_ <;>
+      rcases containsOrEq_iff_eq_or_contains.1 h with rfl | h
+    · rw [replace_of_notMem_terms ht]; exact h
+    · exact (ihl h).to_reflTransGen
+    · rw [replace_of_notMem_terms ht]; exact h
+    · exact (ihr h).to_reflTransGen
+
 /-- Moving the daughter `r` out of `[l r]` and leaving a trace yields `[l′ t]`, with `l′` the
     substituted left daughter; a tree is never its own daughter, taken here as a hypothesis. -/
 example (l r : SyntacticObject) (h : merge l r ≠ r) :

@@ -392,6 +392,21 @@ theorem isSmugglingStep_iff (a : Analysis) (ev : Bool) :
   revert s a ev
   decide +kernel
 
+theorem nodup_lexTokens (a : Analysis) (ev : Bool) :
+    ((Clause.of verb agent patient c be).passive a ev).lexTokens.Nodup := by
+  rcases c with _ | (_ | _) <;> cases a <;> cases ev <;>
+    simp [Clause.passive, Clause.preRaising, Clause.fronted, Clause.voiceP, Clause.vP,
+      Clause.vpSteps, Clause.evacuation, Clause.evacuee?, Clause.of, Derivation.lexTokens,
+      Derivation.items, Derivation.append, Step.items, Complement.map, part₀, v₀, x₀, infl₀]
+
+-- (34): once PartP has moved, the external argument no longer c-commands the object.
+theorem not_cCommandsAt_agent_patient (ev : Bool) :
+    ¬ ((Clause.of verb agent patient c be).passive .partP ev).CCommandsAt
+        (((Clause.of verb agent patient c be).voiceP ev).length + 1)
+        (Clause.of verb agent patient c be).agent (Clause.of verb agent patient c be).patient :=
+  ((isSmugglingStep_iff verb agent patient be c .partP ev).2 rfl).not_cCommandsAt_succ
+    (nodup_lexTokens ..) (by simp) (by simp)
+
 theorem converges_iff_not_obeysFreezing (a : Analysis) (ev : Bool) :
     (Clause.of verb agent patient c be).Converges a ev ↔
       ¬ ((Clause.of verb agent patient c be).passive a ev).ObeysFreezing := by
@@ -421,6 +436,11 @@ theorem isRemnantStep_iff (w : String) (a : Analysis) (ev : Bool) :
   decide +kernel
 
 end Shape
+
+/-- PartP smuggles the object past nothing it carries along: it does not come to c-command its
+own verb. -/
+example : ¬ (ex9.passive .partP false).IsSmugglingStep (ex9.voiceP false).length ex9.patient
+    ex9.verb := by decide +kernel
 
 /-- Smuggling brings the object level with the external argument, not past it: once PartP has
 moved, Infl's probe finds both. -/

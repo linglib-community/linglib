@@ -169,10 +169,8 @@ theorem BindsAtSomeStage.bindsAtLF {x y : LexicalItem.Token} (hxy : x ≠ y)
   have h1 := Marked.cCommands_unmark_of_cCommands_contract hxy hc
   obtain ⟨C', hC'⟩ := Option.isSome_iff_exists.1 (show (d.copyObject?).isSome by
     rw [copyObject?, Option.isSome_map, isSome_replayWithCopies?]; exact hd)
-  have hsplit : (d.take n).append (d.steps.drop n) = d := by
-    show (⟨d.initial, d.steps.take n ++ d.steps.drop n⟩ : Derivation) = d
-    rw [List.take_append_drop]
-  obtain ⟨C, hC, hsub⟩ := terms_subset_copyObject?_append (by rw [hsplit]; exact hC')
+  obtain ⟨C, hC, hsub⟩ := terms_subset_copyObject?_append
+    (by rw [d.take_append_drop n]; exact hC')
   rw [Option.mem_def, copyObject?, hc', Option.map_some] at hC
   obtain rfl := Option.some.inj hC
   exact ⟨C', hC', h1.mono hsub⟩

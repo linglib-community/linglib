@@ -429,6 +429,15 @@ theorem take_append_of_le {d : Derivation} {n : Nat} (h : n ≤ d.length) (steps
   unfold take append
   rw [length, List.take_left]
 
+@[simp] theorem take_append_drop (d : Derivation) (n : Nat) :
+    (d.take n).append (d.steps.drop n) = d := by
+  simp [take, append]
+
+/-- The first `i + 1` steps are the first `i` and step `i`. -/
+theorem take_succ {d : Derivation} {i : Nat} {step : Step} (h : d.steps[i]? = some step) :
+    d.take (i + 1) = (d.take i).append [step] := by
+  simp [take, append, List.take_add_one, h]
+
 theorem stageAt_append_of_le {d : Derivation} {n : Nat} (h : n ≤ d.length) (steps : List Step) :
     (d.append steps).stageAt n τ = d.stageAt n τ := by
   rw [← final_take, ← final_take, take_append_of_le h]
@@ -494,6 +503,11 @@ theorem lexTokens_append (d : Derivation) (steps : List Step) :
     (d.append steps).lexTokens =
       d.lexTokens + ((Step.itemsList steps).map SyntacticObject.yield).sum := by
   simp [lexTokens, items, append, Step.itemsList, List.map_append, List.sum_append, add_assoc]
+
+/-- An initial segment merges no token the derivation does not. -/
+theorem lexTokens_take_le (d : Derivation) (n : Nat) : (d.take n).lexTokens ≤ d.lexTokens := by
+  conv_rhs => rw [← d.take_append_drop n, lexTokens_append]
+  exact Multiset.le_add_right _ _
 
 /-- A derivation is admissible when each of its steps is, beside the items still to come. -/
 def Admissible (d : Derivation) : Prop := Step.AdmissibleList d.steps d.initial

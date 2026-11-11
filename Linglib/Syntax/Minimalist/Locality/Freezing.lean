@@ -79,6 +79,23 @@ def ObeysFreezing (d : Derivation) : Prop :=
 instance (d : Derivation) : Decidable d.ObeysFreezing :=
   inferInstanceAs (Decidable (d.movedItems.Pairwise _))
 
+/-- A derivation obeys Freezing exactly when no step moves a constituent that the mover of an
+earlier step contains. -/
+theorem obeysFreezing_iff_forall_mover? :
+    d.ObeysFreezing ↔
+      ∀ ⦃i j : ℕ⦄, i < j → ∀ m ∈ d.mover? i, ∀ m' ∈ d.mover? j, ¬ Contains m m' := by
+  rw [ObeysFreezing, movedItems, List.pairwise_filterMap, List.pairwise_iff_getElem]
+  constructor
+  · intro h i j hij m hm m' hm'
+    have hj := lt_length_of_mem_mover? hm'
+    have hi : i < d.steps.length := hij.trans hj
+    rw [mover?, List.getElem?_eq_getElem hi] at hm
+    rw [mover?, List.getElem?_eq_getElem hj] at hm'
+    exact h i j hi hj hij m hm m' hm'
+  · intro h i j hi hj hij m hm m' hm'
+    exact h hij m (by rw [mover?, List.getElem?_eq_getElem hi]; exact hm)
+      m' (by rw [mover?, List.getElem?_eq_getElem hj]; exact hm')
+
 theorem obeysFreezing_append_iff :
     (d.append steps).ObeysFreezing ↔ d.ObeysFreezing ∧
       (steps.filterMap Step.mover?).Pairwise (fun m m' ↦ ¬ Contains m m') ∧
