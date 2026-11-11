@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.HarmonicGrammar.Harmony
-public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
+public import Linglib.Phonology.OptimalityTheory.Grammar
 public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.HarmonicGrammar.MaxEnt
@@ -255,45 +255,49 @@ instance [DecidableEq Output] (P : RealizationProblem Input Output (Fin n)) :
 
 /-! ### OT-realization is ERC satisfaction -/
 
-/-- The winner–loser ERCs of a problem have one comparative row for each input and non-target
-    candidate ([prince-2002]). -/
-def ercs [Fintype ι] [DecidableEq Output] (P : RealizationProblem Input Output ι) :
-    Finset (ERC ι) :=
-  P.inputs.biUnion fun i ↦ ((P.gen i).erase (P.target i)).image fun o ↦
-    ercOfProfiles (P.con · (i, P.target i)) (P.con · (i, o))
+/-- The winner–loser ERCs of a problem are those of each input's target against its rivals
+    ([prince-2002]). -/
+def ercs (P : RealizationProblem Input Output ι) : Set (ERC ι) :=
+  ⋃ i ∈ P.inputs, P.toConstraintSystem.ercs i (P.target i)
 
-theorem mem_ercs [Fintype ι] [DecidableEq Output] {P : RealizationProblem Input Output ι}
-    {α : ERC ι} :
+theorem mem_ercs {P : RealizationProblem Input Output ι} {α : ERC ι} :
     α ∈ P.ercs ↔ ∃ i ∈ P.inputs, ∃ o ∈ P.gen i, o ≠ P.target i ∧
       ercOfProfiles (P.con · (i, P.target i)) (P.con · (i, o)) = α := by
-  simp only [ercs, Finset.mem_biUnion, Finset.mem_image, Finset.mem_erase]
-  tauto
+  simp only [ercs, Set.mem_iUnion, exists_prop]
+  rfl
 
 /-- Provided no competitor ties the target's violation profile, `σ` realizes the target iff `σ`
     satisfies every winner–loser ERC ([prince-2002]). -/
-theorem realizedByRanking_iff_satisfiedBy [Fintype ι] [DecidableEq Output]
-    {P : RealizationProblem Input Output ι} {σ : Ranking ι n}
+theorem realizedByRanking_iff_satisfiedBy {P : RealizationProblem Input Output ι}
+    {σ : Ranking ι n}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
       (P.con · (i, P.target i)) ≠ (P.con · (i, o))) :
     P.realizedByRanking σ ↔ ∀ α ∈ P.ercs, α.SatisfiedBy σ := by
-  constructor
-  · intro h α hα
-    obtain ⟨i, hi, o, ho, hone, rfl⟩ := mem_ercs.mp hα
-    exact (satisfiedBy_ercOfProfiles_iff_le σ _ _).mpr
-      ((ConstraintSystem.picksAt_iff.1 (h i hi)).2 o ho hone).le
-  · intro h i hi
-    refine ConstraintSystem.picksAt_iff.2 ⟨P.target_mem i hi, fun o ho hone ↦ ?_⟩
-    refine lt_of_le_of_ne ((satisfiedBy_ercOfProfiles_iff_le σ _ _).mp
-      (h _ (mem_ercs.mpr ⟨i, hi, o, ho, hone, rfl⟩))) fun heq ↦ hvp i hi o ho hone ?_
-    exact funext fun c ↦ by simpa using congrFun (toLex_inj.mp heq) (σ.symm c)
+  refine ⟨fun h α hα ↦ ?_, fun h i hi ↦ ?_⟩
+  · obtain ⟨i, hi, hα⟩ := mem_ercs.1 hα
+    exact (ConstraintSystem.picksAt_iff_forall_ercs_satisfiedBy (P.target_mem i hi)
+      (hvp i hi)).1 (h i hi) α hα
+  · exact (ConstraintSystem.picksAt_iff_forall_ercs_satisfiedBy (P.target_mem i hi)
+      (hvp i hi)).2 fun α hα ↦ h α (mem_ercs.2 ⟨i, hi, hα⟩)
 
-theorem isOTRealizable_iff_linearExtensions_nonempty [DecidableEq Output]
-    {P : RealizationProblem Input Output (Fin n)}
+/-- The grammar of a problem is the grammar that its winner–loser ERCs present. -/
+def grammar (P : RealizationProblem Input Output (Fin n)) : Grammar n := .ofERCs P.ercs
+
+/-- Provided no competitor ties the target's violation profile, the rankings of a problem's
+    grammar are those that realize its target. -/
+theorem mem_extent_grammar {P : RealizationProblem Input Output (Fin n)}
+    {σ : Ranking (Fin n) n}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
       (P.con · (i, P.target i)) ≠ (P.con · (i, o))) :
-    P.IsOTRealizable ↔ (ERC.linearExtensions P.ercs).Nonempty :=
-  exists_congr fun _ ↦ (realizedByRanking_iff_satisfiedBy hvp).trans
-    ERC.mem_linearExtensions.symm
+    σ ∈ P.grammar.extent ↔ P.realizedByRanking σ :=
+  (realizedByRanking_iff_satisfiedBy hvp).symm
+
+/-- A problem is OT-realizable iff its grammar has a ranking. -/
+theorem isOTRealizable_iff_extent_nonempty {P : RealizationProblem Input Output (Fin n)}
+    (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
+      (P.con · (i, P.target i)) ≠ (P.con · (i, o))) :
+    P.IsOTRealizable ↔ P.grammar.extent.Nonempty :=
+  exists_congr fun _ ↦ (mem_extent_grammar hvp).symm
 
 end RealizationProblem
 
@@ -383,6 +387,17 @@ def realizedByPartialOrder (P : RealizationProblem Input Output (Fin n))
     categorically realizes the target. -/
 def IsPartialOrderRealizable (P : RealizationProblem Input Output (Fin n)) : Prop :=
   ∃ r : Fin n → Fin n → Prop, IsPartialOrder (Fin n) r ∧ P.realizedByPartialOrder r
+
+/-- A partial order realizes the target iff its grammar lies below the problem's: every one of
+    its linear extensions is a ranking that realizes the target. -/
+theorem realizedByPartialOrder_iff_le {P : RealizationProblem Input Output (Fin n)}
+    {r : Fin n → Fin n → Prop}
+    (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
+      (P.con · (i, P.target i)) ≠ (P.con · (i, o))) :
+    P.realizedByPartialOrder r ↔ Grammar.ofRel r ≤ P.grammar := by
+  rw [← Concept.extent_subset_extent_iff]
+  exact ⟨fun h σ hσ ↦ (mem_extent_grammar hvp).2 (h σ (Grammar.mem_extent_ofRel.1 hσ)),
+    fun h σ hσ ↦ (mem_extent_grammar hvp).1 (h (Grammar.mem_extent_ofRel.2 hσ))⟩
 
 end RealizationProblem
 

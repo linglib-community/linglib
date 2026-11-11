@@ -2,7 +2,7 @@ module
 
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.Tableau
-public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
+public import Linglib.Phonology.OptimalityTheory.Grammar
 public import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 public import Linglib.Phonology.Tone.Constraints
 public import Linglib.Fragments.Poko.Tone
@@ -397,15 +397,14 @@ theorem ercB_eq_neg : ercB = -ercA := by
   simp only [ercB, ercFor, Eq58.faithfulness_attestedForm, Eq58.faithfulness_loser]
   revert i; decide
 
-/-- **Parallel OT cannot model Poko**: the two rows of the support (59) are antithetical, so no
-ranking of the four faithfulness constraints derives both attested forms. -/
-theorem parallel_OT_inadequate : ¬ (ERC.linearExtensions {ercA, ercB}).Nonempty := by
-  rintro ⟨r, hr⟩
-  rw [ERC.mem_linearExtensions] at hr
-  refine ERC.not_satisfiedBy_neg ⟨0, by rw [ercA_eq]; decide⟩
-    (hr ercA (Finset.mem_insert_self _ _)) ?_
+/-- **Parallel OT cannot model Poko**: the two rows of the support (59) are antithetical, so the
+grammar they present is the inconsistent one, and no ranking of the four faithfulness constraints
+derives both attested forms. -/
+theorem parallel_OT_inadequate : Grammar.ofERCs {ercA, ercB} = ⊥ := by
+  refine Grammar.eq_bot_iff_extent.2 (Set.eq_empty_of_forall_notMem fun r hr ↦ ?_)
+  refine ERC.not_satisfiedBy_neg ⟨0, by rw [ercA_eq]; decide⟩ (hr (Set.mem_insert _ _)) ?_
   rw [← ercB_eq_neg]
-  exact hr ercB (Finset.mem_insert_of_mem (Finset.mem_singleton_self _))
+  exact hr (Set.mem_insert_of_mem _ rfl)
 
 /-- **Harmonic Grammar cannot model Poko**: no weighting of the four faithfulness constraints
 makes both attested forms more harmonic than their rivals in (57) and (58), since MAX(H) would

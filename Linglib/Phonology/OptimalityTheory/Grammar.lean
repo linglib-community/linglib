@@ -66,6 +66,20 @@ theorem ofERCs_eq_iff : ofERCs E = ofERCs E' ↔
     ∀ σ : Ranking (Fin n) n, (∀ α ∈ E, α.SatisfiedBy σ) ↔ ∀ α ∈ E', α.SatisfiedBy σ :=
   Concept.extent_injective.eq_iff.symm.trans Set.ext_iff
 
+/-- Over at least one constraint the bottom grammar has no ranking, since no ranking satisfies
+the ERC with every constraint loser-preferring. -/
+theorem extent_bot [NeZero n] : (⊥ : Grammar n).extent = ∅ := by
+  refine Set.eq_empty_of_forall_notMem fun σ hσ ↦ ?_
+  have h : ERC.SatisfiedBy σ (fun _ ↦ .L) :=
+    Concept.extent_subset_extent_iff.2 (bot_le (a := ofERCs {fun _ ↦ .L})) hσ
+      (Set.mem_singleton _)
+  obtain ⟨w, hw, -⟩ := (ERC.satisfiedBy_iff_dominance σ _).1 h 0 rfl
+  exact absurd hw (by decide)
+
+/-- A grammar over at least one constraint is inconsistent iff it has no ranking. -/
+theorem eq_bot_iff_extent [NeZero n] : G = ⊥ ↔ G.extent = ∅ :=
+  ⟨fun h ↦ h ▸ extent_bot, fun h ↦ Concept.ext (h.trans extent_bot.symm)⟩
+
 /-! ### The antimatroid of a grammar -/
 
 /-- The antimatroid of a grammar with a ranking: the antimatroid of its conditions, whose feasible

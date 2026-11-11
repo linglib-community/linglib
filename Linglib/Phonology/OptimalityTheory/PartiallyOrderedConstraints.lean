@@ -58,8 +58,8 @@ variable {n : ℕ}
 
 A grammar draws one of its linear extensions uniformly at each evaluation ([anttila-1997]), so it
 is the probability measure `uniformOn ↑(Ranking.linearExtensions r)` on rankings, and the
-probability that it selects `o` for the input `i` is that measure at `{σ | S.PicksAt σ i o}`: the fraction of the
-linear extensions that pick `o`. -/
+probability that it selects `o` for the input `i` is that measure at `{σ | S.PicksAt σ i o}`: the
+fraction of the linear extensions that pick `o`. -/
 
 instance (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r] [DecidableRel r] :
     IsProbabilityMeasure (uniformOn (Ranking.linearExtensions r : Set (Ranking (Fin n) n))) :=
@@ -133,24 +133,6 @@ rankings that the two have in common. -/
 theorem Grammar.uniformOn_extent (G H : Grammar n) :
     uniformOn G.extent H.extent = ((G ⊓ H).extent.ncard : ℝ≥0∞) / G.extent.ncard := by
   rw [uniformOn_apply_of_finite G.extent.toFinite, Concept.extent_inf]
-
-/-- The winner–loser ERCs of the candidate `o` at the input `i`, one against each rival. -/
-def ConstraintSystem.ercs (S : ConstraintSystem Input Output (Fin n)) (i : Input) (o : Output) :
-    Set (ERC (Fin n)) :=
-  {α | ∃ o' ∈ S.gen i, o' ≠ o ∧ ercOfProfiles (S.con · (i, o)) (S.con · (i, o')) = α}
-
-/-- A ranking picks a candidate whose violations differ from every rival's iff it satisfies the
-candidate's ERC against each rival ([prince-2002]). -/
-theorem ConstraintSystem.picksAt_iff_forall_ercs_satisfiedBy (ho : o ∈ S.gen i)
-    (hvp : ∀ o' ∈ S.gen i, o' ≠ o → (S.con · (i, o)) ≠ (S.con · (i, o'))) :
-    S.PicksAt σ i o ↔ ∀ α ∈ S.ercs i o, α.SatisfiedBy σ := by
-  refine ⟨fun h α hα ↦ ?_, fun h ↦ ConstraintSystem.picksAt_iff.2 ⟨ho, fun o' ho' hne ↦ ?_⟩⟩
-  · obtain ⟨o', ho', hne, rfl⟩ := hα
-    exact (satisfiedBy_ercOfProfiles_iff_le σ _ _).2
-      ((ConstraintSystem.picksAt_iff.1 h).2 o' ho' hne).le
-  · refine lt_of_le_of_ne ((satisfiedBy_ercOfProfiles_iff_le σ _ _).1
-      (h _ ⟨o', ho', hne, rfl⟩)) fun heq ↦ hvp o' ho' hne (funext fun c ↦ ?_)
-    simpa using congrFun (toLex_inj.1 heq) (σ.symm c)
 
 /-- The probability of a candidate under a grammar is the share of the grammar's rankings that
 satisfy the candidate's ERCs: Anttila's $n/t$ as a ratio of r-volumes. -/
