@@ -10,11 +10,14 @@ The types of two daughters decide which modes of the effect-driven grammar combi
 with every Join and Lower the result allows. [It lists every mode of the
 grammar](##Interpreter.Ty.mem_combine), so the effect-driven interpreter [admits every mode at a
 node](##Interpreter.mem_binary_effectDriven), and with an inventory of meta-modes
-[exactly the modes that keep to it](##Interpreter.mem_binary_effectDrivenWithin).
+[exactly the modes that keep to it](##Interpreter.mem_binary_effectDrivenWithin). The modes for
+two types are [one step of the search from the modes for smaller
+types](##Interpreter.Ty.combineWith_eq_combineStep).
 
 ## Main definitions
 
 * `Interpreter.Mode.closure`: a mode with every Join and Lower stacked on it.
+* `Interpreter.Ty.combineStep`: one step of the search.
 * `Interpreter.Ty.combineWith`, `Interpreter.Ty.combine`: the modes for two types, with a given
   inventory of meta-modes and way of closing each result, and with every meta-mode and
   `Mode.closure`.
@@ -27,7 +30,8 @@ node](##Interpreter.mem_binary_effectDriven), and with an inventory of meta-mode
 
 The two Eject rules do not make their types smaller. An Eject leaves a computation where there
 was an arrow, so neither applies twice to one daughter, and the recursion is on a bound, three
-steps for each unit of size. `Ty.combineWith` takes the step that closes a result as an
+steps for each unit of size, [which the result does not depend
+on](##Interpreter.Ty.combineAux_eq). `Ty.combineWith` takes the step that closes a result as an
 argument: Bumford and Charlow's own `combine` applies Join and Lower once where `Mode.closure`
 stacks them, and the study of their book runs it with that step.
 
@@ -84,65 +88,71 @@ variable (inv : MetaMode → Eff B → Prop) [∀ k f, Decidable (inv k f)]
   (find : (l r : Ty B) → List (Sigma (Rule l r)))
   (close : {l r : Ty B} → (Sigma (Mode Rule l r)) → List (Sigma (Mode Rule l r)))
 
+/-- One step of the search for the modes for two types, given the modes for the types the step
+peels them down to: a basic rule, or a meta-mode of the inventory over a mode for the types under
+it, each with the results `close` gives it. A meta-mode the inventory lacks at an effect is not
+tried there. -/
+def Ty.combineStep (rec : (l r : Ty B) → List (Sigma (Mode Rule l r))) (l r : Ty B) :
+    List (Sigma (Mode Rule l r)) :=
+  (((find l r).map fun p ↦ (⟨p.1, .basic p.2⟩ : Sigma (Mode Rule l r))) ++
+    (match r with
+      | .comp f y =>
+        if inv .map f then (rec l y).map fun p ↦ ⟨.comp f p.1, .mapR p.2⟩ else []
+      | _ => []) ++
+    (match l with
+      | .comp f x =>
+        if inv .map f then (rec x r).map fun p ↦ ⟨.comp f p.1, .mapL p.2⟩ else []
+      | _ => []) ++
+    (match l, r with
+      | .comp f x, .comp g y =>
+        if h : g = f then
+          if ha : f.IsApplicative then
+            if inv .ap f then
+              (rec x y).map fun p ↦ ⟨.comp f p.1, by subst h; exact .ap ha p.2⟩
+            else []
+          else []
+        else []
+      | _, _ => []) ++
+    (match l with
+      | .fn (.comp f x) x' =>
+        if ha : f.IsApplicative then
+          if inv .unit f then (rec (x ⇒ x') r).map fun p ↦ ⟨p.1, .unitR ha p.2⟩
+          else []
+        else []
+      | _ => []) ++
+    (match r with
+      | .fn (.comp f y) y' =>
+        if ha : f.IsApplicative then
+          if inv .unit f then (rec l (y ⇒ y')).map fun p ↦ ⟨p.1, .unitL ha p.2⟩
+          else []
+        else []
+      | _ => []) ++
+    (match l, r with
+      | .comp (.W i) x, .comp (.R j) y =>
+        if h : j = i then
+          if inv .counit (.R i) then (rec x y).map fun p ↦ ⟨p.1, h ▸ .counit p.2⟩
+          else []
+        else []
+      | _, _ => []) ++
+    (match r with
+      | .fn x (.comp (.R i) y) =>
+        if inv .eject (.R i) then
+          (rec l (.comp (.R i) (x ⇒ y))).map fun p ↦ ⟨p.1, .ejectR p.2⟩
+        else []
+      | _ => []) ++
+    (match l with
+      | .fn x (.comp (.R i) y) =>
+        if inv .eject (.R i) then
+          (rec (.comp (.R i) (x ⇒ y)) r).map fun p ↦ ⟨p.1, .ejectL p.2⟩
+        else []
+      | _ => [])).flatMap close
+
 /-- `Ty.combineWith` to a bound on the depth of its recursion. Every rule but the two Ejects
 recurses on smaller types, and an Eject turns an arrow into a computation, so at most one Eject
-on each daughter comes between two rules that shrink a type. A meta-mode the inventory lacks at
-an effect is not tried there. -/
+on each daughter comes between two rules that shrink a type. -/
 def Ty.combineAux : ℕ → (l r : Ty B) → List (Sigma (Mode Rule l r))
   | 0, _, _ => []
-  | k + 1, l, r =>
-    (((find l r).map fun p ↦ (⟨p.1, .basic p.2⟩ : Sigma (Mode Rule l r))) ++
-      (match r with
-        | .comp f y =>
-          if inv .map f then (Ty.combineAux k l y).map fun p ↦ ⟨.comp f p.1, .mapR p.2⟩ else []
-        | _ => []) ++
-      (match l with
-        | .comp f x =>
-          if inv .map f then (Ty.combineAux k x r).map fun p ↦ ⟨.comp f p.1, .mapL p.2⟩ else []
-        | _ => []) ++
-      (match l, r with
-        | .comp f x, .comp g y =>
-          if h : g = f then
-            if ha : f.IsApplicative then
-              if inv .ap f then
-                (Ty.combineAux k x y).map fun p ↦ ⟨.comp f p.1, by subst h; exact .ap ha p.2⟩
-              else []
-            else []
-          else []
-        | _, _ => []) ++
-      (match l with
-        | .fn (.comp f x) x' =>
-          if ha : f.IsApplicative then
-            if inv .unit f then (Ty.combineAux k (x ⇒ x') r).map fun p ↦ ⟨p.1, .unitR ha p.2⟩
-            else []
-          else []
-        | _ => []) ++
-      (match r with
-        | .fn (.comp f y) y' =>
-          if ha : f.IsApplicative then
-            if inv .unit f then (Ty.combineAux k l (y ⇒ y')).map fun p ↦ ⟨p.1, .unitL ha p.2⟩
-            else []
-          else []
-        | _ => []) ++
-      (match l, r with
-        | .comp (.W i) x, .comp (.R j) y =>
-          if h : j = i then
-            if inv .counit (.R i) then (Ty.combineAux k x y).map fun p ↦ ⟨p.1, h ▸ .counit p.2⟩
-            else []
-          else []
-        | _, _ => []) ++
-      (match r with
-        | .fn x (.comp (.R i) y) =>
-          if inv .eject (.R i) then
-            (Ty.combineAux k l (.comp (.R i) (x ⇒ y))).map fun p ↦ ⟨p.1, .ejectR p.2⟩
-          else []
-        | _ => []) ++
-      (match l with
-        | .fn x (.comp (.R i) y) =>
-          if inv .eject (.R i) then
-            (Ty.combineAux k (.comp (.R i) (x ⇒ y)) r).map fun p ↦ ⟨p.1, .ejectL p.2⟩
-          else []
-        | _ => [])).flatMap close
+  | k + 1, l, r => Ty.combineStep inv find close (Ty.combineAux k) l r
 
 /-- The modes for a left daughter of type `l` and a right daughter of type `r`: each way of
 peeling effects off the two types down to a basic rule by the meta-modes of the inventory, with
@@ -397,6 +407,149 @@ theorem Ty.mem_combineAux
     exact List.mem_flatMap.2 ⟨q, hq,
       hstep hm' (List.mem_append_right _ (Mode.mem_lowers m)) hm⟩
 
+omit [∀ k f, Decidable (inv k f)] in
+/-- A mode with a Join of it that keeps to an inventory keeps to it, and the inventory has Join
+at the effect of its result. -/
+theorem Mode.within_of_mem_joins {p q : Sigma (Mode Rule l r)} (h : q ∈ Mode.joins p)
+    (hq : q.2.Within inv) :
+    p.2.Within inv ∧ ∃ (f : Eff B) (a : Ty B), p.1 = .comp f a ∧ inv .join f := by
+  obtain ⟨u, m⟩ := p
+  revert hq
+  rcases u with _ | _ | _ | ⟨f, _ | _ | _ | ⟨g, a⟩⟩ <;> simp [Mode.joins] at h
+  obtain ⟨rfl, -, rfl⟩ := h
+  exact fun hq ↦ ⟨hq.2, _, _, rfl, hq.1⟩
+
+omit [∀ k f, Decidable (inv k f)] in
+/-- A mode with a Lower of it that keeps to an inventory keeps to it, and the inventory has Lower
+at the effect of its result. -/
+theorem Mode.within_of_mem_lowers {p q : Sigma (Mode Rule l r)} (h : q ∈ Mode.lowers p)
+    (hq : q.2.Within inv) :
+    p.2.Within inv ∧ ∃ (f : Eff B) (a : Ty B), p.1 = .comp f a ∧ inv .lower f := by
+  obtain ⟨u, m⟩ := p
+  revert hq
+  rcases u with _ | _ | _ | ⟨_ | _ | _ | o | _ | _, a⟩ <;> simp [Mode.lowers] at h
+  obtain ⟨rfl, rfl⟩ := h
+  exact fun hq ↦ ⟨hq.2, _, _, rfl, hq.1⟩
+
+omit [∀ k f, Decidable (inv k f)] in
+/-- A mode with a stack of Joins and Lowers on it that keeps to an inventory keeps to it. -/
+theorem Mode.within_of_mem_closureAux : ∀ (k : ℕ) {p q : Sigma (Mode Rule l r)},
+    q ∈ Mode.closureAux k p → q.2.Within inv → p.2.Within inv
+  | 0, _, _, h, hq => List.mem_singleton.1 h ▸ hq
+  | k + 1, p, q, h, hq => by
+    rw [Mode.closureAux] at h
+    rcases List.mem_cons.1 h with rfl | h
+    · exact hq
+    · obtain ⟨p', hp', h⟩ := List.mem_flatMap.1 h
+      have hp := Mode.within_of_mem_closureAux k h hq
+      exact (List.mem_append.1 hp').elim (fun h ↦ (Mode.within_of_mem_joins h hp).1)
+        fun h ↦ (Mode.within_of_mem_lowers h hp).1
+
+/-- Closing a mode that keeps to an inventory with neither Join nor Lower at the effect of its
+result adds nothing to it. -/
+theorem Mode.filter_within_closure {f : Eff B} {u : Ty B} {m : Mode Rule l r (.comp f u)}
+    (hm : m.Within inv) (hj : ¬ inv .join f) (hl : ¬ inv .lower f) :
+    (Mode.closure (⟨_, m⟩ : Sigma (Mode Rule l r))).filter (fun q ↦ q.2.Within inv) =
+      [⟨_, m⟩] := by
+  rw [Mode.closure, show (Ty.comp f u).size = f.size + u.size + 1 from rfl, Mode.closureAux,
+    List.filter_cons_of_pos (by simpa using hm), List.cons.injEq, List.filter_eq_nil_iff]
+  refine ⟨rfl, fun q hq hw ↦ ?_⟩
+  obtain ⟨p', hp', hq⟩ := List.mem_flatMap.1 hq
+  have hp : p'.2.Within inv := Mode.within_of_mem_closureAux _ hq (of_decide_eq_true hw)
+  rcases List.mem_append.1 hp' with h | h
+  · obtain ⟨-, f', a, he, hf'⟩ := Mode.within_of_mem_joins h hp
+    cases he
+    exact hj hf'
+  · obtain ⟨-, f', a, he, hf'⟩ := Mode.within_of_mem_lowers h hp
+    cases he
+    exact hl hf'
+
+/-- The modes the search of a grammar with an inventory lists keep to the inventory. -/
+theorem Ty.within_of_mem_combineWithin {m : Sigma (Mode Rule l r)}
+    (h : m ∈ Ty.combineWithin inv find l r) : m.2.Within inv := by
+  obtain ⟨q, -, hq⟩ := List.mem_flatMap.1 (show m ∈ List.flatMap _ _ from h)
+  exact of_decide_eq_true (List.mem_filter.1 hq).2
+
+/-! ### The search does not depend on its bound -/
+
+/-- A step of the search consults the modes for types that are smaller, or as large with one
+fewer daughter to eject from. -/
+theorem Ty.combineStep_congr {rec rec' : (l r : Ty B) → List (Sigma (Mode Rule l r))}
+    {l r : Ty B}
+    (h : ∀ l' r', 3 * (l'.size + r'.size) + l'.ejectable + r'.ejectable <
+      3 * (l.size + r.size) + l.ejectable + r.ejectable → rec l' r' = rec' l' r') :
+    Ty.combineStep inv find close rec l r = Ty.combineStep inv find close rec' l r := by
+  refine congrArg (List.flatMap _) ?_
+  iterate 8 refine congrArg₂ _ ?_ ?_
+  · rfl
+  · split
+    · rename_i f y
+      have := y.ejectable_le_one
+      rw [h _ _ (by simp only [Ty.size, Ty.ejectable_comp]; omega)]
+    · rfl
+  · split
+    · rename_i f x
+      have := x.ejectable_le_one
+      rw [h _ _ (by simp only [Ty.size, Ty.ejectable_comp]; omega)]
+    · rfl
+  · split
+    · rename_i f x g y
+      have := x.ejectable_le_one
+      have := y.ejectable_le_one
+      rw [h _ _ (by simp only [Ty.size, Ty.ejectable_comp]; omega)]
+    · rfl
+  · split
+    · rename_i f x x'
+      have := (x ⇒ x').ejectable_le_one
+      have := (Ty.comp f x ⇒ x').ejectable_le_one
+      rw [h _ _ (by simp only [Ty.size]; omega)]
+    · rfl
+  · split
+    · rename_i f y y'
+      have := (y ⇒ y').ejectable_le_one
+      have := (Ty.comp f y ⇒ y').ejectable_le_one
+      rw [h _ _ (by simp only [Ty.size]; omega)]
+    · rfl
+  · split
+    · rename_i i x j y
+      have := x.ejectable_le_one
+      have := y.ejectable_le_one
+      rw [h _ _ (by simp only [Ty.size, Ty.ejectable_comp]; omega)]
+    · rfl
+  · split
+    · rename_i x i y
+      rw [h _ _ (by
+        simp only [Ty.size, Eff.size, Ty.ejectable_comp, Ty.ejectable_fn_reader]; omega)]
+    · rfl
+  · split
+    · rename_i x i y
+      rw [h _ _ (by
+        simp only [Ty.size, Eff.size, Ty.ejectable_comp, Ty.ejectable_fn_reader]; omega)]
+    · rfl
+
+/-- Past the depth the types of two daughters allow, the search finds the same modes in the same
+order whatever its bound. -/
+theorem Ty.combineAux_eq : ∀ {k k' : ℕ} {l r : Ty B},
+    3 * (l.size + r.size) + l.ejectable + r.ejectable < k →
+    3 * (l.size + r.size) + l.ejectable + r.ejectable < k' →
+      Ty.combineAux inv find close k l r = Ty.combineAux inv find close k' l r
+  | 0, _, _, _, h, _ => absurd h (Nat.not_lt_zero _)
+  | _ + 1, 0, _, _, _, h => absurd h (Nat.not_lt_zero _)
+  | _ + 1, _ + 1, _, _, hk, hk' =>
+    Ty.combineStep_congr fun _ _ h ↦ Ty.combineAux_eq (by omega) (by omega)
+
+/-- **The search does not depend on its bound.** The modes for two types are a step of the
+search from the modes for the types the step peels them down to. -/
+theorem Ty.combineWith_eq_combineStep (l r : Ty B) :
+    Ty.combineWith inv find close l r =
+      Ty.combineStep inv find close (Ty.combineWith inv find close) l r :=
+  Ty.combineStep_congr fun l' r' h ↦ by
+    have := l.ejectable_le_one
+    have := r.ejectable_le_one
+    have := l'.ejectable_le_one
+    have := r'.ejectable_le_one
+    exact Ty.combineAux_eq (by omega) (by omega)
+
 /-- **The search is complete.** Every mode of the grammar that combines two daughters is among
 those `Ty.combine` lists for their types, given every basic rule is among those listed. -/
 theorem Ty.mem_combine
@@ -420,9 +573,7 @@ theorem Ty.mem_combineWithin
     {l r : Ty B} {m : Sigma (Mode Rule l r)} :
     m ∈ Ty.combineWithin inv find l r ↔ m.2.Within inv := by
   constructor
-  · intro h
-    obtain ⟨q, -, hq⟩ := List.mem_flatMap.1 (show m ∈ List.flatMap _ _ from h)
-    exact of_decide_eq_true (List.mem_filter.1 hq).2
+  · exact Ty.within_of_mem_combineWithin
   · intro h
     have := m.2.depth_le
     have := l.ejectable_le_one

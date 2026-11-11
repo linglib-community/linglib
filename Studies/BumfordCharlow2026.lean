@@ -36,6 +36,8 @@ A grammar need not have every meta-mode at every effect (section 3.4). With Stru
 alone, the pointwise grammar, [a closure operator captures the effect of its
 prejacent](##BumfordCharlow2026.combineWithin_pointwise_closure), and without the Unit modes
 [it has no prejacent that lacks the effect](##BumfordCharlow2026.combineWithin_ne_unit_closure).
+Hamblin's grammar is the pointwise grammar of indeterminacy, and [its derivation of a multiple
+question](##BumfordCharlow2026.values_whichDogChasedWhichCat) is application on sets.
 
 A focused phrase evokes alternatives to its value, and an operator such as *only* associates
 with that effect as existential closure does with indeterminacy: it captures the alternatives of
@@ -673,6 +675,100 @@ theorem normalForms_quantifiers : normalForms (C e) (C (e ⇒ T)) (C T) =
       .ap BA] := by decide
 
 end Interpreter
+
+/-! ### A pointwise grammar
+
+Hamblin's grammar (Figure 6) is the grammar with Structured App alone at indeterminacy, every
+word a set. Its derivation of *which dog chased which cat* (3.2) puts the words together by
+application in the structure on sets of values. -/
+
+section Hamblin
+
+open PhraseStructure
+
+/-- The words of (3.2). -/
+inductive Word
+  | whichDog | chased | whichCat
+  deriving DecidableEq
+
+/-- The words by the type of their results. -/
+inductive Item : Ty Unit → Type
+  | whichDog : Item e
+  | chased : Item (e ⇒ e ⇒ .t)
+  | whichCat : Item e
+
+/-- The words by type in Hamblin's grammar, where each is a set. -/
+inductive SetItem : Ty Unit → Type
+  | whichDog : SetItem (.comp .S e)
+  | chased : SetItem (.comp .S (e ⇒ e ⇒ .t))
+  | whichCat : SetItem (.comp .S e)
+
+/-- The result of each word. -/
+def results : Word ⊕ ℕ → List (Sigma Item)
+  | .inl .whichDog => [⟨_, .whichDog⟩]
+  | .inl .chased => [⟨_, .chased⟩]
+  | .inl .whichCat => [⟨_, .whichCat⟩]
+  | .inr _ => []
+
+/-- Hamblin's lexicon. -/
+def sets : Word ⊕ ℕ → List (Sigma SetItem)
+  | .inl .whichDog => [⟨_, .whichDog⟩]
+  | .inl .chased => [⟨_, .chased⟩]
+  | .inl .whichCat => [⟨_, .whichCat⟩]
+  | .inr _ => []
+
+variable {E : Type} (dog cat : E → Prop) (chase : E → E → Prop)
+
+local notation "D" => fun _ : Unit ↦ E
+
+/-- The set each word denotes: a *wh*-phrase its restrictor, and the verb its one value. -/
+def Item.val : {a : Ty Unit} → Item a → (Ty.comp .S a).Dom D
+  | _, .whichDog => {d | dog d}
+  | _, .chased => {chase}
+  | _, .whichCat => {c | cat c}
+
+/-- The same sets, of the words typed as Hamblin's grammar types them. -/
+def SetItem.val : {a : Ty Unit} → SetItem a → a.Dom D
+  | _, .whichDog => {d | dog d}
+  | _, .chased => {chase}
+  | _, .whichCat => {c | cat c}
+
+/-- Hamblin's grammar: application, pointwise at indeterminacy. -/
+def hamblin : Interpreter (effectGrammar (application (B := Unit))) ℕ :=
+  effectDrivenWithin (MetaMode.pointwise (· = .S)) application
+
+/-- (3.2): *which dog chased which cat*. -/
+def whichDogChasedWhichCat : Tree Unit Word :=
+  .bin (.leaf .whichDog) (.bin (.leaf .chased) (.leaf .whichCat))
+
+private theorem binary_fa : hamblin.binary (e ⇒ e ⇒ .t) e = [⟨e ⇒ .t, .basic .fa⟩] := rfl
+
+private theorem binary_ba : hamblin.binary e (e ⇒ .t) = [⟨.t, .basic .ba⟩] := rfl
+
+/-- (3.2): the sentence denotes the set of propositions that a dog chased a cat, one for each dog
+and each cat, by Structured App at each node. -/
+theorem values_whichDogChasedWhichCat :
+    whichDogChasedWhichCat.values hamblin effectGrammar.structure
+        (fun {_} ↦ SetItem.val dog cat chase) sets =
+      [⟨.comp .S .t, {p | ∃ c, cat c ∧ ∃ d, dog d ∧ p = chase c d}⟩] := by
+  have h := Tree.values_effectDrivenWithin_pointwise (P := (· = .S)) (f := .S)
+    (G := application (B := Unit)) rfl trivial (fun _ ↦ rfl) (fun b ↦ by cases b)
+    (ρ := fun {_} ↦ Item.val dog cat chase) (ρ' := fun {_} ↦ SetItem.val dog cat chase)
+    (lex := results) (lex' := sets) (fun x ↦ by rcases x with (_ | _ | _) | _ <;> rfl)
+    whichDogChasedWhichCat
+  refine h.trans ?_
+  change (whichDogChasedWhichCat.values hamblin _ _ results).map _ = _
+  simp only [whichDogChasedWhichCat, Tree.values_phrase_binary, Tree.values_terminal, results,
+    List.map_cons, List.map_nil, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+    binary_fa, binary_ba]
+  refine congrArg (fun x ↦ [(⟨.comp .S .t, x⟩ : Sigma (Ty.Dom D))]) (Set.ext fun p ↦ ?_)
+  change p ∈ Set.seq (_ '' {d | dog d}) (Set.seq (_ '' {chase}) {c | cat c}) ↔ _
+  simp only [Set.mem_seq_iff, Set.mem_image, Set.mem_singleton_iff, Set.mem_ofPred_eq,
+    exists_exists_and_eq_and, exists_eq_left]
+  exact ⟨fun ⟨d, hd, _, ⟨_, rfl, c, hc, rfl⟩, h⟩ ↦ ⟨c, hc, d, hd, h.symm⟩,
+    fun ⟨c, hc, d, hd, h⟩ ↦ ⟨d, hd, _, ⟨_, rfl, c, hc, rfl⟩, h.symm⟩⟩
+
+end Hamblin
 
 /-! ### Scope
 

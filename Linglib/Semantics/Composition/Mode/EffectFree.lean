@@ -90,10 +90,8 @@ theorem Ty.combine_of_effectFree [DecidableEq B] {Rule : Ty B → Ty B → Ty B 
     simp only [hj]
     exact List.map_eq_flatMap.symm
   rw [← hbasic]
-  unfold Ty.combine Ty.combineWith
-  rw [show 3 * (l.size + r.size) + 3 = (3 * (l.size + r.size) + 2) + 1 from rfl]
-  generalize 3 * (l.size + r.size) + 2 = k
-  rw [Ty.combineAux]
+  unfold Ty.combine
+  rw [Ty.combineWith_eq_combineStep, Ty.combineStep]
   congr 1
   all_goals simp_all
   all_goals
