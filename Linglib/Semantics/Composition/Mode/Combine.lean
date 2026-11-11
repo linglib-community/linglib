@@ -256,11 +256,22 @@ omit [DecidableEq B] in
 @[simp] theorem Ty.ejectable_fn_reader (a i b : Ty B) :
     (a ⇒ .comp (.R i) b).ejectable = 1 := rfl
 
+/-- A bound on the depth of the modes for two types: three steps for each unit of size, and one
+for each daughter an Eject applies to. -/
+def Ty.depthBound (l r : Ty B) : ℕ := 3 * (l.size + r.size) + l.ejectable + r.ejectable
+
+omit [DecidableEq B] in
+theorem Ty.depthBound_lt (l r : Ty B) : Ty.depthBound l r < 3 * (l.size + r.size) + 3 := by
+  have := l.ejectable_le_one
+  have := r.ejectable_le_one
+  unfold Ty.depthBound
+  omega
+
 omit [DecidableEq B] in
 /-- Each meta-mode but an Eject makes a daughter smaller, and an Eject leaves one fewer daughter
 to eject from, so the types of the daughters bound the depth of a mode. -/
-theorem Mode.depth_le {l r u : Ty B} (m : Mode Rule l r u) :
-    m.depth ≤ 3 * (l.size + r.size) + l.ejectable + r.ejectable := by
+theorem Mode.depth_le {l r u : Ty B} (m : Mode Rule l r u) : m.depth ≤ Ty.depthBound l r := by
+  unfold Ty.depthBound
   induction m with
   | basic _ => exact Nat.zero_le _
   | @mapR f l r u m ih =>
@@ -476,9 +487,9 @@ theorem Ty.within_of_mem_combineWithin {m : Sigma (Mode Rule l r)}
 fewer daughter to eject from. -/
 theorem Ty.combineStep_congr {rec rec' : (l r : Ty B) → List (Sigma (Mode Rule l r))}
     {l r : Ty B}
-    (h : ∀ l' r', 3 * (l'.size + r'.size) + l'.ejectable + r'.ejectable <
-      3 * (l.size + r.size) + l.ejectable + r.ejectable → rec l' r' = rec' l' r') :
+    (h : ∀ l' r', Ty.depthBound l' r' < Ty.depthBound l r → rec l' r' = rec' l' r') :
     Ty.combineStep inv find close rec l r = Ty.combineStep inv find close rec' l r := by
+  unfold Ty.depthBound at h
   refine congrArg (List.flatMap _) ?_
   iterate 8 refine congrArg₂ _ ?_ ?_
   · rfl
@@ -529,9 +540,8 @@ theorem Ty.combineStep_congr {rec rec' : (l r : Ty B) → List (Sigma (Mode Rule
 
 /-- Past the depth the types of two daughters allow, the search finds the same modes in the same
 order whatever its bound. -/
-theorem Ty.combineAux_eq : ∀ {k k' : ℕ} {l r : Ty B},
-    3 * (l.size + r.size) + l.ejectable + r.ejectable < k →
-    3 * (l.size + r.size) + l.ejectable + r.ejectable < k' →
+theorem Ty.combineAux_eq : ∀ {k k' : ℕ} {l r : Ty B}, Ty.depthBound l r < k →
+    Ty.depthBound l r < k' →
       Ty.combineAux inv find close k l r = Ty.combineAux inv find close k' l r
   | 0, _, _, _, h, _ => absurd h (Nat.not_lt_zero _)
   | _ + 1, 0, _, _, _, h => absurd h (Nat.not_lt_zero _)
@@ -544,11 +554,8 @@ theorem Ty.combineWith_eq_combineStep (l r : Ty B) :
     Ty.combineWith inv find close l r =
       Ty.combineStep inv find close (Ty.combineWith inv find close) l r :=
   Ty.combineStep_congr fun l' r' h ↦ by
-    have := l.ejectable_le_one
-    have := r.ejectable_le_one
-    have := l'.ejectable_le_one
-    have := r'.ejectable_le_one
-    exact Ty.combineAux_eq (by omega) (by omega)
+    have := Ty.depthBound_lt l r
+    exact Ty.combineAux_eq (by omega) (Ty.depthBound_lt l' r')
 
 /-- **The search is complete.** Every mode of the grammar that combines two daughters is among
 those `Ty.combine` lists for their types, given every basic rule is among those listed. -/
@@ -556,10 +563,7 @@ theorem Ty.mem_combine
     (hfind : ∀ {l r u : Ty B} (b : Rule l r u), (⟨u, b⟩ : Sigma (Rule l r)) ∈ find l r)
     {l r u : Ty B} (m : Mode Rule l r u) :
     (⟨u, m⟩ : Sigma (Mode Rule l r)) ∈ Ty.combine find l r := by
-  have := m.depth_le
-  have := l.ejectable_le_one
-  have := r.ejectable_le_one
-  have hk : m.depth < 3 * (l.size + r.size) + 3 := by omega
+  have hk : m.depth < 3 * (l.size + r.size) + 3 := m.depth_le.trans_lt (Ty.depthBound_lt l r)
   exact Ty.mem_combineAux (inv := fun _ _ ↦ True) (find := find) (close := Mode.closure)
     (fun b ↦ hfind b) (fun p _ ↦ Mode.mem_closure_self p)
     (fun hp hp' _ ↦ Mode.mem_closureAux_of_mem _ le_rfl hp hp') m
@@ -575,10 +579,8 @@ theorem Ty.mem_combineWithin
   constructor
   · exact Ty.within_of_mem_combineWithin
   · intro h
-    have := m.2.depth_le
-    have := l.ejectable_le_one
-    have := r.ejectable_le_one
-    have hk : m.2.depth < 3 * (l.size + r.size) + 3 := by omega
+    have hk : m.2.depth < 3 * (l.size + r.size) + 3 :=
+      m.2.depth_le.trans_lt (Ty.depthBound_lt l r)
     exact Ty.mem_combineAux (find := find) (fun b ↦ hfind b)
       (fun p hp ↦ List.mem_filter.2 ⟨Mode.mem_closure_self p, decide_eq_true hp⟩)
       (fun hp hp' hw ↦ List.mem_filter.2

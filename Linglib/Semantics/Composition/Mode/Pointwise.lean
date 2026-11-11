@@ -194,8 +194,8 @@ no type shifts and no basic rule for two daughters carrying `f`, and a lexicon w
 carries `f`. The values of a tree are then its values over the results of the items in the
 structure on computations, where every node means Structured App of the mode that combines the
 results: the effects of the words are merged into one layer at each node. -/
-theorem values_effectDrivenWithin_pointwise (hf : P f) (ha : f.IsApplicative)
-    (hU : ∀ a : Ty B, Language.LocallyFinite.unaryRules (L := G) a = [])
+theorem values_effectDrivenWithin_pointwise [∀ a b : Ty B, IsEmpty (G.Unary a b)] (hf : P f)
+    (ha : f.IsApplicative)
     (hG : ∀ {l r u : Ty B}, G.Binary (.comp f l) (.comp f r) u → False)
     {ρ : ∀ {a : Ty B}, W a → (Ty.comp f a).Dom D} {ρ' : ∀ {a : Ty B}, W' a → a.Dom D}
     {lex : Lx ⊕ ℕ → List (Sigma W)} {lex' : Lx ⊕ ℕ → List (Sigma W')}
@@ -221,6 +221,8 @@ theorem values_effectDrivenWithin_pointwise (hf : P f) (ha : f.IsApplicative)
   | .bind n _, [_], [Y], .cons rfl .nil =>
     have hnil {α β : Type} (l : List α) : l.flatMap (fun _ ↦ ([] : List β)) = [] :=
       List.flatMap_eq_nil_iff.2 fun _ _ ↦ rfl
+    have hU (a : Ty B) : Language.LocallyFinite.unaryRules (L := G) a = [] :=
+      List.eq_nil_iff_forall_not_mem.2 fun p _ ↦ isEmptyElim p.2
     simp [nodeValues, unaryValues, effectDrivenWithin, hU, hnil]
   | .phrase _ _, [_], [Y], .cons h .nil => exact h
   | .phrase _ _, [_, _], [Y₁, Y₂], .cons rfl (.cons rfl .nil) =>

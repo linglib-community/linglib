@@ -17,6 +17,8 @@ continuation at its own result type.
 
 * `Interpreter.Mode`: the basic modes closed under the meta-modes.
 * `Interpreter.Mode.eval`: the meaning of a mode, by the operations of the effects.
+* `Interpreter.Mode.Equiv`: two modes mean the same in every structure, written `m ≈ m'`; each
+  meta-mode respects it.
 * `Interpreter.MetaMode`, `Interpreter.Mode.Within`: the meta-modes, and the modes that keep to
   an inventory of them at each effect.
 * `Interpreter.effectGrammar`: the grammar whose binary rules are the modes over a grammar's
@@ -144,7 +146,74 @@ def eval {G : Language (Ty B)} (D : B → Type) [M : G.Structure (Ty.Dom D)] :
   | _, _, _, .join (f := f) h m, a, b => Eff.join f h (m.eval D a b)
   | _, _, _, .lower m, a, b => Eff.lower (m.eval D a b)
 
+/-- Two modes mean the same when they combine their daughters alike in every structure for the
+grammar. -/
+protected def Equiv {G : Language (Ty B)} {l r u : Ty B} (m m' : Mode G.Binary l r u) : Prop :=
+  ∀ (D : B → Type) [G.Structure (Ty.Dom D)], m.eval D = m'.eval D
+
 end Mode
+
+@[inherit_doc] scoped infix:50 " ≈ " => Mode.Equiv
+
+namespace Mode.Equiv
+
+variable {G : Language (Ty B)} {f : Eff B} {i l l' r r' u : Ty B}
+
+@[refl] protected theorem refl (m : Mode G.Binary l r u) : m ≈ m := fun _ _ ↦ rfl
+
+@[symm] protected theorem symm {m m' : Mode G.Binary l r u} (h : m ≈ m') : m' ≈ m :=
+  fun D _ ↦ (h D).symm
+
+@[trans] protected theorem trans {m m' m'' : Mode G.Binary l r u} (h : m ≈ m') (h' : m' ≈ m'') :
+    m ≈ m'' :=
+  fun D _ ↦ (h D).trans (h' D)
+
+instance : Trans (Mode.Equiv (G := G) (l := l) (r := r) (u := u)) Mode.Equiv Mode.Equiv :=
+  ⟨Equiv.trans⟩
+
+/-! Each meta-mode respects sameness of meaning. -/
+
+protected theorem mapR {m m' : Mode G.Binary l r u} (h : m ≈ m') :
+    (.mapR m : Mode G.Binary l (.comp f r) (.comp f u)) ≈ .mapR m' :=
+  fun D _ ↦ funext₂ fun a b ↦ by simp only [eval, h D]
+
+protected theorem mapL {m m' : Mode G.Binary l r u} (h : m ≈ m') :
+    (.mapL m : Mode G.Binary (.comp f l) r (.comp f u)) ≈ .mapL m' :=
+  fun D _ ↦ funext₂ fun a b ↦ by simp only [eval, h D]
+
+protected theorem ap (hf : f.IsApplicative) {m m' : Mode G.Binary l r u} (h : m ≈ m') :
+    Mode.ap hf m ≈ .ap hf m' :=
+  fun D _ ↦ funext₂ fun a b ↦ by simp only [eval, h D]
+
+protected theorem unitR (hf : f.IsApplicative) {m m' : Mode G.Binary (l ⇒ l') r u}
+    (h : m ≈ m') : Mode.unitR hf m ≈ .unitR hf m' :=
+  fun D _ ↦ funext₂ fun a b ↦ by simp only [eval, h D]
+
+protected theorem unitL (hf : f.IsApplicative) {m m' : Mode G.Binary l (r ⇒ r') u}
+    (h : m ≈ m') : Mode.unitL hf m ≈ .unitL hf m' :=
+  fun D _ ↦ funext₂ fun a b ↦ by simp only [eval, h D]
+
+protected theorem counit {m m' : Mode G.Binary l r u} (h : m ≈ m') :
+    (.counit m : Mode G.Binary (.comp (.W i) l) (.comp (.R i) r) u) ≈ .counit m' :=
+  fun D _ ↦ funext₂ fun a b ↦ by simp only [eval, h D]
+
+protected theorem ejectR {m m' : Mode G.Binary l (.comp (.R i) (r ⇒ r')) u} (h : m ≈ m') :
+    Mode.ejectR m ≈ .ejectR m' :=
+  fun D _ ↦ funext₂ fun a b ↦ by simp only [eval, h D]
+
+protected theorem ejectL {m m' : Mode G.Binary (.comp (.R i) (l ⇒ l')) r u} (h : m ≈ m') :
+    Mode.ejectL m ≈ .ejectL m' :=
+  fun D _ ↦ funext₂ fun a b ↦ by simp only [eval, h D]
+
+protected theorem join (hf : f.IsApplicative) {m m' : Mode G.Binary l r (.comp f (.comp f u))}
+    (h : m ≈ m') : Mode.join hf m ≈ .join hf m' :=
+  fun D _ ↦ funext₂ fun a b ↦ by simp only [eval, h D]
+
+protected theorem lower {m m' : Mode G.Binary l r (.comp (.C u) u)} (h : m ≈ m') :
+    Mode.lower m ≈ .lower m' :=
+  fun D _ ↦ funext₂ fun a b ↦ by simp only [eval, h D]
+
+end Mode.Equiv
 
 /-- The effect-driven grammar over a grammar: its binary rules are replaced by the modes over
 them, and its other symbols are kept. -/

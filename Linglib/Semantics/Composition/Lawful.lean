@@ -11,14 +11,14 @@ Each effect with a unit and an application is a monad, with its map, its unit, i
 and its join as the operations, and [the monad is lawful](##Interpreter.Eff.lawfulMonad). A
 statement about the modes that follows from the functor, applicative or monad laws therefore
 holds at every such effect at once: [Structured App is Join over the two maps, the left
-daughter's effect first](##Interpreter.Mode.eval_join_mapL_mapR).
+daughter's effect first](##Interpreter.Mode.join_mapL_mapR).
 
 Reading, indeterminacy, partiality, alternatives and the storing of truth values are
 [commutative](##Interpreter.Eff.commApplicative): at these [the right daughter's effect may as
-well come first](##Interpreter.Mode.eval_join_mapR_mapL), and [the daughters may change
+well come first](##Interpreter.Mode.join_mapR_mapL), and [the daughters may change
 places](##Interpreter.Mode.eval_ap_comm). Quantifying over continuations
 [is not](##Interpreter.Eff.not_commApplicative_C), and there [the order of the maps is a
-difference of scope](##Interpreter.Mode.exists_eval_join_mapR_mapL_ne).
+difference of scope](##Interpreter.Mode.not_join_mapR_mapL_equiv_ap).
 
 ## Main definitions
 
@@ -165,56 +165,53 @@ namespace Interpreter.Mode
 
 open ManySorted
 
-variable {B : Type} {D : B → Type} {G : Language (Ty B)} [M : G.Structure (Ty.Dom D)]
-  {f : Eff B} {l r u : Ty B}
+variable {B : Type} {G : Language (Ty B)} {f : Eff B} {l r u : Ty B}
 
 /-- At every effect with a unit and an application, mapping a mode over the right daughter, then
 over the left, and joining, is Structured App of the mode: the two daughters' effects are merged
 with the left daughter's first. -/
-theorem eval_join_mapL_mapR (h : f.IsApplicative) (m : Mode G.Binary l r u)
-    (a : (Ty.comp f l).Dom D) (b : (Ty.comp f r).Dom D) :
-    (Mode.join h (.mapL (.mapR m))).eval D a b = (Mode.ap h m).eval D a b := by
+theorem join_mapL_mapR (h : f.IsApplicative) (m : Mode G.Binary l r u) :
+    Mode.join h (.mapL (.mapR m)) ≈ .ap h m := fun D _ ↦ funext₂ fun a b ↦ by
   let := Eff.monad (D := D) f h
   have := Eff.lawfulMonad (D := D) f h
   show a >>= (fun x ↦ (fun y ↦ m.eval D x y) <$> b) = (fun x y ↦ m.eval D x y) <$> a <*> b
   simp only [seq_eq_bind_map, bind_map_left]
 
-/-- At a commutative effect it does not matter which daughter is on the left: Structured App of
-a mode is Structured App of its mirror image at the daughters in the other order. -/
-theorem eval_ap_comm (hc : f.IsCommutative) (m : Mode G.Binary l r u) (m' : Mode G.Binary r l u)
-    (hm : ∀ x y, m.eval D x y = m'.eval D y x) (a : (Ty.comp f l).Dom D)
-    (b : (Ty.comp f r).Dom D) :
-    (Mode.ap hc.isApplicative m).eval D a b = (Mode.ap hc.isApplicative m').eval D b a := by
-  let := Eff.monad (D := D) f hc.isApplicative
-  have := Eff.commApplicative (D := D) hc
-  show (fun x y ↦ m.eval D x y) <$> a <*> b = (fun y x ↦ m'.eval D y x) <$> b <*> a
-  rw [CommApplicative.commutative_map]
-  exact congrArg (fun k ↦ k <$> b <*> a) (funext₂ fun y x ↦ hm x y)
-
 /-- At a commutative effect, mapping a mode over the left daughter, then over the right, and
 joining, is Structured App of the mode too: the effects are merged with the right daughter's
 first, and the order makes no difference. -/
-theorem eval_join_mapR_mapL (hc : f.IsCommutative) (m : Mode G.Binary l r u)
-    (a : (Ty.comp f l).Dom D) (b : (Ty.comp f r).Dom D) :
-    (Mode.join hc.isApplicative (.mapR (.mapL m))).eval D a b =
-      (Mode.ap hc.isApplicative m).eval D a b := by
-  let := Eff.monad (D := D) f hc.isApplicative
-  have := Eff.lawfulMonad (D := D) f hc.isApplicative
-  have := Eff.commApplicative (D := D) hc
-  show b >>= (fun y ↦ (fun x ↦ m.eval D x y) <$> a) = (fun x y ↦ m.eval D x y) <$> a <*> b
-  rw [CommApplicative.commutative_map]
-  simp only [seq_eq_bind_map, bind_map_left]
-  rfl
+theorem join_mapR_mapL (hc : f.IsCommutative) (m : Mode G.Binary l r u) :
+    Mode.join hc.isApplicative (.mapR (.mapL m)) ≈ .ap hc.isApplicative m :=
+  fun D _ ↦ funext₂ fun a b ↦ by
+    let := Eff.monad (D := D) f hc.isApplicative
+    have := Eff.lawfulMonad (D := D) f hc.isApplicative
+    have := Eff.commApplicative (D := D) hc
+    show b >>= (fun y ↦ (fun x ↦ m.eval D x y) <$> a) = (fun x y ↦ m.eval D x y) <$> a <*> b
+    rw [CommApplicative.commutative_map]
+    simp only [seq_eq_bind_map, bind_map_left]
+    rfl
+
+variable {D : B → Type} [M : G.Structure (Ty.Dom D)]
+
+/-- At a commutative effect it does not matter which daughter is on the left: Structured App of
+a mode is Structured App of its mirror image at the daughters in the other order. -/
+theorem eval_ap_comm (hc : f.IsCommutative) {m : Mode G.Binary l r u} {m' : Mode G.Binary r l u}
+    (hm : m.eval D = Function.swap (m'.eval D)) :
+    (Mode.ap hc.isApplicative m).eval D = Function.swap ((Mode.ap hc.isApplicative m').eval D) :=
+  funext₂ fun a b ↦ by
+    let := Eff.monad (D := D) f hc.isApplicative
+    have := Eff.commApplicative (D := D) hc
+    show (fun x y ↦ m.eval D x y) <$> a <*> b = (fun y x ↦ m'.eval D y x) <$> b <*> a
+    rw [CommApplicative.commutative_map]
+    exact congrArg (fun k ↦ k <$> b <*> a) (funext₂ fun y x ↦ congrFun₂ hm x y)
 
 /-- At quantification over continuations the order of the two effects matters: where the result
-type has two values, the two daughters' effects merged with the right daughter's first differ
-from Structured App of the mode at some daughters, whatever the mode. -/
-theorem exists_eval_join_mapR_mapL_ne {o : Ty B} [Nontrivial (o.Dom D)]
+type has two values, merging the effects with the right daughter's first is not Structured App,
+whatever the mode. -/
+theorem not_join_mapR_mapL_equiv_ap {o : Ty B} [Nontrivial (o.Dom D)]
     (m : Mode G.Binary l r u) :
-    ∃ (a : (Ty.comp (.C o) l).Dom D) (b : (Ty.comp (.C o) r).Dom D),
-      (Mode.join (f := .C o) trivial (.mapR (.mapL m))).eval D a b ≠
-        (Mode.ap (f := .C o) trivial m).eval D a b := by
+    ¬ Mode.join (f := .C o) trivial (.mapR (.mapL m)) ≈ .ap trivial m := fun h ↦ by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne (o.Dom D)
-  exact ⟨fun _ ↦ x, fun _ ↦ y, fun h ↦ hxy (congrFun h fun _ ↦ x).symm⟩
+  exact hxy (congrFun (congrFun₂ (h D) (fun _ ↦ x) fun _ ↦ y) fun _ ↦ x).symm
 
 end Interpreter.Mode

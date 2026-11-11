@@ -9,15 +9,14 @@ Two daughters carrying one effect combine by Structured App, or by the two maps 
 followed by Join. Mapped right first, the Join is Structured App, and at a commutative effect so
 is the other: the effect-driven grammar gives one meaning several derivations. The normal form of
 a mode has Structured App for each such Join, and [means what the mode
-does](##Interpreter.Mode.eval_normalize), so [derivations with one normal form have one
-value](##Interpreter.effectGrammar.realize_eq_of_onTerm_normalize_eq).
+does](##Interpreter.Mode.normalize_equiv), so [derivations with one normal form have one
+value](##Interpreter.effectGrammar.normalize_isExpansionOn).
 
 ## Main definitions
 
 * `Interpreter.Mode.normalize`: the normal form of a mode.
 * `Interpreter.effectGrammar.normalize`: the map of the effect-driven grammar into itself that
-  takes each mode to its normal form, [which keeps the meaning of every
-  symbol](##Interpreter.effectGrammar.normalize_isExpansionOn).
+  takes each mode to its normal form.
 
 ## Implementation notes
 
@@ -41,8 +40,7 @@ variable {B : Type}
 
 namespace Mode
 
-variable {Rule : Ty B → Ty B → Ty B → Type} {f : Eff B} {D : B → Type} {G : Language (Ty B)}
-  [M : G.Structure (Ty.Dom D)] {l r u : Ty B}
+variable {Rule : Ty B → Ty B → Ty B → Type} {G : Language (Ty B)} {f : Eff B} {l r u : Ty B}
 
 /-- Join over Map Left of a mode: Structured App, where the mode is a Map Right. -/
 def joinMapL (h : f.IsApplicative) :
@@ -50,12 +48,11 @@ def joinMapL (h : f.IsApplicative) :
   | _, _, _, .mapR m => .ap h m
   | _, _, _, m => .join h (.mapL m)
 
-theorem eval_joinMapL (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f u))
-    (a : (Ty.comp f l).Dom D) (b : r.Dom D) :
-    (joinMapL h m).eval D a b = (Mode.join h (.mapL m)).eval D a b := by
+theorem joinMapL_equiv (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f u)) :
+    joinMapL h m ≈ Mode.join h (.mapL m) := by
   cases m with
-  | mapR m => exact (eval_join_mapL_mapR h m a b).symm
-  | _ => rfl
+  | mapR m => exact (join_mapL_mapR h m).symm
+  | _ => exact .refl _
 
 variable [DecidableEq B]
 
@@ -89,41 +86,36 @@ def normalize : {l r u : Ty B} → Mode Rule l r u → Mode Rule l r u
   | _, _, _, .join h m => joinNormal h m.normalize
   | _, _, _, .lower m => .lower m.normalize
 
-theorem eval_joinMapR (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f u))
-    (a : l.Dom D) (b : (Ty.comp f r).Dom D) :
-    (joinMapR h m).eval D a b = (Mode.join h (.mapR m)).eval D a b := by
+theorem joinMapR_equiv (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f u)) :
+    joinMapR h m ≈ Mode.join h (.mapR m) := by
   cases m with
   | mapL m =>
-    show (if f.IsCommutative then Mode.ap h m else .join h (.mapR (.mapL m))).eval D a b = _
+    show (if f.IsCommutative then Mode.ap h m else .join h (.mapR (.mapL m))) ≈ _
     split_ifs with hc
-    · exact (eval_join_mapR_mapL hc m a b).symm
-    · rfl
-  | _ => rfl
+    · exact (join_mapR_mapL hc m).symm
+    · exact .refl _
+  | _ => exact .refl _
 
-theorem eval_joinNormal (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f (.comp f u)))
-    (a : l.Dom D) (b : r.Dom D) :
-    (joinNormal h m).eval D a b = Eff.join f h (m.eval D a b) := by
+theorem joinNormal_equiv (h : f.IsApplicative) (m : Mode G.Binary l r (.comp f (.comp f u))) :
+    joinNormal h m ≈ Mode.join h m := by
   cases m with
-  | mapL m => exact eval_joinMapL h m a b
-  | mapR m => exact eval_joinMapR h m a b
-  | _ => rfl
+  | mapL m => exact joinMapL_equiv h m
+  | mapR m => exact joinMapR_equiv h m
+  | _ => exact .refl _
 
 /-- A mode and its normal form mean the same. -/
-@[simp] theorem eval_normalize : ∀ {l r u : Ty B} (m : Mode G.Binary l r u) (a : l.Dom D)
-    (b : r.Dom D), m.normalize.eval D a b = m.eval D a b
-  | _, _, _, .basic _, _, _ => rfl
-  | _, _, _, .mapR m, a, b | _, _, _, .mapL m, a, b | _, _, _, .ap _ m, a, b
-  | _, _, _, .unitR _ m, a, b | _, _, _, .unitL _ m, a, b | _, _, _, .counit m, a, b
-  | _, _, _, .ejectR m, a, b | _, _, _, .ejectL m, a, b | _, _, _, .lower m, a, b => by
-    simp only [normalize, eval, eval_normalize m]
-  | _, _, _, .join h m, a, b => by
-    simp only [normalize, eval, eval_joinNormal, eval_normalize m]
-
-/-- Modes with one normal form mean the same: they differ in the order in which commuting
-effects are merged. -/
-theorem eval_eq_of_normalize_eq {m m' : Mode G.Binary l r u} (h : m.normalize = m'.normalize)
-    (a : l.Dom D) (b : r.Dom D) : m.eval D a b = m'.eval D a b := by
-  rw [← eval_normalize m, h, eval_normalize]
+theorem normalize_equiv : ∀ {l r u : Ty B} (m : Mode G.Binary l r u), m.normalize ≈ m
+  | _, _, _, .basic _ => .refl _
+  | _, _, _, .mapR m => (normalize_equiv m).mapR
+  | _, _, _, .mapL m => (normalize_equiv m).mapL
+  | _, _, _, .ap h m => (normalize_equiv m).ap h
+  | _, _, _, .unitR h m => (normalize_equiv m).unitR h
+  | _, _, _, .unitL h m => (normalize_equiv m).unitL h
+  | _, _, _, .counit m => (normalize_equiv m).counit
+  | _, _, _, .ejectR m => (normalize_equiv m).ejectR
+  | _, _, _, .ejectL m => (normalize_equiv m).ejectL
+  | _, _, _, .join h m => (joinNormal_equiv h _).trans ((normalize_equiv m).join h)
+  | _, _, _, .lower m => (normalize_equiv m).lower
 
 end Mode
 
@@ -143,28 +135,21 @@ def normalize (G : Language (Ty B)) : effectGrammar G →ᴸ effectGrammar G whe
     | .prod (.of _) .nil, g => g
     | .prod (.of _) (.prod _ _), g => g
 
-/-- Taking normal forms keeps the meaning of every symbol of the effect-driven grammar. -/
+/-- **Equal meanings.** Taking normal forms keeps the meaning of every symbol of the
+effect-driven grammar, so a derivation and its normal form have one value, and so do two
+derivations with one normal form: they differ, at some of their nodes, in the order in which
+commuting effects are merged. -/
 theorem normalize_isExpansionOn [M : G.Structure (Ty.Dom D)] :
     (normalize G).IsExpansionOn (effectGrammar.structure (M := M)) effectGrammar.structure where
   map_onFunction σ _ g x :=
     match σ, g with
-    | .prod (.of _) (.of _), g => Mode.eval_normalize g x.1 x.2
+    | .prod (.of _) (.of _), g => congrFun₂ (Mode.normalize_equiv g D) x.1 x.2
     | .nil, _ => rfl
     | .of _, _ => rfl
     | .prod .nil _, _ => rfl
     | .prod (.prod _ _) _, _ => rfl
     | .prod (.of _) .nil, _ => rfl
     | .prod (.of _) (.prod _ _), _ => rfl
-
-/-- **Equal meanings.** Derivations of the effect-driven grammar with one normal form have one
-value: they differ, at some of their nodes, in the order in which commuting effects are
-merged. -/
-theorem realize_eq_of_onTerm_normalize_eq [M : G.Structure (Ty.Dom D)] {W : Ty B → Type}
-    (ρ : ∀ {a : Ty B}, W a → a.Dom D) {a : Ty B} {d d' : (effectGrammar G).Deriv W a}
-    (h : (normalize G).onTerm d = (normalize G).onTerm d') :
-    d.realize effectGrammar.structure ρ = d'.realize effectGrammar.structure ρ := by
-  rw [← Language.LHom.realize_onTerm normalize_isExpansionOn ρ d, h,
-    Language.LHom.realize_onTerm normalize_isExpansionOn]
 
 end effectGrammar
 

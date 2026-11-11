@@ -752,7 +752,7 @@ theorem values_whichDogChasedWhichCat :
         (fun {_} ↦ SetItem.val dog cat chase) sets =
       [⟨.comp .S .t, {p | ∃ c, cat c ∧ ∃ d, dog d ∧ p = chase c d}⟩] := by
   have h := Tree.values_effectDrivenWithin_pointwise (P := (· = .S)) (f := .S)
-    (G := application (B := Unit)) rfl trivial (fun _ ↦ rfl) (fun b ↦ by cases b)
+    (G := application (B := Unit)) rfl trivial (fun b ↦ by cases b)
     (ρ := fun {_} ↦ Item.val dog cat chase) (ρ' := fun {_} ↦ SetItem.val dog cat chase)
     (lex := results) (lex' := sets) (fun x ↦ by rcases x with (_ | _ | _) | _ <;> rfl)
     whichDogChasedWhichCat
@@ -832,7 +832,7 @@ theorem eval_ap_fa_eq_eval_ap_ba (hc : f.IsCommutative) (F : (Ty.comp f (a ⇒ b
       Mode (baseGrammar B).Binary (.comp f (a ⇒ b)) (.comp f a) (.comp f b)).eval D F X =
     (Mode.ap hc.isApplicative (.basic (.inl .ba)) :
       Mode (baseGrammar B).Binary (.comp f a) (.comp f (a ⇒ b)) (.comp f b)).eval D X F :=
-  Mode.eval_ap_comm hc _ _ (fun _ _ ↦ rfl) F X
+  congrFun₂ (Mode.eval_ap_comm hc rfl) F X
 
 variable {o : Ty B}
 
