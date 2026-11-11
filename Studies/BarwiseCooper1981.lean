@@ -442,7 +442,7 @@ theorem more_than_half_not_definable :
       (S : (Language.monadic (Fin 2)).Structure M),
       (@Sentence.Realize _ M S φ ↔ MoreThanHalf M S) := by
   rintro ⟨φ, hφ⟩
-  set m := φ.qr + 1 with hm
+  set m := φ.quantifierRank + 1 with hm
   -- M₁ does not satisfy more-than-half: |U₁ ∩ V| = m, |V| = 2m
   have hmth₁ : ¬ MoreThanHalf (Fin (3 * m + 1)) (struc₁ m (3 * m + 1)) := by
     rw [moreThanHalf_iff (m := m) (c := m) _ (fun x ↦ Iff.rfl) (fun x ↦ Iff.rfl)
@@ -528,19 +528,19 @@ noncomputable def star : ∀ {n : ℕ}, QFormula n → (Language.monadic (Fin 2)
       ((BoundedFormula.iSup fun i : Fin n ↦ (&(Fin.last n)).bdEqual &i.castSucc) ⊔ star f)).all
 
 -- p. 215
-theorem qr_star_le : ∀ {n : ℕ} (ψ : QFormula n), (star ψ).qr ≤ numQ ψ
+theorem quantifierRank_star_le : ∀ {n : ℕ} (ψ : QFormula n), (star ψ).quantifierRank ≤ numQ ψ
   | _, .falsum => le_rfl
   | _, .equal _ _ => Nat.zero_le _
   | _, .isU _ => Nat.zero_le _
   | _, .isV _ => Nat.zero_le _
-  | _, .imp f₁ f₂ => max_le ((qr_star_le f₁).trans (Nat.le_add_right _ _))
-      ((qr_star_le f₂).trans (Nat.le_add_left _ _))
-  | _, .all f => Nat.add_le_add_right (qr_star_le f) 1
+  | _, .imp f₁ f₂ => max_le ((quantifierRank_star_le f₁).trans (Nat.le_add_right _ _))
+      ((quantifierRank_star_le f₂).trans (Nat.le_add_left _ _))
+  | _, .all f => Nat.add_le_add_right (quantifierRank_star_le f) 1
   | _, .qx f => by
-      simp only [star, BoundedFormula.qr_all, BoundedFormula.qr_sup, numQ]
+      simp only [star, BoundedFormula.quantifierRank_all, BoundedFormula.quantifierRank_sup, numQ]
       exact Nat.add_le_add_right (max_le (Nat.zero_le _) (max_le
-        ((BoundedFormula.qr_iSup_le (k := 0) fun _ ↦ le_rfl).trans (Nat.zero_le _))
-        (qr_star_le f))) 1
+        ((BoundedFormula.quantifierRank_iSup_le (k := 0) fun _ ↦ le_rfl).trans (Nat.zero_le _))
+        (quantifierRank_star_le f))) 1
 
 -- p. 215
 theorem realize_equivMap {E : Type} [Fintype E] {U V : E → Prop} (σ : E ≃ E)
@@ -758,7 +758,7 @@ theorem more_than_half_not_Q_definable :
       Fintype.card_fin]; omega)
   -- by (5), since `φ*` is a first-order sentence of quantifier rank below `m`
   have htrans := elementarilyEquivalentUpTo_struc m k (by omega) (by omega) (QFormula.star φ)
-    ((QFormula.qr_star_le φ).trans (by omega))
+    ((QFormula.quantifierRank_star_le φ).trans (by omega))
   exact hfalse₁ (hcast _ _ ((hP₁ _).mp (htrans.mpr ((hP₂ _).mpr (hcast _ _ htrue₂)))))
 
 /-! ### The truth condition is the codebase's (most : Det α) -/
