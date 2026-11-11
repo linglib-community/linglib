@@ -59,14 +59,6 @@ known](##eq_up_diag), so that Stalnaker's reinterpretation is the update by the 
   file's reconstruction, through `DynamicSemantics.CCP.isClassical_iff_up_down_eq`.
 * Locators are to the 1978 printing.
 
-## Errata
-
-* On p. 330, *Sherlock Holmes does not exist*, if the name does not refer, is said to express a
-  necessarily false proposition, by the rule that the sentence is true at the worlds whose domain
-  does not contain the person the name refers to. That rule makes it necessarily true, as the
-  first row of matrix G, true throughout, shows (`holmesDoesNotExist_diag`). The 1999 reprint in
-  *Context and Content* reads "necessarily true".
-
 ## TODO
 
 * *Hesperus is identical with Phosphorus*, *it is now three o'clock* and *an ophthalmologist is

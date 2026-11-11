@@ -48,20 +48,6 @@ restrictor holds a bound pronoun cannot outscope the pronoun's binder.
   is `Si.alternatives`: each word is resolved to one alternative before abstraction, for lexical
   alternatives that do not depend on the assignment.
 
-## Errata
-
-* Footnote 25 says that the two lines of (74) are equivalent when every alternative set is
-  nonempty, and (75) and (76) equate the first with a Skolemized choice function. A choice
-  function picks the same member from equal sets, so values of the variable with the same
-  alternatives receive the same one under the first line but not under the second; distinct
-  alternatives at distinct values suffice for the two to agree (`Si.abstractChoice_eq_pi`).
-  With truth values as alternatives, two people who each met some but not all linguists already
-  separate them: the first line gives `[λ₀ t₀ met a linguist]` the constant predicates, the second
-  line and the right-hand side of (75) every predicate (`Si.abstractChoice_ne_pi`,
-  `Si.range_skolem_eq_pi`). The verdict on (77) holds under either line
-  (`Si.nobody_met_iff`, `Si.sSup_pi_nobodyMet_iff`).
-* Figure 9 prints `die X` for `die x`.
-
 ## TODO
 
 * (46), and point-wise composition with a closure inside the island (45) on (46) and (47).

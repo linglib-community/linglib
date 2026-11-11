@@ -44,12 +44,6 @@ the run time of an actual event.
   of an interval in a plural interval (31) is inclusion in the hull, and (33) holds. The habitual
   scenario takes its events to be sets of games ordered by inclusion.
 
-## Errata
-
-* (111) applies `MOD` to its arguments in the order `MOD(w)(i)(…)`, though it defines `MOD` as
-  `λ℘.λi.λw`; read in its defined order it computes `BEST` from the composite predicate, where (52)
-  and (58) compute it from the description `℘`, which `IMP` follows.
-
 ## TODO
 
 * The boundedness presuppositions (105) and (109), adverbs of quantification (§2.4), the

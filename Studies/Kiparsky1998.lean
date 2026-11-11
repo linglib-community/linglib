@@ -27,14 +27,6 @@ the verbs by resultativity fails](##not_fits_resultativity).
 * 'Few' and 'many' are pluralities of at most two and at least three individuals.
 * The paradigm does not separate unboundedness from non-quantization, which fits it as well.
 
-## Errata
-
-* The text cites the definitions of divisive, cumulative and diverse reference under the number
-  of the definition of unboundedness.
-* 'A bomb' and 'the food' are said to be neither divisive nor cumulative; [the first is divisive
-  and the second cumulative](##aBear_isDivisive_theBears_isCumulative), vacuously, and both are
-  bounded by diversity, as the paper's remark on *Fred* has it.
-
 ## TODO
 
 * The partitive subjects of presentational verbs, and the coercion of bounded predicates.

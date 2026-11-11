@@ -45,17 +45,6 @@ determiners (*the n*, *both*, *neither*) fall outside the total type `Det α` an
   `most_apply_self` holds only for a nonempty restrictor, and by the definition of §4.6 the
   library's `most` is weak rather than strong as Table II has it (`most_weak`).
 
-## Errata
-
-* The artificial determiner of §4.8 is printed as `‖D‖(A) = {X | Card(X − A) is finite and
-  even}`, but the paper's own witnesses, `A − {a, b} ∈ ‖D‖(A)` and `A − {a} ∉ ‖D‖(A)`, hold
-  only for `Card(A − X)`. As printed, `D` would not live on `A`, against the determiner
-  universal U3; `evenOutside` counts `A − X`, and is conservative (`conservative_evenOutside`).
-* §4.8 lists *all but one man* among the denotations U6 rules out. But *all but one* is the
-  conjunction of *all but at most one*, increasing, and *not all*, decreasing, just as the same
-  passage reads *two men* as *at least two men but at most two men*; it
-  [satisfies the constraint](##Quantifier.Det.satisfiesUniversals_allBut).
-
 ## References
 
 * [barwise-cooper-1981]
@@ -190,7 +179,7 @@ theorem inter_nonempty_of_scopeUp_dual (hm : ScopeMonotone D) {R A B : Set α}
 monotone quantifiers, as ruling out *an even number of*, *exactly three or exactly five* and *all
 but one*. U6 is right continuity in the scope (`satisfiesUniversals_iff`). The second fails it on
 five individuals, its truth at three and at five members of the scope not carrying over to four;
-the third does not (Errata). -/
+the third does not. -/
 
 -- §4.8
 theorem not_rightContinuous_exactly_three_sup_exactly_five :
@@ -201,14 +190,14 @@ theorem not_rightContinuous_exactly_three_sup_exactly_five :
   simp only [Pi.sup_apply, sup_Prop_eq]
   decide
 
--- §4.8, Errata
+-- §4.8
 example [Finite α] : (allBut 1 : Det α).SatisfiesUniversals := satisfiesUniversals_allBut 1
 
-/-! §4.8's artificial strong-but-not-increasing determiner, conservative once its erratum is
-corrected, shows U7 (*positive strong determiners are increasing*) is not a logical truth. -/
+/-! §4.8's artificial strong-but-not-increasing determiner, conservative when it counts
+`A − X`, shows U7 (*positive strong determiners are increasing*) is not a logical truth. -/
 
 /-- `X ∈ D(A)` iff the members of `A` outside `X` are finitely and evenly many — positive
-strong, but not increasing (§4.8, with the erratum `A − X`). -/
+strong, but not increasing (§4.8, counting `A − X`). -/
 def evenOutside : Det α := fun A X ↦ (A \ X).Finite ∧ Even (A \ X).ncard
 
 theorem conservative_evenOutside : Conservative (evenOutside (α := α)) := fun A X ↦ by

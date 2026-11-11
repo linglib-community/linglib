@@ -44,17 +44,6 @@ them.
 * Dowty's branching-time progressive (p. 152) is stated over histories, which p. 153 lets take the
   role of worlds; `branchingProg` reads it so.
 
-## Errata
-
-* The branching-time progressive (p. 152) takes, for each inertia history, some longer interval of
-  the sentence's truth, while (25) fixes one longer interval for every inertia world. The first is
-  strictly weaker ([they differ](##not_branchingProg_subset_prog)): when the inertia worlds
-  complete a circle at different times, it makes *John is drawing a circle* true and (25) false.
-  So the choice between the two formalizations matters for the progressive, contrary to p. 154.
-  The branching definition also drops (25)'s requirement that the interval not be a final
-  subinterval of the longer one, which its own gloss on p. 151 ("extending into some ... possible
-  future") presupposes.
-
 ## TODO
 
 * BECOME (11), (11'), Cresswell's AND (19), the futurate progressive of §3.7 and the stative

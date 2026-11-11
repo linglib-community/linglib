@@ -28,20 +28,6 @@ and local accommodation [fits best](##MartyEtAl2026.modelFits_best).
 * Intermediate projection is George's 2008 deployment with concern for disappointment, the theory
   note 5 credits with it alone.
 
-## Errata
-
-* Table 2 prints ∃:1 for nm-neg with the Target-2 picture in both experiments, as the released
-  analysis codes the predictor. Existential projection as (7b) states it, at the trigger's
-  standard, [rejects that picture](##MartyEtAl2026.exist_accepts_nmNeg); the printed column reads
-  the scope at [either standard](##MartyEtAl2026.mem_predictions_exist_iff). So ∃-proj too tells
-  the nm-neg targets apart, against §3.2, it predicts Exp. 1's nm-neg below nm-pos at Target-2,
-  against §3.6, and the two ∃ models of Table 3 were fitted with the printed cell.
-* [Three rates of §3.6](##MartyEtAl2026.reportedRates_mismatch) disagree with the released counts:
-  20% for m-neg at Target-1 in Exp. 2 (19.0%), 13% for m-pos at Target-1 in Exp. 1 (1.4%) and 73%
-  for nm-neg at Target-2 in Exp. 2 (75.4%); the section later prints the first and third as 19%
-  and 75%.
-* Table 1 labels the m-neg sentence of Experiment 1 n-neg.
-
 ## References
 
 * [marty-etal-2026]

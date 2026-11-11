@@ -24,7 +24,7 @@ adopt the likeliest type
   are `RSA.actionSpeaker` at the utility of a correct guess, not `RSA.speaker`, whose logarithmic
   utility [frank-goodman-2012] never sends a false message (note 2).
 * A type's data (`produce`) draw each state from the state prior, so they have total mass one; the
-  posterior over types is the same as under the printed likelihood (see Errata).
+  posterior over types is the same as under the printed likelihood.
 * The factor `1.05` of Fig. 2 is the prior's parameter, from the caption. `invariant_biasedPrior`
   shows for every factor that the stationary ratio of `L_lack` to `L_bound` users is the factor,
   which is the "exactly 1.05" of p. 2770.
@@ -46,29 +46,6 @@ adopt the likeliest type
   fitness and the uniform population over its twelve types in both generations, the next
   population has total mass `1/12`. Its prose (p. 2082) says that `L_a` gives `m₁` an upper
   bound, but by its matrix the bounded message, true only at the first state, is `m₂`.
-
-## Errata
-
-* §3.1 (p. 2768) says that every type has a sizable advantage over literal `L_lack`. Pragmatic
-  `L_bound` has one only when `λ > log(5/3)`, and pragmatic `L_lack` does worse than literal
-  `L_lack` whenever `λ ≤ 2 log(5/2)`, as at the `λ = 1` of §2.4.1
-  ([selfSuccess_Llack_zero_lt](##selfSuccess_Llack_zero_lt)).
-* Appendix A (p. 2788) prints the replicator mutator step as
-  `(0.9x² - 0.2x + 0.2) / (3x² - 4x + 2)` with rest points `.121`, `.609` and `.903`. These are
-  the step and rest points when the negatives produced by mutation number `0.1 · 2(1 - x)`
-  instead of `0.1 · (1 - x)(2 - 2x)`. The step is `(1.1x² - 0.4x + 0.2) / (3x² - 4x + 2)`
-  ([rmd_real_negative](##rmd_real_negative)), whose rest points are numerically near `.106`,
-  `.735` and `.859`.
-* The likelihood of data in §2.4.3 (p. 2767) is the product of the speaker's chances of the
-  messages, without the chances of the states, so it sums to `|S|^k` over the data of length
-  `k` and the rows of `Q` do not sum to one.
-* Table 2 (p. 2773) gives `A ∩ B ≠ ∅ ∧ A ≠ ∅` as the least complex formula for *some but not
-  all*, but it expresses *some*, since its second conjunct follows from the first; the formula for
-  *none or all*, its negation, expresses *none* given that `A` is nonempty. The formula
-  `A ∩ B ≠ ∅ ∧ ¬(A ⊆ B)` for *some but not all* costs `11` by Table 1, more than the printed
-  `8`; a higher cost only lowers the prior of `L_bound`, so `lexiconWeight_lt` still holds.
-* In Appendix B (p. 2789) the third row of `LH` and of both matrices `Q` is labelled `t₂`; it is
-  `t₃`.
 
 ## TODO
 
@@ -703,7 +680,7 @@ theorem lexiconWeight_le_lexAll (L : Fin 3 → Representation) :
           (prod_le_one₀ (fun r' _ ↦ h₀ r') fun r' _ ↦ (h₄ r').trans (by norm_num)) (h₀ r)
     _ ≤ 1 / 4 := by linarith [h₄ r]
 
--- Table 2 (p. 2773), erratum: the formula printed for *some but not all* expresses *some*.
+-- Table 2 (p. 2773): `A ∩ B ≠ ∅ ∧ A ≠ ∅` is equivalent to `A ∩ B ≠ ∅`.
 example {α : Type*} (A B : Set α) : (A ∩ B).Nonempty ∧ A.Nonempty ↔ (A ∩ B).Nonempty :=
   ⟨And.left, fun h ↦ ⟨h, h.mono Set.inter_subset_left⟩⟩
 
@@ -881,8 +858,8 @@ theorem replicator_real_negative_eq_iff (x : Measure Sign) [IsProbabilityMeasure
     · exact .inr (.inl (by linarith))
   · rintro (h | h | h) <;> rw [h] <;> ring
 
--- App. A (p. 2788), erratum: the replicator mutator step sends the share `x` of negatives to
--- `(1.1x² - 0.4x + 0.2) / (3x² - 4x + 2)`, not to the printed `(0.9x² - 0.2x + 0.2) / ⋯`.
+-- App. A (p. 2788): the replicator mutator step sends the share `x` of negatives to
+-- `(1.1x² - 0.4x + 0.2) / (3x² - 4x + 2)`.
 theorem rmd_real_negative (x : Measure Sign) [IsProbabilityMeasure x] :
     (rmd mutation (fitness payoff x) x).real {negative} =
       (1.1 * x.real {negative} ^ 2 - 0.4 * x.real {negative} + 0.2) /

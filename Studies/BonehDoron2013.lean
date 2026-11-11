@@ -36,16 +36,6 @@ time, and *would* is Gen with a restriction and an interval from the context.
   setting the left boundary of its span. With *used to* the chapter reads *since then* as a
   reference interval stretching to the perspective time.
 
-## Errata
-
-* The denotations (18) and (19) make (42c) true in its context (`usedTo_hab_of_single_trip`).
-  Its falsity rests on an assumption the chapter states only in prose in §6.3.2, that a property
-  characterizes an interval only if the interval is extended and the property is actualized at
-  both of its ends (`Characterizes`).
-* The second disjunct of (22b), `∃Q Gen(P_C, Q, i_C, w)`, holds of every restriction through the
-  empty restrictor, since Gen (21) has no existential import, so (22b) does not constrain the
-  context.
-
 ## TODO
 
 * Telling (2c) from (2d) by (22b) needs Gen to presuppose that its restrictor is nonempty.

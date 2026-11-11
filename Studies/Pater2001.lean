@@ -40,15 +40,6 @@ stops fuse](##fusingStops_mem), as the intermediate types of Newman's typology d
 * With NASASSIM dominated, [the velars alone fuse](##exists_fusingStops_eq_velars), a type
   Newman's typology lacks.
 
-## Errata
-
-* The left tableau of (4) marks the winner's *NC̥ violation fatal and gives it the UNIFORMITY
-  violation that [belongs to the fused candidate](##uniformity_empat).
-* (16) counts the deletion of the affix's vowel under MAX, but (17), (18), (23) and (24) do not,
-  so [their fused candidates lack a MAX violation](##max_baru). No winner changes.
-* (42) leaves IDENT[PLACE] blank for the fused candidate, whose nasal
-  [corresponds to the prefix's ŋ](##identPlace_fuse). No winner changes.
-
 ## TODO
 
 * The other NC effects of (5) and (6), the infixation of (7) to (10), the co-occurrence table

@@ -28,16 +28,6 @@ the phrase to the verb phrase, so [*walk to the house* is bounded](##Zwarts2005.
 * The paper's trace function respects Rothstein's partial event concatenation, not an
   unrestricted mereological sum.
 
-## Errata
-
-* The definition of divisive reference quantifies over all paths where it needs $p \in X$: as
-  printed, a divisive set contains every proper subpath of every path.
-* The appendix calls constant paths the least elements of the subpath order. They are
-  [only minimal](##Spatial.Path.isMin_const), since
-  [constant paths at different points are incomparable](##Zwarts2005.const_le_const_iff).
-* The title of the appendix announces an event algebra that it does not define; the event
-  operation appears only in the discussion of how aspect is transferred.
-
 ## TODO
 
 * The minimality and grinder operators (63) and (64).

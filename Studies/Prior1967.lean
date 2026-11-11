@@ -19,12 +19,6 @@ strict *later than*: [it refutes `CFpFFp` when discrete](##not_den_int), and
 [falls short of trichotomy](##cmnmpnmp_not_trichotomous), and `CFPpAApPpFp` and `CPFpAApPpFp`
 [come apart on a fork](##fork_asymmetry).
 
-## Errata
-
-* Prior reports (p. 38) that `CMNMpNMp` is shown to require trichotomy, but it holds on two
-  unconnected lines (`cmnmpnmp_not_trichotomous`). It requires trichotomy only among the times
-  connected to a given one.
-
 ## TODO
 
 * The metric tense logic of Chapter VI, the Ockhamist and Peircean formalizations of Chapter VII

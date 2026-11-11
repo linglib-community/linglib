@@ -72,17 +72,6 @@ require](##rows_any).
 * The closure ranges over the expanded domains rather than over the expansion functions. The
   examples take the single widening to every coffee.
 
-## Errata
-
-* The text allows the contextual domain itself as an expansion of the domain of *any* and says
-  that the semantics still confines *any* to downward-entailing contexts in that case. Once the
-  contextual domain is among the expansions, the closure entails the competitor in every context
-  ([`universalClosure_subset`](##universalClosure_subset)), positive ones included, so the
-  strengthening condition does not confine it.
-* The argument against global computation says that the implicature entails (21c), meaning
-  (22c); the discussion of scale selection calls the minimal scales those in (78), meaning (97);
-  and the competitor (130b) has *any cake* for *the cake*.
-
 ## TODO
 
 * The double-negation contrast between strong values, because-clauses as covert conjunctions,

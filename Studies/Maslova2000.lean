@@ -27,8 +27,8 @@ languages at its ancestral frequency](##integral_frequency_cond).
 * A typology is a finite type with measurable singletons and its type-shift process a Markov
   kernel; `typeShift P` is the process with transition probabilities `P`. Strong connection is
   irreducibility with respect to the counting measure. The paper's small time interval, over which
-  a language most likely keeps its type, is not imposed on the definitions; the two processes the
-  errata use keep each type with probability at least nine tenths.
+  a language most likely keeps its type, is not imposed on the definitions; the processes
+  `absorbing` and `cycle` keep each type with probability at least nine tenths.
 * That the shifts of a coarser typology depend on the coarse type alone is the condition
   `κ (g s) = (κS s).map g` on the coarsening `g` of a finer typology.
 * The birth-and-death process enters only through the law of the numbers of descendants of the
@@ -38,29 +38,6 @@ languages at its ancestral frequency](##integral_frequency_cond).
 * The paper obtains the expected frequency $f_0$ from the independence of splitting and dying from
   type, and (A10) displays it, for many ancestral languages, as the ratio of the expected numbers;
   here it holds exactly for any exchangeable law (`integral_frequency_cond`).
-
-## Errata
-
-* The second term of (A11) lacks its square; (A12) is what the squared term gives (not formalized;
-  see TODO).
-* At $f_0 = 1/2$, (6) gives $\sigma = \sqrt{\alpha}/(2\sqrt{K})$ with $\alpha = 1 + p(D)/p(B)$,
-  more than the $1/(2\sqrt{K})$ of (4) whenever $p(D) > 0$. The appendix obtains (4) as the limit
-  $N_0 \to K$, in which every ancestral language leaves descendants, and the bound $1/\sqrt{K}$ of
-  (5) is $2\sigma$ only in that limit (not formalized; see TODO).
-* The paper takes strong connection to be necessary for a stationary distribution, which it defines
-  as uniquely determined by the process: without a path from one type to another, the probability
-  of the second stays zero from the first while it is positive from others, so that the dependence
-  on the initial type lasts forever. Strong connection is necessary for a unique stationary law
-  that gives every type a positive probability, but not for a unique stationary law. A process with
-  a path from one type to another and none back has one, concentrated on the second type, and in
-  the limit, which is also how a strongly connected process loses its initial type, the
-  probability of the first type vanishes from both types (`isDistributionalUniversal_absorbing`,
-  `absorbing_pow_apply_true`, `tendsto_absorbing_pow_true`, `not_isIrreducible_absorbing`).
-* The paper takes the notion of a distributional universal to imply that a shift from a preferred
-  type to a dispreferred one is less probable than the reverse shift. This holds of two types and
-  of any process in detailed balance (`lt_iff_of_isReversible`), but not in general: of three
-  types moving around a cycle over a small time interval, the more probable of two can be one the
-  process shifts to the other and never directly back (`cycle_counterexample`).
 
 ## TODO
 

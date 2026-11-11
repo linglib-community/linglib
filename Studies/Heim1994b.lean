@@ -25,13 +25,6 @@ property. Structured answers [give their partition for every predicate](##ker_wh
 * Predicates are topical properties `E → Set W` over individuals, not the groups of the paper's
   plural semantics, and a restrictor is read at the world of evaluation.
 
-## Errata
-
-* §6 and §8 take the proposition believed on the generalized analysis to be the answer in the
-  second sense; the two agree on the true answers of a Hamblin set, but for identity with oneself
-  the answer in the second sense [is trivial](##ans₂_wh_identicalWithSelf).
-* §7 gives the truth conditions (22) as those of (15); they are those of (21).
-
 ## References
 
 * [heim-1994]

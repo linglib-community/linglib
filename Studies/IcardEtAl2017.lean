@@ -31,12 +31,6 @@ abnormal deflation (with disjoined causes, a less normal $C$ is less causal), wh
   assume priors below one, and the desiderata compare priors strictly between zero and one, where
   every existing measure is defined.
 
-## Errata
-
-* The conjunctive bars of Experiment 1 in Fig. 2a stand near 4.1 and 5.4, while §5.1.2 prints the
-  means 3.37 and 5.61, which agree with the by-vignette bars of Fig. A1. The data take the printed
-  means.
-
 ## References
 
 * [icard-et-al-2017]

@@ -38,18 +38,6 @@ comparative is vague.
 * `Acyclic` is the paper's three-term condition, not Sen's acyclicity, which forbids strict cycles
   of every length; the Condorcet cycle violates both.
 
-## Errata
-
-* The paper offers utilitarian aggregation with non-negative weights as meeting Arrow's conditions
-  under cardinal unit comparability, but zero weights fail weak Pareto
-  (`Aggregation.not_weakPareto_utilitarian_zero`) and one positive weight makes a dictator
-  (`Aggregation.isDictator_utilitarian_single`).
-* Footnote 24 glosses Sen's Pareto extension rule (`Aggregation.paretoExtension`) as ranking `x` at
-  least as high as `y` when `x` is F-er on some dimension, which no object is than itself, though
-  the footnote calls the rule's outputs reflexive.
-* The quantificational comparative cited to Sassoon's 2013 book is on p. 368 of
-  [sassoon-2013], the paper's Sassoon 2013b.
-
 ## TODO
 
 * The sharp branch, May's and Weymark's characterizations of majority rule and the Pareto rule.

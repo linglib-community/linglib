@@ -46,12 +46,6 @@ FAM-DEF > COHERE > ALIGN. Between two fully anaphoric interpretations that pass 
 * Both readings of (12c) violate FAM-DEF (`d12_famDef`), *Mary* being new, so (12) lies outside
   `Filtered` and Proposition (20); (1) instantiates them.
 
-## Errata
-
-* Tableau (13) marks no FAM-DEF violation, though *Mary* in (12c) is a proper name new to the
-  discourse, which FAM-DEF counts (fn. 14, and the tableaux for (5c) and (8c)). Both
-  candidates incur it (`d12_famDef`), so the winner is unaffected.
-
 ## References
 
 * [beaver-2004]

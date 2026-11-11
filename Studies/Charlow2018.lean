@@ -36,18 +36,6 @@ At the entity type the same applicative is Jacobson's variable-free semantics, w
   assumes only the laws it uses, for the one intension it stores, and holds for any indices.
 * As in the paper, `likes x y` is "`y` likes `x`".
 
-## Errata
-
-* The paper presents a monad by `ρ`, `⊛` and `μ` with an associativity and an identity law, which
-  mention `⊛` only as `ρ f ⊛ m`, the functor's map, and so leave `⊛` free of `μ`. The writer's
-  flattener satisfies both laws with the writer's application run backwards, a lawful applicative
-  that is [not the application its monad determines](##BackwardsWriter.exists_seq_ne). The two
-  presentations agree only under a further law such as `m ⊛ n = μ (ρ (λf. ρ f ⊛ n) ⊛ m)`, which
-  every lawful monad satisfies.
-* The paycheck reading on type-homogeneous assignments is stated for *her₀* but reads `g₁`, the
-  variable of the earlier derivation's *her₁*; the formula is encoded. The text calls that
-  derivation "Figure 6 (left)", a figure with one panel.
-
 ## TODO
 
 * Composing sets with the reader (`S ∘ G`) admits no lawful flattener.
@@ -336,7 +324,7 @@ theorem bijOn_toAssignment {α : Type} :
       funext fun g ↦ hm ?_⟩
     rintro i (rfl | rfl) <;> simp
 
-/-! ### Errata
+/-! ### The writer applied backwards
 
 The monad laws of section 4.3 do not relate `⊛` to `μ`. A log of bits paired with a value
 carries the writer's flattener, which appends the inner log to the outer, and the writer's

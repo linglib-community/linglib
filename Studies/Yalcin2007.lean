@@ -54,13 +54,6 @@ the paper's seventh section is not modelled. The update of a sentence is not in 
 footnote leaves the comparison informal; Veltman's language has *might* only at the top of a
 sentence, a restriction these clauses do not need.
 
-## Errata
-
-The definition of $s_\alpha$ on p. 998 evaluates the antecedent as
-$\llbracket\alpha\rrbracket^{c,s',w}$, at the conditional's own world $w$ rather than at the
-bound $w'$. The surrounding prose asks for the largest subset that includes the information in
-the antecedent, which is acceptance in $s'$, and `IsMaxAccepting` reads it so.
-
 ## References
 
 * [yalcin-2007]

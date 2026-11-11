@@ -59,30 +59,6 @@ attitude alone cannot](##minimal_pair), if the interval it occupies depends on t
   settle; [with a rigid interval (64') cannot separate the cases of (24)](##doubleAccess_rigid_iff),
   and `Event.TemporalTrace`, which has no world, gives the times of events only.
 
-## Errata
-
-* The rule for a noun phrase raised to S (13a) gives the sentence a truth value, to which the
-  matrix rule (1) and the complementizer (9), which close a property of times, do not apply;
-  `Model.Holds` takes such a sentence as it is.
-* Rule 14 on p. 273 translates the empty tense as PRES or as a future; p. 255, p. 274 and (40) give
-  PRES alone, and the future translation would give (28) the subsequent reading p. 97 denies it.
-* (44) line 4 and (45) line 4 are said to be equivalent (p. 116), and the wide scope reading to
-  cover the narrow ones (pp. 101-102, 119; p. 107 hedges). Both compare a noun at different times,
-  which p. 148 tentatively reads at the temporal index, so [they need a noun stable over
-  time](##Model.metNarrow_not_metWide), an assumption left unstated.
-* The # of (61) on p. 132 does not follow from the fragment: [the undeleted past on *would* allows a
-  winning after the speech time](##Model.would_undeleted_any_future).
-* [The rule generates the LF (70')](##rule_generates_metBuyer) of a sentence the consultants reject.
-  pp. 141-142 call the data murky, cite (73) against the alternative, and keep the rule knowingly.
-* The explanation of (29) on pp. 267-268 reads c-command as "the first NP or S node" and locality as
-  "no other tense feature that α dominates", where p. 253 has the first branching node and
-  c-command.
-* The second line of (25c') prints *John Past say*, for *John Pres woll say*. The note on p. 261
-  gives PRES as the choice for *want* and *promise*, for the future. (59') and (59'') have *say*
-  for the *claim* of (59). The example on p. 137 is numbered (71), the number of the example on
-  p. 140, where (65) is due. On pp. 326-327 *(63)* stands for (64'), and (65) has *pregnant* for
-  the *in the room* of (64).
-
 ## TODO
 
 * A theorem that composing the cells agrees with `Model.Holds` on every LF.

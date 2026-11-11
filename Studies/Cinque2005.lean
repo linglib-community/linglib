@@ -27,14 +27,6 @@ do](##frequency_antitone), but for the two orders the paper itself sets aside.
 * Greenberg's Universal 20 is read as the paper reads it, over the modifiers before and after
   the noun, and Hawkins's revision as the paper quotes it.
 
-## Errata
-
-* (6w) is counted as having one marked option, the raising of the noun with pied-piping of the
-  picture-of-who type, though the parameters list it among the orders derived by partial
-  movement, [a second marked option](##markedOptions_w). Its frequency is
-  given as few languages in the text and very few in (6) and the note to it; with two marked
-  options the very few fits the other orders.
-
 ## References
 
 * [cinque-2005]

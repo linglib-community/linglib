@@ -41,17 +41,6 @@ on the thematic hierarchy, [not the passive subject](##rows_passive).
   compared with Baker's rules applied, in the order of the suffixes, to a transitive root with
   an applied oblique.
 
-## Errata
-
-* (7d) prints the starred form as *mang-idw-its-*, with the causative's lower case, under the
-  label PASS-INT and the gloss "(=INT-PASS)"; (12a) prints it *mang-idw-ITS-*, as the row does.
-* (12d) prints its doubled *-an-* without the underline that fn. 2 gives every doubled *-an-* and
-  that (12c) gives the same morph.
-* The discussion of (23) attributes to (25b) the form in which *-its-* and *-idw-* separate *-ir-*
-  from the preceding *-an-*; that form is (23b).
-* Footnote 16 contrasts the intensive with the iterative circumscription "we saw for -its- in
-  (20)"; the iteration is (18), and (20) is the Cibemba data.
-
 ## TODO
 
 * The anti-cyclic spell-out the authors propose after (34), which fixes the causative's position

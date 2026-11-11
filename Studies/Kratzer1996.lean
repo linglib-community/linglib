@@ -44,11 +44,6 @@ one](##Kratzer1996.holder_owns_defined), defined at the states.
 * With total predicates Event Identification is total, and an agent head with a stative verb
   phrase gives the empty relation (`agent_stative_eq_bot`).
 
-## Errata
-
-* (26) gives *Holder* as $\lambda x_e \lambda s_s[\mathrm{holder}(x)(e)]$, binding $s$ and using
-  $e$. The study reads $\mathrm{holder}(x)(s)$.
-
 ## References
 
 * [kratzer-1996]

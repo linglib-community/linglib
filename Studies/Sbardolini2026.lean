@@ -27,14 +27,6 @@ tautologies](##Sbardolini2026.tautology).
   individuals or of worlds, which entail one another by inclusion. `IsSUM` takes at least one
   premise; with none, the restrictor of the singular definite would fail it.
 
-## Errata
-
-* The table marks `◇Fx` not SUM and `(Some A)F` SUM, but `◇` is `some` over the accessible worlds:
-  with one premise [both are SUM](##Sbardolini2026.isStrawsonUE_modal_some), with `n` [neither
-  is](##Sbardolini2026.not_isSUM_scope_some), nor is
-  [`(The F)A`](##Sbardolini2026.not_isSUM_definite_restrictor).
-* The table prints the tautology as `|A∩F| ≤ 0` and the contradiction as `3 ≤ |A∩F| ≥ 1`.
-
 ## TODO
 
 * Polar questions, imperatives, generics, plural definites, *both*, and the scope of *too*.
@@ -373,7 +365,7 @@ theorem necessity {W : Type} (R : SetRel W W) :
 
 end Rivals
 
-/-! ### Errata -/
+/-! ### Possibility modals -/
 
 section Errata
 

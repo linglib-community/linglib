@@ -39,11 +39,6 @@ neither quantity invariance nor finiteness, and the parity remarks need finitene
 invariance. The reading of universal entailments and presuppositions on the Hasse diagram of
 `Set α` is not George's, who argues by counting.
 
-## Errata
-
-Definitions 20 and 21 write `Q` for the determiner `D` in their two-argument clauses. Definition 24
-says *perm-quantifier* for *pc-determiner*. Propositions 5 and 7 say `Q` for `D`.
-
 ## TODO
 
 * Integrate George's isomorphism between Heim's updates and trivalent propositions, already

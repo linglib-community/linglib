@@ -43,15 +43,6 @@ forward hierarchy](##directionality).
   assumes for Shiwilu.
 * The paper's v is `Cat.Voice` and its categorizing v is `Cat.v`, the labels note 19 offers.
 
-## Errata
-
-* Generalizations (5) and (10) and table 7 give dependent case when the subject is at least as high
-  as the object, but (15) rules out every first-person object, so [the mechanism gives no ergative
-  at 1→1 and does give it at 2→2](##diagonal). The tables have no reflexive rows.
-* (6b) prints the subject's object agreement as *-nke(ma)*, but (36d) spells out [PART, AUG, v] as a
-  whole and none of the routes to its absence in §3.3 deletes [AUG] alone, so [bare *-nke* on the
-  subject of a 2PL object is not derived](##not_predicted_bare_nke).
-
 ## TODO
 
 * `positions` stipulates that fronting and pro-drop require the high position; `clause .low` can

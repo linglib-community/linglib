@@ -26,24 +26,6 @@ The existential over representative subgroups is an existential over a set `R`. 
 plural subgroup is that of its tallest member, so `R` holds those members, and a correlate outside
 `R` may exceed the standard, the exceptions the paper predicts. Heights are in inches.
 
-## Errata
-
-* (86c) does not follow from (86a) and (86b): heights of 5ft and 6ft
-  [satisfy both and fail (86c)](##Rett2015a.strengthened_every_not_eq). (86c) is the implicature
-  [computed under the universal](##Rett2015a.lowScope_eq_every_iff), not the wide negation printed
-  as (86b).
-* (87b) is printed with `≥`, which contradicts (87a); `>` must be meant, as in (65b) and (84b).
-* (87c) is glossed as "John's tallest possible height", but the formula names
-  [the greatest lower bound of his heights](##Rett2015a.highScope_eq_every_iff), the shortest.
-* In Table 1 the M-implicature of S1 is printed F, but (84c) is true there, since no linguist
-  reaches 5ft. The printed row is the prose gloss, that the linguists differ in height, and
-  [the two agree only where the Q-implicature holds](##Rett2015a.not_every_iff_nontrivial).
-  S1 fails on its truth conditions, so the verdict is unaffected.
-* The first conjunct of (84d) is weaker than (84a) with (84b) once
-  [two representative subgroups differ in their maxima](##Rett2015a.eq_some_not_strengthened).
-* The text after (85) refers to (86) as "(91)", the text after (70) refers to (61) as "(59)", and
-  Table 2 heads both of its columns "class A".
-
 ## TODO
 
 The evaluative branch of the M-implicature, (80), needs a contextual standard for each of (16),

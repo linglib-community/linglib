@@ -35,20 +35,6 @@ disappear](##Range.freeChoice_iff). [The paper's answer judgments follow](##rows
 * The paper's taxonomy of interrogatives stays a row feature, since no theory-layer type of *wh*
   phrase exists for a Farsi fragment entry to instantiate.
 
-## Errata
-
-* (52) requires of every `P` that `f(P)` be a singleton subset of `P`, [which no function does at
-  the empty set](##not_exists_forall_ncard_eq_one). `IsSingletonSelection` requires it of nonempty
-  sets.
-* The paper objects that singular interrogatives over pluralities would not compete with plural
-  ones, wrongly admitting singular answers to the latter. [Over Dayal's domains its own Hamblin sets
-  leave any competition among them vacuous](##strengthen_hamblin_whDomain), so (25) must come from
-  the phrase's domain or, by Elliott, Nicolae and Sauerland's Brevity, from plurals lacking those
-  Hamblin sets, while [with *-ro* Dayal's competition returns](##strengthen_hamblinRo_whDomain) and
-  (28) needs neither.
-* (51) prints *have-to* in the LFs of the non-modal (49)–(50), and (40), (45) and (53) print
-  `B[(thing₁,r) ∧ B(thing₂,r)]` for `[B(thing₁,r) ∧ B(thing₂,r)]`.
-
 ## TODO
 
 * The *which* interrogatives and the indefinite uses of *what*, which the paper leaves open.

@@ -31,16 +31,6 @@ quantificational subordination](##felicitous_discourse150a_iff).
   function into terms drops the restricted variable's assertion.
 * Label definitions nested in another's body are floated to the top of the discourse.
 
-## Errata
-
-* Summation abstracts over every set, and `w ∉ ψ` holds of every plurality that is not a world,
-  so the translation of "It's not like he doesn't own a car. It is just in the shop" is [false in
-  every model with an entity](##judgment_138a), though the paper judges it acceptable.
-* "Everyone who brought something valuable locked it up" gets the strong reading only with a
-  singular restriction: as printed, [a plurality of people who brought the same valuable and
-  locked it verifies it](##realize_valuables116_not_strong) where one of them left another
-  valuable unlocked.
-
 ## TODO
 
 * Of the paper's applications, only the paycheck and negated-indefinite pronouns, the bathroom

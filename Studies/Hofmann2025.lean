@@ -22,7 +22,7 @@ paper's figures and tables are instances on its models.
   propositional dref, read only in the scope of the operator introducing it, and it relies on no
   modal anaphora (§4.4.3), so there a clause returns its context, the state holds only the
   individual drefs, and the commitment set is an argument of `Clause.dec`. The registers appear here
-  only for the formulas that the Errata concern (`printed41`, `printedIt`), and the fragment's
+  only for the formulas as printed (`printed41`, `printedIt`), and the fragment's
   output for (41) is [among theirs, with Figure 7's contexts](##exists_mem_printed41).
 * The commitment sets a discourse allows, Table 1's column, are the `dc` at which it succeeds, and
   pragmatic maximization (35) [selects the greatest of them](##figure5).
@@ -36,30 +36,6 @@ paper's figures and tables are instances on its models.
   *There isn't a bathroom. It isn't upstairs*, on which the paper gives no judgment.
 * In (44) the outer maximization forces `υ` to an upstairs bathroom wherever one exists; in (43)
   it leaves `υ` free, and the anaphor's context picks the worlds where it is upstairs.
-
-## Errata
-
-* (40) cites Brasoveanu, whose `max^u(D)` introduces `u` under the operator ([brasoveanu-2007] (40),
-  p. 148; [brasoveanu-2010] (69), p. 466). Hofmann's omits it, and (18a) tests `φ ≡ φ̄'` between
-  `[φ']` and the operator, so that restoring it would overwrite what the test constrains. As printed
-  every maximization ranges over updates that fix its dref, and `Update.maxAt_eq_of_fixes` makes it
-  vacuous: every row of Table 3 is [an output of (41)](##mem_printed41), including a speaker who
-  commits to a bathroom world and asserts that there is no bathroom. Maximizing the context a clause
-  returns [selects the first row](##mem_thereIsnt_bathroom). (26) survives the defect:
-  [it needs no maximization](##eq_empty_of_mem_printed41_comp_printedIt).
-* Figures 3 and 4 and pp. 12, 14 and 28 narrow a commitment set, but (19) has no `[φDC]`, and
-  Tables 1 and 2 instead eliminate its possible values. [An assertion fixes its commitment
-  set](##maxAt_printed41), so (35) and the formal clause of (21a) hold of every update. A `P`
-  with no successful update is true by that clause and false by (21c), and (21d) and (21e) collapse
-  with it, so the "contextually entails" of (45) is read here as inclusion of contexts.
-* An indefinite outscoping negation, *a bathroom isn't upstairs*, [has a context of every
-  world](##eq_univ_of_mem_indefinite_not_it) under (16), (18a) and (25), so it [has no output on
-  M₁](##not_mem_indefinite_not_it): the negated scope needs the referent exactly outside the worlds
-  where it exists. (1) restricts itself to unspecific indefinites, and the fragment derives no
-  other.
-* (18c) and (18d) subscript `max` with the unbound `φ₁`, and (18d)'s first box prints the trivial
-  `φ ⋐ φ` for `φ ⋐ φ'`. (52) omits `φ₄` from the box in which (18e) introduces it. p. 18 cites (21)
-  for (19), and p. 28 swaps the antecedent (19b) and the anaphor (30).
 
 ## TODO
 

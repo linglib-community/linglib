@@ -44,12 +44,6 @@ complementive makes a verb of motion take *zijn*](##perfect_op).
   `verbClass` records that account, and the auxiliary is then the selection rule's, whichever way
   the language treats its reflexives.
 
-## Errata
-
-* The gloss of the raising rule, that a noun phrase stays in its base position unless the phrase is
-  directional, mispredicts the chapter's own *naar de garage* 'to the garage' and *van Utrecht*
-  'from Utrecht' when read as stated; it holds as a necessary condition.
-
 ## TODO
 
 * The extraction pairs with the selected *op* of *wachten op* 'wait for' need a non-spatial reading,

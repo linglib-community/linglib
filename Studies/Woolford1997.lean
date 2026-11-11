@@ -38,17 +38,6 @@ patterns](##ruleValues_of_mem_derivations) where objects can be nominative.
   lexical ergative, where Marantz's is dependent, and [fails for
   objective](##objective_not_elsewhere).
 
-## Errata
-
-* P. 223 says nominative-accusative where p. 202 has nominative-objective: [the former cannot arise
-  without accusative](##nom_acc_notMem_lacking).
-* P. 207 promises evidence in section 3 that languages can lack accusative, but [Thangu's patterns
-  do not depend on it](##thangu_accusative_irrelevant) and Kalkatungu has it.
-* Note 30's negative case is [any verb with only lexical Cases](##maxAcc_neg_iff), as in (18b) and
-  (63), not just intransitives.
-* (8) has the surface form of the starred (22B.7): its dative and objective are both *-na*.
-* Thangu's obligatory dative in (60) [is not forced](##dative_not_forced).
-
 ## TODO
 
 * The passives (14), (15) and the claim of section 1.2.1 about them.

@@ -31,13 +31,6 @@ a modal that its associate scopes below](##split_scope).
 * Resumption as a last resort (p. 115) is applied to the local subject too, which p. 108 argues
   from islands.
 
-## Errata
-
-* Ch. 5 (50) over the printed alternatives (56) [makes (57-a) false](##rows_won) and has (59)
-  presuppose what p. 173 denies; ch. 4 (47) sides with (50), and no other entry is given.
-* Pp. 167–168 count concord against a quantifier analysis, but [it entails the double
-  reading](##double_of_concord), so truth values cannot show that.
-
 ## TODO
 
 * Kasem and Kusaal, whose gapped local subjects (209), (210) anti-locality bars unless they skip

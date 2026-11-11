@@ -40,28 +40,6 @@ asserted distinctness [is trivial or idle](##inSitu_dichotomy).
   `pluralize` is false and `Homogeneity.barePlural` undefined. The paper tries (225) only for
   section 6.4 and does not reconcile them.
 
-## Errata
-
-* (77) prints `s ≤ s'`, which defines a least element, and [with two or more others the set in
-  (76a) has none](##not_exists_isLeast_otherAtoms). The text requires the greatest, encoded here.
-* (105) to (107) count students across a whole division, but (95) evaluates the condition at each
-  pair, so on a singular cover [(105b) is false in the paper's scenario](##exactlyTwo_row). Counting
-  across a division [verifies (108) as well](##exactlyTwo_across_division). [No example can do what
-  (105) is offered for](##inSitu_dichotomy): in-situ distinctness is tautologous or equivalent to
-  (108), so the reply considered on p. 100, that tautologies are merely disregarded, stays open.
-* Footnote 15 claims that (iv) makes (iii) a subset of (i). It secures only the first conjunct of
-  (i), [even with persistence and a cover that fits](##not_situationWeak_splitRelation); [support
-  for each pair in a relevant subsituation suffices](##situationWeak_of_strong).
-* The "iff" of (178), and so (193a) against (193b), fails for the cells of (181), which lack the
-  minimality footnote 5 requires of (54): a middle cell is a part of the sum of its neighbours, and
-  [the closure form is true on a circle with a gap where the coverage form is
-  false](##situationWeakReading_gap).
-* P. 107 predicts exception effects from (130a), but with `**` as in (95) [a true (130a) needs a
-  cover that fits](##exists_cell_of_weakReading_eq_true), so with the cover of (140) it is [false in
-  the situation (136)](##weakReading_situation136) where (139) is [true](##pirates_rows).
-* (118a) prints `y ≠ p` for `y ≤ p`. Section 5.2.2 refers to a section 4.3.4; the discussion it
-  means is in section 4.4.
-
 ## TODO
 
 * Non-singular covers beyond minimal covers: subgroup readings (89), (91), (92) and (130) to (133),

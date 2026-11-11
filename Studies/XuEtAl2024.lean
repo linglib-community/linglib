@@ -50,13 +50,6 @@ sentence-encoder prototypes, and the baseline encodings are not restated; the at
 the paper's first table and the near-synonyms of its second are recorded as examples. Surprisal
 is measured in nats; bits differ by the factor `log 2`, which rescales the tradeoff parameter.
 
-## Errata
-
-* Eq. 8 is said to follow [zaslavsky-kemp-regier-tishby-2018], but it is a different measure.
-  There the deviation from the optimal objective is taken at the parameter that minimizes it and
-  divided by that parameter (`ZaslavskyKempRegierTishby2018.efficiencyLoss`); eq. 8 takes the
-  least deviation itself, undivided (`efficiencyLoss`).
-
 ## References
 
 * [xu-etal-2024]

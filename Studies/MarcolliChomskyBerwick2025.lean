@@ -169,22 +169,6 @@ weight, and Remark 3.2.2 and Lemma 3.2.7 use `R = id` at that weight on the trop
 `Consistency` the identity has weight `+1` as well, since disjunction is idempotent, and the
 consistency maps use it at that weight.
 
-## Errata
-
-The proof of Proposition 1.10.2 prints `X₄ = 2{x{x{xx}}} + {{xx}{xx}}`. Its recursion gives
-`𝔐(X₁, X₃) + 𝔐(X₂, X₂) + 𝔐(X₃, X₁) = 4{x{x{xx}}} + {{xx}{xx}}` (`planarSum_four`), and four is
-the number of planar embeddings that the proof says the coefficient counts: the five planar binary
-trees with four leaves split as four and one.
-
-The paragraph before (1.3.10) announces the projections as `Π_{ρ,d}`, `Π_{c,ρ}` and `Π_{c,d}`, and
-the bullets under it define `Π_{d,ρ}`, `Π_{ρ,c}` and `Π_{d,c}`, the notation of the rest of the book
-(p. 44).
-
-Page 82 prints `T/d T_v = Π_{d,ρ}(T/ρ T_v) = Π_{ρ,c}(T/c T_v)`. The last projection must be
-`Π_{d,c}`, as earlier on that page and in the display of §1.4.4 (p. 53), since `Π_{ρ,c}(T/c T_v)` is
-`T/ρ T_v`, which keeps the vertex the cut leaves unary. On the example of §1.4.4 the printed
-equation fails.
-
 ## TODO
 
 §1.17 reads (1.10.1) as the quadratic case of the combinatorial Dyson–Schwinger equation

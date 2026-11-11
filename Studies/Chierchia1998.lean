@@ -67,12 +67,6 @@ sum meets it whatever the size of its extension (`Kind.up_down_of_sSup_mem`). In
 with exactly one instance, where the plural has no member. Carlson's instance relation is
 part-of in the model `lawn`, so a kind is an instance of itself.
 
-## Errata
-
-* (25e) prints Id(x) = λx[x ≤ y], binding the wrong variable; the text above footnote 14, which
-  has ι undone via the part-of relation, and the footnote's Id(x) = λy[y = x] for a singularity
-  give Id(x) = λy[y ≤ x].
-
 ## References
 
 * [chierchia-1998]

@@ -36,15 +36,6 @@ outcomes](##want_alice_and_want_sue) but [not hope for both](##not_hope_both).
 * The diversity presuppositions and the similarity-semantics version of the fragment are not
   formalized.
 
-## Errata
-
-* The local necessity of (19) quantifies over `f(s)` where `⋂f(s)` is meant.
-* Appendix B's best sets as printed have two worlds both in a best set exactly when they are best
-  and satisfy the same premises, so a best set exists only when the best worlds form one class.
-  Where the desires to marry Alice and to marry Sue cannot both be met [there is
-  none](##not_exists_printed_bestSet), and Appendix B's local necessity makes (16) false, against
-  the text. `bestSets` reads the best sets as the classes of best worlds.
-
 ## References
 
 * [portner-rubinstein-2020]

@@ -41,14 +41,6 @@ excludes](##not_closureBelowNo_lf61). [*Or* is never collective](##minimal_some_
   for the individuals those singletons contain, which the singleton map carries over since it
   preserves unions.
 
-## Errata
-
-* (83c) and the prose after it swap the Americans and Russians of (82a) and (83b).
-* (99a) prints `MIN(ER(cat)) or MIN(ER(dog))` for the `MIN(ER(cat) or ER(dog))` of its prose and
-  (99b). [The two logical forms agree](##holds_lf99Printed_iff), so the slip is harmless.
-* (95b) and (96b) are equivalent only when both nouns are nonempty: without dogs, (95b) holds
-  vacuously while (96b) still requires every cat to be licensed.
-
 ## TODO
 
 The split scope of indefinite numerals and Winter's pair semantics are not formalized.

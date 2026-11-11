@@ -38,17 +38,6 @@ once, where Percus states the two generalizations separately; the pronoun inside
 a sister of another type and is not selected. Every λ of the structures here binds situation
 pronouns, so the nearest λ is the nearest one of the kind Percus means.
 
-## Errata
-
-* The number (34) labels both the interpretation of the indexing (33) and Generalization X.
-* Percus sets aside the indexing of (26b) with both pronouns bound by the higher λ on the ground
-  that the sister of *thinks* is then [defined at objects other than
-  situations](##Percus2000.not_isProposition_vpb_upper_upper). By the same rules that holds of
-  the indexing (37) of (35b), which he interprets as (37b) and excludes only by Generalization Y:
-  its sister of *thinks* is [defined at an individual
-  too](##Percus2000.not_isProposition_advp_upper). The entries here do not make *thinks* and
-  *always* undefined at such a function, so that (37) has the interpretation he gives it.
-
 ## References
 
 * [percus-2000]

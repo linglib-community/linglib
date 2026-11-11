@@ -28,20 +28,6 @@ definite under the partition of a preorder into its degrees.
   and diet, so there are people-eating lions of both subspecies. The restrictor *lions that eat
   people* is read as footnote 11's *lions that eat only people*, a value of the diet.
 
-## Errata
-
-* (28b) as printed binds `y_k` in the antecedent and uses it in the consequent; it is read with
-  `y_k` bound outside the implication. (33) prints `Π(x_y)` for `Π(x_k)`.
-* (57) is credited to Cresswell and (58) presented as the first step of his construction. His
-  comparison is *more F than* and need not be a preorder, and his equivalence relation compares what
-  two things stand in the comparison to, not the two things with each other. The relations agree on
-  a preorder, the case the paper needs, but not on a strict comparison.
-* The relation of footnote 20 is printed as $x ≽ y ∧ y ⋡ x$, the strict part of the preorder, while
-  the footnote calls it reflexive. The relation with the stated properties is $x ≽ y$ on the
-  classes, which is mathlib's order on `Antisymmetrization`.
-* Footnote 21 states reflexivity as $∀ d, d' ∈ DEG_A [d ≃_A d']$, which says that all degrees are
-  equivalent; $d ≃_A d$ is meant.
-
 ## TODO
 
 * The champagne partitions (64)–(66) of §4.3.2, the distribution of ad hoc kind terms (§3.3),

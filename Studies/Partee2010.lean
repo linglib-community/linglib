@@ -37,15 +37,6 @@ is that non-vacuity licenses the shift for them and not for an adjective already
 within its literal head (`Modifier.not_shiftsHead_of_isNonVacuous`). The reanalysis of the
 splitting data acts on the class labels (`AdjectiveClass.reanalyse`).
 
-## Errata
-
-* The meaning postulate (7) for intersective adjectives,
-  $\exists P_{\langle e,t\rangle}\,\Box\,\forall Q\,\forall x\,[\mathrm{ADJ}'(Q)(x) \leftrightarrow
-  P(x) \wedge {}^{\vee}Q(x)]$, binds an extensional $P$ outside the necessity operator, so the
-  property an intersective adjective meets its noun with would have one extension at every world.
-  The study reads (7) with $P$ an intension, `Modifier.IsIntersective` at `W → E → Prop`, as
-  `Studies/Kamp1975.lean` reads Kamp's (7).
-
 ## References
 
 * [partee-2010]

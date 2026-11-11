@@ -42,27 +42,6 @@ exception set](##pex_but_no_eq_true_iff).
   is read off the constraints each domain satisfies; the accommodation operator of (56) is
   `Trivalent.posExt`.
 
-## Errata
-
-* (6b) and (32c) give the excludable alternatives of *Gal was at the party* as those about
-  individuals disjoint from Gal. With the plural alternatives of (12), every alternative other
-  than the prejacent is excludable, *Gal and Tal were at the party* among them
-  (`isInnocentlyExcludable_Ici_iff`, `isInnocentlyExcludable_galTal`); the exhaustive inference
-  is unaffected.
-* (110b) fails with the plural alternatives of (12), on which the strong presupposition (13)
-  rests; [crnic-2026a] shows that singular ones give a weak presupposition. *Someone but Gal* has
-  the excludable alternative *someone but everyone except Gal*, that Gal was there
-  (`isInnocentlyExcludable_but_some`), so `exh` in (109) is not vacuous and the Economy Constraint
-  (108) does not exclude (107) (`judgment_107`).
-* (40), (56) and (58) do not single out the resolution (41) of *Gal is only a grad student*:
-  pruning to *only [postdoc]* satisfies and violates the same constraints, and under negation
-  conveys that Gal is a professor (`pruned_postdoc`). The closure of relevance under the Boolean
-  operations, set aside in fn. 3, does single it out, but only computed over the context: there
-  (41) is the one informative pruning that is an allowable restriction in the sense of
-  [fox-katzir-2011] (`isAllowableRestriction_onlyCtx_iff`), while over all worlds pruning to
-  *only [non-academic]* and *only [postdoc]* is allowable too
-  (`isAllowableRestriction_only_ranks`).
-
 ## TODO
 
 * The sufficiency modal constructions of §3.4, the embedded exhaustification of §3.5, the

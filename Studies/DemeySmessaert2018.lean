@@ -45,17 +45,6 @@ exhaustive](##isBooleanClosed_jsbHexagon_iff), the strong case.
   formula over `p` depends only on the value of `p` at the evaluation world and the values it
   takes, and two worlds realize every such type.
 
-## Errata
-
-* Footnote 19 claims that every permutation of the bitstrings of length `n` preserves the
-  Aristotelian relations, and footnote 26 defines permutation variants by such permutations. Only
-  permutations of the bit positions do: swapping `100` and `010` turns the subalternation of `100`
-  to `101` into the contradiction of `010` and `101`. Read literally, every bitstring semantics of
-  length `n` is a permutation variant, so Theorem 3's uniqueness clause holds trivially; Theorem 3
-  here relabels positions.
-* Section 5.2 writes `□p ∨ (¬p ∨ ◇p)` for the octagon's `□p ∨ (¬p ∧ ◇p)`, and `Π_S5(F₂)` for
-  the first-order partition `Π_FOL(F₂)`.
-
 ## TODO
 
 * The sharper bounds of Section 3.3 for contingent fragments closed under negation,

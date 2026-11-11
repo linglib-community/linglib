@@ -32,12 +32,6 @@ firsthand of an A1 system. The strategies the Fragments record are grammatical f
 Haan counts; a complementation strategy, biclausal, he would not. Kashaya is placed on the map by
 the paradigm of a spontaneous remark.
 
-## Errata
-
-The map codes Georgian with direct evidentials, but the companion chapter on coding glosses the
-Georgian aorist as neutral and says that, unlike the perfect, it has not been formalized as a
-direct evidential [de-haan-2013b].
-
 ## TODO
 
 Finnish, which the chapter says has evidentials derived from modal verbs, is left out until a

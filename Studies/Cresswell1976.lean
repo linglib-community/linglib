@@ -45,18 +45,6 @@ Stalnaker selection function.
 * (66) lies outside the prediction. Cresswell takes it to use the words as if they produced a
   common scale, and says that he does not know how this should be represented.
 
-## Errata
-
-* (50) is printed without an asterisk and (65) with one, but both compare across scales, so
-  *er than* [fails on both alike](##unstarred_crosses_scales). The paper offers (50) as an instance
-  of the single meaning of *more* and does not comment on the difference.
-* The consistency proof for (4.2) opens by supposing $a ≈ c$, $b ≈ c$ and $b ≈ d$. The middle
-  hypothesis is a slip: it would make all four equivalent, and the proof uses only the other two.
-* §2 remarks that whether the relation of a scale is strict or total "seems unimportant". For the
-  construction of §4 it matters. A connected preorder and its strict part
-  [give the same degrees](##cresswellSetoid_lt_eq_le), but on a partial order the strict
-  part can [identify incomparable points that the order keeps apart](##cresswellSetoid_lt_ne_le).
-
 ## TODO
 
 * The relation $>_d$ between pairs of points on a scale with a natural metric (§4), on which *twice

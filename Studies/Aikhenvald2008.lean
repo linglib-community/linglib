@@ -20,11 +20,6 @@ of completive clauses presents its events one after another (§18.10). The compl
 Each of the two examples has one medial clause with each completive, and its readings are those
 of both clauses.
 
-## Errata
-
-Table 18.1 marks *-ta:y-kǝb*, with *-lǝk* and *-ga:y*, as not occurring with *napa-*, while the text
-excludes only the last two (§18.1, §18.9). The Fragment follows the table.
-
 ## References
 
 * [aikhenvald-2008]

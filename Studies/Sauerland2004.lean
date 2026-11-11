@@ -29,13 +29,6 @@ A world is a valuation of the atoms, or for (47) whether Kai had the broccoli an
 none, some but not all, or all of the peas. Alternatives are indexed by the scale-mates
 substituted, so one proposition can carry several indices, as *A* does in (51).
 
-## Errata
-
-(51) lists nine primary implicatures of *A or (B or C)*, but the cross product (19) of the two
-disjunctions' scales also yields *A or B*, *A or C* and *A or (B and C)*, which asymmetrically
-entail the assertion. Their primary implicatures block no secondary implicature, so (52) holds
-over all twelve stronger alternatives (`isSecondaryImplicature_abc_iff`).
-
 ## References
 
 * [sauerland-2004]

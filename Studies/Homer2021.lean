@@ -61,14 +61,6 @@ impossible … not*, a derivation of this file.
   clausal spine. A constituent below the position of the subject denotes a proposition for each
   value of its trace, and the modal base is the worlds in which someone did something.
 
-## Errata
-
-* The strengthened meaning conjoins the negation of the weakest alternative asymmetrically entailing
-  the constituent, which is undefined when there is none: under *not … or* and in every
-  constituent without a scalar term. Such a constituent is left as it is, as by Krifka's rule.
-  The alternatives of a constituent without a scalar term are given as its meaning rather than
-  the singleton of it.
-
 ## TODO
 
 * The entanglement of *some* with itself and of *any* with itself, and *at most five people sold

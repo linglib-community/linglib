@@ -75,15 +75,6 @@ eq. S13).
   a numerical optimization outside the formalization. The empirical encoders of the World Color
   Survey are not in the library.
 
-## Errata
-
-* SI eq. S10 glosses the conditional entropy as `H_q(C|W) = −∑ p(c) q(w|c) log (q(c|w) / p(c))`,
-  which is `−I_q(W;C)`; the conditional entropy has `log q(c|w)`. `IsLeastInformative` uses the
-  conditional entropy, which the surrounding text and eq. S11 require.
-* SI eq. S11 writes `I_q(W;C) = argmax_{p(c)} H(C) − H_q(C|W)`, equating a number with a
-  distribution; the identity meant is `I_q(W;C) = H(C) − H_q(C|W)`
-  (`measureEntropy_sub_condEntropy`), whence the least informative prior maximizes `I_q(W;C)`.
-
 ## References
 
 * [N. Zaslavsky, C. Kemp, T. Regier and N. Tishby, *Efficient compression in color naming and

@@ -30,14 +30,6 @@ recursion.
 * Equation numbers are those of the arXiv preprint 2005.06641v1. The two-page proceedings
   abstract numbers its equations differently and leaves out the proofs.
 
-## Errata
-
-* Proposition 1 of the supplementary material states for every `α ≥ 0` that the recursion
-  respects the lexicon, but at `α = 0` the speaker (2) weighs every utterance alike and so uses
-  utterances the lexicon rules out, unless `0 · (−∞)` is read as `−∞`. The lexicon statements
-  here assume `0 < α`; at `α = 0` the speaker is uniform over all the utterances, since
-  `0 ^ 0 = 1`.
-
 ## TODO
 
 * The fixed points of the recursion are stationary points of the tradeoff, and the limit of the
