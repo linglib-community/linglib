@@ -1016,6 +1016,45 @@ def ex_8_51b : Datum :=
     readings := []
     paperFeatures := [("example", "8.51"), ("variant", "b"), ("participants", "kisser,sibling,causer"), ("p1", "P"), ("p2", "X"), ("p3", "A"), ("marker", "-ang"), ("alternation", "causativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p3")] }
 
+def ex_8_52a : Datum :=
+  { id := "creissels2024_8_52a"
+    source := ⟨"creissels-2024", "ch. 8 (52a)"⟩
+    reportedIn := none
+    language := "indo1316"
+    primaryText := "Mereka sudah men-jemput Tomo."
+    glossedTokens := [("Mereka", "3PL"), ("sudah", "PRF"), ("men-jemput", "AV/TR-meet"), ("Tomo", "PRN")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("example", "8.52"), ("variant", "a"), ("participants", "meeter,met"), ("p1", "A"), ("p2", "P"), ("pivot", "p1")] }
+
+def ex_8_52b : Datum :=
+  { id := "creissels2024_8_52b"
+    source := ⟨"creissels-2024", "ch. 8 (52b)"⟩
+    reportedIn := none
+    language := "indo1316"
+    primaryText := "Tomo sudah di-jemput mereka."
+    glossedTokens := [("Tomo", "PRN"), ("sudah", "PRF"), ("di-jemput", "PV-meet"), ("mereka", "3PL")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("example", "8.52"), ("variant", "b"), ("participants", "meeter,met"), ("p1", "A"), ("p2", "P"), ("pivot", "p2")] }
+
+def ex_8_52c : Datum :=
+  { id := "creissels2024_8_52c"
+    source := ⟨"creissels-2024", "ch. 8 (52c)"⟩
+    reportedIn := none
+    language := "indo1316"
+    primaryText := "Tomo sudah di-jemput oleh mereka."
+    glossedTokens := [("Tomo", "PRN"), ("sudah", "PRF"), ("di-jemput", "PASS-meet"), ("oleh", "by"), ("mereka", "3PL")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("example", "8.52"), ("variant", "c"), ("participants", "meeter,met"), ("p1", "X"), ("p2", "S"), ("pivot", "p2")] }
+
 def ex_12_2a : Datum :=
   { id := "creissels2024_12_2a"
     source := ⟨"creissels-2024", "ch. 12 (2a)"⟩
@@ -1081,6 +1120,6 @@ def ex_12_3c : Datum :=
     readings := []
     paperFeatures := [("example", "12.3"), ("variant", "c"), ("participants", "woman,food"), ("p1", "absent"), ("p2", "S")] }
 
-def all : List Datum := [ex_1_13a, ex_1_13b, ex_1_22a, ex_1_22b, ex_1_22c, ex_1_23a, ex_1_23b, ex_1_23c, ex_1_24a, ex_1_24b, ex_1_24c, ex_8_1a, ex_8_1b, ex_8_2a, ex_8_2b, ex_8_3a, ex_8_3b, ex_8_4a, ex_8_4b, ex_8_5a, ex_8_5b, ex_8_6a, ex_8_6b, ex_8_6c, ex_8_6d, ex_8_13a, ex_8_13b, ex_8_14a, ex_8_14b, ex_8_14c, ex_8_14d, ex_8_14e, ex_8_15a, ex_8_15b, ex_8_15c, ex_8_16a, ex_8_16b, ex_8_18a, ex_8_18b, ex_8_19a, ex_8_19b, ex_8_21a, ex_8_21b, ex_8_23a, ex_8_23b, ex_8_24a, ex_8_24b, ex_8_27a, ex_8_27b, ex_8_28a, ex_8_28b, ex_8_33a, ex_8_33b, ex_8_38a, ex_8_38b, ex_8_38c, ex_8_38d, ex_8_38e, ex_8_38f, ex_8_38g, ex_8_38h, ex_8_39a, ex_8_39b, ex_8_39c, ex_8_39d, ex_8_39e, ex_8_47a, ex_8_47b, ex_8_48a, ex_8_48b, ex_8_48c, ex_8_48d, ex_8_48e, ex_8_50a, ex_8_50b, ex_8_51a, ex_8_51b, ex_12_2a, ex_12_2b, ex_12_3a, ex_12_3b, ex_12_3c]
+def all : List Datum := [ex_1_13a, ex_1_13b, ex_1_22a, ex_1_22b, ex_1_22c, ex_1_23a, ex_1_23b, ex_1_23c, ex_1_24a, ex_1_24b, ex_1_24c, ex_8_1a, ex_8_1b, ex_8_2a, ex_8_2b, ex_8_3a, ex_8_3b, ex_8_4a, ex_8_4b, ex_8_5a, ex_8_5b, ex_8_6a, ex_8_6b, ex_8_6c, ex_8_6d, ex_8_13a, ex_8_13b, ex_8_14a, ex_8_14b, ex_8_14c, ex_8_14d, ex_8_14e, ex_8_15a, ex_8_15b, ex_8_15c, ex_8_16a, ex_8_16b, ex_8_18a, ex_8_18b, ex_8_19a, ex_8_19b, ex_8_21a, ex_8_21b, ex_8_23a, ex_8_23b, ex_8_24a, ex_8_24b, ex_8_27a, ex_8_27b, ex_8_28a, ex_8_28b, ex_8_33a, ex_8_33b, ex_8_38a, ex_8_38b, ex_8_38c, ex_8_38d, ex_8_38e, ex_8_38f, ex_8_38g, ex_8_38h, ex_8_39a, ex_8_39b, ex_8_39c, ex_8_39d, ex_8_39e, ex_8_47a, ex_8_47b, ex_8_48a, ex_8_48b, ex_8_48c, ex_8_48d, ex_8_48e, ex_8_50a, ex_8_50b, ex_8_51a, ex_8_51b, ex_8_52a, ex_8_52b, ex_8_52c, ex_12_2a, ex_12_2b, ex_12_3a, ex_12_3b, ex_12_3c]
 
 end Creissels2024.Examples

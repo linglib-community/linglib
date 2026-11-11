@@ -7,18 +7,13 @@ public import Linglib.Fragments.Indonesian.Phonology
 # Indonesian verbs
 
 This file defines the Indonesian verbs of Beavers and Udayana's study of the middle voice and
-three verbs that show the readings of the prefix *ter-* in Sneddon's grammar.
+five verbs that show the readings of the prefix *ter-* in Sneddon's grammar: the stative,
+which has no actor, the accidental and the abilitative, of which a verb may have more than one.
 
 An entry records the segments of the root, whether the root has a middle in *ber-*, and the
-reading of its *ter-* form if it has one. The prefixed forms are derived, the active by the
-nasal alternation of `Indonesian.Phonology.meN`.
-
-## Main definitions
-
-* `TerClass`: the stative, accidental and abilitative readings of *ter-*.
-* `Indonesian.Verb`: a verb entry, with the forms `Verb.meN`, `Verb.di`, `Verb.ber?` and
-  `Verb.ter?`.
-* `verbs`: the entries of this file.
+readings of its *ter-* form. The prefixed forms are derived by `Indonesian.Phonology`, the
+active by the nasal alternation of *meN-* and the forms in *ber-* and *ter-* by the loss of
+their *r*.
 
 ## References
 
@@ -36,8 +31,8 @@ open ArgumentStructure Indonesian.Phonology
 
 /-! ### Readings of *ter-* -/
 
-/-- The three readings of a verb in *ter-* in Sneddon's grammar. Some verbs have more than one,
-as *terbuka* 'open', which can also be accidental or abilitative. -/
+/-- The three readings of a verb in *ter-* ([sneddon-1996] pp. 112–119). Some verbs have more
+than one, as *terbuka* 'open', which is usually stative and can be accidental or abilitative. -/
 inductive TerClass where
   /-- The state that follows an action, as in *tertulis* 'written'. -/
   | stative
@@ -78,8 +73,8 @@ structure Verb extends _root_.Verb where
   rootSegments : List Segment
   /-- Whether the root has a middle in *ber-*. -/
   ber : Bool := false
-  /-- The reading of the *ter-* form, for a root that has one. -/
-  terClass : Option TerClass := none
+  /-- The readings of the *ter-* form, none for a root without one. -/
+  terClasses : List TerClass := []
   /-- The nouns that the *ber-* form incorporates. -/
   incorporatedNPs : List String := []
   deriving BEq
@@ -94,11 +89,11 @@ def di (v : Verb) : List Segment := [d, i] ++ v.rootSegments
 
 /-- The middle in *ber-*, for a root that has one. -/
 def ber? (v : Verb) : Option (List Segment) :=
-  if v.ber then some ([b, e, r] ++ v.rootSegments) else none
+  if v.ber then some (Phonology.ber v.rootSegments) else none
 
 /-- The form in *ter-*, for a root that has one. -/
 def ter? (v : Verb) : Option (List Segment) :=
-  v.terClass.map fun _ ↦ [t, e, r] ++ v.rootSegments
+  if v.terClasses = [] then none else some (Phonology.ter v.rootSegments)
 
 end Verb
 
@@ -167,12 +162,13 @@ def sisir : Verb where
 
 /-! ### Roots with a form in *ter-* -/
 
-/-- *buka* 'open', as in *Pintu itu terbuka* 'The door opened'. -/
+/-- *buka* 'open', whose *terbuka* is usually stative, *Pintu terbuka* 'The door is open', and
+can be accidental or abilitative ([sneddon-1996] p. 119). -/
 def buka : Verb where
   morphs := [.root "buka"]
   rootSegments := [b, u, k, a]
   valency := .ofFrame ArgumentFrame.np
-  terClass := some .stative
+  terClasses := [.stative, .accidental, .abilitative]
 
 /-- *pecah* 'break', as in *Jendela itu terpecah* 'The window broke'. Its middle *berpecah* has
 the dispositional or passive reading alone. -/
@@ -181,7 +177,7 @@ def pecah : Verb where
   rootSegments := [p, e, c, a, h]
   valency := .ofFrame ArgumentFrame.np
   ber := true
-  terClass := some .stative
+  terClasses := [.stative]
 
 /-- *tulis* 'write', whose stative is *Surat itu tertulis dalam bahasa Inggris* 'That letter is
 written in English', beside the passive *ditulis* 'was written'. -/
@@ -189,15 +185,17 @@ def tulis : Verb where
   morphs := [.root "tulis"]
   rootSegments := [t, u, l, i, s]
   valency := .ofFrame ArgumentFrame.np
-  terClass := some .stative
+  terClasses := [.stative]
 
-/-- *bawa* 'carry, take', whose accidental is *Koran saudara terbawa oleh saya* 'I took your
-newspaper by mistake'. -/
+/-- *bawa* 'carry, take', whose *terbawa* is accidental in *Maaf, koran saudara terbawa oleh
+saya* 'Sorry, I took your newspaper by mistake' and abilitative in *Apa terbawa oleh kau
+paket-paket itu sendiri?* 'Were you able to carry those parcels by yourself?' ([sneddon-1996]
+p. 118). -/
 def bawa : Verb where
   morphs := [.root "bawa"]
   rootSegments := [b, a, w, a]
   valency := .ofFrame ArgumentFrame.np
-  terClass := some .accidental
+  terClasses := [.accidental, .abilitative]
 
 /-- *dengar* 'hear', whose abilitative is *tidak terdengar dari sini* 'cannot be heard from
 here'. -/
@@ -205,7 +203,7 @@ def dengar : Verb where
   morphs := [.root "dengar"]
   rootSegments := [d, e, ng, a, r]
   valency := .ofFrame ArgumentFrame.np
-  terClass := some .abilitative
+  terClasses := [.abilitative]
 
 /-- The entries of this file. -/
 def verbs : List Verb :=

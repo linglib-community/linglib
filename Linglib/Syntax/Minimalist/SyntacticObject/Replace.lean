@@ -161,6 +161,25 @@ theorem replace_of_val_eq_leaf {s target replacement : SyntacticObject} {a : Ver
   rw [replace, subst_of_val_eq_leaf hs, ite_eq_right h]
   rfl
 
+/-- Replacing `target` keeps what an object contains apart from `target`: a term that neither
+lies inside `target` nor holds it. -/
+theorem Contains.replace {s x target replacement : SyntacticObject} (h : Contains s x)
+    (hx : x ∉ target.terms) (ht : target ∉ x.terms) :
+    Contains (s.replace target replacement) x := by
+  induction s using ind with
+  | leaf a => simp at h
+  | trace => simp at h
+  | traceOf a => simp at h
+  | merge l r ihl ihr =>
+    have hne : merge l r ≠ target := fun e ↦ hx (e ▸ mem_terms.2 h.to_reflTransGen)
+    rw [replace_merge_of_ne hne, contains_merge]
+    refine (contains_merge.1 h).imp (fun h ↦ ?_) fun h ↦ ?_ <;>
+      rcases containsOrEq_iff_eq_or_contains.1 h with rfl | h
+    · rw [replace_of_notMem_terms ht]; exact h
+    · exact (ihl h).to_reflTransGen
+    · rw [replace_of_notMem_terms ht]; exact h
+    · exact (ihr h).to_reflTransGen
+
 /-- Moving the daughter `r` out of `[l r]` and leaving a trace yields `[l′ t]`, with `l′` the
     substituted left daughter; a tree is never its own daughter, taken here as a hypothesis. -/
 example (l r : SyntacticObject) (h : merge l r ≠ r) :
@@ -179,6 +198,74 @@ def headTrace (s : SyntacticObject) (τ : SyntacticObject → Option LexicalItem
 theorem headTrace_val (s : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token) :
     (s.headTrace τ).val = UnorderedTree.leaf (Sum.inr (τ s)) := by
   unfold headTrace; cases τ s <;> rfl
+
+/-- Replacing the occurrences of a term by a silent object removes its tokens and no others, in
+an object that pronounces no token twice. -/
+theorem yield_replace_add_yield {s m t : SyntacticObject} (hs : s.yield.Nodup)
+    (hm : m ∈ s.terms) (ht : t.yield = 0) : (s.replace m t).yield + m.yield = s.yield := by
+  induction s using ind with
+  | leaf a =>
+    obtain rfl : m = leaf a := by simpa using hm
+    rw [replace_self, ht, zero_add]
+  | trace =>
+    obtain rfl : m = trace := by simpa using hm
+    rw [replace_self, ht, zero_add]
+  | traceOf a =>
+    obtain rfl : m = traceOf a := by simpa using hm
+    rw [replace_self, ht, zero_add]
+  | merge l r ihl ihr =>
+    by_cases h : merge l r = m
+    · subst h; rw [replace_self, ht, zero_add]
+    · rw [yield_merge] at hs
+      obtain ⟨hl, hr, hdisj⟩ := Multiset.nodup_add.1 hs
+      have hm' : m ∈ l.terms ∨ m ∈ r.terms := by
+        rw [terms_merge, Multiset.mem_cons, Multiset.mem_add] at hm
+        exact hm.resolve_left fun e ↦ h e.symm
+      rw [replace_merge_of_ne h, yield_merge, yield_merge]
+      by_cases hml : m ∈ l.terms <;> by_cases hmr : m ∈ r.terms
+      · have h0 : m.yield = 0 := Multiset.eq_zero_of_forall_notMem fun a ha ↦
+          Multiset.disjoint_left.1 hdisj (Multiset.mem_of_le (yield_le_of_mem_terms hml) ha)
+            (Multiset.mem_of_le (yield_le_of_mem_terms hmr) ha)
+        have el := ihl hl hml
+        have er := ihr hr hmr
+        rw [h0, add_zero] at el er ⊢
+        rw [el, er]
+      · rw [replace_of_notMem_terms hmr, add_right_comm, ihl hl hml]
+      · rw [replace_of_notMem_terms hml, add_assoc, ihr hr hmr]
+      · exact (hm'.elim hml hmr).elim
+
+theorem yield_headTrace (s : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token) :
+    (s.headTrace τ).yield = 0 := by
+  unfold headTrace; cases τ s <;> rfl
+
+section Map
+
+variable {f : LexicalItem.Token → LexicalItem.Token}
+
+/-- Replacement commutes with an injective relabelling. -/
+theorem replace_map (hf : Function.Injective f) (s target replacement : SyntacticObject) :
+    (s.replace target replacement).map f =
+      (s.map f).replace (target.map f) (replacement.map f) := by
+  have hmem (x : SyntacticObject) : target.map f ∈ (x.map f).terms ↔ target ∈ x.terms := by
+    rw [terms_map, Multiset.mem_map_of_injective (map_injective hf)]
+  have leafCase (x : SyntacticObject) (hx : x.terms = {x}) :
+      (x.replace target replacement).map f =
+        (x.map f).replace (target.map f) (replacement.map f) := by
+    by_cases h : x = target
+    · subst h; rw [replace_self, replace_self]
+    · have hn : target ∉ x.terms := by rw [hx, Multiset.mem_singleton]; exact fun e ↦ h e.symm
+      rw [replace_of_notMem_terms hn, replace_of_notMem_terms ((hmem x).not.2 hn)]
+  induction s using ind with
+  | leaf a => exact leafCase _ (terms_leaf a)
+  | trace => exact leafCase _ terms_trace
+  | traceOf a => exact leafCase _ (terms_traceOf a)
+  | merge l r ihl ihr =>
+    by_cases h : merge l r = target
+    · subst h; rw [replace_self, replace_self]
+    · rw [replace_merge_of_ne h, map_merge, map_merge,
+        replace_merge_of_ne fun e ↦ h (map_injective hf (by rwa [map_merge])), ihl, ihr]
+
+end Map
 
 /-- The remainder `T/mover`, the current object with the mover's occurrences replaced by the trace
     of its head under `τ`. -/

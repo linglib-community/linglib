@@ -8,7 +8,7 @@ public import Linglib.Fragments.Hungarian.Pronouns
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
-public import Linglib.Syntax.Minimalist.Locality.Horizon
+public import Linglib.Syntax.Minimalist.Probe.Horizon
 public import Linglib.Data.Examples.Readers
 
 /-!

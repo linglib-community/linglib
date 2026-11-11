@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Locality.Chain
+public import Linglib.Syntax.Minimalist.Phase.Chain
+public import Linglib.Syntax.Minimalist.Copy.AntiLocality
 
 /-!
 # Transfer and the Phase Impenetrability Condition
@@ -256,5 +257,32 @@ theorem crosses_iff {tok : LexicalItem.Token} {h : TreePath} (hh : h ∈ t.val.v
     hproj.trans ((parent_covBy_complement h).le.trans hc)
   exact ⟨fun ⟨hc, hn⟩ ↦ ⟨(not_le_fst_iff hx (hle hc)).1 hn, hc⟩,
     fun ⟨hlt, hc⟩ ↦ ⟨hc, (not_le_fst_iff hx (hle hc)).2 hlt⟩⟩
+
+/-! ### Anti-locality and the PIC -/
+
+/-- A link that moves the complement of a phase head, landing outside it, moves it to a
+specifier of the head's phrase or leaves the complement after the phase is complete: with the
+PIC, Abels's anti-locality leaves the complement of a phase head no way out. -/
+theorem compToSpec_or_mem_sealed {tok : LexicalItem.Token} {x : TreePath × TreePath}
+    {h : TreePath} (hh : h ∈ t.val.validPaths) (h0 : h ≠ ⊥) (hhead : IsHeadPosition t h)
+    (hx : x ∈ links hd t tok) (hr : projectionAt hd t x.2 = complement h)
+    (hin : ¬ complement h ≤ x.1.parent) :
+    CompToSpec hd t x ∨ x.2 ∈ sealed {h} (complementDomain hd t ∅) (Pic1 hd t) x.1.parent := by
+  have hcx : complement h ≤ x.2 := hr ▸ projectionAt_le hd t x.2
+  have hlt : x.1.parent < complement h :=
+    ((IsLeftLinear.comparable_of_le_common (parent_lt_of_mem_links hx).1.le hcx).resolve_right
+      hin).lt_of_ne fun he ↦ hin he.ge
+  have hle : x.1.parent ≤ h.parent := by
+    simpa [TreePath.pred_eq_parent] using Order.le_pred_of_lt hlt
+  have hcomp : CompToSpec hd t x ↔ projectionAt hd t h ≤ x.1.parent := by
+    rw [CompToSpec, hr, complement_complement hh h0]
+    exact and_iff_right hhead
+  rcases IsLeftLinear.comparable_of_le_common (projectionAt_le hd t h)
+    (hle.trans (TreePath.parent_le h)) with hph | hph
+  · exact .inl (hcomp.2 hph)
+  · rcases hph.lt_or_eq with hph | hph
+    · refine .inr ⟨h, Finset.mem_singleton_self h, hph, ?_⟩
+      simpa [complementDomain, transferHead] using hcx
+    · exact .inl (hcomp.2 hph.ge)
 
 end Minimalist

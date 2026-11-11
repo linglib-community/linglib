@@ -3,7 +3,7 @@ module
 public import Studies.Chomsky2013
 public import Studies.Collins2005
 public import Linglib.Data.Examples.Boskovic2018
-public import Linglib.Syntax.Minimalist.Locality.Transfer
+public import Linglib.Syntax.Minimalist.Phase.Transfer
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
 /-!

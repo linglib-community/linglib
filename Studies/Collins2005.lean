@@ -5,7 +5,7 @@ public import Linglib.Data.Examples.Collins2005
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
-public import Linglib.Syntax.Minimalist.Locality.Freezing
+public import Linglib.Syntax.Minimalist.Derivation.Freezing
 public import Linglib.Syntax.Minimalist.Derivation.Remnant
 public import Linglib.Syntax.Minimalist.Copy.BindingAtReading
 public import Linglib.Syntax.Minimalist.Derivation.Smuggling
@@ -248,7 +248,8 @@ theorem active_shares_vP (p : Clause) (a : Analysis) :
 theorem cCommandsAt_vP_iff (p : Clause) (a : Analysis) {x y : SyntacticObject} :
     p.active.CCommandsAt (p.vP false).length x y ↔
       (p.passive a false).CCommandsAt (p.vP false).length x y := by
-  rw [Derivation.CCommandsAt, Derivation.CCommandsAt, active_shares_vP]
+  rw [Derivation.CCommandsAt, Derivation.CCommandsAt, Derivation.stageAt, Derivation.stageAt,
+    active_shares_vP p a]
 
 example : ex9.active.CCommandsAt (ex9.vP false).length ex9.agent ex9.patient := by decide
 
@@ -392,6 +393,35 @@ theorem isSmugglingStep_iff (a : Analysis) (ev : Bool) :
   revert s a ev
   decide +kernel
 
+theorem nodup_lexTokens (a : Analysis) (ev : Bool) :
+    ((Clause.of verb agent patient c be).passive a ev).lexTokens.Nodup := by
+  rcases c with _ | (_ | _) <;> cases a <;> cases ev <;>
+    simp [Clause.passive, Clause.preRaising, Clause.fronted, Clause.voiceP, Clause.vP,
+      Clause.vpSteps, Clause.evacuation, Clause.evacuee?, Clause.of, Derivation.lexTokens,
+      Derivation.items, Derivation.append, Step.items, Complement.map, part₀, v₀, x₀, infl₀]
+
+theorem isSome_replay? (a : Analysis) (ev : Bool) :
+    ((Clause.of verb agent patient c be).passive a ev).replay?.isSome := by
+  rw [of_eq_map, Clause.passive_map _ (renaming_heads _ _ _ _ _),
+    Derivation.replay?_map (Equiv.injective _)
+      (fun s ↦ s.selHead_map (renaming_preservesSelection ..)), Option.isSome_map]
+  generalize c.map (Complement.map fun _ ↦ ()) = s
+  revert s a ev
+  decide +kernel
+
+theorem isValid (a : Analysis) (ev : Bool) :
+    ((Clause.of verb agent patient c be).passive a ev).IsValid :=
+  let h := Derivation.isSome_replay?_iff.1 (isSome_replay? verb agent patient be c a ev)
+  ⟨h.1, h.2, nodup_lexTokens verb agent patient be c a ev⟩
+
+-- (34): once PartP has moved, the external argument no longer c-commands the object.
+theorem not_cCommandsAt_agent_patient (ev : Bool) :
+    ¬ ((Clause.of verb agent patient c be).passive .partP ev).CCommandsAt
+        (((Clause.of verb agent patient c be).voiceP ev).length + 1)
+        (Clause.of verb agent patient c be).agent (Clause.of verb agent patient c be).patient :=
+  ((isSmugglingStep_iff verb agent patient be c .partP ev).2 rfl).not_cCommandsAt_succ
+    (isValid ..) (by simp) (by simp)
+
 theorem converges_iff_not_obeysFreezing (a : Analysis) (ev : Bool) :
     (Clause.of verb agent patient c be).Converges a ev ↔
       ¬ ((Clause.of verb agent patient c be).passive a ev).ObeysFreezing := by
@@ -421,6 +451,11 @@ theorem isRemnantStep_iff (w : String) (a : Analysis) (ev : Bool) :
   decide +kernel
 
 end Shape
+
+/-- PartP smuggles the object past nothing it carries along: it does not come to c-command its
+own verb. -/
+example : ¬ (ex9.passive .partP false).IsSmugglingStep (ex9.voiceP false).length ex9.patient
+    ex9.verb := by decide +kernel
 
 /-- Smuggling brings the object level with the external argument, not past it: once PartP has
 moved, Infl's probe finds both. -/

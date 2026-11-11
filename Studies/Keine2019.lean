@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Locality.Horizon
+public import Linglib.Syntax.Minimalist.Probe.Horizon
 public import Linglib.Syntax.Minimalist.Clause.Spine
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject

@@ -27,7 +27,7 @@ one bound in situ, as for Pesetsky, has a single copy; a deleted copy above the 
 Huang's covert movement, a pronounced copy between deleted ones Sato and Ngui's partial movement,
 and a token with two pronounced copies is shared, Citko's Parallel Merge. A copy is linked to the
 nearest copy whose projection c-commands it, c-command being Reinhart's (`RoseTree.CCommands`); the
-locality of links is in `Locality/Chain.lean`.
+Phase Impenetrability Condition on links is in `Phase/Chain.lean`.
 
 ## Main definitions
 
@@ -224,5 +224,24 @@ theorem links_eq_nil_of_length_le_one (h : (chain t tok).length ≤ 1) : links h
     · simp [hc] at h
   exact not_isLink_self hd t tok p
 
+/-! ### Islands -/
+
+/-- A link of the chain of `tok` leaves the domain at `D` when it runs from inside `D` to outside,
+as movement out of an island does. -/
+def Escapes (D : TreePath) : Prop := ∃ x ∈ links hd t tok, D ≤ x.2 ∧ ¬ D ≤ x.1
+
+instance (D : TreePath) : Decidable (Escapes hd t tok D) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+/-- A link of the chain of `tok` leaves the projection of a head that `P` holds of. -/
+def CrossesIsland (P : LexicalItem.Token → Prop) [DecidablePred P] : Prop :=
+  ∃ p ∈ occurrencesWith t P, Escapes hd t tok (projectionAt hd t p)
+
+instance (P : LexicalItem.Token → Prop) [DecidablePred P] :
+    Decidable (CrossesIsland hd t tok P) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+theorem not_escapes_of_length_le_one (h : (chain t tok).length ≤ 1) (D : TreePath) :
+    ¬ Escapes hd t tok D := by
+  simp [Escapes, links_eq_nil_of_length_le_one hd t tok h]
 
 end Minimalist

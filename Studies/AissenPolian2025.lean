@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
-public import Linglib.Syntax.Minimalist.Locality.Horizon
+public import Linglib.Syntax.Minimalist.Probe.Horizon
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Data.Examples.AissenPolian2025
 public import Linglib.Data.Examples.Readers

@@ -6,36 +6,28 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Derivation.Basic
-public import Linglib.Syntax.Minimalist.Workspace.NoComplexityLoss
-public import Linglib.Syntax.Minimalist.Workspace.MinimalYield
+public import Linglib.Syntax.Minimalist.Workspace.Merge.SyntacticObject
 
 /-!
-# Economy of derivations
+# Derivations on the workspace
 
-An admissible derivation step relates the workspace of the current object, its items and the
-items still to come to the workspace of the object it builds and those items. When its operands
-are not traces, that transformation satisfies No Complexity Loss graded by the size `σ` and
-Minimal Yield under trace counting (§1.6 of Marcolli, Chomsky and Berwick). An External Merge step
-is the term of Merge taking both objects whole and leaving the spectators uncut, so its component
-map loses no complexity. Along an admissible derivation the workspaces of its stages therefore
-form a chain of economical transformations.
+A derivation step applies an algebraic Merge at the current object, beside a spectator workspace of
+the items still to come. When it matches no accessible term of the spectators, and an Internal
+Merge raises a uniquely accessible proper term, [the step is the algebraic Merge on the
+workspace](##Minimalist.Step.mergeOp_workspace), and [an admissible derivation is the iterated
+algebraic Merge](##Minimalist.Derivation.mergeOpList_initial) on the workspace of its initial
+object and its items. A Merge step is also MERGE on the workspace as a multiset, [Internal Merge
+leaving the trace of the mover's head](##Minimalist.Step.apply_im_eq_mergeWith).
 
-## Main definitions
+## TODO
 
-* `Minimalist.Derivation.workspaces`: the workspaces of a derivation's stages.
-
-## Main results
-
-* `Minimalist.Step.noComplexityLoss`, `Step.minimalYield`: an admissible step whose operands are
-  not traces is economical.
-* `Minimalist.Derivation.isChain_noComplexityLoss`, `isChain_minimalYield`: so is
-  every step of an admissible derivation.
-* `Minimalist.Derivation.isChain_merge`: every step of an admissible derivation is MERGE, an
-  Internal Merge step leaving the trace of the mover's head.
+* Extend `Step.Admissible` and `Step.mergeOp_workspace` to `extract` and `remerge`, the two stages
+  of Internal Merge, on the workspace of the object, its stack and the items still to come.
 
 ## References
 
-* [marcolli-chomsky-berwick-2025]
+* [marcolli-chomsky-berwick-2025], §1.2 (Definition 1.2.6) and §1.4 (Lemma 1.4.1,
+  Proposition 1.4.2)
 -/
 
 @[expose] public section
@@ -65,205 +57,148 @@ namespace Minimalist
 
 open SyntacticObject ConnesKreimer
 
-theorem Step.value_isLeft_apply {step : Step} {current : SyntacticObject} {W : Workspace}
-    (h : step.Admissible current W) : (step.apply current).val.value.isLeft := by
-  cases step with
-  | em side item => cases side <;> simp [Step.apply]
-  | im mover _ => simp [Step.apply]
-  | extract _ | remerge _ => exact h.elim
+/-! ### Steps as algebraic Merges
 
-/-! ### External Merge as a term of Merge
+A step merges the current object with the items it introduces, beside a spectator workspace of the
+items still to come. When it matches no accessible term of the spectators, and an Internal Merge
+raises a uniquely accessible proper term, the step is the algebraic Merge on the workspace. The two
+stages of Internal Merge, `extract` and `remerge`, act on the stack beside the object, which this
+workspace leaves out, so they are not admissible here. -/
 
-External Merge of `S` and `S'` beside spectators `W` is the term of Merge taking `S` and `S'`
-whole and leaving every spectator uncut. -/
+/-- A step applies an algebraic Merge at the current object, External Merge with the item or the
+    unit stage followed by External Merge of the remainder with the mover. -/
+noncomputable def Step.mergeOp (step : Step)
+    (current : SyntacticObject) :
+    ConnesKreimer ℤ (UnorderedTree Vertex) →ₗ[ℤ] ConnesKreimer ℤ (UnorderedTree Vertex) :=
+  match step with
+  | .em _ item => Merge.traceMergeOp traceEncoder Vertex.bare current.val item.toSyntacticObject.val
+  | .im mover _ => Merge.traceMergeOp traceEncoder Vertex.bare (deleteAccessible mover current).val
+      mover.val ∘ₗ Merge.traceMergeOpUnit traceEncoder mover.val
+  | .extract mover => Merge.traceMergeOpUnit traceEncoder mover.val
+  | .remerge _ => 0
 
-section ExternalMerge
+/-- A step at the current object is admissible beside a spectator workspace `W` when it matches
+    no accessible term of `W`, and an Internal Merge raises a uniquely accessible proper term that
+    is not a trace. -/
+def Step.Admissible (current : SyntacticObject)
+    (W : Workspace) : Step → Prop
+  | .em _ item => ∀ U ∈ W, current ∉ U.terms ∧ ↑item ∉ U.terms
+  | .im mover _ => mover.val.value.isLeft ∧ current.terms.count mover = 1 ∧ current ≠ mover ∧
+      ∀ U ∈ W, deleteAccessible mover current ∉ U.terms ∧ mover ∉ U.terms
+  | .extract _ | .remerge _ => False
 
-variable (S S' : UnorderedTree Vertex) (W : Multiset (UnorderedTree Vertex))
-
-/-- The term of Merge taking `S` and `S'` whole and leaving the spectators uncut. -/
-private def emTerm : CutChoice Vertex :=
-  ({S, S'} : Multiset (UnorderedTree Vertex)).map (fun T ↦ (T, ({T}, 0))) +
-    W.map fun T ↦ (T, (0, {T}))
-
-private theorem emTerm_mem :
-    emTerm S S' W ∈ forestCutChoices (traceCuts traceEncoder) ({S, S'} + W) :=
-  add_mem_forestCutChoices (map_whole_mem_forestCutChoices _)
-    (map_uncut_mem_forestCutChoices fun T _ ↦ zero_mem_traceCuts _ T)
-
-private theorem emTerm_crown : (emTerm S S' W).crown = {S, S'} := by simp [emTerm]
-
-private theorem emTerm_trunk : (emTerm S S' W).trunk = W := by simp [emTerm]
-
-private theorem emTerm_whole_or_uncut : ∀ x ∈ emTerm S S' W, x.2.1 = 0 ∨ x.2.2 = 0 := by
-  simp only [emTerm, Multiset.mem_add, Multiset.mem_map]
-  rintro x (⟨T, -, rfl⟩ | ⟨T, -, rfl⟩)
-  exacts [.inr rfl, .inl rfl]
-
-variable {S S'} in
-private theorem emTerm_lexical (hS : S.value.isLeft) (hS' : S'.value.isLeft) :
-    ∀ x ∈ emTerm S S' W, x.2.1 ≠ 0 → x.1.value.isLeft := by
-  simp only [emTerm, Multiset.mem_add, Multiset.mem_map]
-  rintro x (⟨T, hT, rfl⟩ | ⟨T, -, rfl⟩) h
-  · rcases Multiset.mem_cons.mp hT with rfl | hT
-    · exact hS
-    · exact Multiset.mem_singleton.mp hT ▸ hS'
-  · exact absurd rfl h
-
-end ExternalMerge
-
-variable {step : Step} {current : SyntacticObject} {W : Workspace}
-
-/-- The trace cut extracting the mover of an admissible Internal Merge. -/
-private theorem mem_traceCuts_mover {mover : SyntacticObject} (hm : mover.val.value.isLeft)
-    (h : current.terms.count mover = 1) (hne : current ≠ mover) :
-    ({mover.val}, (deleteAccessible mover current).val) ∈ traceCuts traceEncoder current.val :=
-  Multiset.mem_of_mem_filter (p := fun p ↦ p.1 = {mover.val}) <| by
-    rw [traceCuts_filter_mover hm h hne]
-    exact Multiset.mem_singleton_self _
-
-/-- An admissible step whose operands are not traces satisfies No Complexity Loss under the size `σ`
-(the book's (1.6.10)). -/
-theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur : current.val.value.isLeft)
-    (hitems : ∀ i ∈ step.items, i.val.value.isLeft) :
-    NoComplexityLoss (fun T ↦ Forest.accessibleSize {T})
-      (({current} + step.items + W).map Subtype.val)
-      (({step.apply current} + W).map Subtype.val) := by
-  cases step with
-  | em side item =>
-    simp only [Step.items, Multiset.mem_singleton, forall_eq] at hitems
-    have hs := emTerm_mem current.val (item : SyntacticObject).val (W.map Subtype.val)
-    have hm := UnorderedTree.accessibleCount_merge none current.val (item : SyntacticObject).val
-      (UnorderedTree.numTraces_lt_numNodes_of_isLeft hcur)
-      (UnorderedTree.numTraces_lt_numNodes_of_isLeft hitems)
-    have := NoComplexityLoss.of_componentMap hs
-      (X := UnorderedTree.node Vertex.bare {current.val, (item : SyntacticObject).val})
-      ((NoComplexityLoss.map_componentMap_merge_iff hs
-        (hasExtractionCost_accessibleSize_traceCuts hs (emTerm_lexical _ hcur hitems))
-        (fun T ↦ by simp) (emTerm_crown ..)
-        (by simp only [Forest.accessibleSize_singleton, hm]; omega)
-        (by simp only [Forest.accessibleSize_singleton, hm]; omega)).mpr
-        (emTerm_whole_or_uncut _ _ _))
-    rw [emTerm_trunk] at this
-    rw [Step.apply_em, merge_comm]
-    simp only [Step.items, Multiset.map_add, Multiset.map_singleton, merge_val]
-    rwa [Multiset.singleton_add]
-  | im mover _ =>
-    obtain ⟨hm, hc, hne, -⟩ := h
-    have hp := mem_traceCuts_mover hm hc hne
-    have hσ := traceCuts_accessibleSize traceEncoder hcur hp
-    have hmerge := UnorderedTree.accessibleCount_merge none (deleteAccessible mover current).val
-      mover.val (UnorderedTree.numTraces_lt_numNodes_of_isLeft (by
-        rw [traceCuts_trunk_value traceEncoder _ _ hp]; exact hcur))
-      (UnorderedTree.numTraces_lt_numNodes_of_isLeft hm)
-    simp only [Multiset.map_singleton, Multiset.sum_singleton,
-      Forest.accessibleSize_singleton] at hσ
-    refine ⟨{(current.val, (merge (deleteAccessible mover current) mover).val)} +
-      (W.map Subtype.val).map fun U ↦ (U, U), ?_, ?_, ?_⟩
-    · simp [Step.items, Multiset.map_map]
-    · simp only [Step.apply_im, Multiset.map_add, Multiset.map_singleton, Multiset.mem_add,
-        Multiset.mem_singleton, Multiset.mem_map]
-      rintro x (rfl | ⟨U, hU, rfl⟩)
-      exacts [.inl rfl, .inr hU]
-    · simp only [NoComplexityLoss.Map, Multiset.mem_add, Multiset.mem_singleton,
-        Multiset.mem_map]
-      rintro x (rfl | ⟨U, -, rfl⟩)
-      · simp only [merge_val, Forest.accessibleSize_singleton, hmerge]
-        omega
-      · exact le_rfl
-  | extract _ | remerge _ => exact h.elim
-
-/-- An admissible step whose operands are not traces satisfies Minimal Yield under trace
-    counting. -/
-theorem Step.minimalYield (h : step.Admissible current W) (hcur : current.val.value.isLeft)
-    (hitems : ∀ i ∈ step.items, i.val.value.isLeft) :
-    MinimalYield UnorderedTree.accessibleCount (({current} + step.items + W).map Subtype.val)
-      (({step.apply current} + W).map Subtype.val) := by
+/-- An admissible step is the algebraic Merge on the workspace of the current object, the items
+    it introduces, and the spectators. -/
+theorem Step.mergeOp_workspace {step : Step}
+    {current : SyntacticObject} {W : Workspace} (h : step.Admissible current W) :
+    step.mergeOp current (ConnesKreimer.of' (({current} + step.items + W).map Subtype.val))
+      = ConnesKreimer.of' (({step.apply current} + W).map Subtype.val) := by
   cases step with
   | em side item =>
     rw [Step.apply_em, merge_comm]
-    simp only [Step.items, Multiset.mem_singleton, forall_eq] at hitems
-    simp only [Step.items, Multiset.map_add, Multiset.map_singleton, merge_val]
-    exact (MinimalYield.em_pair_accessibleCount none
-      (UnorderedTree.numTraces_lt_numNodes_of_isLeft hcur)
-      (UnorderedTree.numTraces_lt_numNodes_of_isLeft hitems)).add_right _
+    exact traceMergeOp_node_residual traceEncoder current ↑item h
   | im mover _ =>
-    obtain ⟨hm, hc, hne, -⟩ := h
-    have hp := mem_traceCuts_mover hm hc hne
-    obtain ⟨l, r, rfl⟩ := exists_eq_merge_of_count_terms hc hne
-    simp only [Step.items, add_zero, Step.apply_im, Multiset.map_add, Multiset.map_singleton,
-      merge_val, Multiset.pair_comm (deleteAccessible mover (merge l r)).val] at hp ⊢
-    exact (MinimalYield.im_accessibleCount_of_cut none none traceEncoder _ _ hp mover.val
-      rfl).add_right _
+    obtain ⟨hm, hc, hne, hW⟩ := h
+    exact traceMergeOp_im_residual hm hc hne hW
   | extract _ | remerge _ => exact h.elim
 
-/-- The workspaces after each of a list of steps hold the object built so far beside the items
-    still to come. -/
-noncomputable def Step.workspacesAfter : List Step → SyntacticObject → List Workspace
-  | [], _ => []
+/-- The algebraic Merges of a list of steps from the current object, composed in order. -/
+noncomputable def Step.mergeOpList :
+    List Step → SyntacticObject →
+      ConnesKreimer ℤ (UnorderedTree Vertex) →ₗ[ℤ] ConnesKreimer ℤ (UnorderedTree Vertex)
+  | [], _ => LinearMap.id
+  | step :: steps, current => Step.mergeOpList steps (step.apply current) ∘ₗ step.mergeOp current
+
+/-- Every step of a list is admissible beside the items still to come. -/
+def Step.AdmissibleList : List Step → SyntacticObject → Prop
+  | [], _ => True
   | step :: steps, current =>
-      ({step.apply current} + Step.itemsList steps) ::
-        Step.workspacesAfter steps (step.apply current)
+      step.Admissible current (Step.itemsList steps) ∧
+        Step.AdmissibleList steps (step.apply current)
 
-private theorem isChain_of_step {R : Workspace → Workspace → Prop} {P : SyntacticObject → Prop}
-    (hR : ∀ {step : Step} {current : SyntacticObject} {W : Workspace}, step.Admissible current W →
-      P current → (∀ i ∈ step.items, P i) →
-        R ({current} + step.items + W) ({step.apply current} + W))
-    (hP : ∀ {step : Step} {current : SyntacticObject} {W : Workspace},
-      step.Admissible current W → P (step.apply current)) :
+/-- Admissible steps compose to the algebraic Merge from the workspace of the current object and
+    the items they introduce to the object they build. -/
+theorem Step.mergeOpList_workspace :
     ∀ (steps : List Step) (current : SyntacticObject), Step.AdmissibleList steps current →
-      P current → (∀ i ∈ Step.itemsList steps, P i) →
-      List.IsChain R (({current} + Step.itemsList steps) :: Step.workspacesAfter steps current)
-  | [], _, _, _, _ => .singleton _
-  | step :: steps, current, ⟨h, hs⟩, hcur, hitems => by
-    rw [Step.itemsList_cons] at hitems ⊢
-    refine .cons_cons ?_ (isChain_of_step hR hP steps _ hs (hP h)
-      fun i hi ↦ hitems i (Multiset.mem_add.mpr (.inr hi)))
-    rw [← add_assoc]
-    exact hR h hcur fun i hi ↦ hitems i (Multiset.mem_add.mpr (.inl hi))
+      Step.mergeOpList steps current
+          (ConnesKreimer.of' (({current} + Step.itemsList steps).map Subtype.val))
+        = ConnesKreimer.of' {(steps.foldl (fun so step => step.apply so) current).val}
+  | [], current, _ => by
+    simp [Step.mergeOpList]
+  | step :: steps, current, ⟨h, hs⟩ => by
+    rw [Step.mergeOpList, LinearMap.comp_apply, Step.itemsList_cons, ← add_assoc,
+      Step.mergeOp_workspace h, List.foldl_cons]
+    exact Step.mergeOpList_workspace steps (step.apply current) hs
+
+/-- Admissible steps leave the stack alone and build what they build on the object. -/
+theorem Step.foldl_run_of_admissibleList :
+    ∀ (steps : List Step) (current : SyntacticObject) (st : List SyntacticObject),
+      Step.AdmissibleList steps current →
+      steps.foldl (fun c step ↦ step.run c) ⟨current, st⟩
+        = ⟨steps.foldl (fun so step ↦ step.apply so) current, st⟩
+  | [], _, _, _ => rfl
+  | step :: steps, current, st, ⟨h, hs⟩ => by
+    have : step.run ⟨current, st⟩ = ⟨step.apply current, st⟩ := by
+      cases step with
+      | em _ _ | im _ _ => rfl
+      | extract _ | remerge _ => exact h.elim
+    rw [List.foldl_cons, List.foldl_cons, this]
+    exact Step.foldl_run_of_admissibleList steps _ st hs
+
+variable {τ : SyntacticObject → Option LexicalItem.Token}
+
+/-! ### Steps as MERGE
+
+A Merge step is MERGE on the workspace of the current object, the items it introduces and the
+spectators: External Merge leaving copies (`Workspace.merge`), and Internal Merge leaving the trace
+of the mover's head (`Workspace.mergeWith`). Of the two stages of Internal Merge, `extract`
+contracts and puts the mover's copy on the stack, and `remerge` is MERGE of that copy and the
+current object on the workspace that holds the stack. -/
+
+/-- External Merge is MERGE of the item and the current object. -/
+theorem Step.apply_em_eq_merge (side : Edge) (item : LinearizedSyntacticObject)
+    (current : SyntacticObject) (W : Workspace) :
+    {(Step.em side item).apply current τ} + W =
+      ({current} + (Step.em side item).items + W).merge ↑item current := by
+  have h : ({current} + {↑item} + W : Workspace) = ({↑item} + {current}) + W := by abel
+  rw [Step.apply_em, Step.items, Workspace.merge_def, h, Multiset.insert_eq_cons,
+    ← Multiset.singleton_add, add_tsub_cancel_left, add_comm]
+
+/-- Internal Merge is MERGE of the mover and the current object leaving the trace of the mover's
+    head. -/
+theorem Step.apply_im_eq_mergeWith (side : Edge) {mover current : SyntacticObject} {W : Workspace}
+    (hmc : mover ∈ current.terms) (hne : current ≠ mover) (hW : ∀ U ∈ W, mover ∉ U.terms) :
+    {(Step.im mover side).apply current τ} + W =
+      ({current} + W).mergeWith (·.headTrace τ) mover current := by
+  rw [Workspace.mergeWith_internal hmc hne hW, add_comm, merge_comm]
+  rfl
+
+/-- Merging the copy on top of the stack back is MERGE of the copy and the current object, on the
+    workspace of the object, its stack and the spectators. -/
+theorem Step.run_remerge_eq_merge (side : Edge) (current m : SyntacticObject)
+    (st : List SyntacticObject) (W : Workspace) :
+    {((Step.remerge side).run ⟨current, m :: st⟩ τ).current} +
+        ↑((Step.remerge side).run ⟨current, m :: st⟩ τ).stack + W =
+      ({current} + ↑(m :: st) + W).merge m current := by
+  show {merge m current} + ↑st + W = _
+  have h : ({current} + ↑(m :: st) + W : Workspace) = ({m} + {current}) + (↑st + W) := by
+    rw [← Multiset.cons_coe, ← Multiset.singleton_add]; abel
+  rw [Workspace.merge_def, h, Multiset.insert_eq_cons, ← Multiset.singleton_add,
+    add_tsub_cancel_left]
+  abel
 
 namespace Derivation
 
-/-- The workspaces of a derivation's stages hold the initial object beside its items, then after
-    each step the object built so far beside the items still to come. -/
-noncomputable def workspaces (d : Derivation) : List Workspace :=
-  ({d.initial} + d.items) :: Step.workspacesAfter d.steps d.initial
+/-- A derivation is admissible when each of its steps is, beside the items still to come. -/
+def Admissible (d : Derivation) : Prop := Step.AdmissibleList d.steps d.initial
 
-/-- Each step of an admissible derivation is MERGE on the workspaces of its stages: an External
-    Merge step leaving copies, and an Internal Merge step leaving the trace of the mover's head. -/
-theorem isChain_merge {d : Derivation} (hd : d.Admissible) :
-    d.workspaces.IsChain fun W W' : Workspace ↦ ∃ P Q : SyntacticObject,
-      W' = W.merge P Q ∨ W' = W.mergeWith (·.headTrace) P Q := by
-  refine isChain_of_step (P := fun _ ↦ True) (fun {step current W} h _ _ ↦ ?_) (fun _ ↦ trivial)
-    d.steps d.initial hd trivial fun _ _ ↦ trivial
-  cases step with
-  | em side item => exact ⟨↑item, current, .inl (Step.apply_em_eq_merge side item current W)⟩
-  | im mover side =>
-    obtain ⟨-, hc, hne, hW⟩ := h
-    refine ⟨mover, current, .inr ?_⟩
-    rw [Step.items, add_zero]
-    exact Step.apply_im_eq_mergeWith side (Multiset.count_pos.1 (by omega)) hne
-      fun U hU ↦ (hW U hU).2
-  | extract _ | remerge _ => exact h.elim
-
-/-- Every step of an admissible derivation whose initial object and items are not traces satisfies
-    No Complexity Loss, graded by the size `σ`. -/
-theorem isChain_noComplexityLoss {d : Derivation} (hd : d.Admissible)
-    (hinit : d.initial.val.value.isLeft) (hitems : ∀ i ∈ d.items, i.val.value.isLeft) :
-    d.workspaces.IsChain (fun W W' : Workspace ↦ NoComplexityLoss
-      (fun T ↦ Forest.accessibleSize {T}) (W.map Subtype.val) (W'.map Subtype.val)) :=
-  isChain_of_step (P := fun S ↦ S.val.value.isLeft)
-    (fun h hcur hi ↦ Step.noComplexityLoss h hcur hi) Step.value_isLeft_apply d.steps d.initial hd
-    hinit hitems
-
-/-- Every step of an admissible derivation whose initial object and items are not traces satisfies
-    Minimal Yield under trace counting. -/
-theorem isChain_minimalYield {d : Derivation} (hd : d.Admissible)
-    (hinit : d.initial.val.value.isLeft) (hitems : ∀ i ∈ d.items, i.val.value.isLeft) :
-    d.workspaces.IsChain (fun W W' : Workspace ↦
-      MinimalYield UnorderedTree.accessibleCount (W.map Subtype.val) (W'.map Subtype.val)) :=
-  isChain_of_step (P := fun S ↦ S.val.value.isLeft) (fun h hcur hi ↦ Step.minimalYield h hcur hi)
-    Step.value_isLeft_apply d.steps d.initial hd hinit hitems
+/-- An admissible derivation is the iterated algebraic Merge on the workspace of its initial object
+    and its items: the composite of its steps' Merges sends that workspace to its final object. -/
+theorem mergeOpList_initial {d : Derivation} (hd : d.Admissible) :
+    Step.mergeOpList d.steps d.initial (ConnesKreimer.of' (({d.initial} + d.items).map Subtype.val))
+      = ConnesKreimer.of' {d.final.val} :=
+  (Step.mergeOpList_workspace d.steps d.initial hd).trans <| by
+    rw [final, run, Step.foldl_run_of_admissibleList d.steps d.initial [] hd]
 
 end Derivation
 

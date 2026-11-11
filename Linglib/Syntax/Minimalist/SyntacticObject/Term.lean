@@ -396,6 +396,17 @@ theorem Sisters.of_merge {x z : SyntacticObject L} (h : Sisters (merge l r) x z)
   · exact .inl ⟨w, hw, hwx, hwz, hxz⟩
   · exact .inr (.inl ⟨w, hw, hwx, hwz, hxz⟩)
 
+/-- Once `β` has moved, leaving the remnant `R`, nothing but `R` and the terms of `β` c-commands a
+term found only in `β`: the sister of anything else lies inside `R`. -/
+theorem not_cCommands_merge_of_notMem_terms {β R x y : SyntacticObject L} (hx : x ∉ β.terms)
+    (hR : x ≠ R) (hy : y ∉ R.terms) : ¬ CCommands (merge β R) x y := by
+  rintro ⟨z, -, hs, hzy⟩
+  rcases Sisters.of_merge hs with h | h | ⟨rfl, -⟩ | ⟨rfl, -⟩
+  · exact hx h.mem_left
+  · exact hy (terms_subset_terms (mem_terms.1 h.mem_right) (mem_terms.2 hzy))
+  · exact hx (self_mem_terms _)
+  · exact hR rfl
+
 /-- The c-command domain of `x` in `root`, the search space of a probe sitting at `x`. -/
 def cCommandDomain [DecidableEq L] (root x : SyntacticObject L) :
     Multiset (SyntacticObject L) :=

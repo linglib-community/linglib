@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.Set.Finite.Lemmas
 public import Linglib.Data.Examples.Storment2026
 public import Linglib.Fragments.Setswana.Basic
 public import Linglib.Syntax.Agreement.Bundle

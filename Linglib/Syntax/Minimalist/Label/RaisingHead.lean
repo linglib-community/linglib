@@ -41,7 +41,7 @@ takes the daughter carrying the raising head, and the embedding's head where the
   leaf that selects is the head, and otherwise the right daughter heads. It decides only where the
   raising head is undefined, at a phrase merged in place beside another phrase, which the labeling
   algorithm leaves unlabeled until one of the two moves on (`HeadFunction.label`).
-* The raising head also delimits the phases of `Locality/Phase.lean`.
+* The raising head also delimits the phases of `Phase/Basic.lean`.
 
 ## TODO
 

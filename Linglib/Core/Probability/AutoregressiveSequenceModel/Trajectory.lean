@@ -152,9 +152,7 @@ theorem trajectory_setOf_forall_ne_none :
 of tightness. -/
 theorem isTight_iff_trajectory_setOf_forall_ne_none :
     M.IsTight ↔ M.trajectory {ω | ∀ i, ω i ≠ none} = 0 := by
-  rw [trajectory_setOf_forall_ne_none, isTight_iff_tendsto_survival]
-  have hinf := tendsto_atTop_iInf M.survival_antitone
-  exact ⟨fun h ↦ tendsto_nhds_unique hinf h, fun h ↦ h ▸ hinf⟩
+  rw [trajectory_setOf_forall_ne_none, isTight_iff_iInf_survival_eq_zero]
 
 /-- The probability of generating exactly the string `List.ofFn f` is the probability that the
 trajectory begins with its units and then ends. -/

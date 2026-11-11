@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
-public import Linglib.Syntax.Minimalist.Locality.Phase
+public import Linglib.Syntax.Minimalist.Phase.Basic
 public import Linglib.Syntax.Minimalist.Probe.Minimal
 
 /-!

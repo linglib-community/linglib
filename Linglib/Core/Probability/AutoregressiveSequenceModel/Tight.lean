@@ -5,39 +5,26 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Analysis.SpecificLimits.ProdOneSub
+public import Linglib.Core.Analysis.SpecialFunctions.Log.Summable
 public import Linglib.Core.MeasureTheory.Measure.Basic
 public import Linglib.Core.Probability.AutoregressiveSequenceModel.Basic
 
 /-!
 # Tight autoregressive sequence models
 
-Survival is the probability that no end symbol appears in the first `n` steps. The probabilities
-of the strings shorter than `n` and the survival at `n` sum to one, so a model is tight exactly
-when survival tends to zero, and since survival is the product of one minus the conditional end
-probability at each step, exactly when that probability reaches one or has a divergent sum. In a
-tight model the strings extending a prefix have total probability its prefix probability, the
-conditionals are the next-symbol laws of the string law, and the expected length is the total
-survival after the first step.
-
-## Main definitions
-
-* `survival`, `stopProb`, `eosHazard`.
-
-## Main results
-
-* `isTight_iff_tendsto_survival`, `survival_eq_prod`.
-* `isTight_iff`: tight exactly when the conditional end probability reaches one or has a
-  divergent sum ([du-etal-2023], Theorem 4.7).
-* `isTight_of_le_next_none`: a divergent lower bound on the end probability gives tightness
-  ([du-etal-2023], Proposition 4.3).
-* `IsTight.after`, `IsTight.stringMeasure_setOf_prefix`, `IsTight.next_ofMeasure_stringMeasure`.
-* `lintegral_length_le`, `IsTight.lintegral_length`, `lintegral_length_le_div`: bounds on the
-  expected length; `IsTight.tsum_prefixProb` ([opedal-chodroff-cotterell-wilcox-2024]).
+Survival is the probability that no end symbol appears in the first `n` steps. The string
+probabilities and the limit of survival [sum to one](##tsum_stringProb_add_iInf_survival), so a
+model is tight [exactly when survival tends to zero](##isTight_iff_tendsto_survival), and since
+survival is [the product](##survival_eq_prod) of one minus the conditional end probability at each
+step, [exactly when](##isTight_iff) that probability reaches one or has a divergent sum. In a tight
+model the strings extending a prefix have
+[total probability its prefix probability](##IsTight.stringMeasure_setOf_prefix), the conditionals
+are [the next-symbol laws](##IsTight.next_ofMeasure_stringMeasure) of the string law, and the
+expected length is [the total survival](##IsTight.lintegral_length) after the first step.
 
 ## Implementation notes
 
-* The product criterion behind `isTight_iff` is `ENNReal.tendsto_prod_range_one_sub_nhds_zero_iff`,
+* The product criterion behind `isTight_iff` is `ENNReal.hasProd_one_sub_zero_iff`,
   [du-etal-2023]'s Corollary 4.6 extended to factors that may vanish.
 * [du-etal-2023] count steps from one, so their conditional end probability at step `t` is
   `eosHazard (t - 1)`. Where survival is zero the ratio is `0` by the convention of `ℝ≥0∞`
@@ -146,21 +133,31 @@ theorem survival_ne_top (n : ℕ) : M.survival n ≠ ∞ :=
 theorem stopProb_le_survival (n : ℕ) : M.stopProb n ≤ M.survival n :=
   (M.survival_succ_add_stopProb n).le.trans' le_add_self
 
+theorem survival_succ_eq_sub (n : ℕ) : M.survival (n + 1) = M.survival n - M.stopProb n :=
+  ENNReal.eq_sub_of_add_eq (ne_top_of_le_ne_top (M.survival_ne_top n) (M.stopProb_le_survival n))
+    (M.survival_succ_add_stopProb n)
+
 theorem survival_antitone : Antitone M.survival :=
   antitone_nat_of_succ_le fun n ↦ (M.survival_succ_add_stopProb n).le.trans' le_self_add
 
-theorem isTight_iff_tendsto_survival : M.IsTight ↔ Tendsto M.survival atTop (𝓝 0) := by
+/-- The string probabilities and the limit of survival sum to one: the mass a model does not give
+to strings is the probability of never ending. -/
+theorem tsum_stringProb_add_iInf_survival : ∑' x, M.stringProb x + ⨅ n, M.survival n = 1 := by
   have hsum (n : ℕ) : ∑ k ∈ range n, M.stopProb k = 1 - M.survival n :=
     ENNReal.eq_sub_of_add_eq (M.survival_ne_top n) (M.sum_range_stopProb_add_survival n)
-  have hinf : ⨅ n, M.survival n ≤ 1 := (iInf_le _ 0).trans (M.survival_le_one 0)
-  rw [IsTight, tsum_stringProb, ENNReal.tsum_eq_iSup_nat, iSup_congr hsum, ← ENNReal.sub_iInf]
-  constructor
-  · intro h
-    have h0 : ⨅ n, M.survival n = 0 := by
-      rw [← ENNReal.sub_sub_cancel ENNReal.one_ne_top hinf, h, tsub_self]
-    exact h0 ▸ tendsto_atTop_iInf M.survival_antitone
-  · intro h
-    rw [tendsto_nhds_unique (tendsto_atTop_iInf M.survival_antitone) h, tsub_zero]
+  rw [tsum_stringProb, ENNReal.tsum_eq_iSup_nat, iSup_congr hsum, ← ENNReal.sub_iInf,
+    tsub_add_cancel_of_le ((iInf_le _ 0).trans (M.survival_le_one 0))]
+
+theorem isTight_iff_iInf_survival_eq_zero : M.IsTight ↔ ⨅ n, M.survival n = 0 := by
+  have h := M.tsum_stringProb_add_iInf_survival
+  refine ⟨fun hM ↦ ?_, fun h0 ↦ by rwa [h0, add_zero] at h⟩
+  rw [show ∑' x, M.stringProb x = 1 from hM] at h
+  exact (ENNReal.add_right_inj ENNReal.one_ne_top).1 (h.trans (add_zero 1).symm)
+
+theorem isTight_iff_tendsto_survival : M.IsTight ↔ Tendsto M.survival atTop (𝓝 0) := by
+  have h := tendsto_atTop_iInf M.survival_antitone
+  rw [isTight_iff_iInf_survival_eq_zero]
+  exact ⟨fun h0 ↦ h0 ▸ h, tendsto_nhds_unique h⟩
 
 /-- A model whose strings all end within `n` symbols is tight. -/
 theorem isTight_of_survival_eq_zero {n : ℕ} (h : M.survival n = 0) : M.IsTight :=
@@ -177,35 +174,50 @@ theorem survival_succ (n : ℕ) : M.survival (n + 1) = M.survival n * (1 - M.eos
   · rw [h, zero_mul]
     exact nonpos_iff_eq_zero.1 ((M.survival_antitone n.le_succ).trans h.le)
   · rw [ENNReal.mul_sub fun _ _ ↦ M.survival_ne_top n, mul_one, eosHazard,
-      ENNReal.mul_div_cancel h (M.survival_ne_top n)]
-    exact ENNReal.eq_sub_of_add_eq (ne_top_of_le_ne_top (M.survival_ne_top n)
-      (M.stopProb_le_survival n)) (M.survival_succ_add_stopProb n)
+      ENNReal.mul_div_cancel h (M.survival_ne_top n), survival_succ_eq_sub]
 
 theorem survival_eq_prod (n : ℕ) : M.survival n = ∏ k ∈ range n, (1 - M.eosHazard k) := by
   induction n with
   | zero => simp
   | succ n ih => rw [survival_succ, ih, prod_range_succ]
 
+/-- The probability of never ending is the product of one minus the conditional end
+probabilities. -/
+theorem iInf_survival_eq_tprod : ⨅ n, M.survival n = ∏' n, (1 - M.eosHazard n) :=
+  tendsto_nhds_unique (tendsto_atTop_iInf M.survival_antitone) <| by
+    simpa only [← survival_eq_prod] using (ENNReal.multipliable_of_le_one
+      fun n ↦ tsub_le_self (a := 1) (b := M.eosHazard n)).hasProd.tendsto_prod_nat
+
 /-- A model is tight exactly when the conditional end probability reaches one or has a divergent
 sum ([du-etal-2023], Theorem 4.7). -/
 theorem isTight_iff : M.IsTight ↔ (∃ n, M.eosHazard n = 1) ∨ ∑' n, M.eosHazard n = ∞ := by
-  rw [isTight_iff_tendsto_survival, funext M.survival_eq_prod]
-  exact ENNReal.tendsto_prod_range_one_sub_nhds_zero_iff M.eosHazard_le_one
+  rw [isTight_iff_iInf_survival_eq_zero, iInf_survival_eq_tprod,
+    ← (ENNReal.multipliable_of_le_one fun _ ↦ tsub_le_self).hasProd_iff,
+    ENNReal.hasProd_one_sub_zero_iff]
+  simp_rw [(M.eosHazard_le_one _).ge_iff_eq]
 
-/-- A model whose end probabilities after length-`t - 1` prefixes are bounded below by a divergent
-series is tight ([du-etal-2023], Proposition 4.3). -/
-theorem isTight_of_le_next_none {f : ℕ → ℝ≥0∞}
-    (hf : ∀ x : List α, f (x.length + 1) ≤ M.next x {none}) (h : ∑' t, f (t + 1) = ∞) :
-    M.IsTight := by
-  by_cases hs : ∃ n, M.survival n = 0
-  · obtain ⟨n, hn⟩ := hs
-    rw [isTight_iff_tendsto_survival]
-    refine tendsto_const_nhds.congr' (eventually_atTop.2 ⟨n, fun m hm ↦ ?_⟩)
-    exact (nonpos_iff_eq_zero.1 ((M.survival_antitone hm).trans hn.le)).symm
-  · simp only [not_exists] at hs
-    refine M.isTight_iff.2 (.inr (eq_top_mono (ENNReal.tsum_le_tsum fun n ↦ ?_) h))
-    rw [eosHazard, ENNReal.le_div_iff_mul_le (.inl (hs n)) (.inl (M.survival_ne_top n))]
-    exact M.mul_survival_le_stopProb fun x hx ↦ hx ▸ hf x
+/-- An end probability of at least `c n` after every prefix of length `n` bounds survival by the
+product of the `1 - c n`. -/
+theorem survival_le_prod {c : ℕ → ℝ≥0∞} (hc : ∀ x : List α, c x.length ≤ M.next x {none})
+    (n : ℕ) : M.survival n ≤ ∏ k ∈ range n, (1 - c k) := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    have hstop := M.mul_survival_le_stopProb (n := n) fun x hx ↦ hx ▸ hc x
+    rw [prod_range_succ, survival_succ_eq_sub]
+    calc M.survival n - M.stopProb n ≤ M.survival n - c n * M.survival n :=
+          tsub_le_tsub_left hstop _
+      _ = M.survival n * (1 - c n) := by
+        rw [ENNReal.mul_sub fun _ _ ↦ M.survival_ne_top n, mul_one, mul_comm]
+      _ ≤ _ := by gcongr
+
+/-- A model whose end probability after every prefix of length `n` is at least `c n`, with the
+`c n` of infinite sum, is tight ([du-etal-2023], Proposition 4.3). -/
+theorem isTight_of_le_next_none {c : ℕ → ℝ≥0∞}
+    (hc : ∀ x : List α, c x.length ≤ M.next x {none}) (h : ∑' n, c n = ∞) : M.IsTight :=
+  M.isTight_iff_tendsto_survival.2 <| tendsto_of_tendsto_of_tendsto_of_le_of_le
+    tendsto_const_nhds (ENNReal.hasProd_one_sub_zero_iff.2 (.inr h)).tendsto_prod_nat
+    (fun _ ↦ zero_le) (M.survival_le_prod hc)
 
 /-- When the end probability after a prefix depends only on its length, survival is the product
 of one minus it. -/
@@ -218,8 +230,7 @@ theorem survival_eq_prod_of_next_none_eq {e : ℕ → ℝ≥0∞}
     have hstop : M.stopProb n = e n * M.survival n := by
       rw [stopProb, survival, ← ENNReal.tsum_mul_left]
       exact tsum_congr fun x ↦ by rw [stringProb, he, x.2, mul_comm]
-    rw [prod_range_succ, ← ih, ENNReal.eq_sub_of_add_eq (ne_top_of_le_ne_top (M.survival_ne_top n)
-      (M.stopProb_le_survival n)) (M.survival_succ_add_stopProb n), hstop,
+    rw [prod_range_succ, ← ih, survival_succ_eq_sub, hstop,
       ENNReal.mul_sub fun _ _ ↦ M.survival_ne_top n, mul_one, mul_comm]
 
 /-- When the end probability after a prefix depends only on its length, the model is tight exactly
@@ -227,22 +238,14 @@ when that probability reaches one or has a divergent sum. -/
 theorem isTight_iff_of_next_none_eq {e : ℕ → ℝ≥0∞}
     (he : ∀ x : List α, M.next x {none} = e x.length) (he1 : ∀ n, e n ≤ 1) :
     M.IsTight ↔ (∃ n, e n = 1) ∨ ∑' n, e n = ∞ := by
-  rw [isTight_iff_tendsto_survival, funext (M.survival_eq_prod_of_next_none_eq he)]
-  exact ENNReal.tendsto_prod_range_one_sub_nhds_zero_iff he1
+  rw [isTight_iff_tendsto_survival, funext (M.survival_eq_prod_of_next_none_eq he),
+    ← ENNReal.hasProd_iff_tendsto_nat fun _ ↦ tsub_le_self, ENNReal.hasProd_one_sub_zero_iff]
+  simp_rw [(he1 _).ge_iff_eq]
 
 /-- An end probability of at least `c` after every prefix makes survival decay geometrically. -/
 theorem survival_le_pow {c : ℝ≥0∞} (hc : ∀ x : List α, c ≤ M.next x {none}) (n : ℕ) :
     M.survival n ≤ (1 - c) ^ n := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    have hstop := M.mul_survival_le_stopProb (n := n) fun x _ ↦ hc x
-    rw [pow_succ, ENNReal.eq_sub_of_add_eq (ne_top_of_le_ne_top (M.survival_ne_top n)
-      (M.stopProb_le_survival n)) (M.survival_succ_add_stopProb n)]
-    calc M.survival n - M.stopProb n ≤ M.survival n - c * M.survival n := tsub_le_tsub_left hstop _
-      _ = M.survival n * (1 - c) := by
-        rw [ENNReal.mul_sub fun _ _ ↦ M.survival_ne_top n, mul_one, mul_comm]
-      _ ≤ (1 - c) ^ n * (1 - c) := by gcongr
+  simpa using M.survival_le_prod (c := fun _ ↦ c) hc n
 
 /-- The string probabilities of any model sum to at most one. -/
 theorem tsum_stringProb_le_one : ∑' x, M.stringProb x ≤ 1 := by

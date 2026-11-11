@@ -9,42 +9,22 @@ public import Linglib.Syntax.Minimalist.Copy.Reading
 public import Linglib.Syntax.Minimalist.Copy.Replay
 public import Linglib.Syntax.Minimalist.Linearization.ChainReduction
 public import Linglib.Syntax.Minimalist.Linearization.Replay
+public import Linglib.Syntax.Minimalist.Derivation.CCommand
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
 # Binding at a stage of the derivation
 
 Movement reorders c-command, and binding may be evaluated before or after it: reconstruction.
-`CCommandsAt d n x y` says that `x` c-commands `y` in the object the replay of `d` reaches after
-`n` steps, which by faithfulness is `d.stageAt n` itself; a stage whose replay fails c-commands
-nothing. `BindsAtSurface` evaluates binding at the last stage and `BindsAtSomeStage` at any, the
-derivational binding condition under which a sentence is well formed as soon as some stage
-satisfies it. `BindsAtLF` evaluates binding at the copy object, where some copy of each must stand
-in the relation, and in a derivation of Merge steps that merges no token twice the two coincide.
-
-## Main definitions
-
-* `Minimalist.Derivation.CCommandsAt`, `BindsAtSurface`, `BindsAtSomeStage`, `BindsAtLF`
-
-## Main results
-
-* `Minimalist.Derivation.CCommandsAt.cCommands_stageAt`: the predicate speaks
-  of the derivation's own stage.
-* `Minimalist.Derivation.cCommandsAt_append_of_le`, `BindsAtSomeStage.append`.
-* `Minimalist.Derivation.BindsAtSomeStage.bindsAtLF`, `BindsAtLF.bindsAtSomeStage`: binding at
-  some stage is binding at the copy object, and conversely in a derivation of Merge steps that
-  merges no token twice and moves no trace.
-* `Minimalist.Derivation.bindsAtSomeStage_iff_bindsAtLF`: derivational binding is binding at
-  the copy object.
-* `Minimalist.Derivation.cCommandsAt_map_iff`: c-command at a stage is invariant under an
-  injective relabelling that preserves selection.
-* `Minimalist.SyntacticObject.not_cCommands_merge_of_notMem_terms`: once a term has moved, nothing
-  below the root of its remnant c-commands into it.
+`BindsAtSurface` evaluates binding at the last stage and `BindsAtSomeStage` at any, the derivational
+binding condition under which a sentence is well formed as soon as some stage satisfies it.
+`BindsAtLF` evaluates binding at the copy object, where some copy of each must stand in the
+relation. In a derivation of Merge steps that merges no token twice and moves no trace, [binding at
+some stage is binding at the copy
+object](##Minimalist.Derivation.bindsAtSomeStage_iff_bindsAtLF).
 
 ## Implementation notes
 
-* `CCommandsAt` reads the stages the replay externalizes under the default trace encoder,
-  `selHead`, though the stages themselves take the encoder as a parameter.
 * The stages are contractions, so `BindsAtSurface` is binding at the form Marcolli, Chomsky and
   Berwick send to the semantic interface. Collins's objection to that choice is the contrast
   between `BindsAtSurface` and `BindsAtLF`.
@@ -59,47 +39,12 @@ in the relation, and in a derivation of Merge steps that merges no token twice t
 
 @[expose] public section
 
-namespace Minimalist.SyntacticObject
-
-/-- Once `β` has moved, leaving the remnant `R`, nothing but `R` and the terms of `β` c-commands a
-term found only in `β`: the sister of anything else lies inside `R`. -/
-theorem not_cCommands_merge_of_notMem_terms {β R x y : SyntacticObject} (hx : x ∉ β.terms)
-    (hR : x ≠ R) (hy : y ∉ R.terms) : ¬ CCommands (merge β R) x y := by
-  rintro ⟨z, -, hs, hzy⟩
-  rcases Sisters.of_merge hs with h | h | ⟨rfl, -⟩ | ⟨rfl, -⟩
-  · exact hx h.mem_left
-  · exact hy (terms_subset_terms (mem_terms.1 h.mem_right) (mem_terms.2 hzy))
-  · exact hx (self_mem_terms _)
-  · exact hR rfl
-
-end Minimalist.SyntacticObject
-
 namespace Minimalist.Derivation
 
 open SyntacticObject
 open LinearizedSyntacticObject (Marked)
 
 variable {d : Derivation} {steps : List Step} {n : Nat} {x y : SyntacticObject}
-
-/-- `x` c-commands `y` at stage `n` of `d`: in the ordered object the replay reaches after `n`
-steps. -/
-def CCommandsAt (d : Derivation) (n : Nat) (x y : SyntacticObject) : Prop :=
-  ∃ p ∈ (d.take n).externalize?, CCommands p x y
-
-instance (d : Derivation) (n : Nat) (x y : SyntacticObject) :
-    Decidable (d.CCommandsAt n x y) := by
-  unfold CCommandsAt; infer_instance
-
-/-- The stage the predicate looks at is the derivation's own. -/
-theorem CCommandsAt.cCommands_stageAt (h : d.CCommandsAt n x y) :
-    CCommands (d.stageAt n) x y :=
-  let ⟨_, hp, hc⟩ := h
-  d.externalize?_take_faithful n hp ▸ hc
-
-/-- The early stages of an extended derivation are the original's. -/
-theorem cCommandsAt_append_of_le (h : n ≤ d.length) :
-    (d.append steps).CCommandsAt n x y ↔ d.CCommandsAt n x y := by
-  rw [CCommandsAt, CCommandsAt, take_append_of_le h]
 
 /-- Surface binding: c-command at the last stage. -/
 abbrev BindsAtSurface (d : Derivation) (x y : SyntacticObject) : Prop :=
@@ -109,8 +54,8 @@ abbrev BindsAtSurface (d : Derivation) (x y : SyntacticObject) : Prop :=
 def BindsAtSomeStage (d : Derivation) (x y : SyntacticObject) : Prop :=
   ∃ n ≤ d.length, d.CCommandsAt n x y
 
-instance (d : Derivation) (x y : SyntacticObject) : Decidable (d.BindsAtSomeStage x y) := by
-  unfold BindsAtSomeStage; infer_instance
+instance (d : Derivation) (x y : SyntacticObject) : Decidable (d.BindsAtSomeStage x y) :=
+  inferInstanceAs (Decidable (∃ n ≤ d.length, _))
 
 /-- Binding at the surface is binding at some stage. -/
 theorem BindsAtSurface.bindsAtSomeStage (h : d.BindsAtSurface x y) : d.BindsAtSomeStage x y :=
@@ -128,14 +73,6 @@ theorem BindsAtSomeStage.append (h : d.BindsAtSomeStage x y) :
 section Map
 
 variable {f : LexicalItem.Token → LexicalItem.Token}
-
-theorem cCommandsAt_map_iff (hf : Function.Injective f)
-    (hsel : LexicalItem.Token.PreservesSelection f) :
-    (d.map f).CCommandsAt n (x.map f) (y.map f) ↔ d.CCommandsAt n x y := by
-  rw [CCommandsAt, CCommandsAt, take_map,
-    externalize?_map hf fun s ↦ SyntacticObject.selHead_map s hsel]
-  cases (d.take n).externalize? <;>
-    simp [LinearizedSyntacticObject.toSyntacticObject_map, cCommands_map_iff hf]
 
 theorem bindsAtSurface_map_iff (hf : Function.Injective f)
     (hsel : LexicalItem.Token.PreservesSelection f) :
@@ -157,22 +94,23 @@ place. -/
 def BindsAtLF (d : Derivation) (x y : SyntacticObject) : Prop :=
   ∃ C ∈ d.copyObject?, CCommands C x y
 
-instance (d : Derivation) (x y : SyntacticObject) : Decidable (d.BindsAtLF x y) := by
-  unfold BindsAtLF; infer_instance
+instance (d : Derivation) (x y : SyntacticObject) : Decidable (d.BindsAtLF x y) :=
+  inferInstanceAs (Decidable (∃ C ∈ d.copyObject?, _))
 
 /-- Binding at some stage is binding at the copy object, where every stage survives. -/
 theorem BindsAtSomeStage.bindsAtLF {x y : LexicalItem.Token} (hxy : x ≠ y)
     (hd : d.replay?.isSome) (h : d.BindsAtSomeStage ↑x ↑y) : d.BindsAtLF ↑x ↑y := by
-  obtain ⟨n, -, p, hp, hc⟩ := h
-  rw [Option.mem_def, externalize?_eq_map_replayWithCopies?] at hp
+  obtain ⟨n, -, hc⟩ := h
+  obtain ⟨p, hp⟩ := Option.isSome_iff_exists.1 (show ((d.take n).externalize?).isSome by
+    rw [externalize?, Option.isSome_map]; exact isSome_replay?_take hd n)
+  rw [CCommandsAt, ← d.externalize?_take_faithful n hp] at hc
+  rw [externalize?_eq_map_replayWithCopies?] at hp
   obtain ⟨c, hc', rfl⟩ := Option.map_eq_some_iff.1 hp
   have h1 := Marked.cCommands_unmark_of_cCommands_contract hxy hc
   obtain ⟨C', hC'⟩ := Option.isSome_iff_exists.1 (show (d.copyObject?).isSome by
     rw [copyObject?, Option.isSome_map, isSome_replayWithCopies?]; exact hd)
-  have hsplit : (d.take n).append (d.steps.drop n) = d := by
-    show (⟨d.initial, d.steps.take n ++ d.steps.drop n⟩ : Derivation) = d
-    rw [List.take_append_drop]
-  obtain ⟨C, hC, hsub⟩ := terms_subset_copyObject?_append (by rw [hsplit]; exact hC')
+  obtain ⟨C, hC, hsub⟩ := terms_subset_copyObject?_append
+    (by rw [d.take_append_drop n]; exact hC')
   rw [Option.mem_def, copyObject?, hc', Option.map_some] at hC
   obtain rfl := Option.some.inj hC
   exact ⟨C', hC', h1.mono hsub⟩
@@ -224,8 +162,10 @@ theorem BindsAtLF.bindsAtSomeStage {x y : LexicalItem.Token} (hxy : x ≠ y)
       hT ▸ mem_lexTokens_of_mem_yield_copyObject? hdC (mem_yield_iff.2 ht)
     have hfinal : ∀ cT', (d.append [s]).replay? = some cT' →
         CCommands cT'.current.toSyntacticObject ↑x ↑y → (d.append [s]).BindsAtSomeStage ↑x ↑y :=
-      fun cT' h1 h2 ↦ ⟨(d.append [s]).length, le_rfl, cT'.current,
-        by rw [take_length, externalize?, h1]; rfl, h2⟩
+      fun cT' h1 h2 ↦ ⟨(d.append [s]).length, le_rfl, by
+        rw [CCommandsAt, ← externalize?_take_faithful _ _ (p := cT'.current)
+          (by rw [take_length, externalize?, h1]; rfl)]
+        exact h2⟩
     have hne : ∀ T : SyntacticObject, leaf y ∈ T.terms → (↑x : SyntacticObject) ≠ T :=
       fun T hy he ↦ by
         rw [← he, terms_leaf, Multiset.mem_singleton, leaf_inj] at hy

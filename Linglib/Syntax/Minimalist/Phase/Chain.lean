@@ -6,30 +6,18 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Copy.Chain
-public import Linglib.Syntax.Minimalist.Locality.Phase
+public import Linglib.Syntax.Minimalist.Phase.Basic
 
 /-!
-# Locality on chains
+# The Phase Impenetrability Condition on chains
 
-Locality constrains the links of a chain. Chomsky's Phase Impenetrability Condition bars a link
-from the interior of a phase, the positions its head c-commands, to a position outside the head's
-maximal projection, so that the edge is the escape hatch (`Crosses`); an island is a domain no
-link may leave (`Escapes`). A token with one copy has no link, so binding in situ is subject to
-neither (`not_crosses_of_length_le_one`, `not_escapes_of_length_le_one`), and movement, covert
-movement included, is subject to both, as Sato and Ngui find. The interior of a phase on positions
-is the c-command domain of its head (`RoseTree.cCommandDomain`), and it carries the terms within
-the complement of the unordered phase (`withinComplement_iff_exists_mem_cCommandDomain`).
-
-## Main definitions
-
-* `Minimalist.Crosses`, `Minimalist.Escapes`: a link leaving a phase from its interior, and a
-  link leaving a domain.
-* `Minimalist.CrossesIsland`: a link leaving the projection of an island head.
-
-## Main statements
-
-* `Minimalist.withinComplement_iff_exists_mem_cCommandDomain`: the positions a phase head
-  occurring once c-commands carry the terms within its complement.
+Chomsky's Phase Impenetrability Condition bars a link of a chain from the interior of a phase, the
+positions its head c-commands, to a position outside the head's maximal projection, so that the
+edge is the escape hatch: such a link `Crosses` the phase. A token with one copy has no link, so
+binding in situ [is not subject to it](##Minimalist.not_crosses_of_length_le_one), and movement,
+covert movement included, is, as Sato and Ngui find. The interior of a phase on positions is the
+c-command domain of its head, and it [carries the terms within the complement of the unordered
+phase](##Minimalist.withinComplement_iff_exists_mem_cCommandDomain).
 
 ## Implementation notes
 
@@ -79,26 +67,8 @@ def Crosses (h : TreePath) : Prop :=
 
 instance (h : TreePath) : Decidable (Crosses hd t tok h) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- A link of the chain of `tok` leaves the domain at `D` when it runs from inside `D` to outside,
-as movement out of an island does. -/
-def Escapes (D : TreePath) : Prop := ∃ x ∈ links hd t tok, D ≤ x.2 ∧ ¬ D ≤ x.1
-
-instance (D : TreePath) : Decidable (Escapes hd t tok D) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-/-- A link of the chain of `tok` leaves the projection of a head that `P` holds of. -/
-def CrossesIsland (P : LexicalItem.Token → Prop) [DecidablePred P] : Prop :=
-  ∃ p ∈ occurrencesWith t P, Escapes hd t tok (projectionAt hd t p)
-
-instance (P : LexicalItem.Token → Prop) [DecidablePred P] :
-    Decidable (CrossesIsland hd t tok P) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
 theorem not_crosses_of_length_le_one (h : (chain t tok).length ≤ 1) (p : TreePath) :
     ¬ Crosses hd t tok p := by
   simp [Crosses, links_eq_nil_of_length_le_one hd t tok h]
-
-theorem not_escapes_of_length_le_one (h : (chain t tok).length ≤ 1) (D : TreePath) :
-    ¬ Escapes hd t tok D := by
-  simp [Escapes, links_eq_nil_of_length_le_one hd t tok h]
 
 end Minimalist

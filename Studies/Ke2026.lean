@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Ke2026
 public import Linglib.Syntax.Minimalist.Linearization.SpelloutDomain
-public import Linglib.Syntax.Minimalist.Locality.Transfer
+public import Linglib.Syntax.Minimalist.Phase.Transfer
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
 /-!

@@ -39,6 +39,10 @@ stops fuse](##fusingStops_mem), as the intermediate types of Newman's typology d
   vowels [+labial].
 * With NASASSIM dominated, [the velars alone fuse](##exists_fusingStops_eq_velars), a type
   Newman's typology lacks.
+* Violations are counted from the correspondence in every tableau: in (4) [the fused candidate
+  bears the UNIFORMITY violation](##uniformity_empat), [MAX counts the deletion of the affix's
+  vowel](##max_baru) in each Muna tableau, and in (42) [the fused candidate violates
+  IDENT[PLACE]](##identPlace_fuse), its nasal corresponding to the prefix's ŋ.
 
 ## TODO
 
