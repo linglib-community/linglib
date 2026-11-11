@@ -26,7 +26,8 @@ one](##takesTypeOne_or_takesTypeTwo).
 ## Implementation notes
 
 The middle in *ber-* selects no pivot and is the matter of `Verbs.lean`. Passive type one with
-a first or second person agent, which Sneddon reports from spontaneous speech, is not admitted.
+a first or second person agent, which Sneddon reports from spontaneous speech, is not admitted,
+and the verbs in *ter-*, which take the agent of passive type one in any person, are left out.
 
 ## References
 
