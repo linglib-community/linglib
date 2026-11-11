@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.JinKoenig2021
 public import Studies.Karttunen1974
-public import Linglib.Semantics.Modality.Necessity
+public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.English.Negation
@@ -67,21 +67,14 @@ theorem before_dual {T : Type*} [LinearOrder T] {A B : Set (NonemptyInterval T)}
 
 /-! ### Logical operators (Section 6.3) -/
 
-open Modality in
-/-- *impossible p* is the necessity of `¬p`, so `p` fails at the best worlds and, if it holds
-anywhere, the meaning activates both, (13c). -/
-theorem impossible_dual {W : Type*} (f g : Background W) (p : W → Prop)
-    (w : W) (h : ∀ w' ∈ bestWorlds f g w, ¬ p w') (hb : (bestWorlds f g w).Nonempty)
-    (hp : ∃ x, p x) : DualInference p :=
-  let ⟨w', hw'⟩ := hb
-  ⟨hp, w', h w' hw'⟩
-
-open Modality in
-theorem possibility_of_not_impossible {W : Type*} (f g : Background W)
-    (p : W → Prop) (w : W) (h : ¬ ∀ w' ∈ bestWorlds f g w, ¬ p w') :
-    ∃ w' ∈ bestWorlds f g w, p w' := by
-  by_contra hne
-  exact h fun w' hw' hp ↦ hne ⟨w', hw', hp⟩
+open ModalLogic in
+/-- *impossible p* is the necessity of `¬p`, so `p` fails at an accessible world and, if it holds
+anywhere, the meaning activates both, (13c). That *not impossible* is possibility is
+`ModalLogic.not_box`. -/
+theorem impossible_dual {W : Type*} (R : SetRel W W) [IsSerial R] {p : W → Prop} {w : W}
+    (h : □[R] pᶜ w) (hp : ∃ x, p x) : DualInference p :=
+  let ⟨v, hv⟩ := IsSerial.serial (R := R) w
+  ⟨hp, v, h v hv⟩
 
 /-- *q without p* is `q ∧ ¬p`, the negation in the meaning, (13c). -/
 def withoutSem {W : Type*} (q p : Set W) : Set W := q ∩ pᶜ

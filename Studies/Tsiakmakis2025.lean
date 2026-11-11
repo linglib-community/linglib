@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Necessity
-public import Linglib.Semantics.PolarityItem.Licenser
+public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Fragments.Greek.StandardModern.Negation
 public import Linglib.Fragments.Greek.StandardModern.PolarityItems
 public import Linglib.Data.Examples.Tsiakmakis2025
@@ -17,8 +17,8 @@ ordering source. Both have uses in which they seem to negate nothing, and Tsiakm
 the two differ in kind. Expletive *dhen* is *dhen*, its negation masked at the level of the
 utterance. Expletive *min* keeps the modal component and drops the negation, so that [*dhen* under
 it gives back negative *min*](##Tsiakmakis2025.Negator.expletive_neg2_compl), it [conveys a bias
-for the proposition](##Tsiakmakis2025.Negator.bias_of_expletive_neg2), and, being upward
-entailing, it [licenses no emphatic
+for the proposition](##Tsiakmakis2025.Negator.bias_of_expletive_neg2), and, being a
+necessity and no negation, it [licenses no emphatic
 n-word](##Tsiakmakis2025.Negator.licenses_expletive_tipota_iff). The hosts of expletive negation
 across languages divide accordingly into apparent hosts and hosts proper, and [each Greek host
 spells out the negator of its class](##Tsiakmakis2025.greek_negators).
@@ -34,7 +34,9 @@ spells out the negator of its class](##Tsiakmakis2025.greek_negators).
   French fear-predicate *ne*, and is not fixed.
 * The paper says that canonical negative markers license negative concord items and that
   expletive *min* does not. The licensing condition is the library's: an emphatic n-word needs an
-  anti-additive licenser, the strength that negation and *xoris* 'without' share.
+  anti-additive licenser, the strength that negation and *xoris* 'without' share, and the
+  negators are the licensers of `PolarityItem.LicensingContext`, whose strengths are proved
+  there.
 * The ignorance of a *min*-free question, whose speaker holds both answers equally probable, is
   rendered as the possibility of both.
 * The left-periphery diagnostic and the arguments that negative exclamatives are rhetorical
@@ -58,7 +60,7 @@ spells out the negator of its class](##Tsiakmakis2025.greek_negators).
 
 namespace Tsiakmakis2025
 
-open Modality ModalLogic PolarityItem NaturalLogic
+open Modality ModalLogic PolarityItem
 
 /-- The two sentential negators, which Greek tells apart morphologically: NEG₁ is standard
 negation, and NEG₂ is the modal negation that a nonveridical operator licenses. -/
@@ -103,23 +105,6 @@ theorem expletive_neg2_compl (p : W → Prop) : neg2.expletive R pᶜ = neg2.neg
 theorem negative_neg2_compl (p : W → Prop) : neg2.negative R pᶜ = neg2.expletive R p :=
   congrArg □[R] (compl_compl p)
 
-/-! ### Entailment properties -/
-
-theorem isAntiAdditive_negative : ∀ n : Negator, IsAntiAdditive (n.negative R)
-  | neg1 => isAntiAdditive_compl
-  | neg2 => isAntiAdditive_compl.map_inf_comp fun _ _ ↦ box_inf R
-
-theorem negative_bot : ∀ n : Negator, n.negative R ⊥ = ⊤
-  | neg1 => compl_bot
-  | neg2 => (congrArg □[R] compl_bot).trans (box_top R)
-
-theorem negative_top [IsSerial R] : ∀ n : Negator, n.negative R ⊤ = ⊥
-  | neg1 => compl_top
-  | neg2 => funext fun w ↦ eq_false fun h ↦
-    let ⟨v, hv⟩ := IsSerial.serial (R := R) w; h v hv trivial
-
-theorem monotone_expletive_neg2 : Monotone (neg2.expletive R) := box_mono R
-
 /-! ### Bias (section 4) -/
 
 variable {R} in
@@ -132,43 +117,37 @@ theorem bias_of_expletive_neg2 [IsSerial R] (h : neg2.expletive R p w) :
 
 end Denotation
 
-/-! ### Negative concord items (section 4) -/
+/-! ### Negative concord items (section 4)
 
-section Licensing
+Each use of a negator places one of the library's licensers over a polarity item: NEG₁ is clausal
+negation, negative NEG₂ is necessity after negation over a serial relation, and expletive NEG₂ is
+necessity, `ModalLogic.box_iff_mem_core`. -/
 
-open Greek.StandardModern.PolarityItems
+/-- The licensing context of a negator in its negative use. Necessity after negation is the
+licenser the library files under verbs of denying. -/
+def negativeContext : Negator → LicensingContext
+  | neg1 => .negation
+  | neg2 => .denyVerb
 
-variable {W : Type} [Nonempty W] (R : SetRel W W)
+/-- The licensing context of a negator in its expletive use. -/
+def expletiveContext : Negator → LicensingContext
+  | neg1 => .negation
+  | neg2 => .modalNecessity
 
-theorem carries_negative [IsSerial R] (n : Negator) :
-    (Licenser.ofOperator (n.negative R)).Carries .antiAdditive :=
-  Licenser.carries_ofOperator_iff.2
-    ⟨ProjectivitySignature.holdsFor_antiAdd_iff.2 ⟨isAntiAdditive_negative R n, negative_top R n⟩,
-      fun hm ↦ by
-        have h := hm (bot_le : (⊥ : W → Prop) ≤ ⊤)
-        rw [negative_bot, negative_top] at h
-        exact h (Classical.arbitrary W) trivial⟩
+theorem negative_neg2_iff_mem_core {W : Type*} {R : SetRel W W} {p : W → Prop} {w : W} :
+    neg2.negative R p w ↔ w ∈ R.core {v | p v}ᶜ := .rfl
 
-omit [Nonempty W] in
-theorem not_carries_expletive_neg2 (s : Negation.Strength) :
-    ¬ (Licenser.ofOperator (neg2.expletive R)).Carries s :=
-  fun h ↦ (Licenser.carries_ofOperator_iff.1 h).2 (monotone_expletive_neg2 R)
-
+open Greek.StandardModern.PolarityItems in
 /-- Of the two expletive negators only NEG₁ licenses an emphatic n-word: *TIPOTA* is out under
 expletive *min*, (40), (46), (52). With canonical *dhen* added the clause denotes negative *min*,
-which licenses it, (41). -/
-theorem licenses_expletive_tipota_iff [IsSerial R] {n : Negator} :
-    (Licenser.ofOperator (n.expletive R)).Licenses tipota ↔ n = neg1 := by
-  rw [Licenser.licenses_iff_carries (r := .antiAdditive) rfl (by decide) (by decide)]
-  cases n
-  · exact iff_of_true (carries_negative R neg1) rfl
-  · exact iff_of_false (not_carries_expletive_neg2 R _) (by decide)
+which licenses it as *dhen* does, (41). -/
+theorem licenses_expletive_tipota_iff {n : Negator} :
+    n.expletiveContext.licenser.Licenses tipota ↔ n = neg1 := by
+  cases n <;> decide
 
-theorem licenses_negative_tipota [IsSerial R] (n : Negator) :
-    (Licenser.ofOperator (n.negative R)).Licenses tipota :=
-  (Licenser.licenses_iff_carries rfl (by decide) (by decide)).2 (carries_negative R n)
-
-end Licensing
+open Greek.StandardModern.PolarityItems in
+theorem licenses_negative_tipota (n : Negator) : n.negativeContext.licenser.Licenses tipota := by
+  cases n <;> decide
 
 open Greek.StandardModern.Negation in
 /-- Greek spells NEG₁ *dhen* and NEG₂ *min*. -/
