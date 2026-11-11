@@ -202,11 +202,15 @@ theorem Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
 
 /-! ### Pronounced tokens -/
 
+section Yield
+
+open LinearizedSyntacticObject (toSyntacticObject)
+
 private theorem Step.yield_map_replay? {step : Step} {c c' : Cfg LinearizedSyntacticObject}
-    (hc : ((c.map LinearizedSyntacticObject.toSyntacticObject).yield + (step.items.map SyntacticObject.yield).sum).Nodup)
+    (hc : ((c.map toSyntacticObject).yield + (step.items.map SyntacticObject.yield).sum).Nodup)
     (h : step.replay? c τ = some c') :
-    (c'.map LinearizedSyntacticObject.toSyntacticObject).yield =
-      (c.map LinearizedSyntacticObject.toSyntacticObject).yield + (step.items.map SyntacticObject.yield).sum := by
+    (c'.map toSyntacticObject).yield =
+      (c.map toSyntacticObject).yield + (step.items.map SyntacticObject.yield).sum := by
   obtain ⟨p, st⟩ := c
   have hp : p.toSyntacticObject.yield.Nodup :=
     Multiset.nodup_of_le ((Multiset.le_add_right _ _).trans (Multiset.le_add_right _ _)) hc
@@ -238,10 +242,10 @@ private theorem Step.yield_map_replay? {step : Step} {c c' : Cfg LinearizedSynta
 private theorem yield_map_foldlM_replay? :
     ∀ {steps : List Step} {c c' : Cfg LinearizedSyntacticObject},
       steps.foldlM (fun c step ↦ step.replay? c τ) c = some c' →
-      ((c.map LinearizedSyntacticObject.toSyntacticObject).yield +
+      ((c.map toSyntacticObject).yield +
         ((Step.itemsList steps).map SyntacticObject.yield).sum).Nodup →
-      (c'.map LinearizedSyntacticObject.toSyntacticObject).yield =
-        (c.map LinearizedSyntacticObject.toSyntacticObject).yield + ((Step.itemsList steps).map SyntacticObject.yield).sum
+      (c'.map toSyntacticObject).yield =
+        (c.map toSyntacticObject).yield + ((Step.itemsList steps).map SyntacticObject.yield).sum
   | [], _, _, h, _ => by obtain rfl := Option.some.inj h; simp
   | step :: steps, c, _, h, hn => by
     obtain ⟨c₁, h₁, h⟩ := Option.bind_eq_some_iff.1 h
@@ -254,12 +258,14 @@ private theorem yield_map_foldlM_replay? :
 object or in a copy left on the stack, however many copies its movements leave. -/
 theorem Derivation.yield_replay? {d : Derivation} {c : Cfg LinearizedSyntacticObject}
     (hd : d.lexTokens.Nodup) (h : d.replay? τ = some c) :
-    (c.map LinearizedSyntacticObject.toSyntacticObject).yield = d.lexTokens := by
+    (c.map toSyntacticObject).yield = d.lexTokens := by
   obtain ⟨p, hp, h⟩ := Option.bind_eq_some_iff.1 h
-  have h0 : (Cfg.map LinearizedSyntacticObject.toSyntacticObject ⟨p, []⟩).yield = d.initial.yield := by
+  have h0 : (Cfg.map toSyntacticObject ⟨p, []⟩).yield = d.initial.yield := by
     simp [Cfg.yield_map, SyntacticObject.toSyntacticObject_of_toLinearizedLeaf? hp]
   have := yield_map_foldlM_replay? h (by rwa [h0])
   rwa [h0] at this
+
+end Yield
 
 /-! ### C-command at a stage -/
 
@@ -281,6 +287,15 @@ theorem CCommandsAt.cCommands_stageAt (h : d.CCommandsAt n x y) :
     CCommands (d.stageAt n) x y :=
   let ⟨_, hp, hc⟩ := h
   d.externalize?_take_faithful n hp ▸ hc
+
+/-- A stage at which something c-commands pronounces no token twice, when the derivation merges
+none twice. -/
+theorem CCommandsAt.nodup_yield_run_take (h : d.CCommandsAt n x y) (hd : d.lexTokens.Nodup) :
+    ((d.take n).run).yield.Nodup := by
+  obtain ⟨_, hp, -⟩ := h
+  obtain ⟨c, hc, -⟩ := Option.map_eq_some_iff.1 hp
+  have hd' := Multiset.nodup_of_le (d.lexTokens_take_le n) hd
+  rwa [← replay?_faithful _ hc, yield_replay? hd' hc]
 
 /-- The early stages of an extended derivation are the original's. -/
 theorem cCommandsAt_append_of_le (h : n ≤ d.length) :

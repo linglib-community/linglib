@@ -144,6 +144,36 @@ def Step.mover? : Step → Option SyntacticObject
     (Step.im mover side).mover? = some mover :=
   rfl
 
+/-- A step with mover `m` builds an object whose terms are among those of the remainder merged
+with `m`: an Internal Merge builds exactly that, and an extraction the remainder alone. -/
+theorem Step.terms_current_run_subset {step : Step} {m : SyntacticObject} (h : m ∈ step.mover?)
+    (c : Derivation.Cfg SyntacticObject) :
+    (step.run c τ).current.terms ⊆ (merge (deleteAccessible m c.current τ) m).terms := by
+  cases step with
+  | em _ _ | remerge _ => cases h
+  | im mover side => obtain rfl := Option.some.inj h; exact fun _ hu ↦ hu
+  | extract mover =>
+    obtain rfl := Option.some.inj h
+    exact fun u hu ↦ by
+      rw [terms_merge]; exact Multiset.mem_cons_of_mem (Multiset.mem_add.2 (.inl hu))
+
+/-- A step with mover `m` leaves a configuration that pronounces the remainder and `m`, in its
+object or on its stack. -/
+theorem Step.yield_add_yield_le_yield_run {step : Step} {m : SyntacticObject}
+    (h : m ∈ step.mover?) (c : Derivation.Cfg SyntacticObject) :
+    (deleteAccessible m c.current τ).yield + m.yield ≤ (step.run c τ).yield := by
+  obtain ⟨cur, st⟩ := c
+  cases step with
+  | em _ _ | remerge _ => cases h
+  | im mover side =>
+    obtain rfl := Option.some.inj h
+    exact (Multiset.le_add_right _ (st.map yield).sum).trans_eq <| by
+      simp [Derivation.Cfg.yield, Step.run, Step.apply]
+  | extract mover =>
+    obtain rfl := Option.some.inj h
+    exact (Multiset.le_add_right _ (st.map yield).sum).trans_eq <| by
+      simp [Derivation.Cfg.yield, Step.run, Step.apply, add_assoc]
+
 /-- The step with its new daughter on the left. -/
 def Step.leftward : Step → Step
   | .em _ item => .em .left item
@@ -322,13 +352,18 @@ theorem take_succ {d : Derivation} {i : Nat} {step : Step} (h : d.steps[i]? = so
     d.take (i + 1) = (d.take i).append [step] := by
   simp [take, append, List.take_add_one, h]
 
-theorem stageAt_append_of_le {d : Derivation} {n : Nat} (h : n ≤ d.length) (steps : List Step) :
-    (d.append steps).stageAt n τ = d.stageAt n τ := by
-  rw [← final_take, ← final_take, take_append_of_le h]
-
 theorem run_append (d : Derivation) (steps : List Step) :
     (d.append steps).run τ = steps.foldl (fun c step ↦ step.run c τ) (d.run τ) := by
   simp [run, append, List.foldl_append]
+
+/-- The configuration after `i + 1` steps is step `i` run on the configuration after `i`. -/
+theorem run_take_succ {d : Derivation} {i : Nat} {step : Step} (h : d.steps[i]? = some step) :
+    (d.take (i + 1)).run τ = step.run ((d.take i).run τ) τ := by
+  rw [take_succ h, run_append]; rfl
+
+theorem stageAt_append_of_le {d : Derivation} {n : Nat} (h : n ≤ d.length) (steps : List Step) :
+    (d.append steps).stageAt n τ = d.stageAt n τ := by
+  rw [← final_take, ← final_take, take_append_of_le h]
 
 @[simp] theorem movedItems_append (d : Derivation) (steps : List Step) :
     (d.append steps).movedItems = d.movedItems ++ steps.filterMap Step.mover? := by

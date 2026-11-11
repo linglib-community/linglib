@@ -76,41 +76,17 @@ the smugglee after the step, neither being a bare trace. -/
 theorem IsSmugglingStep.not_cCommandsAt_succ (h : d.IsSmugglingStep i xp w)
     (hd : d.lexTokens.Nodup) (hxp : xp.yield ≠ 0) (hw : w.yield ≠ 0) :
     ¬ d.CCommandsAt (i + 1) w xp := by
-  obtain ⟨m, hm, hmx, ⟨p, hp, hwx⟩, q, hq, hmw⟩ := h
-  rintro ⟨q', hq', hc⟩
-  obtain rfl := Option.mem_unique hq hq'
+  obtain ⟨m, hm, hmx, hwx, hmw⟩ := h
   obtain ⟨step, hs, hsm⟩ := Option.bind_eq_some_iff.1 hm
-  obtain ⟨c, hc', rfl⟩ := Option.map_eq_some_iff.1 hq
-  have hd' := Multiset.nodup_of_le (d.lexTokens_take_le (i + 1)) hd
-  have hrun : (d.take (i + 1)).run = step.run (d.take i).run := by
-    rw [take_succ hs, run_append]; rfl
-  have hnd : (step.run (d.take i).run).yield.Nodup := by
-    rwa [← hrun, ← replay?_faithful _ hc', yield_replay? hd' hc']
-  have hcur : c.current.toSyntacticObject = (step.run (d.take i).run).current := by
-    rw [← hrun, ← replay?_faithful _ hc']; rfl
-  rw [externalize?_faithful _ hp, final] at hwx
-  rw [hcur] at hmw hc
-  generalize (d.take i).run = cfg at hwx hmw hc hnd
-  obtain ⟨cur, st⟩ := cfg
-  cases step with
-  | em _ _ | remerge _ => cases hsm
-  | im mover side =>
-    obtain rfl : mover = m := Option.some.inj hsm
-    refine not_cCommands_merge_replace (t := mover.headTrace selHead) ?_ hxp hw hmx hwx hmw hc
-    exact (Multiset.nodup_add.1 <| Multiset.nodup_of_le
-      ((Multiset.le_add_right _ (st.map yield).sum).trans_eq <| by
-        simp [Cfg.yield, Step.run, Step.apply, deleteAccessible]) hnd).2.2
-  | extract mover =>
-    obtain rfl : mover = m := Option.some.inj hsm
-    have hsub {x y : SyntacticObject}
-        (h : CCommands (cur.replace mover (mover.headTrace selHead)) x y) :
-        CCommands (merge (cur.replace mover (mover.headTrace selHead)) mover) x y :=
-      h.mono fun u hu ↦ by
-        rw [terms_merge]; exact Multiset.mem_cons_of_mem (Multiset.mem_add.2 (.inl hu))
-    refine not_cCommands_merge_replace ?_ hxp hw hmx hwx (hsub hmw) (hsub hc)
-    exact (Multiset.nodup_add.1 <| Multiset.nodup_of_le
-      ((Multiset.le_add_right _ (st.map yield).sum).trans_eq <| by
-        simp [Cfg.yield, Step.run, Step.apply, deleteAccessible, add_assoc]) hnd).2.2
+  intro hc
+  have hnd := run_take_succ hs ▸ hmw.nodup_yield_run_take hd
+  have hsub := Step.terms_current_run_subset (τ := selHead) hsm (d.take i).run
+  have hstage : d.stageAt (i + 1) = (step.run (d.take i).run).current :=
+    congrArg Cfg.current (run_take_succ hs)
+  exact not_cCommands_merge_replace
+    (Multiset.nodup_add.1 <| Multiset.nodup_of_le (Step.yield_add_yield_le_yield_run hsm _) hnd).2.2
+    hxp hw hmx hwx.cCommands_stageAt ((hstage ▸ hmw.cCommands_stageAt).mono hsub)
+    ((hstage ▸ hc.cCommands_stageAt).mono hsub)
 
 /-- A smuggling step freezes what it smuggles. -/
 theorem IsSmugglingStep.frozen (h : d.IsSmugglingStep i xp w) : d.Frozen xp :=
