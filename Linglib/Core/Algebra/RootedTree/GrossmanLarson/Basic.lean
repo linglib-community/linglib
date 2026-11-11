@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.BigOperators.Multiset
+public import Linglib.Core.Algebra.BigOperators.Ring.Multiset
 public import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 public import Linglib.Core.Algebra.RootedTree.PreLie.ChapotonLivernet
 public import Linglib.Core.Algebra.RootedTree.PreLie.InsertionUnordered
@@ -117,9 +117,7 @@ theorem insertion_of'_add (A B C : Forest (UnorderedTree α)) :
         insertion (of' (R := R) A) (of' p.1) * insertion (of' B) (of' p.2)).sum := by
   rw [insertion_of'_of', insertionMultiset_add_host, Multiset.map_bind, Multiset.sum_bind]
   refine congrArg Multiset.sum (Multiset.map_congr rfl fun p _ ↦ ?_)
-  rw [insertion_of'_of', insertion_of'_of', Multiset.map_map,
-    ← Multiset.sum_map_product_mul _ _ (of' (R := R)) (of' (R := R))]
-  simp [of'_add]
+  rw [insertion_of'_of', insertion_of'_of', Multiset.sum_map_conv _ _ of'_add]
 
 private theorem counit_insertion_of'_of' (F G : Forest (UnorderedTree α)) :
     counit (insertion (of' F) (of' G)) = counit (of' (R := R) F) * counit (of' (R := R) G) := by

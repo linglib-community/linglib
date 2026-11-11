@@ -75,7 +75,7 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
 * Definitions 1.2.6 and 1.2.8 (admissible cuts, the coproducts `Δ^ω`):
   `ConnesKreimer.admissibleCuts` and `comulAlgHom` for `Δ^ρ`, which Remark 1.2.9 identifies with the
   Connes–Kreimer coproduct; `traceCuts` and `traceComulAlgHom` for `Δ^c`.
-* Lemma 1.2.10: `ConnesKreimer.traceComul_coassoc` and the edge grading of `Coproduct/TraceGrading`.
+* Lemma 1.2.10: `ConnesKreimer.traceComulAlgHom_coassoc` and the edge grading of `Coproduct/TraceGrading`.
 * Lemma 1.2.11 and (1.2.12): `ConnesKreimer.instBialgebra`, the `HopfAlgebra` instance, and
   `antipode_ofTree`.
 * The projections `Π_{ρ,c}` and `Π_{d,ρ}` and the relations `Δ^d = (id ⊗ Π_{d,ρ}) ∘ Δ^ρ =

@@ -75,7 +75,7 @@ private theorem mergeOpOfCuts_pair_eq_mul (lbl : α) {S S' T T' : UnorderedTree 
         (Multiset.mem_product.mp hx).2,
     Multiset.filter_product (fun a : Forest (UnorderedTree α) × Forest (UnorderedTree α) ↦ a.1 = A)
       (fun b : Forest (UnorderedTree α) × Forest (UnorderedTree α) ↦ b.1 = B),
-    Multiset.map_map, mul_assoc, ← Multiset.sum_map_product_mul]
+    Multiset.map_map, mul_assoc, Multiset.sum_map_mul_sum_map]
   simp only [Function.comp_def, Prod.snd_add, of'_add]
 
 /-- Merge on a one-tree workspace is Sideward Merge of type 3(a) ([marcolli-chomsky-berwick-2025]
