@@ -1,17 +1,13 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
-public import Linglib.Phonology.OptimalityTheory.Antimatroid
 public import Linglib.Phonology.OptimalityTheory.Grammar
 public import Linglib.Phonology.OptimalityTheory.Typology
 public import Linglib.Core.GroupTheory.Perm.MinOn
 public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Algebra.BigOperators.Field
-public import Mathlib.Data.Prod.Basic
 public import Mathlib.MeasureTheory.Measure.Real
-public import Mathlib.Order.Extension.Linear
 public import Mathlib.Order.Preorder.Finite
-public import Mathlib.Order.RelIso.Basic
 
 /-!
 # Partially ordered constraints
@@ -20,27 +16,21 @@ This file defines the partially ordered constraints model of variation of Kipars
 grammar is a partial order `r` on the constraints, and each evaluation uses one of its linear
 extensions, a total ranking, whose sole winner is the output. Anttila reads the grammar
 quantitatively: a candidate that wins under $n$ of the $t$ linear extensions has probability
-$n/t$, so the grammar is the uniform measure on `linearExtensions r` and the
-[probabilities of the candidates sum to one](##sum_measure_setOf_picksAt).
+$n/t$, so the grammar is the uniform measure on its linear extensions and the
+[probabilities of the candidates sum to one](##sum_measure_setOf_picksAt). The same measure is
+defined on any `Grammar`, where a candidate's probability is the
+[share of the grammar's rankings](##OptimalityTheory.Grammar.uniformOn_extent_picksAt) that
+satisfy the candidate's ERCs.
 
 A ranking satisfies an ERC strictly when its earliest non-neutral constraint is winner-preferring.
 When the grammar ranks a set `D` of the non-neutral constraints above the others and its
 automorphisms act transitively on `D`, each member of `D` comes first equally often, and the ERC
-holds at the rate [$|W ∩ D| / |D|$](##uniformOn_real_lex_pos). A competition between two
-candidates is [strict satisfaction of their ERC](##picksAt_binary_iff_lex_pos), so this is the
-rate at which a candidate wins. Free ranking of all the constraints and Tesar and Smolensky's
-stratified hierarchies are the two cases used in practice.
+holds at the rate [$|W ∩ D| / |D|$](##OptimalityTheory.ERC.uniformOn_real_lex_pos). A competition
+between two candidates is [strict satisfaction of their ERC](##picksAt_binary_iff_lex_pos), so
+this is the rate at which a candidate wins. Free ranking of all the constraints and Tesar and
+Smolensky's stratified hierarchies are the two cases used in practice.
 
 ## Implementation notes
-
-Grammars are unbundled relations `r : Fin n → Fin n → Prop` with `[IsPartialOrder (Fin n) r]`,
-never `PartialOrder (Fin n)` values, since a class-typed binder would become a local instance and
-capture the `≤` and `<` notation that must keep meaning the positional order of `Fin n`. This is
-mathlib's idiom for orders treated as data, as in `extend_partialOrder`.
-
-A permutation `g` of the constraints is an automorphism of the grammar when `g ⁻¹'o r = r`, and
-the rate theorems ask that the automorphisms preserving `D` act transitively on `D`. For a freely
-ranked `D` the transpositions of `D` are such automorphisms.
 
 Sole winners need strict satisfaction of an ERC, `toLex 0 < toLex (α ∘ σ)`, where
 `ERC.SatisfiedBy` is the weak inequality. The rate theorems are stated for the strict form, which
@@ -54,7 +44,6 @@ needs no side condition that some constraint be non-neutral.
 * [A. Prince, *Entailed Ranking Arguments* (2002)][prince-2002]
 * [N. Merchant and J. Riggle, *OT grammars, beyond partial orders: ERC sets and antimatroids*
   (2016)][merchant-riggle-2016]
-* [R. P. Dilworth, *Lattices with unique irreducible decompositions* (1940)][dilworth-1940]
 -/
 
 @[expose] public section
@@ -65,230 +54,16 @@ open Finset MeasureTheory ProbabilityTheory
 
 variable {n : ℕ}
 
-/-! ### Linear extensions -/
-
-/-- Equality is the discrete partial order. As a grammar it imposes no ranking, and every ranking
-is a linear extension of it. -/
-instance {α : Type*} : IsPartialOrder α (· = ·) where
-  refl _ := rfl
-  trans _ _ _ := Eq.trans
-  antisymm _ _ h _ := h
-
-section LinearExtension
-
-variable {r : Fin n → Fin n → Prop} {g σ : Ranking (Fin n) n}
-
-/-- The ranking `σ` is a *linear extension* of the grammar `r` when it ranks `a` at least as high
-as `b` whenever `r a b`. -/
-def IsLinearExtension (r : Fin n → Fin n → Prop) (σ : Ranking (Fin n) n) : Prop :=
-  r ≤ σ.toRel
-
-instance (r : Fin n → Fin n → Prop) [DecidableRel r] (σ : Ranking (Fin n) n) :
-    Decidable (IsLinearExtension r σ) :=
-  decidable_of_iff (∀ a b, r a b → σ.symm a ≤ σ.symm b) Iff.rfl
-
-/-- The linear extensions of a grammar: Anttila's tableaux, the total rankings among which the
-grammar chooses at each evaluation. -/
-def linearExtensions (r : Fin n → Fin n → Prop) [DecidableRel r] : Finset (Ranking (Fin n) n) :=
-  {σ | IsLinearExtension r σ}
-
-@[simp]
-theorem mem_linearExtensions [DecidableRel r] :
-    σ ∈ linearExtensions r ↔ IsLinearExtension r σ := by
-  simp [linearExtensions]
-
-theorem isLinearExtension_toRel (σ : Ranking (Fin n) n) : IsLinearExtension σ.toRel σ :=
-  le_refl σ.toRel
-
-/-- A ranking is the only linear extension of its own order. -/
-@[simp]
-theorem linearExtensions_toRel (σ : Ranking (Fin n) n) : linearExtensions σ.toRel = {σ} := by
-  ext τ
-  rw [mem_linearExtensions, mem_singleton, IsLinearExtension, Ranking.toRel_le_toRel_iff, eq_comm]
-
-/-- Every ranking is a linear extension of the discrete grammar. -/
-@[simp]
-theorem linearExtensions_eq (n : ℕ) :
-    linearExtensions (· = · : Fin n → Fin n → Prop) = univ :=
-  eq_univ_of_forall fun _ ↦ mem_linearExtensions.2 fun _ _ h ↦ h ▸ le_refl _
-
-/-- Composing with a permutation `g` of the constraints turns the linear extensions of the
-pullback of `r` along `g` into those of `r`. -/
-theorem isLinearExtension_mul_iff :
-    IsLinearExtension r (g * σ) ↔ IsLinearExtension (g ⁻¹'o r) σ :=
-  ⟨fun h a b hab ↦ by simpa using h (g a) (g b) hab,
-   fun h a b hab ↦ by simpa using h (g⁻¹ a) (g⁻¹ b) (by simpa [Order.Preimage] using hab)⟩
-
-/-- The linear extensions of a grammar are closed under the permutations of the constraints that
-preserve it. -/
-theorem IsLinearExtension.mul (hg : g ⁻¹'o r = r) (hσ : IsLinearExtension r σ) :
-    IsLinearExtension r (g * σ) :=
-  isLinearExtension_mul_iff.2 (hg.symm ▸ hσ)
-
-/-- Every grammar has a linear extension, by Szpilrajn's theorem. -/
-theorem exists_isLinearExtension (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r] :
-    ∃ σ : Ranking (Fin n) n, IsLinearExtension r σ := by
-  obtain ⟨s, hs, hsub⟩ := extend_partialOrder r
-  obtain ⟨σ, rfl⟩ := Ranking.exists_toRel_eq (n := n) s
-  exact ⟨σ, hsub⟩
-
-theorem linearExtensions_nonempty (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r]
-    [DecidableRel r] : (linearExtensions r).Nonempty :=
-  (exists_isLinearExtension r).imp fun _ ↦ mem_linearExtensions.2
-
-end LinearExtension
-
-/-! ### Stratified grammars
-
-In a stratified grammar every constraint of an earlier stratum dominates every constraint of a
-later one, and an inner order applies within each stratum. With the discrete inner order this is
-the stratified domination hierarchy of [tesar-smolensky-1995], whose strata are freely ranked. -/
-
-section Stratified
-
-variable {s : ℕ} {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop} {k : Fin s}
-  {d d' : Fin n}
-
-/-- The stratified grammar of a stratum assignment and an inner order: the lexicographic order
-`Prod.Lex` pulled back along `a ↦ (stratumOf a, a)`, so that strata compare strictly and `inner`
-applies within a stratum. -/
-def stratified (stratumOf : Fin n → Fin s) (inner : Fin n → Fin n → Prop) :
-    Fin n → Fin n → Prop :=
-  fun a b ↦ Prod.Lex (· < ·) inner (stratumOf a, a) (stratumOf b, b)
-
-theorem stratified_iff {a b : Fin n} :
-    stratified stratumOf inner a b ↔
-      stratumOf a < stratumOf b ∨ stratumOf a = stratumOf b ∧ inner a b :=
-  Prod.lex_iff
-
-instance [IsPartialOrder (Fin n) inner] : IsPartialOrder (Fin n) (stratified stratumOf inner) where
-  refl a := Prod.Lex.right _ (refl_of inner a)
-  trans _ _ _ := Prod.Lex.trans
-  antisymm _ _ hab hba := congrArg Prod.snd (antisymm hab hba)
-
-instance [DecidableRel inner] : DecidableRel (stratified stratumOf inner) :=
-  fun _ _ ↦ decidable_of_iff _ stratified_iff.symm
-
-/-- A stratified grammar is invariant under the transposition of two constraints of a stratum on
-which the inner order is discrete. -/
-theorem swap_preimage_stratified [Std.Refl inner]
-    (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner a b → a = b)
-    (hd : stratumOf d = k) (hd' : stratumOf d' = k) :
-    Equiv.swap d d' ⁻¹'o stratified stratumOf inner = stratified stratumOf inner := by
-  have h_str (x : Fin n) : stratumOf (Equiv.swap d d' x) = stratumOf x := by
-    rcases eq_or_ne x d with rfl | hxd
-    · rw [Equiv.swap_apply_left, hd', hd]
-    rcases eq_or_ne x d' with rfl | hxd'
-    · rw [Equiv.swap_apply_right, hd, hd']
-    · rw [Equiv.swap_apply_of_ne_of_ne hxd hxd']
-  ext a b
-  rw [Order.Preimage, stratified_iff, stratified_iff, h_str a, h_str b]
-  refine or_congr_right (and_congr_right fun heq ↦ ?_)
-  rcases eq_or_ne (stratumOf a) k with hk | hk
-  · refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
-    · obtain rfl : a = b := (Equiv.swap d d').injective
-        (h_triv _ _ ((h_str a).trans hk) ((h_str b).trans (heq ▸ hk)) h)
-      exact refl_of inner a
-    · obtain rfl : a = b := h_triv a b hk (heq ▸ hk) h
-      exact refl_of inner _
-  · have hne {x c : Fin n} (hx : stratumOf x ≠ k) (hc : stratumOf c = k) : x ≠ c :=
-      fun h ↦ hx (h ▸ hc)
-    rw [Equiv.swap_apply_of_ne_of_ne (hne hk hd) (hne hk hd'),
-      Equiv.swap_apply_of_ne_of_ne (hne (heq ▸ hk) hd) (hne (heq ▸ hk) hd')]
-
-end Stratified
-
-/-! ### Partial orders as sets of ERCs
-
-Each related pair of a partial order is a simple ERC, and the linear extensions of the order are
-those of its ERCs. A partially ordered grammar is thus a `Grammar`, whose antimatroid has the order
-ideals as its feasible sets ([dilworth-1940], [merchant-riggle-2016]). -/
-
-section ERC
-
-variable {r : Fin n → Fin n → Prop} [DecidableRel r]
-
-/-- The ERCs of a relation: the simple ERC `a ≫ b` for each related pair, which is trivial when
-`a = b`. -/
-def toERCs (r : Fin n → Fin n → Prop) [DecidableRel r] : Finset (ERC (Fin n)) :=
-  ({p | r p.1 p.2} : Finset (Fin n × Fin n)).image fun p ↦ simpleERC p.1 p.2
-
-theorem mem_toERCs {α : ERC (Fin n)} : α ∈ toERCs r ↔ ∃ a b, r a b ∧ simpleERC a b = α := by
-  simp [toERCs, Prod.exists]
-
-theorem forall_mem_toERCs_satisfiedBy_iff {σ : Ranking (Fin n) n} :
-    (∀ α ∈ toERCs r, ERC.SatisfiedBy σ α) ↔ IsLinearExtension r σ := by
-  refine ⟨fun h a b hab ↦ (simpleERC_satisfiedBy_toRel_iff a b σ).1
-    (h _ (mem_toERCs.2 ⟨a, b, hab, rfl⟩)), fun h α hα ↦ ?_⟩
-  obtain ⟨a, b, hab, rfl⟩ := mem_toERCs.1 hα
-  exact (simpleERC_satisfiedBy_toRel_iff a b σ).2 (h a b hab)
-
-/-- The linear extensions of a relation are those of its ERCs. -/
-theorem linearExtensions_eq_linearExtensions_toERCs (r : Fin n → Fin n → Prop) [DecidableRel r] :
-    linearExtensions r = ERC.linearExtensions (toERCs r) := by
-  ext σ
-  rw [mem_linearExtensions, ERC.mem_linearExtensions, forall_mem_toERCs_satisfiedBy_iff]
-
-theorem isSimple_or_isTrivial_of_mem_toERCs {α : ERC (Fin n)} (hα : α ∈ toERCs r) :
-    α.IsSimple ∨ α.IsTrivial := by
-  obtain ⟨a, b, -, rfl⟩ := mem_toERCs.1 hα
-  exact simpleERC_isSimple_or_isTrivial a b
-
-variable (r) [IsPartialOrder (Fin n) r]
-
-theorem linearExtensions_toERCs_nonempty : (ERC.linearExtensions (toERCs r)).Nonempty :=
-  linearExtensions_eq_linearExtensions_toERCs r ▸ linearExtensions_nonempty r
-
-/-- The grammar of a partial order, whose legs are its linear extensions. -/
-def Grammar.ofPartialOrder : Grammar n :=
-  .ofERCs (toERCs r) (linearExtensions_toERCs_nonempty r)
-
-@[simp] theorem Grammar.legs_ofPartialOrder :
-    (Grammar.ofPartialOrder r).legs = linearExtensions r :=
-  (linearExtensions_eq_linearExtensions_toERCs r).symm
-
-theorem forall_isFeasible_toERCs_iff {S : Finset (Fin n)} :
-    (∀ α ∈ toERCs r, ERC.IsFeasible {α} (S : Set (Fin n))) ↔ ∀ a b, r a b → b ∈ S → a ∈ S := by
-  obtain ⟨σ, hσ⟩ := linearExtensions_toERCs_nonempty r
-  have hsat : ∀ α ∈ toERCs r, ∃ σ : Ranking (Fin n) n, ERC.SatisfiedBy σ α :=
-    fun α hα ↦ ⟨σ, ERC.mem_linearExtensions.mp hσ α hα⟩
-  refine ⟨fun h a b hrel hbS ↦ ?_, fun h α hα ↦ ?_⟩
-  · rcases eq_or_ne a b with rfl | hab
-    · exact hbS
-    · have hα := mem_toERCs.mpr ⟨a, b, hrel, rfl⟩
-      obtain ⟨w, hwS, hwW⟩ := (ERC.isFeasible_singleton_iff (hsat _ hα) S).mp (h _ hα)
-        ⟨b, hbS, simpleERC_apply_L hab⟩
-      rwa [(simpleERC_eq_W_iff w).mp hwW] at hwS
-  · rw [ERC.isFeasible_singleton_iff (hsat α hα)]
-    obtain ⟨a, b, hrel, rfl⟩ := mem_toERCs.mp hα
-    rintro ⟨l, hlS, hlL⟩
-    have hab : a ≠ b := by rintro rfl; exact simpleERC_self_isTrivial a l hlL
-    rw [(simpleERC_eq_L_iff hab l).mp hlL] at hlS
-    exact ⟨a, h a b hrel hlS, simpleERC_apply_W⟩
-
-/-- The feasible sets of the antimatroid of a partial order are its order ideals, the sets
-containing every constraint that the order ranks above one of their members. -/
-@[simp] theorem Grammar.toAntimatroid_ofPartialOrder_isFeasible {S : Finset (Fin n)} :
-    (Grammar.ofPartialOrder r).toAntimatroid.IsFeasible (↑S : Set (Fin n)) ↔
-      ∀ a b, r a b → b ∈ S → a ∈ S := by
-  rw [Grammar.ofPartialOrder, Grammar.toAntimatroid_ofERCs_isFeasible, ERC.toAntimatroid_isFeasible,
-    ERC.isFeasible_iff_forall_singleton_of_simple
-      ((ERC.linearExtensions_nonempty_iff _).mp (linearExtensions_toERCs_nonempty r))
-      fun _ ↦ isSimple_or_isTrivial_of_mem_toERCs]
-  exact forall_isFeasible_toERCs_iff r
-
-end ERC
-
 /-! ### The quantitative interpretation
 
 A grammar draws one of its linear extensions uniformly at each evaluation ([anttila-1997]), so it
-is the probability measure `uniformOn ↑(linearExtensions r)` on rankings, and the probability that
-it selects `o` for the input `i` is that measure at `{σ | S.PicksAt σ i o}`: the fraction of the
+is the probability measure `uniformOn ↑(Ranking.linearExtensions r)` on rankings, and the
+probability that it selects `o` for the input `i` is that measure at `{σ | S.PicksAt σ i o}`: the fraction of the
 linear extensions that pick `o`. -/
 
 instance (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r] [DecidableRel r] :
-    IsProbabilityMeasure (uniformOn (linearExtensions r : Set (Ranking (Fin n) n))) :=
-  isProbabilityMeasure_uniformOn (Set.toFinite _) (linearExtensions_nonempty r)
+    IsProbabilityMeasure (uniformOn (Ranking.linearExtensions r : Set (Ranking (Fin n) n))) :=
+  isProbabilityMeasure_uniformOn (Set.toFinite _) (Ranking.linearExtensions_nonempty r)
 
 variable {Input Output : Type*}
 variable {S : ConstraintSystem Input Output (Fin n)} {con : ConstraintSet (Input × Output) (Fin n)}
@@ -311,7 +86,8 @@ theorem sum_measure_setOf_picksAt (μ : Measure (Ranking (Fin n) n)) [IsProbabil
 /-- The linear extensions of a grammar are partitioned by the candidate they pick. -/
 theorem sum_card_filter_picksAt [DecidableEq Output] [DecidableRel r] (h_ne : (S.gen i).Nonempty)
     (h_inj : Set.InjOn (fun o ↦ (S.con · (i, o))) (S.gen i)) :
-    ∑ o ∈ S.gen i, #{σ ∈ linearExtensions r | S.PicksAt σ i o} = #(linearExtensions r) := by
+    ∑ o ∈ S.gen i, #{σ ∈ Ranking.linearExtensions r | S.PicksAt σ i o} =
+      #(Ranking.linearExtensions r) := by
   classical
   rw [← card_biUnion fun o _ o' _ hne ↦ disjoint_left.2 fun σ h h' ↦
     hne ((mem_filter.1 h).2.unique (mem_filter.1 h').2)]
@@ -325,8 +101,9 @@ theorem sum_card_filter_picksAt [DecidableEq Output] [DecidableRel r] (h_ne : (S
 theorem card_filter_picksAt_binary_add [DecidableEq Output] [DecidableRel r] {o₁ o₂ : Output}
     (h_two : S.gen i = {o₁, o₂}) (h_ne : o₁ ≠ o₂)
     (h_vp : (S.con · (i, o₁)) ≠ (S.con · (i, o₂))) :
-    #{σ ∈ linearExtensions r | S.PicksAt σ i o₁} + #{σ ∈ linearExtensions r | S.PicksAt σ i o₂} =
-      #(linearExtensions r) := by
+    #{σ ∈ Ranking.linearExtensions r | S.PicksAt σ i o₁} +
+        #{σ ∈ Ranking.linearExtensions r | S.PicksAt σ i o₂} =
+      #(Ranking.linearExtensions r) := by
   have h_inj : Set.InjOn (fun o ↦ (S.con · (i, o))) (S.gen i) := by
     intro o ho o' ho' hvv
     rw [h_two] at ho ho'
@@ -336,12 +113,70 @@ theorem card_filter_picksAt_binary_add [DecidableEq Output] [DecidableRel r] {o�
   have h := sum_card_filter_picksAt (r := r) (h_two ▸ insert_nonempty _ _) h_inj
   rwa [h_two, sum_pair h_ne] at h
 
+/-! ### The measure of a grammar
+
+The uniform measure is defined on the rankings of any grammar. With pairwise distinct violation
+profiles a candidate is picked exactly by the rankings that satisfy its ERC against each rival, so
+its probability is the number of rankings of the grammar that satisfy those ERCs over the number
+of all its rankings, the two counts that [merchant-riggle-2016] call r-volumes. -/
+
+section Grammar
+
+open scoped ENNReal
+
+theorem Grammar.isProbabilityMeasure_uniformOn (G : Grammar n) (h : G.extent.Nonempty) :
+    IsProbabilityMeasure (uniformOn G.extent) :=
+  ProbabilityTheory.isProbabilityMeasure_uniformOn G.extent.toFinite h
+
+/-- The uniform measure on the rankings of a grammar gives another grammar the share of the
+rankings that the two have in common. -/
+theorem Grammar.uniformOn_extent (G H : Grammar n) :
+    uniformOn G.extent H.extent = ((G ⊓ H).extent.ncard : ℝ≥0∞) / G.extent.ncard := by
+  rw [uniformOn_apply_of_finite G.extent.toFinite, Concept.extent_inf]
+
+/-- The winner–loser ERCs of the candidate `o` at the input `i`, one against each rival. -/
+def ConstraintSystem.ercs (S : ConstraintSystem Input Output (Fin n)) (i : Input) (o : Output) :
+    Set (ERC (Fin n)) :=
+  {α | ∃ o' ∈ S.gen i, o' ≠ o ∧ ercOfProfiles (S.con · (i, o)) (S.con · (i, o')) = α}
+
+/-- A ranking picks a candidate whose violations differ from every rival's iff it satisfies the
+candidate's ERC against each rival ([prince-2002]). -/
+theorem ConstraintSystem.picksAt_iff_forall_ercs_satisfiedBy (ho : o ∈ S.gen i)
+    (hvp : ∀ o' ∈ S.gen i, o' ≠ o → (S.con · (i, o)) ≠ (S.con · (i, o'))) :
+    S.PicksAt σ i o ↔ ∀ α ∈ S.ercs i o, α.SatisfiedBy σ := by
+  refine ⟨fun h α hα ↦ ?_, fun h ↦ ConstraintSystem.picksAt_iff.2 ⟨ho, fun o' ho' hne ↦ ?_⟩⟩
+  · obtain ⟨o', ho', hne, rfl⟩ := hα
+    exact (satisfiedBy_ercOfProfiles_iff_le σ _ _).2
+      ((ConstraintSystem.picksAt_iff.1 h).2 o' ho' hne).le
+  · refine lt_of_le_of_ne ((satisfiedBy_ercOfProfiles_iff_le σ _ _).1
+      (h _ ⟨o', ho', hne, rfl⟩)) fun heq ↦ hvp o' ho' hne (funext fun c ↦ ?_)
+    simpa using congrFun (toLex_inj.1 heq) (σ.symm c)
+
+/-- The probability of a candidate under a grammar is the share of the grammar's rankings that
+satisfy the candidate's ERCs: Anttila's $n/t$ as a ratio of r-volumes. -/
+theorem Grammar.uniformOn_extent_picksAt (G : Grammar n) (ho : o ∈ S.gen i)
+    (hvp : ∀ o' ∈ S.gen i, o' ≠ o → (S.con · (i, o)) ≠ (S.con · (i, o'))) :
+    uniformOn G.extent {σ | S.PicksAt σ i o} =
+      ((G ⊓ .ofERCs (S.ercs i o)).extent.ncard : ℝ≥0∞) / G.extent.ncard := by
+  rw [← Grammar.uniformOn_extent]
+  congr 1
+  ext σ
+  exact ConstraintSystem.picksAt_iff_forall_ercs_satisfiedBy ho hvp
+
+/-- A grammar predicts a candidate, giving it nonzero probability, iff the candidate wins under
+one of its rankings ([anttila-1997]). -/
+theorem Grammar.uniformOn_extent_picksAt_ne_zero_iff (G : Grammar n) :
+    uniformOn G.extent {σ | S.PicksAt σ i o} ≠ 0 ↔ ∃ σ ∈ G.extent, S.PicksAt σ i o :=
+  uniformOn_ne_zero_iff G.extent.toFinite
+
+end Grammar
+
 /-! ### Categorical outcomes -/
 
 /-- A candidate is picked by every linear extension of a grammar if, against each rival, some
 constraint that favors it is ranked by the grammar above every constraint that favors the
 rival. -/
-theorem IsLinearExtension.picksAt (hσ : IsLinearExtension r σ) (ho : o ∈ S.gen i)
+theorem Ranking.IsLinearExtension.picksAt (hσ : σ.IsLinearExtension r) (ho : o ∈ S.gen i)
     (h : ∀ o' ∈ S.gen i, o' ≠ o → ∃ w, S.con w (i, o) < S.con w (i, o') ∧
       ∀ l, S.con l (i, o') < S.con l (i, o) → r w l) :
     S.PicksAt σ i o :=
@@ -367,16 +202,17 @@ variable {α : ERC (Fin n)} {D : Finset (Fin n)}
 when the grammar ranks a set `D` of non-neutral constraints above the other non-neutral ones and
 its automorphisms preserving `D` act transitively on `D`: their number times `|D|` is the number
 of linear extensions times `|W ∩ D|`. -/
-theorem card_filter_lex_pos_mul_card [DecidableRel r] (hD : D ⊆ α.support)
+theorem ERC.card_filter_lex_pos_mul_card [DecidableRel r] (hD : D ⊆ α.support)
     (h_lead : ∀ a ∈ α.support, a ∉ D → ∃ d ∈ D, r d a)
     (h_aut : ∀ d ∈ D, ∀ d' ∈ D, ∃ g : Equiv.Perm (Fin n),
       g d = d' ∧ (∀ z, g z ∈ D ↔ z ∈ D) ∧ g ⁻¹'o r = r) :
-    #((linearExtensions r).filter fun σ : Ranking (Fin n) n ↦ toLex 0 < toLex (α ∘ σ)) * #D =
-      #(linearExtensions r) * #(α.W ∩ D) := by
+    #((Ranking.linearExtensions r).filter
+        fun σ : Ranking (Fin n) n ↦ toLex 0 < toLex (α ∘ σ)) * #D =
+      #(Ranking.linearExtensions r) * #(α.W ∩ D) := by
   classical
-  have key (σ) (hσ : σ ∈ linearExtensions r) :
+  have key (σ) (hσ : σ ∈ Ranking.linearExtensions r) :
       toLex 0 < toLex (α ∘ σ) ↔ ∃ x ∈ α.W ∩ D, IsMinOn σ.symm D x := by
-    rw [mem_linearExtensions] at hσ
+    rw [Ranking.mem_linearExtensions] at hσ
     rw [ERC.lex_pos_iff_exists_isMinOn]
     refine ⟨fun ⟨x, hx, hmin⟩ ↦ ?_, fun ⟨x, hx, hmin⟩ ↦ ?_⟩
     · have hxD : x ∈ D := by
@@ -390,34 +226,37 @@ theorem card_filter_lex_pos_mul_card [DecidableRel r] (hD : D ⊆ α.support)
       · obtain ⟨d, hd, hda⟩ := h_lead a ha haD
         exact (isMinOn_iff.1 hmin d hd).trans (hσ d a hda)
   have hS : ∀ d ∈ D, ∀ d' ∈ D, ∃ g : Equiv.Perm (Fin n), g d = d' ∧ (∀ z, g z ∈ D ↔ z ∈ D) ∧
-      ∀ σ, g * σ ∈ linearExtensions r ↔ σ ∈ linearExtensions r := fun d hd d' hd' ↦ by
+      ∀ σ, g * σ ∈ Ranking.linearExtensions r ↔ σ ∈ Ranking.linearExtensions r :=
+      fun d hd d' hd' ↦ by
     obtain ⟨g, hgd, hgD, hg⟩ := h_aut d hd d' hd'
     exact ⟨g, hgd, hgD, fun σ ↦ by
-      rw [mem_linearExtensions, mem_linearExtensions, isLinearExtension_mul_iff, hg]⟩
+      rw [Ranking.mem_linearExtensions, Ranking.mem_linearExtensions,
+        Ranking.isLinearExtension_mul_iff, hg]⟩
   rw [filter_congr key]
   convert Equiv.Perm.card_filter_isMinOn_symm_mul_card _ D _ hS
 
 /-- When a grammar ranks a set `D` of non-neutral constraints above the other non-neutral ones
 and its automorphisms preserving `D` act transitively on `D`, the uniform measure on its linear
 extensions strictly satisfies the ERC at the rate `|W ∩ D| / |D|`. -/
-theorem uniformOn_real_lex_pos [IsPartialOrder (Fin n) r] [DecidableRel r]
+theorem ERC.uniformOn_real_lex_pos [IsPartialOrder (Fin n) r] [DecidableRel r]
     (hD : D ⊆ α.support) (h_lead : ∀ a ∈ α.support, a ∉ D → ∃ d ∈ D, r d a)
     (h_aut : ∀ d ∈ D, ∀ d' ∈ D, ∃ g : Equiv.Perm (Fin n),
       g d = d' ∧ (∀ z, g z ∈ D ↔ z ∈ D) ∧ g ⁻¹'o r = r) :
-    (uniformOn (linearExtensions r : Set (Ranking (Fin n) n))).real
+    (uniformOn (Ranking.linearExtensions r : Set (Ranking (Fin n) n))).real
         {σ : Ranking (Fin n) n | toLex 0 < toLex (α ∘ σ)} = (#(α.W ∩ D) : ℝ) / #D := by
   rw [uniformOn_finset_real_setOf]
   rcases D.eq_empty_or_nonempty with rfl | hne
   · -- every constraint is neutral, so no ranking satisfies the ERC strictly
-    have : (linearExtensions r).filter (fun σ : Ranking (Fin n) n ↦ toLex 0 < toLex (α ∘ σ)) = ∅ :=
+    have : (Ranking.linearExtensions r).filter
+        (fun σ : Ranking (Fin n) n ↦ toLex 0 < toLex (α ∘ σ)) = ∅ :=
       filter_eq_empty_iff.2 fun σ _ hσ ↦ by
         obtain ⟨x, hx, -⟩ := ERC.lex_pos_iff_exists_isMinOn.1 hσ
         obtain ⟨d, hd, -⟩ := h_lead x (ERC.W_subset_support hx) (notMem_empty x)
         exact notMem_empty d hd
     rw [this, card_empty, inter_empty, card_empty, Nat.cast_zero, zero_div, div_zero]
-  · rw [div_eq_div_iff (by exact_mod_cast (linearExtensions_nonempty r).card_pos.ne')
+  · rw [div_eq_div_iff (by exact_mod_cast (Ranking.linearExtensions_nonempty r).card_pos.ne')
       (by exact_mod_cast hne.card_pos.ne')]
-    exact_mod_cast (card_filter_lex_pos_mul_card hD h_lead h_aut).trans (Nat.mul_comm _ _)
+    exact_mod_cast (ERC.card_filter_lex_pos_mul_card hD h_lead h_aut).trans (Nat.mul_comm _ _)
 
 /-- A uniformly random ranking satisfies an ERC with a non-neutral constraint at the rate
 `|W| / |W ∪ L|`. -/
@@ -494,10 +333,10 @@ theorem card_filter_picksAt_mul_card [DecidableRel r] {D : Finset (Fin n)}
     (h_lead : ∀ a ∈ active S.con i chosen other, a ∉ D → ∃ d ∈ D, r d a)
     (h_aut : ∀ d ∈ D, ∀ d' ∈ D, ∃ g : Equiv.Perm (Fin n),
       g d = d' ∧ (∀ z, g z ∈ D ↔ z ∈ D) ∧ g ⁻¹'o r = r) :
-    #{σ ∈ linearExtensions r | S.PicksAt σ i chosen} * #D =
-      #(linearExtensions r) * #(favoring S.con i chosen other ∩ D) := by
+    #{σ ∈ Ranking.linearExtensions r | S.PicksAt σ i chosen} * #D =
+      #(Ranking.linearExtensions r) * #(favoring S.con i chosen other ∩ D) := by
   rw [filter_congr fun σ _ ↦ picksAt_binary_iff_lex_pos h_two h_ne σ]
-  exact card_filter_lex_pos_mul_card hD h_lead h_aut
+  exact ERC.card_filter_lex_pos_mul_card hD h_lead h_aut
 
 /-- Under the same hypotheses, the uniform measure on the linear extensions picks `chosen` at the
 rate `|favoring ∩ D| / |D|`. -/
@@ -507,14 +346,15 @@ theorem uniformOn_real_picksAt_binary [IsPartialOrder (Fin n) r] [DecidableRel r
     (h_lead : ∀ a ∈ active S.con i chosen other, a ∉ D → ∃ d ∈ D, r d a)
     (h_aut : ∀ d ∈ D, ∀ d' ∈ D, ∃ g : Equiv.Perm (Fin n),
       g d = d' ∧ (∀ z, g z ∈ D ↔ z ∈ D) ∧ g ⁻¹'o r = r) :
-    (uniformOn (linearExtensions r : Set (Ranking (Fin n) n))).real {σ | S.PicksAt σ i chosen} =
+    (uniformOn (Ranking.linearExtensions r : Set (Ranking (Fin n) n))).real
+        {σ | S.PicksAt σ i chosen} =
       (#(favoring S.con i chosen other ∩ D) : ℝ) / #D := by
   have h : {σ | S.PicksAt σ i chosen} =
       {σ : Ranking (Fin n) n |
         toLex 0 < toLex (ercOfProfiles (S.con · (i, chosen)) (S.con · (i, other)) ∘ σ)} :=
     Set.ext fun σ ↦ picksAt_binary_iff_lex_pos h_two h_ne σ
   rw [h]
-  exact uniformOn_real_lex_pos hD h_lead h_aut
+  exact ERC.uniformOn_real_lex_pos hD h_lead h_aut
 
 /-- Under the discrete grammar, with every ranking a linear extension, the uniform measure on
 rankings picks `chosen` at the rate `|favoring| / |active|`. -/
@@ -527,7 +367,7 @@ theorem uniformOn_real_picksAt_discrete_binary
       ⟨Equiv.swap d d', Equiv.swap_apply_left d d', Equiv.Perm.swap_apply_mem_iff hd hd', by
         ext a b
         exact (Equiv.swap d d').injective.eq_iff⟩
-  rwa [linearExtensions_eq, coe_univ, inter_eq_left.2 favoring_subset_active] at h
+  rwa [Ranking.linearExtensions_eq, coe_univ, inter_eq_left.2 favoring_subset_active] at h
 
 section Stratified
 
@@ -542,9 +382,9 @@ theorem card_filter_picksAt_stratified_binary [IsPartialOrder (Fin n) inner] [De
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner a b → a = b)
     (h_tie : ∀ c, stratumOf c < k → S.con c (i, chosen) = S.con c (i, other))
     (h_dec : ((active S.con i chosen other).filter (stratumOf · = k)).Nonempty) :
-    #{σ ∈ linearExtensions (stratified stratumOf inner) | S.PicksAt σ i chosen} *
+    #{σ ∈ Ranking.linearExtensions (stratified stratumOf inner) | S.PicksAt σ i chosen} *
         #((active S.con i chosen other).filter (stratumOf · = k)) =
-      #(linearExtensions (stratified stratumOf inner)) *
+      #(Ranking.linearExtensions (stratified stratumOf inner)) *
         #(favoring S.con i chosen other ∩
           (active S.con i chosen other).filter (stratumOf · = k)) := by
   obtain ⟨d, hd⟩ := h_dec
@@ -564,13 +404,14 @@ theorem uniformOn_real_picksAt_stratified_binary [IsPartialOrder (Fin n) inner]
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner a b → a = b)
     (h_tie : ∀ c, stratumOf c < k → S.con c (i, chosen) = S.con c (i, other))
     (h_dec : ((active S.con i chosen other).filter (stratumOf · = k)).Nonempty) :
-    (uniformOn (linearExtensions (stratified stratumOf inner) : Set (Ranking (Fin n) n))).real
+    (uniformOn (Ranking.linearExtensions (stratified stratumOf inner) :
+      Set (Ranking (Fin n) n))).real
         {σ | S.PicksAt σ i chosen} =
       (#(favoring S.con i chosen other ∩
           (active S.con i chosen other).filter (stratumOf · = k)) : ℝ) /
         #((active S.con i chosen other).filter (stratumOf · = k)) := by
   rw [uniformOn_finset_real_setOf, div_eq_div_iff
-    (by exact_mod_cast (linearExtensions_nonempty _).card_pos.ne')
+    (by exact_mod_cast (Ranking.linearExtensions_nonempty _).card_pos.ne')
     (by exact_mod_cast h_dec.card_pos.ne')]
   exact_mod_cast (card_filter_picksAt_stratified_binary h_two h_ne h_triv h_tie h_dec).trans
     (Nat.mul_comm _ _)
@@ -579,7 +420,7 @@ omit [DecidableEq Output] in
 /-- Under a stratified grammar a candidate is picked if, against each rival, the two tie on every
 stratum before some stratum whose active constraints all favor it. -/
 theorem picksAt_stratified_of_dominates
-    (hσ : IsLinearExtension (stratified stratumOf inner) σ) (ho : o ∈ S.gen i)
+    (hσ : σ.IsLinearExtension (stratified stratumOf inner)) (ho : o ∈ S.gen i)
     (h : ∀ o' ∈ S.gen i, o' ≠ o → ∃ k : Fin s,
       (∀ c, stratumOf c < k → S.con c (i, o) = S.con c (i, o')) ∧
       ((active S.con i o o').filter (stratumOf · = k)).Nonempty ∧
@@ -600,10 +441,10 @@ theorem uniformOn_picksAt_stratified_eq_one [IsPartialOrder (Fin n) inner] [Deci
       (∀ c, stratumOf c < k → S.con c (i, o) = S.con c (i, o')) ∧
       ((active S.con i o o').filter (stratumOf · = k)).Nonempty ∧
       (active S.con i o o').filter (stratumOf · = k) ⊆ favoring S.con i o o') :
-    uniformOn (linearExtensions (stratified stratumOf inner) : Set (Ranking (Fin n) n))
+    uniformOn (Ranking.linearExtensions (stratified stratumOf inner) : Set (Ranking (Fin n) n))
       {σ | S.PicksAt σ i o} = 1 :=
-  uniformOn_eq_one_of (Set.toFinite _) (linearExtensions_nonempty _) fun _ hσ ↦
-    picksAt_stratified_of_dominates (mem_linearExtensions.1 (mem_coe.1 hσ)) ho h
+  uniformOn_eq_one_of (Set.toFinite _) (Ranking.linearExtensions_nonempty _) fun _ hσ ↦
+    picksAt_stratified_of_dominates (Ranking.mem_linearExtensions.1 (mem_coe.1 hσ)) ho h
 
 end Stratified
 

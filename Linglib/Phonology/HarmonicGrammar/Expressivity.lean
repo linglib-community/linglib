@@ -374,10 +374,10 @@ namespace RealizationProblem
 
 /-- A grammar `r` **POC-realizes** the target if every consistent extension
     realizes it. Since consistent extensions always exist
-    (`exists_isLinearExtension`), this is never vacuous. -/
+    (`Ranking.exists_isLinearExtension`), this is never vacuous. -/
 def realizedByPartialOrder (P : RealizationProblem Input Output (Fin n))
     (r : Fin n → Fin n → Prop) : Prop :=
-  ∀ σ, IsLinearExtension r σ → P.realizedByRanking σ
+  ∀ σ, σ.IsLinearExtension r → P.realizedByRanking σ
 
 /-- A `RealizationProblem` is **POC-realizable** if some partial order
     categorically realizes the target. -/
@@ -393,7 +393,7 @@ theorem RealizationProblem.IsPartialOrderRealizable.isOTRealizable
     (h : P.IsPartialOrderRealizable) : P.IsOTRealizable := by
   obtain ⟨r, hpo, hreal⟩ := h
   have := hpo
-  obtain ⟨σ, hσ⟩ := exists_isLinearExtension r
+  obtain ⟨σ, hσ⟩ := Ranking.exists_isLinearExtension r
   exact ⟨σ, hreal σ hσ⟩
 
 theorem RealizationProblem.IsOTRealizable.isPartialOrderRealizable

@@ -272,17 +272,17 @@ theorem deletionProb_maxPreVOverStarCT_preC_not_mem :
 theorem five_le_of_real_picksAt_eq {n : ℕ} {Input Output : Type*} [DecidableEq Output]
     {S : ConstraintSystem Input Output (Fin n)}
     {r : Fin n → Fin n → Prop} [DecidableRel r] {i : Input} {o : Output}
-    (h : (uniformOn (linearExtensions r : Set (Ranking (Fin n) n))).real
+    (h : (uniformOn (Ranking.linearExtensions r : Set (Ranking (Fin n) n))).real
       {σ | S.PicksAt σ i o} = 1/100) : 5 ≤ n := by
   rw [uniformOn_finset_real_setOf] at h
-  have ht : (linearExtensions r).card ≤ n.factorial := (card_le_univ _).trans_eq (by
+  have ht : (Ranking.linearExtensions r).card ≤ n.factorial := (card_le_univ _).trans_eq (by
     rw [show Fintype.card (Ranking (Fin n) n) = Fintype.card (Equiv.Perm (Fin n)) from rfl,
       Fintype.card_perm, Fintype.card_fin])
-  have h0 : (linearExtensions r).card ≠ 0 := by
+  have h0 : (Ranking.linearExtensions r).card ≠ 0 := by
     rintro h0; rw [h0, Nat.cast_zero, div_zero] at h; norm_num at h
   rw [div_eq_div_iff (by exact_mod_cast h0) (by norm_num)] at h
-  generalize ((linearExtensions r).filter (S.PicksAt · i o)).card = k at h
-  generalize (linearExtensions r).card = t at h ht h0
+  generalize ((Ranking.linearExtensions r).filter (S.PicksAt · i o)).card = k at h
+  generalize (Ranking.linearExtensions r).card = t at h ht h0
   have hkt : 100 * k = t := by exact_mod_cast (by linarith : (100 * k : ℝ) = t)
   by_contra hn
   have := Nat.factorial_le (show n ≤ 4 by omega)

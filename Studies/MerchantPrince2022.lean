@@ -12,7 +12,7 @@ Merchant and Prince study the large-scale structure of an OT typology, the parti
 rankings (legs) into grammars. A row of a tableau asserted optimal generates the elementary ranking
 conditions of its winner–loser comparisons (`rowERCs`), and the grammar of that row, in the hub of
 Merchant and Riggle, consists of the legs under which the row wins lexicographically
-(`mem_rowGrammar_legs_iff_lex`).
+(`mem_rowGrammar_extent_iff_lex`).
 
 Any partition of the legs has border point pairs, legs in different blocks that differ by
 transposing two adjacent constraints. For each constraint `c`, the pairs that transpose `c` with
@@ -70,24 +70,21 @@ candidate, the ranking conditions a leg must satisfy for `w` to be optimal ([pri
 def rowERCs (t : Tableau C n) (w : C) : Finset (ERC (Fin n)) :=
   (t.candidates.erase w).image (tableauERC t w)
 
-/-- The **grammar of a tableau row** is the grammar of the row's ERC set in the `Grammar` hub
-([merchant-prince-2022]; [merchant-riggle-2016]). The hypothesis `h` says that the row's conditions
-are consistent, so that `w` is an optimum that no competitor harmonically bounds. -/
-def rowGrammar (t : Tableau C n) (w : C)
-    (h : (ERC.linearExtensions (rowERCs t w)).Nonempty) : Grammar n :=
-  Grammar.ofERCs (rowERCs t w) h
+/-- The **grammar of a tableau row** is the grammar that the row's ERC set presents
+([merchant-prince-2022]; [merchant-riggle-2016]). It has a leg exactly when `w` is an optimum
+that no competitor harmonically bounds. -/
+def rowGrammar (t : Tableau C n) (w : C) : Grammar n :=
+  Grammar.ofERCs ↑(rowERCs t w)
 
-@[simp] theorem mem_rowGrammar_legs {t : Tableau C n} {w : C}
-    {h : (ERC.linearExtensions (rowERCs t w)).Nonempty} {r : Ranking (Fin n) n} :
-    r ∈ (rowGrammar t w h).legs ↔ ∀ α ∈ rowERCs t w, ERC.SatisfiedBy r α := by
-  simp only [rowGrammar, Grammar.legs_ofERCs, ERC.mem_linearExtensions]
+@[simp] theorem mem_rowGrammar_extent {t : Tableau C n} {w : C} {r : Ranking (Fin n) n} :
+    r ∈ (rowGrammar t w).extent ↔ ∀ α ∈ rowERCs t w, ERC.SatisfiedBy r α :=
+  Grammar.mem_extent_ofERCs
 
-theorem mem_rowGrammar_legs_iff_lex {t : Tableau C n} {w : C}
-    {h : (ERC.linearExtensions (rowERCs t w)).Nonempty} {r : Ranking (Fin n) n} :
-    r ∈ (rowGrammar t w h).legs ↔
+theorem mem_rowGrammar_extent_iff_lex {t : Tableau C n} {w : C} {r : Ranking (Fin n) n} :
+    r ∈ (rowGrammar t w).extent ↔
       ∀ l ∈ t.candidates.erase w,
         r • t.profile w ≤ r • t.profile l := by
-  rw [mem_rowGrammar_legs]
+  rw [mem_rowGrammar_extent]
   unfold rowERCs
   constructor
   · intro hsat l hl
