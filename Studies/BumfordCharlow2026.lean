@@ -671,6 +671,19 @@ theorem values_heimKratzer (t : Tree Unit Word) :
         | (obtain rfl := hp; trivial)
         | (obtain ⟨_, -, rfl⟩ := hp; exact ⟨⟨trivial, trivial⟩, ⟨trivial, trivial⟩, trivial⟩)) t
 
+/-- Every derivation of Heim and Kratzer's grammar, read in the environment-sensitive grammar with
+the binder, has the value their rules give it. No tree is involved: the statement is about the
+two grammars. -/
+theorem realize_heimKratzer {a : Ty Base} (d : grammar.Deriv Item a) :
+    ((ManySorted.Language.withAbstraction.toBinding (baseGrammar Base) assignment
+        fun _ ↦ .e).onTerm d).realize
+        ((effectGrammar.structure.sum (binding.structure (g := assignment)
+          (D := HeimKratzer1998.Dom) assignments)).comap (Ty.comp (.R assignment)))
+        (fun {_} i ↦ Item.val i) =
+      d.realize total Item.val :=
+  ManySorted.Language.withAbstraction.realize_toBinding (g := assignment)
+    (D := HeimKratzer1998.Dom) assignments (fun {_} i ↦ Item.val i) d
+
 /-- The surface scope of *every person sees some person*, the two quantifiers raised over their
 binders. -/
 theorem values_heimKratzer_surface :

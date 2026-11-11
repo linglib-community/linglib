@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Composition.Mode.Pointwise
 public import Linglib.Semantics.Composition.Mode.EffectFree
 public import Linglib.Semantics.Composition.PredicateAbstraction
+public import Linglib.Core.ModelTheory.ManySorted.Comap
 
 /-!
 # Predicate abstraction as an operator on readers
@@ -11,16 +12,21 @@ Heim and Kratzer evaluate every constituent at an assignment, and abstract over 
 values that depend on one. Where the assignment is a datum every word reads, such a value is a
 computation, sisters combine by Structured App, and abstraction is an operator on computations:
 the binder of an index takes a computation to the computation of a function of the value the
-assignment is modified to give the index. The grammar with the assignment in its types [gives a
-tree the values of the grammar relative to assignments](##PhraseStructure.Tree.values_withBinder),
-whatever other effects its words have, and over words without effects [the values of Heim and
-Kratzer's rules](##PhraseStructure.Tree.values_withBinder_of_effectFree).
+assignment is modified to give the index. A grammar with abstraction maps into the grammar with
+the binder, and [a derivation keeps its
+value](##ManySorted.Language.withAbstraction.realize_toBinding). For trees, the grammar with the
+assignment in its types [gives the values of the grammar relative to
+assignments](##PhraseStructure.Tree.values_withBinder), whatever other effects its words have, and
+over words without effects [the values of Heim and Kratzer's
+rules](##PhraseStructure.Tree.values_withBinder_of_effectFree).
 
 ## Main definitions
 
 * `Interpreter.Binder`, `Interpreter.binding`: the binder of an index, an operator on the
   computations that read an assignment.
 * `Interpreter.withBinder`: an interpreter that admits the binder at an index.
+* `ManySorted.Language.withAbstraction.toBinding`: the map of a grammar with abstraction into
+  the grammar with the binder, at the types of readers.
 
 ## Implementation notes
 
@@ -89,6 +95,67 @@ def withBinder [DecidableEq B] {L : Language.{0, 0} (Ty B)} (I : Interpreter L �
   binary l r := (I.binary l r).map fun m ↦ ⟨m.1, .inl m.2⟩
 
 end Interpreter
+
+/-! ### The grammar relative to assignments, at the types of readers
+
+A grammar of binary rules with abstraction maps into the effect-driven grammar with the binder,
+along the map that takes a type to the type of the computations of it that read an assignment.
+The map keeps the value of every derivation, so the two grammars differ only in where the
+assignment is: a parameter of every domain, or a datum in the types. -/
+
+namespace ManySorted.Language.withAbstraction
+
+open Interpreter
+
+variable {B : Type} {L : Language.{0, 0} (Ty B)} [L.IsBinary] {g : Ty B} {Γ : ℕ → Ty B}
+
+/-- The map of a grammar with abstraction into the effect-driven grammar with the binder, at the
+types of the computations that read an assignment: a rule is its Structured App, and abstraction
+over an index is the binder of the index. -/
+def toBinding (L : Language.{0, 0} (Ty B)) [L.IsBinary] (g : Ty B) (Γ : ℕ → Ty B) :
+    L.withAbstraction Γ →ᴸ ((effectGrammar L).sum (binding g Γ)).comap (Ty.comp (.R g)) where
+  onFunction σ u f :=
+    match σ, u, f with
+    | .prod (.of _) (.of _), _, .inl f => .inl (Mode.ap (.basic f))
+    | .of _, _, .inr (.index n b) => .inr (Binder.index n b)
+    | .of _, _, .inl f => isEmptyElim f
+    | .nil, _, .inl f => isEmptyElim f
+    | .prod .nil _, _, .inl f => isEmptyElim f
+    | .prod (.prod _ _) _, _, .inl f => isEmptyElim f
+    | .prod (.of _) .nil, _, .inl f => isEmptyElim f
+    | .prod (.of _) (.prod _ _), _, .inl f => isEmptyElim f
+
+variable {D : B → Type} [M : L.Structure (Ty.Dom D)]
+
+/-- The effect-driven grammar with the binder, at the types of readers, expands the grammar
+relative to assignments: Structured App of a rule at reading is the rule at one assignment, and
+the binder of an index is abstraction over it. -/
+theorem toBinding_isExpansionOn (E : Assignments (g.Dom D) (Ty.Dom D) Γ) :
+    (toBinding L g Γ).IsExpansionOn (withAbstraction.structure E)
+      ((effectGrammar.structure.sum (binding.structure E)).comap (Ty.comp (.R g))) where
+  map_onFunction σ u f _ :=
+    match σ, u, f with
+    | .prod (.of _) (.of _), _, .inl _ => rfl
+    | .of _, _, .inr (.index _ _) => rfl
+    | .of _, _, .inl f => isEmptyElim f
+    | .nil, _, .inl f => isEmptyElim f
+    | .prod .nil _, _, .inl f => isEmptyElim f
+    | .prod (.prod _ _) _, _, .inl f => isEmptyElim f
+    | .prod (.of _) .nil, _, .inl f => isEmptyElim f
+    | .prod (.of _) (.prod _ _), _, .inl f => isEmptyElim f
+
+/-- **Assignments are an effect, for derivations.** A derivation of a grammar with abstraction
+has, read in the effect-driven grammar with the binder at the types of readers, the value it has
+relative to assignments. -/
+theorem realize_toBinding (E : Assignments (g.Dom D) (Ty.Dom D) Γ) {W : Ty B → Type}
+    (ρ : ∀ {a : Ty B}, W a → g.Dom D → a.Dom D) {a : Ty B}
+    (d : (L.withAbstraction Γ).Deriv W a) :
+    ((toBinding L g Γ).onTerm d).realize
+        ((effectGrammar.structure.sum (binding.structure E)).comap (Ty.comp (.R g))) ρ =
+      d.realize (withAbstraction.structure E) ρ :=
+  LHom.realize_onTerm (toBinding_isExpansionOn E) ρ d
+
+end ManySorted.Language.withAbstraction
 
 namespace PhraseStructure.Tree
 
