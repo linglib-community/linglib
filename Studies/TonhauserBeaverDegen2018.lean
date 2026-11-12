@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Statistics.TonhauserBeaverDegen2018
 public import Linglib.Semantics.Presupposition.Trigger
+public import Studies.BeaverEtAl2017
 public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
 
 /-!
@@ -17,11 +18,13 @@ triggers is not such a colouring: [two soft triggers differ](##soft_not_a_class)
 
 The second is the Gradient Projection Principle, that content embedded under an
 entailment-cancelling operator projects to the extent that it is not at-issue, which replaces the
-*if and only if* of the Projection Principle of Simons, Tonhauser, Beaver and Roberts by a matter
-of degree. The paper draws from it the prediction that projectivity varies together with
-not-at-issueness, mathlib's `Monovary`, and tests it by regression:
-[the effect has the predicted sign in all four experiments and is significant in
-three](##atIssuenessEffect_significant_iff).
+*if and only if* of the Projection Principle of Beaver, Roberts, Simons and Tonhauser by a matter
+of degree. On their definition, `BeaverEtAl2017.AtIssue`, a content without obligatory local
+effect is never at-issue, and the three such contents of Experiment 1a were [more not-at-issue
+than all but one of the rest](##notAtIssueness_lt_of_not_localEffect). The paper draws from the
+principle the prediction that projectivity varies together with not-at-issueness, mathlib's
+`Monovary`, and tests it by regression: [the effect has the predicted sign in all four
+experiments and is significant in three](##atIssuenessEffect_significant_iff).
 
 ## Implementation notes
 
@@ -58,7 +61,7 @@ three](##atIssuenessEffect_significant_iff).
 
 namespace TonhauserBeaverDegen2018
 
-open Data.Statistics SimpleGraph
+open Data.Statistics SimpleGraph TonhauserEtAl2013
 
 /-! ### The observed means -/
 
@@ -161,6 +164,20 @@ theorem hard_soft_not_adj :
 
 /-! ### The Gradient Projection Principle -/
 
+/-- The class of an Experiment 1a content among the projective contents of
+[tonhauser-beaver-roberts-simons-2013], as the released data code it. -/
+def Expression.projectiveClass (e : Expression) : ProjectiveClass :=
+  match (heterogeneous e).triggerClass with
+  | .b => .B
+  | .c => .C
+
+/-- The contents without obligatory local effect, those of the appositives and the possessive,
+were more not-at-issue than every content with it but the complement of *be annoyed*. -/
+theorem notAtIssueness_lt_of_not_localEffect {a b : Expression}
+    (ha : a.projectiveClass.ObligatoryLocalEffect) (hb : ¬ b.projectiveClass.ObligatoryLocalEffect)
+    (h : a ≠ .annoyed) : a.notAtIssueness < b.notAtIssueness := by
+  revert a b; decide +kernel
+
 -- The prediction the paper draws from the principle before testing it: the content of a
 -- non-restrictive relative clause is more not-at-issue than the complement of *discover*, and
 -- more projective.
@@ -170,8 +187,8 @@ theorem discover_lt_nrrc :
       Expression.discover.projectivity < Expression.nrrc.projectivity := by
   decide +kernel
 
-/-- Among the complements of Experiment 1b, whenever one is told apart as the more projective it
-is also at least as not-at-issue. -/
+-- Among the complements of Experiment 1b, whenever one is told apart as the more projective it
+-- is also at least as not-at-issue.
 theorem le_of_adj_of_lt {p q : Predicate} (h : distinguished1b.Adj p q)
     (hpq : p.projectivity < q.projectivity) : p.notAtIssueness ≤ q.notAtIssueness := by
   revert p q; decide +kernel
