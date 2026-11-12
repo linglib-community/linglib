@@ -11,9 +11,9 @@ public import Mathlib.Data.Part
 A computation of the writer monad `Writer ω` yields a value and logs output in `ω`: `pure` logs
 nothing and `bind` appends the logs. [Forgetting the log](##val_bind) is a monad morphism to `Id`,
 and [`bind` only extends the log](##log_prefix_bind), so a value can feed later logging while the
-log never feeds a value. A log in a meet-semilattice with a top combines by meet, and with truth values for logs a
-computation is
-[a partial value](##Writer.toPart) defined where its log holds.
+log never feeds a value. A log in a meet-semilattice with a top combines by meet, and with
+truth values for logs a computation is [a partial value](##Writer.toPart) defined where its log
+holds.
 
 ## Main definitions
 
