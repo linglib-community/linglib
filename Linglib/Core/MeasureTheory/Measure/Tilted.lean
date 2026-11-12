@@ -14,9 +14,17 @@ nonzero `c`, since the normalization absorbs the factor. On a finite type the ti
 atom by the exponential of `f` and renormalizes, so tilting the counting measure, or the uniform
 measure, gives `Real.softmax f`.
 
+Tilting commutes with pushing the measure forward along a map, when the tilting function is pulled
+back along it. The counting measure does not: its pushforward counts preimages. So pushing forward
+the softmax of pulled-back scores weights each point by its number of preimages, and a point that
+is split into several copies gains mass.
+
 ## Main results
 
 * `MeasureTheory.tilted_smul`: tilting is invariant under scaling the measure.
+* `MeasureTheory.map_tilted_comp`: tilting commutes with pushing forward.
+* `MeasureTheory.map_count_tilted_comp_real_singleton`: the pushforward of a softmax of pulled-back
+  scores weights each point by its number of preimages.
 * `MeasureTheory.tilted_real_singleton`, `MeasureTheory.count_tilted_real_singleton`: the tilted
   measure of an atom on a finite type.
 * `MeasureTheory.uniformOn_univ_tilted`: tilting the uniform measure on a finite type is tilting
@@ -72,6 +80,29 @@ theorem tilted_real_singleton (μ : Measure α) [IsFiniteMeasure μ] (f : α →
     integral_fintype .of_finite]
   simp only [smul_eq_mul]
   ring
+
+/-- Tilting commutes with pushing forward: tilting by a function pulled back along `f` and then
+pushing forward along `f` is pushing forward and then tilting. -/
+theorem map_tilted_comp {β : Type*} [MeasurableSpace β] {f : β → α} (hf : Measurable f)
+    {g : α → ℝ} (hg : Measurable g) (μ : Measure β) :
+    (μ.tilted (g ∘ f)).map f = (μ.map f).tilted g := by
+  ext s hs
+  rw [Measure.map_apply hf hs, tilted_apply' _ _ (hf hs), tilted_apply' _ _ hs,
+    setLIntegral_map hs (by fun_prop) hf, integral_map hf.aemeasurable (by fun_prop)]
+  rfl
+
+/-- Pushing forward the softmax of scores pulled back along `f` weights each point by its number
+of preimages: a point with more copies gets more mass. -/
+theorem map_count_tilted_comp_real_singleton {β : Type*} [MeasurableSpace β] [Fintype β]
+    [MeasurableSingletonClass β] (f : β → α) (g : α → ℝ) (a : α) :
+    ((Measure.count.tilted (g ∘ f)).map f).real {a} =
+      (f ⁻¹' {a}).ncard * Real.exp (g a) / ∑ b, (f ⁻¹' {b}).ncard * Real.exp (g b) := by
+  have hcount (b : α) : (Measure.count.map f).real {b} = (f ⁻¹' {b}).ncard := by
+    rw [measureReal_def, Measure.map_apply .of_discrete (measurableSet_singleton b),
+      Measure.count_apply_finite _ (Set.toFinite _), ENNReal.toReal_natCast,
+      Set.ncard_eq_toFinset_card _ (Set.toFinite _)]
+  rw [map_tilted_comp .of_discrete .of_discrete, tilted_real_singleton]
+  simp_rw [hcount]
 
 /-- On a finite type, a probability measure is the tilt of `ν` by `f` exactly when its atoms are
 proportional to those of `ν` reweighted by the exponential of `f`. -/
