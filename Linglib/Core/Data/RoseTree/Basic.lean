@@ -19,8 +19,7 @@ quotient of this type by `RoseTree.Perm` (`UnorderedTree`).
 
 The type is nested through `List`, so its recursor takes one motive for trees and one for lists.
 `RoseTree.rec'` is the induction principle with the single hypothesis `∀ c ∈ cs, motive c`, and
-`RoseTree.fold` is the catamorphism from which `map`, the counts and the frontier are defined. A
-function that satisfies the node equation of a fold is that fold (`RoseTree.fold_unique`).
+`RoseTree.fold` is the catamorphism from which `map`, the counts and the frontier are defined.
 
 ## Main definitions
 
@@ -164,12 +163,6 @@ theorem fold_hom (h : β → γ) {f : α → List β → β} {g : α → List γ
 @[simp] theorem fold_node_eq_self (t : RoseTree α) : fold node t = t := by
   induction t with
   | node a cs ih => rw [fold_node, List.map_congr_left ih, List.map_id']
-
-/-- The universal property of `fold`: a function that satisfies the node equation of `fold f` is
-`fold f`. -/
-theorem fold_unique (f : α → List β → β) (h : RoseTree α → β)
-    (hyp : ∀ a cs, h (node a cs) = f a (cs.map h)) : fold f = h :=
-  funext fun t ↦ by rw [← fold_hom h hyp t, fold_node_eq_self]
 
 /-! ### Functoriality -/
 
