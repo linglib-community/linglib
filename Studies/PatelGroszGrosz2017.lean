@@ -110,7 +110,9 @@ theorem der_er_can_diverge {y : E} (hi : g i ∈ R g s) (hy : y ∈ R g s) (hne 
     ⟦DefiniteDescription.ofStrength .uniqueness R i⟧ g s ≠
       ⟦DefiniteDescription.ofStrength .familiarity R i⟧ g s := by
   obtain ⟨hw, hs⟩ := Schwarz2009.weak_eq_none_strong_eq_some hi hy hne
-  exact fun h ↦ Option.some_ne_none _ ((hs.symm.trans h.symm).trans hw)
+  intro h
+  have hm : g i ∈ ⟦DefiniteDescription.ofStrength .uniqueness R i⟧ g s := h ▸ hs
+  exact Part.notMem_none _ (hw ▸ hm)
 
 theorem der_eq_er_of_unique (hUniq : ∀ y ∈ R g s, y = g i) :
     ⟦DefiniteDescription.ofStrength .familiarity R i⟧ g s =

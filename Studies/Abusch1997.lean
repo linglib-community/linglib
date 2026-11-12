@@ -53,7 +53,7 @@ variable {E W T : Type*}
 /-! ### De re interpretation across attitude contexts -/
 
 theorem simultaneous_deRe {C : Type*} (now : C → T) (rain : T → Set C) (A : Set C) (p : C) :
-    AscribesUnder A p (some ∘ now) (now p) rain ↔ ∀ q ∈ A, q ∈ rain (now q) :=
+    AscribesUnder A p (Part.some ∘ now) (now p) rain ↔ ∀ q ∈ A, q ∈ rain (now q) :=
   ascribesUnder_comp_some_apply
 
 /-! ### The upper limit constraint

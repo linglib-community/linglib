@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Trivalent.Part
+public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Semantics.Reference.Character
 
 /-!
@@ -32,6 +32,8 @@ dynamic consumer that needs it.
 
 @[expose] public section
 
+open Presupposition
+
 /-- A definite denotes, at a context and a world, at most one individual. -/
 abbrev Definite (Ctx : Type*) (W : Type*) (E : Type*) := Ctx → W → Part E
 
@@ -44,26 +46,23 @@ undefined where the definite denotes nothing and the value of `scope` at its ref
 elsewhere. -/
 noncomputable def toTrivalent (nd : Definite Ctx W E) (scope : E → W → Prop) (c : Ctx) :
     W → Trivalent :=
-  fun w ↦ Trivalent.ofPart ((nd c w).map (scope · w))
+  presupOfReferent (nd c) scope
 
 section Values
 
 variable {nd : Definite Ctx W E} {scope : E → W → Prop} {c : Ctx} {w : W}
 
 @[simp] theorem toTrivalent_eq_undefined_iff :
-    nd.toTrivalent scope c w = .undefined ↔ ¬ (nd c w).Dom := by
-  simp [toTrivalent]
+    nd.toTrivalent scope c w = .undefined ↔ ¬ (nd c w).Dom :=
+  presupOfReferent_eq_undefined_iff
 
 @[simp] theorem toTrivalent_eq_true_iff :
-    nd.toTrivalent scope c w = .true ↔ ∃ e ∈ nd c w, scope e w := by
-  simp only [toTrivalent, Trivalent.ofPart_eq_true_iff, Part.mem_map_iff, eq_iff_iff]
-  exact ⟨fun ⟨_, ⟨e, he, h⟩, ha⟩ ↦ ⟨e, he, h.2 ha⟩, fun ⟨e, he, h⟩ ↦ ⟨_, ⟨e, he, .rfl⟩, h⟩⟩
+    nd.toTrivalent scope c w = .true ↔ ∃ e ∈ nd c w, scope e w :=
+  presupOfReferent_eq_true_iff
 
 @[simp] theorem toTrivalent_eq_false_iff :
-    nd.toTrivalent scope c w = .false ↔ ∃ e ∈ nd c w, ¬ scope e w := by
-  simp only [toTrivalent, Trivalent.ofPart_eq_false_iff, Part.mem_map_iff, eq_iff_iff]
-  exact ⟨fun ⟨_, ⟨e, he, h⟩, ha⟩ ↦ ⟨e, he, fun hs ↦ ha (h.1 hs)⟩,
-    fun ⟨e, he, h⟩ ↦ ⟨_, ⟨e, he, .rfl⟩, h⟩⟩
+    nd.toTrivalent scope c w = .false ↔ ∃ e ∈ nd c w, ¬ scope e w :=
+  presupOfReferent_eq_false_iff
 
 end Values
 

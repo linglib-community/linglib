@@ -429,8 +429,8 @@ example : ∅ ∈ English.Determiners.this.denote (fun _ _ _ ↦ True) 0 ctx nea
   refine DemonstrativeDeterminer.mem_denote.2
     ⟨DemonstrativeDeterminer.mem_vicinity.2 ⟨{0}, ?_, trivial⟩, ?_⟩
   · simp [English.Determiners.this, Person.participants_mem_participantSets_first, ctx]
-  · exact Part.mem_ofOption.2 ((iota_eq_some_iff (s := {x : Finset (Fin 2) | True ∧ x = g₀ 0})).2
-      ⟨⟨trivial, rfl⟩, fun _ hx ↦ hx.2⟩)
+  · exact (mem_iota (s := {x : Finset (Fin 2) | True ∧ x = g₀ 0})).2
+      ⟨⟨trivial, rfl⟩, fun _ hx ↦ hx.2⟩
 
 /-- With no vicinities, even a demonstrative without a deictic contrast denotes nothing. -/
 example (dem : DemonstrativeDeterminer) :

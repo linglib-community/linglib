@@ -38,7 +38,7 @@ Whether ∩ is defined for a nominal is a proposition `down` that the consumer s
 (`Semantics/Reference/Kind.lean`). It depends on the nominal's denotation and not on its number
 and countability alone, since a plural property anchored to particular entities has no kind. The
 nominal's number is supplied too, since blocking applies only within a determiner's domain.
-`Kind.down_isSome_of_supClosed` and `IsAntichain.iota_isGreatest_eq_none` decide whether ∩ has a
+`Kind.down_dom_of_supClosed` and `IsAntichain.iota_isGreatest_eq_none` decide whether ∩ has a
 value for cumulative extensions and for extensions of two or more atoms.
 
 ## References
@@ -138,21 +138,21 @@ prevent (`not_lexicalizes_demonstrative`, `not_lexicalizes_possessive`). An inde
 ∃, and no determiner is ∩. -/
 def Lexicalizes : Entry → CovertShift → Prop
   | .article a, .iota => ∀ (E W : Type) (R : Restrictor E W) (d : ℕ),
-      (bare R).toDefinite ∈ a.denotations R d
+      ⟦bare R⟧ ∈ a.denotations R d
   | .article a, .iotaAnaphoric => ∀ (E W : Type) (R : Restrictor E W) (d : ℕ),
-      (anaphoric R d).toDefinite ∈ a.denotations R d
+      ⟦anaphoric R d⟧ ∈ a.denotations R d
   | .article a, .exists => ∃ d ∈ a.definiteness, d < .definite
   | .demonstrative dem, .iota => ∀ (E W P T : Type) [PartialOrder E]
       (c : Kaplan.Context W E P T) (χ : SetRel E E) (R : Restrictor E W) (d : ℕ),
-      dem.denote R d c χ = (bare R).toDefinite
+      dem.denote R d c χ = ⟦bare R⟧
   | .demonstrative dem, .iotaAnaphoric => ∀ (E W P T : Type) [PartialOrder E]
       (c : Kaplan.Context W E P T) (χ : SetRel E E) (R : Restrictor E W) (d : ℕ),
-      dem.denote R d c χ = (anaphoric R d).toDefinite
+      dem.denote R d c χ = ⟦anaphoric R d⟧
   | .possessive p, .iota => ∀ (E W : Type) (R : Restrictor E W) (possessor : (ℕ → E) → W → E)
-      (rel : (ℕ → E) → W → E → E → Prop), p.denote R possessor rel = (bare R).toDefinite
+      (rel : (ℕ → E) → W → E → E → Prop), p.denote R possessor rel = ⟦bare R⟧
   | .possessive p, .iotaAnaphoric => ∀ (E W : Type) (R : Restrictor E W) (d : ℕ)
       (possessor : (ℕ → E) → W → E) (rel : (ℕ → E) → W → E → E → Prop),
-      p.denote R possessor rel = (anaphoric R d).toDefinite
+      p.denote R possessor rel = ⟦anaphoric R d⟧
   | _, _ => False
 
 /-- The restrictor true of everything, with two satisfiers in `Bool`. -/
@@ -160,13 +160,13 @@ private abbrev top : Restrictor Bool Unit := fun _ _ ↦ Set.univ
 
 /-- With two satisfiers the weak article is undefined and the strong one picks the indexed
 entity. -/
-private theorem unique_ne_anaphoric : (unique top).toDefinite ≠ (anaphoric top 0).toDefinite := by
+private theorem unique_ne_anaphoric : ⟦unique top⟧ ≠ ⟦anaphoric top 0⟧ := by
   intro h
-  have h' := Part.ofOption_injective (congrFun (congrFun h fun _ ↦ true) ())
-  rw [DefiniteDescription.denote_unique_eq_none_of_ne top _ _ (x := true) (y := false) trivial
-      trivial (by decide)] at h'
-  exact Option.some_ne_none true
-    (h'.trans ((DefiniteDescription.denote_anaphoric_eq_some_iff top 0 _ ()).2 ⟨trivial, rfl⟩)).symm
+  have hm : true ∈ ⟦anaphoric top 0⟧ (fun _ ↦ true) () :=
+    (DefiniteDescription.mem_denote_anaphoric top 0 _ ()).2 ⟨trivial, rfl⟩
+  rw [← h, DefiniteDescription.denote_unique_eq_none_of_ne top _ _ (x := true) (y := false)
+    trivial trivial (by decide)] at hm
+  exact Part.notMem_none _ hm
 
 /-- A context of utterance on the one-element types. -/
 private abbrev unitContext : Kaplan.Context Unit Unit Unit Unit := ⟨(), (), (), (), ()⟩
@@ -191,20 +191,18 @@ theorem lexicalizes_article_iotaAnaphoric_iff (a : Article) :
 vicinity, it denotes nothing and the definite does. -/
 theorem not_lexicalizes_demonstrative (dem : DemonstrativeDeterminer) (τ : CovertShift) :
     ¬ (demonstrative dem).Lexicalizes τ := by
-  have key : ∀ k : DefiniteDescription Unit Unit, (⟦k⟧ (fun _ ↦ ()) ()).isSome →
-      dem.denote (fun _ _ _ ↦ True) 0 unitContext ⊥ ≠ k.toDefinite := fun k hk h ↦ by
-    have hd : (k.toDefinite (fun _ ↦ ()) ()).Dom := (Part.ofOption_dom _).2 hk
-    rw [← h] at hd
-    obtain ⟨hv, -⟩ := hd
+  have key : ∀ k : DefiniteDescription Unit Unit, (⟦k⟧ (fun _ ↦ ()) ()).Dom →
+      dem.denote (fun _ _ _ ↦ True) 0 unitContext ⊥ ≠ ⟦k⟧ := fun k hk h ↦ by
+    rw [← h] at hk
+    obtain ⟨hv, -⟩ := hk
     simp at hv
   cases τ
   · exact id
   · exact fun h ↦ key (bare fun _ _ _ ↦ True)
-      ((DefiniteDescription.denote_isSome_iff _ _ _).2 ⟨(), trivial, fun _ _ ↦ rfl⟩)
+      ((DefiniteDescription.denote_dom _ _ _).2 ⟨(), trivial, fun _ _ ↦ rfl⟩)
       (h Unit Unit Unit Unit unitContext ⊥ _ 0)
   · exact fun h ↦ key (anaphoric (fun _ _ _ ↦ True) 0)
-      (Option.isSome_iff_exists.2
-        ⟨(), (DefiniteDescription.denote_anaphoric_eq_some_iff _ 0 _ ()).2 ⟨trivial, rfl⟩⟩)
+      ((DefiniteDescription.denote_anaphoric_dom _ _ _ _).2 trivial)
       (h Unit Unit Unit Unit unitContext ⊥ _ 0)
   · exact id
 
@@ -212,19 +210,18 @@ theorem not_lexicalizes_demonstrative (dem : DemonstrativeDeterminer) (τ : Cove
 where the definite is not. -/
 theorem not_lexicalizes_possessive (p : PossessiveDeterminer) (τ : CovertShift) :
     ¬ (possessive p).Lexicalizes τ := by
-  have key : ∀ k : DefiniteDescription Unit Unit, (⟦k⟧ (fun _ ↦ ()) ()).isSome →
-      p.denote (fun _ _ ↦ Set.univ) (fun _ _ ↦ ()) (fun _ _ _ _ ↦ False) ≠ k.toDefinite :=
+  have key : ∀ k : DefiniteDescription Unit Unit, (⟦k⟧ (fun _ ↦ ()) ()).Dom →
+      p.denote (fun _ _ ↦ Set.univ) (fun _ _ ↦ ()) (fun _ _ _ _ ↦ False) ≠ ⟦k⟧ :=
     fun k hk h ↦ by
-      have h' := Part.ofOption_injective (congrFun (congrFun h fun _ ↦ ()) ())
-      rw [← h', DefiniteDescription.denote_possessive_isSome_iff] at hk
+      rw [← h, PossessiveDeterminer.denote_apply, DefiniteDescription.denote_possessive_dom] at hk
       simp at hk
   cases τ
   · exact id
   · exact fun h ↦ key (bare fun _ _ _ ↦ True)
-      ((DefiniteDescription.denote_isSome_iff _ _ _).2 ⟨(), trivial, fun _ _ ↦ rfl⟩)
+      ((DefiniteDescription.denote_dom _ _ _).2 ⟨(), trivial, fun _ _ ↦ rfl⟩)
       (h Unit Unit _ _ _)
   · exact fun h ↦ key (anaphoric (fun _ _ _ ↦ True) 0)
-      ((DefiniteDescription.denote_anaphoric_isSome_iff _ _ _ _).2 trivial) (h Unit Unit _ 0 _ _)
+      ((DefiniteDescription.denote_anaphoric_dom _ _ _ _).2 trivial) (h Unit Unit _ 0 _ _)
   · exact id
 
 theorem lexicalizes_iota_iff (e : Entry) : e.Lexicalizes .iota ↔ e.Marks .uniqueness := by

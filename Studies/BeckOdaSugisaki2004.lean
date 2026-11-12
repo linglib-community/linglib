@@ -96,12 +96,12 @@ theorem pos_comparedTo (μ : Entity → D) (x y : Entity) :
 /-! ### Yori-clauses denote individuals -/
 
 /-- `theC C P` is the unique `P`-individual of the contextual domain `C` (54). -/
-noncomputable def theC (C : Set Entity) (P : Entity → Prop) : Option Entity :=
+noncomputable def theC (C : Set Entity) (P : Entity → Prop) : Part Entity :=
   iota {x | x ∈ C ∧ P x}
 
-theorem theC_eq_some_iff (C : Set Entity) (P : Entity → Prop) (y : Entity) :
-    theC C P = some y ↔ (y ∈ C ∧ P y) ∧ ∀ z, z ∈ C → P z → z = y := by
-  simp only [theC, iota_eq_some_iff, Set.mem_ofPred_eq, and_imp]
+theorem mem_theC (C : Set Entity) (P : Entity → Prop) (y : Entity) :
+    y ∈ theC C P ↔ (y ∈ C ∧ P y) ∧ ∀ z, z ∈ C → P z → z = y := by
+  simp only [theC, mem_iota, Set.mem_ofPred_eq, and_imp]
 
 -- (41a)
 theorem isGreatest_card_of_isGreatest {Atom : Type*} {P : Finset Atom → Prop}
@@ -133,9 +133,9 @@ theorem not_er_nobody [NoMaxOrder D] (bought : Set Entity) (μ : Entity → D) (
 ((86), (88c)). -/
 theorem yori_negative_entails_unbought (C : Set Entity) (bought : Entity → Prop)
     (μ : Entity → D) (x : Entity)
-    (h : ∃ y, theC C (fun z => ¬ bought z) = some y ∧ pos μ (μ y) x) :
+    (h : ∃ y ∈ theC C (fun z => ¬ bought z), pos μ (μ y) x) :
     ∃ y ∈ C, ¬ bought y :=
-  let ⟨y, hy, _⟩ := h; ⟨y, ((theC_eq_some_iff _ _ _).1 hy).1⟩
+  let ⟨y, hy, _⟩ := h; ⟨y, ((mem_theC _ _ _).1 hy).1⟩
 
 /-- A universally quantified comparative (95a) can hold when no book was read by every boy, lacking
 the uniqueness presupposition of the *yori*-clause ((94), (95)). -/

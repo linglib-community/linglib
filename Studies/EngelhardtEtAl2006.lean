@@ -83,7 +83,7 @@ inductive NounModifier
 /-- The property an intersective modifier meets its noun with: for a prepositional phrase, being
 located in a part of an object of the kind that the preposition marks as a place. -/
 def NounModifier.property (D : Display) : NounModifier → Fin 5 → Prop
-  | .pp p k, i => ∃ ℓ j, (D i).ground = some (ℓ, j) ∧ (ℓ, .place) ∈ Case.cells p.functions ∧
+  | .pp p k, i => ∃ ℓ j, (ℓ, j) ∈ (D i).ground ∧ (ℓ, .place) ∈ Case.cells p.functions ∧
       (D j).kind = k
   | .other, i => (D 0).ground.map Prod.snd ≠ some i
 
@@ -127,10 +127,10 @@ variable (D : Display) (s : Finset (Fin 5)) (r : Fin 5) (d : Description)
 
 /-- *The* with the description, the weak article of [schwarz-2009], picks out `r` in the resource
 situation `s`. -/
-def Identifies : Prop := ⟦DefiniteDescription.unique (d.restrictor D)⟧ default s = some r
+def Identifies : Prop := r ∈ ⟦DefiniteDescription.unique (d.restrictor D)⟧ default s
 
 instance : Decidable (Identifies D s r d) :=
-  decidable_of_iff _ (DefiniteDescription.denote_unique_eq_some_iff _ _ _).symm
+  decidable_of_iff _ (DefiniteDescription.mem_denote_unique _ _ _).symm
 
 /-- The description identifies `r` in `s` with a modifier its bare noun does not need. -/
 def OverDescribes : Prop := d.modifier.isSome ∧ Identifies D s r d ∧ Identifies D s r d.bare
@@ -291,11 +291,11 @@ theorem referentiallySupported_iff_exists_observesQuantity (D : Display) (d : De
       (d.modifier.map fun m ↦ {i | m.property D i}) ↔
       ∃ r, ObservesQuantity D univ r d := by
   have h (d : Description) (r : Fin 5) :
-      Identifies D univ r d ↔ iota {i | d.property D i} = some r := by
+      Identifies D univ r d ↔ r ∈ iota {i | d.property D i} := by
     unfold Identifies Description.restrictor
     simp
   rcases d with ⟨k, _ | m⟩
-  · simp [ObservesQuantity, OverDescribes, h, Description.bare, Option.isSome_iff_exists]
+  · simp [ObservesQuantity, OverDescribes, h, Description.bare, Part.dom_iff_mem]
   · simp only [referentiallySupported_some_iff, ObservesQuantity, OverDescribes, h,
       Description.bare, Option.isSome_some, true_and, Option.map_some]
     exact exists_congr fun _ ↦ and_congr_right fun ha ↦

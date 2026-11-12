@@ -64,7 +64,7 @@ def chierchiaUnscrambled : Prop :=
 trace below negation. -/
 def chierchiaScrambled : Prop :=
   Quantifier.individual (Kind.down books)
-    (fun k : Unit → Option (Individual Book) ↦ Det.some (Kind.up k ()) read)ᶜ
+    (fun k : Unit → Part (Individual Book) ↦ Det.some (Kind.up k ()) read)ᶜ
 
 /-- Scrambling a kind over negation changes nothing, since a kind takes no scope, as a name
 takes none, so the kinds approach gives narrow scope at either position. -/
@@ -82,9 +82,9 @@ theorem books_example : krifkaScrambled ∧ ¬ krifkaUnscrambled ∧ ¬ chierchi
   refine ⟨⟨Individual.atom .unfinished, trivial, not_read_unfinished⟩,
     not_not.2 ⟨Individual.atom .finished, trivial, read_finished⟩, ?_⟩
   rw [chierchiaScrambled_iff, chierchiaUnscrambled, not_not]
-  have hd : Kind.down books () = some ⟨Set.univ, Set.univ_nonempty⟩ :=
-    Kind.down_eq_some_iff.2 ⟨trivial, fun x _ ↦ (Set.subset_univ x.1 : x ≤ _)⟩
-  rw [Kind.up_apply_of_eq_some hd]
+  have hd : ⟨Set.univ, Set.univ_nonempty⟩ ∈ Kind.down books () :=
+    Kind.mem_down.2 ⟨trivial, fun x _ ↦ (Set.subset_univ x.1 : x ≤ _)⟩
+  rw [Kind.up_apply_of_mem hd]
   exact ⟨Individual.atom .finished, (Set.subset_univ _ : Individual.atom Book.finished ≤ _),
     read_finished⟩
 

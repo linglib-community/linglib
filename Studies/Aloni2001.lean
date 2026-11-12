@@ -302,7 +302,7 @@ def DeReUnder (C : Set (W → D)) (R : Set W) (y : D) (P : D → Set W) (w : W) 
 /-- A de re report under a cover holds when the believer ascribes the property to the res under
 one of the cover's concepts, in the sense of [lewis-1979-attitudes] with worlds as centers. -/
 theorem deReUnder_iff_exists_ascribesUnder {R : Set W} {y : D} {P : D → Set W} {w : W} :
-    DeReUnder C R y P w ↔ ∃ c ∈ C, AscribesUnder R w (some ∘ c) y P := by
+    DeReUnder C R y P w ↔ ∃ c ∈ C, AscribesUnder R w (Part.some ∘ c) y P := by
   unfold DeReUnder
   exact exists_congr fun _ ↦
     and_congr_right' (ascribesUnder_comp_some.trans (and_congr_left' eq_comm)).symm

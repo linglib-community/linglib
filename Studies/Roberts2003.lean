@@ -54,7 +54,7 @@ def candidates (C : State W V M) (desc : W → M → Prop) : Set V :=
 /-- A referent is informationally unique for a descriptive content in a context when it is the
 iota of the familiar referents the context entails to have the content (32). -/
 def InformationallyUnique (C : State W V M) (desc : W → M → Prop) (i : V) : Prop :=
-  iota (candidates C desc) = some i
+  i ∈ iota (candidates C desc)
 
 /-- A referent is informationally unique when it is familiar and entailed to have the content,
 and every familiar referent entailed to have the content is that referent (32). -/
@@ -62,7 +62,7 @@ theorem informationallyUnique_iff :
     InformationallyUnique C desc i ↔
       (State.Familiar C i ∧ Entails C desc i) ∧
         ∀ k, State.Familiar C k ∧ Entails C desc k → k = i :=
-  iota_eq_some_iff
+  mem_iota
 
 /-! ### Heim's Familiarity Condition -/
 
@@ -133,11 +133,11 @@ theorem strangeMen :
   have h0 : State.Familiar strangeMenContext 0 := familiar_iff.2 (.inl rfl)
   refine ⟨(FCP.admits_def_ _).2 ⟨h0, (supports_atomAt_iff h0).2 (entails_iff.2 (.inl ⟨rfl, ⟨⟩⟩))⟩,
     ⟨fun ⟨i, hi⟩ ↦ ?_, fun h ↦ absurd h (by decide)⟩, ⟨fun _ ↦ rfl, fun _ ↦ ?_⟩⟩
-  · have hne : iota (candidates strangeMenContext strangeMan) = none :=
+  · have hne : iota (candidates strangeMenContext strangeMan) = Part.none :=
       iota_eq_none_of_ne (e := 0) (e' := 1)
         ⟨familiar_iff.2 (.inl rfl), entails_iff.2 (.inl ⟨rfl, ⟨⟩⟩)⟩
         ⟨familiar_iff.2 (.inr rfl), entails_iff.2 (.inr ⟨rfl, ⟨⟩⟩)⟩ (by decide)
-    exact absurd (hne ▸ hi : (none : Option ℕ) = some i) (by simp)
+    exact absurd (hne ▸ hi : i ∈ (Part.none : Part ℕ)) (Part.notMem_none _)
   · refine informationallyUnique_iff.2 ⟨⟨h0, entails_iff.2 (.inl ⟨rfl, rfl⟩)⟩, ?_⟩
     rintro k ⟨-, hk⟩
     rcases entails_iff.1 hk with ⟨rfl, -⟩ | ⟨-, h⟩
@@ -158,8 +158,8 @@ def PronounPresupposes (C : State W V M) (desc : W → M → Prop) (sal : Set V)
 content and at least as salient as its antecedent. -/
 theorem pronounPresupposes_iff_iota {sal : Set V} {r : V → V → Prop} (hr : r i i) :
     PronounPresupposes C desc sal r i ↔
-      iota ({k ∈ sal | Entails C desc k} ∩ {k | r k i}) = some i := by
-  rw [iota_eq_some_iff]
+      i ∈ iota ({k ∈ sal | Entails C desc k} ∩ {k | r k i}) := by
+  rw [mem_iota]
   exact ⟨fun ⟨hi, h⟩ ↦ ⟨⟨hi, hr⟩, fun k ⟨⟨hk, hd⟩, hki⟩ ↦ h k hk hki hd⟩,
     fun ⟨⟨hi, _⟩, h⟩ ↦ ⟨hi, fun k hk hki hd ↦ h k ⟨⟨hk, hd⟩, hki⟩⟩⟩
 

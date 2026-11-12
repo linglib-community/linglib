@@ -29,7 +29,6 @@ prominent ones'.
 
 ## Main declarations
 
-* `DefiniteDescription.toDefinite`: a description's `Definite`, its referent where it has one.
 * `DemonstrativeDeterminer.denote`: the demonstrative's `Definite`.
 * `Article.toDescriptions`, `Article.denotations`: an article's possible descriptions, one per
   admissible strength, and their `Definite`s; a syncretic article (English *the*) denotes both the
@@ -70,16 +69,6 @@ open scoped SetRel
 
 variable {E W : Type} (R : Restrictor E W) (d : ℕ) (possessor : (ℕ → E) → W → E)
   (rel : (ℕ → E) → W → E → E → Prop)
-
-/-! ### Descriptions as definite denotations -/
-
-/-- A description denotes the `Definite` that is its referent where it has one. -/
-noncomputable def DefiniteDescription.toDefinite (k : DefiniteDescription E W) :
-    Definite (ℕ → E) W E :=
-  fun g w ↦ ↑(⟦k⟧ g w)
-
-@[simp] theorem DefiniteDescription.toNominal_apply (k : DefiniteDescription E W) (g : ℕ → E)
-    (w : W) : k.toDefinite g w = ↑(⟦k⟧ g w) := rfl
 
 /-! ### The demonstrative determiner's denotation -/
 
@@ -122,7 +111,7 @@ index `d` where the indexed referent `g d` lies in its vicinity, and nothing els
 noncomputable def _root_.DemonstrativeDeterminer.denote (dem : DemonstrativeDeterminer) :
     Definite (ℕ → E) W E :=
   fun g w ↦ Part.assert (g d ∈ dem.vicinity c χ)
-    fun _ ↦ ↑(⟦DefiniteDescription.demonstrative R d⟧ g w)
+    fun _ ↦ ⟦DefiniteDescription.demonstrative R d⟧ g w
 
 /-- A demonstrative determiner denotes on every model, the restrictor, the index, the context of
 utterance and the vicinity relation being the Reader arguments of its domain. -/
@@ -137,7 +126,7 @@ its vicinity: deixis filters the referent and never selects it. -/
 @[simp] theorem _root_.DemonstrativeDeterminer.mem_denote {dem : DemonstrativeDeterminer}
     {g : ℕ → E} {s : W} {x : E} :
     x ∈ dem.denote R d c χ g s ↔
-      g d ∈ dem.vicinity c χ ∧ x ∈ (DefiniteDescription.anaphoric R d).toDefinite g s := by
+      g d ∈ dem.vicinity c χ ∧ x ∈ ⟦DefiniteDescription.anaphoric R d⟧ g s := by
   simp only [DemonstrativeDeterminer.denote, Part.mem_assert_iff, exists_prop]
   rfl
 
@@ -171,7 +160,7 @@ theorem _root_.Article.realizes_of_mem_toDescriptions (a : Article) (idx : ℕ)
 /-- The `Definite`s an article can denote are those of its descriptions. -/
 def _root_.Article.denotations (a : Article) (R : Restrictor E W) (idx : ℕ) :
     Set (Definite (ℕ → E) W E) :=
-  DefiniteDescription.toDefinite '' a.toDescriptions R idx
+  (⟦·⟧ : DefiniteDescription E W → Definite (ℕ → E) W E) '' a.toDescriptions R idx
 
 /-- An article denotes the set of its readings on every model, the restrictor and the index
 being the Reader arguments of its domain. -/
@@ -182,7 +171,7 @@ noncomputable instance : Denotes Article
 theorem _root_.Article.denotations_realized (a : Article) (idx : ℕ)
     (nd : Definite (ℕ → E) W E) (h : nd ∈ a.denotations R idx) :
     ∃ k : DefiniteDescription E W,
-      Determiner.Inventory.Realizes [.article a] k.kind ∧ nd = k.toDefinite := by
+      Determiner.Inventory.Realizes [.article a] k.kind ∧ nd = ⟦k⟧ := by
   obtain ⟨k, hk, rfl⟩ := h
   exact ⟨k, Article.realizes_of_mem_toDescriptions R a idx k hk, rfl⟩
 
@@ -194,7 +183,7 @@ quantified possessors see `Possession.PossNP`, which agrees with this descriptio
 possessor (`DefiniteDescription.possNP_iff_exists_mem_denote_possessive`). -/
 noncomputable def _root_.PossessiveDeterminer.denote (_p : PossessiveDeterminer) :
     Definite (ℕ → E) W E :=
-  (DefiniteDescription.possessive R possessor rel).toDefinite
+  ⟦DefiniteDescription.possessive R possessor rel⟧
 
 /-- A possessive determiner denotes on every model, the restrictor, the possessor and the
 possession relation being the Reader arguments of its domain. -/
@@ -205,7 +194,7 @@ noncomputable instance : Denotes PossessiveDeterminer
 
 @[simp]
 theorem _root_.PossessiveDeterminer.denote_apply (p : PossessiveDeterminer) (g : ℕ → E) (w : W) :
-    p.denote R possessor rel g w = ↑(⟦DefiniteDescription.possessive R possessor rel⟧ g w) := rfl
+    p.denote R possessor rel g w = ⟦DefiniteDescription.possessive R possessor rel⟧ g w := rfl
 
 theorem _root_.PossessiveDeterminer.denote_realized (p : PossessiveDeterminer) :
     Determiner.Inventory.Realizes [.possessive p]

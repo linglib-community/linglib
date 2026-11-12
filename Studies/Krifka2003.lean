@@ -126,8 +126,8 @@ theorem cum_pluralize_ofAtoms [DecidableEq Atom] (D : World → Set Atom) (w : W
 
 -- (77)
 theorem down_withNumber_one {a : Atom} (h : D w = {a}) :
-    Kind.down (withNumber 1 (ofAtoms D)) w = some {a} :=
-  Kind.down_eq_some_iff.2
+    {a} ∈ Kind.down (withNumber 1 (ofAtoms D)) w :=
+  Kind.mem_down.2
     ⟨⟨⟨Finset.singleton_nonempty a, by simp [h]⟩, Finset.card_singleton a⟩,
       fun _ hx ↦ Finset.coe_subset.1 (by simpa [h] using hx.1.2)⟩
 

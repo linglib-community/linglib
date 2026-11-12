@@ -97,10 +97,10 @@ variable {R : Restrictor E W} {d : ℕ} {g : ℕ → E} {s : W}
 /-- Over a restrictor with a satisfier besides the antecedent, the weak article fails uniqueness and
 the strong article returns the antecedent. -/
 theorem weak_eq_none_strong_eq_some {y : E} (hd : g d ∈ R g s) (hy : y ∈ R g s) (hne : y ≠ g d) :
-    ⟦DefiniteDescription.unique R⟧ g s = none ∧
-      ⟦DefiniteDescription.anaphoric R d⟧ g s = some (g d) :=
+    ⟦DefiniteDescription.unique R⟧ g s = Part.none ∧
+      g d ∈ ⟦DefiniteDescription.anaphoric R d⟧ g s :=
   ⟨DefiniteDescription.denote_unique_eq_none_of_ne R g s hd hy hne.symm,
-    (DefiniteDescription.denote_anaphoric_eq_some_iff R d g s).2 ⟨hd, rfl⟩⟩
+    (DefiniteDescription.mem_denote_anaphoric R d g s).2 ⟨hd, rfl⟩⟩
 
 end Contrast
 
@@ -119,8 +119,8 @@ def boundTo (l : Fin 2) : ℕ → Person := fun _ ↦ .ornithologist l
 /-- In (31) *#vom Mann* fails uniqueness at every lecture while *von dem Mann* denotes the bound
 ornithologist, (28) being the one-lecture case. -/
 theorem covarying_anaphora (l : Fin 2) :
-    ⟦DefiniteDescription.unique man⟧ (boundTo l) l = none ∧
-      ⟦DefiniteDescription.anaphoric man 1⟧ (boundTo l) l = some (.ornithologist l) :=
+    ⟦DefiniteDescription.unique man⟧ (boundTo l) l = Part.none ∧
+      (.ornithologist l) ∈ ⟦DefiniteDescription.anaphoric man 1⟧ (boundTo l) l :=
   weak_eq_none_strong_eq_some (y := .student) (.inl rfl) (.inr rfl) nofun
 
 /-! ### Two mechanisms of covariation (§2.3) -/
@@ -131,14 +131,14 @@ variable (f : W → E) (d : ℕ) (g : ℕ → E) (s : W)
 
 /-- The weak article over a restrictor true at each situation of one entity denotes that entity, as
 *Gewinner* does in (48). -/
-theorem weak_covaries : ⟦DefiniteDescription.unique fun _ s ↦ {f s}⟧ g s = some (f s) :=
-  iota_singleton (f s)
+theorem weak_covaries : f s ∈ ⟦DefiniteDescription.unique fun _ s ↦ {f s}⟧ g s :=
+  mem_iota_iff_eq_singleton.2 rfl
 
 /-- The strong article does not covary with the situation. At a fixed assignment it is defined over
 the same restrictor only at the situations whose entity is the antecedent. -/
-theorem strong_isSome_iff : (⟦DefiniteDescription.anaphoric (fun _ s ↦ {f s}) d⟧ g s).isSome ↔
+theorem strong_dom_iff : (⟦DefiniteDescription.anaphoric (fun _ s ↦ {f s}) d⟧ g s).Dom ↔
     g d = f s :=
-  DefiniteDescription.denote_anaphoric_isSome_iff _ d g s
+  DefiniteDescription.denote_anaphoric_dom _ d g s
 
 end Covariation
 
@@ -155,8 +155,8 @@ def relational : DefiniteDescription E W := .possessive ⊤ (fun g _ ↦ g d) fu
 
 /-- In relational anaphora the uniqueness requirement resurfaces, the description being defined iff
 the antecedent has exactly one relatum. -/
-theorem relational_isSome_iff : (⟦relational R d⟧ g s).isSome ↔ ∃! x, R (g d) x s :=
-  (DefiniteDescription.denote_possessive_isSome_iff ⊤ (fun g _ ↦ g d) _ g s).trans <| by simp
+theorem relational_dom_iff : (⟦relational R d⟧ g s).Dom ↔ ∃! x, R (g d) x s :=
+  (DefiniteDescription.denote_possessive_dom ⊤ (fun g _ ↦ g d) _ g s).trans <| by simp
 
 end Relational
 
@@ -191,7 +191,7 @@ theorem shift_of_le (hy : R y x y) (hys : y ≤ s) (hb : ¬ IsBot y) : x ∈ shi
 /-- The weak article over Π of a local relational noun whose referents are not part of their
 relata, as authors are not part of their books, is undefined. -/
 theorem unique_shift_eq_none (hR : IsLocal R) (hpart : ∀ y x s, R y x s → ¬ x ≤ y)
-    (g : ℕ → S) (s : S) : ⟦DefiniteDescription.unique (shift R)⟧ g s = none :=
+    (g : ℕ → S) (s : S) : ⟦DefiniteDescription.unique (shift R)⟧ g s = Part.none :=
   iota_eq_none_iff.2 fun ⟨x, ⟨y, hy, _⟩, _⟩ ↦ hpart y x y hy (hR y x y hy)
 
 end Shift
@@ -242,50 +242,50 @@ theorem not_le_of_authorOf {y x s : Sit} (h : authorOf y x s) : ¬ x ≤ y := by
 
 -- (58)
 theorem partWhole_bridging (g : ℕ → Sit) :
-    ⟦DefiniteDescription.unique (shift crisperOf)⟧ g fridge = some {.crisper} :=
-  (DefiniteDescription.denote_unique_eq_some_iff _ _ _).2
+    {.crisper} ∈ ⟦DefiniteDescription.unique (shift crisperOf)⟧ g fridge :=
+  (DefiniteDescription.mem_denote_unique _ _ _).2
     ⟨shift_of_le ⟨rfl, rfl, by decide⟩ le_rfl (by simp [fridge]), fun _ ⟨_, ⟨_, h, _⟩, _⟩ ↦ h⟩
 
 -- (231)
 theorem larger_situation (g : ℕ → Sit) :
-    ⟦DefiniteDescription.unique (shift mayorOf)⟧ g {.station} = some {.mayor} ∧
+    {.mayor} ∈ ⟦DefiniteDescription.unique (shift mayorOf)⟧ g {.station} ∧
       ¬ ({.mayor} : Sit) ≤ {.station} :=
-  ⟨(DefiniteDescription.denote_unique_eq_some_iff _ _ _).2
+  ⟨(DefiniteDescription.mem_denote_unique _ _ _).2
     ⟨⟨town, ⟨rfl, rfl, by decide⟩, Mereology.Overlap.of_le (by simp) (by decide)⟩,
       fun _ ⟨_, ⟨_, h, _⟩, _⟩ ↦ h⟩, by decide⟩
 
 -- (62), (275)
 theorem author_weak (g : ℕ → Sit) (s : Sit) :
-    ⟦DefiniteDescription.unique (shift authorOf)⟧ g s = none :=
+    ⟦DefiniteDescription.unique (shift authorOf)⟧ g s = Part.none :=
   unique_shift_eq_none isLocal_authorOf (fun _ _ _ ↦ not_le_of_authorOf) g s
 
 -- (275)
 theorem relational_anaphora :
-    ⟦relational authorOf 1⟧ (fun _ ↦ {.novel}) Finset.univ = some {.author} :=
-  (DefiniteDescription.denote_possessive_eq_some_iff _ _ _ _ _).2
+    {.author} ∈ ⟦relational authorOf 1⟧ (fun _ ↦ {.novel}) Finset.univ :=
+  (DefiniteDescription.mem_denote_possessive _ _ _ _ _).2
     ⟨⟨trivial, .inl ⟨rfl, rfl⟩, by decide⟩, fun _ ⟨_, h, _⟩ ↦
       h.elim And.right fun ⟨h, _⟩ ↦ absurd h (by decide)⟩
 
 /-- Antecedent to the coauthored novel, *von dem Autor* fails uniqueness, though *von dem Roman*
 picks out the novel. -/
 theorem relational_anaphora_coauthored :
-    ⟦relational authorOf 1⟧ (fun _ ↦ {.coauthoredNovel}) Finset.univ = none ∧
-      ⟦DefiniteDescription.anaphoric novel 1⟧ (fun _ ↦ {.coauthoredNovel}) Finset.univ =
-        some {.coauthoredNovel} :=
+    ⟦relational authorOf 1⟧ (fun _ ↦ {.coauthoredNovel}) Finset.univ = Part.none ∧
+      ({.coauthoredNovel} : Sit) ∈
+        ⟦DefiniteDescription.anaphoric novel 1⟧ (fun _ ↦ {.coauthoredNovel}) Finset.univ :=
   ⟨iota_eq_none_of_ne (e := {.author}) (e' := {.coauthor})
       ⟨trivial, .inr ⟨rfl, .inl rfl⟩, by decide⟩ ⟨trivial, .inr ⟨rfl, .inr rfl⟩, by decide⟩
       (by decide),
-    (DefiniteDescription.denote_anaphoric_eq_some_iff _ _ _ _).2 ⟨.inr rfl, rfl⟩⟩
+    (DefiniteDescription.mem_denote_anaphoric _ _ _ _).2 ⟨.inr rfl, rfl⟩⟩
 
 -- (231)
 theorem larger_situation_strong :
-    ⟦relational mayorOf 1⟧ (fun _ ↦ {.station}) Finset.univ = none :=
+    ⟦relational mayorOf 1⟧ (fun _ ↦ {.station}) Finset.univ = Part.none :=
   iota_eq_none_iff.2 fun ⟨_, ⟨_, h, _⟩, _⟩ ↦ absurd h (by decide)
 
 -- (58), §6.4.1
 theorem partWhole_bridging_strong :
-    ⟦relational crisperOf 1⟧ (fun _ ↦ fridge) fridge = some {.crisper} :=
-  (DefiniteDescription.denote_possessive_eq_some_iff _ _ _ _ _).2
+    {.crisper} ∈ ⟦relational crisperOf 1⟧ (fun _ ↦ fridge) fridge :=
+  (DefiniteDescription.mem_denote_possessive _ _ _ _ _).2
     ⟨⟨trivial, rfl, rfl, by decide⟩, fun _ ⟨_, _, h, _⟩ ↦ h⟩
 
 /-! ### The examples -/
@@ -317,16 +317,16 @@ namespace Scenario
 /-- The weak article is available when its description is defined, over a relational noun through
 Π at the train station's situation. -/
 def WeakAvailable : Scenario → Prop
-  | plain u _ => (⟦DefiniteDescription.unique (plainNoun u)⟧ (fun _ ↦ 0) ()).isSome
+  | plain u _ => (⟦DefiniteDescription.unique (plainNoun u)⟧ (fun _ ↦ 0) ()).Dom
   | relational p _ =>
-      (⟦DefiniteDescription.unique (shift (relationalNoun p))⟧ (fun _ ↦ ∅) {.station}).isSome
+      (⟦DefiniteDescription.unique (shift (relationalNoun p))⟧ (fun _ ↦ ∅) {.station}).Dom
 
 /-- The strong article is available when an antecedent makes its index familiar (290b) and its
 description is then defined, over a relational noun as relational anaphora (309). -/
 def StrongAvailable : Scenario → Prop
-  | plain u a => a = true ∧ (⟦DefiniteDescription.anaphoric (plainNoun u) 1⟧ (fun _ ↦ 0) ()).isSome
+  | plain u a => a = true ∧ (⟦DefiniteDescription.anaphoric (plainNoun u) 1⟧ (fun _ ↦ 0) ()).Dom
   | relational p r =>
-      (⟦Schwarz2009.relational (relationalNoun p) 1⟧ (fun _ ↦ antecedentOf p r) Finset.univ).isSome
+      (⟦Schwarz2009.relational (relationalNoun p) 1⟧ (fun _ ↦ antecedentOf p r) Finset.univ).Dom
 
 /-- An article strength is available when its article is. -/
 def Available (sc : Scenario) : DefiniteDescription.Strength → Prop
@@ -350,29 +350,29 @@ def predicted (sc : Scenario) : DefiniteDescription.Strength → Bool
   | .familiarity => sc.strong
 
 theorem weakAvailable_iff : ∀ sc : Scenario, sc.WeakAvailable ↔ sc.weak = true
-  | plain true _ => iff_of_true ((DefiniteDescription.denote_unique_isSome_iff _ _ _).2
+  | plain true _ => iff_of_true ((DefiniteDescription.denote_unique_dom _ _ _).2
       ⟨0, .inl rfl, fun _ h ↦ h.resolve_right fun ⟨h, _⟩ ↦ nomatch h⟩) rfl
   | plain false _ => iff_of_false (by
-      show ¬ (⟦DefiniteDescription.unique (plainNoun false)⟧ (fun _ ↦ 0) ()).isSome
+      show ¬ (⟦DefiniteDescription.unique (plainNoun false)⟧ (fun _ ↦ 0) ()).Dom
       rw [DefiniteDescription.denote_unique_eq_none_of_ne _ _ () (x := 0) (y := 1) (.inl rfl)
         (.inr ⟨rfl, rfl⟩) (by decide)]
-      exact Bool.false_ne_true) Bool.false_ne_true
+      exact Part.not_none_dom) Bool.false_ne_true
   | relational true _ => iff_of_true (by
-      show (⟦DefiniteDescription.unique (shift mayorOf)⟧ (fun _ ↦ ∅) {.station}).isSome
-      rw [(larger_situation _).1]; rfl) rfl
+      show (⟦DefiniteDescription.unique (shift mayorOf)⟧ (fun _ ↦ ∅) {.station}).Dom
+      exact Part.dom_iff_mem.2 ⟨_, (larger_situation _).1⟩) rfl
   | relational false _ => iff_of_false (by
-      show ¬ (⟦DefiniteDescription.unique (shift authorOf)⟧ (fun _ ↦ ∅) {.station}).isSome
-      rw [author_weak]; exact Bool.false_ne_true) Bool.false_ne_true
+      show ¬ (⟦DefiniteDescription.unique (shift authorOf)⟧ (fun _ ↦ ∅) {.station}).Dom
+      rw [author_weak]; exact Part.not_none_dom) Bool.false_ne_true
 
 theorem strongAvailable_iff : ∀ sc : Scenario, sc.StrongAvailable ↔ sc.strong = true
   | plain u a => by
-    show a = true ∧ (⟦DefiniteDescription.anaphoric (plainNoun u) 1⟧ (fun _ ↦ 0) ()).isSome ↔
+    show a = true ∧ (⟦DefiniteDescription.anaphoric (plainNoun u) 1⟧ (fun _ ↦ 0) ()).Dom ↔
       a = true
-    rw [DefiniteDescription.denote_anaphoric_isSome_iff]
+    rw [DefiniteDescription.denote_anaphoric_dom]
     exact and_iff_left (.inl rfl)
   | relational p r => by
     have h : ({.station} : Sit) ≠ town := by decide
-    simp only [StrongAvailable, relational_isSome_iff, strong]
+    simp only [StrongAvailable, relational_dom_iff, strong]
     cases p <;> cases r <;> simp [relationalNoun, antecedentOf, mayorOf, authorOf, h]
 
 theorem available_iff (sc : Scenario) : ∀ p, sc.Available p ↔ sc.predicted p = true

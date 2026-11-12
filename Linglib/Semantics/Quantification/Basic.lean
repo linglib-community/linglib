@@ -76,13 +76,17 @@ theorem the_iff : the A B ↔ (∃! x, x ∈ A) ∧ A ⊆ B := by
 
 theorem the_iff_exists_mem_iota : the A B ↔ ∃ x ∈ iota A, x ∈ B :=
   exists_congr fun x ↦ and_congr_left' <|
-    Set.ext_iff.symm.trans <| eq_comm.trans (iota_isPartialInv x A).symm
+    Set.ext_iff.symm.trans mem_iota_iff_eq_singleton.symm
 
-/-- *The `A`* is the lift of `iota A` where `iota A` is defined, and the empty quantifier
-elsewhere ([partee-1987], §3.2). -/
-theorem the_eq_elim (A : Set α) : the A = (iota A).elim ⊥ individual :=
-  funext fun _ ↦ propext <| the_iff_exists_mem_iota.trans <| by
-    cases iota A <;> simp [individual]
+/-- *The `A`* is the lift of `iota A` where `iota A` is defined ([partee-1987], §3.2). -/
+theorem the_eq_individual {a : α} (h : a ∈ iota A) : the A = individual a :=
+  funext fun B ↦ propext <| the_iff_exists_mem_iota.trans
+    ⟨fun ⟨_, hx, hB⟩ ↦ Part.mem_unique h hx ▸ hB, fun hB ↦ ⟨a, h, hB⟩⟩
+
+/-- *The `A`* is the empty quantifier where `iota A` is undefined ([partee-1987], §3.2). -/
+theorem the_eq_bot (h : ¬ (iota A).Dom) : the A = ⊥ :=
+  funext fun _ ↦ propext <| the_iff_exists_mem_iota.trans
+    ⟨fun ⟨_, hx, _⟩ ↦ h (Part.dom_iff_mem.2 ⟨_, hx⟩), False.elim⟩
 
 theorem every_iff_le : every A B ↔ A ≤ B := .rfl
 

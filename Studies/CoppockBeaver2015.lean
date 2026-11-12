@@ -360,7 +360,7 @@ open Classical in
 /-- Partee's *ident* applied to the individual-denoting Fregean entry yields the property of
 being the unique `P`, undefined when there is none (Table 2). -/
 noncomputable def identIota (P : (E → Trivalent)) : (E → Trivalent) :=
-  fun x ↦ (_root_.iota {y | P y = .true}).elim .undefined fun j ↦ ofProp (x = j)
+  fun x ↦ bindPart (_root_.iota {y | P y = .true}) fun j ↦ ofProp (x = j)
 
 theorem presupposesUniqueness_the [DecidablePred (WeakUnique (E := E))] :
     PresupposesUniqueness (the (E := E)) :=
@@ -414,9 +414,7 @@ theorem presupposesExistence_be_theFregeanGQ :
 theorem identIota_ne_undefined_iff {P : (E → Trivalent)} {x : E} :
     identIota P x ≠ .undefined ↔ ∃! y, P y = .true := by
   classical
-  refine Iff.trans ?_ (_root_.iota_isSome_iff (s := {y | P y = .true}))
-  rw [identIota]
-  cases _root_.iota {y | P y = .true} <;> simp
+  exact (bindPart_ne_undefined_iff fun _ ↦ ofProp_ne_undefined).trans _root_.iota_dom
 
 -- Table 2
 theorem presupposesUniqueness_identIota : PresupposesUniqueness (identIota (E := E)) :=
@@ -532,16 +530,16 @@ end Derivations
 /-! ### Existence in argument position -/
 
 /-- The iota shift (84) returns the unique satisfier, or the undefined individual. -/
-noncomputable def iota (P : (E → Trivalent)) : Option E := _root_.iota {x | P x = .true}
+noncomputable def iota (P : (E → Trivalent)) : Part E := _root_.iota {x | P x = .true}
 
-theorem iota_isSome_iff (P : (E → Trivalent)) : (iota P).isSome ↔ ∃! x, P x = .true :=
-  _root_.iota_isSome_iff
+theorem iota_dom (P : (E → Trivalent)) : (iota P).Dom ↔ ∃! x, P x = .true :=
+  _root_.iota_dom
 
-theorem iota_eq_none_iff (P : (E → Trivalent)) : iota P = none ↔ ¬ ∃! x, P x = .true := by
-  rw [← Option.not_isSome_iff_eq_none, iota_isSome_iff]
+theorem iota_eq_none_iff (P : (E → Trivalent)) : iota P = Part.none ↔ ¬ ∃! x, P x = .true := by
+  rw [Part.eq_none_iff', iota_dom]
 
 -- (14)
-theorem iota_false : iota (fun _ ↦ .false : (E → Trivalent)) = none :=
+theorem iota_false : iota (fun _ ↦ .false : (E → Trivalent)) = Part.none :=
   (iota_eq_none_iff _).2 fun ⟨_, hx, _⟩ ↦ by simp at hx
 
 theorem iota_the [DecidablePred (WeakUnique (E := E))] (P : (E → Trivalent)) :
@@ -555,9 +553,8 @@ theorem iota_the [DecidablePred (WeakUnique (E := E))] (P : (E → Trivalent)) :
 -- (87), (86)
 theorem elim_iota_ne_undefined_iff (P : (E → Trivalent)) (f : E → Trivalent)
     (hf : ∀ x, f x ≠ .undefined) :
-    (iota P).elim .undefined f ≠ .undefined ↔ ∃! x, P x = .true := by
-  rw [← iota_isSome_iff]
-  cases iota P <;> simp [hf]
+    bindPart (iota P) f ≠ .undefined ↔ ∃! x, P x = .true :=
+  (bindPart_ne_undefined_iff hf).trans (iota_dom P)
 
 /-- The existential shift (85) asserts a common satisfier of restrictor and scope. -/
 noncomputable def ex (P Q : (E → Trivalent)) : Trivalent :=
@@ -577,22 +574,20 @@ def scopeInside (T : E → E → Trivalent) (Q : (E → Trivalent) → Trivalent
 -- §3.2
 theorem not_update_dom_iota {C : Set W} {π : W → (E → Trivalent)} (G : W → E → Trivalent) {w : W}
     (hw : w ∈ C) (h : ¬ ∃! x, π w x = .true) :
-    ¬ (CCP.Partial.ofTrivalent (fun w ↦ (iota (π w)).elim .undefined (G w)) C).Dom := fun hd ↦
-  hd hw (show (iota (π w)).elim .undefined (G w) = .undefined by
-    rw [(iota_eq_none_iff _).2 h]
-    rfl)
+    ¬ (CCP.Partial.ofTrivalent (fun w ↦ bindPart (iota (π w)) (G w)) C).Dom := fun hd ↦
+  hd hw (bindPart_of_not_dom ((iota_dom _).not.2 h) _)
 
 /-- Where every world of the context has exactly one satisfier, the determinate and the
 indeterminate readings update the context alike (§3.4). -/
 theorem readings_agree_of_existsUnique {C : Set W} {π Q : W → (E → Trivalent)}
     (hπ : ∀ w ∈ C, IsBivalent (π w)) (hQ : ∀ w ∈ C, IsBivalent (Q w))
     (h : ∀ w ∈ C, ∃! x, π w x = .true) :
-    CCP.Partial.ofTrivalent (fun w ↦ (iota (π w)).elim .undefined (Q w)) C =
+    CCP.Partial.ofTrivalent (fun w ↦ bindPart (iota (π w)) (Q w)) C =
       CCP.Partial.ofTrivalent (fun w ↦ ex (π w) (Q w)) C := by
   refine CCP.Partial.ofTrivalent_congr fun w hw ↦ ?_
   obtain ⟨x, hx, hu⟩ := h w hw
-  have hi : iota (π w) = some x := iota_eq_some_iff.2 ⟨hx, hu⟩
-  rw [hi, Option.elim_some, ex]
+  have hi : x ∈ iota (π w) := mem_iota.2 ⟨hx, hu⟩
+  rw [bindPart_of_mem hi, ex]
   refine (eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_).symm
   · simp only [existsHaug_eq_undefined_iff, meetWeak_eq_undefined_iff, (hπ w hw).ne_undefined,
       (hQ w hw).ne_undefined, or_self]
@@ -606,7 +601,7 @@ theorem no_determinate_indefinites [Nontrivial E] [DecidablePred (WeakUnique (E 
     (F : W → (E → Trivalent) → Trivalent) (π : W → E → Trivalent) (G : W → E → Trivalent)
     {C : Set W}
     (h : ¬ Blocks C (fun α w ↦ F w (α (π w))) the an) :
-    ¬ (CCP.Partial.ofTrivalent (fun w ↦ (iota (π w)).elim .undefined (G w)) C).Dom := fun hd ↦
+    ¬ (CCP.Partial.ofTrivalent (fun w ↦ bindPart (iota (π w)) (G w)) C).Dom := fun hd ↦
   h <| blocks_of_weakUnique F π fun _ hw _ ha _ hb ↦
     (not_not.1 fun hu ↦ not_update_dom_iota G hw hu hd).unique ha hb
 

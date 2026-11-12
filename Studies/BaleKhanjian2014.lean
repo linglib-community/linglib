@@ -144,8 +144,8 @@ theorem mem_sup {x : E} : x ∈ sup X ↔ IsGreatest X x := .rfl
 theorem sup_subsingleton : (sup X).Subsingleton := fun _ ha _ hb ↦ IsGreatest.unique ha hb
 
 -- the choice function adds no presupposition to that of *sup*
-@[simp] theorem iota_sup_isSome_iff : (iota (sup X)).isSome ↔ (sup X).Nonempty :=
-  sup_subsingleton.iota_isSome_iff
+@[simp] theorem iota_sup_dom_iff : (iota (sup X)).Dom ↔ (sup X).Nonempty :=
+  sup_subsingleton.iota_dom
 
 variable {α : Type*} {B : Finset α} {k : ℕ}
 
@@ -300,7 +300,7 @@ noncomputable def Item.val (B : Finset α) : {a : Ty Unit} → Item a → a.Dom 
   | _, .num n => .some n.denote
   | _, .two => .some (numeral 2)
   | _, .def_ => .some fun X ↦ Part.restrict (sup X).Nonempty (.some (sup X)) fun _ ↦ trivial
-  | _, .plusDef => .some fun X ↦ ↑(iota X)
+  | _, .plusDef => .some fun X ↦ iota X
 
 /-- The meanings of a tree over the boys `B`: every constituent is a partial value, and a
 function applies to its sister where both are defined. -/
@@ -417,7 +417,7 @@ theorem defined_definiteDP : defined (α := α) (definiteDP n) = defined (numPSt
 theorem defined_bareDP_sg : defined (α := α) (bareDP .sg) = {B | B.card = 1} := by
   ext B
   simp only [defined, Set.mem_ofPred_eq]
-  simp [meanings_bareDP, numPVal_eq, eval_backPartial, IsDefined, Item.val, iota_isSome_iff,
+  simp [meanings_bareDP, numPVal_eq, eval_backPartial, IsDefined, Item.val, iota_dom,
     denote_sg_boy, Finset.card_eq_one]
   constructor
   · rintro ⟨x, ⟨hxB, hx⟩, huniq⟩
@@ -439,7 +439,7 @@ theorem defined_numeralDP : defined (α := α) (numeralDP n) = {B | B.card = 2} 
     exacts [⟨1, by omega, denote_sg_boy⟩, ⟨2, le_rfl, denote_pl_boy⟩]
   obtain ⟨k, hk2, hden⟩ := hk
   simp [defined, meanings_numeralDP, numPStarVal_eq, eval_backPartial, eval_forth, IsDefined,
-    Item.val, Part.restrict, hsub.iota_isSome_iff, hden, sup_card_le]
+    Item.val, Part.restrict, hsub.iota_dom, hden, sup_card_le]
   exact ⟨fun ⟨_, _, ⟨rfl, _⟩, h⟩ ↦ h, fun h ↦ ⟨⟨B, rfl, by omega⟩, B, ⟨rfl, by omega⟩, h⟩⟩
 
 /-! ### Symmetry
@@ -496,13 +496,14 @@ private theorem Transports.sup (h : Transports σ X X') : Transports σ (sup X) 
 
 private theorem Transports.iota (h : Transports σ X X') :
     (_root_.iota X).map (·.map σ.toEmbedding) = _root_.iota X' := by
-  rcases hX : _root_.iota X with _ | x
-  · refine (iota_eq_none_iff.2 fun ⟨y, hy, huniq⟩ ↦ iota_eq_none_iff.1 hX ⟨_, (h.mem_iff' y).1 hy,
-      fun z hz ↦ ?_⟩).symm
+  refine Part.ext fun y ↦ ?_
+  simp only [Part.mem_map_iff, mem_iota]
+  constructor
+  · rintro ⟨x, ⟨hx, huniq⟩, rfl⟩
+    exact ⟨(h x).1 hx, fun z hz ↦ by rw [← map_map_symm σ z, huniq _ ((h.mem_iff' z).1 hz)]⟩
+  · rintro ⟨hy, huniq⟩
+    refine ⟨y.map σ.symm.toEmbedding, ⟨(h.mem_iff' y).1 hy, fun z hz ↦ ?_⟩, map_map_symm σ y⟩
     rw [← map_symm_map σ z, huniq _ ((h z).1 hz)]
-  · obtain ⟨hx, huniq⟩ := iota_eq_some_iff.1 hX
-    refine (iota_eq_some_iff.2 ⟨(h x).1 hx, fun y hy ↦ ?_⟩).symm
-    rw [← map_map_symm σ y, huniq _ ((h.mem_iff' y).1 hy)]
 
 /-- Individuals related along `σ`. -/
 private def rel (σ : Equiv.Perm α) : ∀ _ : Unit, Finset α → Finset α → Prop :=
@@ -528,11 +529,9 @@ private theorem liftRel_val (B : Finset α) : ∀ {a : Ty Unit} (i : Item a),
         fun _ _ ↦ liftRel_set hsup⟩⟩
   | _, .plusDef => ⟨Iff.rfl, fun _ _ X X' hX ↦ by
       have hi := (transports_of_liftRel hX).iota
-      show Eff.RelWith .M _ (rel σ ()) (↑(iota X) : Part (Finset α)) ↑(iota X')
+      show Eff.RelWith .M _ (rel σ ()) (iota X) (iota X')
       rw [← hi]
-      cases iota X
-      · exact ⟨Iff.rfl, fun h ↦ absurd h Part.not_none_dom⟩
-      · exact ⟨Iff.rfl, fun _ _ ↦ rfl⟩⟩
+      exact ⟨Iff.rfl, fun _ _ ↦ rfl⟩⟩
 
 private theorem mem_defined_of_map {B : Finset α} {t : Tree Cat Morpheme}
     (h : B.map σ.toEmbedding ∈ defined t) : B ∈ defined t := by

@@ -81,11 +81,11 @@ def MANY (d : ℕ) : Set (Finset α) := Finset.card ⁻¹' {d}
 theorem mem_MANY {d : ℕ} {x : Finset α} : x ∈ MANY d ↔ x.card = d := Iff.rfl
 
 /-- `CARD P` is the number of atoms every plurality in `P` has, `ιd. ∀x[P(x) → #x = d]` ((24)). -/
-noncomputable def CARD (P : Set (Finset α)) : Option ℕ := iota {d | ∀ x ∈ P, x.card = d}
+noncomputable def CARD (P : Set (Finset α)) : Part ℕ := iota {d | ∀ x ∈ P, x.card = d}
 
 -- (25)
-theorem CARD_MANY {n : ℕ} (hn : ∃ x : Finset α, x.card = n) : CARD (MANY (α := α) n) = some n :=
-  iota_eq_some_iff.2 ⟨fun _ hx ↦ hx, fun _ h ↦ let ⟨x, hx⟩ := hn; (h x hx).symm.trans hx⟩
+theorem CARD_MANY {n : ℕ} (hn : ∃ x : Finset α, x.card = n) : n ∈ CARD (MANY (α := α) n) :=
+  mem_iota.2 ⟨fun _ hx ↦ hx, fun _ h ↦ let ⟨x, hx⟩ := hn; (h x hx).symm.trans hx⟩
 
 -- (17)
 theorem MANY_injective_iff : Function.Injective (MANY (α := α)) ↔ Infinite α := by
