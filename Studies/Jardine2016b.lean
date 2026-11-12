@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Autosegmental.Correspondence
-public import Linglib.Phonology.Autosegmental.Form
+public import Linglib.Phonology.Autosegmental.TwoTier
 public import Linglib.Data.Examples.Jardine2016b
 public import Linglib.Data.Examples.Readers
 
@@ -133,8 +133,8 @@ theorem spell_eq_some_iff {w v : List Seg} {γs : List Pair} :
 /-- Jardine's `g` on Γ-strings ((7.15)): the correspondence graph spelling the input and
 output symbols position by position. -/
 abbrev g (γs : List Pair) : Rep Seg Seg :=
-  (Form.ofLines (γs.map Pair.input) (γs.map Pair.output)
-    ((Finset.range γs.length).image fun i ↦ (i, i))).toAR
+  AR.ofLines (γs.map Pair.input) (γs.map Pair.output)
+    ((Finset.range γs.length).image fun i ↦ (i, i))
 
 /-- A Γ-string's graph between the boundaries ⋊ and ⋉. -/
 abbrev gen (γs : List Pair) : Rep Seg Seg := g (.lb :: γs ++ [.rb])
@@ -142,19 +142,19 @@ abbrev gen (γs : List Pair) : Rep Seg Seg := g (.lb :: γs ++ [.rb])
 /-! ### The grammar φ_apba -/
 
 /-- φ_apa (7.19): a surface `apa` — output-only, the markedness constraint *VTV. -/
-abbrev banApa : Rep Seg Seg := (Form.ofLines [] [.a, .p, .a] ∅).toAR
+abbrev banApa : Rep Seg Seg := AR.ofLines [] [.a, .p, .a] ∅
 
 /-- φ_⋊pb (7.21): a `p` surfacing as `b` word-initially. -/
-abbrev banInitialPb : Rep Seg Seg := (Form.ofLines [.p] [.lb, .b] {(0, 1)}).toAR
+abbrev banInitialPb : Rep Seg Seg := AR.ofLines [.p] [.lb, .b] {(0, 1)}
 
 /-- φ_pb⋉ (7.21): a `p` surfacing as `b` word-finally. -/
-abbrev banFinalPb : Rep Seg Seg := (Form.ofLines [.p] [.b, .rb] {(0, 0)}).toAR
+abbrev banFinalPb : Rep Seg Seg := AR.ofLines [.p] [.b, .rb] {(0, 0)}
 
 /-- φ_ppb (7.21): a `p` surfacing as `b` after a surface `p`. -/
-abbrev banPbAfterP : Rep Seg Seg := (Form.ofLines [.p] [.p, .b] {(0, 1)}).toAR
+abbrev banPbAfterP : Rep Seg Seg := AR.ofLines [.p] [.p, .b] {(0, 1)}
 
 /-- φ_pbp (7.21): a `p` surfacing as `b` before a surface `p`. -/
-abbrev banPbBeforeP : Rep Seg Seg := (Form.ofLines [.p] [.b, .p] {(0, 0)}).toAR
+abbrev banPbBeforeP : Rep Seg Seg := AR.ofLines [.p] [.b, .p] {(0, 0)}
 
 /-- φ_apba (7.22). -/
 def voicingGrammar : List (Rep Seg Seg) :=

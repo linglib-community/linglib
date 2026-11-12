@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Autosegmental.Form
+public import Linglib.Phonology.Autosegmental.Morph
 
 /-!
 # Candidates
@@ -45,45 +45,50 @@ because `Finset.sort` does not unfold structurally.
 
 namespace Autosegmental
 
+universe u
+
 /-- A `Candidate u` is the surface state of a derivation from the form `u`, recording the
 autosegments deleted so far and the current surface lines. The faithful candidate is
 `Candidate.input u`, and GEN edits candidates while `u` stays fixed. A candidate carries no
 sponsors of its own, so, as in [bermudez-otero-2012]'s architecture (p. 47), GEN cannot violate
 Consistency of Exponence. -/
-@[ext] structure Candidate {S T M : Type*} (u : Form (Sponsored T M) (Sponsored S M)) where
+@[ext] structure Candidate {S T M : Type u} (u : AR (TwoTier (Sponsored T M) (Sponsored S M))) where
   /-- The autosegments deleted on the surface. -/
-  deleted : Finset (Fin u.upper.length)
+  deleted : Finset (Fin (u.word .upper).length)
   /-- The surface association lines. -/
-  links : Finset (Fin u.upper.length × Fin u.lower.length)
+  links : Finset (Fin (u.word .upper).length × Fin (u.word .lower).length)
 
 namespace Candidate
 
-variable {S T M : Type*} {u : Form (Sponsored T M) (Sponsored S M)} (c : Candidate u)
-  {k j : Fin u.upper.length}
-  {i : Fin u.lower.length} {l : Fin u.upper.length × Fin u.lower.length}
+variable {S T M : Type u} {u : AR (TwoTier (Sponsored T M) (Sponsored S M))} (c : Candidate u)
+  {k j : Fin (u.word .upper).length}
+  {i : Fin (u.word .lower).length} {l : Fin (u.word .upper).length × Fin (u.word .lower).length}
 
 /-- Candidates are compared on their positions alone, whatever the labels of the form. -/
 instance : DecidableEq (Candidate u) := fun _ _ ↦ decidable_of_iff _ Candidate.ext_iff.symm
 
 /-- `input u` is the faithful candidate of `u`, with nothing deleted and the form's lines as
 its surface lines. -/
-@[simps] def input (u : Form (Sponsored T M) (Sponsored S M)) : Candidate u := ⟨∅, u.links⟩
+@[simps] def input (u : AR (TwoTier (Sponsored T M) (Sponsored S M))) : Candidate u :=
+  ⟨∅, u.links .upper .lower⟩
 
 /-! ### Surface predicates -/
 
 /-- Autosegment `k` is linked when it bears a surface line. -/
-def IsLinked (k : Fin u.upper.length) : Prop := ∃ l ∈ c.links, l.1 = k
+def IsLinked (k : Fin (u.word .upper).length) : Prop := ∃ l ∈ c.links, l.1 = k
 
 /-- Autosegment `k` is floating when it is not deleted and bears no surface line. -/
-def IsFloating (k : Fin u.upper.length) : Prop := k ∉ c.deleted ∧ ¬ c.IsLinked k
+def IsFloating (k : Fin (u.word .upper).length) : Prop := k ∉ c.deleted ∧ ¬ c.IsLinked k
 
 /-- `insertedLinks c` is the set of surface lines absent from the form, which GEN has
 inserted and `DEP` counts. -/
-def insertedLinks : Finset (Fin u.upper.length × Fin u.lower.length) := c.links \ u.links
+def insertedLinks : Finset (Fin (u.word .upper).length × Fin (u.word .lower).length) :=
+  c.links \ (u.links .upper .lower)
 
 /-- `deletedLinks c` is the set of the form's lines absent from the surface, which GEN has
 deleted and `MAX` counts. -/
-def deletedLinks : Finset (Fin u.upper.length × Fin u.lower.length) := u.links \ c.links
+def deletedLinks : Finset (Fin (u.word .upper).length × Fin (u.word .lower).length) :=
+  (u.links .upper .lower) \ c.links
 
 instance : Decidable (c.IsLinked k) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
@@ -94,10 +99,11 @@ variable {c}
 theorem isLinked_iff : c.IsLinked k ↔ ∃ i, (k, i) ∈ c.links :=
   ⟨fun ⟨⟨_, i⟩, h, rfl⟩ ↦ ⟨i, h⟩, fun ⟨_, h⟩ ↦ ⟨_, h, rfl⟩⟩
 
-@[simp] theorem mem_insertedLinks : l ∈ c.insertedLinks ↔ l ∈ c.links ∧ l ∉ u.links :=
+@[simp] theorem mem_insertedLinks : l ∈ c.insertedLinks ↔
+    l ∈ c.links ∧ l ∉ (u.links .upper .lower) :=
   Finset.mem_sdiff
 
-@[simp] theorem mem_deletedLinks : l ∈ c.deletedLinks ↔ l ∈ u.links ∧ l ∉ c.links :=
+@[simp] theorem mem_deletedLinks : l ∈ c.deletedLinks ↔ l ∈ (u.links .upper .lower) ∧ l ∉ c.links :=
   Finset.mem_sdiff
 
 @[simp] theorem insertedLinks_input : (input u).insertedLinks = ∅ := by
@@ -114,16 +120,17 @@ kernel `decide`. -/
 variable (c)
 
 /-- `linksTo c i` lists the autosegments linked to slot `i` on the surface, in tier order. -/
-def linksTo (i : Fin u.lower.length) : List (Fin u.upper.length) :=
-  (List.finRange u.upper.length).filter fun k ↦ (k, i) ∈ c.links
+def linksTo (i : Fin (u.word .lower).length) : List (Fin (u.word .upper).length) :=
+  (List.finRange (u.word .upper).length).filter fun k ↦ (k, i) ∈ c.links
 
 /-- `tierValues c i` lists the values of the autosegments linked to slot `i` on the surface,
 in tier order. -/
-def tierValues (i : Fin u.lower.length) : List T :=
-  (c.linksTo i).map fun k ↦ u.upper[k].value
+def tierValues (i : Fin (u.word .lower).length) : List T :=
+  (c.linksTo i).map fun k ↦ (u.word .upper)[k].value
 
 /-- `alive c` lists the undeleted autosegments in tier order. -/
-def alive : List (Fin u.upper.length) := (List.finRange u.upper.length).filter (· ∉ c.deleted)
+def alive : List (Fin (u.word .upper).length) :=
+  (List.finRange (u.word .upper).length).filter (· ∉ c.deleted)
 
 variable {c}
 
@@ -131,12 +138,13 @@ variable {c}
   simp [linksTo]
 
 variable (c) in
-theorem nodup_linksTo (i : Fin u.lower.length) : (c.linksTo i).Nodup :=
+theorem nodup_linksTo (i : Fin (u.word .lower).length) : (c.linksTo i).Nodup :=
   (List.nodup_finRange _).filter _
 
 @[simp] theorem mem_tierValues {t : T} :
-    t ∈ c.tierValues i ↔ ∃ k, (k, i) ∈ c.links ∧ u.upper[k].value = t := by
-  simp [tierValues]
+    t ∈ c.tierValues i ↔ ∃ k, (k, i) ∈ c.links ∧ (u.word .upper)[k].value = t := by
+  simp only [tierValues, List.mem_map]
+  exact exists_congr fun k ↦ and_congr_left fun _ ↦ mem_linksTo
 
 @[simp] theorem mem_alive : k ∈ c.alive ↔ k ∉ c.deleted := by
   simp [alive]
@@ -146,15 +154,17 @@ theorem nodup_linksTo (i : Fin u.lower.length) : (c.linksTo i).Nodup :=
 variable (c)
 
 /-- `delete c k` deletes autosegment `k` on the surface, with every surface line it bears. -/
-@[simps] def delete (k : Fin u.upper.length) : Candidate u :=
+@[simps] def delete (k : Fin (u.word .upper).length) : Candidate u :=
   ⟨insert k c.deleted, c.links.filter (·.1 ≠ k)⟩
 
 /-- `insertLink c k i` inserts the surface line from autosegment `k` to slot `i`. -/
-@[simps] def insertLink (k : Fin u.upper.length) (i : Fin u.lower.length) : Candidate u :=
+@[simps] def insertLink (k : Fin (u.word .upper).length) (i : Fin (u.word .lower).length) :
+    Candidate u :=
   ⟨c.deleted, insert (k, i) c.links⟩
 
 /-- `deleteLink c k i` deletes the surface line from autosegment `k` to slot `i`. -/
-@[simps] def deleteLink (k : Fin u.upper.length) (i : Fin u.lower.length) : Candidate u :=
+@[simps] def deleteLink (k : Fin (u.word .upper).length) (i : Fin (u.word .lower).length) :
+    Candidate u :=
   ⟨c.deleted, c.links.erase (k, i)⟩
 
 variable {c}
@@ -197,12 +207,12 @@ def gen (c : Candidate u) : Finset (Candidate u) :=
   insert c <|
     (Finset.univ.filter (· ∉ c.deleted)).image c.delete ∪
       ((Finset.univ.filter c.IsFloating ×ˢ Finset.univ).filter
-        fun p ↦ p.2 ∈ window (c.links : SetRel (Fin u.upper.length) (Fin u.lower.length)) p.1).image
+        fun p ↦ p.2 ∈ window (c.links : SetRel _ _) p.1).image
           fun p ↦ c.insertLink p.1 p.2
 
 theorem mem_gen : c' ∈ c.gen ↔ c' = c ∨ (∃ k ∉ c.deleted, c' = c.delete k) ∨
     ∃ k i, c.IsFloating k ∧
-      i ∈ window (c.links : SetRel (Fin u.upper.length) (Fin u.lower.length)) k ∧
+      i ∈ window (c.links : SetRel _ _) k ∧
         c' = c.insertLink k i := by
   simp only [gen, Finset.mem_insert, Finset.mem_union, Finset.mem_image, Finset.mem_filter,
     Finset.mem_univ, true_and, Finset.mem_product, and_true, Prod.exists, and_assoc,
@@ -214,7 +224,7 @@ theorem delete_mem_gen (hd : k ∉ c.deleted) : c.delete k ∈ c.gen :=
   mem_gen.2 (.inr (.inl ⟨k, hd, rfl⟩))
 
 theorem insertLink_mem_gen (hk : c.IsFloating k)
-    (hx : i ∈ window (c.links : SetRel (Fin u.upper.length) (Fin u.lower.length)) k) :
+    (hx : i ∈ window (c.links : SetRel _ _) k) :
     c.insertLink k i ∈ c.gen :=
   mem_gen.2 (.inr (.inr ⟨k, i, hk, hx, rfl⟩))
 
@@ -225,9 +235,10 @@ theorem deleted_subset_of_mem_gen (hc : c' ∈ c.gen) : c.deleted ⊆ c'.deleted
 /-- GEN is closed on the No-Crossing Constraint, since deletion shrinks the surface lines and
 each inserted line ends in its node's window. -/
 theorem isNonCrossing_links_of_mem_gen
-    (h : IsNonCrossing (c.links : SetRel (Fin u.upper.length) (Fin u.lower.length)))
+    (h : IsNonCrossing (c.links : SetRel (Fin (u.word .upper).length) (Fin (u.word .lower).length)))
     (hc : c' ∈ c.gen) :
-    IsNonCrossing (c'.links : SetRel (Fin u.upper.length) (Fin u.lower.length)) := by
+    IsNonCrossing
+      (c'.links : SetRel (Fin (u.word .upper).length) (Fin (u.word .lower).length)) := by
   rcases mem_gen.1 hc with rfl | ⟨_, -, rfl⟩ | ⟨_, _, -, hx, rfl⟩
   · exact h
   · exact h.subset (Finset.coe_subset.2 links_delete_subset)

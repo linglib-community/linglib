@@ -110,33 +110,33 @@ theorem sum_length_melody (w : List AssociationState) :
 
 /-- A TBU translates into the primitive with one timing slot carrying the TBU's melody
 (Jardine's reading of the string as a representation). -/
-def toAR (a : AssociationState) : AR (TwoTier TRN Unit) := (Form.primitive (melody a) ()).toAR
+def toAR (a : AssociationState) : AR (TwoTier TRN Unit) := AR.primitive (melody a) ()
 
-@[simp] theorem word_toAR_true (a : AssociationState) : (toAR a).word true = melody a := rfl
+@[simp] theorem word_toAR_upper (a : AssociationState) : (toAR a).word .upper = melody a := rfl
 
-@[simp] theorem word_toAR_false (a : AssociationState) : (toAR a).word false = [()] := rfl
+@[simp] theorem word_toAR_lower (a : AssociationState) : (toAR a).word .lower = [()] := rfl
 
 @[simp] theorem link_toAR (a : AssociationState) (p q : ℕ) :
-    (toAR a).Link true false p q ↔ p < (melody a).length ∧ q = 0 := by
+    (toAR a).Link .upper .lower p q ↔ p < (melody a).length ∧ q = 0 := by
   simp [toAR]
 
-@[simp] theorem word_prod_map_toAR_true (w : List AssociationState) :
-    (w.map toAR).prod.word true = List.replicate (w.count .H) TRN.H := by
+@[simp] theorem word_prod_map_toAR_upper (w : List AssociationState) :
+    (w.map toAR).prod.word .upper = List.replicate (w.count .H) TRN.H := by
   induction w with
   | nil => rfl
   | cons a w ih => cases a <;> simp [ih, List.replicate_succ]
 
-@[simp] theorem word_prod_map_toAR_false (w : List AssociationState) :
-    (w.map toAR).prod.word false = List.replicate w.length () := by
+@[simp] theorem word_prod_map_toAR_lower (w : List AssociationState) :
+    (w.map toAR).prod.word .lower = List.replicate w.length () := by
   induction w with
   | nil => rfl
   | cons a w ih => simp [ih, List.replicate_succ]
 
 theorem link_prod_map_toAR (w : List AssociationState) (p j : ℕ) :
-    (w.map toAR).prod.Link true false p j ↔
+    (w.map toAR).prod.Link .upper .lower p j ↔
       p = (w.take j).count .H ∧ w[j]? = some .H := by
-  have hoff : AR.tierOffset toAR true w j = (w.take j).count .H := by
-    simp only [AR.tierOffset, word_toAR_true, sum_length_melody]
+  have hoff : AR.tierOffset toAR .upper w j = (w.take j).count .H := by
+    simp only [AR.tierOffset, word_toAR_upper, sum_length_melody]
   rw [AR.link_prod_map_of_length_eq_one toAR fun _ ↦ rfl]
   simp only [link_toAR, hoff, and_true, length_melody, List.getElem?_eq_some_iff]
   constructor
@@ -148,10 +148,10 @@ theorem link_prod_map_toAR (w : List AssociationState) (p j : ℕ) :
     exact ⟨hj, le_rfl, by simp [h]⟩
 
 theorem link_collapse_prod_map_toAR (w : List AssociationState) (k j : ℕ) :
-    ((w.map toAR).prod.collapse true).Link true false k j ↔ k = 0 ∧ w[j]? = some .H := by
+    ((w.map toAR).prod.collapse .upper).Link .upper .lower k j ↔ k = 0 ∧ w[j]? = some .H := by
   rw [AR.link_collapse]
-  simp only [repointIdx_self, repointIdx_of_ne (by decide : false ≠ true),
-    link_prod_map_toAR, word_prod_map_toAR_true, OCP.runIdx_replicate]
+  simp only [repointIdx_self, repointIdx_of_ne (by decide : Tier.lower ≠ Tier.upper),
+    link_prod_map_toAR, word_prod_map_toAR_upper, OCP.runIdx_replicate]
   constructor
   · rintro ⟨p, q, ⟨-, h⟩, rfl, rfl⟩
     exact ⟨rfl, h⟩
@@ -163,15 +163,15 @@ end AssociationState
 /-- The output representation, in coordinates, is the OCP-merge and then the hull, both at the
 melody tier. -/
 def plateauAR (w : List AssociationState) : AR (TwoTier TRN Unit) :=
-  ((w.map AssociationState.toAR).prod.collapse true).hull true
+  ((w.map AssociationState.toAR).prod.collapse .upper).hull .upper
 
 theorem link_plateauAR (w : List AssociationState) (k j : ℕ) :
-    (plateauAR w).Link true false k j ↔ k = 0 ∧ .H ∈ w.take (j + 1) ∧ .H ∈ w.drop j := by
+    (plateauAR w).Link .upper .lower k j ↔ k = 0 ∧ .H ∈ w.take (j + 1) ∧ .H ∈ w.drop j := by
   by_cases hj : j < w.length
   · unfold plateauAR
-    rw [AR.link_hull_left true _ (by decide)
+    rw [AR.link_hull_left .upper _ (by decide)
       (by simpa using hj :
-        j < (((w.map AssociationState.toAR).prod.collapse true).word false).length)]
+        j < (((w.map AssociationState.toAR).prod.collapse .upper).word .lower).length)]
     simp only [AssociationState.link_collapse_prod_map_toAR, List.mem_take_iff_getElem?,
       List.mem_drop_iff_getElem?, Nat.lt_succ_iff]
     constructor

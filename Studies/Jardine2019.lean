@@ -41,7 +41,7 @@ tier-based strictly local at any width: with `x = L^(k-1)`, `H L x` and `x H` ar
   below quantify over grammars of factors.
 * `gT` extends to strings by Definition 2, the product of primitives under merging
   concatenation (`MergeAR`). Its primitives are OCP-clean, so it agrees with collapsing the
-  bridged concatenation (`MergeAR.prod_map_ofAR`), which the form `merged` presents and the
+  bridged concatenation (`MergeAR.prod_map_ofAR`), the representation `merged` that the
   proofs compute with.
 * The unmerged realization `(w.map gT).prod` is kept for the contrast merging makes.
 
@@ -78,55 +78,53 @@ def Sym.melody : Sym → List TRN
 abbrev μ : TBUKind := .mora
 
 /-- `gT` (23) maps a symbol to the primitive (Definition 1) of its melody over one mora. -/
-def gT (s : Sym) : Form TRN TBUKind := .primitive s.melody μ
+def gT (s : Sym) : AR (TwoTier TRN TBUKind) := .primitive s.melody μ
 
 /-- `gT(w)` (Definition 2): the product of the primitives under merging concatenation. -/
-def realize (w : List Sym) : MergeAR true (TwoTier TRN TBUKind) :=
-  (w.map fun s ↦ MergeAR.ofAR (gT s).toAR).prod
+def realize (w : List Sym) : MergeAR .upper (TwoTier TRN TBUKind) :=
+  (w.map fun s ↦ MergeAR.ofAR (gT s)).prod
 
-/-- The merged realization of a string, as a form: the product of the primitives with its melody
+/-- The merged realization of a string: the product of the primitives with its melody
 collapsed. -/
-abbrev merged (w : List Sym) : Form TRN TBUKind := (w.map gT).prod.collapse
+abbrev merged (w : List Sym) : AR (TwoTier TRN TBUKind) := (w.map gT).prod.collapse .upper
 
-theorem isCleanAt_gT (s : Sym) : (gT s).toAR.IsCleanAt true := by
+theorem isCleanAt_gT (s : Sym) : (gT s).IsCleanAt .upper := by
   cases s <;> simp [AR.IsCleanAt, gT, Sym.melody, show H ≠ L by decide]
 
-/-- The realization of a string is the presentation of its merged form. -/
-theorem toAR_realize (w : List Sym) : MergeAR.toAR (realize w) = (merged w).toAR := by
-  rw [realize, MergeAR.prod_map_ofAR isCleanAt_gT, MergeAR.toAR_ofAR, Form.toAR_collapse,
-    Form.toAR_list_prod, List.map_map]
-  rfl
+/-- The realization of a string is its merged realization. -/
+theorem toAR_realize (w : List Sym) : MergeAR.toAR (realize w) = (merged w) := by
+  rw [realize, MergeAR.prod_map_ofAR isCleanAt_gT, MergeAR.toAR_ofAR]
 
 /-- `L(B^{gT})` (§5.3) is the set of strings whose realization avoids the grammar. -/
 def ASL (B : List (AR (TwoTier TRN TBUKind))) : Language Sym :=
   Language.bannedSubgraph (fun w ↦ MergeAR.toAR (realize w)) B
 
 theorem mem_ASL_iff {B : List (AR (TwoTier TRN TBUKind))} {w : List Sym} :
-    w ∈ ASL B ↔ (merged w).toAR.Free B := by
+    w ∈ ASL B ↔ (merged w).Free B := by
   rw [ASL, Language.mem_bannedSubgraph, toAR_realize]
 
 /-- Every graph in `gT(Σ*)` obeys the OCP and the NCC, as they are preserved from the
 primitives (§5.2.2). -/
 theorem isCleanAt_and_noCrossing_realize (w : List Sym) :
-    (MergeAR.toAR (realize w)).IsCleanAt true ∧ (MergeAR.toAR (realize w)).NoCrossing :=
+    (MergeAR.toAR (realize w)).IsCleanAt .upper ∧ (MergeAR.toAR (realize w)).NoCrossing :=
   ⟨MergeAR.isCleanAt_toAR_prod fun _ hX ↦ by
       obtain ⟨s, -, rfl⟩ := List.mem_map.1 hX
       exact isCleanAt_gT s,
     MergeAR.noCrossing_toAR_prod fun _ hX ↦ by
       obtain ⟨s, -, rfl⟩ := List.mem_map.1 hX
-      exact Form.noCrossing_toAR_primitive _ _⟩
+      exact AR.noCrossing_primitive _ _⟩
 
 /-! ### The grammars of (26) and (33) -/
 
 /-- The factor of (26) is a tone over two morae. -/
 abbrev spread : AR (TwoTier TRN TBUKind) :=
-  (Form.ofLines [H] [μ, μ] {(0, 0), (0, 1)}).toAR
+  AR.ofLines [H] [μ, μ] {(0, 0), (0, 1)}
 
 /-- (3), the melody `H L H`. -/
-abbrev hlh : AR (TwoTier TRN TBUKind) := (Form.ofLines [H, L, H] [] ∅).toAR
+abbrev hlh : AR (TwoTier TRN TBUKind) := AR.ofLines [H, L, H] [] ∅
 
 /-- The falling contour is `H L` over one mora. -/
-abbrev fall : AR (TwoTier TRN TBUKind) := (Form.primitive [H, L] μ).toAR
+abbrev fall : AR (TwoTier TRN TBUKind) := AR.primitive [H, L] μ
 
 /-- The grammar of (26) bans a tone over two morae. -/
 def spreadGrammar : List (AR (TwoTier TRN TBUKind)) := [spread]
@@ -136,7 +134,7 @@ def utpGrammar : List (AR (TwoTier TRN TBUKind)) := [hlh, fall]
 
 theorem mem_ASL_utpGrammar_iff (w : List Sym) :
     w ∈ ASL utpGrammar ↔
-      ¬ hlh.FactorEmbeds (merged w).toAR ∧ ¬ fall.FactorEmbeds (merged w).toAR := by
+      ¬ hlh.FactorEmbeds (merged w) ∧ ¬ fall.FactorEmbeds (merged w) := by
   simp only [mem_ASL_iff, utpGrammar, AR.free_cons, AR.free_nil, and_true]
 
 instance (B : List (AR (TwoTier TRN TBUKind))) (w : List Sym) : Decidable (w ∈ ASL B) :=
@@ -195,7 +193,7 @@ theorem LHHLH_not_mem_ASL_utp : [.L, .H, .H, .L, .H] ∉ ASL utpGrammar := by de
 theorem HHLLHH_not_mem_ASL_utp : [.H, .H, .L, .L, .H, .H] ∉ ASL utpGrammar := by decide
 
 theorem HHLLHH_free_prod_map_gT :
-    (([.H, .H, .L, .L, .H, .H] : List Sym).map gT).prod.toAR.Free utpGrammar := by decide
+    (([.H, .H, .L, .L, .H, .H] : List Sym).map gT).prod.Free utpGrammar := by decide
 
 /-! ### Theorem 3: contours contain their pure counterparts -/
 
@@ -213,12 +211,11 @@ theorem not_mem_ASL_HF_of_not_mem_ASL_HL (B : List (AR (TwoTier TRN TBUKind)))
 /-! ### The link-free fragment of the unmerged class is star-free -/
 
 theorem isStarFree_free_prod_map_hlh :
-    (Language.bannedSubgraph (fun w ↦ (w.map gT).prod.toAR) [hlh]).IsStarFree := by
-  simp only [Form.toAR_list_prod, List.map_map]
-  exact Language.isStarFree_bannedSubgraph_prod_map (Form.toAR ∘ gT) _ fun F hF ↦ by
+    (Language.bannedSubgraph (fun w ↦ (w.map gT).prod) [hlh]).IsStarFree :=
+  Language.isStarFree_bannedSubgraph_prod_map gT _ fun F hF ↦ by
     rw [List.mem_singleton] at hF
     subst hF
-    exact Form.not_link_toAR _ (by decide)
+    exact AR.not_link_of_lines_eq_empty (by decide)
 
 /-! ### Theorem 3: `L_UTP` is neither strictly local nor tier-based strictly local
 
@@ -227,44 +224,43 @@ and membership in `L_UTP` depends only on the merged melody. With `x = L^{k−1}
 `x·H` are in `L_UTP` and `H L·x·H` is not, which breaks suffix substitution at every width; and
 every symbol is visible, so a tier-based grammar would have to be strictly local. -/
 
-private theorem fst_eq_snd_of_mem_lines {w : List Sym} (hw : ∀ s ∈ w, s ≠ .F) {p q : ℕ}
-    (h : (p, q) ∈ (w.map gT).prod.lines) : p = q := by
+private theorem eq_of_link_prod_map_gT {w : List Sym} (hw : ∀ s ∈ w, s ≠ .F) {p q : ℕ}
+    (h : (w.map gT).prod.Link .upper .lower p q) : p = q := by
   induction w generalizing p q with
-  | nil => simp at h
+  | nil => exact absurd h (AR.not_link_one _ _ _ _)
   | cons s w ih =>
     have hs : (Sym.melody s).length = 1 := by
       cases s <;> simp_all [Sym.melody]
-    simp only [List.map_cons, List.prod_cons, Form.mul_eq_concat, Form.concat_lines,
-      Finset.mem_union, Finset.mem_map, Form.shift_apply, Prod.mk.injEq, Prod.exists] at h
-    rcases h with h | ⟨a, b, h, rfl, rfl⟩
-    · have := (Form.mem_lines_primitive _ _).1 h
-      simp only [hs] at this
+    rw [List.map_cons, List.prod_cons, AR.link_mul] at h
+    rcases h with h | ⟨hp, hq, h⟩
+    · have := AR.link_primitive.1 h
       omega
-    · rw [ih (fun t ht ↦ hw t (List.mem_cons_of_mem _ ht)) h]
-      simp [gT, hs]
+    · have := ih (fun t ht ↦ hw t (List.mem_cons_of_mem _ ht)) h
+      simp only [gT, AR.word_primitive_upper, AR.word_primitive_lower, hs,
+        List.length_singleton] at hp hq this
+      omega
 
 theorem not_fall_factorEmbeds_merged {w : List Sym} (hw : ∀ s ∈ w, s ≠ .F) :
-    ¬ fall.FactorEmbeds (merged w).toAR := by
+    ¬ fall.FactorEmbeds (merged w) := by
   rw [AR.factorEmbeds_iff_two_tier]
-  rintro ⟨ot, -, of, -, -, -, hl⟩
-  obtain ⟨p₁, hb₁, hr₁⟩ := (Form.mem_lines_collapse _).1 <|
-    (Form.link_toAR _).1 (hl 0 (by simp) 0 (by simp) (by decide))
-  obtain ⟨p₂, hb₂, hr₂⟩ := (Form.mem_lines_collapse _).1 <|
-    (Form.link_toAR _).1 (hl 1 (by simp) 0 (by simp) (by decide))
-  rw [fst_eq_snd_of_mem_lines hw hb₁] at hr₁
-  rw [fst_eq_snd_of_mem_lines hw hb₂] at hr₂
+  rintro ⟨a, -, b, -, -, -, hl⟩
+  obtain ⟨p₁, hb₁, hr₁⟩ := AR.link_collapse_upper_lower.1 <|
+    hl 0 (by simp) 0 (by simp) (by decide)
+  obtain ⟨p₂, hb₂, hr₂⟩ := AR.link_collapse_upper_lower.1 <|
+    hl 1 (by simp) 0 (by simp) (by decide)
+  rw [eq_of_link_prod_map_gT hw hb₁] at hr₁
+  rw [eq_of_link_prod_map_gT hw hb₂] at hr₂
   omega
 
 theorem hlh_factorEmbeds_merged_iff (w : List Sym) :
-    hlh.FactorEmbeds (merged w).toAR ↔
-      [H, L, H] <:+: OCP.collapse (w.map Sym.melody).flatten := by
-  have hu : (merged w).toAR.word true = OCP.collapse (w.map Sym.melody).flatten := by
-    simp [Form.upper_list_prod, gT, Function.comp_def]
-  rw [AR.factorEmbeds_iff_infix_of_link_free (Form.not_link_toAR _ (by decide))]
-  refine ⟨fun h ↦ by simpa [hu] using h true, fun h i ↦ ?_⟩
+    hlh.FactorEmbeds (merged w) ↔ [H, L, H] <:+: OCP.collapse (w.map Sym.melody).flatten := by
+  have hu : (w.map gT).prod.word .upper = (w.map Sym.melody).flatten := by
+    simp [AR.word_prod, gT, Function.comp_def]
+  rw [AR.factorEmbeds_iff_infix_of_link_free (AR.not_link_of_lines_eq_empty (by decide))]
+  refine ⟨fun h ↦ by simpa [hu] using h .upper, fun h i ↦ ?_⟩
   cases i
-  · simp
   · simpa [hu] using h
+  · simp
 
 private theorem melody_replicate_L (m : ℕ) :
     ((List.replicate m Sym.L).map Sym.melody).flatten = List.replicate m L := by

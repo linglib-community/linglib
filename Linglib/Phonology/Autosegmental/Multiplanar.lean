@@ -5,14 +5,14 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Autosegmental.Form
+public import Linglib.Phonology.Autosegmental.Morph
 
 /-!
 # Multiplanar forms
 
 A multiplanar form is a tier of slots shared by several planes, each plane a tier of autosegments
 associated with the slots, the planes meeting along the slots as McCarthy's planes meet along the
-skeleton. Plane `i` is the two-tier form `plane i`, and the No-Crossing Constraint holds plane by
+skeleton. The No-Crossing Constraint holds plane by
 plane, since autosegments on different planes stand in no order. Multiplanar forms concatenate
 plane by plane, presentation as a representation is an injective monoid hom, and forms occupying
 disjoint tiers commute: morphs on separate planes are unordered.
@@ -21,7 +21,6 @@ disjoint tiers commute: morphs on separate planes are unordered.
 
 * `Multiplanar ι α β`: the alphabets of a multiplanar representation, with the slots on `none`.
 * `MultiplanarForm ι S T M`: slots in `S`, autosegments in `T` on the planes `ι`, sponsors in `M`.
-* `MultiplanarForm.plane`, `MultiplanarForm.ofPlane`: a plane as a form, and a form on a plane.
 * `MultiplanarForm.addLines`, `MultiplanarForm.filterLines`: lines added to or kept on a plane.
 * `MultiplanarForm.hostedOn`: the autosegments of a plane linked to a slot.
 * `MultiplanarForm.toAR`: the representation a multiplanar form presents.
@@ -71,16 +70,6 @@ variable {ι S T M : Type*} (f g : MultiplanarForm ι S T M)
 instance [Fintype ι] [DecidableEq S] [DecidableEq T] [DecidableEq M] :
     DecidableEq (MultiplanarForm ι S T M) :=
   fun _ _ ↦ decidable_of_iff _ MultiplanarForm.ext_iff.symm
-
-/-- Plane `i`, the form of its autosegments over the slots. -/
-def plane (i : ι) : Form (Sponsored T M) (Sponsored S M) :=
-  ⟨f.upper i, f.lower, f.lines i, f.lt_of_mem_lines⟩
-
-@[simp] theorem plane_upper (i : ι) : (f.plane i).upper = f.upper i := rfl
-
-@[simp] theorem plane_lower (i : ι) : (f.plane i).lower = f.lower := rfl
-
-@[simp] theorem plane_lines (i : ι) : (f.plane i).lines = f.lines i := rfl
 
 theorem lines_eq_empty_of_upper {i : ι} (h : f.upper i = []) : f.lines i = ∅ :=
   Finset.eq_empty_of_forall_notMem fun _ hp ↦ by simpa [h] using (f.lt_of_mem_lines hp).1
@@ -156,33 +145,12 @@ section Lines
 
 variable [DecidableEq ι]
 
-/-- `ofPlane i x` puts the form `x` on plane `i`, with every other plane empty. -/
-def ofPlane (i : ι) (x : Form (Sponsored T M) (Sponsored S M)) : MultiplanarForm ι S T M where
-  lower := x.lower
-  upper j := if j = i then x.upper else []
-  lines j := if j = i then x.lines else ∅
-  lt_of_mem_lines {j} {_} h := by
-    by_cases hj : j = i
-    · subst hj
-      simpa using x.lt_of_mem_lines (by simpa using h)
-    · simp [hj] at h
-
-variable (i : ι) (x : Form (Sponsored T M) (Sponsored S M))
-
-@[simp] theorem ofPlane_lower : (ofPlane i x).lower = x.lower := rfl
-
-@[simp] theorem ofPlane_upper (j : ι) :
-    (ofPlane i x).upper j = if j = i then x.upper else [] := rfl
-
-@[simp] theorem ofPlane_lines (j : ι) :
-    (ofPlane i x).lines j = if j = i then x.lines else ∅ := rfl
-
-@[simp] theorem plane_ofPlane : (ofPlane i x).plane i = x := by
-  ext <;> simp
-
 /-- `ofMelody i m w` is the morph of `m` with the melody `w` on plane `i`, unlinked, and no
 slots. -/
-def ofMelody (m : M) (w : List T) : MultiplanarForm ι S T M := ofPlane i (Form.morph m w [] ∅)
+def ofMelody (i : ι) (m : M) (w : List T) : MultiplanarForm ι S T M :=
+  ⟨[], fun j ↦ if j = i then w.map (⟨·, m⟩) else [], fun _ ↦ ∅, fun h ↦ by simp at h⟩
+
+variable (i : ι)
 
 @[simp] theorem ofMelody_lower (m : M) (w : List T) : (ofMelody i m w : MultiplanarForm ι S T M).lower = [] := rfl
 
@@ -191,8 +159,7 @@ def ofMelody (m : M) (w : List T) : MultiplanarForm ι S T M := ofPlane i (Form.
   rfl
 
 @[simp] theorem ofMelody_lines (m : M) (w : List T) (j : ι) :
-    (ofMelody i m w : MultiplanarForm ι S T M).lines j = ∅ := by
-  by_cases hj : j = i <;> simp [ofMelody, hj]
+    (ofMelody i m w : MultiplanarForm ι S T M).lines j = ∅ := rfl
 
 theorem map_ofMelody {T' : Type*} (φ : T → T') (m : M) (w : List T) :
     (ofMelody i m w : MultiplanarForm ι S T M).map φ = ofMelody i m (w.map φ) := by
@@ -254,12 +221,20 @@ end Lines
 /-! ### Concatenation -/
 
 /-- `concat f g` juxtaposes the slots of `f` and `g` and the autosegments of each plane, and shifts
-the lines of `g` past the tiers of `f`, plane by plane as `Form.concat`. -/
+the lines of `g` past the tiers of `f`, plane by plane. -/
 def concat : MultiplanarForm ι S T M where
   lower := f.lower ++ g.lower
   upper i := f.upper i ++ g.upper i
-  lines i := f.lines i ∪ (g.lines i).map (Form.shift (f.upper i).length f.lower.length)
-  lt_of_mem_lines {i} {_} hp := ((f.plane i).concat (g.plane i)).lt_of_mem_lines hp
+  lines i := f.lines i ∪ (g.lines i).map (AR.shift (f.upper i).length f.lower.length)
+  lt_of_mem_lines {i} {_} hp := by
+    simp only [Finset.mem_union, Finset.mem_map] at hp
+    rcases hp with hp | ⟨q, hq, rfl⟩
+    · have := f.lt_of_mem_lines hp
+      simp only [List.length_append]
+      omega
+    · have := g.lt_of_mem_lines hq
+      simp only [AR.shift_apply, List.length_append]
+      omega
 
 /-- The empty form has no slots, no autosegments, and no lines. -/
 def empty : MultiplanarForm ι S T M := ⟨[], fun _ ↦ [], fun _ ↦ ∅, fun h ↦ by simp at h⟩
@@ -270,9 +245,7 @@ def empty : MultiplanarForm ι S T M := ⟨[], fun _ ↦ [], fun _ ↦ ∅, fun 
 
 @[simp] theorem concat_lines (i : ι) :
     (f.concat g).lines i =
-      f.lines i ∪ (g.lines i).map (Form.shift (f.upper i).length f.lower.length) := rfl
-
-theorem plane_concat (i : ι) : (f.concat g).plane i = (f.plane i).concat (g.plane i) := rfl
+      f.lines i ∪ (g.lines i).map (AR.shift (f.upper i).length f.lower.length) := rfl
 
 @[simp] theorem empty_lower : (empty : MultiplanarForm ι S T M).lower = [] := rfl
 
@@ -281,16 +254,20 @@ theorem plane_concat (i : ι) : (f.concat g).plane i = (f.plane i).concat (g.pla
 @[simp] theorem empty_lines (i : ι) : (empty : MultiplanarForm ι S T M).lines i = ∅ := rfl
 
 theorem concat_assoc (h : MultiplanarForm ι S T M) :
-    (f.concat g).concat h = f.concat (g.concat h) :=
-  MultiplanarForm.ext (List.append_assoc ..) (funext fun _ ↦ List.append_assoc ..)
-    (funext fun i ↦ congrArg Form.lines (Form.concat_assoc (f.plane i) (g.plane i) (h.plane i)))
+    (f.concat g).concat h = f.concat (g.concat h) := by
+  refine MultiplanarForm.ext (List.append_assoc ..) (funext fun _ ↦ List.append_assoc ..)
+    (funext fun i ↦ ?_)
+  simp only [concat_lines, concat_upper, concat_lower, List.length_append, Finset.map_union,
+    Finset.map_map, Finset.union_assoc]
+  congr 3
+  ext <;> simp [Nat.add_assoc]
 
 theorem empty_concat : empty.concat f = f :=
-  MultiplanarForm.ext rfl rfl (funext fun i ↦ congrArg Form.lines (Form.empty_concat (f.plane i)))
+  MultiplanarForm.ext rfl rfl (funext fun i ↦ by ext; simp [Finset.mem_map])
 
 theorem concat_empty : f.concat empty = f :=
   MultiplanarForm.ext (List.append_nil _) (funext fun _ ↦ List.append_nil _)
-    (funext fun i ↦ congrArg Form.lines (Form.concat_empty (f.plane i)))
+    (funext fun i ↦ by ext; simp)
 
 /-- Multiplanar forms are a monoid under concatenation, with the empty form as unit. -/
 instance instMonoid : Monoid (MultiplanarForm ι S T M) where
@@ -326,12 +303,6 @@ namespace MultiplanarForm
 section Word
 
 variable (f g : MultiplanarForm ι S T M)
-
-/-- Concatenation preserves the No-Crossing Constraint on each plane. -/
-theorem isNonCrossing_lines_concat {i : ι} (h₁ : IsNonCrossing (f.lines i : SetRel ℕ ℕ))
-    (h₂ : IsNonCrossing (g.lines i : SetRel ℕ ℕ)) :
-    IsNonCrossing ((f.concat g).lines i : SetRel ℕ ℕ) :=
-  Form.isNonCrossing_lines_concat (f.plane i) (g.plane i) h₁ h₂
 
 /-- The words of the presented representation: the slots on tier `none`, and the autosegments of
 plane `i` on tier `some i`. -/
@@ -404,7 +375,7 @@ theorem toAR_concat : (f.concat g).toAR = f.toAR * g.toAR := by
       (f.concat g).toAR.Link (some i) none p q ↔ (f.toAR * g.toAR).Link (some i) none p q := by
     rw [AR.link_mul]
     simp only [link_toAR, word_toAR, word_some, word_none, concat_lines, Finset.mem_union,
-      Finset.mem_map, Form.shift_apply, Prod.ext_iff]
+      Finset.mem_map, AR.shift_apply, Prod.ext_iff]
     constructor
     · rintro (h | ⟨⟨a, b⟩, h, rfl, rfl⟩)
       · exact .inl h

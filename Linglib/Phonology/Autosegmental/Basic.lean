@@ -128,7 +128,8 @@ def assoc : SimpleGraph X.Pos where
   symm := ⟨fun _ _ h ↦ h.symm⟩
   loopless := ⟨fun _ h ↦ h.ne rfl⟩
 
-instance : DecidableRel X.assoc.Adj := fun v w ↦ inferInstanceAs (Decidable (X.Link v.1 w.1 v.2 w.2))
+instance : DecidableRel X.assoc.Adj :=
+  fun v w ↦ inferInstanceAs (Decidable (X.Link v.1 w.1 v.2 w.2))
 
 theorem link_iff_adj {v w : X.Pos} : X.Link v.1 w.1 v.2 w.2 ↔ X.assoc.Adj v w := .rfl
 
@@ -136,6 +137,43 @@ theorem Link.adj {i j : ι} {p q : ℕ} (h : X.Link i j p q) :
     X.assoc.Adj ⟨i, ⟨p, h.lt_left⟩⟩ ⟨j, ⟨q, h.lt_right⟩⟩ := h
 
 theorem fst_ne_of_adj {v w : X.Pos} (h : X.assoc.Adj v w) : v.1 ≠ w.1 := Link.ne h
+
+/-! ### Lines as pairs of positions -/
+
+section Links
+
+variable (X) (i j : ι)
+
+/-- The lines from tier `i` to tier `j` as pairs of positions of the two words, the view that
+candidates edit. -/
+def links : Finset (Fin (X.word i).length × Fin (X.word j).length) :=
+  Finset.univ.filter fun x ↦ (x.1.val, x.2.val) ∈ X.lines i j
+
+variable {X i j}
+
+@[simp] theorem mem_links {x : Fin (X.word i).length × Fin (X.word j).length} :
+    x ∈ X.links i j ↔ (x.1.val, x.2.val) ∈ X.lines i j := by
+  simp [links]
+
+variable (X i j) in
+theorem map_links :
+    (X.links i j).map (Fin.valEmbedding.prodMap Fin.valEmbedding) = X.lines i j := by
+  ext ⟨a, b⟩
+  simp only [Finset.mem_map, mem_links, Function.Embedding.prodMap, Prod.exists,
+    Function.Embedding.coeFn_mk, Prod.map, Fin.valEmbedding_apply, Prod.mk.injEq]
+  constructor
+  · rintro ⟨k, l, h, rfl, rfl⟩
+    exact h
+  · intro h
+    exact ⟨⟨a, Link.lt_left h⟩, ⟨b, Link.lt_right h⟩, h, rfl, rfl⟩
+
+theorem isNonCrossing_lines_iff_links :
+    IsNonCrossing (X.lines i j : SetRel ℕ ℕ) ↔
+      IsNonCrossing (X.links i j : SetRel (Fin (X.word i).length) (Fin (X.word j).length)) := by
+  rw [← map_links, Finset.coe_map, isNonCrossing_image]
+  rfl
+
+end Links
 
 /-! ### Representations from words and a graph -/
 
@@ -347,20 +385,26 @@ theorem isNonCrossing_lines_comm {i j : ι} :
   exact ⟨fun h _ _ _ _ h₁ h₂ hlt ↦ le_of_not_gt fun hgt ↦ (h h₂.symm h₁.symm hgt).not_gt hlt,
     fun h _ _ _ _ h₁ h₂ hlt ↦ le_of_not_gt fun hgt ↦ (h h₂.symm h₁.symm hgt).not_gt hlt⟩
 
+/-- Concatenation keeps the lines between two tiers non-crossing. -/
+theorem isNonCrossing_lines_mul {i j : ι} (hX : IsNonCrossing (X.lines i j : SetRel ℕ ℕ))
+    (hY : IsNonCrossing (Y.lines i j : SetRel ℕ ℕ)) :
+    IsNonCrossing ((X * Y).lines i j : SetRel ℕ ℕ) :=
+  isNonCrossing_lines_iff.2 fun p q p' q' h₁ h₂ hlt ↦ by
+    replace hX := isNonCrossing_lines_iff.1 hX
+    replace hY := isNonCrossing_lines_iff.1 hY
+    rcases (link_mul i j p q).1 h₁ with h₁ | ⟨hp, hq, h₁⟩ <;>
+      rcases (link_mul i j p' q').1 h₂ with h₂ | ⟨hp', hq', h₂⟩
+    · exact hX h₁ h₂ hlt
+    · exact (h₁.lt_right.trans_le hq').le
+    · exact absurd (h₂.lt_left.trans_le hp) (by omega)
+    · have := hY h₁ h₂ (by omega)
+      omega
+
 /-- Concatenation preserves the No-Crossing Constraint. With `NoCrossing.repoint` under the
 merge this gives the inductive step of [jardine-heinz-2015]'s Theorem 4 for their merging
 concatenation, `MergeAR.noCrossing_toAR_mul`. -/
 theorem NoCrossing.mul (hX : X.NoCrossing) (hY : Y.NoCrossing) : (X * Y).NoCrossing :=
-    fun i j ↦ isNonCrossing_lines_iff.2 fun p q p' q' h₁ h₂ hlt ↦ by
-  replace hX := isNonCrossing_lines_iff.1 (hX i j)
-  replace hY := isNonCrossing_lines_iff.1 (hY i j)
-  rcases (link_mul i j p q).1 h₁ with h₁ | ⟨hp, hq, h₁⟩ <;>
-    rcases (link_mul i j p' q').1 h₂ with h₂ | ⟨hp', hq', h₂⟩
-  · exact hX h₁ h₂ hlt
-  · exact (h₁.lt_right.trans_le hq').le
-  · exact absurd (h₂.lt_left.trans_le hp) (by omega)
-  · have := hY h₁ h₂ (by omega)
-    omega
+  fun i j ↦ isNonCrossing_lines_mul (hX i j) (hY i j)
 
 /-! ### Moving positions -/
 

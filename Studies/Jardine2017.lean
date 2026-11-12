@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Autosegmental.Form
+public import Linglib.Phonology.Autosegmental.TwoTier
 public import Linglib.Phonology.Tone.Basic
 
 /-!
@@ -48,7 +48,7 @@ abbrev σ : TBUKind := .syllable
 association lines given as pairs of positions. -/
 abbrev ar (tones : List TRN) (tbus : List TBUKind) (lines : List (ℕ × ℕ)) :
     AR (TwoTier TRN TBUKind) :=
-  (Form.ofLines tones tbus lines.toFinset).toAR
+  AR.ofLines tones tbus lines.toFinset
 
 /-- The grammar of forbidden subgraphs `¬r₁ ∧ … ∧ ¬rₙ` of (3a), as the list of factors. -/
 abbrev Grammar := List (AR (TwoTier TRN TBUKind))

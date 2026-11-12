@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Autosegmental.IntervalOrder
-public import Linglib.Phonology.Autosegmental.Form
+public import Linglib.Phonology.Autosegmental.TwoTier
 public import Linglib.Phonology.Tone.Basic
 
 /-!
@@ -183,12 +183,13 @@ inductive Syl
 /-- Clements's `mo yɛ ka` (27): `mo` and `yɛ` overlap the first L, `ka` the H, and the final L
 floats, with no precedence across the tiers (28). -/
 abbrev clements : AR (TwoTier TRN Syl) :=
-  (Form.ofLines [L, H, L] [.mo, .ye, .ka] {(0, 0), (0, 1), (1, 2)}).toAR
+  AR.ofLines [L, H, L] [.mo, .ye, .ka] {(0, 0), (0, 1), (1, 2)}
 
 /-- (27) is consistent: it has an event structure. -/
 theorem clements_consistent : ∃ prec ov, IsEventStructureOf clements prec ov :=
   exists_isEventStructureOf_of_hasIntervalOrder
-    (AR.noCrossing_iff_hasIntervalOrder.1 (by decide))
+    ((AR.noCrossing_iff_hasIntervalOrder_of_card_le_two (by simp)).1
+      (show clements.NoCrossing by decide))
 
 /-- Three tiers, each tier's first position linked to the next tier's second around the cycle
 of tiers. -/

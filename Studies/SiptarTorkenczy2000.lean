@@ -30,7 +30,8 @@ by prelinking (`sourceValue_agrees`, `sourceValue_viz`, `sourceValue_hid`,
 
 ## Implementation notes
 
-* Words are the substrate's `Form` with vocalic nodes for the backbone, place features for the tier
+* Words are the substrate's two-tier representations with vocalic nodes for the backbone, place
+  features for the tier
   and the stem and suffix as sponsors, and the rules act on its `Candidate`s; a rule inserts
   association lines, and the derivation composes the rules in the chapter's order. Default COR is
   read at the surface, a placeless node counting as coronal. Where the chapter has COR and LAB
@@ -80,67 +81,69 @@ inductive Morph
   deriving DecidableEq
 
 /-- A phonological word is an autosegmental form over vocalic nodes and place features. -/
-abbrev Word := Form (Sponsored Place Morph) (Sponsored VNode Morph)
+abbrev Word := AR (TwoTier (Sponsored Place Morph) (Sponsored VNode Morph))
 
 /-! ### The rules -/
 
 variable {w : Word} (c : Candidate w)
 
 /-- The place features linked to the `i`-th node. -/
-def places (i : Fin w.lower.length) : List Place := c.tierValues i
+def places (i : Fin (w.word .lower).length) : List Place := c.tierValues i
 
 /-- Whether the `i`-th node is low. -/
-def isLow (i : Fin w.lower.length) : Bool := w.lower[i].value.open1
+def isLow (i : Fin (w.word .lower).length) : Bool := (w.word .lower)[i].value.open1
 
 /-- The value of the `k`-th tier element. -/
-def valueAt (k : Fin w.upper.length) : Place := w.upper[k].value
+def valueAt (k : Fin (w.word .upper).length) : Place := (w.word .upper)[k].value
 
 /-- Where a place feature may associate, principles (7c) and (7d) under constraints (6a) and
 (6b): DOR to any node without COR, COR to a placeless node, LAB to a node without DOR that is
 not low. -/
-def MayLink (p : Place) (i : Fin w.lower.length) : Prop :=
+def MayLink (p : Place) (i : Fin (w.word .lower).length) : Prop :=
   (p = .dor → .cor ∉ places c i) ∧ (p = .cor → places c i = []) ∧
     (p = .lab → .dor ∉ places c i ∧ isLow i = false)
 
-instance (p : Place) (i : Fin w.lower.length) : Decidable (MayLink c p i) :=
+instance (p : Place) (i : Fin (w.word .lower).length) : Decidable (MayLink c p i) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 /-- Associate tier element `k`, bearing `p`, to every node it may link to. -/
-def linkAll (k : Fin w.upper.length) (p : Place) : Candidate w :=
-  (List.finRange w.lower.length).foldl (fun g i ↦ if MayLink g p i then g.insertLink k i else g) c
+def linkAll (k : Fin (w.word .upper).length) (p : Place) : Candidate w :=
+  (List.finRange (w.word .lower).length).foldl (fun g i ↦ if MayLink g p i then g.insertLink k i
+      else g) c
 
 /-- The floating tier elements bearing `p`. -/
-def floating (p : Place) : List (Fin w.upper.length) :=
-  (List.finRange w.upper.length).filter fun k ↦ decide (c.IsFloating k ∧ valueAt k = p)
+def floating (p : Place) : List (Fin (w.word .upper).length) :=
+  (List.finRange (w.word .upper).length).filter fun k ↦ decide (c.IsFloating k ∧ valueAt k = p)
 
 /-- By Link DOR (3b), every floating DOR associates to every node without COR. -/
 def linkDor : Candidate w := (floating c .dor).foldl (fun g k ↦ linkAll g k .dor) c
 
 /-- By Link Place (3a), every floating place feature associates to every node it may link to. -/
 def linkPlace : Candidate w :=
-  (List.finRange w.upper.length).foldl
+  (List.finRange (w.word .upper).length).foldl
     (fun g k ↦ if g.IsFloating k then linkAll g k (valueAt k) else g) c
 
 /-- The tier element bearing `p` anchored on node `i`. -/
-def anchored (p : Place) (i : Fin w.lower.length) : Option (Fin w.upper.length) :=
+def anchored (p : Place) (i : Fin (w.word .lower).length) : Option (Fin (w.word .upper).length) :=
   (c.linksTo i).find? fun k ↦ valueAt k = p
 
 /-- Spread `p` from node `i` to the next node when it is anchored on `i` and may link there. -/
-def spreadAt (p : Place) (i : Fin w.lower.length) : Candidate w :=
+def spreadAt (p : Place) (i : Fin (w.word .lower).length) : Candidate w :=
   match anchored c p i with
   | some k =>
-    if h : i.val + 1 < w.lower.length then
+    if h : i.val + 1 < (w.word .lower).length then
       if MayLink c p ⟨i.val + 1, h⟩ then c.insertLink k ⟨i.val + 1, h⟩ else c
     else c
   | none => c
 
 /-- By Spread DOR (4b), iterating left to right, an anchored DOR extends to the next node. -/
-def spreadDor : Candidate w := (List.finRange w.lower.length).foldl (fun g i ↦ spreadAt g .dor i) c
+def spreadDor : Candidate w :=
+  (List.finRange (w.word .lower).length).foldl (fun g i ↦ spreadAt g .dor i) c
 
 /-- By Spread Place (4a), iterating left to right, an anchored COR extends to the next node when
 it is placeless, and an anchored LAB when it bears no DOR and is not low. -/
 def spreadPlace : Candidate w :=
-  (List.finRange w.lower.length).foldl (fun g i ↦ spreadAt (spreadAt g .cor i) .lab i) c
+  (List.finRange (w.word .lower).length).foldl (fun g i ↦ spreadAt (spreadAt g .cor i) .lab i) c
 
 /-- The derivation applies the linking rules, the DOR rule first, and then the spreading
 rules. -/
@@ -163,13 +166,15 @@ variable {c}
 /-- By constraint (6a), no node bears both COR and DOR. -/
 def Sound (g : Candidate w) : Prop := ∀ i, ¬ (.cor ∈ places g i ∧ .dor ∈ places g i)
 
-theorem mem_places_insertLink {p : Place} {k : Fin w.upper.length} {i j : Fin w.lower.length} :
+theorem mem_places_insertLink {p : Place} {k : Fin (w.word .upper).length} {i j :
+    Fin (w.word .lower).length} :
     p ∈ places (c.insertLink k i) j ↔ p ∈ places c j ∨ (j = i ∧ valueAt k = p) := by
   simp only [places, valueAt, Candidate.mem_tierValues, Candidate.insertLink_links,
     Finset.mem_insert, Prod.mk.injEq]
   aesop
 
-theorem Sound.insertLink {p : Place} {k : Fin w.upper.length} {i : Fin w.lower.length}
+theorem Sound.insertLink {p : Place} {k : Fin (w.word .upper).length} {i :
+    Fin (w.word .lower).length}
     (hs : Sound c) (hv : valueAt k = p) (hm : MayLink c p i) : Sound (c.insertLink k i) := by
   intro j ⟨hc, hd⟩
   rw [mem_places_insertLink] at hc hd
@@ -190,7 +195,8 @@ theorem Preserves.trans {g h : Candidate w} (h₁ : Preserves c g) (h₂ : Prese
     Preserves c h :=
   ⟨h₁.subset.trans h₂.subset, h₂.sound ∘ h₁.sound⟩
 
-theorem Preserves.insertLink {p : Place} {k : Fin w.upper.length} {i : Fin w.lower.length}
+theorem Preserves.insertLink {p : Place} {k : Fin (w.word .upper).length} {i :
+    Fin (w.word .lower).length}
     (hv : valueAt k = p) (hm : MayLink c p i) : Preserves c (c.insertLink k i) :=
   ⟨Finset.subset_insert _ _, fun hs ↦ hs.insertLink hv hm⟩
 
@@ -203,7 +209,7 @@ private theorem foldl_preserves {α : Type*} {step : Candidate w → α → Cand
     exact fun g hg ↦ ih (fun b hb ↦ h b (List.mem_cons_of_mem a hb)) _
       (hg.trans (h a (List.mem_cons_self ..) g hg))
 
-theorem preserves_linkAll {k : Fin w.upper.length} {p : Place} (hv : valueAt k = p) :
+theorem preserves_linkAll {k : Fin (w.word .upper).length} {p : Place} (hv : valueAt k = p) :
     Preserves c (linkAll c k p) :=
   foldl_preserves _ (fun i _ g _ ↦ by
     split_ifs with hm
@@ -221,7 +227,8 @@ theorem preserves_linkPlace : Preserves c (linkPlace c) :=
     · exact preserves_linkAll rfl
     · exact .refl) c .refl
 
-theorem preserves_spreadAt (p : Place) (i : Fin w.lower.length) : Preserves c (spreadAt c p i) := by
+theorem preserves_spreadAt (p : Place) (i : Fin (w.word .lower).length) :
+    Preserves c (spreadAt c p i) := by
   unfold spreadAt
   split
   · next k hk =>
@@ -300,13 +307,13 @@ node when the suffix has one. -/
 def word (s : Stem) (x : Suffix) : Word :=
   let prelinked : List (Place × ℕ) := s.nodes.zipIdx.flatMap fun (v, i) ↦ v.2.map (·, i)
   let n := s.floating.length
-  Form.morph .stem (s.floating ++ prelinked.map (·.1)) (s.nodes.map (·.1))
+  AR.morph .stem (s.floating ++ prelinked.map (·.1)) (s.nodes.map (·.1))
       (prelinked.zipIdx.map fun ((q, j) : (Place × ℕ) × ℕ) ↦ (n + j, q.2)).toFinset *
-    Form.morph .suffix (if x.hasLab then [.lab] else []) [x.node]
+    AR.morph .suffix (if x.hasLab then [.lab] else []) [x.node]
       (if x.hasLab then {(0, 0)} else ∅)
 
 /-- The slot of the suffix node, the last node of the word. -/
-def suffixSlot (s : Stem) (x : Suffix) : Fin (word s x).lower.length :=
+def suffixSlot (s : Stem) (x : Suffix) : Fin ((word s x).word .lower).length :=
   ⟨s.nodes.length, by simp [word]⟩
 
 /-- The suffix segments the derivation yields. -/

@@ -113,11 +113,11 @@ instance (governor governee : List Autosegment) : Decidable (MayGovern governor 
 
 /-- A form of the paper is a melodic tier of `Autosegment`s over a strict-CV skeleton, each object
 and slot sponsored by a morpheme in `M`. -/
-abbrev Form (M : Type*) := Autosegmental.Form (Sponsored Autosegment M) (Sponsored Slot M)
+abbrev Form (M : Type) := Autosegmental.AR (TwoTier (Sponsored Autosegment M) (Sponsored Slot M))
 
 section Exponents
 
-variable {M : Type*} (m : M)
+variable {M : Type} (m : M)
 
 /-- An exponent of floating material has objects on the melodic tier and no skeleton. -/
 abbrev floating (objs : List Autosegment) : Form M :=
@@ -139,10 +139,10 @@ def emptyCV : Form M := .morph m [] [.C, .V] ∅
 variable {m} (s : Form M)
 
 /-- The floating `d` of a historic-tense form. -/
-def d : Fin (historic m * s).upper.length := ⟨0, by simp⟩
+def d : Fin ((historic m * s).word .upper).length := ⟨0, by simp⟩
 
 /-- The bundle `{L}` of a historic-tense form. -/
-def bundle : Fin (historic m * s).upper.length := ⟨1, by simp⟩
+def bundle : Fin ((historic m * s).word .upper).length := ⟨1, by simp⟩
 
 end Exponents
 
@@ -150,18 +150,18 @@ end Exponents
 
 section Docking
 
-variable {M : Type*} {u : Form M} (c : Candidate u)
+variable {M : Type} {u : Form M} (c : Candidate u)
 
 /-- Slot `i` hosts a segment on the surface. -/
-def HostsSegment (i : Fin u.lower.length) : Prop :=
-  ∃ k s, (k, i) ∈ c.links ∧ u.upper[k].value = .seg s
+def HostsSegment (i : Fin (u.word .lower).length) : Prop :=
+  ∃ k s, (k, i) ∈ c.links ∧ (u.word .upper)[k].value = .seg s
 
-instance (i : Fin u.lower.length) : Decidable (HostsSegment c i) :=
+instance (i : Fin (u.word .lower).length) : Decidable (HostsSegment c i) :=
   inferInstanceAs (Decidable (∃ _ _, _ ∧ _))
 
 /-- The slot immediately to the right of object `k` is the first slot after every slot linked to
 an object before it. -/
-def nextSlot (k : Fin u.upper.length) : Option (Fin u.lower.length) :=
+def nextSlot (k : Fin (u.word .upper).length) : Option (Fin (u.word .lower).length) :=
   Fin.find? fun i ↦ ∀ j ∈ leftIndices c.links k, j < i
 
 variable (u) in
@@ -172,9 +172,9 @@ def domains : Finset (Fin (StrictCV.units u)) := StrictCV.clusters (.input u) Ma
 /-- A docking site for `{L}` is a C-slot hosting the consonant it acts on, and for a segment a
 segmentally empty C-slot whose nucleus hosts a segment or is enclosed in a domain of
 infrasegmental government (§4.1). -/
-def IsDockingSite : Autosegment → Fin u.lower.length → Prop
-  | .L, i => u.lower[i].value = .C ∧ HostsSegment c i
-  | .seg _, i => u.lower[i].value = .C ∧ ¬ HostsSegment c i ∧
+def IsDockingSite : Autosegment → Fin (u.word .lower).length → Prop
+  | .L, i => (u.word .lower)[i].value = .C ∧ HostsSegment c i
+  | .seg _, i => (u.word .lower)[i].value = .C ∧ ¬ HostsSegment c i ∧
       ∃ j, StrictCV.onset u j = i ∧ (HostsSegment c (StrictCV.nucleus u j) ∨
         StrictCV.Enclosed (StrictCV.nucleusOf c Autosegment.IsSegment (domains u) j)
           ((StrictCV.surface c Autosegment.IsSegment (domains u)).drop (j + 1)))
@@ -184,35 +184,35 @@ instance : ∀ a i, Decidable (IsDockingSite c a i)
   | .seg _, _ => inferInstanceAs (Decidable (_ ∧ _ ∧ ∃ _, _))
 
 variable {c} in
-theorem IsDockingSite.isC {i : Fin u.lower.length} : ∀ {a}, IsDockingSite c a i →
-    u.lower[i].value = .C
+theorem IsDockingSite.isC {i : Fin (u.word .lower).length} : ∀ {a}, IsDockingSite c a i →
+    (u.word .lower)[i].value = .C
   | .L, h | .seg _, h => h.1
 
 /-- Object `k` can dock when it is floating and the slot immediately to its right is a docking
 site for it. -/
-def CanDock (k : Fin u.upper.length) : Prop :=
-  c.IsFloating k ∧ ∃ i ∈ nextSlot c k, IsDockingSite c u.upper[k].value i
+def CanDock (k : Fin (u.word .upper).length) : Prop :=
+  c.IsFloating k ∧ ∃ i ∈ nextSlot c k, IsDockingSite c (u.word .upper)[k].value i
 
-instance (k : Fin u.upper.length) : Decidable (CanDock c k) :=
+instance (k : Fin (u.word .upper).length) : Decidable (CanDock c k) :=
   inferInstanceAs (Decidable (_ ∧ ∃ _ ∈ _, _))
 
 /-- The *f* on slot `i`, whose segmental content `{L}` deletes (§2.2). -/
-def fOn (i : Fin u.lower.length) : Option (Fin u.upper.length) :=
-  (c.linksTo i).find? (u.upper[·].value = .seg .f)
+def fOn (i : Fin (u.word .lower).length) : Option (Fin (u.word .upper).length) :=
+  (c.linksTo i).find? ((u.word .upper)[·].value = .seg .f)
 
 /-- Object `k` docks on the slot immediately to its right; `{L}` docking on an *f* deletes its
 segmental content and leaves the slot. -/
-def dock (k : Fin u.upper.length) : Candidate u :=
+def dock (k : Fin (u.word .upper).length) : Candidate u :=
   match nextSlot c k with
   | some i =>
-    if u.upper[k].value = .L then
+    if (u.word .upper)[k].value = .L then
       (fOn c i).elim (c.insertLink k i) (c.insertLink k i).delete
     else c.insertLink k i
   | none => c
 
 /-- A step docks one floating object where it can. -/
 inductive Step : Candidate u → Candidate u → Prop
-  | dock {c : Candidate u} {k : Fin u.upper.length} :
+  | dock {c : Candidate u} {k : Fin (u.word .upper).length} :
       CanDock c k → Step c (LaoideKemp2026.dock c k)
 
 /-- A surface form is a candidate where no object can dock. -/
@@ -222,20 +222,20 @@ instance : Decidable (IsSurface c) := inferInstanceAs (Decidable (∀ _, _))
 
 /-- A candidate realizes `a` when an object of value `a` is linked on the surface; a floating
 object is not pronounced. -/
-def Realizes (a : Autosegment) : Prop := ∃ k, u.upper[k].value = a ∧ c.IsLinked k
+def Realizes (a : Autosegment) : Prop := ∃ k, (u.word .upper)[k].value = a ∧ c.IsLinked k
 
 instance (a : Autosegment) : Decidable (Realizes c a) := inferInstanceAs (Decidable (∃ _, _ ∧ _))
 
 /-- A candidate begins with an empty consonantal slot, the context in which the morphosyntactic
 analysis spells out the historic-tense particle as *d* ((23)). -/
 def BeginsWithEmptyC : Prop :=
-  ∃ i : Fin u.lower.length, i.val = 0 ∧ u.lower[i].value = .C ∧ ¬ HostsSegment c i
+  ∃ i : Fin (u.word .lower).length, i.val = 0 ∧ (u.word .lower)[i].value = .C ∧ ¬ HostsSegment c i
 
 instance : Decidable (BeginsWithEmptyC c) := inferInstanceAs (Decidable (∃ _, _ ∧ _ ∧ _))
 
-variable {c} {c' : Candidate u} {k j : Fin u.upper.length}
+variable {c} {c' : Candidate u} {k j : Fin (u.word .upper).length}
 
-theorem mem_links_of_fOn_eq_some {i : Fin u.lower.length} (h : fOn c i = some j) :
+theorem mem_links_of_fOn_eq_some {i : Fin (u.word .lower).length} (h : fOn c i = some j) :
     (j, i) ∈ c.links :=
   Candidate.mem_linksTo.1 (List.mem_of_find?_eq_some h)
 
@@ -254,7 +254,7 @@ theorem isFloating_dock (hk : CanDock c k) : (dock c k).IsFloating j ↔ j ≠ k
     exact ⟨fun h ↦ h.2, fun ⟨hjk, hj⟩ ↦ ⟨fun he ↦ hj' (he ▸ hj), hjk, hj⟩⟩
   · exact Candidate.isFloating_insertLink
 
-theorem links_dock_subset {i : Fin u.lower.length} (hi : nextSlot c k = some i) :
+theorem links_dock_subset {i : Fin (u.word .lower).length} (hi : nextSlot c k = some i) :
     (dock c k).links ⊆ insert (k, i) c.links := by
   simp only [dock, hi]
   split_ifs
@@ -262,7 +262,7 @@ theorem links_dock_subset {i : Fin u.lower.length} (hi : nextSlot c k = some i) 
     exacts [Finset.Subset.refl _, Candidate.links_delete_subset]
   · exact Finset.Subset.refl _
 
-theorem val_eq_zero_of_mem_nextSlot (h : leftIndices c.links k = ∅) {i : Fin u.lower.length}
+theorem val_eq_zero_of_mem_nextSlot (h : leftIndices c.links k = ∅) {i : Fin (u.word .lower).length}
     (hi : i ∈ nextSlot c k) : i.val = 0 := by
   by_contra h0
   have := (Fin.find?_eq_some_iff.1 hi).2 ⟨0, by omega⟩ (Fin.lt_def.2 (by simp only; omega))
@@ -324,7 +324,7 @@ same structure blocks both lenition and the linking of `d` (§6.2). -/
 
 section EmptyCV
 
-variable {M : Type*} {u : Form M} {c : Candidate u}
+variable {M : Type} {u : Form M} {c : Candidate u}
 
 theorem not_isDockingSite_onset {j : Fin (StrictCV.units u)}
     (hc : ¬ HostsSegment c (StrictCV.onset u j)) (hv : ¬ HostsSegment c (StrictCV.nucleus u j))
@@ -343,9 +343,10 @@ theorem not_isDockingSite_onset {j : Fin (StrictCV.units u)}
 variable {m m' : M} {objs : List Autosegment} {s : Form M}
   {c c' : Candidate (floating m objs * (emptyCV m' * s))}
 
-private theorem le_of_mem_links {p} (hp : p ∈ (floating m objs * (emptyCV m' * s)).links) :
+private theorem le_of_mem_links {p} (hp :
+    p ∈ (floating m objs * (emptyCV m' * s)).links .upper .lower) :
     objs.length ≤ p.1.val ∧ 2 ≤ p.2.val := by
-  have h := Form.mem_links.1 hp
+  have h := AR.mem_links.1 hp
   simp [floating, emptyCV, Prod.ext_iff] at h
   omega
 
@@ -373,12 +374,12 @@ private theorem leftIndices_eq_empty (h : Blocked c) {k : Fin _} (hk : k.val < o
 
 private theorem le_of_canDock (h : Blocked c) {k : Fin _} (hk : CanDock c k) :
     objs.length ≤ k.val ∧ ∀ i ∈ nextSlot c k, 2 ≤ i.val := by
-  have hlen : 1 < (floating m objs * (emptyCV m' * s)).lower.length := by simp [emptyCV]
+  have hlen : 1 < ((floating m objs * (emptyCV m' * s)).word .lower).length := by simp [emptyCV]
   obtain ⟨-, i, hi, hs⟩ := hk
   have hi0 : i.val ≠ 0 := fun h0 ↦ by
     have hu : 0 < StrictCV.units (floating m objs * (emptyCV m' * s)) := by
-      simp only [StrictCV.units, Form.mul_eq_concat, Form.concat_lower, floating, emptyCV,
-        Form.morph_lower, List.map_nil, List.map_cons, List.nil_append, List.length_cons,
+      simp only [StrictCV.units, AR.word_mul, floating, emptyCV,
+        AR.word_morph_lower, List.map_nil, List.map_cons, List.nil_append, List.length_cons,
         List.cons_append]
       omega
     obtain rfl : i = StrictCV.onset _ ⟨0, hu⟩ := Fin.ext (by simp [StrictCV.onset, h0])

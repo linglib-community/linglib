@@ -43,22 +43,22 @@ inductive Mel
   | b
   deriving DecidableEq
 
-/-- Example 1's labels: melody symbols over `true`, and the one timing symbol `c` over
-`false`. -/
+/-- Example 1's labels: melody symbols on the upper tier, and the one timing symbol `c`
+on the lower. -/
 abbrev Γ := TwoTier Mel Unit
 
 /-- `G₁` of Figure 2: the melody `a b`, both associated to one timing node. -/
-abbrev G₁ : AR Γ := (Form.primitive [.a, .b] ()).toAR
+abbrev G₁ : AR Γ := AR.primitive [.a, .b] ()
 
 /-- `G₂` of Figure 2: `b` over a timing node. -/
-abbrev G₂ : AR Γ := (Form.primitive [.b] ()).toAR
+abbrev G₂ : AR Γ := AR.primitive [.b] ()
 
 /-- The graph of Figure 4: `a` then the merged `b`, over two timing nodes, with the merged `b`
 associated to both. -/
-abbrev fig4 : AR Γ := (Form.ofLines [.a, .b] [(), ()] {(0, 0), (1, 0), (1, 1)}).toAR
+abbrev fig4 : AR Γ := AR.ofLines [.a, .b] [(), ()] {(0, 0), (1, 0), (1, 1)}
 
 /-- Concatenating `G₁` and `G₂` merges their `b` nodes (Example 3, Figure 4). -/
-theorem mul_G₁_G₂ : toAR (ofAR G₁ * ofAR G₂ : MergeAR true Γ) = fig4 := by decide
+theorem mul_G₁_G₂ : toAR (ofAR G₁ * ofAR G₂ : MergeAR .upper Γ) = fig4 := by decide
 
 /-! ### Kishambaa: an OCP-violating primitive -/
 
@@ -85,20 +85,20 @@ def Sym.lines : Sym → Finset (ℕ × ℕ)
   | .γ₂ => {(1, 0)}
 
 /-- The primitives of Figure 13. -/
-def g (s : Sym) : AR (TwoTier TRN TBUKind) := (Form.ofLines s.melody [μ] s.lines).toAR
+def g (s : Sym) : AR (TwoTier TRN TBUKind) := AR.ofLines s.melody [μ] s.lines
 
 /-- The realization of a string by merging concatenation, the product of its symbols'
 primitives (Definition 5). -/
-def realize (w : List Sym) : MergeAR true (TwoTier TRN TBUKind) := (w.map fun s ↦ ofAR (g s)).prod
+def realize (w : List Sym) : MergeAR .upper (TwoTier TRN TBUKind) := (w.map fun s ↦ ofAR (g s)).prod
 
-theorem not_isCleanAt_g_γ₂ : ¬ (g .γ₂).IsCleanAt true := by
+theorem not_isCleanAt_g_γ₂ : ¬ (g .γ₂).IsCleanAt .upper := by
   simp [AR.IsCleanAt, g, Sym.melody]
 
 /-- Figure 12a, 'snake': one high spread over two morae. -/
-abbrev snake : AR (TwoTier TRN TBUKind) := (Form.ofLines [H] [μ, μ] {(0, 0), (0, 1)}).toAR
+abbrev snake : AR (TwoTier TRN TBUKind) := AR.ofLines [H] [μ, μ] {(0, 0), (0, 1)}
 
 /-- Figure 12b, 'sheep': a high and a downstepped high, one per mora. -/
-abbrev sheep : AR (TwoTier TRN TBUKind) := (Form.ofLines [H, H] [μ, μ] {(0, 0), (1, 1)}).toAR
+abbrev sheep : AR (TwoTier TRN TBUKind) := AR.ofLines [H, H] [μ, μ] {(0, 0), (1, 1)}
 
 /-- `γ₁γ₁` derives the spread high of Figure 12a. -/
 theorem realize_γ₁_γ₁ : toAR (realize [.γ₁, .γ₁]) = snake := by decide
@@ -108,12 +108,12 @@ theorem realize_γ₁_γ₂ : toAR (realize [.γ₁, .γ₂]) = sheep := by deci
 
 /-- Collapsing every run after concatenating merges all three highs of `γ₁γ₂`, deriving the
 spread graph of Figure 12a instead. -/
-theorem collapse_prod_γ₁_γ₂ : ([Sym.γ₁, .γ₂].map g).prod.collapse true = snake := by decide
+theorem collapse_prod_γ₁_γ₂ : ([Sym.γ₁, .γ₂].map g).prod.collapse .upper = snake := by decide
 
 /-- Once a primitive violates the OCP, collapsing after concatenation does not compute
 merging concatenation: the two realizations of `γ₁γ₂` differ. -/
 theorem realize_γ₁_γ₂_ne_collapse :
-    toAR (realize [.γ₁, .γ₂]) ≠ ([Sym.γ₁, .γ₂].map g).prod.collapse true := by
+    toAR (realize [.γ₁, .γ₂]) ≠ ([Sym.γ₁, .γ₂].map g).prod.collapse .upper := by
   rw [realize_γ₁_γ₂, collapse_prod_γ₁_γ₂]
   decide
 

@@ -29,7 +29,7 @@ order admits.
 * `IsNonCrossing.of_intervals`: overlaps of intervals placed in tier order are non-crossing.
 * `AR.HasIntervalOrder.noCrossing`: a representation with an interval order obeys the NCC.
 * `AR.noCrossing_iff_hasIntervalOrder_of_isAcyclic`: on a forest of tiers the converse holds,
-  and `AR.noCrossing_iff_hasIntervalOrder` on two tiers in particular.
+  and `AR.noCrossing_iff_hasIntervalOrder_of_card_le_two` on at most two tiers.
 * `AR.exists_noCrossing_not_hasIntervalOrder`: on a cycle of three tiers it fails.
 
 ## Implementation notes
@@ -184,11 +184,11 @@ theorem noCrossing_iff_hasIntervalOrder_of_isAcyclic [Finite ι] {G : SimpleGrap
       @hleaf ⟨i, Finset.mem_of_mem_erase hi⟩ hi' ⟨j, Finset.mem_of_mem_erase hj⟩ hj'
   rwa [Finset.coe_erase, Set.insert_sdiff_singleton, Set.insert_eq_of_mem hℓ] at this
 
-/-- On two tiers, which always form a forest, a representation obeys the No-Crossing
+/-- On at most two tiers, which always form a forest, a representation obeys the No-Crossing
 Constraint iff it has an interval order. -/
-theorem noCrossing_iff_hasIntervalOrder {τ : Bool → Type*} {X : AR τ} :
+theorem noCrossing_iff_hasIntervalOrder_of_card_le_two [Finite ι] (h : ENat.card ι ≤ 2) :
     X.NoCrossing ↔ X.HasIntervalOrder :=
-  noCrossing_iff_hasIntervalOrder_of_isAcyclic (G := ⊤) (.of_card_le_two (by simp))
+  noCrossing_iff_hasIntervalOrder_of_isAcyclic (G := ⊤) (.of_card_le_two h)
     fun _ _ ↦ fst_ne_of_adj
 
 /-- On a cycle of three tiers the converse fails: with each tier's first position linked to the

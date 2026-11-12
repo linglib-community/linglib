@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.OCP
-public import Linglib.Phonology.Autosegmental.Form
+public import Linglib.Phonology.Autosegmental.TwoTier
 
 /-!
 # OCP-merging collapse of autosegmental representations
@@ -20,8 +20,8 @@ that destutters the tier word (`OCP.collapse`) through the run index `runIdx`, m
 of identical melody nodes; a melody `Hⁿ` collapses to one `H` linked to `n` timing slots. The
 collapse [is OCP-clean](##Autosegmental.AR.isCleanAt_collapse), and collapsing a clean tier
 [changes nothing](##Autosegmental.AR.IsCleanAt.collapse_eq). On two tiers the collapse of the
-melody is computed on forms: `Form.collapse`
-[presents it](##Autosegmental.Form.toAR_collapse). Collapsing a realization `(w.map g₀).prod`
+upper tier [repoints each line](##Autosegmental.AR.link_collapse_upper_lower) through the run
+index of that tier. Collapsing a realization `(w.map g₀).prod`
 merges every run of its melody. Jardine and Heinz instead merge only at the seam of each
 concatenation (`Autosegmental/MergeAR.lean`), and the two agree when the primitives are
 OCP-clean, as in Jardine's tonal realization.
@@ -38,8 +38,6 @@ OCP-clean, as in Jardine's tonal realization.
 namespace Autosegmental
 
 open OCP
-
-universe u
 
 /-! ### Repointing a tier -/
 
@@ -158,47 +156,17 @@ theorem IsCleanAt.collapse_eq (h : X.IsCleanAt m) : X.collapse m = X := by
 
 end Collapse
 
-/-! ### Collapsing the melody of a representation on two tiers -/
+/-! ### Collapsing the upper tier of a representation on two tiers -/
 
-theorem link_collapse_true_false {α β : Type u} [DecidableEq α] [DecidableEq β]
-    {X : AR (TwoTier α β)} {r s : ℕ} :
-    (X.collapse true).Link true false r s ↔
-      ∃ p, X.Link true false p s ∧ runIdx (X.word true) p = r := by
+open Tier in
+theorem link_collapse_upper_lower {τ : Tier → Type*} [DecidableEq (τ upper)] {X : AR τ}
+    {r s : ℕ} :
+    (X.collapse upper).Link upper lower r s ↔
+      ∃ p, X.Link upper lower p s ∧ runIdx (X.word upper) p = r := by
   rw [link_collapse]
-  simp only [repointIdx_self, repointIdx_of_ne (by decide : false ≠ true)]
+  simp only [repointIdx_self, repointIdx_of_ne (by decide : lower ≠ upper)]
   exact ⟨fun ⟨p, q, hl, hr, hs⟩ ↦ ⟨p, hs ▸ hl, hr⟩, fun ⟨p, hl, hr⟩ ↦ ⟨p, s, hl, hr, rfl⟩⟩
 
 end AR
-
-namespace Form
-
-variable {α β : Type*} [DecidableEq α] (f : Form α β)
-
-/-- The OCP merge of a form destutters its upper tier and repoints each line through the run
-index, so a merged autosegment keeps every line of the autosegments merged into it. -/
-def collapse : Form α β where
-  upper := OCP.collapse f.upper
-  lower := f.lower
-  lines := f.lines.image (Prod.map (runIdx f.upper) id)
-  lt_of_mem_lines h := by
-    obtain ⟨p, hp, rfl⟩ := Finset.mem_image.1 h
-    exact ⟨runIdx_lt_collapse_length _ (f.lt_of_mem_lines hp).1, (f.lt_of_mem_lines hp).2⟩
-
-@[simp] theorem upper_collapse : f.collapse.upper = OCP.collapse f.upper := rfl
-
-@[simp] theorem lower_collapse : f.collapse.lower = f.lower := rfl
-
-theorem mem_lines_collapse {r s : ℕ} :
-    (r, s) ∈ f.collapse.lines ↔ ∃ p, (p, s) ∈ f.lines ∧ runIdx f.upper p = r := by
-  simp only [collapse, Finset.mem_image, Prod.exists, Prod.map_apply, id_eq, Prod.mk.injEq]
-  exact ⟨fun ⟨p, q, h, hr, hs⟩ ↦ ⟨p, hs ▸ h, hr⟩, fun ⟨p, h, hr⟩ ↦ ⟨p, s, h, hr, rfl⟩⟩
-
-/-- The merged form presents the collapse of the presented representation. -/
-theorem toAR_collapse {α β : Type u} [DecidableEq α] [DecidableEq β] (f : Form α β) :
-    f.collapse.toAR = f.toAR.collapse true :=
-  AR.ext_of_true_false (by simp) (by simp) fun r s ↦ by
-    simp [AR.link_collapse_true_false, mem_lines_collapse]
-
-end Form
 
 end Autosegmental
