@@ -70,9 +70,7 @@ theorem phiDom_congr {e₁ e₂ : PersonalPronoun} (hr : e₁.referential = e₂
 /-- A pronoun denotes the nominal whose selector is the value `g i` of its index, always defined
 under a total assignment, and whose intrinsic presupposition is that the resolved
 referent `g i` lies in the φ-domain. -/
-def denote : Nominal (ℕ → E) W E where
-  presup g _ := g i ∈ e.phiDom c
-  selector g _ := some (g i)
+def denote : Nominal (ℕ → E) W E := .var i (e.phiDom c)
 
 universe u
 

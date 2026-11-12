@@ -14,7 +14,9 @@ in the intrinsic *presupposition* (φ-features, uniqueness, deixis), as Büring 
 selector at a context (`Nominal.resolve`), so a definite built from `presupOfReferent` is a
 resolved `Nominal.ofReferent` by `rfl` (`ofReferent_resolve`), and the full denotation
 restricts the resolved one to where the intrinsic presupposition holds (`Nominal.toTrivalent`),
-which is where a pronoun's φ-features project. A character is the total nominal with no
+which is where a pronoun's φ-features project. A variable restricted to a domain
+(`Nominal.var`) selects the assignment's value at its index and presupposes that the value lies
+in the domain. A character is the total nominal with no
 presupposition (`Character.toNominal`), and it is directly referential exactly when that
 nominal's selector is rigid at every context (`Character.isDirectlyReferential_iff`).
 
@@ -90,7 +92,35 @@ variable {nd : Nominal Ctx W E} {scope : E → W → Prop} {c : Ctx} {w : W}
     nd.toTrivalent scope c w = .undefined ↔ (nd.presup c w → nd.selector c w = none) := by
   simp [toTrivalent, imp_iff_not_or]
 
+@[simp] theorem toTrivalent_eq_true_iff :
+    nd.toTrivalent scope c w = .true ↔
+      nd.presup c w ∧ ∃ e, nd.selector c w = some e ∧ scope e w := by
+  simp [toTrivalent, resolve]
+
 end Values
+
+/-! ### Variables -/
+
+section Var
+
+variable {ι : Type*} {i : ι} {D : Set E} {scope : E → W → Prop} {g : ι → E} {w : W}
+
+/-- A variable restricted to a domain selects the value `g i` of its index under the assignment
+and presupposes that the value lies in the domain `D`. -/
+@[simps]
+def var (i : ι) (D : Set E) : Nominal (ι → E) W E where
+  presup g _ := g i ∈ D
+  selector g _ := some (g i)
+
+theorem var_toTrivalent_eq_undefined_iff :
+    (var i D).toTrivalent scope g w = .undefined ↔ g i ∉ D := by
+  simp
+
+theorem var_toTrivalent_eq_true_iff :
+    (var i D).toTrivalent scope g w = .true ↔ g i ∈ D ∧ scope (g i) w := by
+  simp
+
+end Var
 
 @[ext] theorem ext {nd₁ nd₂ : Nominal Ctx W E}
     (hp : nd₁.presup = nd₂.presup) (hs : nd₁.selector = nd₂.selector) : nd₁ = nd₂ := by
