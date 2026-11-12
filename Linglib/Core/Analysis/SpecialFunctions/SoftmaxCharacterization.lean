@@ -22,6 +22,11 @@ turn it into Cauchy's functional equation for the logarithm of the odds, whose [
 solutions are linear](##AddMonoidHom.eq_mul_of_monotone). With two alternatives the equation is
 vacuous and the rule need not be a softmax.
 
+The exponential is also forced by independence. A ratio rule gives each alternative a strength
+that depends on its score and chooses in proportion to strength. If the rule on a pair of
+independent binary choices, scored by the sum of the two scores, is the product of the rules on
+each, then [the strength is exponential in the score](##Real.exists_eq_mul_exp_of_div_sum_mul).
+
 ## References
 
 * [R. D. Luce, *Individual Choice Behavior: A Theoretical Analysis* (1959)][luce-1959]
@@ -94,5 +99,47 @@ theorem exists_eq_softmax_of_div_eq (hι : 2 < Fintype.card ι) {ρ : (ι → �
   rw [← Finset.sum_div, ← Finset.mul_sum, div_eq_one_iff_eq (exp_pos _).ne'] at h1
   rw [softmax_apply, eq_div_iff (sum_exp_pos _).ne']
   simpa only [Pi.smul_apply, smul_eq_mul] using h1
+
+/-- A ratio rule that treats independent choices independently has exponential strength. If
+choosing in proportion to `g` of the score, on two binary choices scored by the sum of their
+scores, is the product of doing so on each, then `g` is an exponential. -/
+theorem exists_eq_mul_exp_of_div_sum_mul {g : ℝ → ℝ} (hpos : ∀ x, 0 < g x) (hg : Monotone g)
+    (h : ∀ (s t : Bool → ℝ) (i k : Bool),
+      g (s i + t k) / ∑ p : Bool × Bool, g (s p.1 + t p.2) =
+        g (s i) / (∑ j, g (s j)) * (g (t k) / ∑ l, g (t l))) :
+    ∃ α : ℝ, 0 ≤ α ∧ ∀ x, g x = g 0 * exp (α * x) := by
+  have hmul (x y : ℝ) : g (x + y) * g 0 = g x * g y := by
+    set s : Bool → ℝ := fun b ↦ cond b x 0 with hs
+    set t : Bool → ℝ := fun b ↦ cond b y 0 with ht
+    have hD : 0 < ∑ p : Bool × Bool, g (s p.1 + t p.2) :=
+      Finset.sum_pos (fun _ _ ↦ hpos _) Finset.univ_nonempty
+    have hA : 0 < ∑ j, g (s j) := Finset.sum_pos (fun _ _ ↦ hpos _) Finset.univ_nonempty
+    have hB : 0 < ∑ l, g (t l) := Finset.sum_pos (fun _ _ ↦ hpos _) Finset.univ_nonempty
+    have e1 : g (x + y) * ((∑ j, g (s j)) * ∑ l, g (t l)) =
+        g x * g y * ∑ p : Bool × Bool, g (s p.1 + t p.2) := by
+      have := h s t true true
+      rw [div_mul_div_comm, div_eq_div_iff hD.ne' (mul_pos hA hB).ne'] at this
+      exact this
+    have e2 : g (0 + 0) * ((∑ j, g (s j)) * ∑ l, g (t l)) =
+        g 0 * g 0 * ∑ p : Bool × Bool, g (s p.1 + t p.2) := by
+      have := h s t false false
+      rw [div_mul_div_comm, div_eq_div_iff hD.ne' (mul_pos hA hB).ne'] at this
+      exact this
+    rw [add_zero, mul_assoc] at e2
+    have hAB := mul_left_cancel₀ (hpos 0).ne' e2
+    exact mul_right_cancel₀ hD.ne' (by rw [mul_assoc, ← hAB, e1])
+  let f : ℝ →+ ℝ :=
+    { toFun := fun x ↦ log (g x) - log (g 0)
+      map_zero' := sub_self _
+      map_add' := fun x y ↦ by
+        have hxy := congrArg log (hmul x y)
+        rw [log_mul (hpos _).ne' (hpos 0).ne', log_mul (hpos x).ne' (hpos y).ne'] at hxy
+        linarith }
+  have hf : Monotone f := fun x y hxy ↦ sub_le_sub_right (log_le_log (hpos x) (hg hxy)) _
+  refine ⟨f 1, by simpa using hf zero_le_one, fun x ↦ ?_⟩
+  have hx : log (g x) - log (g 0) = f 1 * x := f.eq_mul_of_monotone hf x
+  rw [← exp_log (hpos x), ← exp_log (hpos 0), ← exp_add]
+  congr 1
+  linarith
 
 end Real
