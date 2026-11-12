@@ -6,8 +6,10 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Data.Wordlist.Audring2019
+public import Linglib.Morphology.ConstructionMorphology.Pattern
 public import Linglib.Morphology.ConstructionMorphology.Schema
 public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Order.Bounds.Basic
 public import Mathlib.Tactic.FinCases
 
@@ -25,7 +27,8 @@ with a variable. It is [the greatest description that every sister instantiates]
 and the variable also carries productivity, since
 [a stored word generates nothing but itself](##word_generates_iff).
 
-The second-order schema `[N -ful]A ≈ [N -less]A` is a sister link between mother schemas, which
+The second-order schema `[N -ful]A ≈ [N -less]A` is a sister link between mother schemas, one
+pattern over the positions of both whose base variables are coindexed. It
 [pairs the two adjectives of one base](##fulLess_pairs_iff). The pairing is
 [no product of conditions on single words](##fulLess_ne_prod), so a mother of the two schemas
 cannot state it. Second-order schemas are also the subject of [booij-2019].
@@ -52,7 +55,7 @@ cannot state it. Second-order schemas are also the subject of [booij-2019].
 
 namespace Audring2019
 
-open ConstructionMorphology CLDF.Wordlist
+open ConstructionMorphology Pattern CLDF.Wordlist
 
 /-- The morphs of a form read as a base slot and an affix slot, with `⊥` where a morph is
 missing. -/
@@ -117,51 +120,30 @@ theorem word_generates_iff {Λ : Set (Fin 2 → Flat String)} {u : Fin 2 → Fla
 
 /-! ### The second-order schema `[N -ful]A ≈ [N -less]A` -/
 
-/-- The variables of (14) are the base shared by the two schemas and the two affixes. -/
-inductive FulLessVar
-  | base
-  | ful
-  | less
-  deriving DecidableEq
-
-/-- (14): The second-order schema is the two schemas with their coindexed base as one
-description. -/
-def fulLess : Schema FulLessVar (Flat String) :=
-  .productive fun | .base => ⊥ | .ful => ↑"ful" | .less => ↑"less"
-
-/-- The subscripting of the slots of `[N -ful]A` by the variables of (14). -/
-def fulSub : Fin 2 → FulLessVar := ![.base, .ful]
-
-/-- The subscripting of the slots of `[N -less]A` by the variables of (14). -/
-def lessSub : Fin 2 → FulLessVar := ![.base, .less]
-
-/-- The schema `[N -ful]A` is the description of (14) read at its own slots. -/
-def fulSchema : Schema (Fin 2) (Flat String) := fulLess.comap fulSub
-
-/-- The schema `[N -less]A` is the description of (14) read at its own slots. -/
-def lessSchema : Schema (Fin 2) (Flat String) := fulLess.comap lessSub
+/-- (14): The second-order schema is the two schemas as one pattern, their base variables
+coindexed. -/
+abbrev fulLess : Pattern (Fin 2 ⊕ Fin 2) (Flat String) :=
+  .ofTerms (Sum.elim ![.inr 1, .inl "ful"] ![.inr 1, .inl "less"])
 
 /-- The second-order schema pairs an *-ful* adjective with a *-less* adjective exactly when the
 two have the same base. -/
-theorem fulLess_pairs_iff {p q : Fin 2 → Flat String} :
-    fulLess.InstantiatesAt (Sum.elim fulSub lessSub) (Sum.elim p q) ↔
-      ∃ b, p = ![b, ↑"ful"] ∧ q = ![b, ↑"less"] := by
-  rw [Schema.instantiatesAt_elim_iff_exists_fill]
-  refine ⟨fun ⟨x, hp, hq⟩ ↦ ⟨x .base, ?_, ?_⟩, fun ⟨b, hp, hq⟩ ↦ ⟨fun _ ↦ b, ?_, ?_⟩⟩ <;>
+theorem fulLess_pairs_iff {p q : Fin 2 → String} :
+    fulLess ≤ ofItem (Sum.elim (Flat.some ∘ p) (Flat.some ∘ q)) ↔
+      ∃ b, p = ![b, "ful"] ∧ q = ![b, "less"] := by
+  refine ofTerms_sumElim_le_ofItem_iff.trans
+    ⟨fun ⟨x, hp, hq⟩ ↦ ⟨x 1, ?_, ?_⟩, fun ⟨b, hp, hq⟩ ↦ ⟨fun _ ↦ b, ?_, ?_⟩⟩ <;>
   · subst_vars
     funext i
     fin_cases i <;> rfl
 
 -- (12), §5: *helpful* with *helpless* and *careful* with *careless*
 theorem second_order_pairs : ∀ r ∈ Wordlist.relations, r.relation = "second_order_schema" →
-    fulLess.InstantiatesAt (Sum.elim fulSub lessSub)
-      (Sum.elim (slots r.form) (slots r.target)) := by
+    fulLess ≤ ofItem (Sum.elim (slots r.form) (slots r.target)) := by
   decide
 
 -- the coindexed base is filled differently
 theorem not_careful_clueless_pairs :
-    ¬ fulLess.InstantiatesAt (Sum.elim fulSub lessSub)
-      (Sum.elim (slots Wordlist.careful) (slots Wordlist.clueless)) := by
+    ¬ fulLess ≤ ofItem (Sum.elim (slots Wordlist.careful) (slots Wordlist.clueless)) := by
   decide
 
 /-- No conditions on the *-ful* and the *-less* adjectives separately pair them as the
@@ -169,19 +151,22 @@ second-order schema does, so neither a mother of the two schemas nor any other s
 words states the pairing. -/
 theorem fulLess_ne_prod (A B : Set (Fin 2 → Flat String)) :
     {(x, y) : (Fin 2 → Flat String) × (Fin 2 → Flat String) |
-      fulLess.InstantiatesAt (Sum.elim fulSub lessSub) (Sum.elim x y)} ≠ A ×ˢ B :=
-  Schema.setOf_instantiatesAt_elim_ne_prod (s := fulLess) (pos₁ := fulSub) (pos₂ := lessSub)
+      fulLess ≤ ofItem (Sum.elim x y)} ≠ A ×ˢ B :=
+  setOf_le_ofItem_sumElim_ne_prod
     (w₁ := slots Wordlist.careful) (w₂ := slots Wordlist.careless)
     (w₁' := slots Wordlist.helpful) (w₂' := slots Wordlist.helpless)
-    (by decide) (by decide) (a := 0) (b := 0) rfl (by decide) A B
+    (by decide) (by decide) (a := 0) (b := 0) (by decide) (by decide) A B
 
 -- (14): a mother of the two schemas holds nothing but the categories, which the slots do not
 -- record
-theorem fulLess_mother_eq_bot : fulSchema.body ⊓ lessSchema.body = ⊥ := by
+theorem fulLess_mother_content :
+    (fulLess.comap Sum.inl ⊓ fulLess.comap Sum.inr).content = ⊥ := by
   decide
 
-theorem fulLess_mother_instantiates (w : Fin 2 → Flat String) :
-    (Schema.nonproductive (fulSchema.body ⊓ lessSchema.body)).Instantiates w :=
-  Schema.instantiates_iff.2 (fulLess_mother_eq_bot.trans_le bot_le)
+theorem fulLess_mother_le (w : Fin 2 → Flat String) :
+    fulLess.comap Sum.inl ⊓ fulLess.comap Sum.inr ≤ ofItem w :=
+  ⟨fun i ↦ (congrFun fulLess_mother_content i).trans_le bot_le, fun p q h ↦ .inl
+    ((by decide : ∀ p q : Fin 2,
+      (fulLess.comap Sum.inl ⊓ fulLess.comap Sum.inr).coindex p q → p = q) p q h)⟩
 
 end Audring2019

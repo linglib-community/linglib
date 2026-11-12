@@ -242,9 +242,7 @@ end Generality
 An item over positions is read against a schema over variables through a subscripting, which is
 a map from positions to variables. Positions with the same subscript are coindexed and must be
 filled alike. Two items form a paired instantiation when their sum instantiates the schema through
-the sum of their subscriptings. Once two pairs fill a coindexed position differently, the pairs
-are [not a product of conditions on the items separately](##setOf_instantiatesAt_elim_ne_prod),
-so no schema over single items, such as one dominating both, states the pairing. -/
+the sum of their subscriptings. `Pattern` states the same coindexation without the index type. -/
 
 section Positions
 variable [PartialOrder α] [OrderBot α] {s : Schema V α} {pos : P → V} {w : P → α}
@@ -301,13 +299,6 @@ theorem instantiatesAt_comp_equiv (e : Q ≃ P) :
 
 variable {pos₁ : P₁ → V} {pos₂ : P₂ → V} {w₁ : P₁ → α} {w₂ : P₂ → α}
 
-/-- Two items are a paired instantiation exactly when they are one instance of the description
-read through each subscripting. -/
-theorem instantiatesAt_elim_iff_exists :
-    s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁ w₂) ↔
-      ∃ u, s.Instantiates u ∧ w₁ = u ∘ pos₁ ∧ w₂ = u ∘ pos₂ := by
-  simp only [InstantiatesAt, Sum.comp_elim, Sum.elim_eq_iff]
-
 /-- Two items are a paired instantiation exactly when each instantiates the schema through its
 own subscripting and the two agree wherever their subscripts coincide. -/
 theorem instantiatesAt_elim_iff :
@@ -326,18 +317,6 @@ theorem InstantiatesAt.sumElim_apply_eq
     (h : s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁ w₂)) (a : P₁) (b : P₂)
     (hab : pos₁ a = pos₂ b) : w₁ a = w₂ b :=
   (instantiatesAt_elim_iff.1 h).2.2 a b hab
-
-/-- The pairs of a paired instantiation are not the product of a set of first items and a set of
-second items once a position of each is coindexed and two pairs fill those positions
-differently. -/
-theorem setOf_instantiatesAt_elim_ne_prod {w₁' : P₁ → α} {w₂' : P₂ → α}
-    (h : s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁ w₂))
-    (h' : s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁' w₂')) {a : P₁} {b : P₂}
-    (hab : pos₁ a = pos₂ b) (hne : w₁ a ≠ w₂' b) (A : Set (P₁ → α)) (B : Set (P₂ → α)) :
-    {(x, y) : (P₁ → α) × (P₂ → α) | s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim x y)} ≠
-      A ×ˢ B := fun hAB ↦ by
-  have hm x y := Set.ext_iff.1 hAB (x, y)
-  exact hne (((hm w₁ w₂').2 ⟨((hm _ _).1 h).1, ((hm _ _).1 h').2⟩).sumElim_apply_eq a b hab)
 
 theorem instantiatesAt_elim_swap :
     s.InstantiatesAt (Sum.elim pos₂ pos₁) (Sum.elim w₂ w₁) ↔
@@ -361,45 +340,6 @@ theorem instantiatesAt_elim_iff_eqOn {pos₁ pos₂ : P → V} {w₁ w₂ : P �
   exact he ha
 
 end Positions
-
-/-! ### Filling the variables over the flat order
-
-Over the flat order every constant is maximal, so an instance of a schema is determined by what
-fills its variables: [the instances of a schema are its fillings](##instantiates_iff_exists_fill).
--/
-
-section Fill
-variable {β : Type*} {s : Schema V (Flat β)} {x u : V → Flat β} {pos : P → V} {w : P → Flat β}
-
-/-- The instance of `s` whose variables are filled by `x` and whose constants stay. -/
-def fill (s : Schema V (Flat β)) (x : V → Flat β) (v : V) : Flat β := (s.body v).or (x v)
-
-@[simp] theorem fill_apply (v : V) : s.fill x v = (s.body v).or (x v) := rfl
-
-theorem instantiates_fill (s : Schema V (Flat β)) (x : V → Flat β) : s.Instantiates (s.fill x) :=
-  fun _ ↦ Flat.le_or_left _ _
-
-theorem Instantiates.fill_eq (h : s.Instantiates u) : s.fill u = u :=
-  funext fun v ↦ Flat.or_eq_right.2 (h v)
-
-/-- Over the flat order the instances of a schema are its fillings. -/
-theorem instantiates_iff_exists_fill : s.Instantiates u ↔ ∃ x, u = s.fill x :=
-  ⟨fun h ↦ ⟨u, h.fill_eq.symm⟩, fun ⟨x, hx⟩ ↦ hx ▸ s.instantiates_fill x⟩
-
-theorem instantiatesAt_iff_exists_fill : s.InstantiatesAt pos w ↔ ∃ x, w = s.fill x ∘ pos :=
-  ⟨fun ⟨u, hu, hw⟩ ↦ ⟨u, hu.fill_eq.symm ▸ hw⟩, fun ⟨x, hw⟩ ↦ ⟨_, s.instantiates_fill x, hw⟩⟩
-
-variable {pos₁ : P₁ → V} {pos₂ : P₂ → V} {w₁ : P₁ → Flat β} {w₂ : P₂ → Flat β}
-
-/-- Two items are a paired instantiation over the flat order exactly when they are one filling
-of the schema read through each subscripting. -/
-theorem instantiatesAt_elim_iff_exists_fill :
-    s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁ w₂) ↔
-      ∃ x, w₁ = s.fill x ∘ pos₁ ∧ w₂ = s.fill x ∘ pos₂ := by
-  rw [instantiatesAt_elim_iff_exists]
-  exact ⟨fun ⟨u, hu, h⟩ ↦ ⟨u, hu.fill_eq.symm ▸ h⟩, fun ⟨x, h⟩ ↦ ⟨_, s.instantiates_fill x, h⟩⟩
-
-end Fill
 
 /-! ### The relational and the generative role -/
 
