@@ -9,8 +9,8 @@ public import Linglib.Phonology.Segmental.PHOIBLE
 This file defines the 31 consonants and seven vowels of Amharic, as in PHOIBLE's inventory 131,
 as segments named by their IPA symbols, with feature values from the PHOIBLE chart. The
 inventory also lists the geminates, which are not further phonemes here. PHOIBLE gives the
-[labial] value of the labialized consonants as a contour, so each is [+round] and [−labiodental]
-with no [labial] value.
+[labial] value of the labialized consonants as a contour, and each is the inventory's phoneme,
+[+round] and [−labiodental] with no [labial] value.
 
 ## Main definitions
 

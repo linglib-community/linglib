@@ -10,11 +10,12 @@ Amazon, as [vasquez-aguilar-etal-2026] tabulates them: eighteen consonants, voic
 in none, and four vowels, the peripheral /i u a/ and the interior /ɘ/, with no contrast in length
 or nasality.
 
-The feature values come from the PHOIBLE chart. The chart's labialized velar is [+round] with no
-[labial] value, which PHOIBLE gives as a contour; the glottalized tap /ˀɾ/ takes the chart's
-glottalized tap, whose matrix does not record that the glottalization precedes the closure.
-PHOIBLE's two inventories of the language, from UPSID and SAPhon, differ from this table: neither
-has /kʷ/, and SAPhon writes the interior vowel as /ə/. They are not used here.
+The feature values come from the PHOIBLE chart. PHOIBLE gives the [labial] value of the labialized
+velar as a contour, and /kʷ/ is the chart entry at the last phase, [+labial] and [+round]; the
+glottalized tap /ˀɾ/ takes the chart's glottalized tap, whose matrix does not record that the
+glottalization precedes the closure. PHOIBLE's two inventories of the language, from UPSID and
+SAPhon, differ from this table: neither has /kʷ/, and SAPhon writes the interior vowel as /ə/.
+They are not used here.
 
 ## Main definitions
 
@@ -46,7 +47,7 @@ def t : Segment := .ofChart .«t»
 def k : Segment := .ofChart .«k»
 
 /-- /kʷ/, the labialized velar plosive. -/
-def «kʷ» : Segment := .ofChart .«kʷ»
+def «kʷ» : Segment := .ofChart FeatureMatrix.last.«kʷ»
 
 /-- /ʔ/, the glottal stop. -/
 def «ʔ» : Segment := .ofChart .«ʔ»

@@ -29,8 +29,9 @@ the chart evaluates their matrices at every feature.
 A complex segment, such as a prenasalized stop or a diphthong, has a contour such as `+,-` on a
 feature that changes within it. The phases of a contour are never all equal, so their meet in the
 subsumption order is the unspecified value, and the feature matrix of the segment has that value
-at the feature: it holds the values the segment keeps throughout. The phases themselves are in the
-docstring of the segment's chart entry.
+at the feature: it holds the values the segment keeps throughout. The chart also gives each
+complex segment at the first and at the last phase of its contours, `FeatureMatrix.first.«kʷ»`
+and `FeatureMatrix.last.«kʷ»`, and the docstring of its entry records every phase.
 
 The generator checks what this file says of the table against every row of it: what each source
 records, that a glyph determines its class and its feature values, that the phases of a contour
