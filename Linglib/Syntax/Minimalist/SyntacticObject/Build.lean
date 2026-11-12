@@ -62,6 +62,19 @@ instance : CommMagma (SyntacticObject L) where
 
 @[simp] theorem mul_def (l r : SyntacticObject L) : l * r = merge l r := rfl
 
+/-- Relabelling along a map of lexical alphabets is a homomorphism of magmas. -/
+def mapHom {L' : Type} (f : L → L') : SyntacticObject L →ₙ* SyntacticObject L' :=
+  ⟨map f, map_merge f⟩
+
+@[simp] theorem mapHom_apply {L' : Type} (f : L → L') (s : SyntacticObject L) :
+    mapHom f s = s.map f := rfl
+
+@[simp] theorem mapHom_id : mapHom (id : L → L) = MulHom.id _ := MulHom.ext map_id
+
+theorem mapHom_comp {L' L'' : Type} (g : L' → L'') (f : L → L') :
+    mapHom (g ∘ f) = (mapHom g).comp (mapHom f) :=
+  MulHom.ext fun s ↦ (map_map f g s).symm
+
 /-- A lexical item is a leaf. -/
 instance : Coe L (SyntacticObject L) := ⟨leaf⟩
 
@@ -111,6 +124,25 @@ def toSyntacticObjectHom : LinearizedSyntacticObject L →ₙ* SyntacticObject L
 
 @[simp] theorem toSyntacticObjectHom_apply (p : LinearizedSyntacticObject L) :
     toSyntacticObjectHom p = p.toSyntacticObject := rfl
+
+/-- Relabelling along a map of lexical alphabets is a homomorphism of magmas. -/
+def mapHom {L' : Type} (f : L → L') :
+    LinearizedSyntacticObject L →ₙ* LinearizedSyntacticObject L' :=
+  ⟨map f, map_merge f⟩
+
+@[simp] theorem mapHom_apply {L' : Type} (f : L → L') (p : LinearizedSyntacticObject L) :
+    mapHom f p = p.map f := rfl
+
+@[simp] theorem mapHom_id : mapHom (id : L → L) = MulHom.id _ := MulHom.ext map_id
+
+theorem mapHom_comp {L' L'' : Type} (g : L' → L'') (f : L → L') :
+    mapHom (g ∘ f) = (mapHom g).comp (mapHom f) :=
+  MulHom.ext fun p ↦ (map_map f g p).symm
+
+/-- Forgetting the order commutes with relabelling. -/
+theorem toSyntacticObjectHom_comp_mapHom {L' : Type} (f : L → L') :
+    toSyntacticObjectHom.comp (mapHom f) = (SyntacticObject.mapHom f).comp toSyntacticObjectHom :=
+  MulHom.ext fun p ↦ toSyntacticObject_map f p
 
 theorem merge_inj {l r l' r' : LinearizedSyntacticObject L} :
     merge l r = merge l' r' ↔ l = l' ∧ r = r' := by
