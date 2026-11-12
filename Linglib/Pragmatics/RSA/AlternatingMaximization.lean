@@ -19,15 +19,18 @@ energy. The loss of any listener exceeds that of the Bayesian listener, which is
 entropy of the state given the utterance, by [her expected divergence from
 it](##InformationTheory.informationLoss_eq_posterior_add). The free energy of any speaker falls
 short of that of the speaker of `RSA.speaker` at the Bayesian belief by [her expected divergence
-from it](##RSA.freeEnergy_eq_freeEnergy_speaker_sub). Going up a level of the recursion therefore never
-lowers the free energy, which [rises](##RSA.monotone_freeEnergy_iterate_recurse) and
-[converges](##RSA.exists_tendsto_freeEnergy_iterate_recurse) along it.
+from it](##RSA.freeEnergy_eq_freeEnergy_speaker_sub). Going up a level of the recursion therefore
+never lowers the free energy, which [rises](##RSA.monotone_freeEnergy_iterate_recurse) and
+[converges](##RSA.exists_tendsto_freeEnergy_iterate_recurse) along it, and since each speaker
+update raises it by at least the divergence between the two speakers, successive speakers [grow
+alike](##RSA.tendsto_sum_klDiv_speaker_iterate_recurse). The speaker at the Bayesian belief is
+the [only maximizer](##RSA.freeEnergy_eq_freeEnergy_speaker_iff) against her listener.
 
 ## Implementation notes
 
-* The free energy is the functional the source calls the RSA tradeoff. Row by row it is the free
-  energy of the Gibbs variational principle, entropy plus expected log-weight, for the weights
-  the speaker normalizes.
+* The free energy is the functional the source calls the RSA tradeoff. At each observation it is
+  the free energy of the Gibbs variational principle, entropy plus expected log-weight, for the
+  weights the speaker normalizes.
 * The expected utility depends on the speaker and her observation kernel only through their
   composite, the channel from states to utterances, and is stated for a channel.
 * The speaker's belief is any family `b` that agrees with the posterior of the prior given her
@@ -51,9 +54,9 @@ open scoped ENNReal
 
 namespace RSA
 
-/-- Gibbs' variational identity for a row of a weight kernel. The divergence from the row and the
-entropy add up to the log of the total weight less the expected log-weight, so the row is the
-distribution with the greatest entropy plus expected log-weight. -/
+/-- Gibbs' variational identity for normalized weights. The divergence from the normalized weights
+and the entropy add up to the log of the total weight less the expected log-weight, so normalizing
+gives the distribution with the greatest entropy plus expected log-weight. -/
 private theorem toReal_klDiv_ofWeights_add_measureEntropy {S ι : Type*} [MeasurableSpace S]
     [MeasurableSingletonClass S] {μ : Measure S} [MeasurableSpace ι] [Countable ι]
     [MeasurableSingletonClass ι] [Fintype S] [IsProbabilityMeasure μ] {w : ι → S → ℝ≥0∞} {i : ι}
@@ -75,9 +78,9 @@ private theorem toReal_klDiv_ofWeights_add_measureEntropy {S ι : Type*} [Measur
 
 variable {W O U : Type*} [MeasurableSpace W] [MeasurableSpace O] [MeasurableSpace U]
 
-/-! ### The rows of the speaker -/
+/-! ### The speaker at one observation -/
 
-section Row
+section Observation
 
 variable [Fintype W] [Fintype U] [MeasurableSingletonClass U] [Countable O]
   [MeasurableSingletonClass O] {α : ℝ} {C : U → ℝ} {L : U → Measure W}
@@ -93,8 +96,9 @@ theorem isProbabilityMeasure_speaker_of_absolutelyContinuous (hα : 0 ≤ α)
 
 variable [MeasurableSingletonClass W] [IsFiniteMeasure (b o)]
 
-/-- The divergence of a distribution over utterances from a row of the speaker and its entropy add
-up to the log of the row's normalizer less the rationality times its expected utility. -/
+/-- At one observation, the divergence of a distribution over utterances from the speaker's and its
+entropy add up to the log of the speaker's normalizer less the rationality times its expected
+utility. -/
 theorem toReal_klDiv_speaker_add_measureEntropy (hα : 0 ≤ α) (hq : q ≪ speaker α C L b o) :
     (klDiv q (speaker α C L b o)).toReal + Hm[q] =
       log (∑ u, ((b o).geomMean (fun w ↦ L u {w}) ^ α).toReal * exp (-(α * C u))) -
@@ -126,7 +130,7 @@ theorem toReal_klDiv_speaker_add_measureEntropy (hα : 0 ≤ α) (hq : q ≪ spe
   simp only [smul_eq_mul]
   exact key
 
-end Row
+end Observation
 
 /-! ### The expected utility
 
@@ -222,7 +226,8 @@ theorem freeEnergy_id [Fintype W] (S : Kernel W U) (L : Kernel U W) :
 /-- Against a fixed speaker her Bayesian listener maximizes the free energy. -/
 theorem freeEnergy_le_freeEnergy_listener [Fintype W] [Fintype U] [MeasurableSingletonClass W]
     [MeasurableSingletonClass U] [Nonempty W] [IsFiniteMeasure μ] [IsFiniteKernel κ] {α : ℝ}
-    (hα : 0 ≤ α) (S : Kernel O U) [IsFiniteKernel S] (L : Kernel U W) [∀ u, IsZeroOrProbabilityMeasure (L u)] :
+    (hα : 0 ≤ α) (S : Kernel O U) [IsFiniteKernel S] (L : Kernel U W)
+    [∀ u, IsZeroOrProbabilityMeasure (L u)] :
     freeEnergy μ κ C α S L ≤ freeEnergy μ κ C α S (listener μ (S ∘ₖ κ)) :=
   add_le_add_right (mul_le_mul_of_nonneg_left (expectedUtility_le_listener μ (S ∘ₖ κ) L C)
     (EReal.coe_nonneg.2 hα)) _
@@ -231,8 +236,8 @@ end Defs
 
 /-! ### The speaker's step
 
-Where the free energy is not `⊥` it is the real number `realFreeEnergy`, and the row identity
-for the speaker, averaged over her observations, gives the gap. -/
+Where the free energy is not `⊥` it is the real number `realFreeEnergy`, and the identity for the
+speaker at one observation, averaged over her observations, gives the gap. -/
 
 section Speaker
 
@@ -450,6 +455,24 @@ private theorem freeEnergy_speaker_eq_coe :
   freeEnergy_eq_coe (hα.eq_or_lt.imp Eq.symm fun hα' ↦
     ne_zero_of_absolutelyContinuous_speaker hb hα' fun _ _ ↦ .rfl)
 
+/-- Only the speaker at the Bayesian belief maximizes the free energy: a speaker who does as well
+is that speaker at every observation made. -/
+theorem freeEnergy_eq_freeEnergy_speaker_iff :
+    freeEnergy μ κ C α S L = freeEnergy μ κ C α (speaker α C L b) L ↔
+      ∀ o, (κ ∘ₘ μ) {o} ≠ 0 → S o = speaker α C L b o := by
+  rw [freeEnergy_eq_freeEnergy_speaker_sub hb hα S L, freeEnergy_speaker_eq_coe hb hα L]
+  have hzero : ∑ o, (κ ∘ₘ μ) {o} * klDiv (S o) (speaker α C L b o) = 0 ↔
+      ∀ o, (κ ∘ₘ μ) {o} ≠ 0 → S o = speaker α C L b o := by
+    rw [Finset.sum_eq_zero_iff]
+    exact ⟨fun h o ho ↦ klDiv_eq_zero_iff.1 ((mul_eq_zero.1 (h o (Finset.mem_univ o))).resolve_left
+      ho), fun h o _ ↦ mul_eq_zero.2 (or_iff_not_imp_left.2 fun ho ↦ klDiv_eq_zero_iff.2 (h o ho))⟩
+  rw [← hzero]
+  generalize ∑ o, (κ ∘ₘ μ) {o} * klDiv (S o) (speaker α C L b o) = D
+  rcases eq_or_ne D ∞ with rfl | hD
+  · simp [EReal.sub_top]
+  · rw [← EReal.coe_ennreal_toReal hD, ← EReal.coe_sub, EReal.coe_eq_coe_iff, sub_eq_self,
+      ENNReal.toReal_eq_zero_iff, or_iff_left hD]
+
 end Speaker
 
 /-! ### The recursion
@@ -504,21 +527,81 @@ theorem monotone_freeEnergy_iterate_recurse : Monotone fun n ↦
     exact (freeEnergy_le_freeEnergy_listener μ κ C hα _ _).trans
       (freeEnergy_le_freeEnergy_speaker hb hα _ _)
 
+omit hκ in
+private theorem sum_klDiv_speaker_recurse_le :
+    ∑ o, (κ ∘ₘ μ) {o} * klDiv (speaker α C L b o) (speaker α C (recurse μ κ b α C L) b o) ≤
+      ENNReal.ofReal (realFreeEnergy μ κ C α (speaker α C (recurse μ κ b α C L) b)
+        (recurse μ κ b α C L) - realFreeEnergy μ κ C α (speaker α C L b) L) := by
+  have h : freeEnergy μ κ C α (speaker α C L b) L ≤
+      freeEnergy μ κ C α (speaker α C L b) (recurse μ κ b α C L) :=
+    freeEnergy_le_freeEnergy_listener μ κ C hα _ _
+  rw [freeEnergy_speaker_eq_coe hb hα L, freeEnergy_eq_freeEnergy_speaker_sub (C := C) hb hα
+    (speaker α C L b) (recurse μ κ b α C L), freeEnergy_speaker_eq_coe hb hα] at h
+  generalize ∑ o, (κ ∘ₘ μ) {o} *
+    klDiv (speaker α C L b o) (speaker α C (recurse μ κ b α C L) b o) = D at h ⊢
+  rcases eq_or_ne D ∞ with rfl | hD
+  · rw [EReal.coe_ennreal_top, EReal.sub_top] at h
+    exact absurd (le_bot_iff.1 h) (EReal.coe_ne_bot _)
+  · rw [← EReal.coe_ennreal_toReal hD, ← EReal.coe_sub, EReal.coe_le_coe_iff] at h
+    rw [← ENNReal.ofReal_toReal hD]
+    exact ENNReal.ofReal_le_ofReal (by linarith)
+
+private theorem monotone_realFreeEnergy_iterate_recurse : Monotone fun n ↦ realFreeEnergy μ κ C α
+    (speaker α C ((recurse μ κ b α C)^[n] L) b) ((recurse μ κ b α C)^[n] L) := fun m n h ↦
+  EReal.coe_le_coe_iff.1 <| by
+    simpa only [freeEnergy_speaker_eq_coe (C := C) hb hα] using
+      monotone_freeEnergy_iterate_recurse (C := C) hb hα hκ L h
+
+omit [∀ o, IsFiniteMeasure (b o)] in
+private theorem realFreeEnergy_iterate_recurse_le (n : ℕ) : realFreeEnergy μ κ C α
+    (speaker α C ((recurse μ κ b α C)^[n] L) b) ((recurse μ κ b α C)^[n] L) ≤
+      log (Fintype.card U) + α * ∑ u, |C u| :=
+  have := isMarkovKernel_speaker_iterate_recurse (C := C) hb hα hκ L n
+  realFreeEnergy_le hα _ _
+
 /-- The free energy converges along the recursion to a real number, being monotone, bounded above
 and nowhere `⊥`. -/
 theorem exists_tendsto_freeEnergy_iterate_recurse : ∃ g : ℝ, Tendsto (fun n ↦
     freeEnergy μ κ C α (speaker α C ((recurse μ κ b α C)^[n] L) b) ((recurse μ κ b α C)^[n] L))
       atTop (𝓝 g) := by
-  have hcoe (n : ℕ) := freeEnergy_speaker_eq_coe (C := C) hb hα ((recurse μ κ b α C)^[n] L)
-  have hmono : Monotone fun n ↦ realFreeEnergy μ κ C α
-      (speaker α C ((recurse μ κ b α C)^[n] L) b) ((recurse μ κ b α C)^[n] L) := fun m n h ↦
-    EReal.coe_le_coe_iff.1 (hcoe m ▸ hcoe n ▸ monotone_freeEnergy_iterate_recurse hb hα hκ L h)
-  simp_rw [hcoe]
-  refine ⟨_, (continuous_coe_real_ereal.tendsto _).comp
-    (tendsto_atTop_ciSup hmono ⟨log (Fintype.card U) + α * ∑ u, |C u|, ?_⟩)⟩
-  rintro _ ⟨n, rfl⟩
-  have := isMarkovKernel_speaker_iterate_recurse (C := C) hb hα hκ L n
-  exact realFreeEnergy_le hα _ _
+  simp_rw [freeEnergy_speaker_eq_coe (C := C) hb hα]
+  exact ⟨_, (continuous_coe_real_ereal.tendsto _).comp (tendsto_atTop_ciSup
+    (monotone_realFreeEnergy_iterate_recurse hb hα hκ L) ⟨_, Set.forall_mem_range.2
+      (realFreeEnergy_iterate_recurse_le (C := C) hb hα hκ L)⟩)⟩
+
+/-- The expected divergences of each speaker of the recursion from the next have a finite sum:
+every speaker update raises the free energy by at least that divergence, and the free energy is
+bounded. -/
+theorem tsum_sum_klDiv_speaker_iterate_recurse_ne_top :
+    ∑' n, ∑ o, (κ ∘ₘ μ) {o} * klDiv (speaker α C ((recurse μ κ b α C)^[n] L) b o)
+      (speaker α C ((recurse μ κ b α C)^[n + 1] L) b o) ≠ ∞ := by
+  set R : ℕ → ℝ := fun n ↦ realFreeEnergy μ κ C α
+    (speaker α C ((recurse μ κ b α C)^[n] L) b) ((recurse μ κ b α C)^[n] L) with hR
+  have hmono : Monotone R := monotone_realFreeEnergy_iterate_recurse (C := C) hb hα hκ L
+  refine ne_top_of_le_ne_top (ENNReal.ofReal_ne_top
+    (r := log (Fintype.card U) + α * ∑ u, |C u| - R 0))
+    (ENNReal.tsum_le_of_sum_range_le fun N ↦ ?_)
+  calc ∑ n ∈ Finset.range N, ∑ o, (κ ∘ₘ μ) {o} *
+        klDiv (speaker α C ((recurse μ κ b α C)^[n] L) b o)
+          (speaker α C ((recurse μ κ b α C)^[n + 1] L) b o)
+    _ ≤ ∑ n ∈ Finset.range N, ENNReal.ofReal (R (n + 1) - R n) :=
+        Finset.sum_le_sum fun n _ ↦ by
+          have := isMarkovKernel_speaker_iterate_recurse (C := C) hb hα hκ L n
+          simp only [hR, Function.iterate_succ_apply']
+          exact sum_klDiv_speaker_recurse_le hb hα _
+    _ = ENNReal.ofReal (R N - R 0) := by
+        rw [← ENNReal.ofReal_sum_of_nonneg fun n _ ↦ sub_nonneg.2 (hmono (Nat.le_add_right n 1)),
+          Finset.sum_range_sub]
+    _ ≤ _ := ENNReal.ofReal_le_ofReal (sub_le_sub_right
+        (realFreeEnergy_iterate_recurse_le (C := C) hb hα hκ L N) _)
+
+/-- Successive speakers of the recursion grow alike: the expected divergence of each from the next
+tends to zero. -/
+theorem tendsto_sum_klDiv_speaker_iterate_recurse :
+    Tendsto (fun n ↦ ∑ o, (κ ∘ₘ μ) {o} * klDiv (speaker α C ((recurse μ κ b α C)^[n] L) b o)
+      (speaker α C ((recurse μ κ b α C)^[n + 1] L) b o)) atTop (𝓝 0) :=
+  ENNReal.tendsto_atTop_zero_of_tsum_ne_top
+    (tsum_sum_klDiv_speaker_iterate_recurse_ne_top hb hα hκ L)
 
 end Recursion
 

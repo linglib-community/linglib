@@ -28,9 +28,9 @@ tradeoff never decreases along the recursion and
 * `listener t` is the paper's listener of depth `t`, and the speaker who answers it is the
   paper's speaker of depth `t + 1`. The recursion assumes a prior that charges every meaning and
   a finite lexicon in which every meaning has an applicable utterance, so that every speaker is
-  a probability kernel. A listener's row is zero at an utterance that applies to no meaning. The
-  lexicon is any such weight and the cost any real function, where the paper's lexicon has
-  values in the unit interval and its cost is nonnegative.
+  a probability kernel. A listener is the zero measure at an utterance that applies to no
+  meaning. The lexicon is any such weight and the cost any real function, where the paper's
+  lexicon has values in the unit interval and its cost is nonnegative.
 * Equation numbers are those of the arXiv preprint 2005.06641v1. The two-page proceedings
   abstract numbers its equations differently and leaves out the proofs.
 

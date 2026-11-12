@@ -17,7 +17,8 @@ under its distribution at the output, infinite [exactly when](##informationLoss_
 decoder rules out a state that can produce an output. Over finite types the loss of any decoder is
 the conditional entropy of the state given the output plus [its expected divergence from the
 posterior](##informationLoss_eq_posterior_add), so the posterior [loses the
-least](##informationLoss_posterior_le).
+least](##informationLoss_posterior_le) and [only the posterior
+does](##informationLoss_eq_posterior_iff).
 
 ## References
 
@@ -151,6 +152,23 @@ theorem informationLoss_eq_posterior_add :
 /-- The posterior loses the least information. -/
 theorem informationLoss_posterior_le : informationLoss μ κ (κ†μ) ≤ informationLoss μ κ φ :=
   informationLoss_eq_posterior_add μ κ φ ▸ le_self_add
+
+theorem informationLoss_posterior_ne_top : informationLoss μ κ (κ†μ) ≠ ∞ := by
+  rw [informationLoss_posterior]
+  exact ENNReal.sum_ne_top.2 fun x _ ↦ ENNReal.mul_ne_top (measure_ne_top _ _) ENNReal.ofReal_ne_top
+
+/-- Only the posterior loses the least information: a decoder that loses no more agrees with it at
+every output that occurs. -/
+theorem informationLoss_eq_posterior_iff :
+    informationLoss μ κ φ = informationLoss μ κ (κ†μ) ↔ φ =ᵐ[κ ∘ₘ μ] κ†μ := by
+  have h {a d : ℝ≥0∞} (ha : a ≠ ∞) : a + d = a ↔ d = 0 :=
+    ⟨fun h ↦ (ENNReal.add_right_inj ha).1 (h.trans (add_zero a).symm), fun h ↦ by rw [h, add_zero]⟩
+  rw [informationLoss_eq_posterior_add μ κ φ, h (informationLoss_posterior_ne_top μ κ),
+    Finset.sum_eq_zero_iff, Filter.EventuallyEq, ae_iff_of_countable]
+  simp only [Finset.mem_univ, true_imp_iff]
+  refine forall_congr' fun x ↦ ?_
+  rw [mul_eq_zero, klDiv_eq_zero_iff, or_iff_not_imp_left]
+  exact imp_congr_right fun _ ↦ eq_comm
 
 end Posterior
 
