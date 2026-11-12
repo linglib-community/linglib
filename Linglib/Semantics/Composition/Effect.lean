@@ -191,6 +191,23 @@ instance monad (f : Eff B) [h : f.IsApplicative] : Monad (Obj D f) where
   seq g x := seq f h g (x ())
   bind m k := join f h (map f k m)
 
+/-! The carrier of a named effect unfolds to its standard carrier, where instance search does not
+find `Eff.functor` and `Eff.monad`, so they are restated at each effect. -/
+
+instance : Functor (Obj D (.S : Eff B)) := functor _
+instance (i : Ty B) : Functor (Obj D (.R i)) := functor _
+instance (o : Ty B) : Functor (Obj D (.W o)) := functor _
+instance (r : Ty B) : Functor (Obj D (.C r)) := functor _
+instance : Functor (Obj D (.M : Eff B)) := functor _
+instance : Functor (Obj D (.F : Eff B)) := functor _
+
+instance : Monad (Obj D (.S : Eff B)) := monad _
+instance (i : Ty B) : Monad (Obj D (.R i)) := monad _
+instance : Monad (Obj D (.W .t : Eff B)) := monad _
+instance (r : Ty B) : Monad (Obj D (.C r)) := monad _
+instance : Monad (Obj D (.M : Eff B)) := monad _
+instance : Monad (Obj D (.F : Eff B)) := monad _
+
 /-- The co-unit of storing and reading: the stored datum is given to the reader. -/
 def counit {i : Ty B} (x : Obj D (.W i) (Obj D (.R i) α)) : α := x.1 x.2
 

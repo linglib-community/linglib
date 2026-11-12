@@ -1,13 +1,14 @@
 module
 
 public import Linglib.Semantics.ConventionalImplicature
+public import Linglib.Logic.Trivalent.Part
 public import Linglib.Logic.Trivalent.Pointwise
 
 /-!
 # Two-dimensional presupposition
 
 A two-dimensional account of presupposition computes what a sentence asserts and what it
-presupposes separately, as a `TwoDim W (W → Prop)` whose not-at-issue content is the
+presupposes separately, as a `TwoDim (W → Prop) (W → Prop)` whose not-at-issue content is the
 presupposition. Such a proposition is [trivalent](##ConventionalImplicature.TwoDim.toTrivalent),
 undefined where its presupposition fails, and the applicative connectives become the Weak Kleene
 ones. Karttunen's filtering conditional is [a bind](##ConventionalImplicature.TwoDim.impFilter),
@@ -49,23 +50,33 @@ section Trivalent
 
 open Classical
 
-variable (p q : TwoDim W (W → Prop)) {w : W}
+variable (p q : TwoDim (W → Prop) (W → Prop)) {w : W}
 
-/-- A two-dimensional proposition evaluates to the trivalent proposition undefined where its
-not-at-issue content fails and the classical value of its at-issue content elsewhere. -/
+/-- A two-dimensional proposition at a world is a truth value with a logged truth value. -/
+def atWorld (w : W) : Writer Prop Prop := Writer.mk (p.atIssue w) (p.notAtIssue w)
+
+/-- A two-dimensional proposition evaluates to the trivalent proposition that is, at each world,
+the partial truth value `Writer.toPart` gives: undefined where its not-at-issue content fails and
+the value of its at-issue content elsewhere. -/
 noncomputable def toTrivalent : W → Trivalent :=
-  Trivalent.condEvent p.notAtIssue p.atIssue
+  fun w ↦ Trivalent.ofPart (p.atWorld w).toPart
 
 @[simp] theorem toTrivalent_eq_true_iff :
     p.toTrivalent w = .true ↔ p.notAtIssue w ∧ p.atIssue w := by
-  simp [toTrivalent]
+  simp only [toTrivalent, Trivalent.ofPart_eq_true_iff, Writer.mem_toPart]
+  exact ⟨fun ⟨_, ⟨h, rfl⟩, ha⟩ ↦ ⟨h, ha⟩, fun ⟨h, ha⟩ ↦ ⟨_, ⟨h, rfl⟩, ha⟩⟩
 
 @[simp] theorem toTrivalent_eq_false_iff :
     p.toTrivalent w = .false ↔ p.notAtIssue w ∧ ¬ p.atIssue w := by
-  simp [toTrivalent]
+  simp only [toTrivalent, Trivalent.ofPart_eq_false_iff, Writer.mem_toPart]
+  exact ⟨fun ⟨_, ⟨h, rfl⟩, ha⟩ ↦ ⟨h, ha⟩, fun ⟨h, ha⟩ ↦ ⟨_, ⟨h, rfl⟩, ha⟩⟩
 
 @[simp] theorem toTrivalent_eq_undefined_iff : p.toTrivalent w = .undefined ↔ ¬ p.notAtIssue w := by
-  simp [toTrivalent]
+  simp only [toTrivalent, Trivalent.ofPart_eq_undefined_iff]
+  exact Iff.rfl
+
+theorem toTrivalent_eq_condEvent : p.toTrivalent = Trivalent.condEvent p.notAtIssue p.atIssue :=
+  funext fun w ↦ Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp) (by simp)
 
 theorem toTrivalent_neg : p.neg.toTrivalent = p.toTrivalentᶜ :=
   funext fun _ ↦ Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp) (by simp)
@@ -89,7 +100,7 @@ theorem toTrivalent_imp :
 only where the antecedent's at-issue content holds. This is the conditional presupposition by
 which [peters-1979] renders the filter of [karttunen-1973], and the one [sharvit-2025] gives for
 the connectives of [karttunen-peters-1979]. -/
-def impFilter : TwoDim W (W → Prop) := p >>= fun a ↦ ⟨a ⇨ q.atIssue, a ⇨ q.notAtIssue⟩
+def impFilter : TwoDim (W → Prop) (W → Prop) := p >>= fun a ↦ .mk (a ⇨ q.atIssue) (a ⇨ q.notAtIssue)
 
 @[simp] theorem impFilter_atIssue : (p.impFilter q).atIssue = p.atIssue ⇨ q.atIssue := rfl
 
@@ -109,9 +120,9 @@ theorem toTrivalent_impFilter :
 /-- Filtering needs the bind: an at-issue operator applied to two meanings presupposes the same
 whatever their at-issue content, so none presupposes what the filtering conditional does. -/
 theorem exists_seq_notAtIssue_ne_impFilter [Nonempty W] :
-    ∃ p q : TwoDim W (W → Prop), ∀ f : (W → Prop) → (W → Prop) → W → Prop,
+    ∃ p q : TwoDim (W → Prop) (W → Prop), ∀ f : (W → Prop) → (W → Prop) → W → Prop,
       (f <$> p <*> q).notAtIssue ≠ (p.impFilter q).notAtIssue := by
-  refine ⟨⟨⊥, ⊤⟩, ⟨⊥, ⊥⟩, fun f h ↦ ?_⟩
+  refine ⟨.mk ⊥ ⊤, .mk ⊥ ⊥, fun f h ↦ ?_⟩
   obtain ⟨w⟩ := ‹Nonempty W›
   simpa using congrFun h w
 
@@ -120,9 +131,14 @@ asserts `A(φ) ∨ A(ψ)`: each disjunct's presupposition projects unless the ot
 at-issue content holds. It is [yagi-2025]'s Definition 2 and the disjunction [sharvit-2025]
 gives for the connectives of [karttunen-peters-1979]; [kalomoiros-schwarz-2021] give experimental
 support for the symmetry. -/
-@[simps]
-def orFilter : TwoDim W (W → Prop) :=
-  ⟨p.atIssue ⊔ q.atIssue, fun w ↦ (q.atIssue w ∨ p.notAtIssue w) ∧ (p.atIssue w ∨ q.notAtIssue w)⟩
+def orFilter : TwoDim (W → Prop) (W → Prop) :=
+  .mk (atIssue := p.atIssue ⊔ q.atIssue)
+    (notAtIssue := fun w ↦ (q.atIssue w ∨ p.notAtIssue w) ∧ (p.atIssue w ∨ q.notAtIssue w))
+
+@[simp] theorem orFilter_atIssue : (orFilter p q).atIssue = p.atIssue ⊔ q.atIssue := rfl
+
+@[simp] theorem orFilter_notAtIssue : (orFilter p q).notAtIssue =
+    fun w ↦ (q.atIssue w ∨ p.notAtIssue w) ∧ (p.atIssue w ∨ q.notAtIssue w) := rfl
 
 theorem orFilter_comm : orFilter p q = orFilter q p :=
   TwoDim.ext (sup_comm ..) (funext fun _ ↦ propext and_comm)
@@ -138,12 +154,12 @@ theorem orFilter_atIssue_of_conflict (h : ¬ (p.notAtIssue w ∧ q.notAtIssue w)
 
 theorem orFilter_not_trivalent (w : W) :
     ¬ ∃ f : Trivalent → Trivalent → Trivalent,
-      ∀ p q : TwoDim W (W → Prop),
+      ∀ p q : TwoDim (W → Prop) (W → Prop),
         (orFilter p q).toTrivalent w = f (p.toTrivalent w) (q.toTrivalent w) := by
   rintro ⟨f, hf⟩
-  have h₁ := hf ⟨fun _ ↦ True, fun _ ↦ False⟩ ⟨fun _ ↦ True, fun _ ↦ False⟩
-  have h₂ := hf ⟨fun _ ↦ False, fun _ ↦ False⟩ ⟨fun _ ↦ True, fun _ ↦ False⟩
-  simp [orFilter, toTrivalent, Trivalent.condEvent_apply] at h₁ h₂
+  have h₁ := hf (.mk (fun _ ↦ True) fun _ ↦ False) (.mk (fun _ ↦ True) fun _ ↦ False)
+  have h₂ := hf (.mk (fun _ ↦ False) fun _ ↦ False) (.mk (fun _ ↦ True) fun _ ↦ False)
+  simp [toTrivalent_eq_condEvent, Trivalent.condEvent_apply] at h₁ h₂
   exact absurd (h₁.trans h₂.symm) (by decide)
 
 /-- Embedding under a negative factive, *x is unaware that p*, presupposes that the complement
@@ -151,9 +167,15 @@ holds, its presupposition included, and asserts that `x` does not believe its at
 The complement's presupposition so projects to the evaluation world, the transparent rule of
 [van-der-sandt-1992], and not into `x`'s beliefs, the opaque rule of [heim-1992];
 [delpinal-bassi-sauerland-2024] derive free choice under *unaware* with either. -/
-@[simps]
-def negFactive (believes : (W → Prop) → W → Prop) : TwoDim W (W → Prop) :=
-  ⟨fun w ↦ ¬ believes p.atIssue w, fun w ↦ p.notAtIssue w ∧ p.atIssue w⟩
+def negFactive (believes : (W → Prop) → W → Prop) : TwoDim (W → Prop) (W → Prop) :=
+  .mk (atIssue := fun w ↦ ¬ believes p.atIssue w)
+    (notAtIssue := fun w ↦ p.notAtIssue w ∧ p.atIssue w)
+
+@[simp] theorem negFactive_atIssue (believes : (W → Prop) → W → Prop) :
+    (p.negFactive believes).atIssue = fun w ↦ ¬ believes p.atIssue w := rfl
+
+@[simp] theorem negFactive_notAtIssue (believes : (W → Prop) → W → Prop) :
+    (p.negFactive believes).notAtIssue = fun w ↦ p.notAtIssue w ∧ p.atIssue w := rfl
 
 end Trivalent
 

@@ -338,8 +338,8 @@ variable (R a b) in
 /-- `pex^{IE+II}[◇(a ∨ b)]` as a two-dimensional meaning, with the prejacent `◇(a ∨ b)` at issue
 and the presupposition of `pexPossOr` not at issue. A negative factive denies belief in the
 at-issue content, which it reads apart from the presupposition. -/
-def pexPossOrTwoDim : TwoDim W (W → Prop) :=
-  ⟨(· ∈ R.preimage (a ∪ b)), (pexPossOr R a b · ≠ .undefined)⟩
+def pexPossOrTwoDim : TwoDim (W → Prop) (W → Prop) :=
+  .mk (atIssue := (· ∈ R.preimage (a ∪ b))) (notAtIssue := (pexPossOr R a b · ≠ .undefined))
 
 theorem toTrivalent_pexPossOrTwoDim : (pexPossOrTwoDim R a b).toTrivalent = pexPossOr R a b := by
   funext w

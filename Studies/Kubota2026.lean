@@ -83,12 +83,18 @@ variable {W O : Type*}
 
 /-- The presuppositional projection presupposes the counterstance and asserts the prejacent. -/
 noncomputable def toTrivalent (m : Outlook W O) : W → Trivalent :=
-  (⟨m.prejacent, m.counterstance⟩ : TwoDim W (W → Prop)).toTrivalent
+  (TwoDim.mk m.prejacent m.counterstance).toTrivalent
 
 /-- The expressive projection at an outlook pairs the prejacent with the stance as its
 use-conditional dimension. -/
-@[simps] def toTwoDim (m : Outlook W O) (o : O) : TwoDim W (W → Prop) :=
-  ⟨m.prejacent, m.evaluation o⟩
+def toTwoDim (m : Outlook W O) (o : O) : TwoDim (W → Prop) (W → Prop) :=
+  .mk (atIssue := m.prejacent) (notAtIssue := m.evaluation o)
+
+@[simp] theorem toTwoDim_atIssue (m : Outlook W O) (o : O) :
+    (m.toTwoDim o).atIssue = m.prejacent := rfl
+
+@[simp] theorem toTwoDim_notAtIssue (m : Outlook W O) (o : O) :
+    (m.toTwoDim o).notAtIssue = m.evaluation o := rfl
 
 -- (40), (41)
 theorem compl_gapExt_compl_toTrivalent (m : Outlook W O) :
@@ -107,14 +113,14 @@ def IsRigid (m : Outlook W O) : Prop := _root_.IsRigid m.evaluation
 shift is non-rigidity ((42)). -/
 theorem isRigid_iff (m : Outlook W O) :
     m.IsRigid ↔ ∀ o o', m.toTwoDim o = m.toTwoDim o' := by
-  simp only [IsRigid, _root_.IsRigid, toTwoDim, TwoDim.mk.injEq, true_and]
+  simp only [IsRigid, _root_.IsRigid, toTwoDim, TwoDim.mk_inj, true_and]
 
 /-- The outlook-marked meaning of a pure expressive, whose conventional implicature is the same
 at every outlook and which presupposes nothing. -/
-def ofTwoDim (t : TwoDim W (W → Prop)) : Outlook W O :=
+def ofTwoDim (t : TwoDim (W → Prop) (W → Prop)) : Outlook W O :=
   ⟨t.atIssue, fun _ ↦ True, fun _ ↦ t.notAtIssue⟩
 
-theorem ofTwoDim_isRigid (t : TwoDim W (W → Prop)) : (ofTwoDim (O := O) t).IsRigid :=
+theorem ofTwoDim_isRigid (t : TwoDim (W → Prop) (W → Prop)) : (ofTwoDim (O := O) t).IsRigid :=
   isRigid_const t.notAtIssue
 
 end Outlook

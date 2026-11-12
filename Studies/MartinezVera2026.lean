@@ -87,12 +87,12 @@ def evidence (ev : A → Evidential.Parameter → Set W → Set W) (s : A) (e : 
 /-- `withEvidential ev s e S` applies the evidential `e` to the sentence `S` by rule I ((40a),
 (42a)), keeping the scope at issue and adding the speaker's evidence for it not at issue. -/
 def withEvidential (ev : A → Evidential.Parameter → Set W → Set W) (s : A) (e : Evidential)
-    (S : TwoDim W (Set W)) : TwoDim W (Set W) :=
+    (S : TwoDim (W → Prop) (Set W)) : TwoDim (W → Prop) (Set W) :=
   S.ciApply fun p ↦ (· ∈ evidence ev s e p)
 
 variable (ev : A → Evidential.Parameter → Set W → Set W) (s : A) (e : Evidential)
 
-@[simp] theorem withEvidential_atIssue (S : TwoDim W (Set W)) :
+@[simp] theorem withEvidential_atIssue (S : TwoDim (W → Prop) (Set W)) :
     (withEvidential ev s e S).atIssue = S.atIssue := rfl
 
 @[simp] theorem ofPred_notAtIssue_withEvidential_pure (p : Set W) :
@@ -115,7 +115,7 @@ namespace Move
 
 /-- The operator `assert` (39) commits the speaker to the scope, by means of which she addresses
 the question under discussion, and to the not-at-issue content. -/
-def assert (s : A) (S : TwoDim W (Set W)) : Move A W where
+def assert (s : A) (S : TwoDim (W → Prop) (Set W)) : Move A W where
   speaker := s
   commitments := {S.atIssue, Set.ofPred S.notAtIssue}
   addressers := {S.atIssue}
@@ -123,7 +123,7 @@ def assert (s : A) (S : TwoDim W (Set W)) : Move A W where
 /-- The operator `present` (41) brings the scope to the addressee's attention, addresses the
 question under discussion by means of it or its negation, and commits the speaker only to the
 not-at-issue content. -/
-def present (s : A) (S : TwoDim W (Set W)) : Move A W where
+def present (s : A) (S : TwoDim (W → Prop) (Set W)) : Move A W where
   speaker := s
   commitments := {Set.ofPred S.notAtIssue}
   addressers := {S.atIssue, S.atIssueᶜ}
@@ -135,28 +135,28 @@ def biasedQuestion (s : A) (q : Set W) : Move A W := ⟨s, ∅, {q}⟩
 /-- A declarative with a direct evidential is asserted and one with a reportative is presented
 ((40c), (42c)), and `declare s e S` is the move of a declarative with evidential `e`, if the paper
 analyzes `e`. -/
-def declare (s : A) (e : Evidential) (S : TwoDim W (Set W)) : Option (Move A W) :=
+def declare (s : A) (e : Evidential) (S : TwoDim (W → Prop) (Set W)) : Option (Move A W) :=
   match e.evidenceType? with
   | some .attested => some (assert s S)
   | some .reported => some (present s S)
   | _ => none
 
-theorem declare_of_isDirect {e : Evidential} (he : e.IsDirect) (S : TwoDim W (Set W)) :
+theorem declare_of_isDirect {e : Evidential} (he : e.IsDirect) (S : TwoDim (W → Prop) (Set W)) :
     declare s e S = some (assert s S) := by
   simp [declare, Evidential.evidenceType?_eq_some_iff.2 he]
 
 theorem declare_of_isReportative {e : Evidential} (he : e.IsReportative)
-    (S : TwoDim W (Set W)) : declare s e S = some (present s S) := by
+    (S : TwoDim (W → Prop) (Set W)) : declare s e S = some (present s S) := by
   simp [declare, Evidential.evidenceType?_eq_some_iff.2 he]
 
-@[simp] theorem declare_rka (S : TwoDim W (Set W)) : declare s rka S = some (assert s S) :=
+@[simp] theorem declare_rka (S : TwoDim (W → Prop) (Set W)) : declare s rka S = some (assert s S) :=
   declare_of_isDirect s (by decide) S
 
-@[simp] theorem declare_shka (S : TwoDim W (Set W)) : declare s shka S = some (present s S) :=
+@[simp] theorem declare_shka (S : TwoDim (W → Prop) (Set W)) : declare s shka S = some (present s S) :=
   declare_of_isReportative s (by decide) S
 
 -- The paper does not analyze the inferential *-shi* (footnote 6).
-example (S : TwoDim W (Set W)) : declare s shi S = none := rfl
+example (S : TwoDim (W → Prop) (Set W)) : declare s shi S = none := rfl
 
 end Move
 
@@ -174,7 +174,7 @@ def update (c : Context A W) (m : Move A W) : Context A W := ⟨insert m c.moves
 
 /-- `c.declare s e S` puts on record the move of a declarative with evidential `e`, if the paper
 analyzes `e`. -/
-def declare (c : Context A W) (s : A) (e : Evidential) (S : TwoDim W (Set W)) : Context A W :=
+def declare (c : Context A W) (s : A) (e : Evidential) (S : TwoDim (W → Prop) (Set W)) : Context A W :=
   ((Move.declare s e S).map c.update).getD c
 
 /-- Asking a question that addresses no prior one makes it the question under discussion. -/
@@ -242,13 +242,13 @@ theorem highlighted_update_iff {m : Move A W} :
 
 /-- Presenting `p` licenses clausal *=mi* on `p` ((48), (50), (51)), wherever `¬p` addresses the
 question under discussion. -/
-theorem miDefined_update_present (S : TwoDim W (Set W))
+theorem miDefined_update_present (S : TwoDim (W → Prop) (Set W))
     (h : c.qud.PartiallyAnsweredBy S.atIssueᶜ) :
     MiDefined (c.update (.present s S)) Set.univ S.atIssue :=
   miDefined_of_highlighted_compl (highlighted_update_iff.2 ⟨.inl (by simp [Move.present]), h⟩)
 
 /-- Asserting a consistent `p` adds nothing that licenses clausal *=mi* on `p` ((47), (49)). -/
-theorem miDefined_update_assert_iff (S : TwoDim W (Set W)) (hp : S.atIssue.Nonempty) :
+theorem miDefined_update_assert_iff (S : TwoDim (W → Prop) (Set W)) (hp : S.atIssue.Nonempty) :
     MiDefined (c.update (.assert s S)) Set.univ S.atIssue ↔ MiDefined c Set.univ S.atIssue := by
   simp only [miDefined_univ_iff, highlighted_update_iff, Move.assert, Set.mem_singleton_iff]
   constructor
@@ -283,7 +283,7 @@ theorem contextSetOf_update {m : Move A W} {w : W} :
       (m.speaker = s → ∀ p ∈ m.commitments, w ∈ p) ∧ w ∈ c.contextSetOf s := by
   simp [Context.mem_contextSetOf, Context.update]
 
-variable (S : TwoDim W (Set W))
+variable (S : TwoDim (W → Prop) (Set W))
 
 -- (18a), footnote 9
 theorem contextSetOf_assert_assert_compl :
@@ -365,7 +365,7 @@ def evModel (_ : Role) (_ : Evidential.Parameter) (_ : Set (Set Event)) : Set (S
 
 /-- `sentence s e p` is the declarative of `s` with evidential `e` and scope `p`. -/
 def sentence (s : Role) (e : Evidential) (p : Set (Set Event)) :
-    TwoDim (Set Event) (Set (Set Event)) :=
+    TwoDim ((Set Event) → Prop) (Set (Set Event)) :=
   withEvidential evModel s e (pure p)
 
 /-- A `Prior` is the discourse before a *=mi* sentence as the paper describes its examples. It is

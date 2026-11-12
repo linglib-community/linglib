@@ -99,6 +99,13 @@ instance lawfulMonad (f : Eff B) [h : f.IsApplicative] : LawfulMonad (Obj D f) :
     | F => exact join_map_map (m := WithAlternatives) g x
     | _ => rfl
 
+instance : LawfulMonad (Obj D (.S : Eff B)) := lawfulMonad _
+instance (i : Ty B) : LawfulMonad (Obj D (.R i)) := lawfulMonad _
+instance : LawfulMonad (Obj D (.W .t : Eff B)) := lawfulMonad _
+instance (r : Ty B) : LawfulMonad (Obj D (.C r)) := lawfulMonad _
+instance : LawfulMonad (Obj D (.M : Eff B)) := lawfulMonad _
+instance : LawfulMonad (Obj D (.F : Eff B)) := lawfulMonad _
+
 /-- An effect is commutative if it is applicative and is not quantification over continuations
 (`.C r`). The `seq` of a commutative effect does not depend on the order of its two computations
 (`Eff.commApplicative`). -/

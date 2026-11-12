@@ -1,6 +1,8 @@
 module
 
 public import Mathlib.Control.Monad.Writer
+public import Mathlib.Control.Traversable.Basic
+public import Mathlib.Data.Part
 
 /-!
 # Writer monads
@@ -8,7 +10,9 @@ public import Mathlib.Control.Monad.Writer
 A computation of the writer monad `Writer ω` yields a value and logs output in `ω`: `pure` logs
 nothing and `bind` appends the logs. [Forgetting the log](##val_bind) is a monad morphism to `Id`,
 and [`bind` only extends the log](##log_prefix_bind), so a value can feed later logging while the
-log never feeds a value.
+log never feeds a value. With truth values for logs, combined by conjunction, a computation is
+[a partial value](##Writer.toPart) defined where its log holds, and that passage is
+[a morphism of applicative functors](##Writer.toPartHom).
 
 ## Main definitions
 
@@ -111,5 +115,41 @@ on list logs. -/
 theorem log_prefix_bind {P : Type u} (m : Writer (List P) A) (f : A → Writer (List P) B) :
     m.log <+: (m >>= f).log :=
   ⟨(f m.val).log, rfl⟩
+
+end Writer
+
+/-! ### Truth-value logs and partiality -/
+
+namespace Writer
+
+variable {α : Type}
+
+/-- The writer monad over truth values under conjunction. -/
+abbrev propMonad : Monad (Writer Prop) := WriterT.monad (M := Id) True And
+
+attribute [local instance] propMonad
+
+/-- A value with a logged truth value is the partial value defined where the log holds. -/
+def toPart (m : Writer Prop α) : Part α := ⟨m.log, fun _ ↦ m.val⟩
+
+@[simp] theorem toPart_dom (m : Writer Prop α) : m.toPart.Dom = m.log := rfl
+
+@[simp] theorem mem_toPart {m : Writer Prop α} {a : α} : a ∈ m.toPart ↔ m.log ∧ m.val = a :=
+  ⟨fun ⟨h, e⟩ ↦ ⟨h, e⟩, fun ⟨h, e⟩ ↦ ⟨h, e⟩⟩
+
+/-- `Writer.toPart` as a morphism of applicative functors: it preserves the unit and
+application. -/
+def toPartHom : ApplicativeTransformation (Writer Prop) Part where
+  app _ := toPart
+  preserves_pure' _ := Part.ext' (iff_of_true trivial trivial) fun _ _ ↦ rfl
+  preserves_seq' _ _ := Part.ext' ⟨fun h ↦ ⟨h.1, h.2⟩, fun h ↦ ⟨h.1, h.2⟩⟩ fun _ _ ↦ rfl
+
+/-- Two computations give the same partial value when their logs agree and their values agree
+where the log holds: `toPart` forgets the value where the log fails. -/
+theorem toPart_eq_iff {m n : Writer Prop α} :
+    m.toPart = n.toPart ↔ (m.log ↔ n.log) ∧ (m.log → m.val = n.val) := by
+  refine ⟨fun h ↦ ?_, fun ⟨hd, hv⟩ ↦ Part.ext' hd fun hx _ ↦ hv hx⟩
+  have hd : m.log ↔ n.log := iff_of_eq (congrArg Part.Dom h)
+  exact ⟨hd, fun hx ↦ ((mem_toPart (m := n)).1 (h ▸ mem_toPart.2 ⟨hx, rfl⟩)).2.symm⟩
 
 end Writer
