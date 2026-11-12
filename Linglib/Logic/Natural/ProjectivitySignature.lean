@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Order.BoundedOrder.Basic
 public import Mathlib.Order.GaloisConnection.Basic
+public import Mathlib.Order.Hom.BoundedLattice
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Algebra.Group.Units.Defs
 public import Mathlib.Basic.Sign.Defs
@@ -133,7 +134,8 @@ def Property.compose : Property → Property → Option Property
       some .antiMultiplicative
   | _, _ => none
 
-private theorem Property.compose_assoc : ∀ p q r : Property,
+/-- The property rule for composition is associative. -/
+theorem Property.compose_assoc : ∀ p q r : Property,
     (p.compose q).bind (·.compose r) = (q.compose r).bind (p.compose ·) := by
   decide
 
@@ -259,6 +261,16 @@ theorem holdsFor_antiAddMult_iff {f : α → β} :
     forall_eq_or_imp, forall_eq, Property.HoldsFor]
   exact ⟨fun h ↦ h.2, fun h ↦ ⟨h.1.1.antitone, h⟩⟩
 
+/-- A bounded lattice homomorphism is a morphism. -/
+theorem holdsFor_addMult_of_boundedLatticeHomClass {F : Type*} [FunLike F α β]
+    [BoundedLatticeHomClass F α β] (f : F) : HoldsFor .addMult f := by
+  intro p hp
+  cases p with
+  | monotone => exact OrderHomClass.mono f
+  | additive => exact ⟨map_sup f, map_top f⟩
+  | multiplicative => exact ⟨map_inf f, map_bot f⟩
+  | antitone | antiAdditive | antiMultiplicative => exact absurd hp (by decide)
+
 theorem holdsFor_addMult_of_galoisConnection {f u l : α → α}
     (gc₁ : GaloisConnection f u) (gc₂ : GaloisConnection l f) :
     HoldsFor .addMult f := by
@@ -304,6 +316,33 @@ theorem HoldsFor.comp {γ : Type*} [Lattice γ] [BoundedOrder γ] {ψ φ : Proje
     (ψ * φ).HoldsFor (f ∘ g) := fun _ hr ↦ by
   obtain ⟨p, hp, q, hq, h⟩ := mem_properties_mul.1 hr
   exact (hf p hp).compose h (hg q hq)
+
+/-- Passing to the order dual is an anti-morphism. -/
+theorem holdsFor_antiAddMult_toDual : HoldsFor .antiAddMult (OrderDual.toDual : α → αᵒᵈ) := by
+  intro p hp
+  cases p with
+  | antitone => exact fun _ _ h ↦ h
+  | antiAdditive => exact ⟨fun _ _ ↦ rfl, rfl⟩
+  | antiMultiplicative => exact ⟨fun _ _ ↦ rfl, rfl⟩
+  | monotone | additive | multiplicative => exact absurd hp (by decide)
+
+/-- Returning from the order dual is an anti-morphism. -/
+theorem holdsFor_antiAddMult_ofDual : HoldsFor .antiAddMult (OrderDual.ofDual : αᵒᵈ → α) := by
+  intro p hp
+  cases p with
+  | antitone => exact fun _ _ h ↦ h
+  | antiAdditive => exact ⟨fun _ _ ↦ rfl, rfl⟩
+  | antiMultiplicative => exact ⟨fun _ _ ↦ rfl, rfl⟩
+  | monotone | additive | multiplicative => exact absurd hp (by decide)
+
+/-- A map into the order dual is a σ-function exactly when the map is a `⊖ * σ`-function: the
+anti-additive functions into a lattice are the additive functions into its dual, and likewise for
+the other classes ([icard-2012] Lemma 1.10). -/
+theorem holdsFor_toDual_comp_iff {σ : ProjectivitySignature} {f : α → β} :
+    σ.HoldsFor (OrderDual.toDual ∘ f) ↔ (antiAddMult * σ).HoldsFor f := by
+  refine ⟨fun h ↦ holdsFor_antiAddMult_ofDual.comp h, fun h ↦ ?_⟩
+  simpa [← mul_assoc, show antiAddMult * antiAddMult = 1 from rfl] using
+    holdsFor_antiAddMult_toDual.comp h
 
 /-- A map after complementation is a σ-function exactly when the map is a `σ * ⊖`-function, since
 `⊖` is its own inverse. -/

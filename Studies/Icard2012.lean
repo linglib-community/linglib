@@ -55,9 +55,10 @@ example : join .alternation .negation = .forward := rfl
 example : join .alternation .reverse = .alternation := rfl
 example : ∀ R : Relation, 1 * R = R ∧ R * 1 = R := by decide
 example : ∀ R : Relation, ⊤ * R = ⊤ ∧ R * ⊤ = ⊤ := by decide
-example : IsLeast {T : Relation | ∀ x y z : Finset (Fin 3),
-    Relation.Holds .forward x y → Relation.Holds .negation y z → T.Holds x z}
-    .alternation := Relation.isLeast_join .forward .negation
+example {α : Type*} [DistribLattice α] [BoundedOrder α] [Nontrivial α] :
+    IsLeast {T : Relation | ∀ x y z : α,
+      Relation.Holds .forward x y → Relation.Holds .negation y z → T.Holds x z}
+      .alternation := Relation.isLeast_join .forward .negation
 
 example : project .forward .antiAdd = .reverse := rfl
 example : project .negation .addMult = .negation := rfl
@@ -88,8 +89,8 @@ example {α : Type*} [BooleanAlgebra α] :
 
 /-- Read with the printed implication order, the ≪-maximal sound chaining of Definition 1.4 is
 always `#`. -/
-example (R S : Relation) : IsGreatest {T : Relation | ∀ x y z : Finset (Fin 3),
-    R.Holds x y → S.Holds y z → T.Holds x z} ⊤ :=
+example {α : Type*} [Lattice α] [BoundedOrder α] (R S : Relation) :
+    IsGreatest {T : Relation | ∀ x y z : α, R.Holds x y → S.Holds y z → T.Holds x z} ⊤ :=
   ⟨fun _ _ _ _ _ ↦ trivial, fun _ _ ↦ le_top⟩
 
 /-- `•` projects `≡` to `≡`, since every function preserves equality. -/
