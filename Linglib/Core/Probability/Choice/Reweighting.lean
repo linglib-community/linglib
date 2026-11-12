@@ -8,6 +8,9 @@ module
 public import Linglib.Core.InformationTheory.KullbackLeibler.WithDensity
 public import Mathlib.MeasureTheory.Measure.Prod
 
+import Linglib.Core.MeasureTheory.Measure.WithDensity
+import Linglib.Core.Probability.ConditionalProbability
+
 /-!
 # Principles that determine reweighting
 
@@ -98,11 +101,75 @@ structure IsChoiceRule (R : ChoiceRule.{u}) : Prop where
     (μ : Measure β) [IsProbabilityMeasure μ] (c : β → ℝ≥0∞) {x y : β} (h : c x ≤ c y) :
     R β μ c {y} * μ {x} ≤ R β μ c {x} * μ {y}
 
+/-- The weight `exp (-α * t)` of a cost `t`. -/
+private noncomputable def weight (α : ℝ) (t : ℝ≥0∞) : ℝ≥0∞ :=
+  EReal.exp (-((ENNReal.ofReal α * t : ℝ≥0∞) : EReal))
+
+private lemma weight_add (α : ℝ) (a b : ℝ≥0∞) : weight α (a + b) = weight α a * weight α b := by
+  rw [weight, weight, weight, mul_add, EReal.coe_ennreal_add,
+    EReal.neg_add (.inl (EReal.coe_ennreal_ne_bot _)) (.inr (EReal.coe_ennreal_ne_bot _)),
+    sub_eq_add_neg, EReal.exp_add]
+
+private lemma weight_antitone (α : ℝ) : Antitone (weight α) := fun _ _ h ↦
+  EReal.exp_monotone (EReal.neg_le_neg_iff.2 (EReal.coe_ennreal_le_coe_ennreal_iff.2
+    (by gcongr)))
+
+private lemma weight_le_one (α : ℝ) (t : ℝ≥0∞) : weight α t ≤ 1 :=
+  (weight_antitone α (zero_le : 0 ≤ t)).trans_eq (by simp [weight])
+
+private lemma weight_ne_zero (α : ℝ) {t : ℝ≥0∞} (ht : t ≠ ∞) : weight α t ≠ 0 := by
+  rw [weight, ne_eq, EReal.exp_eq_zero_iff, EReal.neg_eq_bot_iff, EReal.coe_ennreal_eq_top_iff]
+  exact ENNReal.mul_ne_top ENNReal.ofReal_ne_top ht
+
+private instance {β : Type*} [MeasurableSpace β] (μ : Measure β) [IsFiniteMeasure μ] (α : ℝ)
+    (c : β → ℝ≥0∞) : IsFiniteMeasure (μ.withDensity fun x ↦ weight α (c x)) :=
+  isFiniteMeasure_withDensity ((lintegral_mono fun x ↦ weight_le_one α (c x)).trans_lt
+    (by simp)).ne
+
+private lemma cond_univ_prod {β γ : Type*} [MeasurableSpace β] [MeasurableSpace γ]
+    (μ : Measure β) (ν : Measure γ) [IsFiniteMeasure μ] [IsFiniteMeasure ν] :
+    (μ.prod ν)[|Set.univ] = μ[|Set.univ].prod ν[|Set.univ] := by
+  have h : μ.prod ν Set.univ = μ Set.univ * ν Set.univ := by
+    rw [← Set.univ_prod_univ, Measure.prod_prod]
+  simp only [ProbabilityTheory.cond, Measure.restrict_univ, Measure.prod_smul_left,
+    Measure.prod_smul_right, smul_smul, h]
+  rw [ENNReal.mul_inv (.inr (measure_ne_top _ _)) (.inl (measure_ne_top _ _)), mul_comm]
+
 /-- Reweighting the reference by `exp (-α * c)` and normalizing satisfies the principles. -/
-theorem isChoiceRule_reweight {α : ℝ} (hα : 0 ≤ α) :
-    IsChoiceRule.{u} fun β _ _ _ μ c ↦ (μ.withDensity fun x ↦
+theorem isChoiceRule_reweight (α : ℝ) :
+    IsChoiceRule.{u} fun _ _ _ _ μ c ↦ (μ.withDensity fun x ↦
       EReal.exp (-((ENNReal.ofReal α * c x : ℝ≥0∞) : EReal)))[|Set.univ] := by
-  sorry
+  change IsChoiceRule fun _ _ _ _ μ c ↦ (μ.withDensity fun x ↦ weight α (c x))[|Set.univ]
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · intro β _ _ _ μ _ c ⟨x, hμx, hcx⟩
+    refine cond_isProbabilityMeasure_of_finite (fun h0 ↦ ?_) (measure_ne_top _ _)
+    have hx := measure_mono_null (Set.subset_univ {x}) h0
+    rw [withDensity_apply _ (.singleton x), lintegral_singleton] at hx
+    exact mul_ne_zero (weight_ne_zero α hcx) hμx hx
+  · intro β γ _ _ _ _ _ _ f μ _ c
+    have hf : Measurable f := .of_discrete
+    rw [← Measure.map_withDensity_comp Measurable.of_discrete.aemeasurable hf.aemeasurable,
+      cond_map hf.aemeasurable .univ, Set.preimage_univ]
+    rfl
+  · intro β _ _ _ μ _ c s hs
+    have hμs : μ s ≠ 0 := fun h ↦
+      hs ((cond_absolutelyContinuous.trans (withDensity_absolutelyContinuous μ _)) h)
+    have hcond : μ[|s] = (μ s)⁻¹ • μ.restrict s := rfl
+    rw [hcond, withDensity_smul_measure,
+      cond_smul (ENNReal.inv_ne_zero.2 (measure_ne_top μ s)) (ENNReal.inv_ne_top.2 hμs),
+      ← restrict_withDensity .of_discrete, cond_cond_eq_cond_inter' .univ .of_discrete
+        (measure_ne_top _ _), Set.univ_inter]
+    simp only [ProbabilityTheory.cond, Measure.restrict_univ, Measure.restrict_apply_univ]
+  · intro β γ _ _ _ _ _ _ μ _ ν _ c d
+    simp only [weight_add]
+    rw [← prod_withDensity (f := fun x ↦ weight α (c x)) (g := fun y ↦ weight α (d y))
+      .of_discrete .of_discrete, cond_univ_prod]
+  · intro β _ _ _ μ _ c x y h
+    simp only [cond_apply MeasurableSet.univ, Set.univ_inter, withDensity_apply _ (.singleton _),
+      lintegral_singleton]
+    rw [mul_assoc, mul_assoc, mul_assoc, mul_assoc, mul_comm (μ {y})]
+    gcongr
+    exact weight_antitone α h
 
 /-- A rule satisfying the principles reweights the reference by `exp (-α * c)` at some inverse
 temperature `α` and normalizes, or conditions the reference on the alternatives of finite cost, or
