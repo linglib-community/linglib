@@ -1,9 +1,8 @@
 module
 
-public import Linglib.Core.InformationTheory.Surprisal
+public import Linglib.Core.InformationTheory.InformationLoss
 public import Linglib.Core.Probability.Kernel.Softmax
 public import Linglib.Core.Order.Pareto
-public import Linglib.Pragmatics.RSA.AlternatingMaximization
 public import Mathlib.Data.Set.Finite.Lemmas
 public import Linglib.Data.Examples.XuEtAl2024
 
@@ -22,9 +21,9 @@ under a form a concept closer to the prototype is less surprising and incurs les
 loss (`surprisal_listener_le`).
 
 An encoding of the emerging concepts is a speaker who names each concept by one form
-(`encoder`). Its two costs (eq. 4, `costs`) are the information loss and the expected cost of
-`RSA` with the form length as cost (`informationLoss_encoder`, `expectedCost_encoder`), so that the
-objective is the negative expected utility at cost `β • l` (`objective_eq_neg_expectedUtility`).
+(`encoder`). Its two costs (eq. 4, `costs`) are the expected surprisal of the intended concept and
+the expected length of the form. The first is the information the listener loses through the
+encoding (`informationLoss_encoder`, `ofReal_fst_costs`).
 With need held fixed the objective decomposes into an item-level objective (eq. 5,
 `objective_eq_sum`), so an encoding that is optimal concept by concept is optimal overall
 (`objective_le_of_forall`) and, for a positive parameter, on the Pareto frontier
@@ -109,20 +108,17 @@ end Listener
 
 section Costs
 
-variable {C W : Type*} [Fintype C] [MeasurableSpace C] [MeasurableSingletonClass C]
-  [MeasurableSpace W] [MeasurableSingletonClass W]
-
-/-- The speaker who encodes each concept by its form under `f`. -/
-noncomputable def encoder (f : C → W) : Kernel C W := Kernel.deterministic f .of_discrete
-
-instance (f : C → W) : IsMarkovKernel (encoder f) := by unfold encoder; infer_instance
+variable {C W : Type*} [Fintype C] [MeasurableSpace C] [MeasurableSpace W]
 
 variable (need : Measure C) (l : W → ℝ) (m : Kernel W C)
 
 /-- The costs of an encoding `f` under need `need`, form length `l` and listener `m` (eq. 4): the
-information the listener loses about the intended concept and the expected length of the form. -/
+expected surprisal of the intended concept and the expected length of the form. The surprisal
+enters through its real part, which is the surprisal itself unless the listener rules the concept
+out under the form; the similarity choice listener rules nothing out
+(`surprisal_listener_ne_top`). -/
 noncomputable def costs (f : C → W) : ℝ × ℝ :=
-  (RSA.informationLoss need Kernel.id (encoder f) m, RSA.expectedCost need Kernel.id l (encoder f))
+  (∑ c, need.real {c} * (surprisal (m (f c)) c).toReal, ∑ c, need.real {c} * l (f c))
 
 /-- The objective `L_β` of an encoding (eq. 4), its information loss plus `β` times its expected
 length. -/
@@ -130,47 +126,14 @@ noncomputable def objective (β : ℝ) (f : C → W) : ℝ :=
   (costs need l m f).1 + β * (costs need l m f).2
 
 /-- The item-level objective (eq. 7): the surprisal of the concept under the form, plus the
-weighted length of the form. The surprisal enters through its real part, which is the surprisal
-itself unless the listener rules the concept out under the form; the similarity choice listener
-rules nothing out (`surprisal_listener_ne_top`). -/
+weighted length of the form. -/
 noncomputable def itemObjective (β : ℝ) (c : C) (w : W) : ℝ :=
   (surprisal (m w) c).toReal + β * l w
-
-@[simp] theorem informationLoss_encoder (f : C → W) :
-    RSA.informationLoss need Kernel.id (encoder f) m =
-      ∑ c, need.real {c} * (surprisal (m (f c)) c).toReal := by
-  simp [RSA.informationLoss, encoder, Kernel.deterministic_apply, integral_dirac]
-
--- A listener that rules out no needed concept under its form loses, in the real cost, exactly
--- the expected surprisal of the intended concept.
-theorem ofReal_informationLoss_encoder [IsFiniteMeasure need] (f : C → W)
-    (hm : ∀ c, need {c} ≠ 0 → m (f c) {c} ≠ 0) :
-    ENNReal.ofReal (RSA.informationLoss need Kernel.id (encoder f) m) =
-      ∑ c, need {c} * surprisal (m (f c)) c := by
-  rw [informationLoss_encoder, ENNReal.ofReal_sum_of_nonneg fun c _ ↦
-    mul_nonneg measureReal_nonneg ENNReal.toReal_nonneg]
-  refine Finset.sum_congr rfl fun c _ ↦ ?_
-  rcases eq_or_ne (need {c}) 0 with h0 | h0
-  · simp [measureReal_def, h0]
-  · rw [ENNReal.ofReal_mul measureReal_nonneg, measureReal_def,
-      ENNReal.ofReal_toReal (measure_ne_top _ _),
-      ENNReal.ofReal_toReal (surprisal_ne_top_iff.2 (hm c h0))]
-
-@[simp] theorem expectedCost_encoder (f : C → W) :
-    RSA.expectedCost need Kernel.id l (encoder f) = ∑ c, need.real {c} * l (f c) := by
-  simp [RSA.expectedCost, encoder, Kernel.deterministic_apply, integral_dirac]
-
-/-- The objective is the negative expected utility of `RSA` at cost `β • l`. -/
-theorem objective_eq_neg_expectedUtility [Finite W] [IsMarkovKernel m] (β : ℝ) (f : C → W) :
-    objective need l m β f = -RSA.expectedUtility need Kernel.id (β • l) (encoder f) m := by
-  rw [RSA.expectedUtility_eq_neg_add, RSA.expectedCost_smul, neg_neg]
-  rfl
 
 /-- Eq. 5: with need held fixed, the objective is the need-weighted item-level objective. -/
 theorem objective_eq_sum (β : ℝ) (f : C → W) :
     objective need l m β f = ∑ c, need.real {c} * itemObjective l m β c (f c) := by
-  simp only [objective, costs, informationLoss_encoder, expectedCost_encoder, itemObjective,
-    mul_add, sum_add_distrib, mul_sum, mul_left_comm β]
+  simp only [objective, costs, itemObjective, mul_add, sum_add_distrib, mul_sum, mul_left_comm β]
 
 theorem objective_le_of_forall {f g : C → W} (β : ℝ)
     (h : ∀ c, itemObjective l m β c (f c) ≤ itemObjective l m β c (g c)) :
@@ -183,6 +146,40 @@ theorem minimalFor_costs {f : C → W} {β : ℝ} (hβ : 0 < β)
     (hf : ∀ c w, itemObjective l m β c (f c) ≤ itemObjective l m β c w) :
     MinimalFor (fun _ ↦ True) (costs need l m) f :=
   .of_fst_add_mul_snd_le hβ trivial fun g _ ↦ objective_le_of_forall need l m β fun c ↦ hf c (g c)
+
+section Encoder
+
+variable [MeasurableSingletonClass C] [MeasurableSingletonClass W]
+
+/-- The speaker who encodes each concept by its form under `f`. -/
+noncomputable def encoder (f : C → W) : Kernel C W := Kernel.deterministic f .of_discrete
+
+instance (f : C → W) : IsMarkovKernel (encoder f) := by unfold encoder; infer_instance
+
+/-- The information the listener loses through an encoding is the expected surprisal of the
+intended concept under its form, infinite when she rules a needed concept out. -/
+theorem informationLoss_encoder [Fintype W] (f : C → W) :
+    informationLoss need (encoder f) m = ∑ c, need {c} * surprisal (m (f c)) c := by
+  simp_rw [informationLoss, lintegral_fintype, encoder, Kernel.deterministic_apply,
+    Measure.dirac_apply' _ (measurableSet_singleton _), mul_comm (need _)]
+  refine Finset.sum_congr rfl fun c _ ↦ ?_
+  rw [Finset.sum_eq_single (f c) (fun w _ hw ↦ by simp [hw.symm]) (by simp)]
+  simp
+
+/-- A listener that rules out no needed concept under its form loses exactly the first cost. -/
+theorem ofReal_fst_costs [Fintype W] [IsFiniteMeasure need] (f : C → W)
+    (hm : ∀ c, need {c} ≠ 0 → m (f c) {c} ≠ 0) :
+    ENNReal.ofReal (costs need l m f).1 = informationLoss need (encoder f) m := by
+  rw [informationLoss_encoder, costs, ENNReal.ofReal_sum_of_nonneg fun c _ ↦
+    mul_nonneg measureReal_nonneg ENNReal.toReal_nonneg]
+  refine Finset.sum_congr rfl fun c _ ↦ ?_
+  rcases eq_or_ne (need {c}) 0 with h0 | h0
+  · simp [measureReal_def, h0]
+  · rw [ENNReal.ofReal_mul measureReal_nonneg, measureReal_def,
+      ENNReal.ofReal_toReal (measure_ne_top _ _),
+      ENNReal.ofReal_toReal (surprisal_ne_top_iff.2 (hm c h0))]
+
+end Encoder
 
 /-- The efficiency loss of an encoding against the frontier `E` (eq. 8), its least excess
 objective over the optimal encoding across the tradeoff parameters in `B`. -/
