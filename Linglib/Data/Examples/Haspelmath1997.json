@@ -609,6 +609,7 @@
   },
   {
     "id": "haspelmath1997_de_A1a_etwas",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A1a)"
@@ -634,10 +635,6 @@
       [
         "series",
         "etwas-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "The etwas-series can always be replaced by the irgend-series, except in the specific-known function.",
@@ -645,6 +642,7 @@
   },
   {
     "id": "haspelmath1997_de_A1a_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A1a)"
@@ -670,10 +668,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "The etwas-series can always be replaced by the irgend-series, except in the specific-known function. The book stars this alternative inside the example; the translation is the example's.",
@@ -681,6 +675,7 @@
   },
   {
     "id": "haspelmath1997_de_A1b_etwas",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A1b)"
@@ -706,10 +701,6 @@
       [
         "series",
         "etwas-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -717,6 +708,7 @@
   },
   {
     "id": "haspelmath1997_de_A1b_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A1b)"
@@ -742,10 +734,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -753,6 +741,7 @@
   },
   {
     "id": "haspelmath1997_de_A2_etwas",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A2)"
@@ -778,10 +767,6 @@
       [
         "series",
         "etwas-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -789,6 +774,7 @@
   },
   {
     "id": "haspelmath1997_de_A2_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A2)"
@@ -814,10 +800,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -825,6 +807,7 @@
   },
   {
     "id": "haspelmath1997_de_A3a_etwas",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A3a)"
@@ -850,10 +833,6 @@
       [
         "series",
         "etwas-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -861,6 +840,7 @@
   },
   {
     "id": "haspelmath1997_de_A3a_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A3a)"
@@ -886,10 +866,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -897,6 +873,7 @@
   },
   {
     "id": "haspelmath1997_de_A3b_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A3b)"
@@ -922,10 +899,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -933,6 +906,7 @@
   },
   {
     "id": "haspelmath1997_de_A3b_je",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A3b)"
@@ -958,10 +932,6 @@
       [
         "series",
         "je"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -969,6 +939,7 @@
   },
   {
     "id": "haspelmath1997_de_A3c_etwas",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A3c)"
@@ -994,10 +965,6 @@
       [
         "series",
         "etwas-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1005,6 +972,7 @@
   },
   {
     "id": "haspelmath1997_de_A3c_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A3c)"
@@ -1030,10 +998,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1041,6 +1005,7 @@
   },
   {
     "id": "haspelmath1997_de_A4_je_etwas",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A4)"
@@ -1070,10 +1035,6 @@
       [
         "series",
         "etwas-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1081,6 +1042,7 @@
   },
   {
     "id": "haspelmath1997_de_A4_je_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A4)"
@@ -1110,10 +1072,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1121,6 +1079,7 @@
   },
   {
     "id": "haspelmath1997_de_A4_irgend_etwas",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A4)"
@@ -1150,10 +1109,6 @@
       [
         "series",
         "etwas-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1161,6 +1116,7 @@
   },
   {
     "id": "haspelmath1997_de_A4_irgend_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A4)"
@@ -1186,10 +1142,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1197,6 +1149,7 @@
   },
   {
     "id": "haspelmath1997_de_A5",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A5)"
@@ -1226,10 +1179,6 @@
       [
         "series",
         "je"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "Only the irgend-series and je are possible in the comparative; the irgend-indefinite must be stressed.",
@@ -1237,6 +1186,7 @@
   },
   {
     "id": "haspelmath1997_de_A6",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A6)"
@@ -1262,10 +1212,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "Stressed; jeder is generally preferred.",
@@ -1273,6 +1219,7 @@
   },
   {
     "id": "haspelmath1997_de_A7",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A7)"
@@ -1298,10 +1245,6 @@
       [
         "series",
         "jeder"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1309,6 +1252,7 @@
   },
   {
     "id": "haspelmath1997_de_A8",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A8)"
@@ -1334,10 +1278,6 @@
       [
         "series",
         "jeder"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1345,6 +1285,7 @@
   },
   {
     "id": "haspelmath1997_de_A9a_jeder",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A9a)"
@@ -1370,10 +1311,6 @@
       [
         "series",
         "jeder"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "The indirect-negation use is what makes jeder an indefinite rather than only a distributive universal.",
@@ -1381,6 +1318,7 @@
   },
   {
     "id": "haspelmath1997_de_A9a_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A9a)"
@@ -1406,10 +1344,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1417,6 +1351,7 @@
   },
   {
     "id": "haspelmath1997_de_A9b_jeder",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A9b)"
@@ -1442,10 +1377,6 @@
       [
         "series",
         "jeder"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1453,6 +1384,7 @@
   },
   {
     "id": "haspelmath1997_de_A9b_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A9b)"
@@ -1478,10 +1410,6 @@
       [
         "series",
         "irgend-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "",
@@ -1489,6 +1417,7 @@
   },
   {
     "id": "haspelmath1997_de_A10a",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A10a)"
@@ -1514,10 +1443,6 @@
       [
         "series",
         "n-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "The n-series does not co-occur with verbal negation.",
@@ -1525,6 +1450,7 @@
   },
   {
     "id": "haspelmath1997_de_A10b_etwas",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A10b)"
@@ -1550,10 +1476,6 @@
       [
         "series",
         "n-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "The second indefinite, in the scope of niemandem, is from the etwas-series.",
@@ -1561,6 +1483,7 @@
   },
   {
     "id": "haspelmath1997_de_A10b_irgend",
+    "method": "unclassified",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A10b)"
@@ -1586,10 +1509,6 @@
       [
         "series",
         "n-"
-      ],
-      [
-        "method",
-        "introspection"
       ]
     ],
     "comment": "The second indefinite, in the scope of niemandem, is from the irgend-series.",

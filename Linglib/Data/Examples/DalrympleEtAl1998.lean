@@ -72,7 +72,6 @@ def ex109 : Datum :=
   { id := "dalrympleetal1998_ex109"
     source := ⟨"dalrymple-et-al-1998", "(109)"⟩
     reportedIn := none
-    method := some .introspection
     language := "stan1293"
     primaryText := "John and Bill are taller than each other."
     glossedTokens := []

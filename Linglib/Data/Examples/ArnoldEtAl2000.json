@@ -2,7 +2,7 @@
   {
     "id": "arnoldetal2000_1",
     "source": {"bibkey": "arnold-losongco-wasow-ginstrom-2000", "paperLabel": "(1)"},
-    "method": "introspection",
+    "method": "unclassified",
     "language": "stan1293",
     "primaryText": "The waiter brought the wine we had ordered to the table",
     "discourseSegments": [],
@@ -23,7 +23,7 @@
   {
     "id": "arnoldetal2000_2",
     "source": {"bibkey": "arnold-losongco-wasow-ginstrom-2000", "paperLabel": "(2)"},
-    "method": "introspection",
+    "method": "unclassified",
     "language": "stan1293",
     "primaryText": "Chris gave a bowl of Mom's traditional cranberry sauce to Terry",
     "discourseSegments": [],
@@ -44,7 +44,7 @@
   {
     "id": "arnoldetal2000_3",
     "source": {"bibkey": "arnold-losongco-wasow-ginstrom-2000", "paperLabel": "(3)"},
-    "method": "introspection",
+    "method": "unclassified",
     "language": "stan1293",
     "primaryText": "Sandy picked the freshly baked apple pie up.",
     "discourseSegments": [],
@@ -65,7 +65,7 @@
   {
     "id": "arnoldetal2000_5",
     "source": {"bibkey": "arnold-losongco-wasow-ginstrom-2000", "paperLabel": "(5)"},
-    "method": "introspection",
+    "method": "unclassified",
     "language": "stan1293",
     "primaryText": "I gave to Mary the valuable book that was extremely difficult to find",
     "discourseSegments": [],
@@ -263,7 +263,7 @@
   {
     "id": "arnoldetal2000_12",
     "source": {"bibkey": "arnold-losongco-wasow-ginstrom-2000", "paperLabel": "(12)"},
-    "method": "introspection",
+    "method": "unclassified",
     "language": "stan1293",
     "primaryText": "A: What about the yellow duck? B: Give it the small green crayon. A: What about the. . . .",
     "discourseSegments": [],
@@ -368,7 +368,7 @@
   {
     "id": "arnoldetal2000_t4_do",
     "source": {"bibkey": "arnold-losongco-wasow-ginstrom-2000", "paperLabel": "Table 4"},
-    "method": "introspection",
+    "method": "unclassified",
     "language": "stan1293",
     "primaryText": "Give the white rabbit the carrot.",
     "discourseSegments": [],
@@ -388,7 +388,7 @@
   {
     "id": "arnoldetal2000_t4_hnps",
     "source": {"bibkey": "arnold-losongco-wasow-ginstrom-2000", "paperLabel": "Table 4"},
-    "method": "introspection",
+    "method": "unclassified",
     "language": "stan1293",
     "primaryText": "Give to the white rabbit the carrot.",
     "discourseSegments": [],
@@ -408,7 +408,7 @@
   {
     "id": "arnoldetal2000_t4_passg",
     "source": {"bibkey": "arnold-losongco-wasow-ginstrom-2000", "paperLabel": "Table 4"},
-    "method": "introspection",
+    "method": "unclassified",
     "language": "stan1293",
     "primaryText": "The white rabbit should be given the carrot.",
     "discourseSegments": [],
@@ -428,7 +428,7 @@
   {
     "id": "arnoldetal2000_t4_dotop",
     "source": {"bibkey": "arnold-losongco-wasow-ginstrom-2000", "paperLabel": "Table 4"},
-    "method": "introspection",
+    "method": "unclassified",
     "language": "stan1293",
     "primaryText": "The white rabbit, give the carrot.",
     "discourseSegments": [],
@@ -448,7 +448,7 @@
   {
     "id": "arnoldetal2000_t4_preptop",
     "source": {"bibkey": "arnold-losongco-wasow-ginstrom-2000", "paperLabel": "Table 4"},
-    "method": "introspection",
+    "method": "unclassified",
     "language": "stan1293",
     "primaryText": "To the white rabbit, give the carrot.",
     "discourseSegments": [],
@@ -468,7 +468,7 @@
   {
     "id": "arnoldetal2000_t4_prep",
     "source": {"bibkey": "arnold-losongco-wasow-ginstrom-2000", "paperLabel": "Table 4"},
-    "method": "introspection",
+    "method": "unclassified",
     "language": "stan1293",
     "primaryText": "Give the carrot to the white rabbit.",
     "discourseSegments": [],
@@ -488,7 +488,7 @@
   {
     "id": "arnoldetal2000_t4_passt",
     "source": {"bibkey": "arnold-losongco-wasow-ginstrom-2000", "paperLabel": "Table 4"},
-    "method": "introspection",
+    "method": "unclassified",
     "language": "stan1293",
     "primaryText": "The carrot should be given to the white rabbit.",
     "discourseSegments": [],
@@ -508,7 +508,7 @@
   {
     "id": "arnoldetal2000_t4_prepttop",
     "source": {"bibkey": "arnold-losongco-wasow-ginstrom-2000", "paperLabel": "Table 4"},
-    "method": "introspection",
+    "method": "unclassified",
     "language": "stan1293",
     "primaryText": "The carrot, give to the white rabbit.",
     "discourseSegments": [],

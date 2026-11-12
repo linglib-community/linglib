@@ -46,10 +46,10 @@ record-only keys `discourseSegments`, `translation`, `comment` and `verified`:
 
 Behavior:
 - Errors out (exit 1) if the JSON file doesn't exist.
-- Reads each paper's method from `contributions.csv` (one of `introspection`, `elicitation`,
-  `corpus`, `experiment`, `description`, or `unclassified`) and errors out on a paper with no row
-  there; a row's `method` overrides it, and the method is emitted as `Datum.method` (`none` where
-  unclassified).
+- Reads each paper's method from `contributions.csv` (one of `elicitation`, `corpus`,
+  `experiment`, `description`, or `unclassified`) and errors out on a paper with no row there; a
+  row's `method` overrides it, `unclassified` included, and the method is emitted as
+  `Datum.method` (`none` where unclassified).
 - Validates but does not emit the record-only keys: the CLDF export carries
   them, and no theorem reads them, so the Lean rows that `decide` reduces stay
   small. `verified` (`"page-image"`, `"text-layer"` or `"supplement"`) is how the row was last
@@ -100,7 +100,7 @@ ROOT       = Path(__file__).resolve().parent.parent
 JSON_DIR   = ROOT / "Linglib" / "Data" / "Examples"
 LANGUAGES  = JSON_DIR / "languages.csv"
 CONTRIBUTIONS = JSON_DIR / "contributions.csv"
-METHODS = ("introspection", "elicitation", "corpus", "experiment", "description")
+METHODS = ("elicitation", "corpus", "experiment", "description")
 
 
 def known_languages() -> set[str]:
@@ -279,8 +279,9 @@ def emit_example(ex: dict, author_year_lower: str, default_method: str) -> str:
 
     src         = emit_source_ref(ex.get("source") or {}, where + ".source")
     reported_in = emit_reported_in(ex.get("reportedIn"), where)
-    if "method" in ex and ex["method"] not in METHODS:
-        raise ValueError(f"{where}: method {ex['method']!r}; expected one of {', '.join(METHODS)}")
+    if "method" in ex and ex["method"] not in METHODS + ("unclassified",):
+        raise ValueError(f"{where}: method {ex['method']!r}; expected one of "
+                         f"{', '.join(METHODS)} or unclassified")
     method      = ex.get("method", default_method)
     language    = (ex.get("language") or "").strip()
     if language and language not in KNOWN_LANGUAGES:
