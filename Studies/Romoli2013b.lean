@@ -195,6 +195,14 @@ theorem isGreatest_noOne_iff_mem_posExt_noOneNR [Nonempty E] :
   rw [isGreatest_noOne, Gajewski2007.posExt_noOneNR]
   simp [Gajewski2007.every]
 
+-- (50), (51), (165): where the alternatives the prejacent entails are those the order of the
+-- indices gives, the exhaustivity operator applied to *no one thinks p* yields the same
+theorem mem_exh_noOne_iff [Nonempty E]
+    (h : ∀ j, noOneAlternatives B p (1, 0) ⊆ noOneAlternatives B p j ↔ j ≤ (1, 0)) :
+    w ∈ exh (Set.range (noOneAlternatives B p)) (noOneAlternatives B p (1, 0)) ↔
+      w ∈ ⋂ x, (B x).dom ∩ (B x).core pᶜ :=
+  (mem_exh_range_iff_isGreatest_of_forall h).trans isGreatest_noOne
+
 -- fn. 16, (165c): denying only the strictly stronger alternative, that no one has an opinion,
 -- gives the weaker inference that someone does; the universal inference (164c) needs the denial
 -- of *not everyone has an opinion*, which is independent of the prejacent, so the excludable

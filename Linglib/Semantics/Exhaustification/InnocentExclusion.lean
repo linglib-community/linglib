@@ -239,15 +239,6 @@ theorem exhMW_subset_exhIE : exhMW ALT φ ⊆ exhIE ALT φ := fun _ hu ↦
 theorem exhIE_univ : exhIE univ φ = φ :=
   (exhIE_subset _ _).antisymm (exhMW_univ.ge.trans (exhMW_subset_exhIE _ _))
 
-variable {ALT φ} in
-/-- Plain exhaustification keeps the prejacent worlds whose true alternatives are least among the
-prejacent's, as `exhMW` keeps those whose are minimal. Innocent exclusion keeps those below the join
-of the minimal sets (`mem_exhIE_iff_subset_sUnion`), and the cell those at it (`mem_cell_iff`). -/
-theorem mem_exh_iff_least {u : World} : u ∈ exh ALT φ ↔ u ∈ φ ∧
-    ∀ v ∈ φ, Preorder.satisfied (· ∈ ·) ALT u ⊆ Preorder.satisfied (· ∈ ·) ALT v :=
-  and_congr_right fun _ ↦ ⟨fun h _ hv q hq ↦ ⟨hq.1, h q hq.1 hq.2 hv⟩,
-    fun h _ hq hw v hv ↦ (h v hv ⟨hq, hw⟩).2⟩
-
 theorem exh_subset_exhMW : exh ALT φ ⊆ exhMW ALT φ :=
   fun _ ⟨hu, hex⟩ ↦ ⟨hu, fun _ hv _ a ⟨ha, hua⟩ ↦ ⟨ha, hex a ha hua hv⟩⟩
 
@@ -468,6 +459,9 @@ section Verified
 
 variable {ALT φ} {w : World}
 
+/-- Plain exhaustification keeps the prejacent worlds whose true alternatives are least among the
+prejacent's, as `exhMW` keeps those whose are minimal. Innocent exclusion keeps those below the join
+of the minimal sets (`mem_exhIE_iff_subset_sUnion`), and the cell those at it (`mem_cell_iff`). -/
 theorem mem_exh_iff_isLeast :
     w ∈ exh ALT φ ↔
       w ∈ φ ∧ IsLeast (Preorder.satisfied (· ∈ ·) ALT '' φ) (Preorder.satisfied (· ∈ ·) ALT w) := by

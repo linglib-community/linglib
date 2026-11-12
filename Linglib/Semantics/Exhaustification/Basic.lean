@@ -211,6 +211,13 @@ theorem Irredundant.mem_exh_range_iff (hf : Irredundant f) {i : ι} {w : W} :
     imp_congr_right fun _ ↦
     ⟨fun h ↦ by_contra fun hne ↦ hf.not_subset (Ne.symm hne) h, fun h ↦ h ▸ subset_rfl⟩
 
+/-- When the members a member entails are those at the indices below its own, it is exhaustified
+where its index is the greatest true one. -/
+theorem mem_exh_range_iff_isGreatest_of_forall [Preorder ι] {i : ι} {w : W}
+    (hf : ∀ j, f i ⊆ f j ↔ j ≤ i) : w ∈ exh (Set.range f) (f i) ↔ IsGreatest {j | w ∈ f j} i :=
+  mem_exh_range_iff.trans <| and_congr_right fun _ ↦ forall_congr' fun j ↦ imp_congr_right fun _ ↦
+    hf j
+
 section LinearOrder
 
 variable [LinearOrder ι] {i : ι} {w : W}
@@ -219,8 +226,7 @@ variable [LinearOrder ι] {i : ι} {w : W}
 where its index is the greatest true one. -/
 theorem mem_exh_range_iff_isGreatest (hf : StrictAnti f) :
     w ∈ exh (Set.range f) (f i) ↔ IsGreatest {j | w ∈ f j} i :=
-  mem_exh_range_iff.trans <| and_congr_right fun _ ↦ forall_congr' fun _ ↦ imp_congr_right fun _ ↦
-    hf.le_iff_ge
+  mem_exh_range_iff_isGreatest_of_forall fun _ ↦ hf.le_iff_ge
 
 /-- On a strictly increasing family, where smaller indices are stronger, a member is exhaustified
 where its index is the least true one. -/
