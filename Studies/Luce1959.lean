@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Analysis.SpecialFunctions.SoftmaxCharacterization
 public import Linglib.Core.Probability.ConditionalProbability
 public import Linglib.Processing.Psychophysics.SignalDetection
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
@@ -650,12 +651,8 @@ scale is exponential in `u` and pairwise choice is logistic. Luce reproduces Ada
 proof, which reduces the claim to Cauchy's functional equation. -/
 
 private theorem exists_eq_mul_of_strictMono (h : ℝ →+ ℝ) (hh : StrictMono h) :
-    ∃ k : ℝ, 0 < k ∧ ∀ s, h s = k * s := by
-  have hcont : Continuous h :=
-    h.continuous_of_isBounded_nhds_zero (Icc_mem_nhds (by norm_num : (-1 : ℝ) < 0) one_pos)
-      ((Metric.isBounded_Icc (h (-1)) (h 1)).subset hh.monotone.image_Icc_subset)
-  refine ⟨h 1, by simpa using hh one_pos, fun s ↦ ?_⟩
-  simpa [mul_comm] using map_real_smul h hcont s 1
+    ∃ k : ℝ, 0 < k ∧ ∀ s, h s = k * s :=
+  ⟨h 1, by simpa using hh one_pos, h.eq_mul_of_monotone hh.monotone⟩
 
 -- §2, pp. 41–42
 theorem logistic_unique {X : Type*} {v u : X → ℝ} {g F : ℝ → ℝ}
