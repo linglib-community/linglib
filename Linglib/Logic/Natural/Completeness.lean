@@ -17,7 +17,8 @@ public import Mathlib.Order.PrimeSeparator
 # Completeness of the projectivity calculus
 
 The join, projection and composition tables of natural logic are sound, and this file proves that
-they cannot be improved. The order on relations is
+they cannot be improved. On a Boolean algebra the join [is relational
+composition](##NaturalLogic.Relation.holds_mul). The order on relations is
 [implication](##NaturalLogic.Relation.le_iff_forall_holds) in every nontrivial bounded lattice, and
 the join is [the least sound chaining](##NaturalLogic.Relation.isLeast_join) in every nontrivial
 distributive one, [even among denotations other than `⊥` and
@@ -157,6 +158,101 @@ theorem isLeast_join_Ioo (R S : Relation) :
     decide
   obtain ⟨x, hx, y, hy, z, hz, hR, hS, hT'⟩ := counter R S T hle
   exact hT' (hT x y z hx hy hz hR hS)
+
+/-! ### The join is relational composition
+
+An atomic constraint is an inequality between `x` or its complement and `y` or its complement, an
+arrow from one of the two polarities of `x` to one of `y`. Chained constraints compose when the
+polarity of the middle term agrees, which is the atom rule, and the constraints of a relation form
+a partial bijection of the two polarities. -/
+
+section BooleanAlgebra
+
+variable [BooleanAlgebra α]
+
+/-- An element, or its complement when the polarity is negative. -/
+private def pol (s : Bool) (x : α) : α := bif s then xᶜ else x
+
+private theorem pol_of_ne {s t : Bool} (h : s ≠ t) (x : α) : pol s x = (pol t x)ᶜ := by
+  cases s <;> cases t <;> simp_all [pol]
+
+/-- The polarity of the first argument in the inequality an atom asserts. -/
+private def Atom.src : Atom → Bool
+  | .le | .disjoint => false
+  | .ge | .codisjoint => true
+
+/-- The polarity of the second argument in the inequality an atom asserts. -/
+private def Atom.tgt : Atom → Bool
+  | .le | .codisjoint => false
+  | .ge | .disjoint => true
+
+private theorem Atom.holds_iff_pol {a : Atom} {x y : α} :
+    a.Holds x y ↔ pol a.src x ≤ pol a.tgt y := by
+  cases a
+  · exact Iff.rfl
+  · exact compl_le_compl_iff_le.symm
+  · exact le_compl_iff_disjoint_right.symm
+  · exact codisjoint_iff_compl_le_right
+
+private theorem Atom.exists_join : ∀ a b : Atom, a.tgt = b.src →
+    ∃ c, a.join b = some c ∧ c.src = a.src ∧ c.tgt = b.tgt := by
+  decide
+
+private theorem Atom.eq_of_mem_constraints : ∀ R : Relation, ∀ a ∈ R.constraints,
+    ∀ b ∈ R.constraints, (a.src = b.src → a = b) ∧ (a.tgt = b.tgt → a = b) := by
+  decide
+
+/-- On a Boolean algebra the join is relational composition: `R * S` holds of `x` and `z` exactly
+when some `y` has `x R y` and `y S z`. The constraints bound `y` and its complement from both sides,
+and the bounds are compatible when `R * S` holds. The middle term may be `⊥` or `⊤`; among other
+elements the join is only the least sound relation (`Relation.isLeast_join_Ioo`). -/
+theorem holds_mul (R S : Relation) :
+    (R * S).Holds (α := α) = _root_.Relation.Comp R.Holds S.Holds := by
+  ext x z
+  refine ⟨fun h ↦ ?_, fun ⟨y, hR, hS⟩ ↦ hR.join hS⟩
+  have H : ∀ a ∈ R.constraints, ∀ b ∈ S.constraints, a.tgt = b.src →
+      pol a.src x ≤ pol b.tgt z := by
+    intro a ha b hb hab
+    obtain ⟨c, hc, hs, ht⟩ := Atom.exists_join a b hab
+    have := holds_iff.1 h c (mem_constraints_mul.2 ⟨a, ha, b, hb, hc⟩)
+    rwa [Atom.holds_iff_pol, hs, ht] at this
+  let l : Atom → α := fun a ↦ bif a.tgt then ⊥ else pol a.src x
+  let u : Atom → α := fun b ↦ bif b.src then (pol b.tgt z)ᶜ else ⊥
+  refine ⟨R.constraints.sup l ⊔ S.constraints.sup u,
+    holds_iff.2 fun a ha ↦ Atom.holds_iff_pol.2 ?_, holds_iff.2 fun b hb ↦ Atom.holds_iff_pol.2 ?_⟩
+  · cases hat : a.tgt
+    · exact le_sup_of_le_left (by simpa [l, hat] using Finset.le_sup (f := l) ha)
+    · change _ ≤ (_)ᶜ
+      rw [le_compl_comm]
+      refine sup_le (Finset.sup_le fun a' ha' ↦ ?_) (Finset.sup_le fun b hb ↦ ?_)
+      · cases hat' : a'.tgt
+        · have hne : a'.src ≠ a.src := fun h ↦ by
+            rw [(Atom.eq_of_mem_constraints R a' ha' a ha).1 h, hat] at hat'
+            exact Bool.noConfusion hat'
+          simpa [l, hat'] using (pol_of_ne hne x).le
+        · simp [l, hat']
+      · cases hbs : b.src
+        · simp [u, hbs]
+        · simpa [u, hbs] using H a ha b hb (hat.trans hbs.symm)
+  · cases hbs : b.src
+    · refine sup_le (Finset.sup_le fun a ha ↦ ?_) (Finset.sup_le fun b' hb' ↦ ?_)
+      · cases hat : a.tgt
+        · simpa [l, hat, pol] using H a ha b hb (hat.trans hbs.symm)
+        · simp [l, hat]
+      · cases hbs' : b'.src
+        · simp [u, hbs']
+        · have hne : b.tgt ≠ b'.tgt := fun h ↦ by
+            rw [(Atom.eq_of_mem_constraints S b hb b' hb').2 h, hbs'] at hbs
+            exact Bool.noConfusion hbs
+          simpa [u, hbs'] using (pol_of_ne hne z).ge
+    · change (_)ᶜ ≤ _
+      rw [compl_le_iff_compl_le]
+      exact le_sup_of_le_right (by simpa [u, hbs] using Finset.le_sup (f := u) hb)
+
+/-- The identity of the join holds of equal elements. -/
+theorem holds_one : (1 : Relation).Holds (α := α) = Eq := rfl
+
+end BooleanAlgebra
 
 /-! ### Why seven relations -/
 
