@@ -336,14 +336,13 @@ theorem john_cCommands_theBook :
 end CCommand
 
 /-- The book's structure for an applicative head over the unergative *run*: the high applicative
-in its position of (6a), a low one in the structure of (103b). The static-possession and affected
-applicatives of [cuervo-2003] are outside the book's inventory. -/
+in its position of (6a), a low one in the structure of (103b). The static-possession applicative
+of [cuervo-2003] is outside the book's inventory. -/
 def unergativeTree? : Appl.Head → Option LinearizedSyntacticObject
   | .high => some unergative
   | .low .recipient => some (ranMary applTo)
   | .low .source => some (ranMary applFrom)
   | .low .possessor => none
-  | .affected => none
 
 /-- An object is satisfiable when, in some model where no agent of running is its theme, it
 means a predicate of eventualities true of some eventuality. -/

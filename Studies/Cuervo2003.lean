@@ -7,56 +7,41 @@ public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
+public import Mathlib.Data.Finset.Prod
 
 /-!
 # Cuervo (2003): Datives at Large
 
-This file formalizes the central claim of [cuervo-2003]: dative arguments have structural
-meanings. A dative is licensed by an applicative head, and what it means is read off where that
-head merges in the event structure, the chain of [cuervo-2003]'s flavors of v
-(`Minimalist.LittleV`); the site is `Minimalist.Appl.Site`. Table (28) distinguishes three
-positions. Below every verbal head, the
-applicative takes the theme DP as its complement and relates the dative to an individual, as a
-recipient, a source or a possessor according to the verb and to pragmatics: the low applicative,
-the double object construction of Chapter 2. Between two heads, it takes the lower vP, a result
-state, as its complement and is itself the complement of the dynamic head above, so the dative
-participates in two events, external to the state and internal to the change or activity: the
-affected applicative of Chapter 3, the addition to Pylkkänen's typology. Above every head, it
-takes the whole vP and relates the dative to the event: the high applicative of Chapter 4, an
-experiencer over a state or a change and a benefactive or malefactive, the ethical dative, over an
-activity. Every cell of table (40) is a value of `meaning`.
-
-Three restrictions turn the geometry into predictions. A low applicative needs the theme as the
-complement of the root, which it is in a simple structure whose root licenses an object, but not
-in a complex one, where the theme is the specifier of the lower vP, nor in a predicational state;
-so the double object construction is structurally incompatible with causatives and inchoatives
-(§3.1, §3.2.3), and Baker's gap, the absence of the construction with unaccusatives, reduces to
-simple verbs of change, with which Spanish has it (*A Gabi le llegaron dos cartas*). English lacks
-the affected applicative and every high one, and has the low applicative TO under activities
-alone, which is why its causatives, inchoatives and unaccusatives take no dative at all. A high
-applicative requires an animate dative, so an inanimate dative with an inchoative is affected and
-nothing else, while an animate one is ambiguous between the affected reading and the
-unintentional-responsibility reading of a high applicative over vGO (§4.2.3). And the Spanish
-high applicative over an activity is defective: it is spelled out by a clitic and projects no
-specifier, so an unergative takes a dative clitic and no dative DP (§4.3.2).
-
-## Main definitions
-
-* `Meaning`, `meaning`: table (40), the meaning of a dative at a `Minimalist.Appl.Site`.
-* `Predicate`, `Predicate.ThemeIsRootComplement`: a verb's use with its event structure.
-* `Inventory`, `spanish`, `english`, `Inventory.Licenses`, `meanings`: which datives a language's
-  applicative heads license and what they mean.
+This file formalizes the claim that dative arguments have structural meanings: a dative is licensed
+by an applicative head, and what it means is read off the site where that head merges in the chain
+of event introducers. A site falls in a cell of the dissertation's table of datives, an applicative
+head with the verbal head it combines with; a language's inventory is a set of cells, and [the
+meanings of a dative](##mem_dativeMeanings) are those of its licensed sites. A low applicative needs
+the theme as the complement of the root, so [the double object construction is incompatible with
+causatives and inchoatives](##not_licenses_low_of_biEventive); [English has one
+cell](##english_licenses_iff), the low applicative TO under an activity, and so takes no dative with
+a causative, an inchoative or a simple verb of change, while Spanish has the construction with
+*llegar*. A high applicative requires an animate dative, so [an inanimate dative with an inchoative
+is affected and nothing else](##spanish_dativeMeanings_inchoative), and the Spanish high applicative
+over an activity is defective, so [an unergative takes a dative clitic and no dative
+DP](##spanish_licenses_unergative_iff).
 
 ## Implementation notes
 
-The merge site of the applicative and the three types of table (28) are `Minimalist.Appl.Site`, a
-position in the little-v chain; the empty affected-under-state cell of table (40) is
-`Minimalist.Appl.Site.not_affected_of_state`. Dative case, clitic doubling and the movement of the
-dative to the subject position of unaccusatives (§2.0.5, §3.2.2.1) are not represented, nor are
-the sub-types of low applicative beyond the relation read, the resultatives and particles of
-§3.3, or the defective applicatives of other languages. The low relation is the verb's, as the
-paper takes it to be fixed by the verb's meaning and by pragmatics. Italian is left out, since
-the paper attests its double object construction with *arrivare* alone.
+* A high applicative orients the event to the dative, read as an experiencer when the event is a
+  state and as a benefactive or malefactive when it is an activity; over a change the table gives
+  both, and the unintentional-responsibility reading of a dative with an inchoative is the
+  experiencer reading there.
+* The English inventory is the low applicative TO under activities. The few verbs the
+  dissertation notes as accepting it idiosyncratically in other configurations (*envy*, *owe*,
+  *save*) are outside it.
+* The low relation is the verb's, as the dissertation takes it to be fixed by the verb's meaning
+  and by pragmatics: a recipient with a verb directed to the dative, a source with one directed
+  away, a possessor otherwise.
+* Dative case, clitic doubling, the movement of the dative to the subject position of
+  unaccusatives, two datives in one clause, the resultatives and particles that build complex
+  structures, and the defective applicatives of other languages are not represented. Italian is
+  left out, since the dissertation attests its double object construction with *arrivare* alone.
 
 ## References
 
@@ -71,28 +56,48 @@ namespace Cuervo2003
 
 open Minimalist
 
-/-! ### Meanings (table (40)) -/
+/-! ### Meanings -/
 
-/-- The meanings a dative argument can have. -/
+/-- The meanings a dative argument can have, the columns of the table of datives. -/
 inductive Meaning where
   /-- Related to the theme as a recipient, a source or a possessor. -/
   | low (relation : Appl.LowRelation)
   | affected
-  /-- The experiencer of a state or of a change; over a change, also the person unintentionally
-  responsible for it (§4.2.3). -/
   | experiencer
-  /-- The benefactive or malefactive of an activity, the ethical dative (§4.3.2). -/
-  | ethical
+  /-- The benefactive or malefactive of an event, the ethical dative. -/
+  | benefactive
   deriving DecidableEq, Repr
 
-/-- The meaning of a dative at a site, given the low relation the verb supplies: that of the head
-at the site, the high head being the experiencer of a state or change and the ethical dative of an
-activity. -/
-def meaning (s : Appl.Site) (r : Appl.LowRelation) : Meaning :=
-  match s.head r with
-  | .low r => .low r
-  | .affected => .affected
-  | .high => if s.complementHead = some .vDO then .ethical else .experiencer
+/-- The columns of the table of datives, the types of applicative: a low applicative with its
+relation, and an applicative that takes a vP, affected when a dynamic head embeds it and high
+when none does. -/
+inductive Column where
+  | low (relation : Appl.LowRelation)
+  | affected
+  | high
+  deriving DecidableEq, Repr
+
+/-- The column of a site, given the relation a low applicative establishes. -/
+def column (s : Appl.Site) (r : Appl.LowRelation) : Column :=
+  if s.Low then .low r else if s.High then .high else .affected
+
+/-- The table of datives: the meanings of a type of applicative combined with a verbal head. A
+high applicative over a state is an experiencer, over an activity a benefactive or malefactive,
+and over a change either. -/
+def meanings : Column × LittleV → Finset Meaning
+  | (.low r, _) => {.low r}
+  | (.affected, _) => {.affected}
+  | (.high, .vBE) => {.experiencer}
+  | (.high, .vGO) => {.experiencer, .benefactive}
+  | (.high, .vDO) => {.benefactive}
+
+/-- The verbal head an applicative at the site combines with, the row of the table: the head
+that takes ApplP as its complement, or for a high applicative the head of its own complement. -/
+def row (s : Appl.Site) : Option LittleV := s.selector <|> s.complementHead
+
+/-- The cell of the table a site falls in, given the relation a low applicative establishes. -/
+def cell (s : Appl.Site) (r : Appl.LowRelation) : Option (Column × LittleV) :=
+  (row s).map (column s r, ·)
 
 /-! ### Predicates -/
 
@@ -104,7 +109,7 @@ structure Predicate where
   frame : ArgumentFrame
   heads : List LittleV
   predicational : Bool := false
-  relation : Appl.LowRelation := .recipient
+  relation : Appl.LowRelation := .possessor
 
 namespace Predicate
 
@@ -118,7 +123,7 @@ instance : Decidable p.RootLicensesObject := inferInstanceAs (Decidable (_ ∨ _
 
 /-- The theme is the complement of the root, where a low applicative can take it: the root
 licenses an object, the structure is simple, since the theme of a complex one is the specifier of
-the lower vP (§3.2.2.3), and the state is not predicational (§1.3.3). -/
+the lower vP, and the state is not predicational. -/
 def ThemeIsRootComplement : Prop :=
   p.RootLicensesObject ∧ ¬ LittleV.BiEventive p.heads ∧ p.predicational = false
 
@@ -209,24 +214,23 @@ end English
 
 /-! ### Inventories of applicative heads -/
 
-/-- A language's applicative heads and their restrictions. -/
+/-- A language's applicative heads: the cells of the table it has, and those of them that are
+defective, spelled out by a clitic and projecting no specifier for a dative DP. -/
 structure Inventory where
-  /-- Has the affected applicative; English does not (§3.2.3). -/
-  affected : Bool
-  /-- Has high applicatives; English does not (§4.3). -/
-  high : Bool
-  /-- The low applicatives it has, by the relation read and the head the root combines with;
-  English has the low applicative TO under activities alone (§3.2.3). -/
-  low : Appl.LowRelation → LittleV → Bool
-  /-- The high applicative over an activity projects a specifier; the Spanish one is defective
-  and spelled out by a clitic alone (§4.3.2). -/
-  ethicalSpecifier : Bool
+  heads : Finset (Column × LittleV)
+  defective : Finset (Column × LittleV) := ∅
 
-/-- Spanish has every type, its ethical applicative defective. -/
-def spanish : Inventory := ⟨true, true, fun _ _ ↦ true, false⟩
+/-- Spanish has every cell of the table, a low and a high applicative with each verbal head and
+the affected applicative under the two dynamic ones; its high applicative over an activity is
+defective. -/
+def spanish : Inventory where
+  heads := {.low .recipient, .low .source, .low .possessor, .high} ×ˢ {.vDO, .vGO, .vBE} ∪
+    {.affected} ×ˢ {.vDO, .vGO}
+  defective := {(.high, .vDO)}
 
 /-- English has the low applicative TO under activities and nothing else. -/
-def english : Inventory := ⟨false, false, fun r v ↦ r = .recipient && v = .vDO, true⟩
+def english : Inventory where
+  heads := {(.low .recipient, .vDO)}
 
 /-- A dative argument as the applicative licenses it: its site, whether it is animate and whether
 it is a full DP rather than a clitic alone. -/
@@ -236,104 +240,123 @@ structure Dative where
   fullDP : Bool
   deriving DecidableEq, Repr
 
-/-- The inventory `i` licenses the dative `d` with the predicate `p`: the site is a cut of the
-predicate's structure; a low applicative needs the theme as the root's complement and the head
-of the language for that relation and structure; an affected one needs the affected head; a high
-one needs a high head, an animate dative and, over an activity with a full DP, a specifier. -/
+/-- The inventory `i` licenses the dative `d` with the predicate `p`: the site is in the
+predicate's structure and its cell in the inventory, not defective if the dative is a full DP; a
+low applicative needs the theme as the root's complement, and a high one an animate dative. -/
 def Inventory.Licenses (i : Inventory) (p : Predicate) (d : Dative) : Prop :=
-  d.site ∈ Appl.Site.all p.heads ∧
-    (d.site.Low →
-      p.ThemeIsRootComplement ∧ ∀ v ∈ d.site.selector, i.low p.relation v = true) ∧
-    (d.site.Affected → i.affected = true) ∧
-    (d.site.High →
-      i.high = true ∧ d.animate = true ∧
-        (d.fullDP = true → p.heads.head? = some .vDO → i.ethicalSpecifier = true))
+  d.site.heads = p.heads ∧
+    (∃ c ∈ cell d.site p.relation, c ∈ i.heads ∧ (d.fullDP = true → c ∉ i.defective)) ∧
+    (d.site.Low → p.ThemeIsRootComplement) ∧ (d.site.High → d.animate = true)
 
 instance (i : Inventory) (p : Predicate) (d : Dative) : Decidable (i.Licenses p d) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
 
-/-- The meanings of a dative of the given animacy and form with `p` in the language `i`: those of
-its licensed sites. -/
-def meanings (i : Inventory) (p : Predicate) (animate fullDP : Bool) : List Meaning :=
-  ((Appl.Site.all p.heads).filter fun s ↦ i.Licenses p ⟨s, animate, fullDP⟩).map
-    (meaning · p.relation)
+/-- The meanings of a dative of the given animacy and form with `p` in the language `i`. -/
+def Inventory.dativeMeanings (i : Inventory) (p : Predicate) (animate fullDP : Bool) :
+    Finset Meaning :=
+  ((Appl.Site.all p.heads).filter fun s ↦ i.Licenses p ⟨s, animate, fullDP⟩).toFinset.biUnion
+    fun s ↦ (cell s p.relation).elim ∅ meanings
 
-/-! ### The double object construction and Baker's gap (§3.1, §3.2.3) -/
+variable {i : Inventory} {p : Predicate} {d : Dative} {m : Meaning} {animate fullDP : Bool}
 
-/-- No low applicative with a complex structure: the theme is the specifier of the lower vP. -/
-theorem not_licenses_low_of_biEventive {i : Inventory} {p : Predicate} {d : Dative}
-    (hc : LittleV.BiEventive p.heads) (hl : d.site.Low) : ¬ i.Licenses p d :=
-  fun h ↦ (h.2.1 hl).1.2.1 hc
+-- A dative has the meanings of the cells of its licensed sites.
+theorem mem_dativeMeanings : m ∈ i.dativeMeanings p animate fullDP ↔
+    ∃ s, i.Licenses p ⟨s, animate, fullDP⟩ ∧ ∃ c ∈ cell s p.relation, m ∈ meanings c := by
+  simp only [Inventory.dativeMeanings, Finset.mem_biUnion, List.mem_toFinset, List.mem_filter,
+    decide_eq_true_eq, Appl.Site.mem_all_iff]
+  refine exists_congr fun s ↦ ⟨fun ⟨⟨_, h⟩, hm⟩ ↦ ⟨h, ?_⟩, fun ⟨h, c, hc, hm⟩ ↦ ⟨⟨h.1, h⟩, ?_⟩⟩
+  · cases hc : cell s p.relation <;> simp_all
+  · simp_all
 
-theorem licenses_of_biEventive {i : Inventory} {p : Predicate} {d : Dative}
-    (hc : LittleV.BiEventive p.heads) (h : i.Licenses p d) : d.site.Affected ∨ d.site.High := by
-  have hne : d.site.heads ≠ [] := by
-    rw [Appl.Site.mem_all_iff.1 h.1]; exact fun e ↦ by simp [LittleV.BiEventive, e] at hc
-  rcases d.site.low_or_affected_or_high hne with hl | ha | hh
-  · exact absurd h (not_licenses_low_of_biEventive hc hl)
-  · exact .inl ha
-  · exact .inr hh
+/-! ### The double object construction and Baker's gap -/
 
-/-- English takes no dative with a causative or an inchoative, lacking affected and high
-applicatives, (88), (89). -/
-theorem english_not_licenses_of_biEventive {p : Predicate} {d : Dative}
-    (hc : LittleV.BiEventive p.heads) : ¬ english.Licenses p d := by
-  intro h
-  rcases licenses_of_biEventive hc h with ha | hh
-  · exact absurd (h.2.2.1 ha) (by decide)
-  · exact absurd (h.2.2.2 hh).1 (by decide)
+/-- No low applicative with a complex structure, whose theme is the specifier of the lower vP:
+the double object construction is incompatible with causatives and inchoatives. -/
+theorem not_licenses_low_of_biEventive (hc : LittleV.BiEventive p.heads) (hl : d.site.Low) :
+    ¬ i.Licenses p d :=
+  fun h ↦ (h.2.2.1 hl).2.1 hc
 
-/-- Baker's gap: English takes no dative with a simple verb of change either, its low
-applicative being confined to activities, (92). -/
-theorem english_not_licenses_change {p : Predicate} {d : Dative} (hp : p.heads = [.vGO]) :
-    ¬ english.Licenses p d := by
-  intro h
-  rcases d.site.low_or_affected_or_high (by rw [Appl.Site.mem_all_iff.1 h.1, hp]; simp) with
-    hl | ha | hh
-  · have he := Appl.Site.mem_all_iff.1 h.1
-    rw [Appl.Site.heads, show d.site.below = [] from hl, List.append_nil, hp] at he
-    have := (h.2.1 hl).2 .vGO (by simp [Appl.Site.selector, he])
-    revert this; cases p.relation <;> decide
-  · exact absurd (h.2.2.1 ha) (by decide)
-  · exact absurd (h.2.2.2 hh).1 (by decide)
+/-- English licenses a dative only as the recipient of the theme of a simple activity. -/
+theorem english_licenses_iff : english.Licenses p d ↔
+    p.heads = [.vDO] ∧ d.site = ⟨[.vDO], []⟩ ∧ p.relation = .recipient ∧
+      p.ThemeIsRootComplement := by
+  obtain ⟨⟨a, b⟩, an, dp⟩ := d
+  constructor
+  · rintro ⟨hh, ⟨c, hc, hmem, -⟩, hl, -⟩
+    obtain rfl : c = (.low .recipient, .vDO) := by simpa [english] using hmem
+    simp only [cell, Option.mem_def, Option.map_eq_some_iff, Prod.mk.injEq] at hc
+    obtain ⟨v, hv, hhead, rfl⟩ := hc
+    obtain ⟨hlow, hr⟩ : Appl.Site.Low ⟨a, b⟩ ∧ p.relation = .recipient := by
+      unfold column at hhead; split_ifs at hhead; simp_all
+    obtain rfl : b = [] := hlow
+    have ht := hl rfl
+    rw [Appl.Site.heads, List.append_nil] at hh
+    rcases a with _ | ⟨v, _ | ⟨w, t⟩⟩
+    · simp [row, Appl.Site.selector, Appl.Site.complementHead] at hv
+    · obtain rfl : v = .vDO := by simpa [row, Appl.Site.selector] using hv
+      exact ⟨hh.symm, rfl, hr, ht⟩
+    · exact absurd ht.2.1 (by simp [← hh, LittleV.BiEventive])
+  · rintro ⟨hp, hd, hr, ht⟩
+    simp only [Appl.Site.mk.injEq] at hd
+    obtain ⟨rfl, rfl⟩ := hd
+    refine ⟨hp.symm, ⟨(.low .recipient, .vDO), ?_, ?_, ?_⟩, fun _ ↦ ht, ?_⟩ <;>
+      simp [cell, row, Appl.Site.selector, column, Appl.Site.Low, Appl.Site.High, hr,
+        english]
+
+-- (88), (89)
+theorem english_not_licenses_of_biEventive (hc : LittleV.BiEventive p.heads) :
+    ¬ english.Licenses p d :=
+  fun h ↦ by simp [(english_licenses_iff.1 h).1, LittleV.BiEventive] at hc
+
+-- (92)
+theorem english_not_licenses_change (hp : p.heads = [.vGO]) : ¬ english.Licenses p d :=
+  fun h ↦ by simp [(english_licenses_iff.1 h).1] at hp
 
 -- (93a)
-theorem spanish_change_low : spanish.Licenses llegar ⟨⟨[.vGO], []⟩, true, true⟩ := by decide
+theorem spanish_licenses_llegar : spanish.Licenses llegar ⟨⟨[.vGO], []⟩, true, true⟩ := by decide
 
-/-! ### The ethical dative (§4.3) -/
+/-! ### The ethical dative -/
 
-/-- The only dative a Spanish unergative takes is an animate ethical clitic ((66), (74a), (78)). -/
-theorem unergative_clitic_only {p : Predicate} (hp : p.heads = [.vDO])
-    (ho : ¬ p.RootLicensesObject) (d : Dative) :
+/-- The only dative a Spanish unergative takes is an animate ethical clitic. -/
+theorem spanish_licenses_unergative_iff (hp : p.heads = [.vDO]) (ho : ¬ p.RootLicensesObject) :
     spanish.Licenses p d ↔ d = ⟨⟨[], [.vDO]⟩, true, false⟩ := by
   obtain ⟨⟨a, b⟩, an, dp⟩ := d
-  simp only [Inventory.Licenses, Appl.Site.mem_all_iff, Appl.Site.heads, hp, spanish,
-    Appl.Site.Low, Appl.Site.High, Appl.Site.Affected, Predicate.ThemeIsRootComplement, ho,
-    Dative.mk.injEq, Appl.Site.mk.injEq]
-  rcases a with _ | ⟨v, a⟩ <;> rcases b with _ | ⟨w, b⟩ <;> simp
+  rcases a with _ | ⟨v, a⟩ <;> rcases b with _ | ⟨w, b⟩ <;>
+    simp [Inventory.Licenses, Appl.Site.heads, hp, cell, row, column, Appl.Site.selector,
+      Appl.Site.complementHead, Appl.Site.Low, Appl.Site.High, spanish,
+      Predicate.ThemeIsRootComplement, ho]
+  rintro rfl rfl
+  cases dp <;> simp
 
 -- (67a)
-theorem transitive_low_dp :
+theorem spanish_licenses_correrTransitive :
     spanish.Licenses correrTransitive ⟨⟨[.vDO], []⟩, true, true⟩ := by decide
 
-/-! ### Datives with inchoatives (§4.2.3) -/
+/-! ### Animacy and the datives of inchoatives -/
 
-/-- An animate dative with an inchoative is an experiencer or affected, and an inanimate one only
-affected ((55), (60)). -/
-theorem inchoative_meanings {p : Predicate} (hp : p.heads = [.vGO, .vBE]) (dp : Bool) :
-    meanings spanish p true dp = [.experiencer, .affected] ∧
-      meanings spanish p false dp = [.affected] := by
-  cases dp <;>
-    simp [meanings, hp, Appl.Site.all, List.range_succ, Inventory.Licenses, spanish,
+-- The inanimate-dative row of the table: no high applicative for an inanimate dative.
+theorem Inventory.Licenses.not_high (h : i.Licenses p d) (ha : d.animate = false) : ¬ d.site.High :=
+  fun hh ↦ by simp [h.2.2.2 hh] at ha
+
+/-- An animate dative with an inchoative is affected, an experiencer or a benefactive, and an
+inanimate one only affected. -/
+theorem spanish_dativeMeanings_inchoative (hp : p.heads = [.vGO, .vBE]) :
+    spanish.dativeMeanings p true fullDP = {.affected, .experiencer, .benefactive} ∧
+      spanish.dativeMeanings p false fullDP = {.affected} := by
+  cases fullDP <;>
+    simp [Inventory.dativeMeanings, hp, Appl.Site.all, List.range_succ, Inventory.Licenses, spanish,
       LittleV.BiEventive, Predicate.ThemeIsRootComplement, Appl.Site.Low, Appl.Site.High,
-      Appl.Site.Affected, Appl.Site.head, Appl.Site.complementHead, Appl.Site.selector, meaning]
+      Appl.Site.heads, column, Appl.Site.complementHead, Appl.Site.selector, cell, row,
+      meanings] <;>
+    decide
 
 -- (35), (90a)
-theorem causative_meanings {p : Predicate} (hp : p.heads = [.vDO, .vBE]) :
-    meanings spanish p true true = [.affected] := by
-  simp [meanings, hp, Appl.Site.all, List.range_succ, Inventory.Licenses, spanish,
+theorem spanish_dativeMeanings_causative (hp : p.heads = [.vDO, .vBE]) :
+    spanish.dativeMeanings p animate true = {.affected} := by
+  simp [Inventory.dativeMeanings, hp, Appl.Site.all, List.range_succ, Inventory.Licenses, spanish,
     LittleV.BiEventive, Predicate.ThemeIsRootComplement, Appl.Site.Low, Appl.Site.High,
-    Appl.Site.Affected, Appl.Site.head, Appl.Site.complementHead, Appl.Site.selector, meaning]
+    Appl.Site.heads, column, Appl.Site.complementHead, Appl.Site.selector, cell, row,
+    meanings]
 
 /-! ### The rows -/
 
@@ -357,21 +380,21 @@ def inventory? (e : Datum) : Option Inventory :=
 def meaning? (e : Datum) : Option Meaning :=
   e.parse? "meaning"
     [("recipient", .low .recipient), ("source", .low .source), ("possessor", .low .possessor),
-      ("affected", .affected), ("experiencer", .experiencer), ("ethical", .ethical)]
+      ("affected", .affected), ("experiencer", .experiencer), ("ethical", .benefactive)]
 
 /-- The meanings the model gives an example's dative. -/
-def predicted (e : Datum) : Option (List Meaning) := do
+def predicted (e : Datum) : Option (Finset Meaning) := do
   let i ← inventory? e
   let p ← predicate? e
   let a ← e.parse? "animate" [("yes", true), ("no", false)]
   let f ← e.parse? "dative" [("dp", true), ("clitic", false)]
-  return meanings i p a f
+  return i.dativeMeanings p a f
 
 /-- Every example is acceptable exactly when its dative has a licensed site, and the meaning
-the paper reports is among those licensed; where the paper reports an unintentional
-responsibility reading, it is the high applicative's experiencer reading. -/
+the dissertation reports is among those licensed; where it reports an unintentional
+responsibility reading, it is the experiencer reading of the high applicative. -/
 theorem rows : ∀ e ∈ Examples.all, ∃ ms ∈ predicted e,
-    (.marginal ≤ e.judgment ↔ ms ≠ []) ∧ (∀ m ∈ meaning? e, m ∈ ms) ∧
+    (.marginal ≤ e.judgment ↔ ms.Nonempty) ∧ (∀ m ∈ meaning? e, m ∈ ms) ∧
       ∀ j ∈ e.readings.lookup "unintentional responsibility",
         (.marginal ≤ j ↔ .experiencer ∈ ms) := by
   decide +kernel
