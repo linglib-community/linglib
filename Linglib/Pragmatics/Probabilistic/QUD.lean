@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Probability.Kernel.Basic
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.Probabilistic.Basic
 
 /-!
 # Speakers who address a question

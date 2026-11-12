@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.Probabilistic.Basic
 
 /-!
 # Lexical uncertainty

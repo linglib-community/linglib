@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Pragmatics.Probabilistic.Uniform
 public import Linglib.Data.Examples.Alsop2024
 public import Linglib.Data.Examples.Readers
 

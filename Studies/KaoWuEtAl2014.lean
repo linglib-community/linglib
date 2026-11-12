@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
-public import Linglib.Pragmatics.RSA.LexicalUncertainty
-public import Linglib.Pragmatics.RSA.QUD
+public import Linglib.Pragmatics.Probabilistic.LexicalUncertainty
+public import Linglib.Pragmatics.Probabilistic.QUD
 public import Linglib.Semantics.Degree.Granularity
 public import Mathlib.Data.Rat.Floor
 

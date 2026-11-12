@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Core.Probability.AutoregressiveSequenceModel.Tight
-public import Linglib.Pragmatics.RSA.Incremental
-public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Pragmatics.Probabilistic.Incremental
+public import Linglib.Pragmatics.Probabilistic.Uniform
 
 /-!
 # Cohn-Gordon, Goodman and Potts (2019): An Incremental Iterated Response Model of Pragmatics

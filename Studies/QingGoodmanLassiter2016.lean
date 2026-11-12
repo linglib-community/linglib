@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.RSA.QUD
+public import Linglib.Pragmatics.Probabilistic.QUD
 public import Linglib.Semantics.Aspect.Phasal
 
 /-!

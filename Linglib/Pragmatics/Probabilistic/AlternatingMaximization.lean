@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.InformationTheory.InformationLoss
-public import Linglib.Pragmatics.RSA.Recursion
+public import Linglib.Pragmatics.Probabilistic.Recursion
 
 /-!
 # The RSA recursion as alternating maximization

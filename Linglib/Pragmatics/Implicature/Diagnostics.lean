@@ -11,7 +11,7 @@ bare pair of an **assertion** `φ : W → Prop` and an inferred **content**
 `W → Prop`. Any strengthening mechanism — a Neo-Gricean recipe
 (`Pragmatics/NeoGricean/`), grammatical exhaustification
 (`Semantics/Exhaustification/`), a thresholded RSA posterior
-(`Pragmatics/RSA/`) — can submit its output to these predicates; no
+(`Pragmatics/Probabilistic/`) — can submit its output to these predicates; no
 shared record type is required, so the diagnostics stay neutral between
 frameworks that disagree about what an implicature *is*.
 

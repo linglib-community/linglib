@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 public import Linglib.Core.Probability.Kernel.Module
-public import Linglib.Pragmatics.RSA.KullbackLeibler
+public import Linglib.Pragmatics.Probabilistic.KullbackLeibler
 public import Mathlib.Data.Nat.Dist
 public import Mathlib.Order.Interval.Finset.Nat
 

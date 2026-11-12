@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Core.MeasureTheory.Measure.Real
-public import Linglib.Pragmatics.RSA.Decision
-public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Pragmatics.Probabilistic.Decision
+public import Linglib.Pragmatics.Probabilistic.Uniform
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 

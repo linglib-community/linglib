@@ -34,7 +34,7 @@ require linglib from git
 
 (Use `@ "main"` to track the latest development instead of the pinned release.)
 
-Then `import Linglib` — or, more selectively, e.g. `import Linglib.Pragmatics.RSA.Basic`.
+Then `import Linglib` — or, more selectively, e.g. `import Linglib.Pragmatics.Probabilistic.Basic`.
 
 ## Links
 

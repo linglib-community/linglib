@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.Probabilistic.Basic
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Data.Examples.VanTielEtAl2021
 public import Linglib.Data.Statistics.VanTielEtAl2021

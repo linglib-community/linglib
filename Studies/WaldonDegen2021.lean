@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.RSA.Incremental
+public import Linglib.Pragmatics.Probabilistic.Incremental
 public import Studies.DegenEtAl2020
 public import Linglib.Data.Examples.WaldonDegen2021
 

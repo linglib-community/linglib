@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.RSA.QUD
+public import Linglib.Pragmatics.Probabilistic.QUD
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Linglib.Core.Probability.ConditionalProbability

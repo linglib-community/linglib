@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.RSA.AlternatingMaximization
+public import Linglib.Pragmatics.Probabilistic.AlternatingMaximization
 
 /-!
 # Zaslavsky, Hu and Levy (2021): A Rate–Distortion View of Human Pragmatic Reasoning?

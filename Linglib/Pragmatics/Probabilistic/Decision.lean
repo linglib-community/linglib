@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.Probabilistic.Basic
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!

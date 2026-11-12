@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Linglib.Data.Statistics.Burnett2019
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.Probabilistic.Basic
 public import Linglib.Pragmatics.SocialMeaning.Dimension
 public import Linglib.Pragmatics.SocialMeaning.IndexicalField
 public import Linglib.Pragmatics.SocialMeaning.Persona

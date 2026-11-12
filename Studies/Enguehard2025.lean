@@ -2,7 +2,7 @@ module
 
 public import Studies.Fox2018
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.Probabilistic.Basic
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.TFAE
 
