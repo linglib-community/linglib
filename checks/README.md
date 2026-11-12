@@ -14,10 +14,22 @@ source = "elliott-2023"
 id       = "ex-22"                       # stable, never reused
 kind     = "result"
 label    = "(22)"                        # the source's own name for the item
+claim    = """
+The negative update of ∃xP(x) picks out the possibilities in s at which there are no Ps.
+"""
 decls    = ["DynamicSemantics.BilateralUpdate.negative_exists_pred1"]
 relation = "specializes"
 notes    = "Assumes `x` novel at `s` and a nonempty domain."
 ```
+
+`claim` says in words what the source says about the item: the item as the source states it,
+with its formulas, and what is odd about it, such as a definition that contradicts its own prose.
+It is the inventory half of the record, and `decls`, `relation` and `notes` are the mapping to
+Lean, which says how the declarations state it. Anyone can write a claim, by hand or not, since a
+sign-off covers it: the signer checks the claim and the declarations against the source, and
+rewording the claim makes the sign-off stale. It is not the place for how the Lean departs from
+the source, which is the `notes`. The source's edition is the bibliography's business, since the
+file is named by the key.
 
 Sign-offs are not kept in this file, but in the ledger, `checks/ledger/` (see below).
 
@@ -64,10 +76,10 @@ python3 scripts/checks.py verify-ledger --base origin/main --author HANDLE
 python3 scripts/checks.py selftest
 ```
 
-`sign` records the hash of the item: how the check file says it is stated, and its statement
-closure. The mapping is the item's `kind` and `relation`, its `decls` and its `notes`, so that
-changing any of them after a sign-off makes it stale; the notes' whitespace and the order of
-the declarations do not count. The closure takes in:
+`sign` records the hash of the item: what the check file says about it, and its statement
+closure. The record is the item's `claim`, `kind` and `relation`, its `decls` and its `notes`,
+so that changing any of them after a sign-off makes it stale; the whitespace of the claim and
+notes, and the order of the declarations, do not count. The closure takes in:
 
 * the types of the item's declarations;
 * the types and bodies of the project definitions those types mention, followed transitively
@@ -195,9 +207,10 @@ date   = 2026-11-12T10:32:05Z
 [[item]]
 id       = "ex-22"
 hash     = "a1a64c03eb680068"
-kind     = "result"                # the mapping as the signer saw it, for `diff`
+kind     = "result"                # the record as the signer saw it, for `diff`
 relation = "specializes"
 decls    = ["DynamicSemantics.BilateralUpdate.negative_exists_pred1"]
+claim    = "The negative update of ∃xP(x) picks out the possibilities at which there are no Ps."
 notes    = "Assumes `x` novel at `s` and a nonempty domain."
 nodes = [
   { name = "DynamicSemantics.…", term = "9f2c…", text = "41b7…" },
@@ -205,7 +218,7 @@ nodes = [
 ```
 
 `ledger/nodes/<text-hash>.txt` holds the text of each declaration in the closure as the signer
-read it, shared by every sign-off that read it. `diff` compares those texts, and the mapping, with
+read it, shared by every sign-off that read it. `diff` compares those texts, and the record, with
 the current ones, so it needs no commit and still works after a squash. It also names a
 declaration whose printed text is the same but whose term differs. The docs pages say that a
 statement has changed since the sign-off, and point to `diff`. An item is current if the hash of
@@ -236,6 +249,7 @@ CI cannot tell a person from an agent working under that person's account. The c
 that refuses to run under Claude Code is a guard against accidents, and review of the pull request
 does the rest.
 
-Not part of this change: a proof that a changed statement still agrees with a signed one (the
-texts stored here are what such a proof would be stated against), and a split of the item files
-into an inventory of the source's items and a mapping to declarations kept in the Lean source.
+Not built: a proof that a changed statement still agrees with a signed one (the texts stored
+here are what such a proof would be stated against), and the mapping (`decls`, `relation`,
+`notes`) kept in the Lean source, as an attribute on the declarations, which would follow them
+through renames and moves.

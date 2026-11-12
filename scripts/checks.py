@@ -62,6 +62,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import textwrap
 import tomllib
 from pathlib import Path
 
@@ -144,8 +145,9 @@ def load_ledger():
             entries.setdefault((sign["source"], item["id"]), []).append({
                 "by": sign["by"], "via": sign.get("via"),
                 "date": sign["date"], "hash": item["hash"], "nodes": item.get("nodes", []),
-                "mapping": {"kind": item.get("kind"), "relation": item.get("relation"),
-                            "decls": item.get("decls", []), "notes": item.get("notes", "")},
+                "record": {"claim": item.get("claim", ""), "kind": item.get("kind"),
+                           "relation": item.get("relation"), "decls": item.get("decls", []),
+                           "notes": item.get("notes", "")},
                 "file": path.name})
     for found in entries.values():
         found.sort(key=lambda e: e["date"])
@@ -202,6 +204,8 @@ def validate(sources):
             kind = item.get("kind")
             if kind not in KINDS:
                 problems.append(f"{key}/{cid}: kind {kind!r} is not one of {sorted(KINDS)}")
+            if not item.get("claim", "").strip():
+                problems.append(f"{key}/{cid}: no claim, saying in words what the source says")
             relation = item.get("relation")
             if relation not in RELATIONS:
                 problems.append(
@@ -260,20 +264,21 @@ def closures(names, renames=None):
     return check_closure(modules, names, load_renames() if renames is None else renames)
 
 
-def mapping_of(item):
-    """What the check file says about how an item is stated, which a sign-off covers with the
-    statements themselves: what kind of item it is, the declarations, the relation and the notes,
-    with the notes' whitespace normalised so that rewrapping them is no change."""
-    return {"kind": item.get("kind"), "relation": item.get("relation"),
-            "decls": sorted(item.get("decls", [])),
+def item_record(item):
+    """What the check file says about an item, which a sign-off covers with the statements
+    themselves: the claim, which the source makes, and how the declarations state it: the kind,
+    the declarations, the relation and the notes. The text is normalised for whitespace, so that
+    rewrapping a claim or notes is no change."""
+    return {"claim": " ".join(item.get("claim", "").split()), "kind": item.get("kind"),
+            "relation": item.get("relation"), "decls": sorted(item.get("decls", [])),
             "notes": " ".join(item.get("notes", "").split())}
 
 
 def item_hash(item, data):
-    """The hash of an item: its mapping, and its statement closure."""
+    """The hash of an item: its record, and its statement closure."""
     h = hashlib.sha256(HASH_VERSION.encode())
-    mapping = json.dumps(mapping_of(item), sort_keys=True, ensure_ascii=False)
-    h.update(f"\0mapping\0{mapping}".encode())
+    record = json.dumps(item_record(item), sort_keys=True, ensure_ascii=False)
+    h.update(f"\0record\0{record}".encode())
     closure = set()
     for name in sorted(item["decls"]):
         root = data["roots"][name]
@@ -449,10 +454,15 @@ def cmd_diff(args):
     print(f"{args.item}: {status[ref]}; signed by {last['by']} on {last['date']:%Y-%m-%d}")
     if status[ref] != "stale":
         return 0
-    mapping = mapping_of(info[ref]["item"])
-    for key, signed_value in last["mapping"].items():
-        if signed_value != mapping[key]:
-            print(f"\n{key}: was {signed_value!r} when signed, now {mapping[key]!r}")
+    record = item_record(info[ref]["item"])
+    for key, signed_value in last["record"].items():
+        if signed_value != record[key]:
+            if key in ("claim", "notes"):
+                for label, text in ((f"{key} was, when signed:", signed_value),
+                                    (f"{key} is now:", record[key])):
+                    print(f"\n{label}\n{textwrap.indent(textwrap.fill(text), '  ')}")
+            else:
+                print(f"\n{key}: was {signed_value!r} when signed, now {record[key]!r}")
     signed = {n["name"]: n for n in last["nodes"]}
     now = info[ref]["closure"]
     for name in sorted(signed.keys() - now):
@@ -591,19 +601,20 @@ def toml_string(s):
 
 
 def ledger_file(source, by, via, when, signed):
-    """The text of a ledger file for the items just signed, given as `(id, hash, mapping, nodes)`,
-    the mapping as `mapping_of` gives it and each node as `(name, term, text)`."""
+    """The text of a ledger file for the items just signed, given as `(id, hash, record, nodes)`,
+    the record as `item_record` gives it and each node as `(name, term, text)`."""
     lines = [f"source = {toml_string(source)}", f"by = {toml_string(by)}"]
     if via:
         lines.append(f"via = {toml_string(via)}")
     lines.append(f"date = {when}")
-    for cid, digest, mapping, nodes in signed:
+    for cid, digest, record, nodes in signed:
         lines += ["", "[[item]]", f"id = {toml_string(cid)}", f"hash = {toml_string(digest)}",
-                  f"kind = {toml_string(mapping['kind'])}",
-                  f"relation = {toml_string(mapping['relation'])}",
-                  f"decls = [{', '.join(toml_string(d) for d in mapping['decls'])}]"]
-        if mapping["notes"]:
-            lines.append(f"notes = {toml_string(mapping['notes'])}")
+                  f"kind = {toml_string(record['kind'])}",
+                  f"relation = {toml_string(record['relation'])}",
+                  f"decls = [{', '.join(toml_string(d) for d in record['decls'])}]",
+                  f"claim = {toml_string(record['claim'])}"]
+        if record["notes"]:
+            lines.append(f"notes = {toml_string(record['notes'])}")
         lines.append("nodes = [")
         for name, term, text in nodes:
             lines.append(f"  {{ name = {toml_string(name)}, term = "
@@ -652,7 +663,7 @@ def record(args, by):
             continue
         nodes = [(n, data["nodes"][n]["term"], data["nodes"][n]["text"])
                  for n in sorted(info[ref]["closure"])]
-        signed.append((cid, info[ref]["hash"], mapping_of(info[ref]["item"]), nodes))
+        signed.append((cid, info[ref]["hash"], item_record(info[ref]["item"]), nodes))
     if not signed:
         print("nothing to sign")
         return 0
@@ -837,27 +848,28 @@ def selftest_docstring(data, name):
     return not ok
 
 
-def selftest_mapping(data):
+def selftest_record(data):
     """Whether the hash of an item changes with what its sign-off covers, and with nothing else:
-    the kind, relation and declarations change it, and so do the notes, unless only their
-    whitespace is changed."""
+    the claim, kind, relation, declarations and notes change it, unless only the whitespace of
+    the claim or notes is changed, or the order of the declarations."""
     name = lambda n: f"ChecksFixture.{n}"
-    base = {"kind": "result", "relation": "specializes", "notes": "Assumes a nonempty domain.",
-            "decls": [name("unionOne")]}
+    both = [name("unionOne"), name("unionZero")]
+    base = {"claim": "A claim.", "kind": "result", "relation": "specializes",
+            "notes": "Assumes a nonempty domain.", "decls": [name("unionOne")]}
     cases = [
-        ("the relation", False, {**base, "relation": "generalizes"}),
-        ("the kind", False, {**base, "kind": "definition"}),
-        ("the declarations", False, {**base, "decls": [name("unionOne"), name("unionZero")]}),
-        ("the notes' wording", False, {**base, "notes": "Assumes a domain."}),
-        ("the notes' wrapping", True, {**base, "notes": "Assumes\n  a  nonempty\ndomain.\n"}),
-        ("the order of the declarations", True,
-         {**base, "decls": [name("unionOne"), name("unionZero")][::-1]}),
+        ("the claim's wording", False, base, {**base, "claim": "Another claim."}),
+        ("the claim's wrapping", True, base, {**base, "claim": " A\n  claim.\n"}),
+        ("the relation", False, base, {**base, "relation": "generalizes"}),
+        ("the kind", False, base, {**base, "kind": "definition"}),
+        ("the declarations", False, base, {**base, "decls": both}),
+        ("the order of the declarations", True, {**base, "decls": both},
+         {**base, "decls": both[::-1]}),
+        ("the notes' wording", False, base, {**base, "notes": "Assumes a domain."}),
+        ("the notes' wrapping", True, base, {**base, "notes": "Assumes\n  a  nonempty\ndomain.\n"}),
     ]
     failures = 0
-    for what, same, item in cases:
-        reference = ({**base, "decls": [name("unionOne"), name("unionZero")]}
-                     if what == "the order of the declarations" else base)
-        ok = (item_hash(item, data) == item_hash(reference, data)) == same
+    for what, same, one, other in cases:
+        ok = (item_hash(one, data) == item_hash(other, data)) == same
         failures += not ok
         print(f"{'ok  ' if ok else 'FAIL'}  {what} {'keeps' if same else 'changes'} the hash")
     return failures
@@ -873,7 +885,7 @@ def cmd_selftest(args):
     data = check_closure(["ChecksFixture"], names, [])
     failures = selftest_groups(data, SELFTEST_GROUPS)
     failures += selftest_docstring(data, SELFTEST_GROUPS[0][2][0])
-    failures += selftest_mapping(data)
+    failures += selftest_record(data)
     for name, unused in SELFTEST_UNUSED:
         ok = f"ChecksFixture.{unused}" not in data["roots"][f"ChecksFixture.{name}"]["closure"]
         failures += not ok
