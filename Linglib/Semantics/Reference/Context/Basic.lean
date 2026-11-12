@@ -10,14 +10,18 @@ public import Linglib.Discourse.Role
 /-!
 # The context of utterance
 
-The context of utterance of Kaplan, a tuple of an agent, a world, a time and a position, with the
-addressee of Speas and Tenny as a fifth coordinate. The agent and the addressee are the holders of
-the two discourse roles, `Kaplan.Context.holder`.
+A context of utterance is a tuple of an agent, an addressee, a world, a time and a position.
+Kaplan's contexts have the agent, the time, the position and the world; the addressee is a
+coordinate of the contexts of Schlenker and of the work on indexical shift after him, where a
+context and an index are tuples of one type. The agent and the addressee are the holders of the
+two discourse roles, `Kaplan.Context.holder`.
 
 ## References
 
 * [kaplan-1989]
-* [speas-tenny-2003]
+* [schlenker-2003]
+* [anand-nevins-2004]
+* [deal-2020]
 -/
 
 @[expose] public section
