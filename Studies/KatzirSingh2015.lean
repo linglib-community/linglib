@@ -1,30 +1,45 @@
 module
 
-public import Mathlib.Data.Set.Basic
-public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Logic.Aristotelian.Square
+public import Mathlib.Order.Minimal
+public import Linglib.Semantics.Questions.Partition.Basic
+public import Studies.Spector2014
 
 /-!
 # Katzir and Singh (2015): Economy of Structure and Information
 
-Katzir and Singh account for the oddness of assertions such as *Some Italians come from a warm
-country* and *John has one wife* with two felicity conditions. The question condition (8) asks
-that an assertion address a question the participants are known to want settled; the answer
-condition (15) asks that it be a true, relevant answer not needlessly worse than another true
-relevant one, an alternative being better (16) when it is at most as complex, in Katzir's
-structural sense, and at least as strong. A `Scenario` collects the meanings and complexities of
-the alternatives, the context and the question, and `Felicitous` conjoins the two conditions.
+Katzir and Singh derive the oddness of *Some Italians come from a warm country* and *John has
+one wife* from the requirement that an assertion be a good answer to a good question. Which
+questions are good, those the participants are commonly known to want settled, the theory takes as
+given, so `Felicitous` is relative to a family of them. A `GoodAnswer` is true, relevant, and
+minimal among the true relevant alternatives in the product of complexity and strength. An answer
+that means what a simpler one means
+[is therefore never good](##KatzirSingh2015.not_goodAnswer_of_meaning_eq), which
+[is Hurford's constraint](##KatzirSingh2015.not_felicitous_disj); *some*
+[is needlessly weak](##KatzirSingh2015.not_goodAnswer_some) where *all* is true, whatever is
+known; and the indefinite article [gives way to the definite](##KatzirSingh2015.not_goodAnswer_a).
+The ban on trivial alternatives does not read the question:
+[it rejects *all*](##KatzirSingh2015.not_noTrivialAlternatives_scalar) under the explicit question
+that makes it a good answer, and
+[it accepts](##KatzirSingh2015.noTrivialAlternatives_typewriter) an assertion whose only defect is
+its question.
 
 ## Implementation notes
 
-A question is a family of answers, the alternatives of the assertion when no question is
-explicit, and it is settled in a context when its live answers there coincide, the use the
-paper makes of the good question of (7); an assertion is relevant when it does not split a cell
-of the partition the answers induce (the paper's footnote 8). Complexity enters as a rank, the
-structural order not being rebuilt on trees. Meanings are sets of worlds, with presupposition
-folded into truth for (21). The embedded cases of Section 4, which the paper leaves open, are
-not represented.
+A question is a partition, and an assertion is relevant to it in a context when the question
+determines it there, `Setoid.DeterminesOn`. Strength is entailment of the meanings and does not
+read the context. Complexity takes values in any preorder, so the structural order on
+trees can be supplied. The definite article carries its presupposition in its truth conditions.
+The focus semantic value an assertion's question must lie in is an argument of `Felicitous`.
+
+## TODO
+
+* The embedded cases, where oddness persists in environments that satisfy both conditions, are
+  not represented.
+* A disjunction *φ or (not φ and ψ)* means what the simpler *φ or ψ* means, so it is
+  [never a good answer](##KatzirSingh2015.not_goodAnswer_disj_compl_inter); [katzir-singh-2014]
+  reports such sentences as appropriate and compares complexity locally instead, which is not
+  formalized.
+* The judgments are not yet rows of `Data/Examples`.
 
 ## References
 
@@ -34,253 +49,239 @@ not represented.
 * [heim-1991]
 * [hurford-1974]
 * [katzir-2007]
+* [katzir-singh-2014]
+* [groenendijk-stokhof-1984]
+* [rooth-1992]
 -/
 
 @[expose] public section
 
 namespace KatzirSingh2015
 
-/-- A discourse situation records the meanings of the alternatives and their structural
-complexity, the context, and the question, a family of answers. -/
-structure Scenario (W U A : Type*) where
-  meaning : U → Set W
-  complexity : U → ℕ
-  context : Set W
-  question : A → Set W
+open Set Aristotelian
+open Spector2014 (NoTrivialAlternatives)
 
-namespace Scenario
+variable {W U C X : Type*} [Preorder C]
 
-variable {W U A : Type*} (s : Scenario W U A)
+/-! ### The answer condition -/
 
-/-- The question is settled in the context when its live answers there coincide. -/
-def Settled : Prop :=
-  ∀ a b : A, (∃ w ∈ s.context, w ∈ s.question a) → (∃ w ∈ s.context, w ∈ s.question b) →
-    ∀ w ∈ s.context, (w ∈ s.question a ↔ w ∈ s.question b)
+section GoodAnswer
 
-/-- An assertion is relevant to the question when, within the context, it does not split a cell
-of the partition the answers induce. -/
-def Relevant (u : U) : Prop :=
-  ∀ w ∈ s.context, ∀ v ∈ s.context,
-    (∀ a, w ∈ s.question a ↔ v ∈ s.question a) → (w ∈ s.meaning u ↔ v ∈ s.meaning u)
+variable (meaning : U → Set W) (complexity : U → C) (c : Set W) (Q : Setoid W) {u v : U} {w : W}
 
-/-- An alternative is at least as good (16a) when it is at most as complex and at least as
-strong. -/
-def AtLeastAsGood (u v : U) : Prop :=
-  s.complexity u ≤ s.complexity v ∧ s.meaning u ⊆ s.meaning v
-
-/-- An alternative is better (16b) when it is at least as good and not conversely. -/
-def Better (u v : U) : Prop := s.AtLeastAsGood u v ∧ ¬ s.AtLeastAsGood v u
-
-/-- A good answer at `w` (15) is true, relevant, and not needlessly worse than a true relevant
-alternative. -/
+/-- A good answer at `w` is true, relevant, and not needlessly worse than a true relevant
+alternative (15). In the product order one alternative is at least as good as another when it is
+at most as complex and at least as strong (16a), and better when the comparison is strict
+(16b). -/
 def GoodAnswer (u : U) (w : W) : Prop :=
-  w ∈ s.meaning u ∧ s.Relevant u ∧ ¬ ∃ v, s.Better v u ∧ w ∈ s.meaning v ∧ s.Relevant v
+  MinimalFor (fun v ↦ w ∈ meaning v ∧ Q.DeterminesOn (meaning v) c)
+    (fun v ↦ (complexity v, meaning v)) u
 
-/-- An assertion is felicitous at `w` when the question is not settled (8) and the assertion is a
-good answer (15). -/
-def Felicitous (u : U) (w : W) : Prop := ¬ s.Settled ∧ s.GoodAnswer u w
+/-- An assertion is felicitous at `w` in the context `c` when it is a good answer to a good
+question it is congruent to, one whose answers lie in its focus semantic value (8). -/
+def Felicitous (good : Set (Setoid W)) (focus : U → Set (Set W)) (u : U) (w : W) : Prop :=
+  ∃ Q ∈ good, Q.classes ⊆ focus u ∧ GoodAnswer meaning complexity c Q u w
 
-section Decidable
+variable {meaning complexity c Q}
 
-variable [Fintype W] [Fintype U] [Fintype A] [∀ u, DecidablePred (· ∈ s.meaning u)]
-  [DecidablePred (· ∈ s.context)] [∀ a, DecidablePred (· ∈ s.question a)]
+theorem goodAnswer_iff : GoodAnswer meaning complexity c Q u w ↔
+    w ∈ meaning u ∧ Q.DeterminesOn (meaning u) c ∧ ∀ ⦃v⦄, (complexity v, meaning v) <
+      (complexity u, meaning u) → ¬ (w ∈ meaning v ∧ Q.DeterminesOn (meaning v) c) := by
+  rw [GoodAnswer, minimalFor_iff_forall_lt, and_assoc]
 
-instance : Decidable s.Settled := inferInstanceAs (Decidable (∀ _ _, _ → _ → ∀ _ ∈ _, _))
+theorem GoodAnswer.mem (h : GoodAnswer meaning complexity c Q u w) : w ∈ meaning u := h.1.1
 
-instance (u : U) : Decidable (s.Relevant u) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, ∀ _ ∈ _, _ → _))
+theorem GoodAnswer.determinesOn (h : GoodAnswer meaning complexity c Q u w) :
+    Q.DeterminesOn (meaning u) c :=
+  h.1.2
 
-instance (u v : U) : Decidable (s.AtLeastAsGood u v) :=
-  inferInstanceAs (Decidable (_ ∧ ∀ _, _ → _))
+-- (17), (18), (21)
+theorem not_goodAnswer_of_stronger (hc : complexity v ≤ complexity u)
+    (hs : meaning v ⊂ meaning u) (hw : w ∈ meaning v) (hr : Q.DeterminesOn (meaning v) c) :
+    ¬ GoodAnswer meaning complexity c Q u w :=
+  fun h ↦ h.not_lt ⟨hw, hr⟩ (Prod.mk_lt_mk.2 (.inr ⟨hc, hs⟩))
 
-instance (u v : U) : Decidable (s.Better u v) := inferInstanceAs (Decidable (_ ∧ ¬ _))
+theorem not_goodAnswer_of_simpler (hc : complexity v < complexity u)
+    (hs : meaning v ⊆ meaning u) (hw : w ∈ meaning v) (hr : Q.DeterminesOn (meaning v) c) :
+    ¬ GoodAnswer meaning complexity c Q u w :=
+  fun h ↦ h.not_lt ⟨hw, hr⟩ (Prod.mk_lt_mk.2 (.inl ⟨hc, hs⟩))
 
-instance (u : U) (w : W) : Decidable (s.GoodAnswer u w) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ ¬ ∃ _, _))
+theorem not_goodAnswer_of_meaning_eq (hc : complexity v < complexity u)
+    (h : meaning v = meaning u) : ¬ GoodAnswer meaning complexity c Q u w :=
+  fun hu ↦ not_goodAnswer_of_simpler hc h.le (h.ge hu.mem) (h ▸ hu.determinesOn) hu
 
-instance (u : U) (w : W) : Decidable (s.Felicitous u w) := inferInstanceAs (Decidable (¬ _ ∧ _))
+-- (22)
+theorem not_goodAnswer_disj {d φ ψ : U} (hd : meaning d = meaning φ ∪ meaning ψ)
+    (hψ : meaning ψ ⊆ meaning φ) (hc : complexity φ < complexity d) :
+    ¬ GoodAnswer meaning complexity c Q d w :=
+  not_goodAnswer_of_meaning_eq hc (hd.trans (union_eq_left.2 hψ)).symm
 
-end Decidable
+-- (23)
+theorem not_goodAnswer_conj {k φ ψ : U} (hk : meaning k = meaning φ ∩ meaning ψ)
+    (hψ : meaning φ ⊆ meaning ψ) (hc : complexity φ < complexity k) :
+    ¬ GoodAnswer meaning complexity c Q k w :=
+  not_goodAnswer_of_meaning_eq hc (hk.trans (inter_eq_left.2 hψ)).symm
 
-variable {u v x : U}
+-- the disjunctions of [katzir-singh-2014] (25), which mean what a plain disjunction means
+theorem not_goodAnswer_disj_compl_inter {d e φ ψ : U}
+    (hd : meaning d = meaning φ ∪ (meaning φ)ᶜ ∩ meaning ψ)
+    (he : meaning e = meaning φ ∪ meaning ψ) (hc : complexity e < complexity d) :
+    ¬ GoodAnswer meaning complexity c Q d w :=
+  not_goodAnswer_of_meaning_eq hc (by rw [hd, he, union_inter_distrib_left, union_compl_self,
+    univ_inter])
 
-theorem atLeastAsGood_refl (u : U) : s.AtLeastAsGood u u := ⟨le_rfl, subset_rfl⟩
+variable {good good' : Set (Setoid W)} {focus : U → Set (Set W)}
 
-theorem atLeastAsGood_trans (h : s.AtLeastAsGood u v) (h' : s.AtLeastAsGood v x) :
-    s.AtLeastAsGood u x :=
-  ⟨h.1.trans h'.1, h.2.trans h'.2⟩
+theorem Felicitous.mono (h : Felicitous meaning complexity c good focus u w)
+    (hg : good ⊆ good') : Felicitous meaning complexity c good' focus u w :=
+  let ⟨Q, hQ, hf, ha⟩ := h
+  ⟨Q, hg hQ, hf, ha⟩
 
-theorem better_irrefl (u : U) : ¬ s.Better u u := fun h ↦ h.2 (s.atLeastAsGood_refl u)
+/-- A disjunction more complex than a disjunct that the other disjunct entails is infelicitous at
+every world, whatever is known and whichever questions are good (22). -/
+theorem not_felicitous_disj {d φ ψ : U} (hd : meaning d = meaning φ ∪ meaning ψ)
+    (hψ : meaning ψ ⊆ meaning φ) (hc : complexity φ < complexity d) :
+    ¬ Felicitous meaning complexity c good focus d w :=
+  fun ⟨_, _, _, ha⟩ ↦ not_goodAnswer_disj hd hψ hc ha
 
-theorem better_asymm (h : s.Better u v) : ¬ s.Better v u := fun h' ↦ h.2 h'.1
+-- (23)
+theorem not_felicitous_conj {k φ ψ : U} (hk : meaning k = meaning φ ∩ meaning ψ)
+    (hψ : meaning φ ⊆ meaning ψ) (hc : complexity φ < complexity k) :
+    ¬ Felicitous meaning complexity c good focus k w :=
+  fun ⟨_, _, _, ha⟩ ↦ not_goodAnswer_conj hk hψ hc ha
 
-/-- Better-than is a strict order, the irreflexive part of the at-least-as-good preorder. -/
-theorem better_trans (h : s.Better u v) (h' : s.Better v x) : s.Better u x :=
-  ⟨s.atLeastAsGood_trans h.1 h'.1, fun hx ↦ h.2 (s.atLeastAsGood_trans h'.1 hx)⟩
+end GoodAnswer
 
-/-- An answer is needlessly weak, and so not good, when a true relevant alternative of no greater
-complexity is strictly stronger ((17), (18), (21)). -/
-theorem not_goodAnswer_of_stronger {w : W} (hc : s.complexity v ≤ s.complexity u)
-    (hs : s.meaning v ⊂ s.meaning u) (hw : w ∈ s.meaning v) (hr : s.Relevant v) :
-    ¬ s.GoodAnswer u w :=
-  fun h ↦ h.2.2 ⟨v, ⟨⟨hc, hs.1⟩, fun h' ↦ hs.2 h'.2⟩, hw, hr⟩
+/-! ### Some and all
 
-/-- An answer is needlessly complex, and so not good, when a true relevant alternative of lower
-complexity is at least as strong. -/
-theorem not_goodAnswer_of_simpler {w : W} (hc : s.complexity v < s.complexity u)
-    (hs : s.meaning v ⊆ s.meaning u) (hw : w ∈ s.meaning v) (hr : s.Relevant v) :
-    ¬ s.GoodAnswer u w :=
-  fun h ↦ h.2.2 ⟨v, ⟨⟨hc.le, hs⟩, fun h' ↦ hc.not_ge h'.1⟩, hw, hr⟩
-
-/-- A disjunction is a needlessly complex answer where a simpler disjunct is true and relevant, as
-the first disjunct of (22) is, whether or not the second entails it. -/
-theorem not_goodAnswer_disj {d φ ψ : U} {w : W} (hd : s.meaning d = s.meaning φ ∪ s.meaning ψ)
-    (hc : s.complexity φ < s.complexity d) (hw : w ∈ s.meaning φ) (hr : s.Relevant φ) :
-    ¬ s.GoodAnswer d w :=
-  s.not_goodAnswer_of_simpler hc (hd ▸ Set.subset_union_left) hw hr
-
-/-- Likewise a conjunction whose second conjunct is entailed by the first, (23). -/
-theorem not_goodAnswer_conj {c φ ψ : U} {w : W} (hc' : s.meaning c = s.meaning φ ∩ s.meaning ψ)
-    (hψ : s.meaning φ ⊆ s.meaning ψ) (hc : s.complexity φ < s.complexity c)
-    (hw : w ∈ s.meaning φ) (hr : s.Relevant φ) : ¬ s.GoodAnswer c w :=
-  s.not_goodAnswer_of_simpler hc (hc' ▸ Set.subset_inter le_rfl hψ) hw hr
-
-end Scenario
-
-/-! ### Some and all (Sections 1 and 3.2)
-
-The *some* and *all* alternatives over the three ways a set of grades, names or origins can
-fall, the vertices of the triangle of opposition (`Aristotelian.Triangle`): to none (`E`), to
-some but not all (`IO`), or to all (`A`). -/
-
-open Aristotelian
+The *some* and *all* alternatives over the three ways a set of grades, names or origins can fall,
+the vertices of the triangle of opposition: to none (`E`), to some but not all (`IO`), or to all
+(`A`). -/
 
 /-- The scalar alternatives. -/
 inductive Scalar
   | some_ | all_
-  deriving DecidableEq, Repr, Fintype
 
-/-- *Some* is true above the bottom vertex, *all* only at the top one. -/
-def scalarDenotes : Scalar → Triangle → Prop
-  | .some_, w => ⊥ < w
-  | .all_, w => w = ⊤
+/-- *Some* and *all* denote the `I` and `A` corners of the square. -/
+def Scalar.meaning : Scalar → Set Triangle
+  | .some_ => Triangle.corners.I
+  | .all_ => Triangle.corners.A
 
-instance : ∀ u w, Decidable (scalarDenotes u w) := fun u w ↦ by
-  cases u <;> unfold scalarDenotes <;> infer_instance
+theorem Scalar.meaning_all_ssubset_some : Scalar.meaning .all_ ⊂ Scalar.meaning .some_ :=
+  Finset.coe_ssubset.2 (by decide)
 
-/-- In the scalar scenario the alternatives form the question and have the same complexity, the
-context being a parameter. -/
-abbrev scalar (context : Set Triangle) : Scenario Triangle Scalar Scalar where
-  meaning u := {w | scalarDenotes u w}
-  complexity _ := 1
-  context := context
-  question u := {w | scalarDenotes u w}
+theorem Scalar.mem_meaning_all : Triangle.A ∈ Scalar.meaning .all_ := Finset.mem_coe.2 (by decide)
 
-/-- Where the context makes *some* and *all* equivalent, as in (1) and (19), both are odd. -/
-theorem some_all_odd_of_settled :
-    (scalar {w | w ≠ .IO}).Settled ∧
-      ∀ u w, ¬ (scalar {w | w ≠ .IO}).Felicitous u w := by
-  decide
+section Scalar
 
-/-- Where the equivalence is only the speaker's belief (17), *all* is a good answer and *some* is
-needlessly weak. -/
-theorem all_felicitous_some_odd :
-    (scalar Set.univ).Felicitous .all_ .A ∧ ¬ (scalar Set.univ).Felicitous .some_ .A := by
-  decide
+variable {complexity : Scalar → C} {c : Set Triangle} {Q : Setoid Triangle}
 
-/-- The explicit question *to how many?* of (20) is not settled by the common knowledge of
-(19), and *all* becomes a good answer while *some* stays needlessly weak. -/
-abbrev explicit : Scenario Triangle Scalar Triangle where
-  meaning u := {w | scalarDenotes u w}
-  complexity _ := 1
-  context := {w | w ≠ .IO}
-  question a := {a}
+-- (17b), (20b)
+theorem goodAnswer_all (hc : complexity .all_ ≤ complexity .some_)
+    (hr : Q.DeterminesOn (Scalar.meaning .all_) c) :
+    GoodAnswer Scalar.meaning complexity c Q .all_ .A :=
+  ⟨⟨Scalar.mem_meaning_all, hr⟩, fun v _ _ ↦ by
+    cases v
+    exacts [⟨hc, Scalar.meaning_all_ssubset_some.subset⟩, le_rfl]⟩
 
-theorem explicit_question_rescues_all :
-    ¬ explicit.Settled ∧ explicit.Felicitous .all_ .A ∧ ¬ explicit.Felicitous .some_ .A := by
-  decide
+/-- Where *all* is true and no more complex, *some* is a needlessly weak answer to any question
+that determines *all*, whatever is known ((17a), (19a), (20a)). -/
+theorem not_goodAnswer_some (hc : complexity .all_ ≤ complexity .some_)
+    (hr : Q.DeterminesOn (Scalar.meaning .all_) c) :
+    ¬ GoodAnswer Scalar.meaning complexity c Q .some_ .A :=
+  not_goodAnswer_of_stronger hc Scalar.meaning_all_ssubset_some Scalar.mem_meaning_all hr
 
-/-- Under a downward-entailing operator (18) the entailment reverses, *some* being the
-stronger, and it is *all* that is needlessly weak. -/
-def restrictorDenotes : Scalar → Triangle → Prop
-  | .some_, w => w = ⊤
-  | .all_, w => ⊥ < w
+end Scalar
 
-instance : ∀ u w, Decidable (restrictorDenotes u w) := fun u w ↦ by
-  cases u <;> unfold restrictorDenotes <;> infer_instance
+/-- In the context of (19) every alternative of *some* and of *all* is trivial, whatever the
+question, the explicit one of (20) included, the finest question, under which *all* is a good
+answer (`goodAnswer_all` with `Setoid.bot_determines`). -/
+theorem not_noTrivialAlternatives_scalar (u : Scalar) :
+    ¬ NoTrivialAlternatives {w | w ≠ .IO} (range Scalar.meaning) u.meaning :=
+  have h : ∀ v : Scalar, v.meaning ∩ {w | w ≠ Triangle.IO} = {Triangle.A} := by
+    rintro (_ | _)
+    exacts [Spector2014.corners_I_inter_ne_IO, Spector2014.corners_A_inter_ne_IO]
+  Spector2014.not_noTrivialAlternatives_of_inter_eq <| by
+    rintro _ ⟨v, rfl⟩
+    rw [h u, h v]
 
-/-- The scenario of (18) asserts that every professor who assigned an A to some or all of his
-students got a raise, over how many of the A-givers got one. -/
-abbrev restrictor : Scenario Triangle Scalar Scalar where
-  meaning u := {w | restrictorDenotes u w}
-  complexity _ := 1
-  context := Set.univ
-  question u := {w | restrictorDenotes u w}
-
-theorem some_felicitous_all_odd :
-    restrictor.Felicitous .some_ .A ∧ ¬ restrictor.Felicitous .all_ .A := by
-  decide
-
-/-! ### Maximize Presupposition (Section 3.2.3) -/
+/-! ### Maximize Presupposition -/
 
 /-- How many suns there are and whether one shines. -/
 inductive Sky
   | oneShining | oneDark | many
-  deriving DecidableEq, Repr, Fintype
 
 /-- *A sun is shining* and *the sun is shining*. -/
 inductive Article
   | a | the
-  deriving DecidableEq, Repr, Fintype
 
 /-- The definite carries the uniqueness presupposition into its truth conditions. -/
-def articleDenotes : Article → Sky → Prop
-  | .a, w => w ≠ .oneDark
-  | .the, w => w = .oneShining
+def Article.meaning : Article → Set Sky
+  | .a => {.oneDark}ᶜ
+  | .the => {.oneShining}
 
-instance : ∀ u w, Decidable (articleDenotes u w) := fun u w ↦ by
-  cases u <;> unfold articleDenotes <;> infer_instance
+/-- Whether the sun is shining. -/
+abbrev shining : Setoid Sky := Setoid.polar {.oneShining}
 
-/-- (21) with common knowledge of one sun, the question being whether it shines. -/
-abbrev sun : Scenario Sky Article Bool where
-  meaning u := {w | articleDenotes u w}
-  complexity _ := 1
-  context := {w | w ≠ .many}
-  question b := {w | decide (w = .oneShining) = b}
+theorem Article.meaning_the_ssubset_a : Article.meaning .the ⊂ Article.meaning .a :=
+  ⟨by simp [Article.meaning], fun h ↦ by simpa [Article.meaning] using @h .many⟩
 
-theorem the_felicitous_a_odd :
-    sun.Felicitous .the .oneShining ∧ ¬ sun.Felicitous .a .oneShining := by
-  decide
+-- (21)
+theorem Article.meaning_inter_ne_many (u : Article) : u.meaning ∩ {.many}ᶜ = {.oneShining} := by
+  ext w
+  cases u <;> cases w <;> simp [Article.meaning]
 
-/-! ### Hurford disjunctions (Section 3.3) -/
+-- (21a)
+theorem determinesOn_a : shining.DeterminesOn (Article.meaning .a) {.many}ᶜ :=
+  fun w hw v hv hwv ↦ by
+    have h := Setoid.polar_iff.1 hwv
+    cases w <;> cases v <;> simp_all [Article.meaning]
 
-/-- Where John went. -/
-inductive Trip
-  | paris | franceNotParis | elsewhere
-  deriving DecidableEq, Repr, Fintype
+-- (21a)
+theorem not_determines_a : ¬ shining.Determines (Article.meaning .a) := fun h ↦ by
+  have := h.iff (w := .oneDark) (v := .many) (Setoid.polar_iff.2 (by simp))
+  simp [Article.meaning] at this
 
-/-- *John visited France*, and the disjunction (22) with *Paris*. -/
-inductive Visit
-  | france | franceOrParis
-  deriving DecidableEq, Repr, Fintype
+section Article
 
-def visitDenotes : Visit → Trip → Prop
-  | .france, w => w ≠ .elsewhere
-  | .franceOrParis, w => w ≠ .elsewhere
+variable {complexity : Article → C} {c : Set Sky}
 
-instance : ∀ u w, Decidable (visitDenotes u w) := fun u w ↦ by
-  cases u <;> unfold visitDenotes <;> infer_instance
+/-- The indefinite is a needlessly weak answer where the definite is true and no more complex
+(21a). -/
+theorem not_goodAnswer_a (hc : complexity .the ≤ complexity .a) :
+    ¬ GoodAnswer Article.meaning complexity c shining .a .oneShining :=
+  not_goodAnswer_of_stronger hc Article.meaning_the_ssubset_a (mem_singleton _)
+    (Setoid.polar_determines.determinesOn c)
 
-/-- In (22) the disjunction is more complex than its first disjunct, and the question is where
-John went. -/
-abbrev hurford : Scenario Trip Visit Trip where
-  meaning u := {w | visitDenotes u w}
-  complexity | .france => 1 | .franceOrParis => 2
-  context := Set.univ
-  question a := {a}
+-- (21b)
+theorem goodAnswer_the (hc : complexity .the ≤ complexity .a) :
+    GoodAnswer Article.meaning complexity c shining .the .oneShining :=
+  ⟨⟨mem_singleton _, Setoid.polar_determines.determinesOn c⟩, fun v _ _ ↦ by
+    cases v
+    exacts [⟨hc, Article.meaning_the_ssubset_a.subset⟩, le_rfl]⟩
 
-theorem hurford_odd : ∀ w, ¬ hurford.Felicitous .franceOrParis w := by decide
+end Article
 
-theorem france_felicitous : hurford.Felicitous .france .paris := by decide
+/-! ### An assertion out of the blue -/
+
+/-- The alternatives *x broke the typewriter* of (13), over who broke it if anyone did. -/
+abbrev typewriter (x : X) : Set (Option X) := {some x}
+
+/-- The assertion (13a) has an alternative that is not trivial where nothing is known, and it is a
+good answer to who broke the typewriter (`goodAnswer_typewriter`), so its oddness out of the blue
+rests on that question's not being a good one. -/
+theorem noTrivialAlternatives_typewriter [Nontrivial X] (x : X) :
+    NoTrivialAlternatives univ (range (typewriter (X := X))) (typewriter x) := by
+  obtain ⟨y, hy⟩ := exists_ne x
+  exact Spector2014.noTrivialAlternatives_univ_iff.2 ⟨_, ⟨y, rfl⟩, singleton_ne_empty _,
+    fun h ↦ Option.some_ne_none y (h.ge (mem_univ none)).symm,
+    fun h ↦ hy (Option.some_injective _ (singleton_eq_singleton_iff.1 h)).symm⟩
+
+-- (13a)
+theorem goodAnswer_typewriter (complexity : X → C) (x : X) :
+    GoodAnswer typewriter complexity univ (⨅ y : X, Setoid.polar (typewriter y)) x (some x) :=
+  ⟨⟨rfl, Setoid.Determines.determinesOn (iInf_le _ x) _⟩, fun y hy _ ↦ by
+    obtain rfl : x = y := Option.some_injective _ hy.1
+    exact le_rfl⟩
 
 end KatzirSingh2015

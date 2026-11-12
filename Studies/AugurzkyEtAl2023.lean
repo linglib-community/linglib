@@ -121,7 +121,7 @@ variable (q : NumberTree)
 theorem usable_iff_reading_of {S : Display → Trivalent} {δ : Designation}
     (htrue : ∀ d, S d = .true → reading q d δ) (hfalse : ∀ d, S d = .false → ¬ reading q d δ)
     (hres : ∀ c, KrizChemla2015.holds q c → S (c.map fun b : Bool ↦ Trivalent.ofProp b) = .true)
-    {Q : Setoid Display} (h₁ : Setoid.ker (resolve δ) ≤ Q) (h₂ : Q.Decides {d | reading q d δ})
+    {Q : Setoid Display} (h₁ : Setoid.ker (resolve δ) ≤ Q) (h₂ : Q.Determines {d | reading q d δ})
     (d : Display) : Homogeneity.usable Q S d ↔ reading q d δ := by
   have hcell : ∀ {d d'}, Q d d' → (reading q d δ ↔ reading q d' δ) := fun h ↦ h₂.iff h
   exact ⟨fun ⟨⟨d', hd', h'⟩, _⟩ ↦ (hcell hd').2 (htrue d' h'), fun h ↦
@@ -132,7 +132,7 @@ theorem usable_iff_reading_of {S : Display → Trivalent} {δ : Designation}
 variable [DecidableRel q]
 
 theorem usable_iff_reading {Q : Setoid Display} {δ : Designation}
-    (h₁ : Setoid.ker (resolve δ) ≤ Q) (h₂ : Q.Decides {d | reading q d δ}) (d : Display) :
+    (h₁ : Setoid.ker (resolve δ) ≤ Q) (h₂ : Q.Determines {d | reading q d δ}) (d : Display) :
     Homogeneity.usable Q (supervaluation q) d ↔ reading q d δ := by
   refine usable_iff_reading_of q (fun d' h ↦ ?_) (fun d' h ↦ ?_) (fun c h ↦ ?_) h₁ h₂ d
   · rw [supervaluation_eq_designations, Trivalent.supervaluation_eq_true_iff] at h

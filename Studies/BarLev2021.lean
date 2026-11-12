@@ -24,7 +24,7 @@ another's.
 
 `readings` are the threshold readings, obtained by pruning to a fixed subdomain size; the
 paper's asymmetric conjunctions of alternatives are omitted, so `IsReading` agrees with the
-paper's selection on the partitions whose only decided readings are thresholds, which
+paper's selection on the partitions whose only determined readings are thresholds, which
 includes the polar questions of (66), (80) and (81). The maximality constraint on prunings
 is not formalized. `Gappy` ranges over all partitions and is context-free; that a context
 fixing the partition removes the gap is carried by `reading_80` and `reading_81`.
@@ -166,9 +166,9 @@ def readings : Set (Set W) :=
     q = exhIEII (subDisjsOfCard (x ∩ D) (atom P) m) (⋃ b ∈ x ∩ D, atom P b)}
 
 variable (D x P) in
-/-- The reading a partition selects is the strongest reading it decides. -/
+/-- The reading a partition selects is the strongest reading it determines. -/
 def IsReading (Q : Setoid W) (q : Set W) : Prop :=
-  q ∈ readings D x P ∧ Q.Decides q ∧ ∀ r ∈ readings D x P, Q.Decides r → q ⊆ r
+  q ∈ readings D x P ∧ Q.Determines q ∧ ∀ r ∈ readings D x P, Q.Determines r → q ⊆ r
 
 theorem IsReading.unique {Q : Setoid W} {q r : Set W} (hq : IsReading D x P Q q)
     (hr : IsReading D x P Q r) : q = r :=
@@ -257,7 +257,7 @@ theorem isReading_polar_atLeast (h : Separating D x P)
     (hcount : ∀ k ≤ (x ∩ D).card, ∃ w, count D x P w = k) {k : ℕ} (hk : 0 < k)
     (hkn : k ≤ (x ∩ D).card) :
     IsReading D x P (Setoid.polar (atLeast D x P k)) (atLeast D x P k) := by
-  refine ⟨(mem_readings_iff h).2 ⟨k, hk, hkn, rfl⟩, Setoid.polar_decides, fun r hr hQ ↦ ?_⟩
+  refine ⟨(mem_readings_iff h).2 ⟨k, hk, hkn, rfl⟩, Setoid.polar_determines, fun r hr hQ ↦ ?_⟩
   obtain ⟨l, hl, hln, rfl⟩ := (mem_readings_iff h).1 hr
   refine atLeast_antitone (not_lt.1 fun hkl ↦ ?_)
   obtain ⟨w, hw⟩ := hcount l hln
