@@ -16,18 +16,19 @@ public import Mathlib.Algebra.Order.Group.Nat
 # The leaves of a rose tree
 
 `RoseTree.leaves` is the multiset of leaf labels of a rose tree, the frontier `RoseTree.leafList`
-[with its order forgotten](##RoseTree.coe_leafList). It is the fold that sends a leaf to a
-singleton and a branching node to the sum of its children's leaves, which makes it
-[invariant under `Perm`](##RoseTree.leaves_perm), natural in the labels
-([`leaves_map`](##RoseTree.leaves_map)), and computed at a branching node by any additive map
-([`map_leaves_node_of_ne_nil`](##RoseTree.map_leaves_node_of_ne_nil)). The frontier is a
+with its order forgotten. At a branching node it is the
+[sum of the children's leaves](##RoseTree.leaves_node_of_ne_nil), so
+[any additive map of it](##RoseTree.map_leaves_node_of_ne_nil) is computed child by child; it is
+[invariant under `Perm`](##RoseTree.leaves_perm) and
+[natural in the labels](##RoseTree.leaves_map). The frontier is a
 [sublist of the preorder traversal](##RoseTree.leafList_sublist_values), so the leaves are among
 the node labels and a statistic of the leaves is bounded by the same statistic of the nodes.
 
 ## Implementation notes
 
-`leaves` is defined as a fold of its own and not as `↑t.leafList`, so that `leaves_perm` is an
-instance of `fold_perm`: the algebra reads its arguments through a nil test and a sum.
+The frontier `leafList` is the one fold. `numLeaves` is its length and `leaves` its coercion to a
+multiset, so the facts about either are read off the frontier and no second fold is related to it
+by induction.
 -/
 
 @[expose] public section
@@ -60,10 +61,10 @@ theorem numLeaves_le_numNodes (t : RoseTree α) : t.numLeaves ≤ t.numNodes := 
 /-! ### The multiset of leaves -/
 
 /-- The multiset of leaf labels of a rose tree. -/
-def leaves : RoseTree α → Multiset α :=
-  fold fun a ss ↦ match ss with
-    | [] => {a}
-    | ss => ss.sum
+def leaves (t : RoseTree α) : Multiset α := t.leafList
+
+/-- The leaf labels are the frontier with its order forgotten. -/
+theorem coe_leafList (t : RoseTree α) : (t.leafList : Multiset α) = t.leaves := rfl
 
 section Node
 variable (a : α) (c : RoseTree α) (cs : List (RoseTree α))
@@ -72,8 +73,9 @@ variable (a : α) (c : RoseTree α) (cs : List (RoseTree α))
 
 theorem leaves_node_of_ne_nil {cs : List (RoseTree α)} (h : cs ≠ []) :
     leaves (node a cs) = (cs.map leaves).sum := by
-  obtain ⟨c, cs, rfl⟩ := List.exists_cons_of_ne_nil h
-  simp only [leaves, fold_node, List.map_cons]
+  rw [leaves, leafList_node_of_ne_nil a h, ← Multiset.coe_join, Multiset.join, Multiset.sum_coe,
+    List.map_map]
+  rfl
 
 @[simp] theorem leaves_node_cons : leaves (node a (c :: cs)) = ((c :: cs).map leaves).sum :=
   leaves_node_of_ne_nil a (List.cons_ne_nil c cs)
@@ -97,20 +99,9 @@ theorem leaves_le_of_mem_children {c t : RoseTree α} (h : c ∈ t.children) :
   exact (List.single_le_sum (fun _ _ ↦ Multiset.zero_le _) _ (List.mem_map_of_mem h)).trans
     (sum_map_leaves_le_node a cs)
 
-/-! ### The frontier with its order forgotten -/
+theorem mem_leaves {t : RoseTree α} {x : α} : x ∈ t.leaves ↔ x ∈ t.leafList := Multiset.mem_coe
 
-/-- The leaf labels are the frontier with its order forgotten. -/
-theorem coe_leafList (t : RoseTree α) : (t.leafList : Multiset α) = t.leaves :=
-  fold_hom (fun l : List α ↦ (l : Multiset α)) (fun a ls ↦ by
-    cases ls with
-    | nil => rfl
-    | cons l ls => exact (Multiset.coe_join (l :: ls)).symm.trans (Multiset.sum_coe _)) t
-
-theorem mem_leaves {t : RoseTree α} {x : α} : x ∈ t.leaves ↔ x ∈ t.leafList := by
-  rw [← coe_leafList, Multiset.mem_coe]
-
-@[simp] theorem card_leaves (t : RoseTree α) : Multiset.card t.leaves = t.numLeaves := by
-  rw [← coe_leafList, Multiset.coe_card, length_leafList]
+@[simp] theorem card_leaves (t : RoseTree α) : Multiset.card t.leaves = t.numLeaves := rfl
 
 theorem leaves_ne_zero (t : RoseTree α) : t.leaves ≠ 0 := by
   rw [← coe_leafList, Ne, Multiset.coe_eq_zero]
@@ -127,14 +118,8 @@ theorem leaves_le_values (t : RoseTree α) : t.leaves ≤ (t.values : Multiset �
 /-! ### `Perm` invariance -/
 
 /-- Reordering children does not change the leaves. -/
-theorem leaves_perm {t s : RoseTree α} (h : Perm t s) : t.leaves = s.leaves := by
-  refine fold_perm (fun v l₁ l₂ h' ↦ ?_) h
-  cases l₁ with
-  | nil => rw [← h'.nil_eq]
-  | cons x xs =>
-    cases l₂ with
-    | nil => exact absurd h'.eq_nil (by simp)
-    | cons y ys => exact h'.sum_eq
+theorem leaves_perm {t s : RoseTree α} (h : Perm t s) : t.leaves = s.leaves :=
+  Multiset.coe_eq_coe.2 h.leafList_perm
 
 /-! ### Additive maps of the leaves -/
 

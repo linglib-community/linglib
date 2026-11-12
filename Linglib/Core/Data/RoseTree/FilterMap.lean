@@ -62,6 +62,6 @@ theorem filterMap_some (g : α → β) (t : RoseTree α) :
     filterMap Sum.getLeft? (map (Sum.inl : α → α ⊕ β) t) = some t := by
   rw [filterMap_map,
     show (Sum.getLeft? ∘ (Sum.inl : α → α ⊕ β)) = (fun a ↦ some (id a)) from rfl,
-    filterMap_some, id_map]
+    filterMap_some, map_id]
 
 end RoseTree

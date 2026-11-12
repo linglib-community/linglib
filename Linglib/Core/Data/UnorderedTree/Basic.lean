@@ -310,11 +310,11 @@ theorem map_leaf (f : α → β) (a : α) :
   rw [map_mk, RoseTree.map_leaf]
 
 @[simp] theorem map_id (t : UnorderedTree α) : map id t = t :=
-  Quotient.inductionOn t fun p ↦ congrArg mk p.id_map
+  Quotient.inductionOn t fun p ↦ congrArg mk p.map_id
 
 theorem map_map (f : α → β) (g : β → γ) (t : UnorderedTree α) :
     map g (map f t) = map (g ∘ f) t :=
-  Quotient.inductionOn t fun p ↦ congrArg mk (p.comp_map f g).symm
+  Quotient.inductionOn t fun p ↦ congrArg mk (p.map_map g f)
 
 theorem map_node (f : α → β) (a : α) (cs : Multiset (UnorderedTree α)) :
     map f (node a cs) = node (f a) (cs.map (map f)) := by

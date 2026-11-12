@@ -324,11 +324,11 @@ end Inversion
 
 @[simp] theorem map_id (t : Tree C W) : t.map id = t := by
   rw [map, show Label.mapWord (C := C) (id : W → W) = id from funext Label.mapWord_id]
-  exact RoseTree.id_map t
+  exact RoseTree.map_id t
 
 @[simp] theorem map_map (g : W' → W'') (f : W → W') (t : Tree C W) :
     (t.map f).map g = t.map (g ∘ f) := by
-  simp only [map, ← RoseTree.comp_map]
+  simp only [map, RoseTree.map_map]
   congr 1
   funext l
   exact Label.mapWord_mapWord g f l

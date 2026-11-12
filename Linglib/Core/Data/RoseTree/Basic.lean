@@ -19,7 +19,8 @@ quotient of this type by `RoseTree.Perm` (`UnorderedTree`).
 
 The type is nested through `List`, so its recursor takes one motive for trees and one for lists.
 `RoseTree.rec'` is the induction principle with the single hypothesis `∀ c ∈ cs, motive c`, and
-`RoseTree.fold` is the catamorphism from which `map`, the counts and the frontier are defined.
+`RoseTree.fold` is the catamorphism from which `map`, the counts and the frontier are defined. A
+function that satisfies the node equation of a fold is that fold (`RoseTree.eq_fold`).
 
 ## Main definitions
 
@@ -159,6 +160,23 @@ theorem fold_hom (h : β → γ) {f : α → List β → β} {g : α → List γ
     rw [fold_node, fold_node, hfg, List.map_map]
     exact congrArg (g a) (List.map_congr_left fun c hc ↦ ih c hc)
 
+/-- Folding with the constructor rebuilds the tree. -/
+@[simp] theorem fold_node_eq_self (t : RoseTree α) : fold node t = t := by
+  induction t with
+  | node a cs ih => rw [fold_node, List.map_congr_left ih, List.map_id']
+
+/-- The universal property of `fold`: a function that satisfies the node equation of `fold f` is
+`fold f`. -/
+theorem eq_fold {f : α → List β → β} {h : RoseTree α → β}
+    (hf : ∀ a cs, h (node a cs) = f a (cs.map h)) : h = fold f :=
+  funext fun t ↦ by rw [← fold_hom h hf t, fold_node_eq_self]
+
+/-- Two functions that satisfy the same node equation are equal. -/
+theorem hom_ext {f : α → List β → β} {h₁ h₂ : RoseTree α → β}
+    (h₁f : ∀ a cs, h₁ (node a cs) = f a (cs.map h₁))
+    (h₂f : ∀ a cs, h₂ (node a cs) = f a (cs.map h₂)) : h₁ = h₂ :=
+  (eq_fold h₁f).trans (eq_fold h₂f).symm
+
 /-! ### Functoriality -/
 
 /-- Relabel every node by `f`, preserving shape. -/
@@ -169,20 +187,10 @@ def map (f : α → β) : RoseTree α → RoseTree β :=
     map f (node a cs) = node (f a) (cs.map (map f)) := by
   simp only [map, fold_node]
 
-theorem id_map (t : RoseTree α) : map id t = t := by
-  induction t with
-  | node a cs ih =>
-    rw [map_node, id_eq]
-    congr 1
-    exact (List.map_congr_left ih).trans (List.map_id cs)
+@[simp] theorem map_id (t : RoseTree α) : map id t = t := fold_node_eq_self t
 
-theorem comp_map (f : α → β) (g : β → γ) (t : RoseTree α) :
-    map (g ∘ f) t = map g (map f t) := by
-  induction t with
-  | node a cs ih =>
-    rw [map_node, map_node, map_node, Function.comp_apply, List.map_map]
-    congr 1
-    exact List.map_congr_left ih
+theorem map_map (g : β → γ) (f : α → β) (t : RoseTree α) : map g (map f t) = map (g ∘ f) t :=
+  fold_hom (map g) (fun a ps ↦ map_node g (f a) ps) t
 
 @[simp] theorem value_map (f : α → β) (t : RoseTree α) : (map f t).value = f t.value := by
   cases t; simp
@@ -193,7 +201,7 @@ theorem map_injective {f : α → β} (hf : Function.Injective f) : Function.Inj
   | inr _ =>
     obtain ⟨g, hg⟩ := hf.hasLeftInverse
     exact Function.LeftInverse.injective (g := map g) fun t ↦ by
-      rw [← comp_map, hg.comp_eq_id, id_map]
+      rw [map_map, hg.comp_eq_id, map_id]
 
 /-! ### Counting -/
 
@@ -298,37 +306,29 @@ theorem leafList_ne_nil (t : RoseTree α) : t.leafList ≠ [] := by
       exact List.flatten_ne_nil_iff.2 ⟨c.leafList, List.mem_map_of_mem (List.mem_cons_self ..),
         ih c (List.mem_cons_self ..)⟩
 
-/-- The number of leaves. A single leaf counts as `1`. -/
-def numLeaves : RoseTree α → ℕ :=
-  fold fun _ ns ↦ max 1 ns.sum
+/-- The number of leaves is the length of the frontier. A single leaf counts as `1`. -/
+def numLeaves (t : RoseTree α) : ℕ := t.leafList.length
 
-@[simp] theorem numLeaves_node (a : α) (cs : List (RoseTree α)) :
-    numLeaves (node a cs) = max 1 (cs.map numLeaves).sum := by
-  simp only [numLeaves, fold_node]
+theorem length_leafList (t : RoseTree α) : t.leafList.length = t.numLeaves := rfl
 
-@[simp] theorem numLeaves_leaf (a : α) : numLeaves (leaf a) = 1 := by simp
+@[simp] theorem numLeaves_leaf (a : α) : numLeaves (leaf a) = 1 := by
+  rw [numLeaves, leafList_leaf, List.length_singleton]
 
-theorem numLeaves_pos (t : RoseTree α) : 0 < numLeaves t := by
-  cases t with
-  | node a cs =>
-    rw [numLeaves_node]
-    exact Nat.lt_of_lt_of_le Nat.one_pos (Nat.le_max_left _ _)
+theorem numLeaves_pos (t : RoseTree α) : 0 < numLeaves t :=
+  List.length_pos_iff.2 t.leafList_ne_nil
 
 theorem numLeaves_node_of_ne_nil (a : α) {cs : List (RoseTree α)} (h : cs ≠ []) :
     numLeaves (node a cs) = (cs.map numLeaves).sum := by
-  obtain ⟨c, cs, rfl⟩ := List.exists_cons_of_ne_nil h
-  rw [numLeaves_node, List.map_cons, List.sum_cons]
-  have := numLeaves_pos c
-  omega
+  rw [numLeaves, leafList_node_of_ne_nil a h, List.length_flatten, List.map_map]
+  rfl
 
-theorem length_leafList (t : RoseTree α) : t.leafList.length = t.numLeaves := by
-  induction t with
-  | node a cs ih =>
-    rcases eq_or_ne cs [] with rfl | hcs
-    · simp
-    · rw [leafList_node_of_ne_nil a hcs, numLeaves_node_of_ne_nil a hcs, List.length_flatten,
-        List.map_map]
-      exact congrArg List.sum (List.map_congr_left ih)
+@[simp] theorem numLeaves_node (a : α) (cs : List (RoseTree α)) :
+    numLeaves (node a cs) = max 1 (cs.map numLeaves).sum := by
+  rcases cs with _ | ⟨c, cs⟩
+  · rfl
+  · rw [numLeaves_node_of_ne_nil a (List.cons_ne_nil c cs), List.map_cons, List.sum_cons]
+    have := numLeaves_pos c
+    omega
 
 /-! ### Height -/
 
@@ -367,23 +367,11 @@ def arity (t : RoseTree α) : ℕ := t.children.length
 
 @[simp] theorem map_leaf (f : α → β) (a : α) : map f (leaf a) = leaf (f a) := rfl
 
-@[simp] theorem numNodes_map (f : α → β) (t : RoseTree α) : (map f t).numNodes = t.numNodes := by
-  induction t with
-  | node a cs ih =>
-    simp only [map_node, numNodes_node, List.map_map]
-    exact congrArg (· + 1) (congrArg List.sum (List.map_congr_left ih))
+@[simp] theorem numNodes_map (f : α → β) (t : RoseTree α) : (map f t).numNodes = t.numNodes :=
+  fold_hom numNodes (fun a ps ↦ numNodes_node (f a) ps) t
 
-@[simp] theorem numLeaves_map (f : α → β) (t : RoseTree α) : (map f t).numLeaves = t.numLeaves := by
-  induction t with
-  | node a cs ih =>
-    simp only [map_node, numLeaves_node, List.map_map]
-    exact congrArg (max 1 ·) (congrArg List.sum (List.map_congr_left ih))
-
-@[simp] theorem height_map (f : α → β) (t : RoseTree α) : (map f t).height = t.height := by
-  induction t with
-  | node a cs ih =>
-    simp only [map_node, height_node, List.map_map]
-    exact congrArg (· + 1) (congrArg (List.foldr max 0) (List.map_congr_left ih))
+@[simp] theorem height_map (f : α → β) (t : RoseTree α) : (map f t).height = t.height :=
+  fold_hom height (fun a ps ↦ height_node (f a) ps) t
 
 @[simp] theorem localTrees_map (f : α → β) (t : RoseTree α) :
     (map f t).localTrees = t.localTrees.map fun p ↦ (f p.1, p.2.map f) := by
@@ -403,6 +391,9 @@ def arity (t : RoseTree α) : ℕ := t.children.length
       simp only [map_node, List.map_cons, leafList_node_cons, List.map_flatten, List.map_map]
       exact congrArg List.flatten (congrArg₂ _ (ih c (List.mem_cons_self ..))
         (List.map_congr_left fun d hd ↦ ih d (List.mem_cons_of_mem _ hd)))
+
+@[simp] theorem numLeaves_map (f : α → β) (t : RoseTree α) : (map f t).numLeaves = t.numLeaves := by
+  rw [numLeaves, leafList_map, List.length_map, numLeaves]
 
 /-! ### Instances -/
 
