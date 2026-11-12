@@ -9,6 +9,7 @@ public import Studies.HeimKratzer1998
 public import Linglib.Semantics.Composition.Mode.Normal
 public import Linglib.Semantics.Composition.MetaCombinator.Adjunction
 public import Linglib.Semantics.Composition.Mode.Interpreter
+public import Linglib.Semantics.Composition.Mode.Traverse
 
 /-!
 # Bumford and Charlow 2026: effect-driven interpretation
@@ -938,6 +939,34 @@ theorem eval_unitR_only_iff (p : Prop) :
   change {q ∈ ({p} : Set Prop) | q} = {p} ↔ p
   refine ⟨fun h ↦ (h.ge rfl).2, fun hp ↦ Set.ext fun q ↦ ⟨And.left, fun hq ↦ ⟨hq, ?_⟩⟩⟩
   rwa [Set.mem_singleton_iff.1 hq]
+
+-- Each occurrence of an item evokes its alternatives on its own: with `x` in both argument
+-- positions, the alternatives pair every alternative to the first with every one to the second.
+example (alt : ∀ {a : Ty Unit}, a.Dom D → Set (a.Dom D)) (r : E → E → Prop) (x : E) :
+    WithAlternatives.alternatives
+        ((ManySorted.Language.Deriv.binary (L := effectGrammar (baseGrammar Unit))
+            (W := fun a ↦ a.Dom D)
+            (Mode.basic (.inl .fa) : Mode (baseGrammar Unit).Binary (.base () ⇒ .t) (.base ()) .t)
+            (.binary (Mode.basic (.inl .fa) :
+                Mode (baseGrammar Unit).Binary (.base () ⇒ .base () ⇒ .t) (.base ())
+                  (.base () ⇒ .t))
+              (.leaf r) (.leaf x))
+            (.leaf x)).realize
+          (effectGrammar.pointwise (.F : Eff Unit))
+          fun v ↦ (id <$> (⟨v, alt v⟩ : WithAlternatives _) : WithAlternatives _)) =
+      {p | ∃ r' ∈ alt (a := .base () ⇒ .base () ⇒ .t) r, ∃ a ∈ alt (a := .base ()) x,
+        ∃ b ∈ alt (a := .base ()) x, p = r' a b} := by
+  refine (effectGrammar.alternatives_realize_pointwise (W' := fun a ↦ a.Dom D) (fun {_} ↦ id)
+    (fun v ↦ ⟨v, alt v⟩) _).trans ?_
+  ext p
+  simp only [ManySorted.Language.Term.traverse, Set.mem_image,
+    WithAlternatives.mem_alternatives_seq,
+    WithAlternatives.mem_alternatives_map, Set.mem_ofPred_eq, exists_exists_and_eq_and]
+  constructor
+  · rintro ⟨_, ⟨_, ⟨r', hr, a, ha, rfl⟩, b, hb, rfl⟩, rfl⟩
+    exact ⟨r', hr, a, ha, b, hb, rfl⟩
+  · rintro ⟨r', hr, a, ha, b, hb, rfl⟩
+    exact ⟨_, ⟨_, ⟨r', hr, a, ha, rfl⟩, b, hb, rfl⟩, rfl⟩
 
 end Focus
 
