@@ -42,8 +42,9 @@ reading's content, which the theorems take as events. The non-factive reading le
 complement's probability alone when the common ground makes the complement independent of what
 the holder knows, a hypothesis of the theorems that derive the resolved models. Under unresolved
 factivity the factivity value of an index is likewise independent of the complement. The response
-noise of section 4.1, the truncated normal likelihood, is not modeled, so each model is the distribution
-of the intended answer. The paper's illustrative sentences are rows of `GroveWhite2025.Examples`.
+noise of section 4.1, the truncated normal likelihood, is not modeled, so each model is the
+distribution of the intended answer. The paper's illustrative sentences are rows of
+`GroveWhite2025.Examples`.
 
 ## References
 
