@@ -68,14 +68,14 @@ python3 scripts/checks.py selftest
 
 `sign` records the hash of the item's statement closure. The closure takes in:
 
-* the types and docstrings of the item's declarations;
+* the types of the item's declarations;
 * the types and bodies of the project definitions those types mention, followed transitively
   (Mathlib is trusted).
 
 It leaves out every proof, including proofs inside a statement or a definition's body, and the
-declarations used only in them. So a proof can change without affecting a sign-off. A change to a
-statement, or to a definition it uses, makes the sign-off stale, and `diff` shows the changes
-since the signed commit.
+declarations used only in them, and every docstring. So a proof or a docstring can change without
+affecting a sign-off. A change to a statement, or to a definition it uses, makes the sign-off
+stale, and `diff` shows the changes since the signed commit.
 
 The hash is taken over the elaborated terms, not their printed form. A change that printing would
 hide, such as to the type of a bound variable, still makes a sign-off stale. Renaming a bound

@@ -9,7 +9,7 @@ import Lean
 # Statement closures
 
 `scripts/checks.py` records human checks that Lean declarations state what a source says. A check
-covers a declaration's statement closure: its type and docstring, and every declaration of the
+covers a declaration's statement closure: its type, and every declaration of the
 project that the statement mentions, followed through the bodies of definitions but never into
 proofs. Mathlib and Lean are trusted and not followed.
 

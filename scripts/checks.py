@@ -4,7 +4,7 @@
 Each file `checks/<bib-key>.toml` lists the items of one source, its numbered definitions,
 results and data, and the Lean declarations that state each one (`checks/README.md`). A human who
 has read the source and the Lean signs an item, and the sign-off records a hash of the item's
-statement closure: the types and docstrings of its declarations, and the types and bodies of every
+statement closure: the types of its declarations, and the types and bodies of every
 project definition those statements mention, but no proofs. `lake exe checkClosure` computes the
 closures.
 
@@ -52,6 +52,7 @@ Sign-offs are made by people. `sign` refuses to run inside an agent session (`CL
 
 import argparse
 import concurrent.futures
+import copy
 import datetime
 import hashlib
 import json
@@ -68,7 +69,7 @@ CHECKS = ROOT / "checks"
 LIBRARIES = ["Linglib", "Studies"]
 KINDS = {"definition", "result", "datum"}
 RELATIONS = {"exact", "generalizes", "specializes", "variant", "refutes", "missing"}
-HASH_VERSION = "v2"
+HASH_VERSION = "v3"
 STANDARD_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 RENAMES = CHECKS / "renames.toml"
 
@@ -217,7 +218,7 @@ def item_hash(item, data):
     closure = set()
     for name in sorted(item["decls"]):
         root = data["roots"][name]
-        h.update(f"\0root\0{name}\0{root['doc']}\0{data['nodes'][name]['term']}".encode())
+        h.update(f"\0root\0{name}\0{data['nodes'][name]['term']}".encode())
         closure.update(root["closure"])
     for name in sorted(closure - set(item["decls"])):
         h.update(f"\0node\0{name}\0{data['nodes'][name]['term']}".encode())
@@ -636,6 +637,17 @@ def selftest_groups(data, groups):
     return failures
 
 
+def selftest_docstring(data, name):
+    """Whether the hash of an item stays the same when a declaration's docstring changes."""
+    full = f"ChecksFixture.{name}"
+    item = {"decls": [full]}
+    other = copy.deepcopy(data)
+    other["roots"][full]["doc"] += " A different docstring."
+    ok = item_hash(item, data) == item_hash(item, other)
+    print(f"{'ok  ' if ok else 'FAIL'}  a docstring keeps the hash  ({name})")
+    return not ok
+
+
 def cmd_selftest(args):
     names = sorted({f"ChecksFixture.{n}" for _, _, ns in SELFTEST_GROUPS + SELFTEST_RENAMED_GROUPS
                     for n in ns} | {f"ChecksFixture.{n}" for n, _ in SELFTEST_UNUSED})
@@ -645,6 +657,7 @@ def cmd_selftest(args):
         sys.exit("the fixture does not build:\n" + build.stdout[-2000:])
     data = check_closure(["ChecksFixture"], names, [])
     failures = selftest_groups(data, SELFTEST_GROUPS)
+    failures += selftest_docstring(data, SELFTEST_GROUPS[0][2][0])
     for name, unused in SELFTEST_UNUSED:
         ok = f"ChecksFixture.{unused}" not in data["roots"][f"ChecksFixture.{name}"]["closure"]
         failures += not ok
