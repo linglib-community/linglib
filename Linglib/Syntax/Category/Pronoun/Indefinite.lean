@@ -17,6 +17,8 @@ analysis of its distribution, which studies pair with the series.
 * `IndefinitePronoun`: a proform of the indefinite kind.
 * `IndefinitePronoun.ofProForm`, `IndefinitePronoun.ofInterrogative`: the indefinite a marker
   builds on a proform.
+* `ProForm.IsQuexistential`: the proform is an interrogative and an indefinite of the language
+  under one form.
 * `IndefinitePronoun.toWord`: its token, of UD pronoun type `Ind`, an R-expression where nominal
   (`IndefinitePronoun.bindingClassOf_toWord`).
 * `IndefinitePronoun.Series`: the members of a series, with the name it is cited by.
@@ -26,6 +28,7 @@ analysis of its distribution, which studies pair with the series.
 
 * [haspelmath-1997]
 * [chomsky-1981]
+* [hengeveld-iatridou-roelofsen-2023]
 -/
 
 @[expose] public section
@@ -61,6 +64,17 @@ theorem bindingClassOf_toWord (p : IndefinitePronoun) :
     Binding.bindingClassOf p.toWord =
       if Binding.IsNominal p.cat then some .rExpression else none :=
   p.toProForm.bindingClassOf_toWord (.inr (.inr (.inl rfl)))
+
+/-- A proform is a quexistential of a language when it is among its interrogatives and among its
+indefinites with no difference in spell-out, as Dutch *wat* is 'what' and 'something'
+([hengeveld-iatridou-roelofsen-2023]). -/
+def _root_.ProForm.IsQuexistential (p : ProForm) (interrogatives : Finset InterrogativePronoun)
+    (indefinites : Finset IndefinitePronoun) : Prop :=
+  ⟨p⟩ ∈ interrogatives ∧ ⟨p⟩ ∈ indefinites
+
+instance (p : ProForm) (I : Finset InterrogativePronoun) (J : Finset IndefinitePronoun) :
+    Decidable (p.IsQuexistential I J) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- An indefinite series is the indefinite pronouns formed alike across the ontological
 categories, as the English *some*-series *somebody*, *something*, *somewhere*. -/

@@ -1,11 +1,13 @@
 module
 
+public import Linglib.Fragments.Korean.Pronouns
 public import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!
 # Korean indefinite pronouns
 
-Korean uses its bare interrogatives as indefinites, as *nwukwu* 'who' for 'someone'. Its series are
+Korean uses its bare interrogatives as indefinites, as *nwukwu* 'who' for 'someone': they are
+the quexistentials of `Korean.Pronouns`. Its series are
 the general *-nka*-series and the free-choice *-na*- and *-tunci*-series on the interrogatives
 (*nwukwu-nka*, *nwukwu-na*, *nwukwu-tunci*), whose free-choice series also occur on the determiner
 *amu* with a generic noun, and the negative *-to*-series of *amu* with a generic noun (*amu
@@ -27,8 +29,7 @@ member of each. The members are those of Haspelmath's table, with *amu salam-to*
 namespace Korean.Indefinites
 
 /-- Bare *nwukwu* 'who' used as an indefinite. -/
-def nwukwu : IndefinitePronoun :=
-  { form := "nwukwu", script := some "누구", ontology := .person }
+def nwukwu : IndefinitePronoun := ⟨Pronouns.nwukwu⟩
 
 /-- *nwukwu-nka*, the interrogative with *-nka*. -/
 def nwukwuNka : IndefinitePronoun :=
@@ -55,10 +56,7 @@ def nwukwuTunci : IndefinitePronoun :=
 
 /-- The bare interrogatives used as indefinites. -/
 def interrogativeSeries : IndefinitePronoun.Series :=
-  ⟨"bare interrogative", {nwukwu, { form := "mues", ontology := .thing },
-    { form := "etten", ontology := .property },
-    { form := "eti", ontology := .place }, { form := "encey", ontology := .time },
-    { form := "enu", ontology := .determiner }}⟩
+  ⟨"bare interrogative", Pronouns.quexistentials.image (⟨·⟩)⟩
 
 /-- The *-nka*-series. -/
 def nkaSeries : IndefinitePronoun.Series :=

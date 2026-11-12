@@ -24,7 +24,7 @@ def pis : InterrogativePronoun → IndefinitePronoun :=
   IndefinitePronoun.ofInterrogative (· ++ "-pis")
 
 /-- Bare *pi* 'who' used as an indefinite. -/
-def pi : IndefinitePronoun := IndefinitePronoun.ofInterrogative id Pronouns.pi
+def pi : IndefinitePronoun := ⟨Pronouns.pi.toProForm⟩
 
 /-- *pi-pis*, the interrogative *pi* with *-pis*. -/
 def piPis : IndefinitePronoun := pis Pronouns.pi
@@ -33,7 +33,7 @@ def piPis : IndefinitePronoun := pis Pronouns.pi
 
 /-- The bare interrogatives used as indefinites. -/
 def interrogativeSeries : IndefinitePronoun.Series :=
-  ⟨"bare interrogative", Pronouns.interrogatives.image (IndefinitePronoun.ofInterrogative id)⟩
+  ⟨"bare interrogative", Pronouns.interrogatives.image (⟨·.toProForm⟩)⟩
 
 /-- The *-pis*-series. -/
 def pisSeries : IndefinitePronoun.Series := ⟨"-pis", Pronouns.interrogatives.image pis⟩
