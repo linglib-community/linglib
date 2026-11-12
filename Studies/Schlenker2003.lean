@@ -64,7 +64,7 @@ quantification over contexts whose worlds are its accessible worlds does. -/
 theorem doxastic_holdsAt_iff_say (V : Doxastic.DoxasticPredicate W E)
     (hV : Context.world '' compat x t w = {w' | w ~[V.access x] w'}) :
     V.HoldsAt x p w ↔
-      (∀ _ ∈ V.factivity, p w) ∧ Say compat x t w (fun τ ↦ p τ.innermost.world) τ := by
+      (V.IsFactive → p w) ∧ Say compat x t w (fun τ ↦ p τ.innermost.world) τ := by
   rw [say_world_only, hV, V.holdsAt_iff]
   rfl
 

@@ -174,10 +174,10 @@ holds, Common Ground status for a factive (10). -/
 theorem subset_compl_gapExt_sentence_iff (V : DoxasticPredicate W E) (a : E) :
     c ⊆ (Trivalent.gapExt (V.sentence a p))ᶜ ↔
       (Profile.ofFactivity V.factivity).condition c p := by
-  rw [DoxasticPredicate.compl_gapExt_sentence]
+  rw [DoxasticPredicate.compl_gapExt_sentence, DoxasticPredicate.IsFactive]
   cases V.factivity
-  · exact iff_of_true (fun _ _ _ h ↦ nomatch h) trivial
-  · exact ⟨fun h w hw ↦ h hw _ rfl, fun h _ hw _ _ ↦ h _ hw⟩
+  · exact iff_of_true (fun _ _ h ↦ absurd rfl h) trivial
+  · exact ⟨fun h w hw ↦ h hw nofun, fun h _ hw _ ↦ h _ hw⟩
 
 /-- yǐwéi's profile on the paper's analysis, beyond the non-factivity its fragment entry
 records. -/

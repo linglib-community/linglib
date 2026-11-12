@@ -143,7 +143,7 @@ theorem ivek_doxastic_identity_iff_holdsAt :
     F.ivek .doxastic .identity p x w ↔
       (⟨F.belief, none⟩ : Doxastic.DoxasticPredicate W E).HoldsAt x p w := by
   rw [Doxastic.DoxasticPredicate.holdsAt_iff, ivek_identity_iff]
-  exact ⟨fun h ↦ ⟨nofun, h⟩, fun h ↦ h.2⟩
+  exact ⟨fun h ↦ ⟨fun hf ↦ absurd rfl hf, h⟩, fun h ↦ h.2⟩
 
 /-! ### Conjunction and negation, §2 -/
 

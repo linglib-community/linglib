@@ -261,7 +261,8 @@ theorem holdsAt_hintikka_iff [DiscreteMeasurableSpace W] [Countable W]
   rw [hU, UpperSet.coe_Ici, ← Lassiter2017.certain_eq_preimage,
     Lassiter2017.mem_certain_iff_mem_ae _ .of_discrete, ← Filter.eventually_mem_set,
     ae_iff_of_countable]
-  simp [Doxastic.DoxasticPredicate.holdsAt_iff, hintikka, box_iff]
+  simp [Doxastic.DoxasticPredicate.holdsAt_iff, Doxastic.DoxasticPredicate.IsFactive, hintikka,
+    box_iff]
 
 end Hintikka
 

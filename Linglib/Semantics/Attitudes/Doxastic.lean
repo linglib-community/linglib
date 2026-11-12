@@ -20,6 +20,14 @@ records its factivity and whether its alternatives are epistemic, reflexive in e
 doxastic, and it is veridical exactly when
 [every denotation of that kind is](##Doxastic.isVeridical_forall_iff).
 
+A predicate can also entail its complement without presupposing it. The
+[veridical counterpart](##Doxastic.DoxasticPredicate.veridical) of a predicate asserts the
+complement at the world of evaluation; it is
+[true where the factive is](##Doxastic.DoxasticPredicate.posExt_sentence_veridical), and the
+factive is [false only where the complement is true
+besides](##Doxastic.DoxasticPredicate.negExt_sentence_eq_inter), so the two analyses of *know*
+part under negation.
+
 ## Implementation notes
 
 Veridicality is derived, not stored: a predicate that asserts its complement besides the box is
@@ -54,21 +62,34 @@ namespace DoxasticPredicate
 
 variable (V : DoxasticPredicate W E) (agent : E) (p : W → Prop) (w : W)
 
+/-- The predicate is factive when it carries a factivity class. -/
+def IsFactive : Prop := V.factivity ≠ none
+
+instance : Decidable V.IsFactive := inferInstanceAs (Decidable (_ ≠ _))
+
 open Classical in
 /-- Applied to a holder and a complement, the predicate is a trivalent proposition that
 presupposes the complement if the predicate is factive and asserts the box. -/
 noncomputable def sentence : W → Trivalent :=
-  Trivalent.condEvent (fun w ↦ ∀ _ ∈ V.factivity, p w) (□[V.access agent] p)
+  Trivalent.condEvent (fun w ↦ V.IsFactive → p w) (□[V.access agent] p)
 
 /-- ⟦x V that p⟧(w) is true when `sentence` is. -/
 def HoldsAt : Prop := V.sentence agent p w = .true
 
-theorem holdsAt_iff :
-    V.HoldsAt agent p w ↔ (∀ _ ∈ V.factivity, p w) ∧ □[V.access agent] p w := by
+theorem holdsAt_iff : V.HoldsAt agent p w ↔ (V.IsFactive → p w) ∧ □[V.access agent] p w := by
   simp [HoldsAt, sentence]
 
+theorem posExt_sentence :
+    Trivalent.posExt (V.sentence agent p) = {w | (V.IsFactive → p w) ∧ □[V.access agent] p w} := by
+  simp [sentence]
+
+theorem negExt_sentence :
+    Trivalent.negExt (V.sentence agent p) =
+      {w | (V.IsFactive → p w) ∧ ¬ □[V.access agent] p w} := by
+  simp [sentence]
+
 theorem compl_gapExt_sentence :
-    (Trivalent.gapExt (V.sentence agent p))ᶜ = {w | ∀ _ ∈ V.factivity, p w} := by
+    (Trivalent.gapExt (V.sentence agent p))ᶜ = {w | V.IsFactive → p w} := by
   ext w
   simp [sentence]
 
@@ -84,19 +105,63 @@ variable {V agent p w}
 theorem holdsAt_iff_box [(V.access agent).IsRefl] :
     V.HoldsAt agent p w ↔ □[V.access agent] p w := by
   rw [holdsAt_iff]
-  exact ⟨And.right, fun h ↦ ⟨fun _ _ ↦ box_T h, h⟩⟩
+  exact ⟨And.right, fun h ↦ ⟨fun _ ↦ box_T h, h⟩⟩
 
 /-- A predicate is veridical exactly when it is factive or reflexive in its accessibility for
 every holder. -/
-theorem isVeridical_iff : V.IsVeridical ↔ V.factivity ≠ none ∨ ∀ a, (V.access a).IsRefl := by
+theorem isVeridical_iff : V.IsVeridical ↔ V.IsFactive ∨ ∀ a, (V.access a).IsRefl := by
   refine ⟨fun h ↦ or_iff_not_imp_left.2 fun hF a ↦ ⟨fun v ↦ h a (v ~[V.access a] ·) v ?_⟩, ?_⟩
-  · rw [holdsAt_iff, not_not.1 hF]
-    exact ⟨nofun, fun _ ↦ id⟩
+  · exact (holdsAt_iff ..).2 ⟨fun hf ↦ absurd hf hF, fun _ ↦ id⟩
   · rintro (hF | hR) a q v h
-    · obtain ⟨f, hf⟩ := Option.ne_none_iff_exists'.1 hF
-      exact ((holdsAt_iff ..).1 h).1 f hf
+    · exact ((holdsAt_iff ..).1 h).1 hF
     · have := hR a
       exact box_T ((holdsAt_iff ..).1 h).2
+
+/-! ### Asserting the complement
+
+A predicate can entail its complement without presupposing it, by asserting it at the world of
+evaluation. Such a predicate is true where the factive over the same alternatives is, and the two
+part under negation: the factive is false only where the complement is true, and undefined where
+it is false, while its veridical counterpart is false there. -/
+
+variable (V) in
+/-- The veridical counterpart of a predicate asserts the complement where a factive presupposes
+it: the world of evaluation joins the holder's alternatives and nothing is presupposed. -/
+def veridical : DoxasticPredicate W E where
+  access a := V.access a ∪ SetRel.id
+
+theorem not_isFactive_veridical : ¬ V.veridical.IsFactive := fun h ↦ h rfl
+
+theorem holdsAt_veridical_iff :
+    V.veridical.HoldsAt agent p w ↔ □[V.access agent] p w ∧ p w := by
+  rw [holdsAt_iff, and_iff_right fun h ↦ absurd h not_isFactive_veridical]
+  exact (box_union _).trans (and_congr_right' box_id)
+
+theorem isVeridical_veridical : V.veridical.IsVeridical :=
+  fun _ _ _ h ↦ (holdsAt_veridical_iff.1 h).2
+
+/-- The veridical counterpart presupposes nothing. -/
+theorem gapExt_sentence_veridical : Trivalent.gapExt (V.veridical.sentence agent p) = ∅ := by
+  rw [← compl_compl (Trivalent.gapExt _), compl_gapExt_sentence]
+  simp [not_isFactive_veridical]
+
+/-- A factive predicate and its veridical counterpart are true at the same worlds. -/
+theorem posExt_sentence_veridical (hV : V.IsFactive) :
+    Trivalent.posExt (V.veridical.sentence agent p) = Trivalent.posExt (V.sentence agent p) := by
+  ext w
+  exact holdsAt_veridical_iff.trans
+    ((holdsAt_iff ..).trans ⟨fun h ↦ ⟨h.2, h.1 hV⟩, fun h ↦ ⟨fun _ ↦ h.2, h.1⟩⟩).symm
+
+/-- A factive predicate is false at the worlds where its veridical counterpart is false and the
+complement is true. -/
+theorem negExt_sentence_eq_inter (hV : V.IsFactive) :
+    Trivalent.negExt (V.sentence agent p) =
+      Trivalent.negExt (V.veridical.sentence agent p) ∩ {w | p w} := by
+  ext w
+  rw [Set.mem_inter_iff, negExt_sentence, negExt_sentence]
+  exact ⟨fun h ↦ ⟨⟨fun hf ↦ absurd hf not_isFactive_veridical,
+      fun hb ↦ h.2 ((box_union _).1 hb).1⟩, h.1 hV⟩,
+    fun h ↦ ⟨fun _ ↦ h.2, fun hb ↦ h.1.2 ((box_union _).2 ⟨hb, box_id.2 h.2⟩)⟩⟩
 
 end DoxasticPredicate
 
@@ -111,8 +176,9 @@ theorem isVeridical_forall_iff (fac : Option Factivity) (b : Alternatives) :
   · by_contra hn
     simp only [Attitude.IsVeridical, ne_eq, not_or, not_not] at hn
     exact h Unit Unit ⟨fun _ ↦ ∅, none⟩ hn.1.symm (fun hb ↦ absurd hb hn.2) () (fun _ ↦ False) ()
-      ((DoxasticPredicate.holdsAt_iff ..).2 ⟨nofun, fun _ hv ↦ absurd hv (Set.notMem_empty _)⟩)
-  · rw [DoxasticPredicate.isVeridical_iff, hf]
-    exact h.imp id hr
+      ((DoxasticPredicate.holdsAt_iff ..).2
+        ⟨fun hF ↦ absurd rfl hF, fun _ hv ↦ absurd hv (Set.notMem_empty _)⟩)
+  · rw [DoxasticPredicate.isVeridical_iff]
+    exact h.imp (fun hfac hn ↦ hfac (hf ▸ hn)) hr
 
 end Doxastic
