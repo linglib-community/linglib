@@ -124,10 +124,8 @@ theorem bundle_eq_toFinset_features (S : UnorderedTree (F ⊕ Unit)) :
 
 omit [DecidableEq F] in
 theorem leafFeatures_node_inr (cs : List (RoseTree (F ⊕ Unit))) :
-    leafFeatures (.node (.inr ()) cs) = (cs.map leafFeatures).sum := by
-  cases cs with
-  | nil => rfl
-  | cons c cs => exact map_leaves_node_cons _ c cs (Multiset.filterMapAddMonoidHom _)
+    leafFeatures (.node (.inr ()) cs) = (cs.map leafFeatures).sum :=
+  map_leaves_node_of_map_singleton_eq_zero (Multiset.filterMapAddMonoidHom _) _ rfl cs
 
 /-! ### Fusion
 

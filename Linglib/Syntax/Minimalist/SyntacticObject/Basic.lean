@@ -489,11 +489,11 @@ def map (f : L → L') (p : LinearizedSyntacticObject L) : LinearizedSyntacticOb
   Subtype.ext (UnorderedTree.map_mk _ _).symm
 
 @[simp] theorem map_id (p : LinearizedSyntacticObject L) : p.map id = p :=
-  Subtype.ext (by rw [val_map, Vertex.map_id, RoseTree.id_map])
+  Subtype.ext (by rw [val_map, Vertex.map_id, RoseTree.map_id])
 
 @[simp] theorem map_map (f : L → L') (g : L' → L'') (p : LinearizedSyntacticObject L) :
     (p.map f).map g = p.map (g ∘ f) :=
-  Subtype.ext (by rw [val_map, val_map, val_map, ← RoseTree.comp_map, Vertex.map_comp])
+  Subtype.ext (by rw [val_map, val_map, val_map, RoseTree.map_map, Vertex.map_comp])
 
 theorem map_injective {f : L → L'} (hf : Function.Injective f) :
     Function.Injective (map f : LinearizedSyntacticObject L → LinearizedSyntacticObject L') :=

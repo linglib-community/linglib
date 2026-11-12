@@ -45,29 +45,16 @@ theorem holds_pair (a : Vertex) (l r : RoseTree Vertex) :
     Holds y (.node a [l, r]) ↔ Holds y l ∨ Holds y r := by
   simp [Holds]
 
-private theorem mem_list_sum {α : Type*} {a : α} {L : List (Multiset α)} :
-    a ∈ L.sum ↔ ∃ s ∈ L, a ∈ s := by
-  induction L with
-  | nil => simp
-  | cons s L ih => simp [ih]
-
 theorem holds_node_of_mem {a : Vertex} {cs : List (RoseTree Vertex)} {c : RoseTree Vertex}
-    (hc : c ∈ cs) (h : Holds y c) : Holds y (.node a cs) := by
-  rcases cs with _ | ⟨c₀, cs⟩
-  · simp at hc
-  · rw [Holds, leaves_node_cons, mem_list_sum]
-    exact ⟨c.leaves, List.mem_map_of_mem hc, h⟩
+    (hc : c ∈ cs) (h : Holds y c) : Holds y (.node a cs) :=
+  Multiset.mem_of_le (leaves_le_of_mem_children hc) h
 
 theorem exists_mem_of_holds_map {α : Type*} {a : Vertex} {cs : List α}
     {f : α → RoseTree Vertex} (hne : cs ≠ []) (h : Holds y (.node a (cs.map f))) :
     ∃ c ∈ cs, Holds y (f c) := by
-  rcases cs with _ | ⟨c₀, cs⟩
-  · exact absurd rfl hne
-  · rw [List.map_cons, Holds, leaves_node_cons, mem_list_sum] at h
-    obtain ⟨s, hs, hy⟩ := h
-    obtain ⟨c, hc, rfl⟩ := List.mem_map.1 hs
-    obtain ⟨c', hc', rfl⟩ := List.mem_map.1 (List.map_cons (f := f) ▸ hc)
-    exact ⟨c', hc', hy⟩
+  obtain ⟨_, ht, hy⟩ := (mem_leaves_node_of_ne_nil a (mt List.map_eq_nil_iff.1 hne)).1 h
+  obtain ⟨c, hc, rfl⟩ := List.mem_map.1 ht
+  exact ⟨c, hc, hy⟩
 
 theorem holds_of_mem_subtrees {r z : RoseTree Vertex} (hr : r ∈ z.subtrees)
     (h : Holds y r) : Holds y z := by

@@ -324,11 +324,11 @@ end Inversion
 
 @[simp] theorem map_id (t : Tree C W) : t.map id = t := by
   rw [map, show Label.mapWord (C := C) (id : W → W) = id from funext Label.mapWord_id]
-  exact RoseTree.id_map t
+  exact RoseTree.map_id t
 
 @[simp] theorem map_map (g : W' → W'') (f : W → W') (t : Tree C W) :
     (t.map f).map g = t.map (g ∘ f) := by
-  simp only [map, ← RoseTree.comp_map]
+  simp only [map, RoseTree.map_map]
   congr 1
   funext l
   exact Label.mapWord_mapWord g f l
@@ -350,12 +350,8 @@ def yield (t : Tree C W) : List W := t.terminals.map Prod.snd
 @[simp] theorem terminals_terminal (c : C) (w : W) : (terminal c w).terminals = [(c, w)] := rfl
 
 @[simp] theorem terminals_phrase (c : C) (k : PhraseKind) (cs : List (Tree C W)) :
-    (phrase c k cs).terminals = cs.flatMap terminals := by
-  rcases cs with _ | ⟨c', cs⟩
-  · rfl
-  · simp only [terminals, phrase, RoseTree.leafList_node_cons, List.filterMap_flatten,
-      List.map_map, List.flatMap_def]
-    rfl
+    (phrase c k cs).terminals = cs.flatMap terminals :=
+  (RoseTree.filterMap_leafList_node_of_eq_none rfl cs).trans (List.flatMap_def ..).symm
 
 @[simp] theorem terminals_trace (n : ℕ) (c : C) : (trace n c : Tree C W).terminals = [] := rfl
 

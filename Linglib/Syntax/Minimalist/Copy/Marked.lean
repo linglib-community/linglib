@@ -109,8 +109,8 @@ def contract : LinearizedSyntacticObject := ⟨contractTree t.val, isSyntacticOb
 
 theorem map_snd_map (s : RoseTree Vertex) :
     (s.map ((none, ·) : Vertex → CopyMark × Vertex)).map Prod.snd = s := by
-  rw [← comp_map]
-  exact id_map s
+  rw [RoseTree.map_map]
+  exact RoseTree.map_id s
 
 /-- A linearized object with no lower copy. -/
 def ofLinearized (p : LinearizedSyntacticObject) : Marked :=

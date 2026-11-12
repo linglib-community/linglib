@@ -60,9 +60,8 @@ def yield (t : RoseTree (Symbol T N)) : List T := t.leafList.filterMap Symbol.te
   yield_node_nil s
 
 theorem yield_node_of_ne_nil (s : Symbol T N) {cs : List (RoseTree (Symbol T N))} (h : cs ≠ []) :
-    yield (node s cs) = (cs.map yield).flatten := by
-  rw [yield, leafList_node_of_ne_nil _ h, List.filterMap_flatten, List.map_map]
-  rfl
+    yield (node s cs) = (cs.map yield).flatten :=
+  filterMap_leafList_node_of_ne_nil _ s h
 
 @[simp] theorem yield_node_cons (s : Symbol T N) (c : RoseTree (Symbol T N))
     (cs : List (RoseTree (Symbol T N))) :
@@ -70,10 +69,8 @@ theorem yield_node_of_ne_nil (s : Symbol T N) {cs : List (RoseTree (Symbol T N))
   yield_node_of_ne_nil s (List.cons_ne_nil c cs)
 
 @[simp] theorem yield_node_nonterminal (A : N) (cs : List (RoseTree (Symbol T N))) :
-    yield (node (.nonterminal A) cs) = (cs.map yield).flatten := by
-  cases cs with
-  | nil => simp
-  | cons c cs => exact yield_node_cons _ c cs
+    yield (node (.nonterminal A) cs) = (cs.map yield).flatten :=
+  filterMap_leafList_node_of_eq_none rfl cs
 
 @[simp] theorem yield_map {N' : Type*} (f : N → N') (t : RoseTree (Symbol T N)) :
     (t.map (Symbol.mapNonterminal f)).yield = t.yield := by

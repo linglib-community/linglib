@@ -226,8 +226,30 @@ theorem fold_perm {g : α → List β → β}
 theorem numNodes_perm {t s : RoseTree α} (h : Perm t s) : t.numNodes = s.numNodes :=
   fold_perm (fun _ _ _ h' ↦ congrArg (· + 1) h'.sum_eq) h
 
+private theorem flatten_perm_of_rel : ∀ {l₁ l₂ : List (List β)},
+    Multiset.Rel List.Perm (↑l₁ : Multiset (List β)) ↑l₂ → l₁.flatten.Perm l₂.flatten
+  | [], l₂, h => by
+    rw [Multiset.coe_nil, Multiset.rel_zero_left, Multiset.coe_eq_zero] at h
+    rw [h]
+  | x :: xs, l₂, h => by
+    obtain ⟨y, G, hxy, hG, he⟩ := Multiset.rel_cons_left.1 (Multiset.cons_coe x xs ▸ h)
+    induction G using Quot.inductionOn with
+    | h ys =>
+      exact ((hxy.append (flatten_perm_of_rel hG)).trans (List.flatten_cons ▸ .refl _)).trans
+        (Multiset.coe_eq_coe.1 he).flatten.symm
+
+/-- Reordering children permutes the frontier. -/
+theorem Perm.leafList_perm {t s : RoseTree α} (h : Perm t s) : t.leafList.Perm s.leafList := by
+  refine fold_rel (S := List.Perm) (fun a {l₁ l₂} h' ↦ ?_) h
+  have hc := Multiset.card_eq_card_of_rel h'
+  rcases l₁ with _ | ⟨x, xs⟩ <;> rcases l₂ with _ | ⟨y, ys⟩
+  · rfl
+  · simp at hc
+  · simp at hc
+  · exact flatten_perm_of_rel h'
+
 theorem numLeaves_perm {t s : RoseTree α} (h : Perm t s) : t.numLeaves = s.numLeaves :=
-  fold_perm (fun _ _ _ h' ↦ congrArg (max 1) h'.sum_eq) h
+  h.leafList_perm.length_eq
 
 theorem height_perm {t s : RoseTree α} (h : Perm t s) : t.height = s.height :=
   fold_perm (fun _ _ _ h' ↦ congrArg (· + 1) (h'.foldr_eq 0)) h
