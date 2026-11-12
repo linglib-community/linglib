@@ -35,6 +35,10 @@ The focus semantic value an assertion's question must lie in is an argument of `
 
 * The embedded cases, where oddness persists in environments that satisfy both conditions, are
   not represented.
+* A disjunction *φ or (not φ and ψ)* means what the simpler *φ or ψ* means, so it is
+  [never a good answer](##KatzirSingh2015.not_goodAnswer_disj_compl_inter); [katzir-singh-2014]
+  reports such sentences as appropriate and compares complexity locally instead, which is not
+  formalized.
 * The judgments are not yet rows of `Data/Examples`.
 
 ## References
@@ -45,6 +49,7 @@ The focus semantic value an assertion's question must lie in is an argument of `
 * [heim-1991]
 * [hurford-1974]
 * [katzir-2007]
+* [katzir-singh-2014]
 * [groenendijk-stokhof-1984]
 * [rooth-1992]
 -/
@@ -116,6 +121,14 @@ theorem not_goodAnswer_conj {k φ ψ : U} (hk : meaning k = meaning φ ∩ meani
     (hψ : meaning φ ⊆ meaning ψ) (hc : complexity φ < complexity k) :
     ¬ GoodAnswer meaning complexity Q k w :=
   not_goodAnswer_of_meaning_eq hc (hk.trans (inter_eq_left.2 hψ)).symm
+
+-- the disjunctions of [katzir-singh-2014] (25), which mean what a plain disjunction means
+theorem not_goodAnswer_disj_compl_inter {d e φ ψ : U}
+    (hd : meaning d = meaning φ ∪ (meaning φ)ᶜ ∩ meaning ψ)
+    (he : meaning e = meaning φ ∪ meaning ψ) (hc : complexity e < complexity d) :
+    ¬ GoodAnswer meaning complexity Q d w :=
+  not_goodAnswer_of_meaning_eq hc (by rw [hd, he, union_inter_distrib_left, union_compl_self,
+    univ_inter])
 
 variable {c : Set W} {good good' : Set (Question W)} {focus : U → Set (Set W)}
 
