@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.Lattice
 public import Mathlib.Order.Interval.Set.LinearOrder
+public import Mathlib.Order.Hom.CompleteLattice
 public import Linglib.Core.Order.UpperLower.Closure
 public import Linglib.Core.Order.StrictBounds
 public import Linglib.Semantics.Degree.Comparison
@@ -344,7 +345,7 @@ theorem mem_gtOverSet_iff_subset_Iio (y : α) : y ∈ μ ⁻¹' strictUpperBound
   Iff.rfl
 
 theorem gtOverSet_isAntiAdditive : IsAntiAdditive (μ ⁻¹' strictUpperBounds ·) :=
-  isAntiAdditive_forall_mem fun d y ↦ d < μ y
+  (isAntiAdditive_upperPolar (· < ·)).infHom_comp (CompleteLatticeHom.setPreimage μ)
 
 theorem gtOverSet_eq_singleton_of_isGreatest {m : D} (hm : IsGreatest Δ m) :
     μ ⁻¹' strictUpperBounds Δ = μ ⁻¹' strictUpperBounds {m} := by
