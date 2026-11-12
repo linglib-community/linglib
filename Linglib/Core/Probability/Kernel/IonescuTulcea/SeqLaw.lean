@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Probability.Kernel.IonescuTulcea.Maps
 public import Linglib.Core.Probability.Kernel.IonescuTulcea.PartialTraj
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Data.Fin.Tuple.Take
@@ -150,22 +151,6 @@ end Singleton
 /-! ### The law as a partial trajectory -/
 
 section Traj
-
-/-- The times `0, …, n` are the indices of the first `n + 1` draws. -/
-def _root_.Nat.iicEquivFin (n : ℕ) : (Iic n : Finset ℕ) ≃ Fin (n + 1) where
-  toFun i := ⟨i, Nat.lt_succ_of_le (mem_Iic.1 i.2)⟩
-  invFun j := ⟨j, mem_Iic.2 (Nat.le_of_lt_succ j.2)⟩
-  left_inv _ := rfl
-  right_inv _ := rfl
-
-/-- A trajectory up to time `n` as the sequence of its first `n + 1` draws. -/
-noncomputable def trajEquivFin (n : ℕ) : (Π _ : Iic n, α) ≃ᵐ (Fin (n + 1) → α) :=
-  MeasurableEquiv.piCongrLeft (fun _ ↦ α) (Nat.iicEquivFin n)
-
-@[simp] theorem trajEquivFin_apply (n : ℕ) (x : Π _ : Iic n, α) (j : Fin (n + 1)) :
-    trajEquivFin n x j = x ⟨j, mem_Iic.2 (Nat.le_of_lt_succ j.2)⟩ := by
-  simp [trajEquivFin, MeasurableEquiv.coe_piCongrLeft, Equiv.piCongrLeft_apply_eq_cast]
-  rfl
 
 variable (κ) in
 /-- The prediction rule read on trajectories: after the draws at times `0, …, n`, the law of the

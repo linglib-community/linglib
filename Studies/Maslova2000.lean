@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Probability.Exchangeable
+public import Linglib.Core.Probability.Exchangeable.Basic
 public import Linglib.Core.Probability.Kernel.Invariance
 public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.Probability.ConditionalProbability
