@@ -774,7 +774,6 @@ import Linglib.Semantics.Modification.Basic
 import Linglib.Semantics.Modification.Classification
 import Linglib.Semantics.Modification.Coercion
 import Linglib.Semantics.Mood.Defs
-import Linglib.Semantics.Mood.SpeechEvent
 import Linglib.Semantics.Mood.State
 import Linglib.Semantics.Mood.Verbal
 import Linglib.Semantics.Plurality.Algebra
