@@ -35,7 +35,7 @@ own a dog*, the kind pronoun *them* is therefore interpretable and a partitive i
 * Individuals form any join semilattice, as in the paper (§3); the models are Link's nonempty
   sets of atoms, `Mereology.Individual`. A kind is a function from worlds to partial
   individuals, and σ is ι of `IsGreatest`, as in (13a), so *it* is ∩, `Kind.down`. The
-  sufficient condition for σ is stated for finite extensions (`Kind.down_isSome_of_supClosed`),
+  sufficient condition for σ is stated for finite extensions (`Kind.down_dom_of_supClosed`),
   where the paper has closure under arbitrary sums, since Link's model has no empty sum.
 
 ## TODO
@@ -70,12 +70,12 @@ section Kinds
 variable [SemilatticeSup E]
 
 /-- *they* (17b) denotes the kind of the plural closure (14) of a concept. -/
-noncomputable def they (P : World → Set E) : World → Option E :=
+noncomputable def they (P : World → Set E) : World → Part E :=
   Kind.down fun w ↦ supClosure (P w)
 
 /-- `pronoun noun` is the kind pronoun that the head noun selects (12): *they* for a count noun,
 and for a mass noun *it*, which denotes the kind of the concept, ∩ as in (13b), (17a). -/
-noncomputable def pronoun (noun : English.Nouns.Noun) : (World → Set E) → World → Option E :=
+noncomputable def pronoun (noun : English.Nouns.Noun) : (World → Set E) → World → Part E :=
   if noun.IsCount then they else Kind.down
 
 theorem pronoun_of_isCount {noun : English.Nouns.Noun} (h : noun.IsCount) :
@@ -107,7 +107,7 @@ def spider : Unit → Set (Individual Bool) :=
   fun _ ↦ {Individual.atom true, Individual.atom false}
 
 /-- The kind of the singular count concept is undefined with two instances (15c). -/
-theorem spider_no_kind : Kind.down spider () = none := by
+theorem spider_no_kind : Kind.down spider () = Part.none := by
   refine IsAntichain.iota_isGreatest_eq_none ?_ (Set.mem_insert _ _)
     (Set.mem_insert_of_mem _ rfl) fun h ↦ Bool.noConfusion (Set.singleton_eq_singleton_iff.1
       (congrArg Subtype.val h))
@@ -115,8 +115,8 @@ theorem spider_no_kind : Kind.down spider () = none := by
   exacts [hne rfl, Bool.noConfusion (h rfl), Bool.noConfusion (h rfl), hne rfl]
 
 /-- The kind of the plural closure of *spider* is the sum of the two spiders (15b). -/
-theorem spiders_kind : they spider () = some (Individual.atom true ⊔ Individual.atom false) := by
-  refine iota_isGreatest_eq_some_iff.2
+theorem spiders_kind : (Individual.atom true ⊔ Individual.atom false) ∈ they spider () := by
+  refine mem_iota_isGreatest.2
     ⟨supClosed_supClosure (subset_supClosure (Set.mem_insert _ _))
       (subset_supClosure (Set.mem_insert_of_mem _ rfl)), ?_⟩
   refine supClosure_min (t := Set.Iic (Individual.atom true ⊔ Individual.atom false)) ?_
@@ -132,7 +132,7 @@ it, a kind, or an index (§4); `undef` marks an index outside the assignment's d
 inductive DRefVal (World E : Type*)
   | entity (x : E)
   | concept (P : World → Set E) (noun : English.Nouns.Noun)
-  | kind (k : World → Option E)
+  | kind (k : World → Part E)
   | index (w : World)
   | undef
 

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Part
 
 /-!
 # Presupposition in trivalent semantics
@@ -80,43 +81,48 @@ theorem strawsonEntails_not_trans :
 
 /-! ### Definite descriptions -/
 
-/-- The definite-description combinator, for a partial selector `referent` returning the referent
-at each world (or `none` where none is determined) and a `scope` asserted of it, is the scope's
-value at the referent where one is selected and undefined elsewhere. Every definite denotation
-instantiates the selector, with the Russellian iota `iota` over a restrictor, over the
-restrictor conjoined with identity to an antecedent, or with Donnellan's attributive use. -/
-noncomputable def presupOfReferent {E : Type*} (referent : W → Option E) (scope : E → W → Prop) :
+/-- The definite-description combinator, for a partial `referent` at each world and a `scope`
+asserted of it, is the scope's value at the referent where there is one and undefined elsewhere.
+Every definite denotation instantiates the referent, with the Russellian iota `iota` over a
+restrictor, over the restrictor conjoined with identity to an antecedent, or with Donnellan's
+attributive use. -/
+noncomputable def presupOfReferent {E : Type*} (referent : W → Part E) (scope : E → W → Prop) :
     W → Trivalent :=
-  fun w ↦ (referent w).elim .undefined fun e ↦ Trivalent.ofProp (scope e w)
+  fun w ↦ Trivalent.ofPart ((referent w).map (scope · w))
 
 section PresupOfReferent
 
-variable {E : Type*} {referent : W → Option E} {scope : E → W → Prop} {w : W}
+variable {E : Type*} {referent : W → Part E} {scope : E → W → Prop} {w : W}
 
 @[simp] theorem presupOfReferent_eq_undefined_iff :
-    presupOfReferent referent scope w = .undefined ↔ referent w = none := by
-  cases h : referent w <;> simp [presupOfReferent, h]
+    presupOfReferent referent scope w = .undefined ↔ ¬ (referent w).Dom := by
+  simp [presupOfReferent]
 
 @[simp] theorem presupOfReferent_eq_true_iff :
-    presupOfReferent referent scope w = .true ↔ ∃ e, referent w = some e ∧ scope e w := by
-  cases h : referent w <;> simp [presupOfReferent, h]
+    presupOfReferent referent scope w = .true ↔ ∃ e ∈ referent w, scope e w := by
+  simp only [presupOfReferent, Trivalent.ofPart_eq_true_iff, Part.mem_map_iff, eq_iff_iff]
+  exact ⟨fun ⟨_, ⟨e, he, h⟩, ha⟩ ↦ ⟨e, he, h.2 ha⟩, fun ⟨e, he, h⟩ ↦ ⟨_, ⟨e, he, .rfl⟩, h⟩⟩
 
 @[simp] theorem presupOfReferent_eq_false_iff :
-    presupOfReferent referent scope w = .false ↔ ∃ e, referent w = some e ∧ ¬ scope e w := by
-  cases h : referent w <;> simp [presupOfReferent, h]
+    presupOfReferent referent scope w = .false ↔ ∃ e ∈ referent w, ¬ scope e w := by
+  simp only [presupOfReferent, Trivalent.ofPart_eq_false_iff, Part.mem_map_iff, eq_iff_iff]
+  exact ⟨fun ⟨_, ⟨e, he, h⟩, ha⟩ ↦ ⟨e, he, fun hs ↦ ha (h.1 hs)⟩,
+    fun ⟨e, he, h⟩ ↦ ⟨_, ⟨e, he, .rfl⟩, h⟩⟩
 
 /-- Negation is a hole for the presupposition of a definite. -/
 theorem presupOfReferent_not :
     presupOfReferent referent (fun e w ↦ ¬ scope e w) w = (presupOfReferent referent scope w)ᶜ :=
   Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp) (by simp)
 
-theorem presupOfReferent_of_some {e : E} (h : referent w = some e) :
-    presupOfReferent referent scope w = Trivalent.ofProp (scope e w) := by
-  simp [presupOfReferent, h]
+theorem presupOfReferent_of_mem {e : E} (h : e ∈ referent w) :
+    presupOfReferent referent scope w = Trivalent.ofProp (scope e w) :=
+  Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff
+    (by simpa using Part.dom_iff_mem.2 ⟨e, h⟩)
+    (by simpa using ⟨fun ⟨_, he', hs⟩ ↦ Part.mem_unique he' h ▸ hs, fun hs ↦ ⟨e, h, hs⟩⟩)
 
-theorem presupOfReferent_of_none (h : referent w = none) :
-    presupOfReferent referent scope w = .undefined := by
-  simp [presupOfReferent, h]
+theorem presupOfReferent_of_not_dom (h : ¬ (referent w).Dom) :
+    presupOfReferent referent scope w = .undefined :=
+  presupOfReferent_eq_undefined_iff.2 h
 
 end PresupOfReferent
 

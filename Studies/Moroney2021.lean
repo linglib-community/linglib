@@ -30,7 +30,7 @@ optional.
 
 The optional demonstratives *nâj* 'this' and *nân* 'that' presuppose what the bare definite does,
 a unique referent in the situation, and [refer to it when it lies in their deictic
-domain](##demDenotation_eq_some_iff), near the speaker for *nâj* and away from the speaker for
+domain](##mem_demDenotation), near the speaker for *nâj* and away from the speaker for
 *nân*. That spatial content is why a demonstrative [is not the
 definite](##demDenotation_eq_bare_iff) and so blocks none of the bare noun's readings.
 
@@ -235,16 +235,16 @@ variable {W E P T : Type} [PartialOrder E] (c : Kaplan.Context W E P T) (χ : Se
 /-- The demonstrative of (147)–(148) presupposes, as the bare definite does, a unique `P` in the
 situation, and denotes the `P` in its deictic domain, `ιx[P(x) ∧ close.to.speaker(x)]` for
 *nâj*. -/
-noncomputable def demDenotation (R : Restrictor E W) (g : ℕ → E) (s : W) : Option E :=
+noncomputable def demDenotation (R : Restrictor E W) (g : ℕ → E) (s : W) : Part E :=
   (⟦bare R⟧ g s).bind fun _ ↦ iota (R g s ∩ χ.image (c.participants ⁻¹' d.deixis))
 
 /-- A demonstrative refers to the bare noun's referent when that referent lies in its deictic
 domain. -/
-theorem demDenotation_eq_some_iff {R : Restrictor E W} {g : ℕ → E} {s : W} {x : E} :
-    demDenotation c χ d R g s = some x ↔
-      ⟦bare R⟧ g s = some x ∧ x ∈ χ.image (c.participants ⁻¹' d.deixis) := by
-  simp only [demDenotation, Option.bind_eq_some_iff, DefiniteDescription.denote_bare_eq_some_iff,
-    iota_eq_some_iff]
+theorem mem_demDenotation {R : Restrictor E W} {g : ℕ → E} {s : W} {x : E} :
+    x ∈ demDenotation c χ d R g s ↔
+      x ∈ ⟦bare R⟧ g s ∧ x ∈ χ.image (c.participants ⁻¹' d.deixis) := by
+  simp only [demDenotation, Part.mem_bind_iff, DefiniteDescription.mem_denote_bare,
+    mem_iota]
   constructor
   · rintro ⟨y, ⟨-, hy⟩, ⟨hx, hxd⟩, -⟩
     exact ⟨⟨hx, fun z hz ↦ (hy z hz).trans (hy x hx).symm⟩, hxd⟩
@@ -255,16 +255,15 @@ theorem demDenotation_eq_some_iff {R : Restrictor E W} {g : ℕ → E} {s : W} {
 domain holds every referent, so a demonstrative with spatial content is not the definite and
 blocks no definite reading of the bare noun (p. 62). -/
 theorem demDenotation_eq_bare_iff (g : ℕ → E) (s : W) :
-    (∀ R : Restrictor E W, (⟦bare R⟧ g s).isSome → demDenotation c χ d R g s = ⟦bare R⟧ g s) ↔
+    (∀ R : Restrictor E W, (⟦bare R⟧ g s).Dom → demDenotation c χ d R g s = ⟦bare R⟧ g s) ↔
       ∀ x, x ∈ χ.image (c.participants ⁻¹' d.deixis) := by
   refine ⟨fun h x ↦ ?_, fun h R hR ↦ ?_⟩
-  · have hb : ⟦bare fun (_ : ℕ → E) (_ : W) y ↦ y = x⟧ g s = some x :=
-      (DefiniteDescription.denote_bare_eq_some_iff _ g s).2 ⟨rfl, fun _ ↦ id⟩
-    exact ((demDenotation_eq_some_iff c χ d).1
-      ((h _ (Option.isSome_iff_exists.2 ⟨x, hb⟩)).trans hb)).2
-  · obtain ⟨x, hx⟩ := Option.isSome_iff_exists.1 hR
-    rw [hx, demDenotation_eq_some_iff]
-    exact ⟨hx, h x⟩
+  · have hb : x ∈ ⟦bare fun (_ : ℕ → E) (_ : W) y ↦ y = x⟧ g s :=
+      (DefiniteDescription.mem_denote_bare _ g s).2 ⟨rfl, fun _ ↦ id⟩
+    exact ((mem_demDenotation c χ d).1 (h _ (Part.dom_iff_mem.2 ⟨x, hb⟩) ▸ hb)).2
+  · obtain ⟨x, hx⟩ := Part.dom_iff_mem.1 hR
+    rw [Part.eq_some_iff.2 hx]
+    exact Part.eq_some_iff.2 ((mem_demDenotation c χ d).2 ⟨hx, h x⟩)
 
 -- close.to.speaker, (147)
 theorem mem_image_naj_iff {x : E} :

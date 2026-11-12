@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Reference.Character
-public import Linglib.Semantics.Reference.Nominal
+public import Linglib.Semantics.Reference.Definite
 public import Linglib.Semantics.Reference.Iota
 
 /-!
@@ -14,8 +14,8 @@ public import Linglib.Semantics.Reference.Iota
 
 Donnellan distinguishes two uses of a definite description. Used attributively, *the φ* denotes
 at each world whoever uniquely satisfies φ there, the Russellian iota taken pointwise
-(`attributive`, `attributive_eq_some_iff`), and as a nominal denotation its only presupposition
-is that the iota is defined (`attributiveNominal`, `attributiveNominal_resolve_eq_one_iff`). Used
+(`attributive`, `mem_attributive`), and as a definite denotation it denotes where the
+iota is defined (`attributiveDefinite`, `attributiveDefinite_toTrivalent_eq_true_iff`). Used
 referentially, it denotes the individual the speaker has in mind whatever the world: the
 constant character (`Character.const`), whose content is rigid.
 The two uses come apart in Donnellan's scene of the man with the martini: when the intended
@@ -45,22 +45,23 @@ variable {W E : Type*} {φ : E → W → Prop} {w : W} {e intended : E}
 
 /-- The attributive use, which picks out at each world the unique satisfier of the description
 there. -/
-noncomputable def attributive (φ : E → W → Prop) : W → Option E := fun w ↦ iota {x | φ x w}
+noncomputable def attributive (φ : E → W → Prop) : W → Part E := fun w ↦ iota {x | φ x w}
 
-theorem attributive_eq_some_iff : attributive φ w = some e ↔ φ e w ∧ ∀ x, φ x w → x = e :=
-  iota_eq_some_iff
+theorem mem_attributive : e ∈ attributive φ w ↔ φ e w ∧ ∀ x, φ x w → x = e :=
+  mem_iota
 
-/-- The attributive use as a nominal denotation, whose selector is the pointwise iota and which
-presupposes nothing beyond the iota's definedness. -/
-noncomputable def attributiveNominal (φ : E → W → Prop) : Nominal Unit W E :=
-  .ofReferent (attributive φ)
+/-- The attributive use as a definite denotation, the pointwise iota where it is defined. -/
+noncomputable def attributiveDefinite (φ : E → W → Prop) : Definite Unit W E :=
+  fun _ ↦ attributive φ
 
-theorem attributiveNominal_resolve_eq_one_iff (ψ : E → W → Prop) (h : attributive φ w = some e) :
-    (attributiveNominal φ).resolve ψ () w = .true ↔ ψ e w := by
-  simp [attributiveNominal, Nominal.ofReferent_resolve, Presupposition.presupOfReferent_of_some h]
+theorem attributiveDefinite_toTrivalent_eq_true_iff (ψ : E → W → Prop)
+    (h : e ∈ attributive φ w) :
+    (attributiveDefinite φ).toTrivalent ψ () w = .true ↔ ψ e w :=
+  Definite.toTrivalent_eq_true_iff.trans
+    ⟨fun ⟨_, he', h'⟩ ↦ Part.mem_unique he' h ▸ h', fun h' ↦ ⟨e, h, h'⟩⟩
 
-theorem attributive_ne_const_of_misfit (h : attributive φ w = some e) (hne : e ≠ intended) :
-    attributive φ w ≠ some (Character.const intended () w) := by
-  simpa [h] using hne
+theorem attributive_ne_const_of_misfit (h : e ∈ attributive φ w) (hne : e ≠ intended) :
+    attributive φ w ≠ Part.some (Character.const intended () w) :=
+  fun heq ↦ hne (Part.mem_some_iff.1 (heq ▸ h))
 
 end Donnellan1966

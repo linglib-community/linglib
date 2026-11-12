@@ -95,16 +95,16 @@ theorem denote_complement :
     ⟦complement cont p d⟧ g s = iota ({x | cont x = p} ∩ {g d}) := rfl
 
 -- §5.3
-theorem denote_complement_isSome_iff : (⟦complement cont p d⟧ g s).isSome ↔ cont (g d) = p :=
-  DefiniteDescription.denote_anaphoric_isSome_iff _ _ _ _
+theorem denote_complement_dom : (⟦complement cont p d⟧ g s).Dom ↔ cont (g d) = p :=
+  DefiniteDescription.denote_anaphoric_dom _ _ _ _
 
 /-- The complement can be defined at a situation where its content is false: familiarity is
 not factivity (§5.3.1), the warrant for (86)–(87) in §5.3.2. -/
 theorem not_factive :
     ∃ (cont : Unit → Bool → Prop) (p : Bool → Prop) (g : ℕ → Unit) (s : Bool),
-      (⟦complement cont p 0⟧ g s).isSome ∧ ¬ p s :=
+      (⟦complement cont p 0⟧ g s).Dom ∧ ¬ p s :=
   ⟨fun _ ↦ (· = true), (· = true), fun _ ↦ (), false,
-    (denote_complement_isSome_iff ..).2 rfl, Bool.false_ne_true⟩
+    (denote_complement_dom ..).2 rfl, Bool.false_ne_true⟩
 
 /-- The dependent mood is generalized conjunction (75). -/
 def dependentMood {α : Type*} (P Q : α → Prop) : α → Prop := P ⊓ Q

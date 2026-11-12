@@ -86,7 +86,7 @@ theorem Det.Intersective.mem_BE {D : Det E} (hD : D.Intersective) {A : Set E} {x
     x ∈ BE (D A) ↔ D (A ∩ {x}) (A ∩ {x}) :=
   hD _ _ _ _ (Set.inter_self _).symm
 
-theorem iota_BE_individual (a : E) : iota (BE (individual a)) = some a := by
+theorem iota_BE_individual (a : E) : iota (BE (individual a)) = Part.some a := by
   rw [BE_individual, iota_singleton]
 
 /-! ### The definite article -/

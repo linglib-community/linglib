@@ -87,7 +87,7 @@ uniquely to the value of the concept of `x` as well. -/
 def AcquaintanceBased (Acq : Set (E → Centered W E → Prop)) (alts : Set (Centered W E))
     (G : ConceptGenerator W E) (x : E) (w : W) (dom : Set E) : Prop :=
   ∀ u ∈ dom, ∃ R ∈ Acq, ∀ p ∈ insert (w, x) alts,
-    relatum R p = some (G u p) ∧ (u ∈ epiAlt alts → relatum R p = some (G x p))
+    (G u p) ∈ relatum R p ∧ (u ∈ epiAlt alts → (G x p) ∈ relatum R p)
 
 /-- A generator is suitable for `x` in `w` (82) when it is reliable and acquaintance-based. -/
 def Suitable (Acq : Set (E → Centered W E → Prop)) (alts : Set (Centered W E))
@@ -113,7 +113,7 @@ concept ((82); cf. (83), (84)). -/
 theorem AcquaintanceBased.eqOn_of_mem_epiAlt (h : AcquaintanceBased Acq alts G x w dom)
     (hu : u ∈ dom) (he : u ∈ epiAlt alts) : Set.EqOn (G u) (G x) (insert (w, x) alts) := by
   obtain ⟨R, -, hR⟩ := h u hu
-  exact fun p hp ↦ Option.some_inj.1 ((hR p hp).1.symm.trans ((hR p hp).2 he))
+  exact fun p hp ↦ Part.mem_unique (hR p hp).1 ((hR p hp).2 he)
 
 /-- The de se reading is the de re reading through the self concept, whose relation is identity,
 Lewis's relation of acquaintance par excellence. When identity is among the holder's acquaintance
@@ -125,14 +125,14 @@ theorem sayDeRe_of_sayDeSe (hself : (fun y p ↦ y = selfConcept p) ∈ Acq)
   ⟨fun _ ↦ selfConcept,
     ⟨fun u hu ↦ (hdom u hu).elim (fun e ↦ Or.inl e.symm) (fun e ↦ Or.inr ⟨e, rfl⟩),
       fun _ _ ↦ ⟨_, hself, fun p _ ↦
-        ⟨congrFun (relatum_eq _) p, fun _ ↦ congrFun (relatum_eq _) p⟩⟩⟩,
+        ⟨mem_relatum.2 ⟨rfl, fun _ h ↦ h⟩, fun _ ↦ mem_relatum.2 ⟨rfl, fun _ h ↦ h⟩⟩⟩⟩,
     h⟩
 
 /-- A de re claim about a res in the domain that is not an epistemic alternative of the holder
 needs an acquaintance relation she bears uniquely to the res in the actual world, the base
 condition of [lewis-1979-attitudes]. -/
 theorem ClaimDeRe.exists_relatum_eq (h : ClaimDeRe Acq alts P res x w dom) (hres : res ∈ dom)
-    (hne : res ∉ epiAlt alts) : ∃ R ∈ Acq, relatum R (w, x) = some res := by
+    (hne : res ∉ epiAlt alts) : ∃ R ∈ Acq, res ∈ relatum R (w, x) := by
   obtain ⟨G, ⟨hrel, hacq⟩, -⟩ := h
   obtain ⟨R, hR, hb⟩ := hacq res hres
   have hG : G res (w, x) = res := (hrel res hres).resolve_right fun h ↦ hne h.1
@@ -177,7 +177,7 @@ theorem deSe_false : ¬ SayDeSe sayAlts cleverP := by
 theorem authorGen_suitable : Suitable s1Acq sayAlts authorGen john actual {john} :=
   ⟨by simp [Reliable, authorGen, authorConcept],
     fun _ _ ↦ ⟨_, rfl, fun p _ ↦
-      ⟨congrFun (relatum_eq _) p, fun _ ↦ congrFun (relatum_eq _) p⟩⟩⟩
+      ⟨mem_relatum.2 ⟨rfl, fun _ h ↦ h⟩, fun _ ↦ mem_relatum.2 ⟨rfl, fun _ h ↦ h⟩⟩⟩⟩
 
 theorem deRe_true : SayDeRe s1Acq sayAlts cleverP john actual {john} :=
   ⟨authorGen, authorGen_suitable, by
@@ -231,7 +231,7 @@ def johnAcq : Set (Ind → Centered Wld Ind → Prop) := {fun y p ↦ y = patien
 theorem claimsHe_true : SayDeRe johnAcq claimAlts delusionalP john actualN {john} :=
   ⟨patientGen, ⟨by simp [Reliable, patientGen, patientConcept],
     fun _ _ ↦ ⟨_, rfl, fun p _ ↦
-      ⟨congrFun (relatum_eq _) p, fun _ ↦ congrFun (relatum_eq _) p⟩⟩⟩,
+      ⟨mem_relatum.2 ⟨rfl, fun _ h ↦ h⟩, fun _ ↦ mem_relatum.2 ⟨rfl, fun _ h ↦ h⟩⟩⟩⟩,
     by simp [claimAlts, delusionalP, patientGen, patientConcept, actualN, belN, patient]⟩
 
 theorem claimsNapoleon_false :
@@ -241,7 +241,7 @@ theorem claimsNapoleon_false :
   rw [johnAcq, Set.mem_singleton_iff] at hR
   subst hR
   rw [relatum_eq] at hb
-  exact absurd (Option.some_inj.1 hb) (by decide)
+  exact absurd (Part.mem_some_iff.1 hb) (by decide)
 
 /-- In the Napoleon contrast the bound-pronoun reading is true and the name reading false. -/
 theorem napoleon_contrast :

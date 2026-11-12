@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.DavidsonGagne2022
 public import Linglib.Fragments.ASL.Determiners
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Semantics.Reference.Nominal
+public import Linglib.Semantics.Reference.Definite
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -24,7 +24,7 @@ existential.
 ## Implementation notes
 
 * A feature is a partial identity function, so it denotes its domain of definition and
-  features combine by intersection; the pronoun is `Nominal.var`, the value of its index
+  features combine by intersection; the pronoun is `Definite.var`, the value of its index
   presupposed to lie in that intersection, as `PersonalPronoun.denote` is.
 * The ordering among marked loci is the paper's convention that higher loci denote properly
   larger plurals, a strictly monotone map from heights to referents, taken as a hypothesis
@@ -122,12 +122,12 @@ theorem strengthen_plural_eq_arc (hy : ¬ Atom y) :
 
 /-- (46e), (47e): `⟦[ixᵢ]-arc-φ⟧` is the value of the index `i`, presupposed to be a non-atom
 in the domain `φ` of the pronoun's other features. -/
-def ixArc (i : ι) (φ : Set E) : Nominal (ι → E) W E := .var i (arc ∩ φ)
+def ixArc (i : ι) (φ : Set E) : Definite (ι → E) W E := .var i (arc ∩ φ)
 
 /-- (50c), (51c): a determiner composed with a nominal through the partitive
 `⟦of⟧ = λxλy. y ≤ x` of [ladusaw-1982] takes the parts of the nominal's referent as its
 restrictor. -/
-noncomputable def partitive {Ctx : Type*} (d : Det E) (n : Nominal Ctx W E) (Q : E → W → Prop) :
+noncomputable def partitive {Ctx : Type*} (d : Det E) (n : Definite Ctx W E) (Q : E → W → Prop) :
     Ctx → W → Trivalent :=
   n.toTrivalent fun x w ↦ d (Set.Iic x) {y | Q y w}
 
@@ -135,11 +135,11 @@ variable {d : Det E} {i j : ι} {φ : Set E} {Q : E → W → Prop} {g : ι → 
 
 theorem partitive_ixArc_eq_undefined_iff :
     partitive d (ixArc i φ) Q g w = .undefined ↔ g i ∉ arc ∩ φ :=
-  Nominal.var_toTrivalent_eq_undefined_iff
+  Definite.var_toTrivalent_eq_undefined_iff
 
 theorem partitive_ixArc_eq_true_iff :
     partitive d (ixArc i φ) Q g w = .true ↔ g i ∈ arc ∩ φ ∧ d (Set.Iic (g i)) {y | Q y w} :=
-  Nominal.var_toTrivalent_eq_true_iff
+  Definite.var_toTrivalent_eq_true_iff
 
 -- (50e)
 /-- `FS(ALL)` at the neutral height, its pronoun resolved to the largest individual of

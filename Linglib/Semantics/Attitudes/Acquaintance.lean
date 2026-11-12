@@ -43,52 +43,52 @@ belief de re through identity.
 
 namespace Acquaintance
 
-variable {α C : Type*} {R : α → C → Prop} {k : C → Option α} {c : C → α} {P : α → Set C}
+variable {α C : Type*} {R : α → C → Prop} {k : C → Part α} {c : C → α} {P : α → Set C}
   {A : Set C} {p : C} {y : α}
 
 /-- The relatum of the center `p` under `R` is the unique thing `p` bears `R` to, and `none` when
 there is no such thing or several. -/
-noncomputable def relatum (R : α → C → Prop) (p : C) : Option α := iota {a | R a p}
+noncomputable def relatum (R : α → C → Prop) (p : C) : Part α := iota {a | R a p}
 
 /-- The property of having a value under the partial concept `k` that has `P`, the centers that
 do. -/
-def deRe (k : C → Option α) (P : α → Set C) : Set C := {p | ∃ y ∈ k p, p ∈ P y}
+def deRe (k : C → Part α) (P : α → Set C) : Set C := {p | ∃ y ∈ k p, p ∈ P y}
 
 /-- At the center `p`, with attitude alternatives `A`, the subject ascribes `P` to `y` under `k`
 when `k` picks out `y` at her center and she self-ascribes the property of having a value under
 `k` that has `P`, every alternative having it. -/
-def AscribesUnder (A : Set C) (p : C) (k : C → Option α) (y : α) (P : α → Set C) : Prop :=
-  k p = some y ∧ A ⊆ deRe k P
+def AscribesUnder (A : Set C) (p : C) (k : C → Part α) (y : α) (P : α → Set C) : Prop :=
+  y ∈ k p ∧ A ⊆ deRe k P
 
-theorem relatum_eq_some_iff : relatum R p = some y ↔ R y p ∧ ∀ z, R z p → z = y :=
-  iota_eq_some_iff
+@[simp] theorem mem_relatum : y ∈ relatum R p ↔ R y p ∧ ∀ z, R z p → z = y :=
+  mem_iota
 
 /-- A concept is the partial concept of the relation each center bears to its value there. -/
-theorem relatum_eq (c : C → α) : relatum (fun y p ↦ y = c p) = some ∘ c :=
+theorem relatum_eq (c : C → α) : relatum (fun y p ↦ y = c p) = Part.some ∘ c :=
   funext fun p ↦ iota_singleton (c p)
 
-theorem mem_deRe_iff_of_eq_some (h : k p = some y) : p ∈ deRe k P ↔ p ∈ P y :=
-  ⟨fun ⟨_, hz, hP⟩ ↦ Option.some_inj.1 (h.symm.trans hz) ▸ hP, fun hP ↦ ⟨y, h, hP⟩⟩
+theorem mem_deRe_iff_of_mem (h : y ∈ k p) : p ∈ deRe k P ↔ p ∈ P y :=
+  ⟨fun ⟨_, hz, hP⟩ ↦ Part.mem_unique hz h ▸ hP, fun hP ↦ ⟨y, h, hP⟩⟩
 
 /-- The de re property of a relation is the property of bearing it uniquely to something that
 has the property. -/
 theorem mem_deRe_relatum_iff :
     p ∈ deRe (relatum R) P ↔ ∃ y, (R y p ∧ ∀ z, R z p → z = y) ∧ p ∈ P y :=
-  exists_congr fun _ ↦ and_congr_left' relatum_eq_some_iff
+  exists_congr fun _ ↦ and_congr_left' mem_relatum
 
-@[simp] theorem mem_deRe_comp_some : p ∈ deRe (some ∘ c) P ↔ p ∈ P (c p) :=
-  mem_deRe_iff_of_eq_some rfl
+@[simp] theorem mem_deRe_comp_some : p ∈ deRe (Part.some ∘ c) P ↔ p ∈ P (c p) :=
+  mem_deRe_iff_of_mem (Part.mem_some _)
 
 theorem ascribesUnder_comp_some :
-    AscribesUnder A p (some ∘ c) y P ↔ y = c p ∧ ∀ q ∈ A, q ∈ P (c q) :=
-  and_congr (Option.some_inj.trans eq_comm)
+    AscribesUnder A p (Part.some ∘ c) y P ↔ y = c p ∧ ∀ q ∈ A, q ∈ P (c q) :=
+  and_congr Part.mem_some_iff
     ⟨fun h _ hq ↦ mem_deRe_comp_some.1 (h hq), fun h _ hq ↦ mem_deRe_comp_some.2 (h _ hq)⟩
 
 /-- Ascribing `P` under a concept to its value at the subject's own center is self-ascribing the
 property of the concept's value. With the self of each center as the concept, identity, this is
 Lewis's reduction of belief de se to belief de re. -/
 theorem ascribesUnder_comp_some_apply :
-    AscribesUnder A p (some ∘ c) (c p) P ↔ ∀ q ∈ A, q ∈ P (c q) := by
+    AscribesUnder A p (Part.some ∘ c) (c p) P ↔ ∀ q ∈ A, q ∈ P (c q) := by
   simp [ascribesUnder_comp_some]
 
 end Acquaintance

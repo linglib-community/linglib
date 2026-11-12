@@ -151,8 +151,8 @@ open Mereology
 /-- Were kinds to exclude only concepts instantiated by one individual in every situation, a
 singular property with no instance in some situation could have a kind. -/
 example :
-    ∃ (P : Bool → Set Bool) (K : Set (Bool → Option Bool)),
-      (∀ k ∈ K, ¬ ∀ s, ∃ d, k s = some d ∧ Atom d) ∧ (∀ s, ∀ x ∈ P s, Atom x) ∧
+    ∃ (P : Bool → Set Bool) (K : Set (Bool → Part Bool)),
+      (∀ k ∈ K, ¬ ∀ s, ∃ d, d ∈ k s ∧ Atom d) ∧ (∀ s, ∀ x ∈ P s, Atom x) ∧
         Kind.down P ∈ K := by
   refine ⟨fun s ↦ if s then {true} else ∅, {Kind.down fun s ↦ if s then {true} else ∅}, ?_, ?_,
     Set.mem_singleton _⟩
@@ -195,7 +195,7 @@ example {P : Unit → Set (Individual Bool)}
   have ht : Individual.atom true ∈ Kind.up (Kind.down P) () := by
     rw [h]
     exact Or.inr rfl
-  rw [Kind.up_apply_of_eq_none (Kind.down_eq_none_iff.2 fun ⟨d, hd⟩ ↦ h0 d hd.1)] at ht
+  rw [Kind.up_apply_of_not_dom fun hd ↦ (Kind.down_dom.1 hd).elim fun d hd ↦ h0 d hd.1] at ht
   exact ht
 
 end KindFormation
@@ -215,7 +215,7 @@ open scoped SetRel
 /-- Carlson's state predication on a kind is derived kind predication (31c) over its instances,
 once his instances of the kind are the instances of its concept. -/
 theorem carlson_mem_image_iff {S E Stage Place Time : Type*} [Preorder E]
-    {M : Carlson1977.Model Stage E Place Time} {inst : SetRel E E} {k : E} {κ : S → Option E}
+    {M : Carlson1977.Model Stage E Place Time} {inst : SetRel E E} {k : E} {κ : S → Part E}
     {s : S} (hinst : ∀ x, x ~[inst] k ↔ x ∈ Kind.up κ s) (hk : M.RealizedByInstances inst k)
     (P : Set Stage) : k ∈ M.R.image P ↔ Quantifier.Det.some (Kind.up κ s) (M.R.image P) :=
   Set.ext hinst ▸ Carlson1977.Model.mem_image_iff hk P
@@ -239,7 +239,7 @@ whose instances include its own, since the instance that derived kind predicatio
 first is an instance of the second. -/
 theorem carlson_119 {S E Stage Place Time : Type*} [Preorder E]
     {M : Carlson1977.Model Stage E Place Time} {inst : SetRel E E} {k k' : E}
-    {κ κ' : S → Option E} {s : S} (hinst : ∀ x, x ~[inst] k ↔ x ∈ Kind.up κ s)
+    {κ κ' : S → Part E} {s : S} (hinst : ∀ x, x ~[inst] k ↔ x ∈ Kind.up κ s)
     (hinst' : ∀ x, x ~[inst] k' ↔ x ∈ Kind.up κ' s) (hk : M.RealizedByInstances inst k)
     (hk' : M.RealizedByInstances inst k') (hsub : Kind.up κ s ⊆ Kind.up κ' s)
     {P : Set Stage} (hP : k ∈ M.R.image P) : k' ∈ M.R.image P :=
@@ -251,9 +251,10 @@ the conditions of (119). -/
 example (P : Set (Fin 3)) (h : ({0, 1} : Finset (Fin 3)) ∈ lawn.R.image P) :
     (Finset.univ : Finset (Fin 3)) ∈ lawn.R.image P :=
   carlson_119 (M := lawn) (inst := {p | p.1 ≤ p.2}) (k := ({0, 1} : Finset (Fin 3)))
-    (k' := Finset.univ) (κ := fun _ : Unit ↦ some ({0, 1} : Finset (Fin 3)))
-    (κ' := fun _ ↦ some Finset.univ) (s := ()) (fun _ ↦ Iff.rfl) (fun _ ↦ Iff.rfl)
-    (lawn_realizedByInstances _) (lawn_realizedByInstances _) (fun x _ ↦ Finset.subset_univ x) h
+    (k' := Finset.univ) (κ := fun _ : Unit ↦ Part.some ({0, 1} : Finset (Fin 3)))
+    (κ' := fun _ ↦ Part.some Finset.univ) (s := ())
+    (fun _ ↦ by simp) (fun _ ↦ by simp)
+    (lawn_realizedByInstances _) (lawn_realizedByInstances _) (fun x _ ↦ by simp) h
 
 /-- States do not pass the other way: with the cat on the lawn, *Mammals are sitting on my lawn*
 is true and *Dogs are sitting on my lawn* false. -/
@@ -311,7 +312,7 @@ theorem english_licensesBare_of_ne_singular {num : Number} (hnum : num ≠ .sing
 open Mereology in
 /-- English admits no bare singular count noun, (24b), since ∩ is undefined for it. -/
 theorem english_not_licensesBare_singular {S E : Type*} [PartialOrder E]
-    {K : Set (S → Option E)} {P : S → Set E} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Atom d)
+    {K : Set (S → Part E)} {P : S → Set E} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Atom d)
     (hP : ∀ s, ∀ x ∈ P s, Atom x) :
     ¬ (nominalMapping .english).LicensesBare (determiners .english) .singular (Kind.down P ∈ K) :=
   (english_licensesBare_singular_iff _).not.2 (Kind.down_notMem_of_atom hK hP)

@@ -804,7 +804,6 @@ import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Reference.Context.Basic
 import Linglib.Semantics.Reference.Context.Index
 import Linglib.Semantics.Reference.Context.Tower
-import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Reference.Rigidity
 import Linglib.Semantics.Tense.Defs
 import Linglib.Semantics.Tense.Embedding
