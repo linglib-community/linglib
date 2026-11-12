@@ -194,7 +194,8 @@ theorem negNRStressed_eq (R : SetRel W W) : negNRStressed R = negUniversal R := 
 /-- The environment of negated *know*, a factive universal without neg-raising, built from the
 substrate's negated factive. -/
 def negKnow (R : SetRel W W) (p : Set W) : Set W :=
-  Trivalent.posExt (TwoDim.negFactive (pure (· ∈ p) : TwoDim (W → Prop) (W → Prop)) (Box R)).toTrivalent
+  Trivalent.posExt
+    (TwoDim.negFactive (pure (· ∈ p) : TwoDim (W → Prop) (W → Prop)) (Box R)).toTrivalent
 
 -- (58b)
 theorem not_isAntiAdditive_negKnow : ¬ IsAntiAdditive (negKnow (W := Fin 3) .univ) := by

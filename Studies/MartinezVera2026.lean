@@ -152,7 +152,8 @@ theorem declare_of_isReportative {e : Evidential} (he : e.IsReportative)
 @[simp] theorem declare_rka (S : TwoDim (W → Prop) (Set W)) : declare s rka S = some (assert s S) :=
   declare_of_isDirect s (by decide) S
 
-@[simp] theorem declare_shka (S : TwoDim (W → Prop) (Set W)) : declare s shka S = some (present s S) :=
+@[simp] theorem declare_shka (S : TwoDim (W → Prop) (Set W)) :
+    declare s shka S = some (present s S) :=
   declare_of_isReportative s (by decide) S
 
 -- The paper does not analyze the inferential *-shi* (footnote 6).
@@ -174,7 +175,8 @@ def update (c : Context A W) (m : Move A W) : Context A W := ⟨insert m c.moves
 
 /-- `c.declare s e S` puts on record the move of a declarative with evidential `e`, if the paper
 analyzes `e`. -/
-def declare (c : Context A W) (s : A) (e : Evidential) (S : TwoDim (W → Prop) (Set W)) : Context A W :=
+def declare (c : Context A W) (s : A) (e : Evidential) (S : TwoDim (W → Prop) (Set W)) :
+    Context A W :=
   ((Move.declare s e S).map c.update).getD c
 
 /-- Asking a question that addresses no prior one makes it the question under discussion. -/

@@ -11,18 +11,17 @@ public import Linglib.Core.Control.Monad.Writer
 A two-dimensional meaning `TwoDim ω α` pairs an at-issue value of type `α` with not-at-issue
 content of type `ω`, which the speaker contributes without putting it at issue: a proposition,
 a truth value, or a set of propositions. Not-at-issue content only accumulates, so `TwoDim ω` is
-the writer monad over a meet-semilattice with a top, and a map of logs that preserves meets and
-the top is [a morphism of the monads](##ConventionalImplicature.TwoDim.mapLog). For
-propositions it is the writer monad under
-meet, a computation of mathlib's `Writer` whose value is the at-issue dimension and whose log is
-the not-at-issue one. Potts's rule of [CI application](##ConventionalImplicature.TwoDim.ciApply) is a bind that
-hands its at-issue argument on unmodified, and the connectives combine at-issue content
-applicatively, so that CIs project from under each of them.
+mathlib's writer monad over a meet-semilattice with a top, its value the at-issue dimension and
+its log the not-at-issue one, and a map of logs that preserves meets and the top is
+[a morphism of the monads](##ConventionalImplicature.TwoDim.mapLog). Potts's rule of
+[CI application](##ConventionalImplicature.TwoDim.ciApply) is a bind that hands its at-issue
+argument on unmodified, and the connectives combine at-issue content applicatively, so that CIs
+project from under each of them.
 
 ## Implementation notes
 
 * Potts interprets a parsetree as its root's at-issue term with the set of CI propositions on its
-  nodes. The not-at-issue dimension here is one proposition, the meet of that set, so a repeated
+  nodes. The studies take one proposition for the log, the meet of that set, so a repeated
   CI adds nothing. That suits content whose repetition is redundant, but not the strengthening
   Potts reports for repeated expressives, which needs graded expressive content.
 * The dimension also carries not-at-issue content that is not a CI in Potts's sense, such as

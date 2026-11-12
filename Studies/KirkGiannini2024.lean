@@ -114,14 +114,16 @@ def shunt (p : TwoDim (W → Prop) (W → Prop)) : TwoDim (W → Prop) (W → Pr
 @[simp] theorem shunt_atIssue (p : TwoDim (W → Prop) (W → Prop)) :
     (shunt p).atIssue = p.atIssue ⊓ p.notAtIssue := rfl
 
-@[simp] theorem shunt_notAtIssue (p : TwoDim (W → Prop) (W → Prop)) : (shunt p).notAtIssue = ⊤ := rfl
+@[simp] theorem shunt_notAtIssue (p : TwoDim (W → Prop) (W → Prop)) :
+    (shunt p).notAtIssue = ⊤ := rfl
 
 /-- 𝔄 ⇝ ⧫ with Peripheral Intensional Function Application: the peripheral proposition is
 replaced by ⧫ of its intension, the at-issue meaning passing up unchanged. -/
 def approp (p : TwoDim (W → Prop) (W → Prop)) : TwoDim (W → Prop) (W → Prop) :=
   .mk (atIssue := p.atIssue) (notAtIssue := □[M.appropriate] p.notAtIssue)
 
-@[simp] theorem approp_atIssue (p : TwoDim (W → Prop) (W → Prop)) : (approp M p).atIssue = p.atIssue := rfl
+@[simp] theorem approp_atIssue (p : TwoDim (W → Prop) (W → Prop)) :
+    (approp M p).atIssue = p.atIssue := rfl
 
 @[simp] theorem approp_notAtIssue (p : TwoDim (W → Prop) (W → Prop)) :
     (approp M p).notAtIssue = □[M.appropriate] p.notAtIssue := rfl

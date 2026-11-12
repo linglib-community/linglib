@@ -94,8 +94,8 @@ def ifKP (p q : TwoDim (W → Prop) (W → Prop)) : TwoDim (W → Prop) (W → P
   .mk (atIssue := fun _ ↦ ∀ w' ∈ EP, p.atIssue w' → q.atIssue w')
     (notAtIssue := (p.impFilter q).notAtIssue)
 
-theorem ifKP_notAtIssue_of_not_atIssue {p : TwoDim (W → Prop) (W → Prop)} (q : TwoDim (W → Prop) (W → Prop))
-    {w : W} (hp : p.notAtIssue w) (h : ¬ p.atIssue w) : (ifKP EP p q).notAtIssue w :=
+theorem ifKP_notAtIssue_of_not_atIssue {p : TwoDim (W → Prop) (W → Prop)}
+    (q : TwoDim (W → Prop) (W → Prop)) {w : W} (hp : p.notAtIssue w) (h : ¬ p.atIssue w) : (ifKP EP p q).notAtIssue w :=
   ⟨hp, fun ha ↦ absurd ha h⟩
 
 /-- The closest worlds to `w` among the `Y`-worlds of the epistemic state, under the similarity
@@ -109,14 +109,16 @@ theorem clos_subset (w : W) (Y : Set W) : clos EP sim w Y ⊆ Y :=
 at the closest antecedent-worlds, and asserts that those are consequent-worlds. -/
 def ifKPstar (p q : TwoDim (W → Prop) (W → Prop)) : TwoDim (W → Prop) (W → Prop) :=
   .mk (atIssue := fun w ↦ clos EP sim w {w' | p.atIssue w'} ⊆ {w' | q.atIssue w'})
-    (notAtIssue := fun w ↦ p.notAtIssue w ∧ clos EP sim w {w' | p.atIssue w'} ⊆ {w' | q.notAtIssue w'})
+    (notAtIssue := fun w ↦
+      p.notAtIssue w ∧ clos EP sim w {w' | p.atIssue w'} ⊆ {w' | q.notAtIssue w'})
 
 /-- The K/P* conjunction (127) presupposes the first conjunct's presupposition, and the second's
 at the evaluation world or at the closest worlds where the first is true. -/
 def andKPstar (p q : TwoDim (W → Prop) (W → Prop)) : TwoDim (W → Prop) (W → Prop) :=
   .mk (atIssue := p.atIssue ⊓ q.atIssue)
     (notAtIssue := fun w ↦
-      p.notAtIssue w ∧ (q.notAtIssue w ∨ clos EP sim w {w' | p.atIssue w'} ⊆ {w' | q.notAtIssue w'}))
+      p.notAtIssue w ∧
+        (q.notAtIssue w ∨ clos EP sim w {w' | p.atIssue w'} ⊆ {w' | q.notAtIssue w'}))
 
 /-- The presupposition-free proposition that `p`'s presupposition holds and its at-issue content
 is false. -/
@@ -140,7 +142,8 @@ theorem orKPstar_notAtIssue (p q : TwoDim (W → Prop) (W → Prop)) (w : W) :
           clos EP sim w {w' | q.notAtIssue w' ∧ ¬ q.atIssue w'} ⊆ {w' | p.notAtIssue w'}) := by
   simp [orKPstar, andKPstar, definedFalse]
 
-theorem orKPstar_comm (p q : TwoDim (W → Prop) (W → Prop)) : orKPstar EP sim p q = orKPstar EP sim q p :=
+theorem orKPstar_comm (p q : TwoDim (W → Prop) (W → Prop)) :
+    orKPstar EP sim p q = orKPstar EP sim q p :=
   TwoDim.ext (sup_comm ..) (funext fun _ ↦ propext (and_congr or_comm and_comm))
 
 /-- A closest-worlds presupposition holding throughout `M` strengthens to `Q` throughout `M` when
