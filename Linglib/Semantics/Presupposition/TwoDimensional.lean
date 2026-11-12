@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.ConventionalImplicature
-public import Linglib.Semantics.Presupposition.Factive
+public import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Two-dimensional presupposition

@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Probability.Distributions.Bernoulli
-public import Linglib.Semantics.Presupposition.Factive
+public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Data.Examples.GroveWhite2025
 public import Mathlib.Probability.ConditionalProbability
@@ -111,7 +111,7 @@ update does not tell asserting the complement from presupposing it. -/
 theorem setOf_clauseEmbeddingSem_factive (epi : E → SetRel Ω Ω) (φ : Ω → Prop) (x : E) :
     {i | clauseEmbeddingSem epi .factive φ x i} =
       Trivalent.posExt (Presupposition.factive □[epi x] φ) :=
-  (Presupposition.posExt_factive _ _).symm
+  (Presupposition.posExt_factive _ _).symm ▸ rfl
 
 variable [MeasurableSpace Ω] (cg : Measure Ω) (K C : Set Ω)
 

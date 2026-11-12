@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Presupposition.Factive
 public import Linglib.Semantics.Presupposition.Trigger
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Attitudes.Basic
@@ -13,12 +12,12 @@ tradition: `w ~[R] w'` reads "`w'` is compatible with what the holder believes o
 and ⟦x believes p⟧(w) is the relational box `□[R] p w`, so closure under known implication is the
 K axiom `ModalLogic.box_K`. A verb entails its complement in one of three ways. Its alternatives
 may be epistemic, among which the world of evaluation always is, so that the box is veridical
-(`ModalLogic.box_T`). It may assert the complement beside the box, which is the box over the
-alternatives with the world of evaluation added (`ModalLogic.box_union`, `ModalLogic.box_id`). Or
-it may presuppose the complement, as `Presupposition.factive` does, which is
-[true at the same worlds](##Doxastic.posExt_factive_box). A verb's entry records its factivity and
-whether its alternatives are epistemic or doxastic, and it is veridical exactly when
-[every denotation of that kind is](##Doxastic.isVeridical_forall_iff).
+(`ModalLogic.box_T_iff`). It may assert the complement beside the box, which is the box over the
+alternatives with the world of evaluation added (`ModalLogic.box_sup`,
+`ModalLogic.box_id_eq_id`). Or it may presuppose the complement, as `Presupposition.factive`
+does, which is true at the same worlds (`Presupposition.posExt_factive`). A verb's entry records
+its factivity and whether its alternatives are epistemic or doxastic, and it is veridical exactly
+when [every denotation of that kind is](##Doxastic.isVeridical_forall_iff).
 
 ## Implementation notes
 
@@ -37,16 +36,6 @@ veridical, the empty accessibility.
 namespace Doxastic
 
 open ModalLogic Presupposition SetRel
-
-variable {W : Type*}
-
-/-- A factive doxastic predicate is true where the complement holds throughout the alternatives
-with the world of evaluation added. -/
-theorem posExt_factive_box (R : SetRel W W) (p : W → Prop) :
-    Trivalent.posExt (factive □[R] p) = {w | □[R ∪ SetRel.id] p w} := by
-  ext w
-  rw [posExt_factive]
-  exact ((box_union _).trans (and_congr_right' box_id)).symm
 
 /-- A doxastic predicate of factivity class `fac` over alternatives `b` entails its complement
 under every denotation of its kind, which presupposes the complement when `fac` is a class and

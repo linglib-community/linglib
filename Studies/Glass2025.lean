@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Presupposition.Factive
+public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.Mandarin.Verbs
 public import Linglib.Data.Examples.Glass2025
@@ -171,8 +171,7 @@ def Profile.ofFactivity : Option Factivity → Profile
 the requirement of the factive profile, whatever attitude it asserts. -/
 theorem subset_compl_gapExt_factive_iff (att : (W → Prop) → W → Prop) :
     c ⊆ (Trivalent.gapExt (factive att p))ᶜ ↔ Profile.factive.condition c p := by
-  rw [gapExt_factive]
-  exact ⟨fun h w hw ↦ not_not.1 (h hw), fun h w hw ↦ not_not.2 (h w hw)⟩
+  simp [Set.subset_def, Profile.condition, EntailsP]
 
 /-- yǐwéi's profile on the paper's analysis, beyond the non-factivity its fragment entry
 records. -/
