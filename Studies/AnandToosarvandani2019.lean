@@ -37,6 +37,7 @@ namespace AnandToosarvandani2019
 
 open Tense Tense.Perspective
 open scoped Denotes
+open scoped SetRel
 
 variable {T : Type*} [LinearOrder T] {a u τ₀ r J : NonemptyInterval T}
 
@@ -67,19 +68,19 @@ def Demonstrative.cell : Demonstrative → Finset Allen.Relation
   | .now => Allen.le
   | .then => Allen.ofPosition English.TemporalDeictic.then_.cell
 
-theorem presup_then : Presup Demonstrative.then.cell a J ↔ ¬ J.Overlaps a := by
+theorem presup_then : a ~[Allen.toSetRel Demonstrative.then.cell] J ↔ ¬ J.Overlaps a := by
   simp [Demonstrative.cell, English.TemporalDeictic.then_, denote_present]
 
 /-- Only R-PAST is compatible with *now* (p. 24): a reference within the *now*-interval lies
 within the assessment time and cannot precede it. -/
 theorem not_restricted_now_past : ¬ Restricted Past.past.cell Demonstrative.now.cell a r J :=
-  fun ⟨hr, hle, hJ⟩ ↦ NonemptyInterval.Precedes.not_overlaps (presup_precedes.1 hr)
-    (NonemptyInterval.overlaps_of_le (hle.trans (presup_le.1 hJ)))
+  fun ⟨hr, hle, hJ⟩ ↦ NonemptyInterval.Precedes.not_overlaps (Allen.mem_toSetRel_precedes.1 hr)
+    (NonemptyInterval.overlaps_of_le (hle.trans (Allen.mem_toSetRel_le.1 hJ)))
 
 -- p. 31
 theorem not_restricted_then_remote : ¬ Restricted Past.remote.cell Demonstrative.then.cell a r J :=
   fun ⟨hr, hle, hJ⟩ ↦ presup_then.1 hJ
-    ((NonemptyInterval.overlaps_of_le (presup_le.1 hr)).mono_left hle)
+    ((NonemptyInterval.overlaps_of_le (Allen.mem_toSetRel_le.1 hr)).mono_left hle)
 
 /-! ### The assessment time (section 4.2) -/
 
@@ -106,8 +107,8 @@ theorem not_precedes_of_cats (h : Cats a u τ₀) (hr : r ≤ a) (hau : a.Preced
 /-- Final *then*, (41): when the *then*-interval is the time of the most recent eventuality, CATS
 leaves the utterance time as the only assessment time, which the paper offers as one
 possibility. -/
-theorem eq_of_cats_of_presup_then (h : Cats a u τ₀) (hJ : Presup Demonstrative.then.cell a τ₀) :
-    a = u := by
+theorem eq_of_cats_of_presup_then (h : Cats a u τ₀)
+    (hJ : a ~[Allen.toSetRel Demonstrative.then.cell] τ₀) : a = u := by
   refine h.resolve_right fun h' ↦ presup_then.1 hJ ?_
   have hfst := forall_precedes_iff_iff_fst_eq.1 h'
   exact ⟨by rw [← hfst]; exact a.fst_le_snd, by rw [hfst]; exact τ₀.fst_le_snd⟩
@@ -177,7 +178,7 @@ private theorem predicted_of_admits {d : Demonstrative} {p : Position} {sister a
     rintro rfl
     cases t
     · exact absurd hres not_restricted_now_past
-    · exact not_precedes_of_cats hcats (presup_le.1 hres.1) (hrem rfl)
+    · exact not_precedes_of_cats hcats (Allen.mem_toSetRel_le.1 hres.1) (hrem rfl)
   cases p with
   | final =>
     cases hJ
@@ -207,21 +208,22 @@ private abbrev I (x y : ℤ) (h : x ≤ y := by decide) : NonemptyInterval ℤ :
 private theorem admits_final_now (sister anterior : Bool) :
     Admits .now .final sister anterior .eq :=
   ⟨I 0 1, I 0 1, I 0 1, I 0 1, I 2 2, .remote, rfl,
-    ⟨presup_le.2 le_rfl, le_rfl, presup_le.2 le_rfl⟩, fun _ ↦ by decide, .inr fun _ ↦ .rfl,
+    ⟨Allen.mem_toSetRel_le.2 le_rfl, le_rfl, Allen.mem_toSetRel_le.2 le_rfl⟩, fun _ ↦ by decide,
+    .inr fun _ ↦ .rfl,
     NonemptyInterval.position_self _⟩
 
 private theorem admits_final_then (sister anterior : Bool) :
     Admits .then .final sister anterior .eq :=
   ⟨I 0 1, I 0 1, I 0 1, I 2 2, I 2 2, .past, rfl,
-    ⟨presup_precedes.2 (by decide), le_rfl, presup_then.2 (by decide)⟩, nofun, .inl rfl,
+    ⟨Allen.mem_toSetRel_precedes.2 (by decide), le_rfl, presup_then.2 (by decide)⟩, nofun, .inl rfl,
     NonemptyInterval.position_self _⟩
 
 private theorem admits_initial_now_gt (sister anterior : Bool) :
     Admits .now .initial sister anterior .gt :=
   ⟨I 0 1, I 2 3, I 2 3, I 0 3, I 4 4, .remote,
     show (I 2 3).position (I 0 1) ∈ _ by rw [show (I 2 3).position (I 0 1) = .gt by decide]; simp,
-    ⟨presup_le.2 (NonemptyInterval.le_def.2 ⟨by decide, by decide⟩), le_rfl,
-      presup_le.2 (NonemptyInterval.le_def.2 ⟨by decide, by decide⟩)⟩,
+    ⟨Allen.mem_toSetRel_le.2 (NonemptyInterval.le_def.2 ⟨by decide, by decide⟩), le_rfl,
+      Allen.mem_toSetRel_le.2 (NonemptyInterval.le_def.2 ⟨by decide, by decide⟩)⟩,
     fun _ ↦ by decide, .inr (forall_precedes_iff_iff_fst_eq.2 rfl), by decide⟩
 
 private theorem admits_initial_now_eq (anterior : Bool) :
@@ -229,14 +231,15 @@ private theorem admits_initial_now_eq (anterior : Bool) :
   ⟨I 0 1, I 0 1, I 0 1, I 0 1, I 2 2, .remote,
     show (I 0 1).position (I 0 1) ∈ _ by
       rw [NonemptyInterval.position_self]; exact eq_mem_initialPositions.2 rfl,
-    ⟨presup_le.2 le_rfl, le_rfl, presup_le.2 le_rfl⟩, fun _ ↦ by decide, .inr fun _ ↦ .rfl,
+    ⟨Allen.mem_toSetRel_le.2 le_rfl, le_rfl, Allen.mem_toSetRel_le.2 le_rfl⟩, fun _ ↦ by decide,
+    .inr fun _ ↦ .rfl,
     NonemptyInterval.position_self _⟩
 
 private theorem admits_initial_then_gt (sister anterior : Bool) :
     Admits .then .initial sister anterior .gt :=
   ⟨I 0 1, I 2 3, I 2 3, I 4 4, I 4 4, .past,
     show (I 2 3).position (I 0 1) ∈ _ by rw [show (I 2 3).position (I 0 1) = .gt by decide]; simp,
-    ⟨presup_precedes.2 (by decide), le_rfl, presup_then.2 (by decide)⟩, nofun, .inl rfl,
+    ⟨Allen.mem_toSetRel_precedes.2 (by decide), le_rfl, presup_then.2 (by decide)⟩, nofun, .inl rfl,
     by decide⟩
 
 private theorem admits_initial_then_eq (anterior : Bool) :
@@ -244,7 +247,7 @@ private theorem admits_initial_then_eq (anterior : Bool) :
   ⟨I 0 1, I 0 1, I 0 1, I 2 2, I 2 2, .past,
     show (I 0 1).position (I 0 1) ∈ _ by
       rw [NonemptyInterval.position_self]; exact eq_mem_initialPositions.2 rfl,
-    ⟨presup_precedes.2 (by decide), le_rfl, presup_then.2 (by decide)⟩, nofun, .inl rfl,
+    ⟨Allen.mem_toSetRel_precedes.2 (by decide), le_rfl, presup_then.2 (by decide)⟩, nofun, .inl rfl,
     NonemptyInterval.position_self _⟩
 
 private theorem admits_initial_then_lt_of_anterior (sister : Bool) :
@@ -252,7 +255,7 @@ private theorem admits_initial_then_lt_of_anterior (sister : Bool) :
   ⟨I 2 3, I 0 1, I 0 1, I 4 4, I 4 4, .past,
     show (I 0 1).position (I 2 3) ∈ _ by
       rw [show (I 0 1).position (I 2 3) = .lt by decide]; exact lt_mem_initialPositions.2 rfl,
-    ⟨presup_precedes.2 (by decide), le_rfl, presup_then.2 (by decide)⟩, nofun, .inl rfl,
+    ⟨Allen.mem_toSetRel_precedes.2 (by decide), le_rfl, presup_then.2 (by decide)⟩, nofun, .inl rfl,
     by decide⟩
 
 private theorem admits_initial_then_lt_of_not_sister (anterior : Bool) :
@@ -260,7 +263,7 @@ private theorem admits_initial_then_lt_of_not_sister (anterior : Bool) :
   ⟨I 2 3, I 0 1, I 0 3, I 4 4, I 4 4, .past,
     show (I 0 3).position (I 2 3) ∈ _ by
       rw [show (I 0 3).position (I 2 3) = .eq by decide]; exact eq_mem_initialPositions.2 rfl,
-    ⟨presup_precedes.2 (by decide), NonemptyInterval.le_def.2 ⟨by decide, by decide⟩,
+    ⟨Allen.mem_toSetRel_precedes.2 (by decide), NonemptyInterval.le_def.2 ⟨by decide, by decide⟩,
       presup_then.2 (by decide)⟩, nofun, .inl rfl, by decide⟩
 
 /-- The account derives the positional generalization (45). -/

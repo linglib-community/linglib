@@ -59,7 +59,7 @@ theorem simultaneous_deRe {C : Type*} (now : C → T) (rain : T → Set C) (A : 
 /-! ### The upper limit constraint
 
 The now of an epistemic alternative is an upper limit for the denotation of tenses
-(`Tense.upperLimitConstraint`). Epistemic alternatives are moments of a branching frame, where
+(the nonfuture cell `Tense.nonfuture`). Epistemic alternatives are moments of a branching frame, where
 the past of a moment is determinate and its future is not. -/
 
 section Branching
@@ -68,9 +68,9 @@ variable {M : Type*} [PartialOrder M] [IsLeftLinear M] {now t t' : M}
 
 /-- From an epistemic alternative the past is determinate, in that a time the upper limit constraint
 admits lies on every history through the now. -/
-theorem histories_subset_of_upperLimit (h : now ~[toSetRel upperLimitConstraint] t) :
+theorem histories_subset_of_upperLimit (h : now ~[toSetRel nonfuture] t) :
     histories now ⊆ histories t :=
-  histories_antitone (mem_toSetRel_upperLimitConstraint.1 h)
+  histories_antitone (mem_toSetRel_nonfuture.1 h)
 
 /-- The future is not determinate, in that where two later times lie on different branches, neither
 lies on every history through the now. -/
@@ -82,7 +82,7 @@ theorem not_histories_subset_of_branching (ht' : now ≤ t') (h : ¬ t ≤ t') (
 end Branching
 
 theorem forwardShifted_not_upperLimit [LinearOrder T] {thinking opening : T}
-    (h : thinking < opening) : compare opening thinking ∉ upperLimitConstraint := by
+    (h : thinking < opening) : compare opening thinking ∉ nonfuture := by
   simpa using h
 
 /-! ### Transmitted temporal relations -/
@@ -166,12 +166,12 @@ theorem simultaneous_nonLocal [Preorder T] (h₁ : matrix.Con ρ g) (h₂ : embe
 theorem narrowScope_forward (k : ℕ) (hk : k ≠ 1) :
     ∃ (ρ : ℕ → ℤ → ℤ → Prop) (g : ℕ → ℤ), matrix.Con ρ g ∧
       (⟨k, 2, 2⟩ : TemporalArgument).Con ρ g ∧ PastConstraint ρ {1} ∧ PastConstraint ρ {1, k} ∧
-      compare (g 2) (g 2) ∈ upperLimitConstraint ∧ g 0 < g 2 :=
+      compare (g 2) (g 2) ∈ nonfuture ∧ g 0 < g 2 :=
   ⟨fun r ↦ if r = 1 then (· < ·) else (· = ·), fun | 0 => 0 | 1 => -5 | _ => 10,
     by show (-5 : ℤ) < 0; decide,
     by show (if k = 1 then (· < ·) else (· = ·)) (10 : ℤ) 10; simp [hk],
     pastConstraint_singleton.2 rfl, ⟨1, by simp, rfl⟩,
-    (compare_mem_upperLimitConstraint _ _).2 le_rfl, by show (0 : ℤ) < 10; decide⟩
+    (compare_mem_nonfuture _ _).2 le_rfl, by show (0 : ℤ) < 10; decide⟩
 
 theorem wideScope_precedes [Preorder T] {k i : ℕ}
     (hcon : (⟨k, i, 0⟩ : TemporalArgument).Con ρ g) (hp : PastConstraint ρ {k}) : g i < g 0 := by
