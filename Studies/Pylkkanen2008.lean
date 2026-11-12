@@ -9,7 +9,7 @@ public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 public import Linglib.Syntax.Minimalist.SyntacticObject.ToTree
 public import Linglib.Syntax.Minimalist.Clause.Size
-public import Linglib.Syntax.Minimalist.Verbal.Applicative
+public import Linglib.Syntax.Minimalist.Verbal.Applicative.Denotation
 public import Linglib.Syntax.Minimalist.Verbal.Voice.Denotation
 public import Linglib.Data.Examples.Pylkkanen2008
 
@@ -32,7 +32,6 @@ event](##unergative_satisfiable_iff), the book's first diagnostic of the two hea
 
 ## Main definitions
 
-* `lowAppl`: the low applicative.
 * `grammar`: the book's rules of composition.
 * `Word`, `Word.val`: the words of the book's applicative sentences by type, and what they
   denote in a `Model`.
@@ -72,7 +71,7 @@ note a), so only the English, Japanese, and Finnish heads are given as `CauseHea
 The second applicative diagnostic (18), that low applicatives are nonsensical with completely
 static verbs such as *hold*, is a fact about the plausibility of the transfer of possession
 (15) asserts, not a typing fact: the low ApplP composes with a static transitive verb
-(`lowApplP_composes_transitive`). Since the transfer relation of (15) is not relativized to the
+(`Minimalist.Appl.binary_lowApplP`). Since the transfer relation of (15) is not relativized to the
 event, the clash with a static event does not follow from the denotation; the study records the
 book's correlation of the two tests across Table 2.1 (`table21_static_iff_unergative`).
 
@@ -94,19 +93,12 @@ its structures, and the bundling of Cause with Voice into one head are not what 
 namespace Pylkkanen2008
 
 
-open ArgumentStructure Minimalist Examples Interpreter
+open ArgumentStructure Minimalist Minimalist.Appl Examples Interpreter
 open scoped SetRel
 
 variable {Entity E : Type*}
 
 /-! ### Applicatives: high relates to the event, low to the theme -/
-
-/-- The low applicative (15) relates the direct object `x` to the indirect object `y` by the
-transfer relation `poss`, to-the-possession for a recipient applicative and from-the-possession
-for a source applicative, and asserts that `x` is the theme of the verb `f`. -/
-def lowAppl (theme : Entity → E → Prop) (poss : Entity → Entity → Prop) (x y : Entity)
-    (f : Entity → E → Prop) : E → Prop :=
-  fun e ↦ f x e ∧ theme x e ∧ poss x y
 
 /-- `lowApplTy` is the type of the low applicative head (15), `⟨e,⟨e,⟨⟨e,⟨s,t⟩⟩,⟨s,t⟩⟩⟩⟩`. -/
 abbrev lowApplTy : Ty Base := .e ⇒ .e ⇒ .evt ⇒ .vt
@@ -117,29 +109,6 @@ abbrev grammar : ManySorted.Language (Ty Base) := Voice.grammar
 
 /-- The rules a node admits, by the types of its daughters: every rule that applies. -/
 abbrev rules {N : Type} : Interpreter grammar N := typeDriven grammar
-
--- (17): no rule combines a low applicative, at any stage of saturation, with an unergative verb
-theorem lowAppl_not_composes_unergative :
-    ∀ τ ∈ [lowApplTy, .e ⇒ .evt ⇒ .vt, .evt ⇒ .vt], ∀ u,
-      IsEmpty (grammar.Binary τ .vt u) ∧ IsEmpty (grammar.Binary .vt τ u) := by
-  intro τ hτ u
-  simp only [List.mem_cons, List.not_mem_nil, or_false] at hτ
-  rcases hτ with rfl | rfl | rfl <;>
-    exact ⟨⟨by rintro ((m | m) | m) <;> cases m⟩, ⟨by rintro ((m | m) | m) <;> cases m⟩⟩
-
--- (18): the low ApplP takes a transitive verb by Functional Application
-theorem lowApplP_composes_transitive :
-    rules.binary () (.evt ⇒ .vt) .evt = [⟨.vt, .inl (.inl .fa)⟩] :=
-  rfl
-
--- (103b): over a constituent whose open argument is the agent, the low ApplP holds of no event
--- exactly when, if `x` passes to `y`, `x` is the theme of no event of which it is the agent
-theorem lowAppl_eventIdentification_eq_bot_iff {agent theme : Entity → E → Prop}
-    {poss : Entity → Entity → Prop} {run : E → Prop} {x y : Entity} :
-    lowAppl theme poss x y (eventIdentification agent run) = ⊥ ↔
-      (poss x y → ∀ e, run e → agent x e → ¬ theme x e) := by
-  refine ⟨fun h hp e hr ha ht ↦ (congrFun h e).mp ⟨⟨ha, hr⟩, ht, hp⟩,
-    fun h ↦ funext fun e ↦ eq_false fun ⟨⟨ha, hr⟩, ht, hp⟩ ↦ h hp e hr ha ht⟩
 
 /-! ### The applicative structures and their meanings -/
 
@@ -336,14 +305,13 @@ theorem john_cCommands_theBook :
 end CCommand
 
 /-- The book's structure for an applicative head over the unergative *run*: the high applicative
-in its position of (6a), a low one in the structure of (103b). The static-possession and affected
-applicatives of [cuervo-2003] are outside the book's inventory. -/
+in its position of (6a), a low one in the structure of (103b). The static-possession applicative
+of [cuervo-2003] is outside the book's inventory. -/
 def unergativeTree? : Appl.Head → Option LinearizedSyntacticObject
   | .high => some unergative
   | .low .recipient => some (ranMary applTo)
   | .low .source => some (ranMary applFrom)
   | .low .possessor => none
-  | .affected => none
 
 /-- An object is satisfiable when, in some model where no agent of running is its theme, it
 means a predicate of eventualities true of some eventuality. -/

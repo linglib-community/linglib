@@ -68,10 +68,23 @@ inductive Meaning where
   | benefactive
   deriving DecidableEq, Repr
 
-/-- The table of datives: the meanings of an applicative head combined with a verbal head. A
+/-- The columns of the table of datives, the types of applicative: a low applicative with its
+relation, and an applicative that takes a vP, affected when a dynamic head embeds it and high
+when none does. -/
+inductive Column where
+  | low (relation : Appl.LowRelation)
+  | affected
+  | high
+  deriving DecidableEq, Repr
+
+/-- The column of a site, given the relation a low applicative establishes. -/
+def column (s : Appl.Site) (r : Appl.LowRelation) : Column :=
+  if s.Low then .low r else if s.High then .high else .affected
+
+/-- The table of datives: the meanings of a type of applicative combined with a verbal head. A
 high applicative over a state is an experiencer, over an activity a benefactive or malefactive,
 and over a change either. -/
-def meanings : Appl.Head × LittleV → Finset Meaning
+def meanings : Column × LittleV → Finset Meaning
   | (.low r, _) => {.low r}
   | (.affected, _) => {.affected}
   | (.high, .vBE) => {.experiencer}
@@ -83,8 +96,8 @@ that takes ApplP as its complement, or for a high applicative the head of its ow
 def row (s : Appl.Site) : Option LittleV := s.selector <|> s.complementHead
 
 /-- The cell of the table a site falls in, given the relation a low applicative establishes. -/
-def cell (s : Appl.Site) (r : Appl.LowRelation) : Option (Appl.Head × LittleV) :=
-  (row s).map (s.head r, ·)
+def cell (s : Appl.Site) (r : Appl.LowRelation) : Option (Column × LittleV) :=
+  (row s).map (column s r, ·)
 
 /-! ### Predicates -/
 
@@ -204,8 +217,8 @@ end English
 /-- A language's applicative heads: the cells of the table it has, and those of them that are
 defective, spelled out by a clitic and projecting no specifier for a dative DP. -/
 structure Inventory where
-  heads : Finset (Appl.Head × LittleV)
-  defective : Finset (Appl.Head × LittleV) := ∅
+  heads : Finset (Column × LittleV)
+  defective : Finset (Column × LittleV) := ∅
 
 /-- Spanish has every cell of the table, a low and a high applicative with each verbal head and
 the affected applicative under the two dynamic ones; its high applicative over an activity is
@@ -274,7 +287,7 @@ theorem english_licenses_iff : english.Licenses p d ↔
     simp only [cell, Option.mem_def, Option.map_eq_some_iff, Prod.mk.injEq] at hc
     obtain ⟨v, hv, hhead, rfl⟩ := hc
     obtain ⟨hlow, hr⟩ : Appl.Site.Low ⟨a, b⟩ ∧ p.relation = .recipient := by
-      unfold Appl.Site.head at hhead; split_ifs at hhead; simp_all
+      unfold column at hhead; split_ifs at hhead; simp_all
     obtain rfl : b = [] := hlow
     have ht := hl rfl
     rw [Appl.Site.heads, List.append_nil] at hh
@@ -287,7 +300,7 @@ theorem english_licenses_iff : english.Licenses p d ↔
     simp only [Appl.Site.mk.injEq] at hd
     obtain ⟨rfl, rfl⟩ := hd
     refine ⟨hp.symm, ⟨(.low .recipient, .vDO), ?_, ?_, ?_⟩, fun _ ↦ ht, ?_⟩ <;>
-      simp [cell, row, Appl.Site.selector, Appl.Site.head, Appl.Site.Low, Appl.Site.High, hr,
+      simp [cell, row, Appl.Site.selector, column, Appl.Site.Low, Appl.Site.High, hr,
         english]
 
 -- (88), (89)
@@ -309,7 +322,7 @@ theorem spanish_licenses_unergative_iff (hp : p.heads = [.vDO]) (ho : ¬ p.RootL
     spanish.Licenses p d ↔ d = ⟨⟨[], [.vDO]⟩, true, false⟩ := by
   obtain ⟨⟨a, b⟩, an, dp⟩ := d
   rcases a with _ | ⟨v, a⟩ <;> rcases b with _ | ⟨w, b⟩ <;>
-    simp [Inventory.Licenses, Appl.Site.heads, hp, cell, row, Appl.Site.head, Appl.Site.selector,
+    simp [Inventory.Licenses, Appl.Site.heads, hp, cell, row, column, Appl.Site.selector,
       Appl.Site.complementHead, Appl.Site.Low, Appl.Site.High, spanish,
       Predicate.ThemeIsRootComplement, ho]
   rintro rfl rfl
@@ -333,7 +346,7 @@ theorem spanish_dativeMeanings_inchoative (hp : p.heads = [.vGO, .vBE]) :
   cases fullDP <;>
     simp [Inventory.dativeMeanings, hp, Appl.Site.all, List.range_succ, Inventory.Licenses, spanish,
       LittleV.BiEventive, Predicate.ThemeIsRootComplement, Appl.Site.Low, Appl.Site.High,
-      Appl.Site.heads, Appl.Site.head, Appl.Site.complementHead, Appl.Site.selector, cell, row,
+      Appl.Site.heads, column, Appl.Site.complementHead, Appl.Site.selector, cell, row,
       meanings] <;>
     decide
 
@@ -342,7 +355,7 @@ theorem spanish_dativeMeanings_causative (hp : p.heads = [.vDO, .vBE]) :
     spanish.dativeMeanings p animate true = {.affected} := by
   simp [Inventory.dativeMeanings, hp, Appl.Site.all, List.range_succ, Inventory.Licenses, spanish,
     LittleV.BiEventive, Predicate.ThemeIsRootComplement, Appl.Site.Low, Appl.Site.High,
-    Appl.Site.heads, Appl.Site.head, Appl.Site.complementHead, Appl.Site.selector, cell, row,
+    Appl.Site.heads, column, Appl.Site.complementHead, Appl.Site.selector, cell, row,
     meanings]
 
 /-! ### The rows -/
