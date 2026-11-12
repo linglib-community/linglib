@@ -20,6 +20,9 @@ the filters containing `□a`](##Order.ProperFilter.core_setOf_mem).
 
 ## Implementation notes
 
+`ProperFilter L` is a structure on a filter with the proof that it omits `⊥`, with a `SetLike`
+instance, as mathlib's `PrimeSpectrum` is a structure on an ideal with the proof that it is prime.
+
 Harding, McDonald and Peinado call the frame of proper filters Goldblatt's orthoframe and identify
 its concepts with the canonical completion of `L`, beside MacLaren's orthoframe of nonzero
 elements in `Core/Order/Ortholattice/Representation.lean`, whose concepts are the MacNeille
@@ -41,9 +44,13 @@ open Set SetRel
 
 namespace Order
 
-/-- The proper filters of `L`, the points of Goldblatt's representation. -/
-abbrev ProperFilter (L : Type*) [Lattice L] [OrderBot L] : Type _ :=
-  {F : PFilter L // ⊥ ∉ F}
+/-- The proper filters of `L`, those not containing `⊥`: the points of Goldblatt's
+representation. -/
+structure ProperFilter (L : Type*) [Lattice L] [OrderBot L] where
+  /-- The underlying filter. -/
+  toPFilter : PFilter L
+  /-- A proper filter does not contain `⊥`. -/
+  protected bot_notMem' : ⊥ ∉ toPFilter
 
 namespace PFilter
 
@@ -77,24 +84,35 @@ namespace ProperFilter
 
 variable {L : Type*} [Lattice L] [BoundedOrder L]
 
+/-- A proper filter on `L` is a subset of `L`. -/
 instance : SetLike (ProperFilter L) L where
-  coe F := (F.1 : Set L)
-  coe_injective _ _ h := Subtype.ext (SetLike.coe_injective h)
+  coe F := F.toPFilter
+  coe_injective := fun ⟨_, _⟩ ⟨_, _⟩ h ↦ by
+    obtain rfl := SetLike.coe_injective h
+    rfl
 
-@[simp] theorem mem_val {F : ProperFilter L} {a : L} : a ∈ F.1 ↔ a ∈ F := Iff.rfl
+instance : PartialOrder (ProperFilter L) := .ofSetLike (ProperFilter L)
 
-theorem bot_notMem (F : ProperFilter L) : ⊥ ∉ F := F.2
+@[simp] theorem mem_toPFilter {F : ProperFilter L} {a : L} : a ∈ F.toPFilter ↔ a ∈ F := Iff.rfl
 
-@[simp] theorem top_mem (F : ProperFilter L) : ⊤ ∈ F := F.1.top_mem
+@[simp] theorem mem_mk {G : PFilter L} {h : ⊥ ∉ G} {a : L} :
+    a ∈ (⟨G, h⟩ : ProperFilter L) ↔ a ∈ G := Iff.rfl
+
+/-- Two proper filters are equal when they have the same members. -/
+@[ext] theorem ext {F G : ProperFilter L} (h : ∀ a, a ∈ F ↔ a ∈ G) : F = G := SetLike.ext h
+
+theorem bot_notMem (F : ProperFilter L) : ⊥ ∉ F := F.bot_notMem'
+
+@[simp] theorem top_mem (F : ProperFilter L) : ⊤ ∈ F := F.toPFilter.top_mem
 
 theorem mem_of_le (F : ProperFilter L) {a b : L} (h : a ≤ b) (ha : a ∈ F) : b ∈ F :=
-  F.1.mem_of_le h ha
+  F.toPFilter.mem_of_le h ha
 
 theorem inf_mem (F : ProperFilter L) {a b : L} (ha : a ∈ F) (hb : b ∈ F) : a ⊓ b ∈ F :=
-  F.1.inf_mem ha hb
+  F.toPFilter.inf_mem ha hb
 
 @[simp] theorem inf_mem_iff (F : ProperFilter L) {a b : L} : a ⊓ b ∈ F ↔ a ∈ F ∧ b ∈ F :=
-  F.1.inf_mem_iff
+  F.toPFilter.inf_mem_iff
 
 /-- The principal filter of a nonzero element. -/
 def principal {a : L} (ha : a ≠ ⊥) : ProperFilter L :=
@@ -108,7 +126,7 @@ variable {box : InfTopHom L L}
 
 /-- The filter `{a | □a ∈ F}`, proper when `□` is deflationary. -/
 def nec (hT : ∀ a, box a ≤ a) (F : ProperFilter L) : ProperFilter L :=
-  ⟨F.1.comap box, fun h ↦ F.bot_notMem <| by
+  ⟨F.toPFilter.comap box, fun h ↦ F.bot_notMem <| by
     have h' := PFilter.mem_comap.mp h
     rwa [le_bot_iff.mp (hT ⊥)] at h'⟩
 
