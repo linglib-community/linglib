@@ -9,7 +9,7 @@ public import Linglib.Core.Probability.Distributions.Bernoulli
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Data.Examples.GroveWhite2025
 public import Mathlib.Probability.ConditionalProbability
-public import Mathlib.Probability.Independence.Basic
+public import Linglib.Core.Probability.Independence.Basic
 
 /-!
 # Grove and White (2025): Factivity, Presupposition Projection, and Discrete Knowledge
@@ -38,11 +38,11 @@ their mean answer and differ in spread.
 
 The epistemic relation of (13) is an accessibility relation for each holder and the holder's
 knowledge of the complement is necessity along it. Updating the common ground conditions it on a
-reading's content; the non-factive reading leaves the complement's probability alone when the
-common ground makes the complement independent of what the holder knows, a hypothesis of the
-theorems that derive the resolved models. Under unresolved factivity the factivity value of an
-index is likewise independent of the complement. The response noise of
-section 4.1, the truncated normal likelihood, is not modeled, so each model is the distribution
+reading's content, which the theorems take as events. The non-factive reading leaves the
+complement's probability alone when the common ground makes the complement independent of what
+the holder knows, a hypothesis of the theorems that derive the resolved models. Under unresolved
+factivity the factivity value of an index is likewise independent of the complement. The response
+noise of section 4.1, the truncated normal likelihood, is not modeled, so each model is the distribution
 of the intended answer. The paper's illustrative sentences are rows of `GroveWhite2025.Examples`.
 
 ## References
@@ -93,39 +93,38 @@ def clauseEmbeddingSem (epi : E → SetRel Ω Ω) : FactivityReading → (Ω →
   | .factive, φ, x, i => □[epi x] φ i ∧ φ i
   | .nonfactive, φ, x, i => □[epi x] φ i
 
-variable [MeasurableSpace Ω] (cg : Measure Ω) (epi : E → SetRel Ω Ω) (φ : Ω → Prop) (x : E)
+/-- The content of a reading as an event, for the indices `K` at which the holder knows the
+complement and the indices `C` at which it is true. -/
+def FactivityReading.content (K C : Set Ω) : FactivityReading → Set Ω
+  | .factive => K ∩ C
+  | .nonfactive => K
+
+theorem setOf_clauseEmbeddingSem (epi : E → SetRel Ω Ω) (r : FactivityReading) (φ : Ω → Prop)
+    (x : E) : {i | clauseEmbeddingSem epi r φ x i} = r.content {i | □[epi x] φ i} {i | φ i} := by
+  cases r <;> rfl
+
+variable [MeasurableSpace Ω] (cg : Measure Ω) (K C : Set Ω)
 
 /-- Updating the common ground with a reading conditions it on the reading's content. -/
-noncomputable def update (r : FactivityReading) : Measure Ω :=
-  cg[|{i | clauseEmbeddingSem epi r φ x i}]
+noncomputable def update (r : FactivityReading) : Measure Ω := cg[|r.content K C]
 
-instance (r : FactivityReading) : IsZeroOrProbabilityMeasure (update cg epi φ x r) := by
+instance (r : FactivityReading) : IsZeroOrProbabilityMeasure (update cg K C r) := by
   unfold update; infer_instance
 
-theorem update_factive :
-    update cg epi φ x .factive = cg[|{i | □[epi x] φ i} ∩ {i | φ i}] := rfl
+variable {cg K C} [IsProbabilityMeasure cg]
 
-theorem update_nonfactive : update cg epi φ x .nonfactive = cg[|{i | □[epi x] φ i}] := rfl
-
-variable {cg epi φ x} [IsProbabilityMeasure cg]
-
-theorem likely_update_factive (hK : MeasurableSet {i | □[epi x] φ i})
-    (hφ : MeasurableSet {i | φ i}) (h : cg {i | □[epi x] φ i ∧ φ i} ≠ 0) :
-    likely (update cg epi φ x .factive) {i | φ i} = 1 := by
-  have h' : cg ({i | □[epi x] φ i} ∩ {i | φ i}) ≠ 0 := h
+theorem likely_update_factive (hK : MeasurableSet K) (hC : MeasurableSet C)
+    (h : cg (K ∩ C) ≠ 0) : likely (update cg K C .factive) C = 1 := by
   ext
-  rw [coe_likely, measureReal_def, update_factive, cond_apply (hK.inter hφ),
-    Set.inter_eq_left.2 Set.inter_subset_right, ENNReal.inv_mul_cancel h' (measure_ne_top _ _)]
+  rw [coe_likely, measureReal_def, update, FactivityReading.content, cond_apply (hK.inter hC),
+    Set.inter_eq_left.2 Set.inter_subset_right, ENNReal.inv_mul_cancel h (measure_ne_top _ _)]
   rfl
 
 /-- Under the non-factive reading the complement keeps its probability, when the common ground
 makes it independent of what the holder knows. -/
-theorem likely_update_nonfactive (hK : MeasurableSet {i | □[epi x] φ i})
-    (hind : IndepSet {i | □[epi x] φ i} {i | φ i} cg) (h : cg {i | □[epi x] φ i} ≠ 0) :
-    likely (update cg epi φ x .nonfactive) {i | φ i} = likely cg {i | φ i} := by
-  ext
-  rw [coe_likely, coe_likely, measureReal_def, measureReal_def, update_nonfactive, cond_apply hK,
-    hind.measure_inter_eq_mul, ← mul_assoc, ENNReal.inv_mul_cancel h (measure_ne_top _ _), one_mul]
+theorem likely_update_nonfactive (hK : MeasurableSet K) (hind : IndepSet K C cg)
+    (h : cg K ≠ 0) : likely (update cg K C .nonfactive) C = likely cg C :=
+  Subtype.ext (hind.cond_real_apply hK h)
 
 end LexicalEntry
 
@@ -222,69 +221,49 @@ end Completion
 
 section Derivation
 
-variable {Ω E : Type*} [MeasurableSpace Ω] {cg : Measure Ω} [IsProbabilityMeasure cg]
-  {epi : E → SetRel Ω Ω} {φ : Ω → Prop} {x : E} (τ : I)
+variable {Ω : Type*} [MeasurableSpace Ω] {cg : Measure Ω} [IsProbabilityMeasure cg]
+  {K C : Set Ω} (τ : I)
 
-open Classical in
 /-- The answer at an index under discrete world knowledge is the complement's truth value. -/
-noncomputable def complementValue (φ : Ω → Prop) (i : Ω) : I := if φ i then 1 else 0
+noncomputable def complementValue (C : Set Ω) : Ω → I := C.indicator fun _ ↦ 1
 
 /-- The norming-discrete model is the distribution of the complement's truth value at an index
 drawn from the common ground. -/
-theorem map_complementValue (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (hφ : MeasurableSet {i | φ i}) :
-    μ.map (complementValue φ) = normingDiscrete (likely μ {i | φ i}) := by
+theorem map_complementValue (μ : Measure Ω) [IsProbabilityMeasure μ] (hC : MeasurableSet C) :
+    μ.map (complementValue C) = normingDiscrete (likely μ C) := by
   classical
-  have hcv : Measurable (complementValue φ) := Measurable.ite hφ measurable_const measurable_const
-  have h1 : (toNNReal (likely μ {i | φ i}) : ℝ≥0∞) = μ {i | φ i} :=
-    (ENNReal.toReal_eq_toReal_iff' ENNReal.coe_ne_top (measure_ne_top μ _)).1
-      (by simp [measureReal_def])
-  have h0 : (toNNReal (σ (likely μ {i | φ i})) : ℝ≥0∞) = μ {i | φ i}ᶜ :=
-    (ENNReal.toReal_eq_toReal_iff' ENNReal.coe_ne_top (measure_ne_top μ _)).1
-      (by simp [coe_symm_eq, ← measureReal_def, probReal_compl_eq_one_sub hφ])
-  ext s hs
-  rw [Measure.map_apply hcv hs, normingDiscrete, bernoulliMeasure_apply _ hs, h1, h0]
-  have hpre : complementValue φ ⁻¹' s =
-      (if (1 : I) ∈ s then {i | φ i} else ∅) ∪ (if (0 : I) ∈ s then {i | φ i}ᶜ else ∅) := by
-    ext i
-    by_cases hi : φ i <;> by_cases h1s : (1 : I) ∈ s <;> by_cases h0s : (0 : I) ∈ s <;>
-      simp [complementValue, hi, h1s, h0s]
-  rw [hpre]
-  by_cases h1s : (1 : I) ∈ s <;> by_cases h0s : (0 : I) ∈ s <;>
-    simp [h1s, h0s]
+  rw [complementValue, ← Set.piecewise_eq_indicator]
+  exact map_piecewise_const_eq_bernoulliMeasure 1 0 μ hC
 
 /-- The discrete-factivity model draws a reading of (13) and answers with the probability of
 the complement under the common ground updated with it. -/
-theorem discreteFactivity_eq_bind_update (hK : MeasurableSet {i | □[epi x] φ i})
-    (hφ : MeasurableSet {i | φ i}) (hind : IndepSet {i | □[epi x] φ i} {i | φ i} cg)
-    (h : cg {i | □[epi x] φ i ∧ φ i} ≠ 0) :
-    discreteFactivity τ (likely cg {i | φ i}) = Ber(FactivityReading.factive, .nonfactive, τ).bind
-      fun r ↦ dirac (likely (update cg epi φ x r) {i | φ i}) := by
-  have hK0 : cg {i | □[epi x] φ i} ≠ 0 := fun h0 ↦ h (measure_mono_null (fun _ hi ↦ hi.1) h0)
+theorem discreteFactivity_eq_bind_update (hK : MeasurableSet K) (hC : MeasurableSet C)
+    (hind : IndepSet K C cg) (h : cg (K ∩ C) ≠ 0) :
+    discreteFactivity τ (likely cg C) = Ber(FactivityReading.factive, .nonfactive, τ).bind
+      fun r ↦ dirac (likely (update cg K C r) C) := by
   rw [discreteFactivity, resolvedFactivity]
   congr 1
   funext r
   cases r
-  · rw [likely_update_factive hK hφ h]
-  · rw [likely_update_nonfactive hK hind hK0]
+  · rw [likely_update_factive hK hC h]
+  · rw [likely_update_nonfactive hK hind ((measure_inter_null_of_null_left C).mt h)]
 
 /-- The wholly-discrete model draws a reading of (13) and answers with the complement's truth
 at an index drawn from the common ground updated with it. -/
-theorem whollyDiscrete_eq_bind_update (hK : MeasurableSet {i | □[epi x] φ i})
-    (hφ : MeasurableSet {i | φ i}) (hind : IndepSet {i | □[epi x] φ i} {i | φ i} cg)
-    (h : cg {i | □[epi x] φ i ∧ φ i} ≠ 0) :
-    whollyDiscrete τ (likely cg {i | φ i}) = Ber(FactivityReading.factive, .nonfactive, τ).bind
-      fun r ↦ (update cg epi φ x r).map (complementValue φ) := by
-  have hK0 : cg {i | □[epi x] φ i} ≠ 0 := fun h0 ↦ h (measure_mono_null (fun _ hi ↦ hi.1) h0)
+theorem whollyDiscrete_eq_bind_update (hK : MeasurableSet K) (hC : MeasurableSet C)
+    (hind : IndepSet K C cg) (h : cg (K ∩ C) ≠ 0) :
+    whollyDiscrete τ (likely cg C) = Ber(FactivityReading.factive, .nonfactive, τ).bind
+      fun r ↦ (update cg K C r).map (complementValue C) := by
+  have hK0 : cg K ≠ 0 := (measure_inter_null_of_null_left C).mt h
   rw [whollyDiscrete, resolvedFactivity]
   congr 1
   funext r
   cases r
-  · have : IsProbabilityMeasure (update cg epi φ x .factive) := cond_isProbabilityMeasure h
-    rw [map_complementValue _ hφ, likely_update_factive hK hφ h]
+  · have : IsProbabilityMeasure (update cg K C .factive) := cond_isProbabilityMeasure h
+    rw [map_complementValue _ hC, likely_update_factive hK hC h]
     simp [normingDiscrete]
-  · have : IsProbabilityMeasure (update cg epi φ x .nonfactive) := cond_isProbabilityMeasure hK0
-    rw [map_complementValue _ hφ, likely_update_nonfactive hK hind hK0]
+  · have : IsProbabilityMeasure (update cg K C .nonfactive) := cond_isProbabilityMeasure hK0
+    rw [map_complementValue _ hC, likely_update_nonfactive hK hind hK0]
 
 end Derivation
 
