@@ -17,7 +17,10 @@ with roots.
 
 The feature values come from the PHOIBLE chart, which codes the tongue-root contrast by
 [tense], so a vowel is the segment of its chart entry's tongue-root reading. The chart's /ə/
-is [−tense], and Guébie's /ə/ departs from it in being [+ATR].
+is [−tense], and Guébie's /ə/ departs from it in being [+ATR]. Sande distinguishes the ten
+vowels by [high], [back], [round] and [ATR], with the central /ə a/ both [+back] and differing
+only in [ATR]. The chart's values agree with hers on [high] and [round], and on [back] for the
+other eight; its central vowels are [−front, −back], and its /a/ is [+low], and they are kept.
 
 ## Main definitions
 
@@ -54,8 +57,8 @@ def i : Segment := vowel .«i»
 def e : Segment := vowel .«e»
 
 /-- The advanced mid central vowel /ə/. PHOIBLE's /ə/ is [−tense], which the tongue-root reading
-makes [−ATR]; Guébie's /ə/ is [+ATR] in the inventory (1) of [sande-clem-dabkowski-2026], whose
-(2) shows the plural suffix alternating between /ə/ and /a/ (p. 3). -/
+makes [−ATR]; Guébie's /ə/ is [+ATR] in the feature table (5) of [sande-2022] (p. 5), and the
+plural suffix alternates between /ə/ and /a/ ((2) of [sande-clem-dabkowski-2026], p. 3). -/
 def schwa : Segment := vowel .«ə» (.ofSpecs [(.atr, true)])
 
 /-- The advanced mid back vowel /o/. -/
