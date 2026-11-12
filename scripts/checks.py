@@ -54,6 +54,7 @@ import argparse
 import concurrent.futures
 import copy
 import datetime
+import difflib
 import hashlib
 import json
 import os
@@ -72,6 +73,9 @@ RELATIONS = {"exact", "generalizes", "specializes", "variant", "refutes", "missi
 HASH_VERSION = "v3"
 STANDARD_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 RENAMES = CHECKS / "renames.toml"
+LEDGER = CHECKS / "ledger"
+LEDGER_NODES = LEDGER / "nodes"
+LOGIN = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?")
 
 
 def load_renames():
@@ -120,6 +124,39 @@ def unrecorded(data, renames):
     return [a for a in data.get("aliases", []) if (a["old"], a["new"]) not in known]
 
 
+def short_hash(data):
+    """The name of a ledger file or node: the start of the SHA-256 of its bytes."""
+    return hashlib.sha256(data).hexdigest()[:16]
+
+
+def load_ledger():
+    """The ledger entries of every item, oldest first, keyed by `(source, id)`. A file is named by
+    the hash of its contents, so that an edited entry is found."""
+    entries = {}
+    for path in sorted(LEDGER.glob("*.toml")):
+        raw = path.read_bytes()
+        if path.stem != short_hash(raw):
+            sys.exit(f"{path}: its name is not the hash of its contents")
+        sign = tomllib.loads(raw.decode("utf-8"))
+        for item in sign.get("item", []):
+            entries.setdefault((sign["source"], item["id"]), []).append({
+                "by": sign["by"], "recorded_by": sign["recorded_by"], "via": sign.get("via"),
+                "date": sign["date"], "hash": item["hash"], "nodes": item.get("nodes", []),
+                "file": path.name})
+    for found in entries.values():
+        found.sort(key=lambda e: e["date"])
+    return entries
+
+
+def node_text(digest):
+    """The text of a declaration as a signer read it, from the ledger's node store."""
+    path = LEDGER_NODES / f"{digest}.txt"
+    raw = path.read_bytes()
+    if short_hash(raw) != digest:
+        sys.exit(f"{path}: its name is not the hash of its contents")
+    return raw.decode("utf-8")
+
+
 def load_sources(keys=None):
     """The check files, keyed by source, each with its path and items."""
     sources = {}
@@ -132,6 +169,13 @@ def load_sources(keys=None):
         if key != path.stem:
             sys.exit(f"{path}: `source = {key!r}` does not match the file name")
         sources[key] = {"path": path, "items": data.get("item", [])}
+    ledger = load_ledger()
+    for key, src in sources.items():
+        for item in src["items"]:
+            if "check" in item:
+                sys.exit(f"{src['path']}: {item.get('id')} has `[[item.check]]` blocks, which "
+                         "the ledger replaced: sign-offs are kept in checks/ledger/")
+            item["check"] = ledger.get((key, item.get("id")), [])
     if keys:
         unknown = set(keys) - sources.keys()
         if unknown:
@@ -299,8 +343,8 @@ def status_json(sources, status, info):
             "source": key, "id": cid, "kind": item.get("kind"), "label": item.get("label", cid),
             "relation": item.get("relation"), "notes": item.get("notes", "").strip(),
             "decls": item.get("decls", []), "status": st,
-            "check": last and {"by": last.get("by"), "date": str(last.get("date")),
-                               "commit": last.get("commit")},
+            "check": last and {"by": last["by"], "recorded_by": last["recorded_by"],
+                               "via": last["via"], "date": last["date"].date().isoformat()},
             "blocking": [f"{k}/{c}" for k, c in info[(key, cid)].get("blocking", [])]})
     return {"commit": commit, "items": items}
 
@@ -371,20 +415,34 @@ def cmd_core(args):
 
 def cmd_diff(args):
     sources = load_sources([args.source])
-    status, info, _ = evaluate(sources)
+    status, info, data = evaluate(sources)
     ref = (args.source, args.item)
     if ref not in info:
         sys.exit(f"no item {args.item} in {args.source}")
-    checks = info[ref]["item"].get("check", [])
+    checks = info[ref]["item"]["check"]
     if not checks:
         sys.exit(f"{args.item} has never been signed")
     last = checks[-1]
-    print(f"{args.item}: {status[ref]}; signed at {last['commit']} by {last['by']} "
-          f"on {last['date']}")
+    print(f"{args.item}: {status[ref]}; signed by {last['by']} on {last['date']:%Y-%m-%d}")
     if status[ref] != "stale":
         return 0
-    files = [str(Path(*m.split(".")).with_suffix(".lean")) for m in info[ref].get("files", [])]
-    return subprocess.run(["git", "diff", last["commit"], "--", *files], cwd=ROOT).returncode
+    signed = {n["name"]: n for n in last["nodes"]}
+    now = info[ref]["closure"]
+    for name in sorted(signed.keys() - now):
+        print(f"\n{name}: no longer in the statement's closure")
+    for name in sorted(now - signed.keys()):
+        print(f"\n{name}: now in the statement's closure")
+    for name in sorted(now & signed.keys()):
+        before, after = node_text(signed[name]["text"]), data["nodes"][name]["text"]
+        if before != after:
+            print()
+            print("\n".join(difflib.unified_diff(before.splitlines(), after.splitlines(),
+                                                  f"{name} (signed)", f"{name} (now)",
+                                                  lineterm="")))
+        elif signed[name]["term"] != short_hash(data["nodes"][name]["term"].encode()):
+            print(f"\n{name}: the printed text is the same, but the term differs, as in a "
+                  "bound variable's type that printing hides")
+    return 0
 
 
 RENAMES_HEADER = """\
@@ -423,27 +481,49 @@ def cmd_renames(args):
     return 0
 
 
-def insert_check(text, cid, entry):
-    """The TOML text with `entry` appended to the item with id `cid`."""
-    lines = text.splitlines(keepends=True)
-    id_line = re.compile(rf'\s*id\s*=\s*"{re.escape(cid)}"\s*$')
-    start = next(i for i, l in enumerate(lines) if id_line.match(l))
-    end = next((i for i in range(start + 1, len(lines)) if lines[i].strip() == "[[item]]"),
-               len(lines))
+def toml_string(s):
+    """A TOML basic string, which JSON's escapes also write."""
+    return json.dumps(s, ensure_ascii=False)
 
-    def filler(line):
-        return not line.strip() or line.lstrip().startswith("#")
 
-    while end > start + 1 and filler(lines[end - 1]):
-        end -= 1
-    return "".join(lines[:end]) + entry + "".join(lines[end:])
+def ledger_file(source, by, recorded_by, via, when, signed):
+    """The text of a ledger file, and the node texts it needs, for the items just signed, given as
+    `(id, hash, nodes)`, each node `(name, term, text)`."""
+    lines = [f"source = {toml_string(source)}", f"by = {toml_string(by)}",
+             f"recorded_by = {toml_string(recorded_by)}"]
+    if via:
+        lines.append(f"via = {toml_string(via)}")
+    lines.append(f"date = {when}")
+    for cid, digest, nodes in signed:
+        lines += ["", "[[item]]", f"id = {toml_string(cid)}", f"hash = {toml_string(digest)}",
+                  "nodes = ["]
+        for name, term, text in nodes:
+            lines.append(f"  {{ name = {toml_string(name)}, term = "
+                         f'"{short_hash(term.encode())}", text = "{short_hash(text.encode())}" }},')
+        lines.append("]")
+    return "\n".join(lines) + "\n"
 
 
 def cmd_sign(args):
     if os.environ.get("CLAUDECODE"):
         sys.exit("sign-offs are made by people: run `sign` yourself, outside an agent session")
-    if not re.fullmatch(r"[A-Za-z0-9-]+", args.by):
-        sys.exit(f"--by takes a GitHub handle, not {args.by!r}")
+    by = args.by.strip()
+    recorded_by = args.recorded_by or by
+    if not by or any(c in by for c in '\n\r"\\'):
+        sys.exit(f"--by takes the reviewer's name or GitHub handle, not {args.by!r}")
+    if not LOGIN.fullmatch(recorded_by):
+        sys.exit("--recorded-by takes your GitHub handle, and defaults to --by, which is not one: "
+                 f"{recorded_by!r}")
+    if by != recorded_by and not args.via:
+        sys.exit("a sign-off recorded for someone else needs --via, saying how they made the "
+                 "check known, such as `email` or `issue #123`")
+    if args.via and by == recorded_by:
+        sys.exit("--via is for a sign-off recorded for someone else")
+    return record(args, by, recorded_by)
+
+
+def record(args, by, recorded_by):
+    """Write the ledger file for the items `args` selects, and the node texts it needs."""
     sources = load_sources([args.source])
     problems = [p for p in validate(sources)]
     if problems:
@@ -457,11 +537,6 @@ def cmd_sign(args):
                  "`checks.py renames`: " + ", ".join(f"{a['old']} -> {a['new']}" for a in pending))
     items = sources[args.source]["items"]
     ids = [c["id"] for c in items] if args.all else args.items.split(",")
-    commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, check=True,
-                            capture_output=True, text=True).stdout.strip()
-    today = datetime.date.today().isoformat()
-    path = sources[args.source]["path"]
-    text = path.read_text(encoding="utf-8")
     signed = []
     for cid in ids:
         ref = (args.source, cid)
@@ -473,12 +548,24 @@ def cmd_sign(args):
             sys.exit(f"{cid} is {status[ref]} and cannot be signed")
         if info[ref]["signoff"] == "signed" and args.all:
             continue
-        entry = (f'\n  [[item.check]]\n  by     = "{args.by}"\n  date   = {today}\n'
-                 f'  commit = "{commit}"\n  hash   = "{info[ref]["hash"]}"\n')
-        text = insert_check(text, cid, entry)
-        signed.append(cid)
+        nodes = [(n, data["nodes"][n]["term"], data["nodes"][n]["text"])
+                 for n in sorted(info[ref]["closure"])]
+        signed.append((cid, info[ref]["hash"], nodes))
+    if not signed:
+        print("nothing to sign")
+        return 0
+    when = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    text = ledger_file(args.source, by, recorded_by, args.via, when, signed)
+    LEDGER_NODES.mkdir(parents=True, exist_ok=True)
+    for _, _, nodes in signed:
+        for _, _, node in nodes:
+            path = LEDGER_NODES / f"{short_hash(node.encode())}.txt"
+            if not path.exists():
+                path.write_text(node, encoding="utf-8")
+    path = LEDGER / f"{short_hash(text.encode())}.toml"
     path.write_text(text, encoding="utf-8")
-    print(f"signed {len(signed)} item(s) of {args.source} at {commit}: {', '.join(signed)}")
+    print(f"signed {len(signed)} item(s) of {args.source} in checks/{LEDGER.name}/{path.name}: "
+          f"{', '.join(c for c, _, _ in signed)}")
     return 0
 
 
@@ -698,7 +785,10 @@ def main():
     g = p.add_mutually_exclusive_group(required=True)
     g.add_argument("--all", action="store_true", help="every unsigned or stale item")
     g.add_argument("--items", help="comma-separated item ids")
-    p.add_argument("--by", required=True, help="your GitHub handle")
+    p.add_argument("--by", required=True,
+                   help="who checked: your GitHub handle, or the name of a reviewer you record for")
+    p.add_argument("--recorded-by", help="your GitHub handle, if --by is someone else")
+    p.add_argument("--via", help="how that reviewer made the check known (`email`, `issue #123`)")
     p.set_defaults(func=cmd_sign)
     p = sub.add_parser("gloss", help="blind English glosses of the items' Lean statements")
     p.add_argument("source")

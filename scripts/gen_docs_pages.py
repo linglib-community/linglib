@@ -582,12 +582,15 @@ class ModulePage:
             elif c["relation"] == "refutes":
                 verb = f'Checked as <span class="rel" title="{esc(c["notes"])}">refuting</span>'
             day = datetime.date.fromisoformat(ck["date"])
-            by = (f'by {link("https://github.com/" + ck["by"], esc(ck["by"]))} '
-                  f'on {day.day} {day:%B} {day.year}')
+            who = (link("https://github.com/" + ck["by"], esc(ck["by"]))
+                   if ck["by"] == ck["recorded_by"] else esc(ck["by"]))
+            by = f'by {who} on {day.day} {day:%B} {day.year}'
+            if ck["by"] != ck["recorded_by"]:
+                recorder = link("https://github.com/" + ck["recorded_by"], esc(ck["recorded_by"]))
+                by += f', recorded by {recorder}'
             if c["status"] == "stale":
-                diff = f'{REPO}/compare/{ck["commit"]}...{self.sha or "main"}'
-                line = (f'{verb} {against} at {link(diff, esc(ck["commit"]))}; its '
-                        'statement has changed since.')
+                line = (f'{verb} {against} {by}; its statement has changed since '
+                        '(<code>checks.py diff</code> shows how).')
             elif c["status"] == "relies":
                 rest = [self.lib.items[r] for r in c["blocking"] if r in self.lib.items]
                 names = ", ".join(self.item_name(r, c["source"]) for r in rest)

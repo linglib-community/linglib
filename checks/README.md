@@ -17,13 +17,9 @@ label    = "(22)"                        # the source's own name for the item
 decls    = ["DynamicSemantics.BilateralUpdate.negative_exists_pred1"]
 relation = "specializes"
 notes    = "Assumes `x` novel at `s` and a nonempty domain."
-
-  [[item.check]]                         # added by `scripts/checks.py sign`
-  by     = "patrl"
-  date   = 2026-11-04
-  commit = "836c3fc25"
-  hash   = "a1a64c03eb680068"
 ```
+
+Sign-offs are not kept in this file, but in the ledger, `checks/ledger/` (see below).
 
 `kind` says what the item is in the source:
 
@@ -60,6 +56,7 @@ are made by people, never by agents. Proofs need no check, since Lean has checke
 python3 scripts/checks.py status [SOURCE ...]
 python3 scripts/checks.py sign SOURCE --items ex-22,ex-23 --by HANDLE
 python3 scripts/checks.py sign SOURCE --all --by HANDLE
+python3 scripts/checks.py sign SOURCE --all --by "A. Reviewer" --recorded-by HANDLE --via email
 python3 scripts/checks.py diff SOURCE ITEM
 python3 scripts/checks.py core [--json]
 python3 scripts/checks.py renames
@@ -75,7 +72,7 @@ python3 scripts/checks.py selftest
 It leaves out every proof, including proofs inside a statement or a definition's body, and the
 declarations used only in them, and every docstring. So a proof or a docstring can change without
 affecting a sign-off. A change to a statement, or to a definition it uses, makes the sign-off
-stale, and `diff` shows the changes since the signed commit.
+stale, and `diff` shows what changed since the sign-off.
 
 The hash is taken over the elaborated terms, not their printed form. A change that printing would
 hide, such as to the type of a bound variable, still makes a sign-off stale. Renaming a bound
@@ -176,19 +173,13 @@ reads `checks.py status --json`.
 Who checks which source is arranged in GitHub issues, not here. The files record only what has been
 checked.
 
-## The ledger (planned)
+## The ledger
 
-*This section describes a change that is not built yet. It replaces the `[[item.check]]` blocks,
-and will become documentation when it is.*
-
-A sign-off now records a `commit`, and `diff` and the docs compare link use it. The repository
-squashes pull requests, so a commit made on a PR branch never reaches `main`. A sign-off must not
-depend on one. It must hold what the signer read.
-
-Sign-offs move out of the item files into an append-only ledger, `checks/ledger/`, with one file
-per signing event, so that two people signing at once do not conflict. A file is named by the
-hash of its contents, and holds the items signed, each with the hash of its statement closure
-and the closure itself:
+A sign-off holds what its signer read, since the repository squashes pull requests and a commit
+made on a PR branch never reaches `main`. Sign-offs are kept in an append-only ledger,
+`checks/ledger/`, with one file per signing event, so that two people signing at once do not
+conflict. A file is named by the hash of its contents, and holds the items signed, each with the
+hash of its statement closure and a list of the declarations in it:
 
 ```toml
 # checks/ledger/<hash>.toml
@@ -196,19 +187,22 @@ source      = "elliott-2023"
 by          = "A. Reviewer"        # who checked; a GitHub login is not required
 recorded_by = "patrl"              # who added this file: the author of the PR
 via         = "email"              # required when `by` is not `recorded_by`
-date        = 2026-11-12
+date        = 2026-11-12T10:32:05Z
 
 [[item]]
 id   = "ex-22"
 hash = "a1a64c03eb680068"
-nodes = [{ name = "DynamicSemantics.…", term = "9f2c…", text = "41b7…" }]
+nodes = [
+  { name = "DynamicSemantics.…", term = "9f2c…", text = "41b7…" },
+]
 ```
 
 `ledger/nodes/<text-hash>.txt` holds the text of each declaration in the closure as the signer
 read it, shared by every sign-off that read it. `diff` compares those texts with the current ones,
-so it needs no commit and still works after a squash. The docs pages say what changed since the
-sign-off in the same way, instead of linking to a comparison of commits. An item is current if
-the hash of its newest ledger entry is its hash now.
+so it needs no commit and still works after a squash. It also names a declaration whose printed
+text is the same but whose term differs. The docs pages say that a statement has changed since
+the sign-off, and point to `diff`. An item is current if the hash of its newest ledger entry is
+its hash now.
 
 **Who checks.** `recorded_by` is the GitHub account that adds the file. A reviewer without an
 account is named in `by`, and a maintainer records the sign-off for them, giving `via`: how
@@ -216,7 +210,7 @@ the reviewer made the check known, such as `email` or `issue #123`, with no cont
 sign-off recorded by a maintainer for someone else is shown as such: "checked by A. Reviewer,
 recorded by patrl". Sign-offs are still made by people, never by agents.
 
-CI fails a pull request that:
+`sign` enforces the `via` rule. The rest is not built yet: CI will fail a pull request that:
 
 * changes or deletes a file in `checks/ledger/`, or has one whose name is not the hash of its
   contents;
