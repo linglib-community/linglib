@@ -15,7 +15,8 @@ manage to leave* implies *didn't leave*; *force* is `+/◦`, *refuse* `−/◦`,
 *want* `◦/◦`. Each slot is a flat value, `◦` being `⊥`, so signatures are ordered by how much they
 imply.
 
-Each implication is [an atomic constraint](##NaturalLogic.ImplicationSignature.holds_ofPolarities_iff) of
+Each implication is [an atomic
+constraint](##NaturalLogic.ImplicationSignature.holds_ofPolarities_iff) of
 natural logic between the claim and its complement, and a signature implies more exactly when it
 [constrains more](##NaturalLogic.ImplicationSignature.constraints_subset_constraints). Its
 constraints are those of one of the seven relations [unless both slots imply the same
@@ -112,7 +113,9 @@ theorem constraints_subset_constraints : s.constraints ⊆ t.constraints ↔ s �
   refine ⟨fun h m ↦ ?_, fun h a ha ↦ ?_⟩
   · cases hs : s.implied m with
     | bot => exact bot_le
-    | coe q => exact Flat.coe_le_iff.2 (ofPolarities_mem_constraints.1 (h (ofPolarities_mem_constraints.2 hs)))
+    | coe q =>
+      exact Flat.coe_le_iff.2
+        (ofPolarities_mem_constraints.1 (h (ofPolarities_mem_constraints.2 hs)))
   · obtain ⟨m, q, hs, rfl⟩ := mem_constraints.1 ha
     exact ofPolarities_mem_constraints.2 (Flat.coe_le_iff.1 (hs ▸ h m))
 

@@ -5,13 +5,13 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Order.Hom.BoundedLattice
 public import Linglib.Logic.Natural.Projection
 public import Mathlib.Data.Finset.BooleanAlgebra
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.Bounds.Basic
 public import Mathlib.Order.Interval.Set.Basic
-public import Mathlib.Order.PrimeSeparator
 
 /-!
 # Completeness of the projectivity calculus
@@ -35,7 +35,7 @@ relations](##NaturalLogic.Relation.mem_range_constraints_iff).
 
 * Countermodels are computed on `Bool` and carried to other lattices: `Bool` embeds in a bounded
   lattice as `⊥` and `⊤`, and a nontrivial bounded distributive lattice maps back onto `Bool` along
-  a [prime ideal](##NaturalLogic.ProjectivitySignature.exists_holdsFor_addMult). The function-class
+  a [prime ideal](##DistribLattice.nonempty_boundedLatticeHom_bool). The function-class
   theorems need distributivity for this map, since the five-element modular lattice `M₃` has no
   morphism to `Bool` and its morphism class into `Bool` is empty.
 * The nine signatures do not classify the property profiles a function can have: the constant-`⊤`
@@ -61,38 +61,7 @@ namespace NaturalLogic
 
 variable {α β γ : Type*}
 
-/-! ### The two-element algebra in a bounded lattice -/
-
-/-- The copy of the two-element Boolean algebra in a bounded lattice. -/
-private def ofBool [Top α] [Bot α] (b : Bool) : α := bif b then ⊤ else ⊥
-
-private theorem ofBool_eq_self (b : Bool) : ofBool b = b := by cases b <;> rfl
-
-section Lattice
-
-variable [Lattice α] [BoundedOrder α]
-
-private theorem Relation.Atom.holds_ofBool_iff [Nontrivial α] {a : Relation.Atom} {b c : Bool} :
-    a.Holds (ofBool b : α) (ofBool c) ↔ a.Holds b c := by
-  cases a <;> cases b <;> cases c <;>
-    simp [ofBool, Relation.Atom.Holds, disjoint_iff, codisjoint_iff]
-
-private theorem Relation.holds_ofBool_iff [Nontrivial α] {R : Relation} {b c : Bool} :
-    R.Holds (ofBool b : α) (ofBool c) ↔ R.Holds b c := by
-  simp only [Relation.holds_iff, Relation.Atom.holds_ofBool_iff]
-
-private theorem ProjectivitySignature.holdsFor_addMult_ofBool :
-    ProjectivitySignature.HoldsFor .addMult (ofBool : Bool → α) := by
-  intro p hp
-  cases p with
-  | monotone =>
-    exact fun b c h ↦ by
-      cases b <;> cases c <;> first | exact le_rfl | exact bot_le | exact absurd h (by decide)
-  | additive => exact ⟨fun b c ↦ by cases b <;> cases c <;> simp [ofBool], rfl⟩
-  | multiplicative => exact ⟨fun b c ↦ by cases b <;> cases c <;> simp [ofBool], rfl⟩
-  | antitone | antiAdditive | antiMultiplicative => exact absurd hp (by decide)
-
-end Lattice
+open BoundedLatticeHom (ofBool ofBool_injective)
 
 /-! ### The order and the join -/
 
@@ -111,7 +80,7 @@ theorem le_iff_forall_holds [Nontrivial α] {R S : Relation} :
   have counter : ∀ R S : Relation, ¬ R ≤ S → ∃ x y : Bool, R.Holds x y ∧ ¬ S.Holds x y := by
     decide
   obtain ⟨x, y, hR, hS⟩ := counter R S hle
-  exact hS (holds_ofBool_iff.1 (h _ _ (holds_ofBool_iff.2 hR)))
+  exact hS ((holds_map_iff ofBool_injective).1 (h _ _ ((holds_map_iff ofBool_injective).2 hR)))
 
 /-- The order on relations is already implication between elements other than `⊥` and `⊤`, the
 denotations [maccartney-manning-2009] admit, on the eight-element Boolean algebra. -/
@@ -138,13 +107,8 @@ theorem isLeast_join [DistribLattice α] [BoundedOrder α] [Nontrivial α] (R S 
       ∃ x y z : Bool, R.Holds x y ∧ S.Holds y z ∧ ¬ T.Holds x z := by
     decide
   obtain ⟨x, y, z, hR, hS, hT'⟩ := counter R S T hle
-  exact hT' (holds_ofBool_iff.1 (hT _ _ _ (holds_ofBool_iff.2 hR) (holds_ofBool_iff.2 hS)))
-
-/-- Three denotations other than `⊥` and `⊤` that `R` and `S` chain and `T` does not relate. The
-definition keeps the instance search of `Relation.isLeast_join_Ioo` within its default size. -/
-private def JoinCounter (R S T : Relation) : Prop :=
-  ∃ x ∈ Set.Ioo (⊥ : Finset (Fin 3)) ⊤, ∃ y ∈ Set.Ioo (⊥ : Finset (Fin 3)) ⊤,
-    ∃ z ∈ Set.Ioo (⊥ : Finset (Fin 3)) ⊤, R.Holds x y ∧ S.Holds y z ∧ ¬ T.Holds x z
+  exact hT' ((holds_map_iff ofBool_injective).1 (hT _ _ _
+    ((holds_map_iff ofBool_injective).2 hR) ((holds_map_iff ofBool_injective).2 hS)))
 
 /-- The join stays least when the three denotations are other than `⊥` and `⊤`, as
 [maccartney-manning-2009] require of denotations, on the eight-element Boolean algebra. -/
@@ -153,8 +117,9 @@ theorem isLeast_join_Ioo (R S : Relation) :
       z ∈ Set.Ioo ⊥ ⊤ → R.Holds x y → S.Holds y z → T.Holds x z} (R * S) := by
   refine ⟨fun _ _ _ _ _ _ hR hS ↦ hR.join hS, fun T hT ↦ ?_⟩
   by_contra hle
-  have counter : ∀ R S T : Relation, ¬ R * S ≤ T → JoinCounter R S T := by
-    unfold JoinCounter
+  have counter : ∀ R S T : Relation, ¬ R * S ≤ T →
+      ∃ x ∈ Set.Ioo (⊥ : Finset (Fin 3)) ⊤, ∃ y ∈ Set.Ioo (⊥ : Finset (Fin 3)) ⊤,
+        ∃ z ∈ Set.Ioo (⊥ : Finset (Fin 3)) ⊤, R.Holds x y ∧ S.Holds y z ∧ ¬ T.Holds x z := by
     decide
   obtain ⟨x, hx, y, hy, z, hz, hR, hS, hT'⟩ := counter R S T hle
   exact hT' (hT x y z hx hy hz hR hS)
@@ -193,10 +158,6 @@ section BooleanAlgebra
 
 variable [BooleanAlgebra α]
 
-private theorem Atom.exists_join (a b : Atom) (h : a.tgt = b.src) :
-    ∃ c, a.join b = some c ∧ c.src = a.src ∧ c.tgt = b.tgt :=
-  ⟨_, ite_eq_left h, Atom.src_ofPolarities _ _, Atom.tgt_ofPolarities _ _⟩
-
 /-- On a Boolean algebra the join is relational composition: `R * S` holds of `x` and `z` exactly
 when some `y` has `x R y` and `y S z`. The constraints bound `y` and its complement from both sides,
 and the bounds are compatible when `R * S` holds. The middle term may be `⊥` or `⊤`; among other
@@ -208,9 +169,8 @@ theorem holds_mul (R S : Relation) :
   have H : ∀ a ∈ R.constraints, ∀ b ∈ S.constraints, a.tgt = b.src →
       Polarity.complHom a.src x ≤ Polarity.complHom b.tgt z := by
     intro a ha b hb hab
-    obtain ⟨c, hc, hs, ht⟩ := Atom.exists_join a b hab
-    have := holds_iff.1 h c (mem_constraints_mul.2 ⟨a, ha, b, hb, hc⟩)
-    rwa [Atom.holds_iff_complHom_le, hs, ht] at this
+    have := holds_iff.1 h _ (mem_constraints_mul.2 ⟨a, ha, b, hb, ite_eq_left hab⟩)
+    rwa [Atom.holds_iff_complHom_le, Atom.src_ofPolarities, Atom.tgt_ofPolarities] at this
   let l : Atom → α := fun a ↦ match a.tgt with
     | .positive => Polarity.complHom a.src x
     | .negative => ⊥
@@ -218,7 +178,8 @@ theorem holds_mul (R S : Relation) :
     | .positive => ⊥
     | .negative => (Polarity.complHom b.tgt z)ᶜ
   refine ⟨R.constraints.sup l ⊔ S.constraints.sup u,
-    holds_iff.2 fun a ha ↦ Atom.holds_iff_complHom_le.2 ?_, holds_iff.2 fun b hb ↦ Atom.holds_iff_complHom_le.2 ?_⟩
+    holds_iff.2 fun a ha ↦ Atom.holds_iff_complHom_le.2 ?_,
+    holds_iff.2 fun b hb ↦ Atom.holds_iff_complHom_le.2 ?_⟩
   · cases hat : a.tgt
     · exact le_sup_of_le_left (by simpa [l, hat] using Finset.le_sup (f := l) ha)
     · change _ ≤ (_)ᶜ
@@ -392,45 +353,11 @@ theorem HoldsFor.comp_addMult {σ : ProjectivitySignature} {f : β → γ} {g : 
   have h := hf.comp hg
   rwa [show σ * addMult = σ from mul_one σ] at h
 
-private theorem HoldsFor.map_ofBool {f : α → β} (hf : HoldsFor .addMult f) (b : Bool) :
-    f (ofBool b) = ofBool b := by
-  cases b
-  · exact (hf .multiplicative (by decide)).2
-  · exact (hf .additive (by decide)).2
-
 end Lattice
 
 section DistribLattice
 
 variable [DistribLattice α] [BoundedOrder α] [Nontrivial α]
-
-/-- A nontrivial bounded distributive lattice has a morphism to the two-element Boolean algebra,
-the map telling whether an element lies outside a prime ideal. -/
-theorem exists_holdsFor_addMult : ∃ f : α → Bool, HoldsFor .addMult f := by
-  classical
-  obtain ⟨J, hJ, -, hJ'⟩ := DistribLattice.prime_ideal_of_disjoint_filter_ideal
-    (F := Order.PFilter.principal (⊤ : α)) (I := Order.Ideal.principal ⊥)
-    (Set.disjoint_left.2 fun x hx hx' ↦ bot_ne_top (α := α) <|
-      le_antisymm bot_le
-        ((Order.PFilter.mem_principal.1 hx).trans (Order.Ideal.mem_principal.1 hx')))
-  have htop : (⊤ : α) ∉ J := fun h ↦
-    Set.disjoint_left.1 hJ' (Order.PFilter.mem_principal.2 le_rfl) h
-  refine ⟨fun x ↦ decide (x ∉ J), fun p hp ↦ ?_⟩
-  cases p with
-  | monotone =>
-    intro x y hxy
-    by_cases hy : y ∈ J
-    · have hx : x ∈ J := J.lower hxy hy
-      simp [hy, hx]
-    · simp [hy]
-  | additive =>
-    exact ⟨fun x y ↦ by simp [Order.Ideal.sup_mem_iff], by simpa using htop⟩
-  | multiplicative =>
-    refine ⟨fun x y ↦ ?_, by simp⟩
-    have : x ⊓ y ∈ J ↔ x ∈ J ∨ y ∈ J :=
-      ⟨hJ.mem_or_mem, fun h ↦ h.elim (J.lower inf_le_left) (J.lower inf_le_right)⟩
-    simp [this, not_or]
-  | antitone | antiAdditive | antiMultiplicative => exact absurd hp (by decide)
 
 /-- `project R σ` is the least relation to which every σ-function sends `R`-related arguments, for
 functions from a nontrivial bounded distributive lattice to a nontrivial bounded lattice
@@ -446,11 +373,13 @@ theorem isLeast_project [Lattice β] [BoundedOrder β] [Nontrivial β] (R : Rela
         σ.HoldsFor f ∧ R.Holds x y ∧ ¬ T.Holds (f x) (f y) := by
     decide
   obtain ⟨f, x, y, hf, hR, hT'⟩ := counter R σ T hle
-  obtain ⟨π, hπ⟩ := exists_holdsFor_addMult (α := α)
-  have h := hT (ofBool ∘ f ∘ π) (holdsFor_addMult_ofBool.addMult_comp (hf.comp_addMult hπ))
-    (ofBool x) (ofBool y) (Relation.holds_ofBool_iff.2 hR)
-  simp only [Function.comp_apply, hπ.map_ofBool, ofBool_eq_self] at h
-  exact hT' (Relation.holds_ofBool_iff.1 h)
+  obtain ⟨π⟩ := DistribLattice.nonempty_boundedLatticeHom_bool (α := α)
+  have hπ := holdsFor_addMult_of_boundedLatticeHomClass π
+  have h := hT ((ofBool : BoundedLatticeHom Bool β) ∘ f ∘ π)
+    ((holdsFor_addMult_of_boundedLatticeHomClass ofBool).addMult_comp (hf.comp_addMult hπ))
+    (ofBool x) (ofBool y) ((Relation.holds_map_iff ofBool_injective).2 hR)
+  simp only [Function.comp_apply, map_ofBool, BoundedLatticeHom.ofBool_apply_bool] at h
+  exact hT' ((Relation.holds_map_iff ofBool_injective).1 h)
 
 variable [DistribLattice β] [BoundedOrder β] [Nontrivial β]
 
@@ -464,15 +393,18 @@ theorem le_iff_forall_holdsFor {σ τ : ProjectivitySignature} :
       ∃ f : Bool → Bool, σ.HoldsFor f ∧ ¬ τ.HoldsFor f := by
     decide
   obtain ⟨f, hσ, hτ⟩ := counter σ τ hle
-  obtain ⟨π, hπ⟩ := exists_holdsFor_addMult (α := α)
-  obtain ⟨ρ, hρ⟩ := exists_holdsFor_addMult (α := β)
+  obtain ⟨π⟩ := DistribLattice.nonempty_boundedLatticeHom_bool (α := α)
+  have hπ := holdsFor_addMult_of_boundedLatticeHomClass π
+  obtain ⟨ρ⟩ := DistribLattice.nonempty_boundedLatticeHom_bool (α := β)
+  have hρ := holdsFor_addMult_of_boundedLatticeHomClass ρ
   have h := (hρ.addMult_comp
-    (h _ (holdsFor_addMult_ofBool.addMult_comp (hσ.comp_addMult hπ)))).comp_addMult
-    (holdsFor_addMult_ofBool (α := α))
+    (h _ ((holdsFor_addMult_of_boundedLatticeHomClass ofBool).addMult_comp
+      (hσ.comp_addMult hπ)))).comp_addMult
+    (holdsFor_addMult_of_boundedLatticeHomClass (ofBool : BoundedLatticeHom Bool α))
   refine hτ (by
     convert h using 1
     funext b
-    simp [hπ.map_ofBool, hρ.map_ofBool, ofBool_eq_self])
+    simp)
 
 /-- `ψ * φ` is the least signature whose class contains every ψ-function after a φ-function,
 between nontrivial bounded distributive lattices ([icard-2012]'s definition of composition). -/
@@ -486,17 +418,21 @@ theorem isLeast_compose [DistribLattice γ] [BoundedOrder γ] [Nontrivial γ]
       ∃ f g : Bool → Bool, ψ.HoldsFor f ∧ φ.HoldsFor g ∧ ¬ χ.HoldsFor (f ∘ g) := by
     decide
   obtain ⟨f, g, hf, hg, hχ'⟩ := counter ψ φ χ hle
-  obtain ⟨π, hπ⟩ := exists_holdsFor_addMult (α := α)
-  obtain ⟨π', hπ'⟩ := exists_holdsFor_addMult (α := β)
-  obtain ⟨ρ, hρ⟩ := exists_holdsFor_addMult (α := γ)
+  obtain ⟨π⟩ := DistribLattice.nonempty_boundedLatticeHom_bool (α := α)
+  have hπ := holdsFor_addMult_of_boundedLatticeHomClass π
+  obtain ⟨π'⟩ := DistribLattice.nonempty_boundedLatticeHom_bool (α := β)
+  have hπ' := holdsFor_addMult_of_boundedLatticeHomClass π'
+  obtain ⟨ρ⟩ := DistribLattice.nonempty_boundedLatticeHom_bool (α := γ)
+  have hρ := holdsFor_addMult_of_boundedLatticeHomClass ρ
   have h := (hρ.addMult_comp
-    (hχ _ _ (holdsFor_addMult_ofBool.addMult_comp (hf.comp_addMult hπ'))
-      (holdsFor_addMult_ofBool.addMult_comp (hg.comp_addMult hπ)))).comp_addMult
-    (holdsFor_addMult_ofBool (α := α))
+    (hχ _ _ ((holdsFor_addMult_of_boundedLatticeHomClass ofBool).addMult_comp (hf.comp_addMult hπ'))
+      ((holdsFor_addMult_of_boundedLatticeHomClass ofBool).addMult_comp
+        (hg.comp_addMult hπ)))).comp_addMult
+    (holdsFor_addMult_of_boundedLatticeHomClass (ofBool : BoundedLatticeHom Bool α))
   refine hχ' (by
     convert h using 1
     funext b
-    simp [hπ.map_ofBool, hπ'.map_ofBool, hρ.map_ofBool, ofBool_eq_self])
+    simp)
 
 end DistribLattice
 

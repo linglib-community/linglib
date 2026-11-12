@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Negation.Polarity
 public import Mathlib.Algebra.Group.Defs
 public import Mathlib.Order.Hom.Basic
+public import Mathlib.Order.Hom.BoundedLattice
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Disjoint
 public import Mathlib.Tactic.DeriveFintype
@@ -185,7 +186,8 @@ def dual (a : Atom) : Atom := ofPolarities (.negative * a.src) (.negative * a.tg
 
 end Atom
 
-private theorem Atom.join_assoc :
+/-- The atom rule is associative. -/
+theorem Atom.join_assoc :
     ∀ a b c : Atom, (a.join b).bind (·.join c) = (b.join c).bind (a.join ·) := by
   decide
 
@@ -282,9 +284,29 @@ theorem Relation.Atom.holds_iff_complHom_le {α : Type*} [BooleanAlgebra α] {a 
   · exact le_compl_iff_disjoint_right.symm
   · exact codisjoint_iff_compl_le_right
 
+/-- An injective bounded lattice homomorphism preserves and reflects each constraint. -/
+theorem Relation.Atom.holds_map_iff {F α β : Type*} [Lattice α] [BoundedOrder α] [Lattice β]
+    [BoundedOrder β] [FunLike F α β] [BoundedLatticeHomClass F α β] {f : F}
+    (hf : Function.Injective f) {a : Relation.Atom} {x y : α} :
+    a.Holds (f x) (f y) ↔ a.Holds x y := by
+  cases a
+  · exact (by rw [← inf_eq_left, ← map_inf, hf.eq_iff, inf_eq_left] : f x ≤ f y ↔ x ≤ y)
+  · exact (by rw [← inf_eq_left, ← map_inf, hf.eq_iff, inf_eq_left] : f y ≤ f x ↔ y ≤ x)
+  · exact (by rw [disjoint_iff, ← map_inf, ← map_bot f, hf.eq_iff, disjoint_iff] :
+      Disjoint (f x) (f y) ↔ Disjoint x y)
+  · exact (by rw [codisjoint_iff, ← map_sup, ← map_top f, hf.eq_iff, codisjoint_iff] :
+      Codisjoint (f x) (f y) ↔ Codisjoint x y)
+
 theorem Relation.holds_toRelation {α : Type*} [Lattice α] [BoundedOrder α] {a : Relation.Atom}
     {x y : α} : a.toRelation.Holds x y ↔ a.Holds x y := by
   cases a <;> rfl
+
+/-- An injective bounded lattice homomorphism preserves and reflects each relation. -/
+theorem Relation.holds_map_iff {F α β : Type*} [Lattice α] [BoundedOrder α] [Lattice β]
+    [BoundedOrder β] [FunLike F α β] [BoundedLatticeHomClass F α β] {f : F}
+    (hf : Function.Injective f) {R : Relation} {x y : α} :
+    R.Holds (f x) (f y) ↔ R.Holds x y := by
+  simp only [Relation.holds_iff, Relation.Atom.holds_map_iff hf]
 
 theorem Relation.holds_converse {α : Type*} [Lattice α] [BoundedOrder α] {R : Relation}
     {x y : α} : R.converse.Holds x y ↔ R.Holds y x := by

@@ -51,7 +51,9 @@ def Property.project : Relation.Atom → Property → Option Relation.Atom
   | .disjoint, .antiMultiplicative => some .codisjoint
   | _, _ => none
 
-private theorem Property.compose_project : ∀ (p q : Property) (a : Relation.Atom),
+/-- Projecting through a composite property is projecting through the inner one and then the
+outer. -/
+theorem Property.compose_project : ∀ (p q : Property) (a : Relation.Atom),
     (p.compose q).bind (Property.project a ·) =
       (Property.project a q).bind (Property.project · p) := by
   decide
@@ -90,8 +92,9 @@ theorem project_mono (R : Relation) : Monotone (project R) := by
   obtain ⟨p, hp, a, ha, hab⟩ := (mem_constraints_project hR).1 hb
   exact (mem_constraints_project hR).2 ⟨p, le_iff.1 h hp, a, ha, hab⟩
 
-private theorem project_ne_equiv : ∀ {R : Relation} (σ : ProjectivitySignature), R ≠ .equiv →
-    project R σ ≠ .equiv := by
+/-- Only `≡` projects to `≡`. -/
+@[simp] theorem project_eq_equiv_iff : ∀ {R : Relation} {σ : ProjectivitySignature},
+    project R σ = .equiv ↔ R = .equiv := by
   decide
 
 /-- Projecting through `φ` and then through `ψ` is projecting through `ψ * φ` ([icard-2012]
@@ -102,7 +105,7 @@ theorem project_project (R : Relation) (φ ψ : ProjectivitySignature) :
   by_cases hR : R = .equiv
   · subst hR; simp only [project_equiv]
   refine Relation.constraints_injective <| Finset.ext fun _ ↦ ?_
-  simp only [mem_constraints_project (project_ne_equiv φ hR), mem_constraints_project hR,
+  simp only [mem_constraints_project (project_eq_equiv_iff.not.2 hR), mem_constraints_project hR,
     mem_properties_mul]
   exact (exists_bind_comm Property.compose_project).symm
 
@@ -116,14 +119,14 @@ instance : MulAction ProjectivitySignature Relation where
   one_smul := by decide
   mul_smul ψ φ R := (project_project R φ ψ).symm
 
-private theorem eq_of_project_eq : ∀ σ τ : ProjectivitySignature,
-    project .forward σ = project .forward τ → project .negation σ = project .negation τ → σ = τ := by
-  decide
-
 /-- A signature is determined by how it projects the relations, already by its projections of `⊑`
 and `^`. -/
 instance : FaithfulSMul ProjectivitySignature Relation where
-  eq_of_smul_eq_smul {σ τ} h := eq_of_project_eq σ τ (h .forward) (h .negation)
+  eq_of_smul_eq_smul {σ τ} h := by
+    have key : ∀ σ τ : ProjectivitySignature, project .forward σ = project .forward τ →
+        project .negation σ = project .negation τ → σ = τ := by
+      decide
+    exact key σ τ (h .forward) (h .negation)
 
 end ProjectivitySignature
 
@@ -253,25 +256,6 @@ theorem soundFor_antiAddMult_iff {f : α → β} :
   | alternation => exact hd hR
   | cover => exact hc hR
   | independent => trivial
-
-private theorem codisjoint_map_of_map_sup {f : α → β}
-    (h : (∀ p q, f (p ⊔ q) = f p ⊔ f q) ∧ f ⊤ = ⊤) {x y : α} (hxy : Codisjoint x y) :
-    Codisjoint (f x) (f y) :=
-  codisjoint_iff.2 (by rw [← h.1, hxy.eq_top, h.2])
-
-private theorem disjoint_map_of_map_inf {f : α → β}
-    (h : (∀ p q, f (p ⊓ q) = f p ⊓ f q) ∧ f ⊥ = ⊥) {x y : α} (hxy : Disjoint x y) :
-    Disjoint (f x) (f y) :=
-  disjoint_iff.2 (by rw [← h.1, hxy.eq_bot, h.2])
-
-private theorem disjoint_map_of_isAntiAdditive {f : α → β} (h : IsAntiAdditive f ∧ f ⊤ = ⊥)
-    {x y : α} (hxy : Codisjoint x y) : Disjoint (f x) (f y) :=
-  disjoint_iff.2 (by rw [← h.1, hxy.eq_top, h.2])
-
-private theorem codisjoint_map_of_isAntiMultiplicative {f : α → β}
-    (h : IsAntiMultiplicative f ∧ f ⊥ = ⊤) {x y : α} (hxy : Disjoint x y) :
-    Codisjoint (f x) (f y) :=
-  codisjoint_iff.2 (by rw [← h.1, hxy.eq_bot, h.2])
 
 theorem soundFor_addMult_of_boundedLatticeHomClass {F : Type*} [FunLike F α β]
     [BoundedLatticeHomClass F α β] (f : F) : SoundFor .addMult f :=
@@ -407,10 +391,10 @@ theorem Property.HoldsFor.project {p : Property} {f : α → β}
     simp only [Property.HoldsFor, Relation.Atom.Holds] at hf ha ⊢
   all_goals first
     | exact hf ha
-    | exact codisjoint_map_of_map_sup hf ha
-    | exact disjoint_map_of_map_inf hf ha
-    | exact disjoint_map_of_isAntiAdditive hf ha
-    | exact codisjoint_map_of_isAntiMultiplicative hf ha
+    | exact codisjoint_iff.2 (by rw [← hf.1, ha.eq_top, hf.2])
+    | exact disjoint_iff.2 (by rw [← hf.1, ha.eq_bot, hf.2])
+    | exact disjoint_iff.2 (by rw [← hf.1, ha.eq_top, hf.2])
+    | exact codisjoint_iff.2 (by rw [← hf.1, ha.eq_bot, hf.2])
 
 /-- A function carries the constraints of a property when it takes each constraint between its
 arguments to the constraint `Property.project` says between its values. A function with the
