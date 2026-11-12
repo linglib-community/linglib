@@ -20,7 +20,7 @@ morphisms agreeing on the leaves are equal (`hom_ext`). The zero absorbs the
 off-carrier arities, so one total algebra (`mergeAlgebra`) drives the fold, the
 quotient descent, and the subtype restriction once and for all: consumers supply a
 lexical-leaf value and a trace value, the latter for the bare trace (`none`) and for the trace
-of each token (`some tok`), the three kinds of leaf `hom_ext` distinguishes, and inherit
+of each token (`some tok`), the three kinds of leaf `ofLeaf` enumerates, and inherit
 `Perm`-invariance from `mul_comm` via a private permutation-invariance lemma — no bespoke step
 induction.
 
@@ -163,16 +163,28 @@ noncomputable def lift : SyntacticObject L →ₙ* β where
 
 end CommMagma
 
-/-- Morphisms agreeing on the leaves are equal, the uniqueness half of the universal property. -/
+/-- The leaf of the alphabet `L ⊕ Option L`: a lexical leaf, or a trace. -/
+def ofLeaf : L ⊕ Option L → SyntacticObject L
+  | .inl a => leaf a
+  | .inr none => trace
+  | .inr (some a) => traceOf a
+
+@[simp] theorem ofLeaf_inl (a : L) : ofLeaf (.inl a) = leaf a := rfl
+
+@[simp] theorem ofLeaf_inr_none : ofLeaf (.inr none : L ⊕ Option L) = trace := rfl
+
+@[simp] theorem ofLeaf_inr_some (a : L) : ofLeaf (.inr (some a)) = traceOf a := rfl
+
+/-- Magma homomorphisms out of the carrier agreeing on the leaves are equal, the uniqueness half
+of the universal property. -/
+@[ext]
 theorem hom_ext [Mul β] {f g : SyntacticObject L →ₙ* β}
-    (hlex : ∀ tok, f (SyntacticObject.leaf tok) = g (SyntacticObject.leaf tok))
-    (htrace : f trace = g trace) (htraceOf : ∀ tok, f (traceOf tok) = g (traceOf tok)) :
-    f = g :=
+    (h : ∀ x, f (ofLeaf x) = g (ofLeaf x)) : f = g :=
   MulHom.ext fun s => by
     induction s using SyntacticObject.ind with
-    | leaf tok => exact hlex tok
-    | trace => exact htrace
-    | traceOf tok => exact htraceOf tok
+    | leaf tok => exact h (.inl tok)
+    | trace => exact h (.inr none)
+    | traceOf tok => exact h (.inr (some tok))
     | merge l r ihl ihr =>
       rw [show merge l r = l * r from rfl, map_mul, map_mul, ihl, ihr]
 
@@ -187,12 +199,6 @@ variable {M : Type*} [CommMagma M]
 instance : CommMagma (WithZero M) where
   mul_comm a b := by
     induction a <;> induction b <;> simp [← WithZero.coe_mul, mul_comm]
-
-/-- The leaf of the alphabet `L ⊕ Option L`: a lexical leaf, or a trace. -/
-def ofLeaf : L ⊕ Option L → SyntacticObject L
-  | .inl a => leaf a
-  | .inr none => trace
-  | .inr (some a) => traceOf a
 
 theorem liftFun_coe_ne_zero (f : L ⊕ Option L → M) (s : SyntacticObject L) :
     liftFun (fun a ↦ (f (.inl a) : WithZero M)) (fun o ↦ (f (.inr o) : WithZero M)) s ≠ 0 := by
@@ -231,10 +237,7 @@ noncomputable def liftEquiv : (L ⊕ Option L → M) ≃ (SyntacticObject L →�
   toFun := liftHom
   invFun F := F ∘ ofLeaf
   left_inv f := funext fun x ↦ liftHom_ofLeaf f x
-  right_inv F := hom_ext
-    (fun a ↦ liftHom_ofLeaf (F ∘ ofLeaf) (.inl a))
-    (liftHom_ofLeaf (F ∘ ofLeaf) (.inr none))
-    (fun a ↦ liftHom_ofLeaf (F ∘ ofLeaf) (.inr (some a)))
+  right_inv F := hom_ext fun x ↦ liftHom_ofLeaf (F ∘ ofLeaf) x
 
 @[simp] theorem liftEquiv_apply_ofLeaf (f : L ⊕ Option L → M) (x : L ⊕ Option L) :
     liftEquiv f (ofLeaf x) = f x :=
@@ -264,13 +267,13 @@ noncomputable def equivFreeCommMagma : SyntacticObject L ≃* FreeCommMagma (L �
     have h : (FreeCommMagma.lift ofLeaf).comp
           (liftEquiv (M := FreeCommMagma (L ⊕ Option L)) FreeCommMagma.of)
         = MulHom.id (SyntacticObject L) :=
-      hom_ext (fun a ↦ by simp [ofLeaf]) (by simp [ofLeaf]) (fun a ↦ by simp [ofLeaf])
+      hom_ext fun x ↦ by simp
     exact MulHom.ext_iff.1 h s
   right_inv x := by
     have h : ((liftEquiv (M := FreeCommMagma (L ⊕ Option L)) FreeCommMagma.of :
             SyntacticObject L →ₙ* _).comp (FreeCommMagma.lift ofLeaf))
         = MulHom.id (FreeCommMagma (L ⊕ Option L)) :=
-      FreeCommMagma.hom_ext fun x ↦ by rcases x with a | (_ | a) <;> simp [ofLeaf]
+      FreeCommMagma.hom_ext fun x ↦ by simp
     exact MulHom.ext_iff.1 h x
   map_mul' := map_mul (liftEquiv FreeCommMagma.of)
 
@@ -281,6 +284,11 @@ noncomputable def equivFreeCommMagma : SyntacticObject L ≃* FreeCommMagma (L �
 @[simp] theorem equivFreeCommMagma_symm_of (x : L ⊕ Option L) :
     equivFreeCommMagma.symm (FreeCommMagma.of x) = ofLeaf (L := L) x :=
   FreeCommMagma.lift_of _ _
+
+/-- Relabelling is the homomorphism the universal property assigns to relabelled leaves. -/
+theorem mapHom_eq_liftEquiv {L' : Type} (f : L → L') :
+    mapHom f = liftEquiv (ofLeaf ∘ Sum.map f (Option.map f)) :=
+  hom_ext fun x ↦ by rcases x with a | (_ | a) <;> simp
 
 end Freeness
 

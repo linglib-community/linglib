@@ -205,7 +205,7 @@ noncomputable def headHom : SyntacticObject →ₙ* LinearizationState side :=
     check — two morphisms agreeing on the leaves (`hom_ext`). -/
 theorem sel_comp_headHom :
     LinearizationState.sel.comp (headHom side) = selCheckHom :=
-  hom_ext (fun _ => rfl) rfl (fun _ => rfl)
+  hom_ext fun x ↦ by rcases x with _ | _ | _ <;> rfl
 
 @[simp] theorem sel_linearizationState (s : SyntacticObject) :
     LinearizationState.sel (s.linearizationState side) = s.selCheck :=
