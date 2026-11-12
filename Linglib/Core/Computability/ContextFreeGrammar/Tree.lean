@@ -248,6 +248,47 @@ theorem Licensed.sum_ruleCount_eq_count_values [DecidableEq T] {g : ContextFreeG
       simp [hrule, add_comm]
     · simp [hB]
 
+/-- A total over the local trees of a licensed tree is a total over the rules by their counts,
+for a quantity that vanishes at terminal leaves. -/
+theorem Licensed.sum_map_localTrees {M : Type*} [AddCommMonoid M] [DecidableEq T]
+    {g : ContextFreeGrammar T} [DecidableEq g.NT] {t : RoseTree (Symbol T g.NT)}
+    (ht : t.Licensed g.Licenses) {F : Symbol T g.NT × List (Symbol T g.NT) → M}
+    (hF : ∀ a, F (.terminal a, []) = 0) :
+    (t.localTrees.map F).sum =
+      ∑ r ∈ g.rules, ruleCount r t • F (.nonterminal r.input, r.output) := by
+  induction ht using Licensed.grammar_induction with
+  | terminal a => simp [leaf, ruleCount_node_terminal, hF]
+  | nonterminal A cs hrule hcs ih =>
+    have hsum (f : ContextFreeRule T g.NT → M) :
+        ∑ r ∈ g.rules, (cs.map (ruleCount r)).sum • f r =
+          (cs.map fun c ↦ ∑ r ∈ g.rules, ruleCount r c • f r).sum := by
+      clear ih hcs hrule
+      induction cs with
+      | nil => simp
+      | cons c cs ihl => simp [add_nsmul, Finset.sum_add_distrib, ihl]
+    simp only [localTrees_node, List.map_cons, List.sum_cons, List.map_flatten, List.sum_flatten,
+      List.map_map, Function.comp_def, ruleCount_node_nonterminal, add_nsmul,
+      Finset.sum_add_distrib, ite_smul, one_nsmul, zero_nsmul, Finset.sum_ite_eq',
+      ite_eq_left hrule, hsum]
+    rw [List.map_congr_left ih]
+
+/-- A total over the local trees of a corpus of licensed trees is a total over the rules by their
+counts, for a quantity that vanishes at terminal leaves. -/
+theorem sum_map_localTrees_eq_sum_ruleCounts {M : Type*} [AddCommMonoid M] [DecidableEq T]
+    {g : ContextFreeGrammar T} [DecidableEq g.NT] {D : Multiset (RoseTree (Symbol T g.NT))}
+    (hD : ∀ t ∈ D, t.Licensed g.Licenses) {F : Symbol T g.NT × List (Symbol T g.NT) → M}
+    (hF : ∀ a, F (.terminal a, []) = 0) :
+    (D.map fun t ↦ (t.localTrees.map F).sum).sum =
+      ∑ r ∈ g.rules, ruleCounts D r • F (.nonterminal r.input, r.output) := by
+  induction D using Multiset.induction_on with
+  | empty => simp
+  | cons t D ih =>
+    rw [← Multiset.singleton_add, map_add]
+    simp only [Pi.add_apply, add_nsmul, Finset.sum_add_distrib, ruleCounts_singleton,
+      Multiset.map_add, Multiset.map_singleton, Multiset.sum_add, Multiset.sum_singleton,
+      ih fun t' ht' ↦ hD t' (Multiset.mem_cons_of_mem ht'),
+      (hD t (Multiset.mem_cons_self t D)).sum_map_localTrees hF]
+
 theorem Licensed.exists_getElem?_take {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
     (ht : t.Licensed g.Licenses) {p : List ℕ} {s : RoseTree (Symbol T g.NT)}
     (hs : t[p]? = some s)
