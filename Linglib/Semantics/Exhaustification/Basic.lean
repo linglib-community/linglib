@@ -18,8 +18,10 @@ prejacent `p`, which is the assertion of the entailment-scale *only*. `exh C p` 
 together with `excludes C p`: it denies every alternative the prejacent does not entail, so a
 member of `C` is exhaustified [where it is the least true
 member](##mem_exh_iff_isLeast_of_mem), on a scale where its index is [the greatest true
-one](##mem_exh_range_iff_isGreatest). Over finitely many worlds and an indexed family of
-alternatives, membership in `exh` is decidable.
+one](##mem_exh_range_iff_isGreatest). Denying only the strictly stronger alternatives instead
+gives [the minimal true members](##mem_exh_inter_Iio_iff_minimal), the same thing [when no
+alternative is independent of the prejacent](##exh_inter_Iio_eq_exh). Over finitely many worlds
+and an indexed family of alternatives, membership in `exh` is decidable.
 
 ## Main statements
 
@@ -247,6 +249,27 @@ theorem mem_excludes_inter_Iio : w ∈ excludes (C ∩ Set.Iio p) p ↔ ∀ q �
 /-- Exhaustifying against the strictly stronger alternatives negates all of them. -/
 theorem mem_exh_inter_Iio : w ∈ exh (C ∩ Set.Iio p) p ↔ w ∈ p ∧ ∀ q ∈ C, q ⊂ p → w ∉ q :=
   and_congr_right fun _ ↦ mem_excludes_inter_Iio
+
+/-- Exhaustified against the strictly stronger alternatives only, a member of `C` holds where it
+is a minimal true member: true, with no true member strictly below it. -/
+theorem mem_exh_inter_Iio_iff_minimal (hp : p ∈ C) :
+    w ∈ exh (C ∩ Set.Iio p) p ↔ Minimal (· ∈ {q ∈ C | w ∈ q}) p :=
+  mem_exh_inter_Iio.trans <| Iff.trans
+    ⟨fun ⟨hw, h⟩ ↦ ⟨⟨hp, hw⟩, fun _ hlt hy ↦ h _ hy.1 hlt hy.2⟩,
+      fun ⟨hw, h⟩ ↦ ⟨hw.2, fun _ hq hlt hwq ↦ h hlt ⟨hq, hwq⟩⟩⟩
+    minimal_iff_forall_lt.symm
+
+/-- Denying the alternatives the prejacent does not entail denies the strictly stronger ones. -/
+theorem exh_subset_exh_inter_Iio (C : Set (Set W)) (p : Set W) :
+    exh C p ⊆ exh (C ∩ Set.Iio p) p :=
+  exh_antitone Set.inter_subset_left p
+
+/-- When every alternative is comparable with the prejacent, the alternatives it does not entail
+are the strictly stronger ones, and the two exhaustifications agree. They come apart on an
+alternative that is independent of the prejacent, which only `exh C p` denies. -/
+theorem exh_inter_Iio_eq_exh (h : ∀ q ∈ C, q ⊆ p ∨ p ⊆ q) : exh (C ∩ Set.Iio p) p = exh C p :=
+  (exh_subset_exh_inter_Iio C p).antisymm' fun _ hw ↦ ⟨hw.1, fun q hq hwq ↦
+    (h q hq).elim (fun hqp ↦ not_not.1 fun hpq ↦ (mem_exh_inter_Iio.1 hw).2 q hq ⟨hqp, hpq⟩ hwq) id⟩
 
 /-- A member is dominated exactly when negating what is strictly stronger leaves nothing. -/
 theorem exh_inter_Iio_eq_empty_iff : exh (C ∩ Set.Iio p) p = ∅ ↔ Dominated C p := by

@@ -195,6 +195,24 @@ theorem isGreatest_noOne_iff_mem_posExt_noOneNR [Nonempty E] :
   rw [isGreatest_noOne, Gajewski2007.posExt_noOneNR]
   simp [Gajewski2007.every]
 
+-- fn. 16, (165c): denying only the strictly stronger alternative, that no one has an opinion,
+-- gives the weaker inference that someone does; the universal inference (164c) needs the denial
+-- of *not everyone has an opinion*, which is independent of the prejacent, so the excludable
+-- alternatives are those that are not weaker
+theorem maximal_noOne :
+    Maximal (w ∈ noOneAlternatives B p ·) (1, 0) ↔
+      w ∈ noOne (fun x ↦ (B x).core p) ∧ ∃ x, w ∈ excludedMiddle (B x) p := by
+  rw [maximal_iff_forall_gt]
+  refine and_congr_right fun _ ↦ ⟨fun h ↦ ?_, fun ⟨x, hx⟩ j hj hmem ↦ ?_⟩
+  · by_contra hc
+    exact h (Prod.mk_lt_mk.2 (.inr ⟨le_rfl, by decide⟩) : ((1, 0) : Fin 2 × Fin 2) < (1, 1))
+      fun x hx ↦ hc ⟨x, hx⟩
+  · have hj' : ∀ a b : Fin 2, (1 < a ∧ 0 ≤ b ∨ 1 ≤ a ∧ 0 < b) →
+        (a, b) = ((1, 1) : Fin 2 × Fin 2) := by decide
+    obtain ⟨a, b⟩ := j
+    cases hj' a b (Prod.mk_lt_mk.1 hj)
+    exact hmem x hx
+
 /-! ### Stacked predicates (§7.3.1) -/
 
 /-- The alternatives of a negated neg-raising predicate over another (172c), indexed by the
