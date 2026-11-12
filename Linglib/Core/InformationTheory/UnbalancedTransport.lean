@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.InformationTheory.KullbackLeibler.Basic
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
+public import Linglib.Core.Probability.Kernel.Softmax
 public import Mathlib.Analysis.SpecialFunctions.Log.ERealExp
 public import Mathlib.InformationTheory.KullbackLeibler.ChainRule
 public import Mathlib.MeasureTheory.Measure.Prod
@@ -31,7 +32,8 @@ plan is a sum of three divergences. With one marginal fixed and the other free, 
 for the divergence then gives the cost of a plan as [its divergence from the plan built on the
 conditional kernel of the Gibbs measure](##InformationTheory.transportCost_compProd), which is
 therefore the [least costly](##InformationTheory.transportCost_compProd_condKernel_le) and the
-[only such](##InformationTheory.transportCost_compProd_eq_iff).
+[only such](##InformationTheory.transportCost_compProd_eq_iff). That plan sends each point to [the
+softmax of minus its costs over `ε`](##InformationTheory.compProd_gibbs_condKernel).
 
 ## Implementation notes
 
@@ -258,6 +260,43 @@ theorem transportCost_compProd_eq_iff (he : 0 < e)
     ⟨ENNReal.mul_ne_top ENNReal.ofReal_ne_top hμ, ENNReal.ofReal_ne_top⟩)).1
       (h.trans (zero_add _).symm)
   exact (mul_eq_zero.1 h0).resolve_left (ENNReal.ofReal_pos.2 he).ne'
+
+/-! #### The minimizer as a softmax
+
+At a point of the first factor where some cost is finite, the conditional kernel of the Gibbs
+measure is the softmax of minus the cost over `ε`. -/
+
+omit [Fintype α] [StandardBorelSpace β] [Nonempty β] in
+theorem gibbs_fst_apply_singleton (ε : ℝ≥0∞) (a : α) :
+    (gibbs c ε).fst {a} = ∑ b, gibbs c ε {(a, b)} := by
+  have h : Prod.fst ⁻¹' {a} =
+      ((({a} : Finset α) ×ˢ (Finset.univ : Finset β) : Finset (α × β)) : Set (α × β)) := by
+    ext ⟨x, y⟩
+    simp [eq_comm]
+  rw [Measure.fst_apply (measurableSet_singleton a), h, ← sum_measure_singleton,
+    Finset.sum_product, Finset.sum_singleton]
+
+theorem gibbs_condKernel_apply (ε : ℝ≥0∞) {a : α} (ha : ∃ b, gibbs c ε {(a, b)} ≠ 0) :
+    (gibbs c ε).condKernel a =
+      Kernel.softmax (fun a b ↦ -((c (a, b) / ε : ℝ≥0∞) : EReal)) a := by
+  have hfst : (gibbs c ε).fst {a} ≠ 0 := by
+    rw [gibbs_fst_apply_singleton]
+    obtain ⟨b, hb⟩ := ha
+    exact fun h ↦ hb (Finset.sum_eq_zero_iff.1 h b (Finset.mem_univ b))
+  refine Measure.ext_of_singleton fun b ↦ ?_
+  rw [Measure.condKernel_apply_of_ne_zero hfst, Kernel.softmax_apply_singleton,
+    gibbs_fst_apply_singleton, Set.singleton_prod_singleton, ENNReal.div_eq_inv_mul]
+  simp_rw [gibbs_apply_singleton]
+
+omit [IsFiniteMeasure μ] in
+/-- With the first marginal fixed and the second free, the least costly plan sends each point of
+positive mass to the softmax of minus its costs over `ε`, when each such point has a finite
+cost. -/
+theorem compProd_gibbs_condKernel (he : 0 < e) (h : ∀ a, μ {a} ≠ 0 → ∃ b, c (a, b) ≠ ∞) :
+    μ ⊗ₘ (gibbs c (.ofReal e)).condKernel =
+      μ ⊗ₘ Kernel.softmax (fun a b ↦ -((c (a, b) / ENNReal.ofReal e : ℝ≥0∞) : EReal)) :=
+  Measure.compProd_congr (ae_iff_of_countable.2 fun a ha ↦ gibbs_condKernel_apply c _
+    ((h a ha).imp fun _ hb ↦ mt (gibbs_apply_singleton_eq_zero_iff he).1 hb))
 
 end HardFst
 
