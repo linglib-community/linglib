@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Pragmatics.RSA.Uniform
-public import Linglib.Pragmatics.RSA.Decision
+public import Linglib.Pragmatics.Probabilistic.Uniform
+public import Linglib.Pragmatics.Probabilistic.Decision
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Causation.CausalModel.Basic

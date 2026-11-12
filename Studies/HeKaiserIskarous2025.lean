@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.HeKaiserIskarous2025
-public import Linglib.Pragmatics.RSA.LexicalUncertainty
+public import Linglib.Pragmatics.Probabilistic.LexicalUncertainty
 public import Mathlib.Tactic.DeriveFintype
 
 /-!

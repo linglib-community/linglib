@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Probability.ConditionalProbability
 public import Linglib.Core.Probability.Independence.Basic
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.Probabilistic.Basic
 
 /-!
 # Grusdt, Lassiter, and Franke (2022): Rational Communication with Conditionals

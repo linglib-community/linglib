@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Pragmatics.RSA.LexicalUncertainty
-public import Linglib.Pragmatics.RSA.Recursion
+public import Linglib.Pragmatics.Probabilistic.LexicalUncertainty
+public import Linglib.Pragmatics.Probabilistic.Recursion
 public import Linglib.Pragmatics.Bidirectional
 public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Analysis.Calculus.Deriv.Inv

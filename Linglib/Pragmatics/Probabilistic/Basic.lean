@@ -17,7 +17,8 @@ public import Mathlib.Data.EReal.BigOperators
 /-!
 # The Rational Speech Act pipeline on probability kernels
 
-Frank and Goodman's Rational Speech Act model in mathlib's probability vocabulary. The
+Frank and Goodman's Rational Speech Act model, the Bayesian member of the family Franke and Jäger
+call probabilistic pragmatics, in mathlib's probability vocabulary. The
 [listener](##RSA.listener) reweights a prior by the mass each state's measure gives the utterance
 heard: at the channel of a speaker who is only truthful she is the literal listener, who
 [conditions the prior on the extension](##RSA.listener_truthful_apply), and at a speaker the
@@ -38,8 +39,8 @@ entails](##RSA.speaker_listener_truthful_apply_eq_iff).
   log-probability, such as a question- or politeness-weighted one, is that rule at her own score,
   with `⊥` marking the utterances she cannot use.
 * Boolean meanings at a uniform prior on finitely many states, where masses reduce to counting, are
-  treated in `Linglib.Pragmatics.RSA.Uniform`, and a latent whose prior is independent of the
-  state's in `Linglib.Pragmatics.RSA.LexicalUncertainty`.
+  treated in `Linglib.Pragmatics.Probabilistic.Uniform`, and a latent whose prior is independent of
+  the state's in `Linglib.Pragmatics.Probabilistic.LexicalUncertainty`.
 
 ## References
 
@@ -52,6 +53,7 @@ entails](##RSA.speaker_listener_truthful_apply_eq_iff).
   Case Study on Grammatically Generated Implicature Readings* (2020)][franke-bergen-2020]
 * [spector-2025]
 * [goodman-stuhlmuller-2013]
+* [franke-jager-2016]
 -/
 
 @[expose] public section
@@ -338,7 +340,7 @@ A latent the speaker also knows, a lexicon or a threshold or a question, is a co
 state: the speaker at a pair is `fun p ↦ speaker α C (L p.2) Measure.dirac p.1`, addressing that
 latent's listener, and her listener holds a prior over pairs. Its marginals pool the
 prior-weighted production probabilities over the other coordinate. When the prior over pairs is a
-product, this is lexical uncertainty (`Linglib.Pragmatics.RSA.LexicalUncertainty`). -/
+product, this is lexical uncertainty (`Linglib.Pragmatics.Probabilistic.LexicalUncertainty`). -/
 
 section Prod
 

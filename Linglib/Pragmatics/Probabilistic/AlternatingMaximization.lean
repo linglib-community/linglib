@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.InformationTheory.ChannelCapacity
 public import Linglib.Core.InformationTheory.Surprisal
-public import Linglib.Pragmatics.RSA.Recursion
+public import Linglib.Pragmatics.Probabilistic.Recursion
 
 /-!
 # The RSA recursion as alternating maximization
