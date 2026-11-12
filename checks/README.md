@@ -56,7 +56,7 @@ are made by people, never by agents. Proofs need no check, since Lean has checke
 python3 scripts/checks.py status [--ci] [SOURCE ...]
 python3 scripts/checks.py sign SOURCE --items ex-22,ex-23 --by HANDLE
 python3 scripts/checks.py sign SOURCE --all --by HANDLE
-python3 scripts/checks.py sign SOURCE --all --by "A. Reviewer" --recorded-by HANDLE --via email
+python3 scripts/checks.py sign SOURCE --all --by "A. Reviewer" --via email
 python3 scripts/checks.py diff SOURCE ITEM
 python3 scripts/checks.py core [--json]
 python3 scripts/checks.py renames
@@ -185,10 +185,9 @@ hash of its statement closure and a list of the declarations in it:
 ```toml
 # checks/ledger/<hash>.toml
 source      = "elliott-2023"
-by          = "A. Reviewer"        # who checked; a GitHub login is not required
-recorded_by = "patrl"              # who added this file: the author of the PR
-via         = "email"              # required when `by` is not `recorded_by`
-date        = 2026-11-12T10:32:05Z
+by     = "A. Reviewer"             # who checked; a GitHub login unless there is a `via`
+via    = "email"                   # for a sign-off recorded for someone else
+date   = 2026-11-12T10:32:05Z
 
 [[item]]
 id   = "ex-22"
@@ -205,22 +204,21 @@ text is the same but whose term differs. The docs pages say that a statement has
 the sign-off, and point to `diff`. An item is current if the hash of its newest ledger entry is
 its hash now.
 
-**Who checks.** `recorded_by` is the GitHub account that adds the file. A reviewer without an
-account is named in `by`, and someone else records the sign-off for them, giving `via`: how
-the reviewer made the check known, such as `email` or `issue #123`, with no contact details. A
-sign-off recorded for someone else is shown as such: "checked by A. Reviewer, recorded by
-patrl". The admin who merges the pull request vouches for it, as for any change from outside.
-Sign-offs are still made by people, never by agents.
+**Who checks.** `by` is a GitHub login, that of the pull request's author, and git records who
+added the file. A reviewer without an account is named in `by` instead, and someone else records
+the sign-off for them, giving `via`: how the reviewer made the check known, such as `email` or
+`issue #123`, with no contact details. The admin who merges the pull request vouches for it, as
+for any change from outside. Sign-offs are still made by people, never by agents.
 
 `sign` enforces the `via` rule when it writes the file. CI enforces all of them, with
 `verify-ledger`, in a job on every pull request. It fails a pull request that:
 
 * changes or deletes a file in `checks/ledger/`, or has one whose name is not the hash of its
   contents or whose node texts are missing;
-* has a `recorded_by` that is not the PR's author, or is a bot;
-* has a `by` that names a bot or an agent (a name containing `bot`, `claude`, `copilot`, `codex`,
-  `gemini` or `gpt`, which stops accidents rather than a determined effort);
-* has `by` different from `recorded_by` without a `via`;
+* is made by a bot account, or one whose login or `by` names a bot or an agent (a name
+  containing `bot`, `claude`, `copilot`, `codex`, `gemini` or `gpt`, which stops accidents rather
+  than a determined effort);
+* has a `by` that is not the PR's author, without a `via`;
 * signs an item that the check file does not list.
 
 A step of the build job runs `status --ci` after the build. It fails on a `broken` item, so that

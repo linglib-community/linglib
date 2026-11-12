@@ -142,7 +142,7 @@ def load_ledger():
         sign = tomllib.loads(raw.decode("utf-8"))
         for item in sign.get("item", []):
             entries.setdefault((sign["source"], item["id"]), []).append({
-                "by": sign["by"], "recorded_by": sign["recorded_by"], "via": sign.get("via"),
+                "by": sign["by"], "via": sign.get("via"),
                 "date": sign["date"], "hash": item["hash"], "nodes": item.get("nodes", []),
                 "file": path.name})
     for found in entries.values():
@@ -345,8 +345,8 @@ def status_json(sources, status, info):
             "source": key, "id": cid, "kind": item.get("kind"), "label": item.get("label", cid),
             "relation": item.get("relation"), "notes": item.get("notes", "").strip(),
             "decls": item.get("decls", []), "status": st,
-            "check": last and {"by": last["by"], "recorded_by": last["recorded_by"],
-                               "via": last["via"], "date": last["date"].date().isoformat()},
+            "check": last and {"by": last["by"], "via": last["via"],
+                               "date": last["date"].date().isoformat()},
             "blocking": [f"{k}/{c}" for k, c in info[(key, cid)].get("blocking", [])]})
     return {"commit": commit, "items": items}
 
@@ -483,24 +483,18 @@ def ledger_problems(changes, author, author_type):
 def entry_problems(path, sign, author, author_type):
     """What is wrong with one new ledger file."""
     problems = []
-    by, recorded_by, via = sign.get("by"), sign.get("recorded_by"), sign.get("via")
-    source = sign.get("source")
-    if not all(isinstance(v, str) and v for v in (by, recorded_by, source)):
-        return [f"{path}: `source`, `by` and `recorded_by` must all be given"]
+    by, via, source = sign.get("by"), sign.get("via"), sign.get("source")
+    if not all(isinstance(v, str) and v for v in (by, source)):
+        return [f"{path}: `source` and `by` must be given"]
     if not isinstance(sign.get("date"), datetime.datetime):
         problems.append(f"{path}: `date` must be a date and time")
-    if recorded_by.lower() != author.lower():
-        problems.append(f"{path}: recorded_by is {recorded_by}, but the pull request is by "
-                        f"{author}")
-    if author_type == "Bot" or AGENT_NAME.search(recorded_by):
-        problems.append(f"{path}: a sign-off is recorded by a person, not {recorded_by}")
+    if author_type == "Bot" or AGENT_NAME.search(author):
+        problems.append(f"{path}: a sign-off is added by a person, not {author}")
     if AGENT_NAME.search(by):
         problems.append(f"{path}: a sign-off is made by a person, not {by}")
-    if by == recorded_by:
-        if via:
-            problems.append(f"{path}: `via` is for a sign-off recorded for someone else")
-    elif not via:
-        problems.append(f"{path}: a sign-off recorded for someone else needs `via`")
+    if not via and by.lower() != author.lower():
+        problems.append(f"{path}: `by` is {by}, but the pull request is by {author}: a sign-off "
+                        "for someone else needs `via`")
     ids = set()
     source_file = CHECKS / f"{source}.toml"
     if source_file.exists():
@@ -579,11 +573,10 @@ def toml_string(s):
     return json.dumps(s, ensure_ascii=False)
 
 
-def ledger_file(source, by, recorded_by, via, when, signed):
+def ledger_file(source, by, via, when, signed):
     """The text of a ledger file, and the node texts it needs, for the items just signed, given as
     `(id, hash, nodes)`, each node `(name, term, text)`."""
-    lines = [f"source = {toml_string(source)}", f"by = {toml_string(by)}",
-             f"recorded_by = {toml_string(recorded_by)}"]
+    lines = [f"source = {toml_string(source)}", f"by = {toml_string(by)}"]
     if via:
         lines.append(f"via = {toml_string(via)}")
     lines.append(f"date = {when}")
@@ -601,21 +594,15 @@ def cmd_sign(args):
     if os.environ.get("CLAUDECODE"):
         sys.exit("sign-offs are made by people: run `sign` yourself, outside an agent session")
     by = args.by.strip()
-    recorded_by = args.recorded_by or by
     if not by or any(c in by for c in '\n\r"\\'):
         sys.exit(f"--by takes the reviewer's name or GitHub handle, not {args.by!r}")
-    if not LOGIN.fullmatch(recorded_by):
-        sys.exit("--recorded-by takes your GitHub handle, and defaults to --by, which is not one: "
-                 f"{recorded_by!r}")
-    if by != recorded_by and not args.via:
-        sys.exit("a sign-off recorded for someone else needs --via, saying how they made the "
-                 "check known, such as `email` or `issue #123`")
-    if args.via and by == recorded_by:
-        sys.exit("--via is for a sign-off recorded for someone else")
-    return record(args, by, recorded_by)
+    if not args.via and not LOGIN.fullmatch(by):
+        sys.exit("--by takes your GitHub handle, unless you record the sign-off for someone else, "
+                 "when --via says how they made the check known, such as `email` or `issue #123`")
+    return record(args, by)
 
 
-def record(args, by, recorded_by):
+def record(args, by):
     """Write the ledger file for the items `args` selects, and the node texts it needs."""
     sources = load_sources([args.source])
     problems = [p for p in validate(sources)]
@@ -648,7 +635,7 @@ def record(args, by, recorded_by):
         print("nothing to sign")
         return 0
     when = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    text = ledger_file(args.source, by, recorded_by, args.via, when, signed)
+    text = ledger_file(args.source, by, args.via, when, signed)
     LEDGER_NODES.mkdir(parents=True, exist_ok=True)
     for _, _, nodes in signed:
         for _, _, node in nodes:
@@ -882,7 +869,6 @@ def main():
     g.add_argument("--items", help="comma-separated item ids")
     p.add_argument("--by", required=True,
                    help="who checked: your GitHub handle, or the name of a reviewer you record for")
-    p.add_argument("--recorded-by", help="your GitHub handle, if --by is someone else")
     p.add_argument("--via", help="how that reviewer made the check known (`email`, `issue #123`)")
     p.set_defaults(func=cmd_sign)
     p = sub.add_parser("gloss", help="blind English glosses of the items' Lean statements")

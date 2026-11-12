@@ -582,12 +582,9 @@ class ModulePage:
             elif c["relation"] == "refutes":
                 verb = f'Checked as <span class="rel" title="{esc(c["notes"])}">refuting</span>'
             day = datetime.date.fromisoformat(ck["date"])
-            who = (link("https://github.com/" + ck["by"], esc(ck["by"]))
-                   if ck["by"] == ck["recorded_by"] else esc(ck["by"]))
+            who = (esc(ck["by"]) if ck["via"]
+                   else link("https://github.com/" + ck["by"], esc(ck["by"])))
             by = f'by {who} on {day.day} {day:%B} {day.year}'
-            if ck["by"] != ck["recorded_by"]:
-                recorder = link("https://github.com/" + ck["recorded_by"], esc(ck["recorded_by"]))
-                by += f', recorded by {recorder}'
             if c["status"] == "stale":
                 line = (f'{verb} {against} {by}; its statement has changed since '
                         '(<code>checks.py diff</code> shows how).')
