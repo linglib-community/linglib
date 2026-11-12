@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Aristotelian.Square
-public import Linglib.Pragmatics.RSA.Decision
+public import Linglib.Pragmatics.Probabilistic.Decision
 public import Studies.KirbyDowmanGriffiths2007
 
 /-!

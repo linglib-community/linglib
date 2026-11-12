@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.MeasureTheory.Measure.Real
-public import Linglib.Pragmatics.RSA.LexicalUncertainty
+public import Linglib.Pragmatics.Probabilistic.LexicalUncertainty
 public import Linglib.Fragments.English.Adjectives
 
 /-!

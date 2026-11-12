@@ -3,7 +3,7 @@ module
 public import Linglib.Core.InformationTheory.InformationLoss
 public import Linglib.Core.Probability.Kernel.Softmax
 public import Linglib.Core.Order.Pareto
-public import Linglib.Pragmatics.RSA.AlternatingMaximization
+public import Linglib.Pragmatics.Probabilistic.AlternatingMaximization
 public import Mathlib.Data.Set.Finite.Lemmas
 public import Linglib.Data.Examples.XuEtAl2024
 

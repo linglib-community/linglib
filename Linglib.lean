@@ -704,10 +704,6 @@ import Linglib.Pragmatics.Bidirectional
 import Linglib.Pragmatics.DecisionTheoretic.Basic
 import Linglib.Pragmatics.Implicature.Diagnostics
 import Linglib.Pragmatics.NeoGricean.Basic
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Pragmatics.RSA.Uniform
-import Linglib.Pragmatics.RSA.Incremental
-import Linglib.Pragmatics.RSA.QUD
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Processing.DiscriminativeLexicon.Coding
 import Linglib.Processing.DiscriminativeLexicon.Realization

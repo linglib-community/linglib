@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Probability.Kernel.Module
-public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Pragmatics.Probabilistic.Uniform
 
 /-!
 # Potts and Levy (2015): Negotiating Lexical Uncertainty and Speaker Expertise with Disjunction
@@ -34,7 +34,7 @@ paper's 1.
 
 ## Implementation notes
 
-The agents are kernels of `Pragmatics/RSA`, the speakers power-weight kernels and the
+The agents are kernels of `Pragmatics/Probabilistic`, the speakers power-weight kernels and the
 listeners Bayesian inverses against uniform priors; the expertise speaker is a weight kernel
 built from the fixed-lexicon listener and the lexicon posterior. The paper's speakers subtract
 the cost outside the rationality, so it enters the substrate speaker divided by α. Listener

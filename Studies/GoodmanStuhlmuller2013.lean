@@ -4,8 +4,8 @@ public import Linglib.Core.Probability.Distributions.Hypergeometric
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Linglib.Core.Probability.UniformOn
-public import Linglib.Pragmatics.RSA.Recursion
-public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Pragmatics.Probabilistic.Recursion
+public import Linglib.Pragmatics.Probabilistic.Uniform
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Quantification.NumberTree
 

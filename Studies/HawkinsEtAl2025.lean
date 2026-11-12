@@ -6,7 +6,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.Probability.Decision.ValueOfInformation
 public import Linglib.Data.Examples.HawkinsEtAl2025
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.Probabilistic.Basic
 public import Linglib.Semantics.Questions.Polar
 
 /-!

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Probability.ConditionalProbability
-public import Linglib.Pragmatics.RSA.QUD
+public import Linglib.Pragmatics.Probabilistic.QUD
 public import Linglib.Data.Examples.Warstadt2022
 
 /-!

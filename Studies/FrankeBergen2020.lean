@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Pragmatics.Probabilistic.Uniform
 public import Linglib.Logic.Aristotelian.Square
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Mathlib.Data.List.ProdSigma
