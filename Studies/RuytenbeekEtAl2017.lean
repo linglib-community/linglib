@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Discourse.SpeechAct
-public import Linglib.Semantics.Mood.SpeechEvent
 public import Linglib.Fragments.Romance.French.Modals
 public import Linglib.Data.Examples.RuytenbeekEtAl2017
 public import Linglib.Data.Statistics.RuytenbeekEtAl2017
@@ -51,7 +50,6 @@ namespace RuytenbeekEtAl2017
 
 open Discourse.SpeechAct French
 open Modality
-open Discourse.SpeechAct.Force (primaryFlavor)
 
 /-! ### Constructions and forces -/
 
@@ -106,7 +104,7 @@ imperative's directive-making semantics: the imperative's own deontic necessity,
 questioning of the addressee's ability, or a possibility modal's enablement. -/
 def NonLiteralist.DirectivePrimary (c : Construction) : Prop :=
   c.sentenceType = .imperative ∨
-    (∃ m ∈ c.modal, ∃ φ ∈ primaryFlavor .directive, (.necessity, φ) ∈ m.meaning) ∨
+    (∃ m ∈ c.modal, (.necessity, .deontic) ∈ m.meaning) ∨
     c.queriedPrep = some .ability ∨ ∃ m ∈ c.modal, .possibility ∈ m.forces
 
 instance (c : Construction) : Decidable (Literalist.DirectivePrimary c) := by

@@ -172,13 +172,4 @@ theorem update_promise_eq_directive_iff :
     update_promise_addressee, update_directive_addressee]
   rw [State.promote_eq_self_iff, eq_comm, State.promote_eq_self_iff]
 
-/-- Folding contents through a force folds them through the update of its component in the state
-of each holder. -/
-theorem foldl_update_apply_of_mem {f : Force} {r : Role} {c : Component} (hr : r ∈ f.holders)
-    (hc : f.target = some c) (l : List (W → Prop)) (d : Role → State W) :
-    l.foldl f.update d r = l.foldl c.update (d r) := by
-  induction l generalizing d with
-  | nil => rfl
-  | cons φ l ih => rw [List.foldl_cons, ih, update_apply_of_mem d φ hr hc, List.foldl_cons]
-
 end Discourse.SpeechAct.Force
