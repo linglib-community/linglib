@@ -153,11 +153,12 @@ variable {X : AR τ} {prec ov : X.Pos → X.Pos → Prop}
 
 /-- A representation with an event structure obeys the No-Crossing Constraint. -/
 theorem IsEventStructureOf.noCrossing (h : IsEventStructureOf X prec ov) : X.NoCrossing :=
-  fun i j ↦ AR.isNonCrossing_lines_iff.2 fun p q p' q' ⟨hp, hq, h₁⟩ ⟨hp', hq', h₂⟩ hlt ↦ by
+  fun i j ↦ AR.isNonCrossing_lines_iff.2 fun p q p' q' h₁ h₂ hlt ↦ by
     by_contra! hgt
-    exact h.not_crossing (h.prec_of_lt i (show (⟨p, hp⟩ : Fin _) < ⟨p', hp'⟩ from hlt))
-      (h.prec_of_lt j (show (⟨q', hq'⟩ : Fin _) < ⟨q, hq⟩ from hgt)) (h.ov_of_adj h₁)
-      (h.ov_of_adj h₂)
+    exact h.not_crossing
+      (h.prec_of_lt i (show (⟨p, h₁.lt_left⟩ : Fin _) < ⟨p', h₂.lt_left⟩ from hlt))
+      (h.prec_of_lt j (show (⟨q', h₂.lt_right⟩ : Fin _) < ⟨q, h₁.lt_right⟩ from hgt))
+      (h.ov_of_adj h₁.adj) (h.ov_of_adj h₂.adj)
 
 theorem exists_isEventStructureOf_of_hasIntervalOrder (h : X.HasIntervalOrder) :
     ∃ prec ov, IsEventStructureOf X prec ov := by

@@ -97,11 +97,12 @@ theorem hasIntervalOrder_of_intervals {T : Type*} [LinearOrder T] (I : X.Pos →
 lines would make the order of their tiers a `2 + 2`. -/
 theorem HasIntervalOrder.noCrossing (h : X.HasIntervalOrder) : X.NoCrossing := by
   obtain ⟨r, hr, htier, hadj⟩ := h
-  refine fun i j ↦ isNonCrossing_lines_iff.2 fun p q p' q' ⟨hp, hq, h₁⟩ ⟨hp', hq', h₂⟩ hlt ↦ ?_
+  refine fun i j ↦ isNonCrossing_lines_iff.2 fun p q p' q' h₁ h₂ hlt ↦ ?_
   by_contra! hgt
-  rcases hr.two_plus_two (htier i (show (⟨p, hp⟩ : Fin _) < ⟨p', hp'⟩ from hlt))
-    (htier j (show (⟨q', hq'⟩ : Fin _) < ⟨q, hq⟩ from hgt)) with h | h
-  exacts [hadj h₁ h, hadj h₂.symm h]
+  rcases hr.two_plus_two
+    (htier i (show (⟨p, h₁.lt_left⟩ : Fin _) < ⟨p', h₂.lt_left⟩ from hlt))
+    (htier j (show (⟨q', h₂.lt_right⟩ : Fin _) < ⟨q, h₁.lt_right⟩ from hgt)) with h | h
+  exacts [hadj h₁.adj h, hadj h₂.symm.adj h]
 
 /-- Intervals place the tiers of `s`: in order along each tier, with the lines among them
 overlaps. -/

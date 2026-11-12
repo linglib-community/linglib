@@ -66,41 +66,36 @@ end RepointIdx
 namespace AR
 
 section Repoint
-variable {ι : Type*} [Fintype ι] [DecidableEq ι] {τ : ι → Type*} (X : AR τ) (m : ι)
+variable {ι : Type*} [DecidableEq ι] {τ : ι → Type*} (X : AR τ) (m : ι)
   (w : List (τ m)) {f : ℕ → ℕ} (hf : ∀ p < (X.word m).length, f p < w.length)
 
 /-- `X` with tier `m` read as the word `w` and its positions moved along `f`, the lines
 following the positions they join. -/
 def repoint : AR τ :=
-  X.map (Function.update X.word m w) fun i p ↦ ⟨repointIdx m f i p, by
+  X.map (Function.update X.word m w) (repointIdx m f) fun i p hp ↦ by
     unfold repointIdx
     split_ifs with h
     · subst h
-      simpa using hf p p.2
-    · simp [Function.update_of_ne h]⟩
+      simpa using hf p hp
+    · simpa [Function.update_of_ne h] using hp
 
-@[simp] theorem word_repoint_self : (X.repoint m w hf).word m = w := by simp [repoint, map]
+@[simp] theorem word_repoint_self : (X.repoint m w hf).word m = w := by simp [repoint]
 
 @[simp] theorem word_repoint_of_ne {i : ι} (h : i ≠ m) : (X.repoint m w hf).word i = X.word i := by
-  simp [repoint, map, h]
+  simp [repoint, h]
 
 variable {X m w}
 
 /-- The lines of a repointing are the repointed lines. -/
 theorem link_repoint {i j : ι} {r s : ℕ} :
     (X.repoint m w hf).Link i j r s ↔
-      ∃ p q, X.Link i j p q ∧ repointIdx m f i p = r ∧ repointIdx m f j q = s := by
-  rw [repoint, link_map]
-  constructor
-  · rintro ⟨⟨p, q⟩, hx, rfl, rfl⟩
-    exact ⟨p, q, mem_lines.1 hx, rfl, rfl⟩
-  · rintro ⟨p, q, ⟨hp, hq, h⟩, rfl, rfl⟩
-    exact ⟨(⟨p, hp⟩, ⟨q, hq⟩), h, rfl, rfl⟩
+      ∃ p q, X.Link i j p q ∧ repointIdx m f i p = r ∧ repointIdx m f j q = s :=
+  link_map
 
 /-- A monotone repointing preserves the NCC. -/
 theorem NoCrossing.repoint (hmono : Monotone f) (h : X.NoCrossing) :
     (X.repoint m w hf).NoCrossing :=
-  NoCrossing.map _ _ (fun i _ _ hab ↦ repointIdx_monotone hmono i hab) h
+  NoCrossing.map _ _ _ (fun i ↦ (repointIdx_monotone hmono i).monotoneOn _) h
 
 end Repoint
 
@@ -120,8 +115,6 @@ theorem IsCleanAt.repointIdx_runIdx (h : X.IsCleanAt m) {i : ι} {p : ℕ}
   rcases eq_or_ne i m with rfl | hi
   · exact (repointIdx_self p).trans (runIdx_clean h hp)
   · exact repointIdx_of_ne hi p
-
-variable [Fintype ι]
 
 /-- The **OCP-merging collapse** of melody tier `m` merges every run of identical melody nodes,
 repointing the tier through its run index. -/

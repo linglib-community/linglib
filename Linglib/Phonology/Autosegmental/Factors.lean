@@ -167,12 +167,12 @@ section OfList
 variable {α : Type*}
 
 /-- A string is a representation with one tier and no association lines. -/
-def ofList (w : List α) : AR fun _ : Unit ↦ α := ⟨fun _ ↦ w, ⊥, bot_le, inferInstance⟩
+def ofList (w : List α) : AR fun _ : Unit ↦ α := ⟨fun _ ↦ w, fun _ _ ↦ ∅, fun _ ↦ rfl, nofun, nofun⟩
 
 @[simp] theorem word_ofList (w : List α) (i : Unit) : (ofList w).word i = w := rfl
 
 @[simp] theorem not_link_ofList (w : List α) (i j : Unit) (p q : ℕ) :
-    ¬ (ofList w).Link i j p q := fun h ↦ h.2.2
+    ¬ (ofList w).Link i j p q := Finset.notMem_empty _
 
 /-- One string embeds in another as a factor iff it is an infix. -/
 @[simp] theorem factorEmbeds_ofList_iff (f w : List α) :

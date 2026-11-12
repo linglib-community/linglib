@@ -61,7 +61,8 @@ theorem ext_of_true_false (ht : X.word true = Y.word true) (hf : X.word false = 
 
 /-! ### The No-Crossing Constraint -/
 
-theorem noCrossing_iff_two_tier : X.NoCrossing ↔ IsNonCrossing (X.lines true false) := by
+theorem noCrossing_iff_two_tier :
+    X.NoCrossing ↔ IsNonCrossing (X.lines true false : SetRel ℕ ℕ) := by
   refine ⟨fun h ↦ h true false, fun h i j ↦ ?_⟩
   cases i <;> cases j
   exacts [isNonCrossing_lines_self _, isNonCrossing_lines_comm.1 h, h, isNonCrossing_lines_self _]

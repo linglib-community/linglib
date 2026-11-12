@@ -114,8 +114,6 @@ private theorem repointIdx_mergeIdx_add (i : ι) (p : ℕ) :
 
 end
 
-variable [Fintype ι]
-
 /-- **Merging concatenation**: the bridging concatenation with the seam of melody tier `m`
 merged, the last node of `X` and the first node of `Y` becoming one node when they bear the
 same label. -/
@@ -184,7 +182,7 @@ end Offset
 
 end Mul
 
-variable [DecidableEq ι] [DecidableEq (τ m)] [Fintype ι]
+variable [DecidableEq ι] [DecidableEq (τ m)]
 
 /-- Merging concatenation is a monoid with the empty representation as unit
 ([jardine-heinz-2015] Theorems 1 and 3). -/

@@ -385,11 +385,10 @@ theorem not_link_toAR_some_some {i i' : ι} {p q : ℕ} : ¬ f.toAR.Link (some i
 theorem noCrossing_toAR_iff :
     f.toAR.NoCrossing ↔ ∀ i, IsNonCrossing (f.lines i : SetRel ℕ ℕ) := by
   have key (i : ι) :
-      IsNonCrossing (f.toAR.lines (some i) none) ↔ IsNonCrossing (f.lines i : SetRel ℕ ℕ) := by
-    rw [AR.isNonCrossing_lines_iff_link]
-    congr! 1
-    ext ⟨p, q⟩
-    exact f.link_toAR
+      IsNonCrossing (f.toAR.lines (some i) none : SetRel ℕ ℕ) ↔
+        IsNonCrossing (f.lines i : SetRel ℕ ℕ) := by
+    simp only [AR.isNonCrossing_lines_iff, link_toAR]
+    exact ⟨fun h _ ha _ hb ↦ h ha hb, fun h _ _ _ _ h₁ h₂ ↦ h h₁ h₂⟩
   refine ⟨fun h i ↦ (key i).1 (h _ _), fun h j k ↦ ?_⟩
   rcases j with _ | i <;> rcases k with _ | i'
   · exact AR.isNonCrossing_lines_self none

@@ -341,21 +341,41 @@ namespace Form
 
 /-- The representation a form presents, with the upper tier over `true` and the lower tier over
 `false`. -/
-def toAR : AR (TwoTier α β) :=
-  AR.fromRel (fun b ↦ b.rec f.lower f.upper) fun i j p q ↦ i = true ∧ j = false ∧ (p, q) ∈ f.lines
+def toAR : AR (TwoTier α β) where
+  word b := b.rec f.lower f.upper
+  lines
+    | true, false => f.lines
+    | false, true => f.lines.map (Equiv.prodComm ℕ ℕ).toEmbedding
+    | _, _ => ∅
+  lines_self i := by cases i <;> rfl
+  swap_mem_lines i j p q h := by
+    cases i <;> cases j
+    · exact absurd h (Finset.notMem_empty _)
+    · obtain ⟨⟨a, b⟩, hab, he⟩ := Finset.mem_map.1 h
+      cases he
+      exact hab
+    · exact Finset.mem_map.2 ⟨(p, q), h, rfl⟩
+    · exact absurd h (Finset.notMem_empty _)
+  fst_lt_of_mem_lines i j p q h := by
+    cases i <;> cases j
+    · exact absurd h (Finset.notMem_empty _)
+    · obtain ⟨⟨a, b⟩, hab, he⟩ := Finset.mem_map.1 h
+      cases he
+      exact (f.lt_of_mem_lines hab).2
+    · exact (f.lt_of_mem_lines h).1
+    · exact absurd h (Finset.notMem_empty _)
 
 @[simp] theorem word_toAR_true : f.toAR.word true = f.upper := rfl
 
 @[simp] theorem word_toAR_false : f.toAR.word false = f.lower := rfl
 
-@[simp] theorem link_toAR {p q : ℕ} : f.toAR.Link true false p q ↔ (p, q) ∈ f.lines :=
-  AR.link_fromRel.trans ⟨fun ⟨_, _, _, h⟩ ↦ h.elim (·.2.2) fun h ↦ absurd h.1 (by decide), fun h ↦
-    ⟨by decide, (f.lt_of_mem_lines h).1, (f.lt_of_mem_lines h).2, .inl ⟨rfl, rfl, h⟩⟩⟩
+@[simp] theorem lines_toAR : f.toAR.lines true false = f.lines := rfl
+
+@[simp] theorem link_toAR {p q : ℕ} : f.toAR.Link true false p q ↔ (p, q) ∈ f.lines := .rfl
 
 /-- The presented representation obeys the NCC iff the lines are non-crossing. -/
-theorem noCrossing_toAR_iff : f.toAR.NoCrossing ↔ IsNonCrossing (f.lines : SetRel ℕ ℕ) := by
-  simp only [AR.noCrossing_iff_two_tier, AR.isNonCrossing_lines_iff_link, link_toAR]
-  rfl
+theorem noCrossing_toAR_iff : f.toAR.NoCrossing ↔ IsNonCrossing (f.lines : SetRel ℕ ℕ) :=
+  AR.noCrossing_iff_two_tier
 
 theorem toAR_concat : (f.concat g).toAR = f.toAR * g.toAR :=
   AR.ext_of_true_false rfl rfl fun p q ↦ by
@@ -387,15 +407,12 @@ the lower. -/
 def ofAR (X : AR (TwoTier α β)) : Form α β where
   upper := X.word true
   lower := X.word false
-  lines := (Finset.range (X.word true).length ×ˢ Finset.range (X.word false).length).filter
-    fun p ↦ X.Link true false p.1 p.2
-  lt_of_mem_lines h := ⟨(Finset.mem_filter.1 h).2.lt_left, (Finset.mem_filter.1 h).2.lt_right⟩
+  lines := X.lines true false
+  lt_of_mem_lines h := ⟨AR.Link.lt_left h, AR.Link.lt_right h⟩
 
 /-- Every representation on two tiers is the presentation of its form. -/
 @[simp] theorem toAR_ofAR (X : AR (TwoTier α β)) : (ofAR X).toAR = X :=
-  AR.ext_of_true_false rfl rfl fun p q ↦ by
-    simp only [link_toAR, ofAR, Finset.mem_filter, Finset.mem_product, Finset.mem_range]
-    exact ⟨fun h ↦ h.2, fun h ↦ ⟨⟨h.lt_left, h.lt_right⟩, h⟩⟩
+  AR.ext_of_true_false rfl rfl fun _ _ ↦ .rfl
 
 @[simp] theorem ofAR_toAR : ofAR f.toAR = f := toAR_injective (toAR_ofAR _)
 
