@@ -14,9 +14,9 @@ whether it is true, *know* is factive and *think* is not, and the two questions 
 experiments ask whether Cole believes the complement and whether it is true. A literal listener
 interprets the utterance within the speaker's private assumptions, a set of worlds, and answers
 the question (`L0`). The speaker is truthful, informative about the answer, and pays a cost that
-doubles for the complex utterances (`S1`). The pragmatic listener, who hears the utterance and the question,
-inverts the speaker jointly over worlds and assumptions (`L1`), as in the model of Qing, Goodman
-and Lassiter.
+doubles for the complex utterances (`S1`). The pragmatic listener, who hears the utterance and
+the question, inverts the speaker jointly over worlds and assumptions (`L1`), as in the model of
+Qing, Goodman and Lassiter.
 
 ## Implementation notes
 
