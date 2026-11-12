@@ -41,7 +41,7 @@ that `checks.py` can record it before the alias is removed.
 open Lean Meta
 
 /-- The libraries whose declarations a closure follows, and the fixture of `checks.py selftest`. -/
-def projectRoots : List Name := [`Linglib, `Studies, `Eval, `Lab, `ChecksFixture]
+def projectRoots : List Name := [`Linglib, `Studies, `ChecksFixture]
 
 def moduleOf? (env : Environment) (n : Name) : Option Name := do
   let idx ← env.getModuleIdxFor? n

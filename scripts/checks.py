@@ -65,7 +65,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CHECKS = ROOT / "checks"
-LIBRARIES = ["Linglib", "Studies", "Eval", "Lab"]
+LIBRARIES = ["Linglib", "Studies"]
 KINDS = {"definition", "result", "datum"}
 RELATIONS = {"exact", "generalizes", "specializes", "variant", "refutes", "missing"}
 HASH_VERSION = "v2"
