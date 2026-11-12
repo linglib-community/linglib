@@ -46,4 +46,20 @@ theorem toReal_klDiv_eq_sum_log_div [Fintype S] {ν : Measure S} [IsProbabilityM
   rw [toReal_klDiv_of_measure_eq hμν (by simp), integral_congr_ae h, integral_fintype .of_finite]
   simp
 
+/-- On a finite type the divergence of one finite measure from another is the expected log-ratio of
+the masses of the atoms, plus the difference of the total masses. -/
+theorem toReal_klDiv_eq_sum_log_div_add [Fintype S] {ν : Measure S} [IsFiniteMeasure μ]
+    [IsFiniteMeasure ν] (hμν : μ ≪ ν) :
+    (klDiv μ ν).toReal =
+      ∑ s, μ.real {s} * log (μ.real {s} / ν.real {s}) + ν.real Set.univ - μ.real Set.univ := by
+  have h : llr μ ν =ᵐ[μ] fun s ↦ log (μ.real {s} / ν.real {s}) := by
+    refine ae_iff_of_countable.2 fun s hs ↦ ?_
+    dsimp only
+    have hd := Measure.setLIntegral_rnDeriv hμν {s}
+    rw [lintegral_singleton] at hd
+    rw [llr, measureReal_def, measureReal_def, ← ENNReal.toReal_div, ← hd,
+      ENNReal.mul_div_cancel_right (fun h ↦ hs (hμν h)) (measure_ne_top _ _)]
+  rw [toReal_klDiv hμν .of_finite, integral_congr_ae h, integral_fintype .of_finite]
+  simp
+
 end InformationTheory
