@@ -10,8 +10,8 @@ public import Mathlib.Order.Hom.Basic
 MacLaren's representation sends an ortholattice `L` with a join-dense subset `V` into the
 concepts of an orthogonality relation: the points are the nonzero elements of `V`, two points are
 orthogonal when one lies below the complement of the other, and `a` goes to the concept of the
-points below it. This is [an order embedding](##OrthoConcept.principalEmbedding) and [an ortholattice
-homomorphism](##OrthoConcept.principalHom), and on a complete lattice, where
+points below it. This is [an order embedding](##OrthoConcept.principalEmbedding) and [an
+ortholattice homomorphism](##OrthoConcept.principalHom), and on a complete lattice, where
 [every concept is the image of the join of its extent](##OrthoConcept.principal_sSup_extent), it
 is [an order isomorphism](##OrthoConcept.principalIso).
 
