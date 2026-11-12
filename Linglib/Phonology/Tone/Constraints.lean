@@ -13,9 +13,9 @@ public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
 # Tonal constraints
 
 OT and harmonic-serialism constraints over the candidates `Candidate u` of an autosegmental form
-`u : Form S TRN M`, generic over the segment type `S` and the opaque sponsor type `M`. Each is
-an `OptimalityTheory.Constraint`, a violation count. Equation numbers are McPherson and
-Lamont's.
+`u : Form (Sponsored TRN M) (Sponsored S M)`, generic over the segment type `S` and the opaque
+sponsor type `M`. Each is an `OptimalityTheory.Constraint`, a violation count. Equation numbers
+are McPherson and Lamont's.
 
 ## Main definitions
 
@@ -55,7 +55,7 @@ open Autosegmental
 open Tone (TRN)
 open OptimalityTheory
 
-variable {S M : Type*} [DecidableEq S] [DecidableEq M] {u : Form S TRN M}
+variable {S M : Type*} [DecidableEq S] [DecidableEq M] {u : Form (Sponsored TRN M) (Sponsored S M)}
 
 /-! ### Tone-value predicate
 

@@ -435,7 +435,8 @@ theorem isNonCrossing_inputs :
     ∀ u ∈ [Fig3.fig3Input, Eq24.eq24Input, Eq21.eq21Input, Eq27.eq27Input, Eq30.eq30Input,
       Eq22.eq22Input, Eq58.eq58Input], IsNonCrossing (u.lines : SetRel ℕ ℕ) := by
   have s := isNonCrossing_stem
-  have c := Form.isNonCrossing_lines_concat (S := List Phonology.Segment) (T := TRN) (M := ℕ)
+  have c := Form.isNonCrossing_lines_concat (α := Sponsored TRN ℕ)
+    (β := Sponsored (List Phonology.Segment) ℕ)
   simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
   exact ⟨c _ _ (c _ _ (s 0 _ (by simp)) (s 1 _ (by simp))) (s 2 _ (by simp)),
     c _ _ (c _ _ (s 0 _ (by simp)) (s 1 _ (by simp))) (s 2 _ (by simp)),

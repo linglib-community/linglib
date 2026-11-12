@@ -52,7 +52,8 @@ namespace Poko
 
 /-- A Poko form has syllables of Poko segments on its lower tier and tonal root nodes on its
 upper tier, each element sponsored by a morpheme in `M`. -/
-abbrev Form (M : Type*) := Autosegmental.Form (List Segment) TRN M
+abbrev Form (M : Type*) := 
+  Autosegmental.Form (Autosegmental.Sponsored TRN M) (Autosegmental.Sponsored (List Segment) M)
 
 variable {M : Type*} (x : M)
 

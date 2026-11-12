@@ -11,7 +11,7 @@ public import Linglib.Core.Data.List.TakeDrop
 public import Linglib.Core.Computability.ShuffleIdeal
 public import Linglib.Phonology.Subregular.Dependence
 public import Linglib.Phonology.Autosegmental.OCP
-public import Linglib.Phonology.Autosegmental.TwoTier
+public import Linglib.Phonology.Autosegmental.Realization
 public import Linglib.Phonology.Autosegmental.Hull
 public import Linglib.Phonology.Tone.Basic
 public import Linglib.Phonology.Tone.Surfacing
@@ -110,7 +110,7 @@ theorem sum_length_melody (w : List AssociationState) :
 
 /-- A TBU translates into the primitive with one timing slot carrying the TBU's melody
 (Jardine's reading of the string as a representation). -/
-def toAR (a : AssociationState) : AR (TwoTier TRN Unit) := AR.primitive (melody a) ()
+def toAR (a : AssociationState) : AR (TwoTier TRN Unit) := (Form.primitive (melody a) ()).toAR
 
 @[simp] theorem word_toAR_true (a : AssociationState) : (toAR a).word true = melody a := rfl
 

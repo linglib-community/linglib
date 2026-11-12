@@ -136,7 +136,7 @@ inductive Morpheme where
   deriving DecidableEq, Repr
 
 /-- A form with syllable TBUs, tones, and the sponsoring morphemes. -/
-abbrev Form := Autosegmental.Form Syl TRN Morpheme
+abbrev Form := Autosegmental.Form (Sponsored TRN Morpheme) (Sponsored Syl Morpheme)
 
 /-- The input of an ideophone as the root `m`: one lexical tone for each run of identical tones,
 linked to every syllable of its run. -/

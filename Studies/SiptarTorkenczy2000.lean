@@ -80,7 +80,7 @@ inductive Morph
   deriving DecidableEq
 
 /-- A phonological word is an autosegmental form over vocalic nodes and place features. -/
-abbrev Word := Form VNode Place Morph
+abbrev Word := Form (Sponsored Place Morph) (Sponsored VNode Morph)
 
 /-! ### The rules -/
 

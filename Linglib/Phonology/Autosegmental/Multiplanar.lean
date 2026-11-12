@@ -73,7 +73,8 @@ instance [Fintype ι] [DecidableEq S] [DecidableEq T] [DecidableEq M] :
   fun _ _ ↦ decidable_of_iff _ MultiplanarForm.ext_iff.symm
 
 /-- Plane `i`, the form of its autosegments over the slots. -/
-def plane (i : ι) : Form S T M := ⟨f.upper i, f.lower, f.lines i, f.lt_of_mem_lines⟩
+def plane (i : ι) : Form (Sponsored T M) (Sponsored S M) :=
+  ⟨f.upper i, f.lower, f.lines i, f.lt_of_mem_lines⟩
 
 @[simp] theorem plane_upper (i : ι) : (f.plane i).upper = f.upper i := rfl
 
@@ -156,7 +157,7 @@ section Lines
 variable [DecidableEq ι]
 
 /-- `ofPlane i x` puts the form `x` on plane `i`, with every other plane empty. -/
-def ofPlane (i : ι) (x : Form S T M) : MultiplanarForm ι S T M where
+def ofPlane (i : ι) (x : Form (Sponsored T M) (Sponsored S M)) : MultiplanarForm ι S T M where
   lower := x.lower
   upper j := if j = i then x.upper else []
   lines j := if j = i then x.lines else ∅
@@ -166,7 +167,7 @@ def ofPlane (i : ι) (x : Form S T M) : MultiplanarForm ι S T M where
       simpa using x.lt_of_mem_lines (by simpa using h)
     · simp [hj] at h
 
-variable (i : ι) (x : Form S T M)
+variable (i : ι) (x : Form (Sponsored T M) (Sponsored S M))
 
 @[simp] theorem ofPlane_lower : (ofPlane i x).lower = x.lower := rfl
 

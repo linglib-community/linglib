@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Autosegmental.Correspondence
+public import Linglib.Phonology.Autosegmental.Form
 public import Linglib.Data.Examples.Jardine2016b
 public import Linglib.Data.Examples.Readers
 
@@ -132,7 +133,8 @@ theorem spell_eq_some_iff {w v : List Seg} {γs : List Pair} :
 /-- Jardine's `g` on Γ-strings ((7.15)): the correspondence graph spelling the input and
 output symbols position by position. -/
 abbrev g (γs : List Pair) : Rep Seg Seg :=
-  AR.ofWords (γs.map Pair.input) (γs.map Pair.output) (· = ·)
+  (Form.ofLines (γs.map Pair.input) (γs.map Pair.output)
+    ((Finset.range γs.length).image fun i ↦ (i, i))).toAR
 
 /-- A Γ-string's graph between the boundaries ⋊ and ⋉. -/
 abbrev gen (γs : List Pair) : Rep Seg Seg := g (.lb :: γs ++ [.rb])
@@ -140,33 +142,23 @@ abbrev gen (γs : List Pair) : Rep Seg Seg := g (.lb :: γs ++ [.rb])
 /-! ### The grammar φ_apba -/
 
 /-- φ_apa (7.19): a surface `apa` — output-only, the markedness constraint *VTV. -/
-abbrev banApa : Rep Seg Seg := AR.ofWords [] [.a, .p, .a] fun _ _ ↦ False
+abbrev banApa : Rep Seg Seg := (Form.ofLines [] [.a, .p, .a] ∅).toAR
 
 /-- φ_⋊pb (7.21): a `p` surfacing as `b` word-initially. -/
-abbrev banInitialPb : Rep Seg Seg := AR.ofWords [.p] [.lb, .b] fun i o ↦ i = 0 ∧ o = 1
+abbrev banInitialPb : Rep Seg Seg := (Form.ofLines [.p] [.lb, .b] {(0, 1)}).toAR
 
 /-- φ_pb⋉ (7.21): a `p` surfacing as `b` word-finally. -/
-abbrev banFinalPb : Rep Seg Seg := AR.ofWords [.p] [.b, .rb] fun i o ↦ i = 0 ∧ o = 0
+abbrev banFinalPb : Rep Seg Seg := (Form.ofLines [.p] [.b, .rb] {(0, 0)}).toAR
 
 /-- φ_ppb (7.21): a `p` surfacing as `b` after a surface `p`. -/
-abbrev banPbAfterP : Rep Seg Seg := AR.ofWords [.p] [.p, .b] fun i o ↦ i = 0 ∧ o = 1
+abbrev banPbAfterP : Rep Seg Seg := (Form.ofLines [.p] [.p, .b] {(0, 1)}).toAR
 
 /-- φ_pbp (7.21): a `p` surfacing as `b` before a surface `p`. -/
-abbrev banPbBeforeP : Rep Seg Seg := AR.ofWords [.p] [.b, .p] fun i o ↦ i = 0 ∧ o = 0
+abbrev banPbBeforeP : Rep Seg Seg := (Form.ofLines [.p] [.b, .p] {(0, 0)}).toAR
 
 /-- φ_apba (7.22). -/
 def voicingGrammar : List (Rep Seg Seg) :=
   [banApa, banInitialPb, banFinalPb, banPbAfterP, banPbBeforeP]
-
-theorem free_voicingGrammar_iff (G : Rep Seg Seg) :
-    G.Free voicingGrammar ↔
-      ¬ banApa.FactorEmbeds G ∧ ¬ banInitialPb.FactorEmbeds G ∧ ¬ banFinalPb.FactorEmbeds G ∧
-        ¬ banPbAfterP.FactorEmbeds G ∧ ¬ banPbBeforeP.FactorEmbeds G := by
-  simp only [voicingGrammar, AR.free_cons, AR.free_nil, and_true]
-
-/-- On GEN the grammar decides. -/
-instance (γs : List Pair) : Decidable ((gen γs).Free voicingGrammar) :=
-  decidable_of_iff _ (free_voicingGrammar_iff (gen γs)).symm
 
 /-! ### The relation R(CG(φ_apba)) -/
 

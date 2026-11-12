@@ -50,7 +50,7 @@ autosegments deleted so far and the current surface lines. The faithful candidat
 `Candidate.input u`, and GEN edits candidates while `u` stays fixed. A candidate carries no
 sponsors of its own, so, as in [bermudez-otero-2012]'s architecture (p. 47), GEN cannot violate
 Consistency of Exponence. -/
-@[ext] structure Candidate {S T M : Type*} (u : Form S T M) where
+@[ext] structure Candidate {S T M : Type*} (u : Form (Sponsored T M) (Sponsored S M)) where
   /-- The autosegments deleted on the surface. -/
   deleted : Finset (Fin u.upper.length)
   /-- The surface association lines. -/
@@ -58,7 +58,8 @@ Consistency of Exponence. -/
 
 namespace Candidate
 
-variable {S T M : Type*} {u : Form S T M} (c : Candidate u) {k j : Fin u.upper.length}
+variable {S T M : Type*} {u : Form (Sponsored T M) (Sponsored S M)} (c : Candidate u)
+  {k j : Fin u.upper.length}
   {i : Fin u.lower.length} {l : Fin u.upper.length × Fin u.lower.length}
 
 /-- Candidates are compared on their positions alone, whatever the labels of the form. -/
@@ -66,7 +67,7 @@ instance : DecidableEq (Candidate u) := fun _ _ ↦ decidable_of_iff _ Candidate
 
 /-- `input u` is the faithful candidate of `u`, with nothing deleted and the form's lines as
 its surface lines. -/
-@[simps] def input (u : Form S T M) : Candidate u := ⟨∅, u.links⟩
+@[simps] def input (u : Form (Sponsored T M) (Sponsored S M)) : Candidate u := ⟨∅, u.links⟩
 
 /-! ### Surface predicates -/
 

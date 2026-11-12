@@ -12,40 +12,35 @@ public import Mathlib.Data.Fin.Embedding
 /-!
 # Forms and morphs
 
-This file defines forms, two-tier autosegmental representations in position coordinates: an
-upper tier of autosegments over a lower tier of slots, each element sponsored by a morpheme, with
-a finite set of association lines between the tiers. Forms concatenate by juxtaposing the tiers,
-and presentation as a representation is a monoid hom, so the No-Crossing Constraint on the lines
-is the constraint on the representation. A morph, the material that the morphology inserts as
-the exponent of one morpheme and cannot alter, is a form with one sponsor. Unlike Haspelmath's
-segmental morph it may be a floating tone or feature alone, and a word's underlying form is the
-product of its morphs.
+A form is a two-tier autosegmental representation in position coordinates: an upper tier over a
+lower tier, with a finite set of association lines between their positions. Forms concatenate by
+juxtaposing the tiers and shifting the lines of the right factor, and are a monoid. A form
+presents a representation on two tiers, and presentation
+[is an isomorphism of monoids](##Autosegmental.Form.toAREquiv), so every such representation is
+the presentation of one form, the realization of a string of forms is the presentation of
+[their product](##Autosegmental.Form.toAR_list_prod), and the No-Crossing Constraint on a
+representation [is the constraint on the lines](##Autosegmental.Form.noCrossing_toAR_iff) of its
+form. Jardine's autosegmental graph primitive is the form `Form.primitive`, a melody over one
+timing slot.
 
-## Main definitions
-
-* `Sponsored α M`: a tier element with the morpheme that sponsors it.
-* `Form S T M`: a representation with slots in `S`, autosegments in `T`, and sponsors in `M`;
-  `Form.concat` and `Form.empty` make the forms a monoid.
-* `Form.links`: the lines of a form as pairs of its positions, which candidates edit.
-* `Form.morph`: the morph of a morpheme, from its autosegments, its slots, and its lines.
-* `Form.IsTautomorphemic`: a line whose autosegment and slot share a sponsor.
-* `Form.toAR`: the representation a form presents, through `AR.ofWords`.
-
-## Main results
-
-* `Form.noCrossing_toAR_iff`: the presented representation obeys the NCC iff the lines are
-  non-crossing.
-* `Form.toARHom`: presentation is a monoid hom from forms to representations.
-* `Form.isNonCrossing_lines_concat`: concatenation preserves the No-Crossing Constraint.
+In a theory of morphologically conditioned phonology each tier element is sponsored by a
+morpheme, and the labels are `Sponsored` autosegments and slots. A morph, the material that the
+morphology inserts as the exponent of one morpheme and cannot alter, is a form with one sponsor.
+Unlike Haspelmath's segmental morph it may be a floating tone or feature alone, and a word's
+underlying form is the product of its morphs.
 
 ## Implementation notes
 
 A form stores its lines as pairs of natural numbers with a proof that they are in range, as a
 `Finset` stores a multiset with a proof that it has no duplicates, so concatenation is a union
 and a shift. `Form.links` views the lines as pairs of positions in `Fin` over the tier lengths,
-whose numerals need a `NeZero` instance that a study supplies by `decide`. `Form.morph` drops the
-pairs out of range, as `SimpleGraph.fromEdgeSet` drops loops. `Form.toAR` needs the three label
+whose numerals need a `NeZero` instance that a study supplies by `decide`. `Form.ofLines` drops
+the pairs out of range, as `SimpleGraph.fromEdgeSet` drops loops. `Form.toAR` needs the two label
 types in one universe, as `TwoTier` does.
+
+[jardine-2019]'s Definition 1 requires of a primitive only that each of its lines ends at the
+timing slot. `Form.primitive` associates every melody node, as the primitives of the paper's
+`gT` are.
 
 ## References
 
@@ -63,6 +58,7 @@ types in one universe, as `TwoTier` does.
 * [laoide-kemp-2026]
 * [jardine-heinz-2015]
 * [jardine-2016b]
+* [jardine-2019]
 -/
 
 @[expose] public section
@@ -89,23 +85,23 @@ def Sponsored.map {α β M : Type*} (φ : α → β) (x : Sponsored α M) : Spon
 @[simp] theorem Sponsored.morpheme_map {α β M : Type*} (φ : α → β) (x : Sponsored α M) :
     (x.map φ).morpheme = x.morpheme := rfl
 
-/-- A `Form S T M` is a two-tier autosegmental representation with slots in `S`, autosegments
-in `T`, and sponsors in `M`. Its association lines are pairs of a position of the upper tier
-and a position of the lower tier. -/
-@[ext] structure Form (S T M : Type*) where
+/-- A `Form α β` is a two-tier autosegmental representation with autosegments in `α` over slots
+in `β`. Its association lines are pairs of a position of the upper tier and a position of the
+lower tier. -/
+@[ext] structure Form (α β : Type*) where
   /-- The upper tier, of autosegments in tier order. -/
-  upper : List (Sponsored T M)
+  upper : List α
   /-- The lower tier, of slots in tier order. -/
-  lower : List (Sponsored S M)
+  lower : List β
   /-- The association lines, each from a position of the upper tier to one of the lower. -/
   lines : Finset (ℕ × ℕ)
   lt_of_mem_lines {p : ℕ × ℕ} : p ∈ lines → p.1 < upper.length ∧ p.2 < lower.length
 
 namespace Form
 
-variable {S T M : Type*} (f g : Form S T M)
+variable {α β : Type*} (f g : Form α β)
 
-instance [DecidableEq S] [DecidableEq T] [DecidableEq M] : DecidableEq (Form S T M) :=
+instance [DecidableEq α] [DecidableEq β] : DecidableEq (Form α β) :=
   fun _ _ ↦ decidable_of_iff _ Form.ext_iff.symm
 
 /-- The lines of a form as pairs of its positions, the view that candidates edit. -/
@@ -135,6 +131,10 @@ theorem isNonCrossing_lines_iff :
 
 /-! ### Morphemes -/
 
+section Sponsor
+
+variable {S T M : Type*} (f : Form (Sponsored T M) (Sponsored S M))
+
 /-- `morphemes f` is the set of morphemes sponsoring an element of either tier. -/
 def morphemes [DecidableEq M] : Finset M :=
   (f.lower.map Sponsored.morpheme).toFinset ∪ (f.upper.map Sponsored.morpheme).toFinset
@@ -156,6 +156,8 @@ instance [DecidableEq M] (l : Fin f.upper.length × Fin f.lower.length) :
     Decidable (f.IsTautomorphemic l) :=
   inferInstanceAs (Decidable (_ = _))
 
+end Sponsor
+
 /-! ### Concatenation
 
 Concatenation juxtaposes the tiers and shifts the right factor's lines past the left factor's
@@ -168,7 +170,7 @@ def shift (a b : ℕ) : ℕ × ℕ ↪ ℕ × ℕ := (addLeftEmbedding a).prodMa
 
 /-- `concat f g` juxtaposes the tiers of `f` and `g` and shifts the lines of `g` past the tiers
 of `f`. -/
-def concat : Form S T M where
+def concat : Form α β where
   upper := f.upper ++ g.upper
   lower := f.lower ++ g.lower
   lines := f.lines ∪ g.lines.map (shift f.upper.length f.lower.length)
@@ -183,7 +185,7 @@ def concat : Form S T M where
       omega
 
 /-- The empty form has empty tiers and no lines. -/
-def empty : Form S T M := ⟨[], [], ∅, nofun⟩
+def empty : Form α β := ⟨[], [], ∅, nofun⟩
 
 @[simp] theorem concat_upper : (f.concat g).upper = f.upper ++ g.upper := rfl
 
@@ -192,13 +194,13 @@ def empty : Form S T M := ⟨[], [], ∅, nofun⟩
 @[simp] theorem concat_lines :
     (f.concat g).lines = f.lines ∪ g.lines.map (shift f.upper.length f.lower.length) := rfl
 
-@[simp] theorem empty_upper : (empty : Form S T M).upper = [] := rfl
+@[simp] theorem empty_upper : (empty : Form α β).upper = [] := rfl
 
-@[simp] theorem empty_lower : (empty : Form S T M).lower = [] := rfl
+@[simp] theorem empty_lower : (empty : Form α β).lower = [] := rfl
 
-@[simp] theorem empty_lines : (empty : Form S T M).lines = ∅ := rfl
+@[simp] theorem empty_lines : (empty : Form α β).lines = ∅ := rfl
 
-theorem concat_assoc (h : Form S T M) : (f.concat g).concat h = f.concat (g.concat h) := by
+theorem concat_assoc (h : Form α β) : (f.concat g).concat h = f.concat (g.concat h) := by
   refine Form.ext (List.append_assoc ..) (List.append_assoc ..) ?_
   simp only [concat_lines, concat_upper, concat_lower, List.length_append, Finset.map_union,
     Finset.map_map, Finset.union_assoc]
@@ -218,7 +220,7 @@ theorem concat_empty : f.concat empty = f := by
   · simp
 
 /-- Forms are a monoid under concatenation, with the empty form as unit. -/
-instance instMonoid : Monoid (Form S T M) where
+instance instMonoid : Monoid (Form α β) where
   mul := concat
   one := empty
   mul_assoc := concat_assoc
@@ -227,13 +229,71 @@ instance instMonoid : Monoid (Form S T M) where
 
 @[simp] theorem mul_eq_concat : f * g = f.concat g := rfl
 
-@[simp] theorem one_eq_empty : (1 : Form S T M) = empty := rfl
+@[simp] theorem one_eq_empty : (1 : Form α β) = empty := rfl
+
+/-- The upper tier of a product is the concatenation of the upper tiers. -/
+theorem upper_list_prod (l : List (Form α β)) : l.prod.upper = (l.map upper).flatten := by
+  induction l with
+  | nil => rfl
+  | cons f l ih => simp [ih]
+
+/-- The lower tier of a product is the concatenation of the lower tiers. -/
+theorem lower_list_prod (l : List (Form α β)) : l.prod.lower = (l.map lower).flatten := by
+  induction l with
+  | nil => rfl
+  | cons f l ih => simp [ih]
+
+/-! ### Forms from words and lines -/
+
+section OfLines
+
+variable (upper : List α) (lower : List β) (lines : Finset (ℕ × ℕ))
+
+/-- `ofLines upper lower lines` is the form with the given tiers and a line for each pair in
+`lines` of a position of `upper` and a position of `lower`. -/
+def ofLines : Form α β where
+  upper := upper
+  lower := lower
+  lines := lines.filter fun p ↦ p.1 < upper.length ∧ p.2 < lower.length
+  lt_of_mem_lines h := (Finset.mem_filter.1 h).2
+
+@[simp] theorem upper_ofLines : (ofLines upper lower lines).upper = upper := rfl
+
+@[simp] theorem lower_ofLines : (ofLines upper lower lines).lower = lower := rfl
+
+/-- The lines of `ofLines` are the given pairs within range of its tiers. -/
+@[simp] theorem lines_ofLines :
+    (ofLines upper lower lines).lines =
+      lines.filter fun p ↦ p.1 < upper.length ∧ p.2 < lower.length := rfl
+
+/-- Every form is the form of its tiers and its lines. -/
+@[simp] theorem ofLines_eta : ofLines f.upper f.lower f.lines = f :=
+  Form.ext rfl rfl <| Finset.filter_true_of_mem fun _ ↦ f.lt_of_mem_lines
+
+variable (as : List α) (b : β)
+
+/-- The autosegmental graph primitive of [jardine-2019] Definition 1 has one timing slot `b`,
+with every node of the melody `as` associated to it. -/
+def primitive : Form α β := ofLines as [b] (Finset.range as.length ×ˢ {0})
+
+@[simp] theorem upper_primitive : (primitive as b).upper = as := rfl
+
+@[simp] theorem lower_primitive : (primitive as b).lower = [b] := rfl
+
+@[simp] theorem mem_lines_primitive {p : ℕ × ℕ} :
+    p ∈ (primitive as b).lines ↔ p.1 < as.length ∧ p.2 = 0 := by
+  obtain ⟨p, q⟩ := p
+  simp only [primitive, lines_ofLines, Finset.mem_filter, Finset.mem_product, Finset.mem_range,
+    Finset.mem_singleton, List.length_singleton]
+  omega
+
+end OfLines
 
 /-! ### Morphs -/
 
 section Morph
 
-variable (m : M) (upper : List T) (lower : List S) (lines : Finset (ℕ × ℕ))
+variable {S T M : Type*} (m : M) (upper : List T) (lower : List S) (lines : Finset (ℕ × ℕ))
 
 /-- `morph m upper lower lines` is the morph of the morpheme `m`: the autosegments `upper` over
 the slots `lower`, all sponsored by `m`, with a line for each pair in `lines` of a position of
@@ -244,11 +304,8 @@ unvalued, and an autosegment without a line floats. Harmonic serialism under ric
 takes `lines` empty in every language ([mccarthy-mullin-smith-2012], p. 285), while a stratal
 phonology hands partially linked morphs, such as the Poko stem /Mᴴ/, to the postlexical level
 ([mcpherson-lamont-2026], (3) and p. 5). -/
-def morph : Form S T M where
-  upper := upper.map (⟨·, m⟩)
-  lower := lower.map (⟨·, m⟩)
-  lines := lines.filter fun p ↦ p.1 < upper.length ∧ p.2 < lower.length
-  lt_of_mem_lines h := by simpa using (Finset.mem_filter.1 h).2
+def morph : Form (Sponsored T M) (Sponsored S M) :=
+  ofLines (upper.map (⟨·, m⟩)) (lower.map (⟨·, m⟩)) lines
 
 @[simp] theorem morph_upper : (morph m upper lower lines).upper = upper.map (⟨·, m⟩) := rfl
 
@@ -257,7 +314,8 @@ def morph : Form S T M where
 /-- The lines of a morph are the given pairs within range of its tiers. -/
 @[simp] theorem lines_morph :
     (morph m upper lower lines).lines =
-      lines.filter fun p ↦ p.1 < upper.length ∧ p.2 < lower.length := rfl
+      lines.filter fun p ↦ p.1 < upper.length ∧ p.2 < lower.length := by
+  simp [morph]
 
 variable {m upper lower lines} in
 @[simp] theorem mem_links_morph {p : Fin (morph m upper lower lines).upper.length ×
@@ -266,7 +324,8 @@ variable {m upper lower lines} in
   rw [mem_links, lines_morph, Finset.mem_filter, and_iff_left_iff_imp]
   exact fun _ ↦ ⟨by simpa using p.1.isLt, by simpa using p.2.isLt⟩
 
-@[simp] theorem links_morph_empty : (morph m upper lower ∅ : Form S T M).links = ∅ :=
+@[simp] theorem links_morph_empty :
+    (morph m upper lower ∅ : Form (Sponsored T M) (Sponsored S M)).links = ∅ :=
   Finset.eq_empty_of_forall_notMem fun _ h ↦ Finset.notMem_empty _ (mem_links_morph.1 h)
 
 end Morph
@@ -276,28 +335,27 @@ end Form
 section Presentation
 
 universe u
-variable {S T M : Type u} (f g : Form S T M)
+variable {α β : Type u} (f g : Form α β)
 
 namespace Form
 
-/-- The representation a form presents, with the sponsors on its labels. -/
-def toAR : AR (TwoTier (Sponsored T M) (Sponsored S M)) :=
-  AR.ofWords f.upper f.lower fun p q ↦ (p, q) ∈ f.lines
+/-- The representation a form presents, with the upper tier over `true` and the lower tier over
+`false`. -/
+def toAR : AR (TwoTier α β) :=
+  AR.fromRel (fun b ↦ b.rec f.lower f.upper) fun i j p q ↦ i = true ∧ j = false ∧ (p, q) ∈ f.lines
 
 @[simp] theorem word_toAR_true : f.toAR.word true = f.upper := rfl
 
 @[simp] theorem word_toAR_false : f.toAR.word false = f.lower := rfl
 
 @[simp] theorem link_toAR {p q : ℕ} : f.toAR.Link true false p q ↔ (p, q) ∈ f.lines :=
-  AR.link_ofWords.trans
-    ⟨fun h ↦ h.2.2, fun h ↦ ⟨(f.lt_of_mem_lines h).1, (f.lt_of_mem_lines h).2, h⟩⟩
+  AR.link_fromRel.trans ⟨fun ⟨_, _, _, h⟩ ↦ h.elim (·.2.2) fun h ↦ absurd h.1 (by decide), fun h ↦
+    ⟨by decide, (f.lt_of_mem_lines h).1, (f.lt_of_mem_lines h).2, .inl ⟨rfl, rfl, h⟩⟩⟩
 
 /-- The presented representation obeys the NCC iff the lines are non-crossing. -/
 theorem noCrossing_toAR_iff : f.toAR.NoCrossing ↔ IsNonCrossing (f.lines : SetRel ℕ ℕ) := by
-  refine AR.noCrossing_ofWords_iff.trans ?_
-  congr! 1
-  ext ⟨p, q⟩
-  exact ⟨fun h ↦ h.2.2, fun h ↦ ⟨(f.lt_of_mem_lines h).1, (f.lt_of_mem_lines h).2, h⟩⟩
+  simp only [AR.noCrossing_iff_two_tier, AR.isNonCrossing_lines_iff_link, link_toAR]
+  rfl
 
 theorem toAR_concat : (f.concat g).toAR = f.toAR * g.toAR :=
   AR.ext_of_true_false rfl rfl fun p q ↦ by
@@ -312,14 +370,55 @@ theorem toAR_concat : (f.concat g).toAR = f.toAR * g.toAR :=
       · exact .inl h
       · exact .inr ⟨_, h, by omega, by omega⟩
 
-theorem toAR_empty : (empty : Form S T M).toAR = 1 :=
+theorem toAR_empty : (empty : Form α β).toAR = 1 :=
   AR.ext_of_true_false rfl rfl fun p q ↦ by simp
 
-/-- Presentation is a monoid hom from forms to representations. -/
-@[simps] def toARHom : Form S T M →* AR (TwoTier (Sponsored T M) (Sponsored S M)) where
+/-- A form without lines presents a representation without lines. -/
+theorem not_link_toAR (h : f.lines = ∅) (i j : Bool) (p q : ℕ) : ¬ f.toAR.Link i j p q :=
+  fun hl ↦ AR.not_link_one i j p q <|
+    (AR.link_iff_of_true_false (Y := 1) (fun p q ↦ by simp [h]) i j p q).1 hl
+
+theorem toAR_injective : Function.Injective (toAR : Form α β → AR (TwoTier α β)) :=
+  fun f g h ↦ Form.ext (congrArg (·.word true) h) (congrArg (·.word false) h) <|
+    Finset.ext fun ⟨p, q⟩ ↦ by rw [← link_toAR, h, link_toAR]
+
+/-- The form of a representation on two tiers: its words, and its lines from the upper tier to
+the lower. -/
+def ofAR (X : AR (TwoTier α β)) : Form α β where
+  upper := X.word true
+  lower := X.word false
+  lines := (Finset.range (X.word true).length ×ˢ Finset.range (X.word false).length).filter
+    fun p ↦ X.Link true false p.1 p.2
+  lt_of_mem_lines h := ⟨(Finset.mem_filter.1 h).2.lt_left, (Finset.mem_filter.1 h).2.lt_right⟩
+
+/-- Every representation on two tiers is the presentation of its form. -/
+@[simp] theorem toAR_ofAR (X : AR (TwoTier α β)) : (ofAR X).toAR = X :=
+  AR.ext_of_true_false rfl rfl fun p q ↦ by
+    simp only [link_toAR, ofAR, Finset.mem_filter, Finset.mem_product, Finset.mem_range]
+    exact ⟨fun h ↦ h.2, fun h ↦ ⟨⟨h.lt_left, h.lt_right⟩, h⟩⟩
+
+@[simp] theorem ofAR_toAR : ofAR f.toAR = f := toAR_injective (toAR_ofAR _)
+
+/-- Presentation is an isomorphism of monoids between the forms and the representations on two
+tiers. -/
+def toAREquiv : Form α β ≃* AR (TwoTier α β) where
   toFun := toAR
-  map_one' := toAR_empty
+  invFun := ofAR
+  left_inv := ofAR_toAR
+  right_inv := toAR_ofAR
   map_mul' := toAR_concat
+
+@[simp] theorem coe_toAREquiv : ⇑(toAREquiv : Form α β ≃* _) = toAR := rfl
+
+@[simp] theorem coe_toAREquiv_symm : ⇑(toAREquiv : Form α β ≃* _).symm = ofAR := rfl
+
+@[simp] theorem toAR_mul : (f * g).toAR = f.toAR * g.toAR := toAR_concat f g
+
+@[simp] theorem toAR_one : (1 : Form α β).toAR = 1 := toAR_empty
+
+/-- The realization of a string of forms is the presentation of their product. -/
+theorem toAR_list_prod (l : List (Form α β)) : l.prod.toAR = (l.map toAR).prod :=
+  map_list_prod toAREquiv l
 
 /-- Concatenation preserves the No-Crossing Constraint, as concatenation of representations
 does ([jardine-2016b] Theorem 4). -/
@@ -328,6 +427,10 @@ theorem isNonCrossing_lines_concat (h₁ : IsNonCrossing (f.lines : SetRel ℕ �
     IsNonCrossing ((f.concat g).lines : SetRel ℕ ℕ) := by
   rw [← noCrossing_toAR_iff, toAR_concat]
   exact ((noCrossing_toAR_iff f).2 h₁).mul ((noCrossing_toAR_iff g).2 h₂)
+
+/-- Primitives obey the NCC, having one timing slot. -/
+theorem noCrossing_toAR_primitive (as : List α) (b : β) : (primitive as b).toAR.NoCrossing :=
+  AR.noCrossing_of_length_false_le_one le_rfl
 
 end Form
 

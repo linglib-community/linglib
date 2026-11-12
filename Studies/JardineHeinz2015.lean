@@ -48,14 +48,14 @@ inductive Mel
 abbrev Γ := TwoTier Mel Unit
 
 /-- `G₁` of Figure 2: the melody `a b`, both associated to one timing node. -/
-abbrev G₁ : AR Γ := AR.primitive [.a, .b] ()
+abbrev G₁ : AR Γ := (Form.primitive [.a, .b] ()).toAR
 
 /-- `G₂` of Figure 2: `b` over a timing node. -/
-abbrev G₂ : AR Γ := AR.primitive [.b] ()
+abbrev G₂ : AR Γ := (Form.primitive [.b] ()).toAR
 
 /-- The graph of Figure 4: `a` then the merged `b`, over two timing nodes, with the merged `b`
 associated to both. -/
-abbrev fig4 : AR Γ := AR.ofWords [.a, .b] [(), ()] fun p q ↦ q = 0 ∨ p = 1
+abbrev fig4 : AR Γ := (Form.ofLines [.a, .b] [(), ()] {(0, 0), (1, 0), (1, 1)}).toAR
 
 /-- Concatenating `G₁` and `G₂` merges their `b` nodes (Example 3, Figure 4). -/
 theorem mul_G₁_G₂ : toAR (ofAR G₁ * ofAR G₂ : MergeAR true Γ) = fig4 := by decide
@@ -80,16 +80,12 @@ def Sym.melody : Sym → List TRN
 
 /-- The lines of a symbol's primitive: `γ₁`'s high is linked, and only the second high of
 `γ₂`. -/
-def Sym.lines : Sym → ℕ → ℕ → Prop
-  | .γ₁ => fun _ _ ↦ True
-  | .γ₂ => fun p _ ↦ p = 1
-
-instance : ∀ s : Sym, DecidableRel s.lines
-  | .γ₁ => fun _ _ ↦ inferInstanceAs (Decidable True)
-  | .γ₂ => fun p _ ↦ inferInstanceAs (Decidable (p = 1))
+def Sym.lines : Sym → Finset (ℕ × ℕ)
+  | .γ₁ => {(0, 0)}
+  | .γ₂ => {(1, 0)}
 
 /-- The primitives of Figure 13. -/
-def g (s : Sym) : AR (TwoTier TRN TBUKind) := AR.ofWords s.melody [μ] (s.lines)
+def g (s : Sym) : AR (TwoTier TRN TBUKind) := (Form.ofLines s.melody [μ] s.lines).toAR
 
 /-- The realization of a string by merging concatenation, the product of its symbols'
 primitives (Definition 5). -/
@@ -99,10 +95,10 @@ theorem not_isCleanAt_g_γ₂ : ¬ (g .γ₂).IsCleanAt true := by
   simp [AR.IsCleanAt, g, Sym.melody]
 
 /-- Figure 12a, 'snake': one high spread over two morae. -/
-abbrev snake : AR (TwoTier TRN TBUKind) := AR.ofWords [H] [μ, μ] fun _ _ ↦ True
+abbrev snake : AR (TwoTier TRN TBUKind) := (Form.ofLines [H] [μ, μ] {(0, 0), (0, 1)}).toAR
 
 /-- Figure 12b, 'sheep': a high and a downstepped high, one per mora. -/
-abbrev sheep : AR (TwoTier TRN TBUKind) := AR.ofWords [H, H] [μ, μ] fun p q ↦ p = q
+abbrev sheep : AR (TwoTier TRN TBUKind) := (Form.ofLines [H, H] [μ, μ] {(0, 0), (1, 1)}).toAR
 
 /-- `γ₁γ₁` derives the spread high of Figure 12a. -/
 theorem realize_γ₁_γ₁ : toAR (realize [.γ₁, .γ₁]) = snake := by decide

@@ -6,36 +6,25 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.OCP
-public import Linglib.Phonology.Autosegmental.TwoTier
+public import Linglib.Phonology.Autosegmental.Form
 
 /-!
 # OCP-merging collapse of autosegmental representations
 
 Merging melody nodes moves the positions of the melody tier along a monotone map.
 `X.repoint m w f` reads melody tier `m` as the word `w`, moves each of its positions `p` to
-`f p`, and carries the links along, so a merged node keeps every line of the nodes merged into
-it. `AR.collapse m` is the repointing that destutters the tier word (`OCP.collapse`) through the
-run index `runIdx`, merging every run of identical melody nodes; a melody `Hⁿ` collapses to one
-`H` linked to `n` timing slots. Collapsing a realization `(w.map g₀).prod` merges every run of
-its melody. Jardine and Heinz instead merge only at the seam of each concatenation
-(`Autosegmental/MergeAR.lean`), and the two agree when the primitives are OCP-clean, as in
-Jardine's tonal realization.
-
-## Main definitions
-
-* `AR.repoint`: a representation with one tier moved along a map of its positions.
-* `AR.collapse`: the OCP merge of melody tier `m`.
-* `AR.IsCleanAt`: no adjacent repeats on melody tier `m`.
-* `MergedLinks`: the lines of a two-tier presentation with its melody collapsed.
-
-## Main results
-
-* `AR.link_repoint`, `AR.noCrossing_repoint`: repointing carries the links, and a monotone
-  repointing preserves the NCC.
-* `AR.isCleanAt_collapse`, `AR.noCrossing_collapse`: the collapse is OCP-clean and preserves
-  the NCC; `AR.IsCleanAt.collapse_eq`: collapsing a clean tier changes nothing.
-* `AR.collapse_ofWords`, `AR.prod_ofWords_collapse`: collapsing a presentation, or a realized
-  string of presentations, gives a presentation.
+`f p`, and [carries the links along](##Autosegmental.AR.link_repoint), so a merged node keeps
+every line of the nodes merged into it, and a monotone repointing
+[preserves the NCC](##Autosegmental.AR.NoCrossing.repoint). `AR.collapse m` is the repointing
+that destutters the tier word (`OCP.collapse`) through the run index `runIdx`, merging every run
+of identical melody nodes; a melody `Hⁿ` collapses to one `H` linked to `n` timing slots. The
+collapse [is OCP-clean](##Autosegmental.AR.isCleanAt_collapse), and collapsing a clean tier
+[changes nothing](##Autosegmental.AR.IsCleanAt.collapse_eq). On two tiers the collapse of the
+melody is computed on forms: `Form.collapse`
+[presents it](##Autosegmental.Form.toAR_collapse). Collapsing a realization `(w.map g₀).prod`
+merges every run of its melody. Jardine and Heinz instead merge only at the seam of each
+concatenation (`Autosegmental/MergeAR.lean`), and the two agree when the primitives are
+OCP-clean, as in Jardine's tonal realization.
 
 ## References
 
@@ -49,6 +38,8 @@ Jardine's tonal realization.
 namespace Autosegmental
 
 open OCP
+
+universe u
 
 /-! ### Repointing a tier -/
 
@@ -174,63 +165,47 @@ theorem IsCleanAt.collapse_eq (h : X.IsCleanAt m) : X.collapse m = X := by
 
 end Collapse
 
-/-! ### Collapsing two-tier presentations
+/-! ### Collapsing the melody of a representation on two tiers -/
 
-In the two-tier case, with the melody over `true`, collapsing a presentation gives the
-presentation whose melody is destuttered and whose lines are repointed through the run index of
-the melody. -/
-
-section MergedOfWords
-
-universe u
-variable {α β : Type u} [DecidableEq α]
-
-/-- A line of an OCP-merged presentation is a line of the presentation with its melody position
-repointed through the run index of the melody. -/
-def _root_.Autosegmental.MergedLinks (melody : List α) (Lk : ℕ → ℕ → Prop) (r s : ℕ) : Prop :=
-  ∃ p < melody.length, Lk p s ∧ runIdx melody p = r
-
-instance (melody : List α) (Lk : ℕ → ℕ → Prop) [DecidableRel Lk] :
-    DecidableRel (MergedLinks melody Lk) :=
-  fun _ _ ↦ inferInstanceAs (Decidable (∃ _ < _, _))
-
-theorem link_collapse_true_false {X : AR (TwoTier α β)} [DecidableEq β] {r s : ℕ} :
+theorem link_collapse_true_false {α β : Type u} [DecidableEq α] [DecidableEq β]
+    {X : AR (TwoTier α β)} {r s : ℕ} :
     (X.collapse true).Link true false r s ↔
-      ∃ p < (X.word true).length, X.Link true false p s ∧ runIdx (X.word true) p = r := by
+      ∃ p, X.Link true false p s ∧ runIdx (X.word true) p = r := by
   rw [link_collapse]
   simp only [repointIdx_self, repointIdx_of_ne (by decide : false ≠ true)]
-  constructor
-  · rintro ⟨p, q, hl, rfl, rfl⟩
-    exact ⟨p, hl.lt_left, hl, rfl⟩
-  · rintro ⟨p, -, hl, rfl⟩
-    exact ⟨p, s, hl, rfl, rfl⟩
-
-variable [DecidableEq β] {as : List α} {bs : List β} {L : ℕ → ℕ → Prop} [DecidableRel L]
-
-/-- Collapsing the melody of a presentation gives a presentation. -/
-theorem collapse_ofWords :
-    (ofWords as bs L).collapse true = ofWords (OCP.collapse as) bs (MergedLinks as L) :=
-  ext_of_true_false (by simp) (by simp) fun r s ↦ by
-    rw [link_collapse_true_false, link_ofWords]
-    simp only [word_ofWords_true, link_ofWords, MergedLinks]
-    constructor
-    · rintro ⟨p, hp, ⟨-, hs, hl⟩, rfl⟩
-      exact ⟨runIdx_lt_collapse_length _ hp, hs, p, hp, hl, rfl⟩
-    · rintro ⟨-, hs, p, hp, hl, rfl⟩
-      exact ⟨p, hp, ⟨hp, hs, hl⟩, rfl⟩
-
-variable {S : Type*} (as : S → List α) (bs : S → List β) (L : S → ℕ → ℕ → Prop)
-  [∀ s, DecidableRel (L s)]
-
-/-- The merged realization of a string of presentations is one presentation. -/
-theorem prod_ofWords_collapse (w : List S) :
-    (w.map fun s ↦ ofWords (as s) (bs s) (L s)).prod.collapse true =
-      ofWords (OCP.collapse (w.map as).flatten) (w.map bs).flatten
-        (MergedLinks (w.map as).flatten (BlockLinks as bs L w)) := by
-  rw [prod_ofWords, collapse_ofWords]
-
-end MergedOfWords
+  exact ⟨fun ⟨p, q, hl, hr, hs⟩ ↦ ⟨p, hs ▸ hl, hr⟩, fun ⟨p, hl, hr⟩ ↦ ⟨p, s, hl, hr, rfl⟩⟩
 
 end AR
+
+namespace Form
+
+variable {α β : Type*} [DecidableEq α] (f : Form α β)
+
+/-- The OCP merge of a form destutters its upper tier and repoints each line through the run
+index, so a merged autosegment keeps every line of the autosegments merged into it. -/
+def collapse : Form α β where
+  upper := OCP.collapse f.upper
+  lower := f.lower
+  lines := f.lines.image (Prod.map (runIdx f.upper) id)
+  lt_of_mem_lines h := by
+    obtain ⟨p, hp, rfl⟩ := Finset.mem_image.1 h
+    exact ⟨runIdx_lt_collapse_length _ (f.lt_of_mem_lines hp).1, (f.lt_of_mem_lines hp).2⟩
+
+@[simp] theorem upper_collapse : f.collapse.upper = OCP.collapse f.upper := rfl
+
+@[simp] theorem lower_collapse : f.collapse.lower = f.lower := rfl
+
+theorem mem_lines_collapse {r s : ℕ} :
+    (r, s) ∈ f.collapse.lines ↔ ∃ p, (p, s) ∈ f.lines ∧ runIdx f.upper p = r := by
+  simp only [collapse, Finset.mem_image, Prod.exists, Prod.map_apply, id_eq, Prod.mk.injEq]
+  exact ⟨fun ⟨p, q, h, hr, hs⟩ ↦ ⟨p, hs ▸ h, hr⟩, fun ⟨p, h, hr⟩ ↦ ⟨p, s, h, hr, rfl⟩⟩
+
+/-- The merged form presents the collapse of the presented representation. -/
+theorem toAR_collapse {α β : Type u} [DecidableEq α] [DecidableEq β] (f : Form α β) :
+    f.collapse.toAR = f.toAR.collapse true :=
+  AR.ext_of_true_false (by simp) (by simp) fun r s ↦ by
+    simp [AR.link_collapse_true_false, mem_lines_collapse]
+
+end Form
 
 end Autosegmental
