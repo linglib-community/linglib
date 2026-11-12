@@ -176,13 +176,8 @@ variable {Var : Type u} {φ ψ : ModalFormula Var}
 
 theorem eval_embed {box : InfTopHom L L} [IsRRegular (ofFilters L) (access box)]
     (hT : ∀ a, box a ≤ a) (v : Var → L) (φ : ModalFormula Var) :
-    eval ((ofFilters L).necHom (access box)) (fun p ↦ embed (v p)) φ = embed (eval box v φ) := by
-  induction φ with
-  | top => exact embed_top.symm
-  | var p => rfl
-  | neg φ ih => rw [eval, eval, ih, embed_compl]
-  | and φ ψ ihφ ihψ => rw [eval, eval, ihφ, ihψ, embed_inf]
-  | box φ ih => rw [eval, eval, ih, embed_box hT]
+    eval ((ofFilters L).necHom (access box)) (fun p ↦ embed (v p)) φ = embed (eval box v φ) :=
+  (map_eval embedHom (embed_box hT) v φ).symm
 
 /-- Consequence over epistemic compatibility frames implies derivability in EO
 ([holliday-mandelkern-2024] Theorem 4.37). -/

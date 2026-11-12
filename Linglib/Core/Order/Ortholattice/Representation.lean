@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.Concept
+public import Linglib.Core.Order.Ortholattice.Hom
 public import Mathlib.Order.Hom.Basic
 
 /-!
@@ -9,9 +10,8 @@ public import Mathlib.Order.Hom.Basic
 MacLaren's representation sends an ortholattice `L` with a join-dense subset `V` into the
 concepts of an orthogonality relation: the points are the nonzero elements of `V`, two points are
 orthogonal when one lies below the complement of the other, and `a` goes to the concept of the
-points below it. This is [an order embedding](##OrthoConcept.principalEmbedding) preserving
-[meets](##OrthoConcept.principal_inf), [joins](##OrthoConcept.principal_sup) and
-[complements](##OrthoConcept.principal_compl), and on a complete lattice, where
+points below it. This is [an order embedding](##OrthoConcept.principalEmbedding) and [an ortholattice
+homomorphism](##OrthoConcept.principalHom), and on a complete lattice, where
 [every concept is the image of the join of its extent](##OrthoConcept.principal_sSup_extent), it
 is [an order isomorphism](##OrthoConcept.principalIso).
 
@@ -137,11 +137,6 @@ theorem principal_top (hV : JoinDense V) : principal V (⊤ : L) = ⊤ :=
   top_le_iff.mp <| by
     rw [← Concept.extent_subset_extent_iff, extent_principal hV]; exact fun b _ ↦ le_top
 
-theorem principal_bot (hV : JoinDense V) : principal V (⊥ : L) = ⊥ :=
-  le_bot_iff.mp <| by
-    rw [← Concept.extent_subset_extent_iff, extent_principal hV]
-    exact fun b hb ↦ absurd (le_bot_iff.mp hb) b.2.2
-
 /-- `principal V` sends complements to orthocomplements ([maclaren-1964] Theorem 2.3). -/
 theorem principal_compl (hV : JoinDense V) (a : L) :
     principal V aᶜ = (principal V a)ᶜ := by
@@ -152,15 +147,24 @@ theorem principal_compl (hV : JoinDense V) (a : L) :
   ext b
   exact InvolutiveCompl.le_compl_comm
 
-/-- `principal V` preserves joins (from `⊓`- and `ᶜ`-preservation via De Morgan). -/
+/-- `principal V` as an ortholattice homomorphism, for join-dense `V`
+([maclaren-1964] Theorem 2.3). -/
+def principalHom (hV : JoinDense V) : OrtholatticeHom L (OrthoConcept V) :=
+  .ofInfTopHom ⟨⟨principal V, principal_inf hV⟩, principal_top hV⟩ (principal_compl hV)
+
+@[simp] theorem coe_principalHom (hV : JoinDense V) : ⇑(principalHom hV) = principal V :=
+  rfl
+
+@[simp] theorem principalHom_apply (hV : JoinDense V) (a : L) :
+    principalHom hV a = principal V a :=
+  rfl
+
+theorem principal_bot (hV : JoinDense V) : principal V (⊥ : L) = ⊥ :=
+  map_bot (principalHom hV)
+
 theorem principal_sup (hV : JoinDense V) (a b : L) :
-    principal V (a ⊔ b) = principal V a ⊔ principal V b := by
-  rw [show a ⊔ b = (aᶜ ⊓ bᶜ)ᶜ by
-        rw [InvolutiveCompl.compl_inf, InvolutiveCompl.compl_compl,
-            InvolutiveCompl.compl_compl],
-      principal_compl hV, principal_inf hV, principal_compl hV, principal_compl hV,
-      InvolutiveCompl.compl_inf, InvolutiveCompl.compl_compl,
-      InvolutiveCompl.compl_compl]
+    principal V (a ⊔ b) = principal V a ⊔ principal V b :=
+  map_sup (principalHom hV) a b
 
 end OrthoConcept
 

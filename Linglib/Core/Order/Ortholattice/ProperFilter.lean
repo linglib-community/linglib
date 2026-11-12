@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.Concept
+public import Linglib.Core.Order.Ortholattice.Hom
 public import Linglib.Core.Relation.SetRel
 public import Mathlib.Order.Hom.BoundedLattice
 public import Mathlib.Order.PFilter
@@ -10,9 +11,9 @@ public import Mathlib.Order.PFilter
 
 Goldblatt's representation sends an ortholattice `L` into the concepts of an orthogonality
 relation on its proper filters: two filters are orthogonal when one contains the complement of an
-element of the other, and `a` goes to the concept of the filters containing it. This
-[preserves and reflects the order](##Order.ProperFilter.embed_le_embed) and preserves
-[meets](##Order.ProperFilter.embed_inf) and [complements](##Order.ProperFilter.embed_compl). A
+element of the other, and `a` goes to the concept of the filters containing it. This is
+[an order embedding](##Order.ProperFilter.embedOrderEmbedding) and [an ortholattice
+homomorphism](##Order.ProperFilter.embedHom). A
 map `□` preserving finite meets gives the relation under which `F` accesses `G` when `G` contains
 everything necessary at `F`, and when `□` is deflationary [`□` of the filters containing `a` is
 the filters containing `□a`](##Order.ProperFilter.core_setOf_mem).
@@ -98,7 +99,7 @@ theorem mem_nec {hT : ∀ a, box a ≤ a} {F : ProperFilter L} {a : L} :
 variable (box) in
 /-- `F` accesses `G` when `G` contains everything necessary at `F`. -/
 def access : SetRel (ProperFilter L) (ProperFilter L) :=
-  {p | ∀ a, box a ∈ p.1.1 → a ∈ p.2.1}
+  {(F, G) | ∀ a, box a ∈ F.1 → a ∈ G.1}
 
 theorem mem_access {F G : ProperFilter L} : F ~[access box] G ↔ ∀ a, box a ∈ F.1 → a ∈ G.1 :=
   Iff.rfl
@@ -178,6 +179,26 @@ theorem embed_top : embed (⊤ : L) = ⊤ :=
 
 theorem embed_compl (a : L) : embed aᶜ = (embed a)ᶜ :=
   SetLike.coe_injective <| by rw [Concept.coe_compl, coe_embed, coe_embed, upperPolar_setOf_mem]
+
+/-- `embed` as an order embedding. -/
+def embedOrderEmbedding : L ↪o Concept (ProperFilter L) (ProperFilter L) Orthogonal :=
+  OrderEmbedding.ofMapLEIff embed fun _ _ ↦ embed_le_embed
+
+@[simp] theorem coe_embedOrderEmbedding : ⇑(embedOrderEmbedding (L := L)) = embed := rfl
+
+/-- `embed` as an ortholattice homomorphism ([goldblatt-1975]). -/
+def embedHom : OrtholatticeHom L (Concept (ProperFilter L) (ProperFilter L) Orthogonal) :=
+  .ofInfTopHom ⟨⟨embed, embed_inf⟩, embed_top⟩ embed_compl
+
+@[simp] theorem coe_embedHom : ⇑(embedHom (L := L)) = embed := rfl
+
+@[simp] theorem embedHom_apply (a : L) : embedHom a = embed a := rfl
+
+theorem embed_bot : embed (⊥ : L) = ⊥ :=
+  map_bot embedHom
+
+theorem embed_sup (a b : L) : embed (a ⊔ b) = embed a ⊔ embed b :=
+  map_sup embedHom a b
 
 end ProperFilter
 

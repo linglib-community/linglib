@@ -112,12 +112,8 @@ def Compatibility.ofOrtholattice (V : Set L) : Compatibility (Point V) where
 
 omit [IsOrtholattice L] in
 theorem eval_map {V₀ : Set L} (hV : JoinDense V₀) (v : Var → L) (φ : Formula Var) :
-    Formula.eval (fun p ↦ principal V₀ (v p)) φ = principal V₀ (Formula.eval v φ) := by
-  induction φ with
-  | top => simp only [Formula.eval, principal_top hV]
-  | var p => rfl
-  | neg φ ih => simp only [Formula.eval, ih, principal_compl hV]
-  | and φ ψ ihφ ihψ => simp only [Formula.eval, ihφ, ihψ, principal_inf hV]
+    Formula.eval (fun p ↦ principal V₀ (v p)) φ = principal V₀ (Formula.eval v φ) :=
+  (Formula.map_eval (principalHom hV) v φ).symm
 
 /-- Frame consequence implies derivability ([holliday-mandelkern-2024] Theorem 4.19). -/
 theorem frame_complete (h : φ ⊨ᶠ ψ) : φ ⊢ ψ := by

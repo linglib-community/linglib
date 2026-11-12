@@ -22,24 +22,18 @@ involution; an ortholattice keeps the involution and the complement laws but giv
 distributivity. They meet in the Boolean algebras, since [an ortholattice is distributive exactly
 when its orthocomplement is a pseudocomplement](##inf_sup_le_iff_le_compl_of_disjoint).
 
-An ortholattice is *orthomodular* when `a ≤ b` implies `b = a ⊔ (aᶜ ⊓ b)`. Every modular
-ortholattice, and so every Boolean algebra, is orthomodular. The motivating example is the lattice
-of closed subspaces of a Hilbert space, Birkhoff and von Neumann's propositions of quantum
-mechanics. The regular propositions of Holliday and Mandelkern's epistemic compatibility frames
-form an ortholattice that is not orthomodular.
+An ortholattice is *orthomodular* when `a ≤ b` implies `b = a ⊔ (aᶜ ⊓ b)`. [Every modular
+ortholattice](##IsModularLattice.toIsOrthomodularLattice), and so every Boolean algebra, is
+orthomodular. The motivating example is the lattice of closed subspaces of a Hilbert space,
+Birkhoff and von Neumann's propositions of quantum mechanics. The regular propositions of Holliday and Mandelkern's epistemic compatibility frames
+form an ortholattice that is not orthomodular. The structure-preserving maps are the
+ortholattice homomorphisms of `Core/Order/Ortholattice/Hom.lean`.
 
-## Main definitions
+## Implementation notes
 
-* `IsOrtholattice α`: the Prop mixin over `[Lattice α] [BoundedOrder α] [InvolutiveCompl α]`
-  (the involutive antitone `ᶜ` of `Core/Order/InvolutiveCompl.lean`) adding
-  non-contradiction.
-* `IsOrthomodularLattice α`: an ortholattice satisfying the orthomodular law.
-
-## Main results
-
-* `IsOrtholattice.inf_sup_le_iff_le_compl_of_disjoint`: an ortholattice is distributive exactly
-  when its orthocomplement is a pseudocomplement.
-* `IsModularLattice.toIsOrthomodularLattice`: a modular ortholattice is orthomodular.
+`IsOrtholattice` is a Prop mixin over `[Lattice α] [BoundedOrder α] [InvolutiveCompl α]`, the
+involutive antitone `ᶜ` of `Core/Order/InvolutiveCompl.lean`, adding non-contradiction, as
+mathlib's `IsModularLattice` and `ComplementedLattice` are mixins over a lattice.
 
 ## TODO
 
