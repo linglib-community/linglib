@@ -42,10 +42,10 @@ Czech inventories, 2274 and 2480, add the glottal stop and the voiced affricate 
 Short counts as not phonemic (p. 457).
 
 Hayes's features have no length, so a long vowel is two segments of its quality, and a
-diphthong, which the chart omits as contour-valued, is its two vowels. A vowel keeps the
-features that distinguish the five, since the chart gives the short high vowel as the lax [ɪ]
-and the long one as the tense [iː]. The chart's *t*, *d* and *n* are alveolar where Short calls
-them dental, a difference in [distributed] on which no Czech contrast depends.
+diphthong, which the chart leaves unspecified where its quality changes, is its two vowels. A
+vowel keeps the features that distinguish the five, since the chart gives the short high vowel
+as the lax [ɪ] and the long one as the tense [iː]. The chart's *t*, *d* and *n* are alveolar
+where Short calls them dental, a difference in [distributed] on which no Czech contrast depends.
 
 `ofString?` reads the phonemes and not their realization: the final devoicing and the voicing
 assimilation of obstruents (p. 458) are left out, so that *oběd* 'lunch' is /objed/ where Short

@@ -95,7 +95,8 @@ def ø : Segment := vowel .«ø»
 def o : Segment := vowel .«o»
 
 /-- The low back vowel /ɒ/, orthographic ⟨a⟩, which departs from the chart in being phonologically
-unrounded. -/
+unrounded: system (7) of [siptar-torkenczy-2000] puts short /a/ with the [+back, −round] vowels,
+its surface rounding being "a matter of phonetic implementation" (p. 54). -/
 def turnedScriptA : Segment := vowel .«ɒ» (Segment.ofSpecs [(.round, false)])
 
 /-- The seven short vowels, pairwise distinct. -/

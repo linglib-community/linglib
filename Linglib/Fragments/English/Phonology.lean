@@ -37,9 +37,9 @@ chart entry, so the values are PHOIBLE's.
 The transcription is Hayes's, with plain /p t k/. PHOIBLE's English inventories write the
 voiceless stops aspirated, so no inventory contains these glyphs, and membership in one is not
 stated. English /ɹ/ is the chart's `ɹ`, which is [−consonantal] and so a glide in sonority.
-The chart has no entries for diphthongs. Hayes writes a diphthong as the two vowels of its
-beginning and end, so the diphthongs /aɪ aʊ ɔɪ/ of Table 2.2 are transcribed as two segments, and
-/eɪ/, which the table lists among the vowels, is left out; /oʊ/ is the monophthong /o/.
+Hayes writes a diphthong as the two vowels of its beginning and end, so the diphthongs
+/aɪ aʊ ɔɪ/ of Table 2.2 are transcribed as two segments, and /eɪ/, which the table lists among
+the vowels, is left out; /oʊ/ is the monophthong /o/.
 
 ## References
 
