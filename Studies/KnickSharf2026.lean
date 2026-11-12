@@ -216,32 +216,36 @@ def Competitor.heads : Competitor → ℕ
   | .simplePresent => 2
   | .perfect => 3
 
-/-- The competition (43) between the simple present and the perfect `p`, the question being the
-competitors themselves. -/
+/-- The competition (43) between the simple present and the perfect `p`. -/
 abbrev competition (V : W → E → Prop) (p : Set W) (t : T) :
-    KatzirSingh2015.Scenario W Competitor Competitor where
+    KatzirSingh2015.Scenario W Competitor ℕ where
   meaning := Competitor.meaning V p t
   complexity := Competitor.heads
   context := univ
-  question := Competitor.meaning V p t
 
-theorem competition_relevant {p : Set W} (c : Competitor) : (competition V p t).Relevant c :=
-  fun _ _ _ _ h ↦ h c
+/-- The question the competitors answer, the competitors themselves. -/
+abbrev question (V : W → E → Prop) (p : Set W) (t : T) : Set (Set W) :=
+  range (Competitor.meaning V p t)
+
+theorem competition_relevant {p : Set W} (c : Competitor) :
+    (competition V p t).Relevant (question V p t) c :=
+  KatzirSingh2015.Scenario.relevant_of_mem ⟨c, rfl⟩
 
 -- (43), (44)
 theorem goodAnswer_perfect_iff {p : Set W} :
-    (competition V p t).GoodAnswer .perfect w ↔
+    (competition V p t).GoodAnswer (question V p t) .perfect w ↔
       w ∈ p ∧ ¬ (simplePresent V t ⊆ p ∧ w ∈ simplePresent V t) := by
-  refine ⟨fun h ↦ ⟨h.1, fun ⟨hs, hw⟩ ↦ ?_⟩, fun ⟨hw, hs⟩ ↦ ⟨hw, competition_relevant _, ?_⟩⟩
-  · exact (competition V p t).not_goodAnswer_of_simpler (u := .perfect) (v := .simplePresent)
+  refine ⟨fun h ↦ ⟨h.mem, fun ⟨hs, hw⟩ ↦ ?_⟩, fun ⟨hw, hs⟩ ↦ ⟨⟨hw, competition_relevant _⟩, ?_⟩⟩
+  · exact KatzirSingh2015.Scenario.not_goodAnswer_of_simpler (u := .perfect) (v := .simplePresent)
       (by decide : Competitor.heads .simplePresent < Competitor.heads .perfect) hs hw
       (competition_relevant _) h
-  · rintro ⟨_ | _, hb, hw', -⟩
-    · exact hs ⟨hb.1.2, hw'⟩
-    · exact (competition V p t).better_irrefl _ hb
+  · rintro (_ | _) ⟨hw', -⟩ hle
+    · exact absurd ⟨hle.2, hw'⟩ hs
+    · exact le_rfl
 
 theorem goodAnswer_universalPerfect_iff :
-    (competition V (universalPerfect V D t) t).GoodAnswer .perfect w ↔
+    (competition V (universalPerfect V D t) t).GoodAnswer (question V (universalPerfect V D t) t)
+        .perfect w ↔
       w ∈ universalPerfect V D t ∧ ¬ simplePresent V t ⊆ universalPerfect V D t := by
   rw [goodAnswer_perfect_iff]
   exact and_congr_right fun hw ↦ not_congr
@@ -251,7 +255,7 @@ theorem goodAnswer_universalPerfect_iff :
 it is a good answer in some model whose eventualities take time. -/
 def Survives (p : (W → NonemptyInterval T → Prop) → Set W) (t : T) : Prop :=
   ∃ V : W → NonemptyInterval T → Prop, (∀ w e, V w e → e.fst < e.snd) ∧
-    ∃ w, (competition V (p V) t).GoodAnswer .perfect w
+    ∃ w, (competition V (p V) t).GoodAnswer (question V (p V) t) .perfect w
 
 /-- The universal perfect survives its competition with the simple present exactly when its
 domain has a time before the speech time but not the speech time itself, as under narrow focus or
@@ -341,8 +345,8 @@ theorem everSince_universal (V : W → E → Prop) (t₀ t : T) :
 -- footnote 2: a bounded eventuality that takes time holds throughout no span
 theorem not_survives_everSince_experiential {t₀ : T} :
     ¬ Survives (W := W) (Reading.experiential.everSince · t₀ t) t :=
-  fun ⟨_, hV, _, hw, _⟩ ↦ IatridouEtAl2001.no_universal_of_prfv (fun e he ↦ hV _ e he)
-    (perf_mono (fun _ ↦ inter_subset_right) hw)
+  fun ⟨_, hV, _, hw⟩ ↦ IatridouEtAl2001.no_universal_of_prfv (fun e he ↦ hV _ e he)
+    (perf_mono (fun _ ↦ inter_subset_right) hw.mem)
 
 -- the imperfective (25) is strict where Iatridou et al.'s is not (footnote 6)
 theorem exists_iatridou_not_universalPerfect [Nonempty W] {t₀ : T} (h : t₀ ≤ t) :
