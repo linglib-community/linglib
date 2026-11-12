@@ -5,6 +5,8 @@ public import Mathlib.Data.Part
 public import Mathlib.Data.Set.Functor
 public import Mathlib.Data.Set.Lattice.Image
 public import Linglib.Semantics.Alternatives.WithAlternatives
+public import Linglib.Core.Control.Monad.Writer
+public import Mathlib.Order.CompleteBooleanAlgebra
 
 /-!
 # Types with effects
@@ -37,15 +39,19 @@ adjoint to reading, and
 
 Truth values are a type of their own and not a base sort, since predicate modification and the
 merging of stored truth values name them. The carriers are the standard ones, `Set`,
-functions, products, `Cont`, `Part` and `WithAlternatives`, and the operations are theirs.
-Storing is applicative only at the truth values, merged by conjunction, as in the book's
-interpreter, which runs at indeterminacy, reading, storing and continuations; partiality and
+functions, `Writer`, `Cont`, `Part` and `WithAlternatives`, and the operations are theirs.
+Storing is the writer over the stored type's domain. The book makes it applicative where the
+stored type is a monoid and declares the truth values the only one; here it is applicative at
+every conjoinable type, whose domain is a complete Boolean algebra, with stored contents merged
+by meet, so that a stored proposition composes as a stored truth value does. The book's
+interpreter runs at indeterminacy, reading, storing and continuations; partiality and
 alternatives are effects of the book that it does not run. State and dynamic state are not
 effects here: the book derives them from storing and reading.
 
 ## References
 
 * [bumford-charlow-2026]
+* [partee-rooth-1983]
 -/
 
 @[expose] public section
@@ -106,31 +112,63 @@ abbrev Eff.Obj (D : B → Type) (f : Eff B) (α : Type) : Type :=
   match f with
   | .S => Set α
   | .R i => Ty.Dom D i → α
-  | .W o => α × Ty.Dom D o
+  | .W o => Writer (Ty.Dom D o) α
   | .C r => Cont (Ty.Dom D r) α
   | .M => Part α
   | .F => WithAlternatives α
 
 end
 
+/-- A type is conjoinable when it ends in `t` ([partee-rooth-1983]). -/
+def Ty.Conjoinable : Ty B → Prop
+  | .t => True
+  | .fn _ b => b.Conjoinable
+  | .comp (.R _) b => b.Conjoinable
+  | .base _ | .comp .S _ | .comp (.W _) _ | .comp (.C _) _ | .comp .M _
+  | .comp .F _ => False
+
+instance Ty.decidableConjoinable : DecidablePred (Ty.Conjoinable (B := B))
+  | .t => .isTrue trivial
+  | .fn _ b => Ty.decidableConjoinable b
+  | .comp (.R _) b => Ty.decidableConjoinable b
+  | .base _ | .comp .S _ | .comp (.W _) _ | .comp (.C _) _ | .comp .M _
+  | .comp .F _ => .isFalse id
+
+/-- The domain of a conjoinable type carries the pointwise complete Boolean algebra
+([partee-rooth-1983]). -/
+@[instance_reducible]
+def Ty.Dom.completeBooleanAlgebra (D : B → Type) :
+    (ty : Ty B) → ty.Conjoinable → CompleteBooleanAlgebra (ty.Dom D)
+  | .t, _ => inferInstanceAs (CompleteBooleanAlgebra Prop)
+  | .fn _ b, h => letI := completeBooleanAlgebra D b h; inferInstance
+  | .comp (.R _) b, h => letI := completeBooleanAlgebra D b h; inferInstance
+  | .base _, h | .comp .S _, h | .comp (.W _) _, h | .comp (.C _) _, h | .comp .M _, h
+  | .comp .F _, h => h.elim
+
 namespace Eff
 
 variable {D : B → Type} {α β : Type}
 
 /-- An effect `f` is applicative if `Eff.Obj D f` has a `pure` and a `seq`. Every effect is,
-except storing (`.W o`) at a type `o` other than `.t`: two stored truth values are merged by
-conjunction, with `True` stored by `pure`, and other stored data are not merged. -/
+except storing (`.W o`) at a type `o` that is not conjoinable: two stored contents of a
+conjoinable type are merged by meet, with `⊤` stored by `pure`, and other stored data are not
+merged. -/
 class IsApplicative (f : Eff B) : Prop where
-  /-- A stored datum is a truth value. -/
+  /-- A stored datum is of a conjoinable type. -/
   out : match f with
-    | .W o => o = .t
+    | .W o => o.Conjoinable
     | _ => True
 
 instance : IsApplicative (.S : Eff B) := ⟨trivial⟩
 
 instance (i : Ty B) : IsApplicative (.R i) := ⟨trivial⟩
 
-instance : IsApplicative (.W .t : Eff B) := ⟨rfl⟩
+instance : IsApplicative (.W .t : Eff B) := ⟨trivial⟩
+
+instance (a b : Ty B) [h : IsApplicative (.W b)] : IsApplicative (.W (.fn a b)) := ⟨h.out⟩
+
+instance (i b : Ty B) [h : IsApplicative (.W b)] : IsApplicative (.W (.comp (.R i) b)) :=
+  ⟨h.out⟩
 
 instance (r : Ty B) : IsApplicative (.C r) := ⟨trivial⟩
 
@@ -139,14 +177,14 @@ instance : IsApplicative (.M : Eff B) := ⟨trivial⟩
 instance : IsApplicative (.F : Eff B) := ⟨trivial⟩
 
 instance [DecidableEq B] : DecidablePred (IsApplicative (B := B))
-  | .W o => decidable_of_iff (o = .t) ⟨fun h ↦ ⟨h⟩, fun h ↦ h.out⟩
+  | .W o => decidable_of_iff o.Conjoinable ⟨fun h ↦ ⟨h⟩, fun h ↦ h.out⟩
   | .S | .R _ | .C _ | .M | .F => isTrue ⟨trivial⟩
 
 /-- An effect's map. -/
 def map : (f : Eff B) → (α → β) → Obj D f α → Obj D f β
   | .S, g, x => g '' x
   | .R _, g, x => fun i ↦ g (x i)
-  | .W _, g, x => (g x.1, x.2)
+  | .W _, g, x => Writer.mk (g x.val) x.log
   | .C _, g, x => fun c ↦ x fun a ↦ c (g a)
   | .M, g, x => x.map g
   | .F, g, x => Functor.map (f := WithAlternatives) g x
@@ -155,7 +193,8 @@ def map : (f : Eff B) → (α → β) → Obj D f α → Obj D f β
 def pure : (f : Eff B) → f.IsApplicative → α → Obj D f α
   | .S, _, a => {a}
   | .R _, _, a => fun _ ↦ a
-  | .W _, ⟨rfl⟩, a => (a, True)
+  | .W o, h, a =>
+    letI := Ty.Dom.completeBooleanAlgebra D o h.out; (Pure.pure a : Writer (Ty.Dom D o) _)
   | .C _, _, a => fun c ↦ c a
   | .M, _, a => Part.some a
   | .F, _, a => .unfeatured a
@@ -166,7 +205,8 @@ def seq : (f : Eff B) → f.IsApplicative → Obj D f (α → β) → Obj D f α
     Obj D f β
   | .S, _, g, x => Set.seq g x
   | .R _, _, g, x => fun i ↦ g i (x i)
-  | .W _, ⟨rfl⟩, g, x => (g.1 x.1, g.2 ∧ x.2)
+  | .W o, h, g, x =>
+    letI := Ty.Dom.completeBooleanAlgebra D o h.out; (g <*> x : Writer (Ty.Dom D o) _)
   | .C _, _, g, x => fun c ↦ g fun k ↦ x fun a ↦ c (k a)
   | .M, _, g, x => g.bind fun k ↦ x.map k
   | .F, _, g, x => Seq.seq (f := WithAlternatives) g fun _ ↦ x
@@ -175,7 +215,8 @@ def seq : (f : Eff B) → f.IsApplicative → Obj D f (α → β) → Obj D f α
 def join : (f : Eff B) → f.IsApplicative → Obj D f (Obj D f α) → Obj D f α
   | .S, _, x => ⋃₀ x
   | .R _, _, x => fun i ↦ x i i
-  | .W _, ⟨rfl⟩, x => (x.1.1, x.2 ∧ x.1.2)
+  | .W o, h, x =>
+    letI := Ty.Dom.completeBooleanAlgebra D o h.out; (x >>= id : Writer (Ty.Dom D o) _)
   | .C _, _, x => fun c ↦ x fun m ↦ m c
   | .M, _, x => x.bind id
   | .F, _, x => Bind.bind (m := WithAlternatives) x id
@@ -203,13 +244,13 @@ instance : Functor (Obj D (.F : Eff B)) := functor _
 
 instance : Monad (Obj D (.S : Eff B)) := monad _
 instance (i : Ty B) : Monad (Obj D (.R i)) := monad _
-instance : Monad (Obj D (.W .t : Eff B)) := monad _
+instance (o : Ty B) [IsApplicative (.W o)] : Monad (Obj D (.W o)) := monad _
 instance (r : Ty B) : Monad (Obj D (.C r)) := monad _
 instance : Monad (Obj D (.M : Eff B)) := monad _
 instance : Monad (Obj D (.F : Eff B)) := monad _
 
 /-- The co-unit of storing and reading: the stored datum is given to the reader. -/
-def counit {i : Ty B} (x : Obj D (.W i) (Obj D (.R i) α)) : α := x.1 x.2
+def counit {i : Ty B} (x : Obj D (.W i) (Obj D (.R i) α)) : α := x.val x.log
 
 /-- Reading distributes over functions: a function into a reader is a reader of functions. -/
 def eject {i : Ty B} (k : α → Obj D (.R i) β) : Obj D (.R i) (α → β) :=
@@ -222,6 +263,7 @@ def lower {r : Ty B} (m : Obj D (.C r) (Ty.Dom D r)) : Ty.Dom D r := m id
   cases f with
   | M => exact Part.map_id' (fun _ ↦ rfl) x
   | F => exact id_map (f := WithAlternatives) x
+  | W => rfl
   | _ => simp [map]
 
 theorem map_map (f : Eff B) (g : α → β) {γ : Type} (h : β → γ) (x : Obj D f α) :

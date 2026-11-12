@@ -54,7 +54,7 @@ def Eff.RelWith : (f : Eff B) → (f.Datum D → f.Datum D' → Prop) → {α β
     (α → β → Prop) → Eff.Obj D f α → Eff.Obj D' f β → Prop
   | .S, _, _, _, q => fun s s' ↦ (∀ a ∈ s, ∃ b ∈ s', q a b) ∧ ∀ b ∈ s', ∃ a ∈ s, q a b
   | .R _, rd, _, _, q => LiftFun rd q
-  | .W _, rd, _, _, q => fun x y ↦ q x.1 y.1 ∧ rd x.2 y.2
+  | .W _, rd, _, _, q => fun x y ↦ q x.val y.val ∧ rd x.log y.log
   | .C _, rd, _, _, q => LiftFun (LiftFun q rd) rd
   | .M, _, _, _, q => fun x y ↦ (x.Dom ↔ y.Dom) ∧ ∀ hx hy, q (x.get hx) (y.get hy)
   | .F, _, _, _, q => fun x y ↦ q x.ordinary y.ordinary ∧
@@ -85,6 +85,27 @@ end
 abbrev Eff.LiftRel (r : ∀ b, D b → D' b → Prop) (f : Eff B) {α β : Type} (R : α → β → Prop) :
     Eff.Obj D f α → Eff.Obj D' f β → Prop :=
   Eff.RelWith f (Eff.DatumRel r f) R
+
+/-- The tops of a conjoinable type are related. -/
+theorem Ty.liftRel_top (r : ∀ b, D b → D' b → Prop) : (o : Ty B) → (h : o.Conjoinable) →
+    Ty.LiftRel r o (Ty.Dom.completeBooleanAlgebra D o h).top
+      (Ty.Dom.completeBooleanAlgebra D' o h).top
+  | .t, _ => Iff.rfl
+  | .fn _ b, h => fun _ _ _ ↦ Ty.liftRel_top r b h
+  | .comp (.R _) b, h => fun _ _ _ ↦ Ty.liftRel_top r b h
+  | .base _, h | .comp .S _, h | .comp (.W _) _, h | .comp (.C _) _, h | .comp .M _, h
+  | .comp .F _, h => h.elim
+
+/-- The meets of related elements of a conjoinable type are related. -/
+theorem Ty.liftRel_inf (r : ∀ b, D b → D' b → Prop) : (o : Ty B) → (h : o.Conjoinable) →
+    ∀ {a b : o.Dom D} {a' b' : o.Dom D'}, Ty.LiftRel r o a a' → Ty.LiftRel r o b b' →
+      Ty.LiftRel r o ((Ty.Dom.completeBooleanAlgebra D o h).inf a b)
+        ((Ty.Dom.completeBooleanAlgebra D' o h).inf a' b')
+  | .t, _ => fun ha hb ↦ and_congr ha hb
+  | .fn _ c, h => fun ha hb _ _ hx ↦ Ty.liftRel_inf r c h (ha hx) (hb hx)
+  | .comp (.R _) c, h => fun ha hb _ _ hx ↦ Ty.liftRel_inf r c h (ha hx) (hb hx)
+  | .base _, h | .comp .S _, h | .comp (.W _) _, h | .comp (.C _) _, h | .comp .M _, h
+  | .comp .F _, h => h.elim
 
 namespace Eff
 
@@ -122,7 +143,7 @@ theorem rel_pure (f : Eff B) (h : f.IsApplicative) :
   cases f with
   | S => exact ⟨fun _ ha ↦ ⟨b, rfl, ha ▸ hab⟩, fun _ hb ↦ ⟨a, rfl, hb ▸ hab⟩⟩
   | R i => exact fun _ _ _ ↦ hab
-  | W o => obtain ⟨rfl⟩ := h; exact ⟨hab, Iff.rfl⟩
+  | W o => exact ⟨hab, Ty.liftRel_top r o h.out⟩
   | C o => exact fun _ _ hc ↦ hc hab
   | M => exact ⟨Iff.rfl, fun _ _ ↦ hab⟩
   | F => exact ⟨hab, fun _ ha ↦ ⟨b, rfl, ha ▸ hab⟩, fun _ hb ↦ ⟨a, rfl, hb ▸ hab⟩⟩
@@ -143,7 +164,7 @@ theorem rel_seq (f : Eff B) (h : f.IsApplicative) :
       obtain ⟨a, ha, hab⟩ := hx.2 b hb
       exact ⟨k a, ⟨k, hk, a, ha, rfl⟩, hkk hab⟩
   | R i => exact fun _ _ hi ↦ hg hi (hx hi)
-  | W o => obtain ⟨rfl⟩ := h; exact ⟨hg.1 hx.1, and_congr hg.2 hx.2⟩
+  | W o => exact ⟨hg.1 hx.1, Ty.liftRel_inf r o h.out hg.2 hx.2⟩
   | C o => exact fun _ _ hc ↦ hg fun _ _ hk ↦ hx fun _ _ hab ↦ hc (hk hab)
   | M =>
     exact ⟨⟨fun ⟨h₁, h₂⟩ ↦ ⟨hg.1.1 h₁, hx.1.1 h₂⟩, fun ⟨h₁, h₂⟩ ↦ ⟨hg.1.2 h₁, hx.1.2 h₂⟩⟩,
@@ -174,7 +195,7 @@ theorem rel_join (f : Eff B) (h : f.IsApplicative) :
       obtain ⟨a, ha, hab⟩ := hss.2 b hb
       exact ⟨a, ⟨s, hs, ha⟩, hab⟩
   | R i => exact fun _ _ hi ↦ hx hi hi
-  | W o => obtain ⟨rfl⟩ := h; exact ⟨hx.1.1, and_congr hx.2 hx.1.2⟩
+  | W o => exact ⟨hx.1.1, Ty.liftRel_inf r o h.out hx.2 hx.1.2⟩
   | C o => exact fun _ _ hc ↦ hx fun _ _ hm ↦ hm hc
   | M =>
     exact ⟨⟨fun ⟨h₁, h₂⟩ ↦ ⟨hx.1.1 h₁, (hx.2 h₁ _).1.1 h₂⟩,

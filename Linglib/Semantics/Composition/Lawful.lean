@@ -69,7 +69,9 @@ instance lawfulMonad (f : Eff B) [h : f.IsApplicative] : LawfulMonad (Obj D f) :
     show join f h (map f k (pure f h a)) = k a
     cases f with
     | S => simp [join, map, pure]
-    | W o => obtain ⟨rfl⟩ := h; exact Prod.ext rfl (true_and _)
+    | W o =>
+      letI := Ty.Dom.completeBooleanAlgebra D o h.out
+      exact Writer.ext rfl (top_inf_eq _)
     | M => simp [join, map, pure]
     | F => exact join_map_pure (m := WithAlternatives) a k
     | _ => rfl
@@ -78,7 +80,9 @@ instance lawfulMonad (f : Eff B) [h : f.IsApplicative] : LawfulMonad (Obj D f) :
       join f h (map f (fun a ↦ join f h (map f g (k a))) x)
     cases f with
     | S => ext c; simp [join, map]
-    | W o => obtain ⟨rfl⟩ := h; exact Prod.ext rfl (propext and_assoc)
+    | W o =>
+      letI := Ty.Dom.completeBooleanAlgebra D o h.out
+      exact Writer.ext rfl (inf_assoc ..)
     | M => simp [join, map, Part.bind_assoc]
     | F => exact join_map_join_map (m := WithAlternatives) x k g
     | _ => rfl
@@ -86,7 +90,9 @@ instance lawfulMonad (f : Eff B) [h : f.IsApplicative] : LawfulMonad (Obj D f) :
     show join f h (map f (fun y ↦ pure f h (g y)) x) = map f g x
     cases f with
     | S => ext c; simp [join, map, pure, eq_comm]
-    | W o => obtain ⟨rfl⟩ := h; exact Prod.ext rfl (and_true _)
+    | W o =>
+      letI := Ty.Dom.completeBooleanAlgebra D o h.out
+      exact Writer.ext rfl (inf_top_eq _)
     | M => exact Part.bind_some_eq_map g x
     | F => exact join_map_pure_comp (m := WithAlternatives) g x
     | _ => rfl
@@ -94,14 +100,14 @@ instance lawfulMonad (f : Eff B) [h : f.IsApplicative] : LawfulMonad (Obj D f) :
     show join f h (map f (fun k ↦ map f k x) g) = seq f h g x
     cases f with
     | S => ext c; simp [join, map, seq, Set.mem_seq_iff]
-    | W o => obtain ⟨rfl⟩ := h; rfl
+    | W o => rfl
     | M => simp [join, map, seq]
     | F => exact join_map_map (m := WithAlternatives) g x
     | _ => rfl
 
 instance : LawfulMonad (Obj D (.S : Eff B)) := lawfulMonad _
 instance (i : Ty B) : LawfulMonad (Obj D (.R i)) := lawfulMonad _
-instance : LawfulMonad (Obj D (.W .t : Eff B)) := lawfulMonad _
+instance (o : Ty B) [IsApplicative (.W o)] : LawfulMonad (Obj D (.W o)) := lawfulMonad _
 instance (r : Ty B) : LawfulMonad (Obj D (.C r)) := lawfulMonad _
 instance : LawfulMonad (Obj D (.M : Eff B)) := lawfulMonad _
 instance : LawfulMonad (Obj D (.F : Eff B)) := lawfulMonad _
@@ -117,7 +123,7 @@ instance : IsCommutative (.S : Eff B) := ⟨nofun⟩
 
 instance (i : Ty B) : IsCommutative (.R i) := ⟨nofun⟩
 
-instance : IsCommutative (.W .t : Eff B) := ⟨nofun⟩
+instance (o : Ty B) [IsApplicative (.W o)] : IsCommutative (.W o) := ⟨nofun⟩
 
 instance : IsCommutative (.M : Eff B) := ⟨nofun⟩
 
@@ -125,7 +131,7 @@ instance : IsCommutative (.F : Eff B) := ⟨nofun⟩
 
 instance [DecidableEq B] : DecidablePred (IsCommutative (B := B))
   | .C _ => isFalse fun h ↦ h.ne_C _ rfl
-  | .W o => decidable_of_iff (o = .t)
+  | .W o => decidable_of_iff o.Conjoinable
     ⟨fun h ↦ { out := h, ne_C := nofun }, fun h ↦ h.out⟩
   | .S | .R _ | .M | .F => isTrue { out := trivial, ne_C := nofun }
 
@@ -136,7 +142,9 @@ private theorem seq_map_prodMk_comm {f : Eff B} (hc : f.IsCommutative) {α β : 
   cases f with
   | S => exact CommApplicative.commutative_prod (m := Set) a b
   | R i => rfl
-  | W o => obtain ⟨rfl⟩ := hc.toIsApplicative; exact Prod.ext rfl (propext and_comm)
+  | W o =>
+    letI := Ty.Dom.completeBooleanAlgebra D o hc.toIsApplicative.out
+    exact Writer.ext rfl (inf_comm ..)
   | C r => exact (hc.ne_C r rfl).elim
   | M =>
     ext p

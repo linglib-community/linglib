@@ -13,7 +13,6 @@ conjunctive one at a type of predicates](##Coordinator.predicateModification_eva
 
 ## Main definitions
 
-* `Interpreter.Ty.Conjoinable`: the types that end in `t`.
 * `Coordinator.reading`: a coordinator's denotation at a conjoinable type.
 * `Coordinator.readings`: its denotations at every conjoinable type.
 
@@ -28,32 +27,6 @@ conjunctive one at a type of predicates](##Coordinator.predicateModification_eva
 namespace Interpreter
 
 variable {B : Type}
-
-/-- A type is conjoinable when it ends in `t` ([partee-rooth-1983]). -/
-def Ty.Conjoinable : Ty B → Prop
-  | .t => True
-  | .fn _ b => b.Conjoinable
-  | .comp (.R _) b => b.Conjoinable
-  | .base _ | .comp .S _ | .comp (.W _) _ | .comp (.C _) _ | .comp .M _
-  | .comp .F _ => False
-
-instance Ty.decidableConjoinable : DecidablePred (Ty.Conjoinable (B := B))
-  | .t => .isTrue trivial
-  | .fn _ b => Ty.decidableConjoinable b
-  | .comp (.R _) b => Ty.decidableConjoinable b
-  | .base _ | .comp .S _ | .comp (.W _) _ | .comp (.C _) _ | .comp .M _
-  | .comp .F _ => .isFalse id
-
-/-- The domain of a conjoinable type carries the pointwise complete Boolean algebra
-([partee-rooth-1983]). -/
-@[instance_reducible]
-def Ty.Dom.completeBooleanAlgebra (D : B → Type) :
-    (ty : Ty B) → ty.Conjoinable → CompleteBooleanAlgebra (ty.Dom D)
-  | .t, _ => inferInstanceAs (CompleteBooleanAlgebra Prop)
-  | .fn _ b, h => letI := completeBooleanAlgebra D b h; inferInstance
-  | .comp (.R _) b, h => letI := completeBooleanAlgebra D b h; inferInstance
-  | .base _, h | .comp .S _, h | .comp (.W _) _, h | .comp (.C _) _, h | .comp .M _, h
-  | .comp .F _, h => h.elim
 
 end Interpreter
 
