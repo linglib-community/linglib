@@ -28,7 +28,8 @@ no stronger one.
 ## Main definitions
 
 * `Person.dom`, `Number.dom`, `Gender.dom`: the domain of an optional value.
-* `Kaplan.Context.participants`: the discourse roles whose holders are part of a referent.
+* `Kaplan.Context.holder`, `Kaplan.Context.participants`: the holder of a discourse role, and the
+  roles whose holders are part of a referent.
 
 ## Main results
 
@@ -121,18 +122,31 @@ namespace Kaplan.Context
 
 variable {W E P T : Type*} [PartialOrder E] (c : Context W E P T) (x : E)
 
-open Classical in
-/-- The participants of a referent at a context are the discourse roles whose holders, the agent
-and the addressee, are part of it. -/
-noncomputable def participants : Finset Discourse.Role :=
-  Finset.univ.filter fun r ↦ (match r with | .speaker => c.agent | .addressee => c.addressee) ≤ x
+/-- The holder of a discourse role at a context, the agent for the speaker and the addressee for
+the addressee. -/
+def holder : Discourse.Role → E
+  | .speaker => c.agent
+  | .addressee => c.addressee
 
-@[simp] theorem speaker_mem_participants : .speaker ∈ c.participants x ↔ c.agent ≤ x := by
+@[simp] theorem holder_speaker : c.holder .speaker = c.agent := rfl
+@[simp] theorem holder_addressee : c.holder .addressee = c.addressee := rfl
+
+open Classical in
+/-- The participants of a referent at a context are the discourse roles whose holders are part of
+it. -/
+noncomputable def participants : Finset Discourse.Role :=
+  Finset.univ.filter fun r ↦ c.holder r ≤ x
+
+variable {c x} in
+theorem mem_participants {r : Discourse.Role} : r ∈ c.participants x ↔ c.holder r ≤ x := by
   simp [participants]
+
+@[simp] theorem speaker_mem_participants : .speaker ∈ c.participants x ↔ c.agent ≤ x :=
+  mem_participants
 
 @[simp] theorem addressee_mem_participants :
-    .addressee ∈ c.participants x ↔ c.addressee ≤ x := by
-  simp [participants]
+    .addressee ∈ c.participants x ↔ c.addressee ≤ x :=
+  mem_participants
 
 end Kaplan.Context
 
