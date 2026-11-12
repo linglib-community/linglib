@@ -3,6 +3,7 @@ module
 public import Linglib.Pragmatics.RSA.QUD
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Probability.Kernel.Posterior
+public import Linglib.Core.Probability.ConditionalProbability
 
 /-!
 # Scontras and Tonhauser (2025): Projection without Lexically-Specified Presupposition
@@ -12,8 +13,8 @@ without a lexical presupposition. A world settles whether Cole believes the comp
 whether it is true, *know* is factive and *think* is not, and the two questions of the
 experiments ask whether Cole believes the complement and whether it is true. A literal listener
 interprets the utterance within the speaker's private assumptions, a set of worlds, and answers
-the question (`L0`). The speaker is informative about the answer and pays a cost that doubles for
-the complex utterances (`S1`). The pragmatic listener, who hears the utterance and the question,
+the question (`L0`). The speaker is truthful, informative about the answer, and pays a cost that
+doubles for the complex utterances (`S1`). The pragmatic listener, who hears the utterance and the question,
 inverts the speaker jointly over worlds and assumptions (`L1`), as in the model of Qing, Goodman
 and Lassiter.
 
@@ -30,6 +31,10 @@ and Lassiter.
   Lassiter.
 * A simple utterance costs `k` and a complex one `2 * k`, the paper's cost of a simple utterance
   doubled.
+* The paper's speaker (6) is stated without a requirement of truth. The released model conditions
+  the speaker on the truth of her utterance at her world, and `S1` does the same; `S1Free` is the
+  speaker of the printed formula, who would call a false belief knowledge under the belief
+  question (`S1Free_knowPos_ne_zero`).
 
 ## TODO
 
@@ -88,6 +93,8 @@ instance : DecidablePred World.Knows := fun _ ↦ inferInstanceAs (Decidable (_ 
 def World.Thinks (w : World) : Prop := w.believes
 
 instance : DecidablePred World.Thinks := fun _ ↦ inferInstanceAs (Decidable (_ = true))
+
+theorem World.Knows.thinks {w : World} (h : w.Knows) : w.Thinks := h.1
 
 theorem World.knows_iff_thinks {w : World} (h : w.complement) : w.Knows ↔ w.Thinks :=
   and_iff_left h
@@ -201,22 +208,58 @@ theorem L0_univ_bel_knowNeg {w : World} (hb : w.believes = false) :
 /-- A simple utterance costs `k` and a complex one twice that (6). -/
 def cost (k : ℝ) (u : Utt) : ℝ := if u.Complex then 2 * k else k
 
-/-- The speaker within an assumption set (6) knows her world's answer to the question and is
-informative about the literal listener's belief about it at rationality `α`, less the cost. -/
-noncomputable def S1 (α k : ℝ) (A : Finset World) (q : Question) (w : World) : Measure Utt :=
+/-- The speaker of (6) without the requirement of truth: she knows her world's answer to the
+question and is informative about the literal listener's belief about it at rationality `α`, less
+the cost. -/
+noncomputable def S1Free (α k : ℝ) (A : Finset World) (q : Question) (w : World) : Measure Utt :=
   speaker α (cost k) (L0 A q) Measure.dirac (q.answer w)
+
+/-- The speaker within an assumption set (6) is truthful: she chooses among the utterances true
+at her world, informatively about her world's answer to the question and less the cost. -/
+noncomputable def S1 (α k : ℝ) (A : Finset World) (q : Question) (w : World) : Measure Utt :=
+  (S1Free α k A q w)[|{v | literal v w}]
+
+instance (α k : ℝ) (A : Finset World) (q : Question) (w : World) :
+    IsFiniteMeasure (S1Free α k A q w) :=
+  inferInstanceAs (IsFiniteMeasure (speaker _ _ _ _ _))
 
 instance (α k : ℝ) (A : Finset World) (q : Question) (w : World) :
     IsFiniteMeasure (S1 α k A q w) :=
-  inferInstanceAs (IsFiniteMeasure (speaker _ _ _ _ _))
+  inferInstanceAs (IsFiniteMeasure (ProbabilityTheory.cond _ _))
 
 variable (α k : ℝ)
 
+theorem S1_apply_singleton (A : Finset World) (q : Question) (w : World) (u : Utt)
+    [Decidable (literal u w)] :
+    S1 α k A q w {u} =
+      if literal u w then (S1Free α k A q w {v | literal v w})⁻¹ * S1Free α k A q w {u} else 0 := by
+  rw [S1, cond_apply .of_discrete]
+  split_ifs with h
+  · rw [Set.inter_eq_right.2 ((Set.singleton_subset_iff (s := {v | literal v w})).2 h)]
+  · rw [(Set.inter_singleton_eq_empty (s := {v | literal v w})).2 h, measure_empty, mul_zero]
+
+-- Truthfulness restricts the speaker: informativity about the answer alone would have her say
+-- *Cole knows that C* of a false belief under the belief question.
+theorem S1Free_knowPos_ne_zero (hα : 0 < α) :
+    S1Free α k Finset.univ .belief (true, false) {.knowPos} ≠ 0 := by
+  rw [S1Free, speaker_dirac_apply_singleton_ne_zero_iff hα]
+  rw [L0_apply, show l0 Finset.univ .belief .knowPos (true, false) = (1, 1) from by decide]
+  simp
+
+/-- The speaker never produces an utterance false at her world. -/
+theorem S1_apply_singleton_of_not_literal (A : Finset World) (q : Question) {w : World} {u : Utt}
+    (h : ¬ literal u w) : S1 α k A q w {u} = 0 := by
+  classical simp [S1_apply_singleton, h]
+
 /-- A speaker who assumes the complement produces negated *know* and negated *think* alike
-under either question, since they are equally informative and equally costly. -/
-theorem S1_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : Question) (w : World) :
-    S1 α k A q w {.knowNeg} = S1 α k A q w {.thinkNeg} := by
-  rw [S1, speaker_dirac_apply_singleton, speaker_dirac_apply_singleton, L0_knowNeg_eq_thinkNeg hA]
+under either question, since they are true together, equally informative and equally costly. -/
+theorem S1_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : Question) {w : World}
+    (hw : w ∈ A) : S1 α k A q w {.knowNeg} = S1 α k A q w {.thinkNeg} := by
+  have e : literal .knowNeg w ↔ literal .thinkNeg w :=
+    not_congr (World.knows_iff_thinks (mem_sem.1 (hA hw)))
+  classical
+  rw [S1_apply_singleton, S1_apply_singleton, if_congr e rfl rfl, S1Free,
+    speaker_dirac_apply_singleton, speaker_dirac_apply_singleton, L0_knowNeg_eq_thinkNeg hA]
   rfl
 
 /-- Without assumptions, a speaker addressing the belief question at a world in which Cole does
@@ -227,19 +270,23 @@ theorem S1_univ_bel_knowNeg_lt_thinkNeg (hα : 0 < α) {w : World} (hb : w.belie
       (S1 α k Finset.univ .belief w).real {.thinkNeg} := by
   have hc : cost k .thinkNeg = 2 * k := ite_eq_left (by decide)
   have hc' : cost k .knowNeg = 2 * k := ite_eq_left (by decide)
-  rw [S1, speaker_dirac_real_singleton_lt_iff hα.le
-      ⟨.thinkNeg, by rw [L0_univ_bel_thinkNeg hb]; exact one_ne_zero⟩, hc, hc',
-    ENNReal.mul_lt_mul_iff_left (ENNReal.ofReal_pos.2 (Real.exp_pos _)).ne' ENNReal.ofReal_ne_top,
-    L0_univ_bel_thinkNeg hb, L0_univ_bel_knowNeg hb, ENNReal.one_rpow, ← ENNReal.one_rpow α]
-  refine ENNReal.rpow_lt_rpow ?_ hα
-  rw [ENNReal.div_lt_iff (Or.inl three_ne_zero) (Or.inl (ENNReal.ofNat_ne_top)), one_mul]
-  norm_num
-
-/-- Under the belief question the speaker's choice depends on the world only through Cole's
-belief, as the question's answer does. -/
-theorem S1_bel_congr (A : Finset World) {w w' : World} (h : w.believes = w'.believes) :
-    S1 α k A .belief w = S1 α k A .belief w' := by
-  rw [S1, S1, show Question.answer .belief w = Question.answer .belief w' from h]
+  have hlt : (S1Free α k Finset.univ .belief w).real {.knowNeg} <
+      (S1Free α k Finset.univ .belief w).real {.thinkNeg} := by
+    rw [S1Free, speaker_dirac_real_singleton_lt_iff hα.le
+        ⟨.thinkNeg, by rw [L0_univ_bel_thinkNeg hb]; exact one_ne_zero⟩, hc, hc',
+      ENNReal.mul_lt_mul_iff_left (ENNReal.ofReal_pos.2 (Real.exp_pos _)).ne'
+        ENNReal.ofReal_ne_top,
+      L0_univ_bel_thinkNeg hb, L0_univ_bel_knowNeg hb, ENNReal.one_rpow, ← ENNReal.one_rpow α]
+    refine ENNReal.rpow_lt_rpow ?_ hα
+    rw [ENNReal.div_lt_iff (Or.inl three_ne_zero) (Or.inl (ENNReal.ofNat_ne_top)), one_mul]
+    norm_num
+  have hT : literal .thinkNeg w := by simp [literal, World.Thinks, hb]
+  have hK : literal .knowNeg w := fun h ↦ hT h.thinks
+  rw [S1, cond_real_apply _ .of_discrete, cond_real_apply _ .of_discrete,
+    Set.inter_eq_right.2 ((Set.singleton_subset_iff (s := {v | literal v w})).2 hK),
+    Set.inter_eq_right.2 ((Set.singleton_subset_iff (s := {v | literal v w})).2 hT)]
+  refine div_lt_div_of_pos_right hlt (lt_of_le_of_lt measureReal_nonneg (hlt.trans_le ?_))
+  exact measureReal_mono ((Set.singleton_subset_iff (s := {v | literal v w})).2 hT)
 
 /-! ### The pragmatic listener (7) -/
 
