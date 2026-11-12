@@ -24,6 +24,7 @@ after a sequence of overwrites it reads the context of the last overwrite that t
 * `Context.Coord`, `Context.equivPi`: the coordinates of a context, and the context as a function
   on them.
 * `Context.overwrite s c i`: `c` with the coordinates in `s` taken from `i`.
+* `Context.Coord.ofRole`: the coordinate holding a discourse role.
 * `Context.localDepth ss k`: the position of the last of the overwrites `ss` that takes `k`.
 * `shiftyOp s`: the shifty operator, evaluating its argument at the context overwritten from the
   index, Kaplan's `shiftBy (overwrite s)`.
@@ -119,6 +120,21 @@ theorem overwrite_overwrite : overwrite t (overwrite s c i) i = overwrite (s ∪
   split_ifs <;> tauto
 
 end overwrite
+
+/-! ### The coordinates of the discourse roles -/
+
+/-- The coordinate holding a discourse role, the agent coordinate for the speaker and the
+addressee coordinate for the addressee. -/
+def Coord.ofRole : Discourse.Role ↪ Coord where
+  toFun
+    | .speaker => .agent
+    | .addressee => .addressee
+  inj' a b h := by cases a <;> cases b <;> first | rfl | cases h
+
+/-- Overwriting replaces the holder of a role exactly when it takes the role's coordinate. -/
+theorem holder_overwrite (s : Finset Coord) (c i : Context W E P T) (r : Discourse.Role) :
+    (overwrite s c i).holder r = if Coord.ofRole r ∈ s then i.holder r else c.holder r := by
+  cases r <;> rfl
 
 /-! ### Expressions reading some coordinates -/
 

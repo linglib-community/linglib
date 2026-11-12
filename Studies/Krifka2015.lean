@@ -537,28 +537,28 @@ theorem relevanceSign_evidence (μ : MeasureTheory.Measure Weather)
 
 section Tags
 
-variable {W : Type*} (O : Discourse.Role → SetRel W W) (C : Space (Set (Set W))) (φ : Set W)
+variable {A W : Type*} (O : A → SetRel W W) (s₁ s₂ : A) (C : Space (Set (Set W))) (φ : Set W)
 
-/-- A matching tag conjoins the assertion with the monopolar question of the same content
-(44). -/
+/-- A matching tag conjoins `s₁`'s assertion with the monopolar question to `s₂` of the same
+content (44). -/
 def matchingTag : Set (Set (Set W)) :=
-  ↑(C.assert O .speaker φ) ∩ ↑(C.monopolarQuestion O .addressee φ)
+  ↑(C.assert O s₁ φ) ∩ ↑(C.monopolarQuestion O s₂ φ)
 
 /-- A reverse tag disjoins the assertion with the monopolar question of the negation (45). -/
 def reverseTag : Set (Set (Set W)) :=
-  ↑(C.assert O .speaker φ) ∪ ↑(C.monopolarQuestion O .addressee φᶜ)
+  ↑(C.assert O s₁ φ) ∪ ↑(C.monopolarQuestion O s₂ φᶜ)
 
 -- p. 342
-theorem matchingTag_eq (hk : committed O .speaker φ ∉ C.root)
-    (h : Admits C {committed O .addressee φ, committed O .speaker φ}) :
-    matchingTag O C φ = ↑(C.update {committed O .addressee φ, committed O .speaker φ}) := by
+theorem matchingTag_eq (hk : committed O s₁ φ ∉ C.root)
+    (h : Admits C {committed O s₂ φ, committed O s₁ φ}) :
+    matchingTag O s₁ s₂ C φ = ↑(C.update {committed O s₂ φ, committed O s₁ φ}) := by
   rw [C.coe_update_of_root_mem h]
   ext d
   simp only [matchingTag, Set.mem_inter_iff, SetLike.mem_coe, mem_monopolarQuestion, Set.mem_Ici]
   constructor
   · rintro ⟨hs, rfl | ⟨hd, ha⟩⟩
     · exact absurd ((C.root_mem_assert_iff _ _ _).1 hs) hk
-    · have hks : committed O .speaker φ ∈ d :=
+    · have hks : committed O s₁ φ ∈ d :=
         ((C.mem_assert _ _ _).1 hs).elim (fun e ↦ e ▸ C.committed_mem_root_assert _ _ _)
           And.right
       exact ⟨hd, Set.insert_subset ha (Set.singleton_subset_iff.2 hks)⟩
@@ -566,9 +566,9 @@ theorem matchingTag_eq (hk : committed O .speaker φ ∉ C.root)
     exact ⟨(C.mem_assert _ _ _).2 (Or.inr ⟨hd, hsub (Or.inr rfl)⟩),
       Or.inr ⟨hd, hsub (Or.inl rfl)⟩⟩
 
-theorem reverseTag_eq (h : Admits C {committed O .speaker φ}) :
-    reverseTag O C φ =
-      ↑(C.question {{committed O .speaker φ}, {committed O .addressee φᶜ}}) := by
+theorem reverseTag_eq (h : Admits C {committed O s₁ φ}) :
+    reverseTag O s₁ s₂ C φ =
+      ↑(C.question {{committed O s₁ φ}, {committed O s₂ φᶜ}}) := by
   ext d
   constructor
   · rintro (hd | hd)
@@ -582,72 +582,72 @@ theorem reverseTag_eq (h : Admits C {committed O .speaker φ}) :
     · exact Or.inl ((C.mem_assert _ _ _).2 (Or.inr ⟨hd, hq rfl⟩))
     · exact Or.inr ((mem_monopolarQuestion ..).2 (Or.inr ⟨hd, hq rfl⟩))
 
-theorem isLeast_reverseTag : IsLeast (reverseTag O C φ) C.root :=
+theorem isLeast_reverseTag : IsLeast (reverseTag O s₁ s₂ C φ) C.root :=
   ⟨Or.inr (Space.root_mem _), by
     rintro d (hd | hd)
-    · exact (C.root_le_root_update _).trans ((C.assert O .speaker φ).root_le hd)
-    · exact (C.monopolarQuestion O .addressee φᶜ).root_le hd⟩
+    · exact (C.root_le_root_update _).trans ((C.assert O s₁ φ).root_le hd)
+    · exact (C.monopolarQuestion O s₂ φᶜ).root_le hd⟩
 
 /-- When the addressee contradicts a plain assertion, the speaker is still committed
 (p. 342). -/
 theorem committed_speaker_mem_root_assert_assert (ψ : Set W) :
-    committed O .speaker φ ∈ ((C.assert O .speaker φ).assert O .addressee ψ).root :=
-  (C.assert O .speaker φ).root_le_root_update _ (C.committed_mem_root_assert _ _ _)
+    committed O s₁ φ ∈ ((C.assert O s₁ φ).assert O s₂ ψ).root :=
+  (C.assert O s₁ φ).root_le_root_update _ (C.committed_mem_root_assert _ _ _)
 
-variable [Nonempty W] {O φ}
+variable [Nonempty W] {O s₁ s₂ φ}
 
-theorem isLeast_matchingTag (h : Coherent {committed O .addressee φ, committed O .speaker φ}) :
-    IsLeast (matchingTag O (coherent W) φ)
-      {committed O .addressee φ, committed O .speaker φ} := by
-  rw [matchingTag_eq _ _ φ (Set.notMem_empty _) (admits_coherent_iff.2 h)]
-  have h' := ((coherent W).update {committed O .addressee φ, committed O .speaker φ}).isLeast
+theorem isLeast_matchingTag (h : Coherent {committed O s₂ φ, committed O s₁ φ}) :
+    IsLeast (matchingTag O s₁ s₂ (coherent W) φ)
+      {committed O s₂ φ, committed O s₁ φ} := by
+  rw [matchingTag_eq _ _ _ _ φ (Set.notMem_empty _) (admits_coherent_iff.2 h)]
+  have h' := ((coherent W).update {committed O s₂ φ, committed O s₁ φ}).isLeast
   rwa [root_update_coherent h] at h'
 
 -- p. 342
-theorem not_admits_matchingTag_no [ModalLogic.IsSerial (O .addressee)]
-    (h : Coherent {committed O .addressee φ, committed O .speaker φ}) :
-    ¬ Admits ((coherent W).update {committed O .addressee φ, committed O .speaker φ})
-      {committed O .addressee φᶜ} := fun h' ↦
-  not_coherent_committed_committed_compl (O := O) (a := .addressee) (φ := φ) <|
+theorem not_admits_matchingTag_no [ModalLogic.IsSerial (O s₂)]
+    (h : Coherent {committed O s₂ φ, committed O s₁ φ}) :
+    ¬ Admits ((coherent W).update {committed O s₂ φ, committed O s₁ φ})
+      {committed O s₂ φᶜ} := fun h' ↦
+  not_coherent_committed_committed_compl (O := O) (a := s₂) (φ := φ) <|
     Coherent.mono (Set.insert_subset (Or.inr (Or.inl rfl)) (Set.singleton_subset_iff.2
       (Or.inl rfl))) <| admits_coherent_iff.1 <|
         (admits_update_iff _ (admits_coherent_iff.2 h)).1 h'
 
 /-- Rejecting an assertion with a matching tag and answering *no* leaves only the addressee's
 commitment, the speaker's being rejected with the tag (p. 342). -/
-theorem root_reject_matchingTag_no (h : (committed O .addressee φᶜ).Nonempty) :
+theorem root_reject_matchingTag_no (h : (committed O s₂ φᶜ).Nonempty) :
     (((start W).perform
-        (·.update {committed O .addressee φ, committed O .speaker φ})).reject.perform
-      (·.assert O .addressee φᶜ)).current.root = {committed O .addressee φᶜ} :=
+        (·.update {committed O s₂ φ, committed O s₁ φ})).reject.perform
+      (·.assert O s₂ φᶜ)).current.root = {committed O s₂ φᶜ} :=
   root_update_coherent (coherent_singleton.2 h)
 
-theorem admits_assert_no (hs : (committed O .speaker φ).Nonempty)
-    (h : Coherent {committed O .addressee φᶜ, committed O .speaker φ}) :
-    Admits ((coherent W).assert O .speaker φ) {committed O .addressee φᶜ} :=
+theorem admits_assert_no (hs : (committed O s₁ φ).Nonempty)
+    (h : Coherent {committed O s₂ φᶜ, committed O s₁ φ}) :
+    Admits ((coherent W).assert O s₁ φ) {committed O s₂ φᶜ} :=
   (admits_update_iff _ (admits_coherent_iff.2 (coherent_singleton.2 hs))).2
     (admits_coherent_iff.2 h)
 
 -- p. 343
-theorem root_reverseTag_update_yes [ModalLogic.IsSerial (O .addressee)]
-    (h : Coherent {committed O .addressee φ, committed O .speaker φ}) :
-    (((coherent W).question {{committed O .speaker φ}, {committed O .addressee φᶜ}}).update
-        {committed O .addressee φ}).root =
-      {committed O .addressee φ, committed O .speaker φ} := by
-  have h' : ∀ q ∈ ({{committed O .speaker φ}, {committed O .addressee φᶜ}} : Set (Set (Set W))),
-      q ≠ {committed O .speaker φ} → ∀ d ∈ coherent W, ¬ {committed O .addressee φ} ∪ q ⊆ d := by
+theorem root_reverseTag_update_yes [ModalLogic.IsSerial (O s₂)]
+    (h : Coherent {committed O s₂ φ, committed O s₁ φ}) :
+    (((coherent W).question {{committed O s₁ φ}, {committed O s₂ φᶜ}}).update
+        {committed O s₂ φ}).root =
+      {committed O s₂ φ, committed O s₁ φ} := by
+  have h' : ∀ q ∈ ({{committed O s₁ φ}, {committed O s₂ φᶜ}} : Set (Set (Set W))),
+      q ≠ {committed O s₁ φ} → ∀ d ∈ coherent W, ¬ {committed O s₂ φ} ∪ q ⊆ d := by
     rintro q (rfl | rfl) hne d hd hsub
     · exact absurd rfl hne
-    · exact not_coherent_committed_committed_compl (O := O) (a := .addressee) (φ := φ)
+    · exact not_coherent_committed_committed_compl (O := O) (a := s₂) (φ := φ)
         (Coherent.mono hsub hd)
   rw [question_update_of_forall _ (not_subset_root_coherent _) (Or.inl rfl) h']
   exact root_update_coherent h
 
 -- p. 343
-theorem root_reverseTag_update_no (h : (committed O .addressee φᶜ).Nonempty) :
-    (((coherent W).question {{committed O .speaker φ}, {committed O .addressee φᶜ}}).update
-        {committed O .addressee φᶜ}).root = {committed O .addressee φᶜ} := by
+theorem root_reverseTag_update_no (h : (committed O s₂ φᶜ).Nonempty) :
+    (((coherent W).question {{committed O s₁ φ}, {committed O s₂ φᶜ}}).update
+        {committed O s₂ φᶜ}).root = {committed O s₂ φᶜ} := by
   rw [question_update_of_mem (coherent W)
-    (P := {{committed O .speaker φ}, {committed O .addressee φᶜ}}) (Or.inr rfl)]
+    (P := {{committed O s₁ φ}, {committed O s₂ φᶜ}}) (Or.inr rfl)]
   exact root_update_coherent (coherent_singleton.2 h)
 
 end Tags
