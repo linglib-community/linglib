@@ -162,9 +162,8 @@ private abbrev top : Restrictor Bool Unit := fun _ _ ↦ Set.univ
 entity. -/
 private theorem unique_ne_anaphoric : (unique top).toNominal ≠ (anaphoric top 0).toNominal := by
   intro h
-  have h' := congrFun (congrFun (congrArg Nominal.selector h) fun _ ↦ true) ()
-  rw [DefiniteDescription.toNominal_selector, DefiniteDescription.toNominal_selector,
-    DefiniteDescription.denote_unique_eq_none_of_ne top _ _ (x := true) (y := false) trivial
+  have h' := Part.ofOption_injective (congrFun (congrFun h fun _ ↦ true) ())
+  rw [DefiniteDescription.denote_unique_eq_none_of_ne top _ _ (x := true) (y := false) trivial
       trivial (by decide)] at h'
   exact Option.some_ne_none true
     (h'.trans ((DefiniteDescription.denote_anaphoric_eq_some_iff top 0 _ ()).2 ⟨trivial, rfl⟩)).symm
@@ -189,16 +188,25 @@ theorem lexicalizes_article_iotaAnaphoric_iff (a : Article) :
   · exact hp
 
 /-- A demonstrative lexicalizes no covert shift: where no referent has the indexed one in its
-vicinity, its deictic presupposition fails and the definite's does not. -/
+vicinity, it denotes nothing and the definite does. -/
 theorem not_lexicalizes_demonstrative (dem : DemonstrativeDeterminer) (τ : CovertShift) :
     ¬ (demonstrative dem).Lexicalizes τ := by
-  have key : ∀ k : DefiniteDescription Unit Unit,
-      dem.denote (fun _ _ _ ↦ True) 0 unitContext ⊥ ≠ k.toNominal := fun k h ↦ by
-    have h' := congrFun (congrFun (congrArg Nominal.presup h) fun _ ↦ ()) ()
-    simp [DemonstrativeDeterminer.denote, SetRel.image] at h'
+  have key : ∀ k : DefiniteDescription Unit Unit, (⟦k⟧ (fun _ ↦ ()) ()).isSome →
+      dem.denote (fun _ _ _ ↦ True) 0 unitContext ⊥ ≠ k.toNominal := fun k hk h ↦ by
+    have hd : (k.toNominal (fun _ ↦ ()) ()).Dom := (Part.ofOption_dom _).2 hk
+    rw [← h] at hd
+    obtain ⟨hv, -⟩ := hd
+    simp at hv
   cases τ
-  exacts [id, fun h ↦ key _ (h Unit Unit Unit Unit unitContext ⊥ _ 0),
-    fun h ↦ key _ (h Unit Unit Unit Unit unitContext ⊥ _ 0), id]
+  · exact id
+  · exact fun h ↦ key (bare fun _ _ _ ↦ True)
+      ((DefiniteDescription.denote_isSome_iff _ _ _).2 ⟨(), trivial, fun _ _ ↦ rfl⟩)
+      (h Unit Unit Unit Unit unitContext ⊥ _ 0)
+  · exact fun h ↦ key (anaphoric (fun _ _ _ ↦ True) 0)
+      (Option.isSome_iff_exists.2
+        ⟨(), (DefiniteDescription.denote_anaphoric_eq_some_iff _ 0 _ ()).2 ⟨trivial, rfl⟩⟩)
+      (h Unit Unit Unit Unit unitContext ⊥ _ 0)
+  · exact id
 
 /-- A possessive lexicalizes no covert shift: under the empty possession relation it is undefined
 where the definite is not. -/
@@ -207,8 +215,7 @@ theorem not_lexicalizes_possessive (p : PossessiveDeterminer) (τ : CovertShift)
   have key : ∀ k : DefiniteDescription Unit Unit, (⟦k⟧ (fun _ ↦ ()) ()).isSome →
       p.denote (fun _ _ ↦ Set.univ) (fun _ _ ↦ ()) (fun _ _ _ _ ↦ False) ≠ k.toNominal :=
     fun k hk h ↦ by
-      have h' := congrFun (congrFun (congrArg Nominal.selector h) fun _ ↦ ()) ()
-      rw [PossessiveDeterminer.denote_selector, DefiniteDescription.toNominal_selector] at h'
+      have h' := Part.ofOption_injective (congrFun (congrFun h fun _ ↦ ()) ())
       rw [← h', DefiniteDescription.denote_possessive_isSome_iff] at hk
       simp at hk
   cases τ

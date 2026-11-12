@@ -71,7 +71,7 @@ def IndexAvailable (env : DefiniteDescription.Use) : Prop := env.strength = .fam
 
 /-- An inventory has a form for a presupposition when an article marks it or, for familiarity,
 when it has a demonstrative, whose description is the strong article's
-(`DemonstrativeDeterminer.denote_selector_eq_anaphoric`) and so supplies the index of ι^x. -/
+(`DemonstrativeDeterminer.mem_denote`) and so supplies the index of ι^x. -/
 def HasForm (inv : Inventory) : DefiniteDescription.Strength → Prop
   | .uniqueness => inv.Marks .uniqueness
   | .familiarity => inv.Marks .familiarity ∨ inv.Realizes .demonstrative

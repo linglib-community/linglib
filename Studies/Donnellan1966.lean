@@ -14,8 +14,8 @@ public import Linglib.Semantics.Reference.Iota
 
 Donnellan distinguishes two uses of a definite description. Used attributively, *the φ* denotes
 at each world whoever uniquely satisfies φ there, the Russellian iota taken pointwise
-(`attributive`, `attributive_eq_some_iff`), and as a nominal denotation its only presupposition
-is that the iota is defined (`attributiveNominal`, `attributiveNominal_resolve_eq_one_iff`). Used
+(`attributive`, `attributive_eq_some_iff`), and as a nominal denotation it denotes where the
+iota is defined (`attributiveNominal`, `attributiveNominal_toTrivalent_eq_true_iff`). Used
 referentially, it denotes the individual the speaker has in mind whatever the world: the
 constant character (`Character.const`), whose content is rigid.
 The two uses come apart in Donnellan's scene of the man with the martini: when the intended
@@ -50,14 +50,14 @@ noncomputable def attributive (φ : E → W → Prop) : W → Option E := fun w 
 theorem attributive_eq_some_iff : attributive φ w = some e ↔ φ e w ∧ ∀ x, φ x w → x = e :=
   iota_eq_some_iff
 
-/-- The attributive use as a nominal denotation, whose selector is the pointwise iota and which
-presupposes nothing beyond the iota's definedness. -/
+/-- The attributive use as a nominal denotation, the pointwise iota where it is defined. -/
 noncomputable def attributiveNominal (φ : E → W → Prop) : Nominal Unit W E :=
-  .ofReferent (attributive φ)
+  fun _ w ↦ ↑(attributive φ w)
 
-theorem attributiveNominal_resolve_eq_one_iff (ψ : E → W → Prop) (h : attributive φ w = some e) :
-    (attributiveNominal φ).resolve ψ () w = .true ↔ ψ e w := by
-  simp [attributiveNominal, Nominal.ofReferent_resolve, Presupposition.presupOfReferent_of_some h]
+theorem attributiveNominal_toTrivalent_eq_true_iff (ψ : E → W → Prop)
+    (h : attributive φ w = some e) :
+    (attributiveNominal φ).toTrivalent ψ () w = .true ↔ ψ e w := by
+  simp [attributiveNominal, h]
 
 theorem attributive_ne_const_of_misfit (h : attributive φ w = some e) (hne : e ≠ intended) :
     attributive φ w ≠ some (Character.const intended () w) := by
