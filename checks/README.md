@@ -175,3 +175,60 @@ reads `checks.py status --json`.
 
 Who checks which source is arranged in GitHub issues, not here. The files record only what has been
 checked.
+
+## The ledger (planned)
+
+*This section describes a change that is not built yet. It replaces the `[[item.check]]` blocks,
+and will become documentation when it is.*
+
+A sign-off now records a `commit`, and `diff` and the docs compare link use it. The repository
+squashes pull requests, so a commit made on a PR branch never reaches `main`. A sign-off must not
+depend on one. It must hold what the signer read.
+
+Sign-offs move out of the item files into an append-only ledger, `checks/ledger/`, with one file
+per signing event, so that two people signing at once do not conflict. A file is named by the
+hash of its contents, and holds the items signed, each with the hash of its statement closure
+and the closure itself:
+
+```toml
+# checks/ledger/<hash>.toml
+source      = "elliott-2023"
+by          = "A. Reviewer"        # who checked; a GitHub login is not required
+recorded_by = "patrl"              # who added this file: the author of the PR
+via         = "email"              # required when `by` is not `recorded_by`
+date        = 2026-11-12
+
+[[item]]
+id   = "ex-22"
+hash = "a1a64c03eb680068"
+nodes = [{ name = "DynamicSemantics.…", term = "9f2c…", text = "41b7…" }]
+```
+
+`ledger/nodes/<text-hash>.txt` holds the text of each declaration in the closure as the signer
+read it, shared by every sign-off that read it. `diff` compares those texts with the current ones,
+so it needs no commit and still works after a squash. The docs pages say what changed since the
+sign-off in the same way, instead of linking to a comparison of commits. An item is current if
+the hash of its newest ledger entry is its hash now.
+
+**Who checks.** `recorded_by` is the GitHub account that adds the file. A reviewer without an
+account is named in `by`, and a maintainer records the sign-off for them, giving `via`: how
+the reviewer made the check known, such as `email` or `issue #123`, with no contact details. A
+sign-off recorded by a maintainer for someone else is shown as such: "checked by A. Reviewer,
+recorded by patrl". Sign-offs are still made by people, never by agents.
+
+CI fails a pull request that:
+
+* changes or deletes a file in `checks/ledger/`, or has one whose name is not the hash of its
+  contents;
+* has a `recorded_by` that is not the PR's author, or is a bot;
+* has a `by` that names a bot or an agent;
+* has `by` different from `recorded_by` without a `via`, or recorded by someone not listed in
+  `checks/MAINTAINERS`.
+
+CI cannot tell a person from an agent working under that person's account. The check in `sign`
+that refuses to run under Claude Code is a guard against accidents, and a maintainer who records
+a sign-off for someone else vouches for it.
+
+Not part of this change: a proof that a changed statement still agrees with a signed one (the
+texts stored here are what such a proof would be stated against), and a split of the item files
+into an inventory of the source's items and a mapping to declarations kept in the Lean source.
