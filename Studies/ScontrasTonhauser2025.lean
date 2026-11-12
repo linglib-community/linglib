@@ -128,6 +128,22 @@ def sem (u : Utt) : Finset World := Finset.univ.filter (literal u)
 
 @[simp] theorem mem_sem {u : Utt} {w : World} : w ∈ sem u ↔ literal u w := by simp [sem]
 
+/-- The negative counterpart of a positive utterance and the positive counterpart of a negative
+one. -/
+def Utt.neg : Utt → Utt
+  | .knowPos => .knowNeg
+  | .knowNeg => .knowPos
+  | .thinkPos => .thinkNeg
+  | .thinkNeg => .thinkPos
+  | .cPos => .cNeg
+  | .cNeg => .cPos
+
+/-- Negation is logical in (4): a negative utterance is true where its positive counterpart is
+false. -/
+theorem sem_neg (u : Utt) : sem u.neg = (sem u)ᶜ := by
+  revert u
+  decide
+
 theorem sem_thinkNeg_ssubset_sem_knowNeg : sem .thinkNeg ⊂ sem .knowNeg := by decide
 
 /-! ### The literal listener within an assumption set (5) -/
@@ -246,7 +262,6 @@ theorem S1Free_knowPos_ne_zero (hα : 0 < α) :
   rw [L0_apply, show l0 Finset.univ .belief .knowPos (true, false) = (1, 1) from by decide]
   simp
 
-/-- The speaker never produces an utterance false at her world. -/
 theorem S1_apply_singleton_of_not_literal (A : Finset World) (q : Question) {w : World} {u : Utt}
     (h : ¬ literal u w) : S1 α k A q w {u} = 0 := by
   classical simp [S1_apply_singleton, h]
