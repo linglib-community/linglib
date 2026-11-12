@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.Minimal
-public import Linglib.Semantics.Questions.Entailment
+public import Linglib.Semantics.Questions.Partition.Basic
 public import Studies.Spector2014
 
 /-!
@@ -25,9 +25,9 @@ its question.
 
 ## Implementation notes
 
-An assertion is relevant to a question when the question decides it, `Question.decided`, and
-relevant in a context `c` when `Question.ofSet c ⊓ Q` does. Strength is entailment of the meanings
-and does not read the context. Complexity takes values in any preorder, so the structural order on
+A question is a partition, and an assertion is relevant to it in a context when the question
+determines it there, `Setoid.DeterminesOn`. Strength is entailment of the meanings and does not
+read the context. Complexity takes values in any preorder, so the structural order on
 trees can be supplied. The definite article carries its presupposition in its truth conditions.
 The focus semantic value an assertion's question must lie in is an argument of `Felicitous`.
 
@@ -58,7 +58,7 @@ The focus semantic value an assertion's question must lie in is an argument of `
 
 namespace KatzirSingh2015
 
-open Set Question Aristotelian
+open Set Aristotelian
 open Spector2014 (NoTrivialAlternatives)
 
 variable {W U C X : Type*} [Preorder C]
@@ -67,70 +67,70 @@ variable {W U C X : Type*} [Preorder C]
 
 section GoodAnswer
 
-variable (meaning : U → Set W) (complexity : U → C) (Q : Question W) {u v : U} {w : W}
+variable (meaning : U → Set W) (complexity : U → C) (c : Set W) (Q : Setoid W) {u v : U} {w : W}
 
 /-- A good answer at `w` is true, relevant, and not needlessly worse than a true relevant
 alternative (15). In the product order one alternative is at least as good as another when it is
 at most as complex and at least as strong (16a), and better when the comparison is strict
 (16b). -/
 def GoodAnswer (u : U) (w : W) : Prop :=
-  MinimalFor (fun v ↦ w ∈ meaning v ∧ meaning v ∈ Q.decided) (fun v ↦ (complexity v, meaning v)) u
+  MinimalFor (fun v ↦ w ∈ meaning v ∧ Q.DeterminesOn (meaning v) c)
+    (fun v ↦ (complexity v, meaning v)) u
 
 /-- An assertion is felicitous at `w` in the context `c` when it is a good answer to a good
-question it is congruent to, one whose alternatives lie in its focus semantic value (8). -/
-def Felicitous (c : Set W) (good : Set (Question W)) (focus : U → Set (Set W)) (u : U) (w : W) :
-    Prop :=
-  ∃ Q ∈ good, alt Q ⊆ focus u ∧ GoodAnswer meaning complexity (ofSet c ⊓ Q) u w
+question it is congruent to, one whose answers lie in its focus semantic value (8). -/
+def Felicitous (good : Set (Setoid W)) (focus : U → Set (Set W)) (u : U) (w : W) : Prop :=
+  ∃ Q ∈ good, Q.classes ⊆ focus u ∧ GoodAnswer meaning complexity c Q u w
 
-variable {meaning complexity Q}
+variable {meaning complexity c Q}
 
-theorem goodAnswer_iff : GoodAnswer meaning complexity Q u w ↔
-    w ∈ meaning u ∧ meaning u ∈ Q.decided ∧ ∀ ⦃v⦄, (complexity v, meaning v) <
-      (complexity u, meaning u) → ¬ (w ∈ meaning v ∧ meaning v ∈ Q.decided) := by
+theorem goodAnswer_iff : GoodAnswer meaning complexity c Q u w ↔
+    w ∈ meaning u ∧ Q.DeterminesOn (meaning u) c ∧ ∀ ⦃v⦄, (complexity v, meaning v) <
+      (complexity u, meaning u) → ¬ (w ∈ meaning v ∧ Q.DeterminesOn (meaning v) c) := by
   rw [GoodAnswer, minimalFor_iff_forall_lt, and_assoc]
 
-theorem GoodAnswer.mem (h : GoodAnswer meaning complexity Q u w) : w ∈ meaning u := h.1.1
+theorem GoodAnswer.mem (h : GoodAnswer meaning complexity c Q u w) : w ∈ meaning u := h.1.1
 
-theorem GoodAnswer.mem_decided (h : GoodAnswer meaning complexity Q u w) :
-    meaning u ∈ Q.decided :=
+theorem GoodAnswer.determinesOn (h : GoodAnswer meaning complexity c Q u w) :
+    Q.DeterminesOn (meaning u) c :=
   h.1.2
 
 -- (17), (18), (21)
 theorem not_goodAnswer_of_stronger (hc : complexity v ≤ complexity u)
-    (hs : meaning v ⊂ meaning u) (hw : w ∈ meaning v) (hr : meaning v ∈ Q.decided) :
-    ¬ GoodAnswer meaning complexity Q u w :=
+    (hs : meaning v ⊂ meaning u) (hw : w ∈ meaning v) (hr : Q.DeterminesOn (meaning v) c) :
+    ¬ GoodAnswer meaning complexity c Q u w :=
   fun h ↦ h.not_lt ⟨hw, hr⟩ (Prod.mk_lt_mk.2 (.inr ⟨hc, hs⟩))
 
 theorem not_goodAnswer_of_simpler (hc : complexity v < complexity u)
-    (hs : meaning v ⊆ meaning u) (hw : w ∈ meaning v) (hr : meaning v ∈ Q.decided) :
-    ¬ GoodAnswer meaning complexity Q u w :=
+    (hs : meaning v ⊆ meaning u) (hw : w ∈ meaning v) (hr : Q.DeterminesOn (meaning v) c) :
+    ¬ GoodAnswer meaning complexity c Q u w :=
   fun h ↦ h.not_lt ⟨hw, hr⟩ (Prod.mk_lt_mk.2 (.inl ⟨hc, hs⟩))
 
 theorem not_goodAnswer_of_meaning_eq (hc : complexity v < complexity u)
-    (h : meaning v = meaning u) : ¬ GoodAnswer meaning complexity Q u w :=
-  fun hu ↦ not_goodAnswer_of_simpler hc h.le (h.ge hu.mem) (h ▸ hu.mem_decided) hu
+    (h : meaning v = meaning u) : ¬ GoodAnswer meaning complexity c Q u w :=
+  fun hu ↦ not_goodAnswer_of_simpler hc h.le (h.ge hu.mem) (h ▸ hu.determinesOn) hu
 
 -- (22)
 theorem not_goodAnswer_disj {d φ ψ : U} (hd : meaning d = meaning φ ∪ meaning ψ)
     (hψ : meaning ψ ⊆ meaning φ) (hc : complexity φ < complexity d) :
-    ¬ GoodAnswer meaning complexity Q d w :=
+    ¬ GoodAnswer meaning complexity c Q d w :=
   not_goodAnswer_of_meaning_eq hc (hd.trans (union_eq_left.2 hψ)).symm
 
 -- (23)
 theorem not_goodAnswer_conj {k φ ψ : U} (hk : meaning k = meaning φ ∩ meaning ψ)
     (hψ : meaning φ ⊆ meaning ψ) (hc : complexity φ < complexity k) :
-    ¬ GoodAnswer meaning complexity Q k w :=
+    ¬ GoodAnswer meaning complexity c Q k w :=
   not_goodAnswer_of_meaning_eq hc (hk.trans (inter_eq_left.2 hψ)).symm
 
 -- the disjunctions of [katzir-singh-2014] (25), which mean what a plain disjunction means
 theorem not_goodAnswer_disj_compl_inter {d e φ ψ : U}
     (hd : meaning d = meaning φ ∪ (meaning φ)ᶜ ∩ meaning ψ)
     (he : meaning e = meaning φ ∪ meaning ψ) (hc : complexity e < complexity d) :
-    ¬ GoodAnswer meaning complexity Q d w :=
+    ¬ GoodAnswer meaning complexity c Q d w :=
   not_goodAnswer_of_meaning_eq hc (by rw [hd, he, union_inter_distrib_left, union_compl_self,
     univ_inter])
 
-variable {c : Set W} {good good' : Set (Question W)} {focus : U → Set (Set W)}
+variable {good good' : Set (Setoid W)} {focus : U → Set (Set W)}
 
 theorem Felicitous.mono (h : Felicitous meaning complexity c good focus u w)
     (hg : good ⊆ good') : Felicitous meaning complexity c good' focus u w :=
@@ -151,16 +151,6 @@ theorem not_felicitous_conj {k φ ψ : U} (hk : meaning k = meaning φ ∩ meani
   fun ⟨_, _, _, ha⟩ ↦ not_goodAnswer_conj hk hψ hc ha
 
 end GoodAnswer
-
--- the question that asks which world is actual decides every proposition
-theorem mem_decided_iInf_polar_singleton (p : Set W) :
-    p ∈ (⨅ w : W, polar {w}).decided := mem_decided.2 fun σ hσ ↦ mem_polar.2 <| by
-  by_contra! h
-  obtain ⟨x, hx, hxp⟩ := not_subset.1 h.1
-  obtain ⟨y, hy, hyp⟩ := not_subset.1 h.2
-  rcases mem_polar.1 (le_def.1 (iInf_le (fun w : W ↦ polar {w}) x) hσ) with hs | hs
-  · exact hyp (by rwa [mem_singleton_iff.1 (hs hy)])
-  · exact hs hx rfl
 
 /-! ### Some and all
 
@@ -184,26 +174,28 @@ theorem Scalar.mem_meaning_all : Triangle.A ∈ Scalar.meaning .all_ := Finset.m
 
 section Scalar
 
-variable {complexity : Scalar → C} {Q : Question Triangle}
+variable {complexity : Scalar → C} {c : Set Triangle} {Q : Setoid Triangle}
 
 -- (17b), (20b)
 theorem goodAnswer_all (hc : complexity .all_ ≤ complexity .some_)
-    (hr : Scalar.meaning .all_ ∈ Q.decided) : GoodAnswer Scalar.meaning complexity Q .all_ .A :=
+    (hr : Q.DeterminesOn (Scalar.meaning .all_) c) :
+    GoodAnswer Scalar.meaning complexity c Q .all_ .A :=
   ⟨⟨Scalar.mem_meaning_all, hr⟩, fun v _ _ ↦ by
     cases v
     exacts [⟨hc, Scalar.meaning_all_ssubset_some.subset⟩, le_rfl]⟩
 
 /-- Where *all* is true and no more complex, *some* is a needlessly weak answer to any question
-that decides *all*, whatever is known ((17a), (19a), (20a)). -/
+that determines *all*, whatever is known ((17a), (19a), (20a)). -/
 theorem not_goodAnswer_some (hc : complexity .all_ ≤ complexity .some_)
-    (hr : Scalar.meaning .all_ ∈ Q.decided) : ¬ GoodAnswer Scalar.meaning complexity Q .some_ .A :=
+    (hr : Q.DeterminesOn (Scalar.meaning .all_) c) :
+    ¬ GoodAnswer Scalar.meaning complexity c Q .some_ .A :=
   not_goodAnswer_of_stronger hc Scalar.meaning_all_ssubset_some Scalar.mem_meaning_all hr
 
 end Scalar
 
 /-- In the context of (19) every alternative of *some* and of *all* is trivial, whatever the
-question, the explicit one of (20) included, under which *all* is a good answer (`goodAnswer_all`
-with `mem_decided_iInf_polar_singleton`). -/
+question, the explicit one of (20) included, the finest question, under which *all* is a good
+answer (`goodAnswer_all` with `Setoid.bot_determines`). -/
 theorem not_noTrivialAlternatives_scalar (u : Scalar) :
     ¬ NoTrivialAlternatives {w | w ≠ .IO} (range Scalar.meaning) u.meaning :=
   have h : ∀ v : Scalar, v.meaning ∩ {w | w ≠ Triangle.IO} = {Triangle.A} := by
@@ -229,7 +221,7 @@ def Article.meaning : Article → Set Sky
   | .the => {.oneShining}
 
 /-- Whether the sun is shining. -/
-abbrev shining : Question Sky := polar {.oneShining}
+abbrev shining : Setoid Sky := Setoid.polar {.oneShining}
 
 theorem Article.meaning_the_ssubset_a : Article.meaning .the ⊂ Article.meaning .a :=
   ⟨by simp [Article.meaning], fun h ↦ by simpa [Article.meaning] using @h .many⟩
@@ -240,19 +232,15 @@ theorem Article.meaning_inter_ne_many (u : Article) : u.meaning ∩ {.many}ᶜ =
   cases u <;> cases w <;> simp [Article.meaning]
 
 -- (21a)
-theorem mem_decided_a : Article.meaning .a ∈ (ofSet {.many}ᶜ ⊓ shining).decided :=
-  mem_decided.2 fun σ ⟨hc, hσ⟩ ↦ mem_polar.2 <| (mem_polar.1 hσ).imp
-    (fun h ↦ h.trans Article.meaning_the_ssubset_a.subset) fun h x hx ↦ by
-      have h₁ := mem_ofSet.1 hc hx
-      have h₂ := h hx
-      cases x <;> simp_all [Article.meaning]
+theorem determinesOn_a : shining.DeterminesOn (Article.meaning .a) {.many}ᶜ :=
+  fun w hw v hv hwv ↦ by
+    have h := Setoid.polar_iff.1 hwv
+    cases w <;> cases v <;> simp_all [Article.meaning]
 
 -- (21a)
-theorem not_mem_decided_a : Article.meaning .a ∉ shining.decided := fun h ↦ by
-  have hσ : ({.oneDark, .many} : Set Sky) ∈ shining := mem_polar.2 (.inr (by simp [subset_def]))
-  rcases mem_polar.1 (le_def.1 (mem_decided.1 h) hσ) with h | h
-  · simpa [Article.meaning] using h (mem_insert _ _)
-  · simpa [Article.meaning] using h (mem_insert_of_mem _ rfl)
+theorem not_determines_a : ¬ shining.Determines (Article.meaning .a) := fun h ↦ by
+  have := h.iff (w := .oneDark) (v := .many) (Setoid.polar_iff.2 (by simp))
+  simp [Article.meaning] at this
 
 section Article
 
@@ -261,14 +249,14 @@ variable {complexity : Article → C} {c : Set Sky}
 /-- The indefinite is a needlessly weak answer where the definite is true and no more complex
 (21a). -/
 theorem not_goodAnswer_a (hc : complexity .the ≤ complexity .a) :
-    ¬ GoodAnswer Article.meaning complexity (ofSet c ⊓ shining) .a .oneShining :=
+    ¬ GoodAnswer Article.meaning complexity c shining .a .oneShining :=
   not_goodAnswer_of_stronger hc Article.meaning_the_ssubset_a (mem_singleton _)
-    (mem_decided.2 inf_le_right)
+    (Setoid.polar_determines.determinesOn c)
 
 -- (21b)
 theorem goodAnswer_the (hc : complexity .the ≤ complexity .a) :
-    GoodAnswer Article.meaning complexity (ofSet c ⊓ shining) .the .oneShining :=
-  ⟨⟨mem_singleton _, mem_decided.2 inf_le_right⟩, fun v _ _ ↦ by
+    GoodAnswer Article.meaning complexity c shining .the .oneShining :=
+  ⟨⟨mem_singleton _, Setoid.polar_determines.determinesOn c⟩, fun v _ _ ↦ by
     cases v
     exacts [⟨hc, Article.meaning_the_ssubset_a.subset⟩, le_rfl]⟩
 
@@ -291,8 +279,8 @@ theorem noTrivialAlternatives_typewriter [Nontrivial X] (x : X) :
 
 -- (13a)
 theorem goodAnswer_typewriter (complexity : X → C) (x : X) :
-    GoodAnswer typewriter complexity (⨅ y : X, polar (typewriter y)) x (some x) :=
-  ⟨⟨rfl, mem_decided.2 (iInf_le _ x)⟩, fun y hy _ ↦ by
+    GoodAnswer typewriter complexity univ (⨅ y : X, Setoid.polar (typewriter y)) x (some x) :=
+  ⟨⟨rfl, Setoid.Determines.determinesOn (iInf_le _ x) _⟩, fun y hy _ ↦ by
     obtain rfl : x = y := Option.some_injective _ hy.1
     exact le_rfl⟩
 

@@ -633,14 +633,14 @@ theorem whichDeRe_eq_ker :
   rfl
 
 theorem sentence_relevant (D : Det E) :
-    (whichDeRe G P w).Decides {v | sentence D (extension G w) (extension P v)} := by
-  rw [whichDeRe_eq_ker, Setoid.decides_iff]
+    (whichDeRe G P w).Determines {v | sentence D (extension G w) (extension P v)} := by
+  rw [whichDeRe_eq_ker, Setoid.determines_iff]
   intro v u h
   simp only [Set.mem_ofPred_eq, sentence_iff, Setoid.ker_def.1 h]
 
 /-- Every conservative determiner is relevant to the question. -/
 theorem relevant_of_conservative {Q : Quantifier.Det E} (hQ : Conservative Q) :
-    (whichDeRe G P w).Decides {v | Q (extension G w) (extension P v)} := by
+    (whichDeRe G P w).Determines {v | Q (extension G w) (extension P v)} := by
   simpa only [sentence_ofGQ hQ] using sentence_relevant G P w (Det.ofGQ Q)
 
 end Questions

@@ -97,7 +97,7 @@ theorem who_eq_iInf_polar (P : E → Set W) : who P = ⨅ x, Setoid.polar (P x) 
 theorem who_le_polar (P : E → Set W) (x : E) : who P ≤ Setoid.polar (P x) :=
   who_eq_iInf_polar P ▸ iInf_le _ x
 
-theorem who_decides (P : E → Set W) (x : E) : (who P).Decides (P x) := who_le_polar P x
+theorem who_determines (P : E → Set W) (x : E) : (who P).Determines (P x) := who_le_polar P x
 
 /-- *Who walks* and *who doesn't walk* are one question, so that knowing the answer to either is
 knowing the answer to the other (chapter II, (X)). -/
@@ -146,24 +146,24 @@ theorem Knows.mono (hQ : Q ≤ Q') (h : Knows Q w R) : Knows Q' w R :=
 theorem knows_inf_iff : Knows (Q ⊓ Q') w R ↔ Knows Q w R ∧ Knows Q' w R :=
   ⟨fun h ↦ ⟨h.mono inf_le_left, h.mono inf_le_right⟩, fun h _ hv ↦ ⟨h.1 hv, h.2 hv⟩⟩
 
-/-- To know the answer is to know every true proposition the question decides, which uses no
+/-- To know the answer is to know every true proposition the question determines, which uses no
 factivity, so that the arguments (I) to (VII) of chapter II hold for *tell* as for *know*. -/
-theorem Knows.mem_core (h : Knows Q w R) (hp : Q.Decides p) (hw : w ∈ p) : w ∈ R.core p :=
+theorem Knows.mem_core (h : Knows Q w R) (hp : Q.Determines p) (hw : w ∈ p) : w ∈ R.core p :=
   SetRel.core_mono (hp.cell_subset hw) h
 
 /-- Knowing whether Mary walks is knowing that she walks when she does (chapter II, (I)). -/
 example (h : Knows (Setoid.polar p) w R) (hw : w ∈ p) : w ∈ R.core p :=
-  h.mem_core polar_decides hw
+  h.mem_core polar_determines hw
 
 /-- Knowing whether Mary walks is knowing that she doesn't when she doesn't (chapter II, (II)). -/
 example (h : Knows (Setoid.polar p) w R) (hw : w ∉ p) : w ∈ R.core pᶜ :=
-  h.mem_core polar_decides.compl hw
+  h.mem_core polar_determines.compl hw
 
 /-- Knowing whether Mary walks or Bill sleeps, when Mary doesn't walk and Bill sleeps, is knowing
 that Mary doesn't walk and Bill sleeps (chapter II, (IX)). -/
 example (h : Knows (Setoid.polar p ⊓ Setoid.polar q) w R) (hp : w ∉ p) (hq : w ∈ q) :
     w ∈ R.core (pᶜ ∩ q) :=
-  h.mem_core ((polar_decides.mono inf_le_left).compl.inter (polar_decides.mono inf_le_right))
+  h.mem_core ((polar_determines.mono inf_le_left).compl.inter (polar_determines.mono inf_le_right))
     ⟨hp, hq⟩
 
 -- p. 87
@@ -863,7 +863,7 @@ know that they P, which is `Question.KnowsSomeAnswer` on the Hamblin set `Set.ra
 p. 538). -/
 theorem knowsSomeAnswer_of_knows {P : E → Set W} {x : E} (h : Knows (who P) w R)
     (hx : w ∈ P x) : KnowsSomeAnswer (Set.range P) w R :=
-  ⟨P x, ⟨⟨x, rfl⟩, hx⟩, h.mem_core (who_decides P x) hx⟩
+  ⟨P x, ⟨⟨x, rfl⟩, hx⟩, h.mem_core (who_determines P x) hx⟩
 
 -- p. 538
 theorem not_knowsSomeAnswer {P : E → Set W} (h : ∀ x, w ∉ P x) :

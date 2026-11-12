@@ -14,7 +14,7 @@ Lu, Pan and Degen support in five acceptability experiments. A constituent is fo
 when its alternatives are among the answers to the question under discussion, (3), with
 alternative sets and answers after Roberts, and backgrounded otherwise
 (`Foregrounded`), which is the question deciding each of the constituent's alternatives
-(`Setoid.le_ker_iff_forall_decides`). A communication event has a manner and a content,
+(`Setoid.le_ker_iff_forall_determines`). A communication event has a manner and a content,
 and the manner question backgrounds the content (`mannerQUD`, `contentQUD`,
 `not_foregrounded_content_mannerQUD`). Movement foregrounds the moved element, so moving it out of
 a backgrounded complement is the information-structural clash of Erteschik-Shir: the
@@ -38,7 +38,7 @@ manner-of-speaking verb, by default in Experiment 3a and under focus in 3b
 (3) asks the alternatives relative to a constituent to be among the complete answers to the
 question. Over partition questions, whose cells are the complete answers, this is rendered as
 the question settling the constituent: two events in one cell agree on it, so the question
-decides each of its alternatives. The paper takes one question to be under discussion at a time,
+determines each of its alternatives. The paper takes one question to be under discussion at a time,
 which is why focus overrides the predicate's default.
 
 The negation test (7) of earlier work is not formalized: the paper counts it a test of

@@ -286,7 +286,7 @@ theorem doctorStrategy_children (good patients diagnose polite : Set W) :
   ext q
   simp [doctorStrategy, RoseTree.leaf, ctValue, generate_polarityFocus]
 
--- p. 162: the strategy is complete when being a good doctor is decided by the three
+-- p. 162: the strategy is complete when being a good doctor is determined by the three
 -- subquestions, a Boolean combination of their propositions.
 theorem doctorStrategy_isComplete {good patients diagnose polite : Set W}
     (h : good ∈ BooleanSubalgebra.closure {patients, diagnose, polite}) :
@@ -294,8 +294,8 @@ theorem doctorStrategy_isComplete {good patients diagnose polite : Set W}
   refine .node (fun _ ↦ ?_) (by simp)
   simp only [RoseTree.leaf, RoseTree.value_node, List.map_cons, List.map_nil, Multiset.inf_coe,
     List.foldr, inf_top_eq]
-  refine Question.mem_decided.1 (BooleanSubalgebra.closure_le.2 (fun q hq ↦ ?_) h)
-  rw [SetLike.mem_coe, Question.mem_decided]
+  refine Question.mem_determined.1 (BooleanSubalgebra.closure_le.2 (fun q hq ↦ ?_) h)
+  rw [SetLike.mem_coe, Question.mem_determined]
   rcases hq with rfl | rfl | rfl
   exacts [inf_le_left, inf_le_right.trans inf_le_left, inf_le_right.trans inf_le_right]
 

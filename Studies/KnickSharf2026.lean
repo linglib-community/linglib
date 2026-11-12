@@ -217,25 +217,25 @@ def Competitor.heads : Competitor → ℕ
   | .perfect => 3
 
 /-- The question the competitors of (43) answer, which of them hold. -/
-abbrev question (V : W → E → Prop) (p : Set W) (t : T) : Question W :=
-  ⨅ c, Question.polar (Competitor.meaning V p t c)
+abbrev question (V : W → E → Prop) (p : Set W) (t : T) : Setoid W :=
+  ⨅ c, Setoid.polar (Competitor.meaning V p t c)
 
 /-- A competitor is a good answer in the competition (43) between the simple present and the
 perfect `p`. -/
 abbrev GoodAnswer (V : W → E → Prop) (p : Set W) (t : T) : Competitor → W → Prop :=
-  KatzirSingh2015.GoodAnswer (Competitor.meaning V p t) Competitor.heads (question V p t)
+  KatzirSingh2015.GoodAnswer (Competitor.meaning V p t) Competitor.heads univ (question V p t)
 
-theorem mem_decided_question {p : Set W} (c : Competitor) :
-    Competitor.meaning V p t c ∈ (question V p t).decided :=
-  Question.mem_decided.2 (iInf_le _ c)
+theorem determinesOn_question {p : Set W} (c : Competitor) :
+    (question V p t).DeterminesOn (Competitor.meaning V p t c) univ :=
+  Setoid.Determines.determinesOn (iInf_le _ c) _
 
 -- (43), (44)
 theorem goodAnswer_perfect_iff {p : Set W} :
     GoodAnswer V p t .perfect w ↔ w ∈ p ∧ ¬ (simplePresent V t ⊆ p ∧ w ∈ simplePresent V t) := by
-  refine ⟨fun h ↦ ⟨h.mem, fun ⟨hs, hw⟩ ↦ ?_⟩, fun ⟨hw, hs⟩ ↦ ⟨⟨hw, mem_decided_question _⟩, ?_⟩⟩
+  refine ⟨fun h ↦ ⟨h.mem, fun ⟨hs, hw⟩ ↦ ?_⟩, fun ⟨hw, hs⟩ ↦ ⟨⟨hw, determinesOn_question _⟩, ?_⟩⟩
   · exact KatzirSingh2015.not_goodAnswer_of_simpler (u := .perfect) (v := .simplePresent)
       (by decide : Competitor.heads .simplePresent < Competitor.heads .perfect) hs hw
-      (mem_decided_question _) h
+      (determinesOn_question _) h
   · rintro (_ | _) ⟨hw', -⟩ hle
     · exact absurd ⟨hle.2, hw'⟩ hs
     · exact le_rfl
