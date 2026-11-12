@@ -4,7 +4,7 @@ public import Linglib.Semantics.Questions.Partition.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Insert
 public import Linglib.Core.Order.UpperLower.Closure
-public import Linglib.Pragmatics.NeoGricean.Basic
+public import Linglib.Pragmatics.NeoGricean.Prior
 
 /-!
 # Spector (2007): Scalar Implicatures: Exhaustivity and Gricean Reasoning
@@ -27,10 +27,12 @@ reduction of optimality to "the answer is the strongest positive proposition the
 entails", `Pos i = P`, and `maximalStates_eq` its theorem: the unique maximal state is
 the minimal valuations of `P` (`Minimal`), so a positive answer implicates its
 exhaustification in the sense of Groenendijk and Stokhof. The theorem is an instance of the
-neo-Gricean one: at the finest question the optimal states are those satisfying Quality and the
-primary implicatures (`isOptimal_bot_iff`), the minimal valuations are the minimal worlds
+neo-Gricean one: at the finest question the optimal answer is the optimal assertion of that
+reasoning (`isOptimal_bot_iff`), the minimal valuations are the minimal worlds
 against the positive propositions (`exhMW_positives`), and the positive propositions are closed
-under intersection and nonempty unions. `no_unwanted_negation` checks the
+under intersection and nonempty unions. Closure under intersection also makes the optimal answer
+the least probable positive proposition the state entails under every prior
+(`isOptimal_iff_forall_measure`). `no_unwanted_negation` checks the
 reasoning against the disjunction case: no optimal state for *A or B* decides *A*.
 
 ## Implementation notes
@@ -209,13 +211,11 @@ theorem Pos_isPositive {i : Proposition Atom} (hi : i.Nonempty) (hnu : Pos i ≠
 /-! ### The Gricean reasoning on the shared substrate -/
 
 omit [DecidableEq Atom] in
-/-- At the question that separates every two worlds, the answer is optimal in a state when the
-state satisfies Quality and the primary implicatures of the answer. -/
+/-- At the question that separates every two worlds, the paper's optimal answer is the optimal
+assertion of the neo-Gricean reasoning. -/
 theorem isOptimal_bot_iff {W : Type*} {S : Set (Set W)} {α i : Set W} :
-    IsOptimal ⊥ S α i ↔ i ⊆ α ∧ i ∈ NeoGricean.primaryImplicatures S α := by
-  simp only [IsOptimal, relativize_bot, NeoGricean.mem_primaryImplicatures]
-  exact and_congr_right fun _ ↦ ⟨fun h ψ hψ hlt hsub ↦ h ψ hψ hsub hlt,
-    fun h ψ hψ hsub hlt ↦ h ψ hψ hlt hsub⟩
+    IsOptimal ⊥ S α i ↔ NeoGricean.IsOptimal S α i := by
+  simp only [IsOptimal, relativize_bot, NeoGricean.isOptimal_iff]
 
 theorem IsPositive.empty_notMem {P : Proposition Atom} (hP : IsPositive P) : ∅ ∉ P := fun h ↦
   hP.ne_univ (Set.eq_univ_of_forall fun V ↦ hP.mem_of_subset h (Finset.empty_subset V))
@@ -286,14 +286,13 @@ its minimal valuations, its exhaustification. -/
 theorem maximalStates_eq {P : Proposition Atom} (hP : IsPositive P) :
     maximalStates ⊥ positives P = {{V | Minimal (· ∈ P) V}} := by
   have hExh : {V | Minimal (· ∈ P) V} ∈ optimalStates ⊥ positives P :=
-    ⟨exists_minimal_of_wellFoundedLT _ hP.nonempty, isOptimal_bot_iff.2 ⟨fun _ h ↦ h.prop,
-      exhMW_positives P ▸ NeoGricean.exhMW_mem_primaryImplicatures fun w hw ↦
+    ⟨exists_minimal_of_wellFoundedLT _ hP.nonempty, isOptimal_bot_iff.2 <|
+      exhMW_positives P ▸ NeoGricean.isOptimal_exhMW fun w hw ↦
         let ⟨m, hmw, hm⟩ := exists_minimal_le_of_wellFoundedLT (· ∈ P) w hw
-        ⟨m, exhMW_positives P ▸ hm, satisfied_positives_subset_iff.2 hmw⟩⟩⟩
+        ⟨m, exhMW_positives P ▸ hm, satisfied_positives_subset_iff.2 hmw⟩⟩
   have hent : ∀ i ∈ optimalStates ⊥ positives P, {V | Minimal (· ∈ P) V} ⊆ i := fun i hi V hV ↦ by
-    obtain ⟨hiP, hprim⟩ := isOptimal_bot_iff.1 hi.2
-    obtain ⟨w, hw, h⟩ := NeoGricean.exists_satisfied_eq_of_mem_primaryImplicatures
-      infClosed_positives (fun _ ↦ sUnion_mem_positives) hP hi.1 hiP hprim (exhMW_positives P ▸ hV)
+    obtain ⟨w, hw, h⟩ := (isOptimal_bot_iff.1 hi.2).exists_satisfied_eq infClosed_positives
+      (fun _ ↦ sUnion_mem_positives) hP hi.1 (exhMW_positives P ▸ hV)
     exact (satisfied_positives_subset_iff.1 h.le).antisymm
       (satisfied_positives_subset_iff.1 h.ge) ▸ hw
   ext i
@@ -304,6 +303,16 @@ theorem maximalStates_eq {P : Proposition Atom} (hP : IsPositive P) :
     exact hmax _ hExh (Set.ssubset_iff_subset_ne.2 ⟨hent i hi, fun h ↦ hne h.symm⟩)
   · rintro rfl
     exact ⟨hExh, fun i' hi' hss ↦ hss.2 (hent i' hi')⟩
+
+/-- A positive answer is optimal in a state that entails it exactly when it is at most as
+probable as every positive proposition the state entails, whatever the prior: the choice of the
+most informative answer does not depend on the prior. -/
+theorem isOptimal_iff_forall_measure [MeasurableSpace (Valuation Atom)]
+    [MeasurableSingletonClass (Valuation Atom)] {P i : Proposition Atom} (hP : IsPositive P)
+    (hi : i ⊆ P) :
+    IsOptimal ⊥ positives P i ↔ ∀ μ : MeasureTheory.Measure (Valuation Atom),
+      ∀ Q ∈ positives, i ⊆ Q → μ P ≤ μ Q :=
+  isOptimal_bot_iff.trans (NeoGricean.isOptimal_iff_forall_measure infClosed_positives hP hi)
 
 theorem implicates_setOf_minimal {P : Proposition Atom} (hP : IsPositive P) :
     Implicates ⊥ positives P {V | Minimal (· ∈ P) V} := by
