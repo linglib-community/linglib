@@ -121,6 +121,21 @@ theorem le_iff {R R' : Relation} :
 instance : DecidableLE Relation := fun _ _ ↦
   decidable_of_iff _ le_iff.symm
 
+/-- A primitive relation as one of the seven: `⊑`, `⊒`, `|` and `⌣` are the relations asserting a
+single constraint, and the others are their conjunctions. -/
+def Atom.toRelation : Atom → Relation
+  | .le => .forward
+  | .ge => .reverse
+  | .disjoint => .alternation
+  | .codisjoint => .cover
+
+@[simp] theorem constraints_toRelation : ∀ a : Atom, a.toRelation.constraints = {a} := by decide
+
+/-- A relation asserts the primitive relations it entails. -/
+theorem mem_constraints_iff_le {R : Relation} {a : Atom} :
+    a ∈ R.constraints ↔ R ≤ a.toRelation := by
+  rw [le_iff, constraints_toRelation, Finset.singleton_subset_iff]
+
 instance : OrderTop Relation where
   top := .independent
   le_top _ := le_iff.mpr (Finset.empty_subset _)
@@ -253,6 +268,10 @@ theorem Relation.holds_iff {α : Type*} [Lattice α] [BoundedOrder α]
   cases R <;>
     simp [Relation.Holds, Relation.Atom.Holds, Relation.constraints,
       isCompl_iff, le_antisymm_iff]
+
+theorem Relation.holds_toRelation {α : Type*} [Lattice α] [BoundedOrder α] {a : Relation.Atom}
+    {x y : α} : a.toRelation.Holds x y ↔ a.Holds x y := by
+  cases a <;> rfl
 
 theorem Relation.holds_converse {α : Type*} [Lattice α] [BoundedOrder α] {R : Relation}
     {x y : α} : R.converse.Holds x y ↔ R.Holds y x := by

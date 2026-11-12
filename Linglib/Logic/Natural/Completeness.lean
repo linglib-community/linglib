@@ -159,6 +159,29 @@ theorem isLeast_join_Ioo (R S : Relation) :
   obtain ⟨x, hx, y, hy, z, hz, hR, hS, hT'⟩ := counter R S T hle
   exact hT' (hT x y z hx hy hz hR hS)
 
+/-! ### Relations as partial bijections of the polarities -/
+
+/-- The constraints of a relation are a partial bijection of the polarities: no two of them take
+the first argument with the same polarity, nor the second. -/
+theorem injOn_src_constraints (R : Relation) : Set.InjOn Atom.src R.constraints := by
+  have : ∀ R : Relation, ∀ a ∈ R.constraints, ∀ b ∈ R.constraints, a.src = b.src → a = b := by
+    decide
+  exact fun a ha b hb ↦ this R a ha b hb
+
+theorem injOn_tgt_constraints (R : Relation) : Set.InjOn Atom.tgt R.constraints := by
+  have : ∀ R : Relation, ∀ a ∈ R.constraints, ∀ b ∈ R.constraints, a.tgt = b.tgt → a = b := by
+    decide
+  exact fun a ha b hb ↦ this R a ha b hb
+
+/-- The seven relations are the partial bijections of the two polarities: a set of constraints is
+a relation's exactly when no two of its members agree on the polarity of either argument. -/
+theorem mem_range_constraints_iff_injOn {s : Finset Atom} :
+    s ∈ Set.range constraints ↔ Set.InjOn Atom.src s ∧ Set.InjOn Atom.tgt s := by
+  have : ∀ s : Finset Atom, (∃ R : Relation, R.constraints = s) ↔
+      (∀ a ∈ s, ∀ b ∈ s, a.src = b.src → a = b) ∧ ∀ a ∈ s, ∀ b ∈ s, a.tgt = b.tgt → a = b := by
+    decide
+  exact this s
+
 /-! ### The join is relational composition
 
 An atomic constraint is an inequality between `x` or its complement and `y` or its complement, an
@@ -189,27 +212,6 @@ private theorem Atom.holds_iff_pol {a : Atom} {x y : α} :
 private theorem Atom.exists_join (a b : Atom) (h : a.tgt = b.src) :
     ∃ c, a.join b = some c ∧ c.src = a.src ∧ c.tgt = b.tgt :=
   ⟨_, ite_eq_left h, Atom.src_ofPolarities _ _, Atom.tgt_ofPolarities _ _⟩
-
-/-- The constraints of a relation are a partial bijection of the polarities: no two of them take
-the first argument with the same polarity, nor the second. -/
-theorem injOn_src_constraints (R : Relation) : Set.InjOn Atom.src R.constraints := by
-  have : ∀ R : Relation, ∀ a ∈ R.constraints, ∀ b ∈ R.constraints, a.src = b.src → a = b := by
-    decide
-  exact fun a ha b hb ↦ this R a ha b hb
-
-theorem injOn_tgt_constraints (R : Relation) : Set.InjOn Atom.tgt R.constraints := by
-  have : ∀ R : Relation, ∀ a ∈ R.constraints, ∀ b ∈ R.constraints, a.tgt = b.tgt → a = b := by
-    decide
-  exact fun a ha b hb ↦ this R a ha b hb
-
-/-- The seven relations are the partial bijections of the two polarities: a set of constraints is
-a relation's exactly when no two of its members agree on the polarity of either argument. -/
-theorem mem_range_constraints_iff_injOn {s : Finset Atom} :
-    s ∈ Set.range constraints ↔ Set.InjOn Atom.src s ∧ Set.InjOn Atom.tgt s := by
-  have : ∀ s : Finset Atom, (∃ R : Relation, R.constraints = s) ↔
-      (∀ a ∈ s, ∀ b ∈ s, a.src = b.src → a = b) ∧ ∀ a ∈ s, ∀ b ∈ s, a.tgt = b.tgt → a = b := by
-    decide
-  exact this s
 
 /-- On a Boolean algebra the join is relational composition: `R * S` holds of `x` and `z` exactly
 when some `y` has `x R y` and `y S z`. The constraints bound `y` and its complement from both sides,
@@ -273,44 +275,75 @@ section Lattice
 
 variable [Lattice α] [BoundedOrder α]
 
+/-- The constraints that hold of `x` and `y` take `x` with different polarities exactly when `x`
+is neither `⊥` nor `⊤`: at `⊥` both `x ≤ y` and disjointness hold, at `⊤` both `y ≤ x` and
+codisjointness. -/
+theorem injOn_src_setOf_holds_iff {x y : α} :
+    Set.InjOn Atom.src {a | a.Holds x y} ↔ x ∈ Set.Ioo ⊥ ⊤ := by
+  refine ⟨fun h ↦ ⟨bot_lt_iff_ne_bot.2 ?_, lt_top_iff_ne_top.2 ?_⟩, fun ⟨h0, h1⟩ a ha b hb hab ↦ ?_⟩
+  · rintro rfl
+    exact absurd (h (show Atom.le ∈ {a | a.Holds ⊥ y} from bot_le)
+      (show Atom.disjoint ∈ {a | a.Holds ⊥ y} from disjoint_bot_left) rfl)
+      (by decide)
+  · rintro rfl
+    exact absurd (h (show Atom.ge ∈ {a | a.Holds ⊤ y} from le_top)
+      (show Atom.codisjoint ∈ {a | a.Holds ⊤ y} from codisjoint_top_left) rfl)
+      (by decide)
+  · cases a <;> cases b <;> first
+      | rfl
+      | exact absurd hab (by decide)
+      | exact (h0.ne' (Disjoint.eq_bot_of_le hb ha)).elim
+      | exact (h0.ne' (Disjoint.eq_bot_of_le ha hb)).elim
+      | exact (h1.ne (Codisjoint.eq_top_of_le hb ha)).elim
+      | exact (h1.ne (Codisjoint.eq_top_of_le ha hb)).elim
+
+/-- The constraints that hold of `x` and `y` take `y` with different polarities exactly when `y`
+is neither `⊥` nor `⊤`. -/
+theorem injOn_tgt_setOf_holds_iff {x y : α} :
+    Set.InjOn Atom.tgt {a | a.Holds x y} ↔ y ∈ Set.Ioo ⊥ ⊤ := by
+  refine ⟨fun h ↦ ⟨bot_lt_iff_ne_bot.2 ?_, lt_top_iff_ne_top.2 ?_⟩, fun ⟨h0, h1⟩ a ha b hb hab ↦ ?_⟩
+  · rintro rfl
+    exact absurd (h (show Atom.ge ∈ {a | a.Holds x ⊥} from bot_le)
+      (show Atom.disjoint ∈ {a | a.Holds x ⊥} from disjoint_bot_right) rfl)
+      (by decide)
+  · rintro rfl
+    exact absurd (h (show Atom.le ∈ {a | a.Holds x ⊤} from le_top)
+      (show Atom.codisjoint ∈ {a | a.Holds x ⊤} from codisjoint_top_right) rfl)
+      (by decide)
+  · cases a <;> cases b <;> first
+      | rfl
+      | exact absurd hab (by decide)
+      | exact (h0.ne' (Disjoint.eq_bot_of_ge hb ha)).elim
+      | exact (h0.ne' (Disjoint.eq_bot_of_ge ha hb)).elim
+      | exact (h1.ne (Codisjoint.eq_top_of_ge hb ha)).elim
+      | exact (h1.ne (Codisjoint.eq_top_of_ge ha hb)).elim
+
 /-- Constraints that two elements other than `⊥` and `⊤` satisfy together are among those of a
-single relation: an inclusion and an exclusion would force one of the elements to `⊥` or `⊤`. -/
+single relation. -/
 theorem mem_range_constraints_of_holds {s : Finset Atom} {x y : α}
     (h : ∀ a ∈ s, a.Holds x y) (hx : x ∈ Set.Ioo ⊥ ⊤) (hy : y ∈ Set.Ioo ⊥ ⊤) :
-    s ∈ Set.range constraints := by
-  by_contra hs
-  have key : ∀ s : Finset Atom, (¬ ∃ R : Relation, R.constraints = s) →
-      ({.le, .disjoint} ⊆ s ∨ {.le, .codisjoint} ⊆ s ∨
-       {.ge, .disjoint} ⊆ s ∨ {.ge, .codisjoint} ⊆ s) := by decide
-  rcases key s hs with hp | hp | hp | hp
-  · exact hx.1.ne' ((h .disjoint (hp (by decide))).eq_bot_of_le (h .le (hp (by decide))))
-  · exact hy.2.ne ((h .codisjoint (hp (by decide))).eq_top_of_ge (h .le (hp (by decide))))
-  · exact hy.1.ne' ((h .disjoint (hp (by decide))).eq_bot_of_ge (h .ge (hp (by decide))))
-  · exact hx.2.ne ((h .codisjoint (hp (by decide))).eq_top_of_le (h .ge (hp (by decide))))
+    s ∈ Set.range constraints :=
+  mem_range_constraints_iff_injOn.2
+    ⟨((injOn_src_setOf_holds_iff (y := y)).2 hx).mono fun a ha ↦ h a ha,
+      ((injOn_tgt_setOf_holds_iff (x := x)).2 hy).mono fun a ha ↦ h a ha⟩
 
 /-- Two elements of a bounded lattice stand in a strongest relation exactly when neither is `⊥` or
-`⊤` ([icard-2012]'s Lemma 1.3 with the converse remarked under it). At `⊥` or `⊤` an inclusion and
-an exclusion both hold, and no relation entails both. -/
+`⊤` ([icard-2012]'s Lemma 1.3 with the converse remarked under it): the strongest relation asserts
+the constraints that hold, and these are a relation's when they form a partial bijection of the
+polarities. -/
 theorem exists_isLeast_holds_iff {x y : α} :
     (∃ R : Relation, IsLeast {S : Relation | S.Holds x y} R) ↔
       x ∈ Set.Ioo ⊥ ⊤ ∧ y ∈ Set.Ioo ⊥ ⊤ := by
   classical
-  refine ⟨fun ⟨R, hR⟩ ↦ ?_, fun ⟨hx, hy⟩ ↦ ?_⟩
-  · have key : ∀ R : Relation, (R ≤ .forward ∨ R ≤ .reverse) →
-        (R ≤ .alternation ∨ R ≤ .cover) → False := by decide
-    have hle {S : Relation} (hS : S.Holds x y) : R ≤ S := hR.2 hS
-    refine ⟨⟨bot_lt_iff_ne_bot.2 ?_, lt_top_iff_ne_top.2 ?_⟩,
-      bot_lt_iff_ne_bot.2 ?_, lt_top_iff_ne_top.2 ?_⟩ <;> rintro rfl
-    · exact key R (.inl (hle (S := .forward) bot_le))
-        (.inl (hle (S := .alternation) disjoint_bot_left))
-    · exact key R (.inr (hle (S := .reverse) le_top))
-        (.inr (hle (S := .cover) codisjoint_top_left))
-    · exact key R (.inr (hle (S := .reverse) bot_le))
-        (.inl (hle (S := .alternation) disjoint_bot_right))
-    · exact key R (.inl (hle (S := .forward) le_top))
-        (.inr (hle (S := .cover) codisjoint_top_right))
-  · obtain ⟨R, hR⟩ := mem_range_constraints_of_holds
-      (s := Finset.univ.filter fun a ↦ a.Holds x y) (fun a ha ↦ (Finset.mem_filter.1 ha).2) hx hy
+  rw [← injOn_src_setOf_holds_iff (y := y), ← injOn_tgt_setOf_holds_iff (x := x)]
+  refine ⟨fun ⟨R, hR⟩ ↦ ?_, fun h ↦ ?_⟩
+  · have : {a : Atom | a.Holds x y} = ↑R.constraints := Set.ext fun a ↦
+      ⟨fun ha ↦ mem_constraints_iff_le.2 (hR.2 (holds_toRelation.2 ha)),
+        fun ha ↦ holds_iff.1 hR.1 a ha⟩
+    rw [this]
+    exact ⟨injOn_src_constraints R, injOn_tgt_constraints R⟩
+  · obtain ⟨R, hR⟩ := (mem_range_constraints_iff_injOn
+      (s := Finset.univ.filter fun a ↦ a.Holds x y)).2 (by simpa using h)
     refine ⟨R, holds_iff.2 fun a ha ↦ ?_, fun S hS ↦ le_iff.2 fun a ha ↦ ?_⟩
     · rw [hR] at ha
       exact (Finset.mem_filter.1 ha).2
