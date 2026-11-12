@@ -124,7 +124,7 @@ variable {W E P T : Type*} [PartialOrder E] (c : Context W E P T) (x : E)
 open Classical in
 /-- The participants of a referent at a context are the discourse roles whose holders, the agent
 and the addressee, are part of it. -/
-noncomputable def participants : Finset Discourse.Role :=
+noncomputable def participants : Finset SpeechAct.Role :=
   Finset.univ.filter fun r ↦ (match r with | .speaker => c.agent | .addressee => c.addressee) ≤ x
 
 @[simp] theorem speaker_mem_participants : .speaker ∈ c.participants x ↔ c.agent ≤ x := by
@@ -142,13 +142,13 @@ variable {W E P T : Type*} [PartialOrder E] (c : Kaplan.Context W E P T) (x : E)
 
 /-- A person feature's domain holds the referents whose participants bear the feature. -/
 theorem mem_dom_feature_iff (f : Feature) : x ∈ Feature.dom c f ↔ Bears (c.participants x) f := by
-  cases f <;> simp [Feature.dom, Bears, Finset.Nonempty, Discourse.Role.exists_role]
+  cases f <;> simp [Feature.dom, Bears, Finset.Nonempty, SpeechAct.Role.exists_role]
 
 /-- The first person denotes the referents in its domain. -/
 theorem participants_mem_participantSets_first :
     c.participants x ∈ Person.first.participantSets ↔ x ∈ dom c (some .first) := by
   simp only [mem_dom_first, participantSets, Finset.mem_insert, Finset.mem_singleton,
-    Finset.ext_iff, Discourse.Role.forall_role, Kaplan.Context.speaker_mem_participants,
+    Finset.ext_iff, SpeechAct.Role.forall_role, Kaplan.Context.speaker_mem_participants,
     Kaplan.Context.addressee_mem_participants]
   simp; tauto
 
@@ -156,14 +156,14 @@ theorem participants_mem_participantSets_second :
     c.participants x ∈ Person.second.participantSets ↔
       x ∈ dom c (some .second) ∧ x ∉ dom c (some .first) := by
   simp only [mem_dom_second, mem_dom_first, participantSets, Finset.mem_singleton,
-    Finset.ext_iff, Discourse.Role.forall_role, Kaplan.Context.speaker_mem_participants,
+    Finset.ext_iff, SpeechAct.Role.forall_role, Kaplan.Context.speaker_mem_participants,
     Kaplan.Context.addressee_mem_participants]
   simp; tauto
 
 theorem participants_mem_participantSets_third :
     c.participants x ∈ Person.third.participantSets ↔ x ∉ dom c (some .second) := by
   simp only [mem_dom_second, participantSets, Finset.mem_singleton, Finset.ext_iff,
-    Discourse.Role.forall_role, Kaplan.Context.speaker_mem_participants,
+    SpeechAct.Role.forall_role, Kaplan.Context.speaker_mem_participants,
     Kaplan.Context.addressee_mem_participants]
   simp
 

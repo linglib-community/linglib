@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.FarkasBruce2010
 public import Linglib.Discourse.Commitment.Table
 public import Linglib.Discourse.Response
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Fragments.English.Particles
 public import Linglib.Fragments.German.Particles
 public import Linglib.Fragments.Romance.French.Particles
@@ -89,22 +89,22 @@ namespace FarkasBruce2010
 open Commitment
 open Filter
 
-variable {W : Type*} (K : Table Discourse.Role W) (p : Set W)
+variable {W : Type*} (K : Table SpeechAct.Role W) (p : Set W)
 
 /-- In a total denial (22) the speaker asserts `p` and the addressee asserts its negation. -/
-abbrev denial : Table Discourse.Role W := (K.assert .speaker p).assert .addressee pᶜ
+abbrev denial : Table SpeechAct.Role W := (K.assert .speaker p).assert .addressee pᶜ
 
 /-! ### Default assertions and default polar questions -/
 
 /-- A world can survive the assertion of `p` in a `Commitment.Table` without satisfying `p`. -/
 theorem assert_not_narrowing :
-    ∃ (K : Table Discourse.Role Bool) (p : Set Bool) (w : Bool),
+    ∃ (K : Table SpeechAct.Role Bool) (p : Set Bool) (w : Bool),
       w ∈ (K.assert .speaker p).commonGround.ker ∧ w ∉ p :=
   ⟨.empty, {true}, false, by simp, Bool.false_ne_true⟩
 
 /-- From a stable context an assertion projects the single common ground with `p`, a
 categorical bias towards confirmation (8). -/
-theorem projectedSet_assert (a : Discourse.Role) (hK : K.IsStable) (hp : K.commonGround ⊓ 𝓟 p ≠ ⊥) :
+theorem projectedSet_assert (a : SpeechAct.Role) (hK : K.IsStable) (hp : K.commonGround ⊓ 𝓟 p ≠ ⊥) :
     (K.assert a p).projectedSet = {K.commonGround ⊓ 𝓟 p} := by
   rw [Table.projectedSet_assert, Table.projectedSet_of_isStable hK,
     Table.project_singleton_ofSet hp]
@@ -159,7 +159,7 @@ theorem discourseCommitments_agreeToDisagree :
 
 /-! ### Reacting to a polar question -/
 
-theorem projectedSet_polarQuestion_assert (hK : K.IsStable) (b : Discourse.Role) {q : Set W}
+theorem projectedSet_polarQuestion_assert (hK : K.IsStable) (b : SpeechAct.Role) {q : Set W}
     (hq : q ∈ ({p, pᶜ} : Set (Set W))) (hc : K.commonGround ⊓ 𝓟 q ≠ ⊥) :
     ((K.polarQuestion p).assert b q).projectedSet = {K.commonGround ⊓ 𝓟 q} := by
   rw [Table.projectedSet_assert, Table.projectedSet_polarQuestion,
@@ -189,7 +189,7 @@ theorem projectedSet_polarQuestion_assert (hK : K.IsStable) (b : Discourse.Role)
           (Or.inr ⟨he, fun e ↦ hc (by simp [e]), Or.inr rfl⟩)
 
 /-- A reverse answer (27) is no crisis, since the question projected both resolutions. -/
-theorem not_inCrisis_polarQuestion_assert_compl (hK : K.IsStable) (b : Discourse.Role)
+theorem not_inCrisis_polarQuestion_assert_compl (hK : K.IsStable) (b : SpeechAct.Role)
     (hnp : K.commonGround ⊓ 𝓟 pᶜ ≠ ⊥) : ¬ ((K.polarQuestion p).assert b pᶜ).InCrisis := by
   rw [Table.inCrisis_iff, projectedSet_polarQuestion_assert K p hK b (Or.inr rfl) hnp]
   exact fun h ↦ hnp (h _ rfl)
@@ -233,13 +233,13 @@ theorem Confirming.iff_relative_eq_positive [Nonempty W] {s t : Sentence W}
   rw [Confirming, Sentence.prop, Sentence.prop, h]
   exact Response.polarity_smul_eq_antecedent_smul_iff (x := ⟨m, s.polarity, t.polarity⟩) _
 
-theorem inCrisis_reversing_assert {s t : Sentence W} (h : Reversing s t) (a b : Discourse.Role) :
+theorem inCrisis_reversing_assert {s t : Sentence W} (h : Reversing s t) (a b : SpeechAct.Role) :
     ((K.assert a s.prop).assert b t.prop).InCrisis := by
   rw [h]
   exact K.inCrisis_assert_assert_compl a s.prop b
 
 theorem not_inCrisis_reversing_polarQuestion {s t : Sentence W} (h : Reversing s t)
-    (hK : K.IsStable) (b : Discourse.Role) (hc : K.commonGround ⊓ 𝓟 s.propᶜ ≠ ⊥) :
+    (hK : K.IsStable) (b : SpeechAct.Role) (hc : K.commonGround ⊓ 𝓟 s.propᶜ ≠ ⊥) :
     ¬ ((K.polarQuestion s.prop).assert b t.prop).InCrisis := by
   rw [h]
   exact not_inCrisis_polarQuestion_assert_compl K s.prop hK b hc

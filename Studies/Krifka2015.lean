@@ -3,7 +3,7 @@ module
 public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Discourse.Commitment.Space
 public import Linglib.Discourse.Commitment.Table
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Pragmatics.DecisionTheoretic.Basic
 public import Studies.BuringGunlogson2000
 
@@ -341,11 +341,11 @@ instance : Nonempty Weather := ⟨.rain⟩
 def raining : Set Weather := {.rain}
 
 /-- An index fixes the weather and what each participant's commitments leave open about it. -/
-abbrev World := Index Discourse.Role Weather
+abbrev World := Index SpeechAct.Role Weather
 
 /-- The index at which it rains and each participant's commitments leave open the weathers in
 `s`. -/
-def World.mk (w : Weather) (s : Discourse.Role → Set Weather) (hs : ∀ r, (s r).Nonempty) :
+def World.mk (w : Weather) (s : SpeechAct.Role → Set Weather) (hs : ∀ r, (s r).Nonempty) :
     World :=
   ⟨w, s, hs⟩
 
@@ -355,10 +355,10 @@ instance : Nonempty World := ⟨.mk .rain (fun _ ↦ Set.univ) fun _ ↦ Set.uni
 abbrev C₀ : Space (Set (Set World)) := coherent World
 
 /-- That a participant is committed to the weather being in `s`. -/
-abbrev commitsTo (r : Discourse.Role) (s : Set Weather) : Set World :=
+abbrev commitsTo (r : SpeechAct.Role) (s : Set Weather) : Set World :=
   committed Index.access r (Index.fact ⁻¹' s)
 
-theorem mem_commitsTo {r : Discourse.Role} {s : Set Weather} {w : World} :
+theorem mem_commitsTo {r : SpeechAct.Role} {s : Set Weather} {w : World} :
     w ∈ commitsTo r s ↔ w.commitmentSet r ⊆ s := by
   rw [commitsTo, Index.committed_access_preimage]
   rfl
@@ -391,7 +391,7 @@ theorem sInter_root_assert_raining :
     ⋂₀ (C₀.assert Index.access .speaker (Index.fact ⁻¹' raining)).root =
         commitsTo .speaker raining ∧
       ¬ commitsTo .speaker raining ⊆ Index.fact ⁻¹' raining ∧
-      ((Table.empty : Table Discourse.Role World).assert .speaker
+      ((Table.empty : Table SpeechAct.Role World).assert .speaker
         (Index.fact ⁻¹' raining)).commonGround = ⊤ := by
   refine ⟨?_, fun h ↦ ?_, rfl⟩
   · rw [assert, root_update_coherent (coherent_singleton.2 ⟨_, committing_mem_commitsTo_speaker
@@ -537,7 +537,7 @@ theorem relevanceSign_evidence (μ : MeasureTheory.Measure Weather)
 
 section Tags
 
-variable {W : Type*} (O : Discourse.Role → SetRel W W) (C : Space (Set (Set W))) (φ : Set W)
+variable {W : Type*} (O : SpeechAct.Role → SetRel W W) (C : Space (Set (Set W))) (φ : Set W)
 
 /-- A matching tag conjoins the assertion with the monopolar question of the same content
 (44). -/

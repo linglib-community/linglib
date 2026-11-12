@@ -31,7 +31,7 @@ open scoped FinsetFamily
 
 namespace Person
 
-open Finset Discourse
+open Finset SpeechAct
 
 /-! ### Participant sets -/
 

@@ -15,14 +15,14 @@ public import Mathlib.Tactic.DeriveFintype
 This file defines the two discourse roles, speaker and addressee, the participants a speech-act
 context distinguishes ([kaplan-1989]) and the agents of a two-party commitment model
 ([gunlogson-2001], [farkas-bruce-2010]). A role's counterpart is the other participant
-(`Discourse.Role.other`), an involution without fixed points, so a statement about every role
-is a statement about a role and its counterpart (`Discourse.Role.forall_role'`), and the roles
+(`SpeechAct.Role.other`), an involution without fixed points, so a statement about every role
+is a statement about a role and its counterpart (`SpeechAct.Role.forall_role'`), and the roles
 form a nontrivial type.
 
 ## Main definitions
 
-* `Discourse.Role` — speaker or addressee.
-* `Discourse.Role.other` — the other participant.
+* `SpeechAct.Role` — speaker or addressee.
+* `SpeechAct.Role.other` — the other participant.
 
 ## References
 
@@ -33,7 +33,7 @@ form a nontrivial type.
 
 @[expose] public section
 
-namespace Discourse
+namespace SpeechAct
 
 /-- A discourse role is one of the two participants of a speech act, its speaker or its
 addressee. -/
@@ -81,4 +81,4 @@ theorem exists_role' {p : Role → Prop} (r : Role) : (∃ s, p s) ↔ p r ∨ p
 
 end Role
 
-end Discourse
+end SpeechAct

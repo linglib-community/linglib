@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Discourse.SpeechAct
+public import Linglib.Discourse.SpeechAct.Basic
 public import Linglib.Discourse.QUD.Basic
 public import Linglib.Core.Data.List.Forall2
 
@@ -204,7 +204,7 @@ variable {I : Type*}
 
 /-- The illocutionary force linking principle (56): the default force of a root sentence,
 assertion, interrogation or direction, is fixed by the type of its denotation. -/
-def Denotation.defaultForce : Denotation I W T → Discourse.SpeechAct.Force
+def Denotation.defaultForce : Denotation I W T → SpeechAct.Force
   | .proposition _ => .assertion
   | .question _ => .question
   | .property _ => .directive

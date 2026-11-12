@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Gunlogson2001
 public import Linglib.Discourse.Commitment.Basic
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct.Role
 
 /-!
 # Gunlogson (2001): True to Form: Rising and Falling Declaratives as Questions in English
@@ -41,7 +41,7 @@ declaratives whose content stays unresolved, the form in which it holds.
 
 namespace Gunlogson2001
 
-open Commitment State Discourse
+open Commitment State SpeechAct
 
 variable {W : Type*} {K : State Role W} {p : Set W}
 

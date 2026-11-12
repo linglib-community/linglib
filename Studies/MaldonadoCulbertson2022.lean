@@ -37,7 +37,7 @@ them. Experiments 1 and 3 are not formalized.
 
 namespace MaldonadoCulbertson2022
 
-open Discourse Finset Harbour2016
+open SpeechAct Finset Harbour2016
 
 /-! ### The conditions as partitions (Table 7, p. 315) -/
 

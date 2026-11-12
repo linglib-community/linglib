@@ -25,14 +25,14 @@ updates, in the states of the participants it updates.
 * `Mood.SpeechEvent`: a force together with `CON(e*)`.
 * `Mood.SpeechEvent.toContext`, `Mood.SpeechEvent.modal`: the induced discourse context and its
   modal.
-* `Discourse.SpeechAct.Force.primaryFlavor`: Hacquard's flavor of a speech act, read off its
+* `SpeechAct.Force.primaryFlavor`: Hacquard's flavor of a speech act, read off its
   component.
 
 ## Implementation notes
 
 * Hacquard's four speech acts are declaratives, interrogatives, imperatives and quotatives, after
   Tenny and Speas; Speas and Tenny 2003 derive the subjunctive in place of the quotative, whose
-  status they leave open. `Discourse.SpeechAct.Force` has neither the subjunctive nor the
+  status they leave open. `SpeechAct.Force` has neither the subjunctive nor the
   quotative and adds the promise and the exclamation.
 * Hacquard gives content only to declaratives and imperatives, and the inquiry licenses no
   flavor.
@@ -59,8 +59,8 @@ namespace Mood
 
 open DynamicSemantics
 open Modality (ModalFlavor)
-open Discourse (Role)
-open Discourse.SpeechAct (Force)
+open SpeechAct (Role)
+open SpeechAct (Force)
 
 variable {W : Type*}
 
@@ -186,7 +186,7 @@ def Component.flavor : Component → Option ModalFlavor
 
 /-- The primary flavor a speech act licenses is the flavor of its force's component
 ([hacquard-2006]). -/
-def _root_.Discourse.SpeechAct.Force.primaryFlavor (f : Force) : Option ModalFlavor :=
+def _root_.SpeechAct.Force.primaryFlavor (f : Force) : Option ModalFlavor :=
   f.target.bind Component.flavor
 
 theorem Component.target_of_mem_flavor {c : Component} {φ : ModalFlavor} (h : φ ∈ c.flavor) :

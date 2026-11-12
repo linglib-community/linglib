@@ -89,7 +89,7 @@ explanation the paper argues for.
 
 namespace Haspelmath2021
 
-open Discourse
+open SpeechAct
 open Focus (Mark)
 open OrderDual (toDual)
 
