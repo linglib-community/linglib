@@ -8,7 +8,8 @@ public import Mathlib.Order.UpperLower.Closure
 # Minimal elements of upper closures
 
 `[UPSTREAM]` candidate for `Mathlib/Order/UpperLower/Closure.lean`: in a partial order, the
-minimal elements of an upper closure are those of the generating set, and so is its least element.
+minimal elements of an upper closure are those of the generating set, and so is its least element;
+under a well-founded order the minimal elements generate the same upper closure.
 mathlib has the minimal-element lemma only for antichains,
 `IsAntichain.minimal_mem_upperClosure_iff_mem`, which follows from the general one with
 `IsAntichain.minimal_mem_iff`. In a join-semilattice the meet of two upper closures is the upper
@@ -39,6 +40,13 @@ theorem isLeast_upperClosure_iff : IsLeast (upperClosure s : Set α) x ↔ IsLea
       fun b hb ↦ hx (subset_upperClosure hb)⟩
   · rintro b ⟨a, has, hab⟩
     exact (hlb has).trans hab
+
+/-- Under a well-founded order a set and its minimal elements have the same upper closure. -/
+theorem upperClosure_setOf_minimal [WellFoundedLT α] (s : Set α) :
+    upperClosure {x | Minimal (· ∈ s) x} = upperClosure s := by
+  refine le_antisymm (fun x ⟨a, has, hax⟩ ↦ ?_) (upperClosure_anti fun _ hx ↦ hx.prop)
+  obtain ⟨m, hma, hm⟩ := exists_minimal_le_of_wellFoundedLT (· ∈ s) a has
+  exact ⟨m, hm, hma.trans hax⟩
 
 end PartialOrder
 

@@ -20,10 +20,11 @@ Asserting `φ` implicates `Kφ` by Quality and the primary implicature `¬Kψ` o
 consistent with `Kφ` and all the primary implicatures.
 
 The states satisfying Quality and the primary implicatures are those in which the assertion is an
-optimal answer in Spector's Gricean reasoning. Over finitely many alternatives the minimal worlds
-of the assertion, `Exhaustification.exhMW`, are such a state, and when the alternatives include
-the assertion and are closed under intersection and union they are the most informed one: every
-consistent such state contains a world making the same alternatives true as each minimal world.
+optimal answer in Spector's Gricean reasoning. Where every world of the assertion lies above a
+minimal one, as over finitely many alternatives, the minimal worlds of the assertion,
+`Exhaustification.exhMW`, are such a state, and when the alternatives include the assertion and
+are closed under intersection and nonempty unions they are the most informed one: every consistent
+such state contains a world making the same alternatives true as each minimal world.
 
 ## Main definitions
 
@@ -127,20 +128,23 @@ section MinimalWorlds
 
 open Exhaustification
 
-/-- Over finitely many alternatives, the minimal worlds of the assertion are a state satisfying
-every primary implicature. -/
-theorem exhMW_mem_primaryImplicatures (hfin : alts.Finite) :
+/-- Where every world of the assertion lies above a minimal one, as over finitely many
+alternatives, the minimal worlds are a state satisfying every primary implicature. -/
+theorem exhMW_mem_primaryImplicatures (h : ∀ w ∈ φ, ∃ u ∈ exhMW alts φ,
+    Preorder.satisfied (· ∈ ·) alts u ⊆ Preorder.satisfied (· ∈ ·) alts w) :
     exhMW alts φ ∈ primaryImplicatures alts φ := by
-  refine mem_primaryImplicatures.2 fun ψ hψ hψφ h ↦ hψφ.2 fun w hw ↦ ?_
-  obtain ⟨u, hu, huw⟩ := exists_mem_exhMW_le hfin hw
-  exact (huw ⟨hψ, h hu⟩).2
+  refine mem_primaryImplicatures.2 fun ψ hψ hψφ hsub ↦ hψφ.2 fun w hw ↦ ?_
+  obtain ⟨u, hu, huw⟩ := h w hw
+  exact (huw ⟨hψ, hsub hu⟩).2
 
-/-- When the alternatives include the assertion and are closed under intersection and union, a
-consistent state satisfying Quality and the primary implicatures contains, for each minimal world
-of the assertion, a world making the same alternatives true. -/
-theorem exists_satisfied_eq_of_mem_primaryImplicatures (hfin : alts.Finite)
-    (hinf : InfClosed alts) (hsup : SupClosed alts) (hφ : φ ∈ alts) (hne : s.Nonempty)
-    (hs : s ⊆ φ) (hprim : s ∈ primaryImplicatures alts φ) {u : W} (hu : u ∈ exhMW alts φ) :
+variable (hinf : InfClosed alts) (hsup : ∀ A ⊆ alts, A.Nonempty → ⋃₀ A ∈ alts) (hφ : φ ∈ alts)
+  (hne : s.Nonempty) (hs : s ⊆ φ) (hprim : s ∈ primaryImplicatures alts φ)
+include hinf hsup hφ hne hs hprim
+
+/-- When the alternatives include the assertion and are closed under intersection and nonempty
+unions, a consistent state satisfying Quality and the primary implicatures contains, for each
+minimal world of the assertion, a world making the same alternatives true. -/
+theorem exists_satisfied_eq_of_mem_primaryImplicatures {u : W} (hu : u ∈ exhMW alts φ) :
     ∃ w ∈ s, Preorder.satisfied (· ∈ ·) alts w = Preorder.satisfied (· ∈ ·) alts u := by
   by_contra hcon
   have hA : ∀ w ∈ s, ∃ a ∈ alts, w ∈ a ∧ u ∉ a := fun w hw ↦ by
@@ -151,8 +155,7 @@ theorem exists_satisfied_eq_of_mem_primaryImplicatures (hfin : alts.Finite)
   obtain ⟨w₀, hw₀⟩ := hne
   obtain ⟨a₀, ha₀, -, hua₀⟩ := hA w₀ hw₀
   have hmem : ⋃₀ {a ∈ alts | u ∉ a} ∩ φ ∈ alts :=
-    hinf (hsup.sSup_mem_of_nonempty (hfin.subset (sep_subset _ _)) ⟨a₀, ha₀, hua₀⟩
-      (sep_subset _ _)) hφ
+    hinf (hsup _ (sep_subset _ _) ⟨a₀, ha₀, hua₀⟩) hφ
   refine mem_primaryImplicatures.1 hprim _ hmem ⟨inter_subset_right, fun h ↦ ?_⟩ fun w hw ↦ ?_
   · obtain ⟨a, ha, hua⟩ := (h hu.1).1
     exact ha.2 hua
@@ -162,19 +165,15 @@ theorem exists_satisfied_eq_of_mem_primaryImplicatures (hfin : alts.Finite)
 /-- Under the same closure conditions, the minimal worlds are the most informed such state: they
 entail every alternative that a consistent state satisfying Quality and the primary implicatures
 entails. -/
-theorem exhMW_subset_of_mem_primaryImplicatures (hfin : alts.Finite) (hinf : InfClosed alts)
-    (hsup : SupClosed alts) (hφ : φ ∈ alts) (hne : s.Nonempty) (hs : s ⊆ φ)
-    (hprim : s ∈ primaryImplicatures alts φ) (hψ : ψ ∈ alts) (hsψ : s ⊆ ψ) :
+theorem exhMW_subset_of_mem_primaryImplicatures (hψ : ψ ∈ alts) (hsψ : s ⊆ ψ) :
     exhMW alts φ ⊆ ψ := fun _ hu ↦
-  let ⟨_, hw, h⟩ := exists_satisfied_eq_of_mem_primaryImplicatures hfin hinf hsup hφ hne hs hprim hu
+  let ⟨_, hw, h⟩ := exists_satisfied_eq_of_mem_primaryImplicatures hinf hsup hφ hne hs hprim hu
   (h.subset ⟨hψ, hsψ hw⟩).2
 
 /-- And they exclude every alternative that such a state excludes. -/
-theorem exhMW_subset_compl_of_mem_primaryImplicatures (hfin : alts.Finite)
-    (hinf : InfClosed alts) (hsup : SupClosed alts) (hφ : φ ∈ alts) (hne : s.Nonempty)
-    (hs : s ⊆ φ) (hprim : s ∈ primaryImplicatures alts φ) (hψ : ψ ∈ alts) (hsψ : s ⊆ ψᶜ) :
+theorem exhMW_subset_compl_of_mem_primaryImplicatures (hψ : ψ ∈ alts) (hsψ : s ⊆ ψᶜ) :
     exhMW alts φ ⊆ ψᶜ := fun _ hu huψ ↦
-  let ⟨_, hw, h⟩ := exists_satisfied_eq_of_mem_primaryImplicatures hfin hinf hsup hφ hne hs hprim hu
+  let ⟨_, hw, h⟩ := exists_satisfied_eq_of_mem_primaryImplicatures hinf hsup hφ hne hs hprim hu
   hsψ hw (h.superset ⟨hψ, huψ⟩).2
 
 end MinimalWorlds

@@ -3,7 +3,8 @@ module
 public import Linglib.Semantics.Questions.Partition.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Insert
-public import Mathlib.Order.Minimal
+public import Linglib.Core.Order.UpperLower.Closure
+public import Linglib.Pragmatics.NeoGricean.Basic
 
 /-!
 # Spector (2007): Scalar Implicatures: Exhaustivity and Gricean Reasoning
@@ -25,7 +26,11 @@ negative literal, is the set of positive answers. `isOptimal_iff` derives the pa
 reduction of optimality to "the answer is the strongest positive proposition the state
 entails", `Pos i = P`, and `maximalStates_eq` its theorem: the unique maximal state is
 the minimal valuations of `P` (`Minimal`), so a positive answer implicates its
-exhaustification in the sense of Groenendijk and Stokhof. `no_unwanted_negation` checks the
+exhaustification in the sense of Groenendijk and Stokhof. The theorem is an instance of the
+neo-Gricean one: at the finest question the optimal states are those satisfying Quality and the
+primary implicatures (`isOptimal_bot_iff`), the minimal valuations are the minimal worlds
+against the positive propositions (`exhMW_positives`), and the positive propositions are closed
+under intersection and nonempty unions. `no_unwanted_negation` checks the
 reasoning against the disjunction case: no optimal state for *A or B* decides *A*.
 
 ## Implementation notes
@@ -122,26 +127,13 @@ def Holds : Literal Atom → Valuation Atom → Prop
 
 end Literal
 
-/-- The positive extension of `P` collects all supersets of its valuations. -/
-def Pos (P : Proposition Atom) : Proposition Atom := {V | ∃ V' ∈ P, V' ⊆ V}
+/-- The positive extension of `P` collects all supersets of its valuations: its upper closure. -/
+def Pos (P : Proposition Atom) : Proposition Atom := upperClosure P
 
-theorem subset_Pos (P : Proposition Atom) : P ⊆ Pos P := fun V hV ↦ ⟨V, hV, Finset.Subset.refl V⟩
-
-theorem Pos_mono {P P' : Proposition Atom} (h : P ⊆ P') : Pos P ⊆ Pos P' :=
-  fun _ ⟨V', hV', hle⟩ ↦ ⟨V', h hV', hle⟩
-
-theorem Pos_setOf_minimal (P : Proposition Atom) : Pos {V | Minimal (· ∈ P) V} = Pos P := by
-  refine Set.Subset.antisymm (Pos_mono fun _ h ↦ h.prop) fun V ⟨V', hV', hle⟩ ↦ ?_
-  obtain ⟨t, hts, ht⟩ := exists_minimal_le_of_wellFoundedLT (· ∈ P) V' hV'
-  exact ⟨t, ht, hts.trans hle⟩
-
-theorem setOf_minimal_subset_of_Pos_eq {P i : Proposition Atom} (h : Pos i = P) :
-    {V | Minimal (· ∈ P) V} ⊆ i := by
-  intro V hV
-  by_contra hVi
-  obtain ⟨V', hV'i, hle⟩ : V ∈ Pos i := h ▸ hV.prop
-  exact hV.not_prop_of_lt (Finset.ssubset_iff_subset_ne.2 ⟨hle, fun heq ↦ hVi (heq ▸ hV'i)⟩)
-    (h ▸ subset_Pos i hV'i)
+-- Fact 2 of the paper, with Fact 1.
+theorem Pos_setOf_minimal (P : Proposition Atom) : Pos {V | Minimal (· ∈ P) V} = Pos P :=
+  congrArg (fun U : UpperSet (Valuation Atom) ↦ (U : Set (Valuation Atom)))
+    (upperClosure_setOf_minimal P)
 
 variable [DecidableEq Atom]
 
@@ -207,12 +199,66 @@ theorem isPositive_of_upward {P : Proposition Atom} (hne : P.Nonempty) (hnu : P 
       hup V hV (V.cons a haV') fun x hx ↦ Finset.mem_cons.2 (Or.inr hx)
 
 theorem Pos_of_isPositive {P : Proposition Atom} (hP : IsPositive P) : Pos P = P :=
-  Set.Subset.antisymm (fun _ ⟨_, hV', hle⟩ ↦ hP.mem_of_subset hV' hle) (subset_Pos P)
+  Set.Subset.antisymm (fun _ ⟨_, hV', hle⟩ ↦ hP.mem_of_subset hV' hle) subset_upperClosure
 
 theorem Pos_isPositive {i : Proposition Atom} (hi : i.Nonempty) (hnu : Pos i ≠ Set.univ) :
     IsPositive (Pos i) :=
-  isPositive_of_upward (hi.mono (subset_Pos i)) hnu
+  isPositive_of_upward (hi.mono subset_upperClosure) hnu
     fun _ ⟨V', hV', hle⟩ _ hle' ↦ ⟨V', hV', hle.trans hle'⟩
+
+/-! ### The Gricean reasoning on the shared substrate -/
+
+omit [DecidableEq Atom] in
+/-- At the question that separates every two worlds, the answer is optimal in a state when the
+state satisfies Quality and the primary implicatures of the answer. -/
+theorem isOptimal_bot_iff {W : Type*} {S : Set (Set W)} {α i : Set W} :
+    IsOptimal ⊥ S α i ↔ i ⊆ α ∧ i ∈ NeoGricean.primaryImplicatures S α := by
+  simp only [IsOptimal, relativize_bot, NeoGricean.mem_primaryImplicatures]
+  exact and_congr_right fun _ ↦ ⟨fun h ψ hψ hlt hsub ↦ h ψ hψ hsub hlt,
+    fun h ψ hψ hsub hlt ↦ h ψ hψ hlt hsub⟩
+
+theorem IsPositive.empty_notMem {P : Proposition Atom} (hP : IsPositive P) : ∅ ∉ P := fun h ↦
+  hP.ne_univ (Set.eq_univ_of_forall fun V ↦ hP.mem_of_subset h (Finset.empty_subset V))
+
+-- A valuation makes at most the positive propositions of another true when it is included in it.
+theorem satisfied_positives_subset_iff {V V' : Valuation Atom} :
+    Preorder.satisfied (· ∈ ·) (positives (Atom := Atom)) V ⊆
+      Preorder.satisfied (· ∈ ·) positives V' ↔ V ⊆ V' := by
+  refine ⟨fun h ↦ ?_, fun h P hP ↦ ⟨hP.1, IsPositive.mem_of_subset hP.1 hP.2 h⟩⟩
+  rcases V.eq_empty_or_nonempty with rfl | ⟨a, ha⟩
+  · exact Finset.empty_subset _
+  · have hpos : IsPositive {U : Valuation Atom | V ⊆ U} :=
+      isPositive_of_upward ⟨V, Finset.Subset.refl V⟩
+        (fun h' ↦ Finset.notMem_empty a (((Set.ext_iff.1 h' ∅).2 trivial : V ⊆ ∅) ha))
+        fun _ hU _ hUU' ↦ hU.trans hUU'
+    exact (h ⟨hpos, Finset.Subset.refl V⟩).2
+
+/-- Against the positive propositions, the minimal worlds of a proposition are its minimal
+valuations. -/
+theorem exhMW_positives (P : Proposition Atom) :
+    Exhaustification.exhMW positives P = {V | Minimal (· ∈ P) V} :=
+  Set.ext fun _ ↦ ⟨fun h ↦ ⟨h.1, fun _ hb hbV ↦ satisfied_positives_subset_iff.1
+      (h.2 hb (satisfied_positives_subset_iff.2 hbV))⟩,
+    fun h ↦ ⟨h.1, fun _ hb hbV ↦ satisfied_positives_subset_iff.2
+      (h.2 hb (satisfied_positives_subset_iff.1 hbV))⟩⟩
+
+theorem infClosed_positives : InfClosed (positives (Atom := Atom)) := fun A hA B hB ↦ by
+  obtain ⟨VA, hVA⟩ := IsPositive.nonempty hA
+  obtain ⟨VB, hVB⟩ := IsPositive.nonempty hB
+  exact isPositive_of_upward
+    ⟨VA ∪ VB, hA.mem_of_subset hVA Finset.subset_union_left,
+      hB.mem_of_subset hVB Finset.subset_union_right⟩
+    (fun h ↦ hA.empty_notMem ((Set.ext_iff.1 h ∅).2 trivial).1)
+    fun _ hV _ hle ↦ ⟨hA.mem_of_subset hV.1 hle, hB.mem_of_subset hV.2 hle⟩
+
+theorem sUnion_mem_positives {A : Set (Proposition Atom)} (hA : A ⊆ positives)
+    (hne : A.Nonempty) : ⋃₀ A ∈ positives := by
+  obtain ⟨Q, hQ⟩ := hne
+  obtain ⟨V, hV⟩ := IsPositive.nonempty (hA hQ)
+  refine isPositive_of_upward ⟨V, Q, hQ, hV⟩ (fun h ↦ ?_) fun _ ⟨Q', hQ', hV'⟩ _ hle ↦
+    ⟨Q', hQ', IsPositive.mem_of_subset (hA hQ') hV' hle⟩
+  obtain ⟨Q', hQ', h'⟩ : (∅ : Valuation Atom) ∈ ⋃₀ A := (Set.ext_iff.1 h ∅).2 trivial
+  exact IsPositive.empty_notMem (hA hQ') h'
 
 /-! ### The reduction and the theorem -/
 
@@ -224,26 +270,32 @@ theorem isOptimal_iff {P i : Proposition Atom} (hP : IsPositive P) (hi : i.Nonem
     have hsub : Pos i ⊆ P := fun _ ⟨V', hV', hle⟩ ↦ hP.mem_of_subset (hiP hV') hle
     by_contra hne
     have hnu : Pos i ≠ Set.univ := fun h ↦ hP.ne_univ (Set.eq_univ_of_univ_subset (h ▸ hsub))
-    exact hopt (Pos i) (Pos_isPositive hi hnu) (subset_Pos i)
+    exact hopt (Pos i) (Pos_isPositive hi hnu) subset_upperClosure
       (Set.ssubset_iff_subset_ne.2 ⟨hsub, hne⟩)
   · rintro rfl
-    exact ⟨subset_Pos i, fun α' hα' hiα' hss ↦
-      hss.2 ((Pos_mono hiα').trans (Pos_of_isPositive hα').subset)⟩
+    exact ⟨subset_upperClosure, fun α' hα' hiα' hss ↦
+      hss.2 ((show Pos i ⊆ Pos α' from upperClosure_anti hiα').trans
+        (Pos_of_isPositive hα').subset)⟩
 
 theorem optimalStates_eq {P : Proposition Atom} (hP : IsPositive P) :
     optimalStates ⊥ positives P = {i | i.Nonempty ∧ Pos i = P} :=
   Set.ext fun _ ↦ and_congr_right (isOptimal_iff hP)
 
+/-- For a positive answer, the one maximally informed state in which it is optimal is the set of
+its minimal valuations, its exhaustification. -/
 theorem maximalStates_eq {P : Proposition Atom} (hP : IsPositive P) :
     maximalStates ⊥ positives P = {{V | Minimal (· ∈ P) V}} := by
-  have hI := optimalStates_eq hP
-  have hExh : {V | Minimal (· ∈ P) V} ∈ optimalStates ⊥ positives P := by
-    rw [hI]
-    exact ⟨exists_minimal_of_wellFoundedLT _ hP.nonempty,
-      by rw [Pos_setOf_minimal, Pos_of_isPositive hP]⟩
-  have hent : ∀ i ∈ optimalStates ⊥ positives P, {V | Minimal (· ∈ P) V} ⊆ i := fun i hi ↦ by
-    rw [hI] at hi
-    exact setOf_minimal_subset_of_Pos_eq hi.2
+  have hExh : {V | Minimal (· ∈ P) V} ∈ optimalStates ⊥ positives P :=
+    ⟨exists_minimal_of_wellFoundedLT _ hP.nonempty, isOptimal_bot_iff.2 ⟨fun _ h ↦ h.prop,
+      exhMW_positives P ▸ NeoGricean.exhMW_mem_primaryImplicatures fun w hw ↦
+        let ⟨m, hmw, hm⟩ := exists_minimal_le_of_wellFoundedLT (· ∈ P) w hw
+        ⟨m, exhMW_positives P ▸ hm, satisfied_positives_subset_iff.2 hmw⟩⟩⟩
+  have hent : ∀ i ∈ optimalStates ⊥ positives P, {V | Minimal (· ∈ P) V} ⊆ i := fun i hi V hV ↦ by
+    obtain ⟨hiP, hprim⟩ := isOptimal_bot_iff.1 hi.2
+    obtain ⟨w, hw, h⟩ := NeoGricean.exists_satisfied_eq_of_mem_primaryImplicatures
+      infClosed_positives (fun _ ↦ sUnion_mem_positives) hP hi.1 hiP hprim (exhMW_positives P ▸ hV)
+    exact (satisfied_positives_subset_iff.1 h.le).antisymm
+      (satisfied_positives_subset_iff.1 h.ge) ▸ hw
   ext i
   simp only [maximalStates, Set.mem_ofPred_eq, Set.mem_singleton_iff, relativize_bot]
   constructor
@@ -320,7 +372,7 @@ theorem no_unwanted_negation {a b : Atom} (hab : a ≠ b) {i : Proposition Atom}
   · intro h
     have hsub : Pos i ⊆ atomProp b := by
       rintro _ ⟨V', hV', hle⟩
-      have hV'or : V' ∈ orProp a b := hPos ▸ subset_Pos i hV'
+      have hV'or : V' ∈ orProp a b := hPos ▸ subset_upperClosure hV'
       rcases hV'or with ha' | hb'
       · exact absurd ha' (h hV')
       · exact hle hb'
