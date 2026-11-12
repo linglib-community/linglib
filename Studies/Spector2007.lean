@@ -314,6 +314,19 @@ theorem isOptimal_iff_forall_measure [MeasurableSpace (Valuation Atom)]
       ∀ Q ∈ positives, i ⊆ Q → μ P ≤ μ Q :=
   isOptimal_bot_iff.trans (NeoGricean.isOptimal_iff_forall_measure infClosed_positives hP hi)
 
+-- The same in terms of divergence: over finitely many atoms, a positive answer is optimal in a
+-- consistent state exactly when the state's beliefs are closest to its literal reading.
+theorem isOptimal_iff_forall_klDiv [Fintype Atom] [MeasurableSpace (Valuation Atom)]
+    [DiscreteMeasurableSpace (Valuation Atom)] {P i : Proposition Atom} (hP : IsPositive P)
+    (hi : i.Nonempty) :
+    IsOptimal ⊥ positives P i ↔ ∀ μ : MeasureTheory.Measure (Valuation Atom),
+      MeasureTheory.IsFiniteMeasure μ → (∀ V, μ {V} ≠ 0) →
+      InformationTheory.klDiv (ProbabilityTheory.cond μ i) (ProbabilityTheory.cond μ P) ≠ ⊤ ∧
+        ∀ Q ∈ positives, InformationTheory.klDiv (ProbabilityTheory.cond μ i)
+          (ProbabilityTheory.cond μ P) ≤
+            InformationTheory.klDiv (ProbabilityTheory.cond μ i) (ProbabilityTheory.cond μ Q) :=
+  isOptimal_bot_iff.trans (NeoGricean.isOptimal_iff_forall_klDiv infClosed_positives hP hi)
+
 theorem implicates_setOf_minimal {P : Proposition Atom} (hP : IsPositive P) :
     Implicates ⊥ positives P {V | Minimal (· ∈ P) V} := by
   intro i hi
