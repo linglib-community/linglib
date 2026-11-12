@@ -86,8 +86,6 @@ structure SourceRef where
 
 /-- How an example and its judgment were obtained. -/
 inductive Datum.Method where
-  /-- Constructed and judged by the author. -/
-  | introspection
   /-- Elicited from, or judged by, native-speaker consultants. -/
   | elicitation
   /-- Attested in a text, a corpus or on the web. -/
