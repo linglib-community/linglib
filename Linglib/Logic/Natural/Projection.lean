@@ -2,7 +2,6 @@ module
 
 public import Linglib.Logic.Natural.ProjectivitySignature
 public import Mathlib.Algebra.Group.Action.Defs
-public import Mathlib.Algebra.Group.Action.Basic
 public import Mathlib.Order.GaloisConnection.Basic
 public import Mathlib.Order.Hom.BoundedLattice
 public import Mathlib.Order.Hom.Set
@@ -52,54 +51,6 @@ def Property.project : Relation.Atom → Property → Option Relation.Atom
   | .disjoint, .antiMultiplicative => some .codisjoint
   | _, _ => none
 
-/-! ### Signatures as partial bijections of the constraints -/
-
-/-- A polarity acts on a constraint through both of its polarities, the negative one exchanging
-`≤` with `≥` and disjointness with codisjointness. -/
-instance : MulAction Polarity Relation.Atom where
-  smul p a := ⟨p * a.src, p * a.tgt⟩
-  one_smul a := by cases a; simp [HSMul.hSMul]
-  mul_smul p q a := by cases a; simp [HSMul.hSMul, mul_assoc]
-
-/-- The constraints that the functions of a signature carry from their arguments to their values:
-the inclusions for a monotone or antitone class, with codisjointness for the additive and
-anti-additive ones and disjointness for the multiplicative and anti-multiplicative ones. -/
-def domain : ProjectivitySignature → Finset Relation.Atom
-  | .all => ∅
-  | .mono | .anti => {.le, .ge}
-  | .additive | .antiAdd => {.le, .ge, .codisjoint}
-  | .mult | .antiMult => {.le, .ge, .disjoint}
-  | .addMult | .antiAddMult => Finset.univ
-
-/-- The polarity of a signature, negative for the antitone classes. -/
-def polarity (σ : ProjectivitySignature) : Polarity :=
-  if σ.sign = -1 then .negative else .positive
-
-/-- A signature as a partial bijection of the constraints: a constraint in its domain is carried
-to itself by a monotone class and to its negative by an antitone one. -/
-def toPEquiv (σ : ProjectivitySignature) : Relation.Atom ≃. Relation.Atom :=
-  (PEquiv.ofSet (σ.domain : Set Relation.Atom)).trans (MulAction.toPerm σ.polarity).toPEquiv
-
-/-- The partial bijection of a signature is the property rule. -/
-theorem toPEquiv_eq_some_iff {σ : ProjectivitySignature} {a b : Relation.Atom} :
-    σ.toPEquiv a = some b ↔ ∃ p ∈ σ.properties, Property.project a p = some b := by
-  sorry
-
-/-- A signature is determined by its partial bijection. -/
-theorem toPEquiv_injective : Function.Injective toPEquiv := by
-  sorry
-
-@[simp] theorem toPEquiv_one : (1 : ProjectivitySignature).toPEquiv = PEquiv.refl _ := by
-  sorry
-
-@[simp] theorem toPEquiv_top : (⊤ : ProjectivitySignature).toPEquiv = ⊥ := by
-  sorry
-
-/-- Composing signatures composes their partial bijections, inner first. -/
-@[simp] theorem toPEquiv_mul (ψ φ : ProjectivitySignature) :
-    (ψ * φ).toPEquiv = φ.toPEquiv.trans ψ.toPEquiv := by
-  sorry
-
 private theorem Property.compose_project : ∀ (p q : Property) (a : Relation.Atom),
     (p.compose q).bind (Property.project a ·) =
       (Property.project a q).bind (Property.project · p) := by
@@ -138,13 +89,6 @@ theorem project_mono (R : Relation) : Monotone (project R) := by
   refine Relation.le_iff.2 fun _ hb ↦ ?_
   obtain ⟨p, hp, a, ha, hab⟩ := (mem_constraints_project hR).1 hb
   exact (mem_constraints_project hR).2 ⟨p, le_iff.1 h hp, a, ha, hab⟩
-
-/-- A projection asserts the images of the relation's constraints under the signature's partial
-bijection. -/
-theorem mem_constraints_project_iff_toPEquiv {R : Relation} (hR : R ≠ .equiv)
-    {σ : ProjectivitySignature} {b : Relation.Atom} :
-    b ∈ (project R σ).constraints ↔ ∃ a ∈ R.constraints, σ.toPEquiv a = some b := by
-  sorry
 
 private theorem project_ne_equiv : ∀ {R : Relation} (σ : ProjectivitySignature), R ≠ .equiv →
     project R σ ≠ .equiv := by
@@ -458,7 +402,7 @@ arguments to the constraint `Property.project` says between its values. -/
 theorem Property.HoldsFor.project {p : Property} {f : α → β}
     (hf : p.HoldsFor f) {a b : Relation.Atom} (h : Property.project a p = some b)
     {x y : α} (ha : a.Holds x y) : b.Holds (f x) (f y) := by
-  rcases a with ⟨_ | _, _ | _⟩ <;> cases p <;>
+  cases a <;> cases p <;>
     simp only [Property.project, reduceCtorEq, Option.some.injEq] at h <;> subst h <;>
     simp only [Property.HoldsFor, Relation.Atom.Holds] at hf ha ⊢
   all_goals first

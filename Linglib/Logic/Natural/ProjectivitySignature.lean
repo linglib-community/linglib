@@ -305,6 +305,33 @@ theorem HoldsFor.comp {γ : Type*} [Lattice γ] [BoundedOrder γ] {ψ φ : Proje
   obtain ⟨p, hp, q, hq, h⟩ := mem_properties_mul.1 hr
   exact (hf p hp).compose h (hg q hq)
 
+/-- Passing to the order dual is an anti-morphism. -/
+theorem holdsFor_antiAddMult_toDual : HoldsFor .antiAddMult (OrderDual.toDual : α → αᵒᵈ) := by
+  intro p hp
+  cases p with
+  | antitone => exact fun _ _ h ↦ h
+  | antiAdditive => exact ⟨fun _ _ ↦ rfl, rfl⟩
+  | antiMultiplicative => exact ⟨fun _ _ ↦ rfl, rfl⟩
+  | monotone | additive | multiplicative => exact absurd hp (by decide)
+
+/-- Returning from the order dual is an anti-morphism. -/
+theorem holdsFor_antiAddMult_ofDual : HoldsFor .antiAddMult (OrderDual.ofDual : αᵒᵈ → α) := by
+  intro p hp
+  cases p with
+  | antitone => exact fun _ _ h ↦ h
+  | antiAdditive => exact ⟨fun _ _ ↦ rfl, rfl⟩
+  | antiMultiplicative => exact ⟨fun _ _ ↦ rfl, rfl⟩
+  | monotone | additive | multiplicative => exact absurd hp (by decide)
+
+/-- A map into the order dual is a σ-function exactly when the map is a `⊖ * σ`-function: the
+anti-additive functions into a lattice are the additive functions into its dual, and likewise for
+the other classes ([icard-2012] Lemma 1.10). -/
+theorem holdsFor_toDual_comp_iff {σ : ProjectivitySignature} {f : α → β} :
+    σ.HoldsFor (OrderDual.toDual ∘ f) ↔ (antiAddMult * σ).HoldsFor f := by
+  refine ⟨fun h ↦ holdsFor_antiAddMult_ofDual.comp h, fun h ↦ ?_⟩
+  simpa [← mul_assoc, show antiAddMult * antiAddMult = 1 from rfl] using
+    holdsFor_antiAddMult_toDual.comp h
+
 /-- A map after complementation is a σ-function exactly when the map is a `σ * ⊖`-function, since
 `⊖` is its own inverse. -/
 theorem holdsFor_comp_compl_iff {γ : Type*} [BooleanAlgebra γ] {σ : ProjectivitySignature}

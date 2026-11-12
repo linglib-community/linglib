@@ -74,7 +74,7 @@ variable [Lattice α] [BoundedOrder α]
 
 private theorem Relation.Atom.holds_ofBool_iff [Nontrivial α] {a : Relation.Atom} {b c : Bool} :
     a.Holds (ofBool b : α) (ofBool c) ↔ a.Holds b c := by
-  rcases a with ⟨_ | _, _ | _⟩ <;> cases b <;> cases c <;>
+  cases a <;> cases b <;> cases c <;>
     simp [ofBool, Relation.Atom.Holds, disjoint_iff, codisjoint_iff]
 
 private theorem Relation.holds_ofBool_iff [Nontrivial α] {R : Relation} {b c : Bool} :
@@ -178,20 +178,38 @@ private def pol : Polarity → α → α
 private theorem pol_of_ne {s t : Polarity} (h : s ≠ t) (x : α) : pol s x = (pol t x)ᶜ := by
   cases s <;> cases t <;> simp_all [pol]
 
-private theorem Atom.holds_iff_pol {a : Atom} {x y : α} : a.Holds x y ↔ pol a.src x ≤ pol a.tgt y := by
-  rcases a with ⟨_ | _, _ | _⟩
+private theorem Atom.holds_iff_pol {a : Atom} {x y : α} :
+    a.Holds x y ↔ pol a.src x ≤ pol a.tgt y := by
+  cases a
   · exact Iff.rfl
+  · exact compl_le_compl_iff_le.symm
   · exact le_compl_iff_disjoint_right.symm
   · exact codisjoint_iff_compl_le_right
-  · exact compl_le_compl_iff_le.symm
 
 private theorem Atom.exists_join (a b : Atom) (h : a.tgt = b.src) :
     ∃ c, a.join b = some c ∧ c.src = a.src ∧ c.tgt = b.tgt :=
-  ⟨⟨a.src, b.tgt⟩, ite_eq_left h, rfl, rfl⟩
+  ⟨_, ite_eq_left h, Atom.src_ofPolarities _ _, Atom.tgt_ofPolarities _ _⟩
 
-private theorem Atom.eq_of_mem_constraints : ∀ R : Relation, ∀ a ∈ R.constraints,
-    ∀ b ∈ R.constraints, (a.src = b.src → a = b) ∧ (a.tgt = b.tgt → a = b) := by
-  decide
+/-- The constraints of a relation are a partial bijection of the polarities: no two of them take
+the first argument with the same polarity, nor the second. -/
+theorem injOn_src_constraints (R : Relation) : Set.InjOn Atom.src R.constraints := by
+  have : ∀ R : Relation, ∀ a ∈ R.constraints, ∀ b ∈ R.constraints, a.src = b.src → a = b := by
+    decide
+  exact fun a ha b hb ↦ this R a ha b hb
+
+theorem injOn_tgt_constraints (R : Relation) : Set.InjOn Atom.tgt R.constraints := by
+  have : ∀ R : Relation, ∀ a ∈ R.constraints, ∀ b ∈ R.constraints, a.tgt = b.tgt → a = b := by
+    decide
+  exact fun a ha b hb ↦ this R a ha b hb
+
+/-- The seven relations are the partial bijections of the two polarities: a set of constraints is
+a relation's exactly when no two of its members agree on the polarity of either argument. -/
+theorem mem_range_constraints_iff_injOn {s : Finset Atom} :
+    s ∈ Set.range constraints ↔ Set.InjOn Atom.src s ∧ Set.InjOn Atom.tgt s := by
+  have : ∀ s : Finset Atom, (∃ R : Relation, R.constraints = s) ↔
+      (∀ a ∈ s, ∀ b ∈ s, a.src = b.src → a = b) ∧ ∀ a ∈ s, ∀ b ∈ s, a.tgt = b.tgt → a = b := by
+    decide
+  exact this s
 
 /-- On a Boolean algebra the join is relational composition: `R * S` holds of `x` and `z` exactly
 when some `y` has `x R y` and `y S z`. The constraints bound `y` and its complement from both sides,
@@ -222,7 +240,7 @@ theorem holds_mul (R S : Relation) :
       refine sup_le (Finset.sup_le fun a' ha' ↦ ?_) (Finset.sup_le fun b hb ↦ ?_)
       · cases hat' : a'.tgt
         · have hne : a'.src ≠ a.src := fun h ↦ by
-            rw [(Atom.eq_of_mem_constraints R a' ha' a ha).1 h, hat] at hat'
+            rw [injOn_src_constraints R ha' ha h, hat] at hat'
             exact Polarity.noConfusion hat'
           simpa [l, hat'] using (pol_of_ne hne x).le
         · simp [l, hat']
@@ -237,7 +255,7 @@ theorem holds_mul (R S : Relation) :
       · cases hbs' : b'.src
         · simp [u, hbs']
         · have hne : b.tgt ≠ b'.tgt := fun h ↦ by
-            rw [(Atom.eq_of_mem_constraints S b hb b' hb').2 h, hbs'] at hbs
+            rw [injOn_tgt_constraints S hb hb' h, hbs'] at hbs
             exact Polarity.noConfusion hbs
           simpa [u, hbs'] using (pol_of_ne hne z).ge
     · change (_)ᶜ ≤ _

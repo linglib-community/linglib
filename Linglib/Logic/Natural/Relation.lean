@@ -2,9 +2,7 @@ module
 
 public import Linglib.Semantics.Negation.Polarity
 public import Mathlib.Algebra.Group.Defs
-public import Mathlib.Basic.PEquiv
-public import Mathlib.Algebra.Group.Basic
-public import Mathlib.Algebra.Order.Monoid.Unbundled.Defs
+public import Mathlib.Order.Hom.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Disjoint
 public import Mathlib.Tactic.DeriveFintype
@@ -73,88 +71,23 @@ inductive Relation where
 
 namespace Relation
 
-/-! ### Atomic constraints
+/-- The atomic lattice constraints a relation can impose
+([icard-2012] Definition 1.2). -/
+inductive Atom where
+  /-- `x ≤ y`. -/
+  | le
+  /-- `y ≤ x`. -/
+  | ge
+  /-- `x ⊓ y = ⊥`. -/
+  | disjoint
+  /-- `x ⊔ y = ⊤`. -/
+  | codisjoint
+  deriving DecidableEq, Fintype, Repr
 
-An atomic constraint relates `x` or its complement to `y` or its complement by `≤`: it is an arrow
-from a polarity of the first argument to a polarity of the second. -/
-
-/-- An atomic constraint between two elements ([icard-2012] Definition 1.2): the first, taken with
-polarity `src`, is below the second taken with polarity `tgt`
-(`Relation.Atom.holds_iff_smul_subset`). -/
-structure Atom where
-  /-- The polarity of the first argument. -/
-  src : Polarity
-  /-- The polarity of the second argument. -/
-  tgt : Polarity
-  deriving DecidableEq, Repr
-
-namespace Atom
-
-/-- `x ≤ y`. -/
-@[match_pattern] abbrev le : Atom := ⟨.positive, .positive⟩
-
-/-- `y ≤ x`, that is, `xᶜ ≤ yᶜ`. -/
-@[match_pattern] abbrev ge : Atom := ⟨.negative, .negative⟩
-
-/-- `x ⊓ y = ⊥`, that is, `x ≤ yᶜ`. -/
-@[match_pattern] abbrev disjoint : Atom := ⟨.positive, .negative⟩
-
-/-- `x ⊔ y = ⊤`, that is, `xᶜ ≤ y`. -/
-@[match_pattern] abbrev codisjoint : Atom := ⟨.negative, .positive⟩
-
-instance : Fintype Atom :=
-  ⟨{le, ge, disjoint, codisjoint}, by rintro ⟨_ | _, _ | _⟩ <;> decide⟩
-
-/-- The constraint between `x` and `z` that a constraint between `x` and `y` and one between `y`
-and `z` guarantee: the composite arrow, when the polarities of `y` agree
-(`Relation.Atom.Holds.join`). -/
-def join (a b : Atom) : Option Atom :=
-  if a.tgt = b.src then some ⟨a.src, b.tgt⟩ else none
-
-end Atom
-
-/-! ### Relations as partial bijections of the polarities -/
-
-/-- A relation as a partial bijection of the two polarities, sending the polarity of the first
-argument to the polarity of the second that it is below: `≡` is the identity, `^` exchanges the
-polarities, `#` is nowhere defined, and each of the other four is a single arrow. -/
-def toPEquiv : Relation → (Polarity ≃. Polarity)
-  | .equiv => PEquiv.refl Polarity
-  | .forward => PEquiv.single .positive .positive
-  | .reverse => PEquiv.single .negative .negative
-  | .negation => (Equiv.mulLeft Polarity.negative).toPEquiv
-  | .alternation => PEquiv.single .positive .negative
-  | .cover => PEquiv.single .negative .positive
-  | .independent => ⊥
-
-/-- The relation of a partial bijection of the polarities. -/
-def ofPEquiv (f : Polarity ≃. Polarity) : Relation :=
-  match f .positive, f .negative with
-  | some .positive, some .negative => .equiv
-  | some .negative, some .positive => .negation
-  | some .positive, none => .forward
-  | none, some .negative => .reverse
-  | some .negative, none => .alternation
-  | none, some .positive => .cover
-  | _, _ => .independent
-
-@[simp] theorem ofPEquiv_toPEquiv : ∀ R : Relation, ofPEquiv R.toPEquiv = R := by decide
-
-@[simp] theorem toPEquiv_ofPEquiv (f : Polarity ≃. Polarity) : (ofPEquiv f).toPEquiv = f := by
-  sorry
-
-/-- The seven relations are the partial bijections of the two polarities. -/
-def equivPEquiv : Relation ≃ (Polarity ≃. Polarity) where
-  toFun := toPEquiv
-  invFun := ofPEquiv
-  left_inv := ofPEquiv_toPEquiv
-  right_inv := toPEquiv_ofPEquiv
-
-theorem toPEquiv_injective : Function.Injective toPEquiv := equivPEquiv.injective
-
-/-- The atomic constraints a relation asserts, the arrows of its partial bijection
-(`Relation.mem_constraints_iff`): `{le, ge}` for `≡`, `{disjoint, codisjoint}` for `^` and `∅` for
-`#`. A relation holds iff all its constraints do (`Relation.holds_iff`). -/
+/-- The atomic constraints a relation asserts, `{le, ge}` for `≡`, `{disjoint, codisjoint}` for `^`
+and `∅` for `#`. A relation holds iff all its constraints do (`Relation.holds_iff`), and of the
+sixteen constraint sets exactly these seven are nondegenerately realizable
+(`Relation.mem_range_constraints_iff` in `Logic/Natural/Completeness.lean`). -/
 def constraints : Relation → Finset Atom
   | .equiv => {.le, .ge}
   | .forward => {.le}
@@ -163,10 +96,6 @@ def constraints : Relation → Finset Atom
   | .alternation => {.disjoint}
   | .cover => {.codisjoint}
   | .independent => ∅
-
-theorem mem_constraints_iff : ∀ {R : Relation} {a : Atom},
-    a ∈ R.constraints ↔ R.toPEquiv a.src = some a.tgt := by
-  decide
 
 theorem constraints_injective : Function.Injective constraints := by decide
 
@@ -178,18 +107,16 @@ def ofAtoms (P : Atom → Prop) [DecidablePred P] : Relation :=
     (fun R ↦ ∀ a ∈ R.constraints, P a)).getD independent
 
 /-- In the implication order ([icard-2012]'s ≪), `R ≤ R'` iff `xRy` entails `xR'y`, i.e. iff the
-partial bijection of `R` extends that of `R'` (`Relation.Holds.of_le`). It consists of two diamonds
+constraints of `R'` are among those of `R` (`Relation.Holds.of_le`). It consists of two diamonds
 sharing only the top `#`, one with `≡` below `⊑` and `⊒`, the other with `^` below `|` and `⌣`;
-there is no bottom, since a partial bijection of two points has two maximal extensions. The most
+there is no bottom, since `x = y` makes `x` and `y` neither disjoint nor exhaustive. The most
 informative relation, which [icard-2012] calls ≪-maximal, is the least one in this order. -/
 instance : PartialOrder Relation :=
-  .lift (fun R ↦ OrderDual.toDual R.toPEquiv) (OrderDual.toDual.injective.comp toPEquiv_injective)
-
-theorem le_iff_toPEquiv_le {R R' : Relation} : R ≤ R' ↔ R'.toPEquiv ≤ R.toPEquiv := Iff.rfl
+  .lift (fun R ↦ OrderDual.toDual (constraints R))
+    (OrderDual.toDual.injective.comp constraints_injective)
 
 theorem le_iff {R R' : Relation} :
-    R ≤ R' ↔ constraints R' ⊆ constraints R := by
-  sorry
+    R ≤ R' ↔ constraints R' ⊆ constraints R := Iff.rfl
 
 instance : DecidableLE Relation := fun _ _ ↦
   decidable_of_iff _ le_iff.symm
@@ -198,39 +125,84 @@ instance : OrderTop Relation where
   top := .independent
   le_top _ := le_iff.mpr (Finset.empty_subset _)
 
-@[simp] theorem toPEquiv_top : (⊤ : Relation).toPEquiv = ⊥ := rfl
+namespace Atom
+
+/-- The polarity of the first argument when a constraint between elements of a Boolean lattice is
+read as an inequality between the arguments or their complements: `x ≤ y` and `x ≤ yᶜ` take `x`
+itself, `xᶜ ≤ yᶜ` and `xᶜ ≤ y` its complement. -/
+def src : Atom → Polarity
+  | .le | .disjoint => .positive
+  | .ge | .codisjoint => .negative
+
+/-- The polarity of the second argument in a constraint read as an inequality. -/
+def tgt : Atom → Polarity
+  | .le | .codisjoint => .positive
+  | .ge | .disjoint => .negative
+
+/-- The constraint saying that the first argument with polarity `m` is below the second with
+polarity `q`. -/
+def ofPolarities : Polarity → Polarity → Atom
+  | .positive, .positive => .le
+  | .positive, .negative => .disjoint
+  | .negative, .positive => .codisjoint
+  | .negative, .negative => .ge
+
+@[simp] theorem ofPolarities_src_tgt : ∀ a : Atom, ofPolarities a.src a.tgt = a := by decide
+
+@[simp] theorem src_ofPolarities : ∀ m q : Polarity, (ofPolarities m q).src = m := by decide
+
+@[simp] theorem tgt_ofPolarities : ∀ m q : Polarity, (ofPolarities m q).tgt = q := by decide
+
+/-- The constraint between `x` and `z` that a constraint between `x` and `y` and one between `y`
+and `z` guarantee, when there is one (`Relation.Atom.Holds.join`): read as inequalities, the two
+chain by transitivity when they take `y` with the same polarity. So `≤` and `≥` are transitive,
+disjointness is inherited downward and codisjointness upward, and `x` disjoint from `y` and `y`
+codisjoint with `z` give `x ≤ z`. -/
+def join (a b : Atom) : Option Atom :=
+  if a.tgt = b.src then some (ofPolarities a.src b.tgt) else none
+
+/-- The constraint in the order dual: `≤` and `≥` exchange, as do disjointness and
+codisjointness. -/
+def dual (a : Atom) : Atom := ofPolarities (.negative * a.src) (.negative * a.tgt)
+
+end Atom
+
+private theorem Atom.join_assoc :
+    ∀ a b c : Atom, (a.join b).bind (·.join c) = (b.join c).bind (a.join ·) := by
+  decide
 
 /-- The join `R ⋈ R'` ([icard-2012], Lemma 1.5) is the strongest relation guaranteed between `x`
-and `z` given `xRy` and `yR'z`: the composite of the two partial bijections, which chains each
-constraint of `R` with each constraint of `R'` on the same polarity of `y`
-(`Relation.mem_constraints_mul`). [maccartney-manning-2009] call it join after the database
-operation; it is not the lattice join. On a Boolean algebra it is relational composition
-(`Relation.holds_mul` in `Logic/Natural/Completeness.lean`), the middle term ranging over all
-elements; [maccartney-manning-2009]'s relations exclude `⊥` and `⊤` and each other, and their
-composition is a union of relations in 17 of the 49 cells. -/
-def join (R S : Relation) : Relation := ofPEquiv (R.toPEquiv.trans S.toPEquiv)
+and `z` given `xRy` and `yR'z`, the relation asserting what the atom rule gives for each pair of
+constraints of `R` and `R'` (`Relation.mem_constraints_mul`). It approximates relational
+composition, which [maccartney-manning-2009] call join after the database operation; it is not the
+lattice join.
+Each cell is sound (`Relation.Holds.join`) and is the least
+sound relation (`Relation.isLeast_join` in `Logic/Natural/Completeness.lean`), as [icard-2012]'s
+Definition 1.4 requires. On a Boolean lattice it is relational composition (`Relation.holds_mul`
+in `Logic/Natural/Completeness.lean`), the middle term ranging over every element;
+[maccartney-manning-2009]'s relations exclude one another and the elements `⊥` and `⊤`, and their
+composition is a union of relations on 17 of the 49 cells (§3). -/
+def join (R S : Relation) : Relation :=
+  ofAtoms fun c ↦ ∃ a ∈ R.constraints, ∃ b ∈ S.constraints, a.join b = some c
 
 instance : Mul Relation := ⟨join⟩
 instance : One Relation := ⟨.equiv⟩
-
-@[simp] theorem toPEquiv_mul (R S : Relation) :
-    (R * S).toPEquiv = R.toPEquiv.trans S.toPEquiv := toPEquiv_ofPEquiv _
-
-@[simp] theorem toPEquiv_one : (1 : Relation).toPEquiv = PEquiv.refl Polarity := rfl
 
 theorem mem_constraints_mul {R S : Relation} {c : Atom} :
     c ∈ (R * S).constraints ↔ ∃ a ∈ R.constraints, ∃ b ∈ S.constraints, a.join b = some c := by
   revert R S c
   decide
 
-/-- The relations form a monoid under ⋈ with identity `≡`, the monoid of partial bijections of the
-two polarities. The identity and absorption laws are printed in [icard-2012] (p. 710);
-associativity is printed in neither [icard-2012] nor [maccartney-manning-2009]. The monoid is not
-commutative, since `^ ⋈ ⌣ = ⊑` but `⌣ ⋈ ^ = ⊒`. -/
+/-- The relations form a monoid under ⋈ with identity `≡`. The identity and absorption laws are
+printed in [icard-2012] (p. 710); associativity, printed in neither [icard-2012] nor
+[maccartney-manning-2009], is that of the atom rule. The monoid is not commutative, since `^ ⋈ ⌣ =
+⊑` but `⌣ ⋈ ^ = ⊒`. -/
 instance : Monoid Relation where
-  mul_assoc R S T := toPEquiv_injective <| by simp only [toPEquiv_mul, PEquiv.trans_assoc]
-  one_mul R := toPEquiv_injective <| by simp only [toPEquiv_mul, toPEquiv_one, PEquiv.refl_trans]
-  mul_one R := toPEquiv_injective <| by simp only [toPEquiv_mul, toPEquiv_one, PEquiv.trans_refl]
+  mul_assoc R S T := constraints_injective <| Finset.ext fun _ ↦ by
+    simp only [mem_constraints_mul]
+    exact exists_bind_comm Atom.join_assoc
+  one_mul r := by cases r <;> rfl
+  mul_one r := by cases r <;> rfl
 
 /-- `#` absorbs on the left ([icard-2012] p. 710). -/
 @[simp] theorem top_mul (r : Relation) : ⊤ * r = ⊤ := by cases r <;> rfl
@@ -246,23 +218,6 @@ def converse : Relation → Relation
   | R => R
 
 @[simp] theorem converse_converse (R : Relation) : R.converse.converse = R := by cases R <;> rfl
-
-/-- The converse reverses the join. -/
-theorem converse_mul (R S : Relation) : (R * S).converse = S.converse * R.converse := by
-  sorry
-
-/-- The converse reverses each arrow and negates both of its polarities, `x ≤ y` being
-`yᶜ ≤ xᶜ`. -/
-theorem toPEquiv_converse (R : Relation) :
-    R.converse.toPEquiv = ((Equiv.mulLeft Polarity.negative).toPEquiv.trans R.toPEquiv.symm).trans
-      (Equiv.mulLeft Polarity.negative).toPEquiv := by
-  sorry
-
-/-- Chaining on the left is monotone. -/
-instance : MulLeftMono Relation := ⟨by sorry⟩
-
-/-- Chaining on the right is monotone. -/
-instance : MulRightMono Relation := ⟨by sorry⟩
 
 end Relation
 
@@ -307,6 +262,19 @@ theorem Relation.holds_converse {α : Type*} [Lattice α] [BoundedOrder α] {R :
   | negation => exact ⟨IsCompl.symm, IsCompl.symm⟩
   | alternation => exact disjoint_comm
   | cover => exact codisjoint_comm
+
+/-- A constraint holds in the order dual exactly when its dual holds. -/
+theorem Relation.Atom.holds_toDual {α : Type*} [Lattice α] [BoundedOrder α] {a : Relation.Atom}
+    {x y : α} : a.Holds (OrderDual.toDual x) (OrderDual.toDual y) ↔ a.dual.Holds x y := by
+  cases a
+  · exact Iff.rfl
+  · exact Iff.rfl
+  · exact disjoint_toDual_iff
+  · exact codisjoint_toDual_iff
+
+/-- The converse reverses the join. -/
+theorem Relation.converse_mul : ∀ R S : Relation, (R * S).converse = S.converse * R.converse := by
+  decide
 
 instance Relation.Atom.decidableHolds {α : Type*} [Lattice α] [BoundedOrder α]
     [DecidableEq α] [DecidableLE α] :
@@ -362,13 +330,11 @@ Distributivity is needed for a disjoint pair followed by a codisjoint one, which
 theorem Relation.Atom.Holds.join {β : Type*} [DistribLattice β] [BoundedOrder β]
     {a b c : Relation.Atom} (h : a.join b = some c) {x y z : β} (ha : a.Holds x y)
     (hb : b.Holds y z) : c.Holds x z := by
-  obtain ⟨s, t⟩ := a
-  obtain ⟨s', t'⟩ := b
-  unfold Relation.Atom.join at h
-  split_ifs at h with hst
-  obtain rfl : t = s' := hst
-  obtain rfl := Option.some.inj h
-  cases s <;> cases t <;> cases t' <;> first
+  cases a <;> cases b <;>
+    simp only [Relation.Atom.join, Relation.Atom.src, Relation.Atom.tgt,
+      Relation.Atom.ofPolarities, reduceCtorEq, ite_true, ite_false, Option.some.injEq] at h <;>
+    subst h <;> simp only [Relation.Atom.Holds] at ha hb ⊢
+  all_goals first
     | exact le_trans ha hb
     | exact ge_trans ha hb
     | exact hb.mono_left ha
