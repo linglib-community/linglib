@@ -75,6 +75,8 @@ STANDARD_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 RENAMES = CHECKS / "renames.toml"
 LEDGER = CHECKS / "ledger"
 LEDGER_NODES = LEDGER / "nodes"
+# Names that are not a person's: a bot account, or an AI agent. A heuristic that stops accidents.
+AGENT_NAME = re.compile(r"(?i)\[bot\]|\bbot\b|-bot\b|claude|copilot|codex|gemini|chatgpt|\bgpt\b")
 LOGIN = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?")
 
 
@@ -365,6 +367,14 @@ def cmd_status(args):
     if pending:
         print(f"{len(pending)} rename(s) of constants these items use are not recorded, and stale "
               "sign-offs may be current once they are: run `checks.py renames`", file=sys.stderr)
+    if args.ci:
+        for (key, cid), st in status.items():
+            if st == "stale":
+                print(f"::warning title=Stale sign-off::{key}/{cid}: its statement has changed "
+                      f"since it was signed; `checks.py diff {key} {cid}` shows how")
+            if st == "broken":
+                print(f"::error title=Broken item::{key}/{cid}: "
+                      f"{', '.join(info[(key, cid)]['unresolved'])} does not resolve")
     for key in sources if not args.sources else args.sources:
         refs = [r for r in status if r[0] == key]
         counts = {}
@@ -382,7 +392,7 @@ def cmd_status(args):
             if status[r] == "unproved":
                 line += f"  ({info[r]['signoff']}; rests on " + ", ".join(info[r]["axioms"]) + ")"
             print(line)
-    return 1 if problems else 0
+    return 1 if problems or (args.ci and "broken" in status.values()) else 0
 
 
 def cmd_core(args):
@@ -443,6 +453,89 @@ def cmd_diff(args):
             print(f"\n{name}: the printed text is the same, but the term differs, as in a "
                   "bound variable's type that printing hides")
     return 0
+
+
+def ledger_problems(changes, author, author_type):
+    """What is wrong with a change to the ledger, given as `(status, path)` pairs from `git diff
+    --name-status`, made by the GitHub account `author`."""
+    problems = []
+    prefix = f"checks/{LEDGER.name}/"
+    for state, path in changes:
+        if state != "A":
+            problems.append(f"{path}: the ledger is append-only, but this file is "
+                            f"{'deleted' if state == 'D' else 'changed'}")
+            continue
+        raw = (ROOT / path).read_bytes()
+        stem = Path(path).stem
+        if stem != short_hash(raw):
+            problems.append(f"{path}: its name is not the hash of its contents")
+        if path.startswith(prefix + "nodes/") or not path.endswith(".toml"):
+            continue
+        try:
+            sign = tomllib.loads(raw.decode("utf-8"))
+        except (tomllib.TOMLDecodeError, UnicodeDecodeError) as e:
+            problems.append(f"{path}: not valid TOML: {e}")
+            continue
+        problems += entry_problems(path, sign, author, author_type)
+    return problems
+
+
+def entry_problems(path, sign, author, author_type):
+    """What is wrong with one new ledger file."""
+    problems = []
+    by, recorded_by, via = sign.get("by"), sign.get("recorded_by"), sign.get("via")
+    source = sign.get("source")
+    if not all(isinstance(v, str) and v for v in (by, recorded_by, source)):
+        return [f"{path}: `source`, `by` and `recorded_by` must all be given"]
+    if not isinstance(sign.get("date"), datetime.datetime):
+        problems.append(f"{path}: `date` must be a date and time")
+    if recorded_by.lower() != author.lower():
+        problems.append(f"{path}: recorded_by is {recorded_by}, but the pull request is by "
+                        f"{author}")
+    if author_type == "Bot" or AGENT_NAME.search(recorded_by):
+        problems.append(f"{path}: a sign-off is recorded by a person, not {recorded_by}")
+    if AGENT_NAME.search(by):
+        problems.append(f"{path}: a sign-off is made by a person, not {by}")
+    if by == recorded_by:
+        if via:
+            problems.append(f"{path}: `via` is for a sign-off recorded for someone else")
+    elif not via:
+        problems.append(f"{path}: a sign-off recorded for someone else needs `via`")
+    ids = set()
+    source_file = CHECKS / f"{source}.toml"
+    if source_file.exists():
+        ids = {i.get("id") for i in tomllib.loads(source_file.read_text("utf-8")).get("item", [])}
+    else:
+        problems.append(f"{path}: no check file for {source}")
+    if not sign.get("item"):
+        problems.append(f"{path}: it signs no item")
+    for item in sign.get("item", []):
+        if ids and item.get("id") not in ids:
+            problems.append(f"{path}: {source} has no item {item.get('id')}")
+        if not isinstance(item.get("hash"), str) or not item.get("nodes"):
+            problems.append(f"{path}: item {item.get('id')} needs a `hash` and its `nodes`")
+        for node in item.get("nodes", []):
+            file = LEDGER_NODES / f"{node.get('text')}.txt"
+            if not file.exists():
+                problems.append(f"{path}: the text {node.get('text')} of {node.get('name')} "
+                                "is not in the ledger")
+            elif short_hash(file.read_bytes()) != node["text"]:
+                problems.append(f"{file.name}: its name is not the hash of its contents")
+    return problems
+
+
+def cmd_verify_ledger(args):
+    out = subprocess.run(["git", "diff", "--name-status", "--no-renames", f"{args.base}...HEAD",
+                          "--", f"checks/{LEDGER.name}"], cwd=ROOT, capture_output=True,
+                         text=True)
+    if out.returncode:
+        sys.exit(f"git diff against {args.base} failed:\n{out.stderr}")
+    changes = [tuple(line.split("\t", 1)) for line in out.stdout.splitlines()]
+    problems = ledger_problems(changes, args.author, args.author_type)
+    for p in problems:
+        print(f"::error::{p}")
+    print(f"{len(changes)} change(s) to the ledger, {len(problems)} problem(s)")
+    return 1 if problems else 0
 
 
 RENAMES_HEADER = """\
@@ -772,6 +865,8 @@ def main():
     p = sub.add_parser("status", help="the status of every item")
     p.add_argument("sources", nargs="*")
     p.add_argument("--json", action="store_true", help="as data, for the docs pages")
+    p.add_argument("--ci", action="store_true",
+                   help="annotate stale items as warnings, and fail on a broken item")
     p.set_defaults(func=cmd_status)
     p = sub.add_parser("diff", help="what changed since an item was signed")
     p.add_argument("source")
@@ -799,6 +894,11 @@ def main():
     p.add_argument("--jobs", type=int, default=4, help="glosses written at once")
     p.add_argument("--refresh", action="store_true", help="rewrite cached glosses")
     p.set_defaults(func=cmd_gloss)
+    p = sub.add_parser("verify-ledger", help="check a pull request's changes to the ledger")
+    p.add_argument("--base", required=True, help="the branch the pull request targets")
+    p.add_argument("--author", required=True, help="the GitHub login of the pull request's author")
+    p.add_argument("--author-type", default="User", help="the account's type: User or Bot")
+    p.set_defaults(func=cmd_verify_ledger)
     p = sub.add_parser("renames", help="record the renames of constants the items use")
     p.set_defaults(func=cmd_renames)
     p = sub.add_parser("selftest", help="check that the hash changes exactly when it should")

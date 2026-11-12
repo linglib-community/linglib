@@ -53,13 +53,14 @@ signer has checked both what the source claims and that the declarations contrad
 are made by people, never by agents. Proofs need no check, since Lean has checked them.
 
 ```
-python3 scripts/checks.py status [SOURCE ...]
+python3 scripts/checks.py status [--ci] [SOURCE ...]
 python3 scripts/checks.py sign SOURCE --items ex-22,ex-23 --by HANDLE
 python3 scripts/checks.py sign SOURCE --all --by HANDLE
 python3 scripts/checks.py sign SOURCE --all --by "A. Reviewer" --recorded-by HANDLE --via email
 python3 scripts/checks.py diff SOURCE ITEM
 python3 scripts/checks.py core [--json]
 python3 scripts/checks.py renames
+python3 scripts/checks.py verify-ledger --base origin/main --author HANDLE
 python3 scripts/checks.py selftest
 ```
 
@@ -205,23 +206,30 @@ the sign-off, and point to `diff`. An item is current if the hash of its newest 
 its hash now.
 
 **Who checks.** `recorded_by` is the GitHub account that adds the file. A reviewer without an
-account is named in `by`, and a maintainer records the sign-off for them, giving `via`: how
+account is named in `by`, and someone else records the sign-off for them, giving `via`: how
 the reviewer made the check known, such as `email` or `issue #123`, with no contact details. A
-sign-off recorded by a maintainer for someone else is shown as such: "checked by A. Reviewer,
-recorded by patrl". Sign-offs are still made by people, never by agents.
+sign-off recorded for someone else is shown as such: "checked by A. Reviewer, recorded by
+patrl". The admin who merges the pull request vouches for it, as for any change from outside.
+Sign-offs are still made by people, never by agents.
 
-`sign` enforces the `via` rule. The rest is not built yet: CI will fail a pull request that:
+`sign` enforces the `via` rule when it writes the file. CI enforces all of them, with
+`verify-ledger`, in a job on every pull request. It fails a pull request that:
 
 * changes or deletes a file in `checks/ledger/`, or has one whose name is not the hash of its
-  contents;
+  contents or whose node texts are missing;
 * has a `recorded_by` that is not the PR's author, or is a bot;
-* has a `by` that names a bot or an agent;
-* has `by` different from `recorded_by` without a `via`, or recorded by someone not listed in
-  `checks/MAINTAINERS`.
+* has a `by` that names a bot or an agent (a name containing `bot`, `claude`, `copilot`, `codex`,
+  `gemini` or `gpt`, which stops accidents rather than a determined effort);
+* has `by` different from `recorded_by` without a `via`;
+* signs an item that the check file does not list.
+
+A step of the build job runs `status --ci` after the build. It fails on a `broken` item, so that
+a renamed or removed declaration is caught, and reports a `stale` item as a warning, since a
+statement may change and its sign-off then says so.
 
 CI cannot tell a person from an agent working under that person's account. The check in `sign`
-that refuses to run under Claude Code is a guard against accidents, and a maintainer who records
-a sign-off for someone else vouches for it.
+that refuses to run under Claude Code is a guard against accidents, and review of the pull request
+does the rest.
 
 Not part of this change: a proof that a changed statement still agrees with a signed one (the
 texts stored here are what such a proof would be stated against), and a split of the item files

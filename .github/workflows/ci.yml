@@ -14,6 +14,23 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  ledger:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check the pull request's changes to the human-check ledger
+        env:
+          BASE: origin/${{ github.base_ref }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+          AUTHOR_TYPE: ${{ github.event.pull_request.user.type }}
+        run: python3 scripts/checks.py verify-ledger --base "$BASE" --author "$AUTHOR" --author-type "$AUTHOR_TYPE"
+
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 120
@@ -104,6 +121,9 @@ jobs:
 
       - name: Build
         run: lake build
+
+      - name: Check that the human checks' declarations resolve (stale sign-offs are warnings)
+        run: python3 scripts/checks.py status --ci
 
       - name: Check for sorries (informational)
         run: |
