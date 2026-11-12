@@ -77,11 +77,30 @@ namespace ProperFilter
 
 variable {L : Type*} [Lattice L] [BoundedOrder L]
 
+instance : SetLike (ProperFilter L) L where
+  coe F := (F.1 : Set L)
+  coe_injective _ _ h := Subtype.ext (SetLike.coe_injective h)
+
+@[simp] theorem mem_val {F : ProperFilter L} {a : L} : a ∈ F.1 ↔ a ∈ F := Iff.rfl
+
+theorem bot_notMem (F : ProperFilter L) : ⊥ ∉ F := F.2
+
+@[simp] theorem top_mem (F : ProperFilter L) : ⊤ ∈ F := F.1.top_mem
+
+theorem mem_of_le (F : ProperFilter L) {a b : L} (h : a ≤ b) (ha : a ∈ F) : b ∈ F :=
+  F.1.mem_of_le h ha
+
+theorem inf_mem (F : ProperFilter L) {a b : L} (ha : a ∈ F) (hb : b ∈ F) : a ⊓ b ∈ F :=
+  F.1.inf_mem ha hb
+
+@[simp] theorem inf_mem_iff (F : ProperFilter L) {a b : L} : a ⊓ b ∈ F ↔ a ∈ F ∧ b ∈ F :=
+  F.1.inf_mem_iff
+
 /-- The principal filter of a nonzero element. -/
 def principal {a : L} (ha : a ≠ ⊥) : ProperFilter L :=
   ⟨PFilter.principal a, fun h ↦ ha (le_bot_iff.mp h)⟩
 
-@[simp] theorem mem_principal {a b : L} (ha : a ≠ ⊥) : b ∈ (principal ha).1 ↔ a ≤ b := Iff.rfl
+@[simp] theorem mem_principal {a b : L} (ha : a ≠ ⊥) : b ∈ principal ha ↔ a ≤ b := Iff.rfl
 
 /-! ### The relation of a meet-preserving operator -/
 
@@ -89,19 +108,19 @@ variable {box : InfTopHom L L}
 
 /-- The filter `{a | □a ∈ F}`, proper when `□` is deflationary. -/
 def nec (hT : ∀ a, box a ≤ a) (F : ProperFilter L) : ProperFilter L :=
-  ⟨F.1.comap box, fun h ↦ F.2 <| by
+  ⟨F.1.comap box, fun h ↦ F.bot_notMem <| by
     have h' := PFilter.mem_comap.mp h
     rwa [le_bot_iff.mp (hT ⊥)] at h'⟩
 
 theorem mem_nec {hT : ∀ a, box a ≤ a} {F : ProperFilter L} {a : L} :
-    a ∈ (nec hT F).1 ↔ box a ∈ F.1 := Iff.rfl
+    a ∈ nec hT F ↔ box a ∈ F := Iff.rfl
 
 variable (box) in
 /-- `F` accesses `G` when `G` contains everything necessary at `F`. -/
 def access : SetRel (ProperFilter L) (ProperFilter L) :=
-  {(F, G) | ∀ a, box a ∈ F.1 → a ∈ G.1}
+  {(F, G) | ∀ a, box a ∈ F → a ∈ G}
 
-theorem mem_access {F G : ProperFilter L} : F ~[access box] G ↔ ∀ a, box a ∈ F.1 → a ∈ G.1 :=
+theorem mem_access {F G : ProperFilter L} : F ~[access box] G ↔ ∀ a, box a ∈ F → a ∈ G :=
   Iff.rfl
 
 theorem access_nec (hT : ∀ a, box a ≤ a) (F : ProperFilter L) : F ~[access box] nec hT F :=
@@ -109,12 +128,12 @@ theorem access_nec (hT : ∀ a, box a ≤ a) (F : ProperFilter L) : F ~[access b
 
 /-- `□` of the filters containing `a` is the filters containing `□a`. -/
 theorem core_setOf_mem (hT : ∀ a, box a ≤ a) (a : L) :
-    (access box).core {F : ProperFilter L | a ∈ F.1} = {F | box a ∈ F.1} :=
-  Set.ext fun F ↦ ⟨fun h ↦ mem_nec.1 (show a ∈ (nec hT F).1 from h (access_nec hT F)),
+    (access box).core {F : ProperFilter L | a ∈ F} = {F | box a ∈ F} :=
+  Set.ext fun F ↦ ⟨fun h ↦ mem_nec.1 (show a ∈ nec hT F from h (access_nec hT F)),
     fun h _ hFG ↦ mem_access.1 hFG a h⟩
 
 theorem isRefl_access (hT : ∀ a, box a ≤ a) : (access box).IsRefl :=
-  ⟨fun F ↦ mem_access.2 fun a h ↦ F.1.mem_of_le (hT a) h⟩
+  ⟨fun F ↦ mem_access.2 fun a h ↦ F.mem_of_le (hT a) h⟩
 
 /-! ### Orthogonality and the representation -/
 
@@ -122,45 +141,45 @@ variable [InvolutiveCompl L]
 
 /-- Two proper filters are orthogonal when one contains the complement of an element of the
 other ([goldblatt-1975]). -/
-def Orthogonal (F G : ProperFilter L) : Prop := ∃ a ∈ F.1, aᶜ ∈ G.1
+def Orthogonal (F G : ProperFilter L) : Prop := ∃ a ∈ F, aᶜ ∈ G
 
 instance : Std.Symm (Orthogonal (L := L)) :=
   ⟨fun _ _ ⟨a, ha, hac⟩ ↦ ⟨aᶜ, hac, by rwa [InvolutiveCompl.compl_compl]⟩⟩
 
 instance [IsOrtholattice L] : Std.Irrefl (Orthogonal (L := L)) :=
-  ⟨fun F ⟨a, ha, hac⟩ ↦ F.2 <| by
-    have h := F.1.inf_mem ha hac
+  ⟨fun F ⟨a, ha, hac⟩ ↦ F.bot_notMem <| by
+    have h := F.inf_mem ha hac
     rwa [IsOrtholattice.inf_compl_eq_bot] at h⟩
 
 theorem upperPolar_setOf_mem (a : L) :
-    upperPolar Orthogonal {F : ProperFilter L | a ∈ F.1} = {G | aᶜ ∈ G.1} := by
+    upperPolar Orthogonal {F : ProperFilter L | a ∈ F} = {G | aᶜ ∈ G} := by
   ext G
   refine ⟨fun h ↦ ?_, fun haG F haF ↦ ⟨a, haF, haG⟩⟩
   rcases eq_or_ne a ⊥ with rfl | ha
-  · rw [InvolutiveCompl.compl_bot]; exact G.1.top_mem
+  · rw [InvolutiveCompl.compl_bot]; exact G.top_mem
   · obtain ⟨c, hc, hcG⟩ :=
-      h (show principal ha ∈ {F : ProperFilter L | a ∈ F.1} from (mem_principal ha).2 le_rfl)
-    exact G.1.mem_of_le (InvolutiveCompl.compl_le_compl ((mem_principal ha).1 hc)) hcG
+      h (show principal ha ∈ {F : ProperFilter L | a ∈ F} from (mem_principal ha).2 le_rfl)
+    exact G.mem_of_le (InvolutiveCompl.compl_le_compl ((mem_principal ha).1 hc)) hcG
 
-theorem isExtent_setOf_mem (a : L) : IsExtent Orthogonal {F : ProperFilter L | a ∈ F.1} := by
+theorem isExtent_setOf_mem (a : L) : IsExtent Orthogonal {F : ProperFilter L | a ∈ F} := by
   refine isExtent_iff_lowerPolar_upperPolar_subset.2 fun F hF ↦ ?_
   rw [upperPolar_setOf_mem] at hF
   by_contra haF
   have hac : aᶜ ≠ ⊥ := fun h ↦ haF <| by
-    rw [← InvolutiveCompl.compl_compl a, h, InvolutiveCompl.compl_bot]; exact F.1.top_mem
+    rw [← InvolutiveCompl.compl_compl a, h, InvolutiveCompl.compl_bot]; exact F.top_mem
   obtain ⟨c, hc, hca⟩ :=
-    hF (show principal hac ∈ {G : ProperFilter L | aᶜ ∈ G.1} from (mem_principal hac).2 le_rfl)
-  exact haF <| F.1.mem_of_le
+    hF (show principal hac ∈ {G : ProperFilter L | aᶜ ∈ G} from (mem_principal hac).2 le_rfl)
+  exact haF <| F.mem_of_le
     (InvolutiveCompl.compl_le_compl_iff_le.mp ((mem_principal hac).1 hca)) hc
 
 /-- `a` as the concept of the proper filters containing it ([goldblatt-1975]). -/
 def embed (a : L) : Concept (ProperFilter L) (ProperFilter L) Orthogonal :=
   .ofIsExtent _ _ (isExtent_setOf_mem a)
 
-@[simp] theorem coe_embed (a : L) : (embed a : Set (ProperFilter L)) = {F | a ∈ F.1} := rfl
+@[simp] theorem coe_embed (a : L) : (embed a : Set (ProperFilter L)) = {F | a ∈ F} := rfl
 
 theorem embed_le_embed {a b : L} : embed a ≤ embed b ↔ a ≤ b := by
-  refine ⟨fun h ↦ ?_, fun h F hF ↦ F.1.mem_of_le h hF⟩
+  refine ⟨fun h ↦ ?_, fun h F hF ↦ F.mem_of_le h hF⟩
   rcases eq_or_ne a ⊥ with rfl | ha
   · exact bot_le
   · have hmem : principal ha ∈ (embed b : Set (ProperFilter L)) :=
@@ -170,12 +189,12 @@ theorem embed_le_embed {a b : L} : embed a ≤ embed b ↔ a ≤ b := by
 theorem embed_inf (a b : L) : embed (a ⊓ b) = embed a ⊓ embed b :=
   SetLike.coe_injective <| by
     rw [Concept.coe_inf, coe_embed, coe_embed, coe_embed]
-    exact Set.ext fun F ↦ F.1.inf_mem_iff (x := a) (y := b)
+    exact Set.ext fun F ↦ F.inf_mem_iff (a := a) (b := b)
 
 theorem embed_top : embed (⊤ : L) = ⊤ :=
   SetLike.coe_injective <| by
     rw [coe_embed, Concept.coe_top]
-    exact Set.ext fun F ↦ iff_of_true F.1.top_mem trivial
+    exact Set.ext fun F ↦ iff_of_true F.top_mem trivial
 
 theorem embed_compl (a : L) : embed aᶜ = (embed a)ᶜ :=
   SetLike.coe_injective <| by rw [Concept.coe_compl, coe_embed, coe_embed, upperPolar_setOf_mem]

@@ -108,7 +108,7 @@ def Compatibility.ofOrtholattice (V : Set L) : Compatibility (Point V) where
   ortho_iff _ _ := not_not.symm
 
 @[simp] theorem Compatibility.ofOrtholattice_compat {V : Set L} {a b : Point V} :
-    (Compatibility.ofOrtholattice V).compat a b ↔ ¬ a.1 ≤ b.1ᶜ := Iff.rfl
+    (Compatibility.ofOrtholattice V).compat a b ↔ ¬ (a : L) ≤ b.1ᶜ := Iff.rfl
 
 omit [IsOrtholattice L] in
 theorem eval_map {V₀ : Set L} (hV : JoinDense V₀) (v : Var → L) (φ : Formula Var) :

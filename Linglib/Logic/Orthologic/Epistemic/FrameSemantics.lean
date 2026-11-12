@@ -121,7 +121,7 @@ def ofFilters : Compatibility (ProperFilter L) where
   ortho_iff _ _ := not_not.symm
 
 theorem ofFilters_compat {F G : ProperFilter L} :
-    (ofFilters L).compat F G ↔ ∀ a ∈ F.1, aᶜ ∉ G.1 :=
+    (ofFilters L).compat F G ↔ ∀ a ∈ F, aᶜ ∉ G :=
   ⟨fun h a ha hac ↦ h ⟨a, ha, hac⟩, fun h ⟨a, ha, hac⟩ ↦ h a ha hac⟩
 
 variable {box : InfTopHom L L}
@@ -132,14 +132,14 @@ Theorem 4.37). -/
 theorem isRRegular_ofFilters (hT : ∀ a, box a ≤ a) : IsRRegular (ofFilters L) (access box) := by
   refine (isRRegular_iff _ _).2 fun F G' G hFG' hG'G ↦ ?_
   let dia : L →o L := ⟨diamondHom box, OrderHomClass.mono _⟩
-  have key : ∀ c ∈ F.1, cᶜ ∉ G.1.map dia := fun c hc hcD ↦ by
+  have key : ∀ c ∈ F, cᶜ ∉ (G : PFilter L).map dia := fun c hc hcD ↦ by
     obtain ⟨a, haG, hac⟩ := PFilter.mem_map.1 hcD
-    have hbox : box aᶜ ∈ F.1 := F.1.mem_of_le (by
+    have hbox : box aᶜ ∈ F := F.mem_of_le (by
       simpa only [dia, OrderHom.coe_mk, diamondHom_apply, InvolutiveCompl.compl_compl] using
         InvolutiveCompl.le_compl_comm.mp hac) hc
     exact ofFilters_compat.1 hG'G aᶜ (mem_access.1 hFG' aᶜ hbox)
       (by rwa [InvolutiveCompl.compl_compl])
-  refine ⟨⟨G.1.map dia, fun h ↦ key ⊤ F.1.top_mem ?_⟩, ofFilters_compat.2 key,
+  refine ⟨⟨(G : PFilter L).map dia, fun h ↦ key ⊤ F.top_mem ?_⟩, ofFilters_compat.2 key,
     fun H hDH ↦ ⟨nec hT H, access_nec hT H, ofFilters_compat.2 fun d hd hdG ↦
       ofFilters_compat.1 hDH (dia dᶜ) (PFilter.mem_map.2 ⟨dᶜ, hdG, le_rfl⟩) ?_⟩⟩
   · rwa [InvolutiveCompl.compl_top]
@@ -151,10 +151,10 @@ theorem isRRegular_ofFilters (hT : ∀ a, box a ≤ a) : IsRRegular (ofFilters L
 ([holliday-mandelkern-2024] proof of Theorem 4.37). -/
 theorem isKnowable_ofFilters (hE : IsEpistemic box) : IsKnowable (ofFilters L) (access box) := by
   let nb : L →o L := ⟨box, OrderHomClass.mono _⟩
-  refine ⟨fun F ↦ ⟨⟨F.1.map nb, fun h ↦ ?_⟩, fun H hGH ↦ ?_⟩⟩
+  refine ⟨fun F ↦ ⟨⟨(F : PFilter L).map nb, fun h ↦ ?_⟩, fun H hGH ↦ ?_⟩⟩
   · obtain ⟨a, haF, ha⟩ := PFilter.mem_map.1 h
     rw [hE.wittgensteinLaw.eq_bot_of_box_eq_bot (le_bot_iff.mp ha)] at haF
-    exact F.2 haF
+    exact F.bot_notMem haF
   · exact (ofFilters L).mem_ofObject_ortho.2 fun I hHI ↦ ofFilters_compat.2 fun c hc hcI ↦
       ofFilters_compat.1 hHI c (mem_access.1 hGH c (PFilter.mem_map.2 ⟨c, hc, le_rfl⟩)) hcI
 

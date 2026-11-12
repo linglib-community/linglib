@@ -49,18 +49,22 @@ omit [InvolutiveCompl L] in
 /-- The points over `V` are the nonzero elements of `V`. -/
 abbrev Point (V : Set L) : Type _ := ↥(V \ {⊥})
 
+omit [InvolutiveCompl L] in
+/-- A point is not the bottom element. -/
+theorem Point.ne_bot {V : Set L} (a : Point V) : (a : L) ≠ ⊥ := a.2.2
+
 /-- Two points are orthogonal when one lies below the complement of the other
 ([maclaren-1964] Theorem 2.5). -/
-def Orthogonal (V : Set L) (a b : Point V) : Prop := a.1 ≤ b.1ᶜ
+def Orthogonal (V : Set L) (a b : Point V) : Prop := (a : L) ≤ b.1ᶜ
 
 @[simp] theorem orthogonal_iff {V : Set L} {a b : Point V} :
-    Orthogonal V a b ↔ a.1 ≤ b.1ᶜ := Iff.rfl
+    Orthogonal V a b ↔ (a : L) ≤ b.1ᶜ := Iff.rfl
 
 instance (V : Set L) : Std.Symm (Orthogonal V) :=
   ⟨fun _ _ h ↦ InvolutiveCompl.le_compl_comm.mp h⟩
 
 instance [IsOrtholattice L] (V : Set L) : Std.Irrefl (Orthogonal V) :=
-  ⟨fun a h ↦ a.2.2 <| (IsOrtholattice.disjoint_of_le_compl h).eq_bot_of_le le_rfl⟩
+  ⟨fun a h ↦ a.ne_bot <| (IsOrtholattice.disjoint_of_le_compl h).eq_bot_of_le le_rfl⟩
 
 end OrthoConcept
 
@@ -76,13 +80,13 @@ variable {L : Type*} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
 
 /-- `principal V a` is the concept whose extent is the points below `a`. -/
 def principal (V : Set L) (a : L) : OrthoConcept V :=
-  Concept.ofObjects (Orthogonal V) {b | b.1 ≤ a}
+  Concept.ofObjects (Orthogonal V) {b | (b : L) ≤ a}
 
 variable {V : Set L}
 
 omit [InvolutiveCompl L] in
 private theorem le_of_forall_point_le (hV : JoinDense V) {a x : L}
-    (h : ∀ b : Point V, b.1 ≤ a → b.1 ≤ x) : a ≤ x := by
+    (h : ∀ b : Point V, (b : L) ≤ a → (b : L) ≤ x) : a ≤ x := by
   refine (isLUB_le_iff (hV a)).mpr ?_
   rintro b ⟨hbV, hba⟩
   rcases eq_or_ne b ⊥ with rfl | hb0
@@ -90,14 +94,14 @@ private theorem le_of_forall_point_le (hV : JoinDense V) {a x : L}
   · exact h ⟨b, hbV, hb0⟩ hba
 
 private theorem upperPolar_setOf_le (hV : JoinDense V) (x : L) :
-    upperPolar (Orthogonal V) {c : Point V | c.1 ≤ x} = {d | x ≤ d.1ᶜ} := by
+    upperPolar (Orthogonal V) {c : Point V | (c : L) ≤ x} = {d | x ≤ d.1ᶜ} := by
   ext d
   simp only [mem_upperPolar_iff, Set.mem_ofPred_eq, orthogonal_iff]
   exact ⟨fun h ↦ le_of_forall_point_le hV fun b hb ↦ h hb, fun h c hc ↦ hc.trans h⟩
 
 private theorem isExtent_setOf_le (hV : JoinDense V) (a : L) :
-    IsExtent (Orthogonal V) {b : Point V | b.1 ≤ a} := by
-  have key : {d : Point V | a ≤ d.1ᶜ} = {d : Point V | d.1 ≤ aᶜ} := by
+    IsExtent (Orthogonal V) {b : Point V | (b : L) ≤ a} := by
+  have key : {d : Point V | a ≤ d.1ᶜ} = {d : Point V | (d : L) ≤ aᶜ} := by
     ext d; exact InvolutiveCompl.le_compl_comm
   rw [isExtent_iff, upperPolar_setOf_le hV a, key,
       ← upperPolar_eq_lowerPolar (Orthogonal V), upperPolar_setOf_le hV aᶜ]
@@ -106,7 +110,7 @@ private theorem isExtent_setOf_le (hV : JoinDense V) (a : L) :
       InvolutiveCompl.compl_compl]
 
 theorem extent_principal (hV : JoinDense V) (a : L) :
-    (principal V a).extent = {b : Point V | b.1 ≤ a} :=
+    (principal V a).extent = {b : Point V | (b : L) ≤ a} :=
   Concept.extent_ofObjects_of_isExtent (isExtent_setOf_le hV a)
 
 /-! ### The representation preserves the order and the operations -/
