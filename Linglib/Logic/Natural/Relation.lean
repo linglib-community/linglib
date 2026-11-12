@@ -198,7 +198,7 @@ composition, which [maccartney-manning-2009] call join after the database operat
 lattice join.
 Each cell is sound (`Relation.Holds.join`) and is the least
 sound relation (`Relation.isLeast_join` in `Logic/Natural/Completeness.lean`), as [icard-2012]'s
-Definition 1.4 requires. On a Boolean lattice it is relational composition (`Relation.holds_mul`
+Definition 1.4 requires. On a Boolean lattice it is relational composition (`Relation.toSetRel_mul`
 in `Logic/Natural/Completeness.lean`), the middle term ranging over every element;
 [maccartney-manning-2009]'s relations exclude one another and the elements `⊥` and `⊤`, and their
 composition is a union of relations on 17 of the 49 cells (§3). -/

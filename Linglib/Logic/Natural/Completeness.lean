@@ -11,6 +11,7 @@ public import Mathlib.Data.Finset.BooleanAlgebra
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.Bounds.Basic
+public import Mathlib.Basic.Rel
 public import Mathlib.Order.Concept
 public import Mathlib.Order.Interval.Set.Basic
 
@@ -23,7 +24,7 @@ the incidence between constraints and pairs of elements, as a signature is [of t
 incidence](##NaturalLogic.ProjectivitySignature.toConcept) between properties and functions, and
 the join, projection and composition assert [the polar of what the semantics
 relates](##NaturalLogic.Relation.coe_constraints_mul). On a Boolean algebra the join [is relational
-composition](##NaturalLogic.Relation.holds_mul). The order on relations is
+composition](##NaturalLogic.Relation.toSetRel_mul). The order on relations is
 [implication](##NaturalLogic.Relation.le_iff_forall_holds) in every nontrivial bounded lattice, and
 the join is [the least sound chaining](##NaturalLogic.Relation.isLeast_join) in every nontrivial
 distributive one, [even among denotations other than `⊥` and
@@ -67,6 +68,7 @@ namespace NaturalLogic
 variable {α β γ : Type*}
 
 open BoundedLatticeHom (ofBool ofBool_injective)
+open scoped SetRel
 
 /-! ### Relations as formal concepts
 
@@ -81,21 +83,35 @@ section Lattice
 variable [Lattice α] [BoundedOrder α]
 
 variable (α) in
+/-- The pairs of elements of a bounded lattice that a constraint holds of. -/
+@[expose] def Atom.toSetRel (a : Atom) : SetRel α α := {(x, y) | a.Holds x y}
+
+variable (α) in
+/-- The pairs of elements of a bounded lattice that a relation holds of. -/
+@[expose] def toSetRel (R : Relation) : SetRel α α := {(x, y) | R.Holds x y}
+
+@[simp] theorem Atom.mem_toSetRel {a : Atom} {x y : α} : x ~[a.toSetRel α] y ↔ a.Holds x y :=
+  Iff.rfl
+
+@[simp] theorem mem_toSetRel {R : Relation} {x y : α} : x ~[R.toSetRel α] y ↔ R.Holds x y :=
+  Iff.rfl
+
+variable (α) in
 /-- The incidence of the atomic constraints on pairs of elements of a bounded lattice. -/
-abbrev Atom.incidence : Atom → α × α → Prop := fun a p ↦ a.Holds p.1 p.2
+abbrev Atom.incidence : Atom → α × α → Prop := fun a p ↦ p ∈ a.toSetRel α
 
 /-- The pairs a relation holds of are the polar of its constraints. -/
-theorem setOf_holds_eq_upperPolar (R : Relation) :
-    {p : α × α | R.Holds p.1 p.2} = upperPolar (Atom.incidence α) ↑R.constraints :=
-  Set.ext fun _ ↦ holds_iff
+theorem toSetRel_eq_upperPolar (R : Relation) :
+    R.toSetRel α = upperPolar (Atom.incidence α) ↑R.constraints :=
+  Set.ext fun ⟨_, _⟩ ↦ holds_iff
 
 variable [Nontrivial α]
 
 /-- The constraints of a relation are the polar of the pairs it holds of: a relation asserts every
 constraint it guarantees. -/
 theorem coe_constraints_eq_lowerPolar (R : Relation) :
-    (↑R.constraints : Set Atom) = lowerPolar (Atom.incidence α) {p | R.Holds p.1 p.2} := by
-  refine Set.ext fun a ↦ ⟨fun ha p hp ↦ holds_iff.1 hp a ha, fun h ↦ ?_⟩
+    (↑R.constraints : Set Atom) = lowerPolar (Atom.incidence α) (R.toSetRel α) := by
+  refine Set.ext fun a ↦ ⟨fun ha ⟨_, _⟩ hp ↦ holds_iff.1 hp a ha, fun h ↦ ?_⟩
   by_contra ha
   have counter : ∀ (R : Relation) (a : Atom), a ∉ R.constraints →
       ∃ x y : Bool, R.Holds x y ∧ ¬ a.Holds x y := by
@@ -110,8 +126,8 @@ of. -/
 @[expose, simps]
 def toConcept (R : Relation) : Concept Atom (α × α) (Atom.incidence α) where
   extent := ↑R.constraints
-  intent := {p | R.Holds p.1 p.2}
-  upperPolar_extent := (setOf_holds_eq_upperPolar R).symm
+  intent := R.toSetRel α
+  upperPolar_extent := (toSetRel_eq_upperPolar R).symm
   lowerPolar_intent := (coe_constraints_eq_lowerPolar R).symm
 
 /-- A stronger relation is a larger concept. -/
@@ -124,7 +140,7 @@ bounded lattice, [icard-2012]'s definition of ≪. -/
 theorem le_iff_forall_holds {R S : Relation} :
     R ≤ S ↔ ∀ x y : α, R.Holds x y → S.Holds x y := by
   rw [← toConcept_le_toConcept_iff (α := α), ← Concept.intent_subset_intent_iff]
-  exact ⟨fun h x y hR ↦ h (a := (x, y)) hR, fun h p hp ↦ h p.1 p.2 hp⟩
+  exact ⟨fun h x y hR ↦ h (a := (x, y)) hR, fun h ⟨x, y⟩ hp ↦ h x y hp⟩
 
 end Lattice
 
@@ -133,8 +149,10 @@ every nontrivial bounded distributive lattice: the atom rule derives every const
 guarantees (`Relation.mem_constraints_mul`). -/
 theorem coe_constraints_mul [DistribLattice α] [BoundedOrder α] [Nontrivial α] (R S : Relation) :
     (↑(R * S).constraints : Set Atom) =
-      lowerPolar (Atom.incidence α) {p | _root_.Relation.Comp R.Holds S.Holds p.1 p.2} := by
-  refine Set.ext fun a ↦ ⟨fun ha p ⟨y, hR, hS⟩ ↦ holds_iff.1 (hR.join hS) a ha, fun h ↦ ?_⟩
+      lowerPolar (Atom.incidence α) (R.toSetRel α ○ S.toSetRel α) := by
+  refine Set.ext fun a ↦ ⟨?_, fun h ↦ ?_⟩
+  · rintro ha ⟨x, z⟩ ⟨y, hR, hS⟩
+    exact holds_iff.1 (Holds.join hR hS) a ha
   by_contra ha
   have counter : ∀ (R S : Relation) (a : Atom), a ∉ (R * S).constraints →
       ∃ x y z : Bool, R.Holds x y ∧ S.Holds y z ∧ ¬ a.Holds x z := by
@@ -173,8 +191,8 @@ bounded distributive lattice ([icard-2012]'s definition of the join). -/
 theorem isLeast_join [DistribLattice α] [BoundedOrder α] [Nontrivial α] (R S : Relation) :
     IsLeast {T : Relation | ∀ x y z : α, R.Holds x y → S.Holds y z → T.Holds x z} (R * S) :=
   ⟨fun _ _ _ hR hS ↦ hR.join hS, fun _ hT ↦ le_iff.2 fun a ha ↦
-    Finset.mem_coe.1 <| (coe_constraints_mul (α := α) R S).symm ▸ fun p ⟨y, hR, hS⟩ ↦
-      holds_iff.1 (hT p.1 y p.2 hR hS) a ha⟩
+    Finset.mem_coe.1 <| (coe_constraints_mul (α := α) R S).symm ▸ fun ⟨x, z⟩ ⟨y, hR, hS⟩ ↦
+      holds_iff.1 (hT x y z hR hS) a ha⟩
 
 /-- The join stays least when the three denotations are other than `⊥` and `⊤`, as
 [maccartney-manning-2009] require of denotations, on the eight-element Boolean algebra. -/
@@ -228,10 +246,10 @@ variable [BooleanAlgebra α]
 when some `y` has `x R y` and `y S z`. The constraints bound `y` and its complement from both sides,
 and the bounds are compatible when `R * S` holds. The middle term may be `⊥` or `⊤`; among other
 elements the join is only the least sound relation (`Relation.isLeast_join_Ioo`). -/
-theorem holds_mul (R S : Relation) :
-    (R * S).Holds (α := α) = _root_.Relation.Comp R.Holds S.Holds := by
-  ext x z
-  refine ⟨fun h ↦ ?_, fun ⟨y, hR, hS⟩ ↦ hR.join hS⟩
+theorem toSetRel_mul (R S : Relation) :
+    (R * S).toSetRel α = R.toSetRel α ○ S.toSetRel α := by
+  ext ⟨x, z⟩
+  refine ⟨fun h ↦ ?_, fun ⟨y, hR, hS⟩ ↦ Holds.join hR hS⟩
   have H : ∀ a ∈ R.constraints, ∀ b ∈ S.constraints, a.tgt = b.src →
       Polarity.complHom a.src x ≤ Polarity.complHom b.tgt z := by
     intro a ha b hb hab
@@ -276,7 +294,7 @@ theorem holds_mul (R S : Relation) :
       exact le_sup_of_le_right (by simpa [u, hbs] using Finset.le_sup (f := u) hb)
 
 /-- The identity of the join holds of equal elements. -/
-theorem holds_one : (1 : Relation).Holds (α := α) = Eq := rfl
+theorem toSetRel_one : (1 : Relation).toSetRel α = SetRel.id := rfl
 
 end BooleanAlgebra
 
@@ -477,9 +495,10 @@ lattice: the property rule derives every constraint that projection guarantees
 theorem coe_constraints_project [Lattice β] [BoundedOrder β] [Nontrivial β] (R : Relation)
     (σ : ProjectivitySignature) :
     (↑(project R σ).constraints : Set Relation.Atom) = lowerPolar (Relation.Atom.incidence β)
-      {q | ∃ f : α → β, σ.HoldsFor f ∧ ∃ x y, R.Holds x y ∧ q = (f x, f y)} := by
+      (⋃ f ∈ {f : α → β | σ.HoldsFor f}, Prod.map f f '' R.toSetRel α) := by
   refine Set.ext fun b ↦ ⟨?_, fun h ↦ ?_⟩
-  · rintro hb _ ⟨f, hf, x, y, hR, rfl⟩
+  · intro hb q hq
+    obtain ⟨f, hf, ⟨x, y⟩, hR, rfl⟩ := Set.mem_iUnion₂.1 hq
     exact Relation.holds_iff.1 (σ.soundFor_of_holdsFor hf R x y hR) b hb
   have key : ∀ (R : Relation) (σ : ProjectivitySignature) (b : Relation.Atom),
       (∀ (f : Bool → Bool) (x y : Bool), σ.HoldsFor f → R.Holds x y → b.Holds (f x) (f y)) →
@@ -487,10 +506,11 @@ theorem coe_constraints_project [Lattice β] [BoundedOrder β] [Nontrivial β] (
     decide
   obtain ⟨π⟩ := DistribLattice.nonempty_boundedLatticeHom_bool (α := α)
   refine key R σ b fun f x y hf hR ↦ (Relation.Atom.holds_map_iff ofBool_injective).1
-    (h (b := (ofBool (f x), ofBool (f y))) ⟨(ofBool : BoundedLatticeHom Bool β) ∘ f ∘ π,
-      (holdsFor_addMult_of_boundedLatticeHomClass ofBool).addMult_comp
-        (hf.comp_addMult (holdsFor_addMult_of_boundedLatticeHomClass π)),
-      ofBool x, ofBool y, (Relation.holds_map_iff ofBool_injective).2 hR, by simp⟩)
+    (h (b := (ofBool (f x), ofBool (f y))) (Set.mem_iUnion₂.2
+      ⟨(ofBool : BoundedLatticeHom Bool β) ∘ f ∘ π,
+        (holdsFor_addMult_of_boundedLatticeHomClass ofBool).addMult_comp
+          (hf.comp_addMult (holdsFor_addMult_of_boundedLatticeHomClass π)),
+        (ofBool x, ofBool y), (Relation.holds_map_iff ofBool_injective).2 hR, by simp⟩))
 
 /-- `project R σ` is the least relation to which every σ-function sends `R`-related arguments, for
 functions from a nontrivial bounded distributive lattice to a nontrivial bounded lattice
@@ -501,7 +521,9 @@ theorem isLeast_project [Lattice β] [BoundedOrder β] [Nontrivial β] (R : Rela
       (project R σ) :=
   ⟨fun _ hf x y hR ↦ σ.soundFor_of_holdsFor hf R x y hR, fun _ hT ↦ Relation.le_iff.2 fun b hb ↦
     Finset.mem_coe.1 <| (coe_constraints_project (α := α) (β := β) R σ).symm ▸
-      fun _ ⟨f, hf, x, y, hR, hq⟩ ↦ hq ▸ Relation.holds_iff.1 (hT f hf x y hR) b hb⟩
+      fun _ hq ↦ by
+        obtain ⟨f, hf, ⟨x, y⟩, hR, rfl⟩ := Set.mem_iUnion₂.1 hq
+        exact Relation.holds_iff.1 (hT f hf x y hR) b hb⟩
 
 variable [DistribLattice β] [BoundedOrder β] [Nontrivial β]
 
