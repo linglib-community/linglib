@@ -51,7 +51,7 @@ namespace Clause
 The sentence types are Sadock and Zwicky's declarative, interrogative, imperative and exclamative,
 with the interrogative subtyped as polar, alternative or constituent, and the promissive that
 Korean grammaticalizes beside the imperative. A sentence type is a form; the speech act it
-conventionally performs is its force, `Discourse.SpeechAct.Force`. -/
+conventionally performs is its force, `SpeechAct.Force`. -/
 
 /-- The sentence types, the grammatical kinds of clause a language distinguishes. -/
 inductive SentenceType where

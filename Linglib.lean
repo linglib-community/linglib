@@ -292,7 +292,6 @@ import Linglib.Discourse.CommonGround
 import Linglib.Discourse.Gameboard.Basic
 import Linglib.Discourse.Gameboard.Defs
 import Linglib.Discourse.QUD.Basic
-import Linglib.Discourse.SpeechAct
 import Linglib.Fragments.ASL.Determiners
 import Linglib.Fragments.Abkhaz.Evidentiality
 import Linglib.Fragments.Afar.Gender

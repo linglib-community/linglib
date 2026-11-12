@@ -125,7 +125,7 @@ complement is an overt NP, a CP, an RP, or a nominal under ellipsis, which lacks
 features that make an NP overt (section 6.3). -/
 inductive Feat where
   | idx | dep | np | cp | rp | elided
-  | d | deixis (δ : Finset (Finset Discourse.Role))
+  | d | deixis (δ : Finset (Finset SpeechAct.Role))
   deriving DecidableEq
 
 /-- The Vocabulary entries for idx, (119) and (131), are *gi* elsewhere, *ge* under dependent

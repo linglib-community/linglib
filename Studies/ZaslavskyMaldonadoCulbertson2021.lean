@@ -329,7 +329,7 @@ On the referents with more than one member, the first-inclusive system groups th
 the exclusive and the second-inclusive system groups it with the second person, the person
 partitions of the standard tripartition and of Zwicky's. -/
 
-open Discourse
+open SpeechAct
 
 /-- The participants of a referent. -/
 def Referent.participants (r : Referent) : Finset Role :=

@@ -242,7 +242,7 @@ theorem todo_not_must {f g : Background W} {φ ψ : Set W} {u : W}
 /-! ### Commitments as mood states
 
 Portner's To-Do List is the ordering of a participant's mood state, and an imperative promotes its
-content in the addressee's (`Discourse.SpeechAct.Force.update`). A commitment state projects a
+content in the addressee's (`SpeechAct.Force.update`). A commitment state projects a
 mood state for each participant: the commitment set of the participant's doxastic commitments,
 ranked by the participant's preferential commitments. -/
 
@@ -252,18 +252,18 @@ def toState (K : State (A × Force) W) (a : A) : Mood.State W :=
     premisePreorder ((fun p : Set W ↦ (· ∈ p)) '' K.contents (a, .preferential))⟩
 
 -- (30): the declarative convention is assertion on the speaker's mood state
-theorem toState_declarative (K : State (Discourse.Role × Force) W) (p : Set W) :
+theorem toState_declarative (K : State (SpeechAct.Role × Force) W) (p : Set W) :
     toState (insert ((.speaker, .doxastic), p) K) =
-      Discourse.SpeechAct.Force.update .assertion (toState K) (· ∈ p) := by
+      SpeechAct.Force.update .assertion (toState K) (· ∈ p) := by
   funext r
   cases r
-  · rw [Discourse.SpeechAct.Force.update_assertion_speaker]
+  · rw [SpeechAct.Force.update_assertion_speaker]
     refine Mood.State.ext ?_ ?_ rfl
     · exact State.commitmentSet_insert_self.trans (Set.inter_comm _ _)
     · show premisePreorder _ = premisePreorder _
       exact congrArg (fun S ↦ premisePreorder ((fun p : Set W ↦ (· ∈ p)) '' S))
         (State.contents_insert_of_ne (by simp))
-  · rw [Discourse.SpeechAct.Force.update_assertion_addressee]
+  · rw [SpeechAct.Force.update_assertion_addressee]
     refine Mood.State.ext (State.commitmentSet_insert_of_ne (by simp)) ?_ rfl
     show premisePreorder _ = premisePreorder _
     exact congrArg (fun S ↦ premisePreorder ((fun p : Set W ↦ (· ∈ p)) '' S))
@@ -272,17 +272,17 @@ theorem toState_declarative (K : State (Discourse.Role × Force) W) (p : Set W) 
 /-- The imperative convention (47), read on the participants' mood states, promotes the content
 in the speaker's ordering, the update a promise makes. Portner's To-Do List update promotes it in
 the addressee's ordering instead, and the two coincide exactly when both orderings already
-respect the content (`Discourse.SpeechAct.Force.update_promise_eq_directive_iff`). -/
-theorem toState_imperative (K : State (Discourse.Role × Force) W) (p : Set W) :
+respect the content (`SpeechAct.Force.update_promise_eq_directive_iff`). -/
+theorem toState_imperative (K : State (SpeechAct.Role × Force) W) (p : Set W) :
     toState (insert ((.speaker, .preferential), p) K) =
-      Discourse.SpeechAct.Force.update .promise (toState K) (· ∈ p) := by
+      SpeechAct.Force.update .promise (toState K) (· ∈ p) := by
   funext r
   cases r
-  · rw [Discourse.SpeechAct.Force.update_promise_speaker]
+  · rw [SpeechAct.Force.update_promise_speaker]
     refine Mood.State.ext (State.commitmentSet_insert_of_ne (by simp)) ?_ rfl
     show premisePreorder _ = premisePreorder _ ⊓ .ofCriterion (· ∈ p)
     rw [State.contents_insert_self, Set.image_insert_eq, premisePreorder_insert]
-  · rw [Discourse.SpeechAct.Force.update_promise_addressee]
+  · rw [SpeechAct.Force.update_promise_addressee]
     refine Mood.State.ext (State.commitmentSet_insert_of_ne (by simp)) ?_ rfl
     show premisePreorder _ = premisePreorder _
     exact congrArg (fun S ↦ premisePreorder ((fun p : Set W ↦ (· ∈ p)) '' S))
@@ -290,7 +290,7 @@ theorem toState_imperative (K : State (Discourse.Role × Force) W) (p : Set W) :
 
 -- one preferential commitment of the speaker ranks the content's worlds first in the speaker's
 -- mood state and leaves the addressee's unranked
-open Discourse (Role) in
+open SpeechAct (Role) in
 example :
     (toState (insert ((.speaker, .preferential), {true}) (∅ : State (Role × Force) Bool))
       .speaker).order.le true false ∧
@@ -298,15 +298,15 @@ example :
       .speaker).order.le false true ∧
     (toState (insert ((.speaker, .preferential), {true}) (∅ : State (Role × Force) Bool))
       .addressee).order.le false true := by
-  rw [toState_imperative, Discourse.SpeechAct.Force.update_promise_speaker,
-    Discourse.SpeechAct.Force.update_promise_addressee]
+  rw [toState_imperative, SpeechAct.Force.update_promise_speaker,
+    SpeechAct.Force.update_promise_addressee]
   have h₀ (a : Role) (v w : Bool) : (toState (∅ : State (Role × Force) Bool) a).order.le v w :=
     fun _ ⟨_, hq, _⟩ _ ↦ absurd hq (Set.notMem_empty _)
   exact ⟨⟨h₀ _ _ _, fun _ ↦ rfl⟩, fun h ↦ Bool.false_ne_true (h.2 rfl), h₀ _ _ _⟩
 
 -- one doxastic commitment of the speaker narrows the speaker's context set to the content and
 -- leaves the addressee's
-open Discourse (Role) in
+open SpeechAct (Role) in
 example :
     (toState (insert ((.speaker, .doxastic), {true}) (∅ : State (Role × Force) Bool))
       .speaker).info = {true} ∧
@@ -316,11 +316,11 @@ example :
   simp [toState]
 
 -- a content the speaker's ordering does not respect separates a promise from a directive
-example : Discourse.SpeechAct.Force.update .promise (⊤ : Discourse.Role → Mood.State Bool)
-    (· = true) ≠ Discourse.SpeechAct.Force.update .directive ⊤ (· = true) :=
+example : SpeechAct.Force.update .promise (⊤ : SpeechAct.Role → Mood.State Bool)
+    (· = true) ≠ SpeechAct.Force.update .directive ⊤ (· = true) :=
   fun h ↦ Bool.false_ne_true <|
   (Preorder.le_ofCriterion_iff.1
-    ((Discourse.SpeechAct.Force.update_promise_eq_directive_iff _ _).1 h .speaker))
+    ((SpeechAct.Force.update_promise_eq_directive_iff _ _).1 h .speaker))
     (a := false) (b := true) trivial rfl
 
 /-- §5: the To-Do List update by itself does not register contrary imperatives. Directing a
@@ -330,10 +330,10 @@ such sequences out by requiring To-Do Lists to be consistent, which the paper ca
 since the ordering a To-Do List induces is a Kratzer ordering made to tolerate incompatible
 constraints; on the paper's account the consistency of effective preferences makes the second
 imperative a revision (`imperatives_revise`). -/
-theorem portner_contrary_imperatives (d : Discourse.Role → Mood.State W) (φ : W → Prop) :
-    (d .addressee).optimal ⊆ (Discourse.SpeechAct.Force.update .directive
-      (Discourse.SpeechAct.Force.update .directive d φ) (¬ φ ·) .addressee).optimal := by
-  simp only [Discourse.SpeechAct.Force.update_directive_addressee,
+theorem portner_contrary_imperatives (d : SpeechAct.Role → Mood.State W) (φ : W → Prop) :
+    (d .addressee).optimal ⊆ (SpeechAct.Force.update .directive
+      (SpeechAct.Force.update .directive d φ) (¬ φ ·) .addressee).optimal := by
+  simp only [SpeechAct.Force.update_directive_addressee,
     Mood.State.promote_toOrderedInformationState, DynamicSemantics.OrderedInformationState.optimal,
     DynamicSemantics.OrderedInformationState.promote_order,
     DynamicSemantics.OrderedInformationState.promote_info]
@@ -342,8 +342,8 @@ theorem portner_contrary_imperatives (d : Discourse.Role → Mood.State W) (φ :
     fun hb' hw' ↦ hb' (hbw.1.2 hw')⟩
 
 -- out of the blue, after (15a) and (15b) every world is optimal for the addressee
-example : (Discourse.SpeechAct.Force.update .directive
-    (Discourse.SpeechAct.Force.update .directive (⊤ : Discourse.Role → Mood.State Bool) (· = true))
+example : (SpeechAct.Force.update .directive
+    (SpeechAct.Force.update .directive (⊤ : SpeechAct.Role → Mood.State Bool) (· = true))
     (¬ · = true) .addressee).optimal = Set.univ :=
   Set.eq_univ_of_univ_subset fun _ _ ↦ portner_contrary_imperatives ⊤ (· = true)
     (Preorder.mem_minimals_iff.2 ⟨trivial, fun _ _ _ ↦ trivial⟩)

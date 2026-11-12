@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Discourse.SpeechAct
+public import Linglib.Discourse.SpeechAct.Basic
 public import Linglib.Data.Examples.FrancikClark1985
 public import Mathlib.Order.Bounds.Basic
 public import Mathlib.Order.Interval.Set.Basic
@@ -71,7 +71,7 @@ of specificity descends the order on queries (`gradient_antitone`).
 
 namespace FrancikClark1985
 
-open Discourse.SpeechAct
+open SpeechAct
 
 /-- What a request asks about: nothing, one preparatory condition, or anything that could stand
 in the way (*Can you tell me?*, *Could you tell me?*). -/

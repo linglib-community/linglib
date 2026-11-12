@@ -4,7 +4,7 @@ public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Semantics.Exhaustification.DomainAlternatives
 public import Linglib.Semantics.Mereology
 public import Linglib.Semantics.Modality.EventRelativity
-public import Linglib.Discourse.SpeechAct
+public import Linglib.Discourse.SpeechAct.Basic
 public import Linglib.Logic.Trivalent.Basic
 public import Linglib.Fragments.Mayan.Chuj.Verbs
 public import Linglib.Fragments.Mayan.Chuj.Voice
@@ -78,7 +78,7 @@ models](##context_rows), and with the sums it [mispredicts four](##sums_mispredi
 
 namespace AlonsoOvalleRoyer2024
 
-open Finset ModalLogic Exhaustification Discourse.SpeechAct
+open Finset ModalLogic Exhaustification SpeechAct
 open Modality (EventBinder)
 
 /-! ### The schema (59) -/

@@ -54,7 +54,7 @@ variable {c : Category}
 /-! ### Configurations -/
 
 /-- The speech-act participants a category contains. -/
-def participants : Category → Finset Discourse.Role
+def participants : Category → Finset SpeechAct.Role
   | speaker | speakerOthers => {.speaker}
   | addressee | addresseeOthers => {.addressee}
   | speakerAddressee | speakerAddresseeOthers => {.speaker, .addressee}
@@ -70,7 +70,7 @@ def otherCount : Category → Fin 3
 several others only on their own. The speaker and the addressee are unique individuals, so a
 group of speakers or of addressees does not arise, and a participant with one other or with
 several forms one group. -/
-def WellFormed (x : Finset Discourse.Role × Fin 3) : Prop :=
+def WellFormed (x : Finset SpeechAct.Role × Fin 3) : Prop :=
   (x.1.Nonempty ∨ x.2 ≠ 0) ∧ (x.2 = 2 → x.1 = ∅)
 
 instance : DecidablePred WellFormed := fun _ ↦ by unfold WellFormed; infer_instance

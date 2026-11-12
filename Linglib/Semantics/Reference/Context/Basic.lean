@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct.Role
 
 /-!
 # The context of utterance
@@ -49,7 +49,7 @@ variable {W E P T : Type*} (c : Context W E P T)
 
 /-- The holder of a discourse role at a context, the agent for the speaker and the addressee for
 the addressee. -/
-def holder : Discourse.Role → E
+def holder : SpeechAct.Role → E
   | .speaker => c.agent
   | .addressee => c.addressee
 

@@ -38,7 +38,7 @@ hierarchy.
 
 @[expose] public section
 
-open Finset Discourse Order
+open Finset SpeechAct Order
 
 namespace Person
 

@@ -15,9 +15,9 @@ public import Mathlib.Tactic.DeriveFintype
 This file defines the two discourse roles, speaker and addressee. They index the agents of a
 two-party commitment model, as in Gunlogson's and Farkas and Bruce's discourse contexts, and a
 person category is a set of them together with a count of others, as in Cysouw's paradigms. A
-role's counterpart is the other participant, `Discourse.Role.other`, an involution without fixed
+role's counterpart is the other participant, `SpeechAct.Role.other`, an involution without fixed
 points, so [a statement about every role is a statement about a role and its
-counterpart](##Discourse.Role.forall_role'). The lemmas follow those of `Bool` and `not`.
+counterpart](##SpeechAct.Role.forall_role'). The lemmas follow those of `Bool` and `not`.
 
 ## References
 
@@ -28,7 +28,7 @@ counterpart](##Discourse.Role.forall_role'). The lemmas follow those of `Bool` a
 
 @[expose] public section
 
-namespace Discourse
+namespace SpeechAct
 
 /-- A discourse role is one of the two participants of a speech act, its speaker or its
 addressee. -/
@@ -76,4 +76,4 @@ theorem exists_role' {p : Role → Prop} (r : Role) : (∃ s, p s) ↔ p r ∨ p
 
 end Role
 
-end Discourse
+end SpeechAct

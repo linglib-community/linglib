@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.NapoliNespor1976
-public import Linglib.Discourse.SpeechAct
+public import Linglib.Discourse.SpeechAct.Basic
 public import Linglib.Fragments.Romance.Italian.PolarityItems
 public import Linglib.Semantics.Mood.Defs
 public import Linglib.Semantics.Negation.Polarity
@@ -54,7 +54,7 @@ The reduced comparatives (83)–(85), the positions of gerunds (40)–(43), the 
 
 namespace NapoliNespor1976
 
-open Discourse.SpeechAct (Force)
+open SpeechAct (Force)
 
 /-! ### What a row records -/
 

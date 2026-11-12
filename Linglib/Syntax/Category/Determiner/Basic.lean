@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Finset.Image
 public import Linglib.Semantics.Reference.Definiteness
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Syntax.Number.Basic
 public import Linglib.Morphology.Word.Basic
 public import Linglib.Semantics.Quantification.Counting
@@ -113,7 +113,7 @@ structure Article extends Determiner where
 in whose vicinity it locates its referent. -/
 structure DemonstrativeDeterminer extends Determiner where
   /-- The participant sets of the referents in whose vicinity the form locates its referent. -/
-  deixis : Finset (Finset Discourse.Role)
+  deixis : Finset (Finset SpeechAct.Role)
   deriving DecidableEq
 
 /-- A quantificational determiner records its readings, the determiner symbols whose
