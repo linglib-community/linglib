@@ -210,7 +210,8 @@ theorem eq_zero_of_mem_traceCuts {T : UnorderedTree (α ⊕ β)} (hT : T.numTrac
         rw [UnorderedTree.quot_mk_eq_mk, UnorderedTree.subtrees_mk,
           RoseTree.unorderedSubtrees_eq_map, Multiset.mem_coe, List.mem_map] at hxT
         obtain ⟨s, hs, rfl⟩ := hxT
-        exact Nat.eq_zero_of_le_zero ((Multiset.countP_le_of_le _ (RoseTree.mem_subtrees.1 hs).leaves_le).trans_eq hT)
+        exact Nat.eq_zero_of_le_zero <|
+          (Multiset.countP_le_of_le _ (RoseTree.mem_subtrees.1 hs).leaves_le).trans_eq hT
   have hcard := traceCuts_numTraces τ T p hp
   rw [hcrown, h, hT, zero_add, zero_add] at hcard
   have hmem : p ∈ (traceCuts τ T).filter (fun p ↦ p.1.card = 0) :=
