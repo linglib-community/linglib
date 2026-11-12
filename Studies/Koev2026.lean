@@ -3,7 +3,7 @@ module
 public import Studies.Kennedy2007
 public import Studies.Lassiter2017
 public import Linglib.Fragments.English.Verbs.Attitude
-public import Linglib.Semantics.Attitudes.Doxastic
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Data.Examples.Koev2026
 public import Linglib.Data.Examples.Readers
 
@@ -15,7 +15,7 @@ complement exceeds a contextual threshold, the positive form of a relative predi
 the credence scale and argues from its shape for a strong force. *Believe* takes maximizers and no
 minimizers, which [only an upper closed scale licenses](##Koev2026.fitsModifiers_iff), and on such
 a scale Interpretive Economy selects the maximum standard, so that unmodified *believe* is
-[Hintikka's universal quantification](##Koev2026.holdsAt_hintikka_iff) over the worlds the
+[Hintikka's universal quantification](##Koev2026.box_hintikka_iff) over the worlds the
 credence leaves open. Comparison classes and the antonym *doubt*
 [place its standard at an endpoint](##Koev2026.furtherEvidence_iff) as well, where *believe* and
 *doubt* are contradictories while *likely* and *unlikely*
@@ -246,23 +246,21 @@ variable {E W : Type*} [MeasurableSpace W] (Cr : E → W → Measure W)
 
 /-- Hintikka's *believe* (1) over the worlds to which a credence gives positive mass, the
 doxastic alternatives being the credence's support ([hintikka-1969]). -/
-def hintikka : Doxastic.DoxasticPredicate W E where
-  access x := {(w, v) | Cr x w {v} ≠ 0}
+def hintikka (x : E) : SetRel W W := {(w, v) | Cr x w {v} ≠ 0}
 
 /-- *Believe* at the standard Interpretive Economy selects on the credence scale is Hintikka's
 *believe* over the credence's support, the universal force of (1): full credence is almost-sure
 truth, closed under conjunction as a threshold below the maximum is not. -/
-theorem holdsAt_hintikka_iff [DiscreteMeasurableSpace W] [Countable W]
+theorem box_hintikka_iff [DiscreteMeasurableSpace W] [Countable W]
     [∀ x w, IsProbabilityMeasure (Cr x w)] (x : E) (p : Set W) (w : W)
     {U : UpperSet Lassiter2017.Probability}
     (hU : U ∈ (Boundedness.ofOrder Lassiter2017.Probability).defaultStandard.standards _) :
-    (hintikka Cr).HoldsAt x (· ∈ p) w ↔ p ∈ Lassiter2017.likelihood (Cr x w) ⁻¹' U := by
+    □[hintikka Cr x] (· ∈ p) w ↔ p ∈ Lassiter2017.likelihood (Cr x w) ⁻¹' U := by
   rw [Boundedness.standards_defaultStandard_ofOrder] at hU
   rw [hU, UpperSet.coe_Ici, ← Lassiter2017.certain_eq_preimage,
     Lassiter2017.mem_certain_iff_mem_ae _ .of_discrete, ← Filter.eventually_mem_set,
     ae_iff_of_countable]
-  simp [Doxastic.DoxasticPredicate.holdsAt_iff, Doxastic.DoxasticPredicate.IsFactive, hintikka,
-    box_iff]
+  simp [hintikka, box_iff]
 
 end Hintikka
 

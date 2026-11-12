@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Universals
-public import Linglib.Semantics.Attitudes.Doxastic
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Data.Examples.MocnikAbramovitz2019
 
 /-!
@@ -30,8 +30,8 @@ is the one on which the ball is neither white nor black (`Frame.ex8b_all_iff`), 
 context of (8) (`Frame.ex8b_all_false`). The flavor accounts for §3: the two *ivək*s of (14),
 set apart by an adverb, are consistent on different flavors (`ex14_consistent`), while one
 *ivək* over clauses that contradict each other, (20), is false on every reading
-(`Frame.not_ivek_and_not`). On the doxastic flavor and the identity cover *ivək* is the
-non-veridical *believe* of Hintikka (`Frame.ivek_doxastic_identity_iff_holdsAt`).
+(`Frame.not_ivek_and_not`). On the identity cover *ivək* is Hintikka's box over the flavor's
+alternatives (`Frame.ivek_identity_iff`), on the doxastic flavor his non-veridical *believe*.
 
 ## Implementation notes
 
@@ -138,12 +138,6 @@ theorem ivek_identity_iff : F.ivek φ .identity p x w ↔ □[F.access φ x] p w
 
 theorem ivek_all_iff : F.ivek φ .all p x w ↔ ◇[F.access φ x] p w :=
   holds_all_iff
-
-theorem ivek_doxastic_identity_iff_holdsAt :
-    F.ivek .doxastic .identity p x w ↔
-      (⟨F.belief, none⟩ : Doxastic.DoxasticPredicate W E).HoldsAt x p w := by
-  rw [Doxastic.DoxasticPredicate.holdsAt_iff, ivek_identity_iff]
-  exact ⟨fun h ↦ ⟨fun hf ↦ absurd rfl hf, h⟩, fun h ↦ h.2⟩
 
 /-! ### Conjunction and negation, §2 -/
 

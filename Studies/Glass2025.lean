@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Attitudes.Doxastic
+public import Linglib.Semantics.Presupposition.Factive
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.Mandarin.Verbs
 public import Linglib.Data.Examples.Glass2025
@@ -16,9 +16,8 @@ scope, requiring only that the Common Ground be compatible with not-p (`Compatib
 stronger requirement is unattested; the weaker is the postsupposition Glass gives Mandarin yǐwéi
 in earlier work (`yiweiDefined`). Table 1, the states of the Common Ground each profile admits,
 is derived from the requirements (`Profile.condition_iff`). The profiles of *know* and *think*
-come from the factivity of their fragment entries, whose factive presupposition in the doxastic
-substrate is the requirement of the factive profile (`subset_compl_gapExt_sentence_iff`,
-`rows_admits`).
+come from the factivity of their fragment entries, and the presupposition of a factive sentence
+is the requirement of the factive profile (`subset_compl_gapExt_factive_iff`, `rows_admits`).
 
 ## Implementation notes
 
@@ -44,7 +43,7 @@ substrate is the requirement of the factive profile (`subset_compl_gapExt_senten
 
 namespace Glass2025
 
-open Doxastic Presupposition
+open Presupposition
 open English
 open English.Verbs hiding Verb
 
@@ -168,16 +167,12 @@ def Profile.ofFactivity : Option Factivity → Profile
   | some _ => .factive
   | none => .nonfactive
 
-variable {E : Type*} in
-/-- A doxastic predicate's presupposition is admitted iff the requirement of its factivity profile
-holds, Common Ground status for a factive (10). -/
-theorem subset_compl_gapExt_sentence_iff (V : DoxasticPredicate W E) (a : E) :
-    c ⊆ (Trivalent.gapExt (V.sentence a p))ᶜ ↔
-      (Profile.ofFactivity V.factivity).condition c p := by
-  rw [DoxasticPredicate.compl_gapExt_sentence, DoxasticPredicate.IsFactive]
-  cases V.factivity
-  · exact iff_of_true (fun _ _ h ↦ absurd rfl h) trivial
-  · exact ⟨fun h w hw ↦ h hw nofun, fun h _ hw _ ↦ h _ hw⟩
+/-- A factive predicate's presupposition is admitted iff its complement is Common Ground (10),
+the requirement of the factive profile, whatever attitude it asserts. -/
+theorem subset_compl_gapExt_factive_iff (att : (W → Prop) → W → Prop) :
+    c ⊆ (Trivalent.gapExt (factive att p))ᶜ ↔ Profile.factive.condition c p := by
+  rw [gapExt_factive]
+  exact ⟨fun h w hw ↦ not_not.1 (h hw), fun h w hw ↦ not_not.2 (h w hw)⟩
 
 /-- yǐwéi's profile on the paper's analysis, beyond the non-factivity its fragment entry
 records. -/

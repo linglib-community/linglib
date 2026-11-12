@@ -6,7 +6,8 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Probability.Distributions.Bernoulli
-public import Linglib.Semantics.Attitudes.Doxastic
+public import Linglib.Semantics.Presupposition.Factive
+public import Linglib.Logic.Modal.Defs
 public import Linglib.Data.Examples.GroveWhite2025
 public import Mathlib.Probability.ConditionalProbability
 public import Linglib.Core.Probability.Independence.Basic
@@ -36,8 +37,9 @@ their mean answer and differ in spread.
 
 ## Implementation notes
 
-The epistemic relation of (13) is the accessibility of a doxastic predicate, and the factive
-reading is its veridical counterpart, which asserts the complement and presupposes nothing.
+The epistemic relation of (13) is an accessibility relation for each holder, the holder's
+knowledge of the complement is necessity along it, and the factive reading asserts the complement
+beside it, presupposing nothing.
 Updating the common ground conditions it on a reading's content, which the theorems take as
 events. The non-factive reading leaves the complement's probability alone when the common ground
 makes the complement independent of what the holder knows, a hypothesis of the theorems that
@@ -54,7 +56,7 @@ illustrative sentences are rows of `GroveWhite2025.Examples`.
 
 @[expose] public section
 
-open MeasureTheory Measure ProbabilityTheory ModalLogic Doxastic unitInterval
+open MeasureTheory Measure ProbabilityTheory ModalLogic unitInterval
 open scoped ENNReal
 
 namespace GroveWhite2025
@@ -87,12 +89,12 @@ section LexicalEntry
 
 variable {Ω E : Type*}
 
-/-- The lexical entry (13) of *know*, at a complement, a holder and an index. The non-factive
-reading is the doxastic predicate over the holder's epistemic alternatives, and the factive
-reading its veridical counterpart, which also asserts the complement at the index. -/
+/-- The lexical entry (13) of *know*, at a complement, a holder and an index: under either
+reading the complement holds throughout the holder's epistemic alternatives at the index, and
+under the factive reading it holds at the index as well. -/
 def clauseEmbeddingSem (epi : E → SetRel Ω Ω) : FactivityReading → (Ω → Prop) → E → Ω → Prop
-  | .factive, φ, x, i => (⟨epi, none⟩ : DoxasticPredicate Ω E).veridical.HoldsAt x φ i
-  | .nonfactive, φ, x, i => (⟨epi, none⟩ : DoxasticPredicate Ω E).HoldsAt x φ i
+  | .factive, φ, x, i => □[epi x] φ i ∧ φ i
+  | .nonfactive, φ, x, i => □[epi x] φ i
 
 /-- The content of a reading as an event, for the indices `K` at which the holder knows the
 complement and the indices `C` at which it is true. -/
@@ -102,17 +104,14 @@ def FactivityReading.content (K C : Set Ω) : FactivityReading → Set Ω
 
 theorem setOf_clauseEmbeddingSem (epi : E → SetRel Ω Ω) (r : FactivityReading) (φ : Ω → Prop)
     (x : E) : {i | clauseEmbeddingSem epi r φ x i} = r.content {i | □[epi x] φ i} {i | φ i} := by
-  cases r <;> ext i
-  · exact DoxasticPredicate.holdsAt_veridical_iff
-  · exact (DoxasticPredicate.holdsAt_iff ..).trans (and_iff_right fun h ↦ absurd rfl h)
+  cases r <;> rfl
 
 /-- The factive reading is true where a predicate that presupposes its complement is, so the
 update does not tell asserting the complement from presupposing it. -/
-theorem setOf_clauseEmbeddingSem_factive (epi : E → SetRel Ω Ω) (f : Presupposition.Factivity)
-    (φ : Ω → Prop) (x : E) :
+theorem setOf_clauseEmbeddingSem_factive (epi : E → SetRel Ω Ω) (φ : Ω → Prop) (x : E) :
     {i | clauseEmbeddingSem epi .factive φ x i} =
-      Trivalent.posExt ((⟨epi, some f⟩ : DoxasticPredicate Ω E).sentence x φ) :=
-  DoxasticPredicate.posExt_sentence_veridical (V := ⟨epi, some f⟩) nofun
+      Trivalent.posExt (Presupposition.factive □[epi x] φ) :=
+  (Presupposition.posExt_factive _ _).symm
 
 variable [MeasurableSpace Ω] (cg : Measure Ω) (K C : Set Ω)
 

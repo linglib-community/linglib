@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Attitudes.Doxastic
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Reference.Kaplan
 
 /-!
@@ -12,7 +12,7 @@ contexts; Amharic, where the first person under *say* denotes the reported speak
 counterexample (`not_stable_amharicI`). An attitude verb quantifies over the contexts
 compatible with its subject's claim, binding a context variable to each (`Say`), and Hintikka's
 quantification over worlds is the case where the embedded meaning reads only the world
-(`say_world_only`, `doxastic_holdsAt_iff_say`). The Amharic second person shifts to the hearer of
+(`say_world_only`, `box_iff_say`). The Amharic second person shifts to the hearer of
 the reported speech act (54) (`amharicYou_shifts`). A logophoric pronoun is the author of an
 embedded context who is not the actual speaker (`Logophoric`), so none is first person.
 
@@ -59,13 +59,12 @@ theorem say_world_only :
       ∀ w' ∈ Context.world '' compat x t w, p w' := by
   simp [Say]
 
-/-- A doxastic predicate of `Doxastic.lean` holds iff its factivity requirement does and
-quantification over contexts whose worlds are its accessible worlds does. -/
-theorem doxastic_holdsAt_iff_say (V : Doxastic.DoxasticPredicate W E)
-    (hV : Context.world '' compat x t w = {w' | w ~[V.access x] w'}) :
-    V.HoldsAt x p w ↔
-      (V.IsFactive → p w) ∧ Say compat x t w (fun τ ↦ p τ.innermost.world) τ := by
-  rw [say_world_only, hV, V.holdsAt_iff]
+/-- Hintikka's box along an accessibility relation is quantification over contexts whose worlds
+are the accessible ones. -/
+theorem box_iff_say (R : SetRel W W)
+    (hR : Context.world '' compat x t w = {w' | w ~[R] w'}) :
+    □[R] p w ↔ Say compat x t w (fun τ ↦ p τ.innermost.world) τ := by
+  rw [say_world_only, hR]
   rfl
 
 /-! ### Shifted indexicals -/
