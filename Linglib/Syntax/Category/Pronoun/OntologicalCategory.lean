@@ -7,13 +7,16 @@ public import Linglib.Data.UD.UPOS
 
 The members of an interrogative or indefinite series differ in the ontological category they
 stand for: a person (*who*, *someone*), a thing (*what*, *something*), a place (*where*,
-*somewhere*) and so on. The category fixes the word class of the member, a pro-adverb for a
-place, a time or a manner and a pronoun otherwise.
+*somewhere*) and so on. The pronoun types of a language express roughly the same categories, so
+that its interrogatives, demonstratives, relatives and indefinites line up in a table of
+correlatives, which takes in the pronominal adverbs. The category fixes the word class of the
+member: a pronoun for a person or a thing, a determiner for a property or a selection, an adverb
+for a place, a time, a manner or a reason.
 
-## Main definitions
+## TODO
 
-* `Pronoun.OntologicalCategory`: the categories pro-forms stand for.
-* `Pronoun.OntologicalCategory.upos`: the word class a category fixes.
+The word class of an amount pro-form differs across languages and is not a datum of the entry;
+`Pronoun.OntologicalCategory.upos` gives it a pronoun's.
 
 ## References
 
@@ -23,10 +26,11 @@ place, a time or a manner and a pronoun otherwise.
 @[expose] public section
 
 /-- The ontological categories of pro-forms. Person, thing, property, place, time, manner and
-amount are the seven Haspelmath finds expressed by simple means in most languages, the cut between
-person and thing (*somebody* against *something*) being made nearly everywhere. Determiners
-(*some* N) and reasons (*for some reason*) are common but not universal, English and German
-having no *somewhy*. -/
+amount are the seven Haspelmath finds most often expressed by simple means, the cut between
+person and thing (*somebody* against *something*) being made nearly everywhere. Many languages
+add a determiner (*which*) distinct from the substantival *who* and *what* and the adjectival
+*what kind*, and some a reason (*why*), which English and German have as an interrogative but
+not as an indefinite. -/
 inductive Pronoun.OntologicalCategory where
   /-- Person is the category of *somebody*, *someone* and interrogative *who*. -/
   | person
@@ -50,14 +54,12 @@ inductive Pronoun.OntologicalCategory where
 
 namespace Pronoun.OntologicalCategory
 
-/-- A category is adverbial when its pro-forms are pro-adverbs, of a place, a time or a
-manner. -/
-def IsAdverbial (c : OntologicalCategory) : Prop := c = .place ∨ c = .time ∨ c = .manner
-
-instance : DecidablePred IsAdverbial := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
-
-/-- The word class of a pro-form is an adverb in an adverbial category and a pronoun
-otherwise. -/
-def upos (c : OntologicalCategory) : UD.UPOS := if c.IsAdverbial then .ADV else .PRON
+/-- The word class of a pro-form: a pronoun where it stands for a person or a thing, a determiner
+where it stands for a property or selects among the referents of a noun, and an adverb where it
+stands for a place, a time, a manner or a reason. -/
+def upos : OntologicalCategory → UD.UPOS
+  | .person | .thing | .amount => .PRON
+  | .property | .determiner => .DET
+  | .place | .time | .manner | .reason => .ADV
 
 end Pronoun.OntologicalCategory

@@ -16,13 +16,15 @@ analysis of its distribution, which studies pair with the series.
 
 * `IndefinitePronoun`: a pronoun with its ontological category.
 * `IndefinitePronoun.ofInterrogative`: the indefinite a marker builds on an interrogative.
-* `IndefinitePronoun.toWord`: its token, of UD pronoun type `Ind`.
+* `IndefinitePronoun.toWord`: its token, of UD pronoun type `Ind`, an R-expression where nominal
+  (`IndefinitePronoun.bindingClassOf_toWord`).
 * `IndefinitePronoun.Series`: the members of a series, with the name it is cited by.
 * `IndefinitePronoun.Series.forms`: the series as a paradigm over the ontological categories.
 
 ## References
 
 * [haspelmath-1997]
+* [chomsky-1981]
 -/
 
 @[expose] public section
@@ -48,7 +50,15 @@ def ofInterrogative (mark : String → String) (q : InterrogativePronoun) : Inde
 /-- An indefinite's token is of UD pronoun type `Ind`, with the word class its category
 fixes. -/
 def toWord (p : IndefinitePronoun) : Morphology.Word :=
-  { p.toPronoun.toWord (some .Ind) with cat := p.ontology.upos }
+  p.toPronoun.toWord (some .Ind) (cat := p.ontology.upos)
+
+/-- An indefinite is a quantifier expression, so an R-expression where its word class is nominal,
+as *someone* is and *somewhere* is not, and is not a pronominal ([chomsky-1981]). -/
+@[simp]
+theorem bindingClassOf_toWord (p : IndefinitePronoun) :
+    Binding.bindingClassOf p.toWord =
+      if Binding.IsNominal p.ontology.upos then some .rExpression else none :=
+  p.toPronoun.bindingClassOf_toWord_of_isOperator (.inr (.inr (.inl rfl))) _
 
 /-- An indefinite series is the indefinite pronouns formed alike across the ontological
 categories, as the English *some*-series *somebody*, *something*, *somewhere*. -/
