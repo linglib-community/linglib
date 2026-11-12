@@ -101,14 +101,14 @@ lexical *-ney*. -/
 def ney : Finset Ordering → Constraint := evidential Korean.Evidentiality.ney.acquisitionToSpeech
 
 /-- Bulgarian *-l*, indirect evidence acquired by the time of speech ((15) to (17)). -/
-def l : Finset Ordering → Constraint := evidential ⟦future⟧ᶜ
+def l : Finset Ordering → Constraint := evidential nonfuture
 
 /-- The English simple past requires downstream evidence for a past event ((20)). -/
-def simplePast : Constraint := { eventToAcquisition := ⟦future⟧ᶜ, eventToSpeech := ⟦past⟧ }
+def simplePast : Constraint := { eventToAcquisition := nonfuture, eventToSpeech := ⟦past⟧ }
 
 /-- The English present progressive requires downstream evidence for a present event ((20)). -/
 def presentProgressive : Constraint :=
-  { eventToAcquisition := ⟦future⟧ᶜ, eventToSpeech := ⟦present⟧ }
+  { eventToAcquisition := nonfuture, eventToSpeech := ⟦present⟧ }
 
 /-- The English future *will* places no evidential constraint on a future event ((20)). -/
 def will : Constraint := { eventToSpeech := ⟦future⟧ }
@@ -139,19 +139,19 @@ theorem ney_present_derived : (ney ⟦present⟧).derived = ⟦present⟧ := com
 theorem ney_future_derived : (ney ⟦future⟧).derived = ⟦future⟧ := comp_present_right _
 
 -- (17)
-theorem l_nonfuture_derived : (l ⟦future⟧ᶜ).derived = ⟦future⟧ᶜ :=
-  comp_compl_future_compl_future
+theorem l_nonfuture_derived : (l nonfuture).derived = nonfuture :=
+  comp_nonfuture_nonfuture
 
 -- (16)
 theorem l_future_derived : (l ⟦future⟧).derived = ⊤ := by
-  show comp ⟦future⟧ ⟦future⟧ᶜ = ⊤
-  rw [← past_sup_present, comp_sup_right]
+  show comp ⟦future⟧ nonfuture = ⊤
+  rw [nonfuture_eq_past_sup_present, comp_sup_right]
   simp
 
 -- footnote 7
 theorem holds_l_nonfuture_iff {f : EvidentialFrame T} :
-    (l ⟦future⟧ᶜ).Holds f ↔ (l ⟦past⟧).Holds f ∨ (l ⟦present⟧).Holds f := by
-  rw [← past_sup_present]
+    (l nonfuture).Holds f ↔ (l ⟦past⟧).Holds f ∨ (l ⟦present⟧).Holds f := by
+  rw [nonfuture_eq_past_sup_present]
   exact holds_evidential_sup
 
 /-! ### Downstream evidence, obviation and the true future (§5, §7) -/
@@ -159,19 +159,19 @@ theorem holds_l_nonfuture_iff {f : EvidentialFrame T} :
 -- (10)
 theorem nonfuture_downstream {f : EvidentialFrame T} :
     ∀ c ∈ [simplePast, presentProgressive, te ⟦past⟧, te ⟦present⟧, ney ⟦past⟧, ney ⟦present⟧,
-      l ⟦future⟧ᶜ], c.Holds f → f.Downstream := fun c hc ↦
+      l nonfuture], c.Holds f → f.Downstream := fun c hc ↦
   Constraint.downstream_of_holds (by revert c; decide)
 
 -- §5
 theorem prospective_beyond_obviation :
     ∀ c ∈ [te ⟦future⟧, ney ⟦future⟧, l ⟦future⟧, willHave, willNow],
-      c.eventToAcquisition ≠ ⟦future⟧ᶜ ∧ c.eventToAcquisition ≠ ⊤ := by
+      c.eventToAcquisition ≠ nonfuture ∧ c.eventToAcquisition ≠ ⊤ := by
   decide
 
 -- §7
 theorem speechTime_lt_acquisitionTime {f : EvidentialFrame T}
-    (h : (⟨⟦future⟧ᶜ, ⊤, ⟦future⟧⟩ : Constraint).Holds f) : f.speechTime < f.acquisitionTime :=
-  lt_of_lt_of_le ((compare_mem_future _ _).1 h.2.2) ((compare_mem_compl_future _ _).1 h.1)
+    (h : (⟨nonfuture, ⊤, ⟦future⟧⟩ : Constraint).Holds f) : f.speechTime < f.acquisitionTime :=
+  lt_of_lt_of_le ((compare_mem_future _ _).1 h.2.2) ((compare_mem_nonfuture _ _).1 h.1)
 
 -- (23)
 theorem willHave_meaning_eq_simplePast_meaning {W : Type*} {f f' : EvidentialFrame T}
@@ -189,7 +189,7 @@ def cell? (e : Datum) : Option Constraint :=
       ("future (will)", will), ("will have V-ed", willHave), ("will now be V-ing", willNow),
       ("-te PAST", te ⟦past⟧), ("-te PRES", te ⟦present⟧), ("-te FUT", te ⟦future⟧),
       ("-ney PAST", ney ⟦past⟧), ("-ney PRES", ney ⟦present⟧), ("-ney FUT", ney ⟦future⟧),
-      ("NFUT + -l", l ⟦future⟧ᶜ), ("FUT + -l", l ⟦future⟧)]
+      ("NFUT + -l", l nonfuture), ("FUT + -l", l ⟦future⟧)]
 
 /-- The frame a row's scenario fixes. -/
 def frame? (e : Datum) : Option (EvidentialFrame ℤ) := do

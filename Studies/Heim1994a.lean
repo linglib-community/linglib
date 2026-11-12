@@ -27,7 +27,7 @@ Licensing Condition `TLC` with the definition (67) of "in the domain of" license
 
 * Times are nonempty intervals, so that `<` is `NonemptyInterval.Precedes`, `o` is
   `NonemptyInterval.Overlaps` and "does not follow" is `NotAfter`, the library's
-  `Tense.upperLimitConstraint` as a perspectival presupposition on intervals.
+  `Tense.nonfuture` as a perspectival presupposition on intervals.
 * Predicates carry their subjects, de dicto descriptions are atomic and always defined, and
   the presuppositions of the nuclear scopes of `woll` and of res-moved `believe` project
   universally, the law the paper invokes for `some` and `believe`. The time-concept is
@@ -57,8 +57,8 @@ def NotAfter (t t₀ : NonemptyInterval T) : Prop := ¬ t₀.Precedes t
 
 theorem notAfter_iff_presup (t t₀ : NonemptyInterval T) :
     NotAfter t t₀ ↔
-      Tense.Perspective.Presup (Allen.ofPosition Tense.upperLimitConstraint) t₀ t := by
-  simp [NotAfter, Tense.upperLimitConstraint, Tense.denote_future]
+      Tense.Perspective.Presup (Allen.ofPosition Tense.nonfuture) t₀ t := by
+  simp [NotAfter, Tense.nonfuture_eq_compl_future, Tense.denote_future]
 
 theorem notAfter_self (t : NonemptyInterval T) : NotAfter t t := precedes_irrefl t
 

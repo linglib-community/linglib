@@ -92,7 +92,7 @@ abbrev historicalBase [LT T] : Set (Index W T) := orientedBase history s Tense.n
 
 /-- The actual-history base, [klecha-2016]'s doxastic base, the alternatives at times at or
 before the index's own. -/
-abbrev actualHistoryBase [LT T] : Set (Index W T) := orientedBase history s ⟦Tense.future⟧ᶜ
+abbrev actualHistoryBase [LT T] : Set (Index W T) := orientedBase history s Tense.nonfuture
 
 /-- The future-history base, [klecha-2016]'s circumstantial base, the alternatives at times
 strictly after the index's own. -/
@@ -117,7 +117,7 @@ theorem mem_historicalBase [PartialOrder T] :
 
 theorem mem_actualHistoryBase [PartialOrder T] :
     s' ∈ actualHistoryBase history s ↔ s'.world ∈ history s ∧ s'.time ≤ s.time := by
-  rw [mem_orientedBase, ← Tense.past_sup_present, Tense.toSetRel_sup, Set.mem_union,
+  rw [mem_orientedBase, Tense.nonfuture_eq_past_sup_present, Tense.toSetRel_sup, Set.mem_union,
     Tense.mem_toSetRel_past, Tense.mem_toSetRel_present, le_iff_lt_or_eq]
 
 theorem mem_futureHistoryBase [Preorder T] :
@@ -142,7 +142,7 @@ theorem orientedBase_sup [LT T] (C D : Finset Ordering) :
 /-- On linear time the actual and future bases together hold the alternatives at all times. -/
 theorem actualHistoryBase_union_futureHistoryBase [LinearOrder T] :
     actualHistoryBase history s ∪ futureHistoryBase history s = history s ×ˢ Set.univ := by
-  rw [← orientedBase_sup, compl_sup_eq_top]
+  rw [← orientedBase_sup, Tense.nonfuture_eq_compl_future, compl_sup_eq_top]
   ext
   simp [mem_orientedBase]
 

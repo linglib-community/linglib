@@ -82,8 +82,8 @@ instance [LE T] [DecidableLE T] (f : EvidentialFrame T) : Decidable f.Downstream
   inferInstanceAs (Decidable (f.eventTime ≤ f.acquisitionTime))
 
 theorem downstream_iff [LinearOrder T] (f : EvidentialFrame T) :
-    f.Downstream ↔ compare f.eventTime f.acquisitionTime ∈ ⟦future⟧ᶜ :=
-  (compare_mem_compl_future _ _).symm
+    f.Downstream ↔ compare f.eventTime f.acquisitionTime ∈ nonfuture :=
+  (compare_mem_nonfuture _ _).symm
 
 /-- A constraint on an evidential frame restricts each of its three relations to a cell of the
 tense partition, `⊤` where it leaves the relation open. -/
@@ -118,7 +118,7 @@ def derived (c : Constraint) : Finset Ordering := comp c.eventToAcquisition c.ac
 theorem compare_mem_derived (h : c.Holds f) : compare f.eventTime f.speechTime ∈ c.derived :=
   compare_mem_comp h.1 h.2.1
 
-theorem downstream_of_holds (hc : c.eventToAcquisition ≤ ⟦future⟧ᶜ) (h : c.Holds f) :
+theorem downstream_of_holds (hc : c.eventToAcquisition ≤ nonfuture) (h : c.Holds f) :
     f.Downstream :=
   f.downstream_iff.2 (hc h.1)
 
