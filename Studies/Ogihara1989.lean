@@ -110,11 +110,11 @@ interval is past and has no subinterval at which the speaker turned off the stov
 -- (56): the salient interval is past, and the past restricted to it is denied
 theorem no_subinterval_iff_not_restricted :
     Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g ↔
-      Perspective.Presup Allen.precedes σ (g n) ∧
+      σ ~[Allen.toSetRel Allen.precedes] g n ∧
         ¬ ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ g n ∧ P t) σ :=
   ⟨fun h ↦ ⟨h.1, fun ⟨t, _, hle, hP⟩ ↦ h.2 ⟨t, hle, hP⟩⟩, fun h ↦ ⟨h.1, fun ⟨t, hle, hP⟩ ↦
-    h.2 ⟨t, Perspective.presup_precedes.2 (NonemptyInterval.precedes_of_le_of_precedes hle
-      (Perspective.presup_precedes.1 h.1)), hle, hP⟩⟩⟩
+    h.2 ⟨t, Allen.mem_toSetRel_precedes.2 (NonemptyInterval.precedes_of_le_of_precedes hle
+      (Allen.mem_toSetRel_precedes.1 h.1)), hle, hP⟩⟩⟩
 
 -- p. 49: a speaker who turned off the stove at no subinterval did not at the interval
 theorem no_subinterval_entails_deictic (h : Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g) :
@@ -128,11 +128,11 @@ theorem deictic_too_weak :
       (P : NonemptyInterval ℤ → Prop),
       Past 0 (fun t ↦ ¬ P t) σ g ∧ ¬ Past 0 (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g :=
   ⟨.pure 10, fun _ ↦ ⟨(0, 5), by decide⟩, (· = .pure 3),
-    ⟨Perspective.presup_precedes.2 (by decide), by decide⟩,
+    ⟨Allen.mem_toSetRel_precedes.2 (by decide), by decide⟩,
     fun h ↦ h.2 ⟨.pure 3, by decide, rfl⟩⟩
 
 -- (46b) entails (56)
-theorem never_entails_no_subinterval (hn : Perspective.Presup Allen.precedes σ (g n))
+theorem never_entails_no_subinterval (hn : σ ~[Allen.toSetRel Allen.precedes] g n)
     (h : ¬ ◇[Allen.toSetRel Allen.precedes] P σ) : Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g :=
   no_subinterval_iff_not_restricted.2 ⟨hn, fun ⟨t, ht, _, hP⟩ ↦ h ⟨t, ht, hP⟩⟩
 
@@ -142,8 +142,8 @@ theorem never_too_strong :
       (P : NonemptyInterval ℤ → Prop),
       Past 0 (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g ∧ ◇[Allen.toSetRel Allen.precedes] P σ := by
   refine ⟨.pure 10, fun _ ↦ ⟨(5, 6), by decide⟩, (· = .pure 1),
-    ⟨Perspective.presup_precedes.2 (by decide), ?_⟩, .pure 1,
-    Perspective.presup_precedes.2 (by decide), rfl⟩
+    ⟨Allen.mem_toSetRel_precedes.2 (by decide), ?_⟩, .pure 1,
+    Allen.mem_toSetRel_precedes.2 (by decide), rfl⟩
   rintro ⟨t, ht, rfl⟩
   exact absurd ht (by decide)
 

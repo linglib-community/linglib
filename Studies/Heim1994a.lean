@@ -47,6 +47,7 @@ Licensing Condition `TLC` with the definition (67) of "in the domain of" license
 namespace Heim1994a
 
 open NonemptyInterval
+open scoped SetRel
 
 variable {T : Type*} [LinearOrder T]
 
@@ -57,7 +58,7 @@ def NotAfter (t t₀ : NonemptyInterval T) : Prop := ¬ t₀.Precedes t
 
 theorem notAfter_iff_presup (t t₀ : NonemptyInterval T) :
     NotAfter t t₀ ↔
-      Tense.Perspective.Presup (Allen.ofPosition Tense.nonfuture) t₀ t := by
+      t₀ ~[Allen.toSetRel (Allen.ofPosition Tense.nonfuture)] t := by
   simp [NotAfter, Tense.nonfuture_eq_compl_future, Tense.denote_future]
 
 theorem notAfter_self (t : NonemptyInterval T) : NotAfter t t := precedes_irrefl t

@@ -460,6 +460,18 @@ theorem relation_mem_filter {p : Relation → Prop} [DecidablePred p] :
     relation i j ∈ ofPosition C ↔ i.position j ∈ C := by
   rw [ofPosition, relation_mem_filter, position_relation]
 
+theorem mem_toSetRel_precedes : (j, i) ∈ toSetRel precedes ↔ i.Precedes j :=
+  relation_mem_precedes
+
+theorem mem_toSetRel_overlaps : (j, i) ∈ toSetRel overlaps ↔ i.Overlaps j :=
+  relation_mem_overlaps
+
+theorem mem_toSetRel_le : (j, i) ∈ toSetRel le ↔ i ≤ j := relation_mem_le
+
+theorem mem_toSetRel_ofPosition {C : Finset Ordering} :
+    (j, i) ∈ toSetRel (ofPosition C) ↔ i.position j ∈ C :=
+  relation_mem_ofPosition
+
 instance : (toSetRel precedes : SetRel (NonemptyInterval T) _).IsTrans :=
   ⟨fun _ _ _ h₁ h₂ ↦ relation_mem_precedes.2
     (NonemptyInterval.precedes_trans (relation_mem_precedes.1 h₂) (relation_mem_precedes.1 h₁))⟩
