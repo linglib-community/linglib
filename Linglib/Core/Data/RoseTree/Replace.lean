@@ -207,7 +207,7 @@ theorem leaves_replaceIf (t : RoseTree α) :
 
 /-- When the outermost matches all have the same leaves under `g`, the replacement has none, and
 no `g`-value occurs twice among the leaves of `t`, replacing trades the leaves of one match. -/
-theorem filterMap_leaves_replaceIf_add {β : Type*} [DecidableEq β] {g : α → Option β}
+theorem filterMap_leaves_replaceIf_add {β : Type*} {g : α → Option β}
     {L : Multiset β} {s t : RoseTree α} (hL : ∀ u, p u → u.leaves.filterMap g = L)
     (hr : r.leaves.filterMap g = 0) (ht : (t.leaves.filterMap g).Nodup)
     (hs : s ∈ outerMatches p t) :

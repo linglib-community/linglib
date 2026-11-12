@@ -127,10 +127,7 @@ theorem leafFeatures_node_inr (cs : List (RoseTree (F ⊕ Unit))) :
     leafFeatures (.node (.inr ()) cs) = (cs.map leafFeatures).sum := by
   cases cs with
   | nil => rfl
-  | cons c cs =>
-    rw [leafFeatures, leaves_node_cons, ← Multiset.coe_filterMapAddMonoidHom, map_list_sum,
-      List.map_map]
-    rfl
+  | cons c cs => exact map_leaves_node_cons _ c cs (Multiset.filterMapAddMonoidHom _)
 
 /-! ### Fusion
 
