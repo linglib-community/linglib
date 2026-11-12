@@ -296,6 +296,22 @@ theorem leafList_node_of_ne_nil (a : α) {cs : List (RoseTree α)} (h : cs ≠ [
     leafList (node a (c :: cs)) = ((c :: cs).map leafList).flatten :=
   leafList_node_of_ne_nil a (List.cons_ne_nil c cs)
 
+/-- A partial map of the frontier of a branching node is read off the children. -/
+theorem filterMap_leafList_node_of_ne_nil (f : α → Option β) (a : α) {cs : List (RoseTree α)}
+    (h : cs ≠ []) :
+    (leafList (node a cs)).filterMap f = (cs.map fun c ↦ c.leafList.filterMap f).flatten := by
+  rw [leafList_node_of_ne_nil a h, List.filterMap_flatten, List.map_map]
+  rfl
+
+/-- A partial map undefined at the label of the root does not tell a leaf from a branching
+node. -/
+theorem filterMap_leafList_node_of_eq_none {f : α → Option β} {a : α} (ha : f a = none)
+    (cs : List (RoseTree α)) :
+    (leafList (node a cs)).filterMap f = (cs.map fun c ↦ c.leafList.filterMap f).flatten := by
+  rcases eq_or_ne cs [] with rfl | h
+  · simp [ha]
+  · exact filterMap_leafList_node_of_ne_nil f a h
+
 theorem leafList_ne_nil (t : RoseTree α) : t.leafList ≠ [] := by
   induction t with
   | node a cs ih =>

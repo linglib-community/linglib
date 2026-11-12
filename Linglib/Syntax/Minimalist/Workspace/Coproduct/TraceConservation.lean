@@ -196,16 +196,6 @@ theorem traceCuts_numTraces (T : UnorderedTree (α ⊕ β)) :
       rootCuts_numTraces (leaveTrace (τ ∘ UnorderedTree.mk))
         (fun s _ h ↦ by obtain ⟨_ | _, _⟩ := s <;> simp at h; simp [← h, traceLeaf]) t q hq
 
-private theorem numTraces_le_of_mem_subtrees {s : RoseTree (α ⊕ β)} :
-    ∀ t : RoseTree (α ⊕ β), s ∈ t.subtrees → s.numTraces ≤ t.numTraces
-  | .node a cs, h => by
-    rw [RoseTree.subtrees_node, List.mem_cons] at h
-    rcases h with rfl | h
-    · exact le_rfl
-    · obtain ⟨c, hc, hs⟩ := List.mem_flatMap.1 h
-      exact (numTraces_le_of_mem_subtrees c hs).trans
-        (Multiset.countP_le_of_le _ (RoseTree.leaves_le_of_mem_children hc))
-
 /-- A trace cut of a tree without traces that leaves no trace is the empty cut, since each tree it
 extracts leaves one. -/
 theorem eq_zero_of_mem_traceCuts {T : UnorderedTree (α ⊕ β)} (hT : T.numTraces = 0)
@@ -220,7 +210,7 @@ theorem eq_zero_of_mem_traceCuts {T : UnorderedTree (α ⊕ β)} (hT : T.numTrac
         rw [UnorderedTree.quot_mk_eq_mk, UnorderedTree.subtrees_mk,
           RoseTree.unorderedSubtrees_eq_map, Multiset.mem_coe, List.mem_map] at hxT
         obtain ⟨s, hs, rfl⟩ := hxT
-        exact Nat.eq_zero_of_le_zero ((numTraces_le_of_mem_subtrees t hs).trans_eq hT)
+        exact Nat.eq_zero_of_le_zero ((Multiset.countP_le_of_le _ (RoseTree.mem_subtrees.1 hs).leaves_le).trans_eq hT)
   have hcard := traceCuts_numTraces τ T p hp
   rw [hcrown, h, hT, zero_add, zero_add] at hcard
   have hmem : p ∈ (traceCuts τ T).filter (fun p ↦ p.1.card = 0) :=

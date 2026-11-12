@@ -238,9 +238,6 @@ theorem IsSubtree.trans {r s t : RoseTree α} (h₁ : IsSubtree r s) (h₂ : IsS
     IsSubtree r t :=
   Relation.ReflTransGen.trans h₁ h₂
 
-instance : @Trans (RoseTree α) (RoseTree α) (RoseTree α) IsSubtree IsSubtree IsSubtree :=
-  ⟨IsSubtree.trans⟩
-
 theorem IsSubtree.of_mem_children {c t : RoseTree α} (h : c ∈ t.children) : IsSubtree c t :=
   Relation.ReflTransGen.single h
 
@@ -292,6 +289,11 @@ theorem IsSubtree.eq_of_numNodes_le {s t : RoseTree α}
 theorem IsSubtree.antisymm {s t : RoseTree α}
     (h₁ : IsSubtree s t) (h₂ : IsSubtree t s) : s = t :=
   h₁.eq_of_numNodes_le h₂.numNodes_le
+
+instance : IsPartialOrder (RoseTree α) IsSubtree where
+  refl := .refl
+  trans _ _ _ := .trans
+  antisymm _ _ := IsSubtree.antisymm
 
 mutual
 /-- `subtrees t` lists the subtrees of `t` in preorder, `t` first, one per vertex. -/
