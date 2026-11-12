@@ -74,7 +74,7 @@ variable [Lattice α] [BoundedOrder α]
 
 private theorem Relation.Atom.holds_ofBool_iff [Nontrivial α] {a : Relation.Atom} {b c : Bool} :
     a.Holds (ofBool b : α) (ofBool c) ↔ a.Holds b c := by
-  cases a <;> cases b <;> cases c <;>
+  rcases a with ⟨_ | _, _ | _⟩ <;> cases b <;> cases c <;>
     simp [ofBool, Relation.Atom.Holds, disjoint_iff, codisjoint_iff]
 
 private theorem Relation.holds_ofBool_iff [Nontrivial α] {R : Relation} {b c : Bool} :
@@ -171,32 +171,23 @@ section BooleanAlgebra
 variable [BooleanAlgebra α]
 
 /-- An element, or its complement when the polarity is negative. -/
-private def pol (s : Bool) (x : α) : α := bif s then xᶜ else x
+private def pol : Polarity → α → α
+  | .positive, x => x
+  | .negative, x => xᶜ
 
-private theorem pol_of_ne {s t : Bool} (h : s ≠ t) (x : α) : pol s x = (pol t x)ᶜ := by
+private theorem pol_of_ne {s t : Polarity} (h : s ≠ t) (x : α) : pol s x = (pol t x)ᶜ := by
   cases s <;> cases t <;> simp_all [pol]
 
-/-- The polarity of the first argument in the inequality an atom asserts. -/
-private def Atom.src : Atom → Bool
-  | .le | .disjoint => false
-  | .ge | .codisjoint => true
-
-/-- The polarity of the second argument in the inequality an atom asserts. -/
-private def Atom.tgt : Atom → Bool
-  | .le | .codisjoint => false
-  | .ge | .disjoint => true
-
-private theorem Atom.holds_iff_pol {a : Atom} {x y : α} :
-    a.Holds x y ↔ pol a.src x ≤ pol a.tgt y := by
-  cases a
+private theorem Atom.holds_iff_pol {a : Atom} {x y : α} : a.Holds x y ↔ pol a.src x ≤ pol a.tgt y := by
+  rcases a with ⟨_ | _, _ | _⟩
   · exact Iff.rfl
-  · exact compl_le_compl_iff_le.symm
   · exact le_compl_iff_disjoint_right.symm
   · exact codisjoint_iff_compl_le_right
+  · exact compl_le_compl_iff_le.symm
 
-private theorem Atom.exists_join : ∀ a b : Atom, a.tgt = b.src →
-    ∃ c, a.join b = some c ∧ c.src = a.src ∧ c.tgt = b.tgt := by
-  decide
+private theorem Atom.exists_join (a b : Atom) (h : a.tgt = b.src) :
+    ∃ c, a.join b = some c ∧ c.src = a.src ∧ c.tgt = b.tgt :=
+  ⟨⟨a.src, b.tgt⟩, ite_eq_left h, rfl, rfl⟩
 
 private theorem Atom.eq_of_mem_constraints : ∀ R : Relation, ∀ a ∈ R.constraints,
     ∀ b ∈ R.constraints, (a.src = b.src → a = b) ∧ (a.tgt = b.tgt → a = b) := by
@@ -216,8 +207,12 @@ theorem holds_mul (R S : Relation) :
     obtain ⟨c, hc, hs, ht⟩ := Atom.exists_join a b hab
     have := holds_iff.1 h c (mem_constraints_mul.2 ⟨a, ha, b, hb, hc⟩)
     rwa [Atom.holds_iff_pol, hs, ht] at this
-  let l : Atom → α := fun a ↦ bif a.tgt then ⊥ else pol a.src x
-  let u : Atom → α := fun b ↦ bif b.src then (pol b.tgt z)ᶜ else ⊥
+  let l : Atom → α := fun a ↦ match a.tgt with
+    | .positive => pol a.src x
+    | .negative => ⊥
+  let u : Atom → α := fun b ↦ match b.src with
+    | .positive => ⊥
+    | .negative => (pol b.tgt z)ᶜ
   refine ⟨R.constraints.sup l ⊔ S.constraints.sup u,
     holds_iff.2 fun a ha ↦ Atom.holds_iff_pol.2 ?_, holds_iff.2 fun b hb ↦ Atom.holds_iff_pol.2 ?_⟩
   · cases hat : a.tgt
@@ -228,7 +223,7 @@ theorem holds_mul (R S : Relation) :
       · cases hat' : a'.tgt
         · have hne : a'.src ≠ a.src := fun h ↦ by
             rw [(Atom.eq_of_mem_constraints R a' ha' a ha).1 h, hat] at hat'
-            exact Bool.noConfusion hat'
+            exact Polarity.noConfusion hat'
           simpa [l, hat'] using (pol_of_ne hne x).le
         · simp [l, hat']
       · cases hbs : b.src
@@ -243,7 +238,7 @@ theorem holds_mul (R S : Relation) :
         · simp [u, hbs']
         · have hne : b.tgt ≠ b'.tgt := fun h ↦ by
             rw [(Atom.eq_of_mem_constraints S b hb b' hb').2 h, hbs'] at hbs
-            exact Bool.noConfusion hbs
+            exact Polarity.noConfusion hbs
           simpa [u, hbs'] using (pol_of_ne hne z).ge
     · change (_)ᶜ ≤ _
       rw [compl_le_iff_compl_le]
