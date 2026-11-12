@@ -37,7 +37,7 @@ referents in whose vicinity it locates its referent. -/
 @[ext]
 structure DemonstrativePronoun extends Pronoun where
   /-- The participant sets of the referents in whose vicinity the form locates its referent. -/
-  deixis : Finset (Finset Discourse.Role)
+  deixis : Finset (Finset SpeechAct.Role)
 
 instance : DecidableEq DemonstrativePronoun :=
   fun _ _ ↦ decidable_of_iff _ DemonstrativePronoun.ext_iff.symm

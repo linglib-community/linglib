@@ -177,7 +177,7 @@ theorem quad_card : (cellsOf quadRaws).card = 4 := by decide
 
 /-- The participants of a referent are the speaker if it contains `0` and the addressee if it
 contains `1`. -/
-def participants (s : Finset Ω) : Finset Discourse.Role :=
+def participants (s : Finset Ω) : Finset SpeechAct.Role :=
   {r | (match r with | .speaker => 0 | .addressee => 1 : Ω) ∈ s}
 
 /-- The calculus generates the library's quadripartition, each of the four cells holding exactly
@@ -250,7 +250,7 @@ the tripartition Zwicky problematized, which groups inclusive with second person
 bivalent geometry (9), which bars [±hearer] without [±author], generates exactly the five
 (p. 193); Harbour rejects it as one of sixteen geometries with nothing to select it (p. 194). -/
 
-open Discourse
+open SpeechAct
 
 /-- A feature of the three-feature theories. -/
 inductive ThreeFeature where

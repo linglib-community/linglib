@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Discourse.SpeechAct
+public import Linglib.Discourse.SpeechAct.Basic
 public import Linglib.Fragments.Romance.French.Modals
 public import Linglib.Data.Examples.RuytenbeekEtAl2017
 public import Linglib.Data.Statistics.RuytenbeekEtAl2017
@@ -48,7 +48,7 @@ possible*, which it attributes to the permission reading of *pouvoir*, is not de
 
 namespace RuytenbeekEtAl2017
 
-open Discourse.SpeechAct French
+open SpeechAct French
 open Modality
 
 /-! ### Constructions and forces -/

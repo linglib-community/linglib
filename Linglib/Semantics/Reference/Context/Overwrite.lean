@@ -125,14 +125,14 @@ end overwrite
 
 /-- The coordinate holding a discourse role, the agent coordinate for the speaker and the
 addressee coordinate for the addressee. -/
-def Coord.ofRole : Discourse.Role ↪ Coord where
+def Coord.ofRole : SpeechAct.Role ↪ Coord where
   toFun
     | .speaker => .agent
     | .addressee => .addressee
   inj' a b h := by cases a <;> cases b <;> first | rfl | cases h
 
 /-- Overwriting replaces the holder of a role exactly when it takes the role's coordinate. -/
-theorem holder_overwrite (s : Finset Coord) (c i : Context W E P T) (r : Discourse.Role) :
+theorem holder_overwrite (s : Finset Coord) (c i : Context W E P T) (r : SpeechAct.Role) :
     (overwrite s c i).holder r = if Coord.ofRole r ∈ s then i.holder r else c.holder r := by
   cases r <;> rfl
 

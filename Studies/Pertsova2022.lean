@@ -37,7 +37,7 @@ not formalized.
 
 namespace Pertsova2022
 
-open Discourse Finset Harbour2016
+open SpeechAct Finset Harbour2016
 
 /-- The feature hierarchy (4): AUTHOR depends on +PARTICIPANT and ADDRESSEE on AUTHOR, so the
 active features form an initial segment of participant, author, addressee. -/

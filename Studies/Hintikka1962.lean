@@ -2,7 +2,7 @@ module
 
 public import Linglib.Logic.Epistemic.Basic
 public import Linglib.Data.Examples.Hintikka1962
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct.Role
 public import Mathlib.Logic.Relation
 
 /-!
@@ -439,7 +439,7 @@ theorem virtuallyImplies_iff_indefensible : VirtuallyImplies p q ↔ Indefensibl
 The countermodels have one atomic sentence `𝐩` and the agents `𝐈`, the speaker, `𝐲`, the
 addressee, and `𝐡`, a third person. -/
 
-open Discourse
+open SpeechAct
 
 /-- The atomic sentence of the countermodels. -/
 local notation "𝐩" => (Formula.atom () : Formula Unit (Option Role))

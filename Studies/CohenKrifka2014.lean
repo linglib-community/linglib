@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Discourse.Commitment.Space
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Semantics.Degree.Comparison
 
 /-!
@@ -292,7 +292,7 @@ section Model
 
 /-- An index fixes a count of petted rabbits and what the participants' commitments leave open
 about it. -/
-abbrev Count := Index Discourse.Role ℕ
+abbrev Count := Index SpeechAct.Role ℕ
 
 /-- The free space over the indices, with no prior commitments. -/
 def rabbits : Space (Set (Set Count)) := Space.Ici ∅
@@ -301,13 +301,13 @@ def rabbits : Space (Set (Set Count)) := Space.Ici ∅
 def only (n m : ℕ) : Count := ⟨n, fun _ ↦ {m}, fun _ ↦ ⟨m, rfl⟩⟩
 
 theorem mem_committed_preimage {X : Set ℕ} {w : Count} :
-    w ∈ committed Index.access Discourse.Role.speaker (Index.fact ⁻¹' X) ↔
+    w ∈ committed Index.access SpeechAct.Role.speaker (Index.fact ⁻¹' X) ↔
       w.commitmentSet .speaker ⊆ X := by
   rw [Index.committed_access_preimage]
   rfl
 
 theorem denial_injective : Function.Injective fun m ↦
-    committed Index.access Discourse.Role.speaker (exactly Index.fact m)ᶜ := by
+    committed Index.access SpeechAct.Role.speaker (exactly Index.fact m)ᶜ := by
   intro m k h
   simp only at h
   by_contra hmk
@@ -319,7 +319,7 @@ theorem denial_injective : Function.Injective fun m ↦
     (show m ∈ (only 0 m).commitmentSet .speaker from rfl) rfl
 
 theorem rabbits_root_fresh (m : ℕ) :
-    committed Index.access Discourse.Role.speaker (exactly Index.fact m)ᶜ ∉ rabbits.root :=
+    committed Index.access SpeechAct.Role.speaker (exactly Index.fact m)ᶜ ∉ rabbits.root :=
   Set.notMem_empty _
 
 -- (1a), (82)
@@ -352,7 +352,7 @@ theorem rabbits_atLeast_not_committed_four :
 
 -- (53)
 theorem rabbits_atLeast_grant_four :
-    committed Index.access Discourse.Role.speaker (exactly Index.fact 4)ᶜ ∉
+    committed Index.access SpeechAct.Role.speaker (exactly Index.fact 4)ᶜ ∉
       (atLeast Index.access rabbits .speaker (exactly Index.fact) 3).root := by
   rw [atLeast, committed_mem_root_exclude_iff Index.access rabbits .speaker (exactly Index.fact)
     _ (Set.empty_subset _) rabbits_root_fresh denial_injective]
@@ -360,7 +360,7 @@ theorem rabbits_atLeast_grant_four :
 
 -- (48), (60a)
 theorem rabbits_atLeast_isLeast :
-    IsLeast {m | committed Index.access Discourse.Role.speaker (exactly Index.fact m)ᶜ ∉
+    IsLeast {m | committed Index.access SpeechAct.Role.speaker (exactly Index.fact m)ᶜ ∉
       (atLeast Index.access rabbits .speaker (exactly Index.fact) 3).root} 3 :=
   atLeast_isLeast Index.access rabbits .speaker (exactly Index.fact) 3 (Set.empty_subset _)
     rabbits_root_fresh denial_injective
@@ -389,7 +389,7 @@ neither state, while asserting `φ` leaves only the second. -/
 section Granting
 
 /-- An index fixes whether it rains and what the participants' commitments leave open about it. -/
-abbrev Weather := Index Discourse.Role Bool
+abbrev Weather := Index SpeechAct.Role Bool
 
 /-- It is raining. -/
 def raining : Set Weather := Index.fact ⁻¹' {true}
@@ -400,7 +400,7 @@ def granting : Space (Set (Set Weather)) :=
     by rintro d (rfl | rfl) <;> simp⟩
 
 theorem committed_raining_ne_compl :
-    committed Index.access Discourse.Role.speaker raining ≠
+    committed Index.access SpeechAct.Role.speaker raining ≠
       committed Index.access .speaker rainingᶜ := fun h ↦ by
   have hw : (⟨true, fun _ ↦ {true}, fun _ ↦ ⟨true, rfl⟩⟩ : Weather) ∈
       committed Index.access .speaker raining := by

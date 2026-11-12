@@ -132,7 +132,7 @@ def full : AccessibilityLevel → Prop
 
 /-- The deictic content of a proximate demonstrative form is the participant sets containing the
 speaker, and that of a distal form is the others. -/
-def deixis : AccessibilityLevel → Option (Finset (Finset Discourse.Role))
+def deixis : AccessibilityLevel → Option (Finset (Finset SpeechAct.Role))
   | .distalDemMod | .distalDemNP | .distalDem => some Person.first.participantSetsᶜ
   | .proxDemMod | .proxDemNP | .proxDem => some Person.first.participantSets
   | _ => none

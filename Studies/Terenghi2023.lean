@@ -49,7 +49,7 @@ that overlap but differ](##ese_readings), as Harbour observes of person- and dis
 
 namespace Terenghi2023
 
-open Discourse
+open SpeechAct
 
 /-! ### Proximity and distance classes -/
 

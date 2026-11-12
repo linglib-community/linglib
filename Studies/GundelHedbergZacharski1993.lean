@@ -50,7 +50,7 @@ least](##familiar_mostFrequent).
 
 namespace GundelHedbergZacharski1993
 
-open Discourse
+open SpeechAct
 
 /-! ### The Givenness Hierarchy -/
 

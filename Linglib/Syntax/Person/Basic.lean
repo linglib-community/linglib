@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct.Role
 
 /-!
 # Grammatical person
@@ -56,7 +56,7 @@ A person value covers the referents whose participants, the speaker and the addr
 form one of its participant sets: `{speaker}` or `{speaker, addressee}` for the general first
 person and a single set for each person of the quadripartition. -/
 
-open Discourse
+open SpeechAct
 
 /-- `p.participantSets` is the family of participant sets of the referents `p` covers. -/
 def participantSets : Person → Finset (Finset Role)

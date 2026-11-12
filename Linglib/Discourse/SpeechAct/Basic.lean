@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Discourse.Commitment.Space
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Syntax.Clause.Basic
 public import Mathlib.Order.Max
 public import Mathlib.Tactic.DeriveFintype
@@ -19,23 +19,23 @@ The *epistemic authority* of an act is the participant whose commitment to its c
 projects. In Krifka's commitment spaces an assertion adds the speaker's commitment to its content
 and a polar question proposes the addressee's commitment to it or to its negation, so the
 authority is [the speaker of an assertion and the addressee of a
-question](##Discourse.SpeechAct.Force.authority_eq_some_iff): the interrogative flip is the
+question](##SpeechAct.Force.authority_eq_some_iff): the interrogative flip is the
 difference between the two updates.
 
 A request is felicitous only if its *preparatory conditions* hold, first among them that the
 addressee is able to do what is requested, and asking whether the addressee is able is a way of
 making the request indirectly. A question is a request for information, and the conditions on giving
-information are [ordered by specificity](##Discourse.SpeechAct.PreparatoryCondition.le), knowing
+information are [ordered by specificity](##SpeechAct.PreparatoryCondition.le), knowing
 it being a way of being able to give it.
 
 ## Main definitions
 
-* `Discourse.SpeechAct.Force`: the illocutionary forces.
-* `Discourse.SpeechAct.Force.authority`: the epistemic authority of an assertion or a question.
-* `Discourse.SpeechAct.Force.commitmentUpdate`: an assertion or a question as an update of a
+* `SpeechAct.Force`: the illocutionary forces.
+* `SpeechAct.Force.authority`: the epistemic authority of an assertion or a question.
+* `SpeechAct.Force.commitmentUpdate`: an assertion or a question as an update of a
   commitment space.
 * `Clause.SentenceType.force`: the force a sentence type conventionally performs.
-* `Discourse.SpeechAct.PreparatoryCondition`: the preparatory conditions of a request, with their
+* `SpeechAct.PreparatoryCondition`: the preparatory conditions of a request, with their
   `PartialOrder`.
 
 ## Implementation notes
@@ -67,7 +67,7 @@ it being a way of being able to give it.
 
 @[expose] public section
 
-namespace Discourse.SpeechAct
+namespace SpeechAct
 
 /-! ### Illocutionary force -/
 
@@ -91,7 +91,7 @@ namespace Force
 /-- The epistemic authority of an act is the participant whose commitment to its content the act
 projects: the speaker of an assertion and the addressee of a question. The other acts have
 none. -/
-def authority : Force → Option Discourse.Role
+def authority : Force → Option SpeechAct.Role
   | assertion => some .speaker
   | question => some .addressee
   | directive | promise | exclamation => none
@@ -106,7 +106,7 @@ section Commitment
 
 open Commitment
 
-variable {W : Type*} (C : Commitment.Space (Set (Set W))) (O : Discourse.Role → SetRel W W)
+variable {W : Type*} (C : Commitment.Space (Set (Set W))) (O : SpeechAct.Role → SetRel W W)
   (φ : Set W)
 
 /-- An act of force `f` with content `φ` as an update of a commitment space, after Krifka: an
@@ -121,7 +121,7 @@ def commitmentUpdate : Force → Option (Commitment.Space (Set (Set W)))
 variable {C O φ}
 
 /-- An act projects the commitment of its authority. -/
-theorem projectsCommitment_of_authority_eq_some {f : Force} {r : Discourse.Role}
+theorem projectsCommitment_of_authority_eq_some {f : Force} {r : SpeechAct.Role}
     (hr : f.authority = some r) {D : Commitment.Space (Set (Set W))}
     (hD : D ∈ f.commitmentUpdate C O φ) : C.ProjectsCommitment O r φ D := by
   cases f <;> cases hr <;> cases hD
@@ -133,10 +133,10 @@ projects: when the participants' commitments to `φ` and to `¬φ` are four dist
 the authority of an assertion or a question is exactly the participant whose commitment its
 update of the space of all states projects. -/
 theorem authority_eq_some_iff
-    (hO : Function.Injective fun x : Discourse.Role × Bool ↦
+    (hO : Function.Injective fun x : SpeechAct.Role × Bool ↦
       committed O x.1 (bif x.2 then φ else φᶜ))
     {f : Force} {D : Commitment.Space (Set (Set W))}
-    (hD : D ∈ f.commitmentUpdate (.Ici ∅) O φ) (r : Discourse.Role) :
+    (hD : D ∈ f.commitmentUpdate (.Ici ∅) O φ) (r : SpeechAct.Role) :
     f.authority = some r ↔ (Commitment.Space.Ici ∅).ProjectsCommitment O r φ D := by
   refine ⟨fun hr ↦ projectsCommitment_of_authority_eq_some hr hD, fun h ↦ ?_⟩
   cases f <;> cases hD <;> cases r
@@ -151,15 +151,15 @@ theorem authority_eq_some_iff
 
 /-- In the canonical model, where each participant's commitments leave open a set of facts, the
 participants' commitments to a fact and to its negation are four distinct propositions. -/
-private theorem injective_committed_index : Function.Injective fun x : Discourse.Role × Bool ↦
+private theorem injective_committed_index : Function.Injective fun x : SpeechAct.Role × Bool ↦
     committed (Index.access (F := Bool)) x.1
       (bif x.2 then Index.fact ⁻¹' {true} else (Index.fact ⁻¹' {true})ᶜ) := by
   have hX (b : Bool) : (bif b then Index.fact ⁻¹' {true} else (Index.fact ⁻¹' {true})ᶜ :
-      Set (Index Discourse.Role Bool)) = Index.fact ⁻¹' {b} := by
+      Set (Index SpeechAct.Role Bool)) = Index.fact ⁻¹' {b} := by
     cases b <;> ext <;> simp
   rintro ⟨r, b⟩ ⟨r', b'⟩ h
   simp only [hX, Index.committed_access_preimage] at h
-  let w : Index Discourse.Role Bool :=
+  let w : Index SpeechAct.Role Bool :=
     ⟨b, fun q ↦ if q = r then {b} else Set.univ, fun q ↦ by split_ifs <;> simp⟩
   have hw : w.commitmentSet r' ⊆ {b'} := (Set.ext_iff.1 h w).1 (by simp [w])
   by_cases hr : r' = r
@@ -171,7 +171,7 @@ private theorem injective_committed_index : Function.Injective fun x : Discourse
 /-- In the canonical model a question does not project the speaker's commitment. -/
 example : ¬ (Commitment.Space.Ici ∅).ProjectsCommitment (Index.access (F := Bool)) .speaker
     (Index.fact ⁻¹' {true}) ((Commitment.Space.Ici ∅).bipolarQuestion
-      (Index.access (κ := Discourse.Role)) .addressee (Index.fact ⁻¹' {true})) :=
+      (Index.access (κ := SpeechAct.Role)) .addressee (Index.fact ⁻¹' {true})) :=
   fun h ↦ absurd ((authority_eq_some_iff injective_committed_index (f := .question) rfl _).2 h)
     (by simp)
 
@@ -236,13 +236,13 @@ instance : NoBotOrder PreparatoryCondition := ⟨by decide⟩
 
 end PreparatoryCondition
 
-end Discourse.SpeechAct
+end SpeechAct
 
 /-! ### The conventional force of a sentence type -/
 
 namespace Clause.SentenceType
 
-open Discourse.SpeechAct (Force)
+open SpeechAct (Force)
 
 /-- The force a sentence type conventionally performs: a question for each of the three
 interrogatives, and for each other type the act it is named for. -/

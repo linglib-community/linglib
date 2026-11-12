@@ -45,7 +45,7 @@ the situation of the [+Author] cell in Figure 5.
 
 namespace Hammerly2023
 
-open Discourse Finset
+open SpeechAct Finset
 
 /-! ### Features as first-order predicates (§3.1) -/
 

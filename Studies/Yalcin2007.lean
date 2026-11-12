@@ -97,7 +97,7 @@ its form is defensible, true at some world of a model. -/
 
 section Relational
 
-open EpistemicLogic EpistemicLogic.Formula Hintikka1962 Discourse
+open EpistemicLogic EpistemicLogic.Formula Hintikka1962 SpeechAct
 
 /-- The atomic sentence *it is raining*. -/
 local notation "𝐩" => (Formula.atom () : Formula Unit (Option Role))
