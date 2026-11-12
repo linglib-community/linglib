@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Assignment
-public import Linglib.Semantics.Reference.Nominal
+public import Linglib.Semantics.Reference.Definite
 public import Linglib.Semantics.Tense.Quantificational
 
 /-!
@@ -11,7 +11,7 @@ Read pronominally, after Partee, a tense refers to a time as a pronoun refers to
 It denotes the value of a temporal variable and presupposes that this time stands to the
 evaluation time, the value of a second variable, in a position of its cell, as a pronoun
 presupposes that its referent has its φ-features. `Tense.pronoun C k j` is this denotation, a
-nominal over times (`Nominal`) as the denotation of a personal pronoun is a nominal
+definite over times (`Definite`) as the denotation of a personal pronoun is a definite
 over individuals. The past and the present are the pronouns of their cells, and the zero tense
 of Kratzer, a variable with no presupposition, is the pronoun of the unconstrained cell `⊤`.
 One denotation serves the deictic, the anaphoric and the bound use, binding being abstraction
@@ -53,7 +53,7 @@ variable [LT T]
 /-- The pronominal tense with cell `C`, referential index `k` and evaluation index `j` denotes
 the time of `k` where it stands to the time of `j` in a position of `C`, and nothing
 elsewhere. -/
-def pronoun (C : Finset Ordering) (k j : ℕ) : Nominal (ℕ → T) W T :=
+def pronoun (C : Finset Ordering) (k j : ℕ) : Definite (ℕ → T) W T :=
   fun g _ ↦ ⟨g j ~[toSetRel C] g k, fun _ ↦ g k⟩
 
 @[simp] theorem pronoun_dom : (pronoun (W := W) C k j g w).Dom ↔ g j ~[toSetRel C] g k := Iff.rfl

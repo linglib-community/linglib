@@ -138,21 +138,21 @@ prevent (`not_lexicalizes_demonstrative`, `not_lexicalizes_possessive`). An inde
 ∃, and no determiner is ∩. -/
 def Lexicalizes : Entry → CovertShift → Prop
   | .article a, .iota => ∀ (E W : Type) (R : Restrictor E W) (d : ℕ),
-      (bare R).toNominal ∈ a.denotations R d
+      (bare R).toDefinite ∈ a.denotations R d
   | .article a, .iotaAnaphoric => ∀ (E W : Type) (R : Restrictor E W) (d : ℕ),
-      (anaphoric R d).toNominal ∈ a.denotations R d
+      (anaphoric R d).toDefinite ∈ a.denotations R d
   | .article a, .exists => ∃ d ∈ a.definiteness, d < .definite
   | .demonstrative dem, .iota => ∀ (E W P T : Type) [PartialOrder E]
       (c : Kaplan.Context W E P T) (χ : SetRel E E) (R : Restrictor E W) (d : ℕ),
-      dem.denote R d c χ = (bare R).toNominal
+      dem.denote R d c χ = (bare R).toDefinite
   | .demonstrative dem, .iotaAnaphoric => ∀ (E W P T : Type) [PartialOrder E]
       (c : Kaplan.Context W E P T) (χ : SetRel E E) (R : Restrictor E W) (d : ℕ),
-      dem.denote R d c χ = (anaphoric R d).toNominal
+      dem.denote R d c χ = (anaphoric R d).toDefinite
   | .possessive p, .iota => ∀ (E W : Type) (R : Restrictor E W) (possessor : (ℕ → E) → W → E)
-      (rel : (ℕ → E) → W → E → E → Prop), p.denote R possessor rel = (bare R).toNominal
+      (rel : (ℕ → E) → W → E → E → Prop), p.denote R possessor rel = (bare R).toDefinite
   | .possessive p, .iotaAnaphoric => ∀ (E W : Type) (R : Restrictor E W) (d : ℕ)
       (possessor : (ℕ → E) → W → E) (rel : (ℕ → E) → W → E → E → Prop),
-      p.denote R possessor rel = (anaphoric R d).toNominal
+      p.denote R possessor rel = (anaphoric R d).toDefinite
   | _, _ => False
 
 /-- The restrictor true of everything, with two satisfiers in `Bool`. -/
@@ -160,7 +160,7 @@ private abbrev top : Restrictor Bool Unit := fun _ _ ↦ Set.univ
 
 /-- With two satisfiers the weak article is undefined and the strong one picks the indexed
 entity. -/
-private theorem unique_ne_anaphoric : (unique top).toNominal ≠ (anaphoric top 0).toNominal := by
+private theorem unique_ne_anaphoric : (unique top).toDefinite ≠ (anaphoric top 0).toDefinite := by
   intro h
   have h' := Part.ofOption_injective (congrFun (congrFun h fun _ ↦ true) ())
   rw [DefiniteDescription.denote_unique_eq_none_of_ne top _ _ (x := true) (y := false) trivial
@@ -192,8 +192,8 @@ vicinity, it denotes nothing and the definite does. -/
 theorem not_lexicalizes_demonstrative (dem : DemonstrativeDeterminer) (τ : CovertShift) :
     ¬ (demonstrative dem).Lexicalizes τ := by
   have key : ∀ k : DefiniteDescription Unit Unit, (⟦k⟧ (fun _ ↦ ()) ()).isSome →
-      dem.denote (fun _ _ _ ↦ True) 0 unitContext ⊥ ≠ k.toNominal := fun k hk h ↦ by
-    have hd : (k.toNominal (fun _ ↦ ()) ()).Dom := (Part.ofOption_dom _).2 hk
+      dem.denote (fun _ _ _ ↦ True) 0 unitContext ⊥ ≠ k.toDefinite := fun k hk h ↦ by
+    have hd : (k.toDefinite (fun _ ↦ ()) ()).Dom := (Part.ofOption_dom _).2 hk
     rw [← h] at hd
     obtain ⟨hv, -⟩ := hd
     simp at hv
@@ -213,7 +213,7 @@ where the definite is not. -/
 theorem not_lexicalizes_possessive (p : PossessiveDeterminer) (τ : CovertShift) :
     ¬ (possessive p).Lexicalizes τ := by
   have key : ∀ k : DefiniteDescription Unit Unit, (⟦k⟧ (fun _ ↦ ()) ()).isSome →
-      p.denote (fun _ _ ↦ Set.univ) (fun _ _ ↦ ()) (fun _ _ _ _ ↦ False) ≠ k.toNominal :=
+      p.denote (fun _ _ ↦ Set.univ) (fun _ _ ↦ ()) (fun _ _ _ _ ↦ False) ≠ k.toDefinite :=
     fun k hk h ↦ by
       have h' := Part.ofOption_injective (congrFun (congrFun h fun _ ↦ ()) ())
       rw [← h', DefiniteDescription.denote_possessive_isSome_iff] at hk

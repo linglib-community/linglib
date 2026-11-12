@@ -7,7 +7,7 @@ module
 
 public import Linglib.Syntax.Category.Pronoun.Personal
 public import Linglib.Semantics.Denotation
-public import Linglib.Semantics.Reference.Nominal
+public import Linglib.Semantics.Reference.Definite
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Logic.Assignment
 
@@ -15,7 +15,7 @@ public import Linglib.Logic.Assignment
 # The denotation of a pronoun
 
 This file defines the denotation of a personal pronoun. A `PersonalPronoun` entry denotes the
-`Nominal` that is the value of the entry's index under the assignment where that value lies in
+`Definite` that is the value of the entry's index under the assignment where that value lies in
 the entry's φ-domain, and nothing elsewhere (`PersonalPronoun.phiDom`, `PersonalPronoun.denote`).
 The φ-domain is the intersection of `Person.dom` at the context of utterance with `Number.dom`
 and `Gender.dom` at the entry's referential person and number and its gender. The denotation
@@ -68,7 +68,7 @@ theorem phiDom_congr {e₁ e₂ : PersonalPronoun} (hr : e₁.referential = e₂
 
 /-- A pronoun denotes the value `g i` of its index where that value lies in the φ-domain, and
 nothing elsewhere. -/
-def denote : Nominal (ℕ → E) W E := .var i (e.phiDom c)
+def denote : Definite (ℕ → E) W E := .var i (e.phiDom c)
 
 universe u
 
@@ -76,7 +76,7 @@ universe u
 arguments of its domain. -/
 instance : Denotes PersonalPronoun
     (∀ (E W P T : Type u) [PartialOrder E] [Gendered E], ℕ → Context W E P T →
-      Nominal (ℕ → E) W E) :=
+      Definite (ℕ → E) W E) :=
   ⟨fun e _ _ _ _ _ _ ↦ e.denote⟩
 
 @[simp] theorem denote_dom (g : ℕ → E) (w : W) :
@@ -85,7 +85,7 @@ instance : Denotes PersonalPronoun
 
 @[simp] theorem mem_denote {g : ℕ → E} {w : W} {x : E} :
     x ∈ e.denote i c g w ↔ g i ∈ e.phiDom c ∧ g i = x :=
-  Nominal.mem_var
+  Definite.mem_var
 
 theorem isRigid_denote (g : ℕ → E) : IsRigid (e.denote (W := W) i c g) :=
   isRigid_const _

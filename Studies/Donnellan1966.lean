@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Reference.Character
-public import Linglib.Semantics.Reference.Nominal
+public import Linglib.Semantics.Reference.Definite
 public import Linglib.Semantics.Reference.Iota
 
 /-!
@@ -14,8 +14,8 @@ public import Linglib.Semantics.Reference.Iota
 
 Donnellan distinguishes two uses of a definite description. Used attributively, *the φ* denotes
 at each world whoever uniquely satisfies φ there, the Russellian iota taken pointwise
-(`attributive`, `attributive_eq_some_iff`), and as a nominal denotation it denotes where the
-iota is defined (`attributiveNominal`, `attributiveNominal_toTrivalent_eq_true_iff`). Used
+(`attributive`, `attributive_eq_some_iff`), and as a definite denotation it denotes where the
+iota is defined (`attributiveDefinite`, `attributiveDefinite_toTrivalent_eq_true_iff`). Used
 referentially, it denotes the individual the speaker has in mind whatever the world: the
 constant character (`Character.const`), whose content is rigid.
 The two uses come apart in Donnellan's scene of the man with the martini: when the intended
@@ -50,14 +50,14 @@ noncomputable def attributive (φ : E → W → Prop) : W → Option E := fun w 
 theorem attributive_eq_some_iff : attributive φ w = some e ↔ φ e w ∧ ∀ x, φ x w → x = e :=
   iota_eq_some_iff
 
-/-- The attributive use as a nominal denotation, the pointwise iota where it is defined. -/
-noncomputable def attributiveNominal (φ : E → W → Prop) : Nominal Unit W E :=
+/-- The attributive use as a definite denotation, the pointwise iota where it is defined. -/
+noncomputable def attributiveDefinite (φ : E → W → Prop) : Definite Unit W E :=
   fun _ w ↦ ↑(attributive φ w)
 
-theorem attributiveNominal_toTrivalent_eq_true_iff (ψ : E → W → Prop)
+theorem attributiveDefinite_toTrivalent_eq_true_iff (ψ : E → W → Prop)
     (h : attributive φ w = some e) :
-    (attributiveNominal φ).toTrivalent ψ () w = .true ↔ ψ e w := by
-  simp [attributiveNominal, h]
+    (attributiveDefinite φ).toTrivalent ψ () w = .true ↔ ψ e w := by
+  simp [attributiveDefinite, h]
 
 theorem attributive_ne_const_of_misfit (h : attributive φ w = some e) (hne : e ≠ intended) :
     attributive φ w ≠ some (Character.const intended () w) := by

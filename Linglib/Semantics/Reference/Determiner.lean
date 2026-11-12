@@ -4,12 +4,12 @@ public import Mathlib.Basic.Rel
 public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Syntax.Category.Determiner.Basic
-public import Linglib.Semantics.Reference.Nominal
+public import Linglib.Semantics.Reference.Definite
 
 /-!
 # The denotation of a determiner
 
-The determiner records of `Syntax/Category/Determiner/Basic.lean` denote `Nominal`s, in parallel
+The determiner records of `Syntax/Category/Determiner/Basic.lean` denote `Definite`s, in parallel
 with the pronouns of `Semantics/Reference/Pronoun.lean`:
 
 | | pronoun | determiner |
@@ -29,12 +29,12 @@ prominent ones'.
 
 ## Main declarations
 
-* `DefiniteDescription.toNominal`: a description's `Nominal`, its referent where it has one.
-* `DemonstrativeDeterminer.denote`: the demonstrative's `Nominal`.
+* `DefiniteDescription.toDefinite`: a description's `Definite`, its referent where it has one.
+* `DemonstrativeDeterminer.denote`: the demonstrative's `Definite`.
 * `Article.toDescriptions`, `Article.denotations`: an article's possible descriptions, one per
-  admissible strength, and their `Nominal`s; a syncretic article (English *the*) denotes both the
+  admissible strength, and their `Definite`s; a syncretic article (English *the*) denotes both the
   weak and the strong description.
-* `PossessiveDeterminer.denote`: the possessive determiner's `Nominal`, the unique satisfier of
+* `PossessiveDeterminer.denote`: the possessive determiner's `Definite`, the unique satisfier of
   the possessee restrictor that stands in the possession relation to the possessor.
 
 ## Implementation notes
@@ -51,7 +51,7 @@ the restrictor's satisfiers; here it is a presupposition on the indexed referent
 strong-article description, and the two coincide whenever the index supplies a referent that meets
 the condition. Distance, visibility and elevation, which cross-cut the person cells, are not
 modeled. `QuantificationalDeterminer`, whose denotation is a determiner denotation rather than an
-individual one, has no `Nominal`.
+individual one, has no `Definite`.
 
 ## References
 
@@ -71,15 +71,15 @@ open scoped SetRel
 variable {E W : Type} (R : Restrictor E W) (d : ℕ) (possessor : (ℕ → E) → W → E)
   (rel : (ℕ → E) → W → E → E → Prop)
 
-/-! ### Descriptions as nominal denotations -/
+/-! ### Descriptions as definite denotations -/
 
-/-- A description denotes the `Nominal` that is its referent where it has one. -/
-noncomputable def DefiniteDescription.toNominal (k : DefiniteDescription E W) :
-    Nominal (ℕ → E) W E :=
+/-- A description denotes the `Definite` that is its referent where it has one. -/
+noncomputable def DefiniteDescription.toDefinite (k : DefiniteDescription E W) :
+    Definite (ℕ → E) W E :=
   fun g w ↦ ↑(⟦k⟧ g w)
 
 @[simp] theorem DefiniteDescription.toNominal_apply (k : DefiniteDescription E W) (g : ℕ → E)
-    (w : W) : k.toNominal g w = ↑(⟦k⟧ g w) := rfl
+    (w : W) : k.toDefinite g w = ↑(⟦k⟧ g w) := rfl
 
 /-! ### The demonstrative determiner's denotation -/
 
@@ -120,7 +120,7 @@ theorem _root_.DemonstrativeDeterminer.vicinity_union_of_compl
 /-- A demonstrative determiner denotes the referent of the demonstrative description at discourse
 index `d` where the indexed referent `g d` lies in its vicinity, and nothing elsewhere. -/
 noncomputable def _root_.DemonstrativeDeterminer.denote (dem : DemonstrativeDeterminer) :
-    Nominal (ℕ → E) W E :=
+    Definite (ℕ → E) W E :=
   fun g w ↦ Part.assert (g d ∈ dem.vicinity c χ)
     fun _ ↦ ↑(⟦DefiniteDescription.demonstrative R d⟧ g w)
 
@@ -128,7 +128,7 @@ noncomputable def _root_.DemonstrativeDeterminer.denote (dem : DemonstrativeDete
 utterance and the vicinity relation being the Reader arguments of its domain. -/
 noncomputable instance : Denotes DemonstrativeDeterminer
     (∀ (E W P T : Type) [PartialOrder E], Restrictor E W → ℕ → Context W E P T → SetRel E E →
-      Nominal (ℕ → E) W E) :=
+      Definite (ℕ → E) W E) :=
   ⟨fun dem _ _ _ _ _ ↦ dem.denote⟩
 
 variable {R d c χ} in
@@ -137,7 +137,7 @@ its vicinity: deixis filters the referent and never selects it. -/
 @[simp] theorem _root_.DemonstrativeDeterminer.mem_denote {dem : DemonstrativeDeterminer}
     {g : ℕ → E} {s : W} {x : E} :
     x ∈ dem.denote R d c χ g s ↔
-      g d ∈ dem.vicinity c χ ∧ x ∈ (DefiniteDescription.anaphoric R d).toNominal g s := by
+      g d ∈ dem.vicinity c χ ∧ x ∈ (DefiniteDescription.anaphoric R d).toDefinite g s := by
   simp only [DemonstrativeDeterminer.denote, Part.mem_assert_iff, exists_prop]
   rfl
 
@@ -168,21 +168,21 @@ theorem _root_.Article.realizes_of_mem_toDescriptions (a : Article) (idx : ℕ)
     Determiner.Inventory.marks_singleton]
   exact (Article.mem_strengths_iff_marks a p).mp hp
 
-/-- The `Nominal`s an article can denote are those of its descriptions. -/
+/-- The `Definite`s an article can denote are those of its descriptions. -/
 def _root_.Article.denotations (a : Article) (R : Restrictor E W) (idx : ℕ) :
-    Set (Nominal (ℕ → E) W E) :=
-  DefiniteDescription.toNominal '' a.toDescriptions R idx
+    Set (Definite (ℕ → E) W E) :=
+  DefiniteDescription.toDefinite '' a.toDescriptions R idx
 
 /-- An article denotes the set of its readings on every model, the restrictor and the index
 being the Reader arguments of its domain. -/
 noncomputable instance : Denotes Article
-    (∀ (E W : Type), Restrictor E W → ℕ → Set (Nominal (ℕ → E) W E)) :=
+    (∀ (E W : Type), Restrictor E W → ℕ → Set (Definite (ℕ → E) W E)) :=
   ⟨fun a _ _ ↦ a.denotations⟩
 
 theorem _root_.Article.denotations_realized (a : Article) (idx : ℕ)
-    (nd : Nominal (ℕ → E) W E) (h : nd ∈ a.denotations R idx) :
+    (nd : Definite (ℕ → E) W E) (h : nd ∈ a.denotations R idx) :
     ∃ k : DefiniteDescription E W,
-      Determiner.Inventory.Realizes [.article a] k.kind ∧ nd = k.toNominal := by
+      Determiner.Inventory.Realizes [.article a] k.kind ∧ nd = k.toDefinite := by
   obtain ⟨k, hk, rfl⟩ := h
   exact ⟨k, Article.realizes_of_mem_toDescriptions R a idx k hk, rfl⟩
 
@@ -193,14 +193,14 @@ cat to which the possessor stands in `rel`. Its only presupposition is the defin
 quantified possessors see `Possession.PossNP`, which agrees with this description at an individual
 possessor (`DefiniteDescription.possNP_iff_exists_mem_denote_possessive`). -/
 noncomputable def _root_.PossessiveDeterminer.denote (_p : PossessiveDeterminer) :
-    Nominal (ℕ → E) W E :=
-  (DefiniteDescription.possessive R possessor rel).toNominal
+    Definite (ℕ → E) W E :=
+  (DefiniteDescription.possessive R possessor rel).toDefinite
 
 /-- A possessive determiner denotes on every model, the restrictor, the possessor and the
 possession relation being the Reader arguments of its domain. -/
 noncomputable instance : Denotes PossessiveDeterminer
     (∀ (E W : Type), Restrictor E W → ((ℕ → E) → W → E) →
-      ((ℕ → E) → W → E → E → Prop) → Nominal (ℕ → E) W E) :=
+      ((ℕ → E) → W → E → E → Prop) → Definite (ℕ → E) W E) :=
   ⟨fun p _ _ ↦ p.denote⟩
 
 @[simp]
