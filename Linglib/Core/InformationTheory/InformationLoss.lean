@@ -15,8 +15,8 @@ A state is drawn from a prior and sent through a channel, and a decoder assigns 
 distribution over states. The information the decoder loses is the expected surprisal of the state
 under its distribution at the output, infinite [exactly when](##informationLoss_eq_top_iff) the
 decoder rules out a state that can produce an output. Over finite types the loss of any decoder is
-the conditional entropy of the state given the output plus [its expected divergence from the
-posterior](##informationLoss_eq_posterior_add), so the posterior [loses the
+the conditional entropy of the state given the output plus [the expected divergence of the
+posterior from it](##informationLoss_eq_posterior_add), so the posterior [loses the
 least](##informationLoss_posterior_le) and [only the posterior
 does](##informationLoss_eq_posterior_iff).
 
@@ -141,8 +141,8 @@ theorem informationLoss_posterior :
 
 variable [∀ x, IsZeroOrProbabilityMeasure (φ x)]
 
-/-- Any decoder loses what the posterior loses and, besides, its expected divergence from the
-posterior over the outputs. -/
+/-- Any decoder loses what the posterior loses and, besides, the expected divergence of the
+posterior from it over the outputs. -/
 theorem informationLoss_eq_posterior_add :
     informationLoss μ κ φ = informationLoss μ κ (κ†μ) +
       ∑ x, (κ ∘ₘ μ) {x} * klDiv ((κ†μ) x) (φ x) := by

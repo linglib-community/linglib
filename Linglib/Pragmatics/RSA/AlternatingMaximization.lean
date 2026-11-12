@@ -11,20 +11,23 @@ and infers the state. The expected utility is minus the information the listener
 expected surprisal of the state under her interpretation, and the expected cost of the
 utterance, and the free energy of a speaker and a listener is the conditional entropy of the
 utterance given the observation plus the rationality times the expected utility. A listener who
-rules out a state the speaker's utterance may come from loses infinitely much, and the free energy
-is then `⊥`.
+rules out a state the speaker's utterance may come from loses infinitely much, and at a positive
+rationality the free energy is then `⊥`.
 
 The two agents of the Rational Speech Act recursion are the two partial maximizers of the free
 energy. The loss of any listener exceeds that of the Bayesian listener, which is the conditional
-entropy of the state given the utterance, by [her expected divergence from
-it](##InformationTheory.informationLoss_eq_posterior_add). The free energy of any speaker falls
+entropy of the state given the utterance, by [the expected divergence of the Bayesian listener
+from her](##InformationTheory.informationLoss_eq_posterior_add). The free energy of any speaker falls
 short of that of the speaker of `RSA.speaker` at the Bayesian belief by [her expected divergence
 from it](##RSA.freeEnergy_eq_freeEnergy_speaker_sub). Going up a level of the recursion therefore
 never lowers the free energy, which [rises](##RSA.monotone_freeEnergy_iterate_recurse) and
 [converges](##RSA.exists_tendsto_freeEnergy_iterate_recurse) along it, and since each speaker
-update raises it by at least the divergence between the two speakers, successive speakers [grow
-alike](##RSA.tendsto_sum_klDiv_speaker_iterate_recurse). The speaker at the Bayesian belief is
-the [only maximizer](##RSA.freeEnergy_eq_freeEnergy_speaker_iff) against her listener.
+update raises it by at least the divergence of the old speaker from the new, [that divergence
+tends to zero](##RSA.tendsto_sum_klDiv_speaker_iterate_recurse), which does not by itself make the
+speakers converge. Against a fixed listener, a speaker does as well as the speaker at the Bayesian
+belief [only by being her](##RSA.freeEnergy_eq_freeEnergy_speaker_iff) at every observation
+made; when that speaker is the zero measure at such an observation, no utterance being open to
+her there, every speaker's free energy is `⊥` and the comparison is empty.
 
 ## Implementation notes
 
@@ -135,7 +138,7 @@ end Observation
 /-! ### The expected utility
 
 The listener's step. The information a listener loses exceeds the conditional entropy of the state
-given the utterance by her expected divergence from the posterior
+given the utterance by the expected divergence of the posterior from her
 (`InformationTheory.informationLoss_eq_posterior_add`), and the Bayesian listener is the posterior
 at every utterance heard. -/
 
@@ -443,7 +446,8 @@ theorem freeEnergy_eq_freeEnergy_speaker_sub :
     rw [freeEnergy_eq_bot hα' hsupp, ENNReal.sum_eq_top.2 ⟨o, Finset.mem_univ o, by
       rw [klDiv_of_not_ac hac]; exact ENNReal.mul_top ho⟩, EReal.coe_ennreal_top, EReal.sub_top]
 
-/-- Against a fixed listener the speaker at the Bayesian belief maximizes the free energy. -/
+/-- Against a fixed listener no speaker has more free energy than the speaker at the Bayesian
+belief, who is the maximizer whenever she is a probability measure at every observation made. -/
 theorem freeEnergy_le_freeEnergy_speaker :
     freeEnergy μ κ C α S L ≤ freeEnergy μ κ C α (speaker α C L b) L := by
   rw [freeEnergy_eq_freeEnergy_speaker_sub hb hα S L]
@@ -455,8 +459,8 @@ private theorem freeEnergy_speaker_eq_coe :
   freeEnergy_eq_coe (hα.eq_or_lt.imp Eq.symm fun hα' ↦
     ne_zero_of_absolutelyContinuous_speaker hb hα' fun _ _ ↦ .rfl)
 
-/-- Only the speaker at the Bayesian belief maximizes the free energy: a speaker who does as well
-is that speaker at every observation made. -/
+/-- A speaker has the free energy of the speaker at the Bayesian belief exactly when she is that
+speaker at every observation made. -/
 theorem freeEnergy_eq_freeEnergy_speaker_iff :
     freeEnergy μ κ C α S L = freeEnergy μ κ C α (speaker α C L b) L ↔
       ∀ o, (κ ∘ₘ μ) {o} ≠ 0 → S o = speaker α C L b o := by
@@ -595,8 +599,8 @@ theorem tsum_sum_klDiv_speaker_iterate_recurse_ne_top :
     _ ≤ _ := ENNReal.ofReal_le_ofReal (sub_le_sub_right
         (realFreeEnergy_iterate_recurse_le (C := C) hb hα hκ L N) _)
 
-/-- Successive speakers of the recursion grow alike: the expected divergence of each from the next
-tends to zero. -/
+/-- The expected divergence of each speaker of the recursion from the next tends to zero. This
+does not by itself give convergence of the speakers. -/
 theorem tendsto_sum_klDiv_speaker_iterate_recurse :
     Tendsto (fun n ↦ ∑ o, (κ ∘ₘ μ) {o} * klDiv (speaker α C ((recurse μ κ b α C)^[n] L) b o)
       (speaker α C ((recurse μ κ b α C)^[n + 1] L) b o)) atTop (𝓝 0) :=

@@ -3,6 +3,7 @@ module
 public import Linglib.Core.InformationTheory.InformationLoss
 public import Linglib.Core.Probability.Kernel.Softmax
 public import Linglib.Core.Order.Pareto
+public import Linglib.Pragmatics.RSA.AlternatingMaximization
 public import Mathlib.Data.Set.Finite.Lemmas
 public import Linglib.Data.Examples.XuEtAl2024
 
@@ -23,7 +24,8 @@ loss (`surprisal_listener_le`).
 An encoding of the emerging concepts is a speaker who names each concept by one form
 (`encoder`). Its two costs (eq. 4, `costs`) are the expected surprisal of the intended concept and
 the expected length of the form. The first is the information the listener loses through the
-encoding (`informationLoss_encoder`, `ofReal_fst_costs`).
+encoding (`informationLoss_encoder`, `ofReal_fst_costs`), and the objective is then the negative
+expected utility of `RSA` at cost `β • l` (`objective_eq_neg_expectedUtility`).
 With need held fixed the objective decomposes into an item-level objective (eq. 5,
 `objective_eq_sum`), so an encoding that is optimal concept by concept is optimal overall
 (`objective_le_of_forall`) and, for a positive parameter, on the Pareto frontier
@@ -120,7 +122,7 @@ out under the form; the similarity choice listener rules nothing out
 noncomputable def costs (f : C → W) : ℝ × ℝ :=
   (∑ c, need.real {c} * (surprisal (m (f c)) c).toReal, ∑ c, need.real {c} * l (f c))
 
-/-- The objective `L_β` of an encoding (eq. 4), its information loss plus `β` times its expected
+/-- The objective `L_β` of an encoding (eq. 4), its expected surprisal plus `β` times its expected
 length. -/
 noncomputable def objective (β : ℝ) (f : C → W) : ℝ :=
   (costs need l m f).1 + β * (costs need l m f).2
@@ -158,16 +160,13 @@ instance (f : C → W) : IsMarkovKernel (encoder f) := by unfold encoder; infer_
 
 /-- The information the listener loses through an encoding is the expected surprisal of the
 intended concept under its form, infinite when she rules a needed concept out. -/
-theorem informationLoss_encoder [Fintype W] (f : C → W) :
+theorem informationLoss_encoder (f : C → W) :
     informationLoss need (encoder f) m = ∑ c, need {c} * surprisal (m (f c)) c := by
-  simp_rw [informationLoss, lintegral_fintype, encoder, Kernel.deterministic_apply,
-    Measure.dirac_apply' _ (measurableSet_singleton _), mul_comm (need _)]
-  refine Finset.sum_congr rfl fun c _ ↦ ?_
-  rw [Finset.sum_eq_single (f c) (fun w _ hw ↦ by simp [hw.symm]) (by simp)]
-  simp
+  simp_rw [informationLoss, encoder, Kernel.deterministic_apply, lintegral_dirac,
+    lintegral_fintype, mul_comm]
 
 /-- A listener that rules out no needed concept under its form loses exactly the first cost. -/
-theorem ofReal_fst_costs [Fintype W] [IsFiniteMeasure need] (f : C → W)
+theorem ofReal_fst_costs [IsFiniteMeasure need] (f : C → W)
     (hm : ∀ c, need {c} ≠ 0 → m (f c) {c} ≠ 0) :
     ENNReal.ofReal (costs need l m f).1 = informationLoss need (encoder f) m := by
   rw [informationLoss_encoder, costs, ENNReal.ofReal_sum_of_nonneg fun c _ ↦
@@ -178,6 +177,22 @@ theorem ofReal_fst_costs [Fintype W] [IsFiniteMeasure need] (f : C → W)
   · rw [ENNReal.ofReal_mul measureReal_nonneg, measureReal_def,
       ENNReal.ofReal_toReal (measure_ne_top _ _),
       ENNReal.ofReal_toReal (surprisal_ne_top_iff.2 (hm c h0))]
+
+/-- The objective is the negative expected utility of `RSA` at cost `β • l`, for a listener that
+rules out no needed concept under its form. -/
+theorem objective_eq_neg_expectedUtility [Fintype W] [IsFiniteMeasure need] (β : ℝ) (f : C → W)
+    (hm : ∀ c, need {c} ≠ 0 → m (f c) {c} ≠ 0) :
+    (objective need l m β f : EReal) = -RSA.expectedUtility need (encoder f) m (β • l) := by
+  have hcost : ∫ w, (β • l) w ∂(encoder f ∘ₘ need) = β * (costs need l m f).2 := by
+    rw [encoder, Measure.deterministic_comp_eq_map, integral_map (Measurable.of_discrete).aemeasurable
+      (Measurable.of_discrete).aestronglyMeasurable, integral_fintype .of_finite, costs,
+      Finset.mul_sum]
+    exact Finset.sum_congr rfl fun c _ ↦ by simp only [Pi.smul_apply, smul_eq_mul]; ring
+  have hnn : 0 ≤ (costs need l m f).1 :=
+    Finset.sum_nonneg fun c _ ↦ mul_nonneg measureReal_nonneg ENNReal.toReal_nonneg
+  rw [RSA.expectedUtility, ← ofReal_fst_costs need l m f hm, EReal.coe_ennreal_ofReal,
+    max_eq_left hnn, hcost, ← EReal.coe_neg, ← EReal.coe_sub, ← EReal.coe_neg, objective]
+  exact congrArg _ (by ring)
 
 end Encoder
 
