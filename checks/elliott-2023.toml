@@ -16,13 +16,13 @@ source = "elliott-2023"
 id       = "ex-13"
 kind     = "definition"
 label    = "(13)"
-decls    = ["DynamicSemantics.Possibility", "DynamicSemantics.State", "Flat",
+decls    = ["DynamicSemantics.Possibility", "DynamicSemantics.State",
             "DynamicSemantics.BilateralUpdate"]
 relation = "exact"
 notes    = """
 With the prose before it: a file is a set of world–assignment pairs (`Possibility`, `State`), and
-assignments are total maps into `Flat E`, whose `⊥` is the undefined individual `#e`. A sentence
-denotes a positive and a negative update, each a map from states to states (`CCP`).
+assignments are total maps into `Part E`, whose `⊥` (`Part.none`) is the undefined individual `#e`.
+A sentence denotes a positive and a negative update, each a map from states to states (`CCP`).
 """
 
 [[item]]
