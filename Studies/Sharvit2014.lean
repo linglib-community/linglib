@@ -373,8 +373,7 @@ instance (τ : Embedded) : Decidable (L.Simultaneous τ) :=
 
 variable {L}
 
-theorem simultaneous_past_iff : L.Simultaneous .past ↔ L.sot :=
-  eq_mem_pastUnderPast_iff
+theorem simultaneous_past_iff : L.Simultaneous .past ↔ L.sot := .rfl
 
 end Language
 

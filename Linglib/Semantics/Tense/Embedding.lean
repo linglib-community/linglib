@@ -62,6 +62,12 @@ variable {sot : Prop} [Decidable sot]
 theorem mem_pastUnderPast {o : Ordering} : o ∈ pastUnderPast sot ↔ o = .lt ∨ sot ∧ o = .eq := by
   by_cases h : sot <;> simp [pastUnderPast, h, Denotes.denote, denote]
 
+/-- A time is a reading of a past under a past attitude exactly when it precedes the attitude's
+now or, where the Sequence of Tense rule applies, is that now. -/
+@[simp] theorem compare_mem_pastUnderPast {T : Type*} [LinearOrder T] (r p : T) :
+    compare r p ∈ pastUnderPast sot ↔ r < p ∨ sot ∧ r = p := by
+  rw [mem_pastUnderPast, compare_lt_iff_lt, compare_eq_iff_eq]
+
 theorem lt_mem_pastUnderPast : .lt ∈ pastUnderPast sot :=
   mem_pastUnderPast.2 (.inl rfl)
 
