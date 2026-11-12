@@ -52,7 +52,8 @@ def i : Segment := vowel .«i»
 /-- The advanced mid front vowel /e/. -/
 def e : Segment := vowel .«e»
 
-/-- The advanced mid central vowel /ə/. -/
+/-- The advanced mid central vowel /ə/. PHOIBLE's /ə/ is [−tense], which the tongue-root reading
+makes [−ATR]; Guébie's /ə/ is the [+ATR] partner of /a/. -/
 def schwa : Segment := vowel .«ə» (.ofSpecs [(.atr, true)])
 
 /-- The advanced mid back vowel /o/. -/

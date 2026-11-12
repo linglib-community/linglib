@@ -38,7 +38,8 @@ open Phonology Data.PHOIBLE
 
 namespace Tarifit
 
-/-- The departure of a pharyngealized consonant from the plain one. -/
+/-- The departure of a pharyngealized consonant from the plain one, for the consonants PHOIBLE
+has no pharyngealized glyph of. -/
 def pharyngealization : Segment := .ofSpecs [(.rtr, true)]
 
 /-! ### Stops -/
@@ -64,7 +65,8 @@ def k : Segment := .ofChart .«k»
 /-- The voiced velar stop /g/. -/
 def g : Segment := .ofChart .«ɡ»
 
-/-- The pharyngealized voiced velar stop /gˤ/. -/
+/-- The pharyngealized voiced velar stop /gˤ/. PHOIBLE has no such glyph, so it is the plain stop
+with [+RTR], the value PHOIBLE's pharyngealized consonants have at their last phase. -/
 def «gˤ» : Segment := .ofChart .«ɡ» pharyngealization
 
 /-- The labialized voiceless velar stop /kʷ/. -/
@@ -138,7 +140,8 @@ def «ʒ» : Segment := .ofChart .«ʒ»
 def «ʒˤ» : Segment := .ofChart FeatureMatrix.last.«ʒˤ»
 
 /-- The pharyngealized labialized voiceless postalveolar fricative /ʃˤʷ/, which the chart lists
-only geminated. -/
+only geminated. PHOIBLE has /ʃˤ/ and /ʃʷ/ but no glyph with both articulations, so it is the plain
+fricative with the last-phase values of both. -/
 def «ʃˤʷ» : Segment :=
   .ofChart .«ʃ» (.ofSpecs [(.rtr, true), (.labial, true), (.round, true), (.labiodental, false)])
 
@@ -157,7 +160,8 @@ def «ʁˤ» : Segment := .ofChart FeatureMatrix.last.«ʁˤ»
 /-- The voiceless pharyngeal fricative /ħ/. -/
 def ħ : Segment := .ofChart .«ħ»
 
-/-- The pharyngeal approximant /ʕ/. -/
+/-- The pharyngeal approximant /ʕ/. PHOIBLE's /ʕ/ is a fricative; it is a sonorant approximant
+here because the text groups it with /r/ among the sonorants that condition vowels. -/
 def «ʕ» : Segment :=
   .ofChart .«ʕ» (.ofSpecs [(.consonantal, false), (.sonorant, true), (.approximant, true)])
 
