@@ -211,6 +211,11 @@ variable [IsProbabilityMeasure P]
 theorem mem_certain_iff : A ∈ certain P ↔ P.real A = 1 :=
   ⟨fun h ↦ le_antisymm measureReal_le_one h, fun h ↦ h.ge⟩
 
+/-- A measurable proposition is certain exactly when it holds almost surely, so the certainties are
+closed under conjunction and consequence as the sets of a filter are. -/
+theorem mem_certain_iff_mem_ae (hA : MeasurableSet A) : A ∈ certain P ↔ A ∈ ae P := by
+  rw [mem_certain_iff, measureReal_def, ENNReal.toReal_eq_one_iff, mem_ae_iff_prob_eq_one hA]
+
 theorem likely_eq_preimage (θ : Probability) : likely P θ = likelihood P ⁻¹' Set.Ioi θ :=
   rfl
 

@@ -11,16 +11,14 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "believe"],
-      ["contrast", "sure"]
-    ],
+    "paperFeatures": [],
     "comment": "Repeated as (21a). The felt weakness of believe that Hawthorne, Rothschild and Spectre take as evidence for a weak force; Koev reads it as subjective certainty against an objective reading of sure, (21b).",
     "verified": "page-image"
   },
   {
     "id": "koev2026_7",
     "source": {"bibkey": "koev-2026", "paperLabel": "(7)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "Each [farmer] believes as strongly as the other that his crops will not survive another week without water, and each cares as much as the other about the survival of his crops.",
     "discourseSegments": [],
@@ -30,16 +28,14 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "believe"],
-      ["degreeConstruction", "equative"]
-    ],
+    "paperFeatures": [],
     "comment": "Naturally occurring, collected via Google search in 2018.",
     "verified": "text-layer"
   },
   {
     "id": "koev2026_8",
     "source": {"bibkey": "koev-2026", "paperLabel": "(8)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "He believes more strongly than I do that the organization of the executive branch of the federal government matters a great deal.",
     "discourseSegments": [],
@@ -49,16 +45,14 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "believe"],
-      ["degreeConstruction", "comparative"]
-    ],
+    "paperFeatures": [],
     "comment": "Naturally occurring, collected via Google search in 2018.",
     "verified": "text-layer"
   },
   {
     "id": "koev2026_9",
     "source": {"bibkey": "koev-2026", "paperLabel": "(9)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "What group on this map most strongly believes that climate change is not real?",
     "discourseSegments": [],
@@ -68,16 +62,14 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "believe"],
-      ["degreeConstruction", "superlative"]
-    ],
+    "paperFeatures": [],
     "comment": "Naturally occurring, collected via Google search in 2018.",
     "verified": "text-layer"
   },
   {
     "id": "koev2026_10a",
     "source": {"bibkey": "koev-2026", "paperLabel": "(10a)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "No one believes more than me that fitness should be a top priority in our lives.",
     "discourseSegments": [],
@@ -87,16 +79,14 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "believe"],
-      ["degreeConstruction", "comparative"]
-    ],
+    "paperFeatures": [],
     "comment": "Naturally occurring; a comparative of believe without strongly.",
     "verified": "text-layer"
   },
   {
     "id": "koev2026_10b",
     "source": {"bibkey": "koev-2026", "paperLabel": "(10b)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "What do you believe more, that the CIA killed JFK or that the government did 9/11?",
     "discourseSegments": [],
@@ -106,16 +96,14 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "believe"],
-      ["degreeConstruction", "comparative"]
-    ],
+    "paperFeatures": [],
     "comment": "Naturally occurring; a comparative of believe without strongly.",
     "verified": "text-layer"
   },
   {
     "id": "koev2026_12a",
     "source": {"bibkey": "koev-2026", "paperLabel": "(12a)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "My boss fully believes that family comes first.",
     "discourseSegments": [],
@@ -125,17 +113,14 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "believe"],
-      ["modifier", "maximizer"],
-      ["adverb", "fully"]
-    ],
+    "paperFeatures": [],
     "comment": "Naturally occurring, collected via Google search in 2018.",
     "verified": "page-image"
   },
   {
     "id": "koev2026_12b",
     "source": {"bibkey": "koev-2026", "paperLabel": "(12b)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "For one, I completely believe that Walmart is a monopoly, if you thought I was defending Walmart.",
     "discourseSegments": [],
@@ -145,17 +130,14 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "believe"],
-      ["modifier", "maximizer"],
-      ["adverb", "completely"]
-    ],
+    "paperFeatures": [],
     "comment": "Naturally occurring, collected via Google search in 2018.",
     "verified": "page-image"
   },
   {
     "id": "koev2026_12c",
     "source": {"bibkey": "koev-2026", "paperLabel": "(12c)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "But Kathleen didn't entirely believe it.",
     "discourseSegments": [],
@@ -165,11 +147,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "believe"],
-      ["modifier", "maximizer"],
-      ["adverb", "entirely"]
-    ],
+    "paperFeatures": [],
     "comment": "Naturally occurring, collected via Google search in 2018.",
     "verified": "page-image"
   },
@@ -188,10 +166,7 @@
       {"form": "Kim believes in all respects that it is raining outside.", "judgment": "marginal"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "believe"],
-      ["respects", "overt"]
-    ],
+    "paperFeatures": [],
     "comment": "Printed ?Kim believes in some/most/all respects that it is raining outside: believe lacks the hallmarks of multidimensionality (Sassoon 2013).",
     "verified": "page-image"
   },
@@ -209,11 +184,7 @@
       {"form": "John believes a bit that the Patriots will win.", "judgment": "questionable"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "believe"],
-      ["modifier", "minimizer"],
-      ["adverb", "slightly"]
-    ],
+    "paperFeatures": [],
     "comment": "Printed ??John slightly believes/believes a bit that the Patriots will win, after a reviewer: believe is not lower closed.",
     "verified": "page-image"
   },
@@ -231,7 +202,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["predicate", "tall"],
       ["comparisonClass", "overt"]
     ],
     "comment": "",
@@ -251,7 +221,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["predicate", "full"],
       ["comparisonClass", "overt"]
     ],
     "comment": "",
@@ -270,7 +239,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["predicate", "likely"],
       ["comparisonClass", "overt"]
     ],
     "comment": "The page prints the mark in parentheses, (?).",
@@ -289,7 +257,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["predicate", "believe"],
       ["comparisonClass", "overt"]
     ],
     "comment": "",
@@ -308,7 +275,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["predicate", "full"],
       ["comparisonClass", "overt"]
     ],
     "comment": "Absolute predicates are sensitive to the kind of object, a wine glass counting as full at about half its capacity, but not with a comparison class restrictor.",
@@ -328,8 +294,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["negated", "bent"],
-      ["antonym", "straight"],
       ["relation", "entails"]
     ],
     "comment": "Printed with an entailment arrow to The rod is straight.",
@@ -348,11 +312,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["negated", "bent"],
-      ["antonym", "straight"],
-      ["construction", "doubleDenial"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -370,8 +330,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["negated", "tall"],
-      ["antonym", "short"],
       ["relation", "does_not_entail"]
     ],
     "comment": "Printed with a struck entailment arrow to Bill is short.",
@@ -390,11 +348,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["negated", "tall"],
-      ["antonym", "short"],
-      ["construction", "doubleDenial"]
-    ],
+    "paperFeatures": [],
     "comment": "Printed with the continuation (He is just average.)",
     "verified": "page-image"
   },
@@ -411,8 +365,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["negated", "doubt"],
-      ["antonym", "believe"],
       ["relation", "entails"]
     ],
     "comment": "Printed with an entailment arrow to Jack believes that Jill is at the party. The context is Koev's assumption of epistemic engagement, not a printed context line. Stated from not doubting to believing, since negated believe invites neg-raising and unembedded doubt is strengthened to believe not (fn. 8).",
@@ -430,11 +382,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["negated", "believe"],
-      ["antonym", "doubt"],
-      ["construction", "doubleDenial"]
-    ],
+    "paperFeatures": [],
     "comment": "The context is Koev's assumption of epistemic engagement, not a printed context line.",
     "verified": "page-image"
   },
@@ -448,12 +396,10 @@
     "translation": "",
     "context": "The chance that Jill is at the party is exactly 50 percent.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "likely"],
-      ["truthValue", "false"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -467,12 +413,10 @@
     "translation": "",
     "context": "The chance that Jill is at the party is exactly 50 percent.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "unlikely"],
-      ["truthValue", "false"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -491,10 +435,7 @@
       {"form": "It's 50 percent certain that Biden will win.", "judgment": "marginal"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "certain"],
-      ["modifier", "percentage"]
-    ],
+    "paperFeatures": [],
     "comment": "Printed It's ??5/?50/99 percent certain that Biden will win. The preference of maximum-degree modal adjectives for high percentages is Klecha 2014's and Lassiter 2017's observation.",
     "verified": "page-image"
   },
@@ -513,10 +454,7 @@
       {"form": "It's 50 percent likely that Biden will win.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "likely"],
-      ["modifier", "percentage"]
-    ],
+    "paperFeatures": [],
     "comment": "Printed It's (?)5/50/99 percent likely that Biden will win. Relative modal adjectives show no preference (Klecha 2014, Lassiter 2017).",
     "verified": "page-image"
   },
@@ -535,10 +473,7 @@
       {"form": "I believe 50 percent that Biden will win.", "judgment": "unacceptable"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["predicate", "believe"],
-      ["modifier", "percentage"]
-    ],
+    "paperFeatures": [],
     "comment": "Printed I believe #5/#50/%99 percent that Biden will win. Fn. 9 reports ratings from nine speakers, believe 99 percent bimodal.",
     "verified": "page-image"
   },
@@ -555,7 +490,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["predicate", "sure"],
       ["reading", "subjective"]
     ],
     "comment": "The page prints the mark in parentheses, (?). With know inherently objective, sure is read subjectively.",
@@ -574,7 +508,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["predicate", "sure"],
       ["reading", "subjective"]
     ],
     "comment": "From an anonymous reviewer: sure expresses internal certainty against an objective claim.",
