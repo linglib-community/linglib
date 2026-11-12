@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Pragmatics.RSA.QUD
-public import Linglib.Semantics.Attitudes.Factivity
+public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Probability.Kernel.Posterior
 
 /-!
@@ -48,7 +48,7 @@ and Lassiter.
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory RSA Factivity
+open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal
 
 namespace ScontrasTonhauser2025
@@ -67,7 +67,42 @@ def Utt.Complex (u : Utt) : Prop := u ≠ .cPos ∧ u ≠ .cNeg
 
 instance : DecidablePred Utt.Complex := fun u ↦ inferInstanceAs (Decidable (u ≠ .cPos ∧ u ≠ .cNeg))
 
-/-! ### Semantics and questions -/
+/-! ### World states, literal meanings and questions (4) -/
+
+/-- A world state of (4) records whether Cole believes the complement and whether it is true, as
+the pair of the two truth values, so that a prior over world states can be a product measure. -/
+abbrev World := Bool × Bool
+
+/-- Cole believes the complement. -/
+abbrev World.believes (w : World) : Bool := w.1
+
+/-- The complement is true. -/
+abbrev World.complement (w : World) : Bool := w.2
+
+/-- *Cole knows that C* holds when Cole believes the complement and it is true (4a). -/
+def World.Knows (w : World) : Prop := w.believes ∧ w.complement
+
+instance : DecidablePred World.Knows := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- *Cole thinks that C* holds when Cole believes the complement (4c). -/
+def World.Thinks (w : World) : Prop := w.believes
+
+instance : DecidablePred World.Thinks := fun _ ↦ inferInstanceAs (Decidable (_ = true))
+
+theorem World.knows_iff_thinks {w : World} (h : w.complement) : w.Knows ↔ w.Thinks :=
+  and_iff_left h
+
+/-- The two questions of the experiments, whether Cole believes the complement and whether it is
+true. -/
+inductive Question where
+  | belief
+  | complement
+  deriving DecidableEq, Fintype
+
+/-- The answer a world state gives to a question. -/
+def Question.answer : Question → World → Bool
+  | .belief, w => w.believes
+  | .complement, w => w.complement
 
 /-- In the literal meanings (4), *know* is factive and *think* is not, and the simple
 utterances assert the complement or its negation. -/
@@ -83,6 +118,8 @@ instance (u : Utt) : DecidablePred (literal u) := by cases u <;> unfold literal 
 
 /-- The extension of an utterance. -/
 def sem (u : Utt) : Finset World := Finset.univ.filter (literal u)
+
+@[simp] theorem mem_sem {u : Utt} {w : World} : w ∈ sem u ↔ literal u w := by simp [sem]
 
 theorem sem_thinkNeg_ssubset_sem_knowNeg : sem .thinkNeg ⊂ sem .knowNeg := by decide
 
@@ -111,11 +148,8 @@ theorem L0_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : Qu
     L0 A q .knowNeg = L0 A q .thinkNeg := by
   have h : A ∩ sem .knowNeg = A ∩ sem .thinkNeg := by
     ext w
-    obtain ⟨b, c⟩ := w
-    simp only [Finset.mem_inter, sem, Finset.mem_filter, Finset.mem_univ, true_and]
-    constructor <;> rintro ⟨hw, hl⟩ <;> refine ⟨hw, ?_⟩ <;>
-      have hc := (Finset.mem_filter.mp (hA hw)).2 <;>
-      revert hc hl <;> cases b <;> cases c <;> decide
+    rw [Finset.mem_inter, Finset.mem_inter, mem_sem, mem_sem]
+    exact and_congr_right fun hw ↦ not_congr (World.knows_iff_thinks (mem_sem.1 (hA hw)))
   refine Measure.ext_of_singleton fun b ↦ ?_
   obtain ⟨w, rfl⟩ : ∃ w, q.answer w = b := by cases q <;> exact ⟨⟨b, b⟩, rfl⟩
   rw [L0_apply, L0_apply, l0, l0, h]
