@@ -191,17 +191,17 @@ instance (k : ℕ) (i : Fin (k + 1)) : DecidablePred (exhKnown k i) := fun _ ↦
 lower-bounded meaning as it is. -/
 theorem exhKnown_last (k n : ℕ) :
     exhKnown k (Fin.last k) n ↔ n ∈ Comparison.ge.interval k :=
-  ⟨fun h ↦ h.1, fun h ↦ ⟨h, fun j hj ↦ absurd hj (not_lt.2 (Fin.le_last j))⟩⟩
+  exhAgainst_lt_iff_of_isMax fun _ _ ↦ Fin.le_last _
 
 /-- A numeral below the top is exhaustified to its exact meaning. -/
 theorem exhKnown_of_lt {k : ℕ} {i : Fin (k + 1)} (hi : i < Fin.last k) (n : ℕ) :
     exhKnown k i n ↔ n ∈ Comparison.eq.interval (i : ℕ) := by
   have hs : (i : ℕ) + 1 < k + 1 := by have := Fin.lt_def.1 hi; simp at this; omega
-  rw [exhKnown, exhAgainst_lt_iff_succ (s := (⟨i + 1, hs⟩ : Fin (k + 1)))
+  rw [exhKnown, exhAgainst_lt_iff_of_isLeast_Ioi (s := (⟨i + 1, hs⟩ : Fin (k + 1)))
     (A := fun j : Fin (k + 1) ↦ n ∈ Comparison.ge.interval (j : ℕ))
     (fun j k hjk (hk : (k : ℕ) ≤ n) ↦ show (j : ℕ) ≤ n from le_trans hjk hk)
-    (Fin.lt_def.2 (Nat.lt_succ_self _))
-    (fun j hj ↦ Fin.le_def.2 (Nat.succ_le_of_lt (Fin.lt_def.1 hj)))]
+    ⟨Fin.lt_def.2 (Nat.lt_succ_self _),
+      fun j hj ↦ Fin.le_def.2 (Nat.succ_le_of_lt (Fin.lt_def.1 hj))⟩]
   simp only [Comparison.interval_ge, Comparison.interval_eq, Set.mem_Ici, Set.mem_singleton_iff]
   omega
 

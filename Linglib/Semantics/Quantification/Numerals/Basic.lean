@@ -87,7 +87,7 @@ theorem maxIn_singleton_iff_exhAgainst [LinearOrder D] {X : Set D} {m : D} :
 theorem exhAgainst_ge_iff [PartialOrder D] {a m : D} :
     exhAgainst (· < ·) (fun j ↦ a ∈ Comparison.ge.interval j) m ↔
       a ∈ Comparison.eq.interval m :=
-  exhAgainst_lt_iff_maximal.trans <| by simp [eq_comm]
+  exhAgainst_lt_le_iff.trans eq_comm
 
 end Readings
 
@@ -106,7 +106,7 @@ variable {D : Type*} {a m : D}
 covers `m`. -/
 theorem exhAgainst_gt_iff [Preorder D] :
     exhAgainst (· < ·) (fun j ↦ a ∈ Comparison.gt.interval j) m ↔ m ⋖ a :=
-  Iff.rfl
+  exhAgainst_lt_lt_iff_covBy
 
 variable [LinearOrder D]
 

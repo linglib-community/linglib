@@ -206,9 +206,10 @@ theorem just_comparative_Ici_iff :
     ⟨fun h ↦ ⟨h.1, fun ε hε ↦ not_lt.2 (h.2 ε (le_of_lt hε) hε)⟩,
       fun h ↦ ⟨h.1, fun ε _ hε ↦ not_lt.1 (h.2 ε hε)⟩⟩
 
-theorem just_comparative_iff_succ {ε' : D} (his : εf < ε') (hleast : ∀ ε, εf < ε → ε' ≤ ε) :
+theorem just_comparative_iff_of_covBy {ε' : D} (h : εf ⋖ ε') :
     just (comparative · dc) (Set.Ici εf) εf μx ↔ dc + εf < μx ∧ μx ≤ dc + ε' := by
-  rw [just_comparative_Ici_iff, exhAgainst_lt_iff_succ (A := (comparative · dc μx))
-    (fun _ _ h ↦ comparative_anti h μx) his hleast, comparative_iff, comparative_iff, not_lt]
+  rw [just_comparative_Ici_iff, exhAgainst_lt_iff_of_isLeast_Ioi (A := (comparative · dc μx))
+    (fun _ _ h ↦ comparative_anti h μx) (h.Ioi_eq ▸ isLeast_Ici), comparative_iff, comparative_iff,
+    not_lt]
 
 end ThomasDeo2020

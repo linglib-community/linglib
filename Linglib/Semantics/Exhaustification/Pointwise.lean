@@ -13,25 +13,13 @@ public import Mathlib.Order.SuccPred.Basic
 # Pointwise exhaustification
 
 Exhaustifying the member `A i` of a family of alternatives against a relation `r` asserts `A i` and
-denies each `A j` with `r i j`. Against the members the prejacent does not entail it is `exh` read
-at a world, in any model (`Exhaustification.mem_exh_range_iff_exhAgainst`); a theory that fixes
-which alternatives count as stronger states that relation outright, and its results then hold in
-every model. Against every other member it is pre-exhaustification against independent rivals, which
-holds of some member exactly when one member holds. Against the larger indices of a scale it is
-maximality (`exhAgainst_lt_iff_maximal`): it denies just the next-stronger alternative on an
-entailment chain (`exhAgainst_lt_iff_succ`), and on a dense scale it cannot be satisfied, the crash
-Fox and Hackl derive for *more than*.
-
-## Main definitions
-
-* `Exhaustification.exhAgainst`: assert a member of a family and deny its rivals.
-
-## Main results
-
-* `Exhaustification.exists_exhAgainst_ne_iff_existsUnique`: against independent rivals, some
-  member is exhaustified iff exactly one member holds.
-* `Exhaustification.exhAgainst_lt_iff_succ`: on an entailment chain, exhaustification denies the
-  next-stronger alternative.
+denies each `A j` with `r i j`. Against every other member it is pre-exhaustification, and [some
+member is exhaustified exactly when one member holds](##exists_exhAgainst_ne_iff_existsUnique).
+Against the larger indices of a scale it is [maximality](##exhAgainst_lt_iff_maximal). There a
+closed property `· ≤ a` is exhaustified [at `a` alone](##exhAgainst_lt_le_iff) and an open property
+`· < a` [at the indices `a` covers](##exhAgainst_lt_lt_iff_covBy), of which a dense scale has none,
+while on an entailment chain exhaustification [denies just the next
+alternative](##exhAgainst_lt_iff_of_isLeast_Ioi).
 
 ## References
 
@@ -82,22 +70,30 @@ theorem exhAgainst_lt_iff_maximal : exhAgainst (· < ·) A i ↔ Maximal A i :=
 theorem exhAgainst_gt_iff_minimal : exhAgainst (· > ·) A i ↔ Minimal A i :=
   minimal_iff_forall_lt.symm
 
+/-- At a maximal index there is nothing to deny. -/
+theorem exhAgainst_lt_iff_of_isMax (hi : IsMax i) : exhAgainst (· < ·) A i ↔ A i :=
+  and_iff_left fun _ hj ↦ (hi.not_lt hj).elim
+
+/-- Exhaustified against the larger indices, the open property `· < a` holds of the indices that
+`a` covers. A dense scale has none (`not_covBy`), so there the exhaustification is never
+satisfied. -/
+theorem exhAgainst_lt_lt_iff_covBy {a : ι} : exhAgainst (· < ·) (· < a) i ↔ i ⋖ a :=
+  Iff.rfl
+
 /-- On an entailment chain, exhaustifying `A i` against the stronger alternatives denies just the
 next-stronger one `A s`. -/
-theorem exhAgainst_lt_iff_succ (hA : Antitone A) (his : i < s) (hleast : ∀ j, i < j → s ≤ j) :
+theorem exhAgainst_lt_iff_of_isLeast_Ioi (hA : Antitone A) (hs : IsLeast (Set.Ioi i) s) :
     exhAgainst (· < ·) A i ↔ A i ∧ ¬ A s :=
-  ⟨fun ⟨hi, h⟩ ↦ ⟨hi, h s his⟩, fun ⟨hi, hs⟩ ↦ ⟨hi, fun j hj hAj ↦ hs (hA (hleast j hj) hAj)⟩⟩
+  and_congr_right fun _ ↦ ⟨fun h ↦ h s hs.1, fun h _ hj hAj ↦ h (hA (hs.2 hj) hAj)⟩
 
-theorem exhAgainst_lt_iff_succOrder [SuccOrder ι] [NoMaxOrder ι] (hA : Antitone A) :
+theorem exhAgainst_lt_iff_succ [SuccOrder ι] [NoMaxOrder ι] (hA : Antitone A) :
     exhAgainst (· < ·) A i ↔ A i ∧ ¬ A (Order.succ i) :=
-  exhAgainst_lt_iff_succ hA (Order.lt_succ i) fun _ ↦ Order.succ_le_of_lt
+  exhAgainst_lt_iff_of_isLeast_Ioi hA ⟨Order.lt_succ i, fun _ ↦ Order.succ_le_of_lt⟩
 
-/-- Exhaustification cannot be satisfied when the prejacent always has a stronger true
-alternative, as on a dense scale. -/
-theorem not_exhAgainst_lt_of_dense (hdense : A i → ∃ j, i < j ∧ A j) :
-    ¬ exhAgainst (· < ·) A i := fun ⟨hi, h⟩ ↦
-  let ⟨j, hij, hj⟩ := hdense hi
-  h j hij hj
+/-- Exhaustified against the larger indices, the closed property `· ≤ a` holds of `a` alone. -/
+theorem exhAgainst_lt_le_iff {ι : Type*} [PartialOrder ι] {i a : ι} :
+    exhAgainst (· < ·) (· ≤ a) i ↔ i = a :=
+  exhAgainst_lt_iff_maximal.trans maximal_le_iff
 
 end Scale
 

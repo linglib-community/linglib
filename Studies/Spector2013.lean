@@ -30,7 +30,7 @@ in a downward-entailing environment. Exhaustifying under *whenever*, above a req
   allowed value lies in the reading, `A ⊆ I`, and a permission when one does, `(A ∩ I).Nonempty`.
 * The exhaustivity operator (45) is `Exhaustification.exh`. On requirements over the *at least*
   readings it denies the larger numerals (`mem_exh_required_iff`), which on the naturals is the
-  next one (`Exhaustification.exhAgainst_lt_iff_succOrder`), as the paper computes (50).
+  next one (`Exhaustification.exhAgainst_lt_iff_succ`), as the paper computes (50).
 * Prosody, the metalinguistic use of negation and the acquisition and processing evidence the
   paper reviews are not formalized.
 
@@ -134,7 +134,7 @@ variable {A : Set ℕ} {m : ℕ}
 -- follows from the exact reading
 theorem necessity_implicature_of_exact (hA : A.Nonempty) (h : A ⊆ Comparison.eq.interval m) :
     exhAgainst (· < ·) (fun n ↦ A ⊆ Comparison.ge.interval n) m := by
-  rw [exhAgainst_lt_iff_succOrder (antitone_required A), Order.succ_eq_add_one]
+  rw [exhAgainst_lt_iff_succ (antitone_required A), Order.succ_eq_add_one]
   obtain ⟨k, hk⟩ := hA
   refine ⟨fun j hj ↦ (h hj : j = m).ge, fun hall ↦ ?_⟩
   have h1 : k = m := h hk
@@ -146,7 +146,7 @@ theorem necessity_implicature_ne_exact (m : ℕ) :
     ∃ A : Set ℕ, exhAgainst (· < ·) (fun n ↦ A ⊆ Comparison.ge.interval n) m ∧
       ¬ A ⊆ Comparison.eq.interval m := by
   refine ⟨{m, m + 1}, ?_, fun h ↦ ?_⟩
-  · rw [exhAgainst_lt_iff_succOrder (antitone_required _), Order.succ_eq_add_one]
+  · rw [exhAgainst_lt_iff_succ (antitone_required _), Order.succ_eq_add_one]
     refine ⟨insert_subset (mem_Ici.2 le_rfl) (singleton_subset_iff.2 (mem_Ici.2 (Nat.le_succ m))),
       fun h ↦ ?_⟩
     have : m + 1 ≤ m := h (mem_insert m _)
@@ -185,7 +185,7 @@ theorem permitted_atMost_of_le {A : Set ℕ} {k m : ℕ} (hk : k ∈ A) (h : k �
 theorem permitted_implicature_iff (A : Set ℕ) (m : ℕ) :
     exhAgainst (· < ·) (fun n ↦ (A ∩ Comparison.ge.interval n).Nonempty) m ↔
       (A ∩ Comparison.ge.interval m).Nonempty ∧ A ⊆ Comparison.le.interval m := by
-  rw [exhAgainst_lt_iff_succOrder (antitone_permitted A), Order.succ_eq_add_one]
+  rw [exhAgainst_lt_iff_succ (antitone_permitted A), Order.succ_eq_add_one]
   refine and_congr_right' ⟨fun h k hk ↦ ?_, fun h ⟨k, hk, hk'⟩ ↦ ?_⟩
   · by_contra hkm
     exact h ⟨k, hk, show m + 1 ≤ k by have : ¬ k ≤ m := hkm; omega⟩
