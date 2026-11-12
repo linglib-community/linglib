@@ -70,7 +70,7 @@ CHECKS = ROOT / "checks"
 LIBRARIES = ["Linglib", "Studies"]
 KINDS = {"definition", "result", "datum"}
 RELATIONS = {"exact", "generalizes", "specializes", "variant", "refutes", "missing"}
-HASH_VERSION = "v3"
+HASH_VERSION = "v4"
 STANDARD_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 RENAMES = CHECKS / "renames.toml"
 LEDGER = CHECKS / "ledger"
@@ -144,6 +144,8 @@ def load_ledger():
             entries.setdefault((sign["source"], item["id"]), []).append({
                 "by": sign["by"], "via": sign.get("via"),
                 "date": sign["date"], "hash": item["hash"], "nodes": item.get("nodes", []),
+                "mapping": {"kind": item.get("kind"), "relation": item.get("relation"),
+                            "decls": item.get("decls", []), "notes": item.get("notes", "")},
                 "file": path.name})
     for found in entries.values():
         found.sort(key=lambda e: e["date"])
@@ -258,9 +260,20 @@ def closures(names, renames=None):
     return check_closure(modules, names, load_renames() if renames is None else renames)
 
 
+def mapping_of(item):
+    """What the check file says about how an item is stated, which a sign-off covers with the
+    statements themselves: what kind of item it is, the declarations, the relation and the notes,
+    with the notes' whitespace normalised so that rewrapping them is no change."""
+    return {"kind": item.get("kind"), "relation": item.get("relation"),
+            "decls": sorted(item.get("decls", [])),
+            "notes": " ".join(item.get("notes", "").split())}
+
+
 def item_hash(item, data):
-    """The hash of an item's statement closure."""
+    """The hash of an item: its mapping, and its statement closure."""
     h = hashlib.sha256(HASH_VERSION.encode())
+    mapping = json.dumps(mapping_of(item), sort_keys=True, ensure_ascii=False)
+    h.update(f"\0mapping\0{mapping}".encode())
     closure = set()
     for name in sorted(item["decls"]):
         root = data["roots"][name]
@@ -436,6 +449,10 @@ def cmd_diff(args):
     print(f"{args.item}: {status[ref]}; signed by {last['by']} on {last['date']:%Y-%m-%d}")
     if status[ref] != "stale":
         return 0
+    mapping = mapping_of(info[ref]["item"])
+    for key, signed_value in last["mapping"].items():
+        if signed_value != mapping[key]:
+            print(f"\n{key}: was {signed_value!r} when signed, now {mapping[key]!r}")
     signed = {n["name"]: n for n in last["nodes"]}
     now = info[ref]["closure"]
     for name in sorted(signed.keys() - now):
@@ -574,15 +591,20 @@ def toml_string(s):
 
 
 def ledger_file(source, by, via, when, signed):
-    """The text of a ledger file, and the node texts it needs, for the items just signed, given as
-    `(id, hash, nodes)`, each node `(name, term, text)`."""
+    """The text of a ledger file for the items just signed, given as `(id, hash, mapping, nodes)`,
+    the mapping as `mapping_of` gives it and each node as `(name, term, text)`."""
     lines = [f"source = {toml_string(source)}", f"by = {toml_string(by)}"]
     if via:
         lines.append(f"via = {toml_string(via)}")
     lines.append(f"date = {when}")
-    for cid, digest, nodes in signed:
+    for cid, digest, mapping, nodes in signed:
         lines += ["", "[[item]]", f"id = {toml_string(cid)}", f"hash = {toml_string(digest)}",
-                  "nodes = ["]
+                  f"kind = {toml_string(mapping['kind'])}",
+                  f"relation = {toml_string(mapping['relation'])}",
+                  f"decls = [{', '.join(toml_string(d) for d in mapping['decls'])}]"]
+        if mapping["notes"]:
+            lines.append(f"notes = {toml_string(mapping['notes'])}")
+        lines.append("nodes = [")
         for name, term, text in nodes:
             lines.append(f"  {{ name = {toml_string(name)}, term = "
                          f'"{short_hash(term.encode())}", text = "{short_hash(text.encode())}" }},')
@@ -630,14 +652,14 @@ def record(args, by):
             continue
         nodes = [(n, data["nodes"][n]["term"], data["nodes"][n]["text"])
                  for n in sorted(info[ref]["closure"])]
-        signed.append((cid, info[ref]["hash"], nodes))
+        signed.append((cid, info[ref]["hash"], mapping_of(info[ref]["item"]), nodes))
     if not signed:
         print("nothing to sign")
         return 0
     when = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     text = ledger_file(args.source, by, args.via, when, signed)
     LEDGER_NODES.mkdir(parents=True, exist_ok=True)
-    for _, _, nodes in signed:
+    for _, _, _, nodes in signed:
         for _, _, node in nodes:
             path = LEDGER_NODES / f"{short_hash(node.encode())}.txt"
             if not path.exists():
@@ -645,7 +667,7 @@ def record(args, by):
     path = LEDGER / f"{short_hash(text.encode())}.toml"
     path.write_text(text, encoding="utf-8")
     print(f"signed {len(signed)} item(s) of {args.source} in checks/{LEDGER.name}/{path.name}: "
-          f"{', '.join(c for c, _, _ in signed)}")
+          f"{', '.join(s[0] for s in signed)}")
     return 0
 
 
@@ -815,6 +837,32 @@ def selftest_docstring(data, name):
     return not ok
 
 
+def selftest_mapping(data):
+    """Whether the hash of an item changes with what its sign-off covers, and with nothing else:
+    the kind, relation and declarations change it, and so do the notes, unless only their
+    whitespace is changed."""
+    name = lambda n: f"ChecksFixture.{n}"
+    base = {"kind": "result", "relation": "specializes", "notes": "Assumes a nonempty domain.",
+            "decls": [name("unionOne")]}
+    cases = [
+        ("the relation", False, {**base, "relation": "generalizes"}),
+        ("the kind", False, {**base, "kind": "definition"}),
+        ("the declarations", False, {**base, "decls": [name("unionOne"), name("unionZero")]}),
+        ("the notes' wording", False, {**base, "notes": "Assumes a domain."}),
+        ("the notes' wrapping", True, {**base, "notes": "Assumes\n  a  nonempty\ndomain.\n"}),
+        ("the order of the declarations", True,
+         {**base, "decls": [name("unionOne"), name("unionZero")][::-1]}),
+    ]
+    failures = 0
+    for what, same, item in cases:
+        reference = ({**base, "decls": [name("unionOne"), name("unionZero")]}
+                     if what == "the order of the declarations" else base)
+        ok = (item_hash(item, data) == item_hash(reference, data)) == same
+        failures += not ok
+        print(f"{'ok  ' if ok else 'FAIL'}  {what} {'keeps' if same else 'changes'} the hash")
+    return failures
+
+
 def cmd_selftest(args):
     names = sorted({f"ChecksFixture.{n}" for _, _, ns in SELFTEST_GROUPS + SELFTEST_RENAMED_GROUPS
                     for n in ns} | {f"ChecksFixture.{n}" for n, _ in SELFTEST_UNUSED})
@@ -825,6 +873,7 @@ def cmd_selftest(args):
     data = check_closure(["ChecksFixture"], names, [])
     failures = selftest_groups(data, SELFTEST_GROUPS)
     failures += selftest_docstring(data, SELFTEST_GROUPS[0][2][0])
+    failures += selftest_mapping(data)
     for name, unused in SELFTEST_UNUSED:
         ok = f"ChecksFixture.{unused}" not in data["roots"][f"ChecksFixture.{name}"]["closure"]
         failures += not ok

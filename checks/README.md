@@ -64,7 +64,10 @@ python3 scripts/checks.py verify-ledger --base origin/main --author HANDLE
 python3 scripts/checks.py selftest
 ```
 
-`sign` records the hash of the item's statement closure. The closure takes in:
+`sign` records the hash of the item: how the check file says it is stated, and its statement
+closure. The mapping is the item's `kind` and `relation`, its `decls` and its `notes`, so that
+changing any of them after a sign-off makes it stale; the notes' whitespace and the order of
+the declarations do not count. The closure takes in:
 
 * the types of the item's declarations;
 * the types and bodies of the project definitions those types mention, followed transitively
@@ -190,19 +193,23 @@ via    = "email"                   # for a sign-off recorded for someone else
 date   = 2026-11-12T10:32:05Z
 
 [[item]]
-id   = "ex-22"
-hash = "a1a64c03eb680068"
+id       = "ex-22"
+hash     = "a1a64c03eb680068"
+kind     = "result"                # the mapping as the signer saw it, for `diff`
+relation = "specializes"
+decls    = ["DynamicSemantics.BilateralUpdate.negative_exists_pred1"]
+notes    = "Assumes `x` novel at `s` and a nonempty domain."
 nodes = [
   { name = "DynamicSemantics.…", term = "9f2c…", text = "41b7…" },
 ]
 ```
 
 `ledger/nodes/<text-hash>.txt` holds the text of each declaration in the closure as the signer
-read it, shared by every sign-off that read it. `diff` compares those texts with the current ones,
-so it needs no commit and still works after a squash. It also names a declaration whose printed
-text is the same but whose term differs. The docs pages say that a statement has changed since
-the sign-off, and point to `diff`. An item is current if the hash of its newest ledger entry is
-its hash now.
+read it, shared by every sign-off that read it. `diff` compares those texts, and the mapping, with
+the current ones, so it needs no commit and still works after a squash. It also names a
+declaration whose printed text is the same but whose term differs. The docs pages say that a
+statement has changed since the sign-off, and point to `diff`. An item is current if the hash of
+its newest ledger entry is its hash now.
 
 **Who checks.** `by` is a GitHub login, that of the pull request's author, and git records who
 added the file. A reviewer without an account is named in `by` instead, and someone else records
