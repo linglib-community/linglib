@@ -435,7 +435,6 @@ SolstadBott2022
 SoltWaldon2019
 Song1996
 Sorace2000
-Spector2007
 Spector2016
 Spector2026
 SpinosoDiPianoEtAl2025
@@ -486,7 +485,6 @@ Yagi2025
 YingEtAl2025
 YuAusensiSmith2023
 ZaslavskyEtAl2019
-ZaslavskyHuLevy2021
 ZaslavskyKempRegierTishby2018
 Zeijlstra2004
 Zeijlstra2012

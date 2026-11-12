@@ -10,30 +10,36 @@ A reference game has finitely many meanings and utterances, a prior over the mea
 and a cost on the utterances. A speaker is a kernel from meanings to utterances and a listener a
 kernel back. The tradeoff of a speaker and a listener is the speaker's conditional entropy plus
 `α` times the expected utility, the listener's log-probability of the speaker's meaning less the
-cost of her utterance. Against a fixed listener the RSA speaker maximizes the tradeoff, and
-against a fixed speaker the Bayesian listener does, so the tradeoff never decreases along the
-recursion.
+cost of her utterance, which is `−∞` when the listener rules out a meaning the speaker conveys.
+Among all speakers the RSA speaker
+[maximizes](##ZaslavskyHuLevy2021.freeEnergy_le_freeEnergy_speaker) the tradeoff against a fixed
+listener, and among all listeners the Bayesian listener
+[does](##ZaslavskyHuLevy2021.freeEnergy_le_freeEnergy_listener) against a fixed speaker, so the
+tradeoff never decreases along the recursion and
+[converges](##ZaslavskyHuLevy2021.exists_tendsto_freeEnergy).
 
 ## Implementation notes
 
 * The paper's speaker knows the meaning, so its tradeoff is `RSA.freeEnergy` at the identity
   observation kernel, which `RSA.freeEnergy_id` writes as the paper does, and its speaker believes
   the point mass. The two maximality statements are cases of the ones in the
-  alternating-maximization file, whose notes say how the real-valued utility there relates to the
-  paper's.
+  alternating-maximization file, which also gives the speaker's gap: a speaker falls short of
+  the RSA speaker by her expected divergence from it.
+* The lexicon is respected at a positive rationality. At rationality zero the speaker is uniform
+  over all utterances, whatever the lexicon.
 * `listener t` is the paper's listener of depth `t`, and the speaker who answers it is the
   paper's speaker of depth `t + 1`. The recursion assumes a prior that charges every meaning and
   a finite lexicon in which every meaning has an applicable utterance, so that every speaker is
-  a probability kernel. A listener's row is zero at an utterance that applies to no meaning. The
-  lexicon is any such weight and the cost any real function, where the paper's lexicon has
-  values in the unit interval and its cost is nonnegative.
+  a probability kernel. A listener is the zero measure at an utterance that applies to no
+  meaning. The lexicon is any such weight and the cost any real function, where the paper's
+  lexicon has values in the unit interval and its cost is nonnegative.
 * Equation numbers are those of the arXiv preprint 2005.06641v1. The two-page proceedings
   abstract numbers its equations differently and leaves out the proofs.
 
 ## TODO
 
-* The fixed points of the recursion are stationary points of the tradeoff, and the limit of the
-  tradeoff along the recursion is its value at one.
+* The fixed points of the recursion are stationary points of the tradeoff. Whether the speakers
+  and listeners of the recursion converge, and to what, is not settled here.
 * The rate–distortion variant, whose tradeoff has mutual information in place of the conditional
   entropy, with its update equations.
 * The asymptotic behaviour of the recursion and the criticality of `α = 1`.
@@ -56,38 +62,29 @@ variable {M U : Type*} [MeasurableSpace M] [MeasurableSpace U] [Fintype M] [Fint
 
 /-! ### The two steps -/
 
-/-- Against a fixed listener the RSA speaker maximizes the tradeoff (7). -/
-theorem freeEnergy_le_freeEnergy_speaker [IsFiniteMeasure P] {α : ℝ} (hα : 0 ≤ α) (L : Kernel U M)
-    [IsFiniteKernel L] (S : Kernel M U) [IsMarkovKernel S]
-    (hS : ∀ m, P {m} ≠ 0 → S m ≪ RSA.speaker α C L Measure.dirac m) :
+/-- Against a fixed listener the RSA speaker maximizes the tradeoff over all speakers (7). -/
+theorem freeEnergy_le_freeEnergy_speaker [Nonempty M] [IsFiniteMeasure P] {α : ℝ} (hα : 0 ≤ α)
+    (S : Kernel M U) [IsMarkovKernel S] (L : Kernel U M)
+    [∀ u, IsZeroOrProbabilityMeasure (L u)] :
     RSA.freeEnergy P Kernel.id C α S L ≤
       RSA.freeEnergy P Kernel.id C α (RSA.speaker α C L Measure.dirac) L :=
-  RSA.freeEnergy_le_freeEnergy_speaker (RSA.id_comp_real_mul_dirac_real P) hα L S
-    (by simpa only [Measure.id_comp] using hS)
+  RSA.freeEnergy_le_freeEnergy_speaker (RSA.dirac_ae_eq_posterior_id P) hα S L
 
 section Listener
 
-variable [Nonempty M] [IsProbabilityMeasure P] (S : Kernel M U) [IsMarkovKernel S]
-  (L : Kernel U M) [∀ u, IsZeroOrProbabilityMeasure (L u)]
-  (hL : ∀ u, (S ∘ₘ P) {u} ≠ 0 → RSA.listener P S u ≪ L u)
-include hL
+variable [Nonempty M] [IsFiniteMeasure P] (S : Kernel M U) [IsFiniteKernel S] (L : Kernel U M)
+  [∀ u, IsZeroOrProbabilityMeasure (L u)]
 
 -- (12)
 theorem expectedUtility_le_listener :
-    RSA.expectedUtility P Kernel.id C S L ≤
-      RSA.expectedUtility P Kernel.id C S (RSA.listener P S) := by
-  have h := RSA.expectedUtility_le_listener P Kernel.id C S L
-    (by simpa only [Kernel.comp_id] using hL)
-  simp only [Kernel.comp_id] at h
-  exact h
+    RSA.expectedUtility P S L C ≤ RSA.expectedUtility P S (RSA.listener P S) C :=
+  RSA.expectedUtility_le_listener P S L C
 
-/-- Against a fixed speaker her Bayesian listener maximizes the tradeoff (8). -/
-theorem freeEnergy_le_freeEnergy_listener (hα : 0 ≤ α) :
+/-- Against a fixed speaker her Bayesian listener maximizes the tradeoff over all listeners
+(8). -/
+theorem freeEnergy_le_freeEnergy_listener {α : ℝ} (hα : 0 ≤ α) :
     RSA.freeEnergy P Kernel.id C α S L ≤ RSA.freeEnergy P Kernel.id C α S (RSA.listener P S) := by
-  have h := RSA.freeEnergy_le_freeEnergy_listener P Kernel.id C α S L
-    (by simpa only [Kernel.comp_id] using hL) hα
-  simp only [Kernel.comp_id] at h
-  exact h
+  simpa only [Kernel.comp_id] using RSA.freeEnergy_le_freeEnergy_listener P Kernel.id C hα S L
 
 end Listener
 
@@ -109,15 +106,11 @@ theorem listener_succ (t : ℕ) : listener P C α l (t + 1) =
 
 variable {P C α l} {u : U} {m : M}
 
-/-- The listeners of the recursion respect the lexicon. An utterance never leads the listener to
-a meaning it does not apply to. -/
 theorem listener_apply_singleton_eq_zero (hα : 0 < α) (h : l u m = 0) (t : ℕ) :
     listener P C α l t u {m} = 0 :=
   RSA.iterate_recurse_id_dirac_apply_singleton_eq_zero hα (by
     rw [Kernel.ofDensity_apply_singleton, h, zero_mul, ENNReal.zero_div]) t
 
-/-- The speakers of the recursion respect the lexicon. No meaning is expressed by an utterance
-that does not apply to it. -/
 theorem speaker_listener_apply_singleton_eq_zero (hα : 0 < α) (h : l u m = 0) (t : ℕ) :
     RSA.speaker α C (listener P C α l t) Measure.dirac m {u} = 0 :=
   RSA.speaker_dirac_apply_singleton_eq_zero hα (listener_apply_singleton_eq_zero hα h t)
@@ -141,21 +134,9 @@ theorem isMarkovKernel_speaker_listener (hm : ∀ m, ∃ u, l u m ≠ 0) (t : �
 
 end Support
 
-variable [IsProbabilityMeasure P] (hP : ∀ m, P {m} ≠ 0) (hl : ∀ u m, l u m ≠ ∞)
+variable [IsProbabilityMeasure P] [Nonempty M] (hP : ∀ m, P {m} ≠ 0) (hl : ∀ u m, l u m ≠ ∞)
   (hα : 0 ≤ α) (hm : ∀ m, ∃ u, l u m ≠ 0)
 include hP hl hα hm
-
-/-- Each speaker update raises the tradeoff, the second inequality of (9). -/
-theorem freeEnergy_le_freeEnergy_speaker_succ (t : ℕ) :
-    RSA.freeEnergy P Kernel.id C α (RSA.speaker α C (listener P C α l t) Measure.dirac)
-        (listener P C α l (t + 1)) ≤
-      RSA.freeEnergy P Kernel.id C α (RSA.speaker α C (listener P C α l (t + 1)) Measure.dirac)
-        (listener P C α l (t + 1)) := by
-  have := isMarkovKernel_speaker_listener (C := C) hP hl hα hm t
-  rw [listener_succ]
-  exact RSA.freeEnergy_listener_le_freeEnergy_speaker (RSA.id_comp_real_mul_dirac_real P) hα _
-
-variable [Nonempty M]
 
 /-- Each listener update raises the tradeoff, the first inequality of (9). -/
 theorem freeEnergy_le_freeEnergy_listener_succ (t : ℕ) :
@@ -165,14 +146,24 @@ theorem freeEnergy_le_freeEnergy_listener_succ (t : ℕ) :
         (listener P C α l (t + 1)) := by
   have := isMarkovKernel_speaker_listener (C := C) hP hl hα hm t
   rw [listener_succ]
-  exact RSA.freeEnergy_speaker_le_freeEnergy_listener (RSA.id_comp_real_mul_dirac_real P) hα _
+  exact RSA.freeEnergy_le_freeEnergy_listener P Kernel.id C hα _ _
 
-/-- The tradeoff converges along the recursion, being monotone and bounded above. -/
-theorem exists_tendsto_freeEnergy : ∃ g, Tendsto (fun t ↦ RSA.freeEnergy P Kernel.id C α
+/-- Each speaker update raises the tradeoff, the second inequality of (9). -/
+theorem freeEnergy_le_freeEnergy_speaker_succ (t : ℕ) :
+    RSA.freeEnergy P Kernel.id C α (RSA.speaker α C (listener P C α l t) Measure.dirac)
+        (listener P C α l (t + 1)) ≤
+      RSA.freeEnergy P Kernel.id C α (RSA.speaker α C (listener P C α l (t + 1)) Measure.dirac)
+        (listener P C α l (t + 1)) :=
+  have := isMarkovKernel_speaker_listener (C := C) hP hl hα hm t
+  RSA.freeEnergy_le_freeEnergy_speaker (RSA.dirac_ae_eq_posterior_id P) hα _ _
+
+/-- The tradeoff converges along the recursion to a real number, being monotone, bounded above
+and nowhere `−∞`. -/
+theorem exists_tendsto_freeEnergy : ∃ g : ℝ, Tendsto (fun t ↦ RSA.freeEnergy P Kernel.id C α
     (RSA.speaker α C (listener P C α l t) Measure.dirac) (listener P C α l t)) atTop (𝓝 g) :=
   have : IsMarkovKernel (RSA.speaker α C (Kernel.ofDensity P l) Measure.dirac) :=
     isMarkovKernel_speaker_listener (C := C) hP hl hα hm 0
-  RSA.exists_tendsto_freeEnergy_iterate_recurse (RSA.id_comp_real_mul_dirac_real P) hα
+  RSA.exists_tendsto_freeEnergy_iterate_recurse (RSA.dirac_ae_eq_posterior_id P) hα
     (fun o ↦ by rw [Measure.id_comp]; exact hP o) (Kernel.ofDensity P l)
 
 end Recursion
