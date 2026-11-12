@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Gamma.Basic
-public import Linglib.Core.Probability.Distributions.PolyaUrn
+public import Linglib.Core.Probability.Combinatorics.PolyaUrn
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Studies.GriffithsKalish2007
 

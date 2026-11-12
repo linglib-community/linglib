@@ -8,7 +8,7 @@ module
 public import Linglib.Core.Analysis.SpecialFunctions.Gamma.Basic
 public import Linglib.Core.MeasureTheory.Measure.Dirac
 public import Linglib.Core.Order.Argmax
-public import Linglib.Core.Probability.Exchangeable
+public import Linglib.Core.Probability.Exchangeable.Basic
 public import Linglib.Core.Probability.Kernel.IonescuTulcea.SeqLaw
 public import Linglib.Core.RingTheory.Polynomial.Pochhammer
 public import Mathlib.MeasureTheory.Measure.Real
