@@ -20,7 +20,7 @@ quotient of this type by `RoseTree.Perm` (`UnorderedTree`).
 The type is nested through `List`, so its recursor takes one motive for trees and one for lists.
 `RoseTree.rec'` is the induction principle with the single hypothesis `∀ c ∈ cs, motive c`, and
 `RoseTree.fold` is the catamorphism from which `map`, the counts and the frontier are defined. A
-function that satisfies the node equation of a fold is that fold (`RoseTree.eq_fold`).
+function that satisfies the node equation of a fold is that fold (`RoseTree.fold_unique`).
 
 ## Main definitions
 
@@ -167,15 +167,9 @@ theorem fold_hom (h : β → γ) {f : α → List β → β} {g : α → List γ
 
 /-- The universal property of `fold`: a function that satisfies the node equation of `fold f` is
 `fold f`. -/
-theorem eq_fold {f : α → List β → β} {h : RoseTree α → β}
-    (hf : ∀ a cs, h (node a cs) = f a (cs.map h)) : h = fold f :=
-  funext fun t ↦ by rw [← fold_hom h hf t, fold_node_eq_self]
-
-/-- Two functions that satisfy the same node equation are equal. -/
-theorem hom_ext {f : α → List β → β} {h₁ h₂ : RoseTree α → β}
-    (h₁f : ∀ a cs, h₁ (node a cs) = f a (cs.map h₁))
-    (h₂f : ∀ a cs, h₂ (node a cs) = f a (cs.map h₂)) : h₁ = h₂ :=
-  (eq_fold h₁f).trans (eq_fold h₂f).symm
+theorem fold_unique (f : α → List β → β) (h : RoseTree α → β)
+    (hyp : ∀ a cs, h (node a cs) = f a (cs.map h)) : fold f = h :=
+  funext fun t ↦ by rw [← fold_hom h hyp t, fold_node_eq_self]
 
 /-! ### Functoriality -/
 
