@@ -26,7 +26,8 @@ are the canonical model in which commitments vary from world to world.
 
 ## Main results
 
-* `Commitment.committed_perform_self`: after the performative update `k⊢φ` holds everywhere.
+* `Commitment.committed_perform`: after the performative update by `φ`, `k⊢ψ` holds where
+  `k⊢(φ → ψ)` held, so `k⊢φ` holds everywhere.
 * `Commitment.committed_iInter`: a commitment to each of a family of propositions is a commitment
   to their conjunction.
 * `Commitment.disjoint_committed_compl`: a holder whose commitments are consistent is not
@@ -42,6 +43,7 @@ are the canonical model in which commitments vary from world to world.
 * [M. Krifka, *Performative updates and the modeling of speech acts* (2024)][krifka-2024a]
 * [T. van der Leer, *Commitments, beliefs and expectations in conversation*
   (2026)][van-der-leer-2026]
+* [T. Yamada, *Dynamic Logic of Propositional Commitments* (2012)][yamada-2012]
 -/
 
 @[expose] public section
@@ -58,7 +60,8 @@ variable {κ W : Type*} (O : κ → SetRel W W) (k : κ) (φ ψ : Set W)
 def committed : Set W := (O k).core φ
 
 /-- The performative update by `k`'s commitment to `φ` keeps the `φ`-successors of `O k` and
-leaves every other accessibility unchanged ([van-der-leer-2026] Definition 4). -/
+leaves every other accessibility unchanged ([yamada-2012]'s update by an act of asserting,
+[van-der-leer-2026] Definition 4). -/
 def perform : κ → SetRel W W := fun k' ↦ {p | p ∈ O k' ∧ (k' = k → p.2 ∈ φ)}
 
 variable {O k φ ψ} {k' : κ}
@@ -93,8 +96,18 @@ theorem perform_subset (k' : κ) : perform O k φ k' ⊆ O k' := fun _ h ↦ h.1
 theorem perform_of_ne (h : k' ≠ k) : perform O k φ k' = O k' :=
   Set.ext fun _ ↦ ⟨And.left, fun hp ↦ ⟨hp, (absurd · h)⟩⟩
 
-@[simp] theorem committed_perform_self : committed (perform O k φ) k φ = Set.univ :=
-  Set.eq_univ_of_forall fun _ _ h ↦ h.2 rfl
+/-- After the performative update by `φ`, `k⊢ψ` holds where `k⊢(φ → ψ)` held before
+([yamada-2012]'s reduction axiom for the asserter's own commitments). -/
+theorem committed_perform : committed (perform O k φ) k ψ = committed O k (φᶜ ∪ ψ) :=
+  Set.ext fun _ ↦ ⟨fun h _ hv ↦ or_iff_not_imp_left.2 fun hφ ↦ h ⟨hv, fun _ ↦ not_not.1 hφ⟩,
+    fun h _ hv ↦ (h hv.1).resolve_left (not_not.2 (hv.2 rfl))⟩
+
+theorem committed_perform_of_ne (h : k' ≠ k) :
+    committed (perform O k φ) k' ψ = committed O k' ψ := by
+  rw [committed, perform_of_ne h, committed]
+
+@[simp] theorem committed_perform_self : committed (perform O k φ) k φ = Set.univ := by
+  rw [committed_perform, Set.compl_union_self, committed_univ]
 
 theorem perform_mono (h : φ ⊆ ψ) (k' : κ) : perform O k φ k' ⊆ perform O k ψ k' :=
   fun _ hp ↦ ⟨hp.1, fun e ↦ h (hp.2 e)⟩
