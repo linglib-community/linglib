@@ -148,9 +148,23 @@ theorem orbit_eq_pair {M : Type*} [MulAction Polarity M] (x : M) :
 
 variable {α : Type*}
 
+/-- The polarities act on a Boolean algebra by complement: the positive polarity leaves an
+element, the negative one takes its complement. -/
+def complHom [BooleanAlgebra α] : Polarity →* Function.End α :=
+  lift ⟨compl, compl_involutive.comp_self⟩
+
+@[simp] theorem complHom_positive [BooleanAlgebra α] (x : α) : complHom positive x = x := rfl
+
+@[simp] theorem complHom_negative [BooleanAlgebra α] (x : α) : complHom negative x = xᶜ := rfl
+
+/-- Different polarities take an element to complementary elements. -/
+theorem complHom_of_ne [BooleanAlgebra α] {s t : Polarity} (h : s ≠ t) (x : α) :
+    complHom s x = (complHom t x)ᶜ := by
+  cases s <;> cases t <;> simp_all
+
 /-- The polarity of a sentence acts on propositions. The positive polarity leaves a proposition,
 the negative one takes its complement. -/
-instance : MulAction Polarity (Set α) := .ofEndHom (lift ⟨compl, compl_involutive.comp_self⟩)
+instance : MulAction Polarity (Set α) := .ofEndHom complHom
 
 @[simp] theorem negative_smul_set (p : Set α) : negative • p = pᶜ := rfl
 

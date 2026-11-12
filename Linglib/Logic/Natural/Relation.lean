@@ -162,6 +162,9 @@ def ofPolarities : Polarity → Polarity → Atom
   | .negative, .positive => .codisjoint
   | .negative, .negative => .ge
 
+theorem ofPolarities_injective : Function.Injective2 ofPolarities := by
+  unfold Function.Injective2; decide
+
 @[simp] theorem ofPolarities_src_tgt : ∀ a : Atom, ofPolarities a.src a.tgt = a := by decide
 
 @[simp] theorem src_ofPolarities : ∀ m q : Polarity, (ofPolarities m q).src = m := by decide
@@ -268,6 +271,16 @@ theorem Relation.holds_iff {α : Type*} [Lattice α] [BoundedOrder α]
   cases R <;>
     simp [Relation.Holds, Relation.Atom.Holds, Relation.constraints,
       isCompl_iff, le_antisymm_iff]
+
+/-- In a Boolean algebra a constraint is an inequality between its arguments taken with its two
+polarities. -/
+theorem Relation.Atom.holds_iff_complHom_le {α : Type*} [BooleanAlgebra α] {a : Relation.Atom}
+    {x y : α} : a.Holds x y ↔ Polarity.complHom a.src x ≤ Polarity.complHom a.tgt y := by
+  cases a
+  · exact Iff.rfl
+  · exact compl_le_compl_iff_le.symm
+  · exact le_compl_iff_disjoint_right.symm
+  · exact codisjoint_iff_compl_le_right
 
 theorem Relation.holds_toRelation {α : Type*} [Lattice α] [BoundedOrder α] {a : Relation.Atom}
     {x y : α} : a.toRelation.Holds x y ↔ a.Holds x y := by

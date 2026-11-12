@@ -412,17 +412,37 @@ theorem Property.HoldsFor.project {p : Property} {f : α → β}
     | exact disjoint_map_of_isAntiAdditive hf ha
     | exact codisjoint_map_of_isAntiMultiplicative hf ha
 
-/-- σ's projection row is sound for every σ-function ([icard-2012] Lemma 2.5): `≡` because `f` is
-a function, and every other constraint by the property rule. -/
+/-- A function carries the constraints of a property when it takes each constraint between its
+arguments to the constraint `Property.project` says between its values. A function with the
+property does (`Property.HoldsFor.project`), and so do others: carrying codisjointness to
+codisjointness is weaker than preserving joins. -/
+def Property.Carries (p : Property) (f : α → β) : Prop :=
+  ∀ ⦃a b⦄, Property.project a p = some b → ∀ ⦃x y⦄, a.Holds x y → b.Holds (f x) (f y)
+
+theorem Property.HoldsFor.carries {p : Property} {f : α → β} (hf : p.HoldsFor f) : p.Carries f :=
+  fun _ _ h _ _ ha ↦ hf.project h ha
+
+/-- σ's projection row is sound for exactly the functions that carry the constraints of each of
+σ's properties, as its function class is the functions with each of them
+(`ProjectivitySignature.HoldsFor`). -/
+theorem soundFor_iff_forall_carries {σ : ProjectivitySignature} {f : α → β} :
+    σ.SoundFor f ↔ ∀ p ∈ σ.properties, p.Carries f := by
+  refine ⟨fun h p hp a b hab x y ha ↦ ?_, fun h R x y hR ↦ ?_⟩
+  · have hne : a.toRelation ≠ .equiv := by cases a <;> decide
+    exact Relation.holds_iff.1 (h a.toRelation x y (Relation.holds_toRelation.2 ha)) b
+      ((mem_constraints_project hne).2 ⟨p, hp, a, by simp, hab⟩)
+  · by_cases hRe : R = .equiv
+    · subst hRe
+      exact congrArg f hR
+    refine Relation.holds_iff.2 fun _ hb ↦ ?_
+    obtain ⟨p, hp, a, ha, hab⟩ := (mem_constraints_project hRe).1 hb
+    exact h p hp hab (Relation.holds_iff.1 hR a ha)
+
+/-- σ's projection row is sound for every σ-function ([icard-2012] Lemma 2.5): a function with a
+property carries its constraints. -/
 theorem soundFor_of_holdsFor {σ : ProjectivitySignature} {f : α → β}
-    (h : σ.HoldsFor f) : σ.SoundFor f := by
-  intro R x y hR
-  by_cases hRe : R = .equiv
-  · subst hRe
-    exact congrArg f hR
-  refine Relation.holds_iff.2 fun _ hb ↦ ?_
-  obtain ⟨p, hp, a, ha, hab⟩ := (mem_constraints_project hRe).1 hb
-  exact (h p hp).project hab (Relation.holds_iff.1 hR a ha)
+    (h : σ.HoldsFor f) : σ.SoundFor f :=
+  soundFor_iff_forall_carries.2 fun p hp ↦ (h p hp).carries
 
 end HoldsFor
 

@@ -193,22 +193,6 @@ section BooleanAlgebra
 
 variable [BooleanAlgebra α]
 
-/-- An element, or its complement when the polarity is negative. -/
-private def pol : Polarity → α → α
-  | .positive, x => x
-  | .negative, x => xᶜ
-
-private theorem pol_of_ne {s t : Polarity} (h : s ≠ t) (x : α) : pol s x = (pol t x)ᶜ := by
-  cases s <;> cases t <;> simp_all [pol]
-
-private theorem Atom.holds_iff_pol {a : Atom} {x y : α} :
-    a.Holds x y ↔ pol a.src x ≤ pol a.tgt y := by
-  cases a
-  · exact Iff.rfl
-  · exact compl_le_compl_iff_le.symm
-  · exact le_compl_iff_disjoint_right.symm
-  · exact codisjoint_iff_compl_le_right
-
 private theorem Atom.exists_join (a b : Atom) (h : a.tgt = b.src) :
     ∃ c, a.join b = some c ∧ c.src = a.src ∧ c.tgt = b.tgt :=
   ⟨_, ite_eq_left h, Atom.src_ofPolarities _ _, Atom.tgt_ofPolarities _ _⟩
@@ -222,19 +206,19 @@ theorem holds_mul (R S : Relation) :
   ext x z
   refine ⟨fun h ↦ ?_, fun ⟨y, hR, hS⟩ ↦ hR.join hS⟩
   have H : ∀ a ∈ R.constraints, ∀ b ∈ S.constraints, a.tgt = b.src →
-      pol a.src x ≤ pol b.tgt z := by
+      Polarity.complHom a.src x ≤ Polarity.complHom b.tgt z := by
     intro a ha b hb hab
     obtain ⟨c, hc, hs, ht⟩ := Atom.exists_join a b hab
     have := holds_iff.1 h c (mem_constraints_mul.2 ⟨a, ha, b, hb, hc⟩)
-    rwa [Atom.holds_iff_pol, hs, ht] at this
+    rwa [Atom.holds_iff_complHom_le, hs, ht] at this
   let l : Atom → α := fun a ↦ match a.tgt with
-    | .positive => pol a.src x
+    | .positive => Polarity.complHom a.src x
     | .negative => ⊥
   let u : Atom → α := fun b ↦ match b.src with
     | .positive => ⊥
-    | .negative => (pol b.tgt z)ᶜ
+    | .negative => (Polarity.complHom b.tgt z)ᶜ
   refine ⟨R.constraints.sup l ⊔ S.constraints.sup u,
-    holds_iff.2 fun a ha ↦ Atom.holds_iff_pol.2 ?_, holds_iff.2 fun b hb ↦ Atom.holds_iff_pol.2 ?_⟩
+    holds_iff.2 fun a ha ↦ Atom.holds_iff_complHom_le.2 ?_, holds_iff.2 fun b hb ↦ Atom.holds_iff_complHom_le.2 ?_⟩
   · cases hat : a.tgt
     · exact le_sup_of_le_left (by simpa [l, hat] using Finset.le_sup (f := l) ha)
     · change _ ≤ (_)ᶜ
@@ -244,7 +228,7 @@ theorem holds_mul (R S : Relation) :
         · have hne : a'.src ≠ a.src := fun h ↦ by
             rw [injOn_src_constraints R ha' ha h, hat] at hat'
             exact Polarity.noConfusion hat'
-          simpa [l, hat'] using (pol_of_ne hne x).le
+          simpa [l, hat'] using (Polarity.complHom_of_ne hne x).le
         · simp [l, hat']
       · cases hbs : b.src
         · simp [u, hbs]
@@ -252,14 +236,14 @@ theorem holds_mul (R S : Relation) :
   · cases hbs : b.src
     · refine sup_le (Finset.sup_le fun a ha ↦ ?_) (Finset.sup_le fun b' hb' ↦ ?_)
       · cases hat : a.tgt
-        · simpa [l, hat, pol] using H a ha b hb (hat.trans hbs.symm)
+        · simpa [l, hat] using H a ha b hb (hat.trans hbs.symm)
         · simp [l, hat]
       · cases hbs' : b'.src
         · simp [u, hbs']
         · have hne : b.tgt ≠ b'.tgt := fun h ↦ by
             rw [injOn_tgt_constraints S hb hb' h, hbs'] at hbs
             exact Polarity.noConfusion hbs
-          simpa [u, hbs'] using (pol_of_ne hne z).ge
+          simpa [u, hbs'] using (Polarity.complHom_of_ne hne z).ge
     · change (_)ᶜ ≤ _
       rw [compl_le_iff_compl_le]
       exact le_sup_of_le_right (by simpa [u, hbs] using Finset.le_sup (f := u) hb)
