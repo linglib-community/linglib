@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Category.Numeral.Composition
-public import Mathlib.Data.List.MinMax
 
 /-!
 # Hurford (2007): A performed practice explains a linguistic universal
@@ -25,8 +24,9 @@ it](##English.next_twoThousandNinetyNine).
 
 The trees use the 1975 grammar of `Numeral`, so a DIGIT is a tally and a PHRASE of a bare M is
 `[one M]`. English *million* is the base-power M of value `10 ^ 6`, since the Packing Strategy
-compares only values. The Mixtec bases are the three of the example, the Hawaiian ones the seven
-Hurford lists, and the Welsh ones those of his remarks on *pymtheg*.
+compares only values. `count L 0` is the junk value *one*. The Mixtec bases are the three of the
+example, the Hawaiian ones the seven Hurford lists, and the Welsh ones those of his remarks on
+*pymtheg*.
 
 ## TODO
 
@@ -59,12 +59,13 @@ def amass (L : List M) (e : Number) : Number :=
 the next word of the recited sequence; past its end the object opens a remainder beside the groups
 set aside, and a remainder that fills a group of its own adds one to the count of groups, the maxim
 "Go as far as you can with the resources you have". The outcome is amassed at every level. -/
-def next (L : List M) : Number → Number
-  | .one => amass L (.oneAnd .one)
-  | .oneAnd r => amass L (.oneAnd (.oneAnd r))
-  | .phrase p => amass L (.phraseAnd p .one)
-  | .phraseAnd (.mk n m) r =>
-    amass L <| if r.value + 1 = m.value then .phrase (.mk (next L n) m)
+def next (L : List M) (e : Number) : Number :=
+  amass L <| match e with
+    | .one => .oneAnd .one
+    | .oneAnd r => .oneAnd (.oneAnd r)
+    | .phrase p => .phraseAnd p .one
+    | .phraseAnd (.mk n m) r =>
+      if r.value + 1 = m.value then .phrase (.mk (next L n) m)
       else .phraseAnd (.mk n m) (next L r)
 
 /-- `count L v` is the numeral reached by counting `v` objects one at a time, starting from
@@ -78,17 +79,16 @@ def count (L : List M) (v : ℕ) : Number :=
   | none => rfl
   | some m => simpa [Number.value, Phrase.value] using List.find?_some h
 
-private theorem packed_amass {v : ℕ} (hv : e.value = v)
-    (he : (∀ m ∈ L, m.value ≠ v) → e.Packed {m | m ∈ L}) : (amass L e).Packed {m | m ∈ L} := by
+private theorem packed_amass (he : (∀ m ∈ L, m.value ≠ e.value) → e.Packed L) :
+    (amass L e).Packed L := by
   unfold amass
   cases h : L.find? (·.value = e.value) with
-  | none => exact he fun m hm ↦ by simpa [hv] using List.find?_eq_none.1 h m hm
+  | none => exact he fun m hm ↦ by simpa using List.find?_eq_none.1 h m hm
   | some m => exact packed_phrase_iff.2 (Phrase.packed_mk_one (List.mem_of_find?_eq_some h))
 
-private theorem isHighestUnder_succ {m : M} {v : ℕ} (hm : m.IsHighestUnder {m | m ∈ L} v)
-    (hne : ∀ m ∈ L, m.value ≠ v + 1) : m.IsHighestUnder {m | m ∈ L} (v + 1) := by
-  obtain ⟨hmL, hmv, hub⟩ := M.isHighestUnder_iff.1 hm
-  exact M.isHighestUnder_iff.2 ⟨hmL, by omega, fun m' hm' h ↦ hub m' hm' (by
+private theorem isHighestUnder_succ {m : M} {v w : ℕ} (hm : m.IsHighestUnder L v) (hw : w = v + 1)
+    (hne : ∀ m ∈ L, m.value ≠ w) : m.IsHighestUnder L w :=
+  ⟨hm.mem, by have := hm.value_le; omega, fun m' hm' h ↦ hm.le_value m' hm' (by
     have := hne m' hm'; omega)⟩
 
 @[simp] theorem value_next (L : List M) : ∀ e : Number, (next L e).value = e.value + 1
@@ -103,28 +103,22 @@ private theorem isHighestUnder_succ {m : M} {v : ℕ} (hm : m.IsHighestUnder {m 
 
 /-- Counting preserves the Packing Strategy: a counter at a packed numeral who moves one more
 object, guided only by the two maxims, reaches a packed numeral. -/
-theorem _root_.Numeral.Number.Packed.next :
-    ∀ {e : Number}, e.Packed {m | m ∈ L} → (next L e).Packed {m | m ∈ L}
-  | .one, _ => packed_amass (v := 2) rfl fun hne ↦
-      ⟨fun m hm ↦ by have := m.one_lt_value; have := hne m hm; simp only [Number.value]; omega,
+theorem _root_.Numeral.Number.Packed.next : ∀ {e : Number}, e.Packed L → (next L e).Packed L
+  | .one, _ => packed_amass fun hne ↦
+      ⟨fun m hm ↦ by have := m.one_lt_value; have := hne m hm; simp only [Number.value] at *; omega,
         trivial⟩
-  | .oneAnd r, ⟨hlow, hr⟩ => packed_amass (v := 1 + r.value + 1) (by simp [Number.value]; omega)
-      fun hne ↦ ⟨fun m hm ↦ by
-        have := hlow m hm; have := hne m hm; simp only [Number.value]; omega, hlow, hr⟩
-  | .phrase (.mk n m), ⟨hm, hn⟩ => packed_amass (v := n.value * m.value + 1) rfl fun hne ↦
-      ⟨isHighestUnder_succ hm hne, m.one_lt_value, hn, trivial⟩
+  | .oneAnd r, ⟨hlow, hr⟩ => packed_amass fun hne ↦
+      ⟨fun m hm ↦ by have := hlow m hm; have := hne m hm; simp only [Number.value] at *; omega,
+        hlow, hr⟩
+  | .phrase (.mk n m), ⟨hm, hn⟩ => packed_amass fun hne ↦
+      ⟨isHighestUnder_succ hm rfl hne, m.one_lt_value, hn, trivial⟩
   | .phraseAnd (.mk n m) r, ⟨hm, hr, hn, hrp⟩ => by
     rw [Hurford2007.next]
-    refine packed_amass (v := n.value * m.value + r.value + 1) ?_ fun hne ↦ ?_
-    · split_ifs with h
-      · simp only [Number.value, Phrase.value, value_next, Nat.add_one_mul]; omega
-      · simp only [Number.value, Phrase.value, value_next]; omega
-    · have hm' := isHighestUnder_succ hm hne
-      split_ifs with h
-      · refine ⟨?_, hn.next⟩
-        rwa [value_next, show (n.value + 1) * m.value = n.value * m.value + r.value + 1 by
-          rw [Nat.add_one_mul]; omega]
-      · exact ⟨by rwa [value_next], by rw [value_next]; omega, hn, hrp.next⟩
+    split_ifs with h
+    · exact packed_amass fun hne ↦ ⟨isHighestUnder_succ hm (by
+        simp only [value_next, Nat.add_one_mul]; omega) hne, hn.next⟩
+    · exact packed_amass fun hne ↦ ⟨isHighestUnder_succ hm (by
+        simp only [value_next]; omega) hne, by rw [value_next]; omega, hn, hrp.next⟩
 
 theorem value_count (L : List M) {v : ℕ} (hv : 0 < v) : (count L v).value = v := by
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_one.2 hv
@@ -134,20 +128,26 @@ theorem value_count (L : List M) {v : ℕ} (hv : 0 < v) : (count L v).value = v 
     rw [count, Nat.add_sub_cancel, Function.iterate_succ_apply', value_next]
     exact congrArg (· + 1) (ih k.succ_pos)
 
-theorem packed_count (L : List M) (v : ℕ) : (count L v).Packed {m | m ∈ L} := by
+theorem packed_count (L : List M) (v : ℕ) : (count L v).Packed L := by
   unfold count
   induction v - 1 with
   | zero => trivial
   | succ k ih => rw [Function.iterate_succ_apply']; exact ih.next
 
-theorem _root_.Numeral.Number.Packed.count_value (hL : Set.InjOn M.value {m | m ∈ L})
-    (he : e.Packed {m | m ∈ L}) : count L e.value = e :=
+/-- Over bases with distinct values, counting `v` objects one at a time reaches the numeral that
+dividing `v` by the highest base that fits builds from the top down. -/
+theorem count_eq_ofValue (hL : (L.map M.value).Nodup) {v : ℕ} (hv : 0 < v) :
+    count L v = ofValue L v :=
+  (packed_count L v).eq_of_value_eq hL (packed_ofValue L hv)
+    ((value_count L hv).trans (value_ofValue L hv).symm)
+
+theorem _root_.Numeral.Number.Packed.count_value (hL : (L.map M.value).Nodup) (he : e.Packed L) :
+    count L e.value = e :=
   (packed_count L _).eq_of_value_eq hL he (value_count L e.value_pos)
 
 /-- Over bases with distinct values, the numerals counting reaches are exactly the ones the Packing
 Strategy admits. -/
-theorem range_count (hL : Set.InjOn M.value {m | m ∈ L}) :
-    Set.range (count L) = {e | e.Packed {m | m ∈ L}} :=
+theorem range_count (hL : (L.map M.value).Nodup) : Set.range (count L) = {e | e.Packed L} :=
   Set.ext fun _ ↦ ⟨fun ⟨v, hv⟩ ↦ hv ▸ packed_count L v, fun he ↦ ⟨_, he.count_value hL⟩⟩
 
 /-- `digit d` is the tally of `d` marks. -/
@@ -169,9 +169,6 @@ abbrev million : M := .tenPow 5
 
 /-- The English bases are *ten*, *hundred*, *thousand* and *million*. -/
 def bases : List M := [.ten, hundred, thousand, million]
-
-theorem injOn_bases : Set.InjOn M.value {m | m ∈ bases} :=
-  fun _ ha _ hb ↦ List.inj_on_of_nodup_map (by decide) ha hb
 
 /-- *five million, two thousand, six hundred* is `[[five million] [[two thousand] [six hundred]]]`.
 -/
@@ -211,20 +208,20 @@ def twentyOneHundred : Number :=
   .phrase (.mk (.phraseAnd (.mk (digit 2) .ten) (digit 1)) hundred)
 
 example : count bases 5002600 = fiveMillionTwoThousandSixHundred :=
-  Packed.count_value injOn_bases (e := fiveMillionTwoThousandSixHundred) (by decide)
+  Packed.count_value (by decide) (e := fiveMillionTwoThousandSixHundred) (by decide)
 
 example : sixHundredTwoThousandFiveMillion.value = fiveMillionTwoThousandSixHundred.value := rfl
 
-example : ¬ sixHundredTwoThousandFiveMillion.Packed {m | m ∈ bases} := by decide
+example : ¬ sixHundredTwoThousandFiveMillion.Packed bases := by decide
 
 example : count bases 600000 = sixHundredThousand :=
-  Packed.count_value injOn_bases (e := sixHundredThousand) (by decide)
+  Packed.count_value (by decide) (e := sixHundredThousand) (by decide)
 
 example : sixThousandHundred.value = sixHundredThousand.value := rfl
 
-example : ¬ sixThousandHundred.Packed {m | m ∈ bases} := by decide
+example : ¬ sixThousandHundred.Packed bases := by decide
 
-example : ¬ twentyHundredNinetyNine.Packed {m | m ∈ bases} := by decide
+example : ¬ twentyHundredNinetyNine.Packed bases := by decide
 
 /-- A counter with nine hundreds, nine tens and nine who moves one more object has ten hundreds,
 and gathers them into a *thousand*. -/
@@ -235,7 +232,7 @@ example : twentyOneHundred.value = twoThousandOneHundred.value := rfl
 
 /-- The Packing Strategy rejects *twenty one hundred*, which English allows, one of the rare
 counterexamples to its prediction that each number has a single numeral. -/
-theorem not_packed_twentyOneHundred : ¬ twentyOneHundred.Packed {m | m ∈ bases} := by decide
+theorem not_packed_twentyOneHundred : ¬ twentyOneHundred.Packed bases := by decide
 
 /-- Counting forward from *two thousand and ninety nine* gives *two thousand, one hundred*, not
 *twenty one hundred*. -/
@@ -288,9 +285,6 @@ def fourHundred : M := .base 400
 /-- The bases of the example are 15, 20 and 400. -/
 def bases : List M := [fifteen, twenty, fourHundred]
 
-theorem injOn_bases : Set.InjOn M.value {m | m ∈ bases} :=
-  fun _ ha _ hb ↦ List.inj_on_of_nodup_map (by decide) ha hb
-
 /-- *šiaʼu kuu*, fifteen and four, is 19. -/
 def nineteen : Number := .phraseAnd (.mk .one fifteen) (digit 4)
 
@@ -304,11 +298,11 @@ def transposed : Number :=
   .phraseAnd (.mk nineteen twenty) (.phraseAnd (.mk nineteen fourHundred) nineteen)
 
 example : count bases 7999 = numeral7999 :=
-  Packed.count_value injOn_bases (e := numeral7999) (by decide)
+  Packed.count_value (by decide) (e := numeral7999) (by decide)
 
 example : transposed.value = numeral7999.value := rfl
 
-example : ¬ transposed.Packed {m | m ∈ bases} := by decide
+example : ¬ transposed.Packed bases := by decide
 
 end Mixtec
 
@@ -319,9 +313,6 @@ namespace Hawaiian
 /-- The Hawaiian bases are 10, 20, 40, 400, 4000, 40,000 and 400,000. -/
 def bases : List M :=
   [.base 10, .base 20, .base 40, .base 400, .base 4000, .base 40000, .base 400000]
-
-theorem injOn_bases : Set.InjOn M.value {m | m ∈ bases} :=
-  fun _ ha _ hb ↦ List.inj_on_of_nodup_map (by decide) ha hb
 
 /-- The numeral for 609,751 is one 400,000, five 40,000s, two 4000s, four 400s, three 40s,
 twenty, ten and one. -/
@@ -335,7 +326,7 @@ def numeral609751 : Number :=
   .phraseAnd (.mk .one (.base 10)) .one
 
 example : count bases 609751 = numeral609751 :=
-  Packed.count_value injOn_bases (e := numeral609751) (by decide)
+  Packed.count_value (by decide) (e := numeral609751) (by decide)
 
 end Hawaiian
 
