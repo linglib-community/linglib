@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 public import Mathlib.Analysis.SpecialFunctions.Log.ERealExp
 public import Mathlib.InformationTheory.KullbackLeibler.Basic
 
@@ -16,22 +17,15 @@ Reweighting a reference measure `μ` by the exponential of minus a cost gives th
 `q`, the expected cost under `q` and the divergence of `q` from the reference, together with the
 mass of the reweighted measure, equal [the divergence of `q` from the reweighted measure together
 with the mass of the reference](##InformationTheory.lintegral_add_klDiv_add_withDensity). The
-identity holds between extended nonnegative reals with no condition on supports: both sides are
-infinite exactly when `q` charges a set the reweighted measure does not.
-
-So expected cost plus divergence from the reference is [least at the reweighted
-measure](##InformationTheory.measure_univ_le_lintegral_add_klDiv_add_withDensity), and [only
-there](##InformationTheory.lintegral_add_klDiv_add_withDensity_eq_iff), among all finite measures
-and not only those of a fixed mass.
+identity holds between extended nonnegative reals with no condition on supports or integrability:
+each side is an integral of a nonnegative function, and both are infinite in particular whenever
+`q` charges a set the reweighted measure does not.
 
 ## TODO
 
-* Prove `lintegral_add_klDiv_add_withDensity`. Where `q` is not absolutely continuous with respect
-  to the reweighted measure both sides are `∞`: either `q` is not absolutely continuous with
-  respect to `μ`, or it charges the set of infinite cost. Otherwise write `g` for the density of
-  `q` against the reweighted measure and `w = exp (-c)`; then `q` has density `g * w` against `μ`,
-  and with `klFun x = x * log x + 1 - x` the pointwise identity
-  `klFun g * w + 1 = klFun (g * w) + g * w * c + w` integrates against `μ` to the statement.
+* The form for probability measures, in which the reweighted measure is normalized and the two
+  masses become the logarithm of the normalizer, on `ProbabilityTheory.Kernel.ofDensity`.
+* The form for a mixture of measures against one decoder.
 
 ## References
 
@@ -44,6 +38,39 @@ open MeasureTheory
 open scoped ENNReal
 
 namespace InformationTheory
+
+open Real in
+private theorem klFun_exp_neg_mul (r s : ℝ) (hs : 0 ≤ s) :
+    r * (exp (-r) * s) + klFun (exp (-r) * s) + exp (-r) = exp (-r) * klFun s + 1 := by
+  rcases hs.eq_or_lt with rfl | hs
+  · simp [klFun]; ring
+  · simp only [klFun]
+    rw [Real.log_mul (exp_pos _).ne' hs.ne', Real.log_exp]
+    ring
+
+open Real in
+private theorem ofReal_klFun_exp_neg_mul (c g : ℝ≥0∞) (hg : EReal.exp (-(c : EReal)) ≠ 0 → g < ∞) :
+    c * (EReal.exp (-(c : EReal)) * g) +
+        ENNReal.ofReal (klFun (EReal.exp (-(c : EReal)) * g).toReal) + EReal.exp (-(c : EReal)) =
+      EReal.exp (-(c : EReal)) * ENNReal.ofReal (klFun g.toReal) + 1 := by
+  induction c with
+  | top => simp [klFun_zero]
+  | coe r =>
+    have hw : EReal.exp (-((r : ℝ≥0∞) : EReal)) = ENNReal.ofReal (exp (-(r : ℝ))) := by
+      rw [← EReal.exp_coe]; rfl
+    rw [hw] at hg ⊢
+    lift g to NNReal using (hg (by positivity)).ne
+    have h := klFun_exp_neg_mul r g g.2
+    have e1 : (r : ℝ≥0∞) = ENNReal.ofReal r := by simp
+    have e2 : (g : ℝ≥0∞) = ENNReal.ofReal g := by simp
+    rw [e1, e2, ← ENNReal.ofReal_mul (by positivity), ← ENNReal.ofReal_mul (by positivity),
+      ENNReal.toReal_ofReal (by positivity), ENNReal.toReal_ofReal (by positivity),
+      ← ENNReal.ofReal_add (by positivity) (klFun_nonneg (by positivity)),
+      ← ENNReal.ofReal_add (add_nonneg (by positivity)
+        (klFun_nonneg (x := exp (-(r : ℝ)) * g) (by positivity))) (by positivity),
+      ← ENNReal.ofReal_mul (by positivity), h,
+      ENNReal.ofReal_add ?_ zero_le_one, ENNReal.ofReal_one]
+    exact mul_nonneg (exp_pos _).le (klFun_nonneg g.2)
 
 variable {β : Type*} [MeasurableSpace β] {c : β → ℝ≥0∞} (q μ : Measure β) [IsFiniteMeasure q]
   [IsFiniteMeasure μ]
@@ -59,23 +86,51 @@ the mass of the reference. -/
 theorem lintegral_add_klDiv_add_withDensity (hc : Measurable c) :
     ∫⁻ x, c x ∂q + klDiv q μ + μ.withDensity (fun x ↦ EReal.exp (-(c x : EReal))) Set.univ =
       klDiv q (μ.withDensity fun x ↦ EReal.exp (-(c x : EReal))) + μ Set.univ := by
-  sorry
-
-/-- Expected cost plus divergence from the reference is at least the mass the reweighting
-removes. -/
-theorem measure_univ_le_lintegral_add_klDiv_add_withDensity (hc : Measurable c) :
-    μ Set.univ ≤
-      ∫⁻ x, c x ∂q + klDiv q μ + μ.withDensity (fun x ↦ EReal.exp (-(c x : EReal))) Set.univ :=
-  lintegral_add_klDiv_add_withDensity q μ hc ▸ le_add_self
-
-/-- Expected cost plus divergence from the reference attains that bound only at the reweighted
-measure. -/
-theorem lintegral_add_klDiv_add_withDensity_eq_iff (hc : Measurable c) :
-    ∫⁻ x, c x ∂q + klDiv q μ + μ.withDensity (fun x ↦ EReal.exp (-(c x : EReal))) Set.univ =
-        μ Set.univ ↔
-      q = μ.withDensity fun x ↦ EReal.exp (-(c x : EReal)) := by
-  rw [lintegral_add_klDiv_add_withDensity q μ hc, ← klDiv_eq_zero_iff]
-  exact ⟨fun h ↦ (ENNReal.add_left_inj (measure_ne_top μ _)).1 (h.trans (zero_add _).symm),
-    fun h ↦ by rw [h, zero_add]⟩
+  set w : β → ℝ≥0∞ := fun x ↦ EReal.exp (-(c x : EReal)) with hw_def
+  have hw : Measurable w := EReal.measurable_exp.comp hc.coe_ereal_ennreal.neg
+  by_cases hq : q ≪ μ.withDensity w
+  · have hqμ : q ≪ μ := hq.trans (withDensity_absolutelyContinuous μ w)
+    set g := q.rnDeriv (μ.withDensity w) with hg_def
+    have hg : Measurable g := Measure.measurable_rnDeriv _ _
+    have hf : q.rnDeriv μ =ᵐ[μ] w * g := by
+      have h1 : q = μ.withDensity (w * g) := by
+        rw [withDensity_mul μ hw hg, Measure.withDensity_rnDeriv_eq q _ hq]
+      conv_lhs => rw [h1]
+      exact Measure.rnDeriv_withDensity μ (hw.mul hg)
+    have hfin : ∀ᵐ x ∂μ, w x ≠ 0 → g x < ∞ :=
+      (ae_withDensity_iff hw).1 (Measure.rnDeriv_lt_top q _)
+    rw [klDiv_eq_lintegral_klFun_of_ac hq, klDiv_eq_lintegral_klFun_of_ac hqμ,
+      ← lintegral_rnDeriv_mul hqμ hc.aemeasurable, withDensity_apply _ MeasurableSet.univ,
+      Measure.restrict_univ, lintegral_withDensity_eq_lintegral_mul μ hw (by fun_prop),
+      ← lintegral_one (μ := μ), ← lintegral_add_left (by fun_prop),
+      ← lintegral_add_left (by fun_prop), ← lintegral_add_left (by fun_prop)]
+    refine lintegral_congr_ae ?_
+    filter_upwards [hf, hfin] with x hx hx'
+    simp only [hx, Pi.mul_apply]
+    rw [mul_comm (w x * g x) (c x)]
+    exact ofReal_klFun_exp_neg_mul (c x) (g x) hx'
+  · rw [klDiv_of_not_ac hq, top_add]
+    by_cases hqμ : q ≪ μ
+    swap; · simp [klDiv_of_not_ac hqμ]
+    have hc_top : q {x | c x = ∞} ≠ 0 := by
+      intro h0
+      refine hq (Measure.AbsolutelyContinuous.mk fun s hs hμs ↦ ?_)
+      rw [withDensity_apply_eq_zero' hw.aemeasurable] at hμs
+      have := hqμ hμs
+      refine measure_mono_null (fun x hx ↦ ?_) (measure_union_null this h0)
+      by_cases hx' : c x = ∞
+      · exact Or.inr hx'
+      · refine Or.inl ⟨?_, hx⟩
+        simp only [Set.mem_ofPred_eq, hw_def, ne_eq, EReal.exp_eq_zero_iff]
+        lift c x to NNReal using hx' with r
+        exact (EReal.coe_ne_bot (-(r : ℝ)))
+    have : ∫⁻ x, c x ∂q = ∞ := by
+      refine top_unique ?_
+      calc ∞ = ∫⁻ x in {x | c x = ∞}, ∞ ∂q := by
+            rw [setLIntegral_const, ENNReal.top_mul hc_top]
+        _ = ∫⁻ x in {x | c x = ∞}, c x ∂q :=
+            (setLIntegral_congr_fun (hc (measurableSet_singleton _)) fun x hx ↦ hx.symm)
+        _ ≤ ∫⁻ x, c x ∂q := setLIntegral_le_lintegral _ _
+    simp [this]
 
 end InformationTheory
