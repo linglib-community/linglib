@@ -204,8 +204,7 @@ private theorem numTraces_le_of_mem_subtrees {s : RoseTree (α ⊕ β)} :
     · exact le_rfl
     · obtain ⟨c, hc, hs⟩ := List.mem_flatMap.1 h
       exact (numTraces_le_of_mem_subtrees c hs).trans
-        ((List.single_le_sum (by simp) _ (List.mem_map_of_mem hc)).trans
-          (RoseTree.sum_map_countP_leaves_le_node _ a cs))
+        (Multiset.countP_le_of_le _ (RoseTree.leaves_le_of_mem_children hc))
 
 /-- A trace cut of a tree without traces that leaves no trace is the empty cut, since each tree it
 extracts leaves one. -/
