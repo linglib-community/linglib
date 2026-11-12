@@ -4,7 +4,7 @@ public import Linglib.Semantics.Questions.Partition.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Insert
 public import Linglib.Core.Order.UpperLower.Closure
-public import Linglib.Pragmatics.Gricean.Prior
+public import Linglib.Pragmatics.Implicature.OptimalAssertion.Prior
 
 /-!
 # Spector (2007): Scalar Implicatures: Exhaustivity and Gricean Reasoning
@@ -28,10 +28,10 @@ entails", `Pos i = P`, and `maximalStates_eq` its theorem: the unique maximal st
 the minimal valuations of `P` (`Minimal`), so a positive answer implicates its
 exhaustification in the sense of Groenendijk and Stokhof. The theorem is an instance of the
 general one about optimal assertions: at the finest question the optimal answer is
-`Gricean.IsOptimal` (`isOptimal_bot_iff`), the minimal valuations are the minimal worlds
-against the positive propositions (`exhMW_positives`), and the positive propositions are closed
-under intersection and nonempty unions. Closure under intersection also makes the optimal answer
-the least probable positive proposition the state entails under every prior
+`Implicature.IsOptimalAssertion` (`isOptimal_bot_iff`), the minimal valuations are the minimal
+worlds against the positive propositions (`exhMW_positives`), and the positive propositions are
+closed under intersection and nonempty unions. Closure under intersection also makes the optimal
+answer the least probable positive proposition the state entails under every prior
 (`isOptimal_iff_forall_measure`). `no_unwanted_negation` checks the
 reasoning against the disjunction case: no optimal state for *A or B* decides *A*.
 
@@ -212,10 +212,10 @@ theorem Pos_isPositive {i : Proposition Atom} (hi : i.Nonempty) (hnu : Pos i ≠
 
 omit [DecidableEq Atom] in
 /-- At the question that separates every two worlds, the paper's optimal answer is the optimal
-assertion `Gricean.IsOptimal`. -/
+assertion `Implicature.IsOptimalAssertion`. -/
 theorem isOptimal_bot_iff {W : Type*} {S : Set (Set W)} {α i : Set W} :
-    IsOptimal ⊥ S α i ↔ Gricean.IsOptimal S α i := by
-  simp only [IsOptimal, relativize_bot, Gricean.isOptimal_iff]
+    IsOptimal ⊥ S α i ↔ Implicature.IsOptimalAssertion S α i := by
+  simp only [IsOptimal, relativize_bot, Implicature.isOptimalAssertion_iff]
 
 theorem IsPositive.empty_notMem {P : Proposition Atom} (hP : IsPositive P) : ∅ ∉ P := fun h ↦
   hP.ne_univ (Set.eq_univ_of_forall fun V ↦ hP.mem_of_subset h (Finset.empty_subset V))
@@ -287,7 +287,7 @@ theorem maximalStates_eq {P : Proposition Atom} (hP : IsPositive P) :
     maximalStates ⊥ positives P = {{V | Minimal (· ∈ P) V}} := by
   have hExh : {V | Minimal (· ∈ P) V} ∈ optimalStates ⊥ positives P :=
     ⟨exists_minimal_of_wellFoundedLT _ hP.nonempty, isOptimal_bot_iff.2 <|
-      exhMW_positives P ▸ Gricean.isOptimal_exhMW fun w hw ↦
+      exhMW_positives P ▸ Implicature.isOptimalAssertion_exhMW fun w hw ↦
         let ⟨m, hmw, hm⟩ := exists_minimal_le_of_wellFoundedLT (· ∈ P) w hw
         ⟨m, exhMW_positives P ▸ hm, satisfied_positives_subset_iff.2 hmw⟩⟩
   have hent : ∀ i ∈ optimalStates ⊥ positives P, {V | Minimal (· ∈ P) V} ⊆ i := fun i hi V hV ↦ by
@@ -312,7 +312,8 @@ theorem isOptimal_iff_forall_measure [MeasurableSpace (Valuation Atom)]
     (hi : i ⊆ P) :
     IsOptimal ⊥ positives P i ↔ ∀ μ : MeasureTheory.Measure (Valuation Atom),
       ∀ Q ∈ positives, i ⊆ Q → μ P ≤ μ Q :=
-  isOptimal_bot_iff.trans (Gricean.isOptimal_iff_forall_measure infClosed_positives hP hi)
+  isOptimal_bot_iff.trans
+    (Implicature.isOptimalAssertion_iff_forall_measure infClosed_positives hP hi)
 
 -- The same in terms of divergence: over finitely many atoms, a positive answer is optimal in a
 -- consistent state exactly when the state's beliefs are closest to its literal reading.
@@ -325,7 +326,8 @@ theorem isOptimal_iff_forall_klDiv [Fintype Atom] [MeasurableSpace (Valuation At
         ∀ Q ∈ positives, InformationTheory.klDiv (ProbabilityTheory.cond μ i)
           (ProbabilityTheory.cond μ P) ≤
             InformationTheory.klDiv (ProbabilityTheory.cond μ i) (ProbabilityTheory.cond μ Q) :=
-  isOptimal_bot_iff.trans (Gricean.isOptimal_iff_forall_klDiv infClosed_positives hP hi)
+  isOptimal_bot_iff.trans
+    (Implicature.isOptimalAssertion_iff_forall_klDiv infClosed_positives hP hi)
 
 theorem implicates_setOf_minimal {P : Proposition Atom} (hP : IsPositive P) :
     Implicates ⊥ positives P {V | Minimal (· ∈ P) V} := by
