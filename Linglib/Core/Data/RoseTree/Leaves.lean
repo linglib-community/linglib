@@ -68,6 +68,14 @@ def leaves (t : RoseTree α) : Multiset α := t.leavesWithDepth.map Prod.fst
   refine congrArg List.sum (List.map_congr_left fun t _ ↦ ?_)
   simp [leaves, Multiset.map_map]
 
+/-- An additive map of the leaves of a branching node is the sum of its values on the leaves of
+the children. -/
+theorem map_leaves_node_cons {F M : Type*} [AddMonoid M] [FunLike F (Multiset α) M]
+    [AddMonoidHomClass F (Multiset α) M] (φ : F) :
+    φ (leaves (node a (c :: cs))) = ((c :: cs).map fun t ↦ φ t.leaves).sum := by
+  rw [leaves_node_cons, map_list_sum, List.map_map]
+  rfl
+
 /-! ### Cardinality -/
 
 /-- The projection has one element per leaf. -/
@@ -77,23 +85,10 @@ theorem card_leavesWithDepth (t : RoseTree α) :
   | node a cs ih =>
     rcases cs with _ | ⟨c, cs⟩
     · rfl
-    · rw [leavesWithDepth_node_cons, numLeaves_node]
-      have hsum : ∀ ds : List (RoseTree α), (∀ d ∈ ds, Multiset.card d.leavesWithDepth
-            = d.numLeaves) →
-          Multiset.card ((ds.map fun t ↦ t.leavesWithDepth.map fun p ↦ (p.1, p.2 + 1)).sum)
-            = (ds.map numLeaves).sum := by
-        intro ds hds
-        induction ds with
-        | nil => rfl
-        | cons d ds ihd =>
-          simp only [List.map_cons, List.sum_cons, Multiset.card_add, Multiset.card_map]
-          rw [hds d List.mem_cons_self, ihd fun x hx ↦ hds x (List.mem_cons_of_mem _ hx)]
-      rw [hsum (c :: cs) ih]
-      have : 0 < ((c :: cs).map numLeaves).sum := by
-        simp only [List.map_cons, List.sum_cons]
-        have := numLeaves_pos c
-        omega
-      omega
+    · rw [leavesWithDepth_node_cons, numLeaves_node_of_ne_nil a (List.cons_ne_nil c cs),
+        ← Multiset.cardHom_apply, map_list_sum, List.map_map]
+      exact congrArg List.sum (List.map_congr_left fun d hd ↦ by
+        rw [Function.comp_apply, Multiset.cardHom_apply, Multiset.card_map, ih d hd])
 
 theorem card_leaves (t : RoseTree α) : Multiset.card t.leaves = t.numLeaves := by
   rw [leaves, Multiset.card_map, card_leavesWithDepth]
@@ -149,9 +144,8 @@ theorem countP_leaves_leaf (a : α) :
     Nat.zero_add]
 
 @[simp] theorem countP_leaves_node_cons (a : α) (c : RoseTree α) (cs : List (RoseTree α)) :
-    (leaves (node a (c :: cs))).countP p = ((c :: cs).map fun t ↦ t.leaves.countP p).sum := by
-  rw [leaves_node_cons, ← Multiset.coe_countPAddMonoidHom, map_list_sum, List.map_map]
-  rfl
+    (leaves (node a (c :: cs))).countP p = ((c :: cs).map fun t ↦ t.leaves.countP p).sum :=
+  map_leaves_node_cons a c cs (Multiset.countPAddMonoidHom p)
 
 theorem countP_leaves_node_of_ne_nil (a : α) {cs : List (RoseTree α)} (h : cs ≠ []) :
     (leaves (node a cs)).countP p = (cs.map fun t ↦ t.leaves.countP p).sum := by
