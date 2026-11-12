@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.Gricean.Basic
+public import Linglib.Pragmatics.Implicature.OptimalAssertion
 public import Linglib.Semantics.Questions.Polar
 
 /-!
@@ -17,7 +17,7 @@ member of every `Set.Iic`, is the inconsistent speaker.
 Asserting `φ` implicates `Kφ` by Quality and the primary implicature `¬Kψ` of each alternative
 `ψ` that asymmetrically entails `φ`; for such a `ψ`, `K¬ψ` is a secondary implicature iff it is
 consistent with `Kφ` and all the primary implicatures. The states satisfying `Kφ` and the primary
-implicatures are those in which asserting `φ` is optimal for the speaker, `Gricean.IsOptimal`.
+implicatures are those in which `φ` is an optimal assertion, `Implicature.IsOptimalAssertion`.
 
 ## Main definitions
 
@@ -113,11 +113,11 @@ theorem compl_Iic_inter_polar (ψ : Set W) :
 
 /-! ### The speaker's side -/
 
-/-- Asserting `φ` is optimal for the speaker in the states that satisfy Quality and the primary
+/-- `φ` is an optimal assertion in the states that satisfy Quality and the primary
 implicatures. -/
-theorem isOptimal_iff_mem :
-    Gricean.IsOptimal alts φ s ↔ s ∈ Iic φ ∩ primaryImplicatures alts φ := by
-  rw [Gricean.isOptimal_iff, mem_inter_iff, mem_primaryImplicatures]
+theorem isOptimalAssertion_iff_mem :
+    Implicature.IsOptimalAssertion alts φ s ↔ s ∈ Iic φ ∩ primaryImplicatures alts φ := by
+  rw [Implicature.isOptimalAssertion_iff, mem_inter_iff, mem_primaryImplicatures]
   exact and_congr_right fun _ ↦ ⟨fun h ψ hψ hlt hsub ↦ h ψ hψ hsub hlt,
     fun h ψ hψ hsub hlt ↦ h ψ hψ hlt hsub⟩
 

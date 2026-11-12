@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 public import Linglib.Core.MeasureTheory.Measure.Dirac
-public import Linglib.Pragmatics.Gricean.Basic
+public import Linglib.Pragmatics.Implicature.OptimalAssertion
 public import Mathlib.MeasureTheory.Measure.Count
 
 /-!
@@ -10,23 +10,25 @@ public import Mathlib.MeasureTheory.Measure.Count
 
 Under a prior on the worlds, the more informative of two propositions is the less probable one,
 the one of greater surprisal. An assertion a speaker is certain of is [the least probable
-alternative she is certain of under every prior](##Gricean.forall_subset_iff_forall_measure_le)
+alternative she is certain of under every prior](##Implicature.forall_subset_iff_forall_measure_le)
 exactly when it entails all the others. The assertion is optimal, in that no stronger alternative
 is one she is certain of, exactly when it is [the least probable under some prior that gives every
-world positive probability](##Gricean.isOptimal_iff_exists_measure), over finitely many worlds.
+world positive probability](##Implicature.isOptimalAssertion_iff_exists_measure), over finitely
+many worlds.
 The two agree when the alternatives are closed under intersection: asserting an alternative is
 then optimal exactly when it is [the least probable alternative the speaker is certain of whatever
-the prior](##Gricean.isOptimal_iff_forall_measure).
+the prior](##Implicature.isOptimalAssertion_iff_forall_measure).
 
 The divergence of the speaker's beliefs, the prior conditioned on her state, from the literal
 reading of a proposition, the prior conditioned on it, is finite [exactly when she is certain of
-the proposition](##Gricean.klDiv_cond_cond_ne_top_iff), and among the propositions she is
-certain of it is [least for the least probable](##Gricean.klDiv_cond_cond_le_iff). So Quality
+the proposition](##Implicature.klDiv_cond_cond_ne_top_iff), and among the propositions she is
+certain of it is [least for the least probable](##Implicature.klDiv_cond_cond_le_iff). So Quality
 is finiteness of the divergence and Quantity its size, and under closure by intersection an
 assertion is optimal exactly when it [minimizes the divergence among the alternatives under every
-prior](##Gricean.isOptimal_iff_forall_klDiv) that gives every world positive probability. On
-the hearer's side, closure under unions as well makes the minimal worlds of the assertion [at
-most as probable as any state in which it is optimal](##Gricean.IsOptimal.measure_exhMW_le).
+prior](##Implicature.isOptimalAssertion_iff_forall_klDiv) that gives every world positive
+probability. On the hearer's side, closure under unions as well makes the minimal worlds of the
+assertion [at most as probable as any state in which it is
+optimal](##Implicature.IsOptimalAssertion.measure_exhMW_le).
 
 ## Implementation notes
 
@@ -38,11 +40,12 @@ statements about divergence, which are over finitely many worlds.
 
 * [grice-1975]
 * [spector-2007]
+* [benz-vanrooij-2007]
 -/
 
 @[expose] public section
 
-namespace Gricean
+namespace Implicature
 
 open MeasureTheory Set
 
@@ -58,9 +61,9 @@ theorem forall_subset_iff_forall_measure_le [MeasurableSingletonClass W] :
 /-- With the alternatives closed under intersection, asserting an alternative the speaker is
 certain of is optimal exactly when it is at most as probable as every alternative she is certain
 of, whatever the prior. -/
-theorem isOptimal_iff_forall_measure [MeasurableSingletonClass W] (hinf : InfClosed alts)
+theorem isOptimalAssertion_iff_forall_measure [MeasurableSingletonClass W] (hinf : InfClosed alts)
     (hφ : φ ∈ alts) (hs : s ⊆ φ) :
-    IsOptimal alts φ s ↔ ∀ μ : Measure W, ∀ ψ ∈ alts, s ⊆ ψ → μ φ ≤ μ ψ := by
+    IsOptimalAssertion alts φ s ↔ ∀ μ : Measure W, ∀ ψ ∈ alts, s ⊆ ψ → μ φ ≤ μ ψ := by
   rw [← forall_subset_iff_forall_measure_le]
   refine ⟨fun h ψ hψ hsψ ↦ by_contra fun hφψ ↦ ?_,
     fun h ↦ ⟨hs, fun ψ hψ hsψ hlt ↦ hlt.2 (h ψ hψ hsψ)⟩⟩
@@ -70,8 +73,8 @@ theorem isOptimal_iff_forall_measure [MeasurableSingletonClass W] (hinf : InfClo
 /-- Over finitely many worlds, asserting what the speaker is certain of is optimal exactly when it
 is at most as probable as every alternative she is certain of under some prior that gives every
 world positive probability. -/
-theorem isOptimal_iff_exists_measure [Fintype W] [DiscreteMeasurableSpace W] (hs : s ⊆ φ) :
-    IsOptimal alts φ s ↔ ∃ μ : Measure W, IsFiniteMeasure μ ∧ (∀ w, μ {w} ≠ 0) ∧
+theorem isOptimalAssertion_iff_exists_measure [Fintype W] [DiscreteMeasurableSpace W] (hs : s ⊆ φ) :
+    IsOptimalAssertion alts φ s ↔ ∃ μ : Measure W, IsFiniteMeasure μ ∧ (∀ w, μ {w} ≠ 0) ∧
       ∀ ψ ∈ alts, s ⊆ ψ → μ φ ≤ μ ψ := by
   constructor
   · intro h
@@ -104,9 +107,9 @@ theorem isOptimal_iff_exists_measure [Fintype W] [DiscreteMeasurableSpace W] (hs
 assertion are at most as probable, whatever the prior, as any consistent state in which the
 assertion is optimal, taken up to the worlds the alternatives do not tell apart: the hearer who
 takes the speaker to be as informed as her assertion allows takes her to be in that state. -/
-theorem IsOptimal.measure_exhMW_le (hinf : InfClosed alts)
+theorem IsOptimalAssertion.measure_exhMW_le (hinf : InfClosed alts)
     (hsup : ∀ A ⊆ alts, A.Nonempty → ⋃₀ A ∈ alts) (hφ : φ ∈ alts) (hne : s.Nonempty)
-    (hs : IsOptimal alts φ s) (μ : Measure W) :
+    (hs : IsOptimalAssertion alts φ s) (μ : Measure W) :
     μ (Exhaustification.exhMW alts φ) ≤
       μ (Preorder.satisfied (· ∈ ·) alts ⁻¹' (Preorder.satisfied (· ∈ ·) alts '' s)) :=
   measure_mono fun _ hu ↦ hs.exists_satisfied_eq hinf hsup hφ hne hu
@@ -154,16 +157,16 @@ omit [IsFiniteMeasure μ] in
 consistent speaker exactly when, under every prior that gives every world positive probability,
 her beliefs are at a finite divergence from its literal reading, and at no greater a divergence
 than from the literal reading of any alternative. -/
-theorem isOptimal_iff_forall_klDiv [Fintype W] (hinf : InfClosed alts) (hφ : φ ∈ alts)
+theorem isOptimalAssertion_iff_forall_klDiv [Fintype W] (hinf : InfClosed alts) (hφ : φ ∈ alts)
     (hne : s.Nonempty) :
-    IsOptimal alts φ s ↔ ∀ μ : Measure W, IsFiniteMeasure μ → (∀ w, μ {w} ≠ 0) →
+    IsOptimalAssertion alts φ s ↔ ∀ μ : Measure W, IsFiniteMeasure μ → (∀ w, μ {w} ≠ 0) →
       klDiv μ[|s] μ[|φ] ≠ ⊤ ∧ ∀ ψ ∈ alts, klDiv μ[|s] μ[|φ] ≤ klDiv μ[|s] μ[|ψ] := by
   constructor
   · intro h μ _ hμ
-    refine ⟨(klDiv_cond_cond_ne_top_iff hμ).2 h.subset, fun ψ hψ ↦ ?_⟩
+    refine ⟨(klDiv_cond_cond_ne_top_iff hμ).2 h.admissible, fun ψ hψ ↦ ?_⟩
     by_cases hsψ : s ⊆ ψ
-    · exact (klDiv_cond_cond_le_iff hμ hne h.subset hsψ).2
-        ((isOptimal_iff_forall_measure hinf hφ h.subset).1 h μ ψ hψ hsψ)
+    · exact (klDiv_cond_cond_le_iff hμ hne h.admissible hsψ).2
+        ((isOptimalAssertion_iff_forall_measure hinf hφ h.admissible).1 h μ ψ hψ hsψ)
     · exact le_of_le_of_eq le_top (not_not.1 (mt (klDiv_cond_cond_ne_top_iff hμ).1 hsψ)).symm
   · intro h
     have hc : ∀ w : W, (Measure.count : Measure W) {w} ≠ 0 := fun w ↦ by simp
@@ -181,4 +184,4 @@ theorem isOptimal_iff_forall_klDiv [Fintype W] (hinf : InfClosed alts) (hφ : φ
 
 end KullbackLeibler
 
-end Gricean
+end Implicature
