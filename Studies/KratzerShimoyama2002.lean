@@ -15,8 +15,8 @@ public import Linglib.Data.Examples.Readers
 
 This file formalizes the paper's Hamblin semantics for indeterminate pronouns and its
 application to German *irgendein*. Every expression denotes a set of alternatives; an
-indeterminate pronoun denotes a set of individuals, composition is pointwise functional
-application, and the alternatives expand until an operator, existential, universal, negative,
+indeterminate pronoun denotes the individuals of its ontological category, composition is
+pointwise functional application, and the alternatives expand until an operator, existential, universal, negative,
 or interrogative, closes them. Since closure returns a single proposition, alternatives are
 caught by the nearest operator, which is the paper's locality constraint on association.
 Determiner quantification is the special case in which the alternatives are individuals.
@@ -141,25 +141,30 @@ end Composition
 
 section Derivation
 
-variable {W E : Type*} (human slept : E → W → Prop)
+variable {W E : Type*} (sort : ProForm.OntologicalCategory → E → W → Prop)
+  (slept : E → W → Prop)
 
-/-- `dare human w` is *dare* 'who', the humans at the evaluation world. -/
-def dare (w : W) : Set E := {x | human x w}
+/-- The individual alternatives of an indeterminate at the evaluation world are the individuals
+of its ontological category, so that *dare* 'who' denotes the humans. -/
+def alternatives (p : ProForm) (w : W) : Set E := {x | sort p.ontology x w}
 
 /-- `nemutta slept` is *nemutta* 'slept', a single alternative. -/
 def nemutta : Set (E → W → Prop) := {slept}
 
 theorem dare_nemutta (w : W) :
-    Set.seq (nemutta slept) (dare human w) = {p | ∃ x, human x w ∧ p = slept x} := by
+    Set.seq (nemutta slept) (alternatives sort Japanese.Pronouns.dare w) =
+      {p | ∃ x, sort .person x w ∧ p = slept x} := by
   rw [nemutta, seq_singleton]
-  ext p; simp [dare, eq_comm]
+  ext p; simp [alternatives, Japanese.Pronouns.dare, eq_comm]
 
 theorem dare_ka (w : W) :
-    opExists (Set.seq (nemutta slept) (dare human w)) = {fun w' ↦ ∃ x, human x w ∧ slept x w'} := by
+    opExists (Set.seq (nemutta slept) (alternatives sort Japanese.Pronouns.dare w)) =
+      {fun w' ↦ ∃ x, sort .person x w ∧ slept x w'} := by
   rw [nemutta, seq_singleton, opExists_image]; rfl
 
 theorem dare_mo (w : W) :
-    opForall (Set.seq (nemutta slept) (dare human w)) = {fun w' ↦ ∀ x, human x w → slept x w'} := by
+    opForall (Set.seq (nemutta slept) (alternatives sort Japanese.Pronouns.dare w)) =
+      {fun w' ↦ ∀ x, sort .person x w → slept x w'} := by
   rw [nemutta, seq_singleton, opForall_image]; rfl
 
 end Derivation

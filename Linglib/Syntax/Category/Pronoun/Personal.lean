@@ -139,6 +139,6 @@ def toWord (p : PersonalPronoun) : Morphology.Word := p.toPronoun.toWord (some .
 @[simp]
 theorem bindingClassOf_toWord (p : PersonalPronoun) :
     Binding.bindingClassOf p.toWord = some .pronoun :=
-  p.toPronoun.bindingClassOf_toWord (by decide)
+  p.toPronoun.bindingClassOf_toWord (by decide) (by decide)
 
 end PersonalPronoun

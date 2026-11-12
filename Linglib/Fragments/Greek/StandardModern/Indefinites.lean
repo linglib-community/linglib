@@ -47,17 +47,19 @@ def opjosdhipote : IndefinitePronoun := { form := "opjosdhipote", ontology := .p
 
 /-- The *ka*-series. -/
 def kaSeries : IndefinitePronoun.Series :=
-  ⟨"ka-", {kapjos, kati, ⟨{ form := "kapu" }, .place⟩, ⟨{ form := "kapote" }, .time⟩,
-    ⟨{ form := "kapos" }, .manner⟩}⟩
+  ⟨"ka-", {kapjos, kati, { form := "kapu", ontology := .place },
+    { form := "kapote", ontology := .time },
+    { form := "kapos", ontology := .manner }}⟩
 
 /-- The *tipota*-series, which has two forms for a person and none for a manner. -/
 def tipotaSeries : IndefinitePronoun.Series :=
-  ⟨"tipota", {kanenas, ⟨{ form := "kanis" }, .person⟩, tipota, ⟨{ form := "puthena" }, .place⟩,
-    ⟨{ form := "pote" }, .time⟩}⟩
+  ⟨"tipota", {kanenas, { form := "kanis", ontology := .person }, tipota,
+    { form := "puthena", ontology := .place },
+    { form := "pote", ontology := .time }}⟩
 
 /-- The *-dhipote* series, which has no member for a manner. -/
 def dhipoteSeries : IndefinitePronoun.Series :=
-  ⟨"-dhipote", {opjosdhipote, ⟨{ form := "otidhipote" }, .thing⟩,
-    ⟨{ form := "opudhipote" }, .place⟩, ⟨{ form := "opotedhipote" }, .time⟩}⟩
+  ⟨"-dhipote", {opjosdhipote, { form := "otidhipote", ontology := .thing },
+    { form := "opudhipote", ontology := .place }, { form := "opotedhipote", ontology := .time }}⟩
 
 end Greek.StandardModern.Indefinites

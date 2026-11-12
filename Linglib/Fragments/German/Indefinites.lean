@@ -47,14 +47,17 @@ def niemand : IndefinitePronoun := { form := "niemand", ontology := .person }
 /-! ### The series -/
 
 /-- The series of *jemand* and *etwas*, which Haspelmath names the *etwas-* series. -/
-def etwasSeries : IndefinitePronoun.Series := ⟨"etwas-", {jemand, ⟨{ form := "etwas" }, .thing⟩}⟩
+def etwasSeries : IndefinitePronoun.Series := ⟨"etwas-", {jemand,
+    { form := "etwas", ontology := .thing }}⟩
 
 /-- The *irgend-* series. -/
 def irgendSeries : IndefinitePronoun.Series :=
-  ⟨"irgend-", {irgendwer, ⟨{ form := "irgendjemand" }, .person⟩, ⟨{ form := "irgendwas" }, .thing⟩,
-    ⟨{ form := "irgendetwas" }, .thing⟩, ⟨{ form := "irgendwo" }, .place⟩,
-    ⟨{ form := "irgendwann" }, .time⟩, ⟨{ form := "irgendwie" }, .manner⟩,
-    ⟨{ form := "irgendein" }, .determiner⟩, ⟨{ form := "irgendwelche" }, .determiner⟩}⟩
+  ⟨"irgend-", {irgendwer, { form := "irgendjemand", ontology := .person },
+    { form := "irgendwas", ontology := .thing },
+    { form := "irgendetwas", ontology := .thing }, { form := "irgendwo", ontology := .place },
+    { form := "irgendwann", ontology := .time }, { form := "irgendwie", ontology := .manner },
+    { form := "irgendein", ontology := .determiner },
+    { form := "irgendwelche", ontology := .determiner }}⟩
 
 /-- The series of temporal *je*. -/
 def jeSeries : IndefinitePronoun.Series := ⟨"je", {je}⟩
@@ -64,7 +67,8 @@ def jederSeries : IndefinitePronoun.Series := ⟨"jeder", {jeder}⟩
 
 /-- The negative *n-* series. -/
 def nSeries : IndefinitePronoun.Series :=
-  ⟨"n-", {niemand, ⟨{ form := "nichts" }, .thing⟩, ⟨{ form := "nirgends" }, .place⟩,
-    ⟨{ form := "nie" }, .time⟩, ⟨{ form := "kein" }, .determiner⟩}⟩
+  ⟨"n-", {niemand, { form := "nichts", ontology := .thing },
+    { form := "nirgends", ontology := .place },
+    { form := "nie", ontology := .time }, { form := "kein", ontology := .determiner }}⟩
 
 end German.Indefinites
