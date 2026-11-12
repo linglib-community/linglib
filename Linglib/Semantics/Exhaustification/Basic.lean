@@ -6,7 +6,8 @@ public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Preorder.Finite
-public import Linglib.Semantics.Exhaustification.Pointwise
+public import Mathlib.Order.Bounds.Defs
+public import Mathlib.Order.Monotone.Basic
 
 /-!
 # Exhaustification
@@ -14,8 +15,11 @@ public import Linglib.Semantics.Exhaustification.Pointwise
 This file defines Chierchia's exhaustification operator `O` and its exclusion component.
 `excludes C p` holds at the worlds where every true alternative in `C` is entailed by the
 prejacent `p`, which is the assertion of the entailment-scale *only*. `exh C p` is the prejacent
-together with `excludes C p`: it denies every alternative the prejacent does not entail. Over
-finitely many worlds and an indexed family of alternatives, membership in `exh` is decidable.
+together with `excludes C p`: it denies every alternative the prejacent does not entail, so a
+member of `C` is exhaustified [where it is the least true
+member](##mem_exh_iff_isLeast_of_mem), on a scale where its index is [the greatest true
+one](##mem_exh_range_iff_isGreatest). Over finitely many worlds and an indexed family of
+alternatives, membership in `exh` is decidable.
 
 ## Main statements
 
@@ -73,6 +77,12 @@ theorem notMem_exh (hq : q ∈ C) (hw : w ∈ q) (h : ¬ p ⊆ q) : w ∉ exh C 
 
 theorem exh_subset_compl (hq : q ∈ C) (h : ¬ p ⊆ q) : exh C p ⊆ qᶜ :=
   fun _ hw hwq ↦ notMem_exh hq hwq h hw
+
+/-- A member of `C` is exhaustified where it is the least true member under entailment, the
+strongest alternative true there. -/
+theorem mem_exh_iff_isLeast_of_mem (hp : p ∈ C) : w ∈ exh C p ↔ IsLeast {q ∈ C | w ∈ q} p :=
+  ⟨fun ⟨hw, h⟩ ↦ ⟨⟨hp, hw⟩, fun q ⟨hq, hwq⟩ ↦ h q hq hwq⟩,
+    fun ⟨⟨_, hw⟩, h⟩ ↦ ⟨hw, fun _ hq hwq ↦ h ⟨hq, hwq⟩⟩⟩
 
 theorem mem_exh_image_iff {ι : Type*} {f : ι → Set W} {A : Set ι} :
     w ∈ exh (f '' A) p ↔ w ∈ p ∧ ∀ i ∈ A, w ∈ f i → p ⊆ f i := by
@@ -192,24 +202,32 @@ theorem Irredundant.excludes_injOn (hf : Irredundant f) (i₀ : ι) :
       exact hj ⟨fun h ↦ absurd h hmem, fun h ↦ absurd h h2⟩
     exact hf.excludes_ne h₂j hmem (fun h ↦ hmem (h ▸ h₁)) heq
 
-theorem mem_exh_range_iff_exhAgainst (f : ι → Set W) (i : ι) (w : W) :
-    w ∈ exh (Set.range f) (f i) ↔ exhAgainst (fun i j ↦ ¬ f i ⊆ f j) (w ∈ f ·) i := by
-  simp only [mem_exh, Set.forall_mem_range, exhAgainst]
-  exact and_congr_right fun _ ↦ forall_congr' fun j ↦
-    ⟨fun h hn hw ↦ hn (h hw), fun h hw ↦ not_not.1 fun hn ↦ h hn hw⟩
+/-- Over an irredundant family, a member is exhaustified where it is the only true member. -/
+theorem Irredundant.mem_exh_range_iff (hf : Irredundant f) {i : ι} {w : W} :
+    w ∈ exh (Set.range f) (f i) ↔ w ∈ f i ∧ ∀ j, w ∈ f j → j = i :=
+  Exhaustification.mem_exh_range_iff.trans <| and_congr_right fun _ ↦ forall_congr' fun _ ↦
+    imp_congr_right fun _ ↦
+    ⟨fun h ↦ by_contra fun hne ↦ hf.not_subset (Ne.symm hne) h, fun h ↦ h ▸ subset_rfl⟩
 
-theorem Irredundant.mem_exh_range_iff {f : ι → Set W} (hf : Irredundant f) (i : ι) (w : W) :
-    w ∈ exh (Set.range f) (f i) ↔ exhAgainst (· ≠ ·) (w ∈ f ·) i := by
-  rw [mem_exh_range_iff_exhAgainst]
-  refine and_congr_right fun _ ↦ forall_congr' fun j ↦ ⟨fun h hij ↦ h (hf.not_subset hij),
-    fun h hn ↦ h fun hij ↦ hn (hij ▸ subset_rfl)⟩
+section LinearOrder
 
-/-- On a strictly decreasing family the prejacent entails just the members at smaller indices, so
-exhaustification denies the members at larger ones. -/
-theorem mem_exh_range_iff_exhAgainst_lt [LinearOrder ι] (hf : StrictAnti f) (i : ι) (w : W) :
-    w ∈ exh (Set.range f) (f i) ↔ exhAgainst (· < ·) (w ∈ f ·) i := by
-  rw [mem_exh_range_iff_exhAgainst]
-  simp only [hf.le_iff_ge, not_le]
+variable [LinearOrder ι] {i : ι} {w : W}
+
+/-- On a strictly decreasing family, where larger indices are stronger, a member is exhaustified
+where its index is the greatest true one. -/
+theorem mem_exh_range_iff_isGreatest (hf : StrictAnti f) :
+    w ∈ exh (Set.range f) (f i) ↔ IsGreatest {j | w ∈ f j} i :=
+  mem_exh_range_iff.trans <| and_congr_right fun _ ↦ forall_congr' fun _ ↦ imp_congr_right fun _ ↦
+    hf.le_iff_ge
+
+/-- On a strictly increasing family, where smaller indices are stronger, a member is exhaustified
+where its index is the least true one. -/
+theorem mem_exh_range_iff_isLeast (hf : StrictMono f) :
+    w ∈ exh (Set.range f) (f i) ↔ IsLeast {j | w ∈ f j} i :=
+  mem_exh_range_iff.trans <| and_congr_right fun _ ↦ forall_congr' fun _ ↦ imp_congr_right fun _ ↦
+    hf.le_iff_le
+
+end LinearOrder
 
 end Irredundant
 

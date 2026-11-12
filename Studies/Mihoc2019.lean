@@ -8,7 +8,6 @@ module
 public import Linglib.Semantics.Quantification.Numerals.Basic
 public import Linglib.Semantics.Exhaustification.DomainAlternatives
 public import Linglib.Semantics.Exhaustification.Basic
-public import Linglib.Semantics.Exhaustification.Pointwise
 public import Mathlib.Data.Set.Card
 
 /-!
@@ -320,8 +319,8 @@ def Winner : Prop := ∃ x, □[R] (μ · = x) w
 /-- The implicatures from the size-`k` subdomain alternatives of `T` deny each `□_S (max ∈ S)`
 pre-exhaustified against the others of its size. -/
 def DomainImplicatures (T : Finset ℕ) (k : ℕ) : Prop :=
-  ∀ S : T.powersetCard k,
-    ¬ exhAgainst (· ≠ ·) (fun S : T.powersetCard k ↦ □[R] (μ · ∈ (S : Finset ℕ)) w) S
+  ∀ S : T.powersetCard k, ¬ (□[R] (μ · ∈ (S : Finset ℕ)) w ∧
+    ∀ S' : T.powersetCard k, □[R] (μ · ∈ (S' : Finset ℕ)) w → S' = S)
 
 variable {R μ w} {T : Finset ℕ} {k : ℕ}
 
@@ -369,7 +368,9 @@ theorem existsUnique_subset_iff (hT : possibleValues R μ w ⊆ T) (hk : k < T.c
 consider exactly `k` values possible. -/
 theorem domainImplicatures_iff (hT : □[R] (μ · ∈ (T : Set ℕ)) w) (hk : k < T.card) :
     DomainImplicatures R μ w T k ↔ (possibleValues R μ w).ncard ≠ k := by
-  simp only [DomainImplicatures, forall_not_exhAgainst_ne_iff, Finset.mem_coe.symm, box_mem_iff]
+  rw [DomainImplicatures, ← not_exists]
+  change (¬ ∃! S : T.powersetCard k, □[R] (μ · ∈ (S : Finset ℕ)) w) ↔ _
+  simp only [Finset.mem_coe.symm, box_mem_iff]
   rw [existsUnique_subset_iff (box_mem_iff.1 hT) hk]
 
 theorem winner_iff [IsSerial R] : Winner R μ w ↔ (possibleValues R μ w).ncard = 1 := by
@@ -464,13 +465,13 @@ variable {ι : Type*} {φ : Form} {D : ι → Set ℕ}
 /-- Exhaustifying a negated form against its negated subdomain alternatives `D`, each
 pre-exhaustified against the others (her Ch. 5 (8)–(9)). -/
 def negExh (φ : Form) (D : ι → Set ℕ) (maxD : ℕ) : Prop :=
-  ¬ φ.tc maxD ∧ ∀ i, ¬ exhAgainst (· ≠ ·) (fun j ↦ maxD ∉ D j) i
+  ¬ φ.tc maxD ∧ ∀ i, ¬ (maxD ∉ D i ∧ ∀ j, maxD ∉ D j → j = i)
 
 theorem negExh_iff [Nontrivial ι] (hD : ∀ i, D i ∈ φ.domainAlts) (maxD : ℕ) :
     negExh φ D maxD ↔ ¬ φ.tc maxD := by
   refine ⟨And.left, fun h ↦ ⟨h, fun i hi ↦ ?_⟩⟩
   obtain ⟨j, hj⟩ := exists_ne i
-  exact h (Form.tc_of_mem_domainAlts (hD j) (not_not.1 (hi.2 j hj.symm)))
+  exact h (Form.tc_of_mem_domainAlts (hD j) (by_contra fun hn ↦ hj (hi.2 j hn)))
 
 /-- Exhaustifying the negated form is not strictly stronger than the negated form. -/
 theorem not_negExh_lt [Nontrivial ι] (hD : ∀ i, D i ∈ φ.domainAlts) :
