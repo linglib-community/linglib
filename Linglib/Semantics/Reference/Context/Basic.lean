@@ -5,13 +5,14 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Tactic.TypeStar
+public import Linglib.Discourse.Role
 
 /-!
 # The context of utterance
 
 The context of utterance of Kaplan, a tuple of an agent, a world, a time and a position, with the
-addressee of Speas and Tenny as a fifth coordinate.
+addressee of Speas and Tenny as a fifth coordinate. The agent and the addressee are the holders of
+the two discourse roles, `Kaplan.Context.holder`.
 
 ## References
 
@@ -37,5 +38,20 @@ structure Context (W : Type*) (E : Type*) (P : Type*) (T : Type*) where
   /-- The position, the location. -/
   position : P
   deriving DecidableEq
+
+namespace Context
+
+variable {W E P T : Type*} (c : Context W E P T)
+
+/-- The holder of a discourse role at a context, the agent for the speaker and the addressee for
+the addressee. -/
+def holder : Discourse.Role → E
+  | .speaker => c.agent
+  | .addressee => c.addressee
+
+@[simp] theorem holder_speaker : c.holder .speaker = c.agent := rfl
+@[simp] theorem holder_addressee : c.holder .addressee = c.addressee := rfl
+
+end Context
 
 end Kaplan

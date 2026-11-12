@@ -28,8 +28,7 @@ no stronger one.
 ## Main definitions
 
 * `Person.dom`, `Number.dom`, `Gender.dom`: the domain of an optional value.
-* `Kaplan.Context.holder`, `Kaplan.Context.participants`: the holder of a discourse role, and the
-  roles whose holders are part of a referent.
+* `Kaplan.Context.participants`: the discourse roles whose holders are part of a referent.
 
 ## Main results
 
@@ -121,15 +120,6 @@ end Person
 namespace Kaplan.Context
 
 variable {W E P T : Type*} [PartialOrder E] (c : Context W E P T) (x : E)
-
-/-- The holder of a discourse role at a context, the agent for the speaker and the addressee for
-the addressee. -/
-def holder : Discourse.Role → E
-  | .speaker => c.agent
-  | .addressee => c.addressee
-
-@[simp] theorem holder_speaker : c.holder .speaker = c.agent := rfl
-@[simp] theorem holder_addressee : c.holder .addressee = c.addressee := rfl
 
 open Classical in
 /-- The participants of a referent at a context are the discourse roles whose holders are part of
