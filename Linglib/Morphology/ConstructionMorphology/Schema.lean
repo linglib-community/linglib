@@ -24,9 +24,11 @@ description at every slot.
 Unification is the partial join of descriptions and Structural Intersection is their meet. The
 instances of a successful unification are
 [the common instances of its arguments](##instantiates_iff_of_unify_eq_coe), and the intersection
-of two items [instantiates exactly the schemas that both instantiate](##instantiates_inf_iff). It
-is their least general generalization in Plotkin's sense, which Jackendoff and Audring compare to
-Albright and Hayes's minimal generalization.
+of two items [instantiates exactly the schemas that both instantiate](##instantiates_inf_iff). Among
+descriptions over the same slots it is their least general generalization in Plotkin's sense,
+which Jackendoff and Audring compare to Albright and Hayes's minimal generalization. It does not
+recover coindexation: the intersection of $aa$ and $bb$ is two unrelated variables, where
+Plotkin's generalization is one variable twice.
 
 Over a lexicon of stored items, a schema relates the stored items that instantiate it and
 generates the instances whose closed variables take fillers attested among those stored items, so
