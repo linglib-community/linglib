@@ -24,6 +24,7 @@ presupposition fails, use `TwoDim` (`Semantics/Presupposition/TwoDimensional.lea
 * `Presupposition.strawsonEntails`: von Fintel's entailment, with the conclusion's presupposition
   as a premise.
 * `Presupposition.presupOfReferent`: the definite-description combinator.
+* `Presupposition.factive`: the sentence of a factive predicate over any attitude.
 
 ## Main results
 
@@ -38,6 +39,7 @@ presupposition fails, use `TwoDim` (`Semantics/Presupposition/TwoDimensional.lea
 * [peters-1979]
 * [bochvar-1938]
 * [von-fintel-1999]
+* [kiparsky-kiparsky-1970]
 -/
 
 @[expose] public section
@@ -117,5 +119,39 @@ theorem presupOfReferent_of_none (h : referent w = none) :
   simp [presupOfReferent, h]
 
 end PresupOfReferent
+
+/-! ### Factive predicates
+
+A factive predicate, *know* or *regret that p*, presupposes its complement and asserts an attitude
+toward it. The attitude is arbitrary, the doxastic box of *know* or the preference of *regret*.
+An attitude `att` entails its complement when `att ≤ id`, and the predicate that asserts the
+complement beside the attitude is `att ⊓ id`; a factive sentence is true where that predicate is
+and false, by `Trivalent.negExt_condEvent`, only where the complement is true besides. -/
+
+/-- The sentence of a factive predicate presupposes the complement `p` and asserts the attitude
+`att` toward it ([kiparsky-kiparsky-1970]). -/
+noncomputable def factive (att : (W → Prop) → W → Prop) (p : W → Prop) : W → Trivalent :=
+  condEvent p (att p)
+
+section Factive
+
+variable {att : (W → Prop) → W → Prop} {p : W → Prop} {w : W}
+
+@[simp] theorem factive_eq_true_iff : factive att p w = .true ↔ p w ∧ att p w := by
+  simp [factive]
+
+@[simp] theorem factive_eq_false_iff : factive att p w = .false ↔ p w ∧ ¬ att p w := by
+  simp [factive]
+
+@[simp] theorem factive_eq_undefined_iff : factive att p w = .undefined ↔ ¬ p w := by
+  simp [factive]
+
+/-- A factive sentence is true where the predicate that asserts its complement holds. -/
+theorem posExt_factive (att : (W → Prop) → W → Prop) (p : W → Prop) :
+    posExt (factive att p) = {w | (att ⊓ id) p w} := by
+  ext w
+  simp [and_comm]
+
+end Factive
 
 end Presupposition
