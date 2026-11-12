@@ -17,10 +17,11 @@ rationality the free energy is then `⊥`.
 The two agents of the Rational Speech Act recursion are the two partial maximizers of the free
 energy. The loss of any listener exceeds that of the Bayesian listener, which is the conditional
 entropy of the state given the utterance, by [the expected divergence of the Bayesian listener
-from her](##InformationTheory.informationLoss_eq_posterior_add). The free energy of any speaker falls
-short of that of the speaker of `RSA.speaker` at the Bayesian belief by [her expected divergence
-from it](##RSA.freeEnergy_eq_freeEnergy_speaker_sub). Going up a level of the recursion therefore
-never lowers the free energy, which [rises](##RSA.monotone_freeEnergy_iterate_recurse) and
+from her](##InformationTheory.informationLoss_eq_posterior_add). The free energy of any speaker
+falls short of that of the speaker of `RSA.speaker` at the Bayesian belief by [her expected
+divergence from it](##RSA.freeEnergy_eq_freeEnergy_speaker_sub). Going up a level of the
+recursion therefore never lowers the free energy, which
+[rises](##RSA.monotone_freeEnergy_iterate_recurse) and
 [converges](##RSA.exists_tendsto_freeEnergy_iterate_recurse) along it, and since each speaker
 update raises it by at least the divergence of the old speaker from the new, [that divergence
 tends to zero](##RSA.tendsto_sum_klDiv_speaker_iterate_recurse), which does not by itself make the

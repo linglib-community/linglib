@@ -165,7 +165,6 @@ theorem informationLoss_encoder (f : C → W) :
   simp_rw [informationLoss, encoder, Kernel.deterministic_apply, lintegral_dirac,
     lintegral_fintype, mul_comm]
 
-/-- A listener that rules out no needed concept under its form loses exactly the first cost. -/
 theorem ofReal_fst_costs [IsFiniteMeasure need] (f : C → W)
     (hm : ∀ c, need {c} ≠ 0 → m (f c) {c} ≠ 0) :
     ENNReal.ofReal (costs need l m f).1 = informationLoss need (encoder f) m := by
@@ -184,8 +183,9 @@ theorem objective_eq_neg_expectedUtility [Fintype W] [IsFiniteMeasure need] (β 
     (hm : ∀ c, need {c} ≠ 0 → m (f c) {c} ≠ 0) :
     (objective need l m β f : EReal) = -RSA.expectedUtility need (encoder f) m (β • l) := by
   have hcost : ∫ w, (β • l) w ∂(encoder f ∘ₘ need) = β * (costs need l m f).2 := by
-    rw [encoder, Measure.deterministic_comp_eq_map, integral_map (Measurable.of_discrete).aemeasurable
-      (Measurable.of_discrete).aestronglyMeasurable, integral_fintype .of_finite, costs,
+    rw [encoder, Measure.deterministic_comp_eq_map,
+      integral_map (Measurable.of_discrete).aemeasurable
+        (Measurable.of_discrete).aestronglyMeasurable, integral_fintype .of_finite, costs,
       Finset.mul_sum]
     exact Finset.sum_congr rfl fun c _ ↦ by simp only [Pi.smul_apply, smul_eq_mul]; ring
   have hnn : 0 ≤ (costs need l m f).1 :=
