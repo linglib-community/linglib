@@ -10,15 +10,15 @@ consonants of their Figure 6, the four vowels /a i u ə/, and the marginal /l/ a
 loans. A phoneme is named by its IPA symbol, with feature values from the PHOIBLE chart, which has
 no Tarifit inventory. The coronal stops are dental, as the text calls them. Length is not a
 feature here: a geminate is a consonant on two timing slots, and `geminates` collects the
-consonants that the chart lists geminated.
+consonants that Figure 6 lists geminated.
 
 PHOIBLE gives the tongue-root value of a pharyngealized consonant and the labial value of a
 labialized one as contours, and each is its chart entry at the last phase of the contour, the
 phase of the secondary articulation: [+RTR], or [+labial] with [+round]. PHOIBLE has no /ɡˤ/ and
-no single /ʃˤʷ/, which are the plain consonants with those values. The chart lists /ʕ/ among the
-fricatives, but the text groups it with /r/ as a sonorant that conditions vowels, and the count of
-rising, plateauing and falling onsets holds only with /ʕ/ above the tap, so /ʕ/ is the chart's
-segment as an approximant.
+no single /ʃˤʷ/, which are the plain consonants with those values. Figure 6 and PHOIBLE list /ʕ/
+among the fricatives, but the text groups it with /r/ as a sonorant that conditions vowels, and
+the count of rising, plateauing and falling onsets holds only with /ʕ/ above the tap, so /ʕ/ is
+the chart's segment as an approximant.
 
 ## Main definitions
 
@@ -29,6 +29,7 @@ segment as an approximant.
 ## References
 
 * [afkir-zellou-2025]
+* [hayes-2009]
 * [moran-mccloy-2019]
 -/
 
@@ -39,7 +40,8 @@ open Phonology Data.PHOIBLE
 namespace Tarifit
 
 /-- The departure of a pharyngealized consonant from the plain one, for the consonants PHOIBLE
-has no pharyngealized glyph of. -/
+has no pharyngealized glyph of. [+RTR] is PHOIBLE's coding of pharyngealization; [hayes-2009]
+adds [+dorsal, −high, +low, −front, +back] instead (p. 88). -/
 def pharyngealization : Segment := .ofSpecs [(.rtr, true)]
 
 /-! ### Stops -/
@@ -139,9 +141,9 @@ def «ʒ» : Segment := .ofChart .«ʒ»
 /-- The pharyngealized voiced postalveolar fricative /ʒˤ/. -/
 def «ʒˤ» : Segment := .ofChart FeatureMatrix.last.«ʒˤ»
 
-/-- The pharyngealized labialized voiceless postalveolar fricative /ʃˤʷ/, which the chart lists
-only geminated. PHOIBLE has /ʃˤ/ and /ʃʷ/ but no glyph with both articulations, so it is the plain
-fricative with the last-phase values of both. -/
+/-- The pharyngealized labialized voiceless postalveolar fricative /ʃˤʷ/, which Figure 6 of
+[afkir-zellou-2025] lists only geminated (p. 7). PHOIBLE has /ʃˤ/ and /ʃʷ/ but no glyph with both
+articulations, so it is the plain fricative with the last-phase values of both. -/
 def «ʃˤʷ» : Segment :=
   .ofChart .«ʃ» (.ofSpecs [(.rtr, true), (.labial, true), (.round, true), (.labiodental, false)])
 
@@ -160,8 +162,9 @@ def «ʁˤ» : Segment := .ofChart FeatureMatrix.last.«ʁˤ»
 /-- The voiceless pharyngeal fricative /ħ/. -/
 def ħ : Segment := .ofChart .«ħ»
 
-/-- The pharyngeal approximant /ʕ/. PHOIBLE's /ʕ/ is a fricative; it is a sonorant approximant
-here because the text groups it with /r/ among the sonorants that condition vowels. -/
+/-- The pharyngeal approximant /ʕ/. PHOIBLE's /ʕ/ is a fricative, and Figure 6 of
+[afkir-zellou-2025] lists it with the fricatives (p. 7); it is a sonorant approximant here because
+their text calls it "a vowel-conditioning sonorant like /r/" (p. 41). -/
 def «ʕ» : Segment :=
   .ofChart .«ʕ» (.ofSpecs [(.consonantal, false), (.sonorant, true), (.approximant, true)])
 

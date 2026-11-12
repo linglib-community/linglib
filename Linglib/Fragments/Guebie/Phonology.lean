@@ -33,6 +33,7 @@ is [−tense], and Guébie's /ə/ departs from it in being [+ATR].
 ## References
 
 * [sande-2022]
+* [sande-clem-dabkowski-2026]
 * [moran-mccloy-2019]
 -/
 
@@ -53,7 +54,8 @@ def i : Segment := vowel .«i»
 def e : Segment := vowel .«e»
 
 /-- The advanced mid central vowel /ə/. PHOIBLE's /ə/ is [−tense], which the tongue-root reading
-makes [−ATR]; Guébie's /ə/ is the [+ATR] partner of /a/. -/
+makes [−ATR]; Guébie's /ə/ is [+ATR] in the inventory (1) of [sande-clem-dabkowski-2026], whose
+(2) shows the plural suffix alternating between /ə/ and /a/ (p. 3). -/
 def schwa : Segment := vowel .«ə» (.ofSpecs [(.atr, true)])
 
 /-- The advanced mid back vowel /o/. -/
