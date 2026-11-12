@@ -239,7 +239,7 @@ theorem pypFactor_nonneg (a : G.NT) (y : Multiset ℕ) : 0 ≤ M.pypFactor a y :
 
 @[simp]
 theorem pypFactor_zero (a : G.NT) : M.pypFactor a 0 = 1 := by
-  simp [pypFactor, pitmanYorEPPF]
+  simp [pypFactor]
 
 variable [DecidableEq G.NT]
 

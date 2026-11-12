@@ -37,7 +37,9 @@ form of the Ionescu–Tulcea partial trajectory: after the first draw, the law o
 
 * `ProbabilityTheory.isProbabilityMeasure_seqLaw`: a Markov prediction rule gives probability
   laws.
-* `ProbabilityTheory.seqLaw_succ_singleton_snoc`, `ProbabilityTheory.seqLaw_singleton`: the chain
+* `ProbabilityTheory.seqLaw_succ_map_init`: forgetting the last draw leaves the law of the draws
+  before it.
+* `ProbabilityTheory.seqLaw_succ_singleton_snoc`,`ProbabilityTheory.seqLaw_singleton`: the chain
   rule on a countable space.
 * `ProbabilityTheory.integral_seqLaw_succ`: the chain rule for expectations.
 * `ProbabilityTheory.seqLaw_succ_eq_map_partialTraj`: the law as a partial trajectory.
@@ -97,6 +99,15 @@ theorem isProbabilityMeasure_seqLaw [∀ n, IsMarkovKernel (κ n)] :
 
 instance [∀ n, IsMarkovKernel (κ n)] (n : ℕ) : IsProbabilityMeasure (seqLaw κ n) :=
   isProbabilityMeasure_seqLaw n
+
+/-- Forgetting the last draw leaves the law of the draws before it. -/
+theorem seqLaw_succ_map_init [∀ n, IsMarkovKernel (κ n)] (n : ℕ) :
+    (seqLaw κ (n + 1)).map Fin.init = seqLaw κ n := by
+  have hinit : Measurable (Fin.init : (Fin (n + 1) → α) → Fin n → α) :=
+    .of_eval fun i ↦ measurable_pi_apply i.castSucc
+  rw [seqLaw_succ, Measure.map_map hinit measurable_snoc_prod,
+    show (Fin.init ∘ fun p : (Fin n → α) × α ↦ (Fin.snoc p.1 p.2 : Fin (n + 1) → α)) = Prod.fst
+      from funext fun p ↦ Fin.init_snoc .., ← Measure.fst, Measure.fst_compProd]
 
 /-- The chain rule for expectations: integrating over the first `n + 1` draws integrates the next
 draw against the prediction rule, then the first `n`. -/
