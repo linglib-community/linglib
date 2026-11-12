@@ -141,7 +141,7 @@ def orFilter : TwoDim (W → Prop) (W → Prop) :=
     fun w ↦ (q.atIssue w ∨ p.notAtIssue w) ∧ (p.atIssue w ∨ q.notAtIssue w) := rfl
 
 theorem orFilter_comm : orFilter p q = orFilter q p :=
-  TwoDim.ext (sup_comm ..) (funext fun _ ↦ propext and_comm)
+  Writer.ext (sup_comm ..) (funext fun _ ↦ propext and_comm)
 
 /-- When the disjuncts' presuppositions conflict, a defined filtering disjunction is true, so it is
 never both defined and false there ([yagi-2025] §2.2). -/

@@ -1,7 +1,8 @@
 module
 
 public import Mathlib.Control.Monad.Writer
-public import Mathlib.Control.Traversable.Basic
+public import Mathlib.Order.BoundedOrder.Basic
+public import Mathlib.Order.Lattice
 public import Mathlib.Data.Part
 
 /-!
@@ -10,9 +11,9 @@ public import Mathlib.Data.Part
 A computation of the writer monad `Writer ω` yields a value and logs output in `ω`: `pure` logs
 nothing and `bind` appends the logs. [Forgetting the log](##val_bind) is a monad morphism to `Id`,
 and [`bind` only extends the log](##log_prefix_bind), so a value can feed later logging while the
-log never feeds a value. With truth values for logs, combined by conjunction, a computation is
-[a partial value](##Writer.toPart) defined where its log holds, and that passage is
-[a morphism of applicative functors](##Writer.toPartHom).
+log never feeds a value. A log in a meet-semilattice with a top combines by meet, and with truth values for logs a
+computation is
+[a partial value](##Writer.toPart) defined where its log holds.
 
 ## Main definitions
 
@@ -63,6 +64,9 @@ protected theorem ext {m₁ m₂ : Writer ω A} (hv : m₁.val = m₂.val) (hl :
   WriterT.ext _ _ (Prod.ext hv hl)
 
 @[simp] theorem val_mk (a : A) (w : ω) : (Writer.mk a w).val = a := rfl
+
+@[simp] theorem mk_inj {a b : A} {v w : ω} : Writer.mk a v = Writer.mk b w ↔ a = b ∧ v = w :=
+  ⟨fun h ↦ ⟨congrArg val h, congrArg log h⟩, fun ⟨ha, hw⟩ ↦ ha ▸ hw ▸ rfl⟩
 
 @[simp] theorem log_mk (a : A) (w : ω) : (Writer.mk a w).log = w := rfl
 
@@ -118,16 +122,31 @@ theorem log_prefix_bind {P : Type u} (m : Writer (List P) A) (f : A → Writer (
 
 end Writer
 
+/-! ### Logs under meet -/
+
+namespace WriterT
+
+variable {ω : Type u} {M : Type u → Type v} [SemilatticeInf ω] [OrderTop ω]
+
+/-- A writer over a meet-semilattice with a top is a monad whose empty log is `⊤` and whose logs
+combine by meet. It has low priority, so that a monoid on the log takes precedence. -/
+instance (priority := low) instMonadInf [Monad M] : Monad (WriterT ω M) :=
+  WriterT.monad ⊤ (· ⊓ ·)
+
+instance (priority := low) instLawfulMonadInf [Monad M] [LawfulMonad M] :
+    LawfulMonad (WriterT ω M) := LawfulMonad.mk'
+  (id_map := fun _ ↦ by ext; simp)
+  (pure_bind := fun _ _ ↦ by ext; simp)
+  (bind_assoc := fun _ _ _ ↦ by ext; simp [inf_assoc])
+  (bind_pure_comp := fun _ _ ↦ by ext; simp)
+
+end WriterT
+
 /-! ### Truth-value logs and partiality -/
 
 namespace Writer
 
 variable {α : Type}
-
-/-- The writer monad over truth values under conjunction. -/
-abbrev propMonad : Monad (Writer Prop) := WriterT.monad (M := Id) True And
-
-attribute [local instance] propMonad
 
 /-- A value with a logged truth value is the partial value defined where the log holds. -/
 def toPart (m : Writer Prop α) : Part α := ⟨m.log, fun _ ↦ m.val⟩
@@ -136,13 +155,6 @@ def toPart (m : Writer Prop α) : Part α := ⟨m.log, fun _ ↦ m.val⟩
 
 @[simp] theorem mem_toPart {m : Writer Prop α} {a : α} : a ∈ m.toPart ↔ m.log ∧ m.val = a :=
   ⟨fun ⟨h, e⟩ ↦ ⟨h, e⟩, fun ⟨h, e⟩ ↦ ⟨h, e⟩⟩
-
-/-- `Writer.toPart` as a morphism of applicative functors: it preserves the unit and
-application. -/
-def toPartHom : ApplicativeTransformation (Writer Prop) Part where
-  app _ := toPart
-  preserves_pure' _ := Part.ext' (iff_of_true trivial trivial) fun _ _ ↦ rfl
-  preserves_seq' _ _ := Part.ext' ⟨fun h ↦ ⟨h.1, h.2⟩, fun h ↦ ⟨h.1, h.2⟩⟩ fun _ _ ↦ rfl
 
 /-- Two computations give the same partial value when their logs agree and their values agree
 where the log holds: `toPart` forgets the value where the log fails. -/

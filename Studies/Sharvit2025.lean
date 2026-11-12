@@ -144,7 +144,7 @@ theorem orKPstar_notAtIssue (p q : TwoDim (W → Prop) (W → Prop)) (w : W) :
 
 theorem orKPstar_comm (p q : TwoDim (W → Prop) (W → Prop)) :
     orKPstar EP sim p q = orKPstar EP sim q p :=
-  TwoDim.ext (sup_comm ..) (funext fun _ ↦ propext (and_congr or_comm and_comm))
+  Writer.ext (sup_comm ..) (funext fun _ ↦ propext (and_congr or_comm and_comm))
 
 /-- A closest-worlds presupposition holding throughout `M` strengthens to `Q` throughout `M` when
 the laws allow `P` without `Q` (122). -/
@@ -203,7 +203,7 @@ theorem ifOverExists_atIssue (α β : Property W E) (x y : E) (w : W) :
     (ifOverExists EP sim α β x y).atIssue w ↔
       clos EP sim w {w' | (α x).atIssue w' ∨ (β x).atIssue w'} ⊆
         {w' | (α y).atIssue w' ∨ (β y).atIssue w'} := by
-  simp only [ifOverExists, ifKPstar, exists'_orProps_atIssue, TwoDim.atIssue_mk]
+  simp only [ifOverExists, ifKPstar, exists'_orProps_atIssue, Writer.val_mk]
 
 /-- The ∀-over-if reading presupposes the disjunction of the antecedent and that `y`'s property is
 defined at the closest worlds where `x` has it (146a). -/

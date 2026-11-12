@@ -113,7 +113,7 @@ def IsRigid (m : Outlook W O) : Prop := _root_.IsRigid m.evaluation
 shift is non-rigidity ((42)). -/
 theorem isRigid_iff (m : Outlook W O) :
     m.IsRigid ↔ ∀ o o', m.toTwoDim o = m.toTwoDim o' := by
-  simp only [IsRigid, _root_.IsRigid, toTwoDim, TwoDim.mk_inj, true_and]
+  simp only [IsRigid, _root_.IsRigid, toTwoDim, Writer.mk_inj, true_and]
 
 /-- The outlook-marked meaning of a pure expressive, whose conventional implicature is the same
 at every outlook and which presupposes nothing. -/

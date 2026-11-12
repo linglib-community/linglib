@@ -204,7 +204,7 @@ theorem not_isAntiAdditive_negKnow : ¬ IsAntiAdditive (negKnow (W := Fin 3) .un
   have := (h {0, 1} {0, 2} 0).2
   simp only [negKnow, Trivalent.mem_posExt, TwoDim.toTrivalent_eq_true_iff,
     TwoDim.negFactive_atIssue, TwoDim.negFactive_notAtIssue,
-    TwoDim.pure_atIssue, TwoDim.pure_notAtIssue, Pi.top_apply, Prop.top_eq_true, true_and, Box,
+    Writer.val_pure, Writer.log_pure, Pi.top_apply, Prop.top_eq_true, true_and, Box,
     Set.mem_insert_iff,
     Set.mem_singleton_iff, Set.mem_union] at this
   revert this
