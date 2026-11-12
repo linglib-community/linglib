@@ -37,22 +37,25 @@ def yaarUu : IndefinitePronoun := { form := "yaar-uu", ontology := .person }
 
 /-- The *-oo* series. -/
 def ooSeries : IndefinitePronoun.Series :=
-  ⟨"-oo", {yaarOo, ⟨{ form := "een-oo" }, .thing⟩, ⟨{ form := "elliy-oo" }, .place⟩,
-    ⟨{ form := "yaavaagal-oo" }, .time⟩, ⟨{ form := "heeg-oo" }, .manner⟩,
-    ⟨{ form := "eṣṭ-oo" }, .amount⟩, ⟨{ form := "yaava-n-oo" }, .determiner⟩,
-    ⟨{ form := "yaava-ḷ-oo" }, .determiner⟩}⟩
+  ⟨"-oo", {yaarOo, { form := "een-oo", ontology := .thing },
+    { form := "elliy-oo", ontology := .place },
+    { form := "yaavaagal-oo", ontology := .time }, { form := "heeg-oo", ontology := .manner },
+    { form := "eṣṭ-oo", ontology := .amount }, { form := "yaava-n-oo", ontology := .determiner },
+    { form := "yaava-ḷ-oo", ontology := .determiner }}⟩
 
 /-- The *-aadaruu* series. -/
 def aadaruuSeries : IndefinitePronoun.Series :=
-  ⟨"-aadaruu", {yaarAadaruu, ⟨{ form := "een-aadaruu" }, .thing⟩,
-    ⟨{ form := "elliy-aadaruu" }, .place⟩, ⟨{ form := "yaavaagal-aadaruu" }, .time⟩,
-    ⟨{ form := "heeg-aadaruu" }, .manner⟩, ⟨{ form := "eṣṭ-aadaruu" }, .amount⟩,
-    ⟨{ form := "yaavanaadaruu" }, .determiner⟩}⟩
+  ⟨"-aadaruu", {yaarAadaruu, { form := "een-aadaruu", ontology := .thing },
+    { form := "elliy-aadaruu", ontology := .place },
+    { form := "yaavaagal-aadaruu", ontology := .time },
+    { form := "heeg-aadaruu", ontology := .manner }, { form := "eṣṭ-aadaruu", ontology := .amount },
+    { form := "yaavanaadaruu", ontology := .determiner }}⟩
 
 /-- The *-uu* series. -/
 def uuSeries : IndefinitePronoun.Series :=
-  ⟨"-uu", {yaarUu, ⟨{ form := "een-uu" }, .thing⟩, ⟨{ form := "elliy-uu" }, .place⟩,
-    ⟨{ form := "yaavaagal-uu" }, .time⟩, ⟨{ form := "heeg-uu" }, .manner⟩,
-    ⟨{ form := "eṣṭ-uu" }, .amount⟩, ⟨{ form := "yaava X-uu" }, .determiner⟩}⟩
+  ⟨"-uu", {yaarUu, { form := "een-uu", ontology := .thing },
+    { form := "elliy-uu", ontology := .place },
+    { form := "yaavaagal-uu", ontology := .time }, { form := "heeg-uu", ontology := .manner },
+    { form := "eṣṭ-uu", ontology := .amount }, { form := "yaava X-uu", ontology := .determiner }}⟩
 
 end Kannada.Indefinites

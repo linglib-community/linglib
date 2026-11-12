@@ -38,7 +38,7 @@ def koiiBhii : IndefinitePronoun := bhii koii
 
 /-- The *koii*-series. -/
 def koiiSeries : IndefinitePronoun.Series :=
-  ⟨"koii", {koii, kuch, ⟨{ form := "kahĩ" }, .place⟩, kabhii}⟩
+  ⟨"koii", {koii, kuch, { form := "kahĩ", ontology := .place }, kabhii}⟩
 
 /-- The *bhii*-series. -/
 def bhiiSeries : IndefinitePronoun.Series := ⟨"bhii", koiiSeries.members.image bhii⟩

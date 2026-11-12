@@ -17,10 +17,10 @@ public import Linglib.Syntax.Person.Category
 
 This file defines the pronoun as a lexical object: a surface form with the agreement features
 every pronoun kind shares. The kinds extend it, each in its own file: `PersonalPronoun`,
-`LogophoricPronoun`, `ReflexivePronoun`, `ReciprocalPronoun`, `DemonstrativePronoun`,
-`InterrogativePronoun` and `IndefinitePronoun`. A `Pronoun` has no denotation, pronoun type or
-binding class of its own; the kind supplies them, and `Pronoun.toWord` takes the last two as
-arguments.
+`LogophoricPronoun`, `ReflexivePronoun`, `ReciprocalPronoun`, `DemonstrativePronoun`, and
+`ProForm` with its kinds `InterrogativePronoun` and `IndefinitePronoun`. A `Pronoun` has no
+denotation, pronoun type or binding class of its own; the kind supplies them, and
+`Pronoun.toWord` takes the last two as arguments.
 
 ## Main definitions
 

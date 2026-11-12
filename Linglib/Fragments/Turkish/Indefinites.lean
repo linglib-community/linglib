@@ -38,7 +38,7 @@ suffix, is used only non-specifically. The functions each series covers are the 
 
 namespace Turkish.Indefinites
 
-open Pronoun (OntologicalCategory)
+open ProForm (OntologicalCategory)
 
 /-! ### The bir-series -/
 

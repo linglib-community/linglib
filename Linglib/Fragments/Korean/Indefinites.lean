@@ -55,30 +55,35 @@ def nwukwuTunci : IndefinitePronoun :=
 
 /-- The bare interrogatives used as indefinites. -/
 def interrogativeSeries : IndefinitePronoun.Series :=
-  ⟨"bare interrogative", {nwukwu, ⟨{ form := "mues" }, .thing⟩, ⟨{ form := "etten" }, .property⟩,
-    ⟨{ form := "eti" }, .place⟩, ⟨{ form := "encey" }, .time⟩, ⟨{ form := "enu" }, .determiner⟩}⟩
+  ⟨"bare interrogative", {nwukwu, { form := "mues", ontology := .thing },
+    { form := "etten", ontology := .property },
+    { form := "eti", ontology := .place }, { form := "encey", ontology := .time },
+    { form := "enu", ontology := .determiner }}⟩
 
 /-- The *-nka*-series. -/
 def nkaSeries : IndefinitePronoun.Series :=
-  ⟨"-nka", {nwukwuNka, ⟨{ form := "mue-nka" }, .thing⟩, ⟨{ form := "eti-sunka" }, .place⟩,
-    ⟨{ form := "encey-nka" }, .time⟩}⟩
+  ⟨"-nka", {nwukwuNka, { form := "mue-nka", ontology := .thing },
+    { form := "eti-sunka", ontology := .place },
+    { form := "encey-nka", ontology := .time }}⟩
 
 /-- The *-to*-series, on the interrogatives and on *amu*. -/
 def toSeries : IndefinitePronoun.Series :=
-  ⟨"-to", {nwukwuTo, amuSalamTo, ⟨{ form := "amu kes-to" }, .thing⟩,
-    ⟨{ form := "amu kos-to" }, .place⟩, ⟨{ form := "amu ttay-to" }, .time⟩,
-    ⟨{ form := "amu X-to" }, .determiner⟩}⟩
+  ⟨"-to", {nwukwuTo, amuSalamTo, { form := "amu kes-to", ontology := .thing },
+    { form := "amu kos-to", ontology := .place }, { form := "amu ttay-to", ontology := .time },
+    { form := "amu X-to", ontology := .determiner }}⟩
 
 /-- The *-na*-series. -/
 def naSeries : IndefinitePronoun.Series :=
-  ⟨"-na", {nwukwuNa, ⟨{ form := "mues-ina" }, .thing⟩, ⟨{ form := "etten …-na" }, .property⟩,
-    ⟨{ form := "eti-na" }, .place⟩, ⟨{ form := "encey-na" }, .time⟩,
-    ⟨{ form := "enu …-na" }, .determiner⟩}⟩
+  ⟨"-na", {nwukwuNa, { form := "mues-ina", ontology := .thing },
+    { form := "etten …-na", ontology := .property },
+    { form := "eti-na", ontology := .place }, { form := "encey-na", ontology := .time },
+    { form := "enu …-na", ontology := .determiner }}⟩
 
 /-- The *-tunci*-series. -/
 def tunciSeries : IndefinitePronoun.Series :=
-  ⟨"-tunci", {nwukwuTunci, ⟨{ form := "mues-itunci" }, .thing⟩,
-    ⟨{ form := "etten …-tunci" }, .property⟩, ⟨{ form := "eti-tunci" }, .place⟩,
-    ⟨{ form := "encey-tunci" }, .time⟩, ⟨{ form := "enu …-tunci" }, .determiner⟩}⟩
+  ⟨"-tunci", {nwukwuTunci, { form := "mues-itunci", ontology := .thing },
+    { form := "etten …-tunci", ontology := .property }, { form := "eti-tunci", ontology := .place },
+    { form := "encey-tunci", ontology := .time },
+    { form := "enu …-tunci", ontology := .determiner }}⟩
 
 end Korean.Indefinites

@@ -48,18 +48,20 @@ def genericNounSeries : IndefinitePronoun.Series := ⟨"generic noun", {ren}⟩
 
 /-- The bare interrogatives used as indefinites. -/
 def interrogativeSeries : IndefinitePronoun.Series :=
-  ⟨"bare interrogative", {shei, shenme, ⟨{ form := "nǎr" }, .place⟩,
-    ⟨{ form := "shénme dìfang" }, .place⟩, ⟨{ form := "shénme shíhou" }, .time⟩,
-    ⟨{ form := "zěnme" }, .manner⟩, ⟨{ form := "něi" }, .determiner⟩}⟩
+  ⟨"bare interrogative", {shei, shenme, { form := "nǎr", ontology := .place },
+    { form := "shénme dìfang", ontology := .place }, { form := "shénme shíhou", ontology := .time },
+    { form := "zěnme", ontology := .manner }, { form := "něi", ontology := .determiner }}⟩
 
 /-- The *dōu* series. -/
 def douSeries : IndefinitePronoun.Series :=
-  ⟨"dōu", {sheiDou, ⟨{ form := "shénme dōu" }, .thing⟩, ⟨{ form := "shénme dìfang dōu" }, .place⟩,
-    ⟨{ form := "něi … dōu" }, .determiner⟩}⟩
+  ⟨"dōu", {sheiDou, { form := "shénme dōu", ontology := .thing },
+    { form := "shénme dìfang dōu", ontology := .place },
+    { form := "něi … dōu", ontology := .determiner }}⟩
 
 /-- The *yě* series. -/
 def yeSeries : IndefinitePronoun.Series :=
-  ⟨"yě", {sheiYe, ⟨{ form := "shénme yě" }, .thing⟩, ⟨{ form := "shénme dìfang yě" }, .place⟩}⟩
+  ⟨"yě", {sheiYe, { form := "shénme yě", ontology := .thing },
+    { form := "shénme dìfang yě", ontology := .place }}⟩
 
 /-- The series of the determiner *rènhé*. -/
 def renheSeries : IndefinitePronoun.Series := ⟨"rènhé", {renhe}⟩
