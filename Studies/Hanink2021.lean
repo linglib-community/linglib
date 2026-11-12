@@ -62,8 +62,6 @@ namespace Hanink2021
 
 open DistributedMorphology Morphology
 open scoped Assignment
-open scoped Denotes
-open DefiniteDescription (Restrictor)
 
 variable {E W : Type}
 
@@ -79,13 +77,13 @@ abbrev idxBind (n : ℕ) (φ : (ℕ → E) → Prop) : (ℕ → E) → E → Pro
 
 /-- A familiar DP is the anaphoric description, denoting the antecedent if it satisfies the
 restriction ((15), (35b), (97) and (106)). -/
-theorem denote_anaphoric_eq_iota (R : Restrictor E W) (d : ℕ) (g : ℕ → E) (s : W) :
-    ⟦DefiniteDescription.anaphoric R d⟧ g s = iota (R g s ∩ Set.ofPred (idxVar d g)) := rfl
+theorem denote_anaphoric_eq_iota (R : (ℕ → E) → W → Set E) (d : ℕ) (g : ℕ → E) (s : W) :
+    Definite.anaphoric R d g s = iota (R g s ∩ Set.ofPred (idxVar d g)) := rfl
 
 /-- The demonstrative D heads *hádi* and *wídi* of (34b) and (34c) refer as the anaphoric DP does.
 -/
-theorem denote_demonstrative_eq_iota (R : Restrictor E W) (d : ℕ) (g : ℕ → E) (s : W) :
-    ⟦DefiniteDescription.demonstrative R d⟧ g s = iota (R g s ∩ Set.ofPred (idxVar d g)) :=
+theorem anaphoric_eq_iota (R : (ℕ → E) → W → Set E) (d : ℕ) (g : ℕ → E) (s : W) :
+    Definite.anaphoric R d g s = iota (R g s ∩ Set.ofPred (idxVar d g)) :=
   rfl
 
 /-! ### Internally headed relatives, section 4 -/

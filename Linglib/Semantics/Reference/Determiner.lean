@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Basic.Rel
 public import Linglib.Semantics.Reference.Description
+public import Linglib.Semantics.Denotation
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Syntax.Category.Determiner.Basic
 public import Linglib.Semantics.Reference.Definite
@@ -15,8 +16,8 @@ with the pronouns of `Semantics/Reference/Pronoun.lean`:
 | | pronoun | determiner |
 |---|---|---|
 | lexical record | `PersonalPronoun` | `Article`, `DemonstrativeDeterminer` |
-| referent | `g i` | `⟦k⟧` for a `DefiniteDescription` `k` |
-| defined where | `g i` is in the φ-domain (`phiDom`) | `k` has a referent and `g d` is in the `vicinity` |
+| referent | `g i` | `iota` of a restrictor (`Definite.unique`, `Definite.anaphoric`) |
+| defined where | `g i` is in the φ-domain (`phiDom`) | the restrictor has one member and `g d` is in the `vicinity` |
 
 A determiner denotes what its description does, so the two pick the same individual by
 construction. A demonstrative's deictic content narrows where it denotes, so deixis filters the
@@ -30,9 +31,8 @@ prominent ones'.
 ## Main declarations
 
 * `DemonstrativeDeterminer.denote`: the demonstrative's `Definite`.
-* `Article.toDescriptions`, `Article.denotations`: an article's possible descriptions, one per
-  admissible strength, and their `Definite`s; a syncretic article (English *the*) denotes both the
-  weak and the strong description.
+* `Article.denotations`: an article's possible `Definite`s, one per admissible strength; a
+  syncretic article (English *the*) denotes both the uniqueness and the anaphoric definite.
 * `PossessiveDeterminer.denote`: the possessive determiner's `Definite`, the unique satisfier of
   the possessee restrictor that stands in the possession relation to the possessor.
 
@@ -63,11 +63,11 @@ individual one, has no `Definite`.
 
 @[expose] public section
 
-open Kaplan DefiniteDescription
+open Kaplan Definite
 open scoped Denotes
 open scoped SetRel
 
-variable {E W : Type} (R : Restrictor E W) (d : ℕ) (possessor : (ℕ → E) → W → E)
+variable {E W : Type} (R : (ℕ → E) → W → Set E) (d : ℕ) (possessor : (ℕ → E) → W → E)
   (rel : (ℕ → E) → W → E → E → Prop)
 
 /-! ### The demonstrative determiner's denotation -/
@@ -111,12 +111,13 @@ index `d` where the indexed referent `g d` lies in its vicinity, and nothing els
 noncomputable def _root_.DemonstrativeDeterminer.denote (dem : DemonstrativeDeterminer) :
     Definite (ℕ → E) W E :=
   fun g w ↦ Part.assert (g d ∈ dem.vicinity c χ)
-    fun _ ↦ ⟦DefiniteDescription.demonstrative R d⟧ g w
+    fun _ ↦ anaphoric R d g w
 
 /-- A demonstrative determiner denotes on every model, the restrictor, the index, the context of
 utterance and the vicinity relation being the Reader arguments of its domain. -/
 noncomputable instance : Denotes DemonstrativeDeterminer
-    (∀ (E W P T : Type) [PartialOrder E], Restrictor E W → ℕ → Context W E P T → SetRel E E →
+    (∀ (E W P T : Type) [PartialOrder E], ((ℕ → E) → W → Set E) → ℕ → Context W E P T →
+      SetRel E E →
       Definite (ℕ → E) W E) :=
   ⟨fun dem _ _ _ _ _ ↦ dem.denote⟩
 
@@ -126,9 +127,8 @@ its vicinity: deixis filters the referent and never selects it. -/
 @[simp] theorem _root_.DemonstrativeDeterminer.mem_denote {dem : DemonstrativeDeterminer}
     {g : ℕ → E} {s : W} {x : E} :
     x ∈ dem.denote R d c χ g s ↔
-      g d ∈ dem.vicinity c χ ∧ x ∈ ⟦DefiniteDescription.anaphoric R d⟧ g s := by
+      g d ∈ dem.vicinity c χ ∧ x ∈ anaphoric R d g s := by
   simp only [DemonstrativeDeterminer.denote, Part.mem_assert_iff, exists_prop]
-  rfl
 
 variable {R d c χ} in
 /-- Two demonstratives denote the same individual where both denote. -/
@@ -140,64 +140,53 @@ theorem _root_.DemonstrativeDeterminer.eq_of_mem_denote {dem₁ dem₂ : Demonst
 
 end Demonstrative
 
-/-! ### The article's descriptions and denotations -/
+/-! ### The article's denotations -/
 
-/-- The descriptions an article can denote are the images of its admissible [schwarz-2009] strengths
-under `DefiniteDescription.ofStrength`. A syncretic article such as English *the* denotes both the
-weak and the strong description. -/
-def _root_.Article.toDescriptions (a : Article) (R : Restrictor E W)
-    (idx : ℕ) : Set (DefiniteDescription E W) :=
-  (DefiniteDescription.ofStrength · R idx) '' a.strengths
-
-theorem _root_.Article.realizes_of_mem_toDescriptions (a : Article) (idx : ℕ)
-    (k : DefiniteDescription E W) (hk : k ∈ a.toDescriptions R idx) :
-    Determiner.Inventory.Realizes [.article a] k.kind := by
-  obtain ⟨p, hp, rfl⟩ := hk
-  rw [DefiniteDescription.kind_ofStrength, Determiner.Inventory.realizes_toKind,
-    Determiner.Inventory.marks_singleton]
-  exact (Article.mem_strengths_iff_marks a p).mp hp
-
-/-- The `Definite`s an article can denote are those of its descriptions. -/
-def _root_.Article.denotations (a : Article) (R : Restrictor E W) (idx : ℕ) :
+/-- The `Definite`s an article can denote are the images of its admissible [schwarz-2009]
+strengths under `Definite.ofStrength`. A syncretic article such as English *the* denotes both the
+uniqueness and the anaphoric definite. -/
+noncomputable def _root_.Article.denotations (a : Article) (R : (ℕ → E) → W → Set E) (idx : ℕ) :
     Set (Definite (ℕ → E) W E) :=
-  (⟦·⟧ : DefiniteDescription E W → Definite (ℕ → E) W E) '' a.toDescriptions R idx
+  (ofStrength · R idx) '' a.strengths
 
 /-- An article denotes the set of its readings on every model, the restrictor and the index
 being the Reader arguments of its domain. -/
 noncomputable instance : Denotes Article
-    (∀ (E W : Type), Restrictor E W → ℕ → Set (Definite (ℕ → E) W E)) :=
+    (∀ (E W : Type), ((ℕ → E) → W → Set E) → ℕ → Set (Definite (ℕ → E) W E)) :=
   ⟨fun a _ _ ↦ a.denotations⟩
 
+/-- Each denotation of an article is the definite of a strength the article marks. -/
 theorem _root_.Article.denotations_realized (a : Article) (idx : ℕ)
     (nd : Definite (ℕ → E) W E) (h : nd ∈ a.denotations R idx) :
-    ∃ k : DefiniteDescription E W,
-      Determiner.Inventory.Realizes [.article a] k.kind ∧ nd = ⟦k⟧ := by
-  obtain ⟨k, hk, rfl⟩ := h
-  exact ⟨k, Article.realizes_of_mem_toDescriptions R a idx k hk, rfl⟩
+    ∃ p : Strength,
+      Determiner.Inventory.Realizes [.article a] p.toKind ∧ nd = ofStrength p R idx := by
+  obtain ⟨p, hp, rfl⟩ := h
+  refine ⟨p, ?_, rfl⟩
+  rw [Determiner.Inventory.realizes_toKind, Determiner.Inventory.marks_singleton]
+  exact (Article.mem_strengths_iff_marks a p).mp hp
 
 /-! ### The possessive determiner's denotation -/
 
 /-- A possessive determiner denotes the possessive description, under which *my cat* is the unique
 cat to which the possessor stands in `rel`. Its only presupposition is the definite's. For
 quantified possessors see `Possession.PossNP`, which agrees with this description at an individual
-possessor (`DefiniteDescription.possNP_iff_exists_mem_denote_possessive`). -/
+possessor (`Definite.possNP_iff_exists_mem_possessive`). -/
 noncomputable def _root_.PossessiveDeterminer.denote (_p : PossessiveDeterminer) :
     Definite (ℕ → E) W E :=
-  ⟦DefiniteDescription.possessive R possessor rel⟧
+  possessive R possessor rel
 
 /-- A possessive determiner denotes on every model, the restrictor, the possessor and the
 possession relation being the Reader arguments of its domain. -/
 noncomputable instance : Denotes PossessiveDeterminer
-    (∀ (E W : Type), Restrictor E W → ((ℕ → E) → W → E) →
+    (∀ (E W : Type), ((ℕ → E) → W → Set E) → ((ℕ → E) → W → E) →
       ((ℕ → E) → W → E → E → Prop) → Definite (ℕ → E) W E) :=
   ⟨fun p _ _ ↦ p.denote⟩
 
 @[simp]
 theorem _root_.PossessiveDeterminer.denote_apply (p : PossessiveDeterminer) (g : ℕ → E) (w : W) :
-    p.denote R possessor rel g w = ⟦DefiniteDescription.possessive R possessor rel⟧ g w := rfl
+    p.denote R possessor rel g w = possessive R possessor rel g w := rfl
 
 theorem _root_.PossessiveDeterminer.denote_realized (p : PossessiveDeterminer) :
-    Determiner.Inventory.Realizes [.possessive p]
-      (DefiniteDescription.possessive R possessor rel).kind :=
+    Determiner.Inventory.Realizes [.possessive p] NominalKind.possessive :=
   ⟨.possessive p, List.mem_singleton_self _, rfl⟩
 
