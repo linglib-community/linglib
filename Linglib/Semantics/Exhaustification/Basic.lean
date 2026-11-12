@@ -6,7 +6,8 @@ public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Preorder.Finite
-public import Linglib.Semantics.Exhaustification.Pointwise
+public import Mathlib.Order.Bounds.Defs
+public import Mathlib.Order.Monotone.Basic
 
 /-!
 # Exhaustification
@@ -14,8 +15,13 @@ public import Linglib.Semantics.Exhaustification.Pointwise
 This file defines Chierchia's exhaustification operator `O` and its exclusion component.
 `excludes C p` holds at the worlds where every true alternative in `C` is entailed by the
 prejacent `p`, which is the assertion of the entailment-scale *only*. `exh C p` is the prejacent
-together with `excludes C p`: it denies every alternative the prejacent does not entail. Over
-finitely many worlds and an indexed family of alternatives, membership in `exh` is decidable.
+together with `excludes C p`: it denies every alternative the prejacent does not entail, so a
+member of `C` is exhaustified [where it is the least true
+member](##mem_exh_iff_isLeast_of_mem), on a scale where its index is [the greatest true
+one](##mem_exh_range_iff_isGreatest). Denying only the strictly stronger alternatives instead
+gives [the minimal true members](##mem_exh_inter_Iio_iff_minimal), the same thing [when no
+alternative is independent of the prejacent](##exh_inter_Iio_eq_exh). Over finitely many worlds
+and an indexed family of alternatives, membership in `exh` is decidable.
 
 ## Main statements
 
@@ -73,6 +79,12 @@ theorem notMem_exh (hq : q ∈ C) (hw : w ∈ q) (h : ¬ p ⊆ q) : w ∉ exh C 
 
 theorem exh_subset_compl (hq : q ∈ C) (h : ¬ p ⊆ q) : exh C p ⊆ qᶜ :=
   fun _ hw hwq ↦ notMem_exh hq hwq h hw
+
+/-- A member of `C` is exhaustified where it is the least true member under entailment, the
+strongest alternative true there. -/
+theorem mem_exh_iff_isLeast_of_mem (hp : p ∈ C) : w ∈ exh C p ↔ IsLeast {q ∈ C | w ∈ q} p :=
+  ⟨fun ⟨hw, h⟩ ↦ ⟨⟨hp, hw⟩, fun q ⟨hq, hwq⟩ ↦ h q hq hwq⟩,
+    fun ⟨⟨_, hw⟩, h⟩ ↦ ⟨hw, fun _ hq hwq ↦ h ⟨hq, hwq⟩⟩⟩
 
 theorem mem_exh_image_iff {ι : Type*} {f : ι → Set W} {A : Set ι} :
     w ∈ exh (f '' A) p ↔ w ∈ p ∧ ∀ i ∈ A, w ∈ f i → p ⊆ f i := by
@@ -192,24 +204,38 @@ theorem Irredundant.excludes_injOn (hf : Irredundant f) (i₀ : ι) :
       exact hj ⟨fun h ↦ absurd h hmem, fun h ↦ absurd h h2⟩
     exact hf.excludes_ne h₂j hmem (fun h ↦ hmem (h ▸ h₁)) heq
 
-theorem mem_exh_range_iff_exhAgainst (f : ι → Set W) (i : ι) (w : W) :
-    w ∈ exh (Set.range f) (f i) ↔ exhAgainst (fun i j ↦ ¬ f i ⊆ f j) (w ∈ f ·) i := by
-  simp only [mem_exh, Set.forall_mem_range, exhAgainst]
-  exact and_congr_right fun _ ↦ forall_congr' fun j ↦
-    ⟨fun h hn hw ↦ hn (h hw), fun h hw ↦ not_not.1 fun hn ↦ h hn hw⟩
+/-- Over an irredundant family, a member is exhaustified where it is the only true member. -/
+theorem Irredundant.mem_exh_range_iff (hf : Irredundant f) {i : ι} {w : W} :
+    w ∈ exh (Set.range f) (f i) ↔ w ∈ f i ∧ ∀ j, w ∈ f j → j = i :=
+  Exhaustification.mem_exh_range_iff.trans <| and_congr_right fun _ ↦ forall_congr' fun _ ↦
+    imp_congr_right fun _ ↦
+    ⟨fun h ↦ by_contra fun hne ↦ hf.not_subset (Ne.symm hne) h, fun h ↦ h ▸ subset_rfl⟩
 
-theorem Irredundant.mem_exh_range_iff {f : ι → Set W} (hf : Irredundant f) (i : ι) (w : W) :
-    w ∈ exh (Set.range f) (f i) ↔ exhAgainst (· ≠ ·) (w ∈ f ·) i := by
-  rw [mem_exh_range_iff_exhAgainst]
-  refine and_congr_right fun _ ↦ forall_congr' fun j ↦ ⟨fun h hij ↦ h (hf.not_subset hij),
-    fun h hn ↦ h fun hij ↦ hn (hij ▸ subset_rfl)⟩
+/-- When the members a member entails are those at the indices below its own, it is exhaustified
+where its index is the greatest true one. -/
+theorem mem_exh_range_iff_isGreatest_of_forall [Preorder ι] {i : ι} {w : W}
+    (hf : ∀ j, f i ⊆ f j ↔ j ≤ i) : w ∈ exh (Set.range f) (f i) ↔ IsGreatest {j | w ∈ f j} i :=
+  mem_exh_range_iff.trans <| and_congr_right fun _ ↦ forall_congr' fun j ↦ imp_congr_right fun _ ↦
+    hf j
 
-/-- On a strictly decreasing family the prejacent entails just the members at smaller indices, so
-exhaustification denies the members at larger ones. -/
-theorem mem_exh_range_iff_exhAgainst_lt [LinearOrder ι] (hf : StrictAnti f) (i : ι) (w : W) :
-    w ∈ exh (Set.range f) (f i) ↔ exhAgainst (· < ·) (w ∈ f ·) i := by
-  rw [mem_exh_range_iff_exhAgainst]
-  simp only [hf.le_iff_ge, not_le]
+section LinearOrder
+
+variable [LinearOrder ι] {i : ι} {w : W}
+
+/-- On a strictly decreasing family, where larger indices are stronger, a member is exhaustified
+where its index is the greatest true one. -/
+theorem mem_exh_range_iff_isGreatest (hf : StrictAnti f) :
+    w ∈ exh (Set.range f) (f i) ↔ IsGreatest {j | w ∈ f j} i :=
+  mem_exh_range_iff_isGreatest_of_forall fun _ ↦ hf.le_iff_ge
+
+/-- On a strictly increasing family, where smaller indices are stronger, a member is exhaustified
+where its index is the least true one. -/
+theorem mem_exh_range_iff_isLeast (hf : StrictMono f) :
+    w ∈ exh (Set.range f) (f i) ↔ IsLeast {j | w ∈ f j} i :=
+  mem_exh_range_iff.trans <| and_congr_right fun _ ↦ forall_congr' fun _ ↦ imp_congr_right fun _ ↦
+    hf.le_iff_le
+
+end LinearOrder
 
 end Irredundant
 
@@ -229,6 +255,27 @@ theorem mem_excludes_inter_Iio : w ∈ excludes (C ∩ Set.Iio p) p ↔ ∀ q �
 /-- Exhaustifying against the strictly stronger alternatives negates all of them. -/
 theorem mem_exh_inter_Iio : w ∈ exh (C ∩ Set.Iio p) p ↔ w ∈ p ∧ ∀ q ∈ C, q ⊂ p → w ∉ q :=
   and_congr_right fun _ ↦ mem_excludes_inter_Iio
+
+/-- Exhaustified against the strictly stronger alternatives only, a member of `C` holds where it
+is a minimal true member: true, with no true member strictly below it. -/
+theorem mem_exh_inter_Iio_iff_minimal (hp : p ∈ C) :
+    w ∈ exh (C ∩ Set.Iio p) p ↔ Minimal (· ∈ {q ∈ C | w ∈ q}) p :=
+  mem_exh_inter_Iio.trans <| Iff.trans
+    ⟨fun ⟨hw, h⟩ ↦ ⟨⟨hp, hw⟩, fun _ hlt hy ↦ h _ hy.1 hlt hy.2⟩,
+      fun ⟨hw, h⟩ ↦ ⟨hw.2, fun _ hq hlt hwq ↦ h hlt ⟨hq, hwq⟩⟩⟩
+    minimal_iff_forall_lt.symm
+
+/-- Denying the alternatives the prejacent does not entail denies the strictly stronger ones. -/
+theorem exh_subset_exh_inter_Iio (C : Set (Set W)) (p : Set W) :
+    exh C p ⊆ exh (C ∩ Set.Iio p) p :=
+  exh_antitone Set.inter_subset_left p
+
+/-- When every alternative is comparable with the prejacent, the alternatives it does not entail
+are the strictly stronger ones, and the two exhaustifications agree. They come apart on an
+alternative that is independent of the prejacent, which only `exh C p` denies. -/
+theorem exh_inter_Iio_eq_exh (h : ∀ q ∈ C, q ⊆ p ∨ p ⊆ q) : exh (C ∩ Set.Iio p) p = exh C p :=
+  (exh_subset_exh_inter_Iio C p).antisymm' fun _ hw ↦ ⟨hw.1, fun q hq hwq ↦
+    (h q hq).elim (fun hqp ↦ not_not.1 fun hpq ↦ (mem_exh_inter_Iio.1 hw).2 q hq ⟨hqp, hpq⟩ hwq) id⟩
 
 /-- A member is dominated exactly when negating what is strictly stronger leaves nothing. -/
 theorem exh_inter_Iio_eq_empty_iff : exh (C ∩ Set.Iio p) p = ∅ ↔ Dominated C p := by

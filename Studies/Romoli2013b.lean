@@ -17,7 +17,7 @@ the subject has no opinion. Since the excluded middle is entailed wherever the p
 under a downward entailing operator, it [does not project](##Romoli2013b.exh_of_monotone) from
 questions, conditionals or modals as a presupposition would, and in the restrictor of a universal
 exhaustification yields [an inference of its
-own](##Romoli2013b.exhAgainst_everyWho). With the enriched meanings as the direct implicatures that
+own](##Romoli2013b.isGreatest_everyWho). With the enriched meanings as the direct implicatures that
 the licensing of strict NPIs reads, the library's licensing theory [admits the strict NPI of each
 example where Romoli accepts it](##Romoli2013b.judgments_predicted), the restrictors of
 quantifiers aside.
@@ -26,8 +26,8 @@ quantifiers aside.
 
 * Romoli's exhaustification denies every alternative that the prejacent does not entail. Which
   alternatives those are is fixed by the theory, not by the model: the families of alternatives
-  are indexed in order of logical strength, and the prejacent is exhaustified against the indices
-  that are not below its own with `Exhaustification.exhAgainst`. In an upward entailing
+  are indexed in order of logical strength, and the exhaustified prejacent holds where its index
+  is the greatest true one, `IsGreatest`. In an upward entailing
   environment the excluded middle is the weaker alternative, which
   `Exhaustification.exh` shows in any model.
 * Romoli adopts the proposal of Gajewski and of Chierchia that a strict NPI needs an environment
@@ -86,15 +86,28 @@ theorem exh_of_monotone {V : Type*} {f : Set W → Set V} (hf : Monotone f) (R :
     rintro _ (rfl | rfl)
     exacts [subset_rfl, hf (core_subset_excludedMiddle R p)]
 
+-- On a chain of two alternatives the weaker is the greatest true one where it holds and the
+-- stronger does not.
+private theorem isGreatest_zero_fin_two {A : Fin 2 → Prop} :
+    IsGreatest {i | A i} 0 ↔ A 0 ∧ ¬ A 1 :=
+  ⟨fun h ↦ ⟨h.1, fun h1 ↦ absurd (h.2 h1) (by decide)⟩,
+    fun h ↦ ⟨h.1, fun i hi ↦ match i, hi with
+      | 0, _ => le_rfl
+      | 1, h1 => absurd h1 h.2⟩⟩
+
+-- An index is the greatest true one where it is true and every index not below it is false.
+private theorem isGreatest_iff_forall_not {ι : Type*} [Preorder ι] {s : Set ι} {i : ι} :
+    IsGreatest s i ↔ i ∈ s ∧ ∀ j, ¬ j ≤ i → j ∉ s :=
+  and_congr_right fun _ ↦ ⟨fun h _ hj hs ↦ hj (h hs), fun h _ hs ↦ not_not.1 fun hj ↦ h _ hj hs⟩
+
 /-- A negated neg-raising predicate exhaustified against its stronger alternative, the negated
 excluded middle: the `exh[not P]` of (116). -/
 def exhNot (R : SetRel W W) (p : Set W) : Set W :=
-  {w | exhAgainst (· < ·) (w ∈ ![(R.core p)ᶜ, (excludedMiddle R p)ᶜ] ·) 0}
+  {w | IsGreatest {i | w ∈ ![(R.core p)ᶜ, (excludedMiddle R p)ᶜ] i} 0}
 
 theorem mem_exhNot_iff : w ∈ exhNot R p ↔ w ∉ R.core p ∧ w ∈ excludedMiddle R p := by
-  simp only [exhNot, Set.mem_ofPred_eq, exhAgainst, Fin.forall_fin_two, lt_self_iff_false,
-    IsEmpty.forall_iff, true_and, Fin.zero_lt_one, forall_const, Matrix.cons_val_zero,
-    Matrix.cons_val_one, Set.mem_compl_iff, not_not]
+  rw [exhNot, Set.mem_ofPred_eq, isGreatest_zero_fin_two]
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Set.mem_compl_iff, not_not]
 
 -- (91)
 theorem exhNot_eq (R : SetRel W W) (p : Set W) : exhNot R p = R.dom ∩ R.core pᶜ :=
@@ -122,12 +135,11 @@ theorem isAntiAdditive_exhNot (R : SetRel W W) : IsAntiAdditive (exhNot R) := fu
   simp only [exhNot_eq, Set.sup_eq_union, Set.inf_eq_inter, dom_inter_core_compl_union]
 
 -- (124)
-theorem exhAgainst_compl_core_preimage :
-    exhAgainst (· < ·) (w ∈ ![(R.core p)ᶜ, (R.preimage p)ᶜ] ·) 0 ↔
+theorem isGreatest_compl_core_preimage :
+    IsGreatest {i | w ∈ ![(R.core p)ᶜ, (R.preimage p)ᶜ] i} 0 ↔
       w ∉ R.core p ∧ w ∈ R.preimage p := by
-  simp only [exhAgainst, Fin.forall_fin_two, lt_self_iff_false, IsEmpty.forall_iff, true_and,
-    Fin.zero_lt_one, forall_const, Matrix.cons_val_zero, Matrix.cons_val_one, Set.mem_compl_iff,
-    not_not]
+  rw [isGreatest_zero_fin_two]
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Set.mem_compl_iff, not_not]
 
 /-! ### Non-upward-entailing environments (§5.2.2) -/
 
@@ -139,13 +151,12 @@ def everyWho (P Q : E → Set W) : Set W := {w | ∀ x, w ∈ P x → w ∈ Q x}
 /-- In the restrictor of a universal, exhaustification adds that someone who believes the
 complement false is outside the scope ((100)–(102)), an inference that the presuppositional
 account does not make. -/
-theorem exhAgainst_everyWho :
-    exhAgainst (· < ·)
-        (w ∈ ![everyWho (fun x ↦ (B x).core p) Q, everyWho (fun x ↦ excludedMiddle (B x) p) Q] ·)
-        0 ↔
+theorem isGreatest_everyWho :
+    IsGreatest {i | w ∈ ![everyWho (fun x ↦ (B x).core p) Q,
+        everyWho (fun x ↦ excludedMiddle (B x) p) Q] i} 0 ↔
       w ∈ everyWho (fun x ↦ (B x).core p) Q ∧ ∃ x, w ∈ (B x).core pᶜ ∧ w ∉ Q x := by
-  simp only [exhAgainst, Fin.forall_fin_two, lt_self_iff_false, IsEmpty.forall_iff, true_and,
-    Fin.zero_lt_one, forall_const, Matrix.cons_val_zero, Matrix.cons_val_one]
+  rw [isGreatest_zero_fin_two]
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
   refine and_congr_right fun hw ↦ ⟨fun hn ↦ ?_, fun ⟨x, hx, hQ⟩ hall ↦ hQ (hall x (.inr hx))⟩
   by_contra hc
   exact hn fun x hx ↦ by_contra fun hQ ↦ hc ⟨x, hx.resolve_left fun hp ↦ hQ (hw x hp), hQ⟩
@@ -164,10 +175,11 @@ def noOneAlternatives (B : E → SetRel W W) (p : Set W) (i : Fin 2 × Fin 2) : 
   ![notEvery, noOne] i.1 fun x ↦ ![(B x).core p, excludedMiddle (B x) p] i.2
 
 -- (164), (165)
-theorem exhAgainst_noOne [Nonempty E] :
-    exhAgainst (fun i j ↦ ¬ j ≤ i) (w ∈ noOneAlternatives B p ·) (1, 0) ↔
+theorem isGreatest_noOne [Nonempty E] :
+    IsGreatest {i | w ∈ noOneAlternatives B p i} (1, 0) ↔
       w ∈ ⋂ x, (B x).dom ∩ (B x).core pᶜ := by
-  simp only [exhAgainst, noOneAlternatives, Prod.forall, Fin.forall_fin_two, Prod.mk_le_mk,
+  rw [isGreatest_iff_forall_not]
+  simp only [Set.mem_ofPred_eq, noOneAlternatives, Prod.forall, Fin.forall_fin_two, Prod.mk_le_mk,
     Matrix.cons_val_zero, Matrix.cons_val_one, Set.mem_iInter, mem_dom_inter_core_compl_iff]
   refine ⟨fun ⟨hw, ⟨_, h01⟩, _, _⟩ x ↦ ⟨hw x, ?_⟩, fun hw ↦ ⟨fun x ↦ (hw x).1,
     ⟨fun h ↦ by simp at h, fun _ ⟨x, hx⟩ ↦ hx (hw x).2⟩,
@@ -177,11 +189,37 @@ theorem exhAgainst_noOne [Nonempty E] :
   exact h01 (by simp) ⟨x, hx⟩
 
 -- (164), (165) [gajewski-2007]
-theorem exhAgainst_noOne_iff_mem_posExt_noOneNR [Nonempty E] :
-    exhAgainst (fun i j ↦ ¬ j ≤ i) (w ∈ noOneAlternatives B p ·) (1, 0) ↔
+theorem isGreatest_noOne_iff_mem_posExt_noOneNR [Nonempty E] :
+    IsGreatest {i | w ∈ noOneAlternatives B p i} (1, 0) ↔
       w ∈ Trivalent.posExt (Gajewski2007.noOneNR Set.univ B p) := by
-  rw [exhAgainst_noOne, Gajewski2007.posExt_noOneNR]
+  rw [isGreatest_noOne, Gajewski2007.posExt_noOneNR]
   simp [Gajewski2007.every]
+
+-- (50), (51), (165): where the alternatives the prejacent entails are those the order of the
+-- indices gives, the exhaustivity operator applied to *no one thinks p* yields the same
+theorem mem_exh_noOne_iff [Nonempty E]
+    (h : ∀ j, noOneAlternatives B p (1, 0) ⊆ noOneAlternatives B p j ↔ j ≤ (1, 0)) :
+    w ∈ exh (Set.range (noOneAlternatives B p)) (noOneAlternatives B p (1, 0)) ↔
+      w ∈ ⋂ x, (B x).dom ∩ (B x).core pᶜ :=
+  (mem_exh_range_iff_isGreatest_of_forall h).trans isGreatest_noOne
+
+-- fn. 16, (165c): denying only the strictly stronger alternative, that no one has an opinion,
+-- gives the weaker inference that someone does; the universal inference (164c) needs the denial
+-- of *not everyone has an opinion*, which is independent of the prejacent, so the excludable
+-- alternatives are those that are not weaker
+theorem maximal_noOne :
+    Maximal (w ∈ noOneAlternatives B p ·) (1, 0) ↔
+      w ∈ noOne (fun x ↦ (B x).core p) ∧ ∃ x, w ∈ excludedMiddle (B x) p := by
+  rw [maximal_iff_forall_gt]
+  refine and_congr_right fun _ ↦ ⟨fun h ↦ ?_, fun ⟨x, hx⟩ j hj hmem ↦ ?_⟩
+  · by_contra hc
+    exact h (Prod.mk_lt_mk.2 (.inr ⟨le_rfl, by decide⟩) : ((1, 0) : Fin 2 × Fin 2) < (1, 1))
+      fun x hx ↦ hc ⟨x, hx⟩
+  · have hj' : ∀ a b : Fin 2, (1 < a ∧ 0 ≤ b ∨ 1 ≤ a ∧ 0 < b) →
+        (a, b) = ((1, 1) : Fin 2 × Fin 2) := by decide
+    obtain ⟨a, b⟩ := j
+    cases hj' a b (Prod.mk_lt_mk.1 hj)
+    exact hmem x hx
 
 /-! ### Stacked predicates (§7.3.1) -/
 
@@ -193,8 +231,8 @@ def stackAlternatives (R₁ R₂ : SetRel W W) (p : Set W) (i : Fin 2 × Fin 2) 
 /-- Exhaustified against its three alternatives, a negated neg-raising predicate over another has
 the negation below both, whichever predicate is on top ((172)–(175)). The scalar account alone
 therefore predicts no asymmetry between *believe* over *want* and *want* over *believe*. -/
-theorem exhAgainst_stack (R₁ R₂ : SetRel W W) (p : Set W) :
-    exhAgainst (fun i j ↦ ¬ j ≤ i) (w ∈ stackAlternatives R₁ R₂ p ·) (0, 0) ↔
+theorem isGreatest_stack (R₁ R₂ : SetRel W W) (p : Set W) :
+    IsGreatest {i | w ∈ stackAlternatives R₁ R₂ p i} (0, 0) ↔
       w ∈ R₁.dom ∩ R₁.core (R₂.dom ∩ R₂.core pᶜ) := by
   have key : w ∈ R₁.dom ∩ R₁.core (R₂.dom ∩ R₂.core pᶜ) ↔
       w ∉ R₁.core (R₂.core p) ∧ w ∈ R₁.core (excludedMiddle R₂ p) ∧
@@ -203,7 +241,8 @@ theorem exhAgainst_stack (R₁ R₂ : SetRel W W) (p : Set W) :
       ← compl_core_inter_excludedMiddle R₁ (R₂.core p)]
     exact ⟨fun ⟨⟨h₁, h₂⟩, h₃⟩ ↦ ⟨h₁, h₃, h₂⟩, fun ⟨h₁, h₃, h₂⟩ ↦ ⟨⟨h₁, h₂⟩, h₃⟩⟩
   rw [key]
-  simp only [exhAgainst, stackAlternatives, Prod.forall, Fin.forall_fin_two, Prod.mk_le_mk,
+  rw [isGreatest_iff_forall_not]
+  simp only [Set.mem_ofPred_eq, stackAlternatives, Prod.forall, Fin.forall_fin_two, Prod.mk_le_mk,
     Matrix.cons_val_zero, Matrix.cons_val_one, Set.mem_compl_iff, not_not]
   exact ⟨fun ⟨hw, ⟨_, h01⟩, h10, _⟩ ↦ ⟨hw, h01 (by simp), h10 (by simp)⟩,
     fun ⟨hw, h₂, h₃⟩ ↦ ⟨hw, ⟨fun h ↦ by simp at h, fun _ ↦ h₂⟩,
@@ -213,7 +252,7 @@ theorem exhAgainst_stack (R₁ R₂ : SetRel W W) (p : Set W) :
 
 Each environment is a licenser whose enriched meaning is the exhaustified one. Negated *think* and
 negated *be certain* share the operator of a negated universal and differ in the enrichment, by
-`exhNot_eq` and `exhAgainst_compl_core_preimage`. -/
+`exhNot_eq` and `isGreatest_compl_core_preimage`. -/
 
 /-- The environments in which the paper places a strict NPI. -/
 inductive Environment

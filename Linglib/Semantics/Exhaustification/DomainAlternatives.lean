@@ -4,7 +4,6 @@ public import Mathlib.Data.Finset.Interval
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Fintype.Basic
 public import Linglib.Logic.Modal.Basic
-public import Linglib.Semantics.Exhaustification.Pointwise
 public import Linglib.Semantics.Exhaustification.InnocentInclusion
 public import Linglib.Semantics.Exhaustification.Antiexhaustive
 
@@ -215,14 +214,15 @@ of the domain. -/
 def AntiExhaustivity (S : Finset E) : Prop :=
   ◇[R] (claim Q S) w → ◇[R] (claim Q (D \ S)) w
 
-/-- For a singleton, anti-exhaustivity negates the possibility of its member exhaustified against
-the possibility of each other member of the domain. -/
-theorem antiExhaustivity_singleton_iff {a : E} (ha : a ∈ D) :
-    AntiExhaustivity R w D Q {a} ↔ ¬ exhAgainst (· ≠ ·) (fun x : D ↦ ◇[R] (Q · x) w) ⟨a, ha⟩ := by
-  simp only [AntiExhaustivity, exhAgainst, claim, Diamond, Finset.mem_singleton, exists_eq_left,
-    Finset.mem_sdiff, not_and, not_forall, not_not, Subtype.forall, ne_eq, Subtype.mk.injEq]
-  exact ⟨fun h hv ↦ let ⟨v, hv', x, ⟨hx, hxa⟩, hq⟩ := h hv; ⟨x, hx, fun h ↦ hxa h.symm, v, hv', hq⟩,
-    fun h hv ↦ let ⟨x, hx, hxa, v, hv', hq⟩ := h hv; ⟨v, hv', x, ⟨hx, fun h ↦ hxa h.symm⟩, hq⟩⟩
+/-- For a singleton, anti-exhaustivity denies that its member is the only possible member of the
+domain, the possibility of that member exhaustified against the possibility of each other one. -/
+theorem antiExhaustivity_singleton_iff {a : E} :
+    AntiExhaustivity R w D Q {a} ↔
+      ¬ (◇[R] (Q · a) w ∧ ∀ x ∈ D, ◇[R] (Q · x) w → x = a) := by
+  simp only [AntiExhaustivity, claim, Diamond, Finset.mem_singleton, exists_eq_left,
+    Finset.mem_sdiff, not_and, not_forall]
+  exact ⟨fun h hv ↦ let ⟨v, hv', x, ⟨hx, hxa⟩, hq⟩ := h hv; ⟨x, hx, ⟨v, hv', hq⟩, hxa⟩,
+    fun h hv ↦ let ⟨x, hx, ⟨v, hv', hq⟩, hxa⟩ := h hv; ⟨v, hv', x, ⟨hx, hxa⟩, hq⟩⟩
 
 theorem exists_singleton_of_diamond (h : ◇[R] (claim Q D) w) :
     ∃ S ∈ subdomainAlternatives .singletons D, ◇[R] (claim Q S) w :=

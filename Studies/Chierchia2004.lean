@@ -228,11 +228,8 @@ theorem strengthen_strong_lexical_pair {φ ψ : Set W} (h : ψ ⊂ φ) :
 
 theorem lexical_strengthen_strong_eq_exh {φ : Set W} {ALT : Set (Set W)}
     (h : ∀ a ∈ ALT, a ⊆ φ ∨ φ ⊆ a) : (lexical φ ALT).strengthen.strong = exh ALT φ := by
-  ext w
-  simp only [mem_strengthen_strong, lexical, mem_exh]
-  refine and_congr_right fun _ ↦ ⟨fun hs a ha hw ↦ by_contra fun hn ↦ ?_,
-    fun he a ha hlt hw ↦ hlt.2 (he a ha hw)⟩
-  exact hs a ha ⟨(h a ha).resolve_right hn, hn⟩ hw
+  rw [← Exhaustification.exh_inter_Iio_eq_exh h]
+  rfl
 
 /-! ### Strong Application -/
 

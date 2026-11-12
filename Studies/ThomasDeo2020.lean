@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Degree.Granularity
 public import Mathlib.Order.Setoid.Partition
-public import Linglib.Semantics.Exhaustification.Pointwise
+public import Linglib.Core.Order.Cover
 public import Linglib.Data.Examples.ThomasDeo2020
 
 /-!
@@ -42,8 +42,6 @@ the rows of `Data.Examples.ThomasDeo2020`.
 @[expose] public section
 
 namespace ThomasDeo2020
-
-open Exhaustification
 
 variable {D : Type*} [AddCommGroup D] [LinearOrder D]
 
@@ -199,16 +197,17 @@ theorem not_just_comparative_iff (hG : ∀ ε ∈ G, εf ≤ ε) :
 
 /-- Over the grains no finer than the finest, the negative component of *just* with a
 comparative is exhaustification against the strictly coarser grains, the stronger alternatives
-of the chain (section 5). -/
+of the chain: the finest grain is the coarsest at which the comparative holds (section 5). -/
 theorem just_comparative_Ici_iff :
-    just (comparative · dc) (Set.Ici εf) εf μx ↔ exhAgainst (· < ·) (comparative · dc μx) εf :=
+    just (comparative · dc) (Set.Ici εf) εf μx ↔ IsGreatest {ε | comparative ε dc μx} εf :=
   (just_comparative_iff fun _ hε ↦ hε).trans
-    ⟨fun h ↦ ⟨h.1, fun ε hε ↦ not_lt.2 (h.2 ε (le_of_lt hε) hε)⟩,
-      fun h ↦ ⟨h.1, fun ε _ hε ↦ not_lt.1 (h.2 ε hε)⟩⟩
+    ⟨fun h ↦ ⟨h.1, fun ε hε ↦ not_lt.1 fun hlt ↦ (h.2 ε hlt.le hlt).not_gt hε⟩,
+      fun h ↦ ⟨h.1, fun _ _ hlt ↦ not_lt.1 fun hc ↦ hlt.not_ge (h.2 hc)⟩⟩
 
-theorem just_comparative_iff_succ {ε' : D} (his : εf < ε') (hleast : ∀ ε, εf < ε → ε' ≤ ε) :
+theorem just_comparative_iff_of_covBy {ε' : D} (h : εf ⋖ ε') :
     just (comparative · dc) (Set.Ici εf) εf μx ↔ dc + εf < μx ∧ μx ≤ dc + ε' := by
-  rw [just_comparative_Ici_iff, exhAgainst_lt_iff_succ (A := (comparative · dc μx))
-    (fun _ _ h ↦ comparative_anti h μx) his hleast, comparative_iff, comparative_iff, not_lt]
+  rw [just_comparative_Ici_iff, (show IsLowerSet {ε | comparative ε dc μx} from
+    fun _ _ hle ↦ comparative_anti hle μx).isGreatest_iff_of_covBy h]
+  exact and_congr Iff.rfl not_lt
 
 end ThomasDeo2020
