@@ -156,7 +156,8 @@ theorem reduplication_verbs :
 *tətamu* pairs with *tamu* and *jəjawah* with *jawah* but *tətamu* not with *jawah*. -/
 theorem reduplication_ne_prod (R : Set (Fin 4 → Flat (List String)))
     (B : Set (Fin 2 → Flat (List String))) :
-    {p | reduplication.InstantiatesAt (Sum.elim redSub baseSub) (Sum.elim p.1 p.2)} ≠ R ×ˢ B :=
+    {(r, b) : (Fin 4 → Flat (List String)) × (Fin 2 → Flat (List String)) |
+      reduplication.InstantiatesAt (Sum.elim redSub baseSub) (Sum.elim r b)} ≠ R ×ˢ B :=
   Schema.setOf_instantiatesAt_elim_ne_prod reduplication_verbs.1 reduplication_verbs.2.1
     (a := 0) (b := 0) rfl (by decide) R B
 
@@ -204,7 +205,8 @@ theorem comparative_pairs :
 /-- No condition on adjectives and comparatives separately pairs them as (16) does, so no schema
 dominating the two sisters states the correspondence of their consonants. -/
 theorem comparative_ne_prod (A B : Set (Fin 5 → Flat String)) :
-    {p | comparative.InstantiatesAt (Sum.elim adjSub cmpSub) (Sum.elim p.1 p.2)} ≠ A ×ˢ B :=
+    {(p, q) : (Fin 5 → Flat String) × (Fin 5 → Flat String) |
+      comparative.InstantiatesAt (Sum.elim adjSub cmpSub) (Sum.elim p q)} ≠ A ×ˢ B :=
   Schema.setOf_instantiatesAt_elim_ne_prod comparative_pairs.1 comparative_pairs.2.1
     (a := 0) (b := 1) rfl (by decide) A B
 

@@ -332,7 +332,7 @@ theorem setOf_instantiatesAt_elim_ne_prod {w₁' : P₁ → α} {w₂' : P₂ �
     (h : s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁ w₂))
     (h' : s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁' w₂')) {a : P₁} {b : P₂}
     (hab : pos₁ a = pos₂ b) (hne : w₁ a ≠ w₂' b) (A : Set (P₁ → α)) (B : Set (P₂ → α)) :
-    {p : (P₁ → α) × (P₂ → α) | s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim p.1 p.2)} ≠
+    {(x, y) : (P₁ → α) × (P₂ → α) | s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim x y)} ≠
       A ×ˢ B := fun hAB ↦ by
   have hm x y := Set.ext_iff.1 hAB (x, y)
   exact hne (((hm w₁ w₂').2 ⟨((hm _ _).1 h).1, ((hm _ _).1 h').2⟩).sumElim_apply_eq a b hab)
@@ -477,6 +477,14 @@ theorem isProductive_iff_forall_generates_iff :
   ⟨fun hs _ _ ↦ hs.generates_iff,
     fun h ↦ isProductive_iff_generates_empty.2 ((h ∅ _).2 s.instantiates_body)⟩
 
+/-- Over the flat order a schema without variables generates nothing but its own description,
+whatever is stored. -/
+theorem generates_iff_eq_of_forall_ne_bot {β : Type*} {s : Schema V (Flat β)}
+    {Λ : Set (V → Flat β)} {u : V → Flat β} (h : ∀ v, s.body v ≠ ⊥) :
+    s.Generates Λ u ↔ u = s.body :=
+  ⟨fun hu ↦ (instantiates_iff_eq_of_forall_isMax fun v ↦ Flat.isMax_of_ne_bot (h v)).1 hu.1,
+    fun hu ↦ hu ▸ ⟨le_rfl, fun v hv ↦ absurd hv.1 (h v)⟩⟩
+
 end Roles
 
 end Schema
@@ -486,7 +494,9 @@ end Schema
 Two items over the same positions are the same except at `S` when they agree outside `S`. The link
 between them is an *instantiation* if the second is strictly above the first at every position of
 `S`, and a *contrast* if the two are incompatible at every position of `S`. An elaboration is an
-instantiation from an item that is `⊥` throughout `S`. -/
+instantiation from an item that is `⊥` throughout `S`. The two links meet in Structural
+Intersection: the intersection of two contrasting items is
+[a description that each instantiates at the contrast](##Contrast.instantiation_inf). -/
 
 section RelationalLinks
 variable [PartialOrder α] {f g : P → α} {S : Set P}
@@ -504,6 +514,21 @@ def Contrast (f g : P → α) (S : Set P) : Prop :=
 theorem Contrast.symm (h : Contrast f g S) : Contrast g f S :=
   ⟨h.1.symm, fun p hp hc ↦ h.2 p hp hc.symm⟩
 
+/-- Two instances of one description at the same positions are the same outside them. -/
+theorem Instantiation.eqOn {g' : P → α} (h : Instantiation f g S) (h' : Instantiation f g' S) :
+    Set.EqOn g g' Sᶜ :=
+  fun _ hp ↦ (h.1 hp).symm.trans (h'.1 hp)
+
+instance [Fintype P] [DecidableEq α] [DecidableLT α] [DecidablePred (· ∈ S)] :
+    Decidable (Instantiation f g S) :=
+  decidable_of_iff (∀ p, (p ∉ S → f p = g p) ∧ (p ∈ S → f p < g p))
+    ⟨fun h ↦ ⟨fun p hp ↦ (h p).1 hp, fun p hp ↦ (h p).2 hp⟩, fun h p ↦ ⟨fun hp ↦ h.1 hp, h.2 p⟩⟩
+
+instance [Fintype P] [DecidableEq α] [∀ a b : α, Decidable (Compat a b)]
+    [DecidablePred (· ∈ S)] : Decidable (Contrast f g S) :=
+  decidable_of_iff (∀ p, (p ∉ S → f p = g p) ∧ (p ∈ S → ¬ Compat (f p) (g p)))
+    ⟨fun h ↦ ⟨fun p hp ↦ (h p).1 hp, fun p hp ↦ (h p).2 hp⟩, fun h p ↦ ⟨fun hp ↦ h.1 hp, h.2 p⟩⟩
+
 variable [OrderBot α]
 
 theorem Instantiation.instantiates {s : Schema P α} {w : P → α}
@@ -516,5 +541,23 @@ theorem contrast_iff_of_forall_isMax (hα : ∀ a : α, a ≠ ⊥ → IsMax a) :
   and_congr_right' (forall₂_congr fun _ _ ↦ not_compat_iff_of_forall_isMax hα)
 
 end RelationalLinks
+
+section Inf
+variable [SemilatticeInf α] {f g : P → α} {S : Set P}
+
+/-- The Structural Intersection of two contrasting items is a description that each of them
+instantiates at the positions of the contrast. -/
+theorem Contrast.instantiation_inf (h : Contrast f g S) : Instantiation (f ⊓ g) f S :=
+  ⟨fun p hp ↦ by rw [Pi.inf_apply, ← h.1 hp, inf_idem], fun p hp ↦
+    inf_le_left.lt_of_ne fun he ↦ h.2 p hp (.of_le (inf_eq_left.1 he) le_rfl)⟩
+
+/-- Where every element above `⊥` is maximal, the Structural Intersection of two contrasting
+items has a variable at each position of the contrast. -/
+theorem Contrast.inf_apply_eq_bot [OrderBot α] (hα : ∀ a : α, a ≠ ⊥ → IsMax a)
+    (h : Contrast f g S) {p : P} (hp : p ∈ S) : (f ⊓ g) p = ⊥ :=
+  by_contra fun hne ↦ h.2 p hp <| .of_le ((hα _ hne).eq_of_le inf_le_left).ge
+    ((hα _ hne).eq_of_le inf_le_right).ge
+
+end Inf
 
 end ConstructionMorphology
