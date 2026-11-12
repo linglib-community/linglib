@@ -12,23 +12,18 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Discourse roles
 
-This file defines the two discourse roles, speaker and addressee, the participants a speech-act
-context distinguishes ([kaplan-1989]) and the agents of a two-party commitment model
-([gunlogson-2001], [farkas-bruce-2010]). A role's counterpart is the other participant
-(`SpeechAct.Role.other`), an involution without fixed points, so a statement about every role
-is a statement about a role and its counterpart (`SpeechAct.Role.forall_role'`), and the roles
-form a nontrivial type.
-
-## Main definitions
-
-* `SpeechAct.Role` — speaker or addressee.
-* `SpeechAct.Role.other` — the other participant.
+This file defines the two discourse roles, speaker and addressee. They index the agents of a
+two-party commitment model, as in Gunlogson's and Farkas and Bruce's discourse contexts, and a
+person category is a set of them together with a count of others, as in Cysouw's paradigms. A
+role's counterpart is the other participant, `SpeechAct.Role.other`, an involution without fixed
+points, so [a statement about every role is a statement about a role and its
+counterpart](##SpeechAct.Role.forall_role'). The lemmas follow those of `Bool` and `not`.
 
 ## References
 
-* [kaplan-1989]
 * [gunlogson-2001]
 * [farkas-bruce-2010]
+* [cysouw-2003]
 -/
 
 @[expose] public section
@@ -60,21 +55,21 @@ theorem other_ne_self : ∀ r : Role, r.other ≠ r := by decide
 theorem self_ne_other (r : Role) : r ≠ r.other := (other_ne_self r).symm
 theorem eq_other_of_ne : ∀ {r s : Role}, r ≠ s → r = s.other := by decide
 theorem eq_other_iff {r s : Role} : r = s.other ↔ r ≠ s :=
-  ⟨λ h => h ▸ other_ne_self s, eq_other_of_ne⟩
+  ⟨fun h ↦ h ▸ other_ne_self s, eq_other_of_ne⟩
 
 instance : Nontrivial Role := ⟨⟨.speaker, .addressee, nofun⟩⟩
 
 theorem card : Fintype.card Role = 2 := rfl
 
 theorem forall_role' {p : Role → Prop} (r : Role) : (∀ s, p s) ↔ p r ∧ p r.other :=
-  ⟨λ h => ⟨h _, h _⟩, λ ⟨h₁, h₂⟩ s => by cases r <;> cases s <;> assumption⟩
+  ⟨fun h ↦ ⟨h _, h _⟩, fun ⟨h₁, h₂⟩ s ↦ by cases r <;> cases s <;> assumption⟩
 
 @[simp] theorem forall_role {p : Role → Prop} : (∀ r, p r) ↔ p .speaker ∧ p .addressee :=
   forall_role' .speaker
 
 theorem exists_role' {p : Role → Prop} (r : Role) : (∃ s, p s) ↔ p r ∨ p r.other :=
-  ⟨λ ⟨s, hs⟩ => by cases s <;> cases r <;> first | exact .inl ‹_› | exact .inr ‹_›,
-    λ h => by cases h <;> exact ⟨_, ‹_›⟩⟩
+  ⟨fun ⟨s, hs⟩ ↦ by cases s <;> cases r <;> first | exact .inl ‹_› | exact .inr ‹_›,
+    fun h ↦ by cases h <;> exact ⟨_, ‹_›⟩⟩
 
 @[simp] theorem exists_role {p : Role → Prop} : (∃ r, p r) ↔ p .speaker ∨ p .addressee :=
   exists_role' .speaker

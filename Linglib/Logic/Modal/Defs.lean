@@ -95,6 +95,14 @@ theorem box_union (S : SetRel W' W) : □[R ∪ S] p w ↔ □[R] p w ∧ □[S]
 theorem box_id {u : W} : □[SetRel.id] p u ↔ p u :=
   ⟨fun h ↦ h u (SetRel.mem_id.2 rfl), fun h _ hv ↦ SetRel.mem_id.1 hv ▸ h⟩
 
+/-- Necessity along a union of relations is the meet of necessity along each. -/
+theorem box_sup (R S : SetRel W' W) : □[R ⊔ S] = □[R] ⊓ □[S] :=
+  funext fun _ ↦ funext fun _ ↦ propext (box_union S)
+
+/-- Necessity along the identity relation is the identity. -/
+theorem box_id_eq_id : □[(SetRel.id : SetRel W W)] = id :=
+  funext fun _ ↦ funext fun _ ↦ propext box_id
+
 theorem box_congr_left {w'' : W'} (h : ∀ v, w ~[R] v ↔ w'' ~[R] v) : □[R] p w ↔ □[R] p w'' :=
   forall_congr' fun v ↦ imp_congr_left (h v)
 

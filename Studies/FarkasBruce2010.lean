@@ -3,7 +3,6 @@ module
 public import Linglib.Data.Examples.FarkasBruce2010
 public import Linglib.Discourse.Commitment.Table
 public import Linglib.Discourse.Response
-public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Fragments.English.Particles
 public import Linglib.Fragments.German.Particles
 public import Linglib.Fragments.Romance.French.Particles
@@ -89,22 +88,22 @@ namespace FarkasBruce2010
 open Commitment
 open Filter
 
-variable {W : Type*} (K : Table SpeechAct.Role W) (p : Set W)
+variable {A W : Type*} (K : Table A W) (p : Set W) (a b : A)
 
-/-- In a total denial (22) the speaker asserts `p` and the addressee asserts its negation. -/
-abbrev denial : Table SpeechAct.Role W := (K.assert .speaker p).assert .addressee pᶜ
+/-- In a total denial (22) one participant asserts `p` and another asserts its negation. -/
+abbrev denial : Table A W := (K.assert a p).assert b pᶜ
 
 /-! ### Default assertions and default polar questions -/
 
 /-- A world can survive the assertion of `p` in a `Commitment.Table` without satisfying `p`. -/
 theorem assert_not_narrowing :
-    ∃ (K : Table SpeechAct.Role Bool) (p : Set Bool) (w : Bool),
-      w ∈ (K.assert .speaker p).commonGround.ker ∧ w ∉ p :=
+    ∃ (K : Table A Bool) (p : Set Bool) (w : Bool),
+      w ∈ (K.assert a p).commonGround.ker ∧ w ∉ p :=
   ⟨.empty, {true}, false, by simp, Bool.false_ne_true⟩
 
 /-- From a stable context an assertion projects the single common ground with `p`, a
 categorical bias towards confirmation (8). -/
-theorem projectedSet_assert (a : SpeechAct.Role) (hK : K.IsStable) (hp : K.commonGround ⊓ 𝓟 p ≠ ⊥) :
+theorem projectedSet_assert (hK : K.IsStable) (hp : K.commonGround ⊓ 𝓟 p ≠ ⊥) :
     (K.assert a p).projectedSet = {K.commonGround ⊓ 𝓟 p} := by
   rw [Table.projectedSet_assert, Table.projectedSet_of_isStable hK,
     Table.project_singleton_ofSet hp]
@@ -119,16 +118,16 @@ theorem projectedSet_polarQuestion (hK : K.IsStable) (hp : K.commonGround ⊓ �
 
 /-! ### Confirmation, denial, and agreeing to disagree -/
 
-/-- After the addressee confirms (16), the asserted proposition is on every commitment
-list. -/
-theorem mem_jointContents_assert_confirm :
-    p ∈ ((K.assert .speaker p).commit .addressee p).commitments.jointContents := by
-  refine State.mem_jointContents.2 fun a ↦
-    show p ∈ ((K.assert .speaker p).commit .addressee p).discourseCommitments a from ?_
-  cases a
-  · rw [Table.discourseCommitments_commit_of_ne (by decide)]
-    exact Table.mem_discourseCommitments_assert _ _ _
+/-- After the other participant confirms (16), the asserted proposition is on every commitment
+list of a conversation between the two. -/
+theorem mem_jointContents_assert_confirm (hab : ∀ x, x = a ∨ x = b) :
+    p ∈ ((K.assert a p).commit b p).commitments.jointContents := by
+  refine State.mem_jointContents.2 fun x ↦
+    show p ∈ ((K.assert a p).commit b p).discourseCommitments x from ?_
+  obtain rfl | hx := eq_or_ne x b
   · exact Table.mem_discourseCommitments_commit_self _ _ _
+  · rw [Table.discourseCommitments_commit_of_ne hx, (hab x).resolve_right hx]
+    exact Table.mem_discourseCommitments_assert _ _ _
 
 /-- The shared proposition enters the common ground (17). -/
 theorem mem_commonGround_settle :
@@ -137,29 +136,29 @@ theorem mem_commonGround_settle :
 /-- The settled assertion is popped (17), and from a stable context the Table is empty
 again. -/
 theorem isStable_settle_assert (hK : K.IsStable) :
-    (((K.assert .speaker p).commit .addressee p).settle p).IsStable := by
+    (((K.assert a p).commit b p).settle p).IsStable := by
   rw [Table.settle_commit_self, Table.settle_assert_self]
   exact Table.isStable_settle_of_isStable p hK
 
 /-- Agreeing to disagree (23) removes the contradictory pair from the Table, and with a
 consistent common ground the crisis is over. -/
 theorem not_inCrisis_agreeToDisagree (hK : K.IsStable) (hcg : K.commonGround ≠ ⊥) :
-    ¬ (denial K p).agreeToDisagree.InCrisis := by
+    ¬ (denial K p a b).agreeToDisagree.InCrisis := by
   rw [Table.inCrisis_agreeToDisagree_assert_assert, Table.inCrisis_iff,
     Table.projectedSet_of_isStable hK]
   exact fun h ↦ hcg (h _ rfl)
 
 /-- After agreeing to disagree (23) each participant stays committed to what they asserted. -/
-theorem discourseCommitments_agreeToDisagree :
-    p ∈ (denial K p).agreeToDisagree.discourseCommitments .speaker ∧
-      pᶜ ∈ (denial K p).agreeToDisagree.discourseCommitments .addressee := by
+theorem discourseCommitments_agreeToDisagree (hab : a ≠ b) :
+    p ∈ (denial K p a b).agreeToDisagree.discourseCommitments a ∧
+      pᶜ ∈ (denial K p a b).agreeToDisagree.discourseCommitments b := by
   rw [Table.discourseCommitments_agreeToDisagree,
-    Table.discourseCommitments_assert_of_ne (by decide)]
+    Table.discourseCommitments_assert_of_ne hab]
   exact ⟨Table.mem_discourseCommitments_assert _ _ _, Table.mem_discourseCommitments_assert _ _ _⟩
 
 /-! ### Reacting to a polar question -/
 
-theorem projectedSet_polarQuestion_assert (hK : K.IsStable) (b : SpeechAct.Role) {q : Set W}
+theorem projectedSet_polarQuestion_assert (hK : K.IsStable) {q : Set W}
     (hq : q ∈ ({p, pᶜ} : Set (Set W))) (hc : K.commonGround ⊓ 𝓟 q ≠ ⊥) :
     ((K.polarQuestion p).assert b q).projectedSet = {K.commonGround ⊓ 𝓟 q} := by
   rw [Table.projectedSet_assert, Table.projectedSet_polarQuestion,
@@ -189,14 +188,14 @@ theorem projectedSet_polarQuestion_assert (hK : K.IsStable) (b : SpeechAct.Role)
           (Or.inr ⟨he, fun e ↦ hc (by simp [e]), Or.inr rfl⟩)
 
 /-- A reverse answer (27) is no crisis, since the question projected both resolutions. -/
-theorem not_inCrisis_polarQuestion_assert_compl (hK : K.IsStable) (b : SpeechAct.Role)
+theorem not_inCrisis_polarQuestion_assert_compl (hK : K.IsStable)
     (hnp : K.commonGround ⊓ 𝓟 pᶜ ≠ ⊥) : ¬ ((K.polarQuestion p).assert b pᶜ).InCrisis := by
-  rw [Table.inCrisis_iff, projectedSet_polarQuestion_assert K p hK b (Or.inr rfl) hnp]
+  rw [Table.inCrisis_iff, projectedSet_polarQuestion_assert K p b hK (Or.inr rfl) hnp]
   exact fun h ↦ hnp (h _ rfl)
 
 /-- The questioner's confirmation (16) of an answer (24) settles the question. -/
 theorem isStable_settle_polarQuestion (hK : K.IsStable) :
-    ((((K.polarQuestion p).assert .addressee p).commit .speaker p).settle p).IsStable := by
+    ((((K.polarQuestion p).assert b p).commit a p).settle p).IsStable := by
   rw [Table.settle_commit_self, Table.settle_assert_self,
     Table.settle_polarQuestion_self]
   exact Table.isStable_settle_of_isStable p hK
@@ -233,16 +232,16 @@ theorem Confirming.iff_relative_eq_positive [Nonempty W] {s t : Sentence W}
   rw [Confirming, Sentence.prop, Sentence.prop, h]
   exact Response.polarity_smul_eq_antecedent_smul_iff (x := ⟨m, s.polarity, t.polarity⟩) _
 
-theorem inCrisis_reversing_assert {s t : Sentence W} (h : Reversing s t) (a b : SpeechAct.Role) :
+theorem inCrisis_reversing_assert {s t : Sentence W} (h : Reversing s t) :
     ((K.assert a s.prop).assert b t.prop).InCrisis := by
   rw [h]
   exact K.inCrisis_assert_assert_compl a s.prop b
 
 theorem not_inCrisis_reversing_polarQuestion {s t : Sentence W} (h : Reversing s t)
-    (hK : K.IsStable) (b : SpeechAct.Role) (hc : K.commonGround ⊓ 𝓟 s.propᶜ ≠ ⊥) :
+    (hK : K.IsStable) (hc : K.commonGround ⊓ 𝓟 s.propᶜ ≠ ⊥) :
     ¬ ((K.polarQuestion s.prop).assert b t.prop).InCrisis := by
   rw [h]
-  exact not_inCrisis_polarQuestion_assert_compl K s.prop hK b hc
+  exact not_inCrisis_polarQuestion_assert_compl K s.prop b hK hc
 
 /-! ### Polarity particles -/
 

@@ -112,17 +112,17 @@ def holders : Force → Finset Role
 /-- A force with content `φ` updates the component it relates to in the state of each of its
 holders and leaves the other participants' states alone. -/
 def update (f : Force) (d : Role → State W) (φ : W → Prop) : Role → State W :=
-  fun r ↦ if r ∈ f.holders then f.target.elim (d r) fun c ↦ c.update (d r) φ else d r
+  f.holders.piecewise (fun r ↦ f.target.elim (d r) fun c ↦ c.update (d r) φ) d
 
 variable (d : Role → State W) (φ : W → Prop)
 
 theorem update_apply_of_mem {f : Force} {r : Role} {c : Component} (hr : r ∈ f.holders)
     (hc : f.target = some c) : f.update d φ r = c.update (d r) φ := by
-  simp only [update, hr, ↓reduceIte, hc, Option.elim_some]
+  simp only [update, Finset.piecewise_eq_of_mem _ _ _ hr, hc, Option.elim_some]
 
 theorem update_apply_of_notMem {f : Force} {r : Role} (hr : r ∉ f.holders) :
-    f.update d φ r = d r := by
-  simp only [update, hr, ↓reduceIte]
+    f.update d φ r = d r :=
+  Finset.piecewise_eq_of_notMem _ _ _ hr
 
 /-- Every force meets a discourse context with a fixed content, so that for texts of forces the
 three consequence relations of dynamic semantics coincide (`DynamicSemantics.tfae_entails`). -/

@@ -50,6 +50,26 @@ theorem bernoulliMeasure_bind {f : X → Measure Y} (hf : Measurable f) :
   simp [bernoulliMeasure_def, Measure.bind_apply hs hf.aemeasurable, lintegral_add_measure,
     lintegral_smul_measure]
 
+omit [MeasurableSingletonClass X] in
+/-- The law of a two-valued random variable is Bernoulli. -/
+theorem map_piecewise_const_eq_bernoulliMeasure {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
+    [IsProbabilityMeasure μ] {s : Set Ω} [DecidablePred (· ∈ s)] (hs : MeasurableSet s) :
+    μ.map (s.piecewise (fun _ ↦ x) fun _ ↦ y) =
+      Ber(x, y, ⟨μ.real s, measureReal_nonneg, measureReal_le_one⟩) := by
+  classical
+  have h1 : ((toNNReal ⟨μ.real s, measureReal_nonneg, measureReal_le_one⟩ : NNReal) : ℝ≥0∞)
+      = μ s :=
+    (ENNReal.toReal_eq_toReal_iff' ENNReal.coe_ne_top (measure_ne_top μ _)).1
+      (by simp [measureReal_def])
+  have h0 : ((toNNReal (σ ⟨μ.real s, measureReal_nonneg, measureReal_le_one⟩) : NNReal) : ℝ≥0∞)
+      = μ sᶜ :=
+    (ENNReal.toReal_eq_toReal_iff' ENNReal.coe_ne_top (measure_ne_top μ _)).1
+      (by simp [coe_symm_eq, ← measureReal_def, probReal_compl_eq_one_sub hs])
+  ext t ht
+  rw [Measure.map_apply (measurable_const.piecewise hs measurable_const) ht,
+    bernoulliMeasure_apply _ ht, h1, h0, Set.piecewise_preimage]
+  by_cases hx : x ∈ t <;> by_cases hy : y ∈ t <;> simp [hx, hy, Set.compl_eq_univ_sdiff]
+
 theorem lintegral_bernoulliMeasure (f : X → ℝ≥0∞) :
     ∫⁻ z, f z ∂Ber(x, y, p) = toNNReal p * f x + toNNReal (σ p) * f y := by
   rw [bernoulliMeasure_def, lintegral_add_measure, lintegral_smul_measure, lintegral_smul_measure,
