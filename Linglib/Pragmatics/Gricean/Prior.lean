@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 public import Linglib.Core.MeasureTheory.Measure.Dirac
-public import Linglib.Pragmatics.NeoGricean.Basic
+public import Linglib.Pragmatics.Gricean.Basic
 public import Mathlib.MeasureTheory.Measure.Count
 
 /-!
@@ -10,23 +10,23 @@ public import Mathlib.MeasureTheory.Measure.Count
 
 Under a prior on the worlds, the more informative of two propositions is the less probable one,
 the one of greater surprisal. An assertion a speaker is certain of is [the least probable
-alternative she is certain of under every prior](##NeoGricean.forall_subset_iff_forall_measure_le)
+alternative she is certain of under every prior](##Gricean.forall_subset_iff_forall_measure_le)
 exactly when it entails all the others. The assertion is optimal, in that no stronger alternative
 is one she is certain of, exactly when it is [the least probable under some prior that gives every
-world positive probability](##NeoGricean.isOptimal_iff_exists_measure), over finitely many worlds.
+world positive probability](##Gricean.isOptimal_iff_exists_measure), over finitely many worlds.
 The two agree when the alternatives are closed under intersection: asserting an alternative is
 then optimal exactly when it is [the least probable alternative the speaker is certain of whatever
-the prior](##NeoGricean.isOptimal_iff_forall_measure).
+the prior](##Gricean.isOptimal_iff_forall_measure).
 
 The divergence of the speaker's beliefs, the prior conditioned on her state, from the literal
 reading of a proposition, the prior conditioned on it, is finite [exactly when she is certain of
-the proposition](##NeoGricean.klDiv_cond_cond_ne_top_iff), and among the propositions she is
-certain of it is [least for the least probable](##NeoGricean.klDiv_cond_cond_le_iff). So Quality
+the proposition](##Gricean.klDiv_cond_cond_ne_top_iff), and among the propositions she is
+certain of it is [least for the least probable](##Gricean.klDiv_cond_cond_le_iff). So Quality
 is finiteness of the divergence and Quantity its size, and under closure by intersection an
 assertion is optimal exactly when it [minimizes the divergence among the alternatives under every
-prior](##NeoGricean.isOptimal_iff_forall_klDiv) that gives every world positive probability. On
+prior](##Gricean.isOptimal_iff_forall_klDiv) that gives every world positive probability. On
 the hearer's side, closure under unions as well makes the minimal worlds of the assertion [at
-most as probable as any state in which it is optimal](##NeoGricean.IsOptimal.measure_exhMW_le).
+most as probable as any state in which it is optimal](##Gricean.IsOptimal.measure_exhMW_le).
 
 ## Implementation notes
 
@@ -36,13 +36,13 @@ statements about divergence, which are over finitely many worlds.
 
 ## References
 
+* [grice-1975]
 * [spector-2007]
-* [sauerland-2004]
 -/
 
 @[expose] public section
 
-namespace NeoGricean
+namespace Gricean
 
 open MeasureTheory Set
 
@@ -181,4 +181,4 @@ theorem isOptimal_iff_forall_klDiv [Fintype W] (hinf : InfClosed alts) (hφ : φ
 
 end KullbackLeibler
 
-end NeoGricean
+end Gricean
