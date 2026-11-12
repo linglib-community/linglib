@@ -1,45 +1,52 @@
 module
 
-public import Linglib.Core.Algebra.Order.Interval.Set.Instances
 public import Linglib.Data.Statistics.TonhauserBeaverDegen2018
 public import Linglib.Semantics.Presupposition.Trigger
-public import Mathlib.Tactic.Linarith
+public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
 
 /-!
 # Tonhauser, Beaver and Degen (2018): How Projective Is Projective Content? Gradience in Projectivity and At-Issueness
 
-Tonhauser, Beaver and Degen's Gradient Projection Principle says that content embedded under an
-entailment-cancelling operator projects to the extent that it is not at-issue. Projectivity and
-at-issueness are gradient, measured on the unit interval, so the principle is the involution
-`Set.Icc.symm` (`gppProjection`); restricted to binary at-issueness it is the Projection Principle
-of Simons, Tonhauser, Beaver and Roberts, that content projects iff it is not at-issue
-(`gppProjection_eq_one_iff`). The categorical analyses the paper reviews predict projection at
-the ceiling (`ceilingProjection`).
+Tonhauser, Beaver and Degen measure how strongly nineteen projective contents of English project
+and how at-issue they are, and draw two conclusions. The first is that projectivity is gradient.
+The contents whose mean projectivity a post hoc comparison tells apart are the edges of a graph,
+and a division of the contents into classes of equal projectivity is a colouring of it. In both
+experiments [two classes do not suffice](##not_colorable_two), and the division into hard and soft
+triggers is not such a colouring: [two soft triggers differ](##soft_not_a_class), while
+[hard and soft triggers do not](##hard_soft_not_adj).
 
-Against the observed means of `Data.Statistics.TonhauserBeaverDegen2018`, the principle is the
-closer account on every content but the pre-state of *stop* (`gpp_closer_than_ceiling`,
-`ceiling_closer_on_stop`), the effect it predicts holds in all four experiments
-(`atIssuenessEffect_beta_pos`), and the printed Tukey comparisons divide the contents into more
-than two projectivity classes, cutting across the hard/soft classification (`three_classes`,
-`soft_not_a_class`, `hard_soft_indistinguishable`).
+The second is the Gradient Projection Principle, that content embedded under an
+entailment-cancelling operator projects to the extent that it is not at-issue, which replaces the
+*if and only if* of the Projection Principle of Simons, Tonhauser, Beaver and Roberts by a matter
+of degree. The paper draws from it the prediction that projectivity varies together with
+not-at-issueness, mathlib's `Monovary`, and tests it by regression:
+[the effect has the predicted sign in all four experiments and is significant in
+three](##atIssuenessEffect_significant_iff).
 
 ## Implementation notes
 
-* Degrees are `Set.Icc (0 : ℚ) 1`: the observations are printed decimals, read through
-  `Decimal.toRat`, and every comparison is exact ℚ arithmetic closed by `decide +kernel`.
-* The paper's own test of the principle is the sign and size of the at-issueness effect in
-  its regressions, kept as data in `atIssuenessEffect`; the error comparison against the
-  ceiling is the paper's review of categorical analyses at the granularity this file can
-  check. No theorem re-thresholds a printed p-value.
-* `Distinguished` reads the paper's printed Tukey verdicts; what counts as distinguished is
-  the paper's mark, not a recomputed test. The paper leaves open whether at-issueness causes
-  projection.
+* An edge of `distinguished1a` or `distinguished1b` is a pair the printed table stars. A marginal
+  mark is not an edge, and the tests are not recomputed.
+* `le_of_adj_of_lt` reads the paper's observation that contents with higher projectivity ratings
+  were also more not-at-issue over the pairs whose projectivity the tables tell apart. The
+  paper's own test of the principle is the regression.
+* The paper leaves open whether not-at-issueness causes projection or only predicts it.
+
+## TODO
+
+* The paper argues that the projection calculi of [karttunen-1973], [gazdar-1979], [heim-1983]
+  and [van-der-sandt-1992] predict uniformly high projectivity for the seventeen
+  presuppositions, none of which was under a plug or a filter. Deriving that prediction from
+  `Studies/Karttunen1973.lean`, `Studies/Gazdar1979.lean` and `Studies/Heim1983.lean` needs the
+  experimental stimuli as derivations of those calculi; here the prediction is met only by its
+  consequence, that no two presuppositions are told apart, which `not_colorable_two` refutes.
 
 ## References
 
 * [tonhauser-beaver-degen-2018]
 * [simons-tonhauser-beaver-roberts-2010]
 * [beaver-roberts-simons-tonhauser-2017]
+* [abusch-2010]
 * [karttunen-1973]
 * [gazdar-1979]
 * [heim-1983]
@@ -51,186 +58,137 @@ than two projectivity classes, cutting across the hard/soft classification (`thr
 
 namespace TonhauserBeaverDegen2018
 
-open Data.Statistics Set.Icc
+open Data.Statistics SimpleGraph
 
-/-! ### The Gradient Projection Principle -/
+/-! ### The observed means -/
 
-/-- By (7), content projects to the extent that it is not at-issue. -/
-def gppProjection : Set.Icc (0 : ℚ) 1 → Set.Icc (0 : ℚ) 1 := Set.Icc.symm
+/-- The mean projectivity of a heterogeneous expression's content, Experiment 1a. -/
+def Expression.projectivity (e : Expression) : ℚ := (heterogeneous e).projectivity.toRat
 
-theorem gppProjection_antitone : Antitone gppProjection := antitone_symm
+/-- Its mean not-at-issueness. -/
+def Expression.notAtIssueness (e : Expression) : ℚ := (heterogeneous e).notAtIssueness.toRat
 
-theorem gppProjection_lt_iff {a b : Set.Icc (0 : ℚ) 1} :
-    gppProjection a < gppProjection b ↔ b < a :=
-  symm_lt_symm
+/-- The mean projectivity of a predicate's complement, Experiment 1b. -/
+def Predicate.projectivity (p : Predicate) : ℚ := (predicates p).projectivity.toRat
 
-theorem gppProjection_eq_one_iff {ai : Set.Icc (0 : ℚ) 1} : gppProjection ai = 1 ↔ ai = 0 :=
-  symm_eq_one
+/-- Its mean not-at-issueness. -/
+def Predicate.notAtIssueness (p : Predicate) : ℚ := (predicates p).notAtIssueness.toRat
 
-theorem gppProjection_eq_zero_iff {ai : Set.Icc (0 : ℚ) 1} : gppProjection ai = 0 ↔ ai = 1 :=
-  symm_eq_zero
+/-! ### Contents told apart in projectivity -/
 
-/-! ### Projection at the ceiling -/
+/-- A printed mark that counts as a difference in means: starred, not marginal. -/
+def Significance.Starred (s : Significance) : Prop := s ≠ .ns ∧ s ≠ .marginal
 
-/-- Projection at the ceiling whatever the at-issueness: what [karttunen-1973], [gazdar-1979]
-and global accommodation predict for a presupposition not under a plug or a filter, and
-[potts-2005] for a conventional implicature. -/
-def ceilingProjection (_ : Set.Icc (0 : ℚ) 1) : Set.Icc (0 : ℚ) 1 := 1
+instance : DecidablePred Significance.Starred := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-@[simp] theorem ceilingProjection_val (ai : Set.Icc (0 : ℚ) 1) :
-    (ceilingProjection ai).val = 1 := rfl
+/-- Table 1: the graph on the Experiment 1a contents whose edges are the pairs with a starred
+difference in mean projectivity. -/
+def distinguished1a : SimpleGraph Expression :=
+  .fromRel fun a b ↦ ∃ r ∈ pairwise1a, r.first = a ∧ r.second = b ∧ r.significance.Starred
 
-theorem gppProjection_eq_ceiling_iff {ai : Set.Icc (0 : ℚ) 1} :
-    gppProjection ai = ceilingProjection ai ↔ ai = 0 :=
-  symm_eq_one
+/-- Table 3: the graph on the Experiment 1b complements whose edges are the pairs with a starred
+difference in mean projectivity. -/
+def distinguished1b : SimpleGraph Predicate :=
+  .fromRel fun a b ↦ ∃ r ∈ pairwise1b, r.first = a ∧ r.second = b ∧ r.significance.Starred
 
-/-! ### The observed degrees
+instance : DecidableRel distinguished1a.Adj :=
+  inferInstanceAs (DecidableRel (SimpleGraph.fromRel _).Adj)
 
-The by-expression means are rationals in the unit interval, lifted to `Set.Icc (0 : ℚ) 1`
-once and for all. -/
+instance : DecidableRel distinguished1b.Adj :=
+  inferInstanceAs (DecidableRel (SimpleGraph.fromRel _).Adj)
 
-theorem heterogeneous_mem (e : Expression) :
-    (heterogeneous e).projectivity.toRat ∈ Set.Icc (0 : ℚ) 1 ∧
-      (heterogeneous e).notAtIssueness.toRat ∈ Set.Icc (0 : ℚ) 1 := by
-  revert e; decide +kernel
-
-theorem predicates_mem (p : Predicate) :
-    (predicates p).projectivity.toRat ∈ Set.Icc (0 : ℚ) 1 ∧
-      (predicates p).notAtIssueness.toRat ∈ Set.Icc (0 : ℚ) 1 := by
-  revert p; decide +kernel
-
-/-- The observed projectivity of a heterogeneous expression's content, Experiment 1a. -/
-def Expression.projectivity (e : Expression) : Set.Icc (0 : ℚ) 1 :=
-  ⟨_, (heterogeneous_mem e).1⟩
-
-/-- Its observed not-at-issueness. -/
-def Expression.notAtIssueness (e : Expression) : Set.Icc (0 : ℚ) 1 :=
-  ⟨_, (heterogeneous_mem e).2⟩
-
-/-- Its observed at-issueness: the released data code the asking-whether response so that `1`
-is not-at-issue. -/
-def Expression.atIssueness (e : Expression) : Set.Icc (0 : ℚ) 1 :=
-  Set.Icc.symm e.notAtIssueness
-
-/-- The observed projectivity of a predicate's complement, Experiment 1b. -/
-def Predicate.projectivity (p : Predicate) : Set.Icc (0 : ℚ) 1 := ⟨_, (predicates_mem p).1⟩
-
-/-- Its observed not-at-issueness. -/
-def Predicate.notAtIssueness (p : Predicate) : Set.Icc (0 : ℚ) 1 := ⟨_, (predicates_mem p).2⟩
-
-/-- Its observed at-issueness. -/
-def Predicate.atIssueness (p : Predicate) : Set.Icc (0 : ℚ) 1 :=
-  Set.Icc.symm p.notAtIssueness
-
-theorem gppProjection_atIssueness (e : Expression) :
-    gppProjection e.atIssueness = e.notAtIssueness :=
-  symm_symm _
-
-/-! ### Errors on the observations -/
-
-/-- The absolute error of an account on content observed at at-issueness `a` and
-projectivity `p`. -/
-def error (f : Set.Icc (0 : ℚ) 1 → Set.Icc (0 : ℚ) 1) (a p : Set.Icc (0 : ℚ) 1) : ℚ :=
-  |(f a : ℚ) - p|
-
-theorem gpp_closer_iff (a p : Set.Icc (0 : ℚ) 1) :
-    error gppProjection a p < error ceilingProjection a p ↔
-      (Set.Icc.symm a : ℚ) < 1 ∧ 2 * (p : ℚ) < 1 + Set.Icc.symm a := by
-  simp only [error, gppProjection, ceilingProjection, Set.Icc.coe_one]
-  have hp := p.2.2
-  have ha := (Set.Icc.symm a).2.2
-  rcases le_or_gt (p : ℚ) (Set.Icc.symm a) with h | h
-  · rw [abs_of_nonneg (by linarith), abs_of_nonneg (by linarith)]
-    exact ⟨fun h' => ⟨by linarith, by linarith⟩, fun h' => by linarith [h'.1]⟩
-  · rw [abs_of_neg (by linarith), abs_of_nonneg (by linarith)]
-    exact ⟨fun h' => ⟨by linarith, by linarith⟩, fun h' => by linarith [h'.2]⟩
-
-theorem nrrc_more_projective_than_discover :
-    Expression.nrrc.atIssueness < Expression.discover.atIssueness ∧
-      gppProjection Expression.discover.atIssueness <
-        gppProjection Expression.nrrc.atIssueness ∧
-      Expression.discover.projectivity < Expression.nrrc.projectivity := by
+/-- A pair the table marks `n.s.` is not an edge, and neither is a marginal one. -/
+example : ¬ distinguished1a.Adj .nrrc .know ∧ ¬ distinguished1a.Adj .stop .know := by
   decide +kernel
 
-theorem gpp_closer_than_ceiling (e : Expression) (h : e ≠ .stop) :
-    error gppProjection e.atIssueness e.projectivity <
-      error ceilingProjection e.atIssueness e.projectivity := by
-  revert e; decide +kernel
+-- The presuppositions of *be annoyed*, *stop* and *only* differ pairwise.
+theorem isNClique_annoyed_stop_only : distinguished1a.IsNClique 3 {.annoyed, .stop, .only} :=
+  is3Clique_triple_iff.2 (by decide +kernel)
 
-theorem ceiling_closer_on_stop :
-    error ceilingProjection Expression.stop.atIssueness Expression.stop.projectivity <
-      error gppProjection Expression.stop.atIssueness Expression.stop.projectivity := by
+-- The complements of *reveal*, *confess* and *establish* were less projective than those of the
+-- semi-factives and differed from each other.
+theorem isNClique_learn_reveal_confess_establish :
+    distinguished1b.IsNClique 4 {.learn, .reveal, .confess, .establish} := by
+  rw [isNClique_iff, isClique_iff]
+  exact ⟨by decide +kernel, rfl⟩
+
+/-- In neither experiment can the contents be divided into two classes that keep apart every pair
+differing in projectivity; the three presuppositions of *be annoyed*, *stop* and *only* already
+cannot. -/
+theorem not_colorable_two : ¬ distinguished1a.Colorable 2 ∧ ¬ distinguished1b.Colorable 2 :=
+  ⟨fun h ↦ absurd (isNClique_annoyed_stop_only.isClique.card_le_of_colorable h) (by decide),
+    fun h ↦ absurd (isNClique_learn_reveal_confess_establish.isClique.card_le_of_colorable h)
+      (by decide)⟩
+
+-- *know* was more projective than *discover* and not told apart from *be annoyed*, though
+-- numerically lower.
+theorem know_between :
+    distinguished1a.Adj .discover .know ∧ ¬ distinguished1a.Adj .know .annoyed ∧
+      Expression.discover.projectivity < Expression.know.projectivity ∧
+      Expression.know.projectivity < Expression.annoyed.projectivity := by
   decide +kernel
 
-/-- The unrestricted universal is false. -/
-example : ¬ ∀ e : Expression,
-    error gppProjection e.atIssueness e.projectivity <
-      error ceilingProjection e.atIssueness e.projectivity := by
-  decide +kernel
+/-! ### Hard and soft triggers -/
 
-theorem gpp_closer_than_ceiling_predicates (p : Predicate) :
-    error gppProjection p.atIssueness p.projectivity <
-      error ceilingProjection p.atIssueness p.projectivity := by
-  revert p; decide +kernel
-
-theorem atIssuenessEffect_beta_pos (x : Experiment) : 0 < (atIssuenessEffect x).beta.toRat := by
-  revert x; decide +kernel
-
-/-! ### Projectivity classes from the printed comparisons -/
-
-/-- Two Experiment 1a contents' projectivity means are distinguished by the printed Tukey
-comparison. -/
-def Expression.Distinguished (a b : Expression) : Prop :=
-  ∃ r ∈ pairwise1a, ((r.first = a ∧ r.second = b) ∨ (r.first = b ∧ r.second = a)) ∧
-    r.significance ≠ .ns ∧ r.significance ≠ .marginal
-
-instance : DecidableRel Expression.Distinguished :=
-  fun _ _ => inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-/-- Two Experiment 1b complements' projectivity means are distinguished. -/
-def Predicate.Distinguished (a b : Predicate) : Prop :=
-  ∃ r ∈ pairwise1b, ((r.first = a ∧ r.second = b) ∨ (r.first = b ∧ r.second = a)) ∧
-    r.significance ≠ .ns ∧ r.significance ≠ .marginal
-
-instance : DecidableRel Predicate.Distinguished :=
-  fun _ _ => inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-theorem three_classes :
-    Expression.Distinguished .nrrc .stop ∧ Expression.Distinguished .stop .only ∧
-      Expression.Distinguished .nrrc .only := by
-  decide +kernel
-
-/-- `Distinguished` rejects a pair the table marks `n.s`. -/
-example : ¬ Expression.Distinguished .nrrc .know := by decide +kernel
-
-theorem know_indistinguishable_from_annoyed : ¬ Expression.Distinguished .know .annoyed := by
-  decide +kernel
-
-/-- The hard/soft classification the paper checks its ranking against, as it cites it for the
-Experiment 1a contents: *be annoyed* is a hard trigger, and *discover*, *stop* and *only* are soft
-triggers. -/
+/-- The classification into hard and soft triggers as the paper cites it for the Experiment 1a
+contents: *be annoyed* is a hard trigger, and *discover*, *stop* and *only* are soft triggers. -/
 def Expression.hardness? : Expression → Option Presupposition.Hardness
   | .annoyed => some .hard
   | .discover | .stop | .only => some .soft
   | _ => none
 
-theorem some_differences_align :
-    Expression.Distinguished .discover .annoyed ∧ Expression.Distinguished .stop .annoyed := by
+-- Some differences follow the classification: the soft *discover* and *stop* against the hard
+-- *be annoyed*.
+theorem hard_soft_adj :
+    ∀ s ∈ [Expression.discover, .stop], s.hardness? = some .soft ∧
+      Expression.annoyed.hardness? = some .hard ∧ distinguished1a.Adj s .annoyed := by
   decide +kernel
 
+/-- The soft triggers are not a class: the prejacent of *only* was less projective than the
+pre-state of *stop*. -/
 theorem soft_not_a_class :
-    ∃ a b, a.hardness? = some .soft ∧ b.hardness? = some .soft ∧
-      Expression.Distinguished a b :=
-  ⟨.stop, .only, rfl, rfl, by decide +kernel⟩
+    ∃ a b, a.hardness? = some .soft ∧ b.hardness? = some .soft ∧ distinguished1a.Adj a b ∧
+      a.projectivity < b.projectivity :=
+  ⟨.only, .stop, rfl, rfl, by decide +kernel⟩
 
-theorem hard_soft_indistinguishable :
+/-- The complements of the hard emotive factives *be annoyed* and *be amused* were not told apart
+from those of six soft semi-factives. -/
+theorem hard_soft_not_adj :
     ∀ h ∈ [Predicate.annoyed, .amused],
       ∀ s ∈ [Predicate.notice, .aware, .realize, .see, .findOut, .learn],
-        ¬ h.Distinguished s := by
+        ¬ distinguished1b.Adj h s := by
   decide +kernel
 
-theorem establish_least_projective (p : Predicate) (h : p ≠ .establish) :
-    Predicate.Distinguished .establish p := by
-  revert p; decide +kernel
+/-! ### The Gradient Projection Principle -/
+
+-- The prediction the paper draws from the principle before testing it: the content of a
+-- non-restrictive relative clause is more not-at-issue than the complement of *discover*, and
+-- more projective.
+theorem discover_lt_nrrc :
+    Expression.discover.notAtIssueness < Expression.nrrc.notAtIssueness ∧
+      distinguished1a.Adj .discover .nrrc ∧
+      Expression.discover.projectivity < Expression.nrrc.projectivity := by
+  decide +kernel
+
+/-- Among the complements of Experiment 1b, whenever one is told apart as the more projective it
+is also at least as not-at-issue. -/
+theorem le_of_adj_of_lt {p q : Predicate} (h : distinguished1b.Adj p q)
+    (hpq : p.projectivity < q.projectivity) : p.notAtIssueness ≤ q.notAtIssueness := by
+  revert p q; decide +kernel
+
+-- In Experiment 1a the same holds of every pair but one: the pre-state of *stop* was more
+-- projective than the prejacent of *only* and no more not-at-issue.
+theorem le_of_adj_of_lt_1a {a b : Expression} (h : distinguished1a.Adj a b)
+    (hab : a.projectivity < b.projectivity) :
+    a.notAtIssueness ≤ b.notAtIssueness ∨ a = .only ∧ b = .stop := by
+  revert a b; decide +kernel
+
+theorem atIssuenessEffect_beta_pos (x : Experiment) : 0 < (atIssuenessEffect x).beta.toRat := by
+  revert x; decide +kernel
+
+/-- Not-at-issueness was a significant predictor of projectivity in every experiment but 2b. -/
+theorem atIssuenessEffect_significant_iff (x : Experiment) :
+    (atIssuenessEffect x).p.Significant 0.05 ↔ x ≠ .exp2b := by
+  revert x; decide +kernel
 
 end TonhauserBeaverDegen2018
