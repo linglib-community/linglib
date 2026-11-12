@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Data.Fin.VecNotation
 public import Linglib.Phonology.Tone.Basic
 public import Linglib.Phonology.OCP
 public import Linglib.Phonology.Autosegmental.Basic

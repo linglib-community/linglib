@@ -136,7 +136,7 @@ inductive Morpheme where
   deriving DecidableEq, Repr
 
 /-- A form with syllable TBUs, tones, and the sponsoring morphemes. -/
-abbrev Form := Autosegmental.Form Syl TRN Morpheme
+abbrev Form := Autosegmental.AR (TwoTier (Sponsored TRN Morpheme) (Sponsored Syl Morpheme))
 
 /-- The input of an ideophone as the root `m`: one lexical tone for each run of identical tones,
 linked to every syllable of its run. -/
@@ -160,13 +160,14 @@ inductive Con where
 variable {u : Form}
 
 /-- The roots of a form, the morphemes sponsoring its syllables. -/
-def roots (u : Form) : List Morpheme := (u.lower.map Sponsored.morpheme).dedup
+def roots (u : Form) : List Morpheme := ((u.word .lower).map Sponsored.morpheme).dedup
 
 /-- Syllable `i` bears the verbaliser's tone `t`. -/
-def BearsTone (c : Candidate u) (t : TRN) (i : Fin u.lower.length) : Prop :=
-  ∃ k ∈ c.linksTo i, u.upper[k].value = t ∧ u.upper[k].morpheme = .vbz
+def BearsTone (c : Candidate u) (t : TRN) (i : Fin (u.word .lower).length) : Prop :=
+  ∃ k ∈ c.linksTo i, (u.word .upper)[k].value = t ∧ (u.word .upper)[k].morpheme = .vbz
 
-instance (c : Candidate u) (t : TRN) (i : Fin u.lower.length) : Decidable (BearsTone c t i) :=
+instance (c : Candidate u) (t : TRN) (i : Fin (u.word .lower).length) :
+    Decidable (BearsTone c t i) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- LEFT-ANCHOR-Tᵥ and RIGHT-ANCHOR-Tᵥ ([finley-2009]): the verbaliser's `t` corresponds to the
@@ -175,7 +176,7 @@ syllable bearing `t`, on the root where they are fewest, and one for every sylla
 bears `t`. -/
 def anchor (e : Edge) (t : TRN) : Constraint (Candidate u) := fun c ↦
   let distance (h : Morpheme) := (e.orient (u.lowerOfMorpheme h)).findIdx? (BearsTone c t ·)
-  ((roots u).filterMap distance).min?.getD u.lower.length
+  ((roots u).filterMap distance).min?.getD (u.word .lower).length
 
 /-- The constraint set, MAX-Tone counting the deleted tones. -/
 def con : ConstraintSet (Candidate u) Con
@@ -186,7 +187,8 @@ def con : ConstraintSet (Candidate u) Con
   | .maxTone => fun c ↦ c.deleted.card
 
 /-- The tones on the syllables of a candidate, left to right. -/
-def surface (c : Candidate u) : List TRN := (List.finRange u.lower.length).flatMap c.tierValues
+def surface (c : Candidate u) : List TRN :=
+  (List.finRange (u.word .lower).length).flatMap c.tierValues
 
 /-- The columns of the printed tableaux: L-ANCH-Mᵥ, R-ANCH-Hᵥ, R-ANCH-Mᵥ, L-ANCH-Hᵥ, MAX-Tone. -/
 private def columns : List Con := [.lAnchorM, .rAnchorH, .rAnchorM, .lAnchorH, .maxTone]
@@ -208,8 +210,8 @@ namespace Tableau24
 floating. -/
 def input : Form := rootInput .root wulash * Verbalizer.m.input
 
-instance : NeZero input.upper.length := ⟨by decide⟩
-instance : NeZero input.lower.length := ⟨by decide⟩
+instance : NeZero (input.word .upper).length := ⟨by decide⟩
+instance : NeZero (input.word .lower).length := ⟨by decide⟩
 
 /-- The faithful candidate. -/
 def cand : Candidate input := .input _
@@ -248,8 +250,8 @@ namespace Tableau25
 /-- *háŋláɣáp* ‘light-weighted’ with VBZ₂. -/
 def input : Form := rootInput .root hanlaghap * Verbalizer.mh.input
 
-instance : NeZero input.upper.length := ⟨by decide⟩
-instance : NeZero input.lower.length := ⟨by decide⟩
+instance : NeZero (input.word .upper).length := ⟨by decide⟩
+instance : NeZero (input.word .lower).length := ⟨by decide⟩
 
 /-- The faithful candidate. -/
 def cand : Candidate input := .input _
@@ -299,8 +301,8 @@ namespace Tableau26
 with VBZ₂. -/
 def input : Form := rootInput .red jalpat * rootInput .base jalpat * Verbalizer.mh.input
 
-instance : NeZero input.upper.length := ⟨by decide⟩
-instance : NeZero input.lower.length := ⟨by decide⟩
+instance : NeZero (input.word .upper).length := ⟨by decide⟩
+instance : NeZero (input.word .lower).length := ⟨by decide⟩
 
 /-- The faithful candidate. -/
 def cand : Candidate input := .input _

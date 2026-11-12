@@ -71,8 +71,8 @@ namespace Fig3
 /-- Fig. 3 input `/kāk^H + rī^H + dō^H/`: each M linked, each H floating. -/
 def fig3Input : Form ℕ := kak 0 * ri 1 * «do» 2
 
-instance : NeZero fig3Input.upper.length := ⟨by decide⟩
-instance : NeZero fig3Input.lower.length := ⟨by decide⟩
+instance : NeZero (fig3Input.word .upper).length := ⟨by decide⟩
+instance : NeZero (fig3Input.word .lower).length := ⟨by decide⟩
 
 /-- The faithful candidate of the input. -/
 def fig3 : Candidate fig3Input := .input _
@@ -170,8 +170,8 @@ namespace Eq24
 /-- Eq. (24) input `/nān + rī^H + nā/`; H-rī is the only floating tone. -/
 def eq24Input : Form ℕ := nan 0 * ri 1 * na 2
 
-instance : NeZero eq24Input.upper.length := ⟨by decide⟩
-instance : NeZero eq24Input.lower.length := ⟨by decide⟩
+instance : NeZero (eq24Input.word .upper).length := ⟨by decide⟩
+instance : NeZero (eq24Input.word .lower).length := ⟨by decide⟩
 
 /-- The faithful candidate of the input. -/
 def eq24 : Candidate eq24Input := .input _
@@ -205,8 +205,8 @@ namespace Eq21
 /-- Eq. (21) input `/nān + rī^H/` (phrase-final): no rightward landing site. -/
 def eq21Input : Form ℕ := nan 0 * ri 1
 
-instance : NeZero eq21Input.upper.length := ⟨by decide⟩
-instance : NeZero eq21Input.lower.length := ⟨by decide⟩
+instance : NeZero (eq21Input.word .upper).length := ⟨by decide⟩
+instance : NeZero (eq21Input.word .lower).length := ⟨by decide⟩
 
 /-- The faithful candidate of the input. -/
 def eq21 : Candidate eq21Input := .input _
@@ -233,8 +233,8 @@ namespace Eq27
 /-- Eq. (27) input `/kāk^H + kǎ/`; kǎ carries a linked MH contour. -/
 def eq27Input : Form ℕ := kak 0 * ka 1
 
-instance : NeZero eq27Input.upper.length := ⟨by decide⟩
-instance : NeZero eq27Input.lower.length := ⟨by decide⟩
+instance : NeZero (eq27Input.word .upper).length := ⟨by decide⟩
+instance : NeZero (eq27Input.word .lower).length := ⟨by decide⟩
 
 /-- The faithful candidate of the input. -/
 def eq27 : Candidate eq27Input := .input _
@@ -262,8 +262,8 @@ namespace Eq30
     (L% omitted). -/
 def eq30Input : Form ℕ := kak 0 * ili 1
 
-instance : NeZero eq30Input.upper.length := ⟨by decide⟩
-instance : NeZero eq30Input.lower.length := ⟨by decide⟩
+instance : NeZero (eq30Input.word .upper).length := ⟨by decide⟩
+instance : NeZero (eq30Input.word .lower).length := ⟨by decide⟩
 
 /-- The faithful candidate of the input. -/
 def eq30 : Candidate eq30Input := .input _
@@ -299,8 +299,8 @@ namespace Eq22
 /-- Eq. (22a) input `/nān + rī^H + ne/`; ne is toneless. -/
 def eq22Input : Form ℕ := nan 0 * ri 1 * ne 2
 
-instance : NeZero eq22Input.upper.length := ⟨by decide⟩
-instance : NeZero eq22Input.lower.length := ⟨by decide⟩
+instance : NeZero (eq22Input.word .upper).length := ⟨by decide⟩
+instance : NeZero (eq22Input.word .lower).length := ⟨by decide⟩
 
 /-- The faithful candidate of the input. -/
 def eq22 : Candidate eq22Input := .input _
@@ -350,8 +350,8 @@ namespace Eq58
 /-- Eq. (58) input `/kāk^H + rī^H/`: each M linked, each H floating. -/
 def eq58Input : Form ℕ := kak 0 * ri 1
 
-instance : NeZero eq58Input.upper.length := ⟨by decide⟩
-instance : NeZero eq58Input.lower.length := ⟨by decide⟩
+instance : NeZero (eq58Input.word .upper).length := ⟨by decide⟩
+instance : NeZero (eq58Input.word .lower).length := ⟨by decide⟩
 
 /-- The faithful candidate of the input. -/
 def eq58 : Candidate eq58Input := .input _
@@ -424,18 +424,19 @@ theorem weighted_HG_inadequate :
 
 private theorem isNonCrossing_stem (x : ℕ) :
     ∀ u ∈ [kak x, ri x, «do» x, nan x, na x, ka x, ili x, ne x],
-      IsNonCrossing (u.lines : SetRel ℕ ℕ) := by
+      IsNonCrossing ((u.lines .upper .lower) : SetRel ℕ ℕ) := by
   simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq, kak, ri,
-    «do», nan, na, ka, ili, ne, Form.lines_morph]
+    «do», nan, na, ka, ili, ne, AR.lines_morph]
   decide
 
 -- Every tableau input obeys the No-Crossing Constraint, its stems doing so and concatenation
 -- preserving it; GEN then never draws a crossing line (`Candidate.isNonCrossing_links_of_mem_gen`).
 theorem isNonCrossing_inputs :
     ∀ u ∈ [Fig3.fig3Input, Eq24.eq24Input, Eq21.eq21Input, Eq27.eq27Input, Eq30.eq30Input,
-      Eq22.eq22Input, Eq58.eq58Input], IsNonCrossing (u.lines : SetRel ℕ ℕ) := by
+      Eq22.eq22Input, Eq58.eq58Input], IsNonCrossing ((u.lines .upper .lower) : SetRel ℕ ℕ) := by
   have s := isNonCrossing_stem
-  have c := Form.isNonCrossing_lines_concat (S := List Phonology.Segment) (T := TRN) (M := ℕ)
+  have c (X Y : Poko.Form ℕ) := AR.isNonCrossing_lines_mul (X := X) (Y := Y) (i := .upper)
+    (j := .lower)
   simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
   exact ⟨c _ _ (c _ _ (s 0 _ (by simp)) (s 1 _ (by simp))) (s 2 _ (by simp)),
     c _ _ (c _ _ (s 0 _ (by simp)) (s 1 _ (by simp))) (s 2 _ (by simp)),

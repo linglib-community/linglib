@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Combinatorics.SimpleGraph.Maps
 public import Mathlib.Combinatorics.Digraph.Basic
 public import Mathlib.Data.Fintype.Sort
 public import Mathlib.SetTheory.Cardinal.Finite
@@ -192,9 +193,10 @@ theorem noInternalAssoc_toGraph : NoInternalAssoc X.toGraph.edges X.toGraph.arcs
 theorem noCrossing_toGraph_iff :
     Autosegmental.NoCrossing X.toGraph.edges X.toGraph.arcs ↔ X.NoCrossing := by
   constructor
-  · intro h i j a ha b hb hlt
+  · refine fun h i j ↦ isNonCrossing_lines_iff.2 fun p q p' q' h₁ h₂ hlt ↦ ?_
     by_contra! hgt
-    exact @h ⟨i, a.1⟩ ⟨j, a.2⟩ ⟨i, b.1⟩ ⟨j, b.2⟩ ha hb ⟨rfl, hlt⟩ ⟨rfl, hgt⟩
+    exact @h ⟨i, ⟨p, h₁.lt_left⟩⟩ ⟨j, ⟨q, h₁.lt_right⟩⟩ ⟨i, ⟨p', h₂.lt_left⟩⟩
+      ⟨j, ⟨q', h₂.lt_right⟩⟩ h₁ h₂ ⟨rfl, hlt⟩ ⟨rfl, hgt⟩
   · rintro h ⟨i, p⟩ ⟨j, q⟩ ⟨i', p'⟩ ⟨j', q'⟩ hvv' hww' ⟨hi, hpp'⟩ ⟨hj, hqq'⟩
     dsimp only at hi hj hpp' hqq'
     subst hi hj
@@ -282,12 +284,11 @@ private theorem _root_.Autosegmental.Graph.Iso.toEquiv_toGraph
 private theorem _root_.Autosegmental.Graph.Iso.link_toGraph
     (e : Graph.Iso X.toGraph Y.toGraph) {i j : ι} {p q : ℕ} (h : X.Link i j p q) :
     Y.Link i j p q := by
-  obtain ⟨hp, hq, hadj⟩ := h
-  have hadj' := (e.edges_iff _ _).mpr hadj
-  obtain ⟨hp', hv⟩ := e.toEquiv_toGraph ⟨p, hp⟩
-  obtain ⟨hq', hw⟩ := e.toEquiv_toGraph ⟨q, hq⟩
+  have hadj' := (e.edges_iff _ _).mpr h.adj
+  obtain ⟨hp', hv⟩ := e.toEquiv_toGraph ⟨p, h.lt_left⟩
+  obtain ⟨hq', hw⟩ := e.toEquiv_toGraph ⟨q, h.lt_right⟩
   rw [hv, hw] at hadj'
-  exact ⟨hp', hq', hadj'⟩
+  exact hadj'
 
 /-- Representations whose graphs are isomorphic are equal: the graph reading is injective up to
 isomorphism. -/
@@ -380,22 +381,21 @@ theorem fst_label_ofGraphEquiv (v : (i : ι) × Fin (ofGraphWord h i).length) :
 variable (G) in
 /-- The representation of a finite graph satisfying Axioms 1–3: the labels of each tier in arc
 order, and the association edges between the corresponding positions. -/
-noncomputable def ofGraph (h₃ : NoInternalAssoc G.edges G.arcs) : AR τ where
-  word := ofGraphWord h
-  assoc := G.edges.comap (ofGraphEquiv h)
-  assoc_le v w hvw hvw₁ := by
+noncomputable def ofGraph (h₃ : NoInternalAssoc G.edges G.arcs) : AR τ :=
+  haveI := Classical.decRel (G.edges.comap (ofGraphEquiv h)).Adj
+  ofAssoc (ofGraphWord h) (G.edges.comap (ofGraphEquiv h)) fun v w hvw hvw₁ ↦ by
     have hvw' : G.edges.Adj (ofGraphEquiv h v) (ofGraphEquiv h w) := hvw
     have htier : G.tier Sigma.fst (ofGraphEquiv h v) = G.tier Sigma.fst (ofGraphEquiv h w) := by
       simp only [Graph.tier, Function.comp_apply, fst_label_ofGraphEquiv]
       exact hvw₁
     exact (h.total hvw'.ne htier).elim (h₃ hvw') (h₃ hvw'.symm)
-  decidableAdj := Classical.decRel _
 
 /-- A finite graph satisfying Axioms 1–3 is the graph of its representation. -/
 noncomputable def ofGraphIso (h₃ : NoInternalAssoc G.edges G.arcs) :
     Graph.Iso (ofGraph G h h₃).toGraph G where
   toEquiv := ofGraphEquiv h
-  edges_iff _ _ := Iff.rfl
+  edges_iff v w := (Eq.to_iff (congrArg (fun g : SimpleGraph _ ↦ g.Adj v w)
+    (@assoc_ofAssoc _ _ (ofGraphWord h) _ (Classical.decRel _) _))).symm
   arcs_iff := by
     rintro ⟨i, p⟩ ⟨j, q⟩
     change G.arcs.Adj (fiberEnum h i (finCongr List.length_ofFn p)).1

@@ -40,23 +40,23 @@ namespace StrictCV
 
 open Autosegmental
 
-variable {T M : Type*} (u : Form Slot T M)
+variable {T M : Type} (u : AR (TwoTier (Sponsored T M) (Sponsored Slot M)))
 
 /-- A skeleton is strict when it is a sequence of CV units. -/
 def IsStrict : Prop :=
-  u.lower.map (·.value) = (List.replicate (u.lower.length / 2) [.C, .V]).flatten
+  (u.word .lower).map (·.value) = (List.replicate ((u.word .lower).length / 2) [.C, .V]).flatten
 
 instance : Decidable (IsStrict u) := inferInstanceAs (Decidable (_ = _))
 
 /-- The number of CV units. -/
-def units : ℕ := u.lower.length / 2
+def units : ℕ := (u.word .lower).length / 2
 
 /-- The onset of CV unit `j`. -/
-def onset (j : Fin (units u)) : Fin u.lower.length :=
+def onset (j : Fin (units u)) : Fin (u.word .lower).length :=
   ⟨2 * j, by have := j.isLt; unfold units at this; omega⟩
 
 /-- The nucleus of CV unit `j`. -/
-def nucleus (j : Fin (units u)) : Fin u.lower.length :=
+def nucleus (j : Fin (units u)) : Fin (u.word .lower).length :=
   ⟨2 * j + 1, by have := j.isLt; unfold units at this; omega⟩
 
 variable {u} (c : Candidate u)
@@ -87,7 +87,8 @@ def surface : List (Nucleus × Bool) :=
 
 variable {c P} {j : Fin (units u)}
 
-theorem mem_hosting : j ∈ hosting c P ↔ ∃ k, (k, nucleus u j) ∈ c.links ∧ P u.upper[k].value := by
+theorem mem_hosting : j ∈ hosting c P ↔
+    ∃ k, (k, nucleus u j) ∈ c.links ∧ P (u.word .upper)[k].value := by
   simp [hosting, Candidate.mem_tierValues]
 
 end StrictCV
