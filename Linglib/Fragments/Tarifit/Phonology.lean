@@ -12,11 +12,12 @@ no Tarifit inventory. The coronal stops are dental, as the text calls them. Leng
 feature here: a geminate is a consonant on two timing slots, and `geminates` collects the
 consonants that the chart lists geminated.
 
-The chart has no entry for the pharyngealized and labialized consonants, whose tongue-root and
-labial values PHOIBLE gives as contours, so each is the plain consonant with [+RTR] or with
-[+round] and [−labiodental]. The chart lists /ʕ/ among the fricatives, but the text groups it
-with /r/ as a sonorant that conditions vowels, and the count of rising, plateauing and falling
-onsets holds only with /ʕ/ above the tap, so /ʕ/ is the chart's segment as an approximant.
+PHOIBLE gives the tongue-root value of a pharyngealized consonant and the labial value of a
+labialized one as contours, which the chart leaves unspecified, so each is the plain consonant
+with [+RTR] or with [+round] and [−labiodental]. The chart lists /ʕ/ among the fricatives, but
+the text groups it with /r/ as a sonorant that conditions vowels, and the count of rising,
+plateauing and falling onsets holds only with /ʕ/ above the tap, so /ʕ/ is the chart's segment
+as an approximant.
 
 ## Main definitions
 

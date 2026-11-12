@@ -34,8 +34,7 @@ unspecified for [back], as Sen's analysis of the variants requires. Both glides 
 
 ## TODO
 
-* The labio-velars /kʷ/ and /gʷ/, which the chart omits as contour-valued, the rare /h/ and
-  /y/, and the diphthongs.
+* The labio-velars /kʷ/ and /gʷ/, the rare /h/ and /y/, and the diphthongs.
 
 ## References
 

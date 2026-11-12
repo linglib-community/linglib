@@ -18,16 +18,17 @@ Writes to:   Linglib/Data/PHOIBLE/Inventories/{Name}.lean, one per requested ISO
              Linglib/Data/PHOIBLE/Chart.lean with `--chart`.
 
 In PHOIBLE a glyph determines its feature values, whatever the inventory, so the chart has
-one feature matrix per glyph. `--chart` and `--check` fail if the CSV ever breaks that
-invariant, or what the docstring of `Data.PHOIBLE.Source` says each source records. Tones
-are left out, and so are glyphs with a contour value such as `-,+`, which a `Bool`-valued
-matrix cannot hold.
+one feature matrix per glyph, tones and complex segments included. A complex segment has a
+contour such as `-,+` in some column, which its matrix leaves unspecified, as the meet of the
+contour's phases. `--chart` and `--check` fail if the CSV ever breaks what the Lean files say
+of it: that a glyph determines its feature values, that the phases of a contour differ, that
+an inventory has no glyph twice, and what the docstring of `Data.PHOIBLE.Source` says each
+source records.
 
 An inventory is the one `ISO=ID` names, else the ISO's lowest InventoryID. Each generated
 module records the argument that regenerates it, and a run without arguments regenerates
-every module in `Inventories/` from its recorded argument. A phoneme whose glyph is in the
-chart takes its feature matrix from `Chart.lean`; tones and contour-valued glyphs carry theirs
-inline, with each contour read as the meet of its phases. PHOIBLE's `NA` becomes `none`.
+every module in `Inventories/` from its recorded argument. A phoneme takes its feature matrix
+from `Chart.lean`. PHOIBLE's `NA` becomes `none`.
 
 Dependencies: pure stdlib (csv module).
 """
@@ -45,9 +46,10 @@ DATA = ROOT / "Linglib" / "Data" / "PHOIBLE" / "raw" / "phoible.csv"
 OUT  = ROOT / "Linglib" / "Data" / "PHOIBLE" / "Inventories"
 CHART = ROOT / "Linglib" / "Data" / "PHOIBLE" / "Chart.lean"
 
-# ── PHOIBLE feature columns (in CSV order, matching Schema.lean) ───────────
+# ── PHOIBLE feature columns ────────────────────────────────────────────────
 
-# The distinctive-feature columns, with "tone" and "stress" appended when emitting.
+# The feature columns, in the order of the constructors of `Data.PHOIBLE.Feature`, which puts
+# the table's first two columns, "tone" and "stress", last.
 FEATURE_COLS = [
     "syllabic", "short", "long", "consonantal", "sonorant", "continuant",
     "delayedRelease", "approximant", "tap", "trill", "nasal", "lateral",
@@ -55,12 +57,8 @@ FEATURE_COLS = [
     "strident", "dorsal", "high", "low", "front", "back", "tense",
     "retractedTongueRoot", "advancedTongueRoot", "periodicGlottalSource",
     "epilaryngealSource", "spreadGlottis", "constrictedGlottis", "fortis",
-    "lenis", "raisedLarynxEjective", "loweredLarynxImplosive", "click",
+    "lenis", "raisedLarynxEjective", "loweredLarynxImplosive", "click", "tone", "stress",
 ]
-# Plus tone + stress at the end.
-
-# Column-to-constructor renames in `Data.PHOIBLE.Feature` (none at present).
-COL_TO_FIELD = {}
 
 # The `Source` column's codes, which are the constructors of `Data.PHOIBLE.Source`.
 SOURCES = ["spa", "upsid", "aa", "ph", "ra", "saphon", "ea", "er"]
@@ -95,6 +93,17 @@ def format_features(pairs, indent="        "):
             cur += piece if cur.strip() else it
     lines.append(cur)
     return ".ofRow {" + chr(10) + chr(10).join(lines) + " }"
+
+def wrap_doc(doc: str) -> str:
+    """Wrap a docstring's text so that it fits 100 columns between `/-- ` and ` -/`."""
+    lines = []; cur = ""
+    for word in doc.split(" "):
+        if cur and len(cur) + 1 + len(word) > 93:
+            lines.append(cur); cur = word
+        else:
+            cur = word if not cur else cur + " " + word
+    lines.append(cur)
+    return chr(10).join(lines)
 
 def segment_class(s: str) -> str:
     s = s.strip().strip('"')
@@ -162,30 +171,15 @@ def lang_module_name(lang_name: str, iso: str) -> str:
 
 # ── Per-inventory emission ─────────────────────────────────────────────────
 
-def in_chart(row: dict) -> bool:
-    """Whether the chart has this row's glyph: not a tone, no contour value."""
-    return (row["SegmentClass"] != "tone"
-            and not any("," in row[c] for c in FEATURE_COLS + ["tone", "stress"]))
-
 def emit_phoneme(row: dict) -> str:
-    """Emit one Lean `Phoneme` literal."""
-    if in_chart(row):
-        feature_block = f".«{row['Phoneme']}»"
-    else:
-        pairs = []
-        for col in FEATURE_COLS + ["tone", "stress"]:
-            val = feature_value(row[col])
-            if val is not None:
-                pairs.append((COL_TO_FIELD.get(col, col), val))
-        feature_block = format_features(pairs)
-
+    """Emit one Lean `Phoneme` literal, its feature matrix the chart entry of its glyph."""
     glyph = row["Phoneme"].strip().strip('"')
 
     return f"""    {{ glyph := {lean_string(glyph)},
       allophones := {allophones_value(row["Allophones"])},
       marginal := {marginal_value(row["Marginal"])},
       segmentClass := {segment_class(row["SegmentClass"])},
-      features := {feature_block} }}"""
+      features := .«{glyph}» }}"""
 
 def emit_inventory(rows: list, var_name: str) -> str:
     """Emit one Lean `Inventory` literal for a list of CSV rows."""
@@ -250,55 +244,65 @@ end Data.PHOIBLE.Inventories.{module_name}
 # ── The glyph chart ────────────────────────────────────────────────────────
 
 def chart_rows():
-    """One CSV row per glyph, in order of first appearance; checks every row with `check_row`
-    and that a glyph determines its feature values."""
-    cols = FEATURE_COLS + ["tone", "stress"]
+    """One CSV row per glyph, in order of first appearance. Checks every row with `check_row`,
+    and that a glyph determines its feature values and segment class, that the phases of a
+    contour differ, and that an inventory has no glyph twice."""
     first = OrderedDict()
+    listed = set()
     with open(DATA, encoding="utf-8") as f:
         for row in csv.DictReader(f):
             check_row(row)
             glyph = row["Phoneme"]
-            vec = tuple(row[c] for c in cols)
+            if (row["InventoryID"], glyph) in listed:
+                sys.exit(f"FATAL: inventory {row['InventoryID']} has glyph {glyph!r} twice")
+            listed.add((row["InventoryID"], glyph))
+            vec = (row["SegmentClass"],) + tuple(row[c] for c in FEATURE_COLS)
             seen = first.get(glyph)
             if seen is None:
+                for c in FEATURE_COLS:
+                    if "," in row[c] and len(set(row[c].split(","))) == 1:
+                        sys.exit(f"FATAL: glyph {glyph!r} has a contour of equal phases")
                 first[glyph] = (row, vec)
             elif seen[1] != vec:
                 sys.exit(f"FATAL: glyph {glyph!r} has two feature vectors")
     return [row for row, _ in first.values()]
 
 def emit_chart() -> str:
-    cols = FEATURE_COLS + ["tone", "stress"]
     entries = []
-    skipped_tone = skipped_contour = 0
+    plain = contoured = tones = 0
     for row in sorted(chart_rows(), key=lambda r: r["GlyphID"]):
-        if row["SegmentClass"] == "tone":
-            skipped_tone += 1; continue
-        if any("," in row[c] for c in cols):
-            skipped_contour += 1; continue
         glyph = row["Phoneme"]
         if "»" in glyph or "-/" in glyph:
             sys.exit(f"FATAL: glyph {glyph!r} cannot be quoted")
-        pairs = [(COL_TO_FIELD.get(c, c), feature_value(row[c])) for c in cols]
+        contours = [f"{c} `{row[c]}`" for c in FEATURE_COLS if "," in row[c]]
+        if row["SegmentClass"] == "tone": tones += 1
+        elif contours: contoured += 1
+        else: plain += 1
+        pairs = [(c, feature_value(row[c])) for c in FEATURE_COLS]
         pairs = [(f, v) for f, v in pairs if v is not None]
         block = format_features(pairs, indent="  ")
-        entries.append(
-            f"/-- {glyph} (GlyphID {row['GlyphID']}), {row['SegmentClass']}. -/\n"
-            f"def «{glyph}» : FeatureMatrix := {block}")
+        doc = f"{glyph} (GlyphID {row['GlyphID']}), {row['SegmentClass']}"
+        if contours:
+            doc += ", with the contour" + ("s " if len(contours) > 1 else " ") + ", ".join(contours)
+        doc = wrap_doc(doc + ".")
+        entries.append(f"/-- {doc} -/\ndef «{glyph}» : FeatureMatrix := {block}")
     body = "\n\n".join(entries)
     return f"""import Linglib.Data.PHOIBLE.Schema
 
 /-!
 # PHOIBLE feature chart
 
-This file lists the feature matrix PHOIBLE 2.0 assigns to each segment glyph. In PHOIBLE a
-glyph determines its feature values in every inventory that uses it, so one matrix per glyph
-is the whole of the database's feature information. Each matrix is a constant named by its
-glyph in the namespace of `FeatureMatrix`, so that `.«n»` and `.«t̠ʃ»` are feature matrices
-wherever one is expected. A feature PHOIBLE marks `0`, not applicable, is left unspecified.
+This file lists the feature matrix of each glyph of PHOIBLE 2.0. In PHOIBLE a glyph determines
+its feature values in every inventory that uses it, so the chart has one matrix per glyph. Each
+matrix is a constant named by its glyph in the namespace of `FeatureMatrix`, so that `.«n»` and
+`.«t̠ʃ»` are feature matrices wherever one is expected. A feature PHOIBLE marks `0`, not
+applicable, is left unspecified.
 
-The chart has {len(entries)} glyphs. It omits the {skipped_tone} tones and the {skipped_contour} glyphs with a contour
-value such as `-,+`, the prenasalized, secondarily articulated and click segments and the
-diphthongs, which a two-valued matrix cannot hold.
+The chart has {len(entries)} glyphs. Of these {plain} are segments with one value in every column and {tones}
+are tones. The other {contoured} are complex segments, among them the prenasalized and secondarily
+articulated consonants, the clicks and the diphthongs, with a contour such as `-,+` in some
+column. The matrix of a complex segment leaves such a feature unspecified, which is the meet of
+the contour's phases, and the docstring of its entry records the contour.
 
 Auto-generated by `scripts/gen_phoible.py --chart`. **Do not edit by hand.**
 

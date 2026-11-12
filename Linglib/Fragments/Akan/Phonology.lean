@@ -20,9 +20,9 @@ Akan reduplication turns on.
 The feature values come from the PHOIBLE chart. The chart codes the two vowel sets by
 [tense] and marks every plain vowel [−ATR], where the Akan literature has [ATR] carry the
 contrast, so a vowel is the segment of its chart entry's tongue-root reading, which takes the
-[tense] value as the [ATR] value and drops [tense]. The chart omits the palatal affricate,
-whose values are contours, and its segment is the velar stop's with the features McCarthy and
-Prince's corono-dorsal analysis adds.
+[tense] value as the [ATR] value and drops [tense]. The chart leaves the palatal
+affricate unspecified where PHOIBLE gives it a contour, and its segment here is the velar stop's
+with the features McCarthy and Prince's corono-dorsal analysis adds.
 
 ## Main definitions
 

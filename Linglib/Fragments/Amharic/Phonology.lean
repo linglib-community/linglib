@@ -8,9 +8,9 @@ public import Linglib.Phonology.Segmental.PHOIBLE
 
 This file defines the 31 consonants and seven vowels of Amharic, as in PHOIBLE's inventory 131,
 as segments named by their IPA symbols, with feature values from the PHOIBLE chart. The
-inventory also lists the geminates, which are not further phonemes here. The chart has no entry
-for the labialized consonants, whose [labial] value PHOIBLE gives as a contour, so each is the
-plain consonant with [+round], [−labiodental] and no [labial] value, as the inventory gives it.
+inventory also lists the geminates, which are not further phonemes here. PHOIBLE gives the
+[labial] value of the labialized consonants as a contour, so each is [+round] and [−labiodental]
+with no [labial] value.
 
 ## Main definitions
 
@@ -49,8 +49,7 @@ def f : Segment := .ofChart .«f»
 def h : Segment := .ofChart .«h»
 
 /-- The labialized voiceless glottal fricative /hʷ/. -/
-def «hʷ» : Segment := .ofChart .«h» (.ofSpecs [(.round, true), (.labiodental, false)])
-    (Finset.univ.erase .labial)
+def «hʷ» : Segment := .ofChart .«hʷ»
 
 /-- The palatal glide /j/. -/
 def j : Segment := .ofChart .«j»
@@ -59,12 +58,10 @@ def j : Segment := .ofChart .«j»
 def k : Segment := .ofChart .«k»
 
 /-- The labialized voiceless velar stop /kʷ/. -/
-def «kʷ» : Segment := .ofChart .«k» (.ofSpecs [(.round, true), (.labiodental, false)])
-    (Finset.univ.erase .labial)
+def «kʷ» : Segment := .ofChart .«kʷ»
 
 /-- The labialized velar ejective /kʷʼ/. -/
-def «kʷʼ» : Segment := .ofChart .«kʼ» (.ofSpecs [(.round, true), (.labiodental, false)])
-    (Finset.univ.erase .labial)
+def «kʷʼ» : Segment := .ofChart .«kʷʼ»
 
 /-- The velar ejective /kʼ/. -/
 def «kʼ» : Segment := .ofChart .«kʼ»
@@ -112,8 +109,7 @@ def z : Segment := .ofChart .«z»
 def «ɡ» : Segment := .ofChart .«ɡ»
 
 /-- The labialized voiced velar stop /ɡʷ/. -/
-def «ɡʷ» : Segment := .ofChart .«ɡ» (.ofSpecs [(.round, true), (.labiodental, false)])
-    (Finset.univ.erase .labial)
+def «ɡʷ» : Segment := .ofChart .«ɡʷ»
 
 /-- The palatal nasal /ɲ/. -/
 def «ɲ» : Segment := .ofChart .«ɲ»
