@@ -7,26 +7,25 @@ public import Linglib.Phonology.Prosody.Match
 /-!
 # Bennett 2018: recursive prosodic words in Kaqchikel
 
-This file formalizes Bennett's argument that the prosodic word recurses in Kaqchikel.
-Prefixes fall into two prosodic classes: low-attaching prefixes are parsed into their stem's
-prosodic word, `[ω Pref Stem]`, and high-attaching prefixes outside it, `[ω Pref [ω Stem]]`.
-Two diagnostics converge on the split — an onsetless syllable at the left edge of an ω
-receives epenthetic [ʔ], so a vowel-initial stem keeps its glottal stop after a high prefix
-but loses it after a low one, and the OCP that fuses adjacent identical consonants is inert
-across an ω boundary, so degemination applies across a low-prefix juncture but not a high
-one. Stacked high prefixes each receive their own glottal stop, which a non-recursive
-prosodic hierarchy could only reproduce by positing one new prosodic category per prefix.
-The recursion follows from a lexical subcategorization frame on the high prefixes, ranked
-above the constraint that every prosodic word correspond to a morphological word.
+Kaqchikel prefixes fall into two prosodic classes: a low-attaching prefix is parsed into the
+prosodic word of its stem, and a high-attaching prefix outside it. An onsetless syllable at the
+left edge of an ω receives epenthetic [ʔ], and the OCP that fuses adjacent identical consonants is
+inert across an ω boundary, so under the recursive parse [every stacked high prefix is a locus of
+[ʔ]-insertion](##omegaInitial_nested) and [is separated from what follows by an ω
+boundary](##mem_omegaBoundaries_nested), where the flat parse has [one
+locus](##omegaInitial_flat) and [no internal boundary](##omegaBoundaries_flat). A parse of the
+same bracketing without recursion [needs a different category for every
+bracket](##nodup_level_of_noLevelRecursion). The recursion follows from a subcategorization frame
+on the high prefixes, which [no candidate satisfies without an ω that matches no morphological
+word](##prosodySyntaxMatch_pos_of_subCat), so the frame is ranked above Match (ω, X⁰).
 
-## Main definitions
+## Implementation notes
 
-* `flat`, `nested`: the two parses of a prefix sequence over a stem.
-* `omegaInitial`, `OmegaSeparates`: the structural side of the two diagnostics — the
-  ω-initial leaves, and whether an ω boundary separates two leaves.
-* `word`, `subCat`: the span of the morphological word, which `Match (X⁰, ω)` and
-  `Match (ω, X⁰)` read as `Prosody.syntaxProsodyMatch` and `Prosody.prosodySyntaxMatch`, and the
-  subcategorization frame, aligned with each prefix's index in the frontier.
+* Every morpheme is one syllable terminal, so `flat n` also stands for the parse of high prefixes
+  as syllables of their stem's ω, which differs from the low-prefix parse below the syllable.
+* `matchWord` is Match (X⁰, ω) as the paper words it, a word within one ω, which asks no more
+  than `Prosody.syntaxProsodyMatch`, a word coextensive with an ω.
+* The hierarchy of `Prosody.Level` has no Clitic Group, so `phrasal` puts a φ in its place.
 
 ## References
 
@@ -40,114 +39,194 @@ above the constraint that every prosodic word correspond to a morphological word
 
 namespace Bennett2018
 
-open Prosody OptimalityTheory
+open Prosody OptimalityTheory RoseTree Core.Order
 
 /-! ### Parses -/
 
-/-- The flat parse `[ω Pref₁ … Prefₙ Stem]`, the structure of low-attaching prefixes (4a). -/
-def flat (prefs : List Constituent) (stem : Constituent) : Tree :=
-  .om ((prefs ++ [stem]).map RoseTree.leaf)
+/-- (4a): the flat parse `[ω Pref₁ … Prefₙ Stem]` of `n` low-attaching prefixes. -/
+def flat (n : ℕ) : Tree := .om (List.replicate (n + 1) Tree.σ)
 
-/-- The recursive parse `[ω Pref₁ [ω … [ω Prefₙ [ω Stem]]]]`, one ω per high-attaching
-prefix ((19a), (23)). -/
-def nested : List Constituent → Constituent → Tree
-  | [], stem => .om [.leaf stem]
-  | p :: ps, stem => .om [.leaf p, nested ps stem]
+/-- (24): the bracketing `[κ₁ Pref₁ [κ₂ … [κₙ Prefₙ [ω Stem]]]]`, the stem an ω and the bracket
+that each prefix opens of the category given for it. -/
+def brackets (κs : List Constituent) : Tree :=
+  κs.foldr (fun κ t ↦ .node κ [Tree.σ, t]) (Tree.om [Tree.σ])
 
-/-- A light prefix syllable. -/
-def pref : Constituent := .syl 1
+/-- (23): the recursive parse `[ω Pref₁ [ω … [ω Prefₙ [ω Stem]]]]` of `n` high-attaching
+prefixes, every bracket an ω. -/
+def nested (n : ℕ) : Tree := brackets (.replicate n .om)
 
-/-- A heavy stem syllable. -/
-def stem : Constituent := .syl 2
+/-- (25a): a high-attaching prefix as an ω of its own beside the ω of its stem. -/
+def phrasal : Tree := .ph [.om [.σ], .om [.σ]]
 
-/-- Each high-attaching prefix as an independent ω under a higher category (25a), the
-carrier's φ standing in for a Clitic Group. -/
-def phrasal : Tree := .ph [.om [.leaf pref], .om [.leaf stem]]
+@[simp] theorem brackets_nil : brackets [] = Tree.om [Tree.σ] := rfl
 
-/-! ### Diagnostics -/
+@[simp] theorem brackets_cons (κ : Constituent) (κs : List Constituent) :
+    brackets (κ :: κs) = .node κ [Tree.σ, brackets κs] := rfl
 
-/-- The leftmost leaf of a tree. -/
-def leftmost (t : Tree) : Constituent := t.leafList.head t.leafList_ne_nil
+@[simp] theorem nested_zero : nested 0 = Tree.om [Tree.σ] := rfl
 
-/-- The ω-initial leaves, one per ω node: the left edge of an ω is where an onsetless
-syllable receives epenthetic [ʔ], the ω being the domain of syllabification. -/
-def omegaInitial (t : Tree) : List Constituent :=
-  (t.subtrees.filter (·.value.level = .om)).map leftmost
+@[simp] theorem nested_succ (n : ℕ) : nested (n + 1) = Tree.om [Tree.σ, nested n] := rfl
 
-/-- Some ω dominates the leaf `b` but not the leaf `a`: an ω boundary between them, across
-which `OCP(X)ω` (18) is inert. -/
-def OmegaSeparates (a b : Constituent) (t : Tree) : Prop :=
-  ∃ s ∈ t.subtrees, s.value.level = .om ∧ b ∈ s.leafList ∧ a ∉ s.leafList
+@[simp] theorem numLeaves_nested (n : ℕ) : (nested n).numLeaves = n + 1 := by
+  induction n with
+  | zero => rfl
+  | succ n ih => simp [ih, Nat.add_comm]
 
-instance (a b : Constituent) (t : Tree) : Decidable (OmegaSeparates a b t) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+theorem levelSpans_om_nested (n : ℕ) :
+    levelSpans .om (nested n) = (List.range (n + 1)).map (·, n + 1) := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    rw [List.range_succ_eq_map]
+    simp [levelSpans, Tree.om, Tree.σ] at ih ⊢
+    simp [ih, Function.comp_def, Nat.add_comm]
 
-/-- In the recursive parse, `n` high prefixes over a vowel-initial stem give `n + 1` loci of
-[ʔ]-insertion ((21)–(23)). -/
-theorem omegaInitial_nested {ps : List Constituent} {s : Constituent}
-    (hps : ∀ p ∈ ps, p.level ≠ .om) (hs : s.level ≠ .om) :
-    omegaInitial (nested ps s) = ps ++ [s] := by
-  induction ps with
-  | nil => simp [omegaInitial, nested, leftmost, hs]
-  | cons p ps ih =>
-    have ih := ih fun q hq ↦ hps q (List.mem_cons_of_mem p hq)
-    simp only [omegaInitial] at ih
-    simp [omegaInitial, nested, leftmost, hps p (List.mem_cons_self ..), ih]
+theorem levelSpans_om_flat (n : ℕ) : levelSpans .om (flat n) = [(0, n + 1)] := by
+  simp [levelSpans, flat, Tree.om, Tree.σ, spansList_replicate]
 
-/-- In the flat parse only the first prefix is ω-initial: one locus of [ʔ]-insertion. -/
-theorem omegaInitial_flat {p : Constituent} {ps : List Constituent} {s : Constituent}
-    (hp : p.level ≠ .om) (hps : ∀ q ∈ ps, q.level ≠ .om) (hs : s.level ≠ .om) :
-    omegaInitial (flat (p :: ps) s) = [p] := by
-  simpa [omegaInitial, flat, leftmost, hp, hs, List.filter_flatMap,
-    List.flatMap_eq_nil_iff] using hps
+/-! ### The two diagnostics -/
 
--- (22)–(23): three high prefixes and a vowel-initial root, four glottal stops.
-example : omegaInitial (nested [pref, pref, pref] stem) = [pref, pref, pref, stem] := by decide
+/-- The terminals at which an ω begins. The ω is the domain of syllabification, so these are
+where an onsetless syllable receives epenthetic [ʔ]. -/
+def omegaInitial (t : Tree) : List ℕ := (levelSpans .om t).map Prod.fst
 
--- (15) vs (16)–(17): no ω boundary separates a low prefix from its stem, so `OCP(X)ω`
--- degeminates across the juncture; an ω boundary separates a high prefix from its stem.
-example : ¬ OmegaSeparates pref stem (flat [pref] stem) := by decide
-example : OmegaSeparates pref stem (nested [pref] stem) := by decide
+/-- The cuts of the frontier at which an ω begins or ends: the ω boundaries, across which
+`OCP(X)ω` (18) does not see adjacent identical segments. -/
+def omegaBoundaries (t : Tree) : List ℕ := (levelSpans .om t).flatMap fun x ↦ [x.1, x.2]
+
+/-- Under the recursive parse each of `n` high prefixes begins an ω, as the stem does: `n + 1`
+loci of [ʔ]-insertion. -/
+theorem omegaInitial_nested (n : ℕ) : omegaInitial (nested n) = List.range (n + 1) := by
+  simp [omegaInitial, levelSpans_om_nested, Function.comp_def]
+
+-- (6)–(8): under the flat parse only the first terminal begins an ω, one locus of [ʔ]-insertion.
+theorem omegaInitial_flat (n : ℕ) : omegaInitial (flat n) = [0] := by
+  simp [omegaInitial, levelSpans_om_flat]
+
+-- (16)–(17): an ω boundary follows every high prefix, so no juncture degeminates.
+theorem mem_omegaBoundaries_nested {n i : ℕ} : i ∈ omegaBoundaries (nested n) ↔ i ≤ n + 1 := by
+  simp only [omegaBoundaries, levelSpans_om_nested, List.mem_flatMap, List.mem_map,
+    List.mem_range]
+  refine ⟨?_, fun h ↦ ?_⟩
+  · rintro ⟨_, ⟨j, hj, rfl⟩, hi⟩
+    simp at hi
+    omega
+  · rcases h.eq_or_lt with rfl | h
+    · exact ⟨(0, n + 1), ⟨0, by omega, rfl⟩, by simp⟩
+    · exact ⟨(i, n + 1), ⟨i, h, rfl⟩, by simp⟩
+
+-- (15), (29): no ω boundary falls inside the flat parse, so its junctures degeminate.
+theorem omegaBoundaries_flat (n : ℕ) : omegaBoundaries (flat n) = [0, n + 1] := by
+  simp [omegaBoundaries, levelSpans_om_flat]
+
+/-! ### Without recursion -/
+
+private theorem getElem?_level_brackets (κs : List Constituent) (i : ℕ) :
+    (κs.map Constituent.level ++ [Level.om])[i]? =
+      (brackets κs)[List.replicate i 1]?.map (·.value.level) := by
+  induction κs generalizing i with
+  | nil => cases i <;> simp [Tree.om, List.replicate_succ]
+  | cons κ κs ih => cases i <;> simp [List.replicate_succ, ih]
+
+/-- A parse of the bracketing of stacked high prefixes that repeats no category along dominance
+gives every bracket a category of its own, none of them ω: the four brackets of three stacked
+prefixes take four categories (24). -/
+theorem nodup_level_of_noLevelRecursion {κs : List Constituent}
+    (h : ∀ ℓ, NoLevelRecursion ℓ (brackets κs)) :
+    (κs.map Constituent.level ++ [Level.om]).Nodup := by
+  refine List.nodup_iff_getElem?_ne_getElem?.2 fun i j hij hj heq ↦ ?_
+  have hℓ := List.getElem?_eq_getElem hj
+  rw [hℓ, getElem?_level_brackets] at heq
+  rw [getElem?_level_brackets] at hℓ
+  obtain ⟨s, hs, hsℓ⟩ := Option.map_eq_some_iff.1 heq
+  obtain ⟨u, hu, huℓ⟩ := Option.map_eq_some_iff.1 hℓ
+  have hle : (⟨.replicate i 1⟩ : TreePath) ≤ ⟨.replicate j 1⟩ :=
+    ⟨.replicate (j - i) 1, by rw [List.replicate_append_replicate]; congr 1; omega⟩
+  have := congrArg (·.toList.length) <| (h _).subsingleton_inter_Iic ⟨.replicate j 1⟩
+    ⟨⟨s, hs, hsℓ⟩, Set.mem_Iic.2 hle⟩ ⟨⟨u, hu, huℓ⟩, Set.mem_Iic.2 le_rfl⟩
+  simp at this
+  omega
+
+-- A φ over the stem's ω repeats no category, and a second φ over it does.
+example : ∀ ℓ, NoLevelRecursion ℓ (brackets [.ph]) := fun ℓ ↦ by cases ℓ <;> decide
+example : ¬ NoLevelRecursion .ph (brackets [.ph, .ph]) := by decide
+
+-- The recursive parse repeats ω along dominance.
+example (n : ℕ) : ¬ ∀ ℓ, NoLevelRecursion ℓ (nested (n + 1)) := fun h ↦ by
+  simpa [List.replicate_succ] using
+    nodup_level_of_noLevelRecursion (κs := .replicate (n + 1) .om) h
 
 /-! ### Constraints and the ranking -/
 
-/-- The prefix and the stem form one morphological word over the two syllables, whose span
-Match (X⁰, ω) (13), undominated in Kaqchikel, and Match (ω, X⁰) read. -/
-abbrev word : List (ℕ × ℕ) := [(0, 2)]
+/-- (13): Match (X⁰, ω), one violation for each morphological word whose segments are not all
+within one ω. -/
+def matchWord (α : List (ℕ × ℕ)) : Constraint Tree :=
+  (Constraint.align fun m w : ℕ × ℕ ↦ w.1 ≤ m.1 ∧ m.2 ≤ w.2).comap fun t ↦ (α, levelSpans .om t)
 
-/-- The subcategorization frame `[ω p [ω ]]` (30): an ω whose daughters are a syllable and an ω. -/
-def IsFrame (t : Tree) : Prop :=
-  t.value.level = .om ∧ t.children.map (·.value.level) = [.syl, .om]
+/-- (30): the subcategorization frame `[ω HighPref [ω ]]`, an ω whose daughters are a syllable
+and an ω. -/
+@[mk_iff]
+structure IsFrame (t : Tree) : Prop where
+  /-- The frame is an ω. -/
+  level : t.value.level = .om
+  /-- Its daughters are the prefix syllable and the ω of the stem. -/
+  daughters : t.children.map (·.value.level) = [.syl, .om]
 
-instance : DecidablePred IsFrame := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidablePred IsFrame := fun _ ↦ decidable_of_iff' _ (isFrame_iff _)
 
-/-- `SubCat`: one violation per high-attaching prefix, at its index in the frontier, at which no
-frame (30) begins. -/
+/-- `SubCat`: one violation for each high-attaching prefix, given by its index in the frontier,
+at which no frame (30) begins. -/
 def subCat (prefs : List ℕ) : Constraint Tree :=
   (Constraint.align fun (i : ℕ) (x : ℕ × ℕ) ↦ i = x.1).comap fun t ↦ (prefs, t.spans IsFrame)
 
+/-- A candidate that gives a high prefix its frame has an ω that matches no morphological word,
+whatever the word: `SubCat` and Match (ω, X⁰) conflict in every candidate. -/
+theorem prosodySyntaxMatch_pos_of_subCat {t : Tree} {i m : ℕ} (h : subCat [i] t = 0) :
+    0 < prosodySyntaxMatch .om [(0, m)] t := by
+  obtain ⟨_, hx, rfl⟩ : ∃ x ∈ t.spans IsFrame, i = x.1 := by
+    simpa using Constraint.align_eq_zero_iff.1 h
+  obtain ⟨p, ⟨κ, cs⟩, hs, ⟨-, hcs⟩, rfl⟩ := mem_spans.1 hx
+  obtain ⟨a, b, rfl, -, hb⟩ : ∃ a b, cs = [a, b] ∧ a.value.level = .syl ∧ b.value.level = .om := by
+    simpa [List.map_eq_cons_iff] using hcs
+  refine List.countP_pos_iff.2 ⟨(t.leafIndex (p ++ [1]), t.leafIndex (p ++ [1]) + b.numLeaves),
+    mem_spans.2 ⟨p ++ [1], b, by simp [getElem?_append, hs], hb, rfl⟩, ?_⟩
+  have := a.numLeaves_pos
+  simp [leafIndex_append hs, leafIndex_cons]
+  omega
+
 /-- A high-attaching prefix is parsed recursively: under `SubCat ≫ Match (ω, X⁰)`, with
-`Match (X⁰, ω)` undominated, the recursive parse is the unique optimum. -/
+Match (X⁰, ω) undominated, the recursive parse is the unique optimum. -/
 theorem high_prefix_recursive :
-    (Tableau.ofList {nested [pref] stem, flat [pref] stem, phrasal}
-      [syntaxProsodyMatch word .om, subCat [0], prosodySyntaxMatch .om word]).optimal =
-        {nested [pref] stem} := by
+    (Tableau.ofList {nested 1, flat 1, phrasal}
+      [matchWord [(0, 2)], subCat [0], prosodySyntaxMatch .om [(0, 2)]]).optimal = {nested 1} := by
   decide
 
--- Stacked high prefixes each realise their frame only in the recursive parse.
-example : subCat [0, 1] (nested [pref, pref] stem) = 0 := by decide
-example : subCat [0, 1] (flat [pref, pref] stem) = 2 := by decide
-
-/-- A low-attaching prefix, carrying no frame, is parsed flat: `Match (ω, X⁰)` alone rules
-out the extra ω. -/
+/-- A low-attaching prefix, carrying no frame, is parsed flat: Match (ω, X⁰) alone rules out the
+extra ω. -/
 theorem low_prefix_flat :
-    (Tableau.ofList {nested [pref] stem, flat [pref] stem, phrasal}
-      [syntaxProsodyMatch word .om, prosodySyntaxMatch .om word]).optimal =
-        {flat [pref] stem} := by
+    (Tableau.ofList {nested 1, flat 1, phrasal}
+      [matchWord [(0, 2)], prosodySyntaxMatch .om [(0, 2)]]).optimal = {flat 1} := by
   decide
 
--- The recursive optimum is a well-formed prosodic word: ω over ω is admitted by
--- Layeredness; only the violable `Match (ω, X⁰)` penalises it.
-example : IsWord (nested [pref] stem) := by decide
+-- (22): three stacked high prefixes each realise their frame only in the recursive parse, at the
+-- cost of three ω's that match no word.
+example : subCat [0, 1, 2] (nested 3) = 0 := by decide
+example : subCat [0, 1, 2] (flat 3) = 3 := by decide
+example : prosodySyntaxMatch .om [(0, 4)] (nested 3) = 3 := by decide
+example : prosodySyntaxMatch .om [(0, 4)] (flat 3) = 0 := by decide
+
+-- A word coextensive with an ω is within one, and a word inside a larger ω is within it
+-- without being coextensive with it.
+example (α : List (ℕ × ℕ)) (t : Tree) : matchWord α t ≤ syntaxProsodyMatch α .om t := by
+  refine List.countP_mono_left fun m _ h ↦ ?_
+  simp only [decide_eq_true_eq] at h ⊢
+  exact fun w hw hmw ↦ h w hw (hmw ▸ ⟨le_rfl, le_rfl⟩)
+
+example : matchWord [(0, 1)] (flat 1) = 0 := by decide
+example : syntaxProsodyMatch [(0, 1)] .om (flat 1) = 1 := by decide
+
+-- The recursive optimum is a well-formed prosodic word: ω over ω is admitted by Layeredness;
+-- only the violable Match (ω, X⁰) penalises it.
+example : IsWord (nested 1) := by decide
 
 end Bennett2018

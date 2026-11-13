@@ -102,12 +102,28 @@ abbrev minimalProjections (ℓ : Level) (t : Tree) : Set TreePath :=
 abbrev NoLevelRecursion (ℓ : Level) (t : Tree) : Prop :=
   IsAntichain (· ≤ ·) (levelPositions ℓ t)
 
+instance (ℓ : Level) (t : Tree) : Decidable (NoLevelRecursion ℓ t) :=
+  decidable_of_iff (∀ p ∈ t.vertices, ∀ q ∈ t.vertices, (⟨p⟩ : TreePath) ∈ levelPositions ℓ t →
+      (⟨q⟩ : TreePath) ∈ levelPositions ℓ t → p <+: q → p = q)
+    ⟨fun h _ hp _ hq hne hle ↦ hne <| congrArg TreePath.mk <| h _
+        (RoseTree.mem_vertices.2 (Option.isSome_iff_exists.2 ⟨_, hp.choose_spec.1⟩)) _
+        (RoseTree.mem_vertices.2 (Option.isSome_iff_exists.2 ⟨_, hq.choose_spec.1⟩)) hp hq hle,
+      fun h _ _ _ _ hp hq hle ↦ congrArg TreePath.toList (h.eq hp hq hle)⟩
+
 /-- **No-Recursion collapses the projections**: under transitive No-Recursion at `ℓ`, every
 `ℓ`-node is at once topmost and bottommost. -/
 theorem maximalProjections_eq_minimalProjections {ℓ : Level} {t : Tree}
     (h : NoLevelRecursion ℓ t) : maximalProjections ℓ t = minimalProjections ℓ t := by
   ext p
   exact h.minimal_mem_iff.trans h.maximal_mem_iff.symm
+
+/-- Under transitive No-Recursion at `ℓ`, at most one `ℓ`-node dominates a given position: the
+positions dominating it form a chain, which meets an antichain in at most one member. A tree
+without recursion therefore stacks no more nodes over a terminal than there are levels. -/
+theorem NoLevelRecursion.subsingleton_inter_Iic {ℓ : Level} {t : Tree}
+    (h : NoLevelRecursion ℓ t) (q : TreePath) : (levelPositions ℓ t ∩ Set.Iic q).Subsingleton :=
+  subsingleton_of_isChain_of_isAntichain
+    (fun _ hp _ hr _ ↦ List.prefix_or_prefix_of_prefix hp.2 hr.2) (h.subset Set.inter_subset_left)
 
 /-- **Parse-into-`ℓ`** ([ito-mester-2003]) counts σ-leaves dominated by no `ℓ`-node. -/
 def parseInto (ℓ : Level) : Constraint Tree := fun t => go false t where
