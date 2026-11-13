@@ -19,7 +19,8 @@ commutative quotient of the free magma on `α`, the nonassociative commutative p
 generators, Marcolli, Chomsky and Berwick's binary unordered rooted trees with leaves in `α`. An
 element is [a generator or the product of an unordered pair](##FreeCommMagma.sumSym2Equiv), so two
 products are equal exactly when [their factors agree in either
-order](##FreeCommMagma.mul_eq_mul_iff), a function is [defined by recursion](##FreeCommMagma.elim)
+order](##FreeCommMagma.mul_eq_mul_iff), a function that respects this is
+[injective](##FreeCommMagma.injective_of_mul_eq_mul), a function is [defined by recursion](##FreeCommMagma.elim)
 from its value at a generator and an order-independent combination at a product, and [equality is
 decided](##FreeMagma.isCommCon_iff) by comparing representatives up to swapping factors.
 `[UPSTREAM]` candidate for `Mathlib/Algebra/Free.lean`.
@@ -228,30 +229,16 @@ end Elim
 of elements. -/
 def sumSym2Equiv : α ⊕ Sym2 (FreeCommMagma α) ≃ FreeCommMagma α where
   toFun := Sum.elim of Sym2.mul
-  invFun := Quotient.lift
-    (fun
-      | .of a => .inl a
-      | .mul x y => .inr s(FreeMagma.toFreeCommMagma x, FreeMagma.toFreeCommMagma y))
-    (fun x y (h : Magma.commCon (FreeMagma α) x y) ↦ by
-      induction h with
-      | of x y h => obtain ⟨a, b, rfl, rfl⟩ := h; exact congrArg Sum.inr Sym2.eq_swap
-      | refl => rfl
-      | symm _ ih => exact ih.symm
-      | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
-      | mul h₁ h₂ =>
-        exact congrArg Sum.inr (congrArg₂ (s(·, ·))
-          (FreeMagma.toFreeCommMagma_eq_toFreeCommMagma.2 h₁)
-          (FreeMagma.toFreeCommMagma_eq_toFreeCommMagma.2 h₂)))
+  invFun := elim Sum.inl (fun x y _ _ ↦ .inr s(x, y)) fun _ _ _ _ ↦ congrArg Sum.inr Sym2.eq_swap
   left_inv := by
     rintro (a | p)
     · rfl
     · induction p with | _ x y
-      obtain ⟨x, rfl⟩ := FreeMagma.toFreeCommMagma_surjective x
-      obtain ⟨y, rfl⟩ := FreeMagma.toFreeCommMagma_surjective y
-      rfl
+      exact elim_mul ..
   right_inv x := by
-    obtain ⟨x, rfl⟩ := FreeMagma.toFreeCommMagma_surjective x
-    cases x <;> rfl
+    induction x with
+    | of a => rfl
+    | mul x y => rw [elim_mul]; rfl
 
 @[simp] theorem sumSym2Equiv_inl (a : α) : sumSym2Equiv (.inl a) = of a := rfl
 
@@ -276,6 +263,35 @@ theorem mul_eq_mul_iff {x y x' y' : FreeCommMagma α} :
     x * y = x' * y' ↔ x = x' ∧ y = y' ∨ x = y' ∧ y = x' := by
   rw [← sumSym2Equiv.symm.injective.eq_iff, sumSym2Equiv_symm_mul, sumSym2Equiv_symm_mul,
     Sum.inr.injEq, Sym2.eq_iff]
+
+/-- A function on the free commutative magma is injective when it is injective on the generators,
+separates generators from products, and takes equal values at two products only when it does so
+at their factors, in either order. -/
+theorem injective_of_mul_eq_mul {γ : Type*} {F : FreeCommMagma α → γ}
+    (hof : ∀ a b, F (of a) = F (of b) → a = b) (hne : ∀ a x y, F (of a) ≠ F (x * y))
+    (hmul : ∀ x y x' y', F (x * y) = F (x' * y') →
+      F x = F x' ∧ F y = F y' ∨ F x = F y' ∧ F y = F x') :
+    Function.Injective F := by
+  intro x
+  induction x with
+  | of a =>
+    intro z h
+    induction z with
+    | of b => rw [hof a b h]
+    | mul x' y' => exact absurd h (hne a x' y')
+  | mul x y hx hy =>
+    intro z h
+    induction z with
+    | of b => exact absurd h.symm (hne b x y)
+    | mul x' y' =>
+      rcases hmul x y x' y' h with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
+      · rw [hx h₁, hy h₂]
+      · rw [hx h₁, hy h₂, mul_comm]
+
+/-- An injective map of generators induces an injective homomorphism. -/
+theorem map_injective {f : α → β} (hf : Function.Injective f) : Function.Injective (map f) :=
+  injective_of_mul_eq_mul (fun _ _ h ↦ hf (of_injective h)) (fun _ _ _ ↦ by rw [map_mul]; exact of_ne_mul _ _ _)
+    fun _ _ _ _ h ↦ mul_eq_mul_iff.1 (by simpa only [map_mul] using h)
 
 end FreeCommMagma
 
@@ -310,22 +326,6 @@ theorem isCommCon_iff {x y : FreeMagma α} :
         FreeCommMagma.mul_eq_mul_iff]
 
 end FreeMagma
-
-theorem FreeMagma.isCommCon_map [DecidableEq α] [DecidableEq β] {f : α → β}
-    (hf : Function.Injective f) (x y : FreeMagma α) :
-    isCommCon (FreeMagma.map f x) (FreeMagma.map f y) = isCommCon x y := by
-  induction x using FreeMagma.recOnMul generalizing y with
-  | ih1 a => cases y <;> simp [isCommCon, hf.eq_iff]
-  | ih2 x₁ x₂ h₁ h₂ => cases y <;> simp [isCommCon, h₁, h₂]
-
-/-- An injective map of generators induces an injective homomorphism. -/
-theorem FreeCommMagma.map_injective {f : α → β} (hf : Function.Injective f) :
-    Function.Injective (FreeCommMagma.map f) := fun x y h ↦ by
-  classical
-  obtain ⟨x, rfl⟩ := FreeMagma.toFreeCommMagma_surjective x
-  obtain ⟨y, rfl⟩ := FreeMagma.toFreeCommMagma_surjective y
-  rwa [map_toFreeCommMagma, map_toFreeCommMagma, ← FreeMagma.isCommCon_iff,
-    FreeMagma.isCommCon_map hf, FreeMagma.isCommCon_iff] at h
 
 instance [DecidableEq α] : DecidableEq (FreeCommMagma α) := fun x y ↦
   Quotient.recOnSubsingleton₂ x y fun _ _ ↦ decidable_of_iff _ FreeMagma.isCommCon_iff

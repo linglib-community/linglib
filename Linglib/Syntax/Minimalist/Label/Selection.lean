@@ -294,7 +294,7 @@ def selCheckN (t : UnorderedTree Vertex) : SelectionState :=
 
 @[simp] theorem selCheckN_toUnorderedTree (s : SyntacticObject) :
     selCheckN s.toUnorderedTree = s.selCheck := by
-  rw [selCheckN, dif_pos s.isSyntacticObject_toUnorderedTree,
+  rw [selCheckN, dite_eq_left s.isSyntacticObject_toUnorderedTree,
     SyntacticObject.ofUnorderedTree_toUnorderedTree]
 
 
