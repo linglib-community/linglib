@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Setoid.Partition
 public import Linglib.Semantics.Degree.CresswellDegree
+public import Linglib.Semantics.Questions.Partition.Basic
 public import Linglib.Semantics.Reference.Iota
 
 /-!
@@ -12,27 +13,31 @@ A kind-referring expression ranges over subkinds that share no realizations and 
 kind, Carlson's Disjointness Condition. Mendia restates the condition as a partition, so that the
 subkinds are [the cells of an equivalence relation](##cover_and_noOverlap_iff_exists_classes) on
 the realizations of the kind, which the context supplies. An ad hoc kind term such as *the lions
-that eat people* is the definite over κ+, the cells that contain every instance of the restrictor.
-It is [defined when any two instances are equivalent](##iota_kappaPlus_dom), it refers to the
-instances themselves [when they are a cell](##self_mem_iota_kappaPlus_iff), and the coarsest
-partition under which it does [divides the kind into the instances and the
-rest](##isGreatest_ker_mem). Degrees are cells too, of mutual comparison on a preorder, so an
-[amount reading](##amount_reading) of a relative clause is the same definite under the partition
-into degrees.
+that eat people* is the definite over κ+, the subkinds that every instance of the restrictor
+realizes. It is [defined when any two instances are equivalent](##iota_kappaPlus_dom), its
+referent is realized by exactly the instances [when they are also a union of
+cells](##cell_eq_iff), and the coarsest partition under which that holds [divides the kind into
+the instances and the rest](##isGreatest_polar). Degrees are subkinds too, the classes of mutual
+comparison on a preorder, so an [amount reading](##amount_reading) of a relative clause is the
+same definite under the partition into degrees.
 
 ## Implementation notes
 
 * The model is extensional. The type `E` collects the realizations of the kind under
-  discussion, a salient kind formation is a `Setoid E`, the partition Π of (28) is its
-  `Setoid.classes`, and a subkind is identified with its cell, as the paper does for its tables
-  (p. 616: the members of a partition "are always objects, not kinds").
-* The definite of (36) picks the largest member of a set. The cells of a partition are an
-  antichain, so the largest member is the only member (`iota_isGreatest_kappaPlus`) and the ι of
-  (31) and (36) is `iota`, undefined when no cell or several qualify.
-* κ+ in (33) asks that the cell contain the instances of the restrictor, and the second line of
-  (36) names the instances themselves as the referent. The two agree when the instances are a
-  cell. In the champagne partitions (64)–(66) the restrictor holds the one portion spilled and
-  the referent is the whole cell of that portion.
+  discussion, a salient kind formation is a `Setoid E`, a subkind is a member of its quotient,
+  and the realizations of the subkind of `a` are `Setoid.cell`, a member of the partition Π of
+  (28), whose members the paper says "are always objects, not kinds" (p. 616). A kind formation
+  is the same object as a partition question, the partition with the instances as one cell is
+  the polar question `Setoid.polar`, and a restrictor that is a union of cells is one the
+  partition determines, `Setoid.Determines`.
+* The definite of (36) picks the largest member of a set. The subkinds of one partition are not
+  ordered and at most one is realized by every instance of a nonempty restrictor
+  (`kappaPlus_subsingleton`), so the ι of (31) and (36) is `iota`, undefined when no subkind or
+  several qualify.
+* κ+ in (33) asks that every instance of the restrictor realize the subkind, and the second line
+  of (36) names the instances themselves as its realizations. `cell_eq_iff` says when the two
+  agree. In the champagne partitions (64)–(66) the restrictor holds the one portion spilled and
+  the referent is realized by the whole cell of that portion.
 * Dogs come in every combination of breed and role and lions in every combination of subspecies
   and diet, so there are people-eating lions of both subspecies. The restrictor *lions that eat
   people* is read as footnote 11's *lions that eat only people*, a value of the diet.
@@ -53,14 +58,19 @@ into degrees.
 
 namespace Mendia2020
 
-variable {E : Type*}
+variable {E : Type*} {s : Setoid E} {P : Set E} {a b : E}
 
 /-! ### Partitions and the Disjointness Condition (§3.1) -/
 
+/-- Every realization of the kind instantiates a member of the family `c`, (28a). -/
+def Cover (c : Set (Set E)) : Prop := ∀ x, ∃ y ∈ c, x ∈ y
+
+/-- No realization of the kind instantiates two members of the family `c`, (28b). -/
+def NoOverlap (c : Set (Set E)) : Prop := ∀ x, ∀ y ∈ c, x ∈ y → ¬ ∃ z ∈ c, y ≠ z ∧ x ∈ z
+
 -- (16), (28)
 theorem cover_and_noOverlap_iff {c : Set (Set E)} :
-    ((∀ x, ∃ y ∈ c, x ∈ y) ∧ ∀ x, ∀ y ∈ c, x ∈ y → ¬ ∃ z ∈ c, y ≠ z ∧ x ∈ z) ↔
-      ∀ x, ∃! y ∈ c, x ∈ y := by
+    Cover c ∧ NoOverlap c ↔ ∀ x, ∃! y ∈ c, x ∈ y := by
   refine ⟨fun ⟨hc, hn⟩ x ↦ ?_, fun h ↦ ⟨fun x ↦ (h x).exists, fun x y hy hx ⟨z, hz, hne, hxz⟩ ↦
     hne ((h x).unique ⟨hy, hx⟩ ⟨hz, hxz⟩)⟩⟩
   obtain ⟨y, hy, hx⟩ := hc x
@@ -69,31 +79,94 @@ theorem cover_and_noOverlap_iff {c : Set (Set E)} :
 /-- The families of nonempty sets that meet Cover and No overlap are the families of cells of an
 equivalence relation ((28), p. 597). -/
 theorem cover_and_noOverlap_iff_exists_classes {c : Set (Set E)} (h0 : ∅ ∉ c) :
-    ((∀ x, ∃ y ∈ c, x ∈ y) ∧ ∀ x, ∀ y ∈ c, x ∈ y → ¬ ∃ z ∈ c, y ≠ z ∧ x ∈ z) ↔
-      ∃ s : Setoid E, s.classes = c :=
+    Cover c ∧ NoOverlap c ↔ ∃ s : Setoid E, s.classes = c :=
   cover_and_noOverlap_iff.trans
     ⟨fun h ↦ ⟨_, Setoid.classes_mkClasses c ⟨h0, h⟩⟩, fun ⟨_, h⟩ ↦ h ▸ Setoid.classes_eqv_classes⟩
 
-/-- The subkinds of a family realized among the individuals `X`, those that *n kinds of dog are
-in the next room* counts. -/
-def realized (c : Set (Set E)) (X : Set E) : Set (Set E) := {y ∈ c | (y ∩ X).Nonempty}
-
-theorem realized_classes (s : Setoid E) (X : Set E) :
-    realized s.classes X = (fun x ↦ {z | s z x}) '' X := by
-  ext y
-  refine ⟨?_, fun ⟨x, hx, hy⟩ ↦ hy ▸ ⟨s.mem_classes x, x, s.refl' x, hx⟩⟩
-  rintro ⟨⟨a, rfl⟩, x, hxa, hx⟩
-  exact ⟨x, hx, Set.ext fun z ↦ ⟨(s.trans' · hxa), (s.trans' · (s.symm' hxa))⟩⟩
-
-theorem ncard_realized_classes_le (s : Setoid E) {X : Set E} (hX : X.Finite) :
-    (realized s.classes X).ncard ≤ X.ncard := by
-  rw [realized_classes]
-  exact Set.ncard_image_le hX
-
 -- (14b), `mendia2020_14b`
-theorem ncard_realized_classes_singleton (s : Setoid E) (a : E) :
-    (realized s.classes {a}).ncard = 1 := by
-  rw [realized_classes, Set.image_singleton, Set.ncard_singleton]
+theorem ncard_image_mk_singleton (s : Setoid E) (a : E) : (Quotient.mk s '' {a}).ncard = 1 := by
+  rw [Set.image_singleton, Set.ncard_singleton]
+
+theorem ncard_image_mk_ker {β : Type*} (f : E → β) (X : Set E) :
+    (Quotient.mk (Setoid.ker f) '' X).ncard = (f '' X).ncard := by
+  rw [← Set.ncard_image_of_injective _ (Setoid.kerLift_injective f), Set.image_image]
+  rfl
+
+/-! ### Subkind reference (§3.2.2) -/
+
+/-- The operator κ+ gives the subkinds that every instance of the restrictor `P` realizes,
+(33). -/
+def kappaPlus (s : Setoid E) (P : Set E) : Set (Quotient s) := {q | ∀ x ∈ P, Quotient.mk s x = q}
+
+-- footnote 9
+@[simp] theorem kappaPlus_empty (s : Setoid E) : kappaPlus s ∅ = Set.univ :=
+  Set.eq_univ_of_forall fun _ _ h ↦ h.elim
+
+-- (31b), footnote 9
+@[simp] theorem kappaPlus_singleton (s : Setoid E) (a : E) :
+    kappaPlus s {a} = {Quotient.mk s a} := by
+  ext q
+  simp [kappaPlus, eq_comm]
+
+theorem kappaPlus_subsingleton (s : Setoid E) (hP : P.Nonempty) : (kappaPlus s P).Subsingleton :=
+  fun _ hq _ hq' ↦
+    let ⟨a, ha⟩ := hP
+    (hq a ha).symm.trans (hq' a ha)
+
+theorem mk_mem_iota_kappaPlus (ha : a ∈ P) :
+    Quotient.mk s a ∈ iota (kappaPlus s P) ↔ P ⊆ s.cell a :=
+  (kappaPlus_subsingleton s ⟨a, ha⟩).mem_iota.trans (forall₂_congr fun _ _ ↦ Quotient.eq)
+
+/-- The definite over κ+ of a nonempty restrictor is defined exactly when any two instances of
+the restrictor are equivalent (p. 604). -/
+theorem iota_kappaPlus_dom (hP : P.Nonempty) :
+    (iota (kappaPlus s P)).Dom ↔ ∀ x ∈ P, ∀ y ∈ P, s x y := by
+  rw [(kappaPlus_subsingleton s hP).iota_dom]
+  refine ⟨fun ⟨q, hq⟩ x hx y hy ↦ Quotient.eq.1 ((hq x hx).trans (hq y hy).symm), fun h ↦ ?_⟩
+  obtain ⟨a, ha⟩ := hP
+  exact ⟨Quotient.mk s a, fun x hx ↦ Quotient.eq.2 (h x hx a ha)⟩
+
+/-- The subkind the definite over κ+ refers to is realized by exactly the instances of the
+restrictor when the definite is defined and the instances are a union of cells, (36). -/
+theorem cell_eq_iff (ha : a ∈ P) :
+    s.cell a = P ↔ Quotient.mk s a ∈ iota (kappaPlus s P) ∧ s.Determines P := by
+  rw [mk_mem_iota_kappaPlus ha]
+  exact ⟨fun h ↦ ⟨h.ge, h ▸ s.determines_cell a⟩, fun h ↦ (h.2.cell_subset ha).antisymm h.1⟩
+
+/-- The coarsest partition under which the definite over κ+ refers to a subkind realized by
+exactly the instances of the restrictor has the instances as one cell and everything else as
+the other (p. 598). -/
+theorem isGreatest_polar (ha : a ∈ P) : IsGreatest {s : Setoid E | s.cell a = P} (.polar P) :=
+  ⟨Setoid.polar_cell_of_mem ha, fun s hs ↦ hs ▸ s.determines_cell a⟩
+
+-- (31b), `mendia2020_32a`
+theorem that_eq (s : Setoid E) (a : E) : iota (kappaPlus s {a}) = Part.some (Quotient.mk s a) := by
+  rw [kappaPlus_singleton, iota_singleton]
+
+-- (32b), `mendia2020_32b`
+theorem the_kind_eq_none (h : ¬ s a b) : iota (kappaPlus s ∅) = Part.none :=
+  iota_eq_none_of_ne (e := Quotient.mk s a) (e' := Quotient.mk s b) (by simp) (by simp)
+    fun hab ↦ h (Quotient.eq.1 hab)
+
+-- p. 604
+theorem the_kappaPlus_eq_none (ha : a ∈ P) (hb : b ∈ P) (h : ¬ s a b) :
+    iota (kappaPlus s P) = Part.none :=
+  Part.eq_none_iff'.2 fun hd ↦ h ((iota_kappaPlus_dom ⟨a, ha⟩).1 hd a ha b hb)
+
+-- (36), (37), footnote 11
+theorem the_kappaPlus_ker {β : Type*} (f : E → β) (a : E) :
+    Quotient.mk _ a ∈ iota (kappaPlus (Setoid.ker f) (f ⁻¹' {f a})) :=
+  (mk_mem_iota_kappaPlus (P := f ⁻¹' {f a}) (a := a) rfl).2 subset_rfl
+
+-- p. 604: independent classifications
+theorem the_kappaPlus_ker_eq_none {α β : Type*} [Nontrivial β] (f : E → α) (g : E → β)
+    (h : Function.Surjective fun x ↦ (f x, g x)) (a : E) :
+    iota (kappaPlus (Setoid.ker g) (f ⁻¹' {f a})) = Part.none := by
+  obtain ⟨b₁, b₂, hne⟩ := exists_pair_ne β
+  obtain ⟨x₁, h₁⟩ := h (f a, b₁)
+  obtain ⟨x₂, h₂⟩ := h (f a, b₂)
+  rw [Prod.mk.injEq] at h₁ h₂
+  exact the_kappaPlus_eq_none h₁.1 h₂.1 fun h' ↦ hne (h₁.2.symm.trans (h'.trans h₂.2))
 
 /-! ### Fido, (14) -/
 
@@ -120,22 +193,21 @@ def borderCollies : Set Dog := {d | d.breed = .borderCollie}
 /-- The watch-dogs. -/
 def watchDogs : Set Dog := {d | d.role = .watchDog}
 
-private theorem borderCollies_ne_watchDogs : borderCollies ≠ watchDogs := fun h ↦ by
-  have : (⟨.borderCollie, .guideDog, 0⟩ : Dog) ∈ watchDogs := h ▸ rfl
+-- (14b)
+theorem not_exists_classes_eq_borderCollies_watchDogs :
+    ¬ ∃ s : Setoid Dog, s.classes = {borderCollies, watchDogs} := fun ⟨s, h⟩ ↦ by
+  have hb : borderCollies ∈ s.classes := by rw [h]; simp
+  have hw : watchDogs ∈ s.classes := by rw [h]; simp
+  have : (⟨.borderCollie, .guideDog, 0⟩ : Dog) ∈ watchDogs :=
+    Setoid.eq_of_mem_classes hb (x := fido) rfl hw rfl ▸ rfl
   simp [watchDogs] at this
 
--- (14), (14b)
-theorem ncard_realized_borderCollies_watchDogs :
-    (realized {borderCollies, watchDogs} {fido}).ncard = 2 := by
-  have : realized {borderCollies, watchDogs} {fido} = {borderCollies, watchDogs} := by
-    refine Set.sep_eq_self_iff_mem_true.2 ?_
-    rintro y (rfl | rfl) <;> exact ⟨fido, rfl, rfl⟩
-  rw [this, Set.ncard_pair borderCollies_ne_watchDogs]
-
--- (14b)
-theorem not_partition_borderCollies_watchDogs :
-    ¬ ∀ x, ∃! y ∈ ({borderCollies, watchDogs} : Set (Set Dog)), x ∈ y := fun h ↦
-  borderCollies_ne_watchDogs ((h fido).unique ⟨by simp, rfl⟩ ⟨by simp, rfl⟩)
+-- p. 601
+theorem the_borderCollie_watchDogs :
+    Quotient.mk _ fido ∈ iota (kappaPlus (Setoid.ker Dog.breed) (borderCollies ∩ watchDogs)) ∧
+      (Setoid.ker Dog.breed).cell fido = borderCollies :=
+  ⟨(mk_mem_iota_kappaPlus (P := borderCollies ∩ watchDogs) (a := fido) ⟨rfl, rfl⟩).2
+    fun _ hx ↦ hx.1, rfl⟩
 
 /-- The dogs of (14a) are three bulldogs and two beagles. -/
 def room14a : Set Dog :=
@@ -143,100 +215,13 @@ def room14a : Set Dog :=
     ⟨.beagle, .guideDog, 0⟩, ⟨.beagle, .guideDog, 1⟩}
 
 -- (14a), `mendia2020_14a`
-theorem ncard_realized_room14a : (realized (Setoid.ker Dog.breed).classes room14a).ncard = 2 := by
-  have hne : {z : Dog | z.breed = .bulldog} ≠ {z | z.breed = .beagle} := fun h ↦ by
-    have : (⟨.bulldog, .guideDog, 0⟩ : Dog) ∈ {z : Dog | z.breed = .beagle} := h ▸ rfl
-    simp at this
-  rw [realized_classes]
-  simp only [room14a, Set.image_insert_eq, Set.image_singleton, Setoid.ker_def]
+theorem ncard_image_mk_room14a : (Quotient.mk (Setoid.ker Dog.breed) '' room14a).ncard = 2 := by
+  rw [ncard_image_mk_ker]
+  simp only [room14a, Set.image_insert_eq, Set.image_singleton]
   simp only [Set.insert_eq_of_mem, Set.mem_insert_iff, Set.mem_singleton_iff, true_or]
-  exact Set.ncard_pair hne
+  exact Set.ncard_pair nofun
 
-/-! ### Subkind reference (§3.2.2) -/
-
-theorem isAntichain_classes (s : Setoid E) : IsAntichain (· ≤ ·) s.classes :=
-  fun _ hb _ hb' hne hle ↦
-    let ⟨_, hx⟩ := Setoid.nonempty_of_mem_partition s.isPartition_classes hb
-    hne (Setoid.eq_of_mem_classes hb hx hb' (hle hx))
-
-/-- The operator κ+ gives the cells of the partition that contain every instance of the
-restrictor `P`, (33). -/
-def kappaPlus (s : Setoid E) (P : Set E) : Set (Set E) := {y ∈ s.classes | P ⊆ y}
-
-variable {s : Setoid E} {P c : Set E} {a b : E}
-
--- footnote 9
-@[simp] theorem kappaPlus_empty (s : Setoid E) : kappaPlus s ∅ = s.classes := by
-  simp [kappaPlus]
-
--- (31b), footnote 9
-@[simp] theorem kappaPlus_singleton (s : Setoid E) (a : E) :
-    kappaPlus s {a} = {y ∈ s.classes | a ∈ y} := by
-  simp [kappaPlus]
-
-theorem kappaPlus_subsingleton (s : Setoid E) (hP : P.Nonempty) : (kappaPlus s P).Subsingleton :=
-  fun _ ⟨hy, hPy⟩ _ ⟨hz, hPz⟩ ↦
-    let ⟨_, ha⟩ := hP
-    Setoid.eq_of_mem_classes hy (hPy ha) hz (hPz ha)
-
-theorem mem_iota_kappaPlus (hP : P.Nonempty) : c ∈ iota (kappaPlus s P) ↔ c ∈ s.classes ∧ P ⊆ c :=
-  (kappaPlus_subsingleton s hP).mem_iota
-
-/-- The definite over κ+ of a nonempty restrictor is defined exactly when any two instances of
-the restrictor are equivalent (p. 604). -/
-theorem iota_kappaPlus_dom (hP : P.Nonempty) :
-    (iota (kappaPlus s P)).Dom ↔ ∀ x ∈ P, ∀ y ∈ P, s x y := by
-  rw [(kappaPlus_subsingleton s hP).iota_dom]
-  refine ⟨fun ⟨_, hy, hPy⟩ x hx y hy' ↦ s.rel_iff_exists_classes.2 ⟨_, hy, hPy hx, hPy hy'⟩,
-    fun h ↦ ?_⟩
-  obtain ⟨a, ha⟩ := hP
-  exact ⟨_, s.mem_classes a, fun x hx ↦ h x hx a ha⟩
-
-/-- The definite over κ+ refers to the instances of the restrictor themselves exactly when they
-are a cell of the partition, (36). -/
-theorem self_mem_iota_kappaPlus_iff : P ∈ iota (kappaPlus s P) ↔ P ∈ s.classes :=
-  ⟨fun h ↦ (mem_iota.1 h).1.1, fun h ↦
-    (mem_iota_kappaPlus (Setoid.nonempty_of_mem_partition s.isPartition_classes h)).2
-      ⟨h, subset_rfl⟩⟩
-
--- The definite picks the largest member (p. 604), which among cells is the only member.
-theorem iota_isGreatest_kappaPlus (s : Setoid E) (P : Set E) :
-    iota {y | IsGreatest (kappaPlus s P) y} = iota (kappaPlus s P) :=
-  ((isAntichain_classes s).subset (Set.sep_subset _ _)).iota_isGreatest
-
--- (31b), `mendia2020_32a`
-theorem that_eq (s : Setoid E) (a : E) : {x | s x a} ∈ iota {y ∈ s.classes | a ∈ y} :=
-  kappaPlus_singleton s a ▸ (mem_iota_kappaPlus (Set.singleton_nonempty a)).2
-    ⟨s.mem_classes a, Set.singleton_subset_iff.2 (s.refl' a)⟩
-
--- (32b), `mendia2020_32b`
-theorem the_kind_eq_none (s : Setoid E) (h : ¬ s a b) : iota s.classes = Part.none :=
-  iota_eq_none_of_ne (s.mem_classes a) (s.mem_classes b) fun hab ↦
-    h (hab ▸ s.refl' a : a ∈ {x | s x b})
-
--- p. 604
-theorem the_kappaPlus_eq_none (ha : a ∈ P) (hb : b ∈ P) (h : ¬ s a b) :
-    iota (kappaPlus s P) = Part.none :=
-  Part.eq_none_iff'.2 fun hd ↦ h ((iota_kappaPlus_dom ⟨a, ha⟩).1 hd a ha b hb)
-
--- (36), (37), footnote 11
-theorem the_kappaPlus_ker {β : Type*} (f : E → β) (a : E) :
-    (f ⁻¹' {f a}) ∈ iota (kappaPlus (Setoid.ker f) (f ⁻¹' {f a})) :=
-  self_mem_iota_kappaPlus_iff.2 ⟨a, rfl⟩
-
-/-! ### The bipartition (§3.1.2) -/
-
-theorem mem_classes_ker_mem (hP : P.Nonempty) : P ∈ (Setoid.ker (· ∈ P)).classes :=
-  let ⟨a, ha⟩ := hP
-  ⟨a, Set.ext fun _ ↦ ⟨fun hx ↦ (eq_true hx).trans (eq_true ha).symm, fun hx ↦ hx.mpr ha⟩⟩
-
-/-- A nonempty restrictor is a cell of the partition into its instances and everything else,
-the coarsest partition under which the definite over κ+ refers to it (p. 598). -/
-theorem isGreatest_ker_mem (hP : P.Nonempty) :
-    IsGreatest {s : Setoid E | P ∈ iota (kappaPlus s P)} (Setoid.ker (· ∈ P)) := by
-  refine ⟨self_mem_iota_kappaPlus_iff.2 (mem_classes_ker_mem hP), fun s hs x y hxy ↦ ?_⟩
-  obtain ⟨z, rfl⟩ := self_mem_iota_kappaPlus_iff.1 hs
-  exact propext ⟨fun hx ↦ s.trans' (s.symm' hxy) hx, fun hy ↦ s.trans' hxy hy⟩
+/-! ### The lions that eat people, (21b) -/
 
 /-- Subspecies of lion. -/
 inductive Subspecies
@@ -246,6 +231,8 @@ inductive Subspecies
 carrion. -/
 inductive Diet
   | people | zebras | carrion
+
+instance : Nontrivial Subspecies := ⟨⟨.african, .asiatic, nofun⟩⟩
 
 /-- A lion has a subspecies, a diet, and an index telling apart lions alike in both. -/
 structure Lion where
@@ -259,34 +246,32 @@ def eatPeople : Set Lion := Lion.diet ⁻¹' {.people}
 -- p. 604
 theorem the_kappaPlus_subspecies :
     iota (kappaPlus (Setoid.ker Lion.subspecies) eatPeople) = Part.none :=
-  the_kappaPlus_eq_none (a := ⟨.african, .people, 0⟩) (b := ⟨.asiatic, .people, 0⟩) rfl rfl
-    (by simp [Setoid.ker_def])
+  the_kappaPlus_ker_eq_none Lion.diet Lion.subspecies (fun ⟨d, s⟩ ↦ ⟨⟨s, d, 0⟩, rfl⟩)
+    ⟨.african, .people, 0⟩
 
--- (37)
+-- (36), (37)
 theorem the_kappaPlus_diet :
-    eatPeople ∈ iota (kappaPlus (Setoid.ker Lion.diet) eatPeople) :=
-  the_kappaPlus_ker Lion.diet ⟨.african, .people, 0⟩
+    Quotient.mk _ (⟨.african, .people, 0⟩ : Lion) ∈
+        iota (kappaPlus (Setoid.ker Lion.diet) eatPeople) ∧
+      (Setoid.ker Lion.diet).cell ⟨.african, .people, 0⟩ = eatPeople :=
+  ⟨the_kappaPlus_ker Lion.diet ⟨.african, .people, 0⟩, rfl⟩
 
 /-! ### Amounts (§4.3) -/
 
-section Amounts
-
-variable {P : Set E} {a : E}
-
-/-- Under the partition of a preorder into its degrees, the definite over κ+ refers to the
-individuals exactly as A as the instances of the restrictor, (57)–(59). -/
+/-- Under the partition of a preorder into its degrees, the definite over κ+ refers to the degree
+of the instances of the restrictor, (57)–(59). -/
 theorem amount_reading [Preorder E] (ha : a ∈ P) (hP : ∀ x ∈ P, AntisymmRel (· ≤ ·) x a) :
-    {y | AntisymmRel (· ≤ ·) y a} ∈ iota (kappaPlus (cresswellSetoid (· ≤ · : E → E → Prop)) P) :=
-  cresswellSetoid_eq_antisymmRel (· ≤ · : E → E → Prop) ▸
-    (mem_iota_kappaPlus ⟨a, ha⟩).2 ⟨(AntisymmRel.setoid E (· ≤ ·)).mem_classes a, hP⟩
+    (⟦a⟧ : CresswellDegree (· ≤ · : E → E → Prop)) ∈
+      iota (kappaPlus (cresswellSetoid (· ≤ ·)) P) :=
+  (mk_mem_iota_kappaPlus ha).2 fun x hx ↦ by
+    rw [cresswellSetoid_eq_antisymmRel]
+    exact hP x hx
 
--- (65), (66)
-theorem the_kappaPlus_measure {D : Type*} [LinearOrder D] (μ : E → D) (ha : a ∈ P)
-    (hP : ∀ x ∈ P, μ x = μ a) :
-    μ ⁻¹' {μ a} ∈ iota (kappaPlus (cresswellSetoid fun x y ↦ μ y ≤ μ x) P) :=
-  cresswellSetoid_le_measure μ ▸ (mem_iota_kappaPlus ⟨a, ha⟩).2 ⟨⟨a, rfl⟩, hP⟩
-
-end Amounts
+-- (59), (65), (66)
+theorem cell_cresswellSetoid_measure {D : Type*} [LinearOrder D] (μ : E → D) (a : E) :
+    (cresswellSetoid fun x y ↦ μ y ≤ μ x).cell a = μ ⁻¹' {μ a} := by
+  rw [cresswellSetoid_le_measure]
+  rfl
 
 /-- Taxonomic kinds of champagne, (64). -/
 inductive Cuvee
@@ -300,28 +285,25 @@ structure Champagne where
   sugar : ℕ
   idx : ℕ
 
-/-- The champagne they spilled that evening, (48a): ten litres of a prestige cuvée with 21 grams
-of sugar per litre. -/
+/-- The champagne they spilled that evening, (48a), is ten litres of a prestige cuvée with 21
+grams of sugar per litre. -/
 def spilled : Champagne := ⟨.prestige, 10, 21, 0⟩
 
 -- (64)
-theorem the_spilled_cuvee :
-    Champagne.cuvee ⁻¹' {.prestige} ∈ iota (kappaPlus (Setoid.ker Champagne.cuvee) {spilled}) :=
-  (mem_iota_kappaPlus (Set.singleton_nonempty _)).2
-    ⟨⟨spilled, rfl⟩, Set.singleton_subset_iff.2 rfl⟩
+theorem cell_spilled_cuvee :
+    (Setoid.ker Champagne.cuvee).cell spilled = Champagne.cuvee ⁻¹' {.prestige} :=
+  rfl
 
 -- (65)
-theorem the_spilled_litres :
-    Champagne.litres ⁻¹' {10} ∈
-      iota (kappaPlus (cresswellSetoid fun x y : Champagne ↦ y.litres ≤ x.litres) {spilled}) :=
-  the_kappaPlus_measure Champagne.litres (Set.mem_singleton spilled) fun _ h ↦
-    congrArg Champagne.litres (Set.mem_singleton_iff.1 h)
+theorem cell_spilled_litres :
+    (cresswellSetoid fun x y : Champagne ↦ y.litres ≤ x.litres).cell spilled =
+      Champagne.litres ⁻¹' {10} :=
+  cell_cresswellSetoid_measure Champagne.litres spilled
 
 -- (66)
-theorem the_spilled_sugar :
-    Champagne.sugar ⁻¹' {21} ∈
-      iota (kappaPlus (cresswellSetoid fun x y : Champagne ↦ y.sugar ≤ x.sugar) {spilled}) :=
-  the_kappaPlus_measure Champagne.sugar (Set.mem_singleton spilled) fun _ h ↦
-    congrArg Champagne.sugar (Set.mem_singleton_iff.1 h)
+theorem cell_spilled_sugar :
+    (cresswellSetoid fun x y : Champagne ↦ y.sugar ≤ x.sugar).cell spilled =
+      Champagne.sugar ⁻¹' {21} :=
+  cell_cresswellSetoid_measure Champagne.sugar spilled
 
 end Mendia2020
