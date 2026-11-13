@@ -242,13 +242,14 @@ variable {α : Type*} {F : Set (Finset α)} {A X w : Finset α}
 open Quantifier Quantifier.Det
 
 /-- (103b), (109): the determiner `Q` over the restrictor `A` minus the excepted plurality `X`. -/
-def but (Q : Det α) (A X : Finset α) : Set (Finset α) := {w | Q (↑A \ ↑X) ↑w}
+def but (Q : Det α) (A X : Finset α) : Set (Finset α) :=
+  Exceptive.subtraction Q (fun _ ↦ ↑A) (↑) ↑X
 
 -- (102): *no `A` but `X`* is *only* over the pluralities within the restrictor
 theorem but_no_eq_only (hF : ∀ a ∈ A, {a} ∈ F) : but no A X = only F {Z ∈ F | Z ⊆ A} X := by
   ext w
   rw [mem_only_of_subset (sep_subset _ _)]
-  simp only [but, mem_ofPred_eq, no, and_imp]
+  simp only [but, Exceptive.mem_subtraction, mem_ofPred_eq, no, and_imp]
   exact ⟨fun h Z _ hZA hZw a ha ↦ by_contra fun haX ↦ h ⟨hZA ha, haX⟩ (hZw ha),
     fun h a ⟨haA, haX⟩ haw ↦ haX (h {a} (hF a haA) (Finset.singleton_subset_iff.2 haA)
       (Finset.singleton_subset_iff.2 haw) (Finset.mem_singleton_self a))⟩

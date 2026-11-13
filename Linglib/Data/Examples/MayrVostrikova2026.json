@@ -1,0 +1,552 @@
+[
+  {
+    "id": "mayrvostrikova2026_1_but",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(1)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every student but Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "every student who is not Ann passed, Ann did not pass, and Ann is a student", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["exceptive", "but"],
+      ["determiner", "every"],
+      ["inference", "exception"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_1_except",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(1)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every student except Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "every student who is not Ann passed, Ann did not pass, and Ann is a student", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["exceptive", "except"],
+      ["determiner", "every"],
+      ["inference", "exception"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_1_besides",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(1)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every student besides Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "every student who is not Ann passed, Ann did not pass, and Ann is a student", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["exceptive", "besides"],
+      ["determiner", "every"],
+      ["inference", "exception"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_2_but",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(2)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No student but Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "no student who is not Ann passed, Ann passed, and Ann is a student", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["exceptive", "but"],
+      ["determiner", "no"],
+      ["inference", "addition"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_2_except",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(2)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No student except Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "no student who is not Ann passed, Ann passed, and Ann is a student", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["exceptive", "except"],
+      ["determiner", "no"],
+      ["inference", "addition"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_2_besides",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(2)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No student besides Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "no student who is not Ann passed, Ann passed, and Ann is a student", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["exceptive", "besides"],
+      ["determiner", "no"],
+      ["inference", "addition"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_3a_but",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(3a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Some student but Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "but"],
+      ["determiner", "some"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_3b_but_atLeast",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(3b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "At least one student but Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "but"],
+      ["determiner", "at least"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_3b_but_exactly",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(3b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Exactly one student but Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "but"],
+      ["determiner", "exactly"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_3c_but_atMost",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(3c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "At most one student but Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "but"],
+      ["determiner", "at most"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_3c_but_moreThan",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(3c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "More than one student but Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "but"],
+      ["determiner", "more than"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_3a_except",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(3a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Some student except Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "except"],
+      ["determiner", "some"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_3b_except_atLeast",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(3b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "At least one student except Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "except"],
+      ["determiner", "at least"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_3b_except_exactly",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(3b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Exactly one student except Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "except"],
+      ["determiner", "exactly"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_3c_except_atMost",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(3c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "At most one student except Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "except"],
+      ["determiner", "at most"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_3c_except_moreThan",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(3c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "More than one student except Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "except"],
+      ["determiner", "more than"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_4",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(4)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Some student besides Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "some student who is not Ann passed, Ann passed, and Ann is a student", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["exceptive", "besides"],
+      ["determiner", "some"],
+      ["inference", "addition"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_5_at_least",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "At least one student besides Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "besides"],
+      ["determiner", "at least"],
+      ["inference", "addition"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_5_more_than",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "More than one student besides Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "besides"],
+      ["determiner", "more than"],
+      ["inference", "addition"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_5_exactly",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Exactly one student besides Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "besides"],
+      ["determiner", "exactly"],
+      ["inference", "addition"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_6_at_most",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "At most two students besides Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "besides"],
+      ["determiner", "at most"],
+      ["inference", "addition"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_6_fewer_than",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Fewer than two students besides Ann passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "besides"],
+      ["determiner", "fewer than"],
+      ["inference", "addition"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_7a_but",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(7a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Which students but Ann passed?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "but"],
+      ["determiner", "which"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_7a_except",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(7a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Which students except Ann passed?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "except"],
+      ["determiner", "which"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_7b",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(7b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Which students besides Ann passed?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exceptive", "besides"],
+      ["determiner", "which"],
+      ["inference", "addition"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mayrvostrikova2026_43a",
+    "source": {"bibkey": "mayr-vostrikova-2026", "paperLabel": "(43a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every student besides Ann and Bill passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Ann and Bill both did not pass", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["exceptive", "besides"],
+      ["determiner", "every"],
+      ["inference", "exception"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

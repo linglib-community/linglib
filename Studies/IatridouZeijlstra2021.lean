@@ -105,17 +105,12 @@ def domainAlternatives (p : V → Set (NonemptyInterval T)) (τ : NonemptyInterv
 
 theorem exh_domainAlternatives_eq_self (hp : ∀ v, IsLowerSet (p v)) :
     exh (domainAlternatives p τ) {v | τ ∈ p v} = {v | τ ∈ p v} :=
-  exh_eq_self <| by rintro _ ⟨τ', hτ', rfl⟩ v hv; exact hp v hτ' hv
+  exh_image_Iic_of_antitone (f := fun τ' ↦ {v | τ' ∈ p v}) (fun _ _ h v hv ↦ hp v h hv) τ
 
 theorem mem_exh_domainAlternatives_iff
     (hp : ∀ τ₁ τ₂, {v | τ₁ ∈ p v} ⊆ {v | τ₂ ∈ p v} ↔ τ₁ ≤ τ₂) {v : V} :
-    v ∈ exh (domainAlternatives p τ) {v | τ ∈ p v} ↔ τ ∈ p v ∧ ∀ τ' < τ, τ' ∉ p v := by
-  simp only [mem_exh, domainAlternatives, Set.forall_mem_image, Set.mem_Iic, Set.mem_ofPred_eq,
-    hp]
-  refine and_congr_right fun _ ↦ ⟨fun h τ' hlt hv ↦ hlt.not_ge (h hlt.le hv), fun h τ' hle hv ↦ ?_⟩
-  obtain rfl | hlt := hle.eq_or_lt
-  · exact le_rfl
-  · exact absurd hv (h τ' hlt)
+    v ∈ exh (domainAlternatives p τ) {v | τ ∈ p v} ↔ τ ∈ p v ∧ ∀ τ' < τ, τ' ∉ p v :=
+  mem_exh_image_Iic_iff (f := fun τ' ↦ {v | τ' ∈ p v}) hp
 
 end Exhaustification
 
