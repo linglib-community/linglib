@@ -3,18 +3,18 @@ module
 public import Linglib.Fragments.German.Case
 public import Linglib.Fragments.German.Conjugation
 public import Linglib.Syntax.Category.Verb.Basic
-public import Linglib.Syntax.Category.Verb.CaseArray
+public import Linglib.Syntax.Category.Verb.CaseFrame
 
 /-!
 # German verbs
 
-This file defines the German verb as a lexical entry: the root `Verb` with its case array and its
+This file defines the German verb as a lexical entry: the root `Verb` with its case frame and its
 stem, the infinitive, third person singular present and past and past participle its conjugation
 is built from. The stem of a weak verb is built from its
 infinitive and that of a verb with a prefix from the verb it is formed on, by the rules of
 `German.Conjugation`, so that *bestraft* comes from *strafen* and *zeigt an* from *zeigen*; a
 strong verb gives its own principal parts. A verb whose only object is in the dative, as *danken*
-'thank' and *gratulieren* 'congratulate' are, records the dative in its case array. A verb of
+'thank' and *gratulieren* 'congratulate' are, records the dative in its case frame. A verb of
 motion records the direction of its theme's path, from which, with its frame, the auxiliary of its
 perfect follows (`German.perfectAuxiliary`).
 
@@ -29,7 +29,7 @@ agreement.
 
 ## Main definitions
 
-* `German.Verb`: the entry, the root `Verb` with its case array and its stem.
+* `German.Verb`: the entry, the root `Verb` with its case frame and its stem.
 * `German.Verb.ofStem`: the entry with the forms of a stem.
 * `German.Verb.withPath`: the entry with a path phrase.
 * `German.Verbs.allVerbs`: the entries.
@@ -49,8 +49,8 @@ agreement.
 
 namespace German
 
-/-- A German verb is the root entry with its case array and its stem. -/
-structure Verb extends _root_.Verb, _root_.Verb.CaseArray Case where
+/-- A German verb is the root entry with its case frame and its stem. -/
+structure Verb extends _root_.Verb, _root_.Verb.CaseFrame Case where
   subject := .nom
   /-- The stem, from which the verb conjugates. -/
   stem : Conjugation.Stem
@@ -288,14 +288,17 @@ def entlassen : Verb :=
   { Verb.ofStem (lassen.stem.inseparable "ent") with
     valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
 
-/-- *rächen* 'avenge' is used reflexively with *an*, *sich rächen an* 'take revenge on'. -/
+/-- *rächen* 'avenge' is used reflexively with *an*, *sich rächen an* 'take revenge on', the
+reflexive its accusative object. -/
 def raechen : Verb :=
-  { Verb.ofStem (weak "rächen") with valency := .ofFrame ArgumentFrame.np, senseTag := .occasion }
+  { Verb.ofStem (weak "rächen") with
+    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
 
-/-- *revanchieren* 'return the favour' is used reflexively with *bei*, *sich revanchieren bei*. -/
+/-- *revanchieren* 'return the favour' is used reflexively with *bei*, *sich revanchieren bei*,
+the reflexive its accusative object. -/
 def revanchieren : Verb :=
   { Verb.ofStem (weak "revanchieren") with
-    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion }
+    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
 
 /-- *zur Verantwortung ziehen* 'hold accountable' is a phrase whose noun phrase stands where a
 separable particle would. -/
@@ -439,6 +442,11 @@ def allVerbs : List Verb :=
    helfen, laufen, ankommen, tanzen, arbeiten, bleiben, liegen]
 
 theorem form_eq_infinitive : ∀ v ∈ allVerbs, v.form = v.stem.infinitive := by decide
+
+/-- The case frame of an entry gives a case to each core object of its basic diathesis. -/
+theorem length_objects_eq_length_coreObjects :
+    ∀ v ∈ allVerbs, ∀ d ∈ v.valency.basic?, v.objects.length = d.coreObjects.length := by
+  decide
 
 /-- `kaufen` gives the present tense of *kaufen* 'buy'. -/
 def kaufen : Person × Number → Option String := weakPresent "kaufen"

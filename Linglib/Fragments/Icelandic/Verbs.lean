@@ -1,13 +1,13 @@
 module
 
 public import Linglib.Syntax.Category.Verb.Basic
-public import Linglib.Syntax.Category.Verb.CaseArray
+public import Linglib.Syntax.Category.Verb.CaseFrame
 public import Linglib.Fragments.Icelandic.Case
 
 /-!
 # Icelandic verbs
 
-The Icelandic verb as a lexical entry: the root `Verb` with its case array, the case of its
+The Icelandic verb as a lexical entry: the root `Verb` with its case frame, the case of its
 subject followed by the cases of its objects in their unmarked linear order. Icelandic marks
 its subjects and objects in every one of its four cases. Of the sixteen case pairs a dyadic
 verb might show, [thrainsson-2007]'s overview (4.48) finds five reasonably common,
@@ -20,7 +20,7 @@ are entries like any other.
 
 ## Main definitions
 
-* `Verb`: the entry, the root `Verb` with its `Verb.CaseArray`.
+* `Verb`: the entry, the root `Verb` with its `Verb.CaseFrame`.
 * `verbs`: the entries.
 
 ## Main results
@@ -31,7 +31,7 @@ are entries like any other.
 
 ## Implementation notes
 
-The entries record the case array and nothing of its provenance: which cases a verb assigns
+The entries record the case frame and nothing of its provenance: which cases a verb assigns
 lexically and which fall out of the configuration is what the accounts of Icelandic case
 disagree about, and each study states its own (`Studies/ZaenenMalingThrainsson1985.lean`).
 The order of two objects is the one the sources gloss.
@@ -48,16 +48,18 @@ The order of two objects is the one the sources gloss.
 
 namespace Icelandic.Verbs
 
-/-- An Icelandic verb is the root entry with its case array, the case of its subject and the
+/-- An Icelandic verb is the root entry with its case frame, the case of its subject and the
 cases of its objects in linear order. -/
-structure Verb extends _root_.Verb, _root_.Verb.CaseArray Case
+structure Verb extends _root_.Verb, _root_.Verb.CaseFrame Case
   deriving BEq
 
 namespace Verb
 
-/-- The entry for a citation form and its case array. -/
+/-- The entry for a citation form and its case frame, with the argument frame whose core
+arguments bear the cases. -/
 def ofCases (form : String) (subject : Case) (objects : List Case := []) : Verb :=
-  { morphs := [.root form], subject, objects }
+  { morphs := [.root form], subject, objects
+    valency := .ofFrame (Verb.CaseFrame.argumentFrame ⟨subject, objects⟩) }
 
 end Verb
 

@@ -2,13 +2,13 @@ module
 
 public import Linglib.Syntax.Category.Verb.Defs
 public import Linglib.Fragments.German.Zurich.Case
-public import Linglib.Syntax.Category.Verb.CaseArray
+public import Linglib.Syntax.Category.Verb.CaseFrame
 
 /-!
 # Zürich German verbs
 
 This file defines the case-governing verbs of Shieber's Swiss German subordinate clauses, whose
-informants spoke the Zürich dialect. Each entry is the root `Verb` with its case array and the
+informants spoke the Zürich dialect. Each entry is the root `Verb` with its case frame and the
 inflected forms the clauses attest: *hälfe* 'help' takes a dative object, and *laa* 'let' and
 *aastriiche* 'paint' take an accusative one.
 
@@ -27,8 +27,8 @@ leaves open.
 
 namespace German.Zurich
 
-/-- A Zürich German verb is the root entry with its case array and its inflected forms. -/
-structure Verb extends _root_.Verb, _root_.Verb.CaseArray Case where
+/-- A Zürich German verb is the root entry with its case frame and its inflected forms. -/
+structure Verb extends _root_.Verb, _root_.Verb.CaseFrame Case where
   subject := .nom
   /-- These are the inflected forms recorded besides the citation form. -/
   inflected : List String := []

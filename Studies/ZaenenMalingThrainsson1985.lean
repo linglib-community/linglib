@@ -199,16 +199,16 @@ theorem defaultCase_of_valued {x : ι} {c : C} (hs : s x = .valued c) :
 
 end DefaultCase
 
-/-- The case array of an association in a voice: the subject's case and then the objects' in
+/-- The case frame of an association in a voice: the subject's case and then the objects' in
 the order of their functions, the immediately postverbal NP the OBJ. -/
-def caseArray (t : List (Arg C)) (a : Fin t.length → GF) (v : Voice) : List C :=
+def caseFrame (t : List (Arg C)) (a : Fin t.length → GF) (v : Voice) : List C :=
   let xs := realized t a v
   (List.ofFn (P.defaultCase (· < ·) .univ fun i : Fin xs.length ↦
     FeatureSlot.offer xs[i].lexicalCase)).filterMap (·.value?)
 
-/-- The case arrays a thematic structure yields in a voice, one per association. -/
-def arrays [DecidableEq C] (t : List (Arg C)) (v : Voice) : Finset (List C) :=
-  (P.associations t).image (P.caseArray t · v)
+/-- The case frames a thematic structure yields in a voice, one per association. -/
+def caseFrames [DecidableEq C] (t : List (Arg C)) (v : Voice) : Finset (List C) :=
+  (P.associations t).image (P.caseFrame t · v)
 
 /-- The argument with a role bears SUBJ under some association in the voice. -/
 def IsSubject (t : List (Arg C)) (v : Voice) (ρ : ThetaRole) : Prop :=
@@ -315,32 +315,32 @@ def entries : List (List (Arg Icelandic.Case) × Icelandic.Verbs.Verb) :=
    (Thematic.leyna, leyna), (Thematic.leyna, svipta), (Thematic.bidja, bidja),
    (Thematic.lofa, lofa), (Thematic.lofa, skila), (Thematic.oska, oska)]
 
-theorem fragment_cases : (∀ e ∈ entries, e.2.cases ∈ icelandic.arrays e.1 .active) ∧
-    German.Verbs.helfen.cases ∈ german.arrays Thematic.helfen .active := by
+theorem fragment_cases : (∀ e ∈ entries, e.2.cases ∈ icelandic.caseFrames e.1 .active) ∧
+    German.Verbs.helfen.cases ∈ german.caseFrames Thematic.helfen .active := by
   decide
 
 -- (62b)
-theorem thykja_arrays : icelandic.arrays Thematic.thykja .active = {[.dat, .nom]} := by decide
+theorem thykja_caseFrames : icelandic.caseFrames Thematic.thykja .active = {[.dat, .nom]} := by decide
 
 -- (9a)
-theorem dansa_passive : icelandic.arrays Thematic.dansa .passive = {[]} := by decide
+theorem dansa_passive : icelandic.caseFrames Thematic.dansa .passive = {[]} := by decide
 
 /-- *Honum var hjálpað* and *Ihm wurde geholfen* are passives with the same lone dative, (4),
 but the Icelandic dative is the subject and the German one is not, by (61c) and (87c). -/
 theorem helped_passives :
-    icelandic.arrays Thematic.hjalpa .passive = {[.dat]} ∧
-      german.arrays Thematic.helfen .passive = {[.dat]} ∧
+    icelandic.caseFrames Thematic.hjalpa .passive = {[.dat]} ∧
+      german.caseFrames Thematic.helfen .passive = {[.dat]} ∧
       icelandic.IsSubject Thematic.hjalpa .passive .theme ∧
       ¬ german.IsSubject Thematic.helfen .passive .theme := by
   decide
 
 /-- A dative–accusative verb has two passives: the goal as dative subject with the theme a
 nominative retained object, and the theme as nominative subject, (44). -/
-theorem gefa_passives : icelandic.arrays Thematic.gefa .passive = {[.dat, .nom], [.nom, .dat]} := by
+theorem gefa_passives : icelandic.caseFrames Thematic.gefa .passive = {[.dat, .nom], [.nom, .dat]} := by
   decide
 
 -- (42)
-theorem lofa_passive : icelandic.arrays Thematic.lofa .passive = {[.dat, .dat]} := by decide
+theorem lofa_passive : icelandic.caseFrames Thematic.lofa .passive = {[.dat, .dat]} := by decide
 
 -- (68)
 theorem oska_passive :
@@ -349,14 +349,14 @@ theorem oska_passive :
   decide
 
 -- (88)
-theorem abhoeren_arrays :
-    german.arrays Thematic.abhoeren .active = {[.nom, .acc, .acc]} ∧
-      german.arrays Thematic.abhoeren .passive = {[.nom, .acc]} := by
+theorem abhoeren_caseFrames :
+    german.caseFrames Thematic.abhoeren .active = {[.nom, .acc, .acc]} ∧
+      german.caseFrames Thematic.abhoeren .passive = {[.nom, .acc]} := by
   decide
 
 -- p. 480, a gap the paper leaves to accident (fn 24)
 theorem icelandic_gen_gen :
-    icelandic.arrays [⟨.agent, none⟩, ⟨.theme, some .gen⟩, ⟨.goal, some .gen⟩] .active =
+    icelandic.caseFrames [⟨.agent, none⟩, ⟨.theme, some .gen⟩, ⟨.goal, some .gen⟩] .active =
       {[.nom, .gen, .gen]} := by
   decide
 
@@ -388,7 +388,7 @@ def roleTable : List (String × ThetaRole) :=
   [("agent", .agent), ("theme", .theme), ("goal", .goal), ("source", .source),
     ("experiencer", .experiencer)]
 
-/-- The Icelandic case arrays as the rows write them. -/
+/-- The Icelandic case frames as the rows write them. -/
 def icelandicCases : List (String × List Icelandic.Case) :=
   [("", []), ("dat", [.dat]), ("gen", [.gen]), ("nom dat", [.nom, .dat]),
     ("nom gen", [.nom, .gen]), ("dat nom", [.dat, .nom]), ("acc acc", [.acc, .acc]),
@@ -396,11 +396,11 @@ def icelandicCases : List (String × List Icelandic.Case) :=
     ("nom acc gen", [.nom, .acc, .gen]), ("nom dat acc", [.nom, .dat, .acc]),
     ("nom dat dat", [.nom, .dat, .dat]), ("nom dat gen", [.nom, .dat, .gen])]
 
-/-- The German case arrays as the rows write them. -/
+/-- The German case frames as the rows write them. -/
 def germanCases : List (String × List German.Case) :=
   [("dat", [.dat]), ("nom acc", [.nom, .acc]), ("nom acc acc", [.nom, .acc, .acc])]
 
-/-- A row attesting a case array, as the thematic structure, the voice and the array, the verb
+/-- A row attesting a case frame, as the thematic structure, the voice and the case frame, the verb
 and the cases named by the tables of its language. -/
 def ofCasesRow {C : Type} (verbs : List (String × List (Arg C)))
     (cases : List (String × List C)) (ex : Datum) : Option (List (Arg C) × Voice × List C) := do
@@ -429,9 +429,9 @@ theorem ofRow_isSome : ∀ ex ∈ Examples.all,
 
 theorem rows_cases :
     (∀ ex ∈ Examples.all, ∀ r ∈ ofCasesRow icelandicVerbs icelandicCases ex,
-      r.2.2 ∈ icelandic.arrays r.1 r.2.1) ∧
+      r.2.2 ∈ icelandic.caseFrames r.1 r.2.1) ∧
     ∀ ex ∈ Examples.all, ∀ r ∈ ofCasesRow germanVerbs germanCases ex,
-      r.2.2 ∈ german.arrays r.1 r.2.1 := by
+      r.2.2 ∈ german.caseFrames r.1 r.2.1 := by
   decide
 
 /-- Each subjecthood judgment of either language is acceptable exactly when the argument tested
