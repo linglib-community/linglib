@@ -81,7 +81,7 @@ def john : LexicalItem.Token := ⟨.of .N [] "John", 3⟩
 def loves : LexicalItem.Token := ⟨.of .V [.N, .N] "loves", 4⟩
 
 /-- *pictures of himself*. -/
-def picturesOfHimself : LinearizedSyntacticObject :=
+def picturesOfHimself : PlanarSyntacticObject :=
   .merge (.leaf pictures) (.merge (.leaf ofP) (.leaf himself))
 
 /-- *John loves pictures of himself*. -/
@@ -147,7 +147,7 @@ def didnt : LexicalItem.Token := ⟨.of .T [.V] "didn't", 7⟩
 def score : LexicalItem.Token := ⟨.of .V [.D] "score", 8⟩
 
 /-- *every player*. -/
-def everyPlayer : LinearizedSyntacticObject := .merge (.leaf every) (.leaf player)
+def everyPlayer : PlanarSyntacticObject := .merge (.leaf every) (.leaf player)
 
 /-- *Every player didn't score*: the subject raised past negation. -/
 def everyDidntScore : Derivation :=
@@ -192,10 +192,10 @@ def highTree : Tree Unit LexicalItem.Token :=
       .phrase () .projection [.trace (every.id + 1) (), .terminal () score]])]
 
 theorem toTree?_low :
-    everyDidntScore.toTree? (·.id) {everyPlayer.toSyntacticObject} = some lowTree := by
+    everyDidntScore.toTree? traceIndex {everyPlayer.toSyntacticObject} = some lowTree := by
   decide +kernel
 
-theorem toTree?_high : everyDidntScore.toTree? (·.id) ∅ = some highTree := by
+theorem toTree?_high : everyDidntScore.toTree? traceIndex ∅ = some highTree := by
   decide +kernel
 
 section Interpretation
@@ -249,9 +249,9 @@ theorem meanings_highTree :
 /-- One derivation of (15) has both scope readings: read low, not every player scored, the
 reading the paper describes in (16); read high, every player failed to. -/
 theorem scope_readings :
-    (∃ t ∈ everyDidntScore.toTree? (·.id) {everyPlayer.toSyntacticObject},
+    (∃ t ∈ everyDidntScore.toTree? traceIndex {everyPlayer.toSyntacticObject},
       meanings pl sc t = [⟨.t, fun _ ↦ ¬ Quantifier.Det.every pl sc⟩]) ∧
-    (∃ t ∈ everyDidntScore.toTree? (·.id) ∅,
+    (∃ t ∈ everyDidntScore.toTree? traceIndex ∅,
       meanings pl sc t = [⟨.t, fun _ ↦ Quantifier.Det.every pl scᶜ⟩]) :=
   ⟨⟨lowTree, toTree?_low, meanings_lowTree pl sc⟩,
     ⟨highTree, toTree?_high, meanings_highTree pl sc⟩⟩
@@ -265,28 +265,28 @@ end Interpretation
 
 /-! ### The readings as cuts -/
 
-open ConnesKreimer LinearizedSyntacticObject.Marked in
+open ConnesKreimer PlanarSyntacticObject.Marked in
 /-- The readings of (15) both cut the quantifier phrase from the copy object. The high reading is a
 term of `Δ^c`, cutting the lower copy, and the low reading a term of `Δ^d`, cutting the higher copy.
 The low reading is no term of `Δ^c`, whose cuts each leave a trace. -/
 theorem scope_readings_cut : ∃ c ∈ everyDidntScore.replayWithCopies?,
-    let C := UnorderedTree.mk c.current.unmark.val
+    let C := UnorderedTree.mk c.current.unmark.toRoseTree
     let τ := termTrace SyntacticObject.selHead
-    let lowReading := UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).val
-    ({UnorderedTree.mk everyPlayer.val}, UnorderedTree.mk c.current.contract.val) ∈
+    let lowReading := UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).toRoseTree
+    ({UnorderedTree.mk everyPlayer.toRoseTree}, UnorderedTree.mk c.current.contract.toRoseTree) ∈
         traceCuts τ C ∧
-      ({UnorderedTree.mk everyPlayer.val}, lowReading) ∈ deletionCuts C ∧
+      ({UnorderedTree.mk everyPlayer.toRoseTree}, lowReading) ∈ deletionCuts C ∧
       ∀ F, (F, lowReading) ∉ traceCuts τ C := by
   have h : ∀ c ∈ everyDidntScore.replayWithCopies?,
       c.current.val.value.1 = none ∧ MarkedBy (termTrace SyntacticObject.selHead) c.current.val ∧
-      c.current.cutForest ∅ = {everyPlayer.val} ∧
-      c.current.cutForest {everyPlayer.toSyntacticObject} = {everyPlayer.val} ∧
+      c.current.cutForest ∅ = {everyPlayer.toRoseTree} ∧
+      c.current.cutForest {everyPlayer.toSyntacticObject} = {everyPlayer.toRoseTree} ∧
       (∀ r ∈ c.current.val.subtrees, r.value.1.isSome →
         ReadLow {everyPlayer.toSyntacticObject} r) ∧
-      (UnorderedTree.mk c.current.unmark.val).numTraces = 0 ∧
-      (UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).val).numTraces = 0 ∧
-      UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).val ≠
-        UnorderedTree.mk c.current.unmark.val := by
+      (UnorderedTree.mk c.current.unmark.toRoseTree).numTraces = 0 ∧
+      (UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).toRoseTree).numTraces = 0 ∧
+      UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).toRoseTree ≠
+        UnorderedTree.mk c.current.unmark.toRoseTree := by
     decide +kernel
   obtain ⟨c, hc⟩ := Option.isSome_iff_exists.1
     (by decide +kernel : everyDidntScore.replayWithCopies?.isSome)

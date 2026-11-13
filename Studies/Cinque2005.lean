@@ -146,10 +146,10 @@ def step (m : LexicalItem.Token) (st : Stage) : List Stage :=
   let d := st.derivation.append [.em .left m]
   ⟨d, st.marks, st.raises⟩ :: match st.derivation.externalize? with
     | none => []
-    | some p => (p.val.subtrees.filter hasN).filterMap fun s ↦
+    | some p => (p.toRoseTree.subtrees.filter hasN).filterMap fun s ↦
         if h : IsSyntacticObject (UnorderedTree.mk s) then
-          some ⟨d.append [.im (LinearizedSyntacticObject.toSyntacticObject ⟨s, h⟩)],
-            (markOf p.val s).toList ++ st.marks, st.raises + 1⟩
+          some ⟨d.append [.im (SyntacticObject.ofUnorderedTree (UnorderedTree.mk s) h)],
+            (markOf p.toRoseTree s).toList ++ st.marks, st.raises + 1⟩
         else none
 
 /-- The derivations (7) allows from the noun and the modifiers `ms`, merged in turn, with an
@@ -183,12 +183,12 @@ def mergeOrder : Derivation :=
 /-- The derivation of (6o): NP raises past A, and `[N [A t]]` past Num. -/
 def derivation6o : Derivation :=
   ⟨leaf tokN, [.em .left tokA, .im (leaf tokN), .em .left tokNum,
-    .im (tokN * (tokA * .traceOf tokN) : LinearizedSyntacticObject), .em .left tokDem]⟩
+    .im (tokN * (tokA * .traceOf tokN) : PlanarSyntacticObject), .em .left tokDem]⟩
 
 /-- The derivation of (6n): `[A N]` raises past Num. -/
 def derivation6n : Derivation :=
   ⟨leaf tokN, [.em .left tokA, .em .left tokNum,
-    .im (tokA * tokN : LinearizedSyntacticObject), .em .left tokDem]⟩
+    .im (tokA * tokN : PlanarSyntacticObject), .em .left tokDem]⟩
 
 -- (6a)
 theorem surfaceCats_mergeOrder : mergeOrder.surfaceCats = [.Dem, .Num, .A, .N] := by decide

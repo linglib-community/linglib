@@ -24,7 +24,7 @@ economy bans, as Fox's Scope Economy bans vacuous scope shifting
 
 ## Implementation notes
 
-* A structure is a linearized syntactic object spelled out by `Linearization/Spellout.lean`: a token
+* A structure is a planar syntactic object spelled out by `Linearization/Spellout.lean`: a token
   at two positions is shared and pronounced at its last occurrence, a fronted wh-phrase leaves a
   deleted copy, and the coordinator is left out, so a string is its conjuncts' words.
 * The E-type pronoun of the second conjunct is a deleted copy of the first wh-phrase without an
@@ -55,7 +55,7 @@ economy bans, as Fox's Scope Economy bans vacuous scope shifting
 
 namespace CitkoGracaninYuksek2020
 
-open Minimalist Minimalist.LinearizedSyntacticObject Core.Order
+open Minimalist Minimalist.PlanarSyntacticObject Core.Order
 
 /-! ### The lexicon -/
 
@@ -83,9 +83,9 @@ def sang' := tok 11 .V [.D] "sang"
 /-- `nonBulk c` is the structure of the coordinated wh-question (13b): the two CPs share their
 complementizer `c`, subject, T and verb, and each holds one wh-phrase, *what* as the verb's object
 in the first and *where* adjoined to the verb phrase in the second. -/
-def nonBulk (c : LexicalItem.Token) : LinearizedSyntacticObject :=
+def nonBulk (c : LexicalItem.Token) : PlanarSyntacticObject :=
   (what * (c * (john * (T * (sang * traceOf what))))) *
-    («where» * (c * (john * (T * (traceOf «where» * (sang : LinearizedSyntacticObject))))))
+    («where» * (c * (john * (T * (traceOf «where» * (sang : PlanarSyntacticObject))))))
 
 /-- The coordinated wh-question (13b). -/
 abbrev cwh := nonBulk c
@@ -95,7 +95,7 @@ abbrev csFromCWH := nonBulk cE
 
 /-- The coordinated sluice (70b) coordinates two clauses, each with its own [E] complementizer and
 TP; the second TP holds the E-type pronoun, a deleted copy of *what*. -/
-def cs : LinearizedSyntacticObject :=
+def cs : PlanarSyntacticObject :=
   (what * (cE * (john * (T * (sang * traceOf what))))) *
     («where» * (cE' * (john' * (T' * (traceOf «where» * (sang' * traceOf what))))))
 
@@ -104,7 +104,7 @@ def cs : LinearizedSyntacticObject :=
 /-- A coordination has the it reading when its second conjunct holds a deleted copy, without an
 antecedent there, of a token pronounced in the first, which it reads as an E-type pronoun ((41),
 (54)). -/
-def ItReading (t : LinearizedSyntacticObject) : Prop :=
+def ItReading (t : PlanarSyntacticObject) : Prop :=
   ∃ x ∈ orphanTraces .raising t, (⟨[1]⟩ : TreePath) ≤ x.1 ∧
     ∃ p ∈ occurrences t x.2, (⟨[0]⟩ : TreePath) ≤ p
 

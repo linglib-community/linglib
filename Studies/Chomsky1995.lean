@@ -21,7 +21,7 @@ In the bare theory sister terminals are never ordered, so the LCA fails on every
 unless traces are exempt, and then one of any two sister terminals is a trace. A specifier
 precedes its head and the head the inside of a branching complement, and a branching specifier is
 ordered consistently only because the X′ does not c-command. The LCA is stated for any tree order
-and instantiated on the positions of a linearized syntactic object, where the book's (11), *the man
+and instantiated on the positions of a planar syntactic object, where the book's (11), *the man
 saw it*, violates it and comes out as *the saw* once *man* and *it* have raised.
 
 ## Main definitions
@@ -29,11 +29,11 @@ saw it*, violates it and comes out as *the saw* once *man* and *it* have raised.
 * `PhraseStructure.Precedes`, `PhraseStructure.Linearizes`: Kayne's precedence, and the LCA.
 * `PhraseStructure.IsVisible`, `PhraseStructure.bareCCommand`: the minimal and maximal
   projections, and c-command by them, the book's (157).
-* `Chomsky1995.HeadDaughterAt`: the head relation on the positions of a linearized object.
+* `Chomsky1995.HeadDaughterAt`: the head relation on the positions of a planar object.
 
 ## Implementation notes
 
-* Positions individuate occurrences, so the LCA is read on the positions of a linearized object,
+* Positions individuate occurrences, so the LCA is read on the positions of a planar object,
   whose order it ignores by `linearizes_bareCCommand_image_iff`.
 * Dominance in Kayne's image is reflexive, so that a terminal specifier, the `j` of (154),
   precedes the head.
@@ -250,24 +250,25 @@ open Core.Order RoseTree PhraseStructure Minimalist
 
 /-! ### The positions of a syntactic object -/
 
-variable (t : LinearizedSyntacticObject)
+variable (t : PlanarSyntacticObject)
 
 /-- The head relation on the positions of `t`, from the head daughter of each subtree. -/
-def HeadDaughterAt (m d : t.val.Positions) : Prop := headDaughterRel (HeadFunction.raising t) m d
+def HeadDaughterAt (m d : t.toRoseTree.Positions) : Prop := headDaughterRel (HeadFunction.raising
+    t) m d
 
 instance : DecidableRel (HeadDaughterAt t) := fun m d ↦
   inferInstanceAs (Decidable (headDaughterRel (HeadFunction.raising t) m d))
 
-theorem headDaughterAt_covBy {m d : t.val.Positions} (h : HeadDaughterAt t m d) : m ⋖ d :=
+theorem headDaughterAt_covBy {m d : t.toRoseTree.Positions} (h : HeadDaughterAt t m d) : m ⋖ d :=
   Positions.covBy_iff.2 (headDaughterRel_covBy _ h)
 
-instance (x : t.val.Positions) : Decidable (IsMinimalProjection (HeadDaughterAt t) x) :=
+instance (x : t.toRoseTree.Positions) : Decidable (IsMinimalProjection (HeadDaughterAt t) x) :=
   inferInstanceAs (Decidable (∀ _, _))
 
-instance (x : t.val.Positions) : Decidable (IsMaximalProjection (HeadDaughterAt t) x) :=
+instance (x : t.toRoseTree.Positions) : Decidable (IsMaximalProjection (HeadDaughterAt t) x) :=
   inferInstanceAs (Decidable (∀ _, _))
 
-instance (x : t.val.Positions) : Decidable (IsVisible (HeadDaughterAt t) x) :=
+instance (x : t.toRoseTree.Positions) : Decidable (IsVisible (HeadDaughterAt t) x) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
 instance : DecidablePred (· ∈ bareCCommand (HeadDaughterAt t)) := fun _ ↦
@@ -275,14 +276,14 @@ instance : DecidablePred (· ∈ bareCCommand (HeadDaughterAt t)) := fun _ ↦
 
 /-- The pronounced terminals of `t`, the positions of its heads; traces are exempt from the
 LCA. -/
-def pronounced : Set t.val.Positions := {p | t.IsHeadAt p}
+def pronounced : Set t.toRoseTree.Positions := {p | t.IsHeadAt p}
 
 instance : DecidablePred (· ∈ pronounced t) := fun p ↦ inferInstanceAs (Decidable (t.IsHeadAt p))
 
-theorem not_linearizes (ht : ¬ IsMax (⊥ : t.val.Positions)) :
+theorem not_linearizes (ht : ¬ IsMax (⊥ : t.toRoseTree.Positions)) :
     ¬ Linearizes (bareCCommand (HeadDaughterAt t)) {p | IsMax p} :=
   not_linearizes_of_not_isMax (fun _ _ ↦ headDaughterAt_covBy t)
-    (fun _ ↦ LinearizedSyntacticObject.isBranching_of_not_isMax) ht
+    (fun _ ↦ PlanarSyntacticObject.isBranching_of_not_isMax) ht
 
 /-! ### *The man saw it*, (11) -/
 
@@ -311,15 +312,15 @@ def saw : LexicalItem.Token :=
 def it : LexicalItem.Token := ⟨.of .D [] English.Pronouns.it.form, 0⟩
 
 /-- *The man saw it*, (11). -/
-def theManSawIt : LinearizedSyntacticObject := {{↑the, ↑man}, {↑saw, ↑it}}
+def theManSawIt : PlanarSyntacticObject := {{↑the, ↑man}, {↑saw, ↑it}}
 
 /-- (11) with *man* and *it* raised, leaving their traces. -/
-def theManSawItRaised : LinearizedSyntacticObject :=
+def theManSawItRaised : PlanarSyntacticObject :=
   {{↑the, .traceOf man}, {↑saw, .traceOf it}}
 
 /-- The position at an address. -/
-def position (l : List ℕ) (h : (⟨l⟩ : TreePath) ∈ t.val.validPaths := by exact rfl) :
-    t.val.Positions :=
+def position (l : List ℕ) (h : (⟨l⟩ : TreePath) ∈ t.toRoseTree.validPaths := by exact rfl) :
+    t.toRoseTree.Positions :=
   ⟨⟨l⟩, h⟩
 
 -- (11)
@@ -329,7 +330,7 @@ theorem maximalProjectionAt_theManSawIt :
   decide
 
 -- (11), (10)
-theorem card_positions_theManSawIt : Fintype.card theManSawIt.val.Positions = 7 := by decide
+theorem card_positions_theManSawIt : Fintype.card theManSawIt.toRoseTree.Positions = 7 := by decide
 
 -- (9)
 theorem levels_theManSawIt :

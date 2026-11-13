@@ -20,7 +20,7 @@ implements it by indexing each node when it is visited.
 
 ## Implementation notes
 
-* A remerged node stands at each of its occurrences in a linearized syntactic object; its parents
+* A remerged node stands at each of its occurrences in a planar syntactic object; its parents
   are the terms it is a daughter of, and dominance between them is proper containment. Where a
   figure has an unlabelled daughter (…) or omits the other material, as (51)–(54) do (p. 378), the
   example supplies tokens of its own.
@@ -43,7 +43,7 @@ open Minimalist RoseTree SyntacticObject
 
 section Algorithm
 
-variable (t : LinearizedSyntacticObject)
+variable (t : PlanarSyntacticObject)
 
 /-- The index of `g` after the visits `log`: the position of its last visit, counting from one, and
 zero when it has not been visited. -/
@@ -86,7 +86,7 @@ def scanList : List (RoseTree Vertex) → List (RoseTree Vertex) →
 end
 
 /-- The algorithm (71): the string of terminals `scangraph` produces from the root. -/
-def linearization : List LexicalItem.Token := (scan t t.val []).2
+def linearization : List LexicalItem.Token := (scan t t.toRoseTree []).2
 
 end Algorithm
 
@@ -129,53 +129,53 @@ def e₄ := node 34 "…4"
 def e₅ := node 35 "…5"
 
 /-- (41): B is remerged from C into the root R; /B D A/. -/
-def ex41 : LinearizedSyntacticObject := B * (D * (A * B))
+def ex41 : PlanarSyntacticObject := B * (D * (A * B))
 
 /-- (42): B is shared by C in the first conjunct and E in the second; /F A Co H D B/. -/
-def ex42 : LinearizedSyntacticObject := (F * (A * B)) * (Co * (H * (D * B)))
+def ex42 : PlanarSyntacticObject := (F * (A * B)) * (Co * (H * (D * B)))
 
 /-- (47): the phrase α = [x y] is remerged from γ₁ into γ₂; /x y δ β1/. -/
-def ex47 : LinearizedSyntacticObject :=
-  let a : LinearizedSyntacticObject := x * y
+def ex47 : PlanarSyntacticObject :=
+  let a : PlanarSyntacticObject := x * y
   a * (δ * (a * β₁))
 
 /-- (48): α is shared by γ₁ and γ₂; /δ1 β1 δ2 β2 α/. -/
-def ex48 : LinearizedSyntacticObject := (δ₁ * (β₁ * α)) * (δ₂ * (β₂ * α))
+def ex48 : PlanarSyntacticObject := (δ₁ * (β₁ * α)) * (δ₂ * (β₂ * α))
 
 /-- (44), (51): α is internally remerged twice and pronounced at its highest position. -/
-def ex51 : LinearizedSyntacticObject := α * (e₃ * (α * (e₂ * (α * β₁))))
+def ex51 : PlanarSyntacticObject := α * (e₃ * (α * (e₂ * (α * β₁))))
 
 /-- (52): α is externally remerged twice and pronounced under the last parent. -/
-def ex52 : LinearizedSyntacticObject := (e₁ * α) * ((e₂ * α) * (e₃ * α))
+def ex52 : PlanarSyntacticObject := (e₁ * α) * ((e₂ * α) * (e₃ * α))
 
 /-- (53): a shared α moves across the board and is pronounced at the position it moved to. -/
-def ex53 : LinearizedSyntacticObject := α * ((e₂ * α) * (e₃ * α))
+def ex53 : PlanarSyntacticObject := α * ((e₂ * α) * (e₃ * α))
 
 /-- (54): α moves within each conjunct and is pronounced at the higher position of the second. -/
-def ex54 : LinearizedSyntacticObject := (α * (y₁ * (z₁ * α))) * (α * (y₂ * (z₂ * α)))
+def ex54 : PlanarSyntacticObject := (α * (y₁ * (z₁ * α))) * (α * (y₂ * (z₂ * α)))
 
 /-- (59): α moves within β, which moves in turn; β and, inside it, α are pronounced high. -/
-def ex59 : LinearizedSyntacticObject :=
-  let β : LinearizedSyntacticObject := e₁ * (α * (e₂ * (e₃ * α)))
+def ex59 : PlanarSyntacticObject :=
+  let β : PlanarSyntacticObject := e₁ * (α * (e₂ * (e₃ * α)))
   β * (e₄ * (e₅ * β))
 
 /-- (60): roll-up movement pronounces the heads in the mirror order of first Merge, X Y Z. -/
-def ex60 : LinearizedSyntacticObject :=
-  let YP : LinearizedSyntacticObject := X * (Y * X)
+def ex60 : PlanarSyntacticObject :=
+  let YP : PlanarSyntacticObject := X * (Y * X)
   YP * (Z * YP)
 
 /-- (64): remnant movement of β, out of which α has moved; α is pronounced only at its second
 occurrence. -/
-def ex64 : LinearizedSyntacticObject :=
-  let β : LinearizedSyntacticObject := e₁ * (e₂ * α)
+def ex64 : PlanarSyntacticObject :=
+  let β : PlanarSyntacticObject := e₁ * (e₂ * α)
   β * (e₃ * (α * (e₄ * β)))
 
 /-- (66): c is shared by Y and Z; /a b c/. -/
-def ex66 : LinearizedSyntacticObject := (a * c) * (b * c)
+def ex66 : PlanarSyntacticObject := (a * c) * (b * c)
 
 /-- The examples with their strings: printed in the paper for (41), (42), (47) and (48), and
 otherwise those its choice of the pronounced occurrence gives. -/
-def examples : List (LinearizedSyntacticObject × List LexicalItem.Token) :=
+def examples : List (PlanarSyntacticObject × List LexicalItem.Token) :=
   [(ex41, [B, D, A]), (ex42, [F, A, Co, H, D, B]), (ex47, [x, y, δ, β₁]),
     (ex48, [δ₁, β₁, δ₂, β₂, α]), (ex51, [α, e₃, e₂, β₁]), (ex52, [e₁, e₂, e₃, α]),
     (ex53, [α, e₂, e₃]), (ex54, [y₁, z₁, α, y₂, z₂]), (ex59, [e₁, α, e₂, e₃, e₄, e₅]),
@@ -193,8 +193,8 @@ theorem remergedYield_examples : ∀ e ∈ examples, remergedYield List.getLast?
 
 /-- α is shared by γ₁ = [g α] and γ₂ = [w α], and γ₂ by δ₁ = [δ1 γ₂] and δ₂ = [δ2 γ₂], with δ₁
 before γ₁ before δ₂. -/
-def double : LinearizedSyntacticObject :=
-  let γ₂ : LinearizedSyntacticObject := w * α
+def double : PlanarSyntacticObject :=
+  let γ₂ : PlanarSyntacticObject := w * α
   (δ₁ * γ₂) * ((g * α) * (δ₂ * γ₂))
 
 /-- (71) pronounces α twice. -/
@@ -207,21 +207,21 @@ theorem remergedYield_double : remergedYield List.getLast? double = [δ₁, g, �
 /-! ### Internal and external remerge -/
 
 -- (42), (48), (52), (66)
-theorem sharing_examples : ∀ t ∈ [ex42, ex48, ex52, ex66], ∀ s ∈ t.val.subtrees,
+theorem sharing_examples : ∀ t ∈ [ex42, ex48, ex52, ex66], ∀ s ∈ t.toRoseTree.subtrees,
     ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s, IsSubtree g g' → g = g' := by
   decide +kernel
 
 -- (41), (47), (51), (60)
 theorem movement_examples : ∀ t ∈ [ex41, ex47, ex51, ex60],
-    (∀ s ∈ t.val.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
-      IsSubtree g g' ∨ IsSubtree g' g) ∧ ∀ g ∈ t.val.subtrees, g.children.Nodup := by
+    (∀ s ∈ t.toRoseTree.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
+      IsSubtree g g' ∨ IsSubtree g' g) ∧ ∀ g ∈ t.toRoseTree.subtrees, g.children.Nodup := by
   decide +kernel
 
 -- (54)
 theorem not_sharing_not_movement_ex54 :
-    ¬ (∀ s ∈ ex54.val.subtrees, ∀ g ∈ mothers ex54 s, ∀ g' ∈ mothers ex54 s,
+    ¬ (∀ s ∈ ex54.toRoseTree.subtrees, ∀ g ∈ mothers ex54 s, ∀ g' ∈ mothers ex54 s,
       IsSubtree g g' → g = g') ∧
-    ¬ (∀ s ∈ ex54.val.subtrees, ∀ g ∈ mothers ex54 s, ∀ g' ∈ mothers ex54 s,
+    ¬ (∀ s ∈ ex54.toRoseTree.subtrees, ∀ g ∈ mothers ex54 s, ∀ g' ∈ mothers ex54 s,
       IsSubtree g g' ∨ IsSubtree g' g) := by
   decide +kernel
 

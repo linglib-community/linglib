@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Algebra.GroupWithZero.Defs
 public import Linglib.Syntax.Minimalist.Label.Head
-public import Linglib.Syntax.Minimalist.SyntacticObject.Lift
+public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 
 /-!
 # Selection-driven heads on the `SyntacticObject` carrier
@@ -26,13 +26,11 @@ head functions it is partial: `0` at exocentric nodes.
   `0` the off-`Dom(h)` failure.
 * `Mul SelectionState` and `Minimalist.selSide`: the carrier-free combinators —
   the selection product, and which daughter projects.
-* `Minimalist.selNode`, `Minimalist.selCheckPlanar`,
-  `Minimalist.SyntacticObject.selCheck`: the selection algebra
-  (`SyntacticObject.mergeAlgebra`), its catamorphism, and the carrier lift.
+* `Minimalist.SyntacticObject.selCheck`: the selection state of a syntactic object.
 * `Minimalist.SyntacticObject.selHead`, `Minimalist.SyntacticObject.cat?`:
   the head token and its category.
 * `Minimalist.SyntacticObject.selCheckHom`: `selCheck` as a morphism of magmas
-  `SyntacticObject →ₙ* SelectionState`, via `SyntacticObject.lift`.
+  `SyntacticObject →ₙ* SelectionState`, the extension of the leaves' states.
 
 ## Main results
 
@@ -230,53 +228,24 @@ def traceState : Option LexicalItem.Token → SelectionState
   | some tok => .of tok []
   | none => .of .bareTrace []
 
-/-- The selection algebra is the `SyntacticObject.mergeAlgebra` of token + `sel`
-    leaves and the traces' `traceState`. -/
-def selNode : Vertex → List SelectionState → SelectionState :=
-  mergeAlgebra (fun tok => .of tok tok.item.sel) traceState
-
-theorem selNode_perm (a : Vertex) {l₁ l₂ : List SelectionState} (h : l₁.Perm l₂) :
-    selNode a l₁ = selNode a l₂ :=
-  mergeAlgebra_perm _ _ a h
-
-/-- The selection check on a planar tree is the catamorphism of `selNode`. -/
-def selCheckPlanar : RoseTree Vertex → SelectionState :=
-  RoseTree.fold selNode
-
-theorem selCheckPlanar_node (a : Vertex) (cs : List (RoseTree Vertex)) :
-    selCheckPlanar (RoseTree.node a cs) = selNode a (cs.map selCheckPlanar) :=
-  RoseTree.fold_node ..
-
-theorem selCheckPlanar_perm {t s : RoseTree Vertex} (h : RoseTree.Perm t s) :
-    selCheckPlanar t = selCheckPlanar s :=
-  RoseTree.fold_perm (fun a _ _ h' => selNode_perm a h') h
-
-/-- Selection check on the nonplanar carrier. -/
-def selCheckN : UnorderedTree Vertex → SelectionState :=
-  liftN (fun tok => .of tok tok.item.sel) traceState
-
-@[simp] theorem selCheckN_mk (p : RoseTree Vertex) :
-    selCheckN (UnorderedTree.mk p) = selCheckPlanar p := rfl
-
-theorem selCheckN_node (a b : UnorderedTree Vertex) :
-    selCheckN (UnorderedTree.node Vertex.bare {a, b}) = selCheckN a * selCheckN b :=
-  liftN_merge _ _ a b
-
 /-! ### The selection-driven head on `SyntacticObject` -/
 
 variable (s : SyntacticObject) (tok : LexicalItem.Token)
 
 namespace SyntacticObject
 
+/-- The selection check as a morphism of magmas, the extension of the selection states of the
+leaves: Merge multiplies constituents and selection multiplies their states. -/
+def selCheckHom : SyntacticObject →ₙ* SelectionState :=
+  FreeCommMagma.lift (Leaf.elim (fun tok ↦ .of tok tok.item.sel) traceState)
+
 /-- **Selection-driven head check**: the selection instance of
     [marcolli-chomsky-berwick-2025]'s head functions; computable. -/
-def selCheck : SelectionState := selCheckN s.val
+def selCheck : SelectionState := selCheckHom s
 
 /-- The projecting head's lexical item, by c-selection. -/
 def selHead : Option LexicalItem.Token := s.selCheck.head
 
-/-- Residual pending selectional features (`some []` = saturated). -/
-def checkedSel : Option (List Cat) := s.selCheck.residual
 
 /-- The category of the projecting head, `none` at exocentric nodes. -/
 def cat? : Option Cat := s.selHead.map (·.item.cat)
@@ -289,12 +258,7 @@ def cat? : Option Cat := s.selHead.map (·.item.cat)
 @[simp] theorem selCheck_traceOf : (traceOf tok).selCheck = .of tok [] := rfl
 
 @[simp] theorem selCheck_node (l r : SyntacticObject) :
-    (merge l r).selCheck = l.selCheck * r.selCheck := liftFun_merge _ _ l r
-
-/-- `selCheck` as a morphism of magmas ([marcolli-chomsky-berwick-2025] §1.13's
-    algebraic frame): the `lift` of the leaf data. -/
-noncomputable def selCheckHom : SyntacticObject →ₙ* SelectionState :=
-  lift (fun tok => .of tok tok.item.sel) traceState
+    (merge l r).selCheck = l.selCheck * r.selCheck := map_mul selCheckHom l r
 
 @[simp] theorem selCheckHom_apply : selCheckHom s = s.selCheck := rfl
 
@@ -322,6 +286,17 @@ theorem selHead_map (hf : LexicalItem.Token.PreservesSelection f) :
     = some tok.item.cat := rfl
 
 end SyntacticObject
+
+/-- The selection state of a tree, that of the syntactic object it is the tree of, and `0` on a
+tree that is not well formed. -/
+def selCheckN (t : UnorderedTree Vertex) : SelectionState :=
+  if h : IsSyntacticObject t then (SyntacticObject.ofUnorderedTree t h).selCheck else 0
+
+@[simp] theorem selCheckN_toUnorderedTree (s : SyntacticObject) :
+    selCheckN s.toUnorderedTree = s.selCheck := by
+  rw [selCheckN, dif_pos s.isSyntacticObject_toUnorderedTree,
+    SyntacticObject.ofUnorderedTree_toUnorderedTree]
+
 
 theorem LexicalItem.Token.PreservesSelection.swap {a b : LexicalItem.Token}
     (hc : a.item.cat = b.item.cat) (hs : a.item.sel = b.item.sel) (ha : a ≠ .bareTrace)

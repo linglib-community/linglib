@@ -34,7 +34,7 @@ namespace Minimalist
 
 open RoseTree SyntacticObject
 open Derivation (Cfg)
-open LinearizedSyntacticObject (toSyntacticObject)
+open PlanarSyntacticObject (toSyntacticObject)
 
 variable {τ : SyntacticObject → Option LexicalItem.Token}
 
@@ -47,11 +47,11 @@ theorem Derivation.coe_surfaceTokens {d : Derivation} (hd : d.lexTokens.Nodup)
   have := d.yield_replay? hd hc
   rw [Cfg.yield_map, hst, List.map_nil, List.sum_nil, add_zero] at this
   rw [surfaceTokens, externalize?, hc, Option.map_some, Option.map_some, Option.getD_some,
-    LinearizedSyntacticObject.coe_yield, this]
+    PlanarSyntacticObject.coe_yield, this]
 
 /-- In a derivation of Merge steps with no token merged twice, every token merged is pronounced in
 its object. -/
-theorem Derivation.mem_yield_of_mem_lexTokens {d : Derivation} {c : Cfg LinearizedSyntacticObject}
+theorem Derivation.mem_yield_of_mem_lexTokens {d : Derivation} {c : Cfg PlanarSyntacticObject}
     (hd : d.lexTokens.Nodup) (hm : ∀ step ∈ d.steps, step.IsMerge) (h : d.replay? τ = some c)
     {tok : LexicalItem.Token} (ht : tok ∈ d.lexTokens) :
     tok ∈ c.current.toSyntacticObject.yield := by

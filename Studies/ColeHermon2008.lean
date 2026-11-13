@@ -175,13 +175,13 @@ def evacuate : List Step :=
 
 /-- A core argument as the remnant holds it: the trace of the pivot, which has left, or the
 argument itself, which has stayed. -/
-def stranded (t : LexicalItem.Token) : LinearizedSyntacticObject :=
+def stranded (t : LexicalItem.Token) : PlanarSyntacticObject :=
   if t = c.pivot then .traceOf t else .leaf t
 
 /-- The remnant VoiceP that raises, (55), (61), has Voice and the verb over their traces, and
 the pivot and the goal replaced by theirs. -/
-def remnant : LinearizedSyntacticObject :=
-  let vp : LinearizedSyntacticObject := match c.goal with
+def remnant : PlanarSyntacticObject :=
+  let vp : PlanarSyntacticObject := match c.goal with
     | some pp => {c.stranded c.patient, {.traceOf c.verb, .traceOf pp}}
     | none => {.traceOf c.verb, c.stranded c.patient}
   {.leaf c.voiceHead, {.leaf c.verb, {.traceOf c.voiceHead, {c.stranded c.agent, {.leaf v₀, vp}}}}}
@@ -725,7 +725,8 @@ stage exactly when some copy of the first c-commands some copy of the second. -/
 example : ∀ c ∈ clauses, ∀ x y : LexicalItem.Token, x ≠ y →
     (c.vos.BindsAtSomeStage ↑x ↑y ↔ c.vos.BindsAtLF ↑x ↑y) := by
   have h : ∀ c ∈ clauses, c.vos.lexTokens.Nodup ∧ (∀ step ∈ c.vos.steps, step.IsMerge) ∧
-      (∀ step ∈ c.vos.steps, ∀ m ∈ step.mover?, m.val.value.isLeft) ∧ c.vos.replay?.isSome := by
+      (∀ step ∈ c.vos.steps, ∀ m ∈ step.mover?, m.toUnorderedTree.value.isLeft) ∧
+          c.vos.replay?.isSome := by
     decide +kernel
   intro c hc x y hxy
   obtain ⟨hd, hm, hmv, hr⟩ := h c hc

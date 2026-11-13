@@ -239,14 +239,14 @@ def IsPhaseHead (a : LexicalItem.Token) : Prop := a.item.cat = .v ∨ a.item.cat
 instance : DecidablePred IsPhaseHead := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The phase heads of an object, by position. -/
-def phaseSet (t : Minimalist.LinearizedSyntacticObject) : Finset Core.Order.TreePath :=
+def phaseSet (t : Minimalist.PlanarSyntacticObject) : Finset Core.Order.TreePath :=
   ((Minimalist.phaseHeads .raising t IsPhaseHead).map (·.1)).toFinset
 
 /-- The arguments a probe at `l` meets in a derivation, by the cyclic expansion of
 [bejar-rezac-2009] ((13)), the complement of a phase below it closed to it. -/
 def goalsIn (d : Derivation) (l : Locus) : List Arg :=
   d.externalize?.elim [] fun t ↦
-    ((Minimalist.tokenList t.val).find? (·.2.item.cat == l.cat)).elim [] fun a ↦
+    ((Minimalist.tokenList t.toRoseTree).find? (·.2.item.cat == l.cat)).elim [] fun a ↦
       (Minimalist.cyclicGoals .raising t (·.item.cat = .D)
         (Minimalist.sealed (phaseSet t) (Minimalist.complementDomain .raising t ∅)
           (Minimalist.Pic1 .raising t) a.1.parent) a.1).filterMap argOf

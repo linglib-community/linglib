@@ -44,12 +44,13 @@ open Minimalist.Probe (depthFirst breadthFirst depth breadthFirst_lt_of_depth_lt
 
 /-! ### Breadth-first search and Closest (2) -/
 
-variable {t : LinearizedSyntacticObject} {p : Probe t.val.Positions} {s : Set t.val.Positions}
-  {a b : t.val.Positions}
+variable {t : PlanarSyntacticObject} {p : Probe t.toRoseTree.Positions} {s : Set
+    t.toRoseTree.Positions}
+  {a b : t.toRoseTree.Positions}
 
 -- (2)
 theorem eq_complement_of_finds_depth (ha : p.Finds s (depth ·.val) a) (hb : b ∈ s)
-    (hsb : p.sat b) (hba : t.val.CCommands b.val a.val) : a.val = complement b.val := by
+    (hsb : p.sat b) (hba : t.toRoseTree.CCommands b.val a.val) : a.val = complement b.val := by
   have hb0 : b.val ≠ ⊥ := fun h ↦ hba.2.1 (h ▸ bot_le)
   have hc : complement b.val ≤ a.val :=
     (mem_cCommandDomain_iff_complement_le b.2 hb0 a.2).1 hba
@@ -59,7 +60,7 @@ theorem eq_complement_of_finds_depth (ha : p.Finds s (depth ·.val) a) (hb : b �
   exact TreePath.length_strictMono hlt
 
 theorem eq_complement_of_finds_breadthFirst (ha : p.Finds s (breadthFirst ·.val) a) (hb : b ∈ s)
-    (hsb : p.sat b) (hba : t.val.CCommands b.val a.val) : a.val = complement b.val :=
+    (hsb : p.sat b) (hba : t.toRoseTree.CCommands b.val a.val) : a.val = complement b.val :=
   eq_complement_of_finds_depth (ha.of_refines fun _ _ ↦ breadthFirst_lt_of_depth_lt) hb hsb hba
 
 /-! ### Two potential goals (7) -/
@@ -68,19 +69,20 @@ theorem eq_complement_of_finds_breadthFirst (ha : p.Finds s (breadthFirst ·.val
 def leaf7 (i : ℕ) : LexicalItem.Token := ⟨.of .N [], i⟩
 
 /-- The search space of (7): node 2 dominates nodes 3 and 4, node 5 nodes 6 and 7. -/
-def tree7 : LinearizedSyntacticObject := (leaf7 3 * leaf7 4) * (leaf7 6 * leaf7 7)
+def tree7 : PlanarSyntacticObject := (leaf7 3 * leaf7 4) * (leaf7 6 * leaf7 7)
 
 /-- α, node 4, which bears [F]. -/
-def α : tree7.val.Positions := ⟨⟨[0, 1]⟩, rfl⟩
+def α : tree7.toRoseTree.Positions := ⟨⟨[0, 1]⟩, rfl⟩
 
 /-- β, node 5, which bears [F]. -/
-def β : tree7.val.Positions := ⟨⟨[1]⟩, rfl⟩
+def β : tree7.toRoseTree.Positions := ⟨⟨[1]⟩, rfl⟩
 
 /-- The probe [PROBE:F], matched by α and β. -/
-def probe7 : Probe tree7.val.Positions := .relativized (· ∈ [α, β])
+def probe7 : Probe tree7.toRoseTree.Positions := .relativized (· ∈ [α, β])
 
 -- (7a), (2)
-theorem ex7a : probe7.Finds Set.univ (depthFirst ·.val) α ∧ tree7.val.CCommands β.val α.val := by
+theorem ex7a : probe7.Finds Set.univ (depthFirst ·.val) α ∧
+    tree7.toRoseTree.CCommands β.val α.val := by
   decide +kernel
 
 -- (7b)

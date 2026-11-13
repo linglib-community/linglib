@@ -214,7 +214,7 @@ variable (s : SyntacticObject)
 
 /-- The raising state of a syntactic object. -/
 def raisingCheck : RaisingState :=
-  liftFun (fun tok ↦ ⟨.sel (.of tok tok.item.sel), 0⟩) raisingTraceState s
+  FreeCommMagma.lift (Leaf.elim (fun tok ↦ ⟨.sel (.of tok tok.item.sel), 0⟩) raisingTraceState) s
 
 /-- The raising head of a syntactic object, [marcolli-chomsky-berwick-2025]'s raising head
 function: the selection head where there is one, and at a landing site the head of the phrase
@@ -231,11 +231,11 @@ def raisingHead : Option LexicalItem.Token := s.raisingCheck.state.head
 
 @[simp] theorem raisingCheck_merge (l r : SyntacticObject) :
     (merge l r).raisingCheck = l.raisingCheck * r.raisingCheck :=
-  liftFun_merge _ _ l r
+  map_mul (FreeCommMagma.lift _) l r
 
 /-- `raisingCheck` as a morphism of magmas. -/
-noncomputable def raisingCheckHom : SyntacticObject →ₙ* RaisingState :=
-  lift (fun tok ↦ ⟨.sel (.of tok tok.item.sel), 0⟩) raisingTraceState
+def raisingCheckHom : SyntacticObject →ₙ* RaisingState :=
+  FreeCommMagma.lift (Leaf.elim (fun tok ↦ ⟨.sel (.of tok tok.item.sel), 0⟩) raisingTraceState)
 
 /-- The raising head of a merge is a daughter's raising head
 ([marcolli-chomsky-berwick-2025] Lemma 1.13.7). -/
@@ -257,11 +257,18 @@ end SyntacticObject
 
 /-- The raising head of a planar tree, that of its unordered image. -/
 def treeRaisingHead (s : RoseTree Vertex) : Option LexicalItem.Token :=
-  (liftN (fun tok ↦ (⟨.sel (.of tok tok.item.sel), 0⟩ : RaisingState)) raisingTraceState
-    (UnorderedTree.mk s)).state.head
+  if h : IsSyntacticObject (UnorderedTree.mk s) then (ofUnorderedTree _ h).raisingHead else none
 
-theorem treeRaisingHead_subtree {t : LinearizedSyntacticObject} (p : t.val.Positions) :
-    treeRaisingHead p.subtree = (t.termAt p).raisingHead := rfl
+theorem raisingHead_eq_treeRaisingHead {x : SyntacticObject} {s : RoseTree Vertex}
+    (h : x.toUnorderedTree = UnorderedTree.mk s) : x.raisingHead = treeRaisingHead s := by
+  subst_vars
+  rw [treeRaisingHead, dif_pos (h ▸ x.isSyntacticObject_toUnorderedTree)]
+  exact congrArg raisingHead
+    (toUnorderedTree_injective (by rw [toUnorderedTree_ofUnorderedTree, h]))
+
+theorem treeRaisingHead_subtree {t : PlanarSyntacticObject} (p : t.toRoseTree.Positions) :
+    treeRaisingHead p.subtree = (t.termAt p).raisingHead :=
+  (raisingHead_eq_treeRaisingHead PlanarSyntacticObject.toUnorderedTree_termAt).symm
 
 /-- The drawing convention makes a token or trace leaf its own head; at a binary node it takes a
 left leaf that selects nothing for a specifier and looks for the head in the right daughter, takes
@@ -284,9 +291,9 @@ def headIndex? (s : RoseTree Vertex) : Option ℕ :=
 /-- The raising head function, [marcolli-chomsky-berwick-2025]'s raising head extended to a total
 head function by the drawing convention: the head daughter of the subtree at each position,
 `none` off the object. -/
-def HeadFunction.raising : HeadFunction := fun t q ↦ t.val[q]?.bind headIndex?
+def HeadFunction.raising : HeadFunction := fun t q ↦ t.toRoseTree[q]?.bind headIndex?
 
-/-- Where a linearized syntactic object with daughters has a raising head, its head daughter carries
+/-- Where a planar syntactic object with daughters has a raising head, its head daughter carries
 it. -/
 theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree Vertex} {ℓ : LexicalItem.Token}
     (hs : IsSyntacticObject (UnorderedTree.mk s)) (hc : s.children ≠ [])
@@ -298,12 +305,18 @@ theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree Vertex} {ℓ : Lexica
     List.length_eq_two.1 ((length_eq_zero_or_two hs).resolve_left fun h0 ↦
       hc (List.length_eq_zero_iff.1 h0))
   obtain ⟨hl, hr⟩ := (isSyntacticObject_mk_merge l r).1 hs
-  have hm : treeRaisingHead (.node Vertex.bare [l, r]) = (merge ⟨_, hl⟩ ⟨_, hr⟩).raisingHead := by
-    simp only [raisingHead, raisingCheck, liftFun, merge_mk]; rfl
+  have hm : (merge (ofUnorderedTree _ hl) (ofUnorderedTree _ hr)).raisingHead
+      = treeRaisingHead (.node Vertex.bare [l, r]) :=
+    raisingHead_eq_treeRaisingHead (by
+      rw [toUnorderedTree_merge, toUnorderedTree_ofUnorderedTree, toUnorderedTree_ofUnorderedTree,
+          UnorderedTree.node_pair_mk])
   by_cases hl' : treeRaisingHead l = some ℓ
   · exact ⟨0, l, by simp [headIndex?, h, hl', List.findIdx?_cons], rfl, hl'⟩
   · have hr' : treeRaisingHead r = some ℓ :=
-      (raisingHead_merge (l := ⟨_, hl⟩) (r := ⟨_, hr⟩) (hm ▸ h)).resolve_left fun h' ↦ hl' h'
+      (raisingHead_eq_treeRaisingHead (toUnorderedTree_ofUnorderedTree _ hr)).symm.trans
+        ((raisingHead_merge (hm.trans h)).resolve_left fun h' ↦
+          hl' ((raisingHead_eq_treeRaisingHead (toUnorderedTree_ofUnorderedTree _ hl)).symm.trans
+              h'))
     exact ⟨1, r, by simp [headIndex?, h, hl', hr', List.findIdx?_cons], rfl, hr'⟩
 
 end Minimalist

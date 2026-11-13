@@ -313,11 +313,11 @@ theorem inSitu_rows : ∀ r ∈ inSituRows, r.2 = true ↔ ¬ (analysis r.1).For
 -- Section 5.3.2: the labeling algorithm labels a verb merged with any phrasal object, whatever
 -- case the object's head bears, so a failure to label, the alternative account of forced
 -- displacement the section examines, cannot displace a direct object with ICA.
-example {t : Minimalist.LinearizedSyntacticObject} {v : Minimalist.LexicalItem.Token}
+example {t : Minimalist.PlanarSyntacticObject} {v : Minimalist.LexicalItem.Token}
     {x : Minimalist.SyntacticObject} (hex : ∃ n, t.termAt n = .merge (.leaf v) x)
     (hx : x.token? = none) (hv : t.InDomain (.leaf v) (.merge (.leaf v) x)) :
     t.IsLabeledBy (.merge (.leaf v) x) v :=
-  Minimalist.LinearizedSyntacticObject.isLabeledBy_merge_head hex hx hv
+  Minimalist.PlanarSyntacticObject.isLabeledBy_merge_head hex hx hv
 
 -- Section 5.2.2
 theorem selCheck_merge_eq_zero_of_sel_ne_nil {d n : Minimalist.LexicalItem.Token}
@@ -382,9 +382,9 @@ end PendingState
 
 /-- Selection before saturation as a licensing: a token with its selectors, a trace a saturated
 copy of the phrase its token heads. -/
-noncomputable def pendingHom : SyntacticObject →ₙ* PendingState :=
-  SyntacticObject.lift (fun tok ↦ ⟨some (tok, tok.item.sel, 0)⟩)
-    (fun u ↦ ⟨some (u.getD .bareTrace, [], 0)⟩)
+def pendingHom : SyntacticObject →ₙ* PendingState :=
+  FreeCommMagma.lift (SyntacticObject.Leaf.elim (fun tok ↦ ⟨some (tok, tok.item.sel, 0)⟩)
+    fun u ↦ ⟨some (u.getD .bareTrace, [], 0)⟩)
 
 /-- The head noun, selecting the relative CP. -/
 def headNoun : LexicalItem.Token := ⟨.of .N [.C], 1⟩
@@ -406,7 +406,7 @@ def externalD : LexicalItem.Token := ⟨.of .D [.N], 6⟩
 
 /-- *Kona*'s phrase once the noun is copied out of it, the noun's trace in its place. -/
 def konaRemnant : SyntacticObject :=
-  (LinearizedSyntacticObject.merge (.leaf kona) (.traceOf headNoun)).toSyntacticObject
+  (PlanarSyntacticObject.merge (.leaf kona) (.traceOf headNoun)).toSyntacticObject
 
 /-- The raising relative of section 5.2.2. The noun merges with *kona* while it still selects the
 relative CP, which is built over them. Once the complementizer is merged, the noun and then
@@ -437,7 +437,7 @@ theorem triggeredMerge_rejects_raisingRelative :
 
 /-- *Kona*'s phrase, *kona* selecting the noun. -/
 def konaPhrase : SyntacticObject :=
-  (LinearizedSyntacticObject.merge (.leaf kona) (.leaf headNoun)).toSyntacticObject
+  (PlanarSyntacticObject.merge (.leaf kona) (.leaf headNoun)).toSyntacticObject
 
 /-- The alternative footnote 14 of the article reports: *kona*'s phrase moves to the edge of the
 relative CP, and the noun is then subextracted from it to select the CP. -/

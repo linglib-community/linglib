@@ -67,11 +67,11 @@ namespace Minimalist
 
 open RoseTree SyntacticObject Core.Order
 
-variable (pick : List TreePath → Option TreePath) (t : LinearizedSyntacticObject)
+variable (pick : List TreePath → Option TreePath) (t : PlanarSyntacticObject)
 
 /-- The mothers of `s` in `t`: the terms of `t` with `s` as a daughter. -/
 def mothers (s : RoseTree Vertex) : List (RoseTree Vertex) :=
-  (t.val.subtrees.filter (s ∈ ·.children)).dedup
+  (t.toRoseTree.subtrees.filter (s ∈ ·.children)).dedup
 
 /-- `m` is a highest mother of `s`: a mother of `s` that no other mother of `s` dominates. -/
 def IsHighestMother (s m : RoseTree Vertex) : Prop :=
@@ -83,28 +83,28 @@ instance (s m : RoseTree Vertex) : Decidable (IsHighestMother t s m) :=
 /-- The positions at which `s` may be pronounced once `pos` places its mothers: its occurrences,
 left to right, under a highest mother pronounced there. -/
 def candidates (pos : RoseTree Vertex → Option TreePath) (s : RoseTree Vertex) : List TreePath :=
-  (t.val.positionedSubtrees.filter fun x ↦ x.2 = s ∧
-    t.val[x.1.parent.toList]?.any fun m ↦
+  (t.toRoseTree.positionedSubtrees.filter fun x ↦ x.2 = s ∧
+    t.toRoseTree[x.1.parent.toList]?.any fun m ↦
       decide (IsHighestMother t s m) && pos m == some x.1.parent).map Prod.fst
 
 /-- Where `s` is pronounced, within `n` steps of the root: the root at the root, and any other term
 at the candidate `pick` chooses. -/
 def spellOutPositionAux : ℕ → RoseTree Vertex → Option TreePath
   | 0, _ => none
-  | n + 1, s => if s = t.val then some ⊥ else pick (candidates t (spellOutPositionAux n) s)
+  | n + 1, s => if s = t.toRoseTree then some ⊥ else pick (candidates t (spellOutPositionAux n) s)
 
 /-- The position at which `s` is pronounced, `none` when `s` is not a term of `t`. -/
 def spellOutPosition (s : RoseTree Vertex) : Option TreePath :=
-  spellOutPositionAux pick t (t.val.numNodes + 1) s
+  spellOutPositionAux pick t (t.toRoseTree.numNodes + 1) s
 
 /-- The pronounced tokens, left to right: each at the position where its leaf is pronounced. -/
 def remergedYield : List LexicalItem.Token :=
-  (tokenList t.val).filterMap fun x ↦
+  (tokenList t.toRoseTree).filterMap fun x ↦
     if spellOutPosition pick t (.node (.lex x.2) []) = some x.1 then some x.2 else none
 
 /-- A token is pronounced once at most, however many times Merge applied to it. -/
 theorem nodup_remergedYield : (remergedYield pick t).Nodup := by
-  refine ((nodup_map_fst_positions _ t.val).of_map Prod.fst).filterMap fun x y tok hx hy ↦ ?_
+  refine ((nodup_map_fst_positions _ t.toRoseTree).of_map Prod.fst).filterMap fun x y tok hx hy ↦ ?_
   simp only [Option.mem_def, Option.ite_none_right_eq_some, Option.some.injEq] at hx hy
   obtain ⟨hx, rfl⟩ := hx
   obtain ⟨hy, hxy⟩ := hy
@@ -115,17 +115,18 @@ theorem nodup_remergedYield : (remergedYield pick t).Nodup := by
 variable {pick t} {pos pos' : RoseTree Vertex → Option TreePath} {s : RoseTree Vertex}
 
 theorem mem_candidates {p : TreePath} :
-    p ∈ candidates t pos s ↔ t.val[p.toList]? = some s ∧
-      ∃ m, t.val[p.parent.toList]? = some m ∧ IsHighestMother t s m ∧
+    p ∈ candidates t pos s ↔ t.toRoseTree[p.toList]? = some s ∧
+      ∃ m, t.toRoseTree[p.parent.toList]? = some m ∧ IsHighestMother t s m ∧
         pos m = some p.parent := by
   simp only [candidates, List.mem_map, List.mem_filter, mem_positionedSubtrees, decide_eq_true_eq,
     Prod.exists, exists_and_right, exists_eq_right]
-  rcases t.val[p.parent.toList]? with _ | m <;> simp
+  rcases t.toRoseTree[p.parent.toList]? with _ | m <;> simp
 
-theorem candidates_congr (h : ∀ m, IsHighestMother t s m → IsSubtree m t.val → pos m = pos' m) :
+theorem candidates_congr (h : ∀ m, IsHighestMother t s m → IsSubtree m t.toRoseTree → pos m = pos'
+    m) :
     candidates t pos s = candidates t pos' s := by
   refine congrArg _ (List.filter_congr fun x _ ↦ ?_)
-  rcases hm : t.val[x.1.parent.toList]? with _ | m
+  rcases hm : t.toRoseTree[x.1.parent.toList]? with _ | m
   · simp
   · by_cases hh : IsHighestMother t s m
     · simp [h m hh (isSubtree_iff_exists_getElem?.2 ⟨_, hm⟩)]
@@ -133,9 +134,9 @@ theorem candidates_congr (h : ∀ m, IsHighestMother t s m → IsSubtree m t.val
 
 /-- A term other than the root has a candidate once `pos` places each larger term at a position of
 its own. -/
-theorem candidates_ne_nil (hs : IsSubtree s t.val) (hroot : s ≠ t.val)
-    (hpos : ∀ m, IsSubtree m t.val → s.numNodes < m.numNodes →
-      ∃ p, pos m = some p ∧ t.val[p.toList]? = some m) :
+theorem candidates_ne_nil (hs : IsSubtree s t.toRoseTree) (hroot : s ≠ t.toRoseTree)
+    (hpos : ∀ m, IsSubtree m t.toRoseTree → s.numNodes < m.numNodes →
+      ∃ p, pos m = some p ∧ t.toRoseTree[p.toList]? = some m) :
     candidates t pos s ≠ [] := by
   obtain ⟨q, hq⟩ := isSubtree_iff_exists_getElem?.1 hs
   obtain ⟨q, i, rfl⟩ : ∃ q' i, q = q' ++ [i] := by
@@ -167,8 +168,9 @@ theorem candidates_ne_nil (hs : IsSubtree s t.val) (hroot : s ≠ t.val)
 the root and `pick` chooses among the positions it is given. -/
 theorem exists_spellOutPositionAux
     (hpick : ∀ l : List TreePath, l ≠ [] → ∃ p ∈ l, pick l = some p) :
-    ∀ (n : ℕ) (s : RoseTree Vertex), IsSubtree s t.val → t.val.numNodes < s.numNodes + n →
-      ∃ p, spellOutPositionAux pick t n s = some p ∧ t.val[p.toList]? = some s
+    ∀ (n : ℕ) (s : RoseTree Vertex), IsSubtree s t.toRoseTree → t.toRoseTree.numNodes < s.numNodes +
+        n →
+      ∃ p, spellOutPositionAux pick t n s = some p ∧ t.toRoseTree[p.toList]? = some s
   | 0, s, hs, hn => absurd hs.numNodes_le (by omega)
   | n + 1, s, hs, hn => by
     rw [spellOutPositionAux]
@@ -180,15 +182,15 @@ theorem exists_spellOutPositionAux
 
 /-- The term at a position holding a token is that token's leaf. -/
 theorem eq_leaf_of_getElem? {p : List ℕ} {s : RoseTree Vertex} {tok : LexicalItem.Token}
-    (hs : t.val[p]? = some s) (hv : s.value = .lex tok) : s = .node (.lex tok) [] := by
+    (hs : t.toRoseTree[p]? = some s) (hv : s.value = .lex tok) : s = .node (.lex tok) [] := by
   obtain ⟨a, cs⟩ := s
   obtain rfl : a = .lex tok := hv
-  have h := (((isSyntacticObject_mk _).1 t.2).of_getElem? hs).rel_root
+  have h := (((isSyntacticObject_mk _).1 t.isSyntacticObject_toRoseTree).of_getElem? hs).rel_root
   simp only [Vertex.Licenses, Multiset.coe_eq_zero, List.map_eq_nil_iff] at h
   rw [h]
 
 theorem mem_tokenList_iff {p : TreePath} {tok : LexicalItem.Token} :
-    (p, tok) ∈ tokenList t.val ↔ t.val[p.toList]? = some (.node (.lex tok) []) := by
+    (p, tok) ∈ tokenList t.toRoseTree ↔ t.toRoseTree[p.toList]? = some (.node (.lex tok) []) := by
   refine ⟨fun h ↦ ?_, fun h ↦ mem_positions_iff.2 ⟨_, h, rfl⟩⟩
   obtain ⟨s, hs, hv⟩ := mem_positions_iff.1 h
   have hsv : s.value = .lex tok := by
@@ -196,12 +198,13 @@ theorem mem_tokenList_iff {p : TreePath} {tok : LexicalItem.Token} :
   rwa [← eq_leaf_of_getElem? hs hsv]
 
 theorem mem_remergedYield (hpick : ∀ l : List TreePath, l ≠ [] → ∃ p ∈ l, pick l = some p)
-    {tok : LexicalItem.Token} : tok ∈ remergedYield pick t ↔ ∃ p, (p, tok) ∈ tokenList t.val := by
+    {tok : LexicalItem.Token} : tok ∈ remergedYield pick t ↔ ∃ p, (p,
+        tok) ∈ tokenList t.toRoseTree := by
   simp only [remergedYield, List.mem_filterMap, Option.ite_none_right_eq_some, Option.some.injEq]
   refine ⟨fun ⟨x, hx, _, h⟩ ↦ ⟨x.1, h ▸ hx⟩, fun ⟨p, hp⟩ ↦ ?_⟩
   have hs := mem_tokenList_iff.1 hp
-  obtain ⟨p', hp', hp's⟩ := exists_spellOutPositionAux hpick (t.val.numNodes + 1) _
-    (isSubtree_iff_exists_getElem?.2 ⟨_, hs⟩) (by have := numNodes_pos (t := t.val); omega)
+  obtain ⟨p', hp', hp's⟩ := exists_spellOutPositionAux hpick (t.toRoseTree.numNodes + 1) _
+    (isSubtree_iff_exists_getElem?.2 ⟨_, hs⟩) (by have := numNodes_pos (t := t.toRoseTree); omega)
   exact ⟨(p', tok), mem_tokenList_iff.2 hp's, hp', rfl⟩
 
 /-- PF pronounces each token exactly once, whatever the pick. -/
@@ -214,7 +217,7 @@ theorem remergedYield_perm_tokens
 /-! ### Movement -/
 
 theorem mem_mothers {g : RoseTree Vertex} :
-    g ∈ mothers t s ↔ IsSubtree g t.val ∧ s ∈ g.children := by
+    g ∈ mothers t s ↔ IsSubtree g t.toRoseTree ∧ s ∈ g.children := by
   simp [mothers, mem_subtrees]
 
 /-- Where the mothers of `s` are ordered by dominance and none has `s` as two daughters, `s` has
@@ -225,7 +228,7 @@ theorem eq_of_mem_candidates
     {p q : TreePath} (hp : p ∈ candidates t pos s) (hq : q ∈ candidates t pos s) : p = q := by
   obtain ⟨hps, m, hm, hhm, hposp⟩ := mem_candidates.1 hp
   obtain ⟨hqs, m', hm', hhm', hposq⟩ := mem_candidates.1 hq
-  have hmem : ∀ {g : RoseTree Vertex} {r : List ℕ}, t.val[r]? = some g →
+  have hmem : ∀ {g : RoseTree Vertex} {r : List ℕ}, t.toRoseTree[r]? = some g →
       s ∈ g.children → g ∈ mothers t s :=
     fun h hs ↦ mem_mothers.2 ⟨isSubtree_iff_exists_getElem?.2 ⟨_, h⟩, hs⟩
   obtain rfl : m = m' := by
@@ -233,8 +236,8 @@ theorem eq_of_mem_candidates
     · exact by_contra fun hne ↦ hhm.2 _ (hmem hm' hhm'.1) ⟨h, hne⟩
     · exact by_contra fun hne ↦ hhm'.2 _ (hmem hm hhm.1) ⟨h, Ne.symm hne⟩
   have hpar : p.parent = q.parent := Option.some.inj (hposp.symm.trans hposq)
-  have key : ∀ {r : TreePath}, t.val[r.toList]? = some s →
-      t.val[r.parent.toList]? = some m →
+  have key : ∀ {r : TreePath}, t.toRoseTree[r.toList]? = some s →
+      t.toRoseTree[r.parent.toList]? = some m →
       ∃ i, r.toList = r.parent.toList ++ [i] ∧ m.children[i]? = some s := by
     intro r hr hrm
     have hne : r.toList ≠ [] := by
@@ -245,7 +248,7 @@ theorem eq_of_mem_candidates
       obtain rfl := Option.some.inj hrm
       exact lt_irrefl _ (numNodes_lt_of_mem hhm.1)
     refine ⟨r.toList.getLast hne, (List.dropLast_concat_getLast hne).symm, ?_⟩
-    have hrm' : t.val[r.toList.dropLast]? = some m := hrm
+    have hrm' : t.toRoseTree[r.toList.dropLast]? = some m := hrm
     rw [← List.dropLast_concat_getLast hne, getElem?_append, hrm'] at hr
     simpa using hr
   obtain ⟨i, hpi, hi⟩ := key hps hm
@@ -260,10 +263,11 @@ is merged with itself, a term is pronounced at the same position whatever the pi
 theorem spellOutPositionAux_eq_of_chain {pick' : List TreePath → Option TreePath}
     (hpick : ∀ l : List TreePath, l ≠ [] → ∃ p ∈ l, pick l = some p)
     (hpick' : ∀ l : List TreePath, l ≠ [] → ∃ p ∈ l, pick' l = some p)
-    (hchain : ∀ s ∈ t.val.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
+    (hchain : ∀ s ∈ t.toRoseTree.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
       IsSubtree g g' ∨ IsSubtree g' g)
-    (hself : ∀ g ∈ t.val.subtrees, g.children.Nodup) :
-    ∀ (n : ℕ) (s : RoseTree Vertex), IsSubtree s t.val → t.val.numNodes < s.numNodes + n →
+    (hself : ∀ g ∈ t.toRoseTree.subtrees, g.children.Nodup) :
+    ∀ (n : ℕ) (s : RoseTree Vertex), IsSubtree s t.toRoseTree → t.toRoseTree.numNodes < s.numNodes +
+        n →
       spellOutPositionAux pick t n s = spellOutPositionAux pick' t n s
   | 0, _, _, _ => rfl
   | n + 1, s, hs, hn => by
@@ -284,38 +288,38 @@ theorem spellOutPositionAux_eq_of_chain {pick' : List TreePath → Option TreePa
 theorem remergedYield_eq_of_chain {pick' : List TreePath → Option TreePath}
     (hpick : ∀ l : List TreePath, l ≠ [] → ∃ p ∈ l, pick l = some p)
     (hpick' : ∀ l : List TreePath, l ≠ [] → ∃ p ∈ l, pick' l = some p)
-    (hchain : ∀ s ∈ t.val.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
+    (hchain : ∀ s ∈ t.toRoseTree.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
       IsSubtree g g' ∨ IsSubtree g' g)
-    (hself : ∀ g ∈ t.val.subtrees, g.children.Nodup) :
+    (hself : ∀ g ∈ t.toRoseTree.subtrees, g.children.Nodup) :
     remergedYield pick t = remergedYield pick' t :=
   List.filterMap_congr fun x hx ↦ by
     have hs := mem_tokenList_iff.1 hx
     rw [spellOutPosition, spellOutPosition, spellOutPositionAux_eq_of_chain hpick hpick' hchain
       hself _ _ (isSubtree_iff_exists_getElem?.2 ⟨_, hs⟩)
-      (by have := numNodes_pos (t := t.val); omega)]
+      (by have := numNodes_pos (t := t.toRoseTree); omega)]
 
 /-! ### Sharing -/
 
 variable (t) in
 /-- The positions of `s` in `t`, left to right. -/
 def positionsOf (s : RoseTree Vertex) : List TreePath :=
-  (t.val.positionedSubtrees.filter (·.2 = s)).map Prod.fst
+  (t.toRoseTree.positionedSubtrees.filter (·.2 = s)).map Prod.fst
 
 theorem mem_positionsOf {p : TreePath} :
-    p ∈ positionsOf t s ↔ t.val[p.toList]? = some s := by
+    p ∈ positionsOf t s ↔ t.toRoseTree[p.toList]? = some s := by
   simp [positionsOf, mem_positionedSubtrees]
 
 private theorem pairwise_lt_positionsOf :
     (positionsOf t s).Pairwise fun p q ↦ p.toList < q.toList :=
-  List.pairwise_map.2 ((pairwise_lt_positionedSubtrees t.val).filter _)
+  List.pairwise_map.2 ((pairwise_lt_positionedSubtrees t.toRoseTree).filter _)
 
 private theorem pairwise_lt_candidates :
     (candidates t pos s).Pairwise fun p q ↦ p.toList < q.toList :=
-  List.pairwise_map.2 ((pairwise_lt_positionedSubtrees t.val).filter _)
+  List.pairwise_map.2 ((pairwise_lt_positionedSubtrees t.toRoseTree).filter _)
 
 private theorem pairwise_lt_tokenList :
-    (tokenList t.val).Pairwise fun x y ↦ x.1.toList < y.1.toList :=
-  (pairwise_lt_positionedSubtrees t.val).filterMap _ fun _ _ h _ ha _ hb ↦ by
+    (tokenList t.toRoseTree).Pairwise fun x y ↦ x.1.toList < y.1.toList :=
+  (pairwise_lt_positionedSubtrees t.toRoseTree).filterMap _ fun _ _ h _ ha _ hb ↦ by
     simp only [Option.map_eq_some_iff] at ha hb
     obtain ⟨_, -, rfl⟩ := ha
     obtain ⟨_, -, rfl⟩ := hb
@@ -375,9 +379,10 @@ private theorem filterMap_last_eq_dedup {β : Type*} [DecidableEq β] :
 /-- Where no mother of a term dominates another, a term pronounced under its highest mother
 pronounced last is pronounced at its last position. -/
 theorem spellOutPositionAux_getLast?
-    (hshare : ∀ s ∈ t.val.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
+    (hshare : ∀ s ∈ t.toRoseTree.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
       IsSubtree g g' → g = g') :
-    ∀ (n : ℕ) (s : RoseTree Vertex), IsSubtree s t.val → t.val.numNodes < s.numNodes + n →
+    ∀ (n : ℕ) (s : RoseTree Vertex), IsSubtree s t.toRoseTree → t.toRoseTree.numNodes < s.numNodes +
+        n →
       spellOutPositionAux List.getLast? t n s = (positionsOf t s).getLast?
   | 0, s, hs, hn => absurd hs.numNodes_le (by omega)
   | n + 1, s, hs, hn => by
@@ -400,13 +405,13 @@ theorem spellOutPositionAux_getLast?
     have hPne : P.toList ≠ [] := fun h ↦ hroot (by rw [h] at hPs; exact (Option.some.inj hPs).symm)
     have hPeq : P.toList = P.parent.toList ++ [P.toList.getLast hPne] :=
       (List.dropLast_concat_getLast hPne).symm
-    obtain ⟨m, hm, hms⟩ : ∃ m, t.val[P.parent.toList]? = some m ∧
+    obtain ⟨m, hm, hms⟩ : ∃ m, t.toRoseTree[P.parent.toList]? = some m ∧
         m.children[P.toList.getLast hPne]? = some s := by
       rw [hPeq, getElem?_append] at hPs
       obtain ⟨m, hm, hms⟩ := Option.bind_eq_some_iff.1 hPs
       exact ⟨m, hm, by simpa using hms⟩
     have hsm : s ∈ m.children := List.mem_of_getElem? hms
-    have hmt : IsSubtree m t.val := isSubtree_iff_exists_getElem?.2 ⟨_, hm⟩
+    have hmt : IsSubtree m t.toRoseTree := isSubtree_iff_exists_getElem?.2 ⟨_, hm⟩
     refine mem_candidates.2 ⟨hPs, m, hm,
       ⟨hsm, fun g hg ⟨hmg, hne⟩ ↦
         hne (hshare s (mem_subtrees.2 hs) m (mem_mothers.2 ⟨hmt, hsm⟩) g hg hmg)⟩, ?_⟩
@@ -432,14 +437,14 @@ theorem spellOutPositionAux_getLast?
 its highest mother pronounced last pronounces each token at its last occurrence: the tokens
 `tokens` keeps, in its order. -/
 theorem remergedYield_getLast?_eq_tokens
-    (hshare : ∀ s ∈ t.val.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
+    (hshare : ∀ s ∈ t.toRoseTree.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
       IsSubtree g g' → g = g') :
     remergedYield List.getLast? t = tokens t := by
   rw [remergedYield, tokens, ← filterMap_last_eq_dedup pairwise_lt_tokenList]
   refine List.filterMap_congr fun x hx ↦ if_congr ?_ rfl rfl
   have hs := mem_tokenList_iff.1 hx
   rw [spellOutPosition, spellOutPositionAux_getLast? hshare _ _
-    (isSubtree_iff_exists_getElem?.2 ⟨_, hs⟩) (by have := numNodes_pos (t := t.val); omega),
+    (isSubtree_iff_exists_getElem?.2 ⟨_, hs⟩) (by have := numNodes_pos (t := t.toRoseTree); omega),
     getLast?_eq_some_iff_of_pairwise pairwise_lt_positionsOf]
   simp only [mem_positionsOf, ← mem_tokenList_iff]
   exact ⟨fun h y hy hyx ↦ h.2 y.1 (hyx ▸ hy), fun h ↦ ⟨hx, fun y hy ↦ h (y, x.2) hy rfl⟩⟩

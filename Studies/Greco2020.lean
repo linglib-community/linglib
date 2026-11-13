@@ -28,7 +28,7 @@ Foc° as CP-phase head gives the derivation, Force° does not.
 
 ## Implementation notes
 
-The spine (68) is a linearized syntactic object over tokens, and `Closed p` reads the Phase
+The spine (68) is a planar syntactic object over tokens, and `Closed p` reads the Phase
 Impenetrability Condition off it: *non* is outside the interior of the phase headed by
 `p` exactly when `p` merged first. The representation (73) carries the raised TP in the
 specifier of the focus phrase, and the focus-side requirements read `Sisters` off it. The
@@ -229,10 +229,10 @@ def v : LexicalItem.Token := ⟨.of .v [.D], 6⟩
 def arg : LexicalItem.Token := ⟨.of .D [], 7⟩
 
 /-- The v*P. -/
-def vP : LinearizedSyntacticObject := v * arg
+def vP : PlanarSyntacticObject := v * arg
 
 /-- The spine (68) with *non* in place: Force° over Neg° over Foc° over Top° over Fin° over TP. -/
-def spine : LinearizedSyntacticObject := force * (non * (foc * (top * (fin * (t * vP)))))
+def spine : PlanarSyntacticObject := force * (non * (foc * (top * (fin * (t * vP)))))
 
 /-- The v*P is closed to *non* under the CP-phase head `p`: the v*P lies in the interior of the
 phase `p` heads and *non* does not, so `p` merged first and transferred the v*P before *non*
@@ -248,13 +248,13 @@ Force°, merged after *non*, it is not. -/
 theorem phase_heads : Closed fin ∧ Closed top ∧ Closed foc ∧ ¬ Closed force := by decide
 
 /-- The raised TP of (73). -/
-def tp : LinearizedSyntacticObject := t * vP
+def tp : PlanarSyntacticObject := t * vP
 
 /-- Foc° over the trace of the raised TP. -/
-def focBar : LinearizedSyntacticObject := foc * LinearizedSyntacticObject.traceOf t
+def focBar : PlanarSyntacticObject := foc * PlanarSyntacticObject.traceOf t
 
 /-- The representation (73): *non* selects the focus phrase whose specifier hosts the TP. -/
-def sneg : LinearizedSyntacticObject := non * (tp * focBar)
+def sneg : PlanarSyntacticObject := non * (tp * focBar)
 
 /-- Some constituent occupies the specifier of the unique focus phrase ([rizzi-1997]). -/
 def FocOccupied : Prop :=

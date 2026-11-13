@@ -14,17 +14,17 @@ public import Linglib.Core.Data.UnorderedTree.Leaves
 This file reads c-command between two tokens off an ordered tree of vertices, by recursion on the
 tree: a token c-commands another when it is a daughter whose sister holds the other. The recursion
 needs no licensing, so it applies to the raw trees that recursions over a marked object produce.
-Between distinct tokens of a linearized object it [is `CCommands`](##cCommands_iff_tokenCCommands).
+Between distinct tokens of a planar object it [is `CCommands`](##cCommands_iff_tokenCCommands).
 
 ## Main definitions
 
-* `Minimalist.LinearizedSyntacticObject.Holds`: the tree has a token as a leaf.
-* `Minimalist.LinearizedSyntacticObject.TokenCCommands`: c-command between tokens.
+* `Minimalist.PlanarSyntacticObject.Holds`: the tree has a token as a leaf.
+* `Minimalist.PlanarSyntacticObject.TokenCCommands`: c-command between tokens.
 -/
 
 @[expose] public section
 
-namespace Minimalist.LinearizedSyntacticObject
+namespace Minimalist.PlanarSyntacticObject
 
 open RoseTree SyntacticObject
 
@@ -141,40 +141,43 @@ private theorem eq_node_of_coe_eq {v : RoseTree Vertex}
 
 private theorem terms_of_nil {a : Vertex}
     (h : IsSyntacticObject (UnorderedTree.mk (.node a []))) :
-    (LinearizedSyntacticObject.toSyntacticObject ⟨.node a [], h⟩).terms =
-      {LinearizedSyntacticObject.toSyntacticObject ⟨.node a [], h⟩} := by
-  rcases a with (_ | v) | (_ | v)
-  · exact absurd h (by simp [licensed_node_iff, Vertex.Licenses])
-  · exact terms_leaf v
-  · exact terms_trace
-  · exact terms_traceOf v
+    (PlanarSyntacticObject.ofRoseTree (.node a []) h).toSyntacticObject.terms =
+      {(PlanarSyntacticObject.ofRoseTree (.node a []) h).toSyntacticObject} := by
+  have hv := PlanarSyntacticObject.toRoseTree_ofRoseTree _ h
+  generalize PlanarSyntacticObject.ofRoseTree (.node a []) h = p at hv
+  cases p with
+  | of x => rfl
+  | mul l r => simp [PlanarSyntacticObject.toRoseTree] at hv
 
 /-- The token is a term of the object just when the tree holds it. -/
-theorem coe_mem_terms_iff (p : LinearizedSyntacticObject) :
-    (↑y : SyntacticObject) ∈ p.toSyntacticObject.terms ↔ Holds y p.val := by
-  obtain ⟨p, h⟩ := p
+theorem coe_mem_terms_iff (p : PlanarSyntacticObject) :
+    (↑y : SyntacticObject) ∈ p.toSyntacticObject.terms ↔ Holds y p.toRoseTree := by
+  obtain ⟨p, h, rfl⟩ := p.exists_eq_ofRoseTree
+  rw [toRoseTree_ofRoseTree]
   induction p with
   | node a cs ih =>
     rcases length_eq_zero_or_two h with hlen | hlen
     · rw [List.length_eq_zero_iff] at hlen
       subst hlen
-      rw [terms_of_nil, Multiset.mem_singleton, Subtype.ext_iff, holds_leaf]
+      rw [terms_of_nil, Multiset.mem_singleton, ← SyntacticObject.toUnorderedTree_inj,
+          toUnorderedTree_toSyntacticObject,
+        toRoseTree_ofRoseTree, holds_leaf]
       change UnorderedTree.mk (.node (Sum.inl (some y)) []) = UnorderedTree.mk (.node a []) ↔ _
       rw [UnorderedTree.mk_node_eq_mk_node_iff]
       simp [eq_comm]
     · obtain ⟨u, v, rfl⟩ := List.length_eq_two.1 hlen
       obtain rfl := eq_bare_of_ne_nil h (by simp)
       obtain ⟨hu, hv⟩ := (isSyntacticObject_mk_merge _ _).1 h
-      change (↑y : SyntacticObject) ∈ (LinearizedSyntacticObject.toSyntacticObject
-        (LinearizedSyntacticObject.merge ⟨u, hu⟩ ⟨v, hv⟩)).terms ↔ _
-      rw [LinearizedSyntacticObject.toSyntacticObject_merge, terms_merge, Multiset.mem_cons,
+      rw [ofRoseTree_node_bare, PlanarSyntacticObject.toSyntacticObject_merge, terms_merge,
+        Multiset.mem_cons,
         Multiset.mem_add, holds_pair, ih u (by simp) hu, ih v (by simp) hv]
       exact or_iff_right (leaf_ne_merge _ _ _)
 
 /-- On a syntactic object c-command between distinct tokens is `TokenCCommands`. -/
-theorem cCommands_iff_tokenCCommands (hxy : x ≠ y) (p : LinearizedSyntacticObject) :
-    CCommands p.toSyntacticObject ↑x ↑y ↔ TokenCCommands x y p.val := by
-  obtain ⟨p, h⟩ := p
+theorem cCommands_iff_tokenCCommands (hxy : x ≠ y) (p : PlanarSyntacticObject) :
+    CCommands p.toSyntacticObject ↑x ↑y ↔ TokenCCommands x y p.toRoseTree := by
+  obtain ⟨p, h, rfl⟩ := p.exists_eq_ofRoseTree
+  rw [toRoseTree_ofRoseTree]
   induction p with
   | node a cs ih =>
     rcases length_eq_zero_or_two h with hlen | hlen
@@ -188,20 +191,30 @@ theorem cCommands_iff_tokenCCommands (hxy : x ≠ y) (p : LinearizedSyntacticObj
     · obtain ⟨u, v, rfl⟩ := List.length_eq_two.1 hlen
       obtain rfl := eq_bare_of_ne_nil h (by simp)
       obtain ⟨hu, hv⟩ := (isSyntacticObject_mk_merge _ _).1 h
-      let U : LinearizedSyntacticObject := ⟨u, hu⟩
-      let V : LinearizedSyntacticObject := ⟨v, hv⟩
-      change CCommands (LinearizedSyntacticObject.toSyntacticObject
-        (LinearizedSyntacticObject.merge U V)) _ _ ↔ _
-      rw [LinearizedSyntacticObject.toSyntacticObject_merge]
+      let U : PlanarSyntacticObject := ofRoseTree u hu
+      let V : PlanarSyntacticObject := ofRoseTree v hv
+      have hUv : U.toRoseTree = u := toRoseTree_ofRoseTree u hu
+      have hVv : V.toRoseTree = v := toRoseTree_ofRoseTree v hv
+      have hval (W : PlanarSyntacticObject) {w : RoseTree Vertex} (hW : W.toRoseTree = w)
+          (he : (↑x : SyntacticObject) = W.toSyntacticObject) :
+          UnorderedTree.mk (.node (Sum.inl (some x)) []) = UnorderedTree.mk w :=
+        (congrArg SyntacticObject.toUnorderedTree he).trans
+          ((toUnorderedTree_toSyntacticObject W).trans (congrArg UnorderedTree.mk hW))
+      rw [ofRoseTree_node_bare]
+      change CCommands (PlanarSyntacticObject.toSyntacticObject
+        (PlanarSyntacticObject.merge U V)) _ _ ↔ _
+      rw [PlanarSyntacticObject.toSyntacticObject_merge]
       constructor
       · rintro ⟨z, -, hs, hzy⟩
         rcases Sisters.of_merge hs with hc | hc | ⟨he, rfl⟩ | ⟨he, rfl⟩
         · exact .inl ((ih u (by simp) hu).1 ⟨z, hc.mem_right, hc, hzy⟩)
         · exact .inr ((ih v (by simp) hv).1 ⟨z, hc.mem_right, hc, hzy⟩)
-        · obtain rfl := eq_node_of_coe_eq (congrArg (·.val) he)
-          exact .left ((coe_mem_terms_iff V).1 (mem_terms.2 hzy))
-        · obtain rfl := eq_node_of_coe_eq (congrArg (·.val) he)
-          exact .right ((coe_mem_terms_iff U).1 (mem_terms.2 hzy))
+        · have hu' := eq_node_of_coe_eq (hval U hUv he)
+          rw [hu']
+          exact .left (hVv ▸ (coe_mem_terms_iff V).1 (mem_terms.2 hzy))
+        · have hv' := eq_node_of_coe_eq (hval V hVv he)
+          rw [hv']
+          exact .right (hUv ▸ (coe_mem_terms_iff U).1 (mem_terms.2 hzy))
       · intro hc
         cases hc with
         | inl hl =>
@@ -212,8 +225,8 @@ theorem cCommands_iff_tokenCCommands (hxy : x ≠ y) (p : LinearizedSyntacticObj
             rw [terms_merge]; exact Multiset.mem_cons_of_mem (Multiset.mem_add.2 (.inr ht))
         | left hy =>
           refine cCommands_merge_left (l := U.toSyntacticObject) (r := V.toSyntacticObject)
-            (fun he ↦ ?_) ((coe_mem_terms_iff V).2 hy)
-          have hv' : v = .node (.inl (some x)) [] := eq_node_of_coe_eq (congrArg (·.val) he)
+            (fun he ↦ ?_) ((coe_mem_terms_iff V).2 (hVv.symm ▸ hy))
+          have hv' : v = .node (.inl (some x)) [] := eq_node_of_coe_eq (hval V hVv he)
           rw [hv', holds_leaf] at hy
           exact hxy (Option.some.inj (Sum.inl.inj hy))
         | right hy =>
@@ -221,13 +234,13 @@ theorem cCommands_iff_tokenCCommands (hxy : x ≠ y) (p : LinearizedSyntacticObj
             ((immediatelyContains_merge _ _ _).2 (.inl rfl))), ⟨_, self_mem_terms _,
               (immediatelyContains_merge _ _ _).2 (.inr rfl),
               (immediatelyContains_merge _ _ _).2 (.inl rfl), fun he ↦ ?_⟩,
-            mem_terms.1 ((coe_mem_terms_iff U).2 hy)⟩
-          have hu' : u = .node (.inl (some x)) [] := eq_node_of_coe_eq (congrArg (·.val) he)
+            mem_terms.1 ((coe_mem_terms_iff U).2 (hUv.symm ▸ hy))⟩
+          have hu' : u = .node (.inl (some x)) [] := eq_node_of_coe_eq (hval U hUv he)
           rw [hu', holds_leaf] at hy
           exact hxy (Option.some.inj (Sum.inl.inj hy))
 
-theorem holds_iff_mem_yield {w : LexicalItem.Token} (p : LinearizedSyntacticObject) :
-    Holds w p.val ↔ w ∈ p.toSyntacticObject.yield :=
+theorem holds_iff_mem_yield {w : LexicalItem.Token} (p : PlanarSyntacticObject) :
+    Holds w p.toRoseTree ↔ w ∈ p.toSyntacticObject.yield :=
   (coe_mem_terms_iff p).symm.trans mem_yield_iff.symm
 
 /-- A trace-free object holds a token. -/
@@ -251,4 +264,4 @@ theorem exists_holds {p : RoseTree Vertex} (h : IsSyntacticObject (UnorderedTree
       exact ⟨w, holds_node_of_mem (by simp) hw⟩
 
 
-end Minimalist.LinearizedSyntacticObject
+end Minimalist.PlanarSyntacticObject

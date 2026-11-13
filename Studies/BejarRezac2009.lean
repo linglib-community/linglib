@@ -94,7 +94,8 @@ def transitiveVP : Derivation := ⟨verb, [.em .left ia, .em .right littleV, .em
 
 -- (16), the order `residue` and `IsDirect` take for granted
 theorem cyclicGoals_transitiveVP :
-    transitiveVP.externalize?.map (fun t ↦ ((tokenList t.val).find? (·.2 == littleV)).map fun a ↦
+    transitiveVP.externalize?.map (fun t ↦ ((tokenList t.toRoseTree).find? (·.2 == littleV)).map fun
+        a ↦
       cyclicGoals .raising t (·.item.cat = .D) ∅ a.1) = some (some [ia, ea]) := by
   decide +kernel
 

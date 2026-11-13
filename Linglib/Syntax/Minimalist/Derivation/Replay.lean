@@ -12,7 +12,7 @@ public import Linglib.Core.Data.List.Monadic
 /-!
 # Replaying a derivation
 
-`Derivation.replay?` runs the steps of a derivation by Merge on linearized objects, each new
+`Derivation.replay?` runs the steps of a derivation by Merge on planar objects, each new
 daughter on the side its step records, and [a successful replay forgets to the derivation's own
 configuration](##Minimalist.Derivation.replay?_faithful). [The replay succeeds exactly when the
 derivation starts from a leaf and each step applies](##Minimalist.Derivation.isSome_replay?_iff),
@@ -40,33 +40,33 @@ open RoseTree UnorderedTree SyntacticObject
 
 open Derivation (Cfg)
 
-/-- A step on a linearized configuration, `Step.run` with each new daughter on its side. Internal
+/-- A step on a planar configuration, `Step.run` with each new daughter on its side. Internal
     Merge raises the leftmost occurrence of the mover, leaving the trace of its head under `τ`,
     and an extraction stacks it; `none` when the mover is absent or the stack is empty. -/
-def Step.replay? (step : Step) (c : Cfg LinearizedSyntacticObject)
+def Step.replay? (step : Step) (c : Cfg PlanarSyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
-    Option (Cfg LinearizedSyntacticObject) :=
+    Option (Cfg PlanarSyntacticObject) :=
   match step, c with
   | .em side item, ⟨p, st⟩ => some ⟨p.attach side item, st⟩
   | .im mover side, ⟨p, st⟩ =>
-      (p.find? mover).map fun s ↦ ⟨(p.replace mover (mover.traceLinearized τ)).attach side s, st⟩
+      (p.find? mover).map fun s ↦ ⟨(p.replace mover (mover.tracePlanar τ)).attach side s, st⟩
   | .extract mover, ⟨p, st⟩ =>
-      (p.find? mover).map fun s ↦ ⟨p.replace mover (mover.traceLinearized τ), s :: st⟩
+      (p.find? mover).map fun s ↦ ⟨p.replace mover (mover.tracePlanar τ), s :: st⟩
   | .remerge side, ⟨p, m :: st⟩ => some ⟨p.attach side m, st⟩
   | .remerge _, ⟨_, []⟩ => none
 
 namespace Derivation
 
-/-- The derivation's linearized configuration under the trace encoder `τ`, or `none` if the initial
+/-- The derivation's planar configuration under the trace encoder `τ`, or `none` if the initial
     object is not a leaf, a mover is absent, or `remerge` finds the stack empty. -/
 def replay? (d : Derivation) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
-    Option (Cfg LinearizedSyntacticObject) :=
-  d.initial.toLinearizedLeaf?.bind fun p ↦ d.steps.foldlM (fun c step ↦ step.replay? c τ) ⟨p, []⟩
+    Option (Cfg PlanarSyntacticObject) :=
+  d.initial.toPlanarLeaf?.bind fun p ↦ d.steps.foldlM (fun c step ↦ step.replay? c τ) ⟨p, []⟩
 
-/-- The derivation's linearized object under the trace encoder `τ`; copies still on the stack are
+/-- The derivation's planar object under the trace encoder `τ`; copies still on the stack are
     not part of it. -/
 def externalize? (d : Derivation) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
-    Option LinearizedSyntacticObject :=
+    Option PlanarSyntacticObject :=
   (d.replay? τ).map (·.current)
 
 end Derivation
@@ -87,10 +87,10 @@ theorem replay?_append_singleton (d : Derivation) (step : Step) :
   funext c
   cases step.replay? c <;> rfl
 
-theorem stack_eq_nil_of_replay? {d : Derivation} {c : Cfg LinearizedSyntacticObject}
+theorem stack_eq_nil_of_replay? {d : Derivation} {c : Cfg PlanarSyntacticObject}
     (hm : ∀ step ∈ d.steps, step.IsMerge) (h : d.replay? τ = some c) : c.stack = [] := by
   obtain ⟨p, -, h⟩ := Option.bind_eq_some_iff.1 h
-  have key : ∀ (steps : List Step) (c₀ c : Cfg LinearizedSyntacticObject),
+  have key : ∀ (steps : List Step) (c₀ c : Cfg PlanarSyntacticObject),
       (∀ step ∈ steps, step.IsMerge) → c₀.stack = [] →
         steps.foldlM (fun c step ↦ step.replay? c τ) c₀ = some c → c.stack = [] := by
     intro steps
@@ -120,21 +120,21 @@ variable {f : LexicalItem.Token → LexicalItem.Token}
   {τ' : SyntacticObject → Option LexicalItem.Token}
 
 theorem Step.replay?_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f) = (τ s).map f)
-    (step : Step) (c : Cfg LinearizedSyntacticObject) :
-    (step.map f).replay? (c.map (LinearizedSyntacticObject.map f)) τ' =
-      (step.replay? c τ).map (Cfg.map (LinearizedSyntacticObject.map f)) := by
+    (step : Step) (c : Cfg PlanarSyntacticObject) :
+    (step.map f).replay? (c.map (PlanarSyntacticObject.map f)) τ' =
+      (step.replay? c τ).map (Cfg.map (PlanarSyntacticObject.map f)) := by
   rcases c with ⟨p, _ | ⟨m, st⟩⟩ <;> cases step <;>
-    simp [Step.map, Step.replay?, Cfg.map, LinearizedSyntacticObject.find?_map hf,
-      LinearizedSyntacticObject.replace_map hf, SyntacticObject.traceLinearized_map hτ,
+    simp [Step.map, Step.replay?, Cfg.map, PlanarSyntacticObject.find?_map hf,
+      PlanarSyntacticObject.replace_map hf, SyntacticObject.tracePlanar_map hτ,
       Function.comp_def]
 
 namespace Derivation
 
 theorem replay?_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f) = (τ s).map f)
     (d : Derivation) :
-    (d.map f).replay? τ' = (d.replay? τ).map (Cfg.map (LinearizedSyntacticObject.map f)) := by
-  simp only [replay?, map, SyntacticObject.toLinearizedLeaf?_map]
-  cases d.initial.toLinearizedLeaf? with
+    (d.map f).replay? τ' = (d.replay? τ).map (Cfg.map (PlanarSyntacticObject.map f)) := by
+  simp only [replay?, map, SyntacticObject.toPlanarLeaf?_map]
+  cases d.initial.toPlanarLeaf? with
   | none => rfl
   | some p =>
     simp only [Option.map_some, Option.bind_some, List.foldlM_map]
@@ -144,7 +144,7 @@ theorem replay?_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f) = (�
 
 theorem externalize?_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f) = (τ s).map f)
     (d : Derivation) :
-    (d.map f).externalize? τ' = (d.externalize? τ).map (LinearizedSyntacticObject.map f) := by
+    (d.map f).externalize? τ' = (d.externalize? τ).map (PlanarSyntacticObject.map f) := by
   rw [externalize?, externalize?, replay?_map hf hτ, Option.map_map, Option.map_map]
   rfl
 
@@ -152,10 +152,10 @@ end Derivation
 
 end Map
 
-private theorem Step.map_of_replay? {c c' : Cfg LinearizedSyntacticObject} {step : Step}
+private theorem Step.map_of_replay? {c c' : Cfg PlanarSyntacticObject} {step : Step}
     (h : step.replay? c τ = some c') :
-    c'.map LinearizedSyntacticObject.toSyntacticObject
-      = step.run (c.map LinearizedSyntacticObject.toSyntacticObject) τ := by
+    c'.map PlanarSyntacticObject.toSyntacticObject
+      = step.run (c.map PlanarSyntacticObject.toSyntacticObject) τ := by
   obtain ⟨p, st⟩ := c
   cases step with
   | em side item =>
@@ -164,11 +164,11 @@ private theorem Step.map_of_replay? {c c' : Cfg LinearizedSyntacticObject} {step
   | im mover side =>
     obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
     simp [Cfg.map, Step.run, Step.apply_im, deleteAccessible,
-      LinearizedSyntacticObject.toSyntacticObject_find? hs, SyntacticObject.merge_comm]
+      PlanarSyntacticObject.toSyntacticObject_find? hs, SyntacticObject.merge_comm]
   | extract mover =>
     obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
     simp [Cfg.map, Step.run, Step.apply, deleteAccessible,
-      LinearizedSyntacticObject.toSyntacticObject_find? hs]
+      PlanarSyntacticObject.toSyntacticObject_find? hs]
   | remerge side =>
     rcases st with _ | ⟨m, st⟩
     · cases h
@@ -177,25 +177,25 @@ private theorem Step.map_of_replay? {c c' : Cfg LinearizedSyntacticObject} {step
 
 /-- A successful replay forgets to the configuration of the derivation
 ([marcolli-chomsky-berwick-2025] Lemma 1.13.1). -/
-theorem Derivation.replay?_faithful (d : Derivation) {c : Cfg LinearizedSyntacticObject}
+theorem Derivation.replay?_faithful (d : Derivation) {c : Cfg PlanarSyntacticObject}
     (h : d.replay? τ = some c) :
-    c.map LinearizedSyntacticObject.toSyntacticObject = d.run τ := by
+    c.map PlanarSyntacticObject.toSyntacticObject = d.run τ := by
   obtain ⟨p, hp, h⟩ := Option.bind_eq_some_iff.1 h
   rw [List.foldl_eq_of_foldlM_eq_some (f := fun c (step : Step) ↦ step.replay? c τ)
     (g := fun c (step : Step) ↦ step.run c τ)
-    (π := Cfg.map LinearizedSyntacticObject.toSyntacticObject)
+    (π := Cfg.map PlanarSyntacticObject.toSyntacticObject)
     (fun _ _ _ ↦ Step.map_of_replay?) h, Derivation.run, Cfg.map, List.map_nil,
-    toSyntacticObject_of_toLinearizedLeaf? hp]
+    toSyntacticObject_of_toPlanarLeaf? hp]
 
 /-- A successful externalization forgets to the derived object, so the surface readouts are the
     word order of `final` itself. -/
-theorem Derivation.externalize?_faithful (d : Derivation) {p : LinearizedSyntacticObject}
+theorem Derivation.externalize?_faithful (d : Derivation) {p : PlanarSyntacticObject}
     (h : d.externalize? τ = some p) : p.toSyntacticObject = d.final τ := by
   obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 h
   rw [Derivation.final, ← d.replay?_faithful hc, Cfg.map_current]
 
 theorem Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
-    {p : LinearizedSyntacticObject} (h : (d.take n).externalize? τ = some p) :
+    {p : PlanarSyntacticObject} (h : (d.take n).externalize? τ = some p) :
     p.toSyntacticObject = d.stageAt n τ :=
   externalize?_faithful (d.take n) h
 
@@ -204,22 +204,22 @@ theorem Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
 The replay succeeds exactly on the derivations whose steps apply, so validity is decided on it. -/
 
 /-- A step replays exactly when it applies to the configuration replayed so far. -/
-theorem Step.isSome_replay?_iff (step : Step) (c : Cfg LinearizedSyntacticObject) :
+theorem Step.isSome_replay?_iff (step : Step) (c : Cfg PlanarSyntacticObject) :
     (step.replay? c τ).isSome ↔
-      step.AppliesTo (c.map LinearizedSyntacticObject.toSyntacticObject) := by
+      step.AppliesTo (c.map PlanarSyntacticObject.toSyntacticObject) := by
   obtain ⟨p, st⟩ := c
   cases step with
   | em side item => simp [Step.replay?, Step.AppliesTo]
   | im mover side =>
-    simp [Step.replay?, Step.AppliesTo, LinearizedSyntacticObject.isSome_find?_iff]
+    simp [Step.replay?, Step.AppliesTo, PlanarSyntacticObject.isSome_find?_iff]
   | extract mover =>
-    simp [Step.replay?, Step.AppliesTo, LinearizedSyntacticObject.isSome_find?_iff]
+    simp [Step.replay?, Step.AppliesTo, PlanarSyntacticObject.isSome_find?_iff]
   | remerge side => cases st <;> simp [Step.replay?, Step.AppliesTo]
 
 theorem Step.isSome_foldlM_replay?_iff :
-    ∀ (steps : List Step) (c : Cfg LinearizedSyntacticObject),
+    ∀ (steps : List Step) (c : Cfg PlanarSyntacticObject),
       (steps.foldlM (fun c (step : Step) ↦ step.replay? c τ) c).isSome ↔
-        Step.ApplyFrom τ steps (c.map LinearizedSyntacticObject.toSyntacticObject)
+        Step.ApplyFrom τ steps (c.map PlanarSyntacticObject.toSyntacticObject)
   | [], _ => by simp [Step.ApplyFrom]
   | step :: steps, c => by
     rw [List.foldlM_cons, Step.ApplyFrom, ← Step.isSome_replay?_iff (τ := τ)]
@@ -235,13 +235,13 @@ namespace Derivation
 /-- The replay succeeds exactly when the derivation starts from a leaf and each step applies. -/
 theorem isSome_replay?_iff {d : Derivation} :
     (d.replay? τ).isSome ↔
-      d.initial.toLinearizedLeaf?.isSome ∧ Step.ApplyFrom τ d.steps ⟨d.initial, []⟩ := by
+      d.initial.toPlanarLeaf?.isSome ∧ Step.ApplyFrom τ d.steps ⟨d.initial, []⟩ := by
   rw [replay?]
-  cases h : d.initial.toLinearizedLeaf? with
+  cases h : d.initial.toPlanarLeaf? with
   | none => simp
   | some p =>
     rw [Option.bind_some, Step.isSome_foldlM_replay?_iff]
-    simp [Cfg.map, SyntacticObject.toSyntacticObject_of_toLinearizedLeaf? h]
+    simp [Cfg.map, SyntacticObject.toSyntacticObject_of_toPlanarLeaf? h]
 
 
 theorem IsValid.isSome_replay? {d : Derivation} (h : d.IsValid τ) : (d.replay? τ).isSome :=
@@ -250,7 +250,7 @@ theorem IsValid.isSome_replay? {d : Derivation} (h : d.IsValid τ) : (d.replay? 
 /-- Validity is decided on the replay. -/
 instance (d : Derivation) : Decidable (d.IsValid τ) :=
   decidable_of_iff
-    (d.initial.toLinearizedLeaf?.isSome ∧ (d.replay? τ).isSome ∧ d.lexTokens.Nodup)
+    (d.initial.toPlanarLeaf?.isSome ∧ (d.replay? τ).isSome ∧ d.lexTokens.Nodup)
     ⟨fun ⟨hi, hr, hn⟩ ↦ ⟨hi, (isSome_replay?_iff.1 hr).2, hn⟩,
       fun h ↦ ⟨h.initial, h.isSome_replay?, h.nodup⟩⟩
 
@@ -266,9 +266,9 @@ end Derivation
 
 section Yield
 
-open LinearizedSyntacticObject (toSyntacticObject)
+open PlanarSyntacticObject (toSyntacticObject)
 
-private theorem Step.yield_map_replay? {step : Step} {c c' : Cfg LinearizedSyntacticObject}
+private theorem Step.yield_map_replay? {step : Step} {c c' : Cfg PlanarSyntacticObject}
     (hc : ((c.map toSyntacticObject).yield + (step.items.map SyntacticObject.yield).sum).Nodup)
     (h : step.replay? c τ = some c') :
     (c'.map toSyntacticObject).yield =
@@ -280,29 +280,29 @@ private theorem Step.yield_map_replay? {step : Step} {c c' : Cfg LinearizedSynta
   | em side item =>
     obtain rfl := Option.some.inj h
     simp only [Cfg.yield_map, Step.items, Multiset.map_singleton, Multiset.sum_singleton,
-      LinearizedSyntacticObject.yield_attach]
+      PlanarSyntacticObject.yield_attach]
     abel
   | im mover side =>
     obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
     simp only [Cfg.yield_map, Step.items, Multiset.map_zero, Multiset.sum_zero, add_zero,
-      LinearizedSyntacticObject.yield_attach]
+      PlanarSyntacticObject.yield_attach]
     rw [add_comm s.toSyntacticObject.yield,
-      LinearizedSyntacticObject.yield_replace_add_yield τ hp hs]
+      PlanarSyntacticObject.yield_replace_add_yield τ hp hs]
   | extract mover =>
     obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
     simp only [Cfg.yield_map, Step.items, Multiset.map_zero, Multiset.sum_zero, add_zero,
       List.map_cons, List.sum_cons]
-    rw [← add_assoc, LinearizedSyntacticObject.yield_replace_add_yield τ hp hs]
+    rw [← add_assoc, PlanarSyntacticObject.yield_replace_add_yield τ hp hs]
   | remerge side =>
     rcases st with _ | ⟨m, st⟩
     · cases h
     · obtain rfl := Option.some.inj h
       simp only [Cfg.yield_map, Step.items, Multiset.map_zero, Multiset.sum_zero, add_zero,
-        List.map_cons, List.sum_cons, LinearizedSyntacticObject.yield_attach]
+        List.map_cons, List.sum_cons, PlanarSyntacticObject.yield_attach]
       abel
 
 private theorem yield_map_foldlM_replay? :
-    ∀ {steps : List Step} {c c' : Cfg LinearizedSyntacticObject},
+    ∀ {steps : List Step} {c c' : Cfg PlanarSyntacticObject},
       steps.foldlM (fun c step ↦ step.replay? c τ) c = some c' →
       ((c.map toSyntacticObject).yield +
         ((Step.itemsList steps).map SyntacticObject.yield).sum).Nodup →
@@ -318,12 +318,12 @@ private theorem yield_map_foldlM_replay? :
 
 /-- When no token is merged twice, a derivation pronounces each token it merges once, in its
 object or in a copy left on the stack, however many copies its movements leave. -/
-theorem Derivation.yield_replay? {d : Derivation} {c : Cfg LinearizedSyntacticObject}
+theorem Derivation.yield_replay? {d : Derivation} {c : Cfg PlanarSyntacticObject}
     (hd : d.lexTokens.Nodup) (h : d.replay? τ = some c) :
     (c.map toSyntacticObject).yield = d.lexTokens := by
   obtain ⟨p, hp, h⟩ := Option.bind_eq_some_iff.1 h
   have h0 : (Cfg.map toSyntacticObject ⟨p, []⟩).yield = d.initial.yield := by
-    simp [Cfg.yield_map, SyntacticObject.toSyntacticObject_of_toLinearizedLeaf? hp]
+    simp [Cfg.yield_map, SyntacticObject.toSyntacticObject_of_toPlanarLeaf? hp]
   have := yield_map_foldlM_replay? h (by rwa [h0])
   rwa [h0] at this
 

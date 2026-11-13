@@ -19,16 +19,16 @@ the object, so the lower copy of a phrase that has moved on is invisible to it.
 
 ## Main definitions
 
-* `Minimalist.LinearizedSyntacticObject.InDomain`: every occurrence of a term lies inside an
+* `Minimalist.PlanarSyntacticObject.InDomain`: every occurrence of a term lies inside an
   occurrence of another.
-* `Minimalist.LinearizedSyntacticObject.FindsHead`, `labelsAt`, `labels`: what minimal search finds.
-* `Minimalist.LinearizedSyntacticObject.IsLabeledBy`, `IsLabeledByFeature`, `IsLabeled`.
-* `Minimalist.LinearizedSyntacticObject.LabelDaughter`, `Minimalist.HeadFunction.label`: the head
+* `Minimalist.PlanarSyntacticObject.FindsHead`, `labelsAt`, `labels`: what minimal search finds.
+* `Minimalist.PlanarSyntacticObject.IsLabeledBy`, `IsLabeledByFeature`, `IsLabeled`.
+* `Minimalist.PlanarSyntacticObject.LabelDaughter`, `Minimalist.HeadFunction.label`: the head
   relation labels induce, and the head function it gives.
 
 ## Main results
 
-* `Minimalist.LinearizedSyntacticObject.findsHead_iff`: search finds the visible heads that no
+* `Minimalist.PlanarSyntacticObject.findsHead_iff`: search finds the visible heads that no
   visible head asymmetrically c-commands.
 * `isLabeledBy_merge_head`, `labels_merge_heads`: a head merged with a non-head labels the result,
   and two heads are both found.
@@ -61,11 +61,11 @@ the object, so the lower copy of a phrase that has moved on is invisible to it.
 
 @[expose] public section
 
-namespace Minimalist.LinearizedSyntacticObject
+namespace Minimalist.PlanarSyntacticObject
 
 open RoseTree SyntacticObject Core.Order
 
-variable (t : LinearizedSyntacticObject)
+variable (t : PlanarSyntacticObject)
 
 /-- `y` is in the domain of `x` in `t`: every occurrence of `y` is a term of an occurrence of `x`,
 [chomsky-2013]'s condition under which the labeling algorithm searching `x` sees `y`. -/
@@ -76,12 +76,12 @@ instance (y x : SyntacticObject) : Decidable (t.InDomain y x) :=
 
 /-- Minimal search from the occurrence at `n` finds the head at `q`: a head in the domain of the
 term at `n` that no other is closer than. -/
-def FindsHead (n q : t.val.Positions) : Prop :=
+def FindsHead (n q : t.toRoseTree.Positions) : Prop :=
   (Probe.relativized fun p ↦ (t.termAt p).token?.isSome).Finds
     {p | n ≤ p ∧ t.InDomain (t.termAt p) (t.termAt n)} (t.above t.branching) q
 
 /-- Decided with the head test first, so that the domain is checked only for heads. -/
-instance (n : t.val.Positions) : DecidablePred (t.FindsHead n) := fun q ↦
+instance (n : t.toRoseTree.Positions) : DecidablePred (t.FindsHead n) := fun q ↦
   decidable_of_iff ((Probe.relativized fun p ↦ (t.termAt p).token?.isSome).Finds
       {p | (t.termAt p).token?.isSome ∧ n ≤ p ∧ t.InDomain (t.termAt p) (t.termAt n)}
       (t.above t.branching) q) <| by
@@ -90,7 +90,7 @@ instance (n : t.val.Positions) : DecidablePred (t.FindsHead n) := fun q ↦
     exact Iff.of_eq (congrArg (MinimalFor · _ q) (funext fun _ ↦ propext (by tauto)))
 
 /-- The heads minimal search from the occurrence at `n` finds. -/
-def labelsAt (n : t.val.Positions) : Finset LexicalItem.Token :=
+def labelsAt (n : t.toRoseTree.Positions) : Finset LexicalItem.Token :=
   (Finset.univ.filter (t.FindsHead n)).biUnion fun q ↦ (t.termAt q).token?.toFinset
 
 /-- The labels of `x`: the heads minimal search from an occurrence of `x` finds. -/
@@ -124,7 +124,7 @@ instance [∀ f, DecidableRel (Agreed f)] (x : SyntacticObject) (f : F) :
 def IsLabeled (x : SyntacticObject) : Prop :=
   (∃ a, t.IsLabeledBy x a) ∨ ∃ f, t.IsLabeledByFeature Agreed x f
 
-variable {t Agreed} {n c d q : t.val.Positions} {x y z : SyntacticObject}
+variable {t Agreed} {n c d q : t.toRoseTree.Positions} {x y z : SyntacticObject}
   {a b : LexicalItem.Token}
 
 theorem card_labels_eq_one_iff : (t.labels x).card = 1 ↔ ∃ a, t.IsLabeledBy x a :=
@@ -174,7 +174,7 @@ theorem labels_eq_of_forall_labelsAt_eq {S : Finset LexicalItem.Token}
 theorem findsHead_iff : t.FindsHead n q ↔
     (n ≤ q ∧ t.InDomain (t.termAt q) (t.termAt n) ∧ t.IsHeadAt q) ∧
       ∀ ⦃q'⦄, n ≤ q' → t.InDomain (t.termAt q') (t.termAt n) → t.IsHeadAt q' →
-        ¬ (t.val.CCommands q' q ∧ ¬ t.val.CCommands q q') := by
+        ¬ (t.toRoseTree.CCommands q' q ∧ ¬ t.toRoseTree.CCommands q q') := by
   rw [FindsHead, finds_above_branching_iff]
   · simp [and_assoc, and_imp, IsHeadAt]
   · exact fun p hp _ _ hne hle ↦
@@ -268,7 +268,7 @@ theorem inDomain_iff_of_immediatelyContains {w : SyntacticObject} {tok : Lexical
   · exact absurd (he ▸ containsOrEq_termAt.2 ⟨p, hep, hp⟩) hz
   · exact ⟨e, hep, he⟩
 
-theorem inDomain_iff_of_covBy {q' : t.val.Positions} (hc : n ⋖ c) (hd : n ⋖ d) (hcd : c ≠ d)
+theorem inDomain_iff_of_covBy {q' : t.toRoseTree.Positions} (hc : n ⋖ c) (hd : n ⋖ d) (hcd : c ≠ d)
     (hdisj : Disjoint (t.termAt c).yield (t.termAt d).yield)
     (hv : t.InDomain (t.termAt d) (t.termAt n)) (hdq' : d ≤ q') (hq' : t.IsHeadAt q') :
     t.InDomain (t.termAt q') (t.termAt n) ↔ t.InDomain (t.termAt q') (t.termAt d) := by
@@ -354,7 +354,7 @@ theorem labelsAt_merge_of_not_inDomain (hc : n ⋖ c) (hd : n ⋖ d) (hcd : c �
 variable (t) in
 /-- `c` is the label daughter of `n`: a daughter containing the one head minimal search from `n`
 finds. -/
-def LabelDaughter (n c : t.val.Positions) : Prop :=
+def LabelDaughter (n c : t.toRoseTree.Positions) : Prop :=
   n ⋖ c ∧ ∃ a, t.labelsAt n = {a} ∧ a ∈ t.labelsAt c
 
 theorem labelDaughter_iff_of_merge_head (hn : t.termAt n = SyntacticObject.merge ↑a x)
@@ -370,7 +370,7 @@ theorem labelDaughter_iff_of_merge_head (hn : t.termAt n = SyntacticObject.merge
       exact he ▸ token?_eq_some_iff.1 hq ▸ containsOrEq_termAt.2 ⟨q, (findsHead_iff.1 hfq).1.1, rfl⟩
   · exact mem_labelsAt.2 ⟨c, findsHead_self (isHeadAt_iff.2 ⟨a, hc⟩), by simp [hc]⟩
 
-end Minimalist.LinearizedSyntacticObject
+end Minimalist.PlanarSyntacticObject
 
 namespace Minimalist.HeadFunction
 
@@ -380,16 +380,17 @@ open RoseTree Core.Order PhraseStructure
 containing the one head minimal search from it finds, and there is none where search finds no head
 or several. -/
 def label : HeadFunction := fun t x ↦
-  if hx : x ∈ t.val.validPaths then
+  if hx : x ∈ t.toRoseTree.validPaths then
     (List.range 2).find? fun i ↦
-      if hc : (⟨x.toList ++ [i]⟩ : TreePath) ∈ t.val.validPaths then
+      if hc : (⟨x.toList ++ [i]⟩ : TreePath) ∈ t.toRoseTree.validPaths then
         decide ((t.labelsAt ⟨x, hx⟩).card = 1 ∧ t.labelsAt ⟨x, hx⟩ ⊆ t.labelsAt ⟨_, hc⟩)
       else false
   else none
 
 /-- The head daughters of the label head function are label daughters. -/
-theorem labelDaughter_of_headDaughterRel_label {t : LinearizedSyntacticObject}
-    {n c : t.val.Positions} (h : headDaughterRel (label t) n.val c.val) : t.LabelDaughter n c := by
+theorem labelDaughter_of_headDaughterRel_label {t : PlanarSyntacticObject}
+    {n c : t.toRoseTree.Positions} (h : headDaughterRel (label t) n.val c.val) :
+        t.LabelDaughter n c := by
   obtain ⟨i, hi, hc⟩ := h
   have hci : (⟨n.val.toList ++ [i]⟩ : TreePath) = c.val := TreePath.ext hc.symm
   simp only [label, dite_eq_left n.2] at hi
@@ -399,7 +400,7 @@ theorem labelDaughter_of_headDaughterRel_label {t : LinearizedSyntacticObject}
   obtain ⟨a, ha⟩ := Finset.card_eq_one.1 hcard
   have hcov : n ⋖ c := Positions.covBy_iff.2 (TreePath.covBy_iff.2 ⟨i, hc⟩)
   refine ⟨hcov, a, ha, ?_⟩
-  have : (⟨⟨n.val.toList ++ [i]⟩, hci ▸ c.2⟩ : t.val.Positions) = c := Subtype.ext hci
+  have : (⟨⟨n.val.toList ++ [i]⟩, hci ▸ c.2⟩ : t.toRoseTree.Positions) = c := Subtype.ext hci
   exact this ▸ hsub (ha ▸ Finset.mem_singleton_self a)
 
 end Minimalist.HeadFunction
