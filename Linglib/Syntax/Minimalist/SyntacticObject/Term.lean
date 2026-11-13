@@ -206,39 +206,10 @@ namespace SyntacticObject
 
 variable {x y l r : SyntacticObject L}
 
-/-- The terms of the syntactic object a planar object presents, one per vertex. -/
-def _root_.Minimalist.PlanarSyntacticObject.terms :
-    PlanarSyntacticObject L → Multiset (SyntacticObject L)
-  | .of x => {FreeCommMagma.of x}
-  | .mul l r => (PlanarSyntacticObject.toSyntacticObject l *
-      PlanarSyntacticObject.toSyntacticObject r) ::ₘ
-      (PlanarSyntacticObject.terms l + PlanarSyntacticObject.terms r)
-
-theorem _root_.Minimalist.PlanarSyntacticObject.terms_eq_of_commCon
-    {p q : PlanarSyntacticObject L} (h : Magma.commCon (FreeMagma (Leaf L)) p q) :
-    p.terms = q.terms := by
-  induction h with
-  | of x y h =>
-    obtain ⟨a, b, rfl, rfl⟩ := h
-    show (_ * _) ::ₘ (_ + _) = (_ * _) ::ₘ (_ + _)
-    rw [mul_comm, add_comm]
-  | refl => rfl
-  | symm _ ih => exact ih.symm
-  | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
-  | @mul w x y z h₁ h₂ ih₁ ih₂ =>
-    show (w.toSyntacticObject * y.toSyntacticObject) ::ₘ (_ + _) =
-      (x.toSyntacticObject * z.toSyntacticObject) ::ₘ (_ + _)
-    rw [ih₁, ih₂, show PlanarSyntacticObject.toSyntacticObject w
-        = PlanarSyntacticObject.toSyntacticObject x from
-          FreeMagma.toFreeCommMagma_eq_toFreeCommMagma.2 h₁,
-      show PlanarSyntacticObject.toSyntacticObject y
-        = PlanarSyntacticObject.toSyntacticObject z from
-          FreeMagma.toFreeCommMagma_eq_toFreeCommMagma.2 h₂]
-
 /-- The terms of a syntactic object, itself included. -/
-def terms (s : SyntacticObject L) : Multiset (SyntacticObject L) :=
-  Quotient.liftOn s PlanarSyntacticObject.terms
-    fun _ _ h ↦ PlanarSyntacticObject.terms_eq_of_commCon h
+def terms : SyntacticObject L → Multiset (SyntacticObject L) :=
+  FreeCommMagma.elim (fun x ↦ {FreeCommMagma.of x}) (fun l r a b ↦ (l * r) ::ₘ (a + b))
+    fun l r a b ↦ by rw [mul_comm, add_comm]
 
 @[simp] theorem terms_leaf (tok : L) : (leaf tok).terms = {leaf tok} := rfl
 
@@ -247,10 +218,8 @@ def terms (s : SyntacticObject L) : Multiset (SyntacticObject L) :=
 @[simp] theorem terms_traceOf (tok : L) : (traceOf tok).terms = {traceOf tok} := rfl
 
 @[simp] theorem terms_merge (l r : SyntacticObject L) :
-    (merge l r).terms = merge l r ::ₘ (l.terms + r.terms) := by
-  obtain ⟨l, rfl⟩ := PlanarSyntacticObject.toSyntacticObject_surjective l
-  obtain ⟨r, rfl⟩ := PlanarSyntacticObject.toSyntacticObject_surjective r
-  rfl
+    (merge l r).terms = merge l r ::ₘ (l.terms + r.terms) :=
+  FreeCommMagma.elim_mul _ _ _ l r
 
 @[simp] theorem map_toUnorderedTree_terms (s : SyntacticObject L) :
     s.terms.map toUnorderedTree = UnorderedTree.subtrees s.toUnorderedTree := by

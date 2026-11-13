@@ -19,8 +19,9 @@ commutative quotient of the free magma on `α`, the nonassociative commutative p
 generators, Marcolli, Chomsky and Berwick's binary unordered rooted trees with leaves in `α`. An
 element is [a generator or the product of an unordered pair](##FreeCommMagma.sumSym2Equiv), so two
 products are equal exactly when [their factors agree in either
-order](##FreeCommMagma.mul_eq_mul_iff), and [equality is decided](##FreeMagma.isCommCon_iff) by
-comparing representatives up to swapping factors. `[UPSTREAM]` candidate for
+order](##FreeCommMagma.mul_eq_mul_iff), a function is [defined by recursion](##FreeCommMagma.elim)
+from its value at a generator and an order-independent combination at a product, and [equality
+is decided](##FreeMagma.isCommCon_iff) by comparing representatives up to swapping factors. `[UPSTREAM]` candidate for
 `Mathlib/Algebra/Free.lean`.
 
 ## References
@@ -167,6 +168,48 @@ end Lift
 def map (f : α → β) : FreeCommMagma α →ₙ* FreeCommMagma β := lift (of ∘ f)
 
 @[simp] theorem map_of (f : α → β) (a : α) : map f (of a) = of (f a) := rfl
+
+/-! ### Recursion -/
+
+section Elim
+
+variable {γ : Type v}
+
+/-- `FreeCommMagma.elim` on representatives. -/
+def elimAux (of : α → γ) (mul : FreeCommMagma α → FreeCommMagma α → γ → γ → γ) : FreeMagma α → γ
+  | .of a => of a
+  | .mul x y => mul (FreeMagma.toFreeCommMagma x) (FreeMagma.toFreeCommMagma y)
+      (elimAux of mul x) (elimAux of mul y)
+
+/-- Recursion on the free commutative magma: a function is given by its value at a generator and,
+at a product, by a combination of the factors and their values that does not depend on the order
+of the factors. -/
+def elim (of : α → γ) (mul : FreeCommMagma α → FreeCommMagma α → γ → γ → γ)
+    (hmul : ∀ x y a b, mul x y a b = mul y x b a) : FreeCommMagma α → γ :=
+  Quotient.lift (elimAux of mul) fun x y (h : Magma.commCon (FreeMagma α) x y) ↦ by
+    induction h with
+    | of x y h => obtain ⟨a, b, rfl, rfl⟩ := h; exact hmul _ _ _ _
+    | refl => rfl
+    | symm _ ih => exact ih.symm
+    | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+    | @mul w x y z h₁ h₂ ih₁ ih₂ =>
+      show mul _ _ (elimAux of mul w) (elimAux of mul y) = mul _ _ (elimAux of mul x)
+        (elimAux of mul z)
+      rw [ih₁, ih₂, FreeMagma.toFreeCommMagma_eq_toFreeCommMagma.2 h₁,
+        FreeMagma.toFreeCommMagma_eq_toFreeCommMagma.2 h₂]
+
+variable (f : α → γ) (g : FreeCommMagma α → FreeCommMagma α → γ → γ → γ)
+  (hg : ∀ x y a b, g x y a b = g y x b a)
+
+@[simp] theorem elim_of (a : α) : elim f g hg (of a) = f a := rfl
+
+@[simp] theorem elim_mul (x y : FreeCommMagma α) :
+    elim f g hg (x * y) = g x y (elim f g hg x) (elim f g hg y) := by
+  obtain ⟨x, rfl⟩ := FreeMagma.toFreeCommMagma_surjective x
+  obtain ⟨y, rfl⟩ := FreeMagma.toFreeCommMagma_surjective y
+  rfl
+
+end Elim
 
 /-! ### Generators and unordered pairs -/
 

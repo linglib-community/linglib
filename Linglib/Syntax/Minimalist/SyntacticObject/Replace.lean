@@ -33,51 +33,19 @@ namespace Minimalist
 
 open RoseTree UnorderedTree SyntacticObject
 
-namespace PlanarSyntacticObject
-
-/-- Substitution on the syntactic object a planar object presents. -/
-def substAux (f : SyntacticObject → Option SyntacticObject) :
-    PlanarSyntacticObject → SyntacticObject
-  | .of x => (f (FreeCommMagma.of x)).getD (FreeCommMagma.of x)
-  | .mul l r => (f (toSyntacticObject l * toSyntacticObject r)).getD
-      (substAux f l * substAux f r)
-
-theorem substAux_eq_of_commCon (f : SyntacticObject → Option SyntacticObject)
-    {p q : PlanarSyntacticObject} (h : Magma.commCon (FreeMagma (Leaf LexicalItem.Token)) p q) :
-    substAux f p = substAux f q := by
-  induction h with
-  | of x y h =>
-    obtain ⟨a, b, rfl, rfl⟩ := h
-    show (f (_ * _)).getD (_ * _) = (f (_ * _)).getD (_ * _)
-    rw [mul_comm (toSyntacticObject a), mul_comm (substAux f a)]
-  | refl => rfl
-  | symm _ ih => exact ih.symm
-  | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
-  | @mul w x y z h₁ h₂ ih₁ ih₂ =>
-    show (f (toSyntacticObject w * toSyntacticObject y)).getD (substAux f w * substAux f y) =
-      (f (toSyntacticObject x * toSyntacticObject z)).getD (substAux f x * substAux f z)
-    rw [ih₁, ih₂, show toSyntacticObject w = toSyntacticObject x from
-        FreeMagma.toFreeCommMagma_eq_toFreeCommMagma.2 h₁,
-      show toSyntacticObject y = toSyntacticObject z from
-        FreeMagma.toFreeCommMagma_eq_toFreeCommMagma.2 h₂]
-
-end PlanarSyntacticObject
-
 namespace SyntacticObject
 
 /-- Substitute `f u` for every outermost term `u` of `s` on which `f` is defined, simultaneously. -/
-def subst (f : SyntacticObject → Option SyntacticObject) (s : SyntacticObject) : SyntacticObject :=
-  Quotient.liftOn s (PlanarSyntacticObject.substAux f)
-    fun _ _ h ↦ PlanarSyntacticObject.substAux_eq_of_commCon f h
+def subst (f : SyntacticObject → Option SyntacticObject) : SyntacticObject → SyntacticObject :=
+  FreeCommMagma.elim (fun x ↦ (f (FreeCommMagma.of x)).getD (FreeCommMagma.of x))
+    (fun l r a b ↦ (f (l * r)).getD (a * b)) fun l r a b ↦ by rw [mul_comm l, mul_comm a]
 
 variable {f g : SyntacticObject → Option SyntacticObject}
 
 @[simp] theorem subst_merge (f : SyntacticObject → Option SyntacticObject)
     (l r : SyntacticObject) :
-    (merge l r).subst f = (f (merge l r)).getD (merge (l.subst f) (r.subst f)) := by
-  obtain ⟨l, rfl⟩ := PlanarSyntacticObject.toSyntacticObject_surjective l
-  obtain ⟨r, rfl⟩ := PlanarSyntacticObject.toSyntacticObject_surjective r
-  rfl
+    (merge l r).subst f = (f (merge l r)).getD (merge (l.subst f) (r.subst f)) :=
+  FreeCommMagma.elim_mul _ _ _ l r
 
 theorem subst_of_toUnorderedTree_eq_leaf {s : SyntacticObject} {a : Vertex} (hs : s.toUnorderedTree
     = UnorderedTree.leaf a)
