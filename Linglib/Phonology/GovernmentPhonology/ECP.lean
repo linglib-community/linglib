@@ -19,8 +19,8 @@ Since a governed nucleus governs nothing, of two successive unexpressed nuclei
 obligatory, the realization of a domain is fixed from the right, each nucleus unexpressed
 exactly when its silence is licensed, and the principle [holds of it](##GovernmentPhonology.satisfiesECP_obligatory).
 In a word of alternating vowels the outcome depends on whether such a vowel, once expressed,
-is strong enough to govern another: where it is, [every other one](##GovernmentPhonology.expressed_obligatory_of_governs)
-is expressed, counting from the end, and where it is not, [all but the last](##GovernmentPhonology.expressed_obligatory_of_not_governs)
+is strong enough to govern another: where it is, [every other one](##GovernmentPhonology.expressed_obligatory_iff_even)
+is expressed, counting from the end, and where it is not, [all but the last](##GovernmentPhonology.expressed_obligatory_iff_succ_lt)
 are.
 
 ## Implementation notes
@@ -88,7 +88,7 @@ def obligatory (R : Finset ℕ) (l : List Nucleus) : List Nucleus := obligatoryF
 
 variable {R : Finset ℕ}
 
-@[simp] theorem length_obligatory : (obligatory A R l).length = l.length := by
+theorem length_obligatory : (obligatory A R l).length = l.length := by
   sorry
 
 /-- The obligatory realization changes only which nuclei are expressed. -/
@@ -99,33 +99,37 @@ theorem map_obligatory : (obligatory A R l).map ({ · with expressed := false })
 theorem satisfiesECP_obligatory : SatisfiesECP A (obligatory A R l) := by
   sorry
 
-/-- A domain is its own obligatory realization exactly when it satisfies the Empty Category
-Principle, expresses the required nuclei, and expresses no other nucleus without associated
-melody whose silence would be licensed. -/
-theorem obligatory_eq_self_iff : obligatory A R l = l ↔ SatisfiesECP A l ∧
+/-- A domain is its own obligatory realization exactly when each nucleus is expressed just in
+case it has associated melody, is required to be expressed, or would not have its silence
+licensed. -/
+theorem obligatory_eq_self_iff : obligatory A R l = l ↔
     ∀ i x, l[i]? = some x → (x.expressed = true ↔ x.melody = .associated ∨ i ∈ R ∨
       ¬ (Governed A (l.set i { x with expressed := false }) i ∨
         Enclosed A (l.set i { x with expressed := false }) i ∨
         i + 1 = l.length ∧ A.finalEmpty = true)) := by
   sorry
 
-/-- Havlík's Law ([scheer-2004] (304)): where an expressed alternating vowel governs another
-and an unexpressed final one does not, a word of alternating vowels expresses those at an even
-distance from its end, the last standing at distance one. -/
-theorem expressed_obligatory_of_governs (hl : ∀ x ∈ l, x.melody = .floating)
-    (he : A.finalEmpty = true)
-    (hs : ∀ x b, x.melody = .floating → x.expressed = true →
-      (Melody.floating : WithBot Melody) ≤ A.strength x b)
-    (hf : ∀ x, x.melody = .floating → x.expressed = false →
-      A.strength x true < (Melody.floating : WithBot Melody)) :
+variable (A) in
+/-- An unexpressed final alternating vowel is too weak to govern another. -/
+def FinalFloatingInert : Prop := ∀ x : Nucleus, x.melody = .floating → x.expressed = false →
+  A.strength x true < (Melody.floating : WithBot Melody)
+
+/-- Havlík's Law ([scheer-2004] (304)): where an expressed alternating vowel governs another, a
+word of alternating vowels expresses those at an even distance from its end, the last standing
+at distance one. -/
+theorem expressed_obligatory_iff_even (hl : ∀ x ∈ l, x.melody = .floating)
+    (he : A.finalEmpty = true) (hf : FinalFloatingInert A)
+    (hs : ∀ x : Nucleus, x.melody = .floating → x.expressed = true →
+      (Melody.floating : WithBot Melody) ≤ A.strength x false) :
     (∃ x ∈ (obligatory A ∅ l)[i]?, x.expressed = true) ↔ i < l.length ∧ Even (l.length - i) := by
   sorry
 
-/-- Lower: where no alternating vowel governs another, a word of alternating vowels expresses
-all but the last. -/
-theorem expressed_obligatory_of_not_governs (hl : ∀ x ∈ l, x.melody = .floating)
-    (he : A.finalEmpty = true)
-    (hs : ∀ x b, x.melody = .floating → A.strength x b < (Melody.floating : WithBot Melody)) :
+/-- Lower: where an expressed alternating vowel does not govern another, a word of alternating
+vowels expresses all but the last. -/
+theorem expressed_obligatory_iff_succ_lt (hl : ∀ x ∈ l, x.melody = .floating)
+    (he : A.finalEmpty = true) (hf : FinalFloatingInert A)
+    (hs : ∀ x : Nucleus, x.melody = .floating → x.expressed = true →
+      A.strength x false < (Melody.floating : WithBot Melody)) :
     (∃ x ∈ (obligatory A ∅ l)[i]?, x.expressed = true) ↔ i + 1 < l.length := by
   sorry
 

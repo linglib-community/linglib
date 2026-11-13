@@ -13,11 +13,10 @@ public import Linglib.Phonology.GovernmentPhonology.Basic
 A nucleus that can govern does, and a nucleus that can license does. Government goes to the
 preceding nucleus when the governor governs it and to the governor's own onset otherwise.
 Licensing goes to the licensor's own onset unless that onset is governed, and then to the
-preceding nucleus, so that [no position](##GovernmentPhonology.not_governsOnset_and_licensesOnset) is both
-governed and licensed. A consonant is weak when governed, as between two vowels,
+preceding nucleus, so that no position is both governed and licensed. A consonant is weak when governed, as between two vowels,
 [strong](##GovernmentPhonology.licensesOnset_iff) when licensed, as after a governed nucleus, and
-[a coda](##GovernmentPhonology.not_governsOnset_and_not_licensesOnset_iff) when its nucleus discharges
-nothing; a syllable is open when its nucleus [is licensed](##GovernmentPhonology.licenses_iff).
+[a coda](##GovernmentPhonology.not_governsOnset_and_not_licensesOnset_iff_not_isGovernor) when its
+nucleus discharges nothing; a syllable is open when its nucleus [is licensed](##GovernmentPhonology.licenses_iff).
 
 ## Implementation notes
 
@@ -89,9 +88,16 @@ theorem licensesOnset_iff (h : IsGovernor A l (i + 1) → IsLicensor A l (i + 1)
       Governs A l (i + 1) i ∨ IsLicensor A l (i + 1) ∧ ¬ IsGovernor A l (i + 1) := by
   sorry
 
-/-- A consonant is neither governed nor licensed exactly when its nucleus neither governs nor
-licenses, as a governed nucleus does not. -/
+/-- A consonant is neither governed nor licensed exactly when its nucleus neither governs it
+nor licenses, as a governed nucleus does not. -/
 theorem not_governsOnset_and_not_licensesOnset_iff :
+    ¬ GovernsOnset A l j ∧ ¬ LicensesOnset A l j ↔ ¬ GovernsOnset A l j ∧ ¬ IsLicensor A l j := by
+  sorry
+
+/-- Where a governor licenses, a consonant is neither governed nor licensed exactly when its
+nucleus is no governor. -/
+theorem not_governsOnset_and_not_licensesOnset_iff_not_isGovernor
+    (h : IsGovernor A l j → IsLicensor A l j) :
     ¬ GovernsOnset A l j ∧ ¬ LicensesOnset A l j ↔ ¬ IsGovernor A l j ∧ ¬ IsLicensor A l j := by
   sorry
 

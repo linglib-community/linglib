@@ -17,10 +17,9 @@ CV, where every syllable is a consonantal position followed by a vocalic one, th
 domain form a sequence and contract these relations leftwards. This file gives the nuclei and
 the relation of government between them. A nucleus governs the nucleus before it when that nucleus is unexpressed, is not enclosed
 in a domain of infrasegmental government, and has a melody no more complex than the governor is
-strong. Government is [local](##GovernmentPhonology.Governs.covBy), each governor has
-[one target](##GovernmentPhonology.Governs.eq_left), and a governed nucleus
-[governs nothing](##GovernmentPhonology.Governs.not_governs), so the governing pairs of a domain are
-disjoint pairs of neighbours. How strong each nucleus is varies with the language and is the
+strong. Government is taken to be local, so that each governor has one target, and a governed
+nucleus [governs nothing](##GovernmentPhonology.Governs.not_governs), so the governing pairs of a
+domain are disjoint pairs of neighbours. How strong each nucleus is varies with the language and is the
 theory's parameter, its lateral actorship.
 
 ## Implementation notes
@@ -112,8 +111,8 @@ structure Actorship where
 and licenses. Schwa, a nucleus expressed without associated melody, and the unexpressed final
 nucleus have the strengths `schwa` and `final` and license as `schwaLicenses` and
 `finalLicenses` say; a final nucleus that governs only nuclei without melody ((378)) has the
-strength of an empty melody. An empty nucleus that is unexpressed and not final, which is
-ungoverned only when it is enclosed in a domain of infrasegmental government, governs and
+strength of an empty melody. An empty nucleus that is unexpressed and not final, which in a
+domain satisfying the Empty Category Principle is ungoverned only when it is enclosed, governs and
 licenses as a full nucleus does, after [brun-trigaud-scheer-2010]. Expressed nuclei support a
 domain of infrasegmental government, and the unexpressed final nucleus does where
 `finalSupports`. That an epenthetic vowel acts as schwa does, and that an enclosed nucleus
