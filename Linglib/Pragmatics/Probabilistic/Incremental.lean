@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Processing.AutoregressiveSequenceModel.Basic
+public import Linglib.Processing.LanguageModel.Autoregressive
 public import Linglib.Core.Probability.Kernel.Basic
 public import Mathlib.Algebra.BigOperators.Group.List.Basic
 public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.List

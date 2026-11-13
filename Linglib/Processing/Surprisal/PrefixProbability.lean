@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Processing.AutoregressiveSequenceModel.Basic
+public import Linglib.Processing.LanguageModel.Autoregressive
 
 /-!
 # Prefix probabilities of a generative process

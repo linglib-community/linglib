@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Log.Summable
 public import Linglib.Core.MeasureTheory.Measure.Basic
-public import Linglib.Processing.AutoregressiveSequenceModel.Basic
+public import Linglib.Processing.LanguageModel.Autoregressive
 
 /-!
 # Tight autoregressive sequence models
