@@ -212,9 +212,14 @@ theorem ancestors_ssubset_ancestors_of_le_of_lt (hax : a ≤ x) (hxb : x < b) (h
   (ssubset_iff_of_subset (ancestors_subset_ancestors_of_le (hax.trans hxb.le))).2
     ⟨x, ⟨hx, hxb⟩, fun h ↦ lt_irrefl x (h.2.trans_le hax)⟩
 
+/-- A node commands every node that all its generators properly dominate. -/
+theorem mem_commandRelation_of_ancestors_subset (h : ancestors P a ⊆ ancestors P b) :
+    a ~[commandRelation P] b :=
+  fun _ hx hxa ↦ (h ⟨hx, hxa⟩).2.le
+
 theorem ancestors_subset_ancestors_iff (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
     ancestors P a ⊆ ancestors P b ↔ a ~[commandRelation P] b := by
-  refine ⟨fun h x hx hxa ↦ (h ⟨hx, hxa⟩).2.le, fun h x hx ↦ ⟨hx.1, ?_⟩⟩
+  refine ⟨mem_commandRelation_of_ancestors_subset, fun h x hx ↦ ⟨hx.1, ?_⟩⟩
   refine lt_of_le_of_ne (mem_commandRelation.1 h _ hx.1 hx.2) ?_
   rintro rfl
   exact hba hx.2.le
