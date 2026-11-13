@@ -228,4 +228,24 @@ theorem of_injective : Function.Injective (of : α → FreeCommMagma α) := fun 
   have := FreeMagma.commCon_of_iff.1 ((Con.eq _).1 h')
   injection this.symm
 
+/-- A generator is not a product. -/
+theorem of_ne_mul (a : α) (x y : FreeCommMagma α) : of a ≠ x * y := by
+  classical
+  obtain ⟨x, rfl⟩ := FreeMagma.toFreeCommMagma_surjective x
+  obtain ⟨y, rfl⟩ := FreeMagma.toFreeCommMagma_surjective y
+  rw [← FreeMagma.toFreeCommMagma_of, ← map_mul, Ne,
+    FreeMagma.toFreeCommMagma_eq_toFreeCommMagma, ← FreeMagma.isCommCon_iff]
+  simp
+
+/-- Two products are equal exactly when their factors agree, in either order. -/
+theorem mul_eq_mul_iff {x y x' y' : FreeCommMagma α} :
+    x * y = x' * y' ↔ x = x' ∧ y = y' ∨ x = y' ∧ y = x' := by
+  classical
+  obtain ⟨x, rfl⟩ := FreeMagma.toFreeCommMagma_surjective x
+  obtain ⟨y, rfl⟩ := FreeMagma.toFreeCommMagma_surjective y
+  obtain ⟨x', rfl⟩ := FreeMagma.toFreeCommMagma_surjective x'
+  obtain ⟨y', rfl⟩ := FreeMagma.toFreeCommMagma_surjective y'
+  simp only [← map_mul, FreeMagma.toFreeCommMagma_eq_toFreeCommMagma, ← FreeMagma.isCommCon_iff,
+    FreeMagma.isCommCon_mul_mul, Bool.or_eq_true, Bool.and_eq_true]
+
 end FreeCommMagma
