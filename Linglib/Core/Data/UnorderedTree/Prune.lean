@@ -55,19 +55,16 @@ theorem prune_leaf (a : α) : prune p (leaf a) = if p a then some (leaf a) else 
   rw [← node_zero, prune_node]
   simp
 
-@[simp] theorem prune_mk (t : RoseTree α) : prune p (mk t) = (t.prune p).map mk := by
-  induction t with
-  | node a cs ih =>
-    have h : (Multiset.ofList (cs.map mk)).filterMap (prune p) =
-        Multiset.ofList ((cs.filterMap (RoseTree.prune p)).map mk) := by
-      rw [Multiset.filterMap_coe, List.filterMap_map,
-        List.filterMap_congr (f := prune p ∘ mk) ih, List.map_filterMap]
-    rw [← node_mk_tree_list, prune_node, RoseTree.prune_node, h]
-    by_cases hp : p a ∨ cs.filterMap (RoseTree.prune p) ≠ []
-    · rw [ite_eq_left hp, ite_eq_left (hp.imp_right fun hc ↦ by simpa using hc), Option.map_some,
-        node_mk_tree_list]
-    · rw [ite_eq_right hp, ite_eq_right fun h' ↦ hp (h'.imp_right fun hc ↦ by simpa using hc),
-        Option.map_none]
+@[simp] theorem prune_mk (t : RoseTree α) : prune p (mk t) = (t.prune p).map mk :=
+  (RoseTree.fold_hom (Option.map mk) (fun a cs ↦ by
+    have h : (Multiset.ofList (cs.map (Option.map mk))).filterMap id =
+        Multiset.ofList ((cs.filterMap id).map mk) := by
+      rw [Multiset.filterMap_coe, List.filterMap_map, List.map_filterMap]; rfl
+    by_cases hp : p a ∨ cs.filterMap id ≠ []
+    · rw [ite_eq_left hp, Option.map_some, ← node_mk_tree_list, ← h]
+      exact (ite_eq_left (hp.imp_right fun hc ↦ by simpa [h] using hc)).symm
+    · rw [ite_eq_right hp, Option.map_none]
+      exact (ite_eq_right fun h' ↦ hp (h'.imp_right fun hc ↦ by simpa [h] using hc)).symm) t).symm
 
 /-- A tree whose leaves all satisfy `p` is its own pruning. -/
 theorem prune_eq_some_self {t : UnorderedTree α} (h : ∀ a ∈ t.leaves, p a) :
@@ -81,14 +78,9 @@ theorem prune_eq_some_self {t : UnorderedTree α} (h : ∀ a ∈ t.leaves, p a) 
         obtain ⟨G, hG⟩ := Multiset.exists_cons_of_mem hd
         rw [hG, leaves_node_cons]
         exact Multiset.mem_add.2 (.inl hb)
-      have hF : ∀ G : Multiset (UnorderedTree α), (∀ d ∈ G, prune p d = some d) →
-          G.filterMap (prune p) = G := fun G ↦ by
-        induction G using Multiset.induction with
-        | empty => simp
-        | cons d G ihG =>
-          intro hG
-          rw [Multiset.filterMap_cons_some _ _ _ (hG d (Multiset.mem_cons_self d G)),
-            ihG fun e he ↦ hG e (Multiset.mem_cons_of_mem he)]
-      rw [prune_node, hF _ hc, ite_eq_left (.inr (by simp))]
+      have hF : (c ::ₘ F).filterMap (prune p) = c ::ₘ F := by
+        rw [← Function.id_comp (prune p), ← Multiset.filterMap_map, Multiset.map_congr rfl hc,
+          Multiset.filterMap_map, Function.id_comp, Multiset.filterMap_some]
+      rw [prune_node, hF, ite_eq_left (.inr (by simp))]
 
 end UnorderedTree

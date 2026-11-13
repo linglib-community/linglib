@@ -11,19 +11,12 @@ public import Linglib.Core.Data.RoseTree.Basic
 # Partial label maps on rose trees
 
 `RoseTree.filterMap f` relabels a rose tree along `f : α → Option β`, dropping every subtree whose
-root `f` sends to `none`. The result is `none` exactly when the root itself is dropped. It is the
-counterpart on rose trees of `List.filterMap`, and a `RoseTree.fold`.
-
-## Main definitions
-
-* `RoseTree.filterMap`: the partial map.
-
-## Main results
-
-* `RoseTree.filterMap_node`: at a node, the surviving children are the `List.filterMap` of the
-  children.
-* `RoseTree.filterMap_map`: `filterMap f (map g t) = filterMap (f ∘ g) t`.
-* `RoseTree.filterMap_some`: a total map drops nothing.
+root `f` sends to `none`; it is the counterpart on rose trees of `List.filterMap`, and a
+`RoseTree.fold`. The root of the result is [the image of the root](##RoseTree.map_value_filterMap),
+so the result is `none` exactly when the root is dropped. Partial label maps compose as partial
+tree maps: [`filterMap` preserves Kleisli composition](##RoseTree.filterMap_filterMap) and
+[sends a total map to `map`](##RoseTree.filterMap_some_comp), and the equations for a `map` before
+or after a `filterMap` are cases of these two.
 -/
 
 @[expose] public section
@@ -41,27 +34,53 @@ def filterMap (f : α → Option β) : RoseTree α → Option (RoseTree β) :=
     filterMap f (node a cs) = (f a).map fun b ↦ node b (cs.filterMap (filterMap f)) := by
   rw [filterMap, fold_node, List.filterMap_map, Function.id_comp]
 
-/-! ### Composition with total maps -/
+/-- The root of the result is the image of the root. -/
+@[simp] theorem map_value_filterMap (f : α → Option β) (t : RoseTree α) :
+    (filterMap f t).map value = f t.value := by
+  cases t with
+  | node a cs => rw [filterMap_node, Option.map_map]; exact Option.map_id'
+
+theorem filterMap_eq_none_iff {f : α → Option β} {t : RoseTree α} :
+    filterMap f t = none ↔ f t.value = none := by
+  rw [← map_value_filterMap f t, Option.map_eq_none_iff]
+
+/-! ### Composition -/
+
+/-- `filterMap` preserves the Kleisli composition of partial maps. -/
+theorem filterMap_filterMap (f : α → Option β) (g : β → Option γ) (t : RoseTree α) :
+    (filterMap f t).bind (filterMap g) = filterMap (fun a ↦ (f a).bind g) t := by
+  induction t with
+  | node a cs ih =>
+    rw [filterMap_node, filterMap_node, ← List.filterMap_congr ih, ← List.filterMap_filterMap]
+    cases f a with
+    | none => rfl
+    | some b => rw [Option.map_some, Option.bind_some, Option.bind_some, filterMap_node]
+
+/-- A total map drops nothing. -/
+theorem filterMap_some_comp (g : α → β) : filterMap (some ∘ g) = some ∘ map g :=
+  funext fun t ↦ by
+    induction t with
+    | node a cs ih =>
+      rw [filterMap_node, Function.comp_apply, Function.comp_apply, map_node, Option.map_some,
+        List.filterMap_congr ih, List.filterMap_eq_map]
+
+@[simp] theorem filterMap_some (t : RoseTree α) : filterMap some t = some t := by
+  rw [← Function.comp_id some, filterMap_some_comp, Function.comp_apply, map_id]
 
 theorem filterMap_map (f : β → Option γ) (g : α → β) (t : RoseTree α) :
     filterMap f (map g t) = filterMap (f ∘ g) t := by
-  induction t with
-  | node a cs ih =>
-    rw [map_node, filterMap_node, filterMap_node, List.filterMap_map,
-      List.filterMap_congr (f := filterMap f ∘ map g) ih, Function.comp_apply]
+  rw [← Option.bind_some (f := filterMap f), ← Function.comp_apply (f := some),
+    ← filterMap_some_comp, filterMap_filterMap]
+  rfl
 
-/-- A total map drops nothing. -/
-theorem filterMap_some (g : α → β) (t : RoseTree α) :
-    filterMap (fun a ↦ some (g a)) t = some (map g t) := by
-  induction t with
-  | node a cs ih =>
-    rw [filterMap_node, map_node, Option.map_some, List.filterMap_congr ih,
-      List.filterMap_eq_map']
+theorem map_filterMap (f : α → Option β) (g : β → γ) (t : RoseTree α) :
+    (filterMap f t).map (map g) = filterMap (fun a ↦ (f a).map g) t := by
+  rw [Option.map_eq_bind, ← filterMap_some_comp, filterMap_filterMap]
+  exact congrArg (filterMap · t) (funext fun _ ↦ Option.map_eq_bind.symm)
 
 @[simp] theorem filterMap_getLeft?_map_inl (t : RoseTree α) :
     filterMap Sum.getLeft? (map (Sum.inl : α → α ⊕ β) t) = some t := by
-  rw [filterMap_map,
-    show (Sum.getLeft? ∘ (Sum.inl : α → α ⊕ β)) = (fun a ↦ some (id a)) from rfl,
-    filterMap_some, map_id]
+  rw [filterMap_map]
+  exact filterMap_some t
 
 end RoseTree
