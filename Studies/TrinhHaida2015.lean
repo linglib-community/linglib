@@ -1,9 +1,7 @@
 module
 
 public import Mathlib.Order.BooleanSubalgebra
-public import Linglib.Semantics.Alternatives.Relevance
-public import Linglib.Semantics.Alternatives.Symmetric
-public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Studies.FoxKatzir2011
 public import Linglib.Syntax.Cat
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Core.Data.RoseTree.Get
@@ -38,10 +36,9 @@ alternatives of *not all*.
 * Sentences are propositions `Set W` in the conditions on domains, and labelled trees in the
   derivations. The sets of formal alternatives over which `run_smoke_isDomain` is stated are the
   paper's, as propositions; the trees are not interpreted.
-* Substitution replaces a constituent by any expression of the source, of whatever category, as
-  the paper's derivations do in replacing a NegP by a VP. `StructuralOp.subst` of
-  `Semantics/Alternatives/Structural.lean` requires the same category, so it does not express
-  these steps.
+* Substitution is [fox-katzir-2011]'s, `FoxKatzir2011.Substitutes`: it replaces a constituent
+  by any expression of the source, of whatever category, as the paper's derivations do in
+  replacing a NegP by a VP.
 * A tree in a derivation under Atomicity carries each substituted expression as a leaf, so
   that nothing inside it can be replaced; [Atomicity only removes
   alternatives](##formalAlternatives_subset).
@@ -167,30 +164,11 @@ theorem exhIE_run_smoke {u : W} (hu : u ∈ run ∧ u ∈ smoke) :
 
 end RunSmoke
 
-/-! ### Substitution (13) -/
+/-! ### The substitution source (13b) -/
 
 section Substitution
 
 variable {α : Type*}
-
-/-- `Rewrites r t t'` when `t'` is `t` with one constituent `x` replaced by a `y` such that
-`r x y`. -/
-inductive Rewrites (r : RoseTree α → RoseTree α → Prop) : RoseTree α → RoseTree α → Prop
-  | here {x y : RoseTree α} (h : r x y) : Rewrites r x y
-  | child (a : α) (l₁ : List (RoseTree α)) {c c' : RoseTree α} (l₂ : List (RoseTree α))
-      (h : Rewrites r c c') : Rewrites r (.node a (l₁ ++ c :: l₂)) (.node a (l₁ ++ c' :: l₂))
-
-variable {r : RoseTree α → RoseTree α → Prop}
-
-theorem reflTransGen_rewrites_node (a : α) (pre : List (RoseTree α)) {cs cs' : List (RoseTree α)}
-    (h : List.Forall₂ (Relation.ReflTransGen (Rewrites r)) cs cs') :
-    Relation.ReflTransGen (Rewrites r) (.node a (pre ++ cs)) (.node a (pre ++ cs')) := by
-  induction h generalizing pre with
-  | nil => exact .refl
-  | @cons c c' cs cs' h _ ih =>
-    refine (h.lift (fun x ↦ RoseTree.node a (pre ++ x :: cs))
-      fun _ _ hx ↦ .child a pre cs hx).trans ?_
-    simpa using ih (pre ++ [c'])
 
 private theorem forall₂_append_cons_tail {α : Type*} {r : α → α → Prop} {c c' : α} (hc : r c c') :
     ∀ {l₁ l₂ ms : List α}, List.Forall₂ (Relation.ReflTransGen r) ms (l₁ ++ c :: l₂) →
@@ -212,16 +190,6 @@ def substitutionSource (lexicon uttered : List (RoseTree α)) : Set (RoseTree α
 instance [DecidableEq α] (lexicon uttered : List (RoseTree α)) :
     DecidablePred (· ∈ substitutionSource lexicon uttered) := fun x ↦
   inferInstanceAs (Decidable (x ∈ lexicon ∨ ∃ s ∈ uttered, x ∈ s.subtrees))
-
-/-- One substitution, a `T_i` of (13a), replaces a constituent with an expression of the
-substitution source. -/
-def Substitutes (source : Set (RoseTree α)) : RoseTree α → RoseTree α → Prop :=
-  Rewrites fun _ s ↦ s ∈ source
-
-/-- By (12) and (13), the formal alternatives of `φ` are what successive substitutions from the
-source derive from it. -/
-def substitutionAlternatives (source : Set (RoseTree α)) (φ : RoseTree α) : Set (RoseTree α) :=
-  {ψ | Relation.ReflTransGen (Substitutes source) φ ψ}
 
 /-! ### Atomicity (32)
 
@@ -251,7 +219,7 @@ def expand : RoseTree (α ⊕ RoseTree α) → RoseTree α :=
 expression of the source, which enters AT-marked. -/
 def SubstitutesAtomic (source : Set (RoseTree α)) :
     RoseTree (α ⊕ RoseTree α) → RoseTree (α ⊕ RoseTree α) → Prop :=
-  Rewrites fun x y ↦ x.value.isLeft ∧ ∃ s ∈ source, y = .leaf (.inr s)
+  FoxKatzir2011.Rewrites fun x y ↦ x.value.isLeft ∧ ∃ s ∈ source, y = .leaf (.inr s)
 
 /-- The formal alternatives of `φ` under Atomicity are the sentences of the trees derived from it
 by successive substitutions, none inside an AT-marked expression. -/
@@ -287,7 +255,7 @@ theorem reflTransGen_substitutesAtomic_node {a : α} {ms : List (RoseTree (α �
           exact .inr ⟨_, forall₂_append_cons_tail hc hms', rfl⟩
   · rintro (⟨s, hs, rfl⟩ | ⟨ms', h, rfl⟩)
     · exact .single (.here ⟨rfl, s, hs, rfl⟩)
-    · exact reflTransGen_rewrites_node (.inl a) [] h
+    · exact FoxKatzir2011.reflTransGen_rewrites_node (.inl a) [] h
 
 /-- Under Atomicity an alternative of a tree is an expression of the source or the tree's own
 root over alternatives of its daughters: a derivation amounts to one replacement of disjoint
@@ -326,7 +294,7 @@ theorem subset_formalAlternatives (φ : RoseTree α) : source ⊆ formalAlternat
 
 private theorem SubstitutesAtomic.expand {m m' : RoseTree (α ⊕ RoseTree α)}
     (h : SubstitutesAtomic source m m') :
-    Relation.ReflTransGen (Substitutes source) (expand m) (expand m') := by
+    Relation.ReflTransGen (FoxKatzir2011.Substitutes source) (expand m) (expand m') := by
   induction h with
   | here h =>
     obtain ⟨-, s, hs, rfl⟩ := h
@@ -340,9 +308,10 @@ private theorem SubstitutesAtomic.expand {m m' : RoseTree (α ⊕ RoseTree α)}
     | inr s => rw [expand_node_inr, expand_node_inr]
 
 theorem formalAlternatives_subset (φ : RoseTree α) :
-    formalAlternatives source φ ⊆ substitutionAlternatives source φ := by
+    formalAlternatives source φ ⊆ FoxKatzir2011.substitutionAlternatives source φ := by
   rintro _ ⟨m, hm, rfl⟩
-  have h : Relation.ReflTransGen (Substitutes source) (expand (φ.map .inl)) (expand m) :=
+  have h : Relation.ReflTransGen (FoxKatzir2011.Substitutes source) (expand (φ.map .inl))
+      (expand m) :=
     Relation.ReflTransGen.lift' expand (fun _ _ ↦ SubstitutesAtomic.expand) _ _ hm
   rwa [expand_map_inl] at h
 
@@ -401,11 +370,11 @@ theorem tense_mem_formalAlternatives {source : Set (Tree Cat Word)} {p q : Tree 
 -- (31): the T′ `α` replaces the prejacent's T′, then the VP `β` replaces the NegP inside it
 theorem ranAndSmoked_mem_substitutionAlternatives :
     clause .john (conj (tense goForARun) (tense smoke)) ∈
-      substitutionAlternatives runSource (clause .john (tense goForARun)) := by
-  have h₁ : Substitutes runSource (clause .john (tense goForARun))
+      FoxKatzir2011.substitutionAlternatives runSource (clause .john (tense goForARun)) := by
+  have h₁ : FoxKatzir2011.Substitutes runSource (clause .john (tense goForARun))
       (clause .john ranAndDidntSmoke) :=
     .child _ [_] [] (.here (by decide))
-  have h₂ : Substitutes runSource (clause .john ranAndDidntSmoke)
+  have h₂ : FoxKatzir2011.Substitutes runSource (clause .john ranAndDidntSmoke)
       (clause .john (conj (tense goForARun) (tense smoke))) :=
     .child _ [_] [] (.child _ [_, _] [] (.child _ [_] [] (.here (by decide))))
   exact .tail (.single h₁) h₂
@@ -444,10 +413,11 @@ abbrev passSource : Set (Tree Cat Word) :=
 
 -- (55): replacing NegP with VP and then *all* with *some* derives *passed some*
 theorem passedSome_mem_substitutionAlternatives :
-    tense (pass .some) ∈ substitutionAlternatives passSource (tense (neg (pass .all))) := by
-  have h₁ : Substitutes passSource (tense (neg (pass .all))) (tense (pass .all)) :=
+    tense (pass .some) ∈
+      FoxKatzir2011.substitutionAlternatives passSource (tense (neg (pass .all))) := by
+  have h₁ : FoxKatzir2011.Substitutes passSource (tense (neg (pass .all))) (tense (pass .all)) :=
     .child _ [_] [] (.here (by decide))
-  have h₂ : Substitutes passSource (tense (pass .all)) (tense (pass .some)) :=
+  have h₂ : FoxKatzir2011.Substitutes passSource (tense (pass .all)) (tense (pass .some)) :=
     .child _ [_] [] (.child _ [_, _] [_] (.here (by decide)))
   exact .tail (.single h₁) h₂
 

@@ -30,8 +30,11 @@ through exhaustive relevance, forbids pruning one of two compatible disjuncts as
 
 Sentences are propositions `Set W`, alternative sets are `Set (Set W)`, and the operators are
 intersections of complements, the paper's propositional rendering of *only*. The structural
-definition is stated without focus marking, so `formalAlternatives` contains the paper's set;
-its one new clause, salient constituents, is what brings a symmetric alternative into the set
+definition is the paper's simplified one, successive replacement of a sub-constituent by an
+element of the substitution source (`substitutionAlternatives`), without the deletion,
+contraction and same-category condition of [katzir-2007]'s `structuralAlternatives`. It is
+stated without focus marking, so `formalAlternatives` contains the paper's set; its one new
+clause, salient constituents, is what brings a symmetric alternative into the set
 (`mem_formalAlternatives_of_salient`). Universal operators are `ModalLogic.Box` over an
 accessibility relation, covering the modal and the quantificational cases alike.
 
@@ -57,11 +60,51 @@ variable {W : Type*}
 
 /-! ### Formal alternatives -/
 
+section Substitution
+
+variable {α : Type*} {r : RoseTree α → RoseTree α → Prop}
+
+/-- `Rewrites r t t'` when `t'` is `t` with one constituent `x` replaced by a `y` such that
+`r x y`. -/
+inductive Rewrites (r : RoseTree α → RoseTree α → Prop) : RoseTree α → RoseTree α → Prop
+  | here {x y : RoseTree α} (h : r x y) : Rewrites r x y
+  | child (a : α) (l₁ : List (RoseTree α)) {c c' : RoseTree α} (l₂ : List (RoseTree α))
+      (h : Rewrites r c c') : Rewrites r (.node a (l₁ ++ c :: l₂)) (.node a (l₁ ++ c' :: l₂))
+
+theorem reflTransGen_rewrites_node (a : α) (pre : List (RoseTree α)) {cs cs' : List (RoseTree α)}
+    (h : List.Forall₂ (Relation.ReflTransGen (Rewrites r)) cs cs') :
+    Relation.ReflTransGen (Rewrites r) (.node a (pre ++ cs)) (.node a (pre ++ cs')) := by
+  induction h generalizing pre with
+  | nil => exact .refl
+  | @cons c c' cs cs' h _ ih =>
+    refine (h.lift (fun x ↦ RoseTree.node a (pre ++ x :: cs))
+      fun _ _ hx ↦ .child a pre cs hx).trans ?_
+    simpa using ih (pre ++ [c'])
+
+/-- One replacement of a sub-constituent with an element of the substitution source. -/
+def Substitutes (source : Set (RoseTree α)) : RoseTree α → RoseTree α → Prop :=
+  Rewrites fun _ s ↦ s ∈ source
+
+/-- What successive replacements from the source derive from `φ`: the structures at most as
+complex as `φ`. -/
+def substitutionAlternatives (source : Set (RoseTree α)) (φ : RoseTree α) : Set (RoseTree α) :=
+  {ψ | Relation.ReflTransGen (Substitutes source) φ ψ}
+
+theorem self_mem_substitutionAlternatives (source : Set (RoseTree α)) (φ : RoseTree α) :
+    φ ∈ substitutionAlternatives source φ :=
+  Relation.ReflTransGen.refl
+
+theorem subset_substitutionAlternatives (source : Set (RoseTree α)) (φ : RoseTree α) :
+    source ⊆ substitutionAlternatives source φ :=
+  fun _ h ↦ .single (.here h)
+
+end Substitution
+
 section Formal
 
 open PhraseStructure Tree
 
-variable {C V : Type} (lex : Finset (Tree C V)) (φ : Tree C V) (salient : Finset (Tree C V))
+variable {C V : Type*} (lex : Finset (Tree C V)) (φ : Tree C V) (salient : Finset (Tree C V))
 
 /-- The substitution source in a context consists of the lexicon, the sub-constituents of the
 sentence, and the salient constituents of the context. -/
@@ -70,19 +113,16 @@ def contextualSource : Set (Tree C V) := ↑lex ∪ {t | t ∈ φ.subtrees} ∪ 
 /-- The formal alternatives in a context are whatever is at most as complex as the sentence over
 the contextual substitution source. -/
 def formalAlternatives : Set (Tree C V) :=
-  {ψ | atMostAsComplex (contextualSource lex φ salient) ψ φ}
+  substitutionAlternatives (contextualSource lex φ salient) φ
 
-theorem formalAlternatives_empty : formalAlternatives lex φ ∅ = structuralAlternatives lex φ := by
-  simp [formalAlternatives, structuralAlternatives, contextualSource, substitutionSource]
-
-theorem mem_formalAlternatives_of_salient {ψ : Tree C V} (hψ : ψ ∈ salient)
-    (hcat : ψ.cat = φ.cat) : ψ ∈ formalAlternatives lex φ salient :=
-  Relation.ReflTransGen.single (StructuralOp.subst hcat (by simp [contextualSource, hψ]))
+theorem mem_formalAlternatives_of_salient {ψ : Tree C V} (hψ : ψ ∈ salient) :
+    ψ ∈ formalAlternatives lex φ salient :=
+  subset_substitutionAlternatives _ _ (by simp [contextualSource, hψ])
 
 theorem someButNotAll_mem_formalAlternatives :
     Katzir2007.someButNotAllSentence ∈ formalAlternatives Katzir2007.lexicon
       Katzir2007.someSentence {Katzir2007.someButNotAllSentence} :=
-  mem_formalAlternatives_of_salient _ _ _ (Finset.mem_singleton_self _) rfl
+  mem_formalAlternatives_of_salient _ _ _ (Finset.mem_singleton_self _)
 
 end Formal
 
