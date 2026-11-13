@@ -37,6 +37,8 @@ are the set itself.
   the predicate is the run time of an event of the predicate.
 * `Aspect.HasSubintervalProperty.impf_subset_prfv`: over a modal domain containing the world of
   evaluation, the imperfective entails the perfective.
+* `Aspect.HasSubintervalProperty.unbounded_subset_durative_prfv`: a predicate in progress
+  throughout a span holds perfectively at every subinterval of it.
 * `Aspect.not_hasSubintervalProperty_snd_eq`: the predicate of events that end when a durative
   event ends lacks the property.
 * `Aspect.exists_prfv_of_unbounded_not_hasSubintervalProperty`: a predicate may validate the
@@ -97,6 +99,12 @@ evaluation entails the perfective, Dowty's entailment from *x is V-ing* to *x ha
 theorem impf_subset_prfv (h : HasSubintervalProperty P) {acc : W → NonemptyInterval T → Set W}
     {w : W} (hw : ∀ t, w ∈ acc w t) : IMPF acc P w ⊆ PRFV P w :=
   fun t ht ↦ h.unbounded_subset_prfv w (mem_unbounded_of_mem_impf (hw t) ht)
+
+/-- Under the subinterval property, a predicate in progress throughout a span holds perfectively at
+every subinterval of it. -/
+theorem unbounded_subset_durative_prfv (h : HasSubintervalProperty P) (w : W) :
+    UNBOUNDED P w ⊆ durative (PRFV P) w :=
+  fun _ ht _ hj ↦ h.unbounded_subset_prfv w (isLowerSet_unbounded P w hj ht)
 
 end HasSubintervalProperty
 

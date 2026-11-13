@@ -34,6 +34,8 @@ or inclusive, at some subinterval, as Dowty, Mittwoch and Vlach distinguish them
 * `Aspect.UNBOUNDED`: Pancheva's non-strict imperfective.
 * `Aspect.perfect`: the perfect as an operator on interval properties, whose reference interval
   is a final subinterval of the perfect time span; `Aspect.PERF` is its value at a point.
+* `Aspect.prospective`: the prospective as an operator on interval properties, whose reference
+  interval precedes the interval it introduces.
 * `Aspect.durative`, `Aspect.inclusive`: the durative and inclusive readings of an interval
   adverbial.
 
@@ -46,8 +48,13 @@ or inclusive, at some subinterval, as Dowty, Mittwoch and Vlach distinguish them
 * `Aspect.impf_singleton`: over the world of evaluation alone, the imperfective is the
   extensional one.
 * `Aspect.ViewpointType.denote_eq_image`, `Aspect.unbounded_eq_image`,
-  `Aspect.perfect_eq_image`: the operators are images under Allen cells, so complex aspects
-  compose by `Allen.comp`.
+  `Aspect.perfect_eq_image`, `Aspect.prospective_eq_image`: the operators are images under Allen
+  cells, so complex aspects compose by `Allen.comp`.
+* `Aspect.mem_perfect_prfv`, `Aspect.prospective_prfv`: over the perfective, the perfect holds
+  where an event is over by the end of the reference interval and the prospective where the
+  reference interval precedes one.
+* `Aspect.mem_durative_prfv`: the perfective holds throughout a span when every moment of it is
+  the run time of an event.
 
 ## Implementation notes
 
@@ -312,6 +319,46 @@ theorem perfect_eq_image (p : W → Set (NonemptyInterval T)) (w : W) :
 theorem perfect_mono (h : ∀ w, p w ⊆ q w) (w : W) : perfect p w ⊆ perfect q w :=
   fun _ ⟨pts, hp, hf⟩ ↦ ⟨pts, h w hp, hf⟩
 
+/-- The perfect of the perfective holds where an event of the predicate is over by the end of the
+reference interval, the perfect time span reaching back to the start of the event. -/
+theorem mem_perfect_prfv : t ∈ perfect (PRFV P) w ↔ ∃ e : E, (τ e).snd ≤ t.snd ∧ P w e := by
+  constructor
+  · rintro ⟨pts, ⟨e, hle, hP⟩, -, hsnd⟩
+    exact ⟨e, hsnd ▸ (NonemptyInterval.le_def.1 hle).2, hP⟩
+  · rintro ⟨e, hle, hP⟩
+    exact ⟨⟨((τ e).fst ⊓ t.fst, t.snd), inf_le_right.trans t.fst_le_snd⟩,
+      ⟨e, NonemptyInterval.le_def.2 ⟨inf_le_left, hle⟩, hP⟩, inf_le_right, rfl⟩
+
+/-- `prospective p` holds at a reference interval that precedes some interval belonging to `p`,
+the prospective as an operator on interval properties. -/
+def prospective (p : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterval T) :=
+  fun w ↦ {i | ∃ j ∈ p w, i.Precedes j}
+
+@[simp] theorem mem_prospective : t ∈ prospective p w ↔ ∃ j ∈ p w, t.Precedes j := Iff.rfl
+
+/-- The prospective is the image of the interval property under the cell of precedence, the
+converse of the cell along which the quantificational past looks back. -/
+theorem prospective_eq_image (p : W → Set (NonemptyInterval T)) (w : W) :
+    prospective p w = (Allen.toSetRel Allen.precedes).image (p w) := by
+  ext i
+  simp [prospective, SetRel.image]
+
+theorem prospective_mono (h : ∀ w, p w ⊆ q w) (w : W) : prospective p w ⊆ prospective q w :=
+  fun _ ⟨j, hp, hj⟩ ↦ ⟨j, h w hp, hj⟩
+
+/-- A reference interval within one that precedes an interval precedes it too. -/
+theorem isLowerSet_prospective (p : W → Set (NonemptyInterval T)) (w : W) :
+    IsLowerSet (prospective p w) :=
+  fun _ _ hle ⟨j, hp, hj⟩ ↦ ⟨j, hp, (NonemptyInterval.le_def.1 hle).2.trans_lt hj⟩
+
+/-- The prospective of the perfective holds where the reference interval precedes an event of the
+predicate, Klein's prospective with the reference interval ending before the event starts. -/
+theorem prospective_prfv (P : W → E → Prop) (w : W) :
+    prospective (PRFV P) w = ofRel NonemptyInterval.Precedes P w :=
+  Set.ext fun _ ↦
+    ⟨fun ⟨_, ⟨e, hle, hP⟩, hj⟩ ↦ ⟨e, hj.trans_le (NonemptyInterval.le_def.1 hle).1, hP⟩,
+      fun ⟨e, hlt, hP⟩ ↦ ⟨τ e, ⟨e, le_rfl, hP⟩, hlt⟩⟩
+
 /-! ### Durative and inclusive readings -/
 
 /-- `durative p` holds at a span when `p` holds at every subinterval of it, the durative reading
@@ -333,5 +380,18 @@ theorem inclusive_eq_of_isUpperSet (hp : IsUpperSet (p w)) : inclusive p w = p w
 
 theorem durative_subset_inclusive : durative p w ⊆ inclusive p w :=
   fun i h ↦ ⟨i, h (Set.mem_Iic.2 le_rfl), le_rfl⟩
+
+/-- The perfective holds throughout a span exactly when every moment of the span is the run time
+of an event of the predicate. -/
+theorem mem_durative_prfv :
+    t ∈ durative (PRFV P) w ↔ ∀ a ∈ t, ∃ e : E, τ e = .pure a ∧ P w e := by
+  refine ⟨fun h a ha ↦ ?_, fun h j hj ↦ ?_⟩
+  · obtain ⟨e, hle, hP⟩ := h (show .pure a ≤ t from NonemptyInterval.le_def.2 ha)
+    obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hle
+    exact ⟨e, NonemptyInterval.ext (Prod.ext (((τ e).fst_le_snd.trans h₂).antisymm h₁)
+      (h₂.antisymm (h₁.trans (τ e).fst_le_snd))), hP⟩
+  · obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hj
+    obtain ⟨e, he, hP⟩ := h j.fst ⟨h₁, j.fst_le_snd.trans h₂⟩
+    exact ⟨e, he ▸ NonemptyInterval.le_def.2 ⟨le_rfl, j.fst_le_snd⟩, hP⟩
 
 end Aspect
