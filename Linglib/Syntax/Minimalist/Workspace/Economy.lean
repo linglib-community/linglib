@@ -95,12 +95,12 @@ private theorem mem_traceCuts_mover {mover : SyntacticObject} (hm : mover.val.va
 theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur : current.val.value.isLeft)
     (hitems : ∀ i ∈ step.items, i.val.value.isLeft) :
     NoComplexityLoss (fun T ↦ Forest.accessibleSize {T})
-      (({current} + step.items + W).map Subtype.val)
-      (({step.apply current} + W).map Subtype.val) := by
+      (({current} + step.items + W).map SyntacticObject.val)
+      (({step.apply current} + W).map SyntacticObject.val) := by
   cases step with
   | em side item =>
     simp only [Step.items, Multiset.mem_singleton, forall_eq] at hitems
-    have hs := emTerm_mem current.val (item : SyntacticObject).val (W.map Subtype.val)
+    have hs := emTerm_mem current.val (item : SyntacticObject).val (W.map SyntacticObject.val)
     have hm := UnorderedTree.accessibleCount_merge none current.val (item : SyntacticObject).val
       (UnorderedTree.numTraces_lt_numNodes_of_isLeft hcur)
       (UnorderedTree.numTraces_lt_numNodes_of_isLeft hitems)
@@ -127,7 +127,7 @@ theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur : current.va
     simp only [Multiset.map_singleton, Multiset.sum_singleton,
       Forest.accessibleSize_singleton] at hσ
     refine ⟨{(current.val, (merge (deleteAccessible mover current) mover).val)} +
-      (W.map Subtype.val).map fun U ↦ (U, U), ?_, ?_, ?_⟩
+      (W.map SyntacticObject.val).map fun U ↦ (U, U), ?_, ?_, ?_⟩
     · simp [Step.items, Multiset.map_map]
     · simp only [Step.apply_im, Multiset.map_add, Multiset.map_singleton, Multiset.mem_add,
         Multiset.mem_singleton, Multiset.mem_map]
@@ -145,8 +145,8 @@ theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur : current.va
     counting. -/
 theorem Step.minimalYield (h : step.Admissible current W) (hcur : current.val.value.isLeft)
     (hitems : ∀ i ∈ step.items, i.val.value.isLeft) :
-    MinimalYield UnorderedTree.accessibleCount (({current} + step.items + W).map Subtype.val)
-      (({step.apply current} + W).map Subtype.val) := by
+    MinimalYield UnorderedTree.accessibleCount (({current} + step.items + W).map SyntacticObject.val)
+      (({step.apply current} + W).map SyntacticObject.val) := by
   cases step with
   | em side item =>
     rw [Step.apply_em, merge_comm]
@@ -219,7 +219,7 @@ theorem isChain_merge {d : Derivation} (hd : d.Admissible) :
 theorem isChain_noComplexityLoss {d : Derivation} (hd : d.Admissible)
     (hinit : d.initial.val.value.isLeft) (hitems : ∀ i ∈ d.items, i.val.value.isLeft) :
     d.workspaces.IsChain (fun W W' : Workspace ↦ NoComplexityLoss
-      (fun T ↦ Forest.accessibleSize {T}) (W.map Subtype.val) (W'.map Subtype.val)) :=
+      (fun T ↦ Forest.accessibleSize {T}) (W.map SyntacticObject.val) (W'.map SyntacticObject.val)) :=
   isChain_of_step (P := fun S ↦ S.val.value.isLeft)
     (fun h hcur hi ↦ Step.noComplexityLoss h hcur hi) Step.value_isLeft_apply d.steps d.initial hd
     hinit hitems
@@ -229,7 +229,7 @@ theorem isChain_noComplexityLoss {d : Derivation} (hd : d.Admissible)
 theorem isChain_minimalYield {d : Derivation} (hd : d.Admissible)
     (hinit : d.initial.val.value.isLeft) (hitems : ∀ i ∈ d.items, i.val.value.isLeft) :
     d.workspaces.IsChain (fun W W' : Workspace ↦
-      MinimalYield UnorderedTree.accessibleCount (W.map Subtype.val) (W'.map Subtype.val)) :=
+      MinimalYield UnorderedTree.accessibleCount (W.map SyntacticObject.val) (W'.map SyntacticObject.val)) :=
   isChain_of_step (P := fun S ↦ S.val.value.isLeft) (fun h hcur hi ↦ Step.minimalYield h hcur hi)
     Step.value_isLeft_apply d.steps d.initial hd hinit hitems
 

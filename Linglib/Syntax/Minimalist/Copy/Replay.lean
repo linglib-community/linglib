@@ -136,6 +136,7 @@ theorem Step.unmark_replayWithCopies?_im {mover : SyntacticObject} {side : Edge}
   obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
   refine ⟨s, ?_, by simp⟩
   obtain ⟨r, hr, -, rfl⟩ := Option.pmap_eq_some_iff.1 hs
+  rw [Marked.val_unmark, Marked.val_unmark]
   exact (isSubtree_of_mem_subtreesUntil hr).map _
 
 /-- Internal Merge with copies is MERGE leaving copies of a copy of the mover on the copy object,
