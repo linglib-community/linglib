@@ -1,0 +1,230 @@
+[
+  {
+    "id": "romoli2013b_112a",
+    "source": {
+      "bibkey": "romoli-2013b",
+      "paperLabel": "(112a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John doesn't think that Mary will arrive until tomorrow.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "romoli2013b_112b",
+    "source": {
+      "bibkey": "romoli-2013b",
+      "paperLabel": "(112b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John isn't certain that Mary will arrive until tomorrow.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "romoli2013b_115",
+    "source": {
+      "bibkey": "romoli-2013b",
+      "paperLabel": "(115)"
+    },
+    "language": "stan1293",
+    "primaryText": "John didn't think that Bill would leave until tomorrow",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "romoli2013b_117a",
+    "source": {
+      "bibkey": "romoli-2013b",
+      "paperLabel": "(117a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every student who left until his birthday missed many classes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "From Chierchia (in press).",
+    "verified": "page-image"
+  },
+  {
+    "id": "romoli2013b_117b",
+    "source": {
+      "bibkey": "romoli-2013b",
+      "paperLabel": "(117b)"
+    },
+    "language": "stan1293",
+    "primaryText": "No student who has seen Mary in weeks is upset with her.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "From Chierchia (in press).",
+    "verified": "page-image"
+  },
+  {
+    "id": "romoli2013b_118",
+    "source": {
+      "bibkey": "romoli-2013b",
+      "paperLabel": "(118)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary didn't leave until Thursday.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "romoli2013b_119",
+    "source": {
+      "bibkey": "romoli-2013b",
+      "paperLabel": "(119)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every student who left until Thursday, missed the class on presuppositions.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "romoli2013b_128",
+    "source": {
+      "bibkey": "romoli-2013b",
+      "paperLabel": "(128)"
+    },
+    "language": "stan1293",
+    "primaryText": "Robin won't be here until six o' clock.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "romoli2013b_129",
+    "source": {
+      "bibkey": "romoli-2013b",
+      "paperLabel": "(129)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's not true that Robin will be here until six o' clock.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "romoli2013b_130",
+    "source": {
+      "bibkey": "romoli-2013b",
+      "paperLabel": "(130)"
+    },
+    "language": "stan1293",
+    "primaryText": "Leslie doesn't believe that Robin will be here until six o' clock.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "romoli2013b_131",
+    "source": {
+      "bibkey": "romoli-2013b",
+      "paperLabel": "(131)"
+    },
+    "language": "stan1293",
+    "primaryText": "Leslie doesn't believe that it's true that Robin will be here until six o' clock.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "romoli2013b_160",
+    "source": {
+      "bibkey": "romoli-2013b",
+      "paperLabel": "(160)"
+    },
+    "language": "stan1293",
+    "primaryText": "No student thought that Mary would leave until tomorrow.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

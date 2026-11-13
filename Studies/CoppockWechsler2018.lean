@@ -3,7 +3,8 @@ module
 public import Linglib.Data.Examples.CoppockWechsler2018
 public import Linglib.Discourse.Commitment.Table
 public import Linglib.Logic.Trivalent.Pointwise
-public import Linglib.Semantics.Reference.Kaplan
+public import Linglib.Semantics.Reference.Context.Basic
+public import Linglib.Semantics.Reference.Monster
 public import Studies.Pearson2015
 public import Linglib.Data.Examples.Readers
 
@@ -57,7 +58,7 @@ variable {W E P T : Type*}
 
 /-- A context of utterance together with its authority, the person who vouches for what is said
 in it. -/
-structure Context (W E P T : Type*) extends Kaplan.Context W E P T where
+structure Context (W E P T : Type*) extends SpeechAct.Context W E P T where
   /-- The epistemic authority of the context. -/
   authority : E
 
@@ -227,14 +228,14 @@ def subject? (r : Datum) : Option (Term W E P T) :=
 
 /-- The context of an example has the speaker as its authority if the example is a statement
 and the addressee if it is a question. -/
-def context? (r : Datum) (c₀ : Kaplan.Context W E P T) :
+def context? (r : Datum) (c₀ : SpeechAct.Context W E P T) :
     Option (Context W E P T) :=
   match r.feature? "clause" with
   | some "declarative" => some ⟨c₀, c₀.agent⟩
   | some "interrogative" => some ⟨c₀, c₀.addressee⟩
   | _ => none
 
-theorem ego_acceptable_iff (c₀ : Kaplan.Context W E P T) (hne : c₀.agent ≠ c₀.addressee) :
+theorem ego_acceptable_iff (c₀ : SpeechAct.Context W E P T) (hne : c₀.agent ≠ c₀.addressee) :
     ∀ r ∈ Examples.all, r.feature? "marking" = some "ego" →
       ∃ t ∈ subject? r, ∃ c ∈ context? r c₀,
         (r.judgment = .acceptable ↔ t c c.authority = c.authority) := by
@@ -302,10 +303,10 @@ becomes the authority. -/
 def authorityShift (x : E) : Function.End (Context W E P T) := fun c ↦ { c with authority := x }
 
 theorem isMonster_authorityShift [Nonempty W] (h : c.authority ≠ x) :
-    Kaplan.IsMonster (Kaplan.shift (authorityShift (W := W) (P := P) (T := T) x) :
-      Kaplan.Character (Context W E P T) W Prop → _) :=
-  (Kaplan.isMonster_shift_iff _).2 <|
-    (Kaplan.ne_one_iff_exists_smul_ne _).2 ⟨c, fun e ↦ h (congrArg Context.authority e).symm⟩
+    Character.IsMonster (Character.shift (authorityShift (W := W) (P := P) (T := T) x) :
+      Character (Context W E P T) W Prop → _) :=
+  (Character.isMonster_shift_iff _).2 <|
+    (Function.End.ne_one_iff_exists_smul_ne _).2 ⟨c, fun e ↦ h (congrArg Context.authority e).symm⟩
 
 theorem says_egoAuth_name_iff (hR : ∃ p, R (w, x) p) :
     Says R x (egoAuth V (name z) (authorityShift x c)) w ↔

@@ -102,10 +102,9 @@ theorem choice_atLeast_visible {m a b : ℕ} (ha : a < m) (hb : m ≤ b) :
 -- Exhaustified against every higher numeral, the lower-bounded numeral is exact.
 open scoped Classical in
 theorem choice_exh_covered {m a b : ℕ} (ha : a < m) (hb : m < b) :
-    choice (fun k ↦ exhAgainst (· < ·) (fun j ↦ k ∈ Comparison.ge.interval j) m) ⟨a, b⟩ =
-      some .covered :=
+    choice (fun k ↦ IsGreatest {j | k ∈ Comparison.ge.interval j} m) ⟨a, b⟩ = some .covered :=
   (choice_eq_covered_iff _ _).2
-    ⟨exhAgainst_ge_iff.not.2 (by simp; omega), exhAgainst_ge_iff.not.2 (by simp; omega)⟩
+    ⟨isGreatest_ge_iff.not.2 (by simp; omega), isGreatest_ge_iff.not.2 (by simp; omega)⟩
 
 theorem choice_one_two_bare :
     choice (· ∈ Comparison.eq.interval 2) ⟨1, 2⟩ = some (.visible 2) := by decide
@@ -121,10 +120,10 @@ theorem choice_two_three_atLeast : choice (· ∈ Comparison.ge.interval 2) ⟨2
 
 open scoped Classical in
 theorem choice_two_three_exh :
-    choice (fun k ↦ exhAgainst (· < ·) (fun j ↦ k ∈ Comparison.ge.interval j) 2) ⟨2, 3⟩ =
+    choice (fun k ↦ IsGreatest {j | k ∈ Comparison.ge.interval j} 2) ⟨2, 3⟩ =
       some (.visible 2) :=
   (choice_eq_visible_left_iff _ ⟨2, 3⟩).2
-    ⟨exhAgainst_ge_iff.2 rfl, exhAgainst_ge_iff.not.2 (by simp)⟩
+    ⟨isGreatest_ge_iff.2 rfl, isGreatest_ge_iff.not.2 (by simp)⟩
 
 theorem choice_one_three_bare : choice (· ∈ Comparison.eq.interval 2) ⟨1, 3⟩ = some .covered :=
   choice_exact_covered (by omega) (by omega)
@@ -140,7 +139,7 @@ theorem choice_one_five_atLeast :
 /-! ### Scalar trials
 
 A box's vertex of the triangle of opposition records whether Cookie Monster has none of the
-cookies (`E`), some but not all of them (`IO`), or all (`A`). On the scale the vertices form,
+cookies, some but not all of them, or all. On the scale the vertices form,
 literal *some* holds above the bottom, *all* at the top, and *some* strengthened by its
 implicature *not all* strictly between. -/
 
@@ -155,54 +154,55 @@ abbrev allLiteral : Triangle → Prop := (· = ⊤)
 /-- *Some* strengthened by *not all* holds strictly between the bottom and top vertices. -/
 abbrev someStrengthened : Triangle → Prop := fun t ↦ ⊥ < t ∧ t < ⊤
 
-theorem some_none_some : choice someLiteral ⟨.E, .IO⟩ = some (.visible .IO) := by
+theorem some_none_some : choice someLiteral ⟨.none, .someNotAll⟩ = some (.visible .someNotAll) := by
   decide
 
-theorem some_some_all_literal : choice someLiteral ⟨.IO, .A⟩ = Option.none := by decide
+theorem some_some_all_literal : choice someLiteral ⟨.someNotAll, .all⟩ = Option.none := by decide
 
 theorem some_some_all_strengthened :
-    choice someStrengthened ⟨.IO, .A⟩ = some (.visible .IO) := by decide
+    choice someStrengthened ⟨.someNotAll, .all⟩ = some (.visible .someNotAll) := by decide
 
 /-- In some(NONE,ALL), the control for implicature cancellation, the literal meaning picks the
 total set, which adults and children chose, and the strengthened meaning the covered box. -/
-theorem some_none_all_literal : choice someLiteral ⟨.E, .A⟩ = some (.visible .A) := by
+theorem some_none_all_literal : choice someLiteral ⟨.none, .all⟩ = some (.visible .all) := by
   decide
 
-theorem some_none_all_strengthened : choice someStrengthened ⟨.E, .A⟩ = some .covered := by
+theorem some_none_all_strengthened : choice someStrengthened ⟨.none, .all⟩ = some .covered := by
   decide
 
-theorem all_none_all : choice allLiteral ⟨.E, .A⟩ = some (.visible .A) := by decide
+theorem all_none_all : choice allLiteral ⟨.none, .all⟩ = some (.visible .all) := by decide
 
-theorem all_some_all : choice allLiteral ⟨.IO, .A⟩ = some (.visible .A) := by decide
+theorem all_some_all : choice allLiteral ⟨.someNotAll, .all⟩ = some (.visible .all) := by decide
 
-theorem all_some_none : choice allLiteral ⟨.IO, .E⟩ = some .covered := by decide
+theorem all_some_none : choice allLiteral ⟨.someNotAll, .none⟩ = some .covered := by decide
 
 /-! ### Two-knowers -/
 
 /-- A child at knower level `k` has the numerals up to `k` as a count list; the numeral `i` of
-that list exhaustified against its known stronger alternatives. -/
+that list exhaustified against its known stronger alternatives is the greatest known numeral
+whose lower-bounded meaning holds. -/
 def exhKnown (k : ℕ) (i : Fin (k + 1)) (n : ℕ) : Prop :=
-  exhAgainst (· < ·) (fun j : Fin (k + 1) ↦ n ∈ Comparison.ge.interval (j : ℕ)) i
+  IsGreatest {j : Fin (k + 1) | n ∈ Comparison.ge.interval (j : ℕ)} i
 
-instance (k : ℕ) (i : Fin (k + 1)) : DecidablePred (exhKnown k i) := fun _ ↦
-  inferInstanceAs (Decidable (exhAgainst _ _ _))
+instance (k : ℕ) (i : Fin (k + 1)) : DecidablePred (exhKnown k i) := fun n ↦
+  decidable_of_iff ((i : ℕ) ≤ n ∧ ∀ j : Fin (k + 1), (j : ℕ) ≤ n → j ≤ i) Iff.rfl
 
 /-- The top of the count list has no stronger known alternative, so exhaustification leaves its
 lower-bounded meaning as it is. -/
 theorem exhKnown_last (k n : ℕ) :
     exhKnown k (Fin.last k) n ↔ n ∈ Comparison.ge.interval k :=
-  ⟨fun h ↦ h.1, fun h ↦ ⟨h, fun j hj ↦ absurd hj (not_lt.2 (Fin.le_last j))⟩⟩
+  ⟨fun h ↦ h.1, fun h ↦ ⟨h, fun j _ ↦ Fin.le_last j⟩⟩
 
 /-- A numeral below the top is exhaustified to its exact meaning. -/
 theorem exhKnown_of_lt {k : ℕ} {i : Fin (k + 1)} (hi : i < Fin.last k) (n : ℕ) :
     exhKnown k i n ↔ n ∈ Comparison.eq.interval (i : ℕ) := by
   have hs : (i : ℕ) + 1 < k + 1 := by have := Fin.lt_def.1 hi; simp at this; omega
-  rw [exhKnown, exhAgainst_lt_iff_succ (s := (⟨i + 1, hs⟩ : Fin (k + 1)))
-    (A := fun j : Fin (k + 1) ↦ n ∈ Comparison.ge.interval (j : ℕ))
-    (fun j k hjk (hk : (k : ℕ) ≤ n) ↦ show (j : ℕ) ≤ n from le_trans hjk hk)
-    (Fin.lt_def.2 (Nat.lt_succ_self _))
-    (fun j hj ↦ Fin.le_def.2 (Nat.succ_le_of_lt (Fin.lt_def.1 hj)))]
-  simp only [Comparison.interval_ge, Comparison.interval_eq, Set.mem_Ici, Set.mem_singleton_iff]
+  refine ⟨fun h ↦ ?_, by rintro rfl; exact ⟨le_refl (i : ℕ), fun _ hj ↦ Fin.le_def.2 hj⟩⟩
+  have h1 : (i : ℕ) ≤ n := h.1
+  by_contra hne
+  have hne : n ≠ i := hne
+  have h2 := Fin.le_def.1 (h.2 (show ((⟨i + 1, hs⟩ : Fin (k + 1)) : ℕ) ≤ n by simp only; omega))
+  simp only at h2
   omega
 
 theorem twoKnower_lowerBounded : choice (exhKnown 2 (Fin.last 2)) ⟨1, 3⟩ = some (.visible 3) := by

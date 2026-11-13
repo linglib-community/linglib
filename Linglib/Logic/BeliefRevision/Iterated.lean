@@ -37,13 +37,6 @@ of its revision, and Spohn's conditionalisation of rankings meets the postulates
   Theorem 9, which expansion makes redundant.
 * Syntax-irrelevance holds by construction, since propositions are sets of worlds.
 
-## Errata
-
-* Lemma 10 says that a state accepts `β` given `α` exactly when some `α ∧ β`-world is strictly
-  more plausible than every `α ∧ ¬β`-world. For an unsatisfiable `α` the right side fails while,
-  by (R*1), the revision by `α` has no worlds and accepts every `β`, so
-  `Faithful.accepts_iff_exists_lt` takes `α` satisfiable.
-
 ## References
 
 * [darwiche-pearl-1997]

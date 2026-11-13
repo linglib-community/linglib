@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.Fin.VecNotation
 public import Linglib.Fragments.Tarifit.ConsonantalRoots
 public import Studies.Parker2002
 public import Linglib.Morphology.Morphotactics.Association
@@ -72,7 +73,7 @@ open Tarifit Morphology Phonology Autosegmental
 
 section Stem
 
-variable {α β : Type*}
+variable {α β : Type}
 
 /-- The prosodic template CCəC of the simple imperative. -/
 def imperativeTemplate : Autosegmental.Skeleton := [.C, .C, .V, .C]
@@ -87,37 +88,39 @@ inductive Morpheme where
   | template
   deriving DecidableEq, Repr, Fintype
 
-open MultiplanarForm
+open AR
 
 /-- A root and the vowel `v` over a template, with no association lines yet: the product of their
 morphs. -/
 def unassociated (t : Skeleton) (v : α) (r : ConsonantalRoot α) :
-    MultiplanarForm Morpheme Slot α Morpheme :=
+    AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme)) :=
   ofMelody .root .root r.segments * ofMelody .vocalism .vocalism [v] * ofSlots .template t
 
 /-- The simple stem: the root and the vowel associated with CCəC by the universal conventions. -/
-def simpleStem (v : α) (r : ConsonantalRoot α) : MultiplanarForm Morpheme Slot α Morpheme :=
+def simpleStem (v : α) (r : ConsonantalRoot α) :
+    AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme)) :=
   ((unassociated imperativeTemplate v r).associate .root .C).associate .vocalism .V
 
 /-- The intensive stem: the root associated with CəCCəC by the conventions, the root line on the
 C-slot of the final CVC erased, and the conventions again, which respread the medial radical to
 it, as McCarthy's Erasure does in the Arabic second binyan; then the vowel. -/
-def intensiveStem (v : α) (r : ConsonantalRoot α) : MultiplanarForm Morpheme Slot α Morpheme :=
+def intensiveStem (v : α) (r : ConsonantalRoot α) :
+    AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme)) :=
   let m := (unassociated intensiveTemplate v r).associate .root .C
   ((m.delink .root 3).associate .root .C).associate .vocalism .V
 
-theorem unassociated_map (f : α → β) (t : Skeleton) (v : α) (r : ConsonantalRoot α) :
-    unassociated t (f v) (r.map f) = (unassociated t v r).map f := by
-  simp only [unassociated, mul_eq_concat, map_concat, map_ofMelody, map_ofSlots,
+theorem unassociated_mapMelody (f : α → β) (t : Skeleton) (v : α) (r : ConsonantalRoot α) :
+    unassociated t (f v) (r.map f) = (unassociated t v r).mapMelody f := by
+  simp only [unassociated, mapMelody_mul, mapMelody_ofMelody, mapMelody_ofSlots,
     ConsonantalRoot.segments_map, List.map_cons, List.map_nil]
 
 theorem simpleStem_map (f : α → β) (v : α) (r : ConsonantalRoot α) :
-    simpleStem (f v) (r.map f) = (simpleStem v r).map f := by
-  simp only [simpleStem, unassociated_map, associate_map]
+    simpleStem (f v) (r.map f) = (simpleStem v r).mapMelody f := by
+  simp only [simpleStem, unassociated_mapMelody, associate_mapMelody]
 
 theorem intensiveStem_map (f : α → β) (v : α) (r : ConsonantalRoot α) :
-    intensiveStem (f v) (r.map f) = (intensiveStem v r).map f := by
-  simp only [intensiveStem, unassociated_map, associate_map, delink_map]
+    intensiveStem (f v) (r.map f) = (intensiveStem v r).mapMelody f := by
+  simp only [intensiveStem, unassociated_mapMelody, associate_mapMelody, delink_mapMelody]
 
 /-- The simple stem links the radicals to the C-slots of CCəC in order and the vowel to its
 V-slot. -/
@@ -128,7 +131,8 @@ theorem simpleStem_eq (a b c v : α) :
       ⟨[0, 1, 2]⟩).link .root [(0, 0), (1, 1), (2, 3)]).link .vocalism [(0, 2)] := by
     decide +kernel
   exact (simpleStem_map ![a, b, c, v] 3 ⟨[0, 1, 2]⟩).trans <|
-    (congrArg (·.map ![a, b, c, v]) h).trans (by simp only [← link_map, ← unassociated_map]; rfl)
+    (congrArg (·.mapMelody ![a, b, c, v]) h).trans
+      (by simp only [← link_mapMelody, ← unassociated_mapMelody]; rfl)
 
 /-- The intensive stem links the medial radical to the two medial C-slots of CəCCəC, and the
 vowel to both V-slots. -/
@@ -140,7 +144,8 @@ theorem intensiveStem_eq (a b c v : α) :
         [(0, 1), (0, 4)] := by
     decide +kernel
   exact (intensiveStem_map ![a, b, c, v] 3 ⟨[0, 1, 2]⟩).trans <|
-    (congrArg (·.map ![a, b, c, v]) h).trans (by simp only [← link_map, ← unassociated_map]; rfl)
+    (congrArg (·.mapMelody ![a, b, c, v]) h).trans
+      (by simp only [← link_mapMelody, ← unassociated_mapMelody]; rfl)
 
 theorem spellout_simpleStem (a b c v : α) :
     (simpleStem v ⟨[a, b, c]⟩).spellout = [a, b, v, c] := by
@@ -153,7 +158,8 @@ theorem spellout_intensiveStem (a b c v : α) :
 end Stem
 
 /-- The simple imperative of a root. -/
-def imperative (r : ConsonantalRoot Segment) : MultiplanarForm Morpheme Slot Segment Morpheme :=
+def imperative (r : ConsonantalRoot Segment) :
+    AR (Multiplanar Morpheme (Sponsored Segment Morpheme) (Sponsored Slot Morpheme)) :=
   simpleStem «ə» r
 
 theorem spellout_imperative (a b c : Segment) :
@@ -311,16 +317,25 @@ example : [β, θ, ð, «ðˤ»].map harden = [b, t, d, «dˤ»] := by decide +k
 def fortis (x : Segment) : Segment := if x ∈ spirants then harden x else x
 
 /-- Fortition: a root element linked to two slots is fortis. -/
-def fortition (m : MultiplanarForm Morpheme Slot Segment Morpheme) :
-    MultiplanarForm Morpheme Slot Segment Morpheme where
-  lower := m.lower
-  upper i := if i = .root then (m.upper i).mapIdx fun k x ↦
-    if 2 ≤ m.linkCount .root k then x.map fortis else x else m.upper i
+def fortition (m : AR (Multiplanar Morpheme (Sponsored Segment Morpheme) (Sponsored Slot
+    Morpheme))) :
+    AR (Multiplanar Morpheme (Sponsored Segment Morpheme) (Sponsored Slot Morpheme)) where
+  word
+    | none => m.word none
+    | some i => if i = .root then (m.word (some i)).mapIdx fun k x ↦
+        if 2 ≤ m.linkCount .root k then x.map fortis else x else m.word (some i)
   lines := m.lines
-  lt_of_mem_lines h := by split_ifs <;> simpa using m.lt_of_mem_lines h
+  lines_self := m.lines_self
+  swap_mem_lines := m.swap_mem_lines
+  fst_lt_of_mem_lines i j p q h := by
+    rcases i with _ | i
+    · exact m.fst_lt_of_mem_lines h
+    · dsimp only
+      split_ifs <;> simpa using m.fst_lt_of_mem_lines h
 
 /-- The intensive imperative of a root: the intensive stem with schwa, after fortition. -/
-def intensive (r : ConsonantalRoot Segment) : MultiplanarForm Morpheme Slot Segment Morpheme :=
+def intensive (r : ConsonantalRoot Segment) :
+    AR (Multiplanar Morpheme (Sponsored Segment Morpheme) (Sponsored Slot Morpheme)) :=
   fortition (intensiveStem «ə» r)
 
 theorem spellout_intensive (a b c : Segment) :
@@ -339,7 +354,7 @@ def written : List Segment → Option (List String)
 
 /-- The stem of a cell of the data. -/
 def stem (c : Wordlist.Cell) (r : ConsonantalRoot Segment) :
-    MultiplanarForm Morpheme Slot Segment Morpheme :=
+    AR (Multiplanar Morpheme (Sponsored Segment Morpheme) (Sponsored Slot Morpheme)) :=
   if c.stem = ↑Wordlist.Stem.intensive then intensive r else imperative r
 
 /-- The roots of the imperatives of §2. -/

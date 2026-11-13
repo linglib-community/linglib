@@ -2,7 +2,7 @@ module
 
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.Tableau
-public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
+public import Linglib.Phonology.OptimalityTheory.Grammar
 public import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 public import Linglib.Phonology.Tone.Constraints
 public import Linglib.Fragments.Poko.Tone
@@ -32,15 +32,6 @@ The stems are those of `Fragments.Poko.Tone`, and an input is their product, eac
 sponsored by its position in the phrase, as the source colours each stem; the tableaux,
 rankings, and serial derivations are the substrate's harmonic-serialism and tableau
 apparatus.
-
-## Errata
-
-* For `/kāk^H + rī^H/` the paragraph introducing the support (59) requires the weight of MAX(H)
-  to be less than half the sum of the other three weights. The violation profiles of (58b) and
-  (58c) require only that it be less than the sum, since (58b) also deletes an H; that no
-  weighting fits both inputs is unaffected.
-* Row (59a) writes the loser (57b) before the winner (57c), the reverse of row (59b), though its
-  W and L are read with (57c) as the winner.
 
 ## References
 
@@ -80,8 +71,8 @@ namespace Fig3
 /-- Fig. 3 input `/kāk^H + rī^H + dō^H/`: each M linked, each H floating. -/
 def fig3Input : Form ℕ := kak 0 * ri 1 * «do» 2
 
-instance : NeZero fig3Input.upper.length := ⟨by decide⟩
-instance : NeZero fig3Input.lower.length := ⟨by decide⟩
+instance : NeZero (fig3Input.word .upper).length := ⟨by decide⟩
+instance : NeZero (fig3Input.word .lower).length := ⟨by decide⟩
 
 /-- The faithful candidate of the input. -/
 def fig3 : Candidate fig3Input := .input _
@@ -179,8 +170,8 @@ namespace Eq24
 /-- Eq. (24) input `/nān + rī^H + nā/`; H-rī is the only floating tone. -/
 def eq24Input : Form ℕ := nan 0 * ri 1 * na 2
 
-instance : NeZero eq24Input.upper.length := ⟨by decide⟩
-instance : NeZero eq24Input.lower.length := ⟨by decide⟩
+instance : NeZero (eq24Input.word .upper).length := ⟨by decide⟩
+instance : NeZero (eq24Input.word .lower).length := ⟨by decide⟩
 
 /-- The faithful candidate of the input. -/
 def eq24 : Candidate eq24Input := .input _
@@ -214,8 +205,8 @@ namespace Eq21
 /-- Eq. (21) input `/nān + rī^H/` (phrase-final): no rightward landing site. -/
 def eq21Input : Form ℕ := nan 0 * ri 1
 
-instance : NeZero eq21Input.upper.length := ⟨by decide⟩
-instance : NeZero eq21Input.lower.length := ⟨by decide⟩
+instance : NeZero (eq21Input.word .upper).length := ⟨by decide⟩
+instance : NeZero (eq21Input.word .lower).length := ⟨by decide⟩
 
 /-- The faithful candidate of the input. -/
 def eq21 : Candidate eq21Input := .input _
@@ -242,8 +233,8 @@ namespace Eq27
 /-- Eq. (27) input `/kāk^H + kǎ/`; kǎ carries a linked MH contour. -/
 def eq27Input : Form ℕ := kak 0 * ka 1
 
-instance : NeZero eq27Input.upper.length := ⟨by decide⟩
-instance : NeZero eq27Input.lower.length := ⟨by decide⟩
+instance : NeZero (eq27Input.word .upper).length := ⟨by decide⟩
+instance : NeZero (eq27Input.word .lower).length := ⟨by decide⟩
 
 /-- The faithful candidate of the input. -/
 def eq27 : Candidate eq27Input := .input _
@@ -271,8 +262,8 @@ namespace Eq30
     (L% omitted). -/
 def eq30Input : Form ℕ := kak 0 * ili 1
 
-instance : NeZero eq30Input.upper.length := ⟨by decide⟩
-instance : NeZero eq30Input.lower.length := ⟨by decide⟩
+instance : NeZero (eq30Input.word .upper).length := ⟨by decide⟩
+instance : NeZero (eq30Input.word .lower).length := ⟨by decide⟩
 
 /-- The faithful candidate of the input. -/
 def eq30 : Candidate eq30Input := .input _
@@ -308,8 +299,8 @@ namespace Eq22
 /-- Eq. (22a) input `/nān + rī^H + ne/`; ne is toneless. -/
 def eq22Input : Form ℕ := nan 0 * ri 1 * ne 2
 
-instance : NeZero eq22Input.upper.length := ⟨by decide⟩
-instance : NeZero eq22Input.lower.length := ⟨by decide⟩
+instance : NeZero (eq22Input.word .upper).length := ⟨by decide⟩
+instance : NeZero (eq22Input.word .lower).length := ⟨by decide⟩
 
 /-- The faithful candidate of the input. -/
 def eq22 : Candidate eq22Input := .input _
@@ -359,8 +350,8 @@ namespace Eq58
 /-- Eq. (58) input `/kāk^H + rī^H/`: each M linked, each H floating. -/
 def eq58Input : Form ℕ := kak 0 * ri 1
 
-instance : NeZero eq58Input.upper.length := ⟨by decide⟩
-instance : NeZero eq58Input.lower.length := ⟨by decide⟩
+instance : NeZero (eq58Input.word .upper).length := ⟨by decide⟩
+instance : NeZero (eq58Input.word .lower).length := ⟨by decide⟩
 
 /-- The faithful candidate of the input. -/
 def eq58 : Candidate eq58Input := .input _
@@ -406,15 +397,14 @@ theorem ercB_eq_neg : ercB = -ercA := by
   simp only [ercB, ercFor, Eq58.faithfulness_attestedForm, Eq58.faithfulness_loser]
   revert i; decide
 
-/-- **Parallel OT cannot model Poko**: the two rows of the support (59) are antithetical, so no
-ranking of the four faithfulness constraints derives both attested forms. -/
-theorem parallel_OT_inadequate : ¬ (ERC.linearExtensions {ercA, ercB}).Nonempty := by
-  rintro ⟨r, hr⟩
-  rw [ERC.mem_linearExtensions] at hr
-  refine ERC.not_satisfiedBy_neg ⟨0, by rw [ercA_eq]; decide⟩
-    (hr ercA (Finset.mem_insert_self _ _)) ?_
+/-- **Parallel OT cannot model Poko**: the two rows of the support (59) are antithetical, so the
+grammar they present is the inconsistent one, and no ranking of the four faithfulness constraints
+derives both attested forms. -/
+theorem parallel_OT_inadequate : Grammar.ofERCs {ercA, ercB} = ⊥ := by
+  refine Grammar.eq_bot_iff_extent.2 (Set.eq_empty_of_forall_notMem fun r hr ↦ ?_)
+  refine ERC.not_satisfiedBy_neg ⟨0, by rw [ercA_eq]; decide⟩ (hr (Set.mem_insert _ _)) ?_
   rw [← ercB_eq_neg]
-  exact hr ercB (Finset.mem_insert_of_mem (Finset.mem_singleton_self _))
+  exact hr (Set.mem_insert_of_mem _ rfl)
 
 /-- **Harmonic Grammar cannot model Poko**: no weighting of the four faithfulness constraints
 makes both attested forms more harmonic than their rivals in (57) and (58), since MAX(H) would
@@ -434,18 +424,19 @@ theorem weighted_HG_inadequate :
 
 private theorem isNonCrossing_stem (x : ℕ) :
     ∀ u ∈ [kak x, ri x, «do» x, nan x, na x, ka x, ili x, ne x],
-      IsNonCrossing (u.lines : SetRel ℕ ℕ) := by
+      IsNonCrossing ((u.lines .upper .lower) : SetRel ℕ ℕ) := by
   simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq, kak, ri,
-    «do», nan, na, ka, ili, ne, Form.lines_morph]
+    «do», nan, na, ka, ili, ne, AR.lines_morph]
   decide
 
 -- Every tableau input obeys the No-Crossing Constraint, its stems doing so and concatenation
 -- preserving it; GEN then never draws a crossing line (`Candidate.isNonCrossing_links_of_mem_gen`).
 theorem isNonCrossing_inputs :
     ∀ u ∈ [Fig3.fig3Input, Eq24.eq24Input, Eq21.eq21Input, Eq27.eq27Input, Eq30.eq30Input,
-      Eq22.eq22Input, Eq58.eq58Input], IsNonCrossing (u.lines : SetRel ℕ ℕ) := by
+      Eq22.eq22Input, Eq58.eq58Input], IsNonCrossing ((u.lines .upper .lower) : SetRel ℕ ℕ) := by
   have s := isNonCrossing_stem
-  have c := Form.isNonCrossing_lines_concat (S := List Phonology.Segment) (T := TRN) (M := ℕ)
+  have c (X Y : Poko.Form ℕ) := AR.isNonCrossing_lines_mul (X := X) (Y := Y) (i := .upper)
+    (j := .lower)
   simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
   exact ⟨c _ _ (c _ _ (s 0 _ (by simp)) (s 1 _ (by simp))) (s 2 _ (by simp)),
     c _ _ (c _ _ (s 0 _ (by simp)) (s 1 _ (by simp))) (s 2 _ (by simp)),

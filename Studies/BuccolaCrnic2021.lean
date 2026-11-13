@@ -62,16 +62,6 @@ entailment, is the first clause of the revised condition without the second, and
 * The models instantiate the conjunctions of plural DPs; a judged row is read only when its
   sentence is one the models instantiate.
 
-## Errata
-
-* The interfering implicature of a collective conjunction is presented as following from
-  Chierchia's (2004) core idea. It follows from the exhaustification the paper attributes to
-  Chierchia (2013), not from the 2004 scalar assertion, which negates only the weakest alternative
-  that asymmetrically entails the sentence; the paper's own observation is that the
-  *or*-alternative of a collective conjunction does not, so on the 2004 definitions the
-  implicature does not arise
-  ([`strongApply_andNode_wroteTogether`](##strongApply_andNode_wroteTogether)).
-
 ## TODO
 
 * The operator-based Revised Additional Restriction and its undergeneration and overgeneration

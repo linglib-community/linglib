@@ -56,6 +56,17 @@ theorem IsInfix.notMem_or_notMem_of_length_le (hl : l <:+: u ++ m ++ v)
   ((infix_append_append_iff (by omega)).1 hl).symm.imp
     (fun h hx' ↦ hx (h.subset hx')) fun h hy' ↦ hy (h.subset hy')
 
+/-- An infix of at most `k` elements of a list of at least `k` lies in an infix of exactly `k`. -/
+theorem exists_infix_length_eq {s w : List α} {k : ℕ} (h : s <:+: w) (hs : s.length ≤ k)
+    (hk : k ≤ w.length) : ∃ f, f <:+: w ∧ f.length = k ∧ s <:+: f := by
+  obtain ⟨t, ht, hget⟩ := infix_iff_getElem?.1 h
+  refine ⟨(w.drop (min t (w.length - k))).take k,
+    (take_prefix _ _).isInfix.trans (drop_suffix _ _).isInfix, by simp; omega,
+    infix_iff_getElem?.2 ⟨t - min t (w.length - k), by simp; omega, fun i hi ↦ ?_⟩⟩
+  rw [getElem?_take_of_lt (by omega), getElem?_drop, ← hget i hi]
+  congr 1
+  omega
+
 section DecidableEq
 
 variable [DecidableEq α]

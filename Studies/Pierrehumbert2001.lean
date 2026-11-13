@@ -6,10 +6,12 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Probability.Kernel.IonescuTulcea.SeqLaw
-public import Linglib.Core.Probability.Moments.Convolution
+public import Linglib.Core.Probability.Moments.Variance
 public import Mathlib.Analysis.PSeries
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.MeasureTheory.Function.LpSeminorm.Prod
+public import Mathlib.MeasureTheory.Integral.Prod
 public import Mathlib.Probability.Kernel.Composition.Prod
 
 /-!
@@ -35,8 +37,9 @@ expected spread [grows at every production](##spread_grows),
 * Every production is stored, the idealization of the paper's one-label figures. The single-label
   loop of its appendix stores a token only if its score is nonzero, a filter the theorems leave
   out.
-* Entrenchment is its large-neighborhood limit, the memory-weighted mean; the rule of the paper's
-  simulations, the mean of the 500 nearest exemplars, is not formalized.
+* Entrenchment is the memory-weighted mean of the whole list. That is the paper's rule exactly
+  whenever the neighborhood holds at least as many exemplars as the list, so for the first 500
+  productions of its simulations; the mean of the 500 nearest of a longer list is not formalized.
 * The decay factor `γ` is `exp (-1/τ)` for the paper's memory time `τ`, and `γ = 1` is no decay.
   The paper's score and recency decay in clock time, so a word used every `r` ticks has exemplars
   `r` ticks apart, its own tokens decay by `γ ^ r`, and `rule (γ ^ r)` is its law. Words picked at
@@ -45,28 +48,6 @@ expected spread [grows at every production](##spread_grows),
 * `spreadGrowth` takes the share of the memory spread that a target inherits as a real, so that the
   two targets share one recursion; only the values 0 and 1 are the paper's.
 * Locators are those of the author's manuscript of June 2000.
-
-## Errata
-
-* The bare model is said to admit no parameter setting on which a category fills out without the
-  spreading going on indefinitely (§3.3). In fact its expected spread is [bounded whenever memory
-  decays](##bddAbove_integral_memorySpread_iff). It [converges](##tendsto_integral_memorySpread) to
-  $\gamma/(1-\gamma)$, [between $\tau-1$ and $\tau$](##div_one_sub_mem_Icc_of_eq_exp), times what
-  noise and bias add at a production, and [a production closes](##spreadGrowth_succ) a share of
-  about $\tau^{-2}$ of the distance. With the paper's noise and bias that is a standard deviation of
-  .41 at $\tau = 50$ and 2.6 at the paper's own 2000.
-* Fig. 3 is read synchronically as words of 10,000 to 100,000 tokens (§3.2), which takes one decay
-  per own token for every word. The appendix instead holds $\tau$ fixed for all labels in clock
-  time and notes without quantifying that rare words then reach less of their list. That effect
-  almost cancels the fewer applications of the bias: the frequent word's [lead is bounded at every
-  moment](##lenition_lead_le), and its [clock speed](##tendsto_clockSpeed) exceeds a rarer word's by
-  at most [a factor $\gamma^{-(r-1)}$](##totalWeight_div_mem_Icc). Evaluating the closed form at the
-  paper's parameters, the means at 100,000 and 10,000 tokens differ by .45 at one decay per token,
-  and by .024 at $\tau = 2000$ ticks and the same clock time.
-* A larger neighborhood is said to give the high-count case less variance than the low-count case
-  (§3.3). In the limit of the largest neighborhood [the expected spread still rises with every
-  production](##spread_grows), [toward $\gamma$ times what noise and bias
-  add](##tendsto_integral_memorySpread), so there the order of the two is not reversed.
 
 ## TODO
 
@@ -93,20 +74,12 @@ section Memory
 
 variable (γ : ℝ≥0) {n : ℕ}
 
-theorem sum_pow_rev {R : Type*} [CommSemiring R] (x : R) :
+private theorem sum_pow_rev {R : Type*} [CommSemiring R] (x : R) :
     ∑ i : Fin n, x ^ (i.rev : ℕ) = ∑ i ∈ range n, x ^ i :=
   (Equiv.sum_comp Fin.revPerm fun i : Fin n ↦ x ^ (i : ℕ)).trans (Fin.sum_univ_eq_sum_range _ n)
 
 /-- The total weight of `n` exemplars, the `i`th youngest of which has weight `γ ^ i`. -/
 noncomputable def totalWeight (n : ℕ) : ℝ := ∑ i ∈ range n, (γ : ℝ) ^ i
-
-/-- The memory-weighted mean of an exemplar list. -/
-noncomputable def memoryMean (e : Fin n → ℝ) : ℝ :=
-  (∑ i, (γ : ℝ) ^ (i.rev : ℕ) * e i) / totalWeight γ n
-
-/-- The memory-weighted spread of an exemplar list about its mean. -/
-noncomputable def memorySpread (e : Fin n → ℝ) : ℝ :=
-  (∑ i, (γ : ℝ) ^ (i.rev : ℕ) * (e i - memoryMean γ e) ^ 2) / totalWeight γ n
 
 theorem totalWeight_succ : totalWeight γ (n + 1) = γ * totalWeight γ n + 1 := geom_sum_succ
 
@@ -159,74 +132,6 @@ private theorem totalWeight_pow_mul (r k : ℕ) :
       sum_range_add, add_comm, mul_sum]
     simp [pow_add, pow_mul]
 
-theorem totalWeight_mul_memoryMean (e : Fin n → ℝ) :
-    totalWeight γ n * memoryMean γ e = ∑ i, (γ : ℝ) ^ (i.rev : ℕ) * e i := by
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp [totalWeight]
-  · exact mul_div_cancel₀ _ (totalWeight_pos γ hn.ne').ne'
-
-theorem totalWeight_mul_memorySpread (e : Fin n → ℝ) :
-    totalWeight γ n * memorySpread γ e =
-      ∑ i, (γ : ℝ) ^ (i.rev : ℕ) * (e i - memoryMean γ e) ^ 2 := by
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp [totalWeight]
-  · exact mul_div_cancel₀ _ (totalWeight_pos γ hn.ne').ne'
-
-theorem sum_mul_sub_sq (e : Fin n → ℝ) (c : ℝ) :
-    ∑ i, (γ : ℝ) ^ (i.rev : ℕ) * (e i - c) ^ 2 =
-      totalWeight γ n * memorySpread γ e + totalWeight γ n * (memoryMean γ e - c) ^ 2 := by
-  have h : ∑ i, (γ : ℝ) ^ (i.rev : ℕ) * (e i - c) ^ 2 =
-      ∑ i, (γ : ℝ) ^ (i.rev : ℕ) * (e i - memoryMean γ e) ^ 2 +
-        2 * (memoryMean γ e - c) * (∑ i, (γ : ℝ) ^ (i.rev : ℕ) * e i -
-          totalWeight γ n * memoryMean γ e) + totalWeight γ n * (memoryMean γ e - c) ^ 2 := by
-    simp only [totalWeight, ← sum_pow_rev, mul_sum, sum_mul, ← sum_sub_distrib, ← sum_add_distrib]
-    exact sum_congr rfl fun i _ ↦ by ring
-  rw [h, totalWeight_mul_memoryMean, sub_self, mul_zero, add_zero, totalWeight_mul_memorySpread]
-
-theorem memoryMean_snoc (e : Fin n → ℝ) (x : ℝ) :
-    memoryMean γ (Fin.snoc e x : Fin (n + 1) → ℝ) =
-      (γ * totalWeight γ n * memoryMean γ e + x) / totalWeight γ (n + 1) := by
-  rw [memoryMean, mul_assoc, totalWeight_mul_memoryMean, mul_sum]
-  simp only [Fin.sum_univ_castSucc, Fin.snoc_castSucc, Fin.snoc_last, Fin.rev_castSucc,
-    Fin.rev_last, Fin.val_succ, Fin.val_zero, pow_zero, one_mul, pow_succ]
-  congr 2
-  exact sum_congr rfl fun i _ ↦ by ring
-
-theorem memorySpread_snoc (e : Fin n → ℝ) (x : ℝ) :
-    memorySpread γ (Fin.snoc e x : Fin (n + 1) → ℝ) =
-      γ * totalWeight γ n / totalWeight γ (n + 1) * memorySpread γ e +
-        γ * totalWeight γ n / totalWeight γ (n + 1) ^ 2 * (x - memoryMean γ e) ^ 2 := by
-  have hS := totalWeight_pos γ (Nat.succ_ne_zero n)
-  have hsum : ∑ i : Fin (n + 1), (γ : ℝ) ^ (i.rev : ℕ) * ((Fin.snoc e x : Fin (n + 1) → ℝ) i -
-      memoryMean γ (Fin.snoc e x : Fin (n + 1) → ℝ)) ^ 2 =
-      γ * (totalWeight γ n * memorySpread γ e + totalWeight γ n *
-        (memoryMean γ e - memoryMean γ (Fin.snoc e x : Fin (n + 1) → ℝ)) ^ 2) +
-      (x - memoryMean γ (Fin.snoc e x : Fin (n + 1) → ℝ)) ^ 2 := by
-    rw [← sum_mul_sub_sq, mul_sum]
-    simp only [Fin.sum_univ_castSucc, Fin.snoc_castSucc, Fin.snoc_last, Fin.rev_castSucc,
-      Fin.rev_last, Fin.val_succ, Fin.val_zero, pow_zero, one_mul, pow_succ]
-    congr 1
-    exact sum_congr rfl fun i _ ↦ by ring
-  rw [memorySpread, hsum, memoryMean_snoc, totalWeight_succ]
-  rw [totalWeight_succ] at hS
-  generalize totalWeight γ n = S at *
-  generalize memoryMean γ e = M
-  generalize memorySpread γ e = V
-  field_simp
-  ring
-
-@[fun_prop] theorem measurable_memoryMean : Measurable (memoryMean γ : (Fin n → ℝ) → ℝ) := by
-  unfold memoryMean
-  fun_prop
-
-end Memory
-
-/-! ### Production -/
-
-section Production
-
-variable (γ : ℝ≥0) {n : ℕ}
-
 /-- The recency distribution of the appendix, picking a position with probability proportional
 to its weight. -/
 noncomputable def recency (n : ℕ) : Measure (Fin n) :=
@@ -239,11 +144,6 @@ theorem integral_recency (f : Fin n → ℝ) :
   rw [integral_smul_nnreal_measure, integral_dirac, NNReal.smul_def, smul_eq_mul]
   simp [totalWeight]
 
-theorem integral_recency_eq_memoryMean (e : Fin n → ℝ) :
-    ∫ i, e i ∂recency γ n = memoryMean γ e := by
-  rw [integral_recency, memoryMean, sum_div]
-  exact sum_congr rfl fun i _ ↦ by ring
-
 instance (n : ℕ) : IsProbabilityMeasure (recency γ (n + 1)) := by
   constructor
   rw [recency, Measure.coe_finsetSum, Finset.sum_apply]
@@ -252,6 +152,93 @@ instance (n : ℕ) : IsProbabilityMeasure (recency γ (n + 1)) := by
   rw [← ENNReal.ofNNReal_finsetSum, ← sum_div, sum_pow_rev,
     div_self (geom_sum_pos zero_le (Nat.succ_ne_zero n)).ne']
   simp
+
+-- Storing a token mixes the older exemplars, discounted once more, with a point mass at the
+-- new one.
+theorem recency_succ (n : ℕ) :
+    recency γ (n + 1) =
+      (γ * (∑ j ∈ range n, γ ^ j) / ∑ j ∈ range (n + 1), γ ^ j) • (recency γ n).map Fin.castSucc +
+        (∑ j ∈ range (n + 1), γ ^ j)⁻¹ • Measure.dirac (Fin.last n) := by
+  have hmap : (recency γ n).map Fin.castSucc =
+      ∑ i : Fin n, (γ ^ (i.rev : ℕ) / ∑ j ∈ range n, γ ^ j : ℝ≥0) •
+        Measure.dirac (Fin.castSucc i) := by
+    rw [recency, Measure.map_finset_sum' Measurable.of_discrete.aemeasurable]
+    simp [Measure.map_smul, Measurable.of_discrete.aemeasurable, Measure.map_dirac' .of_discrete]
+  rw [hmap, recency, Fin.sum_univ_castSucc, smul_sum]
+  simp only [Fin.rev_castSucc, Fin.rev_last, Fin.val_succ, Fin.val_zero, pow_zero, one_div,
+    smul_smul]
+  congr 2
+  funext i
+  have hS : ∑ j ∈ range n, γ ^ j ≠ 0 :=
+    (geom_sum_pos zero_le (Fin.pos i).ne').ne'
+  congr 1
+  rw [pow_succ]
+  field_simp
+
+/-- The memory-weighted mean of an exemplar list, its mean under the recency distribution. -/
+noncomputable def memoryMean (e : Fin n → ℝ) : ℝ := ∫ i, e i ∂recency γ n
+
+/-- The memory-weighted spread of an exemplar list, its variance under the recency
+distribution. -/
+noncomputable def memorySpread (e : Fin n → ℝ) : ℝ := Var[e; recency γ n]
+
+theorem memoryMean_eq_sum (e : Fin n → ℝ) :
+    memoryMean γ e = (∑ i, (γ : ℝ) ^ (i.rev : ℕ) * e i) / totalWeight γ n := by
+  rw [memoryMean, integral_recency, sum_div]
+  exact sum_congr rfl fun i _ ↦ by ring
+
+theorem memorySpread_eq_sum (e : Fin n → ℝ) :
+    memorySpread γ e =
+      (∑ i, (γ : ℝ) ^ (i.rev : ℕ) * (e i - memoryMean γ e) ^ 2) / totalWeight γ n := by
+  rw [memorySpread, variance_eq_integral (by fun_prop), integral_recency, sum_div]
+  exact sum_congr rfl fun i _ ↦ by rw [memoryMean]; ring
+
+theorem totalWeight_mul_memoryMean (e : Fin n → ℝ) :
+    totalWeight γ n * memoryMean γ e = ∑ i, (γ : ℝ) ^ (i.rev : ℕ) * e i := by
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · simp [totalWeight]
+  · rw [memoryMean_eq_sum, mul_div_cancel₀ _ (totalWeight_pos γ hn.ne').ne']
+
+theorem memoryMean_snoc (e : Fin n → ℝ) (x : ℝ) :
+    memoryMean γ (Fin.snoc e x : Fin (n + 1) → ℝ) =
+      (γ * totalWeight γ n * memoryMean γ e + x) / totalWeight γ (n + 1) := by
+  rw [memoryMean_eq_sum, mul_assoc, totalWeight_mul_memoryMean, mul_sum]
+  simp only [Fin.sum_univ_castSucc, Fin.snoc_castSucc, Fin.snoc_last, Fin.rev_castSucc,
+    Fin.rev_last, Fin.val_succ, Fin.val_zero, pow_zero, one_mul, pow_succ]
+  congr 2
+  exact sum_congr rfl fun i _ ↦ by ring
+
+theorem memorySpread_snoc (e : Fin n → ℝ) (x : ℝ) :
+    memorySpread γ (Fin.snoc e x : Fin (n + 1) → ℝ) =
+      γ * totalWeight γ n / totalWeight γ (n + 1) * memorySpread γ e +
+        γ * totalWeight γ n / totalWeight γ (n + 1) ^ 2 * (x - memoryMean γ e) ^ 2 := by
+  cases n with
+  | zero => simp [memorySpread, recency, totalWeight]
+  | succ n =>
+    have : IsProbabilityMeasure ((recency γ (n + 1)).map Fin.castSucc) :=
+      (Measure.isProbabilityMeasure_map_iff Measurable.of_discrete.aemeasurable).2 inferInstance
+    have hS : ∑ j ∈ range (n + 2), γ ^ j ≠ 0 := (geom_sum_pos zero_le (by omega)).ne'
+    rw [memorySpread, recency_succ, variance_smul_add_smul_measure
+        (by rw [inv_eq_one_div, ← add_div, ← geom_sum_succ, div_self hS]) .of_discrete .of_discrete,
+      variance_map .of_discrete .of_discrete, integral_map .of_discrete .of_discrete,
+      integral_dirac, variance_dirac]
+    simp only [Function.comp_def, Fin.snoc_castSucc, Fin.snoc_last]
+    rw [memorySpread, memoryMean]
+    simp only [totalWeight]
+    push_cast
+    ring
+
+@[fun_prop] theorem measurable_memoryMean : Measurable (memoryMean γ : (Fin n → ℝ) → ℝ) := by
+  rw [funext (memoryMean_eq_sum γ)]
+  fun_prop
+
+end Memory
+
+/-! ### Production -/
+
+section Production
+
+variable (γ : ℝ≥0) {n : ℕ}
 
 /-- The production target of the appendix, an exemplar picked by recency or the memory-weighted
 mean, to which entrenchment fixes the target in the limit of a large neighborhood. -/
@@ -301,10 +288,8 @@ instance : IsMarkovKernel (produce γ tgt ν bias : Kernel (Fin (n + 1) → ℝ)
   Kernel.IsMarkovKernel.map _ (by fun_prop)
 
 theorem produce_apply (e : Fin (n + 1) → ℝ) :
-    produce γ tgt ν bias e = (target γ tgt e ∗ ν).map (· + bias) := by
-  rw [produce, Kernel.map_apply _ (by fun_prop), Kernel.prod_apply, Kernel.const_apply,
-    Measure.conv, Measure.map_map (by fun_prop) (by fun_prop)]
-  rfl
+    produce γ tgt ν bias e = ((target γ tgt e).prod ν).map fun p ↦ p.1 + p.2 + bias := by
+  rw [produce, Kernel.map_apply _ (by fun_prop), Kernel.prod_apply, Kernel.const_apply]
 
 theorem memLp_target (e : Fin (n + 1) → ℝ) : MemLp id 2 (target γ tgt e) := by
   cases tgt
@@ -317,16 +302,14 @@ theorem memLp_target (e : Fin (n + 1) → ℝ) : MemLp id 2 (target γ tgt e) :=
 theorem integral_target (e : Fin (n + 1) → ℝ) : ∫ t, t ∂target γ tgt e = memoryMean γ e := by
   cases tgt
   · rw [target_exemplar_apply, integral_map (by fun_prop) (by fun_prop),
-      integral_recency_eq_memoryMean]
+      memoryMean]
   · simp [target_average_apply]
 
 theorem variance_target (e : Fin (n + 1) → ℝ) :
     Var[id; target γ tgt e] = tgt.inherited * memorySpread γ e := by
   cases tgt
-  · rw [target_exemplar_apply, variance_id_map (by fun_prop), variance_eq_integral (by fun_prop),
-      integral_recency, memorySpread, sum_div, Target.inherited, one_mul]
-    simp only [integral_recency_eq_memoryMean]
-    exact sum_congr rfl fun i _ ↦ by ring
+  · rw [target_exemplar_apply, variance_id_map (by fun_prop), Target.inherited, one_mul,
+      memorySpread]
   · simp [target_average_apply, Target.inherited]
 
 variable (hν : MemLp id 2 ν) (hν0 : ∫ x, x ∂ν = 0)
@@ -334,29 +317,35 @@ include hν
 
 theorem memLp_produce (e : Fin (n + 1) → ℝ) : MemLp id 2 (produce γ tgt ν bias e) := by
   rw [produce_apply, memLp_map_measure_iff (by fun_prop) (by fun_prop)]
-  exact (memLp_id_conv (memLp_target γ tgt e) hν).add (memLp_const bias)
+  exact (((memLp_target γ tgt e).comp_fst ν).add (hν.comp_snd _)).add (memLp_const bias)
+
+-- A production inherits the spread of its target and adds the spread of the noise.
+theorem variance_produce (e : Fin (n + 1) → ℝ) :
+    Var[id; produce γ tgt ν bias e] = tgt.inherited * memorySpread γ e + Var[id; ν] := by
+  rw [produce_apply, variance_id_map (by fun_prop),
+    variance_add_const (X := fun p : ℝ × ℝ ↦ p.1 + p.2) (by fun_prop), ← variance_target]
+  exact variance_add_prod (X := id) (Y := id) (memLp_target γ tgt e) hν
 
 include hν0
 
 theorem integral_produce (e : Fin (n + 1) → ℝ) :
     ∫ x, x ∂produce γ tgt ν bias e = memoryMean γ e + bias := by
-  have h : Integrable (fun x : ℝ ↦ x) (target γ tgt e ∗ ν) :=
-    (memLp_id_conv (memLp_target γ tgt e) hν).integrable one_le_two
-  rw [produce_apply, integral_map (by fun_prop) (by fun_prop), integral_add h (integrable_const _),
-    integral_id_conv ((memLp_target γ tgt e).integrable one_le_two) (hν.integrable one_le_two),
+  have h1 : Integrable (fun p : ℝ × ℝ ↦ p.1) ((target γ tgt e).prod ν) :=
+    ((memLp_target γ tgt e).integrable one_le_two).comp_fst ν
+  have h2 : Integrable (fun p : ℝ × ℝ ↦ p.2) ((target γ tgt e).prod ν) :=
+    (hν.integrable one_le_two).comp_snd _
+  rw [produce_apply, integral_map (by fun_prop) (by fun_prop),
+    integral_add (f := fun p : ℝ × ℝ ↦ p.1 + p.2) (h1.add h2) (integrable_const _),
+    integral_add h1 h2, integral_fun_fst (fun t : ℝ ↦ t), integral_fun_snd (fun t : ℝ ↦ t),
     integral_target, hν0]
   simp
 
 theorem integral_produce_sub_sq (e : Fin (n + 1) → ℝ) :
     ∫ x, (x - memoryMean γ e) ^ 2 ∂produce γ tgt ν bias e =
       tgt.inherited * memorySpread γ e + Var[id; ν] + bias ^ 2 := by
-  have h := memLp_id_conv (memLp_target γ tgt e) hν
-  rw [produce_apply, integral_map (by fun_prop) (by fun_prop)]
-  simp only [show ∀ y, y + bias - memoryMean γ e = y - (memoryMean γ e - bias) from
-    fun y ↦ by ring]
-  rw [integral_sub_sq h, variance_id_conv (memLp_target γ tgt e) hν,
-    integral_id_conv ((memLp_target γ tgt e).integrable one_le_two) (hν.integrable one_le_two),
-    integral_target, hν0, variance_target]
+  have h := integral_sub_const_sq (memLp_produce γ tgt bias hν e) (memoryMean γ e)
+  simp only [id] at h
+  rw [h, variance_produce γ tgt bias hν, integral_produce γ tgt bias hν hν0]
   ring
 
 end Production
@@ -402,10 +391,10 @@ theorem memLp_memoryMean : MemLp (memoryMean γ) 2 μ := by
   convert (memLp_finsetSum _ fun i _ ↦ (h i).const_mul ((γ : ℝ) ^ (i.rev : ℕ))).mul_const
     (totalWeight γ n)⁻¹ using 1
   funext e
-  rw [memoryMean, div_eq_mul_inv]
+  rw [memoryMean_eq_sum, div_eq_mul_inv]
 
 theorem integrable_memorySpread : Integrable (memorySpread γ) μ := by
-  unfold memorySpread
+  refine (integrable_congr (.of_forall (memorySpread_eq_sum γ))).2 ?_
   exact (integrable_finsetSum _ fun i _ ↦
     (((h i).sub (memLp_memoryMean h)).integrable_sq).const_mul _).div_const _
 
@@ -469,7 +458,7 @@ theorem integral_memoryMean (n : ℕ) :
   induction n with
   | zero =>
     rw [seqLaw_rule_one, integral_dirac]
-    simp [memoryMean, totalWeight]
+    simp [memoryMean_eq_sum, totalWeight]
   | succ n ih =>
     rw [integral_seqLaw_succ ((memLp_memoryMean (memLp_apply hν hν0 (n + 1))).integrable
       one_le_two)]
@@ -831,7 +820,7 @@ theorem integral_memorySpread (n : ℕ) :
   induction n with
   | zero =>
     rw [seqLaw_rule_one, integral_dirac]
-    simp [memorySpread, memoryMean, totalWeight, spreadGrowth]
+    simp [memorySpread_eq_sum, memoryMean_eq_sum, totalWeight, spreadGrowth]
   | succ n ih =>
     have hV : Integrable (memorySpread γ) (seqLaw (rule γ tgt ν bias seed) (n + 1)) :=
       integrable_memorySpread (memLp_apply hν hν0 n)
@@ -1014,12 +1003,25 @@ example (γ : ℝ≥0) (tgt : Target) (n : ℕ) :
   rw [integral_memoryMean memLp_noise integral_noise]
   simp
 
--- The first erratum at the paper's noise and bias: no decay spreads without bound.
+-- At the paper's noise and bias: no decay spreads without bound.
 example : ¬ BddAbove (Set.range fun n ↦
     ∫ e, memorySpread 1 e ∂seqLaw (rule 1 .exemplar noise (-(1 / 100)) 1) (n + 1)) := by
   rw [bddAbove_integral_memorySpread_iff memLp_noise integral_noise one_pos le_rfl
     (by rw [variance_noise]; norm_num)]
   simp
+
+-- At the paper's memory time of 2000: the expected spread converges, to between
+-- 1999 and 2000 times what noise and bias add, a standard deviation of about 2.6.
+example {γ : ℝ≥0} (hγ : (γ : ℝ) = Real.exp (-(2000 : ℝ)⁻¹)) :
+    ∃ L ∈ Set.Icc (1999 * (103 / 30000) : ℝ) (2000 * (103 / 30000)), Tendsto (fun n ↦
+      ∫ e, memorySpread γ e ∂seqLaw (rule γ .exemplar noise (-(1 / 100)) 1) (n + 1)) atTop
+        (𝓝 L) := by
+  have hpos : 0 < γ := NNReal.coe_pos.1 (hγ ▸ Real.exp_pos _)
+  have hlt : γ < 1 := NNReal.coe_lt_one.1 (hγ ▸ Real.exp_lt_one_iff.2 (by norm_num))
+  have hI := div_one_sub_mem_Icc_of_eq_exp (by norm_num : (0 : ℝ) < 2000) hγ
+  refine ⟨_, ?_, tendsto_integral_memorySpread memLp_noise integral_noise hpos hlt⟩
+  rw [variance_noise, Target.inherited, one_mul]
+  constructor <;> nlinarith [hI.1, hI.2]
 
 -- What noise and bias add at a production, the unit of the expected spread.
 example : Var[id; noise] + (-(1 / 100) : ℝ) ^ 2 = 103 / 30000 := by

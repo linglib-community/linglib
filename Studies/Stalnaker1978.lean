@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Stalnaker1978
 public import Linglib.Semantics.Dynamic.Update
-public import Linglib.Semantics.Reference.Kaplan
+public import Linglib.Semantics.Reference.Monster
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Data.Examples.Readers
 
@@ -41,13 +41,13 @@ known](##eq_up_diag), so that Stalnaker's reinterpretation is the update by the 
 
 ## Implementation notes
 
-* A propositional concept is a `Kaplan.Character W W Prop`, and its diagonal proposition is
-  `Kaplan.Character.diag id`. The dagger is the substrate's `Kaplan.shiftBy` with the context
+* A propositional concept is a `Character W W Prop`, and its diagonal proposition is
+  `Character.diag id`. The dagger is the substrate's `Character.shiftBy` with the context
   shifted to the world of evaluation. The upside-down dagger of note 6, which projects the
-  diagonal onto the vertical, is `Kaplan.Character.dthat` of the diagonal.
+  diagonal onto the vertical, is `Character.dthat` of the diagonal.
 * The worlds `i`, `j` and `k` of each example are one type, `World`. Each example's matrix is
   derived from the facts the paper stipulates for it. Demonstratives, indexicals and terms whose
-  reference is fixed by a description are `Kaplan.Character.dthat`, and proper names are constant
+  reference is fixed by a description are `Character.dthat`, and proper names are constant
   characters, which is the paper's assumption that both are rigid designators.
 * A truth-value gap, for the second principle, is the value `undefined` of a `Trivalent`-valued
   concept, as in `Semantics/Presupposition/Basic.lean`. A sentence that fails to express a
@@ -58,14 +58,6 @@ known](##eq_up_diag), so that Stalnaker's reinterpretation is the update by the 
   eliminative and distributive update agreeing with it where the actual world is known is this
   file's reconstruction, through `DynamicSemantics.CCP.isClassical_iff_up_down_eq`.
 * Locators are to the 1978 printing.
-
-## Errata
-
-* On p. 330, *Sherlock Holmes does not exist*, if the name does not refer, is said to express a
-  necessarily false proposition, by the rule that the sentence is true at the worlds whose domain
-  does not contain the person the name refers to. That rule makes it necessarily true, as the
-  first row of matrix G, true throughout, shows (`holmesDoesNotExist_diag`). The 1999 reprint in
-  *Context and Content* reads "necessarily true".
 
 ## TODO
 
@@ -88,8 +80,7 @@ known](##eq_up_diag), so that Stalnaker's reinterpretation is the update by the 
 
 namespace Stalnaker1978
 
-open Kaplan DynamicSemantics
-open Kaplan.Character (dthat const dthat_isDirectlyReferential const_isDirectlyReferential)
+open DynamicSemantics Character
 
 /-! ### Two-dimensional operators -/
 
@@ -123,7 +114,7 @@ def IsExtensional (O : Character C V α → Character C V β) : Prop :=
 /-- An operator is one-dimensional when the proposition it yields at a context depends only on
 the proposition its argument expresses there. -/
 def IsOneDimensional (O : Character C V α → Character C V β) : Prop :=
-  ∃ o : Content V α → Content V β, ∀ χ c, O χ c = o (χ c)
+  ∃ o : (V → α) → (V → β), ∀ χ c, O χ c = o (χ c)
 
 -- p. 320: each kind of operator generalizes the kind before it
 theorem IsExtensional.isOneDimensional {O : Character C V α → Character C V β}

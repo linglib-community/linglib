@@ -39,12 +39,6 @@ item](##Blok2015.admits_hoeven). [The paper's judgments follow](##Blok2015.judgm
 * The scope of a modified numeral is the cardinal quantifier of what the sentence asserts, as a
   licenser indexed by its finite restrictor, as the library's licensing contexts are.
 
-## Errata
-
-* (45) states the range requirement as $s \ne n$, which admits $s > n$, where *up to n* raises
-  no possibility at all; the discussion of (23b) counts that case as a violation too, and the
-  requirement is $s < n$.
-
 ## TODO
 
 * The evaluative adverbs, which target what a sentence asserts, and the plurals and modals that

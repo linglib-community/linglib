@@ -46,7 +46,7 @@ variable {T : Type*} [LinearOrder T] {P Q : NonemptyInterval T → Prop} {σ : N
 `σ` and that the clause holds at it. -/
 def Past (n : ℕ) (P : NonemptyInterval T → Prop) (σ : NonemptyInterval T) :
     (ℕ → NonemptyInterval T) → Prop :=
-  fun g ↦ Perspective.Presup Allen.precedes σ (g n) ∧ P (g n)
+  fun g ↦ σ ~[Allen.toSetRel Allen.precedes] g n ∧ P (g n)
 
 theorem past_iff : Past n P σ g ↔ (g n).Precedes σ ∧ P (g n) := by
   simp [Past]
@@ -67,7 +67,7 @@ theorem exists_past_iff_sometime :
 *I didn't turn off the stove*, with `P` the times at which the speaker turns off the stove. -/
 
 /-- A speaker who never turned off the stove did not turn it off at the salient time. -/
-theorem never_entails_deictic (hn : Perspective.Presup Allen.precedes σ (g n))
+theorem never_entails_deictic (hn : σ ~[Allen.toSetRel Allen.precedes] g n)
     (h : ¬ ◇[Allen.toSetRel Allen.precedes] P σ) : Past n (fun t ↦ ¬ P t) σ g :=
   ⟨hn, fun hP ↦ h (Past.sometime ⟨hn, hP⟩)⟩
 
@@ -83,8 +83,8 @@ theorem never_too_strong :
     ∃ (σ : NonemptyInterval ℤ) (g : ℕ → NonemptyInterval ℤ)
       (P : NonemptyInterval ℤ → Prop),
       Past 0 (fun t ↦ ¬ P t) σ g ∧ ◇[Allen.toSetRel Allen.precedes] P σ :=
-  ⟨.pure 10, fun _ ↦ .pure 5, (· = .pure 1), ⟨Perspective.presup_precedes.2 (by decide), by decide⟩,
-    .pure 1, Perspective.presup_precedes.2 (by decide), rfl⟩
+  ⟨.pure 10, fun _ ↦ .pure 5, (· = .pure 1), ⟨Allen.mem_toSetRel_precedes.2 (by decide), by decide⟩,
+    .pure 1, Allen.mem_toSetRel_precedes.2 (by decide), rfl⟩
 
 /-- The sentence is false of a speaker who turned off the stove at the salient time, although
 there are past times at which the speaker did not, so that reading is too weak. -/
@@ -92,10 +92,10 @@ theorem sometime_not_too_weak :
     ∃ (σ : NonemptyInterval ℤ) (g : ℕ → NonemptyInterval ℤ)
       (P : NonemptyInterval ℤ → Prop),
       ◇[Allen.toSetRel Allen.precedes] (fun t ↦ ¬ P t) σ ∧
-        Perspective.Presup Allen.precedes σ (g 0) ∧ ¬ Past 0 (fun t ↦ ¬ P t) σ g :=
+        σ ~[Allen.toSetRel Allen.precedes] g 0 ∧ ¬ Past 0 (fun t ↦ ¬ P t) σ g :=
   ⟨.pure 10, fun _ ↦ .pure 5, (· = .pure 5),
-    ⟨.pure 1, Perspective.presup_precedes.2 (by decide), by decide⟩,
-    Perspective.presup_precedes.2 (by decide), fun h ↦ h.2 rfl⟩
+    ⟨.pure 1, Allen.mem_toSetRel_precedes.2 (by decide), by decide⟩,
+    Allen.mem_toSetRel_precedes.2 (by decide), fun h ↦ h.2 rfl⟩
 
 /-! ### Anaphora
 
@@ -113,8 +113,8 @@ theorem existential_pasts_not_anaphoric :
     ∃ (σ : NonemptyInterval ℤ) (P Q : NonemptyInterval ℤ → Prop),
       ◇[Allen.toSetRel Allen.precedes] P σ ∧ ◇[Allen.toSetRel Allen.precedes] Q σ ∧
         ∀ t, ¬ (P t ∧ Q t) :=
-  ⟨.pure 10, (· = .pure 1), (· = .pure 2), ⟨_, Perspective.presup_precedes.2 (by decide), rfl⟩,
-    ⟨_, Perspective.presup_precedes.2 (by decide), rfl⟩,
+  ⟨.pure 10, (· = .pure 1), (· = .pure 2), ⟨_, Allen.mem_toSetRel_precedes.2 (by decide), rfl⟩,
+    ⟨_, Allen.mem_toSetRel_precedes.2 (by decide), rfl⟩,
     fun _ ⟨h₁, h₂⟩ ↦ absurd (h₁.symm.trans h₂) (by decide)⟩
 
 end Partee1973

@@ -6,8 +6,8 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Copy.Reading
-public import Linglib.Syntax.Minimalist.Derivation.Reconstruction
-public import Linglib.Syntax.Minimalist.SyntacticObject.ToTree
+public import Linglib.Syntax.Minimalist.Derivation.Binding
+public import Linglib.Syntax.Minimalist.SyntacticObject.Constituency
 
 /-!
 # The tree of a reading
@@ -15,15 +15,15 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.ToTree
 This file sends a reading of a marked object to the constituency tree that the type-driven
 composition engine interprets. A chain read high gets a binder under its higher copy, and its lower
 copies become the traces that binder binds. [With binders aside](##eraseBinders_toTree) the tree is
-the tree of the object the reading gives, and [with no lower copy](##toTree_ofLinearized) the tree
-the object has as a linearized object.
+the tree of the object the reading gives, and [with no lower copy](##toTree_ofPlanar) the tree
+the object has as a planar object.
 
 ## Implementation notes
 
 * A lower copy that is itself the higher copy of a lower one, at an intermediate site of a chain
   read high, gets a trace and a binder, `[t [λ …]]`, which denotes what its second daughter does.
 * A trace and its binder share the index of the mark, so a chain with no head has the index-free
-  trace, which no binder binds, as `LinearizedSyntacticObject.toTree` promises. A head and a phrase
+  trace, which no binder binds, as `PlanarSyntacticObject.toTree` promises. A head and a phrase
   it projects share an index, and capture each other if the head leaves the phrase and the phrase
   then moves above the head.
 * A remnant read high, with a chain that moved out of it also read high, leaves a free trace and a
@@ -69,25 +69,24 @@ theorem eraseBinders_node {l : Tree.Label C W} (hl : ∀ n c, l ≠ .bind n c)
 
 end PhraseStructure.Tree
 
-namespace Minimalist.LinearizedSyntacticObject.Marked
+namespace Minimalist.PlanarSyntacticObject.Marked
 
 open RoseTree SyntacticObject PhraseStructure
 
 /-- The constituency tree of a reading, the binder of a mark `some a` having the index of the trace
 of `a`, and the index-free trace no binder. -/
-def toTree (ι : LexicalItem.Token → ℕ) (t : Marked) (low : Finset SyntacticObject) :
+def toTree (τ : Option LexicalItem.Token → ℕ) (t : Marked) (low : Finset SyntacticObject) :
     Tree Unit LexicalItem.Token :=
-  reading (ReadLow low) (fun _ l ↦ RoseTree.node (Vertex.toLabel ι (.inr l)) [])
-    (fun v cs ↦ RoseTree.node (Vertex.toLabel ι v) cs)
-    (fun l y ↦ l.elim y fun a ↦ .bind (ι a + 1) () y) (fun _ _ y ↦ y) t.val
+  reading (ReadLow low) (fun _ l ↦ RoseTree.node (Vertex.toLabel τ (.inr l)) [])
+    (fun v cs ↦ RoseTree.node (Vertex.toLabel τ v) cs)
+    (fun l y ↦ l.elim y fun a ↦ .bind (τ (some a)) () y) (fun _ _ y ↦ y) t.val
 
-/-- An object with no lower copy has the tree it has as a linearized object. -/
-@[simp] theorem toTree_ofLinearized (ι : LexicalItem.Token → ℕ) (p : LinearizedSyntacticObject)
+/-- An object with no lower copy has the tree it has as a planar object. -/
+@[simp] theorem toTree_ofPlanar (τ : Option LexicalItem.Token → ℕ) (p : PlanarSyntacticObject)
     (low : Finset SyntacticObject) :
-    (ofLinearized p).toTree ι low = p.toTree ι := by
-  obtain ⟨s, hs⟩ := p
-  simp only [toTree, ofLinearized, LinearizedSyntacticObject.toTree]
-  clear hs
+    (ofPlanar p).toTree τ low = p.toTree τ := by
+  simp only [toTree, ofPlanar, PlanarSyntacticObject.toTree]
+  generalize p.toRoseTree = s
   induction s with
   | node a cs ih =>
     rw [map_node, reading_node]
@@ -97,21 +96,21 @@ def toTree (ι : LexicalItem.Token → ℕ) (t : Marked) (low : Finset Syntactic
 
 /-! ### Trees and objects -/
 
-theorem toLabel_ne_bind (ι : LexicalItem.Token → ℕ) (v : Vertex) (n : ℕ) (c : Unit) :
-    Vertex.toLabel ι v ≠ .bind n c := by
+theorem toLabel_ne_bind (τ : Option LexicalItem.Token → ℕ) (v : Vertex) (n : ℕ) (c : Unit) :
+    Vertex.toLabel τ v ≠ .bind n c := by
   rcases v with (_ | _) | (_ | _) <;> simp [Vertex.toLabel]
 
-@[simp] theorem eraseBinders_elim (ι : LexicalItem.Token → ℕ) (l : Option LexicalItem.Token)
+@[simp] theorem eraseBinders_elim (τ : Option LexicalItem.Token → ℕ) (l : Option LexicalItem.Token)
     (y : Tree Unit LexicalItem.Token) :
-    Tree.eraseBinders (l.elim y fun a ↦ .bind (ι a + 1) () y) = Tree.eraseBinders y := by
+    Tree.eraseBinders (l.elim y fun a ↦ .bind (τ (some a)) () y) = Tree.eraseBinders y := by
   cases l <;> simp
 
 /-- The tree of a reading is the tree of the object it gives, binders aside. -/
-theorem eraseBinders_toTree (ι : LexicalItem.Token → ℕ) (t : Marked)
+theorem eraseBinders_toTree (τ : Option LexicalItem.Token → ℕ) (t : Marked)
     (low : Finset SyntacticObject) :
-    Tree.eraseBinders (t.toTree ι low) = (t.lf low).toTree ι := by
+    Tree.eraseBinders (t.toTree τ low) = (t.lf low).toTree τ := by
   obtain ⟨s, hs⟩ := t
-  simp only [toTree, lf, LinearizedSyntacticObject.toTree]
+  simp only [toTree, toRoseTree_lf, PlanarSyntacticObject.toTree]
   clear hs
   induction s with
   | node v cs ih =>
@@ -123,23 +122,23 @@ theorem eraseBinders_toTree (ι : LexicalItem.Token → ℕ) (t : Marked)
       (try split) <;> (try split) <;> (try split_ifs) <;>
       simp_all [Tree.eraseBinders_node, toLabel_ne_bind, map_node, Function.comp_def]
 
-end Minimalist.LinearizedSyntacticObject.Marked
+end Minimalist.PlanarSyntacticObject.Marked
 
 namespace Minimalist.Derivation
 
 open SyntacticObject PhraseStructure
-open LinearizedSyntacticObject (Marked)
+open PlanarSyntacticObject (Marked)
 
 variable {d : Derivation} {x y : SyntacticObject}
 
 /-- The object a reading of the derivation gives. -/
-def lf? (d : Derivation) (low : Finset SyntacticObject) : Option LinearizedSyntacticObject :=
+def lf? (d : Derivation) (low : Finset SyntacticObject) : Option PlanarSyntacticObject :=
   d.replayWithCopies?.map (·.current.lf low)
 
 /-- The constituency tree of a reading of the derivation. -/
-def toTree? (ι : LexicalItem.Token → ℕ) (d : Derivation) (low : Finset SyntacticObject) :
+def toTree? (τ : Option LexicalItem.Token → ℕ) (d : Derivation) (low : Finset SyntacticObject) :
     Option (Tree Unit LexicalItem.Token) :=
-  d.replayWithCopies?.map (·.current.toTree ι low)
+  d.replayWithCopies?.map (·.current.toTree τ low)
 
 /-- `x` c-commands `y` in the object a reading of the derivation gives. -/
 def BindsAtReading (d : Derivation) (low : Finset SyntacticObject) (x y : SyntacticObject) : Prop :=
@@ -154,8 +153,13 @@ instance (d : Derivation) (low : Finset SyntacticObject) (x y : SyntacticObject)
   rw [lf?, externalize?, ← map_contract_replayWithCopies?, Option.map_map]
   exact Option.map_congr fun c _ ↦ Marked.lf_empty c.current
 
-/-- Binding at the reading with no chain read low is surface binding. -/
-theorem bindsAtReading_empty_iff : d.BindsAtReading ∅ x y ↔ d.BindsAtSurface x y := by
-  simp [BindsAtReading, BindsAtSurface, CCommandsAt]
+/-- Binding at the reading with no chain read low is surface binding, when the replay succeeds. -/
+theorem bindsAtReading_empty_iff (hd : d.replay?.isSome) :
+    d.BindsAtReading ∅ x y ↔ d.BindsAtSurface x y := by
+  obtain ⟨c, hc⟩ := Option.isSome_iff_exists.1 hd
+  have hp : d.externalize? = some c.current := by rw [externalize?, hc]; rfl
+  have hstage : d.stageAt d.length = c.current.toSyntacticObject := by
+    rw [← d.externalize?_take_faithful d.length (by rwa [take_length])]
+  simp [BindsAtReading, BindsAtSurface, CCommandsAt, hp, hstage]
 
 end Minimalist.Derivation

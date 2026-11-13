@@ -12,7 +12,7 @@ public import Linglib.Syntax.Minimalist.Linearization.Spellout
 # Late insertion
 
 The syntax hands PF a spell-out domain: the pronounced terminals of a linearized syntactic
-object, left to right, each read as a feature bundle (`SpelloutDomain.ofLinearized`). The
+object, left to right, each read as a feature bundle (`SpelloutDomain.ofPlanar`). The
 postsyntactic pipeline then runs on it and Vocabulary Insertion realizes each surviving position
 in its neighborhood: late insertion, on which no phonological content travels through the syntax.
 Early insertion is the degenerate case: over the vocabulary whose items each spell out one
@@ -22,7 +22,7 @@ token computes, and contextual allomorphy is precisely what such a vocabulary ca
 
 ## Main definitions
 
-* `DistributedMorphology.SpelloutDomain.ofLinearized`: the handover.
+* `DistributedMorphology.SpelloutDomain.ofPlanar`: the handover.
 * `DistributedMorphology.earlyItems`, `DistributedMorphology.earlySpellout`: one context-free
   item per token, spelling out its lexically listed form, and the pipeline it drives.
 
@@ -45,10 +45,10 @@ open Morphology Minimalist
 
 variable {Bundle : Type*}
 
-/-- The spell-out domain of a linearized syntactic object: its pronounced terminals, left to
+/-- The spell-out domain of a planar syntactic object: its pronounced terminals, left to
 right, each read as a feature bundle. -/
-def SpelloutDomain.ofLinearized (feats : LexicalItem.Token → Bundle)
-    (t : LinearizedSyntacticObject) : SpelloutDomain Bundle :=
+def SpelloutDomain.ofPlanar (feats : LexicalItem.Token → Bundle)
+    (t : PlanarSyntacticObject) : SpelloutDomain Bundle :=
   (pfYield t).map feats
 
 /-! ### Early insertion -/
@@ -97,10 +97,10 @@ theorem pf_earlySpellout {toks : List LexicalItem.Token} (hnd : toks.Nodup) :
 /-- `pfPhon` is the early-insertion pipeline: handing the pronounced terminals over as atomic
 features and inserting each token's lexically listed form returns the carrier's own
 pronunciation, silent tokens dropped. -/
-theorem pfPhon_eq_earlyInsertion (t : LinearizedSyntacticObject) :
+theorem pfPhon_eq_earlyInsertion (t : PlanarSyntacticObject) :
     pfPhon t = ((earlySpellout (pfYield t)).pf
-      (SpelloutDomain.ofLinearized ({·}) t)).flatten.filter (· ≠ "") := by
-  rw [SpelloutDomain.ofLinearized, pf_earlySpellout (nodup_pfYield t), pfPhon]
+      (SpelloutDomain.ofPlanar ({·}) t)).flatten.filter (· ≠ "") := by
+  rw [SpelloutDomain.ofPlanar, pf_earlySpellout (nodup_pfYield t), pfPhon]
   induction pfYield t with
   | nil => rfl
   | cons tok l ih =>

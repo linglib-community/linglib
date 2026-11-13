@@ -30,14 +30,12 @@ Angelopoulos2026
 Anscombe1964
 Anttila1997
 Aremu2025b
-Arka2013
 Arnold2026
 ArregiPietraszko2021
 ArreguiKusumoto1998
 AsherLascarides2003
 AsherPelletier2013
 Asudeh2022
-Audring2019
 AugurzkyEtAl2023
 BadeEtAl2022
 BakayEtAl2026
@@ -104,7 +102,6 @@ Buring2015
 BuringGunlogson2000
 Burnett2019
 Bybee1985
-Bybee1995
 BylininaNouwen2018
 Cacchioli2026
 Caha2009
@@ -147,7 +144,6 @@ CohenKrifka2014
 Condoravdi2002
 CondoravdiLauer2016
 Coon2019
-CoonKeine2021
 Cooper2023
 Coppock2018
 CoppockBeaver2015
@@ -155,13 +151,11 @@ CoppockWechsler2018
 Corbett1998
 Creissels2024
 Cruse1973
-Cuervo2003
 Cumming2026
 Cummins2015
 CumminsFranke2021
 DaleReiter1995
 DalrympleHaug2024
-DavidsonGagne2022
 Dayal2004
 DeClercqEtAl2025
 DeMarneffeNivre2019
@@ -217,7 +211,6 @@ Franke2011
 FrankeBergen2020
 FutrellEtAl2020
 Gajewski2002
-Gajewski2007
 Gajewski2011
 GarassinoJacob2018
 Gasparri2025
@@ -233,7 +226,6 @@ GonzalezPootMcGinnis2006
 GoodmanStuhlmuller2013
 Graf2019
 Grano2026
-Grimm2011
 GrimmDocekal2021
 GroenendijkStokhof1984
 Grove2022
@@ -267,7 +259,6 @@ HollidayIcard2013
 HollidayMandelkern2024
 HoulihanEtAl2023
 HuangSpelkeSnedeker2013
-Hyman2003
 IatridouEtAl2001
 IatridouZeijlstra2021
 ImelGuoSteinertThrelkeld2026
@@ -279,7 +270,6 @@ ItoMester2009
 ItoMester2019
 Itzhaki2021
 Jablonska2004
-JackendoffAudring2020
 Jardine2019
 Jenks2018
 JereticEtAl2025
@@ -289,7 +279,6 @@ Kalin2018
 Kalomoiros2023
 Kamp1975
 Karttunen1971a
-KatzirSingh2015
 KayMichaelis2019
 KeenanComrie1977
 Keine2020
@@ -301,7 +290,6 @@ KiegelandEtAl2026
 Kim2024
 Kiparsky2002
 Kiss1998
-Koev2026
 KonnellyCowper2020
 KonukEtAl2026
 Kramer2020
@@ -438,12 +426,10 @@ Siloni2012
 SiptarTorkenczy2000
 SlomanBarbeyHotaling2009
 Smith1997
-Sneddon1996
 SolstadBott2022
 SoltWaldon2019
 Song1996
 Sorace2000
-Spector2007
 Spector2016
 Spector2026
 SpinosoDiPianoEtAl2025
@@ -466,7 +452,6 @@ Theiler2021
 TheilerRoelofsenAloni2018
 ThomasDeo2020
 TieuKrizChemla2019
-TonhauserBeaverDegen2018
 Toosarvandani2016
 Toosarvandani2023
 Traugott2010
@@ -494,7 +479,6 @@ Yagi2025
 YingEtAl2025
 YuAusensiSmith2023
 ZaslavskyEtAl2019
-ZaslavskyHuLevy2021
 ZaslavskyKempRegierTishby2018
 Zeijlstra2004
 Zeijlstra2012

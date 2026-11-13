@@ -227,7 +227,7 @@ theorem Det.Family.foDefinable_iff_exists_alikeUpTo {F : Det.Family.{u}} :
       AlikeUpTo n A B A' B' → F α A B → F β A' B' := by
   constructor
   · rintro ⟨φ, rfl⟩
-    exact ⟨φ.qr, fun α β _ _ A B A' B' h ↦
+    exact ⟨φ.quantifierRank, fun α β _ _ A B A' B' h ↦
       (elementarilyEquivalentUpTo_iff_alikeUpTo.2 h φ le_rfl).1⟩
   · rintro ⟨n, hn⟩
     obtain ⟨φ, hφ⟩ : (Language.monadic (Fin 2)).FODefinable {M | Finite M}

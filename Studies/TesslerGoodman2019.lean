@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.MeasureTheory.Measure.Real
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.Probabilistic.Basic
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 

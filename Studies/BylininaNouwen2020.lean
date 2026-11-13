@@ -43,8 +43,9 @@ items that *zero* does not, while with `MAX` apart from the numeral *zero* is a 
   `BylininaNouwen2018`: the finite sets of atoms, with the empty plurality, so `plural Z` is the
   full lattice `×Z` and Link's `*Z` ((12)) its nonempty part. The lower bound (29) is
   `isLowerSet_countDegrees_plural`, and its failure with a collective predicate (fn. 8)
-  `countDegrees_singleton`. * `EXH` is `Exhaustification.exhAgainst (· < ·)`, denying every higher
-  numeral, which on those lower sets are the stronger alternatives of (32).
+  `countDegrees_singleton`. * `EXH` of a numeral holds of a degree property whose greatest degree
+  it is, `IsGreatest`: it denies every higher numeral, on those lower sets the stronger
+  alternatives of (32).
 
 ## TODO
 
@@ -80,11 +81,11 @@ def MANY (d : ℕ) : Set (Finset α) := Finset.card ⁻¹' {d}
 theorem mem_MANY {d : ℕ} {x : Finset α} : x ∈ MANY d ↔ x.card = d := Iff.rfl
 
 /-- `CARD P` is the number of atoms every plurality in `P` has, `ιd. ∀x[P(x) → #x = d]` ((24)). -/
-noncomputable def CARD (P : Set (Finset α)) : Option ℕ := iota {d | ∀ x ∈ P, x.card = d}
+noncomputable def CARD (P : Set (Finset α)) : Part ℕ := iota {d | ∀ x ∈ P, x.card = d}
 
 -- (25)
-theorem CARD_MANY {n : ℕ} (hn : ∃ x : Finset α, x.card = n) : CARD (MANY (α := α) n) = some n :=
-  iota_eq_some_iff.2 ⟨fun _ hx ↦ hx, fun _ h ↦ let ⟨x, hx⟩ := hn; (h x hx).symm.trans hx⟩
+theorem CARD_MANY {n : ℕ} (hn : ∃ x : Finset α, x.card = n) : n ∈ CARD (MANY (α := α) n) :=
+  mem_iota.2 ⟨fun _ hx ↦ hx, fun _ h ↦ let ⟨x, hx⟩ := hn; (h x hx).symm.trans hx⟩
 
 -- (17)
 theorem MANY_injective_iff : Function.Injective (MANY (α := α)) ↔ Infinite α := by
@@ -99,7 +100,7 @@ theorem MANY_injective_iff : Function.Injective (MANY (α := α)) ↔ Infinite �
 /-! ### Exhaustification and degree quantifiers
 
 Exhaustifying the lower bound at a site and raising Kennedy's quantifier there give the same reading
-(`BylininaNouwen2018.exhAgainst_iff_highScope`, `BylininaNouwen2018.exhAgainst_iff_lowScope`), so
+(`BylininaNouwen2018.isGreatest_iff_highScope`, `BylininaNouwen2018.isGreatest_iff_lowScope`), so
 the accounts differ only in the sites available to them. -/
 
 section Scope
@@ -108,11 +109,11 @@ variable {n : ℕ}
 
 /-- Spector's wide-scope exhaustification over a possibility modal, the reading (36-b), is
 Kennedy's numeral raised over the modal ((46)). -/
-theorem exhAgainst_poss_iff_highScope {W : Type*} {R : Set W} {count : W → ℕ} :
-    exhAgainst (· < ·) (fun m ↦ (count '' R ∩ Comparison.ge.interval m).Nonempty) n ↔
+theorem isGreatest_poss_iff_highScope {W : Type*} {R : Set W} {count : W → ℕ} :
+    IsGreatest {m | (count '' R ∩ Comparison.ge.interval m).Nonempty} n ↔
       HighScope (MaxIn {n}) (Det.some R) (Iic ∘ count) := by
   simp only [inter_nonempty, exists_mem_image, Comparison.interval_ge, mem_Ici]
-  exact exhAgainst_iff_highScope (Q := Det.some R) (P := Iic ∘ count)
+  exact isGreatest_iff_highScope (Q := Det.some R) (P := Iic ∘ count)
 
 -- (36-a)
 theorem poss_eq_iff_lowScope {W : Type*} {R : Set W} {count : W → ℕ} :
@@ -166,9 +167,9 @@ theorem MAX_individual (n : ℕ) : MAX (individual n) = MaxIn {n} :=
 
 /-- At its landing site `MAX` of the lower-bound quantifier is its exhaustification against the
 higher numerals, a strengthening that moves with the numeral. -/
-theorem MAX_individual_iff_exhAgainst {n : ℕ} {P : Set ℕ} :
-    MAX (individual n) P ↔ exhAgainst (· < ·) (individual · P) n := by
-  rw [MAX_individual]; exact maxIn_singleton_iff_exhAgainst
+theorem MAX_individual_iff_isGreatest {n : ℕ} {P : Set ℕ} :
+    MAX (individual n) P ↔ IsGreatest P n := by
+  rw [MAX_individual]; exact maxIn_singleton
 
 -- (51)
 theorem MAX_individual_zero_iff [DecidableEq α] {A B : Set α} :
@@ -191,7 +192,7 @@ theorem zeroWithMAX_eq_zero : zeroWithMAX = BylininaNouwen2018.zero := by
   simp only [zeroWithMAX, BylininaNouwen2018.zero]
   congr
   funext p B
-  exact propext MAX_individual_iff_exhAgainst
+  exact propext MAX_individual_iff_isGreatest
 
 /-- So it licenses no negative polarity item, where Kennedy's *zero* is *no* and licenses both
 (`BylininaNouwen2018.kennedyZero_eq_nobody`). -/

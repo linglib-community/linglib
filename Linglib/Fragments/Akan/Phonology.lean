@@ -20,9 +20,9 @@ Akan reduplication turns on.
 The feature values come from the PHOIBLE chart. The chart codes the two vowel sets by
 [tense] and marks every plain vowel [−ATR], where the Akan literature has [ATR] carry the
 contrast, so a vowel is the segment of its chart entry's tongue-root reading, which takes the
-[tense] value as the [ATR] value and drops [tense]. The chart omits the palatal affricate,
-whose values are contours, and its segment is the velar stop's with the features McCarthy and
-Prince's corono-dorsal analysis adds.
+[tense] value as the [ATR] value and drops [tense]. The chart leaves the palatal
+affricate unspecified where PHOIBLE gives it a contour, and its segment here is the velar stop's
+with the features McCarthy and Prince's corono-dorsal analysis adds.
 
 ## Main definitions
 
@@ -108,7 +108,11 @@ theorem hasValue_atr_iff :
 
 /-! ### The velar–palatal alternation -/
 
-/-- The features palatalization writes on the velar stop. -/
+/-- The features palatalization writes on the velar stop. [mccarthy-prince-1995] take the Akan
+palatals to be corono-dorsal complex segments, palatalization spreading [+coronal, −anterior]
+onto a dorsal that keeps [+dorsal] (the paragraph after their (125)); [+distributed] and delayed
+release are the values PHOIBLE's /tɕ/ ends in. PHOIBLE's /tɕ/ is [+anterior] and ends as a
+fricative, so the affricate is built on the stop and not taken from its chart entry. -/
 def palatalized : Segment :=
   Segment.ofSpecs [(.coronal, true), (.anterior, false), (.distributed, true),
     (.delayedRelease, true)]

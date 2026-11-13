@@ -42,27 +42,6 @@ exception set](##pex_but_no_eq_true_iff).
   is read off the constraints each domain satisfies; the accommodation operator of (56) is
   `Trivalent.posExt`.
 
-## Errata
-
-* (6b) and (32c) give the excludable alternatives of *Gal was at the party* as those about
-  individuals disjoint from Gal. With the plural alternatives of (12), every alternative other
-  than the prejacent is excludable, *Gal and Tal were at the party* among them
-  (`isInnocentlyExcludable_Ici_iff`, `isInnocentlyExcludable_galTal`); the exhaustive inference
-  is unaffected.
-* (110b) fails with the plural alternatives of (12), on which the strong presupposition (13)
-  rests; [crnic-2026a] shows that singular ones give a weak presupposition. *Someone but Gal* has
-  the excludable alternative *someone but everyone except Gal*, that Gal was there
-  (`isInnocentlyExcludable_but_some`), so `exh` in (109) is not vacuous and the Economy Constraint
-  (108) does not exclude (107) (`judgment_107`).
-* (40), (56) and (58) do not single out the resolution (41) of *Gal is only a grad student*:
-  pruning to *only [postdoc]* satisfies and violates the same constraints, and under negation
-  conveys that Gal is a professor (`pruned_postdoc`). The closure of relevance under the Boolean
-  operations, set aside in fn. 3, does single it out, but only computed over the context: there
-  (41) is the one informative pruning that is an allowable restriction in the sense of
-  [fox-katzir-2011] (`isAllowableRestriction_onlyCtx_iff`), while over all worlds pruning to
-  *only [non-academic]* and *only [postdoc]* is allowable too
-  (`isAllowableRestriction_only_ranks`).
-
 ## TODO
 
 * The sufficiency modal constructions of §3.4, the embedded exhaustification of §3.5, the
@@ -263,13 +242,14 @@ variable {α : Type*} {F : Set (Finset α)} {A X w : Finset α}
 open Quantifier Quantifier.Det
 
 /-- (103b), (109): the determiner `Q` over the restrictor `A` minus the excepted plurality `X`. -/
-def but (Q : Det α) (A X : Finset α) : Set (Finset α) := {w | Q (↑A \ ↑X) ↑w}
+def but (Q : Det α) (A X : Finset α) : Set (Finset α) :=
+  Exceptive.subtraction Q (fun _ ↦ ↑A) (↑) ↑X
 
 -- (102): *no `A` but `X`* is *only* over the pluralities within the restrictor
 theorem but_no_eq_only (hF : ∀ a ∈ A, {a} ∈ F) : but no A X = only F {Z ∈ F | Z ⊆ A} X := by
   ext w
   rw [mem_only_of_subset (sep_subset _ _)]
-  simp only [but, mem_ofPred_eq, no, and_imp]
+  simp only [but, Exceptive.mem_subtraction, mem_ofPred_eq, no, and_imp]
   exact ⟨fun h Z _ hZA hZw a ha ↦ by_contra fun haX ↦ h ⟨hZA ha, haX⟩ (hZw ha),
     fun h a ⟨haA, haX⟩ haw ↦ haX (h {a} (hF a haA) (Finset.singleton_subset_iff.2 haA)
       (Finset.singleton_subset_iff.2 haw) (Finset.mem_singleton_self a))⟩

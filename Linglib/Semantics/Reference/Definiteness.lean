@@ -22,9 +22,9 @@ as data here; which strengths a language's determiner inventory marks is derived
 ## Main definitions
 
 * `Definiteness`: the definiteness scale, whose definites are the cut `Set.Ici .definite`.
-* `DefiniteDescription.Strength`, `NominalKind`: the strength of a definite article
+* `Definite.Strength`, `NominalKind`: the strength of a definite article
   and the kind of nominal an inventory realizes, with `Strength.toKind` and `NominalKind.strength`.
-* `DefiniteDescription.Use`, `DefiniteDescription.Bridging`: the uses of a definite
+* `Definite.Use`, `Definite.Bridging`: the uses of a definite
   description and the bridging relations, each with the strength it calls for.
 
 ## References
@@ -67,7 +67,7 @@ instance : LinearOrder Definiteness := LinearOrder.lift' rank (by decide)
 
 end Definiteness
 
-namespace DefiniteDescription
+namespace Definite
 
 /-- A definite article's strength is uniqueness, which the weak article presupposes, or
 familiarity, which the strong article presupposes ([schwarz-2009]). -/
@@ -76,9 +76,8 @@ inductive Strength where
   | familiarity
   deriving DecidableEq, Repr, Fintype
 
-/-- The strong article is the weak article over a narrowed restrictor
-(`DefiniteDescription.denote_unique_restrictor`), so the strengths form the chain
-uniqueness < familiarity. -/
+/-- The strong article is the weak article over a narrowed restrictor (`Definite.anaphoric`), so
+the strengths form the chain uniqueness < familiarity. -/
 instance : LinearOrder Strength := LinearOrder.lift' Strength.ctorIdx (by decide)
 
 theorem Strength.isUpperSet_iff {s : Set Strength} :
@@ -117,10 +116,10 @@ def Use.strength : Use → Strength
   | .immediateSituation | .largerSituation => .uniqueness
   | .bridging b => b.strength
 
-end DefiniteDescription
+end Definite
 
-/-- A kind of nominal that a determiner inventory may realize is one of the forms of
-`DefiniteDescription`, or the indefinite, which denotes no partial individual. -/
+/-- A kind of nominal that a determiner inventory may realize is one of the forms a definite
+description takes, or the indefinite, which denotes no partial individual. -/
 inductive NominalKind where
   | bare
   | indefinite
@@ -132,16 +131,16 @@ inductive NominalKind where
 
 /-- The weak article realizes the unique description and the strong article the anaphoric
 one. -/
-def DefiniteDescription.Strength.toKind : DefiniteDescription.Strength → NominalKind
+def Definite.Strength.toKind : Definite.Strength → NominalKind
   | .uniqueness  => .unique
   | .familiarity => .anaphoric
 
 /-- The strength a kind of nominal presupposes, where it is definite. -/
-def NominalKind.strength : NominalKind → Option DefiniteDescription.Strength
+def NominalKind.strength : NominalKind → Option Definite.Strength
   | .bare | .indefinite         => none
   | .unique | .possessive       => some .uniqueness
   | .anaphoric | .demonstrative => some .familiarity
 
-@[simp] theorem DefiniteDescription.Strength.strength_toKind (p : DefiniteDescription.Strength) :
+@[simp] theorem Definite.Strength.strength_toKind (p : Definite.Strength) :
     p.toKind.strength = some p := by
   cases p <;> rfl

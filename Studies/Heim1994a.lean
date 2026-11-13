@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.Interval.Basic
-public import Linglib.Semantics.Reference.Context.Index
+public import Linglib.Semantics.Index
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Semantics.Tense.Perspective
 
@@ -27,7 +27,7 @@ Licensing Condition `TLC` with the definition (67) of "in the domain of" license
 
 * Times are nonempty intervals, so that `<` is `NonemptyInterval.Precedes`, `o` is
   `NonemptyInterval.Overlaps` and "does not follow" is `NotAfter`, the library's
-  `Tense.upperLimitConstraint` as a perspectival presupposition on intervals.
+  `Tense.nonfuture` as a perspectival presupposition on intervals.
 * Predicates carry their subjects, de dicto descriptions are atomic and always defined, and
   the presuppositions of the nuclear scopes of `woll` and of res-moved `believe` project
   universally, the law the paper invokes for `some` and `believe`. The time-concept is
@@ -47,6 +47,7 @@ Licensing Condition `TLC` with the definition (67) of "in the domain of" license
 namespace Heim1994a
 
 open NonemptyInterval
+open scoped SetRel
 
 variable {T : Type*} [LinearOrder T]
 
@@ -57,8 +58,8 @@ def NotAfter (t t₀ : NonemptyInterval T) : Prop := ¬ t₀.Precedes t
 
 theorem notAfter_iff_presup (t t₀ : NonemptyInterval T) :
     NotAfter t t₀ ↔
-      Tense.Perspective.Presup (Allen.ofPosition Tense.upperLimitConstraint) t₀ t := by
-  simp [NotAfter, Tense.upperLimitConstraint, Tense.denote_future]
+      t₀ ~[Allen.toSetRel (Allen.ofPosition Tense.nonfuture)] t := by
+  simp [NotAfter, Tense.nonfuture_eq_compl_future, Tense.denote_future]
 
 theorem notAfter_self (t : NonemptyInterval T) : NotAfter t t := precedes_irrefl t
 
@@ -110,14 +111,14 @@ and the world–time pairs compatible with a holder's beliefs at a world and tim
 structure Model (V D A W T : Type*) [LinearOrder T] where
   ext : V → NonemptyInterval T → W → Prop
   desc : D → W → NonemptyInterval T
-  dox : A → W → NonemptyInterval T → Set (Kaplan.Index W (NonemptyInterval T))
+  dox : A → W → NonemptyInterval T → Set (Index W (NonemptyInterval T))
 
 /-- A context: its world and utterance time and the suitable time-concept it supplies (33), a
 function from world–time pairs to times. -/
 structure Context (W T : Type*) [LinearOrder T] where
   world : W
   time : NonemptyInterval T
-  concept : Kaplan.Index W (NonemptyInterval T) → NonemptyInterval T
+  concept : Index W (NonemptyInterval T) → NonemptyInterval T
 
 variable {V D A W : Type*} (M : Model V D A W T) (c : Context W T)
 
@@ -186,7 +187,7 @@ theorem def_res :
   simp [Def, TenseNode.Def, TenseNode.var, Function.update_of_ne]
 
 -- (32)
-theorem not_def_res_of_precedes {s : Kaplan.Index W (NonemptyInterval T)}
+theorem not_def_res_of_precedes {s : Index W (NonemptyInterval T)}
     (hs : s ∈ M.dox x w (g 1))
     (h : s.time.Precedes (c.concept s)) :
     ¬ Def M c (.believeRes x (.PAST 1) .past (.PAST 2) 3 (.pred v (.trace 3) .nonpast)) g w :=

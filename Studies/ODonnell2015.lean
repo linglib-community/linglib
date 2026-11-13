@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Computability.ContextFreeGrammar.Dirichlet
-public import Linglib.Core.Probability.Distributions.PitmanYor
+public import Linglib.Core.Probability.Combinatorics.PitmanYor.Basic
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Data.Statistics.ODonnell2015
 public import Linglib.Morphology.Exponence.DomainRule
@@ -239,7 +239,7 @@ theorem pypFactor_nonneg (a : G.NT) (y : Multiset ℕ) : 0 ≤ M.pypFactor a y :
 
 @[simp]
 theorem pypFactor_zero (a : G.NT) : M.pypFactor a 0 = 1 := by
-  simp [pypFactor, pitmanYorEPPF]
+  simp [pypFactor]
 
 variable [DecidableEq G.NT]
 

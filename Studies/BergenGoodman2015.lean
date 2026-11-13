@@ -3,7 +3,7 @@ module
 public import Linglib.Core.InformationTheory.Entropy.Surprisal
 public import Linglib.Core.InformationTheory.BinaryEntropy
 public import Linglib.Core.Topology.UnitInterval
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.Probabilistic.Basic
 public import Linglib.Data.Examples.BergenGoodman2015
 public import Linglib.Data.Examples.Readers
 

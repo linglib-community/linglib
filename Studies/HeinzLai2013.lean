@@ -37,19 +37,6 @@ and then right to left.
 * Not formalized: Theorem 4 (majority rules is not regular) and the stem-control results
   (Theorems 8 and 9).
 
-## Errata
-
-* Theorem 5 also claims that no length-preserving map meeting (8) is right-subsequential, by an
-  argument omitted as similar. Condition (8) fixes the map only on words that begin with `+`, and
-  the right-to-left pass that raises every `−` unless the word ends in `⊟` meets it and
-  [is right-subsequential](##exists_isRightSubsequential_isSourGrapes). The right half
-  [holds](##not_isRightSubsequential_of_isSourGrapes) once the map also leaves every trigger-free
-  word `−ⁿ` unchanged: the last `−` of `+−ⁿ` then surfaces `+` and that of `−−ⁿ` does not, a
-  difference made `n` positions away.
-* The paper conjectures that sour grapes harmony is not weakly deterministic. For the maps
-  meeting (8) the conjecture fails: the same right-to-left pass preserves length, so it is
-  [weakly deterministic](##exists_isWeaklyDeterministic_isSourGrapes) after the identity.
-
 ## References
 
 * [heinz-lai-2013]

@@ -35,8 +35,8 @@ and are read as data, not derived.
 * Rows (b)–(e) of (13) print counts that (9) does not give: counting the linear extensions of
   their grammars gives 0, 2, 4; 8, 6, 8; 2, 0, 4; and 6, 8, 8 of 12, and only the two zero cells
   agree (`deletionProb_eq_pocRates_iff`). Each printed cell is the rate of the two-stratum
-  grammar that ranks the fixed faithfulness constraint in a stratum of its own, as if the other
-  pairs stayed free. The published chapter has not been checked for a correction.
+  grammar that ranks the fixed faithfulness constraint in a stratum of its own
+  (`uniformOn_strata_eq_pocRates`). The published chapter has not been checked for a correction.
 * §3.3 says that POC can derive only 0, .50 and 1 for pre-consonantal deletion; the grammar of
   row (b) derives 1/3 (`deletionProb_maxPreVOverStarCT_preC_not_mem`).
 * p. 21 says that no ranking "yields deletion in only pre-consonantal position", which row (d) of
@@ -145,10 +145,10 @@ theorem tdDeletion_gen (ctx : Context) : tdDeletion.gen ctx = {.delete, .retain}
 /-! ### Categorical systems (12) -/
 
 /-- Ranking `σ` deletes in `ctx` if deletion is its unique optimum. -/
-def Deletes (σ : Ranking (Fin 4) 4) (ctx : Context) : Prop := PicksAt tdDeletion σ ctx .delete
+def Deletes (σ : Ranking (Fin 4) 4) (ctx : Context) : Prop := tdDeletion.PicksAt σ ctx .delete
 
 instance (σ : Ranking (Fin 4) 4) (ctx : Context) : Decidable (Deletes σ ctx) :=
-  inferInstanceAs (Decidable (PicksAt tdDeletion σ ctx .delete))
+  inferInstanceAs (Decidable (tdDeletion.PicksAt σ ctx .delete))
 
 theorem deletes_preC_iff : ∀ σ : Ranking (Fin 4) 4, Deletes σ .preC ↔ σ.Dominates 0 1 := by decide
 
@@ -188,31 +188,43 @@ theorem active_preV : active con .preV .delete .retain = {0, 1, 2} := by decide
 
 theorem active_pause : active con .pause .delete .retain = {0, 1, 3} := by decide
 
-/-- The grammar of row (a) of (13) has every ranking as a linear extension, and the grammars of
-rows (b)–(e) the rankings that order their imposed pair as they do. -/
-def extensions : ImposedRanking → Finset (Ranking (Fin 4) 4)
-  | .none => univ
-  | .maxPreVOverStarCT => univ.filter (·.Dominates 2 0)
-  | .starCTOverMaxPreV => univ.filter (·.Dominates 0 2)
-  | .maxFinalOverStarCT => univ.filter (·.Dominates 3 0)
-  | .starCTOverMaxFinal => univ.filter (·.Dominates 0 3)
+/-- The ranking conditions of the grammars of (13): row (a) imposes none, and rows (b)–(e) the
+ERC of their imposed pair. -/
+def conditions : ImposedRanking → Finset (ERC (Fin 4))
+  | .none => ∅
+  | .maxPreVOverStarCT => {simpleERC 2 0}
+  | .starCTOverMaxPreV => {simpleERC 0 2}
+  | .maxFinalOverStarCT => {simpleERC 3 0}
+  | .starCTOverMaxFinal => {simpleERC 0 3}
 
-/-- The probability that a grammar of (13) deletes in `ctx`, the share of its linear extensions
-that delete (9). -/
+/-- The grammar of a row of (13), the one its ranking conditions present. -/
+def grammar (g : ImposedRanking) : Grammar 4 := .ofERCs ↑(conditions g)
+
+/-- The rankings of a grammar of (13) as a finite set, for counting. -/
+def extensions (g : ImposedRanking) : Finset (Ranking (Fin 4) 4) :=
+  ERC.linearExtensions (conditions g)
+
+theorem coe_extensions (g : ImposedRanking) :
+    (extensions g : Set (Ranking (Fin 4) 4)) = (grammar g).extent :=
+  Grammar.coe_linearExtensions _
+
+/-- The probability that a grammar of (13) deletes in `ctx`, the share of its rankings that
+delete (9). -/
 noncomputable def deletionProb (g : ImposedRanking) (ctx : Context) : ℝ :=
-  (uniformOn (extensions g : Set (Ranking (Fin 4) 4))).real {σ | Deletes σ ctx}
+  (uniformOn (grammar g).extent).real {σ | Deletes σ ctx}
 
 -- (9)
 private theorem deletionProb_eq_div {g : ImposedRanking} {ctx : Context} {q : ℝ} (k m : ℕ)
     (hk : ((extensions g).filter (Deletes · ctx)).card = k := by decide)
     (hm : (extensions g).card = m := by decide) (hq : (k : ℝ) / m = q := by norm_num) :
     deletionProb g ctx = q := by
-  rw [deletionProb, uniformOn_finset_real_setOf, hk, hm, hq]
+  rw [deletionProb, ← coe_extensions, uniformOn_finset_real_setOf, hk, hm, hq]
 
 theorem deletionProb_none (ctx : Context) :
     deletionProb .none ctx = ((active con ctx .delete .retain).card : ℝ)⁻¹ := by
-  rw [deletionProb, extensions, coe_univ,
-    show {σ | Deletes σ ctx} = {σ | PicksAt tdDeletion σ ctx .delete} from rfl,
+  rw [deletionProb, ← coe_extensions, extensions, conditions, ERC.linearExtensions_empty,
+    coe_univ,
+    show {σ | Deletes σ ctx} = {σ | tdDeletion.PicksAt σ ctx .delete} from rfl,
     uniformOn_real_picksAt_discrete_binary (tdDeletion_gen ctx) (by decide),
     show tdDeletion.con = con from rfl, favoring_eq,
     card_singleton, Nat.cast_one, one_div]
@@ -261,6 +273,35 @@ theorem deletionProb_eq_pocRates_iff (g : ImposedRanking) (ctx : Context) :
   · simp [deletionProb_none_eq_pocRates]
   all_goals cases ctx <;> norm_num [*, pocRates]
 
+/-- The two-stratum grammar of a row of (13) puts the faithfulness constraint of the imposed pair
+in a stratum of its own, above the other three constraints or below them, and leaves each
+stratum freely ranked. -/
+def stratum : ImposedRanking → Fin 4 → Fin 2
+  | .none => fun _ ↦ 0
+  | .maxPreVOverStarCT => fun c ↦ if c = 2 then 0 else 1
+  | .starCTOverMaxPreV => fun c ↦ if c = 2 then 1 else 0
+  | .maxFinalOverStarCT => fun c ↦ if c = 3 then 0 else 1
+  | .starCTOverMaxFinal => fun c ↦ if c = 3 then 1 else 0
+
+/-- The rankings of the two-stratum grammar of a row of (13). -/
+def strata (g : ImposedRanking) : Finset (Ranking (Fin 4) 4) :=
+  Ranking.linearExtensions (stratified (stratum g) (· = ·))
+
+-- (13)
+theorem card_strata_filter_mul (g : ImposedRanking) (ctx : Context) :
+    ((strata g).filter (Deletes · ctx)).card * (pocRates g ctx).total =
+      (strata g).card * (pocRates g ctx).rankings := by
+  cases g <;> cases ctx <;> decide
+
+-- (13): every printed cell is the deletion rate of the row's two-stratum grammar
+theorem uniformOn_strata_eq_pocRates (g : ImposedRanking) (ctx : Context) :
+    (uniformOn (strata g : Set (Ranking (Fin 4) 4))).real {σ | Deletes σ ctx} =
+      (pocRates g ctx).rankings / (pocRates g ctx).total := by
+  rw [uniformOn_finset_real_setOf, div_eq_div_iff
+    (by exact_mod_cast (Ranking.linearExtensions_nonempty _).card_pos.ne')
+    (by cases g <;> cases ctx <;> norm_num [pocRates])]
+  exact_mod_cast (card_strata_filter_mul g ctx).trans (Nat.mul_comm _ _)
+
 /-- The grammar of row (b) gives pre-consonantal deletion probability 1/3, outside the 0, .50 and 1
 that §3.3 allows POC. -/
 theorem deletionProb_maxPreVOverStarCT_preC_not_mem :
@@ -272,17 +313,17 @@ theorem deletionProb_maxPreVOverStarCT_preC_not_mem :
 theorem five_le_of_real_picksAt_eq {n : ℕ} {Input Output : Type*} [DecidableEq Output]
     {S : ConstraintSystem Input Output (Fin n)}
     {r : Fin n → Fin n → Prop} [DecidableRel r] {i : Input} {o : Output}
-    (h : (uniformOn (consistentTotalOrders r : Set (Ranking (Fin n) n))).real
-      {σ | PicksAt S σ i o} = 1/100) : 5 ≤ n := by
+    (h : (uniformOn (Ranking.linearExtensions r : Set (Ranking (Fin n) n))).real
+      {σ | S.PicksAt σ i o} = 1/100) : 5 ≤ n := by
   rw [uniformOn_finset_real_setOf] at h
-  have ht : (consistentTotalOrders r).card ≤ n.factorial := (card_le_univ _).trans_eq (by
+  have ht : (Ranking.linearExtensions r).card ≤ n.factorial := (card_le_univ _).trans_eq (by
     rw [show Fintype.card (Ranking (Fin n) n) = Fintype.card (Equiv.Perm (Fin n)) from rfl,
       Fintype.card_perm, Fintype.card_fin])
-  have h0 : (consistentTotalOrders r).card ≠ 0 := by
+  have h0 : (Ranking.linearExtensions r).card ≠ 0 := by
     rintro h0; rw [h0, Nat.cast_zero, div_zero] at h; norm_num at h
   rw [div_eq_div_iff (by exact_mod_cast h0) (by norm_num)] at h
-  generalize ((consistentTotalOrders r).filter (PicksAt S · i o)).card = k at h
-  generalize (consistentTotalOrders r).card = t at h ht h0
+  generalize ((Ranking.linearExtensions r).filter (S.PicksAt · i o)).card = k at h
+  generalize (Ranking.linearExtensions r).card = t at h ht h0
   have hkt : 100 * k = t := by exact_mod_cast (by linarith : (100 * k : ℝ) = t)
   by_contra hn
   have := Nat.factorial_le (show n ≤ 4 by omega)
@@ -291,12 +332,12 @@ theorem five_le_of_real_picksAt_eq {n : ℕ} {Input Output : Type*} [DecidableEq
 
 theorem uniformOn_univ_real_picksAt_ne {Input Output : Type*} [DecidableEq Output]
     (S : ConstraintSystem Input Output (Fin 5)) (i : Input) (o : Output) :
-    (uniformOn (Set.univ : Set (Ranking (Fin 5) 5))).real {σ | PicksAt S σ i o} ≠
+    (uniformOn (Set.univ : Set (Ranking (Fin 5) 5))).real {σ | S.PicksAt σ i o} ≠
       1/100 := by
   rw [← coe_univ, uniformOn_finset_real_setOf, card_univ, Fintype.card_perm, Fintype.card_fin]
   intro h
   rw [div_eq_div_iff (by positivity) (by norm_num)] at h
-  generalize (univ.filter fun σ : Ranking (Fin 5) 5 ↦ PicksAt S σ i o).card = k at h
+  generalize (univ.filter fun σ : Ranking (Fin 5) 5 ↦ S.PicksAt σ i o).card = k at h
   norm_num [Nat.factorial] at h
   have : k * 100 = 120 := by exact_mod_cast h
   omega
@@ -518,7 +559,7 @@ theorem loanwordDevoicing_not_isOTRealizable : ¬ loanwordDevoicing.IsOTRealizab
 
 /-- Ranking `σ` devoices loanword `l`. -/
 def Devoices (σ : Ranking (Fin 3) 3) (l : Loan) : Prop :=
-  PicksAt loanwordDevoicing.toConstraintSystem σ l .devoiced
+  loanwordDevoicing.toConstraintSystem.PicksAt σ l .devoiced
 
 -- p. 18
 theorem setOf_devoices_guddo :

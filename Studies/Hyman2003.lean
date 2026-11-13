@@ -11,56 +11,48 @@ public import Linglib.Data.Examples.Languages
 /-!
 # Hyman 2003: suffix ordering in Bantu
 
-Hyman argues that the order of the Bantu verbal extensions, causative, applicative,
-reciprocal and passive, is driven by a Pan-Bantu default template, CARP (5), not by semantic
-scope or by Baker's Mirror Principle: Chichewa realizes both scopes of causative and
-applicative as *-its-il-* (3), a reciprocal inside a causative surfaces in the templatic order
-*-its-an-* as well as the mirror order *-an-its-* while the mirror order has only the
-compositional reading (2), a reciprocal inside an applicative surfaces as templatic *-il-an-*
-or with the reciprocal doubled, *-an-il-an-*, never as *-an-il-* (13), and no extension repeats
-(18). The two pressures, TEMPLATE, which licenses a sequence in the template's order, and the
-suffix-specific MIRROR constraints, which license a sequence in the order of scope, are
-ranked, violably and sometimes freely, as in Optimality Theory: a candidate succeeds at the
-first licensor down the ranking by which every sequence and every doubling in it is licensed,
-and a doubled suffix must be a mirror override repaired by a templatic sequence, licensed by
-the conjunction of the two (16). Chimwiini ranks only the template (19), and the syntax of
-Chichewa passives (22)–(23) shows the order of syntactic operations varying under one fixed
-affix order, so the Mirror Principle holds, if at all, as a violable constraint (§3).
-
-## Main definitions
-
-* `Ext`, `carp`, `templatic`: the extensions, the CARP template and an input's templatic
-  realization.
-* `Licensor`, `Licensor.licenses`, `LicensedBy`: TEMPLATE, MIRROR and their conjunction, what
-  each licenses of a candidate, and full licensing by a set of them.
-* `candidates`, `tableau`, `Grammar`, `Grammar.outputs`: the candidates of an input, Hyman's
-  evaluation under a ranking as an OT tableau, a partially ordered set of licensors, and the
-  outputs across its linear extensions.
-* `chichewa`, `chimwiini`, `passiveGrammar`: the grammars of §2, §3 and (12).
+Hyman argues that the order of the Bantu verbal extensions, causative, applicative, reciprocal
+and passive, follows a Pan-Bantu template, CARP, and not semantic scope or Baker's Mirror
+Principle. TEMPLATE licenses sequences in the template's order, and suffix-specific MIRROR
+constraints license a sequence in the order of scope as an override; the licensors are ranked,
+sometimes freely, and a candidate succeeds at the first licensor down the ranking by which it is
+licensed. In Chichewa a reciprocal inside a causative surfaces in the templatic order or the
+mirror order, [while the mirror order has only the compositional
+reading](##asymmetric_compositionality), and a reciprocal inside an applicative surfaces in the
+templatic order or [with the reciprocal doubled](##applicative_reciprocal), a mirror override
+that the template repairs. The model reproduces the paper's five tableaux for three extensions
+[ranking by ranking](##tableaux_49), and [no licensed candidate repeats a
+suffix](##outputs_isChain_ne).
 
 ## Implementation notes
 
-* Hyman's tableaux mark the sequences a licensor licenses rather than violations; the
-  evaluation, a candidate winning at the first rank by which all its sequences are licensed,
-  is the lexicographic minimization of the profile whose `k`-th entry says whether the top
-  `k + 1` licensors fail to license the candidate, so it is a substrate `Tableau`.
-* The conjunction `MIRROR (x, y) & TEMPLATE` licenses an adjacent `x y` followed by `x`, the
-  templatic repair of a mirror override, and the doubling of `x` in any `x … y x`. This
-  follows §2's generalization that doubling yields A-B-A only when A-B is a mirror override;
-  the appendix's tableaux (48c, e) also mark *mang-an-its-il-an* successful, licensing its
-  doubled *-an-* without the conjunction, which the model does not derive.
+* Hyman's tableaux mark the sequences a licensor licenses rather than violations. A candidate is
+  licensed by a set of licensors when every suffix lies in a sequence one of them licenses and
+  every adjacent pair either rises in the template or is an override one of them licenses. The
+  evaluation, a candidate winning at the first rank by which it is licensed, is the
+  lexicographic minimization of the profile whose `k`-th entry says whether the top `k + 1`
+  licensors fail to license the candidate, so it is a substrate `Tableau`.
+* A pair in the template's order needs no licensor of its own, only its two suffixes do: in the
+  paper's tableaux *mang-an-its-il-an-* succeeds by MIRROR (R, C) and the conjunction with
+  TEMPLATE ranked below both.
+* The conjunction `MIRROR (x, y) & TEMPLATE` licenses the three suffixes of an `x … y x`,
+  adjacent or not, all or nothing. A candidate doubles a suffix only where a conjunction of the
+  grammar licenses the doubling, whatever its rank: the same form also succeeds with the
+  conjunction ranked last and not invoked.
 * Chichewa's licensors are TEMPLATE, MIRROR (R, C) and the conjunction for (R, A), freely
   ranked, as the appendix ranks them; MIRROR (A, C) is not activated and MIRROR (R, A) alone is
   dominated by TEMPLATE, so neither ever licenses an output.
 * Baker's rules run on Chichewa with the Chamorro-type causative and the passive of the
-  first object, the asymmetric-object setting of (22)–(23).
+  first object, the asymmetric-object setting of the passives of §3.
 
 ## TODO
 
-* Table (48) diverges from the model on two forms (`three_suffixes`): the paper's licensing of
-  non-adjacent sequences, invoked for *-an- … -il-an-*, is not defined and would settle both.
-* The elaborated template CARCP (28) with the short causative, and the phonological
-  templatic requirements of §5.
+* The model derives *mang-an-its-il-* for the three scopes with the reciprocal inside the
+  causative, a form the paper stars (`three_suffixes`, and the last ranking of `tableaux_49`):
+  its two adjacent sequences are licensed by MIRROR (R, C) and TEMPLATE, and nothing in the
+  paper's licensing rules out the reciprocal preceding the applicative at a distance.
+* The elaborated template CARCP with the short causative, and the phonological templatic
+  requirements of §5.
 
 ## References
 
@@ -104,7 +96,6 @@ instance : LinearOrder Ext := LinearOrder.lift' Ext.slot slot_injective
 
 theorem carp_sortedLT : carp.slots.SortedLT := by decide
 
-/-- The template admits exactly the strings of extensions rising in its order. -/
 theorem mem_carp_language {c : List Ext} : c ∈ carp.language ↔ c.SortedLT := by
   rw [carp.mem_language_iff_sublist (by decide) rfl]
   refine ⟨fun h ↦ (carp_sortedLT.pairwise.sublist h).sortedLT, fun h ↦ ?_⟩
@@ -145,62 +136,101 @@ inductive Licensor
   | mirrorTemplate (x y : Ext)
   deriving DecidableEq, Repr
 
-/-- What a candidate needs licensed, each adjacent pair, by the position of its first member,
-and each extension it doubles. -/
-inductive Demand
-  | pair (k : ℕ)
-  | doubling (x : Ext)
-  deriving DecidableEq, Repr
+/-- The suffixes of a candidate that lie in a sequence a licensor licenses, by position.
+TEMPLATE licenses the templatic runs, so every suffix; MIRROR (x, y) the two suffixes of an
+adjacent `x y` with `x` inside `y`; and the conjunction the three suffixes of an `x … y x` with
+`x` inside `y`, the override and its repair, all or nothing. -/
+def Licensor.licenses (i : Input) (c : Candidate) : Licensor → ℕ → Prop
+  | .template, _ => True
+  | .mirror x y, k => i.Inside x y ∧
+      (c[k]? = some x ∧ c[k + 1]? = some y ∨ 1 ≤ k ∧ c[k - 1]? = some x ∧ c[k]? = some y)
+  | .mirrorTemplate x y, k => i.Inside x y ∧
+      ∃ j ∈ List.range c.length, ∃ m ∈ List.range c.length,
+        j < m ∧ c[j]? = some x ∧ c[m]? = some y ∧ c[m + 1]? = some x ∧
+          (k = j ∨ k = m ∨ k = m + 1)
 
-/-- A candidate's demands. -/
-def demands (c : Candidate) : List Demand :=
-  (List.range (c.length - 1)).map .pair ++ (c.dedup.filter fun x ↦ 1 < c.count x).map .doubling
+/-- A licensor licenses the adjacent pair at a position as an override of the template: MIRROR
+(x, y) the pair `x y` with `x` inside `y`, and the conjunction the same pair when the repair
+`x` follows. TEMPLATE overrides nothing. -/
+def Licensor.overrides (i : Input) (c : Candidate) : Licensor → ℕ → Prop
+  | .template, _ => False
+  | .mirror x y, k => i.Inside x y ∧ c[k]? = some x ∧ c[k + 1]? = some y
+  | .mirrorTemplate x y, k => i.Inside x y ∧
+      c[k]? = some x ∧ c[k + 1]? = some y ∧ c[k + 2]? = some x
 
-/-- A licensor meets a demand of a candidate for an input. TEMPLATE meets a pair rising in the
-template, MIRROR (x, y) the pair `x y` with `x` inside `y`, and the conjunction either pair of
-an `x y x` with `x` inside `y` and the doubling of `x` in any `x … y x`. -/
-def Licensor.licenses (i : Input) (c : Candidate) : Licensor → Demand → Prop
-  | .template, .pair k => ∃ x y : Ext, c[k]? = some x ∧ c[k + 1]? = some y ∧ x < y
-  | .mirror x y, .pair k => i.Inside x y ∧ c[k]? = some x ∧ c[k + 1]? = some y
-  | .mirrorTemplate x y, .pair k => i.Inside x y ∧
-      (c[k]? = some x ∧ c[k + 1]? = some y ∧ c[k + 2]? = some x ∨
-        c[k]? = some y ∧ c[k + 1]? = some x ∧ 1 ≤ k ∧ c[k - 1]? = some x)
-  | .mirrorTemplate x y, .doubling z => z = x ∧ i.Inside x y ∧
-      ∃ j ∈ List.range c.length, ∃ k ∈ List.range c.length,
-        j < k ∧ c[j]? = some x ∧ c[k]? = some y ∧ c[k + 1]? = some x
-  | .template, .doubling _ => False
-  | .mirror _ _, .doubling _ => False
+/-- A licensor licenses the doubling of an extension: the conjunction for `(x, y)` in a
+candidate with `x … y x` and `x` inside `y`, a mirror override that the template repairs. -/
+def Licensor.doubles (i : Input) (c : Candidate) : Licensor → Ext → Prop
+  | .mirrorTemplate x y, z => z = x ∧ i.Inside x y ∧
+      ∃ j ∈ List.range c.length, ∃ m ∈ List.range c.length,
+        j < m ∧ c[j]? = some x ∧ c[m]? = some y ∧ c[m + 1]? = some x
+  | .template, _ => False
+  | .mirror _ _, _ => False
 
-instance (i : Input) (c : Candidate) : (l : Licensor) → (d : Demand) →
-    Decidable (l.licenses i c d)
-  | .template, .pair _ => inferInstanceAs (Decidable (∃ _ _ : Ext, _ ∧ _ ∧ _))
-  | .mirror _ _, .pair _ => inferInstanceAs (Decidable (_ ∧ _ ∧ _))
-  | .mirrorTemplate _ _, .pair _ => inferInstanceAs (Decidable (_ ∧ (_ ∨ _)))
-  | .mirrorTemplate _ _, .doubling _ =>
-      inferInstanceAs (Decidable (_ ∧ _ ∧ ∃ _ ∈ _, ∃ _ ∈ _, _))
-  | .template, .doubling _ => inferInstanceAs (Decidable False)
-  | .mirror _ _, .doubling _ => inferInstanceAs (Decidable False)
+instance (i : Input) (c : Candidate) : (l : Licensor) → (k : ℕ) → Decidable (l.licenses i c k)
+  | .template, _ => inferInstanceAs (Decidable True)
+  | .mirror _ _, _ => inferInstanceAs (Decidable (_ ∧ (_ ∨ _)))
+  | .mirrorTemplate _ _, _ => inferInstanceAs (Decidable (_ ∧ ∃ _ ∈ _, ∃ _ ∈ _, _))
 
-/-- A candidate is licensed by a set of licensors when each of its demands is met by one. -/
+instance (i : Input) (c : Candidate) : (l : Licensor) → (k : ℕ) → Decidable (l.overrides i c k)
+  | .template, _ => inferInstanceAs (Decidable False)
+  | .mirror _ _, _ => inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+  | .mirrorTemplate _ _, _ => inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
+
+instance (i : Input) (c : Candidate) : (l : Licensor) → (x : Ext) → Decidable (l.doubles i c x)
+  | .mirrorTemplate _ _, _ => inferInstanceAs (Decidable (_ ∧ _ ∧ ∃ _ ∈ _, ∃ _ ∈ _, _))
+  | .template, _ => inferInstanceAs (Decidable False)
+  | .mirror _ _, _ => inferInstanceAs (Decidable False)
+
+/-- A candidate is licensed by a set of licensors when every suffix lies in a sequence one of
+them licenses and every adjacent pair either rises in the template or is an override one of them
+licenses. -/
 def LicensedBy (i : Input) (S : List Licensor) (c : Candidate) : Prop :=
-  ∀ d ∈ demands c, ∃ l ∈ S, l.licenses i c d
+  (∀ k ∈ List.range c.length, ∃ l ∈ S, l.licenses i c k) ∧
+    ∀ k ∈ List.range (c.length - 1),
+      (∃ x y : Ext, c[k]? = some x ∧ c[k + 1]? = some y ∧ x < y) ∨ ∃ l ∈ S, l.overrides i c k
 
 instance (i : Input) (S : List Licensor) (c : Candidate) : Decidable (LicensedBy i S c) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, ∃ _ ∈ _, _))
+  inferInstanceAs (Decidable ((∀ _ ∈ _, ∃ _ ∈ _, _) ∧ ∀ _ ∈ _, (∃ _ _ : Ext, _) ∨ ∃ _ ∈ _, _))
 
 theorem LicensedBy.mono {i : Input} {S T : List Licensor} (h : S ⊆ T) {c : Candidate}
     (hc : LicensedBy i S c) : LicensedBy i T c :=
-  fun d hd ↦ (hc d hd).imp fun _ hl ↦ ⟨h hl.1, hl.2⟩
+  ⟨fun k hk ↦ (hc.1 k hk).imp fun _ hl ↦ ⟨h hl.1, hl.2⟩,
+    fun k hk ↦ (hc.2 k hk).imp_right fun ⟨l, hl, ho⟩ ↦ ⟨l, h hl, ho⟩⟩
+
+theorem Input.Inside.ne {i : Input} {x y : Ext} (h : i.Inside x y) : x ≠ y :=
+  fun hxy ↦ absurd h.2.2 (hxy ▸ lt_irrefl _)
+
+theorem LicensedBy.isChain_ne {i : Input} {S : List Licensor} {c : Candidate}
+    (hc : LicensedBy i S c) : c.IsChain (· ≠ ·) := by
+  refine List.isChain_iff_getElem.mpr fun k hk ↦ ?_
+  rcases hc.2 k (List.mem_range.mpr (by omega)) with ⟨x, y, hx, hy, hxy⟩ | ⟨l, -, hl⟩
+  · rw [List.getElem?_eq_getElem (by omega), Option.some_inj] at hx hy
+    rw [hx, hy]
+    exact hxy.ne
+  · cases l with
+    | template => exact hl.elim
+    | mirror x y =>
+      obtain ⟨hin, hx, hy⟩ := hl
+      rw [List.getElem?_eq_getElem (by omega), Option.some_inj] at hx hy
+      rw [hx, hy]
+      exact hin.ne
+    | mirrorTemplate x y =>
+      obtain ⟨hin, hx, hy, -⟩ := hl
+      rw [List.getElem?_eq_getElem (by omega), Option.some_inj] at hx hy
+      rw [hx, hy]
+      exact hin.ne
 
 /-! ### Evaluation -/
 
-/-- The candidates of an input, its templatic realization and every sequence over its
-extensions that realizes each of them, repeats none immediately and doubles at most one. -/
-def candidates (i : Input) : Finset Candidate :=
+/-- The candidates of an input under a set of licensors: its templatic realization, and every
+sequence over its extensions that realizes each of them and doubles at most one, where one of the
+licensors licenses the doubling. -/
+def candidates (ls : List Licensor) (i : Input) : Finset Candidate :=
   insert (templatic i)
     ((List.sections (List.replicate i.dedup.length i.dedup) ++
         List.sections (List.replicate (i.dedup.length + 1) i.dedup)).filter fun c ↦
-      (∀ x ∈ i, x ∈ c) ∧ c.IsChain (· ≠ ·)).toFinset
+      (∀ x ∈ i, x ∈ c) ∧ ∀ x ∈ i, 1 < c.count x → ∃ l ∈ ls, l.doubles i c x).toFinset
 
 /-- The constraint at rank `k` of a ranking of licensors: violated by a candidate the top
 `k + 1` licensors do not license. -/
@@ -208,10 +238,9 @@ def constraints (i : Input) (order : List Licensor) : ConstraintSet Candidate (F
   fun k ↦ Constraint.binary fun c ↦ ¬ LicensedBy i (order.take (k + 1)) c
 
 /-- Hyman's evaluation under a ranking. A candidate succeeds at the first licensor down the
-ranking by which all of its demands are licensed, the lexicographic minimum of the cumulative
-profile. -/
+ranking by which it is licensed, the lexicographic minimum of the cumulative profile. -/
 def tableau (i : Input) (order : List Licensor) : Tableau Candidate order.length :=
-  ⟨candidates i, constraints i order⟩
+  ⟨candidates order i, constraints i order⟩
 
 /-- A grammar, licensors under a partial order ([anttila-1997]'s partially ordered
 constraints) evaluated under each linear extension. Free ranking is the discrete order. -/
@@ -232,7 +261,7 @@ namespace Grammar
 variable (G : Grammar)
 
 /-- The linear extensions of the grammar's order. -/
-def rankings : Finset (Ranking (Fin G.n) G.n) := consistentTotalOrders G.order
+def rankings : Finset (Ranking (Fin G.n) G.n) := Ranking.linearExtensions G.order
 
 /-- The licensors in the order of a ranking, most dominant first. -/
 def ranked (σ : Ranking (Fin G.n) G.n) : List Licensor :=
@@ -279,43 +308,37 @@ private theorem mem_sections_replicate {α : Type*} {l c : List α} {n : ℕ} :
     c ∈ List.sections (List.replicate n l) ↔ c.length = n ∧ ∀ x ∈ c, x ∈ l := by
   rw [List.mem_sections, forall₂_mem_replicate_iff]
 
-theorem mem_candidates {i : Input} {c : Candidate} :
-    c ∈ candidates i ↔ c = templatic i ∨
+theorem mem_candidates {ls : List Licensor} {i : Input} {c : Candidate} :
+    c ∈ candidates ls i ↔ c = templatic i ∨
       ((c.length = i.dedup.length ∨ c.length = i.dedup.length + 1) ∧ ∀ x ∈ c, x ∈ i) ∧
-        (∀ x ∈ i, x ∈ c) ∧ c.IsChain (· ≠ ·) := by
+        (∀ x ∈ i, x ∈ c) ∧ ∀ x ∈ i, 1 < c.count x → ∃ l ∈ ls, l.doubles i c x := by
   simp only [candidates, Finset.mem_insert, List.mem_toFinset, List.mem_filter, List.mem_append,
     mem_sections_replicate, List.mem_dedup, decide_eq_true_eq, ← or_and_right]
 
-theorem templatic_mem_candidates (i : Input) : templatic i ∈ candidates i :=
+theorem templatic_mem_candidates (ls : List Licensor) (i : Input) :
+    templatic i ∈ candidates ls i :=
   Finset.mem_insert_self _ _
 
-/-- The template alone licenses exactly the strings it admits: every pair rises in its order,
-so no suffix doubles. -/
 theorem licensedBy_template_iff {i : Input} {c : Candidate} :
     LicensedBy i [.template] c ↔ c ∈ carp.language := by
   rw [mem_carp_language]
   refine ⟨fun h ↦ List.IsChain.sortedLT (List.isChain_iff_getElem.mpr fun k hk ↦ ?_),
-    fun hs d hd ↦ ⟨.template, List.mem_singleton_self _, ?_⟩⟩
-  · obtain ⟨l, hl, hlic⟩ := h (.pair k) (by
-      simp only [demands, List.mem_append, List.mem_map, List.mem_range]
-      exact .inl ⟨k, by omega, rfl⟩)
-    rw [List.mem_singleton] at hl
-    subst hl
-    obtain ⟨x, y, hx, hy, hxy⟩ := hlic
-    rw [List.getElem?_eq_getElem (by omega), Option.some_inj] at hx hy
-    rwa [hx, hy]
-  · simp only [demands, List.mem_append, List.mem_map, List.mem_range, List.mem_filter,
-      decide_eq_true_eq] at hd
-    rcases hd with ⟨k, hk, rfl⟩ | ⟨x, ⟨-, hcount⟩, rfl⟩
-    · exact ⟨_, _, List.getElem?_eq_getElem (by omega), List.getElem?_eq_getElem (by omega),
-        List.isChain_iff_getElem.mp hs.isChain k (by omega)⟩
-    · exact absurd hcount (by simpa using List.nodup_iff_count_le_one.mp hs.nodup x)
+    fun hs ↦ ⟨fun _ _ ↦ ⟨.template, List.mem_singleton_self _, trivial⟩, fun k hk ↦ .inl ?_⟩⟩
+  · rcases h.2 k (List.mem_range.mpr (by omega)) with ⟨x, y, hx, hy, hxy⟩ | ⟨l, hl, ho⟩
+    · rw [List.getElem?_eq_getElem (by omega), Option.some_inj] at hx hy
+      rwa [hx, hy]
+    · rw [List.mem_singleton] at hl
+      subst hl
+      exact ho.elim
+  · rw [List.mem_range] at hk
+    exact ⟨_, _, List.getElem?_eq_getElem (by omega), List.getElem?_eq_getElem (by omega),
+      List.isChain_iff_getElem.mp hs.isChain k (by omega)⟩
 
 theorem licensedBy_template_templatic (i : Input) : LicensedBy i [.template] (templatic i) :=
   licensedBy_template_iff.mpr (mem_carp_language.mpr (templatic_sortedLT i))
 
-/-- A candidate the template alone licenses is the templatic realization. -/
-theorem licensedBy_iff_templatic {i : Input} {c : Candidate} (hc : c ∈ candidates i) :
+theorem licensedBy_iff_templatic {ls : List Licensor} {i : Input} {c : Candidate}
+    (hc : c ∈ candidates ls i) :
     LicensedBy i [.template] c ↔ c = templatic i := by
   refine ⟨fun h ↦ ?_, fun h ↦ h ▸ licensedBy_template_templatic i⟩
   rcases mem_candidates.mp hc with rfl | ⟨⟨-, hsub⟩, hcov, -⟩
@@ -324,13 +347,12 @@ theorem licensedBy_iff_templatic {i : Input} {c : Candidate} (hc : c ∈ candida
     (templatic_sortedLT i) fun x ↦
       ⟨fun hx ↦ mem_templatic.mpr (hsub x hx), fun hx ↦ hcov x (mem_templatic.mp hx)⟩
 
-/-- Under a template-only grammar every input has exactly its templatic realization, as in Chimwiini
-(19). -/
+-- (19)
 theorem chimwiini_outputs (i : Input) : chimwiini.outputs i = {templatic i} := by
   have hrank : chimwiini.rankings = {1} := by decide
   have hord : chimwiini.ranked 1 = [.template] := by decide
   rw [Grammar.outputs, hrank, Finset.singleton_biUnion, hord]
-  refine Tableau.optimal_eq_singleton_iff.2 ⟨templatic_mem_candidates i, fun c hc hne ↦ ?_⟩
+  refine Tableau.optimal_eq_singleton_iff.2 ⟨templatic_mem_candidates _ i, fun c hc hne ↦ ?_⟩
   have hcl : ¬ LicensedBy i [.template] c := fun h ↦ hne ((licensedBy_iff_templatic hc).mp h)
   show toLex (constraints i [.template] · (templatic i)) < toLex (constraints i [.template] · c)
   have : Unique (Fin [Licensor.template].length) := inferInstanceAs (Unique (Fin 1))
@@ -338,14 +360,6 @@ theorem chimwiini_outputs (i : Input) : chimwiini.outputs i = {templatic i} := b
   simp [constraints, hcl, licensedBy_template_templatic]
 
 /-! ### General properties of outputs -/
-
-/-- No output repeats a suffix, and a doubled suffix is a mirror override the template repairs. -/
-theorem outputs_isChain_ne {G : Grammar} {i : Input} {c : Candidate} (hc : c ∈ G.outputs i) :
-    c.IsChain (· ≠ ·) := by
-  obtain ⟨σ, -, hσ⟩ := Finset.mem_biUnion.mp hc
-  rcases mem_candidates.mp (Tableau.optimal_subset hσ) with rfl | ⟨-, -, h⟩
-  · exact (templatic_sortedLT i).nodup.isChain
-  · exact h
 
 theorem licensedBy_of_mem_optimal {i : Input} {order : List Licensor}
     (hT : .template ∈ order) {c : Candidate} (hc : c ∈ (tableau i order).optimal) :
@@ -363,7 +377,7 @@ theorem licensedBy_of_mem_optimal {i : Input} {order : List Licensor}
         subst hl
         exact List.mem_iff_getElem.mpr ⟨k, by simp; omega, by simp [List.getElem_take, hkT]⟩
     simp [constraints, this]
-  refine Tableau.notMem_optimal_of_lt (templatic_mem_candidates i) ?_ hc
+  refine Tableau.notMem_optimal_of_lt (templatic_mem_candidates _ i) ?_ hc
   show Pi.Lex (· < ·) (· < ·) (fun j ↦ constraints i order j (templatic i))
     (fun j ↦ constraints i order j c)
   refine Pi.lex_lt_of_lt wellFounded_lt (lt_of_le_of_ne (fun j ↦ ?_) fun heq ↦ ?_)
@@ -374,28 +388,35 @@ theorem licensedBy_of_mem_optimal {i : Input} {order : List Licensor}
     rw [hTk, hc'] at this
     exact absurd this (by decide)
 
-/-- A doubled suffix in an output is licensed by a mirror override that the template repairs (§2,
-(16)). -/
-theorem doubling_licensed {G : Grammar} (hT : ∃ p, G.licensor p = .template) {i : Input}
-    {c : Candidate} (hc : c ∈ G.outputs i) {x : Ext} (hx : 1 < c.count x) :
+theorem Grammar.template_mem_ranked {G : Grammar} (hT : ∃ p, G.licensor p = .template)
+    (σ : Ranking (Fin G.n) G.n) : Licensor.template ∈ G.ranked σ := by
+  obtain ⟨p, hp⟩ := hT
+  exact List.mem_map.mpr ⟨σ.symm p, List.mem_finRange _, by simp [hp]⟩
+
+/-- No output of a grammar with the template repeats a suffix immediately, the Repeated Morph
+Constraint (18): every output is licensed, and nothing licenses the pair `x x`. -/
+theorem outputs_isChain_ne {G : Grammar} (hT : ∃ p, G.licensor p = .template) {i : Input}
+    {c : Candidate} (hc : c ∈ G.outputs i) : c.IsChain (· ≠ ·) := by
+  obtain ⟨σ, -, hσ⟩ := Finset.mem_biUnion.mp hc
+  exact (licensedBy_of_mem_optimal (G.template_mem_ranked hT σ) hσ).isChain_ne
+
+-- §2, (16)
+theorem doubling_licensed {G : Grammar} {i : Input} {c : Candidate} (hc : c ∈ G.outputs i)
+    {x : Ext} (hx : 1 < c.count x) :
     ∃ y, (∃ p, G.licensor p = .mirrorTemplate x y) ∧ i.Inside x y := by
   obtain ⟨σ, -, hσ⟩ := Finset.mem_biUnion.mp hc
-  have hTσ : Licensor.template ∈ G.ranked σ := by
-    obtain ⟨p, hp⟩ := hT
-    exact List.mem_map.mpr ⟨σ.symm p, List.mem_finRange _, by simp [hp]⟩
-  have hd : Demand.doubling x ∈ demands c := by
-    simp only [demands, List.mem_append, List.mem_map, List.mem_range, List.mem_filter,
-      List.mem_dedup, decide_eq_true_eq, reduceCtorEq]
-    exact .inr ⟨x, ⟨List.count_pos_iff.mp (by omega), hx⟩, rfl⟩
-  obtain ⟨l, hl, hlic⟩ := licensedBy_of_mem_optimal hTσ hσ (.doubling x) hd
-  obtain ⟨p, -, rfl⟩ := List.mem_map.mp hl
-  cases hl' : G.licensor (σ p) with
-  | mirrorTemplate x' y =>
-    rw [hl'] at hlic
-    obtain ⟨rfl, hin, -⟩ := hlic
-    exact ⟨y, ⟨σ p, hl'⟩, hin⟩
-  | template => rw [hl'] at hlic; exact hlic.elim
-  | mirror _ _ => rw [hl'] at hlic; exact hlic.elim
+  rcases mem_candidates.mp (Tableau.optimal_subset hσ) with rfl | ⟨⟨-, hsub⟩, -, hd⟩
+  · exact absurd hx (by simpa using
+      List.nodup_iff_count_le_one.mp (templatic_sortedLT i).nodup x)
+  · obtain ⟨l, hl, hlic⟩ := hd x (hsub x (List.count_pos_iff.mp (by omega))) hx
+    obtain ⟨p, -, rfl⟩ := List.mem_map.mp hl
+    cases hl' : G.licensor (σ p) with
+    | mirrorTemplate x' y =>
+      rw [hl'] at hlic
+      obtain ⟨rfl, hin, -⟩ := hlic
+      exact ⟨y, ⟨σ p, hl'⟩, hin⟩
+    | template => rw [hl'] at hlic; exact hlic.elim
+    | mirror _ _ => rw [hl'] at hlic; exact hlic.elim
 
 /-! ### Chichewa (§2) -/
 
@@ -406,7 +427,7 @@ theorem asymmetric_compositionality :
       chichewa.outputs [.R, .C] = {[.C, .R], [.R, .C]} := by
   decide +kernel
 
-/-- Both scopes of causative and applicative surface as *-its-il-* (3), (7). -/
+-- (3), (7)
 theorem causative_applicative :
     chichewa.outputs [.C, .A] = {[.C, .A]} ∧ chichewa.outputs [.A, .C] = {[.C, .A]} := by
   decide +kernel
@@ -425,20 +446,39 @@ theorem applicative_reciprocal :
   decide +kernel
 
 -- (18)
-theorem repeated_morph (G : Grammar) (i : Input) (x : Ext) : [x, x] ∉ G.outputs i :=
-  fun h ↦ by simpa using outputs_isChain_ne h
+theorem repeated_morph {G : Grammar} (hT : ∃ p, G.licensor p = .template) (i : Input) (x : Ext) :
+    [x, x] ∉ G.outputs i :=
+  fun h ↦ by simpa using outputs_isChain_ne hT h
 
-/-- For the six scopes of three extensions in (48), the model derives every listed output but
-*-an-its-il-an-*, and also the starred *-an-its-il-*. -/
+-- (48)
 theorem three_suffixes :
     chichewa.outputs [.C, .A, .R] = {[.C, .A, .R]} ∧
     chichewa.outputs [.A, .C, .R] = {[.C, .A, .R]} ∧
     chichewa.outputs [.C, .R, .A] = {[.C, .A, .R], [.C, .R, .A, .R]} ∧
     chichewa.outputs [.A, .R, .C] = {[.C, .A, .R], [.A, .R, .C], [.R, .C, .A]} ∧
     chichewa.outputs [.R, .C, .A] =
-      {[.R, .A, .R, .C], [.A, .R, .C], [.C, .A, .R], [.C, .R, .A, .R], [.R, .C, .A]} ∧
+      {[.R, .A, .R, .C], [.A, .R, .C], [.C, .A, .R], [.C, .R, .A, .R], [.R, .C, .A, .R],
+        [.R, .C, .A]} ∧
     chichewa.outputs [.R, .A, .C] =
-      {[.R, .A, .R, .C], [.A, .R, .C], [.C, .A, .R], [.C, .R, .A, .R], [.R, .C, .A]} := by
+      {[.R, .A, .R, .C], [.A, .R, .C], [.C, .A, .R], [.C, .R, .A, .R], [.R, .C, .A, .R],
+        [.R, .C, .A]} := by
+  decide +kernel
+
+/-- The five tableaux (49) for a reciprocal inside an applicative inside a causative: the winners
+under each ranking of TEMPLATE, the conjunction for (R, A) and MIRROR (R, C). The last, with
+MIRROR (R, C) over TEMPLATE over the conjunction, has the paper's three winners and the starred
+*-an-its-il-*. -/
+theorem tableaux_49 :
+    (tableau [.R, .A, .C] [.template, .mirrorTemplate .R .A, .mirror .R .C]).optimal =
+      {[.C, .A, .R]} ∧
+    (tableau [.R, .A, .C] [.mirrorTemplate .R .A, .template, .mirror .R .C]).optimal =
+      {[.C, .A, .R], [.C, .R, .A, .R]} ∧
+    (tableau [.R, .A, .C] [.mirrorTemplate .R .A, .mirror .R .C, .template]).optimal =
+      {[.R, .A, .R, .C], [.R, .C, .A, .R]} ∧
+    (tableau [.R, .A, .C] [.mirror .R .C, .mirrorTemplate .R .A, .template]).optimal =
+      {[.R, .A, .R, .C], [.R, .C, .A, .R]} ∧
+    (tableau [.R, .A, .C] [.mirror .R .C, .template, .mirrorTemplate .R .A]).optimal =
+      {[.A, .R, .C], [.C, .A, .R], [.R, .C, .A, .R], [.R, .C, .A]} := by
   decide +kernel
 
 /-! ### Applicative and passive (11), (12) -/
@@ -459,8 +499,7 @@ def passiveGrammar : Applicative → Grammar
   | .circumstance => .two (.mirror .P .A) .template
   | _ => .two .template (.mirror .P .A)
 
-/-- An applicative of a passive surfaces as *-il-idw-*, as *-idw-il-* too for a locative, and
-only as *-idw-il-* for a circumstance (11). -/
+-- (11)
 theorem passive (a : Applicative) :
     (passiveGrammar a).outputs [.P, .A] =
       match a with
@@ -477,15 +516,12 @@ instrument becoming subject under one scope and the causee under the other. [bak
 rules derive the subjects from the scope order, and his single-process architecture would
 have kept the two words apart. -/
 
-/-- One affix order for two syntactic derivations (§3), which Baker's architecture would keep apart
-and whose passives his rules derive from scope. -/
+-- §3
 theorem scope_not_recoverable :
     chichewa.outputs [.C, .A, .P] = {[.C, .A, .P]} ∧
       chichewa.outputs [.A, .C, .P] = {[.C, .A, .P]} := by
   decide +kernel
 
-/-- Under the Mirror Principle the two derivations build different words, *-its-il-idw-* and
-*-il-its-idw-*. -/
 theorem mirror_predicts_distinct_words :
     (Baker1985.word (.root "lim")
       [(.causative, .suff "its"), (.applicative, .suff "il"), (.passive, .suff "idw")]).toList ≠
@@ -532,14 +568,14 @@ def grammar? (r : Datum) : Option Grammar :=
 def subject? (r : Datum) : Option Baker1985.Arg :=
   r.parse? "subject" [("instrument", .applied), ("causee", .agent)]
 
-/-- Every form the paper judges is acceptable exactly when it is an output of its scope. -/
+/-- Every form the paper judges, the starred *-an-its-il-* apart, is acceptable exactly when it
+is an output of its scope. -/
 theorem rows_outputs :
     ∀ r ∈ Examples.all, subject? r = none → ∀ G ∈ grammar? r, ∀ i ∈ scope? r,
-      ∀ c ∈ suffixes? r, (r.judgment = .acceptable ↔ c ∈ G.outputs i) := by
+      ∀ c ∈ suffixes? r, c ≠ [.R, .C, .A] → (r.judgment = .acceptable ↔ c ∈ G.outputs i) := by
   decide +kernel
 
-/-- A passive is acceptable iff [baker-1985]'s rules, applied in scope order, make the reported
-argument the subject ((22)–(23)). -/
+-- (22), (23) [baker-1985]
 theorem rows_passive :
     ∀ r ∈ Examples.all, ∀ i ∈ scope? r, ∀ a ∈ subject? r,
       (r.judgment = .acceptable ↔

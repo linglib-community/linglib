@@ -369,7 +369,6 @@ def ex_53 : Datum :=
   { id := "assmannetal2023_53"
     source := ⟨"assmann-etal-2023", "(53)"⟩
     reportedIn := none
-    method := some .introspection
     language := "stan1293"
     primaryText := "Kim ATE the yogurt."
     glossedTokens := []

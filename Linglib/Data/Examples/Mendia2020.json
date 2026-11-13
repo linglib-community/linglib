@@ -1,0 +1,112 @@
+[
+ {
+  "id": "mendia2020_14a",
+  "source": {
+   "bibkey": "mendia-2020",
+   "paperLabel": "(14a)"
+  },
+  "language": "stan1293",
+  "primaryText": "Two kinds of dog are sitting in the next room.",
+  "glossedTokens": [],
+  "translation": "",
+  "context": "There are three bull-dogs and two beagles in the next room.",
+  "judgment": "acceptable",
+  "verdict": true,
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [],
+  "comment": "Attributed to Carlson (1977b, 212).",
+  "verified": "page-image"
+ },
+ {
+  "id": "mendia2020_14b",
+  "source": {
+   "bibkey": "mendia-2020",
+   "paperLabel": "(14b)"
+  },
+  "language": "stan1293",
+  "primaryText": "Two kinds of dog are sitting in the next room.",
+  "glossedTokens": [],
+  "translation": "",
+  "context": "There is only Fido, who is a border collie and a watch-dog, in the next room.",
+  "judgment": "acceptable",
+  "verdict": false,
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [],
+  "comment": "The sentence cannot describe the situation although Fido instantiates both subkinds.",
+  "verified": "page-image"
+ },
+ {
+  "id": "mendia2020_32a",
+  "source": {
+   "bibkey": "mendia-2020",
+   "paperLabel": "(32a)"
+  },
+  "language": "stan1293",
+  "primaryText": "That kind of dog is dangerous.",
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "mendia2020_32b",
+  "source": {
+   "bibkey": "mendia-2020",
+   "paperLabel": "(32b)"
+  },
+  "language": "stan1293",
+  "primaryText": "The kind of dog is dangerous.",
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [],
+  "comment": "Only the demonstrative variant resolves its referent.",
+  "verified": "page-image"
+ },
+ {
+  "id": "mendia2020_fn9_ia",
+  "source": {
+   "bibkey": "mendia-2020",
+   "paperLabel": "fn. 9 (i-a)"
+  },
+  "language": "stan1293",
+  "primaryText": "These days, the dogs that bite humans are especially dangerous.",
+  "glossedTokens": [],
+  "translation": "",
+  "context": "The rabies vaccine is now ineffective because of a mutation that the virus has undergone. So one must be very careful not to get bit by potentially rabies-carrying animals.",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "mendia2020_fn9_ib",
+  "source": {
+   "bibkey": "mendia-2020",
+   "paperLabel": "fn. 9 (i-b)"
+  },
+  "language": "stan1293",
+  "primaryText": "These days, the dogs are especially dangerous.",
+  "glossedTokens": [],
+  "translation": "",
+  "context": "The rabies vaccine is now ineffective because of a mutation that the virus has undergone. So one must be very careful not to get bit by potentially rabies-carrying animals.",
+  "judgment": "unacceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [],
+  "comment": "",
+  "verified": "page-image"
+ }
+]

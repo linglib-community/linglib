@@ -61,13 +61,6 @@ drawing wrong.
   type. Landman's statement of it (p. 3) takes the longer interval after the inertia world; the two
   agree when, as for the truck, the actual world is the only inertia world.
 
-## Errata
-
-* The definition of stopping (p. 24) says that `f`, going on at `j`, stops when nothing of which
-  it is a stage goes on beyond `i`, the interval of `e`. Since `f` is a stage of itself, `f` would
-  then never stop at an interval ending later than `i`, and the continuation branch could not
-  leave the world of `e`; `j` is meant, and `Stops` reads it.
-
 ## TODO
 
 * The rival proposals of §1, the normality, subjunctive and part-of proposals, are not

@@ -17,10 +17,10 @@ public import Linglib.Syntax.Person.Category
 
 This file defines the pronoun as a lexical object: a surface form with the agreement features
 every pronoun kind shares. The kinds extend it, each in its own file: `PersonalPronoun`,
-`LogophoricPronoun`, `ReflexivePronoun`, `ReciprocalPronoun`, `DemonstrativePronoun`,
-`InterrogativePronoun` and `IndefinitePronoun`. A `Pronoun` has no denotation, pronoun type or
-binding class of its own; the kind supplies them, and `Pronoun.toWord` takes the last two as
-arguments.
+`LogophoricPronoun`, `ReflexivePronoun`, `ReciprocalPronoun`, `DemonstrativePronoun`, and
+`ProForm` with its kinds `InterrogativePronoun` and `IndefinitePronoun`. A `Pronoun` has no
+denotation, pronoun type or binding class of its own; the kind supplies them, and
+`Pronoun.toWord` takes the last two as arguments.
 
 ## Main definitions
 
@@ -41,8 +41,8 @@ arguments.
 ## Main results
 
 * `Pronoun.bindingClassOf_toWord_reflex`, `Pronoun.bindingClassOf_toWord_rcp`,
-  `Pronoun.bindingClassOf_toWord`: the binding class the engine reads off a pronoun's token is
-  fixed by the marking its kind supplies.
+  `Pronoun.bindingClassOf_toWord`, `Pronoun.bindingClassOf_toWord_of_isOperator`: the binding
+  class the engine reads off a pronoun's token is fixed by the marking its kind supplies.
 
 ## References
 
@@ -179,18 +179,19 @@ end Table
 
 /-! ### The pronoun as a token -/
 
-/-- The token of a pronoun is a `PRON` word with its agreement features, and with the pronoun
-type and reflexive marking its kind supplies. -/
-def toWord (pronType : Option UD.PronType := none) (reflex : Option Unit := none) :
-    Morphology.Word :=
-  { form := p.form, cat := .PRON,
+/-- The token of a pronoun is a word with its agreement features, and with the pronoun type,
+reflexive marking and word class its kind supplies: a `PRON` unless the kind says otherwise, as
+for a pro-adverb. -/
+def toWord (pronType : Option UD.PronType := none) (reflex : Option Unit := none)
+    (cat : UD.UPOS := .PRON) : Morphology.Word :=
+  { form := p.form, cat := cat,
     features := .of (person := p.person) (number := p.number) (gender := p.gender)
       (case := p.case) (reflex := reflex) (pronType := pronType) }
 
-/-- The token of a pronoun bears the pronoun's φ-features, whatever its pronoun type and reflexive
-marking. -/
-@[simp] theorem phi_toWord (pronType : Option UD.PronType) (reflex : Option Unit) :
-    HasPhi.phi (p.toWord pronType reflex) = HasPhi.phi p := by
+/-- The token of a pronoun bears the pronoun's φ-features, whatever its pronoun type, reflexive
+marking and word class. -/
+@[simp] theorem phi_toWord (pronType : Option UD.PronType) (reflex : Option Unit)
+    (cat : UD.UPOS) : HasPhi.phi (p.toWord pronType reflex cat) = HasPhi.phi p := by
   funext d; cases d <;> rfl
 
 /-- A token marked reflexive classifies as a reflexive anaphor. -/
@@ -205,12 +206,22 @@ theorem bindingClassOf_toWord_rcp :
     Binding.bindingClassOf (p.toWord (some .Rcp)) = some .reciprocal := by
   simp [Binding.bindingClassOf, toWord, Morphology.Features.of]
 
-/-- Any other pronoun token classifies as a pronominal, the elsewhere class of
-[chomsky-1981]. -/
-theorem bindingClassOf_toWord {t : Option UD.PronType} (ht : t ≠ some .Rcp) :
+/-- Any other pronoun token that is not an operator's classifies as a pronominal. -/
+theorem bindingClassOf_toWord {t : Option UD.PronType} (ht : t ≠ some .Rcp)
+    (hop : ∀ x, t = some x → ¬ Binding.IsOperator x) :
     Binding.bindingClassOf (p.toWord t) = some .pronoun := by
   rcases t with _ | t <;> (try cases t) <;>
     simp_all +decide [Binding.bindingClassOf, toWord, Morphology.Features.of]
+
+/-- The token of an operator, a wh-phrase or a quantifier expression, classifies as an
+R-expression where its word class is nominal, and falls outside the binding theory where it is
+not, as a pro-adverb does ([chomsky-1981]). -/
+theorem bindingClassOf_toWord_of_isOperator {t : UD.PronType} (ht : Binding.IsOperator t)
+    (c : UD.UPOS) :
+    Binding.bindingClassOf (p.toWord (some t) none c) =
+      if Binding.IsNominal c then some .rExpression else none := by
+  rcases ht with rfl | rfl | rfl | rfl | rfl <;>
+    simp +decide [Binding.bindingClassOf, toWord, Morphology.Features.of]
 
 /-- A candidate antecedent of a pronoun is a nominal token that agrees with it: a pro-form
 takes its antecedents from a fixed form-class ([bloomfield-1933]). -/

@@ -16,30 +16,18 @@ public import Linglib.Core.GroupTheory.Congruence.Hom
 
 The *syntactic semigroup* of a language `L` is the quotient of the free semigroup, whose elements
 are the nonempty words, by the syntactic congruence `Con.syntactic` of the nonempty words of `L`.
-It is the restriction of the syntactic congruence of the free monoid, so the syntactic semigroup
-embeds in the syntactic monoid, which adds to it at most the class of the empty word.
+That congruence is [the restriction](##Language.syntacticSemigroupCon_eq_comap) of the syntactic
+congruence of the free monoid, so the syntactic semigroup
+[embeds in the syntactic monoid](##Language.syntacticSemigroupToMonoid_injective), which adds to it
+at most the class of the empty word, and is finite
+[exactly when `L` is regular](##Language.isRegular_iff_finite_syntacticSemigroup). A homomorphism
+recognizes `L` exactly when
+[its kernel refines the syntactic congruence](##Language.recognizesSemigroup_iff_ker_le), and
+[adjoining the empty word](##Language.syntacticSemigroupCon_insert_nil) to `L` changes nothing.
 
-The definite, reverse definite and locally trivial pseudovarieties consist of semigroups, and
-their languages are read off the syntactic semigroup. A monoid satisfying the defining condition
-of any of the three is trivial, because the condition applies to the idempotent `1`.
-
-## Main definitions
-
-* `Language.syntacticSemigroupCon`: the syntactic congruence of the nonempty words of `L`.
-* `Language.SyntacticSemigroup`: the quotient semigroup.
-* `Language.toSyntacticSemigroup`: the projection, as a `MulHom`.
-* `Language.RecognizesSemigroup`: recognition of a language by a homomorphism to a semigroup.
-
-## Main results
-
-* `Language.syntacticSemigroupToMonoid_injective`: the syntactic semigroup embeds in the syntactic
-  monoid.
-* `Language.isRegular_iff_finite_syntacticSemigroup`: a language is regular exactly when its
-  syntactic semigroup is finite.
-* `Language.recognizesSemigroup_iff_ker_le`: a homomorphism recognizes `L` exactly when its kernel
-  refines the syntactic congruence.
-* `Language.syntacticSemigroupCon_insert_nil`: adjoining the empty word leaves the syntactic
-  semigroup unchanged.
+The definite, reverse definite and locally trivial pseudovarieties consist of semigroups, since a
+monoid satisfying any of the three conditions is trivial, so their languages are read off the
+syntactic semigroup.
 
 ## References
 
@@ -76,7 +64,7 @@ theorem toSyntacticSemigroup_eq_iff {u v : FreeSemigroup α} :
 
 theorem toSyntacticSemigroup_surjective (L : Language α) :
     Function.Surjective L.toSyntacticSemigroup :=
-  Con.mkMulHom_surjective _
+  Con.mkMulHom_surjective
 
 theorem ker_toSyntacticSemigroup (L : Language α) :
     Con.ker L.toSyntacticSemigroup = L.syntacticSemigroupCon :=
@@ -94,11 +82,16 @@ theorem syntacticSemigroupCon_iff {u v : FreeSemigroup α} :
     L.syntacticSemigroupCon u v ↔ L.syntacticCon u.toFreeMonoid v.toFreeMonoid := by
   rw [syntacticSemigroupCon_eq_comap]; rfl
 
+/-- The syntactic congruence of `L` on the free semigroup is the kernel of the map sending a
+nonempty word to its class in the syntactic monoid. -/
+theorem syntacticSemigroupCon_eq_ker (L : Language α) :
+    L.syntacticSemigroupCon = Con.ker (L.toSyntacticMonoid.toMulHom.comp toFreeMonoid) :=
+  Con.ext fun _ _ ↦ syntacticSemigroupCon_iff.trans toSyntacticMonoid_eq_iff.symm
+
 /-- The embedding of the syntactic semigroup into the syntactic monoid sends the class of a
 nonempty word to its class in the monoid. -/
 def syntacticSemigroupToMonoid (L : Language α) : L.SyntacticSemigroup →ₙ* L.SyntacticMonoid :=
-  L.syntacticSemigroupCon.liftMulHom (L.toSyntacticMonoid.toMulHom.comp toFreeMonoid)
-    fun _ _ h ↦ toSyntacticMonoid_eq_iff.mpr (syntacticSemigroupCon_iff.1 h)
+  L.syntacticSemigroupCon.liftMulHom _ L.syntacticSemigroupCon_eq_ker.le
 
 @[simp] theorem syntacticSemigroupToMonoid_apply (L : Language α) (u : FreeSemigroup α) :
     L.syntacticSemigroupToMonoid (L.toSyntacticSemigroup u) =
@@ -110,7 +103,7 @@ theorem syntacticSemigroupToMonoid_mk (L : Language α) (a : α) (l : List α) :
 
 theorem syntacticSemigroupToMonoid_injective (L : Language α) :
     Function.Injective L.syntacticSemigroupToMonoid :=
-  Con.liftMulHom_injective fun _ _ h ↦ syntacticSemigroupCon_iff.2 (toSyntacticMonoid_eq_iff.mp h)
+  Con.liftMulHom_injective_iff.2 L.syntacticSemigroupCon_eq_ker
 
 instance [Finite L.SyntacticMonoid] : Finite L.SyntacticSemigroup :=
   .of_injective _ L.syntacticSemigroupToMonoid_injective

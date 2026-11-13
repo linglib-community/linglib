@@ -51,26 +51,26 @@ def quiconque : IndefinitePronoun := { form := "quiconque", ontology := .person 
 
 /-- The *quelque*-series. -/
 def quelqueSeries : IndefinitePronoun.Series :=
-  ⟨"quelque-", {quelquUn, ⟨{ form := "quelque chose" }, .thing⟩,
-    ⟨{ form := "quelque part" }, .place⟩, ⟨{ form := "quelque" }, .determiner⟩}⟩
+  ⟨"quelque-", {quelquUn, { form := "quelque chose", ontology := .thing },
+    { form := "quelque part", ontology := .place }, { form := "quelque", ontology := .determiner }}⟩
 
 /-- The *personne*-series. -/
 def personneSeries : IndefinitePronoun.Series :=
-  ⟨"personne", {personne, rien, ⟨{ form := "nulle part" }, .place⟩, jamais,
-    ⟨{ form := "aucunement" }, .manner⟩, ⟨{ form := "aucun" }, .determiner⟩}⟩
+  ⟨"personne", {personne, rien, { form := "nulle part", ontology := .place }, jamais,
+    { form := "aucunement", ontology := .manner }, { form := "aucun", ontology := .determiner }}⟩
 
 /-- The *n'importe*-series. -/
 def nImporteSeries : IndefinitePronoun.Series :=
-  ⟨"n'importe", {nImporteQui, ⟨{ form := "n'importe quoi" }, .thing⟩,
-    ⟨{ form := "n'importe quel" }, .determiner⟩}⟩
+  ⟨"n'importe", {nImporteQui, { form := "n'importe quoi", ontology := .thing },
+    { form := "n'importe quel", ontology := .determiner }}⟩
 
 /-- The *que ce soit*-series, whose determiner is the discontinuous *quelque … que ce soit*. -/
 def queCeSoitSeries : IndefinitePronoun.Series :=
-  ⟨"que ce soit", {quiQueCeSoit, ⟨{ form := "quoi que ce soit" }, .thing⟩,
-    ⟨{ form := "quelque … que ce soit" }, .determiner⟩}⟩
+  ⟨"que ce soit", {quiQueCeSoit, { form := "quoi que ce soit", ontology := .thing },
+    { form := "quelque … que ce soit", ontology := .determiner }}⟩
 
 /-- The *-conque*-series. -/
 def conqueSeries : IndefinitePronoun.Series :=
-  ⟨"-conque", {quiconque, ⟨{ form := "quelconque" }, .determiner⟩}⟩
+  ⟨"-conque", {quiconque, { form := "quelconque", ontology := .determiner }}⟩
 
 end French.Indefinites

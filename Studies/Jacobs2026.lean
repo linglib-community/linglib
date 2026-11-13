@@ -43,20 +43,6 @@ dissimilation](##dissimilate_glide).
 * `dissimilate_glide` applies to every stem whose last LINGUAL segment is [l], so it also predicts
   later -alis forms of *tricliniaris* and of Cser's *Saliaris*, which the paper does not check.
 
-## Errata
-
-* The paper predicts that the -alis forms of the hiatus pairs "did not occur prior to 200AD", but
-  its own table of counts has *Latialis* [three times before 200 AD](##latialis_before200).
-* The variation is said to occur "only … with intervening coronal consonants" and a front vowel in
-  hiatus, but *fulminalis* and *fulminaris* both occur in the 5th century, with [m] and no hiatus,
-  and [the rule derives only *fulminaris*](##fulminalis_variant).
-* [j] is described as [CORONAL] and [DORSAL], as "lingual [dorsal]", and in a diagram as [lingual]
-  over [coronal]. With CORONAL never specified, the diagram's [j] [is off the
-  tier](##not_onLingualTier_coronalGlide) and could not block; the account needs [DORSAL], as in
-  PHOIBLE.
-* One representation is captioned *pluvialis* but spells *fluvialis*, the list of dorsal blockers
-  is cited under the wrong example number, and Cser's counts for *Latialis* are cited a page late.
-
 ## TODO
 
 * Cser's further condition, at least three moræ between the stem and the suffix liquid, needs vowel

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Gamma.Basic
-public import Linglib.Core.Probability.Distributions.PolyaUrn
+public import Linglib.Core.Probability.Combinatorics.PolyaUrn
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Studies.GriffithsKalish2007
 
@@ -36,18 +36,6 @@ the bias; noise meets the condition [only at two degenerate levels](##constantOr
 * The distribution of meanings `P` is a parameter, uniform in the paper's Fig. 3 and Zipfian in its
   Fig. 4. Both figures are simulations and are not formalized; Fig. 3's `α` and `ε` are not
   reported.
-
-## Errata
-
-* Eq. (5) multiplies `Γ(n_k + α)` over `j`; the factor is `Γ(n_j + α)`, the count of class `j`
-  ([`prior_real_singleton`](##prior_real_singleton)).
-* The noisy model is said not to meet the condition "unless ε = 0". It also meets it at
-  `ε = (k-1)/k`, where every class is produced with probability `1/k`, and at `ε = 1`, where a class
-  is produced with probability `0` or `1/(k-1)`
-  ([`constantOrZero_produce_iff`](##constantOrZero_produce_iff)).
-* The proof that weak biases give strong universals assumes an ergodic chain, which its own MAP
-  endpoint is not without noise: each fully regular language is a sink
-  ([`invariant_mapLearner_dirac`](##invariant_mapLearner_dirac)).
 
 ## TODO
 
@@ -409,7 +397,7 @@ theorem invariant_mapLearner_produce_zero (P : Measure (Fin n)) [IsProbabilityMe
     (constantOrZero_produce P hk (.inl rfl))
   rwa [argmax_prior hα, coe_image, coe_univ, Set.image_univ] at h
 
--- Errata: without noise each fully regular language is a sink of the MAP chain, so its
+-- Without noise each fully regular language is a sink of the MAP chain, so its
 -- stationary distribution is not unique and the chain is not ergodic.
 theorem invariant_mapLearner_dirac (P : Measure (Fin n)) [IsProbabilityMeasure P] (hk : 2 ≤ k)
     (hm : m ≠ 0) {α : ℝ} (hα : 0 < α) (j : Fin k) :

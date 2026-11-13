@@ -74,33 +74,33 @@ variable {W T : Type*}
 /-- The indexical tense with cell `C` is the variable `n` presupposing that its reference stands
 to the utterance time, the time of the index `0`, in a position of `C`. The present and the past
 are the tenses of the cells `present` and `past`. -/
-abbrev tense [LT T] (C : Finset Ordering) (n : ℕ) : Nominal (ℕ → T) W T :=
-  pronoun C n 0
+abbrev tense [LT T] (C : Finset Ordering) (n : ℕ) : Definite (ℕ → T) W T :=
+  pronoun (toSetRel C) n 0
 
 /-- The zero tense is a variable with no presupposition, bound by the next tense up. -/
-abbrev zeroTense [LT T] (n : ℕ) : Nominal (ℕ → T) W T := pronoun ⊤ n 0
+abbrev zeroTense [LT T] (n : ℕ) : Definite (ℕ → T) W T := pronoun (toSetRel ⊤) n 0
 
 /-- An out-of-the-blue context has no salient time but the utterance time, so every temporal
 variable resolves to it. -/
 def outOfTheBlue (t₀ : T) : ℕ → T := Function.const ℕ t₀
 
 theorem tense_outOfTheBlue_iff [LinearOrder T] (C : Finset Ordering) (n : ℕ) (t₀ : T) (w : W) :
-    (tense C n).presup (outOfTheBlue t₀) w ↔ .eq ∈ C :=
-  pronoun_presup_const t₀
+    (tense C n (outOfTheBlue t₀) w).Dom ↔ .eq ∈ C :=
+  pronoun_dom_const t₀
 
-theorem zeroTense_presup [LinearOrder T] (n : ℕ) (g : ℕ → T) (w : W) :
-    (zeroTense n).presup g w := by
+theorem zeroTense_dom [LinearOrder T] (n : ℕ) (g : ℕ → T) (w : W) :
+    (zeroTense n g w).Dom := by
   simp
 
 -- (31)
-theorem zeroTense_abstract [LT T] (n : ℕ) (g : ℕ → T) (t : T) (w : W) :
-    Λ[n] (fun g ↦ (zeroTense n).selector g w) g t = some t := by
+theorem zeroTense_abstract [LinearOrder T] (n : ℕ) (g : ℕ → T) (t : T) (w : W) :
+    t ∈ Λ[n] (fun g ↦ zeroTense n g w) g t := by
   simp
 
 theorem tense_not_abstracted [LT T] (C : Finset Ordering) {m n : ℕ} (hn : n ≠ m)
-    (g : ℕ → T) (t : T) (w : W) :
-    Λ[m] (fun g ↦ (tense C n).selector g w) g t = some (g n) := by
-  simp [Function.update_of_ne hn]
+    (g : ℕ → T) (t : T) (w : W) {s : T} (hs : s ∈ Λ[m] (fun g ↦ tense C n g w) g t) :
+    s = g n := by
+  simpa [Function.update_of_ne hn] using (mem_pronoun.1 hs).2.symm
 
 end Tenses
 
@@ -197,7 +197,7 @@ theorem AspectHead.IsAnterior.precedes {a : AspectHead} (ha : a.IsAnterior T)
 defined and the aspect holds of the property at the tense's reference. -/
 def denote (C : Finset Ordering) (a : AspectHead) (n : ℕ) (P : W → E → Prop)
     (g : ℕ → T) (w : W) : Prop :=
-  (tense C n).presup g w ∧ .pure (g n) ∈ a.denote P w
+  (tense C n g w).Dom ∧ .pure (g n) ∈ a.denote P w
 
 theorem denote_iff_holdsAlong (C : Finset Ordering) (a : AspectHead) (n : ℕ)
     (P : W → E → Prop) (g : ℕ → T) (w : W) :
@@ -275,7 +275,7 @@ variable (T : Type*) [LinearOrder T] in
 the blue with an anterior aspect. -/
 def DescribesPastOutOfTheBlue (f : Tense.Form) : Prop :=
   ∃ C a, v.SpellsOut f C a ∧
-    (∀ t₀ : T, (tense (W := Unit) C 0).presup (outOfTheBlue t₀) ()) ∧ a.IsAnterior T
+    (∀ t₀ : T, (tense (W := Unit) C 0 (outOfTheBlue t₀) ()).Dom) ∧ a.IsAnterior T
 
 /-- A form can describe a past event out of the blue iff it spells out, with the perfect, a
 tense that admits coincidence with the utterance time. -/

@@ -15,7 +15,7 @@ public import Linglib.Core.Order.Argmax
 public import Linglib.Core.Probability.Kernel.Basic
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Linglib.Core.Probability.UniformOn
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.Probabilistic.Basic
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Data.Examples.Franke2011
 

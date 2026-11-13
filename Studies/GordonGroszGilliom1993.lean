@@ -32,11 +32,6 @@ Experiments 4 and 5](##not_roleFactored).
   speaks for both of its entities. Experiment 5 prints no test per condition, and the paper
   reads a main effect of pronominalization without an interaction as a penalty in both.
 
-## Errata
-
-* The by-passages planned comparisons of Experiment 1 are printed $F_2(1, 11)$, the by-subjects
-  degrees of freedom; 24 passages give 23 error degrees of freedom, as in $F_2(2, 46)$.
-
 ## References
 
 * [gordon-grosz-gilliom-1993]

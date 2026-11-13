@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Logic.Function.Basic
+public import Mathlib.Logic.Function.Const
 public import Mathlib.Data.Set.Image
 public import Linglib.Logic.Modal.Extensional
 
@@ -26,22 +26,11 @@ scope reading of the designator whose reference `f` fixes at that index. The two
 coincide when `f` is constant on the indices on which the operator's value depends: under every
 operator when `f` is rigid, and for every designator when the operator is extensional.
 
-## Main definitions
+## Implementation notes
 
-* `IsRigid f`: constancy of `f : W → τ`.
-* `largeScope O P f`, `smallScope O P f`: the two scope readings of `O` over `P` of `f`.
-
-## Main results
-
-* `isRigid_iff_forall_eq_const`: a rigid designator is the one whose reference it fixes.
-* `isRigid_iff_subsingleton_range`: the mathlib face.
-* `IsRigid.eq_of_apply_eq`: the necessity of identity.
-* `largeScope_eq_smallScope_const`: the large scope reading as fixing the reference.
-* `largeScope_eq_smallScope_of_dependsOn`: the scope readings coincide for a designator constant
-  on the indices the operator reads.
-* `largeScope_eq_smallScope`: the scope readings coincide for a rigid designator.
-* `IsExtensionalAt.largeScope_eq_smallScope`: the scope readings coincide under an
-  extensional operator.
+`IsRigid` is mathlib's `Function.IsConst` under the name the field gives it, so that the lemmas
+about constant functions apply: a constant intension is rigid by `Function.IsConst.const`, and
+rigidity is subsingletonness of the range by `Set.subsingleton_range_iff`.
 
 ## References
 
@@ -54,37 +43,27 @@ operator when `f` is rigid, and for every designator when the operator is extens
 variable {W τ τ' : Type*} {f g : W → τ}
 
 /-- An intension is rigid when it takes the same value at every index. -/
-def IsRigid (f : W → τ) : Prop := ∀ w₁ w₂, f w₁ = f w₂
+abbrev IsRigid (f : W → τ) : Prop := Function.IsConst f
 
-theorem isRigid_iff_forall_eq_const : IsRigid f ↔ ∀ w, f = fun _ ↦ f w :=
+namespace Function
+
+theorem isConst_iff_forall_eq_const : IsConst f ↔ ∀ w, f = fun _ ↦ f w :=
   ⟨fun h w ↦ funext fun v ↦ h v w, fun h v w ↦ congrFun (h w) v⟩
 
-theorem IsRigid.eq_const (h : IsRigid f) (w : W) : f = fun _ ↦ f w :=
-  isRigid_iff_forall_eq_const.1 h w
-
-theorem isRigid_iff_subsingleton_range : IsRigid f ↔ (Set.range f).Subsingleton := by
-  simp [IsRigid, Set.Subsingleton]
-
-theorem isRigid_const (x : τ) : IsRigid fun _ : W ↦ x := fun _ _ ↦ rfl
-
-/-- Over a single index every intension is rigid. -/
-theorem isRigid_of_subsingleton [Subsingleton W] (f : W → τ) : IsRigid f :=
-  isRigid_iff_subsingleton_range.2 (Set.subsingleton_range f)
+/-- A rigid designator is the designator whose reference it fixes at any index. -/
+theorem IsConst.eq_const (h : IsConst f) (w : W) : f = fun _ ↦ f w :=
+  isConst_iff_forall_eq_const.1 h w
 
 /-- Rigid intensions that agree at one index are equal, which is the necessity of identity. -/
-theorem IsRigid.eq_of_apply_eq (hf : IsRigid f) (hg : IsRigid g) {w : W} (h : f w = g w) :
+theorem IsConst.eq_of_apply_eq (hf : IsConst f) (hg : IsConst g) {w : W} (h : f w = g w) :
     f = g :=
   funext fun v ↦ (hf v w).trans (h.trans (hg w v))
 
-theorem IsRigid.ne (hf : IsRigid f) (hg : ¬ IsRigid g) : f ≠ g :=
-  fun e ↦ hg (e ▸ hf)
+theorem Injective.isConst_comp_iff {g : τ → τ'} (hg : Injective g) :
+    IsConst (g ∘ f) ↔ IsConst f :=
+  ⟨fun h w₁ w₂ ↦ hg (h w₁ w₂), fun h ↦ h.comp_left g⟩
 
-theorem IsRigid.map (h : IsRigid f) (g : τ → τ') : IsRigid (g ∘ f) :=
-  fun w₁ w₂ ↦ congrArg g (h w₁ w₂)
-
-theorem Function.Injective.isRigid_comp_iff {g : τ → τ'} (hg : Function.Injective g) :
-    IsRigid (g ∘ f) ↔ IsRigid f :=
-  ⟨fun h w₁ w₂ ↦ hg (h w₁ w₂), fun h ↦ h.map g⟩
+end Function
 
 /-! ### Scope -/
 

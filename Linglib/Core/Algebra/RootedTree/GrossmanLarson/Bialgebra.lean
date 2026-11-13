@@ -99,7 +99,7 @@ private theorem tmul_sum_map_of (s t : Multiset (Forest (UnorderedTree α))) :
     rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
   rw [h, ← Algebra.TensorProduct.includeLeft_apply (S := R),
     ← Algebra.TensorProduct.includeRight_apply, map_multiset_sum, map_multiset_sum,
-    Multiset.map_map, Multiset.map_map, ← Multiset.sum_map_product_mul]
+    Multiset.map_map, Multiset.map_map, Multiset.sum_map_mul_sum_map]
   exact congrArg Multiset.sum (Multiset.map_congr rfl fun q _ ↦ (h _ _).symm)
 
 protected theorem comul_mul (x y : GrossmanLarson R α) :
@@ -109,7 +109,7 @@ protected theorem comul_mul (x y : GrossmanLarson R α) :
     refine lhom_ext fun F ↦ lhom_ext fun G ↦ ?_
     change comul (R := R) ((of F : GrossmanLarson R α) * of G) = comul (of F) * comul (of G)
     rw [of_mul_of, map_multiset_sum, Multiset.map_map, comul_of, comul_of,
-      ← Multiset.sum_map_product_mul]
+      Multiset.sum_map_mul_sum_map]
     simp only [Function.comp_def, comul_of]
     rw [← Multiset.sum_bind, ← Multiset.map_bind, productMultiset_bind_antidiagonal,
       Multiset.map_bind, Multiset.sum_bind]

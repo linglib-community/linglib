@@ -26,28 +26,10 @@ variety](##existsUnique_generates).
   structures of Containment Theory, are the correspondence constraints that count input nodes
   without a correspondent and corresponding pairs whose output has a feature value its input lacks.
 * A front vowel shares the [−back] of a palatal and so is a candidate only after one.
-* \*CC and DEP[+high] are not in the paper's tableaux. They repair the first two errata, and with
-  \*CC undominated the rank of MAX decides nothing. \*CC is evaluated on the verbalizer's candidates
-  alone, and Slavic allows clusters elsewhere.
-
-## Errata
-
-* [v] and [u] violate only MAX of the paper's constraints, although it says that [v] incurs more
-  violations. With MAX last, [v] [wins before /-a-/ and ties with [u] before
-  /-je-/](##language_of_max_last), and [no ranking without a constraint against clusters gives the
-  alternation](##not_alternation). The conclusion has [u] avoid a cluster, but only the partial
-  hierarchy for BCMS has such a constraint.
-* The tableaux never penalize epenthetic [+high], so [no ranking of the paper's constraints gives a
-  mid vowel](##fill_false_notMem_language) and its typology does not follow from them. The
-  markedness of [+high] it appeals to is DEP[+high] here, [below the top of each
-  hierarchy](##hierarchy).
-* [ov] before /-je-/ is called harmonically bounded by [u], which [violates MAX where [ov] does
-  not](##u_not_bounds_ov).
-* The grammar with [iv] is set aside because DEP[+back] over \*SHARE[−back] would make [+back]
-  marked, but [ev] [requires that ranking too](##language_eq).
-* Tableau (28) marks [iv] for DEP[+back] though its [−back] is shared; tableau (16) and hierarchy
-  (17) order DEP[+back] and DEP[−high] oppositely; the [u] of the [uv] group is credited to (15)
-  for (12); and the text counts seventeen systems where the tables list nineteen varieties.
+* \*CC and DEP[+high] are not in the paper's tableaux. Without \*CC [no ranking gives the
+  alternation](##not_alternation) and without DEP[+high] [none gives a mid
+  vowel](##fill_false_notMem_language); with \*CC undominated the rank of MAX decides nothing.
+  \*CC is evaluated on the verbalizer's candidates alone, and Slavic allows clusters elsewhere.
 
 ## TODO
 
@@ -138,7 +120,7 @@ def output : Candidate → List Segment
 
 /-- `corr c k` is the correspondence of the candidate `k` to the input, a deletion of the empty
 node for [u] and [v] and position by position for the others. -/
-def corr : Candidate → Correspondence BinaryRole Segment
+def corr : Candidate → Correspondence.Diagram BinaryRole Segment
   | .u => .deletion (input c) (output c .u) (Fin.succAbove 1)
   | .v => .deletion (input c) (output c .v) (Fin.succAbove 1)
   | k => .parallel (input c) (output c k)

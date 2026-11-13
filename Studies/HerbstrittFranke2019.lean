@@ -4,7 +4,7 @@ public import Linglib.Core.InformationTheory.Hellinger
 public import Linglib.Core.Probability.Distributions.Hypergeometric
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Linglib.Data.Examples.HerbstrittFranke2019
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.Probabilistic.Basic
 
 /-!
 # Herbstritt and Franke (2019): Complex probability expressions and higher-order uncertainty

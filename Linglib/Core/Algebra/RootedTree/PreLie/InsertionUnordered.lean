@@ -8,6 +8,7 @@ module
 public import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 public import Linglib.Core.Data.List.Zip
 public import Linglib.Core.Data.Multiset.Antidiagonal
+public import Linglib.Core.Data.Multiset.Convolution
 public import Linglib.Core.Data.UnorderedTree.Basic
 
 /-!
@@ -228,8 +229,7 @@ theorem insertionMultiset_antidiagonal (A G : Multiset (UnorderedTree α)) :
 /-- Grafting into a disjoint union splits the guests between the two parts. -/
 theorem insertionMultiset_add_host (A B C : Multiset (UnorderedTree α)) :
     insertionMultiset (A + B) C =
-      C.antidiagonal.bind fun p =>
-        (insertionMultiset A p.1 ×ˢ insertionMultiset B p.2).map fun q => q.1 + q.2 := by
+      C.antidiagonal.bind fun p ↦ (insertionMultiset A p.1).conv (insertionMultiset B p.2) := by
   induction A using forest_inductionOn with | h as =>
   induction B using forest_inductionOn with | h bs =>
   induction C using forest_inductionOn with | h cs =>
@@ -237,7 +237,8 @@ theorem insertionMultiset_add_host (A B C : Multiset (UnorderedTree α)) :
     Multiset.map_bind, antidiagonal_mk, Multiset.bind_map]
   refine Multiset.bind_congr fun p _ => ?_
   rw [insertionMultiset_mk, insertionMultiset_mk]
-  simp only [SProd.sprod, Multiset.product, Multiset.map_bind, Multiset.bind_map, Multiset.map_map]
+  simp only [Multiset.conv, SProd.sprod, Multiset.product, Multiset.map_bind, Multiset.bind_map,
+    Multiset.map_map]
   exact Multiset.bind_congr fun L₁ _ => Multiset.map_congr rfl fun L₂ _ => by simp
 
 /-! ### The Grossman–Larson product -/

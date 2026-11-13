@@ -177,7 +177,7 @@ theorem quad_card : (cellsOf quadRaws).card = 4 := by decide
 
 /-- The participants of a referent are the speaker if it contains `0` and the addressee if it
 contains `1`. -/
-def participants (s : Finset Ω) : Finset Discourse.Role :=
+def participants (s : Finset Ω) : Finset SpeechAct.Role :=
   {r | (match r with | .speaker => 0 | .addressee => 1 : Ω) ∈ s}
 
 /-- The calculus generates the library's quadripartition, each of the four cells holding exactly
@@ -250,7 +250,7 @@ the tripartition Zwicky problematized, which groups inclusive with second person
 bivalent geometry (9), which bars [±hearer] without [±author], generates exactly the five
 (p. 193); Harbour rejects it as one of sixteen geometries with nothing to select it (p. 194). -/
 
-open Discourse
+open SpeechAct
 
 /-- A feature of the three-feature theories. -/
 inductive ThreeFeature where
@@ -404,7 +404,7 @@ theorem english_demonstratives_author_bipartition :
 
 -- (16), p. 180
 theorem preimage_participants_this {W E P T : Type*} [PartialOrder E]
-    (c : Kaplan.Context W E P T) :
+    (c : SpeechAct.Context W E P T) :
     c.participants ⁻¹' English.Determiners.this.deixis = Person.dom c (some .first) :=
   Set.ext fun _ ↦ Person.participants_mem_participantSets_first c _
 
@@ -416,7 +416,7 @@ open scoped SetRel
 speaker is `{0}` and the addressee `{1}`, and every referent is in every vicinity. -/
 
 /-- The context of utterance has speaker `{0}` and addressee `{1}`. -/
-def ctx : Kaplan.Context Unit (Finset (Fin 2)) Unit Unit := ⟨{0}, {1}, (), (), ()⟩
+def ctx : SpeechAct.Context Unit (Finset (Fin 2)) Unit Unit := ⟨{0}, {1}, (), (), ()⟩
 
 /-- Every referent is in every vicinity. -/
 def near : SetRel (Finset (Fin 2)) (Finset (Fin 2)) := Set.univ
@@ -424,29 +424,30 @@ def near : SetRel (Finset (Fin 2)) (Finset (Fin 2)) := Set.univ
 /-- The assignment sends every index to the empty referent. -/
 def g₀ : ℕ → Finset (Fin 2) := fun _ ↦ ∅
 
-/-- *this* resolved with a trivial restrictor is defined and its deictic presupposition holds. -/
-example : (English.Determiners.this.denote (fun _ _ _ ↦ True) 0 ctx near).toTrivalent
-    (fun _ _ ↦ True) g₀ () ≠ .undefined := by
-  rw [Ne, Nominal.toTrivalent_eq_undefined_iff, not_imp]
-  refine ⟨⟨{0}, ?_, trivial⟩, ?_⟩
+/-- *this* with a trivial restrictor denotes the indexed referent, which is in its vicinity. -/
+example : ∅ ∈ English.Determiners.this.denote (fun _ _ _ ↦ True) 0 ctx near g₀ () := by
+  refine DemonstrativeDeterminer.mem_denote.2
+    ⟨DemonstrativeDeterminer.mem_vicinity.2 ⟨{0}, ?_, trivial⟩, ?_⟩
   · simp [English.Determiners.this, Person.participants_mem_participantSets_first, ctx]
-  · rw [← ne_eq, Option.ne_none_iff_exists']
-    exact ⟨∅, (iota_eq_some_iff (s := {x : Finset (Fin 2) | True ∧ x = g₀ 0})).2
-      ⟨⟨trivial, rfl⟩, fun _ hx ↦ hx.2⟩⟩
+  · exact (mem_iota (s := {x : Finset (Fin 2) | True ∧ x = g₀ 0})).2
+      ⟨⟨trivial, rfl⟩, fun _ hx ↦ hx.2⟩
 
-/-- With no vicinities, even a demonstrative without a deictic contrast presupposes falsely. -/
+/-- With no vicinities, even a demonstrative without a deictic contrast denotes nothing. -/
 example (dem : DemonstrativeDeterminer) :
-    ¬ (dem.denote (fun _ _ _ ↦ True) 0 ctx ∅).presup g₀ () := by
-  rintro ⟨x, -, hx⟩; exact hx
+    ¬ (dem.denote (fun _ _ _ ↦ True) 0 ctx ∅ g₀ ()).Dom := by
+  rintro ⟨hv, -⟩
+  obtain ⟨x, -, hx⟩ := DemonstrativeDeterminer.mem_vicinity.1 hv
+  exact hx
 
 /-- When a referent lies both in the speaker's vicinity and in the addressee's, *this* and *that*
 both hold of it, so the two cells' vicinities need not partition the space. -/
-example : (English.Determiners.this.denote (fun _ _ _ ↦ True) 0 ctx near).presup g₀ () ∧
-    (English.Determiners.that.denote (fun _ _ _ ↦ True) 0 ctx near).presup g₀ () := by
-  refine ⟨⟨{0}, ?_, trivial⟩, ⟨{1}, ?_, trivial⟩⟩
+example : g₀ 0 ∈ English.Determiners.this.vicinity ctx near ∧
+    g₀ 0 ∈ English.Determiners.that.vicinity ctx near := by
+  refine ⟨DemonstrativeDeterminer.mem_vicinity.2 ⟨{0}, ?_, trivial⟩,
+    DemonstrativeDeterminer.mem_vicinity.2 ⟨{1}, ?_, trivial⟩⟩
   · simp [English.Determiners.this, Person.participants_mem_participantSets_first, ctx]
-  · simp only [English.Determiners.that, Set.mem_preimage, Finset.coe_compl, Set.mem_compl_iff,
-      Finset.mem_coe, Person.participants_mem_participantSets_first, Person.mem_dom_first, ctx]
+  · simp only [English.Determiners.that, Finset.mem_compl,
+      Person.participants_mem_participantSets_first, Person.mem_dom_first, ctx]
     decide
 
 end SpatialModel

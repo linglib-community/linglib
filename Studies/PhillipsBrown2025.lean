@@ -19,14 +19,14 @@ with no context sensitivity, and a context-sensitive preference relation that va
 overgenerates, predicting *you want to fail the exam* wherever *Nap* is true. The proposal
 evaluates an ascription against a contextual question, a partition of the worlds: the answers
 compatible with the beliefs are ranked by the desires they entail, *S wants p* holds when every
-best answer entails *p* (`Want`), and the ascription is defined only if the question decides *p*,
+best answer entails *p* (`Want`), and the ascription is defined only if the question determines *p*,
 is diverse, does not stack the deck, and the beliefs are sensitive to it (`Defined`).
 
 ## Implementation notes
 
 * A question is a `Setoid`, its answers the cells; the question raised by a list of issues is
   their `Setoid.ofProps`, and *p* is considered relative to a question when the question
-  decides it. Answers are ordered by the desires they entail, Kratzer's ordering with
+  determines it. Answers are ordered by the desires they entail, Kratzer's ordering with
   entailment as satisfaction (`entailed`), and the best answers are the `MaximalFor` elements
   of that valuation.
 * The act, its benefit and its cost are the three issues of the nap and lobster cases (nap,
@@ -74,15 +74,15 @@ def Want : Prop := ∀ w, MaximalFor (Live s bel) (entailed G s) w → s.cell w 
 /-- Some answer entails `p` and some entails `¬p`. -/
 def IsDiverse : Prop := (∃ w, s.cell w ⊆ p) ∧ ∃ w, s.cell w ⊆ pᶜ
 
-/-- Every salient proposition in `N` that some answer entails is itself decided. -/
-def IsAntiDeckstacking : Prop := ∀ q ∈ N, (∃ w, s.cell w ⊆ ↑q) → s.Decides ↑q
+/-- Every salient proposition in `N` that some answer entails is itself determined. -/
+def IsAntiDeckstacking : Prop := ∀ q ∈ N, (∃ w, s.cell w ⊆ ↑q) → s.Determines ↑q
 
 /-- The beliefs discriminate among the answers when some answer is live and some is not. -/
 def IsBelSensitive : Prop := (∃ w, Live s bel w) ∧ ∃ w, ¬ Live s bel w
 
 /-- The four metasemantic constraints jointly. -/
 def Defined : Prop :=
-  s.Decides p ∧ IsDiverse s p ∧ IsAntiDeckstacking N s ∧ IsBelSensitive s bel
+  s.Determines p ∧ IsDiverse s p ∧ IsAntiDeckstacking N s ∧ IsBelSensitive s bel
 
 open Classical in
 /-- Question-based *want* as a trivalent proposition, with its definedness conditions as
@@ -126,9 +126,9 @@ theorem not_want_of_not_exists [Finite W] (hlive : ∃ w, Live s bel w)
   let ⟨w, hb⟩ := exists_best (G := G) hlive
   hp ⟨w, hw w hb⟩
 
-theorem want_of_decides_of_not_exists (hc : s.Decides p) (hnp : ¬ ∃ w, s.cell w ⊆ pᶜ) :
+theorem want_of_determines_of_not_exists (hc : s.Determines p) (hnp : ¬ ∃ w, s.cell w ⊆ pᶜ) :
     Want G s bel p := fun w _ ↦
-  (Setoid.decides_iff_forall_cell.1 hc w).resolve_right fun h ↦ hnp ⟨w, h⟩
+  (Setoid.determines_iff_forall_cell.1 hc w).resolve_right fun h ↦ hnp ⟨w, h⟩
 
 /-- The semantics is Strawson upward monotone, since where both ascriptions are defined,
 `want p` entails `want q` for `p ⊆ q`. -/
@@ -232,7 +232,7 @@ theorem act_true : Defined issues qBenefit bel ↑act ∧ Want desires qBenefit 
 
 /-- In that context the cost is ignored, so *Fail* and *Die* are undefined (§3.6), which blocks
 the inference from *Nap* to *Fail* (§4.1). -/
-theorem cost_undefined : ¬ qBenefit.Decides ↑cost := by decide +kernel
+theorem cost_undefined : ¬ qBenefit.Determines ↑cost := by decide +kernel
 
 /-- Considering the act and its cost, not doing the act is wanted, *Not-nap* and *Not-lobster*,
 and so is avoiding the cost, *Not-die*. -/
@@ -285,26 +285,27 @@ theorem not_rain_deckstacked :
 another leaves open, while the level playing field satisfies it for every proposition. -/
 theorem deckstacked_excluded :
     ¬ IsAntiDeckstacking [happy] qStacked ∧
-      ∀ q : Finset LuWorld, (∃ w, qFair.cell w ⊆ ↑q) → qFair.Decides ↑q := by
+      ∀ q : Finset LuWorld, (∃ w, qFair.cell w ⊆ ↑q) → qFair.Determines ↑q := by
   decide +kernel
 
 theorem antiDeckstacking_univ_singleton {W : Type*} {s : Setoid W}
-    (h : ∀ q : Set W, (∃ w, s.cell w ⊆ q) → s.Decides q) {w₁ w₂ w₃ : W} (h₁₂ : s w₁ w₂)
+    (h : ∀ q : Set W, (∃ w, s.cell w ⊆ q) → s.Determines q) {w₁ w₂ w₃ : W} (h₁₂ : s w₁ w₂)
     (h₁₃ : ¬ s w₁ w₃) : w₁ = w₂ := by
   by_contra hne
-  have hq := Setoid.decides_iff.1 (h (s.cell w₃ ∪ (s.cell w₁ \ {w₂})) ⟨w₃, Set.subset_union_left⟩)
+  have hq := Setoid.determines_iff.1
+    (h (s.cell w₃ ∪ (s.cell w₁ \ {w₂})) ⟨w₃, Set.subset_union_left⟩)
   rcases (hq w₁ w₂ h₁₂).1 (Or.inr ⟨s.refl' w₁, hne⟩) with h | ⟨_, h⟩
   · exact h₁₃ (s.trans' h₁₂ h)
   · exact h rfl
 
 /-! ### Belief-sensitivity (§4.2) -/
 
-/-- An agent whose beliefs are insensitive to every question that decides `p`, William III and
+/-- An agent whose beliefs are insensitive to every question that determines `p`, William III and
 England avoiding nuclear war with France, has *S wants p* undefined in every context, since
-where `p` is decided the beliefs are insensitive, and where they are sensitive `p` is not
-decided. -/
+where `p` is determined the beliefs are insensitive, and where they are sensitive `p` is not
+determined. -/
 theorem undefined_of_insensitive {W : Type*} {bel p : Set W}
-    (h : ∀ s : Setoid W, s.Decides p → ¬ IsBelSensitive s bel) (N : List (Finset W))
+    (h : ∀ s : Setoid W, s.Determines p → ¬ IsBelSensitive s bel) (N : List (Finset W))
     (s : Setoid W) : ¬ Defined N s bel p :=
   fun hd ↦ h s hd.1 hd.2.2.2
 

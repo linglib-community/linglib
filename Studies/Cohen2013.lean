@@ -43,13 +43,6 @@ nettles](##nettles_aux_focus_iff).
   second reading of the verb, so that its locality is derived; the locality of the habitual shift
   is the postulate `Device.AppliesAt`.
 
-## Errata
-
-* Below (25) the chapter says that (25a) can only mean (25b) "but not (25b)"; the excluded
-  reading is (25c).
-* The derivation of the bamboo-shoots generic applies $T_G$ to "(39b)"; the logical form is
-  (35b).
-
 ## TODO
 
 * Bare plurals under habituals ((18): $\mathbf{gen}$ above the existential only) follow from bare

@@ -9,12 +9,13 @@ public import Linglib.Pragmatics.SocialMeaning.Register
 A modal item pairs a form with the force-flavor pairs it can express, the representation of a
 modal's meaning in Imel, Guo and Steinert-Threlkeld's analysis of modal typology, and records the
 register of the form. A modal auxiliary's entry extends it and a modal adverb's instantiates it
-directly. Two items form a Horn scale when they differ in force and share a flavor.
+directly. Two items form a Horn scale when they differ in quantificational force and share a flavor.
 
 ## Main definitions
 
 * `Modality.ModalItem`, with its domain and variation predicates, its classical reading
-  `ModalItem.classical`, and the Horn scales it forms, `ModalItem.Scalemates`.
+  `ModalItem.quantificationalMeaning`, and the Horn scales it forms, `ModalItem.Scalemates`,
+  with the forces of its scalemates, `ModalItem.scalemateForces`.
 
 ## References
 
@@ -73,36 +74,67 @@ instance : DecidablePred VariesForce := fun _ ↦ inferInstanceAs (Decidable (_ 
 
 instance : DecidablePred VariesFlavor := fun _ ↦ inferInstanceAs (Decidable (_ ≤ _))
 
-/-- A modal item on the classical force scale, its weak necessity read as necessity. -/
-def classical (m : ModalItem) : ModalItem :=
-  { m with meaning := m.meaning.image (Prod.map ModalForce.classical id) }
+/-- The meaning of a modal item by quantificational force, its weak necessity quantifying
+universally: the two-way scale of necessity and possibility along which [nauze-2008] and
+[matthewson-2016] compare modal systems. -/
+def quantificationalMeaning (m : ModalItem) : Finset (QuantificationalForce × ModalFlavor) :=
+  m.meaning.image (Prod.map ModalForce.quantificational id)
+
+/-- The quantificational forces a modal item expresses. -/
+def quantificationalForces (m : ModalItem) : Finset QuantificationalForce :=
+  m.forces.image ModalForce.quantificational
 
 @[simp]
-theorem forces_classical (m : ModalItem) :
-    m.classical.forces = m.forces.image ModalForce.classical := by
-  simp only [classical, forces, Finset.image_image, Prod.map_fst']
+theorem image_fst_quantificationalMeaning (m : ModalItem) :
+    m.quantificationalMeaning.image Prod.fst = m.quantificationalForces := by
+  simp only [quantificationalMeaning, quantificationalForces, forces, Finset.image_image,
+    Prod.map_fst']
 
 @[simp]
-theorem flavors_classical (m : ModalItem) : m.classical.flavors = m.flavors := by
-  simp only [classical, flavors, Finset.image_image, Prod.map_snd', Function.id_comp]
+theorem image_snd_quantificationalMeaning (m : ModalItem) :
+    m.quantificationalMeaning.image Prod.snd = m.flavors := by
+  simp only [quantificationalMeaning, flavors, Finset.image_image, Prod.map_snd',
+    Function.id_comp]
 
-/-- Two modals are scalemates, forming a Horn scale, when their lexical forces `lex` differ on the
-classical scale and they share a flavour: only quantifiers over the same domain form a scale
+/-- A modal item varies in quantificational force when it expresses both. -/
+def VariesQuantificationalForce (m : ModalItem) : Prop := 2 ≤ m.quantificationalForces.card
+
+instance : DecidablePred VariesQuantificationalForce :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ≤ _))
+
+/-- Two modals are scalemates, forming a Horn scale, when their lexical quantificational forces
+`lex` differ and they share a flavour: only quantifiers over the same domain form a scale
 ([deal-2011] §2.1). A modal with a weaker scalemate leaves the weaker force to it
 ([grano-2026] §4.5). -/
-def Scalemates (lex : ModalItem → ModalForce) (m m' : ModalItem) : Prop :=
-  (lex m).classical ≠ (lex m').classical ∧ ∃ fl ∈ m.flavors, fl ∈ m'.flavors
+def Scalemates (lex : ModalItem → QuantificationalForce) (m m' : ModalItem) : Prop :=
+  lex m ≠ lex m' ∧ ∃ fl ∈ m.flavors, fl ∈ m'.flavors
 
 /-- A modal has a scalemate in an inventory. -/
-def HasScalemate (lex : ModalItem → ModalForce) (L : List ModalItem) (m : ModalItem) : Prop :=
+def HasScalemate (lex : ModalItem → QuantificationalForce) (L : List ModalItem)
+    (m : ModalItem) : Prop :=
   ∃ m' ∈ L, Scalemates lex m m'
 
-instance (lex : ModalItem → ModalForce) (m m' : ModalItem) : Decidable (Scalemates lex m m') :=
+/-- The lexical forces of a modal's scalemates in an inventory, the forces of the alternatives
+to its use. -/
+def scalemateForces (lex : ModalItem → QuantificationalForce) (L : List ModalItem)
+    (m : ModalItem) : Set QuantificationalForce :=
+  {q | ∃ m' ∈ L, Scalemates lex m m' ∧ lex m' = q}
+
+theorem scalemateForces_nonempty {lex : ModalItem → QuantificationalForce} {L : List ModalItem}
+    {m : ModalItem} : (scalemateForces lex L m).Nonempty ↔ HasScalemate lex L m :=
+  ⟨fun ⟨_, m', hm, hs, _⟩ ↦ ⟨m', hm, hs⟩, fun ⟨m', hm, hs⟩ ↦ ⟨lex m', m', hm, hs, rfl⟩⟩
+
+instance (lex : ModalItem → QuantificationalForce) (m m' : ModalItem) :
+    Decidable (Scalemates lex m m') :=
   inferInstanceAs (Decidable (_ ∧ ∃ _ ∈ _, _))
 
-instance (lex : ModalItem → ModalForce) (L : List ModalItem) (m : ModalItem) :
+instance (lex : ModalItem → QuantificationalForce) (L : List ModalItem) (m : ModalItem) :
     Decidable (HasScalemate lex L m) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+instance (lex : ModalItem → QuantificationalForce) (L : List ModalItem) (m : ModalItem) :
+    DecidablePred (· ∈ scalemateForces lex L m) := fun _ ↦
+  inferInstanceAs (Decidable (∃ _ ∈ _, _ ∧ _))
 
 end ModalItem
 

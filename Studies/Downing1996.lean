@@ -34,12 +34,6 @@ dozen codings, among them *-ten*, *-shoku* and *-kabu*, meet none of these check
 counts of Chapters 3, 6 and 8, the taxonomies of Chapter 4, the history of Chapter 2 and the
 positions of the classifier phrase in Chapter 8 are not represented.
 
-## Errata
-
-Table 1.1 is introduced as the twenty-seven forms every respondent used, but the general *-tsu* was
-left off the questionnaire, as a note to the first chapter concedes, so twenty-six were attested by
-all; the table also numbers *-tsubu* 27 before *-tsū* 26.
-
 ## TODO
 
 Downing's claim that only quality-classifiers serve as modifiers, adding information a noun does

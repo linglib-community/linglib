@@ -103,7 +103,8 @@ def vowel (m : FeatureMatrix) (departure : Segment := ⊥) : Segment :=
 among consonants on the palatal lateral alone. -/
 def consonant (m : FeatureMatrix) : Segment := .ofChart m ⊥ {.back}ᶜ
 
-/-- The low back vowel `a`, a back vowel where the chart's is central. -/
+/-- The low back vowel `a`, a back vowel where the chart's is central: the grammar describes [a]
+as "a low, back and unrounded vowel" (§1.1.2.1). -/
 def a : Segment := vowel .«a» (Segment.ofSpecs [(.back, true)])
 
 /-- The non-high front unrounded vowel `e`. -/

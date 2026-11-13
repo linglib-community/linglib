@@ -28,9 +28,10 @@ chains.
   and those that two intervals realize.
 * `Allen.Relation`, `Allen.relation`: the relations, and the relation of two intervals.
 * `Allen.toSetRel`, `Allen.inv`, `Allen.comp`: a cell as a relation, its converse and composite.
+* `Allen.dual`: a cell on reversed time.
 * `Allen.precedes`, `Allen.isBefore`, `Allen.le`, `Allen.lt`, `Allen.overlaps`,
-  `Allen.startsWithin`, `Allen.finalSubinterval`, `Allen.nonfinalSubinterval`, `Allen.eq`,
-  `Allen.pure`, `Allen.ofPosition`: named cells.
+  `Allen.startsWithin`, `Allen.startsNoEarlier`, `Allen.endsNoLater`, `Allen.finalSubinterval`,
+  `Allen.nonfinalSubinterval`, `Allen.eq`, `Allen.pure`, `Allen.ofPosition`: named cells.
 * `Allen.HoldsAlong`, `Allen.compAlong`: chains of cells and their composites.
 
 ## Main results
@@ -41,6 +42,8 @@ chains.
 * `Allen.relation_map`: the relation of two intervals survives an order embedding.
 * `Allen.toSetRel_comp`: composition is exact on dense time without endpoints, and so are the
   operators the cells induce on sets of intervals (`Allen.image_toSetRel_comp`).
+* `Allen.dual_startsNoEarlier`: ending no later than an interval is starting no earlier than it
+  on reversed time, so a nonfuture reference time is the mirror image of a nonpast one.
 * `Allen.comp_precedes_precedes`: precedence is transitive, an entry of Allen's table that the
   kernel decides.
 * `Allen.comp_pure`: on points, Allen composition is the composition of comparison cells.
@@ -107,6 +110,26 @@ private theorem swap_compare {α : Type*} [LinearOrder α] (a b : α) :
     (ofEndpoints a b c d).swap = ofEndpoints c d a b := by
   simp [ofEndpoints, Comparisons.swap, swap_compare]
 
+/-- The comparisons on reversed time, where each interval's end is its start. -/
+def Comparisons.dual (c : Comparisons) : Comparisons :=
+  ⟨c.sndSnd.swap, c.sndFst.swap, c.fstSnd.swap, c.fstFst.swap, c.firstShape, c.secondShape⟩
+
+@[simp] theorem Comparisons.dual_dual (c : Comparisons) : c.dual.dual = c := by
+  simp [Comparisons.dual]
+
+private theorem compare_toDual {α : Type*} [LinearOrder α] (a b : α) :
+    compare (OrderDual.toDual a) (OrderDual.toDual b) = compare b a := by
+  rcases lt_trichotomy a b with h | rfl | h
+  · exact (compare_gt_iff_gt.2 (OrderDual.toDual_lt_toDual.2 h)).trans (compare_gt_iff_gt.2 h).symm
+  · rw [compare_eq_iff_eq.2 rfl, compare_eq_iff_eq.2 rfl]
+  · exact (compare_lt_iff_lt.2 (OrderDual.toDual_lt_toDual.2 h)).trans (compare_lt_iff_lt.2 h).symm
+
+@[simp] theorem dual_ofEndpoints {α : Type*} [LinearOrder α] (a b c d : α) :
+    (ofEndpoints a b c d).dual =
+      ofEndpoints (OrderDual.toDual b) (OrderDual.toDual a) (OrderDual.toDual d)
+        (OrderDual.toDual c) := by
+  simp [ofEndpoints, Comparisons.dual, swap_compare, compare_toDual]
+
 /-- The comparisons that two intervals realize, those of two intervals among four points. -/
 def realizable : Finset Comparisons :=
   (Finset.univ : Finset (NonemptyInterval (Fin 4) × NonemptyInterval (Fin 4))).image
@@ -125,6 +148,13 @@ theorem Comparisons.swap_mem_realizable {c : Comparisons} (h : c ∈ realizable)
   obtain ⟨p, -, rfl⟩ := Finset.mem_image.1 h
   rw [swap_ofEndpoints]
   exact ofEndpoints_mem_realizable p.2.fst_le_snd p.1.fst_le_snd
+
+theorem Comparisons.dual_mem_realizable {c : Comparisons} (h : c ∈ realizable) :
+    c.dual ∈ realizable := by
+  obtain ⟨p, -, rfl⟩ := Finset.mem_image.1 h
+  rw [dual_ofEndpoints]
+  exact ofEndpoints_mem_realizable (OrderDual.toDual_le_toDual.2 p.1.fst_le_snd)
+    (OrderDual.toDual_le_toDual.2 p.2.fst_le_snd)
 
 /-- A relation is how one interval of a linear order stands to another: comparisons among the
 endpoints of two intervals that some two intervals realize. -/
@@ -151,6 +181,12 @@ instance : Fintype Relation := Fintype.ofEquiv _ equivRealizable.symm
 def inv (r : Relation) : Relation := ⟨r.swap, Comparisons.swap_mem_realizable r.mem_realizable⟩
 
 @[simp] theorem inv_inv (r : Relation) : r.inv.inv = r := ext (Comparisons.swap_swap _)
+
+/-- The relation on reversed time: how the first interval stands to the second when earlier and
+later are exchanged. -/
+def dual (r : Relation) : Relation := ⟨r.toComparisons.dual, r.dual_mem_realizable r.mem_realizable⟩
+
+@[simp] theorem dual_dual (r : Relation) : r.dual.dual = r := ext (Comparisons.dual_dual _)
 
 end Relation
 
@@ -234,6 +270,33 @@ variable {T : Type*} [LinearOrder T]
 @[simp] theorem toSetRel_inv (C : Finset Relation) :
     (toSetRel (inv C) : SetRel (NonemptyInterval T) _) = (toSetRel C).inv := by
   ext ⟨i, j⟩
+  simp
+
+end LinearOrder
+
+/-! ### Reversed time -/
+
+/-- The cell on reversed time. -/
+def dual (C : Finset Relation) : Finset Relation := C.image Relation.dual
+
+@[simp] theorem mem_dual {C : Finset Relation} {r : Relation} : r ∈ dual C ↔ r.dual ∈ C :=
+  ⟨fun h ↦ by obtain ⟨s, hs, rfl⟩ := Finset.mem_image.1 h; simpa using hs,
+    fun h ↦ Finset.mem_image.2 ⟨r.dual, h, r.dual_dual⟩⟩
+
+@[simp] theorem dual_dual (C : Finset Relation) : dual (dual C) = C := by
+  ext r; simp
+
+section LinearOrder
+
+variable {T : Type*} [LinearOrder T]
+
+@[simp] theorem dual_relation (i j : NonemptyInterval T) :
+    (relation i j).dual = relation i.dual j.dual :=
+  Relation.ext (dual_ofEndpoints _ _ _ _)
+
+/-- Two intervals stand in a cell on reversed time exactly when they stand in its dual. -/
+theorem mem_toSetRel_dual {C : Finset Relation} {i j : NonemptyInterval T} :
+    (j.dual, i.dual) ∈ toSetRel C ↔ (j, i) ∈ toSetRel (dual C) := by
   simp
 
 end LinearOrder
@@ -387,7 +450,32 @@ def finalSubinterval : Finset Relation := Finset.univ.filter fun r ↦ r.fstFst 
 def nonfinalSubinterval : Finset Relation :=
   Finset.univ.filter fun r ↦ r.fstFst ≠ .lt ∧ r.sndSnd = .lt
 
+/-- The first interval starts no earlier than the second: no part of it precedes the second. -/
+@[irreducible]
+def startsNoEarlier : Finset Relation := Finset.univ.filter (·.fstFst ≠ .lt)
+
+/-- The first interval ends no later than the second: no part of it follows the second. -/
+@[irreducible]
+def endsNoLater : Finset Relation := Finset.univ.filter (·.sndSnd ≠ .gt)
+
 theorem comp_precedes_precedes : comp precedes precedes = precedes := by decide +kernel
+
+/-- Containment is starting no earlier and ending no later. -/
+theorem le_eq_startsNoEarlier_inf_endsNoLater : le = startsNoEarlier ⊓ endsNoLater := by
+  decide +kernel
+
+/-- Ending no later is starting no earlier on reversed time. -/
+theorem dual_startsNoEarlier : dual startsNoEarlier = endsNoLater := by decide +kernel
+
+theorem dual_endsNoLater : dual endsNoLater = startsNoEarlier := by decide +kernel
+
+/-- Containment is the same on reversed time. -/
+theorem dual_le : dual le = le := by decide +kernel
+
+/-- Precedence on reversed time is its converse. -/
+theorem dual_precedes : dual precedes = inv precedes := by decide +kernel
+
+theorem finalSubinterval_subset_endsNoLater : finalSubinterval ⊆ endsNoLater := by decide +kernel
 
 /-- The position of the first interval relative to the second: before it, after it, or
 overlapping it. -/
@@ -438,6 +526,15 @@ theorem relation_mem_filter {p : Relation → Prop} [DecidablePred p] :
   rw [NonemptyInterval.lt_def, ← relation_mem_le, lt, Finset.mem_filter]
   simp [relation, ofEndpoints, compare_gt_iff_gt, compare_lt_iff_lt]
 
+@[simp] theorem relation_mem_startsNoEarlier :
+    relation i j ∈ startsNoEarlier ↔ j.fst ≤ i.fst := by
+  rw [startsNoEarlier, relation_mem_filter]
+  simp [relation, ofEndpoints, compare_ge_iff_ge]
+
+@[simp] theorem relation_mem_endsNoLater : relation i j ∈ endsNoLater ↔ i.snd ≤ j.snd := by
+  rw [endsNoLater, relation_mem_filter]
+  simp [relation, ofEndpoints, compare_le_iff_le]
+
 @[simp] theorem relation_mem_overlaps : relation i j ∈ overlaps ↔ i.Overlaps j := by
   rw [overlaps, relation_mem_filter]
   simp [relation, ofEndpoints, NonemptyInterval.Overlaps, compare_le_iff_le, compare_ge_iff_ge]
@@ -459,6 +556,18 @@ theorem relation_mem_filter {p : Relation → Prop} [DecidablePred p] :
 @[simp] theorem relation_mem_ofPosition {C : Finset Ordering} :
     relation i j ∈ ofPosition C ↔ i.position j ∈ C := by
   rw [ofPosition, relation_mem_filter, position_relation]
+
+theorem mem_toSetRel_precedes : (j, i) ∈ toSetRel precedes ↔ i.Precedes j :=
+  relation_mem_precedes
+
+theorem mem_toSetRel_overlaps : (j, i) ∈ toSetRel overlaps ↔ i.Overlaps j :=
+  relation_mem_overlaps
+
+theorem mem_toSetRel_le : (j, i) ∈ toSetRel le ↔ i ≤ j := relation_mem_le
+
+theorem mem_toSetRel_ofPosition {C : Finset Ordering} :
+    (j, i) ∈ toSetRel (ofPosition C) ↔ i.position j ∈ C :=
+  relation_mem_ofPosition
 
 instance : (toSetRel precedes : SetRel (NonemptyInterval T) _).IsTrans :=
   ⟨fun _ _ _ h₁ h₂ ↦ relation_mem_precedes.2

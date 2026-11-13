@@ -125,35 +125,35 @@ inductive Embedded
   | past | present
   deriving DecidableEq, Repr, Fintype
 
-/-- The nonpast reading is available for an embedded past exactly when the SOT rule licenses
-the simultaneous reading (`Tense.pastUnderPast`), and for an embedded present exactly when the
-present can be bound. -/
+/-- The nonpast reading of an embedded morpheme is available exactly when the language provides
+its source of zero tense: deletion by the SOT rule for a past, binding for a present. -/
 def NonpastAvailable (L : Language) : Embedded → Prop
-  | .past => .eq ∈ pastUnderPast L.sotRule
+  | .past => L.Provides .deleted
   | .present => L.Provides .boundPresent
 
 instance (L : Language) : DecidablePred (NonpastAvailable L)
-  | .past => inferInstanceAs (Decidable (_ ∈ _))
+  | .past => inferInstanceAs (Decidable (L.Provides .deleted))
   | .present => inferInstanceAs (Decidable (L.Provides .boundPresent))
 
+-- the simultaneous reading of the earlier accounts' past under past
 theorem nonpastAvailable_past_iff (L : Language) :
-    NonpastAvailable L .past ↔ L.Provides .deleted :=
-  eq_mem_pastUnderPast_iff
+    NonpastAvailable L .past ↔ .eq ∈ pastUnderPast L.sotRule :=
+  eq_mem_pastUnderPast_iff.symm
 
 /-- A present bound by the attitude verb denotes the attitude's now, giving the nonpast reading of
 (5) and (12a). -/
 theorem boundPresent_nonpast {W : Type*} [LinearOrder T] (n e : ℕ) (g : ℕ → T) (now : T)
     (w : W) :
-    (pronoun ⟦Tense.present⟧ n e).presup
-      (Function.update (Function.update g e now) n now) w := by
+    (pronoun (toSetRel ⟦Tense.present⟧) n e
+      (Function.update (Function.update g e now) n now) w).Dom := by
   simp [Function.update_apply, denote_present]
 
 /-- A matrix-indexical present under a past attitude verb fails its presupposition at the attitude's
 now, so (3) has only the double access reading. -/
 theorem indexicalPresent_no_nonpast {W : Type*} [LinearOrder T] {n e : ℕ} {g : ℕ → T}
-    {w : W} (hSpeech : (pronoun ⟦Tense.present⟧ n 0).presup g w) (hlt : g e < g 0) :
-    ¬ (pronoun ⟦Tense.present⟧ n e).presup g w := by
-  simp only [pronoun_presup, mem_toSetRel_present] at hSpeech ⊢
+    {w : W} (hSpeech : (pronoun (toSetRel ⟦Tense.present⟧) n 0 g w).Dom) (hlt : g e < g 0) :
+    ¬ (pronoun (toSetRel ⟦Tense.present⟧) n e g w).Dom := by
+  simp only [pronoun_dom, mem_toSetRel_present] at hSpeech ⊢
   exact fun h ↦ hlt.ne (h.symm.trans hSpeech)
 
 /-- An interval shorter than the span from the finding out to the utterance time cannot contain

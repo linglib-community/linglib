@@ -41,15 +41,6 @@ only that two propositions meeting the weak necessity threshold be jointly permi
 (`JointlyPermissible`), which a counting measure with a threshold above half has
 (`countingModel`). Gen and the adverbs of quantification are universal binders, as in (63).
 
-## Errata
-
-* (72) binds the degree outside Gen with `= d`, so every relevant firefighter's measure is the
-  same degree (`eq72_uniform`). Its gloss, "meets or exceeds d", is the reading the text
-  describes and is strictly weaker (`eq72_gloss_weaker`). The glosses of (62) and (73) also read
-  `= d` as "meets or exceeds d", a difference a universal or existential binder does not notice
-  but a proportional one would; with `= d` the pairs counted are as many as the individuals
-  (`ncard_pairs`).
-
 ## TODO
 
 * The overgeneration of (73), matrix existential closure binding the subject of the relative,
@@ -179,7 +170,8 @@ def lexicalForce (m : ModalItem) : ModalForce :=
 -- §4.5
 theorem exists_possibility_scalemate :
     ∃ m ∈ English.Auxiliaries.modals.map (·.toModalItem),
-      ModalItem.Scalemates lexicalForce English.Auxiliaries.should.toModalItem m ∧
+      ModalItem.Scalemates (lexicalForce · |>.quantificational)
+          English.Auxiliaries.should.toModalItem m ∧
         lexicalForce m = .possibility := by
   decide
 
@@ -297,9 +289,9 @@ theorem not_admits_contextual {D : Type*} [LinearOrder D] [OrderBot D] :
   Boundedness.not_admits_contextual_of_ne_open fun h ↦ by
     simpa [h, Boundedness.HasMin] using Boundedness.hasMin_ofOrder_of_orderBot (D := D)
 
-/-! ### Errata: (72) -/
+/-! ### The degree binder of (72) -/
 
-section Errata
+section DegreeBinder
 variable {β D : Type*} [LinearOrder D] [OrderBot D]
 
 -- (72)
@@ -314,6 +306,6 @@ theorem eq72_gloss_weaker :
       ¬ ∃ d : ℕ, ⊥ < d ∧ ∀ y : Fin 2, ![1, 2] y = d :=
   ⟨⟨1, by decide, by decide⟩, fun ⟨_, _, hd⟩ ↦ absurd ((hd 0).trans (hd 1).symm) (by decide)⟩
 
-end Errata
+end DegreeBinder
 
 end Grano2026

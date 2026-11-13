@@ -32,11 +32,6 @@ The central prepositions of English as `Adposition` entries, after the Cambridge
   `English.PolarityItems.inYears`, and *before*, *since*, *until* and deadline *by* are
   `English.TemporalConnectives`.
 
-## Errata
-
-The Cambridge Grammar's second table is said to add *away* and the static uses of *off* and *on*
-(p. 649); it adds those of *off* and *out*.
-
 ## References
 
 * [huddleston-pullum-2002]

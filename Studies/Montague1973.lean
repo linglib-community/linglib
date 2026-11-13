@@ -173,7 +173,7 @@ def extTV (S : W → E → E → Prop) : W → Ty.Domain E W Cat.TV.ty :=
   fun i Q x ↦ Q i fun j y ↦ S j (y j) (x j)
 
 @[simp] theorem starIV_rigidCN (m : W → E → Prop) (i : W) : starIV (rigidCN m i) = m i :=
-  funext fun u ↦ propext ⟨And.right, And.intro (isRigid_const u)⟩
+  funext fun u ↦ propext ⟨And.right, And.intro (Function.IsConst.const u)⟩
 
 @[simp] theorem starIV_extIV (m : W → E → Prop) (i : W) : starIV (extIV m i) = m i := rfl
 
@@ -401,8 +401,8 @@ def staticInterp : Interp ℕ Unit where
     | .seek => fun _ _ _ ↦ True
 
 theorem staticInterp_logicallyPossible : staticInterp.LogicallyPossible where
-  name_rigid _ := isRigid_of_subsingleton _
-  noun_rigid _ _ _ _ _ _ := isRigid_of_subsingleton _
+  name_rigid _ := Function.IsConst.of_subsingleton_domain _
+  noun_rigid _ _ _ _ _ _ := Function.IsConst.of_subsingleton_domain _
   iv_ext
     | .walk, _ => ⟨fun _ _ ↦ False, rfl⟩
   tv_ext
@@ -417,11 +417,11 @@ theorem aWomanLovesEveryMan.not_entails : ¬ Entails {quantifiedIn} direct := fu
   have hd := H staticInterp h () (fun φ hφ g ↦ by
     rw [Set.mem_singleton_iff.1 hφ, quantifiedIn_iff h]
     rintro v ⟨-, rfl | rfl⟩
-    · exact ⟨2, ⟨isRigid_const _, Or.inl rfl⟩, Or.inl ⟨rfl, rfl⟩⟩
-    · exact ⟨3, ⟨isRigid_const _, Or.inr rfl⟩, Or.inr ⟨rfl, rfl⟩⟩) fun _ _ ↦ 0
+    · exact ⟨2, ⟨Function.IsConst.const _, Or.inl rfl⟩, Or.inl ⟨rfl, rfl⟩⟩
+    · exact ⟨3, ⟨Function.IsConst.const _, Or.inr rfl⟩, Or.inr ⟨rfl, rfl⟩⟩) fun _ _ ↦ 0
   obtain ⟨u, -, hu⟩ := (direct_iff h _ ()).1 hd
-  have h0 := @hu 0 ⟨isRigid_const _, Or.inl rfl⟩
-  have h1 := @hu 1 ⟨isRigid_const _, Or.inr rfl⟩
+  have h0 := @hu 0 ⟨Function.IsConst.const _, Or.inl rfl⟩
+  have h1 := @hu 1 ⟨Function.IsConst.const _, Or.inr rfl⟩
   simp only [Set.mem_ofPred_eq, flip, starTV_extTV, staticInterp] at h0 h1
   omega
 
@@ -532,7 +532,7 @@ def temperatureInterp : Interp ℕ (Fin 2) where
 
 theorem temperatureInterp_logicallyPossible : temperatureInterp.LogicallyPossible where
   name_rigid
-    | .ninety | .john | .mary | .bill => isRigid_const _
+    | .ninety | .john | .mary | .bill => Function.IsConst.const _
   noun_rigid
     | .man, _, _, _, _, h | .woman, _, _, _, _, h | .unicorn, _, _, _, _, h => h.1
   iv_ext

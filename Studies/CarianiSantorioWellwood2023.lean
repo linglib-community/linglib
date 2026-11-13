@@ -37,22 +37,6 @@ the authors' degree-based variant, iff the measure reflects the background.
   converse of the scale-mate entailment and the failure of (19) off a total background need each
   holder to hold one state, the one-to-one thematic relation the paper assumes.
 
-## Errata
-
-* §4 calls the states of two cities of equal temperature "not ordered with respect to one
-  another", which makes the background non-linear. Read so, a threshold holds of one state and not
-  of the other (`antisymmRel_iff_forall_isUpperSet`), so one city is hot and the other not at one
-  temperature, and the inference (19) fails under some admissible measure
-  (`total_iff_forall_mem_image_of_maxComparative`). Footnote 10 takes degrees to record classes of
-  states, so the measure reflects the background; the two states are then tied, as Figure 1 draws
-  them, and the background is total (`total_of_reflect_le`), non-linear only in failing
-  antisymmetry.
-* §6 calls the difference between a background of states and a linearly ordered scale "not
-  relevant for current purposes", but the degree-based variant expresses every threshold only when
-  the measure reflects the background (`forall_isUpperSet_exists_preimage_iff`), hence only on a
-  total background.
-* (31) binds `g` but writes `background(f)`, as does footnote 18.
-
 ## TODO
 
 * The crispness contrast (8) and the *for*-phrases (33), (34), for which the paper gives no

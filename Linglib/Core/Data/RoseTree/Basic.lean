@@ -159,6 +159,11 @@ theorem fold_hom (h : β → γ) {f : α → List β → β} {g : α → List γ
     rw [fold_node, fold_node, hfg, List.map_map]
     exact congrArg (g a) (List.map_congr_left fun c hc ↦ ih c hc)
 
+/-- Folding with the constructor rebuilds the tree. -/
+@[simp] theorem fold_node_eq_self (t : RoseTree α) : fold node t = t := by
+  induction t with
+  | node a cs ih => rw [fold_node, List.map_congr_left ih, List.map_id']
+
 /-! ### Functoriality -/
 
 /-- Relabel every node by `f`, preserving shape. -/
@@ -169,20 +174,10 @@ def map (f : α → β) : RoseTree α → RoseTree β :=
     map f (node a cs) = node (f a) (cs.map (map f)) := by
   simp only [map, fold_node]
 
-theorem id_map (t : RoseTree α) : map id t = t := by
-  induction t with
-  | node a cs ih =>
-    rw [map_node, id_eq]
-    congr 1
-    exact (List.map_congr_left ih).trans (List.map_id cs)
+@[simp] theorem map_id (t : RoseTree α) : map id t = t := fold_node_eq_self t
 
-theorem comp_map (f : α → β) (g : β → γ) (t : RoseTree α) :
-    map (g ∘ f) t = map g (map f t) := by
-  induction t with
-  | node a cs ih =>
-    rw [map_node, map_node, map_node, Function.comp_apply, List.map_map]
-    congr 1
-    exact List.map_congr_left ih
+theorem map_map (g : β → γ) (f : α → β) (t : RoseTree α) : map g (map f t) = map (g ∘ f) t :=
+  fold_hom (map g) (fun a ps ↦ map_node g (f a) ps) t
 
 @[simp] theorem value_map (f : α → β) (t : RoseTree α) : (map f t).value = f t.value := by
   cases t; simp
@@ -193,7 +188,7 @@ theorem map_injective {f : α → β} (hf : Function.Injective f) : Function.Inj
   | inr _ =>
     obtain ⟨g, hg⟩ := hf.hasLeftInverse
     exact Function.LeftInverse.injective (g := map g) fun t ↦ by
-      rw [← comp_map, hg.comp_eq_id, id_map]
+      rw [map_map, hg.comp_eq_id, map_id]
 
 /-! ### Counting -/
 
@@ -254,6 +249,22 @@ theorem length_localTrees (t : RoseTree α) : t.localTrees.length = t.numNodes :
     rw [show (cs.map fun c ↦ c.localTrees.length) = cs.map numNodes from
       List.map_congr_left ih]
 
+theorem map_fst_localTrees (t : RoseTree α) : t.localTrees.map Prod.fst = t.values := by
+  induction t with
+  | node a cs ih =>
+    simp only [localTrees_node, values_node, List.map_cons, List.map_flatten, List.map_map,
+      Function.comp_def]
+    rw [List.map_congr_left ih]
+
+/-- Every node of a tree is its root or a child in exactly one local tree. -/
+theorem sum_map_values {M : Type*} [AddCommMonoid M] (f : α → M) (t : RoseTree α) :
+    (t.values.map f).sum = f t.value + (t.localTrees.map fun p ↦ (p.2.map f).sum).sum := by
+  induction t with
+  | node a cs ih =>
+    simp only [values_node, localTrees_node, value_node, List.map_cons, List.sum_cons,
+      List.map_flatten, List.sum_flatten, List.map_map, Function.comp_def]
+    rw [List.map_congr_left ih, List.sum_map_add]
+
 /-- The ordered frontier lists the leaf values from left to right. -/
 def leafList : RoseTree α → List α :=
   fold fun a ls ↦ match ls with
@@ -272,6 +283,22 @@ theorem leafList_node_of_ne_nil (a : α) {cs : List (RoseTree α)} (h : cs ≠ [
     leafList (node a (c :: cs)) = ((c :: cs).map leafList).flatten :=
   leafList_node_of_ne_nil a (List.cons_ne_nil c cs)
 
+/-- A partial map of the frontier of a branching node is read off the children. -/
+theorem filterMap_leafList_node_of_ne_nil (f : α → Option β) (a : α) {cs : List (RoseTree α)}
+    (h : cs ≠ []) :
+    (leafList (node a cs)).filterMap f = (cs.map fun c ↦ c.leafList.filterMap f).flatten := by
+  rw [leafList_node_of_ne_nil a h, List.filterMap_flatten, List.map_map]
+  rfl
+
+/-- A partial map undefined at the label of the root does not tell a leaf from a branching
+node. -/
+theorem filterMap_leafList_node_of_eq_none {f : α → Option β} {a : α} (ha : f a = none)
+    (cs : List (RoseTree α)) :
+    (leafList (node a cs)).filterMap f = (cs.map fun c ↦ c.leafList.filterMap f).flatten := by
+  rcases eq_or_ne cs [] with rfl | h
+  · simp [ha]
+  · exact filterMap_leafList_node_of_ne_nil f a h
+
 theorem leafList_ne_nil (t : RoseTree α) : t.leafList ≠ [] := by
   induction t with
   | node a cs ih =>
@@ -282,37 +309,29 @@ theorem leafList_ne_nil (t : RoseTree α) : t.leafList ≠ [] := by
       exact List.flatten_ne_nil_iff.2 ⟨c.leafList, List.mem_map_of_mem (List.mem_cons_self ..),
         ih c (List.mem_cons_self ..)⟩
 
-/-- The number of leaves. A single leaf counts as `1`. -/
-def numLeaves : RoseTree α → ℕ :=
-  fold fun _ ns ↦ max 1 ns.sum
+/-- The number of leaves is the length of the frontier. A single leaf counts as `1`. -/
+def numLeaves (t : RoseTree α) : ℕ := t.leafList.length
 
-@[simp] theorem numLeaves_node (a : α) (cs : List (RoseTree α)) :
-    numLeaves (node a cs) = max 1 (cs.map numLeaves).sum := by
-  simp only [numLeaves, fold_node]
+theorem length_leafList (t : RoseTree α) : t.leafList.length = t.numLeaves := rfl
 
-@[simp] theorem numLeaves_leaf (a : α) : numLeaves (leaf a) = 1 := by simp
+@[simp] theorem numLeaves_leaf (a : α) : numLeaves (leaf a) = 1 := by
+  rw [numLeaves, leafList_leaf, List.length_singleton]
 
-theorem numLeaves_pos (t : RoseTree α) : 0 < numLeaves t := by
-  cases t with
-  | node a cs =>
-    rw [numLeaves_node]
-    exact Nat.lt_of_lt_of_le Nat.one_pos (Nat.le_max_left _ _)
+theorem numLeaves_pos (t : RoseTree α) : 0 < numLeaves t :=
+  List.length_pos_iff.2 t.leafList_ne_nil
 
 theorem numLeaves_node_of_ne_nil (a : α) {cs : List (RoseTree α)} (h : cs ≠ []) :
     numLeaves (node a cs) = (cs.map numLeaves).sum := by
-  obtain ⟨c, cs, rfl⟩ := List.exists_cons_of_ne_nil h
-  rw [numLeaves_node, List.map_cons, List.sum_cons]
-  have := numLeaves_pos c
-  omega
+  rw [numLeaves, leafList_node_of_ne_nil a h, List.length_flatten, List.map_map]
+  rfl
 
-theorem length_leafList (t : RoseTree α) : t.leafList.length = t.numLeaves := by
-  induction t with
-  | node a cs ih =>
-    rcases eq_or_ne cs [] with rfl | hcs
-    · simp
-    · rw [leafList_node_of_ne_nil a hcs, numLeaves_node_of_ne_nil a hcs, List.length_flatten,
-        List.map_map]
-      exact congrArg List.sum (List.map_congr_left ih)
+@[simp] theorem numLeaves_node (a : α) (cs : List (RoseTree α)) :
+    numLeaves (node a cs) = max 1 (cs.map numLeaves).sum := by
+  rcases cs with _ | ⟨c, cs⟩
+  · rfl
+  · rw [numLeaves_node_of_ne_nil a (List.cons_ne_nil c cs), List.map_cons, List.sum_cons]
+    have := numLeaves_pos c
+    omega
 
 /-! ### Height -/
 
@@ -351,23 +370,11 @@ def arity (t : RoseTree α) : ℕ := t.children.length
 
 @[simp] theorem map_leaf (f : α → β) (a : α) : map f (leaf a) = leaf (f a) := rfl
 
-@[simp] theorem numNodes_map (f : α → β) (t : RoseTree α) : (map f t).numNodes = t.numNodes := by
-  induction t with
-  | node a cs ih =>
-    simp only [map_node, numNodes_node, List.map_map]
-    exact congrArg (· + 1) (congrArg List.sum (List.map_congr_left ih))
+@[simp] theorem numNodes_map (f : α → β) (t : RoseTree α) : (map f t).numNodes = t.numNodes :=
+  fold_hom numNodes (fun a ps ↦ numNodes_node (f a) ps) t
 
-@[simp] theorem numLeaves_map (f : α → β) (t : RoseTree α) : (map f t).numLeaves = t.numLeaves := by
-  induction t with
-  | node a cs ih =>
-    simp only [map_node, numLeaves_node, List.map_map]
-    exact congrArg (max 1 ·) (congrArg List.sum (List.map_congr_left ih))
-
-@[simp] theorem height_map (f : α → β) (t : RoseTree α) : (map f t).height = t.height := by
-  induction t with
-  | node a cs ih =>
-    simp only [map_node, height_node, List.map_map]
-    exact congrArg (· + 1) (congrArg (List.foldr max 0) (List.map_congr_left ih))
+@[simp] theorem height_map (f : α → β) (t : RoseTree α) : (map f t).height = t.height :=
+  fold_hom height (fun a ps ↦ height_node (f a) ps) t
 
 @[simp] theorem localTrees_map (f : α → β) (t : RoseTree α) :
     (map f t).localTrees = t.localTrees.map fun p ↦ (f p.1, p.2.map f) := by
@@ -387,6 +394,9 @@ def arity (t : RoseTree α) : ℕ := t.children.length
       simp only [map_node, List.map_cons, leafList_node_cons, List.map_flatten, List.map_map]
       exact congrArg List.flatten (congrArg₂ _ (ih c (List.mem_cons_self ..))
         (List.map_congr_left fun d hd ↦ ih d (List.mem_cons_of_mem _ hd)))
+
+@[simp] theorem numLeaves_map (f : α → β) (t : RoseTree α) : (map f t).numLeaves = t.numLeaves := by
+  rw [numLeaves, leafList_map, List.length_map, numLeaves]
 
 /-! ### Instances -/
 

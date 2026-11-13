@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Pragmatics.Probabilistic.Uniform
 public import Linglib.Semantics.Exhaustification.InnocentInclusion
 public import Studies.Franke2011
 
@@ -45,25 +45,6 @@ cell](##Disjunction.probMirrorIdentifies_or_of_prior).
   exclusion and inclusion, read off the cells of a single atom.
 * Franke's iterated best response is the light system of `Studies/Franke2011.lean`, iterated from
   the literal receiver, a naive hearer, or from the literal sender, a naive speaker.
-
-## Errata
-
-* §4.1 says that with the alternatives *A or B*, *A* and *B* "mirror-image cell identification in
-  (10) will fail as well". (10) is the probabilistic notion, which succeeds there; the
-  mirror-image notion that fails is (4) (`Disjunction.peel_mirrorIdentifies_disjunctions`).
-* §5.2 names the third state to be peeled, three times, as ¬A ∧ B ∧ ¬C, the cell where only `B`
-  holds. The state meant is ¬A ∧ B ∧ C.
-* (10), unlike (2) and (4), does not require the message to be true at the cell, so every message
-  identifies the last remaining cell (`probMirrorIdentifies_of_subset_singleton`). Footnote 31 says
-  that adding the three-way conjunction to van Rooij's alternatives keeps *A or B or C* from
-  identifying any cell; under (10) as stated it is paired with the cell where no atom holds, at
-  which it is false (`Disjunction.peel_probMirrorIdentifies_vanRooij_insert`).
-* Footnote 33 says that in Franke's system, starting from a naive speaker or from a naive hearer,
-  *A or B* among the alternatives of a three-way disjunction comes to mean that two of the three
-  disjuncts hold but not all three. In the light system that holds from a naive speaker
-  (`Disjunction.franke_naiveSpeaker`); from a naive hearer the cell where all three hold keeps its
-  tie with the cells where two do, and *A or B* comes to mean that at least two hold
-  (`Disjunction.franke_naiveHearer`).
 
 ## TODO
 

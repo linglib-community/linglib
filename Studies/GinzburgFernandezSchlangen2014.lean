@@ -52,20 +52,6 @@ co-propositional with what the speaker means to say next (`not_copropositional_n
   turn open; with the turn change of [ginzburg-2012] (70), A's own continuation is Backward Looking
   Appropriateness Repair with the turn kept.
 
-## Errata
-
-* (43)'s second QUD element `λx Mean(A, u0, x)` and (44)'s move `Assert(A, Mean(A, u0, jacques))`
-  print `u0` where the prose and (43)'s own move have `u_georges`.
-* (44) drops `Named(Georges, georges)` from FACTS, which no rule removes and which the prose
-  (p. 9:37) says stays accessible.
-* The entry for *uh* (66) has the content `FLDEdit(spkr, addr, MaxPending) : Prop`, where the
-  Forward Looking Utterance Rule (65) requires `FLDEdit(spkr, u0) : IllocProp` and (67) writes
-  `FLDEdit(A, B, in)`; (66) and (51) also use the labels `c1` and `c2` twice each.
-* Self addressed queries (72)–(73) are said to be licensed because they are co-propositional with
-  `λx MeanNextUtt(A, u0, x)` (p. 9:53), but under (34b) a query such as `λx Named(him, x)` yields a
-  different proposition on every record. The *what did you/I say?* rows of Table 1 fit the question
-  of Utterance repetition (38b) instead.
-
 ## TODO
 
 * (44) and (53) show QUD empty after an acceptance that MOVES does not record; the derivations here

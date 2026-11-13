@@ -7,6 +7,7 @@ public import Linglib.Semantics.Plurality.Reciprocal
 public import Linglib.Data.Examples.Creissels2024
 public import Linglib.Data.Statistics.Creissels2024
 public import Linglib.Fragments.English.Verbs.Causative
+public import Linglib.Fragments.Indonesian.Voice
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 
@@ -458,6 +459,26 @@ theorem tagalog_pivotRoles : tagalog.symmetrical.pivotRoles = {some .A, some .P,
 
 -- §8.5.2
 theorem tagalog_isMultiple : tagalog.IsMultiple := by decide
+
+/-- The Indonesian *di-* voice read as a patient voice, beside the passive of the fragment. -/
+def indonesianPatientVoice : Voice := patientVoice.marked [.pref "di"]
+
+/-- The Indonesian *di-* voice is ambiguous (52). With the noun phrase after the verb
+unflagged, as in (52b), it is a patient voice, which keeps the construction of (52a) and forms
+a binary symmetrical system with *meN-*. With that phrase flagged by *oleh*, as in (52c), it is
+a passive, and *meN-* and it form no symmetrical system (§8.5.4). -/
+theorem indonesian_di :
+    (∀ i : Fin 2,
+      indonesianPatientVoice.derived.construction i =
+          construction ex_8_52b (Fin.castLE (by omega) i) ∧
+        construction ex_8_52b (Fin.castLE (by omega) i) =
+          construction ex_8_52a (Fin.castLE (by omega) i) ∧
+        (Indonesian.diPassive .adpositional).derived.construction i =
+          construction ex_8_52c (Fin.castLE (by omega) i)) ∧
+      ({Indonesian.subjectVoice, indonesianPatientVoice} : Voice.System).IsSymmetrical ∧
+      ¬ ({Indonesian.subjectVoice, Indonesian.diPassive .adpositional} :
+        Voice.System).IsSymmetrical := by
+  decide +kernel
 
 theorem tagalog_synthetic : ∀ v ∈ tagalog, v.coding = .synthetic := by decide
 

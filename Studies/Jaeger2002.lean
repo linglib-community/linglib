@@ -22,17 +22,6 @@ like the rational ones [contains them](##ClosureConditions.superoptimalSet_mem).
 * A binary markedness constraint is the language it keeps; strings on both sides share one type.
 * Lemma 2 is mathlib's `Function.Lex.wellFoundedLT`, an instance on `ViolationProfile`.
 
-## Errata
-
-* p. 447: Lemma 5's `X = X_{2^(p-1)}` is [false](##stage_two_pow_pred_ne), since its induction takes
-  a witness to be blocked that may be optimal; the bound is [`2^p`](##stage_two_pow).
-* p. 441: the worked example's order is printed as the product order where Definition 4 makes it
-  [lexicographic](##beSmall_lt_and_not_lt); the two agree on pairs sharing a component.
-* p. 435: no "largest subrelation" of `GEN` obeys the constraint: for `a < b` sharing a component,
-  `{a}` and `{b}` both do.
-* p. 449: Figure 4 lists intersection and union of languages, which
-  [the construction never uses](##ClosureConditions), and omits the language `{ε}`, which it does.
-
 ## TODO
 
 * The rational relations as an instance of `ClosureConditions`, for Theorem 4 as printed.

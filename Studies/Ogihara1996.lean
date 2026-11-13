@@ -16,8 +16,9 @@ feature, the nearest [+past] or [+pres] above it, is its own, leaving a null ten
 commanding time. A past under a past is then [simultaneous exactly in
 English](##eq_mem_readings_past_past_iff), as is [a past under the
 perfect](##readings_presentPerfect_past). Beneath a higher past, [a past perfect stays a
-past](##readings_pastPerfect) and so does [a past under *will*](##readings_future_past), and the
-book's sentences [have exactly these readings](##rows_readings).
+past](##readings_pastPerfect) and so does [a past under *will*](##readings_future_past). Only
+*woll* and the Japanese non-past [reach past the commanding time](##readings_le_nonfuture), and
+the book's sentences [have exactly these readings](##rows_readings).
 
 ## Implementation notes
 
@@ -44,11 +45,6 @@ book's sentences [have exactly these readings](##rows_readings).
   [stands for the non-past of every conjugation](##Morpheme.tenses_ru), the copula *-da* among
   them. The rows judge only the simultaneous and the shifted readings, so the future reading of a
   Japanese present under a past is predicted but untested.
-
-## Errata
-
-The note to the chart of tenses says that the English present *-s* surfaces only with a first
-person singular subject; it is the third person singular.
 
 ## TODO
 
@@ -189,20 +185,44 @@ def lf (φ : Option Feature) : List Morpheme → List (Finset Morpheme)
   | [] => []
   | m :: l => forms φ m :: lf (m.feature.or φ) l
 
-/-- The composite of a chain of cells, each against the time above it: the positions of the time
-of the last against the time above the first. -/
-def compAlong : List (Finset Ordering) → Finset Ordering
-  | [] => ⟦present⟧
-  | C :: cs => comp (compAlong cs) C
-
 /-- The readings of a sentence, given the tense morphemes of its clauses: the positions of the
 time of its last clause against the time of the clause above it, composed from the cells of the
 last clause's morphemes at LF. The clause above a matrix clause is the utterance. -/
 def readings (cs : List (List Morpheme)) : Finset Ordering :=
   compAlong (((lf none cs.flatten).drop cs.dropLast.flatten.length).map (·.sup cell))
 
-/-- A past under a past takes the positions `pastUnderPast` of its language's SOT rule: before the
-commanding time, or also at it where the rule applies. -/
+theorem Morpheme.sup_forms_cell_le (φ : Option Feature) {n : Morpheme}
+    (h : n.cell ≤ nonfuture) : (forms φ n).sup cell ≤ nonfuture := by
+  refine Finset.sup_le fun m hm ↦ ?_
+  obtain rfl | rfl : m = n ∨ m = null := by
+    unfold forms at hm
+    split at hm
+    · simpa using hm
+    · exact .inl (by simpa using hm)
+  exacts [h, by decide]
+
+theorem exists_eq_forms_of_mem_lf :
+    ∀ {φ : Option Feature} {l : List Morpheme} {F : Finset Morpheme},
+      F ∈ lf φ l → ∃ ψ, ∃ m ∈ l, F = forms ψ m
+  | _, m :: l, F, h => by
+    rcases List.mem_cons.1 h with rfl | h
+    · exact ⟨_, m, List.mem_cons_self, rfl⟩
+    · obtain ⟨ψ, n, hn, rfl⟩ := exists_eq_forms_of_mem_lf h
+      exact ⟨ψ, n, List.mem_cons_of_mem _ hn, rfl⟩
+
+theorem Morpheme.cell_le_nonfuture_iff (m : Morpheme) :
+    m.cell ≤ nonfuture ↔ m ≠ woll ∧ m ≠ ru := by
+  cases m <;> decide
+
+/-- A sentence has a forward-shifted reading only through *woll* or the Japanese non-past: the
+SOT rule leaves every other chain of tense morphemes within the Upper Limit Constraint. -/
+theorem readings_le_nonfuture {cs : List (List Morpheme)}
+    (h : ∀ m ∈ cs.flatten, m ≠ woll ∧ m ≠ ru) : readings cs ≤ nonfuture := by
+  refine compAlong_le_nonfuture fun C hC ↦ ?_
+  obtain ⟨F, hF, rfl⟩ := List.mem_map.1 hC
+  obtain ⟨ψ, m, hm, rfl⟩ := exists_eq_forms_of_mem_lf (List.mem_of_mem_drop hF)
+  exact Morpheme.sup_forms_cell_le ψ ((Morpheme.cell_le_nonfuture_iff m).2 (h m hm))
+
 theorem readings_past_past (L : Language) :
     readings (chain L [.simplePast, .simplePast]) = pastUnderPast L.HasSOT := by
   cases L <;> decide
@@ -231,7 +251,7 @@ theorem readings_pastPerfect : readings (chain .english [.simplePast, .pastPerfe
 reading as a past under a past does, before or at the time of the saying, since the perfect
 carries [+past] and triggers the rule. -/
 theorem readings_presentPerfect_past :
-    readings (chain .english [.presentPerfect, .simplePast]) = upperLimitConstraint := by
+    readings (chain .english [.presentPerfect, .simplePast]) = nonfuture := by
   decide
 
 /-- A past under a future is not deleted, since its local tense feature is the [+pres] of
@@ -240,7 +260,7 @@ present, the higher past would license deletion and the simultaneous reading. -/
 theorem readings_future_past :
     readings (chain .english [.future, .simplePast]) = ⟦past⟧ ∧
       readings (chain .english [.simplePast, .future, .simplePast]) = ⟦past⟧ ∧
-      readings [[ed], [woll], [ed]] = upperLimitConstraint := by
+      readings [[ed], [woll], [ed]] = nonfuture := by
   decide
 
 -- the [+pres] of *will* is the lowest past's local tense feature, so the rule cannot delete it

@@ -51,16 +51,6 @@ the paper does not discuss.
 * What is not simplex comes from a table of what each category can denote
   (`meanings_mem_of_licensed`), not from listing the trees.
 
-## Errata
-
-Section 4.1 says that under strict symmetry the complexity filter and blocking "are necessarily
-aligned", reasoning from the equalities (70) that blocking prohibits a strengthening only if the
-other alternative is simplex. That holds of the first version (14), not of the revised (67) the
-section quotes, which [also reads every simplex meaning strictly
-between](##IsSymmetric.blocked_sdiff_iff), and [the alignment fails](##exists_isSymmetric_blocked).
-Section 4.3's extension to entailment symmetry, whose proof the paper omits, inherits this. The
-paper offers no example with such a meaning.
-
 ## TODO
 
 The contextual cases (23), (58), (59), the disjunction (29), the embedding (79), the question
@@ -259,8 +249,8 @@ variable {α : Type*} [BooleanAlgebra α] {sq : Square α} {F : Set α} {s : α}
 
 theorem lt_I_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) {q : α}
     (hq : q ∈ ({sq.A, sq.E, sq.I, sq.O} : Set α)) : q < sq.I ↔ q = sq.A := by
-  have hE : ¬ sq.E ≤ sq.I := fun hle ↦ hne .E (h.contradEI.disjoint.eq_bot_of_le hle)
-  have hIA : ¬ sq.I ≤ sq.A := fun hle ↦ hne .IO <| le_bot_iff.1 <|
+  have hE : ¬ sq.E ≤ sq.I := fun hle ↦ hne .none (h.contradEI.disjoint.eq_bot_of_le hle)
+  have hIA : ¬ sq.I ≤ sq.A := fun hle ↦ hne .someNotAll <| le_bot_iff.1 <|
     (inf_le_inf_right _ hle).trans h.contradAO.disjoint.le_bot
   simp only [mem_insert_iff, mem_singleton_iff] at hq
   rcases hq with rfl | rfl | rfl | rfl
@@ -280,53 +270,48 @@ theorem blocked_I_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ �
   · rintro ⟨hA, hs⟩
     exact ⟨sq.A, hA, hs, (lt_I_iff h hne (by simp)).2 rfl⟩
 
-theorem I_sdiff_O (h : SquareRelations sq) : sq.I \ sq.O = sq.A := by
-  rw [_root_.sdiff_eq, ← h.contradAO.eq_compl, inf_eq_right.2 h.subalternAI]
-
-theorem I_sdiff_A (h : SquareRelations sq) : sq.I \ sq.A = sq.I ⊓ sq.O := by
-  rw [_root_.sdiff_eq, h.contradAO.compl_eq]
-
 theorem blocked_I_sdiff_O_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥)
     (hF : F ⊆ {sq.A, sq.E, sq.I, sq.O}) : Blocked F (sq.I \ sq.O) sq.I ↔ sq.A ∈ F := by
-  rw [blocked_I_iff h hne hF, I_sdiff_O h]
+  rw [blocked_I_iff h hne hF, h.I_sdiff_O]
   simp
 
 theorem not_blocked_I_sdiff_A (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥)
     (hF : F ⊆ {sq.A, sq.E, sq.I, sq.O}) : ¬ Blocked F (sq.I \ sq.A) sq.I := by
-  rw [blocked_I_iff h hne hF, I_sdiff_A h]
+  rw [blocked_I_iff h hne hF, h.I_sdiff_A]
   rintro ⟨-, hle⟩
-  exact hne .IO <| le_bot_iff.1 <| (le_inf hle inf_le_right).trans h.contradAO.disjoint.le_bot
+  exact hne .someNotAll <| le_bot_iff.1 <|
+    (le_inf hle inf_le_right).trans h.contradAO.disjoint.le_bot
 
 theorem exhIE_I_eq_self {W : Type*} {sq : Square (Set W)} (h : SquareRelations sq)
     (hne : ∀ t, sq.triangle t ≠ ⊥) : exhIE {sq.I, sq.A, sq.O} sq.I = sq.I := by
   have hcov : sq.I ⊆ sq.A ∪ sq.O := fun w _ ↦
     show w ∈ sq.A ⊔ sq.O from h.contradAO.sup_eq_top ▸ mem_univ w
   refine exhIE_eq_self_of_subset_union hcov ?_ ?_
-  · have heq : sq.I \ sq.A = sq.I ⊓ sq.O := I_sdiff_A h
-    exact heq ▸ nonempty_iff_ne_empty.2 (show sq.I ⊓ sq.O ≠ ∅ from hne .IO)
-  · have heq : sq.I \ sq.O = sq.A := I_sdiff_O h
-    exact heq ▸ nonempty_iff_ne_empty.2 (show sq.A ≠ ∅ from hne .A)
+  · have heq : sq.I \ sq.A = sq.I ⊓ sq.O := h.I_sdiff_A
+    exact heq ▸ nonempty_iff_ne_empty.2 (show sq.I ⊓ sq.O ≠ ∅ from hne .someNotAll)
+  · have heq : sq.I \ sq.O = sq.A := h.I_sdiff_O
+    exact heq ▸ nonempty_iff_ne_empty.2 (show sq.A ≠ ∅ from hne .all)
 
 -- Section 2.5: if *optional* is `I \ A`, blocking rules out both readings of (52).
 theorem blocked_of_sdiff_mem {W : Type*} {sq : Square (Set W)} {F : Set (Set W)}
     (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) (hA : sq.A ∈ F)
     (hO : sq.I \ sq.A ∈ F) : Blocked F (sq.I \ sq.A) sq.I ∧ Blocked F sq.A sq.I := by
   have hs : IsSymmetric sq.I sq.A (sq.I \ sq.A) := isSymmetric_sdiff h.subalternAI
-  refine ⟨IsSymmetric.blocked_sdiff hs hO (nonempty_iff_ne_empty.2 (hne .A)), ?_⟩
+  refine ⟨IsSymmetric.blocked_sdiff hs hO (nonempty_iff_ne_empty.2 (hne .all)), ?_⟩
   have hO' : (sq.I \ sq.A).Nonempty :=
-    I_sdiff_A h ▸ nonempty_iff_ne_empty.2 (show sq.I ⊓ sq.O ≠ ∅ from hne .IO)
+    h.I_sdiff_A ▸ nonempty_iff_ne_empty.2 (show sq.I ⊓ sq.O ≠ ∅ from hne .someNotAll)
   simpa only [hs.symm.sdiff_eq] using IsSymmetric.blocked_sdiff hs.symm hA hO'
 
 -- Section 4.1: at the O corner the partners of (52) are no longer strictly symmetric.
 theorem not_isSymmetric_O {W : Type*} {sq : Square (Set W)} (h : SquareRelations sq)
     (hne : ∀ t, sq.triangle t ≠ ⊥) : ¬ IsSymmetric sq.I sq.A sq.O := fun hs ↦
-  hne .E (h.contradEI.disjoint.eq_bot_of_le (h.subalternEO.trans hs.subset_right))
+  hne .none (h.contradEI.disjoint.eq_bot_of_le (h.subalternEO.trans hs.subset_right))
 
 -- (54): at the O corner only (54b) is contradictory.
 theorem O_inf_eq_bot_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) :
     (sq.O ⊓ sq.E = ⊥ ↔ Examples.ex_54a.judgment = .unacceptable) ∧
       (sq.O ⊓ sq.A = ⊥ ↔ Examples.ex_54b.judgment = .unacceptable) :=
-  ⟨iff_of_false (fun hE ↦ hne .E ((inf_eq_right.2 h.subalternEO).symm.trans hE)) (by decide),
+  ⟨iff_of_false (fun hE ↦ hne .none ((inf_eq_right.2 h.subalternEO).symm.trans hE)) (by decide),
     iff_of_true h.contradAO.disjoint.symm.eq_bot rfl⟩
 
 -- (54): at `I \ A` both are, where the paper finds a contrast.
@@ -337,7 +322,7 @@ theorem sdiff_inf_eq_bot (h : SquareRelations sq) :
 -- (55): negating the O corner gives *required*, the preferred reading; negating `I \ A` does not.
 theorem compl_O_eq_A (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) :
     sq.Oᶜ = sq.A ∧ ¬ (sq.I \ sq.A)ᶜ ≤ sq.A :=
-  ⟨h.contradAO.symm.compl_eq, fun hle ↦ hne .E <| h.contraryAE.symm.eq_bot_of_le <|
+  ⟨h.contradAO.symm.compl_eq, fun hle ↦ hne .none <| h.contraryAE.symm.eq_bot_of_le <|
     (le_compl_iff_disjoint_right.2 (h.contradEI.disjoint.mono_right sdiff_le)).trans hle⟩
 
 end Square
@@ -467,8 +452,8 @@ def sqAt : Square (Set W) where
 variable {A X}
 
 theorem sqAt_relations (hA : A.Nonempty) : SquareRelations (sqAt A X) :=
-  .of_disjoint (Set.ext fun _ ↦ by simp [sqAt, Det.no_iff_not_some]) rfl
-    (Set.disjoint_left.2 fun _ hE hN ↦ hA.ne_empty (Det.a_e_contrary hE hN))
+  (Det.square_relations hA).map (F := BoundedLatticeHom (Quantifier E) (Set W))
+    (CompleteLatticeHom.setPreimage X).toBoundedLatticeHom
 
 -- Two members of the restrictor make the square nondegenerate over the possible extensions.
 example {a b : E} (ha : a ∈ A) (hb : b ∈ A) (hab : a ≠ b) (t : Triangle) :
@@ -701,18 +686,18 @@ theorem squareOf_triangle_ne (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥) (c : C
   cases c <;> first
     | exact hne t
     | cases t
-      · exact hne .A
-      · exact fun h0 ↦ hne .IO ((inf_comm _ _).trans h0)
-      · exact hne .E
+      · exact hne .all
+      · exact fun h0 ↦ hne .someNotAll ((inf_comm _ _).trans h0)
+      · exact hne .none
 
 theorem O_ne_I (h : SquareRelations (sqAt A X)) (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥) :
     (sqAt A X).O ≠ (sqAt A X).I := fun heq ↦
-  hne .A (h.contraryAE.eq_bot_of_le (by
+  hne .all (h.contraryAE.eq_bot_of_le (by
     rw [← h.contradEI.symm.compl_eq, ← heq, ← h.contradAO.compl_eq, compl_compl]))
 
 theorem O_ne_A (h : SquareRelations (sqAt A X)) (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥) :
     (sqAt A X).O ≠ (sqAt A X).A := fun heq ↦
-  hne .A (h.contradAO.disjoint.eq_bot_of_le heq.ge)
+  hne .all (h.contradAO.disjoint.eq_bot_of_le heq.ge)
 
 theorem A_notMem_simplex_minimal (h : SquareRelations (sqAt A X))
     (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥) : (sqAt A X).A ∉ simplex A X .minimal := fun hA ↦

@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Deal2011` — typed example data
@@ -19,6 +21,7 @@ def ex1 : Datum :=
   { id := "deal2011_ex1"
     source := ⟨"deal-2011", "(1)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "nezp1238"
     primaryText := "'inéhne-no'qa 'ee kii lepít cíickan."
     glossedTokens := [("'inéhne-no'qa", "take-MOD"), ("'ee", "you"), ("kii", "DEM"), ("lepít", "two"), ("cíickan", "blanket")]
@@ -32,6 +35,7 @@ def ex5 : Datum :=
   { id := "deal2011_ex5"
     source := ⟨"deal-2011", "(5)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "nezp1238"
     primaryText := "kíye pe-ckilíi-toq-o'qa kulaawit-'ásx."
     glossedTokens := [("kíye", "we"), ("pe-ckilíi-toq-o'qa", "S.PL-return-back-MOD"), ("kulaawit-'ásx", "dark-before")]
@@ -45,6 +49,7 @@ def ex6 : Datum :=
   { id := "deal2011_ex6"
     source := ⟨"deal-2011", "(6)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "nezp1238"
     primaryText := "c'alawí 'ee ta'c c'ix̂-n'ipéecwi-se-∅ niimiipuutímt, ilx̂níi-ne c'íiqin 'ee 'a-cóokwa-no'qa."
     glossedTokens := [("c'alawí", "if"), ("'ee", "you"), ("ta'c", "good"), ("c'ix̂-n'ipéecwi-se-∅", "speak-DES-IMPF-PRES"), ("niimiipuutímt", "Nez.Perce.language"), ("ilx̂níi-ne", "many-OBJ"), ("c'íiqin", "word"), ("'ee", "you"), ("'a-cóokwa-no'qa", "3OBJ-know-MOD")]
@@ -71,6 +76,7 @@ def ex46 : Datum :=
   { id := "deal2011_ex46"
     source := ⟨"deal-2011", "(46)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "nezp1238"
     primaryText := "tamáalwit-wecet wéet'u 'ee x̂eeleewi-yo'qa 'étke k'omáy'c 'ee wee-s-∅ 'áatim."
     glossedTokens := [("tamáalwit-wecet", "rule-reason"), ("wéet'u", "not"), ("'ee", "you"), ("x̂eeleewi-yo'qa", "play-MOD"), ("'étke", "because"), ("k'omáy'c", "hurt"), ("'ee", "you"), ("wee-s-∅", "be-P-PRES"), ("'áatim", "arm")]
@@ -84,6 +90,7 @@ def ex47 : Datum :=
   { id := "deal2011_ex47"
     source := ⟨"deal-2011", "(47)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "nezp1238"
     primaryText := "wéet'u kíye kíne pa-w'cáa-yo'qa, kíye ciklíi-six-∅."
     glossedTokens := [("wéet'u", "not"), ("kíye", "we"), ("kíne", "here"), ("pa-w'cáa-yo'qa", "S.PL-stay-MOD"), ("kíye", "we"), ("ciklíi-six-∅", "go.home-IMPF.PL-PRES")]
@@ -97,6 +104,7 @@ def ex48 : Datum :=
   { id := "deal2011_ex48"
     source := ⟨"deal-2011", "(48)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "nezp1238"
     primaryText := "Wéet'u máwa hi-pa-'yáax̂-no'qa 'inpeew'etúu-nm."
     glossedTokens := [("Wéet'u", "not"), ("máwa", "when"), ("hi-pa-'yáax̂-no'qa", "3SUBJ-S.PL-find-MOD"), ("'inpeew'etúu-nm", "police-ERG")]
@@ -124,6 +132,7 @@ def ex50 : Datum :=
   { id := "deal2011_ex50"
     source := ⟨"deal-2011", "(50)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "nezp1238"
     primaryText := "wéet'u 'ee timiipni-yo'qa."
     glossedTokens := [("wéet'u", "not"), ("'ee", "you"), ("timiipni-yo'qa", "remember-MOD")]
@@ -137,6 +146,7 @@ def ex51 : Datum :=
   { id := "deal2011_ex51"
     source := ⟨"deal-2011", "(51)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "nezp1238"
     primaryText := "hi-wqíi-cix-∅ 'iléx̂ni hipt ke yox̂ hi-pá-ap-o'qa."
     glossedTokens := [("hi-wqíi-cix-∅", "3SUBJ-throw.away-IMPF.PL-PRES"), ("'iléx̂ni", "a.lot"), ("hipt", "food"), ("ke", "REL"), ("yox̂", "DEM"), ("hi-pá-ap-o'qa", "3SUBJ-S.PL-eat-MOD")]
@@ -150,6 +160,7 @@ def ex52 : Datum :=
   { id := "deal2011_ex52"
     source := ⟨"deal-2011", "(52)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "nezp1238"
     primaryText := "hi-wqíi-cix-∅ 'óykala hipt ke yox̂ hi-pá-ap-o'qa."
     glossedTokens := [("hi-wqíi-cix-∅", "3SUBJ-throw.away-IMPF.PL-PRES"), ("'óykala", "all"), ("hipt", "food"), ("ke", "REL"), ("yox̂", "DEM"), ("hi-pá-ap-o'qa", "3SUBJ-S.PL-eat-MOD")]
@@ -163,6 +174,7 @@ def ex53 : Datum :=
   { id := "deal2011_ex53"
     source := ⟨"deal-2011", "(53)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "nezp1238"
     primaryText := "'e-hitéeme-∅ 'óykala-na ke-m 'a-hitáama-no'qa!"
     glossedTokens := [("'e-hitéeme-∅", "3OBJ-read-IMPV"), ("'óykala-na", "everything-OBJ"), ("ke-m", "REL-2SG"), ("'a-hitáama-no'qa", "3OBJ-read-MOD")]
@@ -176,6 +188,7 @@ def ex54 : Datum :=
   { id := "deal2011_ex54"
     source := ⟨"deal-2011", "(54)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "nezp1238"
     primaryText := "ke-m itúu 'iim kiy-ó'qa 'iin wáaqo' kúu-∅-ye."
     glossedTokens := [("ke-m", "REL-2SG"), ("itúu", "what"), ("'iim", "you"), ("kiy-ó'qa", "do-MOD"), ("'iin", "I"), ("wáaqo'", "already"), ("kúu-∅-ye", "do-P-REM.PST")]
@@ -189,6 +202,7 @@ def ex57 : Datum :=
   { id := "deal2011_ex57"
     source := ⟨"deal-2011", "(57)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "nezp1238"
     primaryText := "c'alawí wéeyux̂ 'u-u-s-∅ k'omáy'c, saykiptaw'atóo-nm háamti'c páa-x-no'qa."
     glossedTokens := [("c'alawí", "if"), ("wéeyux̂", "leg"), ("'u-u-s-∅", "3GEN-be-P-PRES"), ("k'omáy'c", "injured"), ("saykiptaw'atóo-nm", "doctor-ERG"), ("háamti'c", "quickly"), ("páa-x-no'qa", "3/3-see-MOD")]
@@ -202,6 +216,7 @@ def ex58 : Datum :=
   { id := "deal2011_ex58"
     source := ⟨"deal-2011", "(58)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "nezp1238"
     primaryText := "c'alawí saykiptaw'atóo-nm háamti'c páa-x-no'qa, simíinikem-x hi-kiy-ó'qa."
     glossedTokens := [("c'alawí", "if"), ("saykiptaw'atóo-nm", "doctor-ERG"), ("háamti'c", "quickly"), ("páa-x-no'qa", "3/3-see-MOD"), ("simíinikem-x", "Lewiston-to"), ("hi-kiy-ó'qa", "3SUBJ-go-MOD")]
@@ -215,6 +230,7 @@ def ex59 : Datum :=
   { id := "deal2011_ex59"
     source := ⟨"deal-2011", "(59)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "nezp1238"
     primaryText := "c'alawí 'aac-o'qa, kaa 'aac-o'."
     glossedTokens := [("c'alawí", "if"), ("'aac-o'qa", "enter-MOD"), ("kaa", "then"), ("'aac-o'", "enter-PROSP")]
@@ -239,5 +255,28 @@ def ex60 : Datum :=
     paperFeatures := [("modal", "o'qa"), ("environment", "conditional antecedent"), ("force", "necessity")] }
 
 def all : List Datum := [ex1, ex5, ex6, ex10, ex46, ex47, ex48, ex49, ex50, ex51, ex52, ex53, ex54, ex57, ex58, ex59, ex60]
+
+/-- The environment of the modal in the sentence. -/
+inductive Environment where
+  /-- unembedded: an unembedded clause -/
+  | unembedded
+  /-- existential restriction: the restriction of an existential quantifier -/
+  | existentialRestriction
+  /-- conditional consequent: the consequent of a conditional -/
+  | conditionalConsequent
+  /-- negation: the scope of negation -/
+  | negation
+  /-- universal restriction: the restriction of a universal quantifier -/
+  | universalRestriction
+  /-- conditional antecedent: the antecedent of a conditional -/
+  | conditionalAntecedent
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `environment`. -/
+def environment (e : Datum) : Option Environment :=
+  e.parse? "environment" [("unembedded", .unembedded), ("existential restriction", .existentialRestriction),
+    ("conditional consequent", .conditionalConsequent), ("negation", .negation),
+    ("universal restriction", .universalRestriction),
+    ("conditional antecedent", .conditionalAntecedent)]
 
 end Deal2011.Examples

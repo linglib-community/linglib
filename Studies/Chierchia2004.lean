@@ -72,17 +72,6 @@ require](##rows_any).
 * The closure ranges over the expanded domains rather than over the expansion functions. The
   examples take the single widening to every coffee.
 
-## Errata
-
-* The text allows the contextual domain itself as an expansion of the domain of *any* and says
-  that the semantics still confines *any* to downward-entailing contexts in that case. Once the
-  contextual domain is among the expansions, the closure entails the competitor in every context
-  ([`universalClosure_subset`](##universalClosure_subset)), positive ones included, so the
-  strengthening condition does not confine it.
-* The argument against global computation says that the implicature entails (21c), meaning
-  (22c); the discussion of scale selection calls the minimal scales those in (78), meaning (97);
-  and the competitor (130b) has *any cake* for *the cake*.
-
 ## TODO
 
 * The double-negation contrast between strong values, because-clauses as covert conjunctions,
@@ -239,11 +228,8 @@ theorem strengthen_strong_lexical_pair {φ ψ : Set W} (h : ψ ⊂ φ) :
 
 theorem lexical_strengthen_strong_eq_exh {φ : Set W} {ALT : Set (Set W)}
     (h : ∀ a ∈ ALT, a ⊆ φ ∨ φ ⊆ a) : (lexical φ ALT).strengthen.strong = exh ALT φ := by
-  ext w
-  simp only [mem_strengthen_strong, lexical, mem_exh]
-  refine and_congr_right fun _ ↦ ⟨fun hs a ha hw ↦ by_contra fun hn ↦ ?_,
-    fun he a ha hlt hw ↦ hlt.2 (he a ha hw)⟩
-  exact hs a ha ⟨(h a ha).resolve_right hn, hn⟩ hw
+  rw [← Exhaustification.exh_inter_Iio_eq_exh h]
+  rfl
 
 /-! ### Strong Application -/
 

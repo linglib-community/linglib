@@ -12,9 +12,9 @@ public import Linglib.Syntax.Projection
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
-# Positions of linearized syntactic objects
+# Positions of planar syntactic objects
 
-The positions of a linearized syntactic object, the paths to its vertices, form a rooted tree
+The positions of a planar syntactic object, the paths to its vertices, form a rooted tree
 (`RoseTree.Positions`). Each carries a term, the subtree there read as a syntactic object: the
 terms at the covers of a position are the terms its term immediately contains, and the terms at
 the positions below it are the terms its term contains, so c-command by a term occurring once is
@@ -23,23 +23,23 @@ head function (`SyntacticObject/Projection.lean`).
 
 ## Main definitions
 
-* `LinearizedSyntacticObject.termAt`: the term at a position.
-* `LinearizedSyntacticObject.branching`, `LinearizedSyntacticObject.above`: the branching positions
-  of a linearized object, and the generators above a position, its closeness key.
+* `PlanarSyntacticObject.termAt`: the term at a position.
+* `PlanarSyntacticObject.branching`, `PlanarSyntacticObject.above`: the branching positions
+  of a planar object, and the generators above a position, its closeness key.
 * `Minimalist.complement`: the sister of a head.
 
 ## Main statements
 
-* `LinearizedSyntacticObject.terms_eq_map_termAt`: the terms are the terms at the positions.
-* `LinearizedSyntacticObject.immediatelyContains_termAt`,
-  `LinearizedSyntacticObject.containsOrEq_termAt`: terms contain one another as their positions
+* `PlanarSyntacticObject.terms_eq_map_termAt`: the terms are the terms at the positions.
+* `PlanarSyntacticObject.immediatelyContains_termAt`,
+  `PlanarSyntacticObject.containsOrEq_termAt`: terms contain one another as their positions
   dominate one another.
-* `LinearizedSyntacticObject.exists_cCommands_termAt_of_cCommands`,
-  `LinearizedSyntacticObject.cCommands_termAt_of_cCommands`: c-command between terms is witnessed by
+* `PlanarSyntacticObject.exists_cCommands_termAt_of_cCommands`,
+  `PlanarSyntacticObject.cCommands_termAt_of_cCommands`: c-command between terms is witnessed by
   c-command between occurrences, and conversely when sister terms are distinct: Collins and
   Stabler's theorem relating c-command between objects to c-command between occurrences.
-* `LinearizedSyntacticObject.isBranching_of_not_isMax`: a position that is not a leaf branches.
-* `LinearizedSyntacticObject.above_branching_lt_iff`: closeness under the branching positions is
+* `PlanarSyntacticObject.isBranching_of_not_isMax`: a position that is not a leaf branches.
+* `PlanarSyntacticObject.above_branching_lt_iff`: closeness under the branching positions is
   asymmetric c-command.
 * `Minimalist.mem_cCommandDomain_iff_complement_le`: a head c-commands exactly the positions below
   its complement.
@@ -57,30 +57,40 @@ open RoseTree SyntacticObject Core.Order PhraseStructure
 
 /-! ### Terms at positions -/
 
-namespace LinearizedSyntacticObject
+namespace PlanarSyntacticObject
 
 open RoseTree SyntacticObject
 
-variable {t : LinearizedSyntacticObject} {p : t.val.Positions} {y : SyntacticObject}
+variable {t : PlanarSyntacticObject} {p : t.toRoseTree.Positions} {y : SyntacticObject}
 
-theorem isSyntacticObject_subtree (p : t.val.Positions) :
+theorem isSyntacticObject_subtree (p : t.toRoseTree.Positions) :
     IsSyntacticObject (UnorderedTree.mk p.subtree) :=
   isSyntacticObject_of_mem_subtrees t.toSyntacticObject _
     (mem_unorderedSubtrees.2 ⟨_, _, p.getElem?_eq, rfl⟩)
 
 variable (t) in
 /-- The term of `t` at a position. -/
-def termAt (p : t.val.Positions) : SyntacticObject := ⟨_, isSyntacticObject_subtree p⟩
+def termAt (p : t.toRoseTree.Positions) : SyntacticObject :=
+  SyntacticObject.ofUnorderedTree _ (isSyntacticObject_subtree p)
 
-@[simp] theorem termAt_bot : t.termAt ⊥ = t.toSyntacticObject := rfl
+@[simp] theorem toUnorderedTree_termAt : (t.termAt p).toUnorderedTree =
+    UnorderedTree.mk p.subtree :=
+  SyntacticObject.toUnorderedTree_ofUnorderedTree _ _
+
+@[simp] theorem termAt_bot : t.termAt ⊥ = t.toSyntacticObject :=
+  SyntacticObject.toUnorderedTree_injective (by rw [toUnorderedTree_termAt]; rfl)
 
 variable (t) in
 /-- The term of `t` at a position, with the order of daughters it has in `t`. -/
-def linearizedTermAt (p : t.val.Positions) : LinearizedSyntacticObject :=
-  ⟨_, isSyntacticObject_subtree p⟩
+def planarTermAt (p : t.toRoseTree.Positions) : PlanarSyntacticObject :=
+  PlanarSyntacticObject.ofRoseTree _ (isSyntacticObject_subtree p)
 
-@[simp] theorem toSyntacticObject_linearizedTermAt :
-    (t.linearizedTermAt p).toSyntacticObject = t.termAt p := rfl
+@[simp] theorem toRoseTree_planarTermAt : (t.planarTermAt p).toRoseTree = p.subtree :=
+  PlanarSyntacticObject.toRoseTree_ofRoseTree _ _
+
+@[simp] theorem toSyntacticObject_planarTermAt :
+    (t.planarTermAt p).toSyntacticObject = t.termAt p :=
+  toSyntacticObject_ofRoseTree _ _
 
 theorem length_children_subtree (hp : ¬ IsMax p) : p.subtree.children.length = 2 := by
   have hs := isSyntacticObject_subtree p
@@ -92,48 +102,49 @@ theorem length_children_subtree (hp : ¬ IsMax p) : p.subtree.children.length = 
 /-- A position that is not a leaf branches. -/
 theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p := by
   have h2 := length_children_subtree hp
-  have hv : ∀ i < 2, (⟨p.val.toList ++ [i]⟩ : TreePath) ∈ t.val.validPaths := fun i hi ↦
+  have hv : ∀ i < 2, (⟨p.val.toList ++ [i]⟩ : TreePath) ∈ t.toRoseTree.validPaths := fun i hi ↦
     mem_validPaths_append_singleton_iff.2 ⟨_, p.getElem?_eq, h2 ▸ hi⟩
   refine ⟨⟨_, hv 0 (by omega)⟩, Positions.covBy_iff.2 (TreePath.covBy_iff.2 ⟨0, rfl⟩),
     ⟨_, hv 1 (by omega)⟩, Positions.covBy_iff.2 (TreePath.covBy_iff.2 ⟨1, rfl⟩), fun h ↦ ?_⟩
-  simpa using congrArg (fun q : t.val.Positions ↦ q.val.toList.getLast?) h
+  simpa using congrArg (fun q : t.toRoseTree.Positions ↦ q.val.toList.getLast?) h
 
 /-- The term at a position immediately contains the terms at its covers. -/
 theorem immediatelyContains_termAt :
     ImmediatelyContains (t.termAt p) y ↔ ∃ q, p ⋖ q ∧ t.termAt q = y := by
-  show y.val ∈ (UnorderedTree.mk p.subtree).children ↔ _
-  rw [UnorderedTree.children_mk, Multiset.mem_coe, List.mem_map]
+  rw [ImmediatelyContains, toUnorderedTree_termAt, UnorderedTree.children_mk, Multiset.mem_coe,
+      List.mem_map]
   constructor
   · rintro ⟨c, hc, hcy⟩
     obtain ⟨q, hpq, rfl⟩ := Positions.mem_children_subtree.1 hc
-    exact ⟨q, hpq, Subtype.ext hcy⟩
+    exact ⟨q, hpq, SyntacticObject.toUnorderedTree_injective (toUnorderedTree_termAt.trans hcy)⟩
   · rintro ⟨q, hpq, rfl⟩
-    exact ⟨q.subtree, Positions.mem_children_subtree.2 ⟨q, hpq, rfl⟩, rfl⟩
+    exact ⟨q.subtree, Positions.mem_children_subtree.2 ⟨q, hpq, rfl⟩, toUnorderedTree_termAt.symm⟩
 
 /-- The term at a position contains or equals the terms at the positions below it. -/
 theorem containsOrEq_termAt : ContainsOrEq (t.termAt p) y ↔ ∃ q, p ≤ q ∧ t.termAt q = y := by
-  rw [← mem_terms, ← Multiset.mem_map_of_injective Subtype.val_injective, map_val_terms]
-  show y.val ∈ unorderedSubtrees p.subtree ↔ _
+  rw [← mem_terms, ← Multiset.mem_map_of_injective SyntacticObject.toUnorderedTree_injective,
+      map_toUnorderedTree_terms,
+    toUnorderedTree_termAt, UnorderedTree.subtrees_mk]
   simp only [unorderedSubtrees_eq_map, Multiset.mem_coe, List.mem_map, mem_subtrees,
     Positions.isSubtree_subtree]
   constructor
   · rintro ⟨s, ⟨q, hpq, rfl⟩, hsy⟩
-    exact ⟨q, hpq, Subtype.ext hsy⟩
+    exact ⟨q, hpq, SyntacticObject.toUnorderedTree_injective (toUnorderedTree_termAt.trans hsy)⟩
   · rintro ⟨q, hpq, rfl⟩
-    exact ⟨q.subtree, ⟨q, hpq, rfl⟩, rfl⟩
+    exact ⟨q.subtree, ⟨q, hpq, rfl⟩, toUnorderedTree_termAt.symm⟩
 
 theorem mem_terms_iff : y ∈ t.toSyntacticObject.terms ↔ ∃ q, t.termAt q = y := by
   rw [mem_terms, ← termAt_bot, containsOrEq_termAt]
   simp
 
 variable (t) in
-/-- The terms of a linearized object are the terms at its positions, one per position. -/
+/-- The terms of a planar object are the terms at its positions, one per position. -/
 theorem terms_eq_map_termAt :
-    t.toSyntacticObject.terms = (Finset.univ : Finset t.val.Positions).val.map t.termAt := by
-  apply Multiset.map_injective Subtype.val_injective
-  rw [map_val_terms, Multiset.map_map]
-  change UnorderedTree.subtrees (UnorderedTree.mk t.val) =
-    (Finset.univ : Finset t.val.Positions).val.map (UnorderedTree.mk ∘ Positions.subtree)
+    t.toSyntacticObject.terms = (Finset.univ : Finset t.toRoseTree.Positions).val.map t.termAt := by
+  apply Multiset.map_injective SyntacticObject.toUnorderedTree_injective
+  rw [map_toUnorderedTree_terms, Multiset.map_map,
+    show SyntacticObject.toUnorderedTree ∘ t.termAt = UnorderedTree.mk ∘ Positions.subtree from
+      funext fun _ ↦ toUnorderedTree_termAt, toUnorderedTree_toSyntacticObject]
   rw [← Multiset.map_map, Positions.map_subtree_univ, UnorderedTree.subtrees_mk,
     unorderedSubtrees_eq_map, Multiset.map_coe]
 
@@ -144,9 +155,9 @@ theorem count_terms (u : SyntacticObject) :
   simp only [eq_comm]
 
 
-variable {a : t.val.Positions} {x : SyntacticObject}
+variable {a : t.toRoseTree.Positions} {x : SyntacticObject}
 
-theorem isBranchingAt_parent (ha : a ≠ ⊥) : IsBranchingAt t.val a.val.parent := by
+theorem isBranchingAt_parent (ha : a ≠ ⊥) : IsBranchingAt t.toRoseTree a.val.parent := by
   have hc : a.subtree ∈ (Order.pred a).subtree.children :=
     Positions.mem_children_subtree.2
       ⟨a, Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using ha), rfl⟩
@@ -160,7 +171,8 @@ theorem isBranchingAt_parent (ha : a ≠ ⊥) : IsBranchingAt t.val a.val.parent
 /-- C-command between terms is witnessed by c-command between occurrences of them, with no
 condition on how often they occur. -/
 theorem exists_cCommands_termAt_of_cCommands (h : t.toSyntacticObject.CCommands x y) :
-    ∃ p q : t.val.Positions, t.val.CCommands p q ∧ t.termAt p = x ∧ t.termAt q = y := by
+    ∃ p q : t.toRoseTree.Positions, t.toRoseTree.CCommands p q ∧ t.termAt p = x ∧ t.termAt q = y :=
+        by
   obtain ⟨z, -, ⟨w, hw, hwx, hwz, hne⟩, hzy⟩ := h
   obtain ⟨m, rfl⟩ := mem_terms_iff.1 hw
   obtain ⟨c, hmc, rfl⟩ := immediatelyContains_termAt.1 hwx
@@ -175,9 +187,9 @@ theorem exists_cCommands_termAt_of_cCommands (h : t.toSyntacticObject.CCommands 
 
 /-- C-command between occurrences is c-command between their terms when the commander's term differs
 from its sisters' ([collins-stabler-2016]'s Theorem 3). -/
-theorem cCommands_termAt_of_cCommands {p q : t.val.Positions}
+theorem cCommands_termAt_of_cCommands {p q : t.toRoseTree.Positions}
     (hs : ∀ d, Order.pred p ⋖ d → d ≠ p → t.termAt d ≠ t.termAt p)
-    (h : t.val.CCommands p q) : t.toSyntacticObject.CCommands (t.termAt p) (t.termAt q) := by
+    (h : t.toRoseTree.CCommands p q) : t.toSyntacticObject.CCommands (t.termAt p) (t.termAt q) := by
   have hp : p ≠ ⊥ := fun h' ↦ h.2.1 (h' ▸ bot_le)
   obtain ⟨hpq, hnpq⟩ :=
     (cCommands_iff_parent_lt (fun h' ↦ hp (Subtype.ext h')) (isBranchingAt_parent hp)).1 h
@@ -191,7 +203,7 @@ theorem cCommands_termAt_of_cCommands {p q : t.val.Positions}
 
 theorem cCommands_termAt_iff (hu : ∀ q, t.termAt q = t.termAt a → q = a) :
     t.toSyntacticObject.CCommands (t.termAt a) x ↔
-      ∃ q : t.val.Positions, t.val.CCommands a q ∧ t.termAt q = x := by
+      ∃ q : t.toRoseTree.Positions, t.toRoseTree.CCommands a q ∧ t.termAt q = x := by
   refine ⟨fun h ↦ ?_, fun ⟨q, hq, hqx⟩ ↦ hqx ▸ cCommands_termAt_of_cCommands
     (fun d _ hd he ↦ hd (hu d he)) hq⟩
   obtain ⟨p, q, hpq, hpa, rfl⟩ := exists_cCommands_termAt_of_cCommands h
@@ -207,11 +219,12 @@ theorem eq_termAt_pred_of_immediatelyContains (hu : ∀ q, t.termAt q = t.termAt
 
 /-! ### Daughters -/
 
-variable {c d e q q' : t.val.Positions}
+variable {c d e q q' : t.toRoseTree.Positions}
 
 theorem eq_or_eq_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) (he : a ⋖ e) : e = c ∨ e = d := by
   have hlen := length_children_subtree (not_isMax_of_lt hc.lt)
-  have hlt : ∀ (r : t.val.Positions) (m : ℕ), r.val.toList = a.val.toList ++ [m] → m < 2 := by
+  have hlt : ∀ (r : t.toRoseTree.Positions) (m : ℕ), r.val.toList = a.val.toList ++ [m] → m < 2 :=
+      by
     intro r m hm
     have hr := r.2
     rw [show r.val = ⟨a.val.toList ++ [m]⟩ from TreePath.ext hm] at hr
@@ -236,13 +249,14 @@ theorem immediatelyContains_termAt_iff_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (h
   obtain ⟨e, he, rfl⟩ := immediatelyContains_termAt.1 h
   exact (eq_or_eq_of_covBy hc hd hcd he).imp (congrArg _) (congrArg _)
 
-theorem cCommands_of_covBy (hc : a ⋖ c) (hq : a < q) (hcq : ¬ c ≤ q) : t.val.CCommands c q := by
+theorem cCommands_of_covBy (hc : a ⋖ c) (hq : a < q) (hcq : ¬ c ≤ q) : t.toRoseTree.CCommands c q :=
+    by
   have hpar : c.val.parent = a.val := by rw [← Positions.pred_val, Order.pred_eq_of_covBy hc]
   exact (cCommands_iff_of_covBy (Positions.covBy_iff.1 hc)
     (hpar ▸ isBranchingAt_parent (ne_bot_of_gt hc.lt))).2 ⟨hq, hcq⟩
 
 theorem not_cCommands_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) (hcq : c < q)
-    (hdq' : d ≤ q') : ¬ t.val.CCommands q q' := by
+    (hdq' : d ≤ q') : ¬ t.toRoseTree.CCommands q q' := by
   intro h
   have hq0 : q ≠ ⊥ := ne_bot_of_gt hcq
   rw [cCommands_iff_parent_lt (fun h0 ↦ hq0 (Subtype.ext h0)) (isBranchingAt_parent hq0)] at h
@@ -269,7 +283,7 @@ theorem exists_covBy_termAt_eq_right {y : SyntacticObject}
 
 variable (t) in
 /-- The term at a position is a lexical item, a head. -/
-def IsHeadAt (q : t.val.Positions) : Prop := (t.termAt q).token?.isSome
+def IsHeadAt (q : t.toRoseTree.Positions) : Prop := (t.termAt q).token?.isSome
 
 instance : DecidablePred t.IsHeadAt := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
@@ -288,51 +302,52 @@ theorem IsHeadAt.exists_covBy_le (h : t.IsHeadAt q) (ha : ¬ IsMax a) (haq : a �
     ∃ e, a ⋖ e ∧ e ≤ q :=
   exists_covBy_le_of_lt (lt_of_le_of_ne haq fun he ↦ ha (he ▸ h.isMax))
 
-end LinearizedSyntacticObject
+end PlanarSyntacticObject
 
 /-! ### Closeness at positions -/
 
-namespace LinearizedSyntacticObject
+namespace PlanarSyntacticObject
 
-variable (t : LinearizedSyntacticObject)
+variable (t : PlanarSyntacticObject)
 
 /-- The generators in `P` properly dominating a position, the key under which a probe searching the
 object compares goals (`PhraseStructure.ancestors`). -/
-def above (P : Set TreePath) [DecidablePred (· ∈ P)] (q : t.val.Positions) : Finset TreePath :=
+def above (P : Set TreePath) [DecidablePred (· ∈ P)] (q : t.toRoseTree.Positions) :
+    Finset TreePath :=
   (Finset.Iio q.val).filter (· ∈ P)
 
-theorem coe_above (P : Set TreePath) [DecidablePred (· ∈ P)] (q : t.val.Positions) :
+theorem coe_above (P : Set TreePath) [DecidablePred (· ∈ P)] (q : t.toRoseTree.Positions) :
     (t.above P q : Set TreePath) = ancestors P q.val := by
   ext x
   simp [above, ancestors, and_comm]
 
-/-- The branching positions of a linearized object, the generators of c-command. -/
-def branching : Set TreePath := {x | t.val.IsBranchingAt x}
+/-- The branching positions of a planar object, the generators of c-command. -/
+def branching : Set TreePath := {x | t.toRoseTree.IsBranchingAt x}
 
 instance : DecidablePred (· ∈ t.branching) :=
-  fun x ↦ inferInstanceAs (Decidable (t.val.IsBranchingAt x))
+  fun x ↦ inferInstanceAs (Decidable (t.toRoseTree.IsBranchingAt x))
 
-variable {t} {q g : t.val.Positions}
+variable {t} {q g : t.toRoseTree.Positions}
 
 /-- Between positions neither of which dominates the other, closeness under the branching
 positions is asymmetric c-command. -/
 theorem above_branching_lt_iff (hqg : ¬ q ≤ g) (hgq : ¬ g ≤ q) :
     t.above t.branching q < t.above t.branching g ↔
-      t.val.CCommands q g ∧ ¬ t.val.CCommands g q := by
+      t.toRoseTree.CCommands q g ∧ ¬ t.toRoseTree.CCommands g q := by
   rw [← Finset.coe_ssubset, coe_above, coe_above]
   exact ancestors_ssubset_ancestors_iff_cCommands hqg hgq
 
-theorem above_branching_lt_of_cCommands (hqg : t.val.CCommands q g)
-    (hgq : ¬ t.val.CCommands g q) : t.above t.branching q < t.above t.branching g :=
+theorem above_branching_lt_of_cCommands (hqg : t.toRoseTree.CCommands q g)
+    (hgq : ¬ t.toRoseTree.CCommands g q) : t.above t.branching q < t.above t.branching g :=
   (above_branching_lt_iff hqg.2.1 hqg.2.2).2 ⟨hqg, hgq⟩
 
-end LinearizedSyntacticObject
+end PlanarSyntacticObject
 
 /-! ### Complements -/
 
 section Complement
 
-variable (t : LinearizedSyntacticObject)
+variable (t : PlanarSyntacticObject)
 
 /-- The complement of the head at `p` is its sister. -/
 def complement (p : TreePath) : TreePath := ⟨p.toList.dropLast ++ [1 - p.toList.getLastD 0]⟩
@@ -344,13 +359,13 @@ theorem parent_covBy_complement (p : TreePath) : p.parent ⋖ complement p :=
   TreePath.ext (by simp [complement])
 
 variable {t} in
-theorem complement_complement {h : TreePath} (hh : h ∈ t.val.validPaths) (h0 : h ≠ ⊥) :
+theorem complement_complement {h : TreePath} (hh : h ∈ t.toRoseTree.validPaths) (h0 : h ≠ ⊥) :
     complement (complement h) = h := by
-  set hp : t.val.Positions := ⟨h, hh⟩
+  set hp : t.toRoseTree.Positions := ⟨h, hh⟩
   have hp0 : hp ≠ ⊥ := fun he ↦ h0 (congrArg Subtype.val he)
   have hm : Order.pred hp ⋖ hp :=
     Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using hp0)
-  have hlen := LinearizedSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
+  have hlen := PlanarSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
   obtain ⟨i, hi⟩ := TreePath.covBy_iff.1 (Positions.covBy_iff.1 hm)
   have hlt : i < 2 := by
     have hv := hp.2
@@ -367,36 +382,36 @@ theorem complement_complement {h : TreePath} (hh : h ∈ t.val.validPaths) (h0 :
 variable {t} in
 /-- In a syntactic object, a head other than the root c-commands exactly the positions below its
 complement. -/
-theorem mem_cCommandDomain_iff_complement_le {h q : TreePath} (hh : h ∈ t.val.validPaths)
-    (h0 : h ≠ ⊥) (hq : q ∈ t.val.validPaths) :
-    q ∈ t.val.cCommandDomain h ↔ complement h ≤ q := by
-  set hp : t.val.Positions := ⟨h, hh⟩
+theorem mem_cCommandDomain_iff_complement_le {h q : TreePath} (hh : h ∈ t.toRoseTree.validPaths)
+    (h0 : h ≠ ⊥) (hq : q ∈ t.toRoseTree.validPaths) :
+    q ∈ t.toRoseTree.cCommandDomain h ↔ complement h ≤ q := by
+  set hp : t.toRoseTree.Positions := ⟨h, hh⟩
   have hp0 : hp ≠ ⊥ := fun he ↦ h0 (congrArg Subtype.val he)
   have hm : Order.pred hp ⋖ hp :=
     Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using hp0)
   have hmv : (Order.pred hp).val = h.parent := Positions.pred_val hp
-  have hlen := LinearizedSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
-  have hcv : complement h ∈ t.val.validPaths := by
+  have hlen := PlanarSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
+  have hcv : complement h ∈ t.toRoseTree.validPaths := by
     refine mem_validPaths_append_singleton_iff.2 ⟨(Order.pred hp).subtree, ?_, ?_⟩
     · rw [← TreePath.parent_toList, ← hmv]
       exact (Order.pred hp).getElem?_eq
     · rw [hlen]
       omega
-  set hc : t.val.Positions := ⟨complement h, hcv⟩
+  set hc : t.toRoseTree.Positions := ⟨complement h, hcv⟩
   have hmc : Order.pred hp ⋖ hc :=
     Positions.covBy_iff.2 (hmv ▸ parent_covBy_complement h)
   have hhc : hp ≠ hc := fun he ↦ by
-    have := congrArg (fun r : t.val.Positions ↦ r.val.toList.getLastD 0) he
+    have := congrArg (fun r : t.toRoseTree.Positions ↦ r.val.toList.getLastD 0) he
     simp only [hp, hc, complement, List.getLastD_concat] at this
     omega
   rw [RoseTree.mem_cCommandDomain, cCommands_iff_parent_lt h0
-    (LinearizedSyntacticObject.isBranchingAt_parent (t := t) hp0)]
-  set qp : t.val.Positions := ⟨q, hq⟩
+    (PlanarSyntacticObject.isBranchingAt_parent (t := t) hp0)]
+  set qp : t.toRoseTree.Positions := ⟨q, hq⟩
   constructor
   · rintro ⟨hlt, hnl⟩
     obtain ⟨e, hme, heq⟩ := exists_covBy_le_of_lt
       (show Order.pred hp < qp from Subtype.coe_lt_coe.1 (hmv ▸ hlt))
-    rcases LinearizedSyntacticObject.eq_or_eq_of_covBy hm hmc hhc hme with rfl | rfl
+    rcases PlanarSyntacticObject.eq_or_eq_of_covBy hm hmc hhc hme with rfl | rfl
     · exact absurd heq hnl
     · exact heq
   · intro hcq

@@ -29,10 +29,6 @@ the paper's decomposition of a point into parts defining valuations; only the ba
 the atomic cases use the decomposition. The fullness model is the whole powerset rather than that
 of the team, since a translation inspects only the points below its point of evaluation.
 
-## Errata
-
-Lemma 4.7 and its restatement print `x⁺ ∨ x⁻ = s` where `x⁺ ∨ x⁻ = x` is meant, as the proof shows.
-
 ## TODO
 
 The fixed-point logic $\mu$MIL, the Boolean negation and dependence atoms of the further team

@@ -13,7 +13,7 @@ public import Linglib.Data.Examples.Readers
 modal bases. Under *hope* and *pray* a past under a past may follow the attitude, which Abusch's
 Upper Limit Constraint forbids and *think* does not allow. The base `dox` returns the actual
 histories, which end at the evaluation time, so it [carries the
-constraint](##Background.upperLimitConstraint_of_mem_dox), and `cir` the future histories, which
+constraint](##Background.nonfuture_of_mem_dox), and `cir` the future histories, which
 begin after it. A clause's readings are the orientations its attitude's bases and its tense both
 admit: [*think* leaves the past and the present](##think_readings), [*hope* every
 orientation](##hope_readings), as [the corpus sentences show](##rows_readings).
@@ -42,7 +42,7 @@ namespace Klecha2016
 
 open scoped Denotes
 
-open Tense HistoricalAlternatives English English.Verbs Kaplan
+open Tense HistoricalAlternatives English English.Verbs
 
 variable {W T : Type*}
 
@@ -71,7 +71,7 @@ def base [LT T] (m : Background) (history : HistoricalAlternatives W T) (s : Ind
 theorem base_dox_cir [LT T] (history : HistoricalAlternatives W T) (s : Index W T) :
     dox.base history s = actualHistoryBase history s ∧
       cir.base history s = futureHistoryBase history s :=
-  ⟨by rw [base, orientations, actualHistoryBase, ← past_sup_present]; rfl, rfl⟩
+  ⟨by rw [base, orientations, actualHistoryBase]; rfl, rfl⟩
 
 -- (53), (55)
 theorem compare_mem_orientations [LinearOrder T] (m : Background)
@@ -80,13 +80,13 @@ theorem compare_mem_orientations [LinearOrder T] (m : Background)
   compare_mem_of_mem_orientedBase h
 
 -- §4.2 [abusch-1997]
-theorem orientations_dox : dox.orientations = upperLimitConstraint := by decide
+theorem orientations_dox : dox.orientations = nonfuture := by decide
 
 /-- The modal base `dox` carries the Upper Limit Constraint: its situations are never later than
 the evaluation time. -/
-theorem upperLimitConstraint_of_mem_dox [LinearOrder T] (history : HistoricalAlternatives W T)
+theorem nonfuture_of_mem_dox [LinearOrder T] (history : HistoricalAlternatives W T)
     {s s' : Index W T} (h : s' ∈ dox.base history s) :
-    compare s'.time s.time ∈ upperLimitConstraint :=
+    compare s'.time s.time ∈ nonfuture :=
   orientations_dox ▸ compare_mem_orientations .dox history h
 
 -- (55), (53), §3.3, (43), (45a), §3.2

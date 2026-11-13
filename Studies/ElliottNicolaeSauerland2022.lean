@@ -44,14 +44,6 @@ presupposition](##avoidsIneffability_a_iff).
   presupposed, which the paper does not test. (68) has none, and the paper leaves it open: [both
   phrases are predicted usable](##usable_ex_68), against the judgment on *quiénes*.
 
-## Errata
-
-Table 1 prints a cross for the anti-singleton inference of plural *which* phrases, and (15) tags a
-plural *which* question as carrying uniqueness, against (3), (16), (17) and the surrounding text.
-The proposition said to answer (76) prints `B ⊕ C` where (76) and the sentences before it have
-`A ⊕ C`. The text before (55) calls *quién_e* acceptable in `≥ 1` contexts, against (51); it should
-be the ambiguous *quién*.
-
 ## TODO
 
 * Percus's (41), which needs EXH under a quantifier and the projection of its presupposition.

@@ -41,22 +41,6 @@ class pages attest the alternation for six of the seven verb classes of (11).
   irrealis mood and the alethic modals are below past tense, so *then*, *perhaps*, *possibly* and
   *necessarily* are predicted good in both gerunds.
 
-## Errata
-
-* In (67)–(69) the abundance condition counts the parts of `e′`, free once `e′` is reduced away;
-  it is read as counting the parts of `e`. (67a) applies the one-place `v` to the PP and to the
-  VP, which enters by event identification.
-* The locatum enters (69) only through the result state, so theme abundance does not follow from
-  event abundance as p. 24 says (`exists_nonBase_atom`); the route through (64) on p. 23 is open.
-* (71) relativizes scalarity and mirativity to a parameter `S` read as the speaker, and leaves
-  `w` free. (25) and (50) need the attitude holder's evaluation, and no denotation shifts `S`:
-  with the holder's, (50b) is inconsistent (`not_subset_compl_of_image_subset`), with the
-  speaker's it is not (`exists_speaker_consistent`).
-* §4.2 has habitual aspect "immediately dominated by T", where Cinque puts future tense, irrealis
-  mood and the alethic modals between. P. 24 dates Dowty's dynamic texture 2000, §3.2 2001, and
-  (55) refers to §3.2.2 for §3.3.2. The bibliography dates Henderson's dissertation 2014 for
-  2012, and "Dowty (2000: 2)" and "(2001: 6)" fall outside the page ranges it gives.
-
 ## TODO
 
 * The *consider* test (25) as the discretionariness that `Studies/Coppock2018.lean` asks of

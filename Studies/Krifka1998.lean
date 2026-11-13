@@ -38,16 +38,6 @@ two non-contemporaneous events are atelic.
 * In the finite model, the diagram's detour consists of the segments `h` and `i`; the
   paper's list of movements calls the second one `j`.
 
-## Errata
-
-* The proof in §3.3 that *eat two apples* is quantized infers `y′ = y″` from uniqueness of
-  objects (50), which compares only parts of `y` related to `e′`, while `y′` is not known to be a
-  part of `y`. Cumulativity (54) closes the gap: it relates the sum `y ⊕ y′` to `e`, inside which
-  uniqueness of objects compares `y′` and `y″`, so a summative relation with unique objects has
-  unique participants (`Mereology.UO.up_of_sum`, whence `Aspect.SINC.vp_qua`). Strict
-  incrementality alone does not suffice: `twoThemes` is strictly incremental and takes a
-  quantized object predicate to a verb phrase that is not quantized (`not_qua_vp_twoThemes`).
-
 ## References
 
 * [krifka-1998]

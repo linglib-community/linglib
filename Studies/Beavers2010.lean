@@ -58,12 +58,6 @@ arrival and possession.
 * Beavers's rough correspondence with Dowty's proto-patient entailments is not formalized, since
   it marks two of its cells as uncertain.
 
-## Errata
-
-* Two cross-references in the discussion of *climb* are off by four: the scalar analysis "as in
-  88" is (84), and the degrees of traversal "as in 89" are (85).
-* (38a) writes result′(x, g, s, e), swapping the scale and goal arguments of (31) and (38b).
-
 ## TODO
 
 * The telicity diagnostic (32), *What happened to x* for the *load* locative (53), and the

@@ -192,9 +192,9 @@ theorem Model.extension_eq {M : Model T} {lf : LF}
 /-! ### Before and after -/
 
 theorem before_iff_not_diamond :
-    before X t ↔ ¬ ◇[Allen.toSetRel (Allen.ofPosition ⟦future⟧ᶜ)] X t := by
+    before X t ↔ ¬ ◇[Allen.toSetRel (Allen.ofPosition nonfuture)] X t := by
   simp only [before, Diamond, Allen.mem_toSetRel, Allen.relation_mem_ofPosition,
-    Finset.mem_compl, denote_future, Finset.mem_singleton, NonemptyInterval.position_eq_gt,
+    nonfuture_eq_compl_future, Finset.mem_compl, denote_future, Finset.mem_singleton, NonemptyInterval.position_eq_gt,
     not_exists, not_and]
   exact forall_congr' fun _ ↦ not_imp_not.symm
 

@@ -305,7 +305,7 @@ theorem fmc_point_consistent (s : SelectionFunction CarianiSantorio2018.W) :
       s.modal (CarianiSantorio2018.frame.alt 0) CarianiSantorio2018.warriorsCap ∩
         (CarianiSantorio2018.frame.alt 0).preimage CarianiSantorio2018.warriorsCapᶜ := by
   refine ⟨by rw [modal_eq_id]; rfl, .cg, by simp [CarianiSantorio2018.warriorsCap], ?_⟩
-  change CarianiSantorio2018.W.cg ∈ CarianiSantorio2018.frame.alternatives (.cw, 0)
+  change CarianiSantorio2018.W.cg ∈ CarianiSantorio2018.frame.alternatives ⟨.cw, 0⟩
   simp
 
 /-! ### Kissine's argument

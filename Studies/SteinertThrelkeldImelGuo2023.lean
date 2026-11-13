@@ -49,19 +49,6 @@ flavors of *ivək* lie outside that space, and the universal is stated for any t
 and flavors. So do the metaphysical and generic uses of *-eʔ*, which `washoAttested` leaves
 out; the weak necessity of [bochnak-2015a] is the library's `ModalForce.weakNecessity`.
 
-## Errata
-
-* The paper introduces path-connectedness by replacing the universal quantification of
-  convexity, every pair between two pairs of the meaning belongs to it, with an existential
-  one, some pair between them does. Under the paper's own betweenness each of the two pairs lies
-  between them, so the existential condition holds of every meaning
-  (`exists_mem_pair_product`). Only the parenthetical reformulation, "or" in place of "and",
-  is the intended weaker property.
-* Table 1 gives its second modal as satisfying path-connectedness without independence, but it
-  fails the "or" formulation, since its weak teleological and strong epistemic points share no
-  corner; it is connected in the rook's graph, and so satisfies only the footnote's reading
-  (`table1b_connected_not_pathConnected`).
-
 ## References
 
 * [steinert-threlkeld-imel-guo-2023]

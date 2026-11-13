@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Pragmatics.RSA.LexicalUncertainty
-public import Linglib.Pragmatics.RSA.QUD
+public import Linglib.Pragmatics.Probabilistic.LexicalUncertainty
+public import Linglib.Pragmatics.Probabilistic.QUD
 
 /-!
 # Kao, Bergen and Goodman (2014): Formalizing the Pragmatics of Metaphor Understanding

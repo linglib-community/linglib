@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Core.Probability.AutoregressiveSequenceModel.Tight
-public import Linglib.Pragmatics.RSA.Incremental
-public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Pragmatics.Probabilistic.Incremental
+public import Linglib.Pragmatics.Probabilistic.Uniform
 
 /-!
 # Cohn-Gordon, Goodman and Potts (2019): An Incremental Iterated Response Model of Pragmatics
@@ -24,17 +24,6 @@ and the listener who hears *red* [anticipates the red hat](##listener_anticipati
   probability reaches, ends the string; the paper does not define the speaker there.
 * The cost of one per word is generalized to any `c`; before the utterance can end, a cost that
   every word shares cancels, so Sedivy's display is evaluated at every `c`.
-
-## Errata
-
-* Figure 1e prints 0.42 and 0.20 for the red dress's *dress* and *red object*, where eq. (7) over
-  Figure 1c gives [3/7 and 4/21](##figureOne_incremental_values), 0.43 and 0.19.
-* p. 84 calls the letter forced after *A* "B" while giving p(A | [A], W1) = 1.0; it is
-  [*A*](##figureThree_incremental_values).
-* §3.2 reports the tall cup's 0.6 as the probability of "the tall glass".
-* §3.2's cancellation after *tall pitcher* [holds for the listener whose prior is her posterior
-  after *tall*](##Sedivy.afterTallPitcher_eq_one); eq. (6) as printed leaves the pitcher
-  [at 1/2](##Sedivy.l1_tall_pitcher).
 
 ## TODO
 

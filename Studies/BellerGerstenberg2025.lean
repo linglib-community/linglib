@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Pragmatics.Probabilistic.Uniform
 public import Linglib.Semantics.Causation.CausalModel.Defs
 public import Linglib.Core.Relation.ReflTransGen
 

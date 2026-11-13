@@ -13,7 +13,7 @@ public import Linglib.Core.Data.RoseTree.Get
 public import Mathlib.Order.Setoid.Basic
 
 /-!
-# Chains on linearized syntactic objects
+# Chains on planar syntactic objects
 
 A chain is the set of positions of one object. On a copy object, where Internal Merge leaves the
 mover in place, two positions are in one chain when they hold one term (`chainRel`, the kernel of
@@ -27,11 +27,11 @@ one bound in situ, as for Pesetsky, has a single copy; a deleted copy above the 
 Huang's covert movement, a pronounced copy between deleted ones Sato and Ngui's partial movement,
 and a token with two pronounced copies is shared, Citko's Parallel Merge. A copy is linked to the
 nearest copy whose projection c-commands it, c-command being Reinhart's (`RoseTree.CCommands`); the
-locality of links is in `Locality/Chain.lean`.
+Phase Impenetrability Condition on links is in `Phase/Chain.lean`.
 
 ## Main definitions
 
-* `Minimalist.LinearizedSyntacticObject.chainRel`: the chains of a copy object.
+* `Minimalist.PlanarSyntacticObject.chainRel`: the chains of a copy object.
 * `Minimalist.tokenList`, `Minimalist.traceList`: the pronounced and the deleted copies.
 * `occurrences`, `traces`, `chain`, `Moves`, `IsShared`: the copies of a token.
 * `occurrencesWith`: the pronounced copies of the tokens a predicate holds of.
@@ -67,44 +67,44 @@ open RoseTree SyntacticObject Core.Order PhraseStructure
 
 /-! ### Chains of copies -/
 
-namespace LinearizedSyntacticObject
+namespace PlanarSyntacticObject
 
-variable {t : LinearizedSyntacticObject}
+variable {t : PlanarSyntacticObject}
 
 variable (t) in
 /-- Two positions are in one chain when they hold one term. -/
-def chainRel : Setoid t.val.Positions := Setoid.ker t.termAt
+def chainRel : Setoid t.toRoseTree.Positions := Setoid.ker t.termAt
 
-theorem chainRel_iff {p q : t.val.Positions} : t.chainRel p q ↔ t.termAt p = t.termAt q :=
+theorem chainRel_iff {p q : t.toRoseTree.Positions} : t.chainRel p q ↔ t.termAt p = t.termAt q :=
   Iff.rfl
 
 instance : DecidableRel t.chainRel := fun _ _ ↦ inferInstanceAs (Decidable (_ = _))
 
 variable (t) in
 /-- A chain has a position for each occurrence of its term. -/
-theorem card_chainRel (p : t.val.Positions) :
+theorem card_chainRel (p : t.toRoseTree.Positions) :
     (Finset.univ.filter (t.chainRel p ·)).card = t.toSyntacticObject.terms.count (t.termAt p) := by
   rw [count_terms]
   simp only [chainRel_iff, eq_comm]
 
 theorem exists_chainRel_of_self_mem_copyRel {x : SyntacticObject}
     (h : (x, x) ∈ t.toSyntacticObject.copyRel) :
-    ∃ p q, t.chainRel p q ∧ t.val.CCommands p q ∧ t.termAt p = x := by
+    ∃ p q, t.chainRel p q ∧ t.toRoseTree.CCommands p q ∧ t.termAt p = x := by
   obtain ⟨p, q, hpq, hp, hq⟩ := exists_cCommands_termAt_of_cCommands h.1
   exact ⟨p, q, hp.trans hq.symm, hpq, hp⟩
 
 /-- Form Copy relates an object to itself exactly when two positions of its chain are in
 c-command, in an object no term of which is merged with itself. -/
 theorem self_mem_copyRel_iff {x : SyntacticObject}
-    (hs : ∀ p d : t.val.Positions, Order.pred p ⋖ d → d ≠ p → t.termAt d ≠ t.termAt p) :
+    (hs : ∀ p d : t.toRoseTree.Positions, Order.pred p ⋖ d → d ≠ p → t.termAt d ≠ t.termAt p) :
     (x, x) ∈ t.toSyntacticObject.copyRel ↔
-      ∃ p q, t.chainRel p q ∧ t.val.CCommands p q ∧ t.termAt p = x := by
+      ∃ p q, t.chainRel p q ∧ t.toRoseTree.CCommands p q ∧ t.termAt p = x := by
   refine ⟨exists_chainRel_of_self_mem_copyRel, fun ⟨p, q, hpq, hc, hp⟩ ↦ ?_⟩
   have h := cCommands_termAt_of_cCommands (hs p) hc
   rw [← chainRel_iff.1 hpq, hp] at h
   exact ⟨h, rfl⟩
 
-end LinearizedSyntacticObject
+end PlanarSyntacticObject
 
 /-! ### Copies -/
 
@@ -138,30 +138,30 @@ def tokenList : RoseTree Vertex → List (TreePath × LexicalItem.Token) :=
 def traceList : RoseTree Vertex → List (TreePath × LexicalItem.Token) :=
   positions (Sum.elim (fun _ ↦ none) id)
 
-variable (hd : HeadFunction) (t : LinearizedSyntacticObject) (tok : LexicalItem.Token)
+variable (hd : HeadFunction) (t : PlanarSyntacticObject) (tok : LexicalItem.Token)
 
 /-- The positions of the pronounced copies of `tok`. -/
 def occurrences : List TreePath :=
-  (tokenList t.val).filterMap fun x ↦ if x.2 = tok then some x.1 else none
+  (tokenList t.toRoseTree).filterMap fun x ↦ if x.2 = tok then some x.1 else none
 
 /-- The positions of the pronounced copies of the tokens `P` holds of. -/
 def occurrencesWith (P : LexicalItem.Token → Prop) [DecidablePred P] : List TreePath :=
-  (tokenList t.val).filterMap fun x ↦ if P x.2 then some x.1 else none
+  (tokenList t.toRoseTree).filterMap fun x ↦ if P x.2 then some x.1 else none
 
 theorem occurrencesWith_eq : occurrencesWith t (· = tok) = occurrences t tok := rfl
 
 variable {t tok} in
 @[simp] theorem mem_occurrences {p : TreePath} :
-    p ∈ occurrences t tok ↔ (p, tok) ∈ tokenList t.val := by
+    p ∈ occurrences t tok ↔ (p, tok) ∈ tokenList t.toRoseTree := by
   simp [occurrences]
 
 /-- The positions of the deleted copies of `tok`. -/
 def traces : List TreePath :=
-  (traceList t.val).filterMap fun x ↦ if x.2 = tok then some x.1 else none
+  (traceList t.toRoseTree).filterMap fun x ↦ if x.2 = tok then some x.1 else none
 
 /-- The chain of `tok` lists the positions of its copies, pronounced or deleted, left to right. -/
 def chain : List TreePath :=
-  (positions (Sum.elim id id) t.val).filterMap fun x ↦ if x.2 = tok then some x.1 else none
+  (positions (Sum.elim id id) t.toRoseTree).filterMap fun x ↦ if x.2 = tok then some x.1 else none
 
 /-- `tok` moves when it has a deleted copy. -/
 def Moves : Prop := traces t tok ≠ []
@@ -178,23 +178,23 @@ instance : Decidable (IsShared t tok) := inferInstanceAs (Decidable (_ ≤ _))
 /-- A deleted copy has an antecedent when the projection of a pronounced copy of its token
 c-commands it. -/
 def HasAntecedent (x : TreePath × LexicalItem.Token) : Prop :=
-  ∃ p ∈ occurrences t x.2, CCommands t.val (projectionAt hd t p) x.1
+  ∃ p ∈ occurrences t x.2, CCommands t.toRoseTree (projectionAt hd t p) x.1
 
 instance (x : TreePath × LexicalItem.Token) : Decidable (HasAntecedent hd t x) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The deleted copies without antecedents. -/
 def orphanTraces : List (TreePath × LexicalItem.Token) :=
-  (traceList t.val).filter (¬ HasAntecedent hd t ·)
+  (traceList t.toRoseTree).filter (¬ HasAntecedent hd t ·)
 
 /-! ### Links -/
 
 /-- The copy at `p` is linked to the copy at `q` below it when its projection c-commands `q` and
 the projection of no other copy of `tok` lies between them. -/
 def IsLink (p q : TreePath) : Prop :=
-  CCommands t.val (projectionAt hd t p) q ∧
-    ∀ r ∈ chain t tok, CCommands t.val (projectionAt hd t p) (projectionAt hd t r) →
-      ¬ CCommands t.val (projectionAt hd t r) q
+  CCommands t.toRoseTree (projectionAt hd t p) q ∧
+    ∀ r ∈ chain t tok, CCommands t.toRoseTree (projectionAt hd t p) (projectionAt hd t r) →
+      ¬ CCommands t.toRoseTree (projectionAt hd t r) q
 
 instance (p q : TreePath) : Decidable (IsLink hd t tok p q) := inferInstanceAs (Decidable (_ ∧ _))
 
@@ -207,7 +207,7 @@ def links : List (TreePath × TreePath) :=
 takes scope. -/
 def chainTop : List TreePath :=
   (chain t tok).filter fun q ↦
-    (chain t tok).all fun p ↦ ¬ CCommands t.val (projectionAt hd t p) q
+    (chain t tok).all fun p ↦ ¬ CCommands t.toRoseTree (projectionAt hd t p) q
 
 theorem not_isLink_self (p : TreePath) : ¬ IsLink hd t tok p p :=
   fun h ↦ h.1.2.1 (projectionAt_le hd t p)
@@ -224,5 +224,24 @@ theorem links_eq_nil_of_length_le_one (h : (chain t tok).length ≤ 1) : links h
     · simp [hc] at h
   exact not_isLink_self hd t tok p
 
+/-! ### Islands -/
+
+/-- A link of the chain of `tok` leaves the domain at `D` when it runs from inside `D` to outside,
+as movement out of an island does. -/
+def Escapes (D : TreePath) : Prop := ∃ x ∈ links hd t tok, D ≤ x.2 ∧ ¬ D ≤ x.1
+
+instance (D : TreePath) : Decidable (Escapes hd t tok D) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+/-- A link of the chain of `tok` leaves the projection of a head that `P` holds of. -/
+def CrossesIsland (P : LexicalItem.Token → Prop) [DecidablePred P] : Prop :=
+  ∃ p ∈ occurrencesWith t P, Escapes hd t tok (projectionAt hd t p)
+
+instance (P : LexicalItem.Token → Prop) [DecidablePred P] :
+    Decidable (CrossesIsland hd t tok P) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+theorem not_escapes_of_length_le_one (h : (chain t tok).length ≤ 1) (D : TreePath) :
+    ¬ Escapes hd t tok D := by
+  simp [Escapes, links_eq_nil_of_length_le_one hd t tok h]
 
 end Minimalist

@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Discourse.SpeechAct
+public import Linglib.Discourse.SpeechAct.Basic
 public import Linglib.Discourse.QUD.Basic
 public import Linglib.Core.Data.List.Forall2
 
@@ -78,7 +78,7 @@ rather than built into the domain of `realizes`.
 
 namespace Roberts2023
 
-open HistoricalAlternatives Modality Quantifier Filter Kaplan
+open HistoricalAlternatives Modality Quantifier Filter
 
 variable {W T E : Type*}
 
@@ -140,7 +140,7 @@ def applic (c : Index W T) : Set (Index W T) :=
 circumstance `a` comes, at a timely later time in the same world, to realize `P`. -/
 def realizes (c : Index W T) : Prop :=
   ∀ c' ∈ applic history g f P a c,
-    ∃ t', c'.time < t' ∧ P (c'.world, t') a ∧ (c'.world, t') ∈ timelyFut history g c'
+    ∃ t', c'.time < t' ∧ P ⟨c'.world, t'⟩ a ∧ ⟨c'.world, t'⟩ ∈ timelyFut history g c'
 
 variable {history g f P a}
 
@@ -150,7 +150,7 @@ theorem applic_future (hf : IsFuturate history g f P a) {c c' : Index W T}
   ⟨h₁, h₂⟩
 
 theorem realizes_time_lt {c c' : Index W T} (h : realizes history g f P a c)
-    (hc' : c' ∈ applic history g f P a c) : ∃ t', c'.time < t' ∧ P (c'.world, t') a :=
+    (hc' : c' ∈ applic history g f P a c) : ∃ t', c'.time < t' ∧ P ⟨c'.world, t'⟩ a :=
   let ⟨t', ht, hP, _⟩ := h c' hc'
   ⟨t', ht, hP⟩
 
@@ -204,7 +204,7 @@ variable {I : Type*}
 
 /-- The illocutionary force linking principle (56): the default force of a root sentence,
 assertion, interrogation or direction, is fixed by the type of its denotation. -/
-def Denotation.defaultForce : Denotation I W T → Discourse.SpeechAct.Force
+def Denotation.defaultForce : Denotation I W T → SpeechAct.Force
   | .proposition _ => .assertion
   | .question _ => .question
   | .property _ => .directive
@@ -278,7 +278,7 @@ theorem realizes_nobody_move [Preorder T] {history : HistoricalAlternatives W T}
     {move : Index W T → E → Prop} {c c' : Index W T} {x y : E}
     (h : realizes history g f (fun c _ ↦ nobody addr (move c)) x c)
     (hc' : c' ∈ applic history g f (fun c _ ↦ nobody addr (move c)) x c) (hy : y ∈ addr) :
-    ∃ t', c'.time < t' ∧ ¬ move (c'.world, t') y ∧ (c'.world, t') ∈ timelyFut history g c' :=
+    ∃ t', c'.time < t' ∧ ¬ move ⟨c'.world, t'⟩ y ∧ ⟨c'.world, t'⟩ ∈ timelyFut history g c' :=
   let ⟨t', ht, hP, hfut⟩ := h c' hc'
   ⟨t', ht, hP hy, hfut⟩
 

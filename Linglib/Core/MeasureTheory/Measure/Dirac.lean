@@ -15,7 +15,8 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.ZeroOne
 # Dirac measures and their sums
 
 A Dirac measure is a zero-one measure, and a measure concentrated at a point is a multiple of the
-Dirac measure there. A nonzero measure on a countable space charges some point. The measure
+Dirac measure there. Inclusion of sets is comparison of their measures under every measure. A
+nonzero measure on a countable space charges some point. The measure
 `∑ b, w b • dirac b` on a finite type gives a set the total weight of its points.
 `[UPSTREAM]` candidate for `Mathlib/MeasureTheory/Measure/Dirac/Basic.lean`.
 -/
@@ -32,6 +33,13 @@ variable {α : Type*} [MeasurableSpace α]
 
 instance dirac.isZeroOneMeasure (a : α) : IsZeroOneMeasure (dirac a) :=
   ⟨fun _ _ ↦ dirac_apply_eq_zero_or_one⟩
+
+/-- One set is included in another exactly when it has at most its measure under every
+measure. -/
+theorem _root_.MeasureTheory.subset_iff_forall_measure_le [MeasurableSingletonClass α]
+    {s t : Set α} : s ⊆ t ↔ ∀ μ : Measure α, μ s ≤ μ t := by
+  refine ⟨fun h μ ↦ measure_mono h, fun h a ha ↦ by_contra fun hat ↦ ?_⟩
+  simpa [dirac_apply, ha, hat] using h (dirac a)
 
 /-- A nonzero measure on a countable space charges some point. -/
 theorem exists_measure_singleton_ne_zero [Countable α] (μ : Measure α) [NeZero μ] :

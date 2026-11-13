@@ -45,27 +45,31 @@ def quivis : IndefinitePronoun := { form := "quivis", ontology := .person }
 /-- The *-dam* series of *quidam* 'somebody', *quiddam* 'something' and the determiner *quidam*
 'a certain'. -/
 def damSeries : IndefinitePronoun.Series :=
-  ⟨"-dam", {quidam, ⟨{ form := "quiddam" }, .thing⟩, ⟨{ form := "quidam" }, .determiner⟩}⟩
+  ⟨"-dam", {quidam, { form := "quiddam", ontology := .thing },
+    { form := "quidam", ontology := .determiner }}⟩
 
 /-- The *ali-* series. -/
 def aliSeries : IndefinitePronoun.Series :=
-  ⟨"ali-", {aliquis, ⟨{ form := "aliquid" }, .thing⟩, ⟨{ form := "alicubi" }, .place⟩,
-    ⟨{ form := "aliquando" }, .time⟩, ⟨{ form := "aliqui" }, .determiner⟩}⟩
+  ⟨"ali-", {aliquis, { form := "aliquid", ontology := .thing },
+    { form := "alicubi", ontology := .place },
+    { form := "aliquando", ontology := .time }, { form := "aliqui", ontology := .determiner }}⟩
 
 /-- The *-quam* series. -/
 def quamSeries : IndefinitePronoun.Series :=
-  ⟨"-quam", {quisquam, ⟨{ form := "quidquam" }, .thing⟩, ⟨{ form := "usquam" }, .place⟩,
-    ⟨{ form := "umquam" }, .time⟩, ⟨{ form := "ullus" }, .determiner⟩}⟩
+  ⟨"-quam", {quisquam, { form := "quidquam", ontology := .thing },
+    { form := "usquam", ontology := .place },
+    { form := "umquam", ontology := .time }, { form := "ullus", ontology := .determiner }}⟩
 
 /-- The negative series. -/
 def nSeries : IndefinitePronoun.Series :=
-  ⟨"n-", {nemo, ⟨{ form := "nihil" }, .thing⟩, ⟨{ form := "nusquam" }, .place⟩,
-    ⟨{ form := "numquam" }, .time⟩, ⟨{ form := "nullus" }, .determiner⟩,
-    ⟨{ form := "neuter" }, .determiner⟩}⟩
+  ⟨"n-", {nemo, { form := "nihil", ontology := .thing }, { form := "nusquam", ontology := .place },
+    { form := "numquam", ontology := .time }, { form := "nullus", ontology := .determiner },
+    { form := "neuter", ontology := .determiner }}⟩
 
 /-- The *-vis* series. -/
 def visSeries : IndefinitePronoun.Series :=
-  ⟨"-vis", {quivis, ⟨{ form := "quidvis" }, .thing⟩, ⟨{ form := "ubivis" }, .place⟩,
-    ⟨{ form := "quivis" }, .determiner⟩, ⟨{ form := "utervis" }, .determiner⟩}⟩
+  ⟨"-vis", {quivis, { form := "quidvis", ontology := .thing },
+    { form := "ubivis", ontology := .place },
+    { form := "quivis", ontology := .determiner }, { form := "utervis", ontology := .determiner }}⟩
 
 end Latin.Indefinites

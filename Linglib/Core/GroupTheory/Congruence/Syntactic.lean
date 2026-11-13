@@ -7,6 +7,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.GroupTheory.Congruence.Defs
 public import Mathlib.GroupTheory.Congruence.Hom
 
 /-!
@@ -37,8 +38,6 @@ and monoids, and the description by contexts is a theorem where contexts exist.
 
 namespace Con
 
-open Relation
-
 section Mul
 
 variable {M N F : Type*} [Mul M] [Mul N] [FunLike F M N] [MulHomClass F M N]
@@ -51,31 +50,13 @@ classes. -/
 def syntactic (S : Set M) : Con M :=
   sSup {c | ∀ ⦃u v⦄, c u v → (u ∈ S ↔ v ∈ S)}
 
-/-- Membership in `S` respects the syntactic congruence of `S`: the join of the congruences of which
-`S` is a union of classes relates the chains of steps each taken in one of them. -/
+/-- Membership in `S` respects the syntactic congruence of `S`, since a supremum of congruences is
+their supremum as equivalence relations. -/
 @[to_additive]
-theorem mem_iff_of_syntactic (h : syntactic S u v) : u ∈ S ↔ v ∈ S := by
-  let R : M → M → Prop := fun x y ↦ ∃ c : Con M, (∀ ⦃u v⦄, c u v → (u ∈ S ↔ v ∈ S)) ∧ c x y
-  have hr (a : M) {x y : M} (h : EqvGen R x y) : EqvGen R (x * a) (y * a) := by
-    induction h with
-    | rel _ _ h => obtain ⟨c, hc, h⟩ := h; exact .rel _ _ ⟨c, hc, c.mul h (c.refl a)⟩
-    | refl => exact .refl _
-    | symm _ _ _ ih => exact .symm _ _ ih
-    | trans _ _ _ _ _ ih ih' => exact .trans _ _ _ ih ih'
-  have hl (a : M) {x y : M} (h : EqvGen R x y) : EqvGen R (a * x) (a * y) := by
-    induction h with
-    | rel _ _ h => obtain ⟨c, hc, h⟩ := h; exact .rel _ _ ⟨c, hc, c.mul (c.refl a) h⟩
-    | refl => exact .refl _
-    | symm _ _ _ ih => exact .symm _ _ ih
-    | trans _ _ _ _ _ ih ih' => exact .trans _ _ _ ih ih'
-  let E : Con M := ⟨⟨EqvGen R, EqvGen.is_equivalence R⟩, fun h h' ↦ .trans _ _ _ (hr _ h) (hl _ h')⟩
-  have hE : EqvGen R u v := (sSup_le fun c hc _ _ h ↦ .rel _ _ ⟨c, hc, h⟩ : syntactic S ≤ E) h
-  clear h
-  induction hE with
-  | rel _ _ h => obtain ⟨c, hc, h⟩ := h; exact hc h
-  | refl => exact .rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih ih' => exact ih.trans ih'
+theorem mem_iff_of_syntactic (h : syntactic S u v) : u ∈ S ↔ v ∈ S :=
+  have hle : (syntactic S).toSetoid ≤ Setoid.ker (· ∈ S) :=
+    (sSup_toSetoid _).trans_le <| sSup_le <| Set.forall_mem_image.2 fun _ hc _ _ h ↦ propext (hc h)
+  iff_of_eq (hle h)
 
 /-- The syntactic congruence of `S` is the greatest congruence of which `S` is a union of
 classes. -/

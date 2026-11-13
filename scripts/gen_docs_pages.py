@@ -84,7 +84,7 @@ EVALUATED = re.compile(r":=\s*(?:by\s+)?(?:decide|rfl)\s*$")
 # A sentence that needs the paper open, by leaning on what comes before it, or that speaks against
 # the paper, which is not a first sight of it.
 NOT_ALONE = re.compile(r"^(?:\(?\d|§|(?:It|This|These|They|Both|Each|Section|Part)\b)"
-                       r"|\bthe (?:paper|book|chapter|author)\b|\bmisprint|\berrat", re.I)
+                       r"|\bthe (?:paper|book|chapter|author)\b|\bmisprint", re.I)
 # A page left where the study pages used to be, which forwards to the page, anchor and all.
 REDIRECT = """<!DOCTYPE html>
 <html lang="en">
@@ -102,7 +102,7 @@ SHOWN = 5
 # How many of each kind of neighbor a theory page's graph and lists show before folding the rest.
 FILES_SHOWN, STUDIES_SHOWN = 8, 14
 # The sections of a module docstring that note a file's details, rather than say what it offers.
-NOTES = "Implementation notes|TODO|Errata|Notation|References"
+NOTES = "Implementation notes|TODO|Notation|References"
 # Docstrings write mathematics in TeX between dollar signs, as doc-gen4 reads them; a page with
 # any loads MathJax, configured as doc-gen4's but drawing SVG, so that no web fonts load.
 TEX = re.compile(r"(?<![\\$])\$(?!\s)[^$<>]+?(?<![\s\\])\$|\$\$.+?\$\$", re.S)

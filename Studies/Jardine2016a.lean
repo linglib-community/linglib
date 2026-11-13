@@ -137,13 +137,13 @@ plateau, Hyman and Katamba's rule as given in (7). -/
 
 open Autosegmental in
 theorem link_collapse_prod_map_toAR_map :
-    (((utp.map w).map AssociationState.toAR).prod.collapse true).Link true false k j ↔
+    (((utp.map w).map AssociationState.toAR).prod.collapse .upper).Link .upper .lower k j ↔
       k = 0 ∧ utp.Surfaces w j := by
   rw [AssociationState.link_collapse_prod_map_toAR, utp.map_getElem?_H_iff]
 
 /-- `HØØH` fuses to one H linked to all four TBUs. -/
 example : ∀ j < 4,
-    (((utp.map [.H, .O, .O, .H]).map AssociationState.toAR).prod.collapse true).Link true false
+    (((utp.map [.H, .O, .O, .H]).map AssociationState.toAR).prod.collapse .upper).Link .upper .lower
       0 j := by
   simp only [link_collapse_prod_map_toAR_map, true_and]
   decide

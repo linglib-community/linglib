@@ -62,21 +62,6 @@ tests](##began_rows) and the [five-language survey](##table1_rows) follow.
   finite clause or a gerund, `English.Verbs.forget` and `English.Verbs.forget_rog`; Williams'
   uniformity hypothesis takes them to be one verb.
 
-## Errata
-
-* (28b) binds the time of the complement existentially. So bound, [a plain infinitive presupposes
-  only that an event of its predicate started before the forgetting](##preExPrinted_aspP_iff), the
-  contradiction of (36) does not arise, and no modal is needed; the prose of (34) and (36) evaluates
-  the complement at the subjective now.
-* (37) does not require the state `s` to have a plan, and a state whose plan is empty satisfies it
-  vacuously, so that [any such state starting before the forgetting meets pre-existence under the
-  modal](##preEx_mod_of_plan_eq_empty) and (21b) is predicted fine wherever there is one; the
-  scenario of (21) gives every state a plan. (37) also applies `Q` to a world before a time, against
-  its type in (28).
-* (40) derives (iii) from (i) and (ii), neither of which follows from (37), and the proper inclusion
-  (ii) of the subjective now in the plan's run time allows them a common left bound; (iii) needs the
-  prose's "the runtime of Mod begins before this".
-
 ## TODO
 
 * The finite complements of (4), (11a) and (18), which the paper leaves to future work, and the
@@ -432,7 +417,7 @@ theorem table1_rows [DenselyOrdered T] [Nonempty W] (hE : ∃ e f : E, (τ e).Pr
   simp only [forall_needsMod_den_iff hE]
   decide
 
-/-! ### Errata -/
+/-! ### Variants of pre-existence -/
 
 /-- Pre-existence as (28b) prints it, with the time of the complement bound existentially. -/
 def PreExPrinted (C : Complement W E T) (e : E) (w : W) : Prop :=

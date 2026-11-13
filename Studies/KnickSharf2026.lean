@@ -50,15 +50,6 @@ anymore*](##form_predicts).
 * The complexity of a competitor is the number of heads in its logical form, the simple present
   being the universal perfect with `PERF` deleted.
 
-## Errata
-
-* The account does not exclude an experiential parse of the focused perfect. Its alternatives are
-  ordered by the earliest time of the domain, covert *even* over them is consistent, and the parse
-  [survives the competition](##focused_experiential_available), so the account admits *but she's
-  not anymore* after a focused *has been sick* and a focused perfect of *run*, which the paper
-  judges infelicitous. That narrow focus yields a universal perfect is the conclusion of the
-  paper's diagnostics, which its analysis assumes rather than derives.
-
 ## TODO
 
 * The permanent states of *be dead*, the predicate classes under focus and the unavailable
@@ -88,18 +79,18 @@ variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 /-- The simple present (39a), `PRS IMPF`, holds where an eventuality of `V` runs properly through
 the speech time `t`. -/
 def simplePresent (V : W → E → Prop) (t : T) : Set W :=
-  {w | (w, t) ∈ atPoint (ViewpointType.imperfective.denote V)}
+  {w | ⟨w, t⟩ ∈ atPoint (ViewpointType.imperfective.denote V)}
 
 /-- The universal perfect (39b), `PRS PERF IMPF`, holds where a perfect time span ending at the
 speech time `t` and starting in the domain `D` lies properly within the run time of an
 eventuality of `V`. -/
 def universalPerfect (V : W → E → Prop) (D : Set T) (t : T) : Set W :=
-  {w | (w, t) ∈ PERF ((·.fst) ⁻¹' D ∩ ViewpointType.imperfective.denote V ·)}
+  {w | ⟨w, t⟩ ∈ PERF ((·.fst) ⁻¹' D ∩ ViewpointType.imperfective.denote V ·)}
 
 /-- The experiential perfect (29), `PRS PERF PRFV`, holds where such a span contains the run time
 of an eventuality of `V`. -/
 def experientialPerfect (V : W → E → Prop) (D : Set T) (t : T) : Set W :=
-  {w | (w, t) ∈ PERF ((·.fst) ⁻¹' D ∩ PRFV V ·)}
+  {w | ⟨w, t⟩ ∈ PERF ((·.fst) ⁻¹' D ∩ PRFV V ·)}
 
 variable {V : W → E → Prop} {D D₁ D₂ : Set T} {t : T} {w : W}
 
@@ -225,32 +216,32 @@ def Competitor.heads : Competitor → ℕ
   | .simplePresent => 2
   | .perfect => 3
 
-/-- The competition (43) between the simple present and the perfect `p`, the question being the
-competitors themselves. -/
-abbrev competition (V : W → E → Prop) (p : Set W) (t : T) :
-    KatzirSingh2015.Scenario W Competitor Competitor where
-  meaning := Competitor.meaning V p t
-  complexity := Competitor.heads
-  context := univ
-  question := Competitor.meaning V p t
+/-- The question the competitors of (43) answer, which of them hold. -/
+abbrev question (V : W → E → Prop) (p : Set W) (t : T) : Setoid W :=
+  ⨅ c, Setoid.polar (Competitor.meaning V p t c)
 
-theorem competition_relevant {p : Set W} (c : Competitor) : (competition V p t).Relevant c :=
-  fun _ _ _ _ h ↦ h c
+/-- A competitor is a good answer in the competition (43) between the simple present and the
+perfect `p`. -/
+abbrev GoodAnswer (V : W → E → Prop) (p : Set W) (t : T) : Competitor → W → Prop :=
+  KatzirSingh2015.GoodAnswer (Competitor.meaning V p t) Competitor.heads univ (question V p t)
+
+theorem determinesOn_question {p : Set W} (c : Competitor) :
+    (question V p t).DeterminesOn (Competitor.meaning V p t c) univ :=
+  Setoid.Determines.determinesOn (iInf_le _ c) _
 
 -- (43), (44)
 theorem goodAnswer_perfect_iff {p : Set W} :
-    (competition V p t).GoodAnswer .perfect w ↔
-      w ∈ p ∧ ¬ (simplePresent V t ⊆ p ∧ w ∈ simplePresent V t) := by
-  refine ⟨fun h ↦ ⟨h.1, fun ⟨hs, hw⟩ ↦ ?_⟩, fun ⟨hw, hs⟩ ↦ ⟨hw, competition_relevant _, ?_⟩⟩
-  · exact (competition V p t).not_goodAnswer_of_simpler (u := .perfect) (v := .simplePresent)
+    GoodAnswer V p t .perfect w ↔ w ∈ p ∧ ¬ (simplePresent V t ⊆ p ∧ w ∈ simplePresent V t) := by
+  refine ⟨fun h ↦ ⟨h.mem, fun ⟨hs, hw⟩ ↦ ?_⟩, fun ⟨hw, hs⟩ ↦ ⟨⟨hw, determinesOn_question _⟩, ?_⟩⟩
+  · exact KatzirSingh2015.not_goodAnswer_of_simpler (u := .perfect) (v := .simplePresent)
       (by decide : Competitor.heads .simplePresent < Competitor.heads .perfect) hs hw
-      (competition_relevant _) h
-  · rintro ⟨_ | _, hb, hw', -⟩
-    · exact hs ⟨hb.1.2, hw'⟩
-    · exact (competition V p t).better_irrefl _ hb
+      (determinesOn_question _) h
+  · rintro (_ | _) ⟨hw', -⟩ hle
+    · exact absurd ⟨hle.2, hw'⟩ hs
+    · exact le_rfl
 
 theorem goodAnswer_universalPerfect_iff :
-    (competition V (universalPerfect V D t) t).GoodAnswer .perfect w ↔
+    GoodAnswer V (universalPerfect V D t) t .perfect w ↔
       w ∈ universalPerfect V D t ∧ ¬ simplePresent V t ⊆ universalPerfect V D t := by
   rw [goodAnswer_perfect_iff]
   exact and_congr_right fun hw ↦ not_congr
@@ -260,7 +251,7 @@ theorem goodAnswer_universalPerfect_iff :
 it is a good answer in some model whose eventualities take time. -/
 def Survives (p : (W → NonemptyInterval T → Prop) → Set W) (t : T) : Prop :=
   ∃ V : W → NonemptyInterval T → Prop, (∀ w e, V w e → e.fst < e.snd) ∧
-    ∃ w, (competition V (p V) t).GoodAnswer .perfect w
+    ∃ w, GoodAnswer V (p V) t .perfect w
 
 /-- The universal perfect survives its competition with the simple present exactly when its
 domain has a time before the speech time but not the speech time itself, as under narrow focus or
@@ -337,7 +328,7 @@ def Reading.perfect : Reading → (W → E → Prop) → Set T → T → Set W
 at `t₀`, the aspect holding throughout them, as [iatridou-anagnostopoulou-izvorski-2001] read
 durative adverbials. -/
 def Reading.everSince (r : Reading) (V : W → E → Prop) (t₀ t : T) : Set W :=
-  {w | (w, t) ∈ PERF ({pts | pts.fst = t₀} ∩ durative (r.aspect V) ·)}
+  {w | ⟨w, t⟩ ∈ PERF ({pts | pts.fst = t₀} ∩ durative (r.aspect V) ·)}
 
 theorem everSince_universal (V : W → E → Prop) (t₀ t : T) :
     Reading.universal.everSince V t₀ t = universalPerfect V {t₀} t := by
@@ -350,13 +341,13 @@ theorem everSince_universal (V : W → E → Prop) (t₀ t : T) :
 -- footnote 2: a bounded eventuality that takes time holds throughout no span
 theorem not_survives_everSince_experiential {t₀ : T} :
     ¬ Survives (W := W) (Reading.experiential.everSince · t₀ t) t :=
-  fun ⟨_, hV, _, hw, _⟩ ↦ IatridouEtAl2001.no_universal_of_prfv (fun e he ↦ hV _ e he)
-    (perf_mono (fun _ ↦ inter_subset_right) hw)
+  fun ⟨_, hV, _, hw⟩ ↦ IatridouEtAl2001.no_universal_of_prfv (fun e he ↦ hV _ e he)
+    (perf_mono (fun _ ↦ inter_subset_right) hw.mem)
 
 -- the imperfective (25) is strict where Iatridou et al.'s is not (footnote 6)
 theorem exists_iatridou_not_universalPerfect [Nonempty W] {t₀ : T} (h : t₀ ≤ t) :
     ∃ (V : W → NonemptyInterval T → Prop) (w : W),
-      (w, t) ∈ PERF ({pts | pts.fst = t₀} ∩ durative (UNBOUNDED V) ·) ∧
+      ⟨w, t⟩ ∈ PERF ({pts | pts.fst = t₀} ∩ durative (UNBOUNDED V) ·) ∧
         w ∉ universalPerfect V {t₀} t := by
   obtain ⟨w⟩ := ‹Nonempty W›
   refine ⟨fun _ e ↦ e = ⟨(t₀, t), h⟩, w,

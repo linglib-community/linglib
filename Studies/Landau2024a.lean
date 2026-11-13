@@ -177,11 +177,11 @@ def jussiveOf (row : Datum) : Option Jussive :=
 
 section Reported
 
-variable {W E P T : Type*} [PartialOrder E] (c : Kaplan.Context W E P T) (s o x : E)
+variable {W E P T : Type*} [PartialOrder E] (c : SpeechAct.Context W E P T) (s o x : E)
 
 /-- The context a verb of saying reports, whose agent is the matrix subject `s` and whose
 addressee is the matrix object `o`. -/
-def reported : Kaplan.Context W E P T := { c with agent := s, addressee := o }
+def reported : SpeechAct.Context W E P T := { c with agent := s, addressee := o }
 
 /-- At the reported context a first exclusive subject includes just the matrix subject and a second
 person one just the object, Postal's correlation (33), and an inclusive one both. -/
@@ -192,8 +192,8 @@ theorem mem_participantSets_reported :
       ((reported c s o).participants x ∈ Person.firstInclusive.participantSets ↔
         s ≤ x ∧ o ≤ x) := by
   simp only [Person.participantSets, Finset.mem_singleton, Finset.ext_iff,
-    Discourse.Role.forall_role, Kaplan.Context.speaker_mem_participants,
-    Kaplan.Context.addressee_mem_participants, reported]
+    SpeechAct.Role.forall_role, SpeechAct.Context.speaker_mem_participants,
+    SpeechAct.Context.addressee_mem_participants, reported]
   simp; tauto
 
 end Reported
@@ -201,7 +201,7 @@ end Reported
 /-- The roles of the reported context that a controlled reading's subject includes, the agent for
 subject control, the addressee for object control, both for split control, and neither for a free
 reading. -/
-def roles : String → Option (Finset Discourse.Role)
+def roles : String → Option (Finset SpeechAct.Role)
   | "subject" => some {.speaker}
   | "object" => some {.addressee}
   | "split" => some {.speaker, .addressee}

@@ -86,7 +86,7 @@ theorem bannedSubgraph_cons (F : AR τ) :
 
 theorem mem_bannedSubgraph_of_factorEmbeds (h : (r u).FactorEmbeds (r v))
     (hv : v ∈ bannedSubgraph r B) : u ∈ bannedSubgraph r B :=
-  fun F hF hFu ↦ hv F hF (hFu.trans h)
+  AR.Free.of_factorEmbeds hv h
 
 theorem IsAutosegmentalStrictlyLocal.mem_of_factorEmbeds
     (hL : IsAutosegmentalStrictlyLocal r L) (h : (r u).FactorEmbeds (r v)) (hv : v ∈ L) :

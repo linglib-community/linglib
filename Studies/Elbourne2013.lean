@@ -33,11 +33,11 @@ their strong reading and a repeated description no sloppy reading.
 
 * Situations are any partial order; minimality is mathlib's `Minimal`, and the lexical entries of
   §2.3.3 are transcribed with it. The article is `iota` at the situation, so its domain
-  condition is `∃!` (`the_isSome_iff`), and a sentence is `Presupposition.presupOfReferent` of
+  condition is `∃!` (`the_dom_iff`), and a sentence is `Presupposition.presupOfReferent` of
   the description. A situation pronoun is its value as a function of the situation the
   proposition is applied to, constant when free and the identity when bound. A description
   inside a scope contributes `∃ z ∈ the f s`, the condition under which `presupOfReferent` is
-  true, with `Option` membership.
+  true, with `Part` membership.
 * Intensional operators are universal over an accessibility relation and lift trivalent
   propositions by the Weak Kleene universal over the accessible situations
   (`Trivalent.forallWeak`); attitude verbs are defined where the complement is defined
@@ -119,18 +119,18 @@ variable {S E : Type*}
 
 /-- The definite article, (3) of ch. 3, is `λf.λs : ∃!x f(x)(s). ιx f(x)(s)`, a partial function
 from situations to the unique satisfier of the property in the situation. -/
-noncomputable def the (f : E → S → Prop) (s : S) : Option E := iota {x | f x s}
+noncomputable def the (f : E → S → Prop) (s : S) : Part E := iota {x | f x s}
 
-theorem the_isSome_iff (f : E → S → Prop) (s : S) : (the f s).isSome ↔ ∃! x, f x s :=
-  iota_isSome_iff
+theorem the_dom_iff (f : E → S → Prop) (s : S) : (the f s).Dom ↔ ∃! x, f x s :=
+  iota_dom
 
 theorem the_eq_some_iff (f : E → S → Prop) (s : S) (x : E) :
-    the f s = some x ↔ f x s ∧ ∀ y, f y s → y = x :=
-  iota_eq_some_iff
+    x ∈ the f s ↔ f x s ∧ ∀ y, f y s → y = x :=
+  mem_iota
 
 /-- A pronoun, (4b) of ch. 10, has the article's entry, its noun phrase supplied by
 NP-deletion. -/
-noncomputable def pronoun (np : E → S → Prop) : S → Option E := the np
+noncomputable def pronoun (np : E → S → Prop) : S → Part E := the np
 
 /-- `[[the NP] sᵢ]`, (4) of ch. 3, is the description with its situation pronoun, whose value is
 the function `σ` of the situation the containing proposition is applied to. A free pronoun is
@@ -138,7 +138,7 @@ constant, so that the referent enters via the context and is the same wherever t
 is applied, the referential use of (11) of ch. 5; a bound one is the identity (Situation Binding
 I and λ-Conversion II), so that the individual described depends on the situation of
 evaluation, the attributive use of (15) of ch. 5. -/
-noncomputable def description (σ : S → S) (f : E → S → Prop) (s : S) : Option E :=
+noncomputable def description (σ : S → S) (f : E → S → Prop) (s : S) : Part E :=
   the f (σ s)
 
 /-- `[[[the NP] sᵢ] VP]` is the sentence as a trivalent proposition, (3) of ch. 4 for a free
@@ -151,13 +151,13 @@ pronoun discharges the domain condition at its referent, whatever situation the 
 applied to; a bound one carries it to the situation where the proposition is applied. -/
 theorem sentence_ne_undefined_iff (σ : S → S) (f vp : E → S → Prop) (s : S) :
     sentence σ f vp s ≠ .undefined ↔ ∃! x, f x (σ s) := by
-  rw [sentence, Ne, presupOfReferent_eq_undefined_iff, ← Ne, Option.ne_none_iff_isSome]
-  exact the_isSome_iff f (σ s)
+  rw [sentence, Ne, presupOfReferent_eq_undefined_iff, not_not]
+  exact the_dom_iff f (σ s)
 
 -- (12)
 theorem sentence_eq_true_iff (σ : S → S) (f vp : E → S → Prop) {s : S} {x : E}
-    (h : description σ f s = some x) : sentence σ f vp s = .true ↔ vp x s := by
-  simp [sentence, presupOfReferent_of_some h]
+    (h : x ∈ description σ f s) : sentence σ f vp s = .true ↔ vp x s := by
+  simp [sentence, presupOfReferent_of_mem h]
 
 /-! ### Intensional operators: de re, de dicto, attributive de re (ch. 7) -/
 
@@ -205,7 +205,7 @@ theorem attributiveDeRe_ne_undefined_iff (R : S → Set S) (f vp : E → S → P
 
 /-- Kripke's *the number of the planets* is attributive yet de re ((16) of ch. 7). -/
 theorem attributiveDeRe_eq_true_iff (R : S → Set S) (f vp : E → S → Prop) {s : S} {x : E}
-    (h : the f s = some x) : attributiveDeRe R f vp s = .true ↔ ∀ w ∈ R s, vp x w :=
+    (h : x ∈ the f s) : attributiveDeRe R f vp s = .true ↔ ∀ w ∈ R s, vp x w :=
   sentence_eq_true_iff id f _ h
 
 /-! ### Existence entailments (ch. 8) -/
@@ -361,8 +361,8 @@ theorem minimal_ownsADonkey_iff (w : Village E) (x : E) (s' : Village E) :
 
 theorem the_donkey_minimal (x y : E) :
     the (fun z (s : Village E) ↦ Fact.donkey z ∈ s) {Fact.farmer x, Fact.donkey y, Fact.owns x y} =
-      some y := by
-  rw [the_eq_some_iff]
+      Part.some y := by
+  rw [Part.eq_some_iff, the_eq_some_iff]
   refine ⟨by simp, fun z hz ↦ ?_⟩
   simp only [Finset.mem_insert, Finset.mem_singleton, reduceCtorEq, false_or, or_false,
     Fact.donkey.injEq] at hz
@@ -373,8 +373,8 @@ theorem existsUnique_donkey_of_minimal (w : Village E) (x : E) {s' : Village E}
     (hs : Minimal (fun s' ↦ s' ≤ w ∧ s' ≤ w ∧ ownsADonkey w x s') s') :
     ∃! z, Fact.donkey z ∈ s' := by
   obtain ⟨y, -, -, -, rfl⟩ := (minimal_ownsADonkey_iff w x s').mp hs
-  exact (the_isSome_iff (fun z (s : Village E) ↦ Fact.donkey z ∈ s) _).mp
-    (by rw [the_donkey_minimal]; rfl)
+  exact (the_dom_iff (fun z (s : Village E) ↦ Fact.donkey z ∈ s) _).mp
+    (by rw [the_donkey_minimal]; exact trivial)
 
 /-- The nuclear scope of (4) in ch. 6 is `σ₃ [Q [beats [the donkey s₃]]]`. Situation Binding III
 binds the description to the restrictor's minimal situation `s'`, and `Q` extends `s'` to a
@@ -399,7 +399,7 @@ private theorem beatsTheDonkey_iff (w : Village E) (x y : E) :
       {Fact.farmer x, Fact.donkey y, Fact.owns x y} ≤ w ∧ Fact.beats x y ∈ w := by
   unfold beatsTheDonkey
   rw [the_donkey_minimal]
-  simp only [Option.mem_def, Option.some.injEq, exists_eq_left']
+  simp only [Part.mem_some_iff, exists_eq_left]
   exact Q_mem_iff (fun x ↦ Fact.beats x y) x w _
 
 /-- On the neat semantics for donkey sentences (§6.2), the donkey sentence is true iff every farmer
@@ -449,15 +449,15 @@ variable {E : Type*}
 standing in the covert relation to the individual variable `v`, which a higher quantifier may
 bind. -/
 noncomputable def relDescription {S : Type*} (rel : E → E → S → Prop) (np : E → S → Prop) (v : E)
-    (s : S) : Option E :=
+    (s : S) : Part E :=
   iota {x | np x s ∧ rel x v s}
 
 -- (17b), (17a)
 theorem relDescription_eq_some_iff {S : Type*} (rel : E → E → S → Prop) (np : E → S → Prop)
     (v : E) (s : S) (x : E) :
-    relDescription rel np v s = some x ↔
+    x ∈ relDescription rel np v s ↔
       (np x s ∧ rel x v s) ∧ ∀ y, np y s → rel y v s → y = x := by
-  rw [relDescription, iota_eq_some_iff]
+  rw [relDescription, mem_iota]
   simp only [Set.mem_ofPred_eq, and_imp]
 
 variable [DecidableEq E]
@@ -474,7 +474,7 @@ noncomputable def everyOwnerBeatsTheDonkeyAndThePriestToo (s₀ s : Village E) :
 /-- On the situation-variable description, (32) of ch. 9 has only the strict reading, on which the
 priest beats each farmer's donkey. -/
 theorem everyOwnerBeatsTheDonkeyAndThePriestToo_iff (w : Village E) {p : E}
-    (hp : the (fun p (s : Village E) ↦ Fact.priest p ∈ s) w = some p) :
+    (hp : p ∈ the (fun p (s : Village E) ↦ Fact.priest p ∈ s) w) :
     everyOwnerBeatsTheDonkeyAndThePriestToo w w ↔
       ∀ x y, Fact.farmer x ∈ w → Fact.donkey y ∈ w → Fact.owns x y ∈ w →
         Fact.beats x y ∈ w ∧ Fact.beats p y ∈ w := by
@@ -484,8 +484,8 @@ theorem everyOwnerBeatsTheDonkeyAndThePriestToo_iff (w : Village E) {p : E}
         x w {Fact.farmer x, Fact.donkey y, Fact.owns x y} ↔
       {Fact.farmer x, Fact.donkey y, Fact.owns x y} ≤ w ∧
         Fact.beats x y ∈ w ∧ Fact.beats p y ∈ w := by
-    rw [the_donkey_minimal, hp]
-    simp only [Option.mem_def, Option.some.injEq, exists_eq_left']
+    rw [the_donkey_minimal, Part.eq_some_iff.2 hp]
+    simp only [Part.mem_some_iff, exists_eq_left]
     simpa only [Finset.insert_subset_iff, Finset.singleton_subset_iff] using
       Q_subset_iff (fun x ↦ {Fact.beats x y, Fact.beats p y}) x w
         {Fact.farmer x, Fact.donkey y, Fact.owns x y}

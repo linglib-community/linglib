@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Indonesian.Phonology
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Diagram
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Data.PHOIBLE.Inventories.Muna
 public import Linglib.Data.Wordlist.Pater2001
@@ -39,15 +39,10 @@ stops fuse](##fusingStops_mem), as the intermediate types of Newman's typology d
   vowels [+labial].
 * With NASASSIM dominated, [the velars alone fuse](##exists_fusingStops_eq_velars), a type
   Newman's typology lacks.
-
-## Errata
-
-* The left tableau of (4) marks the winner's *NC̥ violation fatal and gives it the UNIFORMITY
-  violation that [belongs to the fused candidate](##uniformity_empat).
-* (16) counts the deletion of the affix's vowel under MAX, but (17), (18), (23) and (24) do not,
-  so [their fused candidates lack a MAX violation](##max_baru). No winner changes.
-* (42) leaves IDENT[PLACE] blank for the fused candidate, whose nasal
-  [corresponds to the prefix's ŋ](##identPlace_fuse). No winner changes.
+* Violations are counted from the correspondence in every tableau: in (4) [the fused candidate
+  bears the UNIFORMITY violation](##uniformity_empat), [MAX counts the deletion of the affix's
+  vowel](##max_baru) in each Muna tableau, and in (42) [the fused candidate violates
+  IDENT[PLACE]](##identPlace_fuse), its nasal corresponding to the prefix's ŋ.
 
 ## TODO
 
@@ -88,7 +83,7 @@ A candidate is an input and an output related as Pater's subscripts relate them,
 correspondence from the input to the output. -/
 
 /-- A candidate, a correspondence from the input to the output. -/
-abbrev Cand := Correspondence BinaryRole Segment
+abbrev Cand := Correspondence.Diagram BinaryRole Segment
 
 /-- *NC̥: a nasal before a voiceless obstruent. -/
 def nc : Constraint Cand := fun c ↦

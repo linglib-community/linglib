@@ -108,39 +108,39 @@ def jibun : ReflexivePronoun := { form := "jibun", script := some "自分" }
 /-! ### Indeterminate pronouns -/
 
 /-- 誰 *dare* 'who'. -/
-def dare : InterrogativePronoun := { form := "dare", script := some "誰", ontology := .person }
+def dare : ProForm := { form := "dare", script := some "誰", ontology := .person }
 
 /-- 何 *nani* 'what'. -/
-def nani : InterrogativePronoun := { form := "nani", script := some "何", ontology := .thing }
+def nani : ProForm := { form := "nani", script := some "何", ontology := .thing }
 
 /-- どの *dono* 'which', a determiner. -/
-def dono : InterrogativePronoun :=
+def dono : ProForm :=
   { form := "dono", script := some "どの", ontology := .determiner }
 
 /-- どこ *doko* 'where'. -/
-def doko : InterrogativePronoun := { form := "doko", script := some "どこ", ontology := .place }
+def doko : ProForm := { form := "doko", script := some "どこ", ontology := .place }
 
 /-- いつ *itsu* 'when'. -/
-def itsu : InterrogativePronoun := { form := "itsu", script := some "いつ", ontology := .time }
+def itsu : ProForm := { form := "itsu", script := some "いつ", ontology := .time }
 
 /-- なぜ *naze* 'why'. -/
-def naze : InterrogativePronoun := { form := "naze", script := some "なぜ", ontology := .reason }
+def naze : ProForm := { form := "naze", script := some "なぜ", ontology := .reason }
 
 /-- どう *dō* 'how'. -/
-def doo : InterrogativePronoun := { form := "dō", script := some "どう", ontology := .manner }
+def doo : ProForm := { form := "dō", script := some "どう", ontology := .manner }
 
 /-- 何 *nan-* 'how many', before a classifier. -/
-def nan : InterrogativePronoun := { form := "nan", script := some "何", ontology := .amount }
+def nan : ProForm := { form := "nan", script := some "何", ontology := .amount }
 
-/-- どれ *dore* 'which one', the determiner of Haspelmath's table. -/
-def dore : InterrogativePronoun :=
-  { form := "dore", script := some "どれ", ontology := .determiner }
+/-- どれ *dore* 'which one', the determiner of Haspelmath's table, a pronoun. -/
+def dore : ProForm :=
+  { form := "dore", script := some "どれ", ontology := .determiner, cat := .PRON }
 
 /-- いくら *ikura* 'how much'. -/
-def ikura : InterrogativePronoun := { form := "ikura", script := some "いくら", ontology := .amount }
+def ikura : ProForm := { form := "ikura", script := some "いくら", ontology := .amount }
 
 /-- いくつ *ikutsu* 'how many'. -/
-def ikutsu : InterrogativePronoun :=
+def ikutsu : ProForm :=
   { form := "ikutsu", script := some "いくつ", ontology := .amount }
 
 /-! ### Demonstrative pronouns -/

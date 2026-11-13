@@ -9,8 +9,8 @@ public import Linglib.Semantics.ArgumentStructure.Valency
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Minimalist.Copy.Replay
 public import Linglib.Syntax.Minimalist.Linearization.ChainReduction
-public import Linglib.Syntax.Minimalist.Locality.Freezing
-public import Linglib.Syntax.Minimalist.Derivation.Reconstruction
+public import Linglib.Syntax.Minimalist.Derivation.Freezing
+public import Linglib.Syntax.Minimalist.Derivation.Binding
 public import Linglib.Syntax.Minimalist.Derivation.Remnant
 public import Linglib.Syntax.Minimalist.Copy.Chain
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
@@ -50,14 +50,6 @@ smuggling passive for English](##adjunct_only).
   movers, so the remnant, carrying the evacuees' traces, freezes only what stayed in it; fn. 18's
   caveat on extraction from moved complements is the paper's.
 * Binding at a stage is decided on the replay, which forgets to the derivation's own stage.
-
-## Errata
-
-* p. 159: "(28)–(39)" for (37)–(39), the passive subjects antecedent to passive agents.
-* p. 190: the structure (97) is proposed for "an English passive like (96)", but it is the
-  structure of (95); (99) is that of (96).
-* p. 162: (44) glosses *mang-atuk* 'ACT-see'; its translation and (43) have 'hit'.
-* p. 192: "(91)", twice, for (100); (91) is the unordered Toba Batak vP of §6.
 
 ## TODO
 
@@ -183,13 +175,13 @@ def evacuate : List Step :=
 
 /-- A core argument as the remnant holds it: the trace of the pivot, which has left, or the
 argument itself, which has stayed. -/
-def stranded (t : LexicalItem.Token) : LinearizedSyntacticObject :=
+def stranded (t : LexicalItem.Token) : PlanarSyntacticObject :=
   if t = c.pivot then .traceOf t else .leaf t
 
 /-- The remnant VoiceP that raises, (55), (61), has Voice and the verb over their traces, and
 the pivot and the goal replaced by theirs. -/
-def remnant : LinearizedSyntacticObject :=
-  let vp : LinearizedSyntacticObject := match c.goal with
+def remnant : PlanarSyntacticObject :=
+  let vp : PlanarSyntacticObject := match c.goal with
     | some pp => {c.stranded c.patient, {.traceOf c.verb, .traceOf pp}}
     | none => {.traceOf c.verb, c.stranded c.patient}
   {.leaf c.voiceHead, {.leaf c.verb, {.traceOf c.voiceHead, {c.stranded c.agent, {.leaf v₀, vp}}}}}
@@ -733,7 +725,8 @@ stage exactly when some copy of the first c-commands some copy of the second. -/
 example : ∀ c ∈ clauses, ∀ x y : LexicalItem.Token, x ≠ y →
     (c.vos.BindsAtSomeStage ↑x ↑y ↔ c.vos.BindsAtLF ↑x ↑y) := by
   have h : ∀ c ∈ clauses, c.vos.lexTokens.Nodup ∧ (∀ step ∈ c.vos.steps, step.IsMerge) ∧
-      (∀ step ∈ c.vos.steps, ∀ m ∈ step.mover?, m.val.value.isLeft) ∧ c.vos.replay?.isSome := by
+      (∀ step ∈ c.vos.steps, ∀ m ∈ step.mover?, m.toUnorderedTree.value.isLeft) ∧
+          c.vos.replay?.isSome := by
     decide +kernel
   intro c hc x y hxy
   obtain ⟨hd, hm, hmv, hr⟩ := h c hc

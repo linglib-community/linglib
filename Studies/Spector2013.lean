@@ -28,16 +28,16 @@ in a downward-entailing environment. Exhaustifying under *whenever*, above a req
   the lexical entries reach them on the count of `P ∩ Q` in a finite domain.
 * A modal environment is the set `A` of values its base allows: a requirement holds when every
   allowed value lies in the reading, `A ⊆ I`, and a permission when one does, `(A ∩ I).Nonempty`.
-* The exhaustivity operator (45) is `Exhaustification.exh`. On requirements over the *at least*
-  readings it denies the larger numerals (`mem_exh_required_iff`), which on the naturals is the
-  next one (`Exhaustification.exhAgainst_lt_iff_succOrder`), as the paper computes (50).
+* The exhaustivity operator (45) holds of a member of the alternatives where it is the most
+  informative true one, which is `Exhaustification.exh`
+  (`Exhaustification.mem_exh_iff_isLeast_of_mem`). On requirements over the *at least* readings
+  that is where the numeral is the greatest one required (`mem_exh_required_iff`), which on the
+  naturals is to deny the next one (`IsLowerSet.isGreatest_iff_of_covBy`), as the paper computes
+  (50).
+* The judged sentences are the rows of `Examples.all`, cited by label where a theorem states what
+  a reading predicts of them; their contexts are prose, so no theorem reads a row.
 * Prosody, the metalinguistic use of negation and the acquisition and processing evidence the
   paper reviews are not formalized.
-
-## Errata
-
-* p. 284: "In both (36b) and (27)" means (36b) and (37), the obligation to read two papers, as the
-  sentence after it shows.
 
 ## References
 
@@ -115,19 +115,26 @@ theorem strictAnti_powerset_atLeast : StrictAnti fun n : ℕ ↦ 𝒫 Comparison
   fun _ _ h ↦ ssubset_iff_subset_not_subset.2 ⟨powerset_mono.2 (Ici_subset_Ici.2 h.le),
     fun h' ↦ h.not_ge (Ici_subset_Ici.1 (powerset_mono.1 h'))⟩
 
-theorem antitone_required (A : Set ℕ) : Antitone fun n ↦ A ⊆ Comparison.ge.interval n :=
+theorem isLowerSet_required (A : Set ℕ) : IsLowerSet {n | A ⊆ Comparison.ge.interval n} :=
   fun _ _ h hA ↦ hA.trans (Ici_subset_Ici.2 h)
 
-theorem antitone_permitted (A : Set ℕ) :
-    Antitone fun n ↦ (A ∩ Comparison.ge.interval n).Nonempty :=
+theorem isLowerSet_permitted (A : Set ℕ) :
+    IsLowerSet {n | (A ∩ Comparison.ge.interval n).Nonempty} :=
   fun _ _ h ↦ Nonempty.mono (inter_subset_inter_right _ (Ici_subset_Ici.2 h))
 
 -- (48)–(50): a requirement, as the set of values it allows, satisfies the exhaustified *we are
--- required to solve `m` problems* when it requires *at least `m`* and not *at least `m + 1`*
+-- required to solve `m` problems* when `m` is the greatest number it requires at least
 theorem mem_exh_required_iff {A : Set ℕ} {m : ℕ} :
     A ∈ exh (range fun n ↦ 𝒫 Comparison.ge.interval n) (𝒫 Comparison.ge.interval m) ↔
-      exhAgainst (· < ·) (fun n ↦ A ⊆ Comparison.ge.interval n) m :=
-  mem_exh_range_iff_exhAgainst_lt strictAnti_powerset_atLeast m A
+      IsGreatest {n | A ⊆ Comparison.ge.interval n} m :=
+  mem_exh_range_iff_isGreatest strictAnti_powerset_atLeast
+
+-- fn. 4, (56): the maximality analysis of the numeral raised over the requirement, *three is the
+-- maximal number `n` such that we must solve at least `n`*, is the same reading
+theorem mem_exh_required_iff_maxIn {A : Set ℕ} {m : ℕ} :
+    A ∈ exh (range fun n ↦ 𝒫 Comparison.ge.interval n) (𝒫 Comparison.ge.interval m) ↔
+      MaxIn {m} {n | A ⊆ Comparison.ge.interval n} :=
+  mem_exh_required_iff.trans maxIn_singleton.symm
 
 /-! ### The neo-Gricean account (Section 2) -/
 
@@ -138,8 +145,8 @@ variable {A : Set ℕ} {m : ℕ}
 -- (11), (12): under a requirement the wide-scope implicature *not required to solve `m + 1`*
 -- follows from the exact reading
 theorem necessity_implicature_of_exact (hA : A.Nonempty) (h : A ⊆ Comparison.eq.interval m) :
-    exhAgainst (· < ·) (fun n ↦ A ⊆ Comparison.ge.interval n) m := by
-  rw [exhAgainst_lt_iff_succOrder (antitone_required A), Order.succ_eq_add_one]
+    IsGreatest {n | A ⊆ Comparison.ge.interval n} m := by
+  rw [(isLowerSet_required A).isGreatest_iff_of_covBy (Order.covBy_add_one m)]
   obtain ⟨k, hk⟩ := hA
   refine ⟨fun j hj ↦ (h hj : j = m).ge, fun hall ↦ ?_⟩
   have h1 : k = m := h hk
@@ -148,10 +155,10 @@ theorem necessity_implicature_of_exact (hA : A.Nonempty) (h : A ⊆ Comparison.e
 
 -- (11), (12): but is weaker than it
 theorem necessity_implicature_ne_exact (m : ℕ) :
-    ∃ A : Set ℕ, exhAgainst (· < ·) (fun n ↦ A ⊆ Comparison.ge.interval n) m ∧
+    ∃ A : Set ℕ, IsGreatest {n | A ⊆ Comparison.ge.interval n} m ∧
       ¬ A ⊆ Comparison.eq.interval m := by
   refine ⟨{m, m + 1}, ?_, fun h ↦ ?_⟩
-  · rw [exhAgainst_lt_iff_succOrder (antitone_required _), Order.succ_eq_add_one]
+  · rw [(isLowerSet_required _).isGreatest_iff_of_covBy (Order.covBy_add_one m)]
     refine ⟨insert_subset (mem_Ici.2 le_rfl) (singleton_subset_iff.2 (mem_Ici.2 (Nat.le_succ m))),
       fun h ↦ ?_⟩
     have : m + 1 ≤ m := h (mem_insert m _)
@@ -188,9 +195,9 @@ theorem permitted_atMost_of_le {A : Set ℕ} {k m : ℕ} (hk : k ∈ A) (h : k �
 
 -- (28), (29): the neo-Gricean reading of (25b) is its intended *at most* paraphrase
 theorem permitted_implicature_iff (A : Set ℕ) (m : ℕ) :
-    exhAgainst (· < ·) (fun n ↦ (A ∩ Comparison.ge.interval n).Nonempty) m ↔
+    IsGreatest {n | (A ∩ Comparison.ge.interval n).Nonempty} m ↔
       (A ∩ Comparison.ge.interval m).Nonempty ∧ A ⊆ Comparison.le.interval m := by
-  rw [exhAgainst_lt_iff_succOrder (antitone_permitted A), Order.succ_eq_add_one]
+  rw [(isLowerSet_permitted A).isGreatest_iff_of_covBy (Order.covBy_add_one m)]
   refine and_congr_right' ⟨fun h k hk ↦ ?_, fun h ⟨k, hk, hk'⟩ ↦ ?_⟩
   · by_contra hkm
     exact h ⟨k, hk, show m + 1 ≤ k by have : ¬ k ≤ m := hkm; omega⟩
@@ -207,23 +214,19 @@ def fieldsMedalAges : Set ℕ := Iic 40
 /-- The heights at which one may be hired in the military, the context of (40). -/
 def militaryHeights : Set ℕ := Ici 6
 
-/-- The requirement sentences (30a), (30b), (39) and (40) are judged as their *at least* reading
-predicts; an *at most* reading would make (30b) true, and the *exactly* reading would make (30a),
-(39) and (40) false. -/
+/-- The *at least* reading makes the requirement sentences (30a), (39) and (40) true and (30b)
+false, as they are judged; an *at most* reading would make (30b) true, and the *exactly* reading
+would make (30a), (39) and (40) false. -/
 theorem requirement_rows :
-    (votingAges ⊆ Comparison.ge.interval 18 ↔
-      Examples.ex30a.verdict = some true) ∧
-    (fieldsMedalAges ⊆ Comparison.ge.interval 40 ↔
-      Examples.ex30b.verdict = some true) ∧
-    (votingAges ⊆ Comparison.ge.interval 18 ↔
-      Examples.ex39.verdict = some true) ∧
-    (militaryHeights ⊆ Comparison.ge.interval 6 ↔
-      Examples.ex40.verdict = some true) ∧
+    -- (30a) and (39), rows `spector2013_ex30a` and `spector2013_ex39`, judged true
+    votingAges ⊆ Comparison.ge.interval 18 ∧
+    -- (30b), row `spector2013_ex30b`, judged false
+    ¬ fieldsMedalAges ⊆ Comparison.ge.interval 40 ∧
+    -- (40), row `spector2013_ex40`, judged true
+    militaryHeights ⊆ Comparison.ge.interval 6 ∧
     fieldsMedalAges ⊆ Comparison.le.interval 40 ∧
     ¬ votingAges ⊆ Comparison.eq.interval 18 ∧ ¬ militaryHeights ⊆ Comparison.eq.interval 6 := by
-  refine ⟨iff_of_true subset_rfl (by decide), iff_of_false (fun h ↦ ?_) (by decide),
-    iff_of_true subset_rfl (by decide), iff_of_true subset_rfl (by decide), subset_rfl,
-    fun h ↦ ?_, fun h ↦ ?_⟩
+  refine ⟨subset_rfl, fun h ↦ ?_, subset_rfl, subset_rfl, fun h ↦ ?_, fun h ↦ ?_⟩
   · have : 40 ≤ 0 := h (Nat.zero_le 40)
     omega
   · have : 19 = 18 := h (Nat.le_succ 18)
@@ -243,13 +246,13 @@ theorem exact_extends_upward {B : ℕ → Prop} (hB : Monotone B) {m : ℕ} (h :
     ∀ k ∈ Comparison.ge.interval m, B k :=
   fun _ hk ↦ hB hk h
 
--- (36b), pp. 284–285: the discourse is consistent on the *at least* reading of *four*, and the
--- exact reading strengthened by any background `B` stays inconsistent with *five*
+-- (36b), row `spector2013_ex36b`, pp. 284–285: the discourse, judged consistent, is so on the
+-- *at least* reading of *four*, and the exact reading strengthened by any background `B` stays
+-- inconsistent with *five*
 theorem chairs_row (B : Set ℕ) :
-    ((Comparison.ge.interval 4 ∩ Comparison.ge.interval 5).Nonempty ↔
-      Examples.ex36b.judgment = .acceptable) ∧
+    (Comparison.ge.interval 4 ∩ Comparison.ge.interval 5).Nonempty ∧
     Comparison.eq.interval 4 ∩ B ∩ Comparison.ge.interval 5 = ∅ :=
-  ⟨iff_of_true ⟨5, Nat.le_succ 4, mem_Ici.2 le_rfl⟩ rfl,
+  ⟨⟨5, Nat.le_succ 4, mem_Ici.2 le_rfl⟩,
     eq_empty_of_forall_notMem fun k ⟨⟨h4, _⟩, h5⟩ ↦ by
       have h4 : k = 4 := h4
       have h5 : 5 ≤ k := h5
@@ -257,9 +260,10 @@ theorem chairs_row (B : Set ℕ) :
 
 -- (39), (40): exhaustified, a requirement of an *at least* reading names the least allowed value,
 -- on any scale of degrees
-theorem exhAgainst_required_Ici_iff {D : Type*} [PartialOrder D] {n m : D} :
-    exhAgainst (· < ·) (fun k ↦ Ici n ⊆ Comparison.ge.interval k) m ↔ n = m :=
-  exhAgainst_lt_iff_maximal.trans <| by simp [eq_comm]
+theorem isGreatest_required_Ici_iff {D : Type*} [PartialOrder D] {n m : D} :
+    IsGreatest {k | Ici n ⊆ Comparison.ge.interval k} m ↔ n = m :=
+  ⟨fun h ↦ le_antisymm (h.2 (subset_refl (Ici n))) (Ici_subset_Ici.1 h.1),
+    by rintro rfl; exact ⟨fun _ h ↦ h, fun _ h ↦ Ici_subset_Ici.1 h⟩⟩
 
 /-! ### The ambiguity account (Section 5) -/
 
@@ -309,14 +313,14 @@ theorem exact_parse_vacuous (s : S) : ¬ Ici (n s) ⊆ Comparison.eq.interval m 
 /-- The intended parse (53b) of the professor example, exhaustification under *whenever* and
 above the demand, restricts the first conjunct to the exams whose least demand is `m` (54). -/
 theorem intermediate_parse_iff :
-    (∀ s, exhAgainst (· < ·) (fun k ↦ Ici (n s) ⊆ Comparison.ge.interval k) m → managed s) ↔
+    (∀ s, IsGreatest {k | Ici (n s) ⊆ Comparison.ge.interval k} m → managed s) ↔
       ∀ s, n s = m → managed s := by
-  simp only [exhAgainst_required_Ici_iff]
+  simp only [isGreatest_required_Ici_iff]
 
 -- (53), (54): with an exam for each least demand and success up to `m`, the intended parse is
 -- consistent with the second conjunct and the *at least* parse is not
 theorem intermediate_parse_consistent :
-    (∀ s : ℕ, exhAgainst (· < ·) (fun k ↦ Ici s ⊆ Comparison.ge.interval k) m → s ≤ m) ∧
+    (∀ s : ℕ, IsGreatest {k | Ici s ⊆ Comparison.ge.interval k} m → s ≤ m) ∧
       (∀ s, m < s → ¬ s ≤ m) ∧ ¬ ∀ s : ℕ, Ici s ⊆ Comparison.ge.interval m → s ≤ m :=
   ⟨(intermediate_parse_iff id (· ≤ m) m).2 fun _ h ↦ h.le, fun _ h ↦ not_le.2 h,
     fun h ↦ atLeast_parse_contradiction id (· ≤ m) m h ⟨m + 1, Nat.lt_succ_self m, by omega⟩⟩

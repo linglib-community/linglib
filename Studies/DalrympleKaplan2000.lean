@@ -232,11 +232,11 @@ theorem right_node_raising :
 /-! ### Person resolution (§6) -/
 
 /-- A person value as a set of markers, the paper's S and H the two discourse roles (§6.1). -/
-abbrev PersonSet := Finset Discourse.Role
+abbrev PersonSet := Finset SpeechAct.Role
 
 -- §6.3
 theorem card_personSet : Fintype.card PersonSet = 4 := by
-  rw [Fintype.card_finset, Discourse.Role.card]; rfl
+  rw [Fintype.card_finset, SpeechAct.Role.card]; rfl
 
 /-- The marker set of a person value is the largest participant set it covers: the single set
 of a quadripartition value (87), and the inclusive's `{S,H}` for the first person unmarked for

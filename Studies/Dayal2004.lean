@@ -112,7 +112,7 @@ theorem exists_iff_not_down (hι : ds.Blocks num .iota) (hx : ds.Blocks num .iot
 
 /-- An English bare singular has no shift, (88a), since ∩ is undefined for a singular property
 once every kind has a plural instance somewhere, *the* blocks ι and ι^x, and *a* blocks ∃. -/
-theorem english_bare_singular {S E : Type*} [PartialOrder E] {K : Set (S → Option E)}
+theorem english_bare_singular {S E : Type*} [PartialOrder E] {K : Set (S → Part E)}
     {P : S → Set E} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Mereology.Atom d)
     (hP : ∀ s, ∀ x ∈ P s, Mereology.Atom x) :
     ∀ τ, ¬ MaximalFor (English.Determiners.inventory.Available .singular (Kind.down P ∈ K))

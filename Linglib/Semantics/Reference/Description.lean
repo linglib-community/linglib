@@ -3,54 +3,33 @@ module
 public import Linglib.Logic.Assignment
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Semantics.Reference.Iota
-public import Linglib.Semantics.Denotation
+public import Linglib.Semantics.Reference.Definite
 public import Linglib.Semantics.Possession.Quantifier
 
 /-!
-# Nominal descriptions
+# Definite descriptions
 
-A `DefiniteDescription E W` is a definite description over entities `E` at situations `W`: a bare
-noun read by the covert iota, the weak (uniqueness) and strong (familiarity) articles of Schwarz, a
-deictic demonstrative, and a possessive. Its denotation `⟦k⟧ g s`, relative to an entity assignment
-and a resource situation, is the partial individual the description picks out, `none` when the
-uniqueness presupposition fails. Every description is a Russellian iota over a restrictor at the
-situation, narrowed by its form (`DefiniteDescription.restrictor`); the strong article and the
-demonstrative narrow it to the indexed entity, so the anaphoric index selects the referent while the
-situation only decides definedness (`denote_anaphoric_eq_some_iff`, `denote_anaphoric_rigid`),
-whereas the weak article's referent covaries with the situation. The possessive is the iota over the
-restrictor relationalized by the possession relation, Barker's `Possession.π`, at the possessor.
-
-## Main definitions
-
-* `DefiniteDescription.Restrictor E W`: a property of entities at a situation, relative to an
-  assignment.
-* `DefiniteDescription E W`, `DefiniteDescription.restrictor`, `DefiniteDescription.denote`: the
-  descriptions, the restrictor each narrows, and the iota over it.
-* `DefiniteDescription.kind`, `DefiniteDescription.ofStrength`: the Frame-free kind and the
-  description an article strength realizes.
-
-## Main results
-
-* `denote_unique_eq_some_iff`, `denote_anaphoric_eq_some_iff`, `denote_possessive_eq_some_iff`:
-  the referent conditions of the three iotas.
-* `denote_bare_eq_unique`, `denote_demonstrative_eq_anaphoric`: the covert iota is the weak
-  article, and deixis filters without selecting.
-* `possNP_iff_exists_mem_denote_possessive`: the possessive description agrees with
-  `Possession.PossNP` at an individual possessor.
-* `denote_unique_restrictor`: every description is the weak article over its restrictor, and
-  `denote_anaphoric_eq_unique_of_forall_eq` the strong and weak articles agree where the antecedent
-  is the only satisfier.
-* `denote_anaphoric_eq_possessive`: the strong article is the possessive over identity to the
-  antecedent.
+A definite description denotes `iota` of a restrictor at a context and a situation: the only
+member of the restrictor there, and nothing when there is none or several. The
+[uniqueness definite](##Definite.unique) is the weak article of Schwarz and the covert iota of a
+bare noun. The [anaphoric definite](##Definite.anaphoric), his strong article, narrows the
+restrictor to the value of an index, so that [the index selects the referent and the situation
+only decides definedness](##Definite.mem_anaphoric), whereas the uniqueness definite's referent
+covaries with the situation. The [possessive](##Definite.possessive) is the iota over the
+restrictor relationalized by the possession relation, Barker's `Possession.π`, at the possessor,
+and [anaphora is the possessive over identity to the
+antecedent](##Definite.anaphoric_eq_possessive). An article strength [realizes one of the
+two](##Definite.ofStrength).
 
 ## Implementation notes
 
 The resource situation is a Reader argument of the denotation, as the assignment is: a situation
 pronoun binding it, as Hanink proposes, is composition above the description,
-`fun gs ↦ ⟦k⟧ g (gs n)`, not a field of it. Indefinites do not denote a partial individual and are
-not descriptions; `NominalKind.indefinite` records them for inventory typology only. A
-demonstrative's deictic content and the presupposition it imposes belong to the determiner
-(`DemonstrativeDeterminer.denote`), not to the description.
+`fun gs ↦ Definite.unique R g (gs n)`, not part of it. A bare noun read by the covert iota and a
+noun with the weak article differ in form and not in meaning, as do a demonstrative and the strong
+article, so each pair is one definite here; which forms a language has is a fact about its
+determiner inventory. Indefinites do not denote a partial individual and are not descriptions. A
+demonstrative's deictic content belongs to the determiner (`DemonstrativeDeterminer.denote`).
 
 ## References
 
@@ -66,174 +45,118 @@ demonstrative's deictic content and the presupposition it imposes belong to the 
 
 @[expose] public section
 
-open scoped Denotes
+namespace Definite
 
-/-- A restrictor is a set of entities at a situation, relative to an entity assignment. -/
-abbrev DefiniteDescription.Restrictor (E W : Type) := (ℕ → E) → W → Set E
+variable {Ctx W E ι : Type*} {R : Ctx → W → Set E} {c : Ctx} {s : W} {x : E}
 
-/-- A definite description is the covert iota of a bare noun, the weak or the strong article of
-[schwarz-2009], a deictic demonstrative, or a possessive. -/
-inductive DefiniteDescription (E W : Type) where
-  /-- A bare noun read by the covert iota ([chierchia-1998], [dayal-2004]). -/
-  | bare (restrictor : DefiniteDescription.Restrictor E W)
-  /-- The weak article is the uniqueness definite. -/
-  | unique (restrictor : DefiniteDescription.Restrictor E W)
-  /-- The strong article is the familiarity definite whose antecedent is the `discourseIdx`-th
-  entity of the assignment. -/
-  | anaphoric (restrictor : DefiniteDescription.Restrictor E W) (discourseIdx : ℕ)
-  /-- A deictic demonstrative ([moroney-2021]) is the strong article in its form, its deictic
-  content being the determiner's. -/
-  | demonstrative (restrictor : DefiniteDescription.Restrictor E W) (discourseIdx : ℕ)
-  /-- A possessive picks the unique satisfier of the restrictor that stands in `relation` to the
-  `possessor`. -/
-  | possessive (restrictor : DefiniteDescription.Restrictor E W) (possessor : (ℕ → E) → W → E)
-      (relation : (ℕ → E) → W → E → E → Prop)
+/-! ### The uniqueness definite -/
 
-namespace DefiniteDescription
+/-- The uniqueness definite over a restrictor denotes the only member of the restrictor at the
+context and the situation: the Russellian iota, the weak article of [schwarz-2009]. -/
+noncomputable def unique (R : Ctx → W → Set E) : Definite Ctx W E := fun c s ↦ iota (R c s)
 
-variable {E W : Type} (R : Restrictor E W) (d : ℕ)
-  (possessor : (ℕ → E) → W → E) (rel : (ℕ → E) → W → E → E → Prop) (g : ℕ → E)
-  (s : W) {x : E}
-
-/-! ### The Frame-free kind -/
-
-/-- The kind of a description, its constructor with the payload erased. -/
-def kind : DefiniteDescription E W → NominalKind
-  | .bare _           => .bare
-  | .unique _         => .unique
-  | .anaphoric _ _    => .anaphoric
-  | .demonstrative .. => .demonstrative
-  | .possessive ..    => .possessive
-
-/-- An article strength realizes the weak article over a restrictor for uniqueness and the strong
-article for familiarity, `idx` being the strong article's anaphoric index. -/
-def ofStrength (p : Strength) (R : Restrictor E W) (idx : ℕ) : DefiniteDescription E W :=
-  match p with
-  | .uniqueness  => .unique R
-  | .familiarity => .anaphoric R idx
-
-@[simp] theorem kind_ofStrength (p : Strength) (idx : ℕ) :
-    (ofStrength p R idx).kind = p.toKind := by
-  cases p <;> rfl
-
-/-! ### The denotation -/
-
-/-- A description's iota ranges over its restrictor, narrowed for the strong article and the
-demonstrative to the indexed entity and for the possessive to what stands in the possession
-relation to the possessor. -/
-def restrictor : DefiniteDescription E W → Restrictor E W
-  | .bare R | .unique R => R
-  | .anaphoric R d | .demonstrative R d => fun g s ↦ R g s ∩ {g d}
-  | .possessive R possessor rel => fun g s ↦ Possession.π (R g s) (rel g s) (possessor g s)
-
-/-- A description picks out, at an assignment and a resource situation, the Russellian iota over its
-restrictor ([schwarz-2009]). -/
-noncomputable def denote (k : DefiniteDescription E W) (g : ℕ → E) (s : W) : Option E :=
-  iota (k.restrictor g s)
-
-noncomputable instance : Denotes (DefiniteDescription E W) ((ℕ → E) → W → Option E) := ⟨denote⟩
-
-@[simp] theorem denote_bare : ⟦bare R⟧ g s = iota (R g s) := rfl
-
-@[simp] theorem denote_unique : ⟦unique R⟧ g s = iota (R g s) := rfl
-
-@[simp] theorem denote_anaphoric :
-    ⟦anaphoric R d⟧ g s = iota (R g s ∩ {g d}) := rfl
-
-@[simp] theorem denote_demonstrative :
-    ⟦demonstrative R d⟧ g s = iota (R g s ∩ {g d}) := rfl
-
-@[simp] theorem denote_possessive :
-    ⟦possessive R possessor rel⟧ g s = iota (Possession.π (R g s) (rel g s) (possessor g s)) :=
-  rfl
-
-/-- The covert iota of a bare noun is the weak article; the two differ in form, not meaning. -/
-theorem denote_bare_eq_unique : ⟦bare R⟧ = ⟦unique R⟧ := rfl
-
-/-- A demonstrative denotes as the strong article with the same index, so deixis, a presupposition
-on the referent, filters it without selecting it. -/
-theorem denote_demonstrative_eq_anaphoric : ⟦demonstrative R d⟧ = ⟦anaphoric R d⟧ := rfl
-
-/-- Every description denotes as the weak article over its restrictor, so the strong article is the
-weak article over the restrictor narrowed to the antecedent. -/
-theorem denote_unique_restrictor (k : DefiniteDescription E W) : ⟦unique k.restrictor⟧ = ⟦k⟧ := rfl
-
-/-- The strong article is the possessive whose possessor is the antecedent and whose relation is
-identity, so anaphora is relational anaphora to the referent itself. -/
-theorem denote_anaphoric_eq_possessive :
-    ⟦anaphoric R d⟧ = ⟦possessive R (fun g _ ↦ g d) fun _ _ y x ↦ x = y⟧ := rfl
-
-/-! ### Referent conditions -/
-
-theorem denote_eq_some_iff (k : DefiniteDescription E W) :
-    ⟦k⟧ g s = some x ↔ x ∈ k.restrictor g s ∧ ∀ y ∈ k.restrictor g s, y = x :=
-  iota_eq_some_iff
-
-theorem denote_isSome_iff (k : DefiniteDescription E W) :
-    (⟦k⟧ g s).isSome ↔ ∃! x, x ∈ k.restrictor g s :=
-  iota_isSome_iff
-
-/-- The weak article denotes `x` iff `x` is the unique satisfier of the restrictor at the
+/-- The uniqueness definite denotes `x` iff `x` is the unique satisfier of the restrictor at the
 situation. -/
-theorem denote_unique_eq_some_iff : ⟦unique R⟧ g s = some x ↔ x ∈ R g s ∧ ∀ y ∈ R g s, y = x :=
-  iota_eq_some_iff
+@[simp] theorem mem_unique : x ∈ unique R c s ↔ x ∈ R c s ∧ ∀ y ∈ R c s, y = x :=
+  mem_iota
 
-/-- The covert iota denotes `x` iff `x` is the unique satisfier of the restrictor at the
+/-- The uniqueness definite is defined iff the restrictor has a unique satisfier at the
 situation. -/
-theorem denote_bare_eq_some_iff : ⟦bare R⟧ g s = some x ↔ x ∈ R g s ∧ ∀ y ∈ R g s, y = x :=
-  iota_eq_some_iff
+theorem unique_dom : (unique R c s).Dom ↔ ∃! x, x ∈ R c s :=
+  iota_dom
 
-/-- The weak article is defined iff the restrictor has a unique satisfier at the situation. -/
-theorem denote_unique_isSome_iff : (⟦unique R⟧ g s).isSome ↔ ∃! x, x ∈ R g s :=
-  iota_isSome_iff
-
-/-- The weak article is undefined where the restrictor has two satisfiers. -/
-theorem denote_unique_eq_none_of_ne {y : E} (hx : x ∈ R g s) (hy : y ∈ R g s) (hne : x ≠ y) :
-    ⟦unique R⟧ g s = none :=
+/-- The uniqueness definite is undefined where the restrictor has two satisfiers. -/
+theorem unique_eq_none_of_ne {y : E} (hx : x ∈ R c s) (hy : y ∈ R c s) (hne : x ≠ y) :
+    unique R c s = Part.none :=
   iota_eq_none_of_ne hx hy hne
 
-/-- The strong article denotes `x` iff `x` is its antecedent and the restrictor holds of the
+/-! ### The anaphoric definite -/
+
+section Anaphoric
+
+variable {R : (ι → E) → W → Set E} {d : ι} {g : ι → E}
+
+/-- The anaphoric definite is the uniqueness definite over the restrictor narrowed to the value of
+the index `d`, the strong article of [schwarz-2009]. -/
+noncomputable def anaphoric (R : (ι → E) → W → Set E) (d : ι) : Definite (ι → E) W E :=
+  unique fun g s ↦ R g s ∩ {g d}
+
+/-- The anaphoric definite denotes `x` iff `x` is its antecedent and the restrictor holds of the
 antecedent at the situation, so the index selects and the situation only decides definedness. -/
-theorem denote_anaphoric_eq_some_iff : ⟦anaphoric R d⟧ g s = some x ↔ g d ∈ R g s ∧ x = g d :=
-  (Set.Subsingleton.iota_eq_some_iff fun _ ha _ hb ↦ ha.2.trans hb.2.symm).trans
+@[simp] theorem mem_anaphoric : x ∈ anaphoric R d g s ↔ g d ∈ R g s ∧ x = g d :=
+  (Set.Subsingleton.mem_iota fun _ ha _ hb ↦ ha.2.trans hb.2.symm).trans
     ⟨fun ⟨h, hx⟩ ↦ ⟨hx ▸ h, hx⟩, fun ⟨h, hx⟩ ↦ ⟨hx ▸ h, hx⟩⟩
 
-/-- The strong article is defined iff the restrictor holds of its antecedent at the situation. -/
-theorem denote_anaphoric_isSome_iff : (⟦anaphoric R d⟧ g s).isSome ↔ g d ∈ R g s := by
-  rw [Option.isSome_iff_exists]
-  simp only [denote_anaphoric_eq_some_iff, exists_eq_right]
+/-- The anaphoric definite is defined iff the restrictor holds of its antecedent at the
+situation. -/
+theorem anaphoric_dom : (anaphoric R d g s).Dom ↔ g d ∈ R g s := by
+  rw [Part.dom_iff_mem]
+  simp only [mem_anaphoric, exists_eq_right]
 
-/-- Wherever the strong article is defined its referent is the antecedent, so the referent does not
-covary with the situation. -/
-theorem denote_anaphoric_rigid {s' : W} {x' : E} (h : ⟦anaphoric R d⟧ g s = some x)
-    (h' : ⟦anaphoric R d⟧ g s' = some x') : x = x' :=
-  ((denote_anaphoric_eq_some_iff R d g s).1 h).2.trans
-    ((denote_anaphoric_eq_some_iff R d g s').1 h').2.symm
+/-- Wherever the anaphoric definite is defined its referent is the antecedent, so the referent
+does not covary with the situation. -/
+theorem anaphoric_rigid {s' : W} {x' : E} (h : x ∈ anaphoric R d g s)
+    (h' : x' ∈ anaphoric R d g s') : x = x' :=
+  (mem_anaphoric.1 h).2.trans (mem_anaphoric.1 h').2.symm
 
-/-- Where the antecedent is the only satisfier of the restrictor, the strong article denotes as the
-weak one. -/
-theorem denote_anaphoric_eq_unique_of_forall_eq (h : ∀ y ∈ R g s, y = g d) :
-    ⟦anaphoric R d⟧ g s = ⟦unique R⟧ g s :=
+/-- Where the antecedent is the only satisfier of the restrictor, the anaphoric definite denotes
+as the uniqueness definite. -/
+theorem anaphoric_eq_unique_of_forall_eq (h : ∀ y ∈ R g s, y = g d) :
+    anaphoric R d g s = unique R g s :=
   congrArg iota <| Set.inter_eq_left.2 h
+
+/-- An article strength realizes the uniqueness definite over a restrictor for uniqueness and the
+anaphoric definite for familiarity, `idx` being the anaphoric index. -/
+noncomputable def ofStrength (p : Strength) (R : (ι → E) → W → Set E) (idx : ι) :
+    Definite (ι → E) W E :=
+  match p with
+  | .uniqueness => unique R
+  | .familiarity => anaphoric R idx
+
+@[simp] theorem ofStrength_uniqueness (idx : ι) : ofStrength .uniqueness R idx = unique R := rfl
+
+@[simp] theorem ofStrength_familiarity (idx : ι) :
+    ofStrength .familiarity R idx = anaphoric R idx := rfl
+
+end Anaphoric
+
+/-! ### The possessive -/
+
+section Possessive
+
+variable {possessor : Ctx → W → E} {rel : Ctx → W → E → E → Prop}
+
+/-- The possessive is the uniqueness definite over the satisfiers of the restrictor that stand in
+`rel` to the `possessor`. -/
+noncomputable def possessive (R : Ctx → W → Set E) (possessor : Ctx → W → E)
+    (rel : Ctx → W → E → E → Prop) : Definite Ctx W E :=
+  unique fun c s ↦ Possession.π (R c s) (rel c s) (possessor c s)
 
 /-- The possessive denotes `x` iff `x` is the unique satisfier of the restrictor that stands in the
 possession relation to the possessor. -/
-theorem denote_possessive_eq_some_iff :
-    ⟦possessive R possessor rel⟧ g s = some x ↔
-      (x ∈ R g s ∧ rel g s (possessor g s) x) ∧
-        ∀ y, y ∈ R g s ∧ rel g s (possessor g s) y → y = x :=
-  iota_eq_some_iff
+theorem mem_possessive :
+    x ∈ possessive R possessor rel c s ↔
+      (x ∈ R c s ∧ rel c s (possessor c s) x) ∧
+        ∀ y, y ∈ R c s ∧ rel c s (possessor c s) y → y = x :=
+  mem_iota
 
 /-- The possessive is defined iff exactly one satisfier of the restrictor stands in the
 possession relation to the possessor. -/
-theorem denote_possessive_isSome_iff :
-    (⟦possessive R possessor rel⟧ g s).isSome ↔ ∃! x, x ∈ R g s ∧ rel g s (possessor g s) x :=
-  iota_isSome_iff
+theorem possessive_dom :
+    (possessive R possessor rel c s).Dom ↔ ∃! x, x ∈ R c s ∧ rel c s (possessor c s) x :=
+  iota_dom
 
-theorem possNP_iff_exists_mem_denote_possessive (B : Set E) :
-    Possession.PossNP (Quantifier.individual (possessor g s)) Quantifier.Det.the (rel g s)
-        (R g s) B ↔ ∃ x ∈ ⟦possessive R possessor rel⟧ g s, x ∈ B := by
-  rw [Possession.possNP_individual_the, Quantifier.Det.the_iff_exists_mem_iota, denote_possessive]
+theorem possNP_iff_exists_mem_possessive (B : Set E) :
+    Possession.PossNP (Quantifier.individual (possessor c s)) Quantifier.Det.the (rel c s)
+        (R c s) B ↔ ∃ x ∈ possessive R possessor rel c s, x ∈ B := by
+  rw [Possession.possNP_individual_the, Quantifier.Det.the_iff_exists_mem_iota]
+  rfl
 
-end DefiniteDescription
+/-- The anaphoric definite is the possessive whose possessor is the antecedent and whose relation
+is identity, so anaphora is relational anaphora to the referent itself. -/
+theorem anaphoric_eq_possessive (R : (ι → E) → W → Set E) (d : ι) :
+    anaphoric R d = possessive R (fun g _ ↦ g d) fun _ _ y x ↦ x = y := rfl
 
+end Possessive
+
+end Definite

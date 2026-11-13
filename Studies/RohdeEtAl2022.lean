@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.InformationTheory.Entropy.Surprisal
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.Probabilistic.Basic
 
 /-!
 # Rohde, Hoek, Keshev and Franke (2022): This better be interesting

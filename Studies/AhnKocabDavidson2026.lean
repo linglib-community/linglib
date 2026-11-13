@@ -19,7 +19,7 @@ licensed only when reference must be disambiguated.
 
 This file defines `ixLoc`, the demonstrative `that` over `Modifier.intersective`, the
 two-dimensional introducing and anaphoric uses, `incorporate`, and a verb's Padden class
-read off its selection. `that_isSome_iff` is the uniqueness presupposition; `scenario_help`
+read off its selection. `that_dom_iff` is the uniqueness presupposition; `scenario_help`
 derives the interpretation of `AHELPB` from the incorporated points; `paddenClass_of_selection`
 recovers the agreeing/spatial/plain trichotomy; the row theorems state the pragmatic
 hypothesis over the consultants' judgments.
@@ -56,10 +56,10 @@ def ixLoc (R : E → L → Prop) (o : L) : E → Prop := fun x ↦ R x o
 
 /-- The demonstrative `⟦that⟧ = λR λP. ιx. P(x) ∧ R(x)`: the unique entity meeting the
 spatial and the nominal restriction. -/
-noncomputable def that (R P : E → Prop) : Option E := iota {x | Modifier.intersective R P x}
+noncomputable def that (R P : E → Prop) : Part E := iota {x | Modifier.intersective R P x}
 
-theorem that_isSome_iff (R P : E → Prop) : (that R P).isSome ↔ ∃! x, P x ∧ R x := by
-  simp [that, iota_isSome_iff, and_comm]
+theorem that_dom_iff (R P : E → Prop) : (that R P).Dom ↔ ∃! x, P x ∧ R x := by
+  simp [that, iota_dom, and_comm]
 
 theorem that_top (R : E → Prop) : that R ⊤ = iota {x | R x} :=
   congrArg (iota ∘ Set.ofPred) (inf_top_eq R)
@@ -73,12 +73,12 @@ location associated with it, or a location arbitrarily assigned to it by introdu
 def locatedAt (at_ : E → L) : E → L → Prop := fun x o ↦ at_ x = o
 
 /-- Arbitrary association by introduction: `x` has been assigned locus `o`. -/
-def assigned (assoc : E → Option L) : E → L → Prop := fun x o ↦ assoc x = some o
+def assigned (assoc : E → Option L) : E → L → Prop := fun x o ↦ o ∈ assoc x
 
-theorem that_assigned_isSome (assoc : E → Option L) (h : ∀ x y o, assoc x = some o →
-    assoc y = some o → x = y) (o : L) :
-    (that (ixLoc (assigned assoc) o) ⊤).isSome ↔ ∃ x, assoc x = some o := by
-  rw [that_isSome_iff]
+theorem that_assigned_dom (assoc : E → Option L) (h : ∀ x y o, o ∈ assoc x →
+    o ∈ assoc y → x = y) (o : L) :
+    (that (ixLoc (assigned assoc) o) ⊤).Dom ↔ ∃ x, o ∈ assoc x := by
+  rw [that_dom_iff]
   exact ⟨fun ⟨x, hx, _⟩ ↦ ⟨x, hx.2⟩, fun ⟨x, hx⟩ ↦ ⟨x, ⟨trivial, hx⟩, fun y hy ↦ h y x o hy.2 hx⟩⟩
 
 /-! ### Introducing and anaphoric uses -/

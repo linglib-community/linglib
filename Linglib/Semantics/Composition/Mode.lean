@@ -30,16 +30,6 @@ and `Ty.combine` is the book's procedure for listing them.
 do not make their types smaller, so the recursion is on a bound, three steps for each unit of
 size.
 
-## Errata
-
-* The book says its interpreter finds every interpretation a sentence has in the theory. It
-  applies Join and Lower once to each way of combining two daughters, so it does not find a mode
-  that joins twice: a function into three layers of one effect and its argument combine by
-  application into three layers and, joined once, into two, but not into one.
-* The book says neither Eject rule feeds itself or the other. Eject on one daughter may be
-  followed by Eject on the other; what cannot happen is two on one daughter, since the first
-  leaves a computation there and not an arrow.
-
 ## TODO
 
 * That `Ty.combineAux` is the same at every bound from `3 * (l.size + r.size) + 3` on is not

@@ -27,14 +27,6 @@ tautologies](##Sbardolini2026.tautology).
   individuals or of worlds, which entail one another by inclusion. `IsSUM` takes at least one
   premise; with none, the restrictor of the singular definite would fail it.
 
-## Errata
-
-* The table marks `◇Fx` not SUM and `(Some A)F` SUM, but `◇` is `some` over the accessible worlds:
-  with one premise [both are SUM](##Sbardolini2026.isStrawsonUE_modal_some), with `n` [neither
-  is](##Sbardolini2026.not_isSUM_scope_some), nor is
-  [`(The F)A`](##Sbardolini2026.not_isSUM_definite_restrictor).
-* The table prints the tautology as `|A∩F| ≤ 0` and the contradiction as `3 ≤ |A∩F| ≥ 1`.
-
 ## TODO
 
 * Polar questions, imperatives, generics, plural definites, *both*, and the scope of *too*.
@@ -279,13 +271,10 @@ theorem isSUM_tautology_contradiction (A : Set E) :
 theorem isStrawsonUE_definite_restrictor (B : Set E) :
     IsStrawsonUE fun F ↦ definite (W := W) F B := by
   intro F G hFG w hF hG
-  simp only [definite, presupOfReferent] at hF hG ⊢
-  rcases hiF : iota F with _ | e
-  · simp [hiF] at hF
-  rcases hiG : iota G with _ | e'
-  · simp [hiG] at hG
-  obtain rfl := (iota_eq_some_iff.1 hiG).2 e (hFG (iota_eq_some_iff.1 hiF).1)
-  simpa [hiF, hiG] using hF
+  obtain ⟨e, he, heB⟩ := presupOfReferent_eq_true_iff.1 hF
+  obtain ⟨e', he'⟩ := Part.dom_iff_mem.1 (not_not.1 (presupOfReferent_eq_undefined_iff.not.1 hG))
+  obtain rfl := (mem_iota.1 he').2 e (hFG (mem_iota.1 he).1)
+  exact presupOfReferent_eq_true_iff.2 ⟨_, he', heB⟩
 
 -- With two premises, the restrictor of the singular definite is not SUM: *the novel* and *the
 -- cookbook* can be long while *the poem* is not, though nothing is both a novel and a cookbook.
@@ -293,32 +282,29 @@ theorem not_isSUM_definite_restrictor [Nonempty W] {B : Set E} {a b c : E} (ha :
     (hb : b ∈ B) (hc : c ∉ B) (hab : a ≠ b) : ¬ IsSUM fun F ↦ definite (W := W) F B := fun h ↦ by
   classical
   have := h {{a}, {b}} (by simp) {c} (by simp [Finset.inf'_insert, hab]) (Classical.arbitrary W)
-  simp [definite, presupOfReferent, ha, hb, hc] at this
+  simp [definite, ha, hb, hc] at this
 
 -- *\*The student sold any books*: the scope of the singular definite is SUM.
 theorem isSUM_definite_scope (A : Set E) : IsSUM (definite (W := W) A) := by
   intro s hs y hy w hall hdef
-  simp only [definite, presupOfReferent] at hall hdef ⊢
-  rcases hiA : iota A with _ | e
-  · simp [hiA] at hdef
-  simp only [hiA, Option.elim_some, Trivalent.ofProp_eq_true_iff] at hall ⊢
-  exact hy (Finset.inf'_induction hs id (p := (e ∈ ·)) (fun _ ha _ hb ↦ ⟨ha, hb⟩) hall)
+  obtain ⟨e, he⟩ :=
+    Part.dom_iff_mem.1 (not_not.1 (presupOfReferent_eq_undefined_iff.not.1 hdef))
+  refine presupOfReferent_eq_true_iff.2 ⟨e, he, hy (Finset.inf'_induction hs id (p := (e ∈ ·))
+    (fun _ ha _ hb ↦ ⟨ha, hb⟩) fun x hx ↦ ?_)⟩
+  obtain ⟨e', he', hx'⟩ := presupOfReferent_eq_true_iff.1 (hall x hx)
+  exact Part.mem_unique he he' ▸ hx'
 
 -- *\*It is Mary who sold any books*: the cleft, which presupposes that exactly one thing is `F`
 -- and says that it is `x`, is SUM, being the singular definite with scope `{x}` (20a).
 theorem isSUM_cleft (x : E) : IsSUM fun F ↦ definite (W := W) F {x} := by
   intro s hs y hy w hall hdef
-  simp only [definite, presupOfReferent] at hall hdef ⊢
   have hx : ∀ F ∈ s, x ∈ F := fun F hF ↦ by
-    have := hall F hF
-    rcases hiF : iota F with _ | e
-    · simp [hiF] at this
-    simp only [hiF, Option.elim_some, Trivalent.ofProp_eq_true_iff, Set.mem_singleton_iff] at this
-    exact this ▸ (iota_eq_some_iff.1 hiF).1
-  rcases hiy : iota y with _ | e
-  · simp [hiy] at hdef
-  simpa [hiy] using ((iota_eq_some_iff.1 hiy).2 x
-    (hy (Finset.inf'_induction hs id (p := (x ∈ ·)) (fun _ ha _ hb ↦ ⟨ha, hb⟩) hx))).symm
+    obtain ⟨e, he, rfl⟩ := presupOfReferent_eq_true_iff.1 (hall F hF)
+    exact (mem_iota.1 he).1
+  obtain ⟨e, he⟩ :=
+    Part.dom_iff_mem.1 (not_not.1 (presupOfReferent_eq_undefined_iff.not.1 hdef))
+  exact presupOfReferent_eq_true_iff.2 ⟨e, he, ((mem_iota.1 he).2 x
+    (hy (Finset.inf'_induction hs id (p := (x ∈ ·)) (fun _ ha _ hb ↦ ⟨ha, hb⟩) hx))).symm⟩
 
 -- *Only Mary sold any books*: *only x* is not SUM, since *only John saw a small bird* and *John
 -- saw a bird* do not entail *only John saw a bird* (22a).
@@ -373,9 +359,9 @@ theorem necessity {W : Type} (R : SetRel W W) :
 
 end Rivals
 
-/-! ### Errata -/
+/-! ### Possibility modals -/
 
-section Errata
+section Possibility
 
 variable {W : Type*}
 
@@ -392,6 +378,6 @@ theorem not_isSUM_modal_some {R : SetRel W W} {w u v : W} (hu : (w, u) ∈ R) (h
   have := h {{u}, {v}} (by simp) ∅ (by simp [Finset.inf'_insert, huv]) w
   simp [modal, Det.some, hu, hv] at this
 
-end Errata
+end Possibility
 
 end Sbardolini2026

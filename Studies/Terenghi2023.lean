@@ -13,7 +13,7 @@ neither, and a measure can further class the vectors from that atom by length, s
 person core that distance contrasts modify. The classes of lengths [partition the region near an
 atom](##distanceClass_partition); Mundari [grades each of its terms, Brazilian Portuguese only its
 non-local term and Satawal only its participant terms](##graded); and without a measure the
-semantics [is Harbour's vicinity semantics](##locates_iff_presup). Spanish *ese* [has two readings
+semantics [is Harbour's vicinity semantics](##locates_iff_mem_vicinity). Spanish *ese* [has two readings
 that overlap but differ](##ese_readings), as Harbour observes of person- and distance-based medials.
 
 ## Implementation notes
@@ -32,11 +32,6 @@ that overlap but differ](##ese_readings), as Harbour observes of person- and dis
   person term. The paper describes Mundari's third term as measuring distance from both
   participants; it anchors on the others' atom, as the non-participant term does throughout.
 
-## Errata
-
-* The classes of vector lengths are bounded by strict inequalities on both sides, which leaves the
-  cut-off lengths themselves in no class; each class here is closed at its lower cut-off.
-
 ## TODO
 
 * The change from ternary to binary systems as the loss of the last person feature to enter the
@@ -54,7 +49,7 @@ that overlap but differ](##ese_readings), as Harbour observes of person- and dis
 
 namespace Terenghi2023
 
-open Discourse
+open SpeechAct
 
 /-! ### Proximity and distance classes -/
 
@@ -146,16 +141,16 @@ instance (t : DeicticTerm) (V : Vectors E D) (y : E) : Decidable (t.Locates V y)
 
 section Harbour
 
-variable {E' W P T : Type} [PartialOrder E'] (c : Kaplan.Context W E' P T) (V : Vectors E' D)
+variable {E' W P T : Type} [PartialOrder E'] (c : SpeechAct.Context W E' P T) (V : Vectors E' D)
 
 /-- Without a measure, a demonstrative locates its referent as in Harbour's semantics, the
 vicinity of an anchor being NEAR its participants' atom, whenever every atom it admits is the
 participants of some referent. -/
-theorem locates_iff_presup (dem : DemonstrativeDeterminer) (R : DefiniteDescription.Restrictor E' W)
-    (d : ℕ) (g : ℕ → E') (s : W) (h : ∀ a ∈ dem.deixis, ∃ x, c.participants x = a) :
-    (dem.denote R d c {p | V.Near (c.participants p.1) p.2}).presup g s ↔
+theorem locates_iff_mem_vicinity (dem : DemonstrativeDeterminer) (d : ℕ) (g : ℕ → E')
+    (h : ∀ a ∈ dem.deixis, ∃ x, c.participants x = a) :
+    g d ∈ dem.vicinity c {p | V.Near (c.participants p.1) p.2} ↔
       (⟨dem.deixis, none⟩ : DeicticTerm).Locates V (g d) := by
-  rw [DemonstrativeDeterminer.denote_presup]
+  rw [DemonstrativeDeterminer.mem_vicinity]
   constructor
   · rintro ⟨x, hx, hn⟩
     exact ⟨_, hx, hn, by simp⟩

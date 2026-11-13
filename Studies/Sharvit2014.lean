@@ -145,11 +145,11 @@ def cell : Embedded → Finset Ordering
   | .present => ⟦Tense.present⟧
 
 @[simp] theorem presup_cell_past {π t : NonemptyInterval M} :
-    Perspective.Presup (Allen.ofPosition (cell .past)) π t ↔ t.Precedes π := by
+    π ~[Allen.toSetRel (Allen.ofPosition (cell .past))] t ↔ t.Precedes π := by
   simp [cell, Tense.denote_past]
 
 @[simp] theorem presup_cell_present {π t : NonemptyInterval M} :
-    Perspective.Presup (Allen.ofPosition (cell .present)) π t ↔ t.Overlaps π := by
+    π ~[Allen.toSetRel (Allen.ofPosition (cell .present))] t ↔ t.Overlaps π := by
   simp [cell, Tense.denote_present]
 
 /-- The readings of a tensed clause that is the complement of *before*. -/
@@ -169,7 +169,7 @@ inductive Reading
 speech time. -/
 def Reading.denote (SP : NonemptyInterval M) (q : Set (NonemptyInterval M)) :
     Reading → Set (NonemptyInterval M)
-  | .pronominal τ => {t | Perspective.Presup (Allen.ofPosition (cell τ)) SP t ∧ t ∈ q}
+  | .pronominal τ => {t | SP ~[Allen.toSetRel (Allen.ofPosition (cell τ))] t ∧ t ∈ q}
   | .existential τ => {t | ◇[Allen.toSetRel (Allen.ofPosition (cell τ))] (· ∈ q) t}
   | .null => q
 
@@ -178,7 +178,7 @@ index `k`, as in (30a), says that the time of `k` stands to the time of `j` as t
 and that the predicate holds at it. -/
 def clause (τ : Embedded) (j k : ℕ) (q : Set (NonemptyInterval M)) :
     (ℕ → NonemptyInterval M) → Prop :=
-  fun g ↦ Perspective.Presup (Allen.ofPosition (cell τ)) (g j) (g k) ∧ g k ∈ q
+  fun g ↦ g j ~[Allen.toSetRel (Allen.ofPosition (cell τ))] g k ∧ g k ∈ q
 
 variable {τ : Embedded} {j k : ℕ} {g : ℕ → NonemptyInterval M}
 
@@ -373,8 +373,7 @@ instance (τ : Embedded) : Decidable (L.Simultaneous τ) :=
 
 variable {L}
 
-theorem simultaneous_past_iff : L.Simultaneous .past ↔ L.sot :=
-  eq_mem_pastUnderPast_iff
+theorem simultaneous_past_iff : L.Simultaneous .past ↔ L.sot := .rfl
 
 end Language
 

@@ -33,7 +33,7 @@ Corbett's resolution rules state.
 
 namespace Person
 
-open Discourse
+open SpeechAct
 
 /-- The standard tripartition identifies the participant sets with the same person up to
 clusivity, a congruence for union. -/

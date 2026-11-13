@@ -26,12 +26,6 @@ printed object of each of the grammar's examples in the case the rules assign](#
 * The Fragment's phonemes do not write the *g* of *digi=kamera-n*, so one example goes unread.
 * A form of the tables is read in the Finnish case whose comparative label is its cell's case.
 
-## Errata
-
-* The grammar makes an affirmative sentence and either a resultative action or a definite quantity
-  enough for a total object; [it needs all three](##Object.case_ne_part_iff), and [the grammar's
-  own *Tyttö luki kirja-a* is no total object](##exists_affirmative_definite_not_total).
-
 ## References
 
 * [karlsson-2017]

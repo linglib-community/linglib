@@ -1,12 +1,14 @@
 module
 
 public import Linglib.Fragments.Mandarin.Nouns
+public import Linglib.Fragments.Mandarin.Pronouns
 public import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!
 # Mandarin indefinite pronouns
 
-Mandarin uses its bare interrogatives as indefinites, as *shéi* 'who' for 'someone, anyone', and
+Mandarin uses its bare interrogatives, the quexistentials of `Mandarin.Pronouns`, as indefinites,
+as *shéi* 'who' for 'someone, anyone', and
 derives two series from them with *dōu* and *yě* 'even, also; every, all', *shéi dōu* and *shéi yě*.
 Generic nouns such as *rén* 'person' are also used as indefinites, and the determiner *rènhé* 'any'
 can be counted a series of its own. The members are those of Haspelmath's table, the bare
@@ -27,10 +29,10 @@ def ren : IndefinitePronoun :=
   { form := Nouns.ren.form, script := some Nouns.ren.hanzi, ontology := .person }
 
 /-- Bare *shéi* 'who' used as an indefinite. -/
-def shei : IndefinitePronoun := { form := "shéi", script := some "谁", ontology := .person }
+def shei : IndefinitePronoun := ⟨Pronouns.shei⟩
 
 /-- Bare *shénme* 'what' used as an indefinite. -/
-def shenme : IndefinitePronoun := { form := "shénme", script := some "什么", ontology := .thing }
+def shenme : IndefinitePronoun := ⟨Pronouns.shenme⟩
 
 /-- *shéi dōu*, the interrogative with *dōu*. -/
 def sheiDou : IndefinitePronoun := { form := "shéi dōu", script := some "谁都", ontology := .person }
@@ -48,18 +50,18 @@ def genericNounSeries : IndefinitePronoun.Series := ⟨"generic noun", {ren}⟩
 
 /-- The bare interrogatives used as indefinites. -/
 def interrogativeSeries : IndefinitePronoun.Series :=
-  ⟨"bare interrogative", {shei, shenme, ⟨{ form := "nǎr" }, .place⟩,
-    ⟨{ form := "shénme dìfang" }, .place⟩, ⟨{ form := "shénme shíhou" }, .time⟩,
-    ⟨{ form := "zěnme" }, .manner⟩, ⟨{ form := "něi" }, .determiner⟩}⟩
+  ⟨"bare interrogative", Pronouns.quexistentials.image (⟨·⟩)⟩
 
 /-- The *dōu* series. -/
 def douSeries : IndefinitePronoun.Series :=
-  ⟨"dōu", {sheiDou, ⟨{ form := "shénme dōu" }, .thing⟩, ⟨{ form := "shénme dìfang dōu" }, .place⟩,
-    ⟨{ form := "něi … dōu" }, .determiner⟩}⟩
+  ⟨"dōu", {sheiDou, { form := "shénme dōu", ontology := .thing },
+    { form := "shénme dìfang dōu", ontology := .place },
+    { form := "něi … dōu", ontology := .determiner }}⟩
 
 /-- The *yě* series. -/
 def yeSeries : IndefinitePronoun.Series :=
-  ⟨"yě", {sheiYe, ⟨{ form := "shénme yě" }, .thing⟩, ⟨{ form := "shénme dìfang yě" }, .place⟩}⟩
+  ⟨"yě", {sheiYe, { form := "shénme yě", ontology := .thing },
+    { form := "shénme dìfang yě", ontology := .place }}⟩
 
 /-- The series of the determiner *rènhé*. -/
 def renheSeries : IndefinitePronoun.Series := ⟨"rènhé", {renhe}⟩

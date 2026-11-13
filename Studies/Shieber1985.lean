@@ -19,9 +19,8 @@ subordinate clauses is not context-free. The homomorphism `f` sends the words of
 letters, and the image of the language intersected with the regular language
 `r = w a* b* x c* d* y` is `w aᵐ bⁿ x cᵐ dⁿ y`. Erasing `w`, `x` and `y` leaves `aᵐ bⁿ cᵐ dⁿ`,
 which is not context-free, and the context-free languages are closed under homomorphisms and
-under intersection with regular languages. The weakening of Claim 3 in note 4 does not support
-this argument (see Errata), but the correction that allows a clause fewer noun phrases than verbs
-[still yields the theorem](##not_isContextFree_of_count_le). The argument needs the case
+under intersection with regular languages. A Claim 3 that allows a clause fewer noun phrases than
+verbs [also yields the theorem](##not_isContextFree_of_count_le). The argument needs the case
 distinction: identifying the two cases sends the cross-serial clauses onto `aᵏ cᵏ`, so their
 [case-blind image is context-free](##isContextFree_stringMap_eraseCase_crossSerial), as is the
 string set of Dutch, which has no such case marking and for which [pullum-gazdar-1982] give a
@@ -39,20 +38,6 @@ The letters put the accusative *d'chind* and *laa* before the dative *em Hans* a
 schema of Claim 2 and `f` do; the prose of Claim 2 puts the datives first. In the data, a verb
 requires the case of its entry in `German.Zurich.Verbs`, and a noun phrase bears the case its
 gloss marks.
-
-## Errata
-
-Note 4 restricts Claim 3 to clauses with as many noun phrases as verbs and says that this weaker
-claim suffices for the proof. It does not: with Claim 3 so restricted, the image with the frame
-erased can be `{aᵖ bᵠ cʳ dᵘ | p + q ≠ r + u} ∪ {aᵐ bⁿ cᵐ dⁿ}`, which is the union of the
-context-free `{aᵖ bᵠ cʳ dᵘ | p + q ≠ r + u}` and `{aᵏ bʲ cᵏ dˡ}`. [radzinski-2026] reports the
-correction in [ojeda-1988], credited there to Manaster Ramer: the subjects of the infinitives may
-be omitted, so a clause has at most as many noun phrases of each case as verbs requiring that
-case. Stated for all the clauses of the schema, that claim gives the result.
-
-## TODO
-
-Stating the counterexample to note 4 needs the closure of the context-free languages under union.
 
 ## References
 

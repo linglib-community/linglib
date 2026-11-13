@@ -14,7 +14,7 @@ usable proposition is not false (`usable.ne_false`), and one used where it is no
 true is in its extension gap there, so non-maximal readings are usability at gap-worlds
 (`usable.eq_undefined_of_ne_true`). Gap removal blocks them (`metaAssert_prevents_nonmax`), and
 tolerated exceptions cannot be mentioned (`exception_unaddressable`). Strong relevance, after Križ and Spector, is the bivalent counterpart
-of addressing, holding when the issue decides the proposition (`Setoid.Decides`).
+of addressing, holding when the issue determines the proposition (`Setoid.Determines`).
 
 ## Main definitions
 
@@ -142,12 +142,12 @@ theorem communicatedContent_antitone {q q' : Setoid W} (p : W → Trivalent) (hR
 /-! ### Strong relevance
 
 Bivalent counterpart of `addressesIssue`, from [kriz-spector-2021]: a `W → Prop` is *strongly
-relevant* to an issue when it is constant on each cell, that is, when the issue decides it;
+relevant* to an issue when it is constant on each cell, that is, when the issue determines it;
 Addressing has it as its special case on bivalent propositions
 (`KrizSpector2021.addressesIssue_iff_stronglyRelevant`). -/
 
-/-- A proposition is strongly relevant to an issue iff the issue decides it. -/
-abbrev isStronglyRelevantProp (q : Setoid W) (p : W → Prop) : Prop := q.Decides {w | p w}
+/-- A proposition is strongly relevant to an issue iff the issue determines it. -/
+abbrev isStronglyRelevantProp (q : Setoid W) (p : W → Prop) : Prop := q.Determines {w | p w}
 
 /-- Filter a set of propositions to those strongly relevant to `q`. -/
 def stronglyRelevantSet (q : Setoid W) (candidates : Set (W → Prop)) : Set (W → Prop) :=
@@ -155,9 +155,9 @@ def stronglyRelevantSet (q : Setoid W) (candidates : Set (W → Prop)) : Set (W 
 
 theorem trivial_relevant_iff_constant (p : W → Prop) :
     isStronglyRelevantProp ⊤ p ↔ ∀ w₁ w₂ : W, p w₁ ↔ p w₂ :=
-  Setoid.top_decides_iff
+  Setoid.top_determines_iff
 
-theorem exact_all_relevant (p : W → Prop) : isStronglyRelevantProp ⊥ p := Setoid.bot_decides
+theorem exact_all_relevant (p : W → Prop) : isStronglyRelevantProp ⊥ p := Setoid.bot_determines
 
 theorem exact_stronglyRelevantSet_eq (candidates : Set (W → Prop)) :
     stronglyRelevantSet ⊥ candidates = candidates :=

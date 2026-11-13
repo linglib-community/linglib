@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
-public import Linglib.Syntax.Minimalist.Locality.Phase
+public import Linglib.Syntax.Minimalist.Phase.Transfer
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
 /-!
 # Pietraszko (2026): In Defense of the Clause-Internal Phase
@@ -313,46 +314,53 @@ def phaseHeads (sp : Spine) : List LexicalItem.Token :=
   (sp.zipIdx.filter (·.1.phase)).map fun x ↦ tokOf sp x.2 x.1
 
 /-- The copy of the subject at height `j`, when it is pronounced at height `k`. -/
-def copyAt (k j : ℕ) : LinearizedSyntacticObject := if j = k then .leaf subj else .traceOf subj
+def copyAt (k j : ℕ) : PlanarSyntacticObject := if j = k then .leaf subj else .traceOf subj
 
 /-- Once the first `n` heads are merged, the tree has the subject pronounced at its height then,
 with deleted copies at its base and in every specifier it passed through. -/
-def treeAt (sp : Spine) (n : ℕ) : LinearizedSyntacticObject :=
+def treeAt (sp : Spine) (n : ℕ) : PlanarSyntacticObject :=
   let k := (stateAt sp n).height
   (sp.take n).zipIdx.foldl (fun t x ↦
-    let hp : LinearizedSyntacticObject := .leaf (tokOf sp x.2 x.1) * t
+    let hp : PlanarSyntacticObject := .leaf (tokOf sp x.2 x.1) * t
     if x.1.epp ∧ x.2 + 1 ≤ k then copyAt k (x.2 + 1) * hp else hp)
     (copyAt k 0 * (v * (V * obj)))
 
-/-- The subject is accessible under the condition `s` to the head at index `i`, merged on the tree
-built so far. -/
-def TreeAccessible (s : Impenetrability) (sp : Spine) (i : ℕ) : Prop :=
-  ∀ hd ∈ sp[i]?, ((.leaf (tokOf sp i hd) * treeAt sp i : LinearizedSyntacticObject) :
-    SyntacticObject).Accessible (phaseHeads sp) s (tokOf sp i hd) subj
+/-- The tree in which the head `hd` at index `i` has just merged. -/
+def probeTree (sp : Spine) (i : ℕ) (hd : Head) : PlanarSyntacticObject :=
+  .leaf (tokOf sp i hd) * treeAt sp i
 
-instance (s : Impenetrability) (sp : Spine) (i : ℕ) : Decidable (TreeAccessible s sp i) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, _))
+/-- The pronounced subject is accessible to the head at index `i`, merged on the tree built so
+far, when it lies in no complement of a phase head transferred by then under the schedule `pic`. -/
+def TreeAccessible (pic : PlanarSyntacticObject → Schedule) (sp : Spine) (i : ℕ) : Prop :=
+  ∀ hd ∈ sp[i]?, ∀ q ∈ occurrences (probeTree sp i hd) subj,
+    q ∉ sealed (occurrencesWith (probeTree sp i hd) (· ∈ phaseHeads sp)).toFinset
+      (complementDomain .raising (probeTree sp i hd) ∅) (pic (probeTree sp i hd)) ⊥
+
+instance (pic : PlanarSyntacticObject → Schedule) [∀ t Φ h s, Decidable (pic t Φ h s)]
+    (sp : Spine) (i : ℕ) : Decidable (TreeAccessible pic sp i) :=
+  inferInstanceAs (Decidable (∀ _ ∈ _, ∀ _ ∈ _, ¬ _))
 
 /-- In simple clauses (9)–(14) the subject is accessible to a head exactly when it is under
 [chomsky-2000]'s condition on the tree the derivation has built. -/
 theorem simple_accessible_iff (e : Bool) :
-    ∀ i < 2, Accessible (simple e) i ↔ TreeAccessible .phase (simple e) i := by
+    ∀ i < 2, Accessible (simple e) i ↔ TreeAccessible (Pic1 .raising) (simple e) i := by
   cases e <;> decide
 
 /-- The same in auxiliary constructions (16)–(21). -/
 theorem auxV_accessible_iff (e : Bool) :
-    ∀ i < 3, Accessible (auxV e) i ↔ TreeAccessible .phase (auxV e) i := by
+    ∀ i < 3, Accessible (auxV e) i ↔ TreeAccessible (Pic1 .raising) (auxV e) i := by
   cases e <;> decide
 
 /-- The same in reduced clauses (34)–(42). -/
 theorem reduced_accessible_iff (e : Bool) :
-    ∀ i < 2, Accessible (reduced e) i ↔ TreeAccessible .phase (reduced e) i := by
+    ∀ i < 2, Accessible (reduced e) i ↔ TreeAccessible (Pic1 .raising) (reduced e) i := by
   cases e <;> decide
 
 /-- Under [chomsky-2001]'s condition, T would agree with a subject left in the complement of Voice,
 against the default agreement of (6) and (11). -/
 theorem nextPhase_overgenerates :
-    ¬ TreeAccessible .phase (simple false) 1 ∧ TreeAccessible .nextPhase (simple false) 1 := by
+    ¬ TreeAccessible (Pic1 .raising) (simple false) 1 ∧
+      TreeAccessible (Pic2 .raising) (simple false) 1 := by
   decide
 
 end Pietraszko2026

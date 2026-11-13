@@ -108,8 +108,8 @@ inductive TriggerClass where
   | c
   deriving DecidableEq, Repr, Fintype
 
-/-- A printed significance mark; the thresholds differ between tables (*** is .001 in Table 1 and
-.0001 in Tables 3 and 5). -/
+/-- A printed significance mark of the two Tukey tables, Tables 1 and 3, where *** is
+significance at .0001. -/
 inductive Significance where
   /-- ***: significant at the table's strictest threshold -/
   | threeStars
@@ -278,9 +278,9 @@ def participants : Experiment → Participants
   | .exp2a => ⟨250, 6, 6, 238, 43⟩
   | .exp2b => ⟨250, 6, 6, 238, 240⟩
 
-/-- A row of the Tukey table of the Exp. 1a Results (tab:pairwise in the authors' LaTeX); *** is
-significance at .001, ** at .01, * at .05, . marginal at .1: Tukey pairwise comparisons of
-the projectivity means of the Experiment 1a contents; *** at .001 -/
+/-- A row of the Tukey table of the Exp. 1a Results, Table 1 (tab:pairwise in the authors'
+LaTeX); *** is significance at .0001, ** at .01, * at .05, . marginal at .1: Tukey pairwise
+comparisons of the projectivity means of the Experiment 1a contents; *** at .0001 -/
 structure PairwiseA where
   /-- The row expression. -/
   first : Expression
@@ -290,9 +290,9 @@ structure PairwiseA where
   significance : Significance
   deriving DecidableEq, Repr
 
-/-- The 36 rows of the Tukey table of the Exp. 1a Results (tab:pairwise in the authors' LaTeX);
-*** is significance at .001, ** at .01, * at .05, . marginal at .1, in the paper's order;
-from an experiment; checked against the PDF text layer only. -/
+/-- The 36 rows of the Tukey table of the Exp. 1a Results, Table 1 (tab:pairwise in the authors'
+LaTeX); *** is significance at .0001, ** at .01, * at .05, . marginal at .1, in the paper's
+order; from an experiment; checked against the page images. -/
 def pairwise1a : List PairwiseA :=
   [⟨.annoyed, .nrrc, .ns⟩,
    ⟨.nominalAppositive, .nrrc, .ns⟩,
@@ -331,9 +331,9 @@ def pairwise1a : List PairwiseA :=
    ⟨.only, .discover, .threeStars⟩,
    ⟨.only, .stupid, .twoStars⟩]
 
-/-- A row of the Tukey table of the Exp. 1b Results (tab:pairwise-1b in the authors' LaTeX); ***
-is significance at .0001, ** at .01, * at .05, . marginal at .1: Tukey pairwise comparisons
-of the projectivity means of the Experiment 1b complements; *** at .0001 -/
+/-- A row of the Tukey table of the Exp. 1b Results, Table 3 (tab:pairwise-1b in the authors'
+LaTeX); *** is significance at .0001, ** at .01, * at .05, . marginal at .1: Tukey pairwise
+comparisons of the projectivity means of the Experiment 1b complements; *** at .0001 -/
 structure PairwiseB where
   /-- The row predicate. -/
   first : Predicate
@@ -343,9 +343,9 @@ structure PairwiseB where
   significance : Significance
   deriving DecidableEq, Repr
 
-/-- The 66 rows of the Tukey table of the Exp. 1b Results (tab:pairwise-1b in the authors'
-LaTeX); *** is significance at .0001, ** at .01, * at .05, . marginal at .1, in the paper's
-order; from an experiment; checked against the PDF text layer only. -/
+/-- The 66 rows of the Tukey table of the Exp. 1b Results, Table 3 (tab:pairwise-1b in the
+authors' LaTeX); *** is significance at .0001, ** at .01, * at .05, . marginal at .1, in the
+paper's order; from an experiment; checked against the page images. -/
 def pairwise1b : List PairwiseB :=
   [⟨.notice, .annoyed, .ns⟩,
    ⟨.aware, .annoyed, .ns⟩,

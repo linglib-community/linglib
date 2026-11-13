@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Theta.Basic
-public import Linglib.Syntax.Minimalist.SyntacticObject.Lift
+public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 
 /-!
 # Realization of colored trees
@@ -39,11 +39,11 @@ variable {L : Type}
 /-- What an input color contributes to the realization: an anchored leaf its syntactic object, a
 lexical item or a trace, and the empty-tree marker and bare grids the unit. -/
 def Color.object : Color (L ⊕ Option L) → WithOne (SyntacticObject L)
-  | .lex a _ => ofLeaf a
+  | .lex a _ => (FreeCommMagma.of (Leaf.sumEquiv.symm a) : SyntacticObject L)
   | _ => 1
 
 @[simp] theorem Color.object_lex (a : L ⊕ Option L) (g : List PolarizedRole) :
-    (Color.lex a g).object = ofLeaf a := rfl
+    (Color.lex a g).object = (FreeCommMagma.of (Leaf.sumEquiv.symm a) : SyntacticObject L) := rfl
 
 @[simp] theorem Color.object_free (g : List PolarizedRole) :
     (Color.free g : Color (L ⊕ Option L)).object = 1 := rfl

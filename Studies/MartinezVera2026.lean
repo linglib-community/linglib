@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.MartinezVera2026
 public import Linglib.Discourse.Commitment.Basic
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Fragments.Quechua.SaraguroKichwa.Evidentiality
 public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Semantics.Evidential.Basic
@@ -321,7 +321,7 @@ are the scope, its negation and the variants, named by `Answer`; `miDefined_iff`
 presupposition of *=mi* in each example's context to a check on these names, and
 `judgment_eq_acceptable_iff_miDefined` compares it with the paper's judgments. -/
 
-open Discourse (Role)
+open SpeechAct (Role)
 
 /-- A `Site` is a constituent that *=mi* marks or a correction contrasts in the examples. -/
 inductive Site

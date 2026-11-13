@@ -40,12 +40,6 @@ and only an ordinary question suspend it](##coherent_iff).
   presupposition must hold in the former, a hard one in the latter; *if anyone* restricts the
   assumptions to the presupposition, and a reply must be consistent with the common ground.
 
-## Errata
-
-* (50b) prints `p_w = λw′ like_w′(j,x)` for the `p = λw′ like_w′(j,x)` of (49b), and the second
-  line of (37b) equates `p` with the truth value `think_w(j,q)` where (34b) has
-  `λw′ think_w′(j,p′)`.
-
 ## TODO
 
 * Lahiri's contextual restriction in place of the truth requirement (40), Rullmann's account of

@@ -21,7 +21,7 @@ neither can be innocently excluded, since negating both contradicts the assertio
 (`Exhaustification.not_isInnocentlyExcludable_of_subset_union`); the study's
 `exhIE_eq_self_of_isDomain` is that shape.
 
-* Indirect implicatures, (12)–(15), after [romoli-2013]: *some* is derived from *not all* by
+* Indirect implicatures, (12)–(15), after [romoli-2013a]: *some* is derived from *not all* by
   (15), it is the negation of the needed *not any*, and exhaustification is vacuous on every
   domain (`exhIE_indirect_eq_self`); the Atomicity Constraint of [trinh-haida-2015] removes
   *some*, (22), and the implicature follows (`exhIE_indirect_atomicity`).
@@ -75,7 +75,7 @@ domain `TrinhHaida2015.run_smoke_isDomain`. The examples are the rows of `Exampl
 * [katzir-2007]
 * [fox-katzir-2011]
 * [trinh-haida-2015]
-* [romoli-2013]
+* [romoli-2013a]
 * [swanson-2010]
 * [bergen-levy-goodman-2016]
 * [fox-2007]

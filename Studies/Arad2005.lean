@@ -60,10 +60,10 @@ single out the natural pairs.
 
 namespace Arad2005
 
-open Morphology Autosegmental MultiplanarForm DistributedMorphology
+open Morphology Autosegmental AR DistributedMorphology
 open McCarthy1981 (Morpheme)
 
-variable {α β : Type*}
+variable {α β : Type}
 
 /-! ### The binyanim (24b) -/
 
@@ -79,7 +79,7 @@ inductive Binyan where
 
 /-- `Prefixes α` holds the prefixal segments, the *n-* of nVCCVC, *h-* of hVCCVC, *h-i-t* of
 hitCVCCVC, and *m-*, *t-* of the mišqalim (24a). -/
-structure Prefixes (α : Type*) where
+structure Prefixes (α : Type) where
   /-- `n` is the *n* of nVCCVC. -/
   n : α
   /-- `h` is the *h* of hVCCVC and hitCVCCVC. -/
@@ -117,15 +117,15 @@ def Binyan.erasure : Binyan → Bool
 /-- `place pre t r` puts the prefix `pre` on the leftmost slots of `t`, with the root `r` not yet
 associated. -/
 def place (pre : List α) (t : Skeleton) (r : ConsonantalRoot α) :
-    MultiplanarForm Morpheme Slot α Morpheme :=
-  let m : MultiplanarForm Morpheme Slot α Morpheme :=
+    AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme)) :=
+  let m : AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme)) :=
     ofMelody .root .root r.segments * ofMelody .affix .affix pre * ofSlots .template t
   m.link .affix ((List.range pre.length).map fun k ↦ (k, k))
 
 /-- The consonantism of a binyan places its prefix, associates the root by the conventions and,
 under Erasure, applies the conventions again ([mccarthy-1981]). -/
 def consonantism (px : Prefixes α) (b : Binyan) (r : ConsonantalRoot α) :
-    MultiplanarForm Morpheme Slot α Morpheme :=
+    AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme)) :=
   let m := (place (b.prefix px) b.template r).associate .root .C
   if b.erasure then
     (((McCarthy1981.erasure m).associateOneToOne .root .C).associateRemaining .root .C).spread
@@ -201,26 +201,30 @@ theorem realizeVoice_isSome :
 
 /-- `vocalize` associates a vocalism with the consonantism by the conventions. -/
 def vocalize (px : Prefixes α) (v : Vowel → α) (b : Binyan) (vs : List Vowel)
-    (r : ConsonantalRoot α) : MultiplanarForm Morpheme Slot α Morpheme :=
+    (r : ConsonantalRoot α) :
+        AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme)) :=
   (ofMelody Morpheme.vocalism Morpheme.vocalism (vs.map v) * consonantism px b r).associate .vocalism .V
 
 /-- The stem of a root-derived verb has the binyan under v, Voice's vowels in its context and the
 root associated with it (p. 43). It is `none` where Voice has no exponent. -/
 def stem (px : Prefixes α) (v : Vowel → α) (b : Binyan) (voice : Voice)
-    (r : ConsonantalRoot α) : Option (MultiplanarForm Morpheme Slot α Morpheme) :=
+    (r : ConsonantalRoot α) :
+        Option (AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme))) :=
   (realizeVoice b voice).map fun x ↦ vocalize px v x.1 x.2 r
 
 /-! ### Spirantization and degemination (pp. 28–29) -/
 
 /-- `linked m` lists each slot with the melodic element linked to it, as its plane and position,
 and that element's segment. -/
-def linked (m : MultiplanarForm Morpheme Slot α Morpheme) : List (ℕ × (Morpheme × ℕ) × α) :=
+def linked (m : AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme))) :
+    List (ℕ × (Morpheme × ℕ) × α) :=
   (List.range m.template.length).filterMap fun i ↦
     (m.linkAt? i).bind fun e ↦ (m.segmentAt i).map (i, e, ·)
 
 /-- `spirantize f m` realizes each segment by `f`, given whether it follows a V-slot and is not
 the first slot of a geminate, whose element also occupies the next slot. -/
-def spirantize (f : Bool → α → α) (m : MultiplanarForm Morpheme Slot α Morpheme) :
+def spirantize (f : Bool → α → α) (m :
+    AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme))) :
     List (ℕ × (Morpheme × ℕ) × α) :=
   let l := linked m
   l.zipIdx.map fun ((i, a, x), j) ↦
@@ -235,7 +239,8 @@ def degeminate (l : List (ℕ × (Morpheme × ℕ) × α)) : List α :=
   (l.destutter fun p q ↦ p.2.1 ≠ q.2.1).map (·.2.2)
 
 /-- `surface f m` is the stem spirantized by `f` and degeminated. -/
-def surface (f : Bool → α → α) (m : MultiplanarForm Morpheme Slot α Morpheme) : List α :=
+def surface (f : Bool → α → α) (m :
+    AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme))) : List α :=
   degeminate (spirantize f m)
 
 /-- `verb` is the surface of the stem of a root-derived verb. -/
@@ -246,7 +251,7 @@ def verb (px : Prefixes α) (v : Vowel → α) (f : Bool → α → α) (b : Bin
 /-- `surfaceDegeminatedFirst` applies the rules in the order the book rules out, degemination before
 the spirantization of whatever follows a vowel. -/
 def surfaceDegeminatedFirst (isV : α → Bool) (f : Bool → α → α)
-    (m : MultiplanarForm Morpheme Slot α Morpheme) : List α :=
+    (m : AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme))) : List α :=
   let w := degeminate (linked m)
   w.zipIdx.map fun (x, j) ↦ f (0 < j && (w[j - 1]?.map isV).getD false) x
 
@@ -292,15 +297,16 @@ def Mishqal.vowels : Mishqal → List Vowel
 /-- The stem of a root-derived noun associates the root and the mišqal's own vowels with its
 template. -/
 def nounStem (px : Prefixes α) (v : Vowel → α) (q : Mishqal) (r : ConsonantalRoot α) :
-    MultiplanarForm Morpheme Slot α Morpheme :=
+    AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme)) :=
   (ofMelody Morpheme.vocalism Morpheme.vocalism (q.vowels.map v) *
     (place (q.prefix px) q.template r).associate .root .C).associate .vocalism .V
 
 /-! ### Relabeling -/
 
 theorem place_map (f : α → β) (pre : List α) (t : Skeleton) (r : ConsonantalRoot α) :
-    place (pre.map f) t (r.map f) = (place pre t r).map f := by
-  simp only [place, mul_eq_concat, ← link_map, map_concat, map_ofMelody, map_ofSlots,
+    place (pre.map f) t (r.map f) = (place pre t r).mapMelody f := by
+  simp only [place, ← link_mapMelody, mapMelody_mul, mapMelody_ofMelody,
+      mapMelody_ofSlots,
     ConsonantalRoot.segments_map, List.length_map]
 
 theorem prefix_map (f : α → β) (px : Prefixes α) (b : Binyan) :
@@ -308,19 +314,21 @@ theorem prefix_map (f : α → β) (px : Prefixes α) (b : Binyan) :
   cases b <;> rfl
 
 theorem consonantism_map (f : α → β) (px : Prefixes α) (b : Binyan) (r : ConsonantalRoot α) :
-    consonantism (px.map f) b (r.map f) = (consonantism px b r).map f := by
-  simp only [consonantism, prefix_map, place_map, associate_map]
-  split <;> simp only [McCarthy1981.erasure_map, associateOneToOne_map, associateRemaining_map,
-    spread_map]
+    consonantism (px.map f) b (r.map f) = (consonantism px b r).mapMelody f := by
+  simp only [consonantism, prefix_map, place_map, associate_mapMelody]
+  split <;> simp only [McCarthy1981.erasure_map, associateOneToOne_mapMelody,
+      associateRemaining_mapMelody,
+    spread_mapMelody]
 
 theorem vocalize_map (f : α → β) (px : Prefixes α) (v : Vowel → α) (b : Binyan)
     (vs : List Vowel) (r : ConsonantalRoot α) :
-    vocalize (px.map f) (f ∘ v) b vs (r.map f) = (vocalize px v b vs r).map f := by
-  simp only [vocalize, ← associate_map, map_mul, map_ofMelody, List.map_map, ← consonantism_map]
+    vocalize (px.map f) (f ∘ v) b vs (r.map f) = (vocalize px v b vs r).mapMelody f := by
+  simp only [vocalize, ← associate_mapMelody, mapMelody_mul, mapMelody_ofMelody,
+      List.map_map, ← consonantism_map]
 
 theorem stem_map (f : α → β) (px : Prefixes α) (v : Vowel → α) (b : Binyan) (voice : Voice)
     (r : ConsonantalRoot α) :
-    stem (px.map f) (f ∘ v) b voice (r.map f) = (stem px v b voice r).map (·.map f) := by
+    stem (px.map f) (f ∘ v) b voice (r.map f) = (stem px v b voice r).map (·.mapMelody f) := by
   simp only [stem, Option.map_map]
   congr 1
   funext x
@@ -328,13 +336,15 @@ theorem stem_map (f : α → β) (px : Prefixes α) (v : Vowel → α) (b : Biny
 
 theorem nounStem_map (f : α → β) (px : Prefixes α) (v : Vowel → α) (q : Mishqal)
     (r : ConsonantalRoot α) :
-    nounStem (px.map f) (f ∘ v) q (r.map f) = (nounStem px v q r).map f := by
+    nounStem (px.map f) (f ∘ v) q (r.map f) = (nounStem px v q r).mapMelody f := by
   have hq : q.prefix (px.map f) = (q.prefix px).map f := by cases q <;> rfl
-  simp only [nounStem, hq, ← associate_map, map_mul, map_ofMelody, List.map_map, ← place_map]
+  simp only [nounStem, hq, ← associate_mapMelody, mapMelody_mul, mapMelody_ofMelody,
+      List.map_map, ← place_map]
 
-theorem linked_map (f : α → β) (m : MultiplanarForm Morpheme Slot α Morpheme) :
-    linked (m.map f) = (linked m).map fun (i, a, x) ↦ (i, a, f x) := by
-  simp only [linked, template_map, linkAt?_map, segmentAt_map, List.map_filterMap]
+theorem linked_map (f : α → β) (m :
+    AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme))) :
+    linked (m.mapMelody f) = (linked m).map fun (i, a, x) ↦ (i, a, f x) := by
+  simp only [linked, template_mapMelody, linkAt?_map, segmentAt_mapMelody, List.map_filterMap]
   congr 1
   funext i
   cases m.linkAt? i with
@@ -342,16 +352,19 @@ theorem linked_map (f : α → β) (m : MultiplanarForm Morpheme Slot α Morphem
   | some a => cases m.segmentAt i <;> simp
 
 theorem spirantize_map (g h : α → β) (f : Bool → α → α) (f' : Bool → β → β)
-    (hf : ∀ b x, f' b (g x) = h (f b x)) (m : MultiplanarForm Morpheme Slot α Morpheme) :
-    spirantize f' (m.map g) = (spirantize f m).map fun (i, a, x) ↦ (i, a, h x) := by
-  simp only [spirantize, linked_map, template_map, List.zipIdx_map, List.map_map,
+    (hf : ∀ b x, f' b (g x) = h (f b x)) (m :
+        AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme))) :
+    spirantize f' (m.mapMelody g) = (spirantize f m).map fun (i, a, x) ↦ (i, a, h x) := by
+  simp only [spirantize, linked_map, template_mapMelody, List.zipIdx_map,
+      List.map_map,
     List.getElem?_map]
   refine List.map_congr_left fun ⟨⟨i, a, x⟩, j⟩ _ ↦ ?_
   rcases hj : (linked m)[j + 1]? with _ | ⟨_, b, _⟩ <;> simp [hj, hf]
 
 theorem surface_map (g h : α → β) (f : Bool → α → α) (f' : Bool → β → β)
-    (hf : ∀ b x, f' b (g x) = h (f b x)) (m : MultiplanarForm Morpheme Slot α Morpheme) :
-    surface f' (m.map g) = (surface f m).map h := by
+    (hf : ∀ b x, f' b (g x) = h (f b x)) (m :
+        AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme))) :
+    surface f' (m.mapMelody g) = (surface f m).map h := by
   simp only [surface, degeminate, spirantize_map g h f f' hf]
   rw [← List.map_destutter (f := fun x : ℕ × (Morpheme × ℕ) × α ↦ (x.1, x.2.1, h x.2.2))
     fun _ _ _ _ ↦ Iff.rfl, List.map_map, List.map_map]
@@ -394,15 +407,16 @@ theorem consonantism_cvccvc (px : Prefixes α) (w x y z : α) :
     (consonantism px .cvccvc ⟨[x, y, z]⟩).spellout = [x, y, y, z] ∧
       (consonantism px .cvccvc ⟨[w, x, y, z]⟩).spellout = [w, x, y, z] := by
   have h₃ : consonantism px .cvccvc ⟨[x, y, z]⟩ =
-      (consonantism numeralPx .cvccvc ⟨[0, 1, 2]⟩).map (label px (fun _ ↦ x) [x, y, z] x) := by
+      (consonantism numeralPx .cvccvc ⟨[0, 1, 2]⟩).mapMelody
+        (label px (fun _ ↦ x) [x, y, z] x) := by
     rw [← consonantism_map]
     rfl
   have h₄ : consonantism px .cvccvc ⟨[w, x, y, z]⟩ =
-      (consonantism numeralPx .cvccvc ⟨[0, 1, 2, 3]⟩).map
+      (consonantism numeralPx .cvccvc ⟨[0, 1, 2, 3]⟩).mapMelody
         (label px (fun _ ↦ x) [w, x, y, z] x) := by
     rw [← consonantism_map]
     rfl
-  rw [h₃, h₄, spellout_map, spellout_map]
+  rw [h₃, h₄, spellout_mapMelody, spellout_mapMelody]
   have : (consonantism numeralPx .cvccvc ⟨[0, 1, 2]⟩).spellout = [0, 1, 1, 2] ∧
       (consonantism numeralPx .cvccvc ⟨[0, 1, 2, 3]⟩).spellout = [0, 1, 2, 3] := by decide
   rw [this.1, this.2]
@@ -413,14 +427,15 @@ theorem freeBearers_vocalism (px : Prefixes α) (v : Vowel → α) (x y z : α) 
     (∀ b : Binyan, ((consonantism px b ⟨[x, y, z]⟩).freeBearers .V).length = 2) ∧
       ∀ q : Mishqal, (nounStem px v q ⟨[x, y, z]⟩).freeBearers .V = [] := by
   have hb : ∀ b, consonantism px b ⟨[x, y, z]⟩ =
-      (consonantism numeralPx b ⟨[0, 1, 2]⟩).map (label px v [x, y, z] x) := fun b ↦ by
+      (consonantism numeralPx b ⟨[0, 1, 2]⟩).mapMelody (label px v [x, y, z] x) := fun b ↦ by
     rw [← consonantism_map]
     rfl
   have hq : ∀ q, nounStem px v q ⟨[x, y, z]⟩ =
-      (nounStem numeralPx numeralVowel q ⟨[0, 1, 2]⟩).map (label px v [x, y, z] x) := fun q ↦ by
+      (nounStem numeralPx numeralVowel q ⟨[0, 1, 2]⟩).mapMelody (label px v [x, y, z] x) :=
+        fun q ↦ by
     rw [← nounStem_map, numeralPx_map, label_comp_numeralVowel]
     rfl
-  simp only [hb, hq, freeBearers_map]
+  simp only [hb, hq, freeBearers_mapMelody]
   decide
 
 /-! ### The data -/
@@ -829,7 +844,8 @@ theorem words_derived_seg : ∀ p ∈ fragmentRoots, ∀ a ∈ Wordlist.analyses
         Option.map_eq_some_iff] at hx
       obtain ⟨_, -, r, hr', rfl⟩ := hx
       exact hr'
-    rw [hr _ hx', verb_map segment surfaceSegment fricative fillContinuant fillContinuant_segment,
+    rw [hr _ hx', verb_map segment surfaceSegment fricative fillContinuant
+        fillContinuant_segment,
       verb_eq_of_not_mem_uncovered hf hx hu]
     rfl
   · have hx' : root? p.1 = some x.2 := by
@@ -837,7 +853,8 @@ theorem words_derived_seg : ∀ p ∈ fragmentRoots, ∀ a ∈ Wordlist.analyses
         Option.map_eq_some_iff] at hx
       obtain ⟨_, -, r, hr', rfl⟩ := hx
       exact hr'
-    rw [hr _ hx', nounStem_map, surface_map segment surfaceSegment fricative fillContinuant
+    rw [hr _ hx', nounStem_map, surface_map segment surfaceSegment fricative
+        fillContinuant
       fillContinuant_segment, nouns_derived a hf x hx]
 
 /-! ### Multiple Contextualized Meaning (Ch. 3, Ch. 7) -/

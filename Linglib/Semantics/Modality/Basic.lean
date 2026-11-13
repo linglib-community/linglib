@@ -21,9 +21,9 @@ and orientation locate a modal claim in time.
 
 ## Main definitions
 
-* `Modality.ModalForce`, with the strength order `possibility < weakNecessity < necessity`,
-  the classical dual `ModalForce.dual`, the concord class `ModalForce.IsUniversal`, and the
-  classical force `ModalForce.classical`, which reads weak necessity as necessity.
+* `Modality.QuantificationalForce`, existential or universal, with its dual and the action of
+  `Polarity`; `Modality.ModalForce.quantificational` reads a force's.
+* `Modality.ModalForce`, with the strength order `possibility < weakNecessity < necessity`.
 * `Modality.ModalForce.standard`: the standard a force sets on a scale of propositions.
 * `Modality.ModalFlavor` and the pair type `Modality.ForceFlavor`.
 * `Modality.TemporalPerspective`, `Modality.TemporalOrientation`.
@@ -58,6 +58,50 @@ namespace Modality
 
 /-! ### Modal force -/
 
+/-- The quantificational force of a modal: existential or universal quantification over its
+domain of worlds. -/
+inductive QuantificationalForce where
+  | existential
+  | universal
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+namespace QuantificationalForce
+
+/-- The strength of a quantificational force, existential the weaker. -/
+def rank : QuantificationalForce → ℕ
+  | existential => 0
+  | universal => 1
+
+/-- Quantificational forces are ordered by strength: over a nonempty domain a universal claim
+entails the existential one. -/
+instance : LinearOrder QuantificationalForce := LinearOrder.lift' rank (by decide)
+
+instance : BoundedOrder QuantificationalForce where
+  top := universal
+  le_top := by decide
+  bot := existential
+  bot_le := by decide
+
+/-- The dual exchanges the two forces, as negation does: what is not possible is necessarily
+not. -/
+def dual : QuantificationalForce → QuantificationalForce
+  | existential => universal
+  | universal => existential
+
+theorem dual_involutive : Function.Involutive dual := by rintro (_ | _) <;> rfl
+
+@[simp] theorem dual_dual (q : QuantificationalForce) : q.dual.dual = q := dual_involutive q
+
+theorem dual_ne (q : QuantificationalForce) : q.dual ≠ q := by cases q <;> decide
+
+/-- A polarity acts on quantificational forces, the negative polarity taking the dual. -/
+instance : MulAction Polarity QuantificationalForce :=
+  .ofEndHom (Polarity.lift ⟨dual, dual_involutive.comp_self⟩)
+
+@[simp] theorem negative_smul (q : QuantificationalForce) : Polarity.negative • q = q.dual := rfl
+
+end QuantificationalForce
+
 /-- A modal force is a quantificational strength. Weak necessity, *ought* and *should*, lies
 between necessity and possibility ([von-fintel-iatridou-2008]); whether it quantifies
 universally over a narrower domain ([von-fintel-iatridou-2008]), compares alternatives
@@ -87,36 +131,15 @@ instance : BoundedOrder ModalForce where
   bot := possibility
   bot_le := by decide
 
-/-- The classical dual exchanges necessity and possibility. Weak necessity has no settled
-possibility counterpart ([agha-jeretic-2026] §2.4) and is sent to possibility. -/
-def dual : ModalForce → ModalForce
-  | necessity => possibility
-  | weakNecessity => possibility
-  | possibility => necessity
+/-- The quantificational force of a force, weak necessity quantifying universally
+([von-fintel-iatridou-2008]). -/
+def quantificational : ModalForce → QuantificationalForce
+  | possibility => .existential
+  | weakNecessity | necessity => .universal
 
-/-- Necessity and weak necessity quantify universally, the concord class that separates them
-from possibility ([zeijlstra-2007]). -/
-def IsUniversal (f : ModalForce) : Prop := f ≠ possibility
-
-instance : DecidablePred IsUniversal := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
-
-/-- The classical force of a force, on the two-point scale of necessity and possibility along
-which [nauze-2008] and [matthewson-2016] compare modal systems: weak necessity quantifies
-universally ([von-fintel-iatridou-2008]) and counts as necessity. -/
-def classical : ModalForce → ModalForce
-  | possibility => possibility
-  | _ => necessity
-
-variable {f : ModalForce}
-
-@[simp]
-theorem dual_classical : f.classical.dual = f.dual := by cases f <;> rfl
-
-theorem dual_dual : f.dual.dual = f.classical := by cases f <;> rfl
-
-@[simp]
-theorem classical_eq_necessity_iff : f.classical = necessity ↔ f.IsUniversal := by
-  cases f <;> decide
+theorem monotone_quantificational : Monotone quantificational := by
+  intro f g h
+  cases f <;> cases g <;> first | exact absurd h (by decide) | decide
 
 /-! ### Forces as standards -/
 

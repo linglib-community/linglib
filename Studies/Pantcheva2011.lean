@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Morphology.Paradigm.Contiguity
+public import Linglib.Core.Algebra.Order.Interval.Set.Instances
 public import Mathlib.Topology.UnitInterval
 public import Studies.Zwarts2005
 
@@ -200,19 +201,11 @@ example : ∃ p q r : Path ℕ, IsCoinitial {1} p ∧ IsCofinal {1} q ∧ p.IsCo
 theorem isTransitive_reverse : IsTransitive R p.reverse ↔ IsTransitive R p :=
   hasShape_reverse p (d := fun _ ↦ ()) (s := .transitive)
 
-/-- The reversal of §5.4 on the unit interval, which assigns to each point `i` the position
-assigned to `1 - i`, as an order isomorphism onto the dual. -/
-def symmIso : unitInterval ≃o unitIntervalᵒᵈ where
-  toFun i := OrderDual.toDual (unitInterval.symm i)
-  invFun i := unitInterval.symm (OrderDual.ofDual i)
-  left_inv i := by simp
-  right_inv i := by simp
-  map_rel_iff' := unitInterval.symm_le_symm
-
 -- §5.4, §5.5
 theorem hasShape_comp_symm {γ : unitInterval → Loc} :
     HasShape R (γ ∘ unitInterval.symm) d s ↔ HasShape R γ d s.reverse := by
-  rw [show γ ∘ unitInterval.symm = (γ ∘ OrderDual.ofDual) ∘ symmIso from rfl, hasShape_comp,
+  rw [show γ ∘ unitInterval.symm = (γ ∘ OrderDual.ofDual) ∘ Set.Icc.symmOrderIso from rfl,
+    hasShape_comp,
     hasShape_comp_ofDual]
 
 /-- A shape is bounded in the table's sense exactly when its paths are not cumulative in the sense

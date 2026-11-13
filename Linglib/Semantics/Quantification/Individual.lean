@@ -93,26 +93,24 @@ entity reading where `iota` of its restrictor is defined; an indefinite or a uni
 on a singleton restrictor, which `iota` again detects. -/
 
 /-- `lower Q` is the entity whose individual is `Q`, defined when `Q` is a principal ultrafilter. -/
-noncomputable def lower : Quantifier E → Option E := Function.partialInv individual
+noncomputable def lower (Q : Quantifier E) : Part E := ⟨∃ a, individual a = Q, fun h ↦ h.choose⟩
 
-theorem lower_isPartialInv : Function.IsPartialInv individual (lower (E := E)) :=
-  individual_injective.isPartialInv
+/-- `lower` is the partial inverse of `individual`. -/
+@[simp] theorem mem_lower {Q : Quantifier E} {a : E} : a ∈ lower Q ↔ individual a = Q :=
+  ⟨fun ⟨h, ha⟩ ↦ ha ▸ h.choose_spec, fun h ↦
+    have hu : ∃ a, individual a = Q := ⟨a, h⟩
+    ⟨hu, individual_injective (hu.choose_spec.trans h.symm)⟩⟩
 
-theorem lower_eq_some_iff {Q : Quantifier E} {a : E} : lower Q = some a ↔ individual a = Q :=
-  lower_isPartialInv a Q
+@[simp] theorem lower_individual (a : E) : lower (individual a) = Part.some a :=
+  Part.eq_some_iff.2 (mem_lower.2 rfl)
 
-@[simp] theorem lower_individual (a : E) : lower (individual a) = some a :=
-  Function.partialInv_left individual_injective a
-
-@[simp] theorem lower_bot : lower (⊥ : Quantifier E) = none :=
-  Option.eq_none_iff_forall_ne_some.2 fun a h ↦
-    (congrFun (lower_eq_some_iff.1 h) Set.univ).mp (Set.mem_univ a)
+@[simp] theorem lower_bot : lower (⊥ : Quantifier E) = Part.none :=
+  Part.eq_none_iff.2 fun a h ↦ (congrFun (mem_lower.1 h) Set.univ).mp (Set.mem_univ a)
 
 private theorem lower_eq_iota_of {f : Det E}
     (hf : ∀ {A : Set E} {a : E}, f A = individual a ↔ A = {a}) (A : Set E) :
     lower (f A) = iota A :=
-  Option.ext fun _ ↦ lower_eq_some_iff.trans <| eq_comm.trans <| hf.trans <|
-    Set.eq_singleton_iff_unique_mem.trans iota_eq_some_iff.symm
+  Part.ext fun _ ↦ mem_lower.trans <| eq_comm.trans <| hf.trans mem_iota_iff_eq_singleton.symm
 
 /-- An indefinite has an entity reading by `lower` only where the definite does
 ([partee-1987], §3.4.1). -/
@@ -123,7 +121,10 @@ theorem lower_every (A : Set E) : lower (every A) = iota A :=
   lower_eq_iota_of (fun {_ _} ↦ by rw [individual_eq_every, every_injective.eq_iff]) A
 
 @[simp] theorem lower_the (A : Set E) : lower (the A) = iota A := by
-  rw [the_eq_elim]; cases iota A <;> simp
+  by_cases h : (iota A).Dom
+  · obtain ⟨a, ha⟩ := Part.dom_iff_mem.1 h
+    rw [the_eq_individual ha, lower_individual, Part.eq_some_iff.2 ha]
+  · rw [the_eq_bot h, lower_bot, Part.eq_none_iff'.2 h]
 
 /-! ### Individuals as complete homomorphisms
 

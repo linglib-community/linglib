@@ -40,17 +40,6 @@ context sorts (48).
   both, so the readings of (48) are unaffected; the trivalent propositions `beforeP` and `afterP`
   keep the definedness condition for von Fintel's Strawson entailment.
 
-## Errata
-
-* Proposition 1 identifies Heinämäki's *before* with Anscombe's on any instantiated, left-bounded
-  temporal clause, but passing from (36) to (37) replaces the interval `K`, of which a time
-  precedes all times, by the whole of `B`. On a temporal clause that holds at two intervals the
-  two come apart, since Heinämäki's *before* needs to precede only one of them
-  ([the counterexample](##not_forall_some_before_iff_beforeEver)). [It holds on a clause with one
-  interval](##some_before_iff_beforeEver), and [in general relative to an
-  interval](##some_before_iff_exists_beforeEver). The statement for *after* [is
-  correct](##some_after_iff_after).
-
 ## References
 
 * [beaver-condoravdi-2003]
@@ -238,18 +227,18 @@ variable {W T : Type*} [LinearOrder T]
 
 open Classical in
 /-- *A before B* at a world, (45), defined where `B` has an earliest time in the world. -/
-noncomputable def beforeP (A B : Set (W × T)) : W → Trivalent :=
-  Trivalent.condEvent (fun w ↦ ∃ e, IsLeast {t | (w, t) ∈ B} e)
-    (fun w ↦ uniform (· < ·) {t | (w, t) ∈ A} {t | (w, t) ∈ B})
+noncomputable def beforeP (A B : Set (Index W T)) : W → Trivalent :=
+  Trivalent.condEvent (fun w ↦ ∃ e, IsLeast {t | ⟨w, t⟩ ∈ B} e)
+    (fun w ↦ uniform (· < ·) {t | ⟨w, t⟩ ∈ A} {t | ⟨w, t⟩ ∈ B})
 
 open Classical in
 /-- *A after B* at a world, (45), defined where `B` has an earliest time in the world. -/
-noncomputable def afterP (A B : Set (W × T)) : W → Trivalent :=
-  Trivalent.condEvent (fun w ↦ ∃ e, IsLeast {t | (w, t) ∈ B} e)
-    (fun w ↦ uniform (· > ·) {t | (w, t) ∈ A} {t | (w, t) ∈ B})
+noncomputable def afterP (A B : Set (Index W T)) : W → Trivalent :=
+  Trivalent.condEvent (fun w ↦ ∃ e, IsLeast {t | ⟨w, t⟩ ∈ B} e)
+    (fun w ↦ uniform (· > ·) {t | ⟨w, t⟩ ∈ A} {t | ⟨w, t⟩ ∈ B})
 
 /-- The uniform *before* is Strawson downward entailing in its temporal clause. -/
-theorem isStrawsonDE_before (A : Set (W × T)) : IsStrawsonDE (beforeP A) := by
+theorem isStrawsonDE_before (A : Set (Index W T)) : IsStrawsonDE (beforeP A) := by
   intro _ _ hB w hq hp
   simp only [beforeP, Trivalent.condEvent_eq_true_iff, ne_eq, Trivalent.condEvent_eq_undefined_iff,
     not_not] at hq hp ⊢
@@ -258,7 +247,7 @@ theorem isStrawsonDE_before (A : Set (W × T)) : IsStrawsonDE (beforeP A) := by
   exact ⟨⟨e, he⟩, t, ht, e, he, hlt.trans_le (he'.2 (hB he.1))⟩
 
 /-- The uniform *after* is Strawson upward entailing in its temporal clause. -/
-theorem isStrawsonUE_after (A : Set (W × T)) : IsStrawsonUE (afterP A) := by
+theorem isStrawsonUE_after (A : Set (Index W T)) : IsStrawsonUE (afterP A) := by
   intro _ _ hB w hp hq
   simp only [afterP, Trivalent.condEvent_eq_true_iff, ne_eq, Trivalent.condEvent_eq_undefined_iff,
     not_not] at hq hp ⊢
@@ -282,31 +271,31 @@ section Modal
 variable {W T : Type*} [LinearOrder T]
 
 /-- The times at which `B` is instantiated in some world of `worlds` (46). -/
-def instTimes (worlds : Set W) (B : Set (W × T)) : Set T := {t | ∃ w ∈ worlds, (w, t) ∈ B}
+def instTimes (worlds : Set W) (B : Set (Index W T)) : Set T := {t | ∃ w ∈ worlds, ⟨w, t⟩ ∈ B}
 
 /-- `B` is instantiated in `w` when it holds there at some time. -/
-def Inst (B : Set (W × T)) (w : W) : Prop := ∃ t, (w, t) ∈ B
+def Inst (B : Set (Index W T)) (w : W) : Prop := ∃ t, ⟨w, t⟩ ∈ B
 
 /-- The connective (47) holds at `w` when some main-clause time stands in `cmp` to the earliest
 temporal-clause time across the alternatives of `w` at that time. -/
-def connective (cmp : T → T → Prop) (A B : Set (W × T)) (alt : HistoricalAlternatives W T)
+def connective (cmp : T → T → Prop) (A B : Set (Index W T)) (alt : HistoricalAlternatives W T)
     (w : W) : Prop :=
-  ∃ t, (w, t) ∈ A ∧ ∃ e, IsLeast (instTimes (alt (w, t)) B) e ∧ cmp t e
+  ∃ t, ⟨w, t⟩ ∈ A ∧ ∃ e, IsLeast (instTimes (alt ⟨w, t⟩) B) e ∧ cmp t e
 
 /-- *A before B* (47). -/
-abbrev before (A B : Set (W × T)) (alt : HistoricalAlternatives W T) (w : W) : Prop :=
+abbrev before (A B : Set (Index W T)) (alt : HistoricalAlternatives W T) (w : W) : Prop :=
   connective (· < ·) A B alt w
 
 /-- *A after B* (47). -/
-abbrev after (A B : Set (W × T)) (alt : HistoricalAlternatives W T) (w : W) : Prop :=
+abbrev after (A B : Set (Index W T)) (alt : HistoricalAlternatives W T) (w : W) : Prop :=
   connective (· > ·) A B alt w
 
-variable {cmp : T → T → Prop} {A B : Set (W × T)} {alt : HistoricalAlternatives W T} {w : W}
+variable {cmp : T → T → Prop} {A B : Set (Index W T)} {alt : HistoricalAlternatives W T} {w : W}
 
 -- (47), (45)
-theorem connective_iff_uniform_of_eq_singleton (h : ∀ t, alt (w, t) = {w}) :
-    connective cmp A B alt w ↔ uniform cmp {t | (w, t) ∈ A} {t | (w, t) ∈ B} := by
-  have hs (t : T) : instTimes (alt (w, t)) B = {t' | (w, t') ∈ B} := by
+theorem connective_iff_uniform_of_eq_singleton (h : ∀ t, alt ⟨w, t⟩ = {w}) :
+    connective cmp A B alt w ↔ uniform cmp {t | ⟨w, t⟩ ∈ A} {t | ⟨w, t⟩ ∈ B} := by
+  have hs (t : T) : instTimes (alt ⟨w, t⟩) B = {t' | ⟨w, t'⟩ ∈ B} := by
     rw [h t]
     ext
     simp [instTimes]
@@ -314,31 +303,31 @@ theorem connective_iff_uniform_of_eq_singleton (h : ∀ t, alt (w, t) = {w}) :
 
 -- (49)
 theorem connective_alt_inst (h : connective cmp A B alt w) :
-    ∃ t, (w, t) ∈ A ∧ ∃ w' ∈ alt (w, t), Inst B w' :=
+    ∃ t, ⟨w, t⟩ ∈ A ∧ ∃ w' ∈ alt ⟨w, t⟩, Inst B w' :=
   let ⟨t, htA, e, ⟨⟨w', hw', hB⟩, _⟩, _⟩ := h
   ⟨t, htA, w', hw', e, hB⟩
 
 /-- A clause respects the historical equivalence of a frame when worlds historically equivalent
 at `t` agree on it at all earlier times. -/
-def RespectsHistory (F : Temporal.TWFrame W T) (B : Set (W × T)) : Prop :=
-  ∀ ⦃w w' : W⦄ ⦃t t' : T⦄, t' < t → F.sim t w w' → ((w, t') ∈ B ↔ (w', t') ∈ B)
+def RespectsHistory (F : Temporal.TWFrame W T) (B : Set (Index W T)) : Prop :=
+  ∀ ⦃w w' : W⦄ ⦃t t' : T⦄, t' < t → F.sim t w w' → (⟨w, t'⟩ ∈ B ↔ ⟨w', t'⟩ ∈ B)
 
 /-- Beaver and Condoravdi's alternatives for a temporal clause over a frame (p. 50) lie among the
 historical alternatives and leave a world instantiating the clause as its own only
 alternative. -/
-structure Alternatives (F : Temporal.TWFrame W T) (B : Set (W × T)) where
+structure Alternatives (F : Temporal.TWFrame W T) (B : Set (Index W T)) where
   /-- The alternatives of a world at a time. -/
   alt : HistoricalAlternatives W T
   /-- The initial branch point condition. -/
   subset_alternatives : ∀ i, alt i ⊆ F.alternatives i
   /-- A world in which the temporal clause is instantiated is its own only alternative. -/
-  eq_singleton_of_inst : ∀ ⦃w⦄, Inst B w → ∀ t, alt (w, t) = {w}
+  eq_singleton_of_inst : ∀ ⦃w⦄, Inst B w → ∀ t, alt ⟨w, t⟩ = {w}
 
 variable {F : Temporal.TWFrame W T}
 
 /-- On a temporal clause instantiated in the world, (47) is (45). -/
 theorem connective_iff_uniform_of_inst (a : Alternatives F B) (hw : Inst B w) :
-    connective cmp A B a.alt w ↔ uniform cmp {t | (w, t) ∈ A} {t | (w, t) ∈ B} :=
+    connective cmp A B a.alt w ↔ uniform cmp {t | ⟨w, t⟩ ∈ A} {t | ⟨w, t⟩ ∈ B} :=
   connective_iff_uniform_of_eq_singleton (a.eq_singleton_of_inst hw)
 
 /-- *After* entails its temporal clause (§6). Its earliest time precedes the main-clause time, so
@@ -367,23 +356,23 @@ inductive BeforeReading where
   deriving DecidableEq, Repr
 
 /-- The veridical reading has every world of the context instantiate `B`. -/
-def Veridical (B : Set (W × T)) (c : Set W) : Prop := ∀ w ∈ c, Inst B w
+def Veridical (B : Set (Index W T)) (c : Set W) : Prop := ∀ w ∈ c, Inst B w
 
 /-- The counterfactual reading has no world of the context instantiate `B`. -/
-def Counterfactual (B : Set (W × T)) (c : Set W) : Prop := ∀ w ∈ c, ¬ Inst B w
+def Counterfactual (B : Set (Index W T)) (c : Set W) : Prop := ∀ w ∈ c, ¬ Inst B w
 
 /-- The non-committal reading has some worlds of the context instantiate `B` and some not. -/
-def NonCommittal (B : Set (W × T)) (c : Set W) : Prop :=
+def NonCommittal (B : Set (Index W T)) (c : Set W) : Prop :=
   (∃ w ∈ c, Inst B w) ∧ ∃ w ∈ c, ¬ Inst B w
 
 /-- The property of a context that a reading names. -/
-def BeforeReading.Holds (B : Set (W × T)) (c : Set W) : BeforeReading → Prop
+def BeforeReading.Holds (B : Set (Index W T)) (c : Set W) : BeforeReading → Prop
   | .veridical => Veridical B c
   | .counterfactual => Counterfactual B c
   | .nonCommittal => NonCommittal B c
 
 /-- Each nonempty context has exactly one of the readings (48). -/
-theorem existsUnique_reading {B : Set (W × T)} {c : Set W} (hc : c.Nonempty) :
+theorem existsUnique_reading {B : Set (Index W T)} {c : Set W} (hc : c.Nonempty) :
     ∃! r : BeforeReading, r.Holds B c := by
   obtain ⟨w₀, hw₀⟩ := hc
   by_cases hv : Veridical B c
@@ -405,7 +394,7 @@ theorem existsUnique_reading {B : Set (W × T)} {c : Set W} (hc : c.Nonempty) :
   cases r
   exacts [absurd hr hv, absurd hr hcf, rfl]
 
-variable [LinearOrder T] {A B : Set (W × T)} {F : Temporal.TWFrame W T}
+variable [LinearOrder T] {A B : Set (Index W T)} {F : Temporal.TWFrame W T}
 
 /-- A context updated with *A after B* is veridical (p. 51). -/
 theorem veridical_inter_after (a : Alternatives F B) (hB : RespectsHistory F B) (c : Set W) :
@@ -415,7 +404,7 @@ theorem veridical_inter_after (a : Alternatives F B) (hB : RespectsHistory F B) 
 -- (49)
 theorem alt_inst_of_mem_inter_before {alt : HistoricalAlternatives W T} {c : Set W} {w : W}
     (hw : w ∈ c ∩ {w | before A B alt w}) :
-    ∃ t, (w, t) ∈ A ∧ ∃ w' ∈ alt (w, t), Inst B w' :=
+    ∃ t, ⟨w, t⟩ ∈ A ∧ ∃ w' ∈ alt ⟨w, t⟩, Inst B w' :=
   connective_alt_inst hw.2
 
 end Readings
@@ -452,10 +441,10 @@ def World.completion : World → Option ℕ
   | _ => none
 
 /-- The world–time pairs at which Mozart dies. -/
-def dies : Set (World × ℕ) := {i | i.1.death = i.2}
+def dies : Set (Index World ℕ) := {i | i.world.death = i.time}
 
 /-- The world–time pairs at which Mozart finishes the Requiem. -/
-def finishes : Set (World × ℕ) := {i | i.1.completion = some i.2}
+def finishes : Set (Index World ℕ) := {i | i.world.completion = some i.time}
 
 /-- Worlds are historically equivalent at `t` when they agree on Mozart's death and on his
 finishing at all earlier times, each fact being settled from the next time on. -/
@@ -467,7 +456,7 @@ theorem respectsHistory_finishes : RespectsHistory frame finishes :=
   fun _ _ _ t' ht h ↦ by simpa [finishes] using h (t', false) ht
 
 theorem mem_alternatives_of_le_one {t : ℕ} (ht : t ≤ 1) (w v : World) :
-    v ∈ frame.alternatives (w, t) := by
+    v ∈ frame.alternatives ⟨w, t⟩ := by
   have hd (u : World) : u.death ≠ 0 := by cases u <;> decide
   have hc (u : World) : u.completion ≠ some 0 := by cases u <;> decide
   rintro ⟨n, b⟩ hn
@@ -478,9 +467,9 @@ theorem mem_alternatives_of_le_one {t : ℕ} (ht : t ≤ 1) (w v : World) :
 up to Mozart's death in `early` and `idle`, where the world in which he lives longer is
 normal. -/
 def alt : HistoricalAlternatives World ℕ
-  | (.early, t) => if t ≤ 1 then {.early, .later} else {.early}
-  | (.idle, t) => if t ≤ 1 then {.idle, .idleLater} else {.idle}
-  | (w, _) => {w}
+  | ⟨.early, t⟩ => if t ≤ 1 then {.early, .later} else {.early}
+  | ⟨.idle, t⟩ => if t ≤ 1 then {.idle, .idleLater} else {.idle}
+  | ⟨w, _⟩ => {w}
 
 /-- The alternatives of the Mozart example meet the conditions of p. 50. -/
 def alternatives : Alternatives frame finishes where

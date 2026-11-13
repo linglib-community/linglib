@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Case.Assignment
-public import Linglib.Syntax.Minimalist.Locality.Transfer
+public import Linglib.Syntax.Minimalist.Phase.Transfer
 
 /-!
 # Case on syntactic objects
@@ -53,7 +53,7 @@ namespace Minimalist
 
 open Core.Order Case
 
-variable (hd : HeadFunction) (t : LinearizedSyntacticObject) (Φ : Finset TreePath)
+variable (hd : HeadFunction) (t : PlanarSyntacticObject) (Φ : Finset TreePath)
   (D : TreePath → Set TreePath) [∀ h, DecidablePred (· ∈ D h)] (h : TreePath)
 
 /-- The copies of an NP standing in what the phase head at `h` transfers on its own, each at the
@@ -73,12 +73,12 @@ def SpelledOutAt (tok : LexicalItem.Token) : Prop :=
 copy of `y` there. -/
 def CCommandsAt (x y : LexicalItem.Token) : Prop :=
   ∃ p ∈ copiesAt hd t Φ D h x, ∃ q ∈ copiesAt hd t Φ D h y,
-    t.val.CCommands p q ∧ ¬ t.val.CCommands q p
+    t.toRoseTree.CCommands p q ∧ ¬ t.toRoseTree.CCommands q p
 
 /-- The head at `a` reaches an NP when it c-commands a copy of it standing in what `h`
 transfers. -/
 def ReachesAt (a : TreePath) (tok : LexicalItem.Token) : Prop :=
-  ∃ p ∈ copiesAt hd t Φ D h tok, t.val.CCommands a p
+  ∃ p ∈ copiesAt hd t Φ D h tok, t.toRoseTree.CCommands a p
 
 instance (tok : LexicalItem.Token) : Decidable (VisibleAt hd t Φ D h tok) :=
   inferInstanceAs (Decidable (_ ≠ _))
@@ -96,8 +96,8 @@ instance (a : TreePath) (tok : LexicalItem.Token) : Decidable (ReachesAt hd t Φ
 def projectingHeads : List (TreePath × LexicalItem.Token) :=
   -- Sorted by bucketing on depth: `List.insertionSort` does not unfold under `decide +kernel` in
   -- a module file, which the studies' checks run in.
-  (List.range t.val.numNodes).reverse.flatMap fun n ↦
-    (tokenList t.val).filter fun x ↦ x.1.toList.length == n && projectionAt hd t x.1 != x.1
+  (List.range t.toRoseTree.numNodes).reverse.flatMap fun n ↦
+    (tokenList t.toRoseTree).filter fun x ↦ x.1.toList.length == n && projectionAt hd t x.1 != x.1
 
 /-- The probes of the phase head at `h`: the heads with an Agree case whose complement it
 transfers, deepest first, each with its case and the NPs of `U` it reaches. -/

@@ -25,15 +25,6 @@ allows](##readings_fit_fullNP), and a Russian possessive inside an NP
 * A modifier has [no mode with a relational noun](##possessive_modes), so the possessor slot is
   closed first, with `⨆`.
 
-## Errata
-
-* (8), (9) and (15) apply a relation to the possessee first; (10) and (14), as here, to the
-  possessor.
-* (34b) translates a full NP as 'mine'; the parallel (32b) has 'my country'.
-* *portret* with an instrumental pronoun
-  [lacks the possession reading](##not_instrumental_possession) (footnote 13), which the authors
-  cannot explain.
-
 ## TODO
 
 * (18)–(22), *ničej* (footnote 16) and the German adjective test (footnote 11) are not encoded.

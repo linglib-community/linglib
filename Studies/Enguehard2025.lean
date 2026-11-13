@@ -2,7 +2,7 @@ module
 
 public import Studies.Fox2018
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.Probabilistic.Basic
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.TFAE
 
@@ -35,7 +35,7 @@ communicative stability](##Enguehard2025.weaklyStable_iff_isOptimal).
   where nothing is true this holds vacuously.
 * The theorem relating strong stability to exhaustification assumes finitely many alternatives,
   which the appendix assumes for innocent exclusion and minimal worlds; its basic form needs the
-  assumption too (see Errata).
+  assumption too.
 * The paper compares strong stability with the condition of a 2020 manuscript of Fox's, that
   exhaustification yield exactly the induced partition rather than contain it. Fox's 2018 paper
   states the same condition, Question Partition Matching, so the comparison runs through
@@ -58,33 +58,6 @@ communicative stability](##Enguehard2025.weaklyStable_iff_isOptimal).
   meanings, which is the paper's assumption that no two messages tie; the utility is its
   logarithm, which the comparison drops. A prior is a probability measure giving every world
   positive mass, and the worlds are finitely many, where the paper also allows countably many.
-
-## Errata
-
-* The result on two-place connectives fails when its condition that the atoms are not dominated
-  is read among the alternatives alone: [six propositions over two
-  atoms](##Enguehard2025.exists_not_isUpperSet_of_bilaterallyStronglyStable), among them
-  *if q then p*, are bilaterally strongly stable with neither atom dominated, yet *if q then p* is
-  not monotone. The result holds when the negated atoms are not dominated among the negations
-  either ([repaired](##Enguehard2025.eq_setOf_isUpperSet_of_bilaterallyStronglyStable)).
-* The theorem relating strong stability to exhaustification is stated for any set of
-  alternatives, and the appendix assumes them finite only for innocent exclusion and minimal
-  worlds, but its omitted lemma, that exhaustifying against the non-dominated alternatives changes
-  nothing, fails for infinitely many: [over `ℕ ∪ {∞}` the non-dominated
-  alternatives](##Enguehard2025.exists_image_exh_eq_classes_not_stronglyStable) exhaustify to
-  exactly the induced partition, yet none is strongest at `∞`.
-* The results on symmetric and on projectively symmetric functions, and their proofs, assume at
-  least two atoms: [*p* and *not p*](##Enguehard2025.exists_quantityInvariant_not_isUpperSet)
-  over one atom are bilaterally strongly stable and symmetric, and *not p*, the negated
-  existential, is not monotone.
-* Weak stability as defined holds vacuously at a world where no alternative is true, whereas the
-  proof of the clone result for weak stability assumes that every world has a true and a false
-  alternative, the coverage the paper asks of the strongest answer condition and assumes in its
-  probabilistic model. Under the definition as printed that result fails: [the falsity-preserving
-  functions](##Enguehard2025.exists_isClone_bilaterallyWeaklyStable_not_isUpperSet) form a proper
-  clone that contains exclusive disjunction and is bilaterally weakly stable,
-  vacuously so where no atom holds. With the coverage the result
-  [holds](##Enguehard2025.isUpperSet_of_isClone).
 
 ## TODO
 
@@ -221,7 +194,7 @@ theorem tfae_stronglyStable (A : Set (Set W)) (hA : A.Finite) :
       (isStrongestTrueAnswer_of_exhMW_subset hA' hp hw (he.le.trans (hsub w)))⟩
   tfae_finish
 
--- (26) for infinitely many alternatives (Errata): over `ℕ ∪ {∞}`, the alternatives `[n, ∞]`, `{n}`
+-- (26) for infinitely many alternatives: over `ℕ ∪ {∞}`, the alternatives `[n, ∞]`, `{n}`
 -- and `{0, ∞}`; the `[n, ∞]` are dominated, the others exhaustify to the singletons, the induced
 -- partition, yet none is strongest at `∞`
 theorem exists_image_exh_eq_classes_not_stronglyStable :
@@ -424,7 +397,7 @@ private theorem isUpperSet_fin_two {φ : Set (Set (Fin 2))} (hφ : IsUpperSet φ
     · refine ⟨univ, .inr <| ext fun J ↦ ?_⟩
       rcases fin_two_cases J with rfl | rfl | rfl | rfl <;> simp [hE, h0, h1, hU]
 
--- (32b), with the negated atoms also not dominated among the negations (Errata)
+-- (32b), with the negated atoms also not dominated among the negations
 theorem eq_setOf_isUpperSet_of_bilaterallyStronglyStable {A : Set (Set (Set (Fin 2)))}
     (hat : ∀ i, {I | i ∈ I} ∈ A) (h : BilaterallyStronglyStable A)
     (hdom : ∀ i, ¬ Dominated A {I | i ∈ I})
@@ -453,7 +426,8 @@ theorem eq_setOf_isUpperSet_of_bilaterallyStronglyStable {A : Set (Set (Set (Fin
   obtain ⟨I, rfl | rfl⟩ := isUpperSet_fin_two hφ
   exacts [Ici_mem hat hup h.1 I, compl_Iic_mem hat hup h.2 I]
 
--- (32b) as printed: neither atom is dominated, yet *if q then p* is not monotone (Errata)
+-- (32b) without that condition on the negations: neither atom is dominated, yet *if q then p*
+-- is not monotone
 theorem exists_not_isUpperSet_of_bilaterallyStronglyStable :
     ∃ A : Set (Set (Set (Fin 2))), (∀ i, {I | i ∈ I} ∈ A) ∧ BilaterallyStronglyStable A ∧
       (∀ i, ¬ Dominated A {I | i ∈ I}) ∧ ∃ φ ∈ A, ¬ IsUpperSet φ := by
@@ -838,7 +812,7 @@ private theorem inter_eq_empty_of_atom_subset (hJ : LivesOn (· ∈ φ) J)
 
 end Projective
 
--- (37b), for at least two atoms (Errata): the conjunctions and disjunctions of atoms are
+-- (37b), for at least two atoms: the conjunctions and disjunctions of atoms are
 -- alternatives, and every alternative is upward monotone
 theorem isUpperSet_of_bilaterallyStronglyStable [Nontrivial ι] {A : Set (Set (Set ι))}
     (hat : ∀ i, {I | i ∈ I} ∈ A) (hps : ∀ φ ∈ A, IsProjectivelySymmetric φ)
@@ -896,7 +870,7 @@ theorem isUpperSet_of_bilaterallyStronglyStable [Nontrivial ι] {A : Set (Set (S
     rw [hu, show (Iic (univ : Set ι))ᶜ = ∅ from (congrArg compl Iic_top).trans compl_univ, ← hχ0]
     exact hχ
 
--- (34c) and (37b) at a single atom: `p` and `¬p` (Errata)
+-- (34c) and (37b) at a single atom: `p` and `¬p`
 theorem exists_quantityInvariant_not_isUpperSet :
     ∃ A : Set (Set (Set Unit)), (∀ i, {I | i ∈ I} ∈ A) ∧
       (∀ φ ∈ A, QuantityInvariant (· ∈ φ) ∧ IsProjectivelySymmetric φ) ∧
@@ -1113,7 +1087,7 @@ theorem bilaterallyStronglyStable_univ : BilaterallyStronglyStable (univ : Set (
   refine ⟨fun w ↦ ⟨{w}, ⟨trivial, rfl⟩, fun ψ ⟨_, hw⟩ ↦ singleton_subset_iff.2 hw⟩,
     fun w ↦ ⟨{w}, ⟨⟨{w}ᶜ, trivial, compl_compl _⟩, rfl⟩, fun ψ ⟨_, hw⟩ ↦ singleton_subset_iff.2 hw⟩⟩
 
--- (40a), with a true and a false member at every world (Errata)
+-- (40a), with a true and a false member at every world
 theorem isUpperSet_of_isClone {F : ∀ n : ℕ, Set (Set (Set (Fin n)))} (hF : IsClone F)
     (hL : ∃ n, 0 < n ∧ F n ≠ univ) (hT : ∀ n, 0 < n → ∀ w, ∃ φ ∈ F n, w ∈ φ)
     (hF' : ∀ n, 0 < n → ∀ w, ∃ φ ∈ F n, w ∉ φ)
@@ -1199,8 +1173,8 @@ theorem bilaterallyStronglyStable_iff_eq_isUpperSet {F : ∀ n : ℕ, Set (Set (
   exact sUnion_mem h0 hu (toFinite _) (image_subset_iff.2 fun I _ ↦
     Ici_mem (hF.atom_mem n) (hup n hn) (h n hn).1 I)
 
--- (40a) as printed: the falsity-preserving functions form a proper clone, bilaterally weakly
--- stable, vacuously where no atom holds, that holds exclusive disjunction (Errata)
+-- (40a) without that coverage: the falsity-preserving functions form a proper clone,
+-- bilaterally weakly stable, vacuously where no atom holds, that holds exclusive disjunction
 theorem exists_isClone_bilaterallyWeaklyStable_not_isUpperSet :
     ∃ F : ∀ n : ℕ, Set (Set (Set (Fin n))), IsClone F ∧ (∀ n, F n ≠ univ) ∧
       (∀ n, BilaterallyWeaklyStable (range fun i : Fin n ↦ {I | i ∈ I}) (F n)) ∧

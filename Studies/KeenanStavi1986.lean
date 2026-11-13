@@ -49,13 +49,6 @@ an infinite universe the finitary closure is strictly smaller than the conservat
 quantifiers count with. Canonical witnesses of each size are initial segments of a fixed
 enumeration (`segment`), which nest, unlike arbitrarily chosen subsets.
 
-## Errata
-
-* PROP 14(c) and its gloss say that the cardinal functions are always a proper subset of the
-  existential ones. On a universe of one individual the two classes coincide
-  (`cardinalSubalgebra_eq_of_subsingleton`), so `cardinalSubalgebra_lt` assumes two
-  individuals.
-
 ## TODO
 
 * Footnote 10(b): on an infinite universe `CARD ⊊ E-Det ⊓ LOG`, witnessed by the paper's `f₀`.

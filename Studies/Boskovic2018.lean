@@ -3,7 +3,7 @@ module
 public import Studies.Chomsky2013
 public import Studies.Collins2005
 public import Linglib.Data.Examples.Boskovic2018
-public import Linglib.Syntax.Minimalist.Locality.Transfer
+public import Linglib.Syntax.Minimalist.Phase.Transfer
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
 /-!
@@ -53,7 +53,7 @@ which moves a non-phase, obeys the condition while violating the traditional ban
 
 namespace Boskovic2018
 
-open Core.Order Minimalist Minimalist.LinearizedSyntacticObject
+open Core.Order Minimalist Minimalist.PlanarSyntacticObject
 open Chomsky2013 (tok nominal IsRoot)
 
 /-! ### Labeling, phases and the PIC -/
@@ -81,17 +81,17 @@ abbrev Agreed (f : Feature) : LexicalItem.Token → LexicalItem.Token → Prop :
   Relation.SymmGen (Shares f)
 
 /-- The heads minimal search finds that can label `x`: roots are too weak to label. -/
-def labelers (t : LinearizedSyntacticObject) (x : SyntacticObject) : Finset LexicalItem.Token :=
+def labelers (t : PlanarSyntacticObject) (x : SyntacticObject) : Finset LexicalItem.Token :=
   (t.labels x).filter (¬ IsRoot ·)
 
 /-- Labeling in the paper, that of [chomsky-2013]: by the one head that can label, or by a feature
 the heads that can label share, when none of them is a daughter. -/
-def IsLabeled (t : LinearizedSyntacticObject) (x : SyntacticObject) : Prop :=
+def IsLabeled (t : PlanarSyntacticObject) (x : SyntacticObject) : Prop :=
   (∃ a ∈ labelers t x, labelers t x = {a}) ∨
     ((labelers t x).Nontrivial ∧ (∀ a ∈ labelers t x, ¬ SyntacticObject.ImmediatelyContains x ↑a) ∧
       ∃ f, (labelers t x : Set LexicalItem.Token).Pairwise (Agreed f))
 
-instance (t : LinearizedSyntacticObject) (x : SyntacticObject) : Decidable (IsLabeled t x) :=
+instance (t : PlanarSyntacticObject) (x : SyntacticObject) : Decidable (IsLabeled t x) :=
   haveI : Decidable (labelers t x).Nontrivial :=
     decidable_of_iff _ Finset.one_lt_card_iff_nontrivial
   inferInstanceAs (Decidable (_ ∨ _))
@@ -110,7 +110,7 @@ instance : DecidablePred IsPhaseHeadNP := fun _ ↦ inferInstanceAs (Decidable (
 a phase head, transferred once its phase, the head's projection under `hd`, is complete. -/
 def ObeysPic (hd : HeadFunction) (Φ : LexicalItem.Token → Prop) [DecidablePred Φ]
     (d : Derivation) : Prop :=
-  ∀ t ∈ d.externalize?, ∀ x ∈ tokenList t.val,
+  ∀ t ∈ d.externalize?, ∀ x ∈ tokenList t.toRoseTree,
     ¬ LinkLeaves hd t x.2
       (sealed (occurrencesWith t Φ).toFinset (complementDomain hd t ∅) (Pic1 hd t))
 
@@ -131,7 +131,7 @@ instance (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] (d : Derivation) :
 /-- The determiner of *who*. -/
 def whoD := tok 200 .D "who" (features := .single .wh true) (sel := [.n])
 /-- *who*. -/
-def who : LinearizedSyntacticObject := nominal whoD (tok 201 .n (sel := [.N])) (tok 202 .N)
+def who : PlanarSyntacticObject := nominal whoD (tok 201 .n (sel := [.N])) (tok 202 .N)
 def ofP := tok 203 .P "of" (sel := [.D])
 def friends := tok 204 .N "friends" (sel := [.P])
 def friendsN := tok 205 .n (sel := [.N])
@@ -139,17 +139,17 @@ def subjD := tok 206 .D (sel := [.n])
 def hireV := tok 207 .v (sel := [.V])
 def hired := tok 208 .V "hired" (sel := [.D])
 /-- *Mary*. -/
-def mary : LinearizedSyntacticObject :=
+def mary : PlanarSyntacticObject :=
   nominal (tok 209 .D (sel := [.n])) (tok 210 .n (sel := [.N])) (tok 211 .N "Mary")
 def tI := tok 212 .T (sel := [.v])
 def cQ := tok 213 .C (features := .single .wh true) (sel := [.T])
 
 /-- The subject *friends of* `x`. -/
-def subject (x : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
+def subject (x : PlanarSyntacticObject) : PlanarSyntacticObject :=
   subjD * (friendsN * (friends * (ofP * x)))
 
 /-- *hired Mary*, built in its own workspace. -/
-def hiredMary : LinearizedSyntacticObject := hireV * (hired * mary)
+def hiredMary : PlanarSyntacticObject := hireV * (hired * mary)
 
 /-- The two ways *who* can leave the subject (16): by the subject's edge while the subject is in
 situ, the cycle requiring the step before the subject moves, or directly from the moved subject. -/
@@ -165,7 +165,7 @@ def subextraction (r : Route) : Derivation :=
     (match r with | .edge => [.im who] | .direct => []) ++
     [.em .right hiredMary, .em .left tI,
       .im (match r with
-        | .edge => (who * subject (.traceOf whoD) : LinearizedSyntacticObject)
+        | .edge => (who * subject (.traceOf whoD) : PlanarSyntacticObject)
         | .direct => subject who),
       .em .left cQ, .im who]⟩
 
@@ -187,7 +187,7 @@ theorem ex17 :
 
 def janeD := tok 220 .D (sel := [.n])
 /-- *Jane*. -/
-def jane : LinearizedSyntacticObject :=
+def jane : PlanarSyntacticObject :=
   nominal janeD (tok 221 .n (sel := [.N])) (tok 222 .N "Jane")
 def kiss := tok 223 .V "kiss" (sel := [.D])
 def kissV := tok 224 .v (sel := [.V])
@@ -197,7 +197,7 @@ def did := tok 225 .T "did" (sel := [.v])
 def remnantFronting : Derivation :=
   ⟨tok 211 .N "Mary", [.em .left (tok 210 .n (sel := [.N])), .em .left (tok 209 .D (sel := [.n])),
     .em .left kiss, .em .left kissV, .em .left jane, .em .left did, .im jane,
-    .im (.traceOf janeD * (kissV * (kiss * mary)) : LinearizedSyntacticObject)]⟩
+    .im (.traceOf janeD * (kissV * (kiss * mary)) : PlanarSyntacticObject)]⟩
 
 /-- (20): vP, its subject gone, is labeled by v and moves as a remnant of the subject; remnant
 movement obeys even the traditional ban. -/
@@ -210,16 +210,16 @@ theorem ex20 : remnantFronting.surfacePhon = ["kiss", "Mary", "Jane", "did"] ∧
 
 def peterD := tok 230 .D "den" (sel := [.n])
 /-- *den Peter*. -/
-def peter : LinearizedSyntacticObject :=
+def peter : PlanarSyntacticObject :=
   nominal peterD (tok 231 .n (sel := [.N])) (tok 232 .N "Peter")
 def mag := tok 233 .V "mag" (sel := [.D])
 /-- *niemand*. -/
-def niemand : LinearizedSyntacticObject :=
+def niemand : PlanarSyntacticObject :=
   nominal (tok 234 .D "niemand" (sel := [.n])) (tok 235 .n (sel := [.N])) (tok 236 .N)
 def cV2 := tok 237 .C (sel := [.V])
 
 /-- The verb-second clause *den Peter mag niemand*, the object raised to its specifier. -/
-def v2Clause : LinearizedSyntacticObject := peter * (cV2 * (niemand * (mag * .traceOf peterD)))
+def v2Clause : PlanarSyntacticObject := peter * (cV2 * (niemand * (mag * .traceOf peterD)))
 
 /-- The steps that build the verb-second clause. -/
 def v2Steps : List Step :=
@@ -259,11 +259,11 @@ example : ¬ ObeysPic .label IsPhaseHead v2InSitu := by decide +kernel
 
 def ovA := tok 250 .a "Jovanovu" (sel := [.N])
 /-- The possessive adjective *Jovanovu* 'John's'. -/
-def possessor : LinearizedSyntacticObject := ovA * tok 251 .N
+def possessor : PlanarSyntacticObject := ovA * tok 251 .N
 def slikaN := tok 252 .n (sel := [.N])
 def slika := tok 253 .N "sliku"
 /-- The object *Jovanovu sliku* 'John's picture', the possessor at its edge. -/
-def object : LinearizedSyntacticObject := possessor * (slikaN * slika)
+def object : PlanarSyntacticObject := possessor * (slikaN * slika)
 def vidio := tok 254 .V "vidio" (sel := [.n])
 def je := tok 255 .T "je" (sel := [.V])
 
@@ -282,12 +282,12 @@ theorem ex25a : ¬ possessorExtraction.ObeysFreezing ∧
 
 def waarD := tok 260 .D "waar" (sel := [.n])
 /-- *waar*. -/
-def waar : LinearizedSyntacticObject := nominal waarD (tok 261 .n (sel := [.N])) (tok 262 .N)
+def waar : PlanarSyntacticObject := nominal waarD (tok 261 .n (sel := [.N])) (tok 262 .N)
 def mee := tok 263 .P "mee" (sel := [.D])
 /-- *waar mee*, the r-pronoun in Spec,PP. -/
-def pp : LinearizedSyntacticObject := waar * (mee * .traceOf waarD)
+def pp : PlanarSyntacticObject := waar * (mee * .traceOf waarD)
 /-- *de vis snijden*. -/
-def snijden : LinearizedSyntacticObject :=
+def snijden : PlanarSyntacticObject :=
   tok 264 .V "snijden" (sel := [.D]) *
     nominal (tok 265 .D "de" (sel := [.n])) (tok 266 .n (sel := [.N])) (tok 267 .N "vis")
 def zou := tok 268 .T "zou" (sel := [.V])

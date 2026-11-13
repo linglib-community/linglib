@@ -39,18 +39,6 @@ the scope order of the sentence.
   functions.
 * Transitive verbs take the object first, so `saw m j` is *John saw Mary*.
 
-## Errata
-
-* The paper calls the four scopings of *someone saw a friend of everyone* logically distinct. The
-  restrictor of *a* contains the variable that *everyone* binds, so by
-  `ChoiceFunction.exists_forall_apply_iff` the two scopings that differ in the order of *a* and
-  *everyone* are equivalent (`a_everyone_iff_everyone_a`), and the grammar gives the sentence two
-  truth conditions.
-* The choice-function determiners agree with the generalized quantifiers of the expository
-  grammar only on a nonempty restrictor. A choice function may pick anything from the empty
-  property, so without men *John saw every man* says that John saw everyone
-  (`john_saw_every_man_iff_of_not_exists`).
-
 ## TODO
 
 Derivations of (22a), (23a) and (26a), which need the rules N → N PP and PP → P NP, the

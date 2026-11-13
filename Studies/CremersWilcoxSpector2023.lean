@@ -4,8 +4,8 @@ public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.Probability.Kernel.Module
 public import Linglib.Core.Probability.UniformOn
-public import Linglib.Pragmatics.RSA.LexicalUncertainty
-public import Linglib.Pragmatics.RSA.QUD
+public import Linglib.Pragmatics.Probabilistic.LexicalUncertainty
+public import Linglib.Pragmatics.Probabilistic.QUD
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
@@ -22,12 +22,6 @@ world of both rise above its prior? Each model's section ends in its verdict, st
   `P(i_exh) = 1/2` only in its fit (Appendix B.3).
 * The wonky models share one speaker on worlds and backgrounds, and their posteriors are (A.5a)
   and (A.5b). Lexical uncertainty and intentions take the interpretations equiprobable.
-
-## Errata
-
-* Appendix A.2 writes `P(w_ab|b1)` for the measured prior, which is `P(w_ab|b2)`.
-* Appendix B.2's `L1(w_ab|A)` exchanges `w_a` and `w_ab`; corrected, it is (A.5).
-* Item 7 of the §4.2 model takes the log of a sum of logs, and item 7 of §4.3 has `L_n ∝ log S_n`.
 
 ## TODO
 

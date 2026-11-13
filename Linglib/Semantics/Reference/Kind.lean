@@ -19,7 +19,7 @@ wherever ∩ is defined, that is, wherever the property has instances its extens
 member. Closure under sums gives the largest member, not closure downward: over a complete
 semilattice ∩ is defined on a property closed under arbitrary sums, so ∪ undoes ∩ on one that is
 also closed downward (`Kind.up_down_of_sSup_mem`), and ∩ is defined on a finite property closed
-under binary sums (`Kind.down_isSome_of_supClosed`). On the plural of a singular property, ∪∩
+under binary sums (`Kind.down_dom_of_supClosed`). On the plural of a singular property, ∪∩
 restores the [atoms beneath the pluralities](##Kind.up_down_of_forall_atom). ∩ is
 [undefined for a singular property](##Kind.down_notMem_of_atom) when no kind is singular wherever
 it has a value. Derived kind predication, which applies a predicate of objects to a kind by
@@ -37,7 +37,7 @@ the correlate is [no function of the property's extension](##Kind.not_exists_app
 
 ## Implementation notes
 
-The set of kinds is a parameter `K : Set (S → Option E)` of the theorems that need it, primitive
+The set of kinds is a parameter `K : Set (S → Part E)` of the theorems that need it, primitive
 as in Chierchia. Chierchia states (17c) with AT_P "the set that generates P under PL", which is
 read here as the atoms beneath members of `P`. Read as the singular property whose plural `P`
 is, (17c) fails at a situation with exactly one instance, where the plural has no member and ∩
@@ -56,7 +56,7 @@ namespace Kind
 
 open Mereology
 
-variable {S E : Type*} {P F : S → Set E} {k : S → Option E} {s : S} {d x : E}
+variable {S E : Type*} {P F : S → Set E} {k : S → Part E} {s : S} {d x : E}
 
 section Preorder
 
@@ -64,57 +64,66 @@ variable [Preorder E]
 
 /-- ∪: the instances of a kind at a situation are the parts of its value there, and there are none
 where it has no value. -/
-def up (k : S → Option E) (s : S) : Set E := (k s).elim ∅ Set.Iic
+def up (k : S → Part E) (s : S) : Set E := {x | ∃ d ∈ k s, x ≤ d}
 
-theorem up_apply_of_eq_some (h : k s = some d) : up k s = Set.Iic d := by simp [up, h]
+@[simp] theorem mem_up : x ∈ up k s ↔ ∃ d ∈ k s, x ≤ d := Iff.rfl
 
-theorem up_apply_of_eq_none (h : k s = none) : up k s = ∅ := by simp [up, h]
+theorem up_apply_of_mem (h : d ∈ k s) : up k s = Set.Iic d :=
+  Set.ext fun _ ↦ ⟨fun ⟨_, hd, hx⟩ ↦ Part.mem_unique hd h ▸ hx, fun hx ↦ ⟨d, h, hx⟩⟩
 
-theorem mem_up : x ∈ up k s ↔ ∃ d ∈ k s, x ≤ d := by
-  cases h : k s <;> simp [up_apply_of_eq_some, up_apply_of_eq_none, h]
+theorem up_apply_of_not_dom (h : ¬ (k s).Dom) : up k s = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ ⟨_, hd, _⟩ ↦ h (Part.dom_iff_mem.2 ⟨_, hd⟩)
+
+theorem isLowerSet_up : IsLowerSet (up k s) :=
+  fun _ _ hba ⟨d, hd, had⟩ ↦ ⟨d, hd, hba.trans had⟩
 
 end Preorder
 
 /-- ∩: the concept of the largest member of a property's extension at each situation, which is the
 property's kind where it is a kind. -/
-noncomputable def down [LE E] (P : S → Set E) (s : S) : Option E :=
+noncomputable def down [LE E] (P : S → Set E) (s : S) : Part E :=
   iota {x | IsGreatest (P s) x}
 
 section PartialOrder
 
 variable [PartialOrder E]
 
-theorem down_eq_some_iff : down P s = some d ↔ IsGreatest (P s) d :=
-  iota_isGreatest_eq_some_iff
+@[simp] theorem mem_down : d ∈ down P s ↔ IsGreatest (P s) d :=
+  mem_iota_isGreatest
 
-theorem down_isSome_iff : (down P s).isSome ↔ ∃ d, IsGreatest (P s) d :=
-  iota_isGreatest_isSome_iff
+theorem down_dom : (down P s).Dom ↔ ∃ d, IsGreatest (P s) d :=
+  iota_isGreatest_dom
 
-theorem down_eq_none_iff : down P s = none ↔ ¬ ∃ d, IsGreatest (P s) d :=
+theorem down_eq_none_iff : down P s = Part.none ↔ ¬ ∃ d, IsGreatest (P s) d :=
   iota_isGreatest_eq_none_iff
 
 /-- ∩∪d = d, Chierchia's (17a). -/
-theorem down_up (k : S → Option E) : down (up k) = k :=
-  funext fun s ↦ iota_isGreatest_elim_Iic (k s)
+theorem down_up (k : S → Part E) : down (up k) = k :=
+  funext fun s ↦ Part.ext fun d ↦ mem_down.trans
+    ⟨fun ⟨⟨d', hd', hle⟩, hub⟩ ↦ hle.antisymm (hub ⟨d', hd', le_rfl⟩) ▸ hd',
+      fun h ↦ ⟨⟨d, h, le_rfl⟩, fun _ ⟨_, hd', hx⟩ ↦ Part.mem_unique hd' h ▸ hx⟩⟩
 
 /-- ∪∩P = P for a property closed downward wherever ∩P is defined, Chierchia's (17b): wherever
 the property has instances, its extension has a largest member. -/
-theorem up_down (hP : ∀ s, IsLowerSet (P s)) (hdef : ∀ s, (P s).Nonempty → (down P s).isSome) :
+theorem up_down (hP : ∀ s, IsLowerSet (P s)) (hdef : ∀ s, (P s).Nonempty → (down P s).Dom) :
     up (down P) = P :=
-  funext fun s ↦ elim_Iic_iota_isGreatest (hP s) fun hne ↦ down_isSome_iff.1 (hdef s hne)
+  funext fun s ↦ Set.ext fun x ↦
+    ⟨fun ⟨_, hd, hx⟩ ↦ hP s hx (mem_down.1 hd).1, fun hx ↦
+      have ⟨d, hd⟩ := Part.dom_iff_mem.1 (hdef s ⟨x, hx⟩)
+      ⟨d, hd, (mem_down.1 hd).2 hx⟩⟩
 
 /-- On the plural of a singular property `F`, true of what is not `F` and has only `F`-atoms,
 ∪∩ adds the atoms beneath the pluralities wherever ∩ is defined, Chierchia's (17c). -/
 theorem up_down_of_forall_atom (hF : ∀ s, ∀ x ∈ F s, Atom x)
     (hP : ∀ s x, x ∈ P s ↔ x ∉ F s ∧ ∀ y ≤ x, Atom y → y ∈ F s)
-    (hdef : ∀ s, (P s).Nonempty → (down P s).isSome) (s : S) :
+    (hdef : ∀ s, (P s).Nonempty → (down P s).Dom) (s : S) :
     up (down P) s = P s ∪ {a | Atom a ∧ ∃ x ∈ P s, a ≤ x} := by
   rcases (P s).eq_empty_or_nonempty with h0 | hne
-  · rw [up_apply_of_eq_none (down_eq_none_iff.2 fun ⟨_, hd⟩ ↦ h0.subset hd.1), h0]
+  · rw [up_apply_of_not_dom fun h ↦ (down_dom.1 h).elim fun _ hd ↦ h0.subset hd.1, h0]
     simp
-  obtain ⟨m, hm⟩ := Option.isSome_iff_exists.1 (hdef s hne)
-  have hgm := down_eq_some_iff.1 hm
-  rw [up_apply_of_eq_some hm]
+  obtain ⟨m, hm⟩ := Part.dom_iff_mem.1 (hdef s hne)
+  have hgm := mem_down.1 hm
+  rw [up_apply_of_mem hm]
   ext y
   refine ⟨fun hy ↦ ?_, ?_⟩
   · by_cases ha : Atom y
@@ -126,19 +135,19 @@ theorem up_down_of_forall_atom (hF : ∀ s, ∀ x ∈ F s, Atom x)
 
 /-- ∩ is undefined for a singular property when no kind is singular in every situation where it
 has a value: the concept of a singular property is singular wherever it has one. -/
-theorem down_notMem_of_atom {K : Set (S → Option E)} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Atom d)
+theorem down_notMem_of_atom {K : Set (S → Part E)} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Atom d)
     (hP : ∀ s, ∀ x ∈ P s, Atom x) : down P ∉ K :=
-  fun h ↦ hK _ h fun s _ hd ↦ hP s _ (down_eq_some_iff.1 hd).1
+  fun h ↦ hK _ h fun s _ hd ↦ hP s _ (mem_down.1 hd).1
 
 end PartialOrder
 
-theorem down_isSome_of_supClosed [SemilatticeSup E] (hcum : SupClosed (P s)) (hfin : (P s).Finite)
-    (hne : (P s).Nonempty) : (down P s).isSome :=
-  hcum.directedOn.iota_isGreatest_isSome hfin hne
+theorem down_dom_of_supClosed [SemilatticeSup E] (hcum : SupClosed (P s)) (hfin : (P s).Finite)
+    (hne : (P s).Nonempty) : (down P s).Dom :=
+  hcum.directedOn.iota_isGreatest_dom hfin hne
 
 theorem up_down_of_sSup_mem [CompleteSemilatticeSup E] (hP : ∀ s, IsLowerSet (P s))
     (hsum : ∀ s, ∀ T ⊆ P s, T.Nonempty → sSup T ∈ P s) : up (down P) = P :=
-  up_down hP fun s hne ↦ down_isSome_iff.2
+  up_down hP fun s hne ↦ down_dom.2
     ⟨sSup (P s), hsum s _ subset_rfl hne, fun _ hx ↦ le_sSup hx⟩
 
 /-! ### Kinds as correlates of properties -/

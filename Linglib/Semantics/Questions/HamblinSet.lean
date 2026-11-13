@@ -461,8 +461,7 @@ variable {H w} in
 [dayal-1996]'s `Max_inf`). -/
 theorem mem_exh_iff_isStrongestTrueAnswer {p : Set W} (hp : p ∈ H) :
     w ∈ Exhaustification.exh H p ↔ IsStrongestTrueAnswer H w p :=
-  ⟨fun ⟨hw, h⟩ => ⟨⟨hp, hw⟩, fun q ⟨hq, hwq⟩ => h q hq hwq⟩,
-    fun ⟨⟨_, hw⟩, h⟩ => ⟨hw, fun _ hq hwq => h ⟨hq, hwq⟩⟩⟩
+  Exhaustification.mem_exh_iff_isLeast_of_mem hp
 
 theorem exh_eq_strongAnswer {p : Set W} (h : IsStrongestTrueAnswer H w p) :
     Exhaustification.exh H p = strongAnswer H w := by

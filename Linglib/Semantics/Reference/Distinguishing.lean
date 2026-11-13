@@ -108,8 +108,8 @@ theorem distinguishes_prop_iff (hC : C.Nonempty) :
 /-- Identification against a nonempty contrast set that excludes the referent is the Russellian
 uniqueness of the description on the domain `insert r C`. -/
 theorem distinguishes_iff_iota [DecidableEq E] (hC : C.Nonempty) (hr : r ∉ C) :
-    Distinguishes compat C r d ↔ iota {x | compat d x ∧ x ∈ insert r C} = some r := by
-  rw [distinguishes_prop_iff hC, iota_eq_some_iff]
+    Distinguishes compat C r d ↔ r ∈ iota {x | compat d x ∧ x ∈ insert r C} := by
+  rw [distinguishes_prop_iff hC, mem_iota]
   simp only [Set.mem_ofPred_eq, Finset.mem_insert, true_or, and_true]
   exact and_congr_right fun _ ↦
     ⟨fun h x ⟨hx, hxr⟩ ↦ hxr.elim id fun hxC ↦ (h x hxC hx).elim,

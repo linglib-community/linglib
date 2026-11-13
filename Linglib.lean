@@ -3,7 +3,6 @@
 /-
 A Lean 4 library for formal linguistics, covering semantics, pragmatics,
 and their interfaces. See README.md for documentation links.
-import Linglib.Core.Algebra.BigOperators.Multiset
 import Linglib.Core.Algebra.FreeMonoid.FreeSemigroup
 import Linglib.Core.Algebra.Group.Aperiodic
 import Linglib.Core.Algebra.Group.Idempotent
@@ -293,7 +292,6 @@ import Linglib.Discourse.CommonGround
 import Linglib.Discourse.Gameboard.Basic
 import Linglib.Discourse.Gameboard.Defs
 import Linglib.Discourse.QUD.Basic
-import Linglib.Discourse.SpeechAct
 import Linglib.Fragments.ASL.Determiners
 import Linglib.Fragments.Abkhaz.Evidentiality
 import Linglib.Fragments.Afar.Gender
@@ -666,7 +664,6 @@ import Linglib.Phonology.Hiatus
 import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 import Linglib.Phonology.Harmony.Basic
 import Linglib.Phonology.OCP
-import Linglib.Phonology.OptimalityTheory.Antimatroid
 import Linglib.Phonology.OptimalityTheory.Cophonology
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.Grammar
@@ -696,7 +693,6 @@ import Linglib.Phonology.Subregular.Transduction
 import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Segmental.FeatureClass
 import Linglib.Phonology.Segmental.Defs
-import Linglib.Phonology.Segmental.ElementTheory
 import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.Tone.Constraints
 import Linglib.Phonology.Tone.Grammatical
@@ -707,10 +703,6 @@ import Linglib.Pragmatics.Bidirectional
 import Linglib.Pragmatics.DecisionTheoretic.Basic
 import Linglib.Pragmatics.Implicature.Diagnostics
 import Linglib.Pragmatics.NeoGricean.Basic
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Pragmatics.RSA.Uniform
-import Linglib.Pragmatics.RSA.Incremental
-import Linglib.Pragmatics.RSA.QUD
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Processing.DiscriminativeLexicon.Coding
 import Linglib.Processing.DiscriminativeLexicon.Realization
@@ -730,7 +722,6 @@ import Linglib.Semantics.Attitudes.Acquaintance
 import Linglib.Semantics.Attitudes.Anchor
 import Linglib.Semantics.Attitudes.Distributivity
 import Linglib.Semantics.Attitudes.Doxastic
-import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Causation.Morphological
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Conditionals.Counterfactual
@@ -778,7 +769,6 @@ import Linglib.Semantics.Modification.Basic
 import Linglib.Semantics.Modification.Classification
 import Linglib.Semantics.Modification.Coercion
 import Linglib.Semantics.Mood.Defs
-import Linglib.Semantics.Mood.SpeechEvent
 import Linglib.Semantics.Mood.State
 import Linglib.Semantics.Mood.Verbal
 import Linglib.Semantics.Plurality.Algebra
@@ -811,9 +801,6 @@ import Linglib.Semantics.Questions.Highlighting
 import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Reference.Context.Basic
-import Linglib.Semantics.Reference.Context.Index
-import Linglib.Semantics.Reference.Context.Tower
-import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Reference.Rigidity
 import Linglib.Semantics.Tense.Defs
 import Linglib.Semantics.Tense.Embedding
@@ -842,7 +829,6 @@ import Linglib.Syntax.Category.Complementizer.Basic
 import Linglib.Syntax.Category.Coordinator
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Syntax.Category.Noun.Basic
-import Linglib.Syntax.Category.Numeral.Composition
 import Linglib.Syntax.Category.Particle.Basic
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Category.Pronoun.Demonstrative
@@ -887,7 +873,6 @@ import Linglib.Syntax.Minimalist.Probe.Basic
 import Linglib.Syntax.Minimalist.Probe.Phi
 import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
-import Linglib.Syntax.Minimalist.SyntacticObject.Lift
 import Linglib.Syntax.Minimalist.SyntacticObject.Replace
 import Linglib.Syntax.Minimalist.Theta.Basic
 import Linglib.Syntax.Minimalist.Theta.Realize

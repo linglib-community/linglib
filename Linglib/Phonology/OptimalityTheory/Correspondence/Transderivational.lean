@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Diagram
 public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
@@ -58,7 +58,8 @@ inductive Role
 
 /-- The subparadigm of a base `b` and a derived word `d` with their inputs, the index pairs of
 their IO relations, and the index pairs `oo` of their OO relation. -/
-def paradigmOfPairs (bIn b dIn d : List α) (ioB ioD oo : List (ℕ × ℕ)) : Correspondence Role α :=
+def paradigmOfPairs (bIn b dIn d : List α) (ioB ioD oo : List (ℕ × ℕ)) :
+    Correspondence.Diagram Role α :=
   .ofPairs (fun | .baseInput => bIn | .base => b | .derivInput => dIn | .derivative => d)
     fun | .baseInput, .base => ioB | .derivInput, .derivative => ioD | .base, .derivative => oo
         | _, _ => []
@@ -67,53 +68,53 @@ def paradigmOfPairs (bIn b dIn d : List α) (ioB ioD oo : List (ℕ × ℕ)) : C
 input stands in the derived word's at `offset`, so that the OO relation links the realisations of
 each segment of the base's input, and the epenthetic segments at a common site. -/
 def paradigm (bIn b dIn d : List α) (ioB ioD : List (ℕ × ℕ)) (offset : ℕ := 0) :
-    Correspondence Role α :=
+    Correspondence.Diagram Role α :=
   paradigmOfPairs bIn b dIn d ioB ioD
     (Correspondence.ooPairs (ioB.map fun rp ↦ (rp.1 + offset, rp.2)) ioD b.length d.length)
 
 /-- A constraint of the hierarchy, read at each word of the subparadigm. -/
 structure ParadigmConstraint (α : Type*) where
   /-- The violations the base incurs. -/
-  atBase : Correspondence Role α → ℕ
+  atBase : Correspondence.Diagram Role α → ℕ
   /-- The violations the derived word incurs. -/
-  atDerived : Correspondence Role α → ℕ
+  atDerived : Correspondence.Diagram Role α → ℕ
 
 /-- A markedness constraint, read off each output. -/
 def markedness (m : List α → ℕ) : ρ → ParadigmConstraint α :=
   fun _ ↦ ⟨fun c ↦ m (c.form .base), fun c ↦ m (c.form .derivative)⟩
 
 /-- An IO-Faith constraint, read off each word's IO relation. -/
-def ioFaith (f : Correspondence Role α → Role → Role → ℕ) : ρ → ParadigmConstraint α :=
+def ioFaith (f : Correspondence.Diagram Role α → Role → Role → ℕ) : ρ → ParadigmConstraint α :=
   fun _ ↦ ⟨fun c ↦ f c .baseInput .base, fun c ↦ f c .derivInput .derivative⟩
 
 /-- The OO-Identity constraint proper to the relation `rel` is read off the OO relation of a
 subparadigm bearing `rel`, and is vacuous on subparadigms bearing another and at the base. -/
-def ooIdentity [DecidableEq ρ] (rel : ρ) (f : Correspondence Role α → Role → Role → ℕ) :
+def ooIdentity [DecidableEq ρ] (rel : ρ) (f : Correspondence.Diagram Role α → Role → Role → ℕ) :
     ρ → ParadigmConstraint α :=
   fun r ↦ ⟨fun _ ↦ 0, fun c ↦ if r = rel then f c .base .derivative else 0⟩
 
 /-- The copy of the hierarchy that evaluates the base of a subparadigm bearing `r`. -/
 def baseRecursion (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :
-    List (Constraint (Correspondence Role α)) :=
+    List (Constraint (Correspondence.Diagram Role α)) :=
   ranking.map fun k ↦ (k r).atBase
 
 /-- The copy of the hierarchy that evaluates the derived word of a subparadigm bearing `r`. -/
 def derivedRecursion (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :
-    List (Constraint (Correspondence Role α)) :=
+    List (Constraint (Correspondence.Diagram Role α)) :=
   ranking.map fun k ↦ (k r).atDerived
 
 /-- Recursive evaluation duplicates the hierarchy and ranks the base's copy above the derived
 word's. -/
 def recursive (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :
-    List (Constraint (Correspondence Role α)) :=
+    List (Constraint (Correspondence.Diagram Role α)) :=
   baseRecursion ranking r ++ derivedRecursion ranking r
 
 /-- Summed evaluation tallies each constraint's violations over both words. -/
 def nonrecursive (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :
-    List (Constraint (Correspondence Role α)) :=
+    List (Constraint (Correspondence.Diagram Role α)) :=
   ranking.map fun k c ↦ (k r).atBase c + (k r).atDerived c
 
-variable {cand : L → Correspondence Role α} {labels : Finset L}
+variable {cand : L → Correspondence.Diagram Role α} {labels : Finset L}
   {ranking : List (ρ → ParadigmConstraint α)} {r : ρ}
 
 /-- Base priority is ranking priority: the winners of recursive evaluation are the derived word's

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Akan.Phonology
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Diagram
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Mathlib.Tactic.FinCases
 
@@ -73,6 +73,32 @@ def intervocalic [DecidableEq σ] (x : σ) : List σ → ℕ
 
 end Surface
 
+/-! ### Contiguity and anchoring
+
+The paper illustrates the two contiguity constraints of its Appendix A on maps between strings of
+*x*, *y* and *z*: deleting or inserting a medial segment violates one of them, and deleting or
+inserting a final segment violates neither. -/
+
+/-- The map from the string `s` to the string `t` relating the positions paired in `l`. -/
+private def map (s t : List Char) (l : List (ℕ × ℕ)) : Correspondence.Diagram BinaryRole Char :=
+  .ofPairs (fun | .lhs => s | .rhs => t) fun | .lhs, .rhs => l | _, _ => []
+
+/-- The map *xyz* → *xz* skips *y* and violates I-CONTIG. -/
+example : (map ['x', 'y', 'z'] ['x', 'z'] [(0, 0), (2, 1)]).contigIViol .lhs .rhs = 1 := by decide
+
+/-- The map *xyz* → *xy* deletes at the edge and satisfies I-CONTIG. -/
+example : (map ['x', 'y', 'z'] ['x', 'y'] [(0, 0), (1, 1)]).contigIViol .lhs .rhs = 0 := by decide
+
+/-- The map *xz* → *xyz* intrudes *y* and violates O-CONTIG. -/
+example : (map ['x', 'z'] ['x', 'y', 'z'] [(0, 0), (1, 2)]).contigOViol .lhs .rhs = 1 := by decide
+
+/-- The map *xy* → *xyz* inserts at the edge and satisfies O-CONTIG. -/
+example : (map ['x', 'y'] ['x', 'y', 'z'] [(0, 0), (1, 1)]).contigOViol .lhs .rhs = 0 := by decide
+
+/-- Deleting the final segment keeps the left edges in correspondence and not the right. -/
+example : (map ['x', 'y', 'z'] ['x', 'y'] [(0, 0), (1, 1)]).anchorLViol .lhs .rhs = 0 ∧
+    (map ['x', 'y', 'z'] ['x', 'y'] [(0, 0), (1, 1)]).anchorRViol .lhs .rhs = 1 := by decide
+
 /-! ### Javanese *h*-deletion: overapplication -/
 
 namespace Javanese
@@ -118,7 +144,7 @@ def reduplicant : Candidate → List Seg
   | overapplication | normalApplication => stemNoH
 
 /-- The correspondence of a candidate between the stem, its base and its reduplicant. -/
-def correspondence (c : Candidate) : Correspondence ReduplicationRole Seg :=
+def correspondence (c : Candidate) : Correspondence.Diagram ReduplicationRole Seg :=
   .reduplication stem c.base c.reduplicant
 
 /-- The surface string, the base followed by the reduplicant and the suffix. -/
@@ -252,7 +278,7 @@ def reduplicant : Candidate → List Seg
   | unfaithfulBase | codalessReduplicant => stemNoCoda
 
 /-- The correspondence of a candidate between the stem, its base and its reduplicant. -/
-def correspondence (c : Candidate) : Correspondence ReduplicationRole Seg :=
+def correspondence (c : Candidate) : Correspondence.Diagram ReduplicationRole Seg :=
   .reduplication stem c.base c.reduplicant
 
 /-- The surface string, the reduplicant followed by the base. -/
@@ -378,7 +404,7 @@ def reduplicant : Candidate → List Segment
   | overapplication | normalApplication => [tcCurl, smallCapitalI]
 
 /-- The correspondence of a candidate between the stem, its base and its reduplicant. -/
-def correspondence (c : Candidate) : Correspondence ReduplicationRole Segment :=
+def correspondence (c : Candidate) : Correspondence.Diagram ReduplicationRole Segment :=
   .reduplication stem c.base c.reduplicant
 
 /-- The surface string, the reduplicant followed by the base. -/

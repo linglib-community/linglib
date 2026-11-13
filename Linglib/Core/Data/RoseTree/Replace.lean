@@ -37,6 +37,12 @@ namespace RoseTree
 
 variable {α : Type*}
 
+/-- The leaves of a subtree are among the leaves of the tree. -/
+theorem IsSubtree.leaves_le {s t : RoseTree α} (h : IsSubtree s t) : s.leaves ≤ t.leaves := by
+  induction h with
+  | refl => exact le_rfl
+  | tail _ hc ih => exact ih.trans (leaves_le_of_mem_children hc)
+
 section ModifyIf
 
 variable (p : RoseTree α → Prop) [DecidablePred p] (f : RoseTree α → RoseTree α)
@@ -207,7 +213,7 @@ theorem leaves_replaceIf (t : RoseTree α) :
 
 /-- When the outermost matches all have the same leaves under `g`, the replacement has none, and
 no `g`-value occurs twice among the leaves of `t`, replacing trades the leaves of one match. -/
-theorem filterMap_leaves_replaceIf_add {β : Type*} [DecidableEq β] {g : α → Option β}
+theorem filterMap_leaves_replaceIf_add {β : Type*} {g : α → Option β}
     {L : Multiset β} {s t : RoseTree α} (hL : ∀ u, p u → u.leaves.filterMap g = L)
     (hr : r.leaves.filterMap g = 0) (ht : (t.leaves.filterMap g).Nodup)
     (hs : s ∈ outerMatches p t) :

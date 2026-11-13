@@ -25,7 +25,9 @@ past the barn fell*, where grammar (1) puts the prefix probability before the wo
 times the one after it (section 6.1), and the subject and object relative asymmetry of grammar (3)
 (section 7). The two levels of the linking hypothesis agree, since prefix-level load only grows
 along a sentence (`disconfirmed_mono`) and word-level surprisals telescope to the negative log of
-the sentence's prefix mass (`totalSurprisal_nil_eq`).
+the sentence's prefix mass (`totalSurprisal_nil_eq`). The consistency the first level assumes
+holds of any grammar whose weights are relative frequencies in a treebank
+(`PCFG.isProbabilityMeasure_derivationMeasure_relFreq`), by the theorem of [chi-geman-1998].
 
 ## Implementation notes
 
@@ -43,6 +45,7 @@ ratio is a theorem about it; both are infinite at a word that no analysis of the
 
 * [hale-2001]
 * [stolcke-1995]
+* [chi-geman-1998]
 * [levy-2008]
 -/
 

@@ -30,15 +30,6 @@ corpus frequencies rank *ripe bananas, cheeky monkeys* [first](##gluingMeasure_l
 * The corpus frequencies and the printed probabilities are read from
   `Data.Statistics.AbramskySadrzadeh2014`.
 
-## Errata
-
-* p. 6: Proposition 1 fails for Example 2, whose listed gluing [admits
-  `John(b)`](##isGluing_beats_insert).
-* p. 6: under disjoint vocabularies a consistent candidate need not glue [unless the cover maps are
-  injective](##not_forall_exists_isGluing_of_disjoint), and with them every family glues.
-* p. 7: the vocabularies of Example 3 are not disjoint: `Man` occurs in two parts.
-* p. 11: $d(t_4)$ is [printed 0.205 for $10/48$](##gluingProbability_rounds_iff).
-
 ## References
 
 * [abramsky-sadrzadeh-2014]

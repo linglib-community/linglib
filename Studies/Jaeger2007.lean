@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Jaeger2007
 public import Studies.GoldwaterJohnson2003
-public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
+public import Linglib.Phonology.OptimalityTheory.Typology
 public import Mathlib.Basic.Sign.Basic
 public import Linglib.Data.Examples.Readers
 
@@ -168,7 +168,7 @@ input, under the five constraints. -/
 def syllabification : ConstraintSystem Syl Syl (Fin 5) := ⟨fun _ ↦ univ, con⟩
 
 theorem faithful_iff (σ : Ranking (Fin 5) 5) (i : Syl) :
-    PicksAt syllabification σ i i ↔ ∀ k, con k (i, i) = 1 → σ.Dominates 0 k := by
+    syllabification.PicksAt σ i i ↔ ∀ k, con k (i, i) = 1 → σ.Dominates 0 k := by
   revert σ i; decide +kernel
 
 /-- The syllable types produced faithfully once the markedness constraints in `S` are below
@@ -176,7 +176,7 @@ FAITH, namely those violating no other markedness constraint. -/
 def produced (S : Finset (Fin 5)) : Finset Syl := univ.filter fun i ↦ ∀ k, con k (i, i) = 1 → k ∈ S
 
 theorem mem_produced_iff (σ : Ranking (Fin 5) 5) (i : Syl) :
-    i ∈ produced (univ.filter (σ.Dominates 0)) ↔ PicksAt syllabification σ i i := by
+    i ∈ produced (univ.filter (σ.Dominates 0)) ↔ syllabification.PicksAt σ i i := by
   simp [produced, faithful_iff]
 
 /-- The stages at which FAITH overtakes *CODA, ONSET, *COMPLEXCODA and *COMPLEXONSET in turn

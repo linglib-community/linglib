@@ -34,17 +34,6 @@ a modal disjunction false although her truth conditions make it true
   not (`Figures.ross_invalid`). The stronger pointwise claim, that `□p` makes `□(p ∨ q)` neither
   true nor false, is `ross_gap`.
 
-## Errata
-
-* The admissibility of a model is printed as a condition on all atoms `p, q`, which no model
-  satisfies for `p = q`; it is read here for the pair at hand.
-* The appendix prints `[!φ] = (℘(info([φ]⁺)), ℘(info([ψ]⁻)))`, with `ψ` in the negative
-  coordinate. This is a typo for `φ`, the only reading on which `!φ` is a bilateral proposition,
-  and `MinimalCovering.bang` follows it.
-* The paraphrase of Simons's super cover drops its requirement that the family be nonempty, under
-  which the claim that every minimal cover is a super cover fails for the empty family covering
-  the empty set. It holds for every nonempty set (`MinimalCovering.IsMinCover.isSuperCover`).
-
 ## References
 
 * [booth-2022a]

@@ -24,12 +24,6 @@ Since every world has the same times,
   locators give, which reprints it with bracketed editorial updates. The first edition was not
   available, so the 1984 page numbers are unchecked.
 
-## Errata
-
-* (8) is printed with `p` beside schematic `φ` in (6) and (7). With `p` atomic it is valid, by (6)
-  and the T axiom (`sat_past_N_of_N_past`), so its invalidity needs an instance with the future
-  tense.
-
 ## TODO
 
 * Treelike frames and Ockhamist validity (Definitions 1 to 5), which validate (6) and (7) but not

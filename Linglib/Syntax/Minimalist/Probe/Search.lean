@@ -8,7 +8,7 @@ public import Mathlib.Data.List.Lex
 
 A probe's search can be stated procedurally, as the order in which it considers the positions of
 its domain, stopping at the first one that satisfies it; such an order is a key for
-`LinearizedSyntacticObject.goalsBy`. Depth-first search, left to right, orders positions
+`PlanarSyntacticObject.goalsBy`. Depth-first search, left to right, orders positions
 lexicographically by their paths, the preorder of `RoseTree.vertices`; breadth-first search orders
 them by depth and then left to right; and breadth-first search over unordered sisters orders them
 by depth alone.

@@ -187,7 +187,7 @@ theorem pairing_product_of'_mul_of' (A B C₁ C₂ : Forest (UnorderedTree α)) 
   rw [h, Multiset.map_congr rfl fun W _ ↦ pairing_of'_mul W _ _, ← Multiset.sum_bind,
     ← Multiset.map_bind, productMultiset_bind_antidiagonal, Multiset.map_bind, Multiset.sum_bind]
   refine congrArg Multiset.sum (Multiset.map_congr rfl fun pq _ ↦ ?_)
-  rw [h, h, ← Multiset.sum_map_product_mul]
+  rw [h, h, Multiset.sum_map_mul_sum_map]
 
 open scoped TensorProduct
 

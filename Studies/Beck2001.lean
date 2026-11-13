@@ -40,28 +40,6 @@ asserted distinctness [is trivial or idle](##inSitu_dichotomy).
   `pluralize` is false and `Homogeneity.barePlural` undefined. The paper tries (225) only for
   section 6.4 and does not reconcile them.
 
-## Errata
-
-* (77) prints `s ≤ s'`, which defines a least element, and [with two or more others the set in
-  (76a) has none](##not_exists_isLeast_otherAtoms). The text requires the greatest, encoded here.
-* (105) to (107) count students across a whole division, but (95) evaluates the condition at each
-  pair, so on a singular cover [(105b) is false in the paper's scenario](##exactlyTwo_row). Counting
-  across a division [verifies (108) as well](##exactlyTwo_across_division). [No example can do what
-  (105) is offered for](##inSitu_dichotomy): in-situ distinctness is tautologous or equivalent to
-  (108), so the reply considered on p. 100, that tautologies are merely disregarded, stays open.
-* Footnote 15 claims that (iv) makes (iii) a subset of (i). It secures only the first conjunct of
-  (i), [even with persistence and a cover that fits](##not_situationWeak_splitRelation); [support
-  for each pair in a relevant subsituation suffices](##situationWeak_of_strong).
-* The "iff" of (178), and so (193a) against (193b), fails for the cells of (181), which lack the
-  minimality footnote 5 requires of (54): a middle cell is a part of the sum of its neighbours, and
-  [the closure form is true on a circle with a gap where the coverage form is
-  false](##situationWeakReading_gap).
-* P. 107 predicts exception effects from (130a), but with `**` as in (95) [a true (130a) needs a
-  cover that fits](##exists_cell_of_weakReading_eq_true), so with the cover of (140) it is [false in
-  the situation (136)](##weakReading_situation136) where (139) is [true](##pirates_rows).
-* (118a) prints `y ≠ p` for `y ≤ p`. Section 5.2.2 refers to a section 4.3.4; the discussion it
-  means is in section 4.4.
-
 ## TODO
 
 * Non-singular covers beyond minimal covers: subgroup readings (89), (91), (92) and (130) to (133),
@@ -134,16 +112,16 @@ variable {α : Type*} [DecidableEq α] {Cov : Finset α → Prop} {x y d A : Fin
 /-- (76a): *each other* is the definite *the other ones among them*, the largest sum of cells of
 the cover that are parts of the range `y` and do not overlap the contrast `x`, where there is one.
 -/
-noncomputable def eachOther (Cov : Finset α → Prop) (x y : Finset α) : Option (Finset α) :=
+noncomputable def eachOther (Cov : Finset α → Prop) (x y : Finset α) : Part (Finset α) :=
   iota {w | IsGreatest {z | AlgClosure (fun z ↦ ¬ Overlap z x ∧ z ≤ y ∧ Cov z) z} w}
 
-theorem eachOther_isSome_iff :
-    (eachOther Cov x y).isSome ↔ ∃ z, ¬ Overlap z x ∧ z ≤ y ∧ Cov z := by
+theorem eachOther_dom_iff :
+    (eachOther Cov x y).Dom ↔ ∃ z, ¬ Overlap z x ∧ z ≤ y ∧ Cov z := by
   refine ⟨fun h ↦ ?_, fun ⟨z, hz⟩ ↦ ?_⟩
-  · obtain ⟨d, hd, -⟩ := iota_isGreatest_isSome_iff.1 h
+  · obtain ⟨d, hd, -⟩ := iota_isGreatest_dom.1 h
     obtain ⟨z, hz, -⟩ := algClosure_has_base hd
     exact ⟨z, hz⟩
-  · refine DirectedOn.iota_isGreatest_isSome algClosure_cum.directedOn ?_ ⟨z, .base hz⟩
+  · refine DirectedOn.iota_isGreatest_dom algClosure_cum.directedOn ?_ ⟨z, .base hz⟩
     rw [setOf_algClosure]
     exact ((Finset.finite_toSet y.powerset).subset fun _ h ↦ by simpa using h.2.1).supClosure
 
@@ -153,34 +131,36 @@ private theorem algClosure_otherAtoms_iff :
     let ⟨a, ha⟩ := atom_finset_iff.1 hz.2.2; ⟨a, ha.symm⟩]
   simp [overlap_iff_not_disjoint, atom_singleton, Finset.subset_iff, and_comm]
 
-theorem eachOther_atom_eq_some_iff : eachOther Atom x y = some d ↔ d.Nonempty ∧ d = y \ x := by
-  rw [eachOther, iota_isGreatest_eq_some_iff]
+theorem eachOther_atom_eq_some_iff : d ∈ eachOther Atom x y ↔ d.Nonempty ∧ d = y \ x := by
+  rw [eachOther, mem_iota_isGreatest]
   simp only [IsGreatest, upperBounds, Set.mem_ofPred_eq, algClosure_otherAtoms_iff]
   refine ⟨fun ⟨⟨hd, hsub⟩, hub⟩ ↦ ⟨hd, hsub.antisymm (hub ⟨hd.mono hsub, subset_rfl⟩)⟩, ?_⟩
   rintro ⟨hd, rfl⟩
   exact ⟨⟨hd, subset_rfl⟩, fun _ hz ↦ hz.2⟩
 
-theorem eachOther_atom_isSome_iff : (eachOther Atom x y).isSome ↔ (y \ x).Nonempty :=
-  Option.isSome_iff_exists.trans <| by
+theorem eachOther_atom_dom_iff : (eachOther Atom x y).Dom ↔ (y \ x).Nonempty :=
+  Part.dom_iff_mem.trans <| by
     simp only [eachOther_atom_eq_some_iff]
     exact ⟨fun ⟨_, hd, e⟩ ↦ e ▸ hd, fun h ↦ ⟨_, h, rfl⟩⟩
 
 -- (111)
-theorem eachOther_atom_singleton_of_ne (h : a ≠ b) : eachOther Atom {a} {b} = some {b} :=
+theorem eachOther_atom_singleton_of_ne (h : a ≠ b) : {b} ∈ eachOther Atom {a} {b} :=
   eachOther_atom_eq_some_iff.2 ⟨Finset.singleton_nonempty b, by
     rw [Finset.sdiff_singleton_eq_erase, Finset.erase_eq_of_notMem (by simpa using h)]⟩
 
 -- (111)
-theorem eachOther_atom_singleton_self : eachOther Atom {a} {a} = none := by
-  rw [← Option.not_isSome_iff_eq_none, eachOther_atom_isSome_iff]
+theorem eachOther_atom_singleton_self : eachOther Atom {a} {a} = Part.none := by
+  rw [Part.eq_none_iff', eachOther_atom_dom_iff]
   simp
 
 -- (111)
 theorem eachOther_atom_singleton_eq_some_iff :
-    eachOther Atom {a} {b} = some d ↔ a ≠ b ∧ d = {b} := by
+    d ∈ eachOther Atom {a} {b} ↔ a ≠ b ∧ d = {b} := by
   obtain rfl | h := eq_or_ne a b
-  · simp [eachOther_atom_singleton_self]
-  · simp [eachOther_atom_singleton_of_ne h, h, eq_comm]
+  · simp [eachOther_atom_singleton_self, Part.notMem_none]
+  · simp only [ne_eq, h, not_false_eq_true, true_and]
+    exact ⟨fun hd ↦ Part.mem_unique hd (eachOther_atom_singleton_of_ne h),
+      fun e ↦ e ▸ eachOther_atom_singleton_of_ne h⟩
 
 open Classical in
 -- (111), (112)
@@ -188,8 +168,8 @@ theorem presupOfReferent_eachOther (P : Finset α → Prop) (a b : α) :
     presupOfReferent (eachOther Atom {a}) (fun d _ ↦ P d) ({b} : Finset α) =
       if a = b then .undefined else Trivalent.ofProp (P {b}) := by
   obtain rfl | h := eq_or_ne a b
-  · simp [presupOfReferent_of_none eachOther_atom_singleton_self]
-  · simp [presupOfReferent_of_some (eachOther_atom_singleton_of_ne h), h]
+  · simp [presupOfReferent_of_not_dom (Part.eq_none_iff'.1 eachOther_atom_singleton_self)]
+  · simp [presupOfReferent_of_mem (eachOther_atom_singleton_of_ne h), h]
 
 -- (77) as printed
 theorem not_exists_isLeast_otherAtoms (h : (y \ x).Nontrivial) :
@@ -202,7 +182,7 @@ theorem not_exists_isLeast_otherAtoms (h : (y \ x).Nontrivial) :
 
 /-- (79), after [sauerland-1998]: non-overlap excludes each member of a plural contrast, which
 non-identity would let in. -/
-example : eachOther Atom {0, 1} ({0, 1, 2} : Finset (Fin 3)) = some {2} :=
+example : {2} ∈ eachOther Atom {0, 1} ({0, 1, 2} : Finset (Fin 3)) :=
   eachOther_atom_eq_some_iff.2 ⟨by decide, by decide⟩
 
 /-! ### The collective and the strong reading -/
@@ -255,8 +235,7 @@ private theorem algClosure_sdiff_pair_iff :
 theorem collectiveReading_eq_undefined_iff :
     collectiveReading Atom R A = .undefined ↔ ¬ A.Nontrivial := by
   rw [collectiveReading, pluralize_eq_undefined_iff, not_iff_not, ← algClosure_sdiff_self_iff]
-  simp only [ne_eq, presupOfReferent_eq_undefined_iff, Option.ne_none_iff_isSome,
-    eachOther_atom_isSome_iff]
+  simp only [ne_eq, presupOfReferent_eq_undefined_iff, not_not, eachOther_atom_dom_iff]
 
 theorem collectiveReading_eq_true_iff :
     collectiveReading Atom R A = .true ↔ A.Nontrivial ∧ ∀ a ∈ A, R {a} (A.erase a) := by
@@ -314,8 +293,7 @@ a pair can be cumulated into `⟨A, A⟩` only if `A` divides into distinct part
 theorem weakReading_eq_undefined_iff : weakReading Atom R A = .undefined ↔ ¬ A.Nontrivial := by
   rw [weakReading, cumulatedReading, pluralize_eq_undefined_iff, not_iff_not,
     ← algClosure_sdiff_pair_iff]
-  simp only [ne_eq, presupOfReferent_eq_undefined_iff, Option.ne_none_iff_isSome,
-    eachOther_atom_isSome_iff]
+  simp only [ne_eq, presupOfReferent_eq_undefined_iff, not_not, eachOther_atom_dom_iff]
 
 -- (110), (128)
 theorem cumulatedReading_atom_eq_true_iff {z y : Finset α} :
@@ -387,7 +365,7 @@ def HatesOthers (x d : Finset (Fin 6)) : Prop := (x = {0} ∧ d = {1, 2}) ∨ (x
 -- (128)
 theorem hatesOthers_row :
     cumulatedReading Atom (· ∈ ({{0, 1, 2}, {3, 4, 5}} : Finset (Finset (Fin 6)))) HatesOthers
-      {0, 3} Finset.univ = .true ∧ Examples.ex128a.readings.lookup "(128b)" = some .acceptable := by
+      {0, 3} Finset.univ = .true ∧ .acceptable ∈ Examples.ex128a.readings.lookup "(128b)" := by
   refine ⟨?_, by decide⟩
   rw [cumulatedReading, pluralize_eq_true_iff]
   have e : (({0, 3} : Finset (Fin 6)), (Finset.univ : Finset (Fin 6))) =
@@ -443,7 +421,7 @@ def Likes (x y : Fin 4) : Prop := x ≠ y ∧ ¬ (x = 1 ∧ y = 3)
 -- (99)
 theorem likes_row :
     ¬ StrongReciprocity Likes Finset.univ ∧ WeakReciprocity Likes Finset.univ ∧
-      Examples.ex99.readings.lookup "Strong Reciprocity" = some .acceptable := by decide
+      .acceptable ∈ Examples.ex99.readings.lookup "Strong Reciprocity" := by decide
 
 /-- (83b): each of three forks is jointly supported by the other two, and not by any one of them.
 -/
@@ -453,7 +431,7 @@ def Propped (x d : Finset (Fin 3)) : Prop := ∃ a, x = {a} ∧ d = Finset.univ.
 theorem propped_row :
     collectiveReading Atom Propped Finset.univ = .true ∧
       strongReading Atom Propped Finset.univ ≠ .true ∧
-      Examples.ex83b.readings.lookup "collective" = some .acceptable := by
+      .acceptable ∈ Examples.ex83b.readings.lookup "collective" := by
   refine ⟨collectiveReading_eq_true_iff.2 ⟨Finset.univ_nontrivial, fun a _ ↦ ⟨a, rfl, rfl⟩⟩,
     fun h ↦ ?_, by decide⟩
   obtain ⟨a, -, hd⟩ := (strongReciprocity_iff.1 (strongReading_eq_true_iff.1 h)).2
@@ -501,42 +479,38 @@ open Classical in
 noncomputable def partialScope (Q : Quantifier γ) (g : γ → Trivalent) : Trivalent :=
   if Trivalent.IsBivalent g then Trivalent.ofProp (Q (Trivalent.posExt g)) else .undefined
 
-theorem partialScope_presupOfReferent [Nonempty γ] {W E : Type*} (r : W → Option E)
+theorem partialScope_presupOfReferent [Nonempty γ] {W E : Type*} (r : W → Part E)
     (s : E → W → γ → Prop) (w : W) :
     partialScope Q (fun z ↦ presupOfReferent r (fun e w ↦ s e w z) w) =
       presupOfReferent r (fun e w ↦ Q {z | s e w z}) w := by
-  cases h : r w with
-  | none =>
-    have hb : ¬ Trivalent.IsBivalent fun z ↦ presupOfReferent r (fun e w ↦ s e w z) w :=
-      fun hb ↦ hb.ne_undefined (Classical.arbitrary γ) (presupOfReferent_of_none h)
-    rw [partialScope, ite_eq_right hb, presupOfReferent_of_none h]
-  | some e =>
+  by_cases hd : (r w).Dom
+  · obtain ⟨e, h⟩ := Part.dom_iff_mem.1 hd
     have hb : Trivalent.IsBivalent fun z ↦ presupOfReferent r (fun e w ↦ s e w z) w :=
-      (Trivalent.isBivalent_iff_forall_ne_undefined _).2 fun z ↦ by simp [h]
+      (Trivalent.isBivalent_iff_forall_ne_undefined _).2 fun z ↦ by
+        simp [presupOfReferent_of_mem h]
     have hset :
         Trivalent.posExt (fun z ↦ presupOfReferent r (fun e w ↦ s e w z) w) = {z | s e w z} :=
-      Set.ext fun z ↦ by simp [h]
-    rw [partialScope, ite_eq_left hb, hset, presupOfReferent_of_some h]
+      Set.ext fun z ↦ by simp [presupOfReferent_of_mem h]
+    rw [partialScope, ite_eq_left hb, hset, presupOfReferent_of_mem h]
+  · have hb : ¬ Trivalent.IsBivalent fun z ↦ presupOfReferent r (fun e w ↦ s e w z) w :=
+      fun hb ↦ hb.ne_undefined (Classical.arbitrary γ) (presupOfReferent_of_not_dom hd)
+    rw [partialScope, ite_eq_right hb, presupOfReferent_of_not_dom hd]
 
 private theorem meetWeak_ofProp_presupOfReferent {W E : Type*} (P : Prop) [Decidable P]
-    (r : W → Option E) (s : E → W → Prop) (w : W) :
+    (r : W → Part E) (s : E → W → Prop) (w : W) :
     Trivalent.meetWeak (Trivalent.ofProp P) (presupOfReferent r s w) =
       presupOfReferent r (fun e w ↦ P ∧ s e w) w := by
-  cases h : r w with
-  | none => by_cases hP : P <;> simp [presupOfReferent_of_none h, Trivalent.ofProp, hP]
-  | some e =>
-    rw [presupOfReferent_of_some h, presupOfReferent_of_some h]
+  by_cases hd : (r w).Dom
+  · obtain ⟨e, h⟩ := Part.dom_iff_mem.1 hd
+    rw [presupOfReferent_of_mem h, presupOfReferent_of_mem h]
     by_cases hP : P <;> by_cases hs : s e w <;> simp [Trivalent.ofProp, hP, hs]
+  · by_cases hP : P <;> simp [presupOfReferent_of_not_dom hd, Trivalent.ofProp, hP]
 
 open Classical in
-private theorem presupOfReferent_congr_scope {W E : Type*} {r : W → Option E}
+private theorem presupOfReferent_congr_scope {W E : Type*} {r : W → Part E}
     {s s' : E → W → Prop} {w : W} (h : ∀ e, s e w ↔ s' e w) :
-    presupOfReferent r s w = presupOfReferent r s' w := by
-  cases hr : r w with
-  | none => rw [presupOfReferent_of_none hr, presupOfReferent_of_none hr]
-  | some e =>
-    rw [presupOfReferent_of_some hr, presupOfReferent_of_some hr]
-    exact Trivalent.ofProp_congr (h e)
+    presupOfReferent r s w = presupOfReferent r s' w :=
+  Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp) (by simp [h])
 
 open Classical in
 /-- With a quantifier between the reciprocal and cumulation, the sentence is the weak reading of
@@ -579,7 +553,7 @@ def introductions : Fin 4 → Fin 4 × Fin 4 := ![(0, 1), (1, 0), (2, 3), (3, 2)
 theorem exactlyTwo_row :
     Cumulation (Relation.Map (fun a b : Fin 4 ↦ {z | a ≠ b ∧ (a, b) = introductions z}.ncard = 2)
         ({·}) ({·})) Finset.univ Finset.univ ↔
-      Examples.ex105a.verdict = some true := by
+      true ∈ Examples.ex105a.verdict := by
   refine iff_of_false ?_ (by decide)
   rw [cumulation_map_singleton]
   rintro ⟨-, h, -⟩
@@ -665,17 +639,17 @@ true, and *all*, which [brisson-1998] takes to force the cover to fit, makes it 
 situation judged false. -/
 theorem pirates_rows :
     (WeakReciprocity (Stares situation136) coveredPirates ↔
-      Examples.ex135_136.verdict = some true) ∧
+      true ∈ Examples.ex135_136.verdict) ∧
     (WeakReciprocity (Stares situation141) coveredPirates ↔
-      Examples.ex135_141.verdict = some true) ∧
+      true ∈ Examples.ex135_141.verdict) ∧
     (WeakReciprocity (Stares situation141) Finset.univ ↔
-      Examples.ex143_141.verdict = some true) := by
+      true ∈ Examples.ex143_141.verdict) := by
   decide
 
 -- (136), (141), (142)
 theorem oneWayWeak_mispredicts :
     ¬ OneWayWeakReciprocity (Stares situation141) Finset.univ ∧
-      Examples.ex135_141.verdict = some true ∧
+      true ∈ Examples.ex135_141.verdict ∧
     OneWayWeakReciprocity (Stares situation142) Finset.univ ∧
       Examples.ex135_142.judgment = .questionable := by decide
 
@@ -699,8 +673,7 @@ theorem weakReading_situation136 :
           (fun d p ↦ (Atom p.1 ∧ p.1 ≤ coveredPirates) ∧ (Atom p.2 ∧ p.2 ≤ coveredPirates) ∧
             Relation.Map (Stares situation136) ({·}) ({·}) p.1 d) p ≠ .undefined) (x, y) := by
       refine .base ?_
-      rw [ne_eq, presupOfReferent_eq_undefined_iff, ← ne_eq, Option.ne_none_iff_isSome,
-        eachOther_isSome_iff]
+      rw [ne_eq, presupOfReferent_eq_undefined_iff, not_not, eachOther_dom_iff]
       exact ⟨{c}, overlap_iff_not_disjoint.not_left.2 (Finset.disjoint_singleton_left.2 hx),
         Finset.singleton_subset_iff.2 hy, atom_singleton c, Finset.singleton_subset_iff.2 hc⟩
     have e : ((Finset.univ : Finset (Fin 6)), (Finset.univ : Finset (Fin 6))) =
@@ -791,8 +764,7 @@ theorem situationWeakReading_eq_undefined_iff [DecidableEq τ] {CovS : Finset τ
     {R : Finset α → Finset α → Finset τ → Prop} {s : Finset τ} :
     situationWeakReading Atom CovS R A s = .undefined ↔ ¬ A.Nontrivial := by
   rw [situationWeakReading, pluralize_eq_undefined_iff, not_iff_not, ← algClosure_sdiff_pair_iff]
-  simp only [ne_eq, presupOfReferent_eq_undefined_iff, Option.ne_none_iff_isSome,
-    eachOther_atom_isSome_iff]
+  simp only [ne_eq, presupOfReferent_eq_undefined_iff, not_not, eachOther_atom_dom_iff]
   exact ⟨fun h ↦ h.map (x := (A, A, s)) (f := fun q ↦ (q.1, q.2.1)) (by simp) fun _ ↦ id,
     fun h ↦ h.map (x := (A, A)) (f := fun p ↦ (p.1, p.2, s)) (by simp) fun _ ↦ id⟩
 
@@ -917,9 +889,9 @@ def AdjacentAt (x y t : Fin 5) : Prop :=
 theorem adjacent_rows :
     IntermediateReciprocity Adjacent Finset.univ ∧
     (SituationWeakReciprocity AdjacentAt Finset.univ {0, 1, 2, 3} ↔
-      Examples.ex14_15.verdict = some true) ∧
+      true ∈ Examples.ex14_15.verdict) ∧
     (SituationWeakReciprocity AdjacentAt Finset.univ Finset.univ ↔
-      Examples.ex153.verdict = some true) :=
+      true ∈ Examples.ex153.verdict) :=
   ⟨intermediate_of_line (by decide), by decide, by decide⟩
 
 /-- (181): the minimal situation containing the `t`-th of five poles and its neighbour on a circle.
@@ -975,7 +947,7 @@ theorem salientRelation_row :
     StrongReciprocity (fun x y ↦ UsesNotes x y → Respects x y) Finset.univ ∧
       ¬ StrongReciprocity (fun x y ↦ UsesNotes x y → Respects y x) Finset.univ ∧
       ¬ WeakReciprocity Respects Finset.univ ∧
-      Examples.ex188a.readings.lookup "(188d)" = some .unacceptable := by
+      .unacceptable ∈ Examples.ex188a.readings.lookup "(188d)" := by
   decide
 
 /-! ### Homogeneity and Inclusive Alternative Ordering -/
@@ -1054,7 +1026,7 @@ def KnowsFifth (x y : Fin 5) : Prop := x ≠ 4 ∧ y = 4
 theorem knowsFifth_row :
     (∀ X : Finset (Fin 5), X.Nonempty → ¬ WeakReciprocity KnowsFifth X) ∧
     ((∀ a ∈ Finset.univ, ∀ b ∈ Finset.univ, a ≠ b → ¬ KnowsFifth a b) ↔
-      Examples.ex220.verdict = some true) := by
+      true ∈ Examples.ex220.verdict) := by
   decide
 
 end Beck2001

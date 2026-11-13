@@ -100,7 +100,7 @@ CUSTOM_COLUMNS = [
      "dc:description": "How the row was last checked against its source: page-image or "
                        "text-layer; empty when it has not been."},
     {"name": "Method",
-     "dc:description": "How the example and its judgment were obtained: introspection, "
+     "dc:description": "How the example and its judgment were obtained: "
                        "elicitation, corpus, experiment or description; empty when not yet "
                        "classified."},
 ]
@@ -181,7 +181,8 @@ def example_row(paper, row):
                      for r in row.get("readings", [])] or None,
         "Paper_Features": features(row) or None,
         "Verified": row.get("verified"),
-        "Method": row.get("method") or CONTRIBUTION_METHODS.get(paper),
+        "Method": (None if row.get("method") == "unclassified"
+                   else row.get("method") or CONTRIBUTION_METHODS.get(paper)),
     }
 
 

@@ -18,7 +18,7 @@ perspective time, so the constraint a tense imposes on times `r` and `p` is
 perspective time, not the speech time. Cells are the elements of the Boolean algebra
 `𝒫 {lt, eq, gt}`, so the derived categories are joins and complements of tense denotations
 rather than further tenses: Klecha's nonpast is `⟦present⟧ ⊔ ⟦future⟧`, the nonfuture is
-`⟦future⟧ᶜ`, and the unconstrained cell is `⊤`.
+`⟦past⟧ ⊔ ⟦present⟧`, and the unconstrained cell is `⊤`.
 
 Cells compose: `comp R S` collects the positions of `a` to `c` compatible with `a` to `b` in `R`
 and `b` to `c` in `S`. A cell is also a relation between times (`toSetRel`), the union of the
@@ -31,8 +31,10 @@ moment](##Tense.toSetRel_comp_iff).
 ## Main declarations
 
 * `Tense.denote`: the cell a tense denotes, written `⟦t⟧`.
-* `Tense.nonpast`: the cell of the present or future.
+* `Tense.nonpast`, `Tense.nonfuture`: the cells of the present or future and of the past or
+  present.
 * `Tense.comp`: the composition of two cells.
+* `Tense.compAlong`: the composite of a chain of cells.
 * `Tense.toSetRel`: a cell as a relation between times.
 
 ## Main statements
@@ -77,7 +79,16 @@ theorem nonpast_eq_present_sup_future : nonpast = ⟦present⟧ ⊔ ⟦future⟧
 
 theorem nonpast_eq_compl_past : nonpast = ⟦past⟧ᶜ := by decide
 
-theorem past_sup_present : ⟦past⟧ ⊔ ⟦present⟧ = ⟦future⟧ᶜ := by decide
+/-- The nonfuture is the cell of a reference time before or at the perspective time. -/
+def nonfuture : Finset Ordering := {.lt, .eq}
+
+theorem nonfuture_eq_past_sup_present : nonfuture = ⟦past⟧ ⊔ ⟦present⟧ := by decide
+
+theorem nonfuture_eq_compl_future : nonfuture = ⟦future⟧ᶜ := by decide
+
+theorem past_le_nonfuture : ⟦past⟧ ≤ nonfuture := by decide
+
+theorem present_le_nonfuture : ⟦present⟧ ≤ nonfuture := by decide
 
 /-- The composition of two cells collects the orderings of `a` to `c` compatible with `a` to
 `b` in `R` and `b` to `c` in `S`. -/
@@ -93,6 +104,17 @@ theorem comp_sup_left (R R' S : Finset Ordering) : comp (R ⊔ R') S = comp R S 
 
 theorem comp_sup_right (R S S' : Finset Ordering) : comp R (S ⊔ S') = comp R S ⊔ comp R S' := by
   simp only [comp, Finset.sup_eq_union, Finset.union_biUnion, Finset.biUnion_union]
+
+@[gcongr] theorem comp_le_comp {R R' S S' : Finset Ordering} (hR : R ≤ R') (hS : S ≤ S') :
+    comp R S ≤ comp R' S' := fun _ h ↦
+  let ⟨r, hr, s, hs, ho⟩ := mem_comp.1 h
+  mem_comp.2 ⟨r, hR hr, s, hS hs, ho⟩
+
+@[simp] theorem comp_bot_left (S : Finset Ordering) : comp ⊥ S = ⊥ := rfl
+
+@[simp] theorem comp_bot_right (R : Finset Ordering) : comp R ⊥ = ⊥ := by
+  ext o
+  simp [mem_comp]
 
 @[simp] theorem comp_present_left (S : Finset Ordering) : comp ⟦present⟧ S = S := by
   ext o
@@ -114,8 +136,20 @@ theorem comp_sup_right (R S S' : Finset Ordering) : comp R (S ⊔ S') = comp R S
 
 @[simp] theorem comp_future_past : comp ⟦future⟧ ⟦past⟧ = ⊤ := by decide
 
-@[simp] theorem comp_compl_future_compl_future : comp ⟦future⟧ᶜ ⟦future⟧ᶜ = ⟦future⟧ᶜ := by
-  decide
+@[simp] theorem comp_nonfuture_nonfuture : comp nonfuture nonfuture = nonfuture := by decide
+
+/-- The composite of a chain of cells, each the cell of a time against the time above it: the
+cell of the last time against the time above the first. -/
+def compAlong : List (Finset Ordering) → Finset Ordering
+  | [] => ⟦present⟧
+  | C :: cs => comp (compAlong cs) C
+
+@[simp] theorem compAlong_nil : compAlong [] = ⟦present⟧ := rfl
+
+@[simp] theorem compAlong_cons (C : Finset Ordering) (cs : List (Finset Ordering)) :
+    compAlong (C :: cs) = comp (compAlong cs) C := rfl
+
+theorem compAlong_singleton (C : Finset Ordering) : compAlong [C] = C := comp_present_left C
 
 variable {T : Type*} {C D : Finset Ordering} {p r : T}
 
@@ -137,8 +171,8 @@ variable [LinearOrder T]
 @[simp] theorem compare_mem_nonpast (r p : T) : compare r p ∈ nonpast ↔ p ≤ r := by
   rw [nonpast_eq_compl_past, Finset.mem_compl, compare_mem_past, not_lt]
 
-@[simp] theorem compare_mem_compl_future (r p : T) : compare r p ∈ ⟦future⟧ᶜ ↔ r ≤ p := by
-  rw [Finset.mem_compl, compare_mem_future, not_lt]
+@[simp] theorem compare_mem_nonfuture (r p : T) : compare r p ∈ nonfuture ↔ r ≤ p := by
+  rw [nonfuture_eq_compl_future, Finset.mem_compl, compare_mem_future, not_lt]
 
 theorem compare_mem_comp {R S : Finset Ordering} {a b c : T} (h₁ : compare a b ∈ R)
     (h₂ : compare b c ∈ S) : compare a c ∈ comp R S :=
@@ -173,6 +207,10 @@ theorem mem_toSetRel : p ~[toSetRel C] r ↔ ∃ o ∈ C, o.Compares r p := .rfl
 
 @[simp] theorem mem_toSetRel_future : p ~[toSetRel ⟦future⟧] r ↔ p < r := by
   simp [mem_toSetRel, Denotes.denote, denote]
+
+theorem mem_toSetRel_nonfuture {T : Type*} [PartialOrder T] {p r : T} :
+    p ~[toSetRel nonfuture] r ↔ r ≤ p := by
+  simp [mem_toSetRel, nonfuture, le_iff_lt_or_eq]
 
 theorem mem_toSetRel_top_iff : p ~[toSetRel ⊤] r ↔ r < p ∨ r = p ∨ p < r :=
   ⟨fun ⟨o, _, h⟩ ↦ by cases o; exacts [.inl h, .inr (.inl h), .inr (.inr h)],

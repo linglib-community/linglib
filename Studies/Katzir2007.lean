@@ -37,13 +37,6 @@ the inclusions the paper relies on. A noun phrase is labelled by its noun, and a
 a clause with its second conjunct. The symmetric alternative places the conjunction of
 quantifiers at the determiner.
 
-## Errata
-
-The final substitution source (41) holds the tree itself, so under (19) a tree can replace its own
-constituent: [*tall (tall man)* is at most as complex as *tall man*](##tallTallMan_mem_alternatives)
-and conversely. The relation bounds no size, and every *tall*ⁿ *man* has one complexity. The first
-source (18), the lexicon alone, does bound size (`atMostAsComplex.numNodes_le`).
-
 ## References
 
 * [katzir-2007]

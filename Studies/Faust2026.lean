@@ -57,7 +57,7 @@ namespace Faust2026
 
 open Morphology Autosegmental
 
-variable {α : Type*}
+variable {α : Type}
 
 /-- The planes of a stem (10c): the consonantal melody, root and suffix, and the template's
 vocalization. -/
@@ -74,20 +74,23 @@ inductive Morpheme where
   | template
   deriving DecidableEq, Repr
 
-open MultiplanarForm
+open AR
 
 /-! ### *Misalignment -/
 
 /-- `Misaligned m` holds when some nonfinal root element is associated to the template-final slot,
 which *Misalignment (2), (6b) bans. The root's elements precede the suffix's on the consonantal
 plane, so a root element is nonfinal when a root element follows it. -/
-def Misaligned (m : MultiplanarForm Plane Slot α Morpheme) : Prop :=
-  ∃ l ∈ m.lines .consonantal, (m.upper .consonantal)[l.1]?.map (·.morpheme) = some .root ∧
-    (m.upper .consonantal)[l.1 + 1]?.map (·.morpheme) = some .root ∧
+def Misaligned (m : AR (Multiplanar Plane (Sponsored α Morpheme) (Sponsored Slot Morpheme))) :
+    Prop :=
+  ∃ l ∈ (m.lines (some .consonantal) none), ((m.word (some .consonantal)))[l.1]?.map (·.morpheme) =
+      some .root ∧
+    ((m.word (some .consonantal)))[l.1 + 1]?.map (·.morpheme) = some .root ∧
       l.2 + 1 = m.template.length
 
-instance (m : MultiplanarForm Plane Slot α Morpheme) : Decidable (Misaligned m) :=
-  inferInstanceAs (Decidable (∃ _ ∈ m.lines .consonantal, _))
+instance (m : AR (Multiplanar Plane (Sponsored α Morpheme) (Sponsored Slot Morpheme))) :
+    Decidable (Misaligned m) :=
+  inferInstanceAs (Decidable (∃ _ ∈ (m.lines (some .consonantal) none), _))
 
 /-- The classes the [+consonantal] specification of a C-slot separates. -/
 inductive SegClass where
@@ -145,44 +148,54 @@ structure Pattern where
 
 /-- The template of a pattern, a morph of its slots and its vocalization with the vocalization's
 lines (p. 433). -/
-def Pattern.morph (p : Pattern) : MultiplanarForm Plane Slot String Morpheme :=
+def Pattern.morph (p : Pattern) :
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme)) :=
   (ofSlots .template p.template * ofMelody .vocalic .template p.vocalism :
-    MultiplanarForm Plane Slot String Morpheme).link .vocalic p.vocLines
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))).link .vocalic
+        p.vocLines
 
 /-- The root associated with the C-slots by the conventions, one to one from left to right
 with the final radical spreading onto leftover slots, under the pattern's vocalization. -/
-def lines (p : Pattern) (r : ConsonantalRoot String) : MultiplanarForm Plane Slot String Morpheme :=
+def lines (p : Pattern) (r : ConsonantalRoot String) :
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme)) :=
   (ofMelody Plane.consonantal Morpheme.root r.segments * p.morph).associate .consonantal .C
 
 /-- `m.Admits l` says that the slot's specification admits the segment of the consonantal line
 `l`. A [+c] slot hosts consonants only ((4), (7), (13)), and a plain C-slot anything but a
 vowel. -/
-def Admits (p : Pattern) (m : MultiplanarForm Plane Slot String Morpheme) (l : ℕ × ℕ) : Prop :=
-  match m.template[l.2]?, ((m.upper .consonantal)[l.1]?).map (·.value) with
+def Admits (p : Pattern) (m :
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))) (l : ℕ × ℕ) :
+    Prop :=
+  match m.template[l.2]?, (((m.word (some .consonantal)))[l.1]?).map (·.value) with
   | some .C, some x =>
     if l.2 ∈ p.consonantal then segClass x = .consonant else segClass x ≠ .vowel
   | _, _ => True
 
-instance (p : Pattern) (m : MultiplanarForm Plane Slot String Morpheme) (l : ℕ × ℕ) :
+instance (p : Pattern) (m :
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))) (l : ℕ × ℕ) :
     Decidable (Admits p m l) := by
   unfold Admits; split <;> infer_instance
 
 /-- The V-slots flanking slot `i`. -/
-def flankingV (m : MultiplanarForm Plane Slot String Morpheme) (i : Nat) : List Nat :=
+def flankingV (m : AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))) (i
+    : Nat) : List Nat :=
   [i - 1, i + 1].filter fun s ↦ m.template[s]? = some .V
 
 /-- The vocalization line at slot `s`. -/
-def vocAt (m : MultiplanarForm Plane Slot String Morpheme) (s : Nat) : Option (ℕ × ℕ) :=
-  ((List.range (m.upper .vocalic).length).find? fun k ↦ (k, s) ∈ m.lines .vocalic).map (·, s)
+def vocAt (m : AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))) (s :
+    Nat) : Option (ℕ × ℕ) :=
+  ((List.range ((m.word (some .vocalic))).length).find? fun k ↦ (k, s) ∈ (m.lines (some .vocalic)
+      none)).map (·, s)
 
 /-- `join` places a barred root element. A glide joins the slot of the consonant on its left where
 the pattern's language does that, Amharic and not Hebrew (7). A nonconsonantal radical merges with
 the vocalization on the V-slots flanking its slot, the vocalization element spreading to a flanking
 V-slot it did not occupy, so that the merger "occupies the two vocalic positions around the C
 position" (13b–c). -/
-def join (p : Pattern) (m : MultiplanarForm Plane Slot String Morpheme) (l : ℕ × ℕ) :
-    MultiplanarForm Plane Slot String Morpheme :=
-  match ((m.upper .consonantal)[l.1]?).map (segClass ·.value) with
+def join (p : Pattern) (m :
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))) (l : ℕ × ℕ) :
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme)) :=
+  match (((m.word (some .consonantal)))[l.1]?).map (segClass ·.value) with
   | some .glide =>
     if p.joinsGlide then
       match m.leftLine .consonantal l.2 with
@@ -199,14 +212,16 @@ def join (p : Pattern) (m : MultiplanarForm Plane Slot String Morpheme) (l : ℕ
   | _ => m
 
 /-- The consonantal lines of a match, by melody position and then slot. -/
-def consonantalLines (m : MultiplanarForm Plane Slot String Morpheme) : List (ℕ × ℕ) :=
-  (List.range (m.upper .consonantal).length).flatMap fun k ↦
-    ((List.range m.lower.length).filter fun s ↦ (k, s) ∈ m.lines .consonantal).map (k, ·)
+def consonantalLines (m :
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))) : List (ℕ × ℕ) :=
+  (List.range ((m.word (some .consonantal))).length).flatMap fun k ↦
+    ((List.range (m.word none).length).filter fun s ↦ (k, s) ∈ (m.lines (some .consonantal)
+        none)).map (k, ·)
 
 /-- Association under the slot specifications removes the rejected lines and joins or merges their
 elements as the pattern's language allows. -/
 def associate (p : Pattern) (r : ConsonantalRoot String) :
-    MultiplanarForm Plane Slot String Morpheme :=
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme)) :=
   let m := lines p r
   ((consonantalLines m).filter fun l ↦ ¬ Admits p m l).foldl (join p)
     (m.filterLines .consonantal (Admits p m ·))
@@ -214,20 +229,23 @@ def associate (p : Pattern) (r : ConsonantalRoot String) :
 /-! ### Intrusion -/
 
 /-- The feminine morph √(a)t, whose vowel does not surface, so that it carries only t. -/
-def suffixMorph : MultiplanarForm Plane Slot String Morpheme := ofMelody .consonantal .suffix ["t"]
+def suffixMorph : AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme)) :=
+  ofMelody .consonantal .suffix ["t"]
 
 /-- The feminine morph merged with the base, its consonant associated to slot `s`. The base's root
 and the morph share the consonantal plane, the morph's t after the radicals (10c). -/
-def intrudeAt (m : MultiplanarForm Plane Slot String Morpheme) (s : Nat) :
-    MultiplanarForm Plane Slot String Morpheme :=
-  (m * suffixMorph).link .consonantal [((m.upper .consonantal).length, s)]
+def intrudeAt (m : AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))) (s
+    : Nat) :
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme)) :=
+  (m * suffixMorph).link .consonantal [(((m.word (some .consonantal))).length, s)]
 
-theorem lines_intrudeAt_subset (m : MultiplanarForm Plane Slot String Morpheme) (s : Nat) :
-    (intrudeAt m s).lines .consonantal ⊆
-      insert ((m.upper .consonantal).length, s) (m.lines .consonantal) := by
+theorem lines_intrudeAt_subset (m :
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))) (s : Nat) :
+    (intrudeAt m s).lines (some .consonantal) none ⊆
+      insert (((m.word (some .consonantal))).length, s) ((m.lines (some .consonantal) none)) := by
   intro l hl
   rw [intrudeAt, link, mem_addLines] at hl
-  simp only [suffixMorph, mul_eq_concat, concat_lines, ofMelody_lines, Finset.map_empty,
+  simp only [suffixMorph, lines_mul, lines_ofMelody, Finset.map_empty,
     Finset.union_empty, List.mem_toFinset, List.mem_singleton] at hl
   rw [Finset.mem_insert]
   tauto
@@ -235,27 +253,29 @@ theorem lines_intrudeAt_subset (m : MultiplanarForm Plane Slot String Morpheme) 
 /-- Intrusion (10b–c) associates the morph's consonant from right to left to the rightmost vacant
 C-slot, provided that slot lies in its window, so that its line crosses none of the root's;
 otherwise the consonant floats (13b–c). -/
-def intrude (m : MultiplanarForm Plane Slot String Morpheme) :
-    MultiplanarForm Plane Slot String Morpheme :=
+def intrude (m : AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))) :
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme)) :=
   match m.unfilledCSlots.max? with
   | some s =>
-    if s ∈ window (m.lines .consonantal : SetRel ℕ ℕ) (m.upper .consonantal).length then
+    if s ∈ window ((m.lines (some .consonantal) none) :
+        SetRel ℕ ℕ) ((m.word (some .consonantal))).length then
       intrudeAt m s
     else m * suffixMorph
   | none => m * suffixMorph
 
-theorem misaligned_mul_suffixMorph (m : MultiplanarForm Plane Slot String Morpheme)
-    {L : List (ℕ × ℕ)} (hL : ∀ l ∈ L, (m.upper .consonantal).length ≤ l.1) :
+theorem misaligned_mul_suffixMorph (m :
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme)))
+    {L : List (ℕ × ℕ)} (hL : ∀ l ∈ L, ((m.word (some .consonantal))).length ≤ l.1) :
     Misaligned ((m * suffixMorph).link .consonantal L) ↔ Misaligned m := by
   have hroot (k : ℕ) :
-      ((m.upper .consonantal ++ [⟨"t", .suffix⟩])[k]?.map (·.morpheme) = some .root) ↔
-        (m.upper .consonantal)[k]?.map (·.morpheme) = some .root := by
-    rcases lt_or_ge k (m.upper .consonantal).length with h | h
+      (((m.word (some .consonantal)) ++ [⟨"t", .suffix⟩])[k]?.map (·.morpheme) = some .root) ↔
+        ((m.word (some .consonantal)))[k]?.map (·.morpheme) = some .root := by
+    rcases lt_or_ge k ((m.word (some .consonantal))).length with h | h
     · rw [List.getElem?_append_left h]
     · rw [List.getElem?_append_right h, List.getElem?_eq_none h, List.getElem?_singleton]
       split_ifs <;> simp
-  have hupper : ((m * suffixMorph).link .consonantal L).upper .consonantal =
-      m.upper .consonantal ++ [⟨"t", .suffix⟩] := by
+  have hupper : (((m * suffixMorph).link .consonantal L).word (some .consonantal)) =
+      (m.word (some .consonantal)) ++ [⟨"t", .suffix⟩] := by
     simp [link, suffixMorph]
   have htemplate : ((m * suffixMorph).link .consonantal L).template = m.template := by
     simp [link, suffixMorph, template]
@@ -263,7 +283,7 @@ theorem misaligned_mul_suffixMorph (m : MultiplanarForm Plane Slot String Morphe
   constructor
   · rintro ⟨l, hl, h1, h2, h3⟩
     rw [link, mem_addLines] at hl
-    simp only [suffixMorph, mul_eq_concat, concat_lines, ofMelody_lines, Finset.map_empty,
+    simp only [suffixMorph, lines_mul, lines_ofMelody, Finset.map_empty,
       Finset.union_empty, List.mem_toFinset, true_and] at hl
     rcases hl with hl | ⟨hl, -⟩
     · exact ⟨l, hl, h1, h2, h3⟩
@@ -274,27 +294,32 @@ theorem misaligned_mul_suffixMorph (m : MultiplanarForm Plane Slot String Morphe
     rw [link, mem_addLines]
     simp [suffixMorph, hl]
 
-theorem misaligned_intrudeAt (m : MultiplanarForm Plane Slot String Morpheme) (s : Nat) :
+theorem misaligned_intrudeAt (m :
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))) (s : Nat) :
     Misaligned (intrudeAt m s) ↔ Misaligned m :=
   misaligned_mul_suffixMorph m (by simp)
 
 -- (8), (10)
-theorem misaligned_intrude (m : MultiplanarForm Plane Slot String Morpheme) :
+theorem misaligned_intrude (m :
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))) :
     Misaligned (intrude m) ↔ Misaligned m := by
-  have h := misaligned_mul_suffixMorph m (L := []) (by simp)
+  have h : Misaligned (m * suffixMorph) ↔ Misaligned m := by
+    simpa [Misaligned, link, template] using misaligned_mul_suffixMorph m (L := []) (by simp)
   unfold intrude
   split
   · split
     · exact misaligned_intrudeAt m _
-    · simpa [link] using h
-  · simpa [link] using h
+    · exact h
+  · exact h
 
 /-- The intruder's line never crosses a root line, so intrusion keeps the consonantal plane
 non-crossing. -/
-theorem isNonCrossing_lines_intrude (m : MultiplanarForm Plane Slot String Morpheme)
-    (h : IsNonCrossing (m.lines .consonantal : SetRel ℕ ℕ)) :
-    IsNonCrossing ((intrude m).lines .consonantal : SetRel ℕ ℕ) := by
-  have hsuf : (m * suffixMorph).lines .consonantal = m.lines .consonantal := by
+theorem isNonCrossing_lines_intrude (m :
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme)))
+    (h : IsNonCrossing ((m.lines (some .consonantal) none) : SetRel ℕ ℕ)) :
+    IsNonCrossing ((intrude m).lines (some .consonantal) none : SetRel ℕ ℕ) := by
+  have hsuf : (m * suffixMorph).lines (some .consonantal) none = (m.lines (some .consonantal) none)
+      := by
     simp [suffixMorph]
   unfold intrude
   split
@@ -308,7 +333,7 @@ theorem isNonCrossing_lines_intrude (m : MultiplanarForm Plane Slot String Morph
 /-- The derivation of a root in a pattern is association under the slot specifications followed, for
 a nominal base whose template is unsatisfied, by merger of the feminine morph ((10b), (11)). -/
 def derive (p : Pattern) (r : ConsonantalRoot String) :
-    MultiplanarForm Plane Slot String Morpheme :=
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme)) :=
   let m := associate p r
   if p.category = .noun ∧ ¬ m.allCSlotsFilled then intrude m else m
 
@@ -321,11 +346,13 @@ theorem derive_of_category_ne_noun (p : Pattern) (r : ConsonantalRoot String)
 
 /-- `hosted m s` lists the segments slot `s` hosts, vocalization first, then the consonantal
 melody, root before suffix. -/
-def hosted (m : MultiplanarForm Plane Slot String Morpheme) (s : Nat) : List String :=
+def hosted (m : AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))) (s :
+    Nat) : List String :=
   (m.hostedOn .vocalic s ++ m.hostedOn .consonantal s).map (·.value)
 
 /-- `realizeSlot m s` merges the segments slot `s` hosts onto the first. -/
-def realizeSlot (m : MultiplanarForm Plane Slot String Morpheme) (s : Nat) : Option String :=
+def realizeSlot (m : AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme)))
+    (s : Nat) : Option String :=
   match hosted m s with
   | [] => none
   | x :: xs => some (xs.foldl merge x)
@@ -347,7 +374,8 @@ def collapse : Bool → List (Slot × Option String) → List String
 
 /-- Truncation (7a) deletes the final syllable, the final C-slot and the V-slot before it, when the
 pattern truncates and that slot is vacant. -/
-def truncate (p : Pattern) (m : MultiplanarForm Plane Slot String Morpheme) : Skeleton :=
+def truncate (p : Pattern) (m :
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))) : Skeleton :=
   match m.unfilledCSlots.max?, m.template.cSlots.max? with
   | some s, some s' =>
     if p.truncates ∧ s = s' then m.template.take (s - 1) else m.template
@@ -355,7 +383,8 @@ def truncate (p : Pattern) (m : MultiplanarForm Plane Slot String Morpheme) : Sk
 
 /-- The surface segments of a match in a pattern are the realized slots, a filled prespecified
 geminate slot counting twice ({C C} in (7)), between the pattern's outer material. -/
-def realize (p : Pattern) (m : MultiplanarForm Plane Slot String Morpheme) : List String :=
+def realize (p : Pattern) (m :
+    AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))) : List String :=
   p.pre ++ collapse false ((truncate p m).zipIdx.flatMap fun (c, i) ↦
     let e := (c, realizeSlot m i)
     if p.geminate = some i ∧ e.2.isSome then [e, e] else [e]) ++ p.post
@@ -434,7 +463,7 @@ def hebrewTaqtil : Pattern :=
 theorem klt_kl_satisfy :
     (derive hebrewPst klt).allCSlotsFilled ∧ ¬ Misaligned (derive hebrewPst klt) ∧
     (derive hebrewPst kl).allCSlotsFilled ∧ ¬ Misaligned (derive hebrewPst kl) ∧
-    (1, 4) ∈ (derive hebrewPst kl).lines .consonantal := by
+    (1, 4) ∈ (derive hebrewPst kl).lines (some .consonantal) none := by
   decide
 
 /-- For √klj the final [+c] slot stays vacant, since spreading would misalign the l ((4), (6)). -/
@@ -484,7 +513,7 @@ def amharicInf : Pattern :=
 
 -- (7)
 theorem fdj_pfv :
-    (2, 2) ∈ (derive amharicPfv fdj).lines .consonantal ∧
+    (2, 2) ∈ (derive amharicPfv fdj).lines (some .consonantal) none ∧
     (derive amharicPfv fdj).unfilledCSlots = [4] ∧
     ¬ Misaligned (derive amharicPfv fdj) ∧
     Misaligned ((derive amharicPfv fdj).spread .consonantal .C) := by
@@ -501,7 +530,7 @@ theorem fdj_grnd :
     (derive amharicGrnd fdj).hostedOn .consonantal 3 = [⟨"t", .suffix⟩] ∧
     (derive amharicGrnd fdj).allCSlotsFilled ∧
     ¬ Misaligned (derive amharicGrnd fdj) ∧
-    (derive amharicGrnd fdj).toAR.NoCrossing := by
+    (derive amharicGrnd fdj).NoCrossing := by
   decide
 
 -- (13a), (13b–c)
@@ -510,8 +539,8 @@ theorem inf_intrusion :
     (associate amharicInf sam).unfilledCSlots = [2] ∧
     (associate amharicInf hid).unfilledCSlots = [2] ∧
     (derive amharicInf sma).hostedOn .consonantal 4 = [⟨"t", .suffix⟩] ∧
-    2 ∉ window ((associate amharicInf sam).lines .consonantal : SetRel ℕ ℕ) sam.arity ∧
-    2 ∉ window ((associate amharicInf hid).lines .consonantal : SetRel ℕ ℕ) hid.arity ∧
+    2 ∉ window ((associate amharicInf sam).lines (some .consonantal) none : SetRel ℕ ℕ) sam.arity ∧
+    2 ∉ window ((associate amharicInf hid).lines (some .consonantal) none : SetRel ℕ ℕ) hid.arity ∧
     (derive amharicInf sam).unfilledCSlots = [2] ∧
     (derive amharicInf hid).unfilledCSlots = [2] ∧
     ¬ Misaligned (derive amharicInf sam) ∧
@@ -678,7 +707,8 @@ def NounRow.Derived (r : NounRow) : Prop :=
   match r.root with
   | some ρ =>
     surfaceChars hebrewTaqtil ρ = r.form.toList ∧
-      (r.gender = .Fem ↔ ∃ x ∈ (derive hebrewTaqtil ρ).upper .consonantal, x.morpheme = .suffix)
+      (r.gender = .Fem ↔ ∃ x ∈ ((derive hebrewTaqtil ρ).word (some .consonantal)), x.morpheme =
+          .suffix)
   | none => True
 
 instance (r : NounRow) : Decidable r.Derived := by

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Aristotelian.Square
-public import Linglib.Pragmatics.RSA.Decision
+public import Linglib.Pragmatics.Probabilistic.Decision
 public import Studies.KirbyDowmanGriffiths2007
 
 /-!
@@ -24,7 +24,7 @@ adopt the likeliest type
   are `RSA.actionSpeaker` at the utility of a correct guess, not `RSA.speaker`, whose logarithmic
   utility [frank-goodman-2012] never sends a false message (note 2).
 * A type's data (`produce`) draw each state from the state prior, so they have total mass one; the
-  posterior over types is the same as under the printed likelihood (see Errata).
+  posterior over types is the same as under the printed likelihood.
 * The factor `1.05` of Fig. 2 is the prior's parameter, from the caption. `invariant_biasedPrior`
   shows for every factor that the stationary ratio of `L_lack` to `L_bound` users is the factor,
   which is the "exactly 1.05" of p. 2770.
@@ -46,29 +46,6 @@ adopt the likeliest type
   fitness and the uniform population over its twelve types in both generations, the next
   population has total mass `1/12`. Its prose (p. 2082) says that `L_a` gives `m₁` an upper
   bound, but by its matrix the bounded message, true only at the first state, is `m₂`.
-
-## Errata
-
-* §3.1 (p. 2768) says that every type has a sizable advantage over literal `L_lack`. Pragmatic
-  `L_bound` has one only when `λ > log(5/3)`, and pragmatic `L_lack` does worse than literal
-  `L_lack` whenever `λ ≤ 2 log(5/2)`, as at the `λ = 1` of §2.4.1
-  ([selfSuccess_Llack_zero_lt](##selfSuccess_Llack_zero_lt)).
-* Appendix A (p. 2788) prints the replicator mutator step as
-  `(0.9x² - 0.2x + 0.2) / (3x² - 4x + 2)` with rest points `.121`, `.609` and `.903`. These are
-  the step and rest points when the negatives produced by mutation number `0.1 · 2(1 - x)`
-  instead of `0.1 · (1 - x)(2 - 2x)`. The step is `(1.1x² - 0.4x + 0.2) / (3x² - 4x + 2)`
-  ([rmd_real_negative](##rmd_real_negative)), whose rest points are numerically near `.106`,
-  `.735` and `.859`.
-* The likelihood of data in §2.4.3 (p. 2767) is the product of the speaker's chances of the
-  messages, without the chances of the states, so it sums to `|S|^k` over the data of length
-  `k` and the rows of `Q` do not sum to one.
-* Table 2 (p. 2773) gives `A ∩ B ≠ ∅ ∧ A ≠ ∅` as the least complex formula for *some but not
-  all*, but it expresses *some*, since its second conjunct follows from the first; the formula for
-  *none or all*, its negation, expresses *none* given that `A` is nonempty. The formula
-  `A ∩ B ≠ ∅ ∧ ¬(A ⊆ B)` for *some but not all* costs `11` by Table 1, more than the printed
-  `8`; a higher cost only lowers the prior of `L_bound`, so `lexiconWeight_lt` still holds.
-* In Appendix B (p. 2789) the third row of `LH` and of both matrices `Q` is labelled `t₂`; it is
-  `t₃`.
 
 ## TODO
 
@@ -226,7 +203,7 @@ end Agents
 /-! ### Some and all: the restricted type space of §3.1
 
 The states are the two vertices of the I corner of the square of opposition, *some but not all*
-(`Triangle.IO`) and *all* (`Triangle.A`), equally likely. -/
+(`Triangle.someNotAll`) and *all* (`Triangle.all`), equally likely. -/
 
 section TwoStates
 
@@ -251,34 +228,35 @@ noncomputable def pr : Measure Triangle := uniformOn ↑Triangle.corners.I
 
 /-- §2.4.1: `L_bound` lexicalizes an upper bound for *some*. -/
 def Lbound : Msg → Set Triangle
-  | .some => {.IO}
-  | .all => {.A}
+  | .some => {.someNotAll}
+  | .all => {.all}
 
 /-- §2.4.1: `L_lack` gives *some* only a lower bound, so *some* is true at *all*. -/
 def Llack : Msg → Set Triangle
   | .some => ↑Triangle.corners.I
-  | .all => {.A}
+  | .all => {.all}
 
 /-- The success of a type communicating with itself, its fitness in a population of its own kind. -/
 noncomputable def selfSuccess (lam : ℝ) (L : Msg → Set Triangle) (n : ℕ) : ℝ :=
   success pr (agents pr lam L n).1 (agents pr lam L n).2
 
 instance : IsProbabilityMeasure pr :=
-  isProbabilityMeasure_uniformOn (finite_toSet _) ⟨.IO, by decide⟩
+  isProbabilityMeasure_uniformOn (finite_toSet _) ⟨.someNotAll, by decide⟩
 
-private theorem triangle_univ : (univ : Finset Triangle) = {.E, .IO, .A} := by decide
+private theorem triangle_univ : (univ : Finset Triangle) = {.none, .someNotAll, .all} := by decide
 
 private theorem msg_univ : (univ : Finset Msg) = {.some, .all} := by decide
 
 private theorem pr_real (t : Triangle) :
-    pr.real {t} = if t = .E then 0 else 1 / 2 := by
+    pr.real {t} = if t = .none then 0 else 1 / 2 := by
   rw [pr, uniformOn_finset_real_singleton]
   cases t <;> simp [Triangle.corners]
 
 private theorem success_eq {σ : Kernel Triangle Msg} {η : Kernel Msg Triangle} :
-    success pr σ η = ((σ .IO).real {.some} * (η .some).real {.IO} +
-      (σ .IO).real {.all} * (η .all).real {.IO} + (σ .A).real {.some} * (η .some).real {.A} +
-      (σ .A).real {.all} * (η .all).real {.A}) / 2 := by
+    success pr σ η = ((σ .someNotAll).real {.some} * (η .some).real {.someNotAll} +
+      (σ .someNotAll).real {.all} * (η .all).real {.someNotAll} +
+      (σ .all).real {.some} * (η .some).real {.all} +
+      (σ .all).real {.all} * (η .all).real {.all}) / 2 := by
   simp only [success, triangle_univ, msg_univ, sum_insert, mem_insert, mem_singleton,
     reduceCtorEq, or_self, not_false_eq_true, sum_singleton, pr_real, ↓reduceIte]
   ring
@@ -287,20 +265,22 @@ variable {lam : ℝ}
 
 private theorem pragmatic_hearer_real (L : Msg → Set Triangle) (m : Msg) (s : Triangle) :
     ((agents pr lam L 1).2 m).real {s} = pr.real {s} * ((agents pr lam L 0).1 s).real {m} /
-      (((agents pr lam L 0).1 .IO).real {m} / 2 + ((agents pr lam L 0).1 .A).real {m} / 2) := by
+      (((agents pr lam L 0).1 .someNotAll).real {m} / 2 +
+        ((agents pr lam L 0).1 .all).real {m} / 2) := by
   rw [agents_succ_snd, listener_real_singleton]
   congr 1
   simp only [triangle_univ, sum_insert, mem_insert, mem_singleton, reduceCtorEq, or_self,
     not_false_eq_true, sum_singleton, pr_real, ↓reduceIte]
   ring
 
-private theorem pr_real_I : pr.real {.IO, .A} = 1 := by
-  rw [show ({.IO, .A} : Set Triangle) = ↑Triangle.corners.I by ext t; cases t <;> decide, pr,
-    measureReal_def, uniformOn_self (finite_toSet _) ⟨.IO, by decide⟩, ENNReal.toReal_one]
+private theorem pr_real_I : pr.real {.someNotAll, .all} = 1 := by
+  rw [show ({.someNotAll, .all} : Set Triangle) = ↑Triangle.corners.I by ext t; cases t <;> decide,
+    pr, measureReal_def, uniformOn_self (finite_toSet _) ⟨.someNotAll, by decide⟩,
+    ENNReal.toReal_one]
 
-private theorem pr_real_IO : pr.real {.IO} = 1 / 2 := by rw [pr_real]; rfl
+private theorem pr_real_someNotAll : pr.real {.someNotAll} = 1 / 2 := by rw [pr_real]; rfl
 
-private theorem pr_real_A : pr.real {.A} = 1 / 2 := by rw [pr_real]; rfl
+private theorem pr_real_all : pr.real {.all} = 1 / 2 := by rw [pr_real]; rfl
 
 private theorem S0_some (L : Msg → Set Triangle) (s : Triangle) :
     ((agents pr lam L 0).1 s).real {.some} =
@@ -331,7 +311,7 @@ private theorem H0_real (L : Msg → Set Triangle) (m : Msg) (s : Triangle) :
 theorem selfSuccess_Lbound_zero : selfSuccess lam Lbound 0 = Real.sigmoid lam := by
   rw [selfSuccess, success_eq, S0_some, S0_all, S0_some, S0_all, H0_real, H0_real, H0_real,
     H0_real]
-  simp [Lbound, pr_real_IO, pr_real_A, Real.sigmoid_neg]
+  simp [Lbound, pr_real_someNotAll, pr_real_all, Real.sigmoid_neg]
 
 -- §2.4.1: the pragmatic user of `L_bound` reasons over the literal one's noise.
 theorem selfSuccess_Lbound_one :
@@ -339,14 +319,14 @@ theorem selfSuccess_Lbound_one :
   rw [selfSuccess, success_eq, S1_some, S1_all, S1_some, S1_all, pragmatic_hearer_real,
     pragmatic_hearer_real, pragmatic_hearer_real, pragmatic_hearer_real]
   simp only [S0_some, S0_all, H0_real]
-  simp [Lbound, pr_real_IO, pr_real_A, Real.sigmoid_neg]
+  simp [Lbound, pr_real_someNotAll, pr_real_all, Real.sigmoid_neg]
   ring
 
 -- §2.4.1: the literal user of `L_lack` cannot tell the states apart after *some*.
 theorem selfSuccess_Llack_zero : selfSuccess lam Llack 0 = Real.sigmoid lam / 4 + 3 / 8 := by
   rw [selfSuccess, success_eq, S0_some, S0_all, S0_some, S0_all, H0_real, H0_real, H0_real,
     H0_real]
-  simp [Llack, pr_real_IO, pr_real_A, pr_real_I, Real.sigmoid_neg, Triangle.corners]
+  simp [Llack, pr_real_someNotAll, pr_real_all, pr_real_I, Real.sigmoid_neg, Triangle.corners]
   ring
 
 -- §2.4.1: the pragmatic user of `L_lack`, with `σ(λ)` and `σ(λ/2)`.
@@ -357,15 +337,17 @@ theorem selfSuccess_Llack_one :
         (1 - Real.sigmoid (lam / 2)) * (1 / 2) / (Real.sigmoid lam + 1 / 2) +
         Real.sigmoid (lam / 2) * (1 / 2) / (3 / 2 - Real.sigmoid lam)) / 2 := by
   have hH0 (m : Msg) (t : Triangle) : ((agents pr lam Llack 0).2 m).real {t} =
-      if t = .E then 0 else if m = .some then 1 / 2 else if t = .A then 1 else 0 := by
+      if t = .none then 0 else if m = .some then 1 / 2 else if t = .all then 1 else 0 := by
     rw [H0_real]
-    cases m <;> cases t <;> simp [Llack, Triangle.corners, pr_real_IO, pr_real_A, pr_real_I]
-  have hS0 (m : Msg) (t : Triangle) (ht : t ≠ .E) : ((agents pr lam Llack 0).1 t).real {m} =
-      if t = .A then 1 / 2 else if m = .some then Real.sigmoid lam else 1 - Real.sigmoid lam := by
+    cases m <;> cases t <;>
+      simp [Llack, Triangle.corners, pr_real_someNotAll, pr_real_all, pr_real_I]
+  have hS0 (m : Msg) (t : Triangle) (ht : t ≠ .none) : ((agents pr lam Llack 0).1 t).real {m} =
+      if t = .all then 1 / 2 else if m = .some then Real.sigmoid lam else 1 - Real.sigmoid lam := by
     cases m <;> cases t <;>
       simp_all [S0_some, S0_all, Llack, Triangle.corners, Real.sigmoid_neg, Real.sigmoid_zero]
-  have hS1 (m : Msg) (t : Triangle) (ht : t ≠ .E) : ((agents pr lam Llack 1).1 t).real {m} =
-      if (m = .some) = (t = .IO) then Real.sigmoid (lam / 2) else 1 - Real.sigmoid (lam / 2) := by
+  have hS1 (m : Msg) (t : Triangle) (ht : t ≠ .none) : ((agents pr lam Llack 1).1 t).real {m} =
+      if (m = .some) = (t = .someNotAll) then Real.sigmoid (lam / 2)
+      else 1 - Real.sigmoid (lam / 2) := by
     rw [← Real.sigmoid_neg]
     cases m <;> cases t <;> simp_all [S1_some, S1_all] <;> congr 1 <;> ring
   have h₀ := Real.sigmoid_pos lam
@@ -378,9 +360,9 @@ theorem selfSuccess_Llack_one :
   have h₇ : Real.sigmoid lam * 2 + 1 ≠ 0 := by linarith
   rw [selfSuccess, success_eq, pragmatic_hearer_real, pragmatic_hearer_real,
     pragmatic_hearer_real, pragmatic_hearer_real]
-  simp only [hS1 _ _ (by decide : Triangle.IO ≠ .E), hS1 _ _ (by decide : Triangle.A ≠ .E),
-    hS0 _ _ (by decide : Triangle.IO ≠ .E), hS0 _ _ (by decide : Triangle.A ≠ .E), pr_real_IO,
-    pr_real_A]
+  simp only [hS1 _ _ (by decide : Triangle.someNotAll ≠ .none),
+    hS1 _ _ (by decide : Triangle.all ≠ .none), hS0 _ _ (by decide : Triangle.someNotAll ≠ .none),
+    hS0 _ _ (by decide : Triangle.all ≠ .none), pr_real_someNotAll, pr_real_all]
   simp only [reduceCtorEq, ↓reduceIte, eq_iff_iff, iff_true, iff_false, not_true_eq_false]
   field_simp
   ring
@@ -594,9 +576,9 @@ end TwoStates
 
 /-! ### Three states: the lexica of §3.2
 
-The states are the three vertices of the triangle of opposition, *none* (`Triangle.E`), *some but
-not all* (`Triangle.IO`) and *all* (`Triangle.A`), equally likely, and a lexicon sends each of
-three messages to a set of states. -/
+The states are the three vertices of the triangle of opposition, *none* (`Triangle.none`), *some
+but not all* (`Triangle.someNotAll`) and *all* (`Triangle.all`), equally likely, and a lexicon sends
+each of three messages to a set of states. -/
 
 section ThreeStates
 
@@ -703,7 +685,7 @@ theorem lexiconWeight_le_lexAll (L : Fin 3 → Representation) :
           (prod_le_one₀ (fun r' _ ↦ h₀ r') fun r' _ ↦ (h₄ r').trans (by norm_num)) (h₀ r)
     _ ≤ 1 / 4 := by linarith [h₄ r]
 
--- Table 2 (p. 2773), erratum: the formula printed for *some but not all* expresses *some*.
+-- Table 2 (p. 2773): `A ∩ B ≠ ∅ ∧ A ≠ ∅` is equivalent to `A ∩ B ≠ ∅`.
 example {α : Type*} (A B : Set α) : (A ∩ B).Nonempty ∧ A.Nonempty ↔ (A ∩ B).Nonempty :=
   ⟨And.left, fun h ↦ ⟨h, h.mono Set.inter_subset_left⟩⟩
 
@@ -718,10 +700,10 @@ def denote (L : Fin 3 → Representation) (m : Fin 3) : Set Triangle := ↑(L m)
 -- type as `lexLack` does at every level and rationality; only the prior separates them, 7 : 6.
 theorem success_lexMirror (lam : ℝ) (L : Fin 3 → Set Triangle) (n n' : ℕ) :
     success flat (agents flat lam (denote lexMirror) n).1
-        (agents flat lam (fun m ↦ Equiv.swap .E .A '' L m) n').2 =
+        (agents flat lam (fun m ↦ Equiv.swap .none .all '' L m) n').2 =
       success flat (agents flat lam (denote lexLack) n).1 (agents flat lam L n').2 ∧
       lexiconWeight lexLack = 7 / 6 * lexiconWeight lexMirror := by
-  have he : denote lexMirror = fun m ↦ Equiv.swap .E .A '' denote lexLack m := by
+  have he : denote lexMirror = fun m ↦ Equiv.swap .none .all '' denote lexLack m := by
     funext m
     rw [denote, denote, ← Equiv.coe_toEmbedding, ← Finset.coe_map, Finset.coe_inj]
     fin_cases m <;> decide
@@ -881,8 +863,8 @@ theorem replicator_real_negative_eq_iff (x : Measure Sign) [IsProbabilityMeasure
     · exact .inr (.inl (by linarith))
   · rintro (h | h | h) <;> rw [h] <;> ring
 
--- App. A (p. 2788), erratum: the replicator mutator step sends the share `x` of negatives to
--- `(1.1x² - 0.4x + 0.2) / (3x² - 4x + 2)`, not to the printed `(0.9x² - 0.2x + 0.2) / ⋯`.
+-- App. A (p. 2788): the replicator mutator step sends the share `x` of negatives to
+-- `(1.1x² - 0.4x + 0.2) / (3x² - 4x + 2)`.
 theorem rmd_real_negative (x : Measure Sign) [IsProbabilityMeasure x] :
     (rmd mutation (fitness payoff x) x).real {negative} =
       (1.1 * x.real {negative} ^ 2 - 0.4 * x.real {negative} + 0.2) /

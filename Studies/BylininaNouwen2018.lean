@@ -41,8 +41,8 @@ the Heim-Kennedy generalization ((80)).
   `Mereology.AlgClosure` of them (`plural_sdiff_empty`). A distributive predicate `B` holds of a
   plurality that is in `plural B`.
 * Degrees are natural numbers; Kennedy's numeral is `Quantifier.MaxIn {n}` and its two scopes are
-  `Quantifier.LowScope` and `Quantifier.HighScope`. Exhaustification against the higher numerals is
-  `Exhaustification.exhAgainst (· < ·)`.
+  `Quantifier.LowScope` and `Quantifier.HighScope`. A numeral exhaustified against the higher
+  numerals holds of a degree property whose greatest degree it is, `IsGreatest`.
 * Licensing is the library's: *zero* is a scalar `PolarityItem.Licenser`, and every item
   needs the meaning below the exhaustivity operator non-trivially downward entailing. For strong
   items the library asks Zwarts's anti-additivity of the meaning above it where (53) asks for
@@ -145,9 +145,9 @@ theorem not_maxIn_zero_countDegrees_sdiff (A B : Set α) :
   fun h ↦ zero_notMem_countDegrees_sdiff A B (maxIn_singleton.1 h).1
 
 /-- Exhaustified *zero A B* is *no A B* ((40)). -/
-theorem exhAgainst_zero_iff_no {A B : Set α} :
-    exhAgainst (· < ·) (· ∈ countDegrees A (plural B)) 0 ↔ Det.no A B :=
-  maxIn_singleton_iff_exhAgainst.symm.trans maxIn_zero_countDegrees_iff
+theorem isGreatest_zero_countDegrees_iff {A B : Set α} :
+    IsGreatest (countDegrees A (plural B)) 0 ↔ Det.no A B :=
+  maxIn_singleton.symm.trans maxIn_zero_countDegrees_iff
 
 /-! ### Negative polarity items
 
@@ -166,14 +166,14 @@ numerals ((39), (40)). -/
 def zero : PolarityItem.Licenser :=
   .scalar ⟨⟨NonemptyPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop,
       fun p B ↦ 0 ∈ countDegrees p.A (plural B)⟩,
-    fun p B ↦ exhAgainst (· < ·) (· ∈ countDegrees p.A (plural B)) 0⟩
+    fun p B ↦ IsGreatest (countDegrees p.A (plural B)) 0⟩
 
 -- (54a)
 theorem exhaustified_zero : zero.exhaustified = nobody.licenser := by
   simp only [zero, licenser, PolarityItem.Licenser.exhaustified]
   congr
   funext p B
-  exact propext exhAgainst_zero_iff_no
+  exact propext isGreatest_zero_countDegrees_iff
 
 -- (54b)
 theorem isStrawsonUE_zero : zero.IsStrawsonUE :=
@@ -273,13 +273,13 @@ section Scope
 
 variable {ι : Type*} {Q : Quantifier ι} {P : ι → Set ℕ} {n : ℕ}
 
-theorem exhAgainst_iff_highScope :
-    exhAgainst (· < ·) (fun m ↦ Q {x | m ∈ P x}) n ↔ HighScope (MaxIn {n}) Q P :=
-  maxIn_singleton_iff_exhAgainst.symm
+theorem isGreatest_iff_highScope :
+    IsGreatest {m | Q {x | m ∈ P x}} n ↔ HighScope (MaxIn {n}) Q P :=
+  maxIn_singleton.symm
 
-theorem exhAgainst_iff_lowScope :
-    Q {x | exhAgainst (· < ·) (· ∈ P x) n} ↔ LowScope (MaxIn {n}) Q P := by
-  simp only [LowScope, maxIn_singleton_iff_exhAgainst]
+theorem isGreatest_iff_lowScope :
+    Q {x | IsGreatest (P x) n} ↔ LowScope (MaxIn {n}) Q P := by
+  simp only [LowScope, maxIn_singleton]
 
 end Scope
 

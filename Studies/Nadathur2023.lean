@@ -41,13 +41,6 @@ The paper argues its necessity verdicts from the background variables alone, so 
 over the exogenous settlements, a subset of the consistent supersituations
 (`isConsistentSupersituation_of_isExogenousSettlement`).
 
-## Errata
-
-Definition 10b ranges over the consistent supersituations of Definition 9b
-(`IsConsistentSupersituation`), and over them the paper's own verdicts on (34c) and (34d) fail:
-settling the message, which the background leaves open, reaches communication without the nerve
-(`Consistent.not_nrv_necessary_for_com`).
-
 ## TODO
 
 The *manage* examples need set-valued prerequisites, one of them the

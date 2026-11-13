@@ -45,17 +45,6 @@ determiners (*the n*, *both*, *neither*) fall outside the total type `Det α` an
   `most_apply_self` holds only for a nonempty restrictor, and by the definition of §4.6 the
   library's `most` is weak rather than strong as Table II has it (`most_weak`).
 
-## Errata
-
-* The artificial determiner of §4.8 is printed as `‖D‖(A) = {X | Card(X − A) is finite and
-  even}`, but the paper's own witnesses, `A − {a, b} ∈ ‖D‖(A)` and `A − {a} ∉ ‖D‖(A)`, hold
-  only for `Card(A − X)`. As printed, `D` would not live on `A`, against the determiner
-  universal U3; `evenOutside` counts `A − X`, and is conservative (`conservative_evenOutside`).
-* §4.8 lists *all but one man* among the denotations U6 rules out. But *all but one* is the
-  conjunction of *all but at most one*, increasing, and *not all*, decreasing, just as the same
-  passage reads *two men* as *at least two men but at most two men*; it
-  [satisfies the constraint](##Quantifier.Det.satisfiesUniversals_allBut).
-
 ## References
 
 * [barwise-cooper-1981]
@@ -190,7 +179,7 @@ theorem inter_nonempty_of_scopeUp_dual (hm : ScopeMonotone D) {R A B : Set α}
 monotone quantifiers, as ruling out *an even number of*, *exactly three or exactly five* and *all
 but one*. U6 is right continuity in the scope (`satisfiesUniversals_iff`). The second fails it on
 five individuals, its truth at three and at five members of the scope not carrying over to four;
-the third does not (Errata). -/
+the third does not. -/
 
 -- §4.8
 theorem not_rightContinuous_exactly_three_sup_exactly_five :
@@ -201,14 +190,14 @@ theorem not_rightContinuous_exactly_three_sup_exactly_five :
   simp only [Pi.sup_apply, sup_Prop_eq]
   decide
 
--- §4.8, Errata
+-- §4.8
 example [Finite α] : (allBut 1 : Det α).SatisfiesUniversals := satisfiesUniversals_allBut 1
 
-/-! §4.8's artificial strong-but-not-increasing determiner, conservative once its erratum is
-corrected, shows U7 (*positive strong determiners are increasing*) is not a logical truth. -/
+/-! §4.8's artificial strong-but-not-increasing determiner, conservative when it counts
+`A − X`, shows U7 (*positive strong determiners are increasing*) is not a logical truth. -/
 
 /-- `X ∈ D(A)` iff the members of `A` outside `X` are finitely and evenly many — positive
-strong, but not increasing (§4.8, with the erratum `A − X`). -/
+strong, but not increasing (§4.8, counting `A − X`). -/
 def evenOutside : Det α := fun A X ↦ (A \ X).Finite ∧ Even (A \ X).ncard
 
 theorem conservative_evenOutside : Conservative (evenOutside (α := α)) := fun A X ↦ by
@@ -442,7 +431,7 @@ theorem more_than_half_not_definable :
       (S : (Language.monadic (Fin 2)).Structure M),
       (@Sentence.Realize _ M S φ ↔ MoreThanHalf M S) := by
   rintro ⟨φ, hφ⟩
-  set m := φ.qr + 1 with hm
+  set m := φ.quantifierRank + 1 with hm
   -- M₁ does not satisfy more-than-half: |U₁ ∩ V| = m, |V| = 2m
   have hmth₁ : ¬ MoreThanHalf (Fin (3 * m + 1)) (struc₁ m (3 * m + 1)) := by
     rw [moreThanHalf_iff (m := m) (c := m) _ (fun x ↦ Iff.rfl) (fun x ↦ Iff.rfl)
@@ -528,19 +517,19 @@ noncomputable def star : ∀ {n : ℕ}, QFormula n → (Language.monadic (Fin 2)
       ((BoundedFormula.iSup fun i : Fin n ↦ (&(Fin.last n)).bdEqual &i.castSucc) ⊔ star f)).all
 
 -- p. 215
-theorem qr_star_le : ∀ {n : ℕ} (ψ : QFormula n), (star ψ).qr ≤ numQ ψ
+theorem quantifierRank_star_le : ∀ {n : ℕ} (ψ : QFormula n), (star ψ).quantifierRank ≤ numQ ψ
   | _, .falsum => le_rfl
   | _, .equal _ _ => Nat.zero_le _
   | _, .isU _ => Nat.zero_le _
   | _, .isV _ => Nat.zero_le _
-  | _, .imp f₁ f₂ => max_le ((qr_star_le f₁).trans (Nat.le_add_right _ _))
-      ((qr_star_le f₂).trans (Nat.le_add_left _ _))
-  | _, .all f => Nat.add_le_add_right (qr_star_le f) 1
+  | _, .imp f₁ f₂ => max_le ((quantifierRank_star_le f₁).trans (Nat.le_add_right _ _))
+      ((quantifierRank_star_le f₂).trans (Nat.le_add_left _ _))
+  | _, .all f => Nat.add_le_add_right (quantifierRank_star_le f) 1
   | _, .qx f => by
-      simp only [star, BoundedFormula.qr_all, BoundedFormula.qr_sup, numQ]
+      simp only [star, BoundedFormula.quantifierRank_all, BoundedFormula.quantifierRank_sup, numQ]
       exact Nat.add_le_add_right (max_le (Nat.zero_le _) (max_le
-        ((BoundedFormula.qr_iSup_le (k := 0) fun _ ↦ le_rfl).trans (Nat.zero_le _))
-        (qr_star_le f))) 1
+        ((BoundedFormula.quantifierRank_iSup_le (k := 0) fun _ ↦ le_rfl).trans (Nat.zero_le _))
+        (quantifierRank_star_le f))) 1
 
 -- p. 215
 theorem realize_equivMap {E : Type} [Fintype E] {U V : E → Prop} (σ : E ≃ E)
@@ -758,7 +747,7 @@ theorem more_than_half_not_Q_definable :
       Fintype.card_fin]; omega)
   -- by (5), since `φ*` is a first-order sentence of quantifier rank below `m`
   have htrans := elementarilyEquivalentUpTo_struc m k (by omega) (by omega) (QFormula.star φ)
-    ((QFormula.qr_star_le φ).trans (by omega))
+    ((QFormula.quantifierRank_star_le φ).trans (by omega))
   exact hfalse₁ (hcast _ _ ((hP₁ _).mp (htrans.mpr ((hP₂ _).mpr (hcast _ _ htrue₂)))))
 
 /-! ### The truth condition is the codebase's (most : Det α) -/

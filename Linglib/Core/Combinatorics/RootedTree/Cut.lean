@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Data.UnorderedTree.Basic
-public import Linglib.Core.Data.UnorderedTree.Count
+public import Linglib.Core.Data.UnorderedTree.Leaves
 public import Linglib.Core.Data.Multiset.Bind
 public import Linglib.Core.Data.Multiset.Convolution
 public import Linglib.Core.Data.RoseTree.Basic

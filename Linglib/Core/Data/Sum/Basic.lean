@@ -39,7 +39,7 @@ theorem factorsThrough_sumElim_iff :
     (Sum.elim g₁ g₂).FactorsThrough (Sum.elim f₁ f₂) ↔
       g₁.FactorsThrough f₁ ∧ g₂.FactorsThrough f₂ ∧
         ∀ a b, f₁ a = f₂ b → g₁ a = g₂ b :=
-  ⟨λ h => ⟨λ _ _ e => @h (inl _) (inl _) e, λ _ _ e => @h (inr _) (inr _) e,
-    λ _ _ e => @h (inl _) (inr _) e⟩, λ ⟨h₁, h₂, h⟩ => h₁.sumElim h₂ h⟩
+  ⟨fun h ↦ ⟨fun _ _ e ↦ @h (inl _) (inl _) e, fun _ _ e ↦ @h (inr _) (inr _) e,
+    fun _ _ e ↦ @h (inl _) (inr _) e⟩, fun ⟨h₁, h₂, h⟩ ↦ h₁.sumElim h₂ h⟩
 
 end Function

@@ -26,13 +26,6 @@ one apple it [takes *on the towel* as the destination](##supports_oneReferent_if
 * *The towel* in *on the towel* is read as some towel, since every display has two.
 * The fixations of Experiment 3 are not formalized.
 
-## Errata
-
-* p. 561 places the over-descriptions in "the former", two-referent, condition; [they are in the
-  one-referent display](##observesQuantity_instructions).
-* pp. 554 and 570 say listeners did not rate over-descriptions worse, but Experiment 2 [rated (6)
-  below (4) beyond the interval](##overDescribes_rated_lower_exp2) (p. 563).
-
 ## References
 
 * [engelhardt-etal-2006]
@@ -46,7 +39,6 @@ one apple it [takes *on the towel* as the destination](##supports_oneReferent_if
 namespace EngelhardtEtAl2006
 
 open EngelhardtEtAl2006.Examples Finset
-open scoped Denotes
 
 /-- The category labels of the objects, the apple to be moved, the frog, and the two kinds of
 destination. -/
@@ -90,7 +82,7 @@ inductive NounModifier
 /-- The property an intersective modifier meets its noun with: for a prepositional phrase, being
 located in a part of an object of the kind that the preposition marks as a place. -/
 def NounModifier.property (D : Display) : NounModifier → Fin 5 → Prop
-  | .pp p k, i => ∃ ℓ j, (D i).ground = some (ℓ, j) ∧ (ℓ, .place) ∈ Case.cells p.functions ∧
+  | .pp p k, i => ∃ ℓ j, (ℓ, j) ∈ (D i).ground ∧ (ℓ, .place) ∈ Case.cells p.functions ∧
       (D j).kind = k
   | .other, i => (D 0).ground.map Prod.snd ≠ some i
 
@@ -121,7 +113,7 @@ instance (D : Display) (d : Description) : DecidablePred (d.property D) := fun i
 /-- The restrictor of *the* with a description, which holds of the objects of the resource
 situation that the description does. -/
 def Description.restrictor (D : Display) (d : Description) :
-    DefiniteDescription.Restrictor (Fin 5) (Finset (Fin 5)) :=
+    (ℕ → Fin 5) → Finset (Fin 5) → Set (Fin 5) :=
   fun _ s ↦ {i | i ∈ s ∧ d.property D i}
 
 instance (D : Display) (d : Description) (g : ℕ → Fin 5) (s : Finset (Fin 5)) :
@@ -134,10 +126,10 @@ variable (D : Display) (s : Finset (Fin 5)) (r : Fin 5) (d : Description)
 
 /-- *The* with the description, the weak article of [schwarz-2009], picks out `r` in the resource
 situation `s`. -/
-def Identifies : Prop := ⟦DefiniteDescription.unique (d.restrictor D)⟧ default s = some r
+def Identifies : Prop := r ∈ Definite.unique (d.restrictor D) default s
 
 instance : Decidable (Identifies D s r d) :=
-  decidable_of_iff _ (DefiniteDescription.denote_unique_eq_some_iff _ _ _).symm
+  decidable_of_iff _ Definite.mem_unique.symm
 
 /-- The description identifies `r` in `s` with a modifier its bare noun does not need. -/
 def OverDescribes : Prop := d.modifier.isSome ∧ Identifies D s r d ∧ Identifies D s r d.bare
@@ -282,7 +274,7 @@ theorem listeners_penalize_underDescription :
       ¬ Found .exp2b .instruction (some .oneReferent) := by
   decide +kernel
 
--- p. 563; see Errata
+-- p. 563
 theorem overDescribes_rated_lower_exp2 :
     OverDescribes oneReferent univ 0 InstructionType.modified.target ∧
       ∃ c ∈ comparisons, c.higherInstruction = .bare ∧ c.higherLocation = .different ∧
@@ -298,11 +290,11 @@ theorem referentiallySupported_iff_exists_observesQuantity (D : Display) (d : De
       (d.modifier.map fun m ↦ {i | m.property D i}) ↔
       ∃ r, ObservesQuantity D univ r d := by
   have h (d : Description) (r : Fin 5) :
-      Identifies D univ r d ↔ iota {i | d.property D i} = some r := by
+      Identifies D univ r d ↔ r ∈ iota {i | d.property D i} := by
     unfold Identifies Description.restrictor
     simp
   rcases d with ⟨k, _ | m⟩
-  · simp [ObservesQuantity, OverDescribes, h, Description.bare, Option.isSome_iff_exists]
+  · simp [ObservesQuantity, OverDescribes, h, Description.bare, Part.dom_iff_mem]
   · simp only [referentiallySupported_some_iff, ObservesQuantity, OverDescribes, h,
       Description.bare, Option.isSome_some, true_and, Option.map_some]
     exact exists_congr fun _ ↦ and_congr_right fun ha ↦
