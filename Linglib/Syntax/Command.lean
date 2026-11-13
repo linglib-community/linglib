@@ -120,6 +120,14 @@ theorem mem_commandRelation_iff_le (h : IsGreatest (P ∩ Iio a) m) :
     a ~[commandRelation P] b ↔ m ≤ b := by
   rw [mem_commandRelation_iff_mem_upperBounds, h.isLUB.upperBounds_eq, mem_Ici]
 
+/-- Command within a set of nodes is command in the whole order when every node properly
+dominating a member is a member or dominates every member. -/
+theorem mem_commandRelation_subtype_iff {D : Set α}
+    (hD : ∀ a ∈ D, ∀ x < a, x ∈ D ∨ x ∈ lowerBounds D) (P : Set α) (a b : D) :
+    a ~[commandRelation (Subtype.val ⁻¹' P)] b ↔ a.val ~[commandRelation P] b.val :=
+  ⟨fun h x hx hxa ↦ (hD a a.2 x hxa).elim (fun hxD ↦ h (a := ⟨x, hxD⟩) hx hxa) fun hxD ↦ hxD b.2,
+    fun h _ hx hxa ↦ h hx hxa⟩
+
 end Preorder
 
 /-! ### Command on trees
@@ -212,9 +220,14 @@ theorem ancestors_ssubset_ancestors_of_le_of_lt (hax : a ≤ x) (hxb : x < b) (h
   (ssubset_iff_of_subset (ancestors_subset_ancestors_of_le (hax.trans hxb.le))).2
     ⟨x, ⟨hx, hxb⟩, fun h ↦ lt_irrefl x (h.2.trans_le hax)⟩
 
+/-- A node commands every node that all its generators properly dominate. -/
+theorem mem_commandRelation_of_ancestors_subset (h : ancestors P a ⊆ ancestors P b) :
+    a ~[commandRelation P] b :=
+  fun _ hx hxa ↦ (h ⟨hx, hxa⟩).2.le
+
 theorem ancestors_subset_ancestors_iff (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
     ancestors P a ⊆ ancestors P b ↔ a ~[commandRelation P] b := by
-  refine ⟨fun h x hx hxa ↦ (h ⟨hx, hxa⟩).2.le, fun h x hx ↦ ⟨hx.1, ?_⟩⟩
+  refine ⟨mem_commandRelation_of_ancestors_subset, fun h x hx ↦ ⟨hx.1, ?_⟩⟩
   refine lt_of_le_of_ne (mem_commandRelation.1 h _ hx.1 hx.2) ?_
   rintro rfl
   exact hba hx.2.le
@@ -353,6 +366,42 @@ positions generate. It is reflexive and a position commands what it dominates, u
 `RoseTree.CCommands`; it is read off the tree, so decidable. -/
 abbrev cCommand (t : RoseTree β) : SetRel TreePath TreePath :=
   commandRelation {p | t.IsBranchingAt p}
+
+/-- The branching nodes of the order of positions, the mothers of two distinct nodes, are the
+positions with at least two children. -/
+theorem isBranching_iff_isBranchingAt {t : RoseTree β} (p : t.Positions) :
+    IsBranching p ↔ IsBranchingAt t p.val := by
+  obtain ⟨s, hs⟩ : ∃ s, t[p.val.toList]? = some s := Option.isSome_iff_exists.mp p.2
+  constructor
+  · rintro ⟨⟨⟨la⟩, ha'⟩, ha, ⟨⟨lb⟩, hb'⟩, hb, hab⟩
+    obtain ⟨i, hi⟩ := TreePath.covBy_iff.mp (Positions.covBy_iff.mp ha)
+    obtain ⟨j, hj⟩ := TreePath.covBy_iff.mp (Positions.covBy_iff.mp hb)
+    simp only at hi hj
+    subst hi hj
+    obtain ⟨s₁, hs₁, hi'⟩ := mem_validPaths_append_singleton_iff.mp ha'
+    obtain ⟨s₂, hs₂, hj'⟩ := mem_validPaths_append_singleton_iff.mp hb'
+    rw [hs, Option.some.injEq] at hs₁ hs₂
+    subst hs₁ hs₂
+    have hij : i ≠ j := fun h ↦ hab (by subst h; rfl)
+    exact ⟨s, hs, show 2 ≤ s.children.length by omega⟩
+  · rintro ⟨s', hs', hlen⟩
+    rw [Option.mem_def, hs, Option.some.injEq] at hs'
+    subst hs'
+    rw [arity] at hlen
+    refine ⟨⟨⟨p.val.toList ++ [0]⟩, mem_validPaths_append_singleton_iff.mpr ⟨s, hs, by omega⟩⟩,
+      Positions.covBy_iff.mpr (TreePath.covBy_iff.mpr ⟨0, rfl⟩),
+      ⟨⟨p.val.toList ++ [1]⟩, mem_validPaths_append_singleton_iff.mpr ⟨s, hs, by omega⟩⟩,
+      Positions.covBy_iff.mpr (TreePath.covBy_iff.mpr ⟨1, rfl⟩), fun h ↦ ?_⟩
+    simpa using congrArg (fun q : t.Positions ↦ q.val.toList) h
+
+/-- The command relation the branching nodes of the order of positions generate is
+`RoseTree.cCommand`. -/
+theorem mem_commandRelation_isBranching_iff {t : RoseTree β} (a b : t.Positions) :
+    a ~[commandRelation {p | IsBranching p}] b ↔ a.val ~[t.cCommand] b.val := by
+  rw [show {p : t.Positions | IsBranching p} = Subtype.val ⁻¹' {p | IsBranchingAt t p} from
+    Set.ext isBranching_iff_isBranchingAt]
+  exact mem_commandRelation_subtype_iff
+    (fun _ ha _ hxa ↦ .inl (isLowerSet_validPaths t hxa.le ha)) _ a b
 
 /-- `a` c-commands `b` in `t` when neither dominates the other and every branching node properly
 dominating `a` dominates `b`: [reinhart-1976]'s c-command, `RoseTree.cCommand` without dominance. -/

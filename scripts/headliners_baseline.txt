@@ -48,7 +48,6 @@ BarLev2021
 BarLev2025
 BarLevFox2020
 Barker2002
-BarkerPullum1990
 BarnettEtAl2022
 BarwiseCooper1981
 Beaver2001
