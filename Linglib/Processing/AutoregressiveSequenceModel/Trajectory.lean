@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Probability.AutoregressiveSequenceModel.Tight
+public import Linglib.Processing.AutoregressiveSequenceModel.Tight
 public import Linglib.Core.Probability.Kernel.IonescuTulcea.SeqLaw
 public import Mathlib.Data.List.ReduceOption
 

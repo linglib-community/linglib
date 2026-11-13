@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Probability.AutoregressiveSequenceModel.Tight
+public import Linglib.Processing.AutoregressiveSequenceModel.Tight
 public import Linglib.Pragmatics.Probabilistic.Incremental
 public import Linglib.Pragmatics.Probabilistic.Uniform
 

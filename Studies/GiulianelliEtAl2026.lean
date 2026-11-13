@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Probability.AutoregressiveSequenceModel.Basic
+public import Linglib.Processing.AutoregressiveSequenceModel.Basic
 public import Linglib.Processing.Surprisal.Generalized
 
 /-!
