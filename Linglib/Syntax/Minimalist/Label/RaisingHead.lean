@@ -263,7 +263,8 @@ theorem raisingHead_eq_treeRaisingHead {x : SyntacticObject} {s : RoseTree Verte
     (h : x.toUnorderedTree = UnorderedTree.mk s) : x.raisingHead = treeRaisingHead s := by
   subst_vars
   rw [treeRaisingHead, dif_pos (h ▸ x.isSyntacticObject_toUnorderedTree)]
-  exact congrArg raisingHead (toUnorderedTree_injective (by rw [toUnorderedTree_ofUnorderedTree, h]))
+  exact congrArg raisingHead
+    (toUnorderedTree_injective (by rw [toUnorderedTree_ofUnorderedTree, h]))
 
 theorem treeRaisingHead_subtree {t : PlanarSyntacticObject} (p : t.toRoseTree.Positions) :
     treeRaisingHead p.subtree = (t.termAt p).raisingHead :=

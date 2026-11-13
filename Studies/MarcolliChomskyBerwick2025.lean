@@ -179,7 +179,8 @@ is `P(t) = 1 + t²`, while the book writes `P(X) = X²` next to its requirement 
 
 Lemma 1.10.1 identifies `𝔗` with the free nonassociative commutative magma on one generator,
 stated below as `carrierEmptyEquiv` on the carrier over the empty lexicon; the carrier over a
-lexicon is by definition the free commutative magma on its leaves. The identification of `TreeAlgebra`'s binary span with the
+lexicon is by definition the free commutative magma on its leaves. The identification of
+`TreeAlgebra`'s binary span with the
 carrier over the empty lexicon is not stated.
 
 Lemma 1.16.5 extends the coproducts `Δ^ω` to extended workspaces by excluding the cuts of edges at
