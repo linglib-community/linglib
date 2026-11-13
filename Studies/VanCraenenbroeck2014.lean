@@ -45,16 +45,18 @@ nominalizing suffix, so [no domain fits them](##not_checks_strijdbijl_ijs).
 namespace VanCraenenbroeck2014
 
 open PhraseStructure DistributedMorphology
-open DistributedMorphology.RootCategorization (Lexicon Attachment selector not_strands_argPos)
-open Core.Order (TreePath)
-open Harley2014 (Dependent)
+open DistributedMorphology.RootCategorization (Lexicon Configuration selector not_strands_arg)
+open Harley2014 (Dependent withAdjunct)
 
 /-! ### Pronominalization and selection -/
 
 /-- (14): the projection of a functional head that takes the root as its complement and the
 argument as its specifier. -/
-def fP : Tree Cat Unit :=
-  .node .f [.terminal (.head .D) (), .node .f [.terminal .f (), .terminal .root ()]]
+def fP : Configuration Unit where
+  tree := .node .f [.terminal (.head .D) (), .node .f [.terminal .f (), .terminal .root ()]]
+  root := ⟨[1, 1]⟩
+  head := ⟨[1, 0]⟩
+  arg := ⟨[0]⟩
 
 /-- The root takes the argument as its complement, as in (12), or the argument is severed from
 it, as in (14). -/
@@ -63,28 +65,18 @@ inductive Analysis
   deriving DecidableEq, Repr
 
 /-- The phrase of a categorized root, with an adjunct adjoined to it as in (5). -/
-def Analysis.tree (L : Lexicon Unit) : Analysis → Tree Cat Unit
-  | .complement => .adjoin (.head L.x) [Attachment.complement.tree L, .terminal (.head .P) ()]
-  | .severed =>
-    .adjoin (.head L.x) [.node (.head L.x) [.terminal (.head L.x) (), fP], .terminal (.head .P) ()]
-
-/-- The position of the root. -/
-def Analysis.rootPos : Analysis → TreePath
-  | .complement => ⟨[0, 0, 0]⟩
-  | .severed => ⟨[0, 1, 1, 1]⟩
-
-/-- The position of a dependent. -/
-def Analysis.pos : Analysis → Dependent → TreePath
-  | _, .adjunct => ⟨[1]⟩
-  | .complement, .argument => ⟨[0, 1, 1]⟩
-  | .severed, .argument => ⟨[0, 1, 0]⟩
+def Analysis.configuration (L : Lexicon Unit) : Analysis → Configuration Unit
+  | .complement => withAdjunct L.x () (.complement L)
+  | .severed => withAdjunct L.x () (fP.node (.head L.x) [.terminal (.head L.x) ()] [])
 
 -- the positions are those of the root, the argument and the adjunct
-theorem cat_pos (a : Analysis) (L : Lexicon Unit) :
-    (a.tree L)[a.rootPos]?.map Tree.cat = some .root ∧
-      (a.tree L)[a.pos .argument]?.map Tree.cat = some (.head .D) ∧
-      (a.tree L)[a.pos .adjunct]?.map Tree.cat = some (.head .P) := by
-  cases a <;> exact ⟨rfl, rfl, rfl⟩
+theorem isMarked_configuration (a : Analysis) (L : Lexicon Unit) :
+    (a.configuration L).IsMarked ∧
+      (a.configuration L).tree[Dependent.adjunct.pos (a.configuration L)]?.map Tree.cat =
+        some (.head .P) := by
+  cases a
+  · exact ⟨(Configuration.isMarked_complement L).plug, rfl⟩
+  · exact ⟨(⟨rfl, rfl⟩ : fP.IsMarked).plug.plug, rfl⟩
 
 /-- A proform strands a dependent or includes it. -/
 inductive Use
@@ -94,8 +86,10 @@ inductive Use
 /-- A proform of category `X` may stand for a phrase that contains the root and strands or
 includes the dependent. -/
 def Analysis.Licenses (a : Analysis) (L : Lexicon Unit) (X : Cat) (d : Dependent) : Use → Prop
-  | .stranded => Strands X (a.tree L) a.rootPos (a.pos d)
-  | .included => Includes X (a.tree L) a.rootPos (a.pos d)
+  | .stranded =>
+    Strands X (a.configuration L).tree (a.configuration L).root (d.pos (a.configuration L))
+  | .included =>
+    Includes X (a.configuration L).tree (a.configuration L).root (d.pos (a.configuration L))
 
 instance (a : Analysis) (L : Lexicon Unit) (X : Cat) (d : Dependent) :
     ∀ u, Decidable (a.Licenses L X d u)
@@ -106,7 +100,7 @@ instance (a : Analysis) (L : Lexicon Unit) (X : Cat) (d : Dependent) :
 strands the argument, whatever the categorizer. -/
 theorem not_strands_complement (L : Lexicon Unit) (X : Cat) :
     ¬ Analysis.complement.Licenses L X .argument .stranded :=
-  not_strands_argPos (E := Analysis.complement.tree L) (h := [0]) rfl .complement L X
+  not_strands_arg _ .complement L X
 
 /-- A root categorized as a verb. -/
 def verb : Lexicon Unit := { x := .v, root := (), head := (), arg := () }
@@ -153,7 +147,8 @@ theorem checks_one (a : Analysis) :
 root in (12) and with the functional head in (14), never with the categorizer, so the symmetry of
 (10) and (15) does not tell the analyses apart. -/
 theorem selector_eq (a : Analysis) (L L' : Lexicon Unit) :
-    selector (a.tree L) (a.pos .argument) = selector (a.tree L') (a.pos .argument) := by
+    selector (a.configuration L).tree (a.configuration L).arg =
+      selector (a.configuration L').tree (a.configuration L').arg := by
   cases a <;> rfl
 
 /-! ### Idiomatization -/
