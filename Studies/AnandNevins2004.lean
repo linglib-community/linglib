@@ -15,14 +15,6 @@ must (39), and a shift in an intermediate report keeps the lowest indexicals fro
 context (32). The account: the index has the type of the context, and a verb may take as sister an
 operator that overwrites coordinates of the context with those of the index (2).
 
-## Main definitions
-
-* `opAll` (25), `opAuth` (29): Zazaki's and Slave's operators, as the coordinates their
-  `Kaplan.shiftyOp` overwrites.
-* `say`: an attitude verb (23b), quantifying over indices of the context type.
-* `readings e χ c j`: the values of `χ` under a verb with operator options `e` (39).
-* `Bound`: the binding account (19) with the constraint (22), on the context tower.
-
 ## Implementation notes
 
 Meanings are `Kaplan.Character`s whose index is a `Kaplan.Context`, and an operator is the set of
@@ -33,7 +25,8 @@ condition, which are its (16) and (22).
 ## TODO
 
 Context blocking (44) of the Mupun addressee logophor (45), and the apparent counterexamples to
-Shift-Together from Amharic (46) and English (47)–(50), are rows without theorems.
+Shift-Together from Amharic (46) and English (47)–(50), are rows without theorems. The
+Constraint on Shifting (22), which the paper offers the binding accounts, is not stated.
 
 ## References
 
@@ -49,11 +42,10 @@ namespace AnandNevins2004
 
 open Kaplan (Character Context IsMonster shiftyOp isMonster_shiftBy_iff)
 open Kaplan.Context (Coord equivPi localDepth overwrite)
-open ContextTower (AccessPattern)
 
 universe u
 
-variable {W E P T : Type u} {α β : Type*}
+variable {W E P T : Type u} {α β ι : Type*}
 
 /-! ### Operators and attitude verbs -/
 
@@ -178,13 +170,6 @@ theorem say_shiftyOp_say_shiftyOp (acc' : E → Context W E P T → Set (Context
       ∀ j₁ ∈ acc x i, ∀ j₂ ∈ acc' y j₁, χ (overwrite S₂ (overwrite S₁ c j₁) j₂) j₂ := by
   simp [say]
 
-theorem apply_foldl_overwrite_eq_contextAt {f : Context W E P T → α} {k : Coord}
-    (hf : DependsOn (f ∘ equivPi.symm) {k}) (c : Context W E P T)
-    (ops : List (Finset Coord × Context W E P T)) :
-    f (ops.foldl (fun c p ↦ overwrite p.1 c p.2) c) =
-      f ((⟨c, ops.map Prod.snd⟩ : ContextTower _).contextAt (localDepth (ops.map Prod.fst) k)) :=
-  Kaplan.Context.apply_foldl_overwrite hf c ops
-
 variable {c j₁ S₁ S₂}
 
 /-- If the intermediate clause has a shifted second person, the lowest clause reads no coordinate
@@ -197,40 +182,26 @@ theorem localDepth_ne_zero (h₁ : S₁ ∈ vano) (h₂ : S₂ ∈ vano)
   · exact absurd (by simpa using hyou) hne
   · obtain rfl | rfl := h₂ <;> simp [localDepth]
 
-/-- The binding account of [schlenker-2003] as (19) renders it, with the constraint (22): the
-indexicals of a clause are bound by one context, the utterance context or a reported one above it,
-the context at some depth of the tower, and `f` takes the value `a` there. -/
-def Bound (t : ContextTower (Context W E P T)) (f : Context W E P T → α) (a : α) : Prop :=
-  ∃ k ≤ t.depth, (AccessPattern.mk (.relative k) f).resolve t = a
+variable [DecidableEq ι] (κ κ' : ι) (s : ι → Context W E P T)
 
--- (32)
-theorem bound_origin (t : ContextTower (Context W E P T)) (f : Context W E P T → α) :
-    Bound t f (f t.origin) :=
-  ⟨0, Nat.zero_le _, by simp [AccessPattern.resolve]⟩
-
--- (19)
-theorem bound_I_amharicI (t : ContextTower (Context W E P T)) :
-    Bound t Context.agent (Kaplan.I.resolve t) ∧
-      Bound t Context.agent (Schlenker2003.amharicI.resolve t) :=
-  ⟨by simpa [Kaplan.I] using bound_origin t Context.agent,
-    ⟨t.depth, le_rfl, by
-      simp [AccessPattern.resolve, AccessPattern.innermost, Schlenker2003.amharicI]⟩⟩
-
-/-- For a single report, *say* with `OP∀` agrees with Schlenker's binding verb (§3.4). -/
+/-- For a single report, *say* with `OP∀` agrees with the binding verb of [schlenker-2003] over a
+complement all of whose indexicals read the bound context variable (§3.4). -/
 theorem say_shiftyOp_opAll_iff_say (compat : E → T → W → Set (Context W E P T))
     (χ : Character (Context W E P T) (Context W E P T) Prop) (c i : Context W E P T) :
     say (fun x i ↦ compat x i.time i.world) x (shiftyOp opAll χ) c i ↔
-      Schlenker2003.Say compat x i.time i.world (fun t ↦ χ t.innermost t.innermost) (.root c) := by
+      Schlenker2003.Say compat x i.time i.world κ (fun _ s ↦ χ (s κ) (s κ)) c s := by
   simp [say, Schlenker2003.Say]
 
-/-- Under two reports with Schlenker's verbs the lowest clause can still read the utterance context,
-contrary to (32). -/
-theorem say_say_bound_origin (compat compat' : E → T → W → Set (Context W E P T)) (y : E)
-    (f : Context W E P T → α) (c : Context W E P T) :
-    Schlenker2003.Say compat x c.time c.world
-      (fun t ↦ Schlenker2003.Say compat' y t.innermost.time t.innermost.world
-        (fun t' ↦ Bound t' f (f c)) t) (.root c) :=
-  fun _ _ _ _ ↦ bound_origin _ f
+/-- Under two reports with Schlenker's verbs, an indexical of the lowest clause that reads the
+utterance context `c*` (19a) does so whatever the intermediate clause reads, contrary to (32). -/
+theorem say_say_dthat_iff (compat compat' : E → T → W → Set (Context W E P T)) (y : E)
+    (p : Context W E P T → Prop) (c : Context W E P T) :
+    Schlenker2003.Say compat x c.time c.world κ
+        (fun c s ↦ Schlenker2003.Say compat' y (s κ).time (s κ).world κ' (Character.dthat p) c s)
+        c s ↔
+      ((∃ c₁ ∈ compat x c.time c.world, (compat' y c₁.time c₁.world).Nonempty) → p c) := by
+  simp only [Schlenker2003.Say, Function.update_self, Character.dthat_apply]
+  exact ⟨fun H ⟨c₁, h₁, c₂, h₂⟩ ↦ H c₁ h₁ c₂ h₂, fun H c₁ h₁ c₂ h₂ ↦ H ⟨c₁, h₁, c₂, h₂⟩⟩
 
 /-! ### The rows -/
 

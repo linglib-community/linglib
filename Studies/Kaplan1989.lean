@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Reference.Context.Basic
 public import Linglib.Semantics.Reference.Kaplan
 
 /-!
@@ -32,7 +33,7 @@ referential](##isNecessary_eq_dthat_iff); *I exist* and *I am here now* are
 
 namespace Kaplan1989
 
-open Kaplan ContextTower
+open Kaplan
 open Kaplan.Character (IsAPriori IsNecessary)
 
 /-! ### The failure of necessitation -/
@@ -76,6 +77,27 @@ theorem forall_isAPriori_const_imp_isNecessary_iff_surjective [Nonempty C] (ι :
 
 end Necessitation
 
+/-! ### The indexical constants -/
+
+section Indexicals
+
+variable {W E P T V : Type*}
+
+/-- The individual constant `I` denotes the agent of the context, at every index. -/
+def I : Character (Context W E P T) V E := Character.dthat Context.agent
+
+/-- The position constant `Here` denotes the position of the context, at every index. -/
+def here : Character (Context W E P T) V P := Character.dthat Context.position
+
+theorem isDirectlyReferential_I : (I : Character (Context W E P T) V E).IsDirectlyReferential :=
+  Character.dthat_isDirectlyReferential _
+
+theorem isDirectlyReferential_here :
+    (here : Character (Context W E P T) V P).IsDirectlyReferential :=
+  Character.dthat_isDirectlyReferential _
+
+end Indexicals
+
 /-! ### Proper contexts -/
 
 variable {W E P T : Type*} (exists_ : E → W → Prop) (located : E → P → T → W → Prop)
@@ -102,9 +124,6 @@ theorem isAPriori_existsAgent : IsAPriori (·.1.world) (existsAgent exists_ loca
 /-- *I am here now* is valid. -/
 theorem isAPriori_locatedAgent : IsAPriori (·.1.world) (locatedAgent exists_ located) :=
   fun c ↦ c.2.2
-
-/-- The English *I* reads the speech-act context under every embedding. -/
-example : (Kaplan.I : AccessPattern (Context W E P T) E).Stable := AccessPattern.stable_origin _
 
 /-! ### A one-agent, two-world model -/
 

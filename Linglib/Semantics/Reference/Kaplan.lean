@@ -6,29 +6,16 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Reference.Character
-public import Linglib.Semantics.Reference.Context.Tower
 public import Mathlib.Algebra.Group.Action.End
 
 /-!
-# Kaplan's theory of indexicality
+# Monsters
 
-Kaplan's theory as Schlenker states it, over any type of contexts: an operator on characters that
-evaluates its argument at another context is a *monster*, and Kaplan's thesis for English is that it
-has none, its indexicals reading the speech-act context however deeply they are embedded, the
-origin of the context tower.
-
-## Main definitions
-
-* `IsMonster`: an operator on characters that does not operate on contents.
-* `shiftBy τ`: evaluation at the context `τ c v` computed from the context and the index, as the
-  shifty operators of `Context/Overwrite.lean` do; `shift σ` is its index-independent case.
-* `Kaplan.I`, `Kaplan.you`, `Kaplan.now`, `Kaplan.here`, `Kaplan.actually`: the pure indexicals,
-  origin access patterns on the context tower.
-
-## Main results
-
-* `isMonster_shiftBy_iff`, `isMonster_shift_iff`: an operator evaluating at a computed or shifted
-  context is a monster iff it moves some context.
+An operator on characters is a *monster* when it does not operate on contents: what it yields at
+a context is not determined by the content of its argument there. Kaplan's thesis is that English
+has none. An operator that evaluates its argument at a context computed from the context and the
+index, as the shifty operators of `Context/Overwrite.lean` do, is a monster
+[iff the computation moves some context](##isMonster_shiftBy_iff).
 
 ## References
 
@@ -94,26 +81,5 @@ theorem isMonster_shift_iff [Nontrivial (Content V α)] (σ : Function.End C) :
   simp [shift, isMonster_shiftBy_iff, ne_one_iff_exists_smul_ne]
 
 end Monster
-
-/-! ### The English pure indexicals -/
-
-open ContextTower
-
-variable {W E P T : Type*}
-
-/-- *I* is the agent of the speech-act context. -/
-def I : AccessPattern (Context W E P T) E := .origin Context.agent
-
-/-- *You* is the addressee of the speech-act context. -/
-def you : AccessPattern (Context W E P T) E := .origin Context.addressee
-
-/-- *Now* is the time of the speech-act context. -/
-def now : AccessPattern (Context W E P T) T := .origin Context.time
-
-/-- *Here* is the position of the speech-act context. -/
-def here : AccessPattern (Context W E P T) P := .origin Context.position
-
-/-- *Actually* is the world of the speech-act context. -/
-def actually : AccessPattern (Context W E P T) W := .origin Context.world
 
 end Kaplan

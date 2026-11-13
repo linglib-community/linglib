@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Semantics.Reference.Context.Basic
 public import Linglib.Semantics.Reference.Kaplan
 public import Mathlib.Data.Finset.Piecewise
 public import Mathlib.Logic.Function.DependsOn
