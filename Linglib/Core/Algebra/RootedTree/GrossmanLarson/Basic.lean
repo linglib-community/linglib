@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.Algebra.BigOperators.Ring.Multiset
 public import Linglib.Core.Algebra.RootedTree.ConnesKreimer
+public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
 public import Linglib.Core.Algebra.RootedTree.PreLie.ChapotonLivernet
 public import Linglib.Core.Algebra.RootedTree.PreLie.InsertionUnordered
 public import Mathlib.Algebra.Algebra.Bilinear
@@ -44,6 +45,8 @@ that module with `⋆` as its multiplication.
   `AB ∘ C = Σ (A ∘ C₍₁₎)(B ∘ C₍₂₎)` and `ε(x ∘ y) = ε(x) ε(y)`, on basis forests for the second.
 * `GrossmanLarson.product_of'`: `x ⋆ G = Σ_{G = G₁ + G₂} (x ∘ G₂) G₁`.
 * `GrossmanLarson.counit_product`: the counit is multiplicative for `⋆`.
+* `GrossmanLarson.comulPrim_product_of'_of'`: so is the coproduct in which every tree is
+  primitive, `Δ(x ⋆ y) = Σ (x₍₁₎ ⋆ y₍₁₎) ⊗ (x₍₂₎ ⋆ y₍₂₎)`, on basis forests.
 * `GrossmanLarson.instNonAssocSemiring`: the empty forest is a two-sided unit; associativity and
   the `Semiring` and `Algebra` instances are in `GrossmanLarson/Algebra.lean`.
 * `GrossmanLarson.toConnesKreimer_ι_mul`, `GrossmanLarson.toConnesKreimer_ι_mul_ι`: on one-tree
@@ -190,6 +193,20 @@ theorem counit_product (x y : ConnesKreimer R (UnorderedTree α)) :
       (LinearMap.mul R R).compl₁₂ counit.toLinearMap counit.toLinearMap :=
     lhom_ext' fun F ↦ lhom_ext' fun G ↦ counit_product_of'_of' F G
   exact LinearMap.congr_fun₂ h x y
+
+open scoped TensorProduct in
+/-- The coproduct in which every tree is primitive is multiplicative for the Grossman–Larson
+product: splitting `A ⋆ B` is splitting `A` and `B` and multiplying the parts. -/
+theorem comulPrim_product_of'_of' (A B : Forest (UnorderedTree α)) :
+    comulPrim (product (of' (R := R) A) (of' B)) =
+      ((A.antidiagonal ×ˢ B.antidiagonal).map fun pq ↦
+        product (of' pq.1.1) (of' pq.2.1) ⊗ₜ[R] product (of' pq.1.2) (of' pq.2.2)).sum := by
+  rw [product_of'_of', map_multiset_sum, Multiset.map_map]
+  simp only [Function.comp_def, comulPrim_of']
+  rw [← Multiset.sum_bind, ← Multiset.map_bind, productMultiset_bind_antidiagonal,
+    Multiset.map_bind, Multiset.sum_bind]
+  refine congrArg Multiset.sum (Multiset.map_congr rfl fun pq _ ↦ ?_)
+  rw [product_of'_of', product_of'_of', TensorProduct.sum_map_tmul_sum_map]
 
 theorem product_ofTree_ofTree (T S : UnorderedTree α) :
     product (ofTree (R := R) T) (ofTree S) =

@@ -27,11 +27,11 @@ This file proves that the Grossman–Larson product is associative, makes `Gross
 
 ## Implementation notes
 
-Associativity is proved over `ℤ` by duality: the product is the transpose of the Connes–Kreimer
+Associativity is proved over `ℕ` by duality: the product is the transpose of the Connes–Kreimer
 coproduct under the symmetry-weighted pairing (`Coproduct/AdmissibleCutDuality.lean`), which is
-coassociative, and over `ℤ` the pairing separates points. The structure constants are natural
-numbers, so the `ℤ` case is an identity of multisets of forests, which gives associativity over
-every commutative semiring.
+coassociative, and over `ℕ` an element is determined by its pairings. The structure constants are
+natural numbers, so the `ℕ` case is an identity of multisets of forests, which gives associativity
+over every commutative semiring.
 
 ## TODO
 
@@ -55,9 +55,9 @@ open ConnesKreimer
 
 variable {α : Type*}
 
-private theorem product_assoc_int [DecidableEq α] (x y z : ConnesKreimer ℤ (UnorderedTree α)) :
+private theorem product_assoc_nat [DecidableEq α] (x y z : ConnesKreimer ℕ (UnorderedTree α)) :
     product (product x y) z = product x (product y z) :=
-  ext_pairing_right fun w ↦ congr($(pairing_product_assoc x y z) w)
+  pairing_injective (pairing_product_assoc x y z)
 
 variable {R : Type*} [CommSemiring R]
 
@@ -85,10 +85,10 @@ theorem productMultiset_assoc (F G H : Multiset (UnorderedTree α)) :
     (productMultiset F G).bind (productMultiset · H) =
       (productMultiset G H).bind (productMultiset F ·) := by
   classical
-  refine ConnesKreimer.sum_map_of'_injective (R := ℤ) ?_
+  refine ConnesKreimer.sum_map_of'_injective (R := ℕ) ?_
   simp only
   rw [← GrossmanLarson.product_product_of', ← GrossmanLarson.product_of'_product,
-    GrossmanLarson.product_assoc_int]
+    GrossmanLarson.product_assoc_nat]
 
 end UnorderedTree
 
