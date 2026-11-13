@@ -63,18 +63,21 @@ variable [DecidableEq α]
 /-- Whether two elements of the free magma agree up to swapping the factors of products. -/
 def isCommCon : FreeMagma α → FreeMagma α → Bool
   | .of a, .of b => decide (a = b)
-  | .mul x y, .mul x' y' => (isCommCon x x' && isCommCon y y') || (isCommCon x y' && isCommCon y x')
+  | .mul x y, .mul x' y' =>
+    (isCommCon x x' && isCommCon y y') || (isCommCon x y' && isCommCon y x')
   | _, _ => false
 
 @[simp] theorem isCommCon_of_of (a b : α) : isCommCon (of a) (of b) = decide (a = b) := rfl
 
-@[simp] theorem isCommCon_of_mul (a : α) (x y : FreeMagma α) : isCommCon (of a) (x * y) = false := rfl
+@[simp] theorem isCommCon_of_mul (a : α) (x y : FreeMagma α) :
+    isCommCon (of a) (x * y) = false := rfl
 
-@[simp] theorem isCommCon_mul_of (a : α) (x y : FreeMagma α) : isCommCon (x * y) (of a) = false := rfl
+@[simp] theorem isCommCon_mul_of (a : α) (x y : FreeMagma α) :
+    isCommCon (x * y) (of a) = false := rfl
 
 @[simp] theorem isCommCon_mul_mul (x y x' y' : FreeMagma α) :
-    isCommCon (x * y) (x' * y') = (isCommCon x x' && isCommCon y y' || isCommCon x y' && isCommCon y x') :=
-  rfl
+    isCommCon (x * y) (x' * y') =
+      (isCommCon x x' && isCommCon y y' || isCommCon x y' && isCommCon y x') := rfl
 
 @[simp] theorem isCommCon_self (x : FreeMagma α) : isCommCon x x = true := by
   induction x with
