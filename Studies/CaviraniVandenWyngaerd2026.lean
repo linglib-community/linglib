@@ -7,7 +7,7 @@ module
 
 public import Linglib.Phonology.GovernmentPhonology.ElementTheory
 public import Linglib.Phonology.Autosegmental.Skeleton
-public import Linglib.Phonology.StrictCV.Basic
+public import Studies.Scheer2004
 public import Linglib.Fragments.Slavic.Czech.Phonology
 public import Linglib.Data.Wordlist.CaviraniVandenWyngaerd2026
 
@@ -31,7 +31,7 @@ consonant off their spelling.
 * The skeleton is reduced to what the outcome depends on: the root node of the base-final
   consonant, whether the vowel of the suffix floats, and what a sonorant spreads. The analysis
   uses neither government nor licensing; only the illustration of proper government in the
-  paper's presentation of strict CV is checked, against the Strict CV substrate.
+  paper's presentation of strict CV is checked, against the Government Phonology substrate.
 * The melodies are those of the paper's tables of plain and palatalised consonants. Its closing
   summary table prints /s/ without |I| and /n/ without |A|.
 * Union is taken in the structure, so small and medium palatalisation of /x/ build one structure
@@ -60,7 +60,7 @@ The reflexes of /ɦ/ pattern as those of /k/ do, small against medium and big.
 
 namespace CaviraniVandenWyngaerd2026
 
-open ElementTheory CLDF.Wordlist
+open ElementTheory CLDF.Wordlist GovernmentPhonology
 open Autosegmental (Slot)
 
 /-! ### The plain consonants -/
@@ -378,21 +378,18 @@ theorem interpret_medium :
 
 /-! ### Proper government (§3.3)
 
-The paper illustrates proper government with the alternation in Czech 'elbow': Czech allows an
-empty final nucleus but does not let it govern. -/
-
-/-- A Czech final nucleus may be empty and then neither governs nor licenses. -/
-def czechFinal : StrictCV.FinalNucleus := ⟨true, false⟩
+The paper illustrates proper government with the alternation in Czech 'elbow': the final empty
+nucleus does not govern the alternating vowel, and the vowel of the suffix does. -/
 
 /-- In *loket* the alternating vowel is pronounced and in *lok_te* it stays silent, governed by the
 suffix vowel (§3.3). -/
 theorem loket_lokte :
-    (StrictCV.standard czechFinal
+    (obligatory Scheer2004.czech ∅
         [{ melody := .associated }, { melody := .floating }, { melody := .empty }]).map
-        Prod.snd = [true, true, false] ∧
-      (StrictCV.standard czechFinal
+        (·.expressed) = [true, true, false] ∧
+      (obligatory Scheer2004.czech ∅
         [{ melody := .associated }, { melody := .floating }, { melody := .associated }]).map
-        Prod.snd = [true, false, true] := by
+        (·.expressed) = [true, false, true] := by
   decide
 
 end CaviraniVandenWyngaerd2026
