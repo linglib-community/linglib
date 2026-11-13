@@ -103,7 +103,7 @@ structure Article extends Determiner where
   /-- The exponent of the article. -/
   exponent : Determiner.Exponent
   /-- The definite uses the article obligatorily expones. -/
-  uses : Finset DefiniteDescription.Use := ∅
+  uses : Finset Definite.Use := ∅
   /-- The grammatical number the article selects, or none when it is number-neutral, as English
   *a* selects the singular. -/
   numberRestriction : Option Number := none
@@ -171,7 +171,7 @@ def definiteness : Entry → Finset Definiteness
 
 /-- The definite uses an entry obligatorily expones are an article's `uses`; a demonstrative,
 quantifier or possessive expones none by its lexicon. -/
-def uses : Entry → Finset DefiniteDescription.Use
+def uses : Entry → Finset Definite.Use
   | .article a => a.uses
   | .demonstrative _ | .quantifier _ | .possessive _ => ∅
 
@@ -190,15 +190,15 @@ def Selects (num : Number) : Prop := ∀ n ∈ e.numberRestriction, n = num
 instance (num : Number) : Decidable (e.Selects num) := by unfold Selects; infer_instance
 
 /-- The strengths an entry marks are those its definite uses call for. -/
-def strengths : Finset DefiniteDescription.Strength := e.uses.image DefiniteDescription.Use.strength
+def strengths : Finset Definite.Strength := e.uses.image Definite.Use.strength
 
 /-- An entry marks an article strength when some definite use it expones calls for it. -/
-def Marks (p : DefiniteDescription.Strength) : Prop := p ∈ e.strengths
+def Marks (p : Definite.Strength) : Prop := p ∈ e.strengths
 
-instance (p : DefiniteDescription.Strength) : Decidable (e.Marks p) :=
+instance (p : Definite.Strength) : Decidable (e.Marks p) :=
   inferInstanceAs (Decidable (p ∈ e.strengths))
 
-theorem marks_iff (p : DefiniteDescription.Strength) :
+theorem marks_iff (p : Definite.Strength) :
     e.Marks p ↔ ∃ u ∈ e.uses, u.strength = p :=
   Finset.mem_image
 
@@ -225,25 +225,25 @@ instance (ds : Inventory) (p : Entry → Prop) [DecidablePred p] : Decidable (�
 variable (ds : Inventory)
 
 /-- The strengths an inventory marks are those its entries mark. -/
-def strengths : Finset DefiniteDescription.Strength :=
+def strengths : Finset Definite.Strength :=
   (List.map Entry.strengths ds).foldr (· ∪ ·) ∅
 
 /-- An inventory marks an article strength when some entry marks it. -/
-def Marks (p : DefiniteDescription.Strength) : Prop := ∃ e ∈ ds, e.Marks p
+def Marks (p : Definite.Strength) : Prop := ∃ e ∈ ds, e.Marks p
 
-instance (p : DefiniteDescription.Strength) : Decidable (ds.Marks p) := by
+instance (p : Definite.Strength) : Decidable (ds.Marks p) := by
   unfold Marks; infer_instance
 
-theorem marks_singleton (e : Entry) (p : DefiniteDescription.Strength) : Marks [e] p ↔ e.Marks p :=
+theorem marks_singleton (e : Entry) (p : Definite.Strength) : Marks [e] p ↔ e.Marks p :=
   ⟨fun ⟨_, he, h⟩ ↦ List.mem_singleton.mp he ▸ h, fun h ↦ ⟨e, List.mem_singleton_self e, h⟩⟩
 
-private theorem mem_foldr_union {l : List Entry} {p : DefiniteDescription.Strength} :
+private theorem mem_foldr_union {l : List Entry} {p : Definite.Strength} :
     p ∈ (List.map Entry.strengths l).foldr (· ∪ ·) ∅ ↔ ∃ e ∈ l, p ∈ e.strengths := by
   induction l with
   | nil => simp
   | cons e es ih => simp [ih]
 
-theorem marks_iff_mem_strengths (p : DefiniteDescription.Strength) :
+theorem marks_iff_mem_strengths (p : Definite.Strength) :
     ds.Marks p ↔ p ∈ ds.strengths :=
   (mem_foldr_union (l := ds)).symm
 
@@ -267,7 +267,7 @@ def Realizes : NominalKind → Prop
 
 instance : DecidablePred ds.Realizes := fun k ↦ by cases k <;> unfold Realizes <;> infer_instance
 
-theorem realizes_toKind (p : DefiniteDescription.Strength) : ds.Realizes p.toKind ↔ ds.Marks p := by
+theorem realizes_toKind (p : Definite.Strength) : ds.Realizes p.toKind ↔ ds.Marks p := by
   cases p <;> exact Iff.rfl
 
 end Inventory
@@ -278,9 +278,9 @@ end Determiner
 
 /-- The strengths an article admits are those its uses call for. A syncretic article such as
 English *the* admits both, and a weak or strong article admits one. -/
-def Article.strengths (a : Article) : Finset DefiniteDescription.Strength :=
-  a.uses.image DefiniteDescription.Use.strength
+def Article.strengths (a : Article) : Finset Definite.Strength :=
+  a.uses.image Definite.Use.strength
 
-theorem Article.mem_strengths_iff_marks (a : Article) (p : DefiniteDescription.Strength) :
+theorem Article.mem_strengths_iff_marks (a : Article) (p : Definite.Strength) :
     p ∈ a.strengths ↔ (Determiner.Entry.article a).Marks p :=
   Iff.rfl

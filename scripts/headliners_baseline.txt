@@ -36,7 +36,6 @@ ArreguiKusumoto1998
 AsherLascarides2003
 AsherPelletier2013
 Asudeh2022
-Audring2019
 AugurzkyEtAl2023
 BadeEtAl2022
 BakayEtAl2026
@@ -103,7 +102,6 @@ Buring2015
 BuringGunlogson2000
 Burnett2019
 Bybee1985
-Bybee1995
 BylininaNouwen2018
 Cacchioli2026
 Caha2009
@@ -273,7 +271,6 @@ ItoMester2009
 ItoMester2019
 Itzhaki2021
 Jablonska2004
-JackendoffAudring2020
 Jardine2019
 Jenks2018
 JereticEtAl2025
