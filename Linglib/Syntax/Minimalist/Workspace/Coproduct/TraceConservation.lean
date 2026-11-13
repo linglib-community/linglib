@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Workspace.Coproduct.TraceCut
-public import Linglib.Core.Data.UnorderedTree.Count
+public import Linglib.Core.Data.UnorderedTree.Leaves
 public import Mathlib.Algebra.Order.BigOperators.Group.Multiset
 
 /-!
