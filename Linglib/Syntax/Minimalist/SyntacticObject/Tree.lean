@@ -198,24 +198,6 @@ theorem toRoseTree_injective : Function.Injective (toRoseTree : PlanarSyntacticO
           simpa [toRoseTree] using h
       rw [hl h₁, hr h₂]; rfl
 
-/-- Two planar objects with one syntactic object have one unordered tree. -/
-theorem mk_toRoseTree_eq_of_commCon {p q : PlanarSyntacticObject L}
-    (h : Magma.commCon (FreeMagma (Leaf L)) p q) :
-    UnorderedTree.mk p.toRoseTree = UnorderedTree.mk q.toRoseTree := by
-  induction h with
-  | of x y h =>
-    obtain ⟨a, b, rfl, rfl⟩ := h
-    show UnorderedTree.mk (.node Vertex.bare [toRoseTree a, toRoseTree b])
-      = UnorderedTree.mk (.node Vertex.bare [toRoseTree b, toRoseTree a])
-    rw [← UnorderedTree.node_pair_mk, ← UnorderedTree.node_pair_mk, Multiset.pair_comm]
-  | refl => rfl
-  | symm _ ih => exact ih.symm
-  | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
-  | @mul w x y z _ _ ih₁ ih₂ =>
-    show UnorderedTree.mk (.node Vertex.bare [toRoseTree w, toRoseTree y])
-      = UnorderedTree.mk (.node Vertex.bare [toRoseTree x, toRoseTree z])
-    rw [← UnorderedTree.node_pair_mk, ← UnorderedTree.node_pair_mk, ih₁, ih₂]
-
 end PlanarSyntacticObject
 
 namespace SyntacticObject
@@ -223,13 +205,13 @@ namespace SyntacticObject
 variable {L L' L'' : Type}
 
 /-- The unordered tree of a syntactic object. -/
-def toUnorderedTree (s : SyntacticObject L) : UnorderedTree (Vertex L) :=
-  Quotient.liftOn s (fun p : PlanarSyntacticObject L ↦ UnorderedTree.mk p.toRoseTree)
-    fun _ _ h ↦ PlanarSyntacticObject.mk_toRoseTree_eq_of_commCon h
+def toUnorderedTree : SyntacticObject L → UnorderedTree (Vertex L) :=
+  FreeCommMagma.elim (fun x ↦ UnorderedTree.leaf x.toVertex)
+    (fun _ _ l r ↦ UnorderedTree.node Vertex.bare {l, r})
+    fun _ _ l r ↦ congrArg _ (Multiset.pair_comm l r)
 
-@[simp] theorem _root_.Minimalist.PlanarSyntacticObject.toUnorderedTree_toSyntacticObject
-    (p : PlanarSyntacticObject L) : p.toSyntacticObject.toUnorderedTree =
-        UnorderedTree.mk p.toRoseTree := rfl
+@[simp] theorem toUnorderedTree_of (x : Leaf L) :
+    toUnorderedTree (FreeCommMagma.of x) = UnorderedTree.leaf x.toVertex := rfl
 
 @[simp] theorem toUnorderedTree_leaf (a : L) :
     (leaf a).toUnorderedTree = UnorderedTree.leaf (Vertex.lex a) :=
@@ -242,43 +224,47 @@ def toUnorderedTree (s : SyntacticObject L) : UnorderedTree (Vertex L) :=
 
 @[simp] theorem toUnorderedTree_merge (l r : SyntacticObject L) :
     (merge l r).toUnorderedTree = UnorderedTree.node Vertex.bare {l.toUnorderedTree,
-        r.toUnorderedTree} := by
-  obtain ⟨l, rfl⟩ := PlanarSyntacticObject.toSyntacticObject_surjective l
-  obtain ⟨r, rfl⟩ := PlanarSyntacticObject.toSyntacticObject_surjective r
-  exact (UnorderedTree.node_pair_mk _ _ _).symm
+        r.toUnorderedTree} :=
+  FreeCommMagma.elim_mul ..
+
+@[simp] theorem _root_.Minimalist.PlanarSyntacticObject.toUnorderedTree_toSyntacticObject
+    (p : PlanarSyntacticObject L) : p.toSyntacticObject.toUnorderedTree =
+        UnorderedTree.mk p.toRoseTree := by
+  induction p using FreeMagma.recOnMul with
+  | ih1 x => rfl
+  | ih2 l r hl hr =>
+    refine (toUnorderedTree_merge (PlanarSyntacticObject.toSyntacticObject l)
+      (PlanarSyntacticObject.toSyntacticObject r)).trans ?_
+    rw [hl, hr]
+    exact UnorderedTree.node_pair_mk ..
 
 /-- The tree of a syntactic object is well formed. -/
 theorem isSyntacticObject_toUnorderedTree (s : SyntacticObject L) :
     IsSyntacticObject s.toUnorderedTree := by
   obtain ⟨p, rfl⟩ := PlanarSyntacticObject.toSyntacticObject_surjective s
-  exact p.isSyntacticObject_toRoseTree
+  exact p.toUnorderedTree_toSyntacticObject ▸ p.isSyntacticObject_toRoseTree
 
 /-- A syntactic object is determined by its tree. -/
 theorem toUnorderedTree_injective : Function.Injective (toUnorderedTree : SyntacticObject L → _) :=
     by
   intro s
-  induction s using ind with
-  | leaf a =>
+  induction s using FreeCommMagma.inductionOn with
+  | of x =>
     intro t h
-    rcases exists_form t with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l, r, rfl⟩ <;>
-      simpa using congrArg UnorderedTree.value h
-  | trace =>
+    induction t using FreeCommMagma.inductionOn with
+    | of y =>
+      exact congrArg _ (Leaf.toVertex_injective (by simpa using congrArg UnorderedTree.value h))
+    | mul l r => exact absurd (by simpa using congrArg UnorderedTree.value h) x.toVertex_ne_bare
+  | mul l r hl hr =>
     intro t h
-    rcases exists_form t with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l, r, rfl⟩ <;>
-      first | rfl | simpa using congrArg UnorderedTree.value h
-  | traceOf a =>
-    intro t h
-    rcases exists_form t with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l, r, rfl⟩ <;>
-      simpa using congrArg UnorderedTree.value h
-  | merge l r hl hr =>
-    intro t h
-    rcases exists_form t with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l', r', rfl⟩
-    iterate 3 simpa using congrArg UnorderedTree.value h
-    have := congrArg UnorderedTree.children h
-    simp only [toUnorderedTree_merge, UnorderedTree.children_node] at this
-    rcases Multiset.pair_eq_pair_iff.1 this with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
-    · rw [hl h₁, hr h₂]
-    · rw [hl h₁, hr h₂]; exact merge_comm _ _
+    induction t using FreeCommMagma.inductionOn with
+    | of y =>
+      exact absurd (by simpa using (congrArg UnorderedTree.value h).symm) y.toVertex_ne_bare
+    | mul l' r' =>
+      rcases Multiset.pair_eq_pair_iff.1 (by simpa using congrArg UnorderedTree.children h) with
+        ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
+      · rw [hl h₁, hr h₂]
+      · rw [hl h₁, hr h₂, mul_comm]
 
 @[simp] theorem toUnorderedTree_inj {s t : SyntacticObject L} : s.toUnorderedTree =
     t.toUnorderedTree ↔ s = t := toUnorderedTree_injective.eq_iff
