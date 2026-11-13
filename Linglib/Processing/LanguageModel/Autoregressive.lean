@@ -6,55 +6,31 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.InformationTheory.Surprisal
-public import Linglib.Core.MeasureTheory.Constructions.List
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
-public import Linglib.Core.Probability.ConditionalProbability
-public import Mathlib.Probability.Kernel.Basic
+public import Linglib.Core.Probability.Kernel.Continuation
 public import Mathlib.Probability.Kernel.Composition.MapComap
 
 /-!
 # Autoregressive sequence models
 
 An autoregressive sequence model over an alphabet `α` gives, after every prefix, a distribution
-over the next symbol or the end of the string, `none` [du-etal-2023]. The prefix probability of a
-string is the product of the conditional probabilities along it, the probability of the string
-itself multiplies in the probability of ending after it, and the model is tight when the string
-probabilities sum to one. Conversely, a language model, a probability measure on strings, gives
-after each prefix the law of its continuation, and it is the string law of the model whose
-conditionals are the laws of the first symbol of the continuation.
-
-## Main definitions
-
-* `MeasureTheory.Measure.continuation`: the law of what follows a prefix under a measure on
-  strings.
-* `AutoregressiveSequenceModel α`: a Markov kernel from prefixes to `Option α`.
-* `condPrefixProb`, `prefixProb`, `stringProb`, `stringMeasure`, `IsTight`.
-* `after`: the model after a context.
-* `ofMeasure`: the model whose conditionals are the first symbols of the continuations of a
-  measure on strings.
-
-## Main results
-
-* `MeasureTheory.Measure.continuation_setOf_prefix`: the continuations beginning with `w` have
-  the conditional probability of the strings extending the prefix by `w`.
-* `condPrefixProb_append`, `condPrefixProb_eq_prod`: the chain rule.
-* `toENNReal_neg_log_condPrefixProb`, `toENNReal_neg_log_stringProb`: the surprisal of a
-  continuation is the sum of the surprisals of its symbols, and that of a string adds the surprisal
-  of its end.
-* `stringMeasure_eq_of_next_eq`, `stringMeasure_ofMeasure`: a model whose conditionals are the
-  next-symbol laws of a language model after every prefix of positive probability has it as its
-  string law ([du-etal-2023]).
-* `condPrefixProb_ofMeasure`: the conditional prefix probabilities of the model of a language model
-  are its conditional probabilities of prefix sets.
-* `sum_surprisal_next_ofMeasure_map`: an injective re-linearization of the strings preserves the
-  total surprisal of each string under the model of the language.
+over the next symbol or the end of the string, `none` [du-etal-2023]. The probability that a
+string begins with a prefix is [the product](##condPrefixProb_eq_prod) of the conditional
+probabilities along it, the probability of the string itself multiplies in the probability of
+ending after it, and the model is tight when the string probabilities sum to one. Conversely a
+language model, a probability measure on strings, has after each prefix the law of its
+continuation, and it is [the string law](##stringMeasure_ofMeasure) of the model whose
+conditionals are the laws of the first symbol of the continuation. Prefixes act on both sides, on
+a measure by [taking continuations](##MeasureTheory.Measure.continuation_continuation) and on a
+model by [starting it after the prefix](##after_after), and the passage from measures to models
+[carries one action to the other](##ofMeasure_continuation).
 
 ## Implementation notes
 
 The alphabet need only carry a measurable space, and the results about string laws a countable one
 with measurable singletons; [du-etal-2023] take it finite. The surprisal of a string counts the end
 of the string, so that it is the negative logarithm of the probability of the string
-(`toENNReal_neg_log_stringProb`) rather than of its prefix probability.
+(`surprisal_stringMeasure`) rather than of its prefix probability.
 
 ## References
 
@@ -66,59 +42,9 @@ of the string, so that it is the negative logarithm of the probability of the st
 open InformationTheory MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
-/-! ### Continuations -/
-
-namespace MeasureTheory.Measure
-
-variable {α : Type*} (μ : Measure (List α))
-
-/-- The continuation law of a measure on strings: after the prefix `c`, the law of what follows
-`c` among the strings extending it. -/
-noncomputable def continuation : Kernel (List α) (List α) :=
-  ⟨fun c ↦ (μ[|{y | c <+: y}]).map (List.drop c.length), .of_discrete⟩
-
-theorem continuation_apply (c : List α) :
-    μ.continuation c = (μ[|{y | c <+: y}]).map (List.drop c.length) :=
-  rfl
-
-instance (c : List α) : IsZeroOrProbabilityMeasure (μ.continuation c) := by
-  rw [continuation_apply]
-  infer_instance
-
-theorem isProbabilityMeasure_continuation [IsFiniteMeasure μ] {c : List α}
-    (hc : μ {y | c <+: y} ≠ 0) : IsProbabilityMeasure (μ.continuation c) := by
-  have := cond_isProbabilityMeasure (s := {y | c <+: y}) hc
-  rw [continuation_apply]
-  infer_instance
-
-/-- The continuations of `c` beginning with `w` have the conditional probability of the strings
-extending `c ++ w` among those extending `c`. -/
-theorem continuation_setOf_prefix (c w : List α) :
-    μ.continuation c {a | w <+: a} = μ[{y | c ++ w <+: y} | {y | c <+: y}] := by
-  rw [continuation_apply, map_apply .of_discrete .of_discrete, cond_apply .of_discrete,
-    cond_apply .of_discrete]
-  congr 2
-  ext y
-  simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_ofPred_eq]
-  refine and_congr_right fun ⟨r, hr⟩ ↦ ?_
-  subst hr
-  simp
-
-/-- The continuation of `c` is empty with the conditional probability of `c` itself. -/
-theorem continuation_singleton_nil (c : List α) :
-    μ.continuation c {[]} = μ[{c} | {y | c <+: y}] := by
-  rw [continuation_apply, map_apply .of_discrete .of_discrete, cond_apply .of_discrete,
-    cond_apply .of_discrete]
-  congr 2
-  ext y
-  simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff, Set.mem_ofPred_eq,
-    List.drop_eq_nil_iff]
-  exact ⟨fun ⟨h, hl⟩ ↦ ⟨h, (h.eq_of_length_le hl).symm⟩, fun ⟨h, hy⟩ ↦ ⟨h, hy ▸ le_rfl⟩⟩
-
-end MeasureTheory.Measure
-
 /-- An autoregressive sequence model over the alphabet `α`: after each prefix, a distribution over
 the next symbol, or the end of the string, `none`. -/
+@[ext]
 structure AutoregressiveSequenceModel (α : Type*) [MeasurableSpace α] where
   /-- The distribution of what follows a prefix. -/
   next : Kernel (List α) (Option α)
@@ -235,14 +161,21 @@ noncomputable def after (c : List α) : AutoregressiveSequenceModel α where
 
 @[simp] theorem next_after (c u : List α) : (M.after c).next u = M.next (c ++ u) := rfl
 
-theorem condPrefixProb_append_left (c c' z : List α) :
-    M.condPrefixProb (c ++ c') z = (M.after c).condPrefixProb c' z := by
+@[simp] theorem after_nil : M.after [] = M :=
+  AutoregressiveSequenceModel.ext (Kernel.ext fun u ↦ by simp)
+
+/-- The model after `c` and then after `c'` is the model after `c ++ c'`. -/
+@[simp] theorem after_after (c c' : List α) : (M.after c).after c' = M.after (c ++ c') :=
+  AutoregressiveSequenceModel.ext (Kernel.ext fun u ↦ by simp [List.append_assoc])
+
+@[simp] theorem condPrefixProb_after (c c' z : List α) :
+    (M.after c).condPrefixProb c' z = M.condPrefixProb (c ++ c') z := by
   induction z generalizing c' with
   | nil => simp
-  | cons a z ih => simp [← ih, List.append_assoc]
+  | cons a z ih => simp [ih, List.append_assoc]
 
 theorem prefixProb_after (c z : List α) : (M.after c).prefixProb z = M.condPrefixProb c z := by
-  rw [prefixProb, ← condPrefixProb_append_left, List.append_nil]
+  rw [prefixProb, condPrefixProb_after, List.append_nil]
 
 theorem prefixProb_append (x z : List α) :
     M.prefixProb (x ++ z) = M.prefixProb x * (M.after x).prefixProb z := by
@@ -273,14 +206,15 @@ theorem toENNReal_neg_log_condPrefixProb (c x : List α) :
       (condPrefixProb_le_one _ _ _), ih]
     simp [Fin.sum_univ_succ, surprisal, List.append_assoc]
 
-/-- The surprisal of a string, the negative log of its probability, is the sum of the surprisals of
-its symbols and of the end of the string after it. -/
-theorem toENNReal_neg_log_stringProb (x : List α) :
-    (-ENNReal.log (M.stringProb x)).toENNReal =
+/-- The surprisal of a string under the string law is the sum of the surprisals of its symbols and
+of the end of the string after it. -/
+theorem surprisal_stringMeasure (x : List α) :
+    surprisal M.stringMeasure x =
       ∑ i : Fin x.length, surprisal (M.next (x.take i)) (some x[i]) +
         surprisal (M.next x) none := by
-  rw [stringProb, prefixProb, ENNReal.toENNReal_neg_log_mul (condPrefixProb_le_one _ _ _)
-    (prob_le_one (μ := M.next x)), toENNReal_neg_log_condPrefixProb]
+  rw [surprisal, stringMeasure_singleton, stringProb, prefixProb,
+    ENNReal.toENNReal_neg_log_mul (condPrefixProb_le_one _ _ _) (prob_le_one (μ := M.next x)),
+    toENNReal_neg_log_condPrefixProb]
   simp only [List.nil_append]
   rfl
 
@@ -294,20 +228,17 @@ theorem condPrefixProb_ne_zero (h : ∀ c a, M.next c {some a} ≠ 0) (c x : Lis
 
 /-- The strings extending `x` have total probability the prefix probability of `x` times the
 total probability of the model after `x`. -/
-theorem stringMeasure_setOf_prefix (x : List α) :
-    M.stringMeasure {y | x <+: y} = M.prefixProb x * ∑' z, (M.after x).stringProb z := by
+theorem stringMeasure_cylinder (x : List α) :
+    M.stringMeasure x.cylinder = M.prefixProb x * ∑' z, (M.after x).stringProb z := by
   classical
-  let e : List α ≃ ({y | x <+: y} : Set (List α)) :=
-    { toFun z := ⟨x ++ z, List.prefix_append x z⟩
-      invFun y := y.1.drop x.length
-      left_inv z := by simp
-      right_inv y := Subtype.ext (List.prefix_iff_eq_append.1 y.2) }
-  rw [stringMeasure, Measure.sum_apply _ .of_discrete, ← ENNReal.tsum_mul_left]
-  have hind (y : List α) : (M.stringProb y • Measure.dirac y) {y | x <+: y} =
-      {y | x <+: y}.indicator M.stringProb y := by
+  have hind (y : List α) : (M.stringProb y • Measure.dirac y) x.cylinder =
+      x.cylinder.indicator M.stringProb y := by
     simp [Measure.dirac_apply' _ MeasurableSet.of_discrete, Set.indicator_apply]
-  rw [tsum_congr hind, ← _root_.tsum_subtype, ← e.tsum_eq]
-  exact tsum_congr fun z ↦ M.stringProb_append x z
+  rw [stringMeasure, Measure.sum_apply _ .of_discrete, tsum_congr hind, ← ENNReal.tsum_mul_left,
+    ← (List.append_right_injective x).tsum_eq (f := x.cylinder.indicator M.stringProb)
+      fun y hy ↦ Set.mem_of_indicator_ne_zero hy]
+  exact tsum_congr fun z ↦ (Set.indicator_of_mem (s := x.cylinder) (x.append_mem_cylinder z)
+    _).trans (M.stringProb_append x z)
 
 /-! ### The model of a language model
 
@@ -347,11 +278,17 @@ theorem next_ofMeasure_of_eq_zero {x : List α} (hx : μ.continuation x = 0) :
     (ofMeasure μ).next x = .dirac none := by
   rw [next_ofMeasure, ite_eq_left hx]
 
+/-- The model of the continuation of a measure after `c` is the model of the measure after `c`. -/
+theorem ofMeasure_continuation [IsFiniteMeasure μ] (c : List α) :
+    ofMeasure (μ.continuation c) = (ofMeasure μ).after c :=
+  AutoregressiveSequenceModel.ext <| Kernel.ext fun u ↦ by
+    rw [next_after, next_ofMeasure, next_ofMeasure, Measure.continuation_continuation]
+
 variable [MeasurableSingletonClass α]
 
 theorem next_ofMeasure_apply_some (x : List α) (a : α) :
-    (ofMeasure μ).next x {some a} = μ[{y | x ++ [a] <+: y} | {y | x <+: y}] := by
-  rw [← Measure.continuation_setOf_prefix]
+    (ofMeasure μ).next x {some a} = μ[(x ++ [a]).cylinder | x.cylinder] := by
+  rw [← Measure.continuation_cylinder]
   by_cases h : μ.continuation x = 0
   · simp [next_ofMeasure_of_eq_zero μ h, h]
   rw [next_ofMeasure_of_ne_zero μ h, Measure.map_apply .of_discrete (measurableSet_singleton _)]
@@ -359,8 +296,8 @@ theorem next_ofMeasure_apply_some (x : List α) (a : α) :
   ext l
   cases l <;> simp [eq_comm]
 
-theorem next_ofMeasure_apply_none [IsFiniteMeasure μ] {x : List α} (hx : μ {y | x <+: y} ≠ 0) :
-    (ofMeasure μ).next x {none} = μ[{x} | {y | x <+: y}] := by
+theorem next_ofMeasure_apply_none [IsFiniteMeasure μ] {x : List α} (hx : μ x.cylinder ≠ 0) :
+    (ofMeasure μ).next x {none} = μ[{x} | x.cylinder] := by
   have := μ.isProbabilityMeasure_continuation hx
   rw [next_ofMeasure_of_ne_zero μ (IsProbabilityMeasure.ne_zero _),
     Measure.map_apply .of_discrete (measurableSet_singleton _),
@@ -374,43 +311,41 @@ variable [IsProbabilityMeasure μ] {μ}
 /-- A model whose conditionals are the next-symbol laws of a probability measure on strings after
 every prefix of positive probability gives each prefix the measure of the strings extending it. -/
 theorem prefixProb_eq_of_next_eq {M : AutoregressiveSequenceModel α}
-    (h : ∀ x, μ {y | x <+: y} ≠ 0 → M.next x = (ofMeasure μ).next x) (x : List α) :
-    M.prefixProb x = μ {y | x <+: y} := by
+    (h : ∀ x, μ x.cylinder ≠ 0 → M.next x = (ofMeasure μ).next x) (x : List α) :
+    M.prefixProb x = μ x.cylinder := by
   induction x using List.reverseRecOn with
   | nil => simp
   | append_singleton x a ih =>
-    have hsub : {y | x ++ [a] <+: y} ⊆ {y | x <+: y} := fun y ↦ (List.prefix_append x [a]).trans
+    have hsub := List.cylinder_append_subset x [a]
     rw [prefixProb_concat, ih]
-    rcases eq_or_ne (μ {y | x <+: y}) 0 with h0 | h0
+    rcases eq_or_ne (μ x.cylinder) 0 with h0 | h0
     · rw [h0, zero_mul, measure_mono_null hsub h0]
     rw [h x h0, next_ofMeasure_apply_some, mul_comm, cond_mul_eq_inter .of_discrete,
       Set.inter_eq_right.2 hsub]
 
 variable (μ) in
-theorem prefixProb_ofMeasure (x : List α) : (ofMeasure μ).prefixProb x = μ {y | x <+: y} :=
+theorem prefixProb_ofMeasure (x : List α) : (ofMeasure μ).prefixProb x = μ x.cylinder :=
   prefixProb_eq_of_next_eq (fun _ _ ↦ rfl) x
 
 /-- After a prefix of positive probability, the model of a probability measure on strings
 continues with `x` with the conditional probability of the strings extending the prefix by
 `x`. -/
-theorem condPrefixProb_ofMeasure {c : List α} (hc : μ {y | c <+: y} ≠ 0) (x : List α) :
-    (ofMeasure μ).condPrefixProb c x = μ[{y | c ++ x <+: y} | {y | c <+: y}] := by
-  have h := (ofMeasure μ).prefixProb_append c x
-  rw [prefixProb_after, prefixProb_ofMeasure, prefixProb_ofMeasure] at h
-  have hsub : {y | c ++ x <+: y} ⊆ {y | c <+: y} := fun y ↦ (List.prefix_append c x).trans
-  rw [cond_apply_of_subset .of_discrete hsub]
-  exact (ENNReal.eq_div_iff hc (measure_ne_top _ _)).2 h.symm
+theorem condPrefixProb_ofMeasure {c : List α} (hc : μ c.cylinder ≠ 0) (x : List α) :
+    (ofMeasure μ).condPrefixProb c x = μ[(c ++ x).cylinder | c.cylinder] := by
+  have := μ.isProbabilityMeasure_continuation hc
+  rw [← prefixProb_after, ← ofMeasure_continuation, prefixProb_ofMeasure,
+    Measure.continuation_cylinder]
 
 variable [Countable α]
 
 /-- A model whose conditionals are the next-symbol laws of a string measure at every
 positive-probability prefix has that measure as its string law ([du-etal-2023], footnote 4). -/
 theorem stringMeasure_eq_of_next_eq {M : AutoregressiveSequenceModel α}
-    (h : ∀ x, μ {y | x <+: y} ≠ 0 → M.next x = (ofMeasure μ).next x) : M.stringMeasure = μ := by
+    (h : ∀ x, μ x.cylinder ≠ 0 → M.next x = (ofMeasure μ).next x) : M.stringMeasure = μ := by
   refine Measure.ext_of_singleton fun x ↦ ?_
-  have hsub : {x} ⊆ {y | x <+: y} := Set.singleton_subset_iff.2 (List.prefix_refl x)
+  have hsub := List.singleton_subset_cylinder x
   rw [stringMeasure_singleton, stringProb, prefixProb_eq_of_next_eq h]
-  rcases eq_or_ne (μ {y | x <+: y}) 0 with h0 | h0
+  rcases eq_or_ne (μ x.cylinder) 0 with h0 | h0
   · rw [h0, zero_mul, measure_mono_null hsub h0]
   rw [h x h0, next_ofMeasure_apply_none μ h0, mul_comm, cond_mul_eq_inter .of_discrete,
     Set.inter_eq_right.2 hsub]
@@ -418,6 +353,13 @@ theorem stringMeasure_eq_of_next_eq {M : AutoregressiveSequenceModel α}
 variable (μ) in
 theorem stringMeasure_ofMeasure : (ofMeasure μ).stringMeasure = μ :=
   stringMeasure_eq_of_next_eq fun _ _ ↦ rfl
+
+/-- After a prefix of positive probability, the model of a language model generates the
+continuation of the prefix. -/
+theorem stringMeasure_after_ofMeasure {c : List α} (hc : μ c.cylinder ≠ 0) :
+    ((ofMeasure μ).after c).stringMeasure = μ.continuation c := by
+  have := μ.isProbabilityMeasure_continuation hc
+  rw [← ofMeasure_continuation, stringMeasure_ofMeasure]
 
 variable (μ) in
 theorem isTight_ofMeasure : (ofMeasure μ).IsTight := by
@@ -434,19 +376,7 @@ the end of the string under the model of the language. -/
 theorem surprisal_eq_sum_surprisal_next (x : List α) :
     surprisal μ x = ∑ i : Fin x.length, surprisal ((ofMeasure μ).next (x.take i)) (some x[i]) +
       surprisal ((ofMeasure μ).next x) none := by
-  rw [← toENNReal_neg_log_stringProb, stringProb_ofMeasure]
-  rfl
-
-/-- An injective re-linearization `σ` of the strings, such as `List.reverse`, gives each string
-the total surprisal of its preimage, the end of the string included. -/
-theorem sum_surprisal_next_ofMeasure_map {σ : List α → List α} (hσ : σ.Injective) (x : List α) :
-    ∑ i : Fin (σ x).length,
-        surprisal ((ofMeasure (μ.map σ)).next ((σ x).take i)) (some (σ x)[i]) +
-        surprisal ((ofMeasure (μ.map σ)).next (σ x)) none =
-      ∑ i : Fin x.length, surprisal ((ofMeasure μ).next (x.take i)) (some x[i]) +
-        surprisal ((ofMeasure μ).next x) none := by
-  rw [← surprisal_eq_sum_surprisal_next, ← surprisal_eq_sum_surprisal_next,
-    surprisal_map_of_injective .of_discrete hσ]
+  rw [← surprisal_stringMeasure, stringMeasure_ofMeasure]
 
 end ofMeasure
 

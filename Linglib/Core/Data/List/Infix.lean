@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.List.Infix
+public import Mathlib.Data.Set.Image
 
 /-!
 # Infixes of a three-part concatenation, and common prefixes
@@ -17,6 +18,11 @@ in strictly local languages, where `m` is the shared `k - 1` letters.
 
 The longest common prefix `List.commonPrefix l₁ l₂`, the greatest list that is a prefix of both,
 is the meet of the prefix order.
+
+The cylinder `List.cylinder x` is the set of lists beginning with `x`, the upper set of `x` in the
+prefix order. Cylinders [shrink along prefixes](##cylinder_anti), and the lists of the cylinder of
+`x` whose remainder lies in the cylinder of `z` are
+[the cylinder of `x ++ z`](##cylinder_inter_drop).
 
 ## Implementation notes
 
@@ -97,5 +103,45 @@ theorem prefix_commonPrefix : ∀ {r l₁ l₂ : List α}, r <+: l₁ → r <+: 
     simpa [commonPrefix] using prefix_commonPrefix (r := rs) (prefix_append _ _) (prefix_append _ _)
 
 end DecidableEq
+
+/-! ### Cylinders -/
+
+/-- The cylinder of `x`: the lists beginning with `x`. -/
+def cylinder (x : List α) : Set (List α) := {y | x <+: y}
+
+variable {x y z : List α}
+
+@[simp] theorem mem_cylinder : y ∈ cylinder x ↔ x <+: y := Iff.rfl
+
+@[simp] theorem cylinder_nil : cylinder ([] : List α) = Set.univ :=
+  Set.eq_univ_of_forall fun _ ↦ nil_prefix
+
+theorem self_mem_cylinder (x : List α) : x ∈ cylinder x := prefix_rfl
+
+theorem append_mem_cylinder (x z : List α) : x ++ z ∈ cylinder x := prefix_append x z
+
+theorem singleton_subset_cylinder (x : List α) : {x} ⊆ cylinder x :=
+  Set.singleton_subset_iff.2 (self_mem_cylinder x)
+
+theorem range_append_left (x : List α) : Set.range (x ++ ·) = cylinder x := rfl
+
+theorem cylinder_anti (h : x <+: y) : cylinder y ⊆ cylinder x := fun _ ↦ h.trans
+
+theorem cylinder_append_subset (x z : List α) : cylinder (x ++ z) ⊆ cylinder x :=
+  cylinder_anti (prefix_append x z)
+
+/-- The lists beginning with `x` whose remainder begins with `z` are those beginning with
+`x ++ z`. -/
+theorem cylinder_inter_drop (x z : List α) :
+    cylinder x ∩ drop x.length ⁻¹' cylinder z = cylinder (x ++ z) := by
+  ext y
+  simp only [Set.mem_inter_iff, Set.mem_preimage, mem_cylinder]
+  refine ⟨fun ⟨⟨r, hr⟩, hz⟩ ↦ ?_, fun ⟨r, hr⟩ ↦ ?_⟩ <;> subst hr
+  · simpa using hz
+  · simp [append_assoc]
+
+theorem take_preimage_singleton (x : List α) : take x.length ⁻¹' {x} = cylinder x := by
+  ext y
+  simp [prefix_iff_eq_take, eq_comm]
 
 end List

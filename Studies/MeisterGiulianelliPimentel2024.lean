@@ -195,7 +195,7 @@ theorem simAdjPosterior_indicatorScore [MeasurableSingletonClass W]
       rw [← hr]
       cases r <;> simp
     have hmem : t ∈ consistent str (ws ++ [w]) ↔ r.head? = some w := by
-      simp only [consistent, Set.mem_preimage, Set.mem_ofPred_eq, ← hr,
+      simp only [consistent, Set.mem_preimage, List.mem_cylinder, ← hr,
         List.prefix_append_right_inj]
       cases r <;> simp [eq_comm]
     by_cases ht : t ∈ consistent str (ws ++ [w])
