@@ -156,7 +156,7 @@ theorem not_mem_retro_of_overlaps (h : ∀ i ∈ A w, i.Overlaps p) : p ∉ retr
 /-- The universal perfect over a span begun before its time of tense entails *used to*, which
 unlike it does not assert the state at that time (`IatridouEtAl2001.universal_at_rb`), so the two
 form the scale of (32). -/
-theorem usedTo_of_universal (h : (w, t) ∈ PERF ({i | i.fst < t} ∩ durative (UNBOUNDED P) ·)) :
+theorem usedTo_of_universal (h : ⟨w, t⟩ ∈ PERF ({i | i.fst < t} ∩ durative (UNBOUNDED P) ·)) :
     .pure t ∈ usedTo P w :=
   let ⟨_, ⟨hlt, hd⟩, _⟩ := h
   let ⟨e, hle, hP⟩ := hd (Set.mem_Iic.2 le_rfl)
@@ -174,7 +174,7 @@ to* does not, (35). -/
 theorem perspective_rows {e : E} (he : P w e) (h₀ : (τ e).fst < t₀) (h₁ : t₀ ≤ t)
     (h₂ : t ≤ (τ e).snd) :
     (.pure t ∈ usedTo P w ∧ .pure t ∈ UNBOUNDED P w ↔ Examples.ex30.judgment = .acceptable) ∧
-    ((w, t) ∈ PERF ({i | i.fst = t₀} ∩ durative (UNBOUNDED P) ·) ↔
+    (⟨w, t⟩ ∈ PERF ({i | i.fst = t₀} ∩ durative (UNBOUNDED P) ·) ↔
       Examples.ex33a.judgment = .acceptable) ∧
     (.pure t ∈ retro (fun w ↦ {i | i.fst = t₀ ∧ i.snd = t} ∩ UNBOUNDED P w) w ↔
       Examples.ex33b.judgment = .acceptable) ∧
