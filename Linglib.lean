@@ -693,7 +693,6 @@ import Linglib.Phonology.Subregular.Transduction
 import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Segmental.FeatureClass
 import Linglib.Phonology.Segmental.Defs
-import Linglib.Phonology.Segmental.ElementTheory
 import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.Tone.Constraints
 import Linglib.Phonology.Tone.Grammatical

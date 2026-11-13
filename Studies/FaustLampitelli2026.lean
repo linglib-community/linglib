@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Phonology.Segmental.ElementTheory
+public import Linglib.Phonology.GovernmentPhonology.ElementTheory
 public import Linglib.Phonology.Segmental.NaturalClass
 public import Linglib.Fragments.Tigrinya.Phonology
 public import Linglib.Fragments.Tigre.Phonology

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Segmental.ElementTheory
+public import Linglib.Phonology.GovernmentPhonology.ElementTheory
 public import Linglib.Phonology.Autosegmental.Skeleton
 public import Linglib.Phonology.StrictCV.Basic
 public import Linglib.Fragments.Slavic.Czech.Phonology
