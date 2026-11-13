@@ -26,8 +26,8 @@ prospective, [an eventuality to come](##mem_present_future_iff); the modal selec
   [excludes an eventuality that starts within the utterance time](##mem_present_compl_future_iff),
   which the future does not include.
 * The non-past quantifies over reference times no part of which precedes the utterance time,
-  those standing to it in `Allen.startsNoEarlier`, the mirror image of the nonfuture reference
-  times of [matthewson-2006] (`Allen.dual_startsNoEarlier`).
+  those standing to it in `Allen.startsNoEarlier`, [the mirror image](##mem_nonPast_iff_dual) of
+  the nonfuture reference times of [matthewson-2006].
 * The perfect is the library's, whose span ends with the reference interval, where the paper's
   may end before it; over the perfective the two agree
   (`Aspect.mem_perfect_iff_of_isUpperSet`).
@@ -94,6 +94,11 @@ def nonPast (u : NonemptyInterval T) (p : W → Set (NonemptyInterval T)) : Set 
 
 theorem mem_nonPast : w ∈ nonPast u p ↔ ∃ t ∈ p w, u.fst ≤ t.fst := by
   simp only [nonPast, mem_ofPred_eq, NonemptyInterval.forall_le_not_precedes_iff]
+
+-- (20): the non-past is the nonfuture tense of [matthewson-2006] on reversed time
+theorem mem_nonPast_iff_dual : w ∈ nonPast u p ↔
+    ∃ t ∈ p w, (u.dual, t.dual) ∈ Allen.toSetRel Allen.endsNoLater := by
+  simp [mem_nonPast]
 
 theorem nonPast_prfv : nonPast u (PRFV P) = {w | ∃ e, u.fst ≤ (τ e).fst ∧ P w e} := by
   ext w
