@@ -57,7 +57,8 @@ open Aspect
 
 open Event (τ)
 
-variable {W T E S : Type*} [LinearOrder T] [Event.TemporalTrace E T] [Event.TemporalTrace S T]
+variable {W T E S : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
+  [Event.TemporalTrace S (NonemptyInterval T)]
 
 /-! ### The interval relations of (7b) and (17) -/
 
@@ -160,7 +161,7 @@ theorem bounded_experiential_ended_by_rb (h : i ∈ perfect (BOUNDED P) w) :
   let ⟨_, ⟨e, hlt, hP⟩, hf⟩ := h
   ⟨e, hP, hf.2 ▸ (NonemptyInterval.le_def.1 hlt.le).2⟩
 
-omit [Event.TemporalTrace E T] in
+omit [Event.TemporalTrace E (NonemptyInterval T)] in
 /-- The resultative perfect, (18), asserts the result state at the right boundary of the
 reference interval, overlapping the reference interval and continuing past it. -/
 theorem resultative_state_at_rb (h : i ∈ perfect (RESULTATIVE Q) w) :
@@ -202,7 +203,7 @@ theorem bounded_experiential_iff : i ∈ perfect (BOUNDED P) w ↔ ∃ e, P w e 
   exact ⟨pts, ⟨e, NonemptyInterval.lt_def.2
     ⟨NonemptyInterval.le_def.2 ⟨hlt.le, hf.2 ▸ h⟩, Or.inl hlt⟩, hP⟩, hf⟩
 
-omit [Event.TemporalTrace E T] in
+omit [Event.TemporalTrace E (NonemptyInterval T)] in
 /-- The resultative perfect asserts exactly that a result state holds at the right boundary of
 the reference interval and continues beyond it. -/
 theorem resultative_perfect_iff :

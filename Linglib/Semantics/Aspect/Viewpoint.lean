@@ -138,7 +138,7 @@ theorem ViewpointType.ttTSitRelation_iff {T : Type*} [LinearOrder T] (v : Viewpo
 
 open Event (τ)
 
-variable {T : Type*} [LinearOrder T] {W E : Type*} [Event.TemporalTrace E T]
+variable {T : Type*} [LinearOrder T] {W E : Type*} [Event.TemporalTrace E (NonemptyInterval T)]
 
 /-- The aspect operator of a relation `R` gives, at each world, the reference intervals that
 stand in `R` to the run time of some event of the predicate. -/

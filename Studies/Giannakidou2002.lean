@@ -92,7 +92,7 @@ open Event (τ)
 open Aspect Tense Karttunen1974
 open PolarityItem (LicensingContext)
 
-variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
 
 /-! ### Durative UNTIL and homogeneity -/
 
@@ -291,7 +291,7 @@ structure Model where
   /-- The times are linearly ordered. -/
   [ord : LinearOrder T]
   /-- Each event has a run time. -/
-  [trace : Event.TemporalTrace E T]
+  [trace : Event.TemporalTrace E (NonemptyInterval T)]
 
 attribute [instance] Model.ord Model.trace
 

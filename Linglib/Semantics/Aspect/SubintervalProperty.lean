@@ -68,7 +68,8 @@ namespace Aspect
 
 open Event (τ)
 
-variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T] {P : W → E → Prop} {w : W}
+variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
+  {P : W → E → Prop} {w : W}
   {t : NonemptyInterval T}
 
 /-- A predicate of events has the subinterval property when its run times form a lower set at

@@ -47,7 +47,8 @@ open Allen Aspect Set
 open Tense (pronoun mem_pronoun)
 open Event (τ)
 
-variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T] {P Q : W → E → Prop}
+variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
+  {P Q : W → E → Prop}
   {p : W → Set (NonemptyInterval T)} {g : ℕ → NonemptyInterval T} {u : NonemptyInterval T}
   {w : W} {i : ℕ}
 

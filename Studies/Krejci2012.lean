@@ -54,7 +54,7 @@ open scoped SetRel
 
 section Model
 
-variable {Entity State T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+variable {Entity State T E : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
   (M : ArgumentStructure.EventStructure.Interpretation Entity State E)
   (manip : Entity → E → Prop) (S : Entity → State → Prop)
 

@@ -1009,7 +1009,7 @@ def Hypothesis2 (att : (Index W T → Prop) → E → Index W T → Prop) (p : I
     (σ R : NonemptyInterval T) (w : W) : Prop :=
   ∃ t, t.Precedes σ ∧ t ≤ R ∧ ∃ t', σ < t' ∧ t ≤ t' ∧ att (fun i ↦ p (i.1, t')) x (w, t)
 
-variable [Event.TemporalTrace Ev T]
+variable [Event.TemporalTrace Ev (NonemptyInterval T)]
 
 open Event (τ)
 

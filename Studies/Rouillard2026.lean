@@ -131,7 +131,7 @@ end IsTimeMeasure
 
 end Measure
 
-variable {W T E α : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+variable {W T E α : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
   [AddCommMonoid α] [LinearOrder α] [IsOrderedCancelAddMonoid α] [CanonicallyOrderedAdd α]
 
 /-! ### The Maximal Informativity Principle (§4.1.3) -/

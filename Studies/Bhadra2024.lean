@@ -132,7 +132,7 @@ theorem tier_eq_multi_iff (c : OutcomeClass) :
 /-- A state function gives an object's state at each time, a lifespan point (53). -/
 abbrev StateFunction (Entity State T : Type*) := T → Entity → State
 
-variable {Entity State T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+variable {Entity State T E : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
 
 /-- `res(e)(x)` is the object's state at the right boundary of `e` (64). -/
 def resState (k : StateFunction Entity State T) (e : E) (x : Entity) : State :=

@@ -64,7 +64,7 @@ open Aspect (UNBOUNDED PERF durative)
 open Modality (Background simpleNecessity)
 open scoped Denotes
 
-variable {W E T : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+variable {W E T : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
 
 /-! ### Hab and Gen, (12)–(22) -/
 

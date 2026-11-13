@@ -89,7 +89,7 @@ namespace IatridouZeijlstra2021
 
 open Aspect NonemptyInterval Exhaustification
 
-variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
 
 /-! ### Domain alternatives and exhaustification -/
 

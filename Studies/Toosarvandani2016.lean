@@ -109,7 +109,7 @@ end
 
 section
 
-variable {T : Type*} [LinearOrder T] {W E : Type*} [Event.TemporalTrace E T]
+variable {T : Type*} [LinearOrder T] {W E : Type*} [Event.TemporalTrace E (NonemptyInterval T)]
 
 /-- The operator of an aspect: the reference times at which it places an event of the
 predicate. -/
@@ -241,7 +241,8 @@ end
 
 section
 
-variable {T : Type*} [LinearOrder T] {W E : Type*} [Event.TemporalTrace E T] {s : Suffix}
+variable {T : Type*} [LinearOrder T] {W E : Type*} [Event.TemporalTrace E (NonemptyInterval T)]
+  {s : Suffix}
   {a b : Perfectivity} {P Q : W → E → Prop} {w : W}
 
 /-- A chain with one marked clause holds for some reference times exactly when its events satisfy

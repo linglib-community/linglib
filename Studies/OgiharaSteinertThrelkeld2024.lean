@@ -102,12 +102,13 @@ end Original
 
 section Revision
 
-variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
 
 /-- Eventualities across worlds over a history of the worlds. Each eventuality lies in one world
 (fn. 20), a counterpart of an eventuality starts when it does (fn. 18), and the continuation of
 one eventuality may cause another, in the loose sense of (19). -/
-structure EventFrame (W T E : Type*) [LinearOrder T] [Event.TemporalTrace E T] where
+structure EventFrame (W T E : Type*) [LinearOrder T] [Event.TemporalTrace E
+    (NonemptyInterval T)] where
   /-- The historical equivalence of the worlds, identity before a time. -/
   history : TWFrame W T
   /-- The world an eventuality lies in. -/
@@ -235,7 +236,7 @@ inductive Eventuality where
   | completion
   deriving DecidableEq
 
-instance : Event.TemporalTrace Eventuality ℤ where
+instance : Event.TemporalTrace Eventuality (NonemptyInterval ℤ) where
   τ
     | .death => .pure 1
     | .work => ⟨(0, 1), by decide⟩

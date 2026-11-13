@@ -61,7 +61,8 @@ open Event (τ)
 open Aspect HistoricalAlternatives
 open Modality (TemporalPerspective TemporalOrientation)
 
-variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T] {P : W → E → Prop}
+variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
+  {P : W → E → Prop}
   {Q Q' : SortedProperty W E T}
   {r : Interval (WithTop T)} {t t' : T} {w : W}
 
