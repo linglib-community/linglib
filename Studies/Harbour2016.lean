@@ -404,7 +404,7 @@ theorem english_demonstratives_author_bipartition :
 
 -- (16), p. 180
 theorem preimage_participants_this {W E P T : Type*} [PartialOrder E]
-    (c : Kaplan.Context W E P T) :
+    (c : SpeechAct.Context W E P T) :
     c.participants ⁻¹' English.Determiners.this.deixis = Person.dom c (some .first) :=
   Set.ext fun _ ↦ Person.participants_mem_participantSets_first c _
 
@@ -416,7 +416,7 @@ open scoped SetRel
 speaker is `{0}` and the addressee `{1}`, and every referent is in every vicinity. -/
 
 /-- The context of utterance has speaker `{0}` and addressee `{1}`. -/
-def ctx : Kaplan.Context Unit (Finset (Fin 2)) Unit Unit := ⟨{0}, {1}, (), (), ()⟩
+def ctx : SpeechAct.Context Unit (Finset (Fin 2)) Unit Unit := ⟨{0}, {1}, (), (), ()⟩
 
 /-- Every referent is in every vicinity. -/
 def near : SetRel (Finset (Fin 2)) (Finset (Fin 2)) := Set.univ

@@ -141,7 +141,7 @@ instance (t : DeicticTerm) (V : Vectors E D) (y : E) : Decidable (t.Locates V y)
 
 section Harbour
 
-variable {E' W P T : Type} [PartialOrder E'] (c : Kaplan.Context W E' P T) (V : Vectors E' D)
+variable {E' W P T : Type} [PartialOrder E'] (c : SpeechAct.Context W E' P T) (V : Vectors E' D)
 
 /-- Without a measure, a demonstrative locates its referent as in Harbour's semantics, the
 vicinity of an anchor being NEAR its participants' atom, whenever every atom it admits is the

@@ -1,14 +1,14 @@
 module
 
 public import Linglib.Semantics.Reference.Context.Basic
-public import Linglib.Semantics.Reference.Kaplan
+public import Linglib.Semantics.Reference.Monster
 
 /-!
 # Kaplan (1989): Demonstratives
 
 A sentence is valid in Kaplan's logic of demonstratives when it is true at every context, and
 necessary when what it says at every context is true at every world. Necessity implies validity
-(`Kaplan.Character.IsNecessary.isAPriori`), but necessitation fails
+(`Character.IsNecessary.isAPriori`), but necessitation fails
 [as soon as there are two worlds](##forall_isAPriori_imp_isNecessary_iff_subsingleton), and for
 sentences whose content does not vary with the context it holds [only if every world is the world
 of a context](##forall_isAPriori_const_imp_isNecessary_iff_surjective). *α = dthat[α]*
@@ -33,8 +33,7 @@ referential](##isNecessary_eq_dthat_iff); *I exist* and *I am here now* are
 
 namespace Kaplan1989
 
-open Kaplan
-open Kaplan.Character (IsAPriori IsNecessary)
+open SpeechAct Character
 
 /-! ### The failure of necessitation -/
 

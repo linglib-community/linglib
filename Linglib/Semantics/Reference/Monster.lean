@@ -27,7 +27,7 @@ index, as the shifty operators of `Context/Overwrite.lean` do, is a monster
 
 @[expose] public section
 
-namespace Kaplan
+namespace Character
 
 /-! ### Monsters -/
 
@@ -38,7 +38,7 @@ variable {C V α β : Type*}
 /-- An operator on characters is a monster when it does not operate on contents, so that what it
 yields at a context is not determined by the content of its argument there ([kaplan-1989]). -/
 def IsMonster (O : Character C V α → Character C V β) : Prop :=
-  ¬ ∃ o : C → Content V α → Content V β, ∀ χ c, O χ c = o c (χ c)
+  ¬ ∃ o : C → (V → α) → (V → β), ∀ χ c, O χ c = o c (χ c)
 
 /-- The operator that evaluates a character, at a context and an index, at the context `τ c v`
 and the same index. -/
@@ -68,18 +68,18 @@ def shift (σ : Function.End C) : Character C V α → Character C V α := shift
     shift σ χ c = χ (σ • c) := rfl
 
 /-- A shift moves some context iff it is not the identity. -/
-theorem ne_one_iff_exists_smul_ne (σ : Function.End C) : σ ≠ 1 ↔ ∃ c : C, σ • c ≠ c :=
+theorem _root_.Function.End.ne_one_iff_exists_smul_ne (σ : Function.End C) : σ ≠ 1 ↔ ∃ c : C, σ • c ≠ c :=
   show (σ : C → C) ≠ id ↔ _ from Function.ne_iff
 
 /-- Over contents that can differ, a shift operator is a monster iff the shift moves some
 context. -/
-theorem isMonster_shift_iff [Nontrivial (Content V α)] (σ : Function.End C) :
+theorem isMonster_shift_iff [Nontrivial (V → α)] (σ : Function.End C) :
     IsMonster (shift σ : Character C V α → Character C V α) ↔ σ ≠ 1 := by
   have := Function.nontrivial_of_nontrivial V α
-  obtain ⟨f, g, h⟩ := exists_pair_ne (Content V α)
+  obtain ⟨f, g, h⟩ := exists_pair_ne (V → α)
   have : Nonempty V := (Function.ne_iff.1 h).nonempty
-  simp [shift, isMonster_shiftBy_iff, ne_one_iff_exists_smul_ne]
+  simp [shift, isMonster_shiftBy_iff, Function.End.ne_one_iff_exists_smul_ne]
 
 end Monster
 
-end Kaplan
+end Character

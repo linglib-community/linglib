@@ -17,8 +17,8 @@ operator that overwrites coordinates of the context with those of the index (2).
 
 ## Implementation notes
 
-Meanings are `Kaplan.Character`s whose index is a `Kaplan.Context`, and an operator is the set of
-coordinates it overwrites (`Kaplan.Context.overwrite`). On pp. 25
+Meanings are `Character`s whose index is a `SpeechAct.Context`, and an operator is the set of
+coordinates it overwrites (`SpeechAct.Context.overwrite`). On pp. 25
 and 28 the paper cites "(25)" for the restriction on shifting and for the clausemate-binding
 condition, which are its (16) and (22).
 
@@ -40,8 +40,7 @@ Constraint on Shifting (22), which the paper offers the binding accounts, is not
 
 namespace AnandNevins2004
 
-open Kaplan (Character Context IsMonster shiftyOp isMonster_shiftBy_iff)
-open Kaplan.Context (Coord equivPi localDepth overwrite)
+open SpeechAct Context Character
 
 universe u
 

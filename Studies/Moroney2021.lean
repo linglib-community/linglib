@@ -229,7 +229,7 @@ section Demonstrative
 
 open DefiniteDescription (Restrictor bare)
 
-variable {W E P T : Type} [PartialOrder E] (c : Kaplan.Context W E P T) (χ : SetRel E E)
+variable {W E P T : Type} [PartialOrder E] (c : SpeechAct.Context W E P T) (χ : SetRel E E)
   (d : DemonstrativeDeterminer)
 
 /-- The demonstrative of (147)–(148) presupposes, as the bare definite does, a unique `P` in the

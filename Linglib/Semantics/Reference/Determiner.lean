@@ -23,7 +23,7 @@ construction. A demonstrative's deictic content narrows where it denotes, so dei
 referent but never selects it (`DemonstrativeDeterminer.mem_denote`). Following Harbour's
 spatial head χ, a demonstrative denotes where the indexed referent lies in the vicinity of a
 referent whose participants form one of its participant sets: the χ-image of the preimage of
-those sets under `Kaplan.Context.participants`. For the first person's sets that preimage is the
+those sets under `SpeechAct.Context.participants`. For the first person's sets that preimage is the
 first person's φ-domain, and for the other persons' sets it is their φ-domain less the more
 prominent ones'.
 
@@ -63,7 +63,7 @@ individual one, has no `Definite`.
 
 @[expose] public section
 
-open Kaplan DefiniteDescription
+open SpeechAct DefiniteDescription
 open scoped Denotes
 open scoped SetRel
 

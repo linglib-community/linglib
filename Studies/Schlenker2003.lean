@@ -18,7 +18,7 @@ logophoric pronoun is the author of an embedded context who is not the actual sp
 
 ## Implementation notes
 
-A meaning is a `Kaplan.Character` whose context is the context of the actual speech act, the
+A meaning is a `Character` whose context is the context of the actual speech act, the
 paper's `c*`, and whose index is the assignment of contexts to context variables: a verb
 evaluates its complement at the assignment updated at its variable, and a clause can mix shifted
 and unshifted indexicals. An embedded clause reads its time and world from the context its verb
@@ -37,7 +37,7 @@ reads. The filtering and agreement mechanisms (§5.1.2, §5.1.3) are not modelle
 
 namespace Schlenker2003
 
-open ModalLogic Kaplan
+open ModalLogic SpeechAct
 open scoped SetRel
 
 variable {W E P T ι : Type*} [DecidableEq ι]
