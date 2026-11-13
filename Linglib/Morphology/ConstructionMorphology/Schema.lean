@@ -6,8 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Data.Fintype.Order
-public import Linglib.Core.Data.Sum.Basic
-public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Core.Order.Flat
 public import Linglib.Core.Order.PartialUnify
 public import Mathlib.Order.Lattice
@@ -28,7 +26,8 @@ of two items [instantiates exactly the schemas that both instantiate](##instanti
 descriptions over the same slots it is their least general generalization in Plotkin's sense,
 which Jackendoff and Audring compare to Albright and Hayes's minimal generalization. It does not
 recover coindexation: the intersection of $aa$ and $bb$ is two unrelated variables, where
-Plotkin's generalization is one variable twice.
+Plotkin's generalization is one variable twice. Coindexation is stated by
+`ConstructionMorphology.Pattern`, whose meet is that generalization.
 
 Over a lexicon of stored items, a schema relates the stored items that instantiate it and
 generates the instances whose closed variables take fillers attested among those stored items, so
@@ -40,7 +39,6 @@ productive if it has no closed variable, which holds exactly when
 
 * `Schema`: A schema is a slot-indexed description with a set of variables marked open.
 * `Schema.Instantiates`: An item lies above a schema's description at every slot.
-* `Schema.InstantiatesAt`: An item instantiates a schema through a map from positions to slots.
 * `Schema.Relates`: A schema relates a stored item that instantiates it.
 * `Schema.Generates`: A schema generates an instance whose closed variables take attested fillers.
 * `Schema.IsProductive`: A schema has no closed variable.
@@ -70,7 +68,7 @@ closed variables have one each.
 
 namespace ConstructionMorphology
 
-variable {V P Q P₁ P₂ α : Type*}
+variable {V P Q α : Type*}
 
 /-- A schema is a slot-indexed description `body` together with a set `opens` of variables marked
 open, where a slot at `⊥` is a variable and a slot above `⊥` is a constant. -/
@@ -236,110 +234,6 @@ abbrev decidableLEGeneralityOrder [DecidableLE (V → α)] (family : ι → Sche
   fun i j ↦ inferInstanceAs (Decidable ((family j).body ≤ (family i).body))
 
 end Generality
-
-/-! ### Positions and coindexation
-
-An item over positions is read against a schema over variables through a subscripting, which is
-a map from positions to variables. Positions with the same subscript are coindexed and must be
-filled alike. Two items form a paired instantiation when their sum instantiates the schema through
-the sum of their subscriptings. `Pattern` states the same coindexation without the index type. -/
-
-section Positions
-variable [PartialOrder α] [OrderBot α] {s : Schema V α} {pos : P → V} {w : P → α}
-
-/-- An item `w` over positions instantiates `s` through the subscripting `pos` if `w = u ∘ pos`
-for some instance `u` of `s`. -/
-def InstantiatesAt (s : Schema V α) (pos : P → V) (w : P → α) : Prop :=
-  ∃ u, s.Instantiates u ∧ w = u ∘ pos
-
-theorem Instantiates.instantiatesAt {u : V → α} (h : s.Instantiates u) (pos : P → V) :
-    s.InstantiatesAt pos (u ∘ pos) :=
-  ⟨u, h, rfl⟩
-
-@[simp] theorem instantiatesAt_id {w : V → α} : s.InstantiatesAt id w ↔ s.Instantiates w :=
-  ⟨fun ⟨_, hu, hw⟩ ↦ hw ▸ hu, fun h ↦ ⟨w, h, rfl⟩⟩
-
-theorem InstantiatesAt.comp (h : s.InstantiatesAt pos w) (σ : Q → P) :
-    s.InstantiatesAt (pos ∘ σ) (w ∘ σ) := by
-  obtain ⟨u, hu, rfl⟩ := h
-  exact ⟨u, hu, rfl⟩
-
-theorem InstantiatesAt.factorsThrough (h : s.InstantiatesAt pos w) : w.FactorsThrough pos := by
-  obtain ⟨u, -, rfl⟩ := h
-  exact fun _ _ h ↦ congrArg u h
-
-/-- An item instantiates a schema through a subscripting exactly when it instantiates the
-pulled-back description and fills coindexed positions alike. -/
-theorem instantiatesAt_iff :
-    s.InstantiatesAt pos w ↔ (s.comap pos).Instantiates w ∧ w.FactorsThrough pos := by
-  refine ⟨fun h ↦ ⟨?_, h.factorsThrough⟩, fun ⟨hc, hf⟩ ↦ ?_⟩
-  · obtain ⟨u, hu, rfl⟩ := h
-    exact fun p ↦ hu (pos p)
-  · refine ⟨Function.extend pos w s.body, fun v ↦ ?_, (hf.extend_comp _).symm⟩
-    by_cases hv : ∃ p, pos p = v
-    · obtain ⟨p, rfl⟩ := hv
-      rw [hf.extend_apply]
-      exact hc p
-    · rw [Function.extend_apply' _ _ _ hv]
-
-instance decidableInstantiatesAt [Fintype P] [DecidableEq V] [DecidableEq α] [DecidableLE α] :
-    Decidable (s.InstantiatesAt pos w) :=
-  decidable_of_iff _ instantiatesAt_iff.symm
-
-/-- Through an injective subscripting, which coindexes nothing, an item instantiates a schema
-exactly when it instantiates the pulled-back description. -/
-theorem instantiatesAt_iff_of_injective (h : pos.Injective) :
-    s.InstantiatesAt pos w ↔ (s.comap pos).Instantiates w :=
-  instantiatesAt_iff.trans (and_iff_left (h.factorsThrough w))
-
-theorem instantiatesAt_comp_equiv (e : Q ≃ P) :
-    s.InstantiatesAt (pos ∘ e) (w ∘ e) ↔ s.InstantiatesAt pos w :=
-  exists_congr fun u ↦ and_congr_right' <|
-    e.surjective.injective_comp_right.eq_iff (a := w) (b := u ∘ pos)
-
-variable {pos₁ : P₁ → V} {pos₂ : P₂ → V} {w₁ : P₁ → α} {w₂ : P₂ → α}
-
-/-- Two items are a paired instantiation exactly when each instantiates the schema through its
-own subscripting and the two agree wherever their subscripts coincide. -/
-theorem instantiatesAt_elim_iff :
-    s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁ w₂) ↔
-      s.InstantiatesAt pos₁ w₁ ∧ s.InstantiatesAt pos₂ w₂ ∧
-        ∀ a b, pos₁ a = pos₂ b → w₁ a = w₂ b := by
-  have h : (s.comap (Sum.elim pos₁ pos₂)).Instantiates (Sum.elim w₁ w₂) ↔
-      (s.comap pos₁).Instantiates w₁ ∧ (s.comap pos₂).Instantiates w₂ := by
-    simp only [instantiates_iff, comap_body, Sum.comp_elim, Pi.le_def, Sum.forall, Sum.elim_inl,
-      Sum.elim_inr]
-  rw [instantiatesAt_iff, Function.factorsThrough_sumElim_iff, h, instantiatesAt_iff,
-    instantiatesAt_iff]
-  tauto
-
-theorem InstantiatesAt.sumElim_apply_eq
-    (h : s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁ w₂)) (a : P₁) (b : P₂)
-    (hab : pos₁ a = pos₂ b) : w₁ a = w₂ b :=
-  (instantiatesAt_elim_iff.1 h).2.2 a b hab
-
-theorem instantiatesAt_elim_swap :
-    s.InstantiatesAt (Sum.elim pos₂ pos₁) (Sum.elim w₂ w₁) ↔
-      s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁ w₂) := by
-  rw [← instantiatesAt_comp_equiv (Equiv.sumComm P₁ P₂), Equiv.sumComm_apply, Sum.elim_swap,
-    Sum.elim_swap]
-
-/-- If two injective subscriptings coincide exactly outside `S`, a paired instantiation is a pair
-of instances of the pulled-back descriptions that agree outside `S`. -/
-theorem instantiatesAt_elim_iff_eqOn {pos₁ pos₂ : P → V} {w₁ w₂ : P → α} {S : Set P}
-    (h₁ : pos₁.Injective) (h₂ : pos₂.Injective)
-    (h : ∀ a b, pos₁ a = pos₂ b ↔ a = b ∧ a ∉ S) :
-    s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁ w₂) ↔
-      (s.comap pos₁).Instantiates w₁ ∧ (s.comap pos₂).Instantiates w₂ ∧
-        Set.EqOn w₁ w₂ Sᶜ := by
-  rw [instantiatesAt_elim_iff, instantiatesAt_iff_of_injective h₁,
-    instantiatesAt_iff_of_injective h₂]
-  refine and_congr_right fun _ ↦ and_congr_right fun _ ↦
-    ⟨fun hc a ha ↦ hc a a ((h a a).2 ⟨rfl, ha⟩), fun he a b hab ↦ ?_⟩
-  obtain ⟨rfl, ha⟩ := (h a b).1 hab
-  exact he ha
-
-end Positions
 
 /-! ### The relational and the generative role -/
 

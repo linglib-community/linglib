@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Data.Examples.JackendoffAudring2020
@@ -12,6 +17,7 @@ public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Morphology.Paradigm.Linkage
 public import Linglib.Morphology.Paradigm.Morphome
 public import Linglib.Core.Order.Flat
+public import Studies.Audring2019
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Data.Fin.VecNotation
@@ -73,6 +79,7 @@ the *-ish* schema [is the intersection of its three sisters](##ishSchema_body_eq
 ## References
 
 * [jackendoff-audring-2020]
+* [audring-2019]
 * [booij-2010]
 * [aronoff-1994]
 * [spencer-2013]
@@ -184,7 +191,6 @@ def flies : Animal → Option Bool
   | .ostrich => some false
   | _ => none
 
-/-- The ostrich's override and the canary's inheritance compute as intended. -/
 theorem ostrich_overrides :
     DefaultInheritance.inherited flies .ostrich = {false} ∧
       DefaultInheritance.inherited flies .canary = {true} :=
@@ -225,8 +231,6 @@ inductive Pair
   | assassinate
   deriving DecidableEq
 
-/-- By Objection 10, the phonology demands that *assassinate* inherit from *assassin* and the
-semantics that *assassin* inherit from *assassinate*, and no acyclic hierarchy holds both. -/
 theorem assassin_cycle [PartialOrder Pair] (hphon : Pair.assassinate < .assassin)
     (hsem : Pair.assassin < .assassinate) : False :=
   hphon.asymm hsem
@@ -270,8 +274,6 @@ theorem ismist_pairs_iff {p : Fin 3 → Atom B I} {q : Fin 4 → Atom B I} :
     funext i
     fin_cases i <;> rfl
 
-/-- The relation is open-ended, since for any base and any ideology *X-ism* and *X-ist* are
-paired by the sister schemas, *Trumpism* and *Trumpist* included. -/
 theorem ismist_pairs (b : B) (i : I) :
     ismist ≤ ofItem (Sum.elim (Flat.some ∘ ismWord b i) (Flat.some ∘ istWord b i)) :=
   ismist_pairs_iff.2 ⟨_, _, rfl, rfl⟩
@@ -285,8 +287,6 @@ def syllable (transcribe : List String → Option (List Segment)) {C : Type*}
   (transcribe f.segments).elim ⊥ fun w ↦
     ![↑(Prosody.nucleusSplit w).1, ↑(Prosody.nucleusSplit w).2.1, ↑(Prosody.nucleusSplit w).2.2]
 
-/-- The English and German stems and pasts are in their language's transcription, so `syllable`
-reads none of them as `⊥`. -/
 theorem transcribe_ne_none :
     (∀ f ∈ [Wordlist.sing, Wordlist.sang, Wordlist.string, Wordlist.strung],
       English.Phonology.transcribe f.segments ≠ none) ∧
@@ -314,7 +314,7 @@ abbrev singSang : Pattern (Fin 3 ⊕ Fin 3) (Flat (List Segment)) :=
 abbrev stringStrung : Pattern (Fin 3 ⊕ Fin 3) (Flat (List Segment)) :=
   nucleusPair [English.Phonology.smallCapitalI] [English.Phonology.wedge]
 
-/-- (25) pairs exactly the stems and pasts that are the same except at the nucleus. -/
+-- (25)
 theorem ablaut_pairs_iff {s p : Fin 3 → List σ} :
     ablaut ≤ ofItem (Sum.elim (Flat.some ∘ s) (Flat.some ∘ p)) ↔ Set.EqOn s p {1}ᶜ := by
   refine ofTerms_sumElim_le_ofItem_iff.trans ⟨?_, fun h ↦ ⟨![s 0, s 1, s 2, p 1], ?_, ?_⟩⟩
@@ -348,8 +348,6 @@ theorem instantiation_nucleusPair (v w : List σ) :
   · rcases x with i | i <;> fin_cases i <;> first | rfl | simp at hx
   · rcases hx with rfl | rfl <;> exact bot_lt_iff_ne_bot.2 Flat.coe_ne_bot
 
-/-- A pair under a subschema with distinct pinned nuclei is a nucleus contrast, the same
-except at the nucleus, where the two differ. -/
 theorem contrast_of_nucleusPair {v w : List σ} (hvw : v ≠ w) {s p : Fin 3 → List σ}
     (h : nucleusPair v w ≤ ofItem (Sum.elim (Flat.some ∘ s) (Flat.some ∘ p))) :
     Contrast (Flat.some ∘ s) (Flat.some ∘ p) {1} := by
@@ -423,8 +421,7 @@ theorem specialCells_not_natural : ¬ IsValueConjunction gFeatures ↑specialCel
   rw [isValueConjunction_coe_iff]
   decide
 
-/-- The pattern (45) is morphomic, its special-stem cells forming a syncretism class but no natural
-class ([aronoff-1994]). -/
+-- (45) [aronoff-1994]
 theorem spricht_morphome : IsMorphome sprechen (IsValueConjunction gFeatures) ↑specialCells :=
   isMorphome_of_formCells sprechen (.second, .sg) _ sprechen_formCells (by decide)
     specialCells_not_natural
@@ -524,21 +521,19 @@ def walk : VCell → Exponent
   | .past | .ptcp => .t
   | .prespt => .ing
 
-/-- The present and infinitive share one form of *walk*, and the past and past participle another
-(Section 4.3). -/
+-- Section 4.3
 theorem walk_syncretism :
     formCells walk .bare = {.pres, .inf} ∧ formCells walk .t = {.past, .ptcp} := by
   decide
 
-/-! ### Structural Intersection -/
+/-! ### Structural Intersection
 
-/-- The schema (6) over the two slots of an *-ish* adjective, base and affix, pins the affix
-and makes the base a variable. -/
-def ishSchema : Schema (Fin 2) (Flat String) := Schema.productive ![⊥, ↑"ish"]
+The schema (6) is the `Audring2019.ishSchema` of [audring-2019], the affix pinned and the base a
+variable. -/
 
-/-- Structural Intersection makes the schema of (6) the meet of the three sisters of (5). -/
+-- (6), (5)
 theorem ishSchema_body_eq_inf :
-    ishSchema.body = Wordlist.piggish.morphSlots ⊓ Wordlist.childish.morphSlots ⊓
+    Audring2019.ishSchema.body = Wordlist.piggish.morphSlots ⊓ Wordlist.childish.morphSlots ⊓
       Wordlist.sluggish.morphSlots := by
   funext v
   fin_cases v <;> decide
@@ -546,18 +541,17 @@ theorem ishSchema_body_eq_inf :
 /-- The schema is the most the sisters have in common, since a description is instantiated by
 all three exactly when it is instantiated by the schema's description. -/
 theorem instantiates_ishSchema_iff {s : Schema (Fin 2) (Flat String)} :
-    s.Instantiates ishSchema.body ↔
+    s.Instantiates Audring2019.ishSchema.body ↔
       s.Instantiates Wordlist.piggish.morphSlots ∧ s.Instantiates Wordlist.childish.morphSlots ∧
         s.Instantiates Wordlist.sluggish.morphSlots := by
   rw [ishSchema_body_eq_inf, Schema.instantiates_inf_iff, Schema.instantiates_inf_iff,
     and_assoc]
 
-theorem ishSchema_le_foolish : ishSchema.body ≤ Wordlist.foolish.morphSlots := fun i ↦ by
-  fin_cases i <;> decide
+theorem ishSchema_le_foolish : Audring2019.ishSchema.body ≤ Wordlist.foolish.morphSlots :=
+  fun i ↦ by fin_cases i <;> decide
 
-/-- A newly encountered sister intersected with the schema yields the schema again, the
-Minimal Generalization Learner's fixed point. -/
-theorem ishSchema_inf_foolish : ishSchema.body ⊓ Wordlist.foolish.morphSlots = ishSchema.body :=
+theorem ishSchema_inf_foolish :
+    Audring2019.ishSchema.body ⊓ Wordlist.foolish.morphSlots = Audring2019.ishSchema.body :=
   inf_eq_left.2 ishSchema_le_foolish
 
 end JackendoffAudring2020

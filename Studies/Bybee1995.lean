@@ -7,10 +7,12 @@ module
 
 public import Linglib.Data.Wordlist.Bybee1995
 public import Linglib.Fragments.English.Phonology
+public import Linglib.Morphology.ConstructionMorphology.Pattern
 public import Linglib.Morphology.ConstructionMorphology.Schema
 public import Linglib.Phonology.Prosody.Syllable
 public import Mathlib.Data.Multiset.Filter
 public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.FinCases
 
@@ -57,7 +59,7 @@ their bases lack the vowel a source-oriented pairing from *string* would demand
 
 namespace Bybee1995
 
-open ConstructionMorphology
+open ConstructionMorphology Pattern
 open Phonology (Segment)
 
 variable {P α : Type*} [PartialOrder α] [OrderBot α]
@@ -130,42 +132,21 @@ theorem struck_instantiates :
       strungSchema.Instantiates (syllable Wordlist.drug) := by
   decide
 
-/-- The variables of a source-oriented pairing of base and past: the shared onset and coda,
-and the two nuclei. -/
-inductive PairVar
-  | onset
-  | coda
-  | base
-  | past
-  deriving DecidableEq
-
-/-- A source-oriented schema pairing a base in /ɪ/ with a past in /ʌ/ over a shared onset and
-coda: the generalization over pairs such as *string*, *strung*. -/
-def sourceOriented : Schema PairVar (Flat (List Segment)) :=
-  ⟨fun
-    | .base => ↑[English.Phonology.smallCapitalI]
-    | .past => ↑[English.Phonology.wedge]
-    | _ => ⊥, {.onset, .coda},
-    by rintro _ (rfl | rfl) <;> rfl⟩
-
-/-- The subscripting of the base's positions. -/
-def baseSub : Fin 3 → PairVar := ![.onset, .base, .coda]
-
-/-- The subscripting of the past's positions. -/
-def pastSub : Fin 3 → PairVar := ![.onset, .past, .coda]
+/-- A source-oriented schema pairs a base in /ɪ/ with a past in /ʌ/ as one pattern that
+coindexes what precedes the nucleus and coindexes the coda. It is the generalization over pairs
+such as *string*, *strung*. -/
+abbrev sourceOriented : Pattern (Fin 3 ⊕ Fin 3) (Flat (List Segment)) :=
+  .ofTerms (X := Fin 2) (Sum.elim ![.inr 0, .inl [English.Phonology.smallCapitalI], .inr 1]
+    ![.inr 0, .inl [English.Phonology.wedge], .inr 1])
 
 theorem string_strung_pairs :
-    sourceOriented.InstantiatesAt (Sum.elim baseSub pastSub)
-      (Sum.elim (syllable Wordlist.string) (syllable Wordlist.strung)) := by
+    sourceOriented ≤ ofItem (Sum.elim (syllable Wordlist.string) (syllable Wordlist.strung)) := by
   decide
 
 theorem not_sourceOriented_pairs :
-    ¬ sourceOriented.InstantiatesAt (Sum.elim baseSub pastSub)
-        (Sum.elim (syllable Wordlist.strike) (syllable Wordlist.struck)) ∧
-      ¬ sourceOriented.InstantiatesAt (Sum.elim baseSub pastSub)
-        (Sum.elim (syllable Wordlist.sneak) (syllable Wordlist.snuck)) ∧
-      ¬ sourceOriented.InstantiatesAt (Sum.elim baseSub pastSub)
-        (Sum.elim (syllable Wordlist.drag) (syllable Wordlist.drug)) := by
-  decide
+    ¬ sourceOriented ≤ ofItem (Sum.elim (syllable Wordlist.strike) (syllable Wordlist.struck)) ∧
+      ¬ sourceOriented ≤ ofItem (Sum.elim (syllable Wordlist.sneak) (syllable Wordlist.snuck)) ∧
+      ¬ sourceOriented ≤ ofItem (Sum.elim (syllable Wordlist.drag) (syllable Wordlist.drug)) :=
+  ⟨by decide, by decide, by decide⟩
 
 end Bybee1995
