@@ -260,8 +260,13 @@ def treeRaisingHead (s : RoseTree Vertex) : Option LexicalItem.Token :=
   (liftN (fun tok ↦ (⟨.sel (.of tok tok.item.sel), 0⟩ : RaisingState)) raisingTraceState
     (UnorderedTree.mk s)).state.head
 
+theorem raisingHead_eq_treeRaisingHead {x : SyntacticObject} {s : RoseTree Vertex}
+    (h : x.val = UnorderedTree.mk s) : x.raisingHead = treeRaisingHead s := by
+  rw [raisingHead, raisingCheck, liftFun, h]; rfl
+
 theorem treeRaisingHead_subtree {t : LinearizedSyntacticObject} (p : t.val.Positions) :
-    treeRaisingHead p.subtree = (t.termAt p).raisingHead := rfl
+    treeRaisingHead p.subtree = (t.termAt p).raisingHead :=
+  (raisingHead_eq_treeRaisingHead LinearizedSyntacticObject.val_termAt).symm
 
 /-- The drawing convention makes a token or trace leaf its own head; at a binary node it takes a
 left leaf that selects nothing for a specifier and looks for the head in the right daughter, takes
@@ -298,12 +303,16 @@ theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree Vertex} {ℓ : Lexica
     List.length_eq_two.1 ((length_eq_zero_or_two hs).resolve_left fun h0 ↦
       hc (List.length_eq_zero_iff.1 h0))
   obtain ⟨hl, hr⟩ := (isSyntacticObject_mk_merge l r).1 hs
-  have hm : treeRaisingHead (.node Vertex.bare [l, r]) = (merge ⟨_, hl⟩ ⟨_, hr⟩).raisingHead := by
-    simp only [raisingHead, raisingCheck, liftFun, merge_mk]; rfl
+  have hm : (merge (ofVal _ hl) (ofVal _ hr)).raisingHead
+      = treeRaisingHead (.node Vertex.bare [l, r]) :=
+    raisingHead_eq_treeRaisingHead (by
+      rw [merge_val, val_ofVal, val_ofVal, UnorderedTree.node_pair_mk])
   by_cases hl' : treeRaisingHead l = some ℓ
   · exact ⟨0, l, by simp [headIndex?, h, hl', List.findIdx?_cons], rfl, hl'⟩
   · have hr' : treeRaisingHead r = some ℓ :=
-      (raisingHead_merge (l := ⟨_, hl⟩) (r := ⟨_, hr⟩) (hm ▸ h)).resolve_left fun h' ↦ hl' h'
+      (raisingHead_eq_treeRaisingHead (val_ofVal _ hr)).symm.trans
+        ((raisingHead_merge (hm.trans h)).resolve_left fun h' ↦
+          hl' ((raisingHead_eq_treeRaisingHead (val_ofVal _ hl)).symm.trans h'))
     exact ⟨1, r, by simp [headIndex?, h, hl', hr', List.findIdx?_cons], rfl, hr'⟩
 
 end Minimalist

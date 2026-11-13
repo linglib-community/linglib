@@ -144,15 +144,19 @@ theorem mem_goals_leafProbe_map_iff {f : LexicalItem.Token → LexicalItem.Token
   have hsub (q : t.val.Positions) :
       (e q).subtree = RoseTree.map (SyntacticObject.Vertex.map f) q.subtree :=
     Option.some.inj <| (e q).getElem?_eq.symm.trans <|
+      (congrArg (fun r : RoseTree _ ↦ r[q.val.toList]?) (val_map f t)).trans <|
       (RoseTree.getElem?_map _ t.val q.val.toList).trans (by rw [q.getElem?_eq, Option.map_some])
   have hterm (q : t.val.Positions) : (t.map f).termAt (e q) = (t.termAt q).map f :=
-    Subtype.ext <| show UnorderedTree.mk (e q).subtree = (UnorderedTree.mk q.subtree).map _ by
-      rw [hsub, UnorderedTree.map_mk]
+    SyntacticObject.val_injective <| by
+      rw [val_termAt, hsub, SyntacticObject.val_map, val_termAt, UnorderedTree.map_mk]
   have hcc (a q : t.val.Positions) : (t.map f).val.CCommands (e a) (e q) ↔ t.val.CCommands a q :=
-    RoseTree.cCommands_map _ _ _ _
+    (iff_of_eq (congrArg (fun r : RoseTree _ ↦ r.CCommands a.val q.val) (val_map f t))).trans
+      (RoseTree.cCommands_map _ _ _ _)
   have hkey (q : t.val.Positions) :
       (t.map f).above (t.map f).branching (e q) = t.above t.branching q :=
-    Finset.filter_congr fun x _ ↦ RoseTree.isBranchingAt_map _ t.val x
+    Finset.filter_congr fun x _ ↦
+      (iff_of_eq (congrArg (fun r : RoseTree _ ↦ r.IsBranchingAt x) (val_map f t))).trans
+        (RoseTree.isBranchingAt_map _ t.val x)
   have hfinds (a g : t.val.Positions) :
       ((t.map f).leafProbe c).Finds {q | (t.map f).val.CCommands (e a) q}
           ((t.map f).above (t.map f).branching) (e g) ↔

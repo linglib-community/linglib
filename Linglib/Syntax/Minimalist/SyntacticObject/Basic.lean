@@ -539,6 +539,17 @@ def ofVal (t : RoseTree (Vertex L)) (_h : IsSyntacticObject (UnorderedTree.mk t)
     ofVal p.val p.isSyntacticObject_val = p :=
   val_injective (val_ofVal _ _)
 
+theorem ofVal_node_bare (u v : RoseTree (Vertex L))
+    (h : IsSyntacticObject (UnorderedTree.mk (.node Vertex.bare [u, v]))) :
+    ofVal (.node Vertex.bare [u, v]) h =
+      merge (ofVal u ((isSyntacticObject_mk_merge u v).1 h).1)
+        (ofVal v ((isSyntacticObject_mk_merge u v).1 h).2) :=
+  val_injective (by simp)
+
+/-- Every linearized object is the object of its tree. -/
+theorem exists_eq_ofVal (p : LinearizedSyntacticObject L) : ∃ t h, p = ofVal t h :=
+  ⟨p.val, p.isSyntacticObject_val, (ofVal_val p).symm⟩
+
 end LinearizedSyntacticObject
 
 namespace SyntacticObject
