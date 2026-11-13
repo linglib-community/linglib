@@ -18,8 +18,9 @@ against the subtractions of the proper parts of what it subtracts, for an atom t
 with nothing subtracted. Where subtracting an atom does not entail that alternative, *besides*
 says that the quantification holds without the atom and fails with it. With *every* [the scope
 then fails of the atom](##MayrVostrikova2026.besides_subset_sdiff), and with *no* and *exactly n*
-[it holds of it](##MayrVostrikova2026.besides_subset_inter); with *every* and *no* this is [the
-least exception set of *but*](##MayrVostrikova2026.mem_besides_every_iff). With *some* and *at
+[it holds of it](##MayrVostrikova2026.besides_subset_inter); with *every* and *no*, for an atom
+or a plurality, this is [the least exception set of
+*but*](##MayrVostrikova2026.mem_besides_every_iff). With *some* and *at
 least n* the subtraction does entail the alternative and the exhaustification [is
 idle](##MayrVostrikova2026.besides_eq_of_restrictorMonotone), which a ban on idle exhaustification
 excludes. A modified numeral is a quantifier over degrees above a constituent that says the count
@@ -27,7 +28,9 @@ is exactly a degree, and *besides* is exhaustified there, below the numeral: [so
 others, and the atom as well](##MayrVostrikova2026.mem_besidesNumeral_iff). In a model where
 everyone is a student and any set of them may have passed, *but* with *some* is
 [contradictory](##MayrVostrikova2026.but_some_eq_empty) once two other individuals are
-alternatives. For collective predicates the constituent under the numeral is the
+alternatives, and *but* with *no* or *every*, exhaustified against every subtraction, holds
+[where the excepted set is the least exception set](##MayrVostrikova2026.mem_but_univ_no_iff) of
+[von-fintel-1993]. For collective predicates the constituent under the numeral is the
 informativity-based maximality of [buccola-spector-2016], which over a distributive predicate
 [picks the greatest degree](##MayrVostrikova2026.isMaxInf_iff_isGreatest) and over a predicate
 with no entailments between degrees picks every true one, so that there the exhaustification of
@@ -115,21 +118,17 @@ theorem besides_subset_sdiff (hQ : Q.CoIntersective)
   let ⟨_, ⟨hA, rfl⟩, hB⟩ := ((mem_besides_singleton_iff h).1 hw).sdiff_nonempty hQ
   ⟨hA, hB⟩
 
--- (42), `Examples.ex_1_besides`: the least exception set of [von-fintel-1993]'s *but*
-theorem mem_besides_every_iff (h : ¬ subtraction every A B {a} ⊆ subtraction every A B ∅) :
-    w ∈ besides every A B {a} ↔ IsExceptionSet every (A w) {a} (B w) := by
-  rw [mem_besides_singleton_iff h, restrictive_every_iff, isExceptionSet_every_iff,
-    ← Set.sdiff_eq_empty.not, subset_singleton_iff_eq]
-  exact ⟨fun ⟨h₁, h₂⟩ ↦ h₁.resolve_left h₂,
-    fun h ↦ ⟨.inr h, ne_of_eq_of_ne h (singleton_ne_empty a)⟩⟩
+-- (42), (45), `Examples.ex_1_besides`, `Examples.ex_43a`: with *every*, *besides* a set that
+-- entails none of its alternatives names the least exception set of [von-fintel-1993]'s *but*
+theorem mem_besides_every_iff
+    (h : ∀ S < C, ¬ subtraction every A B C ⊆ subtraction every A B S) :
+    w ∈ besides every A B C ↔ IsExceptionSet every (A w) C (B w) :=
+  (mem_exh_image_Iio_subtraction_iff h).trans minimal_every_iff
 
 -- (47), `Examples.ex_2_besides`
-theorem mem_besides_no_iff (h : ¬ subtraction no A B {a} ⊆ subtraction no A B ∅) :
-    w ∈ besides no A B {a} ↔ IsExceptionSet no (A w) {a} (B w) := by
-  rw [mem_besides_singleton_iff h, restrictive_no_iff, isExceptionSet_no_iff,
-    Set.not_disjoint_iff_nonempty_inter, nonempty_iff_ne_empty, subset_singleton_iff_eq]
-  exact ⟨fun ⟨h₁, h₂⟩ ↦ h₁.resolve_left h₂,
-    fun h ↦ ⟨.inr h, ne_of_eq_of_ne h (singleton_ne_empty a)⟩⟩
+theorem mem_besides_no_iff (h : ∀ S < C, ¬ subtraction no A B C ⊆ subtraction no A B S) :
+    w ∈ besides no A B C ↔ IsExceptionSet no (A w) C (B w) :=
+  (mem_exh_image_Iio_subtraction_iff h).trans minimal_no_iff
 
 /-- Under a left-upward-monotone determiner, *some*, *at least n*, every alternative of *besides*
 is entailed and its exhaustification is idle ((56)–(58)). -/
@@ -209,6 +208,29 @@ theorem but_some_eq_empty (hb : {b} ∈ F) (hc : {c} ∈ F) (hab : a ≠ b) (hac
   by_cases hxb : x = b
   · exact key c hc hac (hxb ▸ hbc)
   · exact key b hb hab hxb
+
+omit [DecidableEq α] in
+-- (17), (18): against every subtraction, *no student but `C`* names the least exception set
+theorem mem_but_univ_no_iff {w : Finset α} :
+    w ∈ but univ no (fun _ : Finset α ↦ univ) (fun w ↦ (w : Set α)) C ↔
+      IsExceptionSet no univ C ↑w := by
+  rw [but, image_univ]
+  refine mem_exh_range_subtraction_iff fun S ↦
+    ⟨fun h c hc ↦ by_contra fun hcS ↦ ?_, fun h ↦ subtraction_mono restrictorAntitone_no h⟩
+  exact h (show ({c} : Finset α) ∈ _ from fun x hx hxc ↦
+    hx.2 (Finset.mem_singleton.1 (Finset.mem_coe.1 hxc) ▸ hc)) ⟨trivial, hcS⟩ (by simp)
+
+-- (10), (16)
+theorem mem_but_univ_every_iff [Fintype α] {w : Finset α} :
+    w ∈ but univ every (fun _ : Finset α ↦ univ) (fun w ↦ (w : Set α)) C ↔
+      IsExceptionSet every univ C ↑w := by
+  rw [but, image_univ]
+  refine mem_exh_range_subtraction_iff fun S ↦
+    ⟨fun h c hc ↦ by_contra fun hcS ↦ ?_, fun h ↦ subtraction_mono restrictorAntitone_every h⟩
+  have hc' := h (show Finset.univ.erase c ∈ _ from fun x hx ↦
+    Finset.mem_coe.2 (Finset.mem_erase.2 ⟨fun e ↦ hx.2 (e ▸ hc), Finset.mem_univ x⟩))
+    ⟨trivial, hcS⟩
+  exact Finset.notMem_erase c _ (Finset.mem_coe.1 hc')
 
 -- fn. 9: with two students the alternatives are consistent with the prejacent
 theorem but_some_two_nonempty :

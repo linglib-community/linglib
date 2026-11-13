@@ -183,6 +183,14 @@ theorem mem_exh_image_Iic_iff (hf : ∀ i j, f i ⊆ f j ↔ i ≤ j) :
     ⟨fun h i hlt hi ↦ hlt.not_ge ((hf a i).1 (h i hlt.le hi)),
       fun h i hle hi ↦ (hf a i).2 <| not_not.1 fun hai ↦ h i (lt_of_le_not_ge hle hai) hi⟩
 
+/-- Against the members at the smaller indices, none of which it entails, a member is
+exhaustified where its index is a minimal true one. -/
+theorem mem_exh_image_Iio_iff_minimal (hf : ∀ i < a, ¬ f a ⊆ f i) :
+    w ∈ exh (f '' Set.Iio a) (f a) ↔ Minimal (fun i ↦ w ∈ f i) a := by
+  rw [mem_exh_image_iff, minimal_iff_forall_lt]
+  exact and_congr_right fun _ ↦
+    ⟨fun h i hi hw ↦ hf i hi (h i hi hw), fun h i hi hw ↦ absurd hw (h hi)⟩
+
 end Order
 
 /-! ### Irredundant alternatives -/
@@ -242,6 +250,13 @@ theorem mem_exh_range_iff_isGreatest_of_forall [Preorder ι] {i : ι} {w : W}
   mem_exh_range_iff.trans <| and_congr_right fun _ ↦ forall_congr' fun j ↦ imp_congr_right fun _ ↦
     hf j
 
+/-- When the members a member entails are those at the indices above its own, it is exhaustified
+where its index is the least true one. -/
+theorem mem_exh_range_iff_isLeast_of_forall [Preorder ι] {i : ι} {w : W}
+    (hf : ∀ j, f i ⊆ f j ↔ i ≤ j) : w ∈ exh (Set.range f) (f i) ↔ IsLeast {j | w ∈ f j} i :=
+  mem_exh_range_iff.trans <| and_congr_right fun _ ↦ forall_congr' fun j ↦ imp_congr_right fun _ ↦
+    hf j
+
 section LinearOrder
 
 variable [LinearOrder ι] {i : ι} {w : W}
@@ -256,8 +271,7 @@ theorem mem_exh_range_iff_isGreatest (hf : StrictAnti f) :
 where its index is the least true one. -/
 theorem mem_exh_range_iff_isLeast (hf : StrictMono f) :
     w ∈ exh (Set.range f) (f i) ↔ IsLeast {j | w ∈ f j} i :=
-  mem_exh_range_iff.trans <| and_congr_right fun _ ↦ forall_congr' fun _ ↦ imp_congr_right fun _ ↦
-    hf.le_iff_le
+  mem_exh_range_iff_isLeast_of_forall fun _ ↦ hf.le_iff_le
 
 end LinearOrder
 

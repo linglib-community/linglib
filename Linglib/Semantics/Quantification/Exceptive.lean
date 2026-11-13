@@ -22,13 +22,17 @@ scope](##Quantifier.Exceptive.isExceptionSet_every_iff) and with *no* [their
 intersection](##Quantifier.Exceptive.isExceptionSet_no_iff).
 
 Over a restrictor and scope that vary with the world, `subtraction Q A B C` is the proposition
-that the quantification holds with `C` subtracted, and both conditions meet its exhaustification
-against other subtractions. Where it does not entail the alternative that subtracts nothing, its
+that the quantification holds with `C` subtracted, and both conditions are exhaustifications of
+it against other subtractions. Where it does not entail the alternative that subtracts nothing, its
 exhaustification against that alternative is [the restrictive
-subtraction](##Quantifier.Exceptive.exh_singleton_subtraction_empty), and under a
-left-downward-monotone determiner the subtraction of the exception set [satisfies its
-exhaustification against any family of
-subtractions](##Quantifier.Exceptive.IsExceptionSet.mem_exh_subtraction).
+subtraction](##Quantifier.Exceptive.exh_singleton_subtraction_empty). Where the subtractions it
+entails are those of the larger sets, its exhaustification against every subtraction holds
+[exactly where `C` is the exception set](##Quantifier.Exceptive.mem_exh_range_subtraction_iff),
+the least verifying subtraction; against the subtractions of its proper parts, where it entails
+none of them, it holds [exactly where `C` is a minimal
+one](##Quantifier.Exceptive.mem_exh_image_Iio_subtraction_iff). A restrictive subtraction of an
+atom is [a minimal one](##Quantifier.Exceptive.restrictive_singleton_iff_minimal), and with
+*every* and *no* minimal and least coincide (`minimal_every_iff`, `minimal_no_iff`).
 
 ## Implementation notes
 
@@ -165,6 +169,31 @@ theorem restrictive_no_iff : Restrictive no A C B ↔ A ⊓ B ≤ C ∧ ¬ Disjo
   unfold Restrictive
   rw [no_iff_le_compl, sdiff_le_comm, sdiff_compl, no_iff_disjoint]
 
+/-! ### Minimal and least verifying subtractions -/
+
+/-- The exception set is a minimal set whose subtraction verifies the quantification. -/
+theorem IsExceptionSet.minimal (h : IsExceptionSet Q A C B) :
+    Minimal (fun S ↦ Q (A \ S) B) C :=
+  IsLeast.minimal h
+
+/-- Subtracting an atom is restrictive exactly when the atom is a minimal set whose subtraction
+verifies the quantification. -/
+theorem restrictive_singleton_iff_minimal {a : α} :
+    Restrictive Q A {a} B ↔ Minimal (fun S ↦ Q (A \ S) B) {a} := by
+  rw [minimal_iff_forall_lt]
+  refine and_congr_right fun _ ↦ ⟨fun h S hS hQ ↦ h ?_, fun h hQ ↦
+    h (Set.ssubset_singleton_iff.2 rfl) (by rwa [Set.sdiff_empty])⟩
+  rwa [Set.ssubset_singleton_iff.1 hS, Set.sdiff_empty] at hQ
+
+/-- With *every* the minimal verifying subtraction is the least, the exception set. -/
+theorem minimal_every_iff :
+    Minimal (fun S ↦ every (A \ S) B) C ↔ IsExceptionSet every A C B :=
+  (isExceptionSet_every A B).minimal_iff.trans (eq_comm.trans isExceptionSet_every_iff.symm)
+
+/-- With *no* the minimal verifying subtraction is the least, the exception set. -/
+theorem minimal_no_iff : Minimal (fun S ↦ no (A \ S) B) C ↔ IsExceptionSet no A C B :=
+  (isExceptionSet_no A B).minimal_iff.trans (eq_comm.trans isExceptionSet_no_iff.symm)
+
 /-! ### Subtraction as a proposition and its exhaustification -/
 
 section Subtraction
@@ -203,12 +232,22 @@ theorem exh_singleton_subtraction_empty_of_restrictorMonotone (hQ : RestrictorMo
     exh {subtraction Q A B ∅} (subtraction Q A B C) = subtraction Q A B C :=
   exh_eq_self fun _ hq ↦ hq ▸ subtraction_anti hQ (Set.empty_subset C)
 
-/-- Under a left-downward-monotone determiner the subtraction of the exception set is
-exhaustified against any family of subtractions: each one true at the world subtracts more. -/
-theorem IsExceptionSet.mem_exh_subtraction (hQ : RestrictorAntitone Q) (F : Set (Set α))
-    (h : IsExceptionSet Q (A w) C (B w)) :
-    w ∈ exh (subtraction Q A B '' F) (subtraction Q A B C) :=
-  mem_exh_image_iff.2 ⟨h.1, fun _ _ hS ↦ subtraction_mono hQ (h.2 hS)⟩
+/-- Against the subtractions of its proper parts, none of which it entails, the subtraction of
+`C` is exhaustified exactly where `C` is a minimal set whose subtraction verifies the
+quantification. -/
+theorem mem_exh_image_Iio_subtraction_iff
+    (h : ∀ S < C, ¬ subtraction Q A B C ⊆ subtraction Q A B S) :
+    w ∈ exh (subtraction Q A B '' Set.Iio C) (subtraction Q A B C) ↔
+      Minimal (fun S ↦ Q (A w \ S) (B w)) C :=
+  mem_exh_image_Iio_iff_minimal h
+
+/-- Where the subtractions that the subtraction of `C` entails are those of the sets containing
+`C`, it is exhaustified against every subtraction exactly where `C` is the exception set. -/
+theorem mem_exh_range_subtraction_iff
+    (h : ∀ S, subtraction Q A B C ⊆ subtraction Q A B S ↔ C ≤ S) :
+    w ∈ exh (Set.range (subtraction Q A B)) (subtraction Q A B C) ↔
+      IsExceptionSet Q (A w) C (B w) :=
+  mem_exh_range_iff_isLeast_of_forall h
 
 end Subtraction
 
