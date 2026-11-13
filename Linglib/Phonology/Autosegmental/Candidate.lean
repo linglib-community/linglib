@@ -22,6 +22,7 @@ neither deleted nor linked on the surface is floating.
   faithful candidate.
 * `Candidate.IsLinked`, `Candidate.IsFloating`: an autosegment with a surface line, and one
   neither deleted nor linked.
+* `Candidate.Hosts`: a slot with a surface line to an autosegment of a given kind.
 * `Candidate.gen`: the one-step GEN of harmonic serialism.
 
 ## Main results
@@ -149,6 +150,38 @@ theorem nodup_linksTo (i : Fin (u.word .lower).length) : (c.linksTo i).Nodup :=
 @[simp] theorem mem_alive : k ∈ c.alive ↔ k ∉ c.deleted := by
   simp [alive]
 
+/-! ### Hosting -/
+
+section Hosts
+
+variable (c) (P Q : T → Prop)
+
+/-- Slot `i` hosts an autosegment satisfying `P` when one is linked to it on the surface. -/
+def Hosts (i : Fin (u.word .lower).length) : Prop :=
+  ∃ k, (k, i) ∈ c.links ∧ P (u.word .upper)[k].value
+
+instance [DecidablePred P] : Decidable (c.Hosts P i) :=
+  inferInstanceAs (Decidable (∃ _, _ ∧ _))
+
+variable {c P Q}
+
+theorem hosts_iff_exists_mem_tierValues : c.Hosts P i ↔ ∃ t ∈ c.tierValues i, P t := by
+  simp only [mem_tierValues]
+  exact ⟨fun ⟨k, hk, h⟩ ↦ ⟨_, ⟨k, hk, rfl⟩, h⟩, fun ⟨_, ⟨k, hk, rfl⟩, h⟩ ↦ ⟨k, hk, h⟩⟩
+
+theorem Hosts.mono (h : ∀ t, P t → Q t) : c.Hosts P i → c.Hosts Q i :=
+  fun ⟨k, hk, hP⟩ ↦ ⟨k, hk, h _ hP⟩
+
+/-- A slot that hosts an autosegment hosts it on every candidate with more lines. -/
+theorem Hosts.of_links_subset {c' : Candidate u} (h : c.links ⊆ c'.links) :
+    c.Hosts P i → c'.Hosts P i :=
+  fun ⟨k, hk, hP⟩ ↦ ⟨k, h hk, hP⟩
+
+theorem not_hosts_of_links_eq_empty (h : c.links = ∅) : ¬ c.Hosts P i :=
+  fun ⟨_, hk, _⟩ ↦ by simp [h] at hk
+
+end Hosts
+
 /-! ### The atomic GEN operations -/
 
 variable (c)
@@ -187,6 +220,12 @@ variable {c}
     (c.insertLink k i).IsFloating j ↔ j ≠ k ∧ c.IsFloating j := by
   simp only [IsFloating, insertLink_deleted, isLinked_insertLink]
   tauto
+
+@[simp] theorem hosts_insertLink {P : T → Prop} {i' : Fin (u.word .lower).length} :
+    (c.insertLink k i).Hosts P i' ↔ i' = i ∧ P (u.word .upper)[k].value ∨ c.Hosts P i' := by
+  simp only [Hosts, insertLink_links, Finset.mem_insert, Prod.mk.injEq]
+  exact ⟨fun ⟨_, h, hP⟩ ↦ h.elim (fun ⟨hk, hi⟩ ↦ .inl ⟨hi, hk ▸ hP⟩) fun h ↦ .inr ⟨_, h, hP⟩,
+    fun h ↦ h.elim (fun ⟨hi, hP⟩ ↦ ⟨k, .inl ⟨rfl, hi⟩, hP⟩) fun ⟨j, h, hP⟩ ↦ ⟨j, .inr h, hP⟩⟩
 
 theorem links_delete_subset : (c.delete k).links ⊆ c.links :=
   Finset.filter_subset _ _
