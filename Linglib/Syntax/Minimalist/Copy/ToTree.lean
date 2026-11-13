@@ -85,9 +85,8 @@ def toTree (ι : LexicalItem.Token → ℕ) (t : Marked) (low : Finset Syntactic
 @[simp] theorem toTree_ofLinearized (ι : LexicalItem.Token → ℕ) (p : LinearizedSyntacticObject)
     (low : Finset SyntacticObject) :
     (ofLinearized p).toTree ι low = p.toTree ι := by
-  obtain ⟨s, hs⟩ := p
   simp only [toTree, ofLinearized, LinearizedSyntacticObject.toTree]
-  clear hs
+  generalize p.val = s
   induction s with
   | node a cs ih =>
     rw [map_node, reading_node]
@@ -111,7 +110,7 @@ theorem eraseBinders_toTree (ι : LexicalItem.Token → ℕ) (t : Marked)
     (low : Finset SyntacticObject) :
     Tree.eraseBinders (t.toTree ι low) = (t.lf low).toTree ι := by
   obtain ⟨s, hs⟩ := t
-  simp only [toTree, lf, LinearizedSyntacticObject.toTree]
+  simp only [toTree, val_lf, LinearizedSyntacticObject.toTree]
   clear hs
   induction s with
   | node v cs ih =>
