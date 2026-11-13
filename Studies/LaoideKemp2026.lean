@@ -99,9 +99,6 @@ instance : DecidablePred Autosegment.IsSegment
   | .seg _ => isTrue trivial
   | .L => isFalse id
 
-theorem Autosegment.isSegment_iff {a : Autosegment} : a.IsSegment ↔ ∃ s, a = .seg s := by
-  cases a <;> simp [Autosegment.IsSegment]
-
 /-- A liquid may govern an obstruent before it, as in the clusters *fr-* and *fl-* of (12) and
 *dr-* and *gl-* of §4.1, where the governing onset hosts *r* or *l* and the governed one an
 obstruent. -/
@@ -152,13 +149,6 @@ section Docking
 
 variable {M : Type} {u : Form M} (c : Candidate u)
 
-/-- Slot `i` hosts a segment on the surface. -/
-def HostsSegment (i : Fin (u.word .lower).length) : Prop :=
-  ∃ k s, (k, i) ∈ c.links ∧ (u.word .upper)[k].value = .seg s
-
-instance (i : Fin (u.word .lower).length) : Decidable (HostsSegment c i) :=
-  inferInstanceAs (Decidable (∃ _ _, _ ∧ _))
-
 /-- The slot immediately to the right of object `k` is the first slot after every slot linked to
 an object before it. -/
 def nextSlot (k : Fin (u.word .upper).length) : Option (Fin (u.word .lower).length) :=
@@ -173,9 +163,9 @@ def domains : Finset (Fin (StrictCV.units u)) := StrictCV.clusters (.input u) Ma
 segmentally empty C-slot whose nucleus hosts a segment or is enclosed in a domain of
 infrasegmental government (§4.1). -/
 def IsDockingSite : Autosegment → Fin (u.word .lower).length → Prop
-  | .L, i => (u.word .lower)[i].value = .C ∧ HostsSegment c i
-  | .seg _, i => (u.word .lower)[i].value = .C ∧ ¬ HostsSegment c i ∧
-      ∃ j, StrictCV.onset u j = i ∧ (HostsSegment c (StrictCV.nucleus u j) ∨
+  | .L, i => (u.word .lower)[i].value = .C ∧ c.Hosts Autosegment.IsSegment i
+  | .seg _, i => (u.word .lower)[i].value = .C ∧ ¬ c.Hosts Autosegment.IsSegment i ∧
+      ∃ j, StrictCV.onset u j = i ∧ (c.Hosts Autosegment.IsSegment (StrictCV.nucleus u j) ∨
         StrictCV.Enclosed (StrictCV.nucleusOf c Autosegment.IsSegment (domains u) j)
           ((StrictCV.surface c Autosegment.IsSegment (domains u)).drop (j + 1)))
 
@@ -229,7 +219,8 @@ instance (a : Autosegment) : Decidable (Realizes c a) := inferInstanceAs (Decida
 /-- A candidate begins with an empty consonantal slot, the context in which the morphosyntactic
 analysis spells out the historic-tense particle as *d* ((23)). -/
 def BeginsWithEmptyC : Prop :=
-  ∃ i : Fin (u.word .lower).length, i.val = 0 ∧ (u.word .lower)[i].value = .C ∧ ¬ HostsSegment c i
+  ∃ i : Fin (u.word .lower).length, i.val = 0 ∧ (u.word .lower)[i].value = .C ∧
+    ¬ c.Hosts Autosegment.IsSegment i
 
 instance : Decidable (BeginsWithEmptyC c) := inferInstanceAs (Decidable (∃ _, _ ∧ _ ∧ _))
 
@@ -327,18 +318,16 @@ section EmptyCV
 variable {M : Type} {u : Form M} {c : Candidate u}
 
 theorem not_isDockingSite_onset {j : Fin (StrictCV.units u)}
-    (hc : ¬ HostsSegment c (StrictCV.onset u j)) (hv : ¬ HostsSegment c (StrictCV.nucleus u j))
+    (hc : ¬ c.Hosts Autosegment.IsSegment (StrictCV.onset u j))
+    (hv : ¬ c.Hosts Autosegment.IsSegment (StrictCV.nucleus u j))
     (hcl : j ∉ domains u) :
     ∀ a, ¬ IsDockingSite c a (StrictCV.onset u j)
   | .L, h => hc h.2
   | .seg _, ⟨_, _, j', hj', h⟩ => by
-    obtain rfl : j' = j := Fin.ext (by
-      have := congrArg Fin.val hj'
-      simp only [StrictCV.onset] at this
-      omega)
+    obtain rfl : j' = j := StrictCV.onset_injective u hj'
     rcases h with h | h
     · exact hv h
-    · exact hcl (by simpa [StrictCV.nucleusOf] using h.cluster_eq_true)
+    · exact hcl (StrictCV.enclosed_nucleusOf_iff.1 h).2.1
 
 variable {m m' : M} {objs : List Autosegment} {s : Form M}
   {c c' : Candidate (floating m objs * (emptyCV m' * s))}
@@ -364,7 +353,7 @@ private theorem zero_notMem_domains
 segment. -/
 private def Blocked (c : Candidate (floating m objs * (emptyCV m' * s))) : Prop :=
   (∀ k : Fin _, k.val < objs.length → c.IsFloating k) ∧
-    ∀ i : Fin _, i.val < 2 → ¬ HostsSegment c i
+    ∀ i : Fin _, i.val < 2 → ¬ c.Hosts Autosegment.IsSegment i
 
 private theorem leftIndices_eq_empty (h : Blocked c) {k : Fin _} (hk : k.val < objs.length) :
     leftIndices c.links k = ∅ := by
@@ -397,7 +386,7 @@ private theorem blocked_input : Blocked (.input (floating m objs * (emptyCV m' *
   refine ⟨fun k hk ↦ ⟨Finset.notMem_empty _, ?_⟩, ?_⟩
   · rintro ⟨p, hp, rfl⟩
     exact absurd (le_of_mem_links hp).1 (by omega)
-  · rintro i hi ⟨k, -, hk, -⟩
+  · rintro i hi ⟨k, hk, -⟩
     have := (le_of_mem_links hk).2
     dsimp only at this
     omega
@@ -409,14 +398,14 @@ private theorem Blocked.step (h : Blocked c) (hs : Step c c') : Blocked c' := by
   have hsub := links_dock_subset hi
   have hi2 := hi2 i hi
   refine ⟨fun j hj ↦ (isFloating_dock hk).2 ⟨fun he ↦ ?_, h.1 j hj⟩,
-    fun i₀ hi₀ ⟨k', s', hk', hval⟩ ↦ ?_⟩
+    fun i₀ hi₀ ⟨k', hk', hval⟩ ↦ ?_⟩
   · rw [he] at hj
     omega
   · rcases Finset.mem_insert.1 (hsub hk') with he | he
     · have := congrArg (·.2.val) he
       simp only at this
       omega
-    · exact h.2 i₀ hi₀ ⟨k', s', he, hval⟩
+    · exact h.2 i₀ hi₀ ⟨k', he, hval⟩
 
 private theorem blocked (hc : ReflTransGen Step (.input _) c) : Blocked c := by
   induction hc with
@@ -429,14 +418,14 @@ theorem isFloating_of_emptyCV (hc : ReflTransGen Step (.input _) c) {k : Fin _}
     (hk : k.val < objs.length) : c.IsFloating k :=
   (blocked hc).1 k hk
 
-theorem not_hostsSegment_of_emptyCV (hc : ReflTransGen Step (.input _) c) {i : Fin _}
-    (hi : i.val < 2) : ¬ HostsSegment c i :=
+theorem not_hosts_of_emptyCV (hc : ReflTransGen Step (.input _) c) {i : Fin _}
+    (hi : i.val < 2) : ¬ c.Hosts Autosegment.IsSegment i :=
   (blocked hc).2 i hi
 
 /-- Whatever the stem, a form that begins with an empty CV unit begins with an empty consonantal
 slot in every candidate derived, so under the morphosyntactic analysis it would take *d'*. -/
 theorem beginsWithEmptyC_of_emptyCV (hc : ReflTransGen Step (.input _) c) : BeginsWithEmptyC c :=
-  ⟨⟨0, by simp [emptyCV]⟩, rfl, rfl, not_hostsSegment_of_emptyCV hc (by simp)⟩
+  ⟨⟨0, by simp [emptyCV]⟩, rfl, rfl, not_hosts_of_emptyCV hc (by simp)⟩
 
 end EmptyCV
 
@@ -557,10 +546,14 @@ theorem historic_rith : ∀ c ∈ surfaces (.input (historic Morpheme.hist * rit
   decide
 
 -- Figures 1, 2 and 5
-theorem isStrict_forms : ∀ s ∈ [bog, ól, fág, freagair, rith],
-    StrictCV.IsStrict (historic Morpheme.hist * s) ∧
-      StrictCV.IsStrict (historic Morpheme.hist * (emptyCV Morpheme.pstImpers * s)) := by
+theorem isStrict_forms : ∀ s ∈ [bog, ól, fág, freagair, rith], s.skeleton.IsStrict := by
   decide
+
+/-- Whatever the stem, the historic-tense marker and an empty CV unit leave a strict skeleton
+strict, the one adding no slot and the other a CV unit. -/
+theorem isStrict_historic {M : Type} {m m' : M} {s : Form M} (h : s.skeleton.IsStrict) :
+    (historic m * s).skeleton.IsStrict ∧ (historic m * (emptyCV m' * s)).skeleton.IsStrict := by
+  simpa [emptyCV] using ⟨h, Skeleton.isStrict_unit.append h⟩
 
 /-! ### Figure 5 and the past-tense impersonal -/
 
