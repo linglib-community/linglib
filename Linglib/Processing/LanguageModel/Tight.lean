@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Log.Summable
 public import Linglib.Core.MeasureTheory.Measure.Basic
+public import Linglib.Core.Probability.BranchingProcess.GaltonWatson
 public import Linglib.Processing.LanguageModel.Autoregressive
 
 /-!
@@ -23,6 +24,11 @@ are [the next-symbol laws](##IsTight.next_ofMeasure_stringMeasure) of the string
 after a prefix [generates the continuation](##IsTight.continuation_stringMeasure), and the
 expected length is [the total survival](##IsTight.lintegral_length) after the first step.
 
+The model is also [a Galton–Watson process](##galtonWatson) whose types are the prefixes, each
+with at most one offspring, and it is tight
+[exactly when that process dies out](##isTight_iff_extinctionProb), which is how a probabilistic
+context-free grammar is tight.
+
 ## Implementation notes
 
 * The product criterion behind `isTight_iff` is `ENNReal.hasProd_one_sub_zero_iff`,
@@ -35,6 +41,7 @@ expected length is [the total survival](##IsTight.lintegral_length) after the fi
 ## References
 
 * [du-etal-2023]
+* [neveu-1986]
 * [opedal-chodroff-cotterell-wilcox-2024]
 -/
 
@@ -356,5 +363,80 @@ theorem lintegral_length_le_div {c : ℝ≥0∞} (hc : ∀ x : List α, c ≤ M.
     _ = (1 - c) / c := by
         simp_rw [pow_succ', ENNReal.tsum_mul_left, ENNReal.tsum_geometric,
           ENNReal.sub_sub_cancel ENNReal.one_ne_top hc1, div_eq_mul_inv]
+
+/-! ### The model as a branching process
+
+A model is a Galton–Watson process whose types are the prefixes: a prefix has no offspring when
+the string ends after it, and otherwise one, the prefix extended by the next symbol. Its family
+tree is a path, finite exactly when the string ends, so tightness is extinction. -/
+
+omit [MeasurableSingletonClass α] [Countable α] in
+theorem stringProb_cons (a : α) (x : List α) :
+    M.stringProb (a :: x) = M.next [] {some a} * (M.after [a]).stringProb x := by
+  simpa [prefixProb] using M.stringProb_append [a] x
+
+omit [MeasurableSingletonClass α] [Countable α] in
+@[simp] theorem stopProb_zero : M.stopProb 0 = M.next [] {none} := by
+  rw [stopProb, tsum_eq_single (⟨[], rfl⟩ : {x : List α // x.length = 0}) fun x hx ↦
+    absurd (Subtype.ext (List.eq_nil_of_length_eq_zero x.2)) hx]
+  simp [stringProb]
+
+/-- Strings of length `n + 1` are a symbol followed by a string of length `n`. -/
+private def consEquiv (n : ℕ) :
+    α × {x : List α // x.length = n} ≃ {y : List α // y.length = n + 1} where
+  toFun p := ⟨p.1 :: p.2.1, by simp [p.2.2]⟩
+  invFun y := (y.1.head (List.ne_nil_of_length_eq_add_one y.2), ⟨y.1.tail, by simp [y.2]⟩)
+  left_inv p := by ext <;> simp
+  right_inv y := Subtype.ext (List.cons_head_tail _)
+
+omit [MeasurableSingletonClass α] [Countable α] in
+/-- A string of length `n + 1` is a first symbol and then a string of length `n` of the model
+after it. -/
+theorem stopProb_succ (n : ℕ) :
+    M.stopProb (n + 1) = ∑' a, M.next [] {some a} * (M.after [a]).stopProb n := by
+  rw [stopProb, ← (consEquiv n).tsum_eq, ENNReal.tsum_prod']
+  simp only [consEquiv, Equiv.coe_fn_mk, stringProb_cons, ENNReal.tsum_mul_left, stopProb]
+
+/-- The model as a Galton–Watson process on prefixes: a prefix has no offspring with the
+probability of ending after it, and the prefix extended by `a` with the probability of `a`. -/
+noncomputable def galtonWatson : Kernel (List α) (List (List α)) :=
+  ⟨fun c ↦ (M.next c).map fun o ↦ o.toList.map (c ++ [·]), .of_discrete⟩
+
+theorem lintegral_galtonWatson (c : List α) (F : List (List α) → ℝ≥0∞) :
+    ∫⁻ js, F js ∂M.galtonWatson c =
+      M.next c {none} * F [] + ∑' a, M.next c {some a} * F [c ++ [a]] := by
+  change ∫⁻ js, F js ∂(M.next c).map _ = _
+  rw [lintegral_map .of_discrete (measurable_of_countable _), lintegral_option]
+  simp [mul_comm]
+
+/-- The mass of the family trees of depth less than `n` is the probability of a string shorter
+than `n`. -/
+theorem iterate_expand_galtonWatson_univ (n : ℕ) (c : List α) :
+    ((GaltonWatson.expand M.galtonWatson)^[n] 0) c Set.univ =
+      ∑ k ∈ range n, (M.after c).stopProb k := by
+  induction n generalizing c with
+  | zero => simp
+  | succ n ih =>
+    rw [Function.iterate_succ_apply', GaltonWatson.expand_apply_univ, lintegral_galtonWatson]
+    simp only [List.map_nil, List.prod_nil, List.map_cons, List.prod_cons, mul_one, ih]
+    rw [sum_range_succ', stopProb_zero, next_after, List.append_nil, add_comm]
+    congr 1
+    simp_rw [stopProb_succ, next_after, List.append_nil, after_after, mul_sum]
+    exact Summable.tsum_finsetSum fun _ _ ↦ ENNReal.summable
+
+/-- The extinction probability of the process at a prefix is the total probability of the strings
+of the model after it. -/
+theorem extinctionProb_galtonWatson (c : List α) :
+    GaltonWatson.extinctionProb M.galtonWatson c = ∑' z, (M.after c).stringProb z := by
+  rw [GaltonWatson.extinctionProb, GaltonWatson.law_eq_iSup_iterate, iSup_apply,
+    Measure.iSup_apply_of_monotone
+      (fun m n h ↦ GaltonWatson.monotone_iterate_expand M.galtonWatson h c) .univ,
+    tsum_stringProb, ENNReal.tsum_eq_iSup_nat]
+  exact iSup_congr fun n ↦ M.iterate_expand_galtonWatson_univ n c
+
+/-- A model is tight exactly when its branching process dies out almost surely. -/
+theorem isTight_iff_extinctionProb :
+    M.IsTight ↔ GaltonWatson.extinctionProb M.galtonWatson [] = 1 := by
+  rw [extinctionProb_galtonWatson, after_nil, IsTight]
 
 end AutoregressiveSequenceModel
