@@ -124,6 +124,25 @@ theorem deletionQuotient_eq_some {T : UnorderedTree α} (h : ∀ a ∈ T.leaves,
     deletionQuotient b T = some T.contractUnary := by
   rw [deletionQuotient, UnorderedTree.prune_eq_some_self _ h, Option.map_some]
 
+/-- A tree with no unary vertex whose leaves are not labelled `b` is its own remainder. -/
+theorem deletionQuotient_eq_self {T : UnorderedTree α} (h : ∀ a ∈ T.leaves, a ≠ b)
+    (hu : T.numUnary = 0) : deletionQuotient b T = some T := by
+  rw [deletionQuotient_eq_some b h, UnorderedTree.contractUnary_eq_self_iff.mpr hu]
+
+/-- Two trees that are their own remainders stay so under a root labelled `b`. -/
+theorem deletionQuotient_node_pair {S S' : UnorderedTree α} (hS : deletionQuotient b S = some S)
+    (hS' : deletionQuotient b S' = some S') :
+    deletionQuotient b (.node b {S, S'}) = some (.node b {S, S'}) := by
+  obtain ⟨S₁, h₁, e₁⟩ := Option.map_eq_some_iff.mp hS
+  obtain ⟨S₂, h₂, e₂⟩ := Option.map_eq_some_iff.mp hS'
+  have hF : ({S, S'} : Multiset (UnorderedTree α)).filterMap (UnorderedTree.prune (· ≠ b)) =
+      {S₁, S₂} := by
+    rw [Multiset.insert_eq_cons, Multiset.filterMap_cons_some _ _ _ h₁, ← Multiset.cons_zero S',
+      Multiset.filterMap_cons_some _ _ _ h₂]
+    rfl
+  rw [deletionQuotient, UnorderedTree.prune_node, hF, ite_eq_left (.inr (by simp)),
+    Option.map_some, UnorderedTree.contractUnary_node_pair, e₁, e₂]
+
 /-- The projection `Π_{d,ρ}` of the right channel: a tree goes to the remainder of its deletion,
     and to `1` when nothing remains. -/
 noncomputable def deletionProj :
