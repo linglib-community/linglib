@@ -516,7 +516,7 @@ end Mark
 /-- An object with no marks, whose tokens are distinct, has no movement nodes and needs none. -/
 private theorem chains_map_none {p : RoseTree Vertex} (h : IsSyntacticObject (UnorderedTree.mk p))
     (hTF : ∀ r ∈ p.subtrees, r.value.isLeft)
-    (hd : (LinearizedSyntacticObject.toSyntacticObject (LinearizedSyntacticObject.ofVal p h)).yield.Nodup) :
+    (hd : (LinearizedSyntacticObject.ofVal p h).toSyntacticObject.yield.Nodup) :
     Chains (p.map ((none, ·) : Vertex → CopyMark × Vertex)) := by
   induction p with
   | node a cs ih =>
@@ -530,9 +530,10 @@ private theorem chains_map_none {p : RoseTree Vertex} (h : IsSyntacticObject (Un
     · obtain ⟨u, v, rfl⟩ := List.length_eq_two.1 hlen
       obtain rfl := eq_bare_of_ne_nil h (by simp)
       obtain ⟨hu, hv⟩ := (isSyntacticObject_mk_merge _ _).1 h
-      have hsum : (LinearizedSyntacticObject.toSyntacticObject (LinearizedSyntacticObject.ofVal u hu)).yield +
-          (LinearizedSyntacticObject.toSyntacticObject (LinearizedSyntacticObject.ofVal v hv)).yield =
-          (LinearizedSyntacticObject.toSyntacticObject (LinearizedSyntacticObject.ofVal (.node Vertex.bare [u, v]) h)).yield := by
+      have hsum : (LinearizedSyntacticObject.ofVal u hu).toSyntacticObject.yield +
+          (LinearizedSyntacticObject.ofVal v hv).toSyntacticObject.yield =
+          (LinearizedSyntacticObject.ofVal (.node Vertex.bare [u, v])
+            h).toSyntacticObject.yield := by
         rw [LinearizedSyntacticObject.ofVal_node_bare,
           LinearizedSyntacticObject.toSyntacticObject_merge, yield_merge]
       rw [← hsum, Multiset.nodup_add] at hd

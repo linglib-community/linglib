@@ -167,7 +167,8 @@ theorem coe_mem_terms_iff (p : LinearizedSyntacticObject) :
     · obtain ⟨u, v, rfl⟩ := List.length_eq_two.1 hlen
       obtain rfl := eq_bare_of_ne_nil h (by simp)
       obtain ⟨hu, hv⟩ := (isSyntacticObject_mk_merge _ _).1 h
-      rw [ofVal_node_bare, LinearizedSyntacticObject.toSyntacticObject_merge, terms_merge, Multiset.mem_cons,
+      rw [ofVal_node_bare, LinearizedSyntacticObject.toSyntacticObject_merge, terms_merge,
+        Multiset.mem_cons,
         Multiset.mem_add, holds_pair, ih u (by simp) hu, ih v (by simp) hv]
       exact or_iff_right (leaf_ne_merge _ _ _)
 

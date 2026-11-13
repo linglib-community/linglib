@@ -148,7 +148,7 @@ def step (m : LexicalItem.Token) (st : Stage) : List Stage :=
     | none => []
     | some p => (p.val.subtrees.filter hasN).filterMap fun s ↦
         if h : IsSyntacticObject (UnorderedTree.mk s) then
-          some ⟨d.append [.im (LinearizedSyntacticObject.toSyntacticObject ⟨s, h⟩)],
+          some ⟨d.append [.im (SyntacticObject.ofVal (UnorderedTree.mk s) h)],
             (markOf p.val s).toList ++ st.marks, st.raises + 1⟩
         else none
 

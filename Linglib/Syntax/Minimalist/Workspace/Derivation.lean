@@ -195,7 +195,8 @@ def Admissible (d : Derivation) : Prop := Step.AdmissibleList d.steps d.initial
 /-- An admissible derivation is the iterated algebraic Merge on the workspace of its initial object
     and its items: the composite of its steps' Merges sends that workspace to its final object. -/
 theorem mergeOpList_initial {d : Derivation} (hd : d.Admissible) :
-    Step.mergeOpList d.steps d.initial (ConnesKreimer.of' (({d.initial} + d.items).map SyntacticObject.val))
+    Step.mergeOpList d.steps d.initial
+        (ConnesKreimer.of' (({d.initial} + d.items).map SyntacticObject.val))
       = ConnesKreimer.of' {d.final.val} :=
   (Step.mergeOpList_workspace d.steps d.initial hd).trans <| by
     rw [final, run, Step.foldl_run_of_admissibleList d.steps d.initial [] hd]

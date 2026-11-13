@@ -145,7 +145,8 @@ theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur : current.va
     counting. -/
 theorem Step.minimalYield (h : step.Admissible current W) (hcur : current.val.value.isLeft)
     (hitems : ∀ i ∈ step.items, i.val.value.isLeft) :
-    MinimalYield UnorderedTree.accessibleCount (({current} + step.items + W).map SyntacticObject.val)
+    MinimalYield UnorderedTree.accessibleCount
+      (({current} + step.items + W).map SyntacticObject.val)
       (({step.apply current} + W).map SyntacticObject.val) := by
   cases step with
   | em side item =>
@@ -219,7 +220,8 @@ theorem isChain_merge {d : Derivation} (hd : d.Admissible) :
 theorem isChain_noComplexityLoss {d : Derivation} (hd : d.Admissible)
     (hinit : d.initial.val.value.isLeft) (hitems : ∀ i ∈ d.items, i.val.value.isLeft) :
     d.workspaces.IsChain (fun W W' : Workspace ↦ NoComplexityLoss
-      (fun T ↦ Forest.accessibleSize {T}) (W.map SyntacticObject.val) (W'.map SyntacticObject.val)) :=
+      (fun T ↦ Forest.accessibleSize {T}) (W.map SyntacticObject.val)
+      (W'.map SyntacticObject.val)) :=
   isChain_of_step (P := fun S ↦ S.val.value.isLeft)
     (fun h hcur hi ↦ Step.noComplexityLoss h hcur hi) Step.value_isLeft_apply d.steps d.initial hd
     hinit hitems
@@ -229,7 +231,8 @@ theorem isChain_noComplexityLoss {d : Derivation} (hd : d.Admissible)
 theorem isChain_minimalYield {d : Derivation} (hd : d.Admissible)
     (hinit : d.initial.val.value.isLeft) (hitems : ∀ i ∈ d.items, i.val.value.isLeft) :
     d.workspaces.IsChain (fun W W' : Workspace ↦
-      MinimalYield UnorderedTree.accessibleCount (W.map SyntacticObject.val) (W'.map SyntacticObject.val)) :=
+      MinimalYield UnorderedTree.accessibleCount (W.map SyntacticObject.val)
+        (W'.map SyntacticObject.val)) :=
   isChain_of_step (P := fun S ↦ S.val.value.isLeft) (fun h hcur hi ↦ Step.minimalYield h hcur hi)
     Step.value_isLeft_apply d.steps d.initial hd hinit hitems
 

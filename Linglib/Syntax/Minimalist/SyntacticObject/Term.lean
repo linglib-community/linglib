@@ -223,10 +223,8 @@ theorem _root_.Minimalist.LinearizedSyntacticObject.terms_eq_of_commCon
   | symm _ ih => exact ih.symm
   | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
   | @mul w x y z h₁ h₂ ih₁ ih₂ =>
-    show (LinearizedSyntacticObject.toSyntacticObject w * LinearizedSyntacticObject.toSyntacticObject y)
-        ::ₘ (_ + _) =
-      (LinearizedSyntacticObject.toSyntacticObject x * LinearizedSyntacticObject.toSyntacticObject z)
-        ::ₘ (_ + _)
+    show (w.toSyntacticObject * y.toSyntacticObject) ::ₘ (_ + _) =
+      (x.toSyntacticObject * z.toSyntacticObject) ::ₘ (_ + _)
     rw [ih₁, ih₂, show LinearizedSyntacticObject.toSyntacticObject w
         = LinearizedSyntacticObject.toSyntacticObject x from
           FreeMagma.toFreeCommMagma_eq_toFreeCommMagma.2 h₁,
