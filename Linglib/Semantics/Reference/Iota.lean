@@ -87,7 +87,31 @@ theorem Set.Subsingleton.iota_dom (h : s.Subsingleton) : (iota s).Dom ↔ s.None
   _root_.iota_dom.trans
     ⟨fun ⟨x, hx, _⟩ ↦ ⟨x, hx⟩, fun ⟨x, hx⟩ ↦ ⟨x, hx, fun _ hy ↦ h hy hx⟩⟩
 
+theorem iota_dom_iff_nonempty_and_subsingleton : (iota s).Dom ↔ s.Nonempty ∧ s.Subsingleton :=
+  ⟨fun ⟨x, hx, hu⟩ ↦ ⟨⟨x, hx⟩, fun a ha b hb ↦ (hu a ha).trans (hu b hb).symm⟩,
+    fun ⟨hn, hs⟩ ↦ hs.iota_dom.2 hn⟩
+
 end Subsingleton
+
+/-! ### The only value of a function on a set -/
+
+section Image
+
+variable {α : Type*} {f : α → E} {P : Set α} {a : α}
+
+/-- The definite of an image is defined when the set is nonempty and the function is constant on
+it. -/
+theorem iota_image_dom : (iota (f '' P)).Dom ↔ P.Nonempty ∧ ∀ x ∈ P, ∀ y ∈ P, f x = f y := by
+  rw [iota_dom_iff_nonempty_and_subsingleton, Set.image_nonempty]
+  refine and_congr_right fun _ ↦ ⟨fun h x hx y hy ↦ h ⟨x, hx, rfl⟩ ⟨y, hy, rfl⟩, ?_⟩
+  rintro h _ ⟨x, hx, rfl⟩ _ ⟨y, hy, rfl⟩
+  exact h x hx y hy
+
+theorem apply_mem_iota_image (ha : a ∈ P) : f a ∈ iota (f '' P) ↔ ∀ x ∈ P, f x = f a := by
+  simp only [mem_iota, Set.mem_image, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+  exact and_iff_right ⟨a, ha, rfl⟩
+
+end Image
 
 /-! ### The largest member -/
 
