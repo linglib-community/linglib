@@ -33,8 +33,8 @@ milk* quantized.
 * `isTelic_of_qua`, `exists_isTelic_not_qua`: quantized predicates are telic, not conversely.
 * `isTelic_runTime_eq`: under precedence by run times a predicate that fixes the run time is
   telic.
-* `Event.IsPrecedence.isTelic_of_qua`: quantized predicates are telic under a precedence on the
-  part structure of events.
+* `Event.IsTemporalPrecedence.isTelic_of_qua`: quantized predicates are telic under a temporal
+  precedence on the part structure of events.
 * `not_isTelic_of_cum`, `not_isTelic_of_div`: cumulative and divisive predicates with successive
   events or parts are not telic.
 * `SINC.inc_of_sum`, `INC.sum`: a summative strictly incremental relation is incremental, and an
@@ -48,7 +48,8 @@ milk* quantized.
 Temporal precedence is a parameter of the telicity notions. The proofs use only that parts of an
 event neither precede nor follow it, `NoPartPrecedes`, which follows from Krifka's axiom that
 overlapping events do not precede each other (`noPartPrecedes_of_overlap`) and holds of any
-precedence on a part structure of events (`Event.IsPrecedence.noPartPrecedes`). A final part is an
+temporal precedence on a part structure of events
+(`Event.IsTemporalPrecedence.noPartPrecedes`). A final part is an
 initial part under the converse precedence, so results about final parts are transported.
 
 ## References
@@ -123,14 +124,14 @@ section Precedence
 open Event
 
 /-- Parts of an event neither precede nor follow it. -/
-theorem _root_.Event.IsPrecedence.noPartPrecedes [SemilatticeSup β] {r : β → β → Prop}
-    (h : IsPrecedence r) : NoPartPrecedes r := fun a _ hab ↦
+theorem _root_.Event.IsTemporalPrecedence.noPartPrecedes [SemilatticeSup β] {r : β → β → Prop}
+    (h : IsTemporalPrecedence r) : NoPartPrecedes r := fun a _ hab ↦
   ⟨fun hr ↦ h.isIntervalOrder.irrefl a (h.mono_right hab hr),
     fun hr ↦ h.isIntervalOrder.irrefl a (h.mono_left hab hr)⟩
 
 /-- Quantized predicates are telic under a precedence on the part structure of events. -/
-theorem _root_.Event.IsPrecedence.isTelic_of_qua [SemilatticeSup β] {r : β → β → Prop}
-    (h : IsPrecedence r) {P : β → Prop} (hP : QUA P) : IsTelic r P :=
+theorem _root_.Event.IsTemporalPrecedence.isTelic_of_qua [SemilatticeSup β] {r : β → β → Prop}
+    (h : IsTemporalPrecedence r) {P : β → Prop} (hP : QUA P) : IsTelic r P :=
   Aspect.isTelic_of_qua h.noPartPrecedes hP
 
 /-- A predicate that fixes the run time is telic: a part of an event runs within it, so it neither
