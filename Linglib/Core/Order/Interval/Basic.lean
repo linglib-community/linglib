@@ -170,6 +170,16 @@ section LinearOrder
 
 variable {α : Type*} [LinearOrder α] {i₁ i₂ : NonemptyInterval α}
 
+/-- No part of an interval precedes another exactly when it starts no earlier than the other. -/
+theorem forall_le_not_precedes_iff : (∀ k ≤ i₁, ¬ k.Precedes i₂) ↔ i₂.fst ≤ i₁.fst :=
+  ⟨fun h ↦ not_lt.1 (h (.pure i₁.fst) (le_def.2 ⟨le_rfl, i₁.fst_le_snd⟩)),
+    fun h k hk hlt ↦ (h.trans ((le_def.1 hk).1.trans k.fst_le_snd)).not_gt hlt⟩
+
+/-- No part of an interval follows another exactly when it ends no later than the other. -/
+theorem forall_le_not_precedes_iff' : (∀ k ≤ i₁, ¬ i₂.Precedes k) ↔ i₁.snd ≤ i₂.snd :=
+  ⟨fun h ↦ not_lt.1 (h (.pure i₁.snd) (le_def.2 ⟨i₁.fst_le_snd, le_rfl⟩)),
+    fun h k hk hlt ↦ ((k.fst_le_snd.trans (le_def.1 hk).2).trans h).not_gt hlt⟩
+
 theorem lt_def : i₁ < i₂ ↔ i₁ ≤ i₂ ∧ (i₂.fst < i₁.fst ∨ i₁.snd < i₂.snd) := by
   rw [lt_iff_le_not_ge]
   exact and_congr_right' (by rw [le_def, not_and_or, not_le, not_le])

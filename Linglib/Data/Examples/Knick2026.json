@@ -1,0 +1,183 @@
+[
+  {
+    "id": "knick2026_7a",
+    "source": {"bibkey": "knick-2026", "paperLabel": "(7a)"},
+    "reportedIn": null,
+    "language": "halh1238",
+    "primaryText": "Tselmeg odoo shüleg unsh-ina.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tselmeg", "Tselmeg"], ["odoo", "now"], ["shüleg", "poem"], ["unsh-ina", "read-nA"]
+    ],
+    "translation": "Tselmeg reads a poem now.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["aktionsart", "eventive"],
+      ["adverbial", "now"]
+    ],
+    "comment": "The translation is the intended reading; the sentence is felicitous on a non-indexical reading of *odoo*.",
+    "verified": "page-image"
+  },
+  {
+    "id": "knick2026_7b",
+    "source": {"bibkey": "knick-2026", "paperLabel": "(7b)"},
+    "reportedIn": null,
+    "language": "halh1238",
+    "primaryText": "Tselmeg margaash shüleg unsh-ina.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tselmeg", "Tselmeg"], ["margaash", "tomorrow"], ["shüleg", "poem"],
+      ["unsh-ina", "read-nA"]
+    ],
+    "translation": "Tselmeg will read a poem tomorrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["aktionsart", "eventive"],
+      ["adverbial", "tomorrow"]
+    ],
+    "comment": "The adverbial is optional.",
+    "verified": "page-image"
+  },
+  {
+    "id": "knick2026_7c",
+    "source": {"bibkey": "knick-2026", "paperLabel": "(7c)"},
+    "reportedIn": null,
+    "language": "halh1238",
+    "primaryText": "Suvdmaa odoo büjigle-ne.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Suvdmaa", "Suvdmaa"], ["odoo", "now"], ["büjigle-ne", "dance-nA"]
+    ],
+    "translation": "Suvdmaa dances now.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["aktionsart", "eventive"],
+      ["adverbial", "now"]
+    ],
+    "comment": "The translation is the intended reading.",
+    "verified": "page-image"
+  },
+  {
+    "id": "knick2026_7d",
+    "source": {"bibkey": "knick-2026", "paperLabel": "(7d)"},
+    "reportedIn": null,
+    "language": "halh1238",
+    "primaryText": "Suvdmaa margaash büjigle-ne.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Suvdmaa", "Suvdmaa"], ["margaash", "tomorrow"], ["büjigle-ne", "dance-nA"]
+    ],
+    "translation": "Suvdmaa will dance tomorrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["aktionsart", "eventive"],
+      ["adverbial", "tomorrow"]
+    ],
+    "comment": "The adverbial is optional.",
+    "verified": "page-image"
+  },
+  {
+    "id": "knick2026_8a",
+    "source": {"bibkey": "knick-2026", "paperLabel": "(8a)"},
+    "reportedIn": null,
+    "language": "halh1238",
+    "primaryText": "Bat odoo minii nuuts-iig med-ne.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bat", "Bat"], ["odoo", "now"], ["minii", "1SG.POSS"], ["nuuts-iig", "secret-ACC"],
+      ["med-ne", "know-nA"]
+    ],
+    "translation": "Bat knows my secret now.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["aktionsart", "stative"],
+      ["adverbial", "now"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "knick2026_8b",
+    "source": {"bibkey": "knick-2026", "paperLabel": "(8b)"},
+    "reportedIn": null,
+    "language": "halh1238",
+    "primaryText": "Bat margaash minii nuuts-iig med-ne.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bat", "Bat"], ["margaash", "tomorrow"], ["minii", "1SG.POSS"], ["nuuts-iig", "secret-ACC"],
+      ["med-ne", "know-nA"]
+    ],
+    "translation": "Bat will know my secret tomorrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["aktionsart", "stative"],
+      ["adverbial", "tomorrow"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "knick2026_8c",
+    "source": {"bibkey": "knick-2026", "paperLabel": "(8c)"},
+    "reportedIn": null,
+    "language": "halh1238",
+    "primaryText": "Khöshöö odoo uul-in oroi-d bairla-na.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Khöshöö", "statue"], ["odoo", "now"], ["uul-in", "mountain-GEN"], ["oroi-d", "top-DAT"],
+      ["bairla-na", "be.placed-nA"]
+    ],
+    "translation": "The statue is placed at the top of the mountain now.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["aktionsart", "stative"],
+      ["adverbial", "now"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "knick2026_8d",
+    "source": {"bibkey": "knick-2026", "paperLabel": "(8d)"},
+    "reportedIn": null,
+    "language": "halh1238",
+    "primaryText": "Khöshöö margaash uul-in oroi-d bairla-na.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Khöshöö", "statue"], ["margaash", "tomorrow"], ["uul-in", "mountain-GEN"],
+      ["oroi-d", "top-DAT"], ["bairla-na", "be.placed-nA"]
+    ],
+    "translation": "The statue will be placed at the top of the mountain tomorrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["aktionsart", "stative"],
+      ["adverbial", "tomorrow"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

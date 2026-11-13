@@ -1,0 +1,128 @@
+[
+  {
+    "id": "matthewson2006_5a",
+    "source": {"bibkey": "matthewson-2006", "paperLabel": "(5a)"},
+    "reportedIn": null,
+    "language": "lill1248",
+    "primaryText": "táyt-kan lhkúnsa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["táyt-kan", "hungry-1SG.SUBJ"], ["lhkúnsa", "now"]
+    ],
+    "translation": "I am hungry now.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["adverbial", "present"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "matthewson2006_5b",
+    "source": {"bibkey": "matthewson-2006", "paperLabel": "(5b)"},
+    "reportedIn": null,
+    "language": "lill1248",
+    "primaryText": "k'ác-an'-lhkan i-nátcw-as",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["k'ác-an'-lhkan", "dry-DIR-1SG.SUBJ"], ["i-nátcw-as", "when.PAST-one.day.away-3CONJ"]
+    ],
+    "translation": "I dried it yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["adverbial", "past"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "matthewson2006_5c",
+    "source": {"bibkey": "matthewson-2006", "paperLabel": "(5c)"},
+    "reportedIn": null,
+    "language": "lill1248",
+    "primaryText": "sáy'sez'-lhkan i-tsilkstásq'et-as",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["sáy'sez'-lhkan", "play-DIR-1SG.SUBJ"], ["i-tsilkstásq'et-as", "when.PAST-Friday-3CONJ"]
+    ],
+    "translation": "I played on Friday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["adverbial", "past"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "matthewson2006_6a",
+    "source": {"bibkey": "matthewson-2006", "paperLabel": "(6a)"},
+    "reportedIn": null,
+    "language": "lill1248",
+    "primaryText": "táyt-kan natcw",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["táyt-kan", "hungry-1SG.SUBJ"], ["natcw", "one.day.away"]
+    ],
+    "translation": "I will be hungry tomorrow.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["adverbial", "future"]
+    ],
+    "comment": "The paper gives *zánucwem* 'next year' as an alternative adverbial.",
+    "verified": "page-image"
+  },
+  {
+    "id": "matthewson2006_6b",
+    "source": {"bibkey": "matthewson-2006", "paperLabel": "(6b)"},
+    "reportedIn": null,
+    "language": "lill1248",
+    "primaryText": "k'ác-an'-lhkan natcw",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["k'ác-an'-lhkan", "dry-DIR-1SG.SUBJ"], ["natcw", "one.day.away"]
+    ],
+    "translation": "I will dry it tomorrow.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["adverbial", "future"]
+    ],
+    "comment": "The paper gives *zánucwem* 'next year' as an alternative adverbial.",
+    "verified": "page-image"
+  },
+  {
+    "id": "matthewson2006_6c",
+    "source": {"bibkey": "matthewson-2006", "paperLabel": "(6c)"},
+    "reportedIn": null,
+    "language": "lill1248",
+    "primaryText": "sáy'sez'-lhkan natcw",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["sáy'sez'-lhkan", "play-1SG.SUBJ"], ["natcw", "one.day.away"]
+    ],
+    "translation": "I will play tomorrow.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["adverbial", "future"]
+    ],
+    "comment": "The paper gives *zánucwem* 'next year' as an alternative adverbial.",
+    "verified": "page-image"
+  }
+]
