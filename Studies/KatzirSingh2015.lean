@@ -155,8 +155,7 @@ end GoodAnswer
 /-! ### Some and all
 
 The *some* and *all* alternatives over the three ways a set of grades, names or origins can fall,
-the vertices of the triangle of opposition: to none (`E`), to some but not all (`IO`), or to all
-(`A`). -/
+the vertices of the triangle of opposition: to none, to some but not all, or to all. -/
 
 /-- The scalar alternatives. -/
 inductive Scalar
@@ -170,7 +169,7 @@ def Scalar.meaning : Scalar → Set Triangle
 theorem Scalar.meaning_all_ssubset_some : Scalar.meaning .all_ ⊂ Scalar.meaning .some_ :=
   Finset.coe_ssubset.2 (by decide)
 
-theorem Scalar.mem_meaning_all : Triangle.A ∈ Scalar.meaning .all_ := Finset.mem_coe.2 (by decide)
+theorem Scalar.mem_meaning_all : Triangle.all ∈ Scalar.meaning .all_ := Finset.mem_coe.2 (by decide)
 
 section Scalar
 
@@ -179,7 +178,7 @@ variable {complexity : Scalar → C} {c : Set Triangle} {Q : Setoid Triangle}
 -- (17b), (20b)
 theorem goodAnswer_all (hc : complexity .all_ ≤ complexity .some_)
     (hr : Q.DeterminesOn (Scalar.meaning .all_) c) :
-    GoodAnswer Scalar.meaning complexity c Q .all_ .A :=
+    GoodAnswer Scalar.meaning complexity c Q .all_ .all :=
   ⟨⟨Scalar.mem_meaning_all, hr⟩, fun v _ _ ↦ by
     cases v
     exacts [⟨hc, Scalar.meaning_all_ssubset_some.subset⟩, le_rfl]⟩
@@ -188,7 +187,7 @@ theorem goodAnswer_all (hc : complexity .all_ ≤ complexity .some_)
 that determines *all*, whatever is known ((17a), (19a), (20a)). -/
 theorem not_goodAnswer_some (hc : complexity .all_ ≤ complexity .some_)
     (hr : Q.DeterminesOn (Scalar.meaning .all_) c) :
-    ¬ GoodAnswer Scalar.meaning complexity c Q .some_ .A :=
+    ¬ GoodAnswer Scalar.meaning complexity c Q .some_ .all :=
   not_goodAnswer_of_stronger hc Scalar.meaning_all_ssubset_some Scalar.mem_meaning_all hr
 
 end Scalar
@@ -197,10 +196,10 @@ end Scalar
 question, the explicit one of (20) included, the finest question, under which *all* is a good
 answer (`goodAnswer_all` with `Setoid.bot_determines`). -/
 theorem not_noTrivialAlternatives_scalar (u : Scalar) :
-    ¬ NoTrivialAlternatives {w | w ≠ .IO} (range Scalar.meaning) u.meaning :=
-  have h : ∀ v : Scalar, v.meaning ∩ {w | w ≠ Triangle.IO} = {Triangle.A} := by
+    ¬ NoTrivialAlternatives {w | w ≠ .someNotAll} (range Scalar.meaning) u.meaning :=
+  have h : ∀ v : Scalar, v.meaning ∩ {w | w ≠ Triangle.someNotAll} = {Triangle.all} := by
     rintro (_ | _)
-    exacts [Spector2014.corners_I_inter_ne_IO, Spector2014.corners_A_inter_ne_IO]
+    exacts [Spector2014.corners_I_inter_ne_someNotAll, Spector2014.corners_A_inter_ne_someNotAll]
   Spector2014.not_noTrivialAlternatives_of_inter_eq <| by
     rintro _ ⟨v, rfl⟩
     rw [h u, h v]

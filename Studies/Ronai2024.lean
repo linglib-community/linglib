@@ -23,8 +23,8 @@ of Sun, Tian and Breheny is put down to the corrective context of *P so not Q*.
 ## Implementation notes
 
 * A scale ⟨P, Q⟩ with `Q ⊆ P` puts each individual of the domain in one of the three cells of
-  `Aristotelian.Triangle`, ordered as *none* < *some but not all* < *all*: neither term (`E`),
-  the weak term only (`IO`), or the strong term (`A`).
+  `Aristotelian.Triangle`, ordered as *none* < *some but not all* < *all*: neither term
+  (`none`), the weak term only (`someNotAll`), or the strong term (`all`).
 * The rows carry the condition means of Figure 1 and the per-scale strong-inference rates of
   both experiments, computed from the raw data the paper deposits.
 
@@ -98,7 +98,7 @@ theorem compatible_iff_not_strong (m : ι → Triangle) :
 
 theorem compatible_not_literal :
     ∃ m : Bool → Triangle, compatible m ∧ ¬ Exp1Some.reading .literal m :=
-  ⟨fun b ↦ if b then .A else .E, by decide⟩
+  ⟨fun b ↦ if b then .all else .none, by decide⟩
 
 /-! ### Readings and the inferences they support (§3.4) -/
 
@@ -119,9 +119,9 @@ theorem supports_iff (ℓ : ReadingLabel) (n : Inference) : Supports ℓ n ↔ n
   refine ⟨fun h ↦ ?_, fun h ι _ m hm ↦ ?_⟩
   · cases ℓ <;> cases n <;> first
       | decide
-      | exact absurd (h (fun _ : Unit ↦ .A) (by decide)) (by decide)
-      | exact absurd (h (fun b : Bool ↦ if b then .A else .IO) (by decide)) (by decide)
-      | exact absurd (h (fun _ : Unit ↦ .IO) (by decide)) (by decide)
+      | exact absurd (h (fun _ : Unit ↦ .all) (by decide)) (by decide)
+      | exact absurd (h (fun b : Bool ↦ if b then .all else .someNotAll) (by decide)) (by decide)
+      | exact absurd (h (fun _ : Unit ↦ .someNotAll) (by decide)) (by decide)
   · cases ℓ <;> cases n <;>
       simp only [supported, Finset.mem_insert, Finset.mem_singleton, reduceCtorEq, or_self,
         or_false, false_or] at h
@@ -172,7 +172,7 @@ theorem exp1_monotone :
 
 theorem literal_and_compatible :
     ∃ m : Unit → Triangle, Exp1Some.reading .literal m ∧ compatible m :=
-  ⟨fun _ ↦ .A, by decide⟩
+  ⟨fun _ ↦ .all, by decide⟩
 
 theorem not_compatible_of_local {m : ι → Triangle} (h : Exp1Some.reading .local_ m) :
     ¬ compatible m :=

@@ -139,7 +139,7 @@ theorem choice_one_five_atLeast :
 /-! ### Scalar trials
 
 A box's vertex of the triangle of opposition records whether Cookie Monster has none of the
-cookies (`E`), some but not all of them (`IO`), or all (`A`). On the scale the vertices form,
+cookies, some but not all of them, or all. On the scale the vertices form,
 literal *some* holds above the bottom, *all* at the top, and *some* strengthened by its
 implicature *not all* strictly between. -/
 
@@ -154,27 +154,27 @@ abbrev allLiteral : Triangle → Prop := (· = ⊤)
 /-- *Some* strengthened by *not all* holds strictly between the bottom and top vertices. -/
 abbrev someStrengthened : Triangle → Prop := fun t ↦ ⊥ < t ∧ t < ⊤
 
-theorem some_none_some : choice someLiteral ⟨.E, .IO⟩ = some (.visible .IO) := by
+theorem some_none_some : choice someLiteral ⟨.none, .someNotAll⟩ = some (.visible .someNotAll) := by
   decide
 
-theorem some_some_all_literal : choice someLiteral ⟨.IO, .A⟩ = Option.none := by decide
+theorem some_some_all_literal : choice someLiteral ⟨.someNotAll, .all⟩ = Option.none := by decide
 
 theorem some_some_all_strengthened :
-    choice someStrengthened ⟨.IO, .A⟩ = some (.visible .IO) := by decide
+    choice someStrengthened ⟨.someNotAll, .all⟩ = some (.visible .someNotAll) := by decide
 
 /-- In some(NONE,ALL), the control for implicature cancellation, the literal meaning picks the
 total set, which adults and children chose, and the strengthened meaning the covered box. -/
-theorem some_none_all_literal : choice someLiteral ⟨.E, .A⟩ = some (.visible .A) := by
+theorem some_none_all_literal : choice someLiteral ⟨.none, .all⟩ = some (.visible .all) := by
   decide
 
-theorem some_none_all_strengthened : choice someStrengthened ⟨.E, .A⟩ = some .covered := by
+theorem some_none_all_strengthened : choice someStrengthened ⟨.none, .all⟩ = some .covered := by
   decide
 
-theorem all_none_all : choice allLiteral ⟨.E, .A⟩ = some (.visible .A) := by decide
+theorem all_none_all : choice allLiteral ⟨.none, .all⟩ = some (.visible .all) := by decide
 
-theorem all_some_all : choice allLiteral ⟨.IO, .A⟩ = some (.visible .A) := by decide
+theorem all_some_all : choice allLiteral ⟨.someNotAll, .all⟩ = some (.visible .all) := by decide
 
-theorem all_some_none : choice allLiteral ⟨.IO, .E⟩ = some .covered := by decide
+theorem all_some_none : choice allLiteral ⟨.someNotAll, .none⟩ = some .covered := by decide
 
 /-! ### Two-knowers -/
 

@@ -80,19 +80,19 @@ instance : MeasurableSpace World := ⊤
 instance : DiscreteMeasurableSpace World := ⟨fun _ ↦ trivial⟩
 
 /-- The world with only N-type aliens (each drank none). -/
-def wN : World := ⟨{.E}, Finset.singleton_nonempty _⟩
+def wN : World := ⟨{.none}, Finset.singleton_nonempty _⟩
 /-- The world with N-type and S-type aliens. -/
-def wNS : World := ⟨{.E, .IO}, by decide +kernel⟩
+def wNS : World := ⟨{.none, .someNotAll}, by decide +kernel⟩
 /-- The world with N-type and A-type aliens. -/
-def wNA : World := ⟨{.E, .A}, by decide +kernel⟩
+def wNA : World := ⟨{.none, .all}, by decide +kernel⟩
 /-- The world with all three alien types. -/
-def wNSA : World := ⟨{.E, .IO, .A}, by decide +kernel⟩
+def wNSA : World := ⟨{.none, .someNotAll, .all}, by decide +kernel⟩
 /-- The world with only S-type aliens (each drank some but not all). -/
-def wS : World := ⟨{.IO}, Finset.singleton_nonempty _⟩
+def wS : World := ⟨{.someNotAll}, Finset.singleton_nonempty _⟩
 /-- The world with S-type and A-type aliens. -/
-def wSA : World := ⟨{.IO, .A}, by decide +kernel⟩
+def wSA : World := ⟨{.someNotAll, .all}, by decide +kernel⟩
 /-- The world with only A-type aliens (each drank all). -/
-def wA : World := ⟨{.A}, Finset.singleton_nonempty _⟩
+def wA : World := ⟨{.all}, Finset.singleton_nonempty _⟩
 
 instance : Nonempty World := ⟨wN⟩
 
@@ -228,7 +228,7 @@ def matrixAlts (u : Utterance) : List AltSentence :=
   u.outer.altCandidates ×ˢ u.inner.altCandidates
 
 /-- After EXH enrichment, when licensed, inner *some* is conjoined with its not-all implicature
-and holds at the `IO` vertex exactly; Exh(none) and Exh(all) are vacuous. -/
+and holds at the `someNotAll` vertex exactly; Exh(none) and Exh(all) are vacuous. -/
 def enrichedSat (qi : AristQuant) (p : Parse) (t : Triangle) : Prop :=
   (↑qi : AltQuant).sat t ∧ (ExhPosition.inner ∈ p ∧ qi = .some → t < ⊤)
 
@@ -280,36 +280,36 @@ the world's alien-type set, not a truth vector. -/
 
 -- Table 1, fn. 7
 theorem table1_nn : ∀ (p : Parse) (w : World),
-    exhMeaning p .nn w ↔ (.E ∉ w ∧ (.matrix ∈ p → w ≠ wA)) := by decide +kernel
+    exhMeaning p .nn w ↔ (.none ∉ w ∧ (.matrix ∈ p → w ≠ wA)) := by decide +kernel
 
 -- Table 1
 theorem table1_ns : ∀ (p : Parse) (w : World),
     exhMeaning p .ns w ↔
-      if .inner ∈ p then .IO ∉ w ∧ (.matrix ∈ p → w ≠ wN)
+      if .inner ∈ p then .someNotAll ∉ w ∧ (.matrix ∈ p → w ≠ wN)
       else w = wN := by decide +kernel
 
 -- Table 1
 theorem table1_na : ∀ (p : Parse) (w : World),
-    exhMeaning p .na w ↔ (.A ∉ w ∧ (.matrix ∈ p → w ≠ wN)) := by decide +kernel
+    exhMeaning p .na w ↔ (.all ∉ w ∧ (.matrix ∈ p → w ≠ wN)) := by decide +kernel
 
 -- Table 1
 theorem table1_sn : ∀ (p : Parse) (w : World),
     exhMeaning p .sn w ↔
-      (.E ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wN)) := by decide +kernel
+      (.none ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wN)) := by decide +kernel
 
 /-- Table 1 gives SS five row-groups, according to which of inner, outer and matrix EXH the parse
 contains. -/
 theorem table1_ss : ∀ (p : Parse) (w : World),
     exhMeaning p .ss w ↔
-      if .inner ∈ p then .IO ∈ w ∧ (.outer ∈ p → w ≠ wS)
-      else if .outer ∈ p then .E ∈ w ∧ w ≠ wN
+      if .inner ∈ p then .someNotAll ∈ w ∧ (.outer ∈ p → w ≠ wS)
+      else if .outer ∈ p then .none ∈ w ∧ w ≠ wN
       else if .matrix ∈ p then w = wNS
       else w ≠ wN := by decide +kernel
 
 -- Table 1
 theorem table1_sa : ∀ (p : Parse) (w : World),
     exhMeaning p .sa w ↔
-      (.A ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wA)) := by decide +kernel
+      (.all ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wA)) := by decide +kernel
 
 -- Table 1
 theorem table1_an : ∀ (p : Parse) (w : World), exhMeaning p .an w ↔ w = wN := by decide +kernel
@@ -318,7 +318,7 @@ theorem table1_an : ∀ (p : Parse) (w : World), exhMeaning p .an w ↔ w = wN :
 theorem table1_as : ∀ (p : Parse) (w : World),
     exhMeaning p .as w ↔
       if .inner ∈ p then w = wS
-      else .E ∉ w ∧ (.matrix ∈ p → w ≠ wA) := by decide +kernel
+      else .none ∉ w ∧ (.matrix ∈ p → w ≠ wA) := by decide +kernel
 
 -- Table 1
 theorem table1_aa : ∀ (p : Parse) (w : World), exhMeaning p .aa w ↔ w = wA := by decide +kernel

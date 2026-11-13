@@ -95,26 +95,29 @@ theorem NoTrivialAlternatives.squiggleSet {fv : Set (Set W)} (h : NoTrivialAlter
 /-! ### Some and each
 
 The alternatives *some of these kids* and *each of these kids* over the vertices of the triangle
-of opposition, siblings sharing their last name in the worlds other than `IO`. -/
+of opposition, siblings sharing their last name in the worlds other than
+`someNotAll`. -/
 
 /-- The `I` and `A` corners of the square. -/
 abbrev someAll : Set (Set Triangle) := {↑Triangle.corners.I, ↑Triangle.corners.A}
 
-theorem corners_I_inter_ne_IO : (↑Triangle.corners.I : Set Triangle) ∩ {w | w ≠ .IO} = {.A} := by
+theorem corners_I_inter_ne_someNotAll :
+    (↑Triangle.corners.I : Set Triangle) ∩ {w | w ≠ .someNotAll} = {.all} := by
   ext w
   cases w <;> simp [Triangle.corners]
 
-theorem corners_A_inter_ne_IO : (↑Triangle.corners.A : Set Triangle) ∩ {w | w ≠ .IO} = {.A} := by
+theorem corners_A_inter_ne_someNotAll :
+    (↑Triangle.corners.A : Set Triangle) ∩ {w | w ≠ .someNotAll} = {.all} := by
   ext w
   cases w <;> simp [Triangle.corners]
 
 -- (2), (22)
 theorem not_noTrivialAlternatives_someAll {φ : Set Triangle} (hφ : φ ∈ someAll) :
-    ¬ NoTrivialAlternatives {w | w ≠ .IO} someAll φ :=
+    ¬ NoTrivialAlternatives {w | w ≠ .someNotAll} someAll φ :=
   not_noTrivialAlternatives_of_inter_eq fun ψ hψ ↦ by
-    have h : ∀ χ ∈ someAll, χ ∩ {w | w ≠ Triangle.IO} = {Triangle.A} := by
+    have h : ∀ χ ∈ someAll, χ ∩ {w | w ≠ Triangle.someNotAll} = {Triangle.all} := by
       rintro χ (rfl | rfl)
-      exacts [corners_I_inter_ne_IO, corners_A_inter_ne_IO]
+      exacts [corners_I_inter_ne_someNotAll, corners_A_inter_ne_someNotAll]
     rw [h φ hφ, h ψ hψ]
 
 private theorem corners_A_ssubset_I :
@@ -122,20 +125,21 @@ private theorem corners_A_ssubset_I :
   Finset.coe_ssubset.2 (by decide)
 
 -- (2a)
-theorem odd_some : Magri2009.Odd {w | w ≠ .IO} someAll ↑Triangle.corners.I := by
-  rw [Magri2009.odd_pair_iff (nonempty_of_ssubset corners_A_ssubset_I), corners_I_inter_ne_IO]
+theorem odd_some : Magri2009.Odd {w | w ≠ .someNotAll} someAll ↑Triangle.corners.I := by
+  rw [Magri2009.odd_pair_iff (nonempty_of_ssubset corners_A_ssubset_I),
+    corners_I_inter_ne_someNotAll]
   exact singleton_subset_iff.2 (Finset.mem_coe.2 (by decide))
 
 /-- The strengthened meaning of *each* does not contradict the common knowledge that makes it
 equivalent to *some* (2b). -/
-theorem not_odd_all : ¬ Magri2009.Odd {w | w ≠ .IO} someAll ↑Triangle.corners.A := by
+theorem not_odd_all : ¬ Magri2009.Odd {w | w ≠ .someNotAll} someAll ↑Triangle.corners.A := by
   have h : Exhaustification.exhIE someAll (↑Triangle.corners.A : Set Triangle) =
       ↑Triangle.corners.A :=
     Exhaustification.exhIE_eq_self_of_forall _ _ <| by
       rintro a (rfl | rfl) -
       exacts [corners_A_ssubset_I.subset, subset_rfl]
   rw [Magri2009.Odd, h]
-  exact not_disjoint_iff.2 ⟨.A, Finset.mem_coe.2 (by decide), by simp⟩
+  exact not_disjoint_iff.2 ⟨.all, Finset.mem_coe.2 (by decide), by simp⟩
 
 /-! ### Numerals -/
 

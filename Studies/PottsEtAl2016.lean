@@ -59,16 +59,16 @@ instance : MeasurableSpace World := ⊤
 
 /-- The outcomes of a state. -/
 def World.outcomes : World → Multiset Triangle
-  | .NNN => {.E, .E, .E}
-  | .NNS => {.E, .E, .IO}
-  | .NNA => {.E, .E, .A}
-  | .NSS => {.E, .IO, .IO}
-  | .NSA => {.E, .IO, .A}
-  | .NAA => {.E, .A, .A}
-  | .SSS => {.IO, .IO, .IO}
-  | .SSA => {.IO, .IO, .A}
-  | .SAA => {.IO, .A, .A}
-  | .AAA => {.A, .A, .A}
+  | .NNN => {.none, .none, .none}
+  | .NNS => {.none, .none, .someNotAll}
+  | .NNA => {.none, .none, .all}
+  | .NSS => {.none, .someNotAll, .someNotAll}
+  | .NSA => {.none, .someNotAll, .all}
+  | .NAA => {.none, .all, .all}
+  | .SSS => {.someNotAll, .someNotAll, .someNotAll}
+  | .SSA => {.someNotAll, .someNotAll, .all}
+  | .SAA => {.someNotAll, .all, .all}
+  | .AAA => {.all, .all, .all}
 
 /-- The quantifiers over a player's shots are *every*, *no* and *some*. -/
 inductive ShotQ where
@@ -95,8 +95,8 @@ instance : MeasurableSpace Lex := ⊤
 
 /-- Under a lexicon *some* covers the outcomes with any hit, or those with some but not all. -/
 def Lex.someDen : Lex → Finset Triangle
-  | .weak => {.IO, .A}
-  | .strong => {.IO}
+  | .weak => {.someNotAll, .all}
+  | .strong => {.someNotAll}
 
 -- (11)
 theorem lex_refines : ∀ l : Lex, l.someDen.Nonempty ∧ l.someDen ⊆ Lex.weak.someDen := by
