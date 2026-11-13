@@ -19,38 +19,14 @@ public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 # The Grossman–Larson product
 
 This file defines the Grossman–Larson product on the free module of forests of nonplanar rooted
-trees. The product `F ⋆ G` sums, over the splits `G = G₁ + G₂`, the forests obtained by grafting
-the trees of `G₂` onto vertices of `F` in all ways, with the trees of `G₁` placed alongside.
-Grossman and Larson introduce the product; the closed form used here is Foissy's Theorem 5.1,
-through the Guin–Oudom extension of the grafting product.
-
-The module of forests is `ConnesKreimer R (UnorderedTree α)`, which Oudom and Guin read as the
-symmetric algebra on the trees: its own product is the disjoint union of forests. The insertion
-`x ∘ y` and the product `x ⋆ y` are bilinear maps on it, and the algebra `GrossmanLarson R α` is
-that module with `⋆` as its multiplication.
-
-## Main definitions
-
-* `UnorderedTree.productMultiset F G`: the forests in the product `F ⋆ G`, with multiplicity.
-* `GrossmanLarson.insertion`: the Guin–Oudom extension `x ∘ y` of the grafting product, grafting
-  every tree of `y` onto a vertex of `x`.
-* `GrossmanLarson.product`: the Grossman–Larson product `x ⋆ y`.
-* `GrossmanLarson R α`: the forests with the product `⋆`.
-* `GrossmanLarson.ι`: the pre-Lie algebra of trees as the one-tree forests.
-
-## Main results
-
-* `GrossmanLarson.insertion_one_left`, `GrossmanLarson.insertion_of'_add`,
-  `GrossmanLarson.counit_insertion`: Oudom and Guin's rules `1 ∘ x = ε(x)`,
-  `AB ∘ C = Σ (A ∘ C₍₁₎)(B ∘ C₍₂₎)` and `ε(x ∘ y) = ε(x) ε(y)`, on basis forests for the second.
-* `GrossmanLarson.product_of'`: `x ⋆ G = Σ_{G = G₁ + G₂} (x ∘ G₂) G₁`.
-* `GrossmanLarson.counit_product`: the counit is multiplicative for `⋆`.
-* `GrossmanLarson.comulPrim_product_of'_of'`: so is the coproduct in which every tree is
-  primitive, `Δ(x ⋆ y) = Σ (x₍₁₎ ⋆ y₍₁₎) ⊗ (x₍₂₎ ⋆ y₍₂₎)`, on basis forests.
-* `GrossmanLarson.instNonAssocSemiring`: the empty forest is a two-sided unit; associativity and
-  the `Semiring` and `Algebra` instances are in `GrossmanLarson/Algebra.lean`.
-* `GrossmanLarson.toConnesKreimer_ι_mul`, `GrossmanLarson.toConnesKreimer_ι_mul_ι`: on one-tree
-  forests, `∘` is the grafting product and `x ⋆ y = x y + x ∘ y`.
+trees, `ConnesKreimer R (UnorderedTree α)`, which Oudom and Guin read as the symmetric algebra on
+the trees. Their [insertion](##GrossmanLarson.insertion) `x ∘ y` grafts every tree of `y` onto a
+vertex of `x`, and [splits its guests over a disjoint union](##GrossmanLarson.insertion_mul),
+$(xy) \circ z = (x \circ z_{(1)})(y \circ z_{(2)})$, for the coproduct in which every tree is
+primitive. The [product](##GrossmanLarson.product_apply) is
+$x \star y = (x \circ y_{(1)})\,y_{(2)}$: each tree of `y` is grafted onto `x` or placed
+alongside it. The algebra `GrossmanLarson R α` is the module with `⋆` as its multiplication, and
+[contains](##GrossmanLarson.ι) the pre-Lie algebra of trees as the one-tree forests.
 
 ## Implementation notes
 
@@ -61,6 +37,12 @@ on the underlying module, where the disjoint-union product is available to state
 
 The insertion `x ∘ y` grafts every tree of `y` onto the original `x`. It is not iterated one-tree
 insertion, which would also graft later trees onto earlier ones.
+
+## TODO
+
+* The insertion is comultiplicative, `Δ(x ∘ y) = (x₍₁₎ ∘ y₍₁₎) ⊗ (x₍₂₎ ∘ y₍₂₎)`, and a right action
+  of the product, `(x ∘ y) ∘ z = x ∘ (y ⋆ z)`: (iii) and (v) of Proposition 3.9 of
+  [oudom-guin-2008]. The second gives their direct proof of associativity.
 
 ## References
 
@@ -84,8 +66,7 @@ variable {R : Type*} [CommSemiring R] {α : Type*}
 /-- The Guin–Oudom extension `x ∘ y` of the grafting product sums, on basis forests, the
 graftings of every tree of `G` onto a vertex of `F`. -/
 noncomputable def insertion :
-    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) →ₗ[R]
-      ConnesKreimer R (UnorderedTree α) :=
+    LinearMap.BilinMap R (ConnesKreimer R (UnorderedTree α)) (ConnesKreimer R (UnorderedTree α)) :=
   linearLift fun F ↦ linearLift fun G ↦ ((insertionMultiset F G).map of').sum
 
 @[simp] theorem insertion_of'_of' (F G : Forest (UnorderedTree α)) :
@@ -122,6 +103,32 @@ theorem insertion_of'_add (A B C : Forest (UnorderedTree α)) :
   refine congrArg Multiset.sum (Multiset.map_congr rfl fun p _ ↦ ?_)
   rw [insertion_of'_of', insertion_of'_of', Multiset.sum_map_conv _ _ of'_add]
 
+/-- (iii) of Proposition 3.7 of [oudom-guin-2008]: grafting into a product splits the guests
+between the two factors, `(x y) ∘ z = (x ∘ z₍₁₎)(y ∘ z₍₂₎)`. -/
+theorem insertion_mul (x y z : ConnesKreimer R (UnorderedTree α)) :
+    insertion (x * y) z =
+      LinearMap.mul' R _ (TensorProduct.map (insertion x) (insertion y) (comulPrim z)) := by
+  have key (A B : Forest (UnorderedTree α)) : insertion (of' (R := R) A * of' B) z =
+      LinearMap.mul' R _
+        (TensorProduct.map (insertion (of' A)) (insertion (of' B)) (comulPrim z)) := by
+    refine LinearMap.congr_fun (lhom_ext' (f := insertion (of' A * of' B))
+      (g := LinearMap.mul' R _ ∘ₗ TensorProduct.map (insertion (of' A)) (insertion (of' B)) ∘ₗ
+        comulPrim.toLinearMap) fun C ↦ ?_) z
+    rw [← of'_add, insertion_of'_add]
+    simp [comulPrim_of', map_multiset_sum, Multiset.map_map, Function.comp_def]
+  induction x using induction_linear with
+  | zero => simp
+  | add a b ha hb =>
+    simp only [add_mul, map_add, LinearMap.add_apply, ha, hb, TensorProduct.map_add_left]
+  | single A r =>
+    induction y using induction_linear with
+    | zero => simp
+    | add a b ha hb =>
+      simp only [mul_add, map_add, LinearMap.add_apply, ha, hb, TensorProduct.map_add_right]
+    | single B s =>
+      simp only [← smul_of', smul_mul_smul_comm, map_smul, LinearMap.smul_apply, key,
+        TensorProduct.map_smul_left, TensorProduct.map_smul_right, smul_smul, mul_comm r s]
+
 private theorem counit_insertion_of'_of' (F G : Forest (UnorderedTree α)) :
     counit (insertion (of' F) (of' G)) = counit (of' (R := R) F) * counit (of' (R := R) G) := by
   rcases eq_or_ne F 0 with rfl | hF
@@ -142,8 +149,7 @@ theorem counit_insertion (x y : ConnesKreimer R (UnorderedTree α)) :
 
 /-- The Grossman–Larson product `x ⋆ y`, on basis forests the sum over `productMultiset`. -/
 noncomputable def product :
-    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) →ₗ[R]
-      ConnesKreimer R (UnorderedTree α) :=
+    LinearMap.BilinMap R (ConnesKreimer R (UnorderedTree α)) (ConnesKreimer R (UnorderedTree α)) :=
   linearLift fun F ↦ linearLift fun G ↦ ((productMultiset F G).map of').sum
 
 @[simp] theorem product_of'_of' (F G : Forest (UnorderedTree α)) :
@@ -164,6 +170,14 @@ theorem product_of' (x : ConnesKreimer R (UnorderedTree α)) (G : Forest (Unorde
       Multiset.map_bind, Multiset.sum_bind, Multiset.smul_sum, Multiset.map_map]
     refine congrArg Multiset.sum (Multiset.map_congr rfl fun p _ ↦ ?_)
     simp [← Multiset.sum_map_mul_right, Multiset.smul_sum, Multiset.map_map]
+
+/-- Definition 3.10 of [oudom-guin-2008]: `x ⋆ y = (x ∘ y₍₁₎) y₍₂₎`. -/
+theorem product_apply (x y : ConnesKreimer R (UnorderedTree α)) :
+    product x y = LinearMap.mul' R _ ((insertion x).rTensor _ (comulPrim y)) := by
+  refine LinearMap.congr_fun (lhom_ext' (f := product x)
+    (g := LinearMap.mul' R _ ∘ₗ (insertion x).rTensor _ ∘ₗ comulPrim.toLinearMap) fun G ↦ ?_) y
+  rw [product_of', ← Multiset.map_swap_antidiagonal, Multiset.map_map]
+  simp [comulPrim_of', map_multiset_sum, Multiset.map_map, Function.comp_def]
 
 theorem product_one_right (x : ConnesKreimer R (UnorderedTree α)) : product x 1 = x := by
   refine LinearMap.congr_fun (lhom_ext' (f := product.flip 1) (g := .id) fun F ↦ ?_) x
