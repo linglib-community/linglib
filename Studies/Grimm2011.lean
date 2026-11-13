@@ -1,10 +1,10 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.Case
 public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.OfEntailmentProfile
 public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.OfLifespan
 public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Linglib.Semantics.Reference.Definiteness
+public import Mathlib.Order.Interval.Set.OrdConnected
 public import Studies.Dowty1991
 public import Linglib.Data.Examples.Readers
 
@@ -13,19 +13,26 @@ public import Linglib.Data.Examples.Readers
 
 Grimm recasts Dowty's proto-role entailments as four privative agentivity properties and four
 persistence properties, whose product orders participant types by semantic prominence, and
-treats a case as a connected region of that lattice. This file supplies the paper's placements
-on the lattice of `Semantics/ArgumentStructure/` and reads its predictions off the interval
-characterizations of the case regions.
+treats a case as a region of that lattice spreading outwards from the maximal agent or the maximal
+patient. This file places the paper's verbs on the lattice of `Semantics/ArgumentStructure/` and
+defines its case regions as order intervals, so that [each is connected](##ordConnected_regions).
+The transitivity hierarchy is [a progression of the patient away from the maximal
+patient](##transitivity_hierarchy), and the Russian object of an opacity-creating verb is
+[in the accusative region exactly when its noun phrase refers](##genitive_accusative_alternation).
+Dowty's Proto-Patient entailments, read through Grimm's correspondences, [place the object of
+*build* strictly below qualitative persistence (beginning)](##build_object_admits_iff).
 
 ## Implementation notes
 
-The paper's remarks on differential object marking, deferred to Grimm (2005), and on the size of
-the nominative or ergative region in a given language are not formalized. Definiteness is the
-substrate scale, the paper's three-step hierarchy (14), and the referring feature, the one that
-entails existence, is its cut at the specific indefinites.
-The entailments of a node, which subject selection counts, are its agentivity and persistence
-features (`entailmentCount`). The subject of *kiss* dominates its object at any common
-persistence level, since kissing changes neither (`kiss_subject_dominates`).
+The case regions are those drawn in the paper's schematic figures: the nominative or ergative
+region is the total persistence branch, the accusative or absolutive region the two nodes without
+agentivity at existential and qualitative persistence (beginning), and the dative region the node
+of sentience at qualitative persistence (beginning). The paper leaves the extent of a region to
+the language, and its middle, oblique region is not delimited, so neither is formalized; nor are
+the remarks on differential object marking, deferred to Grimm (2005). Definiteness is the
+substrate scale, the paper's three-step hierarchy, and the referring feature, the one that
+entails existence, is its cut at the specific indefinites. The entailments of a node, which
+subject selection counts, are its agentivity and persistence features (`entailmentCount`).
 
 ## References
 
@@ -75,6 +82,31 @@ theorem canonical_verbs_mem_lattice :
 theorem see_subject_agentivity :
     perception.subjectProfile.toAgentivity = knowAgentivity := by decide
 
+/-! ### Named participant types
+
+The maximal agent, with every agentivity property at total persistence, is the top of the
+lattice. -/
+
+/-- The maximal patient: no agentivity property, existing when the event begins but not after it,
+as the object of *break* or *destroy* does (Fig. 4). -/
+def maximalPatient : ParticipantType := (∅, .exPersBeginning)
+
+/-- Instigation alone at total persistence, the minimal acceptable agent of *kill*: a natural force
+such as electricity, or the explosion. -/
+def minimalInstigator : ParticipantType := ({.instigation}, .totalPersistence)
+
+/-- The agent of *break* and of *shoot*, Fig. 5's Ia and IIa: instigation and motion at total
+persistence. -/
+def effectorAgent : ParticipantType := ({.instigation, .motion}, .totalPersistence)
+
+/-- The agent of *search*, Fig. 5's IIIa: instigation, motion and sentience at total
+persistence. -/
+def pursuitAgent : ParticipantType := ({.sentience, .instigation, .motion}, .totalPersistence)
+
+/-- The recipient of *geben* (9): sentience at qualitative persistence (beginning), consciously
+involved as a possessor and qualitatively changed in its possessions. -/
+def recipient : ParticipantType := ({.sentience}, .quPersBeginning)
+
 /-! ### Dowty's Proto-Patient entailments and persistence, section 2.1
 
 Grimm relates two of Dowty's Proto-Patient entailments to persistence (`EntailmentProfile.Admits`):
@@ -95,35 +127,13 @@ theorem build_object_not_admits_exPersEnd :
     ¬ (Dowty1991.entailed Dowty1991.Examples.buildObject).Admits .exPersEnd :=
   fun h ↦ absurd ((build_object_admits_iff _).1 h) (by decide)
 
-/-! ### Argument ranges and subject selection, section 2.3
+/-! ### Subject selection, section 2.3
 
-The argument whose node dominates the other's is selected as subject. The agent of *kill* need
-only instigate, so natural forces such as electricity and eventive nominals such as the explosion
-are acceptable subjects, and so is every node above them: agents are upward closed. The patient
-of *hit* canonically changes qualitatively, but the object of the conative *hit at* is unaffected
-and an object may happen to be destroyed, while an entity that does not exist when the event
-begins cannot be hit: patients are closed downward to the existence of the entity. -/
+The argument whose node dominates the other's is selected as subject, which the paper equates
+with having the greater number of entailments. -/
 
-/-- Everything above the minimal instigator is in the nominative or ergative region: the range of
-the subject of *kill*, from the interval characterization of that region. -/
-theorem kill_subject_range {n : ParticipantType} (h : minimalInstigator ≤ n) :
-    n.toCaseRegion = .nomErg :=
-  (ParticipantType.toCaseRegion_eq_nomErg_iff n).mpr h
-
-theorem kill_subject_endpoints :
-    minimalInstigator.toCaseRegion = .nomErg ∧ (⊤ : ParticipantType).toCaseRegion = .nomErg :=
-  ⟨kill_subject_range le_rfl, kill_subject_range le_top⟩
-
-/-- The persistence levels an entity that exists when the event begins can have are the up-set
-of existential persistence (beginning): the range of the patient of *hit* and, in section 3, the
-persistence axis of the transitivity region. -/
-theorem transitive_region_eq_Ici (n : ParticipantType) :
-    n.InTransitiveRegion ↔ PersistenceLevel.exPersBeginning ≤ n.2 := by
-  revert n; decide
-
-/-- The pseudo-cleft (5) presupposes that its object exists when the event begins: a destroyed
-object meets the presupposition, *What John did to the table was ruin it*, and a created one does
-not, *\*What John did to the table was build it*. -/
+-- (5): a destroyed object exists when the event begins, *What John did to the table was ruin
+-- it*, and a created one does not, *\*What John did to the table was build it*
 theorem pseudoCleft_presupposition {T Q : Type*} [LinearOrder T] [DecidableEq Q]
     {life run : NonemptyInterval T} {q : T → Q} :
     (PersistenceLevel.ofLifespan life run q = .exPersBeginning → run.fst ∈ life) ∧
@@ -151,7 +161,7 @@ theorem entailmentCount_strictMono : StrictMono entailmentCount := fun n m h ↦
 theorem exists_entailmentCount_lt_incomparable :
     ∃ n ∈ ParticipantType.lattice, ∃ m ∈ ParticipantType.lattice,
       entailmentCount n < entailmentCount m ∧ ¬ n ≤ m ∧ ¬ m ≤ n :=
-  ⟨sentientNonInstigator, ParticipantType.mem_lattice.2 (by decide), minimalInstigator,
+  ⟨recipient, ParticipantType.mem_lattice.2 (by decide), minimalInstigator,
     ParticipantType.mem_lattice.2 (by decide), by decide⟩
 
 -- (43) of [dowty-1991]
@@ -167,56 +177,117 @@ theorem kiss_subject_outranks :
 
 /-! ### The transitivity region and the effectiveness hierarchy, section 3
 
-[tsunoda-1985]'s hierarchy, the paper's (8): resultative effective action verbs (*break*) above
-contact verbs (*shoot*) above pursuit verbs (*search*). The agent of the first two classes
-entails instigation and motion; the agent of pursuit adds sentience (Fig. 5). -/
+The canonical transitive situation has an agent acting and an object undergoing the effects of
+the action, which it can only do if it exists when the event begins. The hierarchy (8), a part of
+[tsunoda-1985]'s, ranks resultative effective action verbs (*break*) above contact verbs
+(*shoot*) above pursuit verbs (*search*). -/
 
-/-- The agent of *search*, Fig. 5's IIIa: instigation, motion, and sentience at total
-persistence. -/
-def pursuitAgent : ParticipantType := ({.sentience, .instigation, .motion}, .totalPersistence)
+/-- The transitivity region (Fig. 4): the nodes of an argument that exists when the event
+begins, the up-set of existential persistence (beginning) on the persistence axis. -/
+def transitivityRegion : Set ParticipantType := Prod.snd ⁻¹' Set.Ici .exPersBeginning
+
+instance : DecidablePred (· ∈ transitivityRegion) := fun n ↦
+  inferInstanceAs (Decidable (PersistenceLevel.exPersBeginning ≤ n.2))
+
+theorem mk_mem_transitivityRegion {a : Agentivity} {l : PersistenceLevel} :
+    (a, l) ∈ transitivityRegion ↔ .exPB ∈ l :=
+  PersistenceLevel.exPB_mem_iff.symm
+
+-- pp. 529–530: the region excludes the nodes of existential persistence (end) and total
+-- non-persistence
+theorem mk_mem_transitivityRegion_iff_ne {a : Agentivity} {l : PersistenceLevel} :
+    (a, l) ∈ transitivityRegion ↔ l ≠ .exPersEnd ∧ l ≠ .totalNonPersistence := by
+  change PersistenceLevel.exPersBeginning ≤ l ↔ _
+  revert l; decide
+
+/-- The verb classes of the hierarchy (8). -/
+inductive TransitivityRank where
+  /-- Resultative effective action, *kill* and *break*: the object is destroyed. -/
+  | resultativeEffective
+  /-- Contact, *shoot* and *hit*: the object is affected but persists. -/
+  | contact
+  /-- Pursuit, *search* and *seek*: the object need not exist. -/
+  | pursuit
+  deriving DecidableEq, Repr
+
+/-- The canonical patient of each class, Fig. 5's Ip, IIp and IIIp. -/
+def TransitivityRank.patientType : TransitivityRank → ParticipantType
+  | .resultativeEffective => (∅, .exPersBeginning)
+  | .contact => (∅, .quPersBeginning)
+  | .pursuit => (∅, .totalNonPersistence)
 
 /-- Along the hierarchy the patient moves away from the maximal patient: the patient of *break*
 is the maximal patient, that of *shoot* lies above it inside the transitivity region, and that of
-*search* outside it, while the agents stay in the nominative or ergative region. -/
+*search* outside it. -/
 theorem transitivity_hierarchy :
     TransitivityRank.resultativeEffective.patientType = maximalPatient ∧
       TransitivityRank.resultativeEffective.patientType ≤ TransitivityRank.contact.patientType ∧
       TransitivityRank.resultativeEffective.patientType ≠ TransitivityRank.contact.patientType ∧
-      TransitivityRank.contact.patientType.InTransitiveRegion ∧
-      ¬ TransitivityRank.pursuit.patientType.InTransitiveRegion ∧
-      effectorAgent.toCaseRegion = .nomErg ∧ pursuitAgent.toCaseRegion = .nomErg := by
+      TransitivityRank.contact.patientType ∈ transitivityRegion ∧
+      TransitivityRank.pursuit.patientType ∉ transitivityRegion := by
   decide
 
-theorem transitivity_patient_regions :
-    TransitivityRank.resultativeEffective.patientType.toCaseRegion = .accAbs ∧
-      TransitivityRank.contact.patientType.toCaseRegion = .accAbs ∧
-      TransitivityRank.pursuit.patientType.toCaseRegion ≠ .accAbs := by
-  decide
+/-! ### Core case marking systems, section 4
 
-/-! ### Core case marking systems, section 4 -/
+The region of a core case marker includes the maximal agent or the maximal patient and spreads
+outwards from it. Accusative systems mark the patient region and leave the agent region in the
+default nominative; ergative systems mark the agent region and leave the patient region in the
+default absolutive. -/
 
-/-- The maximal agent and patient map to the two core cases of either alignment (Fig. 6). -/
-theorem pole_alignment :
-    maximalAgent.toCaseRegion.toAccusativeCase = .nom ∧
-      maximalPatient.toCaseRegion.toAccusativeCase = .acc ∧
-      maximalAgent.toCaseRegion.toErgativeCase = .erg ∧
-      maximalPatient.toCaseRegion.toErgativeCase = .abs := by
+/-- The nominative or ergative region (Fig. 6): the total persistence branch. -/
+def nomErg : Set ParticipantType := Set.Ici (⊥, .totalPersistence)
+
+/-- The accusative or absolutive region (Fig. 6): no agentivity property at existential or
+qualitative persistence (beginning). -/
+def accAbs : Set ParticipantType := Set.Icc maximalPatient (∅, .quPersBeginning)
+
+/-- The dative region (Fig. 7): the recipient's node. -/
+def dative : Set ParticipantType := {recipient}
+
+instance : DecidablePred (· ∈ nomErg) := fun _ ↦ Set.decidableMemIci
+instance : DecidablePred (· ∈ accAbs) := fun _ ↦ Set.decidableMemIcc
+instance : DecidablePred (· ∈ dative) := fun n ↦ inferInstanceAs (Decidable (n = recipient))
+
+/-- Each case region is a connected region of the lattice, being an order interval. -/
+theorem ordConnected_regions :
+    nomErg.OrdConnected ∧ accAbs.OrdConnected ∧ dative.OrdConnected :=
+  ⟨Set.ordConnected_Ici, Set.ordConnected_Icc, Set.ordConnected_singleton⟩
+
+-- p. 532: the core regions contain the maximal agent and the maximal patient
+theorem poles_mem : ⊤ ∈ nomErg ∧ maximalPatient ∈ accAbs := by decide
+
+-- p. 535: the cases of a language occupy distinct regions
+theorem disjoint_regions :
+    Disjoint nomErg accAbs ∧ Disjoint nomErg dative ∧ Disjoint accAbs dative := by
+  simp only [Set.disjoint_left]; decide
+
+theorem nomErg_eq_preimage : nomErg = Prod.snd ⁻¹' {.totalPersistence} := by
+  ext ⟨a, l⟩
+  change (⊥, PersistenceLevel.totalPersistence) ≤ (a, l) ↔ l = .totalPersistence
+  rw [Prod.mk_le_mk]
+  exact ⟨fun h ↦ top_le_iff.1 h.2, fun h ↦ ⟨bot_le, h.ge⟩⟩
+
+-- section 2.3: every node at or above the minimal agent of *kill* is an acceptable subject of it,
+-- and all of them are in the nominative or ergative region
+theorem kill_subject_range : Set.Ici minimalInstigator ⊆ nomErg :=
+  Set.Ici_subset_Ici.2 (by decide)
+
+-- Fig. 5 on Fig. 6: the agents of the three classes and the patients of the first two are in
+-- the core regions, the patient of *search* in neither
+theorem transitivity_case_regions :
+    effectorAgent ∈ nomErg ∧ pursuitAgent ∈ nomErg ∧
+      TransitivityRank.resultativeEffective.patientType ∈ accAbs ∧
+      TransitivityRank.contact.patientType ∈ accAbs ∧
+      TransitivityRank.pursuit.patientType ∉ accAbs := by
   decide
 
 /-! ### Extensions of the dative, section 5.1
 
-The recipient of *geben* (9) is consciously involved as a possessor and qualitatively changed in
-its possessions; the dative experiencer of the Urdu *ghussa aana* 'get angry' (10) is sentient and
-undergoes a psychological change; the second argument of *danken* and *gratulieren* undergoes
-caused possession in the cognitive realm and that of *dienen* and *helfen* a change through the
-benefit conferred. All three require sentience at qualitative persistence (beginning), the
-substrate's `sentientNonInstigator`. -/
-
-/-- The recipient of (9). -/
-def recipient : ParticipantType := sentientNonInstigator
-
-/-- The recipient's node lies in the dative region (Fig. 7). -/
-theorem recipient_dative : recipient.toCaseRegion = .dative := by decide
+The dative experiencer of the Urdu *ghussa aana* 'get angry' (10) is sentient and undergoes a
+psychological change; the second argument of *danken* and *gratulieren* undergoes caused
+possession in the cognitive realm and that of *dienen* and *helfen* a change through the benefit
+conferred. All require sentience at qualitative persistence (beginning), the node of the
+`recipient`, so the extended uses of the dative fall in the region of its canonical use. -/
 
 /-! ### The genitive/accusative alternation in Russian, section 5.2
 
@@ -242,12 +313,9 @@ def opacityObject (d : Definiteness) : ParticipantType :=
 /-- The object is in the accusative region iff the noun phrase refers, and otherwise at the bottom
 node of the governed genitive (12). -/
 theorem genitive_accusative_alternation (d : Definiteness) :
-    ((opacityObject d).toCaseRegion = .accAbs ↔ Referring d) ∧
-      (opacityObject d = ⊥ ↔ ¬ Referring d) := by
+    (opacityObject d ∈ accAbs ↔ Referring d) ∧ (opacityObject d = ⊥ ↔ ¬ Referring d) := by
   cases d <;> decide
 
-theorem genitive_outside_region (n : ParticipantType) (h : n.InTransitiveRegion) :
-    n ≠ ⊥ :=
-  fun hn ↦ absurd h (hn ▸ by decide)
+theorem bot_notMem_transitivityRegion : ⊥ ∉ transitivityRegion := by decide
 
 end Grimm2011
