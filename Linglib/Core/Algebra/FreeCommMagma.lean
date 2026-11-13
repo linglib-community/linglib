@@ -17,7 +17,7 @@ unordered rooted trees with leaves in `α`. Maps from `α` into a commutative ma
 [correspond](##FreeCommMagma.lift) to magma homomorphisms out of `FreeCommMagma α`, which are
 [determined by their values on the generators](##FreeCommMagma.hom_ext), and
 [the generators are distinct](##FreeCommMagma.of_injective). Two elements of the free magma have
-one image exactly when they [agree up to swapping factors](##FreeMagma.commCon_iff_beqComm), a
+one image exactly when they [agree up to swapping factors](##FreeMagma.isCommCon_iff), a
 recursive test that makes equality decidable. `[UPSTREAM]` candidate for
 `Mathlib/Algebra/Free.lean`.
 
@@ -61,27 +61,27 @@ section BEq
 variable [DecidableEq α]
 
 /-- Whether two elements of the free magma agree up to swapping the factors of products. -/
-def beqComm : FreeMagma α → FreeMagma α → Bool
+def isCommCon : FreeMagma α → FreeMagma α → Bool
   | .of a, .of b => decide (a = b)
-  | .mul x y, .mul x' y' => (beqComm x x' && beqComm y y') || (beqComm x y' && beqComm y x')
+  | .mul x y, .mul x' y' => (isCommCon x x' && isCommCon y y') || (isCommCon x y' && isCommCon y x')
   | _, _ => false
 
-@[simp] theorem beqComm_of_of (a b : α) : beqComm (of a) (of b) = decide (a = b) := rfl
+@[simp] theorem isCommCon_of_of (a b : α) : isCommCon (of a) (of b) = decide (a = b) := rfl
 
-@[simp] theorem beqComm_of_mul (a : α) (x y : FreeMagma α) : beqComm (of a) (x * y) = false := rfl
+@[simp] theorem isCommCon_of_mul (a : α) (x y : FreeMagma α) : isCommCon (of a) (x * y) = false := rfl
 
-@[simp] theorem beqComm_mul_of (a : α) (x y : FreeMagma α) : beqComm (x * y) (of a) = false := rfl
+@[simp] theorem isCommCon_mul_of (a : α) (x y : FreeMagma α) : isCommCon (x * y) (of a) = false := rfl
 
-@[simp] theorem beqComm_mul_mul (x y x' y' : FreeMagma α) :
-    beqComm (x * y) (x' * y') = (beqComm x x' && beqComm y y' || beqComm x y' && beqComm y x') :=
+@[simp] theorem isCommCon_mul_mul (x y x' y' : FreeMagma α) :
+    isCommCon (x * y) (x' * y') = (isCommCon x x' && isCommCon y y' || isCommCon x y' && isCommCon y x') :=
   rfl
 
-@[simp] theorem beqComm_self (x : FreeMagma α) : beqComm x x = true := by
+@[simp] theorem isCommCon_self (x : FreeMagma α) : isCommCon x x = true := by
   induction x with
   | ih1 a => simp
   | ih2 x y hx hy => simp [hx, hy]
 
-theorem beqComm_symm {x y : FreeMagma α} (h : beqComm x y = true) : beqComm y x = true := by
+theorem isCommCon_symm {x y : FreeMagma α} (h : isCommCon x y = true) : isCommCon y x = true := by
   induction x generalizing y with
   | ih1 a => cases y with
     | of b => simpa [eq_comm] using h
@@ -89,11 +89,11 @@ theorem beqComm_symm {x y : FreeMagma α} (h : beqComm x y = true) : beqComm y x
   | ih2 x₁ x₂ h₁ h₂ => cases y with
     | of b => simp at h
     | mul y₁ y₂ =>
-      simp only [mul_eq, beqComm_mul_mul, Bool.or_eq_true, Bool.and_eq_true] at h ⊢
+      simp only [mul_eq, isCommCon_mul_mul, Bool.or_eq_true, Bool.and_eq_true] at h ⊢
       exact h.elim (fun h ↦ .inl ⟨h₁ h.1, h₂ h.2⟩) fun h ↦ .inr ⟨h₂ h.2, h₁ h.1⟩
 
-theorem beqComm_trans {x y z : FreeMagma α} (hxy : beqComm x y = true)
-    (hyz : beqComm y z = true) : beqComm x z = true := by
+theorem isCommCon_trans {x y z : FreeMagma α} (hxy : isCommCon x y = true)
+    (hyz : isCommCon y z = true) : isCommCon x z = true := by
   induction x generalizing y z with
   | ih1 a => cases y with
     | of b => cases z with
@@ -105,20 +105,20 @@ theorem beqComm_trans {x y z : FreeMagma α} (hxy : beqComm x y = true)
     | mul y₁ y₂ => cases z with
       | of c => simp at hyz
       | mul z₁ z₂ =>
-        simp only [mul_eq, beqComm_mul_mul, Bool.or_eq_true, Bool.and_eq_true] at hxy hyz ⊢
+        simp only [mul_eq, isCommCon_mul_mul, Bool.or_eq_true, Bool.and_eq_true] at hxy hyz ⊢
         rcases hxy with ⟨a, b⟩ | ⟨a, b⟩ <;> rcases hyz with ⟨c, d⟩ | ⟨c, d⟩
         exacts [.inl ⟨h₁ a c, h₂ b d⟩, .inr ⟨h₁ a c, h₂ b d⟩, .inr ⟨h₁ a d, h₂ b c⟩,
           .inl ⟨h₁ a d, h₂ b c⟩]
 
 /-- Two elements of the free magma are congruent modulo commutativity exactly when they agree up
 to swapping the factors of products. -/
-theorem commCon_iff_beqComm {x y : FreeMagma α} : commCon α x y ↔ beqComm x y = true := by
-  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+theorem isCommCon_iff {x y : FreeMagma α} : isCommCon x y = true ↔ commCon α x y := by
+  refine Iff.symm ⟨fun h ↦ ?_, fun h ↦ ?_⟩
   · induction h with
     | of x y h => obtain ⟨a, b, rfl, rfl⟩ := h; simp
-    | refl x => exact beqComm_self x
-    | symm _ ih => exact beqComm_symm ih
-    | trans _ _ ih₁ ih₂ => exact beqComm_trans ih₁ ih₂
+    | refl x => exact isCommCon_self x
+    | symm _ ih => exact isCommCon_symm ih
+    | trans _ _ ih₁ ih₂ => exact isCommCon_trans ih₁ ih₂
     | mul _ _ ih₁ ih₂ => simp [ih₁, ih₂]
   · induction x generalizing y with
     | ih1 a => cases y with
@@ -128,13 +128,13 @@ theorem commCon_iff_beqComm {x y : FreeMagma α} : commCon α x y ↔ beqComm x 
     | ih2 x₁ x₂ h₁ h₂ => cases y with
       | of b => simp at h
       | mul y₁ y₂ =>
-        simp only [mul_eq, beqComm_mul_mul, Bool.or_eq_true, Bool.and_eq_true] at h
+        simp only [mul_eq, isCommCon_mul_mul, Bool.or_eq_true, Bool.and_eq_true] at h
         rcases h with ⟨a, b⟩ | ⟨a, b⟩
         · exact (commCon α).mul (h₁ a) (h₂ b)
         · exact (commCon α).trans ((commCon α).mul (h₁ a) (h₂ b))
             (ConGen.Rel.of _ _ ⟨_, _, rfl, rfl⟩)
 
-instance : DecidableRel (commCon α) := fun _ _ ↦ decidable_of_iff' _ commCon_iff_beqComm
+instance : DecidableRel (commCon α) := fun _ _ ↦ decidable_of_iff _ isCommCon_iff
 
 end BEq
 
@@ -153,35 +153,37 @@ instance : CommMagma (FreeCommMagma α) where
     rintro ⟨x⟩ ⟨y⟩
     exact (Con.eq _).2 (ConGen.Rel.of _ _ ⟨x, y, rfl, rfl⟩)
 
-/-- The projection from the free magma, forgetting the bracketing order. -/
-def ofMagma : FreeMagma α →ₙ* FreeCommMagma α :=
+/-- The projection from the free magma, forgetting the order of the factors. -/
+def _root_.FreeMagma.toFreeCommMagma : FreeMagma α →ₙ* FreeCommMagma α :=
   (FreeMagma.commCon α).mkMulHom
 
 /-- The generator `a`. -/
-def of (a : α) : FreeCommMagma α := ofMagma (FreeMagma.of a)
+def of (a : α) : FreeCommMagma α := FreeMagma.toFreeCommMagma (FreeMagma.of a)
 
 instance [Inhabited α] : Inhabited (FreeCommMagma α) := ⟨of default⟩
 
-@[simp] theorem ofMagma_of (a : α) : ofMagma (FreeMagma.of a) = of a := rfl
+@[simp] theorem _root_.FreeMagma.toFreeCommMagma_of (a : α) :
+    FreeMagma.toFreeCommMagma (FreeMagma.of a) = of a := rfl
 
-theorem ofMagma_eq_ofMagma {x y : FreeMagma α} :
-    ofMagma x = ofMagma y ↔ FreeMagma.commCon α x y :=
+theorem _root_.FreeMagma.toFreeCommMagma_eq_toFreeCommMagma {x y : FreeMagma α} :
+    FreeMagma.toFreeCommMagma x = FreeMagma.toFreeCommMagma y ↔ FreeMagma.commCon α x y :=
   Con.eq _
 
 instance [DecidableEq α] : DecidableEq (FreeCommMagma α) :=
   inferInstanceAs (DecidableEq (FreeMagma.commCon α).Quotient)
 
-theorem ofMagma_surjective : Function.Surjective (ofMagma : FreeMagma α → FreeCommMagma α) :=
+theorem _root_.FreeMagma.toFreeCommMagma_surjective :
+    Function.Surjective (FreeMagma.toFreeCommMagma : FreeMagma α → FreeCommMagma α) :=
   Con.mkMulHom_surjective
 
 @[elab_as_elim, induction_eliminator]
 theorem inductionOn {motive : FreeCommMagma α → Prop} (x : FreeCommMagma α)
     (of : ∀ a, motive (of a)) (mul : ∀ x y, motive x → motive y → motive (x * y)) : motive x := by
   rcases x with ⟨x⟩
-  show motive (ofMagma x)
+  show motive (FreeMagma.toFreeCommMagma x)
   induction x using FreeMagma.recOnMul with
   | ih1 a => exact of a
-  | ih2 a b ha hb => exact mul (ofMagma a) (ofMagma b) ha hb
+  | ih2 a b ha hb => exact mul (FreeMagma.toFreeCommMagma a) (FreeMagma.toFreeCommMagma b) ha hb
 
 /-- Magma homomorphisms out of a free commutative magma agreeing on the generators are equal. -/
 @[ext]
@@ -205,8 +207,8 @@ def lift : (α → M) ≃ (FreeCommMagma α →ₙ* M) where
 
 @[simp] theorem lift_comp_of (f : α → M) : lift f ∘ of = f := rfl
 
-@[simp] theorem lift_ofMagma (f : α → M) (x : FreeMagma α) :
-    lift f (ofMagma x) = FreeMagma.lift f x := rfl
+@[simp] theorem lift_toFreeCommMagma (f : α → M) (x : FreeMagma α) :
+    lift f (FreeMagma.toFreeCommMagma x) = FreeMagma.lift f x := rfl
 
 @[simp] theorem lift_symm_apply (F : FreeCommMagma α →ₙ* M) : lift.symm F = F ∘ of := rfl
 
