@@ -470,6 +470,125 @@ theorem val_injective : Function.Injective (val : SyntacticObject L → _) := by
 
 end SyntacticObject
 
+/-! ### Objects from trees -/
+
+namespace LinearizedSyntacticObject
+
+open SyntacticObject (Vertex Leaf length_eq_zero_or_two eq_bare_of_ne_nil
+  isSyntacticObject_mk_merge)
+
+variable {L : Type}
+
+/-- One step of reading a linearized object off a tree: a lexical or trace vertex without
+daughters is a leaf, and a bare vertex over two objects is their Merge. -/
+def ofValStep : Vertex L → List (Option (LinearizedSyntacticObject L)) →
+    Option (LinearizedSyntacticObject L)
+  | .inl (some a), [] => some (leaf a)
+  | .inr none, [] => some trace
+  | .inr (some a), [] => some (traceOf a)
+  | .inl none, [some l, some r] => some (l * r)
+  | _, _ => none
+
+/-- The linearized object with a given tree, if the tree is well formed. -/
+def ofVal? : RoseTree (Vertex L) → Option (LinearizedSyntacticObject L) :=
+  RoseTree.fold ofValStep
+
+theorem ofVal?_node (a : Vertex L) (cs : List (RoseTree (Vertex L))) :
+    ofVal? (.node a cs) = ofValStep a (cs.map ofVal?) :=
+  RoseTree.fold_node _ _ _
+
+@[simp] theorem ofVal?_val (p : LinearizedSyntacticObject L) : ofVal? p.val = some p := by
+  induction p using FreeMagma.recOnMul with
+  | ih1 x => cases x <;> rfl
+  | ih2 l r hl hr =>
+    show ofVal? (.node Vertex.bare [val l, val r]) = some (l * r)
+    rw [ofVal?_node, List.map_cons, List.map_cons, List.map_nil, hl, hr]
+    rfl
+
+/-- A well-formed tree is the tree of a linearized object. -/
+theorem exists_val_eq {t : RoseTree (Vertex L)} (h : IsSyntacticObject (UnorderedTree.mk t)) :
+    ∃ p : LinearizedSyntacticObject L, p.val = t := by
+  induction t with
+  | node lbl cs ih =>
+    rcases length_eq_zero_or_two h with hlen | hlen
+    · obtain rfl := List.length_eq_zero_iff.mp hlen
+      rcases lbl with (_ | a) | (_ | a)
+      · exact absurd (RoseTree.licensed_node_iff.mp ((isSyntacticObject_mk _).mp h)).1
+          (by simp [Vertex.Licenses])
+      · exact ⟨leaf a, rfl⟩
+      · exact ⟨trace, rfl⟩
+      · exact ⟨traceOf a, rfl⟩
+    · obtain ⟨pl, pr, rfl⟩ := List.length_eq_two.mp hlen
+      obtain rfl := eq_bare_of_ne_nil h (by simp)
+      obtain ⟨hl, hr⟩ := (isSyntacticObject_mk_merge pl pr).mp h
+      obtain ⟨l, rfl⟩ := ih pl (by simp) hl
+      obtain ⟨r, rfl⟩ := ih pr (by simp) hr
+      exact ⟨l * r, rfl⟩
+
+/-- The linearized object with the well-formed tree `t`. -/
+def ofVal (t : RoseTree (Vertex L)) (_h : IsSyntacticObject (UnorderedTree.mk t)) :
+    LinearizedSyntacticObject L :=
+  (ofVal? t).getD trace
+
+@[simp] theorem val_ofVal (t : RoseTree (Vertex L)) (h : IsSyntacticObject (UnorderedTree.mk t)) :
+    (ofVal t h).val = t := by
+  obtain ⟨p, rfl⟩ := exists_val_eq h
+  rw [ofVal, ofVal?_val, Option.getD_some]
+
+@[simp] theorem ofVal_val (p : LinearizedSyntacticObject L) :
+    ofVal p.val p.isSyntacticObject_val = p :=
+  val_injective (val_ofVal _ _)
+
+end LinearizedSyntacticObject
+
+namespace SyntacticObject
+
+variable {L : Type}
+
+/-- The syntactic object with the well-formed tree `t`. -/
+def ofVal (t : UnorderedTree (Vertex L)) (_h : IsSyntacticObject t) : SyntacticObject L :=
+  Quotient.liftOn t
+    (fun r ↦ if h : IsSyntacticObject (UnorderedTree.mk r) then
+      (LinearizedSyntacticObject.ofVal r h).toSyntacticObject else trace)
+    fun r r' hr ↦ by
+      have hmk : UnorderedTree.mk r = UnorderedTree.mk r' := Quotient.sound hr
+      by_cases h : IsSyntacticObject (UnorderedTree.mk r)
+      · have h' : IsSyntacticObject (UnorderedTree.mk r') := hmk ▸ h
+        simp only [h, h', ↓reduceDIte]
+        refine val_injective ?_
+        rw [LinearizedSyntacticObject.toSyntacticObject_val,
+          LinearizedSyntacticObject.toSyntacticObject_val, LinearizedSyntacticObject.val_ofVal,
+          LinearizedSyntacticObject.val_ofVal, hmk]
+      · have h' : ¬ IsSyntacticObject (UnorderedTree.mk r') := hmk ▸ h
+        simp only [h, h', ↓reduceDIte]
+
+@[simp] theorem val_ofVal (t : UnorderedTree (Vertex L)) (h : IsSyntacticObject t) :
+    (ofVal t h).val = t := by
+  induction t using Quotient.inductionOn with
+  | _ r =>
+    show (if h : IsSyntacticObject (UnorderedTree.mk r) then
+      (LinearizedSyntacticObject.ofVal r h).toSyntacticObject else trace).val = UnorderedTree.mk r
+    have h' : IsSyntacticObject (UnorderedTree.mk r) := h
+    simp only [h', ↓reduceDIte, LinearizedSyntacticObject.toSyntacticObject_val,
+      LinearizedSyntacticObject.val_ofVal]
+
+@[simp] theorem ofVal_val (s : SyntacticObject L) : ofVal s.val s.isSyntacticObject_val = s :=
+  val_injective (val_ofVal _ _)
+
+@[simp] theorem _root_.Minimalist.LinearizedSyntacticObject.toSyntacticObject_ofVal
+    (t : RoseTree (Vertex L)) (h : IsSyntacticObject (UnorderedTree.mk t)) :
+    (LinearizedSyntacticObject.ofVal t h).toSyntacticObject = ofVal (UnorderedTree.mk t) h :=
+  val_injective (by simp)
+
+/-- Syntactic objects are the well-formed unordered trees. -/
+def valEquiv : SyntacticObject L ≃ {t : UnorderedTree (Vertex L) // IsSyntacticObject t} where
+  toFun s := ⟨s.val, s.isSyntacticObject_val⟩
+  invFun t := ofVal t.1 t.2
+  left_inv := ofVal_val
+  right_inv t := Subtype.ext (val_ofVal t.1 t.2)
+
+end SyntacticObject
+
 
 /-! ### Functoriality -/
 
