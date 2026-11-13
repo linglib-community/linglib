@@ -39,7 +39,6 @@ one apple it [takes *on the towel* as the destination](##supports_oneReferent_if
 namespace EngelhardtEtAl2006
 
 open EngelhardtEtAl2006.Examples Finset
-open scoped Denotes
 
 /-- The category labels of the objects, the apple to be moved, the frog, and the two kinds of
 destination. -/
@@ -114,7 +113,7 @@ instance (D : Display) (d : Description) : DecidablePred (d.property D) := fun i
 /-- The restrictor of *the* with a description, which holds of the objects of the resource
 situation that the description does. -/
 def Description.restrictor (D : Display) (d : Description) :
-    DefiniteDescription.Restrictor (Fin 5) (Finset (Fin 5)) :=
+    (ℕ → Fin 5) → Finset (Fin 5) → Set (Fin 5) :=
   fun _ s ↦ {i | i ∈ s ∧ d.property D i}
 
 instance (D : Display) (d : Description) (g : ℕ → Fin 5) (s : Finset (Fin 5)) :
@@ -127,10 +126,10 @@ variable (D : Display) (s : Finset (Fin 5)) (r : Fin 5) (d : Description)
 
 /-- *The* with the description, the weak article of [schwarz-2009], picks out `r` in the resource
 situation `s`. -/
-def Identifies : Prop := r ∈ ⟦DefiniteDescription.unique (d.restrictor D)⟧ default s
+def Identifies : Prop := r ∈ Definite.unique (d.restrictor D) default s
 
 instance : Decidable (Identifies D s r d) :=
-  decidable_of_iff _ (DefiniteDescription.mem_denote_unique _ _ _).symm
+  decidable_of_iff _ Definite.mem_unique.symm
 
 /-- The description identifies `r` in `s` with a modifier its bare noun does not need. -/
 def OverDescribes : Prop := d.modifier.isSome ∧ Identifies D s r d ∧ Identifies D s r d.bare

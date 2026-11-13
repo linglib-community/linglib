@@ -104,7 +104,7 @@ theorem shan_exists_is_last_resort :
 
 /-! ### The revised typology -/
 
-open DefiniteDescription (Strength)
+open Definite (Strength)
 
 /-- In Moroney's analysis a presupposition is marked when a determiner lexicalizes the covert shift
 that would express it, ι for uniqueness and ι^x for familiarity, so that the Blocking Principle
@@ -227,7 +227,6 @@ theorem maa_cumulative_not_divisive : CUM isDog ∧ ¬ LacksMinimalParts isDog :
 
 section Demonstrative
 
-open DefiniteDescription (Restrictor bare)
 
 variable {W E P T : Type} [PartialOrder E] (c : Kaplan.Context W E P T) (χ : SetRel E E)
   (d : DemonstrativeDeterminer)
@@ -235,15 +234,15 @@ variable {W E P T : Type} [PartialOrder E] (c : Kaplan.Context W E P T) (χ : Se
 /-- The demonstrative of (147)–(148) presupposes, as the bare definite does, a unique `P` in the
 situation, and denotes the `P` in its deictic domain, `ιx[P(x) ∧ close.to.speaker(x)]` for
 *nâj*. -/
-noncomputable def demDenotation (R : Restrictor E W) (g : ℕ → E) (s : W) : Part E :=
-  (⟦bare R⟧ g s).bind fun _ ↦ iota (R g s ∩ χ.image (c.participants ⁻¹' d.deixis))
+noncomputable def demDenotation (R : (ℕ → E) → W → Set E) (g : ℕ → E) (s : W) : Part E :=
+  (Definite.unique R g s).bind fun _ ↦ iota (R g s ∩ χ.image (c.participants ⁻¹' d.deixis))
 
 /-- A demonstrative refers to the bare noun's referent when that referent lies in its deictic
 domain. -/
-theorem mem_demDenotation {R : Restrictor E W} {g : ℕ → E} {s : W} {x : E} :
+theorem mem_demDenotation {R : ((ℕ → E) → W → Set E)} {g : ℕ → E} {s : W} {x : E} :
     x ∈ demDenotation c χ d R g s ↔
-      x ∈ ⟦bare R⟧ g s ∧ x ∈ χ.image (c.participants ⁻¹' d.deixis) := by
-  simp only [demDenotation, Part.mem_bind_iff, DefiniteDescription.mem_denote_bare,
+      x ∈ Definite.unique R g s ∧ x ∈ χ.image (c.participants ⁻¹' d.deixis) := by
+  simp only [demDenotation, Part.mem_bind_iff, Definite.mem_unique,
     mem_iota]
   constructor
   · rintro ⟨y, ⟨-, hy⟩, ⟨hx, hxd⟩, -⟩
@@ -255,11 +254,12 @@ theorem mem_demDenotation {R : Restrictor E W} {g : ℕ → E} {s : W} {x : E} :
 domain holds every referent, so a demonstrative with spatial content is not the definite and
 blocks no definite reading of the bare noun (p. 62). -/
 theorem demDenotation_eq_bare_iff (g : ℕ → E) (s : W) :
-    (∀ R : Restrictor E W, (⟦bare R⟧ g s).Dom → demDenotation c χ d R g s = ⟦bare R⟧ g s) ↔
+    (∀ R : (ℕ → E) → W → Set E, (Definite.unique R g s).Dom →
+        demDenotation c χ d R g s = Definite.unique R g s) ↔
       ∀ x, x ∈ χ.image (c.participants ⁻¹' d.deixis) := by
   refine ⟨fun h x ↦ ?_, fun h R hR ↦ ?_⟩
-  · have hb : x ∈ ⟦bare fun (_ : ℕ → E) (_ : W) y ↦ y = x⟧ g s :=
-      (DefiniteDescription.mem_denote_bare _ g s).2 ⟨rfl, fun _ ↦ id⟩
+  · have hb : x ∈ (Definite.unique fun (_ : ℕ → E) (_ : W) y ↦ y = x) g s :=
+      Definite.mem_unique.2 ⟨rfl, fun _ ↦ id⟩
     exact ((mem_demDenotation c χ d).1 (h _ (Part.dom_iff_mem.2 ⟨x, hb⟩) ▸ hb)).2
   · obtain ⟨x, hx⟩ := Part.dom_iff_mem.1 hR
     rw [Part.eq_some_iff.2 hx]

@@ -15,7 +15,7 @@ Schwarz takes the German contrast between a preposition contracted with the defi
 *zum*, and the full form, as in *zu dem*, for a contrast between two definite articles, as is the
 contrast between Fering's A-form and D-form. The weak article presupposes uniqueness in a resource
 situation (184a) and the strong article adds an anaphoric index (295). They are
-`DefiniteDescription.unique` and `DefiniteDescription.anaphoric`, the strong article being the weak
+`Definite.unique` and `Definite.anaphoric`, the strong article being the weak
 one over the restrictor narrowed to the antecedent, and English *the* denotes both.
 
 Only the strong article is defined over a restrictor with a satisfier besides the antecedent (§6.1),
@@ -52,7 +52,6 @@ antecedent bind the strong article's index, since assignments are total.
 namespace Schwarz2009
 
 open scoped Denotes
-open DefiniteDescription (Restrictor)
 
 variable {E W : Type}
 
@@ -60,31 +59,31 @@ variable {E W : Type}
 
 section Forms
 
-variable (R : Restrictor E W) (d : ℕ)
+variable (R : (ℕ → E) → W → Set E) (d : ℕ)
 
 /-- The German contracted article denotes the weak article and the non-contracted one the strong
 article (Table 2.1). -/
-theorem german_toDescriptions :
-    German.Determiners.contracted.toDescriptions R d = {.unique R} ∧
-      German.Determiners.nonContracted.toDescriptions R d = {.anaphoric R d} := by
+theorem german_denotations :
+    German.Determiners.contracted.denotations R d = {Definite.unique R} ∧
+      German.Determiners.nonContracted.denotations R d = {Definite.anaphoric R d} := by
   have h₁ : German.Determiners.contracted.strengths = {.uniqueness} := by decide
   have h₂ : German.Determiners.nonContracted.strengths = {.familiarity} := by decide
-  simp [Article.toDescriptions, h₁, h₂, DefiniteDescription.ofStrength]
+  simp [Article.denotations, h₁, h₂]
 
 /-- Fering's A-form denotes the weak article and its D-form the strong article (9). -/
-theorem fering_toDescriptions :
-    Fering.Determiners.aForm.toDescriptions R d = {.unique R} ∧
-      Fering.Determiners.dForm.toDescriptions R d = {.anaphoric R d} := by
+theorem fering_denotations :
+    Fering.Determiners.aForm.denotations R d = {Definite.unique R} ∧
+      Fering.Determiners.dForm.denotations R d = {Definite.anaphoric R d} := by
   have h₁ : Fering.Determiners.aForm.strengths = {.uniqueness} := by decide
   have h₂ : Fering.Determiners.dForm.strengths = {.familiarity} := by decide
-  simp [Article.toDescriptions, h₁, h₂, DefiniteDescription.ofStrength]
+  simp [Article.denotations, h₁, h₂]
 
 /-- English *the* denotes both articles, having every use of Hawkins's classification
 (Table 2.3). -/
-theorem english_toDescriptions :
-    English.Determiners.the.toDescriptions R d = {.unique R, .anaphoric R d} := by
+theorem english_denotations :
+    English.Determiners.the.denotations R d = {Definite.unique R, Definite.anaphoric R d} := by
   have h : English.Determiners.the.strengths = {.uniqueness, .familiarity} := by decide
-  simp [Article.toDescriptions, h, DefiniteDescription.ofStrength]
+  simp [Article.denotations, h]
 
 end Forms
 
@@ -92,15 +91,15 @@ end Forms
 
 section Contrast
 
-variable {R : Restrictor E W} {d : ℕ} {g : ℕ → E} {s : W}
+variable {R : (ℕ → E) → W → Set E} {d : ℕ} {g : ℕ → E} {s : W}
 
 /-- Over a restrictor with a satisfier besides the antecedent, the weak article fails uniqueness and
 the strong article returns the antecedent. -/
 theorem weak_eq_none_strong_eq_some {y : E} (hd : g d ∈ R g s) (hy : y ∈ R g s) (hne : y ≠ g d) :
-    ⟦DefiniteDescription.unique R⟧ g s = Part.none ∧
-      g d ∈ ⟦DefiniteDescription.anaphoric R d⟧ g s :=
-  ⟨DefiniteDescription.denote_unique_eq_none_of_ne R g s hd hy hne.symm,
-    (DefiniteDescription.mem_denote_anaphoric R d g s).2 ⟨hd, rfl⟩⟩
+    Definite.unique R g s = Part.none ∧
+      g d ∈ Definite.anaphoric R d g s :=
+  ⟨Definite.unique_eq_none_of_ne hd hy hne.symm,
+    Definite.mem_anaphoric.2 ⟨hd, rfl⟩⟩
 
 end Contrast
 
@@ -110,7 +109,7 @@ inductive Person where
   | student
 
 /-- *Mann* 'man' holds at a lecture of its ornithologist and of the student. -/
-def man : Restrictor Person (Fin 2) := fun _ l x ↦ x = .ornithologist l ∨ x = .student
+def man : (ℕ → Person) → Fin 2 → Set Person := fun _ l x ↦ x = .ornithologist l ∨ x = .student
 
 /-- The assignment on which the indefinite *ein Ornithologe* binds the index to a lecture's
 ornithologist. -/
@@ -119,8 +118,8 @@ def boundTo (l : Fin 2) : ℕ → Person := fun _ ↦ .ornithologist l
 /-- In (31) *#vom Mann* fails uniqueness at every lecture while *von dem Mann* denotes the bound
 ornithologist, (28) being the one-lecture case. -/
 theorem covarying_anaphora (l : Fin 2) :
-    ⟦DefiniteDescription.unique man⟧ (boundTo l) l = Part.none ∧
-      (.ornithologist l) ∈ ⟦DefiniteDescription.anaphoric man 1⟧ (boundTo l) l :=
+    Definite.unique man (boundTo l) l = Part.none ∧
+      (.ornithologist l) ∈ Definite.anaphoric man 1 (boundTo l) l :=
   weak_eq_none_strong_eq_some (y := .student) (.inl rfl) (.inr rfl) nofun
 
 /-! ### Two mechanisms of covariation (§2.3) -/
@@ -131,14 +130,14 @@ variable (f : W → E) (d : ℕ) (g : ℕ → E) (s : W)
 
 /-- The weak article over a restrictor true at each situation of one entity denotes that entity, as
 *Gewinner* does in (48). -/
-theorem weak_covaries : f s ∈ ⟦DefiniteDescription.unique fun _ s ↦ {f s}⟧ g s :=
+theorem weak_covaries : f s ∈ (Definite.unique fun _ s ↦ {f s}) g s :=
   mem_iota_iff_eq_singleton.2 rfl
 
 /-- The strong article does not covary with the situation. At a fixed assignment it is defined over
 the same restrictor only at the situations whose entity is the antecedent. -/
-theorem strong_dom_iff : (⟦DefiniteDescription.anaphoric (fun _ s ↦ {f s}) d⟧ g s).Dom ↔
+theorem strong_dom_iff : (Definite.anaphoric (fun _ s ↦ {f s}) d g s).Dom ↔
     g d = f s :=
-  DefiniteDescription.denote_anaphoric_dom _ d g s
+  Definite.anaphoric_dom
 
 end Covariation
 
@@ -151,12 +150,13 @@ variable (R : E → E → W → Prop) (d : ℕ) (g : ℕ → E) (s : W)
 /-- The relational strong article (309) takes its index `d` as the relatum of the relational noun
 `R`, read as `R y x s` for referent `x` of relatum `y` at `s`, and so is the possessive description
 whose possessor is the antecedent. -/
-def relational : DefiniteDescription E W := .possessive ⊤ (fun g _ ↦ g d) fun _ s y x ↦ R y x s
+noncomputable def relational : Definite (ℕ → E) W E :=
+  Definite.possessive ⊤ (fun g _ ↦ g d) fun _ s y x ↦ R y x s
 
 /-- In relational anaphora the uniqueness requirement resurfaces, the description being defined iff
 the antecedent has exactly one relatum. -/
-theorem relational_dom_iff : (⟦relational R d⟧ g s).Dom ↔ ∃! x, R (g d) x s :=
-  (DefiniteDescription.denote_possessive_dom ⊤ (fun g _ ↦ g d) _ g s).trans <| by simp
+theorem relational_dom_iff : ((relational R d) g s).Dom ↔ ∃! x, R (g d) x s :=
+  Definite.possessive_dom.trans <| by simp
 
 end Relational
 
@@ -171,7 +171,8 @@ variable {S : Type} [PartialOrder S]
 /-- The type-shifter Π of (260) makes a property of a relational noun `R`. An individual `x` has it
 at `s` when `x` stands in `R` to a whole `y`, evaluated at `y` itself, that overlaps `s`;
 individuals are situations, so the whole is one. -/
-def shift (R : S → S → S → Prop) : Restrictor S S := fun _ s ↦ {x | ∃ y, R y x y ∧ Overlap s y}
+def shift (R : S → S → S → Prop) : (ℕ → S) → S → Set S :=
+  fun _ s ↦ {x | ∃ y, R y x y ∧ Overlap s y}
 
 /-- A relational noun is local when it holds at a situation only of parts of the situation, as
 *Bürgermeister* evaluated at a town holds of a mayor who is part of the town. -/
@@ -191,7 +192,7 @@ theorem shift_of_le (hy : R y x y) (hys : y ≤ s) (hb : ¬ IsBot y) : x ∈ shi
 /-- The weak article over Π of a local relational noun whose referents are not part of their
 relata, as authors are not part of their books, is undefined. -/
 theorem unique_shift_eq_none (hR : IsLocal R) (hpart : ∀ y x s, R y x s → ¬ x ≤ y)
-    (g : ℕ → S) (s : S) : ⟦DefiniteDescription.unique (shift R)⟧ g s = Part.none :=
+    (g : ℕ → S) (s : S) : Definite.unique (shift R) g s = Part.none :=
   iota_eq_none_iff.2 fun ⟨x, ⟨y, hy, _⟩, _⟩ ↦ hpart y x y hy (hR y x y hy)
 
 end Shift
@@ -233,7 +234,7 @@ def authorOf (y x s : Sit) : Prop :=
     x ≤ s
 
 /-- *Roman* 'novel' holds of both novels. -/
-def novel : Restrictor Sit Sit := fun _ _ ↦ {{.novel}, {.coauthoredNovel}}
+def novel : (ℕ → Sit) → Sit → Set Sit := fun _ _ ↦ {{.novel}, {.coauthoredNovel}}
 
 theorem isLocal_authorOf : IsLocal authorOf := fun _ _ _ h ↦ h.2
 
@@ -242,50 +243,50 @@ theorem not_le_of_authorOf {y x s : Sit} (h : authorOf y x s) : ¬ x ≤ y := by
 
 -- (58)
 theorem partWhole_bridging (g : ℕ → Sit) :
-    {.crisper} ∈ ⟦DefiniteDescription.unique (shift crisperOf)⟧ g fridge :=
-  (DefiniteDescription.mem_denote_unique _ _ _).2
+    {.crisper} ∈ Definite.unique (shift crisperOf) g fridge :=
+  Definite.mem_unique.2
     ⟨shift_of_le ⟨rfl, rfl, by decide⟩ le_rfl (by simp [fridge]), fun _ ⟨_, ⟨_, h, _⟩, _⟩ ↦ h⟩
 
 -- (231)
 theorem larger_situation (g : ℕ → Sit) :
-    {.mayor} ∈ ⟦DefiniteDescription.unique (shift mayorOf)⟧ g {.station} ∧
+    {.mayor} ∈ Definite.unique (shift mayorOf) g {.station} ∧
       ¬ ({.mayor} : Sit) ≤ {.station} :=
-  ⟨(DefiniteDescription.mem_denote_unique _ _ _).2
+  ⟨Definite.mem_unique.2
     ⟨⟨town, ⟨rfl, rfl, by decide⟩, Mereology.Overlap.of_le (by simp) (by decide)⟩,
       fun _ ⟨_, ⟨_, h, _⟩, _⟩ ↦ h⟩, by decide⟩
 
 -- (62), (275)
 theorem author_weak (g : ℕ → Sit) (s : Sit) :
-    ⟦DefiniteDescription.unique (shift authorOf)⟧ g s = Part.none :=
+    Definite.unique (shift authorOf) g s = Part.none :=
   unique_shift_eq_none isLocal_authorOf (fun _ _ _ ↦ not_le_of_authorOf) g s
 
 -- (275)
 theorem relational_anaphora :
-    {.author} ∈ ⟦relational authorOf 1⟧ (fun _ ↦ {.novel}) Finset.univ :=
-  (DefiniteDescription.mem_denote_possessive _ _ _ _ _).2
+    {.author} ∈ (relational authorOf 1) (fun _ ↦ {.novel}) Finset.univ :=
+  Definite.mem_possessive.2
     ⟨⟨trivial, .inl ⟨rfl, rfl⟩, by decide⟩, fun _ ⟨_, h, _⟩ ↦
       h.elim And.right fun ⟨h, _⟩ ↦ absurd h (by decide)⟩
 
 /-- Antecedent to the coauthored novel, *von dem Autor* fails uniqueness, though *von dem Roman*
 picks out the novel. -/
 theorem relational_anaphora_coauthored :
-    ⟦relational authorOf 1⟧ (fun _ ↦ {.coauthoredNovel}) Finset.univ = Part.none ∧
+    (relational authorOf 1) (fun _ ↦ {.coauthoredNovel}) Finset.univ = Part.none ∧
       ({.coauthoredNovel} : Sit) ∈
-        ⟦DefiniteDescription.anaphoric novel 1⟧ (fun _ ↦ {.coauthoredNovel}) Finset.univ :=
+        Definite.anaphoric novel 1 (fun _ ↦ {.coauthoredNovel}) Finset.univ :=
   ⟨iota_eq_none_of_ne (e := {.author}) (e' := {.coauthor})
       ⟨trivial, .inr ⟨rfl, .inl rfl⟩, by decide⟩ ⟨trivial, .inr ⟨rfl, .inr rfl⟩, by decide⟩
       (by decide),
-    (DefiniteDescription.mem_denote_anaphoric _ _ _ _).2 ⟨.inr rfl, rfl⟩⟩
+    Definite.mem_anaphoric.2 ⟨.inr rfl, rfl⟩⟩
 
 -- (231)
 theorem larger_situation_strong :
-    ⟦relational mayorOf 1⟧ (fun _ ↦ {.station}) Finset.univ = Part.none :=
+    (relational mayorOf 1) (fun _ ↦ {.station}) Finset.univ = Part.none :=
   iota_eq_none_iff.2 fun ⟨_, ⟨_, h, _⟩, _⟩ ↦ absurd h (by decide)
 
 -- (58), §6.4.1
 theorem partWhole_bridging_strong :
-    {.crisper} ∈ ⟦relational crisperOf 1⟧ (fun _ ↦ fridge) fridge :=
-  (DefiniteDescription.mem_denote_possessive _ _ _ _ _).2
+    {.crisper} ∈ (relational crisperOf 1) (fun _ ↦ fridge) fridge :=
+  Definite.mem_possessive.2
     ⟨⟨trivial, rfl, rfl, by decide⟩, fun _ ⟨_, _, h, _⟩ ↦ h⟩
 
 /-! ### The examples -/
@@ -300,7 +301,7 @@ inductive Scenario where
 
 /-- The plain noun of a scenario holds of the referent `0`, and of `1` too unless the referent is
 unique. -/
-def plainNoun (unique : Bool) : Restrictor (Fin 2) Unit :=
+def plainNoun (unique : Bool) : (ℕ → Fin 2) → Unit → Set (Fin 2) :=
   fun _ _ ↦ {x | x = 0 ∨ unique = false ∧ x = 1}
 
 /-- The relational noun of a scenario is *Bürgermeister* if its referent is part of its relatum and
@@ -317,19 +318,19 @@ namespace Scenario
 /-- The weak article is available when its description is defined, over a relational noun through
 Π at the train station's situation. -/
 def WeakAvailable : Scenario → Prop
-  | plain u _ => (⟦DefiniteDescription.unique (plainNoun u)⟧ (fun _ ↦ 0) ()).Dom
+  | plain u _ => (Definite.unique (plainNoun u) (fun _ ↦ 0) ()).Dom
   | relational p _ =>
-      (⟦DefiniteDescription.unique (shift (relationalNoun p))⟧ (fun _ ↦ ∅) {.station}).Dom
+      (Definite.unique (shift (relationalNoun p)) (fun _ ↦ ∅) {.station}).Dom
 
 /-- The strong article is available when an antecedent makes its index familiar (290b) and its
 description is then defined, over a relational noun as relational anaphora (309). -/
 def StrongAvailable : Scenario → Prop
-  | plain u a => a = true ∧ (⟦DefiniteDescription.anaphoric (plainNoun u) 1⟧ (fun _ ↦ 0) ()).Dom
+  | plain u a => a = true ∧ (Definite.anaphoric (plainNoun u) 1 (fun _ ↦ 0) ()).Dom
   | relational p r =>
-      (⟦Schwarz2009.relational (relationalNoun p) 1⟧ (fun _ ↦ antecedentOf p r) Finset.univ).Dom
+      ((Schwarz2009.relational (relationalNoun p) 1) (fun _ ↦ antecedentOf p r) Finset.univ).Dom
 
 /-- An article strength is available when its article is. -/
-def Available (sc : Scenario) : DefiniteDescription.Strength → Prop
+def Available (sc : Scenario) : Definite.Strength → Prop
   | .uniqueness => sc.WeakAvailable
   | .familiarity => sc.StrongAvailable
 
@@ -345,30 +346,30 @@ def strong : Scenario → Bool
   | relational _ r => r
 
 /-- The prediction for an article strength. -/
-def predicted (sc : Scenario) : DefiniteDescription.Strength → Bool
+def predicted (sc : Scenario) : Definite.Strength → Bool
   | .uniqueness => sc.weak
   | .familiarity => sc.strong
 
 theorem weakAvailable_iff : ∀ sc : Scenario, sc.WeakAvailable ↔ sc.weak = true
-  | plain true _ => iff_of_true ((DefiniteDescription.denote_unique_dom _ _ _).2
+  | plain true _ => iff_of_true (Definite.unique_dom.2
       ⟨0, .inl rfl, fun _ h ↦ h.resolve_right fun ⟨h, _⟩ ↦ nomatch h⟩) rfl
   | plain false _ => iff_of_false (by
-      show ¬ (⟦DefiniteDescription.unique (plainNoun false)⟧ (fun _ ↦ 0) ()).Dom
-      rw [DefiniteDescription.denote_unique_eq_none_of_ne _ _ () (x := 0) (y := 1) (.inl rfl)
+      show ¬ (Definite.unique (plainNoun false) (fun _ ↦ 0) ()).Dom
+      rw [Definite.unique_eq_none_of_ne (x := 0) (y := 1) (.inl rfl)
         (.inr ⟨rfl, rfl⟩) (by decide)]
       exact Part.not_none_dom) Bool.false_ne_true
   | relational true _ => iff_of_true (by
-      show (⟦DefiniteDescription.unique (shift mayorOf)⟧ (fun _ ↦ ∅) {.station}).Dom
+      show (Definite.unique (shift mayorOf) (fun _ ↦ ∅) {.station}).Dom
       exact Part.dom_iff_mem.2 ⟨_, (larger_situation _).1⟩) rfl
   | relational false _ => iff_of_false (by
-      show ¬ (⟦DefiniteDescription.unique (shift authorOf)⟧ (fun _ ↦ ∅) {.station}).Dom
+      show ¬ (Definite.unique (shift authorOf) (fun _ ↦ ∅) {.station}).Dom
       rw [author_weak]; exact Part.not_none_dom) Bool.false_ne_true
 
 theorem strongAvailable_iff : ∀ sc : Scenario, sc.StrongAvailable ↔ sc.strong = true
   | plain u a => by
-    show a = true ∧ (⟦DefiniteDescription.anaphoric (plainNoun u) 1⟧ (fun _ ↦ 0) ()).Dom ↔
+    show a = true ∧ (Definite.anaphoric (plainNoun u) 1 (fun _ ↦ 0) ()).Dom ↔
       a = true
-    rw [DefiniteDescription.denote_anaphoric_dom]
+    rw [Definite.anaphoric_dom]
     exact and_iff_left (.inl rfl)
   | relational p r => by
     have h : ({.station} : Sit) ≠ town := by decide
@@ -391,11 +392,11 @@ def scenario? (d : Datum) : Option Scenario :=
     some (.plain u a)
 
 /-- The article strength of a row. -/
-def article? (d : Datum) : Option DefiniteDescription.Strength :=
+def article? (d : Datum) : Option Definite.Strength :=
   d.parse? "article" [("weak", .uniqueness), ("strong", .familiarity)]
 
 /-- The use of a row in Hawkins's classification. -/
-def use? (d : Datum) : Option DefiniteDescription.Use :=
+def use? (d : Datum) : Option Definite.Use :=
   d.parse? "use" [("anaphoric", .anaphoric),
     ("immediateSituation", .immediateSituation), ("largerSituation", .largerSituation),
     ("partWholeBridging", .bridging .partWhole), ("producerBridging", .bridging .relational)]
