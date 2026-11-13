@@ -25,8 +25,9 @@ governed by the next onset, as two consonants that contract infrasegmental gover
 ## Implementation notes
 
 A nucleus of a candidate has associated melody or none, since a floating object is linked to no
-slot. Infrasegmental government is taken to be head-final, the governing consonant following the
-governed one.
+slot. Only the following onset is tried as the governor of an onset. A governing first consonant
+would have to be licensed by the empty nucleus that the domain encloses, which Government
+Licensing excludes, so that infrasegmental government is head-final ([scheer-2004] (52)).
 
 ## References
 
