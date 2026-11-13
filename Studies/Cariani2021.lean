@@ -364,8 +364,7 @@ open Aspect
 open Condoravdi2002 (PRES WOLL frame)
 open Event (τ)
 
-variable {W E T : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
-  (s : SelectionFunction W)
+variable {W E T : Type*} [LinearOrder T] [TemporalTrace E T] (s : SelectionFunction W)
   (MB : W → T → Set W) (Q : SortedProperty W E T) {w : W} {now : T}
 
 /-- Selectional WOLL instantiates the property throughout the forward interval from the start of

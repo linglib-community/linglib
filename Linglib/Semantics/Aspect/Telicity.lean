@@ -138,7 +138,7 @@ theorem _root_.IsTemporalPrecedence.isTelic_of_qua [SemilatticeSup β] (r : β �
 /-- A predicate that fixes the run time is telic: a part of an event runs within it, so it neither
 precedes nor follows a part with the event's run time. -/
 theorem isTelic_runTime_eq [PartialOrder β] {T : Type*} [LinearOrder T]
-    [TemporalTrace β (NonemptyInterval T)] (hτ : Monotone (τ : β → NonemptyInterval T))
+    [TemporalTrace β T] (hτ : Monotone (τ : β → NonemptyInterval T))
     (I : NonemptyInterval T) : IsTelic (Precedes : β → β → Prop) (τ · = I) := by
   intro e e' he he' hle
   have hτe : τ e' = τ e := he'.trans he.symm
@@ -161,8 +161,7 @@ theorem exists_isTelic_not_qua :
       IsTelic (fun a b : Finset (Fin 2) × NonemptyInterval ℕ ↦ a.2.snd < b.2.fst) P ∧ ¬ QUA P ∧
         ¬ IsTelic (fun a b : Finset (Fin 2) × NonemptyInterval ℕ ↦ a.2.snd < b.2.fst)
           fun _ ↦ True := by
-  let : Event.TemporalTrace (Finset (Fin 2) × NonemptyInterval ℕ) (NonemptyInterval ℕ) :=
-    ⟨Prod.snd⟩
+  let : TemporalTrace (Finset (Fin 2) × NonemptyInterval ℕ) ℕ := ⟨Prod.snd⟩
   refine ⟨(·.2 = ⟨(3, 4), by decide⟩), isTelic_runTime_eq monotone_snd _, fun h ↦ ?_, fun h ↦ ?_⟩
   · exact h (x := ({0}, ⟨(3, 4), by decide⟩)) rfl (y := ({0, 1}, ⟨(3, 4), by decide⟩)) rfl
       (fun hxy ↦ absurd (congrArg Prod.fst hxy) (by decide))

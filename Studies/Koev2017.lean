@@ -40,7 +40,7 @@ namespace Koev2017
 
 open Event (τ)
 
-variable {T E : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)] {L : Type*}
+variable {T E : Type*} [LinearOrder T] [TemporalTrace E T] {L : Type*}
 
 /-- Two events are temporally disjoint when their temporal traces do not overlap, the first
 disjunct of Definition 24. -/
@@ -104,7 +104,7 @@ inductive Ev
 
 /-- The described event runs over `[0, 5]`; the speaker learns of it afterwards, witnesses it
 during `[2, 4]`, or sees the smoke over the same interval `[0, 5]`. -/
-instance : Event.TemporalTrace Ev (NonemptyInterval ℤ) where
+instance : TemporalTrace Ev ℤ where
   τ
     | .described => ⟨(0, 5), by decide⟩
     | .learnIndirect => ⟨(10, 15), by decide⟩

@@ -81,8 +81,7 @@ end IsTemporalPrecedence
 /-- Under a trace that preserves sums, precedence by run times is a temporal precedence on the
 part structure of events. -/
 instance Event.isTemporalPrecedence_precedes {E T : Type*} [LinearOrder T] [SemilatticeSup E]
-    [Event.TemporalTrace E (NonemptyInterval T)]
-    [Event.TemporalTrace.IsSupHom E (NonemptyInterval T)] :
+    [TemporalTrace E T] [TemporalTrace.IsSupHom E T] :
     IsTemporalPrecedence E (Event.Precedes : E → E → Prop) where
   left c a b := propext <| by
     simp only [Event.precedes_iff, Event.τ_sup]

@@ -156,14 +156,13 @@ def SubintervalGranularity {T : Type*} [LinearOrder T]
     be built from `P`-parts with runtimes properly included in `τ e` ([champollion-2017]
     eq. (38)). It captures atelicity, the predicates compatible with *for*-adverbials having
     subinterval reference. -/
-def SubintervalReference {T E : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
+def SubintervalReference {T E : Type*} [LinearOrder T] [TemporalTrace E T]
     [SemilatticeSup E]
     (P : E → Prop) (e : E) : Prop :=
   StratifiedReference τ SubintervalGranularity P e
 
 /-- `P` has universal subinterval reference when every `P`-event has subinterval reference. -/
-def SubintervalReferenceUniv {T E : Type*} [LinearOrder T] [Event.TemporalTrace E
-    (NonemptyInterval T)]
+def SubintervalReferenceUniv {T E : Type*} [LinearOrder T] [TemporalTrace E T]
     [SemilatticeSup E]
     (P : E → Prop) : Prop :=
   ∀ e, P e → SubintervalReference P e
@@ -217,7 +216,7 @@ abbrev eachConstr {α β : Type*} [SemilatticeSup α] [PartialOrder β]
   DistributiveReference θ Share x
 
 /-- A *for*-adverbial requires its predicate to have subinterval reference. -/
-abbrev forConstr {T E : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
+abbrev forConstr {T E : Type*} [LinearOrder T] [TemporalTrace E T]
     [SemilatticeSup E]
     (Share : E → Prop) (e : E) : Prop :=
   SubintervalReference Share e
@@ -278,7 +277,7 @@ theorem stratifiedReference_join {α β : Type*} [SemilatticeSup α] [Semilattic
 /-! ### Aspect Bridge (subinterval reference ↔ atelicity) -/
 
 theorem forAdverbial_requires_subintervalReference
-    {T E : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
+    {T E : Type*} [LinearOrder T] [TemporalTrace E T]
     [SemilatticeSup E]
     {P : E → Prop}
     (h_for_ok : SubintervalReferenceUniv P) :
@@ -286,7 +285,7 @@ theorem forAdverbial_requires_subintervalReference
   h_for_ok
 
 theorem qua_incompatible_with_subintervalReference
-    {T E : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
+    {T E : Type*} [LinearOrder T] [TemporalTrace E T]
     [SemilatticeSup E]
     {P : E → Prop}
     (hQua : QUA P)
@@ -302,13 +301,13 @@ theorem qua_incompatible_with_subintervalReference
 
 /-- *V for δ* holds of an event of `V` whose run time is `δ` and at which `V` has subinterval
 reference, [champollion-2017]'s entry for the *for*-adverbial, eq. (72). -/
-def forAdverbialMeaning {T E : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
+def forAdverbialMeaning {T E : Type*} [LinearOrder T] [TemporalTrace E T]
     [SemilatticeSup E]
     (V : E → Prop) (duration : NonemptyInterval T) (e : E) : Prop :=
   V e ∧ τ e = duration ∧ SubintervalReference V e
 
 theorem in_adverbial_incompatible_with_subintervalReference
-    {T E : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
+    {T E : Type*} [LinearOrder T] [TemporalTrace E T]
     [SemilatticeSup E]
     {P : E → Prop}
     (hQua : QUA P)
@@ -389,8 +388,7 @@ end Distributivity
 /-- A predicate `P` has stratified subinterval reference at `e` iff `e` is the sum of a finite
 Schwarzschild cover into proper-subinterval `P`-parts, the book's theorem at the runtime
 dimension. -/
-theorem subintervalReference_iff_cover {T E : Type*} [LinearOrder T] [Event.TemporalTrace E
-    (NonemptyInterval T)]
+theorem subintervalReference_iff_cover {T E : Type*} [LinearOrder T] [TemporalTrace E T]
     [SemilatticeSup E] {P : E → Prop} {e : E} :
     SubintervalReference P e ↔
       ∃ (parts : Finset E) (hne : parts.Nonempty),

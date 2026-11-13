@@ -68,7 +68,7 @@ open Event (τ)
 
 open Aspect
 
-variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E (NonemptyInterval T)]
+variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T]
   {p : W → Set (NonemptyInterval T)} {P : W → E → Prop} {w : W} {i : NonemptyInterval T}
   {t t₀ : T}
 

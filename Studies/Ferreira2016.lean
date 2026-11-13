@@ -88,7 +88,7 @@ end Number
 
 section Imp
 
-variable {E W T : Type*} [LinearOrder T] [TemporalTrace E (NonemptyInterval T)]
+variable {E W T : Type*} [LinearOrder T] [TemporalTrace E T]
 
 /-- `IMP` (111), with Portner's `BEST` (52), (53): in every best world of the circumstantial base
 for the description `P` at the reference interval, ranked by the ordering source, the reference
@@ -211,7 +211,7 @@ legs after time `2`. The sentence is uttered at time `3`. -/
 def hull (s : Finset ℕ) : NonemptyInterval ℕ :=
   if h : s.Nonempty then ⟨(s.min' h, s.max' h), Finset.min'_le_max' _ h⟩ else ⟨(0, 0), le_rfl⟩
 
-local instance : TemporalTrace (Finset ℕ) (NonemptyInterval ℕ) := ⟨hull⟩
+local instance : TemporalTrace (Finset ℕ) ℕ := ⟨hull⟩
 
 /-- The worlds of the soccer scenario. -/
 inductive Soccer

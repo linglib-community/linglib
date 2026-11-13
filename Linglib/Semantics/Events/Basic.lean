@@ -17,19 +17,18 @@ order.
 
 ## Main definitions
 
-* `Event.TemporalTrace`: the temporal trace of an event domain.
-* `Event.TemporalTrace.IsSupHom`: the trace preserves sums.
+* `TemporalTrace`: the temporal trace of an event domain.
+* `TemporalTrace.IsSupHom`: the trace preserves sums.
 * `Event.τSupHom`: the trace as a homomorphism of part structures.
 * `Event.Precedes`: precedence of events by their run times.
 
 ## Implementation notes
 
-* The type of run times is a parameter: intervals of a linear order for the aspectual operators,
-  and any part structure of times for mereological results. An event domain has one trace, so
-  the type of its run times is an `outParam`.
-* The sum of two intervals is their convex hull, so under an interval-valued trace the sum of two
-  events runs from the start of the earlier to the end of the later, where Krifka's and
-  Champollion's sums of times keep the gap between them.
+* Parthood is an order on the event domain from `Semantics/Mereology.lean`, and theories that
+  never read a run time take no trace.
+* Run times are `NonemptyInterval T`, and the sum of two intervals is their convex hull, so the
+  sum of two events runs from the start of the earlier to the end of the later, where Krifka's
+  and Champollion's sums of times keep the gap between them.
 * τ is total, where Champollion lets trace functions be partial. Krifka's richness, that every
   time is the run time of some event, is the hypothesis `Function.Surjective τ`.
 * Bach divides eventualities into states and non-states; here the division is a property of
@@ -49,47 +48,45 @@ order.
 
 @[expose] public section
 
-namespace Event
-
-/-- The temporal trace of an event domain `E`, which sends each event to its run time, of
-type `I`. -/
-class TemporalTrace (E : Type*) (I : outParam Type*) where
+/-- The temporal trace of an event domain `E`, which sends each event to its run time. -/
+class TemporalTrace (E : Type*) (T : outParam Type*) [LE T] where
   /-- The run time of an event. -/
-  τ : E → I
-
-export TemporalTrace (τ)
-
-/-- Each interval is an event whose run time is itself. -/
-instance {T : Type*} [LE T] : TemporalTrace (NonemptyInterval T) (NonemptyInterval T) := ⟨id⟩
-
-@[simp] theorem τ_nonemptyInterval {T : Type*} [LE T] (i : NonemptyInterval T) : τ i = i := rfl
-
-/-! ### Sums -/
+  τ : E → NonemptyInterval T
 
 /-- The run time of a sum of events is the sum of their run times ([krifka-1998] (27),
 [champollion-2017] (36)). -/
-class TemporalTrace.IsSupHom (E I : Type*) [SemilatticeSup E] [SemilatticeSup I]
-    [TemporalTrace E I] : Prop where
+class TemporalTrace.IsSupHom (E T : Type*) [SemilatticeSup E] [Lattice T] [TemporalTrace E T] :
+    Prop where
   /-- The run time of a sum is the sum of the run times. -/
-  τ_sup (e e' : E) : τ (e ⊔ e') = τ e ⊔ τ e'
+  τ_sup (e e' : E) : TemporalTrace.τ (e ⊔ e') = TemporalTrace.τ e ⊔ TemporalTrace.τ e'
 
+namespace Event
+
+export TemporalTrace (τ)
 export TemporalTrace.IsSupHom (τ_sup)
 
-instance {T : Type*} [Lattice T] :
-    TemporalTrace.IsSupHom (NonemptyInterval T) (NonemptyInterval T) := ⟨fun _ _ ↦ rfl⟩
+/-- Each interval is an event whose run time is itself. -/
+instance {T : Type*} [LE T] : TemporalTrace (NonemptyInterval T) T := ⟨id⟩
+
+@[simp] theorem τ_nonemptyInterval {T : Type*} [LE T] (i : NonemptyInterval T) : τ i = i := rfl
+
+instance {T : Type*} [Lattice T] : TemporalTrace.IsSupHom (NonemptyInterval T) T :=
+  ⟨fun _ _ ↦ rfl⟩
+
+/-! ### Sums -/
 
 section SupHom
 
-variable {E I : Type*} [SemilatticeSup E] [SemilatticeSup I] [TemporalTrace E I]
-  [TemporalTrace.IsSupHom E I]
+variable {E T : Type*} [SemilatticeSup E] [Lattice T] [TemporalTrace E T]
+  [TemporalTrace.IsSupHom E T]
 
 /-- The temporal trace as a homomorphism of part structures. -/
-def τSupHom : SupHom E I := ⟨τ, τ_sup⟩
+def τSupHom : SupHom E (NonemptyInterval T) := ⟨τ, τ_sup⟩
 
-@[simp] theorem coe_τSupHom : ⇑(τSupHom : SupHom E I) = τ := rfl
+@[simp] theorem coe_τSupHom : ⇑(τSupHom : SupHom E (NonemptyInterval T)) = τ := rfl
 
 /-- The run time of a part of an event is part of the event's run time ([krifka-1998] (33)). -/
-theorem τ_mono : Monotone (τ : E → I) := OrderHomClass.mono τSupHom
+theorem τ_mono : Monotone (τ : E → NonemptyInterval T) := OrderHomClass.mono τSupHom
 
 end SupHom
 
@@ -101,7 +98,7 @@ variable {E T : Type*}
 
 section Preorder
 
-variable [Preorder T] [TemporalTrace E (NonemptyInterval T)]
+variable [Preorder T] [TemporalTrace E T]
 
 /-- An event precedes another when its run time does ([krifka-1998] (29)). -/
 def Precedes : E → E → Prop := InvImage NonemptyInterval.Precedes τ
@@ -114,7 +111,7 @@ instance [DecidableLT T] : DecidableRel (Precedes : E → E → Prop) := fun e e
 end Preorder
 
 /-- Precedence of events in a line of time is an interval order. -/
-instance [LinearOrder T] [TemporalTrace E (NonemptyInterval T)] : IsIntervalOrder E Precedes :=
+instance [LinearOrder T] [TemporalTrace E T] : IsIntervalOrder E Precedes :=
   NonemptyInterval.isIntervalOrder_precedes.invImage τ
 
 end Precedes

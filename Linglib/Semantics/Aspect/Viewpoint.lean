@@ -78,7 +78,7 @@ or inclusive, at some subinterval, as Dowty, Mittwoch and Vlach distinguish them
   property, `PERF (adv ∩ p ·)`: *since t₀* admits the spans starting at `t₀`, Knick and Sharf's
   domain restriction `tᵣ` the spans starting in `tᵣ`, and the covert adverbial of an unmodified
   perfect every span.
-* Event predicates range over any event domain with a temporal trace (`Event.TemporalTrace`).
+* Event predicates range over any event domain with a temporal trace (`TemporalTrace`).
 * An interval property is a family of sets of intervals indexed by worlds,
   `W → Set (NonemptyInterval T)`, so that mathlib's order closures and lower and upper sets apply
   to it directly; the perfect yields a set of world-time points.
@@ -138,7 +138,7 @@ theorem ViewpointType.ttTSitRelation_iff {T : Type*} [LinearOrder T] (v : Viewpo
 
 open Event (τ)
 
-variable {T : Type*} [LinearOrder T] {W E : Type*} [Event.TemporalTrace E (NonemptyInterval T)]
+variable {T : Type*} [LinearOrder T] {W E : Type*} [TemporalTrace E T]
 
 /-- The aspect operator of a relation `R` gives, at each world, the reference intervals that
 stand in `R` to the run time of some event of the predicate. -/
