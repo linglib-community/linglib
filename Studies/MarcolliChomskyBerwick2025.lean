@@ -259,8 +259,8 @@ example : (wasEatenTrace.toUnorderedTree.filterMap Sum.getLeft?).map UnorderedTr
     `T/d T₂`, against the equation printed on p. 82. -/
 example : wasEatenTrace.toUnorderedTree.filterMap Sum.getLeft? ≠ some (erased wasEaten) := by decide
 
-/-- The first stage at the deletion cuts leaves `T₂` beside `T/d T₂`: projecting the stage at the
-    trace cuts by `Π_{d,c}` gives the workspace that §1.4.4 displays. -/
+/-- The first stage at the deletion coproduct leaves `T₂` beside `T/d T₂`: projecting the stage at
+    the trace cuts by `Π_{d,c}` gives the workspace that §1.4.4 displays. -/
 example :
     Merge.mergeOpUnit (R := ℤ) none (erased theApple)
         (of' ({erased wasEatenTheApple} : Forest (UnorderedTree (Option LexicalItem.Token))))
@@ -469,7 +469,8 @@ example :
           (of' ({theApple.toUnorderedTree} : Forest (UnorderedTree Vertex)))) =
       of' ({theApple.toUnorderedTree} : Forest (UnorderedTree Vertex)) := by
   rw [Merge.mergeOp_im_composition Vertex.bare _ _ _ _ filter_admissibleCuts_theApple
-    (by decide) (fun h ↦ (by decide : theApple ≠ theD) (SyntacticObject.toUnorderedTree_injective h))
+    (by decide)
+    (fun h ↦ (by decide : theApple ≠ theD) (SyntacticObject.toUnorderedTree_injective h))
     (deletionQuotient_of_isSyntacticObject theD.isSyntacticObject_toUnorderedTree)
     (deletionQuotient_of_isSyntacticObject appleN.isSyntacticObject_toUnorderedTree),
     show theApple = merge theD appleN by decide, toUnorderedTree_merge, Multiset.pair_comm]

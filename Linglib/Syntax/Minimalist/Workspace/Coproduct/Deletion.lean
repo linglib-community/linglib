@@ -18,12 +18,17 @@ public import Linglib.Syntax.Minimalist.Workspace.Coproduct.Trace
 Marcolli, Chomsky and Berwick extract accessible terms from a syntactic object with three
 coproducts, which differ in the remainder an extraction leaves. `Δ^c` contracts each extracted
 term to a trace leaf, `Δ^ρ` leaves the remainder of the admissible cut, and `Δ^d` deletes the
-term and contracts the vertices left with a single child. They relate the three by projections
-of the right channel: `Π_{ρ,c}` deletes the trace leaves, `Π_{d,ρ}` contracts the non-branching
-vertices, and `Δ^d = (id ⊗ Π_{d,ρ}) ∘ Δ^ρ = (id ⊗ Π_{d,ρ} ∘ Π_{ρ,c}) ∘ Δ^c`, displayed before
+term and takes the largest binary tree the remainder contracts to. They relate the three by
+projections of the right channel: `Π_{ρ,c}` deletes the trace leaves, `Π_{d,ρ}` reduces the
+remainder, and `Δ^d = (id ⊗ Π_{d,ρ}) ∘ Δ^ρ = (id ⊗ Π_{d,ρ} ∘ Π_{ρ,c}) ∘ Δ^c`, displayed before
 their (1.3.10). Here `Δ^d` is defined by the first expression. The second is
-[proved for trees without traces](##contractUnary_eraseTraces_traceComulAlgHom), from
-[the same relation between `Δ^c` and `Δ^ρ`](##eraseTraces_traceComulAlgHom). In a full binary tree,
+[proved for trees without traces](##deletionProj_eraseTraces_traceComulAlgHom), from
+[the same relation between `Δ^c` and `Δ^ρ`](##eraseTraces_traceComulAlgHom).
+
+The remainder of a deletion is the trunk of the admissible cut restricted to its leaves: the
+vertices above a leaf of the tree, with those left a single child contracted. A deletion therefore
+[keeps the leaves](##deletionCuts_leaves), those of a tree being those of the extracted terms and
+of the remainder. In a full binary tree,
 [deleting one accessible term costs two accessible terms besides its own](##deletionCuts_numEdges),
 the book's (1.6.7). `Merge/Basic.lean` carries the relations over to Merge.
 
@@ -33,14 +38,17 @@ the book's (1.6.7). `Merge/Basic.lean` carries the relations over to Merge.
   so the relations hold along the embedding `rename (UnorderedTree.map Sum.inl)`. The left
   channel of `Δ^c` on an embedded tree is embedded and the right channel is not, which is why
   the projections act on the right channel alone.
-* The book's `Π_{d,ρ}` takes a tree whose vertices have at most two children to the maximal
-  binary tree obtained by contracting edges. Here it is `UnorderedTree.contractUnary`, on trees
-  of any arity.
+* The book's trees carry lexical items at their leaves and nothing at the other vertices, and
+  its `Π_{d,ρ}` takes the remainder of a cut to the maximal binary tree obtained by contracting
+  edges. Here every vertex carries a label, and one label `b` marks the vertices with children,
+  the label Merge gives a new root. A vertex labelled `b` that a cut leaves childless is no leaf,
+  so `deletionQuotient b` removes it, with the vertices above it that have no other descendant,
+  before contracting the unary vertices; it is `none` when nothing remains, and `Π_{d,ρ}` then
+  sends the tree to `1`. Trees of any arity are allowed.
+* The deletion cuts are not a cut enumeration in the sense of `comulOfCuts`, whose trunks are
+  trees: `deletionCuts` pairs each admissible cut with the remainder of its trunk.
 * `Δ^d` carries no `Bialgebra` structure: its coassociativity holds only up to the multiplicity
   of some terms (the book's Lemma 1.2.12).
-* (1.6.7) extends to a cut extracting several terms only when no two of them are sisters. A cut
-  extracting both children of a vertex leaves it a leaf, with nothing to contract, so the two
-  cost one accessible term each (`admissibleCuts_numUnary`).
 
 ## References
 

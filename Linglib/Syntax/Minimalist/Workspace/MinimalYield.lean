@@ -316,7 +316,8 @@ variable [DecidableEq (UnorderedTree α)] [DecidableEq α] (b : α)
   {F : Forest (UnorderedTree α)} {s : CutChoice α} {S S' X : UnorderedTree α}
 
 private theorem card_filterMap_of_forall_ne_none {γ δ : Type*} {f : γ → Option δ} :
-    ∀ {m : Multiset γ}, (∀ a ∈ m, f a ≠ none) → Multiset.card (m.filterMap f) = Multiset.card m := by
+    ∀ {m : Multiset γ}, (∀ a ∈ m, f a ≠ none) →
+      Multiset.card (m.filterMap f) = Multiset.card m := by
   intro m
   induction m using Multiset.induction with
   | empty => simp
@@ -428,9 +429,11 @@ theorem MinimalYield.merge_term_numEdges_iff :
   have hb := card_singleton_add_trunk_add_numWhole hs X
   have hd := card_filterMap_of_forall_ne_none hne
   have hFb : ∀ T ∈ F, T.IsFullBinary := fun T hT ↦ (hF T hT).mono fun _ _ h ↦ h.2
-  have hXc : X.contractUnary.numEdges = S.contractUnary.numEdges + S'.contractUnary.numEdges + 2 := by
+  have hXc : X.contractUnary.numEdges =
+      S.contractUnary.numEdges + S'.contractUnary.numEdges + 2 := by
     rwa [UnorderedTree.contractUnary_eq_self_iff.mpr hXu,
-      UnorderedTree.contractUnary_eq_self_iff.mpr hS, UnorderedTree.contractUnary_eq_self_iff.mpr hS']
+      UnorderedTree.contractUnary_eq_self_iff.mpr hS,
+      UnorderedTree.contractUnary_eq_self_iff.mpr hS']
   have key (hw : s.numWhole ≠ 0) := (MinimalYield.merge_term_iff_of_extraction_two hs
     (hasExtractionCost_contractUnary_merge_term hFb hs hK hS hS' hw) hK hXc)
   have hw_of (h : Multiset.card ({X} + s.trunk.filterMap (deletionQuotient b)) ≤ Multiset.card F) :
@@ -455,9 +458,11 @@ theorem MinimalYieldWeak.merge_term_numEdges_iff :
   have hb := card_singleton_add_trunk_add_numWhole hs X
   have hd := card_filterMap_of_forall_ne_none hne
   have hFb : ∀ T ∈ F, T.IsFullBinary := fun T hT ↦ (hF T hT).mono fun _ _ h ↦ h.2
-  have hXc : X.contractUnary.numEdges = S.contractUnary.numEdges + S'.contractUnary.numEdges + 2 := by
+  have hXc : X.contractUnary.numEdges =
+      S.contractUnary.numEdges + S'.contractUnary.numEdges + 2 := by
     rwa [UnorderedTree.contractUnary_eq_self_iff.mpr hXu,
-      UnorderedTree.contractUnary_eq_self_iff.mpr hS, UnorderedTree.contractUnary_eq_self_iff.mpr hS']
+      UnorderedTree.contractUnary_eq_self_iff.mpr hS,
+      UnorderedTree.contractUnary_eq_self_iff.mpr hS']
   refine ⟨fun h ↦ ?_, fun hw ↦ ?_⟩
   · have := h.noDivergence
     simp only [Multiset.card_add, Multiset.card_singleton, hd] at this hb

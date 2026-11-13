@@ -15,8 +15,8 @@ two-object workspace this holds over every cut enumeration admitting Merge (`mer
 in particular at the admissible and trace cuts. With a residual workspace `F̂` it holds when no
 component of `F̂` has `S` or `S'` as a subtree (`mergeOpOfCuts_pair_residual`), since such a
 workspace passes through Merge unchanged (`mergeOpOfCuts_of'_mul`). The book's Merge, at the
-deletion cuts, reaches these through the contraction of unary vertices
-(`mergeOp_eq_rename_contractUnary_comp`), so its forms hold of objects without unary vertices, as
+deletion coproduct, reaches these through the projection of the remainder
+(`mergeOp_eq_deletionProj_comp`), so its forms hold of objects that are their own remainders, as
 syntactic objects are.
 
 The proof of `mergeOpOfCuts_pair` expands the coproduct of `{S, S'}` into four cross-terms of the

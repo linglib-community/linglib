@@ -21,7 +21,7 @@ channel is the forest `{S, S'}` (Definition 1.3.1), `B` grafts that forest under
 (Definition 1.3.2), and `⊔` multiplies the two channels back into one workspace. Only `Δ` depends
 on how accessible terms are cut out, so the operator is defined over an arbitrary cut enumeration
 `cuts` (`mergeOpOfCuts`). The book's `Δ` is the deletion coproduct `Δ^d`, and `mergeOp` is Merge at
-the deletion cuts; `traceMergeOp` is Merge at the trace cuts. The unit stage `M_{β,1}` of Internal
+that coproduct; `traceMergeOp` is Merge at the trace cuts. The unit stage `M_{β,1}` of Internal
 Merge (Proposition 1.4.2) has no grafting step (`mergeOpUnitOfCuts`).
 
 On a workspace `F`, Merge grafts `{S, S'}` beside the trunk of each forest cut of `F` whose crown
@@ -34,7 +34,7 @@ External, Internal and Sideward Merge are in `Merge/External.lean`, `Merge/Inter
 ## Main definitions
 
 * `Minimalist.Merge.mergeOpOfCuts`, `mergeOp`, `traceMergeOp`: Merge over a cut enumeration, at the
-  deletion cuts, and at the trace cuts.
+  deletion coproduct, and at the trace cuts.
 * `Minimalist.Merge.mergeOpUnitOfCuts`, `mergeOpUnit`, `traceMergeOpUnit`: the unit stage `M_{β,1}`.
 * `Minimalist.Merge.IsMergeCuts`: cut enumerations whose nonempty crowns have fewer edges than
   their tree.
@@ -47,27 +47,29 @@ External, Internal and Sideward Merge are in `Merge/External.lean`, `Merge/Inter
 * `Minimalist.Merge.mergeOp_eq_comp_comulAlgHom`, `mergeOp_eq_comp_traceComulAlgHom`: Merge at `Δ^d`
   through the Connes–Kreimer coproduct and through the trace coproduct, the two expressions of the
   book's (1.3.10).
-* `Minimalist.Merge.mergeOp_eq_rename_contractUnary_comp`,
-  `mergeOpUnit_eq_rename_contractUnary_comp`: on objects without unary vertices, Merge at the
-  deletion cuts is Merge at the admissible cuts followed by contracting unary vertices.
+* `Minimalist.Merge.mergeOp_eq_deletionProj_comp`, `mergeOpUnit_eq_deletionProj_comp`: on
+  objects that are their own remainders, Merge at the deletion coproduct is Merge at the
+  admissible cuts followed by the projection `Π_{d,ρ}`.
 * `Minimalist.Merge.eraseTraces_comp_traceMergeOp`, `mergeOp_eq_comp_traceMergeOp`,
   `mergeOpUnit_eq_comp_traceMergeOpUnit`: on trees without traces, erasing the traces of Merge at
-  the trace cuts gives Merge at the admissible cuts, and contracting too gives Merge at the deletion
-  cuts.
+  the trace cuts gives Merge at the admissible cuts, and projecting too gives Merge at the
+  deletion coproduct.
 
 ## Implementation notes
 
-Definition 1.3.4 fixes the deletion coproduct `Δ^d`, which contracts the unary vertex a cut leaves,
-and `mergeOp` is Merge at the deletion cuts. The Connes–Kreimer coproduct `Δ^ρ` keeps that vertex.
-The two extract the same accessible terms, but `⊔` multiplies the remainder into the result, so
-Merge at the admissible cuts (`mergeOpOfCuts admissibleCuts`) is not the book's operator: its
-Internal Merge leaves a unary vertex, which no syntactic object has. The book writes (1.3.7) through
-`Δ^ρ` only with the right channel contracted after the matching (`mergeOp_eq_comp_comulAlgHom`).
+Definition 1.3.4 fixes the deletion coproduct `Δ^d`, which reduces the remainder of a cut to a
+binary tree, and `mergeOp` is Merge at that coproduct. The Connes–Kreimer coproduct `Δ^ρ` keeps the
+remainder as it is. The two extract the same accessible terms, but `⊔` multiplies the remainder
+into the result, so Merge at the admissible cuts (`mergeOpOfCuts admissibleCuts`) is not the book's
+operator: its Internal Merge leaves a unary vertex, which no syntactic object has. The book writes
+(1.3.7) through `Δ^ρ` only with the right channel projected after the matching
+(`mergeOp_eq_comp_comulAlgHom`).
 
-The deletion cuts do not admit Merge in the sense of `IsMergeCuts`: on a tree with a unary vertex
-the trunk of the empty cut is the contracted tree, not the tree. The book's objects are binary
-trees, which have none, and on them `mergeOp` is Merge at the admissible cuts followed by the
-contraction (`mergeOp_eq_rename_contractUnary_comp`).
+`mergeOp lbl` uses the label `lbl` twice: Merge gives it to the new root, and the deletion takes it
+to mark the vertices with children, removing those a cut leaves childless. The deletion coproduct
+is not `comulOfCuts` of a cut enumeration, since a remainder may be empty, so `mergeOp` is defined
+from `deletionComulAlgHom`. On trees that are their own remainders, as syntactic objects are, it is
+Merge at the admissible cuts followed by the projection (`mergeOp_eq_deletionProj_comp`).
 
 ## References
 
@@ -451,9 +453,9 @@ theorem mergeOpUnitOfCuts_one (cuts : UnorderedTree α → Multiset (Forest
 
 /-! ### Deletion and admissible cuts
 
-Merge at the deletion cuts reaches the Connes–Kreimer coproduct through the contraction `Π_{d,ρ}` of
-the right channel, `rename UnorderedTree.contractUnary`, which commutes with the matching since the
-two act on different channels. -/
+Merge at the deletion coproduct reaches the Connes–Kreimer coproduct through the projection
+`Π_{d,ρ}` of the right channel, `deletionProj`, which commutes with the matching since the two act
+on different channels. -/
 
 section Contraction
 

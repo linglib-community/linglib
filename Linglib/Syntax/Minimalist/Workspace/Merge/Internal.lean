@@ -9,7 +9,7 @@ Internal Merge (Proposition 1.4.2 of Marcolli, Chomsky and Berwick) is the compo
 `M_{T/β,β} ∘ M_{β,1}`. The unit stage selects a cut of `T` with crown `{β}`, giving the two-object
 workspace `{β, T/β}`, and External Merge then merges `β` with the quotient. When one cut extracts
 `β`, the composition yields `node lbl {T/β, β}` over every cut enumeration admitting Merge
-(`mergeOpOfCuts_im_composition`). At the deletion cuts of the book's Merge the quotient is the
+(`mergeOpOfCuts_im_composition`). At the deletion coproduct of the book's Merge the quotient is the
 remainder with its unary vertex contracted (`mergeOp_im_composition`); at the admissible cuts that
 vertex stays, and at the trace cuts a trace takes the place of `β` (`traceMergeOp_im_composition`).
 
