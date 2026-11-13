@@ -334,6 +334,13 @@ theorem mem_perfect_iff_of_isUpperSet (hp : IsUpperSet (p w)) :
     exact ⟨⟨(pts.fst ⊓ t.fst, t.snd), inf_le_right.trans t.fst_le_snd⟩,
       hp (NonemptyInterval.le_def.2 ⟨inf_le_left, hle⟩) hpts, inf_le_right, rfl⟩
 
+/-- For an interval property closed under superintervals, the perfect is its image under the
+converse of ending no later: a perfect time span is a nonfuture reference time. -/
+theorem perfect_eq_image_inv_endsNoLater (hp : IsUpperSet (p w)) :
+    perfect p w = (Allen.toSetRel (Allen.inv Allen.endsNoLater)).image (p w) := by
+  ext i
+  simp [SetRel.image, mem_perfect_iff_of_isUpperSet hp]
+
 /-- The perfect of the perfective holds where an event of the predicate is over by the end of the
 reference interval. -/
 theorem mem_perfect_prfv : t ∈ perfect (PRFV P) w ↔ ∃ e : E, (τ e).snd ≤ t.snd ∧ P w e := by

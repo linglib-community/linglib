@@ -25,7 +25,9 @@ prospective, [an eventuality to come](##mem_present_future_iff); the modal selec
   the future structure and the negated present perfective among them; under it the negated future
   [excludes an eventuality that starts within the utterance time](##mem_present_compl_future_iff),
   which the future does not include.
-* The non-past quantifies over reference times no part of which precedes the utterance time.
+* The non-past quantifies over reference times no part of which precedes the utterance time,
+  those standing to it in `Allen.startsNoEarlier`, the mirror image of the nonfuture reference
+  times of [matthewson-2006] (`Allen.dual_startsNoEarlier`).
 * The perfect is the library's, whose span ends with the reference interval, where the paper's
   may end before it; over the perfective the two agree
   (`Aspect.mem_perfect_iff_of_isUpperSet`).
@@ -91,9 +93,7 @@ def nonPast (u : NonemptyInterval T) (p : W → Set (NonemptyInterval T)) : Set 
   {w | ∃ t ∈ p w, ∀ j ≤ t, ¬ j.Precedes u}
 
 theorem mem_nonPast : w ∈ nonPast u p ↔ ∃ t ∈ p w, u.fst ≤ t.fst := by
-  refine exists_congr fun t ↦ and_congr_right fun _ ↦ ⟨fun h ↦ ?_, fun h j hj hlt ↦ ?_⟩
-  · exact not_lt.1 (h (.pure t.fst) (NonemptyInterval.le_def.2 ⟨le_rfl, t.fst_le_snd⟩))
-  · exact (h.trans ((NonemptyInterval.le_def.1 hj).1.trans j.fst_le_snd)).not_gt hlt
+  simp only [nonPast, mem_ofPred_eq, NonemptyInterval.forall_le_not_precedes_iff]
 
 theorem nonPast_prfv : nonPast u (PRFV P) = {w | ∃ e, u.fst ≤ (τ e).fst ∧ P w e} := by
   ext w
