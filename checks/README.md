@@ -136,6 +136,103 @@ in `scripts/checks/ChecksFixtureDeps.lean`. Run it after changing
   axiom that `native_decide` adds, which trusts the compiler. The status line still shows the
   sign-off, since a statement can be faithful without being proved.
 
+## Walkthrough: reviewing a paper
+
+This is the path from a paper and its study file to signed items. You need the paper (you supply
+it; nothing here fetches it), the repository built (`lake build`), Python 3.11 or later, and, for
+the model steps, a way to run a model, such as Claude Code. Sign-offs are made by you, at your own
+terminal; an agent never signs.
+
+1. **Find the source's key.** It is the paper's key in `references.bib`, such as `elliott-2023`,
+   and the study is its file in `Studies/`. If the paper has no entry, add one first. The check file
+   will be `checks/<key>.toml`.
+2. **Draft the record.** If there is no `checks/<key>.toml` yet, ask an agent to follow
+   `scripts/checks/draft-record.md`, giving it the paper, the key and the study file. It writes the
+   claims from the paper alone, then maps them onto the study's declarations (see *Drafting a
+   record* below). The draft is unsigned. If you would rather write it by hand, copy the example at
+   the top of this file: one `[[item]]` per definition, result or datum of the paper.
+3. **Read the claims against the paper.** This is the step that matters most, and it is yours. A
+   claim must say what the paper says, with its formulas and conditions, including where the
+   paper is odd or wrong. Fix a claim by editing it to match the paper, never to match the Lean. Add
+   an item the draft missed, and split one that is really two things. Check each `kind` and
+   `label`.
+4. **Read the mapping.** For each item, check `decls`, `relation` and `notes`: do the declarations
+   state the item, and does the relation and the note describe how they depart from it? Change
+   them if not. `python3 scripts/checks.py status <key>` reports `broken` for a name that does
+   not resolve.
+5. **Have the Lean back-translated (optional).** This uses a model, and so a share of your usage
+   limit:
+
+   ```
+   python3 scripts/checks.py review <key> --command "scripts/checks/gloss-claude.sh claude-sonnet-5-5" > review.md
+   ```
+
+   Read `review.md` from the top. *Looks unfaithful* lists items where a model that saw only the
+   Lean describes something different from the claim: read that Lean first. *Looks right* is the
+   lowest-risk group, not a verified one. Use `gloss` alone (see *Glosses*) if you only want the
+   descriptions.
+6. **Read the Lean, then sign.** For each item, read the declarations and the project definitions
+   their statements use, as you would a proof you have to believe, and decide whether they say what
+   the claim says up to the `relation` and `notes`. If not, fix the record (or the Lean, in a
+   separate change) and look again. When you are satisfied with some items:
+
+   ```
+   python3 scripts/checks.py sign <key> --items ex-22,ex-23 --by <your-github-handle>
+   python3 scripts/checks.py sign <key> --all --by <your-github-handle>   # every unsigned or stale item
+   ```
+
+   This writes a file to `checks/ledger/`. Sign only what you have read; a sign-off is your
+   statement that you did. If you review for someone without a GitHub account, record their
+   sign-off with their name in `--by` and `--via` saying how they told you (see *The ledger*).
+   Edit claims before you sign: changing a claim, a `relation`, `decls` or `notes` afterwards makes the
+   sign-off stale.
+7. **Check and open a pull request.** `python3 scripts/checks.py status <key>` should show your
+   items as `checked`, or `relies` where an item they depend on is not signed yet. Commit the
+   check file and the new `checks/ledger/` files under your own account, and open the pull
+   request from it: the CI job `verify-ledger` requires that the signer is the pull request's
+   author, unless there is a `via`.
+
+Later, if a statement or a definition it uses changes, `status` shows the item `stale`, and
+`python3 scripts/checks.py diff <key> <item>` shows what changed since you signed. Read it, and
+sign again if the item still says what the paper says.
+
+## Drafting a record
+
+A reviewer who has a paper and its study file can have a first draft of the record written, and the
+Lean checked against it, by models. Nothing in the draft is a sign-off, and the claims still need a
+person to read them against the paper. An agent follows `scripts/checks/draft-record.md`
+to run it; its stages are:
+
+1. **Claims.** A model reads the paper and nothing else, and writes each item's `id`, `kind`,
+   `label` and `claim` (`scripts/checks/draft-claims-prompt.md`). It has not seen the Lean, so the
+   claims say what the paper says, whether or not the study formalizes it that way.
+2. **Mapping.** A second model, which has not seen the paper, is given those claims and the study
+   file, and writes `decls`, `relation` and `notes` (`scripts/checks/draft-mapping-prompt.md`). It
+   may not change a claim: where the Lean departs from one, the departure goes in the `relation`
+   and `notes`. It also lists the study's declarations that match no item.
+3. **Back-translation.** Each item's declarations are described in English by a model that sees
+   only their statement closure (the blind `gloss` of the next section).
+4. **Comparison.** A third model sees the claim, the `relation` and `notes`, and the back-translation,
+   but neither the paper nor the Lean, and says whether the back-translation agrees with the claim
+   up to the departures the notes disclose (`scripts/checks/compare-prompt.md`).
+
+Steps 3 and 4 are `checks.py review`:
+
+```
+python3 scripts/checks.py review SOURCE --command CMD [--items ID,...] [--jobs N] [--refresh]
+```
+
+with the `--command` of `gloss`. It sorts the items into four groups: *looks unfaithful* (the
+comparison found a difference the record does not disclose), *needs a look* (unclear, or no
+review), *departs as the record says* (agrees, with a relation other than `exact`), and *looks
+right* (agrees, with `exact`). It exits non-zero if any item looks unfaithful. A `missing` item is
+listed as not formalized. The same blindness rules as for glosses apply, and each model is given the
+least it needs: the model that writes the claims does not see the Lean, and the model that compares
+sees neither.
+
+The review is a guide to where to read first. A group of items that look right is the lowest-risk
+group, not a verified one, since every stage can be wrong, in the same direction too.
+
 ## Glosses
 
 A reviewer who does not read Lean can ask for a gloss of each item's statement:

@@ -29,6 +29,8 @@ Usage, from the repository root:
     python3 scripts/checks.py status [SOURCE ...]
     python3 scripts/checks.py status --json   # every item, for the docs pages
     python3 scripts/checks.py diff SOURCE ITEM
+    python3 scripts/checks.py gloss SOURCE --command CMD [--items ID,ID,...]
+    python3 scripts/checks.py review SOURCE --command CMD [--items ID,ID,...]
     python3 scripts/checks.py core [--json]
     python3 scripts/checks.py sign SOURCE (--all | --items ID,ID,...) --by GITHUB_HANDLE
     python3 scripts/checks.py selftest   # after changing `checkClosure` or Lean
@@ -683,6 +685,8 @@ def record(args, by):
 
 
 GLOSS_PROMPT = ROOT / "scripts" / "checks" / "gloss-prompt.md"
+COMPARE_PROMPT = ROOT / "scripts" / "checks" / "compare-prompt.md"
+COMPARE_CACHE = ROOT / ".cache" / "checks" / "compares"
 GLOSS_CACHE = ROOT / ".cache" / "checks" / "glosses"
 
 
@@ -730,27 +734,34 @@ def gloss_input(item, data):
     return "\n".join(parts), {table[t]: t for t in targets}
 
 
-def write_gloss(text, command):
+def write_gloss(text, command, prompt=GLOSS_PROMPT, start="### T1"):
     """A gloss of `text` by the shell command `command`, which reads the text on standard input and
-    the prompt from the file named by `$GLOSS_PROMPT`, and writes the gloss to standard output."""
+    the prompt from the file named by `$GLOSS_PROMPT`, and writes the gloss to standard output.
+    The gloss must begin with `start`."""
     out = subprocess.run(command, shell=True, input=text, cwd=ROOT, capture_output=True, text=True,
-                         env={**os.environ, "GLOSS_PROMPT": str(GLOSS_PROMPT)})
+                         env={**os.environ, "GLOSS_PROMPT": str(prompt)})
     gloss = out.stdout.strip()
-    if out.returncode or not gloss.startswith("### T1"):
+    if out.returncode or not gloss.startswith(start):
         detail = (gloss or out.stderr).strip()
         raise RuntimeError(detail.splitlines()[0] if detail else f"exit {out.returncode}")
     return gloss
 
 
-def cmd_gloss(args):
-    sources = load_sources([args.source])
-    items = [i for i in sources[args.source]["items"] if i.get("decls")]
-    if args.items:
-        wanted = args.items.split(",")
+def select_items(sources, source, wanted):
+    """The items of `source` that have declarations, or just those named in `wanted`."""
+    items = [i for i in sources[source]["items"] if i.get("decls")]
+    if wanted:
+        wanted = wanted.split(",")
         unknown = set(wanted) - {i["id"] for i in items}
         if unknown:
             sys.exit(f"no item with declarations: {', '.join(sorted(unknown))}")
         items = [i for i in items if i["id"] in wanted]
+    return items
+
+
+def glosses_of(items, command, jobs, refresh):
+    """The glosses of the items, written by `command` and cached: a dict from item id to its cache
+    entry (`names` and `gloss`), and a dict from item id to why it has no gloss."""
     data = closures(sorted({d for i in items for d in i["decls"]}))
     missing = sorted(d for i in items for d in i["decls"] if not data["roots"][d]["found"])
     if missing:
@@ -758,43 +769,145 @@ def cmd_gloss(args):
 
     prompt = GLOSS_PROMPT.read_text(encoding="utf-8")
     GLOSS_CACHE.mkdir(parents=True, exist_ok=True)
-    jobs = {}
+    work = {}
     for item in items:
         text, names = gloss_input(item, data)
-        key = hashlib.sha256("\0".join([args.command, prompt, text]).encode()).hexdigest()[:16]
-        jobs[item["id"]] = (key, text, names)
+        key = hashlib.sha256("\0".join([command, prompt, text]).encode()).hexdigest()[:16]
+        work[item["id"]] = (key, text, names)
 
     def ensure(cid):
-        key, text, names = jobs[cid]
+        key, text, names = work[cid]
         path = GLOSS_CACHE / f"{key}.json"
-        if path.exists() and not args.refresh:
+        if path.exists() and not refresh:
             return
-        gloss = write_gloss(text, args.command)
-        path.write_text(json.dumps({"command": args.command, "input": text, "names": names,
+        gloss = write_gloss(text, command)
+        path.write_text(json.dumps({"command": command, "input": text, "names": names,
                                     "gloss": gloss}, ensure_ascii=False, indent=1),
                         encoding="utf-8")
 
     failed = {}
-    with concurrent.futures.ThreadPoolExecutor(args.jobs) as pool:
-        futures = {pool.submit(ensure, cid): cid for cid in jobs}
+    with concurrent.futures.ThreadPoolExecutor(jobs) as pool:
+        futures = {pool.submit(ensure, cid): cid for cid in work}
         for f in concurrent.futures.as_completed(futures):
             try:
                 f.result()
             except RuntimeError as e:
                 failed[futures[f]] = str(e)
+    entries = {cid: json.loads((GLOSS_CACHE / f"{key}.json").read_text(encoding="utf-8"))
+               for cid, (key, _, _) in work.items() if cid not in failed}
+    return entries, failed
 
+
+def cmd_gloss(args):
+    sources = load_sources([args.source])
+    items = select_items(sources, args.source, args.items)
+    entries, failed = glosses_of(items, args.command, args.jobs, args.refresh)
     for item in items:
         cid = item["id"]
         print(f"# {args.source}/{cid}: {item.get('label', '')}\n")
         if cid in failed:
             print(f"_No gloss: {failed[cid]}_\n")
             continue
-        entry = json.loads((GLOSS_CACHE / f"{jobs[cid][0]}.json").read_text(encoding="utf-8"))
+        entry = entries[cid]
         print(", ".join(f"{t} is `{n}`" for t, n in entry["names"].items()) + ".\n")
         print(entry["gloss"] + "\n")
     for cid, err in failed.items():
         print(f"{args.source}/{cid}: no gloss: {err}", file=sys.stderr)
     return 1 if failed else 0
+
+
+def compare_input(item, gloss):
+    """The text a comparison is written from: the item's record, with no declaration names, and
+    the back-translation. The paper and the Lean are not in it."""
+    notes = " ".join(item.get("notes", "").split()) or "(none)"
+    return "\n".join([
+        f"## Item: {item.get('label', item['id'])}", "",
+        f"**Kind:** {item['kind']}", f"**Relation:** {item['relation']}", "",
+        "### Claim", " ".join(item["claim"].split()), "",
+        "### Notes", notes, "",
+        "### Back-translation", gloss, ""])
+
+
+def verdict_of(text):
+    m = re.match(r"VERDICT:\s*`?(agrees|differs|unclear)\b", text)
+    return m.group(1) if m else None
+
+
+def cmd_review(args):
+    """Back-translate each item's Lean, have a second reader compare the back-translation with the
+    claim, and report which items look unfaithful, which look right, and which need a look."""
+    sources = load_sources([args.source])
+    all_items = sources[args.source]["items"]
+    items = select_items(sources, args.source, args.items)
+    entries, failed = glosses_of(items, args.command, args.jobs, args.refresh)
+
+    prompt = COMPARE_PROMPT.read_text(encoding="utf-8")
+    COMPARE_CACHE.mkdir(parents=True, exist_ok=True)
+    texts = {i["id"]: compare_input(i, entries[i["id"]]["gloss"])
+             for i in items if i["id"] in entries}
+    keys = {cid: hashlib.sha256("\0".join([args.command, prompt, t]).encode()).hexdigest()[:16]
+            for cid, t in texts.items()}
+
+    def ensure(cid):
+        path = COMPARE_CACHE / f"{keys[cid]}.json"
+        if path.exists() and not args.refresh:
+            return
+        out = write_gloss(texts[cid], args.command, COMPARE_PROMPT, start="VERDICT:")
+        path.write_text(json.dumps({"command": args.command, "input": texts[cid],
+                                    "comparison": out}, ensure_ascii=False, indent=1),
+                        encoding="utf-8")
+
+    problems = dict(failed)
+    with concurrent.futures.ThreadPoolExecutor(args.jobs) as pool:
+        futures = {pool.submit(ensure, cid): cid for cid in texts}
+        for f in concurrent.futures.as_completed(futures):
+            try:
+                f.result()
+            except RuntimeError as e:
+                problems[futures[f]] = str(e)
+
+    groups = {"unfaithful": [], "look": [], "disclosed": [], "right": []}
+    for item in items:
+        cid = item["id"]
+        if cid in problems:
+            groups["look"].append((item, None, f"no review: {problems[cid]}"))
+            continue
+        text = json.loads((COMPARE_CACHE / f"{keys[cid]}.json").read_text(encoding="utf-8"))
+        verdict = verdict_of(text["comparison"])
+        if verdict == "differs":
+            group = "unfaithful"
+        elif verdict == "agrees" and item["relation"] == "exact":
+            group = "right"
+        elif verdict == "agrees":
+            group = "disclosed"
+        else:
+            group = "look"
+        groups[group].append((item, entries[cid], text["comparison"]))
+
+    titles = {
+        "unfaithful": "Looks unfaithful: the Lean differs from the claim in a way the record does not disclose",
+        "look": "Needs a look: the comparison was unclear, or could not be made",
+        "disclosed": "Departs as the record says: check that the notes are right",
+        "right": "Looks right: the back-translation says what the claim says",
+    }
+    print(f"# Review of {args.source}\n")
+    print("Written by models, from the record and the Lean alone, never the paper: a guide to where "
+          "to look, not a sign-off. Read the claims against the paper first.\n")
+    for g in ("unfaithful", "look", "disclosed", "right"):
+        print(f"## {titles[g]} ({len(groups[g])})\n")
+        for item, entry, comparison in groups[g]:
+            print(f"### {item['id']}: {item.get('label', '')} [{item['relation']}]\n")
+            print("Claim: " + " ".join(item["claim"].split()) + "\n")
+            print("Declarations: " + ", ".join(f"`{d}`" for d in item["decls"]) + "\n")
+            if g == "right":
+                continue
+            print(comparison + "\n")
+    absent = [i for i in all_items if not i.get("decls")]
+    if absent:
+        print(f"## Not formalized ({len(absent)})\n")
+        for i in absent:
+            print(f"* {i['id']}: {i.get('label', '')}")
+    return 1 if groups["unfaithful"] else 0
 
 
 # Groups of declarations in `scripts/checks/ChecksFixture.lean` whose terms must all be equal
@@ -941,6 +1054,13 @@ def main():
     p.add_argument("--jobs", type=int, default=4, help="glosses written at once")
     p.add_argument("--refresh", action="store_true", help="rewrite cached glosses")
     p.set_defaults(func=cmd_gloss)
+    p = sub.add_parser("review", help="have the Lean's back-translations compared with the claims")
+    p.add_argument("source")
+    p.add_argument("--items", help="comma-separated item ids (default: every item)")
+    p.add_argument("--command", required=True, help="the shell command `gloss` takes")
+    p.add_argument("--jobs", type=int, default=4, help="models run at once")
+    p.add_argument("--refresh", action="store_true", help="rewrite cached glosses and comparisons")
+    p.set_defaults(func=cmd_review)
     p = sub.add_parser("verify-ledger", help="check a pull request's changes to the ledger")
     p.add_argument("--base", required=True, help="the branch the pull request targets")
     p.add_argument("--author", required=True, help="the GitHub login of the pull request's author")
