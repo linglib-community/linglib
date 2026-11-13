@@ -15,11 +15,11 @@ and, in upward-entailing contexts, where it uses a necessity modal, is a possibi
 without a Horn scale. The use of a modal conveys its claim exhaustified against the claims of
 its scalemates, so [a modal with none conveys its bare claim](##appropriate_empty). A modal
 serves for a force when, over every consistent modal base, it is appropriate wherever an English
-modal of that force is, which holds [for its own force and, if no scalemate makes a stronger
-claim, for the forces whose claim is stronger than its own](##servesFor_iff). Negation reverses
-which claim is the stronger, so a possibility modal without a scale [is
-flexible](##flexible_iff) in upward-entailing contexts only, as *o'qa*, [which forms a scale
-with no Nez Perce modal](##oqa_scaleFree), [is](##oqa_flexible).
+modal of that force is. In an upward-entailing context [a modal serves for its own force, and
+an existential modal with no universal scalemate for every force](##servesFor_positive_iff);
+[under negation a modal serves as its dual does](##servesFor_negative_iff_dual), so a
+possibility modal without a scale [is flexible](##flexible_positive_iff) in upward-entailing
+contexts only, as [*o'qa* is](##oqa_flexible).
 
 ## Implementation notes
 
@@ -62,53 +62,27 @@ def claim : ModalForce → Set W
   | .possibility => {w | simplePossibility f w p}
   | .weakNecessity | .necessity => {w | p ∈ simpleNecessity f w}
 
-/-- In a context of polarity `π`, the claim of force `g` is stronger than that of `fo`:
-necessity is the stronger claim in an upward-entailing context, possibility under negation. -/
-def StrongerIn : Polarity → ModalForce → ModalForce → Prop
-  | .positive, g, fo => fo.classical < g.classical
-  | .negative, g, fo => g.classical < fo.classical
+variable {f p} {fo g : ModalForce}
 
-instance : ∀ π g fo, Decidable (StrongerIn π g fo)
-  | .positive, _, _ => inferInstanceAs (Decidable (_ < _))
-  | .negative, _, _ => inferInstanceAs (Decidable (_ < _))
-
-variable {f p} {π : Polarity} {fo g h : ModalForce}
-
-theorem claim_classical (fo : ModalForce) : claim f p fo.classical = claim f p fo := by
-  cases fo <;> rfl
-
-theorem StrongerIn.asymm (h : StrongerIn π g fo) : ¬ StrongerIn π fo g := by
-  cases π <;> exact lt_asymm h
-
-theorem strongerIn_of_not (h : ¬ StrongerIn π fo g) (hne : fo.classical ≠ g.classical) :
-    StrongerIn π g fo := by
-  cases π
-  exacts [lt_of_le_of_ne (not_lt.1 h) hne, lt_of_le_of_ne (not_lt.1 h) hne.symm]
-
--- With two classical forces, a claim that another is stronger than is the weakest.
-theorem StrongerIn.not_right :
-    ∀ {π g fo}, StrongerIn π g fo → ∀ h, ¬ StrongerIn π fo h := by
-  decide
-
--- With two classical forces, a claim stronger than another is the strongest.
-theorem StrongerIn.not_left :
-    ∀ {π g fo}, StrongerIn π g fo → ∀ h, ¬ StrongerIn π h g := by
-  decide
-
--- Over a consistent modal base, a claim entails every claim not stronger than it in the context.
-theorem smul_claim_subset (hf : f.IsConsistent) (h : ¬ StrongerIn π fo g) :
-    π • claim f p g ⊆ π • claim f p fo := by
+-- Over a consistent modal base a universal claim entails every claim.
+theorem claim_subset_claim (hf : f.IsConsistent) (h : fo.IsUniversal → g.IsUniversal) :
+    claim f p g ⊆ claim f p fo := by
   have hnec : claim f p .necessity ⊆ claim f p .possibility := fun w hw ↦
     let ⟨v, hv⟩ := hf w
     simplePossibility_iff.2 ⟨v, hv, hw hv⟩
-  cases π <;> cases g <;> cases fo <;>
+  cases g <;> cases fo <;>
     first
-    | exact absurd (by decide) h
     | exact subset_rfl
     | exact hnec
-    | exact Set.compl_subset_compl.2 hnec
+    | exact absurd rfl (h (by decide))
 
 variable (f p)
+
+-- The negation of a claim is the claim of the dual force about the negated prejacent.
+theorem compl_claim (fo : ModalForce) : (claim f p fo)ᶜ = claim f pᶜ fo.dual := by
+  ext w
+  cases fo <;>
+    simp [claim, ModalForce.dual, Set.subset_def]
 
 /-- Where a modal of force `fo` is appropriate in a context of polarity `π`, its scalemates
 having the forces `S`: where its claim holds and every scalemate's claim it does not entail
@@ -122,6 +96,23 @@ wherever the prejacent holds at some accessible world, even if it holds at all o
 theorem appropriate_empty (π : Polarity) (fo : ModalForce) :
     appropriate f p π ∅ fo = π • claim f p fo := by
   rw [appropriate, Set.image_empty, exh_empty]
+
+theorem appropriate_positive (S : Set ModalForce) (fo : ModalForce) :
+    appropriate f p .positive S fo = exh (claim f p '' S) (claim f p fo) :=
+  rfl
+
+-- In a negative context a modal is appropriate where its dual is about the negated prejacent.
+theorem appropriate_negative (S : Set ModalForce) (fo : ModalForce) :
+    appropriate f p .negative S fo = appropriate f pᶜ .positive (ModalForce.dual '' S) fo.dual := by
+  simp only [appropriate, Polarity.negative_smul_set, Polarity.positive_smul, compl_claim,
+    Set.image_image]
+
+-- The duals of the forces make the claims the forces make.
+theorem image_claim_image_dual_univ :
+    claim f p '' (ModalForce.dual '' .univ) = claim f p '' .univ := by
+  refine (Set.image_mono (Set.subset_univ _)).antisymm ?_
+  rintro _ ⟨fo, -, rfl⟩
+  exact ⟨fo.dual.dual, ⟨fo.dual, trivial, rfl⟩, by cases fo <;> rfl⟩
 
 end Claims
 
@@ -139,63 +130,90 @@ private def upward : Background Bool := fun w ↦ {Set.Ici w}
 
 private theorem isConsistent_upward : upward.IsConsistent := fun w ↦ ⟨w, by simp [upward]⟩
 
-/-- A prejacent on which the claims of the two classical forces come apart at `false`. -/
-private def prejacent : Polarity → Set Bool
-  | .positive => {true}
-  | .negative => {false}
+private theorem true_mem (fo : ModalForce) : true ∈ claim upward {true} fo := by
+  cases fo <;> simp [claim, upward]
 
-private theorem true_mem (π : Polarity) (fo : ModalForce) :
-    true ∈ π • claim upward (prejacent π) fo := by
-  cases π <;> cases fo <;> simp [claim, upward, prejacent]
+private theorem false_mem_iff (fo : ModalForce) :
+    false ∈ claim upward {true} fo ↔ ¬ fo.IsUniversal := by
+  cases fo <;> simp [claim, upward, ModalForce.IsUniversal]
 
-private theorem false_mem_iff (π : Polarity) (fo : ModalForce) :
-    false ∈ π • claim upward (prejacent π) fo ↔ ∀ g, ¬ StrongerIn π fo g := by
-  cases π <;> cases fo <;> simp [claim, upward, prejacent, StrongerIn] <;> decide
+-- In the model the claims entail one another only as they do over every consistent base.
+private theorem claim_upward_subset_iff {fo g : ModalForce} :
+    claim upward {true} g ⊆ claim upward {true} fo ↔ (fo.IsUniversal → g.IsUniversal) :=
+  ⟨fun h hfo ↦ by_contra fun hg ↦ (false_mem_iff fo).1 (h ((false_mem_iff g).2 hg)) hfo,
+    claim_subset_claim isConsistent_upward⟩
 
-variable {π : Polarity} {fo g : ModalForce} {S : Set ModalForce}
+-- In the model a modal with a scalemate of every force is appropriate somewhere.
+private theorem nonempty_appropriate_upward (g : ModalForce) :
+    (appropriate upward {true} .positive .univ g).Nonempty := by
+  by_cases hg : g.IsUniversal
+  · exact ⟨true, true_mem g, Set.forall_mem_image.2 fun _ _ _ ↦
+      claim_upward_subset_iff.2 fun _ ↦ hg⟩
+  · exact ⟨false, (false_mem_iff g).2 hg, Set.forall_mem_image.2 fun x _ hx ↦
+      claim_upward_subset_iff.2 fun hx' ↦ absurd hx' ((false_mem_iff x).1 hx)⟩
 
-/-- A modal serves for its own force and, if no scalemate's claim is stronger than its own, for
-the forces whose claim is stronger than its own. -/
-theorem servesFor_iff : ServesFor π S fo g ↔
-    fo.classical = g.classical ∨ StrongerIn π g fo ∧ ∀ h ∈ S, ¬ StrongerIn π h fo := by
-  refine ⟨fun hs ↦ or_iff_not_imp_left.2 fun hne ↦ ?_, ?_⟩
-  · have hs := hs Bool upward isConsistent_upward (prejacent π)
-    have hgf : StrongerIn π g fo := by
-      refine strongerIn_of_not (fun hfg ↦ ?_) hne
-      have hg : false ∈ appropriate upward (prejacent π) π .univ g :=
-        ⟨(false_mem_iff π g).2 (hfg.not_right), by
-          rintro _ ⟨x, -, rfl⟩ hx
-          exact smul_claim_subset isConsistent_upward ((false_mem_iff π x).1 hx g)⟩
-      exact (false_mem_iff π fo).1 (hs hg).1 g hfg
-    refine ⟨hgf, fun h hh hhf ↦ ?_⟩
-    have hg : true ∈ appropriate upward (prejacent π) π .univ g :=
-      ⟨true_mem π g, by
-        rintro _ ⟨x, -, rfl⟩ -
-        exact smul_claim_subset isConsistent_upward (hgf.not_left x)⟩
-    exact (false_mem_iff π h).1
-      ((hs hg).2 _ ⟨h, hh, rfl⟩ (true_mem π h) ((false_mem_iff π fo).2 hhf.not_right)) fo hhf
-  · rintro (heq | ⟨hgf, hS⟩) W f hf p
-    · have hc : claim f p g = claim f p fo := by
-        rw [← claim_classical g, ← heq, claim_classical]
-      rw [appropriate, hc]
-      exact exh_antitone (Set.image_mono (Set.subset_univ S)) _
-    · exact fun w hw ↦ ⟨smul_claim_subset hf hgf.asymm hw.1, by
-        rintro _ ⟨h, hh, rfl⟩ -
-        exact smul_claim_subset hf (hS h hh)⟩
+variable {fo g : ModalForce} {S : Set ModalForce}
+
+/-- In an upward-entailing context a modal serves for the forces that quantify as it does, and
+an existential modal none of whose scalemates is universal serves for every force. -/
+theorem servesFor_positive_iff : ServesFor .positive S fo g ↔
+    (fo.IsUniversal ↔ g.IsUniversal) ∨ ¬ fo.IsUniversal ∧ ∀ h ∈ S, ¬ h.IsUniversal := by
+  have key : ServesFor .positive S fo g ↔ (fo.IsUniversal → g.IsUniversal) ∧
+      ∀ h ∈ S, (h.IsUniversal → g.IsUniversal) → h.IsUniversal → fo.IsUniversal := by
+    refine ⟨fun hs ↦ ?_, fun ⟨hfg, hS⟩ W f hf p ↦ exh_subset_exh
+      (Set.image_mono (Set.subset_univ S)) (claim_subset_claim hf hfg)
+      (Set.forall_mem_image.2 fun h hh hgh ↦ ?_)⟩
+    · obtain ⟨hfg, hS⟩ := (exh_subset_exh_iff (Set.mem_image_of_mem _ (Set.mem_univ fo))
+        (Set.image_mono (Set.subset_univ S)) (nonempty_appropriate_upward g)).1
+        (hs Bool upward isConsistent_upward {true})
+      exact ⟨claim_upward_subset_iff.1 hfg, fun h hh hhg ↦ claim_upward_subset_iff.1
+        (hS _ ⟨h, hh, rfl⟩ (claim_upward_subset_iff.2 hhg))⟩
+    · by_cases hhg : h.IsUniversal → g.IsUniversal
+      · exact claim_subset_claim hf (hS h hh hhg)
+      · exact (claim_subset_claim hf fun hg ↦ absurd (fun _ ↦ hg) hhg).trans hgh
+  rw [key]
+  by_cases hfo : fo.IsUniversal <;> by_cases hg : g.IsUniversal <;> simp [hfo, hg]
+
+/-- Under negation a modal serves as its dual does in an upward-entailing context, with the
+duals of its scalemates. -/
+theorem servesFor_negative_iff_dual : ServesFor .negative S fo g ↔
+    ServesFor .positive (ModalForce.dual '' S) fo.dual g.dual := by
+  have key (W : Type) (f : Background W) (p : Set W) :
+      appropriate f p .negative .univ g ⊆ appropriate f p .negative S fo ↔
+        appropriate f pᶜ .positive .univ g.dual ⊆
+          appropriate f pᶜ .positive (ModalForce.dual '' S) fo.dual := by
+    rw [appropriate_negative, appropriate_negative, appropriate_positive,
+      image_claim_image_dual_univ]
+    rfl
+  exact ⟨fun h W f hf p ↦ by simpa using (key W f pᶜ).1 (h W f hf pᶜ),
+    fun h W f hf p ↦ (key W f p).2 (h W f hf pᶜ)⟩
+
+-- Under negation the universal modals are the ones with the weaker claim.
+theorem servesFor_negative_iff : ServesFor .negative S fo g ↔
+    (fo.IsUniversal ↔ g.IsUniversal) ∨ fo.IsUniversal ∧ ∀ h ∈ S, h.IsUniversal := by
+  simp only [servesFor_negative_iff_dual, servesFor_positive_iff, Set.forall_mem_image,
+    ModalForce.isUniversal_dual, not_not, not_iff_not]
 
 instance (π : Polarity) (S : Set ModalForce) [DecidablePred (· ∈ S)] (fo g : ModalForce) :
     Decidable (ServesFor π S fo g) :=
-  decidable_of_iff _ servesFor_iff.symm
+  match π with
+  | .positive => decidable_of_iff _ servesFor_positive_iff.symm
+  | .negative => decidable_of_iff _ servesFor_negative_iff.symm
 
-/-- A modal is flexible in a context, serving for every force, iff its claim is the weakest there
-and no scalemate's is stronger (Table 1). -/
-theorem flexible_iff : (∀ g, ServesFor π S fo g) ↔
-    (∀ g, ¬ StrongerIn π fo g) ∧ ∀ h ∈ S, ¬ StrongerIn π h fo := by
-  simp only [servesFor_iff]
-  refine ⟨fun h ↦ ?_, fun ⟨hw, hS⟩ g ↦ ?_⟩
-  · obtain ⟨hd, hS⟩ := (h fo.dual).resolve_left (by cases fo <;> decide)
-    exact ⟨hd.not_right, hS⟩
-  · exact or_iff_not_imp_left.2 fun hne ↦ ⟨strongerIn_of_not (hw g) hne, hS⟩
+/-- A modal is flexible in an upward-entailing context, serving for every force, iff it is
+existential and none of its scalemates is universal (Table 1). -/
+theorem flexible_positive_iff : (∀ g, ServesFor .positive S fo g) ↔
+    ¬ fo.IsUniversal ∧ ∀ h ∈ S, ¬ h.IsUniversal := by
+  simp only [servesFor_positive_iff]
+  refine ⟨fun h ↦ (h fo.dual).resolve_left (by simp [ModalForce.isUniversal_dual]), fun h _ ↦
+    .inr h⟩
+
+-- Table 1
+theorem flexible_negative_iff : (∀ g, ServesFor .negative S fo g) ↔
+    fo.IsUniversal ∧ ∀ h ∈ S, h.IsUniversal := by
+  simp only [servesFor_negative_iff]
+  refine ⟨fun h ↦ (h fo.dual).resolve_left (by simp [ModalForce.isUniversal_dual]), fun h _ ↦
+    .inr h⟩
 
 /-! ### Scales (§2) -/
 
@@ -214,7 +232,7 @@ which appears to express possibility, *'ax̂*, which speakers judge equivalent t
 epistemic particles 'maybe'. -/
 def lexicalForce (_ : ModalItem) : ModalForce := .possibility
 
-/-- No Nez Perce modal forms a scale with *o'qa* (§2.6). -/
+-- §2.6
 theorem oqa_scaleFree :
     ¬ ModalItem.HasScalemate lexicalForce NezPerce.modals NezPerce.oqa := by
   decide

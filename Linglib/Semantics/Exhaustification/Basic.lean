@@ -27,6 +27,8 @@ and an indexed family of alternatives, membership in `exh` is decidable.
 
 * `Exhaustification.exh_eq_sdiff`: `exh` removes from the prejacent the alternatives it does not
   entail.
+* `Exhaustification.exh_subset_exh_iff`: one exhaustification entails another exactly when the
+  prejacents and the entailed alternatives line up.
 * `Exhaustification.Irredundant.excludes_injOn`: over an irredundant family, exclusion separates
   the alternative sets that contain the prejacent.
 * `Exhaustification.exh_setOf_not_dominated`: among finitely many alternatives, the dominated ones
@@ -146,6 +148,21 @@ theorem excludes_antitone (h : C ⊆ C') (p : Set W) : excludes C' p ⊆ exclude
 
 theorem exh_antitone (h : C ⊆ C') (p : Set W) : exh C' p ⊆ exh C p :=
   Set.inter_subset_inter_right _ (excludes_antitone h p)
+
+/-- One exhaustification entails another, against fewer alternatives, when its prejacent
+entails the other's and the other's prejacent entails each of its alternatives that the first
+prejacent does. -/
+theorem exh_subset_exh (hC : C' ⊆ C) (hqp : q ⊆ p) (h : ∀ r ∈ C', q ⊆ r → p ⊆ r) :
+    exh C q ⊆ exh C' p :=
+  fun _ hw ↦ ⟨hqp hw.1, fun r hr hwr ↦ h r hr (hw.2 r (hC hr) hwr)⟩
+
+/-- Where the first exhaustification holds somewhere and the second prejacent is among its
+alternatives, `exh_subset_exh` is an equivalence. -/
+theorem exh_subset_exh_iff (hp : p ∈ C) (hC : C' ⊆ C) (hne : (exh C q).Nonempty) :
+    exh C q ⊆ exh C' p ↔ q ⊆ p ∧ ∀ r ∈ C', q ⊆ r → p ⊆ r :=
+  ⟨fun h ↦ let ⟨_, hw⟩ := hne
+    ⟨hw.2 p hp (h hw).1, fun r hr hqr ↦ (h hw).2 r hr (hqr hw.1)⟩,
+    fun h ↦ exh_subset_exh hC h.1 h.2⟩
 
 theorem antitone_excludes (C : Set (Set W)) : Antitone (excludes C) :=
   fun _ _ hpq _ hw r hr hwr ↦ hpq.trans (hw r hr hwr)

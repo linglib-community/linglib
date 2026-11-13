@@ -118,6 +118,9 @@ theorem dual_dual : f.dual.dual = f.classical := by cases f <;> rfl
 theorem classical_eq_necessity_iff : f.classical = necessity ↔ f.IsUniversal := by
   cases f <;> decide
 
+theorem isUniversal_dual : f.dual.IsUniversal ↔ ¬ f.IsUniversal := by
+  cases f <;> decide
+
 /-! ### Forces as standards -/
 
 section Standard
