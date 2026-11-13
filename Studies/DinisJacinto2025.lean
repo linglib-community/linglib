@@ -78,24 +78,24 @@ below it would be a smaller upper bound. -/
 instance instIsEmptyMarginalScale {α : Type*} [ConditionallyCompleteLinearOrder α] :
     IsEmpty (MarginalScale α) := by
   refine ⟨fun ml ↦ ?_⟩
-  obtain ⟨x, y, hxy⟩ := ml.exists_large
+  obtain ⟨x, y, hxy⟩ := ml.exists_largelyLT
   set S := {z | x < z ∧ ml.LargelyLT z y}
-  obtain ⟨z₀, hxz₀, hz₀y⟩ := (ml.decomposition hxy).1
+  obtain ⟨z₀, hxz₀, hz₀y⟩ := hxy.exists_marginallyLT_largelyLT
   have hS : S.Nonempty := ⟨z₀, hxz₀.lt, hz₀y⟩
   have hb : BddAbove S := ⟨y, fun z hz ↦ hz.2.lt.le⟩
   have hxl : x < sSup S := hxz₀.lt.trans_le (le_csSup hb ⟨hxz₀.lt, hz₀y⟩)
   have hly : ml.AtMostMarginal (sSup S) y := atMostMarginal_iff_incompRel.2
     ⟨fun h ↦ by
-      obtain ⟨w, hlw, hwy⟩ := (ml.decomposition h).1
+      obtain ⟨w, hlw, hwy⟩ := h.exists_marginallyLT_largelyLT
       exact (le_csSup hb ⟨hxl.trans hlw.lt, hwy⟩).not_gt hlw.lt,
     fun h ↦ (csSup_le hS fun z hz ↦ hz.2.lt.le).not_gt h.lt⟩
-  obtain ⟨w, hwl, -, hxw⟩ := (ml.decomposition (hly.largelyLT_congr_right.2 hxy)).2
-  exact (csSup_le hS fun a ha ↦
-    ((ml.irrelevance a hwl).1 (hly.largelyLT_congr_right.2 ha.2)).1.le).not_gt hwl.lt
+  obtain ⟨w, -, hwl⟩ := (hly.largelyLT_congr_right.2 hxy).exists_largelyLT_marginallyLT
+  exact (csSup_le hS fun a ha ↦ (hwl.atMostMarginal.largelyLT_congr_right.2
+    (hly.largelyLT_congr_right.2 ha.2)).lt.le).not_gt hwl.lt
 
 -- p. 521
 theorem infinite_of_marginalScale (ml : MarginalScale α) : Infinite α :=
-  let ⟨_, _, h⟩ := ml.exists_large
+  let ⟨_, _, h⟩ := ml.exists_largelyLT
   Set.infinite_univ_iff.1 ((LargelyLT.infinite_Ioo h).mono (Set.subset_univ _))
 
 example : IsEmpty (MarginalScale ℕ) := inferInstance
@@ -146,6 +146,11 @@ example : finite.MarginallyLT 0 1 ∧ finite.LargelyLT 0 ω :=
 
 /-! ### Representation -/
 
+-- Definition 4.3: the blocks of the representative model are its rational coordinates.
+example : (lex ℚ ℤ).toBlock (toLex (0, 5)) = (lex ℚ ℤ).toBlock (toLex (0, -3)) ∧
+    (lex ℚ ℤ).toBlock (toLex (0, 5)) < (lex ℚ ℤ).toBlock (toLex (1, 0)) := by
+  simp
+
 variable (ml) in
 /-- `y` is a weakly marginal successor of `x` when `x` is marginally smaller than `y` and no
 degree marginally above `x` is marginally below `y` (Definition 4.4). -/
@@ -177,16 +182,17 @@ theorem FinitelyMarginal.finite_Icc (hf : FinitelyMarginal ml) (h : ml.AtMostMar
   · simp [h.lt]
 
 theorem FinitelyMarginal.finite_Icc_block (hf : FinitelyMarginal ml)
-    (q : Quotient ml.atMostMarginalSetoid) (a b : {y // ⟦y⟧ = q}) : (Set.Icc a b).Finite :=
-  (hf.finite_Icc (Quotient.exact (a.2.trans b.2.symm))).preimage Subtype.val_injective.injOn
+    (q : ml.Block) (a b : {y // ml.toBlock y = q}) : (Set.Icc a b).Finite :=
+  (hf.finite_Icc (toBlock_eq_toBlock.1 (a.2.trans b.2.symm))).preimage Subtype.val_injective.injOn
 
 theorem exists_lt_of_marginallyLT {γ : Type*} [Preorder γ]
-    (h : ∀ q : Quotient ml.atMostMarginalSetoid, ∃ g : {y // ⟦y⟧ = q} → γ, StrictMono g) :
+    (h : ∀ q : ml.Block, ∃ g : {y // ml.toBlock y = q} → γ, StrictMono g) :
     ∃ G : α → γ, ∀ ⦃x y⦄, ml.MarginallyLT x y → G x < G y := by
   choose g hg using h
-  have e (z : α) (q) (h : ⟦z⟧ = q) : g ⟦z⟧ ⟨z, rfl⟩ = g q ⟨z, h⟩ := by subst h; rfl
-  refine ⟨fun z ↦ g ⟦z⟧ ⟨z, rfl⟩, fun x y h ↦ ?_⟩
-  have hxy : (⟦x⟧ : Quotient ml.atMostMarginalSetoid) = ⟦y⟧ := Quotient.sound (.single (.inl h))
+  have e (z : α) (q) (h : ml.toBlock z = q) : g (ml.toBlock z) ⟨z, rfl⟩ = g q ⟨z, h⟩ := by
+    subst h; rfl
+  refine ⟨fun z ↦ g (ml.toBlock z) ⟨z, rfl⟩, fun x y h ↦ ?_⟩
+  have hxy : ml.toBlock x = ml.toBlock y := toBlock_eq_toBlock.2 h.atMostMarginal
   simp only [e x _ hxy]
   exact hg _ h.lt
 
@@ -197,7 +203,7 @@ theorem exists_isHom_lex_rat_int [Countable α] (hf : FinitelyMarginal ml) :
   obtain ⟨F, hF⟩ := Order.exists_rat_rel_iff_lt ml.LargelyLT
   obtain ⟨G, hG⟩ := exists_lt_of_marginallyLT fun q ↦ by
     let := LocallyFiniteOrder.ofFiniteIcc (hf.finite_Icc_block q)
-    obtain ⟨e⟩ := nonempty_orderEmbedding_int {y // ⟦y⟧ = q}
+    obtain ⟨e⟩ := nonempty_orderEmbedding_int {y // ml.toBlock y = q}
     exact ⟨e, e.strictMono⟩
   exact ⟨fun x ↦ toLex (F x, G x), isHom_lex_iff.2 ⟨hF, hG⟩⟩
 
@@ -205,7 +211,7 @@ theorem exists_isHom_lex_rat_int [Countable α] (hf : FinitelyMarginal ml) :
 theorem exists_isHom_lex_rat_rat [Countable α] : ∃ f : α → ℚ ×ₗ ℚ, ml.IsHom (lex ℚ ℚ) f := by
   obtain ⟨F, hF⟩ := Order.exists_rat_rel_iff_lt ml.LargelyLT
   obtain ⟨G, hG⟩ := exists_lt_of_marginallyLT (γ := ℚ) fun q ↦ by
-    obtain ⟨e⟩ := Order.embedding_from_countable_to_dense {y : α // ⟦y⟧ = q} ℚ
+    obtain ⟨e⟩ := Order.embedding_from_countable_to_dense {y : α // ml.toBlock y = q} ℚ
     exact ⟨e, e.strictMono⟩
   exact ⟨fun x ↦ toLex (F x, G x), isHom_lex_iff.2 ⟨hF, hG⟩⟩
 
@@ -234,7 +240,7 @@ theorem IsHom.comp_cautiouslyMonotone {h : α → β ×ₗ γ} (hh : ml.IsHom (l
   refine isHom_lex_iff.2 ⟨fun x y ↦ ?_, fun x y hxy ↦ ?_⟩
   · simp only [Function.comp, hτ _ ⟨x, rfl⟩, hτ _ ⟨y, rfl⟩, ofLex_toLex, hL]
     exact (hf.lt_iff_lt ⟨_, ⟨x, rfl⟩, rfl⟩ ⟨_, ⟨y, rfl⟩, rfl⟩).symm
-  · have he : (ofLex (h x)).1 = (ofLex (h y)).1 := hh.fst_eq_fst_iff.2 (.single (.inl hxy))
+  · have he : (ofLex (h x)).1 = (ofLex (h y)).1 := hh.fst_eq_fst_iff.2 hxy.atMostMarginal
     simp only [Function.comp, hτ _ ⟨x, rfl⟩, hτ _ ⟨y, rfl⟩, ofLex_toLex, he]
     exact hg _ (by simp [← he]) ⟨y, rfl⟩ (hM hxy)
 

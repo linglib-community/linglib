@@ -50,15 +50,15 @@ variable {α : Type*} [LinearOrder α] {ml : MarginalScale α}
 
 theorem not_isTrans_symmGen_marginallyLT (ml : MarginalScale α) :
     ¬ IsTrans α (Relation.SymmGen ml.MarginallyLT) := fun ⟨htr⟩ ↦ by
-  obtain ⟨x, y, h⟩ := ml.exists_large
-  obtain ⟨z, hxz, -⟩ := (ml.decomposition h).1
+  obtain ⟨x, y, h⟩ := ml.exists_largelyLT
+  obtain ⟨z, hxz, -⟩ := h.exists_marginallyLT_largelyLT
   exact (htr x z x (.inl hxz) (.inr hxz)).elim (fun h ↦ h.lt.false) fun h ↦ h.lt.false
 
 -- fn. 9
 theorem not_isTrans_symmGen_largelyLT (ml : MarginalScale α) :
     ¬ IsTrans α (Relation.SymmGen ml.LargelyLT) := fun ⟨htr⟩ ↦ by
-  obtain ⟨x, y, h⟩ := ml.exists_large
-  obtain ⟨z, hxz, hzy⟩ := (ml.decomposition h).1
+  obtain ⟨x, y, h⟩ := ml.exists_largelyLT
+  obtain ⟨z, hxz, hzy⟩ := h.exists_marginallyLT_largelyLT
   exact (htr x y z (.inl h) (.inr hzy)).elim hxz.not_largelyLT fun h' ↦ h'.lt.asymm hxz.lt
 
 /-- ML theory has no model on the naturals or the reals (fn. 7). -/
@@ -151,7 +151,7 @@ theorem exists_large_step_of_soritical {R : O → O → Prop} (hR : ∀ ⦃x y�
     h.exists_boundary (S := {x | ¬ Positive ml μ norm w x}) h₁ (not_not.2 h₂)
   refine ⟨x, y, hxy, hx, not_not.1 hy,
     (marginallyLT_or_largelyLT_of_lt (hR hxy)).resolve_left fun hm ↦ hx ?_⟩
-  exact (positive_iff_of_atMostMarginal (.single (.inl hm))).2 (not_not.1 hy)
+  exact (positive_iff_of_atMostMarginal hm.atMostMarginal).2 (not_not.1 hy)
 
 variable (ml) in
 /-- A property is clustered when something has it iff its degree differs at most marginally
@@ -162,8 +162,8 @@ def Clustered (B : O → Prop) (δ : O → α) : Prop :=
 -- §3
 theorem Clustered.tolerance {B : O → Prop} {δ : O → α} (h : Clustered ml B δ) :
     (¬ B a → ml.MarginallyLT (δ a) (δ b) → ¬ B b) ∧ (B a → ml.MarginallyLT (δ b) (δ a) → B b) :=
-  ⟨fun ha hm hb ↦ ha ((h a).2 ⟨b, hb, .single (.inr hm)⟩),
-    fun ha hm ↦ (h b).2 ⟨a, ha, .single (.inr hm)⟩⟩
+  ⟨fun ha hm hb ↦ ha ((h a).2 ⟨b, hb, hm.atMostMarginal.symm⟩),
+    fun ha hm ↦ (h b).2 ⟨a, ha, hm.atMostMarginal.symm⟩⟩
 
 /-- The positive form's extension is clustered, so the marginality scales account implies the
 nonstandard primitivist principle of §3. -/
