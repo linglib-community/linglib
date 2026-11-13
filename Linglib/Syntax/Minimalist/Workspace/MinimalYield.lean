@@ -233,25 +233,33 @@ section Internal
 variable (lbl : α) {T : UnorderedTree (α ⊕ β)}
   {p : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)} {v : UnorderedTree (α ⊕ β)}
 
-/-- Internal Merge through a deletion cut of a full binary tree keeps its accessible terms
-    ([marcolli-chomsky-berwick-2025] Proposition 1.6.4, for `Δ^d`). -/
-theorem numEdges_im_of_cut (hT : T.IsFullBinary) (hp : p ∈ deletionCuts T) (hv : p.1 = {v}) :
-    (UnorderedTree.node (Sum.inl lbl) {v, p.2}).numEdges = T.numEdges := by
-  rw [UnorderedTree.numEdges_node_pair, deletionCuts_numEdges hT hp hv]
+/-- Internal Merge through a deletion of a full binary tree keeps its accessible terms
+    ([marcolli-chomsky-berwick-2025] Proposition 1.6.4, for `Δ^d`). The remainder of a deletion
+    that extracts one term is the trunk of the admissible cut with its unary vertex contracted
+    (`exists_mem_admissibleCuts_of_card_le_one`). -/
+theorem numEdges_im_of_cut (hT : T.IsFullBinary) (hp : p ∈ admissibleCuts T) (hv : p.1 = {v}) :
+    (UnorderedTree.node (Sum.inl lbl) {v, p.2.contractUnary}).numEdges = T.numEdges := by
+  obtain ⟨k, hk⟩ := admissibleCuts_numUnary hT hp
+  have := admissibleCuts_numEdges_contractUnary hp
+  simp only [hv, Multiset.map_singleton, Multiset.sum_singleton, Multiset.card_singleton] at this hk
+  rw [UnorderedTree.numEdges_node_pair]
+  omega
 
-/-- Internal Merge through a deletion cut of a full binary tree satisfies the weak form of Minimal
+/-- Internal Merge through a deletion of a full binary tree satisfies the weak form of Minimal
     Yield under deletion counting. -/
-theorem MinimalYieldWeak.im_numEdges_of_cut (hT : T.IsFullBinary) (hp : p ∈ deletionCuts T)
+theorem MinimalYieldWeak.im_numEdges_of_cut (hT : T.IsFullBinary) (hp : p ∈ admissibleCuts T)
     (hv : p.1 = {v}) :
-    MinimalYieldWeak UnorderedTree.numEdges {T} {UnorderedTree.node (Sum.inl lbl) {v, p.2}} :=
+    MinimalYieldWeak UnorderedTree.numEdges {T}
+      {UnorderedTree.node (Sum.inl lbl) {v, p.2.contractUnary}} :=
   ⟨by simp, by simp only [Multiset.map_singleton, Multiset.sum_singleton,
     numEdges_im_of_cut lbl hT hp hv, le_refl]⟩
 
-/-- Internal Merge through a deletion cut of a full binary tree violates Minimal Yield under
+/-- Internal Merge through a deletion of a full binary tree violates Minimal Yield under
     deletion counting, since its size `σ` does not grow. -/
-theorem MinimalYield.not_im_numEdges_of_cut (hT : T.IsFullBinary) (hp : p ∈ deletionCuts T)
+theorem MinimalYield.not_im_numEdges_of_cut (hT : T.IsFullBinary) (hp : p ∈ admissibleCuts T)
     (hv : p.1 = {v}) :
-    ¬ MinimalYield UnorderedTree.numEdges {T} {UnorderedTree.node (Sum.inl lbl) {v, p.2}} :=
+    ¬ MinimalYield UnorderedTree.numEdges {T}
+      {UnorderedTree.node (Sum.inl lbl) {v, p.2.contractUnary}} :=
   fun h ↦ by
     have := h.minimalYield
     simp only [Multiset.card_singleton, Multiset.map_singleton, Multiset.sum_singleton,
@@ -295,44 +303,174 @@ theorem MinimalYield.im_accessibleCount_of_cut (lbl a₀ : α) (τ : UnorderedTr
 
 /-! ### Terms of Merge under deletion counting
 
-On a full binary workspace, a term of Merge that takes an object whole extracts at most one tree
-from each component, which costs two accessible terms (1.6.7). A term that takes neither object
-whole diverges, whatever its extractions cost. -/
+A term of Merge chooses an admissible cut of each component, and under `Δ^d` its workspace holds
+the remainders of the trunks. On a full binary workspace, a term that takes an object whole
+extracts at most one tree from each component, which costs two accessible terms (1.6.7). A term
+that takes neither object whole diverges, whatever its extractions cost, unless it consumes a
+component entirely: extracting both children of a root leaves nothing of it, and Merge then
+rebuilds the component. The statements set that case aside, as the book does. -/
 
 section Deletion
 
-variable [DecidableEq (UnorderedTree α)] {F : Forest (UnorderedTree α)} {s : CutChoice α}
-  {S S' X : UnorderedTree α}
+variable [DecidableEq (UnorderedTree α)] [DecidableEq α] (b : α)
+  {F : Forest (UnorderedTree α)} {s : CutChoice α} {S S' X : UnorderedTree α}
 
-private theorem hasExtractionCost_numEdges_merge_term (hF : ∀ T ∈ F, T.IsFullBinary)
-    (hs : s ∈ forestCutChoices deletionCuts F) (hK : s.crown = {S, S'}) (h : s.numWhole ≠ 0) :
-    s.HasExtractionCost UnorderedTree.numEdges 2 :=
-  hasExtractionCost_numEdges_deletionCuts hF hs fun x hx hx0 ↦ by
-    have := CutChoice.card_add_numWhole_le_card_crown hs hx hx0
-    rw [hK] at this
-    simp only [Multiset.insert_eq_cons, Multiset.card_cons, Multiset.card_singleton] at this
+private theorem card_filterMap_of_forall_ne_none {γ δ : Type*} {f : γ → Option δ} :
+    ∀ {m : Multiset γ}, (∀ a ∈ m, f a ≠ none) →
+      Multiset.card (m.filterMap f) = Multiset.card m := by
+  intro m
+  induction m using Multiset.induction with
+  | empty => simp
+  | cons a m ih =>
+    intro h
+    obtain ⟨c, hc⟩ := Option.ne_none_iff_exists'.mp (h a (Multiset.mem_cons_self a m))
+    rw [Multiset.filterMap_cons_some _ _ _ hc, Multiset.card_cons, Multiset.card_cons,
+      ih fun a' ha' ↦ h a' (Multiset.mem_cons_of_mem ha')]
+
+private theorem filterMap_eq_map_of_forall {γ δ : Type*} {f : γ → Option δ} {g : γ → δ} :
+    ∀ {m : Multiset γ}, (∀ a ∈ m, f a = some (g a)) → m.filterMap f = m.map g := by
+  intro m
+  induction m using Multiset.induction with
+  | empty => simp
+  | cons a m ih =>
+    intro h
+    rw [Multiset.filterMap_cons_some _ _ _ (h a (Multiset.mem_cons_self a m)), Multiset.map_cons,
+      ih fun a' ha' ↦ h a' (Multiset.mem_cons_of_mem ha')]
+
+omit [DecidableEq α] in
+/-- A cut of a term that takes an object whole extracts at most one tree. -/
+private theorem card_le_one_of_numWhole_ne_zero (hs : s ∈ forestCutChoices admissibleCuts F)
+    (hK : s.crown = {S, S'}) (h : s.numWhole ≠ 0)
+    {x : UnorderedTree α × (Multiset (UnorderedTree α) × Multiset (UnorderedTree α))}
+    (hx : x ∈ s) (hx0 : x.2.2 ≠ 0) : Multiset.card x.2.1 ≤ 1 := by
+  have := CutChoice.card_add_numWhole_le_card_crown hs hx hx0
+  rw [hK] at this
+  simp only [Multiset.insert_eq_cons, Multiset.card_cons, Multiset.card_singleton] at this
+  omega
+
+/-- A term that takes an object whole leaves, of each trunk, the trunk with its unary vertex
+    contracted. -/
+private theorem filterMap_deletionQuotient_trunk
+    (hF : ∀ T ∈ F, T.Licensed fun a ks ↦ (a = b ↔ ks ≠ 0) ∧
+      (Multiset.card ks = 0 ∨ Multiset.card ks = 2))
+    (hs : s ∈ forestCutChoices admissibleCuts F) (hK : s.crown = {S, S'}) (h : s.numWhole ≠ 0) :
+    s.trunk.filterMap (deletionQuotient b) = s.trunk.map UnorderedTree.contractUnary := by
+  refine filterMap_eq_map_of_forall fun t ht ↦ ?_
+  obtain ⟨x, hx, htx⟩ := CutChoice.mem_trunk.mp ht
+  have hx0 : x.2.2 ≠ 0 := fun h0 ↦ by simp [h0] at htx
+  rcases mem_treeCuts.mp (mem_treeCuts_of_mem_forestCutChoices hs hx) with h2 | ⟨p, hp, h2⟩
+  · exact absurd (by rw [h2]) hx0
+  · have hcard : Multiset.card p.1 ≤ 1 := by
+      have := card_le_one_of_numWhole_ne_zero hs hK h hx hx0
+      rwa [← h2] at this
+    obtain rfl : t = p.2 := by simpa [← h2] using htx
+    rw [deletionQuotient, admissibleCuts_prune_eq_some b
+      (hF x.1 (fst_mem_of_mem_forestCutChoices hs hx)) hp hcard, Option.map_some]
+
+omit [DecidableEq α] in
+/-- Counting accessible terms after contraction, a term that takes an object whole pays two for
+    each tree it extracts. -/
+private theorem hasExtractionCost_contractUnary_merge_term (hF : ∀ T ∈ F, T.IsFullBinary)
+    (hs : s ∈ forestCutChoices admissibleCuts F) (hK : s.crown = {S, S'})
+    (hS : S.numUnary = 0) (hS' : S'.numUnary = 0) (h : s.numWhole ≠ 0) :
+    s.HasExtractionCost (fun t ↦ t.contractUnary.numEdges) 2 :=
+  .of_mem_forestCutChoices hs fun x hx p hp hpx ↦ by
+    have hx0 : x.2.2 ≠ 0 := by rw [← hpx]; exact Multiset.singleton_ne_zero _
+    have hcard : Multiset.card p.1 ≤ 1 := by
+      have := card_le_one_of_numWhole_ne_zero hs hK h hx hx0
+      rwa [← hpx] at this
+    have hT := hF x.1 (fst_mem_of_mem_forestCutChoices hs hx)
+    obtain ⟨k, hk⟩ := admissibleCuts_numUnary hT hp
+    have he := admissibleCuts_numEdges_contractUnary hp
+    have hcrown : (p.1.map fun t ↦ t.contractUnary.numEdges) = p.1.map UnorderedTree.numEdges :=
+      Multiset.map_congr rfl fun c hc ↦ by
+        have hc' : c ∈ s.crown := CutChoice.mem_crown.mpr ⟨x, hx, by rw [← hpx]; exact hc⟩
+        rw [hK] at hc'
+        rcases (by simpa using hc' : c = S ∨ c = S') with rfl | rfl
+        · rw [UnorderedTree.contractUnary_eq_self_iff.mpr hS]
+        · rw [UnorderedTree.contractUnary_eq_self_iff.mpr hS']
+    simp only [UnorderedTree.contractUnary_eq_self_iff.mpr hT.numUnary_eq_zero, hcrown]
     omega
 
-/-- Under deletion counting, on a full binary workspace, a term of Merge satisfies Minimal Yield
-    exactly when it takes both of its objects whole ([marcolli-chomsky-berwick-2025]
-    Propositions 1.6.4 and 1.6.8, for `Δ^d`). -/
-theorem MinimalYield.merge_term_numEdges_iff (hF : ∀ T ∈ F, T.IsFullBinary)
-    (hs : s ∈ forestCutChoices deletionCuts F) (hK : s.crown = {S, S'})
-    (hX : X.numEdges = S.numEdges + S'.numEdges + 2) :
-    MinimalYield UnorderedTree.numEdges F ({X} + s.trunk) ↔ s.numWhole = 2 :=
-  ⟨fun h ↦ (merge_term_iff_of_extraction_two hs
-      (hasExtractionCost_numEdges_merge_term hF hs hK (h.numWhole_ne_zero hs)) hK hX).1 h,
-    fun h ↦ (merge_term_iff_of_extraction_two hs
-      (hasExtractionCost_numEdges_merge_term hF hs hK (by omega)) hK hX).2 h⟩
+/-- For a term that takes an object whole, the counts of Minimal Yield under deletion are those of
+    the admissible term counted after contraction. -/
+private theorem minimalYield_counts
+    (hF : ∀ T ∈ F, T.Licensed fun a ks ↦ (a = b ↔ ks ≠ 0) ∧
+      (Multiset.card ks = 0 ∨ Multiset.card ks = 2))
+    (hs : s ∈ forestCutChoices admissibleCuts F) (hK : s.crown = {S, S'}) (hX : X.numUnary = 0)
+    (h : s.numWhole ≠ 0) :
+    Multiset.card ({X} + s.trunk.filterMap (deletionQuotient b)) = Multiset.card ({X} + s.trunk) ∧
+      (({X} + s.trunk.filterMap (deletionQuotient b)).map UnorderedTree.numEdges).sum =
+        (({X} + s.trunk).map fun t ↦ t.contractUnary.numEdges).sum ∧
+      (F.map UnorderedTree.numEdges).sum = (F.map fun t ↦ t.contractUnary.numEdges).sum := by
+  rw [filterMap_deletionQuotient_trunk b hF hs hK h]
+  refine ⟨by simp, ?_, ?_⟩
+  · simp [Multiset.map_map, UnorderedTree.contractUnary_eq_self_iff.mpr hX]
+  · exact congrArg Multiset.sum (Multiset.map_congr rfl fun T hT ↦ by
+      have hT' : T.IsFullBinary := (hF T hT).mono fun _ _ h ↦ h.2
+      rw [UnorderedTree.contractUnary_eq_self_iff.mpr hT'.numUnary_eq_zero])
 
-/-- Under deletion counting, on a full binary workspace, a term of Merge satisfies the weak form of
-    Minimal Yield exactly when it takes an object whole. -/
-theorem MinimalYieldWeak.merge_term_numEdges_iff (hF : ∀ T ∈ F, T.IsFullBinary)
-    (hs : s ∈ forestCutChoices deletionCuts F) (hK : s.crown = {S, S'})
-    (hX : X.numEdges = S.numEdges + S'.numEdges + 2) :
-    MinimalYieldWeak UnorderedTree.numEdges F ({X} + s.trunk) ↔ s.numWhole ≠ 0 :=
-  ⟨fun h ↦ h.numWhole_ne_zero hs, fun h ↦ (MinimalYieldWeak.merge_term_iff_of_extraction_two hs
-    (hasExtractionCost_numEdges_merge_term hF hs hK h) hK hX).2 h⟩
+variable
+  (hF : ∀ T ∈ F, T.Licensed fun a ks ↦ (a = b ↔ ks ≠ 0) ∧
+    (Multiset.card ks = 0 ∨ Multiset.card ks = 2))
+  (hs : s ∈ forestCutChoices admissibleCuts F)
+  (hne : ∀ t ∈ s.trunk, deletionQuotient b t ≠ none)
+  (hK : s.crown = {S, S'}) (hS : S.numUnary = 0) (hS' : S'.numUnary = 0) (hXu : X.numUnary = 0)
+  (hX : X.numEdges = S.numEdges + S'.numEdges + 2)
+
+include hF hs hne hK hS hS' hXu hX
+
+/-- Under deletion counting, on a full binary workspace, a term of Merge that consumes no
+    component entirely satisfies Minimal Yield exactly when it takes both of its objects whole
+    ([marcolli-chomsky-berwick-2025] Propositions 1.6.4 and 1.6.8, for `Δ^d`). -/
+theorem MinimalYield.merge_term_numEdges_iff :
+    MinimalYield UnorderedTree.numEdges F ({X} + s.trunk.filterMap (deletionQuotient b)) ↔
+      s.numWhole = 2 := by
+  have hb := card_singleton_add_trunk_add_numWhole hs X
+  have hd := card_filterMap_of_forall_ne_none hne
+  have hFb : ∀ T ∈ F, T.IsFullBinary := fun T hT ↦ (hF T hT).mono fun _ _ h ↦ h.2
+  have hXc : X.contractUnary.numEdges =
+      S.contractUnary.numEdges + S'.contractUnary.numEdges + 2 := by
+    rwa [UnorderedTree.contractUnary_eq_self_iff.mpr hXu,
+      UnorderedTree.contractUnary_eq_self_iff.mpr hS,
+      UnorderedTree.contractUnary_eq_self_iff.mpr hS']
+  have key (hw : s.numWhole ≠ 0) := (MinimalYield.merge_term_iff_of_extraction_two hs
+    (hasExtractionCost_contractUnary_merge_term hFb hs hK hS hS' hw) hK hXc)
+  have hw_of (h : Multiset.card ({X} + s.trunk.filterMap (deletionQuotient b)) ≤ Multiset.card F) :
+      s.numWhole ≠ 0 := by
+    simp only [Multiset.card_add, Multiset.card_singleton, hd] at h hb
+    omega
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · have hw := hw_of h.noDivergence
+    obtain ⟨h1, h2, h3⟩ := minimalYield_counts b hF hs hK hXu hw
+    exact (key hw).1 ⟨⟨h1 ▸ h.noDivergence, h3 ▸ h2 ▸ h.noInfoLoss⟩, h1 ▸ h2 ▸ h3 ▸ h.minimalYield⟩
+  · have hw : s.numWhole ≠ 0 := by omega
+    obtain ⟨h1, h2, h3⟩ := minimalYield_counts b hF hs hK hXu hw
+    have h' := (key hw).2 h
+    exact ⟨⟨h1 ▸ h'.noDivergence, h3 ▸ h2 ▸ h'.noInfoLoss⟩, h1 ▸ h2 ▸ h3 ▸ h'.minimalYield⟩
+
+/-- Under deletion counting, on a full binary workspace, a term of Merge that consumes no
+    component entirely satisfies the weak form of Minimal Yield exactly when it takes an object
+    whole. -/
+theorem MinimalYieldWeak.merge_term_numEdges_iff :
+    MinimalYieldWeak UnorderedTree.numEdges F ({X} + s.trunk.filterMap (deletionQuotient b)) ↔
+      s.numWhole ≠ 0 := by
+  have hb := card_singleton_add_trunk_add_numWhole hs X
+  have hd := card_filterMap_of_forall_ne_none hne
+  have hFb : ∀ T ∈ F, T.IsFullBinary := fun T hT ↦ (hF T hT).mono fun _ _ h ↦ h.2
+  have hXc : X.contractUnary.numEdges =
+      S.contractUnary.numEdges + S'.contractUnary.numEdges + 2 := by
+    rwa [UnorderedTree.contractUnary_eq_self_iff.mpr hXu,
+      UnorderedTree.contractUnary_eq_self_iff.mpr hS,
+      UnorderedTree.contractUnary_eq_self_iff.mpr hS']
+  refine ⟨fun h ↦ ?_, fun hw ↦ ?_⟩
+  · have := h.noDivergence
+    simp only [Multiset.card_add, Multiset.card_singleton, hd] at this hb
+    omega
+  · obtain ⟨h1, h2, h3⟩ := minimalYield_counts b hF hs hK hXu hw
+    have h' := (MinimalYieldWeak.merge_term_iff_of_extraction_two hs
+      (hasExtractionCost_contractUnary_merge_term hFb hs hK hS hS' hw) hK hXc).2 hw
+    exact ⟨h1 ▸ h'.noDivergence, h3 ▸ h2 ▸ h'.noInfoLoss⟩
 
 end Deletion
 

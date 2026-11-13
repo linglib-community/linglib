@@ -353,11 +353,13 @@ theorem mem_traceCuts_contract (hroot : t.val.value.1 = none) (hτ : MarkedBy τ
   rw [traceCuts_mk]
   exact Multiset.mem_map.2 ⟨_, hm, rfl⟩
 
-/-- With every chain read low, a reading is a term of the deletion coproduct `Δ^d`: the higher
-copies are an admissible cut of the copy object. -/
-theorem mem_deletionCuts_lf (hlow : ∀ r ∈ t.val.subtrees, r.value.1.isSome → ReadLow low r) :
-    ((t.cutForest low).map UnorderedTree.mk, UnorderedTree.mk (t.lf low).toRoseTree) ∈
-      deletionCuts (UnorderedTree.mk t.unmark.toRoseTree) := by
+/-- With every chain read low, a reading is the trunk of an admissible cut of the copy object with
+its unary vertices contracted, the higher copies being the crown. -/
+theorem exists_mem_admissibleCuts_lf
+    (hlow : ∀ r ∈ t.val.subtrees, r.value.1.isSome → ReadLow low r) :
+    ∃ T, ((t.cutForest low).map UnorderedTree.mk, T) ∈
+        admissibleCuts (UnorderedTree.mk t.unmark.toRoseTree) ∧
+      T.contractUnary = UnorderedTree.mk (t.lf low).toRoseTree := by
   rw [toRoseTree_lf, toRoseTree_unmark]
   obtain ⟨T, hT, hm⟩ := exists_mem_rootCuts_readCut (low := ReadLow low) (e := leaveNothing)
     (s := t.val)
@@ -366,9 +368,21 @@ theorem mem_deletionCuts_lf (hlow : ∀ r ∈ t.val.subtrees, r.value.1.isSome �
     (fun _ _ _ ↦ rfl)
   have h := map_contractUnary_readCut (low := ReadLow low) t.2
   rw [hT, List.map_singleton, List.cons.injEq] at h
-  rw [deletionCuts, admissibleCuts_mk, Multiset.map_map]
-  refine Multiset.mem_map.2 ⟨_, hm, ?_⟩
-  simp only [Function.comp_apply, projCut, UnorderedTree.contractUnary_mk]
-  exact congrArg₂ Prod.mk rfl (congrArg UnorderedTree.mk h.1)
+  rw [admissibleCuts_mk]
+  refine ⟨UnorderedTree.mk T, Multiset.mem_map.2 ⟨_, hm, rfl⟩, ?_⟩
+  rw [UnorderedTree.contractUnary_mk]
+  exact congrArg UnorderedTree.mk h.1
+
+/-- With every chain read low, a reading with no bare leaf is a term of the deletion coproduct
+`Δ^d`: the higher copies are an admissible cut of the copy object, and the reading is the
+remainder. -/
+theorem mem_deletionCuts_lf (hlow : ∀ r ∈ t.val.subtrees, r.value.1.isSome → ReadLow low r)
+    (hlf : ∀ a ∈ (UnorderedTree.mk (t.lf low).toRoseTree).leaves, a ≠ Vertex.bare) :
+    ((t.cutForest low).map UnorderedTree.mk, some (UnorderedTree.mk (t.lf low).toRoseTree)) ∈
+      deletionCuts Vertex.bare (UnorderedTree.mk t.unmark.toRoseTree) := by
+  obtain ⟨T, hT, hc⟩ := exists_mem_admissibleCuts_lf t low hlow
+  refine Multiset.mem_map.2 ⟨_, hT, ?_⟩
+  rw [← hc, UnorderedTree.leaves_contractUnary] at hlf
+  rw [deletionQuotient_eq_some _ hlf, hc]
 
 end Minimalist.PlanarSyntacticObject.Marked

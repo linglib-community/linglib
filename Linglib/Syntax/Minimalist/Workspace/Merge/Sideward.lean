@@ -33,9 +33,9 @@ The book states each lemma for the term that extracts the matching objects. With
 occurrences Merge sums over them, as (1.3.11) does, so the results are sums over the cuts with
 the matching crown, and a workspace without one is sent to `0`.
 
-The lemmas hold over enumerations admitting Merge (`IsMergeCuts`), which the deletion cuts of the
-book's `mergeOp` are not; on objects without unary vertices
-`mergeOp_eq_rename_contractUnary_comp` carries them to `mergeOp`, contracting the trunks.
+The lemmas hold over enumerations admitting Merge (`IsMergeCuts`), which the deletion coproduct of
+the book's `mergeOp` is not; on objects that are their own remainders
+`mergeOp_eq_deletionProj_comp` carries them to `mergeOp`, projecting the trunks.
 
 ## References
 

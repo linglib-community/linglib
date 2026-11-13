@@ -275,7 +275,8 @@ theorem scope_readings_cut : ∃ c ∈ everyDidntScore.replayWithCopies?,
     let lowReading := UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).toRoseTree
     ({UnorderedTree.mk everyPlayer.toRoseTree}, UnorderedTree.mk c.current.contract.toRoseTree) ∈
         traceCuts τ C ∧
-      ({UnorderedTree.mk everyPlayer.toRoseTree}, lowReading) ∈ deletionCuts C ∧
+      ({UnorderedTree.mk everyPlayer.toRoseTree}, some lowReading) ∈
+        deletionCuts SyntacticObject.Vertex.bare C ∧
       ∀ F, (F, lowReading) ∉ traceCuts τ C := by
   have h : ∀ c ∈ everyDidntScore.replayWithCopies?,
       c.current.val.value.1 = none ∧ MarkedBy (termTrace SyntacticObject.selHead) c.current.val ∧
@@ -286,15 +287,18 @@ theorem scope_readings_cut : ∃ c ∈ everyDidntScore.replayWithCopies?,
       (UnorderedTree.mk c.current.unmark.toRoseTree).numTraces = 0 ∧
       (UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).toRoseTree).numTraces = 0 ∧
       UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).toRoseTree ≠
-        UnorderedTree.mk c.current.unmark.toRoseTree := by
+        UnorderedTree.mk c.current.unmark.toRoseTree ∧
+      (∀ a ∈ (UnorderedTree.mk
+          (c.current.lf {everyPlayer.toSyntacticObject}).toRoseTree).leaves,
+        a ≠ SyntacticObject.Vertex.bare) := by
     decide +kernel
   obtain ⟨c, hc⟩ := Option.isSome_iff_exists.1
     (by decide +kernel : everyDidntScore.replayWithCopies?.isSome)
-  obtain ⟨hroot, hτ, hhigh, hlow, hall, hC, hL, hne⟩ := h c hc
+  obtain ⟨hroot, hτ, hhigh, hlow, hall, hC, hL, hne, hlf⟩ := h c hc
   refine ⟨c, hc, ?_, ?_, fun F hF ↦ hne (congrArg Prod.snd
     (eq_zero_of_mem_traceCuts _ hC hF hL))⟩
   · simpa [hhigh] using mem_traceCuts_contract c.current hroot hτ
-  · simpa [hlow] using mem_deletionCuts_lf c.current _ hall
+  · simpa [hlow] using mem_deletionCuts_lf c.current _ hall hlf
 
 /-! ### No Tampering -/
 
