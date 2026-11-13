@@ -161,7 +161,12 @@ theorem mem_excludes_iff_forall_eq (h : ∀ q ∈ C, p ⊆ q → q = p) :
 
 end Exh
 
-/-! ### Alternatives along an order -/
+/-! ### Alternatives along an order
+
+The alternatives are the members of a family at the indices below the prejacent's. Along an
+antitone family the exhaustification is idle; where the prejacent entails no member at a smaller
+index it picks a minimal true index; where entailment among the members is the order of the
+indices it leaves no true member at a smaller index. -/
 
 section Order
 
@@ -172,6 +177,8 @@ exhaustification against them changes nothing. -/
 theorem exh_image_Iic_of_antitone (hf : Antitone f) (a : ι) : exh (f '' Set.Iic a) (f a) = f a :=
   exh_eq_self <| Set.forall_mem_image.2 fun _ hi ↦ hf hi
 
+/-- Along an antitone family, exhaustification against the members at the smaller indices
+changes nothing. -/
 theorem exh_image_Iio_of_antitone (hf : Antitone f) (a : ι) : exh (f '' Set.Iio a) (f a) = f a :=
   exh_eq_self <| Set.forall_mem_image.2 fun _ hi ↦ hf (le_of_lt hi)
 

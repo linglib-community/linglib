@@ -7,32 +7,17 @@ public import Mathlib.Order.Bounds.Basic
 /-!
 # Exceptive quantifiers
 
-This file defines the semantics of exceptive constructions, *every student but John*, *except for
-John, every student* and *some student besides John*, over generalized quantifiers. An exceptive
-subtracts an exception set from the restrictor of a determiner, in the Boolean algebra of
-predicates on the domain. A subtraction is `Restrictive` when the quantification holds with it and
-fails without it. What a restrictive subtraction says of the exception set is fixed by the
-determiner: under an intersective one part of it [lies in the
-scope](##Quantifier.Exceptive.Restrictive.inter_nonempty), under a co-intersective one part of it
-[lies outside](##Quantifier.Exceptive.Restrictive.sdiff_nonempty), and a left-upward-monotone one
-[admits none](##Quantifier.Exceptive.Restrictive.not_of_restrictorMonotone). The exception set of
-a quantification is the least set whose subtraction makes it true, [von-fintel-1993]'s semantics
-of the *but*-phrase, which with *every* is [the restrictor minus the
-scope](##Quantifier.Exceptive.isExceptionSet_every_iff) and with *no* [their
-intersection](##Quantifier.Exceptive.isExceptionSet_no_iff).
-
-Over a restrictor and scope that vary with the world, `subtraction Q A B C` is the proposition
-that the quantification holds with `C` subtracted, and both conditions are exhaustifications of
-it against other subtractions. Where it does not entail the alternative that subtracts nothing, its
-exhaustification against that alternative is [the restrictive
-subtraction](##Quantifier.Exceptive.exh_singleton_subtraction_empty). Where the subtractions it
-entails are those of the larger sets, its exhaustification against every subtraction holds
-[exactly where `C` is the exception set](##Quantifier.Exceptive.mem_exh_range_subtraction_iff),
-the least verifying subtraction; against the subtractions of its proper parts, where it entails
-none of them, it holds [exactly where `C` is a minimal
-one](##Quantifier.Exceptive.mem_exh_image_Iio_subtraction_iff). A restrictive subtraction of an
-atom is [a minimal one](##Quantifier.Exceptive.restrictive_singleton_iff_minimal), and with
-*every* and *no* minimal and least coincide (`minimal_every_iff`, `minimal_no_iff`).
+An exceptive, as in *every student but John*, subtracts an exception set from the restrictor of a
+determiner. The subtraction is `Restrictive` when the quantification holds with it and fails
+without it, and the set is the exception set, `IsExceptionSet`, when it is the least whose
+subtraction verifies the quantification: [von-fintel-1993]'s semantics of the free exceptive and
+of the *but*-phrase. A restrictive subtraction of an atom is [a minimal verifying
+one](##Quantifier.Exceptive.restrictive_singleton_iff_minimal), which with *every* and *no* is
+[the least](##Quantifier.Exceptive.minimal_every_iff). As a proposition, a subtraction that
+entails just the larger ones is exhaustified against all others [where it is the
+least](##Quantifier.Exceptive.mem_exh_range_subtraction_iff), and one that entails none of its
+proper parts' is exhaustified against those [where it is
+minimal](##Quantifier.Exceptive.mem_exh_image_Iio_subtraction_iff).
 
 ## Implementation notes
 
@@ -43,9 +28,10 @@ disjointness formulation of the uniqueness condition is equivalent to the defini
 an exception set within the restrictor, which the definition entails
 (`IsExceptionSet.le_restrictor`) and the formulation does not.
 
-`Exhaustification.exh` denies the alternatives its prejacent does not entail, so against an
-alternative the prejacent entails it changes nothing where `Restrictive` is contradictory
-(`exh_singleton_subtraction_empty_of_restrictorMonotone`).
+`Exhaustification.exh` denies the alternatives its prejacent does not entail, so under a
+left-upward-monotone determiner, where every smaller subtraction is entailed
+(`subtraction_anti`), exhaustification against the smaller subtractions changes nothing while
+`Restrictive` is contradictory.
 
 ## References
 
@@ -88,14 +74,14 @@ theorem mono (hQ : RestrictorAntitone Q) (h : Restrictive Q A C B) {C' : Set α}
 
 /-- Under an intersective determiner a restrictive subtraction removes something the scope holds
 of: part of the exception set lies in the restrictor and in the scope. -/
-theorem inter_nonempty (hQ : Q.Intersective) (h : Restrictive Q A C B) : (A ∩ C ∩ B).Nonempty :=
-  Set.nonempty_iff_ne_empty.2 fun he ↦ h.2 ((hQ.sdiff_iff he).1 h.1)
+theorem inter_nonempty (hQ : Q.Intersective) (h : Restrictive Q A C B) : (A ∩ B ∩ C).Nonempty :=
+  Set.not_disjoint_iff_nonempty_inter.1 fun hd ↦ h.2 ((hQ.sdiff_iff hd).1 h.1)
 
 /-- Under a co-intersective determiner a restrictive subtraction removes something the scope
 fails of: part of the exception set lies in the restrictor and outside the scope. -/
 theorem sdiff_nonempty (hQ : Q.CoIntersective) (h : Restrictive Q A C B) :
-    ((A ∩ C) \ B).Nonempty :=
-  Set.nonempty_iff_ne_empty.2 fun he ↦ h.2 ((hQ.sdiff_iff he).1 h.1)
+    ((A \ B) ∩ C).Nonempty :=
+  Set.not_disjoint_iff_nonempty_inter.1 fun hd ↦ h.2 ((hQ.sdiff_iff hd).1 h.1)
 
 end Restrictive
 
@@ -171,11 +157,6 @@ theorem restrictive_no_iff : Restrictive no A C B ↔ A ⊓ B ≤ C ∧ ¬ Disjo
 
 /-! ### Minimal and least verifying subtractions -/
 
-/-- The exception set is a minimal set whose subtraction verifies the quantification. -/
-theorem IsExceptionSet.minimal (h : IsExceptionSet Q A C B) :
-    Minimal (fun S ↦ Q (A \ S) B) C :=
-  IsLeast.minimal h
-
 /-- Subtracting an atom is restrictive exactly when the atom is a minimal set whose subtraction
 verifies the quantification. -/
 theorem restrictive_singleton_iff_minimal {a : α} :
@@ -208,7 +189,7 @@ def subtraction (Q : Det α) (A B : W → Set α) (C : Set α) : Set W := {w | Q
 
 @[simp] theorem mem_subtraction : w ∈ subtraction Q A B C ↔ Q (A w \ C) (B w) := Iff.rfl
 
-theorem subtraction_empty : subtraction Q A B ∅ = {w | Q (A w) (B w)} := by
+@[simp] theorem subtraction_empty : subtraction Q A B ∅ = {w | Q (A w) (B w)} := by
   simp only [subtraction, Set.sdiff_empty]
 
 /-- Under a left-downward-monotone determiner a larger subtraction is a weaker proposition. -/
@@ -218,19 +199,6 @@ theorem subtraction_mono (hQ : RestrictorAntitone Q) : Monotone (subtraction Q A
 /-- Under a left-upward-monotone determiner a larger subtraction is a stronger proposition. -/
 theorem subtraction_anti (hQ : RestrictorMonotone Q) : Antitone (subtraction Q A B) :=
   fun _ _ h w ↦ hQ (B w) (sdiff_le_sdiff_left h)
-
-/-- Exhaustified against the alternative that subtracts nothing, a subtraction that does not
-entail it is the restrictive subtraction. -/
-theorem exh_singleton_subtraction_empty (h : ¬ subtraction Q A B C ⊆ subtraction Q A B ∅) :
-    exh {subtraction Q A B ∅} (subtraction Q A B C) = {w | Restrictive Q (A w) C (B w)} := by
-  rw [exh_singleton_of_not_subset h, subtraction_empty]
-  rfl
-
-/-- Under a left-upward-monotone determiner a subtraction entails the alternative that subtracts
-nothing, and exhaustification against it changes nothing. -/
-theorem exh_singleton_subtraction_empty_of_restrictorMonotone (hQ : RestrictorMonotone Q) :
-    exh {subtraction Q A B ∅} (subtraction Q A B C) = subtraction Q A B C :=
-  exh_eq_self fun _ hq ↦ hq ▸ subtraction_anti hQ (Set.empty_subset C)
 
 /-- Against the subtractions of its proper parts, none of which it entails, the subtraction of
 `C` is exhaustified exactly where `C` is a minimal set whose subtraction verifies the

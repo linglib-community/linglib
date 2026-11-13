@@ -9,19 +9,15 @@ public import Mathlib.Order.Antichain
 public import Mathlib.Order.Minimal
 
 /-!
-# Minimality under a key
+# Minimality under a key on an antichain
 
 Among elements none of which lies below another, minimality under a key depends only on the key's
 strict order between incomparable elements: when that order is an irreflexive relation `r`, the
-minimal elements are those that nothing is `r`-related to. Under a key no value of which lies
-strictly below another every element is minimal, and under a strictly antitone key on a linear
-order the minimal elements are the greatest.
+minimal elements are those that nothing is `r`-related to.
 
 ## Main statements
 
 * `minimalFor_iff_of_isAntichain`
-* `minimalFor_iff_of_forall_not_lt`
-* `StrictAnti.minimalFor_iff_isGreatest`
 -/
 
 public section
@@ -42,18 +38,3 @@ theorem minimalFor_iff_of_isAntichain (hP : IsAntichain (· ≤ ·) {j | P j}) (
     · simp [hj, hr]
     · simp [hj, h (hP hj hi hne) (hP hi hj hne.symm)]
   · simp [hj]
-
-omit [Preorder ι] in
-/-- Under a key no value of which lies strictly below another, every element of `P` is
-minimal. -/
-theorem minimalFor_iff_of_forall_not_lt (h : ∀ j k, ¬ f j < f k) : MinimalFor P f i ↔ P i :=
-  ⟨fun hi ↦ hi.1, fun hi ↦ ⟨hi, fun j _ ↦ not_lt_iff_le_imp_ge.1 (h j i)⟩⟩
-
-/-- Under a strictly antitone key on a linear order, the minimal elements of `P` are its
-greatest. -/
-theorem StrictAnti.minimalFor_iff_isGreatest {κ γ : Type*} [LinearOrder κ] [Preorder γ]
-    {P : κ → Prop} {f : κ → γ} {i : κ} (hf : StrictAnti f) :
-    MinimalFor P f i ↔ IsGreatest {j | P j} i :=
-  and_congr_right fun _ ↦ forall₂_congr fun j _ ↦ by
-    rw [hf.le_iff_ge, hf.le_iff_ge]
-    exact ⟨fun h ↦ (le_total j i).elim id h, fun h _ ↦ h⟩

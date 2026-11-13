@@ -283,19 +283,17 @@ theorem Intersective.iff_inter_univ (h : d.Intersective) : d A B ↔ d (A ∩ B)
 theorem intersective_iff : d.Intersective ↔ ∀ A B, d A B ↔ d (A ∩ B) Set.univ :=
   ⟨fun h _ _ ↦ h.iff_inter_univ, fun h A B A' B' e ↦ by rw [h A B, h A' B', e]⟩
 
-/-- An intersective determiner denotation is unchanged by removing from its restrictor a set that
-misses the scope there. -/
-theorem Intersective.sdiff_iff (h : d.Intersective) {C : Set α} (hC : A ∩ C ∩ B = ∅) :
+/-- An intersective determiner denotation is unchanged by removing from its restrictor a set
+disjoint from what the restrictor and the scope share. -/
+theorem Intersective.sdiff_iff (h : d.Intersective) {C : Set α} (hC : Disjoint (A ∩ B) C) :
     d (A \ C) B ↔ d A B :=
-  h _ _ _ _ <| Set.ext fun _ ↦ ⟨fun hx ↦ ⟨hx.1.1, hx.2⟩, fun hx ↦
-    ⟨⟨hx.1, fun hx' ↦ Set.eq_empty_iff_forall_notMem.1 hC _ ⟨⟨hx.1, hx'⟩, hx.2⟩⟩, hx.2⟩⟩
+  h _ _ _ _ (by rw [← Set.inter_sdiff_right_comm, hC.sdiff_eq_left])
 
 /-- A co-intersective determiner denotation is unchanged by removing from its restrictor a set
-that lies in the scope there. -/
-theorem CoIntersective.sdiff_iff (h : d.CoIntersective) {C : Set α} (hC : (A ∩ C) \ B = ∅) :
+disjoint from the part of the restrictor outside the scope. -/
+theorem CoIntersective.sdiff_iff (h : d.CoIntersective) {C : Set α} (hC : Disjoint (A \ B) C) :
     d (A \ C) B ↔ d A B :=
-  h _ _ _ _ <| Set.ext fun _ ↦ ⟨fun hx ↦ ⟨hx.1.1, hx.2⟩, fun hx ↦
-    ⟨⟨hx.1, fun hx' ↦ Set.eq_empty_iff_forall_notMem.1 hC _ ⟨⟨hx.1, hx'⟩, hx.2⟩⟩, hx.2⟩⟩
+  h _ _ _ _ (by rw [sdiff_right_comm, hC.sdiff_eq_left])
 
 /-- A determiner denotation is co-intersective exactly when `d A B ↔ d univ (A → B)`, so that it
 reduces to its value on the universe at the Boolean conditional. -/
