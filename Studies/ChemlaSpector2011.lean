@@ -97,8 +97,8 @@ abbrev RatingsMonotone (data : List (ℕ × ℕ)) : Prop :=
 /-! ### Pictures (§3, Appendix 2) -/
 
 /-- A six-letter picture places each letter at a vertex of the triangle of opposition, a
-falsifier being connected to none of its circles (`E`), a strong verifier to some but not all
-(`IO`), and a weak verifier to all (`A`) (Figure 14). -/
+falsifier being connected to none of its circles, a strong verifier to some but not all, and
+a weak verifier to all (Figure 14). -/
 abbrev Picture6 := Fin 6 → Triangle
 
 /-- A three-letter picture. -/
@@ -116,7 +116,7 @@ every letter with some but not all of them. -/
 def reading : ReadingLabel → (ι → Triangle) → Prop
   | .literal => fun p ↦ ∀ i, ⊥ < p i
   | .global => fun p ↦ (∀ i, ⊥ < p i) ∧ ¬ ∀ i, p i = ⊤
-  | .local_ => fun p ↦ ∀ i, p i = .IO
+  | .local_ => fun p ↦ ∀ i, p i = .someNotAll
 
 instance [Fintype ι] : (ℓ : ReadingLabel) → (p : ι → Triangle) → Decidable (reading ℓ p)
   | .literal, _ => inferInstanceAs (Decidable (∀ _, _))
@@ -145,10 +145,10 @@ inductive Exp1Condition where
 /-- The picture of each condition (Figure 4) has six falsifiers, six weak verifiers, four weak
 and two strong verifiers, or six strong verifiers. -/
 def Exp1Condition.witness : Exp1Condition → Picture6
-  | .false_ => fun _ ↦ .E
-  | .literal => fun _ ↦ .A
-  | .weak => fun i ↦ if i.val < 4 then .A else .IO
-  | .strong => fun _ ↦ .IO
+  | .false_ => fun _ ↦ .none
+  | .literal => fun _ ↦ .all
+  | .weak => fun i ↦ if i.val < 4 then .all else .someNotAll
+  | .strong => fun _ ↦ .someNotAll
 
 /-- The readings true at a condition, read off its witness. -/
 def Exp1Condition.truthSet (c : Exp1Condition) : Finset ReadingLabel :=
@@ -167,16 +167,16 @@ namespace Exp2Some
 
 /-- Reading (19a) says that exactly one letter is connected with some or all of its circles, the
 others with none. -/
-abbrev literal (p : Picture3) : Prop := ∃ i, ⊥ < p i ∧ ∀ j, j ≠ i → p j = .E
+abbrev literal (p : Picture3) : Prop := ∃ i, ⊥ < p i ∧ ∀ j, j ≠ i → p j = .none
 
 /-- Reading (19b) says that exactly one letter is connected with some but not all of its
 circles, the others with none. -/
 abbrev global (p : Picture3) : Prop :=
-  (∃ i, p i = .IO ∧ ∀ j, j ≠ i → p j = .E) ∧ ∀ i, p i ≠ .A
+  (∃ i, p i = .someNotAll ∧ ∀ j, j ≠ i → p j = .none) ∧ ∀ i, p i ≠ .all
 
 /-- Reading (19c) says that exactly one letter is connected with some but not all of its
 circles, the others with none or all. -/
-abbrev local_ (p : Picture3) : Prop := ∃ i, p i = .IO ∧ ∀ j, j ≠ i → p j ≠ .IO
+abbrev local_ (p : Picture3) : Prop := ∃ i, p i = .someNotAll ∧ ∀ j, j ≠ i → p j ≠ .someNotAll
 
 /-- The three readings of (21). -/
 def reading : ReadingLabel → Picture3 → Prop
@@ -206,10 +206,10 @@ inductive Exp2Condition where
 
 /-- A picture of each condition (Figure 11). -/
 def Exp2Condition.witness : Exp2Condition → Picture3
-  | .false_ => fun _ ↦ .E
-  | .literal => fun i ↦ if i.val = 0 then .A else .E
-  | .local_ => fun i ↦ if i.val = 0 then .IO else .A
-  | .all => fun i ↦ if i.val = 0 then .IO else .E
+  | .false_ => fun _ ↦ .none
+  | .literal => fun i ↦ if i.val = 0 then .all else .none
+  | .local_ => fun i ↦ if i.val = 0 then .someNotAll else .all
+  | .all => fun i ↦ if i.val = 0 then .someNotAll else .none
 
 /-- The readings true at a condition, read off its witness. -/
 def Exp2Condition.truthSet (c : Exp2Condition) : Finset ReadingLabel :=

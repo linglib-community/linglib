@@ -290,7 +290,7 @@ theorem parts_minterms_syl :
   simp only [mem_insert, mem_singleton, Finset.mem_image, Finset.mem_univ, true_and]
   constructor
   · rintro (rfl | rfl | rfl)
-    exacts [⟨.IO, rfl⟩, ⟨.A, rfl⟩, ⟨.E, rfl⟩]
+    exacts [⟨.someNotAll, rfl⟩, ⟨.all, rfl⟩, ⟨.none, rfl⟩]
   · rintro ⟨t, rfl⟩
     cases t <;> simp [Square.triangle]
 

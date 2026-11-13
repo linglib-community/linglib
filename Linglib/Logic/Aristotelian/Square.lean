@@ -66,12 +66,14 @@ structure Square (α : Type*) where
   /-- `O` is the particular negative corner (*not every*, `¬□p`, `¬Bel p`). -/
   O : α
 
-/-- The vertices of the triangle of opposition, in scale order, are the universal negative `E`,
-the conjunction `IO` of the two particulars, and the universal affirmative `A`. -/
+/-- The vertices of the triangle of opposition, in scale order. -/
 inductive Triangle where
-  | E
-  | IO
-  | A
+  /-- *None*, the universal negative `E`. -/
+  | none
+  /-- *Some but not all*, the conjunction of the two particulars `I` and `O`. -/
+  | someNotAll
+  /-- *All*, the universal affirmative `A`. -/
+  | all
   deriving DecidableEq, Repr, Fintype
 
 namespace Square
@@ -100,9 +102,9 @@ def ofUniversals [Compl α] (a e : α) : Square α := ⟨a, e, eᶜ, aᶜ⟩
 
 /-- The element of a square at a vertex of its triangle. -/
 def triangle [Min α] (sq : Square α) : Triangle → α
-  | .E => sq.E
-  | .IO => sq.I ⊓ sq.O
-  | .A => sq.A
+  | .none => sq.E
+  | .someNotAll => sq.I ⊓ sq.O
+  | .all => sq.A
 
 theorem map_triangle [Min α] [Min β] [FunLike F α β] [InfHomClass F α β] (f : F) (sq : Square α)
     (t : Triangle) : (sq.map f).triangle t = f (sq.triangle t) := by
@@ -221,7 +223,8 @@ end SquareRelations
 namespace Triangle
 
 /-- The corners of the square, each given as the set of vertices at which it holds. -/
-def corners : Square (Finset Triangle) := ⟨{.A}, {.E}, {.IO, .A}, {.E, .IO}⟩
+def corners : Square (Finset Triangle) :=
+  ⟨{.all}, {.none}, {.someNotAll, .all}, {.none, .someNotAll}⟩
 
 /-- The element of `corners` at each vertex is that vertex's singleton. -/
 theorem triangle_corners (t : Triangle) : corners.triangle t = {t} := by
@@ -245,14 +248,14 @@ instance : LinearOrder Triangle where
   toDecidableLE := inferInstance
 
 instance : BoundedOrder Triangle where
-  top := .A
+  top := .all
   le_top := by decide
-  bot := .E
+  bot := .none
   bot_le := by decide
 
-theorem bot_eq_E : (⊥ : Triangle) = .E := rfl
+theorem bot_eq_none : (⊥ : Triangle) = .none := rfl
 
-theorem top_eq_A : (⊤ : Triangle) = .A := rfl
+theorem top_eq_all : (⊤ : Triangle) = .all := rfl
 
 /-- *Some* holds above the bottom vertex. -/
 theorem mem_corners_I {t : Triangle} : t ∈ corners.I ↔ ⊥ < t := by decide +revert
@@ -286,7 +289,7 @@ theorem pairwise_disjoint_triangle (h : SquareRelations sq) :
 
 /-- The vertices of a square join to `⊤`. -/
 theorem sup_triangle (h : SquareRelations sq) : univ.sup sq.triangle = ⊤ := by
-  rw [show (univ : Finset Triangle) = {.E, .IO, .A} by decide, sup_insert, sup_insert,
+  rw [show (univ : Finset Triangle) = {.none, .someNotAll, .all} by decide, sup_insert, sup_insert,
     sup_singleton]
   exact (congrArg _ h.inf_IO_sup_A).trans h.contradEI.sup_eq_top
 
