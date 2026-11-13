@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.GovernmentPhonology.ECP
+public import Linglib.Phonology.GovernmentPhonology.EmptyCategoryPrinciple
 
 /-!
 # Scheer (2004): A lateral theory of phonology

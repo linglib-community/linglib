@@ -7,7 +7,7 @@ public import Linglib.Fragments.Tigrinya.Phonology
 public import Linglib.Fragments.Tigre.Phonology
 public import Linglib.Data.Examples.FaustLampitelli2026
 public import Linglib.Phonology.GovernmentPhonology.CodaMirror
-public import Linglib.Phonology.GovernmentPhonology.ECP
+public import Linglib.Phonology.GovernmentPhonology.EmptyCategoryPrinciple
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 
@@ -651,12 +651,13 @@ def gerund37a : Form := attach ((instantiate gerA ⟨["s", "m", "ʕ"]⟩).getD [
 marked for epenthesis. -/
 def pronounced (f : Form) : List Bool := f.map fun u ↦ decide (u.v ≠ .empty)
 
-/-- The realizations of a sequence of nuclei that satisfy the ECP, express the required nuclei,
-and express as few nuclei as possible. -/
+/-- The realizations of a sequence of nuclei that satisfy the Empty Category Principle, express
+the required nuclei, and express as few nuclei as possible. -/
 def economical (l : List Nucleus) (R : Finset ℕ) : List (List Nucleus) :=
   let admissible := (l.map fun x ↦ [{ x with expressed := false },
     { x with expressed := true }]).sections.filter fun r ↦
-      decide (SatisfiesECP actorship r ∧ ∀ i ∈ R, ∃ x ∈ r[i]?, x.expressed = true)
+      decide (SatisfiesEmptyCategoryPrinciple actorship r ∧
+        ∀ i ∈ R, ∃ x ∈ r[i]?, x.expressed = true)
   admissible.filter fun r ↦ admissible.all fun r' ↦ r.countP (·.expressed) ≤ r'.countP (·.expressed)
 
 /-- In (37a), three empty nuclei precede the lexical vowel, and the derivation yields the

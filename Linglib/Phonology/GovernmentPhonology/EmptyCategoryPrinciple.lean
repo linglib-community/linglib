@@ -15,12 +15,12 @@ public import Mathlib.Data.Finset.Basic
 A nucleus may stay unexpressed when it is governed, when it is enclosed in a domain of
 infrasegmental government, or when it is final in a language whose final nuclei may be empty.
 Since a governed nucleus governs nothing, of two successive unexpressed nuclei
-[one is enclosed](##GovernmentPhonology.SatisfiesECP.enclosed_or_enclosed). Where alternation
-with zero is obligatory, the realization of a domain is fixed from the right, each nucleus
-unexpressed exactly when its silence is licensed, and the principle
-[holds of it](##GovernmentPhonology.satisfiesECP_obligatory). In a word of alternating vowels
-the outcome depends on whether such a vowel, once expressed, is strong enough to govern another:
-where it is, [every other one](##GovernmentPhonology.expressed_obligatory_iff_even) is
+[one is enclosed](##GovernmentPhonology.SatisfiesEmptyCategoryPrinciple.enclosed_or_enclosed).
+Where alternation with zero is obligatory, the realization of a domain is fixed from the right,
+each nucleus unexpressed exactly when its silence is licensed, and the principle
+[holds of it](##GovernmentPhonology.satisfiesEmptyCategoryPrinciple_obligatory). In a word of
+alternating vowels the outcome depends on whether such a vowel, once expressed, is strong
+enough to govern another: where it is, [every other one](##GovernmentPhonology.expressed_obligatory_iff_even) is
 expressed, counting from the end, and where it is not,
 [all but the last](##GovernmentPhonology.expressed_obligatory_iff_succ_lt) are.
 
@@ -46,7 +46,7 @@ variable (A : Actorship) (l : List Nucleus) {i : ℕ}
 /-- The Empty Category Principle ([scheer-2004] (53)): associated melody is expressed, and a
 nucleus is unexpressed only if it is governed, enclosed in a domain of infrasegmental
 government, or final where final nuclei may be empty. -/
-structure SatisfiesECP : Prop where
+structure SatisfiesEmptyCategoryPrinciple : Prop where
   /-- Associated melody is expressed. -/
   expressed_of_associated : ∀ x ∈ l, x.melody = .associated → x.expressed = true
   /-- The silence of an unexpressed nucleus is licensed. -/
@@ -55,15 +55,16 @@ structure SatisfiesECP : Prop where
 
 variable {A l}
 
-theorem satisfiesECP_nil : SatisfiesECP A [] :=
+theorem satisfiesEmptyCategoryPrinciple_nil : SatisfiesEmptyCategoryPrinciple A [] :=
   ⟨by simp, by simp⟩
 
 /-- A stretch satisfies the Empty Category Principle when its first nucleus does and the rest
 of the stretch does. -/
-theorem satisfiesECP_cons {x : Nucleus} {r : List Nucleus} : SatisfiesECP A (x :: r) ↔
+theorem satisfiesEmptyCategoryPrinciple_cons {x : Nucleus} {r : List Nucleus} :
+    SatisfiesEmptyCategoryPrinciple A (x :: r) ↔
     (x.melody = .associated → x.expressed = true) ∧ (x.expressed = false →
       GovernedHead A (x :: r) ∨ EnclosedHead A (x :: r) ∨ r = [] ∧ A.finalEmpty = true) ∧
-      SatisfiesECP A r := by
+      SatisfiesEmptyCategoryPrinciple A r := by
   refine ⟨fun ⟨h1, h2⟩ ↦ ⟨h1 x List.mem_cons_self, fun hx ↦ ?_,
     fun y hy ↦ h1 y (List.mem_cons_of_mem _ hy), fun i hi ↦ ?_⟩, fun ⟨h1, h2, h3, h4⟩ ↦
     ⟨fun y hy ↦ (List.mem_cons.1 hy).elim (· ▸ h1) (h3 y), fun i hi ↦ ?_⟩⟩
@@ -74,14 +75,16 @@ theorem satisfiesECP_cons {x : Nucleus} {r : List Nucleus} : SatisfiesECP A (x :
     · simpa [Governed, Enclosed] using h4 i hi
 
 variable (A) in
-instance instDecidablePredSatisfiesECP : DecidablePred (SatisfiesECP A)
-  | [] => isTrue satisfiesECP_nil
+instance instDecidablePredSatisfiesEmptyCategoryPrinciple :
+    DecidablePred (SatisfiesEmptyCategoryPrinciple A)
+  | [] => isTrue satisfiesEmptyCategoryPrinciple_nil
   | _ :: r =>
-    have := instDecidablePredSatisfiesECP r
-    decidable_of_iff _ satisfiesECP_cons.symm
+    have := instDecidablePredSatisfiesEmptyCategoryPrinciple r
+    decidable_of_iff _ satisfiesEmptyCategoryPrinciple_cons.symm
 
 /-- Of two successive unexpressed nuclei before the last, one is enclosed. -/
-theorem SatisfiesECP.enclosed_or_enclosed (h : SatisfiesECP A l) {x y : Nucleus}
+theorem SatisfiesEmptyCategoryPrinciple.enclosed_or_enclosed
+    (h : SatisfiesEmptyCategoryPrinciple A l) {x y : Nucleus}
     (hx : l[i]? = some x) (hy : l[i + 1]? = some y) (hxe : x.expressed = false)
     (hye : y.expressed = false) (hl : i + 2 < l.length) :
     Enclosed A l i ∨ Enclosed A l (i + 1) := by
@@ -155,19 +158,21 @@ theorem drop_obligatoryFrom :
     · rw [obligatoryFrom_cons]
       split_ifs <;> simp [ih, Nat.add_assoc, Nat.add_comm 1 k]
 
-theorem satisfiesECP_obligatoryFrom : SatisfiesECP A (obligatoryFrom A R i l) := by
+theorem satisfiesEmptyCategoryPrinciple_obligatoryFrom :
+    SatisfiesEmptyCategoryPrinciple A (obligatoryFrom A R i l) := by
   induction l generalizing i with
-  | nil => exact satisfiesECP_nil
+  | nil => exact satisfiesEmptyCategoryPrinciple_nil
   | cons x r ih =>
     rw [obligatoryFrom_cons]
     split_ifs with hc
-    · refine satisfiesECP_cons.2 ⟨fun h ↦ absurd h hc.1, fun _ ↦ hc.2.2.imp_right (.imp_right ?_),
-        ih⟩
+    · refine satisfiesEmptyCategoryPrinciple_cons.2
+        ⟨fun h ↦ absurd h hc.1, fun _ ↦ hc.2.2.imp_right (.imp_right ?_), ih⟩
       exact .imp_left fun h ↦ by rw [h]; rfl
-    · exact satisfiesECP_cons.2 ⟨fun _ ↦ rfl, fun h ↦ by simp at h, ih⟩
+    · exact satisfiesEmptyCategoryPrinciple_cons.2 ⟨fun _ ↦ rfl, fun h ↦ by simp at h, ih⟩
 
-theorem satisfiesECP_obligatory : SatisfiesECP A (obligatory A R l) :=
-  satisfiesECP_obligatoryFrom
+theorem satisfiesEmptyCategoryPrinciple_obligatory :
+    SatisfiesEmptyCategoryPrinciple A (obligatory A R l) :=
+  satisfiesEmptyCategoryPrinciple_obligatoryFrom
 
 private theorem ite_cons_eq_cons_iff {c : Prop} [Decidable c] {o : List Nucleus} :
     (if c then { x with expressed := false } :: o else { x with expressed := true } :: o) =
