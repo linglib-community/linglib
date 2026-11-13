@@ -280,7 +280,7 @@ instance : DecidablePred (MarkedBy τ) := fun _ ↦ inferInstanceAs (Decidable (
 /-- A trace encoder on syntactic objects as one on terms, with no label off them. -/
 def termTrace (σ : SyntacticObject → Option LexicalItem.Token) (u : UnorderedTree Vertex) :
     Option LexicalItem.Token :=
-  if h : IsSyntacticObject u then σ ⟨u, h⟩ else none
+  if h : IsSyntacticObject u then σ (SyntacticObject.ofVal u h) else none
 
 /-- The policy of a reading: a copy of a chain read low leaves nothing when it is cut, as under
 `leaveNothing`, and any other subtree its trace, as under `leaveTrace`. -/
@@ -323,6 +323,7 @@ theorem exists_mem_rootCuts_lf (hroot : t.val.value.1 = none) (hτ : MarkedBy τ
     ∃ T, (t.cutForest low, T) ∈
         rootCuts (extractReading low (τ ∘ UnorderedTree.mk)) t.unmark.val ∧
       contractUnary T = (t.lf low).val := by
+  simp only [val_unmark, val_lf]
   obtain ⟨T, hT, hm⟩ := exists_mem_rootCuts_readCut (low := ReadLow low)
     (e := extractReading low (τ ∘ UnorderedTree.mk)) (s := t.val)
     (fun l hl ↦ by simp [hroot] at hl)
@@ -339,6 +340,7 @@ copies are an admissible cut of the copy object. -/
 theorem mem_traceCuts_contract (hroot : t.val.value.1 = none) (hτ : MarkedBy τ t.val) :
     ((t.cutForest ∅).map UnorderedTree.mk, UnorderedTree.mk t.contract.val) ∈
       traceCuts τ (UnorderedTree.mk t.unmark.val) := by
+  rw [val_contract, val_unmark]
   obtain ⟨T, hT, hm⟩ := exists_mem_rootCuts_readCut (low := ReadLow ∅)
     (e := leaveTrace (τ ∘ UnorderedTree.mk)) (s := t.val)
     (fun l hl ↦ by simp [hroot] at hl)
@@ -356,6 +358,7 @@ copies are an admissible cut of the copy object. -/
 theorem mem_deletionCuts_lf (hlow : ∀ r ∈ t.val.subtrees, r.value.1.isSome → ReadLow low r) :
     ((t.cutForest low).map UnorderedTree.mk, UnorderedTree.mk (t.lf low).val) ∈
       deletionCuts (UnorderedTree.mk t.unmark.val) := by
+  rw [val_lf, val_unmark]
   obtain ⟨T, hT, hm⟩ := exists_mem_rootCuts_readCut (low := ReadLow low) (e := leaveNothing)
     (s := t.val)
     (fun l hl ↦ hlow _ (self_mem_subtrees _) (by simp [hl]))
