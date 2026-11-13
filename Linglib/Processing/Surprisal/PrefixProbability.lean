@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Probability.AutoregressiveSequenceModel.Basic
+public import Linglib.Processing.LanguageModel.Autoregressive
 
 /-!
 # Prefix probabilities of a generative process
@@ -45,7 +45,7 @@ open scoped ProbabilityTheory
 variable {T W : Type*} (str : T → List W)
 
 /-- The complete structures whose yield extends the prefix `ws`. -/
-def consistent (ws : List W) : Set T := str ⁻¹' {l | ws <+: l}
+def consistent (ws : List W) : Set T := str ⁻¹' ws.cylinder
 
 @[simp] theorem consistent_nil : consistent str ([] : List W) = Set.univ :=
   Set.eq_univ_of_forall fun _ ↦ List.nil_prefix
@@ -56,8 +56,8 @@ theorem consistent_anti {ws ws' : List W} (h : ws <+: ws') :
 
 variable [MeasurableSpace T] [DiscreteMeasurableSpace T] (P : Measure T)
 
-theorem map_apply_setOf_prefix (ws : List W) :
-    P.map str {l | ws <+: l} = P (consistent str ws) :=
+theorem map_apply_cylinder (ws : List W) :
+    P.map str ws.cylinder = P (consistent str ws) :=
   Measure.map_apply .of_discrete .of_discrete
 
 variable [MeasurableSpace W] [MeasurableSingletonClass W]
@@ -69,10 +69,9 @@ theorem condPrefixProb_ofMeasure_map [IsProbabilityMeasure P] {ws : List W}
     (hws : P (consistent str ws) ≠ 0) (xs : List W) :
     (ofMeasure (P.map str)).condPrefixProb ws xs =
       P (consistent str (ws ++ xs)) / P (consistent str ws) := by
-  have hsub : {l : List W | ws ++ xs <+: l} ⊆ {l | ws <+: l} :=
-    fun _ ↦ (List.prefix_append ws xs).trans
-  rw [condPrefixProb_ofMeasure (by rwa [map_apply_setOf_prefix]),
-    cond_apply_of_subset .of_discrete hsub, map_apply_setOf_prefix, map_apply_setOf_prefix]
+  rw [condPrefixProb_ofMeasure (by rwa [map_apply_cylinder]),
+    cond_apply_of_subset .of_discrete (ws.cylinder_append_subset xs), map_apply_cylinder,
+    map_apply_cylinder]
 
 /-- The probability of the next word `w` after the prefix `ws` is the process conditioned on the
 prefix, at the structures consistent with the extended prefix. -/

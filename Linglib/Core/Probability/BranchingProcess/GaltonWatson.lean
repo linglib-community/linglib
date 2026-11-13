@@ -277,6 +277,14 @@ theorem expand_apply' (i : ι) (s : Set (RoseTree ι)) :
     lintegral_map (Kernel.measurable_coe _ .of_discrete) .of_discrete]
   simp_rw [fill_inr, Measure.map_apply .of_discrete .of_discrete]
 
+/-- The mass of one generation from `i` is the expected product of the masses of `κ` at the
+offspring. -/
+theorem expand_apply_univ (i : ι) :
+    expand ξ κ i Set.univ = ∫⁻ js, (js.map fun j => κ j Set.univ).prod ∂ξ i := by
+  rw [expand_apply']
+  simp only [Set.preimage_univ, fillList_apply, Measure.listProd_univ, List.map_map]
+  rfl
+
 theorem fill_expand_apply (s : PartialTree ι) : fill (expand ξ κ) s = fill κ ∘ₘ generation ξ s := by
   induction s using RoseTree.rec' with
   | node s cs ih =>
