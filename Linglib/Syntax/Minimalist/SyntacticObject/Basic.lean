@@ -15,45 +15,33 @@ public import Linglib.Syntax.Minimalist.LexicalItem
 /-!
 # Syntactic objects
 
-A syntactic object is a binary rooted tree with leaves labelled by the lexical alphabet and no
-labels at internal vertices: an element of the free non-associative commutative magma on `SO₀`.
-This file builds two carriers for it over one alphabet of vertices, `Vertex L`, an option of a
-leaf label on either side. The left summand is structure: a leaf `Vertex.lex a` of the lexical
-alphabet `L`, or the bare label `Vertex.bare` on a binary internal node. The right summand is a
-trace: the index-free `Vertex.trace`, or the trace `Vertex.traceOf a` of a label, the cancellation
-`T/T_v` remembering the head of `T_v`. Traces are exactly the right summand, the convention of the
-trace coproduct. `SyntacticObject L` is the well-formed unordered tree over `Vertex L`, the object
-Merge builds, and `PlanarSyntacticObject L` the well-formed ordered tree, the form
-linearization produces and PF reads, Marcolli, Chomsky and Berwick's planar embedding.
-Well-formedness is a local condition, each vertex licensing its children (`Vertex.Licenses`), so
-it descends to the quotient; `PlanarSyntacticObject.toSyntacticObject` forgets the order and
-is a homomorphism for the vocabulary the two carriers share, `leaf`, `trace`, `traceOf` and
-`merge`.
-
-## Main definitions
-
-* `Minimalist.SyntacticObject.Vertex`, `Minimalist.IsSyntacticObject`
-* `Minimalist.SyntacticObject`, `Minimalist.PlanarSyntacticObject`: the unordered and the
-  ordered carrier, each with `leaf`, `trace`, `traceOf` and `merge`.
-* `Minimalist.PlanarSyntacticObject.toSyntacticObject`: forgetting the order.
-* `Minimalist.SyntacticObject.map`, `Minimalist.PlanarSyntacticObject.map`: relabelling along
-  a map of lexical alphabets, the induced homomorphism of free commutative magmas.
-
-## Main results
-
-* `Minimalist.SyntacticObject.ind`, `exists_form`: induction and case analysis over the shapes.
-* `Minimalist.PlanarSyntacticObject.toSyntacticObject_merge`: forgetting the order commutes
-  with Merge.
+[marcolli-chomsky-berwick-2025] define the syntactic objects as the free nonassociative
+commutative magma on the lexical items, with Merge as its product, and the planar syntactic
+objects as the free magma on the same items. Here `SyntacticObject L` and
+`PlanarSyntacticObject L` are those two magmas on the leaves `SyntacticObject.Leaf L`, and
+[forgetting the order of daughters](##Minimalist.PlanarSyntacticObject.toSyntacticObject) is the
+projection between them. A planar object has an ordered tree and a syntactic object an unordered
+one; a syntactic object is [determined by its
+tree](##Minimalist.SyntacticObject.toUnorderedTree_injective), and the trees that arise are [the
+well-formed ones](##Minimalist.SyntacticObject.unorderedTreeEquiv), in which a lexical item or a
+trace has no daughters and an unlabelled vertex has two.
 
 ## Implementation notes
 
-The lexical alphabet `L` defaults to `LexicalItem.Token`, so a bare `SyntacticObject` is the
-carrier over tokens; the default pins `L` to `Type`.
+* A leaf is a lexical item or a trace, so these are the book's syntactic objects over an alphabet
+  enlarged by the traces its coproducts leave. The trace of an item records the head of the
+  subtree that was removed, where the book's trace is labelled by the whole subtree.
+* The two types are abbreviations, so the API of `FreeMagma` and `FreeCommMagma` applies to them
+  directly: `*` is Merge, and a map out of either is determined by its values on the leaves.
+* The lexical alphabet `L` defaults to `LexicalItem.Token`, so a bare `SyntacticObject` is over
+  tokens; the default pins `L` to `Type`.
+* The trees are over `Vertex L`, an option of a leaf label on either side: on the left a lexical
+  leaf or the unlabelled internal vertex, on the right a trace, the convention of the trace
+  coproduct.
 
 ## References
 
-* [marcolli-chomsky-berwick-2025], §1.1 (Definition 1.1.1, §1.1.3), §1.2 (Definitions 1.2.1,
-  1.2.6) and §1.12
+* [marcolli-chomsky-berwick-2025]
 -/
 
 @[expose] public section
