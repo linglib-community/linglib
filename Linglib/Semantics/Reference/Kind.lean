@@ -74,6 +74,9 @@ theorem up_apply_of_mem (h : d ∈ k s) : up k s = Set.Iic d :=
 theorem up_apply_of_not_dom (h : ¬ (k s).Dom) : up k s = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ ⟨_, hd, _⟩ ↦ h (Part.dom_iff_mem.2 ⟨_, hd⟩)
 
+theorem isLowerSet_up : IsLowerSet (up k s) :=
+  fun _ _ hba ⟨d, hd, had⟩ ↦ ⟨d, hd, hba.trans had⟩
+
 end Preorder
 
 /-- ∩: the concept of the largest member of a property's extension at each situation, which is the
