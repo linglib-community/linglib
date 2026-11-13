@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.SyntacticObject.Basic
+public import Linglib.Syntax.Minimalist.SyntacticObject.Tree
 public import Linglib.Core.Computability.Edge
 public import Linglib.Core.Data.UnorderedTree.Leaves
 

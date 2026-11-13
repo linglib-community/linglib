@@ -7,7 +7,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Copy.Reading
 public import Linglib.Syntax.Minimalist.Derivation.Binding
-public import Linglib.Syntax.Minimalist.SyntacticObject.ToTree
+public import Linglib.Syntax.Minimalist.SyntacticObject.Constituency
 
 /-!
 # The tree of a reading
