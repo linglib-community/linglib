@@ -179,8 +179,7 @@ is `P(t) = 1 + t²`, while the book writes `P(X) = X²` next to its requirement 
 
 Lemma 1.10.1 identifies `𝔗` with the free nonassociative commutative magma on one generator,
 stated below as `carrierEmptyEquiv` on the carrier over the empty lexicon; the carrier over a
-lexicon is the free commutative magma on its leaf alphabet,
-`SyntacticObject.equivFreeCommMagma`. The identification of `TreeAlgebra`'s binary span with the
+lexicon is by definition the free commutative magma on its leaves. The identification of `TreeAlgebra`'s binary span with the
 carrier over the empty lexicon is not stated.
 
 Lemma 1.16.5 extends the coproducts `Δ^ω` to extended workspaces by excluding the cuts of edges at
@@ -670,29 +669,26 @@ noncomputable def generator : TreeAlgebra := ofTree (UnorderedTree.leaf ())
 
 /-- Over the empty lexicon every leaf is the bare trace, and the carrier is the free commutative
 magma on one generator, the reading of Lemma 1.10.1 on the syntactic-object carrier. -/
-noncomputable def carrierEmptyEquiv : SyntacticObject Empty ≃* FreeCommMagma Unit :=
-  SyntacticObject.equivFreeCommMagma.trans
-    { toFun := FreeCommMagma.lift fun _ ↦ FreeCommMagma.of ()
-      invFun := FreeCommMagma.lift fun _ ↦ FreeCommMagma.of (Sum.inr none)
-      left_inv := fun x ↦ by
-        have h : (FreeCommMagma.lift fun _ ↦
-                FreeCommMagma.of (α := Empty ⊕ Option Empty) (Sum.inr none)).comp
-              (FreeCommMagma.lift fun _ ↦ FreeCommMagma.of (α := Unit) ())
-            = MulHom.id (FreeCommMagma (Empty ⊕ Option Empty)) :=
-          FreeCommMagma.hom_ext fun y ↦ by
-            rcases y with e | (_ | e)
-            · exact e.elim
-            · simp
-            · exact e.elim
-        exact MulHom.ext_iff.1 h x
-      right_inv := fun x ↦ by
-        have h : (FreeCommMagma.lift fun _ ↦ FreeCommMagma.of (α := Unit) ()).comp
-              (FreeCommMagma.lift fun _ ↦
-                FreeCommMagma.of (α := Empty ⊕ Option Empty) (Sum.inr none))
-            = MulHom.id (FreeCommMagma Unit) :=
-          FreeCommMagma.hom_ext fun _ ↦ by simp
-        exact MulHom.ext_iff.1 h x
-      map_mul' := map_mul _ }
+def carrierEmptyEquiv : SyntacticObject Empty ≃* FreeCommMagma Unit where
+  toFun := FreeCommMagma.lift fun _ ↦ FreeCommMagma.of ()
+  invFun := FreeCommMagma.lift fun _ ↦ SyntacticObject.trace
+  left_inv x := by
+    have h : (FreeCommMagma.lift fun _ ↦ (SyntacticObject.trace : SyntacticObject Empty)).comp
+          (FreeCommMagma.lift fun _ ↦ FreeCommMagma.of (α := Unit) ())
+        = MulHom.id (SyntacticObject Empty) :=
+      FreeCommMagma.hom_ext fun y ↦ by
+        rcases y with e | _ | e
+        · exact e.elim
+        · rfl
+        · exact e.elim
+    exact MulHom.ext_iff.1 h x
+  right_inv x := by
+    have h : (FreeCommMagma.lift fun _ ↦ FreeCommMagma.of (α := Unit) ()).comp
+          (FreeCommMagma.lift fun _ ↦ (SyntacticObject.trace : SyntacticObject Empty))
+        = MulHom.id (FreeCommMagma Unit) :=
+      FreeCommMagma.hom_ext fun _ ↦ rfl
+    exact MulHom.ext_iff.1 h x
+  map_mul' := map_mul _
 
 /-- Merge on `V(𝔗)` is the grafting operator after the disjoint union (Lemma 1.3.3), a bilinear
 map. -/

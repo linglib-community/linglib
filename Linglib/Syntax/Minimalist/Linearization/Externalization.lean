@@ -174,10 +174,15 @@ def traceLinearizationState : Option LexicalItem.Token → LinearizationState si
   | some tok => .of tok [] (.traceOf tok)
   | none => .of .bareTrace [] .trace
 
-/-- The head function's value on a syntactic object: the `liftFun` of the lexical leaves and the
-    silent, saturated traces. -/
-def linearizationState (s : SyntacticObject) : LinearizationState side :=
-  liftFun (fun tok => .of tok tok.item.sel (.leaf tok)) (traceLinearizationState side) s
+/-- The head function as a morphism of magmas ([marcolli-chomsky-berwick-2025]
+    §1.13's algebraic frame): Merge multiplies constituents, `h` multiplies states. -/
+def headHom : SyntacticObject →ₙ* LinearizationState side :=
+  FreeCommMagma.lift
+    (Leaf.elim (fun tok ↦ .of tok tok.item.sel (.leaf tok)) (traceLinearizationState side))
+
+/-- The head function's value on a syntactic object, the extension of the states of the lexical
+    leaves and the silent, saturated traces. -/
+def linearizationState (s : SyntacticObject) : LinearizationState side := headHom side s
 
 @[simp] theorem linearizationState_leaf (tok : LexicalItem.Token) :
     (SyntacticObject.leaf tok).linearizationState side = .of tok tok.item.sel (.leaf tok) := rfl
@@ -191,12 +196,7 @@ def linearizationState (s : SyntacticObject) : LinearizationState side :=
 @[simp] theorem linearizationState_node (l r : SyntacticObject) :
     (merge l r).linearizationState side =
       l.linearizationState side * r.linearizationState side :=
-  liftFun_merge _ _ l r
-
-/-- The head function as a morphism of magmas ([marcolli-chomsky-berwick-2025]
-    §1.13's algebraic frame): Merge multiplies constituents, `h` multiplies states. -/
-noncomputable def headHom : SyntacticObject →ₙ* LinearizationState side :=
-  lift (fun tok => .of tok tok.item.sel (.leaf tok)) (traceLinearizationState side)
+  map_mul (headHom side) l r
 
 @[simp] theorem headHom_apply (s : SyntacticObject) :
     headHom side s = s.linearizationState side := rfl
@@ -205,7 +205,7 @@ noncomputable def headHom : SyntacticObject →ₙ* LinearizationState side :=
     check — two morphisms agreeing on the leaves (`hom_ext`). -/
 theorem sel_comp_headHom :
     LinearizationState.sel.comp (headHom side) = selCheckHom :=
-  hom_ext fun x ↦ by rcases x with _ | _ | _ <;> rfl
+  FreeCommMagma.hom_ext fun x ↦ by cases x <;> rfl
 
 @[simp] theorem sel_linearizationState (s : SyntacticObject) :
     LinearizationState.sel (s.linearizationState side) = s.selCheck :=

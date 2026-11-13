@@ -103,6 +103,10 @@ theorem traceMergeOp_node (τ : UnorderedTree Vertex → Option LexicalItem.Toke
 /-- The trace encoder of derivations sends a tree to its head by selection. -/
 def traceEncoder (t : UnorderedTree Vertex) : Option LexicalItem.Token := (selCheckN t).head
 
+@[simp] theorem traceEncoder_toUnorderedTree (s : SyntacticObject) :
+    traceEncoder s.toUnorderedTree = s.selHead := by
+  rw [traceEncoder, selCheckN_toUnorderedTree]; rfl
+
 variable {mover current : SyntacticObject}
 
 /-- A uniquely accessible mover that is not a trace is extracted by exactly one trace cut, whose
@@ -111,7 +115,8 @@ theorem traceCuts_filter_mover (hm : mover.toUnorderedTree.value.isLeft)
     (h : current.terms.count mover = 1) (hne : current ≠ mover) :
     (traceCuts traceEncoder current.toUnorderedTree).filter (fun p ↦ p.1 = {mover.toUnorderedTree})
       = {({mover.toUnorderedTree}, (deleteAccessible mover current).toUnorderedTree)} := by
-  rw [toUnorderedTree_deleteAccessible, toUnorderedTree_headTrace]
+  rw [toUnorderedTree_deleteAccessible, toUnorderedTree_headTrace,
+    ← traceEncoder_toUnorderedTree]
   refine traceCuts_filter_crown_eq_singleton traceEncoder hm ?_
     (fun h' ↦ hne (toUnorderedTree_injective h'))
   rw [← map_toUnorderedTree_terms, Multiset.count_map_eq_count' _ _ toUnorderedTree_injective, h]

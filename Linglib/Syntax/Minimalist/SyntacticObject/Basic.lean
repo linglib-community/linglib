@@ -183,6 +183,28 @@ def map (f : L → L') : Leaf L → Leaf L'
 theorem map_comp (f : L → L') (g : L' → L'') : map g ∘ map f = map (g ∘ f) := by
   funext x; cases x <;> rfl
 
+/-- A function on leaves from one on lexical items and one on traces. -/
+def elim {M : Sort*} (ℓ : L → M) (τ : Option L → M) : Leaf L → M
+  | lex a => ℓ a
+  | trace => τ none
+  | traceOf a => τ (some a)
+
+@[simp] theorem elim_lex {M : Sort*} (ℓ : L → M) (τ : Option L → M) (a : L) :
+    elim ℓ τ (lex a) = ℓ a := rfl
+
+@[simp] theorem elim_trace {M : Sort*} (ℓ : L → M) (τ : Option L → M) :
+    elim ℓ τ trace = τ none := rfl
+
+@[simp] theorem elim_traceOf {M : Sort*} (ℓ : L → M) (τ : Option L → M) (a : L) :
+    elim ℓ τ (traceOf a) = τ (some a) := rfl
+
+/-- A leaf is a lexical item or a trace, which is index-free or of an item. -/
+def sumEquiv : Leaf L ≃ L ⊕ Option L where
+  toFun := elim .inl .inr
+  invFun := Sum.elim lex fun o ↦ o.elim trace traceOf
+  left_inv x := by cases x <;> rfl
+  right_inv x := by rcases x with _ | _ | _ <;> rfl
+
 end Leaf
 
 end SyntacticObject

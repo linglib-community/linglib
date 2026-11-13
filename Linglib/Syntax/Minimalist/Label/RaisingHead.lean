@@ -214,7 +214,7 @@ variable (s : SyntacticObject)
 
 /-- The raising state of a syntactic object. -/
 def raisingCheck : RaisingState :=
-  liftFun (fun tok ↦ ⟨.sel (.of tok tok.item.sel), 0⟩) raisingTraceState s
+  FreeCommMagma.lift (Leaf.elim (fun tok ↦ ⟨.sel (.of tok tok.item.sel), 0⟩) raisingTraceState) s
 
 /-- The raising head of a syntactic object, [marcolli-chomsky-berwick-2025]'s raising head
 function: the selection head where there is one, and at a landing site the head of the phrase
@@ -231,11 +231,11 @@ def raisingHead : Option LexicalItem.Token := s.raisingCheck.state.head
 
 @[simp] theorem raisingCheck_merge (l r : SyntacticObject) :
     (merge l r).raisingCheck = l.raisingCheck * r.raisingCheck :=
-  liftFun_merge _ _ l r
+  map_mul (FreeCommMagma.lift _) l r
 
 /-- `raisingCheck` as a morphism of magmas. -/
-noncomputable def raisingCheckHom : SyntacticObject →ₙ* RaisingState :=
-  lift (fun tok ↦ ⟨.sel (.of tok tok.item.sel), 0⟩) raisingTraceState
+def raisingCheckHom : SyntacticObject →ₙ* RaisingState :=
+  FreeCommMagma.lift (Leaf.elim (fun tok ↦ ⟨.sel (.of tok tok.item.sel), 0⟩) raisingTraceState)
 
 /-- The raising head of a merge is a daughter's raising head
 ([marcolli-chomsky-berwick-2025] Lemma 1.13.7). -/
@@ -257,12 +257,13 @@ end SyntacticObject
 
 /-- The raising head of a planar tree, that of its unordered image. -/
 def treeRaisingHead (s : RoseTree Vertex) : Option LexicalItem.Token :=
-  (liftN (fun tok ↦ (⟨.sel (.of tok tok.item.sel), 0⟩ : RaisingState)) raisingTraceState
-    (UnorderedTree.mk s)).state.head
+  if h : IsSyntacticObject (UnorderedTree.mk s) then (ofUnorderedTree _ h).raisingHead else none
 
 theorem raisingHead_eq_treeRaisingHead {x : SyntacticObject} {s : RoseTree Vertex}
     (h : x.toUnorderedTree = UnorderedTree.mk s) : x.raisingHead = treeRaisingHead s := by
-  rw [raisingHead, raisingCheck, liftFun, h]; rfl
+  subst_vars
+  rw [treeRaisingHead, dif_pos (h ▸ x.isSyntacticObject_toUnorderedTree)]
+  exact congrArg raisingHead (toUnorderedTree_injective (by rw [toUnorderedTree_ofUnorderedTree, h]))
 
 theorem treeRaisingHead_subtree {t : PlanarSyntacticObject} (p : t.toRoseTree.Positions) :
     treeRaisingHead p.subtree = (t.termAt p).raisingHead :=

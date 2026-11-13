@@ -382,9 +382,9 @@ end PendingState
 
 /-- Selection before saturation as a licensing: a token with its selectors, a trace a saturated
 copy of the phrase its token heads. -/
-noncomputable def pendingHom : SyntacticObject →ₙ* PendingState :=
-  SyntacticObject.lift (fun tok ↦ ⟨some (tok, tok.item.sel, 0)⟩)
-    (fun u ↦ ⟨some (u.getD .bareTrace, [], 0)⟩)
+def pendingHom : SyntacticObject →ₙ* PendingState :=
+  FreeCommMagma.lift (SyntacticObject.Leaf.elim (fun tok ↦ ⟨some (tok, tok.item.sel, 0)⟩)
+    fun u ↦ ⟨some (u.getD .bareTrace, [], 0)⟩)
 
 /-- The head noun, selecting the relative CP. -/
 def headNoun : LexicalItem.Token := ⟨.of .N [.C], 1⟩
