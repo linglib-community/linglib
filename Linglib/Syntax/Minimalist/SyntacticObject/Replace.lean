@@ -113,9 +113,6 @@ theorem subst_eq_self {s : SyntacticObject} (h : ∀ u ∈ s.terms, ∀ r, f u =
     (by rwa
         [toUnorderedTree_ofUnorderedTree])) r' hr')).trans (toUnorderedTree_ofUnorderedTree u hu')
 
-theorem subst_of_forall_eq_none {s : SyntacticObject} (h : ∀ u ∈ s.terms, f u = none) :
-    s.subst f = s :=
-  subst_eq_self fun u hu r hr ↦ by simp [h u hu] at hr
 
 /-! ### Replacement -/
 

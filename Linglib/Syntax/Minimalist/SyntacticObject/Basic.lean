@@ -343,16 +343,6 @@ def toUnorderedTree (s : SyntacticObject L) : UnorderedTree (Vertex L) :=
 @[simp] theorem toUnorderedTree_traceOf (a : L) :
     (traceOf a).toUnorderedTree = UnorderedTree.leaf (Vertex.traceOf a) := rfl
 
-theorem isSyntacticObject_merge_iff (a b : UnorderedTree (Vertex L)) :
-    IsSyntacticObject (UnorderedTree.node Vertex.bare {a, b}) ↔
-      IsSyntacticObject a ∧ IsSyntacticObject b := by
-  refine Quotient.inductionOn₂ a b fun pa pb ↦ ?_
-  show IsSyntacticObject (UnorderedTree.node Vertex.bare {UnorderedTree.mk pa,
-    UnorderedTree.mk pb}) ↔
-    IsSyntacticObject (UnorderedTree.mk pa) ∧ IsSyntacticObject (UnorderedTree.mk pb)
-  rw [show ({UnorderedTree.mk pa, UnorderedTree.mk pb} : Multiset (UnorderedTree (Vertex L)))
-        = Multiset.ofList ([pa, pb].map UnorderedTree.mk) from rfl, UnorderedTree.node_mk_tree_list]
-  exact isSyntacticObject_mk_merge pa pb
 
 @[simp] theorem toUnorderedTree_merge (l r : SyntacticObject L) :
     (merge l r).toUnorderedTree = UnorderedTree.node Vertex.bare {l.toUnorderedTree,
@@ -663,19 +653,9 @@ theorem Vertex.map_injective {f : L → L'} (hf : Function.Injective f) :
     Function.Injective (Vertex.map f) :=
   Sum.map_injective.2 ⟨Option.map_injective hf, Option.map_injective hf⟩
 
-theorem Vertex.licenses_map_iff (f : L → L') (a : Vertex L) (ks : List (Vertex L)) :
-    (a.map f).Licenses (ks.map (Vertex.map f) : Multiset _) ↔ a.Licenses ks := by
-  rcases a with (_ | _) | _ <;> simp [Vertex.map, Vertex.Licenses]
 
 end SyntacticObject
 
-theorem isSyntacticObject_map_iff {L L' : Type} (f : L → L')
-    (t : UnorderedTree (SyntacticObject.Vertex L)) :
-    IsSyntacticObject (t.map (SyntacticObject.Vertex.map f)) ↔ IsSyntacticObject t := by
-  refine Quotient.inductionOn t fun p ↦ ?_
-  show IsSyntacticObject ((UnorderedTree.mk p).map _) ↔ IsSyntacticObject (UnorderedTree.mk p)
-  rw [UnorderedTree.map_mk, isSyntacticObject_mk, isSyntacticObject_mk]
-  exact RoseTree.licensed_map_iff (SyntacticObject.Vertex.licenses_map_iff f)
 
 
 namespace SyntacticObject

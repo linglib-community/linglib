@@ -128,9 +128,6 @@ def attach (p : PlanarSyntacticObject L) (e : Edge) (d : PlanarSyntacticObject L
 @[simp] theorem attach_right (p d : PlanarSyntacticObject L) : p.attach .right d = merge p d :=
   rfl
 
-theorem attach_swap (p d : PlanarSyntacticObject L) (e : Edge) :
-    p.attach e.swap d = d.attach e p := by
-  cases e <;> rfl
 
 @[simp] theorem toSyntacticObject_attach (p d : PlanarSyntacticObject L) (e : Edge) :
     (p.attach e d).toSyntacticObject = SyntacticObject.merge d.toSyntacticObject p.toSyntacticObject

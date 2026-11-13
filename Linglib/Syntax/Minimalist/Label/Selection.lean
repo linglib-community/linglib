@@ -246,8 +246,6 @@ def selCheck : SelectionState := selCheckHom s
 /-- The projecting head's lexical item, by c-selection. -/
 def selHead : Option LexicalItem.Token := s.selCheck.head
 
-/-- Residual pending selectional features (`some []` = saturated). -/
-def checkedSel : Option (List Cat) := s.selCheck.residual
 
 /-- The category of the projecting head, `none` at exocentric nodes. -/
 def cat? : Option Cat := s.selHead.map (·.item.cat)
