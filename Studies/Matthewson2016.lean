@@ -300,7 +300,8 @@ theorem nsyilxcen_not_scalar :
   rintro ⟨lex, h⟩
   have hm := h Nsyilxcen.mat (by decide)
   have hc := h Nsyilxcen.cmay (by decide)
-  simp only [Deal2011.ServesIn, ModalItem.Scalemates, Nsyilxcen.modals, List.mem_cons,
+  simp only [Deal2011.ServesIn, ModalItem.scalemateForces, ModalItem.Scalemates,
+    Nsyilxcen.modals, List.mem_cons,
     List.not_mem_nil, or_false, exists_eq_or_imp, exists_eq_left] at hm hc
   generalize lex Nsyilxcen.mat = a at hm hc
   generalize lex Nsyilxcen.cmay = b at hm hc

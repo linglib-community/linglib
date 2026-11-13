@@ -98,8 +98,8 @@ theorem appropriate_empty (π : Polarity) (fo : ModalForce) :
   rw [appropriate, Set.image_empty, exh_empty]
 
 theorem appropriate_positive (S : Set ModalForce) (fo : ModalForce) :
-    appropriate f p .positive S fo = exh (claim f p '' S) (claim f p fo) :=
-  rfl
+    appropriate f p .positive S fo = exh (claim f p '' S) (claim f p fo) := by
+  simp only [appropriate, Polarity.positive_smul]
 
 -- In a negative context a modal is appropriate where its dual is about the negated prejacent.
 theorem appropriate_negative (S : Set ModalForce) (fo : ModalForce) :
@@ -113,6 +113,11 @@ theorem image_claim_image_dual_univ :
   refine (Set.image_mono (Set.subset_univ _)).antisymm ?_
   rintro _ ⟨fo, -, rfl⟩
   exact ⟨fo.dual.dual, ⟨fo.dual, trivial, rfl⟩, by cases fo <;> rfl⟩
+
+theorem appropriate_negative_univ (fo : ModalForce) :
+    appropriate f p .negative .univ fo = appropriate f pᶜ .positive .univ fo.dual := by
+  rw [appropriate_negative, appropriate_positive, appropriate_positive,
+    image_claim_image_dual_univ]
 
 end Claims
 
@@ -182,9 +187,7 @@ theorem servesFor_negative_iff_dual : ServesFor .negative S fo g ↔
       appropriate f p .negative .univ g ⊆ appropriate f p .negative S fo ↔
         appropriate f pᶜ .positive .univ g.dual ⊆
           appropriate f pᶜ .positive (ModalForce.dual '' S) fo.dual := by
-    rw [appropriate_negative, appropriate_negative, appropriate_positive,
-      image_claim_image_dual_univ]
-    rfl
+    rw [appropriate_negative_univ, appropriate_negative]
   exact ⟨fun h W f hf p ↦ by simpa using (key W f pᶜ).1 (h W f hf pᶜ),
     fun h W f hf p ↦ (key W f p).2 (h W f hf pᶜ)⟩
 
@@ -193,6 +196,10 @@ theorem servesFor_negative_iff : ServesFor .negative S fo g ↔
     (fo.IsUniversal ↔ g.IsUniversal) ∨ fo.IsUniversal ∧ ∀ h ∈ S, h.IsUniversal := by
   simp only [servesFor_negative_iff_dual, servesFor_positive_iff, Set.forall_mem_image,
     ModalForce.isUniversal_dual, not_not, not_iff_not]
+
+private theorem not_isUniversal_iff_dual (fo : ModalForce) :
+    ¬ (fo.IsUniversal ↔ fo.dual.IsUniversal) :=
+  fun h ↦ iff_not_self (h.trans ModalForce.isUniversal_dual)
 
 instance (π : Polarity) (S : Set ModalForce) [DecidablePred (· ∈ S)] (fo g : ModalForce) :
     Decidable (ServesFor π S fo g) :=
@@ -203,17 +210,18 @@ instance (π : Polarity) (S : Set ModalForce) [DecidablePred (· ∈ S)] (fo g :
 /-- A modal is flexible in an upward-entailing context, serving for every force, iff it is
 existential and none of its scalemates is universal (Table 1). -/
 theorem flexible_positive_iff : (∀ g, ServesFor .positive S fo g) ↔
-    ¬ fo.IsUniversal ∧ ∀ h ∈ S, ¬ h.IsUniversal := by
-  simp only [servesFor_positive_iff]
-  refine ⟨fun h ↦ (h fo.dual).resolve_left (by simp [ModalForce.isUniversal_dual]), fun h _ ↦
-    .inr h⟩
+    ¬ fo.IsUniversal ∧ ∀ h ∈ S, ¬ h.IsUniversal :=
+  ⟨fun h ↦ (servesFor_positive_iff.1 (h _)).resolve_left (not_isUniversal_iff_dual fo),
+    fun h _ ↦ servesFor_positive_iff.2 (.inr h)⟩
+
+-- English: a possibility modal with a necessity scalemate does not serve for necessity.
+example : ¬ ServesFor .positive {.necessity} .possibility .necessity := by decide
 
 -- Table 1
 theorem flexible_negative_iff : (∀ g, ServesFor .negative S fo g) ↔
-    fo.IsUniversal ∧ ∀ h ∈ S, h.IsUniversal := by
-  simp only [servesFor_negative_iff]
-  refine ⟨fun h ↦ (h fo.dual).resolve_left (by simp [ModalForce.isUniversal_dual]), fun h _ ↦
-    .inr h⟩
+    fo.IsUniversal ∧ ∀ h ∈ S, h.IsUniversal :=
+  ⟨fun h ↦ (servesFor_negative_iff.1 (h _)).resolve_left (not_isUniversal_iff_dual fo),
+    fun h _ ↦ servesFor_negative_iff.2 (.inr h)⟩
 
 /-! ### Scales (§2) -/
 
@@ -221,7 +229,7 @@ theorem flexible_negative_iff : (∀ g, ServesFor .negative S fo g) ↔
 lexical forces `lex` of the modals: its scalemates are those of `L`. -/
 def ServesIn (lex : ModalItem → ModalForce) (L : List ModalItem) (π : Polarity) (m : ModalItem)
     (g : ModalForce) : Prop :=
-  ServesFor π {h | ∃ m' ∈ L, m.Scalemates lex m' ∧ lex m' = h} (lex m) g
+  ServesFor π (m.scalemateForces lex L) (lex m) g
 
 instance (lex : ModalItem → ModalForce) (L : List ModalItem) (π : Polarity) (m : ModalItem)
     (g : ModalForce) : Decidable (ServesIn lex L π m g) :=
@@ -233,9 +241,8 @@ epistemic particles 'maybe'. -/
 def lexicalForce (_ : ModalItem) : ModalForce := .possibility
 
 -- §2.6
-theorem oqa_scaleFree :
-    ¬ ModalItem.HasScalemate lexicalForce NezPerce.modals NezPerce.oqa := by
-  decide
+theorem oqa_scaleFree : NezPerce.oqa.scalemateForces lexicalForce NezPerce.modals = ∅ :=
+  Set.not_nonempty_iff_eq_empty.1 <| ModalItem.scalemateForces_nonempty.not.2 (by decide)
 
 /-- *O'qa* serves for both forces in an upward-entailing context and not under negation
 (§1, §3). -/
@@ -254,12 +261,11 @@ theorem oqa_forces :
 /-- The modals the rows name, keyed by their forms. -/
 def modalTable : List (String × ModalItem) := NezPerce.modals.map fun m ↦ (m.form, m)
 
-/-- The polarity of a row's environment: negation, the restriction of a universal and a
-conditional antecedent are not upward-entailing. -/
-def polarityTable : List (String × Polarity) :=
-  [("unembedded", .positive), ("existential restriction", .positive),
-    ("conditional consequent", .positive), ("negation", .negative),
-    ("universal restriction", .negative), ("conditional antecedent", .negative)]
+/-- The polarity of an environment: negation, the restriction of a universal and a conditional
+antecedent are not upward-entailing. -/
+def polarity : Examples.Environment → Polarity
+  | .unembedded | .existentialRestriction | .conditionalConsequent => .positive
+  | .negation | .universalRestriction | .conditionalAntecedent => .negative
 
 /-- The force of the English modal of a row's context or translation. -/
 def forceTable : List (String × ModalForce) :=
@@ -267,17 +273,17 @@ def forceTable : List (String × ModalForce) :=
 
 theorem rows_resolve :
     ∀ e ∈ Examples.all, (e.parse? "modal" modalTable).isSome ∧
-      (e.parse? "environment" polarityTable).isSome := by
+      (Examples.environment e).isSome := by
   decide
 
 -- §1, §3
 theorem rows :
     ∀ e ∈ Examples.all, ∀ m ∈ e.parse? "modal" modalTable,
-      ∀ π ∈ e.parse? "environment" polarityTable,
+      ∀ env ∈ Examples.environment e,
         (∀ g ∈ e.parse? "force" forceTable, (e.judgment = .acceptable ↔
-          ServesIn lexicalForce NezPerce.modals π m g)) ∧
+          ServesIn lexicalForce NezPerce.modals (polarity env) m g)) ∧
         ∀ r ∈ e.readings, ∃ g ∈ forceTable.lookup r.1, (r.2 = .acceptable ↔
-          ServesIn lexicalForce NezPerce.modals π m g) := by
+          ServesIn lexicalForce NezPerce.modals (polarity env) m g) := by
   decide
 
 end Deal2011

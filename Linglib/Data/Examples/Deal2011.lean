@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Deal2011` — typed example data
@@ -253,5 +255,28 @@ def ex60 : Datum :=
     paperFeatures := [("modal", "o'qa"), ("environment", "conditional antecedent"), ("force", "necessity")] }
 
 def all : List Datum := [ex1, ex5, ex6, ex10, ex46, ex47, ex48, ex49, ex50, ex51, ex52, ex53, ex54, ex57, ex58, ex59, ex60]
+
+/-- The environment of the modal in the sentence. -/
+inductive Environment where
+  /-- unembedded: an unembedded clause -/
+  | unembedded
+  /-- existential restriction: the restriction of an existential quantifier -/
+  | existentialRestriction
+  /-- conditional consequent: the consequent of a conditional -/
+  | conditionalConsequent
+  /-- negation: the scope of negation -/
+  | negation
+  /-- universal restriction: the restriction of a universal quantifier -/
+  | universalRestriction
+  /-- conditional antecedent: the antecedent of a conditional -/
+  | conditionalAntecedent
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `environment`. -/
+def environment (e : Datum) : Option Environment :=
+  e.parse? "environment" [("unembedded", .unembedded), ("existential restriction", .existentialRestriction),
+    ("conditional consequent", .conditionalConsequent), ("negation", .negation),
+    ("universal restriction", .universalRestriction),
+    ("conditional antecedent", .conditionalAntecedent)]
 
 end Deal2011.Examples

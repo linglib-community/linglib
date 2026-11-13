@@ -14,7 +14,8 @@ directly. Two items form a Horn scale when they differ in force and share a flav
 ## Main definitions
 
 * `Modality.ModalItem`, with its domain and variation predicates, its classical reading
-  `ModalItem.classical`, and the Horn scales it forms, `ModalItem.Scalemates`.
+  `ModalItem.classical`, and the Horn scales it forms, `ModalItem.Scalemates`, with the forces
+  of its scalemates, `ModalItem.scalemateForces`.
 
 ## References
 
@@ -97,12 +98,26 @@ def Scalemates (lex : ModalItem → ModalForce) (m m' : ModalItem) : Prop :=
 def HasScalemate (lex : ModalItem → ModalForce) (L : List ModalItem) (m : ModalItem) : Prop :=
   ∃ m' ∈ L, Scalemates lex m m'
 
+/-- The lexical forces of a modal's scalemates in an inventory, the forces of the alternatives
+to its use. -/
+def scalemateForces (lex : ModalItem → ModalForce) (L : List ModalItem) (m : ModalItem) :
+    Set ModalForce :=
+  {fo | ∃ m' ∈ L, Scalemates lex m m' ∧ lex m' = fo}
+
+theorem scalemateForces_nonempty {lex : ModalItem → ModalForce} {L : List ModalItem}
+    {m : ModalItem} : (scalemateForces lex L m).Nonempty ↔ HasScalemate lex L m :=
+  ⟨fun ⟨_, m', hm, hs, _⟩ ↦ ⟨m', hm, hs⟩, fun ⟨m', hm, hs⟩ ↦ ⟨lex m', m', hm, hs, rfl⟩⟩
+
 instance (lex : ModalItem → ModalForce) (m m' : ModalItem) : Decidable (Scalemates lex m m') :=
   inferInstanceAs (Decidable (_ ∧ ∃ _ ∈ _, _))
 
 instance (lex : ModalItem → ModalForce) (L : List ModalItem) (m : ModalItem) :
     Decidable (HasScalemate lex L m) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+instance (lex : ModalItem → ModalForce) (L : List ModalItem) (m : ModalItem) :
+    DecidablePred (· ∈ scalemateForces lex L m) := fun _ ↦
+  inferInstanceAs (Decidable (∃ _ ∈ _, _ ∧ _))
 
 end ModalItem
 
