@@ -6,7 +6,8 @@ public import Linglib.Phonology.Segmental.NaturalClass
 public import Linglib.Fragments.Tigrinya.Phonology
 public import Linglib.Fragments.Tigre.Phonology
 public import Linglib.Data.Examples.FaustLampitelli2026
-public import Linglib.Phonology.StrictCV.Basic
+public import Linglib.Phonology.GovernmentPhonology.CodaMirror
+public import Linglib.Phonology.GovernmentPhonology.ECP
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 
@@ -31,21 +32,17 @@ analysis needs the element.
   a geminable position holding a guttural is a single unit ((12): -sʌʔɨl).
 * The prefixes tɨ- and mɨ- carry empty nuclei realized by epenthesis, as in the paper's
   underlying forms (t_-, m_-); the causative ʔʌ- is lexical (19c).
-* Government is Strict CV's, of which the paper's (23) is a simplified version (fn. 16), and the
-  final nucleus of both languages may be empty and does not govern. Epenthesis is the paper's
-  left-to-right procedure, in which a nucleus after a silent one is realized, so that a run of
-  empty nuclei takes the Ethiosemitic option C▪C_C▪C of (37a) and not the standard one.
+* Government is Government Phonology's, of which the paper's (23) is a simplified version
+  (fn. 16). The final nucleus of both languages may be empty, does not govern, and licenses,
+  which puts a final consonant in the strong position; [scheer-zikova-2010] take a final nucleus
+  to govern and license together or do neither. Epenthesis is the paper's left-to-right
+  procedure, in which a nucleus after a silent one is realized, so that a run of empty nuclei
+  takes the Ethiosemitic option C▪C_C▪C of (37a) and not the obligatory one.
 * Trans-guttural harmony "can, but does not have to apply" (§2.1), so `realizations` lists
   every option and `rows_derived` asks that each attested form be among them. Realization
   does not feed fusion again, the paper's first way out of the loop of (37b–d).
 * The postvocalic spirantization of b ([nɨβaħ], (10b)) is outside the analysis; β is read as b.
 * Not derived: the |I|-syneresis of (8)–(9) and the ejective asymmetry of fn. 8.
-
-## TODO
-
-That a final guttural needs no licensor ((32a)) is stipulated. The paper ascribes to Scheer and
-Ziková final nuclei that license without governing, but they make a final nucleus govern and
-license or do neither, and these forms need one that does not govern (`governs_32a`).
 
 ## References
 
@@ -68,7 +65,7 @@ license or do neither, and these forms need one that does not govern (`governs_3
 
 namespace FaustLampitelli2026
 
-open Morphology ElementTheory
+open Morphology ElementTheory GovernmentPhonology
 
 /-! ### Vowels and gutturals -/
 
@@ -268,28 +265,30 @@ instance (f : Form) (i : Nat) : Decidable (GeminateInternal f i) := by
 
 /-! ### Lateral relations -/
 
-/-- The final nucleus of Tigrinya and Tigre may be empty and does not govern. -/
-def final : StrictCV.FinalNucleus := ⟨true, false⟩
+/-- The lateral actorship of Tigrinya and Tigre. A contentful nucleus governs and licenses (23a),
+(24), an epenthetic one included. The final nucleus may be empty; it does not govern (§3.3.1) and
+it licenses, so that a final guttural has its licensor ((32a)). -/
+def actorship : Actorship := .ltp ↑Melody.floating ⊥ true true false
 
 /-- The melody of a nucleus is associated for a lexical vowel and empty otherwise, even when the
 nucleus is marked for epenthesis. -/
-def Nuc.melody : Nuc → StrictCV.Melody
+def Nuc.melody : Nuc → Melody
   | .vowel _ _ => .associated
   | .empty | .mark => .empty
 
-/-- The nuclei of a form as the lateral computation reads them. The first nucleus must be
-pronounced, since an initial empty CV unit needs its government (fn. 21), and so must a nucleus
-whose onset is a guttural, which needs a pronounced licensor (25), unless the nucleus is final
-((32a)). -/
-def nuclei (f : Form) : List StrictCV.Nucleus :=
-  f.mapIdx fun i u ↦
-    { melody := u.v.melody
-      forced := decide (i = 0 ∨ u.c.HasA ∧ i + 1 < f.length) }
+/-- The nuclei of a form as the lateral computation reads them, none yet expressed. -/
+def nuclei (f : Form) : List Nucleus := f.map fun u ↦ { melody := u.v.melody }
 
-/-- The nuclei of a form before epenthesis, those with a lexical vowel pronounced, so that only a
+/-- The nuclei that must be expressed whatever follows: the first, since an initial empty CV
+unit needs its government (fn. 21), and one whose onset is a guttural, which needs an expressed
+licensor (25), unless the nucleus is final. -/
+def required (f : Form) : Finset ℕ :=
+  (Finset.range f.length).filter fun i ↦ i = 0 ∨ HasAAt f i ∧ i + 1 < f.length
+
+/-- The nuclei of a form before epenthesis, those with a lexical vowel expressed, so that only a
 contentful nucleus governs (23a). -/
-def lexical (f : Form) : List (StrictCV.Nucleus × Bool) :=
-  (nuclei f).map fun x ↦ (x, decide (x.melody = .associated))
+def lexical (f : Form) : List Nucleus :=
+  (nuclei f).map fun x ↦ { x with expressed := decide (x.melody = .associated) }
 
 /-! ### The operations of (30) -/
 
@@ -302,14 +301,14 @@ def fusion (f : Form) : Form :=
       if IsLowA v ∧ (u.c.HasA ∨ HasAAt f (i + 1)) then ⟨u.c, .vowel (lowered v) true⟩ else u
     | _ => u
 
-/-- Dissociation (26c) empties a fused nucleus iff the nuclei after it govern it and it is not the
-licensor of its own fused domain, that is, iff the guttural is the next onset (Av + Ac) rather
-than its own (Ac + Av, (28)). -/
+/-- Dissociation (26c) empties a fused nucleus iff the next nucleus is a governor and it is not
+the licensor of its own fused domain, that is, iff the guttural is the next onset (Av + Ac)
+rather than its own (Ac + Av, (28)). -/
 def dissociation (f : Form) : Form :=
   f.mapIdx fun i u ↦
     match u.v with
     | .vowel _ true =>
-      if HasAAt f (i + 1) ∧ ¬ u.c.HasA ∧ StrictCV.Governs final ((lexical f).drop (i + 1)) then
+      if HasAAt f (i + 1) ∧ ¬ u.c.HasA ∧ IsGovernor actorship (lexical f) (i + 1) then
         ⟨u.c, .empty⟩
       else u
     | _ => u
@@ -384,7 +383,7 @@ theorem fusion_fuses (f : Form) (i : Nat) (c : Cons) (v : Vowel)
 theorem dissociation_empty_iff (f : Form) (i : Nat) (u : CV) (h : f[i]? = some u) :
     (dissociation f)[i]? = some ⟨u.c, .empty⟩ ↔
       u.v = .empty ∨ ∃ v, u.v = .vowel v true ∧
-        HasAAt f (i + 1) ∧ ¬ u.c.HasA ∧ StrictCV.Governs final ((lexical f).drop (i + 1)) := by
+        HasAAt f (i + 1) ∧ ¬ u.c.HasA ∧ IsGovernor actorship (lexical f) (i + 1) := by
   simp only [dissociation, List.getElem?_mapIdx, h, Option.map_some, Option.some.injEq]
   obtain ⟨c, n⟩ := u
   cases n with
@@ -624,16 +623,26 @@ predict (§3.3.3). -/
 theorem rows_unpredicted : ∀ r ∈ rows, ¬ r.predicted → ∀ f ∈ r.forms, f ∉ r.realizations := by
   decide +kernel
 
-/-! ### Proper government and the standard realization -/
+/-! ### Proper government and the obligatory realization -/
 
 /-- The 2nd-person jussive of 'hear', /t_-s_mʌʕ_/ (32a). -/
 def jussive32a : Form := (instantiate juss2 ⟨["s", "m", "ʕ"]⟩).getD []
 
-/-- The fused vowel of (32a) is governed by the following nucleus iff final nuclei act, so [tɨsmaʕ]
-shows the final nucleus does not govern (§3.3.1). -/
-theorem governs_32a (p : StrictCV.FinalNucleus) :
-    StrictCV.Governs p ((lexical (fusion jussive32a)).drop 3) ↔ p.acts = true := by
-  cases p with | mk e a => cases e <;> cases a <;> decide
+/-- The fused vowel of (32a) is followed by a governor iff the final nucleus has some strength, so
+[tɨsmaʕ] shows the final nucleus does not govern (§3.3.1). -/
+theorem isGovernor_32a (s : WithBot Melody) :
+    IsGovernor (.ltp ↑Melody.floating s true true false) (lexical (fusion jussive32a)) 3 ↔
+      s ≠ ⊥ := by
+  induction s using WithBot.recBotCoe with
+  | bot => decide
+  | coe m => cases m <;> decide
+
+/-- Every guttural of a derived form is the onset of a licensor, the final one of the final
+nucleus ((25), (32a)). -/
+theorem guttural_licensed : ∀ r ∈ rows, ∀ f ∈ r.stem, ∀ i < f.length, HasAAt f i →
+    IsLicensor actorship ((nuclei (derive f)).zipWith
+      (fun x b ↦ { x with expressed := b }) ((derive f).map fun u ↦ decide (u.v ≠ .empty))) i := by
+  decide +kernel
 
 /-- The gerund of 'hear' with the suffix *-u*, /m_s_maʕ-u/ (37a). -/
 def gerund37a : Form := attach ((instantiate gerA ⟨["s", "m", "ʕ"]⟩).getD []) ⟨some .u, []⟩
@@ -642,23 +651,25 @@ def gerund37a : Form := attach ((instantiate gerA ⟨["s", "m", "ʕ"]⟩).getD [
 marked for epenthesis. -/
 def pronounced (f : Form) : List Bool := f.map fun u ↦ decide (u.v ≠ .empty)
 
-/-- The realizations of a sequence of nuclei that satisfy the ECP, pronounce the required nuclei,
-and pronounce as few nuclei as possible. -/
-def economical (p : StrictCV.FinalNucleus) (l : List StrictCV.Nucleus) :
-    List (List (StrictCV.Nucleus × Bool)) :=
-  let admissible := (l.map fun x ↦ [(x, false), (x, true)]).sections.filter fun r ↦
-    decide (StrictCV.SatisfiesECP p r ∧ ∀ y ∈ r, y.1.forced = true → y.2 = true)
-  admissible.filter fun r ↦ admissible.all fun r' ↦ r.countP (·.2) ≤ r'.countP (·.2)
+/-- The realizations of a sequence of nuclei that satisfy the ECP, express the required nuclei,
+and express as few nuclei as possible. -/
+def economical (l : List Nucleus) (R : Finset ℕ) : List (List Nucleus) :=
+  let admissible := (l.map fun x ↦ [{ x with expressed := false },
+    { x with expressed := true }]).sections.filter fun r ↦
+      decide (SatisfiesECP actorship r ∧ ∀ i ∈ R, ∃ x ∈ r[i]?, x.expressed = true)
+  admissible.filter fun r ↦ admissible.all fun r' ↦ r.countP (·.expressed) ≤ r'.countP (·.expressed)
 
 /-- In (37a), three empty nuclei precede the lexical vowel, and the derivation yields the
-Ethiosemitic realization [C▪C_C▪C] rather than the standard one (§3.3.3). -/
+Ethiosemitic realization [C▪C_C▪C] rather than the obligatory one (§3.3.3). -/
 theorem syneresis_37a :
     (nuclei (dissociation (fusion gerund37a))).map (·.melody) =
         [.empty, .empty, .empty, .associated] ∧
-      (∀ p, (economical p (nuclei (dissociation (fusion gerund37a)))).map (·.map Prod.snd) =
-        [[true, true, false, true], [true, false, true, true]]) ∧
-      (∀ p, (StrictCV.standard p (nuclei (dissociation (fusion gerund37a)))).map Prod.snd =
-        [true, true, false, true]) ∧
+      (economical (nuclei (dissociation (fusion gerund37a)))
+          (required (dissociation (fusion gerund37a)))).map (·.map (·.expressed)) =
+        [[true, true, false, true], [true, false, true, true]] ∧
+      (obligatory actorship (required (dissociation (fusion gerund37a)))
+          (nuclei (dissociation (fusion gerund37a)))).map (·.expressed) =
+        [true, true, false, true] ∧
       pronounced (derive gerund37a) = [true, false, true, true] := by
   decide +kernel
 
@@ -670,11 +681,11 @@ def DissociatedThird (f : Form) : Prop :=
 
 instance (f : Form) : Decidable (DissociatedThird f) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- On every form of (4)–(19) and (31)–(39), the derivation pronounces the standard realization
+/-- On every form of (4)–(19) and (31)–(39), the derivation pronounces the obligatory realization
 except in the configuration of (37a) (§3.3.3). -/
-theorem rows_pronounced_eq_standard : ∀ r ∈ rows, ∀ f ∈ r.stem,
-    pronounced (derive f) = (StrictCV.standard final (nuclei (dissociation (fusion f)))).map
-      Prod.snd ↔ ¬ DissociatedThird f := by
+theorem rows_pronounced_eq_obligatory : ∀ r ∈ rows, ∀ f ∈ r.stem,
+    pronounced (derive f) = (obligatory actorship (required (dissociation (fusion f)))
+      (nuclei (dissociation (fusion f)))).map (·.expressed) ↔ ¬ DissociatedThird f := by
   decide +kernel
 
 end FaustLampitelli2026

@@ -111,22 +111,22 @@ structure Actorship where
 and licenses. Schwa, a nucleus expressed without associated melody, and the unexpressed final
 nucleus have the strengths `schwa` and `final` and license as `schwaLicenses` and
 `finalLicenses` say; a final nucleus that governs only nuclei without melody ((378)) has the
-strength of an empty melody. An empty nucleus that is unexpressed and not final, which in a
-domain satisfying the Empty Category Principle is ungoverned only when it is enclosed, governs and
-licenses as a full nucleus does, after [brun-trigaud-scheer-2010]. Expressed nuclei support a
-domain of infrasegmental government, and the unexpressed final nucleus does where
-`finalSupports`. That an epenthetic vowel acts as schwa does, and that an enclosed nucleus
-governs alternating vowels, are choices no source makes. -/
+strength of an empty melody. An unexpressed empty nucleus between consonants that may contract
+infrasegmental government, which is ungoverned when it is enclosed, governs and licenses as a
+full nucleus does, after [brun-trigaud-scheer-2010]; any other unexpressed nucleus that is not
+final does neither. Expressed nuclei support a domain of infrasegmental government, and the
+unexpressed final nucleus does where `finalSupports`. That an epenthetic vowel acts as schwa
+does, and that an enclosed nucleus governs alternating vowels, are choices no source makes. -/
 def Actorship.ltp (schwa final : WithBot Melody)
     (schwaLicenses finalLicenses finalSupports : Bool) (finalEmpty : Bool := true) :
     Actorship where
   strength x isFinal :=
     if x.expressed then (if x.melody = .associated then ↑Melody.associated else schwa)
     else if isFinal then final
-    else if x.melody = .empty then ↑Melody.associated else ⊥
+    else if x.melody = .empty ∧ x.cluster = true then ↑Melody.associated else ⊥
   licenses x isFinal :=
     if x.expressed then (decide (x.melody = .associated) || schwaLicenses)
-    else if isFinal then finalLicenses else decide (x.melody = .empty)
+    else if isFinal then finalLicenses else decide (x.melody = .empty) && x.cluster
   supports x isFinal := x.expressed || (isFinal && finalSupports)
   finalEmpty := finalEmpty
 
