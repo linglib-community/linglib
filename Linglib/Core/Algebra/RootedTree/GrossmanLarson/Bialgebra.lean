@@ -153,7 +153,7 @@ theorem toConv_pairing_mul [DecidableEq α] (z w : ConnesKreimer R (UnorderedTre
   simp only [LinearMap.convMul_apply, LinearMap.comp_apply, LinearEquiv.coe_coe, linearEquiv_apply,
     toConnesKreimer_of, comul_of, map_multiset_sum, Multiset.map_map, Function.comp_def,
     TensorProduct.map_tmul, LinearMap.mul'_apply]
-  rw [pairing_symm, pairing_of'_mul]
-  exact congrArg _ (Multiset.map_congr rfl fun p _ ↦ by rw [pairing_symm z, pairing_symm w])
+  rw [pairing_comm, pairing_of'_mul]
+  exact congrArg _ (Multiset.map_congr rfl fun p _ ↦ by rw [pairing_comm z, pairing_comm w])
 
 end GrossmanLarson

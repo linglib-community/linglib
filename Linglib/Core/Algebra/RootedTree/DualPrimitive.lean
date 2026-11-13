@@ -182,9 +182,9 @@ theorem isDualPrimitive_pairing {x : GrossmanLarson R α} (hx : IsPrimitiveElem 
     IsDualPrimitive R (pairing (R := R) x.toConnesKreimer) := by
   have h (z : ConnesKreimer R (UnorderedTree α)) :
       (pairing (R := R) ∘ₗ linearEquiv.toLinearMap).flip z = pairing z ∘ₗ linearEquiv.toLinearMap :=
-    LinearMap.ext fun _ ↦ pairing_symm _ _
+    LinearMap.ext fun _ ↦ pairing_comm _ _
   exact hx.isDualPrimitive (p := pairing ∘ₗ linearEquiv.toLinearMap)
-    (fun a ↦ (pairing_symm 1 a).trans (pairing_one_right a)) (fun _ ↦ pairing_one_right _)
+    (fun a ↦ pairing_one_left a) (fun _ ↦ pairing_one_right _)
     fun z w ↦ by simp only [h, toConv_pairing_mul]
 
 theorem isPrimitiveElem_of_iff [CharZero R] {F : Forest (UnorderedTree α)} :
@@ -258,8 +258,8 @@ theorem coe_pairingLie_op_of (T : UnorderedTree α) :
 embeds in the dual primitives. -/
 theorem pairingLie_injective [CharZero R] [NoZeroDivisors R] :
     Function.Injective (pairingLie (R := R) (α := α)) := fun _ _ h ↦
-  unop_injective <| ι_injective <| GrossmanLarson.ext <|
-    ext_pairing_right fun z ↦ congr($(congrArg Subtype.val h) z)
+  unop_injective <| ι_injective <| GrossmanLarson.ext <| pairing_injective <|
+    toConv_injective <| congrArg Subtype.val h
 
 end CommRing
 
