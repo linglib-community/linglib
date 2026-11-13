@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.VanCraenenbroeck2014
+public import Linglib.Data.Examples.Harley2014
 public import Linglib.Morphology.DistributedMorphology.RootCategorization
 public import Studies.Harley2014
 public import Linglib.Data.Examples.Readers
