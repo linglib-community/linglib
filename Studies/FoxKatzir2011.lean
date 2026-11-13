@@ -30,8 +30,11 @@ through exhaustive relevance, forbids pruning one of two compatible disjuncts as
 
 Sentences are propositions `Set W`, alternative sets are `Set (Set W)`, and the operators are
 intersections of complements, the paper's propositional rendering of *only*. The structural
-definition is stated without focus marking, so `formalAlternatives` contains the paper's set;
-its one new clause, salient constituents, is what brings a symmetric alternative into the set
+definition is the paper's simplified one, successive replacement of a sub-constituent by an
+element of the substitution source (`Tree.substitutionAlternatives`), without the deletion,
+contraction and same-category condition of [katzir-2007]'s `structuralAlternatives`. It is
+stated without focus marking, so `formalAlternatives` contains the paper's set; its one new
+clause, salient constituents, is what brings a symmetric alternative into the set
 (`mem_formalAlternatives_of_salient`). Universal operators are `ModalLogic.Box` over an
 accessibility relation, covering the modal and the quantificational cases alike.
 
@@ -61,28 +64,25 @@ section Formal
 
 open PhraseStructure Tree
 
-variable {C V : Type} (lex : Finset (Tree C V)) (φ : Tree C V) (salient : Finset (Tree C V))
+variable {C V : Type*} (lex : Finset (Tree C V)) (φ : Tree C V) (salient : Finset (Tree C V))
 
 /-- The substitution source in a context consists of the lexicon, the sub-constituents of the
 sentence, and the salient constituents of the context. -/
-def contextualSource : Set (Tree C V) := ↑lex ∪ {t | t ∈ φ.subtrees} ∪ ↑salient
+def contextualSource : Set (Tree C V) := substitutionSource lex φ ∪ ↑salient
 
 /-- The formal alternatives in a context are whatever is at most as complex as the sentence over
 the contextual substitution source. -/
 def formalAlternatives : Set (Tree C V) :=
-  {ψ | atMostAsComplex (contextualSource lex φ salient) ψ φ}
+  substitutionAlternatives (contextualSource lex φ salient) φ
 
-theorem formalAlternatives_empty : formalAlternatives lex φ ∅ = structuralAlternatives lex φ := by
-  simp [formalAlternatives, structuralAlternatives, contextualSource, substitutionSource]
-
-theorem mem_formalAlternatives_of_salient {ψ : Tree C V} (hψ : ψ ∈ salient)
-    (hcat : ψ.cat = φ.cat) : ψ ∈ formalAlternatives lex φ salient :=
-  Relation.ReflTransGen.single (StructuralOp.subst hcat (by simp [contextualSource, hψ]))
+theorem mem_formalAlternatives_of_salient {ψ : Tree C V} (hψ : ψ ∈ salient) :
+    ψ ∈ formalAlternatives lex φ salient :=
+  subset_substitutionAlternatives _ _ (Set.mem_union_right _ (Finset.mem_coe.2 hψ))
 
 theorem someButNotAll_mem_formalAlternatives :
     Katzir2007.someButNotAllSentence ∈ formalAlternatives Katzir2007.lexicon
       Katzir2007.someSentence {Katzir2007.someButNotAllSentence} :=
-  mem_formalAlternatives_of_salient _ _ _ (Finset.mem_singleton_self _) rfl
+  mem_formalAlternatives_of_salient _ _ _ (Finset.mem_singleton_self _)
 
 end Formal
 
@@ -110,23 +110,7 @@ theorem exhIE_eq_self_of_isSymmetric (h : IsSymmetric S S₁ S₂) (hne₁ : S�
 
 theorem exhIE_pair_eq_sdiff (h : IsSymmetric S S₁ S₂) (hne₂ : S₂.Nonempty) :
     exhIE {S, S₁} S = S₂ := by
-  obtain ⟨b, hb⟩ := hne₂
-  have hIE : IsInnocentlyExcludable {S, S₁} S S₁ := by
-    refine .of_forall_subset_or_notMem (by simp) (h.subset_right hb)
-      (disjoint_left.1 h.disjoint.symm hb) ?_
-    rintro c hc
-    simp only [mem_insert_iff, mem_singleton_iff] at hc
-    obtain h1 | h1 := hc <;> subst c
-    · exact Or.inl subset_rfl
-    · exact Or.inr (disjoint_left.1 h.disjoint.symm hb)
-  ext w
-  rw [mem_exhIE_iff, ← h.sdiff_eq, mem_sdiff]
-  refine ⟨fun ⟨hw, h'⟩ ↦ ⟨hw, h' S₁ hIE⟩, fun ⟨hw, hw₁⟩ ↦ ⟨hw, fun q hq ↦ ?_⟩⟩
-  have hq1 := hq.1
-  simp only [mem_insert_iff, mem_singleton_iff] at hq1
-  obtain h1 | h1 := hq1 <;> subst q
-  · exact (not_isInnocentlyExcludable_of_phi_subset (toFinite _) ⟨w, hw⟩ subset_rfl hq).elim
-  · exact hw₁
+  rw [exhIE_pair_sdiff (φ := S) (d := S₁) (h.sdiff_eq.symm ▸ hne₂), h.sdiff_eq]
 
 end Symmetry
 

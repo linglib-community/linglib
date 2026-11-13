@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.SchwarzWagner2026
 public import Linglib.Pragmatics.NeoGricean.Basic
 public import Linglib.Semantics.Composition.Constituency
@@ -167,19 +168,9 @@ theorem exists_isSymmetric_blocked : ∃ (F : Set (Set (Fin 4))) (p a b : Set (F
 -- (14)
 theorem exhIE_eq_self_of_mem {A G : Set (Set W)} {S : Set W} (hA : TrinhHaida2015.IsDomain G S A)
     (hfin : A.Finite) (h : exhIE A S ∈ G) : exhIE A S = S := by
-  have hIE : {a | IsInnocentlyExcludable A S a}.Finite := hfin.subset fun _ ha ↦ ha.1
-  have hsup : ⋃₀ {a | IsInnocentlyExcludable A S a} ∈ BooleanSubalgebra.closure A := by
-    refine hIE.induction_on_subset _ (by rw [sUnion_empty]; exact BooleanSubalgebra.bot_mem)
-      fun {a X} ha _ _ ih ↦ ?_
-    rw [sUnion_insert]
-    exact BooleanSubalgebra.sup_mem (BooleanSubalgebra.subset_closure ha.1) ih
-  have heq : exhIE A S = S \ ⋃₀ {a | IsInnocentlyExcludable A S a} := by
-    ext w
-    simp only [mem_exhIE_iff, mem_sdiff, mem_sUnion, mem_ofPred_eq, not_exists, not_and]
-  have hcl : exhIE A S ∈ BooleanSubalgebra.closure A :=
-    heq ▸ BooleanSubalgebra.sdiff_mem (BooleanSubalgebra.subset_closure hA.self_mem) hsup
   refine (exhIE_subset A S).eq_of_not_ssubset fun hlt ↦ ?_
-  exact exhIE_notMem_lowerClosure hfin (mem_lowerClosure.2 ⟨_, ⟨hA.closed _ h hcl, hlt⟩, le_rfl⟩)
+  exact exhIE_notMem_lowerClosure hfin (mem_lowerClosure.2
+    ⟨_, ⟨hA.closed _ h (exhIE_mem_closure hfin hA.self_mem), hlt⟩, le_rfl⟩)
 
 end Sets
 

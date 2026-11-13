@@ -58,7 +58,7 @@ no glass is both half filled and empty) are hypotheses, and the worlds of the pa
 partitions (none, some but not all; empty, a bit filled, half filled) are witnesses. Which
 sentences are formal alternatives is taken from the paper's sets (14), (19), (31), and (37),
 not derived from a lexicon; that *some* is not derivable from *not all* under Atomicity is
-`TrinhHaida2015.atoms_mem_source`, and (18) itself is `TrinhHaida2015.exhIE_run_smoke` on the
+`TrinhHaida2015.formalAlternatives_pass`, and (18) itself is `TrinhHaida2015.exhIE_run_smoke` on the
 domain `TrinhHaida2015.run_smoke_isDomain`. The examples are the rows of `Examples.all`.
 
 ## TODO
