@@ -57,7 +57,7 @@ attitude alone cannot](##minimal_pair), if the interval it occupies depends on t
 * The second fragment is stated at its translations (64') and (69), which are premises here. The
   interval a state occupies depends on the world, which rule 16 (p. 334) allows and p. 332 does not
   settle; [with a rigid interval (64') cannot separate the cases of (24)](##doubleAccess_rigid_iff),
-  and `Event.TemporalTrace`, which has no world, gives the times of events only.
+  and `TemporalTrace`, which has no world, gives the times of events only.
 
 ## TODO
 
@@ -1009,7 +1009,7 @@ def Hypothesis2 (att : (Index W T → Prop) → E → Index W T → Prop) (p : I
     (σ R : NonemptyInterval T) (w : W) : Prop :=
   ∃ t, t.Precedes σ ∧ t ≤ R ∧ ∃ t', σ < t' ∧ t ≤ t' ∧ att (fun i ↦ p (i.1, t')) x (w, t)
 
-variable [Event.TemporalTrace Ev T]
+variable [TemporalTrace Ev T]
 
 open Event (τ)
 

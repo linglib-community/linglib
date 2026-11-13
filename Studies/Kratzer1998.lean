@@ -116,7 +116,7 @@ inductive AspectHead where
 
 section Aspects
 
-variable {T W E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+variable {T W E : Type*} [LinearOrder T] [TemporalTrace E T]
 
 /-- The operator of (38) turns a property of times into the property of eventualities that
 holds of `e`, at any world, iff the property of times holds of the running time of `e` at every

@@ -23,7 +23,8 @@ two non-contemporaneous events are atelic.
   `Aspect.SINC.vp_qua`.
 * Temporal precedence is a parameter of the telicity notions. The paper's consequence of
   its event axioms that overlapping events never precede each other enters as
-  `NoPartPrecedes`, which is all the proofs use.
+  `NoPartPrecedes`, which is all the proofs use and which [any precedence on a part structure
+  of events satisfies](##IsTemporalPrecedence.noPartPrecedes).
 * Overlap is `Mereology.Overlap`, relative to a possible null element. The paper's part
   structures have none, so the expansion theorems assume that the thematic relation never
   relates the null object.

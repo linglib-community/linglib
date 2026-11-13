@@ -288,7 +288,7 @@ section Transfer
 
 open Event (σ)
 
-variable {E : Type*} [Event.SpatialTrace E Loc] (C : E → E → E → Prop)
+variable {E : Type*} [SpatialTrace E Loc] (C : E → E → E → Prop)
 
 /-- The spatial trace is a homomorphism for concatenation when the trace of a fused event is the
 concatenation of the traces. -/

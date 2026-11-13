@@ -14,7 +14,7 @@ public import Linglib.Core.Order.StrictBounds
 After Krifka, a clause denotes its run times, the set of intervals at which it holds. A stative
 clause holding throughout `i` denotes `i` with all its subintervals, the principal lower set
 `Set.Iic i`, an accomplishment over `i` the singleton `{i}`, and an event predicate the image of
-its events under the temporal trace (`Event.TemporalTrace`). This file defines the time trace of
+its events under the temporal trace (`TemporalTrace`). This file defines the time trace of
 a set of intervals, the time points it covers, and Anscombe's universal *before*, a time of one
 clause before every time of the other, the reading Anscombe gives *before ever*. The times before
 every time of a clause are its strict lower bounds, the complement of its upward closure: *before*
