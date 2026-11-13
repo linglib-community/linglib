@@ -233,25 +233,33 @@ section Internal
 variable (lbl : α) {T : UnorderedTree (α ⊕ β)}
   {p : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)} {v : UnorderedTree (α ⊕ β)}
 
-/-- Internal Merge through a deletion cut of a full binary tree keeps its accessible terms
-    ([marcolli-chomsky-berwick-2025] Proposition 1.6.4, for `Δ^d`). -/
-theorem numEdges_im_of_cut (hT : T.IsFullBinary) (hp : p ∈ deletionCuts T) (hv : p.1 = {v}) :
-    (UnorderedTree.node (Sum.inl lbl) {v, p.2}).numEdges = T.numEdges := by
-  rw [UnorderedTree.numEdges_node_pair, deletionCuts_numEdges hT hp hv]
+/-- Internal Merge through a deletion of a full binary tree keeps its accessible terms
+    ([marcolli-chomsky-berwick-2025] Proposition 1.6.4, for `Δ^d`). The remainder of a deletion
+    that extracts one term is the trunk of the admissible cut with its unary vertex contracted
+    (`exists_mem_admissibleCuts_of_card_le_one`). -/
+theorem numEdges_im_of_cut (hT : T.IsFullBinary) (hp : p ∈ admissibleCuts T) (hv : p.1 = {v}) :
+    (UnorderedTree.node (Sum.inl lbl) {v, p.2.contractUnary}).numEdges = T.numEdges := by
+  obtain ⟨k, hk⟩ := admissibleCuts_numUnary hT hp
+  have := admissibleCuts_numEdges_contractUnary hp
+  simp only [hv, Multiset.map_singleton, Multiset.sum_singleton, Multiset.card_singleton] at this hk
+  rw [UnorderedTree.numEdges_node_pair]
+  omega
 
-/-- Internal Merge through a deletion cut of a full binary tree satisfies the weak form of Minimal
+/-- Internal Merge through a deletion of a full binary tree satisfies the weak form of Minimal
     Yield under deletion counting. -/
-theorem MinimalYieldWeak.im_numEdges_of_cut (hT : T.IsFullBinary) (hp : p ∈ deletionCuts T)
+theorem MinimalYieldWeak.im_numEdges_of_cut (hT : T.IsFullBinary) (hp : p ∈ admissibleCuts T)
     (hv : p.1 = {v}) :
-    MinimalYieldWeak UnorderedTree.numEdges {T} {UnorderedTree.node (Sum.inl lbl) {v, p.2}} :=
+    MinimalYieldWeak UnorderedTree.numEdges {T}
+      {UnorderedTree.node (Sum.inl lbl) {v, p.2.contractUnary}} :=
   ⟨by simp, by simp only [Multiset.map_singleton, Multiset.sum_singleton,
     numEdges_im_of_cut lbl hT hp hv, le_refl]⟩
 
-/-- Internal Merge through a deletion cut of a full binary tree violates Minimal Yield under
+/-- Internal Merge through a deletion of a full binary tree violates Minimal Yield under
     deletion counting, since its size `σ` does not grow. -/
-theorem MinimalYield.not_im_numEdges_of_cut (hT : T.IsFullBinary) (hp : p ∈ deletionCuts T)
+theorem MinimalYield.not_im_numEdges_of_cut (hT : T.IsFullBinary) (hp : p ∈ admissibleCuts T)
     (hv : p.1 = {v}) :
-    ¬ MinimalYield UnorderedTree.numEdges {T} {UnorderedTree.node (Sum.inl lbl) {v, p.2}} :=
+    ¬ MinimalYield UnorderedTree.numEdges {T}
+      {UnorderedTree.node (Sum.inl lbl) {v, p.2.contractUnary}} :=
   fun h ↦ by
     have := h.minimalYield
     simp only [Multiset.card_singleton, Multiset.map_singleton, Multiset.sum_singleton,
