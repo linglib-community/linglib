@@ -80,7 +80,6 @@ theorem servesFor_necessity :
     (∀ m ∈ dubitatives, ServesIn lexicalForce Tlingit.modals .positive m .necessity) ∧
       ¬ ServesIn lexicalForce Tlingit.modals .positive potentialMode .necessity ∧
       ¬ ServesIn lexicalForce Tlingit.modals .positive futureMode .possibility := by
-  simp only [ServesIn, servesFor_iff]
   decide
 
 /-- The dubitatives serve for both forces in an upward-entailing context with a single-force
@@ -89,14 +88,12 @@ theorem dubitatives_fixed_force :
     (∀ m ∈ dubitatives,
         (∀ g, ServesIn lexicalForce Tlingit.modals .positive m g) ∧ ¬ m.VariesForce) ∧
       Statimcets.kaInfer.VariesForce ∧ Washo.modalEq.VariesForce := by
-  simp only [ServesIn, flexible_iff]
   decide
 
 -- (54), (55)
 theorem potential_universal_restriction :
     ServesIn lexicalForce Tlingit.modals .negative potentialMode .possibility ∧
       ¬ ServesIn lexicalForce Tlingit.modals .negative potentialMode .necessity := by
-  simp only [ServesIn, servesFor_iff]
   decide
 
 end Cable2017

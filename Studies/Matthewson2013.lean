@@ -81,8 +81,7 @@ def lexicalForce (m : ModalItem) : ModalForce := if m = sgi then .necessity else
 
 -- Fig. 1 [deal-2011]
 theorem forces_usable : ∀ m ∈ modals, ∀ g, g.classical ∈ m.classical.forces ↔
-    Deal2011.Usable .positive (lexicalForce m) (ModalItem.HasScalemate lexicalForce modals m)
-      g := by
+    Deal2011.ServesIn lexicalForce modals .positive m g := by
   decide
 
 theorem hasScalemate_iff : ∀ m ∈ modals,

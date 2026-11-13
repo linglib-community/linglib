@@ -282,8 +282,7 @@ theorem oqa_rows :
     ∀ e ∈ Examples.all, e.parse? "modal" modalTable = some NezPerce.oqa →
       ∀ π ∈ e.parse? "downwardEntailing" polarityTable, ∀ r ∈ e.readings,
         ∃ fo ∈ forceTable.lookup r.1, (r.2 = .acceptable ↔
-          Deal2011.Usable π (Deal2011.lexicalForce NezPerce.oqa)
-            (ModalItem.HasScalemate Deal2011.lexicalForce NezPerce.modals NezPerce.oqa) fo) := by
+          Deal2011.ServesIn Deal2011.lexicalForce NezPerce.modals π NezPerce.oqa fo) := by
   decide
 
 -- (42), (43)
@@ -297,15 +296,15 @@ theorem nsyilxcen_rows :
 theorem nsyilxcen_not_scalar :
     ¬ ∃ lex : ModalItem → ModalForce, ∀ m ∈ Nsyilxcen.modals, ∀ g,
       g.classical ∈ m.classical.forces ↔
-        Deal2011.Usable .positive (lex m) (ModalItem.HasScalemate lex Nsyilxcen.modals m) g := by
+        Deal2011.ServesIn lex Nsyilxcen.modals .positive m g := by
   rintro ⟨lex, h⟩
   have hm := h Nsyilxcen.mat (by decide)
   have hc := h Nsyilxcen.cmay (by decide)
-  simp only [ModalItem.HasScalemate, ModalItem.Scalemates, Nsyilxcen.modals, List.mem_cons,
+  simp only [Deal2011.ServesIn, ModalItem.Scalemates, Nsyilxcen.modals, List.mem_cons,
     List.not_mem_nil, or_false, exists_eq_or_imp, exists_eq_left] at hm hc
   generalize lex Nsyilxcen.mat = a at hm hc
   generalize lex Nsyilxcen.cmay = b at hm hc
-  cases a <;> cases b <;> revert hm hc <;> decide
+  cases a <;> cases b <;> first | exact absurd hm (by decide) | exact absurd hc (by decide)
 
 /-! ### Modal–temporal interaction (§18.4.3) -/
 
