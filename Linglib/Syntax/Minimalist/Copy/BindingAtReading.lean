@@ -516,7 +516,7 @@ end Mark
 /-- An object with no marks, whose tokens are distinct, has no movement nodes and needs none. -/
 private theorem chains_map_none {p : RoseTree Vertex} (h : IsSyntacticObject (UnorderedTree.mk p))
     (hTF : ∀ r ∈ p.subtrees, r.value.isLeft)
-    (hd : (LinearizedSyntacticObject.toSyntacticObject ⟨p, h⟩).yield.Nodup) :
+    (hd : (LinearizedSyntacticObject.toSyntacticObject (LinearizedSyntacticObject.ofVal p h)).yield.Nodup) :
     Chains (p.map ((none, ·) : Vertex → CopyMark × Vertex)) := by
   induction p with
   | node a cs ih =>
@@ -530,13 +530,11 @@ private theorem chains_map_none {p : RoseTree Vertex} (h : IsSyntacticObject (Un
     · obtain ⟨u, v, rfl⟩ := List.length_eq_two.1 hlen
       obtain rfl := eq_bare_of_ne_nil h (by simp)
       obtain ⟨hu, hv⟩ := (isSyntacticObject_mk_merge _ _).1 h
-      have hsum : (LinearizedSyntacticObject.toSyntacticObject ⟨u, hu⟩).yield +
-          (LinearizedSyntacticObject.toSyntacticObject ⟨v, hv⟩).yield =
-          (LinearizedSyntacticObject.toSyntacticObject ⟨.node Vertex.bare [u, v], h⟩).yield := by
-        rw [show (LinearizedSyntacticObject.toSyntacticObject ⟨.node Vertex.bare [u, v], h⟩) =
-          SyntacticObject.merge (LinearizedSyntacticObject.toSyntacticObject ⟨u, hu⟩)
-            (LinearizedSyntacticObject.toSyntacticObject ⟨v, hv⟩) from
-          LinearizedSyntacticObject.toSyntacticObject_merge ⟨u, hu⟩ ⟨v, hv⟩, yield_merge]
+      have hsum : (LinearizedSyntacticObject.toSyntacticObject (LinearizedSyntacticObject.ofVal u hu)).yield +
+          (LinearizedSyntacticObject.toSyntacticObject (LinearizedSyntacticObject.ofVal v hv)).yield =
+          (LinearizedSyntacticObject.toSyntacticObject (LinearizedSyntacticObject.ofVal (.node Vertex.bare [u, v]) h)).yield := by
+        rw [LinearizedSyntacticObject.ofVal_node_bare,
+          LinearizedSyntacticObject.toSyntacticObject_merge, yield_merge]
       rw [← hsum, Multiset.nodup_add] at hd
       obtain ⟨hdu, hdv, hdis⟩ := hd
       have htu : ∀ r ∈ u.subtrees, r.value.isLeft := fun r hr ↦ hTF r
@@ -544,8 +542,11 @@ private theorem chains_map_none {p : RoseTree Vertex} (h : IsSyntacticObject (Un
       have htv : ∀ r ∈ v.subtrees, r.value.isLeft := fun r hr ↦ hTF r
         (mem_subtrees_trans hr (child_mem_subtrees (by simp)))
       have hno : ∀ w, Holds w u → Holds w v → False := fun w h₁ h₂ ↦
-        Multiset.disjoint_left.1 hdis ((holds_iff_mem_yield ⟨u, hu⟩).1 h₁)
-          ((holds_iff_mem_yield ⟨v, hv⟩).1 h₂)
+        Multiset.disjoint_left.1 hdis
+          ((holds_iff_mem_yield (LinearizedSyntacticObject.ofVal u hu)).1
+            ((LinearizedSyntacticObject.val_ofVal u hu).symm ▸ h₁))
+          ((holds_iff_mem_yield (LinearizedSyntacticObject.ofVal v hv)).1
+            ((LinearizedSyntacticObject.val_ofVal v hv).symm ▸ h₂))
       refine chains_node.2 ⟨?_, ?_⟩
       · rintro k b u' v' he
         simp only [List.map_cons, List.map_nil, RoseTree.node.injEq, List.cons.injEq, and_true,
@@ -612,7 +613,8 @@ private theorem step_em {t : Marked} {item : LinearizedSyntacticObject} (e : Edg
     (hroot : t.val.value.1 = none) (hdis : ∀ w, Has w t.val → ¬ Holds w item.val)
     (hTFi : ∀ r ∈ item.val.subtrees, r.value.isLeft) (hdi : item.toSyntacticObject.yield.Nodup)
     (hTFt : TraceFree t.val) (hg : Good t.val) : Good (t.attach e (ofLinearized item)).val := by
-  obtain ⟨p, hp⟩ := item
+  let p : RoseTree Vertex := item.val
+  have hp : IsSyntacticObject (UnorderedTree.mk p) := item.isSyntacticObject_val
   let d : MT := p.map ((none, ·) : Vertex → CopyMark × Vertex)
   have hdm : d.map Prod.snd = p := map_snd_map p
   obtain ⟨w₀, hw₀⟩ := exists_holds hp hTFi
@@ -637,7 +639,7 @@ private theorem step_em {t : Marked} {item : LinearizedSyntacticObject} (e : Edg
       exact ⟨fun h ↦ absurd h hno₁, fun h ↦ absurd h hno₂⟩
     · intro c hc
       rcases List.mem_pair.1 hc with rfl | rfl
-      · exact chains_map_none hp hTFi hdi
+      · exact chains_map_none hp hTFi ((LinearizedSyntacticObject.ofVal_val item).symm ▸ hdi)
       · exact hg.1
     · rw [map_node] at hc
       simp only [List.map_cons, List.map_nil, hdm] at hc
@@ -827,9 +829,10 @@ private theorem readLow_carrying_iff (t : Marked) {r : MT}
     obtain ⟨q, ⟨hq, hd⟩, hdite⟩ := hm
     rw [dite_eq_left (hso q hq)] at hdite
     obtain rfl := Option.some.inj hdite
-    exact (holds_congr he).1 (of_decide_eq_true hd).2
+    exact (holds_congr ((SyntacticObject.val_ofVal _ _).symm.trans he)).1 (of_decide_eq_true hd).2
   · intro hy
-    refine ⟨⟨termOf q₀, hso q₀ hq₀⟩, ?_, ht₀⟩
+    refine ⟨SyntacticObject.ofVal (termOf q₀) (hso q₀ hq₀), ?_,
+      (SyntacticObject.val_ofVal _ _).trans ht₀⟩
     simp only [carrying, List.mem_toFinset, List.mem_filterMap, List.mem_filter]
     refine ⟨q₀, ⟨hq₀, decide_eq_true ⟨hk₀, (holds_congr ht₀).2 hy⟩⟩, ?_⟩
     rw [dite_eq_left (hso q₀ hq₀)]
@@ -894,12 +897,12 @@ private theorem replayWithCopies?_invariants {d : Derivation} (hd : d.lexTokens.
     have hTFp : ∀ r ∈ p.val.subtrees, r.value.isLeft := fun r hr ↦
       hTF r (by rw [show (Cfg.current ⟨Marked.ofLinearized p, []⟩).val.map Prod.snd
           = p.val from hm₀]; exact hr)
-    refine ⟨?_, ⟨chains_map_none p.2 hTFp ?_, fun x y _ hcc ↦ ?_⟩, fun w hw ↦ ?_⟩
+    refine ⟨?_, ⟨chains_map_none p.isSyntacticObject_val hTFp ?_, fun x y _ hcc ↦ ?_⟩,
+      fun w hw ↦ ?_⟩
     · change (p.val.map ((none, ·) : Vertex → CopyMark × Vertex)).value.1 = none
       rcases p.val with ⟨a, cs⟩
       simp [map_node]
-    · have : (LinearizedSyntacticObject.toSyntacticObject ⟨p.val, p.2⟩) = init := hinit
-      rw [this]
+    · rw [LinearizedSyntacticObject.ofVal_val, hinit]
       simpa [lexTokens, items] using hd
     · have hcc' : CC x y p.val := by
         have : CC x y ((Marked.ofLinearized p).val.map Prod.snd) := hcc
@@ -994,6 +997,8 @@ theorem bindsAtReading_carrying_iff {d : Derivation} (hxy : x ≠ y) (hd : d.lex
   simp only [BindsAtReading, BindsAtLF, lf?, copyObject?, hc, Option.map_some, Option.mem_def,
     Option.some.injEq, exists_eq_left'] at h ⊢
   rw [cCommands_iff_tokenCCommands hxy] at h ⊢
+  rw [Marked.val_unmark] at h
+  rw [Marked.val_lf]
   change CC x y (lfBy (ReadLow (c.current.carrying y)) c.current.val)
   rw [lfBy_readLow_carrying]
   exact (replayWithCopies?_invariants hd hm hmv hc hMN hTF hDD).2.1.2 x y hxy h
