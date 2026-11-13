@@ -282,7 +282,7 @@ theorem oqa_rows :
     ∀ e ∈ Examples.all, e.parse? "modal" modalTable = some NezPerce.oqa →
       ∀ π ∈ e.parse? "downwardEntailing" polarityTable, ∀ r ∈ e.readings,
         ∃ fo ∈ forceTable.lookup r.1, (r.2 = .acceptable ↔
-          Deal2011.ServesIn Deal2011.lexicalForce NezPerce.modals π NezPerce.oqa
+          Deal2011.TranslatesIn Deal2011.lexicalForce NezPerce.modals π NezPerce.oqa
             fo.quantificational) := by
   decide
 
@@ -296,11 +296,11 @@ theorem nsyilxcen_rows :
 ((42)–(43)). -/
 theorem nsyilxcen_not_scalar :
     ¬ ∃ lex : ModalItem → QuantificationalForce, ∀ m ∈ Nsyilxcen.modals, ∀ q,
-      q ∈ m.quantificationalForces ↔ Deal2011.ServesIn lex Nsyilxcen.modals .positive m q := by
+      q ∈ m.quantificationalForces ↔ Deal2011.TranslatesIn lex Nsyilxcen.modals .positive m q := by
   rintro ⟨lex, h⟩
   have hm := h Nsyilxcen.mat (by decide)
   have hc := h Nsyilxcen.cmay (by decide)
-  simp only [Deal2011.ServesIn, ModalItem.scalemateForces, ModalItem.Scalemates,
+  simp only [Deal2011.TranslatesIn, ModalItem.scalemateForces, ModalItem.Scalemates,
     Nsyilxcen.modals, List.mem_cons,
     List.not_mem_nil, or_false, exists_eq_or_imp, exists_eq_left] at hm hc
   generalize lex Nsyilxcen.mat = a at hm hc

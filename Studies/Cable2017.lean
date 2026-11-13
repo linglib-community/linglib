@@ -16,9 +16,9 @@ epistemic necessity, deontic possibility or deontic necessity; speakers convey t
 
 Speakers translate an English epistemic necessity claim with a dubitative, but never a
 circumstantial necessity claim with the potential mode. Cable explains the contrast with Deal's
-account of Nez Perce *o'qa*: a possibility modal serves for necessity in an upward-entailing
-context when no stronger modal shares its flavor, and the future mode is the potential mode's
-scalemate while the dubitatives have none. The dubitatives thus side with *o'qa*, inherently
+account of Nez Perce *o'qa*: a possibility modal translates a necessity modal in an
+upward-entailing context when no stronger modal shares its flavor, and the future mode is the
+potential mode's scalemate while the dubitatives have none. The dubitatives thus side with *o'qa*, inherently
 weak modals without a strong counterpart, and not with St'át'imcets *k'a* or Washo *-eʔ*,
 whose meanings vary in force. The same account makes the past potential weak in the
 restriction of a universal: *ldakát ḵwax̱aayi át* is 'everything I could have eaten', never
@@ -75,26 +75,26 @@ theorem scalemates :
       ∀ m ∈ dubitatives, ¬ ModalItem.HasScalemate lexicalForce Tlingit.modals m := by
   decide
 
-/-- In upward-entailing contexts the dubitatives serve for necessity ((21)–(24)), but the potential
-mode does not ((48)–(49)), nor the future mode for possibility (41). -/
-theorem servesFor_necessity :
-    (∀ m ∈ dubitatives, ServesIn lexicalForce Tlingit.modals .positive m .universal) ∧
-      ¬ ServesIn lexicalForce Tlingit.modals .positive potentialMode .universal ∧
-      ¬ ServesIn lexicalForce Tlingit.modals .positive futureMode .existential := by
+/-- In upward-entailing contexts the dubitatives translate a necessity modal ((21)–(24)), but the
+potential mode does not ((48)–(49)), nor the future mode a possibility modal (41). -/
+theorem translates_necessity :
+    (∀ m ∈ dubitatives, TranslatesIn lexicalForce Tlingit.modals .positive m .universal) ∧
+      ¬ TranslatesIn lexicalForce Tlingit.modals .positive potentialMode .universal ∧
+      ¬ TranslatesIn lexicalForce Tlingit.modals .positive futureMode .existential := by
   decide
 
-/-- The dubitatives serve for both forces in an upward-entailing context with a single-force
-meaning, unlike St'át'imcets *k'a* and Washo *-eʔ* (§6). -/
+/-- The dubitatives translate modals of both forces in an upward-entailing context with a
+single-force meaning, unlike St'át'imcets *k'a* and Washo *-eʔ* (§6). -/
 theorem dubitatives_fixed_force :
     (∀ m ∈ dubitatives,
-        (∀ g, ServesIn lexicalForce Tlingit.modals .positive m g) ∧ ¬ m.VariesForce) ∧
+        (∀ g, TranslatesIn lexicalForce Tlingit.modals .positive m g) ∧ ¬ m.VariesForce) ∧
       Statimcets.kaInfer.VariesForce ∧ Washo.modalEq.VariesForce := by
   decide
 
 -- (54), (55)
 theorem potential_universal_restriction :
-    ServesIn lexicalForce Tlingit.modals .negative potentialMode .existential ∧
-      ¬ ServesIn lexicalForce Tlingit.modals .negative potentialMode .universal := by
+    TranslatesIn lexicalForce Tlingit.modals .negative potentialMode .existential ∧
+      ¬ TranslatesIn lexicalForce Tlingit.modals .negative potentialMode .universal := by
   decide
 
 end Cable2017

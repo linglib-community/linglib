@@ -82,7 +82,7 @@ def lexicalForce (m : ModalItem) : QuantificationalForce :=
 
 -- Fig. 1 [deal-2011]
 theorem forces_usable : ∀ m ∈ modals, ∀ q, q ∈ m.quantificationalForces ↔
-    Deal2011.ServesIn lexicalForce modals .positive m q := by
+    Deal2011.TranslatesIn lexicalForce modals .positive m q := by
   decide
 
 theorem hasScalemate_iff : ∀ m ∈ modals,
