@@ -214,7 +214,7 @@ theorem still_may {history : HistoricalAlternatives W T}
 /-- The history relation fixes the instantiation of `Q` at every interval up to its time, so that
 worlds identical up to `t` agree on `Q` there. -/
 def FixesPast (history : HistoricalAlternatives W T) (Q : SortedProperty W E T) : Prop :=
-  ∀ t w w', w' ∈ history (w, t) →
+  ∀ t w w', w' ∈ history ⟨w, t⟩ →
     ∀ r : Interval (WithTop T), (∀ x ∈ r, x ≤ ↑t) → (At r w Q ↔ At r w' Q)
 
 theorem fixesPast_eventive :

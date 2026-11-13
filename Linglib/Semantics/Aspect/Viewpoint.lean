@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Semantics.Aspect.Defs
-public import Linglib.Semantics.Reference.Context.Index
+public import Linglib.Semantics.Index
 public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Semantics.Events.Basic
 public import Linglib.Semantics.Tense.Allen
@@ -264,17 +264,17 @@ theorem isUpperSet_prfv (P : W → E → Prop) (w : W) : IsUpperSet (PRFV P w) :
 
 /-- The perfect, (22b), holds at the world-time points whose time is the right boundary, (22a),
 of some perfect time span belonging to the interval property. -/
-def PERF (p : W → Set (NonemptyInterval T)) : Set (Kaplan.Index W T) :=
+def PERF (p : W → Set (NonemptyInterval T)) : Set (Index W T) :=
   {s | ∃ pts ∈ p s.world, pts.snd = s.time}
 
 variable {p q : W → Set (NonemptyInterval T)}
 
-@[simp] theorem mem_perf {t : T} : (w, t) ∈ PERF p ↔ ∃ pts ∈ p w, pts.snd = t := Iff.rfl
+@[simp] theorem mem_perf {t : T} : ⟨w, t⟩ ∈ PERF p ↔ ∃ pts ∈ p w, pts.snd = t := Iff.rfl
 
 /-- Under an adverbial fixing the left boundary in `D`, the perfect holds at `t` where the span
 from a time of `D` to `t` belongs to the interval property. -/
 theorem mem_perf_inter_preimage_fst {D : Set T} {t : T} :
-    (w, t) ∈ PERF ((·.fst) ⁻¹' D ∩ p ·) ↔ ∃ x ∈ D, ∃ h : x ≤ t, ⟨(x, t), h⟩ ∈ p w := by
+    ⟨w, t⟩ ∈ PERF ((·.fst) ⁻¹' D ∩ p ·) ↔ ∃ x ∈ D, ∃ h : x ≤ t, ⟨(x, t), h⟩ ∈ p w := by
   rw [mem_perf]
   constructor
   · rintro ⟨⟨⟨x, s⟩, h⟩, ⟨hx, hp⟩, rfl⟩
@@ -287,7 +287,7 @@ theorem perf_mono (h : ∀ w, p w ⊆ q w) : PERF p ⊆ PERF q :=
 
 /-- `atPoint p` holds at the world-time points whose degenerate interval belongs to `p`, as the
 non-perfect forms are evaluated. -/
-def atPoint (p : W → Set (NonemptyInterval T)) : Set (Kaplan.Index W T) :=
+def atPoint (p : W → Set (NonemptyInterval T)) : Set (Index W T) :=
   {s | NonemptyInterval.pure s.time ∈ p s.world}
 
 /-- `perfect p` holds at a reference interval that is a final subinterval of some perfect time

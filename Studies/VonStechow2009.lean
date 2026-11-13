@@ -60,7 +60,6 @@ namespace VonStechow2009
 open Tense Aspect ModalLogic
 open scoped Denotes
 open scoped SetRel
-open Kaplan (Index)
 
 variable {T : Type*} [LinearOrder T] {s : T} {P : T → Prop}
 
@@ -147,7 +146,7 @@ theorem future_perfect_after_speech {six : T}
 
 -- (28)
 theorem xn_iff_perf {W : Type*} (p : W → Set (NonemptyInterval T)) (w : W) :
-    .pure s ∈ perfect p w ↔ (w, s) ∈ PERF p := by
+    .pure s ∈ perfect p w ↔ ⟨w, s⟩ ∈ PERF p := by
   rw [perf_eq_atPoint_perfect]; rfl
 
 /-- In *John has called yesterday* (42, `Examples.ex_42`) *yesterday* modifies the extended-now
@@ -155,7 +154,7 @@ interval, which ends at the speech time, so the sentence is contradictory unless
 is on yesterday. -/
 theorem not_perfAdv_yesterday {W : Type*} (call : W → Set (NonemptyInterval T))
     (yesterday : NonemptyInterval T) (w : W) (hs : s ∉ yesterday) :
-    (w, s) ∉ PERF (Set.Iic yesterday ∩ call ·) := fun h ↦
+    ⟨w, s⟩ ∉ PERF (Set.Iic yesterday ∩ call ·) := fun h ↦
   let ⟨t, ⟨hle, _⟩, e⟩ := mem_perf.1 h
   let ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hle
   hs (NonemptyInterval.mem_def.2 ⟨h₁.trans (t.fst_le_snd.trans e.le), e ▸ h₂⟩)
@@ -360,20 +359,20 @@ theorem anaphoric_report_iff (Dox : T → SetRel W W) {five six : T} (hne : five
 
 -- (78), (79)
 theorem exists_lewis_report :
-    ∃ Dox : SetRel (Index Unit ℤ) (Index Unit ℤ), (∃ i, ((), 5) ~[Dox] i) ∧
-      ◇[toSetRel ⟦past⟧] (fun t ↦ t = 5 ∧ □[Dox] (fun i ↦ i.time = 6) ((), t)) 7 :=
-  ⟨{p | p.2.time = 6}, ⟨((), 6), rfl⟩, 5, by decide, rfl, fun _ h ↦ h⟩
+    ∃ Dox : SetRel (Index Unit ℤ) (Index Unit ℤ), (∃ i, (⟨(), 5⟩ : Index Unit ℤ) ~[Dox] i) ∧
+      ◇[toSetRel ⟦past⟧] (fun t ↦ t = 5 ∧ □[Dox] (fun i ↦ i.time = 6) ⟨(), t⟩) 7 :=
+  ⟨{p | p.2.time = 6}, ⟨⟨(), 6⟩, rfl⟩, 5, by decide, rfl, fun _ h ↦ h⟩
 
 -- (82)
 theorem exists_bound_relative_after_speech :
     ∃ (Dox : SetRel (Index Unit ℤ) (Index Unit ℤ)) (fish : Unit → Prop)
       (alive buy : Unit → ℤ → Prop),
       ◇[toSetRel ⟦past⟧] (fun t₀ ↦ □[Dox] (fun i ↦ ◇[toSetRel ⟦future⟧]
-        (fun t₃ ↦ ∃ x, fish x ∧ alive x t₃ ∧ buy x t₃) i.time) ((), t₀)) 0 ∧
+        (fun t₃ ↦ ∃ x, fish x ∧ alive x t₃ ∧ buy x t₃) i.time) ⟨(), t₀⟩) 0 ∧
         ∀ x t, alive x t → 0 < t := by
-  refine ⟨{p | p.2 = ((), -1)}, fun _ ↦ True, fun _ t ↦ t = 5, fun _ t ↦ t = 5,
+  refine ⟨{p | p.2 = ⟨(), -1⟩}, fun _ ↦ True, fun _ t ↦ t = 5, fun _ t ↦ t = 5,
     ⟨-1, by decide, fun i hi ↦ ?_⟩, fun _ t ht ↦ by omega⟩
-  obtain rfl : i = ((), -1) := hi
+  obtain rfl : i = ⟨(), -1⟩ := hi
   exact ⟨5, by decide, (), trivial, rfl, rfl⟩
 
 end Attitudes
@@ -391,7 +390,7 @@ theorem before_iff_earliest (alt : HistoricalAlternatives W T) (w : W)
         {i : Index W T | i.time < s ∧ arrive i.time} alt w ↔
       ∃ t₁, (t₁ < s ∧ leave t₁) ∧ ∃ m, IsLeast {t₂ | t₂ < s ∧ arrive t₂} m ∧ t₁ < m := by
   rw [BeaverCondoravdi2003.before, BeaverCondoravdi2003.connective_iff_uniform_of_eq_singleton h]
-  simp only [BeaverCondoravdi2003.uniform, Set.mem_ofPred_eq, Kaplan.Index.time_mk]
+  simp only [BeaverCondoravdi2003.uniform, Set.mem_ofPred_eq]
 
 -- (84e)
 theorem not_exists_earliest_will [DenselyOrdered T] :

@@ -142,13 +142,13 @@ section Contexts
 variable {T : Type*} [Preorder T] {F : Temporal.TWFrame W T} {t : T}
 
 -- (17)
-theorem mem_will_alternatives_iff : w ∈ will s (F.alternatives (w, t)) A ↔ w ∈ A :=
+theorem mem_will_alternatives_iff : w ∈ will s (F.alternatives ⟨w, t⟩) A ↔ w ∈ A :=
   mem_will_of_mem s Temporal.TWFrame.mem_alternatives_self
 
 /-- Every candidate world of a context has the same historical alternatives, so the content of *will
 A* is fixed even when the context is indeterminate (§3). -/
-theorem will_alternatives_eq {v : W} (hv : v ∈ F.alternatives (w, t)) :
-    will s (F.alternatives (v, t)) = will s (F.alternatives (w, t)) := by
+theorem will_alternatives_eq {v : W} (hv : v ∈ F.alternatives ⟨w, t⟩) :
+    will s (F.alternatives ⟨v, t⟩) = will s (F.alternatives ⟨w, t⟩) := by
   rw [Temporal.TWFrame.alternatives_eq_of_mem hv]
 
 end Contexts
@@ -219,7 +219,7 @@ inductive W where
 worlds are historical alternatives up to a time when they agree on it or it is not yet dated. -/
 def frame : Temporal.TWFrame W ℕ := .ofDatedFacts (fun _ ↦ 1) (· = ·)
 
-@[simp] theorem alternatives_today (w : W) : frame.alternatives (w, 0) = Set.univ :=
+@[simp] theorem alternatives_today (w : W) : frame.alternatives ⟨w, 0⟩ = Set.univ :=
   Set.eq_univ_of_forall fun _ _ h ↦ (Nat.not_succ_le_zero 0 h).elim
 
 /-- The proposition that Cynthia wears a Warriors cap. -/
@@ -230,8 +230,8 @@ def wearsCap : Set W := {.cw, .cg}
 
 -- §3, §6
 theorem will_warriorsCap_indeterminate (s : SelectionFunction W) :
-    .cw ∈ will s (frame.alternatives (.cw, 0)) warriorsCap ∧
-      .cg ∉ will s (frame.alternatives (.cg, 0)) warriorsCap := by
+    .cw ∈ will s (frame.alternatives ⟨.cw, 0⟩) warriorsCap ∧
+      .cg ∉ will s (frame.alternatives ⟨.cg, 0⟩) warriorsCap := by
   rw [mem_will_alternatives_iff s, mem_will_alternatives_iff s]
   simp [warriorsCap]
 
@@ -256,14 +256,14 @@ private theorem cynthiaCredence_real (S : Set W) : cynthiaCredence.real S = S.nc
 
 -- §8.1
 theorem credence_will_warriorsCap (s : SelectionFunction W) (w : W) :
-    cynthiaCredence.real (will s (frame.alternatives (w, 0)) warriorsCap) = 1 / 3 := by
-  rw [measureReal_def, measure_will s cynthiaCredence (f := frame.alternatives (w, 0)) (by simp),
+    cynthiaCredence.real (will s (frame.alternatives ⟨w, 0⟩) warriorsCap) = 1 / 3 := by
+  rw [measureReal_def, measure_will s cynthiaCredence (f := frame.alternatives ⟨w, 0⟩) (by simp),
     ← measureReal_def, cynthiaCredence_real, warriorsCap, Set.ncard_singleton]
   norm_num
 
 /-- The historical modal base, the background of the relation to today's historical
 alternatives. -/
-def histBase : Background W := .ofRel (.ofSuccessors fun w ↦ frame.alternatives (w, 0))
+def histBase : Background W := .ofRel (.ofSuccessors fun w ↦ frame.alternatives ⟨w, 0⟩)
 
 @[simp] theorem accessibleWorlds_histBase (w : W) : histBase.accessibleWorlds w = Set.univ := by
   simp [histBase]
@@ -296,7 +296,7 @@ The cap-conditional is (30) of §8.2. -/
 
 -- footnote 32
 theorem mem_willIf_wearsCap_warriorsCap (s : SelectionFunction W) (w v : W) :
-    v ∈ willIf s (frame.alternatives (w, 0)) wearsCap warriorsCap ↔
+    v ∈ willIf s (frame.alternatives ⟨w, 0⟩) wearsCap warriorsCap ↔
       v = .cw ∨ v = .cn ∧ s.sel .cn wearsCap = .cw := by
   rw [willIf, alternatives_today, Set.univ_inter]
   cases v
@@ -307,14 +307,14 @@ theorem mem_willIf_wearsCap_warriorsCap (s : SelectionFunction W) (w v : W) :
 /-- The content of the cap-conditional has credence 2/3 when the no-cap world selects the
 Warriors-cap world and 1/3 otherwise (footnote 32). -/
 theorem credence_willIf_wearsCap (s : SelectionFunction W) (w : W) :
-    cynthiaCredence.real (willIf s (frame.alternatives (w, 0)) wearsCap warriorsCap) =
+    cynthiaCredence.real (willIf s (frame.alternatives ⟨w, 0⟩) wearsCap warriorsCap) =
       if s.sel .cn wearsCap = .cw then 2 / 3 else 1 / 3 := by
   split_ifs with h
-  · rw [show willIf s (frame.alternatives (w, 0)) wearsCap warriorsCap = {.cw, .cn} by
+  · rw [show willIf s (frame.alternatives ⟨w, 0⟩) wearsCap warriorsCap = {.cw, .cn} by
       ext; rw [mem_willIf_wearsCap_warriorsCap]; simp [h], cynthiaCredence_real,
       Set.ncard_pair (by decide)]
     norm_num
-  · rw [show willIf s (frame.alternatives (w, 0)) wearsCap warriorsCap = {.cw} by
+  · rw [show willIf s (frame.alternatives ⟨w, 0⟩) wearsCap warriorsCap = {.cw} by
       ext; rw [mem_willIf_wearsCap_warriorsCap]; simp [h], cynthiaCredence_real,
       Set.ncard_singleton]
     norm_num
@@ -368,12 +368,12 @@ instance : DiscreteMeasurableSpace (SelectionFunction W) := ⟨fun _ ↦ trivial
 conditional probability 1/2 (§8.2). -/
 theorem credence2D_willIf_wearsCap (w : W) :
     (uniformOn pairs).real
-        (content2D (fun s f ↦ willIf s f wearsCap warriorsCap) (frame.alternatives (w, 0))) =
+        (content2D (fun s f ↦ willIf s f wearsCap warriorsCap) (frame.alternatives ⟨w, 0⟩)) =
       cynthiaCredence[|wearsCap].real warriorsCap := by
   have hsel : sw.sel .cn wearsCap = .cw ∧ sv.sel .cn wearsCap = .cg :=
     ⟨candidate_sel _, candidate_sel _⟩
   have hinter :
-      pairs ∩ content2D (fun s f ↦ willIf s f wearsCap warriorsCap) (frame.alternatives (w, 0)) =
+      pairs ∩ content2D (fun s f ↦ willIf s f wearsCap warriorsCap) (frame.alternatives ⟨w, 0⟩) =
       {(.cw, sw), (.cw, sv), (.cn, sw)} := by
     ext ⟨v, s⟩
     simp only [pairs, Set.mem_inter_iff, Set.mem_prod, Set.mem_univ, true_and, mem_content2D,

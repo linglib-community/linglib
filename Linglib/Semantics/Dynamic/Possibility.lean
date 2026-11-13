@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Data.Part
-public import Linglib.Semantics.Reference.Context.Index
+public import Linglib.Semantics.Index
 public import Linglib.Core.Order.PartialUnify
 public import Mathlib.Data.PFun
 public import Mathlib.Logic.Function.Basic

@@ -79,18 +79,18 @@ variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 /-- The simple present (39a), `PRS IMPF`, holds where an eventuality of `V` runs properly through
 the speech time `t`. -/
 def simplePresent (V : W → E → Prop) (t : T) : Set W :=
-  {w | (w, t) ∈ atPoint (ViewpointType.imperfective.denote V)}
+  {w | ⟨w, t⟩ ∈ atPoint (ViewpointType.imperfective.denote V)}
 
 /-- The universal perfect (39b), `PRS PERF IMPF`, holds where a perfect time span ending at the
 speech time `t` and starting in the domain `D` lies properly within the run time of an
 eventuality of `V`. -/
 def universalPerfect (V : W → E → Prop) (D : Set T) (t : T) : Set W :=
-  {w | (w, t) ∈ PERF ((·.fst) ⁻¹' D ∩ ViewpointType.imperfective.denote V ·)}
+  {w | ⟨w, t⟩ ∈ PERF ((·.fst) ⁻¹' D ∩ ViewpointType.imperfective.denote V ·)}
 
 /-- The experiential perfect (29), `PRS PERF PRFV`, holds where such a span contains the run time
 of an eventuality of `V`. -/
 def experientialPerfect (V : W → E → Prop) (D : Set T) (t : T) : Set W :=
-  {w | (w, t) ∈ PERF ((·.fst) ⁻¹' D ∩ PRFV V ·)}
+  {w | ⟨w, t⟩ ∈ PERF ((·.fst) ⁻¹' D ∩ PRFV V ·)}
 
 variable {V : W → E → Prop} {D D₁ D₂ : Set T} {t : T} {w : W}
 
@@ -328,7 +328,7 @@ def Reading.perfect : Reading → (W → E → Prop) → Set T → T → Set W
 at `t₀`, the aspect holding throughout them, as [iatridou-anagnostopoulou-izvorski-2001] read
 durative adverbials. -/
 def Reading.everSince (r : Reading) (V : W → E → Prop) (t₀ t : T) : Set W :=
-  {w | (w, t) ∈ PERF ({pts | pts.fst = t₀} ∩ durative (r.aspect V) ·)}
+  {w | ⟨w, t⟩ ∈ PERF ({pts | pts.fst = t₀} ∩ durative (r.aspect V) ·)}
 
 theorem everSince_universal (V : W → E → Prop) (t₀ t : T) :
     Reading.universal.everSince V t₀ t = universalPerfect V {t₀} t := by
@@ -347,7 +347,7 @@ theorem not_survives_everSince_experiential {t₀ : T} :
 -- the imperfective (25) is strict where Iatridou et al.'s is not (footnote 6)
 theorem exists_iatridou_not_universalPerfect [Nonempty W] {t₀ : T} (h : t₀ ≤ t) :
     ∃ (V : W → NonemptyInterval T → Prop) (w : W),
-      (w, t) ∈ PERF ({pts | pts.fst = t₀} ∩ durative (UNBOUNDED V) ·) ∧
+      ⟨w, t⟩ ∈ PERF ({pts | pts.fst = t₀} ∩ durative (UNBOUNDED V) ·) ∧
         w ∉ universalPerfect V {t₀} t := by
   obtain ⟨w⟩ := ‹Nonempty W›
   refine ⟨fun _ e ↦ e = ⟨(t₀, t), h⟩, w,

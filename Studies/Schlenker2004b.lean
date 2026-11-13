@@ -55,7 +55,7 @@ the actual one.
 
 namespace Schlenker2004b
 
-open Tense Kaplan
+open Tense SpeechAct
 
 variable {W E P T : Type*}
 

@@ -42,7 +42,7 @@ namespace Klecha2016
 
 open scoped Denotes
 
-open Tense HistoricalAlternatives English English.Verbs Kaplan
+open Tense HistoricalAlternatives English English.Verbs
 
 variable {W T : Type*}
 

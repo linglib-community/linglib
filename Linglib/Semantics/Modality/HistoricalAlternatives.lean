@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Set.Prod
 public import Mathlib.Order.Interval.Set.Disjoint
 public import Mathlib.Order.Interval.Set.LinearOrder
-public import Linglib.Semantics.Reference.Context.Index
+public import Linglib.Semantics.Index
 public import Linglib.Semantics.Tense.Defs
 public import Linglib.Logic.Temporal.Basic
 
@@ -51,7 +51,7 @@ determines its alternatives, the classes of its historical equivalence.
 
 @[expose] public section
 
-open Set Kaplan
+open Set
 open scoped Denotes
 open scoped SetRel
 open scoped ModalLogic
@@ -67,7 +67,7 @@ variable {W T : Type*}
 /-- The metaphysical modal base of [condoravdi-2002] is the relation curried, giving at a world
 and time the worlds that share the world's history up to that time. -/
 abbrev metaphysicalBase (history : HistoricalAlternatives W T) : W → T → Set W :=
-  Function.curry history
+  fun w t ↦ history ⟨w, t⟩
 
 /-! ### Bases oriented by a tense cell
 
@@ -84,7 +84,7 @@ variable (history : HistoricalAlternatives W T) (s : Index W T) {s' : Index W T}
 /-- The base of the alternatives oriented by a tense cell `C` pairs the alternatives of an index
 with the times standing to the index's time in a position of `C`. -/
 def orientedBase [LT T] (C : Finset Ordering) : Set (Index W T) :=
-  history s ×ˢ {t | s.time ~[Tense.toSetRel C] t}
+  {s' | s'.world ∈ history s ∧ s.time ~[Tense.toSetRel C] s'.time}
 
 /-- The historical modal base, the alternatives at times at or after the index's own, the past
 fixed and the future branching ([thomason-1984], [condoravdi-2002]). -/
@@ -141,7 +141,7 @@ theorem orientedBase_sup [LT T] (C D : Finset Ordering) :
 
 /-- On linear time the actual and future bases together hold the alternatives at all times. -/
 theorem actualHistoryBase_union_futureHistoryBase [LinearOrder T] :
-    actualHistoryBase history s ∪ futureHistoryBase history s = history s ×ˢ Set.univ := by
+    actualHistoryBase history s ∪ futureHistoryBase history s = Index.world ⁻¹' history s := by
   rw [← orientedBase_sup, Tense.nonfuture_eq_compl_future, compl_sup_eq_top]
   ext
   simp [mem_orientedBase]
@@ -167,14 +167,14 @@ def alternatives : HistoricalAlternatives W T := fun i ↦ {v | F.sim i.time i.w
 
 variable {F}
 
-@[simp] theorem mem_alternatives : v ∈ F.alternatives (w, t) ↔ F.sim t w v := Iff.rfl
+@[simp] theorem mem_alternatives : v ∈ F.alternatives ⟨w, t⟩ ↔ F.sim t w v := Iff.rfl
 
-theorem mem_alternatives_self : w ∈ F.alternatives (w, t) := (F.sim t).iseqv.refl w
+theorem mem_alternatives_self : w ∈ F.alternatives ⟨w, t⟩ := (F.sim t).iseqv.refl w
 
 /-- Historical equivalence partitions the worlds, so an alternative of a world has the same
 alternatives as the world. -/
-theorem alternatives_eq_of_mem (h : v ∈ F.alternatives (w, t)) :
-    F.alternatives (v, t) = F.alternatives (w, t) :=
+theorem alternatives_eq_of_mem (h : v ∈ F.alternatives ⟨w, t⟩) :
+    F.alternatives ⟨v, t⟩ = F.alternatives ⟨w, t⟩ :=
   Set.ext fun _ ↦ ⟨(F.sim t).iseqv.trans h, (F.sim t).iseqv.trans ((F.sim t).iseqv.symm h)⟩
 
 end Temporal.TWFrame
@@ -189,7 +189,7 @@ variable {W T : Type*}
 each of its worlds agree on it ([condoravdi-2002]). Past and present issues are settled, and
 future ones need not be. -/
 def settled (history : HistoricalAlternatives W T) (cg : Set W) (t : T) (P : W → Prop) : Prop :=
-  ∀ w ∈ cg, ∀ w' ∈ history (w, t), (P w ↔ P w')
+  ∀ w ∈ cg, ∀ w' ∈ history ⟨w, t⟩, (P w ↔ P w')
 
 /-- A modal base meets the diversity condition of [condoravdi-2002] for a property when some
 common-ground world sees worlds disagreeing on it. -/
@@ -199,7 +199,7 @@ def diverse (MB : W → T → Set W) (cg : Set W) (t : T) (P : W → Prop) : Pro
 /-- A settled property is not diverse over a modal base within the metaphysical one, so
 metaphysical readings of possibility modals are blocked for settled properties. -/
 theorem settled_not_diverse {history : HistoricalAlternatives W T} {MB : W → T → Set W}
-    {cg : Set W} {t : T} {P : W → Prop} (hMB : ∀ w ∈ cg, MB w t ⊆ history (w, t))
+    {cg : Set W} {t : T} {P : W → Prop} (hMB : ∀ w ∈ cg, MB w t ⊆ history ⟨w, t⟩)
     (h : settled history cg t P) : ¬ diverse MB cg t P :=
   fun ⟨w, hw, w', hw', w'', hw'', hP, hnP⟩ ↦
     hnP ((h w hw w'' (hMB w hw hw'')).mp ((h w hw w' (hMB w hw hw')).mpr hP))

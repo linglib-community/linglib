@@ -35,7 +35,7 @@ namespace Mendes2025
 
 open scoped Denotes
 
-open HistoricalAlternatives DynamicSemantics Update SetRel Kaplan
+open HistoricalAlternatives DynamicSemantics Update SetRel
 open RegisterStructure
 
 variable {W T : Type*}
