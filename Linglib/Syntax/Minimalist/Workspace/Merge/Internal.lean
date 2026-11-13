@@ -165,20 +165,20 @@ theorem mergeOpOfCuts_im_composition_residual [IsMergeCuts cuts] (lbl : α) (β 
     Multiset.pair_comm]
   exact mergeOpOfCuts_pair_residual lbl hF
 
-/-- Internal Merge at the deletion cuts, for a mover `β` without unary vertices extracted by a
-    single deletion cut with trunk `Q`. -/
-theorem mergeOp_im_composition (lbl : α) (β T Q : UnorderedTree α)
+/-- Internal Merge at the deletion coproduct, for a mover `β` extracted by a single admissible cut
+    whose trunk has remainder `Q`, both their own remainders. -/
+theorem mergeOp_im_composition [DecidableEq α] (lbl : α) (β T Q : UnorderedTree α)
     (p0 : Forest (UnorderedTree α) × UnorderedTree α)
-    (h_filter : (deletionCuts T).filter (fun p => p.1 = ({β} : Forest (UnorderedTree α))) = {p0})
-    (h_remainder : p0.2 = Q) (hTβ : T ≠ β) (hβ : β.numUnary = 0) :
-    mergeOp (R := R) lbl Q β (mergeOpUnit (R := R) β (of' ({T} : Forest (UnorderedTree α))))
+    (h_filter : (admissibleCuts T).filter (fun p => p.1 = ({β} : Forest (UnorderedTree α))) = {p0})
+    (h_remainder : deletionQuotient lbl p0.2 = some Q) (hTβ : T ≠ β)
+    (hβ : deletionQuotient lbl β = some β) (hQ : deletionQuotient lbl Q = some Q) :
+    mergeOp (R := R) lbl Q β (mergeOpUnit (R := R) lbl β (of' ({T} : Forest (UnorderedTree α))))
       = of' ({UnorderedTree.node lbl {Q, β}} : Forest (UnorderedTree α)) := by
-  obtain ⟨q, -, rfl⟩ := Multiset.mem_map.mp
-    (Multiset.mem_of_mem_filter (h_filter.symm ▸ Multiset.mem_singleton_self p0))
-  subst h_remainder
-  rw [mergeOpUnit, mergeOpUnitOfCuts_apply_singleton_unique β T _ h_filter hTβ, ← of'_singleton,
-    ← of'_add, add_comm]
-  exact mergeOp_pair lbl (UnorderedTree.numUnary_contractUnary _) hβ
+  rw [mergeOpUnit_eq_deletionProj_comp lbl hβ, LinearMap.comp_apply,
+    mergeOpUnitOfCuts_apply_singleton_unique β T p0 h_filter hTβ, AlgHom.toLinearMap_apply,
+    map_mul, of'_singleton, deletionProj_ofTree, deletionProj_ofTree, hβ, h_remainder,
+    Option.elim_some, Option.elim_some, ← of'_singleton, ← of'_singleton, ← of'_add, add_comm]
+  exact mergeOp_pair lbl hQ hβ
 
 end DecidableEq
 

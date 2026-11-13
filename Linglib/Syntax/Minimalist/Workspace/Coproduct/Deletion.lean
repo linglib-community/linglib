@@ -153,6 +153,15 @@ noncomputable def deletionProj :
     deletionProj (R := R) b (ofTree T) = (deletionQuotient b T).elim 1 ofTree :=
   aeval_ofTree _ T
 
+/-- The projection fixes a workspace of trees that are their own remainders. -/
+theorem deletionProj_of' {F : Multiset (UnorderedTree α)}
+    (h : ∀ T ∈ F, deletionQuotient b T = some T) : deletionProj (R := R) b (of' F) = of' F := by
+  induction F using Multiset.induction with
+  | empty => rw [of'_zero, map_one]
+  | cons T F ih =>
+    rw [of'_cons, map_mul, deletionProj_ofTree, h T (Multiset.mem_cons_self _ _),
+      Option.elim_some, ih fun U hU ↦ h U (Multiset.mem_cons_of_mem hU)]
+
 /-- The deletion coproduct `Δ^d` is the Connes–Kreimer coproduct `Δ^ρ` followed, on the right
     channel, by the projection `Π_{d,ρ}`. -/
 noncomputable def deletionComulAlgHom : ConnesKreimer R (UnorderedTree α) →ₐ[R]
