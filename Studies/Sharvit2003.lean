@@ -144,14 +144,15 @@ theorem nonpastAvailable_past_iff (L : Language) :
 (5) and (12a). -/
 theorem boundPresent_nonpast {W : Type*} [LinearOrder T] (n e : ℕ) (g : ℕ → T) (now : T)
     (w : W) :
-    (pronoun ⟦Tense.present⟧ n e (Function.update (Function.update g e now) n now) w).Dom := by
+    (pronoun (toSetRel ⟦Tense.present⟧) n e
+      (Function.update (Function.update g e now) n now) w).Dom := by
   simp [Function.update_apply, denote_present]
 
 /-- A matrix-indexical present under a past attitude verb fails its presupposition at the attitude's
 now, so (3) has only the double access reading. -/
 theorem indexicalPresent_no_nonpast {W : Type*} [LinearOrder T] {n e : ℕ} {g : ℕ → T}
-    {w : W} (hSpeech : (pronoun ⟦Tense.present⟧ n 0 g w).Dom) (hlt : g e < g 0) :
-    ¬ (pronoun ⟦Tense.present⟧ n e g w).Dom := by
+    {w : W} (hSpeech : (pronoun (toSetRel ⟦Tense.present⟧) n 0 g w).Dom) (hlt : g e < g 0) :
+    ¬ (pronoun (toSetRel ⟦Tense.present⟧) n e g w).Dom := by
   simp only [pronoun_dom, mem_toSetRel_present] at hSpeech ⊢
   exact fun h ↦ hlt.ne (h.symm.trans hSpeech)
 
