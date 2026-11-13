@@ -221,13 +221,18 @@ theorem isSyntacticObject_lfBy (low : RoseTree (CopyMark × Vertex) → Prop) [D
 /-- The object a reading gives: each chain in `low` keeps its lowest copy, and every other its
 highest, its lower copies contracted. -/
 def lf (t : Marked) (low : Finset SyntacticObject) : LinearizedSyntacticObject :=
-  ⟨lfTree low t.val, isSyntacticObject_lfBy _ t.2⟩
+  LinearizedSyntacticObject.ofVal (lfTree low t.val) (isSyntacticObject_lfBy _ t.2)
+
+@[simp] theorem val_lf (t : Marked) (low : Finset SyntacticObject) :
+    (t.lf low).val = lfTree low t.val :=
+  LinearizedSyntacticObject.val_ofVal _ _
 
 /-- The chains with a lower copy holding `y`. -/
 def carrying (t : Marked) (y : LexicalItem.Token) : Finset SyntacticObject :=
   ((t.val.subtrees.filter fun r ↦
       r.value.1.isSome ∧ Sum.inl (some y) ∈ (r.map Prod.snd).leaves).filterMap fun r ↦
-    if h : IsSyntacticObject (termOf r) then some ⟨termOf r, h⟩ else none).toFinset
+    if h : IsSyntacticObject (termOf r) then some (SyntacticObject.ofVal (termOf r) h)
+    else none).toFinset
 
 /-! ### The contraction -/
 
@@ -243,7 +248,8 @@ theorem lfTree_empty (t : RoseTree (CopyMark × Vertex)) : lfTree ∅ t = contra
 
 /-- With no chain read low, a reading gives the contraction. -/
 @[simp] theorem lf_empty (t : Marked) : t.lf ∅ = t.contract :=
-  Subtype.ext (lfTree_empty t.val)
+  LinearizedSyntacticObject.val_injective
+    ((val_lf t ∅).trans ((lfTree_empty t.val).trans (val_contract t).symm))
 
 /-! ### Objects with no lower copy -/
 
@@ -269,7 +275,7 @@ theorem lfBy_map_none (low : RoseTree (CopyMark × Vertex) → Prop) [DecidableP
 /-- An object with no lower copy gives itself under every reading. -/
 @[simp] theorem lf_ofLinearized (p : LinearizedSyntacticObject) (low : Finset SyntacticObject) :
     (ofLinearized p).lf low = p :=
-  Subtype.ext (lfBy_map_none _ p.val)
+  LinearizedSyntacticObject.val_injective ((val_lf _ low).trans (lfBy_map_none _ p.val))
 
 /-! ### Binding at a reading is binding at the copy object -/
 
@@ -394,8 +400,12 @@ theorem cCommands_unmark_of_cCommands_lf {t : Marked} {low : Finset SyntacticObj
       ReadLow low u ∨ ReadLow low v → termOf u ≠ termOf v)
     (h : (t.lf low).toSyntacticObject.CCommands ↑x ↑y) :
     t.unmark.toSyntacticObject.CCommands ↑x ↑y :=
-  (cCommands_iff_tokenCCommands hxy _).2 (tokenCCommands_of_tokenCCommands_lfBy hlow
-    ((cCommands_iff_tokenCCommands hxy _).1 h))
+  (cCommands_iff_tokenCCommands hxy _).2 ((val_unmark t).symm ▸
+    tokenCCommands_of_tokenCCommands_lfBy hlow
+      (by
+        show TokenCCommands x y (lfTree low t.val)
+        rw [← val_lf]
+        exact (cCommands_iff_tokenCCommands hxy _).1 h))
 
 /-- A c-command between two pronounced leaves of the contraction holds between the same leaves of
 the copy object, the contraction changing nothing outside the lower copies. -/

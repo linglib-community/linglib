@@ -146,7 +146,10 @@ theorem linearize?_of_find? {cur m : SyntacticObject} {pc s : LinearizedSyntacti
     (hc : cur.linearize? side = some pc) (hf : pc.find? m = some s) :
     m.linearize? side = some s := by
   rw [← LinearizedSyntacticObject.toSyntacticObject_find? hf]
-  exact linearize?_of_mem_subtrees hc (LinearizedSyntacticObject.mem_subtrees_of_find? hf) s.2
+  have h := linearize?_of_mem_subtrees hc (LinearizedSyntacticObject.mem_subtrees_of_find? hf)
+    s.isSyntacticObject_val
+  rwa [← LinearizedSyntacticObject.toSyntacticObject_ofVal,
+    LinearizedSyntacticObject.ofVal_val] at h
 
 end SyntacticObject
 

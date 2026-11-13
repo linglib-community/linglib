@@ -91,8 +91,8 @@ def Step.Admissible (current : SyntacticObject)
     it introduces, and the spectators. -/
 theorem Step.mergeOp_workspace {step : Step}
     {current : SyntacticObject} {W : Workspace} (h : step.Admissible current W) :
-    step.mergeOp current (ConnesKreimer.of' (({current} + step.items + W).map Subtype.val))
-      = ConnesKreimer.of' (({step.apply current} + W).map Subtype.val) := by
+    step.mergeOp current (ConnesKreimer.of' (({current} + step.items + W).map SyntacticObject.val))
+      = ConnesKreimer.of' (({step.apply current} + W).map SyntacticObject.val) := by
   cases step with
   | em side item =>
     rw [Step.apply_em, merge_comm]
@@ -121,7 +121,7 @@ def Step.AdmissibleList : List Step → SyntacticObject → Prop
 theorem Step.mergeOpList_workspace :
     ∀ (steps : List Step) (current : SyntacticObject), Step.AdmissibleList steps current →
       Step.mergeOpList steps current
-          (ConnesKreimer.of' (({current} + Step.itemsList steps).map Subtype.val))
+          (ConnesKreimer.of' (({current} + Step.itemsList steps).map SyntacticObject.val))
         = ConnesKreimer.of' {(steps.foldl (fun so step => step.apply so) current).val}
   | [], current, _ => by
     simp [Step.mergeOpList]
@@ -195,7 +195,7 @@ def Admissible (d : Derivation) : Prop := Step.AdmissibleList d.steps d.initial
 /-- An admissible derivation is the iterated algebraic Merge on the workspace of its initial object
     and its items: the composite of its steps' Merges sends that workspace to its final object. -/
 theorem mergeOpList_initial {d : Derivation} (hd : d.Admissible) :
-    Step.mergeOpList d.steps d.initial (ConnesKreimer.of' (({d.initial} + d.items).map Subtype.val))
+    Step.mergeOpList d.steps d.initial (ConnesKreimer.of' (({d.initial} + d.items).map SyntacticObject.val))
       = ConnesKreimer.of' {d.final.val} :=
   (Step.mergeOpList_workspace d.steps d.initial hd).trans <| by
     rw [final, run, Step.foldl_run_of_admissibleList d.steps d.initial [] hd]
