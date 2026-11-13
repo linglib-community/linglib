@@ -68,30 +68,9 @@ variable {s t x y l r l' r' : SyntacticObject}
 
 /-! ### Structural identity -/
 
-/-- The tree of lexical items and traces an object inscribes, forgetting which token fills each
-leaf. -/
-def erase (s : SyntacticObject) : UnorderedTree (Option LexicalItem ⊕ Option LexicalItem) :=
-  s.toUnorderedTree.map (Sum.map (Option.map LexicalItem.Token.item) (Option.map
-      LexicalItem.Token.item))
-
-@[simp]
-theorem erase_leaf (tok : LexicalItem.Token) :
-    (leaf tok).erase = UnorderedTree.leaf (.inl (some tok.item)) :=
-  UnorderedTree.map_leaf _ _
-
-@[simp]
-theorem erase_trace : trace.erase = UnorderedTree.leaf (.inr none) :=
-  UnorderedTree.map_leaf _ _
-
-@[simp]
-theorem erase_traceOf (tok : LexicalItem.Token) :
-    (traceOf tok).erase = UnorderedTree.leaf (.inr (some tok.item)) :=
-  UnorderedTree.map_leaf _ _
-
-@[simp]
-theorem erase_merge (l r : SyntacticObject) :
-    (merge l r).erase = node (.inl none) {l.erase, r.erase} := by
-  simp [erase, map_node]
+/-- The syntactic object over lexical items that an object inscribes, forgetting which token fills
+each leaf. -/
+def erase (s : SyntacticObject) : SyntacticObject LexicalItem := s.map LexicalItem.Token.item
 
 /-- Two inscriptions are structurally identical when they coincide once token identity is
 forgotten. -/
@@ -116,12 +95,12 @@ theorem StructurallyIdentical.trans (h : StructurallyIdentical x y)
 /-- Structural identity is a congruence for Merge. -/
 theorem StructurallyIdentical.merge (hl : StructurallyIdentical l l')
     (hr : StructurallyIdentical r r') : StructurallyIdentical (merge l r) (merge l' r') := by
-  simp only [StructurallyIdentical, erase_merge] at *
+  simp only [StructurallyIdentical, erase, map_merge] at *
   rw [hl, hr]
 
 theorem StructurallyIdentical.numNodes_eq (h : StructurallyIdentical x y) :
     x.toUnorderedTree.numNodes = y.toUnorderedTree.numNodes := by
-  simpa [erase] using congrArg UnorderedTree.numNodes h
+  simpa [erase] using congrArg (·.toUnorderedTree.numNodes) h
 
 /-- Two inscriptions are repetitions when they are structurally identical but distinct objects,
 built from different tokens: the default relation between identical inscriptions. -/
@@ -135,10 +114,8 @@ variable {f : LexicalItem.Token → LexicalItem.Token}
 
 theorem erase_map (hf : ∀ t, (f t).item = t.item) (s : SyntacticObject) :
     (s.map f).erase = s.erase := by
-  simp only [erase, toUnorderedTree_map, UnorderedTree.map_map]
-  congr 1
-  funext v
-  rcases v with (_ | t) | (_ | t) <;> simp [Vertex.map, hf]
+  rw [erase, erase, map_map]
+  exact congrArg (map · s) (funext hf)
 
 /-- The inscription of `s` from fresh tokens, each index raised by `k`, as External Merge
 introduces a second inscription of an object. -/
@@ -197,29 +174,40 @@ def HasDistinctItems (s : SyntacticObject) : Prop :=
 
 theorem StructurallyIdentical.eq_of_mem_terms (hs : s.HasDistinctItems) (hx : x ∈ s.terms)
     (hy : y ∈ s.terms) (h : StructurallyIdentical x y) : x = y := by
+  replace h : x.map LexicalItem.Token.item = y.map LexicalItem.Token.item := h
   induction x using ind generalizing y with
   | leaf a =>
     rcases exists_form y with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l, r, rfl⟩ <;>
-      have hv := congrArg UnorderedTree.value h <;> simp at hv
-    exact congrArg leaf (hs (.inl hx) (.inl hy) hv)
+      simp only [map_leaf, map_trace, map_traceOf, map_merge] at h
+    · exact congrArg leaf (hs (.inl hx) (.inl hy) (leaf_inj.1 h))
+    · exact absurd h (leaf_ne_trace _)
+    · exact absurd h (leaf_ne_traceOf _ _)
+    · exact absurd h (leaf_ne_merge _ _ _)
   | trace =>
     rcases exists_form y with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l, r, rfl⟩ <;>
-      have hv := congrArg UnorderedTree.value h <;> simp at hv
-    rfl
+      simp only [map_leaf, map_trace, map_traceOf, map_merge] at h
+    · exact absurd h.symm (leaf_ne_trace _)
+    · rfl
+    · exact absurd h (trace_ne_traceOf _)
+    · exact absurd h (trace_ne_merge _ _)
   | traceOf a =>
     rcases exists_form y with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l, r, rfl⟩ <;>
-      have hv := congrArg UnorderedTree.value h <;> simp at hv
-    exact congrArg traceOf (hs (.inr hx) (.inr hy) hv)
+      simp only [map_leaf, map_trace, map_traceOf, map_merge] at h
+    · exact absurd h (traceOf_ne_leaf _ _)
+    · exact absurd h.symm (trace_ne_traceOf _)
+    · exact congrArg traceOf (hs (.inr hx) (.inr hy) (traceOf_inj.1 h))
+    · exact absurd h (traceOf_ne_merge _ _ _)
   | merge l r ihl ihr =>
-    rcases exists_form y with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l', r', rfl⟩
-    iterate 3 (have hv := congrArg UnorderedTree.value h; simp at hv)
-    have hc := congrArg UnorderedTree.children h
-    simp only [erase_merge, children_node] at hc
-    obtain ⟨hl, hr⟩ := mem_terms_of_merge_mem_terms hx
-    obtain ⟨hl', hr'⟩ := mem_terms_of_merge_mem_terms hy
-    rcases Multiset.pair_eq_pair_iff.1 hc with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
-    · rw [ihl hl hl' h₁, ihr hr hr' h₂]
-    · rw [ihl hl hr' h₁, ihr hr hl' h₂, SyntacticObject.merge_comm]
+    rcases exists_form y with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l', r', rfl⟩ <;>
+      simp only [map_leaf, map_trace, map_traceOf, map_merge] at h
+    · exact absurd h.symm (leaf_ne_merge _ _ _)
+    · exact absurd h.symm (trace_ne_merge _ _)
+    · exact absurd h.symm (traceOf_ne_merge _ _ _)
+    · obtain ⟨hl, hr⟩ := mem_terms_of_merge_mem_terms hx
+      obtain ⟨hl', hr'⟩ := mem_terms_of_merge_mem_terms hy
+      rcases merge_eq_merge_iff.1 h with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
+      · rw [ihl hl hl' h₁, ihr hr hr' h₂]
+      · rw [ihl hl hr' h₁, ihr hr hl' h₂, SyntacticObject.merge_comm]
 
 /-- In such an object Form Copy relates each inscription only to itself: its copies are those
 Internal Merge leaves. -/

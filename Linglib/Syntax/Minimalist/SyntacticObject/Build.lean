@@ -57,19 +57,6 @@ instance : Inhabited (SyntacticObject L) := ⟨trace⟩
 
 @[simp] theorem mul_def (l r : SyntacticObject L) : l * r = merge l r := rfl
 
-/-- Relabelling along a map of lexical alphabets is a homomorphism of magmas. -/
-def mapHom {L' : Type} (f : L → L') : SyntacticObject L →ₙ* SyntacticObject L' :=
-  ⟨map f, map_merge f⟩
-
-@[simp] theorem mapHom_apply {L' : Type} (f : L → L') (s : SyntacticObject L) :
-    mapHom f s = s.map f := rfl
-
-@[simp] theorem mapHom_id : mapHom (id : L → L) = MulHom.id _ := MulHom.ext map_id
-
-theorem mapHom_comp {L' L'' : Type} (g : L' → L'') (f : L → L') :
-    mapHom (g ∘ f) = (mapHom g).comp (mapHom f) :=
-  MulHom.ext fun s ↦ (map_map f g s).symm
-
 /-- A lexical item is a leaf. -/
 instance : Coe L (SyntacticObject L) := ⟨leaf⟩
 
@@ -109,33 +96,6 @@ instance : Coe L (PlanarSyntacticObject L) := ⟨leaf⟩
 
 /-- An ordered object is an object. -/
 instance : Coe (PlanarSyntacticObject L) (SyntacticObject L) := ⟨toSyntacticObject⟩
-
-/-- Forgetting the order is a homomorphism of magmas ([marcolli-chomsky-berwick-2025]
-    Lemma 1.13.1). -/
-def toSyntacticObjectHom : PlanarSyntacticObject L →ₙ* SyntacticObject L :=
-  ⟨toSyntacticObject, toSyntacticObject_merge⟩
-
-@[simp] theorem toSyntacticObjectHom_apply (p : PlanarSyntacticObject L) :
-    toSyntacticObjectHom p = p.toSyntacticObject := rfl
-
-/-- Relabelling along a map of lexical alphabets is a homomorphism of magmas. -/
-def mapHom {L' : Type} (f : L → L') :
-    PlanarSyntacticObject L →ₙ* PlanarSyntacticObject L' :=
-  ⟨map f, map_merge f⟩
-
-@[simp] theorem mapHom_apply {L' : Type} (f : L → L') (p : PlanarSyntacticObject L) :
-    mapHom f p = p.map f := rfl
-
-@[simp] theorem mapHom_id : mapHom (id : L → L) = MulHom.id _ := MulHom.ext map_id
-
-theorem mapHom_comp {L' L'' : Type} (g : L' → L'') (f : L → L') :
-    mapHom (g ∘ f) = (mapHom g).comp (mapHom f) :=
-  MulHom.ext fun p ↦ (map_map f g p).symm
-
-/-- Forgetting the order commutes with relabelling. -/
-theorem toSyntacticObjectHom_comp_mapHom {L' : Type} (f : L → L') :
-    toSyntacticObjectHom.comp (mapHom f) = (SyntacticObject.mapHom f).comp toSyntacticObjectHom :=
-  MulHom.ext fun p ↦ toSyntacticObject_map f p
 
 theorem merge_inj {l r l' r' : PlanarSyntacticObject L} :
     merge l r = merge l' r' ↔ l = l' ∧ r = r' :=
@@ -227,10 +187,6 @@ namespace SyntacticObject
 
 /-! ### Lexical leaves from features -/
 
-/-- A lexical leaf from a category and selectional stack. -/
-def mkLeaf (cat : Cat) (sel : SelStack) (id : Nat) : SyntacticObject :=
-  SyntacticObject.leaf ⟨.of cat sel, id⟩
-
 /-- A lexical leaf with a phonological form. -/
 def mkLeafPhon (cat : Cat) (sel : SelStack) (phon : String) (id : Nat) : SyntacticObject :=
   SyntacticObject.leaf ⟨.of cat sel (phonForm := phon), id⟩
@@ -285,78 +241,14 @@ theorem isLeafOf_map {f : LexicalItem.Token → LexicalItem.Token}
     isLeafOf c (s.map f) ↔ isLeafOf c s := by
   simp [isLeafOf, token?_map, Option.map_map, Function.comp_def, hcat]
 
-/-- A trace leaf, bare or indexed. -/
-def isTrace (s : SyntacticObject L) : Prop :=
-  (UnorderedTree.value s.toUnorderedTree).isRight = true ∧
-      UnorderedTree.numNodes s.toUnorderedTree = 1
-
-instance (s : SyntacticObject L) : Decidable (isTrace s) := inferInstanceAs (Decidable (_ ∧ _))
-
-@[simp] theorem isTrace_traceOf (tok : L) : isTrace (traceOf tok) := ⟨rfl, rfl⟩
-
-@[simp] theorem not_isTrace_leaf (tok : L) :
-    ¬ isTrace (SyntacticObject.leaf tok) := fun h ↦
-  Bool.false_ne_true h.1
-
-@[simp] theorem isTrace_trace : isTrace (trace : SyntacticObject L) := ⟨rfl, rfl⟩
-
-/-- The number of leaves, traces included. -/
-def leafCount (s : SyntacticObject L) : Nat := UnorderedTree.numLeaves s.toUnorderedTree
-
-/-- An object is a lexical or trace leaf exactly when its leaf count is one. -/
-def IsLeaf (s : SyntacticObject L) : Prop := s.leafCount = 1
-
-instance : DecidablePred (IsLeaf (L := L)) := fun _ ↦ inferInstanceAs (Decidable (_ = _))
-
-@[simp] theorem isLeaf_leaf (tok : L) : IsLeaf (SyntacticObject.leaf tok) := rfl
-@[simp] theorem isLeaf_trace : IsLeaf (trace : SyntacticObject L) := rfl
-
 /-- A shape summary; the full tree is a quotient with no faithful readout. -/
 instance [Repr L] : Repr (SyntacticObject L) where
   reprPrec s _ := match s.token? with
     | some tok => f!"SyntacticObject.leaf {repr tok}"
     | none =>
-      if s.IsLeaf then f!"SyntacticObject.trace"
-      else f!"⟨SyntacticObject merge, {s.leafCount} leaves⟩"
-
-/-- `nodeCount s = leafCount s - 1`, the number of internal vertices of a full binary tree. -/
-def nodeCount (s : SyntacticObject L) : Nat := UnorderedTree.numLeaves s.toUnorderedTree - 1
-
-@[simp] theorem leafCount_leaf (tok : L) :
-    (SyntacticObject.leaf tok).leafCount = 1 := rfl
-@[simp] theorem leafCount_trace : (trace : SyntacticObject L).leafCount = 1 := rfl
+      let n := UnorderedTree.numLeaves s.toUnorderedTree
+      if n = 1 then f!"SyntacticObject.trace" else f!"⟨SyntacticObject merge, {n} leaves⟩"
 
 end SyntacticObject
-
-/-! ### Carrier tests -/
-
-private def demoTok (i : ℕ) : LexicalItem.Token := ⟨.of .N [], i⟩
-
-private def demoVP : SyntacticObject :=
-  (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf (demoTok 0))
-    (PlanarSyntacticObject.leaf (demoTok 1))).toSyntacticObject
-
-/-- The DSL-built tree is a genuine syntactic object. -/
-example : IsSyntacticObject demoVP.toUnorderedTree := by decide
-/-- Its head token reads back via `token?` of the left leaf. -/
-example : (SyntacticObject.leaf (demoTok 0)).token? = some (demoTok 0) := by decide
-/-- It has two leaves and one internal node. -/
-example : demoVP.leafCount = 2 ∧ demoVP.nodeCount = 1 := by decide
-/-- The trace leaf is recognized; a lexical leaf is not a trace. -/
-example : isTrace (SyntacticObject.trace : SyntacticObject) ∧ ¬ isTrace (SyntacticObject.leaf
-    (demoTok 0)) := by decide
-/-- A bare binary node over a lexical leaf and a bare trace, the shape of an Internal-Merge
-    result, is a syntactic object. -/
-example :
-    IsSyntacticObject (L := LexicalItem.Token) (UnorderedTree.mk (.node Vertex.bare
-      [.leaf (Vertex.lex (demoTok 0)), .leaf Vertex.trace])) := by decide
-/-- A lexical item with children is rejected: lexical items are leaves. -/
-example :
-    ¬ IsSyntacticObject (L := LexicalItem.Token) (UnorderedTree.mk (.node (Vertex.lex (demoTok 0))
-      [.leaf Vertex.trace])) := by decide
-/-- A ternary bare node is rejected: syntactic objects are binary. -/
-example :
-    ¬ IsSyntacticObject (L := LexicalItem.Token) (UnorderedTree.mk (.node Vertex.bare
-      [.leaf Vertex.trace, .leaf Vertex.trace, .leaf Vertex.trace])) := by decide
 
 end Minimalist

@@ -1193,7 +1193,8 @@ theorem theMan_mem_copyRel : (theMan, theMan') ∈ triedToRead.copyRel :=
 inscriptions. -/
 theorem not_mem_copyRel_aBook : (theMan, aBook) ∉ triedToRead.copyRel := fun h ↦ by
   have := h.2
-  simp only [StructurallyIdentical, theMan, aBook, erase_merge, erase_leaf] at this
+  simp only [StructurallyIdentical, theMan, aBook, erase, SyntacticObject.map_merge,
+    SyntacticObject.map_leaf] at this
   exact absurd this (by decide)
 
 end MarcolliChomskyBerwick2025

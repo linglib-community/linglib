@@ -401,6 +401,10 @@ theorem traceOf_ne_leaf (a b : L) : traceOf a ≠ leaf b :=
   ⟨fun h ↦ by injection FreeCommMagma.of_injective h, congrArg traceOf⟩
 
 @[simp]
+theorem trace_ne_traceOf (a : L) : (trace : SyntacticObject L) ≠ traceOf a :=
+  fun h ↦ by injection FreeCommMagma.of_injective h
+
+@[simp]
 theorem trace_ne_merge (l r : SyntacticObject L) : (trace : SyntacticObject L) ≠ merge l r :=
   FreeCommMagma.of_ne_mul _ l r
 
