@@ -587,6 +587,29 @@ example (acc : UnorderedTree Vertex → ℕ) (X : UnorderedTree Vertex) :
 example : sideward3a.trunk.filterMap (deletionQuotient Vertex.bare) = 0 ∧
     merge theD appleN = theApple := by decide
 
+/-- The remainder of a deletion is the largest syntactic object the trunk contracts to
+    (Definition 1.2.5). Extracting two terms that are not sisters leaves each parent a single
+    child, and the remainder is what is left below them, as in the book's example after (1.2.7),
+    whose remainder is the one lexical item `γ`. -/
+example : deletionQuotient Vertex.bare
+      (.node Vertex.bare {.node Vertex.bare {appleN.toUnorderedTree}}) =
+    some appleN.toUnorderedTree := by decide
+
+/-- Extracting *the* and *apple* from `{eaten, {the, apple}}` leaves their parent without a child.
+    It is no leaf of the object, so it goes with them, and the remainder is *eaten*. -/
+example : deletionQuotient Vertex.bare
+      (.node Vertex.bare {eaten.toUnorderedTree, .leaf Vertex.bare}) =
+    some eaten.toUnorderedTree := by decide
+
+/-- Contracting unary vertices alone would keep that childless parent as a leaf, which no
+    syntactic object has. -/
+example : ¬ IsSyntacticObject (UnorderedTree.contractUnary
+    (.node Vertex.bare {eaten.toUnorderedTree, .leaf Vertex.bare})) := by decide
+
+/-- A trunk with no leaf of the object left has no remainder. -/
+example : deletionQuotient Vertex.bare (.leaf Vertex.bare : UnorderedTree Vertex) = none := by
+  decide
+
 /-- The 2(b) term: *eaten* taken whole, and *the* extracted from *the apple*, whose trunk keeps
     *apple* under a unary vertex that the deletion contracts. -/
 private def sidewardTermD : CutChoice Vertex :=
