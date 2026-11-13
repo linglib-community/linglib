@@ -516,6 +516,15 @@ theorem IsHom.mapBlock_toBlock (hf : ml.IsHom ml' f) (x : α) :
     hf.mapBlock (ml.toBlock x) = ml'.toBlock (f x) :=
   rfl
 
+variable (ml) in
+@[simp]
+theorem IsHom.mapBlock_id : (IsHom.id ml).mapBlock = RelEmbedding.refl _ :=
+  DFunLike.ext _ _ <| Block.ind fun _ ↦ rfl
+
+theorem IsHom.mapBlock_comp (hg : ml'.IsHom ml'' g) (hf : ml.IsHom ml' f) :
+    (hg.comp hf).mapBlock = hf.mapBlock.trans hg.mapBlock :=
+  DFunLike.ext _ _ <| Block.ind fun _ ↦ rfl
+
 end IsHom
 
 section Lex
