@@ -108,6 +108,6 @@ def toDefinite (χ : Character C W E) : Definite C W E := fun c w ↦ Part.some 
 
 theorem isDirectlyReferential_iff (χ : Character C W E) :
     χ.IsDirectlyReferential ↔ ∀ c, IsRigid (χ.toDefinite c) :=
-  forall_congr' fun _ ↦ (Part.some_injective (α := E)).isRigid_comp_iff.symm
+  forall_congr' fun _ ↦ (Part.some_injective (α := E)).isConst_comp_iff.symm
 
 end Character

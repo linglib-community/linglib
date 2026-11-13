@@ -88,6 +88,6 @@ instance : Denotes PersonalPronoun
   Definite.mem_var
 
 theorem isRigid_denote (g : ℕ → E) : IsRigid (e.denote (W := W) i c g) :=
-  isRigid_const _
+  Function.IsConst.const _
 
 end PersonalPronoun

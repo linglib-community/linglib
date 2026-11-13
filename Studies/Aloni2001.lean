@@ -95,7 +95,7 @@ def names : Set (W → D) := range (Function.const W)
 
 theorem isRigid_of_mem_names (h : c ∈ names) : IsRigid c := by
   obtain ⟨d, rfl⟩ := h
-  exact isRigid_const d
+  exact Function.IsConst.const d
 
 theorem isCover_names : IsCover (names : Set (W → D)) := fun _ ↦
   ⟨mapsTo_univ _ _, by rintro _ ⟨d, rfl⟩ _ ⟨d', rfl⟩ (e : d = d'); rw [e],
@@ -116,7 +116,7 @@ theorem IsCover.eq_names [Nonempty W] (h : IsCover C) (hr : ∀ c ∈ C, IsRigid
 
 /-- Over a single world the name cover is the only cover (Corollary 4.1.4). -/
 theorem isCover_iff_eq_names [Unique W] : IsCover C ↔ C = names :=
-  ⟨fun h ↦ h.eq_names fun c _ ↦ isRigid_of_subsingleton c, fun h ↦ h ▸ isCover_names⟩
+  ⟨fun h ↦ h.eq_names fun c _ ↦ Function.IsConst.of_subsingleton_domain c, fun h ↦ h ▸ isCover_names⟩
 
 /-! ### Covers as cross-identifications -/
 

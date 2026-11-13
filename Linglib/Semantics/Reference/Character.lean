@@ -74,7 +74,7 @@ def const (e : E) : Character C W E := fun _ _ ↦ e
 
 theorem dthat_isDirectlyReferential (f : C → E) :
     (dthat f : Character C W E).IsDirectlyReferential :=
-  fun c ↦ isRigid_const (f c)
+  fun c ↦ Function.IsConst.const (f c)
 
 theorem const_isDirectlyReferential (e : E) :
     (const e : Character C W E).IsDirectlyReferential :=
