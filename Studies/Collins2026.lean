@@ -192,10 +192,10 @@ def highTree : Tree Unit LexicalItem.Token :=
       .phrase () .projection [.trace (every.id + 1) (), .terminal () score]])]
 
 theorem toTree?_low :
-    everyDidntScore.toTree? (·.id) {everyPlayer.toSyntacticObject} = some lowTree := by
+    everyDidntScore.toTree? traceIndex {everyPlayer.toSyntacticObject} = some lowTree := by
   decide +kernel
 
-theorem toTree?_high : everyDidntScore.toTree? (·.id) ∅ = some highTree := by
+theorem toTree?_high : everyDidntScore.toTree? traceIndex ∅ = some highTree := by
   decide +kernel
 
 section Interpretation
@@ -249,9 +249,9 @@ theorem meanings_highTree :
 /-- One derivation of (15) has both scope readings: read low, not every player scored, the
 reading the paper describes in (16); read high, every player failed to. -/
 theorem scope_readings :
-    (∃ t ∈ everyDidntScore.toTree? (·.id) {everyPlayer.toSyntacticObject},
+    (∃ t ∈ everyDidntScore.toTree? traceIndex {everyPlayer.toSyntacticObject},
       meanings pl sc t = [⟨.t, fun _ ↦ ¬ Quantifier.Det.every pl sc⟩]) ∧
-    (∃ t ∈ everyDidntScore.toTree? (·.id) ∅,
+    (∃ t ∈ everyDidntScore.toTree? traceIndex ∅,
       meanings pl sc t = [⟨.t, fun _ ↦ Quantifier.Det.every pl scᶜ⟩]) :=
   ⟨⟨lowTree, toTree?_low, meanings_lowTree pl sc⟩,
     ⟨highTree, toTree?_high, meanings_highTree pl sc⟩⟩

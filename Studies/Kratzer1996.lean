@@ -135,7 +135,7 @@ def Word.val : {a : Ty Base} → Word a → a.Domain Entity Unit { eventuality :
 Event Identification. -/
 def meanings (t : PlanarSyntacticObject) :
     List (Denotation Entity Unit { eventuality := V }) :=
-  match (t.toTree (·.id)).skeleton (fun _ ↦ false) with
+  match (t.toTree traceIndex).skeleton (fun _ ↦ false) with
   | some s => (typeDriven Voice.grammar).values
       (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V })) inferInstance
       (Word.val ρ feedRel m d)
@@ -235,7 +235,7 @@ def PWord.val : {a : Ty Base} → PWord a → a.Domain Entity Unit { eventuality
 Identification, over partial predicates. -/
 def partialMeanings (t : PlanarSyntacticObject) :
     List (Denotation Entity Unit { eventuality := V }) :=
-  match (t.toTree (·.id)).skeleton (fun _ ↦ false) with
+  match (t.toTree traceIndex).skeleton (fun _ ↦ false) with
   | some s => (typeDriven partialGrammar).values
       (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V })) inferInstance
       (PWord.val IsAction IsState ρ ownRel d) (entries partialLexicon) s

@@ -11,24 +11,23 @@ public import Linglib.Syntax.Tree.Basic
 /-!
 # Planar syntactic objects as constituency trees
 
-A planar syntactic object is a rose tree over vertices, so relabelling its vertices gives a
-constituency tree with the same shape: a lexical leaf becomes a terminal, the bare label of an
-internal node a projection, and a trace a trace. The positions, and so the branching nodes, are
-the object's, so the tree [pronounces the object's tokens in order](##yield_toTree) and its
-c-command is [the object's](##cCommands_toTree_iff), which is c-command between the terms at those
-positions when the commander's term occurs once ([its terms](##cCommands_termAt_iff_toTree)).
-Whatever reads a constituency tree, the type-driven composition engine, binding configurations
-and the spans of prosodic constituency, then reads a Minimalist object.
+The constituency tree of a planar syntactic object is its ordered tree with the vertices
+relabelled: a lexical item becomes a terminal, an unlabelled vertex a projection, and a trace a
+trace with an index. The tree has the object's positions, so whatever is stated on positions,
+c-command among them, carries over by the lemmas about relabelling a tree
+(`RoseTree.cCommands_map`), and it [pronounces the object's tokens in order](##yield_toTree). The
+type-driven composition engine, binding configurations and the spans of prosodic constituency read
+a Minimalist object through this tree.
 
 ## Implementation notes
 
 * Categories are `Unit`. The engine, c-command and the yield ignore categories; the categories a
   head function assigns (`Minimalist.lexicalHeadAt`) depend on the position, not on the vertex, and
   are not a relabelling.
-* A constituency tree has traces and binders only, so a copy is not represented. The trace of a
-  token has the index `ι` gives the token, plus one, and the index-free trace has index `0`, so
-  that no token's trace shares the index-free trace's. No binder is introduced: a trace is free in
-  the tree, interpreted by the assignment.
+* A constituency tree has traces and binders only, so a copy is not represented, and no binder is
+  introduced: a trace is free in the tree, interpreted by the assignment. The index of a trace is
+  a parameter, `traceIndex` being the choice that keeps the index-free trace apart from the trace
+  of every token.
 
 ## References
 
@@ -43,60 +42,41 @@ namespace Minimalist
 
 open PhraseStructure Core.Order
 
+/-- The index of a trace by the token it is the trace of: `0` for the index-free trace and the
+token's identifier plus one otherwise, so that no token's trace shares the index-free trace's. -/
+def traceIndex : Option LexicalItem.Token → ℕ
+  | none => 0
+  | some a => a.id + 1
+
 namespace SyntacticObject
 
 variable {L : Type}
 
-/-- The label of a vertex in a constituency tree: a lexical leaf is a terminal, the bare label a
-projection, the trace of a token the trace of index `ι a + 1` for the token `a`, and the index-free
-trace the trace of index `0`. -/
-def Vertex.toLabel (ι : L → ℕ) : Vertex L → Tree.Label Unit L
-  | .inl (some a) => .terminal () a
-  | .inl none => .phrase () .projection
-  | .inr (some a) => .trace (ι a + 1) ()
-  | .inr none => .trace 0 ()
+/-- The label of a vertex in a constituency tree: a lexical item is a terminal, the unlabelled
+vertex a projection, and a trace the trace of the index `τ` gives it. -/
+def Vertex.toLabel (τ : Option L → ℕ) : Vertex L → Tree.Label Unit L
+  | Vertex.lex a => .terminal () a
+  | Vertex.bare => .phrase () .projection
+  | .inr o => .trace (τ o) ()
 
 end SyntacticObject
 
 namespace PlanarSyntacticObject
 
-variable {L : Type} (ι : L → ℕ)
+variable {L : Type} (τ : Option L → ℕ)
 
-/-- The constituency tree of a planar object, with the trace of a token `a` of index
-`ι a + 1` and the index-free trace of index `0`. -/
+/-- The constituency tree of a planar object, its ordered tree relabelled, a trace having the
+index `τ` gives it. -/
 def toTree (t : PlanarSyntacticObject L) : Tree Unit L :=
-  t.toRoseTree.map (SyntacticObject.Vertex.toLabel ι)
-
-@[simp] theorem toTree_leaf (a : L) : (leaf a).toTree ι = .terminal () a := rfl
-
-@[simp] theorem toTree_traceOf (a : L) : (traceOf a).toTree ι = .trace (ι a + 1) () := rfl
-
-@[simp] theorem toTree_trace : (trace : PlanarSyntacticObject L).toTree ι = .trace 0 () := rfl
-
-@[simp] theorem toTree_merge (l r : PlanarSyntacticObject L) :
-    (merge l r).toTree ι = .phrase () .projection [l.toTree ι, r.toTree ι] := rfl
+  t.toRoseTree.map (SyntacticObject.Vertex.toLabel τ)
 
 /-- The tree pronounces the object's tokens, in order. -/
-theorem yield_toTree (t : PlanarSyntacticObject L) : (t.toTree ι).yield = t.yield := by
+theorem yield_toTree (t : PlanarSyntacticObject L) : (t.toTree τ).yield = t.yield := by
   simp only [toTree, Tree.yield, Tree.terminals, RoseTree.leafList_map, yield,
     List.filterMap_map, List.map_filterMap]
   congr 1
   funext v
   rcases v with (_ | _) | (_ | _) <;> rfl
-
-/-- C-command in the tree is c-command between the positions of the object. -/
-theorem cCommands_toTree_iff (t : PlanarSyntacticObject L) (a b : TreePath) :
-    RoseTree.CCommands (t.toTree ι) a b ↔ t.toRoseTree.CCommands a b :=
-  RoseTree.cCommands_map _ _ a b
-
-/-- When the term at `a` occurs once, the terms it c-commands are those at the positions that `a`
-c-commands in the tree. -/
-theorem cCommands_termAt_iff_toTree {t : PlanarSyntacticObject} (ι : LexicalItem.Token → ℕ)
-    {a : t.toRoseTree.Positions} {x : SyntacticObject} (hu : ∀ q, t.termAt q = t.termAt a → q = a) :
-    t.toSyntacticObject.CCommands (t.termAt a) x ↔
-      ∃ q : t.toRoseTree.Positions, RoseTree.CCommands (t.toTree ι) a q ∧ t.termAt q = x := by
-  simp only [cCommands_toTree_iff]
-  exact cCommands_termAt_iff hu
 
 end PlanarSyntacticObject
 

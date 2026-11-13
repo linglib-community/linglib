@@ -75,16 +75,16 @@ open RoseTree SyntacticObject PhraseStructure
 
 /-- The constituency tree of a reading, the binder of a mark `some a` having the index of the trace
 of `a`, and the index-free trace no binder. -/
-def toTree (ι : LexicalItem.Token → ℕ) (t : Marked) (low : Finset SyntacticObject) :
+def toTree (τ : Option LexicalItem.Token → ℕ) (t : Marked) (low : Finset SyntacticObject) :
     Tree Unit LexicalItem.Token :=
-  reading (ReadLow low) (fun _ l ↦ RoseTree.node (Vertex.toLabel ι (.inr l)) [])
-    (fun v cs ↦ RoseTree.node (Vertex.toLabel ι v) cs)
-    (fun l y ↦ l.elim y fun a ↦ .bind (ι a + 1) () y) (fun _ _ y ↦ y) t.val
+  reading (ReadLow low) (fun _ l ↦ RoseTree.node (Vertex.toLabel τ (.inr l)) [])
+    (fun v cs ↦ RoseTree.node (Vertex.toLabel τ v) cs)
+    (fun l y ↦ l.elim y fun a ↦ .bind (τ (some a)) () y) (fun _ _ y ↦ y) t.val
 
 /-- An object with no lower copy has the tree it has as a planar object. -/
-@[simp] theorem toTree_ofPlanar (ι : LexicalItem.Token → ℕ) (p : PlanarSyntacticObject)
+@[simp] theorem toTree_ofPlanar (τ : Option LexicalItem.Token → ℕ) (p : PlanarSyntacticObject)
     (low : Finset SyntacticObject) :
-    (ofPlanar p).toTree ι low = p.toTree ι := by
+    (ofPlanar p).toTree τ low = p.toTree τ := by
   simp only [toTree, ofPlanar, PlanarSyntacticObject.toTree]
   generalize p.toRoseTree = s
   induction s with
@@ -96,19 +96,19 @@ def toTree (ι : LexicalItem.Token → ℕ) (t : Marked) (low : Finset Syntactic
 
 /-! ### Trees and objects -/
 
-theorem toLabel_ne_bind (ι : LexicalItem.Token → ℕ) (v : Vertex) (n : ℕ) (c : Unit) :
-    Vertex.toLabel ι v ≠ .bind n c := by
+theorem toLabel_ne_bind (τ : Option LexicalItem.Token → ℕ) (v : Vertex) (n : ℕ) (c : Unit) :
+    Vertex.toLabel τ v ≠ .bind n c := by
   rcases v with (_ | _) | (_ | _) <;> simp [Vertex.toLabel]
 
-@[simp] theorem eraseBinders_elim (ι : LexicalItem.Token → ℕ) (l : Option LexicalItem.Token)
+@[simp] theorem eraseBinders_elim (τ : Option LexicalItem.Token → ℕ) (l : Option LexicalItem.Token)
     (y : Tree Unit LexicalItem.Token) :
-    Tree.eraseBinders (l.elim y fun a ↦ .bind (ι a + 1) () y) = Tree.eraseBinders y := by
+    Tree.eraseBinders (l.elim y fun a ↦ .bind (τ (some a)) () y) = Tree.eraseBinders y := by
   cases l <;> simp
 
 /-- The tree of a reading is the tree of the object it gives, binders aside. -/
-theorem eraseBinders_toTree (ι : LexicalItem.Token → ℕ) (t : Marked)
+theorem eraseBinders_toTree (τ : Option LexicalItem.Token → ℕ) (t : Marked)
     (low : Finset SyntacticObject) :
-    Tree.eraseBinders (t.toTree ι low) = (t.lf low).toTree ι := by
+    Tree.eraseBinders (t.toTree τ low) = (t.lf low).toTree τ := by
   obtain ⟨s, hs⟩ := t
   simp only [toTree, toRoseTree_lf, PlanarSyntacticObject.toTree]
   clear hs
@@ -136,9 +136,9 @@ def lf? (d : Derivation) (low : Finset SyntacticObject) : Option PlanarSyntactic
   d.replayWithCopies?.map (·.current.lf low)
 
 /-- The constituency tree of a reading of the derivation. -/
-def toTree? (ι : LexicalItem.Token → ℕ) (d : Derivation) (low : Finset SyntacticObject) :
+def toTree? (τ : Option LexicalItem.Token → ℕ) (d : Derivation) (low : Finset SyntacticObject) :
     Option (Tree Unit LexicalItem.Token) :=
-  d.replayWithCopies?.map (·.current.toTree ι low)
+  d.replayWithCopies?.map (·.current.toTree τ low)
 
 /-- `x` c-commands `y` in the object a reading of the derivation gives. -/
 def BindsAtReading (d : Derivation) (low : Finset SyntacticObject) (x y : SyntacticObject) : Prop :=

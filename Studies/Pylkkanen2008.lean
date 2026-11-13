@@ -279,7 +279,7 @@ def Word.val : {a : Ty Base} → Word a → a.Domain Entity Unit { eventuality :
 /-- The meanings of a syntactic object in a model, by the book's rules. -/
 def meanings (t : PlanarSyntacticObject) :
     List (Denotation Entity Unit { eventuality := V }) :=
-  match (t.toTree (·.id)).skeleton (fun _ ↦ false) with
+  match (t.toTree traceIndex).skeleton (fun _ ↦ false) with
   | some s => rules.values (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V }))
       inferInstance (Word.val M) words s
   | none => []
