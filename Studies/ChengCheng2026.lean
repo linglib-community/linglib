@@ -132,17 +132,17 @@ namespace Combination
 
 /-- The structure of a combination; for *dǎ*+R, the adjunction structure (50). -/
 def tree : Combination → Tree Cat Unit
-  | root => Attachment.modifier.tree lexicon
+  | root => (Configuration.modifier lexicon).tree
   | noun => nounTree
 
 /-- The position of *dǎ*. -/
 def daPos : Combination → TreePath
-  | root => ⟨[0, 1]⟩
+  | root => (Configuration.modifier lexicon).head
   | noun => ⟨[0]⟩
 
 /-- The position of the root after *dǎ*. -/
 def rootPos : Combination → TreePath
-  | root => RootCategorization.rootPos
+  | root => (Configuration.modifier lexicon).root
   | noun => ⟨[1, 0, 0]⟩
 
 /-- *dǎ* and the root after it lie in one complex head. -/
@@ -154,7 +154,8 @@ end Combination
 
 /-- Under either attachment, *dǎ* and the root lie in one complex head. -/
 theorem x0At_tree_lexicon (a : Attachment) :
-    x0At (a.tree lexicon) ⟨[0, 1]⟩ = x0At (a.tree lexicon) RootCategorization.rootPos := by
+    x0At (a.configuration lexicon).tree (a.configuration lexicon).head =
+      x0At (a.configuration lexicon).tree (a.configuration lexicon).root := by
   cases a <;> rfl
 
 /-- The combination a datum tests, and whether its form separates *dǎ* from what follows it. -/

@@ -240,29 +240,36 @@ theorem cahoot_interp_gap :
 
 section OneReplacement
 
-open RootCategorization (Lexicon Attachment rootPos selector)
+open RootCategorization (Lexicon Attachment Configuration selector)
+open Core.Order (TreePath)
 
 /-- The root √STUD of *student*, nominalized by *-ent*, with the argument *chemistry*. -/
 def student : Lexicon String := { x := .n, root := "stud", head := "ent", arg := "chemistry" }
 
+/-- A configuration with an adjunct adjoined to its phrase, a PP of word `w` to a phrase of
+category `x`. -/
+def withAdjunct {W : Type*} (x : Minimalist.Cat) (w : W) (k : Configuration W) :
+    Configuration W :=
+  k.adjoin (.head x) [] [.terminal (.head .P) w]
+
 /-- *student of chemistry with long hair*, the nP of (22) with the adjunct of (23) adjoined to
 it. -/
-def studentWithHair (a : Attachment) : PhraseStructure.Tree Cat String :=
-  .adjoin (.head .n) [a.tree student, .terminal (.head .P) "with long hair"]
+def studentWithHair (a : Attachment) : Configuration String :=
+  withAdjunct .n "with long hair" (a.configuration student)
 
 /-- The dependents of a noun that *one* replaces. -/
 inductive Dependent
   | argument | adjunct
   deriving DecidableEq, Repr
 
-/-- The position of a dependent in `studentWithHair`. -/
-def Dependent.pos (a : Attachment) : Dependent → Core.Order.TreePath
-  | .argument => ⟨0 :: a.argPos.toList⟩
+/-- The position of a dependent in a configuration with an adjunct adjoined to it. -/
+def Dependent.pos {W : Type*} (k : Configuration W) : Dependent → TreePath
+  | .argument => k.arg
   | .adjunct => ⟨[1]⟩
 
 /-- *one*, an nP anaphor, strands the dependent from the root. -/
 def OneStrands (a : Attachment) (d : Dependent) : Prop :=
-  Strands (.head .n) (studentWithHair a) ⟨0 :: rootPos.toList⟩ (d.pos a)
+  Strands (.head .n) (studentWithHair a).tree (studentWithHair a).root (d.pos (studentWithHair a))
 
 instance (a : Attachment) (d : Dependent) : Decidable (OneStrands a d) :=
   inferInstanceAs (Decidable (Strands _ _ _ _))
@@ -291,8 +298,9 @@ def studentOfPhysics : Lexicon String :=
 /-- The verb and the noun of (21) merge their object with the same head iff the root takes the
 object as complement. -/
 theorem selector_eq_iff (a : Attachment) :
-    selector (a.tree study) a.argPos = selector (a.tree studentOfPhysics) a.argPos ↔
-      a = .complement := by
+    selector (a.configuration study).tree (a.configuration study).arg =
+      selector (a.configuration studentOfPhysics).tree (a.configuration studentOfPhysics).arg ↔
+        a = .complement := by
   cases a <;> decide
 
 end OneReplacement
