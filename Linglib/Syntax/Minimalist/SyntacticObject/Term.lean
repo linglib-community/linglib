@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Logic.Relation
-public import Linglib.Core.Data.UnorderedTree.Count
+public import Linglib.Core.Data.UnorderedTree.Leaves
 public import Linglib.Core.Data.UnorderedTree.Subtree
 public import Linglib.Syntax.Minimalist.SyntacticObject.Tree
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build

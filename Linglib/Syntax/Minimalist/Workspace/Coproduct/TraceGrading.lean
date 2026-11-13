@@ -100,15 +100,12 @@ private theorem gradedTensorSpan_mul {m k : ℕ}
 private theorem comulTree_mem (τ : UnorderedTree (α ⊕ β) → β)
     (T : UnorderedTree (α ⊕ β)) :
     comulTreeOfCuts (R := R) (traceCuts τ) T ∈
-      gradedTensorSpan (R := R) (α := α) (β := β) (T.numNodes - 1) := by
+      gradedTensorSpan (R := R) (α := α) (β := β) T.numEdges := by
   unfold comulTreeOfCuts
   refine Submodule.add_mem _ ?_ ?_
   · refine Submodule.subset_span ⟨{T}, 0, ?_, ?_⟩
-    · rw [Multiset.map_singleton, Multiset.sum_singleton]
-      show T.numNodes - 1 + ((0 : Forest (UnorderedTree (α ⊕ β))).map UnorderedTree.numEdges).sum =
-        T.numNodes - 1
-      show T.numNodes - 1 + 0 = T.numNodes - 1
-      omega
+    · rw [Multiset.map_singleton, Multiset.sum_singleton, Multiset.map_zero, Multiset.sum_zero,
+        add_zero]
     · rw [ConnesKreimer.of'_zero]
       rfl
   · refine multiset_sum_mem _ ?_

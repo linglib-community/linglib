@@ -153,11 +153,11 @@ end Grammar
 /-! ### The examples of sections 4 and 6 -/
 
 /-- The successor diagram of a two-letter word. -/
-abbrev pair (a b : Char) : (wordLanguage Char).Factor 2 := succDiagram Char [a, b] le_rfl
+abbrev pair (a b : Char) : (wordLanguage Char).Factor 2 := succDiagram ({·}) [a, b] le_rfl
 
 /-- The grammar of sections 4 and 6 forbids aa, bb and c. -/
 def abGrammar : Set ((wordLanguage Char).Factor 2) :=
-  {pair 'a' 'a', pair 'b' 'b', succDiagram Char ['c'] (by simp)}
+  {pair 'a' 'a', pair 'b' 'b', succDiagram ({·}) ['c'] (by simp)}
 
 /-- The grammar of section 6 forbids the two-letter factors aa, bb and those with a c. -/
 def twoLetterGrammar : Set ((wordLanguage Char).Factor 2) :=
@@ -165,9 +165,9 @@ def twoLetterGrammar : Set ((wordLanguage Char).Factor 2) :=
     pair 'c' 'b'}
 
 theorem mem_language_abGrammar_twoLetterGrammar :
-    ['a'] ∈ language (WordModel · (· ⋖ ·)) abGrammar ∧
-      ['c'] ∉ language (WordModel · (· ⋖ ·)) abGrammar ∧
-        ['c'] ∈ language (WordModel · (· ⋖ ·)) twoLetterGrammar := by
+    ['a'] ∈ language (WordModel ({·}) · (· ⋖ ·)) abGrammar ∧
+      ['c'] ∉ language (WordModel ({·}) · (· ⋖ ·)) abGrammar ∧
+        ['c'] ∈ language (WordModel ({·}) · (· ⋖ ·)) twoLetterGrammar := by
   simp only [mem_language_iff, abGrammar, twoLetterGrammar, Set.mem_insert_iff,
     Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, succDiagram_occurs_iff]
   decide
@@ -178,7 +178,8 @@ theorem mem_language_abGrammar_twoLetterGrammar :
 abbrev featureLanguage : FirstOrder.Language := wordLanguage (Feature × Bool)
 
 example (D : Set (List Segment)) :
-    IsAdequate (WordModel · (· < ·)) D (mostGeneral featureLanguage (WordModel · (· < ·)) 2 D) :=
+    IsAdequate (WordModel featureValues · (· < ·)) D
+      (mostGeneral featureLanguage (WordModel featureValues · (· < ·)) 2 D) :=
   isAdequate_mostGeneral D
 
 /-- The class of the sibilants is [+strident]. -/
@@ -191,10 +192,10 @@ def alveolar : Segment := .ofSpecs [(.strident, true), (.anterior, true)]
 def postalveolar : Segment := .ofSpecs [(.strident, true), (.anterior, false)]
 
 /-- The forbidden subfactor of section 5.2 is an alveolar sibilant before a postalveolar one. -/
-def antPost : featureLanguage.Factor 2 := diagram _ [alveolar, postalveolar] le_rfl
+def antPost : featureLanguage.Factor 2 := diagram featureValues [alveolar, postalveolar] le_rfl
 
 /-- The mirror image is a postalveolar sibilant before an alveolar one. -/
-def postAnt : featureLanguage.Factor 2 := diagram _ [postalveolar, alveolar] le_rfl
+def postAnt : featureLanguage.Factor 2 := diagram featureValues [postalveolar, alveolar] le_rfl
 
 theorem alveolar_le_iff (x : Segment) : alveolar ≤ x ↔ sibilantClass x = some true := by
   rw [alveolar, Segment.ofSpecs_le_iff_forall_mem x (by decide), sibilantClass]
@@ -205,12 +206,12 @@ theorem postalveolar_le_iff (x : Segment) : postalveolar ≤ x ↔ sibilantClass
   by_cases h : x.IsSibilant <;> simp_all [Segment.IsSibilant, Segment.HasValue]
 
 theorem diagram_pair_occurs_iff (d e : Segment) (w : List Segment) :
-    (diagram (Feature × Bool) [d, e] (k := 2) le_rfl).Occurs (WordModel w (· < ·)) ↔
+    (diagram featureValues [d, e] (k := 2) le_rfl).Occurs (WordModel featureValues w (· < ·)) ↔
       ∃ a b, [a, b] <+ w ∧ d ≤ a ∧ e ≤ b := by
   simp [diagram_occurs_iff_forall₂_le, List.forall₂_cons_left_iff]
 
 theorem diagram_pair_le_iff (d e x y : Segment) :
-    diagram (Feature × Bool) [d, e] (k := 2) le_rfl ≤ diagram _ [x, y] le_rfl ↔
+    diagram featureValues [d, e] (k := 2) le_rfl ≤ diagram featureValues [x, y] le_rfl ↔
       d ≤ x ∧ e ≤ y := by
   rw [le_diagram_iff, diagram_pair_occurs_iff]
   refine ⟨fun ⟨a, b, hab, hd, he⟩ ↦ ?_, fun ⟨hd, he⟩ ↦ ⟨x, y, .refl _, hd, he⟩⟩
@@ -218,13 +219,14 @@ theorem diagram_pair_le_iff (d e x y : Segment) :
   exact ⟨hd, he⟩
 
 theorem mem_language_pair_iff {x y : Segment} {G : Set (featureLanguage.Factor 2)} :
-    [x, y] ∈ language (WordModel · (· < ·)) G ↔ ∀ g ∈ G, ¬ g ≤ diagram _ [x, y] le_rfl := by
+    [x, y] ∈ language (WordModel featureValues · (· < ·)) G ↔
+      ∀ g ∈ G, ¬ g ≤ diagram featureValues [x, y] le_rfl := by
   simp only [mem_language_iff, le_diagram_iff]
 
 /-- Each of the four sibilant pairs a conventional model forbids separately lies above the one
 feature-labelled subfactor, which the grammar of section 5.2 forbids instead. -/
 theorem antPost_le_diagram :
-    ∀ x ∈ [s, z], ∀ y ∈ [esh, ezh], antPost ≤ diagram _ [x, y] le_rfl := by
+    ∀ x ∈ [s, z], ∀ y ∈ [esh, ezh], antPost ≤ diagram featureValues [x, y] le_rfl := by
   simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true,
     antPost, diagram_pair_le_iff, alveolar_le_iff, postalveolar_le_iff]
   decide
@@ -234,15 +236,16 @@ def t : Segment := .ofChart .«t»
 
 /-- [+anterior] before [−anterior]. -/
 def antNonant : featureLanguage.Factor 2 :=
-  diagram _ [Segment.ofSpecs [(.anterior, true)], Segment.ofSpecs [(.anterior, false)]] le_rfl
+  diagram featureValues
+    [Segment.ofSpecs [(.anterior, true)], Segment.ofSpecs [(.anterior, false)]] le_rfl
 
 /-- [+strident] before [+strident]. -/
-def stridents : featureLanguage.Factor 2 := diagram _ [strident, strident] le_rfl
+def stridents : featureLanguage.Factor 2 := diagram featureValues [strident, strident] le_rfl
 
 /-- The grammar of section 5.2 admits the sibilants of the Samala word the paper judges acceptable
 and not those of the word it judges ungrammatical. -/
 theorem sibilantsOf_mem_language_iff : ∀ e ∈ Examples.all,
-    sibilantsOf e.primaryText.toList ∈ language (WordModel · (· < ·)) {antPost} ↔
+    sibilantsOf e.primaryText.toList ∈ language (WordModel featureValues · (· < ·)) {antPost} ↔
       e.judgment = .acceptable := by
   simp only [Examples.all, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,
     implies_true, and_true]
@@ -254,15 +257,16 @@ theorem sibilantsOf_mem_language_iff : ∀ e ∈ Examples.all,
 
 -- Forbidding [+str][+str] instead would exclude s…s, which the grammar admits (section 5.2).
 theorem s_s_mem_language :
-    stridents ≤ diagram _ [s, s] le_rfl ∧ [s, s] ∈ language (WordModel · (· < ·)) {antPost} := by
+    stridents ≤ diagram featureValues [s, s] le_rfl ∧
+      [s, s] ∈ language (WordModel featureValues · (· < ·)) {antPost} := by
   simp only [mem_language_pair_iff, Set.mem_singleton_iff, forall_eq, stridents, antPost,
     diagram_pair_le_iff, alveolar_le_iff, postalveolar_le_iff]
   decide
 
 -- Forbidding [+ant][−ant] instead would exclude t…ʃ, which the grammar admits (section 5.2).
 theorem t_esh_mem_language :
-    antNonant ≤ diagram _ [t, esh] le_rfl ∧
-      [t, esh] ∈ language (WordModel · (· < ·)) {antPost} := by
+    antNonant ≤ diagram featureValues [t, esh] le_rfl ∧
+      [t, esh] ∈ language (WordModel featureValues · (· < ·)) {antPost} := by
   simp only [mem_language_pair_iff, Set.mem_singleton_iff, forall_eq, antNonant, antPost,
     diagram_pair_le_iff, alveolar_le_iff, postalveolar_le_iff]
   decide
@@ -285,7 +289,8 @@ private theorem pair_agree_iff (a b : Segment) :
 /-- Hansson's symmetric sibilant harmony is the language of the grammar of the paper's subfactor
 and its mirror image. -/
 theorem navajoSibilantHarmony_language_eq :
-    navajoSibilantHarmony.language 2 = language (WordModel · (· < ·)) {antPost, postAnt} := by
+    navajoSibilantHarmony.language 2 =
+      language (WordModel featureValues · (· < ·)) {antPost, postAnt} := by
   ext w
   rw [TierStrictlyLocalGrammar.mem_ofForbiddenPairs_language_iff_forall_sublist_pair
     (R := fun x y ↦ x .anterior ≠ y .anterior) (p := OnTier) fun _ _ _ _ _ _ ↦ by simp_all,
@@ -296,7 +301,7 @@ theorem navajoSibilantHarmony_language_eq :
   exact forall₂_congr fun a b ↦ imp_congr_right fun _ ↦ pair_agree_iff a b
 
 theorem esh_s_mem_language :
-    [esh, s] ∈ language (WordModel · (· < ·)) {antPost} ∧
+    [esh, s] ∈ language (WordModel featureValues · (· < ·)) {antPost} ∧
       [esh, s] ∉ navajoSibilantHarmony.language 2 := by
   simp only [Set.ext_iff.1 navajoSibilantHarmony_language_eq [esh, s], mem_language_pair_iff,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, antPost, postAnt,

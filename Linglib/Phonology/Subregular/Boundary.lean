@@ -103,32 +103,6 @@ theorem getElem?_int_eq_none_iff : w[i]? = none ↔ i < 0 ∨ (w.length : ℤ) �
   rw [_root_.getElem?_eq_none_iff]
   omega
 
-/-- Agreement of integer-indexed entries up to the length of `w` forces equality. -/
-theorem ext_getElem?_int (h : ∀ j : ℤ, j ≤ (w.length : ℤ) → y[j]? = w[j]?) : y = w := by
-  have hy : y.length ≤ w.length := by
-    have h1 := h (w.length : ℤ) (Int.le_refl _)
-    rwa [getElem?_natCast, getElem?_natCast, getElem?_eq_none (Nat.le_refl _),
-      getElem?_eq_none_iff] at h1
-  refine ext_getElem? fun n ↦ ?_
-  rcases Nat.lt_or_ge n w.length with hn | hn
-  · simpa using h n (by omega)
-  · rw [getElem?_eq_none hn, getElem?_eq_none (by omega)]
-
-/-- Agreement of integer-indexed entries below `c` transfers prefixes of length `c`. -/
-theorem ext_take_getElem?_int {c : ℕ} (h : ∀ j : ℤ, j < (c : ℤ) → y[j]? = w[j]?) :
-    y.take c = w.take c :=
-  ext_take_getElem? fun n hn ↦ by simpa using h n (by omega)
-
-theorem getElem?_int_append_left (h : i < (u.length : ℤ)) : (u ++ v)[i]? = u[i]? := by
-  by_cases h0 : 0 ≤ i
-  · rw [getElem?_int_of_nonneg h0, getElem?_int_of_nonneg h0, getElem?_append_left (by omega)]
-  · rw [getElem?_int_of_neg (by omega), getElem?_int_of_neg (by omega)]
-
-theorem getElem?_int_take_of_lt {c : ℕ} (h : i < (c : ℤ)) : (w.take c)[i]? = w[i]? := by
-  by_cases h0 : 0 ≤ i
-  · rw [getElem?_int_of_nonneg h0, getElem?_int_of_nonneg h0, getElem?_take_of_lt (by omega)]
-  · rw [getElem?_int_of_neg (by omega), getElem?_int_of_neg (by omega)]
-
 end List
 
 /-! ### Position discrimination and windows
@@ -149,10 +123,6 @@ def window (k : ℕ) (w : List α) (i : ℤ) : List (Option α) :=
 lemma getElem?_window {k j : ℕ} {w : List α} {i : ℤ} (h : j < k) :
     (window k w i)[j]? = some w[i + j]? := by
   simp [window, h]
-
-lemma window_eq_window_iff {k : ℕ} {w y : List α} {i q : ℤ} :
-    window k w i = window k y q ↔ ∀ j : ℕ, j < k → w[i + j]? = y[q + j]? := by
-  simp [window, List.ofFn_inj, funext_iff, Fin.forall_iff]
 
 variable {k : ℕ} {w y l : List α}
 
@@ -232,5 +202,97 @@ lemma infix_boundary_and_length_eq_iff {f : List (Option α)} (hk : 1 ≤ k) :
       getElem?_boundary_eq_getElem?_int (q := j + (i + (k - 1 : ℕ)).toNat) (by omega),
       show ((j + (i + (k - 1 : ℕ)).toNat : ℕ) : ℤ) - ((k - 1 : ℕ) : ℤ) = i + (j : ℕ)
         by omega]
+
+/-! ### The edges of a padded word
+
+A boundary marker stands before a symbol only at the left edge of a padded word, and after one
+only at the right edge, so an infix that shows an edge is pinned to it. -/
+
+lemma boundary_reverse (k : ℕ) (w : List α) : (boundary k w).reverse = boundary k w.reverse := by
+  simp [boundary, List.append_assoc]
+
+lemma map_some_infix_boundary (k : ℕ) (w : List α) : w.map some <:+: boundary k w :=
+  ⟨_, _, rfl⟩
+
+private lemma replicate_append_cons {β : Type*} (n : ℕ) (a : β) (l : List β) :
+    List.replicate n a ++ a :: l = a :: (List.replicate n a ++ l) := by
+  induction n with
+  | zero => rfl
+  | succ n ih => simp [List.replicate_succ, ih]
+
+/-- The word between one marker on each side lies in every wider padding. -/
+lemma boundary_two_infix_boundary (hk : 2 ≤ k) (w : List α) : boundary 2 w <:+: boundary k w := by
+  refine ⟨List.replicate (k - 2) none, List.replicate (k - 2) none, ?_⟩
+  obtain ⟨n, rfl⟩ : ∃ n, k = n + 2 := ⟨k - 2, by omega⟩
+  simp [boundary, List.replicate_succ, replicate_append_cons]
+
+lemma infix_of_map_some_infix_boundary {s : List α} (h : s.map some <:+: boundary k y) :
+    s <:+: y := by
+  simpa [boundary, List.filterMap_map] using h.filterMap id
+
+/-- A marker before a symbol stands at the left edge, which fixes where the infix lies. -/
+private lemma getElem?_boundary_of_cons_none_infix {s : List α} {t : List (Option α)}
+    (hs : s ≠ []) (h : none :: (s.map some ++ t) <:+: boundary k y) :
+    ∀ i (hi : i < (s.map some ++ t).length),
+      (boundary k y)[i + (k - 1)]? = some ((s.map some ++ t)[i]) := by
+  obtain ⟨δ, -, hδ⟩ := List.infix_iff_getElem?.1 h
+  have hpos : 0 < s.length := List.length_pos_iff.2 hs
+  have h₀ := of_getElem?_boundary_eq_none (by simpa using hδ 0 (by simp))
+  have h₁ := hδ (0 + 1) (by simp; omega)
+  simp only [List.getElem_cons_succ] at h₁
+  rw [List.getElem_append_left (by simpa using hpos), List.getElem_map] at h₁
+  obtain ⟨_, h₁⟩ := of_getElem?_boundary_eq_some h₁
+  have := (List.getElem?_eq_some_iff.1 h₁).1
+  intro i hi
+  have hi' := hδ (i + 1) (by simpa using hi)
+  simp only [List.getElem_cons_succ] at hi'
+  rwa [show i + 1 + δ = i + (k - 1) by omega] at hi'
+
+/-- A marker before symbols pins them to the left edge. -/
+lemma prefix_of_cons_none_infix_boundary {s : List α} (hs : s ≠ [])
+    (h : none :: s.map some <:+: boundary k y) : s <+: y := by
+  have key (i : ℕ) (hi : i < s.length) : y[i]? = some s[i] := by
+    have := getElem?_boundary_of_cons_none_infix (t := []) hs (by simpa using h) i (by simpa)
+    simp only [List.append_nil, List.getElem_map] at this
+    simpa using (of_getElem?_boundary_eq_some this).2
+  refine List.prefix_iff_eq_take.2 (List.ext_getElem? fun i ↦ ?_)
+  rcases lt_or_ge i s.length with hi | hi
+  · rw [List.getElem?_take_of_lt hi, key i hi, List.getElem?_eq_getElem hi]
+  · rw [List.getElem?_eq_none hi, List.getElem?_eq_none (by simp; omega)]
+
+/-- A marker after symbols pins them to the right edge. -/
+lemma suffix_of_concat_none_infix_boundary {s : List α} (hs : s ≠ [])
+    (h : s.map some ++ [none] <:+: boundary k y) : s <:+ y := by
+  have h' := List.reverse_infix.2 h
+  rw [boundary_reverse] at h'
+  exact List.reverse_prefix.1
+    (prefix_of_cons_none_infix_boundary (by simpa using hs) (by simpa using h'))
+
+/-- A nonempty word between its two markers occurs in the padding of that word alone. -/
+lemma eq_of_boundary_two_infix_boundary {s : List α} (hs : s ≠ [])
+    (h : boundary 2 s <:+: boundary k y) : s = y := by
+  have h' : none :: (s.map some ++ [none]) <:+: boundary k y := by simpa [boundary] using h
+  have hpre : s <+: y := prefix_of_cons_none_infix_boundary hs
+    ((List.cons_prefix_cons.2 ⟨rfl, List.prefix_append _ _⟩).isInfix.trans h')
+  have hlast := getElem?_boundary_of_cons_none_infix hs h' s.length (by simp)
+  have := of_getElem?_boundary_eq_none (by simpa using hlast)
+  exact hpre.eq_of_length_le (by omega)
+
+/-- Only the padding of the empty word has `k` markers in a row. -/
+lemma eq_nil_of_replicate_none_infix_boundary (hk : 1 ≤ k)
+    (h : List.replicate k none <:+: boundary k y) : y = [] := by
+  obtain ⟨δ, hlen, hδ⟩ := List.infix_iff_getElem?.1 h
+  rw [List.length_replicate, length_boundary] at hlen
+  by_contra hy
+  have hpos : 0 < y.length := List.length_pos_iff.2 hy
+  rcases Nat.lt_or_ge δ k with hδk | hδk
+  · have h₁ := hδ (k - 1 - δ) (by simp; omega)
+    rw [List.getElem_replicate, show k - 1 - δ + δ = k - 1 by omega] at h₁
+    have := of_getElem?_boundary_eq_none h₁
+    omega
+  · have h₀ := hδ 0 (by simp; omega)
+    rw [List.getElem_replicate, Nat.zero_add] at h₀
+    have := of_getElem?_boundary_eq_none h₀
+    omega
 
 end Pinning
