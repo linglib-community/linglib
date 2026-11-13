@@ -9,22 +9,14 @@ public import Linglib.Semantics.Events.Lifespan
 Grimm's persistence features say whether a participant exists, and keeps its qualities, at the
 beginning and at the end of an event. Given the participant's life span, the event's run time and
 the participant's qualities over time, Grimm's descriptions of the persistence levels assign the
-participant a level, and its features are the persistence features the participant has. A created
-participant, existing at the end of the event but not at the beginning, does not pre-exist the
-event, and a destroyed one goes out of existence before the event ends.
-
-## Main definitions
-
-* `PersistenceLevel.ofLifespan`: the persistence level of a participant in an event.
-
-## Main statements
-
-* `PersistenceLevel.exPersBeginning_le_ofLifespan_iff`: a participant is at existential persistence
-  (beginning) or above exactly when it exists when the event begins.
-* `PersistenceLevel.not_preExists_of_ofLifespan_eq_exPersEnd`: a created participant does not
-  pre-exist the event.
-* `PersistenceLevel.snd_lt_of_ofLifespan_eq_exPersBeginning`: a destroyed participant goes out of
-  existence before the event ends.
+participant [a level](##ArgumentStructure.PersistenceLevel.ofLifespan), whose features are the
+persistence features the participant has: it [exists when the event
+begins](##ArgumentStructure.PersistenceLevel.exPB_mem_ofLifespan) and [keeps its qualities to the
+end](##ArgumentStructure.PersistenceLevel.quPE_mem_ofLifespan) exactly when the level says so. A
+created participant, existing at the end of the event but not at the beginning, [does not
+pre-exist the event](##ArgumentStructure.PersistenceLevel.not_preExists_of_ofLifespan_eq_exPersEnd),
+and a destroyed one [goes out of existence before the event
+ends](##ArgumentStructure.PersistenceLevel.snd_lt_of_ofLifespan_eq_exPersBeginning).
 
 ## Implementation notes
 
@@ -79,11 +71,30 @@ theorem ofLifespan_eq_totalPersistence_iff :
       run.fst ∈ life ∧ run.snd ∈ life ∧ q run.snd = q run.fst := by
   unfold ofLifespan; split_ifs <;> simp_all
 
+/-! ### The features of the level
+
+The level's features are the persistence features the participant has. -/
+
+@[simp] theorem exPB_mem_ofLifespan : .exPB ∈ ofLifespan life run q ↔ run.fst ∈ life := by
+  unfold ofLifespan; split_ifs <;> simp_all <;> decide
+
+@[simp] theorem exPE_mem_ofLifespan : .exPE ∈ ofLifespan life run q ↔ run.snd ∈ life := by
+  unfold ofLifespan; split_ifs <;> simp_all <;> decide
+
+@[simp] theorem quPB_mem_ofLifespan : .quPB ∈ ofLifespan life run q ↔ run.fst ∈ life := by
+  unfold ofLifespan; split_ifs <;> simp_all <;> decide
+
+/-- A participant keeps its qualities to the end of the event when it exists there with the
+qualities it had at the beginning, if it existed then. -/
+@[simp] theorem quPE_mem_ofLifespan : .quPE ∈ ofLifespan life run q ↔
+    run.snd ∈ life ∧ (run.fst ∈ life → q run.snd = q run.fst) := by
+  unfold ofLifespan; split_ifs <;> simp_all <;> decide
+
 /-- A participant is at existential persistence (beginning) or above exactly when it exists when
 the event begins. -/
 theorem exPersBeginning_le_ofLifespan_iff :
-    .exPersBeginning ≤ ofLifespan life run q ↔ run.fst ∈ life := by
-  unfold ofLifespan; split_ifs <;> simp_all <;> decide
+    .exPersBeginning ≤ ofLifespan life run q ↔ run.fst ∈ life :=
+  exPB_mem_iff.symm.trans exPB_mem_ofLifespan
 
 theorem fst_lt_of_ofLifespan_eq_exPersEnd (h : ofLifespan life run q = .exPersEnd) :
     run.fst < life.fst :=

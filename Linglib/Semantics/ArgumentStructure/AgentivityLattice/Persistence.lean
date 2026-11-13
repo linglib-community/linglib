@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Basic.SetLike.Basic
-public import Mathlib.Order.Lattice
+public import Mathlib.Order.GaloisConnection.Basic
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -15,21 +15,16 @@ boundary erases them, leave five valid combinations, ordered by inclusion: a lat
 creation branch (`exPersEnd`) and an affectedness branch (`exPersBeginning ≤ quPersBeginning`)
 rejoining at `totalPersistence`.
 
-## Main definitions
-
-* `PersistenceLevel.Feature`: the four persistence features.
-* `PersistenceLevel`: the five valid combinations, each a set of features.
-* `PersistenceLevel.Valid`: Grimm's exclusion principles, with `range_features` showing that the
-  five levels are exactly the combinations they leave.
-
 ## Implementation notes
 
 A level is `SetLike` over its features, so its order is inclusion. Grimm's first principle, that
 some qualitative persistence accompanies existential persistence, is read as qualitative
 persistence at the beginning with existence there and some qualitative persistence with existence
 at the end; this is the reading under which exactly five combinations remain, as the paper says.
-The levels are closed under union but not under intersection, so the meet is the largest level
-inside the intersection, given by a table.
+The third principle is a disjunction, so the levels are closed under union but not under
+intersection, and the lattice is lifted along
+[the adjunction](##ArgumentStructure.PersistenceLevel.gc_features_ofFeatures) between a level's
+features and the largest level inside a set of features.
 `AgentivityLattice/OfLifespan.lean` assigns a participant its level from its life span and an
 event's run time.
 
@@ -116,41 +111,40 @@ instance : DecidableRel (α := PersistenceLevel) (· ≤ ·) := fun _ _ ↦
 
 instance : DecidableLT PersistenceLevel := fun _ _ ↦ decidable_of_iff _ lt_iff_le_not_ge.symm
 
-/-- The join of two levels, the level whose features are the union of theirs. -/
-def sup' : PersistenceLevel → PersistenceLevel → PersistenceLevel
-  | .totalNonPersistence, x | x, .totalNonPersistence => x
-  | .totalPersistence, _ | _, .totalPersistence => .totalPersistence
-  | .exPersBeginning, .exPersBeginning => .exPersBeginning
-  | .exPersEnd, .exPersEnd => .exPersEnd
-  | .quPersBeginning, .quPersBeginning => .quPersBeginning
-  | .exPersBeginning, .quPersBeginning | .quPersBeginning, .exPersBeginning => .quPersBeginning
-  | .exPersBeginning, .exPersEnd | .exPersEnd, .exPersBeginning => .totalPersistence
-  | .exPersEnd, .quPersBeginning | .quPersBeginning, .exPersEnd => .totalPersistence
+/-! ### The lattice
 
-/-- The meet of two levels, the largest level inside the intersection of their features. -/
-def inf' : PersistenceLevel → PersistenceLevel → PersistenceLevel
-  | .totalPersistence, x | x, .totalPersistence => x
-  | .totalNonPersistence, _ | _, .totalNonPersistence => .totalNonPersistence
-  | .exPersBeginning, .exPersBeginning => .exPersBeginning
-  | .exPersEnd, .exPersEnd => .exPersEnd
-  | .quPersBeginning, .quPersBeginning => .quPersBeginning
-  | .exPersBeginning, .quPersBeginning | .quPersBeginning, .exPersBeginning => .exPersBeginning
-  | .exPersBeginning, .exPersEnd | .exPersEnd, .exPersBeginning => .totalNonPersistence
-  | .exPersEnd, .quPersBeginning | .quPersBeginning, .exPersEnd => .totalNonPersistence
+The levels are closed under union of features but not under intersection, so the largest level
+inside a set of features exists, and it is upper adjoint to the features of a level. The lattice
+structure is lifted along the adjunction: the join of two levels has the union of their features,
+and their meet is the largest level inside the intersection. -/
 
-theorem features_sup' (l m : PersistenceLevel) : (sup' l m).features = l.features ∪ m.features := by
+/-- The largest level whose features are among `s`. -/
+def ofFeatures (s : Finset Feature) : PersistenceLevel :=
+  if .exPB ∈ s ∧ .quPB ∈ s then
+    if .exPE ∈ s then if .quPE ∈ s then .totalPersistence else .quPersBeginning
+    else .exPersBeginning
+  else if .exPE ∈ s ∧ .quPE ∈ s then .exPersEnd else .totalNonPersistence
+
+/-- A level's features are among `s` exactly when the level is below the largest level inside
+`s`. -/
+theorem gc_features_ofFeatures : GaloisConnection features ofFeatures := by
+  intro l s; revert l s; decide
+
+/-- The levels are a retract of the sets of features. -/
+def gciFeaturesOfFeatures : GaloisCoinsertion features ofFeatures :=
+  gc_features_ofFeatures.toGaloisCoinsertion (by decide)
+
+@[simp] theorem ofFeatures_features (l : PersistenceLevel) : ofFeatures l.features = l :=
+  gciFeaturesOfFeatures.u_l_eq l
+
+instance : Lattice PersistenceLevel := gciFeaturesOfFeatures.liftLattice
+
+theorem features_sup (l m : PersistenceLevel) : (l ⊔ m).features = l.features ∪ m.features := by
   revert l m; decide
 
-instance : Lattice PersistenceLevel where
-  __ := (inferInstance : PartialOrder PersistenceLevel)
-  sup := sup'
-  inf := inf'
-  le_sup_left := by decide
-  le_sup_right := by decide
-  sup_le := by decide
-  inf_le_left := by decide
-  inf_le_right := by decide
-  le_inf := by decide
+theorem features_inf_subset (l m : PersistenceLevel) :
+    (l ⊓ m).features ⊆ l.features ∩ m.features :=
+  gc_features_ofFeatures.l_u_le _
 
 instance : BoundedOrder PersistenceLevel where
   bot := .totalNonPersistence
