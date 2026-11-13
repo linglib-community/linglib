@@ -55,8 +55,12 @@ theorem mem_iff_of_mem_closure (hX : X ∈ BooleanSubalgebra.closure A)
   | sup x _ y _ hx hy => exact or_congr hx hy
   | compl x _ hx => exact not_congr hx
 
+theorem notMem_closure_of_separates (h : ∀ a ∈ A, u ∈ a ↔ v ∈ a) (hu : u ∈ X) (hv : v ∉ X) :
+    X ∉ BooleanSubalgebra.closure A :=
+  fun hX ↦ hv ((mem_iff_of_mem_closure hX h).1 hu)
+
 theorem not_exhaustivelyRelevant_of_separates (h : ∀ a ∈ A, u ∈ a ↔ v ∈ a)
     (hu : u ∈ exh A p) (hv : v ∉ exh A p) : ¬ ExhaustivelyRelevant A p :=
-  fun hp ↦ hv ((mem_iff_of_mem_closure hp h).1 hu)
+  notMem_closure_of_separates h hu hv
 
 end Alternatives

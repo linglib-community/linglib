@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.SchwarzWagner2026
 public import Linglib.Pragmatics.NeoGricean.Basic
 public import Linglib.Semantics.Composition.Constituency
