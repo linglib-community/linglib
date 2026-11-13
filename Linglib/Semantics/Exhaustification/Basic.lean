@@ -161,6 +161,30 @@ theorem mem_excludes_iff_forall_eq (h : ∀ q ∈ C, p ⊆ q → q = p) :
 
 end Exh
 
+/-! ### Alternatives along an order -/
+
+section Order
+
+variable {ι : Type*} [Preorder ι] {f : ι → Set W} {a : ι} {w : W}
+
+/-- Along an antitone family the members at the indices below a member's are entailed by it, and
+exhaustification against them changes nothing. -/
+theorem exh_image_Iic_of_antitone (hf : Antitone f) (a : ι) : exh (f '' Set.Iic a) (f a) = f a :=
+  exh_eq_self <| Set.forall_mem_image.2 fun _ hi ↦ hf hi
+
+theorem exh_image_Iio_of_antitone (hf : Antitone f) (a : ι) : exh (f '' Set.Iio a) (f a) = f a :=
+  exh_eq_self <| Set.forall_mem_image.2 fun _ hi ↦ hf (le_of_lt hi)
+
+/-- Along a family whose entailments are its order, a member is exhaustified against the members
+at the indices below its own where it holds and no member at a smaller index does. -/
+theorem mem_exh_image_Iic_iff (hf : ∀ i j, f i ⊆ f j ↔ i ≤ j) :
+    w ∈ exh (f '' Set.Iic a) (f a) ↔ w ∈ f a ∧ ∀ i < a, w ∉ f i :=
+  mem_exh_image_iff.trans <| and_congr_right fun _ ↦
+    ⟨fun h i hlt hi ↦ hlt.not_ge ((hf a i).1 (h i hlt.le hi)),
+      fun h i hle hi ↦ (hf a i).2 <| not_not.1 fun hai ↦ h i (lt_of_le_not_ge hle hai) hi⟩
+
+end Order
+
 /-! ### Irredundant alternatives -/
 
 section Irredundant

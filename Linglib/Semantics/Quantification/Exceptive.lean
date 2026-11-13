@@ -1,37 +1,34 @@
 module
 
+public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Quantification.Counting
 public import Mathlib.Order.Bounds.Basic
 
 /-!
 # Exceptive quantifiers
 
-This file defines the semantics of exceptive constructions, *every student but John* and
-*except for John, every student*, over generalized quantifiers. An exceptive subtracts an
-exception set from the restrictor of a determiner, in the Boolean algebra of predicates on the
-domain. A restrictive exceptive is one the quantification needs: it holds with the subtraction
-and fails without it, which [von-fintel-1993] gives as the semantics of the free exceptive.
-The exception set of a quantification is the least set whose subtraction makes it true, his
-semantics of the *but*-phrase, so that the phrase names the set responsible for the falsehood
-of the quantification.
+This file defines the semantics of exceptive constructions, *every student but John*, *except for
+John, every student* and *some student besides John*, over generalized quantifiers. An exceptive
+subtracts an exception set from the restrictor of a determiner, in the Boolean algebra of
+predicates on the domain. A subtraction is `Restrictive` when the quantification holds with it and
+fails without it. What a restrictive subtraction says of the exception set is fixed by the
+determiner: under an intersective one part of it [lies in the
+scope](##Quantifier.Exceptive.Restrictive.inter_nonempty), under a co-intersective one part of it
+[lies outside](##Quantifier.Exceptive.Restrictive.sdiff_nonempty), and a left-upward-monotone one
+[admits none](##Quantifier.Exceptive.Restrictive.not_of_restrictorMonotone). The exception set of
+a quantification is the least set whose subtraction makes it true, [von-fintel-1993]'s semantics
+of the *but*-phrase, which with *every* is [the restrictor minus the
+scope](##Quantifier.Exceptive.isExceptionSet_every_iff) and with *no* [their
+intersection](##Quantifier.Exceptive.isExceptionSet_no_iff).
 
-## Main definitions
-
-* `Restrictive`, `IsExceptionSet`: domain subtraction with restrictiveness, and the exception
-  set as the least verifying subtraction.
-
-## Main results
-
-* `IsExceptionSet.unique`, `IsExceptionSet.le_restrictor`, `isExceptionSet_iff_disjoint`,
-  `isExceptionSet_iff_sInf_eq`: the exception set is unique, lies within the restrictor, is
-  disjoint from every verifying subset of the restrictor, and is the intersection of the
-  verifying subtractions.
-* `isExceptionSet_every_iff`, `isExceptionSet_no_iff`: with *every* the exception set is the
-  restrictor minus the scope, with *no* their intersection.
-* `IsExceptionSet.eq_bot_of_restrictorMonotone`, `Restrictive.not_of_restrictorMonotone`,
-  `Restrictive.mono`: a left-upward-monotone determiner admits only the empty exception set and
-  no restrictive exceptive; a left-downward-monotone one preserves restrictiveness under
-  enlarging the exception.
+Over a restrictor and scope that vary with the world, `subtraction Q A B C` is the proposition
+that the quantification holds with `C` subtracted, and both conditions meet its exhaustification
+against other subtractions. Where it does not entail the alternative that subtracts nothing, its
+exhaustification against that alternative is [the restrictive
+subtraction](##Quantifier.Exceptive.exh_singleton_subtraction_empty), and under a
+left-downward-monotone determiner the subtraction of the exception set [satisfies its
+exhaustification against any family of
+subtractions](##Quantifier.Exceptive.IsExceptionSet.mem_exh_subtraction).
 
 ## Implementation notes
 
@@ -41,6 +38,10 @@ disjointness `Disjoint` of the Boolean algebra of sets, and `every R S` is defin
 disjointness formulation of the uniqueness condition is equivalent to the definition only for
 an exception set within the restrictor, which the definition entails
 (`IsExceptionSet.le_restrictor`) and the formulation does not.
+
+`Exhaustification.exh` denies the alternatives its prejacent does not entail, so against an
+alternative the prejacent entails it changes nothing where `Restrictive` is contradictory
+(`exh_singleton_subtraction_empty_of_restrictorMonotone`).
 
 ## References
 
@@ -57,9 +58,9 @@ variable {α : Type*} {Q : Det α} {A C B : Set α}
 
 /-! ### Domain subtraction with restrictiveness and the exception set -/
 
-/-- A restrictive exceptive subtracts the exception set `C` from the restrictor, so that the
-quantification holds with the subtraction and fails without it, (17) of [von-fintel-1993] and
-his semantics of the free exceptive (38). -/
+/-- Subtracting `C` from the restrictor is restrictive when the quantification holds with the
+subtraction and fails without it, (17) of [von-fintel-1993] and his semantics of the free
+exceptive (38). -/
 def Restrictive (Q : Det α) (A C B : Set α) : Prop :=
   Q (A \ C) B ∧ ¬ Q A B
 
@@ -80,6 +81,17 @@ exception set, the inference the exception set blocks. -/
 theorem mono (hQ : RestrictorAntitone Q) (h : Restrictive Q A C B) {C' : Set α}
     (hC : C ≤ C') : Restrictive Q A C' B :=
   ⟨hQ B (sdiff_le_sdiff_left hC) h.1, h.2⟩
+
+/-- Under an intersective determiner a restrictive subtraction removes something the scope holds
+of: part of the exception set lies in the restrictor and in the scope. -/
+theorem inter_nonempty (hQ : Q.Intersective) (h : Restrictive Q A C B) : (A ∩ C ∩ B).Nonempty :=
+  Set.nonempty_iff_ne_empty.2 fun he ↦ h.2 ((hQ.sdiff_iff he).1 h.1)
+
+/-- Under a co-intersective determiner a restrictive subtraction removes something the scope
+fails of: part of the exception set lies in the restrictor and outside the scope. -/
+theorem sdiff_nonempty (hQ : Q.CoIntersective) (h : Restrictive Q A C B) :
+    ((A ∩ C) \ B).Nonempty :=
+  Set.nonempty_iff_ne_empty.2 fun he ↦ h.2 ((hQ.sdiff_iff he).1 h.1)
 
 end Restrictive
 
@@ -152,5 +164,52 @@ theorem restrictive_every_iff : Restrictive every A C B ↔ A \ B ≤ C ∧ ¬ A
 theorem restrictive_no_iff : Restrictive no A C B ↔ A ⊓ B ≤ C ∧ ¬ Disjoint A B := by
   unfold Restrictive
   rw [no_iff_le_compl, sdiff_le_comm, sdiff_compl, no_iff_disjoint]
+
+/-! ### Subtraction as a proposition and its exhaustification -/
+
+section Subtraction
+
+open Exhaustification
+
+variable {W : Type*} {A B : W → Set α} {w : W}
+
+/-- The proposition that the quantification holds with `C` subtracted from the restrictor, for a
+restrictor and a scope that vary with the world. -/
+def subtraction (Q : Det α) (A B : W → Set α) (C : Set α) : Set W := {w | Q (A w \ C) (B w)}
+
+@[simp] theorem mem_subtraction : w ∈ subtraction Q A B C ↔ Q (A w \ C) (B w) := Iff.rfl
+
+theorem subtraction_empty : subtraction Q A B ∅ = {w | Q (A w) (B w)} := by
+  simp only [subtraction, Set.sdiff_empty]
+
+/-- Under a left-downward-monotone determiner a larger subtraction is a weaker proposition. -/
+theorem subtraction_mono (hQ : RestrictorAntitone Q) : Monotone (subtraction Q A B) :=
+  fun _ _ h w ↦ hQ (B w) (sdiff_le_sdiff_left h)
+
+/-- Under a left-upward-monotone determiner a larger subtraction is a stronger proposition. -/
+theorem subtraction_anti (hQ : RestrictorMonotone Q) : Antitone (subtraction Q A B) :=
+  fun _ _ h w ↦ hQ (B w) (sdiff_le_sdiff_left h)
+
+/-- Exhaustified against the alternative that subtracts nothing, a subtraction that does not
+entail it is the restrictive subtraction. -/
+theorem exh_singleton_subtraction_empty (h : ¬ subtraction Q A B C ⊆ subtraction Q A B ∅) :
+    exh {subtraction Q A B ∅} (subtraction Q A B C) = {w | Restrictive Q (A w) C (B w)} := by
+  rw [exh_singleton_of_not_subset h, subtraction_empty]
+  rfl
+
+/-- Under a left-upward-monotone determiner a subtraction entails the alternative that subtracts
+nothing, and exhaustification against it changes nothing. -/
+theorem exh_singleton_subtraction_empty_of_restrictorMonotone (hQ : RestrictorMonotone Q) :
+    exh {subtraction Q A B ∅} (subtraction Q A B C) = subtraction Q A B C :=
+  exh_eq_self fun _ hq ↦ hq ▸ subtraction_anti hQ (Set.empty_subset C)
+
+/-- Under a left-downward-monotone determiner the subtraction of the exception set is
+exhaustified against any family of subtractions: each one true at the world subtracts more. -/
+theorem IsExceptionSet.mem_exh_subtraction (hQ : RestrictorAntitone Q) (F : Set (Set α))
+    (h : IsExceptionSet Q (A w) C (B w)) :
+    w ∈ exh (subtraction Q A B '' F) (subtraction Q A B C) :=
+  mem_exh_image_iff.2 ⟨h.1, fun _ _ hS ↦ subtraction_mono hQ (h.2 hS)⟩
+
+end Subtraction
 
 end Quantifier.Exceptive
