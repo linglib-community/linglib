@@ -44,27 +44,24 @@ instance : DecidablePred CrossValid := fun _ ↦ inferInstanceAs (Decidable (_ �
 
 /-- A participant type respects both the relation among the agentivity properties and the
 dependence of agentivity on initial existence. -/
-def Valid (n : ParticipantType) : Prop := n.1.Valid ∧ n.CrossValid
+def Valid (n : ParticipantType) : Prop := n.1 ∈ Agentivity.lattice ∧ n.CrossValid
 
 instance : DecidablePred Valid := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-private theorem exPB_mem_inf {l m : PersistenceLevel} (hl : .exPB ∈ l) (hm : .exPB ∈ m) :
-    .exPB ∈ l ⊓ m := by
-  revert l m; decide
-
+open PersistenceLevel in
 /-- The valid participant types form a sublattice of the product, Grimm's agentivity lattice. -/
 def lattice : Sublattice ParticipantType where
   carrier := {n | n.Valid}
   supClosed' a ha b hb := ⟨Agentivity.lattice.supClosed ha.1 hb.1, by
     rcases ha.2 with h | h
-    · exact .inl (IsConcreteLE.le_iff.1 le_sup_left h)
+    · exact .inl (exPB_mem_iff.2 (le_sup_of_le_left (exPB_mem_iff.1 h)))
     rcases hb.2 with h' | h'
-    · exact .inl (IsConcreteLE.le_iff.1 le_sup_right h')
+    · exact .inl (exPB_mem_iff.2 (le_sup_of_le_right (exPB_mem_iff.1 h')))
     · exact .inr (by simp [h, h'])⟩
   infClosed' a ha b hb := ⟨Agentivity.lattice.infClosed ha.1 hb.1, by
     rcases ha.2 with h | h
     · rcases hb.2 with h' | h'
-      · exact .inl (exPB_mem_inf h h')
+      · exact .inl (exPB_mem_iff.2 (le_inf (exPB_mem_iff.1 h) (exPB_mem_iff.1 h')))
       · exact .inr (by simp [h'])
     · exact .inr (by simp [h])⟩
 

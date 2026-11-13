@@ -66,9 +66,10 @@ theorem canonical_verb_chain :
       discoverAgentivity < lookAtAgentivity ∧ lookAtAgentivity < assassinateAgentivity := by
   decide
 
-theorem canonical_verbs_valid :
-    sitAgentivity.Valid ∧ knowAgentivity.Valid ∧ discoverAgentivity.Valid ∧
-      lookAtAgentivity.Valid ∧ assassinateAgentivity.Valid := by
+theorem canonical_verbs_mem_lattice :
+    sitAgentivity ∈ Agentivity.lattice ∧ knowAgentivity ∈ Agentivity.lattice ∧
+      discoverAgentivity ∈ Agentivity.lattice ∧ lookAtAgentivity ∈ Agentivity.lattice ∧
+      assassinateAgentivity ∈ Agentivity.lattice := by
   decide
 
 theorem see_subject_agentivity :
@@ -83,12 +84,16 @@ coming into existence as a change of state (his (30a)) and attributes all of (28
 *build*, so read literally the correspondences exclude the creation level, existential persistence
 (end), at which Grimm places the objects of verbs of creation. -/
 
-/-- The object of *build*, with Dowty's entailments, admits only total non-persistence and
-existential persistence (beginning), not the creation level Grimm assigns it. -/
+/-- The object of *build*, with Dowty's entailments, admits only the levels strictly below
+qualitative persistence (beginning), total non-persistence and existential persistence
+(beginning), not the creation level Grimm assigns it. -/
 theorem build_object_admits_iff (l : PersistenceLevel) :
-    (Dowty1991.entailed Dowty1991.Examples.buildObject).Admits l ↔
-      l = .totalNonPersistence ∨ l = .exPersBeginning := by
-  revert l; decide
+    (Dowty1991.entailed Dowty1991.Examples.buildObject).Admits l ↔ l < .quPersBeginning :=
+  EntailmentProfile.admits_iff_lt (by decide) (by decide)
+
+theorem build_object_not_admits_exPersEnd :
+    ¬ (Dowty1991.entailed Dowty1991.Examples.buildObject).Admits .exPersEnd :=
+  fun h ↦ absurd ((build_object_admits_iff _).1 h) (by decide)
 
 /-! ### Argument ranges and subject selection, section 2.3
 
@@ -154,6 +159,11 @@ theorem kiss_subject_dominates (l : PersistenceLevel) :
     ((Dowty1991.kissObjectProfile.toAgentivity, l) : ParticipantType) <
       (Dowty1991.kissSubjectProfile.toAgentivity, l) :=
   Prod.mk_lt_mk_iff_left.2 (by decide)
+
+-- p. 527: dominance in agentivity selects the subject Dowty's count selects
+theorem kiss_subject_outranks :
+    Dowty1991.kissSubjectProfile.Outranks Dowty1991.kissObjectProfile :=
+  EntailmentProfile.outranks_of_toAgentivity_ssubset (by decide) (by decide)
 
 /-! ### The transitivity region and the effectiveness hierarchy, section 3
 

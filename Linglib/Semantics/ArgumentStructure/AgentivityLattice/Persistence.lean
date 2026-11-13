@@ -114,6 +114,8 @@ theorem le_iff_features_subset {l m : PersistenceLevel} : l ≤ m ↔ l.features
 instance : DecidableRel (α := PersistenceLevel) (· ≤ ·) := fun _ _ ↦
   decidable_of_iff _ le_iff_features_subset.symm
 
+instance : DecidableLT PersistenceLevel := fun _ _ ↦ decidable_of_iff _ lt_iff_le_not_ge.symm
+
 /-- The join of two levels, the level whose features are the union of theirs. -/
 def sup' : PersistenceLevel → PersistenceLevel → PersistenceLevel
   | .totalNonPersistence, x | x, .totalNonPersistence => x
@@ -155,6 +157,28 @@ instance : BoundedOrder PersistenceLevel where
   bot_le := by decide
   top := .totalPersistence
   le_top := by decide
+
+/-! ### Features as intervals
+
+Grimm's three degrees of affectedness, no change, qualitative change and existential change, are
+cuts of the lattice: each feature, and existence at both ends, holds on an up-set or fails on a
+down-set of levels. -/
+
+variable {l : PersistenceLevel}
+
+/-- An entity exists when the event begins at existential persistence (beginning) and above. -/
+theorem exPB_mem_iff : .exPB ∈ l ↔ exPersBeginning ≤ l := by revert l; decide
+
+/-- An entity exists when the event ends at existential persistence (end) and above. -/
+theorem exPE_mem_iff : .exPE ∈ l ↔ exPersEnd ≤ l ∨ quPersBeginning ≤ l := by revert l; decide
+
+/-- An entity exists at both ends of the event at qualitative persistence (beginning) and above. -/
+theorem exPB_mem_and_exPE_mem_iff : .exPB ∈ l ∧ .exPE ∈ l ↔ quPersBeginning ≤ l := by
+  revert l; decide
+
+/-- An entity is not entailed to keep its qualities to the end of the event at qualitative
+persistence (beginning) and below. -/
+theorem quPE_notMem_iff : .quPE ∉ l ↔ l ≤ quPersBeginning := by revert l; decide
 
 end PersistenceLevel
 
