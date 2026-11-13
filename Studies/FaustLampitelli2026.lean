@@ -57,7 +57,7 @@ license or do neither, and these forms need one that does not govern (`governs_3
 * [scheer-2004]
 * [kaye-lowenstamm-vergnaud-1990]
 * [charette-1991]
-* [scheer-segeral-2001]
+* [segeral-scheer-2001]
 * [scheer-zikova-2010]
 * [kaye-1992]
 * [bye-2011]
