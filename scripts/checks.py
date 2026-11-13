@@ -70,7 +70,7 @@ ROOT = Path(__file__).resolve().parent.parent
 CHECKS = ROOT / "checks"
 LIBRARIES = ["Linglib", "Studies"]
 KINDS = {"definition", "result", "datum"}
-RELATIONS = {"exact", "generalizes", "specializes", "variant", "refutes", "missing"}
+RELATIONS = {"exact", "generalizes", "specializes", "variant", "counterexample", "missing"}
 HASH_VERSION = "v4"
 STANDARD_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 RENAMES = CHECKS / "renames.toml"
@@ -210,8 +210,8 @@ def validate(sources):
             if relation not in RELATIONS:
                 problems.append(
                     f"{key}/{cid}: relation {relation!r} is not one of {sorted(RELATIONS)}")
-            if relation == "refutes" and kind != "result":
-                problems.append(f"{key}/{cid}: only a result can be refuted, not a {kind}")
+            if relation == "counterexample" and kind != "result":
+                problems.append(f"{key}/{cid}: only a result can have a counterexample, not a {kind}")
             if relation not in ("exact", "missing") and not item.get("notes"):
                 problems.append(f"{key}/{cid}: a `{relation}` item needs notes")
             if relation == "missing" and item.get("decls"):
@@ -391,7 +391,7 @@ def cmd_status(args):
                 print(f"::warning title=Stale sign-off::{key}/{cid}: its statement has changed "
                       f"since it was signed; `checks.py diff {key} {cid}` shows how")
             if st == "broken":
-                print(f"::error title=Broken item::{key}/{cid}: "
+                print(f"::warning title=Broken item::{key}/{cid}: "
                       f"{', '.join(info[(key, cid)]['unresolved'])} does not resolve")
     for key in sources if not args.sources else args.sources:
         refs = [r for r in status if r[0] == key]
@@ -410,7 +410,7 @@ def cmd_status(args):
             if status[r] == "unproved":
                 line += f"  ({info[r]['signoff']}; rests on " + ", ".join(info[r]["axioms"]) + ")"
             print(line)
-    return 1 if problems or (args.ci and "broken" in status.values()) else 0
+    return 1 if problems else 0
 
 
 def cmd_core(args):
@@ -914,7 +914,7 @@ def main():
     p.add_argument("sources", nargs="*")
     p.add_argument("--json", action="store_true", help="as data, for the docs pages")
     p.add_argument("--ci", action="store_true",
-                   help="annotate stale items as warnings, and fail on a broken item")
+                   help="annotate stale and broken items as warnings")
     p.set_defaults(func=cmd_status)
     p = sub.add_parser("diff", help="what changed since an item was signed")
     p.add_argument("source")

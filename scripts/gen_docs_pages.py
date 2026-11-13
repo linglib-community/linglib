@@ -579,8 +579,8 @@ class ModulePage:
             if c["relation"] in RELATION:
                 against += (f' (<span class="rel" title="{esc(c["notes"])}">'
                             f'{RELATION[c["relation"]]}</span>)')
-            elif c["relation"] == "refutes":
-                verb = f'Checked as <span class="rel" title="{esc(c["notes"])}">refuting</span>'
+            elif c["relation"] == "counterexample":
+                verb = f'Checked as <span class="rel" title="{esc(c["notes"])}">a counterexample to</span>'
             day = datetime.date.fromisoformat(ck["date"])
             who = (esc(ck["by"]) if ck["via"]
                    else link("https://github.com/" + ck["by"], esc(ck["by"])))

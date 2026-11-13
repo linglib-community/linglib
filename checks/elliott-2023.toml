@@ -169,7 +169,7 @@ sentence containing a free variable x to be assertable at a file context, x must
 every possibility in that context.
 """
 decls    = ["Elliott2023.assertable_not_familiar"]
-relation = "refutes"
+relation = "counterexample"
 notes    = """
 The paper says Heimian familiarity follows from (26): for a sentence with a free `x` to be
 assertable at `c`, `x` must be defined at every point of `c`. The Lean gives a state with a point
@@ -287,14 +287,15 @@ The negative update of ∃xR(x,y) keeps a possibility only if it already provide
 y: (23a) is equal to (23b), so that the anaphoric presupposition of a free variable in the scope
 projects from the existential.
 """
-decls    = ["Elliott2023.not_negative_exists_pred2"]
-relation = "refutes"
+decls    = ["Elliott2023.negative_exists_pred2", "Elliott2023.not_negative_exists_pred2"]
+relation = "specializes"
 notes    = """
-The paper says the denial of `∃x R(x, y)` keeps a point only if it already defines `y`, and that
-(23a) equals (23b) in general. The Lean gives a state with a point of a world `w` that defines `y`
-and a point of `w` that does not, with `R` empty: the point without `y` lies below an extension of
-the other, so it subsists in the negative update of the scope and (23a) keeps it, while (23b)
-does not. The equation holds at uniform states (ex-23).
+The paper says (23a) equals (23b) in general. `negative_exists_pred2` states it where every point
+of the state defines the same variables, `x` not among them, with `y ≠ x` and a nonempty domain
+(ex-23). `not_negative_exists_pred2` shows that the restriction is needed: it gives a state with a
+point of a world `w` that defines `y` and a point of `w` that does not, with `R` empty. The point
+without `y` lies below an extension of the other, so it subsists in the negative update of the
+scope and (23a) keeps it, while (23b) does not.
 """
 
 [[item]]
@@ -354,13 +355,15 @@ claim    = """
 The positive update, the negative update and the presupposition failure of U(x) are
 guaranteed to be a partition of their input state.
 """
-decls    = ["Elliott2023.not_cover_pred1"]
-relation = "refutes"
+decls    = ["Elliott2023.firstPart_donkey", "Elliott2023.not_cover_pred1"]
+relation = "specializes"
 notes    = """
-The paper says the positive, negative and unknown updates of `U(x)` partition their input. The
-Lean gives a state with a point of a world `w` that defines `x` and a point of `w` that does not,
-with `U` true of everything: the point without `x` lies below the one with it, so it subsists in
-the positive update and is not in the unknown update, and it is in neither of the other two.
+The paper says the positive, negative and unknown updates of `U(x)` partition their input. They do
+where `x` is novel at the state, which is the case in (31), and `firstPart_donkey` uses this.
+`not_cover_pred1` shows that the restriction is needed: it gives a state with a point of a world
+`w` that defines `x` and a point of `w` that does not, with `U` true of everything. The point
+without `x` lies below the one with it, so it subsists in the positive update and is not in the
+unknown update, and it is in neither of the other two.
 """
 
 [[item]]

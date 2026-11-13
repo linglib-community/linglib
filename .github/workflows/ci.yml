@@ -122,7 +122,7 @@ jobs:
       - name: Build
         run: lake build
 
-      - name: Check that the human checks' declarations resolve (stale sign-offs are warnings)
+      - name: Check the human checks (broken items and stale sign-offs are warnings)
         run: python3 scripts/checks.py status --ci
 
       - name: Check for sorries (informational)

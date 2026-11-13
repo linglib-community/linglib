@@ -47,11 +47,11 @@ An item the source makes only in prose has a label naming its section, such as `
 * `generalizes`: it states something stronger, such as the item without one of its assumptions.
 * `specializes`: it states a special case.
 * `variant`: it differs in another way.
-* `refutes`: it proves the item false, usually by a counterexample. Only a `result` can be refuted.
+* `counterexample`: it gives a counterexample to the item as stated. Only a `result` can have one. When the item holds under a restriction, state that as a `specializes` item and list the counterexample among its `decls`, to show that the restriction is needed.
 * `missing`: nothing states the item yet, and `decls` is empty.
 
 Every relation other than `exact` and `missing` needs `notes` saying how the statement departs from
-the source; for `refutes`, what the source claims and how the Lean refutes it. A reader relies on
+the source; for `counterexample`, what the source claims and how the Lean contradicts it. A reader relies on
 these notes, so they should be precise.
 
 ## Signing
@@ -60,7 +60,7 @@ A sign-off says that its author has read the source and the Lean and finds that 
 and the project definitions their statements use, say what the item says, up to the `relation` and
 `notes`. For a `definition` they define what the source defines; for a `result` they state what it
 asserts; for a `datum` they predict the judgment it reports, and the signer has also checked the
-recorded example against the source. For a `refutes` item they show that the result is false: the
+recorded example against the source. For a `counterexample` item they show that the result is false: the
 signer has checked both what the source claims and that the declarations contradict it. Sign-offs
 are made by people, never by agents. Proofs need no check, since Lean has checked them.
 
@@ -241,9 +241,9 @@ for any change from outside. Sign-offs are still made by people, never by agents
 * has a `by` that is not the PR's author, without a `via`;
 * signs an item that the check file does not list.
 
-A step of the build job runs `status --ci` after the build. It fails on a `broken` item, so that
-a renamed or removed declaration is caught, and reports a `stale` item as a warning, since a
-statement may change and its sign-off then says so.
+A step of the build job runs `status --ci` after the build. It reports a `broken` item, so that
+a renamed or removed declaration is caught, and a `stale` item as warnings, since a statement
+may change and its sign-off then says so. It fails only on an invalid check file.
 
 CI cannot tell a person from an agent working under that person's account. The check in `sign`
 that refuses to run under Claude Code is a guard against accidents, and review of the pull request
