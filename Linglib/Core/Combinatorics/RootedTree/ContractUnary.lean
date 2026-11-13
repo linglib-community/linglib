@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Data.UnorderedTree.Leaves
 public import Linglib.Core.Data.UnorderedTree.Licensed
 
 @[expose] public section
@@ -105,6 +106,18 @@ theorem numUnary_contractUnary_node :
     rw [numUnary_contractUnary_node, List.map_congr_left ih]
     simp
 
+/-- Contracting unary vertices keeps the leaves. -/
+@[simp] theorem leaves_contractUnary (t : RoseTree α) : (contractUnary t).leaves = t.leaves := by
+  induction t with
+  | node a cs ih =>
+    rcases cs with _ | ⟨c, _ | ⟨d, rest⟩⟩
+    · rfl
+    · rw [contractUnary_node_singleton, ih c (by simp), leaves_node_cons]
+      simp
+    · rw [contractUnary_node_cons₂, List.map_cons, leaves_node_cons, leaves_node_cons,
+        ← List.map_cons, List.map_map]
+      exact congrArg List.sum (List.map_congr_left ih)
+
 private theorem eq_zero_of_sum_eq_zero {l : List ℕ} (h : l.sum = 0) : ∀ n ∈ l, n = 0 := by
   induction l with
   | nil => simp
@@ -185,6 +198,11 @@ theorem numNodes_contractUnary_add_numUnary (t : UnorderedTree α) :
 @[simp] theorem contractUnary_idem (t : UnorderedTree α) :
     contractUnary (contractUnary t) = contractUnary t :=
   Quotient.inductionOn t fun p => congrArg mk (RoseTree.contractUnary_idem p)
+
+/-- Contracting unary vertices keeps the leaves. -/
+@[simp] theorem leaves_contractUnary (t : UnorderedTree α) :
+    (contractUnary t).leaves = t.leaves :=
+  Quotient.inductionOn t fun p ↦ RoseTree.leaves_contractUnary p
 
 /-- The fixed points of `contractUnary` are exactly the unary-free trees. -/
 theorem contractUnary_eq_self_iff {t : UnorderedTree α} : contractUnary t = t ↔ t.numUnary = 0 :=

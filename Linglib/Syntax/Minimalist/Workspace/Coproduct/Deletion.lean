@@ -8,6 +8,7 @@ module
 public import Linglib.Core.Algebra.RootedTree.Coproduct.AdmissibleCut
 public import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 public import Linglib.Core.Combinatorics.RootedTree.CutFilterMap
+public import Linglib.Core.Combinatorics.RootedTree.CutPrune
 public import Linglib.Core.Data.UnorderedTree.FilterMap
 public import Linglib.Syntax.Minimalist.Workspace.Coproduct.Trace
 
@@ -102,78 +103,113 @@ theorem eraseTraces_traceComulAlgHom (τ : UnorderedTree (α ⊕ β) → β) :
   simp [comulTreeOfCuts, map_multiset_sum, Multiset.map_map,
     Function.comp_def, h]
 
-/-! ### The deletion coproduct -/
+/-! ### The deletion coproduct
+
+The remainder of a deletion is the trunk of the admissible cut restricted to its leaves: a vertex
+whose children the cut all removed is no leaf of the tree, and goes with them. The label `b` is
+that of the vertices with children, the one Merge gives a new root. -/
+
+section Deletion
+
+variable [DecidableEq α] (b : α)
+
+/-- The remainder `T /^d F` of a deletion ([marcolli-chomsky-berwick-2025] Definition 1.2.5), from
+    the trunk `T` of the admissible cut: the vertices above one not labelled `b`, with the unary
+    vertices contracted. It is `none` when the cut leaves no leaf. -/
+def deletionQuotient (T : UnorderedTree α) : Option (UnorderedTree α) :=
+  (T.prune (· ≠ b)).map UnorderedTree.contractUnary
+
+/-- A tree whose leaves are not labelled `b` has nothing to prune. -/
+theorem deletionQuotient_eq_some {T : UnorderedTree α} (h : ∀ a ∈ T.leaves, a ≠ b) :
+    deletionQuotient b T = some T.contractUnary := by
+  rw [deletionQuotient, UnorderedTree.prune_eq_some_self _ h, Option.map_some]
+
+/-- The projection `Π_{d,ρ}` of the right channel: a tree goes to the remainder of its deletion,
+    and to `1` when nothing remains. -/
+noncomputable def deletionProj :
+    ConnesKreimer R (UnorderedTree α) →ₐ[R] ConnesKreimer R (UnorderedTree α) :=
+  aeval fun T ↦ (deletionQuotient b T).elim 1 ofTree
+
+@[simp] theorem deletionProj_ofTree (T : UnorderedTree α) :
+    deletionProj (R := R) b (ofTree T) = (deletionQuotient b T).elim 1 ofTree :=
+  aeval_ofTree _ T
 
 /-- The deletion coproduct `Δ^d` is the Connes–Kreimer coproduct `Δ^ρ` followed, on the right
-    channel, by the contraction `Π_{d,ρ}` of unary vertices. -/
+    channel, by the projection `Π_{d,ρ}`. -/
 noncomputable def deletionComulAlgHom : ConnesKreimer R (UnorderedTree α) →ₐ[R]
     ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
-  (Algebra.TensorProduct.map (.id R _) (rename UnorderedTree.contractUnary)).comp comulAlgHom
+  (Algebra.TensorProduct.map (.id R _) (deletionProj b)).comp comulAlgHom
 
-/-- The deletion cuts of a tree are its admissible cuts with the unary vertices of each trunk
-    contracted. -/
+/-- The deletion cuts of a tree are its admissible cuts, each with the remainder of its trunk. -/
 def deletionCuts (T : UnorderedTree α) :
-    Multiset (Multiset (UnorderedTree α) × UnorderedTree α) :=
-  (admissibleCuts T).map fun p ↦ (p.1, p.2.contractUnary)
+    Multiset (Multiset (UnorderedTree α) × Option (UnorderedTree α)) :=
+  (admissibleCuts T).map fun p ↦ (p.1, deletionQuotient b p.2)
 
 /-- On a tree, `Δ^d` sums the deletion cuts. -/
 theorem deletionComulAlgHom_apply_ofTree (T : UnorderedTree α) :
-    deletionComulAlgHom (R := R) (ofTree T) = ofTree T ⊗ₜ[R] 1 +
-      ((deletionCuts T).map fun p ↦ of' (R := R) p.1 ⊗ₜ[R] ofTree p.2).sum := by
+    deletionComulAlgHom (R := R) b (ofTree T) = ofTree T ⊗ₜ[R] 1 +
+      ((deletionCuts b T).map fun p ↦ of' (R := R) p.1 ⊗ₜ[R] p.2.elim 1 ofTree).sum := by
   simp [deletionComulAlgHom, deletionCuts, comulTreeOfCuts, map_multiset_sum, Multiset.map_map]
 
-/-- `Δ^d` is the admissible-cut coproduct at the deletion cuts. -/
-theorem comulOfCuts_deletionCuts :
-    comulOfCuts (R := R) (deletionCuts (α := α)) = deletionComulAlgHom := by
-  ext T
-  simp [deletionComulAlgHom_apply_ofTree, comulTreeOfCuts]
+variable {b} {T : UnorderedTree α} {p : Multiset (UnorderedTree α) × Option (UnorderedTree α)}
+
+/-- A deletion keeps the leaves: those of a tree are those of the terms a deletion cut extracts
+    and of its remainder. -/
+theorem deletionCuts_leaves (hT : T.Licensed fun a ks ↦ (a = b ↔ ks ≠ 0))
+    (hp : p ∈ deletionCuts b T) :
+    T.leaves = (p.1.map UnorderedTree.leaves).sum + p.2.elim 0 UnorderedTree.leaves := by
+  obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
+  rw [admissibleCuts_leaves_prune b hT hq, deletionQuotient]
+  cases q.2.prune (· ≠ b) <;> simp
 
 /-! ### The cost of a deletion -/
 
-section Cost
-
-variable {T : UnorderedTree α} {p : Multiset (UnorderedTree α) × UnorderedTree α}
+/-- A deletion cut of a full binary tree extracting at most one tree leaves the contracted trunk
+    of an admissible cut. -/
+theorem exists_mem_admissibleCuts_of_card_le_one
+    (hT : T.Licensed fun a ks ↦ (a = b ↔ ks ≠ 0) ∧
+      (Multiset.card ks = 0 ∨ Multiset.card ks = 2))
+    (hp : p ∈ deletionCuts b T) (h : Multiset.card p.1 ≤ 1) :
+    ∃ q ∈ admissibleCuts T, p = (q.1, some q.2.contractUnary) := by
+  obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
+  exact ⟨q, hq, by rw [deletionQuotient, admissibleCuts_prune_eq_some b hT hq h, Option.map_some]⟩
 
 /-- A deletion cut of a full binary tree extracting at most one tree costs two edges for it
     besides the tree's own. -/
-theorem deletionCuts_numEdges_of_card_le_one (hT : T.IsFullBinary)
-    (hp : p ∈ deletionCuts T) (h : Multiset.card p.1 ≤ 1) :
-    T.numEdges = (p.1.map UnorderedTree.numEdges).sum + p.2.numEdges + 2 * Multiset.card p.1 := by
-  obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
-  obtain ⟨k, hk⟩ := admissibleCuts_numUnary hT hq
+theorem deletionCuts_numEdges_of_card_le_one
+    (hT : T.Licensed fun a ks ↦ (a = b ↔ ks ≠ 0) ∧
+      (Multiset.card ks = 0 ∨ Multiset.card ks = 2))
+    (hp : p ∈ deletionCuts b T) (h : Multiset.card p.1 ≤ 1) :
+    T.numEdges = (p.1.map UnorderedTree.numEdges).sum + p.2.elim 0 UnorderedTree.numEdges +
+      2 * Multiset.card p.1 := by
+  obtain ⟨q, hq, rfl⟩ := exists_mem_admissibleCuts_of_card_le_one hT hp h
+  obtain ⟨k, hk⟩ := admissibleCuts_numUnary (hT.mono fun _ _ h ↦ h.2) hq
   have := admissibleCuts_numEdges_contractUnary hq
-  dsimp only at h ⊢
+  dsimp only [Option.elim_some] at h ⊢
   omega
 
 /-- Deleting one accessible term costs two accessible terms besides its own
     ([marcolli-chomsky-berwick-2025] (1.6.7)). -/
-theorem deletionCuts_numEdges (hT : T.IsFullBinary) (hp : p ∈ deletionCuts T)
-    {v : UnorderedTree α} (hv : p.1 = {v}) : T.numEdges = v.numEdges + p.2.numEdges + 2 := by
+theorem deletionCuts_numEdges
+    (hT : T.Licensed fun a ks ↦ (a = b ↔ ks ≠ 0) ∧
+      (Multiset.card ks = 0 ∨ Multiset.card ks = 2))
+    (hp : p ∈ deletionCuts b T) {v : UnorderedTree α} (hv : p.1 = {v}) :
+    T.numEdges = v.numEdges + p.2.elim 0 UnorderedTree.numEdges + 2 := by
   simpa [hv] using deletionCuts_numEdges_of_card_le_one hT hp (by simp [hv])
 
-/-- A choice of deletion cuts of full binary trees, extracting at most one tree from each tree it
-    cuts, costs two edges for each tree it extracts. -/
-theorem hasExtractionCost_numEdges_deletionCuts {F : Multiset (UnorderedTree α)}
-    {s : CutChoice α} (hF : ∀ T ∈ F, T.IsFullBinary) (hs : s ∈ forestCutChoices deletionCuts F)
-    (h : ∀ x ∈ s, x.2.2 ≠ 0 → Multiset.card x.2.1 ≤ 1) :
-    s.HasExtractionCost UnorderedTree.numEdges 2 :=
-  .of_mem_forestCutChoices hs fun x hx p hp hpx ↦
-    deletionCuts_numEdges_of_card_le_one (hF x.1 (fst_mem_of_mem_forestCutChoices hs hx)) hp <| by
-      have := h x hx (by rw [← hpx]; exact Multiset.singleton_ne_zero _)
-      rwa [← hpx] at this
+end Deletion
 
-end Cost
-
-/-- On trees without traces, erasing the traces that `Δ^c` leaves and contracting the unary
-    vertices gives the deletion coproduct `Δ^d`. -/
-theorem contractUnary_eraseTraces_traceComulAlgHom (τ : UnorderedTree (α ⊕ β) → β) :
+/-- On trees without traces, erasing the traces that `Δ^c` leaves and projecting by `Π_{d,ρ}`
+    gives the deletion coproduct `Δ^d`. -/
+theorem deletionProj_eraseTraces_traceComulAlgHom [DecidableEq α] (b : α)
+    (τ : UnorderedTree (α ⊕ β) → β) :
     ((Algebra.TensorProduct.map (.id R _)
-          ((rename UnorderedTree.contractUnary).comp eraseTraces)).comp (traceComulAlgHom τ)).comp
+          ((deletionProj b).comp eraseTraces)).comp (traceComulAlgHom τ)).comp
         (rename (UnorderedTree.map Sum.inl)) =
       (Algebra.TensorProduct.map (rename (UnorderedTree.map Sum.inl)) (.id R _)).comp
-        (deletionComulAlgHom (R := R) (α := α)) := by
+        (deletionComulAlgHom (R := R) (α := α) b) := by
   have h := congrArg
-    (AlgHom.comp (Algebra.TensorProduct.map (.id R _) (rename UnorderedTree.contractUnary)))
+    (AlgHom.comp (Algebra.TensorProduct.map (.id R _) (deletionProj (R := R) b)))
     (eraseTraces_traceComulAlgHom (R := R) τ)
   simpa only [deletionComulAlgHom, ← AlgHom.comp_assoc, ← Algebra.TensorProduct.map_comp,
     AlgHom.comp_id, AlgHom.id_comp] using h

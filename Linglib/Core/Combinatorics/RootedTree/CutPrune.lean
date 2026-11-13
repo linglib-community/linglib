@@ -15,7 +15,8 @@ public import Linglib.Core.Data.UnorderedTree.Prune
 Let `b` label exactly the vertices of a tree that have children. An admissible cut that removes
 every child of a vertex leaves it childless in the trunk, a vertex labelled `b` that is not a leaf
 of the tree. Pruning the trunk to the vertices above one not labelled `b` removes those, and then
-[the leaves of the tree are those of the crown and of the pruned trunk](##admissibleCuts_leaves_prune).
+the leaves of the tree are
+[those of the crown and of the pruned trunk](##admissibleCuts_leaves_prune).
 In a tree whose vertices have no child or two, a cut that extracts at most one tree
 [leaves nothing to prune](##admissibleCuts_prune_eq_some).
 
