@@ -49,8 +49,7 @@ OP_TIME is unobservable; the example of Anderson English is filed as English.
 
 namespace Deal2020
 
-open Kaplan (Character Context shiftyOp)
-open Kaplan.Context (Coord dependsOn_agent equivPi localDepth overwrite)
+open SpeechAct Context Character
 
 universe u
 
@@ -93,7 +92,7 @@ theorem stackOf_eq (l : List Coord) (χ : Character (Context W E P T) (Context W
   | nil => simp [stackOf]
   | cons k l ih =>
     simp only [stackOf, List.foldl_cons] at ih ⊢
-    rw [ih, Kaplan.shiftyOp_shiftyOp, List.toFinset_cons, Finset.insert_eq, Finset.union_comm]
+    rw [ih, Character.shiftyOp_shiftyOp, List.toFinset_cons, Finset.insert_eq, Finset.union_comm]
 
 /-- A stack of operators overwrites the union of their coordinates, so a lexical bundle of the
 operators of (126) is their composition (172). -/
@@ -106,7 +105,7 @@ truth at that context as index (64). -/
 theorem diag_stack (n : ℕ) (χ : Character (Context W E P T) (Context W E P T) α) :
     (stack n χ).diag id = χ.diag id := by
   rw [stack_eq]
-  exact Kaplan.diag_shiftyOp _ χ
+  exact Character.diag_shiftyOp _ χ
 
 /-- (G2): in a complement of any size, an indexical class shifts only if every class below it in
 the sequence shifts as well (§4.4). -/
@@ -147,7 +146,7 @@ theorem eventStackOf_eq (ev : Ev → Context W E P T) (l : List Coord)
   | cons k l ih =>
     simp only [eventStackOf, List.foldl_cons] at ih ⊢
     funext e c i
-    simp only [ih, eventOp, Kaplan.Context.overwrite_overwrite, List.toFinset_cons,
+    simp only [ih, eventOp, SpeechAct.Context.overwrite_overwrite, List.toFinset_cons,
       Finset.insert_eq, Finset.union_comm]
 
 /-- The classes shifted from the index, and so read de se, in a complement of size `n` with the
@@ -183,22 +182,22 @@ include hf
 -- (145)
 theorem apply_complementContext_of_mem_deSe (h : k ∈ deSe n p) :
     f (overwrite (deSe n p) (overwrite (eventShifted n p) c x) i) = f i :=
-  Kaplan.Context.apply_overwrite_of_subset hf (by simpa using h) _ _
+  SpeechAct.Context.apply_overwrite_of_subset hf (by simpa using h) _ _
 
 -- (145)
 theorem apply_complementContext_of_mem_eventShifted (h : k ∈ eventShifted n p) :
     f (overwrite (deSe n p) (overwrite (eventShifted n p) c x) i) = f x := by
   have hk : k ∉ deSe n p := fun hk ↦
     (Finset.mem_sdiff.1 h).2 (shifted_mono (min_le_left p n) hk)
-  rw [Kaplan.Context.apply_overwrite_of_disjoint hf (by simpa using hk),
-    Kaplan.Context.apply_overwrite_of_subset hf (by simpa using h)]
+  rw [SpeechAct.Context.apply_overwrite_of_disjoint hf (by simpa using hk),
+    SpeechAct.Context.apply_overwrite_of_subset hf (by simpa using h)]
 
 theorem apply_complementContext_of_notMem (h : k ∉ shifted n) :
     f (overwrite (deSe n p) (overwrite (eventShifted n p) c x) i) = f c := by
   have h₁ : k ∉ deSe n p := fun hk ↦ h (shifted_mono (min_le_right p n) hk)
   have h₂ : k ∉ eventShifted n p := fun hk ↦ h (Finset.mem_sdiff.1 hk).1
-  rw [Kaplan.Context.apply_overwrite_of_disjoint hf (by simpa using h₁),
-    Kaplan.Context.apply_overwrite_of_disjoint hf (by simpa using h₂)]
+  rw [SpeechAct.Context.apply_overwrite_of_disjoint hf (by simpa using h₁),
+    SpeechAct.Context.apply_overwrite_of_disjoint hf (by simpa using h₂)]
 
 end apply_complementContext
 
@@ -209,7 +208,7 @@ does, both shifted or neither ((77), (83)). -/
 theorem medial_eq_lowest (s₁ s₂ : Finset Coord) (c j₁ j₂ : Context W E P T)
     (hj₂ : j₂.agent = (overwrite s₁ c j₁).agent) :
     (overwrite s₂ (overwrite s₁ c j₁) j₂).agent = (overwrite s₁ c j₁).agent :=
-  Kaplan.Context.apply_overwrite_of_apply_eq (f := Context.agent) dependsOn_agent hj₂
+  SpeechAct.Context.apply_overwrite_of_apply_eq (f := Context.agent) dependsOn_agent hj₂
 
 /-! ### Lexical bundling -/
 
@@ -222,7 +221,7 @@ abbrev opAdv : Finset Coord := {.position, .time}
 -- (172)
 theorem shiftyOp_opPers (χ : Character (Context W E P T) (Context W E P T) α) :
     shiftyOp {.addressee} (shiftyOp {.agent} χ) = shiftyOp opPers χ := by
-  rw [Kaplan.shiftyOp_shiftyOp]
+  rw [Character.shiftyOp_shiftyOp]
   rfl
 
 /-- The coordinate sets a complement may overwrite when its verb selects the sizes `ns` (128). -/

@@ -142,10 +142,10 @@ def Lexicalizes : Entry → CovertShift → Prop
       Definite.anaphoric R d ∈ a.denotations R d
   | .article a, .exists => ∃ d ∈ a.definiteness, d < .definite
   | .demonstrative dem, .iota => ∀ (E W P T : Type) [PartialOrder E]
-      (c : Kaplan.Context W E P T) (χ : SetRel E E) (R : (ℕ → E) → W → Set E) (d : ℕ),
+      (c : SpeechAct.Context W E P T) (χ : SetRel E E) (R : (ℕ → E) → W → Set E) (d : ℕ),
       dem.denote R d c χ = Definite.unique R
   | .demonstrative dem, .iotaAnaphoric => ∀ (E W P T : Type) [PartialOrder E]
-      (c : Kaplan.Context W E P T) (χ : SetRel E E) (R : (ℕ → E) → W → Set E) (d : ℕ),
+      (c : SpeechAct.Context W E P T) (χ : SetRel E E) (R : (ℕ → E) → W → Set E) (d : ℕ),
       dem.denote R d c χ = Definite.anaphoric R d
   | .possessive p, .iota => ∀ (E W : Type) (R : (ℕ → E) → W → Set E) (possessor : (ℕ → E) → W → E)
       (rel : (ℕ → E) → W → E → E → Prop), p.denote R possessor rel = Definite.unique R
@@ -168,7 +168,7 @@ private theorem unique_ne_anaphoric : Definite.unique top ≠ Definite.anaphoric
   exact Part.notMem_none _ hm
 
 /-- A context of utterance on the one-element types. -/
-private abbrev unitContext : Kaplan.Context Unit Unit Unit Unit := ⟨(), (), (), (), ()⟩
+private abbrev unitContext : SpeechAct.Context Unit Unit Unit Unit := ⟨(), (), (), (), ()⟩
 
 theorem lexicalizes_article_iota_iff (a : Article) :
     (article a).Lexicalizes .iota ↔ .uniqueness ∈ a.strengths := by

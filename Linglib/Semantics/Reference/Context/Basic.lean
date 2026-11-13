@@ -14,7 +14,7 @@ A context of utterance is a tuple of an agent, an addressee, a world, a time and
 Kaplan's contexts have the agent, the time, the position and the world; the addressee is a
 coordinate of the contexts of Schlenker and of the work on indexical shift after him, where a
 context and an index are tuples of one type. The agent and the addressee are the holders of the
-two discourse roles, `Kaplan.Context.holder`.
+two discourse roles, `SpeechAct.Context.holder`.
 
 ## References
 
@@ -26,7 +26,7 @@ two discourse roles, `Kaplan.Context.holder`.
 
 @[expose] public section
 
-namespace Kaplan
+namespace SpeechAct
 
 /-- A context of utterance has an agent, an addressee, a world, a time and a position. -/
 @[ext]
@@ -58,4 +58,4 @@ def holder : SpeechAct.Role → E
 
 end Context
 
-end Kaplan
+end SpeechAct

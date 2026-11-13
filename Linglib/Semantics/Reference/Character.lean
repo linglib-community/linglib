@@ -33,7 +33,7 @@ is a priori (`Character.IsNecessary.isAPriori`).
 
 ## Main definitions
 
-* `Character C W E`, `Content W E`
+* `Character C W E`
 * `Character.IsDirectlyReferential`
 * `Character.dthat`, `Character.const`
 * `Character.diag`: the diagonal along the index of the context.
@@ -48,14 +48,10 @@ is a priori (`Character.IsNecessary.isAPriori`).
 
 @[expose] public section
 
-namespace Kaplan
 
-/-- A content is an intension from worlds to extensions, what an expression says at a context. -/
-abbrev Content (W E : Type*) := W → E
-
-/-- A Kaplanian character is the linguistic meaning of an expression, assigning a content to each
-context. -/
-abbrev Character (C W E : Type*) := C → Content W E
+/-- A Kaplanian character is the linguistic meaning of an expression, assigning to each context a
+content, an intension from worlds to extensions. -/
+abbrev Character (C W E : Type*) := C → W → E
 
 namespace Character
 
@@ -78,7 +74,7 @@ def const (e : E) : Character C W E := fun _ _ ↦ e
 
 theorem dthat_isDirectlyReferential (f : C → E) :
     (dthat f : Character C W E).IsDirectlyReferential :=
-  fun c ↦ isRigid_const (f c)
+  fun c ↦ Function.IsConst.const (f c)
 
 theorem const_isDirectlyReferential (e : E) :
     (const e : Character C W E).IsDirectlyReferential :=
@@ -126,4 +122,3 @@ theorem IsNecessary.isAPriori {χ : Character C W Prop} (h : χ.IsNecessary) (ι
 
 end Character
 
-end Kaplan

@@ -17,7 +17,7 @@ so is scope-inert (`dthat_largeScope_eq_smallScope`), yet two descriptions that 
 context world rigidify to one content (`dthat_eq_dthat_of_eq`), so rigidity alone leaves the
 informativeness of an identity unexplained, while a structured singular proposition keeps the
 individuals apart (`SingularProposition.mk_ne_mk_of_ne`). Co-referential rigid designators
-have the same content, `IsRigid.eq_of_apply_eq`, which is the book's "no entailments" thesis:
+have the same content, `Function.IsConst.eq_of_apply_eq`, which is the book's "no entailments" thesis:
 direct reference assigns *Cicero is Cicero* and *Cicero is Tully* one proposition and is
 silent on whether it is necessary or believed. Donnellan's referential use is a different
 mechanism from rigidification: reference fixed by contact with the object before any
@@ -47,7 +47,6 @@ from its semantics, so nothing would be proved about it.
 
 namespace Almog2014
 
-open Kaplan
 
 variable {W E : Type*} {desc desc₁ desc₂ : W → E} {c : W}
 

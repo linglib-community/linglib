@@ -64,13 +64,13 @@ section Original
 
 open BeaverCondoravdi2003
 
-variable {W T : Type*} [LinearOrder T] {A B : Set (W × T)} {w : W}
+variable {W T : Type*} [LinearOrder T] {A B : Set (Index W T)} {w : W}
 
 /-- If the main clause is settled at its times and precludes the temporal clause afterwards,
 initial-branch-point alternatives never make *A before B* true (§2). -/
 theorem not_before_of_settled {F : TWFrame W T} (a : Alternatives F B)
-    (hA : ∀ t, (w, t) ∈ A → F.alternatives.settled {w} t fun v ↦ (v, t) ∈ A)
-    (hAB : ∀ v t t', (v, t) ∈ A → (v, t') ∈ B → t' < t) : ¬ before A B a.alt w := by
+    (hA : ∀ t, ⟨w, t⟩ ∈ A → F.alternatives.settled {w} t fun v ↦ ⟨v, t⟩ ∈ A)
+    (hAB : ∀ v t t', ⟨v, t⟩ ∈ A → ⟨v, t'⟩ ∈ B → t' < t) : ¬ before A B a.alt w := by
   rintro ⟨t, ht, e, ⟨⟨v, hv, he⟩, -⟩, hte⟩
   exact (hAB v t e ((hA t ht w (Set.mem_singleton w) v (a.subset_alternatives _ hv)).1 ht)
     he).asymm hte
@@ -79,21 +79,21 @@ theorem not_before_of_settled {F : TWFrame W T} (a : Alternatives F B)
 the death unsettled at its time, Mozart living on in an alternative that agrees with the world
 before it. -/
 theorem not_settled_mozart :
-    ¬ frame.alternatives.settled {World.early} 1 fun v ↦ (v, 1) ∈ dies := by
+    ¬ frame.alternatives.settled {World.early} 1 fun v ↦ ⟨v, 1⟩ ∈ dies := by
   intro h
   have := (h .early rfl .later (mem_alternatives_of_le_one le_rfl _ _)).1 rfl
   simp [dies, World.death] at this
 
 -- §2
 theorem not_lt_of_isLeast_of_lt {alt : HistoricalAlternatives W T} {v : W} {t t' e : T}
-    (hv : v ∈ alt (w, t)) (hB : (v, t') ∈ B) (ht' : t' < t)
-    (he : IsLeast (instTimes (alt (w, t)) B) e) : ¬ t < e :=
+    (hv : v ∈ alt ⟨w, t⟩) (hB : ⟨v, t'⟩ ∈ B) (ht' : t' < t)
+    (he : IsLeast (instTimes (alt ⟨w, t⟩) B) e) : ¬ t < e :=
   fun hte ↦ not_lt_of_ge (he.2 ⟨v, hv, hB⟩) (ht'.trans hte)
 
 /-- A temporal clause confined to times no later than `hi` makes *A before B* false for main-clause
 times from `hi` on (§5.1). -/
 theorem not_before_of_le {alt : HistoricalAlternatives W T} {hi : T}
-    (hB : ∀ v t, (v, t) ∈ B → t ≤ hi) (hA : ∀ t, (w, t) ∈ A → hi ≤ t) : ¬ before A B alt w :=
+    (hB : ∀ v t, ⟨v, t⟩ ∈ B → t ≤ hi) (hA : ∀ t, ⟨w, t⟩ ∈ A → hi ≤ t) : ¬ before A B alt w :=
   fun ⟨t, ht, _, ⟨⟨_, _, he⟩, _⟩, hte⟩ ↦ lt_irrefl t (hte.trans_le ((hB _ _ he).trans (hA t ht)))
 
 end Original
@@ -294,26 +294,26 @@ theorem not_mem_finishes (I : NonemptyInterval ℤ) (e : Eventuality) :
     (World.actual, I, e) ∉ finishes := by
   simp [finishes]
 
-theorem healthy_not_mem_alternatives : World.healthy ∉ history.alternatives (.actual, 1) :=
+theorem healthy_not_mem_alternatives : World.healthy ∉ history.alternatives ⟨.actual, 1⟩ :=
   fun h ↦ nomatch (h () le_rfl).2 rfl
 
 /-- *Mozart died* and *Mozart finished the Requiem* as Beaver and Condoravdi's clauses, at times. -/
-def diesAt : Set (World × ℤ) := {(.actual, 1)}
+def diesAt : Set (Index World ℤ) := {⟨.actual, 1⟩}
 
 /-- Mozart's completion of the Requiem at `2` in the healthier world. -/
-def finishesAt : Set (World × ℤ) := {(.healthy, 2)}
+def finishesAt : Set (Index World ℤ) := {⟨.healthy, 2⟩}
 
 /-- In the same history Beaver and Condoravdi's *before* makes (6a) false, the death being settled
 at its time, whatever their alternatives. -/
 theorem not_before_dies_finishes (a : BeaverCondoravdi2003.Alternatives history finishesAt) :
     ¬ BeaverCondoravdi2003.before diesAt finishesAt a.alt .actual := by
   refine not_before_of_settled a (fun t ht ↦ ?_) fun v t t' hv hv' ↦ ?_
-  · obtain rfl : t = 1 := (Prod.mk.inj ht).2
+  · obtain rfl : t = 1 := (Index.mk.inj ht).2
     rintro _ rfl v hv
     cases v
     · rfl
     · exact absurd hv healthy_not_mem_alternatives
-  · obtain rfl : v = .actual := (Prod.mk.inj hv).1
+  · obtain rfl : v = .actual := (Index.mk.inj hv).1
     simp [finishesAt] at hv'
 
 end Mozart

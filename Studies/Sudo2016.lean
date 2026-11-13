@@ -73,7 +73,7 @@ variable {W E : Type*} [SemilatticeSup E]
 def numeral (n : ℕ) : W → ℕ := fun _ ↦ n
 
 theorem numeral_isRigid (n : ℕ) : IsRigid (numeral (W := W) n) :=
-  isRigid_const n
+  Function.IsConst.const n
 
 /-- The number of atomic `P`-parts of `x` at a world. -/
 noncomputable def atomCount (P : W → E → Prop) (w : W) (x : E) : ℕ := {y | y ≤ x ∧ P w y}.ncard

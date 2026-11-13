@@ -15,7 +15,7 @@ individual is chosen, as Büring argues. Predicating a scope of a definite gives
 A [variable restricted to a domain](##Definite.var) denotes the assignment's value at its index
 where that value lies in the domain. A character is the definite that denotes everywhere, and it
 is directly referential exactly when [that definite is rigid at every
-context](##Kaplan.Character.isDirectlyReferential_iff).
+context](##Character.isDirectlyReferential_iff).
 
 ## Implementation notes
 
@@ -95,7 +95,7 @@ end Definite
 
 /-! ### Characters as definites -/
 
-namespace Kaplan.Character
+namespace Character
 
 variable {C W E : Type*}
 
@@ -108,6 +108,6 @@ def toDefinite (χ : Character C W E) : Definite C W E := fun c w ↦ Part.some 
 
 theorem isDirectlyReferential_iff (χ : Character C W E) :
     χ.IsDirectlyReferential ↔ ∀ c, IsRigid (χ.toDefinite c) :=
-  forall_congr' fun _ ↦ (Part.some_injective (α := E)).isRigid_comp_iff.symm
+  forall_congr' fun _ ↦ (Part.some_injective (α := E)).isConst_comp_iff.symm
 
-end Kaplan.Character
+end Character

@@ -39,7 +39,6 @@ here: the file gives Donnellan's truth conditions for each use.
 
 namespace Donnellan1966
 
-open Kaplan
 
 variable {W E : Type*} {φ : E → W → Prop} {w : W} {e intended : E}
 

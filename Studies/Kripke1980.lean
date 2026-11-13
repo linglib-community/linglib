@@ -114,7 +114,7 @@ theorem not_isRigid_of_not_isEssential (ht : ∀ w, F (t w) w)
 
 theorem const_ne_of_not_isEssential (ht : ∀ w, F (t w) w) (hF : ¬ IsEssential D (t w₀) F) :
     (fun _ ↦ t w₀) ≠ t :=
-  (isRigid_const _).ne (not_isRigid_of_not_isEssential ht hF)
+  fun e ↦ not_isRigid_of_not_isEssential ht hF (e ▸ .const _)
 
 /-- The stick is one meter long, *one meter* rigidly designating the length the stick has at
 `w₀`, necessarily iff *the length of the stick* is rigid (p. 56). -/
@@ -133,7 +133,7 @@ example :
     largeScope □[Set.univ] (fun x _ ↦ x.1 = x.2) (Function.prod id fun _ ↦ true) true ∧
       ¬ smallScope □[Set.univ] (fun x _ ↦ x.1 = x.2)
         (Function.prod (id : Bool → Bool) fun _ ↦ true) true :=
-  ⟨box_eq_of_isRigid (isRigid_const _) (isRigid_const _) rfl, fun h ↦
+  ⟨box_eq_of_isRigid (Function.IsConst.const _) (Function.IsConst.const _) rfl, fun h ↦
     Bool.false_ne_true (h false trivial)⟩
 
 end Kripke1980
