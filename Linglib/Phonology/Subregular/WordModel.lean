@@ -667,16 +667,6 @@ section LocallyTestable
 
 variable {w v : List α} {k : ℕ}
 
-private theorem exists_infix_length_eq {s : List α} (h : s <:+: w) (hs : s.length ≤ k)
-    (hk : k ≤ w.length) : ∃ f, f <:+: w ∧ f.length = k ∧ s <:+: f := by
-  obtain ⟨t, ht, hget⟩ := List.infix_iff_getElem?.1 h
-  refine ⟨(w.drop (min t (w.length - k))).take k,
-    (List.take_prefix _ _).isInfix.trans (List.drop_suffix _ _).isInfix, by simp; omega,
-    List.infix_iff_getElem?.2 ⟨t - min t (w.length - k), by simp; omega, fun i hi ↦ ?_⟩⟩
-  rw [List.getElem?_take_of_lt (by omega), List.getElem?_drop, ← hget i hi]
-  congr 1
-  omega
-
 private theorem eq_of_kTestVector_eq (h : w.kTestVector k = v.kTestVector k) (hw : w.length < k) :
     w = v := by
   simp only [List.kTestVector, Prod.mk.injEq, Edge.takeAt_left, Edge.takeAt_right] at h
@@ -778,48 +768,18 @@ theorem mem_of_factors_subset_biUnion (hL : L.SuffixSubstitutionClosed k) (hk : 
     obtain ⟨v, hv, hcv⟩ := Set.mem_iUnion₂.1
       (hw ((WordModel.succDiagram_occurs_iff hlen).2 hc))
     exact ⟨v, hv, (WordModel.succDiagram_occurs_iff hlen).1 hcv⟩
-  have hmid : (w.map Sum.inl : List (α ⊕ Edge)) <:+: anchor w :=
-    ⟨[.inr .left], [.inr .right], by simp [anchor]⟩
   by_cases hshort : w.length + 2 ≤ k
   · obtain ⟨v, hv, hwv⟩ := hinfix (anchor w) (List.infix_refl _) (by simpa using hshort)
     rwa [eq_of_anchor_infix_anchor hwv]
-  have hmw : k - 1 ≤ w.length := by omega
-  -- A member extends each prefix of `w` of at least `k - 1` symbols.
-  have hpre (j : ℕ) (hj : k - 1 ≤ j) (hjw : j ≤ w.length) : ∃ y, w.take j ++ y ∈ L := by
-    induction j, hj using Nat.le_induction with
-    | base =>
-      obtain ⟨v, hv, hcv⟩ := hinfix (.inr .left :: (w.take (k - 1)).map .inl)
-        ((List.cons_prefix_cons.2 ⟨rfl, ((List.take_prefix _ w).map _).trans
-          (List.prefix_append _ _)⟩).isInfix) (by simp; omega)
-      obtain ⟨y, rfl⟩ := prefix_of_infix_anchor hcv
-      exact ⟨y, hv⟩
-    | succ j hj ih =>
-      obtain ⟨y, hy⟩ := ih (by omega)
-      have hjlt : j < w.length := by omega
-      have hx : ((w.take j).drop (j - (k - 1))).length = k - 1 := by simp; omega
-      have hinf : (w.take j).drop (j - (k - 1)) ++ [(w[j])] <:+: w := by
-        rw [← List.drop_append_of_le_length (by simp; omega),
-          ← List.take_succ_eq_append_getElem hjlt]
-        exact (List.drop_suffix _ _).isInfix.trans (List.take_prefix _ _).isInfix
-      obtain ⟨v, hv, hcv⟩ := hinfix (((w.take j).drop (j - (k - 1)) ++ [(w[j])]).map .inl)
-        ((hinf.map _).trans hmid) (by simp; omega)
-      obtain ⟨u₂, v₂, rfl⟩ := infix_of_map_inl_infix_anchor hcv
-      refine ⟨v₂, ?_⟩
-      have := hL ((w.take j).take (j - (k - 1))) y u₂ ([(w[j])] ++ v₂) _ hx
-        (by rwa [List.take_append_drop]) (by simpa only [List.append_assoc] using hv)
-      rw [List.take_append_drop] at this
-      rwa [List.take_succ_eq_append_getElem hjlt, List.append_assoc]
-  obtain ⟨y, hy⟩ := hpre w.length hmw le_rfl
-  rw [List.take_length] at hy
-  have hx : (w.rtake (k - 1)).length = k - 1 := by simp; omega
-  have hsuf : (w.rtake (k - 1)).map Sum.inl ++ [(.inr .right : α ⊕ Edge)] <:+ anchor w := by
-    obtain ⟨t, ht⟩ := (List.rtake_suffix w (k - 1)).map (Sum.inl : α → α ⊕ Edge)
-    exact ⟨.inr .left :: t, by rw [anchor, ← ht]; simp⟩
-  obtain ⟨v, hv, hcv⟩ := hinfix _ hsuf.isInfix (by simp; omega)
-  obtain ⟨u₂, rfl⟩ := suffix_of_infix_anchor hcv
-  have := hL (w.rdrop (k - 1)) y u₂ [] _ hx (by rwa [List.rdrop_append_rtake])
-    (by simpa using hv)
-  simpa using this
+  refine hL.mem_of_exists_infix hk (by omega) ?_ (fun s hs hlen ↦ ?_) ?_
+  · obtain ⟨v, hv, hcv⟩ := hinfix (.inr .left :: (w.take (k - 1)).map .inl)
+      (cons_infix_anchor_iff.2 (List.take_prefix _ _)) (by simp; omega)
+    exact ⟨v, hv, prefix_of_infix_anchor hcv⟩
+  · obtain ⟨v, hv, hcv⟩ := hinfix (s.map .inl) (map_inl_infix_anchor_iff.2 hs) (by simp [hlen])
+    exact ⟨v, hv, infix_of_map_inl_infix_anchor hcv⟩
+  · obtain ⟨v, hv, hcv⟩ := hinfix ((w.rtake (k - 1)).map .inl ++ [.inr .right])
+      (append_infix_anchor_iff.2 (List.rtake_suffix _ _)) (by simp; omega)
+    exact ⟨v, hv, suffix_of_infix_anchor hcv⟩
 
 end StrictlyLocal
 
