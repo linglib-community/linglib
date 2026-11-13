@@ -2,34 +2,32 @@ module
 
 public import Linglib.Data.Examples.VanCraenenbroeck2014
 public import Linglib.Morphology.DistributedMorphology.RootCategorization
+public import Studies.Harley2014
 public import Linglib.Data.Examples.Readers
 
 /-!
 # van Craenenbroeck (2014): On diagnosing complement-taking roots
 
-Harley argues that roots take complements from criteria that should diagnose one structure: a
-noun and a verb of one root select their objects alike, *one* strands adjuncts and not arguments,
-and an idiom built from a root and its object alone passivizes and nominalizes. The commentary finds
-the criteria mismatched. In English and Frisian an argument that a noun and a verb select alike can
-still be stranded by a proform, as only adjuncts were to be, and Dutch idioms that passivize and
-survive as nominalized infinitives lose their reading under a nominalizing suffix. Arguments, like
-adjuncts, would then be severed from the root, introduced by a functional head over it, and
-proforms would stand for phrases at different heights.
-
-The mismatch is that pronominalization and selection read different properties of a
-configuration. A proform strands the argument when a phrase of its category separates the argument
-from the root, and a noun and a verb select their objects alike when the argument is merged with
-a head that categorizes nothing. Taking the argument as its complement, the root is not separated
-from it; with the argument in the specifier of the categorizer, the categorizer selects it. Only
-the argument in the specifier of a functional head over the root has both properties.
+Harley argues that roots take complements from three criteria: a noun and a verb of one root
+select their objects alike, *one* strands adjuncts and not arguments, and an idiom of a root and
+its object alone passivizes and nominalizes. The commentary finds them mismatched. English and
+Frisian proforms optionally strand an argument that noun and verb select alike, yet
+[no phrase separates a root from its complement](##not_strands_complement); with the argument in
+the specifier of a functional head over the root, [a proform for that head's phrase strands or
+includes it](##checks_severed) and noun and verb still [select alike](##selector_eq). Dutch
+idioms that passivize and survive as nominalized infinitives lose their reading under a
+nominalizing suffix, so [no domain fits them](##not_checks_strijdbijl_ijs).
 
 ## Implementation notes
 
 * A proform stands for a phrase of its category, and a selection restriction relates an argument
-  to the head it is merged with. A configuration chooses the category of each proform, and the
-  *to* that introduces the stranded argument of (11) is set aside, as the paper does.
-* The configurations are shapes without words, which play no part in either reading; that of
-  (14) is the functional projection as printed, without the categorizer above it.
+  to the head it is merged with. A proform that stood for a head as well as for a phrase, the
+  alternative the paper sets aside for the complement structure, is not formalized, and neither is
+  the *to* that introduces the stranded argument of (11).
+* The structures are shapes without words, which play no part in either reading. That of (14) is
+  placed under the categorizer, with the adjunct adjoined to the categorizer's phrase as in (5), so
+  that the proforms differ in height: *one* stands for the categorizer's phrase, *the same*,
+  *likewise* and Frisian *ien* for the functional head's.
 * An idiom's domain is the root's phrase, vP or VoiceP, as in the classification the paper adopts.
   An idiomatic reading survives a form that alters no head of its domain: the passive alters
   Voice, and the nominalized infinitive, the Dutch counterpart of the English gerund, and the
@@ -39,7 +37,6 @@ the argument in the specifier of a functional head over the root has both proper
 
 * [van-craenenbroeck-2014]
 * [harley-2014]
-* [embick-2004]
 -/
 
 @[expose] public section
@@ -47,66 +44,68 @@ the argument in the specifier of a functional head over the root has both proper
 namespace VanCraenenbroeck2014
 
 open PhraseStructure DistributedMorphology
-open DistributedMorphology.RootCategorization (Lexicon Attachment specifierTree selector)
+open DistributedMorphology.RootCategorization (Lexicon Attachment selector not_strands_argPos)
 open Core.Order (TreePath)
+open Harley2014 (Dependent)
 
 /-! ### Pronominalization and selection -/
 
--- `Config.Derives` quantifies over the categories a proform may have.
-deriving instance Fintype for Minimalist.Cat
-deriving instance Fintype for DistributedMorphology.Cat
+/-- (14): the projection of a functional head that takes the root as its complement and the
+argument as its specifier. -/
+def fP : Tree Cat Unit :=
+  .node .f [.terminal (.head .D) (), .node .f [.terminal .f (), .terminal .root ()]]
 
-/-- In the configurations of a root and its argument, the root takes the argument as its
-complement, as in (12), or modifies the categorizer whose complement it is, or the argument is in
-the specifier of the categorizer, or in the specifier of a functional head over the root, as in
-(14). -/
-inductive Config
-  | complement | modifier | specifier | severed
+/-- The root takes the argument as its complement, as in (12), or the argument is severed from
+it, as in (14). -/
+inductive Analysis
+  | complement | severed
   deriving DecidableEq, Repr
 
-/-- A configuration's phrase, for the categorizer and words of a categorized root. -/
-def Config.tree (L : Lexicon Unit) : Config → Tree Cat Unit
-  | .complement => Attachment.complement.tree L
-  | .modifier => Attachment.modifier.tree L
-  | .specifier => specifierTree L
+/-- The phrase of a categorized root, with an adjunct adjoined to it as in (5). -/
+def Analysis.tree (L : Lexicon Unit) : Analysis → Tree Cat Unit
+  | .complement => .adjoin (.head L.x) [Attachment.complement.tree L, .terminal (.head .P) ()]
   | .severed =>
-    .node .f [.terminal (.head .D) (), .node .f [.terminal .f (), .terminal .root ()]]
+    .adjoin (.head L.x) [.node (.head L.x) [.terminal (.head L.x) (), fP], .terminal (.head .P) ()]
 
 /-- The position of the root. -/
-def Config.rootPos : Config → TreePath
-  | .complement | .modifier => ⟨[0, 0]⟩
-  | .specifier => ⟨[1, 0, 0]⟩
-  | .severed => ⟨[1, 1]⟩
+def Analysis.rootPos : Analysis → TreePath
+  | .complement => ⟨[0, 0, 0]⟩
+  | .severed => ⟨[0, 1, 1, 1]⟩
 
-/-- The position of the argument. -/
-def Config.argPos : Config → TreePath
-  | .complement => ⟨[1, 1]⟩
-  | .modifier => ⟨[1]⟩
-  | .specifier | .severed => ⟨[0]⟩
+/-- The position of a dependent. -/
+def Analysis.pos : Analysis → Dependent → TreePath
+  | _, .adjunct => ⟨[1]⟩
+  | .complement, .argument => ⟨[0, 1, 1]⟩
+  | .severed, .argument => ⟨[0, 1, 0]⟩
 
-/-- A proform strands the argument or includes it. -/
+-- the positions are those of the root, the argument and the adjunct
+theorem cat_pos (a : Analysis) (L : Lexicon Unit) :
+    (a.tree L)[a.rootPos]?.map Tree.cat = some .root ∧
+      (a.tree L)[a.pos .argument]?.map Tree.cat = some (.head .D) ∧
+      (a.tree L)[a.pos .adjunct]?.map Tree.cat = some (.head .P) := by
+  cases a <;> exact ⟨rfl, rfl, rfl⟩
+
+/-- A proform strands a dependent or includes it. -/
 inductive Use
   | stranded | included
   deriving DecidableEq, Repr
 
 /-- A proform of category `X` may stand for a phrase that contains the root and strands or
-includes the argument. -/
-def Config.Licenses (c : Config) (L : Lexicon Unit) (X : Cat) : Use → Prop
-  | .stranded => Strands X (c.tree L) c.rootPos c.argPos
-  | .included =>
-    ∃ p ∈ c.rootPos.toList.inits.map TreePath.mk, p ≤ c.argPos ∧ Replaceable X (c.tree L) p
+includes the dependent. -/
+def Analysis.Licenses (a : Analysis) (L : Lexicon Unit) (X : Cat) (d : Dependent) : Use → Prop
+  | .stranded => Strands X (a.tree L) a.rootPos (a.pos d)
+  | .included => Includes X (a.tree L) a.rootPos (a.pos d)
 
-instance (c : Config) (L : Lexicon Unit) (X : Cat) : ∀ u, Decidable (c.Licenses L X u)
+instance (a : Analysis) (L : Lexicon Unit) (X : Cat) (d : Dependent) :
+    ∀ u, Decidable (a.Licenses L X d u)
   | .stranded => inferInstanceAs (Decidable (Strands _ _ _ _))
-  | .included => inferInstanceAs (Decidable (∃ p ∈ _, _))
+  | .included => inferInstanceAs (Decidable (Includes _ _ _ _))
 
-/-- The proforms of (11), (13) and (17), English *the same* or *likewise* and Frisian *ien*. -/
-inductive Proform
-  | sameLikewise | ien
-  deriving DecidableEq, Repr
-
-/-- The proforms as named in the rows. -/
-def proformTable : List (String × Proform) := [("the same/likewise", .sameLikewise), ("ien", .ien)]
+/-- **No phrase separates a root from its complement.** Under (12) a proform of no category
+strands the argument, whatever the categorizer. -/
+theorem not_strands_complement (L : Lexicon Unit) (X : Cat) :
+    ¬ Analysis.complement.Licenses L X .argument .stranded :=
+  not_strands_argPos (E := Analysis.complement.tree L) (h := [0]) rfl .complement L X
 
 /-- A root categorized as a verb. -/
 def verb : Lexicon Unit := { x := .v, root := (), head := (), arg := () }
@@ -115,45 +114,46 @@ def verb : Lexicon Unit := { x := .v, root := (), head := (), arg := () }
 def noun : Lexicon Unit := { x := .n, root := (), head := (), arg := () }
 
 /-- The categories as named in the rows. -/
-def categoryTable : List (String × Lexicon Unit) := [("verb", verb), ("noun", noun)]
+def categories : List (String × Lexicon Unit) := [("verb", verb), ("noun", noun)]
 
 /-- The uses as named in the rows. -/
-def useTable : List (String × Use) := [("stranded", .stranded), ("included", .included)]
+def uses : List (String × Use) := [("stranded", .stranded), ("included", .included)]
 
-/-- The categories of the selection examples (10) and (15). -/
-def selectionData : List (Lexicon Unit) :=
-  Examples.all.filterMap fun d ↦
-    if d.feature? "construction" = some "selection" then d.parse? "category" categoryTable
-    else none
+/-- The category of the pronominalized phrase and the use of its argument in a row of (11), (13)
+and (17). -/
+def use? (e : Datum) : Option (Lexicon Unit × Use) := do
+  pure (← e.parse? "category" categories, ← e.parse? "argument" uses)
 
-/-- The pronominalization examples (11), (13) and (17), each with the category of the
-pronominalized phrase, the proform, its use and the judgment. -/
-def pronominalizationData : List (Lexicon Unit × Proform × Use × Judgment) :=
-  Examples.all.filterMap fun d ↦ do
-    guard (d.feature? "construction" = some "pronominalization")
-    pure (← d.parse? "category" categoryTable, ← d.parse? "proform" proformTable,
-      ← d.parse? "argument" useTable, d.judgment)
+-- (11), which strands the argument, is accepted
+theorem not_checks_complement (X : Cat) (n : ℕ) :
+    ¬ Datum.Checks use? (fun u ↦ .ofProp (Analysis.complement.Licenses u.1 X .argument u.2))
+      Examples.all n := fun h ↦ by
+  have h11 : _ = Judgment.Band.ofProp (Analysis.complement.Licenses verb X .argument .stranded) :=
+    h.1 Examples.ex_11 (by decide) (verb, .stranded) rfl
+  rw [Judgment.Band.ofProp, ite_eq_right (not_strands_complement verb X)] at h11
+  exact absurd h11 (by decide)
 
-theorem length_data : selectionData.length = 4 ∧ pronominalizationData.length = 4 := by
+/-- **Severed, the argument is stranded or included.** Under (14) *the same*, *likewise* and
+*ien*, proforms for the phrase of the functional head, strand the argument in (11) and (17a) and
+include it in (13) and (17b). -/
+theorem checks_severed :
+    Datum.Checks use? (fun u ↦ .ofProp (Analysis.severed.Licenses u.1 .f .argument u.2))
+      Examples.all 4 := by
   decide +kernel
 
-/-- A configuration derives the examples when the argument is merged with one head in the nouns
-and the verbs of the selection examples, and each proform has a category that licenses exactly
-the uses the pronominalization examples accept. -/
-def Config.Derives (c : Config) : Prop :=
-  (∀ x ∈ selectionData, ∀ y ∈ selectionData,
-    selector (c.tree x) c.argPos = selector (c.tree y) c.argPos) ∧
-  ∀ r ∈ pronominalizationData, ∃ X, ∀ s ∈ pronominalizationData, s.2.1 = r.2.1 →
-    (s.2.2.2 = .acceptable ↔ c.Licenses s.1 X s.2.2.1)
+-- (3), in Harley's rows: under either analysis *one*, a proform for the phrase of the noun,
+-- strands the adjunct and not the argument
+theorem checks_one (a : Analysis) :
+    Datum.Checks (·.parse? "stranded" Harley2014.dependentTable)
+      (fun d ↦ .ofProp (a.Licenses noun (.head .n) d .stranded)) Harley2014.Examples.all 2 := by
+  cases a <;> decide +kernel
 
-instance (c : Config) : Decidable c.Derives := inferInstanceAs (Decidable (_ ∧ _))
-
-/-- **Only the severed argument derives the examples.** Where the root takes the argument as its
-complement or modifies the categorizer no proform strands the argument, as
-`RootCategorization.not_strands_argPos` shows in every context; where the argument is in the
-specifier of the categorizer, the verb and the noun merge it with different heads. -/
-theorem derives_iff (c : Config) : c.Derives ↔ c = .severed := by
-  cases c <;> decide +kernel
+/-- **The noun and the verb select alike under either analysis.** The argument is merged with the
+root in (12) and with the functional head in (14), never with the categorizer, so the symmetry of
+(10) and (15) does not tell the analyses apart. -/
+theorem selector_eq (a : Analysis) (L L' : Lexicon Unit) :
+    selector (a.tree L) (a.pos .argument) = selector (a.tree L') (a.pos .argument) := by
+  cases a <;> rfl
 
 /-! ### Idiomatization -/
 
@@ -168,62 +168,68 @@ def Domain.rank : Domain → ℕ
   | .v => 1
   | .voice => 2
 
+theorem Domain.rank_injective : Function.Injective Domain.rank := by
+  rintro (_ | _ | _) (_ | _ | _) h <;> first | rfl | cases h
+
+instance : LinearOrder Domain := LinearOrder.lift' Domain.rank Domain.rank_injective
+
 /-- The forms of an idiom in (18)–(22). -/
 inductive Form
   | active | passive | nominalizedInfinitive | nominalization
   deriving DecidableEq, Repr
 
-/-- The lowest head a form alters. -/
-def Form.altered : Form → Option Domain
-  | .active => none
-  | .passive => some .voice
-  | .nominalizedInfinitive | .nominalization => some .v
+/-- The lowest head a form alters, `⊤` when it alters none. -/
+def Form.altered : Form → WithTop Domain
+  | .active => ⊤
+  | .passive => Domain.voice
+  | .nominalizedInfinitive | .nominalization => Domain.v
 
 /-- An idiomatic reading survives a form that alters no head of its domain. -/
-def Survives (d : Domain) (f : Form) : Prop := ∀ h ∈ f.altered, d.rank < h.rank
+def Survives (d : Domain) (f : Form) : Prop := d < f.altered
 
 instance (d : Domain) (f : Form) : Decidable (Survives d f) :=
-  inferInstanceAs (Decidable (∀ h ∈ f.altered, _))
-
-/-- The idioms of (18)–(22) are *iemand de bons geven* 'dump someone', *iemand de das omdoen* 'be
-the end of someone', *de strijdbijl begraven* 'bury the hatchet' and *het ijs breken* 'break the
-ice'. -/
-inductive Idiom
-  | bons | das | strijdbijl | ijs
-  deriving DecidableEq, Repr
-
-/-- The idioms as named in the rows. -/
-def idiomTable : List (String × Idiom) :=
-  [("bons", .bons), ("das", .das), ("strijdbijl", .strijdbijl), ("ijs", .ijs)]
+  inferInstanceAs (Decidable (_ < _))
 
 /-- The forms as named in the rows. -/
-def formTable : List (String × Form) :=
+def forms : List (String × Form) :=
   [("active", .active), ("passive", .passive), ("nominalizedInfinitive", .nominalizedInfinitive),
     ("nominalization", .nominalization)]
 
-/-- The idiom examples, the idiom and its form with the judgment of its idiomatic reading. -/
-def idiomData : List (Idiom × Form × Judgment) :=
-  Examples.all.filterMap fun d ↦ do
-    pure (← d.parse? "idiom" idiomTable, ← d.parse? "form" formTable, d.judgment)
+/-- The form of a row of an idiom, one of *iemand de bons geven* 'dump someone', *iemand de das
+omdoen* 'be the end of someone', *de strijdbijl begraven* 'bury the hatchet' and *het ijs
+breken* 'break the ice'. -/
+def form? (idiom : String) (e : Datum) : Option Form :=
+  if e.feature? "idiom" = some idiom then e.parse? "form" forms else none
 
-theorem length_idiomData : idiomData.length = 14 := by decide +kernel
-
-/-- An idiom fits a domain when its reading survives exactly the forms its examples accept. -/
-def Fits (i : Idiom) (d : Domain) : Prop :=
-  ∀ r ∈ idiomData, r.1 = i → (r.2.2 = .acceptable ↔ Survives d r.2.1)
-
-instance (i : Idiom) (d : Domain) : Decidable (Fits i d) :=
-  inferInstanceAs (Decidable (∀ r ∈ idiomData, _))
-
-theorem fits_bons_iff (d : Domain) : Fits .bons d ↔ d = .voice := by
+-- (18)
+theorem checks_bons_iff (d : Domain) :
+    Datum.Checks (form? "bons") (fun f ↦ .ofProp (Survives d f)) Examples.all 3 ↔ d = .voice := by
   cases d <;> decide +kernel
 
-theorem fits_das_iff (d : Domain) : Fits .das d ↔ d = .v := by
+-- (19)
+theorem checks_das_iff (d : Domain) :
+    Datum.Checks (form? "das") (fun f ↦ .ofProp (Survives d f)) Examples.all 3 ↔ d = .v := by
   cases d <;> decide +kernel
 
-/-- **No domain fits.** The idioms that passivize and survive as nominalized infinitives should be
-built from the root and its object alone, and then survive the suffixal nominalization too. -/
-theorem not_fits (d : Domain) : ¬ Fits .strijdbijl d ∧ ¬ Fits .ijs d := by
-  cases d <;> decide +kernel
+/-- No domain fits an idiom judged differently in two forms that alter the same head. -/
+theorem not_checks_of_altered_eq {idiom : String} {e e' : Datum} {f g : Form}
+    (he : e ∈ Examples.all) (he' : e' ∈ Examples.all) (hf : form? idiom e = some f)
+    (hg : form? idiom e' = some g) (h : f.altered = g.altered)
+    (hj : e.judgment.band ≠ e'.judgment.band) (d : Domain) (n : ℕ) :
+    ¬ Datum.Checks (form? idiom) (fun f ↦ .ofProp (Survives d f)) Examples.all n := fun hc ↦
+  hj <| by simp only [hc.1 e he f hf, hc.1 e' he' g hg, Survives, h]
+
+/-- **No domain fits.** *De strijdbijl begraven* and *het ijs breken* keep their reading as
+nominalized infinitives in (20b) and (21b) and lose it under the nominalizing suffix in (22),
+though both forms alter v. -/
+theorem not_checks_strijdbijl_ijs (d : Domain) (n : ℕ) :
+    ¬ Datum.Checks (form? "strijdbijl") (fun f ↦ .ofProp (Survives d f)) Examples.all n ∧
+      ¬ Datum.Checks (form? "ijs") (fun f ↦ .ofProp (Survives d f)) Examples.all n :=
+  ⟨not_checks_of_altered_eq (e := Examples.ex_20b) (e' := Examples.ex_22a)
+      (f := .nominalizedInfinitive) (g := .nominalization) (by decide) (by decide) rfl rfl rfl
+      (by decide) d n,
+    not_checks_of_altered_eq (e := Examples.ex_21b) (e' := Examples.ex_22b)
+      (f := .nominalizedInfinitive) (g := .nominalization) (by decide) (by decide) rfl rfl rfl
+      (by decide) d n⟩
 
 end VanCraenenbroeck2014

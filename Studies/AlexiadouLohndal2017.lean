@@ -130,9 +130,35 @@ theorem derives_iff (v : View) :
 
 section Deverbal
 
-open VanCraenenbroeck2014 (Config)
 open DistributedMorphology (Strands)
-open DistributedMorphology.RootCategorization (selector)
+open DistributedMorphology.RootCategorization (Lexicon specifierTree selector)
+open Core.Order (TreePath)
+
+/-- In the configurations of a Root and its argument, the Root takes the argument as its
+complement, or modifies the categorizer whose complement it is, or the argument is in the
+specifier of the categorizer, or in the specifier of a functional head over the Root. -/
+inductive Config
+  | complement | modifier | specifier | severed
+  deriving DecidableEq, Repr
+
+/-- A configuration's phrase, for the categorizer and words of a categorized Root. -/
+def Config.tree (L : Lexicon Unit) : Config → Tree Cat Unit
+  | .complement => Attachment.complement.tree L
+  | .modifier => Attachment.modifier.tree L
+  | .specifier => specifierTree L
+  | .severed => VanCraenenbroeck2014.fP
+
+/-- The position of the Root. -/
+def Config.rootPos : Config → TreePath
+  | .complement | .modifier => ⟨[0, 0]⟩
+  | .specifier => ⟨[1, 0, 0]⟩
+  | .severed => ⟨[1, 1]⟩
+
+/-- The position of the argument. -/
+def Config.argPos : Config → TreePath
+  | .complement => ⟨[1, 1]⟩
+  | .modifier => ⟨[1]⟩
+  | .specifier | .severed => ⟨[0]⟩
 
 /-- A deverbal noun with an adjunct, the nP of a nominalizer over the phrase of a Root and its
 argument under v, with a PP adjoined to it. -/
@@ -141,7 +167,7 @@ def deverbal (c : Config) : Tree Cat Unit :=
     .terminal (.head .P) ()]
 
 /-- The position of a dependent in `deverbal`. -/
-def position (c : Config) : Harley2014.Dependent → Core.Order.TreePath
+def position (c : Config) : Harley2014.Dependent → TreePath
   | .argument => ⟨0 :: 1 :: c.argPos.toList⟩
   | .adjunct => ⟨[1]⟩
 

@@ -27,7 +27,8 @@ everything inside is related to them as it was.
 
 * `DistributedMorphology.MayCondition`, `DistributedMorphology.MayCondition'`: the two
   formulations of locality.
-* `DistributedMorphology.Strands`: a proform of a category strands one node from another.
+* `DistributedMorphology.Strands`, `DistributedMorphology.Includes`: a proform of a category
+  strands one node from another, or includes it.
 * `DistributedMorphology.localSet`, `DistributedMorphology.localLabels`: the labels of the
   terminals that may condition a head under the refined formulation, as a set and as a list.
 * `DistributedMorphology.x0At`: the complex head containing a node.
@@ -122,6 +123,35 @@ instance [DecidableEq C] (X : C) (t : Tree C W) (p : TreePath) : Decidable (Repl
 instance [DecidableEq C] (X : C) (t : Tree C W) (α β : TreePath) :
     Decidable (Strands X t α β) :=
   List.decidableBEx _ _
+
+/-- A proform of category `X` includes the node at `β` with the node at `α` when it may stand for a
+phrase that contains both. -/
+def Includes (X : C) (t : Tree C W) (α β : TreePath) : Prop :=
+  ∃ p ∈ α.toList.inits.map TreePath.mk, p ≤ β ∧ Replaceable X t p
+
+instance [DecidableEq C] (X : C) (t : Tree C W) (α β : TreePath) :
+    Decidable (Includes X t α β) :=
+  List.decidableBEx _ _
+
+theorem strands_iff {X : C} {t : Tree C W} {α β : TreePath} :
+    Strands X t α β ↔ ∃ p, p ≤ α ∧ ¬ p ≤ β ∧ Replaceable X t p := by
+  simp only [Strands, mem_crossed, and_assoc]
+
+theorem includes_iff {X : C} {t : Tree C W} {α β : TreePath} :
+    Includes X t α β ↔ ∃ p, p ≤ α ∧ p ≤ β ∧ Replaceable X t p := by
+  refine exists_congr fun ⟨p⟩ ↦ and_congr_left fun _ ↦ ?_
+  simp [List.mem_inits, TreePath.le_def]
+
+theorem includes_comm {X : C} {t : Tree C W} {α β : TreePath} :
+    Includes X t α β ↔ Includes X t β α := by
+  simp only [includes_iff, and_left_comm]
+
+/-- A proform that may stand for a phrase containing a node strands or includes every other
+node. -/
+theorem strands_or_includes_iff {X : C} {t : Tree C W} {α β : TreePath} :
+    Strands X t α β ∨ Includes X t α β ↔ ∃ p, p ≤ α ∧ Replaceable X t p := by
+  simp only [strands_iff, includes_iff, ← exists_or, ← and_or_left, ← or_and_right]
+  exact exists_congr fun p ↦ and_congr_right fun _ ↦ and_iff_right (em' _)
 
 theorem not_replaceable_of_isHeadAt {X : C} {t : Tree C W} {p : TreePath} (h : IsHeadAt t p) :
     ¬ Replaceable X t p := by
