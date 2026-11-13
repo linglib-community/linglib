@@ -17,18 +17,15 @@ its maximal projection, and it heads a phase when it
 [heads more than its leaf](##Minimalist.SyntacticObject.isPhaseHead_iff_exists_raisingHead). Its
 complement is the sister it projects over. The phase is what lies within the terms it heads, the
 interior what lies within the complement, and the edge the rest: the head and what is merged above
-it, a phrase raised there included. The Phase Impenetrability Condition seals the interior, under
-[chomsky-2000]'s condition against every probe outside the phase, and under [chomsky-2001]'s
-[weaker one](##Minimalist.SyntacticObject.Accessible.nextPhase_of_phase) only against a probe
-outside the complement of a higher phase head.
+it, a phrase raised there included. The Phase Impenetrability Condition, which seals the interior,
+is stated on positions in `Phase/Transfer.lean`.
 
 ## Implementation notes
 
 * Terms are values, not occurrences, so all copies of a head share one phase, and the lower
-  copies of a moved phrase are one term; positions tell copies apart in `Copy/Chain.lean`, and
-  `Phase/Transfer.lean` states the two conditions there.
+  copies of a moved phrase are one term; positions tell copies apart in `Copy/Chain.lean`.
 * Every head that projects heads a phase, as in the book; the heads a study counts as phase heads
-  (C alone, or also v, D, or Voice) are the list `Accessible` takes.
+  (C alone, or also v, D, or Voice) are the positions `sealed` takes in `Phase/Transfer.lean`.
 * Under the raising head a phrase raised to the edge of a head lies in its phase; a phrase merged
   there in place lies in it only when the head selects it.
 * The bare trace is headed by the dummy token `LexicalItem.Token.bareTrace`, which the statements
@@ -37,30 +34,19 @@ outside the complement of a higher phase head.
 ## TODO
 
 * The book's ordering of phases by inclusion and its inaccessible terms, those in the interiors of
-  lower phases, with the stricter variant that also freezes their heads. That a goal is
-  inaccessible to a head exactly when `Accessible` fails needs phases to be nested or disjoint,
-  which holds of positions and not of values.
+  lower phases, with the stricter variant that also freezes their heads. Their agreement with
+  the positions `sealed` gives needs phases to be nested or disjoint, which holds of positions and
+  not of values.
 
 ## References
 
 * [marcolli-chomsky-berwick-2025]
 * [chomsky-2013]
-* [chomsky-2000]
-* [chomsky-2001]
 -/
 
 @[expose] public section
 
 namespace Minimalist
-
-/-- When the Phase Impenetrability Condition seals the interior of a phase head. -/
-inductive Impenetrability
-  /-- Once the phase is built, to everything outside it ([chomsky-2000]). -/
-  | phase
-  /-- Once a phase head whose complement contains the phase is merged, to everything outside
-  that complement ([chomsky-2001]). -/
-  | nextPhase
-  deriving DecidableEq, Repr
 
 namespace SyntacticObject
 
@@ -264,46 +250,6 @@ theorem phaseInterior_eq_cCommandDomain
     T.phaseInterior ℓ = T.cCommandDomain (leaf ℓ) :=
   Multiset.filter_congr fun _ _ ↦ by
     grind [WithinComplement, IsComplementOf, CCommands, Sisters]
-
-/-! ### The Phase Impenetrability Condition -/
-
-variable (T) in
-/-- `goal` is accessible to `probe` in `T` under the condition `s`, the phase heads being `heads`.
-A goal within the complement of a phase head `H` is reachable from within the phase of `H`
-([chomsky-2001], (7)), and under the weaker condition also by a probe within the complement of
-every phase head `Z` whose complement contains `H`, the stages before the operations at ZP
-([chomsky-2001], (8), (11)). -/
-def Accessible (heads : List LexicalItem.Token) :
-    Impenetrability → SyntacticObject → SyntacticObject → Prop
-  | .phase, probe, goal => ∀ H ∈ heads, T.WithinComplement H goal → T.WithinProjection H probe
-  | .nextPhase, probe, goal => ∀ H ∈ heads, T.WithinComplement H goal →
-      T.WithinProjection H probe ∨
-        ∀ Z ∈ heads, T.WithinComplement Z (leaf H) → T.WithinComplement Z probe
-
-instance (heads : List LexicalItem.Token) (s : Impenetrability) (probe goal : SyntacticObject) :
-    Decidable (T.Accessible heads s probe goal) := by
-  cases s <;> dsimp only [Accessible] <;> infer_instance
-
-variable {heads : List LexicalItem.Token} {probe goal : SyntacticObject}
-
-/-- [chomsky-2000]'s condition is the stronger: what it leaves accessible, [chomsky-2001]'s does
-too. -/
-theorem Accessible.nextPhase_of_phase (h : T.Accessible heads .phase probe goal) :
-    T.Accessible heads .nextPhase probe goal :=
-  fun H hH hg ↦ .inl (h H hH hg)
-
-/-- A goal outside the interior of every phase head is accessible to every probe. -/
-theorem Accessible.of_forall_not_withinComplement {s : Impenetrability}
-    (h : ∀ H ∈ heads, ¬ T.WithinComplement H goal) : T.Accessible heads s probe goal := by
-  cases s <;> exact fun H hH hg ↦ absurd hg (h H hH)
-
-/-- Fewer phase heads seal less. -/
-theorem Accessible.anti {heads' : List LexicalItem.Token} {s : Impenetrability}
-    (h : T.Accessible heads s probe goal) (hsub : heads' ⊆ heads) :
-    T.Accessible heads' s probe goal := by
-  cases s
-  · exact fun H hH hg ↦ h H (hsub hH) hg
-  · exact fun H hH hg ↦ (h H (hsub hH) hg).imp_right fun hz Z hZ ↦ hz Z (hsub hZ)
 
 end SyntacticObject
 

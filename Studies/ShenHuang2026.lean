@@ -174,12 +174,6 @@ def Constraint.Violated : Constraint → Config → Prop
 instance (k : Constraint) : DecidablePred k.Violated := fun _ ↦ by
   cases k <;> unfold Constraint.Violated <;> infer_instance
 
-theorem violatesPIC_iff_not_accessible (c : Config) :
-    c.ViolatesPIC c.tree ↔
-      ¬ (c.tree : SyntacticObject).Accessible c.phaseHead.toList .phase wh (.traceOf wh) := by
-  obtain ⟨f, o, v⟩ := c
-  cases f <;> cases o <;> cases v <;> decide
-
 theorem pic_violated_iff (c : Config) :
     Constraint.Violated .pic c ↔
       c.fronted = true ∧ c.definiteObject = true ∧ c.creation = false := by
