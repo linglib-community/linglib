@@ -90,7 +90,8 @@ def probe : Probe (TreePath × LexicalItem.Token) := relD.toProbe r.feats
 satisfies the probe, c-commands it (8). -/
 def Closest (h : TreePath) (g : TreePath × LexicalItem.Token) : Prop :=
   g ∈ r.goals h ∧ r.probe.sat g ∧ ∀ g' ∈ r.goals h, r.probe.sat g' → g' ≠ g →
-    ¬ r.tree.toRoseTree.CCommands (projectionAt .raising r.tree g'.1) (projectionAt .raising r.tree g.1)
+    ¬ r.tree.toRoseTree.CCommands (projectionAt .raising r.tree g'.1) (projectionAt .raising r.tree
+        g.1)
 
 instance (h : TreePath) : DecidablePred (r.Closest h) := fun _ ↦ by
   unfold Closest; infer_instance

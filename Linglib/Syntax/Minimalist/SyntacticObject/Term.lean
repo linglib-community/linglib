@@ -74,7 +74,8 @@ variable {x y z l r : SyntacticObject L}
 /-! ### Immediate containment -/
 
 /-- `y` is one of `x`'s root daughters. -/
-def ImmediatelyContains (x y : SyntacticObject L) : Prop := y.toUnorderedTree ∈ children x.toUnorderedTree
+def ImmediatelyContains (x y : SyntacticObject L) : Prop :=
+    y.toUnorderedTree ∈ children x.toUnorderedTree
 
 instance [DecidableEq L] (x y : SyntacticObject L) : Decidable (ImmediatelyContains x y) :=
   inferInstanceAs (Decidable (_ ∈ _))
@@ -158,7 +159,8 @@ theorem numNodes_lt_of_immediatelyContains (h : ImmediatelyContains x y) :
   obtain ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩ := exists_form x <;> simp at h
   obtain rfl | rfl := h <;> simp
 
-theorem numNodes_lt_of_contains (h : Contains x y) : y.toUnorderedTree.numNodes < x.toUnorderedTree.numNodes :=
+theorem numNodes_lt_of_contains (h : Contains x y) :
+    y.toUnorderedTree.numNodes < x.toUnorderedTree.numNodes :=
   transGen_minimal (r' := InvImage (· > ·) fun s : SyntacticObject L ↦ s.toUnorderedTree.numNodes)
     (fun _ _ ↦ numNodes_lt_of_immediatelyContains) x y h
 
@@ -196,7 +198,8 @@ theorem isSyntacticObject_of_mem_subtrees (s : SyntacticObject L) :
   | merge l r ihl ihr =>
     simp only [SyntacticObject.toUnorderedTree_merge, mem_subtrees_node_pair]
     rintro m (rfl | h | h)
-    exacts [SyntacticObject.toUnorderedTree_merge l r ▸ (SyntacticObject.merge l r).isSyntacticObject_toUnorderedTree,
+    exacts [SyntacticObject.toUnorderedTree_merge l r ▸ (SyntacticObject.merge l
+        r).isSyntacticObject_toUnorderedTree,
       ihl m h, ihr m h]
 
 namespace SyntacticObject
@@ -252,8 +255,10 @@ def terms (s : SyntacticObject L) : Multiset (SyntacticObject L) :=
 @[simp] theorem map_toUnorderedTree_terms (s : SyntacticObject L) :
     s.terms.map toUnorderedTree = UnorderedTree.subtrees s.toUnorderedTree := by
   induction s using ind with
-  | leaf tok => rw [terms_leaf, Multiset.map_singleton, toUnorderedTree_leaf, UnorderedTree.subtrees_leaf]
-  | trace => rw [terms_trace, Multiset.map_singleton, toUnorderedTree_trace, UnorderedTree.subtrees_leaf]
+  | leaf tok => rw [terms_leaf, Multiset.map_singleton, toUnorderedTree_leaf,
+      UnorderedTree.subtrees_leaf]
+  | trace => rw [terms_trace, Multiset.map_singleton, toUnorderedTree_trace,
+      UnorderedTree.subtrees_leaf]
   | traceOf tok =>
     rw [terms_traceOf, Multiset.map_singleton, toUnorderedTree_traceOf, UnorderedTree.subtrees_leaf]
   | merge l r ihl ihr =>
@@ -271,7 +276,8 @@ def terms (s : SyntacticObject L) : Multiset (SyntacticObject L) :=
 theorem self_mem_terms (s : SyntacticObject L) : s ∈ s.terms :=
   mem_terms.2 ReflTransGen.refl
 
-theorem toUnorderedTree_mem_subtrees {S U : SyntacticObject L} : S.toUnorderedTree ∈ U.toUnorderedTree.subtrees ↔ S ∈ U.terms := by
+theorem toUnorderedTree_mem_subtrees {S U : SyntacticObject L} :
+    S.toUnorderedTree ∈ U.toUnorderedTree.subtrees ↔ S ∈ U.terms := by
   rw [← map_toUnorderedTree_terms, Multiset.mem_map_of_injective toUnorderedTree_injective]
 
 theorem mem_terms_merge_right (u C : SyntacticObject L) : C ∈ (merge u C).terms := by

@@ -49,7 +49,8 @@ the key, the Minimal Link Condition of [chomsky-1995]. -/
 
 namespace PlanarSyntacticObject
 
-variable {t : PlanarSyntacticObject} {p : Probe t.toRoseTree.Positions} {s : Set t.toRoseTree.Positions}
+variable {t : PlanarSyntacticObject} {p : Probe t.toRoseTree.Positions} {s : Set
+    t.toRoseTree.Positions}
   {q g : t.toRoseTree.Positions}
 
 /-- A satisfier that asymmetrically c-commands a position blocks the goal there, whatever else the
@@ -73,14 +74,16 @@ variable {β : Type*} [Preorder β] [DecidableRel ((· < ·) : β → β → Pro
 variable (t) in
 /-- The terms a probe on the head `h` finds when its search orders positions by `key`: those at
 the first satisfying positions that an occurrence of `h` c-commands. -/
-def goalsBy (p : Probe t.toRoseTree.Positions) (h : SyntacticObject) (key : t.toRoseTree.Positions → β) :
+def goalsBy (p : Probe t.toRoseTree.Positions) (h : SyntacticObject) (key : t.toRoseTree.Positions →
+    β) :
     Finset SyntacticObject :=
   (Finset.univ.filter fun g ↦ ∃ a, t.termAt a = h ∧
     p.Finds {q | t.toRoseTree.CCommands a q} key g).image t.termAt
 
 theorem mem_goalsBy {h x : SyntacticObject} {key : t.toRoseTree.Positions → β} :
     x ∈ t.goalsBy p h key ↔
-      ∃ a, t.termAt a = h ∧ ∃ g, p.Finds {q | t.toRoseTree.CCommands a q} key g ∧ t.termAt g = x := by
+      ∃ a, t.termAt a = h ∧ ∃ g, p.Finds {q | t.toRoseTree.CCommands a q} key g ∧ t.termAt g = x :=
+          by
   simp only [goalsBy, Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
   exact ⟨fun ⟨g, ⟨a, ha, hg⟩, hx⟩ ↦ ⟨a, ha, g, hg, hx⟩,
     fun ⟨a, ha, g, hg, hx⟩ ↦ ⟨g, ⟨a, ha, hg⟩, hx⟩⟩
@@ -105,7 +108,8 @@ def goalsUnder (p : Probe t.toRoseTree.Positions) (h : SyntacticObject)
     (cut : Core.Order.TreePath → Set Core.Order.TreePath) [∀ a, DecidablePred (· ∈ cut a)] :
     Finset SyntacticObject :=
   (Finset.univ.filter fun g ↦ ∃ a, t.termAt a = h ∧
-    p.Finds {q | t.toRoseTree.CCommands a q ∧ q.val ∉ cut a.val} (t.above t.branching) g).image t.termAt
+    p.Finds {q | t.toRoseTree.CCommands a q ∧ q.val ∉ cut a.val} (t.above
+        t.branching) g).image t.termAt
 
 @[simp] theorem goalsUnder_empty {h : SyntacticObject} :
     t.goalsUnder p h (fun _ ↦ ∅) = t.goals p h := by
@@ -114,7 +118,8 @@ def goalsUnder (p : Probe t.toRoseTree.Positions) (h : SyntacticObject)
 theorem mem_goalsUnder_of_finds {h : SyntacticObject}
     {cut : Core.Order.TreePath → Set Core.Order.TreePath}
     [∀ a, DecidablePred (· ∈ cut a)] {a : t.toRoseTree.Positions} (ha : t.termAt a = h)
-    (hg : p.Finds {q | t.toRoseTree.CCommands a q} (t.above t.branching) g) (hgc : g.val ∉ cut a.val) :
+    (hg : p.Finds {q | t.toRoseTree.CCommands a q} (t.above t.branching) g) (hgc : g.val ∉ cut
+        a.val) :
     t.termAt g ∈ t.goalsUnder p h cut := by
   simp only [goalsUnder, Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
   exact ⟨g, ⟨a, ha, hg.of_subset (fun _ hq ↦ hq.1) ⟨hg.mem, hgc⟩⟩, rfl⟩
@@ -145,11 +150,14 @@ theorem mem_goals_leafProbe_map_iff {f : LexicalItem.Token → LexicalItem.Token
       (e q).subtree = RoseTree.map (SyntacticObject.Vertex.map f) q.subtree :=
     Option.some.inj <| (e q).getElem?_eq.symm.trans <|
       (congrArg (fun r : RoseTree _ ↦ r[q.val.toList]?) (toRoseTree_map f t)).trans <|
-      (RoseTree.getElem?_map _ t.toRoseTree q.val.toList).trans (by rw [q.getElem?_eq, Option.map_some])
+      (RoseTree.getElem?_map _ t.toRoseTree q.val.toList).trans (by rw [q.getElem?_eq,
+          Option.map_some])
   have hterm (q : t.toRoseTree.Positions) : (t.map f).termAt (e q) = (t.termAt q).map f :=
     SyntacticObject.toUnorderedTree_injective <| by
-      rw [toUnorderedTree_termAt, hsub, SyntacticObject.toUnorderedTree_map, toUnorderedTree_termAt, UnorderedTree.map_mk]
-  have hcc (a q : t.toRoseTree.Positions) : (t.map f).toRoseTree.CCommands (e a) (e q) ↔ t.toRoseTree.CCommands a q :=
+      rw [toUnorderedTree_termAt, hsub, SyntacticObject.toUnorderedTree_map, toUnorderedTree_termAt,
+          UnorderedTree.map_mk]
+  have hcc (a q : t.toRoseTree.Positions) : (t.map f).toRoseTree.CCommands (e a) (e q) ↔
+      t.toRoseTree.CCommands a q :=
     (iff_of_eq (congrArg (fun r : RoseTree _ ↦ r.CCommands a.val q.val) (toRoseTree_map f t))).trans
       (RoseTree.cCommands_map _ _ _ _)
   have hkey (q : t.toRoseTree.Positions) :

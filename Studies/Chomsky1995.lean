@@ -253,7 +253,8 @@ open Core.Order RoseTree PhraseStructure Minimalist
 variable (t : PlanarSyntacticObject)
 
 /-- The head relation on the positions of `t`, from the head daughter of each subtree. -/
-def HeadDaughterAt (m d : t.toRoseTree.Positions) : Prop := headDaughterRel (HeadFunction.raising t) m d
+def HeadDaughterAt (m d : t.toRoseTree.Positions) : Prop := headDaughterRel (HeadFunction.raising
+    t) m d
 
 instance : DecidableRel (HeadDaughterAt t) := fun m d ↦
   inferInstanceAs (Decidable (headDaughterRel (HeadFunction.raising t) m d))

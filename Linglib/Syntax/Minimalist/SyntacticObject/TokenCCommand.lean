@@ -159,7 +159,8 @@ theorem coe_mem_terms_iff (p : PlanarSyntacticObject) :
     rcases length_eq_zero_or_two h with hlen | hlen
     · rw [List.length_eq_zero_iff] at hlen
       subst hlen
-      rw [terms_of_nil, Multiset.mem_singleton, ← SyntacticObject.toUnorderedTree_inj, toUnorderedTree_toSyntacticObject,
+      rw [terms_of_nil, Multiset.mem_singleton, ← SyntacticObject.toUnorderedTree_inj,
+          toUnorderedTree_toSyntacticObject,
         toRoseTree_ofRoseTree, holds_leaf]
       change UnorderedTree.mk (.node (Sum.inl (some y)) []) = UnorderedTree.mk (.node a []) ↔ _
       rw [UnorderedTree.mk_node_eq_mk_node_iff]

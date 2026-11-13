@@ -93,7 +93,8 @@ def yield (s : SyntacticObject L) : Multiset L :=
 @[simp] theorem yield_traceOf (tok : L) : (traceOf tok).yield = 0 := rfl
 
 @[simp] theorem yield_merge (l r : SyntacticObject L) : (merge l r).yield = l.yield + r.yield := by
-  rw [yield, toUnorderedTree_merge, show ({l.toUnorderedTree, r.toUnorderedTree} : Multiset _) = l.toUnorderedTree ::ₘ {r.toUnorderedTree} from rfl,
+  rw [yield, toUnorderedTree_merge, show ({l.toUnorderedTree, r.toUnorderedTree} : Multiset _) =
+      l.toUnorderedTree ::ₘ {r.toUnorderedTree} from rfl,
     UnorderedTree.leaves_node_cons]
   simp [yield, Multiset.filterMap_add]
 
@@ -286,7 +287,8 @@ theorem isLeafOf_map {f : LexicalItem.Token → LexicalItem.Token}
 
 /-- A trace leaf, bare or indexed. -/
 def isTrace (s : SyntacticObject L) : Prop :=
-  (UnorderedTree.value s.toUnorderedTree).isRight = true ∧ UnorderedTree.numNodes s.toUnorderedTree = 1
+  (UnorderedTree.value s.toUnorderedTree).isRight = true ∧
+      UnorderedTree.numNodes s.toUnorderedTree = 1
 
 instance (s : SyntacticObject L) : Decidable (isTrace s) := inferInstanceAs (Decidable (_ ∧ _))
 

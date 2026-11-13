@@ -91,7 +91,8 @@ object built just before. -/
 def complementSchedule (d : Derivation) : List (ℕ × ℕ) :=
   (List.range d.length).filterMap fun i ↦ match (d.steps[i]? : Option Step) with
     | some (.em _ x) =>
-      if (tokenList x.toRoseTree).any fun y ↦ decide (y.1 = ⊥ ∧ IsPhaseHead y.2) then some (i, i + 1)
+      if (tokenList x.toRoseTree).any fun y ↦ decide (y.1 = ⊥ ∧ IsPhaseHead y.2) then some (i, i +
+          1)
       else none
     | _ => none
 

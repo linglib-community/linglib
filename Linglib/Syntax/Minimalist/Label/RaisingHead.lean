@@ -306,13 +306,15 @@ theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree Vertex} {ℓ : Lexica
   have hm : (merge (ofUnorderedTree _ hl) (ofUnorderedTree _ hr)).raisingHead
       = treeRaisingHead (.node Vertex.bare [l, r]) :=
     raisingHead_eq_treeRaisingHead (by
-      rw [toUnorderedTree_merge, toUnorderedTree_ofUnorderedTree, toUnorderedTree_ofUnorderedTree, UnorderedTree.node_pair_mk])
+      rw [toUnorderedTree_merge, toUnorderedTree_ofUnorderedTree, toUnorderedTree_ofUnorderedTree,
+          UnorderedTree.node_pair_mk])
   by_cases hl' : treeRaisingHead l = some ℓ
   · exact ⟨0, l, by simp [headIndex?, h, hl', List.findIdx?_cons], rfl, hl'⟩
   · have hr' : treeRaisingHead r = some ℓ :=
       (raisingHead_eq_treeRaisingHead (toUnorderedTree_ofUnorderedTree _ hr)).symm.trans
         ((raisingHead_merge (hm.trans h)).resolve_left fun h' ↦
-          hl' ((raisingHead_eq_treeRaisingHead (toUnorderedTree_ofUnorderedTree _ hl)).symm.trans h'))
+          hl' ((raisingHead_eq_treeRaisingHead (toUnorderedTree_ofUnorderedTree _ hl)).symm.trans
+              h'))
     exact ⟨1, r, by simp [headIndex?, h, hl', hr', List.findIdx?_cons], rfl, hr'⟩
 
 end Minimalist

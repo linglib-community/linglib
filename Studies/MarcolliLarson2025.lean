@@ -113,7 +113,8 @@ theorem realize_gaveMoved (hb : book ≠ gave) (hj : toJohn ≠ gave) :
   rw [Step.apply_im, deleteAccessible, headTrace, selHead_leaf, Option.elim,
     replace_merge_of_ne (leaf_ne_merge _ _ _).symm, replace_merge_of_ne (leaf_ne_merge _ _ _).symm,
     replace_of_toUnorderedTree_eq_leaf (toUnorderedTree_leaf book) (by simpa using hb),
-    replace_of_toUnorderedTree_eq_leaf (toUnorderedTree_leaf toJohn) (by simpa using hj), replace_self,
+    replace_of_toUnorderedTree_eq_leaf (toUnorderedTree_leaf toJohn) (by simpa using
+        hj), replace_self,
     merge_comm _ (.leaf gave)]
   rfl
 

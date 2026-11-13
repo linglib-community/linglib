@@ -252,7 +252,8 @@ private theorem has_node_map_markTree {v : CopyMark × Vertex} {cs : List MT} :
     show cs.map (RoseTree.map Prod.snd ∘ markTree m l) = cs.map (RoseTree.map Prod.snd) from
       List.map_congr_left fun c _ ↦ map_snd_markTree m l c]
 
-private theorem not_hit_of_some (hm : m.toUnorderedTree.value.isLeft) (l' : Option LexicalItem.Token)
+private theorem not_hit_of_some (hm : m.toUnorderedTree.value.isLeft) (l' : Option
+    LexicalItem.Token)
     (a : Vertex) (cs : List MT) :
     UnorderedTree.mk (contractTree (.node (some l', a) cs)) ≠ m.toUnorderedTree := by
   rw [contractTree_some]
@@ -261,7 +262,8 @@ private theorem not_hit_of_some (hm : m.toUnorderedTree.value.isLeft) (l' : Opti
   rw [← hv] at hm
   simp at hm
 
-private theorem exists_mem_markTree (hm : m.toUnorderedTree.value.isLeft) {s r : MT} (hr : r ∈ s.subtrees) :
+private theorem exists_mem_markTree (hm : m.toUnorderedTree.value.isLeft) {s r : MT} (hr : r ∈
+    s.subtrees) :
     ∃ r' ∈ (markTree m l s).subtrees, termOf r' = termOf r ∧
       (r.value.1.isSome → r'.value.1 = r.value.1) := by
   induction s with
@@ -400,7 +402,8 @@ private theorem lfBy_markTree_of_has (hm : m.toUnorderedTree.value.isLeft) {s : 
 
 /-- If no occurrence marked holds `y`, a c-command in the reading survives marking, unless the
 commander is what was marked. -/
-private theorem cc_lfBy_markTree (hm : m.toUnorderedTree.value.isLeft) (hxy : x ≠ y) {s : MT} (hs : Chains s)
+private theorem cc_lfBy_markTree (hm : m.toUnorderedTree.value.isLeft) (hxy : x ≠ y) {s : MT} (hs :
+    Chains s)
     (hDD : DistinctDaughters s)
     (H : ∀ r ∈ s.subtrees, UnorderedTree.mk (contractTree r) = m.toUnorderedTree → ¬ Has y r)
     (h : CC x y (lfBy (Has y) s)) :
@@ -612,7 +615,8 @@ private theorem Good.swap {a : Vertex} {u v : MT}
 /-- External Merge of an item that shares no token with the object. -/
 private theorem step_em {t : Marked} {item : PlanarSyntacticObject} (e : Edge)
     (hroot : t.val.value.1 = none) (hdis : ∀ w, Has w t.val → ¬ Holds w item.toRoseTree)
-    (hTFi : ∀ r ∈ item.toRoseTree.subtrees, r.value.isLeft) (hdi : item.toSyntacticObject.yield.Nodup)
+    (hTFi : ∀ r ∈ item.toRoseTree.subtrees, r.value.isLeft) (hdi :
+        item.toSyntacticObject.yield.Nodup)
     (hTFt : TraceFree t.val) (hg : Good t.val) : Good (t.attach e (ofPlanar item)).val := by
   let p : RoseTree Vertex := item.toRoseTree
   have hp : IsSyntacticObject (UnorderedTree.mk p) := item.isSyntacticObject_toRoseTree
@@ -640,7 +644,8 @@ private theorem step_em {t : Marked} {item : PlanarSyntacticObject} (e : Edge)
       exact ⟨fun h ↦ absurd h hno₁, fun h ↦ absurd h hno₂⟩
     · intro c hc
       rcases List.mem_pair.1 hc with rfl | rfl
-      · exact chains_map_none hp hTFi ((PlanarSyntacticObject.ofRoseTree_toRoseTree item).symm ▸ hdi)
+      · exact chains_map_none hp hTFi ((PlanarSyntacticObject.ofRoseTree_toRoseTree item).symm ▸
+          hdi)
       · exact hg.1
     · rw [map_node] at hc
       simp only [List.map_cons, List.map_nil, hdm] at hc
@@ -664,7 +669,8 @@ private theorem step_em {t : Marked} {item : PlanarSyntacticObject} (e : Edge)
 
 /-- Internal Merge of a phrase found in the object, other than the object itself. -/
 private theorem step_im {t s₀ : Marked} {m : SyntacticObject} {l : Option LexicalItem.Token}
-    (e : Edge) (hfind : t.find? m = some s₀) (hm : m.toUnorderedTree.value.isLeft) (hMN : MarksName t.val)
+    (e : Edge) (hfind : t.find? m = some s₀) (hm : m.toUnorderedTree.value.isLeft) (hMN : MarksName
+        t.val)
     (hTF : TraceFree t.val) (hDD : DistinctDaughters t.val) (hne : termOf s₀.val ≠ termOf t.val)
     (hg : Good t.val) :
     Good ((t.mark m l).attach e s₀).val := by
@@ -723,7 +729,8 @@ private theorem step_im {t s₀ : Marked} {m : SyntacticObject} {l : Option Lexi
         h.of_mem_subtrees (map_mem_subtrees hr₀) t.2
       rw [lfBy_pair, ite_eq_left hdet]
       split_ifs with hp
-      · have hHas : ∀ r ∈ t.val.subtrees, UnorderedTree.mk (contractTree r) = m.toUnorderedTree → Has y r :=
+      · have hHas : ∀ r ∈ t.val.subtrees, UnorderedTree.mk (contractTree r) = m.toUnorderedTree →
+          Has y r :=
           fun r hr h ↦ (holds_congr (hτ r hr h)).2 hp
         rw [lfBy_markTree_of_has hm hCh hHas]
         rcases hCCt with h | h | ⟨hq, -⟩
@@ -830,7 +837,8 @@ private theorem readLow_carrying_iff (t : Marked) {r : MT}
     obtain ⟨q, ⟨hq, hd⟩, hdite⟩ := hm
     rw [dite_eq_left (hso q hq)] at hdite
     obtain rfl := Option.some.inj hdite
-    exact (holds_congr ((SyntacticObject.toUnorderedTree_ofUnorderedTree _ _).symm.trans he)).1 (of_decide_eq_true hd).2
+    exact (holds_congr ((SyntacticObject.toUnorderedTree_ofUnorderedTree _ _).symm.trans
+        he)).1 (of_decide_eq_true hd).2
   · intro hy
     refine ⟨SyntacticObject.ofUnorderedTree (termOf q₀) (hso q₀ hq₀), ?_,
       (SyntacticObject.toUnorderedTree_ofUnorderedTree _ _).trans ht₀⟩
@@ -937,7 +945,8 @@ private theorem replayWithCopies?_invariants {d : Derivation} (hd : d.lexTokens.
       obtain ⟨hroot, hg, hTok⟩ := ih (c := ⟨t, stk⟩) (marksName_of_mem ht hMN)
         (traceFree_of_mem ht hTF) (distinct_of_mem ht hDD) hd₀ hm₀ hmv₀ hc₀
       have hTFd := traceFree_of_mem hdc hTF
-      have hmd : (Marked.ofPlanar item).val.map Prod.snd = item.toRoseTree := map_snd_map item.toRoseTree
+      have hmd : (Marked.ofPlanar item).val.map Prod.snd = item.toRoseTree :=
+          map_snd_map item.toRoseTree
       have hsum : ((Step.itemsList [Step.em side item]).map SyntacticObject.yield).sum =
           item.toSyntacticObject.yield := by
         simp [Step.itemsList, Step.items]
@@ -953,7 +962,8 @@ private theorem replayWithCopies?_invariants {d : Derivation} (hd : d.lexTokens.
     · obtain ⟨t, stk⟩ := c₀
       simp only [Step.replayWithCopies?] at hstep
       obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 hstep
-      have hmL : mover.toUnorderedTree.value.isLeft := hmv (.im mover side) (by simp) mover (by simp)
+      have hmL : mover.toUnorderedTree.value.isLeft := hmv (.im mover side) (by simp) mover (by
+          simp)
       obtain ⟨cs, hv, ht, hdc, hhas⟩ := attach_val (t.mark mover (selHead mover)) s side
       simp only at hMN hTF hDD ⊢
       have hmt : (t.mark mover (selHead mover)).val.map Prod.snd = t.val.map Prod.snd :=

@@ -78,7 +78,8 @@ def MayPrune (t : PlanarSyntacticObject) (P : List (TreePath × TreePath)) (p q 
     Prop :=
   p.toList.head? = some 0 ∧ 1 < p.toList.length ∧ q.toList.head? = some 1 ∧
     t.toRoseTree[q]?.isSome ∧
-    ∀ x ∈ tokenList t.toRoseTree, x.1.toList.head? = some 0 → ¬ p ≤ x.1 → x.2.item.phonForm?.isSome →
+    ∀ x ∈ tokenList t.toRoseTree, x.1.toList.head? = some 0 → ¬ p ≤ x.1 →
+        x.2.item.phonForm?.isSome →
       (Precedes x.1 p → Precedes (realizedAt P x.1) q) ∧
         (Precedes p x.1 → Precedes q (realizedAt P x.1))
 

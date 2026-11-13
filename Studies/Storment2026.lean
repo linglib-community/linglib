@@ -353,7 +353,8 @@ depth-first search agrees with (118). -/
 def value (c : Construction) (P : Finset Dimension) : WithTop Bundle :=
   ((p.probeStage c).externalize?.map fun t ↦
     (Finset.univ.filter fun q ↦ ∃ a : t.toRoseTree.Positions, t.termAt a = ↑t₀ ∧
-      ((phiProbe P).comap (p.phiAt t)).AgreesWith {x | t.toRoseTree.CCommands a x} (depthFirst ·.val)
+      ((phiProbe P).comap (p.phiAt t)).AgreesWith {x | t.toRoseTree.CCommands a x} (depthFirst
+          ·.val)
         q).sup fun q ↦ (p.phiAt t q : WithTop Bundle)).getD ⊤
 
 /-- The values T may end with (59): halting at the first goal bearing φ, or searching past a

@@ -232,10 +232,12 @@ def agreeCopies (v : Voice) (x : Clause) (h : LexicalItem.Token) (agr : Spec Fea
     (hq : st.obj.toRoseTree.Positions) : Copies :=
   let feats := featuresAt v x st.copies st.obj
   Function.update st.copies h
-    (agr.copied feats {q | st.obj.toRoseTree.CCommands hq q} (agr.bestMatch feats (closeness st.obj)))
+    (agr.copied feats {q | st.obj.toRoseTree.CCommands hq q} (agr.bestMatch feats (closeness
+        st.obj)))
 
 /-- The nominals a head at the position `hq` c-commands, among which its EPP probe searches. -/
-def nominalDomain (t : PlanarSyntacticObject) (hq : t.toRoseTree.Positions) : Set t.toRoseTree.Positions :=
+def nominalDomain (t : PlanarSyntacticObject) (hq : t.toRoseTree.Positions) :
+    Set t.toRoseTree.Positions :=
   {q | t.toRoseTree.CCommands hq q ∧ isNominal t q = true}
 
 instance (t : PlanarSyntacticObject) (hq : t.toRoseTree.Positions) :

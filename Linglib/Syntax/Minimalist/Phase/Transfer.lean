@@ -166,7 +166,8 @@ def phaseLevel (Φ : Finset TreePath) (q : t.toRoseTree.Positions) : t.toRoseTre
 theorem phaseLevel_le (q : t.toRoseTree.Positions) : phaseLevel hd t Φ q ≤ q :=
   Subtype.coe_le_coe.1 (TreePath.le_def.2 (List.take_prefix _ _))
 
-theorem projectionAt_le_phaseLevel {q : t.toRoseTree.Positions} (hΦ : h ∈ Φ) (hc : complement h ≤ q.val)
+theorem projectionAt_le_phaseLevel {q : t.toRoseTree.Positions} (hΦ : h ∈ Φ) (hc : complement h ≤
+    q.val)
     (hp : projectionAt hd t h ≤ h.parent) : projectionAt hd t h ≤ (phaseLevel hd t Φ q).val := by
   have hq := hp.trans ((parent_covBy_complement h).le.trans hc)
   exact TreePath.le_def.2 (List.prefix_take_iff.2 ⟨TreePath.le_def.1 hq,

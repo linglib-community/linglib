@@ -73,7 +73,8 @@ variable (t) in
 def termAt (p : t.toRoseTree.Positions) : SyntacticObject :=
   SyntacticObject.ofUnorderedTree _ (isSyntacticObject_subtree p)
 
-@[simp] theorem toUnorderedTree_termAt : (t.termAt p).toUnorderedTree = UnorderedTree.mk p.subtree :=
+@[simp] theorem toUnorderedTree_termAt : (t.termAt p).toUnorderedTree =
+    UnorderedTree.mk p.subtree :=
   SyntacticObject.toUnorderedTree_ofUnorderedTree _ _
 
 @[simp] theorem termAt_bot : t.termAt ⊥ = t.toSyntacticObject :=
@@ -110,7 +111,8 @@ theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p := by
 /-- The term at a position immediately contains the terms at its covers. -/
 theorem immediatelyContains_termAt :
     ImmediatelyContains (t.termAt p) y ↔ ∃ q, p ⋖ q ∧ t.termAt q = y := by
-  rw [ImmediatelyContains, toUnorderedTree_termAt, UnorderedTree.children_mk, Multiset.mem_coe, List.mem_map]
+  rw [ImmediatelyContains, toUnorderedTree_termAt, UnorderedTree.children_mk, Multiset.mem_coe,
+      List.mem_map]
   constructor
   · rintro ⟨c, hc, hcy⟩
     obtain ⟨q, hpq, rfl⟩ := Positions.mem_children_subtree.1 hc
@@ -120,7 +122,8 @@ theorem immediatelyContains_termAt :
 
 /-- The term at a position contains or equals the terms at the positions below it. -/
 theorem containsOrEq_termAt : ContainsOrEq (t.termAt p) y ↔ ∃ q, p ≤ q ∧ t.termAt q = y := by
-  rw [← mem_terms, ← Multiset.mem_map_of_injective SyntacticObject.toUnorderedTree_injective, map_toUnorderedTree_terms,
+  rw [← mem_terms, ← Multiset.mem_map_of_injective SyntacticObject.toUnorderedTree_injective,
+      map_toUnorderedTree_terms,
     toUnorderedTree_termAt, UnorderedTree.subtrees_mk]
   simp only [unorderedSubtrees_eq_map, Multiset.mem_coe, List.mem_map, mem_subtrees,
     Positions.isSubtree_subtree]
@@ -168,7 +171,8 @@ theorem isBranchingAt_parent (ha : a ≠ ⊥) : IsBranchingAt t.toRoseTree a.val
 /-- C-command between terms is witnessed by c-command between occurrences of them, with no
 condition on how often they occur. -/
 theorem exists_cCommands_termAt_of_cCommands (h : t.toSyntacticObject.CCommands x y) :
-    ∃ p q : t.toRoseTree.Positions, t.toRoseTree.CCommands p q ∧ t.termAt p = x ∧ t.termAt q = y := by
+    ∃ p q : t.toRoseTree.Positions, t.toRoseTree.CCommands p q ∧ t.termAt p = x ∧ t.termAt q = y :=
+        by
   obtain ⟨z, -, ⟨w, hw, hwx, hwz, hne⟩, hzy⟩ := h
   obtain ⟨m, rfl⟩ := mem_terms_iff.1 hw
   obtain ⟨c, hmc, rfl⟩ := immediatelyContains_termAt.1 hwx
@@ -219,7 +223,8 @@ variable {c d e q q' : t.toRoseTree.Positions}
 
 theorem eq_or_eq_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) (he : a ⋖ e) : e = c ∨ e = d := by
   have hlen := length_children_subtree (not_isMax_of_lt hc.lt)
-  have hlt : ∀ (r : t.toRoseTree.Positions) (m : ℕ), r.val.toList = a.val.toList ++ [m] → m < 2 := by
+  have hlt : ∀ (r : t.toRoseTree.Positions) (m : ℕ), r.val.toList = a.val.toList ++ [m] → m < 2 :=
+      by
     intro r m hm
     have hr := r.2
     rw [show r.val = ⟨a.val.toList ++ [m]⟩ from TreePath.ext hm] at hr
@@ -244,7 +249,8 @@ theorem immediatelyContains_termAt_iff_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (h
   obtain ⟨e, he, rfl⟩ := immediatelyContains_termAt.1 h
   exact (eq_or_eq_of_covBy hc hd hcd he).imp (congrArg _) (congrArg _)
 
-theorem cCommands_of_covBy (hc : a ⋖ c) (hq : a < q) (hcq : ¬ c ≤ q) : t.toRoseTree.CCommands c q := by
+theorem cCommands_of_covBy (hc : a ⋖ c) (hq : a < q) (hcq : ¬ c ≤ q) : t.toRoseTree.CCommands c q :=
+    by
   have hpar : c.val.parent = a.val := by rw [← Positions.pred_val, Order.pred_eq_of_covBy hc]
   exact (cCommands_iff_of_covBy (Positions.covBy_iff.1 hc)
     (hpar ▸ isBranchingAt_parent (ne_bot_of_gt hc.lt))).2 ⟨hq, hcq⟩
@@ -306,7 +312,8 @@ variable (t : PlanarSyntacticObject)
 
 /-- The generators in `P` properly dominating a position, the key under which a probe searching the
 object compares goals (`PhraseStructure.ancestors`). -/
-def above (P : Set TreePath) [DecidablePred (· ∈ P)] (q : t.toRoseTree.Positions) : Finset TreePath :=
+def above (P : Set TreePath) [DecidablePred (· ∈ P)] (q : t.toRoseTree.Positions) :
+    Finset TreePath :=
   (Finset.Iio q.val).filter (· ∈ P)
 
 theorem coe_above (P : Set TreePath) [DecidablePred (· ∈ P)] (q : t.toRoseTree.Positions) :

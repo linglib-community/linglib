@@ -131,11 +131,13 @@ theorem contractTree_map (s : RoseTree Vertex) :
     exact congrArg _ ((List.map_congr_left ih).trans (List.map_id cs))
 
 @[simp] theorem unmark_ofPlanar (p : PlanarSyntacticObject) : (ofPlanar p).unmark = p :=
-  PlanarSyntacticObject.toRoseTree_injective ((toRoseTree_unmark _).trans (map_snd_map p.toRoseTree))
+  PlanarSyntacticObject.toRoseTree_injective ((toRoseTree_unmark _).trans (map_snd_map
+      p.toRoseTree))
 
 @[simp] theorem contract_ofPlanar (p : PlanarSyntacticObject) :
     (ofPlanar p).contract = p :=
-  PlanarSyntacticObject.toRoseTree_injective ((toRoseTree_contract _).trans (contractTree_map p.toRoseTree))
+  PlanarSyntacticObject.toRoseTree_injective ((toRoseTree_contract _).trans (contractTree_map
+      p.toRoseTree))
 
 /-! ### Merge -/
 
@@ -176,7 +178,8 @@ def markTree : RoseTree (CopyMark × Vertex) → RoseTree (CopyMark × Vertex) :
 
 theorem markTree_node (v : CopyMark × Vertex) (cs : List (RoseTree (CopyMark × Vertex))) :
     markTree m l (.node v cs) =
-      if UnorderedTree.mk (contractTree (.node v cs)) = m.toUnorderedTree then setMark l (.node v cs)
+      if UnorderedTree.mk (contractTree (.node v cs)) = m.toUnorderedTree then setMark l (.node v
+          cs)
       else .node v (cs.map (markTree m l)) :=
   modifyIf_node _ _ v cs
 
@@ -223,7 +226,8 @@ def mark (t : Marked) (m : SyntacticObject) (l : Option LexicalItem.Token) : Mar
 theorem contract_mark (m : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token) :
     (t.mark m (τ m)).contract = t.contract.replace m (m.tracePlanar τ) :=
   PlanarSyntacticObject.toRoseTree_injective (by
-    rw [toRoseTree_contract, PlanarSyntacticObject.toRoseTree_replace, toRoseTree_contract, toRoseTree_tracePlanar]
+    rw [toRoseTree_contract, PlanarSyntacticObject.toRoseTree_replace, toRoseTree_contract,
+        toRoseTree_tracePlanar]
     exact contractTree_markTree m (τ m) t.val)
 
 /-! ### Occurrences -/
@@ -246,7 +250,8 @@ theorem map_contractTree_outerSubtrees (s : RoseTree (CopyMark × Vertex)) :
 
 /-- The leftmost, outermost subtree outside the lower copies whose contraction is `target`. -/
 def find? (t : Marked) (target : SyntacticObject) : Option Marked :=
-  ((outerSubtrees t.val).find? fun s ↦ UnorderedTree.mk (contractTree s) = target.toUnorderedTree).pmap
+  ((outerSubtrees t.val).find? fun s ↦ UnorderedTree.mk (contractTree s) =
+      target.toUnorderedTree).pmap
     (p := (· ∈ outerSubtrees t.val))
     (fun s hs ↦ ⟨s, (isSyntacticObject_mk _).2
       (((isSyntacticObject_mk _).1 t.2).of_isSubtree ((isSubtree_of_mem_subtreesUntil hs).map _))⟩)
@@ -261,7 +266,8 @@ theorem mem_terms_of_find? {target : SyntacticObject} {s : Marked} (h : t.find? 
       by rw [PlanarSyntacticObject.toUnorderedTree_toSyntacticObject, toRoseTree_unmark]⟩
 
 theorem mk_contractTree_of_find? {target : SyntacticObject} {s : Marked}
-    (h : t.find? target = some s) : UnorderedTree.mk (contractTree s.val) = target.toUnorderedTree := by
+    (h : t.find? target = some s) : UnorderedTree.mk (contractTree s.val) =
+        target.toUnorderedTree := by
   obtain ⟨r, -, hr, rfl⟩ := Option.pmap_eq_some_iff.1 h
   simpa using List.find?_some hr
 
@@ -283,7 +289,8 @@ theorem exists_val_eq_of_unmark_eq_leaf {t : Marked} {x : LexicalItem.Token}
   obtain ⟨⟨⟨k, a⟩, cs⟩, ht⟩ := t
   have hv := congrArg SyntacticObject.toUnorderedTree h
   simp only [toRoseTree_unmark, PlanarSyntacticObject.toUnorderedTree_toSyntacticObject, map_node,
-    SyntacticObject.toUnorderedTree_leaf, UnorderedTree.leaf, UnorderedTree.mk_node_eq_mk_node_iff] at hv
+    SyntacticObject.toUnorderedTree_leaf, UnorderedTree.leaf,
+        UnorderedTree.mk_node_eq_mk_node_iff] at hv
   obtain ⟨rfl, hcs⟩ := hv
   have hc : cs = [] := by simpa using congrArg Multiset.card hcs
   subst hc
@@ -295,7 +302,8 @@ theorem contract_eq_leaf_of_unmark_eq_leaf {t : Marked} {x : LexicalItem.Token}
     t.contract.toSyntacticObject = SyntacticObject.leaf x := by
   obtain ⟨k, hk⟩ := exists_val_eq_of_unmark_eq_leaf h
   rcases k with _ | l
-  · exact SyntacticObject.toUnorderedTree_injective (by simp [hk, SyntacticObject.toUnorderedTree_leaf])
+  · exact SyntacticObject.toUnorderedTree_injective (by simp [hk,
+      SyntacticObject.toUnorderedTree_leaf])
   · simp [PlanarSyntacticObject.yield_toSyntacticObject, hk] at hx
 
 theorem eq_leaf_of_find? {t s : Marked} {target : SyntacticObject} {x : LexicalItem.Token}

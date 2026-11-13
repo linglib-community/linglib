@@ -150,7 +150,8 @@ def liftFun (s : SyntacticObject L) : β := liftN ℓ τ s.toUnorderedTree
 
 @[simp] theorem liftFun_merge (l r : SyntacticObject L) :
     liftFun ℓ τ (merge l r) = liftFun ℓ τ l * liftFun ℓ τ r := by
-  show liftN ℓ τ (merge l r).toUnorderedTree = liftN ℓ τ l.toUnorderedTree * liftN ℓ τ r.toUnorderedTree
+  show liftN ℓ τ (merge l r).toUnorderedTree =
+      liftN ℓ τ l.toUnorderedTree * liftN ℓ τ r.toUnorderedTree
   rw [toUnorderedTree_merge, liftN_merge]
 
 /-- Leaf data extends to a morphism of magmas out of the carrier, the existence half of the

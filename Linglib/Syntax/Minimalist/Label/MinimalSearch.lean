@@ -389,7 +389,8 @@ def label : HeadFunction := fun t x ↦
 
 /-- The head daughters of the label head function are label daughters. -/
 theorem labelDaughter_of_headDaughterRel_label {t : PlanarSyntacticObject}
-    {n c : t.toRoseTree.Positions} (h : headDaughterRel (label t) n.val c.val) : t.LabelDaughter n c := by
+    {n c : t.toRoseTree.Positions} (h : headDaughterRel (label t) n.val c.val) :
+        t.LabelDaughter n c := by
   obtain ⟨i, hi, hc⟩ := h
   have hci : (⟨n.val.toList ++ [i]⟩ : TreePath) = c.val := TreePath.ext hc.symm
   simp only [label, dite_eq_left n.2] at hi

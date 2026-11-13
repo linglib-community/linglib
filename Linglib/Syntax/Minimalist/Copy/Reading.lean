@@ -275,7 +275,8 @@ theorem lfBy_map_none (low : RoseTree (CopyMark × Vertex) → Prop) [DecidableP
 /-- An object with no lower copy gives itself under every reading. -/
 @[simp] theorem lf_ofPlanar (p : PlanarSyntacticObject) (low : Finset SyntacticObject) :
     (ofPlanar p).lf low = p :=
-  PlanarSyntacticObject.toRoseTree_injective ((toRoseTree_lf _ low).trans (lfBy_map_none _ p.toRoseTree))
+  PlanarSyntacticObject.toRoseTree_injective ((toRoseTree_lf _ low).trans (lfBy_map_none _
+      p.toRoseTree))
 
 /-! ### Binding at a reading is binding at the copy object -/
 

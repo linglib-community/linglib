@@ -44,7 +44,8 @@ open Minimalist.Probe (depthFirst breadthFirst depth breadthFirst_lt_of_depth_lt
 
 /-! ### Breadth-first search and Closest (2) -/
 
-variable {t : PlanarSyntacticObject} {p : Probe t.toRoseTree.Positions} {s : Set t.toRoseTree.Positions}
+variable {t : PlanarSyntacticObject} {p : Probe t.toRoseTree.Positions} {s : Set
+    t.toRoseTree.Positions}
   {a b : t.toRoseTree.Positions}
 
 -- (2)
@@ -80,7 +81,8 @@ def β : tree7.toRoseTree.Positions := ⟨⟨[1]⟩, rfl⟩
 def probe7 : Probe tree7.toRoseTree.Positions := .relativized (· ∈ [α, β])
 
 -- (7a), (2)
-theorem ex7a : probe7.Finds Set.univ (depthFirst ·.val) α ∧ tree7.toRoseTree.CCommands β.val α.val := by
+theorem ex7a : probe7.Finds Set.univ (depthFirst ·.val) α ∧
+    tree7.toRoseTree.CCommands β.val α.val := by
   decide +kernel
 
 -- (7b)

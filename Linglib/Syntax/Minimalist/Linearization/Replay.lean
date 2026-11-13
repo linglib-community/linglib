@@ -102,7 +102,8 @@ private theorem linearizationState_replace_leaf {cur m t : SyntacticObject} {a :
   · subst heq; exact linearizationState_replace_self hc ht hsel
   · have hpc : cur.linearize? side = some pc := by
       simp [linearize?, hc, LinearizationState.linearized?]
-    rw [replace_of_toUnorderedTree_eq_leaf hs heq, PlanarSyntacticObject.replace_of_toRoseTree_eq_leaf hpv
+    rw [replace_of_toUnorderedTree_eq_leaf hs heq,
+        PlanarSyntacticObject.replace_of_toRoseTree_eq_leaf hpv
       (by rwa [toSyntacticObject_of_linearize? hpc]), hc]
 
 theorem linearizationState_replace {cur m t : SyntacticObject} {σ}

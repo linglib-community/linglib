@@ -85,7 +85,8 @@ theorem mergeOp_node (S S' : SyntacticObject) :
     Merge.mergeOp (R := ℤ) Vertex.bare S.toUnorderedTree S'.toUnorderedTree
         (of' ({S.toUnorderedTree, S'.toUnorderedTree} : Forest (UnorderedTree Vertex)))
       = of' (R := ℤ) ({(merge S S').toUnorderedTree} : Forest (UnorderedTree Vertex)) := by
-  rw [Merge.mergeOp_pair Vertex.bare S.isSyntacticObject_toUnorderedTree.isFullBinary.numUnary_eq_zero
+  rw [Merge.mergeOp_pair Vertex.bare
+      S.isSyntacticObject_toUnorderedTree.isFullBinary.numUnary_eq_zero
     S'.isSyntacticObject_toUnorderedTree.isFullBinary.numUnary_eq_zero, toUnorderedTree_merge]
 
 /-- External Merge on the carrier is the trace-cut Merge with the bare root label on the
@@ -117,7 +118,8 @@ theorem traceCuts_filter_mover (hm : mover.toUnorderedTree.value.isLeft)
 
 /-- The unit stage `M_{β,1}` on the current object splits off a uniquely accessible mover beside
     the remainder. -/
-theorem traceMergeOpUnit_current (hm : mover.toUnorderedTree.value.isLeft) (h : current.terms.count mover = 1)
+theorem traceMergeOpUnit_current (hm : mover.toUnorderedTree.value.isLeft) (h : current.terms.count
+    mover = 1)
     (hne : current ≠ mover) :
     Merge.traceMergeOpUnit (R := ℤ) traceEncoder mover.toUnorderedTree
         (of' ({current.toUnorderedTree} : Forest (UnorderedTree Vertex)))
@@ -130,21 +132,25 @@ theorem traceMergeOpUnit_current (hm : mover.toUnorderedTree.value.isLeft) (h : 
 
 /-- Internal Merge of a uniquely accessible mover is the composition `M_{T/β,β} ∘ M_{β,1}` of
     trace-cut Merges ([marcolli-chomsky-berwick-2025] Proposition 1.4.2). -/
-theorem traceMergeOp_im (hm : mover.toUnorderedTree.value.isLeft) (h : current.terms.count mover = 1)
+theorem traceMergeOp_im (hm : mover.toUnorderedTree.value.isLeft) (h : current.terms.count mover =
+    1)
     (hne : current ≠ mover) :
-    Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare (deleteAccessible mover current).toUnorderedTree
+    Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare (deleteAccessible mover
+        current).toUnorderedTree
         mover.toUnorderedTree (Merge.traceMergeOpUnit traceEncoder mover.toUnorderedTree
           (of' ({current.toUnorderedTree} : Forest (UnorderedTree Vertex))))
       = of' (R := ℤ) ({(merge (deleteAccessible mover current) mover).toUnorderedTree} :
           Forest (UnorderedTree Vertex)) := by
   rw [Merge.traceMergeOp_im_composition traceEncoder Vertex.bare _ _ _ _
-      (traceCuts_filter_mover hm h hne) rfl (fun h' ↦ hne (toUnorderedTree_injective h')), toUnorderedTree_merge]
+      (traceCuts_filter_mover hm h hne) rfl (fun h' ↦ hne (toUnorderedTree_injective
+          h')), toUnorderedTree_merge]
 
 /-! ### Merge beside a spectator workspace -/
 
 private theorem disjoint_pair_subtrees {S S' U : SyntacticObject}
     (h : S ∉ U.terms ∧ S' ∉ U.terms) :
-    Disjoint ({S.toUnorderedTree, S'.toUnorderedTree} : Forest (UnorderedTree Vertex)) U.toUnorderedTree.subtrees := by
+    Disjoint ({S.toUnorderedTree, S'.toUnorderedTree} : Forest (UnorderedTree
+        Vertex)) U.toUnorderedTree.subtrees := by
   rw [Multiset.disjoint_left]
   intro a ha
   rw [Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at ha
@@ -155,7 +161,8 @@ private theorem disjoint_pair_subtrees {S S' U : SyntacticObject}
     `S` or `S'`. -/
 theorem traceMergeOp_node_residual (τ : UnorderedTree Vertex → Option LexicalItem.Token)
     (S S' : SyntacticObject) {W : Workspace} (hW : ∀ U ∈ W, S ∉ U.terms ∧ S' ∉ U.terms) :
-    Merge.traceMergeOp (R := ℤ) τ Vertex.bare S.toUnorderedTree S'.toUnorderedTree (of' (({S, S'} + W).map toUnorderedTree))
+    Merge.traceMergeOp (R := ℤ) τ Vertex.bare S.toUnorderedTree S'.toUnorderedTree (of' (({S, S'} +
+        W).map toUnorderedTree))
       = of' (({merge S S'} + W).map toUnorderedTree) := by
   rw [Multiset.map_add, Multiset.map_add, Multiset.map_singleton, toUnorderedTree_merge]
   refine Merge.traceMergeOp_pair_residual τ Vertex.bare fun U hU ↦ ?_
@@ -164,17 +171,20 @@ theorem traceMergeOp_node_residual (τ : UnorderedTree Vertex → Option Lexical
 
 /-- Internal Merge of a uniquely accessible mover beside a spectator workspace none of whose
     components contains the mover or the remainder. -/
-theorem traceMergeOp_im_residual (hm : mover.toUnorderedTree.value.isLeft) (h : current.terms.count mover = 1)
+theorem traceMergeOp_im_residual (hm : mover.toUnorderedTree.value.isLeft) (h : current.terms.count
+    mover = 1)
     (hne : current ≠ mover) {W : Workspace}
     (hW : ∀ U ∈ W, deleteAccessible mover current ∉ U.terms ∧ mover ∉ U.terms) :
-    Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare (deleteAccessible mover current).toUnorderedTree
+    Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare (deleteAccessible mover
+        current).toUnorderedTree
         mover.toUnorderedTree (Merge.traceMergeOpUnit traceEncoder mover.toUnorderedTree
           (of' (({current} + W).map toUnorderedTree)))
       = of' (({merge (deleteAccessible mover current) mover} + W).map toUnorderedTree) := by
   rw [Multiset.map_add, Multiset.map_add, Multiset.map_singleton, Multiset.map_singleton,
     toUnorderedTree_merge]
   refine Merge.mergeOpOfCuts_im_composition_residual Vertex.bare _ _ _ _
-    (traceCuts_filter_mover hm h hne) rfl (fun h' ↦ hne (toUnorderedTree_injective h')) fun U hU ↦ ?_
+    (traceCuts_filter_mover hm h hne) rfl (fun h' ↦ hne (toUnorderedTree_injective h')) fun U hU ↦
+        ?_
   obtain ⟨U', hU', rfl⟩ := Multiset.mem_map.mp hU
   exact disjoint_pair_subtrees (hW U' hU')
 
@@ -185,7 +195,8 @@ theorem traceMergeOp_im_residual (hm : mover.toUnorderedTree.value.isLeft) (h : 
 theorem traceMergeOp_of'_merge (τ : UnorderedTree Vertex → Option LexicalItem.Token)
     {S S' : SyntacticObject} {W : Workspace} (hle : {S, S'} ≤ W)
     (hW : ∀ U ∈ W - {S, S'}, S ∉ U.terms ∧ S' ∉ U.terms) :
-    Merge.traceMergeOp (R := ℤ) τ Vertex.bare S.toUnorderedTree S'.toUnorderedTree (of' (W.map toUnorderedTree))
+    Merge.traceMergeOp (R := ℤ) τ Vertex.bare S.toUnorderedTree S'.toUnorderedTree (of' (W.map
+        toUnorderedTree))
       = of' ((W.merge S S').map toUnorderedTree) := by
   conv_lhs => rw [← add_tsub_cancel_of_le hle]
   rw [traceMergeOp_node_residual τ S S' hW, Workspace.merge_def, add_comm]
@@ -193,10 +204,12 @@ theorem traceMergeOp_of'_merge (τ : UnorderedTree Vertex → Option LexicalItem
 /-- Internal Merge ([marcolli-chomsky-berwick-2025] Proposition 1.4.2): the Merge operator at the
     trace cuts computes MERGE of a uniquely accessible mover with the member containing it, leaving
     the trace of its head. -/
-theorem traceMergeOp_im_of'_merge (hm : mover.toUnorderedTree.value.isLeft) (h : current.terms.count mover = 1)
+theorem traceMergeOp_im_of'_merge (hm : mover.toUnorderedTree.value.isLeft) (h : current.terms.count
+    mover = 1)
     (hne : current ≠ mover) {W : Workspace}
     (hW : ∀ U ∈ W, deleteAccessible mover current ∉ U.terms ∧ mover ∉ U.terms) :
-    Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare (deleteAccessible mover current).toUnorderedTree
+    Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare (deleteAccessible mover
+        current).toUnorderedTree
         mover.toUnorderedTree (Merge.traceMergeOpUnit traceEncoder mover.toUnorderedTree
           (of' (({current} + W).map toUnorderedTree)))
       = of' ((({current} + W).mergeWith (·.headTrace) mover current).map toUnorderedTree) := by
@@ -209,7 +222,8 @@ theorem traceMergeOp_im_of'_merge (hm : mover.toUnorderedTree.value.isLeft) (h :
     cuts computes MERGE leaving the trace of the head of `S'` in `T'`, when `S'` is no term of `T`.
     -/
 theorem traceMergeOp_sideward2b_of'_merge {T T' S' : SyntacticObject} {W : Workspace}
-    (hS' : S'.toUnorderedTree.value.isLeft) (hc : T'.terms.count S' = 1) (hne : T' ≠ S') (hT : T ∉ T'.terms)
+    (hS' : S'.toUnorderedTree.value.isLeft) (hc : T'.terms.count S' = 1) (hne : T' ≠ S') (hT : T ∉
+        T'.terms)
     (hS'T : S' ∉ T.terms) (hW : ∀ U ∈ W, T ∉ U.terms ∧ S' ∉ U.terms) :
     Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare T.toUnorderedTree S'.toUnorderedTree
         (of' (({T, T'} + W).map toUnorderedTree))
@@ -219,8 +233,10 @@ theorem traceMergeOp_sideward2b_of'_merge {T T' S' : SyntacticObject} {W : Works
     rw [Workspace.mergeWith_sideward_member (Multiset.count_pos.1 (by omega)) hne hT hS'T hW,
       add_comm {_} W, add_right_comm]
     rfl
-  have hval : T.toUnorderedTree ∉ T'.toUnorderedTree.subtrees := by rwa [toUnorderedTree_mem_subtrees]
-  have hne' : S'.toUnorderedTree ≠ T'.toUnorderedTree := fun h ↦ hne (toUnorderedTree_injective h).symm
+  have hval : T.toUnorderedTree ∉ T'.toUnorderedTree.subtrees := by
+      rwa [toUnorderedTree_mem_subtrees]
+  have hne' : S'.toUnorderedTree ≠ T'.toUnorderedTree := fun h ↦ hne (toUnorderedTree_injective
+      h).symm
   rw [hout, Merge.traceMergeOp, Multiset.map_add, of'_add, mul_comm,
     Merge.mergeOpOfCuts_of'_mul _ fun U hU ↦ by
       obtain ⟨U', hU', rfl⟩ := Multiset.mem_map.mp hU
@@ -236,7 +252,8 @@ theorem traceMergeOp_sideward2b_of'_merge {T T' S' : SyntacticObject} {W : Works
     occurrences of a term `S` of a member `T` and a term `S'` of another member `T'`, the Merge
     operator at the trace cuts computes MERGE leaving the traces of their heads. -/
 theorem traceMergeOp_sideward3b_of'_merge {T T' S S' : SyntacticObject} {W : Workspace}
-    (hS : S.toUnorderedTree.value.isLeft) (hS' : S'.toUnorderedTree.value.isLeft) (hcS : T.terms.count S = 1)
+    (hS : S.toUnorderedTree.value.isLeft) (hS' : S'.toUnorderedTree.value.isLeft) (hcS :
+        T.terms.count S = 1)
     (hcS' : T'.terms.count S' = 1) (hneS : T ≠ S) (hneS' : T' ≠ S') (hST' : S ∉ T'.terms)
     (hS'T : S' ∉ T.terms) (hW : ∀ U ∈ W, S ∉ U.terms ∧ S' ∉ U.terms) :
     Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare S.toUnorderedTree S'.toUnorderedTree
@@ -248,15 +265,18 @@ theorem traceMergeOp_sideward3b_of'_merge {T T' S S' : SyntacticObject} {W : Wor
       (Multiset.count_pos.1 (by omega)) hneS hneS' hST' hS'T hW, add_comm {_, _} W,
       add_right_comm]
     rfl
-  have hvS : S.toUnorderedTree ∉ T'.toUnorderedTree.subtrees := by rwa [toUnorderedTree_mem_subtrees]
-  have hvS' : S'.toUnorderedTree ∉ T.toUnorderedTree.subtrees := by rwa [toUnorderedTree_mem_subtrees]
+  have hvS : S.toUnorderedTree ∉ T'.toUnorderedTree.subtrees := by
+      rwa [toUnorderedTree_mem_subtrees]
+  have hvS' : S'.toUnorderedTree ∉ T.toUnorderedTree.subtrees := by
+      rwa [toUnorderedTree_mem_subtrees]
   rw [hout, Merge.traceMergeOp, Multiset.map_add, of'_add, mul_comm,
     Merge.mergeOpOfCuts_of'_mul _ fun U hU ↦ by
       obtain ⟨U', hU', rfl⟩ := Multiset.mem_map.mp hU
       exact disjoint_pair_subtrees (hW U' hU'),
     Multiset.map_add, Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
     ← Multiset.insert_eq_cons, Merge.mergeOpOfCuts_sideward_3b Vertex.bare
-      (fun h ↦ hneS (toUnorderedTree_injective h).symm) (fun h ↦ hneS' (toUnorderedTree_injective h).symm) hvS hvS',
+      (fun h ↦ hneS (toUnorderedTree_injective h).symm) (fun h ↦ hneS' (toUnorderedTree_injective
+          h).symm) hvS hvS',
     traceCuts_filter_mover hS hcS hneS, traceCuts_filter_mover hS' hcS' hneS']
   simp only [Multiset.map_singleton, Multiset.sum_singleton, Multiset.map_add, of'_add,
     of'_singleton, toUnorderedTree_merge, Multiset.insert_eq_cons, Multiset.map_cons, of'_cons]
@@ -271,7 +291,8 @@ private def demoCurrent : SyntacticObject :=
 /-- Raising one daughter of a two-leaf object meets the hypotheses of `traceMergeOp_im`. -/
 example :
     Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare
-        (deleteAccessible (leaf (demoTok 0)) demoCurrent).toUnorderedTree (leaf (demoTok 0)).toUnorderedTree
+        (deleteAccessible (leaf (demoTok 0)) demoCurrent).toUnorderedTree (leaf (demoTok
+            0)).toUnorderedTree
         (Merge.traceMergeOpUnit traceEncoder (leaf (demoTok 0)).toUnorderedTree
           (of' ({demoCurrent.toUnorderedTree} : Forest (UnorderedTree Vertex))))
       = of' (R := ℤ) ({(merge (deleteAccessible (leaf (demoTok 0)) demoCurrent)
@@ -306,7 +327,8 @@ theorem numNodes_odd (s : SyntacticObject) : Odd s.toUnorderedTree.numNodes := b
 /-- An admissible cut removing one syntactic object from another leaves no syntactic object, since
     the remainder has an even number of vertices. -/
 theorem not_isSyntacticObject_of_mem_admissibleCuts {T mover : SyntacticObject}
-    {p : Forest (UnorderedTree Vertex) × UnorderedTree Vertex} (hp : p ∈ admissibleCuts T.toUnorderedTree)
+    {p : Forest (UnorderedTree Vertex) × UnorderedTree Vertex} (hp : p ∈ admissibleCuts
+        T.toUnorderedTree)
     (hcrown : p.1 = {mover.toUnorderedTree}) : ¬ IsSyntacticObject p.2 := fun h ↦ by
   have hw := admissibleCuts_numNodes T.toUnorderedTree p hp
   rw [hcrown, Multiset.map_singleton, Multiset.sum_singleton] at hw
@@ -385,7 +407,8 @@ private theorem licensed_of_mem_rootCuts_leaveNothing {t : RoseTree Vertex}
 /-- A deletion cut extracting at most one tree from a syntactic object leaves a syntactic object,
     the vertex the extraction leaves unary being contracted. -/
 theorem isSyntacticObject_of_mem_deletionCuts {T : SyntacticObject}
-    {p : Forest (UnorderedTree Vertex) × UnorderedTree Vertex} (hp : p ∈ deletionCuts T.toUnorderedTree)
+    {p : Forest (UnorderedTree Vertex) × UnorderedTree Vertex} (hp : p ∈ deletionCuts
+        T.toUnorderedTree)
     (hcard : Multiset.card p.1 ≤ 1) : IsSyntacticObject p.2 := by
   obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
   clear hp
@@ -405,17 +428,21 @@ theorem isSyntacticObject_of_mem_deletionCuts {T : SyntacticObject}
     `M_{Q,β} ∘ M_{β,1}` of Proposition 1.4.2 yields the one object `merge Q mover`. -/
 theorem mergeOp_im {current mover : SyntacticObject}
     {p0 : Forest (UnorderedTree Vertex) × UnorderedTree Vertex}
-    (h : (deletionCuts current.toUnorderedTree).filter (fun p ↦ p.1 = {mover.toUnorderedTree}) = {p0})
+    (h : (deletionCuts current.toUnorderedTree).filter (fun p ↦ p.1 = {mover.toUnorderedTree}) =
+        {p0})
     (hne : current ≠ mover) :
     ∃ Q : SyntacticObject, Q.toUnorderedTree = p0.2 ∧
       Merge.mergeOp (R := ℤ) Vertex.bare Q.toUnorderedTree mover.toUnorderedTree
-          (Merge.mergeOpUnit mover.toUnorderedTree (of' ({current.toUnorderedTree} : Forest (UnorderedTree Vertex)))) =
+          (Merge.mergeOpUnit mover.toUnorderedTree (of' ({current.toUnorderedTree} : Forest
+              (UnorderedTree Vertex)))) =
         of' ({(merge Q mover).toUnorderedTree} : Forest (UnorderedTree Vertex)) := by
   obtain ⟨hp0, hcrown⟩ := Multiset.mem_filter.mp (h ▸ Multiset.mem_singleton_self p0)
   refine ⟨ofUnorderedTree p0.2 (isSyntacticObject_of_mem_deletionCuts hp0 (by rw [hcrown,
     Multiset.card_singleton])), toUnorderedTree_ofUnorderedTree _ _, ?_⟩
-  rw [toUnorderedTree_ofUnorderedTree, Merge.mergeOp_im_composition Vertex.bare mover.toUnorderedTree current.toUnorderedTree p0.2 p0 h rfl
-    (fun h' ↦ hne (toUnorderedTree_injective h')) mover.isSyntacticObject_toUnorderedTree.isFullBinary.numUnary_eq_zero,
+  rw [toUnorderedTree_ofUnorderedTree, Merge.mergeOp_im_composition Vertex.bare
+      mover.toUnorderedTree current.toUnorderedTree p0.2 p0 h rfl
+    (fun h' ↦ hne (toUnorderedTree_injective
+        h')) mover.isSyntacticObject_toUnorderedTree.isFullBinary.numUnary_eq_zero,
     toUnorderedTree_merge, toUnorderedTree_ofUnorderedTree]
 
 end Minimalist.SyntacticObject

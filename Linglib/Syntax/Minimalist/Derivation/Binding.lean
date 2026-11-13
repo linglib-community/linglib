@@ -238,7 +238,8 @@ no trace and merges no token twice, `x` c-commands `y` at some stage exactly whe
 c-commands some copy of `y` in the object with every copy in place. -/
 theorem bindsAtSomeStage_iff_bindsAtLF {x y : LexicalItem.Token} (hxy : x ≠ y)
     (hd : d.lexTokens.Nodup) (hm : ∀ step ∈ d.steps, step.IsMerge)
-    (hmv : ∀ step ∈ d.steps, ∀ m ∈ step.mover?, m.toUnorderedTree.value.isLeft) (hr : d.replay?.isSome) :
+    (hmv : ∀ step ∈ d.steps, ∀ m ∈ step.mover?, m.toUnorderedTree.value.isLeft) (hr :
+        d.replay?.isSome) :
     d.BindsAtSomeStage ↑x ↑y ↔ d.BindsAtLF ↑x ↑y :=
   ⟨fun h ↦ h.bindsAtLF hxy hr, fun h ↦ h.bindsAtSomeStage hxy hd hm hmv⟩
 

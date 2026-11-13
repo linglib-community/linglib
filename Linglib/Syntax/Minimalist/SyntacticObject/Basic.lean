@@ -235,7 +235,8 @@ def toRoseTree : PlanarSyntacticObject L → RoseTree (Vertex L)
 
 @[simp] theorem toRoseTree_leaf (a : L) :
     (leaf a).toRoseTree = .node (Vertex.lex a) [] := rfl
-@[simp] theorem toRoseTree_trace : (trace : PlanarSyntacticObject L).toRoseTree = .node Vertex.trace [] :=
+@[simp] theorem toRoseTree_trace : (trace : PlanarSyntacticObject L).toRoseTree =
+    .node Vertex.trace [] :=
   rfl
 @[simp] theorem toRoseTree_traceOf (a : L) :
     (traceOf a).toRoseTree = .node (Vertex.traceOf a) [] :=
@@ -263,7 +264,8 @@ theorem toRoseTree_injective : Function.Injective (toRoseTree : PlanarSyntacticO
     cases q with
     | of y => simp [toRoseTree] at h
     | mul l' r' =>
-      obtain ⟨h₁, h₂⟩ : toRoseTree l = toRoseTree l' ∧ toRoseTree r = toRoseTree r' := by simpa [toRoseTree] using h
+      obtain ⟨h₁, h₂⟩ : toRoseTree l = toRoseTree l' ∧ toRoseTree r = toRoseTree r' := by
+          simpa [toRoseTree] using h
       rw [hl h₁, hr h₂]; rfl
 
 /-- Forgetting the order is the quotient map to the syntactic object. -/
@@ -319,12 +321,14 @@ def toUnorderedTree (s : SyntacticObject L) : UnorderedTree (Vertex L) :=
     fun _ _ h ↦ PlanarSyntacticObject.mk_toRoseTree_eq_of_commCon h
 
 @[simp] theorem _root_.Minimalist.PlanarSyntacticObject.toUnorderedTree_toSyntacticObject
-    (p : PlanarSyntacticObject L) : p.toSyntacticObject.toUnorderedTree = UnorderedTree.mk p.toRoseTree := rfl
+    (p : PlanarSyntacticObject L) : p.toSyntacticObject.toUnorderedTree =
+        UnorderedTree.mk p.toRoseTree := rfl
 
 @[simp] theorem toUnorderedTree_leaf (a : L) :
     (leaf a).toUnorderedTree = UnorderedTree.leaf (Vertex.lex a) :=
   rfl
-@[simp] theorem toUnorderedTree_trace : (trace : SyntacticObject L).toUnorderedTree = UnorderedTree.leaf Vertex.trace :=
+@[simp] theorem toUnorderedTree_trace : (trace : SyntacticObject L).toUnorderedTree =
+    UnorderedTree.leaf Vertex.trace :=
   rfl
 @[simp] theorem toUnorderedTree_traceOf (a : L) :
     (traceOf a).toUnorderedTree = UnorderedTree.leaf (Vertex.traceOf a) := rfl
@@ -341,13 +345,15 @@ theorem isSyntacticObject_merge_iff (a b : UnorderedTree (Vertex L)) :
   exact isSyntacticObject_mk_merge pa pb
 
 @[simp] theorem toUnorderedTree_merge (l r : SyntacticObject L) :
-    (merge l r).toUnorderedTree = UnorderedTree.node Vertex.bare {l.toUnorderedTree, r.toUnorderedTree} := by
+    (merge l r).toUnorderedTree = UnorderedTree.node Vertex.bare {l.toUnorderedTree,
+        r.toUnorderedTree} := by
   obtain ⟨l, rfl⟩ := PlanarSyntacticObject.toSyntacticObject_surjective l
   obtain ⟨r, rfl⟩ := PlanarSyntacticObject.toSyntacticObject_surjective r
   exact (UnorderedTree.node_pair_mk _ _ _).symm
 
 /-- The tree of a syntactic object is well formed. -/
-theorem isSyntacticObject_toUnorderedTree (s : SyntacticObject L) : IsSyntacticObject s.toUnorderedTree := by
+theorem isSyntacticObject_toUnorderedTree (s : SyntacticObject L) :
+    IsSyntacticObject s.toUnorderedTree := by
   obtain ⟨p, rfl⟩ := PlanarSyntacticObject.toSyntacticObject_surjective s
   exact p.isSyntacticObject_toRoseTree
 
@@ -441,7 +447,8 @@ theorem exists_form (s : SyntacticObject L) :
   | merge l r _ _ => exact Or.inr (Or.inr (Or.inr ⟨l, r, rfl⟩))
 
 /-- A syntactic object is determined by its tree. -/
-theorem toUnorderedTree_injective : Function.Injective (toUnorderedTree : SyntacticObject L → _) := by
+theorem toUnorderedTree_injective : Function.Injective (toUnorderedTree : SyntacticObject L → _) :=
+    by
   intro s
   induction s using ind with
   | leaf a =>
@@ -466,7 +473,8 @@ theorem toUnorderedTree_injective : Function.Injective (toUnorderedTree : Syntac
     · rw [hl h₁, hr h₂]
     · rw [hl h₁, hr h₂]; exact merge_comm _ _
 
-@[simp] theorem toUnorderedTree_inj {s t : SyntacticObject L} : s.toUnorderedTree = t.toUnorderedTree ↔ s = t := toUnorderedTree_injective.eq_iff
+@[simp] theorem toUnorderedTree_inj {s t : SyntacticObject L} : s.toUnorderedTree =
+    t.toUnorderedTree ↔ s = t := toUnorderedTree_injective.eq_iff
 
 end SyntacticObject
 
@@ -497,7 +505,8 @@ theorem ofRoseTree?_node (a : Vertex L) (cs : List (RoseTree (Vertex L))) :
     ofRoseTree? (.node a cs) = ofRoseTreeStep a (cs.map ofRoseTree?) :=
   RoseTree.fold_node _ _ _
 
-@[simp] theorem ofRoseTree?_toRoseTree (p : PlanarSyntacticObject L) : ofRoseTree? p.toRoseTree = some p := by
+@[simp] theorem ofRoseTree?_toRoseTree (p : PlanarSyntacticObject L) : ofRoseTree? p.toRoseTree =
+    some p := by
   induction p using FreeMagma.recOnMul with
   | ih1 x => cases x <;> rfl
   | ih2 l r hl hr =>
@@ -506,7 +515,8 @@ theorem ofRoseTree?_node (a : Vertex L) (cs : List (RoseTree (Vertex L))) :
     rfl
 
 /-- A well-formed tree is the tree of a planar object. -/
-theorem exists_toRoseTree_eq {t : RoseTree (Vertex L)} (h : IsSyntacticObject (UnorderedTree.mk t)) :
+theorem exists_toRoseTree_eq {t : RoseTree (Vertex L)} (h : IsSyntacticObject (UnorderedTree.mk
+    t)) :
     ∃ p : PlanarSyntacticObject L, p.toRoseTree = t := by
   induction t with
   | node lbl cs ih =>
@@ -530,7 +540,8 @@ def ofRoseTree (t : RoseTree (Vertex L)) (_h : IsSyntacticObject (UnorderedTree.
     PlanarSyntacticObject L :=
   (ofRoseTree? t).getD trace
 
-@[simp] theorem toRoseTree_ofRoseTree (t : RoseTree (Vertex L)) (h : IsSyntacticObject (UnorderedTree.mk t)) :
+@[simp] theorem toRoseTree_ofRoseTree (t : RoseTree (Vertex L)) (h : IsSyntacticObject
+    (UnorderedTree.mk t)) :
     (ofRoseTree t h).toRoseTree = t := by
   obtain ⟨p, rfl⟩ := exists_toRoseTree_eq h
   rw [ofRoseTree, ofRoseTree?_toRoseTree, Option.getD_some]
@@ -568,31 +579,37 @@ def ofUnorderedTree (t : UnorderedTree (Vertex L)) (_h : IsSyntacticObject t) : 
         simp only [h, h', ↓reduceDIte]
         refine toUnorderedTree_injective ?_
         rw [PlanarSyntacticObject.toUnorderedTree_toSyntacticObject,
-          PlanarSyntacticObject.toUnorderedTree_toSyntacticObject, PlanarSyntacticObject.toRoseTree_ofRoseTree,
+          PlanarSyntacticObject.toUnorderedTree_toSyntacticObject,
+              PlanarSyntacticObject.toRoseTree_ofRoseTree,
           PlanarSyntacticObject.toRoseTree_ofRoseTree, hmk]
       · have h' : ¬ IsSyntacticObject (UnorderedTree.mk r') := hmk ▸ h
         simp only [h, h', ↓reduceDIte]
 
-@[simp] theorem toUnorderedTree_ofUnorderedTree (t : UnorderedTree (Vertex L)) (h : IsSyntacticObject t) :
+@[simp] theorem toUnorderedTree_ofUnorderedTree (t : UnorderedTree (Vertex L)) (h :
+    IsSyntacticObject t) :
     (ofUnorderedTree t h).toUnorderedTree = t := by
   induction t using Quotient.inductionOn with
   | _ r =>
     show (if h : IsSyntacticObject (UnorderedTree.mk r) then
-      (PlanarSyntacticObject.ofRoseTree r h).toSyntacticObject else trace).toUnorderedTree = UnorderedTree.mk r
+      (PlanarSyntacticObject.ofRoseTree r h).toSyntacticObject else trace).toUnorderedTree =
+          UnorderedTree.mk r
     have h' : IsSyntacticObject (UnorderedTree.mk r) := h
     simp only [h', ↓reduceDIte, PlanarSyntacticObject.toUnorderedTree_toSyntacticObject,
       PlanarSyntacticObject.toRoseTree_ofRoseTree]
 
-@[simp] theorem ofUnorderedTree_toUnorderedTree (s : SyntacticObject L) : ofUnorderedTree s.toUnorderedTree s.isSyntacticObject_toUnorderedTree = s :=
+@[simp] theorem ofUnorderedTree_toUnorderedTree (s : SyntacticObject L) :
+    ofUnorderedTree s.toUnorderedTree s.isSyntacticObject_toUnorderedTree = s :=
   toUnorderedTree_injective (toUnorderedTree_ofUnorderedTree _ _)
 
 @[simp] theorem _root_.Minimalist.PlanarSyntacticObject.toSyntacticObject_ofRoseTree
     (t : RoseTree (Vertex L)) (h : IsSyntacticObject (UnorderedTree.mk t)) :
-    (PlanarSyntacticObject.ofRoseTree t h).toSyntacticObject = ofUnorderedTree (UnorderedTree.mk t) h :=
+    (PlanarSyntacticObject.ofRoseTree t h).toSyntacticObject = ofUnorderedTree (UnorderedTree.mk
+        t) h :=
   toUnorderedTree_injective (by simp)
 
 /-- Syntactic objects are the well-formed unordered trees. -/
-def unorderedTreeEquiv : SyntacticObject L ≃ {t : UnorderedTree (Vertex L) // IsSyntacticObject t} where
+def unorderedTreeEquiv : SyntacticObject L ≃ {t : UnorderedTree (Vertex L) // IsSyntacticObject
+    t} where
   toFun s := ⟨s.toUnorderedTree, s.isSyntacticObject_toUnorderedTree⟩
   invFun t := ofUnorderedTree t.1 t.2
   left_inv := ofUnorderedTree_toUnorderedTree
@@ -672,8 +689,10 @@ def map (f : L → L') (p : PlanarSyntacticObject L) : PlanarSyntacticObject L' 
   induction p using FreeMagma.recOnMul with
   | ih1 x => simp [map, toRoseTree, Leaf.toVertex_map]
   | ih2 l r hl hr =>
-    have hl' : toRoseTree (FreeMagma.map (Leaf.map f) l) = RoseTree.map (Vertex.map f) (toRoseTree l) := hl
-    have hr' : toRoseTree (FreeMagma.map (Leaf.map f) r) = RoseTree.map (Vertex.map f) (toRoseTree r) := hr
+    have hl' : toRoseTree (FreeMagma.map (Leaf.map f) l) = RoseTree.map (Vertex.map f) (toRoseTree
+        l) := hl
+    have hr' : toRoseTree (FreeMagma.map (Leaf.map f) r) = RoseTree.map (Vertex.map f) (toRoseTree
+        r) := hr
     simp [map, toRoseTree, hl', hr']
 
 @[simp] theorem map_leaf (f : L → L') (a : L) : (leaf a).map f = leaf (f a) := rfl
@@ -690,7 +709,8 @@ def map (f : L → L') (p : PlanarSyntacticObject L) : PlanarSyntacticObject L' 
 
 @[simp] theorem map_map (f : L → L') (g : L' → L'') (p : PlanarSyntacticObject L) :
     (p.map f).map g = p.map (g ∘ f) :=
-  toRoseTree_injective (by rw [toRoseTree_map, toRoseTree_map, toRoseTree_map, RoseTree.map_map, Vertex.map_comp])
+  toRoseTree_injective (by rw [toRoseTree_map, toRoseTree_map, toRoseTree_map, RoseTree.map_map,
+      Vertex.map_comp])
 
 theorem map_injective {f : L → L'} (hf : Function.Injective f) :
     Function.Injective (map f : PlanarSyntacticObject L → PlanarSyntacticObject L') :=
@@ -741,7 +761,8 @@ def map (f : L → L') (s : SyntacticObject L) : SyntacticObject L' :=
 
 @[simp] theorem map_map (f : L → L') (g : L' → L'') (s : SyntacticObject L) :
     (s.map f).map g = s.map (g ∘ f) :=
-  toUnorderedTree_injective (by rw [toUnorderedTree_map, toUnorderedTree_map, toUnorderedTree_map, UnorderedTree.map_map, Vertex.map_comp])
+  toUnorderedTree_injective (by rw [toUnorderedTree_map, toUnorderedTree_map, toUnorderedTree_map,
+      UnorderedTree.map_map, Vertex.map_comp])
 
 theorem map_injective {f : L → L'} (hf : Function.Injective f) :
     Function.Injective (map f : SyntacticObject L → SyntacticObject L') :=

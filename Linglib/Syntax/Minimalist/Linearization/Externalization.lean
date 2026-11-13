@@ -255,10 +255,12 @@ theorem linearize?_merge {d l : SyntacticObject} {pd pl : PlanarSyntacticObject}
 theorem linearize?_of_mem_subtrees {cur : SyntacticObject} {pc : PlanarSyntacticObject}
     (hc : cur.linearize? side = some pc) {q : RoseTree Vertex} (hq : q ∈ pc.toRoseTree.subtrees)
     (hqs : IsSyntacticObject (mk q)) :
-    linearize? side (ofUnorderedTree (mk q) hqs) = some (PlanarSyntacticObject.ofRoseTree q hqs) := by
+    linearize? side (ofUnorderedTree (mk q) hqs) = some (PlanarSyntacticObject.ofRoseTree q hqs) :=
+        by
   have root : ∀ {cur : SyntacticObject} {pc : PlanarSyntacticObject},
       cur.linearize? side = some pc → ∀ hqs : IsSyntacticObject (mk pc.toRoseTree),
-      linearize? side (ofUnorderedTree (mk pc.toRoseTree) hqs) = some (PlanarSyntacticObject.ofRoseTree pc.toRoseTree hqs) :=
+      linearize? side (ofUnorderedTree (mk pc.toRoseTree) hqs) =
+          some (PlanarSyntacticObject.ofRoseTree pc.toRoseTree hqs) :=
     fun hc _ ↦ by
       rw [← PlanarSyntacticObject.toSyntacticObject_ofRoseTree,
         PlanarSyntacticObject.ofRoseTree_toRoseTree, toSyntacticObject_of_linearize? hc, hc]

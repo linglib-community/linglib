@@ -122,7 +122,8 @@ theorem mem_candidates {p : TreePath} :
     Prod.exists, exists_and_right, exists_eq_right]
   rcases t.toRoseTree[p.parent.toList]? with _ | m <;> simp
 
-theorem candidates_congr (h : ∀ m, IsHighestMother t s m → IsSubtree m t.toRoseTree → pos m = pos' m) :
+theorem candidates_congr (h : ∀ m, IsHighestMother t s m → IsSubtree m t.toRoseTree → pos m = pos'
+    m) :
     candidates t pos s = candidates t pos' s := by
   refine congrArg _ (List.filter_congr fun x _ ↦ ?_)
   rcases hm : t.toRoseTree[x.1.parent.toList]? with _ | m
@@ -167,7 +168,8 @@ theorem candidates_ne_nil (hs : IsSubtree s t.toRoseTree) (hroot : s ≠ t.toRos
 the root and `pick` chooses among the positions it is given. -/
 theorem exists_spellOutPositionAux
     (hpick : ∀ l : List TreePath, l ≠ [] → ∃ p ∈ l, pick l = some p) :
-    ∀ (n : ℕ) (s : RoseTree Vertex), IsSubtree s t.toRoseTree → t.toRoseTree.numNodes < s.numNodes + n →
+    ∀ (n : ℕ) (s : RoseTree Vertex), IsSubtree s t.toRoseTree → t.toRoseTree.numNodes < s.numNodes +
+        n →
       ∃ p, spellOutPositionAux pick t n s = some p ∧ t.toRoseTree[p.toList]? = some s
   | 0, s, hs, hn => absurd hs.numNodes_le (by omega)
   | n + 1, s, hs, hn => by
@@ -196,7 +198,8 @@ theorem mem_tokenList_iff {p : TreePath} {tok : LexicalItem.Token} :
   rwa [← eq_leaf_of_getElem? hs hsv]
 
 theorem mem_remergedYield (hpick : ∀ l : List TreePath, l ≠ [] → ∃ p ∈ l, pick l = some p)
-    {tok : LexicalItem.Token} : tok ∈ remergedYield pick t ↔ ∃ p, (p, tok) ∈ tokenList t.toRoseTree := by
+    {tok : LexicalItem.Token} : tok ∈ remergedYield pick t ↔ ∃ p, (p,
+        tok) ∈ tokenList t.toRoseTree := by
   simp only [remergedYield, List.mem_filterMap, Option.ite_none_right_eq_some, Option.some.injEq]
   refine ⟨fun ⟨x, hx, _, h⟩ ↦ ⟨x.1, h ▸ hx⟩, fun ⟨p, hp⟩ ↦ ?_⟩
   have hs := mem_tokenList_iff.1 hp
@@ -263,7 +266,8 @@ theorem spellOutPositionAux_eq_of_chain {pick' : List TreePath → Option TreePa
     (hchain : ∀ s ∈ t.toRoseTree.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
       IsSubtree g g' ∨ IsSubtree g' g)
     (hself : ∀ g ∈ t.toRoseTree.subtrees, g.children.Nodup) :
-    ∀ (n : ℕ) (s : RoseTree Vertex), IsSubtree s t.toRoseTree → t.toRoseTree.numNodes < s.numNodes + n →
+    ∀ (n : ℕ) (s : RoseTree Vertex), IsSubtree s t.toRoseTree → t.toRoseTree.numNodes < s.numNodes +
+        n →
       spellOutPositionAux pick t n s = spellOutPositionAux pick' t n s
   | 0, _, _, _ => rfl
   | n + 1, s, hs, hn => by
@@ -377,7 +381,8 @@ pronounced last is pronounced at its last position. -/
 theorem spellOutPositionAux_getLast?
     (hshare : ∀ s ∈ t.toRoseTree.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
       IsSubtree g g' → g = g') :
-    ∀ (n : ℕ) (s : RoseTree Vertex), IsSubtree s t.toRoseTree → t.toRoseTree.numNodes < s.numNodes + n →
+    ∀ (n : ℕ) (s : RoseTree Vertex), IsSubtree s t.toRoseTree → t.toRoseTree.numNodes < s.numNodes +
+        n →
       spellOutPositionAux List.getLast? t n s = (positionsOf t s).getLast?
   | 0, s, hs, hn => absurd hs.numNodes_le (by omega)
   | n + 1, s, hs, hn => by
