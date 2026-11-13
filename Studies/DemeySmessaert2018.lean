@@ -299,14 +299,7 @@ theorem card_parts_minterms_syl :
     #(Finpartition.minterms ![categorical IsSYLPattern 0, categorical IsSYLPattern 1]).parts =
       3 := by
   have hne : ∀ t, (categoricalSquare IsSYLPattern).triangle t ≠ ⊥ := by decide
-  have hinj : Function.Injective (categoricalSquare IsSYLPattern).triangle := fun s t hst ↦ by
-    by_contra h
-    have hdis : Disjoint ((categoricalSquare IsSYLPattern).triangle s)
-        ((categoricalSquare IsSYLPattern).triangle t) :=
-      squareRelations_syl.pairwise_disjoint_triangle h
-    rw [← hst] at hdis
-    exact hne s (disjoint_self.1 hdis)
-  rw [parts_minterms_syl, card_image_of_injective _ hinj]
+  rw [parts_minterms_syl, card_image_of_injective _ (squareRelations_syl.triangle_injective hne)]
   decide
 
 -- In first-order logic no two categorical statements are contrary.
@@ -321,9 +314,7 @@ theorem not_isContrary_fol (i j : Fin 4) :
 theorem isEmpty_aristotelianIso_categorical :
     IsEmpty (AristotelianIso (categorical IsFOLPattern) (categorical IsSYLPattern)) := by
   refine ⟨fun e ↦ not_isContrary_fol _ _ ((e.symm.map_isContrary (i := 0) (j := 1)).2 ?_)⟩
-  refine ⟨squareRelations_syl.contraryAE, ?_⟩
-  simp only [codisjoint_iff]
-  decide
+  exact squareRelations_syl.isContrary_AE_iff.2 (by decide)
 
 section Models
 

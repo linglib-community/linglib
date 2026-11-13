@@ -270,20 +270,14 @@ theorem blocked_I_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ �
   · rintro ⟨hA, hs⟩
     exact ⟨sq.A, hA, hs, (lt_I_iff h hne (by simp)).2 rfl⟩
 
-theorem I_sdiff_O (h : SquareRelations sq) : sq.I \ sq.O = sq.A := by
-  rw [_root_.sdiff_eq, ← h.contradAO.eq_compl, inf_eq_right.2 h.subalternAI]
-
-theorem I_sdiff_A (h : SquareRelations sq) : sq.I \ sq.A = sq.I ⊓ sq.O := by
-  rw [_root_.sdiff_eq, h.contradAO.compl_eq]
-
 theorem blocked_I_sdiff_O_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥)
     (hF : F ⊆ {sq.A, sq.E, sq.I, sq.O}) : Blocked F (sq.I \ sq.O) sq.I ↔ sq.A ∈ F := by
-  rw [blocked_I_iff h hne hF, I_sdiff_O h]
+  rw [blocked_I_iff h hne hF, h.I_sdiff_O]
   simp
 
 theorem not_blocked_I_sdiff_A (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥)
     (hF : F ⊆ {sq.A, sq.E, sq.I, sq.O}) : ¬ Blocked F (sq.I \ sq.A) sq.I := by
-  rw [blocked_I_iff h hne hF, I_sdiff_A h]
+  rw [blocked_I_iff h hne hF, h.I_sdiff_A]
   rintro ⟨-, hle⟩
   exact hne .IO <| le_bot_iff.1 <| (le_inf hle inf_le_right).trans h.contradAO.disjoint.le_bot
 
@@ -292,9 +286,9 @@ theorem exhIE_I_eq_self {W : Type*} {sq : Square (Set W)} (h : SquareRelations s
   have hcov : sq.I ⊆ sq.A ∪ sq.O := fun w _ ↦
     show w ∈ sq.A ⊔ sq.O from h.contradAO.sup_eq_top ▸ mem_univ w
   refine exhIE_eq_self_of_subset_union hcov ?_ ?_
-  · have heq : sq.I \ sq.A = sq.I ⊓ sq.O := I_sdiff_A h
+  · have heq : sq.I \ sq.A = sq.I ⊓ sq.O := h.I_sdiff_A
     exact heq ▸ nonempty_iff_ne_empty.2 (show sq.I ⊓ sq.O ≠ ∅ from hne .IO)
-  · have heq : sq.I \ sq.O = sq.A := I_sdiff_O h
+  · have heq : sq.I \ sq.O = sq.A := h.I_sdiff_O
     exact heq ▸ nonempty_iff_ne_empty.2 (show sq.A ≠ ∅ from hne .A)
 
 -- Section 2.5: if *optional* is `I \ A`, blocking rules out both readings of (52).
@@ -304,7 +298,7 @@ theorem blocked_of_sdiff_mem {W : Type*} {sq : Square (Set W)} {F : Set (Set W)}
   have hs : IsSymmetric sq.I sq.A (sq.I \ sq.A) := isSymmetric_sdiff h.subalternAI
   refine ⟨IsSymmetric.blocked_sdiff hs hO (nonempty_iff_ne_empty.2 (hne .A)), ?_⟩
   have hO' : (sq.I \ sq.A).Nonempty :=
-    I_sdiff_A h ▸ nonempty_iff_ne_empty.2 (show sq.I ⊓ sq.O ≠ ∅ from hne .IO)
+    h.I_sdiff_A ▸ nonempty_iff_ne_empty.2 (show sq.I ⊓ sq.O ≠ ∅ from hne .IO)
   simpa only [hs.symm.sdiff_eq] using IsSymmetric.blocked_sdiff hs.symm hA hO'
 
 -- Section 4.1: at the O corner the partners of (52) are no longer strictly symmetric.
@@ -457,8 +451,8 @@ def sqAt : Square (Set W) where
 variable {A X}
 
 theorem sqAt_relations (hA : A.Nonempty) : SquareRelations (sqAt A X) :=
-  .of_disjoint (Set.ext fun _ ↦ by simp [sqAt, Det.no_iff_not_some]) rfl
-    (Set.disjoint_left.2 fun _ hE hN ↦ hA.ne_empty (Det.a_e_contrary hE hN))
+  (Det.square_relations hA).map (F := BoundedLatticeHom (Quantifier E) (Set W))
+    (CompleteLatticeHom.setPreimage X).toBoundedLatticeHom
 
 -- Two members of the restrictor make the square nondegenerate over the possible extensions.
 example {a b : E} (ha : a ∈ A) (hb : b ∈ A) (hab : a ≠ b) (t : Triangle) :
