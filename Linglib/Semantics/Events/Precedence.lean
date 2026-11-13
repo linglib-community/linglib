@@ -15,12 +15,13 @@ precedence by the run times of a trace that preserves sums is such a relation.
 
 ## Main definitions
 
-* `Event.IsTemporalPrecedence`: an interval order on events that is anti-additive in each argument.
+* `IsTemporalPrecedence`: an interval order on events that is anti-additive in each argument.
 
 ## Main statements
 
-* `Event.IsTemporalPrecedence.not_of_overlap`: overlapping events do not precede each other.
-* `Event.isTemporalPrecedence_precedes`: precedence by the run times of a sum-preserving trace.
+* `IsTemporalPrecedence.not_of_overlap`: overlapping events do not precede each other.
+* `Event.isTemporalPrecedence_precedes`: precedence by the run times of a sum-preserving trace
+  is a temporal precedence.
 
 ## Implementation notes
 
@@ -43,13 +44,10 @@ precedence alone, as in the reconstructions of times from events.
 
 open Mereology
 
-namespace Event
-
-/-- Temporal precedence on a part structure of events: an interval order in which a sum precedes
-an event exactly when its summands do, and follows one exactly when its summands do. -/
-structure IsTemporalPrecedence {E : Type*} [SemilatticeSup E] (r : E → E → Prop) : Prop where
-  /-- Precedence is an interval order. -/
-  isIntervalOrder : IsIntervalOrder E r
+/-- A temporal precedence on a part structure of events: an interval order in which a sum
+precedes an event exactly when its summands do, and follows one exactly when its summands do. -/
+class IsTemporalPrecedence (E : Type*) [SemilatticeSup E] (r : E → E → Prop) : Prop
+    extends IsIntervalOrder E r where
   /-- A sum precedes an event exactly when its summands do. -/
   left (c : E) : IsAntiAdditive (r · c)
   /-- A sum follows an event exactly when its summands do. -/
@@ -57,42 +55,38 @@ structure IsTemporalPrecedence {E : Type*} [SemilatticeSup E] (r : E → E → P
 
 namespace IsTemporalPrecedence
 
-variable {E : Type*} [SemilatticeSup E] {r : E → E → Prop} {a b c : E}
+variable {E : Type*} [SemilatticeSup E] {r : E → E → Prop} [IsTemporalPrecedence E r] {a b c : E}
 
-theorem sup_left_iff (h : IsTemporalPrecedence r) : r (a ⊔ b) c ↔ r a c ∧ r b c :=
-  (h.left c a b).to_iff
+theorem sup_left_iff : r (a ⊔ b) c ↔ r a c ∧ r b c := (left (r := r) c a b).to_iff
 
-theorem sup_right_iff (h : IsTemporalPrecedence r) : r c (a ⊔ b) ↔ r c a ∧ r c b :=
-  (h.right c a b).to_iff
+theorem sup_right_iff : r c (a ⊔ b) ↔ r c a ∧ r c b := (right (r := r) c a b).to_iff
 
 /-- A part of an event that precedes `c` precedes `c`. -/
-theorem mono_left (h : IsTemporalPrecedence r) (hab : a ≤ b) (hb : r b c) : r a c := by
+theorem mono_left (hab : a ≤ b) (hb : r b c) : r a c := by
   rw [← sup_eq_right.2 hab] at hb
-  exact (h.sup_left_iff.1 hb).1
+  exact (sup_left_iff.1 hb).1
 
 /-- An event that precedes `b` precedes each part of `b`. -/
-theorem mono_right (h : IsTemporalPrecedence r) (hab : a ≤ b) (hb : r c b) : r c a := by
+theorem mono_right (hab : a ≤ b) (hb : r c b) : r c a := by
   rw [← sup_eq_right.2 hab] at hb
-  exact (h.sup_right_iff.1 hb).1
+  exact (sup_right_iff.1 hb).1
 
 /-- Overlapping events do not precede each other ([krifka-1998] (35)). -/
-theorem not_of_overlap (h : IsTemporalPrecedence r) (hab : Overlap a b) : ¬ r a b := fun hr ↦
+theorem not_of_overlap (hab : Overlap a b) : ¬ r a b := fun hr ↦
   let ⟨z, _, hza, hzb⟩ := hab
-  h.isIntervalOrder.irrefl z (h.mono_right hzb (h.mono_left hza hr))
+  irrefl_of r z (mono_right hzb (mono_left hza hr))
 
 end IsTemporalPrecedence
 
 /-- Under a trace that preserves sums, precedence by run times is a temporal precedence on the
 part structure of events. -/
-theorem isTemporalPrecedence_precedes {E T : Type*} [LinearOrder T] [SemilatticeSup E]
-    [TemporalTrace E (NonemptyInterval T)] [TemporalTrace.IsSupHom E (NonemptyInterval T)] :
-    IsTemporalPrecedence (Precedes : E → E → Prop) where
-  isIntervalOrder := inferInstance
+instance Event.isTemporalPrecedence_precedes {E T : Type*} [LinearOrder T] [SemilatticeSup E]
+    [Event.TemporalTrace E (NonemptyInterval T)]
+    [Event.TemporalTrace.IsSupHom E (NonemptyInterval T)] :
+    IsTemporalPrecedence E (Event.Precedes : E → E → Prop) where
   left c a b := propext <| by
-    simp only [precedes_iff, τ_sup]
+    simp only [Event.precedes_iff, Event.τ_sup]
     exact max_lt_iff
   right c a b := propext <| by
-    simp only [precedes_iff, τ_sup]
+    simp only [Event.precedes_iff, Event.τ_sup]
     exact lt_min_iff
-
-end Event
