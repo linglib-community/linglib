@@ -30,8 +30,7 @@ head functions it is partial: `0` at exocentric nodes.
   `Minimalist.SyntacticObject.selCheck`: the selection algebra
   (`SyntacticObject.mergeAlgebra`), its catamorphism, and the carrier lift.
 * `Minimalist.SyntacticObject.selHead`, `Minimalist.SyntacticObject.cat?`:
-  the head token and its category, the head function of the phases
-  (`SyntacticObject.IsPhaseHead`).
+  the head token and its category.
 * `Minimalist.SyntacticObject.selCheckHom`: `selCheck` as a morphism of magmas
   `SyntacticObject →ₙ* SelectionState`, via `SyntacticObject.lift`.
 

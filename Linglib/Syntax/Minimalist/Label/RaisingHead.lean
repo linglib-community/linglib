@@ -221,6 +221,14 @@ function: the selection head where there is one, and at a landing site the head 
 moved out of. -/
 def raisingHead : Option LexicalItem.Token := s.raisingCheck.state.head
 
+@[simp] theorem raisingHead_leaf (tok : LexicalItem.Token) :
+    (leaf tok).raisingHead = some tok := rfl
+
+@[simp] theorem raisingHead_trace : (trace : SyntacticObject).raisingHead = some .bareTrace := rfl
+
+@[simp] theorem raisingHead_traceOf (tok : LexicalItem.Token) :
+    (traceOf tok).raisingHead = none := rfl
+
 @[simp] theorem raisingCheck_merge (l r : SyntacticObject) :
     (merge l r).raisingCheck = l.raisingCheck * r.raisingCheck :=
   liftFun_merge _ _ l r

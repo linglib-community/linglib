@@ -249,6 +249,21 @@ theorem mem_terms_merge_right (u C : SyntacticObject L) : C ∈ (merge u C).term
 theorem terms_subset_terms (h : ContainsOrEq x y) : y.terms ⊆ x.terms :=
   fun _ hz ↦ mem_terms.2 (ReflTransGen.trans h (mem_terms.1 hz))
 
+/-- The terms of a term, one per vertex, are among the terms of the object. -/
+theorem terms_le_terms (h : y ∈ x.terms) : y.terms ≤ x.terms := by
+  induction x using ind with
+  | leaf a => rw [terms_leaf, Multiset.mem_singleton] at h; rw [h]
+  | trace => rw [terms_trace, Multiset.mem_singleton] at h; rw [h]
+  | traceOf a => rw [terms_traceOf, Multiset.mem_singleton] at h; rw [h]
+  | merge l r ihl ihr =>
+    rw [terms_merge, Multiset.mem_cons, Multiset.mem_add] at h
+    rcases h with rfl | h | h
+    · exact le_rfl
+    · rw [terms_merge]
+      exact ((ihl h).trans (Multiset.le_add_right _ _)).trans (Multiset.le_cons_self _ _)
+    · rw [terms_merge]
+      exact ((ihr h).trans (Multiset.le_add_left _ _)).trans (Multiset.le_cons_self _ _)
+
 theorem mem_terms_antisymm (h₁ : x ∈ y.terms) (h₂ : y ∈ x.terms) : x = y := by
   rcases containsOrEq_iff_eq_or_contains.1 (mem_terms.1 h₁) with h | h
   · exact h
