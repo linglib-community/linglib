@@ -656,7 +656,7 @@ the required nuclei, and express as few nuclei as possible. -/
 def economical (l : List Nucleus) (R : Finset ℕ) : List (List Nucleus) :=
   let admissible := (l.map fun x ↦ [{ x with expressed := false },
     { x with expressed := true }]).sections.filter fun r ↦
-      decide (SatisfiesEmptyCategoryPrinciple actorship r ∧
+      decide (EmptyCategoryPrinciple actorship r ∧
         ∀ i ∈ R, ∃ x ∈ r[i]?, x.expressed = true)
   admissible.filter fun r ↦ admissible.all fun r' ↦ r.countP (·.expressed) ≤ r'.countP (·.expressed)
 

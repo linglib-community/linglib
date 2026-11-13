@@ -15,10 +15,10 @@ public import Mathlib.Data.Finset.Basic
 A nucleus may stay unexpressed when it is governed, when it is enclosed in a domain of
 infrasegmental government, or when it is final in a language whose final nuclei may be empty.
 Since a governed nucleus governs nothing, of two successive unexpressed nuclei
-[one is enclosed](##GovernmentPhonology.SatisfiesEmptyCategoryPrinciple.enclosed_or_enclosed).
+[one is enclosed](##GovernmentPhonology.EmptyCategoryPrinciple.enclosed_or_enclosed).
 Where alternation with zero is obligatory, the realization of a domain is fixed from the right,
-each nucleus unexpressed exactly when its silence is licensed, and the principle
-[holds of it](##GovernmentPhonology.satisfiesEmptyCategoryPrinciple_obligatory). In a word of
+each nucleus unexpressed exactly when the principle lets it be, and the principle
+[holds of it](##GovernmentPhonology.emptyCategoryPrinciple_obligatory). In a word of
 alternating vowels the outcome depends on whether such a vowel, once expressed, is strong
 enough to govern another: where it is,
 [every other one](##GovernmentPhonology.expressed_obligatory_iff_even) is expressed, counting
@@ -47,25 +47,25 @@ variable (A : Actorship) (l : List Nucleus) {i : ℕ}
 /-- The Empty Category Principle ([scheer-2004] (53)): associated melody is expressed, and a
 nucleus is unexpressed only if it is governed, enclosed in a domain of infrasegmental
 government, or final where final nuclei may be empty. -/
-structure SatisfiesEmptyCategoryPrinciple : Prop where
+structure EmptyCategoryPrinciple : Prop where
   /-- Associated melody is expressed. -/
   expressed_of_associated : ∀ x ∈ l, x.melody = .associated → x.expressed = true
-  /-- The silence of an unexpressed nucleus is licensed. -/
-  licensed : ∀ i, (∃ x ∈ l[i]?, x.expressed = false) →
+  /-- An unexpressed nucleus is governed, enclosed, or final where final nuclei may be empty. -/
+  governed_or_enclosed_or_final : ∀ i, (∃ x ∈ l[i]?, x.expressed = false) →
     Governed A l i ∨ Enclosed A l i ∨ i + 1 = l.length ∧ A.finalEmpty = true
 
 variable {A l}
 
-theorem satisfiesEmptyCategoryPrinciple_nil : SatisfiesEmptyCategoryPrinciple A [] :=
+theorem emptyCategoryPrinciple_nil : EmptyCategoryPrinciple A [] :=
   ⟨by simp, by simp⟩
 
 /-- A stretch satisfies the Empty Category Principle when its first nucleus does and the rest
 of the stretch does. -/
-theorem satisfiesEmptyCategoryPrinciple_cons {x : Nucleus} {r : List Nucleus} :
-    SatisfiesEmptyCategoryPrinciple A (x :: r) ↔
+theorem emptyCategoryPrinciple_cons {x : Nucleus} {r : List Nucleus} :
+    EmptyCategoryPrinciple A (x :: r) ↔
     (x.melody = .associated → x.expressed = true) ∧ (x.expressed = false →
       GovernedHead A (x :: r) ∨ EnclosedHead A (x :: r) ∨ r = [] ∧ A.finalEmpty = true) ∧
-      SatisfiesEmptyCategoryPrinciple A r := by
+      EmptyCategoryPrinciple A r := by
   refine ⟨fun ⟨h1, h2⟩ ↦ ⟨h1 x List.mem_cons_self, fun hx ↦ ?_,
     fun y hy ↦ h1 y (List.mem_cons_of_mem _ hy), fun i hi ↦ ?_⟩, fun ⟨h1, h2, h3, h4⟩ ↦
     ⟨fun y hy ↦ (List.mem_cons.1 hy).elim (· ▸ h1) (h3 y), fun i hi ↦ ?_⟩⟩
@@ -76,21 +76,21 @@ theorem satisfiesEmptyCategoryPrinciple_cons {x : Nucleus} {r : List Nucleus} :
     · simpa [Governed, Enclosed] using h4 i hi
 
 variable (A) in
-instance instDecidablePredSatisfiesEmptyCategoryPrinciple :
-    DecidablePred (SatisfiesEmptyCategoryPrinciple A)
-  | [] => isTrue satisfiesEmptyCategoryPrinciple_nil
+instance instDecidablePredEmptyCategoryPrinciple :
+    DecidablePred (EmptyCategoryPrinciple A)
+  | [] => isTrue emptyCategoryPrinciple_nil
   | _ :: r =>
-    have := instDecidablePredSatisfiesEmptyCategoryPrinciple r
-    decidable_of_iff _ satisfiesEmptyCategoryPrinciple_cons.symm
+    have := instDecidablePredEmptyCategoryPrinciple r
+    decidable_of_iff _ emptyCategoryPrinciple_cons.symm
 
 /-- Of two successive unexpressed nuclei before the last, one is enclosed. -/
-theorem SatisfiesEmptyCategoryPrinciple.enclosed_or_enclosed
-    (h : SatisfiesEmptyCategoryPrinciple A l) {x y : Nucleus}
+theorem EmptyCategoryPrinciple.enclosed_or_enclosed
+    (h : EmptyCategoryPrinciple A l) {x y : Nucleus}
     (hx : l[i]? = some x) (hy : l[i + 1]? = some y) (hxe : x.expressed = false)
     (hye : y.expressed = false) (hl : i + 2 < l.length) :
     Enclosed A l i ∨ Enclosed A l (i + 1) := by
-  rcases h.licensed i ⟨x, hx, hxe⟩ with h1 | h1 | h1
-  · rcases h.licensed (i + 1) ⟨y, hy, hye⟩ with h2 | h2 | h2
+  rcases h.governed_or_enclosed_or_final i ⟨x, hx, hxe⟩ with h1 | h1 | h1
+  · rcases h.governed_or_enclosed_or_final (i + 1) ⟨y, hy, hye⟩ with h2 | h2 | h2
     · exact absurd h2 (governed_iff.1 h1).2.1
     · exact .inr h2
     · omega
@@ -101,8 +101,9 @@ theorem SatisfiesEmptyCategoryPrinciple.enclosed_or_enclosed
 
 variable (A) in
 /-- The obligatory realization of a stretch whose first nucleus is nucleus `i` of its domain:
-from the right, a nucleus is left unexpressed exactly when its silence is licensed, unless it
-has associated melody or is one of `R`, the nuclei required to be expressed. -/
+from the right, a nucleus is left unexpressed exactly when it would be governed, enclosed or
+final where final nuclei may be empty, unless it has associated melody or is one of `R`, the
+nuclei required to be expressed. -/
 def obligatoryFrom (R : Finset ℕ) : ℕ → List Nucleus → List Nucleus
   | _, [] => []
   | i, x :: r =>
@@ -159,21 +160,21 @@ theorem drop_obligatoryFrom :
     · rw [obligatoryFrom_cons]
       split_ifs <;> simp [ih, Nat.add_assoc, Nat.add_comm 1 k]
 
-theorem satisfiesEmptyCategoryPrinciple_obligatoryFrom :
-    SatisfiesEmptyCategoryPrinciple A (obligatoryFrom A R i l) := by
+theorem emptyCategoryPrinciple_obligatoryFrom :
+    EmptyCategoryPrinciple A (obligatoryFrom A R i l) := by
   induction l generalizing i with
-  | nil => exact satisfiesEmptyCategoryPrinciple_nil
+  | nil => exact emptyCategoryPrinciple_nil
   | cons x r ih =>
     rw [obligatoryFrom_cons]
     split_ifs with hc
-    · refine satisfiesEmptyCategoryPrinciple_cons.2
+    · refine emptyCategoryPrinciple_cons.2
         ⟨fun h ↦ absurd h hc.1, fun _ ↦ hc.2.2.imp_right (.imp_right ?_), ih⟩
       exact .imp_left fun h ↦ by rw [h]; rfl
-    · exact satisfiesEmptyCategoryPrinciple_cons.2 ⟨fun _ ↦ rfl, fun h ↦ by simp at h, ih⟩
+    · exact emptyCategoryPrinciple_cons.2 ⟨fun _ ↦ rfl, fun h ↦ by simp at h, ih⟩
 
-theorem satisfiesEmptyCategoryPrinciple_obligatory :
-    SatisfiesEmptyCategoryPrinciple A (obligatory A R l) :=
-  satisfiesEmptyCategoryPrinciple_obligatoryFrom
+theorem emptyCategoryPrinciple_obligatory :
+    EmptyCategoryPrinciple A (obligatory A R l) :=
+  emptyCategoryPrinciple_obligatoryFrom
 
 private theorem ite_cons_eq_cons_iff {c : Prop} [Decidable c] {o : List Nucleus} :
     (if c then { x with expressed := false } :: o else { x with expressed := true } :: o) =
@@ -182,8 +183,8 @@ private theorem ite_cons_eq_cons_iff {c : Prop} [Decidable c] {o : List Nucleus}
   split_ifs with hc <;> cases e <;> simp [hc]
 
 /-- A stretch is its own obligatory realization exactly when each nucleus is expressed just in
-case it has associated melody, is required to be expressed, or would not have its silence
-licensed. -/
+case it has associated melody, is required to be expressed, or would otherwise be neither
+governed, enclosed nor final. -/
 theorem obligatoryFrom_eq_self_iff : obligatoryFrom A R k l = l ↔
     ∀ i x, l[i]? = some x → (x.expressed = true ↔ x.melody = .associated ∨ i + k ∈ R ∨
       ¬ (Governed A (l.set i { x with expressed := false }) i ∨
@@ -199,8 +200,8 @@ theorem obligatoryFrom_eq_self_iff : obligatoryFrom A R k l = l ↔
     · simp [Governed, Enclosed, Nat.add_right_comm _ 1 k, Nat.add_assoc _ k 1]
 
 /-- A domain is its own obligatory realization exactly when each nucleus is expressed just in
-case it has associated melody, is required to be expressed, or would not have its silence
-licensed. -/
+case it has associated melody, is required to be expressed, or would otherwise be neither
+governed, enclosed nor final. -/
 theorem obligatory_eq_self_iff : obligatory A R l = l ↔
     ∀ i x, l[i]? = some x → (x.expressed = true ↔ x.melody = .associated ∨ i ∈ R ∨
       ¬ (Governed A (l.set i { x with expressed := false }) i ∨
