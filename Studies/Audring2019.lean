@@ -6,41 +6,44 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Data.Wordlist.Audring2019
+public import Linglib.Morphology.ConstructionMorphology.Pattern
 public import Linglib.Morphology.ConstructionMorphology.Schema
-public import Linglib.Core.Logic.Function.FactorsThrough
 public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Fintype.Sum
+public import Mathlib.Order.Bounds.Basic
 public import Mathlib.Tactic.FinCases
 
 /-!
 # Audring (2019): Mothers or sisters? The encoding of morphological knowledge
 
-This file formalizes Audring's division of labour between mother schemas and sister links
-in a full-entry lexicon. A generalization over stored words can be encoded by a mother schema
-dominating them or by sister links, coindices between the words themselves. A sister link is a
-subscripting through which the pair of words factors, so it captures relations of sameness:
-*boyish* and *childish* are sisters at the affix (`ish_affix_sisters`) but cannot be coindexed
-at the base, where their fillers differ (`not_base_sisters`). The mother `[N -ish]A` of (8)
-relates every member of the family through one variable (`ishSchema_relates`), which is what
-states that different bases serve the same function. The mother also carries productivity: it
-generates *Trumpish* over an empty lexicon (`ishSchema_generates_trumpish`), whereas a fully
-specified word generates nothing but itself (`word_generates_iff`).
+A generalization over stored words can be encoded by a mother schema that dominates them or by
+sister links, coindices between the words themselves. This file formalizes the division of labour
+that [audring-2019] draws between the two in a full-entry lexicon.
 
-The second-order schema `[N -ful]A ≈ [N -less]A` of (14) is a sister link between mother
-schemas, one description over a shared base variable read through two subscriptings. The
-coindexed base pairs *careful* with *careless* and not with *clueless*
-(`careful_careless_pairs`, `not_careful_clueless_pairs`). A mother of the two schemas would be
-the meet of their descriptions, which over these slots is empty (`fulLess_mother_eq_bot`) and
-so is instantiated by every word (`fulLess_mother_instantiates`): it states nothing the sisters
-do not, and cannot state the pairing they do, which is no product of conditions on single words
-(`fulLess_ne_prod`).
+A sister link states sameness. The adjectives *boyish*, *foolish* and *childish*
+[share their affix and differ in their bases](##same_affix_contrast), so that no coindex between
+them states what the bases have in common, which is a function. The mother `[N -ish]A` states it
+with a variable. It is [the greatest description that every sister instantiates](##isGLB_ishFamily),
+and the variable also carries productivity, since
+[a stored word generates nothing but itself](##word_generates_iff).
+
+The second-order schema `[N -ful]A ≈ [N -less]A` is a sister link between mother schemas, one
+pattern over the positions of both whose base variables are coindexed. It
+[pairs the two adjectives of one base](##fulLess_pairs_iff). The pairing is
+[no product of conditions on single words](##fulLess_ne_prod), so a mother of the two schemas
+cannot state it. Second-order schemas are also the subject of [booij-2019].
 
 ## Implementation notes
 
-* The words are the CLDF forms of `Data/Wordlist/Audring2019.json`, read one morph per slot by
-  `CLDF.Wordlist.Form.morphSlots`: a base slot and an affix slot on the flat carrier, one tier of
-  the paper's three; the same subscripting mechanism coindexes across tiers. The paper's remaining
-  cases for a mother, an antonymic scale and the feature matrix of an inflectional paradigm,
-  are not formalized.
+* The words are the CLDF forms of `Data/Wordlist/Audring2019.json`, read by `slots` as a base
+  slot and an affix slot on the flat carrier. This is one tier of the paper's three; the same
+  coindexation links the tiers.
+* A sister link between two words is `ConstructionMorphology.Contrast`, sameness outside a set of
+  slots and incompatible fillers inside it.
+* Not formalized: the mother as a relational hub for a large family, the lexical mother *child*
+  of *childish* and *childless*, sister schemas that are not productive in both directions
+  (*clueless* without *clueful*), and the two further cases for a mother, an antonymic scale and
+  the feature matrix of an inflectional paradigm.
 
 ## References
 
@@ -52,155 +55,118 @@ do not, and cannot state the pairing they do, which is no product of conditions 
 
 namespace Audring2019
 
-open ConstructionMorphology
+open ConstructionMorphology Pattern CLDF.Wordlist
 
-/-- A word with base `b` and affix `a` over the two slots base and affix. -/
-def word (b a : String) : Fin 2 → Flat String := ![↑b, ↑a]
+/-- The morphs of a form read as a base slot and an affix slot, with `⊥` where a morph is
+missing. -/
+def slots (f : Form Wordlist.Cell) (i : Fin 2) : Flat String := f.morphs[i.val]?.elim ⊥ Flat.some
 
 /-! ### The *-ish* family: sister links and their mother -/
 
-/-- The mother schema `[N -ish]A` of (8) has its affix pinned and its base an open variable. -/
-def ishSchema : Schema (Fin 2) (Flat String) := Schema.productive ![⊥, ↑"ish"]
+/-- (8): The mother schema `[N -ish]A` has its affix pinned and its base an open variable. -/
+def ishSchema : Schema (Fin 2) (Flat String) := .productive ![⊥, ↑"ish"]
 
-/-- The stored family of (8). -/
+/-- (8): The stored family. -/
 def ishFamily : Set (Fin 2 → Flat String) :=
-  {Wordlist.boyish.morphSlots, Wordlist.foolish.morphSlots, Wordlist.childish.morphSlots}
+  {slots Wordlist.boyish, slots Wordlist.foolish, slots Wordlist.childish}
 
-theorem ishSchema_instantiates {w : Fin 2 → Flat String} (h : w 1 = ↑"ish") :
-    ishSchema.Instantiates w := by
-  intro i
-  fin_cases i
-  · exact bot_le
-  · exact h.ge
-
-/-- The variables of a sister link coindexing the affixes of two words. -/
-inductive AffixLink
-  | base₁
-  | base₂
-  | affix
-  deriving DecidableEq
-
-/-- The sister link at the affix makes the two affix slots share a variable and leaves the bases
-apart. -/
-def affixLink : Fin 2 ⊕ Fin 2 → AffixLink := Sum.elim ![.base₁, .affix] ![.base₂, .affix]
-
-/-- The variables of a sister link coindexing the bases of two words. -/
-inductive BaseLink
-  | base
-  | affix₁
-  | affix₂
-  deriving DecidableEq
-
-/-- The sister link at the base makes the two base slots share a variable and leaves the affixes
-apart. -/
-def baseLink : Fin 2 ⊕ Fin 2 → BaseLink := Sum.elim ![.base, .affix₁] ![.base, .affix₂]
-
-/-- *boyish* and *childish* are sisters at the affix, since the pair factors through the link. -/
-theorem ish_affix_sisters :
-    (Sum.elim Wordlist.boyish.morphSlots Wordlist.childish.morphSlots).FactorsThrough
-      affixLink := by
+/-- The sisters of the *-ish* family are the same at the affix and fill the base differently, so
+a sister link coindexes their affixes and cannot coindex their bases. -/
+theorem same_affix_contrast : ∀ r ∈ Wordlist.relations, r.relation = "same_affix" →
+    Contrast (slots r.form) (slots r.target) {0} := by
   decide
 
-/-- *boyish* and *childish* cannot be coindexed at the base. The relation between *boy* and
-*child* is equivalence of function, not sameness, and no sister link states it. -/
-theorem not_base_sisters :
-    ¬ (Sum.elim Wordlist.boyish.morphSlots Wordlist.childish.morphSlots).FactorsThrough
-      baseLink := by
+-- (10), (11): *childish* and *childless* are sisters at the base
+theorem same_stem_contrast : ∀ r ∈ Wordlist.relations, r.relation = "same_stem" →
+    Contrast (slots r.form) (slots r.target) {1} := by
   decide
 
-/-- The mother relates every member of the family through its one variable. -/
+-- (8): the meet of any two sisters is already the mother
+theorem inf_eq_ishSchema_body : ∀ r ∈ Wordlist.relations, r.relation = "same_affix" →
+    slots r.form ⊓ slots r.target = ishSchema.body := by
+  decide
+
+-- (8): the variable of the mother stands where the sisters differ, and each base fills it
+theorem ishSchema_instantiation {r : FormRelation (Form Wordlist.Cell)}
+    (hr : r ∈ Wordlist.relations) (h : r.relation = "same_affix") :
+    Instantiation ishSchema.body (slots r.form) {0} ∧
+      Instantiation ishSchema.body (slots r.target) {0} :=
+  ⟨inf_eq_ishSchema_body r hr h ▸ (same_affix_contrast r hr h).instantiation_inf,
+    (inf_comm _ _).trans (inf_eq_ishSchema_body r hr h) ▸
+      (same_affix_contrast r hr h).symm.instantiation_inf⟩
+
+/-- The mother is the greatest description that every stored sister instantiates, so it states
+what the family shares and nothing more. -/
+theorem isGLB_ishFamily : IsGLB ishFamily ishSchema.body := by
+  have h : ishSchema.body =
+      slots Wordlist.boyish ⊓ (slots Wordlist.foolish ⊓ slots Wordlist.childish) := by
+    decide
+  exact h ▸ isGLB_pair.insert _
+
 theorem ishSchema_relates {w : Fin 2 → Flat String} (hw : w ∈ ishFamily) :
-    ishSchema.Relates ishFamily w := by
-  refine ⟨hw, ?_⟩
-  simp only [ishFamily, Set.mem_insert_iff, Set.mem_singleton_iff] at hw
-  rcases hw with rfl | rfl | rfl <;> exact ishSchema_instantiates (by decide)
+    ishSchema.Relates ishFamily w :=
+  ⟨hw, isGLB_ishFamily.1 hw⟩
 
-theorem ishSchema_isProductive : ishSchema.IsProductive := Schema.isProductive_productive _
+-- §4.1: the open variable accepts the novel *Trumpish* with nothing stored
+theorem ishSchema_generates_trumpish : ishSchema.Generates ∅ (slots Wordlist.trumpish) :=
+  (Schema.isProductive_productive _).generates_iff.2 (by decide)
 
-/-- The mother generates the novel *Trumpish* with nothing stored. -/
-theorem ishSchema_generates_trumpish : ishSchema.Generates ∅ Wordlist.trumpish.morphSlots :=
-  ishSchema_isProductive.generates_iff.2 (ishSchema_instantiates (by decide))
-
-/-- A fully specified word, taken as a schema, generates nothing but itself. A sister link
-between stored words therefore licenses no novel word, and productivity needs a mother's
-variable. -/
-theorem word_generates_iff (b a : String) {Λ : Set (Fin 2 → Flat String)}
-    {w : Fin 2 → Flat String} :
-    (Schema.nonproductive (word b a)).Generates Λ w ↔ w = word b a := by
-  have hmax : ∀ v, IsMax (word b a v) := fun v ↦ by fin_cases v <;> exact Flat.isMax_coe _
-  refine ⟨fun h ↦ (Schema.instantiates_iff_eq_of_forall_isMax hmax).1 h.instantiates, ?_⟩
-  rintro rfl
-  exact ⟨le_rfl, fun v hv ↦ by fin_cases v <;> exact absurd hv.1 Flat.coe_ne_bot⟩
+/-- A stored word, taken as a schema, generates nothing but itself, so a systematically
+productive pattern needs a mother with a variable. -/
+theorem word_generates_iff {Λ : Set (Fin 2 → Flat String)} {u : Fin 2 → Flat String} :
+    ∀ f ∈ Wordlist.all, (Schema.nonproductive (slots f)).Generates Λ u ↔ u = slots f :=
+  fun f hf ↦ Schema.generates_iff_eq_of_forall_ne_bot
+    ((by decide : ∀ f ∈ Wordlist.all, ∀ v, slots f v ≠ ⊥) f hf)
 
 /-! ### The second-order schema `[N -ful]A ≈ [N -less]A` -/
 
-/-- The variables of (14) are the base shared by the two schemas and the two affixes. -/
-inductive FulLessVar
-  | base
-  | ful
-  | less
-  deriving DecidableEq
+/-- (14): The second-order schema is the two schemas as one pattern, their base variables
+coindexed. -/
+abbrev fulLess : Pattern (Fin 2 ⊕ Fin 2) (Flat String) :=
+  .ofTerms (Sum.elim ![.inr 1, .inl "ful"] ![.inr 1, .inl "less"])
 
-/-- The second-order schema (14) is the two schemas with their coindexed base as one
-description. -/
-def fulLess : Schema FulLessVar (Flat String) :=
-  ⟨fun | .base => ⊥ | .ful => ↑"ful" | .less => ↑"less", {.base}, by rintro _ rfl; rfl⟩
+/-- The second-order schema pairs an *-ful* adjective with a *-less* adjective exactly when the
+two have the same base. -/
+theorem fulLess_pairs_iff {p q : Fin 2 → String} :
+    fulLess ≤ ofItem (Sum.elim (Flat.some ∘ p) (Flat.some ∘ q)) ↔
+      ∃ b, p = ![b, "ful"] ∧ q = ![b, "less"] := by
+  refine ofTerms_sumElim_le_ofItem_iff.trans
+    ⟨fun ⟨x, hp, hq⟩ ↦ ⟨x 1, ?_, ?_⟩, fun ⟨b, hp, hq⟩ ↦ ⟨fun _ ↦ b, ?_, ?_⟩⟩ <;>
+  · subst_vars
+    funext i
+    fin_cases i <;> rfl
 
-/-- The subscripting of the slots of `[N -ful]A` by the variables of (14). -/
-def fulSub : Fin 2 → FulLessVar := ![.base, .ful]
-
-/-- The subscripting of the slots of `[N -less]A` by the variables of (14). -/
-def lessSub : Fin 2 → FulLessVar := ![.base, .less]
-
-/-- The schema `[N -ful]A` is the description of (14) read at its own slots. -/
-def fulSchema : Schema (Fin 2) (Flat String) := fulLess.comap fulSub
-
-/-- The schema `[N -less]A` is the description of (14) read at its own slots. -/
-def lessSchema : Schema (Fin 2) (Flat String) := fulLess.comap lessSub
-
-/-- The variables of (14) filled by base `b`. -/
-def fulLessWord (b : String) : FulLessVar → Flat String
-  | .base => ↑b
-  | .ful => ↑"ful"
-  | .less => ↑"less"
-
-/-- (14) pairs the *-ful* and the *-less* adjective of every base. -/
-theorem fulLess_pairs (b : String) :
-    fulLess.InstantiatesAt (Sum.elim fulSub lessSub) (Sum.elim (word b "ful") (word b "less")) :=
-  ⟨fulLessWord b, fun v ↦ by cases v <;> first | exact bot_le | exact le_rfl,
-    funext fun p ↦ by rcases p with p | p <;> fin_cases p <;> rfl⟩
-
-/-- *careful* and *careless* are a paired instantiation of (14), with the same base and sister
-affixes. -/
-theorem careful_careless_pairs :
-    fulLess.InstantiatesAt (Sum.elim fulSub lessSub)
-      (Sum.elim Wordlist.careful.morphSlots Wordlist.careless.morphSlots) := by
+-- (12), §5: *helpful* with *helpless* and *careful* with *careless*
+theorem second_order_pairs : ∀ r ∈ Wordlist.relations, r.relation = "second_order_schema" →
+    fulLess ≤ ofItem (Sum.elim (slots r.form) (slots r.target)) := by
   decide
 
-/-- *careful* and *clueless* are not a paired instantiation, since the coindexed base is filled
-differently. -/
+-- the coindexed base is filled differently
 theorem not_careful_clueless_pairs :
-    ¬ fulLess.InstantiatesAt (Sum.elim fulSub lessSub)
-      (Sum.elim Wordlist.careful.morphSlots Wordlist.clueless.morphSlots) := by
+    ¬ fulLess ≤ ofItem (Sum.elim (slots Wordlist.careful) (slots Wordlist.clueless)) := by
   decide
 
-/-- No conditions on the *-ful* and the *-less* adjectives separately pair them as (14) does, so
-neither a mother of the two schemas nor any other schema over single words states the
-pairing. -/
+/-- No conditions on the *-ful* and the *-less* adjectives separately pair them as the
+second-order schema does, so neither a mother of the two schemas nor any other schema over single
+words states the pairing. -/
 theorem fulLess_ne_prod (A B : Set (Fin 2 → Flat String)) :
-    {p | fulLess.InstantiatesAt (Sum.elim fulSub lessSub) (Sum.elim p.1 p.2)} ≠ A ×ˢ B :=
-  Schema.setOf_instantiatesAt_elim_ne_prod careful_careless_pairs (fulLess_pairs "hope")
-    (a := 0) (b := 0) rfl (by decide) A B
+    {(x, y) : (Fin 2 → Flat String) × (Fin 2 → Flat String) |
+      fulLess ≤ ofItem (Sum.elim x y)} ≠ A ×ˢ B :=
+  setOf_le_ofItem_sumElim_ne_prod
+    (w₁ := slots Wordlist.careful) (w₂ := slots Wordlist.careless)
+    (w₁' := slots Wordlist.helpful) (w₂' := slots Wordlist.helpless)
+    (by decide) (by decide) (a := 0) (b := 0) (by decide) (by decide) A B
 
-/-- A mother of the two schemas would be the meet of their descriptions, which over these slots
-is empty. It holds nothing but the categories, which the slots do not record. -/
-theorem fulLess_mother_eq_bot : fulSchema.body ⊓ lessSchema.body = ⊥ := by
-  funext v
-  fin_cases v <;> decide
+-- (14): a mother of the two schemas holds nothing but the categories, which the slots do not
+-- record
+theorem fulLess_mother_content :
+    (fulLess.comap Sum.inl ⊓ fulLess.comap Sum.inr).content = ⊥ := by
+  decide
 
-/-- The mother is instantiated by every word, so it states nothing the sisters do not. -/
-theorem fulLess_mother_instantiates (w : Fin 2 → Flat String) :
-    (Schema.nonproductive (fulSchema.body ⊓ lessSchema.body)).Instantiates w :=
-  Schema.instantiates_iff.2 (fulLess_mother_eq_bot.trans_le bot_le)
+theorem fulLess_mother_le (w : Fin 2 → Flat String) :
+    fulLess.comap Sum.inl ⊓ fulLess.comap Sum.inr ≤ ofItem w :=
+  ⟨fun i ↦ (congrFun fulLess_mother_content i).trans_le bot_le, fun p q h ↦ .inl
+    ((by decide : ∀ p q : Fin 2,
+      (fulLess.comap Sum.inl ⊓ fulLess.comap Sum.inr).coindex p q → p = q) p q h)⟩
 
 end Audring2019
