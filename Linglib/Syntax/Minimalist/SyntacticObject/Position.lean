@@ -70,17 +70,26 @@ theorem isSyntacticObject_subtree (p : t.val.Positions) :
 
 variable (t) in
 /-- The term of `t` at a position. -/
-def termAt (p : t.val.Positions) : SyntacticObject := ⟨_, isSyntacticObject_subtree p⟩
+def termAt (p : t.val.Positions) : SyntacticObject :=
+  SyntacticObject.ofVal _ (isSyntacticObject_subtree p)
 
-@[simp] theorem termAt_bot : t.termAt ⊥ = t.toSyntacticObject := rfl
+@[simp] theorem val_termAt : (t.termAt p).val = UnorderedTree.mk p.subtree :=
+  SyntacticObject.val_ofVal _ _
+
+@[simp] theorem termAt_bot : t.termAt ⊥ = t.toSyntacticObject :=
+  SyntacticObject.val_injective (by rw [val_termAt]; rfl)
 
 variable (t) in
 /-- The term of `t` at a position, with the order of daughters it has in `t`. -/
 def linearizedTermAt (p : t.val.Positions) : LinearizedSyntacticObject :=
-  ⟨_, isSyntacticObject_subtree p⟩
+  LinearizedSyntacticObject.ofVal _ (isSyntacticObject_subtree p)
+
+@[simp] theorem val_linearizedTermAt : (t.linearizedTermAt p).val = p.subtree :=
+  LinearizedSyntacticObject.val_ofVal _ _
 
 @[simp] theorem toSyntacticObject_linearizedTermAt :
-    (t.linearizedTermAt p).toSyntacticObject = t.termAt p := rfl
+    (t.linearizedTermAt p).toSyntacticObject = t.termAt p :=
+  toSyntacticObject_ofVal _ _
 
 theorem length_children_subtree (hp : ¬ IsMax p) : p.subtree.children.length = 2 := by
   have hs := isSyntacticObject_subtree p
@@ -101,26 +110,25 @@ theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p := by
 /-- The term at a position immediately contains the terms at its covers. -/
 theorem immediatelyContains_termAt :
     ImmediatelyContains (t.termAt p) y ↔ ∃ q, p ⋖ q ∧ t.termAt q = y := by
-  show y.val ∈ (UnorderedTree.mk p.subtree).children ↔ _
-  rw [UnorderedTree.children_mk, Multiset.mem_coe, List.mem_map]
+  rw [ImmediatelyContains, val_termAt, UnorderedTree.children_mk, Multiset.mem_coe, List.mem_map]
   constructor
   · rintro ⟨c, hc, hcy⟩
     obtain ⟨q, hpq, rfl⟩ := Positions.mem_children_subtree.1 hc
-    exact ⟨q, hpq, Subtype.ext hcy⟩
+    exact ⟨q, hpq, SyntacticObject.val_injective (val_termAt.trans hcy)⟩
   · rintro ⟨q, hpq, rfl⟩
-    exact ⟨q.subtree, Positions.mem_children_subtree.2 ⟨q, hpq, rfl⟩, rfl⟩
+    exact ⟨q.subtree, Positions.mem_children_subtree.2 ⟨q, hpq, rfl⟩, val_termAt.symm⟩
 
 /-- The term at a position contains or equals the terms at the positions below it. -/
 theorem containsOrEq_termAt : ContainsOrEq (t.termAt p) y ↔ ∃ q, p ≤ q ∧ t.termAt q = y := by
-  rw [← mem_terms, ← Multiset.mem_map_of_injective Subtype.val_injective, map_val_terms]
-  show y.val ∈ unorderedSubtrees p.subtree ↔ _
+  rw [← mem_terms, ← Multiset.mem_map_of_injective SyntacticObject.val_injective, map_val_terms,
+    val_termAt, UnorderedTree.subtrees_mk]
   simp only [unorderedSubtrees_eq_map, Multiset.mem_coe, List.mem_map, mem_subtrees,
     Positions.isSubtree_subtree]
   constructor
   · rintro ⟨s, ⟨q, hpq, rfl⟩, hsy⟩
-    exact ⟨q, hpq, Subtype.ext hsy⟩
+    exact ⟨q, hpq, SyntacticObject.val_injective (val_termAt.trans hsy)⟩
   · rintro ⟨q, hpq, rfl⟩
-    exact ⟨q.subtree, ⟨q, hpq, rfl⟩, rfl⟩
+    exact ⟨q.subtree, ⟨q, hpq, rfl⟩, val_termAt.symm⟩
 
 theorem mem_terms_iff : y ∈ t.toSyntacticObject.terms ↔ ∃ q, t.termAt q = y := by
   rw [mem_terms, ← termAt_bot, containsOrEq_termAt]
@@ -130,10 +138,10 @@ variable (t) in
 /-- The terms of a linearized object are the terms at its positions, one per position. -/
 theorem terms_eq_map_termAt :
     t.toSyntacticObject.terms = (Finset.univ : Finset t.val.Positions).val.map t.termAt := by
-  apply Multiset.map_injective Subtype.val_injective
-  rw [map_val_terms, Multiset.map_map]
-  change UnorderedTree.subtrees (UnorderedTree.mk t.val) =
-    (Finset.univ : Finset t.val.Positions).val.map (UnorderedTree.mk ∘ Positions.subtree)
+  apply Multiset.map_injective SyntacticObject.val_injective
+  rw [map_val_terms, Multiset.map_map,
+    show SyntacticObject.val ∘ t.termAt = UnorderedTree.mk ∘ Positions.subtree from
+      funext fun _ ↦ val_termAt, toSyntacticObject_val]
   rw [← Multiset.map_map, Positions.map_subtree_univ, UnorderedTree.subtrees_mk,
     unorderedSubtrees_eq_map, Multiset.map_coe]
 
