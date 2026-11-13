@@ -7,7 +7,6 @@ module
 
 public import Linglib.Phonology.Autosegmental.Candidate
 public import Linglib.Phonology.Autosegmental.Skeleton
-public import Linglib.Phonology.StrictCV.Basic
 public import Mathlib.Order.Hom.Basic
 
 /-!
@@ -18,14 +17,13 @@ one, so strict skeletons are [closed under concatenation](##Autosegmental.Skelet
 and a word built from strict morphs is strict. Unit `j` of a form has its onset at slot `2j` and
 its nucleus at slot `2j + 1`, which in a strict form
 [are consonantal](##Autosegmental.Skeleton.IsStrict.value_onset) and
-[vocalic](##Autosegmental.Skeleton.IsStrict.value_nucleus). A candidate presents the profile that
-the lateral computation reads: the nuclei that host melody, and the units whose onset may be
-governed by the next onset, as two consonants that contract infrasegmental government.
+[vocalic](##Autosegmental.Skeleton.IsStrict.value_nucleus). The clusters of a candidate are the
+units whose onset may be governed by the next onset, as two consonants that contract
+infrasegmental government.
 
 ## Implementation notes
 
-A nucleus of a candidate has associated melody or none, since a floating object is linked to no
-slot. Only the following onset is tried as the governor of an onset. A governing first consonant
+Only the following onset is tried as the governor of an onset. A governing first consonant
 would have to be licensed by the empty nucleus that the domain encloses, which Government
 Licensing excludes, so that infrasegmental government is head-final ([scheer-2004] (52)).
 
@@ -213,40 +211,5 @@ def clusters (MayGovern : List T → List T → Prop) [∀ a b, Decidable (MayGo
     Finset (Fin (units u)) :=
   Finset.univ.filter fun j ↦ ∃ k : Fin (units u), k.val = j.val + 1 ∧
     MayGovern (c.tierValues (onset u k)) (c.tierValues (onset u j))
-
-variable (P : T → Prop) [DecidablePred P] (cl : Finset (Fin (units u)))
-
-/-- The nucleus of CV unit `j`, with associated melody when it hosts an object satisfying `P`, and
-between consonants that may contract infrasegmental government when `j ∈ cl`. -/
-def nucleusOf (j : Fin (units u)) : Nucleus where
-  melody := if c.Hosts P (nucleus u j) then .associated else .empty
-  cluster := decide (j ∈ cl)
-
-/-- The nuclei of a candidate as its surface presents them, those hosting an object satisfying `P`
-pronounced. -/
-def surface : List (Nucleus × Bool) :=
-  List.ofFn fun j ↦ (nucleusOf c P cl j, decide (c.Hosts P (nucleus u j)))
-
-@[simp] theorem length_surface : (surface c P cl).length = units u := List.length_ofFn
-
-@[simp] theorem map_fst_surface : (surface c P cl).map Prod.fst = List.ofFn (nucleusOf c P cl) := by
-  simp [surface, List.map_ofFn, Function.comp_def]
-
-variable {c P cl} {j : Fin (units u)}
-
-/-- A nucleus of a candidate is enclosed in a domain of infrasegmental government when it hosts no
-melody, its unit is one of the clusters, and the next nucleus hosts melody. -/
-theorem enclosed_nucleusOf_iff :
-    Enclosed (nucleusOf c P cl j) ((surface c P cl).drop (j + 1)) ↔
-      ¬ c.Hosts P (nucleus u j) ∧ j ∈ cl ∧
-        ∃ k : Fin (units u), k.val = j + 1 ∧ c.Hosts P (nucleus u k) := by
-  by_cases hk : j.val + 1 < units u
-  · rw [List.drop_eq_getElem_cons (by simpa using hk)]
-    simp only [Enclosed, nucleusOf, surface, List.getElem_ofFn, ite_eq_right_iff, reduceCtorEq,
-      imp_false, decide_eq_true_eq]
-    exact and_congr_right fun _ ↦ and_congr_right fun _ ↦
-      ⟨fun h ↦ ⟨⟨_, hk⟩, rfl, h⟩, fun ⟨k, hkj, h⟩ ↦ by rwa [← Fin.ext (a := k) (b := ⟨_, hk⟩) hkj]⟩
-  · rw [List.drop_eq_nil_of_le (by simpa using Nat.le_of_not_lt hk)]
-    exact iff_of_false id fun ⟨_, _, k, hkj, _⟩ ↦ hk (hkj ▸ k.isLt)
 
 end StrictCV

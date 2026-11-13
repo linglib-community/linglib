@@ -9,7 +9,7 @@ public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Phonology.Autosegmental.Skeleton
 public import Linglib.Phonology.Autosegmental.Candidate
 public import Linglib.Phonology.RuleInteraction
-public import Linglib.Phonology.StrictCV.Skeleton
+public import Linglib.Phonology.GovernmentPhonology.Skeleton
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -45,11 +45,12 @@ slot of the consonant it acts on, and of its effects only the deletion of *f* is
 leaves the C-slot, as Gussmann argues. The palatalization such a slot keeps, a lexical property of
 the following word as Ní Chiosáin shows, is not modelled. The condition on `d` applies to every
 floating segment, as §4.3 extends it to the prothetic consonants; of the masculine article only
-its floating `t` is modelled. Whether a nucleus is enclosed in a domain of infrasegmental
-government is Strict CV's notion, after Scheer; the domains are read off the underlying form,
-since "the IG domain structure remains intact, even after the initial f has been deleted", and a
-liquid may govern an obstruent before it. The phonology is defined for any type of sponsoring
-morpheme, so it cannot consult the morphosyntax, which is Bermúdez-Otero's strict modularity.
+its floating `t` is modelled. A V-slot is within a domain of infrasegmental
+government when the onsets on either side of it contract that government, Scheer's notion; the
+domains are read off the underlying form, since "the IG domain structure remains intact, even
+after the initial f has been deleted", and a liquid may govern an obstruent before it. The
+phonology is defined for any type of sponsoring morpheme, so it cannot consult the
+morphosyntax, which is Bermúdez-Otero's strict modularity.
 Suffixes are not modelled, and Munster *dh'* is written `d`, as the paper writes it.
 
 ## TODO
@@ -160,14 +161,13 @@ structure that "remains intact, even after the initial f has been deleted" (§4.
 def domains : Finset (Fin (StrictCV.units u)) := StrictCV.clusters (.input u) MayGovern
 
 /-- A docking site for `{L}` is a C-slot hosting the consonant it acts on, and for a segment a
-segmentally empty C-slot whose nucleus hosts a segment or is enclosed in a domain of
-infrasegmental government (§4.1). -/
+segmentally empty C-slot whose nucleus hosts a segment or is within a domain of infrasegmental
+government (§4.1). -/
 def IsDockingSite : Autosegment → Fin (u.word .lower).length → Prop
   | .L, i => (u.word .lower)[i].value = .C ∧ c.Hosts Autosegment.IsSegment i
   | .seg _, i => (u.word .lower)[i].value = .C ∧ ¬ c.Hosts Autosegment.IsSegment i ∧
-      ∃ j, StrictCV.onset u j = i ∧ (c.Hosts Autosegment.IsSegment (StrictCV.nucleus u j) ∨
-        StrictCV.Enclosed (StrictCV.nucleusOf c Autosegment.IsSegment (domains u) j)
-          ((StrictCV.surface c Autosegment.IsSegment (domains u)).drop (j + 1)))
+      ∃ j, StrictCV.onset u j = i ∧
+        (c.Hosts Autosegment.IsSegment (StrictCV.nucleus u j) ∨ j ∈ domains u)
 
 instance : ∀ a i, Decidable (IsDockingSite c a i)
   | .L, _ => inferInstanceAs (Decidable (_ ∧ _))
@@ -327,7 +327,7 @@ theorem not_isDockingSite_onset {j : Fin (StrictCV.units u)}
     obtain rfl : j' = j := StrictCV.onset_injective u hj'
     rcases h with h | h
     · exact hv h
-    · exact hcl (StrictCV.enclosed_nucleusOf_iff.1 h).2.1
+    · exact hcl h
 
 variable {m m' : M} {objs : List Autosegment} {s : Form M}
   {c c' : Candidate (floating m objs * (emptyCV m' * s))}
