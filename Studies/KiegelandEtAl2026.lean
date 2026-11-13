@@ -24,8 +24,8 @@ The identity depends on the separator closing each unit. Placed at the onset ins
 spelling is a prefix of the spelling of a longer unit sharing its underlying prefix, and the
 prefix identity fails (`not_forall_encodeOnset_isPrefix_iff`). In the paper's two-unit example
 the unit model and the completion spelling give the shorter unit prefix probability one half, the
-onset spelling one (`map_parse_setOf_prefix`, `map_encode_setOf_prefix`,
-`map_encodeOnset_setOf_prefix`). The
+onset spelling one (`map_parse_cylinder`, `map_encode_cylinder`,
+`map_encodeOnset_cylinder`). The
 separator also carries probability of its own: a unit's conditional probability is that of its
 underlying string times that of the separator after it (`cond_map_encode_singleton`), so summing
 symbol surprisals over a unit's spelling omits the boundary.
@@ -100,24 +100,24 @@ theorem encode_isPrefix_encode_iff (hξ : Function.Injective ξ) {us vs : List U
       obtain ⟨huv, h⟩ := eq_and_isPrefix_of_block h
       exact List.cons_prefix_cons.2 ⟨hξ huv, ih h⟩
 
-theorem encode_preimage_setOf_prefix (hξ : Function.Injective ξ) (us : List U) :
-    encode ξ ⁻¹' {l | encode ξ us <+: l} = {l | us <+: l} := by
+theorem encode_preimage_cylinder (hξ : Function.Injective ξ) (us : List U) :
+    encode ξ ⁻¹' (encode ξ us).cylinder = us.cylinder := by
   ext l
   exact encode_isPrefix_encode_iff hξ
 
 variable (ν : Measure (List U))
 
 theorem cond_map_encode (hξ : Function.Injective ξ) (cs us : List U) :
-    (ν.map (encode ξ))[{l | encode ξ cs ++ encode ξ us <+: l} | {l | encode ξ cs <+: l}] =
-      ν[{l | cs ++ us <+: l} | {l | cs <+: l}] := by
+    (ν.map (encode ξ))[(encode ξ cs ++ encode ξ us).cylinder | (encode ξ cs).cylinder] =
+      ν[(cs ++ us).cylinder | cs.cylinder] := by
   rw [cond_map .of_discrete .of_discrete, Measure.map_apply .of_discrete .of_discrete,
-    ← encode_append, encode_preimage_setOf_prefix hξ, encode_preimage_setOf_prefix hξ]
+    ← encode_append, encode_preimage_cylinder hξ, encode_preimage_cylinder hξ]
 
 theorem cond_map_encode_singleton (hξ : Function.Injective ξ) (cs : List U) (u : U) :
-    ν[{l | cs ++ [u] <+: l} | {l | cs <+: l}] =
-      (ν.map (encode ξ))[{l | encode ξ cs ++ (ξ u).map some <+: l} | {l | encode ξ cs <+: l}] *
-        (ν.map (encode ξ))[{l | encode ξ cs ++ (ξ u).map some ++ [none] <+: l} |
-          {l | encode ξ cs ++ (ξ u).map some <+: l}] := by
+    ν[(cs ++ [u]).cylinder | cs.cylinder] =
+      (ν.map (encode ξ))[(encode ξ cs ++ (ξ u).map some).cylinder | (encode ξ cs).cylinder] *
+        (ν.map (encode ξ))[(encode ξ cs ++ (ξ u).map some ++ [none]).cylinder |
+          (encode ξ cs ++ (ξ u).map some).cylinder] := by
   rw [← cond_map_encode ν hξ, show encode ξ [u] = (ξ u).map some ++ [none] by simp [encode],
     ← List.append_assoc]
   exact (cond_mul_cond_of_subset .of_discrete .of_discrete
@@ -142,18 +142,18 @@ theorem not_forall_encodeOnset_isPrefix_iff :
     ¬ ∀ us vs : List Bool, encodeOnset spell us <+: encodeOnset spell vs ↔ us <+: vs :=
   fun h ↦ absurd ((h [false] [true]).1 (by decide)) (by decide)
 
-theorem map_parse_setOf_prefix : source.map parse {l | [false] <+: l} = 2⁻¹ := by
+theorem map_parse_cylinder : source.map parse ([false]).cylinder = 2⁻¹ := by
   simp [source, parse, Measure.map_apply .of_discrete .of_discrete,
     Measure.dirac_apply' _ MeasurableSet.of_discrete]
 
-theorem map_encode_setOf_prefix :
-    (source.map parse).map (encode spell) {l | encode spell [false] <+: l} = 2⁻¹ := by
+theorem map_encode_cylinder :
+    (source.map parse).map (encode spell) (encode spell [false]).cylinder = 2⁻¹ := by
   rw [Measure.map_apply .of_discrete .of_discrete,
-    encode_preimage_setOf_prefix (fun b b' h ↦ by cases b <;> cases b' <;> simp_all [spell]),
-    map_parse_setOf_prefix]
+    encode_preimage_cylinder (fun b b' h ↦ by cases b <;> cases b' <;> simp_all [spell]),
+    map_parse_cylinder]
 
-theorem map_encodeOnset_setOf_prefix :
-    (source.map parse).map (encodeOnset spell) {l | encodeOnset spell [false] <+: l} = 1 := by
+theorem map_encodeOnset_cylinder :
+    (source.map parse).map (encodeOnset spell) (encodeOnset spell [false]).cylinder = 1 := by
   simp [source, parse, encodeOnset, spell, Measure.map_apply .of_discrete .of_discrete,
     Measure.dirac_apply' _ MeasurableSet.of_discrete, ENNReal.inv_two_add_inv_two]
 

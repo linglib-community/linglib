@@ -16,7 +16,10 @@ For a family with `0 ≤ f i ≤ 1`, the finite products of the `1 - f i` are at
 `f` is not summable; when `f` is summable and no factor vanishes, the infinite product
 [is nonzero](##tprod_one_sub_ne_zero_of_summable). The product is therefore zero
 [exactly when](##Real.hasProd_one_sub_zero_iff) some factor vanishes or `f` is not summable, and
-the same holds [in `ℝ≥0∞`](##ENNReal.hasProd_one_sub_zero_iff) with no hypothesis on `f`.
+the same holds [in `ℝ≥0∞`](##ENNReal.hasProd_one_sub_zero_iff) with no hypothesis on `f`. An
+antitone sequence in `ℝ≥0∞` is such a product: its decrements
+[telescope](##ENNReal.tsum_sub_succ_add_iInf), and each term is the previous one times
+[one minus its relative decrement](##ENNReal.mul_one_sub_sub_succ_div).
 
 `[UPSTREAM]` candidate for `Mathlib/Analysis/SpecialFunctions/Log/Summable.lean`, with the two
 transfer lemmas for `Mathlib/Topology/Algebra/InfiniteSum/ENNReal.lean`.
@@ -99,5 +102,41 @@ theorem hasProd_one_sub_zero_iff :
   simpa [toReal_sub_of_le, (h _).le, (h _).ne, (h _).not_ge,
     tsum_coe_eq_top_iff_not_summable_coe] using Real.hasProd_one_sub_zero_iff
       (fun i ↦ (f i).coe_nonneg) fun i ↦ mod_cast (h i).le
+
+/-! ### Antitone sequences
+
+The decrements `s n - s (n + 1)` of an antitone sequence telescope, and each term is the previous
+one times one minus its relative decrement, so the sequence is a product of such factors. -/
+
+section Antitone
+
+variable {s : ℕ → ℝ≥0∞}
+
+/-- The decrements of an antitone sequence before `n` and its `n`th term sum to its first term. -/
+theorem sum_range_sub_succ_add (hs : Antitone s) (n : ℕ) :
+    ∑ k ∈ range n, (s k - s (k + 1)) + s n = s 0 := by
+  induction n with
+  | zero => simp
+  | succ n ih => rw [sum_range_succ, add_assoc, tsub_add_cancel_of_le (hs n.le_succ), ih]
+
+/-- The decrements of an antitone sequence and its infimum sum to its first term. -/
+theorem tsum_sub_succ_add_iInf (hs : Antitone s) (h0 : s 0 ≠ ∞) :
+    ∑' n, (s n - s (n + 1)) + ⨅ n, s n = s 0 := by
+  have hsum (n : ℕ) : ∑ k ∈ range n, (s k - s (k + 1)) = s 0 - s n :=
+    ENNReal.eq_sub_of_add_eq (ne_top_of_le_ne_top h0 (hs n.zero_le)) (sum_range_sub_succ_add hs n)
+  rw [ENNReal.tsum_eq_iSup_nat, iSup_congr hsum, ← ENNReal.sub_iInf,
+    tsub_add_cancel_of_le (iInf_le _ 0)]
+
+/-- A term of an antitone sequence times one minus its relative decrement is the next term. -/
+theorem mul_one_sub_sub_succ_div (hs : Antitone s) (h0 : s 0 ≠ ∞) (n : ℕ) :
+    s n * (1 - (s n - s (n + 1)) / s n) = s (n + 1) := by
+  have hn : s n ≠ ∞ := ne_top_of_le_ne_top h0 (hs n.zero_le)
+  by_cases h : s n = 0
+  · rw [h, zero_mul]
+    exact (nonpos_iff_eq_zero.1 ((hs n.le_succ).trans h.le)).symm
+  · rw [ENNReal.mul_sub fun _ _ ↦ hn, mul_one, ENNReal.mul_div_cancel h hn,
+      ENNReal.sub_sub_cancel hn (hs n.le_succ)]
+
+end Antitone
 
 end ENNReal

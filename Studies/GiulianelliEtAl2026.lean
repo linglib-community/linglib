@@ -60,14 +60,14 @@ variable {α : Type*} (μ : Measure (List α))
 
 /-- The prefix indicator (eq. (5)): one when the alternative begins with the target. -/
 noncomputable def prefixIndicator (a w _ : List α) : ℝ :=
-  ({a' | w <+: a'} : Set (List α)).indicator 1 a
+  w.cylinder.indicator 1 a
 
 -- (1), (2d)
 theorem integral_prefixIndicator (c w : List α) :
     ∫ a, prefixIndicator a w c ∂μ.continuation c =
-      (μ[{y | c ++ w <+: y} | {y | c <+: y}]).toReal := by
+      (μ[(c ++ w).cylinder | c.cylinder]).toReal := by
   simp only [prefixIndicator]
-  rw [integral_indicator_one .of_discrete, measureReal_def, Measure.continuation_setOf_prefix]
+  rw [integral_indicator_one .of_discrete, measureReal_def, Measure.continuation_cylinder]
 
 section LanguageModel
 
@@ -75,23 +75,22 @@ variable [MeasurableSpace α] [MeasurableSingletonClass α] [IsProbabilityMeasur
 
 /-- Standard surprisal is generalised surprisal with the negative logarithm and the prefix indicator
 (eqs. (2a)–(2d), (4), (5)). -/
-theorem genSurprisal_prefixIndicator (hc : μ {y | c <+: y} ≠ 0) (w : List α) :
+theorem genSurprisal_prefixIndicator (hc : μ c.cylinder ≠ 0) (w : List α) :
     genSurprisal μ.continuation (fun r ↦ -Real.log r) prefixIndicator c w =
       -Real.log ((ofMeasure μ).condPrefixProb c w).toReal := by
   rw [genSurprisal, integral_prefixIndicator, condPrefixProb_ofMeasure hc]
 
-theorem genSurprisal_prefixIndicator_eq_sum (hc : μ {y | c <+: y} ≠ 0) {w : List α}
-    (hw : μ {y | c ++ w <+: y} ≠ 0) :
+theorem genSurprisal_prefixIndicator_eq_sum (hc : μ c.cylinder ≠ 0) {w : List α}
+    (hw : μ (c ++ w).cylinder ≠ 0) :
     genSurprisal μ.continuation (fun r ↦ -Real.log r) prefixIndicator c w =
       ∑ i : Fin w.length, (surprisal ((ofMeasure μ).next (c ++ w.take i)) (some w[i])).toReal := by
-  have hsub : {y | c ++ w <+: y} ⊆ {y | c <+: y} := fun _ ↦ (List.prefix_append c w).trans
   rw [genSurprisal_prefixIndicator μ hc, neg_log_condPrefixProb]
-  rw [condPrefixProb_ofMeasure hc, cond_apply_of_subset .of_discrete hsub]
+  rw [condPrefixProb_ofMeasure hc, cond_apply_of_subset .of_discrete (c.cylinder_append_subset w)]
   exact ENNReal.div_ne_zero.2 ⟨hw, measure_ne_top _ _⟩
 
 /-! ### What the indicator conflates -/
 
-theorem informationValue_one_sub_prefixIndicator (hc : μ {y | c <+: y} ≠ 0) (w : List α) :
+theorem informationValue_one_sub_prefixIndicator (hc : μ c.cylinder ≠ 0) (w : List α) :
     informationValue μ.continuation (fun a w c ↦ 1 - prefixIndicator a w c) c w =
       1 - ((ofMeasure μ).condPrefixProb c w).toReal := by
   have := μ.isProbabilityMeasure_continuation hc
@@ -112,7 +111,7 @@ noncomputable def iiv (d : List α → List α → ℝ) (c w : List α) : ℝ :=
 
 theorem iiv_eq_informationValue [IsFiniteMeasure μ] {d : List α → List α → ℝ} {h : ℕ}
     (hd : ∀ a b, d a b = d (a.take h) (b.take h)) {c w : List α} (hw : h ≤ w.length)
-    (hcw : μ {y | c ++ w <+: y} ≠ 0) :
+    (hcw : μ (c ++ w).cylinder ≠ 0) :
     iiv μ d c w = informationValue μ.continuation (fun a w _ ↦ d a w) c w := by
   have := μ.isProbabilityMeasure_continuation hcw
   have hdw (a a' : List α) : d a (w ++ a') = d a w := by

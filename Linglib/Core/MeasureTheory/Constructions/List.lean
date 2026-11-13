@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Data.List.Infix
 public import Linglib.Core.MeasureTheory.Integral.Layercake
 public import Linglib.Core.MeasureTheory.Measure.GiryMonad
 public import Mathlib.MeasureTheory.Measure.WithDensity
@@ -17,9 +18,10 @@ a countable type, every measure on lists is s-finite. `Measure.listProd` is the 
 independent draws, one from each measure in a list of measures: the `List`-indexed product
 measure, built from the binary product.
 
-The prefix sets `{y | x <+: y}` of a measure on lists are counted two ways. The lists of length
-at least `n` are partitioned by their prefix of length `n`, and a list has one prefix more than
-its length, so the total measure of the prefix sets is the integral of the length plus one.
+The cylinders `x.cylinder`, the lists beginning with `x`, are counted two ways under a measure on
+lists. The lists of length at least `n` are partitioned by their prefix of length `n`, and a list
+has one prefix more than its length, so the total measure of the cylinders is the integral of the
+length plus one.
 
 ## Main definitions
 
@@ -31,8 +33,8 @@ its length, so the total measure of the prefix sets is the integral of the lengt
   the product of the singleton measures.
 * `MeasureTheory.Measure.ωScottContinuous_listProd`: the product is ω-Scott-continuous in each
   factor.
-* `MeasureTheory.Measure.tsum_measure_setOf_prefix_length`,
-  `MeasureTheory.Measure.tsum_measure_setOf_prefix`: the prefix sets counted by length, and in
+* `MeasureTheory.Measure.tsum_measure_cylinder_length`,
+  `MeasureTheory.Measure.tsum_measure_cylinder`: the cylinders counted by length, and in
   total.
 
 ## Implementation notes
@@ -58,11 +60,10 @@ section Prefixes
 variable {α : Type*} [Countable α] (μ : Measure (List α))
 
 /-- The lists of length at least `n` are partitioned by their prefix of length `n`. -/
-theorem tsum_measure_setOf_prefix_length (n : ℕ) :
-    ∑' x : {x : List α // x.length = n}, μ {y | x.1 <+: y} = μ {y | n ≤ y.length} := by
-  have h (x : {x : List α // x.length = n}) : {y | x.1 <+: y} = List.take n ⁻¹' {x.1} := by
-    ext y
-    simp [List.prefix_iff_eq_take, x.2, eq_comm]
+theorem tsum_measure_cylinder_length (n : ℕ) :
+    ∑' x : {x : List α // x.length = n}, μ x.1.cylinder = μ {y | n ≤ y.length} := by
+  have h (x : {x : List α // x.length = n}) : x.1.cylinder = List.take n ⁻¹' {x.1} := by
+    rw [← x.1.take_preimage_singleton, x.2]
   have hs : {y : List α | n ≤ y.length} = List.take n ⁻¹' {x | x.length = n} := by
     ext y
     simp
@@ -72,13 +73,13 @@ theorem tsum_measure_setOf_prefix_length (n : ℕ) :
 
 /-- The total measure of the prefix sets is the integral of the number of prefixes, the length
 plus one. -/
-theorem tsum_measure_setOf_prefix :
-    ∑' x, μ {y | x <+: y} = ∫⁻ y, (y.length : ℝ≥0∞) + 1 ∂μ := by
+theorem tsum_measure_cylinder :
+    ∑' x : List α, μ x.cylinder = ∫⁻ y, (y.length : ℝ≥0∞) + 1 ∂μ := by
   simp_rw [← Nat.cast_add_one]
   rw [← (Equiv.sigmaFiberEquiv List.length).tsum_eq, ENNReal.tsum_sigma',
     lintegral_natCast_eq_tsum_measure_lt (f := fun y : List α ↦ y.length + 1) .of_discrete]
-  show ∑' n, ∑' x : {x : List α // x.length = n}, μ {y | x.1 <+: y} = _
-  exact tsum_congr fun n ↦ (tsum_measure_setOf_prefix_length μ n).trans (by simp)
+  show ∑' n, ∑' x : {x : List α // x.length = n}, μ x.1.cylinder = _
+  exact tsum_congr fun n ↦ (tsum_measure_cylinder_length μ n).trans (by simp)
 
 end Prefixes
 
