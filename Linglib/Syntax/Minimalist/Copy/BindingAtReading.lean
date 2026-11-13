@@ -37,9 +37,9 @@ reading](##exists_bindsAtReading_iff).
 
 @[expose] public section
 
-local notation "CC" => Minimalist.LinearizedSyntacticObject.TokenCCommands
+local notation "CC" => Minimalist.PlanarSyntacticObject.TokenCCommands
 
-namespace Minimalist.LinearizedSyntacticObject.Marked
+namespace Minimalist.PlanarSyntacticObject.Marked
 
 open RoseTree SyntacticObject
 
@@ -516,7 +516,7 @@ end Mark
 /-- An object with no marks, whose tokens are distinct, has no movement nodes and needs none. -/
 private theorem chains_map_none {p : RoseTree Vertex} (h : IsSyntacticObject (UnorderedTree.mk p))
     (hTF : ∀ r ∈ p.subtrees, r.value.isLeft)
-    (hd : (LinearizedSyntacticObject.ofVal p h).toSyntacticObject.yield.Nodup) :
+    (hd : (PlanarSyntacticObject.ofVal p h).toSyntacticObject.yield.Nodup) :
     Chains (p.map ((none, ·) : Vertex → CopyMark × Vertex)) := by
   induction p with
   | node a cs ih =>
@@ -530,12 +530,12 @@ private theorem chains_map_none {p : RoseTree Vertex} (h : IsSyntacticObject (Un
     · obtain ⟨u, v, rfl⟩ := List.length_eq_two.1 hlen
       obtain rfl := eq_bare_of_ne_nil h (by simp)
       obtain ⟨hu, hv⟩ := (isSyntacticObject_mk_merge _ _).1 h
-      have hsum : (LinearizedSyntacticObject.ofVal u hu).toSyntacticObject.yield +
-          (LinearizedSyntacticObject.ofVal v hv).toSyntacticObject.yield =
-          (LinearizedSyntacticObject.ofVal (.node Vertex.bare [u, v])
+      have hsum : (PlanarSyntacticObject.ofVal u hu).toSyntacticObject.yield +
+          (PlanarSyntacticObject.ofVal v hv).toSyntacticObject.yield =
+          (PlanarSyntacticObject.ofVal (.node Vertex.bare [u, v])
             h).toSyntacticObject.yield := by
-        rw [LinearizedSyntacticObject.ofVal_node_bare,
-          LinearizedSyntacticObject.toSyntacticObject_merge, yield_merge]
+        rw [PlanarSyntacticObject.ofVal_node_bare,
+          PlanarSyntacticObject.toSyntacticObject_merge, yield_merge]
       rw [← hsum, Multiset.nodup_add] at hd
       obtain ⟨hdu, hdv, hdis⟩ := hd
       have htu : ∀ r ∈ u.subtrees, r.value.isLeft := fun r hr ↦ hTF r
@@ -544,10 +544,10 @@ private theorem chains_map_none {p : RoseTree Vertex} (h : IsSyntacticObject (Un
         (mem_subtrees_trans hr (child_mem_subtrees (by simp)))
       have hno : ∀ w, Holds w u → Holds w v → False := fun w h₁ h₂ ↦
         Multiset.disjoint_left.1 hdis
-          ((holds_iff_mem_yield (LinearizedSyntacticObject.ofVal u hu)).1
-            ((LinearizedSyntacticObject.val_ofVal u hu).symm ▸ h₁))
-          ((holds_iff_mem_yield (LinearizedSyntacticObject.ofVal v hv)).1
-            ((LinearizedSyntacticObject.val_ofVal v hv).symm ▸ h₂))
+          ((holds_iff_mem_yield (PlanarSyntacticObject.ofVal u hu)).1
+            ((PlanarSyntacticObject.val_ofVal u hu).symm ▸ h₁))
+          ((holds_iff_mem_yield (PlanarSyntacticObject.ofVal v hv)).1
+            ((PlanarSyntacticObject.val_ofVal v hv).symm ▸ h₂))
       refine chains_node.2 ⟨?_, ?_⟩
       · rintro k b u' v' he
         simp only [List.map_cons, List.map_nil, RoseTree.node.injEq, List.cons.injEq, and_true,
@@ -610,10 +610,10 @@ private theorem Good.swap {a : Vertex} {u v : MT}
         exact this.swap
 
 /-- External Merge of an item that shares no token with the object. -/
-private theorem step_em {t : Marked} {item : LinearizedSyntacticObject} (e : Edge)
+private theorem step_em {t : Marked} {item : PlanarSyntacticObject} (e : Edge)
     (hroot : t.val.value.1 = none) (hdis : ∀ w, Has w t.val → ¬ Holds w item.val)
     (hTFi : ∀ r ∈ item.val.subtrees, r.value.isLeft) (hdi : item.toSyntacticObject.yield.Nodup)
-    (hTFt : TraceFree t.val) (hg : Good t.val) : Good (t.attach e (ofLinearized item)).val := by
+    (hTFt : TraceFree t.val) (hg : Good t.val) : Good (t.attach e (ofPlanar item)).val := by
   let p : RoseTree Vertex := item.val
   have hp : IsSyntacticObject (UnorderedTree.mk p) := item.isSyntacticObject_val
   let d : MT := p.map ((none, ·) : Vertex → CopyMark × Vertex)
@@ -640,7 +640,7 @@ private theorem step_em {t : Marked} {item : LinearizedSyntacticObject} (e : Edg
       exact ⟨fun h ↦ absurd h hno₁, fun h ↦ absurd h hno₂⟩
     · intro c hc
       rcases List.mem_pair.1 hc with rfl | rfl
-      · exact chains_map_none hp hTFi ((LinearizedSyntacticObject.ofVal_val item).symm ▸ hdi)
+      · exact chains_map_none hp hTFi ((PlanarSyntacticObject.ofVal_val item).symm ▸ hdi)
       · exact hg.1
     · rw [map_node] at hc
       simp only [List.map_cons, List.map_nil, hdm] at hc
@@ -868,14 +868,14 @@ private theorem lfBy_readLow_carrying (t : Marked) :
     · exact .inl ⟨hk, hr⟩
     · exact .inr h)) (self_mem_subtrees _)
 
-end Minimalist.LinearizedSyntacticObject.Marked
+end Minimalist.PlanarSyntacticObject.Marked
 
 namespace Minimalist.Derivation
 
 open RoseTree SyntacticObject
-open LinearizedSyntacticObject (Marked Holds cCommands_iff_tokenCCommands holds_iff_mem_yield
+open PlanarSyntacticObject (Marked Holds cCommands_iff_tokenCCommands holds_iff_mem_yield
   holds_of_mem_subtrees)
-open LinearizedSyntacticObject.Marked
+open PlanarSyntacticObject.Marked
 
 variable {x y : LexicalItem.Token}
 
@@ -893,25 +893,25 @@ private theorem replayWithCopies?_invariants {d : Derivation} (hd : d.lexTokens.
     simp only [replayWithCopies?, List.foldlM_nil] at hc
     obtain ⟨p, hp, hpc⟩ := Option.bind_eq_some_iff.1 hc
     obtain rfl := Option.some.inj hpc
-    have hinit := SyntacticObject.toSyntacticObject_of_toLinearizedLeaf? hp
-    have hm₀ : (Marked.ofLinearized p).val.map Prod.snd = p.val := map_snd_map p.val
+    have hinit := SyntacticObject.toSyntacticObject_of_toPlanarLeaf? hp
+    have hm₀ : (Marked.ofPlanar p).val.map Prod.snd = p.val := map_snd_map p.val
     have hTFp : ∀ r ∈ p.val.subtrees, r.value.isLeft := fun r hr ↦
-      hTF r (by rw [show (Cfg.current ⟨Marked.ofLinearized p, []⟩).val.map Prod.snd
+      hTF r (by rw [show (Cfg.current ⟨Marked.ofPlanar p, []⟩).val.map Prod.snd
           = p.val from hm₀]; exact hr)
     refine ⟨?_, ⟨chains_map_none p.isSyntacticObject_val hTFp ?_, fun x y _ hcc ↦ ?_⟩,
       fun w hw ↦ ?_⟩
     · change (p.val.map ((none, ·) : Vertex → CopyMark × Vertex)).value.1 = none
       rcases p.val with ⟨a, cs⟩
       simp [map_node]
-    · rw [LinearizedSyntacticObject.ofVal_val, hinit]
+    · rw [PlanarSyntacticObject.ofVal_val, hinit]
       simpa [lexTokens, items] using hd
     · have hcc' : CC x y p.val := by
-        have : CC x y ((Marked.ofLinearized p).val.map Prod.snd) := hcc
+        have : CC x y ((Marked.ofPlanar p).val.map Prod.snd) := hcc
         rwa [hm₀] at this
       change CC x y (lfBy (Has y) (p.val.map ((none, ·) : Vertex → CopyMark × Vertex)))
       rwa [lfBy_map_none]
     · have hw' : Holds w p.val := by
-        have : Has w (Marked.ofLinearized p).val := hw
+        have : Has w (Marked.ofPlanar p).val := hw
         rwa [Has, hm₀] at this
       have := (holds_iff_mem_yield p).1 hw'
       rw [hinit] at this
@@ -931,13 +931,13 @@ private theorem replayWithCopies?_invariants {d : Derivation} (hd : d.lexTokens.
     · obtain ⟨t, stk⟩ := c₀
       simp only [Step.replayWithCopies?, Option.some.injEq] at hstep
       subst hstep
-      obtain ⟨cs, hv, ht, hdc, hhas⟩ := attach_val t (Marked.ofLinearized item) side
+      obtain ⟨cs, hv, ht, hdc, hhas⟩ := attach_val t (Marked.ofPlanar item) side
       simp only at hMN hTF hDD ⊢
       rw [hv] at hMN hTF hDD
       obtain ⟨hroot, hg, hTok⟩ := ih (c := ⟨t, stk⟩) (marksName_of_mem ht hMN)
         (traceFree_of_mem ht hTF) (distinct_of_mem ht hDD) hd₀ hm₀ hmv₀ hc₀
       have hTFd := traceFree_of_mem hdc hTF
-      have hmd : (Marked.ofLinearized item).val.map Prod.snd = item.val := map_snd_map item.val
+      have hmd : (Marked.ofPlanar item).val.map Prod.snd = item.val := map_snd_map item.val
       have hsum : ((Step.itemsList [Step.em side item]).map SyntacticObject.yield).sum =
           item.toSyntacticObject.yield := by
         simp [Step.itemsList, Step.items]

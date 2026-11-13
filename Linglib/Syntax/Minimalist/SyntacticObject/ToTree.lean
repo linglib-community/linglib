@@ -9,9 +9,9 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Position
 public import Linglib.Syntax.Tree.Basic
 
 /-!
-# Linearized syntactic objects as constituency trees
+# Planar syntactic objects as constituency trees
 
-A linearized syntactic object is a rose tree over vertices, so relabelling its vertices gives a
+A planar syntactic object is a rose tree over vertices, so relabelling its vertices gives a
 constituency tree with the same shape: a lexical leaf becomes a terminal, the bare label of an
 internal node a projection, and a trace a trace. The positions, and so the branching nodes, are
 the object's, so the tree [pronounces the object's tokens in order](##yield_toTree) and its
@@ -58,26 +58,26 @@ def Vertex.toLabel (ι : L → ℕ) : Vertex L → Tree.Label Unit L
 
 end SyntacticObject
 
-namespace LinearizedSyntacticObject
+namespace PlanarSyntacticObject
 
 variable {L : Type} (ι : L → ℕ)
 
-/-- The constituency tree of a linearized object, with the trace of a token `a` of index
+/-- The constituency tree of a planar object, with the trace of a token `a` of index
 `ι a + 1` and the index-free trace of index `0`. -/
-def toTree (t : LinearizedSyntacticObject L) : Tree Unit L :=
+def toTree (t : PlanarSyntacticObject L) : Tree Unit L :=
   t.val.map (SyntacticObject.Vertex.toLabel ι)
 
 @[simp] theorem toTree_leaf (a : L) : (leaf a).toTree ι = .terminal () a := rfl
 
 @[simp] theorem toTree_traceOf (a : L) : (traceOf a).toTree ι = .trace (ι a + 1) () := rfl
 
-@[simp] theorem toTree_trace : (trace : LinearizedSyntacticObject L).toTree ι = .trace 0 () := rfl
+@[simp] theorem toTree_trace : (trace : PlanarSyntacticObject L).toTree ι = .trace 0 () := rfl
 
-@[simp] theorem toTree_merge (l r : LinearizedSyntacticObject L) :
+@[simp] theorem toTree_merge (l r : PlanarSyntacticObject L) :
     (merge l r).toTree ι = .phrase () .projection [l.toTree ι, r.toTree ι] := rfl
 
 /-- The tree pronounces the object's tokens, in order. -/
-theorem yield_toTree (t : LinearizedSyntacticObject L) : (t.toTree ι).yield = t.yield := by
+theorem yield_toTree (t : PlanarSyntacticObject L) : (t.toTree ι).yield = t.yield := by
   simp only [toTree, Tree.yield, Tree.terminals, RoseTree.leafList_map, yield,
     List.filterMap_map, List.map_filterMap]
   congr 1
@@ -85,19 +85,19 @@ theorem yield_toTree (t : LinearizedSyntacticObject L) : (t.toTree ι).yield = t
   rcases v with (_ | _) | (_ | _) <;> rfl
 
 /-- C-command in the tree is c-command between the positions of the object. -/
-theorem cCommands_toTree_iff (t : LinearizedSyntacticObject L) (a b : TreePath) :
+theorem cCommands_toTree_iff (t : PlanarSyntacticObject L) (a b : TreePath) :
     RoseTree.CCommands (t.toTree ι) a b ↔ t.val.CCommands a b :=
   RoseTree.cCommands_map _ _ a b
 
 /-- When the term at `a` occurs once, the terms it c-commands are those at the positions that `a`
 c-commands in the tree. -/
-theorem cCommands_termAt_iff_toTree {t : LinearizedSyntacticObject} (ι : LexicalItem.Token → ℕ)
+theorem cCommands_termAt_iff_toTree {t : PlanarSyntacticObject} (ι : LexicalItem.Token → ℕ)
     {a : t.val.Positions} {x : SyntacticObject} (hu : ∀ q, t.termAt q = t.termAt a → q = a) :
     t.toSyntacticObject.CCommands (t.termAt a) x ↔
       ∃ q : t.val.Positions, RoseTree.CCommands (t.toTree ι) a q ∧ t.termAt q = x := by
   simp only [cCommands_toTree_iff]
   exact cCommands_termAt_iff hu
 
-end LinearizedSyntacticObject
+end PlanarSyntacticObject
 
 end Minimalist

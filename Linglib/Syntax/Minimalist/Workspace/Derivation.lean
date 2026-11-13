@@ -156,7 +156,7 @@ contracts and puts the mover's copy on the stack, and `remerge` is MERGE of that
 current object on the workspace that holds the stack. -/
 
 /-- External Merge is MERGE of the item and the current object. -/
-theorem Step.apply_em_eq_merge (side : Edge) (item : LinearizedSyntacticObject)
+theorem Step.apply_em_eq_merge (side : Edge) (item : PlanarSyntacticObject)
     (current : SyntacticObject) (W : Workspace) :
     {(Step.em side item).apply current τ} + W =
       ({current} + (Step.em side item).items + W).merge ↑item current := by

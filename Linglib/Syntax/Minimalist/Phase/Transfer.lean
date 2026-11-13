@@ -63,7 +63,7 @@ abbrev Cut := TreePath → Set TreePath
 -/
 abbrev Schedule := Finset TreePath → TreePath → TreePath → Prop
 
-variable (hd : HeadFunction) (t : LinearizedSyntacticObject)
+variable (hd : HeadFunction) (t : PlanarSyntacticObject)
 
 /-- The head whose complement a phase head transfers: the phase head itself, or, where it has
 deleted, the lexical head of its complement, which inherits its phasehood. -/
@@ -212,7 +212,7 @@ theorem parent_lt_of_mem_links {tok : LexicalItem.Token} {x : TreePath × TreePa
   have hv : projectionAt hd t p ∈ t.val.validPaths :=
     isLowerSet_validPaths _ (projectionAt_le hd t p) (mem_validPaths_of_mem_chain hp)
   have h0 : projectionAt hd t p ≠ ⊥ := fun h ↦ hl.1.2.1 (h ▸ bot_le)
-  have hb := LinearizedSyntacticObject.isBranchingAt_parent (t := t)
+  have hb := PlanarSyntacticObject.isBranchingAt_parent (t := t)
     (a := ⟨projectionAt hd t p, hv⟩) fun h ↦ h0 (congrArg Subtype.val h)
   exact (cCommands_iff_parent_lt h0 hb).1 hl.1
 

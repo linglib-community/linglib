@@ -9,7 +9,7 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 # Minimal search over syntactic objects
 
 This file instantiates probe search at the tree: a probe on the head at a position of a
-linearized object searches the positions the head c-commands in some order, a key on positions.
+planar object searches the positions the head c-commands in some order, a key on positions.
 Closest by the branching positions above them, it finds a goal that no other satisfier
 asymmetrically c-commands: the Minimal Link Condition, with mutually c-commanding candidates
 equidistant. Procedural search orders are in `Probe/Search.lean`. Positions closed to the search,
@@ -18,18 +18,18 @@ then does to the features of the probe and the goal is `Minimalist.FeatureState.
 
 ## Main definitions
 
-* `Minimalist.LinearizedSyntacticObject.goalsBy`, `goals`, `goalsUnder`: the terms a probe on a
+* `Minimalist.PlanarSyntacticObject.goalsBy`, `goals`, `goalsUnder`: the terms a probe on a
   head finds under a search order, under closeness, and with some positions closed to it.
-* `Minimalist.LinearizedSyntacticObject.leafProbe`, `phraseProbe`: the probes satisfied by the
+* `Minimalist.PlanarSyntacticObject.leafProbe`, `phraseProbe`: the probes satisfied by the
   leaves of a category, and by the phrases its heads form.
 
 ## Main results
 
-* `Minimalist.LinearizedSyntacticObject.not_finds_of_cCommands`: a satisfier that asymmetrically
+* `Minimalist.PlanarSyntacticObject.not_finds_of_cCommands`: a satisfier that asymmetrically
   c-commands a position blocks the goal there.
-* `Minimalist.LinearizedSyntacticObject.finds_above_branching_iff`: among satisfiers none of which
+* `Minimalist.PlanarSyntacticObject.finds_above_branching_iff`: among satisfiers none of which
   dominates another, a probe finds those that no satisfier asymmetrically c-commands.
-* `Minimalist.LinearizedSyntacticObject.mem_goals_leafProbe_map_iff`: a probe for the leaves of
+* `Minimalist.PlanarSyntacticObject.mem_goals_leafProbe_map_iff`: a probe for the leaves of
   a category finds the same goals under an injective relabelling that keeps categories.
 
 ## References
@@ -44,12 +44,12 @@ namespace Minimalist
 /-! ### Closest goals
 
 A probe on the head at a position searches the positions the head c-commands, keyed by the
-branching positions above each (`LinearizedSyntacticObject.above`), and finds a goal minimal under
+branching positions above each (`PlanarSyntacticObject.above`), and finds a goal minimal under
 the key, the Minimal Link Condition of [chomsky-1995]. -/
 
-namespace LinearizedSyntacticObject
+namespace PlanarSyntacticObject
 
-variable {t : LinearizedSyntacticObject} {p : Probe t.val.Positions} {s : Set t.val.Positions}
+variable {t : PlanarSyntacticObject} {p : Probe t.val.Positions} {s : Set t.val.Positions}
   {q g : t.val.Positions}
 
 /-- A satisfier that asymmetrically c-commands a position blocks the goal there, whatever else the
@@ -166,6 +166,6 @@ theorem mem_goals_leafProbe_map_iff {f : LexicalItem.Token → LexicalItem.Token
   rw [mem_goals, mem_goals, e.surjective.exists]
   simp only [hterm, (SyntacticObject.map_injective hf).eq_iff, e.surjective.exists, hfinds]
 
-end LinearizedSyntacticObject
+end PlanarSyntacticObject
 
 end Minimalist

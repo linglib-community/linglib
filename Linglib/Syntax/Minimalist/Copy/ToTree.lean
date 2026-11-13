@@ -15,15 +15,15 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.ToTree
 This file sends a reading of a marked object to the constituency tree that the type-driven
 composition engine interprets. A chain read high gets a binder under its higher copy, and its lower
 copies become the traces that binder binds. [With binders aside](##eraseBinders_toTree) the tree is
-the tree of the object the reading gives, and [with no lower copy](##toTree_ofLinearized) the tree
-the object has as a linearized object.
+the tree of the object the reading gives, and [with no lower copy](##toTree_ofPlanar) the tree
+the object has as a planar object.
 
 ## Implementation notes
 
 * A lower copy that is itself the higher copy of a lower one, at an intermediate site of a chain
   read high, gets a trace and a binder, `[t [λ …]]`, which denotes what its second daughter does.
 * A trace and its binder share the index of the mark, so a chain with no head has the index-free
-  trace, which no binder binds, as `LinearizedSyntacticObject.toTree` promises. A head and a phrase
+  trace, which no binder binds, as `PlanarSyntacticObject.toTree` promises. A head and a phrase
   it projects share an index, and capture each other if the head leaves the phrase and the phrase
   then moves above the head.
 * A remnant read high, with a chain that moved out of it also read high, leaves a free trace and a
@@ -69,7 +69,7 @@ theorem eraseBinders_node {l : Tree.Label C W} (hl : ∀ n c, l ≠ .bind n c)
 
 end PhraseStructure.Tree
 
-namespace Minimalist.LinearizedSyntacticObject.Marked
+namespace Minimalist.PlanarSyntacticObject.Marked
 
 open RoseTree SyntacticObject PhraseStructure
 
@@ -81,11 +81,11 @@ def toTree (ι : LexicalItem.Token → ℕ) (t : Marked) (low : Finset Syntactic
     (fun v cs ↦ RoseTree.node (Vertex.toLabel ι v) cs)
     (fun l y ↦ l.elim y fun a ↦ .bind (ι a + 1) () y) (fun _ _ y ↦ y) t.val
 
-/-- An object with no lower copy has the tree it has as a linearized object. -/
-@[simp] theorem toTree_ofLinearized (ι : LexicalItem.Token → ℕ) (p : LinearizedSyntacticObject)
+/-- An object with no lower copy has the tree it has as a planar object. -/
+@[simp] theorem toTree_ofPlanar (ι : LexicalItem.Token → ℕ) (p : PlanarSyntacticObject)
     (low : Finset SyntacticObject) :
-    (ofLinearized p).toTree ι low = p.toTree ι := by
-  simp only [toTree, ofLinearized, LinearizedSyntacticObject.toTree]
+    (ofPlanar p).toTree ι low = p.toTree ι := by
+  simp only [toTree, ofPlanar, PlanarSyntacticObject.toTree]
   generalize p.val = s
   induction s with
   | node a cs ih =>
@@ -110,7 +110,7 @@ theorem eraseBinders_toTree (ι : LexicalItem.Token → ℕ) (t : Marked)
     (low : Finset SyntacticObject) :
     Tree.eraseBinders (t.toTree ι low) = (t.lf low).toTree ι := by
   obtain ⟨s, hs⟩ := t
-  simp only [toTree, val_lf, LinearizedSyntacticObject.toTree]
+  simp only [toTree, val_lf, PlanarSyntacticObject.toTree]
   clear hs
   induction s with
   | node v cs ih =>
@@ -122,17 +122,17 @@ theorem eraseBinders_toTree (ι : LexicalItem.Token → ℕ) (t : Marked)
       (try split) <;> (try split) <;> (try split_ifs) <;>
       simp_all [Tree.eraseBinders_node, toLabel_ne_bind, map_node, Function.comp_def]
 
-end Minimalist.LinearizedSyntacticObject.Marked
+end Minimalist.PlanarSyntacticObject.Marked
 
 namespace Minimalist.Derivation
 
 open SyntacticObject PhraseStructure
-open LinearizedSyntacticObject (Marked)
+open PlanarSyntacticObject (Marked)
 
 variable {d : Derivation} {x y : SyntacticObject}
 
 /-- The object a reading of the derivation gives. -/
-def lf? (d : Derivation) (low : Finset SyntacticObject) : Option LinearizedSyntacticObject :=
+def lf? (d : Derivation) (low : Finset SyntacticObject) : Option PlanarSyntacticObject :=
   d.replayWithCopies?.map (·.current.lf low)
 
 /-- The constituency tree of a reading of the derivation. -/

@@ -114,23 +114,23 @@ theorem complement_spellout_fails :
 
 /-- Ke's schedule: the domain of `h` is transferred once a phase containing the phase of `h` in its
 complement is complete. -/
-def AfterNextPhase (t : LinearizedSyntacticObject) : Schedule :=
+def AfterNextPhase (t : PlanarSyntacticObject) : Schedule :=
   fun Φ h s ↦ ∃ z ∈ Φ, complement z ≤ projectionAt .raising t h ∧ s < projectionAt .raising t z
 
-instance (t : LinearizedSyntacticObject) (Φ : Finset TreePath) (h s : TreePath) :
+instance (t : PlanarSyntacticObject) (Φ : Finset TreePath) (h s : TreePath) :
     Decidable (AfterNextPhase t Φ h s) :=
   inferInstanceAs (Decidable (∃ _ ∈ Φ, _))
 
 /-- No link of a chain in the object a derivation derives leaves a domain `D` of its phase heads
 transferred under the schedule `σ`. -/
-def ObeysTransfer (d : Derivation) (D : LinearizedSyntacticObject → TreePath → Set TreePath)
-    [∀ t h, DecidablePred (· ∈ D t h)] (σ : LinearizedSyntacticObject → Schedule)
+def ObeysTransfer (d : Derivation) (D : PlanarSyntacticObject → TreePath → Set TreePath)
+    [∀ t h, DecidablePred (· ∈ D t h)] (σ : PlanarSyntacticObject → Schedule)
     [∀ t Φ h s, Decidable (σ t Φ h s)] : Prop :=
   ∀ t ∈ d.externalize?, ∀ y ∈ tokenList t.val,
     ¬ LinkLeaves .raising t y.2 (sealed (occurrencesWith t IsPhaseHead).toFinset (D t) (σ t))
 
-instance (d : Derivation) (D : LinearizedSyntacticObject → TreePath → Set TreePath)
-    [∀ t h, DecidablePred (· ∈ D t h)] (σ : LinearizedSyntacticObject → Schedule)
+instance (d : Derivation) (D : PlanarSyntacticObject → TreePath → Set TreePath)
+    [∀ t h, DecidablePred (· ∈ D t h)] (σ : PlanarSyntacticObject → Schedule)
     [∀ t Φ h s, Decidable (σ t Φ h s)] : Decidable (ObeysTransfer d D σ) := by
   unfold ObeysTransfer; infer_instance
 

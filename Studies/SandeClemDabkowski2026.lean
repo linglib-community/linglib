@@ -254,7 +254,7 @@ def C₀ : LexicalItem.Token := ⟨.of .C [], 8⟩
 
 /-- The remnant VP that fronts holds the particle between the traces of the object and the
 verb. -/
-def remnant : LinearizedSyntacticObject :=
+def remnant : PlanarSyntacticObject :=
   {.traceOf Terminal.object.token, {.leaf Terminal.particle.token, .traceOf Terminal.verb.token}}
 
 

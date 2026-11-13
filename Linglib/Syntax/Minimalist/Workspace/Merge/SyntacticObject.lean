@@ -265,7 +265,7 @@ theorem traceMergeOp_sideward3b_of'_merge {T T' S S' : SyntacticObject} {W : Wor
 private def demoTok (i : ℕ) : LexicalItem.Token := ⟨.of .N [], i⟩
 
 private def demoCurrent : SyntacticObject :=
-  (LinearizedSyntacticObject.merge (.leaf (demoTok 0))
+  (PlanarSyntacticObject.merge (.leaf (demoTok 0))
     (.leaf (demoTok 1))).toSyntacticObject
 
 /-- Raising one daughter of a two-leaf object meets the hypotheses of `traceMergeOp_im`. -/

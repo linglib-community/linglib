@@ -264,9 +264,9 @@ theorem raisingHead_eq_treeRaisingHead {x : SyntacticObject} {s : RoseTree Verte
     (h : x.val = UnorderedTree.mk s) : x.raisingHead = treeRaisingHead s := by
   rw [raisingHead, raisingCheck, liftFun, h]; rfl
 
-theorem treeRaisingHead_subtree {t : LinearizedSyntacticObject} (p : t.val.Positions) :
+theorem treeRaisingHead_subtree {t : PlanarSyntacticObject} (p : t.val.Positions) :
     treeRaisingHead p.subtree = (t.termAt p).raisingHead :=
-  (raisingHead_eq_treeRaisingHead LinearizedSyntacticObject.val_termAt).symm
+  (raisingHead_eq_treeRaisingHead PlanarSyntacticObject.val_termAt).symm
 
 /-- The drawing convention makes a token or trace leaf its own head; at a binary node it takes a
 left leaf that selects nothing for a specifier and looks for the head in the right daughter, takes
@@ -291,7 +291,7 @@ head function by the drawing convention: the head daughter of the subtree at eac
 `none` off the object. -/
 def HeadFunction.raising : HeadFunction := fun t q ↦ t.val[q]?.bind headIndex?
 
-/-- Where a linearized syntactic object with daughters has a raising head, its head daughter carries
+/-- Where a planar syntactic object with daughters has a raising head, its head daughter carries
 it. -/
 theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree Vertex} {ℓ : LexicalItem.Token}
     (hs : IsSyntacticObject (UnorderedTree.mk s)) (hc : s.children ≠ [])

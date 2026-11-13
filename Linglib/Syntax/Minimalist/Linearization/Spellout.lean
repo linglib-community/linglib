@@ -63,7 +63,7 @@ namespace Minimalist
 
 open RoseTree SyntacticObject Core.Order
 
-variable (t : LinearizedSyntacticObject)
+variable (t : PlanarSyntacticObject)
 
 /-! ### Ellipsis -/
 

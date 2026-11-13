@@ -214,21 +214,21 @@ open RoseTree UnorderedTree Minimalist SyntacticObject ConnesKreimer
 /-! ### Internal Merge: an example (§1.4.4) -/
 
 /-- *the apple*, the term `T₂` that Internal Merge raises in §1.4.4. -/
-def theAppleLinearized : LinearizedSyntacticObject :=
-  LinearizedSyntacticObject.merge (.leaf ⟨.of .D [.N] "the", 0⟩) (.leaf ⟨.of .N [] "apple", 1⟩)
+def theApplePlanar : PlanarSyntacticObject :=
+  PlanarSyntacticObject.merge (.leaf ⟨.of .D [.N] "the", 0⟩) (.leaf ⟨.of .N [] "apple", 1⟩)
 
 /-- *the apple* as a syntactic object. -/
-def theApple : SyntacticObject := theAppleLinearized.toSyntacticObject
+def theApple : SyntacticObject := theApplePlanar.toSyntacticObject
 
 /-- The workspace `T = {was, {eaten, {the, apple}}}` of §1.4.4. -/
 private def wasEatenTheApple : SyntacticObject :=
-  (LinearizedSyntacticObject.merge (.leaf ⟨.of .T [.V] "was", 2⟩)
+  (PlanarSyntacticObject.merge (.leaf ⟨.of .T [.V] "was", 2⟩)
     (.merge (.leaf ⟨.of .V [.D] "eaten", 3⟩)
       (.merge (.leaf ⟨.of .D [.N] "the", 0⟩) (.leaf ⟨.of .N [] "apple", 1⟩)))).toSyntacticObject
 
 /-- The quotient `T/T₂`, with the trace of the head *the* in place of *the apple*. -/
 private def wasEatenTrace : SyntacticObject :=
-  (LinearizedSyntacticObject.merge (.leaf ⟨.of .T [.V] "was", 2⟩)
+  (PlanarSyntacticObject.merge (.leaf ⟨.of .T [.V] "was", 2⟩)
     (.merge (.leaf ⟨.of .V [.D] "eaten", 3⟩) (.traceOf ⟨.of .D [.N] "the", 0⟩))).toSyntacticObject
 
 /-- The remainder of raising *the apple* out of `T` is the quotient `T/T₂`. -/
@@ -244,7 +244,7 @@ example :
 
 /-- The deletion quotient `T/d T₂ = {was, eaten}` that §1.4.4 displays. -/
 private def wasEaten : SyntacticObject :=
-  (LinearizedSyntacticObject.merge (.leaf ⟨.of .T [.V] "was", 2⟩)
+  (PlanarSyntacticObject.merge (.leaf ⟨.of .T [.V] "was", 2⟩)
     (.leaf ⟨.of .V [.D] "eaten", 3⟩)).toSyntacticObject
 
 /-- A syntactic object with its traces erased, on the labels of the trees without traces. -/
@@ -323,15 +323,15 @@ because the trace of *the* takes the place of *the*. -/
 
 /-- *the*, a term of *the apple*. -/
 def theD : SyntacticObject :=
-  (LinearizedSyntacticObject.leaf ⟨.of .D [.N] "the", 0⟩).toSyntacticObject
+  (PlanarSyntacticObject.leaf ⟨.of .D [.N] "the", 0⟩).toSyntacticObject
 
 /-- *apple*, the other term of *the apple*. -/
 def appleN : SyntacticObject :=
-  (LinearizedSyntacticObject.leaf ⟨.of .N [] "apple", 1⟩).toSyntacticObject
+  (PlanarSyntacticObject.leaf ⟨.of .N [] "apple", 1⟩).toSyntacticObject
 
 /-- *eaten*, the other component of the workspace of §1.3.4. -/
 def eaten : SyntacticObject :=
-  (LinearizedSyntacticObject.leaf ⟨.of .V [.D] "eaten", 3⟩).toSyntacticObject
+  (PlanarSyntacticObject.leaf ⟨.of .V [.D] "eaten", 3⟩).toSyntacticObject
 
 /-- External Merge of *the apple* with *eaten* loses no complexity graded by the size `σ`: its term
     of Merge takes both whole (Proposition 1.6.10). -/
@@ -339,7 +339,7 @@ example :
     NoComplexityLoss (fun T ↦ Forest.accessibleSize {T})
       (({eaten, theApple} : Workspace).map SyntacticObject.val)
       (({merge theApple eaten} : Workspace).map SyntacticObject.val) :=
-  Step.noComplexityLoss (step := .em .left theAppleLinearized) (W := 0) (by simp [Step.Admissible])
+  Step.noComplexityLoss (step := .em .left theApplePlanar) (W := 0) (by simp [Step.Admissible])
     (by decide) (by simp only [Step.items, Multiset.mem_singleton, forall_eq]; decide)
 
 private def admTok (i : Nat) : LexicalItem.Token := ⟨.of .N [], i⟩
@@ -354,7 +354,7 @@ example :
   simp only [Derivation.Admissible, Step.AdmissibleList, Step.Admissible, Step.itemsList_cons,
     Step.itemsList_nil, Step.items, Step.apply_em, add_zero, Multiset.notMem_zero,
     IsEmpty.forall_iff, implies_true, and_true, true_and, ne_eq,
-    LinearizedSyntacticObject.toSyntacticObject_leaf, hne, not_false_eq_true]
+    PlanarSyntacticObject.toSyntacticObject_leaf, hne, not_false_eq_true]
   refine ⟨rfl, ?_⟩
   rw [terms_merge, Multiset.count_cons_of_ne hne.symm]
   simp [admTok]

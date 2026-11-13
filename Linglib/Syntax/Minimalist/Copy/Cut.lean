@@ -38,7 +38,7 @@ rest.
 
 @[expose] public section
 
-namespace Minimalist.LinearizedSyntacticObject.Marked
+namespace Minimalist.PlanarSyntacticObject.Marked
 
 open RoseTree SyntacticObject ConnesKreimer
 
@@ -371,4 +371,4 @@ theorem mem_deletionCuts_lf (hlow : ∀ r ∈ t.val.subtrees, r.value.1.isSome �
   simp only [Function.comp_apply, projCut, UnorderedTree.contractUnary_mk]
   exact congrArg₂ Prod.mk rfl (congrArg UnorderedTree.mk h.1)
 
-end Minimalist.LinearizedSyntacticObject.Marked
+end Minimalist.PlanarSyntacticObject.Marked

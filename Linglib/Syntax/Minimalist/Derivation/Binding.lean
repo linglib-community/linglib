@@ -42,7 +42,7 @@ object](##Minimalist.Derivation.bindsAtSomeStage_iff_bindsAtLF).
 namespace Minimalist.Derivation
 
 open SyntacticObject
-open LinearizedSyntacticObject (Marked)
+open PlanarSyntacticObject (Marked)
 
 variable {d : Derivation} {steps : List Step} {n : Nat} {x y : SyntacticObject}
 
@@ -131,8 +131,8 @@ theorem BindsAtLF.bindsAtSomeStage {x y : LexicalItem.Token} (hxy : x ≠ y)
       Option.map_bind] at hC
     obtain ⟨p, hp, hC⟩ := Option.bind_eq_some_iff.1 hC
     obtain rfl := Option.some.inj hC
-    exact not_sisters_of_toLinearizedLeaf? hp
-      (by simpa [SyntacticObject.toSyntacticObject_of_toLinearizedLeaf? hp] using hs)
+    exact not_sisters_of_toPlanarLeaf? hp
+      (by simpa [SyntacticObject.toSyntacticObject_of_toPlanarLeaf? hp] using hs)
   | append_singleton ss s ih =>
     set d : Derivation := ⟨init, ss⟩
     change (d.append [s]).lexTokens.Nodup at hd
@@ -181,22 +181,22 @@ theorem BindsAtLF.bindsAtSomeStage {x y : LexicalItem.Token} (hxy : x ≠ y)
         rw [replay?_append_singleton, hcT]
         simp [Step.replay?, Cfg.map]
       simp only [Marked.unmark_attach,
-        Marked.unmark_ofLinearized, LinearizedSyntacticObject.toSyntacticObject_attach] at hsis
+        Marked.unmark_ofPlanar, PlanarSyntacticObject.toSyntacticObject_attach] at hsis
       rcases Sisters.of_merge hsis with hl | hr | ⟨hx, rfl⟩ | ⟨hx, rfl⟩
       · refine hfinal _ hreplay ?_
-        rw [LinearizedSyntacticObject.toSyntacticObject_attach]
+        rw [PlanarSyntacticObject.toSyntacticObject_attach]
         refine CCommands.mono ⟨z, hl.mem_right, hl, hzy⟩ fun w hw ↦ ?_
         rw [terms_merge]
         exact Multiset.mem_cons_of_mem (Multiset.mem_add.2 (.inl hw))
       · exact (ih' ⟨_, hdC, z, hr.mem_right, hr, hzy⟩).append
       · have hy := mem_yield_iff.1 (hpron y (mem_terms.2 hzy))
         refine hfinal _ hreplay ?_
-        rw [LinearizedSyntacticObject.toSyntacticObject_attach, ← hx]
+        rw [PlanarSyntacticObject.toSyntacticObject_attach, ← hx]
         exact cCommands_merge_left (hne _ hy) hy
       · have hTx := Marked.contract_eq_leaf_of_unmark_eq_leaf hx.symm
           (hpron x (hx ▸ self_mem_terms _))
         refine hfinal _ hreplay ?_
-        rw [LinearizedSyntacticObject.toSyntacticObject_attach, hTx, merge_comm]
+        rw [PlanarSyntacticObject.toSyntacticObject_attach, hTx, merge_comm]
         exact cCommands_merge_left (hne _ (mem_terms.2 hzy)) (mem_terms.2 hzy)
     | im mover side =>
       obtain ⟨sM, hsM, rfl⟩ := Option.map_eq_some_iff.1 hstep
@@ -204,12 +204,12 @@ theorem BindsAtLF.bindsAtSomeStage {x y : LexicalItem.Token} (hxy : x ≠ y)
       have hsT : c.current.contract.find? mover = some sM.contract := by
         rw [← Marked.map_contract_find?, hsM]; rfl
       have hreplay : (d.append [.im mover side]).replay? =
-          some ⟨(c.current.contract.replace mover (mover.traceLinearized selHead)).attach side
+          some ⟨(c.current.contract.replace mover (mover.tracePlanar selHead)).attach side
             sM.contract, c.stack.map Marked.contract⟩ := by
         rw [replay?_append_singleton, hcT]
         simp [Step.replay?, Cfg.map, hsT]
       simp only [Marked.unmark_attach,
-        Marked.unmark_mark, LinearizedSyntacticObject.toSyntacticObject_attach]
+        Marked.unmark_mark, PlanarSyntacticObject.toSyntacticObject_attach]
         at hsis
       rcases Sisters.of_merge hsis with hl | hr | ⟨hx, rfl⟩ | ⟨hx, rfl⟩
       · exact (ih' ⟨_, hdC, (show CCommands _ _ _ from ⟨z, hl.mem_right, hl, hzy⟩).mono
@@ -219,13 +219,13 @@ theorem BindsAtLF.bindsAtSomeStage {x y : LexicalItem.Token} (hxy : x ≠ y)
           (hmv _ (List.mem_append_right _ (List.mem_singleton_self _)) mover rfl) hx.symm
         subst hmover
         have hy := hpron y (mem_terms.2 hzy)
-        have hrep := LinearizedSyntacticObject.yield_replace_add_yield selHead (hT ▸ hd0) hsT
-        rw [LinearizedSyntacticObject.toSyntacticObject_find? hsT, yield_leaf] at hrep
+        have hrep := PlanarSyntacticObject.yield_replace_add_yield selHead (hT ▸ hd0) hsT
+        rw [PlanarSyntacticObject.toSyntacticObject_find? hsT, yield_leaf] at hrep
         rw [← hrep, Multiset.mem_add, Multiset.mem_singleton] at hy
         have hy' := mem_yield_iff.1 (hy.resolve_right hxy.symm)
         refine hfinal _ hreplay ?_
-        rw [LinearizedSyntacticObject.toSyntacticObject_attach,
-          LinearizedSyntacticObject.toSyntacticObject_find? hsT]
+        rw [PlanarSyntacticObject.toSyntacticObject_attach,
+          PlanarSyntacticObject.toSyntacticObject_find? hsT]
         exact cCommands_merge_left (hne _ hy') hy'
       · rw [← hx, terms_leaf, Multiset.mem_singleton] at hu
         rw [hu] at hzy

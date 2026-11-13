@@ -209,20 +209,20 @@ def me : LexicalItem.Token := ⟨.of .D [] "I", 313⟩
 
 /-- (3), (6a): the Chaga benefactive, `[VoiceP he [Voice′ Voice [ApplP wife [Appl′ Appl_Ben [VP eat
 food]]]]]`. -/
-def chaga : LinearizedSyntacticObject := he * (agentVoice * (wife * (applBen * (eat * food))))
+def chaga : PlanarSyntacticObject := he * (agentVoice * (wife * (applBen * (eat * food))))
 
 /-- (16b): `[VoiceP Mary [Voice′ Voice [VP buy [ApplP John [Appl′ Appl the book]]]]]`. -/
-def buyTree : LinearizedSyntacticObject :=
+def buyTree : PlanarSyntacticObject :=
   mary * (agentVoice * (buy * (john * (applTo * theBook))))
 
 /-- The high benefactive applicative merged with the unergative *run*, in its position of
 (6a). -/
-def unergative : LinearizedSyntacticObject := he * (agentVoice * (wife * (applBen * run)))
+def unergative : PlanarSyntacticObject := he * (agentVoice * (wife * (applBen * run)))
 
 /-- (103b): `[VoiceP [ApplP I [Appl′ Appl Mary]] [Voice′ Voice run]]`, the low applicative head `h`
 over a constituent whose open argument is the external argument; *I ran Mary* with the recipient
 head. -/
-def ranMary (h : LexicalItem.Token) : LinearizedSyntacticObject :=
+def ranMary (h : LexicalItem.Token) : PlanarSyntacticObject :=
   (me * (h * mary)) * (agentVoice * run)
 
 /-- The words of the book's applicative sentences, by semantic type. -/
@@ -277,7 +277,7 @@ def Word.val : {a : Ty Base} → Word a → a.Domain Entity Unit { eventuality :
   | _, .me => M.speaker
 
 /-- The meanings of a syntactic object in a model, by the book's rules. -/
-def meanings (t : LinearizedSyntacticObject) :
+def meanings (t : PlanarSyntacticObject) :
     List (Denotation Entity Unit { eventuality := V }) :=
   match (t.toTree (·.id)).skeleton (fun _ ↦ false) with
   | some s => rules.values (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V }))
@@ -338,7 +338,7 @@ end CCommand
 /-- The book's structure for an applicative head over the unergative *run*: the high applicative
 in its position of (6a), a low one in the structure of (103b). The static-possession applicative
 of [cuervo-2003] is outside the book's inventory. -/
-def unergativeTree? : Appl.Head → Option LinearizedSyntacticObject
+def unergativeTree? : Appl.Head → Option PlanarSyntacticObject
   | .high => some unergative
   | .low .recipient => some (ranMary applTo)
   | .low .source => some (ranMary applFrom)
@@ -346,7 +346,7 @@ def unergativeTree? : Appl.Head → Option LinearizedSyntacticObject
 
 /-- An object is satisfiable when, in some model where no agent of running is its theme, it
 means a predicate of eventualities true of some eventuality. -/
-def Satisfiable (t : LinearizedSyntacticObject) : Prop :=
+def Satisfiable (t : PlanarSyntacticObject) : Prop :=
   ∃ (Entity V : Type) (M : Model Entity V),
     (∀ x e, M.running e → M.role .agent x e → ¬ M.theme x e) ∧
       ∃ P : V → Prop, ⟨.vt, P⟩ ∈ meanings M t ∧ ∃ e, P e
@@ -373,7 +373,7 @@ private theorem not_satisfiable_ranMary {h : LexicalItem.Token}
 /-- Diagnostic 1 (17), on the book's account of (103b): over the unergative *run*, an applicative
 head's structure is satisfiable exactly when the head is high, the low applicatives' structure
 being the contradiction where no agent of running is its theme. -/
-theorem unergative_satisfiable_iff {a : Appl.Head} {t : LinearizedSyntacticObject}
+theorem unergative_satisfiable_iff {a : Appl.Head} {t : PlanarSyntacticObject}
     (ht : unergativeTree? a = some t) : Satisfiable t ↔ a = .high := by
   rcases a with _ | _ | (_ | _ | _) <;> simp only [unergativeTree?, Option.some.injEq,
     reduceCtorEq] at ht <;> subst ht

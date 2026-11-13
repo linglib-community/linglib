@@ -50,7 +50,7 @@ with. Internal Merge is also available in its two stages, `extract` and `remerge
 of the workspace. -/
 inductive Step where
   /-- External Merge, the new item as the daughter on `side`. -/
-  | em (side : Edge) (item : LinearizedSyntacticObject)
+  | em (side : Edge) (item : PlanarSyntacticObject)
   /-- Internal Merge raises `mover` to the daughter on `side`, the left unless stated otherwise,
   leaving the trace of its head in its place. -/
   | im (mover : SyntacticObject) (side : Edge := .left)
@@ -111,14 +111,14 @@ def Step.run (step : Step) (c : Derivation.Cfg SyntacticObject)
 
 variable {τ : SyntacticObject → Option LexicalItem.Token}
 
-theorem Step.apply_em_right (item : LinearizedSyntacticObject) (current : SyntacticObject) :
+theorem Step.apply_em_right (item : PlanarSyntacticObject) (current : SyntacticObject) :
     (Step.em .right item).apply current τ = merge current item := merge_comm _ _
 
 theorem Step.apply_im (mover : SyntacticObject) (side : Edge) (current : SyntacticObject) :
     (Step.im mover side).apply current τ = merge (deleteAccessible mover current τ) mover := rfl
 
 /-- The sides build the same object; they differ only at externalization. -/
-theorem Step.apply_em (side : Edge) (item : LinearizedSyntacticObject) (current : SyntacticObject) :
+theorem Step.apply_em (side : Edge) (item : PlanarSyntacticObject) (current : SyntacticObject) :
     (Step.em side item).apply current τ = merge item current := rfl
 
 /-- A step is a Merge, external or internal, rather than one of the two stages of Internal
@@ -135,7 +135,7 @@ def Step.mover? : Step → Option SyntacticObject
   | .im mover _ | .extract mover => some mover
   | .em _ _ | .remerge _ => none
 
-@[simp] theorem Step.mover?_em (side : Edge) (item : LinearizedSyntacticObject) :
+@[simp] theorem Step.mover?_em (side : Edge) (item : PlanarSyntacticObject) :
     (Step.em side item).mover? = none := rfl
 
 @[simp] theorem Step.mover?_im (mover : SyntacticObject) (side : Edge) :
@@ -162,7 +162,7 @@ def Step.leftward : Step → Step
   | .extract mover => .extract mover
   | .remerge _ => .remerge
 
-@[simp] theorem Step.leftward_em (side : Edge) (item : LinearizedSyntacticObject) :
+@[simp] theorem Step.leftward_em (side : Edge) (item : PlanarSyntacticObject) :
     (Step.em side item).leftward = .em .left item := rfl
 
 @[simp] theorem Step.leftward_im (mover : SyntacticObject) (side : Edge) :

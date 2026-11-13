@@ -183,12 +183,12 @@ def mergeOrder : Derivation :=
 /-- The derivation of (6o): NP raises past A, and `[N [A t]]` past Num. -/
 def derivation6o : Derivation :=
   ⟨leaf tokN, [.em .left tokA, .im (leaf tokN), .em .left tokNum,
-    .im (tokN * (tokA * .traceOf tokN) : LinearizedSyntacticObject), .em .left tokDem]⟩
+    .im (tokN * (tokA * .traceOf tokN) : PlanarSyntacticObject), .em .left tokDem]⟩
 
 /-- The derivation of (6n): `[A N]` raises past Num. -/
 def derivation6n : Derivation :=
   ⟨leaf tokN, [.em .left tokA, .em .left tokNum,
-    .im (tokA * tokN : LinearizedSyntacticObject), .em .left tokDem]⟩
+    .im (tokA * tokN : PlanarSyntacticObject), .em .left tokDem]⟩
 
 -- (6a)
 theorem surfaceCats_mergeOrder : mergeOrder.surfaceCats = [.Dem, .Num, .A, .N] := by decide

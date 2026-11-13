@@ -19,16 +19,16 @@ the object, so the lower copy of a phrase that has moved on is invisible to it.
 
 ## Main definitions
 
-* `Minimalist.LinearizedSyntacticObject.InDomain`: every occurrence of a term lies inside an
+* `Minimalist.PlanarSyntacticObject.InDomain`: every occurrence of a term lies inside an
   occurrence of another.
-* `Minimalist.LinearizedSyntacticObject.FindsHead`, `labelsAt`, `labels`: what minimal search finds.
-* `Minimalist.LinearizedSyntacticObject.IsLabeledBy`, `IsLabeledByFeature`, `IsLabeled`.
-* `Minimalist.LinearizedSyntacticObject.LabelDaughter`, `Minimalist.HeadFunction.label`: the head
+* `Minimalist.PlanarSyntacticObject.FindsHead`, `labelsAt`, `labels`: what minimal search finds.
+* `Minimalist.PlanarSyntacticObject.IsLabeledBy`, `IsLabeledByFeature`, `IsLabeled`.
+* `Minimalist.PlanarSyntacticObject.LabelDaughter`, `Minimalist.HeadFunction.label`: the head
   relation labels induce, and the head function it gives.
 
 ## Main results
 
-* `Minimalist.LinearizedSyntacticObject.findsHead_iff`: search finds the visible heads that no
+* `Minimalist.PlanarSyntacticObject.findsHead_iff`: search finds the visible heads that no
   visible head asymmetrically c-commands.
 * `isLabeledBy_merge_head`, `labels_merge_heads`: a head merged with a non-head labels the result,
   and two heads are both found.
@@ -61,11 +61,11 @@ the object, so the lower copy of a phrase that has moved on is invisible to it.
 
 @[expose] public section
 
-namespace Minimalist.LinearizedSyntacticObject
+namespace Minimalist.PlanarSyntacticObject
 
 open RoseTree SyntacticObject Core.Order
 
-variable (t : LinearizedSyntacticObject)
+variable (t : PlanarSyntacticObject)
 
 /-- `y` is in the domain of `x` in `t`: every occurrence of `y` is a term of an occurrence of `x`,
 [chomsky-2013]'s condition under which the labeling algorithm searching `x` sees `y`. -/
@@ -370,7 +370,7 @@ theorem labelDaughter_iff_of_merge_head (hn : t.termAt n = SyntacticObject.merge
       exact he ▸ token?_eq_some_iff.1 hq ▸ containsOrEq_termAt.2 ⟨q, (findsHead_iff.1 hfq).1.1, rfl⟩
   · exact mem_labelsAt.2 ⟨c, findsHead_self (isHeadAt_iff.2 ⟨a, hc⟩), by simp [hc]⟩
 
-end Minimalist.LinearizedSyntacticObject
+end Minimalist.PlanarSyntacticObject
 
 namespace Minimalist.HeadFunction
 
@@ -388,7 +388,7 @@ def label : HeadFunction := fun t x ↦
   else none
 
 /-- The head daughters of the label head function are label daughters. -/
-theorem labelDaughter_of_headDaughterRel_label {t : LinearizedSyntacticObject}
+theorem labelDaughter_of_headDaughterRel_label {t : PlanarSyntacticObject}
     {n c : t.val.Positions} (h : headDaughterRel (label t) n.val c.val) : t.LabelDaughter n c := by
   obtain ⟨i, hi, hc⟩ := h
   have hci : (⟨n.val.toList ++ [i]⟩ : TreePath) = c.val := TreePath.ext hc.symm

@@ -11,7 +11,7 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.TokenCCommand
 /-!
 # The readings of a marked object
 
-This file defines what a linearized object with its lower copies marked gives to the semantic
+This file defines what a planar object with its lower copies marked gives to the semantic
 interface. A reading is the finite set of chains read low, a chain being named by its term in the
 copy object. A chain read high keeps its higher copy, and its lower copies contract to traces. A
 chain read low keeps its lowest copy, and its higher copies are deleted. With no chain read low the
@@ -20,10 +20,10 @@ does](##cCommands_unmark_of_cCommands_lf), unless it deletes a copy whose sister
 
 ## Main definitions
 
-* `Minimalist.LinearizedSyntacticObject.Marked.reading`: the recursion over a marked tree that every
+* `Minimalist.PlanarSyntacticObject.Marked.reading`: the recursion over a marked tree that every
   reading's objects are built by.
-* `Minimalist.LinearizedSyntacticObject.Marked.lf`: the object a reading gives.
-* `Minimalist.LinearizedSyntacticObject.Marked.carrying`: the chains with a lower copy holding a
+* `Minimalist.PlanarSyntacticObject.Marked.lf`: the object a reading gives.
+* `Minimalist.PlanarSyntacticObject.Marked.carrying`: the chains with a lower copy holding a
   token.
 
 ## Implementation notes
@@ -39,7 +39,7 @@ does](##cCommands_unmark_of_cCommands_lf), unless it deletes a copy whose sister
 
 @[expose] public section
 
-namespace Minimalist.LinearizedSyntacticObject.Marked
+namespace Minimalist.PlanarSyntacticObject.Marked
 
 open RoseTree SyntacticObject
 
@@ -220,12 +220,12 @@ theorem isSyntacticObject_lfBy (low : RoseTree (CopyMark × Vertex) → Prop) [D
 
 /-- The object a reading gives: each chain in `low` keeps its lowest copy, and every other its
 highest, its lower copies contracted. -/
-def lf (t : Marked) (low : Finset SyntacticObject) : LinearizedSyntacticObject :=
-  LinearizedSyntacticObject.ofVal (lfTree low t.val) (isSyntacticObject_lfBy _ t.2)
+def lf (t : Marked) (low : Finset SyntacticObject) : PlanarSyntacticObject :=
+  PlanarSyntacticObject.ofVal (lfTree low t.val) (isSyntacticObject_lfBy _ t.2)
 
 @[simp] theorem val_lf (t : Marked) (low : Finset SyntacticObject) :
     (t.lf low).val = lfTree low t.val :=
-  LinearizedSyntacticObject.val_ofVal _ _
+  PlanarSyntacticObject.val_ofVal _ _
 
 /-- The chains with a lower copy holding `y`. -/
 def carrying (t : Marked) (y : LexicalItem.Token) : Finset SyntacticObject :=
@@ -248,7 +248,7 @@ theorem lfTree_empty (t : RoseTree (CopyMark × Vertex)) : lfTree ∅ t = contra
 
 /-- With no chain read low, a reading gives the contraction. -/
 @[simp] theorem lf_empty (t : Marked) : t.lf ∅ = t.contract :=
-  LinearizedSyntacticObject.val_injective
+  PlanarSyntacticObject.val_injective
     ((val_lf t ∅).trans ((lfTree_empty t.val).trans (val_contract t).symm))
 
 /-! ### Objects with no lower copy -/
@@ -273,9 +273,9 @@ theorem lfBy_map_none (low : RoseTree (CopyMark × Vertex) → Prop) [DecidableP
     exact (List.map_congr_left ih.2.2.2).trans (List.map_id' _)
 
 /-- An object with no lower copy gives itself under every reading. -/
-@[simp] theorem lf_ofLinearized (p : LinearizedSyntacticObject) (low : Finset SyntacticObject) :
-    (ofLinearized p).lf low = p :=
-  LinearizedSyntacticObject.val_injective ((val_lf _ low).trans (lfBy_map_none _ p.val))
+@[simp] theorem lf_ofPlanar (p : PlanarSyntacticObject) (low : Finset SyntacticObject) :
+    (ofPlanar p).lf low = p :=
+  PlanarSyntacticObject.val_injective ((val_lf _ low).trans (lfBy_map_none _ p.val))
 
 /-! ### Binding at a reading is binding at the copy object -/
 
@@ -418,4 +418,4 @@ theorem cCommands_unmark_of_cCommands_contract {t : Marked} (hxy : x ≠ y)
 
 end Binding
 
-end Minimalist.LinearizedSyntacticObject.Marked
+end Minimalist.PlanarSyntacticObject.Marked

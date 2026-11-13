@@ -47,7 +47,7 @@ subject-relative form and Rejang relatives with *gi* show both exceptions.
 
 namespace BrananErlewine2024
 
-open Minimalist Minimalist.LinearizedSyntacticObject Core.Order
+open Minimalist Minimalist.PlanarSyntacticObject Core.Order
 
 /-! ### The probe -/
 
@@ -65,7 +65,7 @@ def relD : Probe.Spec Feature := ⟨{{.rel, .d}}, {{.d}}⟩
 /-- A relative clause: its structure, the heads that probe, and the clitic pronouns. -/
 structure Relative where
   /-- The structure. -/
-  tree : LinearizedSyntacticObject
+  tree : PlanarSyntacticObject
   /-- The heads bearing [PROBE:REL+D]. -/
   probes : List LexicalItem.Token
   /-- The clitic pronouns, invisible to [D]-sensitive probes. -/
@@ -135,7 +135,7 @@ def fall : LexicalItem.Token := ⟨.of .V [] "yağ", 15⟩
 def snow : LexicalItem.Token := ⟨.of .D [] "kar", 16⟩
 
 /-- A relative clause headed by the relative complementizer. -/
-def rel (t : LinearizedSyntacticObject) : Relative := ⟨relC * t, [relC], []⟩
+def rel (t : PlanarSyntacticObject) : Relative := ⟨relC * t, [relC], []⟩
 
 /-- The form a sentence takes is SR exactly when the probe finds a goal (p. 384). -/
 def Derived (d : Datum) (r : Relative) : Prop := d.feature? "form" = some "SR" ↔ r.Converges
@@ -157,7 +157,7 @@ def temporal (subj verb : LexicalItem.Token) : Relative :=
   rel (op * (tense * (subj * (littleV * verb))))
 
 /-- The possessed DP with the operator at its edge. -/
-def possessed (n : LexicalItem.Token) : LinearizedSyntacticObject := op * (poss * n)
+def possessed (n : LexicalItem.Token) : PlanarSyntacticObject := op * (poss * n)
 
 /-- (16): the operator is at the edge of the subject. -/
 def possessorSubject : Relative :=
@@ -241,7 +241,7 @@ def lengthen : LexicalItem.Token := ⟨.of .V [.D] "anjang", 46⟩
 def age : LexicalItem.Token := ⟨.of .N [] "omor", 47⟩
 
 /-- A relative clause whose *gi* heads probe, with its clitic pronouns. -/
-def rel (t : LinearizedSyntacticObject) (clitics : List LexicalItem.Token := []) : Relative :=
+def rel (t : PlanarSyntacticObject) (clitics : List LexicalItem.Token := []) : Relative :=
   ⟨t, [gi, gi₂], clitics⟩
 
 /-- (21a): the theme of an active verb, below the subject. -/
@@ -258,14 +258,14 @@ def cliticAgent : Relative := rel (gi * (aux * (ku * (littleV * (watch * op)))))
 
 /-- (26): the embedded clause, with the operator at its edge, moved to the subject of the passive
 of *say*. -/
-def clausalSubject (cp : LinearizedSyntacticObject) : Relative :=
+def clausalSubject (cp : PlanarSyntacticObject) : Relative :=
   rel (gi * (cp * (tense * (alui * (littleV * (say * cp))))))
 
 /-- (26a): the operator base-generated at the edge of a *bawo* clause, binding a resumptive. -/
-def resumptive : LinearizedSyntacticObject := op * (bawo * (si * (tense * (littleV * come))))
+def resumptive : PlanarSyntacticObject := op * (bawo * (si * (tense * (littleV * come))))
 
 /-- (26b): the operator moved to the edge of a *gi* clause from its subject. -/
-def gap : LinearizedSyntacticObject := op * (gi₂ * (op * (tense * (littleV * come))))
+def gap : PlanarSyntacticObject := op * (gi₂ * (op * (tense * (littleV * come))))
 
 /-- (28a): the embedded subject, attracted by the embedded *gi* and then across a clitic. -/
 def longSubject : Relative :=

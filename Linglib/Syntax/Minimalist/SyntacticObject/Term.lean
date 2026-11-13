@@ -203,16 +203,16 @@ namespace SyntacticObject
 
 variable {x y l r : SyntacticObject L}
 
-/-- The terms of the syntactic object a linearized object presents, one per vertex. -/
-def _root_.Minimalist.LinearizedSyntacticObject.terms :
-    LinearizedSyntacticObject L → Multiset (SyntacticObject L)
+/-- The terms of the syntactic object a planar object presents, one per vertex. -/
+def _root_.Minimalist.PlanarSyntacticObject.terms :
+    PlanarSyntacticObject L → Multiset (SyntacticObject L)
   | .of x => {FreeCommMagma.of x}
-  | .mul l r => (LinearizedSyntacticObject.toSyntacticObject l *
-      LinearizedSyntacticObject.toSyntacticObject r) ::ₘ
-      (LinearizedSyntacticObject.terms l + LinearizedSyntacticObject.terms r)
+  | .mul l r => (PlanarSyntacticObject.toSyntacticObject l *
+      PlanarSyntacticObject.toSyntacticObject r) ::ₘ
+      (PlanarSyntacticObject.terms l + PlanarSyntacticObject.terms r)
 
-theorem _root_.Minimalist.LinearizedSyntacticObject.terms_eq_of_commCon
-    {p q : LinearizedSyntacticObject L} (h : Magma.commCon (FreeMagma (Leaf L)) p q) :
+theorem _root_.Minimalist.PlanarSyntacticObject.terms_eq_of_commCon
+    {p q : PlanarSyntacticObject L} (h : Magma.commCon (FreeMagma (Leaf L)) p q) :
     p.terms = q.terms := by
   induction h with
   | of x y h =>
@@ -225,17 +225,17 @@ theorem _root_.Minimalist.LinearizedSyntacticObject.terms_eq_of_commCon
   | @mul w x y z h₁ h₂ ih₁ ih₂ =>
     show (w.toSyntacticObject * y.toSyntacticObject) ::ₘ (_ + _) =
       (x.toSyntacticObject * z.toSyntacticObject) ::ₘ (_ + _)
-    rw [ih₁, ih₂, show LinearizedSyntacticObject.toSyntacticObject w
-        = LinearizedSyntacticObject.toSyntacticObject x from
+    rw [ih₁, ih₂, show PlanarSyntacticObject.toSyntacticObject w
+        = PlanarSyntacticObject.toSyntacticObject x from
           FreeMagma.toFreeCommMagma_eq_toFreeCommMagma.2 h₁,
-      show LinearizedSyntacticObject.toSyntacticObject y
-        = LinearizedSyntacticObject.toSyntacticObject z from
+      show PlanarSyntacticObject.toSyntacticObject y
+        = PlanarSyntacticObject.toSyntacticObject z from
           FreeMagma.toFreeCommMagma_eq_toFreeCommMagma.2 h₂]
 
 /-- The terms of a syntactic object, itself included. -/
 def terms (s : SyntacticObject L) : Multiset (SyntacticObject L) :=
-  Quotient.liftOn s LinearizedSyntacticObject.terms
-    fun _ _ h ↦ LinearizedSyntacticObject.terms_eq_of_commCon h
+  Quotient.liftOn s PlanarSyntacticObject.terms
+    fun _ _ h ↦ PlanarSyntacticObject.terms_eq_of_commCon h
 
 @[simp] theorem terms_leaf (tok : L) : (leaf tok).terms = {leaf tok} := rfl
 
@@ -245,8 +245,8 @@ def terms (s : SyntacticObject L) : Multiset (SyntacticObject L) :=
 
 @[simp] theorem terms_merge (l r : SyntacticObject L) :
     (merge l r).terms = merge l r ::ₘ (l.terms + r.terms) := by
-  obtain ⟨l, rfl⟩ := LinearizedSyntacticObject.toSyntacticObject_surjective l
-  obtain ⟨r, rfl⟩ := LinearizedSyntacticObject.toSyntacticObject_surjective r
+  obtain ⟨l, rfl⟩ := PlanarSyntacticObject.toSyntacticObject_surjective l
+  obtain ⟨r, rfl⟩ := PlanarSyntacticObject.toSyntacticObject_surjective r
   rfl
 
 @[simp] theorem map_val_terms (s : SyntacticObject L) :

@@ -149,7 +149,7 @@ def vpSteps : List Step :=
   | some c => [.em .right c.token, .em .left p.themeTok]
 
 /-- The VP. -/
-def vp : Option LinearizedSyntacticObject := (⟨p.verbTok, p.vpSteps⟩ : Derivation).externalize?
+def vp : Option PlanarSyntacticObject := (⟨p.verbTok, p.vpSteps⟩ : Derivation).externalize?
 
 /-- The vP: the VP, v, the agent on the left and any VP-external element on the right. -/
 def vP : Derivation :=
@@ -339,7 +339,7 @@ def phi (x : LexicalItem.Token) : Bundle :=
   if x = p.themeTok then themePhi else if x = p.agentTok then p.agentPhi else ⊥
 
 /-- The φ-features at a position of `t`, those of the token there. -/
-def phiAt (t : LinearizedSyntacticObject) (q : t.val.Positions) : Bundle :=
+def phiAt (t : PlanarSyntacticObject) (q : t.val.Positions) : Bundle :=
   (t.termAt q).token?.elim ⊥ p.phi
 
 /-- The stage at which T probes. -/

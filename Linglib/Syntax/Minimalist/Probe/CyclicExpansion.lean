@@ -15,7 +15,7 @@ A probe on a head searches the sister of the head, and as the head projects, the
 projection joins its search space. A probe on v between the arguments therefore meets the internal
 argument and then, once v projects over it, the external argument, [bejar-rezac-2009]'s cyclic
 expansion, and a probe on T above both meets them in the reverse order. Reading the goals off a
-linearized object makes that order a consequence of where the head stands, instead of a stipulated
+planar object makes that order a consequence of where the head stands, instead of a stipulated
 list.
 
 ## References
@@ -29,7 +29,7 @@ namespace Minimalist
 
 open Core.Order
 
-variable (hd : HeadFunction) (t : LinearizedSyntacticObject)
+variable (hd : HeadFunction) (t : PlanarSyntacticObject)
 
 /-- The projections of the position `a`, from `a` up to its maximal projection. -/
 def projectionsOf (a : TreePath) : List TreePath :=

@@ -77,10 +77,10 @@ def mittie : LexicalItem.Token := ⟨.of .D [] "Mittie", 204⟩
 def theDog : LexicalItem.Token := ⟨.of .D [] "the dog", 205⟩
 
 /-- (21): `[VoiceP Mittie [Voice′ Agent [VP the dog feed]]]`. -/
-def tree : LinearizedSyntacticObject := mittie * (agentVoice * (theDog * feed))
+def tree : PlanarSyntacticObject := mittie * (agentVoice * (theDog * feed))
 
 /-- (25): the Voice′ of *Mittie owns the dog*, the Voice head `h` merged with *own the dog*. -/
-def ownsBar (h : LexicalItem.Token) : LinearizedSyntacticObject := h * (theDog * own)
+def ownsBar (h : LexicalItem.Token) : PlanarSyntacticObject := h * (theDog * own)
 
 section Syntax
 
@@ -133,7 +133,7 @@ def Word.val : {a : Ty Base} → Word a → a.Domain Entity Unit { eventuality :
 
 /-- The meanings of a syntactic object by Functional Application, Predicate Modification and
 Event Identification. -/
-def meanings (t : LinearizedSyntacticObject) :
+def meanings (t : PlanarSyntacticObject) :
     List (Denotation Entity Unit { eventuality := V }) :=
   match (t.toTree (·.id)).skeleton (fun _ ↦ false) with
   | some s => (typeDriven Voice.grammar).values
@@ -233,7 +233,7 @@ def PWord.val : {a : Ty Base} → PWord a → a.Domain Entity Unit { eventuality
 
 /-- The meanings of a syntactic object by Functional Application and Kratzer's Event
 Identification, over partial predicates. -/
-def partialMeanings (t : LinearizedSyntacticObject) :
+def partialMeanings (t : PlanarSyntacticObject) :
     List (Denotation Entity Unit { eventuality := V }) :=
   match (t.toTree (·.id)).skeleton (fun _ ↦ false) with
   | some s => (typeDriven partialGrammar).values

@@ -239,7 +239,7 @@ def IsPhaseHead (a : LexicalItem.Token) : Prop := a.item.cat = .v ∨ a.item.cat
 instance : DecidablePred IsPhaseHead := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The phase heads of an object, by position. -/
-def phaseSet (t : Minimalist.LinearizedSyntacticObject) : Finset Core.Order.TreePath :=
+def phaseSet (t : Minimalist.PlanarSyntacticObject) : Finset Core.Order.TreePath :=
   ((Minimalist.phaseHeads .raising t IsPhaseHead).map (·.1)).toFinset
 
 /-- The arguments a probe at `l` meets in a derivation, by the cyclic expansion of

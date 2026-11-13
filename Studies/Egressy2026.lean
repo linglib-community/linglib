@@ -404,7 +404,7 @@ theorem horizon_admits_FocP :
 
 /-! ### Recognition by witness
 
-A linearized syntactic object over a study lexicon pronounces each single-embedding row's gloss
+A planar syntactic object over a study lexicon pronounces each single-embedding row's gloss
 line (`Minimalist.SpellsOut`), and its pre-complementizer verb and its expletive cell are the
 matrix verb and clause role the gloss readers find, so the readers run against derived
 structure. The witnesses are right-branching linearizations, each *hogy*-clause a constituent;
@@ -467,71 +467,71 @@ def lexicon : List LexicalItem :=
     liSzomorú, liTelesírt, liSajnos, liKorábban] : List LexicalItem.Token).map (·.item)
 
 /-- The embedded clause the rows share, *Mari szomorú volt*. -/
-def wSad : LinearizedSyntacticObject := liMari * (liSzomorú * liVolt)
+def wSad : PlanarSyntacticObject := liMari * (liSzomorú * liVolt)
 
 /-- (4): *Peti saw with his own eyes that Mari was sad*. -/
-def w4 : LinearizedSyntacticObject :=
+def w4 : PlanarSyntacticObject :=
   liPeti * (liA * (liSaját * (liSzemével * (liLátta * (liAzt * (liHogy * wSad))))))
 
 /-- (5): the heard variant of (4), *that Mari cried*. -/
-def w5 : LinearizedSyntacticObject :=
+def w5 : PlanarSyntacticObject :=
   liPeti * (liA * (liSaját * (liFülével * (liHallotta * (liAzt * (liHogy * (liMari * liSírt)))))))
 
 /-- (6): *Peti dreamt it that Mari was sad*. -/
-def w6 : LinearizedSyntacticObject :=
+def w6 : PlanarSyntacticObject :=
   liPeti * (liAzt * (liÁlmodta * (liHogy * wSad)))
 
 /-- (7): the *think* variant of (6). -/
-def w7 : LinearizedSyntacticObject :=
+def w7 : PlanarSyntacticObject :=
   liPeti * (liAzt * (liGondolta * (liHogy * wSad)))
 
 /-- (8): *It worried Peti that Mari was sad*, the subject clause. -/
-def w8 : LinearizedSyntacticObject :=
+def w8 : PlanarSyntacticObject :=
   liAz * (liAggasztotta * (liPetit * (liHogy * wSad)))
 
 /-- (9): *You growled because of it that Mari was sad*, the adjunct clause. -/
-def w9 : LinearizedSyntacticObject :=
+def w9 : PlanarSyntacticObject :=
   liMorogtál * (liAmiatt * (liHogy * wSad))
 
 /-- (11a): *Peti said it that (unfortunately) Mari was sad*. -/
-def w11a : LinearizedSyntacticObject :=
+def w11a : PlanarSyntacticObject :=
   liPeti * (liAzt * (liMondta * (liHogy * (liSajnos * wSad))))
 
 /-- (11b): the *shout* variant of (11a). -/
-def w11b : LinearizedSyntacticObject :=
+def w11b : PlanarSyntacticObject :=
   liPeti * (liAzt * (liRikoltotta * (liHogy * (liSajnos * wSad))))
 
 /-- (11c): the *growl* variant of (11a). -/
-def w11c : LinearizedSyntacticObject :=
+def w11c : PlanarSyntacticObject :=
   liPeti * (liAzt * (liMorogta * (liHogy * (liSajnos * wSad))))
 
 /-- (12): *You phoned with it that (unfortunately) Mari was sad*, the adjunct clause. -/
-def w12 : LinearizedSyntacticObject :=
+def w12 : PlanarSyntacticObject :=
   liTelefonáltál * (liAzzal * (liHogy * (liSajnos * wSad)))
 
 /-- (13): *Zsuzsi heard it from Peti that unfortunately Mari was sad*. -/
-def w13 : LinearizedSyntacticObject :=
+def w13 : PlanarSyntacticObject :=
   liZsuzsi * (liPetitől * (liAzt * (liHallotta * (liHogy * (liSajnos * wSad)))))
 
 /-- (14): *Peti saw from the cried-in handkerchiefs that (earlier) Mari was sad*. -/
-def w14 : LinearizedSyntacticObject :=
+def w14 : PlanarSyntacticObject :=
   liPeti * (liA * (liTelesírt * (liZsebkendőkből *
     (liLátta * (liAzt * (liHogy * (liKorábban * wSad)))))))
 
 /-- The matrix verb token of a witness: the verb-category token pronounced before the
 complementizer. -/
-def matrixToken? (t : LinearizedSyntacticObject) : Option LexicalItem.Token :=
+def matrixToken? (t : PlanarSyntacticObject) : Option LexicalItem.Token :=
   ((Minimalist.pfYield t).takeWhile fun tok ↦ tok.item.cat ≠ .C).find? fun tok ↦
     tok.item.cat = .V
 
 /-- The clause role a witness shows: the role `roleTable` gives the paradigm cell its pronounced
 expletive realizes. -/
-def roleOf (t : LinearizedSyntacticObject) : Option ClauseRole :=
+def roleOf (t : PlanarSyntacticObject) : Option ClauseRole :=
   (Minimalist.pfYield t).findSome? fun tok ↦
     (roleTable.find? fun x ↦ x.1 == tok.item.phonForm?).map (·.2)
 
 /-- The single-embedding rows with their witnesses. -/
-def witnessRows : List (Datum × LinearizedSyntacticObject) :=
+def witnessRows : List (Datum × PlanarSyntacticObject) :=
   [(ex_4, w4), (ex_5, w5), (ex_6, w6), (ex_7, w7), (ex_8, w8), (ex_9, w9), (ex_11a, w11a),
     (ex_11b, w11b), (ex_11c, w11c), (ex_12, w12), (ex_13, w13), (ex_14, w14)]
 

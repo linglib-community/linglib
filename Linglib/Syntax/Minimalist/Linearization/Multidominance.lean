@@ -67,7 +67,7 @@ namespace Minimalist
 
 open RoseTree SyntacticObject Core.Order
 
-variable (pick : List TreePath → Option TreePath) (t : LinearizedSyntacticObject)
+variable (pick : List TreePath → Option TreePath) (t : PlanarSyntacticObject)
 
 /-- The mothers of `s` in `t`: the terms of `t` with `s` as a daughter. -/
 def mothers (s : RoseTree Vertex) : List (RoseTree Vertex) :=

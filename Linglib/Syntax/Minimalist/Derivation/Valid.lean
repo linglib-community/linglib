@@ -58,7 +58,7 @@ configuration it meets, and no token is merged twice. -/
 structure IsValid (d : Derivation) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
     Prop where
   /-- The initial object is a leaf. -/
-  initial : d.initial.toLinearizedLeaf?.isSome
+  initial : d.initial.toPlanarLeaf?.isSome
   /-- Each step applies to the configuration it meets. -/
   steps : Step.ApplyFrom τ d.steps ⟨d.initial, []⟩
   /-- No token is merged twice. -/

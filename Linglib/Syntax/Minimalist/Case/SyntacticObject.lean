@@ -53,7 +53,7 @@ namespace Minimalist
 
 open Core.Order Case
 
-variable (hd : HeadFunction) (t : LinearizedSyntacticObject) (Φ : Finset TreePath)
+variable (hd : HeadFunction) (t : PlanarSyntacticObject) (Φ : Finset TreePath)
   (D : TreePath → Set TreePath) [∀ h, DecidablePred (· ∈ D h)] (h : TreePath)
 
 /-- The copies of an NP standing in what the phase head at `h` transfers on its own, each at the

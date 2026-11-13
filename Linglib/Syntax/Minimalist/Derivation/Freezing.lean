@@ -97,7 +97,7 @@ theorem obeysFreezing_append_iff :
     (d.append [.im m side]).ObeysFreezing ↔ d.ObeysFreezing ∧ ¬ d.Frozen m := by
   simp [obeysFreezing_append_iff]
 
-@[simp] theorem obeysFreezing_append_em_iff {item : LinearizedSyntacticObject} {side : Edge} :
+@[simp] theorem obeysFreezing_append_em_iff {item : PlanarSyntacticObject} {side : Edge} :
     (d.append [.em side item]).ObeysFreezing ↔ d.ObeysFreezing := by
   simp [obeysFreezing_append_iff]
 
@@ -118,7 +118,7 @@ end Map
 
 /-! ### Unlabeled immobility -/
 
-variable (L : LinearizedSyntacticObject → SyntacticObject → Prop)
+variable (L : PlanarSyntacticObject → SyntacticObject → Prop)
 
 /-- [boskovic-2018]'s Unlabeled Immobility Condition: each mover of `d` is labeled, as `L` reads
 labels, in the object the derivation has built when it moves. -/
@@ -130,7 +130,7 @@ instance [∀ p, DecidablePred (L p)] (d : Derivation) : Decidable (d.ObeysUIC L
 
 variable {L}
 
-theorem ObeysUIC.mono {L' : LinearizedSyntacticObject → SyntacticObject → Prop}
+theorem ObeysUIC.mono {L' : PlanarSyntacticObject → SyntacticObject → Prop}
     (hL : ∀ p x, L p x → L' p x) (h : d.ObeysUIC L) : d.ObeysUIC L' :=
   fun i hi m hm ↦ (h i hi m hm).imp fun p ⟨hp, hpm⟩ ↦ ⟨hp, hL p m hpm⟩
 
@@ -160,7 +160,7 @@ in the object built so far. -/
     (d.append [.im m side]).ObeysUIC L ↔ d.ObeysUIC L ∧ ∃ p ∈ d.externalize?, L p m := by
   simp [obeysUIC_append_singleton_iff]
 
-@[simp] theorem obeysUIC_append_em_iff {item : LinearizedSyntacticObject} {side : Edge} :
+@[simp] theorem obeysUIC_append_em_iff {item : PlanarSyntacticObject} {side : Edge} :
     (d.append [.em side item]).ObeysUIC L ↔ d.ObeysUIC L := by
   simp [obeysUIC_append_singleton_iff]
 

@@ -145,7 +145,7 @@ end HorizonSetting
 
 /-! ### Horizons on trees -/
 
-variable (η : RoseTree Vertex → Option ℕ) (t : LinearizedSyntacticObject)
+variable (η : RoseTree Vertex → Option ℕ) (t : PlanarSyntacticObject)
 
 /-- The lexical item at the root of a tree, if it is a pronounced leaf. -/
 def rootToken? : RoseTree Vertex → Option LexicalItem.Token

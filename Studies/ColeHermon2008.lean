@@ -175,13 +175,13 @@ def evacuate : List Step :=
 
 /-- A core argument as the remnant holds it: the trace of the pivot, which has left, or the
 argument itself, which has stayed. -/
-def stranded (t : LexicalItem.Token) : LinearizedSyntacticObject :=
+def stranded (t : LexicalItem.Token) : PlanarSyntacticObject :=
   if t = c.pivot then .traceOf t else .leaf t
 
 /-- The remnant VoiceP that raises, (55), (61), has Voice and the verb over their traces, and
 the pivot and the goal replaced by theirs. -/
-def remnant : LinearizedSyntacticObject :=
-  let vp : LinearizedSyntacticObject := match c.goal with
+def remnant : PlanarSyntacticObject :=
+  let vp : PlanarSyntacticObject := match c.goal with
     | some pp => {c.stranded c.patient, {.traceOf c.verb, .traceOf pp}}
     | none => {.traceOf c.verb, c.stranded c.patient}
   {.leaf c.voiceHead, {.leaf c.verb, {.traceOf c.voiceHead, {c.stranded c.agent, {.leaf v₀, vp}}}}}

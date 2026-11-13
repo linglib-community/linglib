@@ -81,7 +81,7 @@ def john : LexicalItem.Token := ⟨.of .N [] "John", 3⟩
 def loves : LexicalItem.Token := ⟨.of .V [.N, .N] "loves", 4⟩
 
 /-- *pictures of himself*. -/
-def picturesOfHimself : LinearizedSyntacticObject :=
+def picturesOfHimself : PlanarSyntacticObject :=
   .merge (.leaf pictures) (.merge (.leaf ofP) (.leaf himself))
 
 /-- *John loves pictures of himself*. -/
@@ -147,7 +147,7 @@ def didnt : LexicalItem.Token := ⟨.of .T [.V] "didn't", 7⟩
 def score : LexicalItem.Token := ⟨.of .V [.D] "score", 8⟩
 
 /-- *every player*. -/
-def everyPlayer : LinearizedSyntacticObject := .merge (.leaf every) (.leaf player)
+def everyPlayer : PlanarSyntacticObject := .merge (.leaf every) (.leaf player)
 
 /-- *Every player didn't score*: the subject raised past negation. -/
 def everyDidntScore : Derivation :=
@@ -265,7 +265,7 @@ end Interpretation
 
 /-! ### The readings as cuts -/
 
-open ConnesKreimer LinearizedSyntacticObject.Marked in
+open ConnesKreimer PlanarSyntacticObject.Marked in
 /-- The readings of (15) both cut the quantifier phrase from the copy object. The high reading is a
 term of `Δ^c`, cutting the lower copy, and the low reading a term of `Δ^d`, cutting the higher copy.
 The low reading is no term of `Δ^c`, whose cuts each leave a trace. -/

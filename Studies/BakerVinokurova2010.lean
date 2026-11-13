@@ -190,7 +190,7 @@ def ditransitiveClause (shifted : Bool) : Derivation :=
     [.em .left subjD, .em .right tense, .em .right comp]⟩
 
 /-- The possessed noun phrase `[D [possessor N]]`. -/
-def possessedNP : LinearizedSyntacticObject :=
+def possessedNP : PlanarSyntacticObject :=
   .merge (.leaf det) (.merge (.leaf possD) (.leaf noun))
 
 /-- A transitive clause whose shifted object is a possessed noun phrase. -/

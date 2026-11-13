@@ -22,7 +22,7 @@ C's φ ∨ δ probe moves the one bearing δ, by Best Match.
 
 ## Implementation notes
 
-* The clause is a linearized syntactic object, closeness the maximal projections above a position,
+* The clause is a planar syntactic object, closeness the maximal projections above a position,
   and movement Internal Merge replayed on it; arguments are nominal leaves. The rows are coded as
   Glottolog's Rainy River Ojibwa, the dialect around Fort Frances, where the speakers consulted are
   from.
@@ -203,24 +203,24 @@ def featuresOf (v : Voice) (x : Clause) (c : Copies) (tok : LexicalItem.Token) :
   else if tok = patient then x.ia.features else c tok
 
 /-- The features at a position, those of its token and none for a trace or a phrase. -/
-def featuresAt (v : Voice) (x : Clause) (c : Copies) (t : LinearizedSyntacticObject)
+def featuresAt (v : Voice) (x : Clause) (c : Copies) (t : PlanarSyntacticObject)
     (q : t.val.Positions) : Finset Feature :=
   ((t.termAt q).token?).elim ∅ (featuresOf v x c)
 
 /-- A position bears a nominal; only nominals move (section 3.5.1). -/
-def isNominal (t : LinearizedSyntacticObject) (q : t.val.Positions) : Bool :=
+def isNominal (t : PlanarSyntacticObject) (q : t.val.Positions) : Bool :=
   ((t.termAt q).token?).elim false (·.item.cat == .D)
 
 /-- Closeness in the clause: the maximal projections above a position, under which the specifiers
 of a head and the head itself are equidistant. -/
-abbrev closeness (t : LinearizedSyntacticObject) : t.val.Positions → Finset TreePath :=
+abbrev closeness (t : PlanarSyntacticObject) : t.val.Positions → Finset TreePath :=
   t.above (maximalProjections .raising t)
 
 /-- A stage of the derivation: the object built, what the heads have copied, and the token the
 last probe moved. -/
 structure Stage where
   /-- The object built. -/
-  obj : LinearizedSyntacticObject
+  obj : PlanarSyntacticObject
   /-- What each head has copied. -/
   copies : Copies
   /-- The token the last probe moved, if any. -/
@@ -235,10 +235,10 @@ def agreeCopies (v : Voice) (x : Clause) (h : LexicalItem.Token) (agr : Spec Fea
     (agr.copied feats {q | st.obj.val.CCommands hq q} (agr.bestMatch feats (closeness st.obj)))
 
 /-- The nominals a head at the position `hq` c-commands, among which its EPP probe searches. -/
-def nominalDomain (t : LinearizedSyntacticObject) (hq : t.val.Positions) : Set t.val.Positions :=
+def nominalDomain (t : PlanarSyntacticObject) (hq : t.val.Positions) : Set t.val.Positions :=
   {q | t.val.CCommands hq q ∧ isNominal t q = true}
 
-instance (t : LinearizedSyntacticObject) (hq : t.val.Positions) :
+instance (t : PlanarSyntacticObject) (hq : t.val.Positions) :
     DecidablePred (· ∈ nominalDomain t hq) :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
@@ -259,7 +259,7 @@ def probeStep (v : Voice) (x : Clause) (h : LexicalItem.Token) (hp : TreePath)
   else st
 
 /-- The vP, the patient in Spec,vP. -/
-def vP : LinearizedSyntacticObject := {↑patient, ↑stem}
+def vP : PlanarSyntacticObject := {↑patient, ↑stem}
 
 /-- The VoiceP of Voice `v`, the agent its specifier. -/
 def voiceP (v : Voice) (x : Clause) : Stage :=
@@ -377,7 +377,7 @@ theorem canTarget_localPatient : ∀ ia, .part ≤ ia → ∀ r, CanTarget cEpp 
   decide +kernel
 
 /-- The arguments of an object in their surface order. -/
-def argumentOrder (t : LinearizedSyntacticObject) : List LexicalItem.Token :=
+def argumentOrder (t : PlanarSyntacticObject) : List LexicalItem.Token :=
   t.yield.filter (· ∈ [agent, patient])
 
 -- (9), (11)

@@ -36,7 +36,7 @@ namespace Minimalist
 
 open Core.Order RoseTree
 
-variable (hd : HeadFunction) (t : LinearizedSyntacticObject)
+variable (hd : HeadFunction) (t : PlanarSyntacticObject)
 
 /-- A pronounced head occupies the position. -/
 def IsHeadPosition (p : TreePath) : Prop := ∃ x ∈ tokenList t.val, x.1 = p

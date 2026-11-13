@@ -44,7 +44,7 @@ open Minimalist.Probe (depthFirst breadthFirst depth breadthFirst_lt_of_depth_lt
 
 /-! ### Breadth-first search and Closest (2) -/
 
-variable {t : LinearizedSyntacticObject} {p : Probe t.val.Positions} {s : Set t.val.Positions}
+variable {t : PlanarSyntacticObject} {p : Probe t.val.Positions} {s : Set t.val.Positions}
   {a b : t.val.Positions}
 
 -- (2)
@@ -68,7 +68,7 @@ theorem eq_complement_of_finds_breadthFirst (ha : p.Finds s (breadthFirst ·.val
 def leaf7 (i : ℕ) : LexicalItem.Token := ⟨.of .N [], i⟩
 
 /-- The search space of (7): node 2 dominates nodes 3 and 4, node 5 nodes 6 and 7. -/
-def tree7 : LinearizedSyntacticObject := (leaf7 3 * leaf7 4) * (leaf7 6 * leaf7 7)
+def tree7 : PlanarSyntacticObject := (leaf7 3 * leaf7 4) * (leaf7 6 * leaf7 7)
 
 /-- α, node 4, which bears [F]. -/
 def α : tree7.val.Positions := ⟨⟨[0, 1]⟩, rfl⟩

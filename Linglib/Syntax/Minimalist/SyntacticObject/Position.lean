@@ -12,9 +12,9 @@ public import Linglib.Syntax.Projection
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
-# Positions of linearized syntactic objects
+# Positions of planar syntactic objects
 
-The positions of a linearized syntactic object, the paths to its vertices, form a rooted tree
+The positions of a planar syntactic object, the paths to its vertices, form a rooted tree
 (`RoseTree.Positions`). Each carries a term, the subtree there read as a syntactic object: the
 terms at the covers of a position are the terms its term immediately contains, and the terms at
 the positions below it are the terms its term contains, so c-command by a term occurring once is
@@ -23,23 +23,23 @@ head function (`SyntacticObject/Projection.lean`).
 
 ## Main definitions
 
-* `LinearizedSyntacticObject.termAt`: the term at a position.
-* `LinearizedSyntacticObject.branching`, `LinearizedSyntacticObject.above`: the branching positions
-  of a linearized object, and the generators above a position, its closeness key.
+* `PlanarSyntacticObject.termAt`: the term at a position.
+* `PlanarSyntacticObject.branching`, `PlanarSyntacticObject.above`: the branching positions
+  of a planar object, and the generators above a position, its closeness key.
 * `Minimalist.complement`: the sister of a head.
 
 ## Main statements
 
-* `LinearizedSyntacticObject.terms_eq_map_termAt`: the terms are the terms at the positions.
-* `LinearizedSyntacticObject.immediatelyContains_termAt`,
-  `LinearizedSyntacticObject.containsOrEq_termAt`: terms contain one another as their positions
+* `PlanarSyntacticObject.terms_eq_map_termAt`: the terms are the terms at the positions.
+* `PlanarSyntacticObject.immediatelyContains_termAt`,
+  `PlanarSyntacticObject.containsOrEq_termAt`: terms contain one another as their positions
   dominate one another.
-* `LinearizedSyntacticObject.exists_cCommands_termAt_of_cCommands`,
-  `LinearizedSyntacticObject.cCommands_termAt_of_cCommands`: c-command between terms is witnessed by
+* `PlanarSyntacticObject.exists_cCommands_termAt_of_cCommands`,
+  `PlanarSyntacticObject.cCommands_termAt_of_cCommands`: c-command between terms is witnessed by
   c-command between occurrences, and conversely when sister terms are distinct: Collins and
   Stabler's theorem relating c-command between objects to c-command between occurrences.
-* `LinearizedSyntacticObject.isBranching_of_not_isMax`: a position that is not a leaf branches.
-* `LinearizedSyntacticObject.above_branching_lt_iff`: closeness under the branching positions is
+* `PlanarSyntacticObject.isBranching_of_not_isMax`: a position that is not a leaf branches.
+* `PlanarSyntacticObject.above_branching_lt_iff`: closeness under the branching positions is
   asymmetric c-command.
 * `Minimalist.mem_cCommandDomain_iff_complement_le`: a head c-commands exactly the positions below
   its complement.
@@ -57,11 +57,11 @@ open RoseTree SyntacticObject Core.Order PhraseStructure
 
 /-! ### Terms at positions -/
 
-namespace LinearizedSyntacticObject
+namespace PlanarSyntacticObject
 
 open RoseTree SyntacticObject
 
-variable {t : LinearizedSyntacticObject} {p : t.val.Positions} {y : SyntacticObject}
+variable {t : PlanarSyntacticObject} {p : t.val.Positions} {y : SyntacticObject}
 
 theorem isSyntacticObject_subtree (p : t.val.Positions) :
     IsSyntacticObject (UnorderedTree.mk p.subtree) :=
@@ -81,14 +81,14 @@ def termAt (p : t.val.Positions) : SyntacticObject :=
 
 variable (t) in
 /-- The term of `t` at a position, with the order of daughters it has in `t`. -/
-def linearizedTermAt (p : t.val.Positions) : LinearizedSyntacticObject :=
-  LinearizedSyntacticObject.ofVal _ (isSyntacticObject_subtree p)
+def planarTermAt (p : t.val.Positions) : PlanarSyntacticObject :=
+  PlanarSyntacticObject.ofVal _ (isSyntacticObject_subtree p)
 
-@[simp] theorem val_linearizedTermAt : (t.linearizedTermAt p).val = p.subtree :=
-  LinearizedSyntacticObject.val_ofVal _ _
+@[simp] theorem val_planarTermAt : (t.planarTermAt p).val = p.subtree :=
+  PlanarSyntacticObject.val_ofVal _ _
 
-@[simp] theorem toSyntacticObject_linearizedTermAt :
-    (t.linearizedTermAt p).toSyntacticObject = t.termAt p :=
+@[simp] theorem toSyntacticObject_planarTermAt :
+    (t.planarTermAt p).toSyntacticObject = t.termAt p :=
   toSyntacticObject_ofVal _ _
 
 theorem length_children_subtree (hp : ¬ IsMax p) : p.subtree.children.length = 2 := by
@@ -135,7 +135,7 @@ theorem mem_terms_iff : y ∈ t.toSyntacticObject.terms ↔ ∃ q, t.termAt q = 
   simp
 
 variable (t) in
-/-- The terms of a linearized object are the terms at its positions, one per position. -/
+/-- The terms of a planar object are the terms at its positions, one per position. -/
 theorem terms_eq_map_termAt :
     t.toSyntacticObject.terms = (Finset.univ : Finset t.val.Positions).val.map t.termAt := by
   apply Multiset.map_injective SyntacticObject.val_injective
@@ -296,13 +296,13 @@ theorem IsHeadAt.exists_covBy_le (h : t.IsHeadAt q) (ha : ¬ IsMax a) (haq : a �
     ∃ e, a ⋖ e ∧ e ≤ q :=
   exists_covBy_le_of_lt (lt_of_le_of_ne haq fun he ↦ ha (he ▸ h.isMax))
 
-end LinearizedSyntacticObject
+end PlanarSyntacticObject
 
 /-! ### Closeness at positions -/
 
-namespace LinearizedSyntacticObject
+namespace PlanarSyntacticObject
 
-variable (t : LinearizedSyntacticObject)
+variable (t : PlanarSyntacticObject)
 
 /-- The generators in `P` properly dominating a position, the key under which a probe searching the
 object compares goals (`PhraseStructure.ancestors`). -/
@@ -314,7 +314,7 @@ theorem coe_above (P : Set TreePath) [DecidablePred (· ∈ P)] (q : t.val.Posit
   ext x
   simp [above, ancestors, and_comm]
 
-/-- The branching positions of a linearized object, the generators of c-command. -/
+/-- The branching positions of a planar object, the generators of c-command. -/
 def branching : Set TreePath := {x | t.val.IsBranchingAt x}
 
 instance : DecidablePred (· ∈ t.branching) :=
@@ -334,13 +334,13 @@ theorem above_branching_lt_of_cCommands (hqg : t.val.CCommands q g)
     (hgq : ¬ t.val.CCommands g q) : t.above t.branching q < t.above t.branching g :=
   (above_branching_lt_iff hqg.2.1 hqg.2.2).2 ⟨hqg, hgq⟩
 
-end LinearizedSyntacticObject
+end PlanarSyntacticObject
 
 /-! ### Complements -/
 
 section Complement
 
-variable (t : LinearizedSyntacticObject)
+variable (t : PlanarSyntacticObject)
 
 /-- The complement of the head at `p` is its sister. -/
 def complement (p : TreePath) : TreePath := ⟨p.toList.dropLast ++ [1 - p.toList.getLastD 0]⟩
@@ -358,7 +358,7 @@ theorem complement_complement {h : TreePath} (hh : h ∈ t.val.validPaths) (h0 :
   have hp0 : hp ≠ ⊥ := fun he ↦ h0 (congrArg Subtype.val he)
   have hm : Order.pred hp ⋖ hp :=
     Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using hp0)
-  have hlen := LinearizedSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
+  have hlen := PlanarSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
   obtain ⟨i, hi⟩ := TreePath.covBy_iff.1 (Positions.covBy_iff.1 hm)
   have hlt : i < 2 := by
     have hv := hp.2
@@ -383,7 +383,7 @@ theorem mem_cCommandDomain_iff_complement_le {h q : TreePath} (hh : h ∈ t.val.
   have hm : Order.pred hp ⋖ hp :=
     Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using hp0)
   have hmv : (Order.pred hp).val = h.parent := Positions.pred_val hp
-  have hlen := LinearizedSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
+  have hlen := PlanarSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
   have hcv : complement h ∈ t.val.validPaths := by
     refine mem_validPaths_append_singleton_iff.2 ⟨(Order.pred hp).subtree, ?_, ?_⟩
     · rw [← TreePath.parent_toList, ← hmv]
@@ -398,13 +398,13 @@ theorem mem_cCommandDomain_iff_complement_le {h q : TreePath} (hh : h ∈ t.val.
     simp only [hp, hc, complement, List.getLastD_concat] at this
     omega
   rw [RoseTree.mem_cCommandDomain, cCommands_iff_parent_lt h0
-    (LinearizedSyntacticObject.isBranchingAt_parent (t := t) hp0)]
+    (PlanarSyntacticObject.isBranchingAt_parent (t := t) hp0)]
   set qp : t.val.Positions := ⟨q, hq⟩
   constructor
   · rintro ⟨hlt, hnl⟩
     obtain ⟨e, hme, heq⟩ := exists_covBy_le_of_lt
       (show Order.pred hp < qp from Subtype.coe_lt_coe.1 (hmv ▸ hlt))
-    rcases LinearizedSyntacticObject.eq_or_eq_of_covBy hm hmc hhc hme with rfl | rfl
+    rcases PlanarSyntacticObject.eq_or_eq_of_covBy hm hmc hhc hme with rfl | rfl
     · exact absurd heq hnl
     · exact heq
   · intro hcq

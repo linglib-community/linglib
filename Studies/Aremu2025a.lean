@@ -54,7 +54,7 @@ a modal that its associate scopes below](##split_scope).
 
 namespace Aremu2025a
 
-open Core.Order Reflex OrderDual Focus Set Minimalist Minimalist.LinearizedSyntacticObject
+open Core.Order Reflex OrderDual Focus Set Minimalist Minimalist.PlanarSyntacticObject
 open BrananErlewine2023 (LeftAlignedOn prominent xp)
 
 /-! ### Derivations -/
@@ -110,24 +110,24 @@ def subjectDP : Site → LexicalItem.Token
   | _ => focusDP
 
 /-- A clause, ch. 1 (27). -/
-def tp (s : LexicalItem.Token) (vp : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
+def tp (s : LexicalItem.Token) (vp : PlanarSyntacticObject) : PlanarSyntacticObject :=
   s * (tense * (asp * (s * (littleV * vp))))
 
 /-- The clause holding the site of the focus. -/
-def inner : Associate → Site → LinearizedSyntacticObject
+def inner : Associate → Site → PlanarSyntacticObject
   | .subject, s => tp (subjectDP s) (lexicalV * otherDP)
   | .object, _ => tp otherDP (lexicalV * focusDP)
 
 /-- A clause with the site of the focus in a conjunct. -/
-def coordinated : Associate → Site → LinearizedSyntacticObject
+def coordinated : Associate → Site → PlanarSyntacticObject
   | .subject, s =>
-    let c : LinearizedSyntacticObject := subjectDP s * (ati * conjunct)
+    let c : PlanarSyntacticObject := subjectDP s * (ati * conjunct)
     c * (tense * (asp * (c * (littleV * (lexicalV * otherDP)))))
   | .object, _ => tp otherDP (lexicalV * (focusDP * (ati * conjunct)))
 
 /-- The clause below the focus head; a moving focus stops at the edge of a complement. -/
-def body (d : Domain) (a : Associate) (s : Site) : LinearizedSyntacticObject :=
-  let embed (c : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
+def body (d : Domain) (a : Associate) (s : Site) : PlanarSyntacticObject :=
+  let embed (c : PlanarSyntacticObject) : PlanarSyntacticObject :=
     tp matrixDP (matrixV * (if FocusMoves a s then focusDP * (wipe * c) else wipe * c))
   match d with
   | .matrix => inner a s
@@ -138,17 +138,17 @@ def body (d : Domain) (a : Associate) (s : Site) : LinearizedSyntacticObject :=
   | .adjunct => tp matrixDP ((before * inner a s) * (lexicalV * otherDP))
 
 /-- A focus in place under the silent head (201), any other in Spec,FocP (187), (190). -/
-def sentence (d : Domain) (a : Associate) (s : Site) : LinearizedSyntacticObject :=
+def sentence (d : Domain) (a : Associate) (s : Site) : PlanarSyntacticObject :=
   if s = .inSitu then nullFoc * body d a s else focusDP * (ni * body d a s)
 
 /-- The island heads of (175), (184)–(186), (191), (192). -/
 def islandHeads : List LexicalItem.Token := [rel, before, ati]
 
 /-- No link is too short (183), and none leaves an island. -/
-def Derivable (t : LinearizedSyntacticObject) : Prop :=
+def Derivable (t : PlanarSyntacticObject) : Prop :=
   ObeysAntiLocality .raising t ∧ ¬ CrossesIsland .raising t focusDP (· ∈ islandHeads)
 
-instance (t : LinearizedSyntacticObject) : Decidable (Derivable t) :=
+instance (t : PlanarSyntacticObject) : Decidable (Derivable t) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Resumption is the last resort where a gap is prohibited (p. 115). -/
@@ -163,7 +163,7 @@ theorem subject_too_close :
   decide +kernel
 
 /-- The derivation a row records. -/
-def derivationOf? (r : Datum) : Option LinearizedSyntacticObject := do
+def derivationOf? (r : Datum) : Option PlanarSyntacticObject := do
   let d ← r.parse? "domain" [("matrix", Domain.matrix), ("complement", .complement),
     ("focusClause", .focusClause), ("relative", .relative), ("adjunct", .adjunct),
     ("coordinate", .coordinate)]

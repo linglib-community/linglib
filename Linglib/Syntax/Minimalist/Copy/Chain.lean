@@ -13,7 +13,7 @@ public import Linglib.Core.Data.RoseTree.Get
 public import Mathlib.Order.Setoid.Basic
 
 /-!
-# Chains on linearized syntactic objects
+# Chains on planar syntactic objects
 
 A chain is the set of positions of one object. On a copy object, where Internal Merge leaves the
 mover in place, two positions are in one chain when they hold one term (`chainRel`, the kernel of
@@ -31,7 +31,7 @@ Phase Impenetrability Condition on links is in `Phase/Chain.lean`.
 
 ## Main definitions
 
-* `Minimalist.LinearizedSyntacticObject.chainRel`: the chains of a copy object.
+* `Minimalist.PlanarSyntacticObject.chainRel`: the chains of a copy object.
 * `Minimalist.tokenList`, `Minimalist.traceList`: the pronounced and the deleted copies.
 * `occurrences`, `traces`, `chain`, `Moves`, `IsShared`: the copies of a token.
 * `occurrencesWith`: the pronounced copies of the tokens a predicate holds of.
@@ -67,9 +67,9 @@ open RoseTree SyntacticObject Core.Order PhraseStructure
 
 /-! ### Chains of copies -/
 
-namespace LinearizedSyntacticObject
+namespace PlanarSyntacticObject
 
-variable {t : LinearizedSyntacticObject}
+variable {t : PlanarSyntacticObject}
 
 variable (t) in
 /-- Two positions are in one chain when they hold one term. -/
@@ -104,7 +104,7 @@ theorem self_mem_copyRel_iff {x : SyntacticObject}
   rw [← chainRel_iff.1 hpq, hp] at h
   exact ⟨h, rfl⟩
 
-end LinearizedSyntacticObject
+end PlanarSyntacticObject
 
 /-! ### Copies -/
 
@@ -138,7 +138,7 @@ def tokenList : RoseTree Vertex → List (TreePath × LexicalItem.Token) :=
 def traceList : RoseTree Vertex → List (TreePath × LexicalItem.Token) :=
   positions (Sum.elim (fun _ ↦ none) id)
 
-variable (hd : HeadFunction) (t : LinearizedSyntacticObject) (tok : LexicalItem.Token)
+variable (hd : HeadFunction) (t : PlanarSyntacticObject) (tok : LexicalItem.Token)
 
 /-- The positions of the pronounced copies of `tok`. -/
 def occurrences : List TreePath :=

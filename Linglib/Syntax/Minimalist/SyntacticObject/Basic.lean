@@ -23,26 +23,26 @@ alphabet `L`, or the bare label `Vertex.bare` on a binary internal node. The rig
 trace: the index-free `Vertex.trace`, or the trace `Vertex.traceOf a` of a label, the cancellation
 `T/T_v` remembering the head of `T_v`. Traces are exactly the right summand, the convention of the
 trace coproduct. `SyntacticObject L` is the well-formed unordered tree over `Vertex L`, the object
-Merge builds, and `LinearizedSyntacticObject L` the well-formed ordered tree, the form
+Merge builds, and `PlanarSyntacticObject L` the well-formed ordered tree, the form
 linearization produces and PF reads, Marcolli, Chomsky and Berwick's planar embedding.
 Well-formedness is a local condition, each vertex licensing its children (`Vertex.Licenses`), so
-it descends to the quotient; `LinearizedSyntacticObject.toSyntacticObject` forgets the order and
+it descends to the quotient; `PlanarSyntacticObject.toSyntacticObject` forgets the order and
 is a homomorphism for the vocabulary the two carriers share, `leaf`, `trace`, `traceOf` and
 `merge`.
 
 ## Main definitions
 
 * `Minimalist.SyntacticObject.Vertex`, `Minimalist.IsSyntacticObject`
-* `Minimalist.SyntacticObject`, `Minimalist.LinearizedSyntacticObject`: the unordered and the
+* `Minimalist.SyntacticObject`, `Minimalist.PlanarSyntacticObject`: the unordered and the
   ordered carrier, each with `leaf`, `trace`, `traceOf` and `merge`.
-* `Minimalist.LinearizedSyntacticObject.toSyntacticObject`: forgetting the order.
-* `Minimalist.SyntacticObject.map`, `Minimalist.LinearizedSyntacticObject.map`: relabelling along
+* `Minimalist.PlanarSyntacticObject.toSyntacticObject`: forgetting the order.
+* `Minimalist.SyntacticObject.map`, `Minimalist.PlanarSyntacticObject.map`: relabelling along
   a map of lexical alphabets, the induced homomorphism of free commutative magmas.
 
 ## Main results
 
 * `Minimalist.SyntacticObject.ind`, `exists_form`: induction and case analysis over the shapes.
-* `Minimalist.LinearizedSyntacticObject.toSyntacticObject_merge`: forgetting the order commutes
+* `Minimalist.PlanarSyntacticObject.toSyntacticObject_merge`: forgetting the order commutes
   with Merge.
 
 ## Implementation notes
@@ -199,58 +199,58 @@ end Leaf
 
 end SyntacticObject
 
-/-- The linearized syntactic objects over `L`, the free magma on the leaves:
+/-- The planar syntactic objects over `L`, the free magma on the leaves:
 [marcolli-chomsky-berwick-2025] §1.12's planar syntactic objects. -/
-abbrev LinearizedSyntacticObject (L : Type := LexicalItem.Token) : Type :=
+abbrev PlanarSyntacticObject (L : Type := LexicalItem.Token) : Type :=
   FreeMagma (SyntacticObject.Leaf L)
 
 /-- The syntactic objects over `L`, the free commutative magma on the leaves. -/
 abbrev SyntacticObject (L : Type := LexicalItem.Token) : Type :=
   FreeCommMagma (SyntacticObject.Leaf L)
 
-/-! ### Linearized objects -/
+/-! ### Planar objects -/
 
-namespace LinearizedSyntacticObject
+namespace PlanarSyntacticObject
 
 open SyntacticObject (Vertex Leaf isSyntacticObject_mk_leaf isSyntacticObject_mk_merge)
 
 variable {L : Type}
 
 /-- A lexical leaf. -/
-@[coe] def leaf (a : L) : LinearizedSyntacticObject L := FreeMagma.of (.lex a)
+@[coe] def leaf (a : L) : PlanarSyntacticObject L := FreeMagma.of (.lex a)
 
 /-- The index-free trace. -/
-def trace : LinearizedSyntacticObject L := FreeMagma.of .trace
+def trace : PlanarSyntacticObject L := FreeMagma.of .trace
 
 /-- The trace of `a`. -/
-def traceOf (a : L) : LinearizedSyntacticObject L := FreeMagma.of (.traceOf a)
+def traceOf (a : L) : PlanarSyntacticObject L := FreeMagma.of (.traceOf a)
 
 /-- Merge, with the daughters in the given order, also written `*`. -/
-abbrev merge (l r : LinearizedSyntacticObject L) : LinearizedSyntacticObject L := l * r
+abbrev merge (l r : PlanarSyntacticObject L) : PlanarSyntacticObject L := l * r
 
-/-- The ordered tree of a linearized object. -/
-def val : LinearizedSyntacticObject L → RoseTree (Vertex L)
+/-- The ordered tree of a planar object. -/
+def val : PlanarSyntacticObject L → RoseTree (Vertex L)
   | .of x => .node x.toVertex []
   | .mul l r => .node Vertex.bare [val l, val r]
 
 @[simp] theorem leaf_val (a : L) :
     (leaf a).val = .node (Vertex.lex a) [] := rfl
-@[simp] theorem trace_val : (trace : LinearizedSyntacticObject L).val = .node Vertex.trace [] :=
+@[simp] theorem trace_val : (trace : PlanarSyntacticObject L).val = .node Vertex.trace [] :=
   rfl
 @[simp] theorem traceOf_val (a : L) :
     (traceOf a).val = .node (Vertex.traceOf a) [] :=
   rfl
-@[simp] theorem merge_val (l r : LinearizedSyntacticObject L) :
+@[simp] theorem merge_val (l r : PlanarSyntacticObject L) :
     (merge l r).val = .node Vertex.bare [l.val, r.val] := rfl
 
-/-- The tree of a linearized object is well formed. -/
-theorem isSyntacticObject_val (p : LinearizedSyntacticObject L) :
+/-- The tree of a planar object is well formed. -/
+theorem isSyntacticObject_val (p : PlanarSyntacticObject L) :
     IsSyntacticObject (UnorderedTree.mk p.val) := by
   induction p using FreeMagma.recOnMul with
   | ih1 x => exact isSyntacticObject_mk_leaf x.toVertex_ne_bare
   | ih2 l r hl hr => exact (isSyntacticObject_mk_merge _ _).2 ⟨hl, hr⟩
 
-theorem val_injective : Function.Injective (val : LinearizedSyntacticObject L → _) := by
+theorem val_injective : Function.Injective (val : PlanarSyntacticObject L → _) := by
   intro p
   induction p using FreeMagma.recOnMul with
   | ih1 x =>
@@ -267,15 +267,15 @@ theorem val_injective : Function.Injective (val : LinearizedSyntacticObject L �
       rw [hl h₁, hr h₂]; rfl
 
 /-- Forgetting the order is the quotient map to the syntactic object. -/
-@[coe] def toSyntacticObject (p : LinearizedSyntacticObject L) : SyntacticObject L :=
+@[coe] def toSyntacticObject (p : PlanarSyntacticObject L) : SyntacticObject L :=
   FreeMagma.toFreeCommMagma p
 
 theorem toSyntacticObject_surjective :
-    Function.Surjective (toSyntacticObject : LinearizedSyntacticObject L → SyntacticObject L) :=
+    Function.Surjective (toSyntacticObject : PlanarSyntacticObject L → SyntacticObject L) :=
   FreeMagma.toFreeCommMagma_surjective
 
-/-- Two linearized objects with one syntactic object have one unordered tree. -/
-theorem mk_val_eq_of_commCon {p q : LinearizedSyntacticObject L}
+/-- Two planar objects with one syntactic object have one unordered tree. -/
+theorem mk_val_eq_of_commCon {p q : PlanarSyntacticObject L}
     (h : Magma.commCon (FreeMagma (Leaf L)) p q) :
     UnorderedTree.mk p.val = UnorderedTree.mk q.val := by
   induction h with
@@ -292,7 +292,7 @@ theorem mk_val_eq_of_commCon {p q : LinearizedSyntacticObject L}
       = UnorderedTree.mk (.node Vertex.bare [val x, val z])
     rw [← UnorderedTree.node_pair_mk, ← UnorderedTree.node_pair_mk, ih₁, ih₂]
 
-end LinearizedSyntacticObject
+end PlanarSyntacticObject
 
 /-! ### The shapes -/
 
@@ -315,11 +315,11 @@ abbrev merge (l r : SyntacticObject L) : SyntacticObject L := l * r
 
 /-- The unordered tree of a syntactic object. -/
 def val (s : SyntacticObject L) : UnorderedTree (Vertex L) :=
-  Quotient.liftOn s (fun p : LinearizedSyntacticObject L ↦ UnorderedTree.mk p.val)
-    fun _ _ h ↦ LinearizedSyntacticObject.mk_val_eq_of_commCon h
+  Quotient.liftOn s (fun p : PlanarSyntacticObject L ↦ UnorderedTree.mk p.val)
+    fun _ _ h ↦ PlanarSyntacticObject.mk_val_eq_of_commCon h
 
-@[simp] theorem _root_.Minimalist.LinearizedSyntacticObject.toSyntacticObject_val
-    (p : LinearizedSyntacticObject L) : p.toSyntacticObject.val = UnorderedTree.mk p.val := rfl
+@[simp] theorem _root_.Minimalist.PlanarSyntacticObject.toSyntacticObject_val
+    (p : PlanarSyntacticObject L) : p.toSyntacticObject.val = UnorderedTree.mk p.val := rfl
 
 @[simp] theorem leaf_val (a : L) :
     (leaf a).val = UnorderedTree.leaf (Vertex.lex a) :=
@@ -342,13 +342,13 @@ theorem isSyntacticObject_merge_iff (a b : UnorderedTree (Vertex L)) :
 
 @[simp] theorem merge_val (l r : SyntacticObject L) :
     (merge l r).val = UnorderedTree.node Vertex.bare {l.val, r.val} := by
-  obtain ⟨l, rfl⟩ := LinearizedSyntacticObject.toSyntacticObject_surjective l
-  obtain ⟨r, rfl⟩ := LinearizedSyntacticObject.toSyntacticObject_surjective r
+  obtain ⟨l, rfl⟩ := PlanarSyntacticObject.toSyntacticObject_surjective l
+  obtain ⟨r, rfl⟩ := PlanarSyntacticObject.toSyntacticObject_surjective r
   exact (UnorderedTree.node_pair_mk _ _ _).symm
 
 /-- The tree of a syntactic object is well formed. -/
 theorem isSyntacticObject_val (s : SyntacticObject L) : IsSyntacticObject s.val := by
-  obtain ⟨p, rfl⟩ := LinearizedSyntacticObject.toSyntacticObject_surjective s
+  obtain ⟨p, rfl⟩ := PlanarSyntacticObject.toSyntacticObject_surjective s
   exact p.isSyntacticObject_val
 
 @[simp] theorem leaf_inj {a b : L} : leaf a = leaf b ↔ a = b :=
@@ -390,7 +390,7 @@ theorem trace_ne_merge (l r : SyntacticObject L) : (trace : SyntacticObject L) �
 
 end SyntacticObject
 
-namespace LinearizedSyntacticObject
+namespace PlanarSyntacticObject
 
 variable {L : Type}
 
@@ -398,17 +398,17 @@ variable {L : Type}
     (leaf a).toSyntacticObject = SyntacticObject.leaf a := rfl
 
 @[simp] theorem toSyntacticObject_trace :
-    (trace : LinearizedSyntacticObject L).toSyntacticObject = SyntacticObject.trace := rfl
+    (trace : PlanarSyntacticObject L).toSyntacticObject = SyntacticObject.trace := rfl
 
 @[simp] theorem toSyntacticObject_traceOf (a : L) :
     (traceOf a).toSyntacticObject = SyntacticObject.traceOf a := rfl
 
 /-- Forgetting the order commutes with Merge. -/
-@[simp] theorem toSyntacticObject_merge (l r : LinearizedSyntacticObject L) :
+@[simp] theorem toSyntacticObject_merge (l r : PlanarSyntacticObject L) :
     (merge l r).toSyntacticObject = SyntacticObject.merge l.toSyntacticObject r.toSyntacticObject :=
   map_mul FreeMagma.toFreeCommMagma l r
 
-end LinearizedSyntacticObject
+end PlanarSyntacticObject
 
 /-! ### Induction and case analysis -/
 
@@ -472,32 +472,32 @@ end SyntacticObject
 
 /-! ### Objects from trees -/
 
-namespace LinearizedSyntacticObject
+namespace PlanarSyntacticObject
 
 open SyntacticObject (Vertex Leaf length_eq_zero_or_two eq_bare_of_ne_nil
   isSyntacticObject_mk_merge)
 
 variable {L : Type}
 
-/-- One step of reading a linearized object off a tree: a lexical or trace vertex without
+/-- One step of reading a planar object off a tree: a lexical or trace vertex without
 daughters is a leaf, and a bare vertex over two objects is their Merge. -/
-def ofValStep : Vertex L → List (Option (LinearizedSyntacticObject L)) →
-    Option (LinearizedSyntacticObject L)
+def ofValStep : Vertex L → List (Option (PlanarSyntacticObject L)) →
+    Option (PlanarSyntacticObject L)
   | .inl (some a), [] => some (leaf a)
   | .inr none, [] => some trace
   | .inr (some a), [] => some (traceOf a)
   | .inl none, [some l, some r] => some (l * r)
   | _, _ => none
 
-/-- The linearized object with a given tree, if the tree is well formed. -/
-def ofVal? : RoseTree (Vertex L) → Option (LinearizedSyntacticObject L) :=
+/-- The planar object with a given tree, if the tree is well formed. -/
+def ofVal? : RoseTree (Vertex L) → Option (PlanarSyntacticObject L) :=
   RoseTree.fold ofValStep
 
 theorem ofVal?_node (a : Vertex L) (cs : List (RoseTree (Vertex L))) :
     ofVal? (.node a cs) = ofValStep a (cs.map ofVal?) :=
   RoseTree.fold_node _ _ _
 
-@[simp] theorem ofVal?_val (p : LinearizedSyntacticObject L) : ofVal? p.val = some p := by
+@[simp] theorem ofVal?_val (p : PlanarSyntacticObject L) : ofVal? p.val = some p := by
   induction p using FreeMagma.recOnMul with
   | ih1 x => cases x <;> rfl
   | ih2 l r hl hr =>
@@ -505,9 +505,9 @@ theorem ofVal?_node (a : Vertex L) (cs : List (RoseTree (Vertex L))) :
     rw [ofVal?_node, List.map_cons, List.map_cons, List.map_nil, hl, hr]
     rfl
 
-/-- A well-formed tree is the tree of a linearized object. -/
+/-- A well-formed tree is the tree of a planar object. -/
 theorem exists_val_eq {t : RoseTree (Vertex L)} (h : IsSyntacticObject (UnorderedTree.mk t)) :
-    ∃ p : LinearizedSyntacticObject L, p.val = t := by
+    ∃ p : PlanarSyntacticObject L, p.val = t := by
   induction t with
   | node lbl cs ih =>
     rcases length_eq_zero_or_two h with hlen | hlen
@@ -525,9 +525,9 @@ theorem exists_val_eq {t : RoseTree (Vertex L)} (h : IsSyntacticObject (Unordere
       obtain ⟨r, rfl⟩ := ih pr (by simp) hr
       exact ⟨l * r, rfl⟩
 
-/-- The linearized object with the well-formed tree `t`. -/
+/-- The planar object with the well-formed tree `t`. -/
 def ofVal (t : RoseTree (Vertex L)) (_h : IsSyntacticObject (UnorderedTree.mk t)) :
-    LinearizedSyntacticObject L :=
+    PlanarSyntacticObject L :=
   (ofVal? t).getD trace
 
 @[simp] theorem val_ofVal (t : RoseTree (Vertex L)) (h : IsSyntacticObject (UnorderedTree.mk t)) :
@@ -535,7 +535,7 @@ def ofVal (t : RoseTree (Vertex L)) (_h : IsSyntacticObject (UnorderedTree.mk t)
   obtain ⟨p, rfl⟩ := exists_val_eq h
   rw [ofVal, ofVal?_val, Option.getD_some]
 
-@[simp] theorem ofVal_val (p : LinearizedSyntacticObject L) :
+@[simp] theorem ofVal_val (p : PlanarSyntacticObject L) :
     ofVal p.val p.isSyntacticObject_val = p :=
   val_injective (val_ofVal _ _)
 
@@ -546,11 +546,11 @@ theorem ofVal_node_bare (u v : RoseTree (Vertex L))
         (ofVal v ((isSyntacticObject_mk_merge u v).1 h).2) :=
   val_injective (by simp)
 
-/-- Every linearized object is the object of its tree. -/
-theorem exists_eq_ofVal (p : LinearizedSyntacticObject L) : ∃ t h, p = ofVal t h :=
+/-- Every planar object is the object of its tree. -/
+theorem exists_eq_ofVal (p : PlanarSyntacticObject L) : ∃ t h, p = ofVal t h :=
   ⟨p.val, p.isSyntacticObject_val, (ofVal_val p).symm⟩
 
-end LinearizedSyntacticObject
+end PlanarSyntacticObject
 
 namespace SyntacticObject
 
@@ -560,16 +560,16 @@ variable {L : Type}
 def ofVal (t : UnorderedTree (Vertex L)) (_h : IsSyntacticObject t) : SyntacticObject L :=
   Quotient.liftOn t
     (fun r ↦ if h : IsSyntacticObject (UnorderedTree.mk r) then
-      (LinearizedSyntacticObject.ofVal r h).toSyntacticObject else trace)
+      (PlanarSyntacticObject.ofVal r h).toSyntacticObject else trace)
     fun r r' hr ↦ by
       have hmk : UnorderedTree.mk r = UnorderedTree.mk r' := Quotient.sound hr
       by_cases h : IsSyntacticObject (UnorderedTree.mk r)
       · have h' : IsSyntacticObject (UnorderedTree.mk r') := hmk ▸ h
         simp only [h, h', ↓reduceDIte]
         refine val_injective ?_
-        rw [LinearizedSyntacticObject.toSyntacticObject_val,
-          LinearizedSyntacticObject.toSyntacticObject_val, LinearizedSyntacticObject.val_ofVal,
-          LinearizedSyntacticObject.val_ofVal, hmk]
+        rw [PlanarSyntacticObject.toSyntacticObject_val,
+          PlanarSyntacticObject.toSyntacticObject_val, PlanarSyntacticObject.val_ofVal,
+          PlanarSyntacticObject.val_ofVal, hmk]
       · have h' : ¬ IsSyntacticObject (UnorderedTree.mk r') := hmk ▸ h
         simp only [h, h', ↓reduceDIte]
 
@@ -578,17 +578,17 @@ def ofVal (t : UnorderedTree (Vertex L)) (_h : IsSyntacticObject t) : SyntacticO
   induction t using Quotient.inductionOn with
   | _ r =>
     show (if h : IsSyntacticObject (UnorderedTree.mk r) then
-      (LinearizedSyntacticObject.ofVal r h).toSyntacticObject else trace).val = UnorderedTree.mk r
+      (PlanarSyntacticObject.ofVal r h).toSyntacticObject else trace).val = UnorderedTree.mk r
     have h' : IsSyntacticObject (UnorderedTree.mk r) := h
-    simp only [h', ↓reduceDIte, LinearizedSyntacticObject.toSyntacticObject_val,
-      LinearizedSyntacticObject.val_ofVal]
+    simp only [h', ↓reduceDIte, PlanarSyntacticObject.toSyntacticObject_val,
+      PlanarSyntacticObject.val_ofVal]
 
 @[simp] theorem ofVal_val (s : SyntacticObject L) : ofVal s.val s.isSyntacticObject_val = s :=
   val_injective (val_ofVal _ _)
 
-@[simp] theorem _root_.Minimalist.LinearizedSyntacticObject.toSyntacticObject_ofVal
+@[simp] theorem _root_.Minimalist.PlanarSyntacticObject.toSyntacticObject_ofVal
     (t : RoseTree (Vertex L)) (h : IsSyntacticObject (UnorderedTree.mk t)) :
-    (LinearizedSyntacticObject.ofVal t h).toSyntacticObject = ofVal (UnorderedTree.mk t) h :=
+    (PlanarSyntacticObject.ofVal t h).toSyntacticObject = ofVal (UnorderedTree.mk t) h :=
   val_injective (by simp)
 
 /-- Syntactic objects are the well-formed unordered trees. -/
@@ -657,17 +657,17 @@ theorem Leaf.toVertex_map (f : L → L') (x : Leaf L) :
 
 end SyntacticObject
 
-namespace LinearizedSyntacticObject
+namespace PlanarSyntacticObject
 
 open SyntacticObject (Vertex Leaf)
 
 variable {L L' L'' : Type}
 
-/-- The linearized object with its labels relabelled by `f`. -/
-def map (f : L → L') (p : LinearizedSyntacticObject L) : LinearizedSyntacticObject L' :=
+/-- The planar object with its labels relabelled by `f`. -/
+def map (f : L → L') (p : PlanarSyntacticObject L) : PlanarSyntacticObject L' :=
   FreeMagma.map (Leaf.map f) p
 
-@[simp] theorem val_map (f : L → L') (p : LinearizedSyntacticObject L) :
+@[simp] theorem val_map (f : L → L') (p : PlanarSyntacticObject L) :
     (p.map f).val = p.val.map (Vertex.map f) := by
   induction p using FreeMagma.recOnMul with
   | ih1 x => simp [map, val, Leaf.toVertex_map]
@@ -678,26 +678,26 @@ def map (f : L → L') (p : LinearizedSyntacticObject L) : LinearizedSyntacticOb
 
 @[simp] theorem map_leaf (f : L → L') (a : L) : (leaf a).map f = leaf (f a) := rfl
 
-@[simp] theorem map_trace (f : L → L') : (trace : LinearizedSyntacticObject L).map f = trace := rfl
+@[simp] theorem map_trace (f : L → L') : (trace : PlanarSyntacticObject L).map f = trace := rfl
 
 @[simp] theorem map_traceOf (f : L → L') (a : L) : (traceOf a).map f = traceOf (f a) := rfl
 
-@[simp] theorem map_merge (f : L → L') (l r : LinearizedSyntacticObject L) :
+@[simp] theorem map_merge (f : L → L') (l r : PlanarSyntacticObject L) :
     (merge l r).map f = merge (l.map f) (r.map f) := rfl
 
-@[simp] theorem map_id (p : LinearizedSyntacticObject L) : p.map id = p :=
+@[simp] theorem map_id (p : PlanarSyntacticObject L) : p.map id = p :=
   val_injective (by rw [val_map, Vertex.map_id, RoseTree.map_id])
 
-@[simp] theorem map_map (f : L → L') (g : L' → L'') (p : LinearizedSyntacticObject L) :
+@[simp] theorem map_map (f : L → L') (g : L' → L'') (p : PlanarSyntacticObject L) :
     (p.map f).map g = p.map (g ∘ f) :=
   val_injective (by rw [val_map, val_map, val_map, RoseTree.map_map, Vertex.map_comp])
 
 theorem map_injective {f : L → L'} (hf : Function.Injective f) :
-    Function.Injective (map f : LinearizedSyntacticObject L → LinearizedSyntacticObject L') :=
+    Function.Injective (map f : PlanarSyntacticObject L → PlanarSyntacticObject L') :=
   fun p q h ↦ val_injective (RoseTree.map_injective (Vertex.map_injective hf)
     (by rw [← val_map, ← val_map, h]))
 
-end LinearizedSyntacticObject
+end PlanarSyntacticObject
 
 namespace SyntacticObject
 
@@ -708,8 +708,8 @@ magmas that a map of lexical alphabets induces. -/
 def map (f : L → L') (s : SyntacticObject L) : SyntacticObject L' :=
   FreeCommMagma.map (Leaf.map f) s
 
-@[simp] theorem _root_.Minimalist.LinearizedSyntacticObject.toSyntacticObject_map (f : L → L')
-    (p : LinearizedSyntacticObject L) :
+@[simp] theorem _root_.Minimalist.PlanarSyntacticObject.toSyntacticObject_map (f : L → L')
+    (p : PlanarSyntacticObject L) :
     (p.map f).toSyntacticObject = p.toSyntacticObject.map f := by
   induction p using FreeMagma.recOnMul with
   | ih1 x => rfl
@@ -721,10 +721,10 @@ def map (f : L → L') (s : SyntacticObject L) : SyntacticObject L' :=
 
 @[simp] theorem val_map (f : L → L') (s : SyntacticObject L) :
     (s.map f).val = s.val.map (Vertex.map f) := by
-  obtain ⟨p, rfl⟩ := LinearizedSyntacticObject.toSyntacticObject_surjective s
-  rw [← LinearizedSyntacticObject.toSyntacticObject_map,
-    LinearizedSyntacticObject.toSyntacticObject_val, LinearizedSyntacticObject.val_map,
-    LinearizedSyntacticObject.toSyntacticObject_val, UnorderedTree.map_mk]
+  obtain ⟨p, rfl⟩ := PlanarSyntacticObject.toSyntacticObject_surjective s
+  rw [← PlanarSyntacticObject.toSyntacticObject_map,
+    PlanarSyntacticObject.toSyntacticObject_val, PlanarSyntacticObject.val_map,
+    PlanarSyntacticObject.toSyntacticObject_val, UnorderedTree.map_mk]
 
 @[simp] theorem map_leaf (f : L → L') (a : L) : (leaf a).map f = leaf (f a) := rfl
 

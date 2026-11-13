@@ -148,9 +148,9 @@ def evacuee? (evacuate : Bool) : Option LexicalItem.Token :=
 
 /-- The PartP at the point it fronts, over the VP, with the trace of the evacuee if there is
 one. -/
-def partP (evacuate : Bool) : LinearizedSyntacticObject :=
-  let leaf := LinearizedSyntacticObject.leaf
-  let vp : LinearizedSyntacticObject := match p.complement with
+def partP (evacuate : Bool) : PlanarSyntacticObject :=
+  let leaf := PlanarSyntacticObject.leaf
+  let vp : PlanarSyntacticObject := match p.complement with
     | some c =>
         {leaf p.patient, {leaf p.verb,
           if (p.evacuee? evacuate).isSome then .traceOf c.val else leaf c.val}}
@@ -303,7 +303,7 @@ theorem converges_map (a : Analysis) (ev : Bool) :
   cases (p.preRaising a ev).externalize? with
   | none => simp
   | some t =>
-    simpa [hi] using LinearizedSyntacticObject.mem_goals_leafProbe_map_iff (t := t)
+    simpa [hi] using PlanarSyntacticObject.mem_goals_leafProbe_map_iff (t := t)
       (c := .D) (h := infl₀) (x := p.patient) hf hsel.cat
 
 include hf hsel hh in
@@ -469,8 +469,8 @@ theorem ex45_surfacePhon (a : Analysis) :
 
 theorem by_selects_vP :
     (Examples.ex29.judgment = .acceptable ↔
-      (({LinearizedSyntacticObject.leaf ex9.voice, LinearizedSyntacticObject.leaf ex9.patient} :
-        LinearizedSyntacticObject).toSyntacticObject.selHead).isSome) ∧
+      (({PlanarSyntacticObject.leaf ex9.voice, PlanarSyntacticObject.leaf ex9.patient} :
+        PlanarSyntacticObject).toSyntacticObject.selHead).isSome) ∧
     ∃ q ∈ (ex9.voiceP false).externalize?, q.toSyntacticObject.selHead = some ex9.voice := by
   decide
 
@@ -736,9 +736,9 @@ example : ∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row, ∀ m ∈ c.d
       (∀ step ∈ c.derivation.steps, step.IsMerge) ∧
       (∀ step ∈ c.derivation.steps, ∀ m ∈ step.mover?, m.val.value.isLeft) ∧
       ∀ m ∈ c.derivation.replayWithCopies?,
-        LinearizedSyntacticObject.Marked.MarksName m.current.val ∧
-          LinearizedSyntacticObject.Marked.TraceFree m.current.val ∧
-          LinearizedSyntacticObject.Marked.DistinctDaughters m.current.val := by
+        PlanarSyntacticObject.Marked.MarksName m.current.val ∧
+          PlanarSyntacticObject.Marked.TraceFree m.current.val ∧
+          PlanarSyntacticObject.Marked.DistinctDaughters m.current.val := by
     decide +kernel
   intro row hrow c hc m hm x y hxy
   obtain ⟨hd, hmg, hmv, hf⟩ := h row hrow c hc

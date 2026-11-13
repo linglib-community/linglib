@@ -9,7 +9,7 @@ public import Studies.Harley2014
 Under late insertion the syntax operates on terminals with no phonological content, and
 Vocabulary Insertion supplies exponents on the PF branch, each terminal realized in its
 neighborhood. The vignette's architecture runs end to end here: a Hiaki clause is built as a
-linearized syntactic object with silent terminals, handed over as a spell-out domain, and
+planar syntactic object with silent terminals, handed over as a spell-out domain, and
 Harley's suppletive vocabulary realizes the verb by the Subset Principle, reading the internal
 argument's number from the neighborhood (`pf_clause`). Root suppletion is the vignette's argument
 that roots too are inserted late: under early insertion a root carries one listed form through
@@ -49,8 +49,8 @@ def subjTok (n : Number) : LexicalItem.Token :=
 def verbTok (r : Root) : LexicalItem.Token := ⟨.of .V [.D], r.1⟩
 
 /-- The Hiaki clause, the internal argument below the clause-final verb. -/
-def clause (r : Root) (n : Number) : LinearizedSyntacticObject :=
-  (subjTok n : LinearizedSyntacticObject) * verbTok r
+def clause (r : Root) (n : Number) : PlanarSyntacticObject :=
+  (subjTok n : PlanarSyntacticObject) * verbTok r
 
 /-- The feature bundles the terminals hand over: the verb its root's index, the argument its
 number. -/
@@ -68,15 +68,15 @@ theorem pfPhon_clause : ∀ r ∈ [Harley2014.run, Harley2014.walk, Harley2014.k
     ∀ n, pfPhon (clause r n) = [] := by decide
 
 theorem pf_clause : ∀ r ∈ [Harley2014.run, Harley2014.walk, Harley2014.kill, Harley2014.sing],
-    ∀ n, lateSpellout.pf (SpelloutDomain.ofLinearized feats (clause r n))
+    ∀ n, lateSpellout.pf (SpelloutDomain.ofPlanar feats (clause r n))
       = [[], (Harley2014.spellout (unaccusative n) r).toList] := by
   decide
 
 /-- *vuite* and *tenne* from one silent syntax (5a). -/
 example :
-    lateSpellout.pf (SpelloutDomain.ofLinearized feats (clause Harley2014.run .singular))
+    lateSpellout.pf (SpelloutDomain.ofPlanar feats (clause Harley2014.run .singular))
         = [[], ["vuite"]] ∧
-      lateSpellout.pf (SpelloutDomain.ofLinearized feats (clause Harley2014.run .plural))
+      lateSpellout.pf (SpelloutDomain.ofPlanar feats (clause Harley2014.run .plural))
         = [[], ["tenne"]] := by
   decide
 

@@ -8,7 +8,7 @@ module
 public import Linglib.Syntax.Minimalist.SyntacticObject.Position
 
 /-!
-# Projection on linearized syntactic objects
+# Projection on planar syntactic objects
 
 The theories of headedness differ in which daughter of a phrase projects, so a head function, the
 index of the head daughter at each position of each object, is a parameter, and the projections of
@@ -18,7 +18,7 @@ function its analysis assumes.
 
 ## Main definitions
 
-* `Minimalist.HeadFunction`: the head daughter at each position of each linearized object.
+* `Minimalist.HeadFunction`: the head daughter at each position of each planar object.
 * `Minimalist.maximalProjections`, `Minimalist.projectionAt`, `Minimalist.lexicalHeadAt`.
 
 ## References
@@ -33,13 +33,13 @@ namespace Minimalist
 
 open Core.Order PhraseStructure
 
-/-- A head function gives, at each position of a linearized syntactic object, the index of its head
+/-- A head function gives, at each position of a planar syntactic object, the index of its head
 daughter, `none` where no daughter projects. -/
-abbrev HeadFunction := LinearizedSyntacticObject → TreePath → Option ℕ
+abbrev HeadFunction := PlanarSyntacticObject → TreePath → Option ℕ
 
-variable (hd : HeadFunction) (t : LinearizedSyntacticObject)
+variable (hd : HeadFunction) (t : PlanarSyntacticObject)
 
-/-- The maximal projections of a linearized object, the positions that are no position's head
+/-- The maximal projections of a planar object, the positions that are no position's head
 daughter. -/
 def maximalProjections : Set TreePath := {x | IsMaximalProjection (headDaughterRel (hd t)) x}
 

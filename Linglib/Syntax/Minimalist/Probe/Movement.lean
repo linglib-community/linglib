@@ -16,21 +16,21 @@ public import Mathlib.Data.Fintype.Inv
 A head may carry conditions on movement as well as on agreement, each an interaction and a
 satisfaction specification, a relativized EPP. A movement probe attracts the goal it agrees with to
 its specifier, and since Merge is binary it attracts at most one: a probe that agrees with two goals
-attracts neither, the Ban on Multiple Move. On a linearized syntactic object a probe on a head
+attracts neither, the Ban on Multiple Move. On a planar syntactic object a probe on a head
 searches the positions the head c-commands, and the goal it attracts is the mover of an Internal
 Merge step.
 
 ## Main definitions
 
 * `Minimalist.Probe.attract`: the goal a movement probe attracts.
-* `Minimalist.LinearizedSyntacticObject.attractStep?`: the Internal Merge a probe on a head
+* `Minimalist.PlanarSyntacticObject.attractStep?`: the Internal Merge a probe on a head
   triggers. Its domain is the positions the head c-commands, or a part of them such as the nominals.
 
 ## Main results
 
 * `Minimalist.Probe.attract_eq_some_iff`: a probe attracts the one goal it agrees with.
 * `Minimalist.Probe.attract_eq_none_of_ne`: the Ban on Multiple Move.
-* `Minimalist.LinearizedSyntacticObject.attractStep?_eq_some_iff`: the mover of the step is the term
+* `Minimalist.PlanarSyntacticObject.attractStep?_eq_some_iff`: the mover of the step is the term
   at the attracted position.
 
 ## Implementation notes
@@ -89,20 +89,20 @@ theorem attract_eq_none_of_ne (ha : p.AgreesWith s key a) (hb : p.AgreesWith s k
 
 end Minimalist.Probe
 
-namespace Minimalist.LinearizedSyntacticObject
+namespace Minimalist.PlanarSyntacticObject
 
 variable {β : Type*} [Preorder β] [DecidableRel ((· < ·) : β → β → Prop)]
 
 /-- The Internal Merge a movement probe searching the positions `s` of `t` triggers, those its head
 c-commands or a part of them: the term at the goal it attracts re-merges. -/
-def attractStep? (t : LinearizedSyntacticObject) (p : Probe t.val.Positions)
+def attractStep? (t : PlanarSyntacticObject) (p : Probe t.val.Positions)
     (s : Set t.val.Positions) [DecidablePred (· ∈ s)] (key : t.val.Positions → β) : Option Step :=
   (p.attract s key).map fun q ↦ .im (t.termAt q)
 
-theorem attractStep?_eq_some_iff {t : LinearizedSyntacticObject} {p : Probe t.val.Positions}
+theorem attractStep?_eq_some_iff {t : PlanarSyntacticObject} {p : Probe t.val.Positions}
     {s : Set t.val.Positions} [DecidablePred (· ∈ s)] {key : t.val.Positions → β} {step : Step} :
     t.attractStep? p s key = some step ↔
       ∃ q, p.attract s key = some q ∧ step = .im (t.termAt q) := by
   simp [attractStep?, eq_comm]
 
-end Minimalist.LinearizedSyntacticObject
+end Minimalist.PlanarSyntacticObject

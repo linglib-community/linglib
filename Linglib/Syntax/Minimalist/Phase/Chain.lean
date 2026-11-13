@@ -38,11 +38,11 @@ namespace Minimalist
 
 open RoseTree SyntacticObject Core.Order PhraseStructure
 
-variable (hd : HeadFunction) (t : LinearizedSyntacticObject) (tok : LexicalItem.Token)
+variable (hd : HeadFunction) (t : PlanarSyntacticObject) (tok : LexicalItem.Token)
 
 /-- The positions a phase head occurring only at `a` c-commands carry the terms within its
 complement. -/
-theorem withinComplement_iff_exists_mem_cCommandDomain {t : LinearizedSyntacticObject}
+theorem withinComplement_iff_exists_mem_cCommandDomain {t : PlanarSyntacticObject}
     {ℓ : LexicalItem.Token} {a : t.val.Positions} {x : SyntacticObject}
     (hu : ∀ q, t.termAt q = SyntacticObject.leaf ℓ ↔ q = a)
     (hph : (t : SyntacticObject).IsPhaseHead ℓ) :
@@ -54,9 +54,9 @@ theorem withinComplement_iff_exists_mem_cCommandDomain {t : LinearizedSyntacticO
   rw [← mem_phaseInterior, phaseInterior_eq_cCommandDomain fun m hm hmℓ ↦ ?_,
     SyntacticObject.mem_cCommandDomain, ← ha]
   · simpa only [RoseTree.mem_cCommandDomain] using
-      LinearizedSyntacticObject.cCommands_termAt_iff hu'
-  · rw [LinearizedSyntacticObject.eq_termAt_pred_of_immediatelyContains hu' hm (by rwa [ha]),
-      ← LinearizedSyntacticObject.eq_termAt_pred_of_immediatelyContains hu' hm₀ (by rwa [ha])]
+      PlanarSyntacticObject.cCommands_termAt_iff hu'
+  · rw [PlanarSyntacticObject.eq_termAt_pred_of_immediatelyContains hu' hm (by rwa [ha]),
+      ← PlanarSyntacticObject.eq_termAt_pred_of_immediatelyContains hu' hm₀ (by rwa [ha])]
     exact hℓ
 
 /-- A link of the chain of `tok` leaves the phase headed at `h` when it runs from a position the
