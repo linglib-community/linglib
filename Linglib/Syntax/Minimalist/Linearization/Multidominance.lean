@@ -183,7 +183,7 @@ theorem eq_leaf_of_getElem? {p : List ℕ} {s : RoseTree Vertex} {tok : LexicalI
     (hs : t.val[p]? = some s) (hv : s.value = .lex tok) : s = .node (.lex tok) [] := by
   obtain ⟨a, cs⟩ := s
   obtain rfl : a = .lex tok := hv
-  have h := (((isSyntacticObject_mk _).1 t.2).of_getElem? hs).rel_root
+  have h := (((isSyntacticObject_mk _).1 t.isSyntacticObject_val).of_getElem? hs).rel_root
   simp only [Vertex.Licenses, Multiset.coe_eq_zero, List.map_eq_nil_iff] at h
   rw [h]
 

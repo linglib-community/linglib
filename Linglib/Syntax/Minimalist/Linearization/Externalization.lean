@@ -255,12 +255,13 @@ theorem linearize?_merge {d l : SyntacticObject} {pd pl : LinearizedSyntacticObj
 theorem linearize?_of_mem_subtrees {cur : SyntacticObject} {pc : LinearizedSyntacticObject}
     (hc : cur.linearize? side = some pc) {q : RoseTree Vertex} (hq : q ∈ pc.val.subtrees)
     (hqs : IsSyntacticObject (mk q)) :
-    linearize? side ⟨mk q, hqs⟩ = some (⟨q, hqs⟩ : LinearizedSyntacticObject) := by
+    linearize? side (ofVal (mk q) hqs) = some (LinearizedSyntacticObject.ofVal q hqs) := by
   have root : ∀ {cur : SyntacticObject} {pc : LinearizedSyntacticObject},
       cur.linearize? side = some pc → ∀ hqs : IsSyntacticObject (mk pc.val),
-      linearize? side ⟨mk pc.val, hqs⟩ = some (⟨pc.val, hqs⟩ : LinearizedSyntacticObject) :=
+      linearize? side (ofVal (mk pc.val) hqs) = some (LinearizedSyntacticObject.ofVal pc.val hqs) :=
     fun hc _ ↦ by
-      rw [show (⟨_, _⟩ : SyntacticObject) = _ from toSyntacticObject_of_linearize? hc, hc]; rfl
+      rw [← LinearizedSyntacticObject.toSyntacticObject_ofVal,
+        LinearizedSyntacticObject.ofVal_val, toSyntacticObject_of_linearize? hc, hc]
   induction cur using ind generalizing pc with
   | leaf tok | trace | traceOf tok =>
     obtain rfl := Option.some.inj hc

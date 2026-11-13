@@ -85,8 +85,8 @@ theorem mergeOp_node (S S' : SyntacticObject) :
     Merge.mergeOp (R := ℤ) Vertex.bare S.val S'.val
         (of' ({S.val, S'.val} : Forest (UnorderedTree Vertex)))
       = of' (R := ℤ) ({(merge S S').val} : Forest (UnorderedTree Vertex)) := by
-  rw [Merge.mergeOp_pair Vertex.bare S.2.isFullBinary.numUnary_eq_zero
-    S'.2.isFullBinary.numUnary_eq_zero, merge_val]
+  rw [Merge.mergeOp_pair Vertex.bare S.isSyntacticObject_val.isFullBinary.numUnary_eq_zero
+    S'.isSyntacticObject_val.isFullBinary.numUnary_eq_zero, merge_val]
 
 /-- External Merge on the carrier is the trace-cut Merge with the bare root label on the
     two-object workspace, for any trace encoder. -/
@@ -112,8 +112,8 @@ theorem traceCuts_filter_mover (hm : mover.val.value.isLeft)
       = {({mover.val}, (deleteAccessible mover current).val)} := by
   rw [deleteAccessible_val, headTrace_val]
   refine traceCuts_filter_crown_eq_singleton traceEncoder hm ?_
-    (fun h' ↦ hne (Subtype.ext h'))
-  rw [← map_val_terms, Multiset.count_map_eq_count' _ _ Subtype.val_injective, h]
+    (fun h' ↦ hne (val_injective h'))
+  rw [← map_val_terms, Multiset.count_map_eq_count' _ _ val_injective, h]
 
 /-- The unit stage `M_{β,1}` on the current object splits off a uniquely accessible mover beside
     the remainder. -/
@@ -124,7 +124,7 @@ theorem traceMergeOpUnit_current (hm : mover.val.value.isLeft) (h : current.term
       = of' ({mover.val, (deleteAccessible mover current).val} :
           Forest (UnorderedTree Vertex)) := by
   rw [Merge.traceMergeOpUnit, Merge.mergeOpUnitOfCuts_apply_singleton_unique _ _ _
-      (traceCuts_filter_mover hm h hne) (fun h' ↦ hne (Subtype.ext h')),
+      (traceCuts_filter_mover hm h hne) (fun h' ↦ hne (val_injective h')),
     ← of'_singleton, ← of'_add]
   rfl
 
@@ -138,7 +138,7 @@ theorem traceMergeOp_im (hm : mover.val.value.isLeft) (h : current.terms.count m
       = of' (R := ℤ) ({(merge (deleteAccessible mover current) mover).val} :
           Forest (UnorderedTree Vertex)) := by
   rw [Merge.traceMergeOp_im_composition traceEncoder Vertex.bare _ _ _ _
-      (traceCuts_filter_mover hm h hne) rfl (fun h' ↦ hne (Subtype.ext h')), merge_val]
+      (traceCuts_filter_mover hm h hne) rfl (fun h' ↦ hne (val_injective h')), merge_val]
 
 /-! ### Merge beside a spectator workspace -/
 
@@ -155,8 +155,8 @@ private theorem disjoint_pair_subtrees {S S' U : SyntacticObject}
     `S` or `S'`. -/
 theorem traceMergeOp_node_residual (τ : UnorderedTree Vertex → Option LexicalItem.Token)
     (S S' : SyntacticObject) {W : Workspace} (hW : ∀ U ∈ W, S ∉ U.terms ∧ S' ∉ U.terms) :
-    Merge.traceMergeOp (R := ℤ) τ Vertex.bare S.val S'.val (of' (({S, S'} + W).map Subtype.val))
-      = of' (({merge S S'} + W).map Subtype.val) := by
+    Merge.traceMergeOp (R := ℤ) τ Vertex.bare S.val S'.val (of' (({S, S'} + W).map val))
+      = of' (({merge S S'} + W).map val) := by
   rw [Multiset.map_add, Multiset.map_add, Multiset.map_singleton, merge_val]
   refine Merge.traceMergeOp_pair_residual τ Vertex.bare fun U hU ↦ ?_
   obtain ⟨U', hU', rfl⟩ := Multiset.mem_map.mp hU
@@ -169,12 +169,12 @@ theorem traceMergeOp_im_residual (hm : mover.val.value.isLeft) (h : current.term
     (hW : ∀ U ∈ W, deleteAccessible mover current ∉ U.terms ∧ mover ∉ U.terms) :
     Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare (deleteAccessible mover current).val
         mover.val (Merge.traceMergeOpUnit traceEncoder mover.val
-          (of' (({current} + W).map Subtype.val)))
-      = of' (({merge (deleteAccessible mover current) mover} + W).map Subtype.val) := by
+          (of' (({current} + W).map val)))
+      = of' (({merge (deleteAccessible mover current) mover} + W).map val) := by
   rw [Multiset.map_add, Multiset.map_add, Multiset.map_singleton, Multiset.map_singleton,
     merge_val]
   refine Merge.mergeOpOfCuts_im_composition_residual Vertex.bare _ _ _ _
-    (traceCuts_filter_mover hm h hne) rfl (fun h' ↦ hne (Subtype.ext h')) fun U hU ↦ ?_
+    (traceCuts_filter_mover hm h hne) rfl (fun h' ↦ hne (val_injective h')) fun U hU ↦ ?_
   obtain ⟨U', hU', rfl⟩ := Multiset.mem_map.mp hU
   exact disjoint_pair_subtrees (hW U' hU')
 
@@ -185,8 +185,8 @@ theorem traceMergeOp_im_residual (hm : mover.val.value.isLeft) (h : current.term
 theorem traceMergeOp_of'_merge (τ : UnorderedTree Vertex → Option LexicalItem.Token)
     {S S' : SyntacticObject} {W : Workspace} (hle : {S, S'} ≤ W)
     (hW : ∀ U ∈ W - {S, S'}, S ∉ U.terms ∧ S' ∉ U.terms) :
-    Merge.traceMergeOp (R := ℤ) τ Vertex.bare S.val S'.val (of' (W.map Subtype.val))
-      = of' ((W.merge S S').map Subtype.val) := by
+    Merge.traceMergeOp (R := ℤ) τ Vertex.bare S.val S'.val (of' (W.map val))
+      = of' ((W.merge S S').map val) := by
   conv_lhs => rw [← add_tsub_cancel_of_le hle]
   rw [traceMergeOp_node_residual τ S S' hW, Workspace.merge_def, add_comm]
 
@@ -198,8 +198,8 @@ theorem traceMergeOp_im_of'_merge (hm : mover.val.value.isLeft) (h : current.ter
     (hW : ∀ U ∈ W, deleteAccessible mover current ∉ U.terms ∧ mover ∉ U.terms) :
     Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare (deleteAccessible mover current).val
         mover.val (Merge.traceMergeOpUnit traceEncoder mover.val
-          (of' (({current} + W).map Subtype.val)))
-      = of' ((({current} + W).mergeWith (·.headTrace) mover current).map Subtype.val) := by
+          (of' (({current} + W).map val)))
+      = of' ((({current} + W).mergeWith (·.headTrace) mover current).map val) := by
   rw [traceMergeOp_im_residual hm h hne hW, Workspace.mergeWith_internal
     (Multiset.count_pos.1 (by omega)) hne fun U hU ↦ (hW U hU).2, add_comm W, merge_comm]
   rfl
@@ -212,15 +212,15 @@ theorem traceMergeOp_sideward2b_of'_merge {T T' S' : SyntacticObject} {W : Works
     (hS' : S'.val.value.isLeft) (hc : T'.terms.count S' = 1) (hne : T' ≠ S') (hT : T ∉ T'.terms)
     (hS'T : S' ∉ T.terms) (hW : ∀ U ∈ W, T ∉ U.terms ∧ S' ∉ U.terms) :
     Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare T.val S'.val
-        (of' (({T, T'} + W).map Subtype.val))
-      = of' ((({T, T'} + W).mergeWith (·.headTrace) T S').map Subtype.val) := by
+        (of' (({T, T'} + W).map val))
+      = of' ((({T, T'} + W).mergeWith (·.headTrace) T S').map val) := by
   have hout : ({T, T'} + W).mergeWith (·.headTrace) T S' =
       W + {merge T S'} + {deleteAccessible S' T'} := by
     rw [Workspace.mergeWith_sideward_member (Multiset.count_pos.1 (by omega)) hne hT hS'T hW,
       add_comm {_} W, add_right_comm]
     rfl
   have hval : T.val ∉ T'.val.subtrees := by rwa [val_mem_subtrees]
-  have hne' : S'.val ≠ T'.val := fun h ↦ hne (Subtype.ext h).symm
+  have hne' : S'.val ≠ T'.val := fun h ↦ hne (val_injective h).symm
   rw [hout, Merge.traceMergeOp, Multiset.map_add, of'_add, mul_comm,
     Merge.mergeOpOfCuts_of'_mul _ fun U hU ↦ by
       obtain ⟨U', hU', rfl⟩ := Multiset.mem_map.mp hU
@@ -240,8 +240,8 @@ theorem traceMergeOp_sideward3b_of'_merge {T T' S S' : SyntacticObject} {W : Wor
     (hcS' : T'.terms.count S' = 1) (hneS : T ≠ S) (hneS' : T' ≠ S') (hST' : S ∉ T'.terms)
     (hS'T : S' ∉ T.terms) (hW : ∀ U ∈ W, S ∉ U.terms ∧ S' ∉ U.terms) :
     Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare S.val S'.val
-        (of' (({T, T'} + W).map Subtype.val))
-      = of' ((({T, T'} + W).mergeWith (·.headTrace) S S').map Subtype.val) := by
+        (of' (({T, T'} + W).map val))
+      = of' ((({T, T'} + W).mergeWith (·.headTrace) S S').map val) := by
   have hout : ({T, T'} + W).mergeWith (·.headTrace) S S' =
       W + {merge S S'} + {deleteAccessible S T, deleteAccessible S' T'} := by
     rw [Workspace.mergeWith_sideward (Multiset.count_pos.1 (by omega))
@@ -256,7 +256,7 @@ theorem traceMergeOp_sideward3b_of'_merge {T T' S S' : SyntacticObject} {W : Wor
       exact disjoint_pair_subtrees (hW U' hU'),
     Multiset.map_add, Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
     ← Multiset.insert_eq_cons, Merge.mergeOpOfCuts_sideward_3b Vertex.bare
-      (fun h ↦ hneS (Subtype.ext h).symm) (fun h ↦ hneS' (Subtype.ext h).symm) hvS hvS',
+      (fun h ↦ hneS (val_injective h).symm) (fun h ↦ hneS' (val_injective h).symm) hvS hvS',
     traceCuts_filter_mover hS hcS hneS, traceCuts_filter_mover hS' hcS' hneS']
   simp only [Multiset.map_singleton, Multiset.sum_singleton, Multiset.map_add, of'_add,
     of'_singleton, merge_val, Multiset.insert_eq_cons, Multiset.map_cons, of'_cons]
@@ -298,7 +298,8 @@ private theorem odd_numNodes_of_isSyntacticObject {t : RoseTree Vertex}
 
 /-- A syntactic object, being a full binary tree, has an odd number of vertices. -/
 theorem numNodes_odd (s : SyntacticObject) : Odd s.val.numNodes := by
-  obtain ⟨t, ht⟩ := s
+  have ht := s.isSyntacticObject_val
+  generalize s.val = t at ht
   induction t using Quotient.inductionOn with
   | h t => exact odd_numNodes_of_isSyntacticObject ht
 
@@ -310,9 +311,9 @@ theorem not_isSyntacticObject_of_mem_admissibleCuts {T mover : SyntacticObject}
   have hw := admissibleCuts_numNodes T.val p hp
   rw [hcrown, Multiset.map_singleton, Multiset.sum_singleton] at hw
   obtain ⟨a, ha⟩ := numNodes_odd mover
-  obtain ⟨b, hb⟩ := numNodes_odd ⟨p.2, h⟩
+  obtain ⟨b, hb⟩ := numNodes_odd (ofVal p.2 h)
   obtain ⟨c, hc⟩ := numNodes_odd T
-  simp only at hb
+  rw [val_ofVal] at hb
   omega
 
 /-- A tree whose bare vertices have one or two children and whose other vertices have none
@@ -388,8 +389,8 @@ theorem isSyntacticObject_of_mem_deletionCuts {T : SyntacticObject}
     (hcard : Multiset.card p.1 ≤ 1) : IsSyntacticObject p.2 := by
   obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
   clear hp
-  obtain ⟨t, ht⟩ := T
-  change q ∈ admissibleCuts t at hq
+  have ht := T.isSyntacticObject_val
+  generalize T.val = t at ht hq
   induction t using Quotient.inductionOn with
   | h t =>
     rw [UnorderedTree.quot_mk_eq_mk, isSyntacticObject_mk] at ht
@@ -411,9 +412,10 @@ theorem mergeOp_im {current mover : SyntacticObject}
           (Merge.mergeOpUnit mover.val (of' ({current.val} : Forest (UnorderedTree Vertex)))) =
         of' ({(merge Q mover).val} : Forest (UnorderedTree Vertex)) := by
   obtain ⟨hp0, hcrown⟩ := Multiset.mem_filter.mp (h ▸ Multiset.mem_singleton_self p0)
-  refine ⟨⟨p0.2, isSyntacticObject_of_mem_deletionCuts hp0 (by rw [hcrown,
-    Multiset.card_singleton])⟩, rfl, ?_⟩
-  rw [Merge.mergeOp_im_composition Vertex.bare mover.val current.val p0.2 p0 h rfl
-    (fun h' ↦ hne (Subtype.ext h')) mover.2.isFullBinary.numUnary_eq_zero, merge_val]
+  refine ⟨ofVal p0.2 (isSyntacticObject_of_mem_deletionCuts hp0 (by rw [hcrown,
+    Multiset.card_singleton])), val_ofVal _ _, ?_⟩
+  rw [val_ofVal, Merge.mergeOp_im_composition Vertex.bare mover.val current.val p0.2 p0 h rfl
+    (fun h' ↦ hne (val_injective h')) mover.isSyntacticObject_val.isFullBinary.numUnary_eq_zero,
+    merge_val, val_ofVal]
 
 end Minimalist.SyntacticObject
