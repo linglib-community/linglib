@@ -236,9 +236,9 @@ example : deleteAccessible theApple wasEatenTheApple = wasEatenTrace := by decid
 
 /-- The first stage `M_{T₂,1}` splits `T` into `T₂` beside the quotient `T/T₂`. -/
 example :
-    Merge.traceMergeOpUnit (R := ℤ) traceEncoder theApple.val
-        (of' ({wasEatenTheApple.val} : Forest (UnorderedTree Vertex)))
-      = of' ({theApple.val, wasEatenTrace.val} : Forest (UnorderedTree Vertex)) := by
+    Merge.traceMergeOpUnit (R := ℤ) traceEncoder theApple.toUnorderedTree
+        (of' ({wasEatenTheApple.toUnorderedTree} : Forest (UnorderedTree Vertex)))
+      = of' ({theApple.toUnorderedTree, wasEatenTrace.toUnorderedTree} : Forest (UnorderedTree Vertex)) := by
   rw [traceMergeOpUnit_current (by decide) (by decide) (by decide),
     show deleteAccessible theApple wasEatenTheApple = wasEatenTrace by decide]
 
@@ -249,15 +249,15 @@ private def wasEaten : SyntacticObject :=
 
 /-- A syntactic object with its traces erased, on the labels of the trees without traces. -/
 private def erased (T : SyntacticObject) : UnorderedTree (Option LexicalItem.Token) :=
-  (T.val.filterMap Sum.getLeft?).getD (.leaf none)
+  (T.toUnorderedTree.filterMap Sum.getLeft?).getD (.leaf none)
 
 /-- The projection `Π_{d,c}` takes `T/c T₂` to `T/d T₂`, as §1.4.4 displays. -/
-example : (wasEatenTrace.val.filterMap Sum.getLeft?).map UnorderedTree.contractUnary =
+example : (wasEatenTrace.toUnorderedTree.filterMap Sum.getLeft?).map UnorderedTree.contractUnary =
     some (erased wasEaten) := by decide
 
 /-- The projection `Π_{ρ,c}` alone leaves *eaten* under a unary vertex, so it does not reach
     `T/d T₂`, against the equation printed on p. 82. -/
-example : wasEatenTrace.val.filterMap Sum.getLeft? ≠ some (erased wasEaten) := by decide
+example : wasEatenTrace.toUnorderedTree.filterMap Sum.getLeft? ≠ some (erased wasEaten) := by decide
 
 /-- The first stage at the deletion cuts leaves `T₂` beside `T/d T₂`: projecting the stage at the
     trace cuts by `Π_{d,c}` gives the workspace that §1.4.4 displays. -/
@@ -266,15 +266,15 @@ example :
         (of' ({erased wasEatenTheApple} : Forest (UnorderedTree (Option LexicalItem.Token))))
       = of' ({erased theApple, erased wasEaten} :
           Forest (UnorderedTree (Option LexicalItem.Token))) := by
-  have h₁ : (erased theApple).map Sum.inl = theApple.val := by decide
-  have h₂ : (erased wasEatenTheApple).map Sum.inl = wasEatenTheApple.val := by decide
+  have h₁ : (erased theApple).map Sum.inl = theApple.toUnorderedTree := by decide
+  have h₂ : (erased wasEatenTheApple).map Sum.inl = wasEatenTheApple.toUnorderedTree := by decide
   rw [Merge.mergeOpUnit_eq_comp_traceMergeOpUnit traceEncoder (by decide)]
   simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply, rename_of', Multiset.map_singleton, h₁,
     h₂]
   rw [traceMergeOpUnit_current (by decide) (by decide) (by decide),
     show deleteAccessible theApple wasEatenTheApple = wasEatenTrace by decide]
-  have h₃ : theApple.val.filterMap Sum.getLeft? = some (erased theApple) := by decide
-  have h₄ : wasEatenTrace.val.filterMap Sum.getLeft? = some (erased wasEatenTrace) := by decide
+  have h₃ : theApple.toUnorderedTree.filterMap Sum.getLeft? = some (erased theApple) := by decide
+  have h₄ : wasEatenTrace.toUnorderedTree.filterMap Sum.getLeft? = some (erased wasEatenTrace) := by decide
   have h₅ : (erased theApple).contractUnary = erased theApple := by decide
   have h₆ : (erased wasEatenTrace).contractUnary = erased wasEaten := by decide
   simp only [AlgHom.comp_apply, Multiset.insert_eq_cons, ← Multiset.singleton_add, of'_add,
@@ -283,10 +283,10 @@ example :
 /-- The composite `M_{T/T₂,T₂} ∘ M_{T₂,1}` is Internal Merge of *the apple*: it merges `T₂` with the
     quotient `T/T₂` (Proposition 1.4.2). -/
 example :
-    Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare wasEatenTrace.val theApple.val
-        (Merge.traceMergeOpUnit traceEncoder theApple.val
-          (of' ({wasEatenTheApple.val} : Forest (UnorderedTree Vertex))))
-      = of' ({(merge wasEatenTrace theApple).val} : Forest (UnorderedTree Vertex)) := by
+    Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare wasEatenTrace.toUnorderedTree theApple.toUnorderedTree
+        (Merge.traceMergeOpUnit traceEncoder theApple.toUnorderedTree
+          (of' ({wasEatenTheApple.toUnorderedTree} : Forest (UnorderedTree Vertex))))
+      = of' ({(merge wasEatenTrace theApple).toUnorderedTree} : Forest (UnorderedTree Vertex)) := by
   rw [show wasEatenTrace = deleteAccessible theApple wasEatenTheApple by decide]
   exact traceMergeOp_im (by decide) (by decide) (by decide)
 
@@ -294,8 +294,8 @@ example :
     Proposition 1.6.4. -/
 example :
     MinimalYield UnorderedTree.accessibleCount
-      (({wasEatenTheApple} : Workspace).map SyntacticObject.val)
-      (({merge wasEatenTrace theApple} : Workspace).map SyntacticObject.val) := by
+      (({wasEatenTheApple} : Workspace).map SyntacticObject.toUnorderedTree)
+      (({merge wasEatenTrace theApple} : Workspace).map SyntacticObject.toUnorderedTree) := by
   rw [show wasEatenTrace = deleteAccessible theApple wasEatenTheApple by decide]
   exact Step.minimalYield (step := .im theApple) (W := 0)
     ⟨by decide, by decide, by decide, by simp⟩ (by decide) (by simp [Step.items])
@@ -304,8 +304,8 @@ example :
     *the apple* with the remainder, of one greater size (Proposition 1.6.10). -/
 example :
     NoComplexityLoss (fun T ↦ Forest.accessibleSize {T})
-      (({wasEatenTheApple} : Workspace).map SyntacticObject.val)
-      (({merge wasEatenTrace theApple} : Workspace).map SyntacticObject.val) := by
+      (({wasEatenTheApple} : Workspace).map SyntacticObject.toUnorderedTree)
+      (({merge wasEatenTrace theApple} : Workspace).map SyntacticObject.toUnorderedTree) := by
   rw [show wasEatenTrace = deleteAccessible theApple wasEatenTheApple by decide]
   exact Step.noComplexityLoss (step := .im theApple) (W := 0)
     ⟨by decide, by decide, by decide, by simp⟩ (by decide) (by simp [Step.items])
@@ -337,8 +337,8 @@ def eaten : SyntacticObject :=
     of Merge takes both whole (Proposition 1.6.10). -/
 example :
     NoComplexityLoss (fun T ↦ Forest.accessibleSize {T})
-      (({eaten, theApple} : Workspace).map SyntacticObject.val)
-      (({merge theApple eaten} : Workspace).map SyntacticObject.val) :=
+      (({eaten, theApple} : Workspace).map SyntacticObject.toUnorderedTree)
+      (({merge theApple eaten} : Workspace).map SyntacticObject.toUnorderedTree) :=
   Step.noComplexityLoss (step := .em .left theApplePlanar) (W := 0) (by simp [Step.Admissible])
     (by decide) (by simp only [Step.items, Multiset.mem_singleton, forall_eq]; decide)
 
@@ -349,7 +349,7 @@ private def admTok (i : Nat) : LexicalItem.Token := ⟨.of .N [], i⟩
 example :
     (Derivation.mk (admTok 0) [Step.em .left (admTok 1), Step.im (admTok 1)]).Admissible := by
   have hne : merge ↑(admTok 1) ↑(admTok 0) ≠ (↑(admTok 1) : SyntacticObject) := fun h ↦ by
-    have := congrArg (fun s : SyntacticObject ↦ s.val.numNodes) h
+    have := congrArg (fun s : SyntacticObject ↦ s.toUnorderedTree.numNodes) h
     simp at this
   simp only [Derivation.Admissible, Step.AdmissibleList, Step.Admissible, Step.itemsList_cons,
     Step.itemsList_nil, Step.items, Step.apply_em, add_zero, Multiset.notMem_zero,
@@ -359,33 +359,33 @@ example :
   rw [terms_merge, Multiset.count_cons_of_ne hne.symm]
   simp [admTok]
 
-private theorem admissibleCuts_theApple : admissibleCuts theApple.val =
-    {({theD.val, appleN.val}, UnorderedTree.leaf Vertex.bare),
-      ({theD.val}, UnorderedTree.node Vertex.bare {appleN.val}),
-      ({appleN.val}, UnorderedTree.node Vertex.bare {theD.val}),
-      (0, theApple.val)} := by
-  rw [show theApple.val = UnorderedTree.node Vertex.bare {theD.val, appleN.val} from
-      congrArg SyntacticObject.val (by decide : theApple = merge theD appleN),
+private theorem admissibleCuts_theApple : admissibleCuts theApple.toUnorderedTree =
+    {({theD.toUnorderedTree, appleN.toUnorderedTree}, UnorderedTree.leaf Vertex.bare),
+      ({theD.toUnorderedTree}, UnorderedTree.node Vertex.bare {appleN.toUnorderedTree}),
+      ({appleN.toUnorderedTree}, UnorderedTree.node Vertex.bare {theD.toUnorderedTree}),
+      (0, theApple.toUnorderedTree)} := by
+  rw [show theApple.toUnorderedTree = UnorderedTree.node Vertex.bare {theD.toUnorderedTree, appleN.toUnorderedTree} from
+      congrArg SyntacticObject.toUnorderedTree (by decide : theApple = merge theD appleN),
     admissibleCuts_node, forestCuts_pair,
-    show theD.val = UnorderedTree.leaf (Vertex.lex ⟨.of .D [.N] "the", 0⟩) from rfl,
-    show appleN.val = UnorderedTree.leaf (Vertex.lex ⟨.of .N [] "apple", 1⟩) from rfl,
+    show theD.toUnorderedTree = UnorderedTree.leaf (Vertex.lex ⟨.of .D [.N] "the", 0⟩) from rfl,
+    show appleN.toUnorderedTree = UnorderedTree.leaf (Vertex.lex ⟨.of .N [] "apple", 1⟩) from rfl,
     treeCuts, treeCuts, admissibleCuts_leaf, admissibleCuts_leaf]
   simp [Multiset.conv, Multiset.cons_product, -admissibleCuts_mk]
   exact Multiset.cons_swap _ _ _
 
 private theorem filter_admissibleCuts_theApple :
-    (admissibleCuts theApple.val).filter (·.1 = {theD.val}) =
-      {({theD.val}, UnorderedTree.node Vertex.bare {appleN.val})} := by
+    (admissibleCuts theApple.toUnorderedTree).filter (·.1 = {theD.toUnorderedTree}) =
+      {({theD.toUnorderedTree}, UnorderedTree.node Vertex.bare {appleN.toUnorderedTree})} := by
   have hne : (UnorderedTree.leaf (Vertex.lex ⟨.of .N [] "apple", 1⟩) : UnorderedTree Vertex) ≠
       UnorderedTree.leaf (Vertex.lex ⟨.of .D [.N] "the", 0⟩) :=
-    fun h ↦ (by decide : appleN ≠ theD) (SyntacticObject.val_injective h)
+    fun h ↦ (by decide : appleN ≠ theD) (SyntacticObject.toUnorderedTree_injective h)
   have hcard (a b : UnorderedTree Vertex) : a ::ₘ {b} ≠ {a} := fun h ↦ by
     simpa using congrArg Multiset.card h
-  rw [show theApple.val = UnorderedTree.node Vertex.bare {theD.val, appleN.val} from
-      congrArg SyntacticObject.val (by decide : theApple = merge theD appleN),
+  rw [show theApple.toUnorderedTree = UnorderedTree.node Vertex.bare {theD.toUnorderedTree, appleN.toUnorderedTree} from
+      congrArg SyntacticObject.toUnorderedTree (by decide : theApple = merge theD appleN),
     admissibleCuts_node, forestCuts_pair,
-    show theD.val = UnorderedTree.leaf (Vertex.lex ⟨.of .D [.N] "the", 0⟩) from rfl,
-    show appleN.val = UnorderedTree.leaf (Vertex.lex ⟨.of .N [] "apple", 1⟩) from rfl,
+    show theD.toUnorderedTree = UnorderedTree.leaf (Vertex.lex ⟨.of .D [.N] "the", 0⟩) from rfl,
+    show appleN.toUnorderedTree = UnorderedTree.leaf (Vertex.lex ⟨.of .N [] "apple", 1⟩) from rfl,
     treeCuts, treeCuts, admissibleCuts_leaf, admissibleCuts_leaf]
   simp [Multiset.conv, Multiset.cons_product, Multiset.filter_singleton, hne, hcard,
     -admissibleCuts_mk]
@@ -393,65 +393,65 @@ private theorem filter_admissibleCuts_theApple :
 /-- Sideward Merge of type 2(b) at the trace cuts merges *eaten* with *the* beside the remainder
     of *the apple* (Lemma 1.4.4). -/
 example :
-    Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare eaten.val theD.val
-        (of' ({eaten.val, theApple.val} : Forest (UnorderedTree Vertex))) =
-      of' ({(merge eaten theD).val, (deleteAccessible theD theApple).val} :
+    Merge.traceMergeOp (R := ℤ) traceEncoder Vertex.bare eaten.toUnorderedTree theD.toUnorderedTree
+        (of' ({eaten.toUnorderedTree, theApple.toUnorderedTree} : Forest (UnorderedTree Vertex))) =
+      of' ({(merge eaten theD).toUnorderedTree, (deleteAccessible theD theApple).toUnorderedTree} :
         Forest (UnorderedTree Vertex)) := by
   rw [Merge.traceMergeOp, Merge.mergeOpOfCuts_sideward_2b Vertex.bare
-      (by rw [val_mem_subtrees]; decide)
-      (fun h ↦ (by decide : theD ≠ theApple) (SyntacticObject.val_injective h)),
+      (by rw [toUnorderedTree_mem_subtrees]; decide)
+      (fun h ↦ (by decide : theD ≠ theApple) (SyntacticObject.toUnorderedTree_injective h)),
     traceCuts_filter_mover (by decide) (by decide) (by decide), Multiset.map_singleton,
-    Multiset.sum_singleton, merge_val, ← of'_singleton, ← of'_add]
+    Multiset.sum_singleton, toUnorderedTree_merge, ← of'_singleton, ← of'_add]
   rfl
 
 /-- At `ε = 1` weighted Sideward Merge of type 2(b) is Sideward Merge at the admissible cuts. -/
 example :
-    Merge.mergeOpEps (R := ℤ) 1 Vertex.bare eaten.val theD.val
-        (of' ({eaten.val, theApple.val} : Forest (UnorderedTree Vertex))) =
-      of' ({(merge eaten theD).val, UnorderedTree.node Vertex.bare {appleN.val}} :
+    Merge.mergeOpEps (R := ℤ) 1 Vertex.bare eaten.toUnorderedTree theD.toUnorderedTree
+        (of' ({eaten.toUnorderedTree, theApple.toUnorderedTree} : Forest (UnorderedTree Vertex))) =
+      of' ({(merge eaten theD).toUnorderedTree, UnorderedTree.node Vertex.bare {appleN.toUnorderedTree}} :
         Forest (UnorderedTree Vertex)) := by
   rw [Merge.mergeOpEps_one, Merge.mergeOpOfCuts_sideward_2b Vertex.bare
-      (by rw [val_mem_subtrees]; decide)
-      (fun h ↦ (by decide : theD ≠ theApple) (SyntacticObject.val_injective h)),
-    filter_admissibleCuts_theApple, Multiset.map_singleton, Multiset.sum_singleton, merge_val,
+      (by rw [toUnorderedTree_mem_subtrees]; decide)
+      (fun h ↦ (by decide : theD ≠ theApple) (SyntacticObject.toUnorderedTree_injective h)),
+    filter_admissibleCuts_theApple, Multiset.map_singleton, Multiset.sum_singleton, toUnorderedTree_merge,
     ← of'_singleton, ← of'_add]
   rfl
 
 /-- At `ε = 0` Minimal Search removes it (Proposition 1.5.1). -/
 example :
-    Merge.mergeOpEps (R := ℤ) 0 Vertex.bare eaten.val theD.val
-      (of' ({eaten.val, theApple.val} : Forest (UnorderedTree Vertex))) = 0 :=
+    Merge.mergeOpEps (R := ℤ) 0 Vertex.bare eaten.toUnorderedTree theD.toUnorderedTree
+      (of' ({eaten.toUnorderedTree, theApple.toUnorderedTree} : Forest (UnorderedTree Vertex))) = 0 :=
   Merge.mergeOpEps_zero_of'_of_not_le _ (by decide)
 
 /-- At every `ε` it is a multiple of `ε`, so Sideward Merge costs at least one
     (Proposition 1.5.1). -/
-example (ε : ℤ) : ∃ y, Merge.mergeOpEps ε Vertex.bare eaten.val theD.val
-    (of' ({eaten.val, theApple.val} : Forest (UnorderedTree Vertex))) = ε • y :=
+example (ε : ℤ) : ∃ y, Merge.mergeOpEps ε Vertex.bare eaten.toUnorderedTree theD.toUnorderedTree
+    (of' ({eaten.toUnorderedTree, theApple.toUnorderedTree} : Forest (UnorderedTree Vertex))) = ε • y :=
   Merge.mergeOpEps_of'_eq_smul_of_not_le ε _ (by decide)
 
 /-- At `ε = 0` External Merge of the two components survives. -/
 example :
-    Merge.mergeOpEps (R := ℤ) 0 Vertex.bare eaten.val theApple.val
-        (of' ({eaten.val, theApple.val} : Forest (UnorderedTree Vertex))) =
-      of' ({(merge eaten theApple).val} : Forest (UnorderedTree Vertex)) := by
+    Merge.mergeOpEps (R := ℤ) 0 Vertex.bare eaten.toUnorderedTree theApple.toUnorderedTree
+        (of' ({eaten.toUnorderedTree, theApple.toUnorderedTree} : Forest (UnorderedTree Vertex))) =
+      of' ({(merge eaten theApple).toUnorderedTree} : Forest (UnorderedTree Vertex)) := by
   simpa using Merge.mergeOpEps_zero_pair_add (R := ℤ) (F := 0) Vertex.bare
-    (S := eaten.val) (S' := theApple.val) (Multiset.notMem_zero _) (Multiset.notMem_zero _)
+    (S := eaten.toUnorderedTree) (S' := theApple.toUnorderedTree) (Multiset.notMem_zero _) (Multiset.notMem_zero _)
 
 /-- At `ε = 0` Internal Merge of *the* inside *the apple* at the admissible cuts survives, while
     Sideward Merge of the same *the* does not. The admissible cut leaves *apple* under a unary
     vertex, so the result is no syntactic object. -/
 example :
-    Merge.mergeOpEps (R := ℤ) 0 Vertex.bare (UnorderedTree.node Vertex.bare {appleN.val}) theD.val
-        (Merge.mergeOpUnitOfCuts admissibleCuts theD.val
-          (of' ({theApple.val} : Forest (UnorderedTree Vertex)))) =
+    Merge.mergeOpEps (R := ℤ) 0 Vertex.bare (UnorderedTree.node Vertex.bare {appleN.toUnorderedTree}) theD.toUnorderedTree
+        (Merge.mergeOpUnitOfCuts admissibleCuts theD.toUnorderedTree
+          (of' ({theApple.toUnorderedTree} : Forest (UnorderedTree Vertex)))) =
       of' ({UnorderedTree.node Vertex.bare
-              {UnorderedTree.node Vertex.bare {appleN.val}, theD.val}} :
+              {UnorderedTree.node Vertex.bare {appleN.toUnorderedTree}, theD.toUnorderedTree}} :
         Forest (UnorderedTree Vertex)) :=
   Merge.mergeOpEps_im_composition _ _ _ _ _ _ filter_admissibleCuts_theApple rfl
-    (fun h ↦ (by decide : theApple ≠ theD) (SyntacticObject.val_injective h))
+    (fun h ↦ (by decide : theApple ≠ theD) (SyntacticObject.toUnorderedTree_injective h))
 
 private theorem filter_deletionCuts_theApple :
-    (deletionCuts theApple.val).filter (·.1 = {theD.val}) = {({theD.val}, appleN.val)} := by
+    (deletionCuts theApple.toUnorderedTree).filter (·.1 = {theD.toUnorderedTree}) = {({theD.toUnorderedTree}, appleN.toUnorderedTree)} := by
   rw [deletionCuts, Multiset.filter_map]
   simp only [Function.comp_def]
   rw [filter_admissibleCuts_theApple, Multiset.map_singleton]
@@ -460,59 +460,59 @@ private theorem filter_deletionCuts_theApple :
 /-- At the deletion cuts, the book's Merge, the same Internal Merge contracts that vertex and
     merges *the* with *apple*, a syntactic object, here *the apple* again. -/
 example :
-    Merge.mergeOp (R := ℤ) Vertex.bare appleN.val theD.val
-        (Merge.mergeOpUnit theD.val (of' ({theApple.val} : Forest (UnorderedTree Vertex)))) =
-      of' ({theApple.val} : Forest (UnorderedTree Vertex)) := by
+    Merge.mergeOp (R := ℤ) Vertex.bare appleN.toUnorderedTree theD.toUnorderedTree
+        (Merge.mergeOpUnit theD.toUnorderedTree (of' ({theApple.toUnorderedTree} : Forest (UnorderedTree Vertex)))) =
+      of' ({theApple.toUnorderedTree} : Forest (UnorderedTree Vertex)) := by
   rw [Merge.mergeOp_im_composition Vertex.bare _ _ _ _ filter_deletionCuts_theApple rfl
-    (fun h ↦ (by decide : theApple ≠ theD) (SyntacticObject.val_injective h))
-    theD.isSyntacticObject_val.isFullBinary.numUnary_eq_zero,
-    show theApple = merge theD appleN by decide, merge_val, Multiset.pair_comm]
+    (fun h ↦ (by decide : theApple ≠ theD) (SyntacticObject.toUnorderedTree_injective h))
+    theD.isSyntacticObject_toUnorderedTree.isFullBinary.numUnary_eq_zero,
+    show theApple = merge theD appleN by decide, toUnorderedTree_merge, Multiset.pair_comm]
 
 private theorem mem_traceCuts_theApple :
-    ({theD.val}, (deleteAccessible theD theApple).val) ∈ traceCuts traceEncoder theApple.val :=
-  Multiset.mem_of_mem_filter (p := fun p ↦ p.1 = {theD.val}) (by
+    ({theD.toUnorderedTree}, (deleteAccessible theD theApple).toUnorderedTree) ∈ traceCuts traceEncoder theApple.toUnorderedTree :=
+  Multiset.mem_of_mem_filter (p := fun p ↦ p.1 = {theD.toUnorderedTree}) (by
     rw [traceCuts_filter_mover (by decide) (by decide) (by decide)]
     exact Multiset.mem_singleton_self _)
 
 /-- The term of Sideward Merge of type 2(b) at the trace cuts takes *eaten* whole and cuts *the*
     out of *the apple*. -/
 private noncomputable def sidewardTermC : CutChoice Vertex :=
-  {(eaten.val, ({eaten.val}, 0)),
-    (theApple.val, ({theD.val}, {(deleteAccessible theD theApple).val}))}
+  {(eaten.toUnorderedTree, ({eaten.toUnorderedTree}, 0)),
+    (theApple.toUnorderedTree, ({theD.toUnorderedTree}, {(deleteAccessible theD theApple).toUnorderedTree}))}
 
 /-- The same term at the admissible cuts. -/
 private noncomputable def sidewardTermN : CutChoice Vertex :=
-  {(eaten.val, ({eaten.val}, 0)),
-    (theApple.val, ({theD.val}, {UnorderedTree.node Vertex.bare {appleN.val}}))}
+  {(eaten.toUnorderedTree, ({eaten.toUnorderedTree}, 0)),
+    (theApple.toUnorderedTree, ({theD.toUnorderedTree}, {UnorderedTree.node Vertex.bare {appleN.toUnorderedTree}}))}
 
 private theorem sidewardTermC_mem :
-    sidewardTermC ∈ forestCutChoices (traceCuts traceEncoder) {eaten.val, theApple.val} := by
+    sidewardTermC ∈ forestCutChoices (traceCuts traceEncoder) {eaten.toUnorderedTree, theApple.toUnorderedTree} := by
   rw [Multiset.insert_eq_cons, forestCutChoices_cons, ← Multiset.cons_zero, forestCutChoices_cons,
     forestCutChoices_zero]
-  exact Multiset.mem_bind.mpr ⟨({eaten.val}, 0), Multiset.mem_cons_self _ _,
+  exact Multiset.mem_bind.mpr ⟨({eaten.toUnorderedTree}, 0), Multiset.mem_cons_self _ _,
     Multiset.mem_map.mpr ⟨_, Multiset.mem_bind.mpr ⟨_,
       Multiset.mem_cons_of_mem (Multiset.mem_map_of_mem _ mem_traceCuts_theApple),
       Multiset.mem_map.mpr ⟨0, Multiset.mem_singleton_self _, rfl⟩⟩, rfl⟩⟩
 
 private theorem sidewardTermN_mem :
-    sidewardTermN ∈ forestCutChoices admissibleCuts {eaten.val, theApple.val} := by
+    sidewardTermN ∈ forestCutChoices admissibleCuts {eaten.toUnorderedTree, theApple.toUnorderedTree} := by
   rw [Multiset.insert_eq_cons, forestCutChoices_cons, ← Multiset.cons_zero, forestCutChoices_cons,
     forestCutChoices_zero]
-  exact Multiset.mem_bind.mpr ⟨({eaten.val}, 0), Multiset.mem_cons_self _ _,
+  exact Multiset.mem_bind.mpr ⟨({eaten.toUnorderedTree}, 0), Multiset.mem_cons_self _ _,
     Multiset.mem_map.mpr ⟨_, Multiset.mem_bind.mpr ⟨_,
       Multiset.mem_cons_of_mem (Multiset.mem_map_of_mem (fun p ↦ (p.1, {p.2}))
-        (show ({theD.val}, UnorderedTree.node Vertex.bare {appleN.val}) ∈
-            admissibleCuts theApple.val
+        (show ({theD.toUnorderedTree}, UnorderedTree.node Vertex.bare {appleN.toUnorderedTree}) ∈
+            admissibleCuts theApple.toUnorderedTree
           by rw [admissibleCuts_theApple]; simp)),
       Multiset.mem_map.mpr ⟨0, Multiset.mem_singleton_self _, rfl⟩⟩, rfl⟩⟩
 
 /-- The 2(b) term satisfies Minimal Yield under trace counting, so Minimal Yield does not tell it
     apart from Internal Merge (Remark 1.6.9). -/
 theorem sideward2b_minimalYield :
-    MinimalYield UnorderedTree.accessibleCount {eaten.val, theApple.val}
-      {(merge eaten theD).val, (deleteAccessible theD theApple).val} := by
+    MinimalYield UnorderedTree.accessibleCount {eaten.toUnorderedTree, theApple.toUnorderedTree}
+      {(merge eaten theD).toUnorderedTree, (deleteAccessible theD theApple).toUnorderedTree} := by
   have := (MinimalYield.merge_term_accessibleCount_iff none sidewardTermC_mem
-    (S := eaten.val) (S' := theD.val)
+    (S := eaten.toUnorderedTree) (S' := theD.toUnorderedTree)
     (fun x hx _ ↦ by
       rw [sidewardTermC, Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at hx
       rcases hx with rfl | rfl <;> rfl)
@@ -522,42 +522,42 @@ theorem sideward2b_minimalYield :
 /-- At the admissible cuts the 2(b) term loses complexity along its component map, since *the apple*
     goes to the lighter trunk `{apple}` (Proposition 1.6.10). -/
 example : ¬ NoComplexityLoss.Map UnorderedTree.numNodes
-    (componentMap (UnorderedTree.node Vertex.bare {eaten.val, theD.val}) sidewardTermN) :=
+    (componentMap (UnorderedTree.node Vertex.bare {eaten.toUnorderedTree, theD.toUnorderedTree}) sidewardTermN) :=
   NoComplexityLoss.not_map_componentMap_merge sidewardTermN_mem
     (hasExtractionCost_numNodes_admissibleCuts sidewardTermN_mem) UnorderedTree.numNodes_pos
-    (S := eaten.val) (S' := theD.val) (by simp [sidewardTermN]) (by decide) (by decide)
+    (S := eaten.toUnorderedTree) (S' := theD.toUnorderedTree) (by simp [sidewardTermN]) (by decide) (by decide)
     (.inr (by decide))
 
 /-- At the trace cuts the 2(b) term loses no vertices along its component map, since the trace of
     *the* takes its place in *the apple*. -/
 example : NoComplexityLoss.Map UnorderedTree.numNodes
-    (componentMap (UnorderedTree.node Vertex.bare {eaten.val, theD.val}) sidewardTermC) := by
+    (componentMap (UnorderedTree.node Vertex.bare {eaten.toUnorderedTree, theD.toUnorderedTree}) sidewardTermC) := by
   simp [NoComplexityLoss.Map, componentMap, sidewardTermC]
   decide
 
 /-- Graded by the size `σ`, which the trace cuts conserve, the 2(b) term at the trace cuts does
     lose complexity (Proposition 1.6.10). -/
 example : ¬ NoComplexityLoss.Map (fun T ↦ Forest.accessibleSize {T})
-    (componentMap (UnorderedTree.node Vertex.bare {eaten.val, theD.val}) sidewardTermC) :=
+    (componentMap (UnorderedTree.node Vertex.bare {eaten.toUnorderedTree, theD.toUnorderedTree}) sidewardTermC) :=
   NoComplexityLoss.not_map_accessibleSize_componentMap_merge none sidewardTermC_mem
     (fun x hx _ ↦ by
       rw [sidewardTermC, Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at hx
       rcases hx with rfl | rfl <;> rfl)
-    (S := eaten.val) (S' := theD.val) (by simp [sidewardTermC]) (.inr (by decide))
+    (S := eaten.toUnorderedTree) (S' := theD.toUnorderedTree) (by simp [sidewardTermC]) (.inr (by decide))
 
 /-- The term of Sideward Merge of type 3(a) of *the* and *apple* cuts both out of *the apple*. -/
 private noncomputable def sideward3a : CutChoice Vertex :=
-  {(theApple.val, ({theD.val, appleN.val}, {UnorderedTree.leaf Vertex.bare}))}
+  {(theApple.toUnorderedTree, ({theD.toUnorderedTree, appleN.toUnorderedTree}, {UnorderedTree.leaf Vertex.bare}))}
 
 /-- It raises the number of components, so it violates Minimal Yield under any counting
     (Proposition 1.6.8). -/
 example (acc : UnorderedTree Vertex → ℕ) (X : UnorderedTree Vertex) :
-    ¬ MinimalYieldWeak acc {theApple.val} ({X} + sideward3a.trunk) := by
-  have hs : sideward3a ∈ forestCutChoices admissibleCuts {theApple.val} := by
+    ¬ MinimalYieldWeak acc {theApple.toUnorderedTree} ({X} + sideward3a.trunk) := by
+  have hs : sideward3a ∈ forestCutChoices admissibleCuts {theApple.toUnorderedTree} := by
     rw [← Multiset.cons_zero, forestCutChoices_cons, forestCutChoices_zero]
     exact Multiset.mem_bind.mpr ⟨_, Multiset.mem_cons_of_mem (Multiset.mem_map_of_mem
       (fun p ↦ (p.1, {p.2}))
-      (show ({theD.val, appleN.val}, UnorderedTree.leaf Vertex.bare) ∈ admissibleCuts theApple.val
+      (show ({theD.toUnorderedTree, appleN.toUnorderedTree}, UnorderedTree.leaf Vertex.bare) ∈ admissibleCuts theApple.toUnorderedTree
         by rw [admissibleCuts_theApple]; exact Multiset.mem_cons_self _ _)),
       Multiset.mem_map.mpr ⟨0, Multiset.mem_singleton_self _, rfl⟩⟩
   exact MinimalYieldWeak.not_of_forall_notMem acc hs (by simp [sideward3a]; decide) X
@@ -565,51 +565,51 @@ example (acc : UnorderedTree Vertex → ℕ) (X : UnorderedTree Vertex) :
 /-- Under deletion counting the 3(a) term keeps the number of accessible terms, where the book's
     table lowers it by two (Proposition 1.6.8): *the* and *apple* are sisters, so deleting both
     leaves their parent a leaf with nothing to contract. -/
-example : sideward3a ∈ forestCutChoices deletionCuts {theApple.val} ∧
-    (({(merge theD appleN).val} + sideward3a.trunk).map
+example : sideward3a ∈ forestCutChoices deletionCuts {theApple.toUnorderedTree} ∧
+    (({(merge theD appleN).toUnorderedTree} + sideward3a.trunk).map
       UnorderedTree.numEdges).sum =
-    (({theApple.val} : Forest (UnorderedTree Vertex)).map UnorderedTree.numEdges).sum := by
+    (({theApple.toUnorderedTree} : Forest (UnorderedTree Vertex)).map UnorderedTree.numEdges).sum := by
   refine ⟨?_, by decide⟩
   rw [← Multiset.cons_zero, forestCutChoices_cons, forestCutChoices_zero]
   exact Multiset.mem_bind.mpr ⟨_, Multiset.mem_cons_of_mem (Multiset.mem_map_of_mem
     (fun p ↦ (p.1, {p.2}))
-    (show ({theD.val, appleN.val}, UnorderedTree.leaf Vertex.bare) ∈ deletionCuts theApple.val
+    (show ({theD.toUnorderedTree, appleN.toUnorderedTree}, UnorderedTree.leaf Vertex.bare) ∈ deletionCuts theApple.toUnorderedTree
       from Multiset.mem_map.mpr ⟨_, by
         rw [admissibleCuts_theApple]; exact Multiset.mem_cons_self _ _, rfl⟩)),
     Multiset.mem_map.mpr ⟨0, Multiset.mem_singleton_self _, rfl⟩⟩
 
 /-- The 2(b) term at the deletion cuts, which contract the trunk `{apple}` to *apple*. -/
 private def sidewardTermD : CutChoice Vertex :=
-  {(eaten.val, ({eaten.val}, 0)), (theApple.val, ({theD.val}, {appleN.val}))}
+  {(eaten.toUnorderedTree, ({eaten.toUnorderedTree}, 0)), (theApple.toUnorderedTree, ({theD.toUnorderedTree}, {appleN.toUnorderedTree}))}
 
 private theorem sidewardTermD_mem :
-    sidewardTermD ∈ forestCutChoices deletionCuts {eaten.val, theApple.val} := by
+    sidewardTermD ∈ forestCutChoices deletionCuts {eaten.toUnorderedTree, theApple.toUnorderedTree} := by
   rw [Multiset.insert_eq_cons, forestCutChoices_cons, ← Multiset.cons_zero, forestCutChoices_cons,
     forestCutChoices_zero]
-  exact Multiset.mem_bind.mpr ⟨({eaten.val}, 0), Multiset.mem_cons_self _ _,
+  exact Multiset.mem_bind.mpr ⟨({eaten.toUnorderedTree}, 0), Multiset.mem_cons_self _ _,
     Multiset.mem_map.mpr ⟨_, Multiset.mem_bind.mpr ⟨_,
       Multiset.mem_cons_of_mem (Multiset.mem_map_of_mem (fun p ↦ (p.1, {p.2}))
-        (Multiset.mem_map.mpr ⟨({theD.val}, UnorderedTree.node Vertex.bare {appleN.val}),
+        (Multiset.mem_map.mpr ⟨({theD.toUnorderedTree}, UnorderedTree.node Vertex.bare {appleN.toUnorderedTree}),
           by rw [admissibleCuts_theApple]; simp, Prod.ext rfl (by decide)⟩)),
       Multiset.mem_map.mpr ⟨0, Multiset.mem_singleton_self _, rfl⟩⟩, rfl⟩⟩
 
 /-- Under deletion counting the 2(b) term satisfies the weak form of Minimal Yield but not the
     strong one, since it takes only *eaten* whole (Proposition 1.6.8). -/
-example : MinimalYieldWeak UnorderedTree.numEdges {eaten.val, theApple.val}
-      {(merge eaten theD).val, appleN.val} ∧
-    ¬ MinimalYield UnorderedTree.numEdges {eaten.val, theApple.val}
-      {(merge eaten theD).val, appleN.val} := by
-  have hF : ∀ T ∈ ({eaten.val, theApple.val} : Forest (UnorderedTree Vertex)),
+example : MinimalYieldWeak UnorderedTree.numEdges {eaten.toUnorderedTree, theApple.toUnorderedTree}
+      {(merge eaten theD).toUnorderedTree, appleN.toUnorderedTree} ∧
+    ¬ MinimalYield UnorderedTree.numEdges {eaten.toUnorderedTree, theApple.toUnorderedTree}
+      {(merge eaten theD).toUnorderedTree, appleN.toUnorderedTree} := by
+  have hF : ∀ T ∈ ({eaten.toUnorderedTree, theApple.toUnorderedTree} : Forest (UnorderedTree Vertex)),
       T.IsFullBinary := by
     simp only [Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton]
     rintro _ (rfl | rfl)
-    exacts [eaten.isSyntacticObject_val.isFullBinary,
-      theApple.isSyntacticObject_val.isFullBinary]
-  have hK : sidewardTermD.crown = {eaten.val, theD.val} := by simp [sidewardTermD]
-  have hX : (merge eaten theD).val.numEdges = eaten.val.numEdges + theD.val.numEdges + 2 := by
-    rw [merge_val]; exact UnorderedTree.numEdges_node_pair _ _ _
-  rw [show ({(merge eaten theD).val, appleN.val} : Forest (UnorderedTree Vertex)) =
-      {(merge eaten theD).val} + sidewardTermD.trunk by simp [sidewardTermD],
+    exacts [eaten.isSyntacticObject_toUnorderedTree.isFullBinary,
+      theApple.isSyntacticObject_toUnorderedTree.isFullBinary]
+  have hK : sidewardTermD.crown = {eaten.toUnorderedTree, theD.toUnorderedTree} := by simp [sidewardTermD]
+  have hX : (merge eaten theD).toUnorderedTree.numEdges = eaten.toUnorderedTree.numEdges + theD.toUnorderedTree.numEdges + 2 := by
+    rw [toUnorderedTree_merge]; exact UnorderedTree.numEdges_node_pair _ _ _
+  rw [show ({(merge eaten theD).toUnorderedTree, appleN.toUnorderedTree} : Forest (UnorderedTree Vertex)) =
+      {(merge eaten theD).toUnorderedTree} + sidewardTermD.trunk by simp [sidewardTermD],
     MinimalYieldWeak.merge_term_numEdges_iff hF sidewardTermD_mem hK hX,
     MinimalYield.merge_term_numEdges_iff hF sidewardTermD_mem hK hX,
     show sidewardTermD.numWhole = 1 by decide]
@@ -961,14 +961,14 @@ end Consistency
 forest of its underlying nonplanar tree. The base ring is `ℕ` because every commutative
 semiring, `Consistency` included, is an `ℕ`-algebra, while a Boolean target is no `ℤ`-algebra. -/
 noncomputable def toCK (S : SyntacticObject) : ConnesKreimer ℕ (UnorderedTree Vertex) :=
-  ofTree S.val
+  ofTree S.toUnorderedTree
 
 /-- Merge factors through the grafting operator on the disjoint union of its arguments, with the
 bare root label (Lemma 1.3.3). -/
 theorem toCK_merge (l r : SyntacticObject) :
     toCK (merge l r) = bPlus Vertex.bare (toCK l * toCK r) := by
-  rw [toCK, toCK, toCK, ← of'_singleton (R := ℕ) l.val, ← of'_singleton (R := ℕ) r.val, ← of'_add,
-    bPlus_of', merge_val]
+  rw [toCK, toCK, toCK, ← of'_singleton (R := ℕ) l.toUnorderedTree, ← of'_singleton (R := ℕ) r.toUnorderedTree, ← of'_add,
+    bPlus_of', toUnorderedTree_merge]
   rfl
 
 open WithConv
@@ -979,14 +979,14 @@ single recursive map of §3.1.5 that checks consistency over all substructures. 
 noncomputable def featureConsistency
     (φ : ConnesKreimer ℕ (UnorderedTree Vertex) →ₗ[ℕ] Consistency)
     (P : Consistency →+ Consistency) (S : SyntacticObject) : Consistency :=
-  birkhoffPlusTree φ P S.val
+  birkhoffPlusTree φ P S.toUnorderedTree
 
 -- Definition 3.1.6, Proposition 3.1.9
 theorem featureConsistency_eq_convMul
     (φ : ConnesKreimer ℕ (UnorderedTree Vertex) →ₗ[ℕ] Consistency)
     (P : Consistency →+ Consistency) (hφ : φ 1 = 1) (S : SyntacticObject) :
     (toConv (birkhoffMinus φ P).toLinearMap * toConv φ) (toCK S) = featureConsistency φ P S :=
-  convMul_birkhoffMinus_apply_ofTree φ P hφ S.val
+  convMul_birkhoffMinus_apply_ofTree φ P hφ S.toUnorderedTree
 
 /-- The head-probe value `Υ_{s,h}` on a tree (equation (3.2.1)), the probe `Υ` applied to the
 tree's selection head, and `inconsistent` when the tree has no well-defined head. -/

@@ -86,7 +86,7 @@ def scanList : List (RoseTree Vertex) → List (RoseTree Vertex) →
 end
 
 /-- The algorithm (71): the string of terminals `scangraph` produces from the root. -/
-def linearization : List LexicalItem.Token := (scan t t.val []).2
+def linearization : List LexicalItem.Token := (scan t t.toRoseTree []).2
 
 end Algorithm
 
@@ -207,21 +207,21 @@ theorem remergedYield_double : remergedYield List.getLast? double = [δ₁, g, �
 /-! ### Internal and external remerge -/
 
 -- (42), (48), (52), (66)
-theorem sharing_examples : ∀ t ∈ [ex42, ex48, ex52, ex66], ∀ s ∈ t.val.subtrees,
+theorem sharing_examples : ∀ t ∈ [ex42, ex48, ex52, ex66], ∀ s ∈ t.toRoseTree.subtrees,
     ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s, IsSubtree g g' → g = g' := by
   decide +kernel
 
 -- (41), (47), (51), (60)
 theorem movement_examples : ∀ t ∈ [ex41, ex47, ex51, ex60],
-    (∀ s ∈ t.val.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
-      IsSubtree g g' ∨ IsSubtree g' g) ∧ ∀ g ∈ t.val.subtrees, g.children.Nodup := by
+    (∀ s ∈ t.toRoseTree.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
+      IsSubtree g g' ∨ IsSubtree g' g) ∧ ∀ g ∈ t.toRoseTree.subtrees, g.children.Nodup := by
   decide +kernel
 
 -- (54)
 theorem not_sharing_not_movement_ex54 :
-    ¬ (∀ s ∈ ex54.val.subtrees, ∀ g ∈ mothers ex54 s, ∀ g' ∈ mothers ex54 s,
+    ¬ (∀ s ∈ ex54.toRoseTree.subtrees, ∀ g ∈ mothers ex54 s, ∀ g' ∈ mothers ex54 s,
       IsSubtree g g' → g = g') ∧
-    ¬ (∀ s ∈ ex54.val.subtrees, ∀ g ∈ mothers ex54 s, ∀ g' ∈ mothers ex54 s,
+    ¬ (∀ s ∈ ex54.toRoseTree.subtrees, ∀ g ∈ mothers ex54 s, ∀ g' ∈ mothers ex54 s,
       IsSubtree g g' ∨ IsSubtree g' g) := by
   decide +kernel
 

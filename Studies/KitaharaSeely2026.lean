@@ -120,8 +120,8 @@ Berwick: MERGE of *eaten* and *the* leaving the trace of *the* satisfies their M
 the trace count, while MERGE leaving its copy violates Minimal Yield (12), the copy staying
 accessible in *the apple*. -/
 theorem sideward2b :
-    Minimalist.MinimalYield UnorderedTree.accessibleCount {eaten.val, theApple.val}
-      ((({eaten, theApple} : Workspace).mergeWith (·.headTrace) eaten theD).map SyntacticObject.val) ∧
+    Minimalist.MinimalYield UnorderedTree.accessibleCount {eaten.toUnorderedTree, theApple.toUnorderedTree}
+      ((({eaten, theApple} : Workspace).mergeWith (·.headTrace) eaten theD).map SyntacticObject.toUnorderedTree) ∧
     ¬ MinimalYield {eaten, theApple} (({eaten, theApple} : Workspace).merge eaten theD) := by
   have h := Workspace.mergeWith_sideward_member (leave := (·.headTrace)) (W := 0)
     (T := eaten) (T' := theApple) (S' := theD) (by decide +kernel) (by decide +kernel)

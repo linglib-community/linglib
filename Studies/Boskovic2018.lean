@@ -110,7 +110,7 @@ instance : DecidablePred IsPhaseHeadNP := fun _ ↦ inferInstanceAs (Decidable (
 a phase head, transferred once its phase, the head's projection under `hd`, is complete. -/
 def ObeysPic (hd : HeadFunction) (Φ : LexicalItem.Token → Prop) [DecidablePred Φ]
     (d : Derivation) : Prop :=
-  ∀ t ∈ d.externalize?, ∀ x ∈ tokenList t.val,
+  ∀ t ∈ d.externalize?, ∀ x ∈ tokenList t.toRoseTree,
     ¬ LinkLeaves hd t x.2
       (sealed (occurrencesWith t Φ).toFinset (complementDomain hd t ∅) (Pic1 hd t))
 

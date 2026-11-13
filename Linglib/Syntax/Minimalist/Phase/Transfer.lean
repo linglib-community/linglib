@@ -158,21 +158,21 @@ theorem disjoint_transferSlice {h' : TreePath} (hh' : h' ∈ Φ) (hin : h' ∈ D
 variable (hd t) in
 /-- The phase level of a position: the phase of the lowest phase head whose complement contains it,
 or the root where there is none. [chomsky-2015] computes labels there. -/
-def phaseLevel (Φ : Finset TreePath) (q : t.val.Positions) : t.val.Positions :=
+def phaseLevel (Φ : Finset TreePath) (q : t.toRoseTree.Positions) : t.toRoseTree.Positions :=
   ⟨⟨q.val.toList.take
       ((Φ.filter (complement · ≤ q.val)).sup (projectionAt hd t · |>.toList.length))⟩,
     isLowerSet_validPaths _ (TreePath.le_def.2 (List.take_prefix _ _)) q.2⟩
 
-theorem phaseLevel_le (q : t.val.Positions) : phaseLevel hd t Φ q ≤ q :=
+theorem phaseLevel_le (q : t.toRoseTree.Positions) : phaseLevel hd t Φ q ≤ q :=
   Subtype.coe_le_coe.1 (TreePath.le_def.2 (List.take_prefix _ _))
 
-theorem projectionAt_le_phaseLevel {q : t.val.Positions} (hΦ : h ∈ Φ) (hc : complement h ≤ q.val)
+theorem projectionAt_le_phaseLevel {q : t.toRoseTree.Positions} (hΦ : h ∈ Φ) (hc : complement h ≤ q.val)
     (hp : projectionAt hd t h ≤ h.parent) : projectionAt hd t h ≤ (phaseLevel hd t Φ q).val := by
   have hq := hp.trans ((parent_covBy_complement h).le.trans hc)
   exact TreePath.le_def.2 (List.prefix_take_iff.2 ⟨TreePath.le_def.1 hq,
     Finset.le_sup (f := (projectionAt hd t · |>.toList.length)) (Finset.mem_filter.2 ⟨hΦ, hc⟩)⟩)
 
-theorem phaseLevel_eq_bot {q : t.val.Positions} (hq : ∀ h ∈ Φ, ¬ complement h ≤ q.val) :
+theorem phaseLevel_eq_bot {q : t.toRoseTree.Positions} (hq : ∀ h ∈ Φ, ¬ complement h ≤ q.val) :
     phaseLevel hd t Φ q = ⊥ := by
   have : Φ.filter (complement · ≤ q.val) = ∅ := Finset.filter_eq_empty_iff.2 hq
   exact Subtype.ext (TreePath.ext (by simp [phaseLevel, this]))
@@ -200,7 +200,7 @@ theorem mem_links {tok : LexicalItem.Token} {x : TreePath × TreePath} :
     exact ⟨q, hq, p, ⟨hp, hl⟩, rfl⟩
 
 theorem mem_validPaths_of_mem_chain {tok : LexicalItem.Token} {p : TreePath}
-    (hp : p ∈ chain t tok) : p ∈ t.val.validPaths := by
+    (hp : p ∈ chain t tok) : p ∈ t.toRoseTree.validPaths := by
   simp only [chain, List.mem_filterMap, Option.ite_none_right_eq_some, Option.some.injEq] at hp
   obtain ⟨⟨p', b⟩, hpb, -, rfl⟩ := hp
   obtain ⟨s, hs, -⟩ := mem_positions_iff.1 hpb
@@ -209,7 +209,7 @@ theorem mem_validPaths_of_mem_chain {tok : LexicalItem.Token} {p : TreePath}
 theorem parent_lt_of_mem_links {tok : LexicalItem.Token} {x : TreePath × TreePath}
     (hx : x ∈ links hd t tok) : x.1.parent < x.2 ∧ ¬ x.1 ≤ x.2 := by
   obtain ⟨q, -, p, hp, hl, rfl⟩ := mem_links.1 hx
-  have hv : projectionAt hd t p ∈ t.val.validPaths :=
+  have hv : projectionAt hd t p ∈ t.toRoseTree.validPaths :=
     isLowerSet_validPaths _ (projectionAt_le hd t p) (mem_validPaths_of_mem_chain hp)
   have h0 : projectionAt hd t p ≠ ⊥ := fun h ↦ hl.1.2.1 (h ▸ bot_le)
   have hb := PlanarSyntacticObject.isBranchingAt_parent (t := t)
@@ -243,7 +243,7 @@ theorem escapes_iff {tok : LexicalItem.Token} {D : TreePath} :
 
 /-- The condition on chain links is a cut: a link leaves the phase of `h` exactly when it leaves the
 complement of `h`, sealed at every stage above the phase. -/
-theorem crosses_iff {tok : LexicalItem.Token} {h : TreePath} (hh : h ∈ t.val.validPaths)
+theorem crosses_iff {tok : LexicalItem.Token} {h : TreePath} (hh : h ∈ t.toRoseTree.validPaths)
     (h0 : h ≠ ⊥) (hproj : projectionAt hd t h ≤ h.parent) :
     Crosses hd t tok h ↔
       LinkLeaves hd t tok (sealed {h} (complementDomain hd t ∅) (Pic1 hd t)) := by
@@ -264,7 +264,7 @@ theorem crosses_iff {tok : LexicalItem.Token} {h : TreePath} (hh : h ∈ t.val.v
 specifier of the head's phrase or leaves the complement after the phase is complete: with the
 PIC, Abels's anti-locality leaves the complement of a phase head no way out. -/
 theorem compToSpec_or_mem_sealed {tok : LexicalItem.Token} {x : TreePath × TreePath}
-    {h : TreePath} (hh : h ∈ t.val.validPaths) (h0 : h ≠ ⊥) (hhead : IsHeadPosition t h)
+    {h : TreePath} (hh : h ∈ t.toRoseTree.validPaths) (h0 : h ≠ ⊥) (hhead : IsHeadPosition t h)
     (hx : x ∈ links hd t tok) (hr : projectionAt hd t x.2 = complement h)
     (hin : ¬ complement h ≤ x.1.parent) :
     CompToSpec hd t x ∨ x.2 ∈ sealed {h} (complementDomain hd t ∅) (Pic1 hd t) x.1.parent := by

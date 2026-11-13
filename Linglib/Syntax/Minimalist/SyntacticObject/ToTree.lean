@@ -65,7 +65,7 @@ variable {L : Type} (ι : L → ℕ)
 /-- The constituency tree of a planar object, with the trace of a token `a` of index
 `ι a + 1` and the index-free trace of index `0`. -/
 def toTree (t : PlanarSyntacticObject L) : Tree Unit L :=
-  t.val.map (SyntacticObject.Vertex.toLabel ι)
+  t.toRoseTree.map (SyntacticObject.Vertex.toLabel ι)
 
 @[simp] theorem toTree_leaf (a : L) : (leaf a).toTree ι = .terminal () a := rfl
 
@@ -86,15 +86,15 @@ theorem yield_toTree (t : PlanarSyntacticObject L) : (t.toTree ι).yield = t.yie
 
 /-- C-command in the tree is c-command between the positions of the object. -/
 theorem cCommands_toTree_iff (t : PlanarSyntacticObject L) (a b : TreePath) :
-    RoseTree.CCommands (t.toTree ι) a b ↔ t.val.CCommands a b :=
+    RoseTree.CCommands (t.toTree ι) a b ↔ t.toRoseTree.CCommands a b :=
   RoseTree.cCommands_map _ _ a b
 
 /-- When the term at `a` occurs once, the terms it c-commands are those at the positions that `a`
 c-commands in the tree. -/
 theorem cCommands_termAt_iff_toTree {t : PlanarSyntacticObject} (ι : LexicalItem.Token → ℕ)
-    {a : t.val.Positions} {x : SyntacticObject} (hu : ∀ q, t.termAt q = t.termAt a → q = a) :
+    {a : t.toRoseTree.Positions} {x : SyntacticObject} (hu : ∀ q, t.termAt q = t.termAt a → q = a) :
     t.toSyntacticObject.CCommands (t.termAt a) x ↔
-      ∃ q : t.val.Positions, RoseTree.CCommands (t.toTree ι) a q ∧ t.termAt q = x := by
+      ∃ q : t.toRoseTree.Positions, RoseTree.CCommands (t.toTree ι) a q ∧ t.termAt q = x := by
   simp only [cCommands_toTree_iff]
   exact cCommands_termAt_iff hu
 

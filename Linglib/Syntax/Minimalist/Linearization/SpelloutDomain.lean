@@ -90,7 +90,7 @@ def mergeStage? (item : SyntacticObject) : Option ℕ :=
 
 /-- The head of the object at stage `n`, the token at the lexical head of its root. -/
 def stageHead? : Option LexicalItem.Token :=
-  (d.stage? n).bind fun t ↦ (tokenList t.val).lookup (lexicalHeadAt hd t ⊥)
+  (d.stage? n).bind fun t ↦ (tokenList t.toRoseTree).lookup (lexicalHeadAt hd t ⊥)
 
 /-- The stages at which the phase of a head `Φ` holds of is complete: the head heads the object
 built so far, and the next step merges something that projects over it. -/

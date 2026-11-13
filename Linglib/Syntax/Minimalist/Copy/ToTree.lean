@@ -86,7 +86,7 @@ def toTree (ι : LexicalItem.Token → ℕ) (t : Marked) (low : Finset Syntactic
     (low : Finset SyntacticObject) :
     (ofPlanar p).toTree ι low = p.toTree ι := by
   simp only [toTree, ofPlanar, PlanarSyntacticObject.toTree]
-  generalize p.val = s
+  generalize p.toRoseTree = s
   induction s with
   | node a cs ih =>
     rw [map_node, reading_node]
@@ -110,7 +110,7 @@ theorem eraseBinders_toTree (ι : LexicalItem.Token → ℕ) (t : Marked)
     (low : Finset SyntacticObject) :
     Tree.eraseBinders (t.toTree ι low) = (t.lf low).toTree ι := by
   obtain ⟨s, hs⟩ := t
-  simp only [toTree, val_lf, PlanarSyntacticObject.toTree]
+  simp only [toTree, toRoseTree_lf, PlanarSyntacticObject.toTree]
   clear hs
   induction s with
   | node v cs ih =>

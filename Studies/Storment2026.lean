@@ -339,7 +339,7 @@ def phi (x : LexicalItem.Token) : Bundle :=
   if x = p.themeTok then themePhi else if x = p.agentTok then p.agentPhi else ⊥
 
 /-- The φ-features at a position of `t`, those of the token there. -/
-def phiAt (t : PlanarSyntacticObject) (q : t.val.Positions) : Bundle :=
+def phiAt (t : PlanarSyntacticObject) (q : t.toRoseTree.Positions) : Bundle :=
   (t.termAt q).token?.elim ⊥ p.phi
 
 /-- The stage at which T probes. -/
@@ -352,8 +352,8 @@ open scoped PartialUnify in
 depth-first search agrees with (118). -/
 def value (c : Construction) (P : Finset Dimension) : WithTop Bundle :=
   ((p.probeStage c).externalize?.map fun t ↦
-    (Finset.univ.filter fun q ↦ ∃ a : t.val.Positions, t.termAt a = ↑t₀ ∧
-      ((phiProbe P).comap (p.phiAt t)).AgreesWith {x | t.val.CCommands a x} (depthFirst ·.val)
+    (Finset.univ.filter fun q ↦ ∃ a : t.toRoseTree.Positions, t.termAt a = ↑t₀ ∧
+      ((phiProbe P).comap (p.phiAt t)).AgreesWith {x | t.toRoseTree.CCommands a x} (depthFirst ·.val)
         q).sup fun q ↦ (p.phiAt t q : WithTop Bundle)).getD ⊤
 
 /-- The values T may end with (59): halting at the first goal bearing φ, or searching past a

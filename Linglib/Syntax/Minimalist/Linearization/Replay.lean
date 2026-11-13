@@ -42,7 +42,7 @@ variable {side : Edge}
 theorem linearize?_of_toPlanarLeaf? {s : SyntacticObject} {p : PlanarSyntacticObject}
     (h : s.toPlanarLeaf? = some p) : s.linearize? side = some p := by
   rcases s.exists_form with ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩ <;>
-    simp [toPlanarLeaf?, merge_val] at h <;> subst h <;> rfl
+    simp [toPlanarLeaf?, toUnorderedTree_merge] at h <;> subst h <;> rfl
 
 theorem linearize?_headTrace (s : SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token) :
@@ -94,15 +94,15 @@ private theorem linearizationState_replace_self {cur t : SyntacticObject} {σ}
   exact hst
 
 private theorem linearizationState_replace_leaf {cur m t : SyntacticObject} {a : Vertex} {σ}
-    {pc pt : PlanarSyntacticObject} (hs : cur.val = UnorderedTree.leaf a)
-    (hpv : pc.val = .node a []) (hc : cur.linearizationState side = ⟨some (σ, pc)⟩)
+    {pc pt : PlanarSyntacticObject} (hs : cur.toUnorderedTree = UnorderedTree.leaf a)
+    (hpv : pc.toRoseTree = .node a []) (hc : cur.linearizationState side = ⟨some (σ, pc)⟩)
     (ht : t.linearize? side = some pt) (hsel : t.selCheck = m.selCheck) :
     (cur.replace m t).linearizationState side = ⟨some (σ, pc.replace m pt)⟩ := by
   by_cases heq : cur = m
   · subst heq; exact linearizationState_replace_self hc ht hsel
   · have hpc : cur.linearize? side = some pc := by
       simp [linearize?, hc, LinearizationState.linearized?]
-    rw [replace_of_val_eq_leaf hs heq, PlanarSyntacticObject.replace_of_val_eq_leaf hpv
+    rw [replace_of_toUnorderedTree_eq_leaf hs heq, PlanarSyntacticObject.replace_of_toRoseTree_eq_leaf hpv
       (by rwa [toSyntacticObject_of_linearize? hpc]), hc]
 
 theorem linearizationState_replace {cur m t : SyntacticObject} {σ}
@@ -147,9 +147,9 @@ theorem linearize?_of_find? {cur m : SyntacticObject} {pc s : PlanarSyntacticObj
     m.linearize? side = some s := by
   rw [← PlanarSyntacticObject.toSyntacticObject_find? hf]
   have h := linearize?_of_mem_subtrees hc (PlanarSyntacticObject.mem_subtrees_of_find? hf)
-    s.isSyntacticObject_val
-  rwa [← PlanarSyntacticObject.toSyntacticObject_ofVal,
-    PlanarSyntacticObject.ofVal_val] at h
+    s.isSyntacticObject_toRoseTree
+  rwa [← PlanarSyntacticObject.toSyntacticObject_ofRoseTree,
+    PlanarSyntacticObject.ofRoseTree_toRoseTree] at h
 
 end SyntacticObject
 

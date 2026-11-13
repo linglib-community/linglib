@@ -71,7 +71,7 @@ variable {s t x y l r l' r' : SyntacticObject}
 /-- The tree of lexical items and traces an object inscribes, forgetting which token fills each
 leaf. -/
 def erase (s : SyntacticObject) : UnorderedTree (Option LexicalItem ⊕ Option LexicalItem) :=
-  s.val.map (Sum.map (Option.map LexicalItem.Token.item) (Option.map LexicalItem.Token.item))
+  s.toUnorderedTree.map (Sum.map (Option.map LexicalItem.Token.item) (Option.map LexicalItem.Token.item))
 
 @[simp]
 theorem erase_leaf (tok : LexicalItem.Token) :
@@ -119,7 +119,7 @@ theorem StructurallyIdentical.merge (hl : StructurallyIdentical l l')
   rw [hl, hr]
 
 theorem StructurallyIdentical.numNodes_eq (h : StructurallyIdentical x y) :
-    x.val.numNodes = y.val.numNodes := by
+    x.toUnorderedTree.numNodes = y.toUnorderedTree.numNodes := by
   simpa [erase] using congrArg UnorderedTree.numNodes h
 
 /-- Two inscriptions are repetitions when they are structurally identical but distinct objects,
@@ -134,7 +134,7 @@ variable {f : LexicalItem.Token → LexicalItem.Token}
 
 theorem erase_map (hf : ∀ t, (f t).item = t.item) (s : SyntacticObject) :
     (s.map f).erase = s.erase := by
-  simp only [erase, val_map, UnorderedTree.map_map]
+  simp only [erase, toUnorderedTree_map, UnorderedTree.map_map]
   congr 1
   funext v
   rcases v with (_ | t) | (_ | t) <;> simp [Vertex.map, hf]

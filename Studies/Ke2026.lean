@@ -91,7 +91,7 @@ object built just before. -/
 def complementSchedule (d : Derivation) : List (ℕ × ℕ) :=
   (List.range d.length).filterMap fun i ↦ match (d.steps[i]? : Option Step) with
     | some (.em _ x) =>
-      if (tokenList x.val).any fun y ↦ decide (y.1 = ⊥ ∧ IsPhaseHead y.2) then some (i, i + 1)
+      if (tokenList x.toRoseTree).any fun y ↦ decide (y.1 = ⊥ ∧ IsPhaseHead y.2) then some (i, i + 1)
       else none
     | _ => none
 
@@ -126,7 +126,7 @@ transferred under the schedule `σ`. -/
 def ObeysTransfer (d : Derivation) (D : PlanarSyntacticObject → TreePath → Set TreePath)
     [∀ t h, DecidablePred (· ∈ D t h)] (σ : PlanarSyntacticObject → Schedule)
     [∀ t Φ h s, Decidable (σ t Φ h s)] : Prop :=
-  ∀ t ∈ d.externalize?, ∀ y ∈ tokenList t.val,
+  ∀ t ∈ d.externalize?, ∀ y ∈ tokenList t.toRoseTree,
     ¬ LinkLeaves .raising t y.2 (sealed (occurrencesWith t IsPhaseHead).toFinset (D t) (σ t))
 
 instance (d : Derivation) (D : PlanarSyntacticObject → TreePath → Set TreePath)

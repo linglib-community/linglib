@@ -146,10 +146,10 @@ def step (m : LexicalItem.Token) (st : Stage) : List Stage :=
   let d := st.derivation.append [.em .left m]
   ⟨d, st.marks, st.raises⟩ :: match st.derivation.externalize? with
     | none => []
-    | some p => (p.val.subtrees.filter hasN).filterMap fun s ↦
+    | some p => (p.toRoseTree.subtrees.filter hasN).filterMap fun s ↦
         if h : IsSyntacticObject (UnorderedTree.mk s) then
-          some ⟨d.append [.im (SyntacticObject.ofVal (UnorderedTree.mk s) h)],
-            (markOf p.val s).toList ++ st.marks, st.raises + 1⟩
+          some ⟨d.append [.im (SyntacticObject.ofUnorderedTree (UnorderedTree.mk s) h)],
+            (markOf p.toRoseTree s).toList ++ st.marks, st.raises + 1⟩
         else none
 
 /-- The derivations (7) allows from the noun and the modifiers `ms`, merged in turn, with an

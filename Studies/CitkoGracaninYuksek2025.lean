@@ -190,7 +190,7 @@ Merges, a shared constituent being built once, and its elided domains as the app
 ellipsis. The terms are [marcolli-chomsky-berwick-2025]'s subtrees, each taken once. -/
 def cost (t : PlanarSyntacticObject) : DerivationCost
   | .lexicalItems => (tokens t).length
-  | .mergeOps => (t.val.subtrees.filter (·.arity ≠ 0)).dedup.length
+  | .mergeOps => (t.toRoseTree.subtrees.filter (·.arity ≠ 0)).dedup.length
   | .ellipsisOps => (elidedDomains t).length
 
 /-! ### The multiple-wh-fronting parameter (27) -/
@@ -225,7 +225,7 @@ instance (s : RoseTree Vertex) : Decidable (IsWhSpecifier s) :=
 /-- The heads of the projections whose edges host several wh-specifiers, each of which receives
 an asterisk. -/
 def asterisked (t : PlanarSyntacticObject) : List LexicalItem.Token :=
-  t.val.positionedSubtrees.filterMap fun x ↦ (projection x.2).bind fun y ↦
+  t.toRoseTree.positionedSubtrees.filterMap fun x ↦ (projection x.2).bind fun y ↦
     if 1 < y.1.countP (decide <| IsWhSpecifier ·) then some y.2 else none
 
 /-- The categories of the asterisked projections whose heads reach PF unsilenced. -/

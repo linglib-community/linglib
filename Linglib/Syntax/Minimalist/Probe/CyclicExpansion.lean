@@ -41,9 +41,9 @@ projection, from the head up, the copies each c-commands outside `cut`, nearest 
 counting only where it is first met. -/
 def cyclicGoals (P : LexicalItem.Token → Prop) [DecidablePred P] (cut : Set TreePath)
     [DecidablePred (· ∈ cut)] (a : TreePath) : List LexicalItem.Token :=
-  ((projectionsOf hd t a).flatMap fun p ↦ (List.range t.val.numNodes).flatMap fun n ↦
-    ((positions (Sum.elim id id) t.val).filter fun x ↦
-      x.1.toList.length == n && decide (P x.2) && decide (t.val.CCommands p x.1) &&
+  ((projectionsOf hd t a).flatMap fun p ↦ (List.range t.toRoseTree.numNodes).flatMap fun n ↦
+    ((positions (Sum.elim id id) t.toRoseTree).filter fun x ↦
+      x.1.toList.length == n && decide (P x.2) && decide (t.toRoseTree.CCommands p x.1) &&
         decide (x.1 ∉ cut)).map (·.2)).eraseDups
 
 variable {hd t} {P : LexicalItem.Token → Prop} [DecidablePred P] {cut : Set TreePath}
@@ -64,8 +64,8 @@ private theorem length_lt_numNodes {β : Type*} {r s : RoseTree β} {q : List �
 the positions closed to it. -/
 theorem mem_cyclicGoals :
     x ∈ cyclicGoals hd t P cut a ↔
-      P x ∧ ∃ p ∈ projectionsOf hd t a, ∃ q, (q, x) ∈ positions (Sum.elim id id) t.val ∧
-        t.val.CCommands p q ∧ q ∉ cut := by
+      P x ∧ ∃ p ∈ projectionsOf hd t a, ∃ q, (q, x) ∈ positions (Sum.elim id id) t.toRoseTree ∧
+        t.toRoseTree.CCommands p q ∧ q ∉ cut := by
   simp only [cyclicGoals, List.mem_eraseDups, List.mem_flatMap, List.mem_map, List.mem_filter,
     Bool.and_eq_true, decide_eq_true_eq, beq_iff_eq, List.mem_range]
   constructor

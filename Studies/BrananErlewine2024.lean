@@ -77,7 +77,7 @@ variable (r : Relative)
 
 /-- The goals of the probe on the head at `h`, the occurrences of D heads in its complement. -/
 def goals (h : TreePath) : List (TreePath × LexicalItem.Token) :=
-  (tokenList r.tree.val).filter fun x ↦ x.2.item.cat = .D ∧ complement h ≤ x.1
+  (tokenList r.tree.toRoseTree).filter fun x ↦ x.2.item.cat = .D ∧ complement h ≤ x.1
 
 /-- The features of a goal, [D] unless it is a clitic, and [REL] on the relative operator. -/
 def feats (g : TreePath × LexicalItem.Token) : Finset Feature :=
@@ -90,7 +90,7 @@ def probe : Probe (TreePath × LexicalItem.Token) := relD.toProbe r.feats
 satisfies the probe, c-commands it (8). -/
 def Closest (h : TreePath) (g : TreePath × LexicalItem.Token) : Prop :=
   g ∈ r.goals h ∧ r.probe.sat g ∧ ∀ g' ∈ r.goals h, r.probe.sat g' → g' ≠ g →
-    ¬ r.tree.val.CCommands (projectionAt .raising r.tree g'.1) (projectionAt .raising r.tree g.1)
+    ¬ r.tree.toRoseTree.CCommands (projectionAt .raising r.tree g'.1) (projectionAt .raising r.tree g.1)
 
 instance (h : TreePath) : DecidablePred (r.Closest h) := fun _ ↦ by
   unfold Closest; infer_instance

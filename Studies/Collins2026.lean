@@ -270,23 +270,23 @@ open ConnesKreimer PlanarSyntacticObject.Marked in
 term of `Δ^c`, cutting the lower copy, and the low reading a term of `Δ^d`, cutting the higher copy.
 The low reading is no term of `Δ^c`, whose cuts each leave a trace. -/
 theorem scope_readings_cut : ∃ c ∈ everyDidntScore.replayWithCopies?,
-    let C := UnorderedTree.mk c.current.unmark.val
+    let C := UnorderedTree.mk c.current.unmark.toRoseTree
     let τ := termTrace SyntacticObject.selHead
-    let lowReading := UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).val
-    ({UnorderedTree.mk everyPlayer.val}, UnorderedTree.mk c.current.contract.val) ∈
+    let lowReading := UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).toRoseTree
+    ({UnorderedTree.mk everyPlayer.toRoseTree}, UnorderedTree.mk c.current.contract.toRoseTree) ∈
         traceCuts τ C ∧
-      ({UnorderedTree.mk everyPlayer.val}, lowReading) ∈ deletionCuts C ∧
+      ({UnorderedTree.mk everyPlayer.toRoseTree}, lowReading) ∈ deletionCuts C ∧
       ∀ F, (F, lowReading) ∉ traceCuts τ C := by
   have h : ∀ c ∈ everyDidntScore.replayWithCopies?,
       c.current.val.value.1 = none ∧ MarkedBy (termTrace SyntacticObject.selHead) c.current.val ∧
-      c.current.cutForest ∅ = {everyPlayer.val} ∧
-      c.current.cutForest {everyPlayer.toSyntacticObject} = {everyPlayer.val} ∧
+      c.current.cutForest ∅ = {everyPlayer.toRoseTree} ∧
+      c.current.cutForest {everyPlayer.toSyntacticObject} = {everyPlayer.toRoseTree} ∧
       (∀ r ∈ c.current.val.subtrees, r.value.1.isSome →
         ReadLow {everyPlayer.toSyntacticObject} r) ∧
-      (UnorderedTree.mk c.current.unmark.val).numTraces = 0 ∧
-      (UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).val).numTraces = 0 ∧
-      UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).val ≠
-        UnorderedTree.mk c.current.unmark.val := by
+      (UnorderedTree.mk c.current.unmark.toRoseTree).numTraces = 0 ∧
+      (UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).toRoseTree).numTraces = 0 ∧
+      UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).toRoseTree ≠
+        UnorderedTree.mk c.current.unmark.toRoseTree := by
     decide +kernel
   obtain ⟨c, hc⟩ := Option.isSome_iff_exists.1
     (by decide +kernel : everyDidntScore.replayWithCopies?.isSome)

@@ -96,7 +96,7 @@ inductive Feature
 
 /-- The probe for a feature on the positions of `t`: for the interrogative feature, [wh] heads; for
 φ-features, determiner phrases. -/
-def probe (t : PlanarSyntacticObject) : Feature → Probe t.val.Positions
+def probe (t : PlanarSyntacticObject) : Feature → Probe t.toRoseTree.Positions
   | .Q => .relativized fun q ↦ ∃ a ∈ (t.termAt q).token?, a.item.IsWh
   | .phi => t.phraseProbe .D
 

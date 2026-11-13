@@ -130,13 +130,13 @@ theorem Derivation.isSome_replayWithCopies? (d : Derivation) :
 unchanged: Extension and No Tampering. -/
 theorem Step.unmark_replayWithCopies?_im {mover : SyntacticObject} {side : Edge}
     {c c' : Cfg Marked} (h : (Step.im mover side).replayWithCopies? c τ = some c') :
-    ∃ s : Marked, IsSubtree s.unmark.val c.current.unmark.val ∧
+    ∃ s : Marked, IsSubtree s.unmark.toRoseTree c.current.unmark.toRoseTree ∧
       c'.current.unmark = c.current.unmark.attach side s.unmark := by
   obtain ⟨p, st⟩ := c
   obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
   refine ⟨s, ?_, by simp⟩
   obtain ⟨r, hr, -, rfl⟩ := Option.pmap_eq_some_iff.1 hs
-  rw [Marked.val_unmark, Marked.val_unmark]
+  rw [Marked.toRoseTree_unmark, Marked.toRoseTree_unmark]
   exact (isSubtree_of_mem_subtreesUntil hr).map _
 
 /-- Internal Merge with copies is MERGE leaving copies of a copy of the mover on the copy object,

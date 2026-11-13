@@ -141,42 +141,42 @@ private theorem eq_node_of_coe_eq {v : RoseTree Vertex}
 
 private theorem terms_of_nil {a : Vertex}
     (h : IsSyntacticObject (UnorderedTree.mk (.node a []))) :
-    (PlanarSyntacticObject.ofVal (.node a []) h).toSyntacticObject.terms =
-      {(PlanarSyntacticObject.ofVal (.node a []) h).toSyntacticObject} := by
-  have hv := PlanarSyntacticObject.val_ofVal _ h
-  generalize PlanarSyntacticObject.ofVal (.node a []) h = p at hv
+    (PlanarSyntacticObject.ofRoseTree (.node a []) h).toSyntacticObject.terms =
+      {(PlanarSyntacticObject.ofRoseTree (.node a []) h).toSyntacticObject} := by
+  have hv := PlanarSyntacticObject.toRoseTree_ofRoseTree _ h
+  generalize PlanarSyntacticObject.ofRoseTree (.node a []) h = p at hv
   cases p with
   | of x => rfl
-  | mul l r => simp [PlanarSyntacticObject.val] at hv
+  | mul l r => simp [PlanarSyntacticObject.toRoseTree] at hv
 
 /-- The token is a term of the object just when the tree holds it. -/
 theorem coe_mem_terms_iff (p : PlanarSyntacticObject) :
-    (↑y : SyntacticObject) ∈ p.toSyntacticObject.terms ↔ Holds y p.val := by
-  obtain ⟨p, h, rfl⟩ := p.exists_eq_ofVal
-  rw [val_ofVal]
+    (↑y : SyntacticObject) ∈ p.toSyntacticObject.terms ↔ Holds y p.toRoseTree := by
+  obtain ⟨p, h, rfl⟩ := p.exists_eq_ofRoseTree
+  rw [toRoseTree_ofRoseTree]
   induction p with
   | node a cs ih =>
     rcases length_eq_zero_or_two h with hlen | hlen
     · rw [List.length_eq_zero_iff] at hlen
       subst hlen
-      rw [terms_of_nil, Multiset.mem_singleton, ← SyntacticObject.val_inj, toSyntacticObject_val,
-        val_ofVal, holds_leaf]
+      rw [terms_of_nil, Multiset.mem_singleton, ← SyntacticObject.toUnorderedTree_inj, toUnorderedTree_toSyntacticObject,
+        toRoseTree_ofRoseTree, holds_leaf]
       change UnorderedTree.mk (.node (Sum.inl (some y)) []) = UnorderedTree.mk (.node a []) ↔ _
       rw [UnorderedTree.mk_node_eq_mk_node_iff]
       simp [eq_comm]
     · obtain ⟨u, v, rfl⟩ := List.length_eq_two.1 hlen
       obtain rfl := eq_bare_of_ne_nil h (by simp)
       obtain ⟨hu, hv⟩ := (isSyntacticObject_mk_merge _ _).1 h
-      rw [ofVal_node_bare, PlanarSyntacticObject.toSyntacticObject_merge, terms_merge,
+      rw [ofRoseTree_node_bare, PlanarSyntacticObject.toSyntacticObject_merge, terms_merge,
         Multiset.mem_cons,
         Multiset.mem_add, holds_pair, ih u (by simp) hu, ih v (by simp) hv]
       exact or_iff_right (leaf_ne_merge _ _ _)
 
 /-- On a syntactic object c-command between distinct tokens is `TokenCCommands`. -/
 theorem cCommands_iff_tokenCCommands (hxy : x ≠ y) (p : PlanarSyntacticObject) :
-    CCommands p.toSyntacticObject ↑x ↑y ↔ TokenCCommands x y p.val := by
-  obtain ⟨p, h, rfl⟩ := p.exists_eq_ofVal
-  rw [val_ofVal]
+    CCommands p.toSyntacticObject ↑x ↑y ↔ TokenCCommands x y p.toRoseTree := by
+  obtain ⟨p, h, rfl⟩ := p.exists_eq_ofRoseTree
+  rw [toRoseTree_ofRoseTree]
   induction p with
   | node a cs ih =>
     rcases length_eq_zero_or_two h with hlen | hlen
@@ -190,16 +190,16 @@ theorem cCommands_iff_tokenCCommands (hxy : x ≠ y) (p : PlanarSyntacticObject)
     · obtain ⟨u, v, rfl⟩ := List.length_eq_two.1 hlen
       obtain rfl := eq_bare_of_ne_nil h (by simp)
       obtain ⟨hu, hv⟩ := (isSyntacticObject_mk_merge _ _).1 h
-      let U : PlanarSyntacticObject := ofVal u hu
-      let V : PlanarSyntacticObject := ofVal v hv
-      have hUv : U.val = u := val_ofVal u hu
-      have hVv : V.val = v := val_ofVal v hv
-      have hval (W : PlanarSyntacticObject) {w : RoseTree Vertex} (hW : W.val = w)
+      let U : PlanarSyntacticObject := ofRoseTree u hu
+      let V : PlanarSyntacticObject := ofRoseTree v hv
+      have hUv : U.toRoseTree = u := toRoseTree_ofRoseTree u hu
+      have hVv : V.toRoseTree = v := toRoseTree_ofRoseTree v hv
+      have hval (W : PlanarSyntacticObject) {w : RoseTree Vertex} (hW : W.toRoseTree = w)
           (he : (↑x : SyntacticObject) = W.toSyntacticObject) :
           UnorderedTree.mk (.node (Sum.inl (some x)) []) = UnorderedTree.mk w :=
-        (congrArg SyntacticObject.val he).trans
-          ((toSyntacticObject_val W).trans (congrArg UnorderedTree.mk hW))
-      rw [ofVal_node_bare]
+        (congrArg SyntacticObject.toUnorderedTree he).trans
+          ((toUnorderedTree_toSyntacticObject W).trans (congrArg UnorderedTree.mk hW))
+      rw [ofRoseTree_node_bare]
       change CCommands (PlanarSyntacticObject.toSyntacticObject
         (PlanarSyntacticObject.merge U V)) _ _ ↔ _
       rw [PlanarSyntacticObject.toSyntacticObject_merge]
@@ -239,7 +239,7 @@ theorem cCommands_iff_tokenCCommands (hxy : x ≠ y) (p : PlanarSyntacticObject)
           exact hxy (Option.some.inj (Sum.inl.inj hy))
 
 theorem holds_iff_mem_yield {w : LexicalItem.Token} (p : PlanarSyntacticObject) :
-    Holds w p.val ↔ w ∈ p.toSyntacticObject.yield :=
+    Holds w p.toRoseTree ↔ w ∈ p.toSyntacticObject.yield :=
   (coe_mem_terms_iff p).symm.trans mem_yield_iff.symm
 
 /-- A trace-free object holds a token. -/

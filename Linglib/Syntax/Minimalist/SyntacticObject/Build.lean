@@ -84,7 +84,7 @@ instance : Singleton (SyntacticObject L) (SyntacticObject L) := ⟨id⟩
 
 /-- The pronounced tokens of a syntactic object, its lexical leaves; traces are unpronounced. -/
 def yield (s : SyntacticObject L) : Multiset L :=
-  s.val.leaves.filterMap (Sum.elim id fun _ ↦ none)
+  s.toUnorderedTree.leaves.filterMap (Sum.elim id fun _ ↦ none)
 
 @[simp] theorem yield_leaf (tok : L) : (leaf tok).yield = {tok} := rfl
 
@@ -93,7 +93,7 @@ def yield (s : SyntacticObject L) : Multiset L :=
 @[simp] theorem yield_traceOf (tok : L) : (traceOf tok).yield = 0 := rfl
 
 @[simp] theorem yield_merge (l r : SyntacticObject L) : (merge l r).yield = l.yield + r.yield := by
-  rw [yield, merge_val, show ({l.val, r.val} : Multiset _) = l.val ::ₘ {r.val} from rfl,
+  rw [yield, toUnorderedTree_merge, show ({l.toUnorderedTree, r.toUnorderedTree} : Multiset _) = l.toUnorderedTree ::ₘ {r.toUnorderedTree} from rfl,
     UnorderedTree.leaves_node_cons]
   simp [yield, Multiset.filterMap_add]
 
@@ -141,8 +141,8 @@ theorem merge_inj {l r l' r' : PlanarSyntacticObject L} :
   ⟨fun h ↦ by injection h with h₁ h₂; exact ⟨h₁, h₂⟩, fun ⟨hl, hr⟩ ↦ hl ▸ hr ▸ rfl⟩
 
 theorem merge_ne_left (l r : PlanarSyntacticObject L) : merge l r ≠ l := fun h ↦ by
-  have := congrArg (·.val.numNodes) h
-  simp only [merge_val, RoseTree.numNodes_node, List.map_cons, List.map_nil, List.sum_cons,
+  have := congrArg (·.toRoseTree.numNodes) h
+  simp only [toRoseTree_merge, RoseTree.numNodes_node, List.map_cons, List.map_nil, List.sum_cons,
     List.sum_nil] at this
   omega
 
@@ -184,10 +184,10 @@ theorem attach_swap (p d : PlanarSyntacticObject L) (e : Edge) :
 
 /-- The pronounced tokens of a planar object, left to right; traces are unpronounced. -/
 def yield (p : PlanarSyntacticObject L) : List L :=
-  p.val.leafList.filterMap (Sum.elim id fun _ ↦ none)
+  p.toRoseTree.leafList.filterMap (Sum.elim id fun _ ↦ none)
 
 theorem yield_toSyntacticObject (p : PlanarSyntacticObject L) :
-    p.toSyntacticObject.yield = p.val.leaves.filterMap (Sum.elim id fun _ ↦ none) := rfl
+    p.toSyntacticObject.yield = p.toRoseTree.leaves.filterMap (Sum.elim id fun _ ↦ none) := rfl
 
 /-- The pronounced tokens of a planar object are those of its object, in order. -/
 theorem coe_yield (p : PlanarSyntacticObject L) :
@@ -200,7 +200,7 @@ theorem yield_attach (p : PlanarSyntacticObject L) (e : Edge)
     (p.attach e d).toSyntacticObject.yield =
       d.toSyntacticObject.yield + p.toSyntacticObject.yield := by
   cases e <;>
-    simp only [yield_toSyntacticObject, attach, merge_val, RoseTree.leaves_node_cons,
+    simp only [yield_toSyntacticObject, attach, toRoseTree_merge, RoseTree.leaves_node_cons,
       List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, Multiset.filterMap_add]
   exact add_comm _ _
 
@@ -238,7 +238,7 @@ def mkLeafPhon (cat : Cat) (sel : SelStack) (phon : String) (id : Nat) : Syntact
 
 /-- The lexical token at the root, if the root is a lexical leaf. -/
 def token? (s : SyntacticObject L) : Option L :=
-  match UnorderedTree.value s.val with
+  match UnorderedTree.value s.toUnorderedTree with
   | .inl o => o
   | .inr _ => none
 
@@ -264,11 +264,11 @@ instance (c : Cat) : DecidablePred (isLeafOf c) := fun _ ↦ inferInstanceAs (De
 theorem traceOf_ne_trace (tok : L) : traceOf tok ≠ trace := by
   intro h
   have h' : (Sum.inr (some tok) : Vertex L) = Sum.inr none :=
-    congrArg (fun s : SyntacticObject L ↦ UnorderedTree.value s.val) h
+    congrArg (fun s : SyntacticObject L ↦ UnorderedTree.value s.toUnorderedTree) h
   simp at h'
 
 @[simp] theorem token?_merge (l r : SyntacticObject L) : (merge l r).token? = none := by
-  rw [token?, merge_val, UnorderedTree.value_node]
+  rw [token?, toUnorderedTree_merge, UnorderedTree.value_node]
 
 theorem token?_eq_some_iff {s : SyntacticObject L} {tok : L} :
     s.token? = some tok ↔ s = leaf tok := by
@@ -286,7 +286,7 @@ theorem isLeafOf_map {f : LexicalItem.Token → LexicalItem.Token}
 
 /-- A trace leaf, bare or indexed. -/
 def isTrace (s : SyntacticObject L) : Prop :=
-  (UnorderedTree.value s.val).isRight = true ∧ UnorderedTree.numNodes s.val = 1
+  (UnorderedTree.value s.toUnorderedTree).isRight = true ∧ UnorderedTree.numNodes s.toUnorderedTree = 1
 
 instance (s : SyntacticObject L) : Decidable (isTrace s) := inferInstanceAs (Decidable (_ ∧ _))
 
@@ -299,7 +299,7 @@ instance (s : SyntacticObject L) : Decidable (isTrace s) := inferInstanceAs (Dec
 @[simp] theorem isTrace_trace : isTrace (trace : SyntacticObject L) := ⟨rfl, rfl⟩
 
 /-- The number of leaves, traces included. -/
-def leafCount (s : SyntacticObject L) : Nat := UnorderedTree.numLeaves s.val
+def leafCount (s : SyntacticObject L) : Nat := UnorderedTree.numLeaves s.toUnorderedTree
 
 /-- An object is a lexical or trace leaf exactly when its leaf count is one. -/
 def IsLeaf (s : SyntacticObject L) : Prop := s.leafCount = 1
@@ -318,7 +318,7 @@ instance [Repr L] : Repr (SyntacticObject L) where
       else f!"⟨SyntacticObject merge, {s.leafCount} leaves⟩"
 
 /-- `nodeCount s = leafCount s - 1`, the number of internal vertices of a full binary tree. -/
-def nodeCount (s : SyntacticObject L) : Nat := UnorderedTree.numLeaves s.val - 1
+def nodeCount (s : SyntacticObject L) : Nat := UnorderedTree.numLeaves s.toUnorderedTree - 1
 
 @[simp] theorem leafCount_leaf (tok : L) :
     (SyntacticObject.leaf tok).leafCount = 1 := rfl
@@ -335,7 +335,7 @@ private def demoVP : SyntacticObject :=
     (PlanarSyntacticObject.leaf (demoTok 1))).toSyntacticObject
 
 /-- The DSL-built tree is a genuine syntactic object. -/
-example : IsSyntacticObject demoVP.val := by decide
+example : IsSyntacticObject demoVP.toUnorderedTree := by decide
 /-- Its head token reads back via `token?` of the left leaf. -/
 example : (SyntacticObject.leaf (demoTok 0)).token? = some (demoTok 0) := by decide
 /-- It has two leaves and one internal node. -/

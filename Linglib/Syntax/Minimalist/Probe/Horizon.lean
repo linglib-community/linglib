@@ -165,12 +165,12 @@ def spineOf : RoseTree Vertex → ClauseSpine
   | _ => ⟨[]⟩
 
 /-- The spine of the node at `p`. -/
-def spineAt (p : TreePath) : ClauseSpine := t.val[p]?.elim ⟨[]⟩ (spineOf η)
+def spineAt (p : TreePath) : ClauseSpine := t.toRoseTree[p]?.elim ⟨[]⟩ (spineOf η)
 
 /-- The positions behind the horizon `c` of the probe at `a`, those dominated by a node the probe
 c-commands whose spine contains `c` ([keine-2019]'s Horizons). -/
 def horizon (a : TreePath) (c : Cat) : Set TreePath :=
-  {q | ∃ x ∈ Finset.Iio q, t.val.CCommands a x ∧ c ∈ spineAt η t x}
+  {q | ∃ x ∈ Finset.Iio q, t.toRoseTree.CCommands a x ∧ c ∈ spineAt η t x}
 
 instance (a : TreePath) (c : Cat) : DecidablePred (· ∈ horizon η t a c) :=
   fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -225,7 +225,7 @@ theorem isUpperSet_horizon : IsUpperSet (horizon η t a c) :=
 /-- A position is behind a probe's horizon exactly when a node the probe c-commands dominates it
 and is not transparent to the probe. -/
 theorem HorizonSetting.mem_cut_iff :
-    q ∈ p.cut η t a ↔ ∃ x < q, t.val.CCommands a x ∧ ¬ p.TransparentTo (spineAt η t x) := by
+    q ∈ p.cut η t a ↔ ∃ x < q, t.toRoseTree.CCommands a x ∧ ¬ p.TransparentTo (spineAt η t x) := by
   constructor
   · rintro ⟨c, hc, x, hx, ha, hm⟩
     exact ⟨x, Finset.mem_Iio.1 hx, ha, fun ht ↦ transparentTo_iff.1 ht c hc hm⟩
@@ -236,19 +236,19 @@ theorem HorizonSetting.mem_cut_iff :
 
 /-- A probe whose sister is not transparent to it reaches nothing beyond its sister: every
 position it c-commands below the sister is behind its horizon. -/
-theorem HorizonSetting.mem_cut_of_not_transparentTo (ha : a ∈ t.val.validPaths) (ha0 : a ≠ ⊥)
-    (hq : q ∈ t.val.validPaths) (hc : t.val.CCommands a q) (hne : q ≠ complement a)
+theorem HorizonSetting.mem_cut_of_not_transparentTo (ha : a ∈ t.toRoseTree.validPaths) (ha0 : a ≠ ⊥)
+    (hq : q ∈ t.toRoseTree.validPaths) (hc : t.toRoseTree.CCommands a q) (hne : q ≠ complement a)
     (hs : ¬ p.TransparentTo (spineAt η t (complement a))) : q ∈ p.cut η t a := by
   have hle : complement a ≤ q := (mem_cCommandDomain_iff_complement_le ha ha0 hq).1 hc
-  have hv : complement a ∈ t.val.validPaths := isLowerSet_validPaths _ hle hq
+  have hv : complement a ∈ t.toRoseTree.validPaths := isLowerSet_validPaths _ hle hq
   exact mem_cut_iff.2 ⟨_, lt_of_le_of_ne hle (Ne.symm hne),
     (mem_cCommandDomain_iff_complement_le ha ha0 hv).2 le_rfl, hs⟩
 
 /-- A vacuous probe reaches nothing beyond its sister: where the head of `p` inherits from its
 sister and `p` is vacuous in the phrase it projects, every position it c-commands below the sister
 is behind its horizon. -/
-theorem HorizonSetting.mem_cut_of_isVacuousIn (ha : a ∈ t.val.validPaths) (ha0 : a ≠ ⊥)
-    (hq : q ∈ t.val.validPaths) (hc : t.val.CCommands a q) (hne : q ≠ complement a)
+theorem HorizonSetting.mem_cut_of_isVacuousIn (ha : a ∈ t.toRoseTree.validPaths) (ha0 : a ≠ ⊥)
+    (hq : q ∈ t.toRoseTree.validPaths) (hc : t.toRoseTree.CCommands a q) (hne : q ≠ complement a)
     (hi : (spineAt η t (complement a)).Inherits p.head)
     (hn : p.head ∉ spineAt η t (complement a))
     (hv : p.IsVacuousIn ((spineAt η t (complement a)).project p.head)) : q ∈ p.cut η t a :=

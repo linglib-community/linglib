@@ -209,7 +209,7 @@ every answer, [rawlins-2008], [ippolito-2024]) to the speaker, so it is licensed
 at the end of the derivation: iff a phrase it is part of, its own or its host's, takes scope
 there. -/
 def Licensed (m : LexicalItem.Token) : Prop :=
-  ∃ x ∈ tokenList t.val, PartOf t m x.2 ∧ ReachesScope t x.2
+  ∃ x ∈ tokenList t.toRoseTree, PartOf t m x.2 ∧ ReachesScope t x.2
 
 instance (m : LexicalItem.Token) : Decidable (Licensed t m) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -234,8 +234,8 @@ theorem licensed_daodi : Licensed daodiQuestion daodi ∧ ¬ ReachesScope daodiQ
 /-- [den-dikken-giannakidou-2002]: *wh-the-hell* is a polarity item licensed in the immediate
 scope of the question operator ([linebarger-1987]), which a wh-phrase c-commanding it blocks. -/
 def Intervention.Licensed (m : LexicalItem.Token) : Prop :=
-  ∃ q ∈ occurrences t m, ∀ x ∈ tokenList t.val, x.2.item.IsWh → ¬ PartOf t m x.2 →
-    ¬ CCommands t.val (projectionAt .raising t x.1) q
+  ∃ q ∈ occurrences t m, ∀ x ∈ tokenList t.toRoseTree, x.2.item.IsWh → ¬ PartOf t m x.2 →
+    ¬ CCommands t.toRoseTree (projectionAt .raising t x.1) q
 
 instance (m : LexicalItem.Token) : Decidable (Intervention.Licensed t m) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))

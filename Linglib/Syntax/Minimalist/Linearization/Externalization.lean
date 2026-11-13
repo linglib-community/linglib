@@ -253,20 +253,20 @@ theorem linearize?_merge {d l : SyntacticObject} {pd pl : PlanarSyntacticObject}
   cases e <;> cases side <;> rfl
 
 theorem linearize?_of_mem_subtrees {cur : SyntacticObject} {pc : PlanarSyntacticObject}
-    (hc : cur.linearize? side = some pc) {q : RoseTree Vertex} (hq : q ∈ pc.val.subtrees)
+    (hc : cur.linearize? side = some pc) {q : RoseTree Vertex} (hq : q ∈ pc.toRoseTree.subtrees)
     (hqs : IsSyntacticObject (mk q)) :
-    linearize? side (ofVal (mk q) hqs) = some (PlanarSyntacticObject.ofVal q hqs) := by
+    linearize? side (ofUnorderedTree (mk q) hqs) = some (PlanarSyntacticObject.ofRoseTree q hqs) := by
   have root : ∀ {cur : SyntacticObject} {pc : PlanarSyntacticObject},
-      cur.linearize? side = some pc → ∀ hqs : IsSyntacticObject (mk pc.val),
-      linearize? side (ofVal (mk pc.val) hqs) = some (PlanarSyntacticObject.ofVal pc.val hqs) :=
+      cur.linearize? side = some pc → ∀ hqs : IsSyntacticObject (mk pc.toRoseTree),
+      linearize? side (ofUnorderedTree (mk pc.toRoseTree) hqs) = some (PlanarSyntacticObject.ofRoseTree pc.toRoseTree hqs) :=
     fun hc _ ↦ by
-      rw [← PlanarSyntacticObject.toSyntacticObject_ofVal,
-        PlanarSyntacticObject.ofVal_val, toSyntacticObject_of_linearize? hc, hc]
+      rw [← PlanarSyntacticObject.toSyntacticObject_ofRoseTree,
+        PlanarSyntacticObject.ofRoseTree_toRoseTree, toSyntacticObject_of_linearize? hc, hc]
   induction cur using ind generalizing pc with
   | leaf tok | trace | traceOf tok =>
     obtain rfl := Option.some.inj hc
-    simp only [PlanarSyntacticObject.leaf_val, PlanarSyntacticObject.trace_val,
-      PlanarSyntacticObject.traceOf_val, RoseTree.subtrees_node, List.flatMap_nil,
+    simp only [PlanarSyntacticObject.toRoseTree_leaf, PlanarSyntacticObject.toRoseTree_trace,
+      PlanarSyntacticObject.toRoseTree_traceOf, RoseTree.subtrees_node, List.flatMap_nil,
       List.mem_cons, List.not_mem_nil, or_false] at hq
     subst hq
     exact root hc hqs
@@ -275,7 +275,7 @@ theorem linearize?_of_mem_subtrees {cur : SyntacticObject} {pc : PlanarSyntactic
     rw [linearize?, linearizationState_node] at hc'
     obtain ⟨pl, pr, hl, hr, rfl | rfl⟩ := LinearizationState.linearized?_mul_eq_some hc' <;>
       cases side <;>
-      simp only [PlanarSyntacticObject.attach, PlanarSyntacticObject.merge_val,
+      simp only [PlanarSyntacticObject.attach, PlanarSyntacticObject.toRoseTree_merge,
         RoseTree.subtrees_node,
         List.flatMap_cons, List.flatMap_nil, List.append_nil, List.mem_cons,
         List.mem_append] at hq <;>

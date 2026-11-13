@@ -75,7 +75,7 @@ def vStar := tok 100 .v "v*" (sel := [.V])
 
 /-- A root that minimal search finds in the sister of v*, which inherits its φ-features. -/
 def InheritsPhi (t : PlanarSyntacticObject) (r : LexicalItem.Token) : Prop :=
-  IsRoot r ∧ ∃ p d : t.val.Positions, t.termAt p = ↑vStar ∧ p ≠ ⊥ ∧ d ≠ ⊥ ∧ p ≠ d ∧
+  IsRoot r ∧ ∃ p d : t.toRoseTree.Positions, t.termAt p = ↑vStar ∧ p ≠ ⊥ ∧ d ≠ ⊥ ∧ p ≠ d ∧
     p.val.parent = d.val.parent ∧ r ∈ t.labelsAt d
 
 instance (t : PlanarSyntacticObject) : DecidablePred (InheritsPhi t) :=
@@ -115,7 +115,7 @@ def Invisible (a : LexicalItem.Token) : Prop := a = vStar ∨ a = cNull
 instance : DecidablePred Invisible := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The object built at the phase level of a position. -/
-def stageOf (t : PlanarSyntacticObject) (n : t.val.Positions) : PlanarSyntacticObject :=
+def stageOf (t : PlanarSyntacticObject) (n : t.toRoseTree.Positions) : PlanarSyntacticObject :=
   t.planarTermAt (phaseLevel .label t (occurrencesWith t IsPhaseHead).toFinset n)
 
 /-- Labeling at the phase level: an occurrence of `x` is labeled in the object built at its phase

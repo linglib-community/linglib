@@ -120,7 +120,7 @@ no trace and merges no token twice: two copies stand in a c-command relation onl
 that merged the higher one, its sister held the other pronounced. -/
 theorem BindsAtLF.bindsAtSomeStage {x y : LexicalItem.Token} (hxy : x ≠ y)
     (hd : d.lexTokens.Nodup) (hm : ∀ step ∈ d.steps, step.IsMerge)
-    (hmv : ∀ step ∈ d.steps, ∀ m ∈ step.mover?, m.val.value.isLeft)
+    (hmv : ∀ step ∈ d.steps, ∀ m ∈ step.mover?, m.toUnorderedTree.value.isLeft)
     (h : d.BindsAtLF ↑x ↑y) : d.BindsAtSomeStage ↑x ↑y := by
   obtain ⟨init, steps⟩ := d
   induction steps using List.reverseRecOn with
@@ -139,7 +139,7 @@ theorem BindsAtLF.bindsAtSomeStage {x y : LexicalItem.Token} (hxy : x ≠ y)
     change (d.append [s]).BindsAtLF ↑x ↑y at h
     change (d.append [s]).BindsAtSomeStage ↑x ↑y
     have hm' : ∀ t ∈ d.steps, t.IsMerge := fun t ht ↦ hm t (List.mem_append_left _ ht)
-    have hmv' : ∀ t ∈ d.steps, ∀ m ∈ t.mover?, m.val.value.isLeft :=
+    have hmv' : ∀ t ∈ d.steps, ∀ m ∈ t.mover?, m.toUnorderedTree.value.isLeft :=
       fun t ht ↦ hmv t (List.mem_append_left _ ht)
     have hs : s.IsMerge := hm s (List.mem_append_right _ (List.mem_singleton_self _))
     have hd0 : d.lexTokens.Nodup :=
@@ -238,7 +238,7 @@ no trace and merges no token twice, `x` c-commands `y` at some stage exactly whe
 c-commands some copy of `y` in the object with every copy in place. -/
 theorem bindsAtSomeStage_iff_bindsAtLF {x y : LexicalItem.Token} (hxy : x ≠ y)
     (hd : d.lexTokens.Nodup) (hm : ∀ step ∈ d.steps, step.IsMerge)
-    (hmv : ∀ step ∈ d.steps, ∀ m ∈ step.mover?, m.val.value.isLeft) (hr : d.replay?.isSome) :
+    (hmv : ∀ step ∈ d.steps, ∀ m ∈ step.mover?, m.toUnorderedTree.value.isLeft) (hr : d.replay?.isSome) :
     d.BindsAtSomeStage ↑x ↑y ↔ d.BindsAtLF ↑x ↑y :=
   ⟨fun h ↦ h.bindsAtLF hxy hr, fun h ↦ h.bindsAtSomeStage hxy hd hm hmv⟩
 

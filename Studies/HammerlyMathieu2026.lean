@@ -204,16 +204,16 @@ def featuresOf (v : Voice) (x : Clause) (c : Copies) (tok : LexicalItem.Token) :
 
 /-- The features at a position, those of its token and none for a trace or a phrase. -/
 def featuresAt (v : Voice) (x : Clause) (c : Copies) (t : PlanarSyntacticObject)
-    (q : t.val.Positions) : Finset Feature :=
+    (q : t.toRoseTree.Positions) : Finset Feature :=
   ((t.termAt q).token?).elim ∅ (featuresOf v x c)
 
 /-- A position bears a nominal; only nominals move (section 3.5.1). -/
-def isNominal (t : PlanarSyntacticObject) (q : t.val.Positions) : Bool :=
+def isNominal (t : PlanarSyntacticObject) (q : t.toRoseTree.Positions) : Bool :=
   ((t.termAt q).token?).elim false (·.item.cat == .D)
 
 /-- Closeness in the clause: the maximal projections above a position, under which the specifiers
 of a head and the head itself are equidistant. -/
-abbrev closeness (t : PlanarSyntacticObject) : t.val.Positions → Finset TreePath :=
+abbrev closeness (t : PlanarSyntacticObject) : t.toRoseTree.Positions → Finset TreePath :=
   t.above (maximalProjections .raising t)
 
 /-- A stage of the derivation: the object built, what the heads have copied, and the token the
@@ -229,16 +229,16 @@ structure Stage where
 /-- What the head `h` at the position `hq` of the object copies by Agree under Best Match with
 `agr`, added to what the heads have copied. -/
 def agreeCopies (v : Voice) (x : Clause) (h : LexicalItem.Token) (agr : Spec Feature) (st : Stage)
-    (hq : st.obj.val.Positions) : Copies :=
+    (hq : st.obj.toRoseTree.Positions) : Copies :=
   let feats := featuresAt v x st.copies st.obj
   Function.update st.copies h
-    (agr.copied feats {q | st.obj.val.CCommands hq q} (agr.bestMatch feats (closeness st.obj)))
+    (agr.copied feats {q | st.obj.toRoseTree.CCommands hq q} (agr.bestMatch feats (closeness st.obj)))
 
 /-- The nominals a head at the position `hq` c-commands, among which its EPP probe searches. -/
-def nominalDomain (t : PlanarSyntacticObject) (hq : t.val.Positions) : Set t.val.Positions :=
-  {q | t.val.CCommands hq q ∧ isNominal t q = true}
+def nominalDomain (t : PlanarSyntacticObject) (hq : t.toRoseTree.Positions) : Set t.toRoseTree.Positions :=
+  {q | t.toRoseTree.CCommands hq q ∧ isNominal t q = true}
 
-instance (t : PlanarSyntacticObject) (hq : t.val.Positions) :
+instance (t : PlanarSyntacticObject) (hq : t.toRoseTree.Positions) :
     DecidablePred (· ∈ nominalDomain t hq) :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
@@ -248,7 +248,7 @@ outer specifier. -/
 def probeStep (v : Voice) (x : Clause) (h : LexicalItem.Token) (hp : TreePath)
     (agr epp : Spec Feature) (st : Stage) : Stage :=
   let t := st.obj
-  if hhp : hp ∈ t.val.validPaths then
+  if hhp : hp ∈ t.toRoseTree.validPaths then
     let c := agreeCopies v x h agr st ⟨hp, hhp⟩
     let feats' := featuresAt v x c t
     match t.attractStep? (epp.toProbe feats') (nominalDomain t ⟨hp, hhp⟩)
@@ -403,7 +403,7 @@ for each nominal the probe agrees with, or the object unchanged if it agrees wit
 def probeOptions (v : Voice) (x : Clause) (h : LexicalItem.Token) (hp : TreePath)
     (agr epp : Spec Feature) (st : Stage) : Multiset Stage :=
   let t := st.obj
-  if hhp : hp ∈ t.val.validPaths then
+  if hhp : hp ∈ t.toRoseTree.validPaths then
     let c := agreeCopies v x h agr st ⟨hp, hhp⟩
     let feats' := featuresAt v x c t
     let movers := Finset.univ.filter fun q ↦ (epp.toProbe feats').AgreesWith

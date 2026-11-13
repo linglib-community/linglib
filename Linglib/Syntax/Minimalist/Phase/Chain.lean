@@ -43,11 +43,11 @@ variable (hd : HeadFunction) (t : PlanarSyntacticObject) (tok : LexicalItem.Toke
 /-- The positions a phase head occurring only at `a` c-commands carry the terms within its
 complement. -/
 theorem withinComplement_iff_exists_mem_cCommandDomain {t : PlanarSyntacticObject}
-    {ℓ : LexicalItem.Token} {a : t.val.Positions} {x : SyntacticObject}
+    {ℓ : LexicalItem.Token} {a : t.toRoseTree.Positions} {x : SyntacticObject}
     (hu : ∀ q, t.termAt q = SyntacticObject.leaf ℓ ↔ q = a)
     (hph : (t : SyntacticObject).IsPhaseHead ℓ) :
     (t : SyntacticObject).WithinComplement ℓ x ↔
-      ∃ q : t.val.Positions, ↑q ∈ t.val.cCommandDomain a ∧ t.termAt q = x := by
+      ∃ q : t.toRoseTree.Positions, ↑q ∈ t.toRoseTree.cCommandDomain a ∧ t.termAt q = x := by
   have ha : t.termAt a = SyntacticObject.leaf ℓ := (hu a).2 rfl
   have hu' : ∀ q, t.termAt q = t.termAt a → q = a := fun q hq ↦ (hu q).1 (hq.trans ha)
   obtain ⟨m₀, hm₀, hℓ, hm₀ℓ⟩ := hph
@@ -63,7 +63,7 @@ theorem withinComplement_iff_exists_mem_cCommandDomain {t : PlanarSyntacticObjec
 head c-commands, the phase's interior, to a position outside the head's maximal projection; the
 Phase Impenetrability Condition forbids it, and a link to the edge does not leave. -/
 def Crosses (h : TreePath) : Prop :=
-  ∃ x ∈ links hd t tok, x.2 ∈ t.val.cCommandDomain h ∧ ¬ projectionAt hd t h ≤ x.1
+  ∃ x ∈ links hd t tok, x.2 ∈ t.toRoseTree.cCommandDomain h ∧ ¬ projectionAt hd t h ≤ x.1
 
 instance (h : TreePath) : Decidable (Crosses hd t tok h) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 

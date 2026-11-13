@@ -137,7 +137,7 @@ theorem liftN_merge (a b : UnorderedTree (Vertex L)) :
   exact rfl
 
 /-- The induced map on syntactic objects, unbundled — computable, `decide`-friendly. -/
-def liftFun (s : SyntacticObject L) : β := liftN ℓ τ s.val
+def liftFun (s : SyntacticObject L) : β := liftN ℓ τ s.toUnorderedTree
 
 @[simp] theorem liftFun_leaf (tok : L) :
     liftFun ℓ τ (SyntacticObject.leaf tok) = ℓ tok :=
@@ -150,8 +150,8 @@ def liftFun (s : SyntacticObject L) : β := liftN ℓ τ s.val
 
 @[simp] theorem liftFun_merge (l r : SyntacticObject L) :
     liftFun ℓ τ (merge l r) = liftFun ℓ τ l * liftFun ℓ τ r := by
-  show liftN ℓ τ (merge l r).val = liftN ℓ τ l.val * liftN ℓ τ r.val
-  rw [merge_val, liftN_merge]
+  show liftN ℓ τ (merge l r).toUnorderedTree = liftN ℓ τ l.toUnorderedTree * liftN ℓ τ r.toUnorderedTree
+  rw [toUnorderedTree_merge, liftN_merge]
 
 /-- Leaf data extends to a morphism of magmas out of the carrier, the existence half of the
     universal property (cf. `FreeMagma.lift`). -/

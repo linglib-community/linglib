@@ -39,7 +39,7 @@ open Core.Order RoseTree
 variable (hd : HeadFunction) (t : PlanarSyntacticObject)
 
 /-- A pronounced head occupies the position. -/
-def IsHeadPosition (p : TreePath) : Prop := ∃ x ∈ tokenList t.val, x.1 = p
+def IsHeadPosition (p : TreePath) : Prop := ∃ x ∈ tokenList t.toRoseTree, x.1 = p
 
 instance (p : TreePath) : Decidable (IsHeadPosition t p) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -61,10 +61,10 @@ instance (x : TreePath × TreePath) : Decidable (SpecToSpec hd t x) :=
 
 /-- No link of any chain moves a specifier across no maximal projection but its own. -/
 def ObeysAntiLocality : Prop :=
-  ∀ y ∈ tokenList t.val, ∀ l ∈ links hd t y.2, ¬ SpecToSpec hd t l
+  ∀ y ∈ tokenList t.toRoseTree, ∀ l ∈ links hd t y.2, ¬ SpecToSpec hd t l
 
 instance : Decidable (ObeysAntiLocality hd t) :=
-  inferInstanceAs (Decidable (∀ y ∈ tokenList t.val, _))
+  inferInstanceAs (Decidable (∀ y ∈ tokenList t.toRoseTree, _))
 
 /-- A link moves the complement of a head to a specifier of the head's phrase, which
 [abels-2003]'s anti-locality bans. -/

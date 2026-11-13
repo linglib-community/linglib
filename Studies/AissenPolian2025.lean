@@ -61,7 +61,7 @@ def secondaryWh : HorizonSetting := ⟨.D, none⟩
 lies behind its horizon for an occurrence of the probe. -/
 def Invisible (p : HorizonSetting) (t : PlanarSyntacticObject)
     (probe target : SyntacticObject) : Prop :=
-  ∃ a q : t.val.Positions,
+  ∃ a q : t.toRoseTree.Positions,
     t.termAt a = probe ∧ t.termAt q = target ∧ q.val ∈ p.cut headIndex? t a.val
 
 instance (p : HorizonSetting) (t : PlanarSyntacticObject) (probe target : SyntacticObject) :
@@ -155,7 +155,7 @@ theorem dp_opaque_verb_visible : Invisible nominalOpacity (cp unaccDP) C₀ D₀
   decide +kernel
 
 /-- C⁰'s wh-probe, satisfied by the wh-possessor. -/
-def whProbe (t : PlanarSyntacticObject) : Probe t.val.Positions :=
+def whProbe (t : PlanarSyntacticObject) : Probe t.toRoseTree.Positions :=
   .relativized fun q ↦ decide (t.termAt q = ↑Psr)
 
 /-- What C⁰'s wh-probe finds, searching short of its horizon at N⁰. -/

@@ -694,7 +694,7 @@ example : ∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row, ∀ x y : Lex
     (c.derivation.BindsAtSomeStage ↑x ↑y ↔ c.derivation.BindsAtLF ↑x ↑y) := by
   have h : ∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row, c.derivation.lexTokens.Nodup ∧
       (∀ step ∈ c.derivation.steps, step.IsMerge) ∧
-      (∀ step ∈ c.derivation.steps, ∀ m ∈ step.mover?, m.val.value.isLeft) ∧
+      (∀ step ∈ c.derivation.steps, ∀ m ∈ step.mover?, m.toUnorderedTree.value.isLeft) ∧
       c.derivation.replay?.isSome := by
     decide +kernel
   intro row hrow c hc x y hxy
@@ -734,7 +734,7 @@ example : ∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row, ∀ m ∈ c.d
         c.derivation.BindsAtLF ↑x ↑y) := by
   have h : ∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row, c.derivation.lexTokens.Nodup ∧
       (∀ step ∈ c.derivation.steps, step.IsMerge) ∧
-      (∀ step ∈ c.derivation.steps, ∀ m ∈ step.mover?, m.val.value.isLeft) ∧
+      (∀ step ∈ c.derivation.steps, ∀ m ∈ step.mover?, m.toUnorderedTree.value.isLeft) ∧
       ∀ m ∈ c.derivation.replayWithCopies?,
         PlanarSyntacticObject.Marked.MarksName m.current.val ∧
           PlanarSyntacticObject.Marked.TraceFree m.current.val ∧

@@ -58,6 +58,6 @@ theorem projectionAt_le (p : TreePath) : projectionAt hd t p ≤ p := maximalPro
 
 /-- The lexical head of the phrase at `p`, reached by descending through head daughters. -/
 def lexicalHeadAt (p : TreePath) : TreePath :=
-  (fun q ↦ (hd t q).elim q fun i ↦ ⟨q.toList ++ [i]⟩)^[t.val.subtrees.length] p
+  (fun q ↦ (hd t q).elim q fun i ↦ ⟨q.toList ++ [i]⟩)^[t.toRoseTree.subtrees.length] p
 
 end Minimalist

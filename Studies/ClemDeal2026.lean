@@ -246,7 +246,7 @@ def phaseSet (t : Minimalist.PlanarSyntacticObject) : Finset Core.Order.TreePath
 [bejar-rezac-2009] ((13)), the complement of a phase below it closed to it. -/
 def goalsIn (d : Derivation) (l : Locus) : List Arg :=
   d.externalize?.elim [] fun t ↦
-    ((Minimalist.tokenList t.val).find? (·.2.item.cat == l.cat)).elim [] fun a ↦
+    ((Minimalist.tokenList t.toRoseTree).find? (·.2.item.cat == l.cat)).elim [] fun a ↦
       (Minimalist.cyclicGoals .raising t (·.item.cat = .D)
         (Minimalist.sealed (phaseSet t) (Minimalist.complementDomain .raising t ∅)
           (Minimalist.Pic1 .raising t) a.1.parent) a.1).filterMap argOf

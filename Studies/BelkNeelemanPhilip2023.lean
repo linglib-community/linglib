@@ -77,8 +77,8 @@ conjunct that precedes `p` is realized before `q`, and material that follows `p`
 def MayPrune (t : PlanarSyntacticObject) (P : List (TreePath × TreePath)) (p q : TreePath) :
     Prop :=
   p.toList.head? = some 0 ∧ 1 < p.toList.length ∧ q.toList.head? = some 1 ∧
-    t.val[q]?.isSome ∧
-    ∀ x ∈ tokenList t.val, x.1.toList.head? = some 0 → ¬ p ≤ x.1 → x.2.item.phonForm?.isSome →
+    t.toRoseTree[q]?.isSome ∧
+    ∀ x ∈ tokenList t.toRoseTree, x.1.toList.head? = some 0 → ¬ p ≤ x.1 → x.2.item.phonForm?.isSome →
       (Precedes x.1 p → Precedes (realizedAt P x.1) q) ∧
         (Precedes p x.1 → Precedes q (realizedAt P x.1))
 
@@ -100,17 +100,17 @@ cannot be created through ellipsis (26); and when, as the No-Tangling Condition 
 multidominated token keeps a branch in the first conjunct. -/
 def Licensed : Prop :=
   (∀ x ∈ d.prunings.zipIdx, MayPrune d.input (d.prunings.take x.2) x.1.1 x.1.2) ∧
-    (∀ pq ∈ d.forced, d.input.val[pq.1]? = d.input.val[pq.2]?) ∧
-    (∀ pq ∈ d.free, d.input.val[pq.1]? ≠ d.input.val[pq.2]? ∧
-      ∀ x ∈ tokenList d.input.val, pq.1 ≤ x.1 → x.2.item.cat ≠ .T) ∧
-    ∀ x ∈ tokenList d.input.val, x.1.toList.head? = some 0 → IsShared d.input x.2 →
+    (∀ pq ∈ d.forced, d.input.toRoseTree[pq.1]? = d.input.toRoseTree[pq.2]?) ∧
+    (∀ pq ∈ d.free, d.input.toRoseTree[pq.1]? ≠ d.input.toRoseTree[pq.2]? ∧
+      ∀ x ∈ tokenList d.input.toRoseTree, pq.1 ≤ x.1 → x.2.item.cat ≠ .T) ∧
+    ∀ x ∈ tokenList d.input.toRoseTree, x.1.toList.head? = some 0 → IsShared d.input x.2 →
       ∃ pq ∈ d.forced, pq.1 ≤ x.1
 
 instance : Decidable d.Licensed := inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The realized tokens, left to right, are those outside every pruned branch. -/
 def yield : List LexicalItem.Token :=
-  (tokenList d.input.val).filterMap fun x ↦
+  (tokenList d.input.toRoseTree).filterMap fun x ↦
     if ∀ pq ∈ d.prunings, ¬ pq.1 ≤ x.1 then some x.2 else none
 
 /-- The realized words, left to right. -/
@@ -118,14 +118,14 @@ def phon : List String := d.yield.filterMap (·.item.phonForm?)
 
 /-- The first word of the first multidominated pivot, where a prosodic break falls. -/
 def pivotOnset : Option String :=
-  d.forced.head?.bind fun pq ↦ d.input.val[pq.2]?.bind fun s ↦
+  d.forced.head?.bind fun pq ↦ d.input.toRoseTree[pq.2]?.bind fun s ↦
     ((tokenList s).filterMap (·.2.item.phonForm?)).head?
 
 /-- No material of an elided pivot follows a multidominated pivot (49), since forced pruning comes
 first, while that material still stands in the first conjunct (100). -/
 theorem Licensed.not_precedes {d : Derivation} (hd : d.Licensed)
     {pq rs : TreePath × TreePath} (hpq : pq ∈ d.forced) (hrs : rs ∈ d.free)
-    {x : TreePath × LexicalItem.Token} (hx : x ∈ tokenList d.input.val) (hrx : rs.1 ≤ x.1)
+    {x : TreePath × LexicalItem.Token} (hx : x ∈ tokenList d.input.toRoseTree) (hrx : rs.1 ≤ x.1)
     (hphon : x.2.item.phonForm?.isSome) (hnf : ∀ ab ∈ d.forced, ¬ ab.1 ≤ x.1) :
     ¬ Precedes pq.1 x.1 := by
   have hrule : ∀ ab i, d.prunings[i]? = some ab → MayPrune d.input (d.prunings.take i) ab.1 ab.2 :=

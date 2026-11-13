@@ -270,7 +270,7 @@ namespace SyntacticObject
 
 /-- **Selection-driven head check**: the selection instance of
     [marcolli-chomsky-berwick-2025]'s head functions; computable. -/
-def selCheck : SelectionState := selCheckN s.val
+def selCheck : SelectionState := selCheckN s.toUnorderedTree
 
 /-- The projecting head's lexical item, by c-selection. -/
 def selHead : Option LexicalItem.Token := s.selCheck.head

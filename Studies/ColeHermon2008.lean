@@ -725,7 +725,7 @@ stage exactly when some copy of the first c-commands some copy of the second. -/
 example : ∀ c ∈ clauses, ∀ x y : LexicalItem.Token, x ≠ y →
     (c.vos.BindsAtSomeStage ↑x ↑y ↔ c.vos.BindsAtLF ↑x ↑y) := by
   have h : ∀ c ∈ clauses, c.vos.lexTokens.Nodup ∧ (∀ step ∈ c.vos.steps, step.IsMerge) ∧
-      (∀ step ∈ c.vos.steps, ∀ m ∈ step.mover?, m.val.value.isLeft) ∧ c.vos.replay?.isSome := by
+      (∀ step ∈ c.vos.steps, ∀ m ∈ step.mover?, m.toUnorderedTree.value.isLeft) ∧ c.vos.replay?.isSome := by
     decide +kernel
   intro c hc x y hxy
   obtain ⟨hd, hm, hmv, hr⟩ := h c hc

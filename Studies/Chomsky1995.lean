@@ -253,21 +253,21 @@ open Core.Order RoseTree PhraseStructure Minimalist
 variable (t : PlanarSyntacticObject)
 
 /-- The head relation on the positions of `t`, from the head daughter of each subtree. -/
-def HeadDaughterAt (m d : t.val.Positions) : Prop := headDaughterRel (HeadFunction.raising t) m d
+def HeadDaughterAt (m d : t.toRoseTree.Positions) : Prop := headDaughterRel (HeadFunction.raising t) m d
 
 instance : DecidableRel (HeadDaughterAt t) := fun m d ↦
   inferInstanceAs (Decidable (headDaughterRel (HeadFunction.raising t) m d))
 
-theorem headDaughterAt_covBy {m d : t.val.Positions} (h : HeadDaughterAt t m d) : m ⋖ d :=
+theorem headDaughterAt_covBy {m d : t.toRoseTree.Positions} (h : HeadDaughterAt t m d) : m ⋖ d :=
   Positions.covBy_iff.2 (headDaughterRel_covBy _ h)
 
-instance (x : t.val.Positions) : Decidable (IsMinimalProjection (HeadDaughterAt t) x) :=
+instance (x : t.toRoseTree.Positions) : Decidable (IsMinimalProjection (HeadDaughterAt t) x) :=
   inferInstanceAs (Decidable (∀ _, _))
 
-instance (x : t.val.Positions) : Decidable (IsMaximalProjection (HeadDaughterAt t) x) :=
+instance (x : t.toRoseTree.Positions) : Decidable (IsMaximalProjection (HeadDaughterAt t) x) :=
   inferInstanceAs (Decidable (∀ _, _))
 
-instance (x : t.val.Positions) : Decidable (IsVisible (HeadDaughterAt t) x) :=
+instance (x : t.toRoseTree.Positions) : Decidable (IsVisible (HeadDaughterAt t) x) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
 instance : DecidablePred (· ∈ bareCCommand (HeadDaughterAt t)) := fun _ ↦
@@ -275,11 +275,11 @@ instance : DecidablePred (· ∈ bareCCommand (HeadDaughterAt t)) := fun _ ↦
 
 /-- The pronounced terminals of `t`, the positions of its heads; traces are exempt from the
 LCA. -/
-def pronounced : Set t.val.Positions := {p | t.IsHeadAt p}
+def pronounced : Set t.toRoseTree.Positions := {p | t.IsHeadAt p}
 
 instance : DecidablePred (· ∈ pronounced t) := fun p ↦ inferInstanceAs (Decidable (t.IsHeadAt p))
 
-theorem not_linearizes (ht : ¬ IsMax (⊥ : t.val.Positions)) :
+theorem not_linearizes (ht : ¬ IsMax (⊥ : t.toRoseTree.Positions)) :
     ¬ Linearizes (bareCCommand (HeadDaughterAt t)) {p | IsMax p} :=
   not_linearizes_of_not_isMax (fun _ _ ↦ headDaughterAt_covBy t)
     (fun _ ↦ PlanarSyntacticObject.isBranching_of_not_isMax) ht
@@ -318,8 +318,8 @@ def theManSawItRaised : PlanarSyntacticObject :=
   {{↑the, .traceOf man}, {↑saw, .traceOf it}}
 
 /-- The position at an address. -/
-def position (l : List ℕ) (h : (⟨l⟩ : TreePath) ∈ t.val.validPaths := by exact rfl) :
-    t.val.Positions :=
+def position (l : List ℕ) (h : (⟨l⟩ : TreePath) ∈ t.toRoseTree.validPaths := by exact rfl) :
+    t.toRoseTree.Positions :=
   ⟨⟨l⟩, h⟩
 
 -- (11)
@@ -329,7 +329,7 @@ theorem maximalProjectionAt_theManSawIt :
   decide
 
 -- (11), (10)
-theorem card_positions_theManSawIt : Fintype.card theManSawIt.val.Positions = 7 := by decide
+theorem card_positions_theManSawIt : Fintype.card theManSawIt.toRoseTree.Positions = 7 := by decide
 
 -- (9)
 theorem levels_theManSawIt :

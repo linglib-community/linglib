@@ -54,7 +54,7 @@ def lowerCopy? (x y : RoseTree (CopyMark × Vertex)) : Option (Option LexicalIte
 
 /-- The chain of the copy `r` is read low in the reading `low`. -/
 def ReadLow (low : Finset SyntacticObject) (r : RoseTree (CopyMark × Vertex)) : Prop :=
-  ∃ m ∈ low, m.val = termOf r
+  ∃ m ∈ low, m.toUnorderedTree = termOf r
 
 instance (low : Finset SyntacticObject) : DecidablePred (ReadLow low) :=
   fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ low, _))
@@ -221,17 +221,17 @@ theorem isSyntacticObject_lfBy (low : RoseTree (CopyMark × Vertex) → Prop) [D
 /-- The object a reading gives: each chain in `low` keeps its lowest copy, and every other its
 highest, its lower copies contracted. -/
 def lf (t : Marked) (low : Finset SyntacticObject) : PlanarSyntacticObject :=
-  PlanarSyntacticObject.ofVal (lfTree low t.val) (isSyntacticObject_lfBy _ t.2)
+  PlanarSyntacticObject.ofRoseTree (lfTree low t.val) (isSyntacticObject_lfBy _ t.2)
 
-@[simp] theorem val_lf (t : Marked) (low : Finset SyntacticObject) :
-    (t.lf low).val = lfTree low t.val :=
-  PlanarSyntacticObject.val_ofVal _ _
+@[simp] theorem toRoseTree_lf (t : Marked) (low : Finset SyntacticObject) :
+    (t.lf low).toRoseTree = lfTree low t.val :=
+  PlanarSyntacticObject.toRoseTree_ofRoseTree _ _
 
 /-- The chains with a lower copy holding `y`. -/
 def carrying (t : Marked) (y : LexicalItem.Token) : Finset SyntacticObject :=
   ((t.val.subtrees.filter fun r ↦
       r.value.1.isSome ∧ Sum.inl (some y) ∈ (r.map Prod.snd).leaves).filterMap fun r ↦
-    if h : IsSyntacticObject (termOf r) then some (SyntacticObject.ofVal (termOf r) h)
+    if h : IsSyntacticObject (termOf r) then some (SyntacticObject.ofUnorderedTree (termOf r) h)
     else none).toFinset
 
 /-! ### The contraction -/
@@ -248,8 +248,8 @@ theorem lfTree_empty (t : RoseTree (CopyMark × Vertex)) : lfTree ∅ t = contra
 
 /-- With no chain read low, a reading gives the contraction. -/
 @[simp] theorem lf_empty (t : Marked) : t.lf ∅ = t.contract :=
-  PlanarSyntacticObject.val_injective
-    ((val_lf t ∅).trans ((lfTree_empty t.val).trans (val_contract t).symm))
+  PlanarSyntacticObject.toRoseTree_injective
+    ((toRoseTree_lf t ∅).trans ((lfTree_empty t.val).trans (toRoseTree_contract t).symm))
 
 /-! ### Objects with no lower copy -/
 
@@ -275,7 +275,7 @@ theorem lfBy_map_none (low : RoseTree (CopyMark × Vertex) → Prop) [DecidableP
 /-- An object with no lower copy gives itself under every reading. -/
 @[simp] theorem lf_ofPlanar (p : PlanarSyntacticObject) (low : Finset SyntacticObject) :
     (ofPlanar p).lf low = p :=
-  PlanarSyntacticObject.val_injective ((val_lf _ low).trans (lfBy_map_none _ p.val))
+  PlanarSyntacticObject.toRoseTree_injective ((toRoseTree_lf _ low).trans (lfBy_map_none _ p.toRoseTree))
 
 /-! ### Binding at a reading is binding at the copy object -/
 
@@ -400,11 +400,11 @@ theorem cCommands_unmark_of_cCommands_lf {t : Marked} {low : Finset SyntacticObj
       ReadLow low u ∨ ReadLow low v → termOf u ≠ termOf v)
     (h : (t.lf low).toSyntacticObject.CCommands ↑x ↑y) :
     t.unmark.toSyntacticObject.CCommands ↑x ↑y :=
-  (cCommands_iff_tokenCCommands hxy _).2 ((val_unmark t).symm ▸
+  (cCommands_iff_tokenCCommands hxy _).2 ((toRoseTree_unmark t).symm ▸
     tokenCCommands_of_tokenCCommands_lfBy hlow
       (by
         show TokenCCommands x y (lfTree low t.val)
-        rw [← val_lf]
+        rw [← toRoseTree_lf]
         exact (cCommands_iff_tokenCCommands hxy _).1 h))
 
 /-- A c-command between two pronounced leaves of the contraction holds between the same leaves of
