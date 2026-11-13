@@ -178,7 +178,8 @@ theorem mem_language_abGrammar_twoLetterGrammar :
 abbrev featureLanguage : FirstOrder.Language := wordLanguage (Feature × Bool)
 
 example (D : Set (List Segment)) :
-    IsAdequate (WordModel featureValues · (· < ·)) D (mostGeneral featureLanguage (WordModel featureValues · (· < ·)) 2 D) :=
+    IsAdequate (WordModel featureValues · (· < ·)) D
+      (mostGeneral featureLanguage (WordModel featureValues · (· < ·)) 2 D) :=
   isAdequate_mostGeneral D
 
 /-- The class of the sibilants is [+strident]. -/
@@ -218,7 +219,8 @@ theorem diagram_pair_le_iff (d e x y : Segment) :
   exact ⟨hd, he⟩
 
 theorem mem_language_pair_iff {x y : Segment} {G : Set (featureLanguage.Factor 2)} :
-    [x, y] ∈ language (WordModel featureValues · (· < ·)) G ↔ ∀ g ∈ G, ¬ g ≤ diagram featureValues [x, y] le_rfl := by
+    [x, y] ∈ language (WordModel featureValues · (· < ·)) G ↔
+      ∀ g ∈ G, ¬ g ≤ diagram featureValues [x, y] le_rfl := by
   simp only [mem_language_iff, le_diagram_iff]
 
 /-- Each of the four sibilant pairs a conventional model forbids separately lies above the one
@@ -234,7 +236,8 @@ def t : Segment := .ofChart .«t»
 
 /-- [+anterior] before [−anterior]. -/
 def antNonant : featureLanguage.Factor 2 :=
-  diagram featureValues [Segment.ofSpecs [(.anterior, true)], Segment.ofSpecs [(.anterior, false)]] le_rfl
+  diagram featureValues
+    [Segment.ofSpecs [(.anterior, true)], Segment.ofSpecs [(.anterior, false)]] le_rfl
 
 /-- [+strident] before [+strident]. -/
 def stridents : featureLanguage.Factor 2 := diagram featureValues [strident, strident] le_rfl
@@ -254,7 +257,8 @@ theorem sibilantsOf_mem_language_iff : ∀ e ∈ Examples.all,
 
 -- Forbidding [+str][+str] instead would exclude s…s, which the grammar admits (section 5.2).
 theorem s_s_mem_language :
-    stridents ≤ diagram featureValues [s, s] le_rfl ∧ [s, s] ∈ language (WordModel featureValues · (· < ·)) {antPost} := by
+    stridents ≤ diagram featureValues [s, s] le_rfl ∧
+      [s, s] ∈ language (WordModel featureValues · (· < ·)) {antPost} := by
   simp only [mem_language_pair_iff, Set.mem_singleton_iff, forall_eq, stridents, antPost,
     diagram_pair_le_iff, alveolar_le_iff, postalveolar_le_iff]
   decide
@@ -285,7 +289,8 @@ private theorem pair_agree_iff (a b : Segment) :
 /-- Hansson's symmetric sibilant harmony is the language of the grammar of the paper's subfactor
 and its mirror image. -/
 theorem navajoSibilantHarmony_language_eq :
-    navajoSibilantHarmony.language 2 = language (WordModel featureValues · (· < ·)) {antPost, postAnt} := by
+    navajoSibilantHarmony.language 2 =
+      language (WordModel featureValues · (· < ·)) {antPost, postAnt} := by
   ext w
   rw [TierStrictlyLocalGrammar.mem_ofForbiddenPairs_language_iff_forall_sublist_pair
     (R := fun x y ↦ x .anterior ≠ y .anterior) (p := OnTier) fun _ _ _ _ _ _ ↦ by simp_all,

@@ -810,7 +810,8 @@ theorem isStrictlyPiecewise_iff_wordModel :
 anchored words ordered by successor. -/
 theorem isStrictlyLocal_iff_wordModel (hk : 2 ≤ k) :
     L.IsStrictlyLocal k ↔
-      (wordLanguage (α ⊕ Edge)).IsStrictlyLocal (fun w ↦ WordModel ({·}) (anchor w) (· ⋖ ·)) k L := by
+      (wordLanguage (α ⊕ Edge)).IsStrictlyLocal
+        (fun w ↦ WordModel ({·}) (anchor w) (· ⋖ ·)) k L := by
   rw [isStrictlyLocal_iff_suffixSubstitutionClosed hk, FirstOrder.Language.isStrictlyLocal_iff]
   refine ⟨fun hL w hw ↦ mem_of_factors_subset_biUnion hL hk hw, fun hS u₁ v₁ u₂ v₂ x hx h₁ h₂ ↦ ?_⟩
   exact (FirstOrder.Language.isStrictlyLocal_iff.2 hS).mem_of_factors_subset_union h₁ h₂
@@ -844,7 +845,8 @@ theorem isPiecewiseTestable_iff_wordModel :
 between their edges under successor. -/
 theorem isLocallyTestable_iff_wordModel :
     L.IsLocallyTestable k ↔
-      (wordLanguage (α ⊕ Edge)).IsLocallyTestable (fun w ↦ WordModel ({·}) (anchor w) (· ⋖ ·)) k L := by
+      (wordLanguage (α ⊕ Edge)).IsLocallyTestable
+        (fun w ↦ WordModel ({·}) (anchor w) (· ⋖ ·)) k L := by
   have key (w v : List α) : w.kTestVector k = v.kTestVector k ↔
       (wordLanguage (α ⊕ Edge)).factors k (WordModel ({·}) (anchor w) (· ⋖ ·)) =
         (wordLanguage (α ⊕ Edge)).factors k (WordModel ({·}) (anchor v) (· ⋖ ·)) :=
