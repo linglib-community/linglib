@@ -98,6 +98,24 @@ private theorem mem_sum_map_leaves {x : α} :
       exact ⟨d, List.mem_cons_of_mem _ hd, hx⟩
 
 omit [DecidableEq α] in
+/-- When `b` labels exactly the vertices with children, no leaf is labelled `b`. -/
+theorem ne_of_mem_leaves {T : UnorderedTree α} (hT : T.Licensed fun a ks ↦ (a = b ↔ ks ≠ 0)) :
+    ∀ x ∈ T.leaves, x ≠ b := by
+  induction T using Quotient.inductionOn with
+  | h t =>
+    change t.Licensed fun a ks ↦ (a = b ↔ (ks : Multiset α) ≠ 0) at hT
+    change ∀ x ∈ t.leaves, x ≠ b
+    induction hT using RoseTree.Licensed.induction with
+    | node a cs hR _ ih =>
+      intro x hx
+      rcases cs with _ | ⟨c, cs⟩
+      · obtain rfl : x = a := by simpa using hx
+        exact fun h ↦ (hR.1 h) (by simp)
+      · rw [RoseTree.leaves_node_cons] at hx
+        obtain ⟨d, hd, hxd⟩ := mem_sum_map_leaves hx
+        exact ih d hd x hxd
+
+omit [DecidableEq α] in
 private theorem rootCuts_leaveNothing_leaves_ne (t : RoseTree α)
     (ht : t.Licensed fun a ks ↦ (a = b ↔ (ks : Multiset α) ≠ 0) ∧
       (Multiset.card (ks : Multiset α) = 0 ∨ Multiset.card (ks : Multiset α) = 2)) :

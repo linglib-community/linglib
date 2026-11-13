@@ -79,6 +79,28 @@ namespace Minimalist.SyntacticObject
 
 open RoseTree UnorderedTree ConnesKreimer
 
+/-- In a syntactic object the bare label marks exactly the vertices with children, and those
+    have two. -/
+theorem licensed_bare_of_isSyntacticObject {t : UnorderedTree Vertex} (h : IsSyntacticObject t) :
+    t.Licensed fun a ks ↦ (a = Vertex.bare ↔ ks ≠ 0) ∧
+      (Multiset.card ks = 0 ∨ Multiset.card ks = 2) :=
+  UnorderedTree.Licensed.mono (R := Vertex.Licenses) (fun a ks h ↦ by
+    match a, h with
+    | .inl (some _), h | .inr _, h =>
+      have hk : ks = 0 := h
+      simp [hk]
+    | .inl none, h =>
+      have hk : Multiset.card ks = 2 := h
+      refine ⟨⟨fun _ hz ↦ ?_, fun _ ↦ rfl⟩, .inr hk⟩
+      simp [hz] at hk) h
+
+/-- A syntactic object is its own remainder under deletion. -/
+theorem deletionQuotient_of_isSyntacticObject {t : UnorderedTree Vertex}
+    (h : IsSyntacticObject t) : deletionQuotient Vertex.bare t = some t :=
+  deletionQuotient_eq_self _
+    (ne_of_mem_leaves _ ((licensed_bare_of_isSyntacticObject h).mono fun _ _ h ↦ h.1))
+    h.isFullBinary.numUnary_eq_zero
+
 /-- External Merge on the carrier is the algebraic Merge with the bare root label on the
     two-object workspace. -/
 theorem mergeOp_node (S S' : SyntacticObject) :
@@ -86,8 +108,9 @@ theorem mergeOp_node (S S' : SyntacticObject) :
         (of' ({S.toUnorderedTree, S'.toUnorderedTree} : Forest (UnorderedTree Vertex)))
       = of' (R := ℤ) ({(merge S S').toUnorderedTree} : Forest (UnorderedTree Vertex)) := by
   rw [Merge.mergeOp_pair Vertex.bare
-      S.isSyntacticObject_toUnorderedTree.isFullBinary.numUnary_eq_zero
-    S'.isSyntacticObject_toUnorderedTree.isFullBinary.numUnary_eq_zero, toUnorderedTree_merge]
+      (deletionQuotient_of_isSyntacticObject S.isSyntacticObject_toUnorderedTree)
+      (deletionQuotient_of_isSyntacticObject S'.isSyntacticObject_toUnorderedTree),
+    toUnorderedTree_merge]
 
 /-- External Merge on the carrier is the trace-cut Merge with the bare root label on the
     two-object workspace, for any trace encoder. -/
@@ -409,14 +432,12 @@ private theorem licensed_of_mem_rootCuts_leaveNothing {t : RoseTree Vertex}
     t p hp
   exact (key (fun c hc ↦ List.mem_singleton.mp hc ▸ ht) hcard).1 _ (List.mem_singleton_self _)
 
-/-- A deletion cut extracting at most one tree from a syntactic object leaves a syntactic object,
-    the vertex the extraction leaves unary being contracted. -/
-theorem isSyntacticObject_of_mem_deletionCuts {T : SyntacticObject}
-    {p : Forest (UnorderedTree Vertex) × UnorderedTree Vertex} (hp : p ∈ deletionCuts
-        T.toUnorderedTree)
-    (hcard : Multiset.card p.1 ≤ 1) : IsSyntacticObject p.2 := by
-  obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
-  clear hp
+/-- An admissible cut extracting at most one tree from a syntactic object leaves a syntactic
+    object once the vertex the extraction leaves unary is contracted. -/
+theorem isSyntacticObject_contractUnary_of_mem_admissibleCuts {T : SyntacticObject}
+    {q : Forest (UnorderedTree Vertex) × UnorderedTree Vertex}
+    (hq : q ∈ admissibleCuts T.toUnorderedTree) (hcard : Multiset.card q.1 ≤ 1) :
+    IsSyntacticObject q.2.contractUnary := by
   have ht := T.isSyntacticObject_toUnorderedTree
   generalize T.toUnorderedTree = t at ht hq
   induction t using Quotient.inductionOn with
@@ -428,26 +449,33 @@ theorem isSyntacticObject_of_mem_deletionCuts {T : SyntacticObject}
     rw [UnorderedTree.contractUnary_mk, isSyntacticObject_mk]
     exact licensed_contractUnary (licensed_of_mem_rootCuts_leaveNothing ht hr hcard)
 
-/-- Internal Merge at the deletion cuts carries a syntactic object to a syntactic object: when one
-    deletion cut extracts the mover, its trunk is a syntactic object `Q`, and the composition
-    `M_{Q,β} ∘ M_{β,1}` of Proposition 1.4.2 yields the one object `merge Q mover`. -/
+/-- Internal Merge at the deletion coproduct carries a syntactic object to a syntactic object:
+    when one admissible cut extracts the mover, the remainder of its trunk is a syntactic object
+    `Q`, and the composition `M_{Q,β} ∘ M_{β,1}` of Proposition 1.4.2 yields the one object
+    `merge Q mover`. -/
 theorem mergeOp_im {current mover : SyntacticObject}
     {p0 : Forest (UnorderedTree Vertex) × UnorderedTree Vertex}
-    (h : (deletionCuts current.toUnorderedTree).filter (fun p ↦ p.1 = {mover.toUnorderedTree}) =
-        {p0})
+    (h : (admissibleCuts current.toUnorderedTree).filter
+        (fun p ↦ p.1 = {mover.toUnorderedTree}) = {p0})
     (hne : current ≠ mover) :
-    ∃ Q : SyntacticObject, Q.toUnorderedTree = p0.2 ∧
+    ∃ Q : SyntacticObject, Q.toUnorderedTree = p0.2.contractUnary ∧
       Merge.mergeOp (R := ℤ) Vertex.bare Q.toUnorderedTree mover.toUnorderedTree
-          (Merge.mergeOpUnit mover.toUnorderedTree (of' ({current.toUnorderedTree} : Forest
-              (UnorderedTree Vertex)))) =
+          (Merge.mergeOpUnit Vertex.bare mover.toUnorderedTree
+            (of' ({current.toUnorderedTree} : Forest (UnorderedTree Vertex)))) =
         of' ({(merge Q mover).toUnorderedTree} : Forest (UnorderedTree Vertex)) := by
   obtain ⟨hp0, hcrown⟩ := Multiset.mem_filter.mp (h ▸ Multiset.mem_singleton_self p0)
-  refine ⟨ofUnorderedTree p0.2 (isSyntacticObject_of_mem_deletionCuts hp0 (by rw [hcrown,
-    Multiset.card_singleton])), toUnorderedTree_ofUnorderedTree _ _, ?_⟩
+  have hcard : Multiset.card p0.1 ≤ 1 := by rw [hcrown, Multiset.card_singleton]
+  have hQ := isSyntacticObject_contractUnary_of_mem_admissibleCuts hp0 hcard
+  have hrem : deletionQuotient Vertex.bare p0.2 = some p0.2.contractUnary := by
+    rw [deletionQuotient, admissibleCuts_prune_eq_some _
+      (licensed_bare_of_isSyntacticObject current.isSyntacticObject_toUnorderedTree) hp0 hcard,
+      Option.map_some]
+  refine ⟨ofUnorderedTree _ hQ, toUnorderedTree_ofUnorderedTree _ _, ?_⟩
   rw [toUnorderedTree_ofUnorderedTree, Merge.mergeOp_im_composition Vertex.bare
-      mover.toUnorderedTree current.toUnorderedTree p0.2 p0 h rfl
-    (fun h' ↦ hne (toUnorderedTree_injective
-        h')) mover.isSyntacticObject_toUnorderedTree.isFullBinary.numUnary_eq_zero,
+      mover.toUnorderedTree current.toUnorderedTree p0.2.contractUnary p0 h hrem
+      (fun h' ↦ hne (toUnorderedTree_injective h'))
+      (deletionQuotient_of_isSyntacticObject mover.isSyntacticObject_toUnorderedTree)
+      (deletionQuotient_of_isSyntacticObject hQ),
     toUnorderedTree_merge, toUnorderedTree_ofUnorderedTree]
 
 end Minimalist.SyntacticObject
