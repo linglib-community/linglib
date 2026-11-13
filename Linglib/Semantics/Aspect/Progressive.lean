@@ -46,7 +46,7 @@ namespace Aspect
 open Event (τ)
 open Modality
 
-variable {E W T : Type*} [PartialOrder E] [LinearOrder T] [Event.TemporalTrace E T]
+variable {E W T : Type*} [PartialOrder E] [LinearOrder T] [TemporalTrace E T]
 
 /-- `e'` includes `e` as a nonfinal part: `e` is part of `e'`, and the run time of `e` is a
 nonfinal subinterval of that of `e'`. -/

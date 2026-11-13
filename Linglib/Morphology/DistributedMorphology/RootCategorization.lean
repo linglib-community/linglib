@@ -30,21 +30,25 @@ Root under the complement attachment and with the categorizer under the modifier
 
 ## Main definitions
 
+* `DistributedMorphology.RootCategorization.Configuration`: a phrase with the positions of its
+  Root, head and argument, and `Configuration.plug`, the configuration within a context.
 * `DistributedMorphology.RootCategorization.Attachment`: the Root merged as a complement or as a
   modifier.
-* `DistributedMorphology.RootCategorization.profile`: the complex head containing a node with the
-  labels local to it.
+* `DistributedMorphology.RootCategorization.Configuration.profile`: the complex head containing
+  the Root with the labels local to it.
 * `DistributedMorphology.RootCategorization.rootProjects`: the Root labels a phrase.
 
 ## Main statements
 
-* `profile_replaceAt_eq`: the two attachments give the Root one profile, in every context.
+* `profile_plug_complement_eq_modifier`: the two attachments give the Root one profile, in every
+  context.
 * `invariant_iff_factorsThrough`: an observable is invariant across the attachments exactly when it
   factors through the profile.
 * `injective_profile_rootProjects`: the profile and whether the Root projects determine the
   configuration, so every observable factors through them.
-* `strands_replaceAt_iff`: a proform strands from the Root under one attachment whatever it strands
-  under the other, in every context.
+* `not_strands_arg`, `strands_plug_complement_iff_modifier`: in every context no proform strands
+  the argument from the Root, and a proform strands from the Root under one attachment whatever
+  it strands under the other.
 
 ## Implementation notes
 
@@ -77,10 +81,15 @@ variable {W : Type*}
 /-- The material of a categorized Root is its categorizer and the words of the Root, the
 categorizer and the argument. -/
 structure Lexicon (W : Type*) where
+  /-- The categorizer. -/
   x : Minimalist.Cat
+  /-- The word of the Root. -/
   root : W
+  /-- The word of the categorizer. -/
   head : W
+  /-- The word of the argument. -/
   arg : W
+  /-- The categorizer is n, v or a. -/
   isCategorizer : x.IsCategorizer := by decide
 
 theorem Lexicon.x_ne_D (L : Lexicon W) : L.x ≠ .D := fun h ↦ by
@@ -90,6 +99,103 @@ theorem Lexicon.x_ne_D (L : Lexicon W) : L.x ≠ .D := fun h ↦ by
 def complexHead (L : Lexicon W) : Tree Cat W :=
   .adjoin (.head L.x) [.terminal .root L.root, .terminal (.head L.x) L.head]
 
+/-! ### Configurations -/
+
+/-- A phrase with the positions of a Root, of the head that categorizes or introduces it, and of
+its internal argument. -/
+structure Configuration (W : Type*) where
+  /-- The phrase. -/
+  tree : Tree Cat W
+  /-- The position of the Root. -/
+  root : TreePath
+  /-- The position of the head. -/
+  head : TreePath
+  /-- The position of the internal argument. -/
+  arg : TreePath
+
+namespace Configuration
+
+/-- The Root is the categorizer's complement and takes the argument as its own. -/
+def complement (L : Lexicon W) : Configuration W where
+  tree := .node (.head L.x)
+    [complexHead L, .node .root [.trace 0 .root, .terminal (.head .D) L.arg]]
+  root := ⟨[0, 0]⟩
+  head := ⟨[0, 1]⟩
+  arg := ⟨[1, 1]⟩
+
+/-- The Root modifies the categorizer, whose complement the argument is. -/
+def modifier (L : Lexicon W) : Configuration W where
+  tree := .node (.head L.x) [complexHead L, .terminal (.head .D) L.arg]
+  root := ⟨[0, 0]⟩
+  head := ⟨[0, 1]⟩
+  arg := ⟨[1]⟩
+
+/-- The Root is the categorizer's complement and the argument its specifier. -/
+def specifier (L : Lexicon W) : Configuration W where
+  tree := .node (.head L.x)
+    [.terminal (.head .D) L.arg, .node (.head L.x) [complexHead L, .trace 0 .root]]
+  root := ⟨[1, 0, 0]⟩
+  head := ⟨[1, 0, 1]⟩
+  arg := ⟨[0]⟩
+
+/-- A configuration within a context, which carries its positions along. -/
+def plug (k : Configuration W) (c : RoseTree.Context (Tree.Label Cat W)) : Configuration W where
+  tree := c.plug k.tree
+  root := c.embed k.root
+  head := c.embed k.head
+  arg := c.embed k.arg
+
+@[simp] theorem plug_nil (k : Configuration W) : k.plug [] = k := rfl
+
+theorem plug_plug (k : Configuration W) (c d : RoseTree.Context (Tree.Label Cat W)) :
+    (k.plug d).plug c = k.plug (c ++ d) := by
+  simp [plug, RoseTree.Context.embed_append]
+
+/-- The configuration among the daughters of a phrase of category `x`, between those `before`
+it and those `after` it. -/
+def node (k : Configuration W) (x : Cat) (before after : List (Tree Cat W)) : Configuration W :=
+  k.plug [⟨.phrase x .projection, before, after⟩]
+
+/-- The configuration among the daughters of an adjunction structure of category `x`, between
+those `before` it and those `after` it. -/
+def adjoin (k : Configuration W) (x : Cat) (before after : List (Tree Cat W)) :
+    Configuration W :=
+  k.plug [⟨.phrase x .adjunction, before, after⟩]
+
+/-- The positions of a configuration are those of a Root and of a DP. -/
+@[mk_iff]
+structure IsMarked (k : Configuration W) : Prop where
+  /-- The Root's position holds a Root. -/
+  root : k.tree[k.root]?.map Tree.cat = some .root
+  /-- The argument's position holds a DP. -/
+  arg : k.tree[k.arg]?.map Tree.cat = some (.head .D)
+
+@[simp] theorem isMarked_plug {k : Configuration W} {c : RoseTree.Context (Tree.Label Cat W)} :
+    (k.plug c).IsMarked ↔ k.IsMarked := by
+  simp only [isMarked_iff, plug, c.getElem?_plug_embed]
+
+alias ⟨_, IsMarked.plug⟩ := isMarked_plug
+
+theorem isMarked_complement (L : Lexicon W) : (complement L).IsMarked := ⟨rfl, rfl⟩
+
+theorem isMarked_modifier (L : Lexicon W) : (modifier L).IsMarked := ⟨rfl, rfl⟩
+
+theorem isMarked_specifier (L : Lexicon W) : (specifier L).IsMarked := ⟨rfl, rfl⟩
+
+/-- The profile of a configuration is the complex head containing its Root together with the
+labels that may condition the Root. -/
+def profile (k : Configuration W) : Option (Tree Cat W) × Set (Cat × W) :=
+  (x0At k.tree k.root, localSet k.tree k.root)
+
+/-- Embedding a configuration with a phrasal root leaves its profile unchanged. -/
+theorem profile_plug (k : Configuration W) (c : RoseTree.Context (Tree.Label Cat W))
+    (hk : ¬ Tree.IsHead k.tree) : (k.plug c).profile = k.profile :=
+  Prod.ext (x0At_plug c hk k.root) (localSet_plug c hk k.root)
+
+end Configuration
+
+open Configuration (complement modifier specifier)
+
 /-- How the Root is merged with its categorizer. -/
 inductive Attachment
   /-- The Root is the categorizer's complement and takes the argument as its own. -/
@@ -98,127 +204,105 @@ inductive Attachment
   | modifier
   deriving DecidableEq, Repr
 
-/-- The phrase of a categorized Root after head movement. -/
-def Attachment.tree (L : Lexicon W) : Attachment → Tree Cat W
-  | .complement =>
-    .node (.head L.x) [complexHead L, .node .root [.trace 0 .root, .terminal (.head .D) L.arg]]
-  | .modifier => .node (.head L.x) [complexHead L, .terminal (.head .D) L.arg]
-
-/-- The phrase with the Root in the categorizer's complement and the argument in its
-specifier. -/
-def specifierTree (L : Lexicon W) : Tree Cat W :=
-  .node (.head L.x) [.terminal (.head .D) L.arg, .node (.head L.x) [complexHead L, .trace 0 .root]]
-
-/-- The profile of the node at `α` is the complex head containing it together with the labels
-that may condition it. -/
-def profile (t : Tree Cat W) (α : TreePath) : Option (Tree Cat W) × Set (Cat × W) :=
-  (x0At t α, localSet t α)
+/-- The configuration of a categorized Root after head movement. -/
+def Attachment.configuration (L : Lexicon W) : Attachment → Configuration W
+  | .complement => Configuration.complement L
+  | .modifier => Configuration.modifier L
 
 /-- The Root labels a phrase. -/
 def rootProjects (t : Tree Cat W) : Bool :=
   t.subtrees.any fun s ↦ match s.value with | .phrase .root .projection => true | _ => false
 
-/-- The position of the Root in a configured phrase. -/
-def rootPos : TreePath := ⟨[0, 0]⟩
-
-theorem localLabels_tree (a : Attachment) (L : Lexicon W) :
-    localLabels (a.tree L) rootPos = [(.root, L.root), (.head L.x, L.head), (.head .D, L.arg)] := by
+theorem localLabels_configuration (a : Attachment) (L : Lexicon W) :
+    localLabels (a.configuration L).tree (a.configuration L).root =
+      [(.root, L.root), (.head L.x, L.head), (.head .D, L.arg)] := by
   cases a <;> rfl
 
-theorem x0At_tree (a : Attachment) (L : Lexicon W) :
-    x0At (a.tree L) rootPos = some (complexHead L) := by
+theorem x0At_configuration (a : Attachment) (L : Lexicon W) :
+    x0At (a.configuration L).tree (a.configuration L).root = some (complexHead L) := by
   cases a <;> rfl
 
-theorem profile_tree (a : Attachment) (L : Lexicon W) :
-    profile (a.tree L) rootPos =
-      (some (complexHead L), {l | l ∈ [(.root, L.root), (.head L.x, L.head), (.head .D, L.arg)]}) := by
-  rw [profile, x0At_tree]
+theorem profile_configuration (a : Attachment) (L : Lexicon W) :
+    (a.configuration L).profile =
+      (some (complexHead L),
+        {l | l ∈ [(.root, L.root), (.head L.x, L.head), (.head .D, L.arg)]}) := by
+  rw [Configuration.profile, x0At_configuration]
   congr 1
   ext l
-  rw [mem_localSet_iff, localLabels_tree]
+  rw [mem_localSet_iff, localLabels_configuration]
   rfl
 
-theorem profile_eq (L : Lexicon W) :
-    profile (Attachment.complement.tree L) rootPos =
-      profile (Attachment.modifier.tree L) rootPos := by
-  rw [profile_tree, profile_tree]
-
-theorem profile_replaceAt {E : Tree Cat W} {h : List ℕ} (hE : E[h]?.isSome)
-    (a : Attachment) (L : Lexicon W) :
-    profile (E.replaceAt h (a.tree L)) ⟨h ++ rootPos.toList⟩ = profile (a.tree L) rootPos := by
-  have ht : ¬ Tree.IsHead (a.tree L) := by cases a <;> exact not_isHead_node _ _
-  rw [profile, profile, x0At_replaceAt hE ht, localSet_replaceAt hE ht]
+theorem profile_complement_eq_modifier (L : Lexicon W) :
+    (complement L).profile = (modifier L).profile :=
+  (profile_configuration .complement L).trans (profile_configuration .modifier L).symm
 
 /-- **In every context the two attachments give the Root one profile.** -/
-theorem profile_replaceAt_eq {E : Tree Cat W} {h : List ℕ} (hE : E[h]?.isSome)
+theorem profile_plug_complement_eq_modifier (c : RoseTree.Context (Tree.Label Cat W))
     (L : Lexicon W) :
-    profile (E.replaceAt h (Attachment.complement.tree L)) ⟨h ++ rootPos.toList⟩ =
-      profile (E.replaceAt h (Attachment.modifier.tree L)) ⟨h ++ rootPos.toList⟩ := by
-  rw [profile_replaceAt hE, profile_replaceAt hE, profile_eq]
+    ((complement L).plug c).profile = ((modifier L).plug c).profile := by
+  rw [(complement L).profile_plug c (not_isHead_node _ _),
+    (modifier L).profile_plug c (not_isHead_node _ _), profile_complement_eq_modifier]
 
 theorem profile_specifier_ne (a : Attachment) (L : Lexicon W) :
-    profile (specifierTree L) ⟨[1, 0, 0]⟩ ≠ profile (a.tree L) rootPos := by
+    (specifier L).profile ≠ (a.configuration L).profile := by
   intro h
-  have hmem : (Cat.head .D, L.arg) ∈ (profile (a.tree L) rootPos).2 := by
-    rw [profile_tree]; simp
+  have hmem : (Cat.head .D, L.arg) ∈ (a.configuration L).profile.2 := by
+    rw [profile_configuration]; simp
   rw [← h] at hmem
-  have hl : localLabels (specifierTree L) ⟨[1, 0, 0]⟩ = [(.root, L.root), (.head L.x, L.head)] :=
-    rfl
-  simp [profile, mem_localSet_iff, hl] at hmem
+  have hl : localLabels (specifier L).tree (specifier L).root =
+      [(.root, L.root), (.head L.x, L.head)] := rfl
+  simp [Configuration.profile, mem_localSet_iff, hl] at hmem
   exact L.x_ne_D hmem.1.symm
 
 /-! ### Invariance and completeness -/
 
 theorem lexicon_eq_of_profile_eq {a a' : Attachment} {L L' : Lexicon W}
-    (h : profile (a.tree L) rootPos = profile (a'.tree L') rootPos) : L = L' := by
-  rw [profile_tree, profile_tree, Prod.mk.injEq, Option.some.injEq] at h
+    (h : (a.configuration L).profile = (a'.configuration L').profile) : L = L' := by
+  rw [profile_configuration, profile_configuration, Prod.mk.injEq, Option.some.injEq] at h
   obtain ⟨h1, h2⟩ := h
   obtain ⟨x, r, hd, ar, hx⟩ := L
   obtain ⟨x', r', hd', ar', hx'⟩ := L'
   simp only [complexHead, RoseTree.node.injEq, Tree.Label.phrase.injEq, Cat.head.injEq,
     List.cons.injEq, Tree.Label.terminal.injEq, and_true, true_and] at h1
   obtain ⟨rfl, rfl, -, rfl⟩ := h1
-  have hm : (Cat.head .D, ar) ∈ {l | l ∈ [(Cat.root, r), (Cat.head x, hd), (Cat.head .D, ar')]} := by
+  have hm : (Cat.head .D, ar) ∈
+      {l | l ∈ [(Cat.root, r), (Cat.head x, hd), (Cat.head .D, ar')]} := by
     rw [← h2]; simp
   simp at hm
   rcases hm with ⟨hD, -⟩ | rfl
   · exact absurd hD.symm (Lexicon.x_ne_D ⟨x, r, hd, ar, hx⟩)
   · rfl
 
-/-- An observable of a phrase and the position of its Root. -/
-abbrev Observable (W X : Type*) := Tree Cat W × TreePath → X
-
 /-- **Invariance.** An observable takes one value on the two attachments of every Root exactly
 when it factors through the profile. -/
-theorem invariant_iff_factorsThrough {X : Type*} (O : Observable W X) :
-    (∀ L, O (Attachment.complement.tree L, rootPos) = O (Attachment.modifier.tree L, rootPos)) ↔
-      Function.FactorsThrough (fun p : Attachment × Lexicon W ↦ O (p.1.tree p.2, rootPos))
-        (fun p ↦ profile (p.1.tree p.2) rootPos) := by
+theorem invariant_iff_factorsThrough {X : Type*} (O : Configuration W → X) :
+    (∀ L, O (complement L) = O (modifier L)) ↔
+      Function.FactorsThrough (fun p : Attachment × Lexicon W ↦ O (p.1.configuration p.2))
+        (fun p ↦ (p.1.configuration p.2).profile) := by
   constructor
   · rintro h ⟨a, L⟩ ⟨a', L'⟩ hp
     obtain rfl := lexicon_eq_of_profile_eq hp
-    cases a <;> cases a' <;> simp [h]
-  · exact fun hf L ↦ @hf (.complement, L) (.modifier, L) (profile_eq L)
+    cases a <;> cases a' <;> simp [Attachment.configuration, h]
+  · exact fun hf L ↦ @hf (.complement, L) (.modifier, L) (profile_complement_eq_modifier L)
 
-theorem rootProjects_complement (L : Lexicon W) :
-    rootProjects (Attachment.complement.tree L) = true := rfl
+theorem rootProjects_complement (L : Lexicon W) : rootProjects (complement L).tree = true := rfl
 
-theorem rootProjects_modifier (L : Lexicon W) :
-    rootProjects (Attachment.modifier.tree L) = false := rfl
+theorem rootProjects_modifier (L : Lexicon W) : rootProjects (modifier L).tree = false := rfl
 
 /-- **Completeness.** The profile and whether the Root labels a phrase determine the
 configuration. -/
 theorem injective_profile_rootProjects :
     Function.Injective fun p : Attachment × Lexicon W ↦
-      (profile (p.1.tree p.2) rootPos, rootProjects (p.1.tree p.2)) := by
+      ((p.1.configuration p.2).profile, rootProjects (p.1.configuration p.2).tree) := by
   rintro ⟨a, L⟩ ⟨a', L'⟩ h
   obtain ⟨hp, hb⟩ := Prod.mk.inj h
   obtain rfl := lexicon_eq_of_profile_eq hp
-  cases a <;> cases a' <;> simp_all [rootProjects_complement, rootProjects_modifier]
+  cases a <;> cases a' <;>
+    simp_all [Attachment.configuration, rootProjects_complement, rootProjects_modifier]
 
-theorem factorsThrough_profile_rootProjects {X : Type*} (O : Observable W X) :
-    Function.FactorsThrough (fun p : Attachment × Lexicon W ↦ O (p.1.tree p.2, rootPos))
-      (fun p ↦ (profile (p.1.tree p.2) rootPos, rootProjects (p.1.tree p.2))) :=
+theorem factorsThrough_profile_rootProjects {X : Type*} (O : Configuration W → X) :
+    Function.FactorsThrough (fun p : Attachment × Lexicon W ↦ O (p.1.configuration p.2))
+      (fun p ↦ ((p.1.configuration p.2).profile, rootProjects (p.1.configuration p.2).tree)) :=
   injective_profile_rootProjects.factorsThrough _
 
 /-! ### Diagnostics
@@ -227,73 +311,53 @@ A diagnostic reads a judgment off an observable through a linking hypothesis. Pr
 reads whether a phrase separates the Root from its argument and cannot decide between the
 attachments; selection reads the head the argument is merged with, and can. -/
 
-/-- The position of the argument in a configured phrase. -/
-def Attachment.argPos : Attachment → TreePath
-  | .complement => ⟨[1, 1]⟩
-  | .modifier => ⟨[1]⟩
-
-theorem mayCondition'_argPos (a : Attachment) (L : Lexicon W) :
-    MayCondition' (a.tree L) rootPos a.argPos := by
+theorem mayCondition'_arg (a : Attachment) (L : Lexicon W) :
+    MayCondition' (a.configuration L).tree (a.configuration L).root (a.configuration L).arg := by
   cases a <;> exact of_decide_eq_true rfl
 
-theorem not_strands_argPos {E : Tree Cat W} {h : List ℕ} (hE : E[h]?.isSome)
-    (a : Attachment) (L : Lexicon W) (X : Cat) :
-    ¬ Strands X (E.replaceAt h (a.tree L)) ⟨h ++ rootPos.toList⟩ ⟨h ++ a.argPos.toList⟩ :=
-  mayCondition'_iff_forall_not_strands.mp
-    ((mayCondition'_replaceAt_append hE _ _).mpr (mayCondition'_argPos a L)) X
+/-- **No phrase separates the Root from its argument.** In every context, under either
+attachment, a proform of no category strands the argument from the Root. -/
+theorem not_strands_arg (c : RoseTree.Context (Tree.Label Cat W)) (a : Attachment)
+    (L : Lexicon W) (X : Cat) :
+    ¬ Strands X ((a.configuration L).plug c).tree ((a.configuration L).plug c).root
+      ((a.configuration L).plug c).arg := fun h ↦
+  mayCondition'_iff_forall_not_strands.mp (mayCondition'_arg a L) X ((strands_plug c _ _).mp h)
 
 /-- **Pronominalization cannot decide.** In every context a proform strands from the Root under
 one attachment whatever it strands under the other. -/
-theorem strands_replaceAt_iff {E : Tree Cat W} {h : List ℕ} (hE : E[h]?.isSome)
+theorem strands_plug_complement_iff_modifier (c : RoseTree.Context (Tree.Label Cat W))
     (L : Lexicon W) (X : Cat) (β : TreePath) :
-    Strands X (E.replaceAt h (Attachment.complement.tree L)) ⟨h ++ rootPos.toList⟩ β ↔
-      Strands X (E.replaceAt h (Attachment.modifier.tree L)) ⟨h ++ rootPos.toList⟩ β := by
-  refine strands_replaceAt_congr (t₁ := Attachment.complement.tree L)
-    (t₂ := Attachment.modifier.tree L) hE (not_isHead_node _ _) (not_isHead_node _ _) rfl
-    (fun p hp hp0 ↦ ?_) X β
+    Strands X ((complement L).plug c).tree ((complement L).plug c).root β ↔
+      Strands X ((modifier L).plug c).tree ((modifier L).plug c).root β := by
+  refine strands_plug_congr c (t₁ := (complement L).tree) (t₂ := (modifier L).tree)
+    (not_isHead_node _ _) (not_isHead_node _ _) rfl (α := ⟨[0, 0]⟩) (fun ⟨p⟩ hp hp0 ↦ ?_) X β
   have : p ∈ [[], [0], [0, 0]] := (List.mem_inits _ _).mpr hp
   simp only [List.mem_cons, List.not_mem_nil, or_false] at this
   obtain rfl | rfl | rfl := this
   exacts [absurd rfl hp0, rfl, rfl]
 
 theorem strands_specifier (L : Lexicon W) :
-    Strands (.head L.x) (specifierTree L) ⟨[1, 0, 0]⟩ ⟨[0]⟩ :=
-  ⟨⟨[1]⟩, by decide, _, rfl, not_isHead_node _ _, rfl⟩
+    Strands (.head L.x) (specifier L).tree (specifier L).root (specifier L).arg :=
+  ⟨⟨[1]⟩, (by decide : (⟨[1]⟩ : TreePath) ∈ crossed ⟨[1, 0, 0]⟩ ⟨[0]⟩), _, rfl,
+    not_isHead_node _ _, rfl⟩
 
-/-- The category of the head a node below the root is merged with, that of its mother. -/
+/-- The category of the head a node is merged with, that of its mother; the root of a tree is
+merged with none. -/
 def selector (t : Tree Cat W) (β : TreePath) : Option Cat :=
-  t[β.parent]?.map Tree.cat
+  if β = ⊥ then none else t[β.parent]?.map Tree.cat
 
-/-- The positions of the arguments of a phrase, its DPs. -/
-def argPositions (t : Tree Cat W) : List TreePath :=
-  t.positionedTerminals.filterMap fun x ↦ if x.2.1 = .head .D then some x.1 else none
+/-- Within a context a node of a phrase other than its root is merged with the head it was. -/
+theorem selector_plug (c : RoseTree.Context (Tree.Label Cat W)) (t : Tree Cat W) {β : TreePath}
+    (hβ : β ≠ ⊥) : selector (c.plug t) (c.embed β) = selector t β := by
+  have h : c.embed β ≠ ⊥ := fun e ↦ hβ (TreePath.ext (List.append_eq_nil_iff.mp
+    (congrArg TreePath.toList e)).2)
+  rw [selector, selector, ite_eq_right h, ite_eq_right hβ, RoseTree.Context.embed,
+    TreePath.parent_appendLeft _ hβ]
+  exact congrArg _ (c.getElem?_plug_embed t β.parent)
 
-theorem argPositions_tree (a : Attachment) (L : Lexicon W) :
-    argPositions (a.tree L) = [a.argPos] := by
-  obtain ⟨x, _, _, _, hx⟩ := L
-  cases x <;> cases hx <;> cases a <;> rfl
-
-/-- A proform of category `X` strands an argument from the node. -/
-def StrandsArgument (X : Cat) : Observable W Prop :=
-  fun o ↦ ∃ β ∈ argPositions o.1, Strands X o.1 o.2 β
-
-/-- An argument is merged with a head of category `c`. -/
-def SelectsArgument (c : Cat) : Observable W Prop :=
-  fun o ↦ ∃ β ∈ argPositions o.1, selector o.1 β = some c
-
-theorem factorsThrough_strandsArgument (X : Cat) :
-    Function.FactorsThrough
-      (fun p : Attachment × Lexicon W ↦ StrandsArgument X (p.1.tree p.2, rootPos))
-      (fun p ↦ profile (p.1.tree p.2) rootPos) := by
-  refine (invariant_iff_factorsThrough _).mp fun L ↦ ?_
-  have h (a : Attachment) : ¬ StrandsArgument X (a.tree L, rootPos) := by
-    simpa [StrandsArgument, argPositions_tree] using
-      mayCondition'_iff_forall_not_strands.mp (mayCondition'_argPos a L) X
-  exact eq_iff_iff.mpr ⟨fun hc ↦ absurd hc (h _), fun hm ↦ absurd hm (h _)⟩
-
-theorem selectsArgument_root (a : Attachment) (L : Lexicon W) :
-    SelectsArgument .root (a.tree L, rootPos) ↔ a = .complement := by
-  simp only [SelectsArgument, argPositions_tree, List.mem_singleton, exists_eq_left]
+theorem selector_arg_eq_root_iff (a : Attachment) (L : Lexicon W) :
+    selector (a.configuration L).tree (a.configuration L).arg = some .root ↔
+      a = .complement := by
   cases a
   · exact iff_of_true rfl rfl
   · exact iff_of_false (fun h ↦ by cases h) (by simp)

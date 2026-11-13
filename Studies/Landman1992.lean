@@ -98,7 +98,7 @@ namespace Model
 
 open Event (τ)
 
-variable {E W T : Type*} [PartialOrder E] [LinearOrder T] [Event.TemporalTrace E T]
+variable {E W T : Type*} [PartialOrder E] [LinearOrder T] [TemporalTrace E T]
   (M : Model E W)
 
 /-- An event continues in a world when it goes on there and so does something of which it is a
@@ -185,7 +185,7 @@ inside the run time of an actual event of its type, like Bennett and Partee's pr
 wherever it holds the perfective holds too: it validates the inference from (3) to (4) that the
 imperfective paradox rejects. -/
 theorem prfv_nonempty_of_impf_nonempty {E W T : Type*} [LinearOrder T]
-    [Event.TemporalTrace E T] {P : W → E → Prop} {w : W}
+    [TemporalTrace E T] {P : W → E → Prop} {w : W}
     (h : (Aspect.IMPF (fun w _ ↦ {w}) P w).Nonempty) : (Aspect.PRFV (T := T) P w).Nonempty :=
   let ⟨_, ht⟩ := h; let ⟨e, _, he⟩ := ht w rfl; ⟨Event.τ e, e, le_rfl, he⟩
 

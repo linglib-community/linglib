@@ -145,7 +145,7 @@ section Aspect
 open Mereology Spatial
 open Event (σ)
 
-variable {E Loc : Type*} [SemilatticeSup E] [SemilatticeSup (Path Loc)] [Event.SpatialTrace E Loc]
+variable {E Loc : Type*} [SemilatticeSup E] [SemilatticeSup (Path Loc)] [SpatialTrace E Loc]
   {V : E → Prop} {R : Path Loc → Prop}
 
 /-- `resultative V R e` holds when `e` is an event of the verb whose path `σ e`, the path of the

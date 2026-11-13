@@ -121,7 +121,7 @@ end Preorder
 /-- A predicate of events in time has the subinterval property exactly when its
 existential quantifier is atomically distributive over time at every world. -/
 theorem hasSubintervalProperty_iff_forall_atomDist {W T : Type*} [LinearOrder T]
-    [Event.TemporalTrace E T] {P : W → E → Prop} :
+    [TemporalTrace E T] {P : W → E → Prop} :
     Aspect.HasSubintervalProperty P ↔ ∀ w, AtomDist τ (.ofPred (P w)) :=
   forall_congr' fun _ ↦ atomDist_ofPred_iff.symm
 

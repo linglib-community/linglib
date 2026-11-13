@@ -72,7 +72,7 @@ open Aspect Function Set
 open Chierchia2006 (evenEnrich)
 open Event (τ)
 
-variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T]
 
 /-! ### The simple present and the two perfects -/
 

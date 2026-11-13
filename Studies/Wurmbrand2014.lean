@@ -88,7 +88,7 @@ inductive Asp
 
 section Aspect
 
-variable {T W E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+variable {T W E : Type*} [LinearOrder T] [TemporalTrace E T]
 
 /-- The relation (47) of an aspect between the reference time `t` and an event's run time `s`: the
 perfective puts the run time properly inside the reference time, the imperfective the reference
