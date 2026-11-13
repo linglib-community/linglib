@@ -10,16 +10,15 @@ public import Linglib.Semantics.Reference.Iota
 # Mendia (2020): Reference to ad hoc kinds
 
 A kind-referring expression ranges over subkinds that share no realizations and jointly cover the
-kind, Carlson's Disjointness Condition. Mendia restates the condition as a partition, so that the
-subkinds are [the cells of an equivalence relation](##cover_and_noOverlap_iff_exists_classes) on
-the realizations of the kind, which the context supplies. An ad hoc kind term such as *the lions
-that eat people* is the definite over κ+, the subkinds that every instance of the restrictor
-realizes. It is [defined when any two instances are equivalent](##iota_kappaPlus_dom), its
-referent is realized by exactly the instances [when they are also a union of
-cells](##cell_eq_iff), and the coarsest partition under which that holds [divides the kind into
-the instances and the rest](##isGreatest_polar). Degrees are subkinds too, the classes of mutual
-comparison on a preorder, so an [amount reading](##amount_reading) of a relative clause is the
-same definite under the partition into degrees.
+kind, Carlson's Disjointness Condition. Mendia restates the condition as a partition: the subkinds
+are [the cells of an equivalence relation](##cover_and_noOverlap_iff_exists_classes) on the
+realizations of the kind, which the context supplies. An ad hoc kind term such as *the lions that
+eat people* is [the definite of the subkinds its instances realize](##iota_kappaPlus). Its referent
+is realized by exactly the instances [when they are also a union of
+cells](##cell_eq_iff_mem_iota_kappaPlus), and the coarsest partition under which that holds [divides
+the kind into the instances and the rest](##isGreatest_polar). Degrees are subkinds too, the classes
+of mutual comparison on a preorder, so an [amount reading](##amount_reading) of a relative clause is
+the same definite under the partition into degrees.
 
 ## Implementation notes
 
@@ -34,8 +33,13 @@ same definite under the partition into degrees.
   ordered and at most one is realized by every instance of a nonempty restrictor
   (`kappaPlus_subsingleton`), so the ι of (31) and (36) is `iota`, undefined when no subkind or
   several qualify.
+* κ+ in (33) collects the subkinds that every instance of the restrictor realizes. For a
+  nonempty restrictor its definite is the definite of the image of the restrictor under
+  `Quotient.mk`; on the empty restrictor κ+ is every subkind, the reading of (32b), where the
+  image is empty.
 * κ+ in (33) asks that every instance of the restrictor realize the subkind, and the second line
-  of (36) names the instances themselves as its realizations. `cell_eq_iff` says when the two
+  of (36) names the instances themselves as its realizations. `cell_eq_iff_mem_iota_kappaPlus`
+  says when the two
   agree. In the champagne partitions (64)–(66) the restrictor holds the one portion spilled and
   the referent is realized by the whole cell of that portion.
 * Dogs come in every combination of breed and role and lions in every combination of subspecies
@@ -83,15 +87,6 @@ theorem cover_and_noOverlap_iff_exists_classes {c : Set (Set E)} (h0 : ∅ ∉ c
   cover_and_noOverlap_iff.trans
     ⟨fun h ↦ ⟨_, Setoid.classes_mkClasses c ⟨h0, h⟩⟩, fun ⟨_, h⟩ ↦ h ▸ Setoid.classes_eqv_classes⟩
 
--- (14b), `mendia2020_14b`
-theorem ncard_image_mk_singleton (s : Setoid E) (a : E) : (Quotient.mk s '' {a}).ncard = 1 := by
-  rw [Set.image_singleton, Set.ncard_singleton]
-
-theorem ncard_image_mk_ker {β : Type*} (f : E → β) (X : Set E) :
-    (Quotient.mk (Setoid.ker f) '' X).ncard = (f '' X).ncard := by
-  rw [← Set.ncard_image_of_injective _ (Setoid.kerLift_injective f), Set.image_image]
-  rfl
-
 /-! ### Subkind reference (§3.2.2) -/
 
 /-- The operator κ+ gives the subkinds that every instance of the restrictor `P` realizes,
@@ -113,31 +108,40 @@ theorem kappaPlus_subsingleton (s : Setoid E) (hP : P.Nonempty) : (kappaPlus s P
     let ⟨a, ha⟩ := hP
     (hq a ha).symm.trans (hq' a ha)
 
-theorem mk_mem_iota_kappaPlus (ha : a ∈ P) :
-    Quotient.mk s a ∈ iota (kappaPlus s P) ↔ P ⊆ s.cell a :=
-  (kappaPlus_subsingleton s ⟨a, ha⟩).mem_iota.trans (forall₂_congr fun _ _ ↦ Quotient.eq)
+/-- The definite over κ+ of a nonempty restrictor is the definite of the subkinds its instances
+realize, (33) and (36). -/
+theorem iota_kappaPlus (hP : P.Nonempty) : iota (kappaPlus s P) = iota (Quotient.mk s '' P) := by
+  obtain ⟨a, ha⟩ := hP
+  refine Part.ext fun q ↦ ?_
+  rw [(kappaPlus_subsingleton s ⟨a, ha⟩).mem_iota, mem_iota]
+  exact ⟨fun h ↦ ⟨⟨a, ha, h a ha⟩, by rintro _ ⟨x, hx, rfl⟩; exact h x hx⟩,
+    fun h x hx ↦ h.2 _ ⟨x, hx, rfl⟩⟩
 
-/-- The definite over κ+ of a nonempty restrictor is defined exactly when any two instances of
-the restrictor are equivalent (p. 604). -/
+theorem mk_mem_iota_kappaPlus (ha : a ∈ P) :
+    Quotient.mk s a ∈ iota (kappaPlus s P) ↔ P ⊆ s.cell a := by
+  rw [iota_kappaPlus ⟨a, ha⟩, apply_mem_iota_image ha]
+  exact forall₂_congr fun _ _ ↦ Quotient.eq
+
+-- p. 604
 theorem iota_kappaPlus_dom (hP : P.Nonempty) :
     (iota (kappaPlus s P)).Dom ↔ ∀ x ∈ P, ∀ y ∈ P, s x y := by
-  rw [(kappaPlus_subsingleton s hP).iota_dom]
-  refine ⟨fun ⟨q, hq⟩ x hx y hy ↦ Quotient.eq.1 ((hq x hx).trans (hq y hy).symm), fun h ↦ ?_⟩
-  obtain ⟨a, ha⟩ := hP
-  exact ⟨Quotient.mk s a, fun x hx ↦ Quotient.eq.2 (h x hx a ha)⟩
+  rw [iota_kappaPlus hP, iota_image_dom, and_iff_right hP]
+  exact forall₂_congr fun _ _ ↦ forall₂_congr fun _ _ ↦ Quotient.eq
 
 /-- The subkind the definite over κ+ refers to is realized by exactly the instances of the
 restrictor when the definite is defined and the instances are a union of cells, (36). -/
-theorem cell_eq_iff (ha : a ∈ P) :
+theorem cell_eq_iff_mem_iota_kappaPlus (ha : a ∈ P) :
     s.cell a = P ↔ Quotient.mk s a ∈ iota (kappaPlus s P) ∧ s.Determines P := by
-  rw [mk_mem_iota_kappaPlus ha]
-  exact ⟨fun h ↦ ⟨h.ge, h ▸ s.determines_cell a⟩, fun h ↦ (h.2.cell_subset ha).antisymm h.1⟩
+  rw [mk_mem_iota_kappaPlus ha, Setoid.cell_eq_iff ha]
 
 /-- The coarsest partition under which the definite over κ+ refers to a subkind realized by
 exactly the instances of the restrictor has the instances as one cell and everything else as
 the other (p. 598). -/
-theorem isGreatest_polar (ha : a ∈ P) : IsGreatest {s : Setoid E | s.cell a = P} (.polar P) :=
-  ⟨Setoid.polar_cell_of_mem ha, fun s hs ↦ hs ▸ s.determines_cell a⟩
+theorem isGreatest_polar (ha : a ∈ P) :
+    IsGreatest {s : Setoid E | Quotient.mk s a ∈ iota (kappaPlus s P) ∧ s.Determines P}
+      (.polar P) := by
+  simp_rw [← cell_eq_iff_mem_iota_kappaPlus ha]
+  exact Setoid.isGreatest_polar ha
 
 -- (31b), `mendia2020_32a`
 theorem that_eq (s : Setoid E) (a : E) : iota (kappaPlus s {a}) = Part.some (Quotient.mk s a) := by
@@ -215,8 +219,7 @@ def room14a : Set Dog :=
     ⟨.beagle, .guideDog, 0⟩, ⟨.beagle, .guideDog, 1⟩}
 
 -- (14a), `mendia2020_14a`
-theorem ncard_image_mk_room14a : (Quotient.mk (Setoid.ker Dog.breed) '' room14a).ncard = 2 := by
-  rw [ncard_image_mk_ker]
+theorem ncard_image_breed_room14a : (Dog.breed '' room14a).ncard = 2 := by
   simp only [room14a, Set.image_insert_eq, Set.image_singleton]
   simp only [Set.insert_eq_of_mem, Set.mem_insert_iff, Set.mem_singleton_iff, true_or]
   exact Set.ncard_pair nofun

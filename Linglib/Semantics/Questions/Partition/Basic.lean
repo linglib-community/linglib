@@ -66,6 +66,8 @@ theorem cell_nonempty (w : W) : (Q.cell w).Nonempty := ⟨w, Q.mem_cell_self w�
 theorem cell_eq_of_rel (h : Q w v) : Q.cell w = Q.cell v :=
   Set.ext fun _ ↦ ⟨fun h' ↦ Q.trans' h' h, fun h' ↦ Q.trans' h' (Q.symm' h)⟩
 
+theorem cell_ker {β : Type*} (f : W → β) (w : W) : (ker f).cell w = f ⁻¹' {f w} := rfl
+
 variable (Q) in
 theorem cell_eq_or_disjoint (w v : W) : Q.cell w = Q.cell v ∨ Disjoint (Q.cell w) (Q.cell v) := by
   by_cases h : Q w v
@@ -162,6 +164,14 @@ theorem determines_cell (w : W) : Q.Determines (Q.cell w) :=
 
 theorem Determines.cell_subset (h : Q.Determines p) (hw : w ∈ p) : Q.cell w ⊆ p :=
   fun _ hv ↦ (determines_iff.1 h _ _ hv).2 hw
+
+/-- The cell of a member of `p` is `p` when `p` lies in that cell and `Q` determines `p`. -/
+theorem cell_eq_iff (hw : w ∈ p) : Q.cell w = p ↔ p ⊆ Q.cell w ∧ Q.Determines p :=
+  ⟨fun h ↦ ⟨h.ge, h ▸ determines_cell w⟩, fun h ↦ (h.2.cell_subset hw).antisymm h.1⟩
+
+/-- The polar question whether `p` is the coarsest question with `p` as a cell. -/
+theorem isGreatest_polar (hw : w ∈ p) : IsGreatest {Q : Setoid W | Q.cell w = p} (polar p) :=
+  ⟨polar_cell_of_mem hw, fun _ hQ ↦ hQ ▸ determines_cell w⟩
 
 theorem le_ker_iff_forall_determines {β : Type*} {f : W → β} :
     Q ≤ ker f ↔ ∀ b, Q.Determines (f ⁻¹' {b}) :=
