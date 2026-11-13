@@ -50,11 +50,14 @@ or inclusive, at some subinterval, as Dowty, Mittwoch and Vlach distinguish them
 * `Aspect.ViewpointType.denote_eq_image`, `Aspect.unbounded_eq_image`,
   `Aspect.perfect_eq_image`, `Aspect.prospective_eq_image`: the operators are images under Allen
   cells, so complex aspects compose by `Allen.comp`.
+* `Aspect.mem_perfect_iff_of_isUpperSet`: for a property closed under superintervals, the perfect
+  time span may end before the reference interval does.
 * `Aspect.mem_perfect_prfv`, `Aspect.prospective_prfv`: over the perfective, the perfect holds
   where an event is over by the end of the reference interval and the prospective where the
   reference interval precedes one.
-* `Aspect.mem_durative_prfv`: the perfective holds throughout a span when every moment of it is
-  the run time of an event.
+* `Aspect.mem_durative_iff_of_isUpperSet`, `Aspect.mem_durative_prfv`: a property closed under
+  superintervals holds throughout a span when it holds at every moment of it, the perfective
+  when every moment is the run time of an event.
 
 ## Implementation notes
 
@@ -319,15 +322,24 @@ theorem perfect_eq_image (p : W → Set (NonemptyInterval T)) (w : W) :
 theorem perfect_mono (h : ∀ w, p w ⊆ q w) (w : W) : perfect p w ⊆ perfect q w :=
   fun _ ⟨pts, hp, hf⟩ ↦ ⟨pts, h w hp, hf⟩
 
-/-- The perfect of the perfective holds where an event of the predicate is over by the end of the
-reference interval, the perfect time span reaching back to the start of the event. -/
-theorem mem_perfect_prfv : t ∈ perfect (PRFV P) w ↔ ∃ e : E, (τ e).snd ≤ t.snd ∧ P w e := by
+/-- For an interval property closed under superintervals, the perfect holds where some span
+belonging to the property is over by the end of the reference interval: the span need not end
+with the reference interval, since it extends to one that does. -/
+theorem mem_perfect_iff_of_isUpperSet (hp : IsUpperSet (p w)) :
+    t ∈ perfect p w ↔ ∃ pts ∈ p w, pts.snd ≤ t.snd := by
   constructor
-  · rintro ⟨pts, ⟨e, hle, hP⟩, -, hsnd⟩
-    exact ⟨e, hsnd ▸ (NonemptyInterval.le_def.1 hle).2, hP⟩
-  · rintro ⟨e, hle, hP⟩
-    exact ⟨⟨((τ e).fst ⊓ t.fst, t.snd), inf_le_right.trans t.fst_le_snd⟩,
-      ⟨e, NonemptyInterval.le_def.2 ⟨inf_le_left, hle⟩, hP⟩, inf_le_right, rfl⟩
+  · rintro ⟨pts, hpts, -, hsnd⟩
+    exact ⟨pts, hpts, hsnd.ge⟩
+  · rintro ⟨pts, hpts, hle⟩
+    exact ⟨⟨(pts.fst ⊓ t.fst, t.snd), inf_le_right.trans t.fst_le_snd⟩,
+      hp (NonemptyInterval.le_def.2 ⟨inf_le_left, hle⟩) hpts, inf_le_right, rfl⟩
+
+/-- The perfect of the perfective holds where an event of the predicate is over by the end of the
+reference interval. -/
+theorem mem_perfect_prfv : t ∈ perfect (PRFV P) w ↔ ∃ e : E, (τ e).snd ≤ t.snd ∧ P w e := by
+  rw [mem_perfect_iff_of_isUpperSet (isUpperSet_prfv P w)]
+  exact ⟨fun ⟨_, ⟨e, hle, hP⟩, h⟩ ↦ ⟨e, (NonemptyInterval.le_def.1 hle).2.trans h, hP⟩,
+    fun ⟨e, h, hP⟩ ↦ ⟨τ e, ⟨e, le_rfl, hP⟩, h⟩⟩
 
 /-- `prospective p` holds at a reference interval that precedes some interval belonging to `p`,
 the prospective as an operator on interval properties. -/
@@ -381,17 +393,27 @@ theorem inclusive_eq_of_isUpperSet (hp : IsUpperSet (p w)) : inclusive p w = p w
 theorem durative_subset_inclusive : durative p w ⊆ inclusive p w :=
   fun i h ↦ ⟨i, h (Set.mem_Iic.2 le_rfl), le_rfl⟩
 
+/-- An interval property closed under superintervals holds throughout a span exactly when it
+holds at every moment of the span. -/
+theorem mem_durative_iff_of_isUpperSet (hp : IsUpperSet (p w)) :
+    t ∈ durative p w ↔ ∀ a ∈ t, .pure a ∈ p w := by
+  refine ⟨fun h _ ha ↦ h (show _ ≤ t from NonemptyInterval.le_def.2 ha), fun h j hj ↦ ?_⟩
+  obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hj
+  exact hp (show .pure j.fst ≤ j from NonemptyInterval.le_def.2 ⟨le_rfl, j.fst_le_snd⟩)
+    (h j.fst ⟨h₁, j.fst_le_snd.trans h₂⟩)
+
+/-- The perfective holds at a moment exactly when the moment is the run time of an event of the
+predicate. -/
+theorem pure_mem_prfv {a : T} : .pure a ∈ PRFV P w ↔ ∃ e : E, τ e = .pure a ∧ P w e := by
+  refine exists_congr fun e ↦ and_congr_left fun _ ↦ ⟨fun hle ↦ ?_, fun h ↦ h.le⟩
+  obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hle
+  exact NonemptyInterval.ext (Prod.ext (((τ e).fst_le_snd.trans h₂).antisymm h₁)
+    (h₂.antisymm (h₁.trans (τ e).fst_le_snd)))
+
 /-- The perfective holds throughout a span exactly when every moment of the span is the run time
 of an event of the predicate. -/
 theorem mem_durative_prfv :
     t ∈ durative (PRFV P) w ↔ ∀ a ∈ t, ∃ e : E, τ e = .pure a ∧ P w e := by
-  refine ⟨fun h a ha ↦ ?_, fun h j hj ↦ ?_⟩
-  · obtain ⟨e, hle, hP⟩ := h (show .pure a ≤ t from NonemptyInterval.le_def.2 ha)
-    obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hle
-    exact ⟨e, NonemptyInterval.ext (Prod.ext (((τ e).fst_le_snd.trans h₂).antisymm h₁)
-      (h₂.antisymm (h₁.trans (τ e).fst_le_snd))), hP⟩
-  · obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hj
-    obtain ⟨e, he, hP⟩ := h j.fst ⟨h₁, j.fst_le_snd.trans h₂⟩
-    exact ⟨e, he ▸ NonemptyInterval.le_def.2 ⟨le_rfl, j.fst_le_snd⟩, hP⟩
+  simp only [mem_durative_iff_of_isUpperSet (isUpperSet_prfv P w), pure_mem_prfv]
 
 end Aspect

@@ -27,7 +27,8 @@ prospective, [an eventuality to come](##mem_present_future_iff); the modal selec
   which the future does not include.
 * The non-past quantifies over reference times no part of which precedes the utterance time.
 * The perfect is the library's, whose span ends with the reference interval, where the paper's
-  may end before it; the non-past perfect is the same on either.
+  may end before it; over the perfective the two agree
+  (`Aspect.mem_perfect_iff_of_isUpperSet`).
 * A subject's eventualities are those of its predicate, and a distributive reading of conjoined
   subjects places an eventuality of each within the reference time.
 * A universal modal over a realistic base commutes with negation [only when the base is
@@ -140,6 +141,12 @@ theorem mem_present_prfv : w ∈ present u (PRFV P) ↔ ∀ a ∈ u, ∃ e, τ e
 theorem mem_present_pure_prfv {a : T} :
     w ∈ present (.pure a) (PRFV P) ↔ ∃ e, τ e = .pure a ∧ P w e := by
   simp [mem_present_prfv, NonemptyInterval.mem_pure]
+
+-- the rule (28) is the pointwise condition at every moment of the utterance time
+theorem mem_present_iff_of_isUpperSet (h : IsUpperSet (p w)) :
+    w ∈ present u p ↔ ∀ a ∈ u, w ∈ present (.pure a) p := by
+  simp only [present, mem_ofPred_eq, mem_durative_iff_of_isUpperSet h, NonemptyInterval.mem_pure,
+    forall_eq]
 
 -- (41b)
 theorem not_mem_present_prfv_of_forall_lt (h : ∀ e, P w e → (τ e).fst < (τ e).snd) :
