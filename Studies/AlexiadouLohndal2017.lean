@@ -130,24 +130,33 @@ theorem derives_iff (v : View) :
 
 section Deverbal
 
-open VanCraenenbroeck2014 (Config)
 open DistributedMorphology (Strands)
-open DistributedMorphology.RootCategorization (selector)
+open DistributedMorphology.RootCategorization (Lexicon Configuration selector)
+
+/-- In the configurations of a Root and its argument, the Root takes the argument as its
+complement, or modifies the categorizer whose complement it is, or the argument is in the
+specifier of the categorizer, or in the specifier of a functional head over the Root. -/
+inductive Config
+  | complement | modifier | specifier | severed
+  deriving DecidableEq, Repr
+
+/-- A configuration's phrase and positions, for the categorizer and words of a categorized
+Root. -/
+def Config.configuration (L : Lexicon Unit) : Config → Configuration Unit
+  | .complement => .complement L
+  | .modifier => .modifier L
+  | .specifier => .specifier L
+  | .severed => VanCraenenbroeck2014.fP
 
 /-- A deverbal noun with an adjunct, the nP of a nominalizer over the phrase of a Root and its
 argument under v, with a PP adjoined to it. -/
-def deverbal (c : Config) : Tree Cat Unit :=
-  .adjoin (.head .n) [.node (.head .n) [.terminal (.head .n) (), c.tree VanCraenenbroeck2014.verb],
-    .terminal (.head .P) ()]
-
-/-- The position of a dependent in `deverbal`. -/
-def position (c : Config) : Harley2014.Dependent → Core.Order.TreePath
-  | .argument => ⟨0 :: 1 :: c.argPos.toList⟩
-  | .adjunct => ⟨[1]⟩
+def deverbal (c : Config) : Configuration Unit :=
+  Harley2014.withAdjunct .n () <|
+    (c.configuration VanCraenenbroeck2014.verb).node (.head .n) [.terminal (.head .n) ()] []
 
 /-- *one*, a proform of the category of the noun, strands the dependent from the Root. -/
 def OneStrands (c : Config) (d : Harley2014.Dependent) : Prop :=
-  Strands (.head .n) (deverbal c) ⟨0 :: 1 :: c.rootPos.toList⟩ (position c d)
+  Strands (.head .n) (deverbal c).tree (deverbal c).root (d.pos (deverbal c))
 
 instance (c : Config) (d : Harley2014.Dependent) : Decidable (OneStrands c d) :=
   inferInstanceAs (Decidable (Strands _ _ _ _))
@@ -163,8 +172,9 @@ theorem oneData_length : oneData.length = 2 := by decide +kernel
 with the verb's head, whatever the configuration. -/
 theorem deverbal_derives (c : Config) :
     (∀ p ∈ oneData, p.2 = .acceptable ↔ OneStrands c p.1) ∧
-      selector (deverbal c) (position c .argument) =
-        selector (c.tree VanCraenenbroeck2014.verb) c.argPos := by
+      selector (deverbal c).tree (deverbal c).arg =
+        selector (c.configuration VanCraenenbroeck2014.verb).tree
+          (c.configuration VanCraenenbroeck2014.verb).arg := by
   cases c <;> decide +kernel
 
 end Deverbal
