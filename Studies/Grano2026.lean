@@ -170,7 +170,8 @@ def lexicalForce (m : ModalItem) : ModalForce :=
 -- §4.5
 theorem exists_possibility_scalemate :
     ∃ m ∈ English.Auxiliaries.modals.map (·.toModalItem),
-      ModalItem.Scalemates lexicalForce English.Auxiliaries.should.toModalItem m ∧
+      ModalItem.Scalemates (lexicalForce · |>.quantificational)
+          English.Auxiliaries.should.toModalItem m ∧
         lexicalForce m = .possibility := by
   decide
 

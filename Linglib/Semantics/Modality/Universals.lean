@@ -125,6 +125,14 @@ theorem ModalItem.singleAxis_meaning_iff {i : ModalItem} :
   unfold SingleAxis ModalItem.VariesForce ModalItem.VariesFlavor ModalItem.forces ModalItem.flavors
   omega
 
+theorem ModalItem.singleAxis_quantificationalMeaning_iff {i : ModalItem} :
+    SingleAxis i.quantificationalMeaning ↔
+      ¬ (i.VariesQuantificationalForce ∧ i.VariesFlavor) := by
+  rw [SingleAxis, ModalItem.image_fst_quantificationalMeaning,
+    ModalItem.image_snd_quantificationalMeaning]
+  unfold ModalItem.VariesQuantificationalForce ModalItem.VariesFlavor
+  omega
+
 /-! ### Kratzer modals
 
 A modal whose force and flavor are set by separate parameters expresses a product. -/

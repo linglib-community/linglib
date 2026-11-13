@@ -59,12 +59,13 @@ theorem expressed_iff (ff : ForceFlavor) :
   revert ff
   decide
 
-/-- A modal's lexical force: necessity if its meaning has necessity, possibility otherwise. -/
-def lexicalForce (m : ModalItem) : ModalForce :=
-  if .necessity ∈ m.forces then .necessity else .possibility
+/-- A modal's lexical force: universal if its meaning has necessity, existential otherwise. -/
+def lexicalForce (m : ModalItem) : QuantificationalForce :=
+  if .necessity ∈ m.forces then .universal else .existential
 
 -- Table 2
-theorem forces_eq : ∀ m ∈ Tlingit.modals, m.forces = {lexicalForce m} ∧ m.flavors.card = 1 := by
+theorem forces_eq :
+    ∀ m ∈ Tlingit.modals, m.quantificationalForces = {lexicalForce m} ∧ m.flavors.card = 1 := by
   decide
 
 /-! ### Scales -/
@@ -77,9 +78,9 @@ theorem scalemates :
 /-- In upward-entailing contexts the dubitatives serve for necessity ((21)–(24)), but the potential
 mode does not ((48)–(49)), nor the future mode for possibility (41). -/
 theorem servesFor_necessity :
-    (∀ m ∈ dubitatives, ServesIn lexicalForce Tlingit.modals .positive m .necessity) ∧
-      ¬ ServesIn lexicalForce Tlingit.modals .positive potentialMode .necessity ∧
-      ¬ ServesIn lexicalForce Tlingit.modals .positive futureMode .possibility := by
+    (∀ m ∈ dubitatives, ServesIn lexicalForce Tlingit.modals .positive m .universal) ∧
+      ¬ ServesIn lexicalForce Tlingit.modals .positive potentialMode .universal ∧
+      ¬ ServesIn lexicalForce Tlingit.modals .positive futureMode .existential := by
   decide
 
 /-- The dubitatives serve for both forces in an upward-entailing context with a single-force
@@ -92,8 +93,8 @@ theorem dubitatives_fixed_force :
 
 -- (54), (55)
 theorem potential_universal_restriction :
-    ServesIn lexicalForce Tlingit.modals .negative potentialMode .possibility ∧
-      ¬ ServesIn lexicalForce Tlingit.modals .negative potentialMode .necessity := by
+    ServesIn lexicalForce Tlingit.modals .negative potentialMode .existential ∧
+      ¬ ServesIn lexicalForce Tlingit.modals .negative potentialMode .universal := by
   decide
 
 end Cable2017

@@ -55,8 +55,8 @@ Gitksan.
 * The rows are joined to the fragments through `parse?` tables, and every row naming a modal
   resolves (`rows_resolve`), so no row theorem holds by a failed lookup.
 * Duals, force distinctions and [nauze-2008]'s axes compare necessity with possibility, weak
-  necessity counting as necessity (`ModalItem.classical`): Table 18.1's *sgi* is a (weak)
-  necessity modal varying only in flavour. The chapter's weak necessity and graded modality
+  necessity counting as necessity (`ModalItem.quantificationalMeaning`): Table 18.1's *sgi* is
+  a (weak) necessity modal varying only in flavour. The chapter's weak necessity and graded modality
   (§18.3.1) are not formalized.
 * A dual is a modal of the other force sharing a flavour, the necessity–possibility pairs of
   §18.3.1 and the same-domain condition on [deal-2011]'s scales.
@@ -247,14 +247,14 @@ induce a scalar implicature ([deal-2011]). -/
 /-- A modal has a dual in an inventory when it is fixed for one classical force and another item
 of the inventory, sharing one of its flavours, is fixed for the dual force. -/
 def HasDualIn (L : List ModalItem) (m : ModalItem) : Prop :=
-  m.classical.forces.card = 1 ∧ ∃ m' ∈ L, m'.classical.forces =
-    m.classical.forces.image ModalForce.dual ∧ ∃ fl ∈ m.flavors, fl ∈ m'.flavors
+  m.quantificationalForces.card = 1 ∧ ∃ m' ∈ L, m'.quantificationalForces =
+    m.quantificationalForces.image QuantificationalForce.dual ∧ ∃ fl ∈ m.flavors, fl ∈ m'.flavors
 
 instance (L : List ModalItem) (m : ModalItem) : Decidable (HasDualIn L m) :=
   inferInstanceAs (Decidable (_ ∧ ∃ _ ∈ _, _ = _ ∧ ∃ _ ∈ _, _))
 
 theorem not_hasDualIn_of_variesForce {L : List ModalItem} {m : ModalItem}
-    (h : m.classical.VariesForce) : ¬ HasDualIn L m :=
+    (h : m.VariesQuantificationalForce) : ¬ HasDualIn L m :=
   fun h' ↦ Nat.not_succ_le_self 1 (h.trans_eq h'.1)
 
 theorem no_duals :
@@ -282,7 +282,8 @@ theorem oqa_rows :
     ∀ e ∈ Examples.all, e.parse? "modal" modalTable = some NezPerce.oqa →
       ∀ π ∈ e.parse? "downwardEntailing" polarityTable, ∀ r ∈ e.readings,
         ∃ fo ∈ forceTable.lookup r.1, (r.2 = .acceptable ↔
-          Deal2011.ServesIn Deal2011.lexicalForce NezPerce.modals π NezPerce.oqa fo) := by
+          Deal2011.ServesIn Deal2011.lexicalForce NezPerce.modals π NezPerce.oqa
+            fo.quantificational) := by
   decide
 
 -- (42), (43)
@@ -294,9 +295,8 @@ theorem nsyilxcen_rows :
 /-- No lexical forces for *mat* and *cmay* let the scalar account of [deal-2011] predict their uses
 ((42)–(43)). -/
 theorem nsyilxcen_not_scalar :
-    ¬ ∃ lex : ModalItem → ModalForce, ∀ m ∈ Nsyilxcen.modals, ∀ g,
-      g.classical ∈ m.classical.forces ↔
-        Deal2011.ServesIn lex Nsyilxcen.modals .positive m g := by
+    ¬ ∃ lex : ModalItem → QuantificationalForce, ∀ m ∈ Nsyilxcen.modals, ∀ q,
+      q ∈ m.quantificationalForces ↔ Deal2011.ServesIn lex Nsyilxcen.modals .positive m q := by
   rintro ⟨lex, h⟩
   have hm := h Nsyilxcen.mat (by decide)
   have hc := h Nsyilxcen.cmay (by decide)
@@ -336,7 +336,7 @@ theorem marking_mirror :
 /-- An inventory distinguishes force within a domain when two of its modals there express
 different sets of classical forces. -/
 def DistinguishesForce (L : List ModalItem) (D : ModalItem → Prop) : Prop :=
-  ∃ m ∈ L, ∃ m' ∈ L, D m ∧ D m' ∧ m.classical.forces ≠ m'.classical.forces
+  ∃ m ∈ L, ∃ m' ∈ L, D m ∧ D m' ∧ m.quantificationalForces ≠ m'.quantificationalForces
 
 instance (L : List ModalItem) (D : ModalItem → Prop) [DecidablePred D] :
     Decidable (DistinguishesForce L D) :=
@@ -380,7 +380,7 @@ theorem niuean_rows :
 /-- An inventory varies along one axis within a domain when its modals there do not vary in
 force and in flavour both. -/
 def OneAxisWithin (L : List ModalItem) (D : ModalItem → Prop) : Prop :=
-  ¬ ((∃ m ∈ L, D m ∧ m.classical.VariesForce) ∧ ∃ m ∈ L, D m ∧ m.VariesFlavor)
+  ¬ ((∃ m ∈ L, D m ∧ m.VariesQuantificationalForce) ∧ ∃ m ∈ L, D m ∧ m.VariesFlavor)
 
 instance (L : List ModalItem) (D : ModalItem → Prop) [DecidablePred D] :
     Decidable (OneAxisWithin L D) :=
@@ -388,8 +388,8 @@ instance (L : List ModalItem) (D : ModalItem → Prop) [DecidablePred D] :
 
 theorem OneAxisWithin.singleAxis {L : List ModalItem} {D : ModalItem → Prop}
     (h : OneAxisWithin L D) {m : ModalItem} (hm : m ∈ L) (hD : D m) :
-    SingleAxis m.classical.meaning :=
-  ModalItem.singleAxis_meaning_iff.2 fun hv ↦
+    SingleAxis m.quantificationalMeaning :=
+  ModalItem.singleAxis_quantificationalMeaning_iff.2 fun hv ↦
     h ⟨⟨m, hm, hD, hv.1⟩, m, hm, hD, by simpa [ModalItem.VariesFlavor] using hv.2⟩
 
 /-- [vander-klok-2013b]'s refinement of the universal: within each domain, epistemic and
@@ -401,13 +401,13 @@ instance (L : List ModalItem) : Decidable (VanderKlok L) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 theorem VanderKlok.singleAxis {L : List ModalItem} (h : VanderKlok L) {m : ModalItem}
-    (hm : m ∈ L) : SingleAxis m.classical.meaning := by
+    (hm : m ∈ L) : SingleAxis m.quantificationalMeaning := by
   by_cases he : m.Epistemic
   exacts [h.1.singleAxis hm he, h.2.singleAxis hm he]
 
 theorem gitksan_vanderKlok : VanderKlok Gitksan.modals := by decide
 
-theorem gitksan_nauze : ∀ m ∈ Gitksan.modals, SingleAxis m.classical.meaning :=
+theorem gitksan_nauze : ∀ m ∈ Gitksan.modals, SingleAxis m.quantificationalMeaning :=
   fun _ hm ↦ gitksan_vanderKlok.singleAxis hm
 
 /-- Table 18.4's hypothetical root system: a deontic modal `x` of either force, a necessity
@@ -419,7 +419,7 @@ def hypotheticalRootSystem : List ModalItem :=
    ⟨"z", {(.possibility, .bouletic)}, .neutral⟩]
 
 theorem hypotheticalRootSystem_singleAxis_not_vanderKlok :
-    (∀ m ∈ hypotheticalRootSystem, SingleAxis m.classical.meaning) ∧
+    (∀ m ∈ hypotheticalRootSystem, SingleAxis m.quantificationalMeaning) ∧
       ¬ VanderKlok hypotheticalRootSystem := by
   decide
 
