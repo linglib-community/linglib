@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
 public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
 public import Linglib.Core.Combinatorics.RootedTree.Aut
 public import Mathlib.LinearAlgebra.BilinearForm.TensorProduct
@@ -185,15 +184,11 @@ theorem pairing_product_of'_mul_of' (A B C₁ C₂ : Forest (UnorderedTree α)) 
       ((A.antidiagonal ×ˢ B.antidiagonal).map fun pq ↦
         pairing (R := R) (product (of' pq.1.1) (of' pq.2.1)) (of' C₁) *
           pairing (product (of' pq.1.2) (of' pq.2.2)) (of' C₂)).sum := by
-  have h (A B : Forest (UnorderedTree α)) (z : ConnesKreimer R (UnorderedTree α)) :
-      pairing (product (of' A) (of' B)) z =
-        ((productMultiset A B).map fun W ↦ pairing (of' W) z).sum := by
-    change pairing.flip z _ = _
-    rw [product_of'_of', map_multiset_sum, Multiset.map_map]
-    rfl
-  rw [h, Multiset.map_congr rfl fun W _ ↦ pairing_of'_mul W _ _, ← Multiset.sum_bind,
-    ← Multiset.map_bind, productMultiset_bind_antidiagonal, Multiset.map_bind, Multiset.sum_bind]
-  refine congrArg Multiset.sum (Multiset.map_congr rfl fun pq _ ↦ ?_)
-  rw [h, h, Multiset.sum_map_mul_sum_map]
+  have h := map_multiset_sum ((pairing.tmul pairing).flip (of' (R := R) C₁ ⊗ₜ of' C₂))
+    ((A.antidiagonal ×ˢ B.antidiagonal).map fun pq ↦
+      product (of' (R := R) pq.1.1) (of' pq.2.1) ⊗ₜ[R] product (of' pq.1.2) (of' pq.2.2))
+  rw [LinearMap.flip_apply, Multiset.map_map] at h
+  rw [pairing_mul, comulPrim_product_of'_of', h]
+  exact congrArg _ (Multiset.map_congr rfl fun pq _ ↦ mul_comm _ _)
 
 end GrossmanLarson

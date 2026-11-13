@@ -91,30 +91,17 @@ instance instIsCocomm : IsCocomm R (GrossmanLarson R α) where
 
 /-! ### The bialgebra -/
 
-private theorem tmul_sum_map_of (s t : Multiset (Forest (UnorderedTree α))) :
-    ((s.map of).sum : GrossmanLarson R α) ⊗ₜ[R] ((t.map of).sum : GrossmanLarson R α) =
-      ((s ×ˢ t).map fun q ↦ (of q.1 : GrossmanLarson R α) ⊗ₜ[R] (of q.2 : _)).sum := by
-  have h (a b : GrossmanLarson R α) :
-      a ⊗ₜ[R] b = (a ⊗ₜ[R] 1) * ((1 : GrossmanLarson R α) ⊗ₜ[R] b) := by
-    rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
-  rw [h, ← Algebra.TensorProduct.includeLeft_apply (S := R),
-    ← Algebra.TensorProduct.includeRight_apply, map_multiset_sum, map_multiset_sum,
-    Multiset.map_map, Multiset.map_map, Multiset.sum_map_mul_sum_map]
-  exact congrArg Multiset.sum (Multiset.map_congr rfl fun q _ ↦ (h _ _).symm)
-
 protected theorem comul_mul (x y : GrossmanLarson R α) :
     comul (R := R) (x * y) = comul x * comul y := by
   have h : (LinearMap.mul R (GrossmanLarson R α)).compr₂ (comul (R := R)) =
       (LinearMap.mul R (GrossmanLarson R α ⊗[R] GrossmanLarson R α)).compl₁₂ comul comul := by
     refine lhom_ext fun F ↦ lhom_ext fun G ↦ ?_
     change comul (R := R) ((of F : GrossmanLarson R α) * of G) = comul (of F) * comul (of G)
-    rw [of_mul_of, map_multiset_sum, Multiset.map_map, comul_of, comul_of,
+    rw [comul_apply, toConnesKreimer_mul, toConnesKreimer_of, toConnesKreimer_of,
+      comulPrim_product_of'_of', map_multiset_sum, Multiset.map_map, comul_of, comul_of,
       Multiset.sum_map_mul_sum_map]
-    simp only [Function.comp_def, comul_of]
-    rw [← Multiset.sum_bind, ← Multiset.map_bind, productMultiset_bind_antidiagonal,
-      Multiset.map_bind, Multiset.sum_bind]
-    refine congrArg Multiset.sum (Multiset.map_congr rfl fun pq _ ↦ ?_)
-    rw [Algebra.TensorProduct.tmul_mul_tmul, of_mul_of, of_mul_of, tmul_sum_map_of]
+    exact congrArg Multiset.sum <| Multiset.map_congr rfl fun pq _ ↦ by
+      rw [Algebra.TensorProduct.tmul_mul_tmul]; rfl
   exact congr($h x y)
 
 noncomputable instance instBialgebra : Bialgebra R (GrossmanLarson R α) :=
