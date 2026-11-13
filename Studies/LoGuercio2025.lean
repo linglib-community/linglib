@@ -132,8 +132,7 @@ theorem no_wideDP_outOfBlue {ψ : Tree Cat EWord}
       (forall₂_congr fun _ _ ↦ by simp [WideDP, Tree.cat])
   refine key.1 (licensed_of_atMostAsComplex (fun s hs ↦ key.2 ?_)
     (fun _ ks i _ h ⟨h1, h2⟩ ↦ h ⟨h1, ?_⟩)
-    (fun _ _ _ _ _ _ _ h ⟨h1, h2⟩ ↦ h ⟨h1, by simpa using h2⟩)
-    (fun _ _ _ _ _ _ ⟨_, h2⟩ ↦ by simp at h2) (key.2 (by decide)) h)
+    (fun _ _ _ _ _ _ h ⟨h1, h2⟩ ↦ h ⟨h1, by simpa using h2⟩) (key.2 (by decide)) h)
   · revert s hs
     exact forall_mem_substitutionSource.2 ⟨by decide, by decide⟩
   · have := List.length_eraseIdx_le ks i
@@ -147,17 +146,18 @@ theorem epithet_not_alternative_outOfBlue :
 /-- After the mention, the epithet sentence is a structural alternative by derivation (24). -/
 theorem epithet_alternative_priorMention :
     bastardJohnArrived ∈ structuralAlternatives priorContextLex johnArrived := by
-  have step1 : StructuralOp (substitutionSource priorContextLex johnArrived) johnArrived
-      bastardPedroArrived :=
-    StructuralOp.inChild (cs := [Tree.node Cat.Det [Tree.terminal Cat.N john], arrivedFirst])
+  have step1 : RoseTree.Rewrites (StructuralOp (substitutionSource priorContextLex johnArrived))
+      johnArrived bastardPedroArrived :=
+    RoseTree.Rewrites.set _ (cs := [Tree.node Cat.Det [Tree.terminal Cat.N john], arrivedFirst])
       ⟨0, by decide⟩
-      (StructuralOp.subst rfl (Set.mem_union_left _ (by simp [priorContextLex])))
-  have step2 : StructuralOp (substitutionSource priorContextLex johnArrived) bastardPedroArrived
-      bastardJohnArrived :=
-    StructuralOp.inChild (cs := [bastardPedroDP, arrivedFirst]) ⟨0, by decide⟩
-      (StructuralOp.inChild (cs := [Tree.terminal Cat.Det that_, Tree.terminal Cat.N bastard,
+      (.here (StructuralOp.subst rfl (Set.mem_union_left _ (by simp [priorContextLex]))))
+  have step2 : RoseTree.Rewrites (StructuralOp (substitutionSource priorContextLex johnArrived))
+      bastardPedroArrived bastardJohnArrived :=
+    RoseTree.Rewrites.set _ (cs := [bastardPedroDP, arrivedFirst]) ⟨0, by decide⟩
+      (RoseTree.Rewrites.set _ (cs := [Tree.terminal Cat.Det that_, Tree.terminal Cat.N bastard,
           Tree.terminal Cat.N pedro]) ⟨2, by decide⟩
-        (StructuralOp.subst rfl (Set.mem_union_left _ (by simp [priorContextLex, epithetLex]))))
+        (.here (StructuralOp.subst rfl
+          (Set.mem_union_left _ (by simp [priorContextLex, epithetLex])))))
   exact Relation.ReflTransGen.head step1 (Relation.ReflTransGen.single step2)
 
 /-! ### Conventionally implicated content as felicity sets -/

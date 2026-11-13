@@ -352,8 +352,8 @@ def frenchIndirectSrc : Tree Cat String → Set (Tree Cat String) :=
 
 theorem tousDual_katzir_alt : tousDualVerres ∈ structuralAlternatives frenchLex tousVerres := by
   apply Relation.ReflTransGen.single
-  refine StructuralOp.inChild (cs := [tousLex, verresLex]) ⟨0, by decide⟩
-    (StructuralOp.subst (φ := tousLex) (ψ := tousDualLex) rfl ?_)
+  refine RoseTree.Rewrites.set _ (cs := [tousLex, verresLex]) ⟨0, by decide⟩
+    (.here (StructuralOp.subst (φ := tousLex) (ψ := tousDualLex) rfl ?_))
   exact Set.mem_union_left _ (by simp [frenchLex])
 
 -- (43)

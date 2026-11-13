@@ -96,12 +96,11 @@ theorem some_all_equalComplexity :
     equalComplexity (substitutionSource lexicon someSentence) someSentence allSentence := by
   refine ⟨?_, ?_⟩ <;>
   · apply Relation.ReflTransGen.single
-    apply StructuralOp.inChild ⟨1, by simp⟩
-    apply StructuralOp.inChild ⟨1, by simp⟩
-    apply StructuralOp.inChild ⟨0, by simp⟩
-    apply StructuralOp.subst
-    · rfl
-    · simp [substitutionSource, lexicon]
+    apply RoseTree.Rewrites.set _ ⟨1, by simp⟩
+    apply RoseTree.Rewrites.set _ ⟨1, by simp⟩
+    apply RoseTree.Rewrites.set _ ⟨0, by simp⟩
+    refine .here (StructuralOp.subst rfl ?_)
+    simp [substitutionSource, lexicon]
 
 -- (25a)
 theorem source_lacks_conjP : ∀ t ∈ substitutionSource lexicon someSentence,
@@ -174,16 +173,16 @@ theorem and_mem_alternatives : andSentence ∈ structuralAlternatives lexicon or
 
 theorem leftDisjunct_mem_alternatives :
     leftDisjunct ∈ structuralAlternatives lexicon orSentence := by
-  refine Relation.ReflTransGen.head (StructuralOp.delete ⟨1, by simp⟩) ?_
-  exact Relation.ReflTransGen.single (StructuralOp.contract (List.Mem.head _) rfl)
+  refine Relation.ReflTransGen.head (.here (StructuralOp.delete ⟨1, by simp⟩)) ?_
+  exact Relation.ReflTransGen.single (.here (StructuralOp.contract (List.Mem.head _) rfl))
 
 theorem rightDisjunct_mem_alternatives :
     rightDisjunct ∈ structuralAlternatives lexicon orSentence := by
-  refine Relation.ReflTransGen.head (StructuralOp.contract
+  refine Relation.ReflTransGen.head (.here (StructuralOp.contract
     (child := .node .S [.terminal .Conj .or_, rightDisjunct])
-    (List.mem_cons_of_mem _ (List.Mem.head _)) rfl) ?_
-  refine Relation.ReflTransGen.head (StructuralOp.delete ⟨0, by simp⟩) ?_
-  exact Relation.ReflTransGen.single (StructuralOp.contract (List.Mem.head _) rfl)
+    (List.mem_cons_of_mem _ (List.Mem.head _)) rfl)) ?_
+  refine Relation.ReflTransGen.head (.here (StructuralOp.delete ⟨0, by simp⟩)) ?_
+  exact Relation.ReflTransGen.single (.here (StructuralOp.contract (List.Mem.head _) rfl))
 
 /-- In the primary inferences (28), with the conjunction and each disjunct strictly stronger than
 the disjunction, a speaker of the disjunction who obeys the principle has none of them weakly
@@ -207,7 +206,7 @@ def justMan : Tree Cat Word := .node .N [.terminal .N .man]
 /-- Deleting the modifier yields a strictly simpler structural alternative, giving an inference only
 under downward entailment ((30) to (32)). -/
 theorem justMan_mem_alternatives : justMan ∈ structuralAlternatives lexicon tallMan :=
-  Relation.ReflTransGen.single (StructuralOp.delete ⟨0, by simp⟩)
+  Relation.ReflTransGen.single (.here (StructuralOp.delete ⟨0, by simp⟩))
 
 /-! ### The subtrees of the sentence as substitution source (Section 5) -/
 
@@ -216,9 +215,9 @@ def tallTallMan : Tree Cat Word := .node .N [.terminal .Adj .tall, tallMan]
 
 -- (41)
 theorem tallTallMan_mem_alternatives : tallTallMan ∈ structuralAlternatives lexicon tallMan :=
-  Relation.ReflTransGen.single (StructuralOp.inChild ⟨1, by simp⟩
-    (StructuralOp.subst (ψ := tallMan) rfl
-      (Set.mem_union_right _ (by simp [tallMan, RoseTree.subtrees_node]))))
+  Relation.ReflTransGen.single (RoseTree.Rewrites.set _ ⟨1, by simp⟩
+    (.here (StructuralOp.subst (ψ := tallMan) rfl
+      (Set.mem_union_right _ (by simp [tallMan, RoseTree.subtrees_node])))))
 
 
 /-- *a little bit more than warm*, an adjective phrase. -/
@@ -247,9 +246,9 @@ def moreThanWarmYesterday : Tree Cat Word :=
 substitution source (41). -/
 theorem moreThanWarmYesterday_mem_alternatives :
     moreThanWarmYesterday ∈ structuralAlternatives lexicon warmYesterday :=
-  Relation.ReflTransGen.single (StructuralOp.inChild ⟨0, by simp⟩
-    (StructuralOp.inChild ⟨2, by simp⟩
-      (StructuralOp.subst rfl (Set.mem_union_right _ (by decide)))))
+  Relation.ReflTransGen.single (RoseTree.Rewrites.set _ ⟨0, by simp⟩
+    (RoseTree.Rewrites.set _ ⟨2, by simp⟩
+      (.here (StructuralOp.subst rfl (Set.mem_union_right _ (by decide))))))
 
 -- Under the first source (18), the lexicon alone, it is no alternative: that source bounds size.
 theorem moreThanWarmYesterday_not_atMostAsComplex_lexicon :

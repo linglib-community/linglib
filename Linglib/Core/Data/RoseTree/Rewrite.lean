@@ -37,6 +37,14 @@ theorem Rewrites.mono {r' : RoseTree α → RoseTree α → Prop} (hr : ∀ x y,
   | here h => exact .here (hr _ _ h)
   | child a l₁ l₂ _ ih => exact .child a l₁ l₂ ih
 
+/-- A rewrite in the `i`-th child is a rewrite of the node. -/
+theorem Rewrites.set (a : α) {cs : List (RoseTree α)} (i : Fin cs.length) {c' : RoseTree α}
+    (h : Rewrites r cs[i] c') : Rewrites r (node a cs) (node a (cs.set i c')) := by
+  have key := Rewrites.child a (cs.take i) (cs.drop (i + 1)) h
+  rw [Fin.getElem_fin, List.getElem_cons_drop, List.take_append_drop] at key
+  rw [List.set_eq_take_append_cons_drop]
+  simpa only [Fin.is_lt, ↓reduceIte] using key
+
 /-- Chains of rewrites in the children of a node give a chain of rewrites at the node. -/
 theorem reflTransGen_rewrites_node (a : α) (pre : List (RoseTree α)) {cs cs' : List (RoseTree α)}
     (h : List.Forall₂ (Relation.ReflTransGen (Rewrites r)) cs cs') :
