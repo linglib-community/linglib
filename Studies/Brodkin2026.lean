@@ -133,7 +133,7 @@ each with the word heading it, and whether the second word is a second-position 
 subcategorizes for the minimal φ of the element before it (29). -/
 structure Constituency where
   /-- The phrases over the two words, each as the words it spans and the word heading it. -/
-  phrases : List ((ℕ × ℕ) × ℕ)
+  phrases : List HeadedSpan
   /-- The second word is a second-position element. -/
   subcat : Bool
   deriving DecidableEq
@@ -142,18 +142,18 @@ namespace Constituency
 
 /-- The head ends its phrase and the next word heads a sister phrase: a stranded head, or a
 wh-phrase before the predicate. -/
-def sisters : Constituency := ⟨[((0, 1), 0), ((1, 2), 1)], false⟩
+def sisters : Constituency := ⟨[⟨⟨(0, 1), by decide⟩, 0⟩, ⟨⟨(1, 2), by decide⟩, 1⟩], false⟩
 
 /-- The next word heads a phrase inside the head's own, the deictic *e* or *o* after a stranded
 demonstrative or negator ((33b), (36b)). -/
-def adjunct : Constituency := ⟨[((0, 2), 0), ((1, 2), 1)], false⟩
+def adjunct : Constituency := ⟨[⟨⟨(0, 2), by decide⟩, 0⟩, ⟨⟨(1, 2), by decide⟩, 1⟩], false⟩
 
 /-- The next word heads the head's phrase, a noun or predicate whose extended projection the head
 belongs to ((33a), (36a)), one phrase as [ito-mester-2019] count an extended projection. -/
-def complement : Constituency := ⟨[((0, 2), 1)], false⟩
+def complement : Constituency := ⟨[⟨⟨(0, 2), by decide⟩, 1⟩], false⟩
 
 /-- The next word is a second-position element hosted by the head's phrase ((40a)–(42a)). -/
-def host : Constituency := ⟨[((0, 1), 0)], true⟩
+def host : Constituency := ⟨[⟨⟨(0, 1), by decide⟩, 0⟩], true⟩
 
 end Constituency
 
@@ -204,7 +204,8 @@ theorem spans_penultimate_isMinimalPhi (k : ℕ) : (penultimate k).spans IsMinim
   rcases k with _ | _ | n <;>
     simp [penultimate, IsMinimalPhi, RoseTree.spansList_append, RoseTree.spansList_replicate]
 
-theorem spans_penultimate_isTrochee : (penultimate (n + 2)).spans IsTrochee = [(n, n + 2)] := by
+theorem spans_penultimate_isTrochee :
+    (penultimate (n + 2)).spans IsTrochee = [⟨(n, n + 2), Nat.le_add_right ..⟩] := by
   simp [penultimate, RoseTree.spansList_append, RoseTree.spansList_replicate, IsTrochee,
     IsConstituent, Foot.childHeadFlags, RoseTree.licensed_node_iff, Constituent.Licenses,
     Constituent.isHead]
@@ -243,17 +244,18 @@ where
     else .node .iota [Tree.ph [h], Tree.ph [n]]
 
 /-- The cut before word `w`, in syllables, for a head of `k` syllables. -/
-def cut (k w : ℕ) : ℕ := ([k, x.next].take w).sum
+def cut (k : ℕ) : ℕ →o ℕ := Prosody.cut [k, x.next]
 
 /-- The stressed syllable of word `w`, its penult (14). -/
 def stress (k w : ℕ) : ℕ := x.cut k w + ([k, x.next].getD w 0 - 2)
 
 /-- The phrases in syllables, each with the stressed syllable of the word heading it. -/
-def phrases (k : ℕ) : List ((ℕ × ℕ) × ℕ) :=
-  x.constituency.phrases.map fun p ↦ ((x.cut k p.1.1, x.cut k p.1.2), x.stress k p.2)
+def phrases (k : ℕ) : List HeadedSpan :=
+  x.constituency.phrases.map fun p ↦ ⟨p.span.map (x.cut k), x.stress k p.head⟩
 
 /-- The spans of the morphosyntactic words, the head's `k` syllables and then the next word's. -/
-def words (k : ℕ) : List (ℕ × ℕ) := [(0, k), (k, k + x.next)]
+def words (k : ℕ) : List (NonemptyInterval ℕ) :=
+  [⟨(0, k), Nat.zero_le k⟩, ⟨(k, k + x.next), Nat.le_add_right ..⟩]
 
 end Input
 
@@ -288,9 +290,10 @@ def maxXP : Constraint Candidate := fun c ↦
 /-- SUBCAT (29b): a violation when a second-position element lies in no minimal φ together with the
 element before it. -/
 def subcat : Constraint Candidate :=
-  (Constraint.align fun (w p : ℕ × ℕ) ↦ p.1 < w.1 ∧ w.2 ≤ p.2).comap fun c ↦
+  (Constraint.align fun (w p : NonemptyInterval ℕ) ↦ p.fst < w.fst ∧ w.snd ≤ p.snd).comap fun c ↦
     let k := syllables c.item.exponent
-    (if x.constituency.subcat then [(k, k + x.next)] else [], (c.tree x).spans IsMinimalPhi)
+    (if x.constituency.subcat then [⟨(k, k + x.next), Nat.le_add_right ..⟩] else [],
+      (c.tree x).spans IsMinimalPhi)
 
 /-- Positional Minimality (26a), Align-R(φ, (σ́σ)): one violation for each φ whose right edge no
 disyllabic trochee shares. -/
@@ -310,7 +313,8 @@ over both words answering to the clause. -/
 def matchPhi : Constraint Candidate := fun c ↦
   let k := syllables c.item.exponent
   prosodySyntaxMatch .ph
-    ((x.phrases k).map (·.1) ++ if x.sameMax then [(0, k + x.next)] else []) (c.tree x)
+    ((x.phrases k).map (·.span) ++
+      if x.sameMax then [⟨(0, k + x.next), Nat.zero_le _⟩] else []) (c.tree x)
 
 /-- The tableau of an input: MAX-XP and SUBCAT over Positional Minimality over PRIORITY over the
 Match constraints, as in (26c), (63), (64) and (80). -/

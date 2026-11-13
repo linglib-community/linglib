@@ -74,7 +74,7 @@ def omegaAdjoined : Tree := .om [fncσ, lexω]
 def phiAttached : Tree := .ph [fncσ, lexω]
 
 /-- The lexical word is the second syllable of each site. -/
-abbrev lex : List (ℕ × ℕ) := [(1, 2)]
+abbrev lex : List (NonemptyInterval ℕ) := [⟨(1, 2), by decide⟩]
 
 /-- Lex-to-ω(L), (12a), the Align(Lex, Left, ω, Left) of [mccarthy-prince-1993b]: a violation when
 no prosodic word begins where the lexical word does, as in the amalgamated site (20b). -/
