@@ -20,8 +20,9 @@ Where alternation with zero is obligatory, the realization of a domain is fixed 
 each nucleus unexpressed exactly when its silence is licensed, and the principle
 [holds of it](##GovernmentPhonology.satisfiesEmptyCategoryPrinciple_obligatory). In a word of
 alternating vowels the outcome depends on whether such a vowel, once expressed, is strong
-enough to govern another: where it is, [every other one](##GovernmentPhonology.expressed_obligatory_iff_even) is
-expressed, counting from the end, and where it is not,
+enough to govern another: where it is,
+[every other one](##GovernmentPhonology.expressed_obligatory_iff_even) is expressed, counting
+from the end, and where it is not,
 [all but the last](##GovernmentPhonology.expressed_obligatory_iff_succ_lt) are.
 
 ## Implementation notes
