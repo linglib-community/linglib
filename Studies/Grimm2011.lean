@@ -73,10 +73,11 @@ theorem canonical_verb_chain :
       discoverAgentivity < lookAtAgentivity ∧ lookAtAgentivity < assassinateAgentivity := by
   decide
 
-theorem canonical_verbs_mem_lattice :
-    sitAgentivity ∈ Agentivity.lattice ∧ knowAgentivity ∈ Agentivity.lattice ∧
-      discoverAgentivity ∈ Agentivity.lattice ∧ lookAtAgentivity ∈ Agentivity.lattice ∧
-      assassinateAgentivity ∈ Agentivity.lattice := by
+theorem canonical_verbs_mem_entailmentClosed :
+    sitAgentivity ∈ Agentivity.entailmentClosed ∧ knowAgentivity ∈ Agentivity.entailmentClosed ∧
+      discoverAgentivity ∈ Agentivity.entailmentClosed ∧
+      lookAtAgentivity ∈ Agentivity.entailmentClosed ∧
+      assassinateAgentivity ∈ Agentivity.entailmentClosed := by
   decide
 
 theorem see_subject_agentivity :
@@ -89,23 +90,23 @@ lattice. -/
 
 /-- The maximal patient: no agentivity property, existing when the event begins but not after it,
 as the object of *break* or *destroy* does (Fig. 4). -/
-def maximalPatient : ParticipantType := (∅, .exPersBeginning)
+def maximalPatient : ParticipantType := (∅, .existentialBeginning)
 
 /-- Instigation alone at total persistence, the minimal acceptable agent of *kill*: a natural force
 such as electricity, or the explosion. -/
-def minimalInstigator : ParticipantType := ({.instigation}, .totalPersistence)
+def killAgent : ParticipantType := ({.instigation}, .total)
 
 /-- The agent of *break* and of *shoot*, Fig. 5's Ia and IIa: instigation and motion at total
 persistence. -/
-def effectorAgent : ParticipantType := ({.instigation, .motion}, .totalPersistence)
+def breakAgent : ParticipantType := ({.instigation, .motion}, .total)
 
 /-- The agent of *search*, Fig. 5's IIIa: instigation, motion and sentience at total
 persistence. -/
-def pursuitAgent : ParticipantType := ({.sentience, .instigation, .motion}, .totalPersistence)
+def searchAgent : ParticipantType := ({.sentience, .instigation, .motion}, .total)
 
 /-- The recipient of *geben* (9): sentience at qualitative persistence (beginning), consciously
 involved as a possessor and qualitatively changed in its possessions. -/
-def recipient : ParticipantType := ({.sentience}, .quPersBeginning)
+def recipient : ParticipantType := ({.sentience}, .qualitativeBeginning)
 
 /-! ### Dowty's Proto-Patient entailments and persistence, section 2.1
 
@@ -119,12 +120,12 @@ coming into existence as a change of state (his (30a)) and attributes all of (28
 /-- The object of *build*, with Dowty's entailments, admits only the levels strictly below
 qualitative persistence (beginning), total non-persistence and existential persistence
 (beginning), not the creation level Grimm assigns it. -/
-theorem build_object_admits_iff (l : PersistenceLevel) :
-    (Dowty1991.entailed Dowty1991.Examples.buildObject).Admits l ↔ l < .quPersBeginning :=
+theorem build_object_admits_iff (l : Persistence) :
+    (Dowty1991.entailed Dowty1991.Examples.buildObject).Admits l ↔ l < .qualitativeBeginning :=
   EntailmentProfile.admits_iff_lt (by decide) (by decide)
 
-theorem build_object_not_admits_exPersEnd :
-    ¬ (Dowty1991.entailed Dowty1991.Examples.buildObject).Admits .exPersEnd :=
+theorem build_object_not_admits_existentialEnd :
+    ¬ (Dowty1991.entailed Dowty1991.Examples.buildObject).Admits .existentialEnd :=
   fun h ↦ absurd ((build_object_admits_iff _).1 h) (by decide)
 
 /-! ### Subject selection, section 2.3
@@ -136,10 +137,10 @@ with having the greater number of entailments. -/
 -- it*, and a created one does not, *\*What John did to the table was build it*
 theorem pseudoCleft_presupposition {T Q : Type*} [LinearOrder T] [DecidableEq Q]
     {life run : NonemptyInterval T} {q : T → Q} :
-    (PersistenceLevel.ofLifespan life run q = .exPersBeginning → run.fst ∈ life) ∧
-      (PersistenceLevel.ofLifespan life run q = .exPersEnd → run.fst ∉ life) :=
-  ⟨fun h ↦ (PersistenceLevel.ofLifespan_eq_exPersBeginning_iff.1 h).1,
-    fun h ↦ (PersistenceLevel.ofLifespan_eq_exPersEnd_iff.1 h).1⟩
+    (Persistence.ofLifespan life run q = .existentialBeginning → run.fst ∈ life) ∧
+      (Persistence.ofLifespan life run q = .existentialEnd → run.fst ∉ life) :=
+  ⟨fun h ↦ (Persistence.ofLifespan_eq_existentialBeginning_iff.1 h).1,
+    fun h ↦ (Persistence.ofLifespan_eq_existentialEnd_iff.1 h).1⟩
 
 /-- The number of entailments of a node, its agentivity and persistence features. -/
 def entailmentCount (n : ParticipantType) : ℕ := n.1.card + n.2.features.card
@@ -149,23 +150,23 @@ theorem entailmentCount_strictMono : StrictMono entailmentCount := fun n m h ↦
   unfold entailmentCount
   rcases Prod.lt_iff.1 h with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
   · have := Finset.card_lt_card h₁
-    have := Finset.card_le_card (PersistenceLevel.le_iff_features_subset.1 h₂)
+    have := Finset.card_le_card (Persistence.le_iff_features_subset.1 h₂)
     omega
   · have := Finset.card_le_card h₁
     have := Finset.card_lt_card (Finset.ssubset_iff_subset_ne.2
-      ⟨PersistenceLevel.le_iff_features_subset.1 h₂.le,
-        fun h ↦ h₂.ne (PersistenceLevel.features_injective h)⟩)
+      ⟨Persistence.le_iff_features_subset.1 h₂.le,
+        fun h ↦ h₂.ne (Persistence.features_injective h)⟩)
     omega
 
 -- p. 527
 theorem exists_entailmentCount_lt_incomparable :
-    ∃ n ∈ ParticipantType.lattice, ∃ m ∈ ParticipantType.lattice,
+    ∃ n ∈ ParticipantType.agentivityLattice, ∃ m ∈ ParticipantType.agentivityLattice,
       entailmentCount n < entailmentCount m ∧ ¬ n ≤ m ∧ ¬ m ≤ n :=
-  ⟨recipient, ParticipantType.mem_lattice.2 (by decide), minimalInstigator,
-    ParticipantType.mem_lattice.2 (by decide), by decide⟩
+  ⟨recipient, ParticipantType.mem_agentivityLattice.2 (by decide), killAgent,
+    ParticipantType.mem_agentivityLattice.2 (by decide), by decide⟩
 
 -- (43) of [dowty-1991]
-theorem kiss_subject_dominates (l : PersistenceLevel) :
+theorem kiss_subject_dominates (l : Persistence) :
     ((Dowty1991.kissObjectProfile.toAgentivity, l) : ParticipantType) <
       (Dowty1991.kissSubjectProfile.toAgentivity, l) :=
   Prod.mk_lt_mk_iff_left.2 (by decide)
@@ -184,24 +185,24 @@ the action, which it can only do if it exists when the event begins. The hierarc
 
 /-- The transitivity region (Fig. 4): the nodes of an argument that exists when the event
 begins, the up-set of existential persistence (beginning) on the persistence axis. -/
-def transitivityRegion : Set ParticipantType := Prod.snd ⁻¹' Set.Ici .exPersBeginning
+def transitivityRegion : Set ParticipantType := Prod.snd ⁻¹' Set.Ici .existentialBeginning
 
 instance : DecidablePred (· ∈ transitivityRegion) := fun n ↦
-  inferInstanceAs (Decidable (PersistenceLevel.exPersBeginning ≤ n.2))
+  inferInstanceAs (Decidable (Persistence.existentialBeginning ≤ n.2))
 
-theorem mk_mem_transitivityRegion {a : Agentivity} {l : PersistenceLevel} :
-    (a, l) ∈ transitivityRegion ↔ .exPB ∈ l :=
-  PersistenceLevel.exPB_mem_iff.symm
+theorem mk_mem_transitivityRegion {a : Agentivity} {l : Persistence} :
+    (a, l) ∈ transitivityRegion ↔ .existsAtBeginning ∈ l :=
+  Persistence.existsAtBeginning_mem_iff_le.symm
 
 -- pp. 529–530: the region excludes the nodes of existential persistence (end) and total
 -- non-persistence
-theorem mk_mem_transitivityRegion_iff_ne {a : Agentivity} {l : PersistenceLevel} :
-    (a, l) ∈ transitivityRegion ↔ l ≠ .exPersEnd ∧ l ≠ .totalNonPersistence := by
-  change PersistenceLevel.exPersBeginning ≤ l ↔ _
+theorem mk_mem_transitivityRegion_iff_ne {a : Agentivity} {l : Persistence} :
+    (a, l) ∈ transitivityRegion ↔ l ≠ .existentialEnd ∧ l ≠ .nonPersistence := by
+  change Persistence.existentialBeginning ≤ l ↔ _
   revert l; decide
 
 /-- The verb classes of the hierarchy (8). -/
-inductive TransitivityRank where
+inductive VerbClass where
   /-- Resultative effective action, *kill* and *break*: the object is destroyed. -/
   | resultativeEffective
   /-- Contact, *shoot* and *hit*: the object is affected but persists. -/
@@ -211,20 +212,20 @@ inductive TransitivityRank where
   deriving DecidableEq, Repr
 
 /-- The canonical patient of each class, Fig. 5's Ip, IIp and IIIp. -/
-def TransitivityRank.patientType : TransitivityRank → ParticipantType
-  | .resultativeEffective => (∅, .exPersBeginning)
-  | .contact => (∅, .quPersBeginning)
-  | .pursuit => (∅, .totalNonPersistence)
+def VerbClass.patientType : VerbClass → ParticipantType
+  | .resultativeEffective => (∅, .existentialBeginning)
+  | .contact => (∅, .qualitativeBeginning)
+  | .pursuit => (∅, .nonPersistence)
 
 /-- Along the hierarchy the patient moves away from the maximal patient: the patient of *break*
 is the maximal patient, that of *shoot* lies above it inside the transitivity region, and that of
 *search* outside it. -/
 theorem transitivity_hierarchy :
-    TransitivityRank.resultativeEffective.patientType = maximalPatient ∧
-      TransitivityRank.resultativeEffective.patientType ≤ TransitivityRank.contact.patientType ∧
-      TransitivityRank.resultativeEffective.patientType ≠ TransitivityRank.contact.patientType ∧
-      TransitivityRank.contact.patientType ∈ transitivityRegion ∧
-      TransitivityRank.pursuit.patientType ∉ transitivityRegion := by
+    VerbClass.resultativeEffective.patientType = maximalPatient ∧
+      VerbClass.resultativeEffective.patientType ≤ VerbClass.contact.patientType ∧
+      VerbClass.resultativeEffective.patientType ≠ VerbClass.contact.patientType ∧
+      VerbClass.contact.patientType ∈ transitivityRegion ∧
+      VerbClass.pursuit.patientType ∉ transitivityRegion := by
   decide
 
 /-! ### Core case marking systems, section 4
@@ -234,51 +235,53 @@ outwards from it. Accusative systems mark the patient region and leave the agent
 default nominative; ergative systems mark the agent region and leave the patient region in the
 default absolutive. -/
 
-/-- The nominative or ergative region (Fig. 6): the total persistence branch. -/
-def nomErg : Set ParticipantType := Set.Ici (⊥, .totalPersistence)
+/-- The core agent region (Fig. 6), nominative in accusative systems and ergative in ergative
+ones: the total persistence branch. -/
+def agentRegion : Set ParticipantType := Set.Ici (⊥, .total)
 
-/-- The accusative or absolutive region (Fig. 6): no agentivity property at existential or
-qualitative persistence (beginning). -/
-def accAbs : Set ParticipantType := Set.Icc maximalPatient (∅, .quPersBeginning)
+/-- The core patient region (Fig. 6), accusative or absolutive: no agentivity property at
+existential or qualitative persistence (beginning). -/
+def patientRegion : Set ParticipantType := Set.Icc maximalPatient (∅, .qualitativeBeginning)
 
 /-- The dative region (Fig. 7): the recipient's node. -/
-def dative : Set ParticipantType := {recipient}
+def dativeRegion : Set ParticipantType := {recipient}
 
-instance : DecidablePred (· ∈ nomErg) := fun _ ↦ Set.decidableMemIci
-instance : DecidablePred (· ∈ accAbs) := fun _ ↦ Set.decidableMemIcc
-instance : DecidablePred (· ∈ dative) := fun n ↦ inferInstanceAs (Decidable (n = recipient))
+instance : DecidablePred (· ∈ agentRegion) := fun _ ↦ Set.decidableMemIci
+instance : DecidablePred (· ∈ patientRegion) := fun _ ↦ Set.decidableMemIcc
+instance : DecidablePred (· ∈ dativeRegion) := fun n ↦ inferInstanceAs (Decidable (n = recipient))
 
 /-- Each case region is a connected region of the lattice, being an order interval. -/
 theorem ordConnected_regions :
-    nomErg.OrdConnected ∧ accAbs.OrdConnected ∧ dative.OrdConnected :=
+    agentRegion.OrdConnected ∧ patientRegion.OrdConnected ∧ dativeRegion.OrdConnected :=
   ⟨Set.ordConnected_Ici, Set.ordConnected_Icc, Set.ordConnected_singleton⟩
 
 -- p. 532: the core regions contain the maximal agent and the maximal patient
-theorem poles_mem : ⊤ ∈ nomErg ∧ maximalPatient ∈ accAbs := by decide
+theorem poles_mem : ⊤ ∈ agentRegion ∧ maximalPatient ∈ patientRegion := by decide
 
 -- p. 535: the cases of a language occupy distinct regions
 theorem disjoint_regions :
-    Disjoint nomErg accAbs ∧ Disjoint nomErg dative ∧ Disjoint accAbs dative := by
+    Disjoint agentRegion patientRegion ∧ Disjoint agentRegion dativeRegion ∧
+      Disjoint patientRegion dativeRegion := by
   simp only [Set.disjoint_left]; decide
 
-theorem nomErg_eq_preimage : nomErg = Prod.snd ⁻¹' {.totalPersistence} := by
+theorem agentRegion_eq_preimage : agentRegion = Prod.snd ⁻¹' {.total} := by
   ext ⟨a, l⟩
-  change (⊥, PersistenceLevel.totalPersistence) ≤ (a, l) ↔ l = .totalPersistence
+  change (⊥, Persistence.total) ≤ (a, l) ↔ l = .total
   rw [Prod.mk_le_mk]
   exact ⟨fun h ↦ top_le_iff.1 h.2, fun h ↦ ⟨bot_le, h.ge⟩⟩
 
 -- section 2.3: every node at or above the minimal agent of *kill* is an acceptable subject of it,
 -- and all of them are in the nominative or ergative region
-theorem kill_subject_range : Set.Ici minimalInstigator ⊆ nomErg :=
+theorem kill_subject_range : Set.Ici killAgent ⊆ agentRegion :=
   Set.Ici_subset_Ici.2 (by decide)
 
 -- Fig. 5 on Fig. 6: the agents of the three classes and the patients of the first two are in
 -- the core regions, the patient of *search* in neither
 theorem transitivity_case_regions :
-    effectorAgent ∈ nomErg ∧ pursuitAgent ∈ nomErg ∧
-      TransitivityRank.resultativeEffective.patientType ∈ accAbs ∧
-      TransitivityRank.contact.patientType ∈ accAbs ∧
-      TransitivityRank.pursuit.patientType ∉ accAbs := by
+    breakAgent ∈ agentRegion ∧ searchAgent ∈ agentRegion ∧
+      VerbClass.resultativeEffective.patientType ∈ patientRegion ∧
+      VerbClass.contact.patientType ∈ patientRegion ∧
+      VerbClass.pursuit.patientType ∉ patientRegion := by
   decide
 
 /-! ### Extensions of the dative, section 5.1
@@ -313,7 +316,7 @@ def opacityObject (d : Definiteness) : ParticipantType :=
 /-- The object is in the accusative region iff the noun phrase refers, and otherwise at the bottom
 node of the governed genitive (12). -/
 theorem genitive_accusative_alternation (d : Definiteness) :
-    (opacityObject d ∈ accAbs ↔ Referring d) ∧ (opacityObject d = ⊥ ↔ ¬ Referring d) := by
+    (opacityObject d ∈ patientRegion ↔ Referring d) ∧ (opacityObject d = ⊥ ↔ ¬ Referring d) := by
   cases d <;> decide
 
 theorem bot_notMem_transitivityRegion : ⊥ ∉ transitivityRegion := by decide

@@ -15,12 +15,12 @@ An argument's agentivity is the set of features its predicate entails, ordered b
 only relation among the features, that volition entails sentience, orders them as Dowty's
 entailments are ordered, and the combinations Grimm organizes into a lattice are the sets closed
 under it, [the lower sets](##ArgumentStructure.Agentivity.isLowerSet_iff), which
-[form a sublattice](##ArgumentStructure.Agentivity.lattice) of all feature sets. Grimm reserves the
-name agentivity lattice for its product with the persistence lattice.
+[form a sublattice](##ArgumentStructure.Agentivity.entailmentClosed) of all feature sets. Grimm
+reserves the name agentivity lattice for its product with the persistence lattice.
 
 ## Implementation notes
 
-The persistence features are `PersistenceLevel.Feature`, their product with the agentivity
+The persistence features are `Persistence.Feature`, their product with the agentivity
 features is `ParticipantType`, and the projection from Dowty's profiles is
 `EntailmentProfile.toAgentivity`.
 
@@ -76,18 +76,19 @@ theorem isLowerSet_iff (a : Agentivity) :
 
 /-- The combinations of features closed under entailment form a sublattice of the feature sets,
 Grimm's lattice of agentivity properties (Fig. 1), with union and intersection as join and meet. -/
-def lattice : Sublattice Agentivity where
+def entailmentClosed : Sublattice Agentivity where
   carrier := {a | IsLowerSet (a : Set Feature)}
   supClosed' a ha b hb := by simpa using IsLowerSet.union ha hb
   infClosed' a ha b hb := by simpa using IsLowerSet.inter ha hb
 
-@[simp] theorem mem_lattice {a : Agentivity} : a ∈ lattice ↔ IsLowerSet (a : Set Feature) :=
+@[simp] theorem mem_entailmentClosed {a : Agentivity} :
+    a ∈ entailmentClosed ↔ IsLowerSet (a : Set Feature) :=
   Iff.rfl
 
-instance : DecidablePred (· ∈ lattice) := fun a ↦
+instance : DecidablePred (· ∈ entailmentClosed) := fun a ↦
   inferInstanceAs (Decidable (IsLowerSet (a : Set Feature)))
 
-theorem card_lattice : (Finset.univ.filter (· ∈ lattice)).card = 12 := by decide
+theorem card_entailmentClosed : (Finset.univ.filter (· ∈ entailmentClosed)).card = 12 := by decide
 
 end Agentivity
 

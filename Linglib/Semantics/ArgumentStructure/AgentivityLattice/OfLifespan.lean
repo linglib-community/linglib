@@ -9,14 +9,15 @@ public import Linglib.Semantics.Events.Lifespan
 Grimm's persistence features say whether a participant exists, and keeps its qualities, at the
 beginning and at the end of an event. Given the participant's life span, the event's run time and
 the participant's qualities over time, Grimm's descriptions of the persistence levels assign the
-participant [a level](##ArgumentStructure.PersistenceLevel.ofLifespan), whose features are the
+participant [a level](##ArgumentStructure.Persistence.ofLifespan), whose features are the
 persistence features the participant has: it [exists when the event
-begins](##ArgumentStructure.PersistenceLevel.exPB_mem_ofLifespan) and [keeps its qualities to the
-end](##ArgumentStructure.PersistenceLevel.quPE_mem_ofLifespan) exactly when the level says so. A
-created participant, existing at the end of the event but not at the beginning, [does not
-pre-exist the event](##ArgumentStructure.PersistenceLevel.not_preExists_of_ofLifespan_eq_exPersEnd),
-and a destroyed one [goes out of existence before the event
-ends](##ArgumentStructure.PersistenceLevel.snd_lt_of_ofLifespan_eq_exPersBeginning).
+begins](##ArgumentStructure.Persistence.existsAtBeginning_mem_ofLifespan) and [keeps its qualities
+to the end](##ArgumentStructure.Persistence.qualitiesAtEnd_mem_ofLifespan) exactly when the level
+says so. A created participant, existing at the end of the event but not at the beginning, [does
+not pre-exist the
+event](##ArgumentStructure.Persistence.not_preExists_of_ofLifespan_eq_existentialEnd), and a
+destroyed one [goes out of existence before the event
+ends](##ArgumentStructure.Persistence.snd_lt_of_ofLifespan_eq_existentialBeginning).
 
 ## Implementation notes
 
@@ -34,7 +35,7 @@ not formalized.
 
 @[expose] public section
 
-namespace ArgumentStructure.PersistenceLevel
+namespace ArgumentStructure.Persistence
 
 variable {T Q : Type*} [LinearOrder T] [DecidableEq Q] {life run : NonemptyInterval T} {q : T → Q}
 
@@ -43,31 +44,31 @@ run time `run`, by Grimm's descriptions: a participant existing at neither end d
 one existing only at the beginning or only at the end persists existentially there, and one
 existing at both ends persists totally or only at the beginning as its qualities are unchanged or
 not ([grimm-2011] pp. 524–525). -/
-def ofLifespan (life run : NonemptyInterval T) (q : T → Q) : PersistenceLevel :=
+def ofLifespan (life run : NonemptyInterval T) (q : T → Q) : Persistence :=
   if run.fst ∈ life then
-    if run.snd ∈ life then if q run.snd = q run.fst then .totalPersistence else .quPersBeginning
-    else .exPersBeginning
-  else if run.snd ∈ life then .exPersEnd else .totalNonPersistence
+    if run.snd ∈ life then if q run.snd = q run.fst then .total else .qualitativeBeginning
+    else .existentialBeginning
+  else if run.snd ∈ life then .existentialEnd else .nonPersistence
 
-theorem ofLifespan_eq_totalNonPersistence_iff :
-    ofLifespan life run q = .totalNonPersistence ↔ run.fst ∉ life ∧ run.snd ∉ life := by
+theorem ofLifespan_eq_nonPersistence_iff :
+    ofLifespan life run q = .nonPersistence ↔ run.fst ∉ life ∧ run.snd ∉ life := by
   unfold ofLifespan; split_ifs <;> simp_all
 
-theorem ofLifespan_eq_exPersEnd_iff :
-    ofLifespan life run q = .exPersEnd ↔ run.fst ∉ life ∧ run.snd ∈ life := by
+theorem ofLifespan_eq_existentialEnd_iff :
+    ofLifespan life run q = .existentialEnd ↔ run.fst ∉ life ∧ run.snd ∈ life := by
   unfold ofLifespan; split_ifs <;> simp_all
 
-theorem ofLifespan_eq_exPersBeginning_iff :
-    ofLifespan life run q = .exPersBeginning ↔ run.fst ∈ life ∧ run.snd ∉ life := by
+theorem ofLifespan_eq_existentialBeginning_iff :
+    ofLifespan life run q = .existentialBeginning ↔ run.fst ∈ life ∧ run.snd ∉ life := by
   unfold ofLifespan; split_ifs <;> simp_all
 
-theorem ofLifespan_eq_quPersBeginning_iff :
-    ofLifespan life run q = .quPersBeginning ↔
+theorem ofLifespan_eq_qualitativeBeginning_iff :
+    ofLifespan life run q = .qualitativeBeginning ↔
       run.fst ∈ life ∧ run.snd ∈ life ∧ q run.snd ≠ q run.fst := by
   unfold ofLifespan; split_ifs <;> simp_all
 
-theorem ofLifespan_eq_totalPersistence_iff :
-    ofLifespan life run q = .totalPersistence ↔
+theorem ofLifespan_eq_total_iff :
+    ofLifespan life run q = .total ↔
       run.fst ∈ life ∧ run.snd ∈ life ∧ q run.snd = q run.fst := by
   unfold ofLifespan; split_ifs <;> simp_all
 
@@ -75,50 +76,55 @@ theorem ofLifespan_eq_totalPersistence_iff :
 
 The level's features are the persistence features the participant has. -/
 
-@[simp] theorem exPB_mem_ofLifespan : .exPB ∈ ofLifespan life run q ↔ run.fst ∈ life := by
+@[simp] theorem existsAtBeginning_mem_ofLifespan :
+    .existsAtBeginning ∈ ofLifespan life run q ↔ run.fst ∈ life := by
   unfold ofLifespan; split_ifs <;> simp_all <;> decide
 
-@[simp] theorem exPE_mem_ofLifespan : .exPE ∈ ofLifespan life run q ↔ run.snd ∈ life := by
+@[simp] theorem existsAtEnd_mem_ofLifespan :
+    .existsAtEnd ∈ ofLifespan life run q ↔ run.snd ∈ life := by
   unfold ofLifespan; split_ifs <;> simp_all <;> decide
 
-@[simp] theorem quPB_mem_ofLifespan : .quPB ∈ ofLifespan life run q ↔ run.fst ∈ life := by
+@[simp] theorem qualitiesAtBeginning_mem_ofLifespan :
+    .qualitiesAtBeginning ∈ ofLifespan life run q ↔ run.fst ∈ life := by
   unfold ofLifespan; split_ifs <;> simp_all <;> decide
 
 /-- A participant keeps its qualities to the end of the event when it exists there with the
 qualities it had at the beginning, if it existed then. -/
-@[simp] theorem quPE_mem_ofLifespan : .quPE ∈ ofLifespan life run q ↔
+@[simp] theorem qualitiesAtEnd_mem_ofLifespan : .qualitiesAtEnd ∈ ofLifespan life run q ↔
     run.snd ∈ life ∧ (run.fst ∈ life → q run.snd = q run.fst) := by
   unfold ofLifespan; split_ifs <;> simp_all <;> decide
 
 /-- A participant is at existential persistence (beginning) or above exactly when it exists when
 the event begins. -/
-theorem exPersBeginning_le_ofLifespan_iff :
-    .exPersBeginning ≤ ofLifespan life run q ↔ run.fst ∈ life :=
-  exPB_mem_iff.symm.trans exPB_mem_ofLifespan
+theorem existentialBeginning_le_ofLifespan_iff :
+    .existentialBeginning ≤ ofLifespan life run q ↔ run.fst ∈ life :=
+  existsAtBeginning_mem_iff_le.symm.trans existsAtBeginning_mem_ofLifespan
 
-theorem fst_lt_of_ofLifespan_eq_exPersEnd (h : ofLifespan life run q = .exPersEnd) :
+theorem fst_lt_of_ofLifespan_eq_existentialEnd (h : ofLifespan life run q = .existentialEnd) :
     run.fst < life.fst :=
-  have ⟨hB, hE⟩ := ofLifespan_eq_exPersEnd_iff.1 h
+  have ⟨hB, hE⟩ := ofLifespan_eq_existentialEnd_iff.1 h
   (NonemptyInterval.notMem_iff.1 hB).resolve_right (run.fst_le_snd.trans hE.2).not_gt
 
 /-- A participant created in an event, existing at its end but not at its beginning, does not
 pre-exist it ([grimm-2011] (5)). -/
-theorem not_preExists_of_ofLifespan_eq_exPersEnd {X : Type*} {σ : X → NonemptyInterval T} {x : X}
-    (h : ofLifespan (σ x) run q = .exPersEnd) : ¬ Event.PreExists σ (· = x) run := by
+theorem not_preExists_of_ofLifespan_eq_existentialEnd {X : Type*} {σ : X → NonemptyInterval T}
+    {x : X} (h : ofLifespan (σ x) run q = .existentialEnd) :
+    ¬ Event.PreExists σ (· = x) run := by
   rw [Event.preExists_eq_iff, not_lt]
-  exact (fst_lt_of_ofLifespan_eq_exPersEnd h).le
+  exact (fst_lt_of_ofLifespan_eq_existentialEnd h).le
 
 /-- A participant destroyed in an event, existing at its beginning but not at its end, goes out of
 existence before the event ends. -/
-theorem snd_lt_of_ofLifespan_eq_exPersBeginning (h : ofLifespan life run q = .exPersBeginning) :
+theorem snd_lt_of_ofLifespan_eq_existentialBeginning
+    (h : ofLifespan life run q = .existentialBeginning) :
     life.snd < run.snd :=
-  have ⟨hB, hE⟩ := ofLifespan_eq_exPersBeginning_iff.1 h
+  have ⟨hB, hE⟩ := ofLifespan_eq_existentialBeginning_iff.1 h
   (NonemptyInterval.notMem_iff.1 hE).resolve_left (hB.1.trans run.fst_le_snd).not_gt
 
 /-- A table that comes into existence on day `2` during a building from day `1` to day `3` is
 created. -/
 example : ofLifespan (⟨(2, 9), by decide⟩ : NonemptyInterval ℤ) ⟨(1, 3), by decide⟩
-    (fun _ ↦ ()) = .exPersEnd := by
+    (fun _ ↦ ()) = .existentialEnd := by
   decide
 
-end ArgumentStructure.PersistenceLevel
+end ArgumentStructure.Persistence

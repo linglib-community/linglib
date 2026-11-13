@@ -12,8 +12,9 @@ Grimm replaces Dowty's five Proto-Patient entailments by four persistence featur
 and qualitative persistence at the beginning and at the end of the event. Their logical
 dependencies, that an entity that exists does so with its qualities and that nonexistence at a
 boundary erases them, leave five valid combinations, ordered by inclusion: a lattice with a
-creation branch (`exPersEnd`) and an affectedness branch (`exPersBeginning ≤ quPersBeginning`)
-rejoining at `totalPersistence`.
+creation branch (`existentialEnd`) and an affectedness branch
+(`existentialBeginning ≤ qualitativeBeginning`)
+rejoining at `total`.
 
 ## Implementation notes
 
@@ -23,7 +24,7 @@ persistence at the beginning with existence there and some qualitative persisten
 at the end; this is the reading under which exactly five combinations remain, as the paper says.
 The third principle is a disjunction, so the levels are closed under union but not under
 intersection, and the lattice is lifted along
-[the adjunction](##ArgumentStructure.PersistenceLevel.gc_features_ofFeatures) between a level's
+[the adjunction](##ArgumentStructure.Persistence.gc_features_interior) between a level's
 features and the largest level inside a set of features.
 `AgentivityLattice/OfLifespan.lean` assigns a participant its level from its life span and an
 event's run time.
@@ -38,44 +39,44 @@ event's run time.
 namespace ArgumentStructure
 
 /-- The five valid persistence levels ([grimm-2011] pp.524–525, Fig. 2). -/
-inductive PersistenceLevel where
+inductive Persistence where
   /-- No entailed existence, as for the arguments of *seek*, *want* and negated copulas. -/
-  | totalNonPersistence
+  | nonPersistence
   /-- The entity comes into existence, as the objects of *build*, *invent* and the subject of
   *appear* do. -/
-  | exPersEnd
+  | existentialEnd
   /-- The entity exists before the event and ceases to, as the subjects of *die*, *evaporate*
   and the objects of *destroy*, *ruin* do. -/
-  | exPersBeginning
+  | existentialBeginning
   /-- The entity persists but is qualitatively changed, as the objects of transitive *move*,
   *dim*, *frighten* and the intransitive subject of *fall* are. -/
-  | quPersBeginning
+  | qualitativeBeginning
   /-- The entity persists unchanged throughout, as prototypical transitive subjects and the
   unaffected objects of *see* and *cut at* do. -/
-  | totalPersistence
+  | total
   deriving DecidableEq, Repr, Fintype
 
-namespace PersistenceLevel
+namespace Persistence
 
 /-- The four persistence features ([grimm-2011] Table 2). -/
 inductive Feature where
-  /-- Existential persistence at the beginning of the event. -/
-  | exPB
-  /-- Existential persistence at the end of the event. -/
-  | exPE
-  /-- Qualitative persistence at the beginning of the event. -/
-  | quPB
-  /-- Qualitative persistence at the end of the event. -/
-  | quPE
+  /-- Existential persistence at the beginning of the event, the paper's ExPB. -/
+  | existsAtBeginning
+  /-- Existential persistence at the end of the event, ExPE. -/
+  | existsAtEnd
+  /-- Qualitative persistence at the beginning of the event, QuPB. -/
+  | qualitiesAtBeginning
+  /-- Qualitative persistence at the end of the event, QuPE. -/
+  | qualitiesAtEnd
   deriving DecidableEq, Repr, Fintype
 
 /-- The features of a level. -/
-def features : PersistenceLevel → Finset Feature
-  | .totalNonPersistence => ∅
-  | .exPersEnd => {.exPE, .quPE}
-  | .exPersBeginning => {.exPB, .quPB}
-  | .quPersBeginning => {.exPB, .exPE, .quPB}
-  | .totalPersistence => {.exPB, .exPE, .quPB, .quPE}
+def features : Persistence → Finset Feature
+  | .nonPersistence => ∅
+  | .existentialEnd => {.existsAtEnd, .qualitiesAtEnd}
+  | .existentialBeginning => {.existsAtBeginning, .qualitiesAtBeginning}
+  | .qualitativeBeginning => {.existsAtBeginning, .existsAtEnd, .qualitiesAtBeginning}
+  | .total => {.existsAtBeginning, .existsAtEnd, .qualitiesAtBeginning, .qualitiesAtEnd}
 
 theorem features_injective : Function.Injective features := by decide
 
@@ -83,7 +84,8 @@ theorem features_injective : Function.Injective features := by decide
 where the entity exists there, existence at the beginning brings qualitative persistence at the
 beginning, and existence at the end brings some qualitative persistence. -/
 def Valid (s : Finset Feature) : Prop :=
-  (.quPB ∈ s ↔ .exPB ∈ s) ∧ (.quPE ∈ s → .exPE ∈ s) ∧ (.exPE ∈ s → .quPB ∈ s ∨ .quPE ∈ s)
+  (.qualitiesAtBeginning ∈ s ↔ .existsAtBeginning ∈ s) ∧ (.qualitiesAtEnd ∈ s → .existsAtEnd ∈ s) ∧
+    (.existsAtEnd ∈ s → .qualitiesAtBeginning ∈ s ∨ .qualitiesAtEnd ∈ s)
 
 instance : DecidablePred Valid := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
@@ -91,25 +93,25 @@ instance : DecidablePred Valid := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _ 
 theorem range_features : Set.range features = {s | Valid s} :=
   Set.ext <| (by decide : ∀ s, (∃ l, features l = s) ↔ Valid s)
 
-instance : SetLike PersistenceLevel Feature where
+instance : SetLike Persistence Feature where
   coe l := l.features
   coe_injective _ _ h := features_injective (Finset.coe_injective h)
 
-instance : PartialOrder PersistenceLevel := .ofSetLike PersistenceLevel
+instance : PartialOrder Persistence := .ofSetLike Persistence
 
-@[simp] theorem mem_features {l : PersistenceLevel} {f : Feature} : f ∈ l.features ↔ f ∈ l :=
+@[simp] theorem mem_features {l : Persistence} {f : Feature} : f ∈ l.features ↔ f ∈ l :=
   Iff.rfl
 
-instance (l : PersistenceLevel) : DecidablePred (· ∈ l) := fun f ↦
+instance (l : Persistence) : DecidablePred (· ∈ l) := fun f ↦
   inferInstanceAs (Decidable (f ∈ l.features))
 
-theorem le_iff_features_subset {l m : PersistenceLevel} : l ≤ m ↔ l.features ⊆ m.features :=
+theorem le_iff_features_subset {l m : Persistence} : l ≤ m ↔ l.features ⊆ m.features :=
   IsConcreteLE.le_iff.trans Finset.coe_subset
 
-instance : DecidableRel (α := PersistenceLevel) (· ≤ ·) := fun _ _ ↦
+instance : DecidableRel (α := Persistence) (· ≤ ·) := fun _ _ ↦
   decidable_of_iff _ le_iff_features_subset.symm
 
-instance : DecidableLT PersistenceLevel := fun _ _ ↦ decidable_of_iff _ lt_iff_le_not_ge.symm
+instance : DecidableLT Persistence := fun _ _ ↦ decidable_of_iff _ lt_iff_le_not_ge.symm
 
 /-! ### The lattice
 
@@ -119,37 +121,37 @@ structure is lifted along the adjunction: the join of two levels has the union o
 and their meet is the largest level inside the intersection. -/
 
 /-- The largest level whose features are among `s`. -/
-def ofFeatures (s : Finset Feature) : PersistenceLevel :=
-  if .exPB ∈ s ∧ .quPB ∈ s then
-    if .exPE ∈ s then if .quPE ∈ s then .totalPersistence else .quPersBeginning
-    else .exPersBeginning
-  else if .exPE ∈ s ∧ .quPE ∈ s then .exPersEnd else .totalNonPersistence
+def interior (s : Finset Feature) : Persistence :=
+  if .existsAtBeginning ∈ s ∧ .qualitiesAtBeginning ∈ s then
+    if .existsAtEnd ∈ s then if .qualitiesAtEnd ∈ s then .total else .qualitativeBeginning
+    else .existentialBeginning
+  else if .existsAtEnd ∈ s ∧ .qualitiesAtEnd ∈ s then .existentialEnd else .nonPersistence
 
 /-- A level's features are among `s` exactly when the level is below the largest level inside
 `s`. -/
-theorem gc_features_ofFeatures : GaloisConnection features ofFeatures := by
+theorem gc_features_interior : GaloisConnection features interior := by
   intro l s; revert l s; decide
 
 /-- The levels are a retract of the sets of features. -/
-def gciFeaturesOfFeatures : GaloisCoinsertion features ofFeatures :=
-  gc_features_ofFeatures.toGaloisCoinsertion (by decide)
+def gciFeaturesInterior : GaloisCoinsertion features interior :=
+  gc_features_interior.toGaloisCoinsertion (by decide)
 
-@[simp] theorem ofFeatures_features (l : PersistenceLevel) : ofFeatures l.features = l :=
-  gciFeaturesOfFeatures.u_l_eq l
+@[simp] theorem interior_features (l : Persistence) : interior l.features = l :=
+  gciFeaturesInterior.u_l_eq l
 
-instance : Lattice PersistenceLevel := gciFeaturesOfFeatures.liftLattice
+instance : Lattice Persistence := gciFeaturesInterior.liftLattice
 
-theorem features_sup (l m : PersistenceLevel) : (l ⊔ m).features = l.features ∪ m.features := by
+theorem features_sup (l m : Persistence) : (l ⊔ m).features = l.features ∪ m.features := by
   revert l m; decide
 
-theorem features_inf_subset (l m : PersistenceLevel) :
+theorem features_inf_subset (l m : Persistence) :
     (l ⊓ m).features ⊆ l.features ∩ m.features :=
-  gc_features_ofFeatures.l_u_le _
+  gc_features_interior.l_u_le _
 
-instance : BoundedOrder PersistenceLevel where
-  bot := .totalNonPersistence
+instance : BoundedOrder Persistence where
+  bot := .nonPersistence
   bot_le := by decide
-  top := .totalPersistence
+  top := .total
   le_top := by decide
 
 /-! ### Features as intervals
@@ -158,22 +160,27 @@ Grimm's three degrees of affectedness, no change, qualitative change and existen
 cuts of the lattice: each feature, and existence at both ends, holds on an up-set or fails on a
 down-set of levels. -/
 
-variable {l : PersistenceLevel}
+variable {l : Persistence}
 
 /-- An entity exists when the event begins at existential persistence (beginning) and above. -/
-theorem exPB_mem_iff : .exPB ∈ l ↔ exPersBeginning ≤ l := by revert l; decide
+theorem existsAtBeginning_mem_iff_le : .existsAtBeginning ∈ l ↔ existentialBeginning ≤ l := by
+  revert l; decide
 
 /-- An entity exists when the event ends at existential persistence (end) and above. -/
-theorem exPE_mem_iff : .exPE ∈ l ↔ exPersEnd ≤ l ∨ quPersBeginning ≤ l := by revert l; decide
+theorem existsAtEnd_mem_iff_le :
+    .existsAtEnd ∈ l ↔ existentialEnd ≤ l ∨ qualitativeBeginning ≤ l := by
+  revert l; decide
 
 /-- An entity exists at both ends of the event at qualitative persistence (beginning) and above. -/
-theorem exPB_mem_and_exPE_mem_iff : .exPB ∈ l ∧ .exPE ∈ l ↔ quPersBeginning ≤ l := by
+theorem existsAtBothEnds_iff_le :
+    .existsAtBeginning ∈ l ∧ .existsAtEnd ∈ l ↔ qualitativeBeginning ≤ l := by
   revert l; decide
 
 /-- An entity is not entailed to keep its qualities to the end of the event at qualitative
 persistence (beginning) and below. -/
-theorem quPE_notMem_iff : .quPE ∉ l ↔ l ≤ quPersBeginning := by revert l; decide
+theorem qualitiesAtEnd_notMem_iff_le : .qualitiesAtEnd ∉ l ↔ l ≤ qualitativeBeginning := by
+  revert l; decide
 
-end PersistenceLevel
+end Persistence
 
 end ArgumentStructure
