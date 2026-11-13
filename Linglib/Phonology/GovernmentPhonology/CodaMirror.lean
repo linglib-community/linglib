@@ -13,10 +13,12 @@ public import Linglib.Phonology.GovernmentPhonology.Basic
 A nucleus that can govern does, and a nucleus that can license does. Government goes to the
 preceding nucleus when the governor governs it and to the governor's own onset otherwise.
 Licensing goes to the licensor's own onset unless that onset is governed, and then to the
-preceding nucleus, so that no position is both governed and licensed. A consonant is weak when governed, as between two vowels,
-[strong](##GovernmentPhonology.licensesOnset_iff) when licensed, as after a governed nucleus, and
-[a coda](##GovernmentPhonology.not_governsOnset_and_not_licensesOnset_iff_not_isGovernor) when its
-nucleus discharges nothing; a syllable is open when its nucleus [is licensed](##GovernmentPhonology.licenses_iff).
+preceding nucleus, so that no position is both governed and licensed. A consonant is weak when
+governed, as between two vowels, [strong](##GovernmentPhonology.licensesOnset_iff) when
+licensed, as after a governed nucleus, and
+[a coda](##GovernmentPhonology.not_governsOnset_and_not_licensesOnset_iff_not_isGovernor) when
+its nucleus discharges nothing; a syllable is open when its nucleus
+[is licensed](##GovernmentPhonology.licenses_iff).
 
 ## Implementation notes
 
@@ -26,9 +28,9 @@ preceding nucleus.
 
 ## TODO
 
-Every theorem is stated and unproved. Long vowels are not represented: their empty complement
-calls for licensing, which would take the licensing of a nucleus that cannot govern. Stress is
-not represented, nor a second, autosegmental licensing that every nucleus discharges.
+Long vowels are not represented: their empty complement calls for licensing, which would take
+the licensing of a nucleus that cannot govern. Stress is not represented, nor a second,
+autosegmental licensing that every nucleus discharges.
 
 ## References
 
@@ -65,46 +67,65 @@ variable {A l}
 
 /-- A governor discharges its government, on the nucleus before it or on its own onset. -/
 theorem isGovernor_iff : IsGovernor A l j ↔ GovernsOnset A l j ∨ ∃ i, Governs A l j i := by
-  sorry
+  refine ⟨fun h ↦ ?_, fun h ↦ h.elim (·.1) fun ⟨_, hg⟩ ↦ hg.isGovernor⟩
+  by_cases hg : ∃ i, Governs A l j i
+  · exact .inr hg
+  · exact .inl ⟨h, fun i hi hG ↦ hg ⟨i, hi, hG⟩⟩
 
 /-- A licensor discharges its licensing, on its own onset or on the nucleus before it, unless
 it is the first nucleus and governs its onset. -/
 theorem isLicensor_iff : IsLicensor A l j ↔ LicensesOnset A l j ∨ (∃ i, Licenses A l j i) ∨
     j = 0 ∧ IsLicensor A l 0 ∧ GovernsOnset A l 0 := by
-  sorry
+  refine ⟨fun h ↦ ?_, ?_⟩
+  · by_cases hg : GovernsOnset A l j
+    · rcases j with _ | j
+      · exact .inr (.inr ⟨rfl, h, hg⟩)
+      · exact .inr (.inl ⟨j, rfl, h, hg⟩)
+    · exact .inl ⟨h, hg⟩
+  · rintro (h | ⟨i, h⟩ | ⟨rfl, h, -⟩)
+    exacts [h.1, h.2.1, h]
 
 /-- No onset is both governed and licensed. -/
-theorem not_governsOnset_and_licensesOnset : ¬ (GovernsOnset A l j ∧ LicensesOnset A l j) := by
-  sorry
+theorem not_governsOnset_and_licensesOnset : ¬ (GovernsOnset A l j ∧ LicensesOnset A l j) :=
+  fun h ↦ h.2.2 h.1
 
 /-- No nucleus is both governed and licensed. -/
-theorem not_governs_and_licenses : ¬ (Governs A l j i ∧ Licenses A l k i) := by
-  sorry
+theorem not_governs_and_licenses : ¬ (Governs A l j i ∧ Licenses A l k i) :=
+  fun ⟨hg, hk, _, _, hn⟩ ↦ hn i hk hg.2
 
 /-- Where a governor licenses, a consonant is licensed exactly when its nucleus governs the
 nucleus before it, or licenses without governing. -/
 theorem licensesOnset_iff (h : IsGovernor A l (i + 1) → IsLicensor A l (i + 1)) :
     LicensesOnset A l (i + 1) ↔
       Governs A l (i + 1) i ∨ IsLicensor A l (i + 1) ∧ ¬ IsGovernor A l (i + 1) := by
-  sorry
+  refine ⟨fun ⟨hl, hn⟩ ↦ ?_, ?_⟩
+  · by_cases hg : IsGovernor A l (i + 1)
+    · by_contra hc
+      exact hn ⟨hg, fun k hk hG ↦ hc (.inl ⟨rfl, Nat.add_right_cancel hk ▸ hG⟩)⟩
+    · exact .inr ⟨hl, hg⟩
+  · rintro (hg | ⟨hl, hn⟩)
+    · exact ⟨h hg.isGovernor, fun ho ↦ ho.2 i rfl hg.2⟩
+    · exact ⟨hl, fun ho ↦ hn ho.1⟩
 
 /-- A consonant is neither governed nor licensed exactly when its nucleus neither governs it
 nor licenses, as a governed nucleus does not. -/
 theorem not_governsOnset_and_not_licensesOnset_iff :
-    ¬ GovernsOnset A l j ∧ ¬ LicensesOnset A l j ↔ ¬ GovernsOnset A l j ∧ ¬ IsLicensor A l j := by
-  sorry
+    ¬ GovernsOnset A l j ∧ ¬ LicensesOnset A l j ↔ ¬ GovernsOnset A l j ∧ ¬ IsLicensor A l j :=
+  and_congr_right fun h ↦ not_congr (and_iff_left h)
 
 /-- Where a governor licenses, a consonant is neither governed nor licensed exactly when its
 nucleus is no governor. -/
 theorem not_governsOnset_and_not_licensesOnset_iff_not_isGovernor
     (h : IsGovernor A l j → IsLicensor A l j) :
-    ¬ GovernsOnset A l j ∧ ¬ LicensesOnset A l j ↔ ¬ IsGovernor A l j ∧ ¬ IsLicensor A l j := by
-  sorry
+    ¬ GovernsOnset A l j ∧ ¬ LicensesOnset A l j ↔ ¬ IsGovernor A l j ∧ ¬ IsLicensor A l j :=
+  ⟨fun ⟨h1, h2⟩ ↦ ⟨fun hg ↦ h2 ⟨h hg, h1⟩, fun hl ↦ h2 ⟨hl, h1⟩⟩,
+    fun ⟨h1, h2⟩ ↦ ⟨fun hg ↦ h1 hg.1, fun hl ↦ h2 hl.1⟩⟩
 
 /-- A nucleus is licensed exactly when the next nucleus licenses, governs, and does not govern
 it. -/
 theorem licenses_iff : Licenses A l (i + 1) i ↔
-    IsLicensor A l (i + 1) ∧ IsGovernor A l (i + 1) ∧ ¬ Governed A l i := by
-  sorry
+    IsLicensor A l (i + 1) ∧ IsGovernor A l (i + 1) ∧ ¬ Governed A l i :=
+  ⟨fun ⟨_, hl, hg, hn⟩ ↦ ⟨hl, hg, hn i rfl⟩, fun ⟨hl, hg, hn⟩ ↦
+    ⟨rfl, hl, hg, fun _ hk hG ↦ hn (Nat.add_right_cancel hk ▸ hG)⟩⟩
 
 end GovernmentPhonology

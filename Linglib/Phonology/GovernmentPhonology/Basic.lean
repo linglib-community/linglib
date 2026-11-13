@@ -15,11 +15,12 @@ In Government Phonology the syllabic position of a segment is defined by lateral
 among positions, government and licensing, and not by the constituent it belongs to. In Strict
 CV, where every syllable is a consonantal position followed by a vocalic one, the nuclei of a
 domain form a sequence and contract these relations leftwards. This file gives the nuclei and
-the relation of government between them. A nucleus governs the nucleus before it when that nucleus is unexpressed, is not enclosed
-in a domain of infrasegmental government, and has a melody no more complex than the governor is
-strong. Government is taken to be local, so that each governor has one target, and a governed
-nucleus [governs nothing](##GovernmentPhonology.Governs.not_governs), so the governing pairs of a
-domain are disjoint pairs of neighbours. How strong each nucleus is varies with the language and is the
+the relation of government between them. A nucleus governs the nucleus before it when that
+nucleus is unexpressed, is not enclosed in a domain of infrasegmental government, and has a
+melody no more complex than the governor is strong. Government is taken to be local, so that
+each governor has one target, and a governed nucleus
+[governs nothing](##GovernmentPhonology.Governs.not_governs), so the governing pairs of a domain
+are disjoint pairs of neighbours. How strong each nucleus is varies with the language and is the
 theory's parameter, its lateral actorship.
 
 ## Implementation notes
@@ -38,10 +39,9 @@ every nucleus and [cavirani-2022]'s for empty ones.
 
 ## TODO
 
-Every theorem is stated and unproved. Whether two consonants may contract infrasegmental
-government is a flag on the nucleus between them and is not derived from their elements.
-Licensing ability is a yes or no, though a final empty nucleus may act and yet be too weak a
-licensor for vowel length.
+Whether two consonants may contract infrasegmental government is a flag on the nucleus between
+them and is not derived from their elements. Licensing ability is a yes or no, though a final
+empty nucleus may act and yet be too weak a licensor for vowel length.
 
 ## References
 
@@ -188,40 +188,63 @@ instance : DecidablePred (IsLicensor A l) := fun _ ↦ inferInstanceAs (Decidabl
 
 variable {A l}
 
+/-- The first nucleus of a stretch is governed exactly as `GovernedHead` unfolds. -/
+theorem governedHead_cons {x : Nucleus} {r : List Nucleus} : GovernedHead A (x :: r) ↔
+    x.expressed = false ∧ ¬ EnclosedHead A (x :: r) ∧ ¬ GovernedHead A r ∧
+      ∃ y ∈ r.head?, (x.melody : WithBot Melody) ≤ A.strength y (decide (r.tail = [])) :=
+  Iff.rfl
+
 theorem governed_iff : Governed A l i ↔ ¬ Enclosed A l i ∧ ¬ Governed A l (i + 1) ∧
     ∃ x ∈ l[i]?, x.expressed = false ∧ ∃ y ∈ l[i + 1]?,
       (x.melody : WithBot Melody) ≤ A.strength y (decide (i + 2 = l.length)) := by
-  sorry
+  rcases Nat.lt_or_ge i l.length with h | h
+  · have key (y : Nucleus) (hy : l[i + 1]? = some y) :
+        decide ((l.drop (i + 1)).tail = []) = decide (i + 2 = l.length) := by
+      have := (List.getElem?_eq_some_iff.1 hy).1
+      exact decide_eq_decide.2 (by rw [List.tail_drop, List.drop_eq_nil_iff]; omega)
+    rw [Governed, Enclosed, List.drop_eq_getElem_cons h, governedHead_cons, List.head?_drop]
+    simp only [List.getElem?_eq_getElem h, Option.mem_def, Option.some.injEq, exists_eq_left']
+    exact ⟨fun ⟨h1, h2, h3, y, hy, hle⟩ ↦ ⟨h2, h3, h1, y, hy, by rwa [← key y hy]⟩,
+      fun ⟨h2, h3, h1, y, hy, hle⟩ ↦ ⟨h1, h2, h3, y, hy, by rwa [key y hy]⟩⟩
+  · refine iff_of_false (by simp [Governed, List.drop_eq_nil_of_le h, GovernedHead]) ?_
+    rintro ⟨-, -, x, hx, -⟩
+    simp [List.getElem?_eq_none h] at hx
 
 /-- The lateral relations of a stretch are those it has at the end of any longer domain. -/
 theorem governed_append (l₁ l₂ : List Nucleus) :
     Governed A (l₁ ++ l₂) (i + l₁.length) ↔ Governed A l₂ i := by
-  sorry
+  rw [Governed, Governed, Nat.add_comm, ← List.drop_drop, List.drop_left]
 
 namespace Governs
 
 /-- Government is local: the governed nucleus is the one before the governor. -/
-theorem covBy (h : Governs A l j i) : i ⋖ j := by
-  sorry
+theorem covBy (h : Governs A l j i) : i ⋖ j :=
+  Nat.covBy_iff_add_one_eq.2 h.1
 
 /-- A governor governs one nucleus. -/
-theorem eq_left (h : Governs A l j i) (h' : Governs A l j k) : i = k := by
-  sorry
+theorem eq_left (h : Governs A l j i) (h' : Governs A l j k) : i = k :=
+  Nat.add_right_cancel (h.1.trans h'.1.symm)
 
 /-- A nucleus is governed by one governor. -/
-theorem eq_right (h : Governs A l j i) (h' : Governs A l k i) : j = k := by
-  sorry
+theorem eq_right (h : Governs A l j i) (h' : Governs A l k i) : j = k :=
+  h.1.symm.trans h'.1
 
 /-- A governed nucleus governs nothing. -/
 theorem not_governs (h : Governs A l j i) : ¬ Governs A l i k := by
-  sorry
+  rintro ⟨rfl, hk⟩
+  exact (governed_iff.1 hk).2.1 h.2
 
 /-- The governed nucleus is unexpressed. -/
-theorem not_expressed (h : Governs A l j i) : ∃ x ∈ l[i]?, x.expressed = false := by
-  sorry
+theorem not_expressed (h : Governs A l j i) : ∃ x ∈ l[i]?, x.expressed = false :=
+  let ⟨_, _, x, hx, hxe, _⟩ := governed_iff.1 h.2
+  ⟨x, hx, hxe⟩
 
 protected theorem isGovernor (h : Governs A l j i) : IsGovernor A l j := by
-  sorry
+  obtain ⟨rfl, hg⟩ := h
+  obtain ⟨-, hn, x, -, -, y, hy, hle⟩ := governed_iff.1 hg
+  refine ⟨hn, y, hy, fun h0 ↦ ?_⟩
+  rw [show A.strength y (decide (i + 2 = l.length)) = ⊥ from h0] at hle
+  exact WithBot.coe_ne_bot (le_bot_iff.1 hle)
 
 end Governs
 
