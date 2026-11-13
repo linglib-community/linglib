@@ -736,6 +736,7 @@ import Linglib.Semantics.Dynamic.FileChange
 import Linglib.Semantics.Dynamic.Partial
 import Linglib.Semantics.Dynamic.Possibility
 import Linglib.Semantics.Dynamic.State
+import Linglib.Semantics.Dynamic.TrivalentUpdate
 import Linglib.Semantics.Dynamic.Update
 import Linglib.Logic.Natural.Completeness
 import Linglib.Semantics.Quantification.Signatures
