@@ -255,8 +255,8 @@ private def erased (T : SyntacticObject) : UnorderedTree (Option LexicalItem.Tok
 example : (wasEatenTrace.toUnorderedTree.filterMap Sum.getLeft?).map UnorderedTree.contractUnary =
     some (erased wasEaten) := by decide
 
-/-- The projection `Π_{ρ,c}` alone leaves *eaten* under a unary vertex, so it does not reach
-    `T/d T₂`, against the equation printed on p. 82. -/
+/-- The projection `Π_{ρ,c}` alone leaves *eaten* under a unary vertex: it reaches `T/ρ T₂`, and
+    `Π_{d,ρ}` takes that to `T/d T₂`. -/
 example : wasEatenTrace.toUnorderedTree.filterMap Sum.getLeft? ≠ some (erased wasEaten) := by decide
 
 /-- The first stage at the deletion coproduct leaves `T₂` beside `T/d T₂`: projecting the stage at
@@ -728,7 +728,7 @@ noncomputable def mergeSeries (X Y : TreeAlgebra⟦X⟧) : TreeAlgebra⟦X⟧ :=
     coeff n (mergeSeries X Y) = ∑ p ∈ antidiagonal n, mergeLin (coeff p.1 X) (coeff p.2 Y) := by
   rw [mergeSeries, coeff_mk, coeff_mul, map_sum]; rfl
 
-/-- `𝔐(X, X)` has no degree-one term, so the printed `X = 𝔐(X, X)` cannot meet `X₁ = x`. -/
+/-- `𝔐(X, X)` has no degree-one term, so the equation leaves `X₁` to the initial condition. -/
 theorem coeff_one_mergeSeries {X : TreeAlgebra⟦X⟧} (h0 : coeff 0 X = 0) :
     coeff 1 (mergeSeries X X) = 0 := by
   simp [Finset.Nat.sum_antidiagonal_succ, h0]
@@ -840,7 +840,7 @@ theorem planarSum_four :
   rw [mergeLin_comm (mergeLin generator (mergeLin generator generator)) generator]
   abel
 
-/-- The printed `X₄ = 2{x{x{xx}}} + {{xx}{xx}}` is not the degree-four term of the solution. -/
+/-- The tree `{x{x{xx}}}` has coefficient `4` in `X₄`, not `2`: it has four planar embeddings. -/
 example : planarSum 4 ≠
     2 • mergeLin generator (mergeLin generator (mergeLin generator generator)) +
       mergeLin (mergeLin generator generator) (mergeLin generator generator) := by
