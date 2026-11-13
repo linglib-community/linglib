@@ -97,13 +97,20 @@ theorem isSyntacticObject_contractTree {t : RoseTree (CopyMark × Vertex)}
 variable (t : Marked)
 
 /-- The copy object, the marks forgotten. -/
-def unmark : LinearizedSyntacticObject := ⟨t.val.map Prod.snd, t.2⟩
+def unmark : LinearizedSyntacticObject := LinearizedSyntacticObject.ofVal (t.val.map Prod.snd) t.2
+
+@[simp] theorem val_unmark : t.unmark.val = t.val.map Prod.snd :=
+  LinearizedSyntacticObject.val_ofVal _ _
 
 /-- The contraction: each lower copy becomes the trace that stands for it, the form externalization
 reads. It has the shape of the contraction quotient $T/^c F$ of [marcolli-chomsky-berwick-2025]
 (Definition 1.2.4), though the book sends that quotient to the Conceptual-Intensional interface and
 its deletion $T/^d F$ to externalization (pp. 33, 82). -/
-def contract : LinearizedSyntacticObject := ⟨contractTree t.val, isSyntacticObject_contractTree t.2⟩
+def contract : LinearizedSyntacticObject :=
+  LinearizedSyntacticObject.ofVal (contractTree t.val) (isSyntacticObject_contractTree t.2)
+
+@[simp] theorem val_contract : t.contract.val = contractTree t.val :=
+  LinearizedSyntacticObject.val_ofVal _ _
 
 /-! ### Linearized objects without lower copies -/
 
@@ -114,7 +121,7 @@ theorem map_snd_map (s : RoseTree Vertex) :
 
 /-- A linearized object with no lower copy. -/
 def ofLinearized (p : LinearizedSyntacticObject) : Marked :=
-  ⟨p.val.map ((none, ·)), by rw [map_snd_map]; exact p.2⟩
+  ⟨p.val.map ((none, ·)), by rw [map_snd_map]; exact p.isSyntacticObject_val⟩
 
 theorem contractTree_map (s : RoseTree Vertex) :
     contractTree (s.map ((none, ·))) = s := by
@@ -124,11 +131,11 @@ theorem contractTree_map (s : RoseTree Vertex) :
     exact congrArg _ ((List.map_congr_left ih).trans (List.map_id cs))
 
 @[simp] theorem unmark_ofLinearized (p : LinearizedSyntacticObject) : (ofLinearized p).unmark = p :=
-  Subtype.ext (map_snd_map p.val)
+  LinearizedSyntacticObject.val_injective ((val_unmark _).trans (map_snd_map p.val))
 
 @[simp] theorem contract_ofLinearized (p : LinearizedSyntacticObject) :
     (ofLinearized p).contract = p :=
-  Subtype.ext (contractTree_map p.val)
+  LinearizedSyntacticObject.val_injective ((val_contract _).trans (contractTree_map p.val))
 
 /-! ### Merge -/
 
@@ -144,13 +151,13 @@ variable {t}
 
 @[simp] theorem unmark_attach (e : Edge) (d : Marked) :
     (t.attach e d).unmark = t.unmark.attach e d.unmark := by
-  cases e <;> exact Subtype.ext (by simp [attach, unmark, LinearizedSyntacticObject.attach,
-    LinearizedSyntacticObject.merge])
+  cases e <;> exact LinearizedSyntacticObject.val_injective
+    (by simp [attach, LinearizedSyntacticObject.attach])
 
 @[simp] theorem contract_attach (e : Edge) (d : Marked) :
     (t.attach e d).contract = t.contract.attach e d.contract := by
-  cases e <;> exact Subtype.ext (by simp [attach, contract, LinearizedSyntacticObject.attach,
-    LinearizedSyntacticObject.merge])
+  cases e <;> exact LinearizedSyntacticObject.val_injective
+    (by simp [attach, LinearizedSyntacticObject.attach])
 
 /-! ### Marking lower copies -/
 
@@ -209,15 +216,14 @@ def mark (t : Marked) (m : SyntacticObject) (l : Option LexicalItem.Token) : Mar
 
 @[simp] theorem unmark_mark (m : SyntacticObject) (l : Option LexicalItem.Token) :
     (t.mark m l).unmark = t.unmark :=
-  Subtype.ext (map_snd_markTree m l t.val)
+  LinearizedSyntacticObject.val_injective
+    ((val_unmark _).trans ((map_snd_markTree m l t.val).trans (val_unmark _).symm))
 
 /-- Marking the copies of `m` with its trace contracts to replacing `m` by its trace. -/
 theorem contract_mark (m : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token) :
     (t.mark m (τ m)).contract = t.contract.replace m (m.traceLinearized τ) :=
-  Subtype.ext (by
-    change contractTree (markTree m (τ m) t.val) =
-      replaceIf _ (m.traceLinearized τ).val (contractTree t.val)
-    rw [traceLinearized_val]
+  LinearizedSyntacticObject.val_injective (by
+    rw [val_contract, LinearizedSyntacticObject.val_replace, val_contract, traceLinearized_val]
     exact contractTree_markTree m (τ m) t.val)
 
 /-! ### Occurrences -/
@@ -250,7 +256,9 @@ theorem mem_terms_of_find? {target : SyntacticObject} {s : Marked} (h : t.find? 
     s.unmark.toSyntacticObject ∈ t.unmark.toSyntacticObject.terms := by
   obtain ⟨r, hr, -, rfl⟩ := Option.pmap_eq_some_iff.1 h
   exact LinearizedSyntacticObject.mem_terms_toSyntacticObject.2
-    ⟨_, mem_subtrees.2 ((isSubtree_of_mem_subtreesUntil hr).map _), rfl⟩
+    ⟨r.map Prod.snd, by
+      rw [val_unmark]; exact mem_subtrees.2 ((isSubtree_of_mem_subtreesUntil hr).map _),
+      by rw [LinearizedSyntacticObject.toSyntacticObject_val, val_unmark]⟩
 
 theorem mk_contractTree_of_find? {target : SyntacticObject} {s : Marked}
     (h : t.find? target = some s) : UnorderedTree.mk (contractTree s.val) = target.val := by
@@ -260,9 +268,10 @@ theorem mk_contractTree_of_find? {target : SyntacticObject} {s : Marked}
 /-- The occurrence found contracts to the occurrence found in the contraction. -/
 theorem map_contract_find? (target : SyntacticObject) :
     (t.find? target).map contract = t.contract.find? target := by
-  apply Option.map_injective Subtype.val_injective
+  apply Option.map_injective LinearizedSyntacticObject.val_injective
   rw [Option.map_map, find?, LinearizedSyntacticObject.find?, Option.map_pmap, Option.map_pmap]
-  simp only [Function.comp_apply, contract, Option.pmap_eq_map]
+  simp only [Function.comp_apply, val_contract, LinearizedSyntacticObject.val_ofVal,
+    Option.pmap_eq_map]
   rw [← map_contractTree_outerSubtrees, List.find?_map]
   simp [Function.comp_def]
 
@@ -272,8 +281,8 @@ theorem exists_val_eq_of_unmark_eq_leaf {t : Marked} {x : LexicalItem.Token}
     (h : t.unmark.toSyntacticObject = SyntacticObject.leaf x) :
     ∃ k, t.val = .node (k, .inl (some x)) [] := by
   obtain ⟨⟨⟨k, a⟩, cs⟩, ht⟩ := t
-  have hv := congrArg Subtype.val h
-  simp only [unmark, LinearizedSyntacticObject.toSyntacticObject_val, map_node,
+  have hv := congrArg SyntacticObject.val h
+  simp only [val_unmark, LinearizedSyntacticObject.toSyntacticObject_val, map_node,
     SyntacticObject.leaf_val, UnorderedTree.leaf, UnorderedTree.mk_node_eq_mk_node_iff] at hv
   obtain ⟨rfl, hcs⟩ := hv
   have hc : cs = [] := by simpa using congrArg Multiset.card hcs
@@ -286,8 +295,8 @@ theorem contract_eq_leaf_of_unmark_eq_leaf {t : Marked} {x : LexicalItem.Token}
     t.contract.toSyntacticObject = SyntacticObject.leaf x := by
   obtain ⟨k, hk⟩ := exists_val_eq_of_unmark_eq_leaf h
   rcases k with _ | l
-  · exact Subtype.ext (by simp [contract, hk, SyntacticObject.leaf_val])
-  · simp [LinearizedSyntacticObject.yield_toSyntacticObject, contract, hk] at hx
+  · exact SyntacticObject.val_injective (by simp [hk, SyntacticObject.leaf_val])
+  · simp [LinearizedSyntacticObject.yield_toSyntacticObject, hk] at hx
 
 theorem eq_leaf_of_find? {t s : Marked} {target : SyntacticObject} {x : LexicalItem.Token}
     (h : t.find? target = some s) (ht : target.val.value.isLeft)
@@ -297,7 +306,8 @@ theorem eq_leaf_of_find? {t s : Marked} {target : SyntacticObject} {x : LexicalI
   obtain ⟨k, hk⟩ := exists_val_eq_of_unmark_eq_leaf hs
   rw [hk] at hc
   rcases k with _ | l
-  · exact Subtype.ext (by rw [← hc, contractTree_none, SyntacticObject.leaf_val]; rfl)
+  · exact SyntacticObject.val_injective
+      (by rw [← hc, contractTree_none, SyntacticObject.leaf_val]; rfl)
   · rw [← hc, contractTree_some] at ht
     simp at ht
 
