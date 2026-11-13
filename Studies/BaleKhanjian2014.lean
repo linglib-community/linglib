@@ -584,7 +584,7 @@ theorem licensed_of_mem_structuralAlternatives {ψ : Tree Cat Morpheme}
     (h : ψ ∈ structuralAlternatives lexicon (numPStar n)) : ψ.Licensed fun l _ ↦ IsNominalLabel l :=
   licensed_of_atMostAsComplex_of_cat (K := fun c ↦ c = .N ∨ c = .Num ∨ c = .Def)
     (fun _ _ h ↦ h.cat) (forall_mem_substitutionSource.2 ⟨by decide, by cases n <;> decide⟩)
-    (fun _ _ _ _ h ↦ h) (fun _ _ _ _ _ _ _ h ↦ h) (fun _ _ _ _ _ h ↦ h) (by cases n <;> decide) h
+    (fun _ _ _ _ h ↦ h) (fun _ _ _ _ _ _ h ↦ h) (by cases n <;> decide) h
 
 /-- A set is good over the boys `B` when it contains `B` and only parts of `B`. -/
 structure GoodPred (B : Finset α) (X : Set (Finset α)) : Prop where
@@ -804,8 +804,8 @@ theorem strengthen_definiteDP_sg_eq_empty [Nontrivial α] :
   have hpl : definiteDP .pl ∈ structuralAlternatives lexicon (definiteDP .sg) :=
     leafSubst_mem_structuralAlternatives (by decide) (by decide)
   have hbare : bareDP .sg ∈ structuralAlternatives lexicon (definiteDP .sg) :=
-    .single (StructuralOp.inChild ⟨0, by simp⟩
-      (StructuralOp.contract (child := numP .sg) (by simp) rfl))
+    .single (RoseTree.Rewrites.set _ ⟨0, by simp⟩
+      (.here (StructuralOp.contract (child := numP .sg) (by simp) rfl)))
   obtain ⟨a, b, hab⟩ := exists_pair_ne α
   have hpair : ({a, b} : Finset α).card = 2 := Finset.card_pair hab
   refine Set.eq_empty_of_forall_notMem fun B hB ↦ ?_

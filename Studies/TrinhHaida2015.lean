@@ -42,8 +42,10 @@ alternatives of *not all*.
 * A tree in a derivation under Atomicity carries each substituted expression as a leaf, so
   that nothing inside it can be replaced; [Atomicity only removes
   alternatives](##formalAlternatives_subset).
-* The verb phrases of the first pair of trees are unanalysed, as in the paper's, and the
-  lexicon of its source is empty; the conjunction is a daughter of the coordination.
+* The substitution sources are `FoxKatzir2011.contextualSource`, the constituents of the
+  context sentence entering as the salient ones. The verb phrases of the first pair of trees are
+  unanalysed, as in the paper's, and the lexicon of its source is empty; the conjunction is a
+  daughter of the coordination.
 
 ## TODO
 
@@ -164,7 +166,11 @@ theorem exhIE_run_smoke {u : W} (hu : u ∈ run ∧ u ∈ smoke) :
 
 end RunSmoke
 
-/-! ### The substitution source (13b) -/
+/-! ### Atomicity (32)
+
+A tree in a derivation under Atomicity is a `RoseTree (α ⊕ RoseTree α)`: a node labelled `.inl a`
+is a node of the prejacent, and a leaf labelled `.inr s` is the source expression `s` marked AT,
+its internal structure invisible. -/
 
 section Substitution
 
@@ -181,21 +187,6 @@ private theorem forall₂_append_cons_tail {α : Type*} {r : α → α → Prop}
     exact .cons hd (forall₂_append_cons_tail hc hk)
 
 variable {source : Set (RoseTree α)}
-
-/-- By (13b), the substitution source holds the lexical items and the constituents uttered in
-the context. -/
-def substitutionSource (lexicon uttered : List (RoseTree α)) : Set (RoseTree α) :=
-  {x | x ∈ lexicon ∨ ∃ s ∈ uttered, x ∈ s.subtrees}
-
-instance [DecidableEq α] (lexicon uttered : List (RoseTree α)) :
-    DecidablePred (· ∈ substitutionSource lexicon uttered) := fun x ↦
-  inferInstanceAs (Decidable (x ∈ lexicon ∨ ∃ s ∈ uttered, x ∈ s.subtrees))
-
-/-! ### Atomicity (32)
-
-A tree in a derivation under Atomicity is a `RoseTree (α ⊕ RoseTree α)`: a node labelled `.inl a`
-is a node of the prejacent, and a leaf labelled `.inr s` is the source expression `s` marked AT,
-its internal structure invisible. -/
 
 /-- The sentence a tree with AT-marked expressions stands for. -/
 def expand : RoseTree (α ⊕ RoseTree α) → RoseTree α :=
@@ -351,7 +342,8 @@ def ranAndDidntSmoke : Tree Cat Word := conj (tense goForARun) (tense (neg smoke
 /-- The substitution source of (28) holds the constituents of *Bill went for a run and didn't
 smoke* and of the prejacent *John went for a run*. -/
 abbrev runSource : Set (Tree Cat Word) :=
-  substitutionSource [] [clause .bill ranAndDidntSmoke, clause .john (tense goForARun)]
+  FoxKatzir2011.contextualSource ∅ (clause .john (tense goForARun))
+    (clause .bill ranAndDidntSmoke).subtrees.toFinset
 
 theorem clause_mem_formalAlternatives {source : Set (Tree Cat Word)} {subj : Word}
     {p q : Tree Cat Word} (h : q ∈ formalAlternatives source p) :
@@ -397,7 +389,8 @@ theorem notMem_formalAlternatives_run :
     clause .john (tense (neg goForARun)) ∉
       formalAlternatives runSource (clause .john (tense goForARun)) := by
   constructor <;>
-    simp [clause, conj, tense, neg, goForARun, smoke, ranAndDidntSmoke, substitutionSource,
+    simp [clause, conj, tense, neg, goForARun, smoke, ranAndDidntSmoke,
+      FoxKatzir2011.contextualSource, Tree.substitutionSource,
       mem_formalAlternatives_node]
 
 /-- The VP *the committee pass `q` of my students* of (55). -/
@@ -407,7 +400,8 @@ def pass (q : Word) : Tree Cat Word :=
 /-- The substitution source of (54) holds the scalar items and the constituents of the
 prejacent (55), *the committee didn't pass all of my students*. -/
 abbrev passSource : Set (Tree Cat Word) :=
-  substitutionSource [Tree.terminal .Det .some, Tree.terminal .Det .all] [tense (neg (pass .all))]
+  FoxKatzir2011.contextualSource {.terminal .Det .some, .terminal .Det .all}
+    (tense (neg (pass .all))) ∅
 
 -- (55): replacing NegP with VP and then *all* with *some* derives *passed some*
 theorem passedSome_mem_substitutionAlternatives :
@@ -428,7 +422,8 @@ theorem formalAlternatives_pass :
       (self_mem_formalAlternatives _) (.cons (self_mem_formalAlternatives _) (.cons
         (subset_formalAlternatives _ (by decide)) (.cons (self_mem_formalAlternatives _) .nil))),
       rfl⟩)) .nil), rfl⟩)), ?_⟩
-  simp [tense, neg, pass, substitutionSource, mem_formalAlternatives_node]
+  simp [tense, neg, pass, FoxKatzir2011.contextualSource, Tree.substitutionSource,
+    mem_formalAlternatives_node]
 
 end Derivations
 

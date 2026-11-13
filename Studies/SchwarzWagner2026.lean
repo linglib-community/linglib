@@ -551,16 +551,15 @@ theorem meanings_mem_of_licensed {R : Tree.Label Cat Word → List (Tree.Label C
 theorem licensed_of_alt {source : Set (Tree Cat Word)} {φ ψ : Tree Cat Word}
     (hs : ∀ s ∈ source, s.Licensed (Licit Ws)) (hφ : φ.Licensed (Licit Ws))
     (h : atMostAsComplex source ψ φ) : ψ.Licensed (Licit Ws) := by
-  refine licensed_of_atMostAsComplex hs (fun l ks i hl hr ↦ ?_) (fun l ks i k hi hl hc hr ↦ ?_)
-    (fun _ _ _ _ _ h ↦ h) hφ h
+  refine licensed_of_atMostAsComplex hs (fun l ks i hl hr ↦ ?_) (fun l ks₁ k k' ks₂ hc hr ↦ ?_)
+    hφ h
   · cases l with
     | phrase c k => exact ((List.eraseIdx_sublist ks i).map _).trans hr
     | _ => exact hl.elim
   · cases l with
-    | phrase c k =>
-      have hi' : Label.cat ks[i] = (ks.map Label.cat)[i]'(by simpa using hi) := by simp
-      simpa only [Licit, List.map_set, hc, hi', List.set_getElem_self] using hr
-    | _ => exact hl.elim
+    | terminal c w => simp [Licit] at hr
+    | phrase c k => simpa only [Licit, List.map_append, List.map_cons, hc] using hr
+    | _ => exact hr.elim
 
 theorem simplex_subset (hs : ∀ s ∈ (↑(lex c) : Set (Tree Cat Word)), s.Licensed (Licit Ws))
     (hφ : (prejacent c).Licensed (Licit Ws))
@@ -640,7 +639,7 @@ theorem sentence_mem {d d' : Word} {v : Tree Cat Word} (hφ : prejacent c = sent
     (h : Tree.terminal .Det d' ∈ lex c) :
     atMostAsComplex ↑(lex c) (sentence d' v) (prejacent c) := by
   rw [hφ]
-  exact .single (.inChild ⟨0, by simp⟩ (.inChild ⟨0, by simp⟩ (.subst rfl h)))
+  exact .single (.set _ ⟨0, by simp⟩ (.set _ ⟨0, by simp⟩ (.here (.subst rfl h))))
 
 theorem A_mem_simplex (hc : c ≠ .minimal) : (squareOf (sqAt A X) c).A ∈ simplex A X c := by
   cases c <;> first
@@ -651,13 +650,13 @@ theorem O_mem_simplex (hc : c = .negated ∨ c = .antonym ∨ c = .lexicalized) 
     (squareOf (sqAt A X) c).O ∈ simplex A X c := by
   rcases hc with rfl | rfl | rfl
   · refine ⟨sentence .some_ (.terminal .V .pred), .single ?_, List.mem_cons_self⟩
-    exact .inChild ⟨1, by simp⟩ (ψ_child := Tree.terminal Cat.V Word.pred)
-      (.contract (by simp) rfl trivial)
+    exact .set _ ⟨1, by simp⟩ (c' := Tree.terminal Cat.V Word.pred)
+      (.here (.contract (by simp) rfl trivial))
   · have hO : (squareOf (sqAt A X) .antonym).O = fun w ↦ Det.some A (X w)ᶜ :=
       Set.ext fun _ ↦ some_compl_iff.symm
     rw [hO]
     exact ⟨sentence .some_ (.terminal .V .antonym),
-      .single (.inChild ⟨1, by simp⟩ (.subst rfl (by decide))), List.mem_cons_self⟩
+      .single (.set _ ⟨1, by simp⟩ (.here (.subst rfl (by decide)))), List.mem_cons_self⟩
   · exact ⟨_, sentence_mem (d' := .nall) rfl (by decide), List.mem_cons_self⟩
 
 theorem simplex_subset_squareOf (c : Case) : simplex A X c ⊆ {(squareOf (sqAt A X) c).A,

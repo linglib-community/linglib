@@ -70,6 +70,9 @@ variable {C V : Type*} (lex : Finset (Tree C V)) (φ : Tree C V) (salient : Fins
 sentence, and the salient constituents of the context. -/
 def contextualSource : Set (Tree C V) := substitutionSource lex φ ∪ ↑salient
 
+instance [DecidableEq C] [DecidableEq V] : DecidablePred (· ∈ contextualSource lex φ salient) :=
+  fun t ↦ inferInstanceAs (Decidable ((t ∈ lex ∨ t ∈ φ.subtrees) ∨ t ∈ salient))
+
 /-- The formal alternatives in a context are whatever is at most as complex as the sentence over
 the contextual substitution source. -/
 def formalAlternatives : Set (Tree C V) :=
