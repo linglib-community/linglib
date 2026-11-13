@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Modality.Necessity
+public import Linglib.Semantics.Exhaustification.Basic
+public import Mathlib.Order.Filter.Basic
 public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Fragments.NezPerce.Modals
 public import Linglib.Data.Examples.Deal2011
@@ -9,28 +10,25 @@ public import Linglib.Data.Examples.Readers
 /-!
 # Deal (2011): Modals without scales
 
-This file formalizes [deal-2011]'s account of the Nez Perce modal *o'qa*, used where English
-uses a possibility modal and where it uses a necessity modal in upward-entailing contexts, but
-only where it uses a possibility modal elsewhere. *O'qa* is a possibility modal without a Horn
-scale: two modals form a scale only when they quantify over the same domain, sharing a type of
-modality, and no stronger Nez Perce modal shares *o'qa*'s (§2). A possibility claim without a
-scalar implicature holds whenever there are accessible worlds of the prejacent, even when all
-accessible worlds are, so in an upward-entailing context *o'qa* serves for both forces (§1).
-Under negation the necessity claim is the weaker one, and *o'qa* serves only where a possibility
-modal of English does (§3).
-
-The claims are [kratzer-1981]'s simple possibility and necessity, and negation acts on them by
-complement, the negative `Polarity`. A modal is appropriate where its claim holds and, if it has
-a scalemate, the scalemate's claim fails when it is the stronger one there (`Appropriate`). The
-contexts a modal serves for are then fixed by whether it has a scalemate and which claim is
-stronger (`servesFor_iff`), and Table 1 follows (`flexible_iff`): a modal with a scale is
-inflexible, a scale-free possibility modal is flexible only in upward-entailing contexts, and a
-scale-free necessity modal only in downward-entailing ones.
+[deal-2011] argues that the Nez Perce modal *o'qa*, used where English uses a possibility modal
+and, in upward-entailing contexts, where it uses a necessity modal, is a possibility modal
+without a Horn scale. The use of a modal conveys its claim exhaustified against the claims of
+its scalemates, so [a modal with none conveys its bare claim](##appropriate_empty). A modal
+translates an English modal when, over all consistent necessities, it is appropriate wherever
+the English modal is: [one of its own force and, if no scalemate's claim is stronger, the
+stronger one](##translates_iff). Negation exchanges the forces, [a modal translating under it
+as its dual does](##translates_iff_positive), so a possibility modal without a scale [is
+flexible](##flexible_iff) in upward-entailing contexts only, as [*o'qa* is](##oqa_flexible).
 
 ## Implementation notes
 
-* Forces are compared on the classical scale, weak necessity counting as necessity; the claims
-  are simple possibility and necessity over a consistent modal base, with no ordering source.
+* The necessities at a world are a filter of propositions, as in
+  `Semantics/Modality/Necessity.lean`, consistent when it is `NeBot`: [kratzer-1981]'s simple
+  necessity over a consistent modal base and her human necessity over an ordering source are
+  both instances. Negation acts on a claim by complement, the negative `Polarity`.
+* The scalar implicature is [chierchia-2006]'s exhaustification, the grammatical view of the two
+  the paper leaves open. The alternatives to a modal's use are the claims of its scalemates in
+  the same context, and the English modal it is compared with has both forces for alternatives.
 * Negation stands in for the downward-entailing contexts of §3, the restrictions of universals
   and conditional antecedents, whose rows the `environment` feature marks; the paper treats
   conditional antecedents as not upward-entailing, leaving their monotonicity open (fn. 12).
@@ -43,156 +41,211 @@ scale-free necessity modal only in downward-entailing ones.
 
 * [deal-2011]
 * [kratzer-1981]
+* [chierchia-2006]
 -/
 
 @[expose] public section
 
 namespace Deal2011
 
-open Modality
+open Modality Exhaustification Filter
 
 /-! ### Claims -/
 
 section Claims
 
-variable {W : Type*} (f : Background W) (p : Set W)
+variable {W : Type*} (N : W → Filter W) (p : Set W)
 
-/-- The claim a modal of force `fo` makes about `p` over the base `f`: simple possibility, or
-simple necessity for the universal forces. -/
-def claim : ModalForce → Set W
-  | .possibility => {w | simplePossibility f w p}
-  | .weakNecessity | .necessity => {w | p ∈ simpleNecessity f w}
+/-- The claim a modal of quantificational force `q` makes about `p` over the necessities `N`:
+that `p` is a necessity, or that its negation is not. -/
+def claim : QuantificationalForce → Set W
+  | .universal => {w | p ∈ N w}
+  | .existential => {w | ∃ᶠ v in N w, v ∈ p}
 
-/-- In a context of polarity `π`, the claim of force `g` is stronger than that of `fo`:
-necessity is the stronger claim in an upward-entailing context, possibility under negation. -/
-def StrongerIn : Polarity → ModalForce → ModalForce → Prop
-  | .positive, g, fo => fo.classical < g.classical
-  | .negative, g, fo => g.classical < fo.classical
+variable {N p}
 
-instance : ∀ π g fo, Decidable (StrongerIn π g fo)
-  | .positive, _, _ => inferInstanceAs (Decidable (_ < _))
-  | .negative, _, _ => inferInstanceAs (Decidable (_ < _))
+-- Over consistent necessities the universal claim entails the existential one.
+theorem antitone_claim (hN : ∀ w, (N w).NeBot) : Antitone (claim N p) := by
+  intro q r hqr w hw
+  have := hN w
+  cases q <;> cases r
+  exacts [hw, Eventually.frequently hw, absurd hqr (by decide), hw]
 
-variable {f p}
+variable (N p)
 
-theorem smul_claim_subset (hf : ModalLogic.IsSerial f.accessible) {π : Polarity} {g fo : ModalForce}
-    (h : StrongerIn π g fo) : π • claim f p g ⊆ π • claim f p fo := by
-  have hnec : claim f p .necessity ⊆ claim f p .possibility := fun w hw ↦
-    let ⟨v, hv⟩ := hf.serial w
-    simplePossibility_iff.2 ⟨v, hv, hw hv⟩
-  cases π <;> cases g <;> cases fo <;>
-    first
-    | exact absurd h (by decide)
-    | exact hnec
-    | exact Set.compl_subset_compl.2 hnec
+-- The negation of a claim is the dual claim about the negated prejacent.
+theorem compl_claim (q : QuantificationalForce) : (claim N p q)ᶜ = claim N pᶜ q.dual := by
+  ext w
+  cases q
+  exacts [not_frequently, not_eventually]
 
-variable (f p)
+theorem smul_claim (π : Polarity) (q : QuantificationalForce) :
+    π • claim N p q = claim N (π • p) (π • q) := by
+  cases π
+  exacts [rfl, compl_claim N p q]
 
-/-- A modal of force `fo`, with a scalemate when `s`, is appropriate in a context of polarity
-`π` where its claim holds and, if it has a scalemate whose claim is the stronger there, that
-claim fails: the scalar implicature. -/
-def Appropriate (π : Polarity) (fo : ModalForce) (s : Prop) : Set W :=
-  π • claim f p fo ∩ {w | s → StrongerIn π fo.dual fo → w ∉ π • claim f p fo.dual}
+/-- Where a modal of force `q` is appropriate in a context of polarity `π`, its scalemates
+having the forces `S`: where its claim holds and every scalemate's claim it does not entail
+fails, the scalar implicature. -/
+def appropriate (π : Polarity) (S : Set QuantificationalForce) (q : QuantificationalForce) :
+    Set W :=
+  exh ((π • claim N p ·) '' S) (π • claim N p q)
+
+/-- A modal without a scale is appropriate wherever its claim holds: a possibility modal
+wherever the prejacent holds at some accessible world, even if it holds at all of them. -/
+@[simp]
+theorem appropriate_empty (π : Polarity) (q : QuantificationalForce) :
+    appropriate N p π ∅ q = π • claim N p q := by
+  rw [appropriate, Set.image_empty, exh_empty]
+
+-- In a context a modal is appropriate where the force the polarity makes of it is, about the
+-- prejacent the polarity makes of its own.
+theorem appropriate_eq_positive (π : Polarity) (S : Set QuantificationalForce)
+    (q : QuantificationalForce) :
+    appropriate N p π S q = appropriate N (π • p) .positive ((π • ·) '' S) (π • q) := by
+  simp only [appropriate, smul_claim, Set.image_image, Polarity.positive_smul]
 
 end Claims
 
 /-! ### Flexibility (§1, §3, Table 1) -/
 
-/-- A modal of force `fo`, with a scalemate when `s`, serves in a context of polarity `π` for
-the force `g` when, in every consistent model, it is appropriate wherever a modal of force `g`
-with a scale, as in English, is. -/
-def ServesFor (π : Polarity) (fo : ModalForce) (s : Prop) (g : ModalForce) : Prop :=
-  ∀ (W : Type) (f : Background W), ModalLogic.IsSerial f.accessible → ∀ p : Set W,
-    Appropriate f p π g True ⊆ Appropriate f p π fo s
+/-- A modal of force `q`, its scalemates having the forces `S`, translates an English modal of
+force `r` in a context of polarity `π` when, over all consistent necessities, it is appropriate
+wherever the English modal, which has a scalemate of either force, is. A translation in this
+sense need not be felt exact ((11), (12)). -/
+def Translates (π : Polarity) (S : Set QuantificationalForce) (q r : QuantificationalForce) :
+    Prop :=
+  ∀ (W : Type) (N : W → Filter W), (∀ w, (N w).NeBot) → ∀ p : Set W,
+    appropriate N p π .univ r ⊆ appropriate N p π S q
 
-/-- A modal serves for its own force, and without a scalemate for any force whose claim is
-stronger than its own. -/
-def Usable (π : Polarity) (fo : ModalForce) (s : Prop) (g : ModalForce) : Prop :=
-  fo.classical = g.classical ∨ (¬ s ∧ StrongerIn π g fo)
+variable {π : Polarity} {q r : QuantificationalForce} {S : Set QuantificationalForce}
 
-instance (π : Polarity) (fo : ModalForce) (s : Prop) [Decidable s] (g : ModalForce) :
-    Decidable (Usable π fo s g) :=
-  inferInstanceAs (Decidable (_ ∨ _))
+/-- In a context a modal translates as the force the polarity makes of it does in an
+upward-entailing one: under negation, as its dual. -/
+theorem translates_iff_positive :
+    Translates π S q r ↔ Translates .positive ((π • ·) '' S) (π • q) (π • r) := by
+  have key (W : Type) (N : W → Filter W) (p : Set W) :
+      appropriate N p π .univ r ⊆ appropriate N p π S q ↔
+        appropriate N (π • p) .positive .univ (π • r) ⊆
+          appropriate N (π • p) .positive ((π • ·) '' S) (π • q) := by
+    rw [appropriate_eq_positive, appropriate_eq_positive N p π S,
+      Set.image_univ_of_surjective (MulAction.surjective π)]
+  refine ⟨fun h W N hN p ↦ ?_, fun h W N hN p ↦ (key W N p).2 (h W N hN _)⟩
+  have := (key W N (π • p)).1 (h W N hN _)
+  rwa [smul_smul, Polarity.mul_self, Polarity.positive_smul] at this
 
-variable {W : Type*} {f : Background W} {p : Set W}
+/-- The two-world necessities under which `false` sees both worlds and `true` itself only. -/
+private def upward (w : Bool) : Filter Bool := 𝓟 (Set.Ici w)
 
-theorem appropriate_classical (π : Polarity) (fo : ModalForce) (s : Prop) :
-    Appropriate f p π fo.classical s = Appropriate f p π fo s := by
-  cases fo <;> cases π <;> rfl
+private theorem neBot_upward (w : Bool) : (upward w).NeBot :=
+  principal_neBot_iff.2 ⟨w, Set.self_mem_Ici⟩
 
-/-- The two-world model in which both worlds are accessible from each. -/
-private def bothAccessible : Background Bool := ⊥
+private theorem true_mem (q : QuantificationalForce) : true ∈ claim upward {true} q := by
+  cases q <;> simp [claim, upward]
 
-private theorem isSerial_bothAccessible : ModalLogic.IsSerial bothAccessible.accessible :=
-  ⟨fun _ ↦ ⟨true, by simp [bothAccessible]⟩⟩
+private theorem false_mem_iff (q : QuantificationalForce) :
+    false ∈ claim upward {true} q ↔ q = .existential := by
+  cases q <;> simp [claim, upward]
 
-variable {π : Polarity} {fo g : ModalForce} {s : Prop}
+-- Under these necessities the claims entail one another only as they do everywhere.
+private theorem claim_upward_subset_iff :
+    claim upward {true} r ⊆ claim upward {true} q ↔ q ≤ r :=
+  ⟨fun h ↦ by
+    by_contra hqr
+    obtain rfl : r = .existential := by revert hqr; cases q <;> cases r <;> decide
+    exact hqr ((false_mem_iff q).1 (h ((false_mem_iff _).2 rfl))).le,
+    fun h ↦ antitone_claim neBot_upward h⟩
 
-/-- Decides membership in the two-world model. -/
-local macro "twoWorlds" : tactic =>
-  `(tactic| (simp_all [Appropriate, claim, StrongerIn, bothAccessible, mem_simpleNecessity,
-    simplePossibility_iff, Set.subset_def,
-    ModalForce.classical, ModalForce.dual, ModalForce.rank, Preorder.lift_le_iff,
-    Preorder.lift_lt_iff]; done))
+-- Under these necessities a modal with a scalemate of either force is appropriate somewhere.
+private theorem nonempty_appropriate_upward (r : QuantificationalForce) :
+    (appropriate upward {true} .positive .univ r).Nonempty := by
+  cases r
+  · exact ⟨false, (false_mem_iff _).2 rfl, Set.forall_mem_image.2 fun s _ hs ↦
+      claim_upward_subset_iff.2 ((false_mem_iff s).1 hs).le⟩
+  · exact ⟨true, true_mem .universal, Set.forall_mem_image.2 fun _ _ _ ↦
+      claim_upward_subset_iff.2 le_top⟩
 
-private theorem not_servesFor_of (p : Set Bool)
-    (hin : true ∈ Appropriate bothAccessible p π g True)
-    (hout : true ∉ Appropriate bothAccessible p π fo s) : ¬ ServesFor π fo s g :=
-  fun h ↦ hout (h Bool bothAccessible isSerial_bothAccessible p hin)
+-- In an upward-entailing context a modal translates an English modal of its own force and, if
+-- no scalemate is stronger, the stronger one.
+theorem translates_positive_iff :
+    Translates .positive S q r ↔ q = r ∨ q < r ∧ ∀ s ∈ S, s ≤ q := by
+  have key : Translates .positive S q r ↔ q ≤ r ∧ ∀ s ∈ S, s ≤ r → s ≤ q := by
+    refine ⟨fun h ↦ ?_, fun ⟨hqr, hS⟩ W N hN p ↦ exh_subset_exh
+      (Set.image_mono (Set.subset_univ S)) (antitone_claim hN hqr)
+      (Set.forall_mem_image.2 fun s hs hrs ↦ ?_)⟩
+    · obtain ⟨hqr, hS⟩ := (exh_subset_exh_iff (Set.mem_image_of_mem _ (Set.mem_univ q))
+        (Set.image_mono (Set.subset_univ S)) (nonempty_appropriate_upward r)).1
+        (h Bool upward neBot_upward {true})
+      exact ⟨claim_upward_subset_iff.1 hqr, fun s hs hsr ↦ claim_upward_subset_iff.1
+        (hS _ ⟨s, hs, rfl⟩ (claim_upward_subset_iff.2 hsr))⟩
+    · by_cases hsr : s ≤ r
+      · exact antitone_claim hN (hS s hs hsr)
+      · obtain rfl : q = r := by revert hqr hsr; cases q <;> cases r <;> cases s <;> decide
+        exact hrs
+  rw [key]
+  refine ⟨fun ⟨hqr, hS⟩ ↦ hqr.eq_or_lt.imp_right fun hlt ↦ ⟨hlt, fun s hs ↦ hS s hs ?_⟩, ?_⟩
+  · revert hlt; cases q <;> cases r <;> cases s <;> decide
+  · rintro (rfl | ⟨hlt, hS⟩)
+    exacts [⟨le_rfl, fun _ _ h ↦ h⟩, ⟨hlt.le, fun s hs _ ↦ hS s hs⟩]
 
-/-- The forces a modal serves for are its own and, if it has no scalemate, those whose claim is
-stronger than its own. -/
-theorem servesFor_iff : ServesFor π fo s g ↔ Usable π fo s g := by
-  refine ⟨fun h ↦ ?_, ?_⟩
-  · by_contra hu
-    simp only [Usable, not_or, not_and] at hu
-    obtain ⟨hne, hsg⟩ := hu
-    cases π <;> cases fo <;> cases g <;> try exact absurd rfl hne
-    all_goals try have hs : s := by_contra fun hs ↦ hsg hs (by decide)
-    all_goals first
-      | refine not_servesFor_of .univ ?_ ?_ h <;> clear h <;> twoWorlds
-      | refine not_servesFor_of {true} ?_ ?_ h <;> clear h <;> twoWorlds
-      | refine not_servesFor_of ∅ ?_ ?_ h <;> clear h <;> twoWorlds
-  · rintro (h | ⟨hs, h⟩) W f hf p w hw
-    · rw [← appropriate_classical (fo := g), ← h, appropriate_classical] at hw
-      exact ⟨hw.1, fun _ ↦ hw.2 trivial⟩
-    · exact ⟨smul_claim_subset hf h hw.1, fun hs' ↦ absurd hs' hs⟩
+/-- A modal translates an English modal of its own force and, if no scalemate's claim is
+stronger in the context, the one whose claim is the stronger there. -/
+theorem translates_iff :
+    Translates π S q r ↔ q = r ∨ π • q < π • r ∧ ∀ s ∈ S, π • s ≤ π • q := by
+  rw [translates_iff_positive, translates_positive_iff, Set.forall_mem_image,
+    (MulAction.injective π).eq_iff]
 
-/-- A modal is flexible in a context iff it has no scalemate and its own claim is the weaker there
-(Table 1). -/
-theorem flexible_iff : (∀ g, ServesFor π fo s g) ↔ ¬ s ∧ StrongerIn π fo.dual fo := by
-  simp only [servesFor_iff, Usable]
-  refine ⟨fun h ↦ (h fo.dual).resolve_left (by cases fo <;> decide), fun h g ↦ ?_⟩
-  cases π <;> cases fo <;> cases g <;> first | exact .inl rfl | exact .inr h
+instance (π : Polarity) (S : Set QuantificationalForce) [DecidablePred (· ∈ S)]
+    (q r : QuantificationalForce) : Decidable (Translates π S q r) :=
+  decidable_of_iff _ translates_iff.symm
+
+/-- A modal is flexible in a context, translating English modals of both forces, iff its claim
+is the existential one there and its scalemates all have its own force (Table 1). -/
+theorem flexible_iff :
+    (∀ r, Translates π S q r) ↔ π • q = .existential ∧ ∀ s ∈ S, s = q := by
+  simp only [translates_iff]
+  refine ⟨fun h ↦ ?_, fun ⟨hq, hS⟩ r ↦ or_iff_not_imp_left.2 fun hqr ↦ ⟨?_, fun s hs ↦ ?_⟩⟩
+  · obtain ⟨hlt, hS⟩ := (h q.dual).resolve_left q.dual_ne.symm
+    have hq : π • q = .existential := by
+      revert hlt; cases π <;> cases q <;> decide
+    exact ⟨hq, fun s hs ↦ MulAction.injective π (le_antisymm (hS s hs) (hq.le.trans bot_le))⟩
+  · exact hq.le.trans_lt (bot_le.lt_of_ne fun h ↦ hqr (MulAction.injective π (hq.trans h)))
+  · rw [hS s hs]
+
+-- English: a possibility modal with a necessity scalemate does not translate a necessity modal.
+example : ¬ Translates .positive {.universal} .existential .universal := by decide
 
 /-! ### Scales (§2) -/
 
-/-- A modal of the inventory `L` serves in a context of polarity `π` for the force `g`, given its
-lexical force and whether it has a scalemate in `L`. -/
-def ServesIn (lex : ModalItem → ModalForce) (L : List ModalItem) (π : Polarity) (m : ModalItem)
-    (g : ModalForce) : Prop :=
-  ServesFor π (lex m) (ModalItem.HasScalemate lex L m) g
+/-- A modal of the inventory `L` translates an English modal of force `r` in a context of
+polarity `π`, given the lexical forces `lex` of the modals: its scalemates are those of `L`. -/
+def TranslatesIn (lex : ModalItem → QuantificationalForce) (L : List ModalItem) (π : Polarity)
+    (m : ModalItem) (r : QuantificationalForce) : Prop :=
+  Translates π (m.scalemateForces lex L) (lex m) r
+
+instance (lex : ModalItem → QuantificationalForce) (L : List ModalItem) (π : Polarity)
+    (m : ModalItem) (r : QuantificationalForce) : Decidable (TranslatesIn lex L π m r) :=
+  inferInstanceAs (Decidable (Translates ..))
 
 /-- The Nez Perce modals are possibility modals (§2): *o'qa*, the participial construction,
 which appears to express possibility, *'ax̂*, which speakers judge equivalent to *o'qa*, and the
 epistemic particles 'maybe'. -/
-def lexicalForce (_ : ModalItem) : ModalForce := .possibility
+def lexicalForce (_ : ModalItem) : QuantificationalForce := .existential
 
 -- §2.6
-theorem oqa_scaleFree :
-    ¬ ModalItem.HasScalemate lexicalForce NezPerce.modals NezPerce.oqa := by
-  decide
+theorem oqa_scaleFree : NezPerce.oqa.scalemateForces lexicalForce NezPerce.modals = ∅ :=
+  Set.not_nonempty_iff_eq_empty.1 <| ModalItem.scalemateForces_nonempty.not.2 (by decide)
 
+/-- *O'qa* translates English modals of both forces in an upward-entailing context, not under
+negation (§1, §3). -/
 theorem oqa_flexible :
-    (∀ g, ServesIn lexicalForce NezPerce.modals .positive NezPerce.oqa g) ∧
-      ¬ ∀ g, ServesIn lexicalForce NezPerce.modals .negative NezPerce.oqa g := by
-  simp only [ServesIn, flexible_iff]
+    (∀ r, TranslatesIn lexicalForce NezPerce.modals .positive NezPerce.oqa r) ∧
+      ¬ ∀ r, TranslatesIn lexicalForce NezPerce.modals .negative NezPerce.oqa r := by
   decide
 
 theorem oqa_forces :
-    ∀ g, g.classical ∈ NezPerce.oqa.classical.forces ↔
-      Usable .positive (lexicalForce NezPerce.oqa)
-        (ModalItem.HasScalemate lexicalForce NezPerce.modals NezPerce.oqa) g := by
+    ∀ r, r ∈ NezPerce.oqa.quantificationalForces ↔
+      TranslatesIn lexicalForce NezPerce.modals .positive NezPerce.oqa r := by
   decide
 
 /-! ### Rows -/
@@ -200,30 +253,29 @@ theorem oqa_forces :
 /-- The modals the rows name, keyed by their forms. -/
 def modalTable : List (String × ModalItem) := NezPerce.modals.map fun m ↦ (m.form, m)
 
-/-- The polarity of a row's environment: negation, the restriction of a universal and a
-conditional antecedent are not upward-entailing. -/
-def polarityTable : List (String × Polarity) :=
-  [("unembedded", .positive), ("existential restriction", .positive),
-    ("conditional consequent", .positive), ("negation", .negative),
-    ("universal restriction", .negative), ("conditional antecedent", .negative)]
+/-- The polarity of an environment: negation, the restriction of a universal and a conditional
+antecedent are not upward-entailing. -/
+def polarity : Examples.Environment → Polarity
+  | .unembedded | .existentialRestriction | .conditionalConsequent => .positive
+  | .negation | .universalRestriction | .conditionalAntecedent => .negative
 
 /-- The force of the English modal of a row's context or translation. -/
-def forceTable : List (String × ModalForce) :=
-  [("possibility", .possibility), ("necessity", .necessity)]
+def forceTable : List (String × QuantificationalForce) :=
+  [("possibility", .existential), ("necessity", .universal)]
 
 theorem rows_resolve :
     ∀ e ∈ Examples.all, (e.parse? "modal" modalTable).isSome ∧
-      (e.parse? "environment" polarityTable).isSome := by
+      (Examples.environment e).isSome := by
   decide
 
 -- §1, §3
 theorem rows :
     ∀ e ∈ Examples.all, ∀ m ∈ e.parse? "modal" modalTable,
-      ∀ π ∈ e.parse? "environment" polarityTable,
-        (∀ g ∈ e.parse? "force" forceTable, (e.judgment = .acceptable ↔
-          Usable π (lexicalForce m) (ModalItem.HasScalemate lexicalForce NezPerce.modals m) g)) ∧
-        ∀ r ∈ e.readings, ∃ g ∈ forceTable.lookup r.1, (r.2 = .acceptable ↔
-          Usable π (lexicalForce m) (ModalItem.HasScalemate lexicalForce NezPerce.modals m) g) := by
+      ∀ env ∈ Examples.environment e,
+        (∀ r ∈ e.parse? "force" forceTable, (e.judgment = .acceptable ↔
+          TranslatesIn lexicalForce NezPerce.modals (polarity env) m r)) ∧
+        ∀ x ∈ e.readings, ∃ r ∈ forceTable.lookup x.1, (x.2 = .acceptable ↔
+          TranslatesIn lexicalForce NezPerce.modals (polarity env) m r) := by
   decide
 
 end Deal2011
