@@ -250,9 +250,9 @@ theorem rows_coherence :
   decide +kernel
 
 -- (48b)
-theorem rows_thetaLabel :
-    ∀ r ∈ rows, ∀ ρs ∈ r.objectRole, ∀ s ∈ r.verb.coreSlots[1]?, ∀ ρ ∈ r.verb.thetaLabel s,
-      ρ ∈ ρs := by
+theorem rows_thetaLabels :
+    ∀ r ∈ rows, ∀ ρs ∈ r.objectRole, ∀ s ∈ r.verb.coreSlots[1]?,
+      (r.verb.thetaLabels s).Nonempty → ¬ Disjoint ρs (r.verb.thetaLabels s) := by
   decide +kernel
 
 end GoldbergJackendoff2004

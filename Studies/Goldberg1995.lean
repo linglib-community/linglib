@@ -185,7 +185,9 @@ def kickLF : LinkedFrame :=
   { frame := .np, roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.patient}, true⟩)] }
 
 -- p. 54
-theorem kick_linkedFrame : English.Verbs.kick.linkedFrame? = some kickLF := by decide
+theorem kick_linkedFrame : ∃ L ∈ English.Verbs.kick.linkedFrame?,
+    L.frame = kickLF.frame ∧ ∀ x ∈ kickLF.roles, x.2.admits ⊆ L.admits x.1 := by
+  decide
 
 /-- *kick* fuses with the ditransitive in only one way, kicker with agent and kicked with patient:
 "The participant roles cannot fuse with the argument roles in any other way" (p. 54) (Fig. 2.9). -/

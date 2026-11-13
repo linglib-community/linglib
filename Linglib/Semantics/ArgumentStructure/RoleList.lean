@@ -185,30 +185,30 @@ theorem mannerContact_object_no_cos : ∀ o ∈ mannerContact.objectProfile, .ch
 /-! ### Derived role labels -/
 
 theorem hit_subject_role :
-    mannerContact.subjectProfile.toRole = some .agent := by decide
+    mannerContact.subjectProfile ∈ ThetaRole.profiles .agent := by decide
 
 theorem hit_object_role :
-    contactObject.toRole = some .patient := by decide
+    contactObject ∈ ThetaRole.profiles .patient := by decide
 
 theorem selfMotion_subject_role :
-    selfMotion.subjectProfile.toRole = some .agent := by decide
+    selfMotion.subjectProfile ∈ ThetaRole.profiles .agent := by decide
 
 theorem perception_subject_role :
-    perception.subjectProfile.toRole = some .experiencer := by decide
+    perception.subjectProfile ∈ ThetaRole.profiles .experiencer := by decide
 
 theorem psychCausal_subject_role :
-    psychCausal.subjectProfile.toRole = some .stimulus := by decide
+    psychCausal.subjectProfile ∈ ThetaRole.profiles .stimulus := by decide
 
 theorem directedMotion_subject_role :
-    directedMotion.subjectProfile.toRole = some .theme := by decide
+    directedMotion.subjectProfile ∈ ThetaRole.profiles .theme := by decide
 
 /-- The admire class's stimulus object is exactly the amuse class's subject ([dowty-1991] (38)). -/
 theorem psychState_mirrors_psychCausal :
-    psychState.subjectProfile.toRole = some .experiencer ∧
+    psychState.subjectProfile ∈ ThetaRole.profiles .experiencer ∧
     psychState.objectProfile = some psychCausal.subjectProfile ∧
     psychCausal.objectProfile = some psychState.subjectProfile := by decide
 
 theorem disappearance_subject_role :
-    disappearance.subjectProfile.toRole = some .patient := by decide
+    disappearance.subjectProfile ∈ ThetaRole.profiles .patient := by decide
 
 end ArgumentStructure
