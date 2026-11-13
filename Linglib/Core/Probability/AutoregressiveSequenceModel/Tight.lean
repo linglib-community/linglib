@@ -19,7 +19,8 @@ survival is [the product](##survival_eq_prod) of one minus the conditional end p
 step, [exactly when](##isTight_iff) that probability reaches one or has a divergent sum. In a tight
 model the strings extending a prefix have
 [total probability its prefix probability](##IsTight.stringMeasure_setOf_prefix), the conditionals
-are [the next-symbol laws](##IsTight.next_ofMeasure_stringMeasure) of the string law, and the
+are [the next-symbol laws](##IsTight.next_ofMeasure_stringMeasure) of the string law, the model
+after a prefix [generates the continuation](##IsTight.continuation_stringMeasure), and the
 expected length is [the total survival](##IsTight.lintegral_length) after the first step.
 
 ## Implementation notes
@@ -289,6 +290,21 @@ theorem IsTight.next_ofMeasure_stringMeasure {M : AutoregressiveSequenceModel α
       cond_apply_of_subset .of_discrete hsub, stringMeasure_singleton,
       hM.stringMeasure_setOf_prefix, stringProb, mul_comm (M.prefixProb x),
       ENNReal.mul_div_cancel_right hx (M.prefixProb_ne_top x)]
+
+/-- In a tight model the continuation of the string law after a prefix of positive probability is
+the string law of the model after the prefix. -/
+theorem IsTight.continuation_stringMeasure {M : AutoregressiveSequenceModel α} (hM : M.IsTight)
+    {x : List α} (hx : M.prefixProb x ≠ 0) :
+    M.stringMeasure.continuation x = (M.after x).stringMeasure := by
+  have := M.isTight_iff_isProbabilityMeasure.1 hM
+  have := M.stringMeasure.isProbabilityMeasure_continuation
+    (by rwa [hM.stringMeasure_setOf_prefix] : M.stringMeasure {y | x <+: y} ≠ 0)
+  refine (stringMeasure_eq_of_next_eq fun u hu ↦ ?_).symm
+  rw [ofMeasure_continuation, next_after, next_after, hM.next_ofMeasure_stringMeasure]
+  refine fun h0 ↦ hu ?_
+  have hsub : {y | x ++ u <+: y} ⊆ {y | x <+: y} := fun y ↦ (List.prefix_append x u).trans
+  rw [Measure.continuation_setOf_prefix, cond_apply_of_subset .of_discrete hsub,
+    hM.stringMeasure_setOf_prefix, h0, ENNReal.zero_div]
 
 /-! ### Expected length
 
