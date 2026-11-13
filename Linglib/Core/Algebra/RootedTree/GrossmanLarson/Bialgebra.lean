@@ -21,6 +21,8 @@ pairing transposes the product of the Connes–Kreimer algebra to this comultipl
 ## Main definitions
 
 * `GrossmanLarson.instBialgebra`: the bialgebra structure.
+* `GrossmanLarson.pairingAlgHom`: the pairing as an algebra homomorphism from the opposite
+  algebra to the convolution algebra of linear functionals on the Connes–Kreimer bialgebra.
 
 ## Main results
 
@@ -142,5 +144,20 @@ theorem toConv_pairing_mul [DecidableEq α] (z w : ConnesKreimer R (UnorderedTre
     TensorProduct.map_tmul, LinearMap.mul'_apply]
   rw [pairing_comm, pairing_of'_mul]
   exact congrArg _ (Multiset.map_congr rfl fun p _ ↦ by rw [pairing_comm z, pairing_comm w])
+
+/-- The pairing as an algebra homomorphism from the opposite of the Grossman–Larson algebra to the
+convolution algebra of linear functionals on the Connes–Kreimer bialgebra. The product is
+reversed because `x ⋆ y` grafts `y` onto `x`, while the Connes–Kreimer coproduct puts the pruned
+crown first. -/
+noncomputable def pairingAlgHom [DecidableEq α] :
+    (GrossmanLarson R α)ᵐᵒᵖ →ₐ[R] WithConv (ConnesKreimer R (UnorderedTree α) →ₗ[R] R) :=
+  AlgHom.ofLinearMap
+    ((WithConv.linearEquiv R _).symm.toLinearMap ∘ₗ pairing ∘ₗ linearEquiv.toLinearMap ∘ₗ
+      (MulOpposite.opLinearEquiv R).symm.toLinearMap)
+    (WithConv.ext <| LinearMap.ext fun z ↦ pairing_one_left z)
+    fun x y ↦ toConv_pairing_product y.unop.toConnesKreimer x.unop.toConnesKreimer
+
+@[simp] theorem pairingAlgHom_apply [DecidableEq α] (x : (GrossmanLarson R α)ᵐᵒᵖ) :
+    pairingAlgHom x = toConv (pairing x.unop.toConnesKreimer) := rfl
 
 end GrossmanLarson

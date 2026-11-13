@@ -234,15 +234,15 @@ the first factor is grafted onto the second, to the dual primitives of the Conne
 bialgebra. It sends a tree `T` to `|Aut T| • δ_T`. -/
 noncomputable def pairingLie :
     (ChapotonLivernet R α)ᵐᵒᵖ →ₗ⁅R⁆ dualPrimitives R (ConnesKreimer R (UnorderedTree α)) where
-  toFun x := ⟨toConv (pairing (R := R) (ι x.unop).toConnesKreimer),
-    isDualPrimitive_pairing (isPrimitiveElem_ι _)⟩
+  toFun x := ⟨pairingAlgHom (op (ι x.unop)), isDualPrimitive_pairing (isPrimitiveElem_ι _)⟩
   map_add' x y := Subtype.ext <| by simp
   map_smul' r x := Subtype.ext <| by simp
   map_lie' {x y} := Subtype.ext <| by
-    change toConv (pairing (R := R) (ι ⁅y.unop, x.unop⁆).toConnesKreimer) =
-      ⁅toConv (pairing (ι x.unop).toConnesKreimer), toConv (pairing (ι y.unop).toConnesKreimer)⁆
-    rw [← ιLie_apply ⁅y.unop, x.unop⁆, LieHom.map_lie, Ring.lie_def, Ring.lie_def]
-    simp [← toConv_pairing_product]
+    change pairingAlgHom (op (ι ⁅y.unop, x.unop⁆)) =
+      ⁅pairingAlgHom (op (ι x.unop)), pairingAlgHom (op (ι y.unop))⁆
+    rw [← ιLie_apply ⁅y.unop, x.unop⁆, LieHom.map_lie, Ring.lie_def, Ring.lie_def, op_sub, op_mul,
+      op_mul, map_sub, map_mul, map_mul]
+    rfl
 
 @[simp] theorem coe_pairingLie (x : (ChapotonLivernet R α)ᵐᵒᵖ) :
     (pairingLie x : WithConv (ConnesKreimer R (UnorderedTree α) →ₗ[R] R)) =

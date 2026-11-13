@@ -9,6 +9,7 @@ public import Linglib.Core.Algebra.BigOperators.Ring.Multiset
 public import Linglib.Core.Algebra.RootedTree.BMinus
 public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
+public import Linglib.Core.LinearAlgebra.BilinearForm.TensorProduct
 public import Mathlib.Algebra.Order.BigOperators.Group.Multiset
 public import Mathlib.RingTheory.Coalgebra.Convolution
 
@@ -25,6 +26,7 @@ Grossman–Larson algebra to the graded dual.
 
 * `ConnesKreimer.pairing_gl_eq_pairing_coproduct`: the duality
   `⟨x ⋆ y, z⟩ = ⟨y ⊗ x, Δ^ρ z⟩`.
+* `ConnesKreimer.isAdjointPair_product_comulAlgHom`: the same as a `LinearMap.IsAdjointPair`.
 * `ConnesKreimer.toConv_pairing_product`: `⟨x ⋆ y, ·⟩ = ⟨y, ·⟩ * ⟨x, ·⟩` in the convolution
   algebra of linear functionals.
 * `ConnesKreimer.pairing_product_assoc`: the two triple products pair equally against everything,
@@ -62,16 +64,12 @@ variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-! ### Adjoint through the second tensor slot -/
 
-private lemma pairing_tmul_lTensor_bPlus (a : α)
-    (u v : ConnesKreimer R (UnorderedTree α))
+private lemma pairing_tmul_lTensor_bPlus (a : α) (u v : ConnesKreimer R (UnorderedTree α))
     (V : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
-    pairing.tmul pairing (u ⊗ₜ[R] v) ((LinearMap.lTensor _ (bPlus (R := R) a)) V) =
-      pairing.tmul pairing (u ⊗ₜ[R] (bMinus (R := R) a v)) V := by
-  induction V using TensorProduct.inductionOn with
-  | tmul p q =>
-    rw [LinearMap.lTensor_tmul, LinearMap.BilinForm.tensorDistrib_tmul,
-      LinearMap.BilinForm.tensorDistrib_tmul, ← pairing_bMinus]
-  | add V₁ V₂ ih₁ ih₂ => simp only [map_add, ih₁, ih₂]
+    pairing.tmul pairing (u ⊗ₜ[R] v) (LinearMap.lTensor _ (bPlus (R := R) a) V) =
+      pairing.tmul pairing (u ⊗ₜ[R] bMinus (R := R) a v) V :=
+  (LinearMap.IsAdjointPair.tmul (f₁ := .id) (g₁ := .id) (fun _ _ ↦ rfl)
+    (isAdjointPair_bMinus_bPlus a) (u ⊗ₜ[R] v) V).symm
 
 /-! ### Tensor-square of the pairing product rule -/
 
@@ -141,6 +139,15 @@ theorem pairing_gl_eq_pairing_coproduct (x y z : ConnesKreimer R (UnorderedTree 
   LinearMap.congr_fun (lhom_ext' (f := pairing (product x y))
     (g := (pairing.tmul pairing (y ⊗ₜ[R] x)).comp (comulAlgHom (R := R)).toLinearMap)
     fun C ↦ pairing_gl_of' C x y) z
+
+/-- The duality as an adjoint pair: the Grossman–Larson product with its factors swapped, as a map
+out of the tensor square, is adjoint to the Connes–Kreimer coproduct. -/
+theorem isAdjointPair_product_comulAlgHom :
+    LinearMap.IsAdjointPair (pairing.tmul pairing) (pairing (R := R))
+      (TensorProduct.lift (product (α := α)).flip) comulAlgHom := fun t z ↦ by
+  induction t using TensorProduct.inductionOn with
+  | tmul y x => exact pairing_gl_eq_pairing_coproduct x y z
+  | add s t hs ht => simp only [map_add, LinearMap.add_apply, hs, ht]
 
 /-! ### The pairing as a map to the convolution algebra -/
 
