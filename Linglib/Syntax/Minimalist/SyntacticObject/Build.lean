@@ -55,11 +55,6 @@ instance : Inhabited (SyntacticObject L) := ⟨trace⟩
 
 /-! ### Merge as multiplication -/
 
-/-- Merge on the carrier is written `l * r`, the commutative magma of the objects. -/
-instance : CommMagma (SyntacticObject L) where
-  mul := merge
-  mul_comm := merge_comm
-
 @[simp] theorem mul_def (l r : SyntacticObject L) : l * r = merge l r := rfl
 
 /-- Relabelling along a map of lexical alphabets is a homomorphism of magmas. -/
@@ -106,9 +101,6 @@ end SyntacticObject
 
 namespace LinearizedSyntacticObject
 
-/-- Merge on the ordered carrier, in the given order, is written `l * r`. -/
-instance : Mul (LinearizedSyntacticObject L) := ⟨merge⟩
-
 @[simp] theorem mul_def (l r : LinearizedSyntacticObject L) : l * r = merge l r := rfl
 
 /-- A lexical item is a leaf. -/
@@ -145,10 +137,8 @@ theorem toSyntacticObjectHom_comp_mapHom {L' : Type} (f : L → L') :
   MulHom.ext fun p ↦ toSyntacticObject_map f p
 
 theorem merge_inj {l r l' r' : LinearizedSyntacticObject L} :
-    merge l r = merge l' r' ↔ l = l' ∧ r = r' := by
-  refine ⟨fun h ↦ ?_, fun ⟨hl, hr⟩ ↦ hl ▸ hr ▸ rfl⟩
-  obtain ⟨hl, hr⟩ : l.val = l'.val ∧ r.val = r'.val := by simpa using congrArg Subtype.val h
-  exact ⟨Subtype.ext hl, Subtype.ext hr⟩
+    merge l r = merge l' r' ↔ l = l' ∧ r = r' :=
+  ⟨fun h ↦ by injection h with h₁ h₂; exact ⟨h₁, h₂⟩, fun ⟨hl, hr⟩ ↦ hl ▸ hr ▸ rfl⟩
 
 theorem merge_ne_left (l r : LinearizedSyntacticObject L) : merge l r ≠ l := fun h ↦ by
   have := congrArg (·.val.numNodes) h

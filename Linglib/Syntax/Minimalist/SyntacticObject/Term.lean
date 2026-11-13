@@ -95,7 +95,7 @@ instance [DecidableEq L] (x y : SyntacticObject L) : Decidable (ImmediatelyConta
     ImmediatelyContains (merge l r) y ↔ y = l ∨ y = r := by
   simp only [ImmediatelyContains, merge_val, children_node, Multiset.insert_eq_cons,
     Multiset.mem_cons, Multiset.mem_singleton]
-  exact or_congr Subtype.val_inj Subtype.val_inj
+  exact or_congr val_inj val_inj
 
 /-! ### Containment -/
 
@@ -186,46 +186,80 @@ theorem isSyntacticObject_of_mem_subtrees (s : SyntacticObject L) :
   induction s using SyntacticObject.ind with
   | leaf tok =>
     simp only [SyntacticObject.leaf_val, mem_subtrees_leaf, forall_eq]
-    exact (SyntacticObject.leaf tok).2
+    exact (SyntacticObject.leaf tok).isSyntacticObject_val
   | trace =>
     simp only [SyntacticObject.trace_val, mem_subtrees_leaf, forall_eq]
-    exact SyntacticObject.trace.2
+    exact SyntacticObject.trace.isSyntacticObject_val
   | traceOf tok =>
     simp only [SyntacticObject.traceOf_val, mem_subtrees_leaf, forall_eq]
-    exact (SyntacticObject.traceOf tok).2
+    exact (SyntacticObject.traceOf tok).isSyntacticObject_val
   | merge l r ihl ihr =>
     simp only [SyntacticObject.merge_val, mem_subtrees_node_pair]
     rintro m (rfl | h | h)
-    exacts [(SyntacticObject.merge l r).2, ihl m h, ihr m h]
+    exacts [SyntacticObject.merge_val l r ▸ (SyntacticObject.merge l r).isSyntacticObject_val,
+      ihl m h, ihr m h]
 
 namespace SyntacticObject
 
 variable {x y l r : SyntacticObject L}
 
+/-- The terms of the syntactic object a linearized object presents, one per vertex. -/
+def _root_.Minimalist.LinearizedSyntacticObject.terms :
+    LinearizedSyntacticObject L → Multiset (SyntacticObject L)
+  | .of x => {FreeCommMagma.of x}
+  | .mul l r => (LinearizedSyntacticObject.toSyntacticObject l *
+      LinearizedSyntacticObject.toSyntacticObject r) ::ₘ
+      (LinearizedSyntacticObject.terms l + LinearizedSyntacticObject.terms r)
+
+theorem _root_.Minimalist.LinearizedSyntacticObject.terms_eq_of_commCon
+    {p q : LinearizedSyntacticObject L} (h : Magma.commCon (FreeMagma (Leaf L)) p q) :
+    p.terms = q.terms := by
+  induction h with
+  | of x y h =>
+    obtain ⟨a, b, rfl, rfl⟩ := h
+    show (_ * _) ::ₘ (_ + _) = (_ * _) ::ₘ (_ + _)
+    rw [mul_comm, add_comm]
+  | refl => rfl
+  | symm _ ih => exact ih.symm
+  | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+  | @mul w x y z h₁ h₂ ih₁ ih₂ =>
+    show (LinearizedSyntacticObject.toSyntacticObject w * LinearizedSyntacticObject.toSyntacticObject y)
+        ::ₘ (_ + _) =
+      (LinearizedSyntacticObject.toSyntacticObject x * LinearizedSyntacticObject.toSyntacticObject z)
+        ::ₘ (_ + _)
+    rw [ih₁, ih₂, show LinearizedSyntacticObject.toSyntacticObject w
+        = LinearizedSyntacticObject.toSyntacticObject x from
+          FreeMagma.toFreeCommMagma_eq_toFreeCommMagma.2 h₁,
+      show LinearizedSyntacticObject.toSyntacticObject y
+        = LinearizedSyntacticObject.toSyntacticObject z from
+          FreeMagma.toFreeCommMagma_eq_toFreeCommMagma.2 h₂]
+
 /-- The terms of a syntactic object, itself included. -/
 def terms (s : SyntacticObject L) : Multiset (SyntacticObject L) :=
-  (UnorderedTree.subtrees s.val).pmap Subtype.mk (isSyntacticObject_of_mem_subtrees s)
+  Quotient.liftOn s LinearizedSyntacticObject.terms
+    fun _ _ h ↦ LinearizedSyntacticObject.terms_eq_of_commCon h
 
-@[simp] theorem map_val_terms (s : SyntacticObject L) :
-    s.terms.map Subtype.val = UnorderedTree.subtrees s.val := by
-  simp [terms, Multiset.map_pmap, Multiset.pmap_eq_map]
+@[simp] theorem terms_leaf (tok : L) : (leaf tok).terms = {leaf tok} := rfl
 
-@[simp] theorem terms_leaf (tok : L) : (leaf tok).terms = {leaf tok} :=
-  Multiset.map_injective Subtype.val_injective <| by
-    rw [Multiset.map_singleton, map_val_terms, leaf_val, UnorderedTree.subtrees_leaf]
+@[simp] theorem terms_trace : (trace : SyntacticObject L).terms = {trace} := rfl
 
-@[simp] theorem terms_trace : (trace : SyntacticObject L).terms = {trace} :=
-  Multiset.map_injective Subtype.val_injective <| by
-    rw [Multiset.map_singleton, map_val_terms, trace_val, UnorderedTree.subtrees_leaf]
-
-@[simp] theorem terms_traceOf (tok : L) : (traceOf tok).terms = {traceOf tok} :=
-  Multiset.map_injective Subtype.val_injective <| by
-    rw [Multiset.map_singleton, map_val_terms, traceOf_val, UnorderedTree.subtrees_leaf]
+@[simp] theorem terms_traceOf (tok : L) : (traceOf tok).terms = {traceOf tok} := rfl
 
 @[simp] theorem terms_merge (l r : SyntacticObject L) :
-    (merge l r).terms = merge l r ::ₘ (l.terms + r.terms) :=
-  Multiset.map_injective Subtype.val_injective <| by
-    simp only [Multiset.map_cons, Multiset.map_add, map_val_terms, merge_val,
+    (merge l r).terms = merge l r ::ₘ (l.terms + r.terms) := by
+  obtain ⟨l, rfl⟩ := LinearizedSyntacticObject.toSyntacticObject_surjective l
+  obtain ⟨r, rfl⟩ := LinearizedSyntacticObject.toSyntacticObject_surjective r
+  rfl
+
+@[simp] theorem map_val_terms (s : SyntacticObject L) :
+    s.terms.map val = UnorderedTree.subtrees s.val := by
+  induction s using ind with
+  | leaf tok => rw [terms_leaf, Multiset.map_singleton, leaf_val, UnorderedTree.subtrees_leaf]
+  | trace => rw [terms_trace, Multiset.map_singleton, trace_val, UnorderedTree.subtrees_leaf]
+  | traceOf tok =>
+    rw [terms_traceOf, Multiset.map_singleton, traceOf_val, UnorderedTree.subtrees_leaf]
+  | merge l r ihl ihr =>
+    rw [terms_merge, Multiset.map_cons, Multiset.map_add, ihl, ihr, merge_val,
       UnorderedTree.subtrees_node_pair]
 
 /-- The terms of `x` are the objects it reflexively contains. -/
@@ -240,7 +274,7 @@ theorem self_mem_terms (s : SyntacticObject L) : s ∈ s.terms :=
   mem_terms.2 ReflTransGen.refl
 
 theorem val_mem_subtrees {S U : SyntacticObject L} : S.val ∈ U.val.subtrees ↔ S ∈ U.terms := by
-  rw [← map_val_terms, Multiset.mem_map_of_injective Subtype.val_injective]
+  rw [← map_val_terms, Multiset.mem_map_of_injective val_injective]
 
 theorem mem_terms_merge_right (u C : SyntacticObject L) : C ∈ (merge u C).terms := by
   rw [terms_merge]
@@ -297,7 +331,7 @@ theorem count_terms_merge_left [DecidableEq L] (u C : SyntacticObject L) :
   rw [terms_merge, Multiset.count_cons_of_ne hne, Multiset.count_add, count_self_terms, add_comm]
 
 theorem card_terms (s : SyntacticObject L) : s.terms.card = s.val.numNodes := by
-  rw [terms, Multiset.card_pmap, UnorderedTree.card_subtrees]
+  rw [← UnorderedTree.card_subtrees, ← map_val_terms, Multiset.card_map]
 
 instance [DecidableEq L] (x y : SyntacticObject L) : Decidable (ContainsOrEq x y) :=
   decidable_of_iff _ mem_terms

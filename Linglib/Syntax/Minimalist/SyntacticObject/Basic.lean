@@ -9,6 +9,7 @@ public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 public import Linglib.Core.Data.Multiset.ZeroCons
 public import Linglib.Core.Data.UnorderedTree.Basic
 public import Linglib.Core.Data.UnorderedTree.Licensed
+public import Linglib.Core.Algebra.FreeCommMagma
 public import Linglib.Syntax.Minimalist.LexicalItem
 
 /-!
@@ -153,21 +154,145 @@ theorem IsSyntacticObject.isFullBinary {L : Type} {t : UnorderedTree (SyntacticO
     | .inl (some _), _, h | .inr _, _, h => .inl (congrArg Multiset.card h)
     | .inl none, _, h => .inr h) h
 
-/-- The syntactic objects over the lexical alphabet `L` are the well-formed unordered trees over
-    `Vertex L`. -/
-def SyntacticObject (L : Type := LexicalItem.Token) : Type :=
-  { t : UnorderedTree (SyntacticObject.Vertex L) // IsSyntacticObject t }
+/-! ### Leaves and the two carriers -/
 
-/-- The linearized syntactic objects are the well-formed ordered trees over `Vertex L`, in any
-    order of the daughters: [marcolli-chomsky-berwick-2025] §1.12's planar embeddings. -/
-def LinearizedSyntacticObject (L : Type := LexicalItem.Token) : Type :=
-  { t : RoseTree (SyntacticObject.Vertex L) // IsSyntacticObject (UnorderedTree.mk t) }
+namespace SyntacticObject
 
-instance {L : Type} [DecidableEq L] : DecidableEq (SyntacticObject L) :=
-  Subtype.instDecidableEq
+variable {L L' L'' : Type}
 
-instance {L : Type} [DecidableEq L] : DecidableEq (LinearizedSyntacticObject L) :=
-  Subtype.instDecidableEq
+/-- A leaf of a syntactic object: a lexical item, the index-free trace, or the trace of an item. -/
+inductive Leaf (L : Type) where
+  /-- A lexical item. -/
+  | lex (a : L)
+  /-- The index-free trace. -/
+  | trace
+  /-- The trace of the item `a`. -/
+  | traceOf (a : L)
+  deriving DecidableEq
+
+namespace Leaf
+
+/-- The vertex a leaf labels. -/
+def toVertex : Leaf L → Vertex L
+  | lex a => Vertex.lex a
+  | trace => Vertex.trace
+  | traceOf a => Vertex.traceOf a
+
+theorem toVertex_injective : Function.Injective (toVertex (L := L)) := by
+  rintro (a | _ | a) (b | _ | b) h <;> simp_all [toVertex]
+
+theorem toVertex_ne_bare (x : Leaf L) : x.toVertex ≠ Vertex.bare := by
+  cases x <;> simp [toVertex]
+
+/-- The leaf with its item relabelled by `f`. -/
+def map (f : L → L') : Leaf L → Leaf L'
+  | lex a => lex (f a)
+  | trace => trace
+  | traceOf a => traceOf (f a)
+
+@[simp] theorem map_id : map (id : L → L) = id := by funext x; cases x <;> rfl
+
+theorem map_comp (f : L → L') (g : L' → L'') : map g ∘ map f = map (g ∘ f) := by
+  funext x; cases x <;> rfl
+
+end Leaf
+
+end SyntacticObject
+
+/-- The linearized syntactic objects over `L`, the free magma on the leaves:
+[marcolli-chomsky-berwick-2025] §1.12's planar syntactic objects. -/
+abbrev LinearizedSyntacticObject (L : Type := LexicalItem.Token) : Type :=
+  FreeMagma (SyntacticObject.Leaf L)
+
+/-- The syntactic objects over `L`, the free commutative magma on the leaves. -/
+abbrev SyntacticObject (L : Type := LexicalItem.Token) : Type :=
+  FreeCommMagma (SyntacticObject.Leaf L)
+
+/-! ### Linearized objects -/
+
+namespace LinearizedSyntacticObject
+
+open SyntacticObject (Vertex Leaf isSyntacticObject_mk_leaf isSyntacticObject_mk_merge)
+
+variable {L : Type}
+
+/-- A lexical leaf. -/
+@[coe] def leaf (a : L) : LinearizedSyntacticObject L := FreeMagma.of (.lex a)
+
+/-- The index-free trace. -/
+def trace : LinearizedSyntacticObject L := FreeMagma.of .trace
+
+/-- The trace of `a`. -/
+def traceOf (a : L) : LinearizedSyntacticObject L := FreeMagma.of (.traceOf a)
+
+/-- Merge, with the daughters in the given order, also written `*`. -/
+abbrev merge (l r : LinearizedSyntacticObject L) : LinearizedSyntacticObject L := l * r
+
+/-- The ordered tree of a linearized object. -/
+def val : LinearizedSyntacticObject L → RoseTree (Vertex L)
+  | .of x => .node x.toVertex []
+  | .mul l r => .node Vertex.bare [val l, val r]
+
+@[simp] theorem leaf_val (a : L) :
+    (leaf a).val = .node (Vertex.lex a) [] := rfl
+@[simp] theorem trace_val : (trace : LinearizedSyntacticObject L).val = .node Vertex.trace [] :=
+  rfl
+@[simp] theorem traceOf_val (a : L) :
+    (traceOf a).val = .node (Vertex.traceOf a) [] :=
+  rfl
+@[simp] theorem merge_val (l r : LinearizedSyntacticObject L) :
+    (merge l r).val = .node Vertex.bare [l.val, r.val] := rfl
+
+/-- The tree of a linearized object is well formed. -/
+theorem isSyntacticObject_val (p : LinearizedSyntacticObject L) :
+    IsSyntacticObject (UnorderedTree.mk p.val) := by
+  induction p using FreeMagma.recOnMul with
+  | ih1 x => exact isSyntacticObject_mk_leaf x.toVertex_ne_bare
+  | ih2 l r hl hr => exact (isSyntacticObject_mk_merge _ _).2 ⟨hl, hr⟩
+
+theorem val_injective : Function.Injective (val : LinearizedSyntacticObject L → _) := by
+  intro p
+  induction p using FreeMagma.recOnMul with
+  | ih1 x =>
+    intro q h
+    cases q with
+    | of y => exact congrArg FreeMagma.of (Leaf.toVertex_injective (by simpa [val] using h))
+    | mul l r => simp [val] at h
+  | ih2 l r hl hr =>
+    intro q h
+    cases q with
+    | of y => simp [val] at h
+    | mul l' r' =>
+      obtain ⟨h₁, h₂⟩ : val l = val l' ∧ val r = val r' := by simpa [val] using h
+      rw [hl h₁, hr h₂]; rfl
+
+/-- Forgetting the order is the quotient map to the syntactic object. -/
+@[coe] def toSyntacticObject (p : LinearizedSyntacticObject L) : SyntacticObject L :=
+  FreeMagma.toFreeCommMagma p
+
+theorem toSyntacticObject_surjective :
+    Function.Surjective (toSyntacticObject : LinearizedSyntacticObject L → SyntacticObject L) :=
+  FreeMagma.toFreeCommMagma_surjective
+
+/-- Two linearized objects with one syntactic object have one unordered tree. -/
+theorem mk_val_eq_of_commCon {p q : LinearizedSyntacticObject L}
+    (h : Magma.commCon (FreeMagma (Leaf L)) p q) :
+    UnorderedTree.mk p.val = UnorderedTree.mk q.val := by
+  induction h with
+  | of x y h =>
+    obtain ⟨a, b, rfl, rfl⟩ := h
+    show UnorderedTree.mk (.node Vertex.bare [val a, val b])
+      = UnorderedTree.mk (.node Vertex.bare [val b, val a])
+    rw [← UnorderedTree.node_pair_mk, ← UnorderedTree.node_pair_mk, Multiset.pair_comm]
+  | refl => rfl
+  | symm _ ih => exact ih.symm
+  | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+  | @mul w x y z _ _ ih₁ ih₂ =>
+    show UnorderedTree.mk (.node Vertex.bare [val w, val y])
+      = UnorderedTree.mk (.node Vertex.bare [val x, val z])
+    rw [← UnorderedTree.node_pair_mk, ← UnorderedTree.node_pair_mk, ih₁, ih₂]
+
+end LinearizedSyntacticObject
 
 /-! ### The shapes -/
 
@@ -176,25 +301,29 @@ namespace SyntacticObject
 variable {L : Type}
 
 /-- A lexical leaf. -/
-@[coe] def leaf (a : L) : SyntacticObject L :=
-  ⟨UnorderedTree.leaf (Vertex.lex a), isSyntacticObject_mk_leaf (by simp)⟩
+@[coe] def leaf (a : L) : SyntacticObject L := FreeCommMagma.of (.lex a)
 
 /-- The index-free trace, the mark an admissible cut leaves in the remaining tree
     ([marcolli-chomsky-berwick-2025], Definition 1.2.6); `traceOf` is the indexed trace. -/
-def trace : SyntacticObject L :=
-  ⟨UnorderedTree.leaf Vertex.trace, isSyntacticObject_mk_leaf (by simp)⟩
+def trace : SyntacticObject L := FreeCommMagma.of .trace
 
 /-- The trace of `a`. -/
-def traceOf (a : L) : SyntacticObject L :=
-  ⟨UnorderedTree.leaf (Vertex.traceOf a), isSyntacticObject_mk_leaf (by simp)⟩
+def traceOf (a : L) : SyntacticObject L := FreeCommMagma.of (.traceOf a)
+
+/-- Merge on the carrier, the product of the free commutative magma, also written `*`. -/
+abbrev merge (l r : SyntacticObject L) : SyntacticObject L := l * r
+
+/-- The unordered tree of a syntactic object. -/
+def val (s : SyntacticObject L) : UnorderedTree (Vertex L) :=
+  Quotient.liftOn s (fun p : LinearizedSyntacticObject L ↦ UnorderedTree.mk p.val)
+    fun _ _ h ↦ LinearizedSyntacticObject.mk_val_eq_of_commCon h
+
+@[simp] theorem _root_.Minimalist.LinearizedSyntacticObject.toSyntacticObject_val
+    (p : LinearizedSyntacticObject L) : p.toSyntacticObject.val = UnorderedTree.mk p.val := rfl
 
 @[simp] theorem leaf_val (a : L) :
     (leaf a).val = UnorderedTree.leaf (Vertex.lex a) :=
   rfl
-
-@[simp] theorem leaf_inj {a b : L} : leaf a = leaf b ↔ a = b :=
-  ⟨fun h ↦ Option.some_injective _
-    (Sum.inl_injective (congrArg (fun s : SyntacticObject L ↦ s.val.value) h)), congrArg leaf⟩
 @[simp] theorem trace_val : (trace : SyntacticObject L).val = UnorderedTree.leaf Vertex.trace :=
   rfl
 @[simp] theorem traceOf_val (a : L) :
@@ -211,96 +340,59 @@ theorem isSyntacticObject_merge_iff (a b : UnorderedTree (Vertex L)) :
         = Multiset.ofList ([pa, pb].map UnorderedTree.mk) from rfl, UnorderedTree.node_mk_tree_list]
   exact isSyntacticObject_mk_merge pa pb
 
-/-- Merge on the carrier, the bare binary node over two syntactic objects, also written `*`. -/
-def merge (l r : SyntacticObject L) : SyntacticObject L :=
-  ⟨UnorderedTree.node Vertex.bare {l.val, r.val}, (isSyntacticObject_merge_iff _ _).2 ⟨l.2, r.2⟩⟩
-
 @[simp] theorem merge_val (l r : SyntacticObject L) :
-    (merge l r).val = UnorderedTree.node Vertex.bare {l.val, r.val} := rfl
+    (merge l r).val = UnorderedTree.node Vertex.bare {l.val, r.val} := by
+  obtain ⟨l, rfl⟩ := LinearizedSyntacticObject.toSyntacticObject_surjective l
+  obtain ⟨r, rfl⟩ := LinearizedSyntacticObject.toSyntacticObject_surjective r
+  exact (UnorderedTree.node_pair_mk _ _ _).symm
 
-theorem merge_comm (l r : SyntacticObject L) : merge l r = merge r l :=
-  Subtype.ext (by rw [merge_val, merge_val, Multiset.pair_comm])
+/-- The tree of a syntactic object is well formed. -/
+theorem isSyntacticObject_val (s : SyntacticObject L) : IsSyntacticObject s.val := by
+  obtain ⟨p, rfl⟩ := LinearizedSyntacticObject.toSyntacticObject_surjective s
+  exact p.isSyntacticObject_val
+
+@[simp] theorem leaf_inj {a b : L} : leaf a = leaf b ↔ a = b :=
+  ⟨fun h ↦ by injection FreeCommMagma.of_injective h, congrArg leaf⟩
+
+theorem merge_comm (l r : SyntacticObject L) : merge l r = merge r l := mul_comm l r
 
 theorem merge_eq_merge_iff {l r l' r' : SyntacticObject L} :
-    merge l r = merge l' r' ↔ l = l' ∧ r = r' ∨ l = r' ∧ r = l' := by
-  refine ⟨fun h ↦ ?_, ?_⟩
-  · have := congrArg (fun s : SyntacticObject L ↦ s.val.children) h
-    simp only [merge_val, UnorderedTree.children_node] at this
-    rcases Multiset.pair_eq_pair_iff.1 this with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
-    exacts [.inl ⟨Subtype.ext h₁, Subtype.ext h₂⟩, .inr ⟨Subtype.ext h₁, Subtype.ext h₂⟩]
-  · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
-    exacts [rfl, merge_comm _ _]
+    merge l r = merge l' r' ↔ l = l' ∧ r = r' ∨ l = r' ∧ r = l' :=
+  FreeCommMagma.mul_eq_mul_iff
 
 @[simp]
 theorem leaf_ne_merge (a : L) (l r : SyntacticObject L) : leaf a ≠ merge l r :=
-  fun h ↦ by simpa using congrArg (fun s : SyntacticObject L ↦ s.val.value) h
+  FreeCommMagma.of_ne_mul _ l r
 
 @[simp]
 theorem leaf_ne_trace (a : L) : leaf a ≠ trace :=
-  fun h ↦ by simpa using congrArg (fun s : SyntacticObject L ↦ s.val.value) h
+  fun h ↦ by injection FreeCommMagma.of_injective h
 
 @[simp]
 theorem leaf_ne_traceOf (a b : L) : leaf a ≠ traceOf b :=
-  fun h ↦ by simpa using congrArg (fun s : SyntacticObject L ↦ s.val.value) h
+  fun h ↦ by injection FreeCommMagma.of_injective h
 
 @[simp]
 theorem traceOf_ne_merge (a : L) (l r : SyntacticObject L) :
     traceOf a ≠ merge l r :=
-  fun h ↦ by simpa using congrArg (fun s : SyntacticObject L ↦ s.val.value) h
+  FreeCommMagma.of_ne_mul _ l r
 
 @[simp]
 theorem traceOf_ne_leaf (a b : L) : traceOf a ≠ leaf b :=
-  fun h ↦ by simpa using congrArg (fun s : SyntacticObject L ↦ s.val.value) h
+  fun h ↦ by injection FreeCommMagma.of_injective h
 
-theorem merge_mk (pl pr : RoseTree (Vertex L))
-    (hl : IsSyntacticObject (UnorderedTree.mk pl)) (hr : IsSyntacticObject (UnorderedTree.mk pr)) :
-    (merge ⟨UnorderedTree.mk pl, hl⟩ ⟨UnorderedTree.mk pr, hr⟩).val
-      = UnorderedTree.mk (.node Vertex.bare [pl, pr]) := by
-  rw [merge_val,
-      show ({UnorderedTree.mk pl, UnorderedTree.mk pr} : Multiset (UnorderedTree (Vertex L)))
-        = Multiset.ofList ([pl, pr].map UnorderedTree.mk) from rfl,
-      UnorderedTree.node_mk_tree_list]
+@[simp] theorem traceOf_inj {a b : L} : traceOf a = traceOf b ↔ a = b :=
+  ⟨fun h ↦ by injection FreeCommMagma.of_injective h, congrArg traceOf⟩
+
+@[simp]
+theorem trace_ne_merge (l r : SyntacticObject L) : (trace : SyntacticObject L) ≠ merge l r :=
+  FreeCommMagma.of_ne_mul _ l r
 
 end SyntacticObject
 
 namespace LinearizedSyntacticObject
 
-open SyntacticObject (Vertex isSyntacticObject_mk_leaf isSyntacticObject_mk_merge)
-
 variable {L : Type}
-
-/-- A lexical leaf. -/
-@[coe] def leaf (a : L) : LinearizedSyntacticObject L :=
-  ⟨.node (Vertex.lex a) [], isSyntacticObject_mk_leaf (by simp)⟩
-
-/-- The index-free trace. -/
-def trace : LinearizedSyntacticObject L :=
-  ⟨.node Vertex.trace [], isSyntacticObject_mk_leaf (by simp)⟩
-
-/-- The trace of `a`. -/
-def traceOf (a : L) : LinearizedSyntacticObject L :=
-  ⟨.node (Vertex.traceOf a) [], isSyntacticObject_mk_leaf (by simp)⟩
-
-/-- Merge, with the daughters in the given order. -/
-def merge (l r : LinearizedSyntacticObject L) : LinearizedSyntacticObject L :=
-  ⟨.node Vertex.bare [l.val, r.val], (isSyntacticObject_mk_merge _ _).mpr ⟨l.2, r.2⟩⟩
-
-@[simp] theorem leaf_val (a : L) :
-    (leaf a).val = .node (Vertex.lex a) [] := rfl
-@[simp] theorem trace_val : (trace : LinearizedSyntacticObject L).val = .node Vertex.trace [] :=
-  rfl
-@[simp] theorem traceOf_val (a : L) :
-    (traceOf a).val = .node (Vertex.traceOf a) [] :=
-  rfl
-@[simp] theorem merge_val (l r : LinearizedSyntacticObject L) :
-    (merge l r).val = .node Vertex.bare [l.val, r.val] := rfl
-
-/-- Forgetting the order is the quotient map to the syntactic object. -/
-@[coe] def toSyntacticObject (p : LinearizedSyntacticObject L)
-  : SyntacticObject L := ⟨UnorderedTree.mk p.val, p.2⟩
-
-@[simp] theorem toSyntacticObject_val (p : LinearizedSyntacticObject L) :
-    p.toSyntacticObject.val = UnorderedTree.mk p.val := rfl
 
 @[simp] theorem toSyntacticObject_leaf (a : L) :
     (leaf a).toSyntacticObject = SyntacticObject.leaf a := rfl
@@ -314,7 +406,7 @@ def merge (l r : LinearizedSyntacticObject L) : LinearizedSyntacticObject L :=
 /-- Forgetting the order commutes with Merge. -/
 @[simp] theorem toSyntacticObject_merge (l r : LinearizedSyntacticObject L) :
     (merge l r).toSyntacticObject = SyntacticObject.merge l.toSyntacticObject r.toSyntacticObject :=
-  Subtype.ext (SyntacticObject.merge_mk l.val r.val l.2 r.2).symm
+  map_mul FreeMagma.toFreeCommMagma l r
 
 end LinearizedSyntacticObject
 
@@ -328,41 +420,18 @@ variable {L : Type}
     syntactic objects. -/
 @[elab_as_elim]
 theorem ind {motive : SyntacticObject L → Prop}
-    (leaf : ∀ a, motive (leaf a))
-    (trace : motive trace)
+    (leaf : ∀ a, motive (leaf a)) (trace : motive trace)
     (traceOf : ∀ a, motive (traceOf a))
-    (merge : ∀ l r : SyntacticObject L, motive l → motive r → motive (merge l r))
-    (s : SyntacticObject L) : motive s := by
-  suffices H : ∀ n (p : RoseTree (Vertex L)) (hp : IsSyntacticObject (UnorderedTree.mk p)),
-      p.numNodes = n → motive ⟨UnorderedTree.mk p, hp⟩ by
-    obtain ⟨t, ht⟩ := s
-    refine Quotient.inductionOn (motive := fun t ↦ ∀ (ht : IsSyntacticObject t), motive ⟨t, ht⟩)
-      t (fun p ht ↦ H p.numNodes p ht rfl) ht
-  intro n
-  induction n using Nat.strong_induction_on with
-  | _ n IH =>
-    rintro ⟨lbl, cs⟩ hp hw
-    rcases length_eq_zero_or_two hp with hlen | hlen
-    · obtain rfl := List.length_eq_zero_iff.mp hlen
-      rcases lbl with (_ | a) | (_ | a)
-      · exact absurd (licensed_node_iff.mp ((isSyntacticObject_mk _).mp hp)).1
-          (by simp [Vertex.Licenses])
-      · exact leaf a
-      · exact trace
-      · exact traceOf a
-    · obtain ⟨pl, pr, rfl⟩ := List.length_eq_two.mp hlen
-      obtain rfl := eq_bare_of_ne_nil hp (by simp)
-      obtain ⟨hl, hr⟩ := (isSyntacticObject_mk_merge pl pr).mp hp
-      have hmerge : (⟨UnorderedTree.mk (RoseTree.node Vertex.bare [pl, pr]), hp⟩
-          : SyntacticObject L) =
-            SyntacticObject.merge ⟨UnorderedTree.mk pl, hl⟩ ⟨UnorderedTree.mk pr, hr⟩ :=
-        Subtype.ext (merge_mk pl pr hl hr).symm
-      rw [hmerge]
-      simp only [RoseTree.numNodes_node, List.map_cons, List.map_nil, List.sum_cons,
-        List.sum_nil] at hw
-      exact merge _ _ (IH pl.numNodes (by omega) pl hl rfl) (IH pr.numNodes (by omega) pr hr rfl)
+    (merge : ∀ l r, motive l → motive r → motive (merge l r)) (s : SyntacticObject L) :
+    motive s := by
+  induction s using FreeCommMagma.inductionOn with
+  | of x => cases x with
+    | lex a => exact leaf a
+    | trace => exact trace
+    | traceOf a => exact traceOf a
+  | mul x y hx hy => exact merge x y hx hy
 
-/-- Every syntactic object is a lexical leaf, a trace, or a Merge. -/
+/-- A syntactic object is a lexical leaf, a trace, or a Merge. -/
 theorem exists_form (s : SyntacticObject L) :
     (∃ a, s = leaf a) ∨ s = trace ∨ (∃ a, s = traceOf a) ∨ (∃ l r, s = merge l r) := by
   induction s using ind with
@@ -371,7 +440,36 @@ theorem exists_form (s : SyntacticObject L) :
   | traceOf a => exact Or.inr (Or.inr (Or.inl ⟨a, rfl⟩))
   | merge l r _ _ => exact Or.inr (Or.inr (Or.inr ⟨l, r, rfl⟩))
 
+/-- A syntactic object is determined by its tree. -/
+theorem val_injective : Function.Injective (val : SyntacticObject L → _) := by
+  intro s
+  induction s using ind with
+  | leaf a =>
+    intro t h
+    rcases exists_form t with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l, r, rfl⟩ <;>
+      simpa using congrArg UnorderedTree.value h
+  | trace =>
+    intro t h
+    rcases exists_form t with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l, r, rfl⟩ <;>
+      first | rfl | simpa using congrArg UnorderedTree.value h
+  | traceOf a =>
+    intro t h
+    rcases exists_form t with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l, r, rfl⟩ <;>
+      simpa using congrArg UnorderedTree.value h
+  | merge l r hl hr =>
+    intro t h
+    rcases exists_form t with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l', r', rfl⟩
+    iterate 3 simpa using congrArg UnorderedTree.value h
+    have := congrArg UnorderedTree.children h
+    simp only [merge_val, UnorderedTree.children_node] at this
+    rcases Multiset.pair_eq_pair_iff.1 this with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
+    · rw [hl h₁, hr h₂]
+    · rw [hl h₁, hr h₂]; exact merge_comm _ _
+
+@[simp] theorem val_inj {s t : SyntacticObject L} : s.val = t.val ↔ s = t := val_injective.eq_iff
+
 end SyntacticObject
+
 
 /-! ### Functoriality -/
 
@@ -418,6 +516,59 @@ theorem isSyntacticObject_map_iff {L L' : Type} (f : L → L')
   rw [UnorderedTree.map_mk, isSyntacticObject_mk, isSyntacticObject_mk]
   exact RoseTree.licensed_map_iff (SyntacticObject.Vertex.licenses_map_iff f)
 
+
+namespace SyntacticObject
+
+variable {L L' L'' : Type}
+
+theorem Leaf.toVertex_map (f : L → L') (x : Leaf L) :
+    (x.map f).toVertex = Vertex.map f x.toVertex := by
+  cases x <;> rfl
+
+end SyntacticObject
+
+namespace LinearizedSyntacticObject
+
+open SyntacticObject (Vertex Leaf)
+
+variable {L L' L'' : Type}
+
+/-- The linearized object with its labels relabelled by `f`. -/
+def map (f : L → L') (p : LinearizedSyntacticObject L) : LinearizedSyntacticObject L' :=
+  FreeMagma.map (Leaf.map f) p
+
+@[simp] theorem val_map (f : L → L') (p : LinearizedSyntacticObject L) :
+    (p.map f).val = p.val.map (Vertex.map f) := by
+  induction p using FreeMagma.recOnMul with
+  | ih1 x => simp [map, val, Leaf.toVertex_map]
+  | ih2 l r hl hr =>
+    have hl' : val (FreeMagma.map (Leaf.map f) l) = RoseTree.map (Vertex.map f) (val l) := hl
+    have hr' : val (FreeMagma.map (Leaf.map f) r) = RoseTree.map (Vertex.map f) (val r) := hr
+    simp [map, val, hl', hr']
+
+@[simp] theorem map_leaf (f : L → L') (a : L) : (leaf a).map f = leaf (f a) := rfl
+
+@[simp] theorem map_trace (f : L → L') : (trace : LinearizedSyntacticObject L).map f = trace := rfl
+
+@[simp] theorem map_traceOf (f : L → L') (a : L) : (traceOf a).map f = traceOf (f a) := rfl
+
+@[simp] theorem map_merge (f : L → L') (l r : LinearizedSyntacticObject L) :
+    (merge l r).map f = merge (l.map f) (r.map f) := rfl
+
+@[simp] theorem map_id (p : LinearizedSyntacticObject L) : p.map id = p :=
+  val_injective (by rw [val_map, Vertex.map_id, RoseTree.map_id])
+
+@[simp] theorem map_map (f : L → L') (g : L' → L'') (p : LinearizedSyntacticObject L) :
+    (p.map f).map g = p.map (g ∘ f) :=
+  val_injective (by rw [val_map, val_map, val_map, RoseTree.map_map, Vertex.map_comp])
+
+theorem map_injective {f : L → L'} (hf : Function.Injective f) :
+    Function.Injective (map f : LinearizedSyntacticObject L → LinearizedSyntacticObject L') :=
+  fun p q h ↦ val_injective (RoseTree.map_injective (Vertex.map_injective hf)
+    (by rw [← val_map, ← val_map, h]))
+
+end LinearizedSyntacticObject
+
 namespace SyntacticObject
 
 variable {L L' L'' : Type}
@@ -425,81 +576,48 @@ variable {L L' L'' : Type}
 /-- The syntactic object with its labels relabelled by `f`, the homomorphism of free commutative
 magmas that a map of lexical alphabets induces. -/
 def map (f : L → L') (s : SyntacticObject L) : SyntacticObject L' :=
-  ⟨s.val.map (Vertex.map f), (isSyntacticObject_map_iff f _).2 s.2⟩
+  FreeCommMagma.map (Leaf.map f) s
+
+@[simp] theorem _root_.Minimalist.LinearizedSyntacticObject.toSyntacticObject_map (f : L → L')
+    (p : LinearizedSyntacticObject L) :
+    (p.map f).toSyntacticObject = p.toSyntacticObject.map f := by
+  induction p using FreeMagma.recOnMul with
+  | ih1 x => rfl
+  | ih2 l r hl hr =>
+    show FreeMagma.toFreeCommMagma (FreeMagma.map (Leaf.map f) (l * r))
+      = FreeCommMagma.map (Leaf.map f) (FreeMagma.toFreeCommMagma (l * r))
+    rw [map_mul, map_mul, map_mul, map_mul]
+    exact congrArg₂ (· * ·) hl hr
 
 @[simp] theorem val_map (f : L → L') (s : SyntacticObject L) :
-    (s.map f).val = s.val.map (Vertex.map f) := rfl
+    (s.map f).val = s.val.map (Vertex.map f) := by
+  obtain ⟨p, rfl⟩ := LinearizedSyntacticObject.toSyntacticObject_surjective s
+  rw [← LinearizedSyntacticObject.toSyntacticObject_map,
+    LinearizedSyntacticObject.toSyntacticObject_val, LinearizedSyntacticObject.val_map,
+    LinearizedSyntacticObject.toSyntacticObject_val, UnorderedTree.map_mk]
 
-@[simp] theorem map_leaf (f : L → L') (a : L) : (leaf a).map f = leaf (f a) :=
-  Subtype.ext (UnorderedTree.map_leaf _ _)
+@[simp] theorem map_leaf (f : L → L') (a : L) : (leaf a).map f = leaf (f a) := rfl
 
-@[simp] theorem map_trace (f : L → L') : (trace : SyntacticObject L).map f = trace :=
-  Subtype.ext (UnorderedTree.map_leaf _ _)
+@[simp] theorem map_trace (f : L → L') : (trace : SyntacticObject L).map f = trace := rfl
 
-@[simp] theorem map_traceOf (f : L → L') (a : L) : (traceOf a).map f = traceOf (f a) :=
-  Subtype.ext (UnorderedTree.map_leaf _ _)
+@[simp] theorem map_traceOf (f : L → L') (a : L) : (traceOf a).map f = traceOf (f a) := rfl
 
 @[simp] theorem map_merge (f : L → L') (l r : SyntacticObject L) :
     (merge l r).map f = merge (l.map f) (r.map f) :=
-  Subtype.ext (by simp [UnorderedTree.map_node])
+  map_mul (FreeCommMagma.map (Leaf.map f)) l r
 
 @[simp] theorem map_id (s : SyntacticObject L) : s.map id = s :=
-  Subtype.ext (by rw [val_map, Vertex.map_id, UnorderedTree.map_id])
+  val_injective (by rw [val_map, Vertex.map_id, UnorderedTree.map_id])
 
 @[simp] theorem map_map (f : L → L') (g : L' → L'') (s : SyntacticObject L) :
     (s.map f).map g = s.map (g ∘ f) :=
-  Subtype.ext (by rw [val_map, val_map, val_map, UnorderedTree.map_map, Vertex.map_comp])
+  val_injective (by rw [val_map, val_map, val_map, UnorderedTree.map_map, Vertex.map_comp])
 
 theorem map_injective {f : L → L'} (hf : Function.Injective f) :
     Function.Injective (map f : SyntacticObject L → SyntacticObject L') :=
-  fun _ _ h ↦ Subtype.ext (UnorderedTree.map_injective (Vertex.map_injective hf)
-    (congrArg Subtype.val h))
+  fun s t h ↦ val_injective (UnorderedTree.map_injective (Vertex.map_injective hf)
+    (by rw [← val_map, ← val_map, h]))
 
 end SyntacticObject
-
-namespace LinearizedSyntacticObject
-
-open SyntacticObject (Vertex)
-
-variable {L L' L'' : Type}
-
-/-- The linearized object with its labels relabelled by `f`. -/
-def map (f : L → L') (p : LinearizedSyntacticObject L) : LinearizedSyntacticObject L' :=
-  ⟨p.val.map (Vertex.map f), by
-    rw [← UnorderedTree.map_mk]; exact (isSyntacticObject_map_iff f _).2 p.2⟩
-
-@[simp] theorem val_map (f : L → L') (p : LinearizedSyntacticObject L) :
-    (p.map f).val = p.val.map (Vertex.map f) := rfl
-
-@[simp] theorem map_leaf (f : L → L') (a : L) : (leaf a).map f = leaf (f a) :=
-  Subtype.ext (by simp)
-
-@[simp] theorem map_trace (f : L → L') : (trace : LinearizedSyntacticObject L).map f = trace :=
-  Subtype.ext (by simp)
-
-@[simp] theorem map_traceOf (f : L → L') (a : L) : (traceOf a).map f = traceOf (f a) :=
-  Subtype.ext (by simp)
-
-@[simp] theorem map_merge (f : L → L') (l r : LinearizedSyntacticObject L) :
-    (merge l r).map f = merge (l.map f) (r.map f) :=
-  Subtype.ext (by simp)
-
-@[simp] theorem toSyntacticObject_map (f : L → L') (p : LinearizedSyntacticObject L) :
-    (p.map f).toSyntacticObject = p.toSyntacticObject.map f :=
-  Subtype.ext (UnorderedTree.map_mk _ _).symm
-
-@[simp] theorem map_id (p : LinearizedSyntacticObject L) : p.map id = p :=
-  Subtype.ext (by rw [val_map, Vertex.map_id, RoseTree.map_id])
-
-@[simp] theorem map_map (f : L → L') (g : L' → L'') (p : LinearizedSyntacticObject L) :
-    (p.map f).map g = p.map (g ∘ f) :=
-  Subtype.ext (by rw [val_map, val_map, val_map, RoseTree.map_map, Vertex.map_comp])
-
-theorem map_injective {f : L → L'} (hf : Function.Injective f) :
-    Function.Injective (map f : LinearizedSyntacticObject L → LinearizedSyntacticObject L') :=
-  fun _ _ h ↦ Subtype.ext (RoseTree.map_injective (Vertex.map_injective hf)
-    (congrArg Subtype.val h))
-
-end LinearizedSyntacticObject
 
 end Minimalist
