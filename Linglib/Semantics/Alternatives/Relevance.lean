@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.BooleanSubalgebra
-public import Linglib.Semantics.Exhaustification.Basic
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Relevance of alternatives
@@ -62,5 +62,21 @@ theorem notMem_closure_of_separates (h : ∀ a ∈ A, u ∈ a ↔ v ∈ a) (hu :
 theorem not_exhaustivelyRelevant_of_separates (h : ∀ a ∈ A, u ∈ a ↔ v ∈ a)
     (hu : u ∈ exh A p) (hv : v ∉ exh A p) : ¬ ExhaustivelyRelevant A p :=
   notMem_closure_of_separates h hu hv
+
+/-- Exhaustifying a member of a finite set of alternatives stays in the Boolean closure of the
+set. -/
+theorem exhIE_mem_closure {S : Set W} (hfin : A.Finite) (hS : S ∈ A) :
+    exhIE A S ∈ BooleanSubalgebra.closure A := by
+  have hIE : {a | IsInnocentlyExcludable A S a}.Finite := hfin.subset fun _ ha ↦ ha.1
+  have hsup : ⋃₀ {a | IsInnocentlyExcludable A S a} ∈ BooleanSubalgebra.closure A := by
+    refine hIE.induction_on_subset _ (by rw [Set.sUnion_empty]; exact BooleanSubalgebra.bot_mem)
+      fun {a X} ha _ _ ih ↦ ?_
+    rw [Set.sUnion_insert]
+    exact BooleanSubalgebra.sup_mem (BooleanSubalgebra.subset_closure ha.1) ih
+  have heq : exhIE A S = S \ ⋃₀ {a | IsInnocentlyExcludable A S a} := by
+    ext w
+    simp only [mem_exhIE_iff, Set.mem_sdiff, Set.mem_sUnion, Set.mem_ofPred_eq, not_exists,
+      not_and]
+  exact heq ▸ BooleanSubalgebra.sdiff_mem (BooleanSubalgebra.subset_closure hS) hsup
 
 end Alternatives

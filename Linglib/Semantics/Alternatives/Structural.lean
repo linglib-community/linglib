@@ -3,6 +3,7 @@ module
 public import Mathlib.Logic.Relation
 public import Mathlib.Order.Antisymmetrization
 public import Mathlib.Data.Finset.Basic
+public import Linglib.Core.Data.RoseTree.Rewrite
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Semantics.Alternatives.WithAlternatives
 
@@ -23,6 +24,7 @@ conversational principles.
 * `StructuralOp`, `atMostAsComplex`, `equalComplexity` — one operation, its reflexive-transitive
   closure as a preorder, and the equal-complexity equivalence.
 * `structuralAlternatives` — the trees at most as complex as the host over its source.
+* `Substitutes`, `substitutionAlternatives` — replacement alone, of any category.
 * `withAlternatives` — the Hamblin composition of a tree over a lexicon, a `WithAlternatives`
   value.
 
@@ -126,6 +128,34 @@ def structuralAlternatives (lex : Finset (Tree C W)) (φ : Tree C W) : Set (Tree
 theorem self_mem_structuralAlternatives (lex : Finset (Tree C W)) (φ : Tree C W) :
     φ ∈ structuralAlternatives lex φ :=
   Relation.ReflTransGen.refl
+
+/-! ### Substitution alone
+
+[fox-katzir-2011] simplify the complexity relation to successive replacement of a sub-constituent
+by an element of the substitution source, of any category, without deletion or contraction. The
+relation makes no use of the labels, so it is stated for every rose tree. -/
+
+section Substitutes
+
+variable {α : Type*}
+
+/-- One replacement of a sub-constituent with an element of the substitution source. -/
+def Substitutes (source : Set (RoseTree α)) : RoseTree α → RoseTree α → Prop :=
+  RoseTree.Rewrites fun _ s ↦ s ∈ source
+
+/-- What successive replacements from the source derive from `φ`. -/
+def substitutionAlternatives (source : Set (RoseTree α)) (φ : RoseTree α) : Set (RoseTree α) :=
+  {ψ | Relation.ReflTransGen (Substitutes source) φ ψ}
+
+theorem self_mem_substitutionAlternatives (source : Set (RoseTree α)) (φ : RoseTree α) :
+    φ ∈ substitutionAlternatives source φ :=
+  Relation.ReflTransGen.refl
+
+theorem subset_substitutionAlternatives (source : Set (RoseTree α)) (φ : RoseTree α) :
+    source ⊆ substitutionAlternatives source φ :=
+  fun _ h ↦ .single (.here h)
+
+end Substitutes
 
 /-! ### Preservation -/
 
