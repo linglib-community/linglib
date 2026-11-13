@@ -23,7 +23,8 @@ of `s`. This is the subsumption of [shieber-1986] and [carpenter-1992] for featu
 depth one, with coindexation as reentrancy.
 
 A word is a pattern whose slots are all maximal, and a pattern written as a row of constants and
-named variables subsumes exactly [its substitution instances](##ofTerms_le_ofItem_iff). The meet
+named variables subsumes exactly [its substitution instances](##ofTerms_le_ofItem_iff), among
+rows as [among words](##ofTerms_le_ofTerms_iff). The meet
 of two patterns is their least general generalization in the sense of [plotkin-1970]: it coindexes
 two positions exactly when both do. A schema that relates two words is a pattern over the disjoint
 union of their positions, and once it coindexes a position of each, the pairs it subsumes are
@@ -227,6 +228,43 @@ theorem ofTerms_le_ofItem_iff [Nonempty β] {t : P → β ⊕ X} {g : P → β} 
         · exact absurd he Flat.coe_ne_bot
         · exact absurd he.symm Flat.coe_ne_bot
         · exact absurd rfl (Flat.isMax_iff_ne_bot.1 hm)
+
+/-- A row coindexes the positions that carry the same term. -/
+theorem coindex_ofTerms_iff [Nonempty β] {t : P → β ⊕ X} {p q : P} :
+    (ofTerms t).coindex p q ↔ t p = t q := by
+  refine ⟨fun h ↦ h.elim id fun ⟨he, hm⟩ ↦ ?_, .inl⟩
+  simp only [Function.comp_apply] at he hm
+  rcases ep : t p with b | v <;> rcases eq : t q with b' | v' <;> rw [ep] at he hm <;>
+    rw [eq] at he
+  · exact congrArg Sum.inl (Flat.coe_injective he)
+  · exact absurd he Flat.coe_ne_bot
+  · exact absurd he.symm Flat.coe_ne_bot
+  · exact absurd rfl (Flat.isMax_iff_ne_bot.1 hm)
+
+/-- One row subsumes another exactly when the second is a substitution instance of the first. -/
+theorem ofTerms_le_ofTerms_iff [Nonempty β] {Y : Type*} {t : P → β ⊕ X} {u : P → β ⊕ Y} :
+    ofTerms t ≤ ofTerms u ↔ ∃ x : X → β ⊕ Y, u = Sum.elim Sum.inl x ∘ t := by
+  constructor
+  · rintro ⟨hc, hk⟩
+    have hf : u.FactorsThrough t := fun p q e ↦
+      coindex_ofTerms_iff.1 (hk (coindex_ofTerms_iff.2 e))
+    refine ⟨fun v ↦ Function.extend t u (fun _ ↦ .inl (Classical.arbitrary β)) (.inr v),
+      funext fun p ↦ ?_⟩
+    have hp := hc p
+    simp only [ofTerms, ofSubscript, content_of, Function.comp_apply] at hp ⊢
+    rcases e : t p with b | v
+    · rw [e] at hp
+      rcases e' : u p with b' | y <;> rw [e'] at hp
+      · exact congrArg Sum.inl (Flat.coe_le_coe.1 hp).symm
+      · exact absurd hp (Flat.not_coe_le_bot b)
+    · rw [Sum.elim_inr, ← e, hf.extend_apply]
+  · rintro ⟨x, rfl⟩
+    refine ⟨fun p ↦ ?_, fun p q h ↦
+      coindex_ofTerms_iff.2 (congrArg (Sum.elim Sum.inl x) (coindex_ofTerms_iff.1 h))⟩
+    simp only [ofTerms, ofSubscript, content_of, Function.comp_apply]
+    rcases t p with b | v
+    · exact le_rfl
+    · exact bot_le
 
 /-- The pairs of words that a row over two sets of positions subsumes are the two readings of one
 substitution. -/
