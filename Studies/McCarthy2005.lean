@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Diagram
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Indices
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Data.Wordlist.McCarthy2005
 public import Studies.Benua1997
@@ -17,8 +17,8 @@ which optimal paradigms leave to derivational morphology. Faithfulness on that r
 resists alternation within the paradigm, and three consequences follow from the architecture
 alone: overapplication only, attraction to the unmarked, and majority rules. A paradigm
 carries the shared input and its members with their cells, surface stems, and input–stem
-correspondences (`Paradigm`), the relation between two stems is read off those
-(`Member.opCorr`), symmetric and base-free by construction, and `markedness`, `ioFaith`, and
+indices (`Paradigm`), two stems are related where their segments are coindexed, symmetrically
+and with no base, and `markedness`, `ioFaith`, and
 `opFaith` sum a constraint over the members or the ordered member pairs. The Classical
 Arabic tableaux for the right and left edges of the verb stem and for geminate verbs, the
 Moroccan nouns and majority-rules paradigm, and the Hebrew jussive paradigms of Benua are rerun
@@ -48,56 +48,34 @@ variable {α ι : Type*}
 
 /-! ### Paradigms as candidates -/
 
-/-- A paradigm member: its inflectional cell, its surface stem, and the correspondence from
-the input to the stem. -/
+/-- A paradigm member: its inflectional cell and its surface stem, each segment with the
+indices it bears. -/
 structure Member (α ι : Type*) where
   cell : ι
-  stem : List α
-  io : List (ℕ × ℕ)
+  stem : List (Correspondence.Segment Unit α)
 
 /-- A candidate paradigm (2a): the inflected forms of one input stem. -/
 structure Paradigm (α ι : Type*) where
   input : List α
   members : List (Member α ι)
 
-/-- The correspondence of a member's stem to the input. -/
-def Member.ioCorr (input : List α) (m : Member α ι) : Correspondence.Diagram BinaryRole α :=
-  .ofPairs (fun | .lhs => input | .rhs => m.stem) fun | .lhs, .rhs => m.io | _, _ => []
-
-/-- ℛ_OP between the stems of two members (2c), the relation that runs through the input
-(`Correspondence.through`): the positions realising the same input position, and the epenthetic
-positions at the same site. -/
-def Member.opCorr (input : List α) (m₁ m₂ : Member α ι) : Correspondence.Diagram BinaryRole α where
-  form
-    | .lhs => m₁.stem
-    | .rhs => m₂.stem
-  edge
-    | .lhs, .rhs =>
-      (Correspondence.edgeOfPairs input.length m₁.stem.length m₁.io).through
-        (Correspondence.edgeOfPairs input.length m₂.stem.length m₂.io)
-    | .rhs, .lhs =>
-      (Correspondence.edgeOfPairs input.length m₂.stem.length m₂.io).through
-        (Correspondence.edgeOfPairs input.length m₁.stem.length m₁.io)
-    | _, _ => ∅
-
 /-- A markedness constraint on the word of each cell, summed over the members (2b). -/
 def markedness (m : ι → List α → ℕ) : Constraint (Paradigm α ι) :=
-  fun P ↦ (P.members.map fun x ↦ m x.cell x.stem).sum
+  fun P ↦ (P.members.map fun x ↦ m x.cell (x.stem.map (·.seg))).sum
 
-/-- An input–output faithfulness constraint summed over the members (2b). -/
-def ioFaith (f : Correspondence.Diagram BinaryRole α → BinaryRole → BinaryRole → ℕ) :
-    Constraint (Paradigm α ι) :=
-  fun P ↦ (P.members.map fun m ↦ f (m.ioCorr P.input) .lhs .rhs).sum
+/-- An input–output faithfulness constraint summed over the members (2b), the input indexed
+by position. -/
+def ioFaith (f : (s t : List (Correspondence.Segment Unit α)) → ℕ) : Constraint (Paradigm α ι) :=
+  fun P ↦ (P.members.map fun m ↦ f (Correspondence.indexed P.input) m.stem).sum
 
-/-- An OP faithfulness constraint (2d): a correspondence constraint summed over the ordered
-pairs of distinct members. -/
-def opFaith (f : Correspondence.Diagram BinaryRole α → BinaryRole → BinaryRole → ℕ) :
-    Constraint (Paradigm α ι) :=
-  fun P ↦ (P.members.offDiag.map fun p ↦ f (p.1.opCorr P.input p.2) .lhs .rhs).sum
+/-- An OP faithfulness constraint (2d): a correspondence constraint between two stems, ℛ_OP
+(2c) relating their coindexed segments, summed over the ordered pairs of distinct members. -/
+def opFaith (f : (s t : List (Correspondence.Segment Unit α)) → ℕ) : Constraint (Paradigm α ι) :=
+  fun P ↦ (P.members.offDiag.map fun p ↦ f p.1.stem p.2.stem).sum
 
 section
 
-variable (f : Correspondence.Diagram BinaryRole α → BinaryRole → BinaryRole → ℕ) {input : List α}
+variable (f : (s t : List (Correspondence.Segment Unit α)) → ℕ) {input : List α}
   {l₁ l₂ : List (Member α ι)}
 
 -- OP faithfulness does not depend on the order of the members.
@@ -108,13 +86,12 @@ theorem opFaith_perm (h : l₁.Perm l₂) : opFaith f ⟨input, l₁⟩ = opFait
 across them in the two directions together, draws `k` marks for each pair of members of
 different classes. -/
 theorem opFaith_append {k : ℕ}
-    (h₁ : ∀ x ∈ l₁, ∀ y ∈ l₁, f (x.opCorr input y) .lhs .rhs = 0)
-    (h₂ : ∀ x ∈ l₂, ∀ y ∈ l₂, f (x.opCorr input y) .lhs .rhs = 0)
-    (h : ∀ x ∈ l₁, ∀ y ∈ l₂,
-      f (x.opCorr input y) .lhs .rhs + f (y.opCorr input x) .lhs .rhs = k) :
+    (h₁ : ∀ x ∈ l₁, ∀ y ∈ l₁, f x.stem y.stem = 0)
+    (h₂ : ∀ x ∈ l₂, ∀ y ∈ l₂, f x.stem y.stem = 0)
+    (h : ∀ x ∈ l₁, ∀ y ∈ l₂, f x.stem y.stem + f y.stem x.stem = k) :
     opFaith f ⟨input, l₁ ++ l₂⟩ = l₁.length * l₂.length * k := by
-  have hrow : ∀ x ∈ l₁, (l₂.map fun y ↦
-      f (x.opCorr input y) .lhs .rhs + f (y.opCorr input x) .lhs .rhs).sum = l₂.length * k :=
+  have hrow : ∀ x ∈ l₁, (l₂.map fun y ↦ f x.stem y.stem + f y.stem x.stem).sum =
+      l₂.length * k :=
     fun x hx ↦ by
       rw [List.map_congr_left (h x hx), List.map_const', List.sum_replicate, smul_eq_mul]
   rw [opFaith, List.sum_map_offDiag_append, List.sum_map_offDiag_eq_zero h₁,
@@ -147,18 +124,18 @@ def high : Seg → Option Bool
 
 /-- ⟨mat, maʧi⟩. -/
 def mat : Paradigm Seg (List Seg) :=
-  ⟨[.m, .a, .t], [⟨[], [.m, .a, .t], Correspondence.diagonalPairs 3⟩,
-    ⟨[.i], [.m, .a, .ch], Correspondence.diagonalPairs 3⟩]⟩
+  ⟨[.m, .a, .t], [⟨[], Correspondence.indexed [.m, .a, .t]⟩,
+    ⟨[.i], Correspondence.indexed [.m, .a, .ch]⟩]⟩
 
-example : opFaith (Correspondence.Diagram.identViolFeature high) mat = 2 := by decide +kernel
+example : opFaith (Correspondence.Segment.identViol high ()) mat = 2 := by decide +kernel
 
 /-- ⟨ma, maʧi⟩. -/
 def ma : Paradigm Seg (List Seg) :=
-  ⟨[.m, .a, .t], [⟨[], [.m, .a], Correspondence.diagonalPairs 2⟩,
-    ⟨[.i], [.m, .a, .ch], Correspondence.diagonalPairs 3⟩]⟩
+  ⟨[.m, .a, .t], [⟨[], Correspondence.indexed [.m, .a]⟩,
+    ⟨[.i], Correspondence.indexed [.m, .a, .ch]⟩]⟩
 
-example : opFaith Correspondence.Diagram.maxViol ma = 1 ∧
-    opFaith Correspondence.Diagram.depViol ma = 1 := by
+example : opFaith (Correspondence.Segment.maxViol ()) ma = 1 ∧
+    opFaith (Correspondence.Segment.depViol ()) ma = 1 := by
   decide +kernel
 
 end Palatalization
@@ -282,20 +259,20 @@ def swpParadigm : Constraint (Paradigm Seg Cell) := markedness fun c s ↦ swp (
 
 def alignLParadigm : Constraint (Paradigm Seg Cell) := markedness fun _ s ↦ alignL s
 
-def opDepV : Constraint (Paradigm Seg Cell) := opFaith (Correspondence.Diagram.depViolOn IsVowel)
+def opDepV : Constraint (Paradigm Seg Cell) := opFaith (Correspondence.Segment.depViolOn IsVowel ())
 
 def opIdentWt : Constraint (Paradigm Seg Cell) :=
-  opFaith (Correspondence.Diagram.identViolFeature weight)
+  opFaith (Correspondence.Segment.identViol weight ())
 
-def ioDepV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.Diagram.depViolOn IsVowel)
+def ioDepV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.Segment.depViolOn IsVowel ())
 
-def ioMaxV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.Diagram.maxViolOn IsVowel)
+def ioMaxV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.Segment.maxViolOn IsVowel ())
 
 def ioMaxC : Constraint (Paradigm Seg Cell) :=
-  ioFaith (Correspondence.Diagram.maxViolOn fun c ↦ ¬IsVowel c)
+  ioFaith (Correspondence.Segment.maxViolOn (fun c ↦ ¬IsVowel c) ())
 
 def ioIdentWt : Constraint (Paradigm Seg Cell) :=
-  ioFaith (Correspondence.Diagram.identViolFeature weight)
+  ioFaith (Correspondence.Segment.identViol weight ())
 
 /-- The summary ranking (21): IO-MAX-V, OP-DEP-V, \*µµµ]σ, \*APP-σ, IO-MAX-C, OP-IDENT-WT >>
 SWP >> ALIGN-L(Stem, σ) >> IO-DEP-V >> IO-IDENT-WT. -/
@@ -318,14 +295,14 @@ def imperfectiveF : Cell := { prefixes := [.j, .a], suffixes := [.n, .a] }
 /-- The paradigms of /faʕaːl/ in (12): shortened throughout, long throughout with the
 superheavy coda an appendix or moraic, or alternating. -/
 def long : Cand → Paradigm Seg Cell
-  | .a => ⟨input, [⟨perfective, short, diag⟩, ⟨perfective1, short, diag⟩]⟩
-  | .b => ⟨input, [⟨perfective, input, diag⟩, ⟨{ perfective1 with appendix := true }, input, diag⟩]⟩
-  | .c => ⟨input, [⟨perfective, input, diag⟩, ⟨perfective1, input, diag⟩]⟩
-  | _ => ⟨input, [⟨perfective, input, diag⟩, ⟨perfective1, short, diag⟩]⟩
+  | .a => ⟨input, [⟨perfective, short⟩, ⟨perfective1, short⟩]⟩
+  | .b => ⟨input, [⟨perfective, faithful⟩, ⟨{ perfective1 with appendix := true }, faithful⟩]⟩
+  | .c => ⟨input, [⟨perfective, faithful⟩, ⟨perfective1, faithful⟩]⟩
+  | _ => ⟨input, [⟨perfective, faithful⟩, ⟨perfective1, short⟩]⟩
 where
   input : List Seg := [.f, .a, .ayn, .aa, .l]
-  short : List Seg := [.f, .a, .ayn, .a, .l]
-  diag : List (ℕ × ℕ) := Correspondence.diagonalPairs 5
+  faithful : List (Correspondence.Segment Unit Seg) := Correspondence.indexed input
+  short : List (Correspondence.Segment Unit Seg) := Correspondence.indexed [.f, .a, .ayn, .a, .l]
 
 -- (12)
 theorem shortening_overapplies :
@@ -335,17 +312,15 @@ theorem shortening_overapplies :
 /-- The paradigms of /faʕl/ in (13): epenthesis throughout, the cluster kept throughout with
 the superheavy coda an appendix or moraic, or alternating. -/
 def cluster : Cand → Paradigm Seg Cell
-  | .a => ⟨input, [⟨perfective, epenthesized, epenthetic⟩,
-      ⟨perfective1, epenthesized, epenthetic⟩]⟩
-  | .b => ⟨input, [⟨perfective, input, diag⟩, ⟨{ perfective1 with appendix := true }, input, diag⟩]⟩
-  | .c => ⟨input, [⟨perfective, input, diag⟩, ⟨perfective1, input, diag⟩]⟩
-  | _ => ⟨input, [⟨perfective, input, diag⟩, ⟨perfective1, epenthesized, epenthetic⟩]⟩
+  | .a => ⟨input, [⟨perfective, epenthesized⟩, ⟨perfective1, epenthesized⟩]⟩
+  | .b => ⟨input, [⟨perfective, faithful⟩, ⟨{ perfective1 with appendix := true }, faithful⟩]⟩
+  | .c => ⟨input, [⟨perfective, faithful⟩, ⟨perfective1, faithful⟩]⟩
+  | _ => ⟨input, [⟨perfective, faithful⟩, ⟨perfective1, epenthesized⟩]⟩
 where
   input : List Seg := [.f, .a, .ayn, .l]
-  epenthesized : List Seg := [.f, .a, .ayn, .i, .l]
-  diag : List (ℕ × ℕ) := Correspondence.diagonalPairs 4
+  faithful : List (Correspondence.Segment Unit Seg) := Correspondence.indexed input
   /-- A vowel epenthesized into the final cluster. -/
-  epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (3, 4)]
+  epenthesized : List (Correspondence.Segment Unit Seg) := faithful.insertIdx 3 (.ofIndex .i 4)
 
 -- (13)
 theorem epenthesis_overapplies :
@@ -354,28 +329,28 @@ theorem epenthesis_overapplies :
 
 /-- The paradigms of /faʕal/ in (17): the (LL) feet kept, or syncopated. -/
 def syncope : Cand → Paradigm Seg Cell
-  | .a => ⟨input, [⟨{ suffixes := [.u] }, input, Correspondence.diagonalPairs 5⟩,
-      ⟨perfective, input, Correspondence.diagonalPairs 5⟩]⟩
-  | _ => ⟨input, [⟨{ suffixes := [.u] }, [.f, .a, .ayn, .l], syncopated⟩,
-      ⟨perfective, [.f, .a, .ayn, .l], syncopated⟩]⟩
+  | .a => ⟨input, [⟨{ suffixes := [.u] }, faithful⟩, ⟨perfective, faithful⟩]⟩
+  | _ => ⟨input, [⟨{ suffixes := [.u] }, syncopated⟩, ⟨perfective, syncopated⟩]⟩
 where
   input : List Seg := [.f, .a, .ayn, .a, .l]
-  syncopated : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (4, 3)]
+  faithful : List (Correspondence.Segment Unit Seg) := Correspondence.indexed input
+  syncopated : List (Correspondence.Segment Unit Seg) := faithful.eraseIdx 3
 
 -- (17)
 theorem no_syncope : (Tableau.ofLabels syncope {.a, .b} ranking).optimal = {.a} := by decide +kernel
 
 /-- The noun /fʕal/ with the case suffixes in (24): epenthesis, or the initial cluster. -/
 def noun : Cand → Paradigm Seg Cell
-  | .a => ⟨input, cases.map fun v ↦ ⟨{ suffixes := [v] }, [.f, .i, .ayn, .a, .l], epenthetic⟩⟩
-  | _ => ⟨input, cases.map fun v ↦ ⟨{ suffixes := [v] }, input, Correspondence.diagonalPairs 4⟩⟩
+  | .a => ⟨input, cases.map fun v ↦ ⟨{ suffixes := [v] }, faithful.insertIdx 1 (.ofIndex .i 4)⟩⟩
+  | _ => ⟨input, cases.map fun v ↦ ⟨{ suffixes := [v] }, faithful⟩⟩
 where
   input : List Seg := [.f, .ayn, .a, .l]
   cases : List Seg := [.u, .a, .i]
-  epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 2), (2, 3), (3, 4)]
+  faithful : List (Correspondence.Segment Unit Seg) := Correspondence.indexed input
 
 -- (24)
-theorem noun_epenthesis : (Tableau.ofLabels noun {.a, .b} ranking).optimal = {.a} := by decide +kernel
+theorem noun_epenthesis : (Tableau.ofLabels noun {.a, .b} ranking).optimal = {.a} := by
+  decide +kernel
 
 /-- The four representative cells of a verbal paradigm: the perfectives *-a*, *-tu* and the
 imperfectives *ja-…-u*, *ja-…-na*. -/
@@ -385,21 +360,22 @@ def verbal (pfA pfTu impfU impfNa : Member Seg Cell) : List (Member Seg Cell) :=
 /-- The paradigms of the eighth conjugation /ftaʕal/ in (19) and (25): the initial cluster
 kept throughout, epenthesis throughout, or epenthesis in the unprefixed forms only. -/
 def eighth : Cand → Paradigm Seg Cell
-  | .a => ⟨input, verbal ⟨perfective, input, diag⟩ ⟨perfective1, input, diag⟩
-      ⟨imperfective, ablaut, diag⟩ ⟨imperfectiveF, ablaut, diag⟩⟩
-  | .b => ⟨input, verbal ⟨perfective, epenthesized input, epenthetic⟩
-      ⟨perfective1, epenthesized input, epenthetic⟩ ⟨imperfective, epenthesized ablaut, epenthetic⟩
-      ⟨imperfectiveF, epenthesized ablaut, epenthetic⟩⟩
-  | _ => ⟨input, verbal ⟨perfective, epenthesized input, epenthetic⟩
-      ⟨perfective1, epenthesized input, epenthetic⟩ ⟨imperfective, ablaut, diag⟩
-      ⟨imperfectiveF, ablaut, diag⟩⟩
+  | .a => ⟨input, verbal ⟨perfective, faithful⟩ ⟨perfective1, faithful⟩
+      ⟨imperfective, ablaut⟩ ⟨imperfectiveF, ablaut⟩⟩
+  | .b => ⟨input, verbal ⟨perfective, epenthesized faithful⟩
+      ⟨perfective1, epenthesized faithful⟩ ⟨imperfective, epenthesized ablaut⟩
+      ⟨imperfectiveF, epenthesized ablaut⟩⟩
+  | _ => ⟨input, verbal ⟨perfective, epenthesized faithful⟩
+      ⟨perfective1, epenthesized faithful⟩ ⟨imperfective, ablaut⟩ ⟨imperfectiveF, ablaut⟩⟩
 where
   input : List Seg := [.f, .t, .a, .ayn, .a, .l]
+  faithful : List (Correspondence.Segment Unit Seg) := Correspondence.indexed input
   /-- The imperfective stem vowel. -/
-  ablaut : List Seg := [.f, .t, .a, .ayn, .i, .l]
-  epenthesized (s : List Seg) : List Seg := s.take 1 ++ [.i] ++ s.drop 1
-  diag : List (ℕ × ℕ) := Correspondence.diagonalPairs 6
-  epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6)]
+  ablaut : List (Correspondence.Segment Unit Seg) :=
+    Correspondence.indexed [.f, .t, .a, .ayn, .i, .l]
+  /-- A vowel epenthesized into the initial cluster. -/
+  epenthesized (s : List (Correspondence.Segment Unit Seg)) :
+      List (Correspondence.Segment Unit Seg) := s.insertIdx 1 (.ofIndex .i 6)
 
 -- (25)
 theorem attraction_to_the_unmarked :
@@ -409,28 +385,28 @@ theorem attraction_to_the_unmarked :
 levelled to the short, unepenthesized stem; epenthesized throughout; long before V-initial
 suffixes; epenthesized in the perfectives; or both. -/
 def tenth : Cand → Paradigm Seg Cell
-  | .a => ⟨input, verbal ⟨perfective, short, diag⟩ ⟨perfective1, short, diag⟩
-      ⟨imperfective, shortAblaut, diag⟩ ⟨imperfectiveF, shortAblaut, diag⟩⟩
-  | .b => ⟨input, verbal ⟨perfective, epenthesized short, epenthetic⟩
-      ⟨perfective1, epenthesized short, epenthetic⟩
-      ⟨imperfective, epenthesized shortAblaut, epenthetic⟩
-      ⟨imperfectiveF, epenthesized shortAblaut, epenthetic⟩⟩
-  | .c => ⟨input, verbal ⟨perfective, input, diag⟩ ⟨perfective1, short, diag⟩
-      ⟨imperfective, ablaut, diag⟩ ⟨imperfectiveF, shortAblaut, diag⟩⟩
-  | .d => ⟨input, verbal ⟨perfective, epenthesized short, epenthetic⟩
-      ⟨perfective1, epenthesized short, epenthetic⟩ ⟨imperfective, shortAblaut, diag⟩
-      ⟨imperfectiveF, shortAblaut, diag⟩⟩
-  | .e => ⟨input, verbal ⟨perfective, epenthesized input, epenthetic⟩
-      ⟨perfective1, epenthesized short, epenthetic⟩ ⟨imperfective, ablaut, diag⟩
-      ⟨imperfectiveF, shortAblaut, diag⟩⟩
+  | .a => ⟨input, verbal ⟨perfective, short⟩ ⟨perfective1, short⟩
+      ⟨imperfective, shortAblaut⟩ ⟨imperfectiveF, shortAblaut⟩⟩
+  | .b => ⟨input, verbal ⟨perfective, epenthesized short⟩ ⟨perfective1, epenthesized short⟩
+      ⟨imperfective, epenthesized shortAblaut⟩ ⟨imperfectiveF, epenthesized shortAblaut⟩⟩
+  | .c => ⟨input, verbal ⟨perfective, long⟩ ⟨perfective1, short⟩
+      ⟨imperfective, ablaut⟩ ⟨imperfectiveF, shortAblaut⟩⟩
+  | .d => ⟨input, verbal ⟨perfective, epenthesized short⟩ ⟨perfective1, epenthesized short⟩
+      ⟨imperfective, shortAblaut⟩ ⟨imperfectiveF, shortAblaut⟩⟩
+  | .e => ⟨input, verbal ⟨perfective, epenthesized long⟩ ⟨perfective1, epenthesized short⟩
+      ⟨imperfective, ablaut⟩ ⟨imperfectiveF, shortAblaut⟩⟩
 where
   input : List Seg := [.s, .t, .a, .f, .ayn, .aa, .l]
-  short : List Seg := [.s, .t, .a, .f, .ayn, .a, .l]
-  ablaut : List Seg := [.s, .t, .a, .f, .ayn, .ii, .l]
-  shortAblaut : List Seg := [.s, .t, .a, .f, .ayn, .i, .l]
-  epenthesized (s : List Seg) : List Seg := s.take 1 ++ [.i] ++ s.drop 1
-  diag : List (ℕ × ℕ) := Correspondence.diagonalPairs 7
-  epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 7)]
+  long : List (Correspondence.Segment Unit Seg) := Correspondence.indexed input
+  short : List (Correspondence.Segment Unit Seg) :=
+    Correspondence.indexed [.s, .t, .a, .f, .ayn, .a, .l]
+  ablaut : List (Correspondence.Segment Unit Seg) :=
+    Correspondence.indexed [.s, .t, .a, .f, .ayn, .ii, .l]
+  shortAblaut : List (Correspondence.Segment Unit Seg) :=
+    Correspondence.indexed [.s, .t, .a, .f, .ayn, .i, .l]
+  /-- A vowel epenthesized into the initial cluster. -/
+  epenthesized (s : List (Correspondence.Segment Unit Seg)) :
+      List (Correspondence.Segment Unit Seg) := s.insertIdx 1 (.ofIndex .i 7)
 
 -- (27), (21)
 theorem two_attractors : (Tableau.ofLabels tenth {.a, .b, .c, .d, .e} ranking).optimal = {.a} := by
@@ -441,20 +417,22 @@ theorem two_attractors : (Tableau.ofLabels tenth {.a, .b, .c, .d, .e} ranking).o
 Geminate verbs delete the vowel between their identical consonants before V-initial
 suffixes, *ħmarra ~ ħmarartu*, so \*.CᵢV.CᵢV dominates IO-MAX-V and OP-MAX-V (29). -/
 
-def opMaxV : Constraint (Paradigm Seg Cell) := opFaith (Correspondence.Diagram.maxViolOn IsVowel)
+def opMaxV : Constraint (Paradigm Seg Cell) := opFaith (Correspondence.Segment.maxViolOn IsVowel ())
 
 /-- The paradigms of /ħmarar/ in (29): the vowel deleted before V-initial suffixes, or kept
 throughout. -/
 def geminate : Cand → Paradigm Seg Cell
-  | .a => ⟨input, verbal ⟨perfective, [.hh, .m, .a, .r, .r], deleted⟩ ⟨perfective1, input, diag⟩
-      ⟨imperfective, [.hh, .m, .a, .r, .r], deleted⟩ ⟨imperfectiveF, ablaut, diag⟩⟩
-  | _ => ⟨input, verbal ⟨perfective, input, diag⟩ ⟨perfective1, input, diag⟩
-      ⟨imperfective, ablaut, diag⟩ ⟨imperfectiveF, ablaut, diag⟩⟩
+  | .a => ⟨input, verbal ⟨perfective, deleted⟩ ⟨perfective1, faithful⟩
+      ⟨imperfective, deleted⟩ ⟨imperfectiveF, ablaut⟩⟩
+  | _ => ⟨input, verbal ⟨perfective, faithful⟩ ⟨perfective1, faithful⟩
+      ⟨imperfective, ablaut⟩ ⟨imperfectiveF, ablaut⟩⟩
 where
   input : List Seg := [.hh, .m, .a, .r, .a, .r]
-  ablaut : List Seg := [.hh, .m, .a, .r, .i, .r]
-  diag : List (ℕ × ℕ) := Correspondence.diagonalPairs 6
-  deleted : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (3, 3), (5, 4)]
+  faithful : List (Correspondence.Segment Unit Seg) := Correspondence.indexed input
+  ablaut : List (Correspondence.Segment Unit Seg) :=
+    Correspondence.indexed [.hh, .m, .a, .r, .i, .r]
+  /-- The vowel between the identical consonants deleted. -/
+  deleted : List (Correspondence.Segment Unit Seg) := faithful.eraseIdx 4
 
 -- (29)
 theorem geminate_alternation :
@@ -531,17 +509,17 @@ theorem sonCon_nouns :
 /-- The ranking of (32): \*ə]σ, \*CCC >> OP-MAX-V >> SONCON >> IO-MAX-V, IO-DEP-V. -/
 def moroccanRanking : List (Constraint (Paradigm Seg (List Seg))) :=
   [markedness fun suf s ↦ schwaOpen (s ++ suf), markedness fun suf s ↦ ccc (s ++ suf),
-   opFaith (Correspondence.Diagram.maxViolOn IsVowel), markedness fun suf s ↦ sonCon (s ++ suf),
-   ioFaith (Correspondence.Diagram.maxViolOn IsVowel),
-   ioFaith (Correspondence.Diagram.depViolOn IsVowel)]
+   opFaith (Correspondence.Segment.maxViolOn IsVowel ()), markedness fun suf s ↦ sonCon (s ++ suf),
+   ioFaith (Correspondence.Segment.maxViolOn IsVowel ()),
+   ioFaith (Correspondence.Segment.depViolOn IsVowel ())]
 
 /-- A CCəC member from /ʃərb/: the input schwa deleted, a schwa epenthesized. -/
 def ccec (suffix : List Seg) : Member Seg (List Seg) :=
-  ⟨suffix, [.sh, .r, .schwa, .b], [(0, 0), (2, 1), (3, 3)]⟩
+  ⟨suffix, [.ofIndex .sh 0, .ofIndex .r 2, .ofIndex .schwa 4, .ofIndex .b 3]⟩
 
 /-- A CəCC member from /ʃərb/. -/
 def cecc (suffix : List Seg) : Member Seg (List Seg) :=
-  ⟨suffix, [.sh, .schwa, .r, .b], Correspondence.diagonalPairs 4⟩
+  ⟨suffix, Correspondence.indexed [.sh, .schwa, .r, .b]⟩
 
 /-- The suffixes of the perfective paradigm (31): none, four C-initial, two V-initial. -/
 def suffixes : List (List Seg) := [[], [.t], [.n, .a], [.t, .i], [.t, .u], [.u], [.schwa, .t]]
@@ -588,20 +566,20 @@ def twoSidedOpen : List Seg → ℕ
 /-- \*VCəCV, SON-CON >> OP-MAX-V >> \*CC#. -/
 def ranking : List (Constraint (Paradigm Seg Unit)) :=
   [markedness fun _ s ↦ twoSidedOpen s, markedness fun _ s ↦ sonCon s,
-   opFaith (Correspondence.Diagram.maxViolOn (· = .vowel)), markedness fun _ s ↦ complexCoda s]
+   opFaith (Correspondence.Segment.maxViolOn (· = .vowel) ()), markedness fun _ s ↦ complexCoda s]
 
 /-- The paradigms of an imperfective and its truncated jussive from a stem ending in the
 cluster `x y`: the cluster kept, epenthesis throughout, or epenthesis in the jussive alone. -/
 def jussive (x y : Seg) : Cand → Paradigm Seg Unit
-  | .a => ⟨stem, [⟨(), stem, Correspondence.diagonalPairs 5⟩,
-      ⟨(), [.glide, .vowel, x, y], Correspondence.diagonalPairs 4⟩]⟩
-  | .b => ⟨stem, [⟨(), [.glide, .vowel, x, .vowel, y, .vowel],
-      [(0, 0), (1, 1), (2, 2), (3, 4), (4, 5)]⟩, ⟨(), epenthesized, epenthetic⟩]⟩
-  | _ => ⟨stem, [⟨(), stem, Correspondence.diagonalPairs 5⟩, ⟨(), epenthesized, epenthetic⟩]⟩
+  | .a => ⟨stem, [⟨(), faithful⟩, ⟨(), faithful.take 4⟩]⟩
+  | .b => ⟨stem, [⟨(), epenthesized faithful⟩, ⟨(), epenthesized (faithful.take 4)⟩]⟩
+  | _ => ⟨stem, [⟨(), faithful⟩, ⟨(), epenthesized (faithful.take 4)⟩]⟩
 where
   stem : List Seg := [.glide, .vowel, x, y, .vowel]
-  epenthesized : List Seg := [.glide, .vowel, x, .vowel, y]
-  epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (3, 4)]
+  faithful : List (Correspondence.Segment Unit Seg) := Correspondence.indexed stem
+  /-- A vowel epenthesized into the cluster. -/
+  epenthesized (s : List (Correspondence.Segment Unit Seg)) :
+      List (Correspondence.Segment Unit Seg) := s.insertIdx 3 (.ofIndex .vowel 5)
 
 -- (33)
 theorem cry : (Tableau.ofLabels (jussive .spirant .stop) {.a, .b, .c} ranking).optimal = {.a} := by
@@ -609,15 +587,16 @@ theorem cry : (Tableau.ofLabels (jussive .spirant .stop) {.a, .b, .c} ranking).o
 
 -- fn. 34
 theorem uncover :
-    (Tableau.ofLabels (jussive .spirant .liquid) {.a, .b, .c} ranking).optimal = {.c} := by decide +kernel
+    (Tableau.ofLabels (jussive .spirant .liquid) {.a, .b, .c} ranking).optimal = {.c} := by
+  decide +kernel
 
 /-- The OP winners for *yišbē ~ yišb* 'take captive' and 'uncover' carry the forms of the
 [benua-1997] winners, (82) and (87). -/
 example :
     (Tableau.ofLabels (jussive .sibilant .stop) {.a, .b, .c} ranking).optimal = {.a} ∧
-    (jussive .sibilant .stop .a).members.map (·.stem) =
+    (jussive .sibilant .stop .a).members.map (·.stem.map (·.seg)) =
       [(Benua1997.Hebrew.captive .d).form .base, (Benua1997.Hebrew.captive .d).form .derivative] ∧
-    (jussive .spirant .liquid .c).members.map (·.stem) =
+    (jussive .spirant .liquid .c).members.map (·.stem.map (·.seg)) =
       [(Benua1997.Hebrew.uncover .b).form .base, (Benua1997.Hebrew.uncover .b).form .derivative] :=
   ⟨by decide, rfl, rfl⟩
 

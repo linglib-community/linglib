@@ -23,8 +23,8 @@ segments [correspond](##OptimalityTheory.Correspondence.Segment.Corresponds) on 
 they share an index there. The positions of two strings that correspond form
 [a correspondence](##OptimalityTheory.Correspondence.ofIndices), whose converse is that of the
 two strings [exchanged](##OptimalityTheory.Correspondence.inv_ofIndices), and each faithfulness
-constraint is a count over the two strings that
-[agrees with the count on that correspondence](##OptimalityTheory.Correspondence.Segment.maxViolOn_eq).
+constraint is a count over the two strings
+[equal to that on the correspondence](##OptimalityTheory.Correspondence.Segment.maxViolOn_eq).
 
 ## Implementation notes
 
@@ -144,7 +144,8 @@ def uniformityViol : ℕ := integrityViol r t s
 
 /-- A count over a list is the number of its positions whose element is counted. -/
 private theorem countP_eq_card_filter_getElem {β : Type*} (l : List β) (p : β → Prop)
-    [DecidablePred p] : l.countP (p ·) = (Finset.univ.filter fun i : Fin l.length ↦ p l[i]).card := by
+    [DecidablePred p] :
+    l.countP (p ·) = (Finset.univ.filter fun i : Fin l.length ↦ p l[i]).card := by
   conv_lhs => rw [← List.ofFn_get l]
   rw [← Multiset.coe_countP, ← Fin.univ_val_map, Multiset.countP_map, Finset.card_def,
     Finset.filter_val]
@@ -228,9 +229,12 @@ variable {ρ α : Type*}
 
 /-! ### Indexings -/
 
+/-- The segment `a` bearing the index `k` on every relation. -/
+def Segment.ofIndex (a : α) (k : ℕ) : Segment ρ α := ⟨a, fun _ ↦ [k]⟩
+
 /-- The string `l` with each segment indexed by its position, on every relation. -/
 def indexed (l : List α) : List (Segment ρ α) :=
-  l.zipIdx.map fun x ↦ ⟨x.1, fun _ ↦ [x.2]⟩
+  l.zipIdx.map fun x ↦ .ofIndex x.1 x.2
 
 @[simp] theorem length_indexed (l : List α) : (indexed (ρ := ρ) l).length = l.length := by
   simp [indexed]
