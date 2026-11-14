@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Indonesian.Phonology
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Diagram
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Data.PHOIBLE.Inventories.Muna
 public import Linglib.Data.Wordlist.Pater2001
@@ -83,22 +83,22 @@ A candidate is an input and an output related as Pater's subscripts relate them,
 correspondence from the input to the output. -/
 
 /-- A candidate, a correspondence from the input to the output. -/
-abbrev Cand := Correspondence.Diagram BinaryRole Segment
+abbrev Cand := Correspondence.Coindexation BinaryRole Segment
 
 /-- *NC̥: a nasal before a voiceless obstruent. -/
 def nc : Constraint Cand := fun c ↦
-  (pairs (c.form .rhs)).countP fun p ↦
+  (pairs (c.string .rhs)).countP fun p ↦
     p.1.HasValue .nasal true ∧ p.2.HasValue .sonorant false ∧ p.2.HasValue .voice false
 
 /-- NASASSIM (36): a nasal not homorganic with the consonant after it. -/
 def nasAssim : Constraint Cand := fun c ↦
-  (pairs (c.form .rhs)).countP fun p ↦
+  (pairs (c.string .rhs)).countP fun p ↦
     p.1.HasValue .nasal true ∧ p.2.IsConsonant ∧ ¬ p.1.Homorganic p.2
 
 /-- *PL/LAB², the self-conjunction of *PL/LAB (15): two labial consonants or glides in a
 word, the non-syllabic segments with labial place. -/
 def plab2 : Constraint Cand := fun c ↦
-  if 2 ≤ (c.form .rhs).countP (fun s ↦ s.HasValue .syllabic false ∧ s.HasValue .labial true)
+  if 2 ≤ (c.string .rhs).countP (fun s ↦ s.HasValue .syllabic false ∧ s.HasValue .labial true)
   then 1 else 0
 
 /-- MAX: an input segment with no output correspondent. -/
@@ -131,22 +131,24 @@ instance : DecidablePred InPrWd := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _
 /-- The output segment at `j` is in the Prosodic Word when one of its input correspondents
 belongs to a morph inside it, `kinds` giving the morph of each input segment. -/
 def OutInPrWd (kinds : List Morph.Kind) (c : Cand) (j : ℕ) : Prop :=
-  ∃ p ∈ c.edge .lhs .rhs, p.2.val = j ∧ ∃ k ∈ kinds[p.1.val]?, InPrWd k
+  ∃ y ∈ (c.toward .rhs .lhs)[j]?, ∃ x ∈ (c.toward .lhs .rhs).zipIdx,
+    x.1.Corresponds y ∧ ∃ k ∈ kinds[x.2]?, InPrWd k
 
 instance (kinds : List Morph.Kind) (c : Cand) : DecidablePred (OutInPrWd kinds c) := fun j ↦
-  inferInstanceAs
-    (Decidable (∃ p ∈ c.edge .lhs .rhs, p.2.val = j ∧ ∃ k ∈ kinds[p.1.val]?, InPrWd k))
+  inferInstanceAs (Decidable (∃ y ∈ (c.toward .rhs .lhs)[j]?, ∃ x ∈ (c.toward .lhs .rhs).zipIdx,
+    x.1.Corresponds y ∧ ∃ k ∈ kinds[x.2]?, InPrWd k))
 
 /-- CRISPEDGE[PRWD] (32): homorganic neighbours on the two sides of an edge of the Prosodic
 Word, whose place is linked across it. -/
 def crispEdge (kinds : List Morph.Kind) : Constraint Cand := fun c ↦
-  (pairs (c.form .rhs)).zipIdx.countP fun q ↦
+  (pairs (c.string .rhs)).zipIdx.countP fun q ↦
     ¬ (OutInPrWd kinds c q.2 ↔ OutInPrWd kinds c (q.2 + 1)) ∧ q.1.1.Homorganic q.1.2
 
 /-- UNIFORMITY of roots: an output segment with two input correspondents in a root. -/
 def uniformityRt (kinds : List Morph.Kind) : Constraint Cand := fun c ↦
-  ((Finset.univ : Finset (Fin (c.form .rhs).length)).filter fun j ↦
-    1 < ((c.edge .lhs .rhs).filter fun p ↦ p.2 = j ∧ kinds[p.1.val]? = some .root).card).card
+  (c.toward .rhs .lhs).countP fun y ↦
+    1 < (c.toward .lhs .rhs).zipIdx.countP fun x ↦
+      x.1.Corresponds y ∧ kinds[x.2]? = some .root
 
 /-- The outcomes of Pater's tableaux: fusion of the nasal and the consonant into one nasal,
 assimilation of the nasal, and the faithful cluster. -/
@@ -159,8 +161,7 @@ inductive Outcome
 /-- The candidates of the nasal `N` before `x` under each outcome, with `y` the nasal that `N`
 assimilates to, which is also the fused nasal. -/
 def junctureCorr (N x y : Segment) : Outcome → Cand
-  | .fuse => .ofPairs (fun | .lhs => [N, x] | .rhs => [y])
-      (fun | .lhs, .rhs => [(0, 0), (1, 0)] | _, _ => [])
+  | .fuse => .ofPairs (fun | .lhs => [N, x] | .rhs => [y]) [(.lhs, .rhs, [(0, 0), (1, 0)])]
   | .assimilate => .parallel [N, x] [y, x]
   | .faithful => .identity [N, x]
 
@@ -192,7 +193,7 @@ def ranking (kinds : List Morph.Kind) : List (Constraint Cand) :=
 they have one output. -/
 def winningOutput {n : ℕ} (N x : Segment) (t : Tableau Outcome n) : Option (List Segment) :=
   match (([Outcome.fuse, .assimilate, .faithful].filter (· ∈ t.optimal)).map
-      fun o ↦ (corr N x o).form .rhs).dedup with
+      fun o ↦ (corr N x o).string .rhs).dedup with
   | [w] => some w
   | _ => none
 
@@ -256,7 +257,7 @@ def edges (n : ℕ) : UmOutcome → List (ℕ × ℕ)
 /-- The candidates of *-um-* before the root `x :: w`. -/
 def corr (x : Segment) (w : List Segment) (o : UmOutcome) : Cand :=
   .ofPairs (fun | .lhs => u :: m :: x :: w | .rhs => output x w o)
-    (fun | .lhs, .rhs => edges w.length o | _, _ => [])
+    [(.lhs, .rhs, edges w.length o)]
 
 /-- The candidates of *-um-* before `root`. -/
 def cands : List Segment → List Cand
