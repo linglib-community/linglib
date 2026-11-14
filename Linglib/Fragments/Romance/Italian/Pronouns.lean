@@ -72,12 +72,12 @@ def tu : PersonalPronoun :=
   { form := "tu", person := some .second, number := some .singular,
     strength := some .strong }
 
-/-- The polite second person singular *Lei*, the V form. It agrees as a third person singular,
-patterns with the feminine singular clitics and binds the third-person reflexive *si*, but it
-denotes the addressee, so it triggers PCC and Fancy Constraint effects and second person plural
-resolved agreement in coordination ([adamson-zompi-2025]). -/
+/-- The polite second person singular *Lei*, the V form. It agrees as a third person feminine
+singular, patterns with the feminine singular clitics and binds the third-person reflexive *si*,
+but it denotes the addressee, so it triggers PCC and Fancy Constraint effects and second person
+plural resolved agreement in coordination ([adamson-zompi-2025]). -/
 def lei_formal : PersonalPronoun :=
-  { form := "Lei", person := some .third, number := some .singular,
+  { form := "Lei", person := some .third, number := some .singular, gender := some .Fem,
     referential := {.addressee}, strength := some .strong }
 
 /-- *lui* — 3sg masculine. -/
