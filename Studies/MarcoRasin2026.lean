@@ -65,20 +65,20 @@ where
   medial := schwaMedial c₁ c₂ c₃
   initial := schwaInitial c₁ c₂ c₃
 
+/-- The undominated markedness constraints (7a, b): \*ə]σ and \*CCC. -/
+def phonotactics : List (Constraint (Paradigm Seg (List Seg))) :=
+  [markedness fun suf s ↦ schwaOpen (s ++ suf), markedness fun suf s ↦ ccc (s ++ suf)]
+
 /-- The constraints (7) in the ranking of tableau (9): \*ə]σ, \*CCC >> OP-MAX-V >> SONCON. -/
 def ranking : List (Constraint (Paradigm Seg (List Seg))) :=
-  [markedness fun suf s ↦ schwaOpen (s ++ suf), markedness fun suf s ↦ ccc (s ++ suf),
-   opFaith (Correspondence.Diagram.maxViolOn IsVowel), markedness fun suf s ↦ sonCon (s ++ suf)]
+  phonotactics ++
+    [opFaith (Correspondence.Diagram.maxViolOn IsVowel), markedness fun suf s ↦ sonCon (s ++ suf)]
 
 /-! ### Moroccan Arabic (§2) -/
 
 /-- The Moroccan perfective paradigm of /ʃrb/ 'drink', with the suffixes of tableau (9). -/
 def moroccan : Cand → Paradigm Seg (List Seg) :=
   paradigms .sh .r .b [[.t], [.n, .a], [.t, .i], [.t, .u]] [[.schwa, .t], [.u]]
-
-/-- In the Moroccan verb the bare stem is CCəC against sonority, as in tableau (9). -/
-theorem moroccan_verb : (Tableau.ofLabels moroccan {.a, .b, .c, .d} ranking).optimal = {.a} := by
-  decide +kernel
 
 /-! ### Majority rules -/
 
@@ -175,6 +175,36 @@ theorem majority_rules :
   rw [opMaxV_paradigms_a, opMaxV_paradigms_b, Nat.mul_lt_mul_left two_pos, Nat.add_mul,
     Nat.mul_add, one_mul, mul_one, Nat.add_lt_add_iff_left]
 
+variable {c₁ c₂ c₃ cInitial vInitial} {labels : Finset Cand}
+
+-- Where the phonotactics leave the two paradigms that differ in the bare stem, the winner is
+-- the one whose bare stem sides with the more numerous suffixes.
+theorem optimal_of_lt
+    (h : (Tableau.ofLabels (paradigms c₁ c₂ c₃ cInitial vInitial) labels phonotactics).optimal =
+      {.a, .b}) (hlt : vInitial.length < cInitial.length) :
+    (Tableau.ofLabels (paradigms c₁ c₂ c₃ cInitial vInitial) labels ranking).optimal = {.a} := by
+  rw [ranking, Tableau.optimal_ofLabels_append, h]
+  refine Tableau.optimal_ofLabels_cons_eq_singleton (by simp) fun l hl hne ↦ ?_
+  obtain rfl : l = .b := by simpa [hne] using hl
+  exact (majority_rules c₁ c₂ c₃ cInitial vInitial).2 hlt
+
+theorem optimal_of_gt
+    (h : (Tableau.ofLabels (paradigms c₁ c₂ c₃ cInitial vInitial) labels phonotactics).optimal =
+      {.a, .b}) (hlt : cInitial.length < vInitial.length) :
+    (Tableau.ofLabels (paradigms c₁ c₂ c₃ cInitial vInitial) labels ranking).optimal = {.b} := by
+  rw [ranking, Tableau.optimal_ofLabels_append, h]
+  refine Tableau.optimal_ofLabels_cons_eq_singleton (by simp) fun l hl hne ↦ ?_
+  obtain rfl : l = .a := by simpa [hne] using hl
+  rw [opMaxV_paradigms_a, opMaxV_paradigms_b, Nat.mul_lt_mul_left two_pos, Nat.add_mul,
+    Nat.mul_add, one_mul, mul_one, Nat.add_lt_add_iff_left]
+  exact hlt
+
+/-- In the Moroccan verb the bare stem is CCəC against sonority, as in tableau (9): the
+phonotactics leave the two paradigms that differ in the bare stem, and four C-initial suffixes
+outnumber two V-initial ones. -/
+theorem moroccan_verb : (Tableau.ofLabels moroccan {.a, .b, .c, .d} ranking).optimal = {.a} :=
+  optimal_of_lt (by decide +kernel) (by decide)
+
 /-- The attested Moroccan paradigm, with four C-initial and two V-initial suffixes, draws 20
 OP-MAX-V marks against 24 with the bare stem CəCC (9), and the attested adjectival paradigm,
 with two V-initial suffixes alone, draws four (14). -/
@@ -200,7 +230,9 @@ def jtaVerb (c₁ c₂ c₃ : Seg) : Cand → Paradigm Seg (List Seg) :=
 theorem jta_verbs :
     ∀ r ∈ [(Seg.sh, Seg.r, Seg.b), (.g, .d, .m), (.k, .ch, .b)],
       (Tableau.ofLabels (jtaVerb r.1 r.2.1 r.2.2) {.a, .b, .c, .d} ranking).optimal = {.a} := by
-  decide +kernel
+  simp only [List.forall_mem_cons, List.not_mem_nil, false_imp_iff, implies_true, and_true]
+  exact ⟨optimal_of_lt (by decide +kernel) (by decide),
+    optimal_of_lt (by decide +kernel) (by decide), optimal_of_lt (by decide +kernel) (by decide)⟩
 
 /-- The roots of the nouns (12): CəCC with C₂ more sonorous than C₃ — *kəlb, bəntʃ, wəld,
 səms, məlħ, tʃəlʒ* — and CCəC otherwise — *xʃəm, ħbəq, lħəm, sdər, bsəl, fħəm*. -/
@@ -235,7 +267,9 @@ CCəC (14). -/
 theorem adjective_paradigm :
     ∀ r ∈ adjectives,
       (Tableau.ofLabels (adjective r.1 r.2.1 r.2.2) {.a, .b} ranking).optimal = {.b} := by
-  decide +kernel
+  have h : ∀ r ∈ adjectives, (Tableau.ofLabels (adjective r.1 r.2.1 r.2.2) {.a, .b}
+      phonotactics).optimal = {.a, .b} := by decide +kernel
+  exact fun r hr ↦ optimal_of_gt (h r hr) (by decide)
 
 -- (15)
 theorem adjective_bare :

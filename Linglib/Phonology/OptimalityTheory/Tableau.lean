@@ -435,6 +435,17 @@ theorem optimal_ofLabels_append {L : Type*} {cand : L → C} {labels : Finset L}
   rw [ofLabels, List.map_append, optimal_ofList_append]
   rfl
 
+/-- A candidate that does strictly best on the top constraint is the sole winner. -/
+theorem optimal_ofList_cons_eq_singleton {c : C} (hc : c ∈ s) (h : ∀ d ∈ s, d ≠ c → F c < F d) :
+    (ofList s (F :: Fs)).optimal = {c} := by
+  rw [optimal_ofList_cons, Finset.argmin_eq_singleton_iff.2 ⟨hc, h⟩]
+  exact optimal_singleton rfl
+
+theorem optimal_ofLabels_cons_eq_singleton {L : Type*} {cand : L → C} {labels : Finset L} {l : L}
+    (hl : l ∈ labels) (h : ∀ l' ∈ labels, l' ≠ l → F (cand l) < F (cand l')) :
+    (ofLabels cand labels (F :: Fs)).optimal = {l} :=
+  optimal_ofList_cons_eq_singleton hl h
+
 theorem optimal_ofList_cons_of_forall_eq (h : ∀ c ∈ s, ∀ d ∈ s, F c = F d) :
     (ofList s (F :: Fs)).optimal = (ofList s Fs).optimal := by
   rw [optimal_ofList_cons, Finset.argmin_eq_self_of_forall_le fun c hc d hd ↦ (h c hc d hd).le]
