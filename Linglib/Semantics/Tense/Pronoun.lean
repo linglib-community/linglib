@@ -12,7 +12,7 @@ It denotes the value of a temporal variable and presupposes that this time stand
 evaluation time, the value of a second variable, in a relation, as a pronoun presupposes that
 its referent has its φ-features. `Tense.pronoun R k j` is this denotation, a definite over times
 (`Definite`) as the denotation of a personal pronoun is a definite over individuals. The past
-and the present are the pronouns of the relations of their cells (`Tense.toSetRel`), the zero
+and the present are the pronouns of the relations of their cells (`PointAlgebra.toSetRel`), the zero
 tense of Kratzer, a variable with no presupposition, is the pronoun of the unconstrained cell
 `⊤`, and a tense whose reference time is an interval is the pronoun of the relation of an Allen
 cell (`Allen.toSetRel`).
@@ -43,11 +43,11 @@ quantificational tense of its cell.
 
 namespace Tense
 
-open ModalLogic
+open ModalLogic PointAlgebra
 open scoped Assignment
 open scoped SetRel
 
-variable {W T : Type*} {R : SetRel T T} {C : Finset Ordering} {k j : ℕ} {g : ℕ → T} {w : W}
+variable {W T : Type*} {R : SetRel T T} {C : PointAlgebra} {k j : ℕ} {g : ℕ → T} {w : W}
 
 /-- The pronominal tense with relation `R`, referential index `k` and evaluation index `j` denotes
 the time of `k` where the time of `j` stands in `R` to it, and nothing elsewhere. -/

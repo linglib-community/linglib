@@ -65,7 +65,7 @@ open scoped SetRel
 
 open Tense Tense.Perspective
 
-variable {T : Type*} [LinearOrder T] {B : Finset Allen.Relation} {C : Finset Ordering}
+variable {T : Type*} [LinearOrder T] {B : Finset Allen.Relation} {C : PointAlgebra}
   {r th π : NonemptyInterval T}
 
 /-! ### The clash and the shift-together effect (section 5) -/
@@ -154,7 +154,7 @@ theorem not_restricted_top_of_le (hC : .eq ∉ C) (hr : r ≤ π) :
 
 /-- The positions of the tense an example's adverb restricts: its embedded tense, or else its
 matrix tense, and all positions for a deleted tense. -/
-def tenseCell (row : Datum) : Option (Finset Ordering) :=
+def tenseCell (row : Datum) : Option PointAlgebra :=
   if row.feature? "shifted" = some "deleted" then some ⊤ else
     row.parse? (if (row.feature? "embedded").isSome then "embedded" else "matrix")
       [("present", ⟦present⟧), ("past", ⟦past⟧), ("future", ⟦future⟧), ("deleted past", ⊤)]

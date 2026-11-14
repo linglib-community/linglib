@@ -33,7 +33,7 @@ strict *later than*: [it refutes `CFpFFp` when discrete](##not_den_int), and
 
 namespace Prior1967
 
-open ModalLogic Tense
+open ModalLogic Tense PointAlgebra
 open scoped Denotes SetRel
 
 -- `CFpFFp` on discrete time, p. 39: something can be the case for the last time at the next
@@ -48,7 +48,7 @@ theorem den_rat : (◇[toSetRel ⟦Tense.future⟧] : (ℚ → Prop) → ℚ →
   diamond_future_den_iff.2 inferInstance
 
 /-- If *later than* were reflexive, `CFpFFp` would be verified even if time were not dense (p. 39).
-The reflexive *later than* is the relation of the nonpast cell. -/
+The reflexive *later than* is the relation of the nonpast. -/
 theorem den_nonpast {T : Type*} [LinearOrder T] :
     (◇[toSetRel nonpast] : (T → Prop) → T → Prop) ≤ ◇[toSetRel nonpast] ∘ ◇[toSetRel nonpast] :=
   have : (toSetRel nonpast : SetRel T T).IsRefl :=
@@ -68,7 +68,7 @@ theorem mirror_image_fails :
 
 variable {T : Type*} [PartialOrder T]
 
-/-- `CMNMpNMp` (p. 38), with `M` the possibility of the unconstrained cell (`diamond_toSetRel_top`),
+/-- `CMNMpNMp` (p. 38), with `M` the possibility of the top element (`diamond_toSetRel_top`),
 holds exactly when time branches neither way. -/
 theorem cmnmpnmp_iff :
     (∀ (p : T → Prop) (t : T),

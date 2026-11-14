@@ -62,7 +62,7 @@ open scoped Assignment
 
 open scoped Denotes
 
-open Tense
+open Tense PointAlgebra
 open Aspect (ofRel ofRel_mono UNBOUNDED PRFV ViewpointType)
 
 /-! ### The tenses (§4–§5) -/
@@ -74,7 +74,7 @@ variable {W T : Type*}
 /-- The indexical tense with cell `C` is the variable `n` presupposing that its reference stands
 to the utterance time, the time of the index `0`, in a position of `C`. The present and the past
 are the tenses of the cells `present` and `past`. -/
-abbrev tense [LT T] (C : Finset Ordering) (n : ℕ) : Definite (ℕ → T) W T :=
+abbrev tense [LT T] (C : PointAlgebra) (n : ℕ) : Definite (ℕ → T) W T :=
   pronoun (toSetRel C) n 0
 
 /-- The zero tense is a variable with no presupposition, bound by the next tense up. -/
@@ -84,7 +84,7 @@ abbrev zeroTense [LT T] (n : ℕ) : Definite (ℕ → T) W T := pronoun (toSetRe
 variable resolves to it. -/
 def outOfTheBlue (t₀ : T) : ℕ → T := Function.const ℕ t₀
 
-theorem tense_outOfTheBlue_iff [LinearOrder T] (C : Finset Ordering) (n : ℕ) (t₀ : T) (w : W) :
+theorem tense_outOfTheBlue_iff [LinearOrder T] (C : PointAlgebra) (n : ℕ) (t₀ : T) (w : W) :
     (tense C n (outOfTheBlue t₀) w).Dom ↔ .eq ∈ C :=
   pronoun_dom_const t₀
 
@@ -97,7 +97,7 @@ theorem zeroTense_abstract [LinearOrder T] (n : ℕ) (g : ℕ → T) (t : T) (w 
     t ∈ Λ[n] (fun g ↦ zeroTense n g w) g t := by
   simp
 
-theorem tense_not_abstracted [LT T] (C : Finset Ordering) {m n : ℕ} (hn : n ≠ m)
+theorem tense_not_abstracted [LT T] (C : PointAlgebra) {m n : ℕ} (hn : n ≠ m)
     (g : ℕ → T) (t : T) (w : W) {s : T} (hs : s ∈ Λ[m] (fun g ↦ tense C n g w) g t) :
     s = g n := by
   simpa [Function.update_of_ne hn] using (mem_pronoun.1 hs).2.symm
@@ -195,11 +195,11 @@ theorem AspectHead.IsAnterior.precedes {a : AspectHead} (ha : a.IsAnterior T)
 
 /-- Tense `C` on the variable `n` with aspect `a` is true of an event property when the tense is
 defined and the aspect holds of the property at the tense's reference. -/
-def denote (C : Finset Ordering) (a : AspectHead) (n : ℕ) (P : W → E → Prop)
+def denote (C : PointAlgebra) (a : AspectHead) (n : ℕ) (P : W → E → Prop)
     (g : ℕ → T) (w : W) : Prop :=
   (tense C n g w).Dom ∧ .pure (g n) ∈ a.denote P w
 
-theorem denote_iff_holdsAlong (C : Finset Ordering) (a : AspectHead) (n : ℕ)
+theorem denote_iff_holdsAlong (C : PointAlgebra) (a : AspectHead) (n : ℕ)
     (P : W → E → Prop) (g : ℕ → T) (w : W) :
     denote C a n P g w ↔ ∃ e : E, P w e ∧
       Allen.HoldsAlong [Allen.pure C, Allen.inv a.cell] (.pure (g 0)) [.pure (g n), τ e] := by
@@ -208,7 +208,7 @@ theorem denote_iff_holdsAlong (C : Finset Ordering) (a : AspectHead) (n : ℕ)
   simp [denote, AspectHead.denote, ofRel, NonemptyInterval.IsPoint]
   exact ⟨fun ⟨hC, e, he, hP⟩ ↦ ⟨e, hP, hC, he⟩, fun ⟨e, hP, hC, he⟩ ↦ ⟨hC, e, he, hP⟩⟩
 
-theorem denote_outOfTheBlue_iff (C : Finset Ordering) (a : AspectHead) (n : ℕ)
+theorem denote_outOfTheBlue_iff (C : PointAlgebra) (a : AspectHead) (n : ℕ)
     (P : W → E → Prop) (t₀ : T) (w : W) :
     denote C a n P (outOfTheBlue t₀) w ↔ .eq ∈ C ∧ .pure t₀ ∈ a.denote P w := by
   rw [denote, tense_outOfTheBlue_iff]; rfl
@@ -227,7 +227,7 @@ end Aspects
 with the tenses and aspects they spell out. -/
 structure Variety where
   /-- The entries of the table. -/
-  table : List (Tense.Form × Finset Ordering × AspectHead)
+  table : List (Tense.Form × PointAlgebra × AspectHead)
 
 /-- In English the progressive forms spell out the imperfective and the simple forms the
 perfective, and the simple past also spells out the perfect, of the present as of the past. -/
@@ -265,9 +265,9 @@ namespace Variety
 variable (v : Variety)
 
 /-- The form `f` spells out tense `C` with aspect `a`. -/
-def SpellsOut (f : Tense.Form) (C : Finset Ordering) (a : AspectHead) : Prop := (f, C, a) ∈ v.table
+def SpellsOut (f : Tense.Form) (C : PointAlgebra) (a : AspectHead) : Prop := (f, C, a) ∈ v.table
 
-instance (f : Tense.Form) (C : Finset Ordering) (a : AspectHead) : Decidable (v.SpellsOut f C a) :=
+instance (f : Tense.Form) (C : PointAlgebra) (a : AspectHead) : Decidable (v.SpellsOut f C a) :=
   inferInstanceAs (Decidable (_ ∈ _))
 
 variable (T : Type*) [LinearOrder T] in

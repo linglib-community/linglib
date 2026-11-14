@@ -79,12 +79,12 @@ Klecha's doxastic and circumstantial bases to the nonfuture and the future. -/
 section Oriented
 
 variable (history : HistoricalAlternatives W T) (s : Index W T) {s' : Index W T}
-  {C : Finset Ordering}
+  {C : PointAlgebra}
 
 /-- The base of the alternatives oriented by a tense cell `C` pairs the alternatives of an index
 with the times standing to the index's time in a position of `C`. -/
-def orientedBase [LT T] (C : Finset Ordering) : Set (Index W T) :=
-  {s' | s'.world ∈ history s ∧ s.time ~[Tense.toSetRel C] s'.time}
+def orientedBase [LT T] (C : PointAlgebra) : Set (Index W T) :=
+  {s' | s'.world ∈ history s ∧ s.time ~[PointAlgebra.toSetRel C] s'.time}
 
 /-- The historical modal base, the alternatives at times at or after the index's own, the past
 fixed and the future branching ([thomason-1984], [condoravdi-2002]). -/
@@ -101,24 +101,25 @@ abbrev futureHistoryBase [LT T] : Set (Index W T) := orientedBase history s ⟦T
 variable {history s}
 
 theorem mem_orientedBase [LT T] :
-    s' ∈ orientedBase history s C ↔ s'.world ∈ history s ∧ s.time ~[Tense.toSetRel C] s'.time :=
+    s' ∈ orientedBase history s C ↔
+      s'.world ∈ history s ∧ s.time ~[PointAlgebra.toSetRel C] s'.time :=
   Iff.rfl
 
 /-- On linear time the time of a situation in an oriented base stands to the index's time in a
 position of the cell. -/
 theorem compare_mem_of_mem_orientedBase [LinearOrder T] (h : s' ∈ orientedBase history s C) :
     compare s'.time s.time ∈ C :=
-  Tense.mem_toSetRel_iff.1 h.2
+  PointAlgebra.mem_toSetRel_iff.1 h.2
 
 theorem mem_historicalBase [PartialOrder T] :
     s' ∈ historicalBase history s ↔ s'.world ∈ history s ∧ s.time ≤ s'.time := by
-  rw [mem_orientedBase, Tense.nonpast_eq_present_sup_future, Tense.toSetRel_sup, Set.mem_union,
-    Tense.mem_toSetRel_present, Tense.mem_toSetRel_future, le_iff_eq_or_lt, eq_comm]
+  rw [mem_orientedBase, Tense.nonpast_eq_present_sup_future, PointAlgebra.toSetRel_sup,
+    Set.mem_union, Tense.mem_toSetRel_present, Tense.mem_toSetRel_future, le_iff_eq_or_lt, eq_comm]
 
 theorem mem_actualHistoryBase [PartialOrder T] :
     s' ∈ actualHistoryBase history s ↔ s'.world ∈ history s ∧ s'.time ≤ s.time := by
-  rw [mem_orientedBase, Tense.nonfuture_eq_past_sup_present, Tense.toSetRel_sup, Set.mem_union,
-    Tense.mem_toSetRel_past, Tense.mem_toSetRel_present, le_iff_lt_or_eq]
+  rw [mem_orientedBase, Tense.nonfuture_eq_past_sup_present, PointAlgebra.toSetRel_sup,
+    Set.mem_union, Tense.mem_toSetRel_past, Tense.mem_toSetRel_present, le_iff_lt_or_eq]
 
 theorem mem_futureHistoryBase [Preorder T] :
     s' ∈ futureHistoryBase history s ↔ s'.world ∈ history s ∧ s.time < s'.time := by
@@ -134,10 +135,10 @@ theorem time_lt_of_mem_futureHistoryBase [Preorder T] (h : s' ∈ futureHistoryB
     s.time < s'.time :=
   (mem_futureHistoryBase.1 h).2
 
-theorem orientedBase_sup [LT T] (C D : Finset Ordering) :
+theorem orientedBase_sup [LT T] (C D : PointAlgebra) :
     orientedBase history s (C ⊔ D) = orientedBase history s C ∪ orientedBase history s D := by
   ext
-  simp only [mem_orientedBase, Tense.toSetRel_sup, Set.mem_union, and_or_left]
+  simp only [mem_orientedBase, PointAlgebra.toSetRel_sup, Set.mem_union, and_or_left]
 
 /-- On linear time the actual and future bases together hold the alternatives at all times. -/
 theorem actualHistoryBase_union_futureHistoryBase [LinearOrder T] :

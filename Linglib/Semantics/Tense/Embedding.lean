@@ -8,23 +8,23 @@ public import Linglib.Semantics.Tense.Defs
 A tense embedded under an attitude verb is evaluated from the attitude holder's now. Abusch makes
 that local evaluation time an upper limit for the denotation of tenses, and accepts Heim's
 construal of the constraint as a presupposition of every tense node: a tense's reference time
-stands to its local evaluation time in a position of the nonfuture cell, `Tense.nonfuture`. That
-cell contains the present and is closed under composition, so [no chain of tenses that each obey
-the constraint reaches a later time](##Tense.compAlong_le_nonfuture): forward shifting needs an
+stands to its local evaluation time in an ordering of the nonfuture, `Tense.nonfuture`. The
+nonfuture contains the present and is closed under products, so [no chain of tenses that each obey
+the constraint reaches a later time](##Tense.prod_le_nonfuture): forward shifting needs an
 operator such as *woll* that moves the evaluation time.
 
 A past under a past attitude places its reference time before the attitude's now. In a language
 with the Sequence of Tense rule the embedded past may instead be deleted and read as a zero tense
-bound to the now, so it coincides with it. The positions `pastUnderPast` of an embedded past are
-therefore the past cell, joined with the present cell where the rule applies. They [obey the
+bound to the now, so it coincides with it. The orderings `pastUnderPast` of an embedded past are
+therefore the past, joined with the present where the rule applies. They [obey the
 constraint](##Tense.pastUnderPast_le_nonfuture), [exhaust it exactly where the rule
 applies](##Tense.pastUnderPast_eq_nonfuture_iff), and on either reading [leave the embedded time
-before the utterance time](##Tense.comp_pastUnderPast_past).
+before the utterance time](##Tense.past_mul_pastUnderPast).
 
 ## Implementation notes
 
 Abusch motivates the constraint by the branching of the future across epistemic alternatives,
-which `Studies/Abusch1997.lean` states on branching frames; the derivation of the cell from a
+which `Studies/Abusch1997.lean` states on branching frames; the derivation of the nonfuture from a
 doxastic modal base is Klecha's (`Studies/Klecha2016.lean`).
 
 ## References
@@ -38,29 +38,30 @@ doxastic modal base is Klecha's (`Studies/Klecha2016.lean`).
 
 namespace Tense
 
+open PointAlgebra
 open scoped Denotes
-open scoped SetRel
 
 /-- No chain of tenses that each obey the Upper Limit Constraint reaches a time after the one
 above the chain. -/
-theorem compAlong_le_nonfuture {cs : List (Finset Ordering)}
-    (h : ∀ C ∈ cs, C ≤ nonfuture) : compAlong cs ≤ nonfuture := by
+theorem prod_le_nonfuture {cs : List PointAlgebra} (h : ∀ C ∈ cs, C ≤ nonfuture) :
+    cs.prod ≤ nonfuture := by
   induction cs with
-  | nil => exact present_le_nonfuture
+  | nil => exact one_le_nonfuture
   | cons C cs ih =>
     rw [List.forall_mem_cons] at h
-    exact (comp_le_comp (ih h.2) h.1).trans comp_nonfuture_nonfuture.le
+    rw [List.prod_cons]
+    exact (mul_le_mul' h.1 (ih h.2)).trans nonfuture_mul_nonfuture.le
 
-/-- `pastUnderPast sot` is the cell of the positions an embedded past's reference time may take
+/-- `pastUnderPast sot` is the orderings an embedded past's reference time may take
 against the attitude's now, where `sot` says whether the Sequence of Tense rule can delete it. A
 genuine past precedes the now, and a deleted past is a zero tense bound to it. -/
-def pastUnderPast (sot : Prop) [Decidable sot] : Finset Ordering :=
+def pastUnderPast (sot : Prop) [Decidable sot] : PointAlgebra :=
   ⟦past⟧ ⊔ if sot then ⟦present⟧ else ⊥
 
 variable {sot : Prop} [Decidable sot]
 
 theorem mem_pastUnderPast {o : Ordering} : o ∈ pastUnderPast sot ↔ o = .lt ∨ sot ∧ o = .eq := by
-  by_cases h : sot <;> simp [pastUnderPast, h, Denotes.denote, denote]
+  by_cases h : sot <;> simp [pastUnderPast, h, mem_past, mem_present]
 
 /-- A time is a reading of a past under a past attitude exactly when it precedes the attitude's
 now or, where the Sequence of Tense rule applies, is that now. -/
@@ -98,10 +99,11 @@ theorem pastUnderPast_eq_nonfuture_iff :
 
 /-- On either reading a past under a past attitude leaves its reference time before the utterance
 time, the simultaneous reading through the attitude's own past. -/
-@[simp] theorem comp_pastUnderPast_past : comp (pastUnderPast sot) ⟦past⟧ = ⟦past⟧ := by
+@[simp] theorem past_mul_pastUnderPast : ⟦past⟧ * pastUnderPast sot = ⟦past⟧ := by
   by_cases h : sot
-  · rw [pastUnderPast_pos h, nonfuture_eq_past_sup_present, comp_sup_left,
-      comp_past_past, comp_present_left, sup_idem]
-  · rw [pastUnderPast_neg h, comp_past_past]
+  · rw [pastUnderPast_pos h]
+    decide
+  · rw [pastUnderPast_neg h]
+    decide
 
 end Tense

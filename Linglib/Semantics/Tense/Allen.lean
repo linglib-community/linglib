@@ -496,9 +496,9 @@ end LinearOrder
 
 /-- The cell of the relations whose position is one of `C`. -/
 @[irreducible]
-def ofPosition (C : Finset Ordering) : Finset Relation := Finset.univ.filter (·.position ∈ C)
+def ofPosition (C : PointAlgebra) : Finset Relation := Finset.univ.filter (·.position ∈ C)
 
-theorem ofPosition_eq : ofPosition {.eq} = overlaps := by decide +kernel
+theorem ofPosition_eq : ofPosition 1 = overlaps := by decide +kernel
 
 theorem ofPosition_lt : ofPosition {.lt} = precedes := by decide +kernel
 
@@ -553,7 +553,7 @@ theorem relation_mem_filter {p : Relation → Prop} [DecidablePred p] :
   rw [nonfinalSubinterval, relation_mem_filter]
   simp [relation, ofEndpoints, NonemptyInterval.NonfinalSubinterval, compare_lt_iff_lt]
 
-@[simp] theorem relation_mem_ofPosition {C : Finset Ordering} :
+@[simp] theorem relation_mem_ofPosition {C : PointAlgebra} :
     relation i j ∈ ofPosition C ↔ i.position j ∈ C := by
   rw [ofPosition, relation_mem_filter, position_relation]
 
@@ -565,7 +565,7 @@ theorem mem_toSetRel_overlaps : (j, i) ∈ toSetRel overlaps ↔ i.Overlaps j :=
 
 theorem mem_toSetRel_le : (j, i) ∈ toSetRel le ↔ i ≤ j := relation_mem_le
 
-theorem mem_toSetRel_ofPosition {C : Finset Ordering} :
+theorem mem_toSetRel_ofPosition {C : PointAlgebra} :
     (j, i) ∈ toSetRel (ofPosition C) ↔ i.position j ∈ C :=
   relation_mem_ofPosition
 
@@ -601,7 +601,7 @@ def eq : Finset Relation := Finset.univ.filter fun r ↦ r.fstFst = .eq ∧ r.sn
 
 /-- The cell of point intervals whose points compare as `C` allows. -/
 @[irreducible]
-def pure (C : Finset Ordering) : Finset Relation :=
+def pure (C : PointAlgebra) : Finset Relation :=
   Finset.univ.filter fun r ↦ r.firstShape = .eq ∧ r.secondShape = .eq ∧ r.fstFst ∈ C
 
 section LinearOrder
@@ -612,7 +612,7 @@ variable {T : Type*} [LinearOrder T] {i j : NonemptyInterval T}
   rw [eq, relation_mem_filter]
   simp [relation, ofEndpoints, NonemptyInterval.ext_iff, Prod.ext_iff]
 
-@[simp] theorem relation_mem_pure {C : Finset Ordering} :
+@[simp] theorem relation_mem_pure {C : PointAlgebra} :
     relation i j ∈ pure C ↔ i.IsPoint ∧ j.IsPoint ∧ compare i.fst j.fst ∈ C := by
   rw [pure, relation_mem_filter]
   simp [relation, ofEndpoints, NonemptyInterval.IsPoint]
@@ -630,14 +630,14 @@ private theorem toComparisons_eq_of_shapes :
   decide +kernel
 
 /-- On points, Allen composition is the composition of comparison cells. -/
-theorem comp_pure (R S : Finset Ordering) : comp (pure R) (pure S) = pure (Tense.comp R S) := by
+theorem comp_pure (R S : PointAlgebra) : comp (pure R) (pure S) = pure (S * R) := by
   ext t
   simp only [mem_comp, pure, Finset.mem_filter, Finset.mem_univ, true_and]
   constructor
   · rintro ⟨i, j, k, ⟨h1, -, hR⟩, ⟨-, h2, hS⟩, rfl⟩
-    exact ⟨h1, h2, Tense.compare_mem_comp hR hS⟩
+    exact ⟨h1, h2, PointAlgebra.compare_mem_mul hR hS⟩
   · rintro ⟨h1, h2, hc⟩
-    obtain ⟨r, hr, s, hs, ho⟩ := Tense.mem_comp.1 hc
+    obtain ⟨r, hr, s, hs, ho⟩ := PointAlgebra.mem_mul.1 hc
     obtain ⟨x, y, z, hxy, hyz, hxz⟩ := exists_fin_of_mem_comp r s _ ho
     have hself (a : Fin 6) : compare a a = .eq := compare_eq_iff_eq.2 rfl
     refine ⟨.pure x, .pure y, .pure z, ⟨hself x, hself y, show compare x y ∈ R from hxy ▸ hr⟩,

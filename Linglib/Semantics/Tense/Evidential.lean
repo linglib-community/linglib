@@ -90,11 +90,11 @@ tense partition, `⊤` where it leaves the relation open. -/
 structure Constraint where
   /-- The cell of the event relative to the acquisition of the evidence, Cumming's evidential
   perspective. -/
-  eventToAcquisition : Finset Ordering := ⊤
+  eventToAcquisition : PointAlgebra := ⊤
   /-- The cell of the acquisition of the evidence relative to speech. -/
-  acquisitionToSpeech : Finset Ordering := ⊤
+  acquisitionToSpeech : PointAlgebra := ⊤
   /-- The cell of the event relative to speech, Cumming's utterance perspective. -/
-  eventToSpeech : Finset Ordering := ⊤
+  eventToSpeech : PointAlgebra := ⊤
   deriving DecidableEq
 
 namespace Constraint
@@ -113,20 +113,20 @@ instance (c : Constraint) (f : EvidentialFrame T) : Decidable (c.Holds f) :=
 
 /-- The cell of the event relative to speech that the relations of the event to the
 acquisition and of the acquisition to speech compose to. -/
-def derived (c : Constraint) : Finset Ordering := comp c.eventToAcquisition c.acquisitionToSpeech
+def derived (c : Constraint) : PointAlgebra := c.acquisitionToSpeech * c.eventToAcquisition
 
 theorem compare_mem_derived (h : c.Holds f) : compare f.eventTime f.speechTime ∈ c.derived :=
-  compare_mem_comp h.1 h.2.1
+  PointAlgebra.compare_mem_mul h.1 h.2.1
 
 theorem downstream_of_holds (hc : c.eventToAcquisition ≤ nonfuture) (h : c.Holds f) :
     f.Downstream :=
   f.downstream_iff.2 (hc h.1)
 
-theorem holds_eventToAcquisition_sup {C D : Finset Ordering} :
+theorem holds_eventToAcquisition_sup {C D : PointAlgebra} :
     ({ c with eventToAcquisition := C ⊔ D } : Constraint).Holds f ↔
       ({ c with eventToAcquisition := C } : Constraint).Holds f ∨
         ({ c with eventToAcquisition := D } : Constraint).Holds f := by
-  simp only [Holds, Finset.sup_eq_union, Finset.mem_union, or_and_right]
+  simp only [Holds, PointAlgebra.mem_sup, or_and_right]
 
 end Constraint
 
@@ -138,4 +138,4 @@ end Tense
 of the acquisition relative to speech. -/
 structure Evidential.Timed extends Evidential where
   /-- The cell of the acquisition of the evidence relative to speech. -/
-  acquisitionToSpeech : Finset Ordering
+  acquisitionToSpeech : PointAlgebra

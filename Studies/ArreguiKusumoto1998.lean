@@ -194,8 +194,8 @@ theorem Model.extension_eq {M : Model T} {lf : LF}
 theorem before_iff_not_diamond :
     before X t ↔ ¬ ◇[Allen.toSetRel (Allen.ofPosition nonfuture)] X t := by
   simp only [before, Diamond, Allen.mem_toSetRel, Allen.relation_mem_ofPosition,
-    nonfuture_eq_compl_future, Finset.mem_compl, denote_future, Finset.mem_singleton, NonemptyInterval.position_eq_gt,
-    not_exists, not_and]
+    nonfuture_eq_compl_future, PointAlgebra.mem_compl, mem_future,
+    NonemptyInterval.position_eq_gt, not_exists, not_and]
   exact forall_congr' fun _ ↦ not_imp_not.symm
 
 -- (18a)
@@ -431,7 +431,7 @@ structure Language where
   /-- The language has the sequence-of-tense rule. -/
   sot : Bool
   /-- The positions the present admits against its evaluation time. -/
-  present : Finset Ordering
+  present : PointAlgebra
   /-- The relations whose connectives select a tensed clause, where a connective otherwise takes
   a relative clause over times. -/
   tensed : Finset Connective.Relation
@@ -456,7 +456,7 @@ def japanese : Language where
   tensed := {.before, .after}
 
 /-- The positions a tense of a language admits against its evaluation time. -/
-def Language.cell (L : Language) : Tense → Finset Ordering
+def Language.cell (L : Language) : Tense → PointAlgebra
   | .present => L.present
   | τ => ⟦τ⟧
 
@@ -492,7 +492,7 @@ theorem interpretable_iff_tense :
 /-! ### The relative-tense account -/
 
 /-- The positions a temporal relation admits for the adjunct event against the matrix event. -/
-def adjunctCell? : Connective.Relation → Option (Finset Ordering)
+def adjunctCell? : Connective.Relation → Option PointAlgebra
   | .before => some ⟦future⟧
   | .after => some ⟦past⟧
   | .when_ => some ⟦present⟧
@@ -501,10 +501,10 @@ def adjunctCell? : Connective.Relation → Option (Finset Ordering)
 /-- On the relative-tense account a tense in an adjunct under a past locates the adjunct event
 against the matrix event, in a position the connective, of cell `c`, must admit, unless it is a
 past that the sequence-of-tense rule deletes. -/
-def Language.RelativeTense (L : Language) (c : Finset Ordering) (τ : Tense) : Prop :=
+def Language.RelativeTense (L : Language) (c : PointAlgebra) (τ : Tense) : Prop :=
   L.sot ∧ τ = .past ∨ (L.cell τ ⊓ c).Nonempty
 
-instance (L : Language) (c : Finset Ordering) (τ : Tense) : Decidable (L.RelativeTense c τ) :=
+instance (L : Language) (c : PointAlgebra) (τ : Tense) : Decidable (L.RelativeTense c τ) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The relative-tense account also derives the tenses of *mae* and *ato*, though not the past of

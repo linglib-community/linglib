@@ -220,7 +220,7 @@ namespace Word
 
 /-- The tense feature of a word, as the cell it denotes (p. 178): [+past] on the past, the perfect
 and *earlier*, [-past] on the present. -/
-def feature? : Word → Option (Finset Ordering)
+def feature? : Word → Option PointAlgebra
   | past _ | perf _ | earlier _ => some ⟦Tense.past⟧
   | pres | ru => some nonpast
   | _ => none
@@ -234,7 +234,7 @@ instance : DecidablePred IsTense := fun w ↦ by cases w <;> unfold IsTense <;> 
 
 /-- The cell of a word: where it places a time against the time at which it is evaluated. The
 English present has none, since it denotes the speech time wherever it is evaluated. -/
-def cell : Word → Finset Ordering
+def cell : Word → PointAlgebra
   | past _ | perf _ | earlier _ => ⟦Tense.past⟧
   | null | ru | current => ⟦Tense.present⟧
   | woll _ | inf _ => ⟦Tense.future⟧
@@ -262,7 +262,7 @@ def lowestOf? (t : LF) (w : Word) : Option TreePath :=
   (wordPositions t (· = w)).argmax (·.toList.length)
 
 /-- The tense feature at a position of an LF. -/
-def featureAt? (t : LF) (p : TreePath) : Option (Finset Ordering) :=
+def featureAt? (t : LF) (p : TreePath) : Option PointAlgebra :=
   (wordAt? t p).bind Word.feature?
 
 /-- The positions of the tense morphemes of an LF. -/
@@ -815,21 +815,21 @@ def timesAbove (t : LF) (b : TreePath) : List TreePath :=
 
 /-- The cell of a time against the speech time: the cells of the words above it and its own,
 composed from the top, the English present returning to the speech time. -/
-def speechCell (t : LF) (b : TreePath) : Finset Ordering :=
+def speechCell (t : LF) (b : TreePath) : PointAlgebra :=
   ((timesAbove t b ++ [b]).filterMap (wordAt? t)).foldl
-    (fun C w ↦ if w = .pres then ⟦Tense.present⟧ else comp w.cell C) ⟦Tense.present⟧
+    (fun C w ↦ if w = .pres then ⟦Tense.present⟧ else C * w.cell) ⟦Tense.present⟧
 
 /-- The cell of a time against the time `r`: the cell of its word when `r` is the time at which the
 word is evaluated, and otherwise as the two times stand to the speech time. -/
-def cellAgainst (t : LF) (b r : TreePath) : Finset Ordering :=
+def cellAgainst (t : LF) (b r : TreePath) : PointAlgebra :=
   match wordAt? t b with
   | some w =>
     if w ≠ .pres ∧ (timesAbove t b).getLast? = some r then w.cell
-    else comp (speechCell t b) ((speechCell t r).image Ordering.swap)
+    else (speechCell t r)⁻¹ * speechCell t b
   | none => ⊥
 
 /-- The cell of a time against `r` over several LFs. -/
-def cellIn (lfs : List LF) (b r : TreePath) : Finset Ordering :=
+def cellIn (lfs : List LF) (b r : TreePath) : PointAlgebra :=
   (lfs.map (cellAgainst · b r)).foldr (· ⊔ ·) ⊥
 
 -- the parameter of `pastUnderPast`, read off the tree
@@ -941,7 +941,7 @@ theorem permanence_excludes_simultaneous (f₂ f₃ : ReichenbachFrame T)
 /-- A tense operator of the three-index system of chapter 2, with the cell of its past feature
 against the quasi-speech time `j` and the cell of its future feature against the evaluation time
 `i`. The operator [-past][+fut], which also updates `j`, is not needed for (126). -/
-def tns (C D : Finset Ordering) (φ : W → NonemptyInterval T → NonemptyInterval T → Prop)
+def tns (C D : PointAlgebra) (φ : W → NonemptyInterval T → NonemptyInterval T → Prop)
     (w : W) (i j : NonemptyInterval T) : Prop :=
   ∃ t, t.position j ∈ C ∧ t.position i ∈ D ∧ φ w t j
 

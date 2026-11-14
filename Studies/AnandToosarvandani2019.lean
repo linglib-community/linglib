@@ -125,8 +125,8 @@ inductive Position where
 sentence-initial demonstrative may pick out: a later time by Narration as Default (33), an earlier
 time when the discourse makes one retrievable, and an overlapping time unless the preceding
 sentence answers a sister subquestion, whose alternatives are disjoint (28). -/
-def initialPositions (sister anterior : Bool) : Finset Ordering :=
-  {.gt} ∪ (if anterior then {.lt} else ∅) ∪ (if sister then ∅ else {.eq})
+def initialPositions (sister anterior : Bool) : PointAlgebra :=
+  {.gt} ⊔ (if anterior then {.lt} else ⊥) ⊔ (if sister then ⊥ else 1)
 
 /-- The demonstrative's interval `J`: the time `τ₀` of the preceding sentence in final position,
 and a time in one of `initialPositions` relative to it in initial position. -/

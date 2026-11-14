@@ -83,10 +83,10 @@ noncomputable def meaning {W : Type*} (c : Constraint) (f : EvidentialFrame T) (
 
 /-- An evidential fixes the relation of the acquisition of the evidence to speech and turns
 the tense it combines with into a constraint on the evidential perspective (§3). -/
-def evidential (acquisition tense : Finset Ordering) : Constraint :=
+def evidential (acquisition tense : PointAlgebra) : Constraint :=
   { eventToAcquisition := tense, acquisitionToSpeech := acquisition }
 
-theorem holds_evidential_sup {a t t' : Finset Ordering} {f : EvidentialFrame T} :
+theorem holds_evidential_sup {a t t' : PointAlgebra} {f : EvidentialFrame T} :
     (evidential a (t ⊔ t')).Holds f ↔ (evidential a t).Holds f ∨ (evidential a t').Holds f :=
   Constraint.holds_eventToAcquisition_sup (c := evidential a t)
 
@@ -94,14 +94,14 @@ theorem holds_evidential_sup {a t t' : Finset Ordering} {f : EvidentialFrame T} 
 
 /-- Korean *-te*, sensory evidence acquired in the past of speech ((13), (18)), the acquisition
 cell of the lexical *-te*. -/
-def te : Finset Ordering → Constraint := evidential Korean.Evidentiality.te.acquisitionToSpeech
+def te : PointAlgebra → Constraint := evidential Korean.Evidentiality.te.acquisitionToSpeech
 
 /-- Korean *-ney*, sensory evidence acquired at speech ((14), (19)), the acquisition cell of the
 lexical *-ney*. -/
-def ney : Finset Ordering → Constraint := evidential Korean.Evidentiality.ney.acquisitionToSpeech
+def ney : PointAlgebra → Constraint := evidential Korean.Evidentiality.ney.acquisitionToSpeech
 
 /-- Bulgarian *-l*, indirect evidence acquired by the time of speech ((15) to (17)). -/
-def l : Finset Ordering → Constraint := evidential nonfuture
+def l : PointAlgebra → Constraint := evidential nonfuture
 
 /-- The English simple past requires downstream evidence for a past event ((20)). -/
 def simplePast : Constraint := { eventToAcquisition := nonfuture, eventToSpeech := ⟦past⟧ }
@@ -126,27 +126,26 @@ relation of the acquisition to speech, and the utterance-perspective columns of 
 and (19) are compositions; under *-l* the same holds of table (17), whose nonfuture cell is
 the join of Koev's null past and null present. -/
 
-theorem te_past_derived : (te ⟦past⟧).derived = ⟦past⟧ := comp_past_past
+theorem te_past_derived : (te ⟦past⟧).derived = ⟦past⟧ := past_mul_past
 
-theorem te_present_derived : (te ⟦present⟧).derived = ⟦past⟧ := comp_present_left _
+theorem te_present_derived : (te ⟦present⟧).derived = ⟦past⟧ := mul_one _
 
-theorem te_future_derived : (te ⟦future⟧).derived = ⊤ := comp_future_past
+theorem te_future_derived : (te ⟦future⟧).derived = ⊤ := past_mul_future
 
-theorem ney_past_derived : (ney ⟦past⟧).derived = ⟦past⟧ := comp_present_right _
+theorem ney_past_derived : (ney ⟦past⟧).derived = ⟦past⟧ := one_mul _
 
-theorem ney_present_derived : (ney ⟦present⟧).derived = ⟦present⟧ := comp_present_right _
+theorem ney_present_derived : (ney ⟦present⟧).derived = ⟦present⟧ := one_mul _
 
-theorem ney_future_derived : (ney ⟦future⟧).derived = ⟦future⟧ := comp_present_right _
+theorem ney_future_derived : (ney ⟦future⟧).derived = ⟦future⟧ := one_mul _
 
 -- (17)
 theorem l_nonfuture_derived : (l nonfuture).derived = nonfuture :=
-  comp_nonfuture_nonfuture
+  nonfuture_mul_nonfuture
 
 -- (16)
 theorem l_future_derived : (l ⟦future⟧).derived = ⊤ := by
-  show comp ⟦future⟧ nonfuture = ⊤
-  rw [nonfuture_eq_past_sup_present, comp_sup_right]
-  simp
+  show nonfuture * ⟦future⟧ = ⊤
+  decide
 
 -- footnote 7
 theorem holds_l_nonfuture_iff {f : EvidentialFrame T} :

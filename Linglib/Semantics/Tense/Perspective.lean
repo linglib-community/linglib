@@ -58,7 +58,7 @@ structure DeicticAdverb where
   /-- The surface form. -/
   form : String
   /-- The positions relative to the anchor that the adverb's reference may occupy. -/
-  cell : Finset Ordering
+  cell : PointAlgebra
   deriving DecidableEq
 
 /-- A distal adverb refers to a time away from its anchor, so its cell excludes overlap. -/
@@ -69,7 +69,7 @@ instance : DecidablePred DeicticAdverb.IsDistal :=
 
 namespace Perspective
 
-variable {T : Type*} [LinearOrder T] {A B : Finset Allen.Relation} {C : Finset Ordering}
+variable {T : Type*} [LinearOrder T] {A B : Finset Allen.Relation} {C : PointAlgebra}
   {π r th : NonemptyInterval T}
 
 /-- An adverb with cell `B` and reference `th` restricts a tense with cell `A` and reference `r`
@@ -104,7 +104,7 @@ theorem not_ofPosition_of_overlaps (hC : .eq ∉ C) (hr : r.Overlaps π) (hle : 
 
 /-- An adverb with positions `D` can restrict a reference with positions `C` for some
 perspective exactly when `D` admits a position of `C`, or overlap. -/
-theorem exists_restricted_ofPosition_iff [Nontrivial T] {D : Finset Ordering} :
+theorem exists_restricted_ofPosition_iff [Nontrivial T] {D : PointAlgebra} :
     (∃ π r th : NonemptyInterval T,
       Restricted (Allen.ofPosition C) (Allen.ofPosition D) π r th) ↔
         ∃ o ∈ C, o ∈ D ∨ .eq ∈ D := by

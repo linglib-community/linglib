@@ -8,18 +8,18 @@ public import Linglib.Logic.Modal.Defs
 /-!
 # Quantificational tense
 
-Read quantificationally, a tense quantifies over the times its cell admits, as in the tense logic
-of Prior: `◇[toSetRel ⟦past⟧] P t`, possibility along the cell's relation (`Tense.toSetRel`, and
-`Allen.toSetRel` on intervals), says that `P` held at some time before `t`, and `□` that it held at
-all of them. Sometime in the past is
+Read quantificationally, a tense quantifies over the times its denotation admits, as in the tense
+logic of Prior: `◇[toSetRel ⟦past⟧] P t`, possibility along its relation
+(`PointAlgebra.toSetRel`, and `Allen.toSetRel` on intervals), says that `P` held at some time
+before `t`, and `□` that it held at all of them. Sometime in the past is
 [left adjoint to always in the future](##Tense.diamond_past_box_future_gc). The schemas beyond
 $K_t$ correspond to the structure of time: $FFp \to Fp$ is [axiom 4](##ModalLogic.diamond_four),
 its converse holds [exactly when time is dense](##Tense.diamond_future_den_iff), $Gp \to Fp$
 [exactly when time has no last moment](##Tense.isSerial_toSetRel_future_iff), and $PFp \to Mp$
 [exactly when time does not branch forward](##Tense.diamond_past_diamond_future_le_iff). A tense
-under a tense [entails the tense of the composed cell](##Tense.diamond_diamond_toSetRel), and is
-that tense for all cells
-[exactly when time is dense without endpoints](##Tense.diamond_toSetRel_comp_iff).
+under a tense [entails the tense of the product](##Tense.diamond_diamond_toSetRel), and is that
+tense for all elements of the point algebra
+[exactly when time is dense without endpoints](##Tense.diamond_toSetRel_mul_iff).
 
 ## References
 
@@ -33,11 +33,11 @@ public section
 
 namespace Tense
 
-open ModalLogic
+open ModalLogic PointAlgebra
 open scoped Denotes
 open scoped SetRel
 
-variable {T : Type*} {C D : Finset Ordering} {P : T → Prop} {t : T}
+variable {T : Type*} {C D : PointAlgebra} {P : T → Prop} {t : T}
 
 section LT
 
@@ -91,7 +91,7 @@ the mirror image of the axiom A4 of [prior-1967]. -/
 theorem diamond_past_den_iff :
     (◇[toSetRel ⟦past⟧] : (T → Prop) → T → Prop) ≤ ◇[toSetRel ⟦past⟧] ∘ ◇[toSetRel ⟦past⟧] ↔
       DenselyOrdered T :=
-  diamond_den_iff.trans toSetRel_past_subset_comp_self_iff
+  diamond_den_iff.trans toSetRel_lt_subset_comp_self_iff
 
 /-- Den for the future: a future is a future of a future, $Fp \to FFp$, exactly when time is
 dense. This is the axiom A4 of [prior-1967] (pp. 38-39); the modal axiom 4 is his A3. -/
@@ -99,13 +99,13 @@ theorem diamond_future_den_iff :
     (◇[toSetRel ⟦future⟧] : (T → Prop) → T → Prop) ≤
         ◇[toSetRel ⟦future⟧] ∘ ◇[toSetRel ⟦future⟧] ↔
       DenselyOrdered T :=
-  diamond_den_iff.trans toSetRel_future_subset_comp_self_iff
+  diamond_den_iff.trans toSetRel_gt_subset_comp_self_iff
 
-/-- The quantificational tense of the unconstrained cell is `M` of [prior-1967], true when `P`
+/-- The quantificational tense of the top element is `M` of [prior-1967], true when `P`
 holds, will hold or held (p. 38). -/
 theorem diamond_toSetRel_top :
     ◇[toSetRel ⊤] P t ↔ ◇[toSetRel ⟦past⟧] P t ∨ P t ∨ ◇[toSetRel ⟦future⟧] P t := by
-  simp only [Diamond, mem_toSetRel_top_iff, mem_toSetRel_past, mem_toSetRel_future, or_and_right,
+  simp only [Diamond, mem_toSetRel_top, mem_toSetRel_past, mem_toSetRel_future, or_and_right,
     exists_or, exists_eq_left]
 
 end LT
@@ -113,17 +113,6 @@ end LT
 section PartialOrder
 
 variable [PartialOrder T] {p r : T}
-
-/-- The relation of the unconstrained cell is comparability. -/
-theorem mem_toSetRel_top_iff_le : p ~[toSetRel ⊤] r ↔ p ≤ r ∨ r ≤ p := by
-  rw [mem_toSetRel_top_iff]
-  refine ⟨?_, fun h ↦ h.elim (fun h ↦ ?_) fun h ↦ ?_⟩
-  · rintro (h | rfl | h)
-    exacts [.inr h.le, .inl le_rfl, .inl h.le]
-  · obtain rfl | h := h.eq_or_lt
-    exacts [.inr (.inl rfl), .inr (.inr h)]
-  · obtain rfl | h := h.eq_or_lt
-    exacts [.inr (.inl rfl), .inl h]
 
 /-- $FPp \to Mp$, the form `CFPpAApPpFp` of [prior-1967] (p. 52) and the axiom AK8 that
 [thomason-1984] reports from Kamp, holds exactly when the predecessors of any time are comparable,
@@ -158,7 +147,7 @@ theorem diamond_past_diamond_future_le_iff :
     exact mem_toSetRel_top_iff_le.1 (h ⟨c, mem_toSetRel_past.2 hac, mem_toSetRel_future.2 hbc⟩)
   · exact mem_toSetRel_top_iff_le.2 (h (mem_toSetRel_past.1 h₁).le (mem_toSetRel_future.1 h₂).le)
 
-/-- Axiom 5 along the unconstrained cell, the law `CMNMpNMp` of [prior-1967] read through
+/-- Axiom 5 along the top element, the law `CMNMpNMp` of [prior-1967] read through
 `ModalLogic.box_five_iff`, holds exactly when time branches neither way. -/
 theorem isEuclidean_toSetRel_top_iff :
     IsEuclidean (toSetRel ⊤ : SetRel T T) ↔ IsLeftLinear T ∧ IsLeftLinear Tᵒᵈ := by
@@ -179,23 +168,22 @@ section LinearOrder
 
 variable [LinearOrder T]
 
-/-- A quantificational tense under another entails the quantificational tense of the composed
-cell. -/
+/-- A quantificational tense under another entails the quantificational tense of the product. -/
 theorem diamond_diamond_toSetRel (h : ◇[toSetRel C] (◇[toSetRel D] P) t) :
-    ◇[toSetRel (comp D C)] P t :=
+    ◇[toSetRel (C * D)] P t :=
   let ⟨_, h₁, u, h₂, hu⟩ := h; ⟨u, toSetRel_comp_subset C D ⟨_, h₁, h₂⟩, hu⟩
 
-/-- The quantificational tense of a composed cell is one quantificational tense under the other,
-for all cells, exactly when time is dense without endpoints. -/
-theorem diamond_toSetRel_comp_iff :
-    (∀ (C D : Finset Ordering) (P : T → Prop),
-        ◇[toSetRel (comp D C)] P = ◇[toSetRel C] (◇[toSetRel D] P)) ↔
+/-- The quantificational tense of a product is one quantificational tense under the other, for
+all elements of the point algebra, exactly when time is dense without endpoints. -/
+theorem diamond_toSetRel_mul_iff :
+    (∀ (C D : PointAlgebra) (P : T → Prop),
+        ◇[toSetRel (C * D)] P = ◇[toSetRel C] (◇[toSetRel D] P)) ↔
       DenselyOrdered T ∧ NoMinOrder T ∧ NoMaxOrder T := by
-  rw [← toSetRel_comp_iff]
+  rw [← toSetRel_mul_iff]
   refine forall₂_congr fun C D ↦
-    ⟨fun h ↦ subset_antisymm ?_ ?_, fun h P ↦ by rw [← h, diamond_comp]⟩
-  · exact diamond_le_diamond_iff.1 fun P ↦ (diamond_comp _ _ P).le.trans (h P).ge
+    ⟨fun h ↦ subset_antisymm ?_ ?_, fun h P ↦ by rw [h, diamond_comp]⟩
   · exact diamond_le_diamond_iff.1 fun P ↦ (h P).le.trans (diamond_comp _ _ P).ge
+  · exact diamond_le_diamond_iff.1 fun P ↦ (diamond_comp _ _ P).le.trans (h P).ge
 
 end LinearOrder
 

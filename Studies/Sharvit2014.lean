@@ -105,7 +105,7 @@ def BeforeDefined (C : NonemptyInterval M) (P : Set (NonemptyInterval M)) : Prop
 start of the contextually relevant interval, whatever the cell of the tense. A clause time that
 follows a time of the predicate can be started later, one that overlaps it can be widened to the
 whole interval, and one that precedes it can be started at the start of the interval. -/
-theorem IsEarliest.eq_fst_of_diamond [DenselyOrdered M] {c : Finset Ordering}
+theorem IsEarliest.eq_fst_of_diamond [DenselyOrdered M] {c : PointAlgebra}
     (h : IsEarliest C {t | ◇[Allen.toSetRel (Allen.ofPosition c)] (· ∈ q) t} m) :
     m = C.fst := by
   refine h.fst_le.eq_of_not_lt' fun hlt ↦ ?_
@@ -133,14 +133,14 @@ theorem IsEarliest.eq_fst_of_diamond [DenselyOrdered M] {c : Finset Ordering}
       (NonemptyInterval.le_def.2 ⟨le_rfl, C.fst_le_snd⟩) (NonemptyInterval.mem_pure_self _))
 
 -- (27)
-theorem not_beforeDefined_diamond [DenselyOrdered M] {c : Finset Ordering} :
+theorem not_beforeDefined_diamond [DenselyOrdered M] {c : PointAlgebra} :
     ¬ BeforeDefined C {t | ◇[Allen.toSetRel (Allen.ofPosition c)] (· ∈ q) t} :=
   fun ⟨_, h, hlt⟩ ↦ hlt.ne' h.eq_fst_of_diamond
 
 /-! ### Tensed clauses under *before* -/
 
 /-- The cell of an embedded tense. -/
-def cell : Embedded → Finset Ordering
+def cell : Embedded → PointAlgebra
   | .past => ⟦Tense.past⟧
   | .present => ⟦Tense.present⟧
 

@@ -163,18 +163,18 @@ theorem settled_past_atom (φ : Set M) : settled (past (atom φ)) = atom (Peirce
 theorem settled_future_atom (φ : Set M) :
     settled (future (atom φ)) = atom (Peircean.future φ) := rfl
 
-/-! #### Grounding in the library's tense cells
+/-! #### Grounding in the library's tenses
 
-The Ockhamist past and future quantify along the relations of the library's tense cells
-(`Tense.toSetRel`), which relate a moment to the moments below it and above it in the order of
-the frame. The witness of the future is kept on the history of evaluation. -/
+The Ockhamist past and future quantify along the relations of the tenses
+(`PointAlgebra.toSetRel`), which relate a moment to the moments below it and above it in the order
+of the frame. The witness of the future is kept on the history of evaluation. -/
 
 theorem mem_past_atom_iff (φ : Set M) (m : M) (h : Flag M) :
-    (m, h) ∈ past (atom φ) ↔ m ∈ (Tense.toSetRel ⟦Tense.past⟧).preimage φ := by
+    (m, h) ∈ past (atom φ) ↔ m ∈ (PointAlgebra.toSetRel ⟦Tense.past⟧).preimage φ := by
   simp [and_comm]
 
 theorem mem_future_atom_iff (φ : Set M) (m : M) (h : Flag M) :
-    (m, h) ∈ future (atom φ) ↔ m ∈ (Tense.toSetRel ⟦Tense.future⟧).preimage (↑h ∩ φ) :=
+    (m, h) ∈ future (atom φ) ↔ m ∈ (PointAlgebra.toSetRel ⟦Tense.future⟧).preimage (↑h ∩ φ) :=
   ⟨fun ⟨m', hm', hlt, hφ⟩ ↦ ⟨m', ⟨hm', hφ⟩, Tense.mem_toSetRel_future.2 hlt⟩,
     fun ⟨m', ⟨hm', hφ⟩, hlt⟩ ↦ ⟨m', hm', Tense.mem_toSetRel_future.1 hlt, hφ⟩⟩
 
@@ -207,7 +207,7 @@ theorem future_past_subset [IsLeftLinear M] (hm : m ∈ h) (hφ : (m, h) ∈ fut
 
 end Ockhamist
 
-open ModalLogic Tense in
+open ModalLogic Tense PointAlgebra in
 /-- A moment with two immediate successors refutes $PFp \to Mp$ along the moments of the frame. -/
 theorem not_diamond_past_diamond_future_le {x : M} (hx : IsBranching x) :
     ¬ ((◇[toSetRel ⟦Tense.past⟧] ∘ ◇[toSetRel ⟦Tense.future⟧] : (M → Prop) → M → Prop) ≤

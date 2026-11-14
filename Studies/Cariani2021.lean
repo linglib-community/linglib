@@ -60,11 +60,11 @@ open scoped Denotes
 
 /-- Linear symmetric *was* (p. 8): `A` held at some earlier time. -/
 def linearWas {T : Type*} [LinearOrder T] (A : T → Prop) : T → Prop :=
-  ◇[Tense.toSetRel ⟦Tense.past⟧] A
+  ◇[PointAlgebra.toSetRel ⟦Tense.past⟧] A
 
 /-- Linear symmetric *will* (p. 8): `A` holds at some later time. -/
 def linearWill {T : Type*} [LinearOrder T] (A : T → Prop) : T → Prop :=
-  ◇[Tense.toSetRel ⟦Tense.future⟧] A
+  ◇[PointAlgebra.toSetRel ⟦Tense.future⟧] A
 
 variable {T : Type*} [LinearOrder T] {A : T → Prop} {t : T}
 
@@ -112,11 +112,11 @@ theorem linearWas_linearWill (hA : A t) (h : linearWas (fun _ ↦ True) t) :
 
 /-- The `K_t` axiom FB, *A ⊃ always in the future, was A*, is the unit of the past-future adjunction
 (p. 17). -/
-theorem kt_fb : A ≤ □[Tense.toSetRel ⟦Tense.future⟧] (linearWas A) :=
+theorem kt_fb : A ≤ □[PointAlgebra.toSetRel ⟦Tense.future⟧] (linearWas A) :=
   Tense.diamond_past_box_future_gc.le_u_l A
 
 /-- `K_t`'s BF, *A ⊃ always in the past, will A* (p. 17). -/
-theorem kt_bf : A ≤ □[Tense.toSetRel ⟦Tense.past⟧] (linearWill A) :=
+theorem kt_bf : A ≤ □[PointAlgebra.toSetRel ⟦Tense.past⟧] (linearWill A) :=
   Tense.diamond_future_box_past_gc.le_u_l A
 
 end Symmetric
