@@ -96,27 +96,28 @@ theorem profileAt_flip {r r' : RoleList} (h : flip r = some r') (a : Argument) :
 /-- Mechanism 1, the empty slot. A stimulus causes the psychological state the verb names
 without the verb saying how, so it carries an underspecified proposition that an
 explanation fills. An agent causes by the action the verb names and carries no slot. -/
-def CarriesSlot (p : EntailmentProfile) : Prop := p.toRole = some .stimulus
+def CarriesSlot (p : EntailmentProfile) : Prop := p ∈ ThetaRole.profiles .stimulus
 
 /-- Mechanism 2, the Contiguity Principle. A consequence continues from the final state of
 the prompt's eventuality, held by the experiencer of the psychological state or by the
 participant the action affects. -/
 def HoldsEndState (p : EntailmentProfile) : Prop :=
-  p.toRole = some .experiencer ∨ .causallyAffected ∈ p
+  p ∈ ThetaRole.profiles .experiencer ∨ .causallyAffected ∈ p
 
 instance (p : EntailmentProfile) : Decidable (CarriesSlot p) :=
-  inferInstanceAs (Decidable (p.toRole = some .stimulus))
+  inferInstanceAs (Decidable (p ∈ ThetaRole.profiles .stimulus))
 
 instance (p : EntailmentProfile) : Decidable (HoldsEndState p) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
 theorem causation_mem_of_carriesSlot {p : EntailmentProfile} (h : CarriesSlot p) :
     .causation ∈ p :=
-  EntailmentProfile.causation_mem_of_toRole_eq_some_stimulus h
+  (ThetaRole.mem_profiles_stimulus.1 h).1
 
 theorem holdsEndState_iff_of_carriesSlot {p : EntailmentProfile} (h : CarriesSlot p) :
-    HoldsEndState p ↔ .causallyAffected ∈ p := by
-  simp [HoldsEndState, CarriesSlot] at *; simp [h]
+    HoldsEndState p ↔ .causallyAffected ∈ p :=
+  or_iff_right fun he ↦ Set.disjoint_left.1
+    (ThetaRole.pairwiseDisjoint_profiles (by simp) (by simp) (by decide)) he h
 
 /-- I-Caus coreference goes to the slot argument. -/
 def ICaus (r : RoleList) (a : Argument) : Prop := ∃ p ∈ profileAt r a, CarriesSlot p

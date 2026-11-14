@@ -8,7 +8,7 @@ public import Linglib.Semantics.ArgumentStructure.Linking
 # Verb arguments
 
 The argument slots of a verb entry, read off its basic frame (`ArgumentFrame.Slot`). Role labels
-are derived classifications of the slots: `Verb.thetaLabel` gives the Dowty cluster label of a
+are derived classifications of the slots: `Verb.thetaLabels` gives the Dowty labels that apply to a
 slot's entailment profile (`Verb.slotProfile?`), and the comparative S/A/P/R/T classification is
 the frame's (`ArgumentFrame.argumentRole`), never a stored feature. `Verb.linkedFrame?` assembles
 the basic frame and the derived labels into the verb's argument structure.
@@ -32,10 +32,10 @@ variable (v : Verb)
 def coreSlots : List ArgumentFrame.Slot :=
   (v.valency.frames.head?.map ArgumentFrame.coreSlots).getD []
 
-/-- `thetaLabel s` is the derived semantic-role label of the slot `s`, the cluster label of its
-    entailment profile (`EntailmentProfile.toRole`). -/
-def thetaLabel (s : ArgumentFrame.Slot) : Option ThetaRole :=
-  (v.slotProfile? s).bind EntailmentProfile.toRole
+/-- `thetaLabels s` is the set of derived semantic-role labels of the slot `s`, the labels that
+apply to its entailment profile (`EntailmentProfile.roles`). -/
+def thetaLabels (s : ArgumentFrame.Slot) : Finset ThetaRole :=
+  (v.slotProfile? s).elim ∅ EntailmentProfile.roles
 
 /-- The lexical argument structure of a verb entry is its basic frame, each slot linked to the
 label read off its entailment profile and required when the frame expresses it. -/
@@ -43,7 +43,7 @@ def linkedFrame? : Option LinkedFrame :=
   v.valency.frames.head?.map fun fr ↦
     { frame := fr
       roles := fr.slots.map fun s ↦
-        (s, { admits := (v.thetaLabel s).toList.toFinset
+        (s, { admits := v.thetaLabels s
               obligatory := (fr.get? s).any fun p ↦ decide p.IsExpressed }) }
 
 end Verb
