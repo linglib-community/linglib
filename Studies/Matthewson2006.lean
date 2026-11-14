@@ -43,7 +43,7 @@ be](##exists_kelh_not_precedes), the reading of English *would*.
 
 namespace Matthewson2006
 
-open Allen Aspect Set
+open Allen IntervalAlgebra Aspect Set
 open Tense (pronoun mem_pronoun)
 open Event (τ)
 
@@ -64,7 +64,7 @@ abbrev PAST (i : ℕ) : Definite (ℕ → NonemptyInterval T) W (NonemptyInterva
 
 /-- The present denotes a reference time that is the utterance time. -/
 abbrev PRESENT (i : ℕ) : Definite (ℕ → NonemptyInterval T) W (NonemptyInterval T) :=
-  pronoun (toSetRel Allen.eq) i 0
+  pronoun (toSetRel 1) i 0
 
 theorem mem_TENSE {t : NonemptyInterval T} :
     t ∈ TENSE (W := W) i g w ↔ (g i).snd ≤ (g 0).snd ∧ g i = t := by
@@ -109,7 +109,7 @@ theorem tense_and_not_past_or_present_of_split (hi : i ≠ 0) (hP : ∃ e, P w e
       ((τ e).fst_le_snd.trans (NonemptyInterval.le_def.1 hle).2)).not_gt hlt)
   · rintro g rfl ⟨t, ht, ⟨e, hle, he⟩, -⟩
     obtain ⟨heq, rfl⟩ := mem_pronoun.1 ht
-    rw [mem_toSetRel, relation_mem_eq] at heq
+    rw [mem_toSetRel, relation_mem_one] at heq
     exact ((((NonemptyInterval.le_def.1 (heq ▸ hle)).1).trans (τ e).fst_le_snd).not_gt
       (hP' e he))
 

@@ -97,7 +97,7 @@ subinterval of `K`, as *Yes, I saw her* (`Examples.ex_1_57`) says of the day, (5
 is Partee's past tense with its index bound by an existential quantifier over the subintervals of
 `K`. -/
 theorem restricted_iff_exists_past :
-    ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ K ∧ P t) σ ↔
+    ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ≤ K ∧ P t) σ ↔
       ∃ t ≤ K, Λ[n] (Past n P σ) g t := by
   simp [Past, Diamond, and_left_comm]
 
@@ -110,11 +110,11 @@ interval is past and has no subinterval at which the speaker turned off the stov
 -- (56): the salient interval is past, and the past restricted to it is denied
 theorem no_subinterval_iff_not_restricted :
     Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g ↔
-      σ ~[Allen.toSetRel Allen.precedes] g n ∧
-        ¬ ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ g n ∧ P t) σ :=
+      σ ~[IntervalAlgebra.toSetRel .precedes] g n ∧
+        ¬ ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ≤ g n ∧ P t) σ :=
   ⟨fun h ↦ ⟨h.1, fun ⟨t, _, hle, hP⟩ ↦ h.2 ⟨t, hle, hP⟩⟩, fun h ↦ ⟨h.1, fun ⟨t, hle, hP⟩ ↦
-    h.2 ⟨t, Allen.mem_toSetRel_precedes.2 (NonemptyInterval.precedes_of_le_of_precedes hle
-      (Allen.mem_toSetRel_precedes.1 h.1)), hle, hP⟩⟩⟩
+    h.2 ⟨t, IntervalAlgebra.mem_toSetRel_precedes.2 (NonemptyInterval.precedes_of_le_of_precedes hle
+      (IntervalAlgebra.mem_toSetRel_precedes.1 h.1)), hle, hP⟩⟩⟩
 
 -- p. 49: a speaker who turned off the stove at no subinterval did not at the interval
 theorem no_subinterval_entails_deictic (h : Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g) :
@@ -128,22 +128,22 @@ theorem deictic_too_weak :
       (P : NonemptyInterval ℤ → Prop),
       Past 0 (fun t ↦ ¬ P t) σ g ∧ ¬ Past 0 (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g :=
   ⟨.pure 10, fun _ ↦ ⟨(0, 5), by decide⟩, (· = .pure 3),
-    ⟨Allen.mem_toSetRel_precedes.2 (by decide), by decide⟩,
+    ⟨IntervalAlgebra.mem_toSetRel_precedes.2 (by decide), by decide⟩,
     fun h ↦ h.2 ⟨.pure 3, by decide, rfl⟩⟩
 
 -- (46b) entails (56)
-theorem never_entails_no_subinterval (hn : σ ~[Allen.toSetRel Allen.precedes] g n)
-    (h : ¬ ◇[Allen.toSetRel Allen.precedes] P σ) : Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g :=
+theorem never_entails_no_subinterval (hn : σ ~[IntervalAlgebra.toSetRel .precedes] g n)
+    (h : ¬ ◇[IntervalAlgebra.toSetRel .precedes] P σ) : Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g :=
   no_subinterval_iff_not_restricted.2 ⟨hn, fun ⟨t, ht, _, hP⟩ ↦ h ⟨t, ht, hP⟩⟩
 
 -- p. 41: the sentence is true of a speaker who turned off the stove before the interval
 theorem never_too_strong :
     ∃ (σ : NonemptyInterval ℤ) (g : ℕ → NonemptyInterval ℤ)
       (P : NonemptyInterval ℤ → Prop),
-      Past 0 (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g ∧ ◇[Allen.toSetRel Allen.precedes] P σ := by
+      Past 0 (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g ∧ ◇[IntervalAlgebra.toSetRel .precedes] P σ := by
   refine ⟨.pure 10, fun _ ↦ ⟨(5, 6), by decide⟩, (· = .pure 1),
-    ⟨Allen.mem_toSetRel_precedes.2 (by decide), ?_⟩, .pure 1,
-    Allen.mem_toSetRel_precedes.2 (by decide), rfl⟩
+    ⟨IntervalAlgebra.mem_toSetRel_precedes.2 (by decide), ?_⟩, .pure 1,
+    IntervalAlgebra.mem_toSetRel_precedes.2 (by decide), rfl⟩
   rintro ⟨t, ht, rfl⟩
   exact absurd ht (by decide)
 
@@ -220,7 +220,7 @@ namespace Word
 
 /-- The tense feature of a word, as the cell it denotes (p. 178): [+past] on the past, the perfect
 and *earlier*, [-past] on the present. -/
-def feature? : Word → Option (Finset Ordering)
+def feature? : Word → Option PointAlgebra
   | past _ | perf _ | earlier _ => some ⟦Tense.past⟧
   | pres | ru => some nonpast
   | _ => none
@@ -234,7 +234,7 @@ instance : DecidablePred IsTense := fun w ↦ by cases w <;> unfold IsTense <;> 
 
 /-- The cell of a word: where it places a time against the time at which it is evaluated. The
 English present has none, since it denotes the speech time wherever it is evaluated. -/
-def cell : Word → Finset Ordering
+def cell : Word → PointAlgebra
   | past _ | perf _ | earlier _ => ⟦Tense.past⟧
   | null | ru | current => ⟦Tense.present⟧
   | woll _ | inf _ => ⟦Tense.future⟧
@@ -262,7 +262,7 @@ def lowestOf? (t : LF) (w : Word) : Option TreePath :=
   (wordPositions t (· = w)).argmax (·.toList.length)
 
 /-- The tense feature at a position of an LF. -/
-def featureAt? (t : LF) (p : TreePath) : Option (Finset Ordering) :=
+def featureAt? (t : LF) (p : TreePath) : Option PointAlgebra :=
   (wordAt? t p).bind Word.feature?
 
 /-- The positions of the tense morphemes of an LF. -/
@@ -544,11 +544,11 @@ variable (M : Model E W T) (g : ℕ → E) {i : Index W T}
 /-- The past restricted to the reference interval `n`: a time before the evaluation time within
 that interval at which `p` holds. -/
 def past (n : ℕ) (p : Index W T → Prop) : Index W T → Prop :=
-  fun i ↦ ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ M.ref n ∧ p (i.1, t)) i.2
+  fun i ↦ ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ≤ M.ref n ∧ p (i.1, t)) i.2
 
 /-- The future restricted to the reference interval `n`. -/
 def fut (n : ℕ) (p : Index W T → Prop) : Index W T → Prop :=
-  fun i ↦ ◇[Allen.toSetRel (Allen.ofPosition ⟦future⟧)] (fun t ↦ t ≤ M.ref n ∧ p (i.1, t)) i.2
+  fun i ↦ ◇[IntervalAlgebra.toSetRel (.ofPosition ⟦future⟧)] (fun t ↦ t ≤ M.ref n ∧ p (i.1, t)) i.2
 
 /-- The English present, $\exists t[\mathrm{NOW}(t) \wedge \mathrm{AT}(t, p)]$: `p` at the speech
 time, wherever it is evaluated. -/
@@ -815,21 +815,21 @@ def timesAbove (t : LF) (b : TreePath) : List TreePath :=
 
 /-- The cell of a time against the speech time: the cells of the words above it and its own,
 composed from the top, the English present returning to the speech time. -/
-def speechCell (t : LF) (b : TreePath) : Finset Ordering :=
+def speechCell (t : LF) (b : TreePath) : PointAlgebra :=
   ((timesAbove t b ++ [b]).filterMap (wordAt? t)).foldl
-    (fun C w ↦ if w = .pres then ⟦Tense.present⟧ else comp w.cell C) ⟦Tense.present⟧
+    (fun C w ↦ if w = .pres then ⟦Tense.present⟧ else C * w.cell) ⟦Tense.present⟧
 
 /-- The cell of a time against the time `r`: the cell of its word when `r` is the time at which the
 word is evaluated, and otherwise as the two times stand to the speech time. -/
-def cellAgainst (t : LF) (b r : TreePath) : Finset Ordering :=
+def cellAgainst (t : LF) (b r : TreePath) : PointAlgebra :=
   match wordAt? t b with
   | some w =>
     if w ≠ .pres ∧ (timesAbove t b).getLast? = some r then w.cell
-    else comp (speechCell t b) ((speechCell t r).image Ordering.swap)
+    else (speechCell t r)⁻¹ * speechCell t b
   | none => ⊥
 
 /-- The cell of a time against `r` over several LFs. -/
-def cellIn (lfs : List LF) (b r : TreePath) : Finset Ordering :=
+def cellIn (lfs : List LF) (b r : TreePath) : PointAlgebra :=
   (lfs.map (cellAgainst · b r)).foldr (· ⊔ ·) ⊥
 
 -- the parameter of `pastUnderPast`, read off the tree
@@ -941,7 +941,7 @@ theorem permanence_excludes_simultaneous (f₂ f₃ : ReichenbachFrame T)
 /-- A tense operator of the three-index system of chapter 2, with the cell of its past feature
 against the quasi-speech time `j` and the cell of its future feature against the evaluation time
 `i`. The operator [-past][+fut], which also updates `j`, is not needed for (126). -/
-def tns (C D : Finset Ordering) (φ : W → NonemptyInterval T → NonemptyInterval T → Prop)
+def tns (C D : PointAlgebra) (φ : W → NonemptyInterval T → NonemptyInterval T → Prop)
     (w : W) (i j : NonemptyInterval T) : Prop :=
   ∃ t, t.position j ∈ C ∧ t.position i ∈ D ∧ φ w t j
 

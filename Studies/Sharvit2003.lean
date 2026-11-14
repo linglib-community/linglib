@@ -43,7 +43,7 @@ namespace Sharvit2003
 open scoped Denotes
 open scoped Assignment
 
-open Tense
+open Tense PointAlgebra
 open scoped ModalLogic
 
 variable {T : Type*}

@@ -74,7 +74,7 @@ variable [LinearOrder T] (history : HistoricalAlternatives W T)
 
 /-- A temporal morpheme `λ𝒫.λs.λs'.[ | τ(s) ⋈ τ(s')]; 𝒫(s)` tests that the running times of `s`
 and `s'` compare within the cell, then runs the radical at `s`. -/
-def temporal (cell : Finset Ordering) (P : Radical W T) (s s' : Sit W T) :
+def temporal (cell : PointAlgebra) (P : Radical W T) (s s' : Sit W T) :
     Update (State W T) :=
   test {i | compare (s i).time (s' i).time ∈ cell} ○ P s
 
@@ -94,7 +94,7 @@ def subj (s₁ : ℕ) (s₀ : Sit W T) (ℙ : Tensed W T) : Update (State W T) :
 
 /-! ### Unpacking the entries -/
 
-variable {cell : Finset Ordering} {P : Index W T → Prop} {s₁ : ℕ}
+variable {cell : PointAlgebra} {P : Index W T → Prop} {s₁ : ℕ}
 
 theorem temporal_radical_apply :
     i ~[temporal cell (radical P) s s'] o ↔
@@ -128,7 +128,7 @@ variable (A C : Index W T → Prop)
 /-- A subordinate clause carrying the Subordinate Future and a main clause with the tense `cell`
 form a dynamic implication, as in the conditional and the relative-clause quantification of the
 paper's derivations. -/
-def sfForm (cell : Finset Ordering) : Update (State W T) :=
+def sfForm (cell : PointAlgebra) : Update (State W T) :=
   test (impl (subj history 1 (val 0) (fut (radical A)))
     (ind (val 2) (val 1) (temporal cell (radical C))))
 

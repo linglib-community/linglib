@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Sharvit2014
 public import Linglib.Logic.Assignment
-public import Linglib.Semantics.Tense.Allen
+public import Linglib.Logic.Temporal.IntervalAlgebra
 public import Linglib.Semantics.Tense.Perspective
 public import Linglib.Semantics.Tense.Quantificational
 public import Linglib.Semantics.Tense.RunTimes
@@ -105,51 +105,51 @@ def BeforeDefined (C : NonemptyInterval M) (P : Set (NonemptyInterval M)) : Prop
 start of the contextually relevant interval, whatever the cell of the tense. A clause time that
 follows a time of the predicate can be started later, one that overlaps it can be widened to the
 whole interval, and one that precedes it can be started at the start of the interval. -/
-theorem IsEarliest.eq_fst_of_diamond [DenselyOrdered M] {c : Finset Ordering}
-    (h : IsEarliest C {t | ◇[Allen.toSetRel (Allen.ofPosition c)] (· ∈ q) t} m) :
+theorem IsEarliest.eq_fst_of_diamond [DenselyOrdered M] {c : PointAlgebra}
+    (h : IsEarliest C {t | ◇[IntervalAlgebra.toSetRel (.ofPosition c)] (· ∈ q) t} m) :
     m = C.fst := by
   refine h.fst_le.eq_of_not_lt' fun hlt ↦ ?_
   obtain ⟨t, ⟨⟨r, hr, hq⟩, htC⟩, hm⟩ := h.1
   obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 htC
-  rw [Allen.mem_toSetRel, Allen.relation_mem_ofPosition] at hr
+  rw [IntervalAlgebra.mem_toSetRel, IntervalAlgebra.relation_mem_ofPosition] at hr
   rcases hpos : r.position t with _ | _ | _
   · have hrt : r.snd < t.fst := NonemptyInterval.position_eq_lt.1 hpos
     obtain ⟨a, ha, ham⟩ := exists_between (max_lt (hrt.trans_le hm.1) hlt)
     have hra : r.position (.pure a) = .lt :=
       NonemptyInterval.position_eq_lt.2 ((le_max_left _ _).trans_lt ha)
-    exact absurd (h.le_of_mem (t := .pure a) ⟨r, by rwa [Allen.mem_toSetRel,
-      Allen.relation_mem_ofPosition, hra, ← hpos], hq⟩ (NonemptyInterval.le_def.2
+    exact absurd (h.le_of_mem (t := .pure a) ⟨r, by rwa [IntervalAlgebra.mem_toSetRel,
+      IntervalAlgebra.relation_mem_ofPosition, hra, ← hpos], hq⟩ (NonemptyInterval.le_def.2
         ⟨(le_max_right _ _).trans ha.le, ham.le.trans (hm.2.trans h₂)⟩)
       (NonemptyInterval.mem_pure_self a)) ham.not_ge
   · have hrC : r.position C = .eq := NonemptyInterval.position_eq_eq.2
       ((NonemptyInterval.overlaps_comm _ _).1 (((NonemptyInterval.overlaps_comm _ _).1
         (NonemptyInterval.position_eq_eq.1 hpos)).mono_left htC))
     exact hlt.ne' (h.eq_fst_of_mem ⟨r, by
-      rwa [Allen.mem_toSetRel, Allen.relation_mem_ofPosition, hrC, ← hpos], hq⟩)
+      rwa [IntervalAlgebra.mem_toSetRel, IntervalAlgebra.relation_mem_ofPosition, hrC, ← hpos], hq⟩)
   · have hra : r.position (.pure C.fst) = .gt := NonemptyInterval.position_eq_gt.2
       ((h₁.trans t.fst_le_snd).trans_lt (NonemptyInterval.position_eq_gt.1 hpos))
-    exact hlt.not_ge (h.le_of_mem (t := .pure C.fst) ⟨r, by rwa [Allen.mem_toSetRel,
-      Allen.relation_mem_ofPosition, hra, ← hpos], hq⟩
+    exact hlt.not_ge (h.le_of_mem (t := .pure C.fst) ⟨r, by rwa [IntervalAlgebra.mem_toSetRel,
+      IntervalAlgebra.relation_mem_ofPosition, hra, ← hpos], hq⟩
       (NonemptyInterval.le_def.2 ⟨le_rfl, C.fst_le_snd⟩) (NonemptyInterval.mem_pure_self _))
 
 -- (27)
-theorem not_beforeDefined_diamond [DenselyOrdered M] {c : Finset Ordering} :
-    ¬ BeforeDefined C {t | ◇[Allen.toSetRel (Allen.ofPosition c)] (· ∈ q) t} :=
+theorem not_beforeDefined_diamond [DenselyOrdered M] {c : PointAlgebra} :
+    ¬ BeforeDefined C {t | ◇[IntervalAlgebra.toSetRel (.ofPosition c)] (· ∈ q) t} :=
   fun ⟨_, h, hlt⟩ ↦ hlt.ne' h.eq_fst_of_diamond
 
 /-! ### Tensed clauses under *before* -/
 
 /-- The cell of an embedded tense. -/
-def cell : Embedded → Finset Ordering
+def cell : Embedded → PointAlgebra
   | .past => ⟦Tense.past⟧
   | .present => ⟦Tense.present⟧
 
 @[simp] theorem presup_cell_past {π t : NonemptyInterval M} :
-    π ~[Allen.toSetRel (Allen.ofPosition (cell .past))] t ↔ t.Precedes π := by
+    π ~[IntervalAlgebra.toSetRel (.ofPosition (cell .past))] t ↔ t.Precedes π := by
   simp [cell, Tense.denote_past]
 
 @[simp] theorem presup_cell_present {π t : NonemptyInterval M} :
-    π ~[Allen.toSetRel (Allen.ofPosition (cell .present))] t ↔ t.Overlaps π := by
+    π ~[IntervalAlgebra.toSetRel (.ofPosition (cell .present))] t ↔ t.Overlaps π := by
   simp [cell, Tense.denote_present]
 
 /-- The readings of a tensed clause that is the complement of *before*. -/
@@ -169,8 +169,8 @@ inductive Reading
 speech time. -/
 def Reading.denote (SP : NonemptyInterval M) (q : Set (NonemptyInterval M)) :
     Reading → Set (NonemptyInterval M)
-  | .pronominal τ => {t | SP ~[Allen.toSetRel (Allen.ofPosition (cell τ))] t ∧ t ∈ q}
-  | .existential τ => {t | ◇[Allen.toSetRel (Allen.ofPosition (cell τ))] (· ∈ q) t}
+  | .pronominal τ => {t | SP ~[IntervalAlgebra.toSetRel (.ofPosition (cell τ))] t ∧ t ∈ q}
+  | .existential τ => {t | ◇[IntervalAlgebra.toSetRel (.ofPosition (cell τ))] (· ∈ q) t}
   | .null => q
 
 /-- A clause whose verb takes the pronominal tense `τ` with evaluation index `j` and referential
@@ -178,7 +178,7 @@ index `k`, as in (30a), says that the time of `k` stands to the time of `j` as t
 and that the predicate holds at it. -/
 def clause (τ : Embedded) (j k : ℕ) (q : Set (NonemptyInterval M)) :
     (ℕ → NonemptyInterval M) → Prop :=
-  fun g ↦ g j ~[Allen.toSetRel (Allen.ofPosition (cell τ))] g k ∧ g k ∈ q
+  fun g ↦ g j ~[IntervalAlgebra.toSetRel (.ofPosition (cell τ))] g k ∧ g k ∈ q
 
 variable {τ : Embedded} {j k : ℕ} {g : ℕ → NonemptyInterval M}
 

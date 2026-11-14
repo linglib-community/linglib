@@ -42,7 +42,7 @@ represented.
 
 namespace Musan1995
 
-open Tense ModalLogic Event
+open Tense PointAlgebra ModalLogic Event
 open scoped Denotes
 
 variable {X T : Type*} [LinearOrder T]

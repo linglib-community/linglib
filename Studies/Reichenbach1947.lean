@@ -154,10 +154,10 @@ structure Clause where
   form : Form
   /-- The positions its time determination allows its point of reference, every position when it
   has none. -/
-  adverb : Finset Ordering := ⊤
+  adverb : PointAlgebra := ⊤
   /-- The positions its connective allows the point of reference of the first clause, the identity
   under the permanence of the reference point. -/
-  link : Finset Ordering := ⟦present⟧
+  link : PointAlgebra := ⟦present⟧
 
 namespace Clause
 
@@ -181,7 +181,7 @@ def Realizable (T : Type*) [LinearOrder T] (c : Clause) (cs : List Clause) : Pro
 /-- A sentence is coherent when the first clause has a fundamental form whose point of reference
 reaches that of each other clause through its connective. -/
 def Coherent (c : Clause) (cs : List Clause) : Prop :=
-  ∃ x ∈ c.positions, ∀ d ∈ cs, ∃ y ∈ d.positions, x.1 ∈ comp d.link {y.1}
+  ∃ x ∈ c.positions, ∀ d ∈ cs, ∃ y ∈ d.positions, x.1 ∈ ({y.1} : PointAlgebra) * d.link
 
 instance (c : Clause) (cs : List Clause) : Decidable (Coherent c cs) :=
   inferInstanceAs (Decidable (∃ x ∈ c.positions, ∀ d ∈ cs, _))
@@ -192,7 +192,7 @@ theorem Realizable.coherent (h : Realizable T c cs) : Coherent c cs := by
   obtain ⟨s, r₀, e₀, h₀, h⟩ := h
   refine ⟨_, h₀, fun d hd ↦ ?_⟩
   obtain ⟨r, e, hf, hl⟩ := h d hd
-  exact ⟨_, hf, compare_mem_comp hl (Finset.mem_singleton_self _)⟩
+  exact ⟨_, hf, PointAlgebra.compare_mem_mul hl (PointAlgebra.mem_singleton.2 rfl)⟩
 
 private theorem exists_compare_eq [NoMinOrder T] [NoMaxOrder T] (o : Ordering) (a : T) :
     ∃ b, compare b a = o := by
@@ -212,27 +212,27 @@ theorem realizable_iff [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T] [Nonempt
   refine ⟨s, r₀, e₀, by simpa [hr₀, he₀] using hx, fun d hd ↦ ?_⟩
   obtain ⟨y, hy, hk⟩ := h d hd
   rw [← hr₀] at hk
-  obtain ⟨r, hl, hr⟩ := compare_mem_comp_iff.1 hk
+  obtain ⟨r, hl, hr⟩ := PointAlgebra.compare_mem_mul_iff.1 hk
   obtain ⟨e, he⟩ := exists_compare_eq y.2 r
-  exact ⟨r, e, by simpa [Finset.mem_singleton.1 hr, he] using hy, hl⟩
+  exact ⟨r, e, by simpa [PointAlgebra.mem_singleton.1 hr, he] using hy, hl⟩
 
 /-- Under the permanence of the reference point a sentence is coherent exactly when its clauses
 can agree on how their point of reference stands to the point of speech. -/
 theorem coherent_iff_of_permanent (h : ∀ d ∈ cs, d.link = ⟦present⟧) :
     Coherent c cs ↔ ∃ x ∈ c.positions, ∀ d ∈ cs, ∃ y ∈ d.positions, y.1 = x.1 := by
   refine exists_congr fun x ↦ and_congr_right fun _ ↦ forall₂_congr fun d hd ↦ ?_
-  simp only [h d hd, comp_present_left, Finset.mem_singleton]
+  simp only [h d hd, denote_present, mul_one, PointAlgebra.mem_singleton]
   exact exists_congr fun _ ↦ and_congr_right fun _ ↦ eq_comm
 
 /-! ### The sentences -/
 
 /-- The cell in which an adverb places a point of reference relative to the point of speech. -/
-def adverb? (w : String) : Option (Finset Ordering) :=
+def adverb? (w : String) : Option PointAlgebra :=
   [("now", ⟦present⟧), ("tomorrow", ⟦future⟧)].lookup w
 
 /-- The cell in which a connective places the point of reference of the first clause relative to
 that of the clause it introduces. -/
-def link? (w : String) : Option (Finset Ordering) :=
+def link? (w : String) : Option PointAlgebra :=
   [("when", ⟦present⟧), ("now that", ⟦present⟧), ("which", ⟦present⟧), ("that", ⟦present⟧),
     ("before", ⟦past⟧), ("than", ⊤)].lookup w
 

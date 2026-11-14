@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Finset.Union
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Semantics.Tense.Allen
+public import Linglib.Logic.Temporal.IntervalAlgebra
 
 /-!
 # Clause chaining
@@ -94,7 +94,7 @@ class MedialForm (M : Type*) where
   relations : M → Finset InterclauseRelation
   /-- The cell of Allen relations in which a form places the time of its clause relative to the
   time the clause is evaluated against, every relation for a form that leaves it open. -/
-  timing : M → Finset Allen.Relation := fun _ ↦ ⊤
+  timing : M → IntervalAlgebra := fun _ ↦ ⊤
   /-- The form carries subject cross-referencing. -/
   IndexesSubject : M → Prop
   [decidableIndexesSubject : DecidablePred IndexesSubject]
@@ -141,13 +141,13 @@ variable {M : Type*} [MedialForm M]
 
 /-- The cell in which the time of the first clause of a chain with the forms `ms` stands to the
 time of the final clause, when each clause is evaluated against the next. -/
-def chainTiming (ms : List M) : Finset Allen.Relation := Allen.compAlong (ms.reverse.map timing)
+def chainTiming (ms : List M) : IntervalAlgebra := (ms.reverse.map timing).prod
 
-@[simp] theorem chainTiming_nil : chainTiming ([] : List M) = Allen.eq := rfl
+@[simp] theorem chainTiming_nil : chainTiming ([] : List M) = 1 := rfl
 
 theorem chainTiming_concat (ms : List M) (m : M) :
-    chainTiming (ms ++ [m]) = Allen.comp (chainTiming ms) (timing m) := by
-  simp [chainTiming, Allen.compAlong]
+    chainTiming (ms ++ [m]) = timing m * chainTiming ms := by
+  simp [chainTiming]
 
 end
 

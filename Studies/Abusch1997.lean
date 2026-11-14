@@ -45,7 +45,7 @@ only the double access reading.
 
 namespace Abusch1997
 
-open Tense Acquaintance BranchingTime
+open Tense PointAlgebra Acquaintance BranchingTime
 open scoped SetRel
 
 variable {E W T : Type*}
@@ -59,7 +59,7 @@ theorem simultaneous_deRe {C : Type*} (now : C → T) (rain : T → Set C) (A : 
 /-! ### The upper limit constraint
 
 The now of an epistemic alternative is an upper limit for the denotation of tenses
-(the nonfuture cell `Tense.nonfuture`). Epistemic alternatives are moments of a branching frame, where
+(the nonfuture, `Tense.nonfuture`). Epistemic alternatives are moments of a branching frame, where
 the past of a moment is determinate and its future is not. -/
 
 section Branching

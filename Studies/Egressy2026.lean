@@ -179,7 +179,7 @@ theorem applicable_vpInternal_cP :
 
 /-- The readings of a past clause under a past matrix, where backshift is the default and the
 simultaneous reading arises only through the rule. -/
-def readings (a : Attachment) (cs : ComplementSize) : Finset Ordering :=
+def readings (a : Attachment) (cs : ComplementSize) : PointAlgebra :=
   pastUnderPast (SOTRule.Applicable a cs)
 
 theorem applicable_nonSpeech :
@@ -209,10 +209,10 @@ theorem english_simultaneous :
 
 /-- One can only perceive directly what happens now: the readings the paper reports are the
 grammatical ones, narrowed to the simultaneous reading under direct perception. -/
-def observed (direct : Prop) [Decidable direct] (rs : Finset Ordering) : Finset Ordering :=
+def observed (direct : Prop) [Decidable direct] (rs : PointAlgebra) : PointAlgebra :=
   if direct then rs ⊓ ⟦present⟧ else rs
 
-theorem observed_le (direct : Prop) [Decidable direct] (rs : Finset Ordering) :
+theorem observed_le (direct : Prop) [Decidable direct] (rs : PointAlgebra) :
     observed direct rs ≤ rs := by
   unfold observed
   split
@@ -241,15 +241,15 @@ def readingTable : List (String × Ordering) := [("simultaneous", .eq), ("backsh
 
 /-- A row's reported readings at embedding level `lvl` agree with a predicted reading set when
 each named reading is judged acceptable exactly if predicted. -/
-def Agrees (e : Datum) (lvl : String) (rs : Finset Ordering) : Prop :=
+def Agrees (e : Datum) (lvl : String) (rs : PointAlgebra) : Prop :=
   ∀ r ∈ e.readings, ∀ x ∈ readingTable, r.1 = lvl ++ x.1 → (r.2 = .acceptable ↔ x.2 ∈ rs)
 
-instance (e : Datum) (lvl : String) (rs : Finset Ordering) : Decidable (Agrees e lvl rs) :=
+instance (e : Datum) (lvl : String) (rs : PointAlgebra) : Decidable (Agrees e lvl rs) :=
   inferInstanceAs (Decidable (∀ r ∈ e.readings, ∀ x ∈ readingTable, _ → _))
 
 /-- The predicted readings of a single-embedding Hungarian row: the grammar at its clause
 type, narrowed by direct perception. -/
-def predicted (e : Datum) (ct : ClauseType) : Finset Ordering :=
+def predicted (e : Datum) (ct : ClauseType) : PointAlgebra :=
   observed (DirectPerceptionAt e "directPerception") (readings .sizeDependent ct.size)
 
 /-- The single-embedding rows of §2.1–2.2: object, subject and adjunct clauses of both types. -/
@@ -334,7 +334,7 @@ theorem clauseType_not_of_verb :
 /-- An embedded clause carries its morphological tense and its size. -/
 structure Clause where
   /-- The clause's tense as a comparison cell, `⟦Tense.past⟧` or `⟦Tense.future⟧`. -/
-  tense : Finset Ordering
+  tense : PointAlgebra
   /-- The clause's size. -/
   size : ComplementSize
 
@@ -342,14 +342,14 @@ structure Clause where
 clause under a past clause is read by the rule; a past clause under any other tense is
 backshifted only, since the rule needs an agreeing PAST above; a non-past clause has no
 past-under-past reading. -/
-def linkReadings (a : Attachment) (matrix : Finset Ordering) (c : Clause) : Finset Ordering :=
+def linkReadings (a : Attachment) (matrix : PointAlgebra) (c : Clause) : PointAlgebra :=
   if c.tense = ⟦past⟧ then (if matrix = ⟦past⟧ then readings a c.size else ⟦past⟧) else ⊥
 
 /-- The readings at each level of a chain of embedded clauses under a matrix tense, matrix first.
 Each clause is read against the clause immediately containing it: by (41) every clause attaches
 at its own size, so a SayP is never inside a TP of any higher clause while a TP is inside the TP
 of the clause containing it, and only structurally adjacent clauses interact (§2.3, §4). -/
-def profile (a : Attachment) : Finset Ordering → List Clause → List (Finset Ordering)
+def profile (a : Attachment) : PointAlgebra → List Clause → List (PointAlgebra)
   | _, [] => []
   | m, c :: rest => linkReadings a m c :: profile a c.tense rest
 

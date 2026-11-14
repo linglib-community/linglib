@@ -13,7 +13,7 @@ combines a situation type (`VendlerClass`) and an independently chosen viewpoint
 ## Implementation notes
 
 * A visibility property quantifies over every linear order, and is decided as the inclusion of
-  the viewpoint's Allen cell in the property's cell (`Allen.forall_toSetRel_subset_iff`).
+  the viewpoint's Allen cell in the property's cell (`IntervalAlgebra.forall_toSetRel_subset_iff`).
 * The compositional rules of section 3.3 are not formalized.
 
 ## References
@@ -50,29 +50,29 @@ def FocusesPreliminaryStages (v : ViewpointType) : Prop :=
   ∀ {T : Type} [LinearOrder T] {tt tsit : NonemptyInterval T},
     v.ttTSitRelation tt tsit → tt < tsit
 
-private theorem forall_imp_iff {D : Finset Allen.Relation}
+private theorem forall_imp_iff {D : IntervalAlgebra}
     {P : ∀ {T : Type} [LinearOrder T], NonemptyInterval T → NonemptyInterval T → Prop}
     (hP : ∀ {T : Type} [LinearOrder T] (tt tsit : NonemptyInterval T),
-      P tt tsit ↔ (tsit, tt) ∈ Allen.toSetRel D) (v : ViewpointType) :
+      P tt tsit ↔ (tsit, tt) ∈ IntervalAlgebra.toSetRel D) (v : ViewpointType) :
     (∀ {T : Type} [LinearOrder T] {tt tsit : NonemptyInterval T},
-      v.ttTSitRelation tt tsit → P tt tsit) ↔ v.cell ⊆ D := by
-  rw [← Allen.forall_toSetRel_subset_iff]
+      v.ttTSitRelation tt tsit → P tt tsit) ↔ v.cell ≤ D := by
+  rw [← IntervalAlgebra.forall_toSetRel_subset_iff]
   exact ⟨fun h T _ ⟨tsit, tt⟩ hv ↦ (hP tt tsit).1 (h ((v.ttTSitRelation_iff tt tsit).2 hv)),
     fun h T _ tt tsit hv ↦ (hP tt tsit).2 (h T ((v.ttTSitRelation_iff tt tsit).1 hv))⟩
 
 /-- The initial point: the perfective and the neutral viewpoint assert it. -/
 theorem showsInitialPoint_iff (v : ViewpointType) :
     ShowsInitialPoint v ↔ v = .perfective ∨ v = .neutral := by
-  refine (forall_imp_iff (D := Allen.inv Allen.startsWithin)
+  refine (forall_imp_iff (D := IntervalAlgebra.startsWithin⁻¹)
     (P := @fun _ _ tt tsit ↦ tsit.fst ∈ tt) (fun _ _ ↦ by simp) v).trans ?_
   cases v <;> decide +kernel
 
 /-- The final point: only the perfective asserts it. -/
 theorem showsFinalPoint_iff (v : ViewpointType) : ShowsFinalPoint v ↔ v = .perfective := by
   refine (forall_imp_iff
-    (D := Finset.univ.filter fun r ↦ r.fstSnd ≠ .gt ∧ r.sndSnd ≠ .lt)
+    (D := IntervalAlgebra.ofPred fun r ↦ r.fstSnd ≠ .gt ∧ r.sndSnd ≠ .lt)
     (P := @fun _ _ tt tsit ↦ tsit.snd ∈ tt) (fun _ _ ↦ ?_) v).trans ?_
-  · rw [Allen.mem_toSetRel, Allen.relation_mem_filter]
+  · rw [IntervalAlgebra.mem_toSetRel, IntervalAlgebra.mem_ofPred]
     simp [Allen.relation, Allen.ofEndpoints, NonemptyInterval.mem_def, compare_le_iff_le,
       compare_ge_iff_ge]
   · cases v <;> decide +kernel
@@ -80,9 +80,9 @@ theorem showsFinalPoint_iff (v : ViewpointType) : ShowsFinalPoint v ↔ v = .per
 /-- Closure: the perfective and the perfect present the situation as closed. -/
 theorem presentsClosed_iff (v : ViewpointType) :
     PresentsClosed v ↔ v = .perfective ∨ v = .perfect := by
-  refine (forall_imp_iff (D := Finset.univ.filter (·.sndSnd ≠ .lt))
+  refine (forall_imp_iff (D := IntervalAlgebra.ofPred (·.sndSnd ≠ .lt))
     (P := @fun _ _ tt tsit ↦ tsit.snd ≤ tt.snd) (fun _ _ ↦ ?_) v).trans ?_
-  · rw [Allen.mem_toSetRel, Allen.relation_mem_filter]
+  · rw [IntervalAlgebra.mem_toSetRel, IntervalAlgebra.mem_ofPred]
     simp [Allen.relation, Allen.ofEndpoints, compare_ge_iff_ge]
   · cases v <;> decide +kernel
 
@@ -90,7 +90,7 @@ theorem presentsClosed_iff (v : ViewpointType) :
 situation. -/
 theorem focusesPreliminaryStages_iff (v : ViewpointType) :
     FocusesPreliminaryStages v ↔ v = .imperfective := by
-  refine (forall_imp_iff (D := Allen.lt) (P := @fun _ _ tt tsit ↦ tt < tsit)
+  refine (forall_imp_iff (D := IntervalAlgebra.lt) (P := @fun _ _ tt tsit ↦ tt < tsit)
     (fun _ _ ↦ by simp) v).trans ?_
   cases v <;> decide +kernel
 

@@ -62,7 +62,7 @@ open scoped Assignment
 
 open scoped Denotes
 
-open Tense
+open Tense PointAlgebra
 open Aspect (ofRel ofRel_mono UNBOUNDED PRFV ViewpointType)
 
 /-! ### The tenses (§4–§5) -/
@@ -74,7 +74,7 @@ variable {W T : Type*}
 /-- The indexical tense with cell `C` is the variable `n` presupposing that its reference stands
 to the utterance time, the time of the index `0`, in a position of `C`. The present and the past
 are the tenses of the cells `present` and `past`. -/
-abbrev tense [LT T] (C : Finset Ordering) (n : ℕ) : Definite (ℕ → T) W T :=
+abbrev tense [LT T] (C : PointAlgebra) (n : ℕ) : Definite (ℕ → T) W T :=
   pronoun (toSetRel C) n 0
 
 /-- The zero tense is a variable with no presupposition, bound by the next tense up. -/
@@ -84,7 +84,7 @@ abbrev zeroTense [LT T] (n : ℕ) : Definite (ℕ → T) W T := pronoun (toSetRe
 variable resolves to it. -/
 def outOfTheBlue (t₀ : T) : ℕ → T := Function.const ℕ t₀
 
-theorem tense_outOfTheBlue_iff [LinearOrder T] (C : Finset Ordering) (n : ℕ) (t₀ : T) (w : W) :
+theorem tense_outOfTheBlue_iff [LinearOrder T] (C : PointAlgebra) (n : ℕ) (t₀ : T) (w : W) :
     (tense C n (outOfTheBlue t₀) w).Dom ↔ .eq ∈ C :=
   pronoun_dom_const t₀
 
@@ -97,7 +97,7 @@ theorem zeroTense_abstract [LinearOrder T] (n : ℕ) (g : ℕ → T) (t : T) (w 
     t ∈ Λ[n] (fun g ↦ zeroTense n g w) g t := by
   simp
 
-theorem tense_not_abstracted [LT T] (C : Finset Ordering) {m n : ℕ} (hn : n ≠ m)
+theorem tense_not_abstracted [LT T] (C : PointAlgebra) {m n : ℕ} (hn : n ≠ m)
     (g : ℕ → T) (t : T) (w : W) {s : T} (hs : s ∈ Λ[m] (fun g ↦ tense C n g w) g t) :
     s = g n := by
   simpa [Function.update_of_ne hn] using (mem_pronoun.1 hs).2.symm
@@ -138,21 +138,21 @@ def AspectHead.rel : AspectHead → NonemptyInterval T → NonemptyInterval T �
 
 /-- The cell of an aspect's relation, the reference time first: the reference time within the
 event time, the event time within the reference time, and the event time wholly before it. -/
-def AspectHead.cell : AspectHead → Finset Allen.Relation
-  | .imperfective => Allen.le
-  | .perfective => Allen.inv Allen.le
-  | .perfect => Allen.inv Allen.precedes
+def AspectHead.cell : AspectHead → IntervalAlgebra
+  | .imperfective => IntervalAlgebra.le
+  | .perfective => IntervalAlgebra.le⁻¹
+  | .perfect => IntervalAlgebra.precedes⁻¹
 
 theorem AspectHead.rel_iff (a : AspectHead) (r s : NonemptyInterval T) :
-    a.rel r s ↔ (s, r) ∈ Allen.toSetRel a.cell := by
+    a.rel r s ↔ (s, r) ∈ IntervalAlgebra.toSetRel a.cell := by
   cases a <;> simp [AspectHead.rel, AspectHead.cell]
 
 /-- Against the library's viewpoints, the perfect is strictly stronger, excluding an event that
 ends exactly when the reference time begins; the imperfective is strictly weaker, admitting a
 reference time that is the whole event time; and the perfectives coincide. -/
 theorem cell_viewpointType :
-    AspectHead.perfect.cell ⊂ ViewpointType.perfect.cell ∧
-      ViewpointType.imperfective.cell ⊂ AspectHead.imperfective.cell ∧
+    AspectHead.perfect.cell < ViewpointType.perfect.cell ∧
+      ViewpointType.imperfective.cell < AspectHead.imperfective.cell ∧
       AspectHead.perfective.cell = ViewpointType.perfective.cell := by
   decide +kernel
 
@@ -169,7 +169,8 @@ theorem denote_perfective (P : W → E → Prop) : AspectHead.perfective.denote 
 theorem perfect_viewpointType {P : W → E → Prop} {w : W} {r : NonemptyInterval T} :
     r ∈ AspectHead.perfect.denote P w → r ∈ ViewpointType.perfect.denote P w :=
   fun h ↦ ofRel_mono (fun r s h ↦ (ViewpointType.perfect.ttTSitRelation_iff r s).2 <|
-    Allen.toSetRel_mono cell_viewpointType.1.subset ((AspectHead.perfect.rel_iff r s).1 h)) P w h
+    IntervalAlgebra.toSetRel_mono cell_viewpointType.1.le
+      ((AspectHead.perfect.rel_iff r s).1 h)) P w h
 
 variable (T) in
 /-- An anterior aspect places the event time before the reference time. -/
@@ -195,20 +196,22 @@ theorem AspectHead.IsAnterior.precedes {a : AspectHead} (ha : a.IsAnterior T)
 
 /-- Tense `C` on the variable `n` with aspect `a` is true of an event property when the tense is
 defined and the aspect holds of the property at the tense's reference. -/
-def denote (C : Finset Ordering) (a : AspectHead) (n : ℕ) (P : W → E → Prop)
+def denote (C : PointAlgebra) (a : AspectHead) (n : ℕ) (P : W → E → Prop)
     (g : ℕ → T) (w : W) : Prop :=
   (tense C n g w).Dom ∧ .pure (g n) ∈ a.denote P w
 
-theorem denote_iff_holdsAlong (C : Finset Ordering) (a : AspectHead) (n : ℕ)
+theorem denote_iff_holdsAlong (C : PointAlgebra) (a : AspectHead) (n : ℕ)
     (P : W → E → Prop) (g : ℕ → T) (w : W) :
     denote C a n P g w ↔ ∃ e : E, P w e ∧
-      Allen.HoldsAlong [Allen.pure C, Allen.inv a.cell] (.pure (g 0)) [.pure (g n), τ e] := by
-  simp only [Allen.HoldsAlong, Allen.toSetRel_inv, SetRel.mem_inv, and_true, ← a.rel_iff,
-    Allen.mem_toSetRel, Allen.relation_mem_pure]
+      IntervalAlgebra.HoldsAlong [IntervalAlgebra.pure C, a.cell⁻¹] (.pure (g 0)) [.pure (g n),
+        τ e] := by
+  simp only [IntervalAlgebra.HoldsAlong, IntervalAlgebra.toSetRel_inv, SetRel.mem_inv, and_true,
+    ← a.rel_iff,
+    IntervalAlgebra.mem_toSetRel, IntervalAlgebra.relation_mem_pure]
   simp [denote, AspectHead.denote, ofRel, NonemptyInterval.IsPoint]
   exact ⟨fun ⟨hC, e, he, hP⟩ ↦ ⟨e, hP, hC, he⟩, fun ⟨e, hP, hC, he⟩ ↦ ⟨hC, e, he, hP⟩⟩
 
-theorem denote_outOfTheBlue_iff (C : Finset Ordering) (a : AspectHead) (n : ℕ)
+theorem denote_outOfTheBlue_iff (C : PointAlgebra) (a : AspectHead) (n : ℕ)
     (P : W → E → Prop) (t₀ : T) (w : W) :
     denote C a n P (outOfTheBlue t₀) w ↔ .eq ∈ C ∧ .pure t₀ ∈ a.denote P w := by
   rw [denote, tense_outOfTheBlue_iff]; rfl
@@ -227,7 +230,7 @@ end Aspects
 with the tenses and aspects they spell out. -/
 structure Variety where
   /-- The entries of the table. -/
-  table : List (Tense.Form × Finset Ordering × AspectHead)
+  table : List (Tense.Form × PointAlgebra × AspectHead)
 
 /-- In English the progressive forms spell out the imperfective and the simple forms the
 perfective, and the simple past also spells out the perfect, of the present as of the past. -/
@@ -265,9 +268,9 @@ namespace Variety
 variable (v : Variety)
 
 /-- The form `f` spells out tense `C` with aspect `a`. -/
-def SpellsOut (f : Tense.Form) (C : Finset Ordering) (a : AspectHead) : Prop := (f, C, a) ∈ v.table
+def SpellsOut (f : Tense.Form) (C : PointAlgebra) (a : AspectHead) : Prop := (f, C, a) ∈ v.table
 
-instance (f : Tense.Form) (C : Finset Ordering) (a : AspectHead) : Decidable (v.SpellsOut f C a) :=
+instance (f : Tense.Form) (C : PointAlgebra) (a : AspectHead) : Decidable (v.SpellsOut f C a) :=
   inferInstanceAs (Decidable (_ ∈ _))
 
 variable (T : Type*) [LinearOrder T] in

@@ -123,7 +123,7 @@ def tenses : Morpheme → Finset Tense
 
 /-- The cell of a tense morpheme: the positions its tenses allow its time against the time of the
 tense commanding it. -/
-def cell (m : Morpheme) : Finset Ordering := m.tenses.sup fun t ↦ ⟦t⟧
+def cell (m : Morpheme) : PointAlgebra := m.tenses.sup fun t ↦ ⟦t⟧
 
 -- p. 2: *-(r)u* stands for the non-past ending of every predicate, the copula's among them.
 theorem tenses_ru (c : Japanese.Tense.Conjugation) :
@@ -188,8 +188,8 @@ def lf (φ : Option Feature) : List Morpheme → List (Finset Morpheme)
 /-- The readings of a sentence, given the tense morphemes of its clauses: the positions of the
 time of its last clause against the time of the clause above it, composed from the cells of the
 last clause's morphemes at LF. The clause above a matrix clause is the utterance. -/
-def readings (cs : List (List Morpheme)) : Finset Ordering :=
-  compAlong (((lf none cs.flatten).drop cs.dropLast.flatten.length).map (·.sup cell))
+def readings (cs : List (List Morpheme)) : PointAlgebra :=
+  (((lf none cs.flatten).drop cs.dropLast.flatten.length).map (·.sup cell)).prod
 
 theorem Morpheme.sup_forms_cell_le (φ : Option Feature) {n : Morpheme}
     (h : n.cell ≤ nonfuture) : (forms φ n).sup cell ≤ nonfuture := by
@@ -218,7 +218,7 @@ theorem Morpheme.cell_le_nonfuture_iff (m : Morpheme) :
 SOT rule leaves every other chain of tense morphemes within the Upper Limit Constraint. -/
 theorem readings_le_nonfuture {cs : List (List Morpheme)}
     (h : ∀ m ∈ cs.flatten, m ≠ woll ∧ m ≠ ru) : readings cs ≤ nonfuture := by
-  refine compAlong_le_nonfuture fun C hC ↦ ?_
+  refine prod_le_nonfuture fun C hC ↦ ?_
   obtain ⟨F, hF, rfl⟩ := List.mem_map.1 hC
   obtain ⟨ψ, m, hm, rfl⟩ := exists_eq_forms_of_mem_lf (List.mem_of_mem_drop hF)
   exact Morpheme.sup_forms_cell_le ψ ((Morpheme.cell_le_nonfuture_iff m).2 (h m hm))

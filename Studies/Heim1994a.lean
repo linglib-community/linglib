@@ -58,7 +58,7 @@ def NotAfter (t t₀ : NonemptyInterval T) : Prop := ¬ t₀.Precedes t
 
 theorem notAfter_iff_presup (t t₀ : NonemptyInterval T) :
     NotAfter t t₀ ↔
-      t₀ ~[Allen.toSetRel (Allen.ofPosition Tense.nonfuture)] t := by
+      t₀ ~[IntervalAlgebra.toSetRel (.ofPosition Tense.nonfuture)] t := by
   simp [NotAfter, Tense.nonfuture_eq_compl_future, Tense.denote_future]
 
 theorem notAfter_self (t : NonemptyInterval T) : NotAfter t t := precedes_irrefl t

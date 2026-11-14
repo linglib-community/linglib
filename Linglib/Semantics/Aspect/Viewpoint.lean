@@ -5,7 +5,7 @@ public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Semantics.Index
 public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Semantics.Events.Basic
-public import Linglib.Semantics.Tense.Allen
+public import Linglib.Logic.Temporal.IntervalAlgebra
 
 /-!
 # Viewpoint aspect
@@ -49,7 +49,7 @@ or inclusive, at some subinterval, as Dowty, Mittwoch and Vlach distinguish them
   extensional one.
 * `Aspect.ViewpointType.denote_eq_image`, `Aspect.unbounded_eq_image`,
   `Aspect.perfect_eq_image`, `Aspect.prospective_eq_image`: the operators are images under Allen
-  cells, so complex aspects compose by `Allen.comp`.
+  cells, so complex aspects compose by the product of the interval algebra.
 * `Aspect.mem_perfect_iff_of_isUpperSet`: for a property closed under superintervals, the perfect
   time span may end before the reference interval does.
 * `Aspect.mem_perfect_prfv`, `Aspect.prospective_prfv`: over the perfective, the perfect holds
@@ -122,16 +122,17 @@ instance {T : Type*} [LinearOrder T] (v : ViewpointType) (tt tsit : NonemptyInte
 /-- The cell of the viewpoint's relation, the topic time first: within the situation, around it,
 after it or from its end, before it or up to its start, and around its start and a stage after
 it. -/
-def ViewpointType.cell : ViewpointType → Finset Allen.Relation
-  | .imperfective => Allen.lt
-  | .perfective => Allen.inv Allen.le
-  | .perfect => Allen.inv Allen.isBefore
-  | .prospective => Allen.isBefore
-  | .neutral => (Allen.inv Allen.startsWithin).filter fun r ↦ r.secondShape = .lt → r.sndFst = .gt
+def ViewpointType.cell : ViewpointType → IntervalAlgebra
+  | .imperfective => IntervalAlgebra.lt
+  | .perfective => IntervalAlgebra.le⁻¹
+  | .perfect => IntervalAlgebra.isBefore⁻¹
+  | .prospective => IntervalAlgebra.isBefore
+  | .neutral =>
+    IntervalAlgebra.startsWithin⁻¹ ⊓ .ofPred fun r ↦ r.secondShape = .lt → r.sndFst = .gt
 
 theorem ViewpointType.ttTSitRelation_iff {T : Type*} [LinearOrder T] (v : ViewpointType)
     (tt tsit : NonemptyInterval T) :
-    v.ttTSitRelation tt tsit ↔ (tsit, tt) ∈ Allen.toSetRel v.cell := by
+    v.ttTSitRelation tt tsit ↔ (tsit, tt) ∈ IntervalAlgebra.toSetRel v.cell := by
   cases v <;> simp [ttTSitRelation, cell, Allen.ofEndpoints, compare_lt_iff_lt, compare_gt_iff_gt]
 
 /-! ### Operators -/
@@ -228,12 +229,12 @@ theorem mem_unbounded : t ∈ UNBOUNDED P w ↔ ∃ e : E, t ≤ τ e ∧ P w e 
 /-- The operator of a viewpoint is the image of the predicate's run times under the viewpoint's
 cell. -/
 theorem ViewpointType.denote_eq_image (v : ViewpointType) (P : W → E → Prop) (w : W) :
-    v.denote P w = (Allen.toSetRel v.cell).image (τ '' {e | P w e}) := by
+    v.denote P w = (IntervalAlgebra.toSetRel v.cell).image (τ '' {e | P w e}) := by
   ext t
   simp [ViewpointType.denote, ofRel, SetRel.image, ViewpointType.ttTSitRelation_iff, and_comm]
 
 theorem unbounded_eq_image (P : W → E → Prop) (w : W) :
-    UNBOUNDED P w = (Allen.toSetRel Allen.le).image (τ '' {e | P w e}) := by
+    UNBOUNDED P w = (IntervalAlgebra.toSetRel .le).image (τ '' {e | P w e}) := by
   ext t
   simp [UNBOUNDED, ofRel, SetRel.image, and_comm]
 
@@ -313,9 +314,9 @@ theorem perf_eq_atPoint_perfect (p : W → Set (NonemptyInterval T)) :
 
 /-- The perfect is the image of the perfect time spans under the final-subinterval cell, so the
 perfect of a viewpoint relates its reference interval to the run time as the composite of the
-two cells does (`Allen.image_toSetRel_subset_comp`). -/
+two does (`IntervalAlgebra.image_toSetRel_subset_mul`). -/
 theorem perfect_eq_image (p : W → Set (NonemptyInterval T)) (w : W) :
-    perfect p w = (Allen.toSetRel Allen.finalSubinterval).image (p w) := by
+    perfect p w = (IntervalAlgebra.toSetRel .finalSubinterval).image (p w) := by
   ext i
   simp [perfect, SetRel.image]
 
@@ -337,7 +338,7 @@ theorem mem_perfect_iff_of_isUpperSet (hp : IsUpperSet (p w)) :
 /-- For an interval property closed under superintervals, the perfect is its image under the
 converse of ending no later: a perfect time span is a nonfuture reference time. -/
 theorem perfect_eq_image_inv_endsNoLater (hp : IsUpperSet (p w)) :
-    perfect p w = (Allen.toSetRel (Allen.inv Allen.endsNoLater)).image (p w) := by
+    perfect p w = (IntervalAlgebra.toSetRel IntervalAlgebra.endsNoLater⁻¹).image (p w) := by
   ext i
   simp [SetRel.image, mem_perfect_iff_of_isUpperSet hp]
 
@@ -358,7 +359,7 @@ def prospective (p : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterv
 /-- The prospective is the image of the interval property under the cell of precedence, the
 converse of the cell along which the quantificational past looks back. -/
 theorem prospective_eq_image (p : W → Set (NonemptyInterval T)) (w : W) :
-    prospective p w = (Allen.toSetRel Allen.precedes).image (p w) := by
+    prospective p w = (IntervalAlgebra.toSetRel .precedes).image (p w) := by
   ext i
   simp [prospective, SetRel.image]
 
