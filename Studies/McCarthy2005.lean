@@ -52,7 +52,7 @@ variable {α ι : Type*}
 indices it bears. -/
 structure Member (α ι : Type*) where
   cell : ι
-  stem : List (Correspondence.Segment Unit α)
+  stem : List (Correspondence.Segment α)
 
 /-- A candidate paradigm (2a): the inflected forms of one input stem. -/
 structure Paradigm (α ι : Type*) where
@@ -65,17 +65,17 @@ def markedness (m : ι → List α → ℕ) : Constraint (Paradigm α ι) :=
 
 /-- An input–output faithfulness constraint summed over the members (2b), the input indexed
 by position. -/
-def ioFaith (f : (s t : List (Correspondence.Segment Unit α)) → ℕ) : Constraint (Paradigm α ι) :=
+def ioFaith (f : (s t : List (Correspondence.Segment α)) → ℕ) : Constraint (Paradigm α ι) :=
   fun P ↦ (P.members.map fun m ↦ f (Correspondence.indexed P.input) m.stem).sum
 
 /-- An OP faithfulness constraint (2d): a correspondence constraint between two stems, ℛ_OP
 (2c) relating their coindexed segments, summed over the ordered pairs of distinct members. -/
-def opFaith (f : (s t : List (Correspondence.Segment Unit α)) → ℕ) : Constraint (Paradigm α ι) :=
+def opFaith (f : (s t : List (Correspondence.Segment α)) → ℕ) : Constraint (Paradigm α ι) :=
   fun P ↦ (P.members.offDiag.map fun p ↦ f p.1.stem p.2.stem).sum
 
 section
 
-variable (f : (s t : List (Correspondence.Segment Unit α)) → ℕ) {input : List α}
+variable (f : (s t : List (Correspondence.Segment α)) → ℕ) {input : List α}
   {l₁ l₂ : List (Member α ι)}
 
 -- OP faithfulness does not depend on the order of the members.
@@ -127,15 +127,15 @@ def mat : Paradigm Seg (List Seg) :=
   ⟨[.m, .a, .t], [⟨[], Correspondence.indexed [.m, .a, .t]⟩,
     ⟨[.i], Correspondence.indexed [.m, .a, .ch]⟩]⟩
 
-example : opFaith (Correspondence.Segment.identViol high ()) mat = 2 := by decide +kernel
+example : opFaith (Correspondence.Segment.identViol high) mat = 2 := by decide +kernel
 
 /-- ⟨ma, maʧi⟩. -/
 def ma : Paradigm Seg (List Seg) :=
   ⟨[.m, .a, .t], [⟨[], Correspondence.indexed [.m, .a]⟩,
     ⟨[.i], Correspondence.indexed [.m, .a, .ch]⟩]⟩
 
-example : opFaith (Correspondence.Segment.maxViol ()) ma = 1 ∧
-    opFaith (Correspondence.Segment.depViol ()) ma = 1 := by
+example : opFaith (Correspondence.Segment.maxViol) ma = 1 ∧
+    opFaith (Correspondence.Segment.depViol) ma = 1 := by
   decide +kernel
 
 end Palatalization
@@ -259,20 +259,20 @@ def swpParadigm : Constraint (Paradigm Seg Cell) := markedness fun c s ↦ swp (
 
 def alignLParadigm : Constraint (Paradigm Seg Cell) := markedness fun _ s ↦ alignL s
 
-def opDepV : Constraint (Paradigm Seg Cell) := opFaith (Correspondence.Segment.depViolOn IsVowel ())
+def opDepV : Constraint (Paradigm Seg Cell) := opFaith (Correspondence.Segment.depViolOn IsVowel)
 
 def opIdentWt : Constraint (Paradigm Seg Cell) :=
-  opFaith (Correspondence.Segment.identViol weight ())
+  opFaith (Correspondence.Segment.identViol weight)
 
-def ioDepV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.Segment.depViolOn IsVowel ())
+def ioDepV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.Segment.depViolOn IsVowel)
 
-def ioMaxV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.Segment.maxViolOn IsVowel ())
+def ioMaxV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.Segment.maxViolOn IsVowel)
 
 def ioMaxC : Constraint (Paradigm Seg Cell) :=
-  ioFaith (Correspondence.Segment.maxViolOn (fun c ↦ ¬IsVowel c) ())
+  ioFaith (Correspondence.Segment.maxViolOn (fun c ↦ ¬IsVowel c))
 
 def ioIdentWt : Constraint (Paradigm Seg Cell) :=
-  ioFaith (Correspondence.Segment.identViol weight ())
+  ioFaith (Correspondence.Segment.identViol weight)
 
 /-- The summary ranking (21): IO-MAX-V, OP-DEP-V, \*µµµ]σ, \*APP-σ, IO-MAX-C, OP-IDENT-WT >>
 SWP >> ALIGN-L(Stem, σ) >> IO-DEP-V >> IO-IDENT-WT. -/
@@ -301,8 +301,8 @@ def long : Cand → Paradigm Seg Cell
   | _ => ⟨input, [⟨perfective, faithful⟩, ⟨perfective1, short⟩]⟩
 where
   input : List Seg := [.f, .a, .ayn, .aa, .l]
-  faithful : List (Correspondence.Segment Unit Seg) := Correspondence.indexed input
-  short : List (Correspondence.Segment Unit Seg) := Correspondence.indexed [.f, .a, .ayn, .a, .l]
+  faithful : List (Correspondence.Segment Seg) := Correspondence.indexed input
+  short : List (Correspondence.Segment Seg) := Correspondence.indexed [.f, .a, .ayn, .a, .l]
 
 -- (12)
 theorem shortening_overapplies :
@@ -318,9 +318,9 @@ def cluster : Cand → Paradigm Seg Cell
   | _ => ⟨input, [⟨perfective, faithful⟩, ⟨perfective1, epenthesized⟩]⟩
 where
   input : List Seg := [.f, .a, .ayn, .l]
-  faithful : List (Correspondence.Segment Unit Seg) := Correspondence.indexed input
+  faithful : List (Correspondence.Segment Seg) := Correspondence.indexed input
   /-- A vowel epenthesized into the final cluster. -/
-  epenthesized : List (Correspondence.Segment Unit Seg) := faithful.insertIdx 3 (.ofIndex .i 4)
+  epenthesized : List (Correspondence.Segment Seg) := faithful.insertIdx 3 (.ofIndex .i 4)
 
 -- (13)
 theorem epenthesis_overapplies :
@@ -333,8 +333,8 @@ def syncope : Cand → Paradigm Seg Cell
   | _ => ⟨input, [⟨{ suffixes := [.u] }, syncopated⟩, ⟨perfective, syncopated⟩]⟩
 where
   input : List Seg := [.f, .a, .ayn, .a, .l]
-  faithful : List (Correspondence.Segment Unit Seg) := Correspondence.indexed input
-  syncopated : List (Correspondence.Segment Unit Seg) := faithful.eraseIdx 3
+  faithful : List (Correspondence.Segment Seg) := Correspondence.indexed input
+  syncopated : List (Correspondence.Segment Seg) := faithful.eraseIdx 3
 
 -- (17)
 theorem no_syncope : (Tableau.ofLabels syncope {.a, .b} ranking).optimal = {.a} := by decide +kernel
@@ -346,7 +346,7 @@ def noun : Cand → Paradigm Seg Cell
 where
   input : List Seg := [.f, .ayn, .a, .l]
   cases : List Seg := [.u, .a, .i]
-  faithful : List (Correspondence.Segment Unit Seg) := Correspondence.indexed input
+  faithful : List (Correspondence.Segment Seg) := Correspondence.indexed input
 
 -- (24)
 theorem noun_epenthesis : (Tableau.ofLabels noun {.a, .b} ranking).optimal = {.a} := by
@@ -369,13 +369,13 @@ def eighth : Cand → Paradigm Seg Cell
       ⟨perfective1, epenthesized faithful⟩ ⟨imperfective, ablaut⟩ ⟨imperfectiveF, ablaut⟩⟩
 where
   input : List Seg := [.f, .t, .a, .ayn, .a, .l]
-  faithful : List (Correspondence.Segment Unit Seg) := Correspondence.indexed input
+  faithful : List (Correspondence.Segment Seg) := Correspondence.indexed input
   /-- The imperfective stem vowel. -/
-  ablaut : List (Correspondence.Segment Unit Seg) :=
+  ablaut : List (Correspondence.Segment Seg) :=
     Correspondence.indexed [.f, .t, .a, .ayn, .i, .l]
   /-- A vowel epenthesized into the initial cluster. -/
-  epenthesized (s : List (Correspondence.Segment Unit Seg)) :
-      List (Correspondence.Segment Unit Seg) := s.insertIdx 1 (.ofIndex .i 6)
+  epenthesized (s : List (Correspondence.Segment Seg)) :
+      List (Correspondence.Segment Seg) := s.insertIdx 1 (.ofIndex .i 6)
 
 -- (25)
 theorem attraction_to_the_unmarked :
@@ -397,16 +397,16 @@ def tenth : Cand → Paradigm Seg Cell
       ⟨imperfective, ablaut⟩ ⟨imperfectiveF, shortAblaut⟩⟩
 where
   input : List Seg := [.s, .t, .a, .f, .ayn, .aa, .l]
-  long : List (Correspondence.Segment Unit Seg) := Correspondence.indexed input
-  short : List (Correspondence.Segment Unit Seg) :=
+  long : List (Correspondence.Segment Seg) := Correspondence.indexed input
+  short : List (Correspondence.Segment Seg) :=
     Correspondence.indexed [.s, .t, .a, .f, .ayn, .a, .l]
-  ablaut : List (Correspondence.Segment Unit Seg) :=
+  ablaut : List (Correspondence.Segment Seg) :=
     Correspondence.indexed [.s, .t, .a, .f, .ayn, .ii, .l]
-  shortAblaut : List (Correspondence.Segment Unit Seg) :=
+  shortAblaut : List (Correspondence.Segment Seg) :=
     Correspondence.indexed [.s, .t, .a, .f, .ayn, .i, .l]
   /-- A vowel epenthesized into the initial cluster. -/
-  epenthesized (s : List (Correspondence.Segment Unit Seg)) :
-      List (Correspondence.Segment Unit Seg) := s.insertIdx 1 (.ofIndex .i 7)
+  epenthesized (s : List (Correspondence.Segment Seg)) :
+      List (Correspondence.Segment Seg) := s.insertIdx 1 (.ofIndex .i 7)
 
 -- (27), (21)
 theorem two_attractors : (Tableau.ofLabels tenth {.a, .b, .c, .d, .e} ranking).optimal = {.a} := by
@@ -417,7 +417,7 @@ theorem two_attractors : (Tableau.ofLabels tenth {.a, .b, .c, .d, .e} ranking).o
 Geminate verbs delete the vowel between their identical consonants before V-initial
 suffixes, *ħmarra ~ ħmarartu*, so \*.CᵢV.CᵢV dominates IO-MAX-V and OP-MAX-V (29). -/
 
-def opMaxV : Constraint (Paradigm Seg Cell) := opFaith (Correspondence.Segment.maxViolOn IsVowel ())
+def opMaxV : Constraint (Paradigm Seg Cell) := opFaith (Correspondence.Segment.maxViolOn IsVowel)
 
 /-- The paradigms of /ħmarar/ in (29): the vowel deleted before V-initial suffixes, or kept
 throughout. -/
@@ -428,11 +428,11 @@ def geminate : Cand → Paradigm Seg Cell
       ⟨imperfective, ablaut⟩ ⟨imperfectiveF, ablaut⟩⟩
 where
   input : List Seg := [.hh, .m, .a, .r, .a, .r]
-  faithful : List (Correspondence.Segment Unit Seg) := Correspondence.indexed input
-  ablaut : List (Correspondence.Segment Unit Seg) :=
+  faithful : List (Correspondence.Segment Seg) := Correspondence.indexed input
+  ablaut : List (Correspondence.Segment Seg) :=
     Correspondence.indexed [.hh, .m, .a, .r, .i, .r]
   /-- The vowel between the identical consonants deleted. -/
-  deleted : List (Correspondence.Segment Unit Seg) := faithful.eraseIdx 4
+  deleted : List (Correspondence.Segment Seg) := faithful.eraseIdx 4
 
 -- (29)
 theorem geminate_alternation :
@@ -509,9 +509,9 @@ theorem sonCon_nouns :
 /-- The ranking of (32): \*ə]σ, \*CCC >> OP-MAX-V >> SONCON >> IO-MAX-V, IO-DEP-V. -/
 def moroccanRanking : List (Constraint (Paradigm Seg (List Seg))) :=
   [markedness fun suf s ↦ schwaOpen (s ++ suf), markedness fun suf s ↦ ccc (s ++ suf),
-   opFaith (Correspondence.Segment.maxViolOn IsVowel ()), markedness fun suf s ↦ sonCon (s ++ suf),
-   ioFaith (Correspondence.Segment.maxViolOn IsVowel ()),
-   ioFaith (Correspondence.Segment.depViolOn IsVowel ())]
+   opFaith (Correspondence.Segment.maxViolOn IsVowel), markedness fun suf s ↦ sonCon (s ++ suf),
+   ioFaith (Correspondence.Segment.maxViolOn IsVowel),
+   ioFaith (Correspondence.Segment.depViolOn IsVowel)]
 
 /-- A CCəC member from /ʃərb/: the input schwa deleted, a schwa epenthesized. -/
 def ccec (suffix : List Seg) : Member Seg (List Seg) :=
@@ -566,7 +566,7 @@ def twoSidedOpen : List Seg → ℕ
 /-- \*VCəCV, SON-CON >> OP-MAX-V >> \*CC#. -/
 def ranking : List (Constraint (Paradigm Seg Unit)) :=
   [markedness fun _ s ↦ twoSidedOpen s, markedness fun _ s ↦ sonCon s,
-   opFaith (Correspondence.Segment.maxViolOn (· = .vowel) ()), markedness fun _ s ↦ complexCoda s]
+   opFaith (Correspondence.Segment.maxViolOn (· = .vowel)), markedness fun _ s ↦ complexCoda s]
 
 /-- The paradigms of an imperfective and its truncated jussive from a stem ending in the
 cluster `x y`: the cluster kept, epenthesis throughout, or epenthesis in the jussive alone. -/
@@ -576,10 +576,10 @@ def jussive (x y : Seg) : Cand → Paradigm Seg Unit
   | _ => ⟨stem, [⟨(), faithful⟩, ⟨(), epenthesized (faithful.take 4)⟩]⟩
 where
   stem : List Seg := [.glide, .vowel, x, y, .vowel]
-  faithful : List (Correspondence.Segment Unit Seg) := Correspondence.indexed stem
+  faithful : List (Correspondence.Segment Seg) := Correspondence.indexed stem
   /-- A vowel epenthesized into the cluster. -/
-  epenthesized (s : List (Correspondence.Segment Unit Seg)) :
-      List (Correspondence.Segment Unit Seg) := s.insertIdx 3 (.ofIndex .vowel 5)
+  epenthesized (s : List (Correspondence.Segment Seg)) :
+      List (Correspondence.Segment Seg) := s.insertIdx 3 (.ofIndex .vowel 5)
 
 -- (33)
 theorem cry : (Tableau.ofLabels (jussive .spirant .stop) {.a, .b, .c} ranking).optimal = {.a} := by

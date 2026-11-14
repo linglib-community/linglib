@@ -71,7 +71,7 @@ def phonotactics : List (Constraint (Paradigm Seg (List Seg))) :=
 /-- OP-MAX-V (7c): a mark for each ordered pair of members and each vowel of the first without
 a correspondent in the second. -/
 def opMaxV : Constraint (Paradigm Seg (List Seg)) :=
-  opFaith (Correspondence.Segment.maxViolOn IsVowel ())
+  opFaith (Correspondence.Segment.maxViolOn IsVowel)
 
 /-- The constraints (7) in the ranking of tableau (9): \*ə]σ, \*CCC >> OP-MAX-V >> SONCON. -/
 def ranking : List (Constraint (Paradigm Seg (List Seg))) :=
@@ -89,25 +89,25 @@ def moroccan : Cand → Paradigm Seg (List Seg) :=
 variable (c₁ c₂ c₃ : Seg) (s s' : List Seg)
 
 private theorem maxV_medial_medial :
-    Correspondence.Segment.maxViolOn IsVowel ()
+    Correspondence.Segment.maxViolOn IsVowel
       (schwaMedial c₁ c₂ c₃ s).stem (schwaMedial c₁ c₂ c₃ s').stem = 0 := by
   simp [Correspondence.Segment.maxViolOn, schwaMedial, Correspondence.Segment.Corresponds,
     Correspondence.Segment.ofIndex]
 
 private theorem maxV_initial_initial :
-    Correspondence.Segment.maxViolOn IsVowel ()
+    Correspondence.Segment.maxViolOn IsVowel
       (schwaInitial c₁ c₂ c₃ s).stem (schwaInitial c₁ c₂ c₃ s').stem = 0 := by
   simp [Correspondence.Segment.maxViolOn, schwaInitial, Correspondence.Segment.Corresponds,
     Correspondence.Segment.ofIndex]
 
 private theorem maxV_medial_initial :
-    Correspondence.Segment.maxViolOn IsVowel ()
+    Correspondence.Segment.maxViolOn IsVowel
       (schwaMedial c₁ c₂ c₃ s).stem (schwaInitial c₁ c₂ c₃ s').stem = 1 := by
   simp [Correspondence.Segment.maxViolOn, schwaMedial, schwaInitial,
     Correspondence.Segment.Corresponds, Correspondence.Segment.ofIndex, IsVowel]
 
 private theorem maxV_initial_medial :
-    Correspondence.Segment.maxViolOn IsVowel ()
+    Correspondence.Segment.maxViolOn IsVowel
       (schwaInitial c₁ c₂ c₃ s).stem (schwaMedial c₁ c₂ c₃ s').stem = 1 := by
   simp [Correspondence.Segment.maxViolOn, schwaMedial, schwaInitial,
     Correspondence.Segment.Corresponds, Correspondence.Segment.ofIndex, IsVowel]

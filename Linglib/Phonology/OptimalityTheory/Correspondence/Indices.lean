@@ -16,11 +16,9 @@ public import Mathlib.Order.Fin.Basic
 # Correspondence by coindexation
 
 Correspondent segments are written with matching subscripted indices: /p₁a₂t₃/ and [p₁a₂t₃],
-a coalesced segment bearing the indices of both its sources, and each correspondence relation
-(input–output, base–reduplicant, output–output, the correspondence among the consonants of an
-output) its own set of subscripts. Here a segment carries its indices on each relation, and two
-segments [correspond](##OptimalityTheory.Correspondence.Segment.Corresponds) on a relation when
-they share an index there. The positions of two strings that correspond form
+a coalesced segment bearing the indices of both its sources. Here a segment carries its
+indices, and two segments [correspond](##OptimalityTheory.Correspondence.Segment.Corresponds)
+when they share one. The positions of two strings that correspond form
 [a correspondence](##OptimalityTheory.Correspondence.ofIndices), whose converse is that of the
 two strings [exchanged](##OptimalityTheory.Correspondence.inv_ofIndices), and each faithfulness
 constraint is a count over the two strings
@@ -53,43 +51,41 @@ constraint is a count over the two strings
 
 namespace OptimalityTheory.Correspondence
 
-/-- A segment with the indices it bears on each correspondence relation `r : ρ`. -/
-structure Segment (ρ α : Type*) where
+/-- A segment with the correspondence indices it bears. -/
+structure Segment (α : Type*) where
   seg : α
-  indices : ρ → List ℕ
+  indices : List ℕ
 
-variable {ρ α F : Type*} (r : ρ)
+variable {α F : Type*}
 
 namespace Segment
 
-/-- Two segments *correspond* on `r` when they share an index there. -/
-def Corresponds (x y : Segment ρ α) : Prop := ∃ k ∈ x.indices r, k ∈ y.indices r
+/-- Two segments *correspond* when they share an index. -/
+def Corresponds (x y : Segment α) : Prop := ∃ k ∈ x.indices, k ∈ y.indices
 
-instance (x y : Segment ρ α) : Decidable (x.Corresponds r y) :=
-  inferInstanceAs (Decidable (∃ k ∈ x.indices r, k ∈ y.indices r))
+instance (x y : Segment α) : Decidable (x.Corresponds y) :=
+  inferInstanceAs (Decidable (∃ k ∈ x.indices, k ∈ y.indices))
 
-variable {r}
-
-theorem Corresponds.symm {x y : Segment ρ α} (h : x.Corresponds r y) : y.Corresponds r x :=
+theorem Corresponds.symm {x y : Segment α} (h : x.Corresponds y) : y.Corresponds x :=
   let ⟨k, hx, hy⟩ := h; ⟨k, hy, hx⟩
 
-theorem corresponds_comm {x y : Segment ρ α} : x.Corresponds r y ↔ y.Corresponds r x :=
+theorem corresponds_comm {x y : Segment α} : x.Corresponds y ↔ y.Corresponds x :=
   ⟨.symm, .symm⟩
 
 end Segment
 
-/-- The correspondence between the positions of two strings on `r`. -/
-def ofIndices (s t : List (Segment ρ α)) : Correspondence (Fin s.length) (Fin t.length) :=
-  Finset.univ.filter fun p ↦ s[p.1].Corresponds r t[p.2]
+/-- The correspondence between the positions of two strings. -/
+def ofIndices (s t : List (Segment α)) : Correspondence (Fin s.length) (Fin t.length) :=
+  Finset.univ.filter fun p ↦ s[p.1].Corresponds t[p.2]
 
-variable {r} {s t : List (Segment ρ α)}
+variable {s t : List (Segment α)}
 
 @[simp] theorem mem_ofIndices {i : Fin s.length} {j : Fin t.length} :
-    (i, j) ∈ ofIndices r s t ↔ s[i].Corresponds r t[j] := by
+    (i, j) ∈ ofIndices s t ↔ s[i].Corresponds t[j] := by
   simp [ofIndices]
 
-@[simp] theorem inv_ofIndices (r : ρ) (s t : List (Segment ρ α)) :
-    (ofIndices r s t).inv = ofIndices r t s := by
+@[simp] theorem inv_ofIndices (s t : List (Segment α)) :
+    (ofIndices s t).inv = ofIndices t s := by
   ext ⟨j, i⟩
   simp [Segment.corresponds_comm]
 
@@ -97,48 +93,48 @@ end OptimalityTheory.Correspondence
 
 namespace OptimalityTheory.Correspondence.Segment
 
-variable {ρ α F : Type*}
+variable {α F : Type*}
 
-variable (P : α → Prop) [DecidablePred P] (r : ρ) (s t : List (Segment ρ α))
+variable (P : α → Prop) [DecidablePred P] (s t : List (Segment α))
 
 /-! ### MAX and DEP -/
 
 /-- MAX restricted to the segments satisfying `P` counts those of `s` without a correspondent
 in `t`. -/
-def maxViolOn : ℕ := s.countP fun x ↦ P x.seg ∧ ∀ y ∈ t, ¬ x.Corresponds r y
+def maxViolOn : ℕ := s.countP fun x ↦ P x.seg ∧ ∀ y ∈ t, ¬ x.Corresponds y
 
 /-- MAX counts the segments of `s` without a correspondent in `t`. -/
-def maxViol : ℕ := s.countP fun x ↦ ∀ y ∈ t, ¬ x.Corresponds r y
+def maxViol : ℕ := s.countP fun x ↦ ∀ y ∈ t, ¬ x.Corresponds y
 
 /-- DEP restricted to the segments satisfying `P` counts those of `t` without a correspondent
 in `s`. -/
-def depViolOn : ℕ := maxViolOn P r t s
+def depViolOn : ℕ := maxViolOn P t s
 
 /-- DEP counts the segments of `t` without a correspondent in `s`. -/
-def depViol : ℕ := maxViol r t s
+def depViol : ℕ := maxViol t s
 
 /-! ### IDENT -/
 
 /-- IDENT for the feature `f` counts the corresponding pairs that differ under `f`. -/
-def identViol [DecidableEq F] (f : α → F) (r : ρ) (s t : List (Segment ρ α)) : ℕ :=
-  (s.map fun x ↦ t.countP fun y ↦ x.Corresponds r y ∧ f x.seg ≠ f y.seg).sum
+def identViol [DecidableEq F] (f : α → F) (s t : List (Segment α)) : ℕ :=
+  (s.map fun x ↦ t.countP fun y ↦ x.Corresponds y ∧ f x.seg ≠ f y.seg).sum
 
 /-- MAX of a privative property counts the corresponding pairs whose first member has it and
 whose second lacks it. -/
 def maxViolFeature : ℕ :=
-  (s.map fun x ↦ t.countP fun y ↦ x.Corresponds r y ∧ P x.seg ∧ ¬ P y.seg).sum
+  (s.map fun x ↦ t.countP fun y ↦ x.Corresponds y ∧ P x.seg ∧ ¬ P y.seg).sum
 
 /-- DEP of a privative property counts the corresponding pairs whose second member has it and
 whose first lacks it. -/
-def depViolFeature : ℕ := maxViolFeature P r t s
+def depViolFeature : ℕ := maxViolFeature P t s
 
 /-! ### INTEGRITY and UNIFORMITY -/
 
 /-- INTEGRITY counts the segments of `s` with more than one correspondent in `t`. -/
-def integrityViol : ℕ := s.countP fun x ↦ 1 < t.countP (x.Corresponds r ·)
+def integrityViol : ℕ := s.countP fun x ↦ 1 < t.countP (x.Corresponds ·)
 
 /-- UNIFORMITY counts the segments of `t` with more than one correspondent in `s`. -/
-def uniformityViol : ℕ := integrityViol r t s
+def uniformityViol : ℕ := integrityViol t s
 
 /-! ### The counts on the derived correspondence -/
 
@@ -162,86 +158,109 @@ private theorem sum_map_countP_eq_card_filter {β γ : Type*} (l₁ : List β) (
   exact (countP_eq_card_filter_getElem l₂ fun y ↦ q l₁[(i : ℕ)] y).trans (Finset.card_filter _ _)
 
 private theorem mem_image_fst_ofIndices {i : Fin s.length} :
-    i ∈ (ofIndices r s t).image Prod.fst ↔ ∃ y ∈ t, s[i].Corresponds r y := by
+    i ∈ (ofIndices s t).image Prod.fst ↔ ∃ y ∈ t, s[i].Corresponds y := by
   simp only [Finset.mem_image, Prod.exists, mem_ofIndices, exists_and_right, exists_eq_right]
   exact ⟨fun ⟨j, h⟩ ↦ ⟨t[j], List.getElem_mem _, h⟩,
     fun ⟨y, hy, h⟩ ↦ let ⟨j, hj, e⟩ := List.getElem_of_mem hy; ⟨⟨j, hj⟩, e ▸ h⟩⟩
 
 theorem maxViolOn_eq :
-    maxViolOn P r s t = (ofIndices r s t).maxViolOn fun i ↦ P s[i].seg := by
+    maxViolOn P s t = (ofIndices s t).maxViolOn fun i ↦ P s[i].seg := by
   rw [maxViolOn, Correspondence.maxViolOn,
-    countP_eq_card_filter_getElem s fun x ↦ P x.seg ∧ ∀ y ∈ t, ¬ x.Corresponds r y]
+    countP_eq_card_filter_getElem s fun x ↦ P x.seg ∧ ∀ y ∈ t, ¬ x.Corresponds y]
   congr 1
   ext i
   simp only [Finset.mem_sdiff, Finset.mem_filter, Finset.mem_univ, true_and,
     mem_image_fst_ofIndices, not_exists, not_and]
 
-theorem maxViol_eq : maxViol r s t = (ofIndices r s t).maxViol := by
+theorem maxViol_eq : maxViol s t = (ofIndices s t).maxViol := by
   rw [maxViol, Correspondence.maxViol,
-    countP_eq_card_filter_getElem s fun x ↦ ∀ y ∈ t, ¬ x.Corresponds r y]
+    countP_eq_card_filter_getElem s fun x ↦ ∀ y ∈ t, ¬ x.Corresponds y]
   congr 1
   ext i
   simp only [Finset.mem_sdiff, Finset.mem_filter, Finset.mem_univ, true_and,
     mem_image_fst_ofIndices, not_exists, not_and]
 
 theorem depViolOn_eq :
-    depViolOn P r s t = (ofIndices r s t).depViolOn fun j ↦ P t[j].seg := by
+    depViolOn P s t = (ofIndices s t).depViolOn fun j ↦ P t[j].seg := by
   rw [depViolOn, maxViolOn_eq, ← inv_ofIndices, Correspondence.depViolOn]
 
-theorem depViol_eq : depViol r s t = (ofIndices r s t).depViol := by
+theorem depViol_eq : depViol s t = (ofIndices s t).depViol := by
   rw [depViol, maxViol_eq, ← inv_ofIndices, Correspondence.depViol]
 
 theorem identViol_eq [DecidableEq F] (f : α → F) :
-    identViol f r s t =
-      (ofIndices r s t).identViol (fun i ↦ f s[i].seg) fun j ↦ f t[j].seg := by
+    identViol f s t =
+      (ofIndices s t).identViol (fun i ↦ f s[i].seg) fun j ↦ f t[j].seg := by
   rw [identViol, Correspondence.identViol, ofIndices, Finset.filter_filter]
-  exact sum_map_countP_eq_card_filter s t fun x y ↦ x.Corresponds r y ∧ f x.seg ≠ f y.seg
+  exact sum_map_countP_eq_card_filter s t fun x y ↦ x.Corresponds y ∧ f x.seg ≠ f y.seg
 
 theorem maxViolFeature_eq :
-    maxViolFeature P r s t =
-      (ofIndices r s t).maxViolFeature (fun i ↦ P s[i].seg) fun j ↦ P t[j].seg := by
+    maxViolFeature P s t =
+      (ofIndices s t).maxViolFeature (fun i ↦ P s[i].seg) fun j ↦ P t[j].seg := by
   rw [maxViolFeature, Correspondence.maxViolFeature, ofIndices, Finset.filter_filter]
-  exact sum_map_countP_eq_card_filter s t fun x y ↦ x.Corresponds r y ∧ P x.seg ∧ ¬ P y.seg
+  exact sum_map_countP_eq_card_filter s t fun x y ↦ x.Corresponds y ∧ P x.seg ∧ ¬ P y.seg
 
-theorem integrityViol_eq : integrityViol r s t = (ofIndices r s t).integrityViol := by
+theorem integrityViol_eq : integrityViol s t = (ofIndices s t).integrityViol := by
   rw [integrityViol, Correspondence.integrityViol,
-    countP_eq_card_filter_getElem s fun x ↦ 1 < t.countP (x.Corresponds r ·)]
+    countP_eq_card_filter_getElem s fun x ↦ 1 < t.countP (x.Corresponds ·)]
   congr 1
   ext i
-  have h : (ofIndices r s t).filter (fun x ↦ x.1 = i) =
-      (Finset.univ.filter fun j : Fin t.length ↦ s[i].Corresponds r t[j]).map
+  have h : (ofIndices s t).filter (fun x ↦ x.1 = i) =
+      (Finset.univ.filter fun j : Fin t.length ↦ s[i].Corresponds t[j]).map
         ⟨fun j ↦ (i, j), fun _ _ h ↦ congrArg Prod.snd h⟩ := by
     ext ⟨a, j⟩
     simp only [Finset.mem_filter, mem_ofIndices, Finset.mem_map, Finset.mem_univ, true_and,
       Function.Embedding.coeFn_mk, Prod.mk.injEq]
     exact ⟨fun ⟨h, e⟩ ↦ ⟨j, e ▸ h, e.symm, rfl⟩, fun ⟨_, h, e, e'⟩ ↦ e ▸ e' ▸ ⟨h, rfl⟩⟩
   rw [Finset.mem_filter, Finset.mem_filter, h, Finset.card_map,
-    countP_eq_card_filter_getElem t fun y ↦ s[i].Corresponds r y]
+    countP_eq_card_filter_getElem t fun y ↦ s[i].Corresponds y]
 
-theorem uniformityViol_eq : uniformityViol r s t = (ofIndices r s t).uniformityViol := by
+theorem uniformityViol_eq : uniformityViol s t = (ofIndices s t).uniformityViol := by
   rw [uniformityViol, integrityViol_eq, ← inv_ofIndices, Correspondence.uniformityViol]
 
 end OptimalityTheory.Correspondence.Segment
 
 namespace OptimalityTheory.Correspondence
 
-variable {ρ α : Type*}
+variable {α F : Type*}
 
 /-! ### Indexings -/
 
-/-- The segment `a` bearing the index `k` on every relation. -/
-def Segment.ofIndex (a : α) (k : ℕ) : Segment ρ α := ⟨a, fun _ ↦ [k]⟩
+/-- The segment `a` bearing the index `k`. -/
+def Segment.ofIndex (a : α) (k : ℕ) : Segment α := ⟨a, [k]⟩
 
-/-- The string `l` with each segment indexed by its position, on every relation. -/
-def indexed (l : List α) : List (Segment ρ α) :=
+/-- The string `l` with each segment indexed by its position. -/
+def indexed (l : List α) : List (Segment α) :=
   l.zipIdx.map fun x ↦ .ofIndex x.1 x.2
 
-@[simp] theorem length_indexed (l : List α) : (indexed (ρ := ρ) l).length = l.length := by
+@[simp] theorem length_indexed (l : List α) : (indexed l).length = l.length := by
   simp [indexed]
 
+/-- In a string indexed by position a segment corresponds with itself alone. -/
+theorem eq_of_corresponds_indexed {l : List α} {x y : Segment α} (hx : x ∈ indexed l)
+    (hy : y ∈ indexed l) (h : x.Corresponds y) : x = y := by
+  obtain ⟨⟨a, i⟩, ha, rfl⟩ := List.mem_map.1 hx
+  obtain ⟨⟨b, j⟩, hb, rfl⟩ := List.mem_map.1 hy
+  obtain rfl : i = j := by simpa [Segment.Corresponds, Segment.ofIndex] using h
+  rw [List.mem_zipIdx_iff_getElem?] at ha hb
+  rw [Option.some.inj (ha.symm.trans hb)]
+
+/-- A string indexed by position is identical to itself in every feature. -/
+theorem identViol_indexed_self [DecidableEq F] (f : α → F) (l : List α) :
+    Segment.identViol f (indexed l) (indexed l) = 0 := by
+  refine List.sum_eq_zero fun n hn ↦ ?_
+  obtain ⟨x, hx, rfl⟩ := List.mem_map.1 hn
+  exact List.countP_eq_zero.2 fun y hy ↦ by
+    simpa using fun h ↦ congrArg (fun z ↦ f z.seg) (eq_of_corresponds_indexed hx hy h)
+
+theorem maxViolFeature_indexed_self (P : α → Prop) [DecidablePred P] (l : List α) :
+    Segment.maxViolFeature P (indexed l) (indexed l) = 0 := by
+  refine List.sum_eq_zero fun n hn ↦ ?_
+  obtain ⟨x, hx, rfl⟩ := List.mem_map.1 hn
+  exact List.countP_eq_zero.2 fun y hy ↦ by
+    simpa using fun h hP ↦ eq_of_corresponds_indexed hx hy h ▸ hP
+
 /-- A string corresponds with itself, indexed by position, without a MAX violation. -/
-theorem maxViol_indexed_self (r : ρ) (l : List α) :
-    Segment.maxViol r (indexed l) (indexed l) = 0 := by
+theorem maxViol_indexed_self (l : List α) : Segment.maxViol (indexed l) (indexed l) = 0 := by
   rw [Segment.maxViol, List.countP_eq_zero]
   intro x hx
   obtain ⟨a, -, rfl⟩ := List.mem_map.1 hx
