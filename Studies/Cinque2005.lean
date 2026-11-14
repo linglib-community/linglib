@@ -180,14 +180,10 @@ Num; in that of (6n) `[A N]` pied-pipes past Num, of the picture-of-who type, `[
 def mergeOrder : Derivation :=
   ⟨leaf tokN, [.em .left tokA, .em .left tokNum, .em .left tokDem]⟩
 
-/-- The derivation of (6o): NP raises past A, and `[N [A t]]` past Num. The trace in the
-pied-piped phrase is named by the number of the movement that left it, and labelled by the head
-that selection gives its mover. -/
+/-- The derivation of (6o): NP raises past A, and `[N [A t]]` past Num. -/
 def derivation6o : Derivation :=
-  Derivation.withTraceHeads SelectionState.licensing
-    ⟨.leaf tokN, [.em .left (.leaf tokA), .im (.leaf tokN), .em .left (.leaf tokNum),
-      .im (.leaf tokN * (.leaf tokA * .labelledTrace 0) :
-        PlanarSyntacticObject (ι := ℕ)).toSyntacticObject, .em .left (.leaf tokDem)]⟩
+  ⟨leaf tokN, [.em .left tokA, .im (leaf tokN), .em .left tokNum,
+    .im (tokN * (tokA * .traceOf tokN) : PlanarSyntacticObject), .em .left tokDem]⟩
 
 /-- The derivation of (6n): `[A N]` raises past Num. -/
 def derivation6n : Derivation :=

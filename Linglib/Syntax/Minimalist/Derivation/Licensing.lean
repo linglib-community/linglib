@@ -42,16 +42,6 @@ structure Licensing (β : Type*) where
   /-- The state of the trace with the given number, of a moved object in the given state. -/
   trace : ℕ → β → β
 
-/-- The number of movers the traces of an object refer to, one more than its largest trace
-number: merging takes the larger bound, so the objects below a bound are closed under Merge. -/
-def SyntacticObject.traceBound : SyntacticObject (ι := ℕ) → ℕ :=
-  FreeCommMagma.elim (Leaf.elim (fun _ ↦ 0) fun u ↦ u.elim 0 (· + 1)) (fun _ _ a b ↦ max a b)
-    fun _ _ a b ↦ max_comm a b
-
-@[simp] theorem SyntacticObject.traceBound_merge (l r : SyntacticObject (ι := ℕ)) :
-    (merge l r).traceBound = max l.traceBound r.traceBound :=
-  FreeCommMagma.elim_mul ..
-
 namespace Licensing
 
 variable (L : Licensing β) (L' : Licensing γ)
@@ -89,47 +79,6 @@ theorem exists_eq_trace_of_getElem? {movers : List (SyntacticObject (ι := ℕ))
       obtain rfl : i = states.length := by omega
       exact ⟨_, (Option.some.inj hx).symm⟩
 
-/-- A licensing reads an object from the states of the traces below its bound. -/
-theorem eval_congr {states states' : List β} {s : SyntacticObject (ι := ℕ)}
-    (h : ∀ i < s.traceBound, states[i]? = states'[i]?) : L.eval states s = L.eval states' s := by
-  induction s using SyntacticObject.ind with
-  | leaf a => rfl
-  | trace => rfl
-  | traceOf i => exact congrArg (·.getD 0) (h i i.lt_succ_self)
-  | merge l r ihl ihr =>
-    rw [show merge l r = l * r from rfl, map_mul, map_mul,
-      ihl fun i hi ↦ h i (by rw [traceBound_merge]; exact lt_max_of_lt_left hi),
-      ihr fun i hi ↦ h i (by rw [traceBound_merge]; exact lt_max_of_lt_right hi)]
-
-theorem length_traceStates (movers : List (SyntacticObject (ι := ℕ))) :
-    (L.traceStates movers).length = movers.length := by
-  suffices key : ∀ states : List β, (movers.foldl
-      (fun states m ↦ states ++ [L.trace states.length (L.eval states m)]) states).length =
-        states.length + movers.length from (key []).trans (zero_add _)
-  induction movers with
-  | nil => exact fun _ ↦ rfl
-  | cons m movers ih => exact fun states ↦ by rw [List.foldl_cons, ih]; simp; omega
-
-/-- The trace states of the first movers are the first trace states. -/
-theorem traceStates_prefix {movers movers' : List (SyntacticObject (ι := ℕ))}
-    (h : movers <+: movers') : L.traceStates movers <+: L.traceStates movers' := by
-  obtain ⟨rest, rfl⟩ := h
-  rw [show L.traceStates (movers ++ rest) = rest.foldl
-    (fun states m ↦ states ++ [L.trace states.length (L.eval states m)]) (L.traceStates movers)
-    from List.foldl_append ..]
-  generalize L.traceStates movers = states
-  induction rest generalizing states with
-  | nil => exact List.prefix_rfl
-  | cons m rest ih => exact (List.prefix_append _ _).trans (ih _)
-
-/-- An object whose traces number only the first movers is read alike with the later ones. -/
-theorem eval_traceStates_of_prefix {movers movers' : List (SyntacticObject (ι := ℕ))}
-    (h : movers <+: movers') {s : SyntacticObject (ι := ℕ)} (hs : s.traceBound ≤ movers.length) :
-    L.eval (L.traceStates movers) s = L.eval (L.traceStates movers') s :=
-  L.eval_congr fun i hi ↦ by
-    obtain ⟨rest, hrest⟩ := L.traceStates_prefix h
-    rw [← hrest, List.getElem?_append_left (by rw [length_traceStates]; omega)]
-
 variable {L L'} {π : β →ₙ* γ}
 
 theorem comp_eval (h0 : π 0 = 0) (hlex : ∀ a, π (L.lex a) = L'.lex a) (states : List β) :
@@ -165,13 +114,6 @@ theorem comp_hom (h0 : π 0 = 0) (hlex : ∀ a, π (L.lex a) = L'.lex a)
     (htrace : ∀ i x, π (L.trace i x) = L'.trace i (π x)) (d : Derivation ℕ) :
     π.comp (L.hom d) = L'.hom d := by
   rw [hom, hom, comp_eval h0 hlex, traceStates_map h0 hlex htrace]
-
-variable (L) in
-/-- A licensing reads the objects of a stage alike over the stage and over the whole
-derivation. -/
-theorem hom_take (d : Derivation ℕ) (n : ℕ) {s : SyntacticObject (ι := ℕ)}
-    (hs : s.traceBound ≤ (d.take n).movedItems.length) : L.hom (d.take n) s = L.hom d s :=
-  L.eval_traceStates_of_prefix ((List.take_prefix n d.steps).filterMap _) hs
 
 end Licensing
 
@@ -210,51 +152,6 @@ theorem LicensedBy.of_hom (h0 : π 0 = 0) (hlex : ∀ a, π (L.lex a) = L'.lex a
     d.LicensedBy L :=
   fun n hn ↦ (h n hn).imp fun c ⟨hc, hall⟩ ↦ ⟨hc, fun x hx hx0 ↦ hall x hx <| by
     rw [← Licensing.comp_hom h0 hlex htrace, MulHom.comp_apply, hx0, h0]⟩
-
-end Derivation
-
-/-! ### Token labels
-
-Under a licensing with heads, a derivation whose traces are numbered has a token-labelled form:
-each numbered trace is labelled by the head the licensing gives its mover. -/
-
-/-- The leaf with a numbered trace labelled by the head listed for it, bare where there is
-none. -/
-def SyntacticObject.Leaf.withTraceHeads (heads : List (Option LexicalItem.Token)) :
-    Leaf LexicalItem.Token ℕ → Leaf LexicalItem.Token LexicalItem.Token
-  | .lex a => .lex a
-  | .trace => .trace
-  | .traceOf i => heads[i]?.join.elim .trace .traceOf
-
-/-- The object with each numbered trace labelled by the head listed for it. -/
-def SyntacticObject.withTraceHeads (heads : List (Option LexicalItem.Token)) :
-    SyntacticObject (ι := ℕ) →ₙ* SyntacticObject :=
-  FreeCommMagma.map (Leaf.withTraceHeads heads)
-
-/-- The planar object with each numbered trace labelled by the head listed for it. -/
-def PlanarSyntacticObject.withTraceHeads (heads : List (Option LexicalItem.Token)) :
-    PlanarSyntacticObject (ι := ℕ) →ₙ* PlanarSyntacticObject :=
-  FreeMagma.map (Leaf.withTraceHeads heads)
-
-/-- The step with each numbered trace labelled by the head listed for it. -/
-def Step.withTraceHeads (heads : List (Option LexicalItem.Token)) : Step ℕ → Step
-  | .em side item => .em side (item.withTraceHeads heads)
-  | .im mover side => .im (mover.withTraceHeads heads) side
-  | .extract mover => .extract (mover.withTraceHeads heads)
-  | .remerge side => .remerge side
-
-namespace Derivation
-
-variable [Head β] (L : Licensing β)
-
-/-- The heads a licensing gives the movers of a derivation, in order. -/
-def traceHeads (d : Derivation ℕ) : List (Option LexicalItem.Token) :=
-  d.movedItems.map fun m ↦ head (L.hom d m)
-
-/-- The token-labelled form of a numbered derivation: each trace labelled by the head the
-licensing gives its mover. -/
-def withTraceHeads (d : Derivation ℕ) : Derivation :=
-  ⟨d.initial.withTraceHeads (d.traceHeads L), d.steps.map (Step.withTraceHeads (d.traceHeads L))⟩
 
 end Derivation
 
