@@ -145,8 +145,8 @@ theorem chair_mem_copyRel : (chair, chair) ∈ appearedToGather.copyRel :=
 theorem hasDistinctItems_appearedToGather : appearedToGather.HasDistinctItems := by
   intro a b ha hb hab
   simp only [appearedToGather, chair, terms_merge, terms_leaf, Multiset.mem_cons, Multiset.mem_add,
-    Multiset.mem_singleton, leaf_inj, leaf_ne_merge, traceOf_ne_merge, traceOf_ne_leaf, false_or,
-    or_false] at ha hb
+    Multiset.mem_singleton, leaf_inj, leaf_ne_merge, labelledTrace_ne_merge,
+    labelledTrace_ne_leaf, false_or, or_false] at ha hb
   rcases ha with rfl | rfl | rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl | rfl | rfl <;>
     first | rfl | simp [LexicalItem.of] at hab
 
