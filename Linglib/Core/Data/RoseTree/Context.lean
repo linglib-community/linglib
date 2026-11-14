@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Data.RoseTree.Get
+public import Linglib.Core.Data.RoseTree.ReplaceAt
 public import Mathlib.Order.Hom.Basic
 
 /-!

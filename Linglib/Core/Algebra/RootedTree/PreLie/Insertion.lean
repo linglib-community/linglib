@@ -9,6 +9,7 @@ public import Linglib.Core.Algebra.RootedTree.PreLie.Graft
 public import Linglib.Core.Data.List.Sections
 public import Linglib.Core.Data.List.Sublists
 public import Linglib.Core.Data.Multiset.Powerset
+public import Linglib.Core.Data.RoseTree.Positions
 public import Linglib.Core.Data.UnorderedTree.Basic
 public import Mathlib.Data.Multiset.Bind
 
