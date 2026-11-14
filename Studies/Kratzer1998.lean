@@ -138,21 +138,21 @@ def AspectHead.rel : AspectHead → NonemptyInterval T → NonemptyInterval T �
 
 /-- The cell of an aspect's relation, the reference time first: the reference time within the
 event time, the event time within the reference time, and the event time wholly before it. -/
-def AspectHead.cell : AspectHead → Finset Allen.Relation
-  | .imperfective => Allen.le
-  | .perfective => Allen.inv Allen.le
-  | .perfect => Allen.inv Allen.precedes
+def AspectHead.cell : AspectHead → IntervalAlgebra
+  | .imperfective => IntervalAlgebra.le
+  | .perfective => IntervalAlgebra.le⁻¹
+  | .perfect => IntervalAlgebra.precedes⁻¹
 
 theorem AspectHead.rel_iff (a : AspectHead) (r s : NonemptyInterval T) :
-    a.rel r s ↔ (s, r) ∈ Allen.toSetRel a.cell := by
+    a.rel r s ↔ (s, r) ∈ IntervalAlgebra.toSetRel a.cell := by
   cases a <;> simp [AspectHead.rel, AspectHead.cell]
 
 /-- Against the library's viewpoints, the perfect is strictly stronger, excluding an event that
 ends exactly when the reference time begins; the imperfective is strictly weaker, admitting a
 reference time that is the whole event time; and the perfectives coincide. -/
 theorem cell_viewpointType :
-    AspectHead.perfect.cell ⊂ ViewpointType.perfect.cell ∧
-      ViewpointType.imperfective.cell ⊂ AspectHead.imperfective.cell ∧
+    AspectHead.perfect.cell < ViewpointType.perfect.cell ∧
+      ViewpointType.imperfective.cell < AspectHead.imperfective.cell ∧
       AspectHead.perfective.cell = ViewpointType.perfective.cell := by
   decide +kernel
 
@@ -169,7 +169,8 @@ theorem denote_perfective (P : W → E → Prop) : AspectHead.perfective.denote 
 theorem perfect_viewpointType {P : W → E → Prop} {w : W} {r : NonemptyInterval T} :
     r ∈ AspectHead.perfect.denote P w → r ∈ ViewpointType.perfect.denote P w :=
   fun h ↦ ofRel_mono (fun r s h ↦ (ViewpointType.perfect.ttTSitRelation_iff r s).2 <|
-    Allen.toSetRel_mono cell_viewpointType.1.subset ((AspectHead.perfect.rel_iff r s).1 h)) P w h
+    IntervalAlgebra.toSetRel_mono cell_viewpointType.1.le
+      ((AspectHead.perfect.rel_iff r s).1 h)) P w h
 
 variable (T) in
 /-- An anterior aspect places the event time before the reference time. -/
@@ -202,9 +203,11 @@ def denote (C : PointAlgebra) (a : AspectHead) (n : ℕ) (P : W → E → Prop)
 theorem denote_iff_holdsAlong (C : PointAlgebra) (a : AspectHead) (n : ℕ)
     (P : W → E → Prop) (g : ℕ → T) (w : W) :
     denote C a n P g w ↔ ∃ e : E, P w e ∧
-      Allen.HoldsAlong [Allen.pure C, Allen.inv a.cell] (.pure (g 0)) [.pure (g n), τ e] := by
-  simp only [Allen.HoldsAlong, Allen.toSetRel_inv, SetRel.mem_inv, and_true, ← a.rel_iff,
-    Allen.mem_toSetRel, Allen.relation_mem_pure]
+      IntervalAlgebra.HoldsAlong [IntervalAlgebra.pure C, a.cell⁻¹] (.pure (g 0)) [.pure (g n),
+        τ e] := by
+  simp only [IntervalAlgebra.HoldsAlong, IntervalAlgebra.toSetRel_inv, SetRel.mem_inv, and_true,
+    ← a.rel_iff,
+    IntervalAlgebra.mem_toSetRel, IntervalAlgebra.relation_mem_pure]
   simp [denote, AspectHead.denote, ofRel, NonemptyInterval.IsPoint]
   exact ⟨fun ⟨hC, e, he, hP⟩ ↦ ⟨e, hP, hC, he⟩, fun ⟨e, hP, hC, he⟩ ↦ ⟨hC, e, he, hP⟩⟩
 

@@ -15,7 +15,7 @@ its referent has its φ-features. `Tense.pronoun R k j` is this denotation, a de
 and the present are the pronouns of the relations of their cells (`PointAlgebra.toSetRel`), the zero
 tense of Kratzer, a variable with no presupposition, is the pronoun of the unconstrained cell
 `⊤`, and a tense whose reference time is an interval is the pronoun of the relation of an Allen
-cell (`Allen.toSetRel`).
+cell (`IntervalAlgebra.toSetRel`).
 One denotation serves the deictic, the anaphoric and the bound use, binding being abstraction
 over the assignment (`Λ[n]`), and a free evaluation index is by convention
 the utterance time. Bound by an existential quantifier, a pronominal tense is the

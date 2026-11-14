@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.LeftLinear
-public import Linglib.Semantics.Tense.Allen
+public import Linglib.Logic.Temporal.IntervalAlgebra
 public import Linglib.Semantics.Tense.Defs
 public import Linglib.Logic.Modal.Defs
 
@@ -9,17 +9,16 @@ public import Linglib.Logic.Modal.Defs
 # Quantificational tense
 
 Read quantificationally, a tense quantifies over the times its denotation admits, as in the tense
-logic of Prior: `◇[toSetRel ⟦past⟧] P t`, possibility along its relation
-(`PointAlgebra.toSetRel`, and `Allen.toSetRel` on intervals), says that `P` held at some time
-before `t`, and `□` that it held at all of them. Sometime in the past is
-[left adjoint to always in the future](##Tense.diamond_past_box_future_gc). The schemas beyond
-$K_t$ correspond to the structure of time: $FFp \to Fp$ is [axiom 4](##ModalLogic.diamond_four),
-its converse holds [exactly when time is dense](##Tense.diamond_future_den_iff), $Gp \to Fp$
-[exactly when time has no last moment](##Tense.isSerial_toSetRel_future_iff), and $PFp \to Mp$
-[exactly when time does not branch forward](##Tense.diamond_past_diamond_future_le_iff). A tense
-under a tense [entails the tense of the product](##Tense.diamond_diamond_toSetRel), and is that
-tense for all elements of the point algebra
-[exactly when time is dense without endpoints](##Tense.diamond_toSetRel_mul_iff).
+logic of Prior: `◇[toSetRel ⟦past⟧] P t`, possibility along its relation (`PointAlgebra.toSetRel`,
+and `IntervalAlgebra.toSetRel` on intervals), says that `P` held at some time before `t`, and `□`
+that it held at all of them. Sometime in the past is [left adjoint to always in the
+future](##Tense.diamond_past_box_future_gc). The schemas beyond $K_t$ correspond to the structure of
+time: $FFp \to Fp$ is [axiom 4](##ModalLogic.diamond_four), its converse holds [exactly when time is
+dense](##Tense.diamond_future_den_iff), $Gp \to Fp$ [exactly when time has no last
+moment](##Tense.isSerial_toSetRel_future_iff), and $PFp \to Mp$ [exactly when time does not branch
+forward](##Tense.diamond_past_diamond_future_le_iff). A tense under a tense [entails the tense of
+the product](##Tense.diamond_diamond_toSetRel), and is that tense for all elements of the point
+algebra [exactly when time is dense without endpoints](##Tense.diamond_toSetRel_mul_iff).
 
 ## References
 
@@ -189,7 +188,7 @@ end LinearOrder
 
 end Tense
 
-namespace Allen
+namespace IntervalAlgebra
 
 open ModalLogic
 
@@ -211,4 +210,4 @@ theorem diamond_precedes_diamond_precedes [DenselyOrdered T] (Q : NonemptyInterv
     ◇[toSetRel precedes] (◇[toSetRel precedes] Q) = ◇[toSetRel precedes] Q := by
   rw [← diamond_comp, toSetRel_precedes_comp_self]
 
-end Allen
+end IntervalAlgebra

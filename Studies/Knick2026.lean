@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.Knick2026
 public import Linglib.Data.Examples.Readers
 public import Linglib.Semantics.Aspect.SubintervalProperty
 public import Linglib.Semantics.Conditionals.SelectionFunction
+public import Linglib.Syntax.Category.Verb.Tense
 
 /-!
 # Knick (2026): Future shifting with present marking in Khalkha Mongolian
@@ -25,8 +26,8 @@ prospective, [an eventuality to come](##mem_present_future_iff); the modal selec
   the future structure and the negated present perfective among them; under it the negated future
   [excludes an eventuality that starts within the utterance time](##mem_present_compl_future_iff),
   which the future does not include.
-* The non-past quantifies over reference times no part of which precedes the utterance time,
-  those standing to it in `Allen.startsNoEarlier`, [the mirror image](##mem_nonPast_iff_dual) of
+* The non-past quantifies over reference times no part of which precedes the utterance time, those
+  standing to it in `IntervalAlgebra.startsNoEarlier`, [the mirror image](##mem_nonPast_iff_dual) of
   the nonfuture reference times of [matthewson-2006].
 * The perfect is the library's, whose span ends with the reference interval, where the paper's
   may end before it; over the perfective the two agree
@@ -97,7 +98,7 @@ theorem mem_nonPast : w ∈ nonPast u p ↔ ∃ t ∈ p w, u.fst ≤ t.fst := by
 
 -- (20): the non-past is the nonfuture tense of [matthewson-2006] on reversed time
 theorem mem_nonPast_iff_dual : w ∈ nonPast u p ↔
-    ∃ t ∈ p w, (u.dual, t.dual) ∈ Allen.toSetRel Allen.endsNoLater := by
+    ∃ t ∈ p w, (u.dual, t.dual) ∈ IntervalAlgebra.toSetRel .endsNoLater := by
   simp [mem_nonPast]
 
 theorem nonPast_prfv : nonPast u (PRFV P) = {w | ∃ e, u.fst ≤ (τ e).fst ∧ P w e} := by

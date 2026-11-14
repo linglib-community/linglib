@@ -14,12 +14,11 @@ public import Linglib.Data.Examples.Languages
 
 The temporal adverb ⌜then⌝ cannot restrict a present tense, whether the present is shifted or not,
 (12). Tenses and ⌜then⌝ are temporal pronouns presupposing a relation to a perspective `π`,
-(69)–(71): PRES overlap, PAST precedence and ⌜then⌝ disjointness, the relations `Allen.toSetRel`
-of the cells `Allen.ofPosition` of the positions `present`, `past` and `presentᶜ`. The operator
-OP_π of
-(73) rebinds `π` for a whole clause, so a clausemate tense and ⌜then⌝, which restricts the tense's
-reference (76), read the same `π`, and a present clashes with ⌜then⌝ whatever `π` is. A deleted
-tense carries no presupposition, (86)–(87).
+(69)–(71): PRES overlap, PAST precedence and ⌜then⌝ disjointness, the relations
+`IntervalAlgebra.toSetRel` of the cells `IntervalAlgebra.ofPosition` of the positions `present`,
+`past` and `presentᶜ`. The operator OP_π of (73) rebinds `π` for a whole clause, so a clausemate
+tense and ⌜then⌝, which restricts the tense's reference (76), read the same `π`, and a present
+clashes with ⌜then⌝ whatever `π` is. A deleted tense carries no presupposition, (86)–(87).
 
 ## Implementation notes
 
@@ -65,32 +64,34 @@ open scoped SetRel
 
 open Tense Tense.Perspective
 
-variable {T : Type*} [LinearOrder T] {B : Finset Allen.Relation} {C : PointAlgebra}
+variable {T : Type*} [LinearOrder T] {B : IntervalAlgebra} {C : PointAlgebra}
   {r th π : NonemptyInterval T}
 
 /-! ### The clash and the shift-together effect (section 5) -/
 
 -- (69)
-theorem presup_present : π ~[Allen.toSetRel (Allen.ofPosition ⟦present⟧)] r ↔ r.Overlaps π := by
+theorem presup_present : π ~[IntervalAlgebra.toSetRel (.ofPosition ⟦present⟧)] r ↔ r.Overlaps π :=
+  by
   simp [denote_present]
 
 -- (70)
-theorem presup_past : π ~[Allen.toSetRel (Allen.ofPosition ⟦past⟧)] r ↔ r.Precedes π := by
+theorem presup_past : π ~[IntervalAlgebra.toSetRel (.ofPosition ⟦past⟧)] r ↔ r.Precedes π := by
   simp [denote_past]
 
 /-- A present-tensed clause modified by a distal adverb is contradictory whatever the perspective
 ((75), (78), (81)–(82)). -/
 theorem not_restricted_present {a : DeicticAdverb} (ha : a.IsDistal) (r th π : NonemptyInterval T) :
-    ¬ Restricted (Allen.ofPosition ⟦present⟧) (Allen.ofPosition a.cell) π r th :=
+    ¬ Restricted (IntervalAlgebra.ofPosition ⟦present⟧) (IntervalAlgebra.ofPosition a.cell) π r th
+      :=
   fun ⟨hr, hle, hth⟩ ↦ not_ofPosition_of_overlaps ha (presup_present.1 hr)
     hle hth
 
 /-- Anand and Toosarvandani's present, their (11a), presupposes containment in the perspective,
 and a distal adverb is excluded with it all the same. -/
 theorem not_restricted_le {a : DeicticAdverb} (ha : a.IsDistal) (r th π : NonemptyInterval T) :
-    ¬ Restricted Allen.le (Allen.ofPosition a.cell) π r th :=
+    ¬ Restricted IntervalAlgebra.le (IntervalAlgebra.ofPosition a.cell) π r th :=
   fun ⟨hr, hle, hth⟩ ↦ not_ofPosition_of_overlaps ha
-    (NonemptyInterval.overlaps_of_le (Allen.mem_toSetRel_le.1 hr)) hle hth
+    (NonemptyInterval.overlaps_of_le (IntervalAlgebra.mem_toSetRel_le.1 hr)) hle hth
 
 /-- The ⌜then⌝ adverbs of the paper's sample, by the Glottocode of their language. -/
 def thenAdverbs : List (Glottocode × DeicticAdverb) :=
@@ -102,51 +103,54 @@ def thenAdverbs : List (Glottocode × DeicticAdverb) :=
 -- (12)
 theorem not_restricted_present_of_mem {a : DeicticAdverb} (ha : a ∈ thenAdverbs.map Prod.snd)
     (r th π : NonemptyInterval T) :
-    ¬ Restricted (Allen.ofPosition ⟦present⟧) (Allen.ofPosition a.cell) π r th :=
+    ¬ Restricted (IntervalAlgebra.ofPosition ⟦present⟧) (IntervalAlgebra.ofPosition a.cell) π r th
+      :=
   not_restricted_present ((by decide : ∀ a ∈ thenAdverbs.map Prod.snd, a.IsDistal) a ha) r th π
 
 -- (115)
 theorem restricted_present_sejchas (r : NonemptyInterval T) :
-    Restricted (Allen.ofPosition ⟦present⟧)
-      (Allen.ofPosition Russian.TemporalDeictic.sejchas.cell) r r r :=
+    Restricted (IntervalAlgebra.ofPosition ⟦present⟧)
+      (IntervalAlgebra.ofPosition Russian.TemporalDeictic.sejchas.cell) r r r :=
   ⟨presup_present.2 (NonemptyInterval.overlaps_refl r), le_rfl,
     presup_present.2 (NonemptyInterval.overlaps_refl r)⟩
 
 /-- With pronominal anchors, PRES and ⌜then⌝ could take different times and the clause would be
 coherent (36). -/
 theorem exists_split_anchor {π₁ π₂ : NonemptyInterval T} (h : ¬ π₁.Overlaps π₂) :
-    ∃ r th, π₁ ~[Allen.toSetRel (Allen.ofPosition ⟦present⟧)] r ∧ r ≤ th ∧
-      π₂ ~[Allen.toSetRel (Allen.ofPosition ⟦present⟧ᶜ)] th :=
+    ∃ r th, π₁ ~[IntervalAlgebra.toSetRel (.ofPosition ⟦present⟧)] r ∧ r ≤ th ∧
+      π₂ ~[IntervalAlgebra.toSetRel (.ofPosition ⟦present⟧ᶜ)] th :=
   ⟨π₁, π₁, presup_present.2 (NonemptyInterval.overlaps_refl π₁), le_rfl,
     by simpa [denote_present] using h⟩
 
 /-! ### Past and deleted tense (sections 3 and 6) -/
 
 -- (38), (39), (44)
-theorem restricted_past_self (hC : .lt ∈ C) (h : π ~[Allen.toSetRel (Allen.ofPosition ⟦past⟧)] r) :
-    Restricted (Allen.ofPosition ⟦past⟧) (Allen.ofPosition C) π r r :=
+theorem restricted_past_self (hC : .lt ∈ C) (h : π ~[IntervalAlgebra.toSetRel (.ofPosition ⟦past⟧)]
+  r) :
+    Restricted (IntervalAlgebra.ofPosition ⟦past⟧) (IntervalAlgebra.ofPosition C) π r r :=
   ⟨h, le_rfl, by
-    rwa [Allen.mem_toSetRel_ofPosition, NonemptyInterval.position_eq_lt.2 (presup_past.1 h)]⟩
+    rwa [IntervalAlgebra.mem_toSetRel_ofPosition,
+      NonemptyInterval.position_eq_lt.2 (presup_past.1 h)]⟩
 
 -- (32)
 theorem presup_then_not_tooji_of_precedes (h : π.Precedes th) :
-    π ~[Allen.toSetRel (Allen.ofPosition English.TemporalDeictic.then_.cell)] th ∧
-      ¬ π ~[Allen.toSetRel (Allen.ofPosition Japanese.TemporalDeictic.tooji.cell)] th := by
+    π ~[IntervalAlgebra.toSetRel (.ofPosition English.TemporalDeictic.then_.cell)] th ∧
+      ¬ π ~[IntervalAlgebra.toSetRel (.ofPosition Japanese.TemporalDeictic.tooji.cell)] th := by
   simp [English.TemporalDeictic.then_, Japanese.TemporalDeictic.tooji, denote_present,
     denote_past, NonemptyInterval.position_eq_gt.2 h]
 
 -- (86), (87)
-theorem restricted_top_iff : Restricted ⊤ B π r th ↔ r ≤ th ∧ π ~[Allen.toSetRel B] th :=
-  and_iff_right (Allen.mem_toSetRel.2 (Finset.mem_univ _))
+theorem restricted_top_iff : Restricted ⊤ B π r th ↔ r ≤ th ∧ π ~[IntervalAlgebra.toSetRel B] th :=
+  and_iff_right (IntervalAlgebra.mem_toSetRel.2 (Finset.mem_univ _))
 
 -- (89a)
 theorem restricted_top_of_not_overlaps (h : ¬ r.Overlaps π) :
-    Restricted ⊤ (Allen.ofPosition ⟦present⟧ᶜ) π r r :=
+    Restricted ⊤ (IntervalAlgebra.ofPosition ⟦present⟧ᶜ) π r r :=
   restricted_top_iff.2 ⟨le_rfl, by simpa [denote_present] using h⟩
 
 -- (89b)
 theorem not_restricted_top_of_le (hC : .eq ∉ C) (hr : r ≤ π) :
-    ¬ Restricted ⊤ (Allen.ofPosition C) π r th :=
+    ¬ Restricted ⊤ (IntervalAlgebra.ofPosition C) π r th :=
   fun ⟨_, hle, hth⟩ ↦ not_ofPosition_of_overlaps hC
     (NonemptyInterval.overlaps_of_le hr) hle hth
 
@@ -168,7 +172,7 @@ satisfies the presuppositions of its tense and of the adverb restricting it. -/
 theorem accepted_iff_exists_restricted [Nontrivial T] :
     ∀ row ∈ Examples.all, ∀ C ∈ tenseCell row, ∀ a ∈ adverb row,
       (.variable ≤ row.judgment ↔ ∃ π r th : NonemptyInterval T,
-        Restricted (Allen.ofPosition C) (Allen.ofPosition a.cell) π r th) := by
+        Restricted (IntervalAlgebra.ofPosition C) (IntervalAlgebra.ofPosition a.cell) π r th) := by
   simp only [exists_restricted_ofPosition_iff]
   decide +kernel
 
@@ -176,14 +180,15 @@ theorem accepted_iff_exists_restricted [Nontrivial T] :
 
 -- (112), (114), (115)
 theorem not_restricted_past_of_le (hth : th ≤ π) :
-    ¬ Restricted (Allen.ofPosition ⟦past⟧) B π r th :=
+    ¬ Restricted (IntervalAlgebra.ofPosition ⟦past⟧) B π r th :=
   fun ⟨hr, hle, _⟩ ↦ NonemptyInterval.Precedes.not_overlaps (presup_past.1 hr)
     (NonemptyInterval.overlaps_of_le (hle.trans hth))
 
 -- (114), (115)
 theorem exists_restricted_past_present {a b : T} (hab : a < b) :
     ∃ r th π : NonemptyInterval T,
-      Restricted (Allen.ofPosition ⟦past⟧) (Allen.ofPosition ⟦present⟧) π r th :=
+      Restricted (IntervalAlgebra.ofPosition ⟦past⟧) (IntervalAlgebra.ofPosition ⟦present⟧) π r th
+        :=
   ⟨.pure a, ⟨(a, b), hab.le⟩, .pure b, presup_past.2 (by exact hab),
     NonemptyInterval.le_def.2 ⟨le_rfl, hab.le⟩, presup_present.2 ⟨hab.le, le_rfl⟩⟩
 

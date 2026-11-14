@@ -142,8 +142,8 @@ scope. -/
 def Model.denote (M : Model T) : {a : Ty Unit} → Item a → Assignment T → a.Dom (Dom T)
   | _, .vp k => fun _ ↦ M.vp k
   | _, .attitude k => fun _ ↦ M.attitude k
-  | _, .past => fun _ ↦ ◇[Allen.toSetRel Allen.precedes]
-  | _, .after => fun _ ↦ ◇[Allen.toSetRel Allen.precedes]
+  | _, .past => fun _ ↦ ◇[IntervalAlgebra.toSetRel .precedes]
+  | _, .after => fun _ ↦ ◇[IntervalAlgebra.toSetRel .precedes]
   | _, .before => fun _ ↦ before
   | _, .speechTime => fun _ ↦ M.speechTime
   | _, .at_ => fun _ t' t ↦ t = t'
@@ -192,8 +192,8 @@ theorem Model.extension_eq {M : Model T} {lf : LF}
 /-! ### Before and after -/
 
 theorem before_iff_not_diamond :
-    before X t ↔ ¬ ◇[Allen.toSetRel (Allen.ofPosition nonfuture)] X t := by
-  simp only [before, Diamond, Allen.mem_toSetRel, Allen.relation_mem_ofPosition,
+    before X t ↔ ¬ ◇[IntervalAlgebra.toSetRel (.ofPosition nonfuture)] X t := by
+  simp only [before, Diamond, IntervalAlgebra.mem_toSetRel, IntervalAlgebra.relation_mem_ofPosition,
     nonfuture_eq_compl_future, PointAlgebra.mem_compl, mem_future,
     NonemptyInterval.position_eq_gt, not_exists, not_and]
   exact forall_congr' fun _ ↦ not_imp_not.symm
@@ -243,7 +243,7 @@ theorem holds_present : M.Holds (clause presentVariable (.leaf (.vp k))) ↔ M.v
 -- (13)
 theorem holds_past :
     M.Holds (clause pastOperator (.leaf (.vp k))) ↔ ∃ t, t.Precedes M.speechTime ∧ M.vp k t :=
-  Allen.diamond_toSetRel_precedes
+  IntervalAlgebra.diamond_toSetRel_precedes
 
 theorem not_interpretable_speechTime_present :
     ¬ Interpretable (.bin (.leaf .speechTime) (.bin presentVariable (.leaf (.vp k)))) := by
@@ -328,7 +328,7 @@ theorem holds_before_present_relative :
 theorem extension_after_past [DenselyOrdered T] :
     M.extension (.bin (.leaf .after) (.bin pastOperator (.leaf (.vp k)))) t ↔
       ∃ t', t'.Precedes t ∧ M.vp k t' := by
-  simp [↓Allen.diamond_precedes_diamond_precedes]
+  simp [↓IntervalAlgebra.diamond_precedes_diamond_precedes]
 
 /-- *After* absorbs the past operator of its clause in every model exactly when time is dense, so
 the root printed in (27), with a single existential over two past operators, assumes density. -/
@@ -336,8 +336,8 @@ theorem forall_extension_after_past_iff :
     (∀ (M : Model T) (k : ℕ) (t : NonemptyInterval T),
       M.extension (.bin (.leaf .after) (.bin pastOperator (.leaf (.vp k)))) t ↔
         ∃ t', t'.Precedes t ∧ M.vp k t') ↔ DenselyOrdered T :=
-  ⟨fun h ↦ Allen.diamond_precedes_den_iff.1 fun Q t hQ ↦
-      (h ⟨fun _ ↦ Q, fun _ X ↦ X, t⟩ 0 t).2 (Allen.diamond_toSetRel_precedes.1 hQ),
+  ⟨fun h ↦ IntervalAlgebra.diamond_precedes_den_iff.1 fun Q t hQ ↦
+      (h ⟨fun _ ↦ Q, fun _ X ↦ X, t⟩ 0 t).2 (IntervalAlgebra.diamond_toSetRel_precedes.1 hQ),
     fun _ _ _ _ ↦ extension_after_past⟩
 
 -- (30)
@@ -359,7 +359,7 @@ theorem interpretable_selected :
 theorem holds_after_selected [DenselyOrdered T] :
     M.Holds (matrix (.leaf (.vp k)) (.bin (.leaf .after) (.bin pastOperator (.leaf (.vp l))))) ↔
       ∃ t, t.Precedes M.speechTime ∧ M.vp k t ∧ ∃ t', t'.Precedes t ∧ M.vp l t' := by
-  simp [↓Allen.diamond_precedes_diamond_precedes, Diamond]
+  simp [↓IntervalAlgebra.diamond_precedes_diamond_precedes, Diamond]
 
 -- (29)
 theorem holds_before_selected :

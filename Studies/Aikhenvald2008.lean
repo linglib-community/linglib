@@ -46,22 +46,22 @@ theorem complex_marker {m : MedialMarker} (h : 1 < m.morphs.length) :
 
 theorem complex_marker_timing {T : Type*} [LinearOrder T] {i j : NonemptyInterval T} :
     Allen.relation i j ∈ taykeb.timing ↔ i.fst < j.fst ∧ j.fst < i.snd ∧ i.snd < j.snd := by
-  simp only [timing, Finset.mem_inter, relation_mem_cotemporaneous, relation_mem_asSoonAs]
+  simp only [timing, IntervalAlgebra.mem_inf, relation_mem_cotemporaneous, relation_mem_asSoonAs]
   exact ⟨fun ⟨⟨h₁, h₂⟩, _, _, h₃⟩ ↦ ⟨h₁, h₂, h₃⟩, fun ⟨h₁, h₂, h₃⟩ ↦ ⟨⟨h₁, h₂⟩, h₁, h₂.le, h₃⟩⟩
 
 /-- In a chain of completive clauses the first event precedes the final one. -/
 theorem completive_chain {ms : List MedialMarker} (hne : ms ≠ []) (h : ∀ m ∈ ms, m = ku ∨ m = k) :
-    MedialForm.chainTiming ms = Allen.precedes := by
+    MedialForm.chainTiming ms = IntervalAlgebra.precedes := by
   induction ms using List.reverseRecOn with
   | nil => exact absurd rfl hne
   | append_singleton ms m ih =>
-    have hm : MedialForm.timing m = Allen.precedes := by
+    have hm : MedialForm.timing m = IntervalAlgebra.precedes := by
       rcases h m (by simp) with rfl | rfl <;> rfl
     rw [MedialForm.chainTiming_concat, hm]
     rcases eq_or_ne ms [] with rfl | hms
     · rw [MedialForm.chainTiming_nil]
       decide +kernel
-    · rw [ih hms fun m' hm' ↦ h m' (by simp [hm']), Allen.comp_precedes_precedes]
+    · rw [ih hms fun m' hm' ↦ h m' (by simp [hm']), IntervalAlgebra.precedes_mul_precedes]
 
 /-- *napa-* goes only with markers that encode a temporal relation, and leaves a completive clause
 reading 'after' but not 'because'. -/

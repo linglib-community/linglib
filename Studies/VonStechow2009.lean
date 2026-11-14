@@ -31,7 +31,7 @@ The tense entries, relative clauses, attitudes and adjunct clauses are stated on
 arguments about the perfective, frame adverbials and the extended now on intervals, where
 *before* is `NonemptyInterval.Precedes`; *on* and *in* are `≤`, *at* is equality. The
 referential Past (47), which von Stechow takes from Heim, presupposes the relation
-`Allen.toSetRel Allen.precedes`; the Perfective (50) and the extended-now perfect (28) are
+`IntervalAlgebra.toSetRel .precedes`; the Perfective (50) and the extended-now perfect (28) are
 `Aspect.PRFV` and `Aspect.PERF`, and quantization (12) is Krifka's `Mereology.QUA`. The printed
 restricted Past (53) compares the quantified time with the speech time where its λ-bound
 argument is meant, as (57) shows; the printed EARLIEST (91) requires the earliest time to
@@ -180,15 +180,15 @@ variable (sunday work : NonemptyInterval T → Prop) {σ : NonemptyInterval T}
 
 -- (44a)
 theorem past_time_on_every_sunday
-    (h : ◇[Allen.toSetRel Allen.precedes] (fun t ↦ ∀ t', sunday t' → t ≤ t' ∧ work t) σ) :
+    (h : ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ ∀ t', sunday t' → t ≤ t' ∧ work t) σ) :
     ∃ t, ∀ t', sunday t' → t ≤ t' :=
   let ⟨t, _, h⟩ := h; ⟨t, fun t' ht' ↦ (h t' ht').1⟩
 
 -- (44b)
 theorem every_sunday_contains_past_time
-    (h : ∀ t', sunday t' → ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ t' ∧ work t) σ) :
+    (h : ∀ t', sunday t' → ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ≤ t' ∧ work t) σ) :
     ∀ t', sunday t' → ∃ t, t.Precedes σ ∧ t ≤ t' :=
-  fun t' ht' ↦ let ⟨t, hts, h⟩ := h t' ht'; ⟨t, Allen.mem_toSetRel_precedes.1 hts, h.1⟩
+  fun t' ht' ↦ let ⟨t, hts, h⟩ := h t' ht'; ⟨t, IntervalAlgebra.mem_toSetRel_precedes.1 hts, h.1⟩
 
 end Quantified
 
@@ -199,12 +199,13 @@ def sunday (t : NonemptyInterval ℕ) : Prop := t.fst % 7 = 0 ∧ t.snd = t.fst 
 (45) and false on (44a) and (44b). -/
 theorem every_sunday :
     (∀ t', sunday t' ∧ t'.Precedes (.pure 10) →
-      ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ t' ∧ sunday t) (.pure 10)) ∧
-    ¬ ◇[Allen.toSetRel Allen.precedes]
+      ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ≤ t' ∧ sunday t) (.pure 10)) ∧
+    ¬ ◇[IntervalAlgebra.toSetRel .precedes]
       (fun t ↦ ∀ t', sunday t' → t ≤ t' ∧ sunday t) (.pure 10) ∧
     ¬ ∀ t', sunday t' →
-      ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ t' ∧ sunday t) (.pure 10) := by
-  refine ⟨fun t' ⟨h, hs⟩ ↦ ⟨t', Allen.mem_toSetRel_precedes.2 hs, le_rfl, h⟩, ?_, fun h ↦ ?_⟩
+      ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ≤ t' ∧ sunday t) (.pure 10) := by
+  refine ⟨fun t' ⟨h, hs⟩ ↦ ⟨t', IntervalAlgebra.mem_toSetRel_precedes.2 hs, le_rfl, h⟩, ?_,
+    fun h ↦ ?_⟩
   · rintro ⟨t, -, h⟩
     have h₀ := NonemptyInterval.le_def.1 (h ⟨(0, 1), by decide⟩ ⟨rfl, rfl⟩).1
     have h₇ := NonemptyInterval.le_def.1 (h ⟨(7, 8), by decide⟩ ⟨rfl, rfl⟩).1
@@ -212,7 +213,7 @@ theorem every_sunday :
     simp only at h₀ h₇
     omega
   · obtain ⟨t, hs, hle, -⟩ := h ⟨(14, 15), by decide⟩ ⟨rfl, rfl⟩
-    have hp : t.snd < 10 := Allen.mem_toSetRel_precedes.1 hs
+    have hp : t.snd < 10 := IntervalAlgebra.mem_toSetRel_precedes.1 hs
     have h₁₄ := NonemptyInterval.le_def.1 hle
     have := t.fst_le_snd
     simp only at h₁₄
@@ -230,54 +231,55 @@ variable {W : Type*} (turnOff rain : W → NonemptyInterval T → Prop) (w : W)
 domain `K` before `σ` satisfies it. -/
 def RestrictedPast (K : Set (NonemptyInterval T)) (Q : NonemptyInterval T → Prop)
     (σ : NonemptyInterval T) : Prop :=
-  ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ∈ K ∧ Q t) σ
+  ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ∈ K ∧ Q t) σ
 
 /-- Restricted to subintervals of a time the referential Past (47) admits, the indefinite Past is
 the Perfective (50), so (52) and (54) agree. -/
-theorem restrictedPast_Iic_iff_prfv (h : σ ~[Allen.toSetRel Allen.precedes] t₅) :
+theorem restrictedPast_Iic_iff_prfv (h : σ ~[IntervalAlgebra.toSetRel .precedes] t₅) :
     RestrictedPast (Set.Iic t₅) (turnOff w) σ ↔ t₅ ∈ PRFV turnOff w :=
-  ⟨fun ⟨t, _, ht, hQ⟩ ↦ ⟨t, ht, hQ⟩, fun ⟨t, ht, hQ⟩ ↦ ⟨t, Allen.mem_toSetRel_precedes.2
-    (NonemptyInterval.precedes_of_le_of_precedes ht (Allen.mem_toSetRel_precedes.1 h)), ht, hQ⟩⟩
+  ⟨fun ⟨t, _, ht, hQ⟩ ↦ ⟨t, ht, hQ⟩, fun ⟨t, ht, hQ⟩ ↦ ⟨t, IntervalAlgebra.mem_toSetRel_precedes.2
+    (NonemptyInterval.precedes_of_le_of_precedes ht (IntervalAlgebra.mem_toSetRel_precedes.1 h)),
+      ht, hQ⟩⟩
 
 -- (46b), (54)
-theorem not_restrictedPast_of_not_past (h : ¬ ◇[Allen.toSetRel Allen.precedes] Q σ) :
+theorem not_restrictedPast_of_not_past (h : ¬ ◇[IntervalAlgebra.toSetRel .precedes] Q σ) :
     ¬ RestrictedPast K Q σ :=
   fun ⟨t, hts, _, hQ⟩ ↦ h ⟨t, hts, hQ⟩
 
 -- (46b)
 theorem exists_not_restrictedPast_past :
     ∃ (σ : NonemptyInterval ℤ) (K : Set (NonemptyInterval ℤ)) (Q : NonemptyInterval ℤ → Prop),
-      ¬ RestrictedPast K Q σ ∧ ◇[Allen.toSetRel Allen.precedes] Q σ := by
+      ¬ RestrictedPast K Q σ ∧ ◇[IntervalAlgebra.toSetRel .precedes] Q σ := by
   refine ⟨.pure 10, Set.Iic ⟨(5, 6), by decide⟩, (· = .pure 1), ?_, .pure 1,
-    Allen.mem_toSetRel_precedes.2 (by decide), rfl⟩
+    IntervalAlgebra.mem_toSetRel_precedes.2 (by decide), rfl⟩
   rintro ⟨t, -, hK, rfl⟩
   exact absurd (NonemptyInterval.le_def.1 hK).1 (by decide)
 
 -- (58), (59)
-theorem not_prfv_of_not_past (h : ¬ ◇[Allen.toSetRel Allen.precedes]
+theorem not_prfv_of_not_past (h : ¬ ◇[IntervalAlgebra.toSetRel .precedes]
       (fun t ↦ t ≤ today ∧ rain w t) σ)
-    (h₅ : σ ~[Allen.toSetRel Allen.precedes] t₅) (h₅' : t₅ ≤ today) : t₅ ∉ PRFV rain w :=
-  fun ⟨t, ht, hr⟩ ↦ h ⟨t, Allen.mem_toSetRel_precedes.2
-    (NonemptyInterval.precedes_of_le_of_precedes ht (Allen.mem_toSetRel_precedes.1 h₅)),
+    (h₅ : σ ~[IntervalAlgebra.toSetRel .precedes] t₅) (h₅' : t₅ ≤ today) : t₅ ∉ PRFV rain w :=
+  fun ⟨t, ht, hr⟩ ↦ h ⟨t, IntervalAlgebra.mem_toSetRel_precedes.2
+    (NonemptyInterval.precedes_of_le_of_precedes ht (IntervalAlgebra.mem_toSetRel_precedes.1 h₅)),
     ht.trans h₅', hr⟩
 
 /-- The referential analysis (59) is too weak, since a short reference time leaves room for rain
 elsewhere in today. -/
 theorem exists_not_prfv_past :
     ∃ (σ t₅ today : NonemptyInterval ℤ) (rain : Unit → NonemptyInterval ℤ → Prop),
-      (σ ~[Allen.toSetRel Allen.precedes] t₅ ∧ t₅ ≤ today ∧ t₅ ∉ PRFV rain ()) ∧
-        ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ today ∧ rain () t) σ := by
+      (σ ~[IntervalAlgebra.toSetRel .precedes] t₅ ∧ t₅ ≤ today ∧ t₅ ∉ PRFV rain ()) ∧
+        ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ≤ today ∧ rain () t) σ := by
   refine ⟨.pure 20, ⟨(0, 1), by decide⟩, ⟨(0, 10), by decide⟩, fun _ t ↦ t = .pure 5,
-    ⟨Allen.mem_toSetRel_precedes.2 (by decide), by decide, ?_⟩, .pure 5,
-    Allen.mem_toSetRel_precedes.2 (by decide), by decide, rfl⟩
+    ⟨IntervalAlgebra.mem_toSetRel_precedes.2 (by decide), by decide, ?_⟩, .pure 5,
+    IntervalAlgebra.mem_toSetRel_precedes.2 (by decide), by decide, rfl⟩
   rintro ⟨t, ht, rfl⟩
   exact absurd (NonemptyInterval.le_def.1 ht).2 (by decide)
 
 -- (59), (58)
 theorem not_prfv_iff_not_past (hmax : ∀ t ≤ today, t.Precedes σ → t ≤ t₅)
-    (h₅ : σ ~[Allen.toSetRel Allen.precedes] t₅) (h₅' : t₅ ≤ today) :
-    t₅ ∉ PRFV rain w ↔ ¬ ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ today ∧ rain w t) σ :=
-  ⟨fun h ⟨t, ht, hle, hr⟩ ↦ h ⟨t, hmax t hle (Allen.mem_toSetRel_precedes.1 ht), hr⟩,
+    (h₅ : σ ~[IntervalAlgebra.toSetRel .precedes] t₅) (h₅' : t₅ ≤ today) :
+    t₅ ∉ PRFV rain w ↔ ¬ ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ≤ today ∧ rain w t) σ :=
+  ⟨fun h ⟨t, ht, hle, hr⟩ ↦ h ⟨t, hmax t hle (IntervalAlgebra.mem_toSetRel_precedes.1 ht), hr⟩,
     fun h ↦ not_prfv_of_not_past rain w h h₅ h₅'⟩
 
 end Partee
