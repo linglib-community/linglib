@@ -5,35 +5,23 @@ public import Mathlib.Data.Finset.Basic
 /-!
 # Dialogue gameboards
 
-This file defines the dialogue gameboard of Ginzburg's theory of dialogue, KoS, and the records
-it holds. A dialogue gameboard is one participant's view of the public state of a conversation:
-who holds the turn and whom they address, the facts accepted so far, the moves made, the
-utterances not yet grounded, and the questions under discussion. An utterance is recorded as a
-locutionary proposition, which keeps its phonological form, category, contextual parameters and
-sub-utterances beside its content, so that a clarification request can target any part of its
-form, as Ginzburg and Cooper argue. A question under discussion carries the sub-utterances that
-established it, which a fragment resolving the question must match.
-
-The types a gameboard is built from form a domain: the grammatical domain of forms, categories,
-parameter labels and sub-utterance denotations, extended by participants, facts, questions and
-utterance contents. A question may mention sub-utterances, as the question of what a speaker
-meant by one does, so the grammatical domain comes first.
-
-## Main definitions
-
-* `Discourse.GrammaticalDomain`, `Discourse.Gameboard.Domain`: the types gameboards are built
-  from.
-* `Discourse.SubUtterance`, `Discourse.LocutionaryProposition`: sub-utterances and utterances.
-* `Discourse.InformationStructure`: a question with its focus-establishing constituents.
-* `Discourse.Gameboard`: the dialogue gameboard.
+A dialogue gameboard is one participant's view of the public state of a conversation in
+Ginzburg's theory of dialogue, KoS: who holds the turn and whom they address, the facts accepted
+so far, the moves made, the utterances not yet grounded, and the questions under discussion. An
+utterance is recorded as a `LocutionaryProposition`, which keeps its form, category, contextual
+parameters and sub-utterances beside its content, so that a clarification request can target any
+part of its form, as Ginzburg and Cooper argue. A question under discussion is recorded as an
+`InformationStructure`, with the constituents that a fragment resolving the question must match.
 
 ## Implementation notes
 
-* A domain bundles decidable equality of its types, as `CategoryTheory.Bundled` bundles a
-  structure with its carrier, so that the records derive decidable equality and gameboards can
-  be computed with.
+* `Gameboard` takes the types of its utterances and of its questions under discussion as
+  parameters, as `DFA` takes its alphabet and its states, rather than a bundle of the types its
+  records are built from: turn taking and the updates of MOVES, PENDING and QUD read neither, and
+  each operation of `Gameboard/Basic.lean` is stated for the gameboards whose entries it reads.
 * A locutionary proposition records the utterance's values as fields, Ginzburg's single type
-  notation, rather than as an Austinian proposition pairing the utterance with its type.
+  notation, rather than as an Austinian proposition pairing the utterance with its type; its
+  gaps and its question domain are not represented.
 * A contextual parameter is its label; the restriction on its value is not represented, and
   sub-utterances do not record their own parameters.
 * The gameboard omits the utterance time and the addressing condition, and `non-resolve-cond` is
@@ -48,61 +36,18 @@ meant by one does, so the grammatical domain comes first.
 
 @[expose] public section
 
-universe u
-
 namespace Discourse
-
-/-- The grammatical domain of a gameboard ([ginzburg-2012] Appendix C) supplies the phonological
-forms, syntactic categories and contextual-parameter labels of signs, and the denotations of
-sub-utterances, each with decidable equality. -/
-structure GrammaticalDomain : Type (u + 1) where
-  /-- Phonological forms. -/
-  Form : Type u
-  /-- Syntactic categories. -/
-  Category : Type u
-  /-- Labels of contextual parameters. -/
-  Label : Type u
-  /-- Denotations of sub-utterances. -/
-  Denotation : Type u
-  [decEqForm : DecidableEq Form]
-  [decEqCategory : DecidableEq Category]
-  [decEqLabel : DecidableEq Label]
-  [decEqDenotation : DecidableEq Denotation]
-
-attribute [instance] GrammaticalDomain.decEqForm GrammaticalDomain.decEqCategory
-  GrammaticalDomain.decEqLabel GrammaticalDomain.decEqDenotation
-
-/-- The domain of a gameboard extends a grammatical domain with the participants, facts,
-questions and utterance contents of [ginzburg-2012] Appendix A, each with decidable equality. -/
-structure Gameboard.Domain extends GrammaticalDomain.{u} where
-  /-- Participants. -/
-  Participant : Type u
-  /-- Facts. -/
-  Fact : Type u
-  /-- Questions. -/
-  Question : Type u
-  /-- Contents of utterances. -/
-  Content : Type u
-  [decEqParticipant : DecidableEq Participant]
-  [decEqFact : DecidableEq Fact]
-  [decEqQuestion : DecidableEq Question]
-  [decEqContent : DecidableEq Content]
-
-attribute [instance] Gameboard.Domain.decEqParticipant Gameboard.Domain.decEqFact
-  Gameboard.Domain.decEqQuestion Gameboard.Domain.decEqContent
-
-variable (G : GrammaticalDomain.{u})
 
 /-- A sub-utterance carries a phonological form, a category and a denotation, which make any
 constituent of an utterance clarifiable, the fractal heterogeneity of
 [ginzburg-cooper-2004]. -/
-structure SubUtterance where
+structure SubUtterance (Form Category Denotation : Type*) where
   /-- The phonological form. -/
-  form : G.Form
+  form : Form
   /-- The syntactic category. -/
-  category : G.Category
+  category : Category
   /-- The denotation, which for a sub-utterance contributing a contextual parameter is its label. -/
-  denotation : G.Denotation
+  denotation : Denotation
   deriving DecidableEq
 
 /-- A locutionary proposition records an utterance with its phonological form, category,
@@ -111,54 +56,54 @@ clarification request can target the form of the utterance and any of its consti
 only its content. The fields are the single-type notation of (42) p. 174; the Austinian
 proposition `[sit = u, sit-type = Tᵤ]` of (41) p. 173 and Appendix A (8d) p. 362 is not
 represented. -/
-structure LocutionaryProposition (Content : Type u) where
+structure LocutionaryProposition (Form Category Label Denotation Content : Type*) where
   /-- The phonological form. -/
-  form : G.Form
+  form : Form
   /-- The syntactic category. -/
-  category : G.Category
+  category : Category
   /-- The content. -/
   content : Content
   /-- The labels of the contextual parameters, which grounding must witness; like SLASH they are
   pooled from the words of the utterance ([ginzburg-cooper-2004] (29)). The restrictions on
   their values, the RESTR of (28), are not represented. -/
-  parameters : Finset G.Label := ∅
+  parameters : Finset Label := ∅
   /-- The sub-utterances, the utterance itself among them as in (42) p. 174, listed rather than
   computed from the daughters by the CONSTITS Amalgamation Constraint of
   [ginzburg-cooper-2004] (30). -/
-  constituents : Finset (SubUtterance G) := ∅
+  constituents : Finset (SubUtterance Form Category Denotation) := ∅
   deriving DecidableEq
 
 /-- An information structure pairs a question under discussion with its focus-establishing
-constituents, the sub-utterances a fragment resolving the question must match in category
-([ginzburg-2012] p. 239 and (9) p. 362). The focus-establishing constituent of a wh-question is
-its wh-phrase, and that of a clarification request the sub-utterance it clarifies; it replaces
-the `sal-utt` of [ginzburg-sag-2000]. (9) types these constituents as locutionary propositions;
-they are sub-utterances here because the rules that set them pick a constituent of an utterance
-(p. 241, and Appendix B (26e) p. 374). -/
-structure InformationStructure (Question : Type u) where
+constituents, which a fragment resolving the question must match in category ([ginzburg-2012]
+p. 239 and (9) p. 362). The focus-establishing constituent of a wh-question is its wh-phrase,
+and that of a clarification request the sub-utterance it clarifies; it replaces the `sal-utt` of
+[ginzburg-sag-2000]. (9) types these constituents as locutionary propositions; the rules that
+set them pick a constituent of an utterance (p. 241, and Appendix B (26e) p. 374), so the
+studies take them to be sub-utterances. -/
+structure InformationStructure (Question Constituent : Type*) where
   /-- The question. -/
   question : Question
   /-- The focus-establishing constituents. -/
-  focusEstablishing : Finset (SubUtterance G) := ∅
+  focusEstablishing : Finset Constituent := ∅
   deriving DecidableEq
 
 /-- The dialogue gameboard of a participant is their public share of the conversational state
 ([ginzburg-2012] (43) p. 175); each participant has their own. Its moves and pending utterances
-are locutionary propositions whose contents are the domain's, and its questions under discussion
-are information structures (p. 239). QUD is a partial order in (43), here a list. -/
-structure Gameboard (D : Gameboard.Domain.{u}) where
+are locutionary propositions in (43), and its questions under discussion are questions there and
+information structures from p. 239 on. QUD is a partial order in (43), here a list. -/
+structure Gameboard (Participant Fact Utterance Question : Type*) where
   /-- The speaker. -/
-  speaker : D.Participant
+  speaker : Participant
   /-- The addressee. -/
-  addressee : D.Participant
+  addressee : Participant
   /-- The commonly accepted facts. -/
-  facts : Finset D.Fact := ∅
+  facts : Finset Fact := ∅
   /-- The moves made, LatestMove first. -/
-  moves : List (LocutionaryProposition D.toGrammaticalDomain D.Content) := []
+  moves : List Utterance := []
   /-- The utterances not yet grounded, MaxPending first. -/
-  pending : List (LocutionaryProposition D.toGrammaticalDomain D.Content) := []
+  pending : List Utterance := []
   /-- The questions under discussion, MaxQUD first. -/
-  qud : List (InformationStructure D.toGrammaticalDomain D.Question) := []
+  qud : List Question := []
   deriving DecidableEq
 
 end Discourse

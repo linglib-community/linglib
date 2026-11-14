@@ -36,7 +36,7 @@ clarification request, a self-repair and a bare follow-up question, as the rules
 * The schematic content types of the traces (`Content`, `Clarifiable`) fix exactly the aboutness,
   influence and resolution relations each trace's side conditions require. Utterances are
   written orthographically, and the categories and contextual parameters are those the examples
-  need (`grammar`).
+  need.
 * Contextual Instantiation takes the labels of the parameters it witnesses rather than the
   witnessing record, so the utterance it produces is a contextual extension of MaxPending by
   `LocutionaryProposition.exists_eq_instantiate_iff`.
@@ -76,10 +76,9 @@ inductive Parameter
   | bo
   deriving DecidableEq, Repr
 
-/-- The grammatical domain of the examples has orthographic forms, their categories, and the
-parameters, which are also the denotations of the names contributing them. -/
-abbrev grammar : GrammaticalDomain :=
-  { Form := String, Category := Category, Label := Parameter, Denotation := Parameter }
+/-- A sub-utterance of the examples has an orthographic form, its category, and as its denotation
+the parameter it contributes. -/
+abbrev Constituent := SubUtterance String Category Parameter
 
 /-- An illocutionary act is the illocutionary relation of an illocutionary proposition applied
 to its content ((8c) p. 361), without the speaker and addressee that the proposition also
@@ -121,21 +120,16 @@ meant by the sub-utterance `u` (Parameter Identification), and `λx.v(u ↦ x)`,
 the content `v` with `u`'s contextual parameter abstracted (Parameter
 Focussing). -/
 class Clarifiable (P Fact Q : Type) where
-  mean : P → SubUtterance grammar → Q
-  focus : IllocutionaryAct Fact Q → SubUtterance grammar → Q
-
-/-- The domain of a gameboard whose utterances carry illocutionary content. -/
-abbrev domain (P Fact Q : Type) [DecidableEq P] [DecidableEq Fact] [DecidableEq Q] :
-    Gameboard.Domain :=
-  { toGrammaticalDomain := grammar, Participant := P, Fact := Fact, Question := Q
-    Content := IllocutionaryAct Fact Q }
-
-/-- A gameboard whose utterances, in MOVES and PENDING, carry illocutionary content. -/
-abbrev Board (P Fact Q : Type) [DecidableEq P] [DecidableEq Fact] [DecidableEq Q] :=
-  Gameboard (domain P Fact Q)
+  mean : P → Constituent → Q
+  focus : IllocutionaryAct Fact Q → Constituent → Q
 
 /-- An utterance with illocutionary content. -/
-abbrev Utterance (Fact Q : Type) := LocutionaryProposition grammar (IllocutionaryAct Fact Q)
+abbrev Utterance (Fact Q : Type) :=
+  LocutionaryProposition String Category Parameter Parameter (IllocutionaryAct Fact Q)
+
+/-- A gameboard whose utterances, in MOVES and PENDING, carry illocutionary content. -/
+abbrev Board (P Fact Q : Type) :=
+  Gameboard P Fact (Utterance Fact Q) (InformationStructure Q Constituent)
 
 /-- The two participants of a duologue. -/
 inductive Agent
@@ -145,7 +139,7 @@ inductive Agent
 
 section Rules
 
-variable {P Fact Q : Type} [DecidableEq P] [DecidableEq Fact] [DecidableEq Q] [Content Fact Q]
+variable {P Fact Q : Type} [DecidableEq Fact] [DecidableEq Q] [Content Fact Q]
 
 /-- The utterance of a bare move, a clause with no recorded form, when only its content matters
 (Ch. 4). -/
@@ -176,10 +170,11 @@ def Copropositional (m : IllocutionaryAct Fact Q) (q : Q) : Prop :=
 instance : DecidableRel (Copropositional (Fact := Fact) (Q := Q)) :=
   fun _ _ ↦ inferInstanceAs (Decidable (_ = _))
 
+omit [DecidableEq Fact] in
 /-- A clarification rule pairing its question with the clarified constituent makes that
 constituent, a constituent of MaxPending, the focus-establishing constituent of MaxQUD. -/
-theorem focusEstablishing_clarify {t : Turn} {q : Utterance Fact Q → SubUtterance grammar → Q}
-    {u : SubUtterance grammar} {cr : Utterance Fact Q} {d d' : Board P Fact Q}
+theorem focusEstablishing_clarify {t : Turn} {q : Utterance Fact Q → Constituent → Q}
+    {u : Constituent} {cr : Utterance Fact Q} {d d' : Board P Fact Q}
     (h : d.clarify Copropositional t (fun v u ↦ ⟨q v u, {u}⟩) u cr = some d') :
     (∃ v ∈ d.maxPending, u ∈ v.constituents) ∧
       d'.qud.head?.map (·.focusEstablishing) = some {u} := by
@@ -210,10 +205,10 @@ inductive Rule (P Fact Q : Type)
   | pendingUpdate (u : Utterance Fact Q) (speaker addressee : P)
   | contextualInstantiation (s : Finset Parameter)
   | pendified (r : Rule P Fact Q)
-  | parameterIdentification (u : SubUtterance grammar) (cr : Utterance Fact Q)
-  | parameterFocussing (u : SubUtterance grammar) (cr : Utterance Fact Q)
-  | crAccommodation (u : SubUtterance grammar)
-  | repair (u : SubUtterance grammar) (cr : Utterance Fact Q)
+  | parameterIdentification (u : Constituent) (cr : Utterance Fact Q)
+  | parameterFocussing (u : Constituent) (cr : Utterance Fact Q)
+  | crAccommodation (u : Constituent)
+  | repair (u : Constituent) (cr : Utterance Fact Q)
 
 variable [Clarifiable P Fact Q]
 
@@ -365,8 +360,8 @@ appropriateness repair ((31) p. 287) is Parameter Identification ((70) p. 192) w
 change: the speaker of a pending utterance accommodates the issue of what they meant by one of its
 constituents and continues co-propositionally with it. -/
 
-theorem parameterIdentification_eq_repair_swapTurn (u : SubUtterance grammar)
-    (cr : Utterance Fact Q) (d : Board P Fact Q) :
+theorem parameterIdentification_eq_repair_swapTurn (u : Constituent) (cr : Utterance Fact Q)
+    (d : Board P Fact Q) :
     (Rule.parameterIdentification u cr).apply d =
       ((Rule.repair u cr).apply d).map Gameboard.swapTurn := by
   simp only [Rule.apply, Gameboard.clarify, Gameboard.interpolate, Turn.act]
@@ -555,7 +550,7 @@ inductive Fact
 inductive Q
   | polar (p : Fact)
   | whoAsked
-  | meant (u : SubUtterance grammar)
+  | meant (u : Constituent)
   deriving DecidableEq
 
 instance : Content Fact Q where
@@ -573,7 +568,7 @@ instance : Clarifiable Agent Fact Q where
   focus _ _ := .whoAsked
 
 /-- The sub-utterance "George". -/
-def george : SubUtterance grammar := { form := "George", category := .np, denotation := .george }
+def george : Constituent := { form := "George", category := .np, denotation := .george }
 
 /-- A's utterance, with the referent of "George" a contextual parameter. -/
 def u₀ : Utterance Fact Q :=
@@ -628,10 +623,10 @@ property of the inventory. -/
 
 section Turn
 
-variable {P Fact Q : Type} [DecidableEq P] [DecidableEq Fact] [DecidableEq Q] [Content Fact Q]
+variable {P Fact Q : Type} [DecidableEq Fact] [DecidableEq Q] [Content Fact Q]
   [Clarifiable P Fact Q] {d d' : Board P Fact Q}
 
-variable {u : SubUtterance grammar} {cr : Utterance Fact Q}
+variable {u : Constituent} {cr : Utterance Fact Q}
 
 theorem speaker_parameterIdentification
     (h : (Rule.parameterIdentification u cr).apply d = some d') : d'.speaker = d.addressee :=
@@ -667,7 +662,7 @@ inductive Q
   | q₀
   | why
   | polar (p : Fact)
-  | meant (u : SubUtterance grammar)
+  | meant (u : Constituent)
   deriving DecidableEq
 
 instance : Content Fact Q where
@@ -685,7 +680,7 @@ instance : Clarifiable Agent Fact Q where
   focus _ _ := .q₀
 
 /-- The sub-utterance "Bo". -/
-def bo : SubUtterance grammar := { form := "Bo", category := .np, denotation := .bo }
+def bo : Constituent := { form := "Bo", category := .np, denotation := .bo }
 
 /-- A's question, with the referent of "Bo" a contextual parameter. -/
 def u₀ : Utterance Fact Q :=

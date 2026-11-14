@@ -136,16 +136,16 @@ inductive Category
   | interjection
   deriving DecidableEq, Repr
 
-/-- The grammatical domain of the examples, whose contextual parameters are not at issue. -/
-abbrev grammar : GrammaticalDomain :=
-  { Form := String, Category := Category, Label := Empty, Denotation := Entity }
+/-- A sub-utterance of the examples has an orthographic form, a category and the entity it
+denotes. -/
+abbrev Constituent := SubUtterance String Category Entity
 
 /-- The predicates the examples' propositions and questions are built from. -/
 inductive Body
   /-- `Mean(a, u, ·)`, what `a` meant by `u`. -/
-  | mean (a : Agent) (u : SubUtterance grammar)
+  | mean (a : Agent) (u : Constituent)
   /-- `MeanNextUtt(a, u, ·)`, what `a` means to say after `u`. -/
-  | meanNext (a : Agent) (u : SubUtterance grammar)
+  | meanNext (a : Agent) (u : Constituent)
   /-- `Named(y, ·)`, the name of `y`. -/
   | named (y : Entity)
   /-- `Leave(·)`. -/
@@ -181,11 +181,11 @@ def Copropositional (q₀ q₁ : Question) : Prop :=
 instance : DecidableRel Copropositional := fun _ _ ↦ by unfold Copropositional; infer_instance
 
 /-- What `a` meant by `u`, ranging over the type of `u`'s denotation. -/
-def meant (a : Agent) (u : SubUtterance grammar) : Question :=
+def meant (a : Agent) (u : Constituent) : Question :=
   .which (.mean a u) {x | x.type = u.denotation.type}
 
 /-- What `a` means to say after `u`. -/
-def meantNext (a : Agent) (u : SubUtterance grammar) : Question :=
+def meantNext (a : Agent) (u : Constituent) : Question :=
   .which (.meanNext a u) .univ
 
 end Question
@@ -195,7 +195,7 @@ inductive Act
   | assert (p : Proposition)
   | ask (q : Question)
   /-- `FLDEdit(spkr, u)`, the speaker searching for what to say after `u` (65). -/
-  | fldEdit (u : SubUtterance grammar)
+  | fldEdit (u : Constituent)
   /-- The content of an utterance in progress. -/
   | inProgress
   deriving DecidableEq
@@ -216,12 +216,12 @@ instance : DecidableRel Copropositional := fun _ _ ↦ by unfold Copropositional
 
 /-- An assertion that `a` meant `x` by `u` answers what `a` meant by `u` exactly when `x` is of the
 type of `u`'s denotation. -/
-theorem copropositional_mean_iff {a : Agent} {u : SubUtterance grammar} {x : Entity} :
+theorem copropositional_mean_iff {a : Agent} {u : Constituent} {x : Entity} :
     (assert ⟨.mean a u, x⟩).Copropositional (.meant a u) ↔ x.type = u.denotation.type := by
   simp [Copropositional, qudContrib, Question.Copropositional, Question.apply, Question.meant,
     Option.exists]
 
-theorem copropositional_meanNext (a : Agent) (u : SubUtterance grammar) (x : Entity) :
+theorem copropositional_meanNext (a : Agent) (u : Constituent) (x : Entity) :
     (assert ⟨.meanNext a u, x⟩).Copropositional (.meantNext a u) := by
   simp [Copropositional, qudContrib, Question.Copropositional, Question.apply, Question.meantNext,
     Option.exists]
@@ -230,22 +230,16 @@ end Act
 
 /-- No query for a name is co-propositional with what `a` means to say after `u`: the two
 questions yield different propositions on every record. -/
-theorem not_copropositional_named (y : Entity) (dom : Finset Entity) (a : Agent)
-    (u : SubUtterance grammar) :
+theorem not_copropositional_named (y : Entity) (dom : Finset Entity) (a : Agent) (u : Constituent) :
     ¬ (Act.ask (.which (.named y) dom)).Copropositional (.meantNext a u) := by
   simp [Act.Copropositional, Act.qudContrib, Question.Copropositional, Question.apply,
     Question.meantNext, Option.forall]
 
-/-- The domain of the examples' gameboards. -/
-abbrev domain : Gameboard.Domain :=
-  { toGrammaticalDomain := grammar, Participant := Agent, Fact := Proposition,
-    Question := Question, Content := Act }
+/-- An utterance of the examples, whose contextual parameters are not at issue. -/
+abbrev Utterance := LocutionaryProposition String Category Empty Entity Act
 
 /-- A gameboard of the examples. -/
-abbrev Board := Gameboard domain
-
-/-- An utterance of the examples. -/
-abbrev Utterance := LocutionaryProposition grammar Act
+abbrev Board := Gameboard Agent Proposition Utterance (InformationStructure Question Constituent)
 
 /-- The rules the derivations use, with the turn a rule leaves open made an argument: Pending
 update and Move update/Pending downdate (31), Backward Looking Appropriateness Repair (48), the
@@ -254,8 +248,8 @@ Forward Looking Utterance Rule (65), Assert QUD-incrementation (22c), and Pendin
 inductive Rule
   | pendingUpdate (u : Utterance) (speaker addressee : Agent)
   | ground
-  | backwardRepair (t : Turn) (u : SubUtterance grammar) (m : Utterance)
-  | forwardUtterance (t : Turn) (u : SubUtterance grammar) (m : Utterance)
+  | backwardRepair (t : Turn) (u : Constituent) (m : Utterance)
+  | forwardUtterance (t : Turn) (u : Constituent) (m : Utterance)
   | assertQud
   | replacePending (w : Utterance)
 
@@ -290,16 +284,16 @@ def utterance (m : Act) : Utterance :=
   { form := "", category := .s, content := m }
 
 /-- An editing phrase such as *uh* after `u`. -/
-def editing (u : SubUtterance grammar) : Utterance :=
+def editing (u : Constituent) : Utterance :=
   { form := "uh", category := .interjection, content := .fldEdit u }
 
-example {t : Turn} {u : SubUtterance grammar} {m : Utterance} {d d' : Board}
+example {t : Turn} {u : Constituent} {m : Utterance} {d d' : Board}
     (h : (Rule.backwardRepair t u m).apply d = some d') :
     ∃ v ∈ d.maxPending, u ∈ v.constituents ∧ d'.qud = ⟨.meant d.speaker u, {u}⟩ :: d.qud := by
   simp only [Rule.apply] at h
   exact d.qud_clarify h
 
-example {t : Turn} {u : SubUtterance grammar} {m : Utterance} {d d' : Board}
+example {t : Turn} {u : Constituent} {m : Utterance} {d d' : Board}
     (h : (Rule.forwardUtterance t u m).apply d = some d') :
     ∃ v ∈ d.maxPending, u ∈ v.constituents ∧ d'.qud = ⟨.meantNext d.speaker u, ∅⟩ :: d.qud := by
   simp only [Rule.apply] at h
@@ -323,7 +317,7 @@ theorem copropositional_left :
 /-! ### The examples -/
 
 /-- The words of the examples. -/
-def lexicon : List (String × SubUtterance grammar) :=
+def lexicon : List (String × Constituent) :=
   [("Bo", ⟨"Bo", .np, .bo⟩), ("Jo", ⟨"Jo", .np, .jo⟩),
     ("Georges", ⟨"Georges", .np, .georges⟩), ("Jacques", ⟨"Jacques", .np, .jacques⟩),
     ("Boston", ⟨"Boston", .np, .boston⟩), ("in", ⟨"in", .p, .«in»⟩),
@@ -364,7 +358,7 @@ instance : DecidablePred FollowUp.IsAnswer := fun f ↦ by
 structure Row where
   direction : Direction
   turn : Turn
-  u0 : SubUtterance grammar
+  u0 : Constituent
   followUp : FollowUp
   judgment : Judgment
   deriving DecidableEq
@@ -424,7 +418,7 @@ theorem rows_selfAddressed : ∀ r ∈ rows, ¬ r.followUp.IsAnswer →
 namespace Ex41
 
 /-- The sub-utterance *Georges*. -/
-def georges : SubUtterance grammar := ⟨"Georges", .np, .georges⟩
+def georges : Constituent := ⟨"Georges", .np, .georges⟩
 
 /-- A's question. -/
 def u₀ : Utterance :=
@@ -460,7 +454,7 @@ end Ex41
 namespace Ex49
 
 /-- The sub-utterance *in*. -/
-def «in» : SubUtterance grammar := ⟨"in", .p, .«in»⟩
+def «in» : Constituent := ⟨"in", .p, .«in»⟩
 
 /-- *Take that book in*, in progress. -/
 def u₀ : Utterance :=
