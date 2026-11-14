@@ -100,6 +100,33 @@ def depViolFeature (P : α → Prop) [DecidablePred P] (c : Coindexation Role α
     ℕ :=
   Segment.depViolFeature P (c.toward r₁ r₂) (c.toward r₂ r₁)
 
+/-- The correspondence between the positions of `r₁` and those of `r₂`. -/
+def rel : Correspondence (Fin (c.toward r₁ r₂).length) (Fin (c.toward r₂ r₁).length) :=
+  ofIndices (c.toward r₁ r₂) (c.toward r₂ r₁)
+
+/-- INTEGRITY counts the segments of `r₁` with more than one correspondent. -/
+def integrityViol : ℕ := Segment.integrityViol (c.toward r₁ r₂) (c.toward r₂ r₁)
+
+/-- UNIFORMITY counts the segments of `r₂` with more than one correspondent. -/
+def uniformityViol : ℕ := Segment.uniformityViol (c.toward r₁ r₂) (c.toward r₂ r₁)
+
+/-- LINEARITY counts the inversions of the correspondence. -/
+def linearityViol : ℕ := (c.rel r₁ r₂).linearityViol
+
+/-- I-CONTIG is violated once unless the segments of `r₁` with a correspondent are a contiguous
+substring. -/
+def contigIViol : ℕ := (c.rel r₁ r₂).contigIViol
+
+/-- O-CONTIG is violated once unless the segments of `r₂` with a correspondent are a contiguous
+substring. -/
+def contigOViol : ℕ := (c.rel r₁ r₂).contigOViol
+
+/-- L-ANCHOR is violated once unless the leftmost segments of the two strings correspond. -/
+def anchorLViol : ℕ := (c.rel r₁ r₂).anchorLViol
+
+/-- R-ANCHOR is violated once unless the rightmost segments of the two strings correspond. -/
+def anchorRViol : ℕ := (c.rel r₁ r₂).anchorRViol
+
 /-! ### Faithfulness and markedness -/
 
 /-- The two strings coindexed position by position, the segments of each string bearing no
