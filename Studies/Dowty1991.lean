@@ -92,12 +92,15 @@ theorem cruse_volitive_is_volition_alone :
 
 variable (p q : EntailmentProfile)
 
-/-- The hierarchies of (36) follow from the selection principle over the canonical role profiles. -/
+/-- The hierarchies of (36) follow from the selection principle over the typical role profiles:
+Agent outranks Instrument and Experiencer, each of them outranks Patient, and Patient is selected
+as direct object over Goal. The braces of (36) leave Instrument and Experiencer unordered, so the
+statement is two chains. -/
 theorem hierarchies :
-    Outranks (ThetaRole.canonicalProfile .agent) (ThetaRole.canonicalProfile .instrument) ∧
-      Outranks (ThetaRole.canonicalProfile .instrument) (ThetaRole.canonicalProfile .patient) ∧
-      Outranks (ThetaRole.canonicalProfile .experiencer)
-        (ThetaRole.canonicalProfile .patient) ∧
+    (([.agent, .instrument, .patient] : List ThetaRole).map ThetaRole.canonicalProfile).Pairwise
+        Outranks ∧
+      (([.agent, .experiencer, .patient] : List ThetaRole).map
+        ThetaRole.canonicalProfile).Pairwise Outranks ∧
       DirectObjectOver (ThetaRole.canonicalProfile .patient)
         (ThetaRole.canonicalProfile .goal) := by
   decide
