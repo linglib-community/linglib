@@ -385,6 +385,27 @@ instance [DecidableEq V] (host : DRS L V) (u v : V) : Decidable (host.Accessible
     obtain ⟨bs, rfl⟩ := List.head?_eq_some_iff.1 hK
     exact ⟨K, bs, ht, hu, hv⟩
 
+/-- A property of a DRS and the DRSs around it that unfolds through `Condition.subordinates`
+holds iff its local part holds at every occurrence at or below the DRS. -/
+theorem DRS.forall_mem_occurrences_iff_of_unfold {P q : List (DRS L V) → DRS L V → Prop}
+    (h : ∀ bs K, P bs K ↔ q bs K ∧ ∀ c ∈ K.conditions, ∀ K' s,
+      K' :: s ∈ c.subordinates → P (s ++ K :: bs) K')
+    (K : DRS L V) (bs : List (DRS L V)) :
+    (∀ K' bs', K' :: bs' ∈ K.occurrences bs → q bs' K') ↔ P bs K := by
+  induction K using wellFounded_directlySubordinate.induction generalizing bs with
+  | _ K ih =>
+    rw [h]
+    constructor
+    · intro hq
+      exact ⟨hq K bs (DRS.mem_occurrences.2 (.inl rfl)), fun c hc K' s hs =>
+        (ih K' ⟨c, hc, s, hs⟩ _).1 fun K'' bs'' ht =>
+          hq K'' bs'' (DRS.mem_occurrences.2 (.inr ⟨c, hc, K', s, hs, ht⟩))⟩
+    · rintro ⟨h₀, hrec⟩ K' bs' ht
+      rcases DRS.mem_occurrences.1 ht with heq | ⟨c, hc, K'', s, hs, ht⟩
+      · obtain ⟨rfl, rfl⟩ := List.cons.inj heq
+        exact h₀
+      · exact (ih K'' ⟨c, hc, s, hs⟩ _).2 (hrec c hc K'' s hs) K' bs' ht
+
 /-! ### Properness and accessibility -/
 
 section Properness
@@ -417,24 +438,16 @@ in `bs`. -/
 theorem DRS.forall_mem_occurrences_iff (K : DRS L V) (bs : List (DRS L V)) :
     (∀ K' bs', K' :: bs' ∈ K.occurrences bs → ∀ γ ∈ K'.conditions, γ.IsAtomic →
       γ.freeVarFinset ⊆ scopeReferents (K' :: bs')) ↔ K.freeVarFinset ⊆ scopeReferents bs := by
-  induction K using wellFounded_directlySubordinate.induction generalizing bs with
-  | _ K ih =>
-    rw [DRS.freeVarFinset_subset_iff, Finset.union_comm, ← scopeReferents_cons,
-      Condition.freeVarFinsetL_subset_iff]
-    constructor
-    · intro h c hc
-      refine Condition.freeVarFinset_subset_iff.2
-        ⟨h K bs (DRS.mem_occurrences.2 (.inl rfl)) c hc, fun K' s hs => ?_⟩
-      rw [← scopeReferents_append]
-      exact (ih K' ⟨c, hc, s, hs⟩ _).1 fun K'' bs'' ht =>
-        h K'' bs'' (DRS.mem_occurrences.2 (.inr ⟨c, hc, K', s, hs, ht⟩))
-    · intro h K' bs' ht
-      rcases DRS.mem_occurrences.1 ht with heq | ⟨c, hc, K'', s, hs, ht⟩
-      · obtain ⟨rfl, rfl⟩ := List.cons.inj heq
-        exact fun γ hγ => (Condition.freeVarFinset_subset_iff.1 (h γ hγ)).1
-      · refine (ih K'' ⟨c, hc, s, hs⟩ _).2 ?_ K' bs' ht
-        rw [scopeReferents_append]
-        exact (Condition.freeVarFinset_subset_iff.1 (h c hc)).2 K'' s hs
+  refine DRS.forall_mem_occurrences_iff_of_unfold
+    (P := fun bs K => K.freeVarFinset ⊆ scopeReferents bs)
+    (q := fun bs K => ∀ γ ∈ K.conditions, γ.IsAtomic →
+      γ.freeVarFinset ⊆ scopeReferents (K :: bs)) (fun bs K => ?_) K bs
+  rw [DRS.freeVarFinset_subset_iff, Finset.union_comm, ← scopeReferents_cons,
+    Condition.freeVarFinsetL_subset_iff]
+  simp only [scopeReferents_append]
+  exact ⟨fun h => ⟨fun γ hγ => (Condition.freeVarFinset_subset_iff.1 (h γ hγ)).1,
+      fun c hc => (Condition.freeVarFinset_subset_iff.1 (h c hc)).2⟩,
+    fun ⟨h₁, h₂⟩ c hc => Condition.freeVarFinset_subset_iff.2 ⟨h₁ c hc, h₂ c hc⟩⟩
 
 /-- A DRS is proper iff, at every occurrence of every atomic condition, the condition's
 referents are declared in the DRSs passed on the way there (Defs. 1.4.2–1.4.3, Def. 2.4.4). -/
@@ -463,31 +476,20 @@ variable [DecidableEq V]
 
 theorem Condition.reuseFreeAt_iff {c : Condition L V} {X : Finset V} :
     c.ReuseFreeAt X ↔
-      ∀ K s, K :: s ∈ c.subordinates → K.ReuseFreeAt (X ∪ scopeReferents s) := by
-  cases c <;> simp [or_imp, forall_and]
+      ∀ K s, K :: s ∈ c.subordinates → K.ReuseFreeAt (scopeReferents s ∪ X) := by
+  cases c <;> simp [or_imp, forall_and, Finset.union_comm]
 
 /-- At the occurrences at or below an occurrence of `K` that has passed `bs`, no DRS declares
 a referent of the DRSs passed iff `K` is reuse-free at the referents declared in `bs`. -/
 theorem DRS.forall_mem_occurrences_disjoint_iff (K : DRS L V) (bs : List (DRS L V)) :
     (∀ K' bs', K' :: bs' ∈ K.occurrences bs → Disjoint (scopeReferents bs') K'.referents) ↔
       K.ReuseFreeAt (scopeReferents bs) := by
-  induction K using wellFounded_directlySubordinate.induction generalizing bs with
-  | _ K ih =>
-    rw [DRS.reuseFreeAt_iff, Finset.union_comm, ← scopeReferents_cons]
-    constructor
-    · intro h
-      refine ⟨h K bs (DRS.mem_occurrences.2 (.inl rfl)), fun c hc =>
-        Condition.reuseFreeAt_iff.2 fun K' s hs => ?_⟩
-      rw [Finset.union_comm, ← scopeReferents_append]
-      exact (ih K' ⟨c, hc, s, hs⟩ _).1 fun K'' bs'' ht =>
-        h K'' bs'' (DRS.mem_occurrences.2 (.inr ⟨c, hc, K', s, hs, ht⟩))
-    · rintro ⟨hd, h⟩ K' bs' ht
-      rcases DRS.mem_occurrences.1 ht with heq | ⟨c, hc, K'', s, hs, ht⟩
-      · obtain ⟨rfl, rfl⟩ := List.cons.inj heq
-        exact hd
-      · refine (ih K'' ⟨c, hc, s, hs⟩ _).2 ?_ K' bs' ht
-        rw [scopeReferents_append, Finset.union_comm]
-        exact Condition.reuseFreeAt_iff.1 (h c hc) K'' s hs
+  refine DRS.forall_mem_occurrences_iff_of_unfold
+    (P := fun bs K => K.ReuseFreeAt (scopeReferents bs))
+    (q := fun bs K => Disjoint (scopeReferents bs) K.referents) (fun bs K => ?_) K bs
+  rw [DRS.reuseFreeAt_iff, Finset.union_comm, ← scopeReferents_cons]
+  simp only [scopeReferents_append]
+  exact and_congr_right fun _ => forall₂_congr fun c _ => Condition.reuseFreeAt_iff
 
 /-- A DRS is reuse-free iff no occurrence of a DRS in it declares a referent of the DRSs
 passed on the way there, which is when verification by partial embeddings and by total
