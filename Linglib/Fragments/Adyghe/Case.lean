@@ -54,6 +54,4 @@ def exponents : Case → List Morph
 
 end Case
 
-instance : _root_.Case.System Case := { label := Case.label }
-
 end Adyghe

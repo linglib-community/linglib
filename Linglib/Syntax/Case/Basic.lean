@@ -17,9 +17,7 @@ matches them to the comparative values.
 
 A fragment's type `L.Case` is matched to the values by `L.Case.label`, the value its traditional
 name corresponds to, and, where the grammar lists more than the name, `L.Case.functions`, the values
-it expresses ([haspelmath-2010], [blake-2001] ch. 2). The fragment registers the two as a
-`Case.System`, whose `Case.inventory` and `Case.functionInventory` are the values its cases are
-named for and the values they express. Where the grammar gives its forms,
+it expresses ([haspelmath-2010], [blake-2001] ch. 2). Where the grammar gives its forms,
 `L.Case.exponents` lists the morphs that mark it, allomorphs and register variants among them. A
 language has a case when some word distinguishes it by form, and the other words may realize it
 with the form of another case ([corbett-2008]), so a fragment with paradigms proves that they
@@ -137,42 +135,5 @@ def kind : Case → Kind
   | .loc | .ine | .ade | .sup | .ill | .all | .sub | .ela | .abl | .del | .perl | .ter =>
     .spatial
   | .inst | .com | .ben | .abess | .caus | .tem | .ess | .transl | .purp | .cmpr => .semantic
-
-/-- A case system matches the cases `K` of a language to the comparative values: `label` is the
-value a case is named for and `functions` the values it expresses, its label among them. A
-description that gives no more than the names has each case express its label. -/
-class System (K : Type*) where
-  /-- The comparative value a case is named for. -/
-  label : K → Case
-  /-- The comparative values a case expresses. -/
-  functions : K → Finset Case := fun k ↦ {label k}
-  label_mem_functions : ∀ k, label k ∈ functions k := by
-    intro k; exact Finset.mem_singleton_self _
-
-section System
-
-variable (K : Type*) [System K] [Fintype K]
-
-/-- The values the cases of a system are named for. -/
-def inventory : Finset Case := Finset.univ.image (System.label (K := K))
-
-/-- The values the cases of a system express. -/
-def functionInventory : Finset Case := Finset.univ.biUnion (System.functions (K := K))
-
-variable {K}
-
-theorem label_mem_inventory (k : K) : System.label k ∈ inventory K :=
-  Finset.mem_image_of_mem _ (Finset.mem_univ k)
-
-theorem mem_functionInventory {c : Case} :
-    c ∈ functionInventory K ↔ ∃ k : K, c ∈ System.functions k := by
-  simp [functionInventory]
-
-variable (K)
-
-theorem inventory_subset_functionInventory : inventory K ⊆ functionInventory K :=
-  Finset.image_subset_iff.2 fun k _ ↦ mem_functionInventory.2 ⟨k, System.label_mem_functions k⟩
-
-end System
 
 end Case

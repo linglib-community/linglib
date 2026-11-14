@@ -76,6 +76,4 @@ theorem label_mem_functions (c : Case) : c.label ∈ c.functions := by
 
 end Case
 
-instance : _root_.Case.System Case := ⟨Case.label, Case.functions, Case.label_mem_functions⟩
-
 end Georgian

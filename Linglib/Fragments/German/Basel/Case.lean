@@ -90,6 +90,4 @@ the accusative. -/
 theorem pronoun_injective : Function.Injective pronoun := by
   decide
 
-instance : _root_.Case.System Case := ⟨Case.label, Case.functions, Case.label_mem_functions⟩
-
 end German.Basel

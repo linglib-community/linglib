@@ -38,6 +38,4 @@ def Case.label : Case → _root_.Case
   | erg => .erg
   | acc => .acc
 
-instance : _root_.Case.System Case := { label := Case.label }
-
 end NezPerce

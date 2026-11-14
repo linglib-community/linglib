@@ -72,6 +72,4 @@ end Case
 /-- The plural proclitic *mga* of common nouns. -/
 def plural : String := "mga"
 
-instance : _root_.Case.System Case := { label := Case.label }
-
 end Tagalog

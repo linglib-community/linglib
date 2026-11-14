@@ -112,6 +112,4 @@ def marking : ArgumentRole → Case
 theorem isErgative_marking : Alignment.IsErgative (Case.label ∘ marking) := by
   decide
 
-instance : _root_.Case.System Case := { label := Case.label }
-
 end Dargwa.Tanti
