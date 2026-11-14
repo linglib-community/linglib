@@ -180,7 +180,7 @@ theorem protoAgent_subset_iff :
 other does, is selected as subject by Dowty's principle. -/
 theorem outranks_of_toAgentivity_ssubset (h : q.toAgentivity ⊂ p.toAgentivity)
     (hie : .independentExistence ∈ q → .independentExistence ∈ p) : p.Outranks q :=
-  .inl <| Finset.card_lt_card
+  outranks_of_protoAgent_ssubset
     ⟨protoAgent_subset_iff.2 ⟨h.1, hie⟩, fun h' ↦ h.2 (protoAgent_subset_iff.1 h').1⟩
 
 /-! ### Proto-Patient entailments and persistence -/
