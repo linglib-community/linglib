@@ -107,6 +107,19 @@ def maxViolOn : ℕ := s.countP fun x ↦ P x.seg ∧ ∀ y ∈ t, ¬ x.Correspo
 /-- MAX counts the segments of `s` without a correspondent in `t`. -/
 def maxViol : ℕ := s.countP fun x ↦ ∀ y ∈ t, ¬ x.Corresponds y
 
+/-- MAX restricted to the positions satisfying `P` counts those of `s` whose segment has no
+correspondent in `t`, the form of a positional faithfulness constraint. -/
+def maxViolAt (P : ℕ → Prop) [DecidablePred P] (s t : List (Segment α)) : ℕ :=
+  s.zipIdx.countP fun x ↦ P x.2 ∧ ∀ y ∈ t, ¬ x.1.Corresponds y
+
+/-- DEP restricted to the positions of `t` satisfying `P`. -/
+def depViolAt (P : ℕ → Prop) [DecidablePred P] (s t : List (Segment α)) : ℕ := maxViolAt P t s
+
+theorem maxViolAt_true : maxViolAt (fun _ ↦ True) s t = maxViol s t := by
+  rw [maxViol, maxViolAt]
+  conv_rhs => rw [← List.zipIdx_map_fst 0 s, List.countP_map]
+  exact List.countP_congr fun x _ ↦ by simp
+
 /-- DEP restricted to the segments satisfying `P` counts those of `t` without a correspondent
 in `s`. -/
 def depViolOn : ℕ := maxViolOn P t s

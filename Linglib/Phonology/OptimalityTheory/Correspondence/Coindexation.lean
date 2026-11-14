@@ -69,6 +69,21 @@ def maxViolOn (P : α → Prop) [DecidablePred P] (c : Coindexation Role α) (r�
 def depViolOn (P : α → Prop) [DecidablePred P] (c : Coindexation Role α) (r₁ r₂ : Role) : ℕ :=
   Segment.depViolOn P (c.toward r₁ r₂) (c.toward r₂ r₁)
 
+/-- MAX restricted to the positions of `r₁` that satisfy `P`, which is the form of a positional
+faithfulness constraint. -/
+def maxViolAt (P : ℕ → Prop) [DecidablePred P] (c : Coindexation Role α) (r₁ r₂ : Role) : ℕ :=
+  Segment.maxViolAt P (c.toward r₁ r₂) (c.toward r₂ r₁)
+
+/-- DEP restricted to the positions of `r₂` that satisfy `P`. -/
+def depViolAt (P : ℕ → Prop) [DecidablePred P] (c : Coindexation Role α) (r₁ r₂ : Role) : ℕ :=
+  Segment.depViolAt P (c.toward r₁ r₂) (c.toward r₂ r₁)
+
+theorem maxViolAt_true : maxViolAt (fun _ ↦ True) c r₁ r₂ = c.maxViol r₁ r₂ :=
+  Segment.maxViolAt_true _ _
+
+theorem depViolAt_true : depViolAt (fun _ ↦ True) c r₁ r₂ = c.depViol r₁ r₂ :=
+  Segment.maxViolAt_true _ _
+
 /-- IDENT(F) for the feature `f` counts the corresponding pairs that differ under `f`. -/
 def identViolFeature [DecidableEq F] (f : α → F) (c : Coindexation Role α) (r₁ r₂ : Role) : ℕ :=
   Segment.identViol f (c.toward r₁ r₂) (c.toward r₂ r₁)
@@ -105,6 +120,17 @@ theorem toward_parallel_lhs_rhs (s₁ s₂ : List α) :
 theorem toward_parallel_rhs_lhs (s₁ s₂ : List α) :
     (parallel s₁ s₂).toward .rhs .lhs = indexed s₂ := by
   simp [toward, parallel, indexed, Segment.ofIndex]
+
+@[simp] theorem string_parallel_lhs (s₁ s₂ : List α) : (parallel s₁ s₂).string .lhs = s₁ := by
+  rw [string, parallel, List.map_map]
+  exact (List.map_congr_left fun _ _ ↦ rfl).trans (List.zipIdx_map_fst 0 _)
+
+@[simp] theorem string_parallel_rhs (s₁ s₂ : List α) : (parallel s₁ s₂).string .rhs = s₂ := by
+  rw [string, parallel, List.map_map]
+  exact (List.map_congr_left fun _ _ ↦ rfl).trans (List.zipIdx_map_fst 0 _)
+
+@[simp] theorem string_identity (s : List α) (r : BinaryRole) : (identity s).string r = s := by
+  cases r <;> simp [identity]
 
 theorem toward_identity {s : List α} {r₁ r₂ : BinaryRole} (h : r₁ ≠ r₂) :
     (identity s).toward r₁ r₂ = indexed s := by
@@ -155,6 +181,12 @@ theorem isFaithfulness_identViolFeature [DecidableEq F] (f : α → F) :
   show Segment.identViol f ((identity s).toward .lhs .rhs) ((identity s).toward .rhs .lhs) = 0
   rw [toward_identity (by decide), toward_identity (by decide)]
   exact identViol_indexed_self f s
+
+@[simp] theorem maxViol_identity (s : List α) : (identity s).maxViol .lhs .rhs = 0 :=
+  isFaithfulness_maxViol s
+
+@[simp] theorem depViol_identity (s : List α) : (identity s).depViol .lhs .rhs = 0 :=
+  isFaithfulness_depViol s
 
 /-- The anti-faithfulness constraint of a faithfulness constraint is not faithfulness, since the
 fully faithful candidate violates it. -/
