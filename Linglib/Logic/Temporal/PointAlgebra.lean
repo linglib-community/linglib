@@ -10,13 +10,14 @@ public import Mathlib.Data.Fintype.Powerset
 
 An element of the point algebra of [vilain-kautz-1986] is a set of the orderings in which one
 point of a linear order may stand to another, read as the disjunction of the relations `<`, `=`
-and `>` that it contains. Elements form a Boolean algebra, and under composition, with the element
-`{eq}` as unit, an idempotent semiring whose sum is the join. Each element is a
-[relation](##PointAlgebra.toSetRel) on any ordered type, and passing to the relation preserves
-joins, [complements](##PointAlgebra.toSetRel_compl) and [converses](##PointAlgebra.toSetRel_inv).
-The relation of a product [contains](##PointAlgebra.toSetRel_comp_subset) the composite of the
-relations, and is the composite for all elements [exactly when the order is dense and has no
-least or greatest point](##PointAlgebra.toSetRel_mul_iff).
+and `>` that it contains. Elements form a Boolean algebra with a converse and a composition whose
+unit is `{eq}`; composition distributes over joins, which the `IdemSemiring` instance records.
+Each element is a [relation](##PointAlgebra.toSetRel) on any ordered type. On a linear order with
+two points the relations [order as the elements do](##PointAlgebra.toSetRel_subset_toSetRel_iff),
+and passing to the relation preserves joins, complements and converses. The relation of a product
+contains the composite of the relations, and is the composite for all elements [exactly when the
+order is dense and has no least or greatest point](##PointAlgebra.toSetRel_mul_iff), where the
+algebra is that of the relations definable from `<`.
 
 ## References
 
@@ -217,6 +218,22 @@ theorem compare_mem_mul_iff [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T] {a 
 
 @[simp] theorem toSetRel_top : (toSetRel ⊤ : SetRel T T) = Set.univ :=
   Set.eq_univ_of_forall fun _ ↦ mem_toSetRel_iff.2 mem_top
+
+/-- On a linear order with two points the relations of two elements are ordered as the elements
+are. -/
+theorem toSetRel_subset_toSetRel_iff [Nontrivial T] :
+    (toSetRel C : SetRel T T) ⊆ toSetRel D ↔ C ≤ D := by
+  refine ⟨fun h o ho ↦ ?_, toSetRel_mono⟩
+  obtain ⟨a, b, hab⟩ := exists_pair_lt T
+  obtain ⟨x, y, rfl⟩ : ∃ x y : T, compare y x = o := by
+    cases o
+    exacts [⟨b, a, compare_lt_iff_lt.2 hab⟩, ⟨a, a, compare_eq_iff_eq.2 rfl⟩,
+      ⟨a, b, compare_gt_iff_gt.2 hab⟩]
+  exact mem_toSetRel_iff.1 (h (mem_toSetRel_iff.2 ho))
+
+theorem toSetRel_injective [Nontrivial T] :
+    Function.Injective (toSetRel : PointAlgebra → SetRel T T) := fun _ _ h ↦
+  le_antisymm (toSetRel_subset_toSetRel_iff.1 h.subset) (toSetRel_subset_toSetRel_iff.1 h.superset)
 
 theorem toSetRel_compl (C : PointAlgebra) : (toSetRel Cᶜ : SetRel T T) = (toSetRel C)ᶜ := by
   ext ⟨x, y⟩
