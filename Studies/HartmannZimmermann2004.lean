@@ -157,7 +157,7 @@ def separated : Prosody.Tree :=
 
 /-- ALIGN-Focus is violated when no φ begins at the focus's left edge, the object at leaf 1. -/
 def alignFocus : Constraint Prosody.Tree :=
-  Constraint.alignLeft.comap fun t ↦ ([(1, 2)], Prosody.levelSpans .ph t)
+  Constraint.alignLeft.comap fun t ↦ ([⟨(1, 2), by decide⟩], Prosody.levelSpans .ph t)
 
 /-- Phrasal economy assigns one violation per φ. -/
 def starPhi : Constraint Prosody.Tree := fun t ↦ (Prosody.levelSpans .ph t).length
@@ -171,7 +171,8 @@ theorem neutral_parse_wraps :
       = {wrapped} := by decide
 
 theorem separated_edge_wrapped_internal :
-    (0, 2) ∉ Prosody.levelSpans .ph separated ∧ (0, 2) ∈ Prosody.levelSpans .ph wrapped := by
+    ⟨(0, 2), by decide⟩ ∉ Prosody.levelSpans .ph separated ∧
+      ⟨(0, 2), by decide⟩ ∈ Prosody.levelSpans .ph wrapped := by
   decide
 
 -- (25) [kidda-1985]

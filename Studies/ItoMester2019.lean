@@ -75,15 +75,18 @@ variable (x : Input)
 the host is a phrase of its own, the host's, and the function word's, headed by the lexical word
 after the function word, the phrase being that word's extended projection (fn. 3), or else by the
 function word. -/
-def phrases : List ((ℕ × ℕ) × ℕ) :=
+def phrases : List HeadedSpan :=
   let n := if x.next then 3 else 2
   let h := if x.next then 2 else 1
-  ((0, n), if x.hostPhrase then h else 0) ::
-    ((if x.hostPhrase then [((0, 1), 0)] else []) ++ if x.fncPhrase then [((1, n), h)] else [])
+  ⟨⟨(0, n), Nat.zero_le _⟩, if x.hostPhrase then h else 0⟩ ::
+    ((if x.hostPhrase then [⟨⟨(0, 1), by decide⟩, 0⟩] else []) ++
+      if x.fncPhrase then [⟨⟨(1, n), (by split <;> decide : 1 ≤ if x.next then 3 else 2)⟩, h⟩]
+      else [])
 
 /-- The lexical words, in terminals, each its own head: the host and the word after the function
 word. -/
-def lex : List ((ℕ × ℕ) × ℕ) := ((0, 1), 0) :: if x.next then [((2, 3), 2)] else []
+def lex : List HeadedSpan :=
+  ⟨⟨(0, 1), by decide⟩, 0⟩ :: if x.next then [⟨⟨(2, 3), by decide⟩, 2⟩] else []
 
 end Input
 
@@ -156,12 +159,11 @@ where
 
 /-- The spans of the `ℓ`-nodes, in terminals, each syllable realizing one terminal and a second
 where it holds 's. -/
-def spans (ℓ : Level) : List (ℕ × ℕ) :=
+def spans (ℓ : Level) : List (NonemptyInterval ℕ) :=
   let realizes := [if c.form = .enclitic then 2 else 1] ++
     (if c.form = .strong ∨ c.form = .weak then [1] else []) ++
       if x.next then [if c.form = .proclitic then 2 else 1] else []
-  let cut (i : ℕ) := (realizes.take i).sum
-  (levelSpans ℓ (c.tree x)).map (Prod.map cut cut)
+  (levelSpans ℓ (c.tree x)).map (.map (cut realizes))
 
 end Candidate
 
@@ -185,14 +187,14 @@ def correspondence : ConstraintSystem Input Candidate Con where
   con
     | .initFaith => Constraint.alignLeft.comap fun xc ↦
         ((xc.2.spans xc.1 .om).filter fun w ↦ ∃ l ∈ xc.1.lex, Corresponds xc.1.lex l w,
-          xc.1.lex.map (·.1))
+          xc.1.lex.map (·.span))
     | .headedness => fun xc ↦ (xc.2.tree xc.1).subtrees.countP fun s ↦
         s.value.level ≠ .syl ∧ ∀ c ∈ s.children,
           c.value.level ≠ s.value.level ∧ c.value.level.toNat + 1 ≠ s.value.level.toNat
     | .phrase => fun xc ↦
         Constraint.deficiency (Corresponds xc.1.phrases) (xc.1.phrases, xc.2.spans xc.1 .ph)
     | .alignR => Constraint.alignRight.comap fun xc ↦
-        (xc.1.phrases.map (·.1), xc.2.spans xc.1 .ph)
+        (xc.1.phrases.map (·.span), xc.2.spans xc.1 .ph)
     | .priority => fun xc ↦
         if xc.1.clitic ∧ (xc.2.form = .strong ∨ xc.2.form = .weak) then 1 else 0
     | .word => fun xc ↦ Constraint.align (fun w l ↦ Corresponds xc.1.lex l w)
@@ -204,13 +206,14 @@ def matchTheory : ConstraintSystem Input Candidate Con where
   gen := candidates
   con
     | .phrase => (Constraint.align Eq).comap fun xc ↦
-        (xc.1.phrases.map (·.1), xc.2.spans xc.1 .ph)
-    | .word => (Constraint.align Eq).comap fun xc ↦ (xc.2.spans xc.1 .om, xc.1.lex.map (·.1))
+        (xc.1.phrases.map (·.span), xc.2.spans xc.1 .ph)
+    | .word => (Constraint.align Eq).comap fun xc ↦ (xc.2.spans xc.1 .om, xc.1.lex.map (·.span))
     | i => correspondence.con i
 
 theorem phrase_le (x : Input) (c : Candidate) :
     correspondence.con .phrase (x, c) ≤ matchTheory.con .phrase (x, c) := by
-  have hx : (x.phrases.map (·.1)).Nodup ∧ ∀ a ∈ x.phrases, a.2 ∈ Set.Ico a.1.1 a.1.2 := by
+  have hx : (x.phrases.map (·.span)).Nodup ∧
+      ∀ a ∈ x.phrases, a.head ∈ Set.Ico a.span.fst a.span.snd := by
     obtain ⟨_ | _, _ | _, _ | _, _ | _⟩ := x <;> decide
   exact deficiency_corresponds_le hx.1 hx.2 (c.spans x .ph)
 
