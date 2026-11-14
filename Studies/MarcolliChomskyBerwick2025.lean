@@ -872,12 +872,25 @@ example : (theDog.linearize? .left).map (·.yield.filterMap (·.item.phonForm?))
 
 /-- Merging *the* on the left of *dog*, which it selects, is harmonic for a head-initial
 language, so that derivation records the head-initial planarization
-(`Derivation.externalize?_eq_linearize?`); merging it on the right is not harmonic. -/
-example : Step.HarmonicList .left selHead [.em .left (.leaf ⟨.of .D [.N] (phonForm := "the"), 0⟩)]
+(`Derivation.externalize?_eq_linearized?`); merging it on the right is not harmonic. -/
+example : Step.HarmonicList (headHom .left) selHead [.em .left (.leaf ⟨.of .D [.N] (phonForm := "the"), 0⟩)]
       ⟨.leaf ⟨.of .N [] (phonForm := "dog"), 1⟩, []⟩ ∧
-    ¬ Step.HarmonicList .left selHead [.em .right (.leaf ⟨.of .D [.N] (phonForm := "the"), 0⟩)]
+    ¬ Step.HarmonicList (headHom .left) selHead [.em .right (.leaf ⟨.of .D [.N] (phonForm := "the"), 0⟩)]
       ⟨.leaf ⟨.of .N [] (phonForm := "dog"), 1⟩, []⟩ :=
   ⟨⟨⟨rfl, by decide⟩, trivial⟩, fun ⟨⟨_, h⟩, _⟩ ↦ absurd h (by decide)⟩
+
+/-- A harmonic derivation with movement: the verb selects the determiner, tense selects the verb
+and then the determiner, which raises to the right of a head-initial tense, leaving the trace
+numbered by its place among the movers. -/
+private def raisedD : Derivation ℕ :=
+  ⟨.leaf ⟨.of .D [], 2⟩, [.em .left (.leaf ⟨.of .V [.D], 1⟩), .em .left (.leaf ⟨.of .T [.V, .D], 3⟩),
+    .im (.leaf ⟨.of .D [], 2⟩) .right]⟩
+
+example : raisedD.externalize? raisedD.moverIndex =
+    ((LinearizationState.licensing .left).hom raisedD
+      (raisedD.final raisedD.moverIndex)).linearized? :=
+  Derivation.externalize?_eq_linearized? (LinearizationState.linearizes_hom raisedD) rfl rfl
+    (by decide)
 
 /-- Exocentric Merge of two saturated `N`s, neither selecting the other, determines no head and
 no order. -/

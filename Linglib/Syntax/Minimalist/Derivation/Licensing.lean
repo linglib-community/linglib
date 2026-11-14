@@ -11,7 +11,8 @@ public import Linglib.Syntax.Minimalist.Derivation.Replay
 # Licensing a derivation
 
 A licensing of Merge gives each lexical item a state in a commutative magma with zero, `0` being
-the failure of Merge, and the trace of a moved object a state that depends on the object's own.
+the failure of Merge, and the trace of a moved object a state that depends on the object's own
+and on the number of the trace.
 Over a derivation whose traces are numbered by its movers, a licensing [extends to a morphism of
 magmas](##Minimalist.Licensing.hom), and the derivation is licensed, `Derivation.LicensedBy`, when
 every stage is in its domain, the object under construction and every copy extracted from it. The
@@ -34,12 +35,12 @@ open SyntacticObject
 variable {β γ : Type*} [CommMagma β] [Zero β] [CommMagma γ] [Zero γ]
 
 /-- A licensing of Merge into `β`: the state of a lexical item, and the state of the trace a moved
-object leaves, given the object's own. -/
+object leaves, given the number of the trace and the object's own state. -/
 structure Licensing (β : Type*) where
   /-- The state of a lexical item. -/
   lex : LexicalItem.Token → β
-  /-- The state of the trace of a moved object in the given state. -/
-  trace : β → β
+  /-- The state of the trace with the given number, of a moved object in the given state. -/
+  trace : ℕ → β → β
 
 namespace Licensing
 
@@ -52,12 +53,31 @@ def eval (states : List β) : SyntacticObject (ι := ℕ) →ₙ* β :=
 /-- The states of the traces of the objects moved, in order: each the trace of its object, read
 with the traces of the objects moved before it. -/
 def traceStates (movers : List (SyntacticObject (ι := ℕ))) : List β :=
-  movers.foldl (fun states m ↦ states ++ [L.trace (L.eval states m)]) []
+  movers.foldl (fun states m ↦ states ++ [L.trace states.length (L.eval states m)]) []
 
 /-- A licensing over a derivation: the morphism of magmas reading each lexical item by its state
 and each numbered trace as the trace of the mover it numbers. -/
 def hom (d : Derivation ℕ) : SyntacticObject (ι := ℕ) →ₙ* β :=
   L.eval (L.traceStates d.movedItems)
+
+/-- The state of the trace numbered `i` is the licensing's trace `i` of some state. -/
+theorem exists_eq_trace_of_getElem? {movers : List (SyntacticObject (ι := ℕ))} {i : ℕ} {x : β}
+    (h : (L.traceStates movers)[i]? = some x) : ∃ y, x = L.trace i y := by
+  suffices key : ∀ states : List β, (∀ i x, states[i]? = some x → ∃ y, x = L.trace i y) →
+      ∀ i x, (movers.foldl (fun states m ↦ states ++ [L.trace states.length (L.eval states m)])
+        states)[i]? = some x → ∃ y, x = L.trace i y from
+    key [] (fun _ _ h ↦ by simp at h) i x h
+  clear h
+  induction movers with
+  | nil => exact fun _ h ↦ h
+  | cons m movers ih =>
+    refine fun states hs ↦ ih _ fun i x hx ↦ ?_
+    rcases Nat.lt_or_ge i states.length with hi | hi
+    · exact hs i x (by rwa [List.getElem?_append_left hi] at hx)
+    · rw [List.getElem?_append_right hi, List.getElem?_singleton] at hx
+      split_ifs at hx with h0
+      obtain rfl : i = states.length := by omega
+      exact ⟨_, (Option.some.inj hx).symm⟩
 
 variable {L L'} {π : β →ₙ* γ}
 
@@ -72,23 +92,26 @@ theorem comp_eval (h0 : π 0 = 0) (hlex : ∀ a, π (L.lex a) = L'.lex a) (state
       cases states[i]? <;> simp [h0]
 
 theorem traceStates_map (h0 : π 0 = 0) (hlex : ∀ a, π (L.lex a) = L'.lex a)
-    (htrace : ∀ x, π (L.trace x) = L'.trace (π x)) (movers : List (SyntacticObject (ι := ℕ))) :
+    (htrace : ∀ i x, π (L.trace i x) = L'.trace i (π x))
+    (movers : List (SyntacticObject (ι := ℕ))) :
     L'.traceStates movers = (L.traceStates movers).map π := by
   suffices h : ∀ states : List β,
-      movers.foldl (fun states m ↦ states ++ [L'.trace (L'.eval states m)]) (states.map π) =
-        (movers.foldl (fun states m ↦ states ++ [L.trace (L.eval states m)]) states).map π from
+      movers.foldl (fun states m ↦ states ++ [L'.trace states.length (L'.eval states m)])
+          (states.map π) =
+        (movers.foldl (fun states m ↦ states ++ [L.trace states.length (L.eval states m)])
+          states).map π from
     h []
   induction movers with
   | nil => exact fun _ ↦ rfl
   | cons m movers ih =>
     intro states
     rw [List.foldl_cons, List.foldl_cons, ← ih, List.map_append, List.map_singleton, htrace,
-      ← comp_eval h0 hlex, MulHom.comp_apply]
+      ← comp_eval h0 hlex, MulHom.comp_apply, List.length_map]
 
 /-- A morphism of licensings, preserving zero, the states of lexical items and traces, commutes
 with their extensions over a derivation. -/
 theorem comp_hom (h0 : π 0 = 0) (hlex : ∀ a, π (L.lex a) = L'.lex a)
-    (htrace : ∀ x, π (L.trace x) = L'.trace (π x)) (d : Derivation ℕ) :
+    (htrace : ∀ i x, π (L.trace i x) = L'.trace i (π x)) (d : Derivation ℕ) :
     π.comp (L.hom d) = L'.hom d := by
   rw [hom, hom, comp_eval h0 hlex, traceStates_map h0 hlex htrace]
 
@@ -125,7 +148,8 @@ variable {L} {π : β →ₙ* γ}
 /-- A licensing licenses the derivations that its image under a morphism of licensings licenses:
 a coarser licensing's derivations are the finer one's. -/
 theorem LicensedBy.of_hom (h0 : π 0 = 0) (hlex : ∀ a, π (L.lex a) = L'.lex a)
-    (htrace : ∀ x, π (L.trace x) = L'.trace (π x)) (h : d.LicensedBy L') : d.LicensedBy L :=
+    (htrace : ∀ i x, π (L.trace i x) = L'.trace i (π x)) (h : d.LicensedBy L') :
+    d.LicensedBy L :=
   fun n hn ↦ (h n hn).imp fun c ⟨hc, hall⟩ ↦ ⟨hc, fun x hx hx0 ↦ hall x hx <| by
     rw [← Licensing.comp_hom h0 hlex htrace, MulHom.comp_apply, hx0, h0]⟩
 
@@ -141,6 +165,6 @@ def SelectionState.saturate : SelectionState → SelectionState
 /-- Triggered Merge as a licensing: an item with its selectors, a trace the saturated head of the
 object moved. -/
 def SelectionState.licensing : Licensing SelectionState :=
-  ⟨fun tok ↦ .of tok tok.item.sel, .saturate⟩
+  ⟨fun tok ↦ .of tok tok.item.sel, fun _ ↦ .saturate⟩
 
 end Minimalist
