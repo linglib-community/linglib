@@ -420,7 +420,7 @@ theorem Vertex.map_injective {f : L → L'} (hf : Function.Injective f) :
   Sum.map_injective.2 ⟨Option.map_injective hf, Option.map_injective hf⟩
 
 theorem Leaf.toVertex_map (f : L → L') (x : Leaf L) :
-    (x.map f).toVertex = Vertex.map f x.toVertex := by
+    (x.map f f).toVertex = Vertex.map f x.toVertex := by
   cases x <;> rfl
 
 end SyntacticObject
@@ -437,9 +437,9 @@ variable {L L' L'' : Type}
   induction p using FreeMagma.recOnMul with
   | ih1 x => simp [map, toRoseTree, Leaf.toVertex_map]
   | ih2 l r hl hr =>
-    have hl' : toRoseTree (FreeMagma.map (Leaf.map f) l) =
+    have hl' : toRoseTree (FreeMagma.map (Leaf.map f f) l) =
         RoseTree.map (Vertex.map f) (toRoseTree l) := hl
-    have hr' : toRoseTree (FreeMagma.map (Leaf.map f) r) =
+    have hr' : toRoseTree (FreeMagma.map (Leaf.map f f) r) =
         RoseTree.map (Vertex.map f) (toRoseTree r) := hr
     simp [map, toRoseTree, hl', hr']
 
