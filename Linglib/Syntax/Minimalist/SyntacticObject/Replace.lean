@@ -324,9 +324,9 @@ theorem toSyntacticObject_find? {p s : PlanarSyntacticObject} {target : Syntacti
 def replace (p : PlanarSyntacticObject) (target : SyntacticObject)
     (rep : PlanarSyntacticObject) : PlanarSyntacticObject :=
   ofRoseTree (replaceIf (mk · = target.toUnorderedTree) rep.toRoseTree p.toRoseTree) (by
-    rw [mk_replaceIf]
-    exact toUnorderedTree_replace p.toSyntacticObject target rep.toSyntacticObject ▸
-      (p.toSyntacticObject.replace target rep.toSyntacticObject).isSyntacticObject_toUnorderedTree)
+    rw [mk_replaceIf, ← toUnorderedTree_toSyntacticObject, ← toUnorderedTree_toSyntacticObject,
+      ← toUnorderedTree_replace]
+    exact SyntacticObject.isSyntacticObject_toUnorderedTree _)
 
 @[simp] theorem toRoseTree_replace (p : PlanarSyntacticObject) (target : SyntacticObject)
     (rep : PlanarSyntacticObject) :
@@ -339,8 +339,8 @@ def replace (p : PlanarSyntacticObject) (target : SyntacticObject)
     (p.replace target rep).toSyntacticObject
       = p.toSyntacticObject.replace target rep.toSyntacticObject :=
   SyntacticObject.toUnorderedTree_injective (by
-    rw [toUnorderedTree_replace, toUnorderedTree_toSyntacticObject,
-        toRoseTree_replace]; exact mk_replaceIf _ _ _)
+    simp only [toUnorderedTree_replace, toUnorderedTree_toSyntacticObject, toRoseTree_replace]
+    exact mk_replaceIf _ _ _)
 
 theorem mem_terms_toSyntacticObject {p : PlanarSyntacticObject} {m : SyntacticObject} :
     m ∈ p.toSyntacticObject.terms ↔ ∃ q ∈ p.toRoseTree.subtrees, mk q = m.toUnorderedTree := by
@@ -367,7 +367,7 @@ theorem replace_of_toSyntacticObject_eq {p r : PlanarSyntacticObject} {target : 
   rw [replaceIf_node]
   split_ifs with hc
   · rfl
-  · exact absurd (hp ▸ congrArg SyntacticObject.toUnorderedTree h) hc
+  · exact absurd (by rw [← hp, ← toUnorderedTree_toSyntacticObject, h]) hc
 
 theorem replace_attach {p d r : PlanarSyntacticObject} {target : SyntacticObject} {e : Edge}
     (h : SyntacticObject.merge d.toSyntacticObject p.toSyntacticObject ≠ target) :
@@ -377,7 +377,8 @@ theorem replace_attach {p d r : PlanarSyntacticObject} {target : SyntacticObject
   cases e <;> simp only [toRoseTree_replace, attach, toRoseTree_merge, replaceIf_node,
       List.map_cons,
     List.map_nil] <;> split_ifs with hc <;>
-    first | rfl | exact (h' (SyntacticObject.toUnorderedTree_injective hc)).elim
+    first | rfl | exact (h' (SyntacticObject.toUnorderedTree_injective
+      ((toUnorderedTree_toSyntacticObject _).trans hc))).elim
 
 theorem replace_of_toRoseTree_eq_leaf {p r : PlanarSyntacticObject} {target : SyntacticObject}
     {a : Vertex} (hp : p.toRoseTree = RoseTree.leaf a) (h : p.toSyntacticObject ≠ target) :
@@ -416,8 +417,7 @@ theorem PlanarSyntacticObject.yield_replace_add_yield {p s : PlanarSyntacticObje
       = replaceIf (fun u ↦ mk u = m.toUnorderedTree) (m.tracePlanar τ).toRoseTree p.toRoseTree :=
           toRoseTree_replace _ _ _
   have e₂ := toRoseTree_ofRoseTree s' (hs''.symm ▸ m.isSyntacticObject_toUnorderedTree)
-  show Multiset.filterMap _ (UnorderedTree.mk (p.replace m (m.tracePlanar τ)).toRoseTree).leaves +
-    Multiset.filterMap _ (UnorderedTree.mk (ofRoseTree s' _).toRoseTree).leaves = _
+  simp only [SyntacticObject.yield, toUnorderedTree_toSyntacticObject] at hp ⊢
   rw [e₁, e₂]
   refine filterMap_leaves_replaceIf_add _ _ (L := m.yield) (fun u hu ↦ ?_) ?_ hp
     (mem_outerMatches_of_find? hs')

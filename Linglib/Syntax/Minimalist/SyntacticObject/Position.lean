@@ -65,8 +65,9 @@ variable {t : PlanarSyntacticObject} {p : t.toRoseTree.Positions} {y : Syntactic
 
 theorem isSyntacticObject_subtree (p : t.toRoseTree.Positions) :
     IsSyntacticObject (UnorderedTree.mk p.subtree) :=
-  isSyntacticObject_of_mem_subtrees t.toSyntacticObject _
-    (mem_unorderedSubtrees.2 ⟨_, _, p.getElem?_eq, rfl⟩)
+  isSyntacticObject_of_mem_subtrees t.toSyntacticObject _ <| by
+    rw [toUnorderedTree_toSyntacticObject]
+    exact mem_unorderedSubtrees.2 ⟨_, _, p.getElem?_eq, rfl⟩
 
 variable (t) in
 /-- The term of `t` at a position. -/
@@ -78,7 +79,7 @@ def termAt (p : t.toRoseTree.Positions) : SyntacticObject :=
   SyntacticObject.toUnorderedTree_ofUnorderedTree _ _
 
 @[simp] theorem termAt_bot : t.termAt ⊥ = t.toSyntacticObject :=
-  SyntacticObject.toUnorderedTree_injective (by rw [toUnorderedTree_termAt]; rfl)
+  SyntacticObject.toUnorderedTree_injective (by rw [toUnorderedTree_termAt, toUnorderedTree_toSyntacticObject]; rfl)
 
 variable (t) in
 /-- The term of `t` at a position, with the order of daughters it has in `t`. -/

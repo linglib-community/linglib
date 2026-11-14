@@ -201,7 +201,8 @@ theorem Step.toSyntacticObject_replayWithCopies?_im {mover : SyntacticObject} {s
   obtain ⟨s, hs, he⟩ := Step.unmark_replayWithCopies?_im h
   refine ⟨s.unmark.toSyntacticObject, ?_,
     by rw [he, PlanarSyntacticObject.toSyntacticObject_attach]⟩
-  exact PlanarSyntacticObject.mem_terms_toSyntacticObject.2 ⟨_, mem_subtrees.2 hs, rfl⟩
+  exact PlanarSyntacticObject.mem_terms_toSyntacticObject.2 ⟨_, mem_subtrees.2 hs,
+    (PlanarSyntacticObject.toUnorderedTree_toSyntacticObject _).symm⟩
 
 /-- Internal Merge with copies adds a position to the chain of the copy it merges
 (`PlanarSyntacticObject.card_chainRel`). -/

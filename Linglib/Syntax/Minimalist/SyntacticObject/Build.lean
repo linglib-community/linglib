@@ -145,13 +145,14 @@ def yield (p : PlanarSyntacticObject L) : List L :=
   p.toRoseTree.leafList.filterMap (Sum.elim id fun _ ↦ none)
 
 theorem yield_toSyntacticObject (p : PlanarSyntacticObject L) :
-    p.toSyntacticObject.yield = p.toRoseTree.leaves.filterMap (Sum.elim id fun _ ↦ none) := rfl
+    p.toSyntacticObject.yield = p.toRoseTree.leaves.filterMap (Sum.elim id fun _ ↦ none) := by
+  rw [SyntacticObject.yield, toUnorderedTree_toSyntacticObject]
+  rfl
 
 /-- The pronounced tokens of a planar object are those of its object, in order. -/
 theorem coe_yield (p : PlanarSyntacticObject L) :
     (p.yield : Multiset L) = p.toSyntacticObject.yield := by
-  rw [yield, ← Multiset.filterMap_coe, RoseTree.coe_leafList]
-  rfl
+  rw [yield, ← Multiset.filterMap_coe, RoseTree.coe_leafList, yield_toSyntacticObject]
 
 theorem yield_attach (p : PlanarSyntacticObject L) (e : Edge)
     (d : PlanarSyntacticObject L) :
