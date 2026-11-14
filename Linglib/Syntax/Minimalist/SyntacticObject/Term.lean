@@ -193,7 +193,7 @@ theorem isSyntacticObject_of_mem_subtrees (s : SyntacticObject L) :
     simp only [SyntacticObject.toUnorderedTree_trace, mem_subtrees_leaf, forall_eq]
     exact SyntacticObject.trace.isSyntacticObject_toUnorderedTree
   | traceOf tok =>
-    simp only [SyntacticObject.toUnorderedTree_traceOf, mem_subtrees_leaf, forall_eq]
+    simp only [SyntacticObject.toUnorderedTree_labelledTrace, mem_subtrees_leaf, forall_eq]
     exact (SyntacticObject.traceOf tok).isSyntacticObject_toUnorderedTree
   | merge l r ihl ihr =>
     simp only [SyntacticObject.toUnorderedTree_merge, mem_subtrees_node_pair]
@@ -229,7 +229,8 @@ def terms : SyntacticObject L → Multiset (SyntacticObject L) :=
   | trace => rw [terms_trace, Multiset.map_singleton, toUnorderedTree_trace,
       UnorderedTree.subtrees_leaf]
   | traceOf tok =>
-    rw [terms_traceOf, Multiset.map_singleton, toUnorderedTree_traceOf, UnorderedTree.subtrees_leaf]
+    rw [terms_traceOf, Multiset.map_singleton, toUnorderedTree_labelledTrace,
+      UnorderedTree.subtrees_leaf]
   | merge l r ihl ihr =>
     rw [terms_merge, Multiset.map_cons, Multiset.map_add, ihl, ihr, toUnorderedTree_merge,
       UnorderedTree.subtrees_node_pair]

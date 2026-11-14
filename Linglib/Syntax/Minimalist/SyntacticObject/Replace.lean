@@ -82,8 +82,8 @@ private theorem toUnorderedTree_subst (f : SyntacticObject → Option SyntacticO
         subst_fun_val, toUnorderedTree_trace,
       UnorderedTree.subst_leaf]
   | traceOf tok =>
-    rw [subst_of_toUnorderedTree_eq_leaf (toUnorderedTree_traceOf tok), toUnorderedTree_getD, ←
-        subst_fun_val, toUnorderedTree_traceOf,
+    rw [subst_of_toUnorderedTree_eq_leaf (toUnorderedTree_labelledTrace tok),
+      toUnorderedTree_getD, ← subst_fun_val, toUnorderedTree_labelledTrace,
       UnorderedTree.subst_leaf]
   | merge l r ihl ihr =>
     rw [subst_merge, toUnorderedTree_getD, ← subst_fun_val, toUnorderedTree_merge,
@@ -438,7 +438,7 @@ theorem SyntacticObject.not_sisters_of_toPlanarLeaf? {s x z : SyntacticObject}
     simp [ImmediatelyContains, toUnorderedTree_trace] at hwx
   · rw [terms_traceOf, Multiset.mem_singleton] at hw
     subst hw
-    simp [ImmediatelyContains, toUnorderedTree_traceOf] at hwx
+    simp [ImmediatelyContains, toUnorderedTree_labelledTrace] at hwx
   · simp [toPlanarLeaf?, toUnorderedTree_merge] at hs
 
 /-! ### Relabelling -/
