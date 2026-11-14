@@ -414,13 +414,13 @@ end PendingState
 /-- Selection before saturation as a licensing: a token with its selectors and nothing pending, a
 trace the saturated head of the object moved. -/
 def pendingLicensing : Licensing PendingState :=
-  ⟨fun tok ↦ .of tok tok.item.sel 0, PendingState.saturate⟩
+  ⟨fun tok ↦ .of tok tok.item.sel 0, fun _ ↦ PendingState.saturate⟩
 
 -- Triggered Merge factors through selection before saturation
 theorem toSelectionStateHom_comp_hom (d : Minimalist.Derivation ℕ) :
     PendingState.toSelectionStateHom.comp (pendingLicensing.hom d) =
       SelectionState.licensing.hom d :=
-  Licensing.comp_hom rfl (fun _ ↦ rfl) PendingState.toSelectionState_saturate d
+  Licensing.comp_hom rfl (fun _ ↦ rfl) (fun _ ↦ PendingState.toSelectionState_saturate) d
 
 /-- Triggered Merge licenses exactly the objects that selection before saturation licenses with
 nothing pending. -/
@@ -433,7 +433,7 @@ theorem hom_licensing_ne_zero_iff (d : Minimalist.Derivation ℕ) (s : Syntactic
 theorem licensedBy_pendingLicensing {d : Minimalist.Derivation ℕ}
     (h : d.LicensedBy SelectionState.licensing) : d.LicensedBy pendingLicensing :=
   .of_hom (L' := SelectionState.licensing) (π := PendingState.toSelectionStateHom) rfl
-    (fun _ ↦ rfl) PendingState.toSelectionState_saturate h
+    (fun _ ↦ rfl) (fun _ ↦ PendingState.toSelectionState_saturate) h
 
 -- (12): triggered Merge has no product of the relative determiner with a noun still selecting
 theorem selCheck_merge_eq_zero_of_sel_ne_nil {d n : LexicalItem.Token}
