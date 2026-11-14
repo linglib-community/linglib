@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Algebra.Order.Group.Multiset
-public import Linglib.Core.Data.RoseTree.Get
+public import Linglib.Core.Data.RoseTree.Subtree
 public import Linglib.Core.Data.RoseTree.Leaves
 
 /-!

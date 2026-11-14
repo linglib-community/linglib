@@ -3,7 +3,7 @@ module
 public import Mathlib.Logic.Relation
 public import Mathlib.Order.Antisymmetrization
 public import Mathlib.Data.Finset.Basic
-public import Linglib.Core.Data.RoseTree.Rewrite
+public import Linglib.Core.Data.RoseTree.Rewrites
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Semantics.Alternatives.WithAlternatives
 

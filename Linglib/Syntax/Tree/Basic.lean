@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Finset.Basic
 public import Linglib.Core.Data.RoseTree.Licensed
+public import Linglib.Core.Data.RoseTree.Positions
 
 /-!
 # Constituency trees

@@ -4,7 +4,7 @@ public import Mathlib.Order.BooleanSubalgebra
 public import Studies.FoxKatzir2011
 public import Linglib.Syntax.Cat
 public import Linglib.Syntax.Tree.Basic
-public import Linglib.Core.Data.RoseTree.Get
+public import Linglib.Core.Data.RoseTree.Subtree
 public import Linglib.Data.Examples.TrinhHaida2015
 
 /-!
