@@ -165,7 +165,7 @@ def subextraction (r : Route) : Derivation :=
     (match r with | .edge => [.im who] | .direct => []) ++
     [.em .right hiredMary, .em .left tI,
       .im (match r with
-        | .edge => (who * subject (.traceOf whoD) : PlanarSyntacticObject)
+        | .edge => (who * subject who.toSyntacticObject.tracePlanar : PlanarSyntacticObject)
         | .direct => subject who),
       .em .left cQ, .im who]⟩
 
@@ -197,7 +197,7 @@ def did := tok 225 .T "did" (sel := [.v])
 def remnantFronting : Derivation :=
   ⟨tok 211 .N "Mary", [.em .left (tok 210 .n (sel := [.N])), .em .left (tok 209 .D (sel := [.n])),
     .em .left kiss, .em .left kissV, .em .left jane, .em .left did, .im jane,
-    .im (.traceOf janeD * (kissV * (kiss * mary)) : PlanarSyntacticObject)]⟩
+    .im (jane.toSyntacticObject.tracePlanar * (kissV * (kiss * mary)) : PlanarSyntacticObject)]⟩
 
 /-- (20): vP, its subject gone, is labeled by v and moves as a remnant of the subject; remnant
 movement obeys even the traditional ban. -/
@@ -219,7 +219,8 @@ def niemand : PlanarSyntacticObject :=
 def cV2 := tok 237 .C (sel := [.V])
 
 /-- The verb-second clause *den Peter mag niemand*, the object raised to its specifier. -/
-def v2Clause : PlanarSyntacticObject := peter * (cV2 * (niemand * (mag * .traceOf peterD)))
+def v2Clause : PlanarSyntacticObject :=
+  peter * (cV2 * (niemand * (mag * peter.toSyntacticObject.tracePlanar)))
 
 /-- The steps that build the verb-second clause. -/
 def v2Steps : List Step :=
@@ -285,7 +286,7 @@ def waarD := tok 260 .D "waar" (sel := [.n])
 def waar : PlanarSyntacticObject := nominal waarD (tok 261 .n (sel := [.N])) (tok 262 .N)
 def mee := tok 263 .P "mee" (sel := [.D])
 /-- *waar mee*, the r-pronoun in Spec,PP. -/
-def pp : PlanarSyntacticObject := waar * (mee * .traceOf waarD)
+def pp : PlanarSyntacticObject := waar * (mee * waar.toSyntacticObject.tracePlanar)
 /-- *de vis snijden*. -/
 def snijden : PlanarSyntacticObject :=
   tok 264 .V "snijden" (sel := [.D]) *
