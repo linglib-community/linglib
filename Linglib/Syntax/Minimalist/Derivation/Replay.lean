@@ -75,17 +75,35 @@ end Derivation
 
 variable {τ : SyntacticObject → Option LexicalItem.Token}
 
+/-- A step replays alike under two trace encoders that agree on its mover where the mover is a
+term of the object. -/
+theorem Step.replay?_congr {τ' : SyntacticObject → Option LexicalItem.Token} (step : Step)
+    (c : Cfg PlanarSyntacticObject)
+    (h : ∀ m ∈ step.mover?, m ∈ c.current.toSyntacticObject.terms → τ m = τ' m) :
+    step.replay? c τ = step.replay? c τ' := by
+  obtain ⟨p, st⟩ := c
+  cases step with
+  | em side item => rfl
+  | remerge side => cases st <;> rfl
+  | im mover side | extract mover =>
+    simp only [Step.replay?]
+    cases hf : p.find? mover with
+    | none => rfl
+    | some s =>
+      rw [SyntacticObject.tracePlanar, SyntacticObject.tracePlanar,
+        h mover rfl (PlanarSyntacticObject.isSome_find?_iff.1 (by rw [hf]; rfl))]
+
 namespace Derivation
 
 theorem replay?_append_singleton (d : Derivation) (step : Step) :
-    (d.append [step]).replay? = d.replay?.bind (step.replay? ·) := by
+    (d.append [step]).replay? τ = (d.replay? τ).bind (step.replay? · τ) := by
   simp only [replay?, append, List.foldlM_append, List.foldlM_cons, List.foldlM_nil,
     Option.bind_assoc]
   congr 1
   funext p
   congr 1
   funext c
-  cases step.replay? c <;> rfl
+  cases step.replay? c τ <;> rfl
 
 theorem stack_eq_nil_of_replay? {d : Derivation} {c : Cfg PlanarSyntacticObject}
     (hm : ∀ step ∈ d.steps, step.IsMerge) (h : d.replay? τ = some c) : c.stack = [] := by
