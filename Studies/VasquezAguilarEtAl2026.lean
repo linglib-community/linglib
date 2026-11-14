@@ -71,17 +71,17 @@ theorem naturalClass_interior : interior.naturalClass Shiwilu.inventory = {«ɘ�
 the output. -/
 structure Candidate where
   /-- The input–output correspondence. -/
-  io : Correspondence.Diagram BinaryRole Segment
+  io : Correspondence.Coindexation BinaryRole Segment
   /-- The prosodic structure of the output. -/
   form : MoraicForm Segment
 
 /-- The candidate with correspondence `io` whose output form, over the output string of `io`, has
 the given lines. -/
-def Candidate.ofIO (io : Correspondence.Diagram BinaryRole Segment)
+def Candidate.ofIO (io : Correspondence.Coindexation BinaryRole Segment)
     (wordSyllable : Finset (ℕ × ℕ) := ∅) (syllableMora : Finset (ℕ × Mora) := ∅)
     (wordSegment : Finset (ℕ × ℕ) := ∅) (syllableSegment : Finset (ℕ × ℕ) := ∅)
     (moraSegment : Finset (Mora × ℕ) := ∅) : Candidate :=
-  ⟨io, .ofLines (io.form .rhs) wordSyllable syllableMora wordSegment syllableSegment
+  ⟨io, .ofLines (io.string .rhs) wordSyllable syllableMora wordSegment syllableSegment
     moraSegment⟩
 
 section Classes
@@ -131,7 +131,7 @@ def crispEdge : Constraint Candidate := fun c ↦
 
 /-- MAX-IO(INTV): a violation for each interior vowel of the input without a correspondent. -/
 def maxIntV : Constraint Candidate := fun c ↦
-  c.io.maxViolAt (fun i ↦ ∃ x ∈ (c.io.form .lhs)[i]?, interior ≤ x) .lhs .rhs
+  c.io.maxViolAt (fun i ↦ ∃ x ∈ (c.io.string .lhs)[i]?, interior ≤ x) .lhs .rhs
 
 /-- The constraints of the analysis. -/
 inductive Con
