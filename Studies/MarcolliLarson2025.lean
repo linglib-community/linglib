@@ -110,8 +110,10 @@ followed by External Merge of the subject: the verb is pronounced in the landing
 its trace where its grid was injected ([marcolli-larson-2025], Example 4.7). -/
 theorem realize_gaveMoved (hb : book ≠ gave) (hj : toJohn ≠ gave) :
     realize (gaveMoved mary gave book toJohn) = ↑(merge (.leaf mary)
-      ((Step.im (.leaf gave)).apply (merge (.leaf book) (merge (.leaf toJohn) (.leaf gave))))) := by
-  rw [Step.apply_im, deleteAccessible, headTrace, selHead_leaf, Option.elim,
+      ((Step.im (.leaf gave) : Step).apply
+        (merge (.leaf book) (merge (.leaf toJohn) (.leaf gave))))) := by
+  rw [Step.apply_im, deleteAccessible, headTrace, TraceLabel.encoder_token, selHead_leaf,
+    Option.elim,
     replace_merge_of_ne (leaf_ne_merge _ _ _).symm, replace_merge_of_ne (leaf_ne_merge _ _ _).symm,
     replace_of_toUnorderedTree_eq_leaf (toUnorderedTree_leaf book) (by simpa using hb),
     replace_of_toUnorderedTree_eq_leaf (toUnorderedTree_leaf toJohn) (by simpa using

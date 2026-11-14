@@ -67,7 +67,7 @@ open PlanarSyntacticObject (Marked)
 copy of the leftmost outermost occurrence of the mover and marks the occurrences it leaves as
 lower copies, each with the trace of the mover's head under `τ`; an extraction stacks the copy. -/
 def Step.replayWithCopies? (step : Step) (c : Cfg Marked)
-    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : Option (Cfg Marked) :=
+    (τ : SyntacticObject → Option LexicalItem.Token := TraceLabel.encoder) : Option (Cfg Marked) :=
   match step, c with
   | .em side item, ⟨p, st⟩ => some ⟨p.attach side (.ofPlanar item), st⟩
   | .im mover side, ⟨p, st⟩ =>
@@ -79,7 +79,7 @@ def Step.replayWithCopies? (step : Step) (c : Cfg Marked)
 /-- The derivation's marked configuration under the trace encoder `τ`, `none` exactly when
 `Derivation.replay?` is. -/
 def Derivation.replayWithCopies? (d : Derivation)
-    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : Option (Cfg Marked) :=
+    (τ : SyntacticObject → Option LexicalItem.Token := TraceLabel.encoder) : Option (Cfg Marked) :=
   d.initial.toPlanarLeaf?.bind fun p ↦
     d.steps.foldlM (fun c step ↦ step.replayWithCopies? c τ) ⟨.ofPlanar p, []⟩
 
@@ -169,7 +169,8 @@ theorem Step.replayWithCopies?_im_eq_merge {mover : SyntacticObject} {side : Edg
 /-- The derivation's copy object, the syntactic object with every copy in place and neither order
 nor marks: the form the semantic interface receives. -/
 def Derivation.copyObject? (d : Derivation)
-    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : Option SyntacticObject :=
+    (τ : SyntacticObject → Option LexicalItem.Token := TraceLabel.encoder) :
+    Option SyntacticObject :=
   (d.replayWithCopies? τ).map (·.current.unmark.toSyntacticObject)
 
 theorem Derivation.replayWithCopies?_append (d : Derivation) (steps : List Step) :

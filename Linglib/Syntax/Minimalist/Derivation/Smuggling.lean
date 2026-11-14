@@ -49,7 +49,7 @@ variable {μ : Movement} {τ : SyntacticObject → Option LexicalItem.Token} {xp
 /-- The movement smuggles `xp` past `w`. -/
 @[mk_iff]
 structure Smuggles (μ : Movement) (xp w : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : Prop where
+    (τ : SyntacticObject → Option LexicalItem.Token := TraceLabel.encoder) : Prop where
   /-- The smuggler contains the smugglee. -/
   contains : Contains μ.mover xp
   /-- The blocker c-commands the smugglee before the movement. -/
@@ -139,8 +139,8 @@ theorem IsSmugglingStep.append (h : d.IsSmugglingStep i xp w) :
 theorem isSmugglingStep_map_iff {f : LexicalItem.Token → LexicalItem.Token}
     (hf : Function.Injective f) (hsel : LexicalItem.Token.PreservesSelection f) :
     (d.map f).IsSmugglingStep i (xp.map f) (w.map f) ↔ d.IsSmugglingStep i xp w := by
-  have hτ : ∀ s : SyntacticObject, selHead (s.map f) = (selHead s).map f :=
-    fun s ↦ s.selHead_map hsel
+  have hτ : ∀ s : SyntacticObject,
+      TraceLabel.encoder (s.map f) = (TraceLabel.encoder s).map f := fun s ↦ s.selHead_map hsel
   rw [isSmugglingStep_iff, isSmugglingStep_iff]
   cases h : d.mover? i <;>
     simp [mover?_map, h, stageAt_map d hf hτ, contains_map_iff hf, cCommands_map_iff hf,

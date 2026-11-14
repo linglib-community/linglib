@@ -19,7 +19,7 @@ and the others by the head-external derivation, which [predicts the connectivity
 each](##analysis_fits) as [no derivation shared by both does](##no_uniform_derivation). Raising
 merges the relative determiner with a noun that still selects the relative clause, so the book
 lets a phrase be selected before it is saturated. [Triggered Merge is that licensing with nothing
-pending](##selCheck_ne_zero_iff): it [rejects the stages of the raising
+pending](##hom_licensing_ne_zero_iff): it [rejects the stages of the raising
 derivation](##triggeredMerge_rejects_raisingRelative) that hold the unsaturated noun, all of
 which [selection before saturation licenses](##raisingRelative_licensed).
 
@@ -37,6 +37,9 @@ which [selection before saturation licenses](##raisingRelative_licensed).
 * `PendingState` is a one-field structure over `Option`, as `Minimalist.SelectionState` is. Its
   product never discharges a pending selector: an object has nothing pending once the item
   selected before it was saturated is copied out, leaving a saturated trace.
+* The derivations of section 5.2.2 number their traces by their movers
+  (`Minimalist.Derivation.moverIndex`), and a licensing reads a numbered trace from the state of
+  the mover it numbers.
 
 ## TODO
 
@@ -348,17 +351,6 @@ instance : CommMagma PendingState where
     simp only [of_mul_of]
     split_ifs <;> simp_all [add_comm]
 
-instance : Head PendingState where
-  head x := x.toOption.map (·.1)
-  head_zero := rfl
-  mem_head_or_mem_head_of_mem_head_mul {x y t} h := by
-    cases x <;> cases y <;> try cases h
-    simp only [of_mul_of] at h
-    split_ifs at h
-    exacts [.inl (by cases h; rfl), .inr (by cases h; rfl), by cases h]
-
-@[simp] theorem head_of : head (of a ra p) = some a := rfl
-
 /-- The selection state of a state with nothing pending, and `0` otherwise. -/
 def toSelectionState : PendingState → SelectionState
   | ⟨some (a, ra, p)⟩ => if p = 0 then .of a ra else 0
@@ -402,40 +394,46 @@ def toSelectionStateHom : PendingState →ₙ* SelectionState where
 @[simp] theorem toSelectionStateHom_apply (x : PendingState) :
     toSelectionStateHom x = x.toSelectionState := rfl
 
+/-- The state of the trace of an object: its head with nothing left to select, and what was pending
+on the object. -/
+def saturate : PendingState → PendingState
+  | ⟨some (a, _, p)⟩ => .of a [] p
+  | ⟨none⟩ => 0
+
+theorem toSelectionState_saturate (x : PendingState) :
+    x.saturate.toSelectionState = x.toSelectionState.saturate := by
+  cases x with
+  | zero => rfl
+  | of a ra p =>
+    show (of a [] p).toSelectionState = _
+    rw [toSelectionState_of, toSelectionState_of]
+    split_ifs <;> rfl
+
 end PendingState
 
-/-- Selection before saturation as a licensing: a token with its selectors, a trace a saturated
-copy of the phrase its token heads. -/
-def pendingHom : SyntacticObject →ₙ* PendingState :=
-  FreeCommMagma.lift (SyntacticObject.Leaf.elim (fun tok ↦ .of tok tok.item.sel 0)
-    fun u ↦ .of (u.getD .bareTrace) [] 0)
+/-- Selection before saturation as a licensing: a token with its selectors and nothing pending, a
+trace the saturated head of the object moved. -/
+def pendingLicensing : Licensing PendingState :=
+  ⟨fun tok ↦ .of tok tok.item.sel 0, PendingState.saturate⟩
 
 -- Triggered Merge factors through selection before saturation
-theorem toSelectionStateHom_comp_pendingHom :
-    PendingState.toSelectionStateHom.comp pendingHom = SyntacticObject.selCheckHom :=
-  FreeCommMagma.hom_ext fun ℓ ↦ by cases ℓ <;> rfl
-
-theorem toSelectionState_pendingHom (s : SyntacticObject) :
-    (pendingHom s).toSelectionState = s.selCheck :=
-  DFunLike.congr_fun toSelectionStateHom_comp_pendingHom s
+theorem toSelectionStateHom_comp_hom (d : Minimalist.Derivation ℕ) :
+    PendingState.toSelectionStateHom.comp (pendingLicensing.hom d) =
+      SelectionState.licensing.hom d :=
+  Licensing.comp_hom rfl (fun _ ↦ rfl) PendingState.toSelectionState_saturate d
 
 /-- Triggered Merge licenses exactly the objects that selection before saturation licenses with
 nothing pending. -/
-theorem selCheck_ne_zero_iff (s : SyntacticObject) :
-    s.selCheck ≠ 0 ↔ ∃ a ra, pendingHom s = .of a ra 0 := by
-  rw [← toSelectionState_pendingHom, PendingState.toSelectionState_ne_zero_iff]
-
-theorem PendingState.head_toSelectionState {x : PendingState} (h : x.toSelectionState ≠ 0) :
-    head x.toSelectionState = head x := by
-  obtain ⟨a, ra, rfl⟩ := toSelectionState_ne_zero_iff.1 h
-  simp only [toSelectionState_of, ↓reduceIte]
-  rfl
+theorem hom_licensing_ne_zero_iff (d : Minimalist.Derivation ℕ) (s : SyntacticObject (ι := ℕ)) :
+    SelectionState.licensing.hom d s ≠ 0 ↔ ∃ a ra, pendingLicensing.hom d s = .of a ra 0 := by
+  rw [← toSelectionStateHom_comp_hom, MulHom.comp_apply, PendingState.toSelectionStateHom_apply,
+    PendingState.toSelectionState_ne_zero_iff]
 
 -- Section 5.5: selection before saturation licenses every derivation of triggered Merge
-theorem licensedBy_pendingHom {d : Minimalist.Derivation}
-    (h : d.LicensedBy SyntacticObject.selCheckHom) : d.LicensedBy pendingHom :=
-  .of_comp pendingHom PendingState.toSelectionStateHom rfl
-    (fun _ ↦ PendingState.head_toSelectionState) (toSelectionStateHom_comp_pendingHom ▸ h)
+theorem licensedBy_pendingLicensing {d : Minimalist.Derivation ℕ}
+    (h : d.LicensedBy SelectionState.licensing) : d.LicensedBy pendingLicensing :=
+  .of_hom (L' := SelectionState.licensing) (π := PendingState.toSelectionStateHom) rfl
+    (fun _ ↦ rfl) PendingState.toSelectionState_saturate h
 
 -- (12): triggered Merge has no product of the relative determiner with a noun still selecting
 theorem selCheck_merge_eq_zero_of_sel_ne_nil {d n : LexicalItem.Token}
@@ -465,58 +463,58 @@ def relC : LexicalItem.Token := ⟨.of .C [.T, .D], 5⟩
 /-- The external determiner, selecting the noun. -/
 def externalD : LexicalItem.Token := ⟨.of .D [.N], 6⟩
 
-/-- *Kona*'s phrase once the noun is copied out of it, the noun's trace in its place. -/
-def konaRemnant : SyntacticObject :=
-  (PlanarSyntacticObject.merge (.leaf kona) (.traceOf headNoun)).toSyntacticObject
+/-- *Kona*'s phrase once the noun is copied out of it: the noun is the first object the
+derivation moves, and its trace bears that number. -/
+def konaRemnant : SyntacticObject (ι := ℕ) :=
+  (PlanarSyntacticObject.merge (.leaf kona) (.labelledTrace 0)).toSyntacticObject
 
 /-- The raising relative of section 5.2.2. The noun merges with *kona* while it still selects the
 relative CP, which is built over them. Once the complementizer is merged, the noun and then
 *kona*'s phrase are copied onto the stack (the book's (14)); *kona*'s phrase merges back first, at
 the edge of the CP (15), and the noun last, selecting the CP and projecting (16); the external
 determiner selects it (17). -/
-def raisingRelative : Minimalist.Derivation :=
-  ⟨headNoun, [.em .left kona, .em .left rcVerb, .em .left rcTense, .em .left relC,
-    .extract headNoun, .extract konaRemnant, .remerge, .remerge, .em .left externalD]⟩
+def raisingRelative : Minimalist.Derivation ℕ :=
+  ⟨.leaf headNoun, [.em .left (.leaf kona), .em .left (.leaf rcVerb), .em .left (.leaf rcTense),
+    .em .left (.leaf relC), .extract (.leaf headNoun), .extract konaRemnant, .remerge, .remerge,
+    .em .left (.leaf externalD)]⟩
 
 /-- Selection before saturation licenses every stage of the raising relative, which obeys Freezing
 and ends with an empty stack and nothing pending: the noun's selector, pending since *kona*
 selected it, is checked once the noun merges back and selects the relative CP. -/
 theorem raisingRelative_licensed :
-    raisingRelative.LicensedBy pendingHom ∧ raisingRelative.ObeysFreezing ∧
-      ∃ c ∈ raisingRelative.replay? (head ∘ pendingHom), c.stack = [] ∧
-        pendingHom c.current.toSyntacticObject = .of externalD [] 0 := by
+    raisingRelative.LicensedBy pendingLicensing ∧ raisingRelative.ObeysFreezing ∧
+      ∃ c ∈ raisingRelative.replay? raisingRelative.moverIndex, c.stack = [] ∧
+        pendingLicensing.hom raisingRelative c.current.toSyntacticObject =
+          .of externalD [] 0 := by
   decide
 
 /-- Triggered Merge accepts the derived relative but rejects its derivation: it fails exactly at
 the stages where the noun, still selecting, sits inside *kona*'s phrase, before it is copied out,
 which the derived object, holding only the noun's trace there, no longer shows. -/
 theorem triggeredMerge_rejects_raisingRelative :
-    raisingRelative.LicensedAt SyntacticObject.selCheckHom raisingRelative.length ∧
+    raisingRelative.LicensedAt SelectionState.licensing raisingRelative.length ∧
       ∀ n ≤ raisingRelative.length,
-        (¬ raisingRelative.LicensedAt SyntacticObject.selCheckHom n ↔ n ∈ [1, 2, 3, 4]) := by
+        (¬ raisingRelative.LicensedAt SelectionState.licensing n ↔ n ∈ [1, 2, 3, 4]) := by
   decide
 
 /-- *Kona*'s phrase, *kona* selecting the noun. -/
-def konaPhrase : SyntacticObject :=
+def konaPhrase : SyntacticObject (ι := ℕ) :=
   (PlanarSyntacticObject.merge (.leaf kona) (.leaf headNoun)).toSyntacticObject
 
 /-- The alternative footnote 14 of the article reports: *kona*'s phrase moves to the edge of the
 relative CP, and the noun is then subextracted from it to select the CP. -/
-def subextractionRelative : Minimalist.Derivation :=
-  ⟨headNoun, [.em .left kona, .em .left rcVerb, .em .left rcTense, .em .left relC,
-    .im konaPhrase, .im headNoun, .em .left externalD]⟩
+def subextractionRelative : Minimalist.Derivation ℕ :=
+  ⟨.leaf headNoun, [.em .left (.leaf kona), .em .left (.leaf rcVerb), .em .left (.leaf rcTense),
+    .em .left (.leaf relC), .im konaPhrase, .im (.leaf headNoun), .em .left (.leaf externalD)]⟩
 
 theorem subextractionRelative_costs :
-    subextractionRelative.LicensedBy pendingHom ∧ ¬ subextractionRelative.ObeysFreezing ∧
-      subextractionRelative.CCommandsAt 4 relC headNoun ∧
-      ¬ subextractionRelative.CCommandsAt 5 relC headNoun ∧
-      ¬ subextractionRelative.CCommandsAt 5 headNoun relC := by
-  decide
-
--- Read with the heads of triggered Merge, *kona*'s phrase, which has none there, leaves the bare
--- trace, and selection before saturation then rejects the stage where it moved.
-example : ¬ ∃ p ∈ (subextractionRelative.take 5).externalize?,
-    pendingHom p.toSyntacticObject ≠ 0 := by
+    subextractionRelative.LicensedBy pendingLicensing ∧ ¬ subextractionRelative.ObeysFreezing ∧
+      subextractionRelative.CCommandsAt 4 (.leaf relC) (.leaf headNoun)
+        subextractionRelative.moverIndex ∧
+      ¬ subextractionRelative.CCommandsAt 5 (.leaf relC) (.leaf headNoun)
+        subextractionRelative.moverIndex ∧
+      ¬ subextractionRelative.CCommandsAt 5 (.leaf headNoun) (.leaf relC)
+        subextractionRelative.moverIndex := by
   decide
 
 end ProjectingMovement

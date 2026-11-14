@@ -201,15 +201,31 @@ example (l r : SyntacticObject L ι) (h : merge l r ≠ r) :
 
 /-! ### Traces -/
 
+/-- The trace encoder used when none is given: the label a moved object leaves on its trace. -/
+class TraceLabel (L ι : Type) where
+  /-- The label of the trace a moved object leaves. -/
+  encoder : SyntacticObject L ι → Option ι
+
+/-- Labelled in tokens, a moved object leaves the trace of its head by selection. -/
+instance : TraceLabel LexicalItem.Token LexicalItem.Token := ⟨selHead⟩
+
+/-- Labelled in `ℕ`, a moved object leaves the bare trace unless an encoder numbers it. -/
+instance : TraceLabel L ℕ := ⟨fun _ ↦ none⟩
+
+omit [DecidableEq L] [DecidableEq ι] in
+theorem TraceLabel.encoder_token :
+    (TraceLabel.encoder : SyntacticObject → Option LexicalItem.Token) = selHead := rfl
+
 /-- A moved object leaves the trace of its head under the encoder `τ`, by default the head by
     selection, or the bare trace when it has none. -/
-def headTrace (s : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
-    SyntacticObject :=
-  (τ s).elim trace traceOf
+def headTrace [TraceLabel L ι] (s : SyntacticObject L ι)
+    (τ : SyntacticObject L ι → Option ι := TraceLabel.encoder) : SyntacticObject L ι :=
+  (τ s).elim trace labelledTrace
 
+omit [DecidableEq L] [DecidableEq ι] in
 /-- The trace a moved object leaves is the trace leaf its encoder labels. -/
-theorem toUnorderedTree_headTrace (s : SyntacticObject) (τ : SyntacticObject → Option
-    LexicalItem.Token) :
+theorem toUnorderedTree_headTrace [TraceLabel L ι] (s : SyntacticObject L ι)
+    (τ : SyntacticObject L ι → Option ι) :
     (s.headTrace τ).toUnorderedTree = UnorderedTree.leaf (Sum.inr (τ s)) := by
   unfold headTrace; cases τ s <;> rfl
 
@@ -248,7 +264,9 @@ theorem yield_replace_add_yield {s m t : SyntacticObject L ι} (hs : s.yield.Nod
       · rw [replace_of_notMem_terms hml, add_assoc, ihr hr hmr]
       · exact (hm'.elim hml hmr).elim
 
-theorem yield_headTrace (s : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token) :
+omit [DecidableEq L] [DecidableEq ι] in
+theorem yield_headTrace [TraceLabel L ι] (s : SyntacticObject L ι)
+    (τ : SyntacticObject L ι → Option ι) :
     (s.headTrace τ).yield = 0 := by
   unfold headTrace; cases τ s <;> rfl
 
@@ -283,12 +301,13 @@ end Map
 
 /-- The remainder `T/mover`, the current object with the mover's occurrences replaced by the trace
     of its head under `τ`. -/
-def deleteAccessible (mover current : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : SyntacticObject :=
+def deleteAccessible [TraceLabel L ι] (mover current : SyntacticObject L ι)
+    (τ : SyntacticObject L ι → Option ι := TraceLabel.encoder) : SyntacticObject L ι :=
   current.replace mover (mover.headTrace τ)
 
-@[simp] theorem toUnorderedTree_deleteAccessible (mover current : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token) :
+@[simp] theorem toUnorderedTree_deleteAccessible [TraceLabel L ι]
+    (mover current : SyntacticObject L ι)
+    (τ : SyntacticObject L ι → Option ι) :
     (deleteAccessible mover current τ).toUnorderedTree
       = UnorderedTree.replace mover.toUnorderedTree (mover.headTrace
           τ).toUnorderedTree current.toUnorderedTree :=
@@ -410,22 +429,26 @@ theorem replace_of_toRoseTree_eq_leaf {p r : PlanarSyntacticObject L ι}
 end PlanarSyntacticObject
 
 /-- The planar trace a moved object leaves, `SyntacticObject.headTrace` with its order. -/
-def SyntacticObject.tracePlanar (s : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : PlanarSyntacticObject :=
-  (τ s).elim PlanarSyntacticObject.trace PlanarSyntacticObject.traceOf
+def SyntacticObject.tracePlanar [TraceLabel L ι] (s : SyntacticObject L ι)
+    (τ : SyntacticObject L ι → Option ι := TraceLabel.encoder) : PlanarSyntacticObject L ι :=
+  (τ s).elim PlanarSyntacticObject.trace PlanarSyntacticObject.labelledTrace
 
-@[simp] theorem SyntacticObject.toSyntacticObject_tracePlanar (s : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token) :
+omit [DecidableEq L] [DecidableEq ι] in
+@[simp] theorem SyntacticObject.toSyntacticObject_tracePlanar [TraceLabel L ι]
+    (s : SyntacticObject L ι)
+    (τ : SyntacticObject L ι → Option ι) :
     (s.tracePlanar τ).toSyntacticObject = s.headTrace τ := by
   unfold tracePlanar headTrace; cases τ s <;> rfl
 
-theorem SyntacticObject.toRoseTree_tracePlanar (s : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token) :
+omit [DecidableEq L] [DecidableEq ι] in
+theorem SyntacticObject.toRoseTree_tracePlanar [TraceLabel L ι] (s : SyntacticObject L ι)
+    (τ : SyntacticObject L ι → Option ι) :
     (s.tracePlanar τ).toRoseTree = .node (.inr (τ s)) [] := by
   unfold tracePlanar; cases τ s <;> rfl
 
-theorem PlanarSyntacticObject.yield_replace_add_yield {p s : PlanarSyntacticObject}
-    {m : SyntacticObject} (τ : SyntacticObject → Option LexicalItem.Token)
+theorem PlanarSyntacticObject.yield_replace_add_yield [TraceLabel L ι]
+    {p s : PlanarSyntacticObject L ι}
+    {m : SyntacticObject L ι} (τ : SyntacticObject L ι → Option ι)
     (hp : p.toSyntacticObject.yield.Nodup) (hs : p.find? m = some s) :
     (p.replace m (m.tracePlanar τ)).toSyntacticObject.yield + s.toSyntacticObject.yield =
       p.toSyntacticObject.yield := by

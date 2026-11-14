@@ -205,7 +205,7 @@ theorem BindsAtLF.bindsAtSomeStage {x y : LexicalItem.Token} (hxy : x ≠ y)
       have hsT : c.current.contract.find? mover = some sM.contract := by
         rw [← Marked.map_contract_find?, hsM]; rfl
       have hreplay : (d.append [.im mover side]).replay? =
-          some ⟨(c.current.contract.replace mover (mover.tracePlanar selHead)).attach side
+          some ⟨(c.current.contract.replace mover mover.tracePlanar).attach side
             sM.contract, c.stack.map Marked.contract⟩ := by
         rw [replay?_append_singleton, hcT]
         simp [Step.replay?, Cfg.map, hsT]

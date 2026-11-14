@@ -40,12 +40,15 @@ namespace Minimalist.Derivation
 
 open SyntacticObject
 
-variable {d : Derivation} {steps : List Step} {x : SyntacticObject}
+variable {ι : Type} {d : Derivation ι} {steps : List (Step ι)}
+  {x : SyntacticObject (ι := ι)}
 
 /-- `x` sits inside a constituent `d` has moved. -/
-def Frozen (d : Derivation) (x : SyntacticObject) : Prop := ∃ m ∈ d.movedItems, Contains m x
+def Frozen (d : Derivation ι) (x : SyntacticObject (ι := ι)) : Prop :=
+  ∃ m ∈ d.movedItems, Contains m x
 
-instance (d : Derivation) (x : SyntacticObject) : Decidable (d.Frozen x) :=
+instance [DecidableEq ι] (d : Derivation ι) (x : SyntacticObject (ι := ι)) :
+    Decidable (d.Frozen x) :=
   inferInstanceAs (Decidable (∃ m ∈ d.movedItems, Contains m x))
 
 /-- Extending a derivation freezes what its new movers contain and nothing else. -/
@@ -62,10 +65,10 @@ theorem Frozen.append (h : d.Frozen x) : (d.append steps).Frozen x :=
 
 /-- A derivation obeys Freezing when no step moves a constituent that an earlier mover
 contains. -/
-def ObeysFreezing (d : Derivation) : Prop :=
+def ObeysFreezing (d : Derivation ι) : Prop :=
   d.movedItems.Pairwise fun m m' ↦ ¬ Contains m m'
 
-instance (d : Derivation) : Decidable d.ObeysFreezing :=
+instance [DecidableEq ι] (d : Derivation ι) : Decidable d.ObeysFreezing :=
   inferInstanceAs (Decidable (d.movedItems.Pairwise _))
 
 /-- A derivation obeys Freezing exactly when no step moves a constituent that the mover of an
@@ -93,11 +96,11 @@ theorem obeysFreezing_append_iff :
   grind
 
 /-- A further movement obeys Freezing exactly when its mover is not frozen. -/
-@[simp] theorem obeysFreezing_append_im_iff {m : SyntacticObject} {side : Edge} :
+@[simp] theorem obeysFreezing_append_im_iff {m : SyntacticObject (ι := ι)} {side : Edge} :
     (d.append [.im m side]).ObeysFreezing ↔ d.ObeysFreezing ∧ ¬ d.Frozen m := by
   simp [obeysFreezing_append_iff]
 
-@[simp] theorem obeysFreezing_append_em_iff {item : PlanarSyntacticObject} {side : Edge} :
+@[simp] theorem obeysFreezing_append_em_iff {item : PlanarSyntacticObject (ι := ι)} {side : Edge} :
     (d.append [.em side item]).ObeysFreezing ↔ d.ObeysFreezing := by
   simp [obeysFreezing_append_iff]
 
@@ -105,7 +108,7 @@ theorem obeysFreezing_append_iff :
 
 section Map
 
-variable {f : LexicalItem.Token → LexicalItem.Token}
+variable {f : LexicalItem.Token → LexicalItem.Token} {d : Derivation} {x : SyntacticObject}
 
 theorem frozen_map_iff (hf : Function.Injective f) : (d.map f).Frozen (x.map f) ↔ d.Frozen x := by
   simp only [Frozen, movedItems_map, List.mem_map, exists_exists_and_eq_and, contains_map_iff hf]
@@ -118,7 +121,7 @@ end Map
 
 /-! ### Unlabeled immobility -/
 
-variable (L : PlanarSyntacticObject → SyntacticObject → Prop)
+variable (L : PlanarSyntacticObject → SyntacticObject → Prop) {d : Derivation} {steps : List Step}
 
 /-- [boskovic-2018]'s Unlabeled Immobility Condition: each mover of `d` is labeled, as `L` reads
 labels, in the object the derivation has built when it moves. -/

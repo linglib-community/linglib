@@ -299,7 +299,8 @@ theorem converges_map (a : Analysis) (ev : Bool) :
     (p.map f).Converges a ev ↔ p.Converges a ev := by
   have hi : f infl₀ = infl₀ := hh _ (by simp [heads])
   rw [Converges, InflFinds, Converges, InflFinds, preRaising_map p hh,
-    Derivation.externalize?_map hf fun s ↦ s.selHead_map hsel]
+    Derivation.externalize?_map (τ := TraceLabel.encoder) (τ' := TraceLabel.encoder) hf
+      fun s ↦ s.selHead_map hsel]
   cases (p.preRaising a ev).externalize? with
   | none => simp
   | some t =>
@@ -403,7 +404,7 @@ theorem nodup_lexTokens (a : Analysis) (ev : Bool) :
 theorem isSome_replay? (a : Analysis) (ev : Bool) :
     ((Clause.of verb agent patient c be).passive a ev).replay?.isSome := by
   rw [of_eq_map, Clause.passive_map _ (renaming_heads _ _ _ _ _),
-    Derivation.replay?_map (Equiv.injective _)
+    Derivation.replay?_map (τ := TraceLabel.encoder) (τ' := TraceLabel.encoder) (Equiv.injective _)
       (fun s ↦ s.selHead_map (renaming_preservesSelection ..)), Option.isSome_map]
   generalize c.map (Complement.map fun _ ↦ ()) = s
   revert s a ev
