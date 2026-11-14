@@ -80,19 +80,19 @@ variable {α : Type*}
 /-- The diagonal `(0, 0), (1, 1), …` between `Fin m` and `Fin n`, one pair per index of the
 shorter string. -/
 def diagonal (m n : ℕ) : Correspondence (Fin m) (Fin n) :=
-  (Finset.univ : Finset (Fin (min m n))).image
-    fun i ↦ (i.castLE (min_le_left _ _), i.castLE (min_le_right _ _))
+  (Finset.univ : Finset (Fin (min m n))).map
+    ⟨fun i ↦ (i.castLE (min_le_left _ _), i.castLE (min_le_right _ _)),
+      fun _ _ h ↦ Fin.ext (congrArg (·.1.1) h)⟩
 
 @[simp] theorem mem_diagonal {m n : ℕ} (a : Fin m) (b : Fin n) :
     (a, b) ∈ diagonal m n ↔ (a : ℕ) = (b : ℕ) := by
-  simp only [diagonal, Finset.mem_image, Finset.mem_univ, true_and, Prod.mk.injEq, Fin.ext_iff,
-    Fin.val_castLE]
+  simp only [diagonal, Finset.mem_map, Finset.mem_univ, true_and, Function.Embedding.coeFn_mk,
+    Prod.mk.injEq, Fin.ext_iff, Fin.val_castLE]
   exact ⟨fun ⟨_, h₁, h₂⟩ ↦ h₁.symm.trans h₂,
     fun h ↦ ⟨⟨a, by have := a.2; have := b.2; omega⟩, rfl, h⟩⟩
 
 theorem card_diagonal (m n : ℕ) : (diagonal m n).card = min m n := by
-  rw [diagonal, Finset.card_image_of_injective _ fun _ _ h ↦ Fin.ext (congrArg (·.1.1) h),
-    Finset.card_univ, Fintype.card_fin]
+  rw [diagonal, Finset.card_map, Finset.card_univ, Fintype.card_fin]
 
 @[simp] theorem inv_diagonal (m n : ℕ) : (diagonal m n).inv = diagonal n m := by
   ext ⟨b, a⟩
@@ -137,10 +137,9 @@ theorem card_filter_diagonal {β : Type*} (l₁ : List α) (l₂ : List β) (q :
     [DecidablePred q] :
     ((diagonal l₁.length l₂.length).filter fun p ↦ q (l₁[p.1], l₂[p.2])).card =
       (l₁.zip l₂).countP (q ·) := by
-  rw [diagonal, Finset.filter_image,
-    Finset.card_image_of_injective _ fun _ _ h ↦ Fin.ext (congrArg (·.1.1) h), Finset.card_def,
-    Finset.filter_val, ← ofFn_getElem_zip, ← Multiset.coe_countP, ← Fin.univ_val_map,
-    Multiset.countP_map]
+  rw [diagonal, Finset.filter_map, Finset.card_map, Finset.card_def, Finset.filter_val,
+    ← ofFn_getElem_zip, ← Multiset.coe_countP, ← Fin.univ_val_map, Multiset.countP_map]
+  rfl
 
 /-! ### Index pairs -/
 
@@ -481,13 +480,8 @@ theorem identViolFeature_eq_zero_of_diagonal {F : Type*} [DecidableEq F] (proj :
     (hform : c.form r₁ = c.form r₂)
     (hedge : c.edge r₁ r₂ = diagonal (c.form r₁).length (c.form r₂).length) :
     c.identViolFeature proj r₁ r₂ = 0 := by
-  simp only [identViolFeature, Correspondence.identViol, hedge, Finset.card_eq_zero,
-    Finset.filter_eq_empty_iff, not_not]
-  rintro ⟨i, j⟩ hij
-  have hij : (i : ℕ) = j := (mem_diagonal i j).1 hij
-  have h : (c.form r₁)[(i : ℕ)]? = (c.form r₂)[(j : ℕ)]? := by rw [hij, hform]
-  rw [List.getElem?_eq_getElem i.2, List.getElem?_eq_getElem j.2, Option.some_inj] at h
-  exact congrArg proj h
+  simp [identViolFeature_of_diagonal c r₁ r₂ proj hedge, hform, List.zip_eq_zipWith,
+    List.zipWith_self]
 
 theorem identViol_eq_zero_of_diagonal [DecidableEq α] (hform : c.form r₁ = c.form r₂)
     (hedge : c.edge r₁ r₂ = diagonal (c.form r₁).length (c.form r₂).length) :
