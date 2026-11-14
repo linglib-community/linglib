@@ -15,7 +15,10 @@ when a DRS declaring it is accessible to one containing the condition. Accessibi
 of complex conditions, so it is decidable, and it is
 [preserved by renaming](##DRT.AccessibleTo.map). A DRS is
 [proper exactly when](##DRT.DRS.isProper_iff_forall_occurrence) every atomic condition finds its
-referents among the DRSs the walk has passed where it occurs.
+referents among the DRSs the walk has passed where it occurs, and
+[reuse-free exactly when](##DRT.DRS.reuseFreeAt_empty_iff_forall_occurrence) no DRS declares one
+of them again: the two hypotheses under which a DRS has the truth conditions of its first-order
+translation.
 
 ## Implementation notes
 
@@ -451,5 +454,50 @@ theorem DRS.IsProper.accessibleFrom {K K' : DRS L V} (hK : K.IsProper)
     ⟨K', bs, h, hγ, K.isProper_iff_forall_occurrence.mp hK K' bs h γ hγ hat hx⟩
 
 end Properness
+
+/-! ### Reuse-freeness and accessibility -/
+
+section ReuseFree
+
+variable [DecidableEq V]
+
+theorem Condition.reuseFreeAt_iff {c : Condition L V} {X : Finset V} :
+    c.ReuseFreeAt X ↔
+      ∀ K s, K :: s ∈ c.subordinates → K.ReuseFreeAt (X ∪ scopeReferents s) := by
+  cases c <;> simp [or_imp, forall_and]
+
+/-- At the occurrences at or below an occurrence of `K` that has passed `bs`, no DRS declares
+a referent of the DRSs passed iff `K` is reuse-free at the referents declared in `bs`. -/
+theorem DRS.forall_mem_occurrences_disjoint_iff (K : DRS L V) (bs : List (DRS L V)) :
+    (∀ K' bs', K' :: bs' ∈ K.occurrences bs → Disjoint (scopeReferents bs') K'.referents) ↔
+      K.ReuseFreeAt (scopeReferents bs) := by
+  induction K using wellFounded_directlySubordinate.induction generalizing bs with
+  | _ K ih =>
+    rw [DRS.reuseFreeAt_iff, Finset.union_comm, ← scopeReferents_cons]
+    constructor
+    · intro h
+      refine ⟨h K bs (DRS.mem_occurrences.2 (.inl rfl)), fun c hc =>
+        Condition.reuseFreeAt_iff.2 fun K' s hs => ?_⟩
+      rw [Finset.union_comm, ← scopeReferents_append]
+      exact (ih K' ⟨c, hc, s, hs⟩ _).1 fun K'' bs'' ht =>
+        h K'' bs'' (DRS.mem_occurrences.2 (.inr ⟨c, hc, K', s, hs, ht⟩))
+    · rintro ⟨hd, h⟩ K' bs' ht
+      rcases DRS.mem_occurrences.1 ht with heq | ⟨c, hc, K'', s, hs, ht⟩
+      · obtain ⟨rfl, rfl⟩ := List.cons.inj heq
+        exact hd
+      · refine (ih K'' ⟨c, hc, s, hs⟩ _).2 ?_ K' bs' ht
+        rw [scopeReferents_append, Finset.union_comm]
+        exact Condition.reuseFreeAt_iff.1 (h c hc) K'' s hs
+
+/-- A DRS is reuse-free iff no occurrence of a DRS in it declares a referent of the DRSs
+passed on the way there, which is when verification by partial embeddings and by total
+assignments agree. -/
+theorem DRS.reuseFreeAt_empty_iff_forall_occurrence (K : DRS L V) :
+    K.ReuseFreeAt ∅ ↔
+      ∀ K' bs, Occurrence K (K' :: bs) → Disjoint (scopeReferents bs) K'.referents := by
+  simp only [Occurrence, ← DRS.mem_occurrences_iff]
+  exact (K.forall_mem_occurrences_disjoint_iff []).symm
+
+end ReuseFree
 
 end DRT
