@@ -208,6 +208,13 @@ def ofStrings (f : Role → List (Segment α)) : Coindexation Role α where
     (ofStrings f).string r = (f r).map (·.seg) := by
   simp [string, ofStrings]
 
+/-- The input, the base and the reduplicant, coindexed position by position. -/
+def reduplication (input base reduplicant : List α) : Coindexation ReduplicationRole α :=
+  ofStrings fun
+    | .input => indexed input
+    | .base => indexed base
+    | .reduplicant => indexed reduplicant
+
 end Coindexation
 
 end OptimalityTheory.Correspondence

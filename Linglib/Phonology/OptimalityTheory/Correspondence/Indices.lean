@@ -298,6 +298,35 @@ private theorem sum_countP_zipIdx (q : α → α → Prop) [∀ a b, Decidable (
       rw [List.map_congr_left h₂, ih t (k + 1), List.countP_cons, List.countP_cons, h₁]
       simp [add_comm]
 
+private theorem countP_zipIdx_forall_not_corresponds (s t : List α) (k : ℕ) :
+    ((s.zipIdx k).map fun x ↦ Segment.ofIndex x.1 x.2).countP (fun x ↦
+      ∀ y ∈ (t.zipIdx k).map fun y ↦ Segment.ofIndex y.1 y.2, ¬ x.Corresponds y) =
+        s.length - t.length := by
+  induction s generalizing t k with
+  | nil => simp
+  | cons a s ih =>
+    cases t with
+    | nil => simp
+    | cons b t =>
+      have h : ∀ x ∈ (s.zipIdx (k + 1)).map fun x ↦ Segment.ofIndex x.1 x.2,
+          (∀ y ∈ Segment.ofIndex b k :: (t.zipIdx (k + 1)).map fun y ↦ Segment.ofIndex y.1 y.2,
+            ¬ x.Corresponds y) ↔
+          ∀ y ∈ (t.zipIdx (k + 1)).map fun y ↦ Segment.ofIndex y.1 y.2, ¬ x.Corresponds y :=
+        fun x hx ↦ by
+          obtain ⟨⟨c, j⟩, hj, rfl⟩ := List.mem_map.1 hx
+          have := (List.mem_zipIdx hj).1
+          simp only [List.forall_mem_cons, Segment.corresponds_ofIndex, and_iff_right_iff_imp]
+          omega
+      simp only [List.zipIdx_cons, List.map_cons, List.length_cons, Nat.add_sub_add_right]
+      rw [List.countP_cons_of_neg (by simp), ← ih t (k + 1)]
+      exact List.countP_congr fun x hx ↦ by simpa using h x hx
+
+/-- Between two strings indexed by position the segments of the first beyond the length of the
+second have no correspondent. -/
+theorem maxViol_indexed (s t : List α) :
+    Segment.maxViol (indexed s) (indexed t) = s.length - t.length :=
+  countP_zipIdx_forall_not_corresponds s t 0
+
 theorem maxViolFeature_indexed (P : α → Prop) [DecidablePred P] (s t : List α) :
     Segment.maxViolFeature P (indexed s) (indexed t) =
       (s.zip t).countP fun p ↦ P p.1 ∧ ¬ P p.2 :=
