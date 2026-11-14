@@ -68,7 +68,7 @@ and tone, and derives from it the paradigm of `Fragments/Taos/Agreement.lean`.
 
 namespace Middleton2026
 
-open Minimalist DistributedMorphology RuleInteraction Number
+open Minimalist DistributedMorphology Phonology Number
 
 /-! ### Inherent and natural number
 
@@ -970,29 +970,26 @@ def linearize (p : Prefix) : List Terminal :=
 
 /-- By rule (18), the goal's `[−author]` swaps with its following inverse feature, when an agent is
 present. -/
-def m18 (p : Prefix) : List Terminal → List Terminal :=
-  reduplicateFirst fun n ↦
-    if p.agent ≠ [] ∧ n.focus = (.goal, .author false) ∧
-      n.rightCtx.head? = some (.goal, .inverse) then some (.metathesis 1 1) else none
+def m18 (p : Prefix) (n : Neighborhood Terminal) : Option Reduplication :=
+  if p.agent ≠ [] ∧ n.focus = (.goal, .author false) ∧
+    n.rightCtx.head? = some (.goal, .inverse) then some (.metathesis 1 1) else none
 
 /-- By rule (23), the paper's (26), a `[−atomic]` agent's `[+minimal]` swaps with the second
 argument's following `[−author]`. -/
-def m23 (p : Prefix) : List Terminal → List Terminal :=
-  reduplicateFirst fun n ↦
-    if p.agent.Has (.atomic false) ∧ n.focus = (.agent, .minimal true) ∧
-      n.rightCtx.head? = some (p.secondArg, .author false) then some (.metathesis 1 1) else none
+def m23 (p : Prefix) (n : Neighborhood Terminal) : Option Reduplication :=
+  if p.agent.Has (.atomic false) ∧ n.focus = (.agent, .minimal true) ∧
+    n.rightCtx.head? = some (p.secondArg, .author false) then some (.metathesis 1 1) else none
 
 /-- By rule (22), the paper's (24), the goal's `[−author]` swaps with its following `[−atomic]`
 before `[+minimal]`, when an agent is present. -/
-def m22 (p : Prefix) : List Terminal → List Terminal :=
-  reduplicateFirst fun n ↦
-    if p.agent ≠ [] ∧ n.focus = (.goal, .author false) ∧
-      n.rightCtx.take 2 = [(.goal, .atomic false), (.goal, .minimal true)]
-    then some (.metathesis 1 1) else none
+def m22 (p : Prefix) (n : Neighborhood Terminal) : Option Reduplication :=
+  if p.agent ≠ [] ∧ n.focus = (.goal, .author false) ∧
+    n.rightCtx.take 2 = [(.goal, .atomic false), (.goal, .minimal true)]
+  then some (.metathesis 1 1) else none
 
 /-- The appendix's two sets of rules of metathesis in order. -/
 def metathesis (p : Prefix) : List Terminal → List Terminal :=
-  m22 p ∘ m23 p ∘ m18 p
+  reduplicateFirst (m22 p) ∘ reduplicateFirst (m23 p) ∘ reduplicateFirst (m18 p)
 
 /-- The phonological role of an exponent, for the epenthetic vowel. -/
 inductive Role where
@@ -1410,7 +1407,7 @@ theorem metathesis_without_r24 :
 /-- Applied to the prefix as Spell-Out leaves it, (24) feeds (23): it removes the goal's
 `[−participant]` that separates the agent's `[+minimal]` from the goal's `[−author]`. -/
 theorem r24_feeds_m23 :
-    Feeds r24.apply (fun p ↦ m23 p (linearize p) ≠ linearize p)
+    Feeds r24.apply (fun p ↦ Fires (m23 p) (linearize p))
       (spellOut ⟨some (.first, .dual), some (.third, .singular), some .dummy⟩) := by
   decide +kernel
 
@@ -1465,14 +1462,15 @@ def zamudio : ObliterationRule Terminal := participantDissimilation [⟨.partici
 past T and what follows it up to the first ergative clitic change places with that clitic: the
 double brackets open before T and close after the clitic, and the angled brackets stand before
 the clitic. (105a)'s conditions on an intervening dative clitic are left out. -/
-def ergativeMetathesis : SpelloutDomain Terminal → SpelloutDomain Terminal :=
-  reduplicateFirst fun n ↦
-    if n.leftCtx = [] ∧ ⟨.tense, true⟩ ∈ n.focus then
-      (n.rightCtx.findIdx? (·.contains ⟨.case, .erg⟩)).map fun i ↦ .metathesis (i + 1) 1
-    else none
+def ergativeMetathesis (n : Neighborhood Terminal) : Option Reduplication :=
+  if n.leftCtx = [] ∧ ⟨.tense, true⟩ ∈ n.focus then
+    (n.rightCtx.findIdx? (·.contains ⟨.case, .erg⟩)).map fun i ↦ .metathesis (i + 1) 1
+  else none
 
-theorem ergativeMetathesis_perm (d : SpelloutDomain Terminal) : (ergativeMetathesis d).Perm d :=
+theorem reduplicateFirst_ergativeMetathesis_perm (d : SpelloutDomain Terminal) :
+    (reduplicateFirst ergativeMetathesis d).Perm d :=
   reduplicateFirst_perm (fun n b hb ↦ by
+    unfold ergativeMetathesis at hb
     split_ifs at hb
     · obtain ⟨i, -, rfl⟩ := Option.map_eq_some_iff.1 hb; rfl
     · cases hb) d
@@ -1483,7 +1481,7 @@ def lSupportRepair (d : SpelloutDomain Terminal) : SpelloutDomain Terminal :=
 
 /-- The Linear Operations module applies the two repairs of T-Noninitiality. -/
 def linearOperations : SpelloutDomain Terminal → SpelloutDomain Terminal :=
-  lSupportRepair ∘ ergativeMetathesis
+  lSupportRepair ∘ reduplicateFirst ergativeMetathesis
 
 /-- Feature Markedness before Linear Operations, the order of Figure 1. -/
 def markednessThenLinear (pd : ObliterationRule Terminal) :
@@ -1521,7 +1519,7 @@ theorem ondarru_linear_then_markedness :
 /-- In Ondarru, Participant Dissimilation feeds Ergative Metathesis (§3.1.3), T being initial only
 once the absolutive clitic is gone. -/
 theorem ondarru_feeds :
-    Feeds ondarru.apply (fun d ↦ ergativeMetathesis d ≠ d) auxiliary17 := by
+    Feeds ondarru.apply (Fires ergativeMetathesis) auxiliary17 := by
   decide
 
 theorem zamudio_markedness_then_linear :
@@ -1538,7 +1536,7 @@ theorem zamudio_linear_then_markedness :
 /-- In Zamudio, Participant Dissimilation bleeds Ergative Metathesis (§3.1.4) by removing the
 ergative clitic that would front. -/
 theorem zamudio_bleeds :
-    Bleeds zamudio.apply (fun d ↦ ergativeMetathesis d ≠ d) auxiliary19 := by
+    Bleeds zamudio.apply (Fires ergativeMetathesis) auxiliary19 := by
   decide
 
 end Basque

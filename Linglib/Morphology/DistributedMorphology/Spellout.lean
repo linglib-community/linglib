@@ -10,7 +10,8 @@ The PF branch at the level of the word: the syntax hands over a string of termin
 postsyntactic operations rewrite it, and Vocabulary Insertion realizes each surviving terminal in
 its neighborhood. The focus-level rules (`ImpoverishmentRule` and kin) rewrite one terminal; the
 operations here remove, merge, move and copy terminals, each [at the first
-neighborhood](##DistributedMorphology.rewriteFirst) where it applies. Obliteration [leaves a
+neighborhood](##DistributedMorphology.rewriteFirst) where it
+[fires](##DistributedMorphology.Fires). Obliteration [leaves a
 sublist](##DistributedMorphology.ObliterationRule.apply_sublist) of the string and Fusion [never
 lengthens it](##DistributedMorphology.FusionRule.length_applyFirstAdjacent_le). The linear
 operations are stated in Generalized Reduplication: brackets copy a stretch of the string, less
@@ -89,12 +90,37 @@ theorem rewriteFirst_induction {C : SpelloutDomain Bundle → Prop} (self : C d)
     obtain ⟨n, hn, hf⟩ := List.exists_of_findSome?_eq_some h
     exact step n l (toList_of_mem_along d hn) hf
 
-theorem rewriteFirst_of_forall_eq_none (h : ∀ n ∈ along d, f n = none) : rewriteFirst f d = d := by
-  rw [rewriteFirst, List.findSome?_eq_none_iff.2 h, Option.getD_none]
-
 @[simp] theorem rewriteFirst_nil : rewriteFirst f [] = [] := rfl
 
 end RewriteFirst
+
+/-- A rule, as a partial map on neighborhoods, fires on a domain when it has a value at one of the
+domain's neighborhoods. -/
+def Fires {β : Type*} (f : Neighborhood Bundle → Option β) (d : SpelloutDomain Bundle) : Prop :=
+  ∃ n ∈ along d, (f n).isSome
+
+section Fires
+
+variable {β : Type*} {f : Neighborhood Bundle → Option β} {d : SpelloutDomain Bundle}
+
+instance : Decidable (Fires f d) := inferInstanceAs (Decidable (∃ n ∈ along d, (f n).isSome))
+
+theorem not_fires_iff : ¬ Fires f d ↔ ∀ n ∈ along d, f n = none := by
+  simp [Fires]
+
+@[simp] theorem not_fires_nil : ¬ Fires f ([] : SpelloutDomain Bundle) := by
+  simp [Fires, along]
+
+theorem fires_map_iff {γ : Type*} {g : Neighborhood Bundle → β → γ} :
+    Fires (fun n ↦ (f n).map (g n)) d ↔ Fires f d := by
+  simp [Fires]
+
+/-- A rule that does not fire leaves the domain as it is. -/
+theorem rewriteFirst_of_not_fires {f : Neighborhood Bundle → Option (SpelloutDomain Bundle)}
+    (h : ¬ Fires f d) : rewriteFirst f d = d := by
+  rw [rewriteFirst, List.findSome?_eq_none_iff.2 (not_fires_iff.1 h), Option.getD_none]
+
+end Fires
 
 /-! ### Obliteration -/
 
@@ -186,6 +212,10 @@ focus, and otherwise leaves the domain unchanged. -/
 def reduplicateFirst (sd : Neighborhood Bundle → Option Reduplication) :
     SpelloutDomain Bundle → SpelloutDomain Bundle :=
   rewriteFirst fun n ↦ (sd n).map fun b ↦ n.leftCtx.reverse ++ b.apply (n.focus :: n.rightCtx)
+
+theorem reduplicateFirst_of_not_fires {sd : Neighborhood Bundle → Option Reduplication}
+    {d : SpelloutDomain Bundle} (h : ¬ Fires sd d) : reduplicateFirst sd d = d :=
+  rewriteFirst_of_not_fires (mt fires_map_iff.1 h)
 
 /-- A rule of Metathesis permutes the terminals of the domain. -/
 theorem reduplicateFirst_perm {sd : Neighborhood Bundle → Option Reduplication}
