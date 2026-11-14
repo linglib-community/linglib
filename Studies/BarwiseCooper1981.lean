@@ -184,10 +184,11 @@ the third does not. -/
 -- §4.8
 theorem not_rightContinuous_exactly_three_sup_exactly_five :
     ¬ (exactly 3 ⊔ exactly 5 : Det (Fin 5)).RightContinuous := fun h ↦ by
-  have := h .univ {x | x.val < 4} {x | x.val < 3} .univ
-    (fun x (hx : x.val < 3) ↦ (by omega : x.val < 4)) (Set.subset_univ _)
+  have := fun h₁ h₂ ↦ (h .univ).out' (x := {x | x.val < 3}) (y := .univ) h₁ h₂
+    (⟨fun x (hx : x.val < 3) ↦ (by omega : x.val < 4), Set.subset_univ _⟩ :
+      {x : Fin 5 | x.val < 4} ∈ Set.Icc {x | x.val < 3} Set.univ)
   revert this
-  simp only [Pi.sup_apply, sup_Prop_eq]
+  simp only [Set.mem_ofPred_eq, Pi.sup_apply, sup_Prop_eq]
   decide
 
 -- §4.8
