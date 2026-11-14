@@ -134,4 +134,6 @@ def alignment : Aspect.Perfectivity → Alignment.AlignmentType
   | .perfective => .ergative
   | .imperfective => .accusative
 
+instance : _root_.Case.System Case := { label := Case.label }
+
 end HindiUrdu

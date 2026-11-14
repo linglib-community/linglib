@@ -33,4 +33,6 @@ def Case.label : Case → _root_.Case
   | objective => .acc
   | possessive => .gen
 
+instance : _root_.Case.System Case := { label := Case.label }
+
 end Ga

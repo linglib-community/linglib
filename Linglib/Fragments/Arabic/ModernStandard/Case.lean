@@ -354,4 +354,6 @@ theorem nuun_deletion :
 
 end Declension
 
+instance : _root_.Case.System Case := { label := Case.label }
+
 end Arabic.ModernStandard

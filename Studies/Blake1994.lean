@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Finset.Option
-public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Core.Order.UpperLower.Finset
 public import Linglib.Fragments.Arabic.ModernStandard.Case
 public import Linglib.Fragments.Dargwa.Tanti.Case
 public import Linglib.Fragments.Finnish.Case
@@ -36,8 +36,9 @@ public import Linglib.Fragments.Yakut.Case
 Blake surveys inflectional case systems from two members to a dozen and finds that they tend to
 be built up in one order: nominative, then accusative or ergative, genitive, dative, locative,
 ablative or instrumental, and then the rest. A language with a case at some position usually has
-a case at every position to its left, so that [systems built in this order lie along one line of
-growth](##Conforms.total), as do [the systems he cites for the successive
+a case at every position to its left. Such a system fills the positions down to the last it
+fills and no others, so that [the systems built in this order lie along one line of
+growth](##Conforms.total), as do [the systems Blake cites for the successive
 stages](##systems_conform). The vocative is set aside, since it marks no relation of a dependent
 to a head.
 
@@ -45,11 +46,12 @@ Blake stresses that this is a tendency and not an implicational universal. Bound
 the work of a higher case, which leaves a gap: Nanai has no genitive, and [Warndarang lacks the
 genitive, the dative and a second core case](##gaps_warndarang). And a case of several functions
 bears one label, which leaves an apparent gap at the position of a function it is not labelled
-for: [such a gap is a position that the functions fill](##gaps_subset_of_conforms). The lowest
-case of a small system is an elsewhere case of this kind. The Latin ablative merges an older
-ablative, instrumental and locative, its label in Blake's words somewhat arbitrary, and [the
-locative position that the Latin labels skip is filled by its
-functions](##gaps_latin_labels_subset).
+for: [such a gap is a position that the functions fill](##gaps_inventory_subset). The practice
+Blake reports is to label a case for the highest of its functions, and under it [each apparent
+gap lies below the label of a case that fills it](##LabelledForHighest.exists_lt_of_mem_gaps).
+The lowest case of a small system is an elsewhere case of this kind. The Latin ablative merges an
+older ablative, instrumental and locative, and its label, in Blake's words somewhat arbitrary, is
+not that of its highest function: the Latin labels skip the locative position.
 
 ## Implementation notes
 
@@ -104,6 +106,8 @@ theorem Position.rank_injective : Function.Injective Position.rank := by decide
 
 instance : LinearOrder Position := LinearOrder.lift' Position.rank Position.rank_injective
 
+instance : LocallyFiniteOrderBot Position := Fintype.toLocallyFiniteOrderBot
+
 /-- The position of a case. A local case goes by its direction, a case of rest with the locative
 and a case of source with the ablative, and the vocative has no position. The oblique of a
 two-case system is at the second position, the case that is likely to cover P or A but for which
@@ -141,7 +145,7 @@ theorem mem_gaps : q ∈ gaps inv ↔ q ∉ positions inv ∧ ∃ p ∈ position
   simp [gaps]
 
 instance : Decidable (Conforms inv) :=
-  inferInstanceAs (Decidable (∀ a b : Position, b ≤ a → a ∈ positions inv → b ∈ positions inv))
+  inferInstanceAs (Decidable (IsLowerSet (positions inv : Set Position)))
 
 theorem conforms_iff_gaps_eq_empty : Conforms inv ↔ gaps inv = ∅ := by
   refine ⟨fun h ↦ Finset.eq_empty_of_forall_notMem fun q hq ↦ ?_, fun h p q hqp hp ↦ ?_⟩
@@ -155,19 +159,75 @@ theorem conforms_iff_gaps_eq_empty : Conforms inv ↔ gaps inv = ∅ := by
 theorem positions_mono (h : inv ⊆ inv') : positions inv ⊆ positions inv' :=
   Finset.biUnion_subset_biUnion_of_subset_left _ h
 
-/-- Conforming systems lie along one line of growth, since of any two one fills every position
-the other fills. -/
-theorem Conforms.total (h : Conforms inv) (h' : Conforms inv') :
-    positions inv ⊆ positions inv' ∨ positions inv' ⊆ positions inv := by
-  simpa using IsLowerSet.total h h'
+-- A conforming inventory fills the positions down to the last it fills, and no others.
+theorem Conforms.mem_positions_iff (h : Conforms inv) :
+    p ∈ positions inv ↔ ↑p ≤ (positions inv).max :=
+  IsLowerSet.mem_iff_le_max h
 
-/-- A case of several functions bears one label, and this leaves only apparent gaps: when the
-functions of a language's cases conform, each gap among its labels is a position that some case
-fills with a function it is not labelled for. -/
+theorem Conforms.eq_empty_or_eq_Iic (h : Conforms inv) :
+    positions inv = ∅ ∨ ∃ p, positions inv = Finset.Iic p :=
+  IsLowerSet.eq_empty_or_eq_Iic h
+
+/-- Systems that conform lie along one line of growth: of any two, one fills every position the
+other fills. -/
+theorem Conforms.total (h : Conforms inv) (h' : Conforms inv') :
+    positions inv ⊆ positions inv' ∨ positions inv' ⊆ positions inv :=
+  IsLowerSet.subset_or_subset h h'
+
+-- A stage of the hierarchy is fixed by how many positions it fills.
+theorem Conforms.positions_eq_of_card_eq (h : Conforms inv) (h' : Conforms inv')
+    (hc : (positions inv).card = (positions inv').card) : positions inv = positions inv' := by
+  rcases h.total h' with hs | hs
+  · exact Finset.eq_of_subset_of_card_le hs hc.ge
+  · exact (Finset.eq_of_subset_of_card_le hs hc.le).symm
+
 theorem gaps_subset_of_conforms (h : inv ⊆ inv') (h' : Conforms inv') :
     gaps inv ⊆ positions inv' \ positions inv := fun q hq ↦ by
   obtain ⟨hq, p, hp, hqp⟩ := mem_gaps.1 hq
   exact Finset.mem_sdiff.2 ⟨h' hqp.le (positions_mono h hp), hq⟩
+
+/-! ### Labels and functions -/
+
+section System
+
+variable (K : Type*) [Case.System K] [Fintype K]
+
+/-- A case of several functions bears one label, and this leaves only apparent gaps: when the
+functions of a language's cases conform, each gap among its labels is a position that some case
+fills with a function it is not labelled for. -/
+theorem gaps_inventory_subset (h : Conforms (Case.functionInventory K)) :
+    gaps (Case.inventory K) ⊆
+      positions (Case.functionInventory K) \ positions (Case.inventory K) :=
+  gaps_subset_of_conforms (Case.inventory_subset_functionInventory K) h
+
+/-- The cases of a system are labelled for the highest of their functions when each case that
+has a function on the hierarchy is labelled at that position or to its left. -/
+def LabelledForHighest : Prop :=
+  ∀ k : K, ∀ c ∈ Case.System.functions k, ∀ q, position c = some q →
+    ∃ p, position (Case.System.label k) = some p ∧ p ≤ q
+
+instance : Decidable (LabelledForHighest K) := by
+  unfold LabelledForHighest; infer_instance
+
+variable {K}
+
+/-- Labelling a case for the highest of its functions puts the apparent gaps where the lower
+functions are: when the functions conform, each gap among the labels is filled by a function of
+a case labelled to its left. -/
+theorem LabelledForHighest.exists_lt_of_mem_gaps (hl : LabelledForHighest K)
+    (hc : Conforms (Case.functionInventory K)) {g : Position}
+    (hg : g ∈ gaps (Case.inventory K)) :
+    ∃ k : K, ∃ p, position (Case.System.label k) = some p ∧ p < g ∧
+      ∃ c ∈ Case.System.functions k, position c = some g := by
+  obtain ⟨hf, hn⟩ := Finset.mem_sdiff.1 (gaps_inventory_subset K hc hg)
+  obtain ⟨c, hcf, hcg⟩ := mem_positions.1 hf
+  obtain ⟨k, hk⟩ := Case.mem_functionInventory.1 hcf
+  obtain ⟨p, hp, hpg⟩ := hl k c hk g hcg
+  refine ⟨k, p, hp, lt_of_le_of_ne hpg ?_, c, hk, hcg⟩
+  rintro rfl
+  exact hn (mem_positions.2 ⟨_, Case.label_mem_inventory k, hp⟩)
+
+end System
 
 /-! ### The systems Blake cites -/
 
@@ -180,25 +240,22 @@ def nanai : Finset Case := {.nom, .acc, .dat, .loc, .abl, .inst, .all}
 /-- Warndarang (77), where bound pronouns cross-reference subject, object and possessor. -/
 def warndarang : Finset Case := {.nom, .loc, .abl, .inst, .all, .purp}
 
-/-- Toda and Irula (75), with a purposive beside the eight cases of Tamil. -/
-def todaIrula : Finset Case := insert .purp (Finset.univ.image Tamil.Case.label)
-
 /-- Tarascan (78), where recipients and beneficiaries take the accusative and the locative covers
 source and goal as well as location. -/
 def tarascan : Finset Case := {.nom, .acc, .gen, .loc, .inst, .com}
+
+/-- Toda and Irula (75), with a purposive beside the eight cases of Tamil. -/
+def todaIrula : Finset Case := insert .purp (Case.inventory Tamil.Case)
 
 /-- The systems Blake cites for the successive stages of the hierarchy, with the three cases of
 Modern Greek, the four of Ancient Greek, German and Icelandic, the six of the Slavonic languages
 and of Turkish, the seven of Classical Armenian, the eight of Tamil and the nine of Toda and
 Irula, each beside its vocative where it has one. -/
 def systems : List (Finset Case) :=
-  [Finset.univ.image Greek.StandardModern.Case.label,
-    Finset.univ.image Greek.Ancient.Case.label, Finset.univ.image German.Case.label,
-    Finset.univ.image Icelandic.Case.label,
-    Finset.univ.image Polish.Case.label, Finset.univ.image Czech.Case.label,
-    Finset.univ.image Slovak.Case.label, Finset.univ.image Serbian.Case.label,
-    Finset.univ.image Turkish.Case.label, classicalArmenian, Finset.univ.image Tamil.Case.label,
-    todaIrula]
+  [Case.inventory Greek.StandardModern.Case, Case.inventory Greek.Ancient.Case,
+    Case.inventory German.Case, Case.inventory Icelandic.Case, Case.inventory Polish.Case,
+    Case.inventory Czech.Case, Case.inventory Slovak.Case, Case.inventory Serbian.Case,
+    Case.inventory Turkish.Case, classicalArmenian, Case.inventory Tamil.Case, todaIrula]
 
 /-- The systems Blake cites at each stage of the hierarchy conform to it. -/
 theorem systems_conform : ∀ inv ∈ systems, Conforms inv := by
@@ -214,36 +271,22 @@ theorem gaps_tarascan : gaps tarascan = {.dat} := by decide
 accusative. -/
 theorem gaps_warndarang : gaps warndarang = {.accErg, .gen, .dat} := by decide
 
-/-! ### Latin
+/-! ### Latin and Ancient Greek
 
 Blake gives Latin as the five-case stage, nominative, accusative, genitive, dative and a last case
-of many functions whose label is somewhat arbitrary. -/
+of many functions whose label is somewhat arbitrary. He sets the Ancient Greek dative beside the
+Latin one to show that cases are compared by the functions they cover and not by their labels.
+Greek has no ablative, and the functions of the Latin ablative fall to the Greek genitive, which
+expresses source, and to the Greek dative, which expresses location and instrument, so that the
+Greek dative is the more comprehensive case. -/
 
-theorem gaps_latin_labels : gaps (Finset.univ.image Latin.Case.label) = {.loc} := by decide
+theorem gaps_latin : gaps (Case.inventory Latin.Case) = {.loc} := by decide
 
-theorem conforms_latin_functions : Conforms (Finset.univ.biUnion Latin.Case.functions) := by
-  decide
-
-/-- The locative position that the Latin case labels skip is one the functions of the Latin
-cases fill. -/
-theorem gaps_latin_labels_subset :
-    gaps (Finset.univ.image Latin.Case.label) ⊆
-      positions (Finset.univ.biUnion Latin.Case.functions) \
-        positions (Finset.univ.image Latin.Case.label) :=
-  gaps_subset_of_conforms
-    (Finset.image_subset_iff.2 fun c _ ↦
-      Finset.mem_biUnion.2 ⟨c, Finset.mem_univ c, c.label_mem_functions⟩)
-    conforms_latin_functions
-
-/-! ### Ancient Greek
-
-Blake sets the Ancient Greek dative beside the Latin one to show that cases are compared by the
-functions they cover and not by their labels. Greek has no ablative, and the functions of the
-Latin ablative fall to the Greek genitive, which expresses source, and to the Greek dative, which
-expresses location and instrument, so that the Greek dative is the more comprehensive case. -/
+-- The ablative is labelled for source, and location is the higher of its functions.
+theorem not_labelledForHighest_latin : ¬ LabelledForHighest Latin.Case := by decide
 
 theorem latin_abl_functions_ancient_greek :
-    .abl ∉ Finset.univ.image Greek.Ancient.Case.label ∧
+    .abl ∉ Case.inventory Greek.Ancient.Case ∧
       Latin.Case.abl.functions ⊆
         Greek.Ancient.Case.gen.functions ∪ Greek.Ancient.Case.dat.functions := by
   decide
@@ -256,52 +299,50 @@ theorem latin_dat_functions_ssubset_ancient_greek :
 The inventories that do not conform each miss a position Blake's two sources of gaps account for.
 Finnish has no dative, and its allative *-lle* has dative functions. Hungarian and Basel German
 have no genitive, the dative marking the possessor, as in the Pama-Nyungan languages Blake
-mentions. The grammatical cases of Dargwa skip the locative and the ablative, which belong to its
-separate series of local cases. Mongolian, Yakut and Georgian have no locative: the Mongolian
-dative expresses location, the Yakut dative has taken over the function of the old locative, and
-the Georgian dative keeps it with a few nouns. Where a fragment records the functions of its
-cases, the functions conform. -/
+mentions. Mongolian, Yakut and Georgian have no locative: the Mongolian dative expresses
+location, the Yakut dative has taken over the function of the old locative, and the Georgian
+dative keeps it with a few nouns. In each of these the functions conform, so that the gaps are
+apparent. The grammatical cases of Dargwa skip the locative and the ablative, which belong to its
+separate series of local cases. -/
 
 -- The three cases of Classical Arabic, which Blake cites, are those of the modern standard
 -- language, and Hindi-Urdu has the direct and oblique of a two-case system.
 theorem fragments_conform :
-    ∀ inv ∈ [Finset.univ.image Arabic.ModernStandard.Case.label,
-      Finset.univ.image HindiUrdu.Case.label, Finset.univ.image Telugu.Case.label,
-      Finset.univ.image Belarusian.Case.label, Finset.univ.image Cassubian.Case.label,
-      Finset.univ.image Russian.Case.label, Finset.univ.image Slovenian.Case.label,
-      Finset.univ.image Sorbian.Upper.Case.label, Finset.univ.image Sorbian.Lower.Case.label,
-      Finset.univ.image Ukrainian.Case.label],
+    ∀ inv ∈ [Case.inventory Arabic.ModernStandard.Case, Case.inventory HindiUrdu.Case,
+      Case.inventory Telugu.Case, Case.inventory Belarusian.Case, Case.inventory Cassubian.Case,
+      Case.inventory Russian.Case, Case.inventory Slovenian.Case,
+      Case.inventory Sorbian.Upper.Case, Case.inventory Sorbian.Lower.Case,
+      Case.inventory Ukrainian.Case],
       Conforms inv := by
   simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
   decide
 
-theorem gaps_finnish : gaps (Finset.univ.image Finnish.Case.label) = {.dat} := by decide
-
-theorem conforms_finnish_functions : Conforms (Finset.univ.biUnion Finnish.Case.functions) := by
+theorem gaps_fragments :
+    gaps (Case.inventory Finnish.Case) = {.dat} ∧
+      gaps (Case.inventory Hungarian.Case) = {.gen} ∧
+      gaps (Case.inventory German.Basel.Case) = {.gen} ∧
+      gaps (Case.inventory Mongolian.Case) = {.loc} ∧
+      gaps (Case.inventory Yakut.Case) = {.loc} ∧
+      gaps (Case.inventory Georgian.Case) = {.loc} ∧
+      gaps (Case.inventory Dargwa.Tanti.Case) = {.loc, .ablInst} := by
   decide
 
-theorem gaps_hungarian : gaps (Finset.univ.image Hungarian.Case.label) = {.gen} := by decide
-
-theorem gaps_dargwa : gaps (Finset.univ.image Dargwa.Tanti.Case.label) = {.loc, .ablInst} := by
+theorem functions_conform :
+    ∀ inv ∈ [Case.functionInventory Latin.Case, Case.functionInventory Greek.Ancient.Case,
+      Case.functionInventory Finnish.Case, Case.functionInventory Hungarian.Case,
+      Case.functionInventory German.Basel.Case, Case.functionInventory Mongolian.Case,
+      Case.functionInventory Yakut.Case, Case.functionInventory Georgian.Case],
+      Conforms inv := by
+  simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
   decide
 
-theorem gaps_mongolian : gaps (Finset.univ.image Mongolian.Case.label) = {.loc} := by decide
-
-theorem conforms_mongolian_functions :
-    Conforms (Finset.univ.biUnion Mongolian.Case.functions) := by
+-- The datives that take in the locative are labelled for the higher function. The Finnish
+-- allative and the Hungarian and Basel German datives are labelled for the lower one.
+theorem labelledForHighest_fragments :
+    LabelledForHighest Greek.Ancient.Case ∧ LabelledForHighest Mongolian.Case ∧
+      LabelledForHighest Yakut.Case ∧ LabelledForHighest Georgian.Case ∧
+      ¬ LabelledForHighest Finnish.Case ∧ ¬ LabelledForHighest Hungarian.Case ∧
+      ¬ LabelledForHighest German.Basel.Case := by
   decide
-
-theorem gaps_yakut : gaps (Finset.univ.image Yakut.Case.label) = {.loc} := by decide
-
-theorem conforms_yakut_functions : Conforms (Finset.univ.biUnion Yakut.Case.functions) := by
-  decide
-
-theorem gaps_georgian : gaps (Finset.univ.image Georgian.Case.label) = {.loc} := by decide
-
-theorem conforms_georgian_functions :
-    Conforms (Finset.univ.biUnion Georgian.Case.functions) := by
-  decide
-
-theorem gaps_basel : gaps (Finset.univ.image German.Basel.Case.label) = {.gen} := by decide
 
 end Blake1994

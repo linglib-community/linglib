@@ -48,6 +48,8 @@ def Case.label : Case → _root_.Case
   | inst => .inst
   | loc => .loc
 
+instance : _root_.Case.System Case := { label := Case.label }
+
 end Sorbian.Upper
 
 namespace Sorbian.Lower
@@ -76,5 +78,7 @@ def Case.label : Case → _root_.Case
   | dat => .dat
   | inst => .inst
   | loc => .loc
+
+instance : _root_.Case.System Case := { label := Case.label }
 
 end Sorbian.Lower

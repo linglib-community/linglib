@@ -47,4 +47,6 @@ def Case.label : Case → _root_.Case
   | dat => .dat
   | gen => .gen
 
+instance : _root_.Case.System Case := { label := Case.label }
+
 end Icelandic

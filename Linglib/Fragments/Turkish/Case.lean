@@ -52,4 +52,6 @@ def Case.label : Case → _root_.Case
   | abl => .abl
   | gen => .gen
 
+instance : _root_.Case.System Case := { label := Case.label }
+
 end Turkish

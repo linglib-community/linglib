@@ -57,4 +57,6 @@ def Case.label : Case → _root_.Case
   | inst => .inst
   | com => .com
 
+instance : _root_.Case.System Case := { label := Case.label }
+
 end Tamil

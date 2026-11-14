@@ -43,4 +43,6 @@ and the clitic *d'* the accusative. -/
 def articleCase : List (String × Case) :=
   [("em", .dat), ("de", .acc), ("es", .acc), ("d'", .acc)]
 
+instance : _root_.Case.System Case := { label := Case.label }
+
 end German.Zurich

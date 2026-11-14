@@ -58,4 +58,6 @@ def forms {α : Type*} (nom acc gen dat : α) : Case → α
 
 end Case
 
+instance : _root_.Case.System Case := { label := Case.label }
+
 end German

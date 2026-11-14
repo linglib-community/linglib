@@ -55,4 +55,6 @@ def Case.label : Case → _root_.Case
   | loc => .loc
   | voc => .voc
 
+instance : _root_.Case.System Case := { label := Case.label }
+
 end Latvian

@@ -48,4 +48,6 @@ def Case.label : Case → _root_.Case
   | inst => .inst
   | loc => .loc
 
+instance : _root_.Case.System Case := { label := Case.label }
+
 end Czech

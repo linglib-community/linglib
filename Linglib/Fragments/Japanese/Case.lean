@@ -83,4 +83,6 @@ def droppable : Finset Case := {nom, acc}
 
 end Case
 
+instance : _root_.Case.System Case := ⟨Case.label, Case.functions, Case.label_mem_functions⟩
+
 end Japanese

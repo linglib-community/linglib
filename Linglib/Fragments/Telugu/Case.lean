@@ -65,4 +65,6 @@ def exponents : Case → List Morphology.Morph
 
 end Case
 
+instance : _root_.Case.System Case := { label := Case.label }
+
 end Telugu
