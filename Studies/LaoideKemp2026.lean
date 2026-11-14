@@ -72,7 +72,7 @@ Prove the distribution of `d` for every stem, not only for the paper's verbs.
 
 namespace LaoideKemp2026
 
-open Autosegmental Relation RuleInteraction
+open Autosegmental Relation Phonology
 open scoped Finset
 
 /-! ### Representations -/

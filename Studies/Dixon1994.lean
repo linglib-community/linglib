@@ -59,7 +59,7 @@ pivots of §6.2.4.
 
 namespace Dixon1994
 
-open Alignment RuleInteraction
+open Alignment Phonology
 
 variable {κ : Type*}
 
