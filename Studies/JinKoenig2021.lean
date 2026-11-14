@@ -152,10 +152,9 @@ end ENConcept
 
 open Tense in
 -- BEFORE: at a time of the main clause the *before*-clause does not hold, (13b).
-theorem exists_notMem_timeTrace_of_beforeEver {T : Type*} [LinearOrder T]
-    {A B : Set (NonemptyInterval T)} (h : beforeEver A B) :
+example {T : Type*} [LinearOrder T] {A B : Set (NonemptyInterval T)} (h : beforeEver A B) :
     ∃ t ∈ timeTrace A, t ∉ timeTrace B :=
-  let ⟨t, hA, ht⟩ := h; ⟨t, hA, fun hB ↦ lt_irrefl t (ht t hB)⟩
+  h.exists_notMem
 
 -- WITHOUT: *q without p* is `q` and not `p`, the negation in the meaning, (13c).
 example {W : Type*} (q p : Set W) : q \ p ⊆ pᶜ := fun _ h ↦ h.2

@@ -184,7 +184,7 @@ theorem uniform_gt_iff_after (hB : ∃ e, IsLeast (timeTrace B) e) :
 -- (29)
 theorem anscombe_before_complement_DE (h : timeTrace B' ⊆ timeTrace B) :
     beforeEver A B → beforeEver A B' :=
-  fun ⟨t, ht, hall⟩ ↦ ⟨t, ht, fun t' ht' ↦ hall t' (h ht')⟩
+  (·.anti_right h)
 
 -- (31)
 theorem anscombe_after_complement_UE (h : timeTrace B ⊆ timeTrace B') :

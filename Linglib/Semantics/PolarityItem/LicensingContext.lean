@@ -541,8 +541,7 @@ theorem holds_withoutClause_iff {s : Negation.Strength} :
 theorem holds_beforeClause_iff {s : Negation.Strength} :
     beforeClause.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive := by
   refine holds_toProjectivitySignature_iff (fun p ↦ ProjectivitySignature.holdsFor_antiAdd_iff.mpr
-    ⟨fun _ _ ↦ propext beforeEver_union_right,
-    eq_bot_iff.2 fun ⟨t, _, h⟩ ↦ lt_irrefl t (h t ⟨NonemptyInterval.pure t, trivial, by simp⟩)⟩)
+    ⟨isAntiAdditive_beforeEver p.A, eq_bot_iff.2 not_beforeEver_univ⟩)
     fun s hs h ↦ ?_
   obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
   have := (ProjectivitySignature.holdsFor_antiAddMult_iff.mp (h ⟨ℕ, ∅⟩)).2.2
