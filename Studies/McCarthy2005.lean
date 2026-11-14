@@ -4,6 +4,7 @@ public import Linglib.Phonology.OptimalityTheory.Correspondence.Diagram
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Data.Wordlist.McCarthy2005
 public import Studies.Benua1997
+public import Linglib.Core.Data.List.OffDiag
 
 /-!
 # McCarthy (2005): Optimal Paradigms
@@ -16,8 +17,8 @@ which optimal paradigms leave to derivational morphology. Faithfulness on that r
 resists alternation within the paradigm, and three consequences follow from the architecture
 alone: overapplication only, attraction to the unmarked, and majority rules. A paradigm
 carries the shared input and its members with their cells, surface stems, and input–stem
-correspondences (`Paradigm`), the correspondence diagram is read off those
-(`Paradigm.corr`), symmetric and base-free by construction, and `markedness`, `ioFaith`, and
+correspondences (`Paradigm`), the relation between two stems is read off those
+(`Member.opCorr`), symmetric and base-free by construction, and `markedness`, `ioFaith`, and
 `opFaith` sum a constraint over the members or the ordered member pairs. The Classical
 Arabic tableaux for the right and left edges of the verb stem and for geminate verbs, the
 Moroccan nouns and majority-rules paradigm, and the Hebrew jussive paradigms of Benua are rerun
@@ -47,12 +48,6 @@ variable {α ι : Type*}
 
 /-! ### Paradigms as candidates -/
 
-/-- The roles of a candidate paradigm: the shared input stem and the stem of each member. -/
-inductive Role
-  | input
-  | member (i : ℕ)
-  deriving DecidableEq, Repr
-
 /-- A paradigm member: its inflectional cell, its surface stem, and the correspondence from
 the input to the stem. -/
 structure Member (α ι : Type*) where
@@ -65,28 +60,24 @@ structure Paradigm (α ι : Type*) where
   input : List α
   members : List (Member α ι)
 
-/-- The stem of the `i`th member, empty beyond the paradigm. -/
-def Paradigm.stem (P : Paradigm α ι) (i : ℕ) : List α :=
-  ((P.members[i]?).map Member.stem).getD []
+/-- The correspondence of a member's stem to the input. -/
+def Member.ioCorr (input : List α) (m : Member α ι) : Correspondence.Diagram BinaryRole α :=
+  .ofPairs (fun | .lhs => input | .rhs => m.stem) fun | .lhs, .rhs => m.io | _, _ => []
 
-/-- The input correspondence of the `i`th member, empty beyond the paradigm. -/
-def Paradigm.io (P : Paradigm α ι) (i : ℕ) : List (ℕ × ℕ) :=
-  ((P.members[i]?).map Member.io).getD []
-
-/-- The correspondence diagram of a candidate (2c): each member's input–stem relation, and
-between the stems of distinct members ℛ_OP, the relation that runs through the input
+/-- ℛ_OP between the stems of two members (2c), the relation that runs through the input
 (`Correspondence.through`): the positions realising the same input position, and the epenthetic
 positions at the same site. -/
-def Paradigm.corr (P : Paradigm α ι) : Correspondence.Diagram Role α where
+def Member.opCorr (input : List α) (m₁ m₂ : Member α ι) : Correspondence.Diagram BinaryRole α where
   form
-    | .input => P.input
-    | .member i => P.stem i
+    | .lhs => m₁.stem
+    | .rhs => m₂.stem
   edge
-    | .input, .member i => Correspondence.edgeOfPairs _ _ (P.io i)
-    | .member i, .member j =>
-      if i = j then ∅ else
-        (Correspondence.edgeOfPairs P.input.length (P.stem i).length (P.io i)).through
-          (Correspondence.edgeOfPairs P.input.length (P.stem j).length (P.io j))
+    | .lhs, .rhs =>
+      (Correspondence.edgeOfPairs input.length m₁.stem.length m₁.io).through
+        (Correspondence.edgeOfPairs input.length m₂.stem.length m₂.io)
+    | .rhs, .lhs =>
+      (Correspondence.edgeOfPairs input.length m₂.stem.length m₂.io).through
+        (Correspondence.edgeOfPairs input.length m₁.stem.length m₁.io)
     | _, _ => ∅
 
 /-- A markedness constraint on the word of each cell, summed over the members (2b). -/
@@ -94,14 +85,43 @@ def markedness (m : ι → List α → ℕ) : Constraint (Paradigm α ι) :=
   fun P ↦ (P.members.map fun x ↦ m x.cell x.stem).sum
 
 /-- An input–output faithfulness constraint summed over the members (2b). -/
-def ioFaith (f : Correspondence.Diagram Role α → Role → Role → ℕ) : Constraint (Paradigm α ι) :=
-  fun P ↦ ((List.range P.members.length).map fun i ↦ f P.corr .input (.member i)).sum
+def ioFaith (f : Correspondence.Diagram BinaryRole α → BinaryRole → BinaryRole → ℕ) :
+    Constraint (Paradigm α ι) :=
+  fun P ↦ (P.members.map fun m ↦ f (m.ioCorr P.input) .lhs .rhs).sum
 
 /-- An OP faithfulness constraint (2d): a correspondence constraint summed over the ordered
 pairs of distinct members. -/
-def opFaith (f : Correspondence.Diagram Role α → Role → Role → ℕ) : Constraint (Paradigm α ι) :=
-  fun P ↦ ((List.range P.members.length).flatMap fun i ↦ (List.range P.members.length).map fun j ↦
-    if i = j then 0 else f P.corr (.member i) (.member j)).sum
+def opFaith (f : Correspondence.Diagram BinaryRole α → BinaryRole → BinaryRole → ℕ) :
+    Constraint (Paradigm α ι) :=
+  fun P ↦ (P.members.offDiag.map fun p ↦ f (p.1.opCorr P.input p.2) .lhs .rhs).sum
+
+section
+
+variable (f : Correspondence.Diagram BinaryRole α → BinaryRole → BinaryRole → ℕ) {input : List α}
+  {l₁ l₂ : List (Member α ι)}
+
+-- OP faithfulness does not depend on the order of the members.
+theorem opFaith_perm (h : l₁.Perm l₂) : opFaith f ⟨input, l₁⟩ = opFaith f ⟨input, l₂⟩ :=
+  (h.offDiag.map _).sum_eq
+
+/-- A paradigm whose members fall into two classes, alike within a class and `k` marks apart
+across them in the two directions together, draws `k` marks for each pair of members of
+different classes. -/
+theorem opFaith_append {k : ℕ}
+    (h₁ : ∀ x ∈ l₁, ∀ y ∈ l₁, f (x.opCorr input y) .lhs .rhs = 0)
+    (h₂ : ∀ x ∈ l₂, ∀ y ∈ l₂, f (x.opCorr input y) .lhs .rhs = 0)
+    (h : ∀ x ∈ l₁, ∀ y ∈ l₂,
+      f (x.opCorr input y) .lhs .rhs + f (y.opCorr input x) .lhs .rhs = k) :
+    opFaith f ⟨input, l₁ ++ l₂⟩ = l₁.length * l₂.length * k := by
+  have hrow : ∀ x ∈ l₁, (l₂.map fun y ↦
+      f (x.opCorr input y) .lhs .rhs + f (y.opCorr input x) .lhs .rhs).sum = l₂.length * k :=
+    fun x hx ↦ by
+      rw [List.map_congr_left (h x hx), List.map_const', List.sum_replicate, smul_eq_mul]
+  rw [opFaith, List.sum_map_offDiag_append, List.sum_map_offDiag_eq_zero h₁,
+    List.sum_map_offDiag_eq_zero h₂, List.map_congr_left hrow, List.map_const',
+    List.sum_replicate, smul_eq_mul, zero_add, zero_add, mul_assoc]
+
+end
 
 /-- The candidate paradigms of a tableau. -/
 inductive Cand
@@ -595,11 +615,11 @@ theorem uncover :
 [benua-1997] winners, (82) and (87). -/
 example :
     (Tableau.ofLabels (jussive .sibilant .stop) {.a, .b, .c} ranking).optimal = {.a} ∧
-    (Benua1997.Hebrew.captive .d).form .base = (jussive .sibilant .stop .a).stem 0 ∧
-    (Benua1997.Hebrew.captive .d).form .derivative = (jussive .sibilant .stop .a).stem 1 ∧
-    (Benua1997.Hebrew.uncover .b).form .base = (jussive .spirant .liquid .c).stem 0 ∧
-    (Benua1997.Hebrew.uncover .b).form .derivative = (jussive .spirant .liquid .c).stem 1 :=
-  ⟨by decide, rfl, rfl, rfl, rfl⟩
+    (jussive .sibilant .stop .a).members.map (·.stem) =
+      [(Benua1997.Hebrew.captive .d).form .base, (Benua1997.Hebrew.captive .d).form .derivative] ∧
+    (jussive .spirant .liquid .c).members.map (·.stem) =
+      [(Benua1997.Hebrew.uncover .b).form .base, (Benua1997.Hebrew.uncover .b).form .derivative] :=
+  ⟨by decide, rfl, rfl⟩
 
 end Hebrew
 

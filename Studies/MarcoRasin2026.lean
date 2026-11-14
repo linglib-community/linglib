@@ -1,6 +1,7 @@
 module
 
 public import Studies.McCarthy2005
+import Mathlib.Tactic.FinCases
 
 /-!
 # Marco and Rasin (2026): Optimal Paradigms
@@ -13,8 +14,10 @@ uniformity draws the unsuffixed verb to CCəC by majority rule, while the one-me
 paradigm is left to the sonority constraint. In Judeo-Tripolitanian Arabic verbs and nouns
 pattern as in Moroccan, but adjectives are CCəC regardless of sonority while inflecting, like
 nouns, with vowel-initial suffixes only, so under McCarthy's ranking optimal paradigms select
-the levelled CəCC paradigm for them; a category-specific template for verbs and adjectives
-derives the pattern, against category-neutral phonology ([bobaljik-2008]).
+the levelled CəCC paradigm for them: for any root and any suffixes, the bare stem sides with
+[the more numerous class of suffixes](##MarcoRasin2026.majority_rules); a category-specific
+template for verbs and adjectives derives the pattern, against category-neutral phonology
+([bobaljik-2008]).
 
 ## Implementation notes
 
@@ -77,15 +80,110 @@ def moroccan : Cand → Paradigm Seg (List Seg) :=
 theorem moroccan_verb : (Tableau.ofLabels moroccan {.a, .b, .c, .d} ranking).optimal = {.a} := by
   decide +kernel
 
-/-- Majority rules: with five CCəC stems and two CəCC stems the attested paradigm draws 20
-OP-MAX-V marks, against 24 with the bare stem CəCC (9), and the attested adjectival paradigm
-draws four (14). -/
+/-! ### Majority rules -/
+
+/-- The input correspondence of a CCəC stem, read into positions. -/
+private abbrev medialIO : Correspondence (Fin 3) (Fin 4) :=
+  Correspondence.edgeOfPairs 3 4 [(0, 0), (1, 1), (2, 3)]
+
+/-- The input correspondence of a CəCC stem, read into positions. -/
+private abbrev initialIO : Correspondence (Fin 3) (Fin 4) :=
+  Correspondence.edgeOfPairs 3 4 [(0, 0), (1, 2), (2, 3)]
+
+private theorem image_fst_medial_medial :
+    (medialIO.through medialIO).image Prod.fst = Finset.univ := by decide +kernel
+
+private theorem image_fst_initial_initial :
+    (initialIO.through initialIO).image Prod.fst = Finset.univ := by decide +kernel
+
+private theorem image_fst_medial_initial :
+    (medialIO.through initialIO).image Prod.fst = {0, 1, 3} := by decide +kernel
+
+private theorem image_fst_initial_medial :
+    (initialIO.through medialIO).image Prod.fst = {0, 2, 3} := by decide +kernel
+
+variable (c₁ c₂ c₃ : Seg) (s s' : List Seg)
+
+private theorem maxV_medial_medial :
+    Correspondence.Diagram.maxViolOn IsVowel
+      ((schwaMedial c₁ c₂ c₃ s).opCorr [c₁, c₂, c₃] (schwaMedial c₁ c₂ c₃ s')) .lhs .rhs = 0 := by
+  show (Finset.univ.filter (fun i : Fin 4 ↦ IsVowel [c₁, c₂, Seg.schwa, c₃][i]) \
+    (medialIO.through medialIO).image Prod.fst).card = 0
+  rw [image_fst_medial_medial, Finset.sdiff_eq_empty_iff_subset.2 (Finset.subset_univ _),
+    Finset.card_empty]
+
+private theorem maxV_initial_initial :
+    Correspondence.Diagram.maxViolOn IsVowel
+      ((schwaInitial c₁ c₂ c₃ s).opCorr [c₁, c₂, c₃] (schwaInitial c₁ c₂ c₃ s')) .lhs .rhs = 0 := by
+  show (Finset.univ.filter (fun i : Fin 4 ↦ IsVowel [c₁, Seg.schwa, c₂, c₃][i]) \
+    (initialIO.through initialIO).image Prod.fst).card = 0
+  rw [image_fst_initial_initial, Finset.sdiff_eq_empty_iff_subset.2 (Finset.subset_univ _),
+    Finset.card_empty]
+
+private theorem maxV_medial_initial :
+    Correspondence.Diagram.maxViolOn IsVowel
+      ((schwaMedial c₁ c₂ c₃ s).opCorr [c₁, c₂, c₃] (schwaInitial c₁ c₂ c₃ s')) .lhs .rhs = 1 := by
+  show (Finset.univ.filter (fun i : Fin 4 ↦ IsVowel [c₁, c₂, Seg.schwa, c₃][i]) \
+    (medialIO.through initialIO).image Prod.fst).card = 1
+  rw [image_fst_medial_initial, Finset.card_eq_one]
+  refine ⟨2, Finset.ext fun i ↦ ?_⟩
+  fin_cases i <;> simp [IsVowel]
+
+private theorem maxV_initial_medial :
+    Correspondence.Diagram.maxViolOn IsVowel
+      ((schwaInitial c₁ c₂ c₃ s).opCorr [c₁, c₂, c₃] (schwaMedial c₁ c₂ c₃ s')) .lhs .rhs = 1 := by
+  show (Finset.univ.filter (fun i : Fin 4 ↦ IsVowel [c₁, Seg.schwa, c₂, c₃][i]) \
+    (initialIO.through medialIO).image Prod.fst).card = 1
+  rw [image_fst_initial_medial, Finset.card_eq_one]
+  refine ⟨1, Finset.ext fun i ↦ ?_⟩
+  fin_cases i <;> simp [IsVowel]
+
+variable (cInitial vInitial : List (List Seg))
+
+-- Each pair of a CCəC stem and a CəCC stem draws two OP-MAX-V marks, one in each direction.
+theorem opMaxV_medial_append_initial :
+    opFaith (Correspondence.Diagram.maxViolOn IsVowel)
+      ⟨[c₁, c₂, c₃], cInitial.map (schwaMedial c₁ c₂ c₃) ++ vInitial.map (schwaInitial c₁ c₂ c₃)⟩ =
+        2 * (cInitial.length * vInitial.length) := by
+  rw [opFaith_append (k := 2), List.length_map, List.length_map, mul_comm]
+  · simp only [List.mem_map, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+    exact fun s _ s' _ ↦ maxV_medial_medial c₁ c₂ c₃ s s'
+  · simp only [List.mem_map, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+    exact fun s _ s' _ ↦ maxV_initial_initial c₁ c₂ c₃ s s'
+  · simp only [List.mem_map, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+    exact fun s _ s' _ ↦ by rw [maxV_medial_initial, maxV_initial_medial]
+
+theorem opMaxV_paradigms_a :
+    opFaith (Correspondence.Diagram.maxViolOn IsVowel) (paradigms c₁ c₂ c₃ cInitial vInitial .a) =
+      2 * ((cInitial.length + 1) * vInitial.length) :=
+  opMaxV_medial_append_initial c₁ c₂ c₃ ([] :: cInitial) vInitial
+
+theorem opMaxV_paradigms_b :
+    opFaith (Correspondence.Diagram.maxViolOn IsVowel) (paradigms c₁ c₂ c₃ cInitial vInitial .b) =
+      2 * (cInitial.length * (vInitial.length + 1)) :=
+  (opFaith_perm _ List.perm_middle.symm).trans
+    (opMaxV_medial_append_initial c₁ c₂ c₃ cInitial ([] :: vInitial))
+
+/-- Majority rules: the paradigm whose bare stem is CCəC draws fewer OP-MAX-V marks than the
+one whose bare stem is CəCC exactly when the C-initial suffixes outnumber the V-initial ones
+(10). -/
+theorem majority_rules :
+    opFaith (Correspondence.Diagram.maxViolOn IsVowel) (paradigms c₁ c₂ c₃ cInitial vInitial .a) <
+        opFaith (Correspondence.Diagram.maxViolOn IsVowel)
+          (paradigms c₁ c₂ c₃ cInitial vInitial .b) ↔
+      vInitial.length < cInitial.length := by
+  rw [opMaxV_paradigms_a, opMaxV_paradigms_b, Nat.mul_lt_mul_left two_pos, Nat.add_mul,
+    Nat.mul_add, one_mul, mul_one, Nat.add_lt_add_iff_left]
+
+/-- The attested Moroccan paradigm, with four C-initial and two V-initial suffixes, draws 20
+OP-MAX-V marks against 24 with the bare stem CəCC (9), and the attested adjectival paradigm,
+with two V-initial suffixes alone, draws four (14). -/
 theorem opMaxV_counts :
     opFaith (Correspondence.Diagram.maxViolOn IsVowel) (moroccan .a) = 20 ∧
       opFaith (Correspondence.Diagram.maxViolOn IsVowel) (moroccan .b) = 24 ∧
       opFaith (Correspondence.Diagram.maxViolOn IsVowel)
-        (paradigms .t .r .sh [] [[.a], [.i, .n]] .a) = 4 := by
-  decide +kernel
+        (paradigms .t .r .sh [] [[.a], [.i, .n]] .a) = 4 :=
+  ⟨opMaxV_paradigms_a .., opMaxV_paradigms_b .., opMaxV_paradigms_a ..⟩
 
 -- (11)
 theorem moroccan_noun :
