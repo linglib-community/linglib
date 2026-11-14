@@ -23,6 +23,14 @@ Arabic tableaux for the right and left edges of the verb stem and for geminate v
 Moroccan nouns and majority-rules paradigm, and the Hebrew jussive paradigms of Benua are rerun
 under the paper's ranking.
 
+## Implementation notes
+
+* In the paper each candidate paradigm brings its own relation ℜ_OP between the stems. Here the
+  relation is computed from the members' input–stem correspondences (`Correspondence.ooPairs`):
+  two positions correspond when they realise the same input position or are epenthetic at the
+  same site, so that the epenthetic vowels of ⟨faʕila, faʕiltu⟩ correspond and those of
+  ⟨faʕla, faʕiltu⟩ do not. Candidates that differ only in ℜ_OP are not represented.
+
 ## References
 
 * [mccarthy-2005]: the Moroccan nouns (30) (pp. 202–203)
