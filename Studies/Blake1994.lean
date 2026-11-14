@@ -55,10 +55,8 @@ functions](##gaps_latin_labels_subset).
 
 The absolutive is placed with the nominative, since Blake calls the unmarked case of an ergative
 system nominative. A local case is placed by its direction, the cases of rest with the locative
-and the cases of source with the ablative. The purposive is not a `Case` value: Warndarang is
-given without its purposive, which would sit with its allative past the ablative and instrumental,
-and Toda and Irula, which add a purposive to the cases of Tamil, are not listed. The text was
-checked in the second edition ([blake-2001]).
+and the cases of source with the ablative. The text was checked in the second edition
+([blake-2001]).
 
 ## TODO
 
@@ -179,9 +177,11 @@ def classicalArmenian : Finset Case := {.nom, .acc, .gen, .dat, .loc, .abl, .ins
 /-- Nanai (76), where a bound pronoun cross-references the possessor. -/
 def nanai : Finset Case := {.nom, .acc, .dat, .loc, .abl, .inst, .all}
 
-/-- Warndarang (77) less its purposive, where bound pronouns cross-reference subject, object and
-possessor. -/
-def warndarang : Finset Case := {.nom, .loc, .abl, .inst, .all}
+/-- Warndarang (77), where bound pronouns cross-reference subject, object and possessor. -/
+def warndarang : Finset Case := {.nom, .loc, .abl, .inst, .all, .purp}
+
+/-- Toda and Irula (75), with a purposive beside the eight cases of Tamil. -/
+def todaIrula : Finset Case := insert .purp (Finset.univ.image Tamil.Case.label)
 
 /-- Tarascan (78), where recipients and beneficiaries take the accusative and the locative covers
 source and goal as well as location. -/
@@ -189,15 +189,16 @@ def tarascan : Finset Case := {.nom, .acc, .gen, .loc, .inst, .com}
 
 /-- The systems Blake cites for the successive stages of the hierarchy, with the three cases of
 Modern Greek, the four of Ancient Greek, German and Icelandic, the six of the Slavonic languages
-and of Turkish, the seven of Classical Armenian and the eight of Tamil, each beside its vocative
-where it has one. -/
+and of Turkish, the seven of Classical Armenian, the eight of Tamil and the nine of Toda and
+Irula, each beside its vocative where it has one. -/
 def systems : List (Finset Case) :=
   [Finset.univ.image Greek.StandardModern.Case.label,
     Finset.univ.image Greek.Ancient.Case.label, Finset.univ.image German.Case.label,
     Finset.univ.image Icelandic.Case.label,
     Finset.univ.image Polish.Case.label, Finset.univ.image Czech.Case.label,
     Finset.univ.image Slovak.Case.label, Finset.univ.image Serbian.Case.label,
-    Finset.univ.image Turkish.Case.label, classicalArmenian, Finset.univ.image Tamil.Case.label]
+    Finset.univ.image Turkish.Case.label, classicalArmenian, Finset.univ.image Tamil.Case.label,
+    todaIrula]
 
 /-- The systems Blake cites at each stage of the hierarchy conform to it. -/
 theorem systems_conform : ∀ inv ∈ systems, Conforms inv := by
@@ -256,9 +257,10 @@ The inventories that do not conform each miss a position Blake's two sources of 
 Finnish has no dative, and its allative *-lle* has dative functions. Hungarian and Basel German
 have no genitive, the dative marking the possessor, as in the Pama-Nyungan languages Blake
 mentions. The grammatical cases of Dargwa skip the locative and the ablative, which belong to its
-separate series of local cases. Mongolian, Yakut and Georgian have no locative: the Yakut dative
-has taken over the function of the old locative, and the Georgian dative keeps it with a few
-nouns. Where a fragment records the functions of its cases, the functions conform. -/
+separate series of local cases. Mongolian, Yakut and Georgian have no locative: the Mongolian
+dative expresses location, the Yakut dative has taken over the function of the old locative, and
+the Georgian dative keeps it with a few nouns. Where a fragment records the functions of its
+cases, the functions conform. -/
 
 -- The three cases of Classical Arabic, which Blake cites, are those of the modern standard
 -- language, and Hindi-Urdu has the direct and oblique of a two-case system.
@@ -284,6 +286,10 @@ theorem gaps_dargwa : gaps (Finset.univ.image Dargwa.Tanti.Case.label) = {.loc, 
   decide
 
 theorem gaps_mongolian : gaps (Finset.univ.image Mongolian.Case.label) = {.loc} := by decide
+
+theorem conforms_mongolian_functions :
+    Conforms (Finset.univ.biUnion Mongolian.Case.functions) := by
+  decide
 
 theorem gaps_yakut : gaps (Finset.univ.image Yakut.Case.label) = {.loc} := by decide
 
