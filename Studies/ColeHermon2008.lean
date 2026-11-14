@@ -160,7 +160,7 @@ def paperSides : Sides :=
 and then the patient, then the light verb, the agent and Voice, each Merge on the side `σ`
 gives. -/
 def base (σ : Sides) : List Step :=
-  c.goal.toList.map (Step.em (σ 0)) ++
+  c.goal.toList.map (fun g : LexicalItem.Token ↦ (.em (σ 0) g : Step)) ++
     [.em (σ 1) c.patient, .em (σ 2) v₀, .em (σ 3) c.agent, .em (σ 4) c.voiceHead]
 
 /-- The VoiceP (53), (58), (72), (75), in which the verb has adjoined to Voice, (51)–(52), as the

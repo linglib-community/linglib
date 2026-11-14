@@ -30,20 +30,23 @@ open SyntacticObject
 
 namespace Derivation
 
-variable {d : Derivation} {steps : List Step} {n : Nat} {x y : SyntacticObject}
+variable {ι : Type} [DecidableEq ι] [TraceLabel LexicalItem.Token ι]
 
-/-- `x` c-commands `y` at stage `n` of `d`. -/
-def CCommandsAt (d : Derivation) (n : Nat) (x y : SyntacticObject) : Prop :=
-  CCommands (d.stageAt n) x y
+/-- `x` c-commands `y` at stage `n` of `d`, under the trace encoder `τ`. -/
+def CCommandsAt (d : Derivation ι) (n : Nat) (x y : SyntacticObject (ι := ι))
+    (τ : SyntacticObject (ι := ι) → Option ι := TraceLabel.encoder) : Prop :=
+  CCommands (d.stageAt n τ) x y
 
 /-- Decided on the replayed object when the replay succeeds, which is cheaper to evaluate than the
 stage itself. -/
-instance (d : Derivation) (n : Nat) (x y : SyntacticObject) :
-    Decidable (d.CCommandsAt n x y) :=
-  match h : (d.take n).externalize? with
-  | some p => decidable_of_iff (CCommands (↑p) x y) (by
+instance (d : Derivation ι) (n : Nat) (x y : SyntacticObject (ι := ι))
+    (τ : SyntacticObject (ι := ι) → Option ι) : Decidable (d.CCommandsAt n x y τ) :=
+  match h : (d.take n).externalize? τ with
+  | some p => decidable_of_iff (CCommands p.toSyntacticObject x y) (by
       rw [CCommandsAt, ← d.externalize?_take_faithful n h])
-  | none => inferInstanceAs (Decidable (CCommands (d.stageAt n) x y))
+  | none => inferInstanceAs (Decidable (CCommands (d.stageAt n τ) x y))
+
+variable {d : Derivation} {steps : List Step} {n : Nat} {x y : SyntacticObject}
 
 theorem CCommandsAt.cCommands_stageAt (h : d.CCommandsAt n x y) :
     CCommands (d.stageAt n) x y := h
@@ -55,8 +58,9 @@ theorem cCommandsAt_append_of_le (h : n ≤ d.length) :
 theorem cCommandsAt_map_iff {f : LexicalItem.Token → LexicalItem.Token} (hf : Function.Injective f)
     (hsel : LexicalItem.Token.PreservesSelection f) :
     (d.map f).CCommandsAt n (x.map f) (y.map f) ↔ d.CCommandsAt n x y := by
-  rw [CCommandsAt, CCommandsAt, stageAt_map d hf (fun s ↦ s.selHead_map hsel),
-    cCommands_map_iff hf]
+  rw [CCommandsAt, CCommandsAt,
+    stageAt_map (τ := TraceLabel.encoder) (τ' := TraceLabel.encoder) d hf
+      (fun s ↦ s.selHead_map hsel), cCommands_map_iff hf]
 
 end Derivation
 

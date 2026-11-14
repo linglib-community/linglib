@@ -47,8 +47,8 @@ theorem exists_eq_merge_of_count_terms {mover current : SyntacticObject}
     rw [terms_trace] at h
     exact absurd (Multiset.mem_singleton.mp (Multiset.count_pos.mp (by omega))).symm hne
   | traceOf tok =>
-    rw [terms_traceOf] at h
-    exact absurd (Multiset.mem_singleton.mp (Multiset.count_pos.mp (by omega))).symm hne
+    rw [terms_labelledTrace] at h
+    exact absurd (Multiset.mem_singleton.mp (Multiset.count_pos.mp (h ▸ Nat.one_pos))).symm hne
   | merge l r _ _ => exact ⟨l, r, rfl⟩
 
 end Minimalist.SyntacticObject
@@ -164,7 +164,7 @@ current object on the workspace that holds the stack. -/
 theorem Step.apply_em_eq_merge (side : Edge) (item : PlanarSyntacticObject)
     (current : SyntacticObject) (W : Workspace) :
     {(Step.em side item).apply current τ} + W =
-      ({current} + (Step.em side item).items + W).merge ↑item current := by
+      ({current} + (Step.em side item).items + W : Workspace).merge ↑item current := by
   have h : ({current} + {↑item} + W : Workspace) = ({↑item} + {current}) + W := by abel
   rw [Step.apply_em, Step.items, Workspace.merge_def, h, Multiset.insert_eq_cons,
     ← Multiset.singleton_add, add_tsub_cancel_left, add_comm]

@@ -268,7 +268,7 @@ theorem linearize?_of_mem_subtrees {cur : SyntacticObject} {pc : PlanarSyntactic
   | leaf tok | trace | traceOf tok =>
     obtain rfl := Option.some.inj hc
     simp only [PlanarSyntacticObject.toRoseTree_leaf, PlanarSyntacticObject.toRoseTree_trace,
-      PlanarSyntacticObject.toRoseTree_traceOf, RoseTree.subtrees_node, List.flatMap_nil,
+      PlanarSyntacticObject.toRoseTree_labelledTrace, RoseTree.subtrees_node, List.flatMap_nil,
       List.mem_cons, List.not_mem_nil, or_false] at hq
     subst hq
     exact root hc hqs

@@ -44,11 +44,13 @@ namespace Movement
 variable (μ : Movement) (τ : SyntacticObject → Option LexicalItem.Token)
 
 /-- The source with the mover's occurrences replaced by the trace of its head. -/
-def remainder (τ : SyntacticObject → Option LexicalItem.Token := selHead) : SyntacticObject :=
+def remainder (τ : SyntacticObject → Option LexicalItem.Token := TraceLabel.encoder) :
+    SyntacticObject :=
   deleteAccessible μ.mover μ.source τ
 
 /-- The remainder merged with the mover. -/
-def result (τ : SyntacticObject → Option LexicalItem.Token := selHead) : SyntacticObject :=
+def result (τ : SyntacticObject → Option LexicalItem.Token := TraceLabel.encoder) :
+    SyntacticObject :=
   merge (μ.remainder τ) μ.mover
 
 theorem mover_mem_terms : μ.mover ∈ μ.source.terms := mem_terms.2 μ.contains.to_reflTransGen

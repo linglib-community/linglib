@@ -40,12 +40,14 @@ open RoseTree UnorderedTree SyntacticObject
 
 open Derivation (Cfg)
 
+variable {ι : Type} [DecidableEq ι] [TraceLabel LexicalItem.Token ι]
+
 /-- A step on a planar configuration, `Step.run` with each new daughter on its side. Internal
     Merge raises the leftmost occurrence of the mover, leaving the trace of its head under `τ`,
     and an extraction stacks it; `none` when the mover is absent or the stack is empty. -/
-def Step.replay? (step : Step) (c : Cfg PlanarSyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
-    Option (Cfg PlanarSyntacticObject) :=
+def Step.replay? (step : Step ι) (c : Cfg (PlanarSyntacticObject (ι := ι)))
+    (τ : SyntacticObject (ι := ι) → Option ι := TraceLabel.encoder) :
+    Option (Cfg (PlanarSyntacticObject (ι := ι))) :=
   match step, c with
   | .em side item, ⟨p, st⟩ => some ⟨p.attach side item, st⟩
   | .im mover side, ⟨p, st⟩ =>
@@ -59,43 +61,26 @@ namespace Derivation
 
 /-- The derivation's planar configuration under the trace encoder `τ`, or `none` if the initial
     object is not a leaf, a mover is absent, or `remerge` finds the stack empty. -/
-def replay? (d : Derivation) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
-    Option (Cfg PlanarSyntacticObject) :=
+def replay? (d : Derivation ι) (τ : SyntacticObject (ι := ι) → Option ι := TraceLabel.encoder) :
+    Option (Cfg (PlanarSyntacticObject (ι := ι))) :=
   d.initial.toPlanarLeaf?.bind fun p ↦ d.steps.foldlM (fun c step ↦ step.replay? c τ) ⟨p, []⟩
 
 /-- The derivation's planar object under the trace encoder `τ`; copies still on the stack are
     not part of it. -/
-def externalize? (d : Derivation) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
-    Option PlanarSyntacticObject :=
+def externalize? (d : Derivation ι)
+    (τ : SyntacticObject (ι := ι) → Option ι := TraceLabel.encoder) :
+    Option (PlanarSyntacticObject (ι := ι)) :=
   (d.replay? τ).map (·.current)
 
 end Derivation
 
 /-! ### Faithfulness -/
 
-variable {τ : SyntacticObject → Option LexicalItem.Token}
-
-/-- A step replays alike under two trace encoders that agree on its mover where the mover is a
-term of the object. -/
-theorem Step.replay?_congr {τ' : SyntacticObject → Option LexicalItem.Token} (step : Step)
-    (c : Cfg PlanarSyntacticObject)
-    (h : ∀ m ∈ step.mover?, m ∈ c.current.toSyntacticObject.terms → τ m = τ' m) :
-    step.replay? c τ = step.replay? c τ' := by
-  obtain ⟨p, st⟩ := c
-  cases step with
-  | em side item => rfl
-  | remerge side => cases st <;> rfl
-  | im mover side | extract mover =>
-    simp only [Step.replay?]
-    cases hf : p.find? mover with
-    | none => rfl
-    | some s =>
-      rw [SyntacticObject.tracePlanar, SyntacticObject.tracePlanar,
-        h mover rfl (PlanarSyntacticObject.isSome_find?_iff.1 (by rw [hf]; rfl))]
+variable {τ : SyntacticObject (ι := ι) → Option ι}
 
 namespace Derivation
 
-theorem replay?_append_singleton (d : Derivation) (step : Step) :
+theorem replay?_append_singleton (d : Derivation ι) (step : Step ι) :
     (d.append [step]).replay? τ = (d.replay? τ).bind (step.replay? · τ) := by
   simp only [replay?, append, List.foldlM_append, List.foldlM_cons, List.foldlM_nil,
     Option.bind_assoc]
@@ -105,10 +90,10 @@ theorem replay?_append_singleton (d : Derivation) (step : Step) :
   funext c
   cases step.replay? c τ <;> rfl
 
-theorem stack_eq_nil_of_replay? {d : Derivation} {c : Cfg PlanarSyntacticObject}
+theorem stack_eq_nil_of_replay? {d : Derivation ι} {c : Cfg (PlanarSyntacticObject (ι := ι))}
     (hm : ∀ step ∈ d.steps, step.IsMerge) (h : d.replay? τ = some c) : c.stack = [] := by
   obtain ⟨p, -, h⟩ := Option.bind_eq_some_iff.1 h
-  have key : ∀ (steps : List Step) (c₀ c : Cfg PlanarSyntacticObject),
+  have key : ∀ (steps : List (Step ι)) (c₀ c : Cfg (PlanarSyntacticObject (ι := ι))),
       (∀ step ∈ steps, step.IsMerge) → c₀.stack = [] →
         steps.foldlM (fun c step ↦ step.replay? c τ) c₀ = some c → c.stack = [] := by
     intro steps
@@ -135,7 +120,7 @@ end Derivation
 section Map
 
 variable {f : LexicalItem.Token → LexicalItem.Token}
-  {τ' : SyntacticObject → Option LexicalItem.Token}
+  {τ τ' : SyntacticObject → Option LexicalItem.Token}
 
 theorem Step.replay?_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f) = (τ s).map f)
     (step : Step) (c : Cfg PlanarSyntacticObject) :
@@ -170,7 +155,7 @@ end Derivation
 
 end Map
 
-private theorem Step.map_of_replay? {c c' : Cfg PlanarSyntacticObject} {step : Step}
+private theorem Step.map_of_replay? {c c' : Cfg (PlanarSyntacticObject (ι := ι))} {step : Step ι}
     (h : step.replay? c τ = some c') :
     c'.map PlanarSyntacticObject.toSyntacticObject
       = step.run (c.map PlanarSyntacticObject.toSyntacticObject) τ := by
@@ -195,25 +180,25 @@ private theorem Step.map_of_replay? {c c' : Cfg PlanarSyntacticObject} {step : S
 
 /-- A successful replay forgets to the configuration of the derivation
 ([marcolli-chomsky-berwick-2025] Lemma 1.13.1). -/
-theorem Derivation.replay?_faithful (d : Derivation) {c : Cfg PlanarSyntacticObject}
+theorem Derivation.replay?_faithful (d : Derivation ι) {c : Cfg (PlanarSyntacticObject (ι := ι))}
     (h : d.replay? τ = some c) :
     c.map PlanarSyntacticObject.toSyntacticObject = d.run τ := by
   obtain ⟨p, hp, h⟩ := Option.bind_eq_some_iff.1 h
-  rw [List.foldl_eq_of_foldlM_eq_some (f := fun c (step : Step) ↦ step.replay? c τ)
-    (g := fun c (step : Step) ↦ step.run c τ)
+  rw [List.foldl_eq_of_foldlM_eq_some (f := fun c (step : Step ι) ↦ step.replay? c τ)
+    (g := fun c (step : Step ι) ↦ step.run c τ)
     (π := Cfg.map PlanarSyntacticObject.toSyntacticObject)
     (fun _ _ _ ↦ Step.map_of_replay?) h, Derivation.run, Cfg.map, List.map_nil,
     toSyntacticObject_of_toPlanarLeaf? hp]
 
 /-- A successful externalization forgets to the derived object, so the surface readouts are the
     word order of `final` itself. -/
-theorem Derivation.externalize?_faithful (d : Derivation) {p : PlanarSyntacticObject}
+theorem Derivation.externalize?_faithful (d : Derivation ι) {p : PlanarSyntacticObject (ι := ι)}
     (h : d.externalize? τ = some p) : p.toSyntacticObject = d.final τ := by
   obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 h
   rw [Derivation.final, ← d.replay?_faithful hc, Cfg.map_current]
 
-theorem Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
-    {p : PlanarSyntacticObject} (h : (d.take n).externalize? τ = some p) :
+theorem Derivation.externalize?_take_faithful (d : Derivation ι) (n : Nat)
+    {p : PlanarSyntacticObject (ι := ι)} (h : (d.take n).externalize? τ = some p) :
     p.toSyntacticObject = d.stageAt n τ :=
   externalize?_faithful (d.take n) h
 
@@ -222,7 +207,7 @@ theorem Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
 The replay succeeds exactly on the derivations whose steps apply, so validity is decided on it. -/
 
 /-- A step replays exactly when it applies to the configuration replayed so far. -/
-theorem Step.isSome_replay?_iff (step : Step) (c : Cfg PlanarSyntacticObject) :
+theorem Step.isSome_replay?_iff (step : Step ι) (c : Cfg (PlanarSyntacticObject (ι := ι))) :
     (step.replay? c τ).isSome ↔
       step.AppliesTo (c.map PlanarSyntacticObject.toSyntacticObject) := by
   obtain ⟨p, st⟩ := c
@@ -235,8 +220,8 @@ theorem Step.isSome_replay?_iff (step : Step) (c : Cfg PlanarSyntacticObject) :
   | remerge side => cases st <;> simp [Step.replay?, Step.AppliesTo]
 
 theorem Step.isSome_foldlM_replay?_iff :
-    ∀ (steps : List Step) (c : Cfg PlanarSyntacticObject),
-      (steps.foldlM (fun c (step : Step) ↦ step.replay? c τ) c).isSome ↔
+    ∀ (steps : List (Step ι)) (c : Cfg (PlanarSyntacticObject (ι := ι))),
+      (steps.foldlM (fun c (step : Step ι) ↦ step.replay? c τ) c).isSome ↔
         Step.ApplyFrom τ steps (c.map PlanarSyntacticObject.toSyntacticObject)
   | [], _ => by simp [Step.ApplyFrom]
   | step :: steps, c => by
@@ -251,7 +236,7 @@ theorem Step.isSome_foldlM_replay?_iff :
 namespace Derivation
 
 /-- The replay succeeds exactly when the derivation starts from a leaf and each step applies. -/
-theorem isSome_replay?_iff {d : Derivation} :
+theorem isSome_replay?_iff {d : Derivation ι} :
     (d.replay? τ).isSome ↔
       d.initial.toPlanarLeaf?.isSome ∧ Step.ApplyFrom τ d.steps ⟨d.initial, []⟩ := by
   rw [replay?]
@@ -262,18 +247,18 @@ theorem isSome_replay?_iff {d : Derivation} :
     simp [Cfg.map, SyntacticObject.toSyntacticObject_of_toPlanarLeaf? h]
 
 
-theorem IsValid.isSome_replay? {d : Derivation} (h : d.IsValid τ) : (d.replay? τ).isSome :=
+theorem IsValid.isSome_replay? {d : Derivation ι} (h : d.IsValid τ) : (d.replay? τ).isSome :=
   isSome_replay?_iff.2 ⟨h.initial, h.steps⟩
 
 /-- Validity is decided on the replay. -/
-instance (d : Derivation) : Decidable (d.IsValid τ) :=
+instance (d : Derivation ι) : Decidable (d.IsValid τ) :=
   decidable_of_iff
     (d.initial.toPlanarLeaf?.isSome ∧ (d.replay? τ).isSome ∧ d.lexTokens.Nodup)
     ⟨fun ⟨hi, hr, hn⟩ ↦ ⟨hi, (isSome_replay?_iff.1 hr).2, hn⟩,
       fun h ↦ ⟨h.initial, h.isSome_replay?, h.nodup⟩⟩
 
 /-- The replay of an initial segment succeeds when the replay of the whole does. -/
-theorem isSome_replay?_take {d : Derivation} (h : (d.replay? τ).isSome) (n : Nat) :
+theorem isSome_replay?_take {d : Derivation ι} (h : (d.replay? τ).isSome) (n : Nat) :
     ((d.take n).replay? τ).isSome :=
   let ⟨hi, hs⟩ := isSome_replay?_iff.1 h
   isSome_replay?_iff.2 ⟨hi, hs.take n⟩
@@ -286,7 +271,7 @@ section Yield
 
 open PlanarSyntacticObject (toSyntacticObject)
 
-private theorem Step.yield_map_replay? {step : Step} {c c' : Cfg PlanarSyntacticObject}
+private theorem Step.yield_map_replay? {step : Step ι} {c c' : Cfg (PlanarSyntacticObject (ι := ι))}
     (hc : ((c.map toSyntacticObject).yield + (step.items.map SyntacticObject.yield).sum).Nodup)
     (h : step.replay? c τ = some c') :
     (c'.map toSyntacticObject).yield =
@@ -320,7 +305,7 @@ private theorem Step.yield_map_replay? {step : Step} {c c' : Cfg PlanarSyntactic
       abel
 
 private theorem yield_map_foldlM_replay? :
-    ∀ {steps : List Step} {c c' : Cfg PlanarSyntacticObject},
+    ∀ {steps : List (Step ι)} {c c' : Cfg (PlanarSyntacticObject (ι := ι))},
       steps.foldlM (fun c step ↦ step.replay? c τ) c = some c' →
       ((c.map toSyntacticObject).yield +
         ((Step.itemsList steps).map SyntacticObject.yield).sum).Nodup →
@@ -336,7 +321,7 @@ private theorem yield_map_foldlM_replay? :
 
 /-- When no token is merged twice, a derivation pronounces each token it merges once, in its
 object or in a copy left on the stack, however many copies its movements leave. -/
-theorem Derivation.yield_replay? {d : Derivation} {c : Cfg PlanarSyntacticObject}
+theorem Derivation.yield_replay? {d : Derivation ι} {c : Cfg (PlanarSyntacticObject (ι := ι))}
     (hd : d.lexTokens.Nodup) (h : d.replay? τ = some c) :
     (c.map toSyntacticObject).yield = d.lexTokens := by
   obtain ⟨p, hp, h⟩ := Option.bind_eq_some_iff.1 h
@@ -348,7 +333,7 @@ theorem Derivation.yield_replay? {d : Derivation} {c : Cfg PlanarSyntacticObject
 end Yield
 
 /-- No configuration a valid derivation reaches pronounces a token twice. -/
-theorem Derivation.IsValid.nodup_yield_run_take {d : Derivation} (h : d.IsValid τ) (n : Nat) :
+theorem Derivation.IsValid.nodup_yield_run_take {d : Derivation ι} (h : d.IsValid τ) (n : Nat) :
     ((d.take n).run τ).yield.Nodup := by
   obtain ⟨c, hc⟩ := Option.isSome_iff_exists.1 (h.take n).isSome_replay?
   rw [← replay?_faithful _ hc, yield_replay? (h.take n).nodup hc]

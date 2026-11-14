@@ -35,21 +35,24 @@ open RoseTree UnorderedTree SyntacticObject
 
 namespace SyntacticObject
 
+variable {L ι : Type}
+
 /-- Substitute `f u` for every outermost term `u` of `s` on which `f` is defined, simultaneously. -/
-def subst (f : SyntacticObject → Option SyntacticObject) : SyntacticObject → SyntacticObject :=
+def subst (f : SyntacticObject L ι → Option (SyntacticObject L ι)) :
+    SyntacticObject L ι → SyntacticObject L ι :=
   FreeCommMagma.elim (fun x ↦ (f (FreeCommMagma.of x)).getD (FreeCommMagma.of x))
     (fun l r a b ↦ (f (l * r)).getD (a * b)) fun l r a b ↦ by rw [mul_comm l, mul_comm a]
 
-variable {f g : SyntacticObject → Option SyntacticObject}
+variable {f g : SyntacticObject L ι → Option (SyntacticObject L ι)}
 
-@[simp] theorem subst_merge (f : SyntacticObject → Option SyntacticObject)
-    (l r : SyntacticObject) :
+@[simp] theorem subst_merge (f : SyntacticObject L ι → Option (SyntacticObject L ι))
+    (l r : SyntacticObject L ι) :
     (merge l r).subst f = (f (merge l r)).getD (merge (l.subst f) (r.subst f)) :=
   FreeCommMagma.elim_mul _ _ _ l r
 
-theorem subst_of_toUnorderedTree_eq_leaf {s : SyntacticObject} {a : Vertex} (hs : s.toUnorderedTree
-    = UnorderedTree.leaf a)
-    (f : SyntacticObject → Option SyntacticObject) : s.subst f = (f s).getD s := by
+theorem subst_of_toUnorderedTree_eq_leaf {s : SyntacticObject L ι} {a : Vertex L ι}
+    (hs : s.toUnorderedTree = UnorderedTree.leaf a)
+    (f : SyntacticObject L ι → Option (SyntacticObject L ι)) : s.subst f = (f s).getD s := by
   rcases exists_form s with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l, r, rfl⟩
   · rfl
   · rfl
@@ -57,18 +60,20 @@ theorem subst_of_toUnorderedTree_eq_leaf {s : SyntacticObject} {a : Vertex} (hs 
   · have := congrArg UnorderedTree.children hs
     simp [UnorderedTree.leaf] at this
 
-private theorem subst_fun_val (f : SyntacticObject → Option SyntacticObject) (s : SyntacticObject) :
+private theorem subst_fun_val (f : SyntacticObject L ι → Option (SyntacticObject L ι))
+    (s : SyntacticObject L ι) :
     (if h : IsSyntacticObject s.toUnorderedTree then (f (ofUnorderedTree s.toUnorderedTree h)).map
         toUnorderedTree else none) =
       (f s).map toUnorderedTree := by
   simp [s.isSyntacticObject_toUnorderedTree]
 
-private theorem toUnorderedTree_getD (o : Option SyntacticObject) (d : SyntacticObject) :
+private theorem toUnorderedTree_getD (o : Option (SyntacticObject L ι))
+    (d : SyntacticObject L ι) :
     (o.getD d).toUnorderedTree = (o.map toUnorderedTree).getD d.toUnorderedTree := by
   cases o <;> rfl
 
-private theorem toUnorderedTree_subst (f : SyntacticObject → Option SyntacticObject) (s :
-    SyntacticObject) :
+private theorem toUnorderedTree_subst (f : SyntacticObject L ι → Option (SyntacticObject L ι))
+    (s : SyntacticObject L ι) :
     (s.subst f).toUnorderedTree = UnorderedTree.subst (fun u ↦
       if h : IsSyntacticObject u then (f (ofUnorderedTree u
           h)).map toUnorderedTree else none) s.toUnorderedTree := by
@@ -82,15 +87,15 @@ private theorem toUnorderedTree_subst (f : SyntacticObject → Option SyntacticO
         subst_fun_val, toUnorderedTree_trace,
       UnorderedTree.subst_leaf]
   | traceOf tok =>
-    rw [subst_of_toUnorderedTree_eq_leaf (toUnorderedTree_traceOf tok), toUnorderedTree_getD, ←
-        subst_fun_val, toUnorderedTree_traceOf,
+    rw [subst_of_toUnorderedTree_eq_leaf (toUnorderedTree_labelledTrace tok),
+      toUnorderedTree_getD, ← subst_fun_val, toUnorderedTree_labelledTrace,
       UnorderedTree.subst_leaf]
   | merge l r ihl ihr =>
     rw [subst_merge, toUnorderedTree_getD, ← subst_fun_val, toUnorderedTree_merge,
         toUnorderedTree_merge, ihl, ihr,
       UnorderedTree.subst_node_pair]
 
-theorem subst_congr {s : SyntacticObject} (h : ∀ u ∈ s.terms, f u = g u) :
+theorem subst_congr {s : SyntacticObject L ι} (h : ∀ u ∈ s.terms, f u = g u) :
     s.subst f = s.subst g := by
   apply toUnorderedTree_injective
   rw [toUnorderedTree_subst, toUnorderedTree_subst]
@@ -100,7 +105,8 @@ theorem subst_congr {s : SyntacticObject} (h : ∀ u ∈ s.terms, f u = g u) :
     h (ofUnorderedTree u hu') ((toUnorderedTree_mem_subtrees (S := ofUnorderedTree u hu')).1 (by rwa
         [toUnorderedTree_ofUnorderedTree]))]
 
-theorem subst_eq_self {s : SyntacticObject} (h : ∀ u ∈ s.terms, ∀ r, f u = some r → r = u) :
+theorem subst_eq_self {s : SyntacticObject L ι}
+    (h : ∀ u ∈ s.terms, ∀ r, f u = some r → r = u) :
     s.subst f = s := by
   apply toUnorderedTree_injective
   rw [toUnorderedTree_subst]
@@ -116,11 +122,13 @@ theorem subst_eq_self {s : SyntacticObject} (h : ∀ u ∈ s.terms, ∀ r, f u =
 
 /-! ### Replacement -/
 
+variable [DecidableEq L] [DecidableEq ι]
+
 /-- Replace every subterm of `s` equal to `target` by `replacement`. -/
-def replace (s target replacement : SyntacticObject) : SyntacticObject :=
+def replace (s target replacement : SyntacticObject L ι) : SyntacticObject L ι :=
   s.subst fun u ↦ if u = target then some replacement else none
 
-@[simp] theorem toUnorderedTree_replace (s target replacement : SyntacticObject) :
+@[simp] theorem toUnorderedTree_replace (s target replacement : SyntacticObject L ι) :
     (replace s target replacement).toUnorderedTree
       =
           UnorderedTree.replace target.toUnorderedTree replacement.toUnorderedTree s.toUnorderedTree
@@ -139,34 +147,36 @@ def replace (s target replacement : SyntacticObject) : SyntacticObject :=
       ite_eq_right hut]
     rfl
 
-@[simp] theorem replace_self (target replacement : SyntacticObject) :
+@[simp] theorem replace_self (target replacement : SyntacticObject L ι) :
     replace target target replacement = replacement :=
   toUnorderedTree_injective (by rw [toUnorderedTree_replace, UnorderedTree.replace_self])
 
-@[simp] theorem replace_self_self (target s : SyntacticObject) : s.replace target target = s :=
+@[simp] theorem replace_self_self (target s : SyntacticObject L ι) : s.replace target target = s :=
   toUnorderedTree_injective (by rw [toUnorderedTree_replace, UnorderedTree.replace_self_self])
 
-theorem replace_of_notMem_terms {s target replacement : SyntacticObject} (h : target ∉ s.terms) :
+theorem replace_of_notMem_terms {s target replacement : SyntacticObject L ι}
+    (h : target ∉ s.terms) :
     s.replace target replacement = s :=
   toUnorderedTree_injective <| by
     rw [toUnorderedTree_replace, UnorderedTree.replace_of_notMem_subtrees (by rwa
         [toUnorderedTree_mem_subtrees])]
 
-theorem replace_merge_of_ne {l r target replacement : SyntacticObject} (h : merge l r ≠ target) :
+theorem replace_merge_of_ne {l r target replacement : SyntacticObject L ι}
+    (h : merge l r ≠ target) :
     replace (merge l r) target replacement
       = merge (replace l target replacement) (replace r target replacement) := by
   rw [replace, subst_merge, ite_eq_right h]
   rfl
 
-theorem replace_of_toUnorderedTree_eq_leaf {s target replacement : SyntacticObject} {a : Vertex}
-    (hs : s.toUnorderedTree = UnorderedTree.leaf a) (h : s ≠ target) :
+theorem replace_of_toUnorderedTree_eq_leaf {s target replacement : SyntacticObject L ι}
+    {a : Vertex L ι} (hs : s.toUnorderedTree = UnorderedTree.leaf a) (h : s ≠ target) :
         s.replace target replacement = s := by
   rw [replace, subst_of_toUnorderedTree_eq_leaf hs, ite_eq_right h]
   rfl
 
 /-- Replacing `target` keeps what an object contains apart from `target`: a term that neither
 lies inside `target` nor holds it. -/
-theorem Contains.replace {s x target replacement : SyntacticObject} (h : Contains s x)
+theorem Contains.replace {s x target replacement : SyntacticObject L ι} (h : Contains s x)
     (hx : x ∉ target.terms) (ht : target ∉ x.terms) :
     Contains (s.replace target replacement) x := by
   induction s using ind with
@@ -185,27 +195,43 @@ theorem Contains.replace {s x target replacement : SyntacticObject} (h : Contain
 
 /-- Moving the daughter `r` out of `[l r]` and leaving a trace yields `[l′ t]`, with `l′` the
     substituted left daughter; a tree is never its own daughter, taken here as a hypothesis. -/
-example (l r : SyntacticObject) (h : merge l r ≠ r) :
+example (l r : SyntacticObject L ι) (h : merge l r ≠ r) :
     replace (merge l r) r trace = merge (replace l r trace) trace := by
   rw [replace_merge_of_ne h, replace_self]
 
 /-! ### Traces -/
 
+/-- The trace encoder used when none is given: the label a moved object leaves on its trace. -/
+class TraceLabel (L ι : Type) where
+  /-- The label of the trace a moved object leaves. -/
+  encoder : SyntacticObject L ι → Option ι
+
+/-- Labelled in tokens, a moved object leaves the trace of its head by selection. -/
+instance : TraceLabel LexicalItem.Token LexicalItem.Token := ⟨selHead⟩
+
+/-- Labelled in `ℕ`, a moved object leaves the bare trace unless an encoder numbers it. -/
+instance : TraceLabel L ℕ := ⟨fun _ ↦ none⟩
+
+omit [DecidableEq L] [DecidableEq ι] in
+theorem TraceLabel.encoder_token :
+    (TraceLabel.encoder : SyntacticObject → Option LexicalItem.Token) = selHead := rfl
+
 /-- A moved object leaves the trace of its head under the encoder `τ`, by default the head by
     selection, or the bare trace when it has none. -/
-def headTrace (s : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
-    SyntacticObject :=
-  (τ s).elim trace traceOf
+def headTrace [TraceLabel L ι] (s : SyntacticObject L ι)
+    (τ : SyntacticObject L ι → Option ι := TraceLabel.encoder) : SyntacticObject L ι :=
+  (τ s).elim trace labelledTrace
 
+omit [DecidableEq L] [DecidableEq ι] in
 /-- The trace a moved object leaves is the trace leaf its encoder labels. -/
-theorem toUnorderedTree_headTrace (s : SyntacticObject) (τ : SyntacticObject → Option
-    LexicalItem.Token) :
+theorem toUnorderedTree_headTrace [TraceLabel L ι] (s : SyntacticObject L ι)
+    (τ : SyntacticObject L ι → Option ι) :
     (s.headTrace τ).toUnorderedTree = UnorderedTree.leaf (Sum.inr (τ s)) := by
   unfold headTrace; cases τ s <;> rfl
 
 /-- Replacing the occurrences of a term by a silent object removes its tokens and no others, in
 an object that pronounces no token twice. -/
-theorem yield_replace_add_yield {s m t : SyntacticObject} (hs : s.yield.Nodup)
+theorem yield_replace_add_yield {s m t : SyntacticObject L ι} (hs : s.yield.Nodup)
     (hm : m ∈ s.terms) (ht : t.yield = 0) : (s.replace m t).yield + m.yield = s.yield := by
   induction s using ind with
   | leaf a =>
@@ -215,7 +241,7 @@ theorem yield_replace_add_yield {s m t : SyntacticObject} (hs : s.yield.Nodup)
     obtain rfl : m = trace := by simpa using hm
     rw [replace_self, ht, zero_add]
   | traceOf a =>
-    obtain rfl : m = traceOf a := by simpa using hm
+    obtain rfl : m = labelledTrace a := by simpa using hm
     rw [replace_self, ht, zero_add]
   | merge l r ihl ihr =>
     by_cases h : merge l r = m
@@ -238,7 +264,9 @@ theorem yield_replace_add_yield {s m t : SyntacticObject} (hs : s.yield.Nodup)
       · rw [replace_of_notMem_terms hml, add_assoc, ihr hr hmr]
       · exact (hm'.elim hml hmr).elim
 
-theorem yield_headTrace (s : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token) :
+omit [DecidableEq L] [DecidableEq ι] in
+theorem yield_headTrace [TraceLabel L ι] (s : SyntacticObject L ι)
+    (τ : SyntacticObject L ι → Option ι) :
     (s.headTrace τ).yield = 0 := by
   unfold headTrace; cases τ s <;> rfl
 
@@ -262,7 +290,7 @@ theorem replace_map (hf : Function.Injective f) (s target replacement : Syntacti
   induction s using ind with
   | leaf a => exact leafCase _ (terms_leaf a)
   | trace => exact leafCase _ terms_trace
-  | traceOf a => exact leafCase _ (terms_traceOf a)
+  | traceOf a => exact leafCase _ (terms_labelledTrace a)
   | merge l r ihl ihr =>
     by_cases h : merge l r = target
     · subst h; rw [replace_self, replace_self]
@@ -273,12 +301,13 @@ end Map
 
 /-- The remainder `T/mover`, the current object with the mover's occurrences replaced by the trace
     of its head under `τ`. -/
-def deleteAccessible (mover current : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : SyntacticObject :=
+def deleteAccessible [TraceLabel L ι] (mover current : SyntacticObject L ι)
+    (τ : SyntacticObject L ι → Option ι := TraceLabel.encoder) : SyntacticObject L ι :=
   current.replace mover (mover.headTrace τ)
 
-@[simp] theorem toUnorderedTree_deleteAccessible (mover current : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token) :
+@[simp] theorem toUnorderedTree_deleteAccessible [TraceLabel L ι]
+    (mover current : SyntacticObject L ι)
+    (τ : SyntacticObject L ι → Option ι) :
     (deleteAccessible mover current τ).toUnorderedTree
       = UnorderedTree.replace mover.toUnorderedTree (mover.headTrace
           τ).toUnorderedTree current.toUnorderedTree :=
@@ -288,79 +317,85 @@ end SyntacticObject
 
 /-! ### Planar leaves -/
 
+variable {L ι : Type}
+
 /-- The planar form of a leaf object, which has only one; `none` on a merged object. -/
-def SyntacticObject.toPlanarLeaf? (s : SyntacticObject) : Option PlanarSyntacticObject :=
+def SyntacticObject.toPlanarLeaf? (s : SyntacticObject L ι) :
+    Option (PlanarSyntacticObject L ι) :=
   match s.toUnorderedTree.value with
   | .inl (some tok) => some (.leaf tok)
   | .inl none => none
   | .inr none => some .trace
-  | .inr (some tok) => some (.traceOf tok)
+  | .inr (some i) => some (.labelledTrace i)
 
-theorem SyntacticObject.toSyntacticObject_of_toPlanarLeaf? {s : SyntacticObject}
-    {p : PlanarSyntacticObject} (h : s.toPlanarLeaf? = some p) :
+theorem SyntacticObject.toSyntacticObject_of_toPlanarLeaf? {s : SyntacticObject L ι}
+    {p : PlanarSyntacticObject L ι} (h : s.toPlanarLeaf? = some p) :
     p.toSyntacticObject = s := by
   rcases s.exists_form with ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩ <;>
     simp [toPlanarLeaf?, toUnorderedTree_merge] at h <;> subst h <;> rfl
 
 /-! ### Occurrences in planar objects -/
 
+variable [DecidableEq L] [DecidableEq ι]
+
 namespace PlanarSyntacticObject
 
 /-- The leftmost, outermost subtree of `p` projecting to `target`. -/
-def find? (p : PlanarSyntacticObject) (target : SyntacticObject) :
-    Option PlanarSyntacticObject :=
+def find? (p : PlanarSyntacticObject L ι) (target : SyntacticObject L ι) :
+    Option (PlanarSyntacticObject L ι) :=
   (p.toRoseTree.subtrees.find? (mk · = target.toUnorderedTree)).pmap (p := (mk · =
       target.toUnorderedTree))
     (fun s hs ↦ ofRoseTree s (hs.symm ▸ target.isSyntacticObject_toUnorderedTree)) fun _ h ↦ by
       simpa using List.find?_some h
 
-theorem toSyntacticObject_find? {p s : PlanarSyntacticObject} {target : SyntacticObject}
+theorem toSyntacticObject_find? {p s : PlanarSyntacticObject L ι} {target : SyntacticObject L ι}
     (h : p.find? target = some s) : s.toSyntacticObject = target := by
   obtain ⟨t, ht, -, rfl⟩ := Option.pmap_eq_some_iff.1 (by rwa [find?] at h)
   exact SyntacticObject.toUnorderedTree_injective
     (by rw [toUnorderedTree_toSyntacticObject, toRoseTree_ofRoseTree]; exact ht)
 
 /-- Every subtree of `p` projecting to `target` replaced by `rep`. -/
-def replace (p : PlanarSyntacticObject) (target : SyntacticObject)
-    (rep : PlanarSyntacticObject) : PlanarSyntacticObject :=
+def replace (p : PlanarSyntacticObject L ι) (target : SyntacticObject L ι)
+    (rep : PlanarSyntacticObject L ι) : PlanarSyntacticObject L ι :=
   ofRoseTree (replaceIf (mk · = target.toUnorderedTree) rep.toRoseTree p.toRoseTree) (by
     rw [mk_replaceIf, ← toUnorderedTree_toSyntacticObject, ← toUnorderedTree_toSyntacticObject,
       ← toUnorderedTree_replace]
     exact SyntacticObject.isSyntacticObject_toUnorderedTree _)
 
-@[simp] theorem toRoseTree_replace (p : PlanarSyntacticObject) (target : SyntacticObject)
-    (rep : PlanarSyntacticObject) :
+@[simp] theorem toRoseTree_replace (p : PlanarSyntacticObject L ι) (target : SyntacticObject L ι)
+    (rep : PlanarSyntacticObject L ι) :
     (p.replace target rep).toRoseTree = replaceIf (mk · =
         target.toUnorderedTree) rep.toRoseTree p.toRoseTree :=
   toRoseTree_ofRoseTree _ _
 
-@[simp] theorem toSyntacticObject_replace (p : PlanarSyntacticObject) (target : SyntacticObject)
-    (rep : PlanarSyntacticObject) :
+@[simp] theorem toSyntacticObject_replace (p : PlanarSyntacticObject L ι)
+    (target : SyntacticObject L ι) (rep : PlanarSyntacticObject L ι) :
     (p.replace target rep).toSyntacticObject
       = p.toSyntacticObject.replace target rep.toSyntacticObject :=
   SyntacticObject.toUnorderedTree_injective (by
     simp only [toUnorderedTree_replace, toUnorderedTree_toSyntacticObject, toRoseTree_replace]
     exact mk_replaceIf _ _ _)
 
-theorem mem_terms_toSyntacticObject {p : PlanarSyntacticObject} {m : SyntacticObject} :
+omit [DecidableEq L] [DecidableEq ι] in
+theorem mem_terms_toSyntacticObject {p : PlanarSyntacticObject L ι} {m : SyntacticObject L ι} :
     m ∈ p.toSyntacticObject.terms ↔ ∃ q ∈ p.toRoseTree.subtrees, mk q = m.toUnorderedTree := by
   rw [← toUnorderedTree_mem_subtrees, toUnorderedTree_toSyntacticObject, subtrees_mk,
       unorderedSubtrees_eq_map,
     Multiset.mem_coe, List.mem_map]
 
-theorem isSome_find?_iff {p : PlanarSyntacticObject} {m : SyntacticObject} :
+theorem isSome_find?_iff {p : PlanarSyntacticObject L ι} {m : SyntacticObject L ι} :
     (p.find? m).isSome ↔ m ∈ p.toSyntacticObject.terms := by
   rw [mem_terms_toSyntacticObject, find?, Option.isSome_pmap, List.find?_isSome]
   simp
 
-theorem mem_subtrees_of_find? {p s : PlanarSyntacticObject} {m : SyntacticObject}
+theorem mem_subtrees_of_find? {p s : PlanarSyntacticObject L ι} {m : SyntacticObject L ι}
     (h : p.find? m = some s) : s.toRoseTree ∈ p.toRoseTree.subtrees := by
   obtain ⟨t, -, ht, rfl⟩ := Option.pmap_eq_some_iff.1 (by rwa [find?] at h)
   rw [toRoseTree_ofRoseTree]
   exact List.mem_of_find?_eq_some ht
 
-theorem replace_of_toSyntacticObject_eq {p r : PlanarSyntacticObject} {target : SyntacticObject}
-    (h : p.toSyntacticObject = target) : p.replace target r = r := by
+theorem replace_of_toSyntacticObject_eq {p r : PlanarSyntacticObject L ι}
+    {target : SyntacticObject L ι} (h : p.toSyntacticObject = target) : p.replace target r = r := by
   apply toRoseTree_injective
   rw [toRoseTree_replace]
   rcases hp : p.toRoseTree with ⟨a, cs⟩
@@ -369,8 +404,8 @@ theorem replace_of_toSyntacticObject_eq {p r : PlanarSyntacticObject} {target : 
   · rfl
   · exact absurd (by rw [← hp, ← toUnorderedTree_toSyntacticObject, h]) hc
 
-theorem replace_attach {p d r : PlanarSyntacticObject} {target : SyntacticObject} {e : Edge}
-    (h : SyntacticObject.merge d.toSyntacticObject p.toSyntacticObject ≠ target) :
+theorem replace_attach {p d r : PlanarSyntacticObject L ι} {target : SyntacticObject L ι}
+    {e : Edge} (h : SyntacticObject.merge d.toSyntacticObject p.toSyntacticObject ≠ target) :
     (p.attach e d).replace target r = (p.replace target r).attach e (d.replace target r) := by
   have h' : (p.attach e d).toSyntacticObject ≠ target := by rwa [toSyntacticObject_attach]
   apply toRoseTree_injective
@@ -380,8 +415,9 @@ theorem replace_attach {p d r : PlanarSyntacticObject} {target : SyntacticObject
     first | rfl | exact (h' (SyntacticObject.toUnorderedTree_injective
       ((toUnorderedTree_toSyntacticObject _).trans hc))).elim
 
-theorem replace_of_toRoseTree_eq_leaf {p r : PlanarSyntacticObject} {target : SyntacticObject}
-    {a : Vertex} (hp : p.toRoseTree = RoseTree.leaf a) (h : p.toSyntacticObject ≠ target) :
+theorem replace_of_toRoseTree_eq_leaf {p r : PlanarSyntacticObject L ι}
+    {target : SyntacticObject L ι} {a : Vertex L ι} (hp : p.toRoseTree = RoseTree.leaf a)
+    (h : p.toSyntacticObject ≠ target) :
     p.replace target r = p := by
   apply toRoseTree_injective
   simp only [toRoseTree_replace, hp, replaceIf_node, List.map_nil]
@@ -393,22 +429,26 @@ theorem replace_of_toRoseTree_eq_leaf {p r : PlanarSyntacticObject} {target : Sy
 end PlanarSyntacticObject
 
 /-- The planar trace a moved object leaves, `SyntacticObject.headTrace` with its order. -/
-def SyntacticObject.tracePlanar (s : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : PlanarSyntacticObject :=
-  (τ s).elim PlanarSyntacticObject.trace PlanarSyntacticObject.traceOf
+def SyntacticObject.tracePlanar [TraceLabel L ι] (s : SyntacticObject L ι)
+    (τ : SyntacticObject L ι → Option ι := TraceLabel.encoder) : PlanarSyntacticObject L ι :=
+  (τ s).elim PlanarSyntacticObject.trace PlanarSyntacticObject.labelledTrace
 
-@[simp] theorem SyntacticObject.toSyntacticObject_tracePlanar (s : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token) :
+omit [DecidableEq L] [DecidableEq ι] in
+@[simp] theorem SyntacticObject.toSyntacticObject_tracePlanar [TraceLabel L ι]
+    (s : SyntacticObject L ι)
+    (τ : SyntacticObject L ι → Option ι) :
     (s.tracePlanar τ).toSyntacticObject = s.headTrace τ := by
   unfold tracePlanar headTrace; cases τ s <;> rfl
 
-theorem SyntacticObject.toRoseTree_tracePlanar (s : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token) :
+omit [DecidableEq L] [DecidableEq ι] in
+theorem SyntacticObject.toRoseTree_tracePlanar [TraceLabel L ι] (s : SyntacticObject L ι)
+    (τ : SyntacticObject L ι → Option ι) :
     (s.tracePlanar τ).toRoseTree = .node (.inr (τ s)) [] := by
   unfold tracePlanar; cases τ s <;> rfl
 
-theorem PlanarSyntacticObject.yield_replace_add_yield {p s : PlanarSyntacticObject}
-    {m : SyntacticObject} (τ : SyntacticObject → Option LexicalItem.Token)
+theorem PlanarSyntacticObject.yield_replace_add_yield [TraceLabel L ι]
+    {p s : PlanarSyntacticObject L ι}
+    {m : SyntacticObject L ι} (τ : SyntacticObject L ι → Option ι)
     (hp : p.toSyntacticObject.yield.Nodup) (hs : p.find? m = some s) :
     (p.replace m (m.tracePlanar τ)).toSyntacticObject.yield + s.toSyntacticObject.yield =
       p.toSyntacticObject.yield := by
@@ -426,8 +466,9 @@ theorem PlanarSyntacticObject.yield_replace_add_yield {p s : PlanarSyntacticObje
   · rw [SyntacticObject.toRoseTree_tracePlanar]
     rfl
 
-theorem SyntacticObject.not_sisters_of_toPlanarLeaf? {s x z : SyntacticObject}
-    {p : PlanarSyntacticObject} (hs : s.toPlanarLeaf? = some p) : ¬ Sisters s x z := by
+omit [DecidableEq L] [DecidableEq ι] in
+theorem SyntacticObject.not_sisters_of_toPlanarLeaf? {s x z : SyntacticObject L ι}
+    {p : PlanarSyntacticObject L ι} (hs : s.toPlanarLeaf? = some p) : ¬ Sisters s x z := by
   rintro ⟨w, hw, hwx, -, -⟩
   rcases s.exists_form with ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩
   · rw [terms_leaf, Multiset.mem_singleton] at hw
@@ -436,9 +477,9 @@ theorem SyntacticObject.not_sisters_of_toPlanarLeaf? {s x z : SyntacticObject}
   · rw [terms_trace, Multiset.mem_singleton] at hw
     subst hw
     simp [ImmediatelyContains, toUnorderedTree_trace] at hwx
-  · rw [terms_traceOf, Multiset.mem_singleton] at hw
+  · rw [terms_labelledTrace, Multiset.mem_singleton] at hw
     subst hw
-    simp [ImmediatelyContains, toUnorderedTree_traceOf] at hwx
+    simp [ImmediatelyContains, toUnorderedTree_labelledTrace] at hwx
   · simp [toPlanarLeaf?, toUnorderedTree_merge] at hs
 
 /-! ### Relabelling -/

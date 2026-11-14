@@ -140,7 +140,7 @@ theorem traceCuts_filter_mover (hm : mover.toUnorderedTree.value.isLeft)
     (h : current.terms.count mover = 1) (hne : current ≠ mover) :
     (traceCuts traceEncoder current.toUnorderedTree).filter (fun p ↦ p.1 = {mover.toUnorderedTree})
       = {({mover.toUnorderedTree}, (deleteAccessible mover current).toUnorderedTree)} := by
-  rw [toUnorderedTree_deleteAccessible, toUnorderedTree_headTrace,
+  rw [toUnorderedTree_deleteAccessible, toUnorderedTree_headTrace, TraceLabel.encoder_token,
     ← traceEncoder_toUnorderedTree]
   refine traceCuts_filter_crown_eq_singleton traceEncoder hm ?_
     (fun h' ↦ hne (toUnorderedTree_injective h'))

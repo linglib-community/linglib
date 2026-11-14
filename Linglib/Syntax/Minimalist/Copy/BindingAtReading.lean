@@ -964,9 +964,9 @@ private theorem replayWithCopies?_invariants {d : Derivation} (hd : d.lexTokens.
       obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 hstep
       have hmL : mover.toUnorderedTree.value.isLeft := hmv (.im mover side) (by simp) mover (by
           simp)
-      obtain ⟨cs, hv, ht, hdc, hhas⟩ := attach_val (t.mark mover (selHead mover)) s side
+      obtain ⟨cs, hv, ht, hdc, hhas⟩ := attach_val (t.mark mover (TraceLabel.encoder mover)) s side
       simp only at hMN hTF hDD ⊢
-      have hmt : (t.mark mover (selHead mover)).val.map Prod.snd = t.val.map Prod.snd :=
+      have hmt : (t.mark mover (TraceLabel.encoder mover)).val.map Prod.snd = t.val.map Prod.snd :=
         map_snd_markTree _ _ _
       have hne : termOf s.val ≠ termOf t.val := by
         exact fun h ↦ termOf_ne_of_attach hDD (h.trans (termOf_markTree _).symm)
