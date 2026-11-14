@@ -14,42 +14,36 @@ public import Linglib.Data.Examples.Readers
 # Privizentseva (2026): The Syntax of Relative Clauses and the Nature of Merge
 
 In Moksha the head of an externally headed relative clause may bear the case assigned inside the
-relative clause instead of the main-clause case, inverse case attraction (ICA). The book argues
-that the head's case predicts its connectivity: relatives with ICA are derived by raising,
-regular externally headed relatives by the head-external derivation, and no rival that gives the
-two one derivation, or raises both, fits the data (chapter 4).
-
-A derivation is a chain of the head noun phrase. Its restrictor is first merged at the foot or,
-by wholesale late merger, at a position where the noun phrase receives case, which the order of
-the head noun's case probe and its Merge feature for the relative CP fixes (the book's Table 5.1,
-`caseSite`). An idiom needs the noun first merged with its verb, an anaphor in the head a binder
-above some merge point, and Condition C a merge point above the pronoun
-(`Minimalist.LateMergerBleeds`). The same order explains the left-periphery restriction: a head
-whose case was valued in the relative clause has no active case probe for main-clause selection,
-so it is displaced (section 5.3), which the labeling algorithm, labeling the verb and its object
-whatever the object's case, does not force. Merging the relative determiner with a noun that
-still selects the relative clause is outside triggered Merge, where one factor is saturated; the
-book lets a phrase be selected before it is saturated (section 5.5), which licenses every stage
-of the raising derivation; triggered Merge rejects the stages before the noun is copied out,
-though it accepts the derived object, which holds only the noun's trace. The derivation copies
-the noun and *kona*'s phrase onto a stack and merges them back in the reverse order. Moving
-*kona*'s phrase first and subextracting the noun, the alternative footnote 14 of the article
-weighs, is licensed as well, but violates Freezing, which the stack derivation obeys, and leaves
-the complementizer and the noun out of c-command. The appositive and restrictive readings of
-relatives with ICA rule out a correlative or internally headed placement (section 3.3.1), and
-attraction is not ordered by a case hierarchy (section 3.5).
+relative clause, inverse case attraction (ICA). The book derives relatives with ICA by raising
+and the others by the head-external derivation, which [predicts the connectivity of
+each](##analysis_fits) as [no derivation shared by both does](##no_uniform_derivation). Raising
+merges the relative determiner with a noun that still selects the relative clause, so the book
+lets a phrase be selected before it is saturated. [Triggered Merge is that licensing with nothing
+pending](##selCheck_ne_zero_iff): it [rejects the stages of the raising
+derivation](##triggeredMerge_rejects_raisingRelative) that hold the unsaturated noun, all of
+which [selection before saturation licenses](##raisingRelative_licensed).
 
 ## Implementation notes
 
-* Heights order the head's position in the relative clause below the main-clause position, with
-  a binder or pronoun of each clause just above the head's position there.
+* A derivation is a chain of the head noun phrase. Its restrictor is first merged at the foot or,
+  by wholesale late merger, where the noun phrase receives case, which the order of the head
+  noun's case probe and its Merge feature for the relative CP fixes (`caseSite`). Heights order
+  the head's position in the relative clause below the main-clause position, with a binder or
+  pronoun of each clause just above the head's position there.
 * Variable binding by a pronoun and crossover show no contrast between the two kinds of relative
   (`pronounVariable_and_crossover_uniform`); the book concludes that they do not rest on
   c-command in syntax, and they are not modelled as structural.
-* Rows with speaker variation (`%`, the second idiom) are left out of `rows_predicted`.
+* Rows with speaker variation (`%`, the second idiom) are left out of `rows`.
+* `PendingState` is a one-field structure over `Option`, as `Minimalist.SelectionState` is. Its
+  product never discharges a pending selector: an object has nothing pending once the item
+  selected before it was saturated is copied out, leaving a saturated trace.
 
 ## TODO
 
+* A derivation that triggered Merge licenses at every stage should be licensed by selection
+  before saturation; `selCheck_ne_zero_iff` gives this for objects, and the stages need the two
+  replays to agree, which leave the traces of the same heads there
+  (`head_pendingHom_of_selCheck_ne_zero`).
 * Section 6.2 obviates Condition C in the main clause, for a name inside the relative clause,
   by late merger of the head with its relative clause into the external determiner, which the
   chain of the head's restrictor does not model; the rows ch. 6 (11) and (12) record the data.
@@ -57,6 +51,9 @@ attraction is not ordered by a case hierarchy (section 3.5).
   modelled; `konaRows_case` records the pattern they derive.
 * A bare-noun object is a lexical leaf, which ties with the verb under minimal search, so the
   labeling argument of section 5.3.2 covers phrasal objects only.
+* [cinque-2020] derives non-restrictive relatives by matching only (`Cinque2020.RCType.Admits`),
+  while relatives with ICA raise and have an appositive reading, which section 5.4 reconciles;
+  the two are not compared.
 
 ## References
 
@@ -64,6 +61,7 @@ attraction is not ordered by a case hierarchy (section 3.5).
 * [privizentseva-2026b]
 * [takahashi-hulsey-2009]
 * [grosu-landman-1998]
+* [cinque-2020]
 -/
 
 @[expose] public section
@@ -139,38 +137,21 @@ def Derivation.MergesAt (d : Derivation) (p : Site) : Prop :=
 instance (d : Derivation) : DecidablePred d.MergesAt :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- An idiom whose verb is at `s` is licensed when the noun can be first merged there, as a
-constituent with the verb. -/
-def Derivation.IdiomAt (d : Derivation) (s : Site) : Prop :=
-  d.MergesAt s
-
 /-- A binder at `s` binds an anaphor in the head when the restrictor can be merged at a position
 the binder c-commands, binding applying at any stage. -/
 def Derivation.AnaphorAt (d : Derivation) (s : Site) : Prop :=
   ∃ p ∈ d.chain, d.MergesAt p ∧ p.height < s.binderHeight
+
+instance (d : Derivation) (s : Site) : Decidable (d.AnaphorAt s) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- A pronoun at `s` can corefer with a name in the head when the restrictor can be merged above
 it, out of its c-command domain. -/
 def Derivation.ObviatesAt (d : Derivation) (s : Site) : Prop :=
   LateMergerBleeds d.MergesAt Site.height d.chain s.binderHeight
 
-instance (d : Derivation) (s : Site) : Decidable (d.IdiomAt s) :=
-  inferInstanceAs (Decidable (d.MergesAt s))
-
-instance (d : Derivation) (s : Site) : Decidable (d.AnaphorAt s) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
 instance (d : Derivation) (s : Site) : Decidable (d.ObviatesAt s) :=
   inferInstanceAs (Decidable (LateMergerBleeds _ _ _ _))
-
-/-! ### The data -/
-
-/-- The case on the head of a relative clause: the internal case of ICA, assigned inside the
-relative clause, or the external case of the main clause. -/
-inductive HeadCase where
-  | internal
-  | external
-  deriving DecidableEq, Repr
 
 /-- The connectivity diagnostics that rest on c-command in syntax. -/
 inductive Diagnostic where
@@ -180,34 +161,47 @@ inductive Diagnostic where
   | conditionC
   deriving DecidableEq, Repr
 
-/-- What a derivation licenses for a diagnostic at a site: a reflexive read as a bound variable
-patterns with anaphor binding. -/
+/-- What a derivation licenses for a diagnostic at a site. An idiom whose verb is at the site
+needs the noun first merged there, as a constituent with the verb, and a reflexive read as a
+bound variable patterns with anaphor binding. -/
 def Derivation.Licenses (d : Derivation) : Diagnostic → Site → Prop
-  | .idiom, s => d.IdiomAt s
+  | .idiom, s => d.MergesAt s
   | .anaphor, s | .reflexiveVariable, s => d.AnaphorAt s
   | .conditionC, s => d.ObviatesAt s
 
 instance (d : Derivation) : ∀ g s, Decidable (d.Licenses g s)
-  | .idiom, s => inferInstanceAs (Decidable (d.IdiomAt s))
+  | .idiom, s => inferInstanceAs (Decidable (d.MergesAt s))
   | .anaphor, s | .reflexiveVariable, s => inferInstanceAs (Decidable (d.AnaphorAt s))
   | .conditionC, s => inferInstanceAs (Decidable (d.ObviatesAt s))
 
+/-! ### The data -/
+
+/-- The case on the head of a relative clause: the internal case of ICA, assigned inside the
+relative clause, or the external case of the main clause. -/
+inductive HeadCase where
+  | internal
+  | external
+  deriving DecidableEq, Repr, Fintype
+
+/-- The case on the head of the relative clause of an example. -/
+def headCase? (ex : Datum) : Option HeadCase :=
+  ex.parse? "rcType" [("ICA", .internal), ("external", .external)]
+
 /-- A relative clause of chapter 4 testing a structural diagnostic: the case on its head, the
-diagnostic, the site of the idiom's verb, binder or pronoun, and whether the tested reading is
-accepted. -/
+diagnostic, the site of the idiom's verb, binder or pronoun, and the judgment of the tested
+reading. -/
 structure Row where
   headCase : HeadCase
   diagnostic : Diagnostic
   site : Site
-  accepted : Bool
+  judgment : Judgment
   deriving DecidableEq, Repr
 
 /-- Condition C rows are judged on the coreferent reading, the others on the sentence. -/
 def Row.ofDatum (ex : Datum) : Option Row := do
-  guard (ex.judgment ≠ .variable)
   guard (ex.feature? "section" ∈ [some "4.3.1", some "4.3.2", some "4.3.3", some "4.3.4",
     some "4.3.5"])
-  let headCase ← ex.parse? "rcType" [("ICA", HeadCase.internal), ("external", .external)]
+  let headCase ← headCase? ex
   let diagnostic ← ex.parse? "diagnostic"
     [("idiom", Diagnostic.idiom), ("anaphor", .anaphor),
       ("reflexiveVariable", .reflexiveVariable), ("conditionC", .conditionC)]
@@ -215,28 +209,21 @@ def Row.ofDatum (ex : Datum) : Option Row := do
   let judgment ← match diagnostic with
     | .conditionC => ex.readings.lookup "coreferent"
     | _ => some ex.judgment
-  pure ⟨headCase, diagnostic, site, decide (.variable ≤ judgment)⟩
+  guard (judgment ≠ .variable)
+  pure ⟨headCase, diagnostic, site, judgment⟩
 
 /-- The structural connectivity rows of chapter 4. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-example : rows.length = 20 := by decide
-
-/-- The rows testing variable binding by a pronoun and crossover: the case on the head and
-whether the bound reading is accepted. -/
-def boundRows : List (HeadCase × Bool) := Examples.all.filterMap fun ex ↦ do
-  guard (ex.feature? "diagnostic" = some "pronounVariable" ∨
-    ex.feature? "diagnostic" = some "crossover")
-  let headCase ← ex.parse? "rcType" [("ICA", HeadCase.internal), ("external", .external)]
-  let judgment ← ex.readings.lookup "bound" <|> some ex.judgment
-  pure (headCase, judgment == .acceptable)
-
-example : boundRows.length = 16 := by decide
+/-- The case on the head of a row testing variable binding by a pronoun or crossover. -/
+def boundTest? (ex : Datum) : Option HeadCase := do
+  guard (ex.feature? "diagnostic" ∈ [some "pronounVariable", some "crossover"])
+  headCase? ex
 
 theorem pronounVariable_and_crossover_uniform :
-    (∀ r ∈ boundRows, r.2 = true) ∧ (∃ r ∈ boundRows, r.1 = .internal) ∧
-      ∃ r ∈ boundRows, r.1 = .external := by
-  decide
+    (∀ e ∈ Examples.all, ∀ _c ∈ boundTest? e, e.readings.lookup "bound" = some .acceptable) ∧
+      ∀ c, (Examples.all.filterMap boundTest?).count c = 8 := by
+  decide +kernel
 
 /-! ### The analysis -/
 
@@ -248,30 +235,28 @@ def analysis : HeadCase → Derivation
 
 /-- A derivation fits a row when it licenses the tested reading exactly when the row accepts it. -/
 def Derivation.Fits (d : Derivation) (r : Row) : Prop :=
-  r.accepted = true ↔ d.Licenses r.diagnostic r.site
+  r.judgment.band = .ofProp (d.Licenses r.diagnostic r.site)
 
 instance (d : Derivation) (r : Row) : Decidable (d.Fits r) :=
-  inferInstanceAs (Decidable (_ ↔ _))
+  inferInstanceAs (Decidable (_ = _))
 
 /-- The analysis predicts every structural connectivity judgment of chapter 4. -/
-theorem rows_predicted : ∀ r ∈ rows, (analysis r.headCase).Fits r := by
+theorem analysis_fits : (∀ r ∈ rows, (analysis r.headCase).Fits r) ∧ rows.length = 20 := by
   decide
 
 /-- No derivation shared by both kinds of relative fits the data, which rules out those of section
 4.4.3.1 and section 4.4.3.3 (Section 4.4.3). -/
 theorem no_uniform_derivation (d : Derivation) : ¬ ∀ r ∈ rows, d.Fits r := by
   intro h
-  obtain ⟨r₁, h₁, r₂, h₂, hg, hs, ha₁, ha₂⟩ : ∃ r₁ ∈ rows, ∃ r₂ ∈ rows,
-      r₁.diagnostic = r₂.diagnostic ∧ r₁.site = r₂.site ∧ r₁.accepted = true ∧
-        r₂.accepted = false := by decide
-  have e₁ := h r₁ h₁
-  have e₂ := h r₂ h₂
-  unfold Derivation.Fits at e₁ e₂
+  obtain ⟨r₁, h₁, r₂, h₂, hg, hs, hj⟩ : ∃ r₁ ∈ rows, ∃ r₂ ∈ rows,
+      r₁.diagnostic = r₂.diagnostic ∧ r₁.site = r₂.site ∧
+        r₁.judgment.band ≠ r₂.judgment.band := by decide
+  have e₁ : r₁.judgment.band = _ := h r₁ h₁
   rw [hg, hs] at e₁
-  simp_all
+  exact hj (e₁.trans (h r₂ h₂).symm)
 
-/-- Raising both kinds, with the external case valued after movement, fails even under wholesale
-late merger (Section 4.4.3.2). -/
+-- Section 4.4.3.2: raising both kinds, with the external case valued after movement, fails even
+-- under wholesale late merger
 theorem raising_only_fails :
     ∃ r ∈ rows, r.headCase = .external ∧ ¬ (Derivation.raising [.mergeCP, .case]).Fits r := by
   decide
@@ -283,32 +268,21 @@ theorem obviatesAt_rc :
 
 /-! ### The left periphery (sections 3.3.2 and 5.3) -/
 
-/-- Main-clause heads select a noun phrase with an active probe, the second-order selection of
-section 5.3.1. A head noun phrase whose case probe was valued inside the relative clause has no
-active case probe left in the main clause, so it must bear another probe, a topic, focus or Q
-feature, which displaces it to the left periphery. -/
-def Derivation.ForcedExSitu : Derivation → Prop
-  | .raising o => caseSite .rc o = some .rc
-  | .headExternal => False
-
-instance : DecidablePred Derivation.ForcedExSitu
-  | .raising o => inferInstanceAs (Decidable (caseSite .rc o = some .rc))
-  | .headExternal => inferInstanceAs (Decidable False)
-
-/-- The rows placing a relative clause with its head in the base position of the head noun
-phrase in the main clause, for a subject below a sentence adverb (section 5.3.2): the case on
-the head and whether the sentence is accepted. -/
-def inSituRows : List (HeadCase × Bool) := Examples.all.filterMap fun ex ↦ do
+/-- The case on the head of a relative clause standing in the base position of its head noun
+phrase in the main clause, for a subject below a sentence adverb (section 5.3.2). -/
+def inSitu? (ex : Datum) : Option HeadCase := do
   guard (ex.feature? "position" ∈ [some "inSitu", some "afterAdverb"])
-  let headCase ← ex.parse? "rcType" [("ICA", HeadCase.internal), ("external", .external)]
-  pure (headCase, ex.judgment == .acceptable)
+  headCase? ex
 
-example : inSituRows.length = 6 := by decide
-
-/-- A relative clause stays in the base position of its head exactly when its derivation does
-not force the head noun phrase out of it. -/
-theorem inSitu_rows : ∀ r ∈ inSituRows, r.2 = true ↔ ¬ (analysis r.1).ForcedExSitu := by
-  decide
+-- Section 5.3.1: main-clause heads select a noun phrase with an active probe. A head noun phrase
+-- whose case probe was valued inside the relative clause has no active case probe left in the
+-- main clause, so it bears a topic, focus or Q probe, which displaces it to the left periphery;
+-- a relative clause stays in the base position of its head exactly when its head's case was not
+-- valued there
+theorem inSitu_rows :
+    Datum.Checks inSitu? (fun c ↦ .ofProp ((analysis c).casePosition ≠ some .rc))
+      Examples.all 6 := by
+  decide +kernel
 
 -- Section 5.3.2: the labeling algorithm labels a verb merged with any phrasal object, whatever
 -- case the object's head bears, so a failure to label, the alternative account of forced
@@ -319,72 +293,157 @@ example {t : Minimalist.PlanarSyntacticObject} {v : Minimalist.LexicalItem.Token
     t.IsLabeledBy (.merge (.leaf v) x) v :=
   Minimalist.PlanarSyntacticObject.isLabeledBy_merge_head hex hx hv
 
--- Section 5.2.2
-theorem selCheck_merge_eq_zero_of_sel_ne_nil {d n : Minimalist.LexicalItem.Token}
-    (hd : d.item.sel ≠ []) (hn : n.item.sel ≠ []) :
-    (Minimalist.SyntacticObject.merge (.leaf d) (.leaf n)).selCheck = 0 := by
-  by_contra h
-  rw [Minimalist.SyntacticObject.selCheck_node, Minimalist.SyntacticObject.selCheck_leaf,
-    Minimalist.SyntacticObject.selCheck_leaf] at h
-  have := Minimalist.SelectionState.isSaturated_iff_not_isSaturated_of_mul_ne_zero h
-  simp_all [Minimalist.SelectionState.IsSaturated, Minimalist.SelectionState.residual,
-    Minimalist.SelectionState.of]
-
 /-! ### Projecting movement (section 5.2.2) -/
 
 section ProjectingMovement
 
 open Minimalist
 
-/-- A selection state that lets an item still selecting be selected, the second implication the
-book draws (section 5.5): the head, its remaining selectors, and the selectors pending from items
-selected before they were saturated. -/
+/-- A selection state that lets an item still selecting be selected (section 5.5): the head, its
+remaining selectors, and the selectors pending from items selected before they were saturated;
+`0` where Merge fails. -/
 structure PendingState where
   toOption : Option (LexicalItem.Token × List Cat × Multiset Cat)
   deriving DecidableEq
 
 namespace PendingState
 
+/-- The state with head `tok`, remaining selectors `stack` and pending selectors `pending`. -/
+def of (tok : LexicalItem.Token) (stack : List Cat) (pending : Multiset Cat) : PendingState :=
+  ⟨some (tok, stack, pending)⟩
+
 instance : Zero PendingState := ⟨⟨none⟩⟩
+
+/-- Recursor for `PendingState` using the preferred forms `0` and `of tok stack pending`. -/
+@[elab_as_elim, induction_eliminator, cases_eliminator]
+def recZeroOf {motive : PendingState → Sort*} (zero : motive 0)
+    (of : ∀ tok stack pending, motive (of tok stack pending)) : ∀ x, motive x
+  | ⟨none⟩ => zero
+  | ⟨some (tok, stack, pending)⟩ => of tok stack pending
 
 /-- One factor selects the other, which need not be saturated; the selectee's remaining selectors
 become pending. -/
-def combine : PendingState → PendingState → PendingState
-  | ⟨some (a, ra, p)⟩, ⟨some (b, rb, q)⟩ =>
-    if ra.head? = some b.item.cat ∧ rb.head? ≠ some a.item.cat then ⟨some (a, ra.tail, p + q + rb)⟩
-    else if rb.head? = some a.item.cat ∧ ra.head? ≠ some b.item.cat then
-      ⟨some (b, rb.tail, p + q + ra)⟩
-    else ⟨none⟩
-  | _, _ => ⟨none⟩
-
 instance : MulZeroClass PendingState where
-  mul := combine
+  mul
+    | ⟨some (a, ra, p)⟩, ⟨some (b, rb, q)⟩ =>
+      if ra.head? = some b.item.cat ∧ rb.head? ≠ some a.item.cat then of a ra.tail (p + q + rb)
+      else if rb.head? = some a.item.cat ∧ ra.head? ≠ some b.item.cat then
+        of b rb.tail (p + q + ra)
+      else 0
+    | _, _ => 0
   zero_mul _ := rfl
-  mul_zero x := by rcases x with ⟨_ | ⟨a, ra, p⟩⟩ <;> rfl
+  mul_zero x := by cases x <;> rfl
 
-theorem mul_def (x y : PendingState) : x * y = combine x y := rfl
+section
+
+variable (a b : LexicalItem.Token) (ra rb : List Cat) (p q : Multiset Cat)
+
+theorem of_mul_of : of a ra p * of b rb q =
+    if ra.head? = some b.item.cat ∧ rb.head? ≠ some a.item.cat then of a ra.tail (p + q + rb)
+    else if rb.head? = some a.item.cat ∧ ra.head? ≠ some b.item.cat then
+      of b rb.tail (p + q + ra)
+    else 0 := rfl
+
+@[simp] theorem of_ne_zero : of a ra p ≠ 0 := mt (congrArg toOption) (Option.some_ne_none _)
 
 instance : CommMagma PendingState where
   mul_comm x y := by
-    rcases x with ⟨_ | ⟨a, ra, p⟩⟩ <;> rcases y with ⟨_ | ⟨b, rb, q⟩⟩ <;>
-      simp only [mul_def, combine]
+    cases x <;> cases y <;> try rfl
+    simp only [of_mul_of]
     split_ifs <;> simp_all [add_comm]
 
 instance : Head PendingState where
   head x := x.toOption.map (·.1)
   head_zero := rfl
   mem_head_or_mem_head_of_mem_head_mul {x y t} h := by
-    rcases x with ⟨_ | ⟨a, ra, p⟩⟩ <;> rcases y with ⟨_ | ⟨b, rb, q⟩⟩ <;>
-      simp only [Option.mem_def, mul_def, combine] at h ⊢
-    all_goals first | cases h | (split_ifs at h <;> simp_all)
+    cases x <;> cases y <;> try cases h
+    simp only [of_mul_of] at h
+    split_ifs at h
+    exacts [.inl (by cases h; rfl), .inr (by cases h; rfl), by cases h]
+
+@[simp] theorem head_of : head (of a ra p) = some a := rfl
+
+/-- The selection state of a state with nothing pending, and `0` otherwise. -/
+def toSelectionState : PendingState → SelectionState
+  | ⟨some (a, ra, p)⟩ => if p = 0 then .of a ra else 0
+  | ⟨none⟩ => 0
+
+@[simp] theorem toSelectionState_zero : toSelectionState 0 = 0 := rfl
+
+theorem toSelectionState_of :
+    (of a ra p).toSelectionState = if p = 0 then .of a ra else 0 := rfl
+
+theorem toSelectionState_ne_zero_iff {x : PendingState} :
+    x.toSelectionState ≠ 0 ↔ ∃ a ra, x = of a ra 0 := by
+  cases x with
+  | zero => exact iff_of_false (fun h ↦ h rfl) fun ⟨a, ra, h⟩ ↦ of_ne_zero _ _ _ h.symm
+  | of a ra p =>
+    rw [toSelectionState_of]
+    split_ifs with hp
+    · subst hp
+      exact iff_of_true (mt (congrArg SelectionState.toOption) (Option.some_ne_none _)) ⟨a, ra, rfl⟩
+    · exact iff_of_false (fun h ↦ h rfl) fun ⟨b, rb, h⟩ ↦ hp (by cases h; rfl)
+
+end
+
+/-- Triggered Merge is selection before saturation with nothing pending, as a morphism of
+magmas. -/
+def toSelectionStateHom : PendingState →ₙ* SelectionState where
+  toFun := toSelectionState
+  map_mul' x y := by
+    cases x with
+    | zero => rw [zero_mul, toSelectionState_zero, zero_mul]
+    | of a ra p =>
+      cases y with
+      | zero => rw [mul_zero, toSelectionState_zero, mul_zero]
+      | of b rb q =>
+        rw [of_mul_of, toSelectionState_of, toSelectionState_of]
+        rcases ra with _ | ⟨c, ra⟩ <;> rcases rb with _ | ⟨c', rb⟩ <;>
+          by_cases hp : p = 0 <;> by_cases hq : q = 0 <;>
+          simp [SelectionState.mul_def, selCombine, SelectionState.of, hp, hq] <;>
+          first | rfl | (split_ifs <;> first | rfl | simp_all [toSelectionState_of])
+
+@[simp] theorem toSelectionStateHom_apply (x : PendingState) :
+    toSelectionStateHom x = x.toSelectionState := rfl
 
 end PendingState
 
 /-- Selection before saturation as a licensing: a token with its selectors, a trace a saturated
 copy of the phrase its token heads. -/
 def pendingHom : SyntacticObject →ₙ* PendingState :=
-  FreeCommMagma.lift (SyntacticObject.Leaf.elim (fun tok ↦ ⟨some (tok, tok.item.sel, 0)⟩)
-    fun u ↦ ⟨some (u.getD .bareTrace, [], 0)⟩)
+  FreeCommMagma.lift (SyntacticObject.Leaf.elim (fun tok ↦ .of tok tok.item.sel 0)
+    fun u ↦ .of (u.getD .bareTrace) [] 0)
+
+-- Triggered Merge factors through selection before saturation
+theorem toSelectionStateHom_comp_pendingHom :
+    PendingState.toSelectionStateHom.comp pendingHom = SyntacticObject.selCheckHom :=
+  FreeCommMagma.hom_ext fun ℓ ↦ by cases ℓ <;> rfl
+
+theorem toSelectionState_pendingHom (s : SyntacticObject) :
+    (pendingHom s).toSelectionState = s.selCheck :=
+  DFunLike.congr_fun toSelectionStateHom_comp_pendingHom s
+
+/-- Triggered Merge licenses exactly the objects that selection before saturation licenses with
+nothing pending. -/
+theorem selCheck_ne_zero_iff (s : SyntacticObject) :
+    s.selCheck ≠ 0 ↔ ∃ a ra, pendingHom s = .of a ra 0 := by
+  rw [← toSelectionState_pendingHom, PendingState.toSelectionState_ne_zero_iff]
+
+theorem head_pendingHom_of_selCheck_ne_zero {s : SyntacticObject} (h : s.selCheck ≠ 0) :
+    head (pendingHom s) = s.selHead := by
+  obtain ⟨a, ra, hs⟩ := (selCheck_ne_zero_iff s).1 h
+  rw [SyntacticObject.selHead, ← toSelectionState_pendingHom, hs]
+  simp [PendingState.toSelectionState_of]
+
+-- (12): triggered Merge has no product of the relative determiner with a noun still selecting
+theorem selCheck_merge_eq_zero_of_sel_ne_nil {d n : LexicalItem.Token}
+    (hd : d.item.sel ≠ []) (hn : n.item.sel ≠ []) :
+    (SyntacticObject.merge (.leaf d) (.leaf n)).selCheck = 0 := by
+  by_contra h
+  rw [SyntacticObject.selCheck_node, SyntacticObject.selCheck_leaf,
+    SyntacticObject.selCheck_leaf] at h
+  have := SelectionState.isSaturated_iff_not_isSaturated_of_mul_ne_zero h
+  simp_all [SelectionState.IsSaturated, SelectionState.residual, SelectionState.of]
 
 /-- The head noun, selecting the relative CP. -/
 def headNoun : LexicalItem.Token := ⟨.of .N [.C], 1⟩
@@ -423,7 +482,7 @@ selected it, is checked once the noun merges back and selects the relative CP. -
 theorem raisingRelative_licensed :
     raisingRelative.LicensedBy pendingHom ∧ raisingRelative.ObeysFreezing ∧
       ∃ c ∈ raisingRelative.replay? (head ∘ pendingHom), c.stack = [] ∧
-        pendingHom c.current.toSyntacticObject = ⟨some (externalD, [], 0)⟩ := by
+        pendingHom c.current.toSyntacticObject = .of externalD [] 0 := by
   decide
 
 /-- Triggered Merge accepts the derived relative but rejects its derivation: it fails exactly at
@@ -452,8 +511,8 @@ theorem subextractionRelative_costs :
       ¬ subextractionRelative.CCommandsAt 5 headNoun relC := by
   decide
 
-/-- Read with the heads of triggered Merge, *kona*'s phrase, which has none there, leaves the bare
-trace, and selection before saturation then rejects the stage where it moved. -/
+-- Read with the heads of triggered Merge, *kona*'s phrase, which has none there, leaves the bare
+-- trace, and selection before saturation then rejects the stage where it moved.
 example : ¬ ∃ p ∈ (subextractionRelative.take 5).externalize?,
     pendingHom p.toSyntacticObject ≠ 0 := by
   decide
@@ -467,19 +526,25 @@ def caseNames : List (String × Case) :=
   [("NOM", .nom), ("GEN", .gen), ("DAT", .dat), ("ABL", .abl), ("IN", .ine), ("EL", .ela),
     ("ILL", .ill)]
 
-/-- The accepted relatives with ICA: the external case and the attracted internal case. -/
-def attractions : List (Case × Case) := Examples.all.filterMap fun ex ↦ do
-  guard (ex.feature? "rcType" = some "ICA" ∧ ex.judgment = .acceptable)
-  let ext ← ex.parse? "externalCase" caseNames
-  let int ← ex.parse? "internalCase" caseNames
-  pure (ext, int)
+/-- An inverse case attraction: the external case the main clause assigns and the internal case
+the head bears instead. -/
+structure Attraction where
+  external : Case
+  internal : Case
+  deriving DecidableEq
 
--- Section 3.5
+/-- The attractions of the accepted relatives with ICA. -/
+def attractions : List Attraction := Examples.all.filterMap fun ex ↦ do
+  guard (ex.feature? "rcType" = some "ICA" ∧ ex.judgment = .acceptable)
+  pure ⟨← ex.parse? "externalCase" caseNames, ← ex.parse? "internalCase" caseNames⟩
+
+-- Section 3.5: no asymmetric order of the cases has the internal case above the external one in
+-- every attraction
 theorem not_hierarchy (r : Case → Case → Prop) [Std.Asymm r] :
-    ¬ ∀ p ∈ attractions, r p.2 p.1 := by
+    ¬ ∀ a ∈ attractions, r a.internal a.external := by
   intro h
-  have h₁ : (Case.nom, Case.gen) ∈ attractions := by decide
-  have h₂ : (Case.gen, Case.nom) ∈ attractions := by decide
+  have h₁ : (⟨.nom, .gen⟩ : Attraction) ∈ attractions := by decide
+  have h₂ : (⟨.gen, .nom⟩ : Attraction) ∈ attractions := by decide
   exact Std.Asymm.asymm _ _ (h _ h₁) (h _ h₂)
 
 /-! ### Readings (section 3.3.1) -/
@@ -510,23 +575,25 @@ inductive Strategy where
   | ica
   | external
   | correlative
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
-/-- The rows testing a reading: the strategy, the reading the test requires, a proper-name head
-the appositive and a free-choice head the restrictive, and whether the sentence is accepted. -/
-def readingRows : List (Strategy × Reading × Bool) := Examples.all.filterMap fun ex ↦ do
-  let strategy ← ex.parse? "rcType"
-    [("ICA", Strategy.ica), ("external", .external), ("correlative", .correlative)]
-  let reading ← (ex.features "test").findSome?
+/-- The strategy of the relative clause of an example. -/
+def strategy? (ex : Datum) : Option Strategy :=
+  ex.parse? "rcType" [("ICA", .ica), ("external", .external), ("correlative", .correlative)]
+
+/-- The reading a test of an example of the strategy `s` requires, a proper-name head the
+appositive and a free-choice head the restrictive. -/
+def reading? (s : Strategy) (ex : Datum) : Option Reading := do
+  guard (strategy? ex = some s)
+  (ex.features "test").findSome?
     ([("properName", Reading.appositive), ("freeChoice", .restrictive)].lookup ·)
-  pure (strategy, reading, ex.judgment == .acceptable)
 
-example : readingRows.length = 6 := by decide
+example : ∀ s, Datum.ReadCount (reading? s) Examples.all 2 := by decide +kernel
 
 /-- A placement fits the readings of a strategy when it allows exactly the tested readings the
 rows accept. -/
 def ReadingsFit (p : Relativization.Placement) (s : Strategy) : Prop :=
-  ∀ x ∈ readingRows, x.1 = s → (x.2.2 = true ↔ Allows p x.2.1)
+  ∀ e ∈ Examples.all, e.Fits (reading? s) fun r ↦ .ofProp (Allows p r)
 
 instance (p : Relativization.Placement) (s : Strategy) : Decidable (ReadingsFit p s) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
@@ -534,11 +601,11 @@ instance (p : Relativization.Placement) (s : Strategy) : Decidable (ReadingsFit 
 -- Section 3.3.1
 theorem fits_ica_iff (p : Relativization.Placement) :
     ReadingsFit p .ica ↔ p = .postNominal ∨ p = .preNominal := by
-  revert p; decide
+  revert p; decide +kernel
 
 theorem fits_correlative_iff (p : Relativization.Placement) :
     ReadingsFit p .correlative ↔ p = .correlative := by
-  revert p; decide
+  revert p; decide +kernel
 
 /-! ### The case of the relative pronoun (sections 3.5 and 5.4.4) -/
 
@@ -547,36 +614,33 @@ occurs only in a few contexts, after *baška* 'except'; for a missing case a gen
 a postposition, or for direction a dative, stands in. -/
 def konaCases : List Case := [.nom, .gen, .dat]
 
-/-- The relatives with ICA recording the case on the head and on *kona*, with whether the
-sentence is accepted. -/
-def konaRows : List (Case × Case × Bool) := Examples.all.filterMap fun ex ↦ do
+/-- The case on the head of a relative with ICA and the case on *kona*. -/
+structure Marking where
+  head : Case
+  kona : Case
+
+/-- The marking of a relative with ICA that records both cases. -/
+def marking? (ex : Datum) : Option Marking := do
   guard (ex.feature? "rcType" = some "ICA")
-  let head ← ex.parse? "headCase" caseNames
-  let kona ← ex.parse? "relPronounCase" caseNames
-  pure (head, kona, ex.judgment == .acceptable)
+  pure ⟨← ex.parse? "headCase" caseNames, ← ex.parse? "relPronounCase" caseNames⟩
 
-example : konaRows.length = 34 := by decide
-
-attribute [local instance high] List.decidableBAll in
 theorem konaRows_case :
-    (∀ x ∈ konaRows, x.2.2 = true → (x.1 = x.2.1 ↔ x.1 ∈ konaCases)) ∧
-      ∀ x ∈ konaRows, x.2.1 ∉ konaCases → x.2.2 = false := by
-  decide
+    (∀ e ∈ Examples.all, ∀ m ∈ marking? e,
+      (e.judgment = .acceptable → (m.head = m.kona ↔ m.head ∈ konaCases)) ∧
+        (m.kona ∉ konaCases → e.judgment ≠ .acceptable)) ∧
+      Datum.ReadCount marking? Examples.all 34 := by
+  decide +kernel
 
-/-- The rows associating a left-peripheral noun phrase or relative clause with a position inside
-an adjunct or complex noun phrase island: the strategy, if any, and whether it is accepted. -/
-def islandRows : List (Option Strategy × Bool) := Examples.all.filterMap fun ex ↦ do
+/-- The strategy, if any, of a left-peripheral noun phrase or relative clause associated with a
+position inside an adjunct or complex noun phrase island. -/
+def island? (ex : Datum) : Option (Option Strategy) := do
   guard ((ex.features "test").any (· ∈ ["adjunctIsland", "complexNPIsland"]) ∧
     ex.feature? "position" = some "leftEdge")
-  let strategy := ex.parse? "rcType"
-    [("ICA", Strategy.ica), ("external", .external), ("correlative", .correlative)]
-  pure (strategy, ex.judgment == .acceptable)
+  pure (strategy? ex)
 
-example : islandRows.length = 8 := by decide
-
-attribute [local instance high] List.decidableBAll in
 -- Section 3.3.2
-theorem islandRows_accepted : ∀ x ∈ islandRows, x.2 = true ↔ x.1 = some .correlative := by
-  decide
+theorem islandRows_accepted :
+    Datum.Checks island? (fun s ↦ .ofProp (s = some .correlative)) Examples.all 8 := by
+  decide +kernel
 
 end Privizentseva2026
