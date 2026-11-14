@@ -955,8 +955,9 @@ theorem must_interleave {l : List Rule} (h₁ : [r34a, r40].Sublist l)
 /-! ### Linearization, metathesis and exponence
 
 After Linearization the prefix is a string of feature terminals, each tagged with its slot,
-in the order of (4) and (5); the appendix's rules of metathesis swap adjacent terminals, the
-library's `TerminalMetathesisRule`, (18) and (22) on the goal as their subscript says and (23) on
+in the order of (4) and (5); the appendix's rules of metathesis swap adjacent terminals, by
+Generalized Reduplication with one terminal on either side of the angled brackets, (18) and (22)
+on the goal as their subscript says and (23) on
 the second argument, goal or object. Exponence then reads each terminal in its prefix. -/
 
 /-- A terminal of the linearized prefix is a slot with a feature. -/
@@ -969,25 +970,29 @@ def linearize (p : Prefix) : List Terminal :=
 
 /-- By rule (18), the goal's `[−author]` swaps with its following inverse feature, when an agent is
 present. -/
-def m18 (p : Prefix) : TerminalMetathesisRule Terminal :=
-  ⟨fun n ↦ p.agent ≠ [] ∧ n.focus = (.goal, .author false) ∧
-    n.rightCtx.head? = some (.goal, .inverse)⟩
+def m18 (p : Prefix) : List Terminal → List Terminal :=
+  reduplicateFirst fun n ↦
+    if p.agent ≠ [] ∧ n.focus = (.goal, .author false) ∧
+      n.rightCtx.head? = some (.goal, .inverse) then some (.metathesis 1 1) else none
 
 /-- By rule (23), the paper's (26), a `[−atomic]` agent's `[+minimal]` swaps with the second
 argument's following `[−author]`. -/
-def m23 (p : Prefix) : TerminalMetathesisRule Terminal :=
-  ⟨fun n ↦ p.agent.Has (.atomic false) ∧ n.focus = (.agent, .minimal true) ∧
-    n.rightCtx.head? = some (p.secondArg, .author false)⟩
+def m23 (p : Prefix) : List Terminal → List Terminal :=
+  reduplicateFirst fun n ↦
+    if p.agent.Has (.atomic false) ∧ n.focus = (.agent, .minimal true) ∧
+      n.rightCtx.head? = some (p.secondArg, .author false) then some (.metathesis 1 1) else none
 
 /-- By rule (22), the paper's (24), the goal's `[−author]` swaps with its following `[−atomic]`
 before `[+minimal]`, when an agent is present. -/
-def m22 (p : Prefix) : TerminalMetathesisRule Terminal :=
-  ⟨fun n ↦ p.agent ≠ [] ∧ n.focus = (.goal, .author false) ∧
-    n.rightCtx.take 2 = [(.goal, .atomic false), (.goal, .minimal true)]⟩
+def m22 (p : Prefix) : List Terminal → List Terminal :=
+  reduplicateFirst fun n ↦
+    if p.agent ≠ [] ∧ n.focus = (.goal, .author false) ∧
+      n.rightCtx.take 2 = [(.goal, .atomic false), (.goal, .minimal true)]
+    then some (.metathesis 1 1) else none
 
 /-- The appendix's two sets of rules of metathesis in order. -/
 def metathesis (p : Prefix) : List Terminal → List Terminal :=
-  runModules [(m18 p).apply, (m23 p).apply, (m22 p).apply]
+  m22 p ∘ m23 p ∘ m18 p
 
 /-- The phonological role of an exponent, for the epenthetic vowel. -/
 inductive Role where
@@ -1405,7 +1410,7 @@ theorem metathesis_without_r24 :
 /-- Applied to the prefix as Spell-Out leaves it, (24) feeds (23): it removes the goal's
 `[−participant]` that separates the agent's `[+minimal]` from the goal's `[−author]`. -/
 theorem r24_feeds_m23 :
-    Feeds r24.apply (fun p ↦ (m23 p).apply (linearize p) ≠ linearize p)
+    Feeds r24.apply (fun p ↦ m23 p (linearize p) ≠ linearize p)
       (spellOut ⟨some (.first, .dual), some (.third, .singular), some .dummy⟩) := by
   decide +kernel
 
@@ -1456,28 +1461,21 @@ def ondarru : ObliterationRule Terminal :=
 /-- In Zamudio, the paper's (18), the trigger is any participant clitic. -/
 def zamudio : ObliterationRule Terminal := participantDissimilation [⟨.participant, true⟩]
 
-/-- Under Ergative Metathesis, the paper's (13) after Arregi and Nevins's (105), a word-initial T is
-preceded by the first ergative clitic that follows it, without (105a)'s conditions on an intervening
-dative clitic. -/
+/-- Under Ergative Metathesis, the paper's (13) after Arregi and Nevins's (105), a word-initial
+past T and what follows it up to the first ergative clitic change places with that clitic: the
+double brackets open before T and close after the clitic, and the angled brackets stand before
+the clitic. (105a)'s conditions on an intervening dative clitic are left out. -/
 def ergativeMetathesis : SpelloutDomain Terminal → SpelloutDomain Terminal :=
-  rewriteFirst
-    (fun n ↦ n.leftCtx = [] ∧ ⟨.tense, true⟩ ∈ n.focus ∧ ∃ t ∈ n.rightCtx, ⟨.case, .erg⟩ ∈ t)
-    fun n ↦ match n.rightCtx.find? (·.contains (⟨.case, .erg⟩)) with
-      | some e => n.leftCtx.reverse ++ e :: n.focus :: n.rightCtx.erase e
-      | none => n.toList
+  reduplicateFirst fun n ↦
+    if n.leftCtx = [] ∧ ⟨.tense, true⟩ ∈ n.focus then
+      (n.rightCtx.findIdx? (·.contains ⟨.case, .erg⟩)).map fun i ↦ .metathesis (i + 1) 1
+    else none
 
-theorem length_ergativeMetathesis (d : SpelloutDomain Terminal) :
-    (ergativeMetathesis d).length = d.length := by
-  unfold ergativeMetathesis
-  refine length_rewriteFirst (fun n ↦ ?_) d
-  cases h : n.rightCtx.find? (·.contains (⟨.case, .erg⟩)) with
-  | none => rfl
-  | some e =>
-    have hmem := List.mem_of_find?_eq_some h
-    simp only [List.length_cons, Neighborhood.toList, List.length_append, List.length_reverse,
-      List.length_erase_of_mem hmem]
-    have := List.length_pos_of_mem hmem
-    omega
+theorem ergativeMetathesis_perm (d : SpelloutDomain Terminal) : (ergativeMetathesis d).Perm d :=
+  reduplicateFirst_perm (fun n b hb ↦ by
+    split_ifs at hb
+    · obtain ⟨i, -, rfl⟩ := Option.map_eq_some_iff.1 hb; rfl
+    · cases hb) d
 
 /-- L-Support: an L before a word-initial T. -/
 def lSupportRepair (d : SpelloutDomain Terminal) : SpelloutDomain Terminal :=
@@ -1490,12 +1488,12 @@ def linearOperations : SpelloutDomain Terminal → SpelloutDomain Terminal :=
 /-- Feature Markedness before Linear Operations, the order of Figure 1. -/
 def markednessThenLinear (pd : ObliterationRule Terminal) :
     SpelloutDomain Terminal → SpelloutDomain Terminal :=
-  runModules [pd.apply, linearOperations]
+  linearOperations ∘ pd.apply
 
 /-- Linear Operations before Feature Markedness, the order both papers reject. -/
 def linearThenMarkedness (pd : ObliterationRule Terminal) :
     SpelloutDomain Terminal → SpelloutDomain Terminal :=
-  runModules [linearOperations, pd.apply]
+  pd.apply ∘ linearOperations
 
 /-- The Ondarru auxiliary of (17), *s-endu-n* 'you saw us': a first plural absolutive clitic,
 past T, and a second singular ergative clitic. -/

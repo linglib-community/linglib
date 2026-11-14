@@ -59,10 +59,10 @@ def feats (tok : LexicalItem.Token) : Finset Harley2014.SiteFeature :=
   | .V => {.root ⟨tok.id⟩}
   | _ => {.internal (if tok.id = 1001 then .singular else .plural)}
 
-/-- Late insertion over Harley's vocabulary: no postsyntactic modules, the Subset Principle at
+/-- Late insertion over Harley's vocabulary: no postsyntactic operation, the Subset Principle at
 each position. -/
 def lateSpellout : Spellout (Finset Harley2014.SiteFeature) String :=
-  ⟨[], fun n ↦ (subsetPrinciple Harley2014.vocabulary n).toList⟩
+  { insert := fun n ↦ (subsetPrinciple Harley2014.vocabulary n).toList }
 
 theorem pfPhon_clause : ∀ r ∈ [Harley2014.run, Harley2014.walk, Harley2014.kill, Harley2014.sing],
     ∀ n, pfPhon (clause r n) = [] := by decide
