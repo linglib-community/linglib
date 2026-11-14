@@ -125,6 +125,10 @@ def recordMove (m : U) : Gameboard P F U I :=
 def pushPending (m : U) : Gameboard P F U I :=
   { d with pending := m :: d.pending }
 
+/-- Pending update: `u`, uttered by `speaker` to `addressee`, becomes MaxPending. -/
+def pendingUpdate (u : U) (speaker addressee : P) : Gameboard P F U I :=
+  { d.pushPending u with speaker, addressee }
+
 /-- The addressee takes the turn. -/
 def swapTurn : Gameboard P F U I :=
   { d with speaker := d.addressee, addressee := d.speaker }
@@ -243,6 +247,35 @@ end Downdate
 /-- The content of the latest move. -/
 def latestContent (d : Gameboard P F (LocutionaryProposition Φ K Λ Δ C) I) : Option C :=
   d.latestMove.map (·.content)
+
+section Increment
+
+variable (d : Gameboard P F (LocutionaryProposition Φ K Λ Δ C) (InformationStructure Q S))
+  {d' : Gameboard P F (LocutionaryProposition Φ K Λ Δ C) (InformationStructure Q S)}
+  (contrib : C → Option Q) {q : Q}
+
+/-- QUD-incrementation: the question the latest move contributes under `contrib` becomes MaxQUD,
+with no focus-establishing constituent. -/
+def incrementQud :
+    Option (Gameboard P F (LocutionaryProposition Φ K Λ Δ C) (InformationStructure Q S)) :=
+  (d.latestContent.bind contrib).map fun q ↦ d.pushQud ⟨q, ∅⟩
+
+variable {contrib}
+
+theorem incrementQud_eq_some_iff : d.incrementQud contrib = some d' ↔
+    ∃ q ∈ d.latestContent.bind contrib, d.pushQud ⟨q, ∅⟩ = d' := by
+  simp only [incrementQud, Option.map_eq_some_iff, Option.mem_def]
+
+/-- QUD-incrementation keeps `non-resolve-cond` exactly when no fact resolves the question the
+latest move contributes. -/
+theorem nonResolveCond_incrementQud_iff (R : F → Q → Prop)
+    (hq : q ∈ d.latestContent.bind contrib) (h : d.incrementQud contrib = some d') :
+    d'.NonResolveCond R ↔ (¬∃ f ∈ d.facts, R f q) ∧ d.NonResolveCond R := by
+  obtain ⟨q', hq', rfl⟩ := d.incrementQud_eq_some_iff.1 h
+  cases Option.mem_unique hq hq'
+  exact d.nonResolveCond_pushQud_iff R
+
+end Increment
 
 section Interpolation
 
