@@ -42,7 +42,7 @@ orders opaque](##seeding_turkish), and [flipping a feeding map makes it bleed](#
 
 namespace BakovicBlumenfeld2024
 
-open Function RuleInteraction Phonology Subregular.LocalRewrite Data.PHOIBLE
+open Function Phonology Subregular.LocalRewrite Data.PHOIBLE
 
 /-! ### Input and output sets, input-rank -/
 
