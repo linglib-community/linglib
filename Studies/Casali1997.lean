@@ -78,22 +78,24 @@ def con : ConstraintSet ElidedVowel (Option Prominence) :=
 
 /-- `corr c e` is the correspondence between the unrepaired concatenation and the form that the
 elision `e` gives. -/
-def corr (e : ElidedVowel) : Correspondence.Diagram BinaryRole Segment :=
-  Correspondence.Diagram.eraseIdx c.input ⟨position c e, position_lt_length_input c e⟩
+def corr (e : ElidedVowel) : Correspondence.Coindexation BinaryRole Segment :=
+  Correspondence.Coindexation.eraseIdx c.input ⟨position c e, position_lt_length_input c e⟩
 
 /-- `resolve c e` is the form that the elision `e` gives. -/
-def resolve (e : ElidedVowel) : List Segment := (corr c e).form .rhs
+def resolve (e : ElidedVowel) : List Segment := (corr c e).string .rhs
 
-theorem resolve_first : resolve c .first = c.elideV1 := c.elideV1_eq_eraseIdx.symm
+theorem resolve_first : resolve c .first = c.elideV1 :=
+  Correspondence.Coindexation.eraseIdx_string_rhs.trans c.elideV1_eq_eraseIdx.symm
 
-theorem resolve_second : resolve c .second = c.elideV2 := c.elideV2_eq_eraseIdx.symm
+theorem resolve_second : resolve c .second = c.elideV2 :=
+  Correspondence.Coindexation.eraseIdx_string_rhs.trans c.elideV2_eq_eraseIdx.symm
 
 theorem con_eq_maxViolAt (i : Option Prominence) (e : ElidedVowel) :
     con c i e = (corr c e).maxViolAt (protects c i) .lhs .rhs :=
   maxAt_singleton_eq_maxViolAt _ ⟨position c e, position_lt_length_input c e⟩
 
 theorem con_none (e : ElidedVowel) : con c none e = (corr c e).maxViol .lhs .rhs :=
-  (con_eq_maxViolAt c none e).trans (Correspondence.Diagram.maxViolAt_true _ _ _)
+  (con_eq_maxViolAt c none e).trans (Correspondence.Coindexation.maxViolAt_true _ _ _)
 
 /-- `violations c e` is the set of constraints that the elision `e` violates, those protecting
 the position of the elided vowel. It is a row of the paper's table of violations. -/

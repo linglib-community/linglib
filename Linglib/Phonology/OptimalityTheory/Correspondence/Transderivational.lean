@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Diagram
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
 public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
@@ -59,62 +59,79 @@ inductive Role
 /-- The subparadigm of a base `b` and a derived word `d` with their inputs, the index pairs of
 their IO relations, and the index pairs `oo` of their OO relation. -/
 def paradigmOfPairs (bIn b dIn d : List α) (ioB ioD oo : List (ℕ × ℕ)) :
-    Correspondence.Diagram Role α :=
+    Correspondence.Coindexation Role α :=
   .ofPairs (fun | .baseInput => bIn | .base => b | .derivInput => dIn | .derivative => d)
-    fun | .baseInput, .base => ioB | .derivInput, .derivative => ioD | .base, .derivative => oo
-        | _, _ => []
+    [(.baseInput, .base, ioB), (.derivInput, .derivative, ioD), (.base, .derivative, oo)]
 
-/-- The subparadigm whose OO relation the IO relations induce (`Correspondence.ooPairs`): the base's
-input stands in the derived word's at `offset`, so that the OO relation links the realisations of
+/-- The indices a position `j` of an output bears on the OO relation, given the index pairs
+`io` of the output with an input of length `n`: the input positions it realises, or, when it
+realises none, an index for its site, the last input position realised at or before it. -/
+def ooIndices (n : ℕ) (io : List (ℕ × ℕ)) (j : ℕ) : List ℕ :=
+  match ((io.filter fun p ↦ p.1 < n ∧ p.2 = j).map (·.1)) with
+  | [] => [n + 1 + (((io.filter fun p ↦ p.1 < n ∧ p.2 ≤ j).map (·.1)).max?.getD n)]
+  | l => l
+
+/-- The subparadigm whose OO relation runs through the derived word's input: the base's input
+stands in the derived word's at `offset`, so that the OO relation links the realisations of
 each segment of the base's input, and the epenthetic segments at a common site. -/
 def paradigm (bIn b dIn d : List α) (ioB ioD : List (ℕ × ℕ)) (offset : ℕ := 0) :
-    Correspondence.Diagram Role α :=
-  paradigmOfPairs bIn b dIn d ioB ioD
-    (Correspondence.ooPairs (ioB.map fun rp ↦ (rp.1 + offset, rp.2)) ioD b.length d.length)
+    Correspondence.Coindexation Role α where
+  form
+    | .baseInput => bIn.zipIdx.map fun x ↦ (x.1, fun | .base => [x.2] | _ => [])
+    | .base => b.zipIdx.map fun x ↦ (x.1, fun
+      | .baseInput => (ioB.filter (·.2 = x.2)).map (·.1)
+      | .derivative => ooIndices dIn.length (ioB.map fun rp ↦ (rp.1 + offset, rp.2)) x.2
+      | _ => [])
+    | .derivInput => dIn.zipIdx.map fun x ↦ (x.1, fun | .derivative => [x.2] | _ => [])
+    | .derivative => d.zipIdx.map fun x ↦ (x.1, fun
+      | .derivInput => (ioD.filter (·.2 = x.2)).map (·.1)
+      | .base => ooIndices dIn.length ioD x.2
+      | _ => [])
 
 /-- A constraint of the hierarchy, read at each word of the subparadigm. -/
 structure ParadigmConstraint (α : Type*) where
   /-- The violations the base incurs. -/
-  atBase : Correspondence.Diagram Role α → ℕ
+  atBase : Correspondence.Coindexation Role α → ℕ
   /-- The violations the derived word incurs. -/
-  atDerived : Correspondence.Diagram Role α → ℕ
+  atDerived : Correspondence.Coindexation Role α → ℕ
 
 /-- A markedness constraint, read off each output. -/
 def markedness (m : List α → ℕ) : ρ → ParadigmConstraint α :=
-  fun _ ↦ ⟨fun c ↦ m (c.form .base), fun c ↦ m (c.form .derivative)⟩
+  fun _ ↦ ⟨fun c ↦ m (c.string .base), fun c ↦ m (c.string .derivative)⟩
 
 /-- An IO-Faith constraint, read off each word's IO relation. -/
-def ioFaith (f : Correspondence.Diagram Role α → Role → Role → ℕ) : ρ → ParadigmConstraint α :=
+def ioFaith (f : Correspondence.Coindexation Role α → Role → Role → ℕ) : ρ → ParadigmConstraint α :=
   fun _ ↦ ⟨fun c ↦ f c .baseInput .base, fun c ↦ f c .derivInput .derivative⟩
 
 /-- The OO-Identity constraint proper to the relation `rel` is read off the OO relation of a
 subparadigm bearing `rel`, and is vacuous on subparadigms bearing another and at the base. -/
-def ooIdentity [DecidableEq ρ] (rel : ρ) (f : Correspondence.Diagram Role α → Role → Role → ℕ) :
+def ooIdentity [DecidableEq ρ] (rel : ρ)
+    (f : Correspondence.Coindexation Role α → Role → Role → ℕ) :
     ρ → ParadigmConstraint α :=
   fun r ↦ ⟨fun _ ↦ 0, fun c ↦ if r = rel then f c .base .derivative else 0⟩
 
 /-- The copy of the hierarchy that evaluates the base of a subparadigm bearing `r`. -/
 def baseRecursion (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :
-    List (Constraint (Correspondence.Diagram Role α)) :=
+    List (Constraint (Correspondence.Coindexation Role α)) :=
   ranking.map fun k ↦ (k r).atBase
 
 /-- The copy of the hierarchy that evaluates the derived word of a subparadigm bearing `r`. -/
 def derivedRecursion (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :
-    List (Constraint (Correspondence.Diagram Role α)) :=
+    List (Constraint (Correspondence.Coindexation Role α)) :=
   ranking.map fun k ↦ (k r).atDerived
 
 /-- Recursive evaluation duplicates the hierarchy and ranks the base's copy above the derived
 word's. -/
 def recursive (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :
-    List (Constraint (Correspondence.Diagram Role α)) :=
+    List (Constraint (Correspondence.Coindexation Role α)) :=
   baseRecursion ranking r ++ derivedRecursion ranking r
 
 /-- Summed evaluation tallies each constraint's violations over both words. -/
 def nonrecursive (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :
-    List (Constraint (Correspondence.Diagram Role α)) :=
+    List (Constraint (Correspondence.Coindexation Role α)) :=
   ranking.map fun k c ↦ (k r).atBase c + (k r).atDerived c
 
-variable {cand : L → Correspondence.Diagram Role α} {labels : Finset L}
+variable {cand : L → Correspondence.Coindexation Role α} {labels : Finset L}
   {ranking : List (ρ → ParadigmConstraint α)} {r : ρ}
 
 /-- Base priority is ranking priority: the winners of recursive evaluation are the derived word's
