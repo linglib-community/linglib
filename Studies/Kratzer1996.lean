@@ -87,13 +87,13 @@ section Syntax
 open SyntacticObject
 
 theorem mittie_cCommands_theDog :
-    CCommands tree (leaf mittie) (leaf theDog) ∧
-      ¬ CCommands tree (leaf theDog) (leaf mittie) := by
+    CCommands tree.toSyntacticObject (leaf mittie) (leaf theDog) ∧
+      ¬ CCommands tree.toSyntacticObject (leaf theDog) (leaf mittie) := by
   constructor <;> decide
 
 theorem voice_between :
-    CCommands tree (leaf agentVoice) (leaf feed) ∧
-      CCommands tree (leaf mittie) (leaf agentVoice) := by
+    CCommands tree.toSyntacticObject (leaf agentVoice) (leaf feed) ∧
+      CCommands tree.toSyntacticObject (leaf mittie) (leaf agentVoice) := by
   constructor <;> decide
 
 end Syntax

@@ -324,13 +324,14 @@ open SyntacticObject
 
 -- (6): the applied argument asymmetrically c-commands the direct object
 theorem wife_cCommands_food :
-    CCommands chaga (leaf wife) (leaf food) ∧ ¬ CCommands chaga (leaf food) (leaf wife) := by
+    CCommands chaga.toSyntacticObject (leaf wife) (leaf food) ∧
+      ¬ CCommands chaga.toSyntacticObject (leaf food) (leaf wife) := by
   constructor <;> decide
 
 -- (6)
 theorem john_cCommands_theBook :
-    CCommands buyTree (leaf john) (leaf theBook) ∧
-      ¬ CCommands buyTree (leaf theBook) (leaf john) := by
+    CCommands buyTree.toSyntacticObject (leaf john) (leaf theBook) ∧
+      ¬ CCommands buyTree.toSyntacticObject (leaf theBook) (leaf john) := by
   constructor <;> decide
 
 end CCommand

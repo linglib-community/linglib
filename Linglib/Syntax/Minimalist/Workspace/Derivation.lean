@@ -47,7 +47,7 @@ theorem exists_eq_merge_of_count_terms {mover current : SyntacticObject}
     rw [terms_trace] at h
     exact absurd (Multiset.mem_singleton.mp (Multiset.count_pos.mp (by omega))).symm hne
   | traceOf tok =>
-    rw [terms_traceOf] at h
+    rw [terms_labelledTrace] at h
     exact absurd (Multiset.mem_singleton.mp (Multiset.count_pos.mp (h ▸ Nat.one_pos))).symm hne
   | merge l r _ _ => exact ⟨l, r, rfl⟩
 

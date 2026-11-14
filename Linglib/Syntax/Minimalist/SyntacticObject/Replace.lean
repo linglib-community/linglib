@@ -262,7 +262,7 @@ theorem replace_map (hf : Function.Injective f) (s target replacement : Syntacti
   induction s using ind with
   | leaf a => exact leafCase _ (terms_leaf a)
   | trace => exact leafCase _ terms_trace
-  | traceOf a => exact leafCase _ (terms_traceOf a)
+  | traceOf a => exact leafCase _ (terms_labelledTrace a)
   | merge l r ihl ihr =>
     by_cases h : merge l r = target
     · subst h; rw [replace_self, replace_self]
@@ -436,7 +436,7 @@ theorem SyntacticObject.not_sisters_of_toPlanarLeaf? {s x z : SyntacticObject}
   · rw [terms_trace, Multiset.mem_singleton] at hw
     subst hw
     simp [ImmediatelyContains, toUnorderedTree_trace] at hwx
-  · rw [terms_traceOf, Multiset.mem_singleton] at hw
+  · rw [terms_labelledTrace, Multiset.mem_singleton] at hw
     subst hw
     simp [ImmediatelyContains, toUnorderedTree_labelledTrace] at hwx
   · simp [toPlanarLeaf?, toUnorderedTree_merge] at hs

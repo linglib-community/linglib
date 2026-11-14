@@ -63,36 +63,37 @@ daughters of `merge x x` are not sisters.
 
 namespace Minimalist
 
-variable {L : Type}
+variable {L ι : Type}
 
 open Relation UnorderedTree
 
 namespace SyntacticObject
 
-variable {x y z l r : SyntacticObject L}
+variable {x y z l r : SyntacticObject L ι}
 
 /-! ### Immediate containment -/
 
 /-- `y` is one of `x`'s root daughters. -/
-def ImmediatelyContains (x y : SyntacticObject L) : Prop :=
+def ImmediatelyContains (x y : SyntacticObject L ι) : Prop :=
     y.toUnorderedTree ∈ children x.toUnorderedTree
 
-instance [DecidableEq L] (x y : SyntacticObject L) : Decidable (ImmediatelyContains x y) :=
+instance [DecidableEq L] [DecidableEq ι] (x y : SyntacticObject L ι) :
+    Decidable (ImmediatelyContains x y) :=
   inferInstanceAs (Decidable (_ ∈ _))
 
-@[simp] theorem immediatelyContains_leaf (tok : L) (y : SyntacticObject L) :
+@[simp] theorem immediatelyContains_leaf (tok : L) (y : SyntacticObject L ι) :
     ¬ ImmediatelyContains (leaf tok) y := by
   simp [ImmediatelyContains]
 
-@[simp] theorem immediatelyContains_trace (y : SyntacticObject L) :
+@[simp] theorem immediatelyContains_trace (y : SyntacticObject L ι) :
     ¬ ImmediatelyContains trace y := by
   simp [ImmediatelyContains]
 
-@[simp] theorem immediatelyContains_traceOf (tok : L) (y : SyntacticObject L) :
-    ¬ ImmediatelyContains (traceOf tok) y := by
+@[simp] theorem immediatelyContains_labelledTrace (i : ι) (y : SyntacticObject L ι) :
+    ¬ ImmediatelyContains (labelledTrace i) y := by
   simp [ImmediatelyContains]
 
-@[simp] theorem immediatelyContains_merge (l r y : SyntacticObject L) :
+@[simp] theorem immediatelyContains_merge (l r y : SyntacticObject L ι) :
     ImmediatelyContains (merge l r) y ↔ y = l ∨ y = r := by
   simp only [ImmediatelyContains, toUnorderedTree_merge, children_node, Multiset.insert_eq_cons,
     Multiset.mem_cons, Multiset.mem_singleton]
@@ -101,10 +102,11 @@ instance [DecidableEq L] (x y : SyntacticObject L) : Decidable (ImmediatelyConta
 /-! ### Containment -/
 
 /-- Containment, the transitive closure of immediate containment. -/
-def Contains : SyntacticObject L → SyntacticObject L → Prop := TransGen ImmediatelyContains
+def Contains : SyntacticObject L ι → SyntacticObject L ι → Prop := TransGen ImmediatelyContains
 
 /-- Reflexive containment, the reflexive transitive closure of immediate containment. -/
-def ContainsOrEq : SyntacticObject L → SyntacticObject L → Prop := ReflTransGen ImmediatelyContains
+def ContainsOrEq : SyntacticObject L ι → SyntacticObject L ι → Prop :=
+  ReflTransGen ImmediatelyContains
 
 theorem ImmediatelyContains.Contains (h : ImmediatelyContains x y) : Contains x y :=
   TransGen.single h
@@ -112,7 +114,7 @@ theorem ImmediatelyContains.Contains (h : ImmediatelyContains x y) : Contains x 
 theorem Contains.trans (hxy : Contains x y) (hyz : Contains y z) : Contains x z :=
   TransGen.trans hxy hyz
 
-instance : IsPreorder (SyntacticObject L) ContainsOrEq :=
+instance : IsPreorder (SyntacticObject L ι) ContainsOrEq :=
   inferInstanceAs (IsPreorder _ (ReflTransGen _))
 
 theorem containsOrEq_iff_eq_or_contains : ContainsOrEq x y ↔ y = x ∨ Contains x y :=
@@ -122,15 +124,15 @@ theorem contains_iff_exists_immediatelyContains :
     Contains x y ↔ ∃ z, ImmediatelyContains x z ∧ ContainsOrEq z y :=
   TransGen.head'_iff
 
-@[simp] theorem contains_leaf (tok : L) (y : SyntacticObject L) :
+@[simp] theorem contains_leaf (tok : L) (y : SyntacticObject L ι) :
     ¬ Contains (leaf tok) y := by
   simp [contains_iff_exists_immediatelyContains]
 
-@[simp] theorem contains_trace (y : SyntacticObject L) : ¬ Contains trace y := by
+@[simp] theorem contains_trace (y : SyntacticObject L ι) : ¬ Contains trace y := by
   simp [contains_iff_exists_immediatelyContains]
 
-@[simp] theorem contains_traceOf (tok : L) (y : SyntacticObject L) :
-    ¬ Contains (traceOf tok) y := by
+@[simp] theorem contains_labelledTrace (i : ι) (y : SyntacticObject L ι) :
+    ¬ Contains (labelledTrace i) y := by
   simp [contains_iff_exists_immediatelyContains]
 
 @[simp] theorem contains_merge :
@@ -144,9 +146,9 @@ theorem contains_iff_exists_immediatelyContains :
 @[simp] theorem containsOrEq_trace : ContainsOrEq trace y ↔ y = trace :=
   reflTransGen_iff_eq immediatelyContains_trace
 
-@[simp] theorem containsOrEq_traceOf (tok : L) :
-    ContainsOrEq (traceOf tok) y ↔ y = traceOf tok :=
-  reflTransGen_iff_eq (immediatelyContains_traceOf tok)
+@[simp] theorem containsOrEq_labelledTrace (i : ι) :
+    ContainsOrEq (labelledTrace i) y ↔ y = labelledTrace i :=
+  reflTransGen_iff_eq (immediatelyContains_labelledTrace i)
 
 @[simp] theorem containsOrEq_merge :
     ContainsOrEq (merge l r) y ↔ y = merge l r ∨ ContainsOrEq l y ∨ ContainsOrEq r y := by
@@ -161,19 +163,19 @@ theorem numNodes_lt_of_immediatelyContains (h : ImmediatelyContains x y) :
 
 theorem numNodes_lt_of_contains (h : Contains x y) :
     y.toUnorderedTree.numNodes < x.toUnorderedTree.numNodes :=
-  transGen_minimal (r' := InvImage (· > ·) fun s : SyntacticObject L ↦ s.toUnorderedTree.numNodes)
+  transGen_minimal (r' := InvImage (· > ·) fun s : SyntacticObject L ι ↦ s.toUnorderedTree.numNodes)
     (fun _ _ ↦ numNodes_lt_of_immediatelyContains) x y h
 
 /-- Being a proper term is well-founded: an object has finitely many terms. -/
-theorem wellFounded_flip_contains : WellFounded (flip (Contains (L := L))) :=
+theorem wellFounded_flip_contains : WellFounded (flip (Contains (L := L) (ι := ι))) :=
   Subrelation.wf (fun h ↦ numNodes_lt_of_contains h)
-    (InvImage.wf (fun s : SyntacticObject L ↦ s.toUnorderedTree.numNodes) wellFounded_lt)
+    (InvImage.wf (fun s : SyntacticObject L ι ↦ s.toUnorderedTree.numNodes) wellFounded_lt)
 
-instance : IsStrictOrder (SyntacticObject L) Contains where
+instance : IsStrictOrder (SyntacticObject L ι) Contains where
   irrefl _ h := lt_irrefl _ (numNodes_lt_of_contains h)
   trans _ _ _ := TransGen.trans
 
-theorem contains_irrefl (x : SyntacticObject L) : ¬ Contains x x := irrefl x
+theorem contains_irrefl (x : SyntacticObject L ι) : ¬ Contains x x := irrefl x
 
 theorem contains_iff_containsOrEq_and_ne : Contains x y ↔ ContainsOrEq x y ∧ y ≠ x :=
   ⟨fun h ↦ ⟨h.to_reflTransGen, fun hyx ↦ contains_irrefl x (hyx ▸ h)⟩,
@@ -183,7 +185,7 @@ end SyntacticObject
 
 /-! ### Terms -/
 
-theorem isSyntacticObject_of_mem_subtrees (s : SyntacticObject L) :
+theorem isSyntacticObject_of_mem_subtrees (s : SyntacticObject L ι) :
     ∀ m ∈ UnorderedTree.subtrees s.toUnorderedTree, IsSyntacticObject m := by
   induction s using SyntacticObject.ind with
   | leaf tok =>
@@ -194,7 +196,7 @@ theorem isSyntacticObject_of_mem_subtrees (s : SyntacticObject L) :
     exact SyntacticObject.trace.isSyntacticObject_toUnorderedTree
   | traceOf tok =>
     simp only [SyntacticObject.toUnorderedTree_labelledTrace, mem_subtrees_leaf, forall_eq]
-    exact (SyntacticObject.traceOf tok).isSyntacticObject_toUnorderedTree
+    exact (SyntacticObject.labelledTrace tok).isSyntacticObject_toUnorderedTree
   | merge l r ihl ihr =>
     simp only [SyntacticObject.toUnorderedTree_merge, mem_subtrees_node_pair]
     rintro m (rfl | h | h)
@@ -204,24 +206,25 @@ theorem isSyntacticObject_of_mem_subtrees (s : SyntacticObject L) :
 
 namespace SyntacticObject
 
-variable {x y l r : SyntacticObject L}
+variable {x y l r : SyntacticObject L ι}
 
 /-- The terms of a syntactic object, itself included. -/
-def terms : SyntacticObject L → Multiset (SyntacticObject L) :=
+def terms : SyntacticObject L ι → Multiset (SyntacticObject L ι) :=
   FreeCommMagma.elim (fun x ↦ {FreeCommMagma.of x}) (fun l r a b ↦ (l * r) ::ₘ (a + b))
     fun l r a b ↦ by rw [mul_comm, add_comm]
 
-@[simp] theorem terms_leaf (tok : L) : (leaf tok).terms = {leaf tok} := rfl
+@[simp] theorem terms_leaf (tok : L) : (leaf tok : SyntacticObject L ι).terms = {leaf tok} := rfl
 
-@[simp] theorem terms_trace : (trace : SyntacticObject L).terms = {trace} := rfl
+@[simp] theorem terms_trace : (trace : SyntacticObject L ι).terms = {trace} := rfl
 
-@[simp] theorem terms_traceOf (tok : L) : (traceOf tok).terms = {traceOf tok} := rfl
+@[simp] theorem terms_labelledTrace (i : ι) :
+    (labelledTrace i : SyntacticObject L ι).terms = {labelledTrace i} := rfl
 
-@[simp] theorem terms_merge (l r : SyntacticObject L) :
+@[simp] theorem terms_merge (l r : SyntacticObject L ι) :
     (merge l r).terms = merge l r ::ₘ (l.terms + r.terms) :=
   FreeCommMagma.elim_mul _ _ _ l r
 
-@[simp] theorem map_toUnorderedTree_terms (s : SyntacticObject L) :
+@[simp] theorem map_toUnorderedTree_terms (s : SyntacticObject L ι) :
     s.terms.map toUnorderedTree = UnorderedTree.subtrees s.toUnorderedTree := by
   induction s using ind with
   | leaf tok => rw [terms_leaf, Multiset.map_singleton, toUnorderedTree_leaf,
@@ -229,7 +232,7 @@ def terms : SyntacticObject L → Multiset (SyntacticObject L) :=
   | trace => rw [terms_trace, Multiset.map_singleton, toUnorderedTree_trace,
       UnorderedTree.subtrees_leaf]
   | traceOf tok =>
-    rw [terms_traceOf, Multiset.map_singleton, toUnorderedTree_labelledTrace,
+    rw [terms_labelledTrace, Multiset.map_singleton, toUnorderedTree_labelledTrace,
       UnorderedTree.subtrees_leaf]
   | merge l r ihl ihr =>
     rw [terms_merge, Multiset.map_cons, Multiset.map_add, ihl, ihr, toUnorderedTree_merge,
@@ -243,14 +246,14 @@ def terms : SyntacticObject L → Multiset (SyntacticObject L) :=
   | traceOf tok => simp
   | merge l r ihl ihr => simp [ihl, ihr]
 
-theorem self_mem_terms (s : SyntacticObject L) : s ∈ s.terms :=
+theorem self_mem_terms (s : SyntacticObject L ι) : s ∈ s.terms :=
   mem_terms.2 ReflTransGen.refl
 
-theorem toUnorderedTree_mem_subtrees {S U : SyntacticObject L} :
+theorem toUnorderedTree_mem_subtrees {S U : SyntacticObject L ι} :
     S.toUnorderedTree ∈ U.toUnorderedTree.subtrees ↔ S ∈ U.terms := by
   rw [← map_toUnorderedTree_terms, Multiset.mem_map_of_injective toUnorderedTree_injective]
 
-theorem mem_terms_merge_right (u C : SyntacticObject L) : C ∈ (merge u C).terms := by
+theorem mem_terms_merge_right (u C : SyntacticObject L ι) : C ∈ (merge u C).terms := by
   rw [terms_merge]
   exact Multiset.mem_cons_of_mem (Multiset.mem_add.2 (.inr (self_mem_terms C)))
 
@@ -262,7 +265,7 @@ theorem terms_le_terms (h : y ∈ x.terms) : y.terms ≤ x.terms := by
   induction x using ind with
   | leaf a => rw [terms_leaf, Multiset.mem_singleton] at h; rw [h]
   | trace => rw [terms_trace, Multiset.mem_singleton] at h; rw [h]
-  | traceOf a => rw [terms_traceOf, Multiset.mem_singleton] at h; rw [h]
+  | traceOf a => rw [terms_labelledTrace, Multiset.mem_singleton] at h; rw [h]
   | merge l r ihl ihr =>
     rw [terms_merge, Multiset.mem_cons, Multiset.mem_add] at h
     rcases h with rfl | h | h
@@ -279,14 +282,15 @@ theorem mem_terms_antisymm (h₁ : x ∈ y.terms) (h₂ : y ∈ x.terms) : x = y
   · exact h'.symm
   · exact absurd (h.trans h') (contains_irrefl y)
 
-theorem mem_terms_of_merge_mem_terms {s : SyntacticObject L} (h : merge l r ∈ s.terms) :
+theorem mem_terms_of_merge_mem_terms {s : SyntacticObject L ι} (h : merge l r ∈ s.terms) :
     l ∈ s.terms ∧ r ∈ s.terms :=
   ⟨terms_subset_terms (mem_terms.1 h) (mem_terms.2 (.single ((immediatelyContains_merge _ _ _).2
       (.inl rfl)))),
     terms_subset_terms (mem_terms.1 h) (mem_terms.2 (.single ((immediatelyContains_merge _ _ _).2
       (.inr rfl))))⟩
 
-theorem count_self_terms [DecidableEq L] (s : SyntacticObject L) : s.terms.count s = 1 := by
+theorem count_self_terms [DecidableEq L] [DecidableEq ι] (s : SyntacticObject L ι) :
+    s.terms.count s = 1 := by
   rcases exists_form s with ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩
   iterate 3 simp
   have hl : merge l r ∉ l.terms := fun h ↦ contains_irrefl (merge l r)
@@ -297,43 +301,44 @@ theorem count_self_terms [DecidableEq L] (s : SyntacticObject L) : s.terms.count
     Multiset.count_eq_zero.2 hr]
 
 /-- Merging a term with an object adds one occurrence of it. -/
-theorem count_terms_merge_left [DecidableEq L] (u C : SyntacticObject L) :
+theorem count_terms_merge_left [DecidableEq L] [DecidableEq ι] (u C : SyntacticObject L ι) :
     (merge u C).terms.count u = C.terms.count u + 1 := by
   have hne : u ≠ merge u C := fun h ↦ (numNodes_lt_of_contains
     (contains_merge.2 (.inl ReflTransGen.refl) : Contains (merge u C) u)).ne
       (congrArg (·.toUnorderedTree.numNodes) h)
   rw [terms_merge, Multiset.count_cons_of_ne hne, Multiset.count_add, count_self_terms, add_comm]
 
-theorem card_terms (s : SyntacticObject L) : s.terms.card = s.toUnorderedTree.numNodes := by
+theorem card_terms (s : SyntacticObject L ι) : s.terms.card = s.toUnorderedTree.numNodes := by
   rw [← UnorderedTree.card_subtrees, ← map_toUnorderedTree_terms, Multiset.card_map]
 
-instance [DecidableEq L] (x y : SyntacticObject L) : Decidable (ContainsOrEq x y) :=
+instance [DecidableEq L] [DecidableEq ι] (x y : SyntacticObject L ι) :
+    Decidable (ContainsOrEq x y) :=
   decidable_of_iff _ mem_terms
 
 /-! ### Accessible terms -/
 
 section AccessibleTerms
 
-variable [DecidableEq L]
+variable [DecidableEq L] [DecidableEq ι]
 
 /-- The accessible terms, the terms at the non-root vertices. -/
-def accessibleTerms (s : SyntacticObject L) : Multiset (SyntacticObject L) := s.terms.erase s
+def accessibleTerms (s : SyntacticObject L ι) : Multiset (SyntacticObject L ι) := s.terms.erase s
 
-theorem cons_accessibleTerms (s : SyntacticObject L) : s ::ₘ s.accessibleTerms = s.terms :=
+theorem cons_accessibleTerms (s : SyntacticObject L ι) : s ::ₘ s.accessibleTerms = s.terms :=
   Multiset.cons_erase (self_mem_terms s)
 
 @[simp] theorem accessibleTerms_leaf (tok : L) :
-    (leaf tok).accessibleTerms = 0 := by
+    (leaf tok : SyntacticObject L ι).accessibleTerms = 0 := by
   simp [accessibleTerms]
 
-@[simp] theorem accessibleTerms_trace : (trace : SyntacticObject L).accessibleTerms = 0 := by
+@[simp] theorem accessibleTerms_trace : (trace : SyntacticObject L ι).accessibleTerms = 0 := by
   simp [accessibleTerms]
 
-@[simp] theorem accessibleTerms_traceOf (tok : L) :
-    (traceOf tok).accessibleTerms = 0 := by
+@[simp] theorem accessibleTerms_labelledTrace (i : ι) :
+    (labelledTrace i : SyntacticObject L ι).accessibleTerms = 0 := by
   simp [accessibleTerms]
 
-@[simp] theorem accessibleTerms_merge (l r : SyntacticObject L) :
+@[simp] theorem accessibleTerms_merge (l r : SyntacticObject L ι) :
     (merge l r).accessibleTerms = l.terms + r.terms := by
   simp [accessibleTerms]
 
@@ -346,25 +351,26 @@ theorem cons_accessibleTerms (s : SyntacticObject L) : s ::ₘ s.accessibleTerms
   | merge l r _ _ => simp
 
 /-- One accessible term per edge. -/
-theorem card_accessibleTerms (s : SyntacticObject L) :
+theorem card_accessibleTerms (s : SyntacticObject L ι) :
     s.accessibleTerms.card = s.toUnorderedTree.numEdges := by
   rw [accessibleTerms, Multiset.card_erase_of_mem (self_mem_terms s), card_terms]; rfl
 
-instance (x y : SyntacticObject L) : Decidable (Contains x y) :=
+instance (x y : SyntacticObject L ι) : Decidable (Contains x y) :=
   decidable_of_iff _ mem_accessibleTerms
 
 end AccessibleTerms
 
 /-! ### C-command -/
 
-variable {root : SyntacticObject L}
+variable {root : SyntacticObject L ι}
 
 /-- `x` and `y` are sisters in `root` when they are distinct daughters of some term of
 `root`. -/
-def Sisters (root x y : SyntacticObject L) : Prop :=
+def Sisters (root x y : SyntacticObject L ι) : Prop :=
   ∃ z ∈ root.terms, ImmediatelyContains z x ∧ ImmediatelyContains z y ∧ x ≠ y
 
-instance [DecidableEq L] (root x y : SyntacticObject L) : Decidable (Sisters root x y) :=
+instance [DecidableEq L] [DecidableEq ι] (root x y : SyntacticObject L ι) :
+    Decidable (Sisters root x y) :=
   Multiset.decidableExistsMultiset
 
 theorem Sisters.symm (h : Sisters root x y) : Sisters root y x :=
@@ -377,10 +383,11 @@ theorem Sisters.mem_right (h : Sisters root x y) : y ∈ root.terms :=
   h.symm.mem_left
 
 /-- `x` c-commands `y` in `root` when a sister of `x` contains or equals `y`. -/
-def CCommands (root x y : SyntacticObject L) : Prop :=
+def CCommands (root x y : SyntacticObject L ι) : Prop :=
   ∃ z ∈ root.terms, Sisters root x z ∧ ContainsOrEq z y
 
-instance [DecidableEq L] (root x y : SyntacticObject L) : Decidable (CCommands root x y) :=
+instance [DecidableEq L] [DecidableEq ι] (root x y : SyntacticObject L ι) :
+    Decidable (CCommands root x y) :=
   Multiset.decidableExistsMultiset
 
 theorem Sisters.cCommands (h : Sisters root x y) : CCommands root x y :=
@@ -395,7 +402,7 @@ theorem CCommands.left_mem_terms (h : CCommands root x y) : x ∈ root.terms :=
   let ⟨_, _, hs, _⟩ := h
   hs.mem_left
 
-theorem CCommands.mono {root' : SyntacticObject L} (h : CCommands root x y)
+theorem CCommands.mono {root' : SyntacticObject L ι} (h : CCommands root x y)
     (hsub : root.terms ⊆ root'.terms) : CCommands root' x y :=
   let ⟨z, hz, ⟨w, hw, hwx, hwz, hxz⟩, hzy⟩ := h
   ⟨z, hsub hz, ⟨w, hsub hw, hwx, hwz, hxz⟩, hzy⟩
@@ -405,7 +412,7 @@ theorem cCommands_merge_left (hlr : l ≠ r) (hy : y ∈ r.terms) : CCommands (m
     ⟨merge l r, self_mem_terms _, (immediatelyContains_merge _ _ _).2 (.inl rfl),
       (immediatelyContains_merge _ _ _).2 (.inr rfl), hlr⟩, mem_terms.1 hy⟩
 
-theorem Sisters.of_merge {x z : SyntacticObject L} (h : Sisters (merge l r) x z) :
+theorem Sisters.of_merge {x z : SyntacticObject L ι} (h : Sisters (merge l r) x z) :
     Sisters l x z ∨ Sisters r x z ∨ x = l ∧ z = r ∨ x = r ∧ z = l := by
   obtain ⟨w, hw, hwx, hwz, hxz⟩ := h
   rw [terms_merge, Multiset.mem_cons, Multiset.mem_add] at hw
@@ -421,7 +428,7 @@ theorem Sisters.of_merge {x z : SyntacticObject L} (h : Sisters (merge l r) x z)
 
 /-- Once `β` has moved, leaving the remnant `R`, nothing but `R` and the terms of `β` c-commands a
 term found only in `β`: the sister of anything else lies inside `R`. -/
-theorem not_cCommands_merge_of_notMem_terms {β R x y : SyntacticObject L} (hx : x ∉ β.terms)
+theorem not_cCommands_merge_of_notMem_terms {β R x y : SyntacticObject L ι} (hx : x ∉ β.terms)
     (hR : x ≠ R) (hy : y ∉ R.terms) : ¬ CCommands (merge β R) x y := by
   rintro ⟨z, -, hs, hzy⟩
   rcases Sisters.of_merge hs with h | h | ⟨rfl, -⟩ | ⟨rfl, -⟩
@@ -431,19 +438,20 @@ theorem not_cCommands_merge_of_notMem_terms {β R x y : SyntacticObject L} (hx :
   · exact hR rfl
 
 /-- The c-command domain of `x` in `root`, the search space of a probe sitting at `x`. -/
-def cCommandDomain [DecidableEq L] (root x : SyntacticObject L) :
-    Multiset (SyntacticObject L) :=
+def cCommandDomain [DecidableEq L] [DecidableEq ι] (root x : SyntacticObject L ι) :
+    Multiset (SyntacticObject L ι) :=
   root.terms.filter (CCommands root x)
 
-@[simp] theorem mem_cCommandDomain [DecidableEq L] :
+@[simp] theorem mem_cCommandDomain [DecidableEq L] [DecidableEq ι] :
     y ∈ cCommandDomain root x ↔ CCommands root x y :=
   Multiset.mem_filter.trans (and_iff_right_of_imp CCommands.mem_terms)
 
 /-- `x` c-commands `y` in `root` and `y` does not c-command `x`. -/
-def AsymmCCommands (root x y : SyntacticObject L) : Prop :=
+def AsymmCCommands (root x y : SyntacticObject L ι) : Prop :=
   CCommands root x y ∧ ¬ CCommands root y x
 
-instance [DecidableEq L] (root x y : SyntacticObject L) : Decidable (AsymmCCommands root x y) :=
+instance [DecidableEq L] [DecidableEq ι] (root x y : SyntacticObject L ι) :
+    Decidable (AsymmCCommands root x y) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 theorem Sisters.not_asymmCCommands (h : Sisters root x y) :
@@ -452,7 +460,7 @@ theorem Sisters.not_asymmCCommands (h : Sisters root x y) :
 
 /-! ### Pronounced tokens of terms -/
 
-theorem mem_yield_iff {s : SyntacticObject L} {tok : L} :
+theorem mem_yield_iff {s : SyntacticObject L ι} {tok : L} :
     tok ∈ s.yield ↔ leaf tok ∈ s.terms := by
   induction s using ind with
   | leaf a => simp
@@ -460,11 +468,12 @@ theorem mem_yield_iff {s : SyntacticObject L} {tok : L} :
   | traceOf a => simp
   | merge l r ihl ihr => simp [ihl, ihr, leaf_ne_merge]
 
-theorem yield_le_of_mem_terms {s u : SyntacticObject L} (h : u ∈ s.terms) : u.yield ≤ s.yield := by
+theorem yield_le_of_mem_terms {s u : SyntacticObject L ι} (h : u ∈ s.terms) :
+    u.yield ≤ s.yield := by
   induction s using ind with
   | leaf a => rw [terms_leaf, Multiset.mem_singleton] at h; rw [h]
   | trace => rw [terms_trace, Multiset.mem_singleton] at h; rw [h]
-  | traceOf a => rw [terms_traceOf, Multiset.mem_singleton] at h; rw [h]
+  | traceOf a => rw [terms_labelledTrace, Multiset.mem_singleton] at h; rw [h]
   | merge l r ihl ihr =>
     rw [terms_merge, Multiset.mem_cons, Multiset.mem_add] at h
     rcases h with rfl | h | h
@@ -476,7 +485,7 @@ theorem yield_le_of_mem_terms {s u : SyntacticObject L} (h : u ∈ s.terms) : u.
 
 section Map
 
-variable {L' : Type} {f : L → L'}
+variable {L' : Type} {f : L → L'} {x y root : SyntacticObject L}
 
 theorem terms_map (f : L → L') (s : SyntacticObject L) :
     (s.map f).terms = s.terms.map (map f) := by
