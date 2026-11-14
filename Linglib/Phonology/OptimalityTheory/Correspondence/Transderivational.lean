@@ -64,13 +64,25 @@ def paradigmOfPairs (bIn b dIn d : List α) (ioB ioD oo : List (ℕ × ℕ)) :
     fun | .baseInput, .base => ioB | .derivInput, .derivative => ioD | .base, .derivative => oo
         | _, _ => []
 
-/-- The subparadigm whose OO relation the IO relations induce (`Correspondence.ooPairs`): the base's
-input stands in the derived word's at `offset`, so that the OO relation links the realisations of
-each segment of the base's input, and the epenthetic segments at a common site. -/
+/-- The subparadigm whose OO relation runs through the derived word's input
+(`Correspondence.through`): the base's input stands in the derived word's at `offset`, so that
+the OO relation links the realisations of each segment of the base's input, and the epenthetic
+segments at a common site. -/
 def paradigm (bIn b dIn d : List α) (ioB ioD : List (ℕ × ℕ)) (offset : ℕ := 0) :
-    Correspondence.Diagram Role α :=
-  paradigmOfPairs bIn b dIn d ioB ioD
-    (Correspondence.ooPairs (ioB.map fun rp ↦ (rp.1 + offset, rp.2)) ioD b.length d.length)
+    Correspondence.Diagram Role α where
+  form
+    | .baseInput => bIn
+    | .base => b
+    | .derivInput => dIn
+    | .derivative => d
+  edge
+    | .baseInput, .base => Correspondence.edgeOfPairs _ _ ioB
+    | .derivInput, .derivative => Correspondence.edgeOfPairs _ _ ioD
+    | .base, .derivative =>
+      (Correspondence.edgeOfPairs dIn.length b.length
+        (ioB.map fun rp ↦ (rp.1 + offset, rp.2))).through
+          (Correspondence.edgeOfPairs dIn.length d.length ioD)
+    | _, _ => ∅
 
 /-- A constraint of the hierarchy, read at each word of the subparadigm. -/
 structure ParadigmConstraint (α : Type*) where

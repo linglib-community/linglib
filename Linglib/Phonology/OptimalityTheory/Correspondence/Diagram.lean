@@ -146,30 +146,8 @@ theorem card_filter_diagonal {β : Type*} (l₁ : List α) (l₂ : List β) (q :
 /-- The index pairs `(0, 0), …, (k - 1, k - 1)` of a parallel correspondence. -/
 def diagonalPairs (k : ℕ) : List (ℕ × ℕ) := (List.range k).map fun i ↦ (i, i)
 
-/-- The index pairs of the positions of two outputs that realise a common input position, from
-the index pairs of the two input–output relations. -/
-def composePairs (l₁ l₂ : List (ℕ × ℕ)) : List (ℕ × ℕ) :=
-  l₁.flatMap fun (r, p) ↦ l₂.filterMap fun (r', q) ↦ if r = r' then some (p, q) else none
-
-/-- The positions of an output of length `n` that realise no input position under `l`. -/
-def epentheticPositions (l : List (ℕ × ℕ)) (n : ℕ) : List ℕ :=
-  (List.range n).filter fun p ↦ ∀ rp ∈ l, rp.2 ≠ p
-
-/-- The site of an output position under `l`: the last input position realised at or before
-it. -/
-def site (l : List (ℕ × ℕ)) (p : ℕ) : Option ℕ :=
-  ((l.filter fun rp ↦ rp.2 ≤ p).map Prod.fst).max?
-
-/-- The output–output relation that two input–output relations `l₁`, `l₂` of outputs of lengths
-`n₁`, `n₂` induce: the positions realising a common input position, and the epenthetic positions
-at a common site. -/
-def ooPairs (l₁ l₂ : List (ℕ × ℕ)) (n₁ n₂ : ℕ) : List (ℕ × ℕ) :=
-  composePairs l₁ l₂ ++ (epentheticPositions l₁ n₁).flatMap fun p ↦
-    (epentheticPositions l₂ n₂).filterMap fun q ↦
-      if site l₁ p = site l₂ q then some (p, q) else none
-
 /-- The relation on positions given by index pairs; pairs out of range are dropped. -/
-def edgeOfPairs (m n : ℕ) (l : List (ℕ × ℕ)) : Finset (Fin m × Fin n) :=
+def edgeOfPairs (m n : ℕ) (l : List (ℕ × ℕ)) : Correspondence (Fin m) (Fin n) :=
   (l.filterMap fun p ↦
     if h : p.1 < m ∧ p.2 < n then some (⟨p.1, h.1⟩, ⟨p.2, h.2⟩) else none).toFinset
 

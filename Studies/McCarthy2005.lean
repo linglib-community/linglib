@@ -26,7 +26,7 @@ under the paper's ranking.
 ## Implementation notes
 
 * In the paper each candidate paradigm brings its own relation ℜ_OP between the stems. Here the
-  relation is computed from the members' input–stem correspondences (`Correspondence.ooPairs`):
+  relation is computed from the members' input–stem correspondences (`Correspondence.through`):
   two positions correspond when they realise the same input position or are epenthetic at the
   same site, so that the epenthetic vowels of ⟨faʕila, faʕiltu⟩ correspond and those of
   ⟨faʕla, faʕiltu⟩ do not. Candidates that differ only in ℜ_OP are not represented.
@@ -74,16 +74,20 @@ def Paradigm.io (P : Paradigm α ι) (i : ℕ) : List (ℕ × ℕ) :=
   ((P.members[i]?).map Member.io).getD []
 
 /-- The correspondence diagram of a candidate (2c): each member's input–stem relation, and
-between the stems of distinct members ℛ_OP, the relation their input correspondences induce
-(`Correspondence.ooPairs`): the positions realising the same input position, and the epenthetic
+between the stems of distinct members ℛ_OP, the relation that runs through the input
+(`Correspondence.through`): the positions realising the same input position, and the epenthetic
 positions at the same site. -/
-def Paradigm.corr (P : Paradigm α ι) : Correspondence.Diagram Role α :=
-  .ofPairs (fun | .input => P.input | .member i => P.stem i)
-    fun | .input, .member i => P.io i
-        | .member i, .member j =>
-          if i = j then [] else
-            Correspondence.ooPairs (P.io i) (P.io j) (P.stem i).length (P.stem j).length
-        | _, _ => []
+def Paradigm.corr (P : Paradigm α ι) : Correspondence.Diagram Role α where
+  form
+    | .input => P.input
+    | .member i => P.stem i
+  edge
+    | .input, .member i => Correspondence.edgeOfPairs _ _ (P.io i)
+    | .member i, .member j =>
+      if i = j then ∅ else
+        (Correspondence.edgeOfPairs P.input.length (P.stem i).length (P.io i)).through
+          (Correspondence.edgeOfPairs P.input.length (P.stem j).length (P.io j))
+    | _, _ => ∅
 
 /-- A markedness constraint on the word of each cell, summed over the members (2b). -/
 def markedness (m : ι → List α → ℕ) : Constraint (Paradigm α ι) :=
@@ -135,7 +139,7 @@ def ma : Paradigm Seg (List Seg) :=
 
 example : opFaith Correspondence.Diagram.maxViol ma = 1 ∧
     opFaith Correspondence.Diagram.depViol ma = 1 := by
-  decide
+  decide +kernel
 
 end Palatalization
 
@@ -306,7 +310,7 @@ where
 -- (12)
 theorem shortening_overapplies :
     (Tableau.ofLabels long {.a, .b, .c, .d} ranking).optimal = {.a} := by
-  decide
+  decide +kernel
 
 /-- The paradigms of /faʕl/ in (13): epenthesis throughout, the cluster kept throughout with
 the superheavy coda an appendix or moraic, or alternating. -/
@@ -326,7 +330,7 @@ where
 -- (13)
 theorem epenthesis_overapplies :
     (Tableau.ofLabels cluster {.a, .b, .c, .d} ranking).optimal = {.a} := by
-  decide
+  decide +kernel
 
 /-- The paradigms of /faʕal/ in (17): the (LL) feet kept, or syncopated. -/
 def syncope : Cand → Paradigm Seg Cell
@@ -410,7 +414,7 @@ where
 
 -- (27), (21)
 theorem two_attractors : (Tableau.ofLabels tenth {.a, .b, .c, .d, .e} ranking).optimal = {.a} := by
-  decide
+  decide +kernel
 
 /-! ### Domination of OP faithfulness (§8.4.4)
 
@@ -436,7 +440,7 @@ where
 theorem geminate_alternation :
     (Tableau.ofLabels geminate {.a, .b}
       (markedness (fun c s ↦ identicalOnsets (c.word s)) :: ranking)).optimal = {.a} := by
-  decide
+  decide +kernel
 
 /-! ### Moroccan Arabic majority rules (§8.5.1)
 
@@ -535,7 +539,7 @@ where
 -- (32)
 theorem majority_rules :
     (Tableau.ofLabels drink {.a, .b, .c, .d} moroccanRanking).optimal = {.a} := by
-  decide
+  decide +kernel
 
 end Arabic
 
@@ -581,7 +585,7 @@ where
 
 -- (33)
 theorem cry : (Tableau.ofLabels (jussive .spirant .stop) {.a, .b, .c} ranking).optimal = {.a} := by
-  decide
+  decide +kernel
 
 -- fn. 34
 theorem uncover :

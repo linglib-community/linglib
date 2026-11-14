@@ -75,7 +75,7 @@ def moroccan : Cand → Paradigm Seg (List Seg) :=
 
 /-- In the Moroccan verb the bare stem is CCəC against sonority, as in tableau (9). -/
 theorem moroccan_verb : (Tableau.ofLabels moroccan {.a, .b, .c, .d} ranking).optimal = {.a} := by
-  decide
+  decide +kernel
 
 /-- Majority rules: with five CCəC stems and two CəCC stems the attested paradigm draws 20
 OP-MAX-V marks, against 24 with the bare stem CəCC (9), and the attested adjectival paradigm
@@ -85,12 +85,12 @@ theorem opMaxV_counts :
       opFaith (Correspondence.Diagram.maxViolOn IsVowel) (moroccan .b) = 24 ∧
       opFaith (Correspondence.Diagram.maxViolOn IsVowel)
         (paradigms .t .r .sh [] [[.a], [.i, .n]] .a) = 4 := by
-  decide
+  decide +kernel
 
 -- (11)
 theorem moroccan_noun :
     (Tableau.ofLabels (paradigms .sh .r .b [] []) {.a, .b} ranking).optimal = {.b} := by
-  decide
+  decide +kernel
 
 /-! ### Judeo-Tripolitanian Arabic verbs and nouns (§3.1) -/
 
@@ -102,7 +102,7 @@ def jtaVerb (c₁ c₂ c₃ : Seg) : Cand → Paradigm Seg (List Seg) :=
 theorem jta_verbs :
     ∀ r ∈ [(Seg.sh, Seg.r, Seg.b), (.g, .d, .m), (.k, .ch, .b)],
       (Tableau.ofLabels (jtaVerb r.1 r.2.1 r.2.2) {.a, .b, .c, .d} ranking).optimal = {.a} := by
-  decide
+  decide +kernel
 
 /-- The roots of the nouns (12): CəCC with C₂ more sonorous than C₃ — *kəlb, bəntʃ, wəld,
 səms, məlħ, tʃəlʒ* — and CCəC otherwise — *xʃəm, ħbəq, lħəm, sdər, bsəl, fħəm*. -/
@@ -116,7 +116,7 @@ theorem jta_nouns :
       (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.b}) ∧
     ∀ r ∈ nouns.2,
       (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.a} := by
-  decide
+  decide +kernel
 
 /-! ### The challenge from adjectives (§3.2–3.3)
 
@@ -137,13 +137,13 @@ CCəC (14). -/
 theorem adjective_paradigm :
     ∀ r ∈ adjectives,
       (Tableau.ofLabels (adjective r.1 r.2.1 r.2.2) {.a, .b} ranking).optimal = {.b} := by
-  decide
+  decide +kernel
 
 -- (15)
 theorem adjective_bare :
     ∀ r ∈ adjectives,
       (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.b} := by
-  decide
+  decide +kernel
 
 /-! ### Category-specific templates (§3.3) -/
 
@@ -167,7 +167,7 @@ theorem template_adjective :
     ∀ r ∈ adjectives,
       (Tableau.ofLabels (adjective r.1 r.2.1 r.2.2) {.a, .b} (templateRanking .adjective)).optimal =
         {.a} := by
-  decide
+  decide +kernel
 
 -- Table 2, (12)
 theorem template_verb_noun :
@@ -180,6 +180,6 @@ theorem template_verb_noun :
     ∀ r ∈ nouns.2,
       (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b}
         (templateRanking .noun)).optimal = {.a} := by
-  decide
+  decide +kernel
 
 end MarcoRasin2026
