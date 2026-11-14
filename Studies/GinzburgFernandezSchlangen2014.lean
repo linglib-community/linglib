@@ -28,8 +28,8 @@ bit* answers the question what was meant by *a little bit* and *swimming* does n
 (`Act.copropositional_mean_iff`), and the examples of §§3–5 are licensed exactly when acceptable
 (`rows_licensed`). The derivations of (41) and (49) reach the gameboards (43) and (52)
 (`Ex41.dgb2`, `Ex49.dgb2`). A self addressed query such as *what's his name?* (72a) is not
-co-propositional with what the speaker means to say next (`not_copropositional_named`,
-`rows_selfAddressed`), against the paper's claim.
+co-propositional with what the speaker means to say next (`not_copropositional_named`), so under
+(34) the Forward Looking Utterance Rule does not license it (`rows_selfAddressed`).
 
 ## Implementation notes
 
@@ -43,7 +43,7 @@ co-propositional with what the speaker means to say next (`not_copropositional_n
   list only the sub-utterances the examples repair, which covers the non-constituent reparandum of
   (63c) too.
 * Grounding (31) asks that the locutionary proposition be true, which is not represented: Move
-  update/Pending downdate (`Rule.ground`) integrates MaxPending unconditionally, and the facts
+  update/Pending downdate (`ground`) integrates MaxPending unconditionally, and the facts
   Utterance Interpolation adds about the speech event are left out.
 * SubstInst (40b) holds of any two utterances whose fields have fixed types, so Pending replacement
   constrains only which utterance is replaced; that the replacement reflects the speaker's
@@ -241,10 +241,37 @@ abbrev Utterance := LocutionaryProposition String Category Empty Entity Act
 /-- A gameboard of the examples. -/
 abbrev Board := Gameboard Agent Proposition Utterance (InformationStructure Question Constituent)
 
-/-- The rules the derivations use, with the turn a rule leaves open made an argument: Pending
-update and Move update/Pending downdate (31), Backward Looking Appropriateness Repair (48), the
-Forward Looking Utterance Rule (65), Assert QUD-incrementation (22c), and Pending replacement
-(40). -/
+/-- Move update/Pending downdate (31): MaxPending is integrated as LatestMove. -/
+def ground (d : Board) : Option Board :=
+  match d.pending with
+  | v :: rest => some { d.recordMove v with pending := rest }
+  | [] => none
+
+/-- Backward Looking Appropriateness Repair (48): what the speaker meant by the constituent `u`
+of MaxPending is accommodated, with `u` as focus-establishing constituent. -/
+def backwardRepair (t : Turn) (u : Constituent) (m : Utterance) (d : Board) : Option Board :=
+  d.clarify Act.Copropositional t (fun _ u ↦ ⟨.meant d.speaker u, {u}⟩) u m
+
+/-- The Forward Looking Utterance Rule (65): after an editing phrase following `u`, what the
+speaker means to say next is accommodated, with no focus-establishing constituent. -/
+def forwardUtterance (t : Turn) (u : Constituent) (m : Utterance) (d : Board) : Option Board :=
+  if d.latestContent = some (.fldEdit u) then
+    d.clarify Act.Copropositional t (fun _ u ↦ ⟨.meantNext d.speaker u, ∅⟩) u m
+  else none
+
+/-- Assert QUD-incrementation (22c): `p?` becomes MaxQUD once `p` is asserted. -/
+def assertQud (d : Board) : Option Board :=
+  d.incrementQud fun
+    | .assert p => some (.polar p)
+    | _ => none
+
+/-- Pending replacement (40): `w` replaces MaxPending. -/
+def replacePending (w : Utterance) (d : Board) : Option Board :=
+  match d.pending with
+  | _ :: rest => some { d with pending := w :: rest }
+  | [] => none
+
+/-- The rules the derivations use, with the turn a rule leaves open made an argument. -/
 inductive Rule
   | pendingUpdate (u : Utterance) (speaker addressee : Agent)
   | ground
@@ -253,24 +280,14 @@ inductive Rule
   | assertQud
   | replacePending (w : Utterance)
 
-/-- A rule as a partial map, `none` when the gameboard fails its preconditions. -/
+/-- The partial map of a rule, `none` when the gameboard fails its preconditions. -/
 def Rule.apply : Rule → Board → Option Board
-  | .pendingUpdate u s a, d => some { d.pushPending u with speaker := s, addressee := a }
-  | .ground, d => match d.pending with
-    | v :: rest => some { d.recordMove v with pending := rest }
-    | [] => none
-  | .backwardRepair t u m, d =>
-    d.clarify Act.Copropositional t (fun _ u ↦ ⟨.meant d.speaker u, {u}⟩) u m
-  | .forwardUtterance t u m, d =>
-    if d.latestContent = some (.fldEdit u) then
-      d.clarify Act.Copropositional t (fun _ u ↦ ⟨.meantNext d.speaker u, ∅⟩) u m
-    else none
-  | .assertQud, d => match d.latestContent with
-    | some (.assert p) => some (d.pushQud ⟨.polar p, ∅⟩)
-    | _ => none
-  | .replacePending w, d => match d.pending with
-    | _ :: rest => some { d with pending := w :: rest }
-    | [] => none
+  | .pendingUpdate u s a => fun d ↦ some (d.pendingUpdate u s a)
+  | .ground => GinzburgFernandezSchlangen2014.ground
+  | .backwardRepair t u m => GinzburgFernandezSchlangen2014.backwardRepair t u m
+  | .forwardUtterance t u m => GinzburgFernandezSchlangen2014.forwardUtterance t u m
+  | .assertQud => GinzburgFernandezSchlangen2014.assertQud
+  | .replacePending w => GinzburgFernandezSchlangen2014.replacePending w
 
 /-- Apply a derivation of rules in sequence. -/
 def run (trace : List Rule) (d : Board) : Option Board :=
@@ -288,21 +305,20 @@ def editing (u : Constituent) : Utterance :=
   { form := "uh", category := .interjection, content := .fldEdit u }
 
 example {t : Turn} {u : Constituent} {m : Utterance} {d d' : Board}
-    (h : (Rule.backwardRepair t u m).apply d = some d') :
-    ∃ v ∈ d.maxPending, u ∈ v.constituents ∧ d'.qud = ⟨.meant d.speaker u, {u}⟩ :: d.qud := by
-  simp only [Rule.apply] at h
-  exact d.qud_clarify h
+    (h : backwardRepair t u m d = some d') :
+    ∃ v ∈ d.maxPending, u ∈ v.constituents ∧ d'.qud = ⟨.meant d.speaker u, {u}⟩ :: d.qud :=
+  d.qud_clarify h
 
 example {t : Turn} {u : Constituent} {m : Utterance} {d d' : Board}
-    (h : (Rule.forwardUtterance t u m).apply d = some d') :
+    (h : forwardUtterance t u m d = some d') :
     ∃ v ∈ d.maxPending, u ∈ v.constituents ∧ d'.qud = ⟨.meantNext d.speaker u, ∅⟩ :: d.qud := by
-  simp only [Rule.apply] at h
+  unfold forwardUtterance at h
   split_ifs at h
   exact d.qud_clarify h
 
-example {w : Utterance} {d d' : Board} (h : (Rule.replacePending w).apply d = some d') :
+example {w : Utterance} {d d' : Board} (h : replacePending w d = some d') :
     d'.facts = d.facts ∧ d'.qud = d.qud ∧ d'.moves = d.moves := by
-  simp only [Rule.apply] at h
+  unfold replacePending at h
   split at h <;> cases h
   exact ⟨rfl, rfl, rfl⟩
 
