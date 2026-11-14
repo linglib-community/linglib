@@ -147,6 +147,12 @@ theorem complexity_const (ν : Measure W) [IsProbabilityMeasure ν] :
   rw [complexity, Measure.compProd_const, measureMutualInfo_prod]
 
 omit [Nonempty M] in
+-- A lexicon naming each meaning by one word is as complex as its words are uncertain.
+theorem complexity_deterministic {f : M → W} (hf : Measurable f) :
+    complexity source (Kernel.deterministic f hf) = H[f ; source] :=
+  measureMutualInfo_compProd_deterministic source hf
+
+omit [Nonempty M] in
 private theorem integral_compProd (f : M × W → ℝ) :
     ∫ p, f p ∂(source ⊗ₘ encoder)
       = ∑ m, source.real {m} * ∑ w, (encoder m).real {w} * f (m, w) := by

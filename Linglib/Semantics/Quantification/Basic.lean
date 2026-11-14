@@ -356,16 +356,16 @@ conjunction of monotone quantifiers exactly when it holds at every scope between
 holds, Thijsse's observation reported by [van-benthem-1984]. -/
 theorem satisfiesUniversals_iff {d : Det α} :
     d.SatisfiesUniversals ↔ d.Conservative ∧ d.RightContinuous := by
-  refine and_congr_right fun _ ↦ ⟨fun h A B B₁ B₂ h₁ h₂ hq₁ hq₂ ↦ ?_, fun h A ↦ ?_⟩
+  refine and_congr_right fun _ ↦ ⟨fun h A ↦ ⟨fun B₁ hq₁ B₂ hq₂ B ⟨h₁, h₂⟩ ↦ ?_⟩, fun h A ↦ ?_⟩
   · obtain ⟨Q₁, Q₂, hm₁, hm₂, he⟩ := h A
-    simp only [he, Pi.inf_apply, inf_Prop_eq] at hq₁ hq₂ ⊢
+    simp only [Set.mem_ofPred_eq, he, Pi.inf_apply, inf_Prop_eq] at hq₁ hq₂ ⊢
     exact ⟨hm₁.elim (fun hm ↦ hm h₁ hq₁.1) fun hm ↦ hm h₂ hq₂.1,
       hm₂.elim (fun hm ↦ hm h₁ hq₁.2) fun hm ↦ hm h₂ hq₂.2⟩
   · refine ⟨fun B ↦ ∃ B' ≤ B, d A B', fun B ↦ ∃ B', B ≤ B' ∧ d A B',
       .inl fun _ _ hBC ⟨B', hB', hq⟩ ↦ ⟨B', hB'.trans hBC, hq⟩,
       .inr fun _ _ hBC ⟨B', hB', hq⟩ ↦ ⟨B', hBC.trans hB', hq⟩, funext fun B ↦ propext ?_⟩
     exact ⟨fun hq ↦ ⟨⟨B, le_rfl, hq⟩, B, le_rfl, hq⟩,
-      fun ⟨⟨B₁, h₁, hq₁⟩, B₂, h₂, hq₂⟩ ↦ h A B B₁ B₂ h₁ h₂ hq₁ hq₂⟩
+      fun ⟨⟨B₁, h₁, hq₁⟩, B₂, h₂, hq₂⟩ ↦ (h A).out' hq₁ hq₂ ⟨h₁, h₂⟩⟩
 
 theorem satisfiesUniversals_some : (Det.some : Det α).SatisfiesUniversals :=
   satisfiesUniversals_iff.2 ⟨conservative_some, scopeMonotone_some.rightContinuous⟩

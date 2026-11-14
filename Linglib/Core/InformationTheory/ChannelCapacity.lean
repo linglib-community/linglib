@@ -184,6 +184,13 @@ theorem measureMutualInfo_compProd :
   rw [sum_mul_toReal_klDiv κ μ _ fun c hc ↦ κ.absolutelyContinuous_comp μ hc, klDiv_self,
     ENNReal.toReal_zero, add_zero]
 
+/-- A deterministic channel carries the entropy of its output. -/
+theorem measureMutualInfo_compProd_deterministic {f : C → W} (hf : Measurable f) :
+    Im[μ ⊗ₘ Kernel.deterministic f hf] = Hm[μ.map f] := by
+  rw [Measure.compProd_deterministic hf, ← entropy_def]
+  exact (mutualInfo_eq_measureMutualInfo measurable_id hf μ).symm.trans
+    ((mutualInfo_comm μ measurable_id hf).trans (mutualInfo_comp_self (X := id) μ measurable_id f))
+
 theorem measureMutualInfo_compProd_le_log_card : Im[μ ⊗ₘ κ] ≤ log (Fintype.card W) :=
   (measureMutualInfo_le_measureEntropy_snd _).trans (measureEntropy_le_log_card _)
 
