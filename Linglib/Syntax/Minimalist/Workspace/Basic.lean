@@ -105,7 +105,8 @@ theorem subst_contraction_of_notMem_left (hP : P ∉ U.terms) :
     exacts [h.symm, h'.symm]
 
 theorem merge_def : W.merge P Q = W - {P, Q} + {SyntacticObject.merge P Q} := by
-  rw [merge, mergeWith, id, id, replace_self_self, replace_self_self,
+  rw [merge, mergeWith, id, id, SyntacticObject.replace_self_self,
+    SyntacticObject.replace_self_self,
     Multiset.map_congr rfl fun U _ ↦ subst_contraction_id, Multiset.map_id']
 
 /-- MERGE of an object with one of its terms in the workspace of the object alone. -/
