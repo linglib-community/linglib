@@ -13,29 +13,19 @@ public import Mathlib.Data.Multiset.MapFold
 # Licensed trees
 
 A relation `R a ks` says that a node labelled `a` may have daughters labelled `ks`, in order: it
-is a set of local trees, each a node's label with its daughters' labels. `R` licenses a tree when
-every subtree of the tree satisfies it at its root, and the trees `R` licenses form a local tree
-language. The derivation trees of a context-free grammar are the trees its rules license, and any
-well-formedness condition on a node and its daughters' labels takes the same form; a condition on
-the root alone is a separate conjunct, and a condition that reads the daughters' subtrees is not
-of this form. A tree is licensed exactly when each of its local trees is
-(`licensed_iff_forall_mem_localTrees`), which decides licensing.
+is a set of local trees, each a node's label with its daughters' labels. `R`
+[licenses](##RoseTree.Licensed) a tree when every subtree satisfies it at its root, which is when
+[the root does and `R` licenses each child](##RoseTree.licensed_node_iff), and when [each local
+tree of the tree is in `R`](##RoseTree.licensed_iff_forall_mem_localTrees), which decides
+licensing. The trees `R` licenses form a local tree language: the derivation trees of a
+context-free grammar are the trees its rules license. Licensing
+[passes to subtrees](##RoseTree.Licensed.of_isSubtree), and a relation that ignores the order of
+the daughters [licenses the permutations of a tree alike](##RoseTree.Perm.licensed_iff).
 
-## Main definitions
+## Implementation notes
 
-* `RoseTree.Licensed R t`: every subtree of `t` satisfies `R` at its root.
-
-## Main results
-
-* `RoseTree.licensed_node_iff`: a tree is licensed when its root's local tree satisfies `R` and
-  its children are licensed; `RoseTree.Licensed.induction` is the induction principle.
-* `RoseTree.Licensed.of_getElem?`: licensing passes to subtrees.
-* `RoseTree.Licensed.numLeaves_le_pow_height_sub_one`: a tree whose nodes have at most `b`
-  children has at most `b ^ (height - 1)` leaves.
-* `RoseTree.Licensed.replaceAt`: replacing a subtree by a licensed tree with the same root value
-  keeps the tree licensed.
-* `RoseTree.licensed_of_perm`: a relation that ignores the order of the children licenses
-  permuted trees alike, so it licenses unordered trees.
+A condition on the root alone is a separate conjunct beside `Licensed`, and a condition that reads
+the daughters' subtrees and not only their labels is not of this form.
 -/
 
 @[expose] public section
@@ -139,10 +129,7 @@ theorem Licensed.replaceAt {t s new : RoseTree α} (ht : t.Licensed R) {p : List
     | node a cs =>
       rw [children_node] at hc
       rw [replaceAt_cons_of_getElem? (by simpa using hc), value_node, children_node]
-      have hval : (c.replaceAt p new).value = c.value := by
-        cases p with
-        | nil => rw [replaceAt_nil, hv, Option.some.inj hcs]
-        | cons j p => exact value_replaceAt_cons c j p new
+      have hval : (c.replaceAt p new).value = c.value := value_replaceAt hcs hv
       refine licensed_node_iff.mpr ⟨?_, fun d hd ↦ ?_⟩
       · obtain ⟨hi, rfl⟩ := List.getElem?_eq_some_iff.mp hc
         have h := List.set_getElem_self (as := cs.map value) (i := i) (by simpa using hi)
@@ -155,12 +142,11 @@ theorem Licensed.replaceAt {t s new : RoseTree α} (ht : t.Licensed R) {p : List
 
 /-- A relation that ignores the order of the children licenses a tree exactly when it licenses
 any permutation of it. -/
-theorem licensed_of_perm (hR : ∀ a {ks ls : List α}, ks.Perm ls → (R a ks ↔ R a ls)) :
-    ∀ {t s : RoseTree α}, t.Perm s → (t.Licensed R ↔ s.Licensed R) := by
-  intro t
-  induction t with
+theorem Perm.licensed_iff (hR : ∀ a {ks ls : List α}, ks.Perm ls → (R a ks ↔ R a ls))
+    {t s : RoseTree α} (h : t.Perm s) : t.Licensed R ↔ s.Licensed R := by
+  induction t generalizing s with
   | node a cs ih =>
-    rintro ⟨b, ds⟩ h
+    obtain ⟨b, ds⟩ := s
     obtain ⟨rfl, hrel⟩ := perm_node_iff.mp h
     rw [licensed_node_iff, licensed_node_iff]
     have hval : (cs.map value).Perm (ds.map value) := by
@@ -173,13 +159,14 @@ theorem licensed_of_perm (hR : ∀ a {ks ls : List α}, ks.Perm ls → (R a ks �
     · obtain ⟨d, hd', hcd⟩ := Multiset.exists_mem_of_rel_of_mem hrel (Multiset.mem_coe.mpr hc)
       exact (ih c hc hcd).mpr (hd d (Multiset.mem_coe.mp hd'))
 
-theorem licensed_map_iff {β : Type*} {f : α → β} {R' : β → List β → Prop}
-    (h : ∀ a ks, R' (f a) (ks.map f) ↔ R a ks) {t : RoseTree α} :
-    (map f t).Licensed R' ↔ t.Licensed R := by
+/-- A relation licenses a relabelled tree when its pullback along the relabelling licenses the
+tree. -/
+@[simp] theorem licensed_map {β : Type*} {f : α → β} {R : β → List β → Prop} {t : RoseTree α} :
+    (map f t).Licensed R ↔ t.Licensed fun a ks ↦ R (f a) (ks.map f) := by
   induction t with
   | node a cs ih =>
     rw [map_node, licensed_node_iff, licensed_node_iff, List.map_map,
-      show value ∘ map f = f ∘ value from funext fun c ↦ value_map f c, ← List.map_map, h,
+      show value ∘ map f = f ∘ value from funext fun c ↦ value_map f c, ← List.map_map,
       List.forall_mem_map]
     exact and_congr_right fun _ ↦ forall₂_congr fun c hc ↦ ih c hc
 
