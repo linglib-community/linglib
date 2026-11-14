@@ -31,15 +31,17 @@ the focus alone](##DistributedMorphology.Spellout.pf_rewriteBefore_eq_pf_rewrite
   after Feature Markedness, where Obliteration applies, and [halle-marantz-1993] fuse sister
   nodes; on a string these are stated over a neighborhood and over adjacent terminals.
 * The brackets of Generalized Reduplication are given by the lengths of the three stretches they
-  delimit. The sources' rules place the two angled brackets at one juncture; here they may stand
-  apart, each with the effect the sources give it alone.
+  delimit. [harris-halle-2005] call the operation metathesis only where the two angled brackets
+  are contiguous; with a stretch between them that stretch is in both copies.
 * `Spellout.postsyntax` is one map, the modules composed in their order.
 
 ## TODO
 
 * The operations before Linearization as maps of the hierarchical object, composed before the
-  handover of `LateInsertion.lean`; Lowering before Linearization and Local Dislocation after it
-  ([embick-noyer-2001]).
+  handover of `LateInsertion.lean`.
+* The place of Linearization: [arregi-nevins-2012] linearize before the linear operations, which
+  precede insertion, and [embick-noyer-2001] linearize at insertion, with Lowering before it and
+  Local Dislocation after.
 * The LF branch: an interpretation that reads the string the syntax hands over.
 
 ## References
@@ -146,8 +148,8 @@ namespace Reduplication
 
 variable {α : Type*} (b : Reduplication) (s : List α)
 
-/-- Metathesis: the two angled brackets at one juncture, so that neither copy keeps what the
-other has and the two stretches change places. -/
+/-- Metathesis: the two angled brackets contiguous, so that neither copy keeps what the other
+has and the two stretches change places. -/
 abbrev metathesis (left right : ℕ) : Reduplication := ⟨left, 0, right⟩
 
 /-- Doubling: the right angled bracket alone, so that the stretch after it is pronounced before
