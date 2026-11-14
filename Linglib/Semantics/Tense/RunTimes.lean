@@ -5,32 +5,22 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Order.AntiAdditive
 public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Core.Order.StrictBounds
 
 /-!
 # Run times
 
-After Krifka, a clause denotes its run times, the set of intervals at which it holds. A stative
-clause holding throughout `i` denotes `i` with all its subintervals, the principal lower set
-`Set.Iic i`, an accomplishment over `i` the singleton `{i}`, and an event predicate the image of
-its events under the temporal trace (`TemporalTrace`). This file defines the time trace of
-a set of intervals, the time points it covers, and Anscombe's universal *before*, a time of one
-clause before every time of the other, the reading Anscombe gives *before ever*. The times before
-every time of a clause are its strict lower bounds, the complement of its upward closure: *before*
-is *not yet*, the negation of *when* or *after*. They form a lower set, so *before ever* is
-anti-additive in its temporal clause. The other analyses of temporal connectives built on run
-times live in their studies.
-
-## Main definitions
-
-* `Tense.timeTrace`: the time points that a set of intervals covers.
-* `Tense.beforeEver`: Anscombe's universal *before*.
-
-## Main statements
-
-* `Tense.beforeEver_iff_not_subset_upperClosure`: *before* is *not yet*.
-* `Tense.beforeEver_union_right`: *before ever* is anti-additive in its temporal clause.
+The run time of an event is its temporal trace, the time it occupies ([krifka-1989]), and the run
+times of a clause are the intervals at which it holds: a stative clause holding throughout `i` has
+the principal lower set `Set.Iic i`, an accomplishment over `i` the singleton `{i}`, and an event
+predicate the image of its events under the trace. The [time trace](##Tense.timeTrace) of a set of
+intervals is the set of time points it covers. One clause is [before ever](##Tense.beforeEver)
+another when a time of the first precedes every time of the second, the universal rendering of
+*before* in [anscombe-1964]. The times before every time of a clause are its strict lower bounds,
+so *before* is [*not yet*](##Tense.beforeEver_iff_not_subset_upperClosure), and they form a lower
+set, so *before ever* is [anti-additive](##Tense.isAntiAdditive_beforeEver) in its temporal clause.
 
 ## References
 
@@ -60,6 +50,9 @@ theorem timeTrace_image {α : Type*} (f : α → NonemptyInterval T) (s : Set α
 @[simp] theorem timeTrace_empty : timeTrace (∅ : Set (NonemptyInterval T)) = ∅ := by
   ext; simp [timeTrace]
 
+@[simp] theorem timeTrace_univ : timeTrace (Set.univ : Set (NonemptyInterval T)) = Set.univ :=
+  Set.eq_univ_of_forall fun t ↦ ⟨NonemptyInterval.pure t, trivial, le_rfl, le_rfl⟩
+
 @[simp] theorem timeTrace_union (p q : Set (NonemptyInterval T)) :
     timeTrace (p ∪ q) = timeTrace p ∪ timeTrace q := by
   ext; simp [or_and_right, exists_or]
@@ -84,10 +77,23 @@ theorem beforeEver_iff :
     beforeEver A B ↔ (timeTrace A ∩ strictLowerBounds (timeTrace B)).Nonempty :=
   .rfl
 
+theorem beforeEver.exists_notMem (h : beforeEver A B) : ∃ t ∈ timeTrace A, t ∉ timeTrace B :=
+  let ⟨t, hA, ht⟩ := h
+  ⟨t, hA, fun hB ↦ lt_irrefl t (ht t hB)⟩
+
+theorem beforeEver.anti_right {B' : Set (NonemptyInterval T)} (h : beforeEver A B)
+    (hB : timeTrace B' ⊆ timeTrace B) : beforeEver A B' :=
+  let ⟨t, ht, hall⟩ := h
+  ⟨t, ht, fun t' ht' ↦ hall t' (hB ht')⟩
+
+theorem not_beforeEver_univ : ¬ beforeEver A .univ := fun h ↦
+  let ⟨_, _, ht⟩ := h.exists_notMem
+  ht (timeTrace_univ (T := T) ▸ trivial)
+
 theorem beforeEver_iff_of_isLeast {m : T} (h : IsLeast (timeTrace B) m) :
-    beforeEver A B ↔ ∃ t ∈ timeTrace A, t < m :=
-  ⟨fun ⟨t, ht, h'⟩ ↦ ⟨t, ht, h' m h.1⟩,
-    fun ⟨t, ht, htm⟩ ↦ ⟨t, ht, fun _ h' ↦ htm.trans_le (h.2 h')⟩⟩
+    beforeEver A B ↔ ∃ t ∈ timeTrace A, t < m := by
+  rw [beforeEver_iff, h.strictLowerBounds_eq]
+  rfl
 
 theorem beforeEver_singleton_right {i : NonemptyInterval T} :
     beforeEver A {i} ↔ ∃ j ∈ A, j.fst < i.fst := by
@@ -142,8 +148,6 @@ theorem beforeEver_iff_not_subset_upperClosure :
     beforeEver A B ↔ ¬ timeTrace A ⊆ upperClosure (timeTrace B) := by
   rw [beforeEver_iff, strictLowerBounds_eq_compl_upperClosure, Set.inter_compl_nonempty_iff]
 
-/-- *Before ever* is anti-additive in its temporal clause, since the times before every time of a
-clause form a lower set and the lower sets of a linear order are nested. -/
 theorem beforeEver_union_right : beforeEver A (B ∪ C) ↔ beforeEver A B ∧ beforeEver A C := by
   simp only [beforeEver_iff, timeTrace_union, strictLowerBounds_union]
   refine ⟨fun h ↦ ⟨h.mono (Set.inter_subset_inter_right _ Set.inter_subset_left),
@@ -152,6 +156,11 @@ theorem beforeEver_union_right : beforeEver A (B ∪ C) ↔ beforeEver A B ∧ b
     (isLowerSet_strictLowerBounds (timeTrace C)) with h | h
   · rwa [Set.inter_eq_left.2 h]
   · rwa [Set.inter_eq_right.2 h]
+
+/-- *Before ever* is anti-additive in its temporal clause, since the times before every time of a
+clause form a lower set and the lower sets of a linear order are nested. -/
+theorem isAntiAdditive_beforeEver (A : Set (NonemptyInterval T)) : IsAntiAdditive (beforeEver A) :=
+  fun _ _ ↦ propext beforeEver_union_right
 
 end LinearOrder
 
