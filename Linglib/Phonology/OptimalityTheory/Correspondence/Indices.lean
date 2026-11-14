@@ -55,6 +55,7 @@ namespace OptimalityTheory.Correspondence
 structure Segment (α : Type*) where
   seg : α
   indices : List ℕ
+  deriving DecidableEq, Repr
 
 variable {α F : Type*}
 
