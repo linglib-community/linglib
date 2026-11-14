@@ -94,7 +94,8 @@ variable (p q : EntailmentProfile)
 
 /-- The hierarchies of (36) follow from the selection principle over the typical role profiles:
 Agent outranks Instrument and Experiencer, each of them outranks Patient, and Patient is selected
-as direct object over Goal. -/
+as direct object over Goal. The braces of (36) leave Instrument and Experiencer unordered, so the
+statement is two chains. -/
 theorem hierarchies :
     (([.agent, .instrument, .patient] : List ThetaRole).map ThetaRole.canonicalProfile).Pairwise
         Outranks ∧
