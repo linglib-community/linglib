@@ -595,9 +595,9 @@ theorem uncover :
 example :
     (Tableau.ofLabels (jussive .sibilant .stop) {.a, .b, .c} ranking).optimal = {.a} ∧
     (jussive .sibilant .stop .a).members.map (·.stem.map (·.seg)) =
-      [(Benua1997.Hebrew.captive .d).form .base, (Benua1997.Hebrew.captive .d).form .derivative] ∧
+      [(Benua1997.Hebrew.captive .d).string .base, (Benua1997.Hebrew.captive .d).string .derivative] ∧
     (jussive .spirant .liquid .c).members.map (·.stem.map (·.seg)) =
-      [(Benua1997.Hebrew.uncover .b).form .base, (Benua1997.Hebrew.uncover .b).form .derivative] :=
+      [(Benua1997.Hebrew.uncover .b).string .base, (Benua1997.Hebrew.uncover .b).string .derivative] :=
   ⟨by decide, rfl, rfl⟩
 
 end Hebrew

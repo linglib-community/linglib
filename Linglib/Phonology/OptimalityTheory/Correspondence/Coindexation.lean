@@ -87,20 +87,48 @@ def depViolFeature (P : α → Prop) [DecidablePred P] (c : Coindexation Role α
 
 /-! ### Faithfulness and markedness -/
 
-/-- `identity s` is the fully faithful candidate: a string and itself, coindexed position by
-position, the segments of each string bearing no index toward their own. -/
-def identity (s : List α) : Coindexation BinaryRole α where
-  form r := s.zipIdx.map fun x ↦ (x.1, fun r' ↦ if r' = r then [] else [x.2])
+/-- The two strings coindexed position by position, the segments of each string bearing no
+index toward their own. -/
+def parallel (s₁ s₂ : List α) : Coindexation BinaryRole α where
+  form
+    | .lhs => s₁.zipIdx.map fun x ↦ (x.1, fun | .rhs => [x.2] | .lhs => [])
+    | .rhs => s₂.zipIdx.map fun x ↦ (x.1, fun | .lhs => [x.2] | .rhs => [])
+
+/-- `identity s` is the fully faithful candidate, a string and itself coindexed position by
+position. -/
+def identity (s : List α) : Coindexation BinaryRole α := parallel s s
+
+theorem toward_parallel_lhs_rhs (s₁ s₂ : List α) :
+    (parallel s₁ s₂).toward .lhs .rhs = indexed s₁ := by
+  simp [toward, parallel, indexed, Segment.ofIndex]
+
+theorem toward_parallel_rhs_lhs (s₁ s₂ : List α) :
+    (parallel s₁ s₂).toward .rhs .lhs = indexed s₂ := by
+  simp [toward, parallel, indexed, Segment.ofIndex]
 
 theorem toward_identity {s : List α} {r₁ r₂ : BinaryRole} (h : r₁ ≠ r₂) :
     (identity s).toward r₁ r₂ = indexed s := by
-  simp [toward, identity, indexed, Segment.ofIndex, h.symm]
+  cases r₁ <;> cases r₂ <;>
+    first
+    | exact absurd rfl h
+    | exact toward_parallel_lhs_rhs s s
+    | exact toward_parallel_rhs_lhs s s
 
 theorem toward_identity_self (s : List α) (r : BinaryRole) :
     (identity s).toward r r = s.map fun a ↦ ⟨a, []⟩ := by
-  rw [toward, identity, List.map_map]
-  conv_rhs => rw [← List.zipIdx_map_fst 0 s, List.map_map]
-  exact List.map_congr_left fun x _ ↦ by simp
+  cases r <;>
+  · rw [toward, identity, parallel, List.map_map]
+    conv_rhs => rw [← List.zipIdx_map_fst 0 s, List.map_map]
+    exact List.map_congr_left fun x _ ↦ by simp
+
+/-- The candidate with the strings `form` and, for each `(r₁, r₂, l)` of `pairs`, the positions
+of `r₁` and `r₂` paired in `l` corresponding. -/
+def ofPairs [DecidableEq Role] (form : Role → List α)
+    (pairs : List (Role × Role × List (ℕ × ℕ))) : Coindexation Role α where
+  form r := (form r).zipIdx.map fun x ↦ (x.1, fun r' ↦
+    (((pairs.flatMap fun e ↦ e.2.2.map fun p ↦ (e.1, e.2.1, p)).zipIdx.filter fun q ↦
+      (q.1.1 = r ∧ q.1.2.1 = r' ∧ q.1.2.2.1 = x.2) ∨
+        (q.1.1 = r' ∧ q.1.2.1 = r ∧ q.1.2.2.2 = x.2)).map (·.2)))
 
 /-- A constraint over binary candidates is *faithfulness* when the fully faithful candidate
 `identity s` satisfies it. -/
@@ -111,6 +139,42 @@ def IsFaithfulness (k : Constraint (Coindexation BinaryRole α)) : Prop :=
 `out`. -/
 def IsMarkedness (out : Role) (k : Constraint (Coindexation Role α)) : Prop :=
   k.FactorsThrough (·.string out)
+
+theorem isFaithfulness_maxViol : IsFaithfulness (α := α) (maxViol · .lhs .rhs) := fun s ↦ by
+  show Segment.maxViol ((identity s).toward .lhs .rhs) ((identity s).toward .rhs .lhs) = 0
+  rw [toward_identity (by decide), toward_identity (by decide)]
+  exact maxViol_indexed_self s
+
+theorem isFaithfulness_depViol : IsFaithfulness (α := α) (depViol · .lhs .rhs) := fun s ↦ by
+  show Segment.maxViol ((identity s).toward .rhs .lhs) ((identity s).toward .lhs .rhs) = 0
+  rw [toward_identity (by decide), toward_identity (by decide)]
+  exact maxViol_indexed_self s
+
+theorem isFaithfulness_identViolFeature [DecidableEq F] (f : α → F) :
+    IsFaithfulness (α := α) (identViolFeature f · .lhs .rhs) := fun s ↦ by
+  show Segment.identViol f ((identity s).toward .lhs .rhs) ((identity s).toward .rhs .lhs) = 0
+  rw [toward_identity (by decide), toward_identity (by decide)]
+  exact identViol_indexed_self f s
+
+/-- The anti-faithfulness constraint of a faithfulness constraint is not faithfulness, since the
+fully faithful candidate violates it. -/
+theorem IsFaithfulness.not_antifaithful {k : Constraint (Coindexation BinaryRole α)}
+    (hk : IsFaithfulness k) : ¬ IsFaithfulness k.antifaithful := fun h ↦ by
+  simpa [Constraint.antifaithful_eq_zero_iff, hk []] using h []
+
+/-! ### One indexing of every string -/
+
+/-- The candidate whose strings bear the same indices toward every role. -/
+def ofStrings (f : Role → List (Segment α)) : Coindexation Role α where
+  form r := (f r).map fun x ↦ (x.seg, fun _ ↦ x.indices)
+
+@[simp] theorem toward_ofStrings (f : Role → List (Segment α)) (r₁ r₂ : Role) :
+    (ofStrings f).toward r₁ r₂ = f r₁ := by
+  simp [toward, ofStrings, Function.comp_def]
+
+@[simp] theorem string_ofStrings (f : Role → List (Segment α)) (r : Role) :
+    (ofStrings f).string r = (f r).map (·.seg) := by
+  simp [string, ofStrings]
 
 end Coindexation
 

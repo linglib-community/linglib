@@ -233,8 +233,72 @@ def Segment.ofIndex (a : α) (k : ℕ) : Segment α := ⟨a, [k]⟩
 def indexed (l : List α) : List (Segment α) :=
   l.zipIdx.map fun x ↦ .ofIndex x.1 x.2
 
+@[simp] theorem map_seg_indexed (l : List α) : (indexed l).map (·.seg) = l := by
+  rw [indexed, List.map_map]
+  conv_rhs => rw [← List.zipIdx_map_fst 0 l]
+  rfl
+
 @[simp] theorem length_indexed (l : List α) : (indexed l).length = l.length := by
   simp [indexed]
+
+@[simp] theorem Segment.seg_ofIndex (a : α) (k : ℕ) : (Segment.ofIndex a k).seg = a := rfl
+
+@[simp] theorem Segment.corresponds_ofIndex {a b : α} {i j : ℕ} :
+    (Segment.ofIndex a i).Corresponds (.ofIndex b j) ↔ i = j := by
+  simp [Segment.Corresponds, Segment.ofIndex]
+
+/-- The pairs of corresponding segments of two strings indexed from `k` that stand in `q` are
+the pairs of the two strings zipped that do. -/
+private theorem sum_countP_zipIdx (q : α → α → Prop) [∀ a b, Decidable (q a b)] (s t : List α)
+    (k : ℕ) :
+    (((s.zipIdx k).map fun x ↦ Segment.ofIndex x.1 x.2).map fun x ↦
+      ((t.zipIdx k).map fun y ↦ Segment.ofIndex y.1 y.2).countP fun y ↦
+        x.Corresponds y ∧ q x.seg y.seg).sum = (s.zip t).countP fun p ↦ q p.1 p.2 := by
+  induction s generalizing t k with
+  | nil => simp
+  | cons a s ih =>
+    cases t with
+    | nil =>
+      rw [List.zip_nil_right]
+      exact List.sum_eq_zero fun n hn ↦ by
+        obtain ⟨x, -, rfl⟩ := List.mem_map.1 hn
+        simp
+    | cons b t =>
+      have h₁ : ((t.zipIdx (k + 1)).map fun y ↦ Segment.ofIndex y.1 y.2).countP
+          (fun y ↦ (Segment.ofIndex a k).Corresponds y ∧ q (Segment.ofIndex a k).seg y.seg) = 0 :=
+        List.countP_eq_zero.2 fun y hy ↦ by
+          obtain ⟨⟨c, j⟩, hj, rfl⟩ := List.mem_map.1 hy
+          have := (List.mem_zipIdx hj).1
+          simp only [Segment.corresponds_ofIndex, decide_eq_true_eq, not_and]
+          omega
+      have h₂ : ∀ x ∈ (s.zipIdx (k + 1)).map fun x ↦ Segment.ofIndex x.1 x.2,
+          ((Segment.ofIndex b k :: (t.zipIdx (k + 1)).map fun y ↦ Segment.ofIndex y.1 y.2).countP
+            fun y ↦ x.Corresponds y ∧ q x.seg y.seg) =
+          ((t.zipIdx (k + 1)).map fun y ↦ Segment.ofIndex y.1 y.2).countP
+            fun y ↦ x.Corresponds y ∧ q x.seg y.seg := fun x hx ↦ by
+        obtain ⟨⟨c, j⟩, hj, rfl⟩ := List.mem_map.1 hx
+        have := (List.mem_zipIdx hj).1
+        rw [List.countP_cons_of_neg]
+        simp only [Segment.corresponds_ofIndex, decide_eq_true_eq, not_and]
+        omega
+      simp only [List.zipIdx_cons, List.map_cons, List.sum_cons, List.zip_cons_cons]
+      rw [List.map_congr_left h₂, ih t (k + 1), List.countP_cons, List.countP_cons, h₁]
+      simp [add_comm]
+
+theorem maxViolFeature_indexed (P : α → Prop) [DecidablePred P] (s t : List α) :
+    Segment.maxViolFeature P (indexed s) (indexed t) =
+      (s.zip t).countP fun p ↦ P p.1 ∧ ¬ P p.2 :=
+  sum_countP_zipIdx (fun a b ↦ P a ∧ ¬ P b) s t 0
+
+theorem depViolFeature_indexed (P : α → Prop) [DecidablePred P] (s t : List α) :
+    Segment.depViolFeature P (indexed s) (indexed t) =
+      (s.zip t).countP fun p ↦ ¬ P p.1 ∧ P p.2 := by
+  rw [Segment.depViolFeature, maxViolFeature_indexed, ← List.zip_swap, List.countP_map]
+  exact List.countP_congr fun p _ ↦ by simp [and_comm]
+
+theorem identViol_indexed [DecidableEq F] (f : α → F) (s t : List α) :
+    Segment.identViol f (indexed s) (indexed t) = (s.zip t).countP fun p ↦ f p.1 ≠ f p.2 :=
+  sum_countP_zipIdx (fun a b ↦ f a ≠ f b) s t 0
 
 /-- In a string indexed by position a segment corresponds with itself alone. -/
 theorem eq_of_corresponds_indexed {l : List α} {x y : Segment α} (hx : x ∈ indexed l)
