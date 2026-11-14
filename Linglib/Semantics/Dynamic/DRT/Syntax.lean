@@ -117,6 +117,11 @@ inductive Condition.IsAtomic : Condition L V → Prop
   | atom (a : L.Atom V) : Condition.IsAtomic (.atom a)
   | eq (u v : V) : Condition.IsAtomic (.eq u v)
 
+instance : DecidablePred (Condition.IsAtomic : Condition L V → Prop)
+  | .atom a => isTrue (.atom a)
+  | .eq u v => isTrue (.eq u v)
+  | .neg _ | .imp _ _ | .dis _ _ => isFalse nofun
+
 /-! ### Renaming -/
 
 section Map

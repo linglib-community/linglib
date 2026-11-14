@@ -2,45 +2,37 @@ module
 
 public import Linglib.Semantics.Dynamic.DRT.Syntax
 public import Mathlib.Logic.Relation
+public import Mathlib.Order.RelClasses
 
 /-!
 # Subordination and accessibility
 
-A DRS is subordinate to another when it occurs inside one of its complex conditions. A discourse
-referent is accessible from a condition when it is declared in a box that is accessible where the
-condition occurs: the box containing the condition, the boxes it is nested in, and the antecedent
-of a conditional for its consequent. Accessibility is a property of occurrences: one box can
-occur twice in a DRS, at places with different accessible boxes. An occurrence is reached from
-the host by a walk that steps into the sub-boxes of complex conditions, collecting the boxes
-accessible at each step, and the walk is computed by a structural recursion that decides
-accessibility.
-
-## Main definitions
-
-* `DRT.DirectlySubordinate`, `DRT.Subordinate`, `DRT.WeakSubordinate`: immediate subordination
-  and its transitive and reflexive-transitive closures.
-* `DRT.ScopeStep`, `DRT.Occurrence`: a step into a sub-box, collecting the accessible boxes,
-  and the occurrences of boxes in a host.
-* `DRT.AccessibleFrom`: a referent accessible from a condition.
-* `DRT.DRS.Accessible`: a referent accessible where another is declared.
-* `DRT.AccessibleTo`: a box accessible to another, in the sense of Geurts, Beaver and Maier.
-
-## Main statements
-
-* `DRT.DRS.mem_occurrences_iff`: the computed occurrences are exactly those reached by the walk,
-  so `DRS.Accessible` is decidable.
-* `DRT.DRS.isProper_iff_forall_occurrence`: a DRS is proper iff the referents of every atomic
-  condition are accessible where it occurs.
+A DRS is subordinate to another when it occurs inside one of its complex conditions. A DRS `K₁`
+is accessible to `K₂` when `K₂` lies weakly below `K₁`, or weakly below the consequent of a
+conditional whose antecedent is `K₁`, and a discourse referent is accessible from a condition
+when a DRS declaring it is accessible to one containing the condition. Accessibility is
+[computed by a walk](##DRT.accessibleTo_iff_exists_occurrence) from the host into the sub-DRSs
+of complex conditions, so it is decidable, and it is
+[preserved by renaming](##DRT.AccessibleTo.map). A DRS is
+[proper exactly when](##DRT.DRS.isProper_iff_forall_occurrence) every atomic condition finds its
+referents among the DRSs the walk has passed where it occurs.
 
 ## Implementation notes
 
-Kamp and Reyle state accessibility for DRS values. Read on values, it lets a chain
-pass through a second occurrence of an equal box and make a referent accessible where no
-occurrence of the condition sees it, so the definitions here quantify over occurrences.
-`AccessibleFrom`, like their definition, asks only that some occurrence of the condition see the
-referent, which properness does not imply: in `[ | ¬[y | P y], ¬[ | P y]]` the condition `P y`
-sees `y` at its first occurrence and leaves it free at its second. Properness is therefore
-characterized at occurrences.
+`Condition.subordinates` lists the DRSs immediately inside a condition, each followed by the
+DRSs of the same condition that it sees, and immediate subordination, the walk and the computed
+occurrences are all stated through it, so that the three complex conditions are distinguished
+once. Subordination and accessibility are relations on DRS values, as Kamp and Reyle state them.
+One DRS can occur at several places in a host with different DRSs accessible to it, and
+`AccessibleTo` holds when it does at one of them, which properness does not imply: in
+`[ | ¬[y | P y], ¬[ | P y]]` the condition `P y` sees `y` at its first occurrence and leaves it
+free at its second. Properness is therefore characterized at occurrences.
+
+## TODO
+
+Geurts, Beaver and Maier define accessibility as the smallest preorder containing the pairs that
+`Condition.subordinates` lists. That closure is not formalized: on DRS values it composes a step
+into a DRS with a step out of an equal DRS occurring elsewhere, which `AccessibleTo` does not.
 
 ## References
 
@@ -51,291 +43,344 @@ characterized at occurrences.
 
 @[expose] public section
 
-open FirstOrder
+open FirstOrder Relation
 
 namespace DRT
 
-universe u v w
+universe u v w x
 
-variable {L : Language.{u, v}} {V : Type w}
+variable {L : Language.{u, v}} {V : Type w} {W : Type x}
 
 /-! ### Subordination -/
 
-/-- `DirectlySubordinate K' K` says `K'` is a sub-box of one of `K`'s conditions, by the `neg`
-case of Def. 1.4.10(i), the `⇒` cases of Def. 2.1.2 (which subordinates *both* components of a
-conditional to the containing DRS), and the `∨` cases of Def. 2.4.3(i)(c), where no disjunct is
-subordinate to another. It is a relation on DRS values, where the textbook's is on box
-occurrences. Every clause pins the containing box in its conclusion, since an unpinned clause
-(such as consequent-below-antecedent) would hold of every pair of DRSs via a manufactured
-container. The `⇒` visibility asymmetry is not subordination but accessibility. -/
-inductive DirectlySubordinate : DRS L V → DRS L V → Prop where
-  /-- The body of a `¬` is directly subordinate to the containing DRS. -/
-  | neg {D K : DRS L V} : Condition.neg K ∈ D.conditions → DirectlySubordinate K D
-  /-- The antecedent of a `⇒` is directly subordinate to the containing DRS. -/
-  | impAnte {D a c : DRS L V} : Condition.imp a c ∈ D.conditions → DirectlySubordinate a D
-  /-- The consequent of a `⇒` is directly subordinate to the containing DRS. -/
-  | impCons {D a c : DRS L V} : Condition.imp a c ∈ D.conditions → DirectlySubordinate c D
-  /-- The left disjunct of a `∨` is directly subordinate to the containing DRS. -/
-  | disL {D l r : DRS L V} : Condition.dis l r ∈ D.conditions → DirectlySubordinate l D
-  /-- The right disjunct of a `∨` is directly subordinate to the containing DRS. -/
-  | disR {D l r : DRS L V} : Condition.dis l r ∈ D.conditions → DirectlySubordinate r D
+/-- The DRSs immediately inside a condition, each followed by the DRSs of the condition that
+are accessible to it: the consequent of a conditional is followed by its antecedent. -/
+def Condition.subordinates : Condition L V → List (List (DRS L V))
+  | .atom _ | .eq _ _ => []
+  | .neg K => [ [K] ]
+  | .imp a c => [ [a], [c, a] ]
+  | .dis l r => [ [l], [r] ]
 
-/-- `Subordinate` is the `<` of Def. 1.4.10(ii), the transitive closure of
-`DirectlySubordinate`. -/
-abbrev Subordinate : DRS L V → DRS L V → Prop :=
-  Relation.TransGen DirectlySubordinate
+namespace Condition
 
-/-- `WeakSubordinate` is the `≤` of Def. 1.4.10(ii), the reflexive-transitive closure of
+@[simp] theorem subordinates_atom (a : L.Atom V) : (atom a).subordinates = [] := rfl
+@[simp] theorem subordinates_eq (u v : V) : (eq u v : Condition L V).subordinates = [] := rfl
+@[simp] theorem subordinates_neg (K : DRS L V) : (neg K).subordinates = [ [K] ] := rfl
+@[simp] theorem subordinates_imp (a c : DRS L V) : (imp a c).subordinates = [ [a], [c, a] ] := rfl
+@[simp] theorem subordinates_dis (l r : DRS L V) : (dis l r).subordinates = [ [l], [r] ] := rfl
+
+theorem subordinates_eq_nil_iff {c : Condition L V} : c.subordinates = [] ↔ c.IsAtomic := by
+  cases c <;> simp [IsAtomic.atom, IsAtomic.eq] <;> nofun
+
+/-- Only the consequent of a conditional sees a DRS of its own condition, the antecedent. -/
+theorem eq_imp_of_mem_subordinates {c : Condition L V} {K B : DRS L V} {s : List (DRS L V)}
+    (h : K :: s ∈ c.subordinates) (hB : B ∈ s) : c = imp B K := by
+  cases c <;> simp at h
+  · obtain ⟨rfl, rfl⟩ := h
+    simp at hB
+  · obtain ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ := h <;> simp at hB
+    rw [hB]
+  · obtain ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ := h <;> simp at hB
+
+theorem subordinates_map [DecidableEq W] (f : V → W) (c : Condition L V) :
+    (c.map f).subordinates = c.subordinates.map (List.map (DRS.map f)) := by
+  cases c <;> simp [Condition.map]
+
+end Condition
+
+/-- Def. 2.4.3(i): `DirectlySubordinate K' K` says `K'` is immediately subordinate to `K`, the
+body of a negation, a component of a conditional or a disjunct among the conditions of `K`. -/
+def DirectlySubordinate (K' K : DRS L V) : Prop :=
+  ∃ c ∈ K.conditions, ∃ s, K' :: s ∈ c.subordinates
+
+/-- Def. 2.4.3(ii): subordination, the transitive closure of `DirectlySubordinate`. -/
+abbrev Subordinate : DRS L V → DRS L V → Prop := TransGen DirectlySubordinate
+
+/-- Def. 2.4.3(iii): weak subordination `≤`, the reflexive-transitive closure of
 `DirectlySubordinate`. -/
-abbrev WeakSubordinate : DRS L V → DRS L V → Prop :=
-  Relation.ReflTransGen DirectlySubordinate
+abbrev WeakSubordinate : DRS L V → DRS L V → Prop := ReflTransGen DirectlySubordinate
 
 theorem DirectlySubordinate.sizeOf_lt {K' K : DRS L V} (h : DirectlySubordinate K' K) :
     sizeOf K' < sizeOf K := by
-  obtain ⟨U, conds⟩ := K
+  obtain ⟨c, hc, s, hs⟩ := h
+  obtain ⟨U, cs⟩ := K
+  have := List.sizeOf_lt_of_mem hc
+  cases c <;> simp at hs <;> rcases hs with h | h <;> simp_all <;> omega
+
+instance wellFounded_directlySubordinate :
+    WellFounded (DirectlySubordinate : DRS L V → DRS L V → Prop) :=
+  Subrelation.wf DirectlySubordinate.sizeOf_lt (measure sizeOf).wf
+
+instance : IsStrictOrder (DRS L V) Subordinate where
+
+instance : Std.Antisymm (WeakSubordinate : DRS L V → DRS L V → Prop) where
+  antisymm K' K h h' := by
+    rcases reflTransGen_iff_eq_or_transGen.mp h with rfl | h₁
+    · rfl
+    rcases reflTransGen_iff_eq_or_transGen.mp h' with rfl | h₂
+    · rfl
+    exact absurd h₂ (WellFounded.asymmetric _ _ h₁)
+
+theorem DirectlySubordinate.map [DecidableEq W] (f : V → W) {K' K : DRS L V}
+    (h : DirectlySubordinate K' K) : DirectlySubordinate (K'.map f) (K.map f) := by
+  obtain ⟨c, hc, s, hs⟩ := h
+  refine ⟨c.map f, ?_, s.map (DRS.map f), ?_⟩
+  · rw [DRS.conditions_map]; exact List.mem_map_of_mem hc
+  · rw [Condition.subordinates_map]; exact List.mem_map_of_mem (f := List.map (DRS.map f)) hs
+
+theorem Subordinate.map [DecidableEq W] (f : V → W) {K' K : DRS L V} (h : Subordinate K' K) :
+    Subordinate (K'.map f) (K.map f) :=
+  TransGen.lift (DRS.map f) (fun _ _ => DirectlySubordinate.map f) _ _ h
+
+theorem WeakSubordinate.map [DecidableEq W] (f : V → W) {K' K : DRS L V}
+    (h : WeakSubordinate K' K) : WeakSubordinate (K'.map f) (K.map f) :=
+  ReflTransGen.lift (DRS.map f) (fun _ _ => DirectlySubordinate.map f) _ _ h
+
+/-! ### Accessibility -/
+
+/-- Def. 2.4.4: `AccessibleTo host K₁ K₂` says the DRS `K₁` is accessible to `K₂` in `host`. -/
+inductive AccessibleTo (host : DRS L V) : DRS L V → DRS L V → Prop
+  /-- A DRS is accessible to the DRSs weakly subordinate to it. -/
+  | subordinate {K₁ K₂ : DRS L V} :
+      WeakSubordinate K₁ host → WeakSubordinate K₂ K₁ → AccessibleTo host K₁ K₂
+  /-- The antecedent of a conditional is accessible to the DRSs weakly subordinate to its
+  consequent. -/
+  | antecedent {K₁ K₂ K₃ K₄ : DRS L V} :
+      WeakSubordinate K₄ host → Condition.imp K₁ K₃ ∈ K₄.conditions → WeakSubordinate K₂ K₃ →
+      AccessibleTo host K₁ K₂
+
+namespace AccessibleTo
+
+variable {host K₁ K₂ K₂' : DRS L V}
+
+theorem weakSubordinate_left (h : AccessibleTo host K₁ K₂) : WeakSubordinate K₁ host := by
   cases h with
-  | neg h | impAnte h | impCons h | disL h | disR h =>
-    have := List.sizeOf_lt_of_mem h
-    simp_all
-    omega
+  | subordinate h₁ _ => exact h₁
+  | antecedent h₄ hc _ => exact .head ⟨_, hc, [], by simp⟩ h₄
 
-theorem Subordinate.sizeOf_lt {K' K : DRS L V} (h : Subordinate K' K) :
-    sizeOf K' < sizeOf K := by
+theorem weakSubordinate_right (h : AccessibleTo host K₁ K₂) : WeakSubordinate K₂ host := by
+  cases h with
+  | subordinate h₁ h₂ => exact h₂.trans h₁
+  | antecedent h₄ hc h₃ => exact h₃.trans (.head ⟨_, hc, [K₁], by simp⟩ h₄)
+
+/-- What is accessible to a DRS is accessible to the DRSs subordinate to it. -/
+theorem of_weakSubordinate (h : AccessibleTo host K₁ K₂) (h' : WeakSubordinate K₂' K₂) :
+    AccessibleTo host K₁ K₂' := by
+  cases h with
+  | subordinate h₁ h₂ => exact .subordinate h₁ (h'.trans h₂)
+  | antecedent h₄ hc h₃ => exact .antecedent h₄ hc (h'.trans h₃)
+
+/-- Renaming referents preserves accessibility. -/
+protected theorem map [DecidableEq W] (f : V → W) (h : AccessibleTo host K₁ K₂) :
+    AccessibleTo (host.map f) (K₁.map f) (K₂.map f) := by
+  cases h with
+  | subordinate h₁ h₂ => exact .subordinate (h₁.map f) (h₂.map f)
+  | antecedent h₄ hc h₃ =>
+    refine .antecedent (h₄.map f) ?_ (h₃.map f)
+    rw [DRS.conditions_map]
+    exact List.mem_map_of_mem (f := Condition.map f) hc
+
+end AccessibleTo
+
+/-- Def. 2.4.4: the referent `x` is accessible from the condition `γ` in `host` when a DRS
+declaring `x` is accessible to one containing `γ`. -/
+def AccessibleFrom (host : DRS L V) (x : V) (γ : Condition L V) : Prop :=
+  ∃ K₁ K₂, AccessibleTo host K₁ K₂ ∧ x ∈ K₁.referents ∧ γ ∈ K₂.conditions
+
+/-- `v` is accessible where `u` is declared when a DRS declaring `v` is accessible to one
+declaring `u`. -/
+def DRS.Accessible (host : DRS L V) (u v : V) : Prop :=
+  ∃ K₁ K₂, AccessibleTo host K₁ K₂ ∧ v ∈ K₁.referents ∧ u ∈ K₂.referents
+
+theorem DRS.Accessible.map [DecidableEq W] (f : V → W) {host : DRS L V} {u v : V}
+    (h : host.Accessible u v) : (host.map f).Accessible (f u) (f v) := by
+  obtain ⟨K₁, K₂, h, hv, hu⟩ := h
+  refine ⟨_, _, h.map f, ?_, ?_⟩ <;> rw [DRS.referents_map] <;>
+    exact Finset.mem_image_of_mem f ‹_›
+
+/-! ### Occurrences
+
+The walk from a host steps into the sub-DRSs of complex conditions. Its state is the list of
+DRSs passed, innermost first, with the antecedent of a conditional recorded on the way into
+its consequent. -/
+
+/-- One step of the walk, from an occurrence of `D` into a DRS immediately inside one of its
+conditions. -/
+inductive ScopeStep : List (DRS L V) → List (DRS L V) → Prop
+  | intro {D K : DRS L V} {bs s : List (DRS L V)} {c : Condition L V} :
+      c ∈ D.conditions → K :: s ∈ c.subordinates → ScopeStep (D :: bs) (K :: s ++ D :: bs)
+
+/-- `Occurrence host (K :: bs)` says the walk from `host` reaches an occurrence of `K` having
+passed the DRSs `bs`. -/
+abbrev Occurrence (host : DRS L V) : List (DRS L V) → Prop := ReflTransGen ScopeStep [host]
+
+/-- A subordinate DRS is reached from every occurrence of the DRS it is subordinate to. -/
+theorem WeakSubordinate.exists_scopeStep {K' K : DRS L V} (h : WeakSubordinate K' K)
+    (bs : List (DRS L V)) :
+    ∃ t, ReflTransGen ScopeStep (K :: bs) (K' :: t) ∧ K :: bs <:+ K' :: t := by
+  induction h using ReflTransGen.head_induction_on with
+  | refl => exact ⟨bs, .refl, List.suffix_rfl⟩
+  | head h' _ ih =>
+    obtain ⟨t, ht, hsuf⟩ := ih
+    obtain ⟨c, hc, s, hs⟩ := h'
+    exact ⟨_, ht.tail (.intro hc hs), hsuf.trans (List.suffix_append (_ :: s) _)⟩
+
+/-- The DRSs passed on the way to an occurrence are accessible to it. -/
+theorem Occurrence.accessibleTo {host K B : DRS L V} {bs : List (DRS L V)}
+    (h : Occurrence host (K :: bs)) (hB : B ∈ K :: bs) : AccessibleTo host B K := by
+  suffices ∀ t, Occurrence host t → ∀ K bs, t = K :: bs → ∀ B ∈ t, AccessibleTo host B K from
+    this _ h K bs rfl B hB
+  intro t h
   induction h with
-  | single h => exact h.sizeOf_lt
-  | tail _ h ih => exact ih.trans h.sizeOf_lt
+  | refl =>
+    intro K bs heq B hB
+    obtain ⟨rfl, rfl⟩ := List.cons.inj heq
+    obtain rfl := List.mem_singleton.1 hB
+    exact .subordinate .refl .refl
+  | tail _ hs ih =>
+    obtain @⟨D, K', bs', s, c, hc, hsub⟩ := hs
+    intro K bs heq B hB
+    obtain ⟨rfl, rfl⟩ := List.cons.inj heq
+    have hKD : DirectlySubordinate _ _ := ⟨_, hc, _, hsub⟩
+    have hD := (ih _ _ rfl _ List.mem_cons_self).weakSubordinate_right
+    rw [List.cons_append, List.mem_cons, List.mem_append] at hB
+    rcases hB with rfl | hB | hB
+    · exact .subordinate (.head hKD hD) .refl
+    · obtain rfl := Condition.eq_imp_of_mem_subordinates hsub hB
+      exact .antecedent hD hc .refl
+    · exact (ih _ _ rfl B hB).of_weakSubordinate (.single hKD)
 
-theorem Subordinate.irrefl (K : DRS L V) : ¬ Subordinate K K :=
-  fun h => absurd h.sizeOf_lt (lt_irrefl _)
-
-/-- Weak subordination is a partial order on DRS values. -/
-theorem WeakSubordinate.antisymm {K' K : DRS L V} (h : WeakSubordinate K' K)
-    (h' : WeakSubordinate K K') : K' = K := by
-  rcases Relation.reflTransGen_iff_eq_or_transGen.mp h with rfl | h₁
-  · rfl
-  rcases Relation.reflTransGen_iff_eq_or_transGen.mp h' with rfl | h₂
-  · rfl
-  exact absurd ((Subordinate.sizeOf_lt h₁).trans (Subordinate.sizeOf_lt h₂)) (lt_irrefl _)
-
-/-! ### Occurrences -/
-
-/-- One step of the walk, from an occurrence of a box `D` whose accessible boxes are `bs`
-(innermost first, `D` included) into a sub-box of one of its complex conditions; the
-consequent of a conditional also sees the antecedent. -/
-inductive ScopeStep : List (DRS L V) × DRS L V → List (DRS L V) × DRS L V → Prop
-  | neg {bs : List (DRS L V)} {D K : DRS L V} :
-      Condition.neg K ∈ D.conditions → ScopeStep (bs, D) (K :: bs, K)
-  | impAnte {bs : List (DRS L V)} {D a c : DRS L V} :
-      Condition.imp a c ∈ D.conditions → ScopeStep (bs, D) (a :: bs, a)
-  | impCons {bs : List (DRS L V)} {D a c : DRS L V} :
-      Condition.imp a c ∈ D.conditions → ScopeStep (bs, D) (c :: a :: bs, c)
-  | disL {bs : List (DRS L V)} {D l r : DRS L V} :
-      Condition.dis l r ∈ D.conditions → ScopeStep (bs, D) (l :: bs, l)
-  | disR {bs : List (DRS L V)} {D l r : DRS L V} :
-      Condition.dis l r ∈ D.conditions → ScopeStep (bs, D) (r :: bs, r)
-
-/-- `Occurrence host (bs, K)` says the walk from `host` reaches an occurrence of `K` whose
-accessible boxes are `bs`. -/
-abbrev Occurrence (host : DRS L V) : List (DRS L V) × DRS L V → Prop :=
-  Relation.ReflTransGen ScopeStep ([host], host)
+/-- `K₁` is accessible to `K₂` exactly when the walk reaches an occurrence of `K₂` having
+passed `K₁`. -/
+theorem accessibleTo_iff_exists_occurrence {host K₁ K₂ : DRS L V} :
+    AccessibleTo host K₁ K₂ ↔ ∃ bs, Occurrence host (K₂ :: bs) ∧ K₁ ∈ K₂ :: bs := by
+  refine ⟨fun h => ?_, fun ⟨_, h, hB⟩ => h.accessibleTo hB⟩
+  cases h with
+  | subordinate h₁ h₂ =>
+    obtain ⟨t₁, w₁, -⟩ := h₁.exists_scopeStep []
+    obtain ⟨t₂, w₂, hsuf⟩ := h₂.exists_scopeStep t₁
+    exact ⟨t₂, w₁.trans w₂, hsuf.subset List.mem_cons_self⟩
+  | @antecedent K₃ K₄ h₄ hc h₃ =>
+    obtain ⟨t₄, w₄, -⟩ := h₄.exists_scopeStep []
+    obtain ⟨t, w, hsuf⟩ := h₃.exists_scopeStep (K₁ :: K₄ :: t₄)
+    exact ⟨t, (w₄.tail (.intro (s := [K₁]) hc (by simp))).trans w, hsuf.subset (by simp)⟩
 
 theorem Occurrence.weakSubordinate {host K : DRS L V} {bs : List (DRS L V)}
-    (h : Occurrence host (bs, K)) : WeakSubordinate K host := by
-  suffices ∀ {p q}, Relation.ReflTransGen ScopeStep p q → WeakSubordinate q.2 p.2 from this h
-  intro p q h
-  induction h with
-  | refl => exact .refl
-  | tail _ hs ih =>
-    refine .head ?_ ih
-    cases hs with
-    | neg h => exact .neg h
-    | impAnte h => exact .impAnte h
-    | impCons h => exact .impCons h
-    | disL h => exact .disL h
-    | disR h => exact .disR h
+    (h : Occurrence host (K :: bs)) : WeakSubordinate K host :=
+  (h.accessibleTo List.mem_cons_self).weakSubordinate_right
 
-/-- `scopeReferents bs` collects the referents declared by the boxes `bs`. -/
+/-- `scopeReferents bs` collects the referents declared by the DRSs `bs`. -/
 def scopeReferents [DecidableEq V] (bs : List (DRS L V)) : Finset V :=
   bs.foldr (fun B s => B.referents ∪ s) ∅
 
-@[simp] theorem scopeReferents_nil [DecidableEq V] : scopeReferents ([] : List (DRS L V)) = ∅ :=
-  rfl
+section scopeReferents
 
-@[simp] theorem scopeReferents_cons [DecidableEq V] (B : DRS L V) (bs : List (DRS L V)) :
+variable [DecidableEq V]
+
+@[simp] theorem scopeReferents_nil : scopeReferents ([] : List (DRS L V)) = ∅ := rfl
+
+@[simp] theorem scopeReferents_cons (B : DRS L V) (bs : List (DRS L V)) :
     scopeReferents (B :: bs) = B.referents ∪ scopeReferents bs := rfl
 
-/-- The referent `x` is accessible from the condition `γ` in `host` when `γ` occurs in a box
-at an occurrence whose accessible boxes declare `x` (Def. 1.4.11, Def. 2.1.3). -/
-def AccessibleFrom [DecidableEq V] (host : DRS L V) (x : V) (γ : Condition L V) : Prop :=
-  ∃ p, Occurrence host p ∧ γ ∈ p.2.conditions ∧ x ∈ scopeReferents p.1
+@[simp] theorem scopeReferents_append (bs cs : List (DRS L V)) :
+    scopeReferents (bs ++ cs) = scopeReferents bs ∪ scopeReferents cs := by
+  induction bs with
+  | nil => simp
+  | cons B bs ih => simp [ih, Finset.union_assoc]
 
-/-- `v` is accessible where `u` is declared when some occurrence of a box declaring `u` has
-`v` among its accessible referents. -/
-def DRS.Accessible [DecidableEq V] (host : DRS L V) (u v : V) : Prop :=
-  ∃ p, Occurrence host p ∧ u ∈ p.2.referents ∧ v ∈ scopeReferents p.1
+theorem mem_scopeReferents {x : V} {bs : List (DRS L V)} :
+    x ∈ scopeReferents bs ↔ ∃ B ∈ bs, x ∈ B.referents := by
+  induction bs with
+  | nil => simp
+  | cons B bs ih => simp [ih]
 
-/-- The box `K₁` is accessible to `K₂` in `host` when it is among the boxes accessible at
-some occurrence of `K₂`. -/
-def AccessibleTo (host K₁ K₂ : DRS L V) : Prop := ∃ bs, Occurrence host (bs, K₂) ∧ K₁ ∈ bs
+theorem accessibleFrom_iff_exists_occurrence {host : DRS L V} {x : V} {γ : Condition L V} :
+    AccessibleFrom host x γ ↔
+      ∃ K bs, Occurrence host (K :: bs) ∧ γ ∈ K.conditions ∧ x ∈ scopeReferents (K :: bs) := by
+  simp only [AccessibleFrom, accessibleTo_iff_exists_occurrence, mem_scopeReferents]
+  exact ⟨fun ⟨K₁, K₂, ⟨bs, h, hB⟩, hx, hγ⟩ => ⟨K₂, bs, h, hγ, K₁, hB, hx⟩,
+    fun ⟨K₂, bs, h, hγ, K₁, hB, hx⟩ => ⟨K₁, K₂, ⟨bs, h, hB⟩, hx, hγ⟩⟩
+
+theorem DRS.accessible_iff_exists_occurrence {host : DRS L V} {u v : V} :
+    host.Accessible u v ↔
+      ∃ K bs, Occurrence host (K :: bs) ∧ u ∈ K.referents ∧ v ∈ scopeReferents (K :: bs) := by
+  simp only [DRS.Accessible, accessibleTo_iff_exists_occurrence, mem_scopeReferents]
+  exact ⟨fun ⟨K₁, K₂, ⟨bs, h, hB⟩, hv, hu⟩ => ⟨K₂, bs, h, hu, K₁, hB, hv⟩,
+    fun ⟨K₂, bs, h, hu, K₁, hB, hv⟩ => ⟨K₁, K₂, ⟨bs, h, hB⟩, hv, hu⟩⟩
+
+end scopeReferents
 
 /-! ### Computing the occurrences
 
-The occurrences below a box are listed by structural recursion through the nested
-conditions, matching each box as `⟨U, cs⟩`, so that the kernel evaluates the list and
-`decide` closes concrete accessibility claims. -/
+The occurrences below a DRS are listed by structural recursion through the nested conditions,
+matching each DRS as `⟨U, cs⟩`, so that the kernel evaluates the list and `decide` closes
+concrete accessibility claims. -/
 
 mutual
-/-- The occurrences of boxes below a condition, at accessible boxes `bs`. -/
-def Condition.occurrences : Condition L V → List (DRS L V) → List (List (DRS L V) × DRS L V)
+/-- The occurrences of DRSs inside a condition of a DRS whose occurrence has passed `bs`. -/
+def Condition.occurrences : Condition L V → List (DRS L V) → List (List (DRS L V))
   | .atom _, _ => []
   | .eq _ _, _ => []
-  | .neg ⟨U, cs⟩, bs => (⟨U, cs⟩ :: bs, ⟨U, cs⟩) :: Condition.occurrencesList cs (⟨U, cs⟩ :: bs)
+  | .neg ⟨U, cs⟩, bs => (⟨U, cs⟩ :: bs) :: Condition.occurrencesList cs (⟨U, cs⟩ :: bs)
   | .imp ⟨Ua, ca⟩ ⟨Uc, cc⟩, bs =>
-      ((⟨Ua, ca⟩ :: bs, ⟨Ua, ca⟩) :: Condition.occurrencesList ca (⟨Ua, ca⟩ :: bs)) ++
-      ((⟨Uc, cc⟩ :: ⟨Ua, ca⟩ :: bs, ⟨Uc, cc⟩) ::
+      ((⟨Ua, ca⟩ :: bs) :: Condition.occurrencesList ca (⟨Ua, ca⟩ :: bs)) ++
+      ((⟨Uc, cc⟩ :: ⟨Ua, ca⟩ :: bs) ::
         Condition.occurrencesList cc (⟨Uc, cc⟩ :: ⟨Ua, ca⟩ :: bs))
   | .dis ⟨Ul, cl⟩ ⟨Ur, cr⟩, bs =>
-      ((⟨Ul, cl⟩ :: bs, ⟨Ul, cl⟩) :: Condition.occurrencesList cl (⟨Ul, cl⟩ :: bs)) ++
-      ((⟨Ur, cr⟩ :: bs, ⟨Ur, cr⟩) :: Condition.occurrencesList cr (⟨Ur, cr⟩ :: bs))
-/-- The occurrences of boxes below a list of conditions. -/
-def Condition.occurrencesList :
-    List (Condition L V) → List (DRS L V) → List (List (DRS L V) × DRS L V)
+      ((⟨Ul, cl⟩ :: bs) :: Condition.occurrencesList cl (⟨Ul, cl⟩ :: bs)) ++
+      ((⟨Ur, cr⟩ :: bs) :: Condition.occurrencesList cr (⟨Ur, cr⟩ :: bs))
+/-- The occurrences of DRSs inside a list of conditions. -/
+def Condition.occurrencesList : List (Condition L V) → List (DRS L V) → List (List (DRS L V))
   | [], _ => []
   | c :: cs, bs => Condition.occurrences c bs ++ Condition.occurrencesList cs bs
 end
 
-/-- The occurrences of boxes at or below an occurrence of `K` at accessible boxes `bs`. -/
-def DRS.occurrences (bs : List (DRS L V)) (K : DRS L V) : List (List (DRS L V) × DRS L V) :=
-  (bs, K) :: Condition.occurrencesList K.conditions bs
+/-- The occurrences of DRSs at or below an occurrence of `K` that has passed `bs`. -/
+def DRS.occurrences (K : DRS L V) (bs : List (DRS L V)) : List (List (DRS L V)) :=
+  (K :: bs) :: Condition.occurrencesList K.conditions (K :: bs)
 
-theorem Condition.occurrences_neg (bs : List (DRS L V)) (K : DRS L V) :
-    Condition.occurrences (.neg K) bs = DRS.occurrences (K :: bs) K := by
-  cases K; rfl
-
-theorem Condition.occurrences_imp (bs : List (DRS L V)) (a c : DRS L V) :
-    Condition.occurrences (.imp a c) bs =
-      DRS.occurrences (a :: bs) a ++ DRS.occurrences (c :: a :: bs) c := by
-  cases a; cases c; rfl
-
-theorem Condition.occurrences_dis (bs : List (DRS L V)) (l r : DRS L V) :
-    Condition.occurrences (.dis l r) bs =
-      DRS.occurrences (l :: bs) l ++ DRS.occurrences (r :: bs) r := by
-  cases l; cases r; rfl
-
-theorem Condition.mem_occurrencesList {cs : List (Condition L V)} {bs : List (DRS L V)}
-    {p : List (DRS L V) × DRS L V} :
-    p ∈ Condition.occurrencesList cs bs ↔ ∃ c ∈ cs, p ∈ Condition.occurrences c bs := by
+theorem Condition.mem_occurrencesList {cs : List (Condition L V)} {bs t : List (DRS L V)} :
+    t ∈ Condition.occurrencesList cs bs ↔ ∃ c ∈ cs, t ∈ Condition.occurrences c bs := by
   induction cs with
   | nil => simp [Condition.occurrencesList]
   | cons c cs ih => simp [Condition.occurrencesList, ih]
 
-theorem DRS.mem_occurrences {bs : List (DRS L V)} {K : DRS L V} {p : List (DRS L V) × DRS L V} :
-    p ∈ DRS.occurrences bs K ↔
-      p = (bs, K) ∨ ∃ c ∈ K.conditions, p ∈ Condition.occurrences c bs := by
-  simp [DRS.occurrences, Condition.mem_occurrencesList]
+theorem Condition.mem_occurrences {c : Condition L V} {bs t : List (DRS L V)} :
+    t ∈ c.occurrences bs ↔ ∃ K s, K :: s ∈ c.subordinates ∧ t ∈ K.occurrences (s ++ bs) := by
+  rcases c with _ | _ | ⟨⟨⟩⟩ | ⟨⟨⟩, ⟨⟩⟩ | ⟨⟨⟩, ⟨⟩⟩ <;>
+    simp [Condition.occurrences, DRS.occurrences, or_and_right, exists_or, or_assoc]
 
-theorem Condition.occurrence_of_mem (c : Condition L V) :
-    ∀ {bs : List (DRS L V)} {D : DRS L V} {p}, c ∈ D.conditions →
-      p ∈ Condition.occurrences c bs → Relation.ReflTransGen ScopeStep (bs, D) p := by
-  induction c with
-  | atom a => intro bs D p _ hp; simp [Condition.occurrences] at hp
-  | eq u v => intro bs D p _ hp; simp [Condition.occurrences] at hp
-  | neg K ih =>
-    intro bs D p hc hp
-    rw [Condition.occurrences_neg, DRS.mem_occurrences] at hp
-    rcases hp with rfl | ⟨d, hd, hp⟩
-    · exact .single (.neg hc)
-    · exact .head (.neg hc) (ih d hd hd hp)
-  | imp a c iha ihc =>
-    intro bs D p hc hp
-    rw [Condition.occurrences_imp, List.mem_append, DRS.mem_occurrences,
-      DRS.mem_occurrences] at hp
-    rcases hp with (rfl | ⟨d, hd, hp⟩) | (rfl | ⟨d, hd, hp⟩)
-    · exact .single (.impAnte hc)
-    · exact .head (.impAnte hc) (iha d hd hd hp)
-    · exact .single (.impCons hc)
-    · exact .head (.impCons hc) (ihc d hd hd hp)
-  | dis l r ihl ihr =>
-    intro bs D p hc hp
-    rw [Condition.occurrences_dis, List.mem_append, DRS.mem_occurrences,
-      DRS.mem_occurrences] at hp
-    rcases hp with (rfl | ⟨d, hd, hp⟩) | (rfl | ⟨d, hd, hp⟩)
-    · exact .single (.disL hc)
-    · exact .head (.disL hc) (ihl d hd hd hp)
-    · exact .single (.disR hc)
-    · exact .head (.disR hc) (ihr d hd hd hp)
-
-private theorem mem_occurrences_of_step_head {bs : List (DRS L V)} {D : DRS L V}
-    {q : List (DRS L V) × DRS L V} (hs : ScopeStep (bs, D) q) : q ∈ DRS.occurrences bs D := by
-  rw [DRS.mem_occurrences]; right
-  cases hs with
-  | neg hc =>
-    exact ⟨_, hc, by rw [Condition.occurrences_neg, DRS.mem_occurrences]; exact .inl rfl⟩
-  | impAnte hc =>
-    exact ⟨_, hc, by
-      rw [Condition.occurrences_imp, List.mem_append, DRS.mem_occurrences]; exact .inl (.inl rfl)⟩
-  | impCons hc =>
-    exact ⟨_, hc, by
-      rw [Condition.occurrences_imp, List.mem_append, DRS.mem_occurrences, DRS.mem_occurrences]
-      exact .inr (.inl rfl)⟩
-  | disL hc =>
-    exact ⟨_, hc, by
-      rw [Condition.occurrences_dis, List.mem_append, DRS.mem_occurrences]; exact .inl (.inl rfl)⟩
-  | disR hc =>
-    exact ⟨_, hc, by
-      rw [Condition.occurrences_dis, List.mem_append, DRS.mem_occurrences, DRS.mem_occurrences]
-      exact .inr (.inl rfl)⟩
-
-private theorem Condition.mem_occurrences_of_step (c : Condition L V) :
-    ∀ {bs : List (DRS L V)} {p q}, p ∈ Condition.occurrences c bs → ScopeStep p q →
-      q ∈ Condition.occurrences c bs := by
-  induction c with
-  | atom a => intro bs p q hp; simp [Condition.occurrences] at hp
-  | eq u v => intro bs p q hp; simp [Condition.occurrences] at hp
-  | neg K ih =>
-    intro bs p q hp hs
-    rw [Condition.occurrences_neg, DRS.mem_occurrences] at hp ⊢
-    rcases hp with rfl | ⟨d, hd, hp⟩
-    · exact DRS.mem_occurrences.mp (mem_occurrences_of_step_head hs)
-    · exact .inr ⟨d, hd, ih d hd hp hs⟩
-  | imp a c iha ihc =>
-    intro bs p q hp hs
-    rw [Condition.occurrences_imp, List.mem_append, DRS.mem_occurrences,
-      DRS.mem_occurrences] at hp ⊢
-    rcases hp with (rfl | ⟨d, hd, hp⟩) | (rfl | ⟨d, hd, hp⟩)
-    · exact .inl (DRS.mem_occurrences.mp (mem_occurrences_of_step_head hs))
-    · exact .inl (.inr ⟨d, hd, iha d hd hp hs⟩)
-    · exact .inr (DRS.mem_occurrences.mp (mem_occurrences_of_step_head hs))
-    · exact .inr (.inr ⟨d, hd, ihc d hd hp hs⟩)
-  | dis l r ihl ihr =>
-    intro bs p q hp hs
-    rw [Condition.occurrences_dis, List.mem_append, DRS.mem_occurrences,
-      DRS.mem_occurrences] at hp ⊢
-    rcases hp with (rfl | ⟨d, hd, hp⟩) | (rfl | ⟨d, hd, hp⟩)
-    · exact .inl (DRS.mem_occurrences.mp (mem_occurrences_of_step_head hs))
-    · exact .inl (.inr ⟨d, hd, ihl d hd hp hs⟩)
-    · exact .inr (DRS.mem_occurrences.mp (mem_occurrences_of_step_head hs))
-    · exact .inr (.inr ⟨d, hd, ihr d hd hp hs⟩)
+theorem DRS.mem_occurrences {K : DRS L V} {bs t : List (DRS L V)} :
+    t ∈ K.occurrences bs ↔ t = K :: bs ∨ ∃ c ∈ K.conditions, ∃ K' s,
+      K' :: s ∈ c.subordinates ∧ t ∈ K'.occurrences (s ++ K :: bs) := by
+  rw [DRS.occurrences, List.mem_cons, Condition.mem_occurrencesList]
+  simp only [Condition.mem_occurrences]
 
 /-- The computed occurrences are exactly those the walk reaches. -/
-theorem DRS.mem_occurrences_iff {bs : List (DRS L V)} {K : DRS L V}
-    {p : List (DRS L V) × DRS L V} :
-    p ∈ DRS.occurrences bs K ↔ Relation.ReflTransGen ScopeStep (bs, K) p := by
-  refine ⟨fun hp => ?_, fun h => ?_⟩
-  · rcases DRS.mem_occurrences.mp hp with rfl | ⟨c, hc, hp⟩
-    · exact .refl
-    · exact Condition.occurrence_of_mem c hc hp
-  · induction h with
-    | refl => exact List.mem_cons_self ..
-    | tail _ hs ih =>
-      rcases DRS.mem_occurrences.mp ih with rfl | ⟨c, hc, hp⟩
-      · exact mem_occurrences_of_step_head hs
-      · exact DRS.mem_occurrences.mpr (.inr ⟨c, hc, Condition.mem_occurrences_of_step c hp hs⟩)
+theorem DRS.mem_occurrences_iff {K : DRS L V} {bs t : List (DRS L V)} :
+    t ∈ K.occurrences bs ↔ ReflTransGen ScopeStep (K :: bs) t := by
+  refine ⟨fun ht => ?_, fun h => ?_⟩
+  · induction K using wellFounded_directlySubordinate.induction generalizing bs with
+    | _ K ih =>
+      rcases DRS.mem_occurrences.1 ht with rfl | ⟨c, hc, K', s, hs, ht⟩
+      · exact .refl
+      · exact .head (.intro hc hs) (ih K' ⟨c, hc, s, hs⟩ ht)
+  · generalize ha : K :: bs = a at h
+    induction h using ReflTransGen.head_induction_on generalizing K bs with
+    | refl => subst ha; exact List.mem_cons_self
+    | head hs _ ih =>
+      subst ha
+      obtain ⟨hc, hsub⟩ := hs
+      exact DRS.mem_occurrences.2 (.inr ⟨_, hc, _, _, hsub, ih rfl⟩)
 
-instance [DecidableEq V] (host : DRS L V) (u v : V) : Decidable (DRS.Accessible host u v) :=
-  decidable_of_iff (∃ p ∈ DRS.occurrences [host] host,
-      u ∈ p.2.referents ∧ v ∈ scopeReferents p.1)
-    (by simp only [DRS.Accessible, Occurrence, DRS.mem_occurrences_iff])
+instance [DecidableEq V] (host : DRS L V) (u v : V) : Decidable (host.Accessible u v) :=
+  decidable_of_iff (∃ t ∈ host.occurrences [],
+      (∃ K ∈ t.head?, u ∈ K.referents) ∧ v ∈ scopeReferents t) <| by
+    simp only [DRS.accessible_iff_exists_occurrence, Occurrence, ← DRS.mem_occurrences_iff]
+    refine ⟨fun ⟨t, ht, ⟨K, hK, hu⟩, hv⟩ => ?_,
+      fun ⟨K, bs, h, hu, hv⟩ => ⟨_, h, ⟨K, rfl, hu⟩, hv⟩⟩
+    obtain ⟨bs, rfl⟩ := List.head?_eq_some_iff.1 hK
+    exact ⟨K, bs, ht, hu, hv⟩
 
 /-! ### Properness and accessibility -/
 
@@ -343,74 +388,67 @@ section Properness
 
 variable [DecidableEq V]
 
-private theorem forall_mem_occurrences_iff_of_conditions {K : DRS L V} {bs : List (DRS L V)}
-    (h : ∀ d ∈ K.conditions,
-      ((∀ p ∈ Condition.occurrences d (K :: bs), ∀ γ ∈ p.2.conditions, γ.IsAtomic →
-          γ.freeVarFinset ⊆ scopeReferents p.1) ∧
-        (d.IsAtomic → d.freeVarFinset ⊆ scopeReferents (K :: bs))) ↔
-      d.freeVarFinset ⊆ scopeReferents (K :: bs)) :
-    (∀ p ∈ DRS.occurrences (K :: bs) K, ∀ γ ∈ p.2.conditions, γ.IsAtomic →
-      γ.freeVarFinset ⊆ scopeReferents p.1) ↔ K.freeVarFinset ⊆ scopeReferents bs := by
-  rw [DRS.freeVarFinset_eq, sdiff_le_iff, Finset.sup_eq_union, ← scopeReferents_cons,
-    Condition.freeVarFinsetL_subset_iff, ← forall₂_congr h]
-  simp only [DRS.mem_occurrences, forall_eq_or_imp, forall_and]
-  constructor
-  · rintro ⟨h₁, h₂⟩
-    exact ⟨fun d hd p hp => h₂ p ⟨d, hd, hp⟩, h₁⟩
-  · rintro ⟨h₂, h₁⟩
-    exact ⟨h₁, fun p ⟨d, hd, hp⟩ => h₂ d hd p hp⟩
+theorem Condition.freeVarFinset_subset_iff {c : Condition L V} {X : Finset V} :
+    c.freeVarFinset ⊆ X ↔ (c.IsAtomic → c.freeVarFinset ⊆ X) ∧
+      ∀ K s, K :: s ∈ c.subordinates → K.freeVarFinset ⊆ scopeReferents s ∪ X := by
+  cases c with
+  | atom a => simp [IsAtomic.atom]
+  | eq u v => simp [IsAtomic.eq]
+  | neg K => simpa using nofun
+  | imp a c =>
+    simp only [freeVarFinset_imp, Finset.union_subset_iff, sdiff_le_iff, Finset.sup_eq_union,
+      subordinates_imp, List.mem_cons, List.cons.injEq, List.not_mem_nil, or_false]
+    exact ⟨fun ⟨ha, hc⟩ => ⟨fun _ => ⟨ha, hc⟩, by rintro K s (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;> simpa⟩,
+      fun ⟨_, h⟩ => ⟨by simpa using h a [] (.inl ⟨rfl, rfl⟩),
+        by simpa using h c [a] (.inr ⟨rfl, rfl⟩)⟩⟩
+  | dis l r =>
+    simp only [freeVarFinset_dis, Finset.union_subset_iff, subordinates_dis, List.mem_cons,
+      List.cons.injEq, List.not_mem_nil, or_false]
+    exact ⟨fun ⟨hl, hr⟩ => ⟨fun _ => ⟨hl, hr⟩, by rintro K s (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;> simpa⟩,
+      fun ⟨_, h⟩ => ⟨by simpa using h l [] (.inl ⟨rfl, rfl⟩),
+        by simpa using h r [] (.inr ⟨rfl, rfl⟩)⟩⟩
 
-private theorem Condition.forall_mem_occurrences_iff (c : Condition L V) :
-    ∀ {bs : List (DRS L V)},
-      ((∀ p ∈ Condition.occurrences c bs, ∀ γ ∈ p.2.conditions, γ.IsAtomic →
-          γ.freeVarFinset ⊆ scopeReferents p.1) ∧
-        (c.IsAtomic → c.freeVarFinset ⊆ scopeReferents bs)) ↔
-      c.freeVarFinset ⊆ scopeReferents bs := by
-  induction c with
-  | atom a => intro bs; simp [Condition.occurrences, Condition.IsAtomic.atom]
-  | eq u v => intro bs; simp [Condition.occurrences, Condition.IsAtomic.eq]
-  | neg K ih =>
-    intro bs
-    rw [Condition.occurrences_neg, Condition.freeVarFinset_neg,
-      ← forall_mem_occurrences_iff_of_conditions fun d hd => ih d hd]
-    exact and_iff_left nofun
-  | imp a c iha ihc =>
-    intro bs
-    rw [Condition.occurrences_imp, Condition.freeVarFinset_imp, Finset.union_subset_iff,
-      sdiff_le_iff, Finset.sup_eq_union, ← scopeReferents_cons, List.forall_mem_append,
-      ← forall_mem_occurrences_iff_of_conditions fun d hd => iha d hd,
-      ← forall_mem_occurrences_iff_of_conditions fun d hd => ihc d hd]
-    exact and_iff_left nofun
-  | dis l r ihl ihr =>
-    intro bs
-    rw [Condition.occurrences_dis, Condition.freeVarFinset_dis, Finset.union_subset_iff,
-      List.forall_mem_append,
-      ← forall_mem_occurrences_iff_of_conditions fun d hd => ihl d hd,
-      ← forall_mem_occurrences_iff_of_conditions fun d hd => ihr d hd]
-    exact and_iff_left nofun
-
-/-- At an occurrence of `K` below the boxes `bs`, the referents of every atomic condition are
-accessible where it occurs iff the free referents of `K` are declared in `bs`. -/
+/-- At the occurrences at or below an occurrence of `K` that has passed `bs`, every atomic
+condition finds its referents among the DRSs passed iff the free referents of `K` are declared
+in `bs`. -/
 theorem DRS.forall_mem_occurrences_iff (K : DRS L V) (bs : List (DRS L V)) :
-    (∀ p ∈ DRS.occurrences (K :: bs) K, ∀ γ ∈ p.2.conditions, γ.IsAtomic →
-      γ.freeVarFinset ⊆ scopeReferents p.1) ↔ K.freeVarFinset ⊆ scopeReferents bs :=
-  forall_mem_occurrences_iff_of_conditions fun d _ => d.forall_mem_occurrences_iff
+    (∀ K' bs', K' :: bs' ∈ K.occurrences bs → ∀ γ ∈ K'.conditions, γ.IsAtomic →
+      γ.freeVarFinset ⊆ scopeReferents (K' :: bs')) ↔ K.freeVarFinset ⊆ scopeReferents bs := by
+  induction K using wellFounded_directlySubordinate.induction generalizing bs with
+  | _ K ih =>
+    rw [DRS.freeVarFinset_subset_iff, Finset.union_comm, ← scopeReferents_cons,
+      Condition.freeVarFinsetL_subset_iff]
+    constructor
+    · intro h c hc
+      refine Condition.freeVarFinset_subset_iff.2
+        ⟨h K bs (DRS.mem_occurrences.2 (.inl rfl)) c hc, fun K' s hs => ?_⟩
+      rw [← scopeReferents_append]
+      exact (ih K' ⟨c, hc, s, hs⟩ _).1 fun K'' bs'' ht =>
+        h K'' bs'' (DRS.mem_occurrences.2 (.inr ⟨c, hc, K', s, hs, ht⟩))
+    · intro h K' bs' ht
+      rcases DRS.mem_occurrences.1 ht with heq | ⟨c, hc, K'', s, hs, ht⟩
+      · obtain ⟨rfl, rfl⟩ := List.cons.inj heq
+        exact fun γ hγ => (Condition.freeVarFinset_subset_iff.1 (h γ hγ)).1
+      · refine (ih K'' ⟨c, hc, s, hs⟩ _).2 ?_ K' bs' ht
+        rw [scopeReferents_append]
+        exact (Condition.freeVarFinset_subset_iff.1 (h c hc)).2 K'' s hs
 
 /-- A DRS is proper iff, at every occurrence of every atomic condition, the condition's
-referents are declared in the boxes accessible there (Defs. 1.4.2–1.4.3, Def. 2.1.3). -/
+referents are declared in the DRSs passed on the way there (Defs. 1.4.2–1.4.3, Def. 2.4.4). -/
 theorem DRS.isProper_iff_forall_occurrence (K : DRS L V) :
-    K.IsProper ↔ ∀ p, Occurrence K p → ∀ γ ∈ p.2.conditions, γ.IsAtomic →
-      γ.freeVarFinset ⊆ scopeReferents p.1 := by
+    K.IsProper ↔ ∀ K' bs, Occurrence K (K' :: bs) → ∀ γ ∈ K'.conditions, γ.IsAtomic →
+      γ.freeVarFinset ⊆ scopeReferents (K' :: bs) := by
   simp only [Occurrence, ← DRS.mem_occurrences_iff]
   rw [DRS.forall_mem_occurrences_iff K [], scopeReferents_nil, Finset.subset_empty]
   rfl
 
 /-- In a proper DRS every referent of an atomic condition is accessible from it. -/
-theorem DRS.IsProper.accessibleFrom {K : DRS L V} (hK : K.IsProper)
-    {p : List (DRS L V) × DRS L V} (hp : Occurrence K p) {γ : Condition L V}
-    (hγ : γ ∈ p.2.conditions) (hat : γ.IsAtomic) {x : V} (hx : x ∈ γ.freeVarFinset) :
+theorem DRS.IsProper.accessibleFrom {K K' : DRS L V} (hK : K.IsProper)
+    {bs : List (DRS L V)} (h : Occurrence K (K' :: bs)) {γ : Condition L V}
+    (hγ : γ ∈ K'.conditions) (hat : γ.IsAtomic) {x : V} (hx : x ∈ γ.freeVarFinset) :
     AccessibleFrom K x γ :=
-  ⟨p, hp, hγ, K.isProper_iff_forall_occurrence.mp hK p hp γ hγ hat hx⟩
+  accessibleFrom_iff_exists_occurrence.2
+    ⟨K', bs, h, hγ, K.isProper_iff_forall_occurrence.mp hK K' bs h γ hγ hat hx⟩
 
 end Properness
 
