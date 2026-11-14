@@ -40,10 +40,6 @@ which [selection before saturation licenses](##raisingRelative_licensed).
 
 ## TODO
 
-* A derivation that triggered Merge licenses at every stage should be licensed by selection
-  before saturation; `selCheck_ne_zero_iff` gives this for objects, and the stages need the two
-  replays to agree, which leave the traces of the same heads there
-  (`head_pendingHom_of_selCheck_ne_zero`).
 * Section 6.2 obviates Condition C in the main clause, for a name inside the relative clause,
   by late merger of the head with its relative clause into the external determiner, which the
   chain of the head's restrictor does not model; the rows ch. 6 (11) and (12) record the data.
@@ -429,11 +425,17 @@ theorem selCheck_ne_zero_iff (s : SyntacticObject) :
     s.selCheck ≠ 0 ↔ ∃ a ra, pendingHom s = .of a ra 0 := by
   rw [← toSelectionState_pendingHom, PendingState.toSelectionState_ne_zero_iff]
 
-theorem head_pendingHom_of_selCheck_ne_zero {s : SyntacticObject} (h : s.selCheck ≠ 0) :
-    head (pendingHom s) = s.selHead := by
-  obtain ⟨a, ra, hs⟩ := (selCheck_ne_zero_iff s).1 h
-  rw [SyntacticObject.selHead, ← toSelectionState_pendingHom, hs]
-  simp [PendingState.toSelectionState_of]
+theorem PendingState.head_toSelectionState {x : PendingState} (h : x.toSelectionState ≠ 0) :
+    head x.toSelectionState = head x := by
+  obtain ⟨a, ra, rfl⟩ := toSelectionState_ne_zero_iff.1 h
+  simp only [toSelectionState_of, ↓reduceIte]
+  rfl
+
+-- Section 5.5: selection before saturation licenses every derivation of triggered Merge
+theorem licensedBy_pendingHom {d : Minimalist.Derivation}
+    (h : d.LicensedBy SyntacticObject.selCheckHom) : d.LicensedBy pendingHom :=
+  .of_comp pendingHom PendingState.toSelectionStateHom rfl
+    (fun _ ↦ PendingState.head_toSelectionState) (toSelectionStateHom_comp_pendingHom ▸ h)
 
 -- (12): triggered Merge has no product of the relative determiner with a noun still selecting
 theorem selCheck_merge_eq_zero_of_sel_ne_nil {d n : LexicalItem.Token}

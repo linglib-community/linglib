@@ -25,9 +25,10 @@ object](##Minimalist.Derivation.bindsAtSomeStage_iff_bindsAtLF).
 
 ## Implementation notes
 
-* The stages are contractions, so `BindsAtSurface` is binding at the form Marcolli, Chomsky and
-  Berwick send to the semantic interface. Collins's objection to that choice is the contrast
-  between `BindsAtSurface` and `BindsAtLF`.
+* The stages are contractions whose traces keep only a head. Marcolli, Chomsky and Berwick send
+  to the semantic interface the contraction whose trace is labelled by the whole extracted term,
+  so `BindsAtSurface` is binding at that form with the content of the traces forgotten.
+  Collins's objection to that choice is the contrast between `BindsAtSurface` and `BindsAtLF`.
 
 ## References
 
