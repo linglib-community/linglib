@@ -181,28 +181,28 @@ theorem StructurallyIdentical.eq_of_mem_terms (hs : s.HasDistinctItems) (hx : x 
       simp only [map_leaf, map_trace, map_traceOf, map_merge] at h
     · exact congrArg leaf (hs (.inl hx) (.inl hy) (leaf_inj.1 h))
     · exact absurd h (leaf_ne_trace _)
-    · exact absurd h (leaf_ne_traceOf _ _)
+    · exact absurd h (leaf_ne_labelledTrace _ _)
     · exact absurd h (leaf_ne_merge _ _ _)
   | trace =>
     rcases exists_form y with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l, r, rfl⟩ <;>
       simp only [map_leaf, map_trace, map_traceOf, map_merge] at h
     · exact absurd h.symm (leaf_ne_trace _)
     · rfl
-    · exact absurd h (trace_ne_traceOf _)
+    · exact absurd h (trace_ne_labelledTrace _)
     · exact absurd h (trace_ne_merge _ _)
   | traceOf a =>
     rcases exists_form y with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l, r, rfl⟩ <;>
       simp only [map_leaf, map_trace, map_traceOf, map_merge] at h
-    · exact absurd h (traceOf_ne_leaf _ _)
-    · exact absurd h.symm (trace_ne_traceOf _)
-    · exact congrArg traceOf (hs (.inr hx) (.inr hy) (traceOf_inj.1 h))
-    · exact absurd h (traceOf_ne_merge _ _ _)
+    · exact absurd h (labelledTrace_ne_leaf _ _)
+    · exact absurd h.symm (trace_ne_labelledTrace _)
+    · exact congrArg traceOf (hs (.inr hx) (.inr hy) (labelledTrace_inj.1 h))
+    · exact absurd h (labelledTrace_ne_merge _ _ _)
   | merge l r ihl ihr =>
     rcases exists_form y with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l', r', rfl⟩ <;>
       simp only [map_leaf, map_trace, map_traceOf, map_merge] at h
     · exact absurd h.symm (leaf_ne_merge _ _ _)
     · exact absurd h.symm (trace_ne_merge _ _)
-    · exact absurd h.symm (traceOf_ne_merge _ _ _)
+    · exact absurd h.symm (labelledTrace_ne_merge _ _ _)
     · obtain ⟨hl, hr⟩ := mem_terms_of_merge_mem_terms hx
       obtain ⟨hl', hr'⟩ := mem_terms_of_merge_mem_terms hy
       rcases merge_eq_merge_iff.1 h with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
