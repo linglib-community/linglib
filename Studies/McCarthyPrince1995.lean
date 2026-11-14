@@ -80,7 +80,8 @@ The paper illustrates the two contiguity constraints of its Appendix A on maps b
 inserting a final segment violates neither. -/
 
 /-- The map from the string `s` to the string `t` relating the positions paired in `l`. -/
-private def map (s t : List Char) (l : List (ℕ × ℕ)) : Correspondence.Coindexation BinaryRole Char :=
+private def map (s t : List Char) (l : List (ℕ × ℕ)) :
+    Correspondence.Coindexation BinaryRole Char :=
   .ofPairs (fun | .lhs => s | .rhs => t) [(.lhs, .rhs, l)]
 
 /-- The map *xyz* → *xz* skips *y* and violates I-CONTIG. -/

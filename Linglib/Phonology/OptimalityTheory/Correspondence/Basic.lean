@@ -29,10 +29,7 @@ CONTIGUITY when its domain or range is
 satisfying the first five is the graph of
 [an order isomorphism](##OptimalityTheory.Correspondence.isFaithful_iff_exists_orderIso).
 Correspondences compose, and a composite of a correspondence without coalescence
-[deletes no more than its two factors](##OptimalityTheory.Correspondence.maxViol_comp_le). Two
-strings in correspondence with a common third are
-[related through it](##OptimalityTheory.Correspondence.through_eq_comp), a segment without a
-correspondent standing at its site.
+[deletes no more than its two factors](##OptimalityTheory.Correspondence.maxViol_comp_le).
 
 ## Implementation notes
 
@@ -531,63 +528,6 @@ theorem maxViol_comp_le [Fintype μ] [LinearOrder μ] {S : Correspondence κ μ}
   refine ⟨j, Finset.mem_sdiff.2 ⟨Finset.mem_univ _, fun hj ↦ hi' ?_⟩, hij⟩
   obtain ⟨⟨j, k⟩, hjk, rfl⟩ := Finset.mem_image.1 hj
   exact Finset.mem_image.2 ⟨(i, k), mem_comp.2 ⟨j, hij, hjk⟩, rfl⟩
-
-/-! ### Sites
-
-Two strings in correspondence with a common third are related through it: positions of the two
-that share a correspondent, and positions without one that stand at the same site. -/
-
-section Sites
-
-omit [Fintype ι]
-
-variable [LinearOrder μ] [Fintype μ]
-
-/-- The site of the position `j`: the last position of the first string with a correspondent
-at or before `j`, and `⊥` when there is none. -/
-def site (R : Correspondence ι κ) (j : κ) : WithBot ι :=
-  (R.filter fun x ↦ x.2 ≤ j).sup fun x ↦ (x.1 : WithBot ι)
-
-/-- `R.withSites` is `R` together with the pairs of each position of the second string without
-a correspondent and its site. -/
-def withSites (R : Correspondence ι κ) : Correspondence (ι ⊕ WithBot ι) κ :=
-  R.image (fun x ↦ (.inl x.1, x.2)) ∪
-    (Finset.univ \ R.image Prod.snd).image fun j ↦ (.inr (R.site j), j)
-
-@[simp] theorem mem_withSites_inl {R : Correspondence ι κ} {i : ι} {j : κ} :
-    (Sum.inl i, j) ∈ R.withSites ↔ (i, j) ∈ R := by
-  simp [withSites]
-
-@[simp] theorem mem_withSites_inr {R : Correspondence ι κ} {s : WithBot ι} {j : κ} :
-    (Sum.inr s, j) ∈ R.withSites ↔ (∀ i, (i, j) ∉ R) ∧ R.site j = s := by
-  simp [withSites]
-
-/-- `R.through S` relates the positions of two strings in correspondence with a common third:
-those that share a correspondent, and those without one at the same site. -/
-def through (R : Correspondence ι κ) (S : Correspondence ι μ) : Correspondence κ μ :=
-  R.inv.comp S ∪ ((Finset.univ \ R.image Prod.snd) ×ˢ (Finset.univ \ S.image Prod.snd)).filter
-    fun x ↦ R.site x.1 = S.site x.2
-
-theorem mem_through {R : Correspondence ι κ} {S : Correspondence ι μ} {j : κ} {k : μ} :
-    (j, k) ∈ R.through S ↔ (∃ i, (i, j) ∈ R ∧ (i, k) ∈ S) ∨
-      (∀ i, (i, j) ∉ R) ∧ (∀ i, (i, k) ∉ S) ∧ R.site j = S.site k := by
-  simp [through, and_assoc]
-
-/-- The relation through a common third string is the composite of the two correspondences
-with their sites. -/
-theorem through_eq_comp (R : Correspondence ι κ) (S : Correspondence ι μ) :
-    R.through S = R.withSites.inv.comp S.withSites := by
-  ext ⟨j, k⟩
-  simp only [mem_through, mem_comp, mem_inv, Sum.exists, mem_withSites_inl, mem_withSites_inr]
-  refine or_congr Iff.rfl ⟨fun ⟨h₁, h₂, h⟩ ↦ ⟨_, ⟨h₁, rfl⟩, h₂, h.symm⟩, ?_⟩
-  rintro ⟨s, ⟨h₁, rfl⟩, h₂, h⟩
-  exact ⟨h₁, h₂, h.symm⟩
-
-@[simp] theorem inv_through (R : Correspondence ι κ) (S : Correspondence ι μ) :
-    (R.through S).inv = S.through R := by
-  rw [through_eq_comp, inv_comp, inv_inv, through_eq_comp]
-
-end Sites
 
 end Correspondence
 

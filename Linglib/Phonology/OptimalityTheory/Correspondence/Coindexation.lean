@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Indices
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Diagram
+public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 
 /-!
 # Coindexed candidates
@@ -36,7 +36,27 @@ is a coindexed string, on which the constraint families are those of two coindex
 
 @[expose] public section
 
-namespace OptimalityTheory.Correspondence
+namespace OptimalityTheory
+
+/-- The roles of a binary candidate are its two strings, as in
+`Correspondence.Coindexation.parallel` and `Correspondence.Coindexation.identity`. -/
+inductive BinaryRole where
+  | lhs
+  | rhs
+  deriving DecidableEq, Repr
+
+/-- The roles of the basic model of reduplication are the input, the base and the
+reduplicant. -/
+inductive ReduplicationRole where
+  | input
+  | base
+  | reduplicant
+  deriving DecidableEq, Repr
+
+namespace Correspondence
+
+/-- The index pairs `(0, 0), …, (k - 1, k - 1)` of two strings paired position by position. -/
+def diagonalPairs (k : ℕ) : List (ℕ × ℕ) := (List.range k).map fun i ↦ (i, i)
 
 /-- A *coindexation* of the strings of a candidate: a string for each role, each segment with
 the indices it bears on its correspondence with the string of each role. -/
@@ -244,4 +264,6 @@ def reduplication (input base reduplicant : List α) : Coindexation Reduplicatio
 
 end Coindexation
 
-end OptimalityTheory.Correspondence
+end Correspondence
+
+end OptimalityTheory
