@@ -977,6 +977,93 @@
     "verified": "page-image"
   },
   {
+    "id": "adamsonzompi2025_37",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(37)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Maria credeva che qualcuno glie la avrebbe raccommandata (al capo) per la promozione.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: Maria believed that someone would recommend her to the boss for the promotion.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "3 attitude holder"
+      ]
+    ],
+    "comment": "Adapted from Charnavel and Mateu 2015; the accusative clitic refers to the attitude holder Maria.",
+    "verified": "page-image"
+  },
+  {
+    "id": "adamsonzompi2025_38",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(38)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Maria credeva che qualcuno te la avrebbe raccommandata per la promozione.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: Maria believed that someone would recommend her to you for the promotion.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "2"
+      ],
+      [
+        "accusative",
+        "3 attitude holder"
+      ]
+    ],
+    "comment": "Marked %: accepted by some of the speakers consulted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "adamsonzompi2025_39",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(39)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Maria credeva che qualcuno Glie la avrebbe raccommandata per la promozione.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Maria believed that someone would recommend her to you (polite) for the promotion.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "LEI"
+      ],
+      [
+        "accusative",
+        "3 attitude holder"
+      ]
+    ],
+    "comment": "Tested with a speaker who accepts (38).",
+    "verified": "page-image"
+  },
+  {
     "id": "adamsonzompi2025_42",
     "source": {
       "bibkey": "adamson-zompi-2025",

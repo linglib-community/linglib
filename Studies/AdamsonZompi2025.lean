@@ -7,6 +7,7 @@ public import Linglib.Fragments.Romance.Spanish.Clitics
 public import Linglib.Fragments.German.Pronouns
 public import Studies.Deal2024
 public import Studies.CoonKeine2021
+public import Studies.CharnavelMateu2015
 public import Linglib.Data.Examples.AdamsonZompi2025
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -42,8 +43,11 @@ A polite clitic is its third person counterpart denoting the addressee (`polite`
 no strength for them, and they are read as offering their person.
 
 The reader `scenario?` leaves out the rows whose gloss names two pronouns for one clitic. The
-Person Licensing Condition, the clitic logophoric restriction, and the accounts of polite
-pronouns by impoverishment or by recruitment of unmarked values have no formal counterpart here.
+clitic logophoric restriction is stated on Charnavel and Mateu's hierarchy of logophoric centers,
+which reads the person a clitic denotes; that some speakers reject a second person dative over
+an accusative attitude holder is not derived. The Person Licensing Condition and the accounts of
+polite pronouns by impoverishment or by recruitment of unmarked values have no formal
+counterpart here.
 
 ## TODO
 
@@ -202,6 +206,20 @@ theorem first_dative_lei :
     Licit (IsLicit weakGrammar) ⟨interpretable mi, interpretable (polite la)⟩ ∧
       ¬ Licit (IsLicit strongGrammar) ⟨interpretable mi, interpretable (polite la)⟩ := by
   decide
+
+/-! ### Logophoric centers -/
+
+-- On the hierarchy of logophoric centers a third person dative excludes accusative LEI as it
+-- does a second person, and with an accusative attitude holder dative LEI is licit, as a second
+-- person dative is, where a third person dative is not.
+theorem logophoric_centers :
+    CharnavelMateu2015.Licit ([gli, la].filterMap CharnavelMateu2015.center) ∧
+      ¬ CharnavelMateu2015.Licit ([gli, ti].filterMap CharnavelMateu2015.center) ∧
+      ¬ CharnavelMateu2015.Licit ([gli, polite la].filterMap CharnavelMateu2015.center) ∧
+      ∀ d ∈ [gli, ti, polite le_dat],
+        (CharnavelMateu2015.Licit ([d].filterMap CharnavelMateu2015.center ++ [.attitudeHolder]) ↔
+          d ≠ gli) := by
+  decide +kernel
 
 /-! ### German assumed identity -/
 

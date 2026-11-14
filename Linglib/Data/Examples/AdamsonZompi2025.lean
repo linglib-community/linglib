@@ -421,6 +421,48 @@ def ex_32 : Datum :=
     readings := []
     paperFeatures := [("conjuncts", "imposter + 3"), ("resolved", "3PL")] }
 
+def ex_37 : Datum :=
+  { id := "adamsonzompi2025_37"
+    source := ⟨"adamson-zompi-2025", "(37)"⟩
+    reportedIn := none
+    method := some .elicitation
+    language := "ital1282"
+    primaryText := "Maria credeva che qualcuno glie la avrebbe raccommandata (al capo) per la promozione."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("dative", "3"), ("accusative", "3 attitude holder")] }
+
+def ex_38 : Datum :=
+  { id := "adamsonzompi2025_38"
+    source := ⟨"adamson-zompi-2025", "(38)"⟩
+    reportedIn := none
+    method := some .elicitation
+    language := "ital1282"
+    primaryText := "Maria credeva che qualcuno te la avrebbe raccommandata per la promozione."
+    glossedTokens := []
+    context := ""
+    judgment := .marginal
+    alternatives := []
+    readings := []
+    paperFeatures := [("dative", "2"), ("accusative", "3 attitude holder")] }
+
+def ex_39 : Datum :=
+  { id := "adamsonzompi2025_39"
+    source := ⟨"adamson-zompi-2025", "(39)"⟩
+    reportedIn := none
+    method := some .elicitation
+    language := "ital1282"
+    primaryText := "Maria credeva che qualcuno Glie la avrebbe raccommandata per la promozione."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("dative", "LEI"), ("accusative", "3 attitude holder")] }
+
 def ex_42 : Datum :=
   { id := "adamsonzompi2025_42"
     source := ⟨"adamson-zompi-2025", "(42)"⟩
@@ -659,6 +701,6 @@ def ex_56 : Datum :=
     readings := []
     paperFeatures := [("dative", "1"), ("accusative", "LEI"), ("cell", "1>LEI")] }
 
-def all : List Datum := [ex_2a, ex_2b, ex_3a, ex_4a, ex_4b, ex_5a, ex_5b, ex_6, ex_8a, ex_10, ex_11c, ex_14, ex_16, ex_17, ex_18, ex_19a, ex_19b, ex_20a, ex_20b, ex_21a, ex_21b, ex_24, ex_25, ex_26, ex_27, ex_29a, ex_30, ex_31, ex_32, ex_42, ex_43, ex_44a, ex_44b, ex_45b, ex_46b, ex_47, ex_48, ex_49a, ex_49b, ex_50a, ex_50b, ex_52, ex_53, fn27i, ex_55b, ex_56]
+def all : List Datum := [ex_2a, ex_2b, ex_3a, ex_4a, ex_4b, ex_5a, ex_5b, ex_6, ex_8a, ex_10, ex_11c, ex_14, ex_16, ex_17, ex_18, ex_19a, ex_19b, ex_20a, ex_20b, ex_21a, ex_21b, ex_24, ex_25, ex_26, ex_27, ex_29a, ex_30, ex_31, ex_32, ex_37, ex_38, ex_39, ex_42, ex_43, ex_44a, ex_44b, ex_45b, ex_46b, ex_47, ex_48, ex_49a, ex_49b, ex_50a, ex_50b, ex_52, ex_53, fn27i, ex_55b, ex_56]
 
 end AdamsonZompi2025.Examples
