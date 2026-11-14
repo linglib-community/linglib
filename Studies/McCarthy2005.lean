@@ -150,7 +150,7 @@ def mat : Paradigm Seg (List Seg) :=
   ⟨[.m, .a, .t], [⟨[], [.m, .a, .t], Correspondence.diagonalPairs 3⟩,
     ⟨[.i], [.m, .a, .ch], Correspondence.diagonalPairs 3⟩]⟩
 
-example : opFaith (Correspondence.Diagram.identViolFeature high) mat = 2 := by decide
+example : opFaith (Correspondence.Diagram.identViolFeature high) mat = 2 := by decide +kernel
 
 /-- ⟨ma, maʧi⟩. -/
 def ma : Paradigm Seg (List Seg) :=
@@ -363,7 +363,7 @@ where
   syncopated : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (4, 3)]
 
 -- (17)
-theorem no_syncope : (Tableau.ofLabels syncope {.a, .b} ranking).optimal = {.a} := by decide
+theorem no_syncope : (Tableau.ofLabels syncope {.a, .b} ranking).optimal = {.a} := by decide +kernel
 
 /-- The noun /fʕal/ with the case suffixes in (24): epenthesis, or the initial cluster. -/
 def noun : Cand → Paradigm Seg Cell
@@ -375,7 +375,7 @@ where
   epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 2), (2, 3), (3, 4)]
 
 -- (24)
-theorem noun_epenthesis : (Tableau.ofLabels noun {.a, .b} ranking).optimal = {.a} := by decide
+theorem noun_epenthesis : (Tableau.ofLabels noun {.a, .b} ranking).optimal = {.a} := by decide +kernel
 
 /-- The four representative cells of a verbal paradigm: the perfectives *-a*, *-tu* and the
 imperfectives *ja-…-u*, *ja-…-na*. -/
@@ -403,7 +403,7 @@ where
 
 -- (25)
 theorem attraction_to_the_unmarked :
-    (Tableau.ofLabels eighth {.a, .b, .c} ranking).optimal = {.a} := by decide
+    (Tableau.ofLabels eighth {.a, .b, .c} ranking).optimal = {.a} := by decide +kernel
 
 /-- The paradigms of /stafʕaːl/ in (27), the candidates obeying the undominated constraints:
 levelled to the short, unepenthesized stem; epenthesized throughout; long before V-initial
@@ -609,7 +609,7 @@ theorem cry : (Tableau.ofLabels (jussive .spirant .stop) {.a, .b, .c} ranking).o
 
 -- fn. 34
 theorem uncover :
-    (Tableau.ofLabels (jussive .spirant .liquid) {.a, .b, .c} ranking).optimal = {.c} := by decide
+    (Tableau.ofLabels (jussive .spirant .liquid) {.a, .b, .c} ranking).optimal = {.c} := by decide +kernel
 
 /-- The OP winners for *yišbē ~ yišb* 'take captive' and 'uncover' carry the forms of the
 [benua-1997] winners, (82) and (87). -/
