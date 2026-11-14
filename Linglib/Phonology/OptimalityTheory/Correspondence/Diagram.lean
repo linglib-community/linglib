@@ -7,7 +7,7 @@ module
 
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
-public import Linglib.Core.Data.Fintype.Fin
+public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Fin.Basic
 
 /-!
@@ -128,29 +128,19 @@ theorem isFaithful_iff_eq_diagonal {m n : ℕ} {R : Correspondence (Fin m) (Fin 
 On the diagonal the `i`-th positions of the two strings correspond, so a count of offending
 pairs is a count over their `List.zip`. -/
 
-private theorem lt_of_lt_length_zip {β : Type*} {l₁ : List α} {l₂ : List β} {i : ℕ}
-    (h : i < (l₁.zip l₂).length) : i < l₁.length ∧ i < l₂.length := by
-  simpa [List.length_zip] using h
+private theorem ofFn_getElem_zip {β : Type*} (l₁ : List α) (l₂ : List β) :
+    List.ofFn (fun i : Fin (min l₁.length l₂.length) ↦
+      (l₁[i.castLE (min_le_left _ _)], l₂[i.castLE (min_le_right _ _)])) = l₁.zip l₂ :=
+  List.ext_getElem (by simp) (by simp)
 
 theorem card_filter_diagonal {β : Type*} (l₁ : List α) (l₂ : List β) (q : α × β → Prop)
     [DecidablePred q] :
     ((diagonal l₁.length l₂.length).filter fun p ↦ q (l₁[p.1], l₂[p.2])).card =
       (l₁.zip l₂).countP (q ·) := by
-  rw [← Fin.card_filter_univ_getElem_eq_countP]
-  symm
-  refine Finset.card_bij (fun i _ ↦ (⟨i, (lt_of_lt_length_zip i.2).1⟩,
-    ⟨i, (lt_of_lt_length_zip i.2).2⟩)) ?_ ?_ ?_
-  · intro i hi
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and, decide_eq_true_eq] at hi
-    simpa [mem_diagonal, List.getElem_zip] using hi
-  · intro i _ j _ h
-    exact Fin.ext (congrArg (fun p ↦ (p.1 : ℕ)) h)
-  · rintro ⟨a, b⟩ hab
-    simp only [Finset.mem_filter, mem_diagonal] at hab
-    have hb : (a : ℕ) < l₂.length := hab.1 ▸ b.2
-    refine ⟨⟨a, by simp [List.length_zip, hb]⟩, by simpa [List.getElem_zip, hab.1] using hab.2,
-      ?_⟩
-    ext <;> simp [hab.1]
+  rw [diagonal, Finset.filter_image,
+    Finset.card_image_of_injective _ fun _ _ h ↦ Fin.ext (congrArg (·.1.1) h), Finset.card_def,
+    Finset.filter_val, ← ofFn_getElem_zip, ← Multiset.coe_countP, ← Fin.univ_val_map,
+    Multiset.countP_map]
 
 /-! ### Index pairs -/
 
