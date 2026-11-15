@@ -11,19 +11,14 @@ public import Linglib.Logic.Modal.Extensional
 # Modifiers of intensional properties
 
 An intensional property is a function from worlds to predicates of entities, and attributive
-adjectives denote modifiers of intensional properties. At these modifiers Kamp's order-theoretic
-classes (`Semantics/Modification/Basic.lean`) take their familiar pointwise form, an intersective
-modifier is extensional, and a privative modifier that holds of something is not subsective. The
-classification descends from Parsons and Kamp through Kamp and Partee; the labels are Partee's.
-
-## Main results
-
-* `Modifier.isIntersective_iff_exists_forall`, `Modifier.isPrivative_iff_forall`: the classes
-  stated pointwise for modifiers of intensional properties, `W → E → Prop`.
-* `Modifier.IsIntersective.isExtensional`: intersective modifiers are extensional.
-* `Modifier.IsPrivative.not_isSubsective`: a privative modifier that holds of something is not
-  subsective.
-* `Modifier.former_isPrivative`: *former*, over properties of times, is privative.
+adjectives denote modifiers of intensional properties. At these modifiers the order-theoretic
+classes of `Semantics/Modification/Basic.lean` take their familiar form: an intersective modifier
+[conjoins every noun with one fixed property](##Modifier.isIntersective_iff_exists_forall) and is
+[extensional](##Modifier.IsIntersective.isExtensional), nothing a privative modifier yields from
+a noun [falls under the noun](##Modifier.isPrivative_iff_forall), and a privative modifier that
+holds of something [is not subsective](##Modifier.IsPrivative.not_isSubsective), as
+[*former*](##Modifier.former_isPrivative) is not over properties of times. The classification
+descends from [parsons-1970] and [kamp-1975] through [kamp-partee-1995], whose labels these are.
 
 ## Implementation notes
 

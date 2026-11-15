@@ -88,6 +88,10 @@ def IsPrivative (m : Modifier α) : Prop :=
 theorem IsPrivative.eq_bot (hp : IsPrivative m) (hs : IsSubsective m) (x : α) : m x = ⊥ :=
   le_bot_iff.mp (hp x le_rfl (hs x))
 
+/-- A modifier is both privative and subsective exactly when it holds of nothing. -/
+theorem isPrivative_and_isSubsective_iff : IsPrivative m ∧ IsSubsective m ↔ ∀ x, m x = ⊥ :=
+  ⟨fun h ↦ h.1.eq_bot h.2, fun h ↦ ⟨fun x ↦ h x ▸ disjoint_bot_left, fun x ↦ h x ▸ bot_le⟩⟩
+
 end OrderBot
 
 /-- Over a Heyting algebra a modifier is privative exactly when it lies below the complement, as
