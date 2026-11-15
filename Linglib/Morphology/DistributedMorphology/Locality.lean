@@ -39,6 +39,7 @@ other.
 * [embick-2010]
 * [embick-2015]
 * [marantz-2013]
+* [marantz-1997] — idioms within the domain of the external argument
 * [embick-2021]
 * [marcolli-chomsky-berwick-2025]
 * [chomsky-2001]
