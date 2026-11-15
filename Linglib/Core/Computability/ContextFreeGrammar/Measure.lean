@@ -41,6 +41,11 @@ treebank is tight in this sense ([chi-geman-1998]).
 * `PCFG.isProbabilityMeasure_derivationMeasure_relFreq`: the relative-frequency estimate from a
   corpus of licensed trees is tight at the root symbol of every tree of the corpus.
 
+## TODO
+
+[chi-geman-1998] also show that every iterate of the EM algorithm on a corpus of yields is tight,
+for a grammar with no null and no unit productions. Estimation from yields is not formalized.
+
 ## References
 
 * [booth-thompson-1973]
