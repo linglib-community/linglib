@@ -52,7 +52,9 @@ def SCUM (P : α → Prop) : Prop := CUM P ∧ ¬ SNG P
 
 /-- A predicate has strictly quantized reference (D 15) if it is quantized and every instance
 has a proper part. -/
-def SQUA (P : α → Prop) : Prop := QUA P ∧ ∀ x, P x → ∃ y, y < x
+structure SQUA (P : α → Prop) : Prop where
+  qua : QUA P
+  exists_lt : ∀ x, P x → ∃ y, y < x
 
 /-- A predicate has atomic reference (D 18) if every instance has a part that is a `P`-atom
 (D 17). -/
@@ -136,7 +138,10 @@ def ITER (θ : O → E → Prop) (e : E) (x : O) : Prop :=
   θ x e ∧ ∃ e' e'' x', e' ≤ e ∧ e'' ≤ e ∧ e' ≠ e'' ∧ x' ≤ x ∧ θ x' e' ∧ θ x' e''
 
 /-- A relation is gradual (D 35) if it has uniqueness of objects and both mappings. -/
-def GRAD (θ : O → E → Prop) : Prop := UP θ ∧ MO θ ∧ ME θ
+structure GRAD (θ : O → E → Prop) : Prop where
+  up : UP θ
+  mo : MO θ
+  me : ME θ
 
 variable {α : E → Prop} {δ : O → Prop} {θ : O → E → Prop}
 
@@ -172,7 +177,7 @@ theorem mso_of_not_iter (hm : MO θ) (hi : ∀ e x, ¬ ITER θ e x) : MSO θ := 
 
 theorem qua_ofTheta (hδ : QUA δ) (hu : UP θ) (hm : MO θ) (hi : ∀ e x, ¬ ITER θ e x) :
     QUA (ofTheta α δ θ) :=
-  (vp_qua hu (mso_of_not_iter hm hi) hδ).subset fun _ h ↦ h.2
+  (vp_qua hu (mso_of_not_iter hm hi) hδ).subset fun _ ⟨_, h⟩ ↦ h
 
 theorem qua_ofTheta_of_gue (hδ : QUA δ) (hu : UP θ) (hm : MO θ) (hg : GUE θ) :
     QUA (ofTheta α δ θ) :=
@@ -181,12 +186,12 @@ theorem qua_ofTheta_of_gue (hδ : QUA δ) (hu : UP θ) (hm : MO θ) (hg : GUE θ
 theorem exists_le_not_ofTheta (hδ : SQUA δ) (hm : ME θ) (hu : UP θ) (e : E)
     (he : ofTheta α δ θ e) : ∃ e' ≤ e, ¬ ofTheta α δ θ e' := by
   obtain ⟨_, x, hx, hθx⟩ := he
-  obtain ⟨y, hyx⟩ := hδ.2 x hx
+  obtain ⟨y, hyx⟩ := hδ.exists_lt x hx
   obtain ⟨e', he', hθy⟩ := hm hθx hyx.le
   refine ⟨e', he', fun ⟨_, z, hz, hθz⟩ ↦ ?_⟩
   have hzy : z = y := hu hθz hθy
   subst hzy
-  exact hδ.1 hz hx hyx.ne hyx.le
+  exact hδ.qua hz hx hyx.ne hyx.le
 
 /-! ### The classification of thematic relations (14) -/
 
@@ -214,19 +219,21 @@ def ThematicClass.UniqueEvents : ThematicClass → Prop
 /-- `c.Requires θ` holds when `θ` meets what (14) requires of the class `c`, namely
 summativity throughout, graduality for the gradual classes, and uniqueness of events for
 effected and consumed patients. -/
-def ThematicClass.Requires (c : ThematicClass) (θ : O → E → Prop) : Prop :=
-  SUM θ ∧ (c.Gradual → GRAD θ) ∧ (c.UniqueEvents → GUE θ)
+structure ThematicClass.Requires (c : ThematicClass) (θ : O → E → Prop) : Prop where
+  sum : SUM θ
+  grad : c.Gradual → GRAD θ
+  gue : c.UniqueEvents → GUE θ
 
 theorem qua_of_uniqueEvents {c : ThematicClass} (hc : c.UniqueEvents) (h : c.Requires θ)
     (hδ : QUA δ) : QUA (ofTheta α δ θ) := by
-  have hg : GRAD θ := h.2.1 (by cases c <;> trivial)
-  exact qua_ofTheta_of_gue hδ hg.1 hg.2.1 (h.2.2 hc)
+  have hg : GRAD θ := h.grad (by cases c <;> trivial)
+  exact qua_ofTheta_of_gue hδ hg.up hg.mo (h.gue hc)
 
 theorem gradualPatient_transfer (h : ThematicClass.gradualPatient.Requires θ) :
     (CUM α → CUM δ → CUM (ofTheta α δ θ)) ∧
       (SQUA δ → ∀ e, ofTheta α δ θ e → ∃ e' ≤ e, ¬ ofTheta α δ θ e') :=
-  ⟨fun hα hδ ↦ cum_ofTheta hα hδ h.1,
-    fun hδ ↦ exists_le_not_ofTheta hδ (h.2.1 trivial).2.2 (h.2.1 trivial).1⟩
+  ⟨fun hα hδ ↦ cum_ofTheta hα hδ h.sum,
+    fun hδ ↦ exists_le_not_ofTheta hδ (h.grad trivial).me (h.grad trivial).up⟩
 
 end Transfer
 
@@ -240,7 +247,7 @@ variable {E T M : Type*} [SemilatticeSup T]
 theorem durative_qua [SemilatticeSup E] [HasRemainders E] [AddCommMonoid M] [PartialOrder M]
     [AddLeftStrictMono M] (P : E → Prop) (μ' : E → M) [IsExtensiveMeasure μ'] (n : M) :
     QUA (QMOD P μ' n) :=
-  qmod_qua ((IsExtensiveMeasure.strictMono μ').strictMonoOn _) n
+  countNoun_qua P μ' n
 
 /-- A time-span adverbial (16) holds of an event that lies within a convex time of the given
 measure. -/

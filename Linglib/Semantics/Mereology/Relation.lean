@@ -116,7 +116,7 @@ theorem UO.mo (h : UO θ) : MO θ := UE.me h
 /-- With mapping to objects, uniqueness of participants gives uniqueness of objects. -/
 theorem UP.uo_of_mo (hU : UP θ) (hm : MO θ) : UO θ := fun _ _ hxe _ hle ↦
   let ⟨y, hy, hθ⟩ := hm hxe hle
-  ⟨y, ⟨hy, hθ⟩, fun _ hz ↦ hU hz.2 hθ⟩
+  ⟨y, ⟨hy, hθ⟩, fun _ ⟨_, hz⟩ ↦ hU hz hθ⟩
 
 theorem GUE.ue_of_me (hG : GUE θ) (hm : ME θ) : UE θ := UP.uo_of_mo hG.flip hm
 
@@ -167,7 +167,7 @@ theorem UO.mso_iff_forall_qua (hO : UO θ) : MSO θ ↔ ∀ x, QUA (θ x) :=
       ⟨y, lt_of_le_of_ne hy fun h ↦ hq x (h ▸ hθ : θ x e') hxe hlt.ne hlt.le, hθ⟩⟩
 
 theorem UO.qua_of_mso (hO : UO θ) (hm : MSO θ) (x : α) : QUA (θ x) :=
-  hO.mso_iff_forall_qua.1 hm x
+  hO.mso_iff_forall_qua.mp hm x
 
 end PartialOrder
 
@@ -200,29 +200,29 @@ variable [Preorder α] [Preorder β] {θ : α → β → Prop} {x : α} {e : β}
 /-- Under uniqueness of events, the part of a related event that a part of the object is related
 to. -/
 noncomputable def UE.part (hE : UE θ) (hxe : θ x e) (y : Set.Iic x) : Set.Iic e :=
-  ⟨(hE hxe y.2).exists.choose, (hE hxe y.2).exists.choose_spec.1⟩
+  ⟨(hE hxe y.prop).exists.choose, (hE hxe y.prop).exists.choose_spec.left⟩
 
 theorem UE.rel_part (hE : UE θ) (hxe : θ x e) (y : Set.Iic x) : θ y (hE.part hxe y) :=
-  (hE hxe y.2).exists.choose_spec.2
+  (hE hxe y.prop).exists.choose_spec.right
 
 /-- Between the parts of a related object and event, `θ` is the graph of `UE.part`. -/
 theorem UE.rel_iff_part_eq (hE : UE θ) (hxe : θ x e) {y : Set.Iic x} {e' : Set.Iic e} :
     θ y e' ↔ hE.part hxe y = e' :=
   ⟨fun h ↦ Subtype.ext
-      ((hE hxe y.2).unique ⟨(hE.part hxe y).2, hE.rel_part hxe y⟩ ⟨e'.2, h⟩),
+      ((hE hxe y.prop).unique ⟨(hE.part hxe y).prop, hE.rel_part hxe y⟩ ⟨e'.prop, h⟩),
     fun h ↦ h ▸ hE.rel_part hxe y⟩
 
 theorem UE.part_mono (hE : UE θ) (hxe : θ x e) : Monotone (hE.part hxe) := fun _ y₂ hle ↦
   let ⟨e₀, ⟨he₀, hθ⟩, _⟩ := hE (hE.rel_part hxe y₂) hle
-  ((hE.rel_iff_part_eq hxe (e' := ⟨e₀, he₀.trans (hE.part hxe y₂).2⟩)).1 hθ).le.trans he₀
+  ((hE.rel_iff_part_eq hxe (e' := ⟨e₀, he₀.trans (hE.part hxe y₂).prop⟩)).mp hθ).le.trans he₀
 
 /-- Under uniqueness of events and of objects, the parts of a related object and event are
 order-isomorphic along `θ`. -/
 noncomputable def UE.partOrderIso (hE : UE θ) (hO : UO θ) (hxe : θ x e) :
     Set.Iic x ≃o Set.Iic e :=
   Equiv.toOrderIso
-    ⟨hE.part hxe, hO.part hxe, fun y ↦ (hO.rel_iff_part_eq hxe).1 (hE.rel_part hxe y),
-      fun e' ↦ (hE.rel_iff_part_eq hxe).1 (hO.rel_part hxe e')⟩
+    ⟨hE.part hxe, hO.part hxe, fun y ↦ (hO.rel_iff_part_eq hxe).mp (hE.rel_part hxe y),
+      fun e' ↦ (hE.rel_iff_part_eq hxe).mp (hO.rel_part hxe e')⟩
     (hE.part_mono hxe) (hO.part_mono hxe)
 
 @[simp]
@@ -270,7 +270,7 @@ theorem mo_graph_iff : MO (· = f ·) ↔ Monotone f :=
 
 theorem uo_graph_iff : UO (· = f ·) ↔ Monotone f :=
   ⟨fun h _ _ hle ↦ let ⟨_, ⟨hy, hy'⟩, _⟩ := h rfl hle; hy' ▸ hy,
-    fun h _ _ hxe _ hle ↦ ⟨_, ⟨hxe ▸ h hle, rfl⟩, fun _ hz ↦ hz.2⟩⟩
+    fun h _ _ hxe _ hle ↦ ⟨_, ⟨hxe ▸ h hle, rfl⟩, fun _ ⟨_, hz⟩ ↦ hz⟩⟩
 
 /-- The graph of a function maps to subobjects iff the function is strictly monotone. -/
 theorem mso_graph_iff : MSO (· = f ·) ↔ StrictMono f :=
@@ -290,7 +290,7 @@ theorem sum_graph_iff (f : β → α) : SUM (· = f ·) ↔ ∀ e e', f (e ⊔ e
     fun h _ _ hx _ _ hy ↦ (congr_arg₂ (· ⊔ ·) hx hy).trans (h _ _).symm⟩
 
 theorem sum_graph {F : Type*} [FunLike F β α] [SupHomClass F β α] (f : F) : SUM (· = f ·) :=
-  (sum_graph_iff f).2 (map_sup f)
+  (sum_graph_iff f).mpr (map_sup f)
 
 end GraphSum
 

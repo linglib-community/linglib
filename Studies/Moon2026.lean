@@ -53,8 +53,7 @@ self-connection of (22), and without its temporal parameter.
 
 namespace Moon2026
 
-open Mereology
-open Aspect (SINC VP)
+open Mereology Aspect
 
 /-! ### Mereotopology -/
 
@@ -175,14 +174,6 @@ theorem mixedDrink_middle_ground {a b : α} (ha : mixedDrinkDen C recipe μ phas
     (hx : mixedDrinkDen C recipe μ phase x) (hy : mixedDrinkDen C recipe μ phase y) (hlt : y < x) :
     ¬ CUM (mixedDrinkDen C recipe μ phase) ∧ ¬ QUA (mixedDrinkDen C recipe μ phase) :=
   connectivity_middle_ground (fun _ ↦ selfConnected_of_mixedDrinkDen) ha hb hDisc hx hy hlt
-
-private theorem not_cum_vp {β : Type*} [SemilatticeSup β] {θ : α → β → Prop} {OBJ : α → Prop}
-    (hs : SUM θ) (hU : UP θ) {x y : α}
-    {e₁ e₂ : β} (hx : OBJ x) (hy : OBJ y) (hθ₁ : θ x e₁) (hθ₂ : θ y e₂) (hSum : ¬ OBJ (x ⊔ y)) :
-    ¬ CUM (VP θ OBJ) := by
-  intro hCum
-  obtain ⟨z, hz_obj, hz_θ⟩ := hCum ⟨x, hx, hθ₁⟩ ⟨y, hy, hθ₂⟩
-  exact hSum (hU hz_θ (hs hθ₁ hθ₂) ▸ hz_obj)
 
 theorem middle_ground_stable {β : Type*} [SemilatticeSup β] {θ : α → β → Prop} (h : SINC θ)
     (hU : UP θ) (hs : SUM θ) {OBJ : α → Prop} {a b : α} {e_a e_b : β} (ha : OBJ a) (hb : OBJ b)

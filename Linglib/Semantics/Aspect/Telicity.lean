@@ -9,9 +9,9 @@ public import Linglib.Semantics.Mereology.Relation
 
 Krifka treats telicity as a property of event predicates: a predicate is telic when every part
 of one of its events that it also applies to is both an initial and a final part of that event.
-[Quantized predicates are telic](##Aspect.isTelic_of_qua)
-[though not conversely](##Aspect.exists_isTelic_not_qua), since a predicate that fixes the run
-time, *from three to four*, [is telic](##Aspect.isTelic_runTime_eq) without being quantized, and
+[Quantized predicates are telic](##Aspect.isTelic_of_qua) though not conversely, since a
+predicate that fixes the run time, *from three to four*,
+[is telic](##Aspect.isTelic_runTime_eq) without being quantized, and
 [cumulative](##Aspect.not_isTelic_of_cum) or [divisive](##Aspect.not_isTelic_of_div) predicates
 that apply to events with successive parts are not. Telicity originates in the thematic relation. A
 relation is strictly incremental when the parts of the object and of the event correspond one to
@@ -56,7 +56,9 @@ section Telicity
 variable [PartialOrder β] (precedes : β → β → Prop)
 
 /-- An initial part of an event is a part that no part of the event precedes. -/
-def IsInitialPart (e' e : β) : Prop := e' ≤ e ∧ ¬ ∃ e'', e'' ≤ e ∧ precedes e'' e'
+structure IsInitialPart (e' e : β) : Prop where
+  le : e' ≤ e
+  not_precedes : ¬ ∃ e'', e'' ≤ e ∧ precedes e'' e'
 
 /-- A final part of an event is a part that no part of the event follows, an initial part under
 the converse precedence. -/
@@ -70,10 +72,22 @@ def IsTelic (P : β → Prop) : Prop :=
 /-- Parts of an event neither precede nor follow it. -/
 def NoPartPrecedes : Prop := ∀ a b : β, a ≤ b → ¬ precedes a b ∧ ¬ precedes b a
 
-variable {precedes}
+variable {precedes} {P : β → Prop} {a b e e' : β}
+
+theorem NoPartPrecedes.part_not_precedes (h : NoPartPrecedes precedes) (hle : a ≤ b) :
+    ¬ precedes a b := (h a b hle).left
+
+theorem NoPartPrecedes.not_precedes_part (h : NoPartPrecedes precedes) (hle : a ≤ b) :
+    ¬ precedes b a := (h a b hle).right
 
 theorem NoPartPrecedes.flip (h : NoPartPrecedes precedes) : NoPartPrecedes (flip precedes) :=
-  fun a b hle ↦ ⟨(h a b hle).2, (h a b hle).1⟩
+  fun _ _ hle ↦ ⟨h.not_precedes_part hle, h.part_not_precedes hle⟩
+
+theorem IsTelic.isInitialPart (h : IsTelic precedes P) (he : P e) (he' : P e') (hle : e' ≤ e) :
+    IsInitialPart precedes e' e := (h e e' he he' hle).left
+
+theorem IsTelic.isFinalPart (h : IsTelic precedes P) (he : P e) (he' : P e') (hle : e' ≤ e) :
+    IsFinalPart precedes e' e := (h e e' he he' hle).right
 
 /-- Parts of an event neither precede nor follow it if overlapping events do not precede each
 other ([krifka-1998] (35)) and no event is null. -/
@@ -83,13 +97,13 @@ theorem noPartPrecedes_of_overlap [NoBotOrder β] (h : ∀ a b, Overlap a b → 
 
 theorem isInitialPart_self (h : NoPartPrecedes precedes) (e : β) :
     IsInitialPart precedes e e :=
-  ⟨le_rfl, fun ⟨_, h', hp⟩ ↦ (h _ _ h').1 hp⟩
+  ⟨le_rfl, fun ⟨_, h', hp⟩ ↦ h.part_not_precedes h' hp⟩
 
 theorem isFinalPart_self (h : NoPartPrecedes precedes) (e : β) : IsFinalPart precedes e e :=
   isInitialPart_self h.flip e
 
 theorem IsTelic.flip {P : β → Prop} (h : IsTelic precedes P) : IsTelic (flip precedes) P :=
-  fun e e' he he' hle ↦ ⟨(h e e' he he' hle).2, (h e e' he he' hle).1⟩
+  fun _ _ he he' hle ↦ ⟨h.isFinalPart he he' hle, h.isInitialPart he he' hle⟩
 
 /-- Quantized predicates are telic. -/
 theorem isTelic_of_qua (h : NoPartPrecedes precedes) {P : β → Prop} (hP : QUA P) :
@@ -134,56 +148,41 @@ theorem isTelic_runTime_eq [PartialOrder β] {T : Type*} [LinearOrder T]
 
 end Precedence
 
-/-- A telic predicate need not be quantized. With events ordered by their participants and run
-times, the predicate true of the events that run from three to four is telic under temporal
-precedence, though it holds of an event and of a proper part with the same run time; under the same
-precedence the predicate true of every event is not telic. -/
-theorem exists_isTelic_not_qua :
-    ∃ P : Finset (Fin 2) × NonemptyInterval ℕ → Prop,
-      IsTelic (fun a b : Finset (Fin 2) × NonemptyInterval ℕ ↦ a.2.snd < b.2.fst) P ∧ ¬ QUA P ∧
-        ¬ IsTelic (fun a b : Finset (Fin 2) × NonemptyInterval ℕ ↦ a.2.snd < b.2.fst)
-          fun _ ↦ True := by
-  let : TemporalTrace (Finset (Fin 2) × NonemptyInterval ℕ) ℕ := ⟨Prod.snd⟩
-  refine ⟨(·.2 = ⟨(3, 4), by decide⟩), isTelic_runTime_eq monotone_snd _, fun h ↦ ?_, fun h ↦ ?_⟩
-  · exact h (x := ({0}, ⟨(3, 4), by decide⟩)) rfl (y := ({0, 1}, ⟨(3, 4), by decide⟩)) rfl
-      (fun hxy ↦ absurd (congrArg Prod.fst hxy) (by decide))
-      (Prod.mk_le_mk.2 ⟨(by decide : ({0} : Finset (Fin 2)) ⊆ {0, 1}), le_rfl⟩)
-  · exact (h ({0}, ⟨(0, 1), by decide⟩) ({0}, ⟨(1, 1), by decide⟩) trivial trivial
-      (Prod.mk_le_mk.2 ⟨le_rfl, NonemptyInterval.le_def.2 ⟨by decide, by decide⟩⟩)).1.2
-      ⟨({0}, ⟨(0, 0), by decide⟩),
-        Prod.mk_le_mk.2 ⟨le_rfl, NonemptyInterval.le_def.2 ⟨by decide, by decide⟩⟩,
-        (by decide : (0 : ℕ) < 1)⟩
-
 /-- A cumulative predicate true of two events, a part of one following the other, is not
 telic. -/
 theorem not_isTelic_of_cum [SemilatticeSup β] {precedes : β → β → Prop} {P : β → Prop}
     (hP : CUM P) {e e' e'' : β} (he : P e) (he' : P e') (h'' : e'' ≤ e)
     (hp : precedes e' e'') : ¬ IsTelic precedes P :=
-  fun hT ↦ (hT (e ⊔ e') e' (hP he he') he' le_sup_right).2.2 ⟨e'', h''.trans le_sup_left, hp⟩
+  fun hT ↦ (hT.isFinalPart (hP he he') he' le_sup_right).not_precedes
+    ⟨e'', h''.trans le_sup_left, hp⟩
 
 /-- A divisive predicate true of an event with a part preceding another part is not telic, as
 the divisive reference of activities makes them atelic ([champollion-krifka-2016]). -/
 theorem not_isTelic_of_div [PartialOrder β] {precedes : β → β → Prop} {P : β → Prop}
     (hP : DIV P) {e e' e'' : β} (he : P e) (h' : e' ≤ e) (h'' : e'' ≤ e)
     (hp : precedes e' e'') : ¬ IsTelic precedes P :=
-  fun hT ↦ (hT e e' he (hP h' he) h').2.2 ⟨e'', h'', hp⟩
+  fun hT ↦ (hT.isFinalPart he (hP h' he) h').not_precedes ⟨e'', h'', hp⟩
 
 end InitialFinal
 
-variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+variable {α β : Type*}
 
 /-! ### Incremental relations -/
+
+section Incremental
 
 /-- A relation is strictly incremental when a part of a related object is related to exactly one
 part of the event and conversely, and some related pair has related proper parts, so the
 relation is not confined to atoms. -/
-structure SINC (θ : α → β → Prop) : Prop where
+structure SINC [PartialOrder α] [PartialOrder β] (θ : α → β → Prop) : Prop where
   ue : UE θ
   uo : UO θ
   /-- Some related pair has related proper parts. -/
   extended : ∃ (x y : α) (e e' : β), y < x ∧ e' < e ∧ θ x e ∧ θ y e'
 
-variable {θ : α → β → Prop}
+section PartialOrder
+
+variable [PartialOrder α] [PartialOrder β] {θ : α → β → Prop}
 
 theorem SINC.mse (h : SINC θ) : MSE θ := h.ue.mse_of_uo h.uo
 
@@ -192,6 +191,10 @@ theorem SINC.mso (h : SINC θ) : MSO θ := h.uo.mso_of_ue h.ue
 theorem SINC.me (h : SINC θ) : ME θ := h.ue.me
 
 theorem SINC.mo (h : SINC θ) : MO θ := h.uo.mo
+
+end PartialOrder
+
+variable [SemilatticeSup α] [SemilatticeSup β] {θ : α → β → Prop}
 
 theorem SINC.up_of_sum (h : SINC θ) (hs : SUM θ) : UP θ := h.uo.up_of_sum hs
 
@@ -232,30 +235,27 @@ theorem Incrementality.Holds.incremental (h : Incrementality.strict.Holds θ) (h
     Incrementality.incremental.Holds θ :=
   SINC.inc_of_sum h hs
 
+end Incremental
+
 /-! ### The verb phrase -/
+
+section VP
 
 /-- The verb phrase of a relation and an object predicate holds of the events with some object
 of the predicate. -/
 def VP (θ : α → β → Prop) (OBJ : α → Prop) : β → Prop := fun e ↦ ∃ y, OBJ y ∧ θ y e
 
+theorem vp_eq (θ : α → β → Prop) (y : α) : VP θ (· = y) = θ y :=
+  funext fun _ ↦ propext ⟨fun ⟨_, h, hθ⟩ ↦ h ▸ hθ, fun h ↦ ⟨y, rfl, h⟩⟩
+
+theorem vp_graph (f : β → α) (OBJ : α → Prop) : VP (· = f ·) OBJ = OBJ ∘ f :=
+  funext fun _ ↦ propext ⟨by rintro ⟨_, h, rfl⟩; exact h, fun h ↦ ⟨_, h, rfl⟩⟩
+
 variable {θ : α → β → Prop} {OBJ : α → Prop}
 
-/-- A summative relation carries cumulativity from the object to the verb phrase. -/
-theorem vp_cum (hθ : SUM θ) (hObj : CUM OBJ) : CUM (VP θ OBJ) :=
-  fun _ ⟨_, h₁, hθ₁⟩ _ ⟨_, h₂, hθ₂⟩ ↦ ⟨_, hObj h₁ h₂, hθ hθ₁ hθ₂⟩
+section Preorder
 
-/-- Uniqueness of participants and mapping to subobjects carry quantization from the object
-to the verb phrase, since the object of a proper subevent is a proper part of the object. -/
-theorem vp_qua (hU : UP θ) (hm : MSO θ) (hObj : QUA OBJ) : QUA (VP θ OBJ) :=
-  qua_of_forall fun _ _ ⟨_, hy, hθ⟩ hlt ⟨_, hz, hθz⟩ ↦
-    let ⟨_, hlt', hθ'⟩ := hm hθ hlt
-    hObj (hU hθz hθ' ▸ hz) hy hlt'.ne hlt'.le
-
-/-- A summative strictly incremental relation, as *eat* is ([krifka-1998]), carries quantization
-from the object to the verb phrase, since summativity and unique objects give unique
-participants. -/
-theorem SINC.vp_qua (h : SINC θ) (hs : SUM θ) (hObj : QUA OBJ) : QUA (VP θ OBJ) :=
-  Aspect.vp_qua (h.up_of_sum hs) h.mso hObj
+variable [Preorder α] [Preorder β]
 
 /-- A relation maps to objects iff it carries divisive reference from the object to the verb
 phrase. -/
@@ -264,13 +264,35 @@ theorem mo_iff_forall_div_vp : MO θ ↔ ∀ OBJ : α → Prop, DIV OBJ → DIV 
 
 theorem vp_div (hm : MO θ) (hObj : DIV OBJ) : DIV (VP θ OBJ) := mo_iff_forall_div_vp.1 hm OBJ hObj
 
-omit [SemilatticeSup α] [SemilatticeSup β] in
-theorem vp_eq (θ : α → β → Prop) (y : α) : VP θ (· = y) = θ y :=
-  funext fun _ ↦ propext ⟨fun ⟨_, h, hθ⟩ ↦ h ▸ hθ, fun h ↦ ⟨y, rfl, h⟩⟩
+end Preorder
 
-omit [SemilatticeSup α] [SemilatticeSup β] in
-theorem vp_graph (f : β → α) (OBJ : α → Prop) : VP (· = f ·) OBJ = OBJ ∘ f :=
-  funext fun _ ↦ propext ⟨by rintro ⟨_, h, rfl⟩; exact h, fun h ↦ ⟨_, h, rfl⟩⟩
+/-- Uniqueness of participants and mapping to subobjects carry quantization from the object
+to the verb phrase, since the object of a proper subevent is a proper part of the object. -/
+theorem vp_qua [PartialOrder α] [PartialOrder β] (hU : UP θ) (hm : MSO θ) (hObj : QUA OBJ) :
+    QUA (VP θ OBJ) :=
+  qua_of_forall fun _ _ ⟨_, hy, hθ⟩ hlt ⟨_, hz, hθz⟩ ↦
+    let ⟨_, hlt', hθ'⟩ := hm hθ hlt
+    hObj (hU hθz hθ' ▸ hz) hy hlt'.ne hlt'.le
+
+variable [SemilatticeSup α] [SemilatticeSup β]
+
+/-- A summative relation carries cumulativity from the object to the verb phrase. -/
+theorem vp_cum (hθ : SUM θ) (hObj : CUM OBJ) : CUM (VP θ OBJ) :=
+  fun _ ⟨_, h₁, hθ₁⟩ _ ⟨_, h₂, hθ₂⟩ ↦ ⟨_, hObj h₁ h₂, hθ hθ₁ hθ₂⟩
+
+/-- Along a summative relation with unique participants, a verb phrase is cumulative only if the
+object predicate holds of the sum of any two of its objects that the relation relates to
+events. -/
+theorem not_cum_vp (hs : SUM θ) (hU : UP θ) {x y : α} {e₁ e₂ : β} (hx : OBJ x) (hy : OBJ y)
+    (hθ₁ : θ x e₁) (hθ₂ : θ y e₂) (hSum : ¬ OBJ (x ⊔ y)) : ¬ CUM (VP θ OBJ) := fun hCum ↦
+  let ⟨_, hz, hθ⟩ := hCum ⟨x, hx, hθ₁⟩ ⟨y, hy, hθ₂⟩
+  hSum (hU hθ (hs hθ₁ hθ₂) ▸ hz)
+
+/-- A summative strictly incremental relation, as *eat* is ([krifka-1998]), carries quantization
+from the object to the verb phrase, since summativity and unique objects give unique
+participants. -/
+theorem SINC.vp_qua (h : SINC θ) (hs : SUM θ) (hObj : QUA OBJ) : QUA (VP θ OBJ) :=
+  Aspect.vp_qua (h.up_of_sum hs) h.mso hObj
 
 /-- A cumulative object predicate along a sum homomorphism gives a cumulative verb phrase, so
 *drink milk* is cumulative ([champollion-krifka-2016]). -/
@@ -286,5 +308,7 @@ theorem vp_qua_graph {F : Type*} [FunLike F β α] [SupHomClass F β α] (f : F)
     (hf : Function.Injective f) (hObj : QUA OBJ) : QUA (VP (· = f ·) OBJ) :=
   vp_qua (up_graph f) ((mso_graph_iff f).2 ((OrderHomClass.mono f).strictMono_of_injective hf))
     hObj
+
+end VP
 
 end Aspect
