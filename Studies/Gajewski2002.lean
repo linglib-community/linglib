@@ -5,7 +5,6 @@ public import Linglib.Semantics.Quantification.Exceptive
 public import Linglib.Semantics.Quantification.Lindstrom
 public import Studies.BarwiseCooper1981
 public import Studies.VonFintel1993
-public import Linglib.Core.GroupTheory.GroupAction.Blocks
 public import Linglib.Core.Data.Fin.VecNotation
 public import Linglib.Data.Examples.Gajewski2002
 public import Mathlib.Algebra.Group.Action.End
@@ -142,16 +141,13 @@ theorem permutationInvariant_there : PermutationInvariant Ty.et fun _ : E ↦ Tr
 /-- The whole domain and the empty set are the only permutation-invariant properties (25). -/
 theorem permutationInvariant_et_iff {P : E → Prop} :
     PermutationInvariant Ty.et P ↔ P = (fun _ ↦ True) ∨ P = (fun _ ↦ False) := by
-  constructor
-  · intro h
-    have hB : MulAction.IsFixedBlock (Equiv.Perm E) {x | P x} := fun π ↦ Set.ext fun x ↦ by
-      simp only [Set.mem_smul_set_iff_inv_smul_mem, Equiv.Perm.smul_def, Set.mem_ofPred_eq]
-      exact iff_of_eq (congrFun (h π) x)
-    rcases hB.eq_empty_or_univ with h0 | hu
-    · exact Or.inr (funext fun x ↦ eq_false fun hx ↦
-        Set.eq_empty_iff_forall_notMem.1 h0 x hx)
-    · exact Or.inl (funext fun x ↦ eq_true (Set.eq_univ_iff_forall.1 hu x))
-  · rintro (rfl | rfl) π <;> rfl
+  refine ⟨fun h ↦ ?_, by rintro (rfl | rfl) π <;> rfl⟩
+  by_cases hP : ∃ a, P a
+  · obtain ⟨a, ha⟩ := hP
+    refine .inl (funext fun x ↦ eq_true ?_)
+    obtain ⟨π, rfl⟩ := MulAction.exists_smul_eq (Equiv.Perm E) a x
+    exact (congrFun (h π⁻¹) a).mpr ha
+  · exact .inr (funext fun x ↦ eq_false fun hx ↦ hP ⟨x, hx⟩)
 
 theorem permutationInvariant_det_iff {Q : Det E} :
     PermutationInvariant Ty.det Q ↔ QuantityInvariant Q :=
