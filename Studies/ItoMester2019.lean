@@ -140,7 +140,7 @@ def candidates (x : Input) : Finset Candidate :=
 
 /-- A lexical word, or a function word in its strong form: a prosodic word over a foot over its
 syllable. -/
-def word : Tree := .om [.ft true [.σ 0 true]]
+def word : Tree := .om [.ft [.σ]]
 
 namespace Candidate
 
@@ -152,7 +152,7 @@ is none. -/
 def tree : Tree :=
   let tail := (match c.form with | .strong => [word] | .weak => [.σ] | _ => []) ++
     if x.next then [word] else []
-  .node .iota (wrap c.top (wrap c.host [word] ++ wrap c.fnc tail))
+  .iota (wrap c.top (wrap c.host [word] ++ wrap c.fnc tail))
 where
   /-- A φ over a nonempty list of nodes, if chosen. -/
   wrap (b : Bool) (l : List Tree) : List Tree := if b ∧ l ≠ [] then [Tree.ph l] else l

@@ -51,96 +51,97 @@ open Prosody OptimalityTheory
 /-! ### Footing -/
 
 /-- Iamb, constraint (2), assigns one mark to every foot that is not right-headed. -/
-def iamb : Constraint Tree := fun t ↦
+def iamb : Constraint MetricalTree := fun t ↦
   t.localTrees.countP fun x ↦ decide (x.1.level = .ft) && !(x.2.getLast?.any (·.isHead))
 
 /-- *V:]φ, constraint (3), assigns one mark to a long vowel in the phrase-final syllable. -/
-def finalLong : Constraint Tree :=
-  Constraint.binary fun t ↦ 2 ≤ (t.leafList.getLast?.bind (·.weight?)).getD 0
+def finalLong : Constraint MetricalTree :=
+  Constraint.binary fun t ↦ 2 ≤ (t.constituency.leafList.getLast?.bind (·.weight?)).getD 0
 
 /-- Max-μ assigns one mark to every input mora missing from the output. -/
-def maxMora (input : List ℕ) : Constraint Tree := fun t ↦
-  (List.zipWith (· - ·) input (t.leafList.filterMap (·.weight?))).sum
+def maxMora (input : List ℕ) : Constraint MetricalTree := fun t ↦
+  (List.zipWith (· - ·) input (t.constituency.leafList.filterMap (·.weight?))).sum
 
 /-- The footing ranking *V:]φ ≫ Max-μ ≫ Parse-σ ≫ Iamb of Tables 2, 4 and 6, where Parse-σ,
     constraint (1), marks every syllable no foot dominates. -/
-def footing (input : List ℕ) : List (Constraint Tree) :=
+def footing (input : List ℕ) : List (Constraint MetricalTree) :=
   [finalLong, maxMora input, parseInto .ft, iamb]
 
 -- Table 2
 theorem table2 :
     (Tableau.ofList
-      {.om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1, .σ 2 true]],
-       .om [.ft true [.σ 1, .σ 2 true], .σ 1, .σ 1],
-       .om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]}
+      {.om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1, .σ 2 true]],
+       .om false [.ft true [.σ 1, .σ 2 true], .σ 1, .σ 1],
+       .om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]}
       (footing [1, 1, 1, 1])).optimal =
-      {.om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]} := by
+      {.om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]} := by
   decide
 
 -- Table 4
 theorem table4 :
     (Tableau.ofList
-      {.om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]],
-       .om [.σ 1, .ft true [.σ 1, .σ 2 true], .σ 1],
-       .om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 2 true], .σ 1]}
+      {.om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]],
+       .om false [.σ 1, .ft true [.σ 1, .σ 2 true], .σ 1],
+       .om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 2 true], .σ 1]}
       (footing [1, 1, 2, 1])).optimal =
-      {.om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 2 true], .σ 1]} := by
+      {.om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 2 true], .σ 1]} := by
   decide
 
 -- Table 6
 theorem table6 :
-    (Tableau.ofList {.om [.ft true [.σ 1, .σ 2 true]], .om [.ft true [.σ 1 true, .σ 1]]}
-      (footing [1, 2])).optimal = {.om [.ft true [.σ 1 true, .σ 1]]} := by
+    (Tableau.ofList {.om false [.ft true [.σ 1, .σ 2 true]], .om false [.ft true [.σ 1 true, .σ 1]]}
+      (footing [1, 2])).optimal = {.om false [.ft true [.σ 1 true, .σ 1]]} := by
   decide
 
 /-! ### Words in isolation -/
 
 /-- *[(alaː)(makíː)lɨ]* 's/he fell' (Fig. 1) has two iambs and a stray final syllable, and the
     second iamb heads the word. -/
-def fell : Tree :=
-  .om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1, .σ 2 true], .σ 1]
+def fell : MetricalTree :=
+  .om false [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1, .σ 2 true], .σ 1]
 
 /-- *[(tsihaː)(lamaː)(kílɨ)]* 'we fell' (Fig. 2) has an even number of syllables, so its last two
     form a trochee, which heads the word. -/
-def weFell : Tree :=
-  .om [.ft false [.σ 1, .σ 2 true], .ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]
+def weFell : MetricalTree :=
+  .om false [.ft false [.σ 1, .σ 2 true], .ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]
 
 /-- *[(umíː)ŋi]* 'annatto' (§1) is an iamb and a stray final syllable. -/
-def annatto : Tree :=
-  .om [.ft true [.σ 1, .σ 2 true], .σ 1]
+def annatto : MetricalTree :=
+  .om false [.ft true [.σ 1, .σ 2 true], .σ 1]
 
 theorem columns_words :
-    Tree.columns fell = [1, 2, 1, 3, 1] ∧ Tree.columns weFell = [1, 2, 1, 2, 3, 1] ∧
-      Tree.columns annatto = [1, 3, 1] := by
+    MetricalTree.columns fell = [1, 2, 1, 3, 1] ∧ MetricalTree.columns weFell = [1, 2, 1, 2, 3, 1] ∧
+      MetricalTree.columns annatto = [1, 3, 1] := by
   decide
 
 -- p. 2365
 theorem headTerminals_words :
-    Tree.headTerminals fell = [.σ 2 true] ∧ Tree.headTerminals weFell = [.σ 1 true] ∧
-      Tree.headTerminals annatto = [.σ 2 true] := by
+    MetricalTree.headTerminals fell = [.σ 2 true] ∧
+      MetricalTree.headTerminals weFell = [.σ 1 true] ∧
+      MetricalTree.headTerminals annatto = [.σ 2 true] := by
   decide
 
 /-! ### Tone domains -/
 
 section ToneDomain
 
-variable (t : Tree)
+variable (t : MetricalTree)
 
 /-- The number of syllables. -/
-abbrev syllableCount : ℕ := (Tree.columns t).length
+abbrev syllableCount : ℕ := (MetricalTree.columns t).length
 
 /-- The mora count of the `i`th syllable. -/
-def moras (i : ℕ) : ℕ := ((Tree.terminals t)[i]?.bind (·.value.weight?)).getD 0
+def moras (i : ℕ) : ℕ := ((MetricalTree.terminals t)[i]?.bind (·.constituency.value.weight?)).getD 0
 
 /-- A syllable is stressed when it heads a foot (p. 2365), its grid column rising above the
     bottom row. -/
-def Stressed (i : ℕ) : Prop := 2 ≤ (Tree.columns t).getD i 0
+def Stressed (i : ℕ) : Prop := 2 ≤ (MetricalTree.columns t).getD i 0
 
 instance : DecidablePred (Stressed t) := fun _ ↦ inferInstanceAs (Decidable (2 ≤ _))
 
 /-- The phrase head Δφ, the primary stress of the phrase, is the position of the head
     terminal. -/
-def head : ℕ := (Tree.project t).findIdx (·.onSpine)
+def head : ℕ := (MetricalTree.project t).findIdx (·.onSpine)
 
 /-- A phrase is metrical, in the sense the tone constraints presuppose (p. 2372), when every
     syllable bears a mora and the primary stress heads a foot and precedes the phrase-final
@@ -301,14 +302,14 @@ theorem tone_in_isolation :
 /-! ### Phrases -/
 
 /-- *[(atɔ́ː) (hɛlɨ)]* 'the friend was injured' (Fig. 9), whose second word is a trochee. -/
-def friendInjured : Tree :=
-  .ph [.node (.om true) [Tree.ft true [.σ 1, .σ 2 true]], .om [.ft true [.σ 1 true, .σ 1]]]
+def friendInjured : MetricalTree :=
+  .ph false [.om true [.ft true [.σ 1, .σ 2 true]], .om false [.ft true [.σ 1 true, .σ 1]]]
 
 /-- *[(atɔː) (hɛ́pɨː)ɾɨ]* 'the friend has been injured' (Fig. 10), whose second word begins with
     an iamb. -/
-def friendHasBeenInjured : Tree :=
-  .ph [.node (.om true) [Tree.ft true [.σ 1, .σ 2 true]],
-    .om [.ft true [.σ 1, .σ 2 true], .σ 1]]
+def friendHasBeenInjured : MetricalTree :=
+  .ph false [.om true [.ft true [.σ 1, .σ 2 true]],
+    .om false [.ft true [.σ 1, .σ 2 true], .σ 1]]
 
 -- Fig. 9
 theorem tone_blocked_by_trochee_head :
@@ -322,9 +323,9 @@ theorem tone_crosses_iamb_dependent :
 
 /-- *[(itɔː)tɔ (tápɨː)ɾɨ]* 'the man has been heard' (Table 12), an instance of Table 14's
     `/σσσ # σσσ/`. -/
-def manHasBeenHeard : Tree :=
-  .ph [.node (.om true) [Tree.ft true [.σ 1, .σ 2 true], Tree.σ 1],
-    .om [.ft true [.σ 1, .σ 2 true], .σ 1]]
+def manHasBeenHeard : MetricalTree :=
+  .ph false [.om true [.ft true [.σ 1, .σ 2 true], .σ 1],
+    .om false [.ft true [.σ 1, .σ 2 true], .σ 1]]
 
 -- Table 14
 theorem table14 : (toneTableau manHasBeenHeard toneRanking).optimal = {⟨(1, 3), by decide⟩} :=
@@ -332,9 +333,9 @@ theorem table14 : (toneTableau manHasBeenHeard toneRanking).optimal = {⟨(1, 3)
 
 /-- *[(umɨː)ŋi ⟨a⟩(lámaː)(kilɨ)]* 'the annatto fell' (Fig. 3), in which the noun heads the phrase
     and the verb's initial vowel is unparsed (§4.3), leaving an iamb and a final trochee. -/
-def annattoFell : Tree :=
-  .ph [.node (.om true) [Tree.ft true [.σ 1, .σ 2 true], Tree.σ 1],
-    .om [.σ 1, .ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]]
+def annattoFell : MetricalTree :=
+  .ph false [.om true [.ft true [.σ 1, .σ 2 true], .σ 1],
+    .om false [.σ 1, .ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]]
 
 -- Fig. 3, §1, §7
 theorem stress_tone_incoherence :

@@ -171,18 +171,19 @@ structure Input where
 
 /-- The prosodic word of `n` syllables with penultimate stress (14), a trochee over its last two
 syllables and the earlier ones unfooted (15); a monosyllable is a degenerate foot. -/
-def penultimate : ℕ → Tree
-  | 0 => .om []
-  | 1 => .om [.ft true [.σ 0 true]]
-  | n + 2 => .om (List.replicate n .σ ++ [.ft true [.σ 0 true, .σ]])
+def penultimate : ℕ → MetricalTree
+  | 0 => .om false []
+  | 1 => .om false [.ft true [.σ 0 true]]
+  | n + 2 => .om false (List.replicate n .σ ++ [.ft true [.σ 0 true, .σ]])
 
 /-- A disyllabic trochee is a well-formed foot with the head profile of `Foot.trochee`. -/
-def IsTrochee (t : Tree) : Prop := IsFoot t ∧ Foot.childHeadFlags t = [true, false]
+def IsTrochee (t : MetricalTree) : Prop := IsFoot t ∧ Foot.childHeadFlags t = [true, false]
 
 instance : DecidablePred IsTrochee := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- A minimal φ dominates no φ. -/
-def IsMinimalPhi (t : Tree) : Prop := t.value.level = .ph ∧ ∀ c ∈ t.children, c.value.level ≠ .ph
+def IsMinimalPhi (t : MetricalTree) : Prop :=
+  t.value.level = .ph ∧ ∀ c ∈ t.children, c.value.level ≠ .ph
 
 instance : DecidablePred IsMinimalPhi := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
@@ -208,7 +209,7 @@ theorem spans_penultimate_isTrochee :
     (penultimate (n + 2)).spans IsTrochee = [⟨(n, n + 2), Nat.le_add_right ..⟩] := by
   simp [penultimate, RoseTree.spansList_append, RoseTree.spansList_replicate, IsTrochee,
     IsConstituent, Foot.childHeadFlags, RoseTree.licensed_node_iff, Constituent.Licenses,
-    Constituent.isHead]
+    Level.Licenses, Constituent.isHead]
 
 end Penultimate
 
@@ -233,15 +234,15 @@ def next : ℕ := if x.footed then 2 else 3
 
 /-- The parse of the input by a head of `k` syllables under a phrasing, the two φs grouped into one
 maximal φ where the next word shares the head's. -/
-def parse (k : ℕ) : Phrasing → Tree
-  | .joined => .node .iota [Tree.ph [penultimate k, penultimate x.next]]
+def parse (k : ℕ) : Phrasing → MetricalTree
+  | .joined => .iota [.ph false [penultimate k, penultimate x.next]]
   | .separate => pair (penultimate k) (penultimate x.next)
   | .lifted => pair (penultimate (k + 1)) (penultimate (x.next - 1))
 where
   /-- Two φs, under one maximal φ where the next word shares the head's. -/
-  pair (h n : Tree) : Tree :=
-    if x.sameMax then .node .iota [Tree.ph [Tree.ph [h], Tree.ph [n]]]
-    else .node .iota [Tree.ph [h], Tree.ph [n]]
+  pair (h n : MetricalTree) : MetricalTree :=
+    if x.sameMax then .iota [.ph false [.ph false [h], .ph false [n]]]
+    else .iota [.ph false [h], .ph false [n]]
 
 /-- The cut before word `w`, in syllables, for a head of `k` syllables. -/
 def cut (k : ℕ) : ℕ →o ℕ := Prosody.cut [k, x.next]
@@ -272,7 +273,7 @@ section Tableau
 variable (v : RuleSet Item) (x : Input)
 
 /-- The parse a candidate gives the input. -/
-def Candidate.tree (c : Candidate) : Tree := x.parse (syllables c.item.exponent) c.phrasing
+def Candidate.tree (c : Candidate) : MetricalTree := x.parse (syllables c.item.exponent) c.phrasing
 
 /-- GEN offers each item of `v` applicable to the head in each phrasing, Syllable Lifting only where
 the next word shares the head's maximal φ, the domain §4.3 gives it. -/

@@ -29,14 +29,14 @@ phrases](##Prosody.IsUtterance.isPhrase_of_mem_children).
 
 namespace Prosody
 
-variable {t c : Tree}
+variable {M : Type*} {t c : RoseTree (Constituent Level M)}
 
 /-- A well-formed phonological phrase is a licensed tree rooted in a φ-node: a φ over nodes of
 level at most φ. -/
-abbrev IsPhrase : Tree → Prop := IsConstituent .ph
+abbrev IsPhrase : RoseTree (Constituent Level M) → Prop := IsConstituent .ph
 
 /-- A well-formed intonational phrase, or utterance, is a licensed tree rooted in an ι-node. -/
-abbrev IsUtterance : Tree → Prop := IsConstituent .iota
+abbrev IsUtterance : RoseTree (Constituent Level M) → Prop := IsConstituent .iota
 
 /-- The daughters of a phonological phrase that satisfies Exhaustivity and Nonrecursivity at φ
 are prosodic words. -/

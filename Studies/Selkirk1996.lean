@@ -54,7 +54,7 @@ open Prosody OptimalityTheory
 def fnc : Tree := .σ 1
 
 /-- The foot of the lexical word. -/
-def foot : Tree := .ft true [.σ 2 true]
+def foot : Tree := .ft [.σ 2]
 
 /-- The lexical word, a prosodic word over its foot. -/
 def lex : Tree := .om [foot]
@@ -118,7 +118,7 @@ theorem violations (c : Con) :
 
 -- (14): a function word in isolation is footed, and its structure is strictly layered.
 theorem isStrictlyLayered_isolation :
-    IsStrictlyLayered (.node .iota [Tree.ph [.om [.ft true [.σ 2 true]]]]) := by decide
+    IsStrictlyLayered (Tree.iota [.ph [.om [.ft [.σ 2]]]]) := by decide
 
 /-! ### Rankings -/
 

@@ -59,13 +59,13 @@ def subminimalOmega : Constraint Tree := fun t ↦ go t where
 def fncσ : Tree := .σ .light
 
 /-- The lexical word as a well-formed, bimoraic ω. -/
-def lexω : Tree := .om [.ft false [.σ .heavy]]
+def lexω : Tree := .om [.ft [.σ .heavy]]
 
 /-- `[φ [ω fnc] [ω lex]]` is the full-ω site, (25a) and (20a). -/
 def fullOmega : Tree := .ph [.om [fncσ], lexω]
 
 /-- `[ω fnc lex]` is the amalgamated site, (25b) and (20b). -/
-def amalgamated : Tree := .om [fncσ, .ft false [.σ .heavy]]
+def amalgamated : Tree := .om [fncσ, .ft [.σ .heavy]]
 
 /-- `[ω fnc [ω lex]]` is the ω-adjoined site, (25c) and (20c). -/
 def omegaAdjoined : Tree := .om [fncσ, lexω]

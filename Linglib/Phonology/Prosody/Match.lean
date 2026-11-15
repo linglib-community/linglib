@@ -57,7 +57,8 @@ namespace Prosody
 open OptimalityTheory
 
 /-- The spans of the `ℓ`-nodes of a prosodic tree, the span counterpart of `levelPositions`. -/
-abbrev levelSpans (ℓ : Level) (t : Tree) : List (NonemptyInterval ℕ) :=
+abbrev levelSpans {M : Type*} (ℓ : Level) (t : RoseTree (Constituent Level M)) :
+    List (NonemptyInterval ℕ) :=
   t.spans (·.value.level = ℓ)
 
 /-- The cut of the frontier before the `i`th of consecutive units of the sizes `l`, monotone in
@@ -71,12 +72,14 @@ def cut (l : List ℕ) : ℕ →o ℕ :=
 /-- **Match(α, π)** ([selkirk-2011]): one violation for each span of the syntactic family `α` that
 is the span of no `π`-node, the two edges of the constituent coinciding with those of no
 `π`-node ([ito-mester-2019]). -/
-def syntaxProsodyMatch (α : List (NonemptyInterval ℕ)) (π : Level) : Constraint Tree :=
+def syntaxProsodyMatch {M : Type*} (α : List (NonemptyInterval ℕ)) (π : Level) :
+    Constraint (RoseTree (Constituent Level M)) :=
   (Constraint.align Eq).comap fun t ↦ (α, levelSpans π t)
 
 /-- **Match(π, α)** ([selkirk-2011]): one violation for each `π`-node whose span is the span of no
 constituent of the syntactic family `α`. -/
-def prosodySyntaxMatch (π : Level) (α : List (NonemptyInterval ℕ)) : Constraint Tree :=
+def prosodySyntaxMatch {M : Type*} (π : Level) (α : List (NonemptyInterval ℕ)) :
+    Constraint (RoseTree (Constituent Level M)) :=
   (Constraint.align Eq).comap fun t ↦ (levelSpans π t, α)
 
 /-- A syntactic constituent as correspondence reads it: the span it covers and the terminal that
@@ -98,7 +101,8 @@ abbrev Corresponds (α : List HeadedSpan) (a : HeadedSpan) (p : NonemptyInterval
 without a corresponding `π`-node by the best correspondence in which no `π`-node answers to two
 constituents. A `π`-node over two sister constituents answers to neither, and a constituent and
 its subconstituents need a `π`-node each. -/
-def syntaxProsodyMax (α : List HeadedSpan) (π : Level) : Constraint Tree :=
+def syntaxProsodyMax {M : Type*} (α : List HeadedSpan) (π : Level) :
+    Constraint (RoseTree (Constituent Level M)) :=
   (Constraint.deficiency (Corresponds α)).comap fun t ↦ (α, levelSpans π t)
 
 variable {α : List HeadedSpan}
@@ -116,22 +120,23 @@ theorem deficiency_corresponds_le (hα : (α.map (·.span)).Nodup)
 
 -- Two words phrased together: the φ over both matches the phrase spanning them, and neither word
 -- is matched by a φ of its own.
-example : prosodySyntaxMatch .ph [⟨(0, 2), by decide⟩] (.ph [.om [.σ], .om [.σ]]) = 0 := by decide
+example : prosodySyntaxMatch .ph [⟨(0, 2), by decide⟩] (Tree.ph [.om [.σ], .om [.σ]]) = 0 := by
+  decide
 example : syntaxProsodyMatch [⟨(0, 1), by decide⟩, ⟨(1, 2), by decide⟩] .ph
-    (.ph [.om [.σ], .om [.σ]]) = 2 := by
+    (Tree.ph [.om [.σ], .om [.σ]]) = 2 := by
   decide
 -- Two sister phrases share no corresponding φ when phrased together, and each has its own when
 -- phrased apart. A φ over T serves only one of the two projections T heads, so the higher one
 -- needs a φ of its own.
 example : syntaxProsodyMax [⟨⟨(0, 1), by decide⟩, 0⟩, ⟨⟨(1, 2), by decide⟩, 1⟩] .ph
-    (.ph [.om [.σ], .om [.σ]]) = 2 := by
+    (Tree.ph [.om [.σ], .om [.σ]]) = 2 := by
   decide
 example : syntaxProsodyMax [⟨⟨(0, 1), by decide⟩, 0⟩, ⟨⟨(1, 2), by decide⟩, 1⟩] .ph
-    (.ph [.ph [.om [.σ]], .ph [.om [.σ]]]) = 0 := by
+    (Tree.ph [.ph [.om [.σ]], .ph [.om [.σ]]]) = 0 := by
   decide
 example : syntaxProsodyMax
     [⟨⟨(0, 2), by decide⟩, 1⟩, ⟨⟨(0, 1), by decide⟩, 0⟩, ⟨⟨(1, 2), by decide⟩, 1⟩] .ph
-    (.node .iota [Tree.ph [.om [.σ]], Tree.ph [.om [.σ]]]) = 1 := by
+    (Tree.iota [.ph [.om [.σ]], .ph [.om [.σ]]]) = 1 := by
   decide
 
 end Prosody

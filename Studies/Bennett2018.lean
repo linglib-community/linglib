@@ -48,8 +48,8 @@ def flat (n : ℕ) : Tree := .om (List.replicate (n + 1) Tree.σ)
 
 /-- (24): the bracketing `[κ₁ Pref₁ [κ₂ … [κₙ Prefₙ [ω Stem]]]]`, the stem an ω and the bracket
 that each prefix opens of the category given for it. -/
-def brackets (κs : List Constituent) : Tree :=
-  κs.foldr (fun κ t ↦ .node κ [Tree.σ, t]) (Tree.om [Tree.σ])
+def brackets (κs : List Level) : Tree :=
+  κs.foldr (fun κ t ↦ .node ⟨κ, 0⟩ [Tree.σ, t]) (Tree.om [Tree.σ])
 
 /-- (23): the recursive parse `[ω Pref₁ [ω … [ω Prefₙ [ω Stem]]]]` of `n` high-attaching
 prefixes, every bracket an ω. -/
@@ -60,8 +60,8 @@ def phrasal : Tree := .ph [.om [.σ], .om [.σ]]
 
 @[simp] theorem brackets_nil : brackets [] = Tree.om [Tree.σ] := rfl
 
-@[simp] theorem brackets_cons (κ : Constituent) (κs : List Constituent) :
-    brackets (κ :: κs) = .node κ [Tree.σ, brackets κs] := rfl
+@[simp] theorem brackets_cons (κ : Level) (κs : List Level) :
+    brackets (κ :: κs) = .node ⟨κ, 0⟩ [Tree.σ, brackets κs] := rfl
 
 @[simp] theorem nested_zero : nested 0 = Tree.om [Tree.σ] := rfl
 
@@ -132,8 +132,8 @@ theorem omegaBoundaries_flat (n : ℕ) : omegaBoundaries (flat n) = [0, n + 1] :
 
 /-! ### Without recursion -/
 
-private theorem getElem?_level_brackets (κs : List Constituent) (i : ℕ) :
-    (κs.map Constituent.level ++ [Level.om])[i]? =
+private theorem getElem?_level_brackets (κs : List Level) (i : ℕ) :
+    (κs ++ [Level.om])[i]? =
       (brackets κs)[List.replicate i 1]?.map (·.value.level) := by
   induction κs generalizing i with
   | nil => cases i <;> simp [Tree.om, List.replicate_succ]
@@ -142,9 +142,9 @@ private theorem getElem?_level_brackets (κs : List Constituent) (i : ℕ) :
 /-- A parse of the bracketing of stacked high prefixes that repeats no category along dominance
 gives every bracket a category of its own, none of them ω: the four brackets of three stacked
 prefixes take four categories (24). -/
-theorem nodup_level_of_noLevelRecursion {κs : List Constituent}
+theorem nodup_level_of_noLevelRecursion {κs : List Level}
     (h : ∀ ℓ, NoLevelRecursion ℓ (brackets κs)) :
-    (κs.map Constituent.level ++ [Level.om]).Nodup := by
+    (κs ++ [Level.om]).Nodup := by
   refine List.nodup_iff_getElem?_ne_getElem?.2 fun i j hij hj heq ↦ ?_
   have hℓ := List.getElem?_eq_getElem hj
   rw [hℓ, getElem?_level_brackets] at heq

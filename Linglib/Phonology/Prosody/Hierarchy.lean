@@ -11,28 +11,34 @@ public import Linglib.Core.Data.RoseTree.Licensed
 /-!
 # The prosodic hierarchy
 
-The prosodic hierarchy orders the categories of prosodic structure, syllable below foot below
-prosodic word below phonological phrase below intonational phrase, and a prosodic tree is an
-ordered tree of constituents of these categories. A constituent of a level is well formed when
-its tree is rooted at that level and every node dominates what `Constituent.Licenses` allows:
-its own level or below, with the syllable dominating nothing and the foot a non-empty list of
-syllables.
+A prosodic tree groups a string into nested constituents, each of a category drawn from a
+linearly ordered hierarchy: syllable below foot below prosodic word below phonological phrase
+below intonational phrase. A node carries its category and its marks, whatever else the
+representation records at a node. The weight of a syllable is a mark, and so is prominence:
+`Tree` marks weight alone, and `MetricalTree` adds the strong–weak labelling of
+[liberman-prince-1977], which [is forgotten](##Prosody.MetricalTree.constituency) to recover
+the grouping. A constituent of a level is well formed when its tree is rooted at that level and
+every node dominates what `Constituent.Licenses` allows.
 
 ## Implementation notes
 
-* In `Constituent` the level is the constructor, so that a weight on a foot or a head mark on
-  the ι root is unrepresentable.
+* `Constituent L M` takes the categories `L` and the marks `M` as parameters, so that what is
+  said of grouping alone holds of every marked tree, and theories that differ in their
+  categories share it. The clitic group and the phonological utterance of [nespor-vogel-1986]
+  are not among the categories of `Level`.
 * The prosodic tree is an ordered rose tree, so No-Tangling holds by construction. It is the
   carrier of candidates for violable constraints, so it includes structures that are not well
   formed, such as a phrase under a word, as well as the recursive prosodic word that
   [ito-mester-2003] admits for compounds.
+* A strong–weak mark says whether a node heads its mother, so a node with no strong daughter
+  or with several is representable; the mark on a root says nothing.
 * The Nonrecursivity and Exhaustivity of [selkirk-1996] are violable and are not part of
   `Constituent.Licenses`; they are the constraints `nonrecursivity` and `exhaustivity`.
-* The clitic group and the phonological utterance of [nespor-vogel-1986] are not levels.
 
 ## References
 
 * [selkirk-1980]
+* [liberman-prince-1977]
 * [nespor-vogel-1986]
 * [selkirk-1996]
 * [ito-mester-2003]
@@ -42,14 +48,10 @@ syllables.
 
 namespace Prosody
 
-/-! ### Levels, constituents and the tree
-
-The prosodic tree is the ordered rose tree `RoseTree` labelled by `Constituent`s. -/
+/-! ### Categories -/
 
 /-- The levels of the prosodic hierarchy, linearly ordered σ < f < ω < φ < ι. Syllable, stress
-foot, and prosodic word are the prosodic categories of [selkirk-1980]; the seven-level
-hierarchy of [nespor-vogel-1986] adds the clitic group between word and phrase and the
-phonological utterance above the intonational phrase, neither of which is a `Level` here. -/
+foot, and prosodic word are the prosodic categories of [selkirk-1980]. -/
 inductive Level
   | syl | ft | om | ph | iota
   deriving DecidableEq, Repr
@@ -65,89 +67,134 @@ theorem toNat_injective : Function.Injective toNat := by
 
 instance : LinearOrder Level := LinearOrder.lift' toNat toNat_injective
 
+instance : OrderBot Level where
+  bot := syl
+  bot_le a := by cases a <;> decide
+
+@[simp] theorem bot_eq : (⊥ : Level) = syl := rfl
+
+instance : WellFoundedLT Level := InvImage.wf toNat Nat.lt_wfRel.wf
+
+/-- What a node of a level may dominate: a syllable nothing, a foot a non-empty list of
+syllables, and ω, φ and ι any nodes at or below their level. -/
+def Licenses : Level → List Level → Prop
+  | syl, ks => ks = []
+  | ft, ks => ks ≠ [] ∧ ∀ k ∈ ks, k = syl
+  | a, ks => ∀ k ∈ ks, k ≤ a
+
+instance : ∀ (a : Level) (ks : List Level), Decidable (Licenses a ks)
+  | syl, ks => inferInstanceAs (Decidable (ks = []))
+  | ft, ks => inferInstanceAs (Decidable (ks ≠ [] ∧ ∀ k ∈ ks, k = syl))
+  | om, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k ≤ om))
+  | ph, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k ≤ ph))
+  | iota, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k ≤ iota))
+
+theorem Licenses.le {a : Level} {ks : List Level} (h : Licenses a ks) : ∀ k ∈ ks, k ≤ a := by
+  cases a with
+  | syl => rintro k hk; rw [show ks = [] from h] at hk; simp at hk
+  | ft => intro k hk; rw [h.2 k hk]; decide
+  | om => exact h
+  | ph => exact h
+  | iota => exact h
+
 end Level
 
-/-- A prosodic node, whose level is its constructor. A syllable carries its `weight` in morae and
-    `isHead`, and every level below the ι root carries `isHead`, whether the node heads its
-    parent; a weight on a foot or a head mark on the ι root is unrepresentable. -/
-inductive Constituent
-  /-- A syllable of the given `weight`, optionally the head of its foot. -/
-  | syl (weight : Syllable.Weight := 0) (isHead : Bool := false)
-  /-- A foot, optionally the head foot of its word. -/
-  | ft (isHead : Bool := false)
-  /-- A prosodic word ω, optionally the head word of its phrase. -/
-  | om (isHead : Bool := false)
-  /-- A phonological phrase φ, optionally the head phrase of its
-  intonational phrase. -/
-  | ph (isHead : Bool := false)
-  /-- An intonational phrase ι, the headless root of the hierarchy. -/
-  | iota
+/-! ### Constituents and trees -/
+
+/-- A node of a prosodic tree: its category `level` and its `mark`. -/
+structure Constituent (L : Type*) (M : Type*) where
+  /-- The category of the node. -/
+  level : L
+  /-- What else the representation records at the node. -/
+  mark : M
   deriving DecidableEq, Repr
 
 namespace Constituent
 
-/-- Whether a node heads its parent (a σ heads its foot, a foot heads its word, an ω its phrase,
-    a φ its intonational phrase); `false` for the ι root. -/
-def isHead : Constituent → Bool
-  | .syl _ h => h | .ft h => h | .om h => h | .ph h => h | .iota => false
+variable {L M N : Type*}
+
+/-- A node with its mark changed by `f`. -/
+def map (f : M → N) (a : Constituent L M) : Constituent L N := ⟨a.level, f a.mark⟩
+
+@[simp] theorem level_map (f : M → N) (a : Constituent L M) : (a.map f).level = a.level := rfl
+
+/-- Whether a node with a strong–weak mark heads its mother. -/
+def isHead {W : Type*} (a : Constituent L (W × Bool)) : Bool := a.mark.2
 
 /-- The mora weight of a σ node; `none` for non-σ nodes. -/
-def weight? : Constituent → Option Syllable.Weight
-  | .syl w _ => some w | _ => none
+def weight? (a : Constituent Level Syllable.Weight) : Option Syllable.Weight :=
+  if a.level = .syl then some a.mark else none
 
-/-- The level of a node, the constructor without its weight and head mark. -/
-def level : Constituent → Level
-  | .syl .. => .syl | .ft _ => .ft | .om _ => .om | .ph _ => .ph | .iota => .iota
+/-- Under the *Layeredness* of [selkirk-1996] a node dominates only its own level or below.
+`Licenses a ks` says that `a` may dominate daughters labelled `ks`: ω, φ, and ι obey nothing
+further, so that recursion at those levels and level skipping, a syllable or a foot directly
+under a φ, are admitted, and the syllable and the foot are strictly layered. -/
+def Licenses (a : Constituent Level M) (ks : List (Constituent Level M)) : Prop :=
+  a.level.Licenses (ks.map (·.level))
 
-@[simp] theorem level_syl (w : Syllable.Weight) (h : Bool) : (syl w h).level = .syl := rfl
-@[simp] theorem level_ft (h : Bool) : (ft h).level = .ft := rfl
-@[simp] theorem level_om (h : Bool) : (om h).level = .om := rfl
-@[simp] theorem level_ph (h : Bool) : (ph h).level = .ph := rfl
-@[simp] theorem level_iota : iota.level = .iota := rfl
-
-/-- `Licenses a ks` says that `a` may dominate daughters labelled `ks`. Every node obeys the
-    *Layeredness* of [selkirk-1996], dominating only its own level or below; ω, φ, and ι obey
-    nothing further, so that recursion at those levels and level skipping, a syllable or a foot
-    directly under a φ, are admitted. The syllable and the foot are strictly layered: a syllable
-    dominates nothing, and a foot a non-empty list of syllables. -/
-def Licenses : Constituent → List Constituent → Prop
-  | .syl .., ks => ks = []
-  | .ft _, ks => ks ≠ [] ∧ ∀ k ∈ ks, k.level = .syl
-  | a, ks => ∀ k ∈ ks, k.level ≤ a.level
-
-instance : ∀ (a : Constituent) (ks : List Constituent), Decidable (Licenses a ks)
-  | .syl .., ks => inferInstanceAs (Decidable (ks = []))
-  | .ft _, ks => inferInstanceAs (Decidable (ks ≠ [] ∧ ∀ k ∈ ks, k.level = .syl))
-  | .om _, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k.level ≤ (Constituent.om _).level))
-  | .ph _, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k.level ≤ (Constituent.ph _).level))
-  | .iota, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k.level ≤ Constituent.iota.level))
+instance (a : Constituent Level M) (ks : List (Constituent Level M)) : Decidable (a.Licenses ks) :=
+  inferInstanceAs (Decidable (Level.Licenses _ _))
 
 end Constituent
 
-/-- A prosodic tree is an ordered rose tree labelled by `Constituent`s; ordered children give
-    No-Tangling by construction. -/
-abbrev Tree := RoseTree Constituent
+/-- A prosodic tree is an ordered rose tree of constituents marked with syllable weight; ordered
+children give No-Tangling by construction. -/
+abbrev Tree := RoseTree (Constituent Level Syllable.Weight)
 
-/-- A syllable leaf, the metrical terminal: a syllable of weight `w` with head mark `h`. -/
-abbrev Tree.σ (w : Syllable.Weight := 0) (h : Bool := false) : Tree := .node (.syl w h) []
+/-- A metrical tree is a prosodic tree whose nodes are also marked strong or weak
+([liberman-prince-1977]). -/
+abbrev MetricalTree := RoseTree (Constituent Level (Syllable.Weight × Bool))
 
-/-- A foot node over `cs`, optionally the head foot of its word. -/
-abbrev Tree.ft (h : Bool) (cs : List Tree) : Tree := .node (.ft h) cs
+/-- The label of a node of a metrical tree: its level, its weight and its strong–weak mark. -/
+abbrev MetricalTree.Label := Constituent Level (Syllable.Weight × Bool)
+
+/-- A syllable leaf of weight `w`. -/
+abbrev Tree.σ (w : Syllable.Weight := 0) : Tree := .node ⟨.syl, w⟩ []
+
+/-- A foot node over `cs`. -/
+abbrev Tree.ft (cs : List Tree) : Tree := .node ⟨.ft, 0⟩ cs
 
 /-- A prosodic-word (ω) node over `cs`. -/
-abbrev Tree.om (cs : List Tree) : Tree := .node .om cs
+abbrev Tree.om (cs : List Tree) : Tree := .node ⟨.om, 0⟩ cs
 
 /-- A phonological-phrase (φ) node over `cs`. -/
-abbrev Tree.ph (cs : List Tree) : Tree := .node .ph cs
+abbrev Tree.ph (cs : List Tree) : Tree := .node ⟨.ph, 0⟩ cs
+
+/-- An intonational-phrase (ι) node over `cs`. -/
+abbrev Tree.iota (cs : List Tree) : Tree := .node ⟨.iota, 0⟩ cs
+
+namespace MetricalTree
+
+/-- A syllable leaf of weight `w`, strong when `h`. -/
+abbrev σ (w : Syllable.Weight := 0) (h : Bool := false) : MetricalTree := .node ⟨.syl, w, h⟩ []
+
+/-- A foot node over `cs`, strong when `h`. -/
+abbrev ft (h : Bool) (cs : List MetricalTree) : MetricalTree := .node ⟨.ft, 0, h⟩ cs
+
+/-- A prosodic-word (ω) node over `cs`, strong when `h`. -/
+abbrev om (h : Bool) (cs : List MetricalTree) : MetricalTree := .node ⟨.om, 0, h⟩ cs
+
+/-- A phonological-phrase (φ) node over `cs`, strong when `h`. -/
+abbrev ph (h : Bool) (cs : List MetricalTree) : MetricalTree := .node ⟨.ph, 0, h⟩ cs
+
+/-- An intonational-phrase (ι) node over `cs`. -/
+abbrev iota (cs : List MetricalTree) : MetricalTree := .node ⟨.iota, 0, false⟩ cs
+
+/-- The grouping of a metrical tree, its strong–weak marks forgotten. -/
+def constituency (m : MetricalTree) : Tree := m.map (Constituent.map Prod.fst)
+
+end MetricalTree
+
+variable {M : Type*}
 
 /-- Induction on a prosodic tree with the syllable leaves as base case: every other node, whether
     a foot, a word, a phrase, or an ill-formed node, is a branch, with the hypothesis for its
     children and the fact that it is not a syllable leaf. -/
 @[elab_as_elim]
-theorem Tree.recLeafBranch {motive : Tree → Prop}
+theorem Tree.recLeafBranch {motive : RoseTree (Constituent Level M) → Prop}
     (leaf : ∀ a, a.level = .syl → motive (.node a []))
     (branch : ∀ a cs, ¬(a.level = .syl ∧ cs = []) → (∀ c ∈ cs, motive c) → motive (.node a cs))
-    (t : Tree) : motive t := by
+    (t : RoseTree (Constituent Level M)) : motive t := by
   induction t using RoseTree.rec' with
   | node a cs ih =>
     by_cases h : a.level = .syl ∧ cs = []
@@ -159,10 +206,20 @@ theorem Tree.recLeafBranch {motive : Tree → Prop}
 /-- A well-formed prosodic constituent at the level `ℓ` is a tree rooted in an `ℓ`-node and
 licensed by `Constituent.Licenses`, so every node dominates only the levels Layeredness allows
 under it. -/
-def IsConstituent (ℓ : Level) (t : Tree) : Prop :=
+def IsConstituent (ℓ : Level) (t : RoseTree (Constituent Level M)) : Prop :=
   t.value.level = ℓ ∧ t.Licensed Constituent.Licenses
 
-instance (ℓ : Level) (t : Tree) : Decidable (IsConstituent ℓ t) :=
+instance (ℓ : Level) (t : RoseTree (Constituent Level M)) : Decidable (IsConstituent ℓ t) :=
   inferInstanceAs (Decidable (_ ∧ _))
+
+/-- A constituent keeps its level and well-formedness when its marks are changed. -/
+theorem isConstituent_map {N : Type*} (f : M → N) {ℓ : Level}
+    {t : RoseTree (Constituent Level M)} :
+    IsConstituent ℓ (t.map (Constituent.map f)) ↔ IsConstituent ℓ t := by
+  rw [IsConstituent, IsConstituent, RoseTree.licensed_map, RoseTree.value_map,
+    Constituent.level_map]
+  refine and_congr_right fun _ ↦ ?_
+  simp only [Constituent.Licenses, List.map_map, Constituent.level_map, Function.comp_def]
+  exact Iff.rfl
 
 end Prosody

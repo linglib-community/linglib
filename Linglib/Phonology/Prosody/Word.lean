@@ -50,13 +50,15 @@ are local `where`s. -/
 
 open OptimalityTheory
 
+variable {M : Type*}
+
 /-- **Parse-into-`ℓ`** ([ito-mester-2003]) counts σ-leaves dominated by no `ℓ`-node. -/
-def parseInto (ℓ : Level) : Constraint Tree := fun t => go false t where
-  go (under : Bool) : Tree → Nat
+def parseInto (ℓ : Level) : Constraint (RoseTree (Constituent Level M)) := fun t => go false t where
+  go (under : Bool) : RoseTree (Constituent Level M) → Nat
     | .node a cs =>
         let u := under || decide (a.level = ℓ)
         (if a.level = .syl ∧ cs = [] ∧ u = false then 1 else 0) + goList u cs
-  goList (under : Bool) : List Tree → Nat
+  goList (under : Bool) : List (RoseTree (Constituent Level M)) → Nat
     | [] => 0
     | c :: cs => go under c + goList under cs
 
@@ -96,33 +98,32 @@ licensed by `Constituent.Licenses`. Licensing is decidable, so a winner can be c
     [selkirk-1996]. A foot daughter is not required, since [dolatian-2020] reports languages
     with ω directly over σ and candidates often leave foot structure out; a stray σ and an ω
     over an ω are admitted, Exhaustivity and Nonrecursivity being violable. -/
-abbrev IsWord : Tree → Prop := IsConstituent .om
+abbrev IsWord : RoseTree (Constituent Level M) → Prop := IsConstituent .om
 
-theorem isWord_children {a : Constituent} {cs : List Tree}
+/-- The daughters of a word without recursion are feet and stray syllables. -/
+theorem isWord_children {a : Constituent Level M} {cs : List (RoseTree (Constituent Level M))}
     (hw : IsWord (.node a cs)) (hr : noRec (.node a cs) = 0) :
     a.level = .om ∧ ∀ c ∈ cs, IsFoot c ∨ (c.value.level = .syl ∧ c.children = []) := by
-  obtain ⟨ha, hl⟩ := hw
-  have ha : a.level = .om := ha
+  have ha : a.level = .om := hw.1
   refine ⟨ha, fun c hc ↦ ?_⟩
-  have hcl := hl.of_mem hc
-  have hle : c.value.level ≤ a.level := by
-    obtain ⟨hd, rfl⟩ : ∃ hd, a = .om hd := by cases a <;> simp_all [Constituent.level]
-    exact (RoseTree.licensed_node_iff.mp hl).1 c.value (List.mem_map_of_mem hc)
-  have hne : c.value.level ≠ a.level :=
-    nonrecursivity_eq_zero_iff.1 (noRec_eq_zero_iff.1 hr _) _ (.refl _) rfl c hc
-  rw [ha] at hle hne
+  have hcl := (hw.of_mem_children (c := c) hc).2
+  have hle : c.value.level ≤ .om := by
+    rw [← ha]
+    exact layeredness_eq_zero_iff.1 hw.layeredness_eq_zero _ (.refl _) c (.of_mem_children hc)
+  have hne : c.value.level ≠ .om := by
+    rw [← ha]
+    exact nonrecursivity_eq_zero_iff.1 (noRec_eq_zero_iff.1 hr _) _ (.refl _) rfl c hc
   rcases c with ⟨cl, ccs⟩
-  simp only [RoseTree.value_node] at hle hne ⊢
-  have hcases : cl.level = .syl ∨ cl.level = .ft ∨ cl.level = .om ∨ cl.level = .ph ∨
-      cl.level = .iota := by cases cl.level <;> simp
-  rcases hcases with hlv | hlv | hlv | hlv | hlv
-  · refine Or.inr ⟨hlv, ?_⟩
-    obtain ⟨w, h', rfl⟩ : ∃ w h', cl = .syl w h' := by cases cl <;> simp_all [Constituent.level]
-    simpa [Constituent.Licenses] using (RoseTree.licensed_node_iff.mp hcl).1
-  · exact Or.inl ⟨hlv, hcl⟩
-  · exact absurd hlv hne
-  · rw [hlv] at hle; exact absurd hle (by decide)
-  · rw [hlv] at hle; exact absurd hle (by decide)
+  simp only [RoseTree.value_node, RoseTree.children_node] at hle hne ⊢
+  cases hlv : cl.level with
+  | syl =>
+    have h := (RoseTree.licensed_node_iff.mp hcl).1
+    rw [Constituent.Licenses, hlv] at h
+    exact Or.inr ⟨rfl, by simpa [Level.Licenses] using h⟩
+  | ft => exact Or.inl ⟨hlv, hcl⟩
+  | om => exact absurd hlv hne
+  | ph => rw [hlv] at hle; exact absurd hle (by decide)
+  | iota => rw [hlv] at hle; exact absurd hle (by decide)
 
 /-! ### Word-size predicates -/
 
@@ -173,7 +174,7 @@ theorem MaximalWord.minimal (hne : feet t ≠ []) (h : MaximalWord measure t) :
 /-! ### Worked examples -/
 
 -- A bimoraic foot, the perfect word over it, and a recursive (ω-over-ω) word.
-private def exFoot : Tree := .ft false [.σ 2]
+private def exFoot : Tree := .ft [.σ 2]
 private def perfectW : Tree := .om [exFoot]
 private def recursiveW : Tree := .om [.σ 1, .om [exFoot]]
 
@@ -181,7 +182,7 @@ private def recursiveW : Tree := .om [.σ 1, .om [exFoot]]
 -- is admitted (No-Recursion is violable). A φ-node inside an ω violates Layeredness.
 example : IsWord perfectW := by decide
 example : IsWord recursiveW := by decide
-example : ¬ IsWord (.om [.node .ph []] : Tree) := by decide
+example : ¬ IsWord (.om [.ph []] : Tree) := by decide
 
 -- `noRec` reads the No-Recursion cost off the carrier: the recursive word scores
 -- one ω-over-ω, the flat one zero.
