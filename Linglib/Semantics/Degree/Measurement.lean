@@ -6,24 +6,32 @@ public import Mathlib.Algebra.Order.Ring.Defs
 import Mathlib.Tactic.Linarith
 
 /-!
-# Scales of measurement
+# Differentials and factors under changes of scale
 
-A *differential comparative* (*3 inches taller*) says that two measures differ by a given amount,
-and a *factor equative* (*twice as tall*) that one measure is a given multiple of another. A
-statement about measures is [meaningful](##Measurement.Meaningful) when every admissible change of
-scale preserves it: every
-strictly increasing map on an ordinal scale, every positive affine map on an interval scale, every
-positive scaling on a ratio scale. A differential needs differences but no zero, and [an affine
-change of scale acts on its amount by its linear part](##differentialComparative_comp_affineMap). A
-factor equative needs a zero, since [a translation preserves it only when the factor fixes the
-translation](##factorEquative_add_const_iff), so *twice as hot* is meaningless in degrees Celsius.
-On an ordinal scale [only the zero differential](##differentialComparative_comp_strictMono_iff) and
-[the factor $1$](##factorEquative_comp_strictMono_iff) survive.
+A *differential comparative* (*3 inches taller*) says that one measure is another moved by a
+difference, and a *factor equative* (*twice as tall*) that it is another scaled by a ratio. A
+statement about measures is meaningful when it is [invariant](##Invariant) under every admissible
+change of scale. [A change of scale that is equivariant along a map of
+amounts](##factorEquative_comp_iff) carries each statement to the one at the image amount, so [an
+affine change of scale acts on a differential by its linear
+part](##differentialComparative_comp_affineMap), and [an action that commutes with the
+amounts](##factorEquative_const_smul) preserves the statement, as a common unit does for ratios and
+a common origin for differences. A factor equative needs a zero, since [a translation preserves it
+only when the factor fixes the translation](##factorEquative_add_const_iff). On an ordinal scale
+[only the zero differential](##differentialComparative_comp_strictMono_iff) and [the factor
+$1$](##factorEquative_comp_strictMono_iff) survive.
 
 ## Implementation notes
 
-A differential takes degrees in an additive torsor and amounts in its group, so dates or degrees
-Celsius need no origin; a factor multiplies degrees and so needs a ring.
+Amounts act on degrees, ratios by `SMul` and differences by `VAdd`, so a ratio need not itself be a
+degree, and dates or degrees Celsius need no origin. The differential comparative is the additive
+form of the factor equative.
+
+## TODO
+
+The admissible changes of scale are taken as given. Measurement theory derives them from the
+representations of a qualitative structure, and `Aggregation` consumes `Invariant` from here only
+for want of that theory.
 
 ## References
 
@@ -37,48 +45,62 @@ Celsius need no origin; a factor multiplies degrees and so needs a ring.
 
 open Function
 
-variable {E : Type*}
+variable {E M N C D D' : Type*}
 
-/-! ### Differentials -/
+/-! ### Differentials and factors -/
 
-section Differential
+/-- The factor equative *a is n times as Adj as b* holds when the measure of `a` is that of `b`
+scaled by `n`. -/
+@[to_additive DifferentialComparative
+/-- The differential comparative *a is d-much Adj-er than b* holds when the measure of `a` is that
+of `b` moved by `d`. -/]
+def FactorEquative [SMul M D] (μ : E → D) (a b : E) (n : M) : Prop :=
+  μ a = n • μ b
 
-/-- The differential comparative *a is d-much Adj-er than b* holds when the measure of `a` exceeds
-that of `b` by `d`. It uses differences of degrees and no zero, so the degrees may form an affine
-space, as on an interval scale. -/
-def DifferentialComparative {V P : Type*} [VSub V P] (μ : E → P) (a b : E) (d : V) : Prop :=
-  μ a -ᵥ μ b = d
+theorem differentialComparative_iff_vsub_eq {V P : Type*} [AddGroup V] [AddTorsor V P]
+    {μ : E → P} {a b : E} {d : V} : DifferentialComparative μ a b d ↔ μ a -ᵥ μ b = d :=
+  eq_vadd_iff_vsub_eq _ _ _
 
--- [sassoon-2010] (13b)
-theorem lt_iff_exists_differentialComparative {D : Type*} [AddGroup D] [LT D]
-    [AddRightStrictMono D] {μ : E → D} {a b : E} :
-    μ b < μ a ↔ ∃ d, 0 < d ∧ DifferentialComparative μ a b d := by
-  simp [DifferentialComparative, sub_pos]
+/-! ### Changes of scale -/
 
-section Torsor
+section Comp
 
-variable {V₁ V₂ P₁ P₂ : Type*} [AddGroup V₁] [AddGroup V₂] [AddTorsor V₁ P₁] [AddTorsor V₂ P₂]
-  {g : P₁ → P₂} {d : V₁} {d' : V₂}
+variable [SMul M D] [SMul N D'] {g : D → D'} {σ : M → N} {n : M} {n' : N}
 
-theorem differentialComparative_comp_of_semiconj (hg : Injective g)
-    (h : Semiconj g (d +ᵥ ·) (d' +ᵥ ·)) (μ : E → P₁) (a b : E) :
-    DifferentialComparative (g ∘ μ) a b d' ↔ DifferentialComparative μ a b d := by
-  have h : g (d +ᵥ μ b) = d' +ᵥ g (μ b) := h (μ b)
-  rw [DifferentialComparative, DifferentialComparative, ← eq_vadd_iff_vsub_eq,
-    ← eq_vadd_iff_vsub_eq, comp_apply, comp_apply, ← h, hg.eq_iff]
+@[to_additive differentialComparative_comp_of_semiconj]
+theorem factorEquative_comp_of_semiconj (hg : Injective g)
+    (h : Semiconj g (n • ·) (n' • ·)) (μ : E → D) (a b : E) :
+    FactorEquative (g ∘ μ) a b n' ↔ FactorEquative μ a b n := by
+  have h : g (n • μ b) = n' • g (μ b) := h (μ b)
+  simp only [FactorEquative, comp_apply, ← h, hg.eq_iff]
 
-theorem differentialComparative_comp_iff_semiconj [Nontrivial E] (hg : Injective g) :
-    (∀ (μ : E → P₁) a b,
-      DifferentialComparative (g ∘ μ) a b d' ↔ DifferentialComparative μ a b d) ↔
-      Semiconj g (d +ᵥ ·) (d' +ᵥ ·) := by
-  refine ⟨fun h x ↦ ?_, fun h μ a b ↦ differentialComparative_comp_of_semiconj hg h μ a b⟩
+@[to_additive differentialComparative_comp_iff_semiconj]
+theorem factorEquative_comp_iff_semiconj [Nontrivial E] (hg : Injective g) :
+    (∀ (μ : E → D) a b, FactorEquative (g ∘ μ) a b n' ↔ FactorEquative μ a b n) ↔
+      Semiconj g (n • ·) (n' • ·) := by
+  refine ⟨fun h x ↦ ?_, fun h μ a b ↦ factorEquative_comp_of_semiconj hg h μ a b⟩
   classical
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
-  have := (h (fun e ↦ if e = a then d +ᵥ x else x) a b).2 (by
-    simp [DifferentialComparative, hab.symm])
-  simpa [DifferentialComparative, hab.symm, eq_vadd_iff_vsub_eq] using this
+  have := (h (fun e ↦ if e = a then n • x else x) a b).2 (by simp [FactorEquative, hab.symm])
+  simpa [FactorEquative, hab.symm] using this
 
-end Torsor
+/-- An injective change of scale that is equivariant along a map `σ` of amounts carries each
+statement to the statement whose amount is the image under `σ`. -/
+@[to_additive differentialComparative_comp_iff]
+theorem factorEquative_comp_iff (hg : Injective g) (h : ∀ m x, g (m • x) = σ m • g x)
+    (μ : E → D) (a b : E) (n : M) :
+    FactorEquative (g ∘ μ) a b (σ n) ↔ FactorEquative μ a b n :=
+  factorEquative_comp_of_semiconj hg (h n) μ a b
+
+end Comp
+
+/-- An action on degrees that commutes with the amounts preserves every statement, as a common
+unit does for ratios and a common origin for differences. -/
+@[to_additive differentialComparative_const_vadd]
+theorem factorEquative_const_smul [SMul M D] [SMul C D] [SMulCommClass C M D] {c : C}
+    (hc : Injective (c • · : D → D)) (μ : E → D) (a b : E) (n : M) :
+    FactorEquative (fun x ↦ c • μ x) a b n ↔ FactorEquative μ a b n :=
+  factorEquative_comp_iff (g := (c • ·)) (σ := id) hc (fun m x ↦ smul_comm c m x) μ a b n
 
 /-- An injective affine change of scale carries a differential to the differential whose amount is
 the image under its linear part, so the differences of an interval scale form a ratio scale. -/
@@ -86,29 +108,43 @@ theorem differentialComparative_comp_affineMap {k V₁ V₂ P₁ P₂ : Type*} [
     [Module k V₁] [AddTorsor V₁ P₁] [AddCommGroup V₂] [Module k V₂] [AddTorsor V₂ P₂]
     (f : P₁ →ᵃ[k] P₂) (hf : Injective f) (μ : E → P₁) (a b : E) (d : V₁) :
     DifferentialComparative (f ∘ μ) a b (f.linear d) ↔ DifferentialComparative μ a b d :=
-  differentialComparative_comp_of_semiconj hf (fun x ↦ f.map_vadd x d) μ a b
+  differentialComparative_comp_iff hf (fun d x ↦ f.map_vadd x d) μ a b d
 
-theorem differentialComparative_const_mul_add_const {k : Type*} [Ring k] [IsDomain k]
-    (μ : E → k) {a : k} (ha : a ≠ 0) (b : k) (x y : E) (d : k) :
-    DifferentialComparative (fun e ↦ a * μ e + b) x y (a * d) ↔
-      DifferentialComparative μ x y d :=
-  differentialComparative_comp_of_semiconj (g := (a * · + b))
-    ((add_left_injective b).comp (mul_right_injective₀ ha))
-    (fun t ↦ by simp only [vadd_eq_add, mul_add, add_assoc]) μ x y
+/-! ### Invariance -/
+
+/-- A function of measures is invariant under a class of changes of scale when none of them
+changes its value. A statement invariant under the changes of a scale is meaningful on it. -/
+def Invariant {β : Type*} (S : Set (D → D)) (a : (E → D) → β) : Prop :=
+  ∀ g ∈ S, ∀ μ, a (g ∘ μ) = a μ
+
+theorem Invariant.mono {β : Type*} {S T : Set (D → D)} (h : S ⊆ T) {a : (E → D) → β}
+    (ha : Invariant T a) : Invariant S a :=
+  fun g hg ↦ ha g (h hg)
+
+/-- Comparing two measures is meaningful on an ordinal scale. -/
+theorem invariant_strictMono_lt [LinearOrder D] (a b : E) :
+    Invariant {u : D → D | StrictMono u} fun μ ↦ μ b < μ a :=
+  fun _ hu _ ↦ propext (StrictMono.lt_iff_lt hu)
+
+/-! ### Numerical scales -/
+
+-- [sassoon-2010] (13b)
+theorem lt_iff_exists_differentialComparative [AddGroup D] [LT D] [AddRightStrictMono D]
+    {μ : E → D} {a b : E} : μ b < μ a ↔ ∃ d : D, 0 < d ∧ DifferentialComparative μ a b d := by
+  simp [differentialComparative_iff_vsub_eq, sub_pos]
 
 /-- Reversing a scale about a point reverses every differential, so *b is d shorter than a* holds
 exactly when *a is d taller than b*, whichever point a negative adjective reverses its antonym
 about ([sassoon-2010] (19)). -/
-theorem differentialComparative_const_sub {D : Type*} [AddCommGroup D] (μ : E → D) (m : D)
-    (a b : E) (d : D) :
+theorem differentialComparative_const_sub [AddCommGroup D] (μ : E → D) (m : D) (a b : E) (d : D) :
     DifferentialComparative (fun e ↦ m - μ e) b a d ↔ DifferentialComparative μ a b d := by
-  simp only [DifferentialComparative, vsub_eq_sub, sub_sub_sub_cancel_left]
+  simp only [differentialComparative_iff_vsub_eq, vsub_eq_sub, sub_sub_sub_cancel_left]
 
 /-- Every strictly increasing change of scale carries a differential to some differential exactly
 when its amount is zero, so a differential needs more than an ordinal scale. -/
 theorem differentialComparative_comp_strictMono_iff {k : Type*} [CommRing k] [LinearOrder k]
     [IsStrictOrderedRing k] [Nontrivial E] {d : k} :
-    (∀ g : k → k, StrictMono g → ∃ d', ∀ (μ : E → k) a b,
+    (∀ g : k → k, StrictMono g → ∃ d' : k, ∀ (μ : E → k) a b,
       DifferentialComparative (g ∘ μ) a b d' ↔ DifferentialComparative μ a b d) ↔ d = 0 := by
   refine ⟨fun h ↦ ?_, ?_⟩
   · have hg : StrictMono fun x : k ↦ max x (2 * x) := fun x y hxy ↦
@@ -127,42 +163,7 @@ theorem differentialComparative_comp_strictMono_iff {k : Type*} [CommRing k] [Li
       rw [max_eq_left (by linarith : 2 * -d ≤ -d)] at h₁
       linarith
   · rintro rfl g hg
-    exact ⟨0, fun μ a b ↦ by
-      simp [DifferentialComparative, sub_eq_zero, hg.injective.eq_iff]⟩
-
-end Differential
-
-/-! ### Factors -/
-
-section Factor
-
-variable {D : Type*} {g : D → D} {n n' : D}
-
-/-- The factor equative *a is n times as Adj as b* holds when the measure of `a` is `n` times that
-of `b`. It multiplies degrees, so it needs a zero, as on a ratio scale. -/
-def FactorEquative [Mul D] (μ : E → D) (a b : E) (n : D) : Prop :=
-  μ a = n * μ b
-
-theorem factorEquative_comp_of_semiconj [Mul D] (hg : Injective g)
-    (h : Semiconj g (n * ·) (n' * ·)) (μ : E → D) (a b : E) :
-    FactorEquative (g ∘ μ) a b n' ↔ FactorEquative μ a b n := by
-  have h : g (n * μ b) = n' * g (μ b) := h (μ b)
-  simp only [FactorEquative, comp_apply, ← h, hg.eq_iff]
-
-theorem factorEquative_comp_iff_semiconj [Mul D] [Nontrivial E] (hg : Injective g) :
-    (∀ (μ : E → D) a b, FactorEquative (g ∘ μ) a b n' ↔ FactorEquative μ a b n) ↔
-      Semiconj g (n * ·) (n' * ·) := by
-  refine ⟨fun h x ↦ ?_, fun h μ a b ↦ factorEquative_comp_of_semiconj hg h μ a b⟩
-  classical
-  obtain ⟨a, b, hab⟩ := exists_pair_ne E
-  have := (h (fun e ↦ if e = a then n * x else x) a b).2 (by simp [FactorEquative, hab.symm])
-  simpa [FactorEquative, hab.symm] using this
-
-theorem factorEquative_const_mul [CommMonoidWithZero D] [IsCancelMulZero D] (μ : E → D) {c : D}
-    (hc : c ≠ 0) (a b : E) (n : D) :
-    FactorEquative (fun x ↦ c * μ x) a b n ↔ FactorEquative μ a b n :=
-  factorEquative_comp_of_semiconj (g := (c * ·)) (mul_right_injective₀ hc)
-    (fun x ↦ mul_left_comm c n x) μ a b
+    exact ⟨0, fun μ a b ↦ by simp [DifferentialComparative, hg.injective.eq_iff]⟩
 
 /-- Translating a scale by `c` carries the factor equative of factor `n` to that of factor `n'`
 exactly when `n' = n` and `n` fixes `c`, so moving the zero of a scale destroys ratios. -/
@@ -179,65 +180,11 @@ theorem factorEquative_add_const_iff [Ring D] [Nontrivial E] (c n n' : D) :
 /-- Every strictly increasing change of scale carries a factor equative to some factor equative
 exactly when its factor is `1`, so a factor equative needs more than an ordinal scale. -/
 theorem factorEquative_comp_strictMono_iff [Ring D] [LinearOrder D] [IsStrictOrderedRing D]
-    [Nontrivial E] :
-    (∀ g : D → D, StrictMono g → ∃ n', ∀ (μ : E → D) a b,
+    [Nontrivial E] {n : D} :
+    (∀ g : D → D, StrictMono g → ∃ n' : D, ∀ (μ : E → D) a b,
       FactorEquative (g ∘ μ) a b n' ↔ FactorEquative μ a b n) ↔ n = 1 := by
   refine ⟨fun h ↦ ?_, ?_⟩
   · obtain ⟨n', hn'⟩ := h (· + 1) (strictMono_id.add_const 1)
     simpa using ((factorEquative_add_const_iff (E := E) 1 n n').1 hn').2
   · rintro rfl g hg
     exact ⟨1, fun μ a b ↦ by simp [FactorEquative, hg.injective.eq_iff]⟩
-
-end Factor
-
-/-! ### Changes of scale -/
-
-namespace Measurement
-
-section Scale
-
-variable {K : Type*} [Semiring K] [PartialOrder K]
-
-/-- The positive affine transformations `t ↦ a * t + b` with `0 < a`, the changes of scale of
-an interval scale. -/
-def positiveAffine : Set (K → K) := {u | ∃ a : K, 0 < a ∧ ∃ b : K, ∀ t, u t = a * t + b}
-
-/-- The similarity transformations `t ↦ a * t` with `0 < a`, the changes of scale of a ratio
-scale. -/
-def similarity : Set (K → K) := {u | ∃ a : K, 0 < a ∧ ∀ t, u t = a * t}
-
-theorem similarity_subset_positiveAffine : similarity ⊆ (positiveAffine : Set (K → K)) :=
-  fun _ ⟨a, ha, hu⟩ ↦ ⟨a, ha, 0, fun t ↦ by rw [hu, add_zero]⟩
-
-theorem positiveAffine_subset_strictMono [IsStrictOrderedRing K] :
-    positiveAffine ⊆ {u : K → K | StrictMono u} :=
-  fun _ ⟨a, ha, b, hu⟩ s t hst ↦ by
-    simp only [hu]
-    exact add_lt_add_left (mul_lt_mul_of_pos_left hst ha) _
-
-end Scale
-
-variable {D : Type*}
-
-/-- A statement about a measure is meaningful on a scale whose changes are `S` when every change
-of scale in `S` preserves it. -/
-def Meaningful (S : Set (D → D)) (φ : (E → D) → Prop) : Prop :=
-  ∀ u ∈ S, ∀ μ, φ (u ∘ μ) ↔ φ μ
-
-theorem Meaningful.mono {S T : Set (D → D)} (h : S ⊆ T) {φ : (E → D) → Prop}
-    (hφ : Meaningful T φ) : Meaningful S φ :=
-  fun u hu ↦ hφ u (h hu)
-
-/-- Comparing two measures is meaningful on an ordinal scale. -/
-theorem meaningful_strictMono_lt [LinearOrder D] (a b : E) :
-    Meaningful {u : D → D | StrictMono u} fun μ ↦ μ b < μ a :=
-  fun _ hu _ ↦ StrictMono.lt_iff_lt hu
-
-/-- A factor equative is meaningful on a ratio scale. -/
-theorem meaningful_similarity_factorEquative [CommSemiring D] [PartialOrder D] [IsCancelMulZero D]
-    (a b : E) (n : D) : Meaningful similarity fun μ ↦ FactorEquative μ a b n := by
-  rintro u ⟨c, hc, hu⟩ μ
-  rw [show u ∘ μ = fun x ↦ c * μ x from funext fun _ ↦ hu _]
-  exact factorEquative_const_mul μ hc.ne' a b n
-
-end Measurement

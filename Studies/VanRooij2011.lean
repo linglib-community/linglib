@@ -10,7 +10,7 @@ public import Linglib.Semantics.Degree.UniversalScale
 Van Rooij measures individual–adjective pairs on one scale, so that *x is P-er than y is Q* compares
 two values of a single measure, and asks which changes of scale such a statement survives. The
 changes that preserve every comparison of pairs are [exactly the strictly increasing maps applied
-to all adjectives alike](##forall_comparative_transform_iff), a co-ordinal scale; [a separate
+to all adjectives alike](##forall_comparative_comp_iff), a co-ordinal scale; [a separate
 origin for each adjective](##not_comparative_cardinalUnit) already undoes the comparison. A
 differential across adjectives needs a common unit and origin, a co-interval scale, on which a
 factor across adjectives [survives only as the factor $1$](##factor_cardinalFull_iff). Bale's
@@ -51,7 +51,7 @@ one](##utilitarian_coInterval).
 
 namespace VanRooij2011
 
-open Aggregation Finset Function Measurement
+open Aggregation Finset Function
 
 variable {X Ad : Type*}
 
@@ -79,27 +79,27 @@ section Sentences
 variable (x y z w : X) (P Q : Ad)
 
 theorem comparative_ordinalLevel : Invariant ordinalLevel (comparative x P y Q) :=
-  (meaningful_strictMono_lt (x, P) (y, Q)).invariant
+  (invariant_strictMono_lt (x, P) (y, Q)).uncurry
 
 /-- A change of scale preserves every comparison of individual–adjective pairs exactly when it
 applies one strictly increasing map to all adjectives, so the measure of pairs is unique up to the
 transformations of a co-ordinal scale. -/
 -- pp. 348–349
-theorem forall_comparative_transform_iff [Nontrivial X] {f : Ad → ℝ → ℝ} :
+theorem forall_comparative_comp_iff [Nontrivial X] {g : (Ad → ℝ) → Ad → ℝ} :
     (∀ (v : Profile Ad X ℝ) x P y Q,
-      comparative x P y Q (v.transform f) ↔ comparative x P y Q v) ↔ f ∈ ordinalLevel := by
-  refine ⟨fun h ↦ ?_, fun hf v x P y Q ↦ (comparative_ordinalLevel x y P Q f hf v).to_iff⟩
+      comparative x P y Q (g ∘ v) ↔ comparative x P y Q v) ↔ g ∈ ordinalLevel := by
+  refine ⟨fun h ↦ ?_, fun hg v x P y Q ↦ (comparative_ordinalLevel x y P Q g hg v).to_iff⟩
   obtain ⟨x, y, hxy⟩ := exists_pair_ne X
   classical
-  have hmono (P : Ad) : StrictMono (f P) := fun s t hst ↦ by
-    have := (h (fun z _ ↦ if z = x then t else s) x P y P).2 (by simp [comparative, hxy.symm, hst])
-    simpa [comparative, Profile.transform, hxy.symm] using this
-  have hle (P Q : Ad) (t : ℝ) : f P t ≤ f Q t := by
-    by_contra hlt
-    exact lt_irrefl t ((h (fun _ _ ↦ t) x P y Q).1 (not_le.1 hlt))
-  rcases isEmpty_or_nonempty Ad with _ | ⟨⟨P⟩⟩
+  have key (p q : Ad → ℝ) (P Q : Ad) : g q Q < g p P ↔ q Q < p P := by
+    simpa [comparative, hxy.symm] using h (fun z ↦ if z = x then p else q) x P y Q
+  have hconst (p : Ad → ℝ) (P P' : Ad) : g p P = g (fun _ ↦ p P) P' :=
+    le_antisymm (not_lt.1 fun hlt ↦ lt_irrefl (p P) ((key p _ P P').1 hlt))
+      (not_lt.1 fun hlt ↦ lt_irrefl (p P) ((key _ p P' P).1 hlt))
+  rcases isEmpty_or_nonempty Ad with _ | ⟨⟨P₀⟩⟩
   · exact ⟨id, strictMono_id, Subsingleton.elim _ _⟩
-  · exact ⟨f P, hmono P, funext₂ fun Q t ↦ le_antisymm (hle P Q t) (hle Q P t)⟩
+  · exact ⟨fun t ↦ g (fun _ ↦ t) P₀, fun s t hst ↦ (key _ _ P₀ P₀).2 hst,
+      funext₂ fun p P ↦ (hconst p P P₀).symm⟩
 
 /-- A common unit with a separate origin for each adjective does not make a comparison across two
 adjectives meaningful. -/
@@ -109,28 +109,26 @@ theorem not_comparative_cardinalUnit (hPQ : P ≠ Q) :
   intro h
   classical
   let v : Profile Ad X ℝ := fun _ i ↦ if i = P then 1 else 0
-  let f : Ad → ℝ → ℝ := fun i t ↦ 1 * t + if i = Q then 2 else 0
+  let g : (Ad → ℝ) → Ad → ℝ := fun p i ↦ 1 * p i + if i = Q then 2 else 0
   have h₁ : comparative x P y Q v := by simp [comparative, v, hPQ.symm]
-  have h₂ : ¬ comparative x P y Q (v.transform f) := by
-    norm_num [comparative, Profile.transform, v, f, hPQ, hPQ.symm]
-  exact h₂ (h f ⟨1, one_pos, _, fun _ _ ↦ rfl⟩ v ▸ h₁)
+  have h₂ : ¬ comparative x P y Q (g ∘ v) := by
+    norm_num [comparative, v, g, hPQ, hPQ.symm]
+  exact h₂ (h g (mem_cardinalUnit.2 ⟨1, one_pos, _, rfl⟩) v ▸ h₁)
 
 theorem not_comparative_ordinal (hPQ : P ≠ Q) : ¬ Invariant ordinal (comparative x P y Q) :=
   fun h ↦ not_comparative_cardinalUnit x y P Q hPQ (h.mono cardinalUnit_subset_ordinal)
 
 -- p. 349: a co-interval scale makes "5 cm taller than Mary is wide" meaningful
-theorem differential_cardinalFull {f : Ad → ℝ → ℝ} (hf : f ∈ cardinalFull) :
+theorem differential_cardinalFull {g : (Ad → ℝ) → Ad → ℝ} (hg : g ∈ cardinalFull) :
     ∃ a > 0, ∀ d (v : Profile Ad X ℝ),
-      differential x P y Q (a * d) (v.transform f) ↔ differential x P y Q d v := by
-  obtain ⟨u, ⟨a, ha, b, hu⟩, rfl⟩ := hf
-  refine ⟨a, ha, fun d v ↦ ?_⟩
-  rw [differential, differential, Profile.uncurry_transform_const,
-    show u ∘ uncurry v = fun p ↦ a * uncurry v p + b from funext fun _ ↦ hu _]
-  exact differentialComparative_const_mul_add_const _ ha.ne' b _ _ d
+      differential x P y Q (a * d) (g ∘ v) ↔ differential x P y Q d v := by
+  obtain ⟨u, hu, rfl⟩ := hg
+  obtain ⟨a, ha, h⟩ := exists_differentialComparative_comp_iff (E := X × Ad) hu
+  exact ⟨a, ha, fun d v ↦ h (uncurry v) _ _ d⟩
 
 -- p. 349: a co-ratio scale
 theorem factor_ratioFull (n : ℝ) : Invariant ratioFull (factor x P y Q n) :=
-  (meaningful_similarity_factorEquative (x, P) (y, Q) n).invariant
+  (invariant_similarity_factorEquative (x, P) (y, Q) n).uncurry
 
 /-- On a co-interval scale *x is n times as P as y is Q* is meaningful only for the factor $1$,
 since a common change of origin moves every other ratio. -/
@@ -141,18 +139,19 @@ theorem factor_cardinalFull_iff {n : ℝ} (hne : (x, P) ≠ (y, Q)) :
     have hyQ : ¬ (y = x ∧ Q = P) := fun ⟨h₁, h₂⟩ ↦ hne (by rw [h₁, h₂])
     let v : Profile Ad X ℝ := fun z i ↦ if z = x ∧ i = P then n else 1
     have h₁ : factor x P y Q n v := by simp [factor, FactorEquative, v, hyQ]
-    have h₂ := (h (const Ad fun t ↦ 1 * t + 1) ⟨_, ⟨1, one_pos, 1, fun _ ↦ rfl⟩, rfl⟩ v).mpr h₁
-    simp only [factor, FactorEquative, uncurry_apply_pair, Profile.transform, const_apply, v,
+    have h₂ := (h _ ⟨fun t ↦ 1 * t + 1, ⟨1, one_pos, 1, fun _ ↦ rfl⟩, rfl⟩ v).mpr h₁
+    simp only [factor, FactorEquative, uncurry_apply_pair, comp_apply, smul_eq_mul, v,
       and_self, ite_true, hyQ, ite_false] at h₂
     linarith
   · rintro rfl _ ⟨u, ⟨a, ha, b, hu⟩, rfl⟩ v
-    simp [factor, FactorEquative, Profile.transform, hu, ha.ne']
+    simp [factor, FactorEquative, hu, ha.ne']
 
 -- p. 349, note 17: each origin cancels within its own difference
 theorem differenceComparative_cardinalUnit :
     Invariant cardinalUnit (differenceComparative x y P z w Q) := by
-  rintro f ⟨a, ha, b, hf⟩ v
-  simp only [differenceComparative, Profile.transform, hf]
+  rintro g hg v
+  obtain ⟨a, ha, b, rfl⟩ := mem_cardinalUnit.1 hg
+  simp only [differenceComparative, comp_apply]
   rw [show ∀ s t c : ℝ, a * s + c - (a * t + c) = a * (s - t) from fun _ _ _ ↦ by ring,
     show ∀ s t c : ℝ, a * s + c - (a * t + c) = a * (s - t) from fun _ _ _ ↦ by ring,
     mul_lt_mul_iff_of_pos_left ha]
@@ -167,15 +166,15 @@ section Universal
 noncomputable def universal (v : Profile Ad X ℝ) (C : Finset X) : Profile Ad X ℚ :=
   fun x P ↦ universalDegree (v · P) C x
 
-theorem universal_transform {f : Ad → ℝ → ℝ} (hf : f ∈ (ordinal : Set (Ad → ℝ → ℝ)))
-    (v : Profile Ad X ℝ) (C : Finset X) : universal (v.transform f) C = universal v C :=
-  funext₂ fun x P ↦ congrFun (universalDegree_comp
-    (OrderEmbedding.ofStrictMono (f P) (mem_ordinal.1 hf P))
-    (v · P) C) x
+theorem universal_comp {g : (Ad → ℝ) → Ad → ℝ} (hg : g ∈ ordinal) (v : Profile Ad X ℝ)
+    (C : Finset X) : universal (g ∘ v) C = universal v C := by
+  obtain ⟨f, hf, rfl⟩ := mem_ordinal.1 hg
+  exact funext₂ fun x P ↦ congrFun
+    (universalDegree_comp (OrderEmbedding.ofStrictMono (f P) (hf P)) (v · P) C) x
 
 theorem universal_ordinal {β : Type*} (C : Finset X) (a : Profile Ad X ℚ → β) :
     Invariant ordinal fun v : Profile Ad X ℝ ↦ a (universal v C) :=
-  fun _ hf v ↦ congrArg a (universal_transform hf v C)
+  fun _ hg v ↦ congrArg a (universal_comp hg v C)
 
 /-- Read through universal degrees, *x is n times as P as y is Q* survives a separate strictly
 increasing map per adjective, so a ratio across adjectives becomes meaningful although each
