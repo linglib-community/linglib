@@ -135,14 +135,9 @@ theorem pexPlural_eq_false_iff : pexPlural D x P R w = .false ↔ ∀ a ∈ x, a
 
 private theorem biUnion_ne_of_card_lt (h : Separating (x ∩ D) (atom P)) {T : Finset Atom}
     (hT : T ⊆ x ∩ D) (hlt : T.card < (x ∩ D).card) :
-    ⋃ i ∈ T, atom P i ≠ ⋃ i ∈ x ∩ D, atom P i := by
-  intro heq
-  obtain ⟨b, hb, hbT⟩ := Finset.exists_mem_notMem_of_card_lt_card hlt
-  obtain ⟨wb, hwb⟩ := h.single b hb
-  have hin : wb ∈ ⋃ i ∈ x ∩ D, atom P i := Set.mem_biUnion hb ((hwb b hb).2 rfl)
-  rw [← heq] at hin
-  obtain ⟨i, hi, hPi⟩ := Set.mem_iUnion₂.1 hin
-  exact hbT (((hwb i (hT hi)).1 hPi) ▸ hi)
+    ⋃ i ∈ T, atom P i ≠ ⋃ i ∈ x ∩ D, atom P i := fun heq ↦
+  hlt.not_ge (Finset.card_le_card
+    ((biUnion_subset_biUnion_iff h.single subset_rfl hT).1 heq.ge))
 
 section Pruning
 

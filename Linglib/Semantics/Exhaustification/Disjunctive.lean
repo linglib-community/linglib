@@ -55,13 +55,36 @@ structure Separating : Prop where
   /-- All the disjuncts hold together at some world. -/
   all : ∃ w, ∀ i ∈ I, w ∈ p i
 
-/-- Independent disjuncts, any combination of which is realized at some world, are separated. -/
+/-- Independent disjuncts, any nonempty combination of which is realized at some world, are
+separated. -/
 theorem Separating.of_forall_subset [DecidableEq ι]
-    (h : ∀ T ⊆ I, ∃ w, ∀ i ∈ I, w ∈ p i ↔ i ∈ T) : Separating I p where
+    (h : ∀ T ⊆ I, T.Nonempty → ∃ w, ∀ i ∈ I, w ∈ p i ↔ i ∈ T) (hI : I.Nonempty) :
+    Separating I p where
   single i hi :=
-    let ⟨w, hw⟩ := h {i} (Finset.singleton_subset_iff.2 hi)
+    let ⟨w, hw⟩ := h {i} (Finset.singleton_subset_iff.2 hi) (Finset.singleton_nonempty i)
     ⟨w, fun j hj ↦ (hw j hj).trans Finset.mem_singleton⟩
-  all := let ⟨w, hw⟩ := h I subset_rfl; ⟨w, fun i hi ↦ (hw i hi).2 hi⟩
+  all := let ⟨w, hw⟩ := h I subset_rfl hI; ⟨w, fun i hi ↦ (hw i hi).2 hi⟩
+
+/-- For separated disjuncts, one disjunction entails another exactly when its disjuncts are
+among the other's. -/
+theorem biUnion_subset_biUnion_iff (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i)
+    {S T : Finset ι} (hS : S ⊆ I) (hT : T ⊆ I) :
+    ⋃ i ∈ S, p i ⊆ ⋃ i ∈ T, p i ↔ S ⊆ T := by
+  refine ⟨fun h i hi ↦ ?_, fun h ↦ Set.biUnion_subset_biUnion_left (Finset.coe_subset.2 h)⟩
+  obtain ⟨w, hw⟩ := hsep i (hS hi)
+  obtain ⟨k, hk, hwk⟩ := Set.mem_iUnion₂.1 (h (Set.mem_biUnion hi ((hw i (hS hi)).2 rfl)))
+  exact (hw k (hT hk)).1 hwk ▸ hk
+
+/-- For separated disjuncts, taking the disjunction over a subset of them is an order
+embedding. -/
+def biUnionOrderEmbedding (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i) :
+    {S : Finset ι // S ⊆ I} ↪o Set World :=
+  OrderEmbedding.ofMapLEIff (fun S ↦ ⋃ i ∈ S.1, p i) fun S T ↦
+    biUnion_subset_biUnion_iff hsep S.2 T.2
+
+@[simp] theorem biUnionOrderEmbedding_apply (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i)
+    (S : {S : Finset ι // S ⊆ I}) : biUnionOrderEmbedding hsep S = ⋃ i ∈ S.1, p i :=
+  rfl
 
 theorem Separating.biUnion_nonempty (h : Separating I p) (hI : I.Nonempty) :
     (⋃ i ∈ I, p i).Nonempty :=

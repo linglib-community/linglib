@@ -1,7 +1,7 @@
 module
 
 public import Studies.BarLevFox2020
-public import Linglib.Semantics.Exhaustification.Pruning
+public import Linglib.Semantics.Alternatives.Pruning
 public import Linglib.Semantics.Homogeneity.Plural
 public import Linglib.Data.Statistics.KrizChemla2015
 
@@ -18,10 +18,10 @@ come from pruning: a set of alternatives may replace the whole set when exhausti
 only weakens the universal reading, which holds exactly when it makes no alternative innocently
 excludable, and the readings so derived are [the conjunctions of alternatives that are not
 themselves alternatives, and the plain existential
-one](##Exhaustification.prunedReadings_eq). They include "at least `k`" for every `k` and lie
+one](##Alternatives.prunedReadings_eq). They include "at least `k`" for every `k` and lie
 among Križ and Spector's candidate meanings. The question the context raises selects the
 strongest reading it determines; [every reading is selected by the question whether it
-holds](##Exhaustification.isPrunedReading_polar), and a world is gappy, true on the reading one
+holds](##Alternatives.isPrunedReading_polar), and a world is gappy, true on the reading one
 question selects and false on another's, [exactly where trivalent plural predication is
 undefined](##gappy_iff_barePlural_eq_undefined).
 
@@ -30,7 +30,7 @@ undefined](##gappy_iff_barePlural_eq_undefined).
 The prejacent and the alternatives are the disjunction of the atomic predications over the atoms
 of the plurality and its closure under disjunction, the form the paper adopts once the domain is
 assumed to hold every part of the plurality; the general theory of exhaustifying and pruning such
-a disjunction is `Exhaustification.exhIEII_supClosure` and `Exhaustification.prunedReadings`.
+a disjunction is `Exhaustification.exhIEII_supClosure` and `Alternatives.prunedReadings`.
 `Gappy` ranges over all partitions and is context-free; that a context fixing the partition
 removes the gap is carried by `reading_80` and `reading_81`.
 
@@ -63,7 +63,7 @@ removes the gap is carried by `reading_80` and `reading_81`.
 
 namespace BarLev2021
 
-open Exhaustification
+open Exhaustification Alternatives
 
 variable {Atom W : Type*} {x : Finset Atom} {P : Atom → W → Prop}
 
@@ -91,7 +91,8 @@ theorem supClosure_subset_readings :
 
 -- So is each reading that pruning derives.
 theorem prunedReadings_subset_readings (h : Separating x (atom P)) (hne : x.Nonempty) :
-    prunedReadings x (atom P) ⊆ Homogeneity.readings (fun z ↦ {w | ∀ a ∈ z, P a w}) x := by
+    prunedReadings (supClosure (atom P '' ↑x)) (⋃ a ∈ x, atom P a) ⊆
+      Homogeneity.readings (fun z ↦ {w | ∀ a ∈ z, P a w}) x := by
   rw [Homogeneity.readings_eq_latticeClosure hne]
   exact (prunedReadings_subset_infClosure h hne).trans (infClosure_min (supClosure_min
     subset_latticeClosure isSublattice_latticeClosure.supClosed)
@@ -131,21 +132,24 @@ variable (x P) in
 /-- A world is gappy when it is true on the reading some partition selects and false on another's.
 -/
 def Gappy (w : W) : Prop :=
-  (∃ (Q : Setoid W) (q : Set W), IsPrunedReading x (atom P) Q q ∧ w ∈ q) ∧
-    ∃ (Q : Setoid W) (q : Set W), IsPrunedReading x (atom P) Q q ∧ w ∉ q
+  (∃ (Q : Setoid W) (q : Set W),
+      IsPrunedReading (supClosure (atom P '' ↑x)) (⋃ a ∈ x, atom P a) Q q ∧ w ∈ q) ∧
+    ∃ (Q : Setoid W) (q : Set W),
+      IsPrunedReading (supClosure (atom P '' ↑x)) (⋃ a ∈ x, atom P a) Q q ∧ w ∉ q
 
 theorem gappy_iff (h : Separating x (atom P)) (hne : x.Nonempty) (w : W) :
     Gappy x P w ↔ (∃ a ∈ x, P a w) ∧ ∃ a ∈ x, ¬ P a w := by
   constructor
   · rintro ⟨⟨_, q, hq, hwq⟩, ⟨_, q', hq', hwq'⟩⟩
-    obtain ⟨a, ha, hPa⟩ := Set.mem_iUnion₂.1 (subset_biUnion_of_mem_prunedReadings hq.1.1 hwq)
+    obtain ⟨a, ha, hPa⟩ := Set.mem_iUnion₂.1 (subset_of_mem_prunedReadings hq.1.1 hwq)
     refine ⟨⟨a, ha, hPa⟩, by_contra fun hcon ↦ ?_⟩
     push Not at hcon
     exact hwq' (iInter_subset_of_mem_prunedReadings h hne hq'.1.1 (Set.mem_iInter₂.2 hcon))
   · rintro ⟨⟨a, ha, hPa⟩, ⟨b, hb, hPb⟩⟩
-    exact ⟨⟨_, _, isPrunedReading_polar h hne (biUnion_mem_prunedReadings h hne),
-        Set.mem_biUnion ha hPa⟩,
-      ⟨_, _, isPrunedReading_polar h hne (iInter_mem_prunedReadings h hne),
+    have hne' := exhIEII_supClosure_nonempty h hne
+    exact ⟨⟨_, _, isPrunedReading_polar hne' (self_mem_prunedReadings
+        (biUnion_mem_supClosure hne) (h.biUnion_nonempty hne)), Set.mem_biUnion ha hPa⟩,
+      ⟨_, _, isPrunedReading_polar hne' (iInter_mem_prunedReadings h hne),
         fun hall ↦ hPb (Set.mem_iInter₂.1 hall b hb)⟩⟩
 
 section Decidable
@@ -200,13 +204,14 @@ abbrev holds (a : Atom) (w : Finset Atom) : Prop := a ∈ w
 
 variable (x)
 
-theorem forall_subset_exists_holds_iff : ∀ T ⊆ x, ∃ w, ∀ a ∈ x, w ∈ atom holds a ↔ a ∈ T :=
-  fun T _ ↦ ⟨T, fun _ _ ↦ Iff.rfl⟩
-
-variable [DecidableEq Atom]
+theorem forall_subset_exists_holds_iff :
+    ∀ T ⊆ x, T.Nonempty → ∃ w, ∀ a ∈ x, w ∈ atom holds a ↔ a ∈ T :=
+  fun T _ _ ↦ ⟨T, fun _ _ ↦ Iff.rfl⟩
 
 theorem separating_holds : Separating x (atom holds) :=
-  .of_forall_subset (forall_subset_exists_holds_iff x)
+  ⟨fun a _ ↦ ⟨{a}, fun _ _ ↦ Finset.mem_singleton⟩, ⟨x, fun _ ↦ id⟩⟩
+
+variable [DecidableEq Atom]
 
 theorem trueCount_holds (w : Finset Atom) : trueCount x (atom holds) w = (x ∩ w).card := by
   change (x.filter (· ∈ w)).card = _
@@ -249,7 +254,9 @@ theorem plural_both :
   exhIEII_eq_universal (separating_holds pair) (by decide)
 
 -- *Kelly laughed* is an alternative of *the kids laughed* and so not a reading of it.
-theorem kellyLaughed_notMem_prunedReadings : kellyLaughed ∉ prunedReadings kids (atom holds) := by
+theorem kellyLaughed_notMem_prunedReadings :
+    kellyLaughed ∉
+      prunedReadings (supClosure (atom holds '' ↑kids)) (⋃ a ∈ kids, atom holds a) := by
   rw [prunedReadings_eq (forall_subset_exists_holds_iff kids) ⟨.kelly, Finset.mem_univ _⟩]
   refine fun h ↦ h.2 ⟨subset_supClosure (Set.mem_image_of_mem _ (Finset.mem_univ _)), fun heq ↦ ?_⟩
   have hj : ({.jane} : Finset Kid) ∈ kellyLaughed :=
@@ -258,7 +265,8 @@ theorem kellyLaughed_notMem_prunedReadings : kellyLaughed ∉ prunedReadings kid
 
 -- Given the partition (66), *the kids laughed* means that at least two of the kids laughed.
 theorem reading_66 :
-    IsPrunedReading kids (atom holds) (Setoid.polar (atLeastTrue kids (atom holds) 2))
+    IsPrunedReading (supClosure (atom holds '' ↑kids)) (⋃ a ∈ kids, atom holds a)
+      (Setoid.polar (atLeastTrue kids (atom holds) 2))
       (atLeastTrue kids (atom holds) 2) :=
   isPrunedReading_polar_atLeastTrue (separating_holds kids) (by decide) (by decide)
 
@@ -270,14 +278,16 @@ def books : Finset Book := Finset.univ
 
 -- In the context of (80), *Mary read the books* means that she read at least five of them.
 theorem reading_80 :
-    IsPrunedReading books (atom holds) (Setoid.polar (atLeastTrue books (atom holds) 5))
+    IsPrunedReading (supClosure (atom holds '' ↑books)) (⋃ a ∈ books, atom holds a)
+      (Setoid.polar (atLeastTrue books (atom holds) 5))
       (atLeastTrue books (atom holds) 5) :=
   isPrunedReading_polar_atLeastTrue (separating_holds books) (by decide) (by decide)
 
 -- In the context of (81), where only reading all ten passes, *Mary read the books* has its
 -- maximal reading.
 theorem reading_81 :
-    IsPrunedReading books (atom holds) (Setoid.polar (atLeastTrue books (atom holds) 10))
+    IsPrunedReading (supClosure (atom holds '' ↑books)) (⋃ a ∈ books, atom holds a)
+      (Setoid.polar (atLeastTrue books (atom holds) 10))
       (atLeastTrue books (atom holds) 10) :=
   isPrunedReading_polar_atLeastTrue (separating_holds books) (by decide) (by decide)
 

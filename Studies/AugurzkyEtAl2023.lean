@@ -337,8 +337,8 @@ theorem krizChemla_asymmetry_of_existential :
 section BarLev
 
 open BarLev2021 (atom)
-open Exhaustification (atLeastTrue mem_atLeastTrue IsPrunedReading
-  isPrunedReading_polar_atLeastTrue)
+open Exhaustification (atLeastTrue mem_atLeastTrue)
+open Alternatives (IsPrunedReading isPrunedReading_polar_atLeastTrue)
 
 variable {α : Type*} (x : Finset α)
 
@@ -372,7 +372,8 @@ private theorem threshold_le (hx : x.Nonempty) (ctx : Context) : ctx.threshold x
 variable [DecidableEq α]
 
 theorem isReading_question (hx : x.Nonempty) (ctx : Context) :
-    IsPrunedReading x (atom BarLev2021.holds) (ctx.question x)
+    IsPrunedReading (supClosure (atom BarLev2021.holds '' ↑x)) (⋃ a ∈ x, atom BarLev2021.holds a)
+      (ctx.question x)
       (atLeastTrue x (atom BarLev2021.holds) (ctx.threshold x)) :=
   isPrunedReading_polar_atLeastTrue (BarLev2021.separating_holds x) (threshold_pos hx ctx)
     (threshold_le hx ctx)
@@ -390,7 +391,8 @@ theorem designated_cell (ctx : Context) (n : ℕ) :
 /-- The reading pruning selects for a boy's presents under the context's question holds of the
 presents he opened exactly when the context's standard designates his cell. -/
 theorem mem_reading_iff_designated_cell (ctx : Context) {r : Set (Finset ℕ)}
-    (hr : IsPrunedReading nine (atom BarLev2021.holds) (ctx.question nine) r) (w : Finset ℕ) :
+    (hr : IsPrunedReading (supClosure (atom BarLev2021.holds '' ↑nine))
+      (⋃ a ∈ nine, atom BarLev2021.holds a) (ctx.question nine) r) (w : Finset ℕ) :
     w ∈ r ↔ ctx.designation.threshold ≤ (cell (nine ∩ w).card) := by
   rw [hr.unique (isReading_question ⟨0, by simp [nine]⟩ ctx), mem_atLeastTrue,
     BarLev2021.trueCount_holds, designated_cell]
