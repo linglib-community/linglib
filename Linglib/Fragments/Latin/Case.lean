@@ -64,20 +64,21 @@ def label : Case → _root_.Case
   | abl => .abl
 
 /-- The functions a case marks: the accusative also expresses the goal of motion,
-and the ablative location and instrument as well as source. The dative marks the indirect object
-of a verb of giving ([greenough-kittredge-howard-dooge-1903] §362), the one pleased or to whom
-something seems (§§367, 375), the possessor with *esse* (§373), the agent with the gerundive and,
-mainly in the perfect, with the passive (§§374–375; [pinkster-2015] §5.8), the one benefited or
-harmed (§376), the possessor in place of a possessive genitive, *versatur mihi ante oculos* 'it
-comes before my eyes' (§377), and the person judging (§378). The dative traditionally called of
-purpose (§382) is not entered as a purpose: [pinkster-2015] takes *receptui canere* 'sound for a
-retreat' as a beneficiary adjunct with an abstract noun (§10.70) and *auxilio esse* 'be a help'
-as a predicative dative (§9.34), beside which purpose is expressed by *ad* ([pinkster-2021]
-§21.11). -/
+and the ablative location and instrument as well as source. The dative marks the recipient of a
+verb of transfer and the addressee of one of communication ([pinkster-2015] §4.52), the
+experiencer of *libet* 'it pleases' (§4.27), the possessor with *sum* (§4.26), the agent with the
+gerundive and, mainly in the perfect, with the passive (§5.8), the beneficiary (§10.70), the
+one whose inalienable part an argument is, *mi malae dolent* 'my jaws hurt', the sympathetic
+dative (§10.96), the one from whose perspective the clause is viewed, the *dativus iudicantis*
+(§10.102), and, not frequently, the purpose in a gerund or gerundive clause, *alligando fasces*
+'for tying up bundles' ([pinkster-2021] §§16.100, 16.106). The dative of a noun traditionally
+called of purpose ([greenough-kittredge-howard-dooge-1903] §382) is for Pinkster a beneficiary
+with an abstract noun (§10.70) or a predicative dative (§9.34), and is not what the purpose
+function here records. -/
 def functions : Case → Finset _root_.Case.Function
   | acc => {.argument .P, .spatial none .goal}
   | dat => {.argument .R, .experiencer, .predicativePossessor, .passiveAgent, .beneficiary,
-      .externalPossessor, .judicantis}
+      .externalPossessor, .judicantis, .purpose}
   | abl => {.spatial none .source, .spatial none .place, .instrumental}
   | c => c.label.functions
 

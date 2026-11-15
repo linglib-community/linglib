@@ -12,17 +12,16 @@ lower part, around the objects, [are joined by two routes only](##routes), throu
 and through the beneficiary. Of [haspelmath-2003]'s map of dative functions they take [the chain
 of goal, recipient and beneficiary](##goal_recipient_beneficiary), which English *to* and the
 Russian dative divide differently, and they note that the map may want a line from beneficiary
-to purpose. The Latin dative of abstract nouns that the tradition calls a dative of purpose is
-for [pinkster-2015] a use of the dative of the beneficiary, and [with a function of purpose the
-Latin dative covers a contiguous area of the map with that line and not of the map
-without](##latin_dative_purpose).
+to purpose. With that line [the Latin dative covers a contiguous
+area](##latin_dative_connected), which on the map as [haspelmath-2003] draws it it does not.
 
 ## Implementation notes
 
 The chapter takes a map to state what is probable, since a gram may come to violate it when
 another gram replaces it in some of its functions; the theorems here state contiguity on the maps
-as drawn. The Latin fragment follows [pinkster-2015] and gives the dative no function of
-purpose; the theorem on the traditional analysis adds that function to the fragment's dative. The general map
+as drawn. The Latin dative's use for purpose is infrequent and confined to gerund and gerundive
+clauses, and the dative of an abstract noun that the tradition calls a dative of purpose is for
+[pinkster-2015] a use of the dative of the beneficiary. The general map
 has no S, which the chapter does not take for a single role, and leaves out the experiencer and
 the spatial functions but goal and source. The material or means of *load the cart with bricks*
 has no function of a case or adposition in `Case.Function`.
@@ -171,21 +170,17 @@ instance : DecidableRel dativeMapWithPurpose.Adj :=
   inferInstanceAs (DecidableRel (fromEdgeSet
     (↑(insert s(beneficiary, purpose) dativeEdges) : Set (Sym2 DativeFunction))).Adj)
 
-/-- On the traditional analysis, which gives the Latin dative a function of purpose beside those
-of the fragment, the dative covers a contiguous area of the map with the line from beneficiary to
-purpose, and not of the map without it. -/
-theorem latin_dative_purpose :
-    (dativeMapWithPurpose.induce
-        ↑(insert purpose (DativeFunction.area (Latin.Case.functions .dat)))).Connected ∧
-      ¬ (dativeMap.induce
-        ↑(insert purpose (DativeFunction.area (Latin.Case.functions .dat)))).Connected := by
-  rw [latin_dative.1]
-  refine ⟨?_, fun hc ↦ ?_⟩
-  · repeat' first
-      | exact induce_coe_singleton_connected _
-      | refine induce_coe_insert_connected ?_ (by decide)
-  · exact absurd (direction_mem_of_purpose_mem (f := recipient) hc (by decide) (by decide)
-      (by decide)) (by decide)
+/-- With a line from beneficiary to purpose the Latin dative, which has purpose without
+direction, covers a contiguous area of the map of dative functions. -/
+theorem latin_dative_connected :
+    (dativeMapWithPurpose.induce ↑(DativeFunction.area (Latin.Case.functions .dat))).Connected := by
+  have h : Finset.univ.erase DativeFunction.direction =
+      {purpose, judicantis, externalPossessor, predicativePossessor, experiencer, beneficiary,
+        recipient} := by decide
+  rw [latin_dative.1, h]
+  repeat' first
+    | exact induce_coe_singleton_connected _
+    | refine induce_coe_insert_connected ?_ (by decide)
 
 end Dative
 

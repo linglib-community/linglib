@@ -19,8 +19,9 @@ the lines it lacks: with no line from purpose to anything but direction, [a gram
 another function has direction](##direction_mem_of_purpose_mem), the arrangement that [French *à*
 and German *zu* select among the three orders of purpose, direction and recipient](##arrangement),
 while on the map with all three lines [any two of them are a contiguous area](##vacuous).
-Of the cases of the fragments, [the Latin dative covers a contiguous area of the first
-map](##latin_dative), and [Japanese *ni* does not of the second](##japanese_ni).
+Of the cases of the fragments, [the Latin dative covers a contiguous area of the first map
+but for its infrequent use for purpose](##latin_dative), and [Japanese *ni* does not of the
+second](##japanese_ni).
 
 ## Implementation notes
 
@@ -51,6 +52,7 @@ English prepositions of the figures do not yet.
 * [blake-1994]
 * [greenough-kittredge-howard-dooge-1903]
 * [pinkster-2015]
+* [pinkster-2021]
 * [tsujimura-2014]
 -/
 
@@ -356,28 +358,35 @@ theorem around :
 /-! ### Two cases of the fragments
 
 The chapter places no Latin or Japanese gram on its maps. In the prose of the grammar the Latin
-dative has every function of the first map but direction, which is left to the poets, and
-purpose, the dative traditionally so called being a beneficiary or a predicative one for
-[pinkster-2015], and what remains is the recipient with the five functions linked to it or to
-beneficiary. The Japanese dative particle
+dative has every function of the first map but direction, which is left to the poets. Its use
+for purpose is confined to gerund and gerundive clauses and is not frequent; with it the dative
+has purpose without the one function purpose is linked to, and without it the dative has the
+recipient with the five functions linked to it or to beneficiary. The Japanese dative particle
 *ni* has recipient and passive agent, which the second map joins only through functions *ni*
 does not have. -/
 
-/-- The Latin dative marks every function of the map of dative functions but direction and
-purpose, a contiguous area of it. -/
+/-- The Latin dative marks every function of the map of dative functions but direction. With
+its infrequent use for purpose it does not cover a contiguous area of the map; its other
+functions are one. -/
 theorem latin_dative :
-    DativeFunction.area (Latin.Case.functions .dat) =
-        {.judicantis, .externalPossessor, .predicativePossessor, .experiencer, .beneficiary,
-          .recipient} ∧
-      (dativeMap.induce ↑(DativeFunction.area (Latin.Case.functions .dat))).Connected := by
-  have h : DativeFunction.area (Latin.Case.functions .dat) =
+    DativeFunction.area (Latin.Case.functions .dat) = Finset.univ.erase .direction ∧
+      ¬ (dativeMap.induce ↑(DativeFunction.area (Latin.Case.functions .dat))).Connected ∧
+      (dativeMap.induce
+        ↑((DativeFunction.area (Latin.Case.functions .dat)).erase .purpose)).Connected := by
+  have h : DativeFunction.area (Latin.Case.functions .dat) = Finset.univ.erase .direction := by
+    decide
+  have h' : (Finset.univ.erase DativeFunction.direction).erase .purpose =
       {.judicantis, .externalPossessor, .predicativePossessor, .experiencer, .beneficiary,
         .recipient} := by decide
-  refine ⟨h, ?_⟩
-  rw [h]
-  repeat' first
-    | exact induce_coe_singleton_connected _
-    | refine induce_coe_insert_connected ?_ (by decide)
+  refine ⟨h, fun hc ↦ ?_, ?_⟩
+  · have := direction_mem_of_purpose_mem (f := .recipient) hc (by rw [h]; decide)
+      (by rw [h]; decide) (by decide)
+    rw [h] at this
+    exact absurd this (by decide)
+  · rw [h, h']
+    repeat' first
+      | exact induce_coe_singleton_connected _
+      | refine induce_coe_insert_connected ?_ (by decide)
 
 theorem japanese_ni :
     InstrumentalFunction.area (Japanese.Case.functions .dat) = {.recipient, .passiveAgent} ∧
