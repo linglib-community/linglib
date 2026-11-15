@@ -22,24 +22,18 @@ forgets.
 An ordered tree denotes [the structure of its positions](##Prosody.Structure.ofTree), which
 [is tree-shaped](##Prosody.Structure.isTree_ofTree): it has a root, and any two nodes are
 related by dominance or by precedence, never both, with precedence inherited by what is
-dominated. A tree-shaped structure [has no crossing](##Prosody.Structure.IsTree.noCrossing),
-the condition that if one node precedes another then nothing the second dominates precedes
-anything the first dominates. No Crossing mentions neither tiers nor lines, and unlike
-tree shape it allows a node two mothers, as a geminate has.
+dominated. Trees with isomorphic structures
+[are equal](##Prosody.Structure.nonempty_iso_ofTree_iff). A tree-shaped structure
+[has no crossing](##Prosody.Structure.IsTree.noCrossing), the condition that if one node
+precedes another then nothing the second properly dominates precedes anything the first
+properly dominates. No Crossing mentions neither tiers nor lines, and unlike tree shape it
+allows a node two mothers, as a geminate has.
 
 ## Implementation notes
 
 Dominance is the order of the nodes with the dominating node least, as for the positions of a
 tree, so that the root is the bottom element. Precedence is given and not derived from
 dominance: a node stranded by the loss of its mother keeps its place in time.
-
-## TODO
-
-* `Prosody.Structure.nonempty_iso_ofTree_iff`: trees with isomorphic structures are equal. The
-  isomorphism carries the root to the root and the daughters of a position, in their order of
-  precedence, to the daughters of its image, so the trees agree by induction.
-* `Prosody.Structure.IsTree.exists_iso_ofTree`: a finite tree-shaped structure is the structure
-  of a tree, built from the root by listing the daughters of each node in order of precedence.
 
 ## References
 
@@ -124,10 +118,10 @@ def Iso.toHom (e : Iso X Y) : Hom X Y :=
 /-! ### Crossing and tree shape -/
 
 variable (X) in
-/-- **No Crossing**: if one node precedes another, nothing the second dominates precedes
-anything the first dominates. -/
+/-- **No Crossing**: if one node precedes another, nothing the second properly dominates
+precedes anything the first properly dominates. Two lines cross; a line and a node do not. -/
 def NoCrossing : Prop :=
-  ∀ ⦃a a' b b' : X.Node⦄, X.Precedes a a' → a ≤ b → a' ≤ b' → ¬X.Precedes b' b
+  ∀ ⦃a a' b b' : X.Node⦄, X.Precedes a a' → a < b → a' < b' → ¬X.Precedes b' b
 
 variable (X) in
 /-- A structure is **tree-shaped** when it has a root, precedence is a strict order that relates
@@ -168,7 +162,7 @@ theorem isChain_Iic (a : X.Node) : IsChain (· ≤ ·) (Set.Iic a) := fun b hb c
 
 /-- A tree-shaped structure has no crossing. -/
 theorem noCrossing : X.NoCrossing := fun _ _ _ _ hp hb hb' hp' ↦
-  h.irrefl _ (h.trans (h.mono hp hb hb') hp')
+  h.irrefl _ (h.trans (h.mono hp hb.le hb'.le) hp')
 
 end IsTree
 
@@ -195,12 +189,22 @@ theorem isTree_ofTree (t : RoseTree α) : (ofTree t).IsTree where
 /-- Trees with isomorphic structures are equal. -/
 theorem nonempty_iso_ofTree_iff {t t' : RoseTree α} :
     Nonempty (Iso (ofTree t) (ofTree t')) ↔ t = t' := by
-  sorry
-
-/-- A finite tree-shaped structure is the structure of a tree. -/
-theorem IsTree.exists_iso_ofTree {X : Structure.{0} α} (h : X.IsTree) [Finite X.Node] :
-    ∃ t : RoseTree α, Nonempty (Iso (ofTree t) X) := by
-  sorry
+  refine ⟨fun ⟨e⟩ ↦ ?_, fun h ↦ h ▸ ⟨Iso.refl _⟩⟩
+  let f : t.Positions ≃o t'.Positions := e.toOrderIso
+  have key (p : t.Positions) : (f p).val = p.val :=
+    Positions.val_apply_of_precedes_iff f e.precedes_iff p
+  refine ext_of_getElem? fun l ↦ ?_
+  by_cases hl : (⟨l⟩ : GornAddress) ∈ t.validPaths
+  · have h := Positions.getElem?_eq (f ⟨⟨l⟩, hl⟩)
+    rw [key] at h
+    rw [Positions.getElem?_eq ⟨⟨l⟩, hl⟩, h]
+    exact congrArg some (e.label_comp ⟨⟨l⟩, hl⟩).symm
+  · have hl' : (⟨l⟩ : GornAddress) ∉ t'.validPaths := fun hl' ↦ hl <| by
+      have h := (f.symm ⟨⟨l⟩, hl'⟩).2
+      rwa [← key, f.apply_symm_apply] at h
+    have h₁ : t[l]? = none := Option.not_isSome_iff_eq_none.1 hl
+    have h₂ : t'[l]? = none := Option.not_isSome_iff_eq_none.1 hl'
+    rw [h₁, h₂]
 
 end Structure
 

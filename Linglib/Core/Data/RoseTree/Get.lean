@@ -221,4 +221,20 @@ theorem isSubtree_iff_exists_getElem? {s t : RoseTree α} :
     | cons i p ih =>
       obtain ⟨c, hc, hp⟩ := getElem?_cons_eq_some_iff.1 hp
       exact (ih hp).tail (List.mem_of_getElem? hc)
+/-- Trees with the same node value at every address are equal. -/
+theorem ext_of_getElem? {t t' : RoseTree α}
+    (h : ∀ p : List ℕ, t[p]?.map value = t'[p]?.map value) : t = t' := by
+  induction t generalizing t' with
+  | node a cs ih =>
+    obtain ⟨b, ds⟩ := t'
+    have hc : ∀ i p, (cs[i]?.bind (·[p]?)).map value = (ds[i]?.bind (·[p]?)).map value :=
+      fun i p ↦ h (i :: p)
+    have hlen : cs.length = ds.length := by
+      have : cs.map value = ds.map value := List.ext_getElem? fun i ↦ by
+        simpa [List.getElem?_map] using hc i []
+      simpa using congrArg List.length this
+    obtain rfl : a = b := by simpa using h []
+    refine congrArg _ (List.ext_getElem hlen fun i h₁ h₂ ↦ ih _ (List.getElem_mem h₁) fun p ↦ ?_)
+    simpa [List.getElem?_eq_getElem h₁, List.getElem?_eq_getElem h₂] using hc i p
+
 end RoseTree
