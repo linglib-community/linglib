@@ -21,7 +21,7 @@ no dative.
 
 ## Main definitions
 
-* `German.Pronouns.pronouns` — the personal pronoun inventory
+* `German.Pronouns.personal` — the personal pronoun inventory
 * `German.Pronouns.addresseeSg`, `German.Pronouns.addresseePl` — the pronouns of address at each
   grade
 * `German.Pronouns.sich`, `German.Pronouns.einander` — the reflexive and the reciprocal pronoun
@@ -109,7 +109,7 @@ def addresseePl : Grade → PersonalPronoun
   | .polite => sie_formal
 
 /-- The personal pronoun inventory. -/
-def pronouns : Finset PersonalPronoun :=
+def personal : Finset PersonalPronoun :=
   {ich, du, sie_formal, er, sie_sg, es, wir, ihr, sie_pl}
 
 /-- *Sie* is the pronoun of the polite grade and of no other, for one addressee or several. -/

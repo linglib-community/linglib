@@ -56,7 +56,7 @@ def addressee : Grade → PersonalPronoun
   | .honorific => tusii
 
 /-- The pronoun inventory. -/
-def pronouns : Finset PersonalPronoun := {maiN, asiiN, tuN, tusii, uhSg, uhPl}
+def personal : Finset PersonalPronoun := {maiN, asiiN, tuN, tusii, uhSg, uhPl}
 
 end Pronouns
 
