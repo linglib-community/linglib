@@ -260,7 +260,7 @@ def scenario? (v : PersonalPronoun → Option Person) (e : Datum) :
   let (dative, accusative) ← e.byLanguage
     [(.italian,
         ([("1", mi), ("2", ti), ("3", gli), ("LEI", polite le_dat), ("3 PP", lui)],
-          [("1", mi), ("2", ti), ("3", la), ("LEI", polite la), ("2 stressed", tu),
+          [("1", mi), ("2", ti), ("3", la), ("LEI", polite la), ("2 stressed", te_tonic),
             ("LEI stressed", lei_formal), ("3 resuming camouflage nominal", lo),
             ("3 resuming imposter", lo)])),
       (.spanish,

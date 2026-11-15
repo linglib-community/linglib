@@ -7,7 +7,9 @@ public import Linglib.Syntax.Category.Pronoun.Reflexive
 # Italian pronouns
 
 Italian has a tonic series of personal pronouns and an atonic series of object pronouns. The
-tonic second person distinguishes familiar *tu* and *voi* from polite *Lei*, which agrees as a
+tonic first and second person singular tell a subject form, *io* and *tu*, from a non-subject
+form, *me* and *te*, used as the stressed object of a verb and after a preposition. The tonic
+second person distinguishes familiar *tu* and *voi* from polite *Lei*, which agrees as a
 third person feminine singular, and the archaic polite plural *Loro*, which agrees as a third
 person plural.
 
@@ -73,6 +75,14 @@ def tu : PersonalPronoun :=
   { form := "tu", person := some .second, number := some .singular,
     strength := some .strong }
 
+/-- *me* — 1sg, the non-subject form ([maiden-robustelli-2007] §6.19, p. 114). -/
+def me_tonic : PersonalPronoun :=
+  { form := "me", person := some .first, number := some .singular, strength := some .strong }
+
+/-- *te* — 2sg familiar, the non-subject form ([maiden-robustelli-2007] §6.19, p. 114). -/
+def te_tonic : PersonalPronoun :=
+  { form := "te", person := some .second, number := some .singular, strength := some .strong }
+
 /-- The polite second person singular *Lei*, the V form. It agrees as a third person feminine
 singular, patterns with the feminine singular clitics and binds the third-person reflexive *si*,
 but it denotes the addressee, so it triggers PCC and Fancy Constraint effects and second person
@@ -123,7 +133,7 @@ def addresseePl : Grade → PersonalPronoun
 
 /-- The strong-pronoun inventory. -/
 def pronouns : Finset PersonalPronoun :=
-  {io, tu, lei_formal, lui, lei, noi, voi, loro_formal, loro}
+  {io, me_tonic, tu, te_tonic, lei_formal, lui, lei, noi, voi, loro_formal, loro}
 
 /-! ### The atonic series -/
 
