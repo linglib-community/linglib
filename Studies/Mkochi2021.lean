@@ -83,24 +83,24 @@ theorem optimal_of_bound_after (hl : c.leftKind = .bound .after a)
       else {.first} := by
   obtain ⟨b, hb⟩ := Option.isSome_iff_exists.1 hb
   split_ifs with h₁ h₂
-  · rw [optimal_eq_pair_iff]
-    ext (_ | _ | _ | _ | _) <;> simp [h₁, h₂, hl, hr, hb, Morph.Kind.JoinsAt]
-  · refine optimal_eq_singleton_of_ssubset (e' := .first) (by decide) ⟨?_, fun h ↦ h₂ ?_⟩ r
-    · rintro (_ | _ | _ | _ | _) hi <;> simp_all [Morph.Kind.JoinsAt]
-    · simpa [h₁] using h (show some .soleSegment ∈ violations c .first by simpa using h₁)
-  · refine optimal_eq_singleton_of_ssubset (e' := .second) (by decide) ⟨?_, fun h ↦ h₁ ?_⟩ r
-    · rintro (_ | _ | _ | _ | _) hi <;> simp_all
-    · simpa using h (show some .morphemeInitial ∈ violations c .second by simp)
+  · simp [optimal_eq_pair_iff, Set.Subset.antisymm_iff, violations_first_subset_second_iff,
+      violations_second_subset_first_iff, h₁, h₂, hl, hr, hb, Morph.Kind.JoinsAt]
+  · refine optimal_eq_singleton_of_ssubset (e' := .first) (by decide) ?_ r
+    simp [Set.ssubset_def, violations_first_subset_second_iff,
+      violations_second_subset_first_iff, h₁, h₂, hl, hr, Morph.Kind.JoinsAt]
+  · refine optimal_eq_singleton_of_ssubset (e' := .second) (by decide) ?_ r
+    simp [Set.ssubset_def, violations_first_subset_second_iff,
+      violations_second_subset_first_iff, h₁, hl]
 
 /-- Between two suffixes or enclitics some ranking of Casali's constraints elides the second
 vowel exactly when the first morph is a single vowel. -/
 theorem exists_mem_optimal_second_iff_leftBody_eq_nil (hl : c.leftKind = .bound .after a)
     (hr : c.rightKind = .bound .after a') :
     (∃ r, .second ∈ (tableau c r).optimal) ↔ c.leftBody = [] := by
-  refine ⟨fun h ↦ by_contra fun hne ↦ ?_, fun h ↦ ?_⟩
-  · simpa [hl] using (exists_mem_optimal_second_iff hne).1 h
-  · refine (exists_mem_optimal_iff (e' := .first) (by decide)).2 fun hlt ↦ hlt.2 ?_
-    rintro (_ | _ | _ | _ | _) hi <;> simp_all [Morph.Kind.JoinsAt]
+  by_cases h : c.leftBody = [] <;>
+    simp [exists_mem_optimal_iff (e' := .first), Set.ssubset_def,
+      violations_first_subset_second_iff, violations_second_subset_first_iff, hl, hr, h,
+      Morph.Kind.JoinsAt]
 
 /-- Two final-vowel suffixes after a root, as in (10): the first is a vowel, a consonant and a
 vowel, and its last vowel elides under every ranking. -/
