@@ -136,7 +136,8 @@ noncomputable def derivationMeasure : Kernel (Symbol T G.NT) (RoseTree (Symbol T
 
 theorem derivationMeasure_singleton_value (t : RoseTree (Symbol T G.NT)) :
     W.derivationMeasure t.value {t} = W.derivProb t :=
-  (GaltonWatson.law_singleton_value W.galtonWatson t).trans (W.galtonWatson_weight t)
+  (GaltonWatson.law_singleton_value W.galtonWatson W.offspring_univ_le_one t).trans
+    (W.galtonWatson_weight t)
 
 theorem derivationMeasure_singleton_of_ne {t : RoseTree (Symbol T G.NT)} {s : Symbol T G.NT}
     (h : t.value ≠ s) : W.derivationMeasure s {t} = 0 :=
@@ -147,13 +148,13 @@ open scoped Classical in
 and `0` otherwise. -/
 theorem derivationMeasure_singleton (t : RoseTree (Symbol T G.NT)) (s : Symbol T G.NT) :
     W.derivationMeasure s {t} = if t.value = s then W.derivProb t else 0 := by
-  rw [derivationMeasure, GaltonWatson.law_singleton, galtonWatson_weight]
+  rw [derivationMeasure, GaltonWatson.law_singleton _ W.offspring_univ_le_one, galtonWatson_weight]
   split_ifs <;> rfl
 
 /-- The derivation measure is a sub-probability measure at every symbol. -/
 theorem derivationMeasure_apply_univ_le_one (s : Symbol T G.NT) :
     W.derivationMeasure s Set.univ ≤ 1 :=
-  GaltonWatson.law_univ_le_one W.offspring_univ_le_one s
+  GaltonWatson.law_univ_le_one W.galtonWatson s
 
 instance : IsFiniteKernel W.derivationMeasure :=
   ⟨⟨1, ENNReal.one_lt_top, W.derivationMeasure_apply_univ_le_one⟩⟩
@@ -174,7 +175,7 @@ theorem derivationMeasure_nonterminal_univ (A : G.NT) :
     W.derivationMeasure (.nonterminal A) Set.univ =
       ∑ r ∈ G.rules.filter (·.input = A),
         W.weight r * (r.output.map fun s ↦ W.derivationMeasure s Set.univ).prod :=
-  (GaltonWatson.extinctionProb_eq_lintegral W.galtonWatson _).trans
+  (GaltonWatson.extinctionProb_eq_lintegral W.galtonWatson W.offspring_univ_le_one _).trans
     (W.lintegral_offspring_nonterminal A _)
 
 /-! ### Relative frequencies -/

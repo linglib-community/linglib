@@ -409,15 +409,17 @@ theorem lintegral_galtonWatson (c : List α) (F : List (List α) → ℝ≥0∞)
   rw [lintegral_map .of_discrete (measurable_of_countable _), lintegral_option]
   simp [mul_comm]
 
-/-- The mass of the family trees of depth less than `n` is the probability of a string shorter
-than `n`. -/
-theorem iterate_expand_galtonWatson_univ (n : ℕ) (c : List α) :
-    ((GaltonWatson.expand M.galtonWatson)^[n] 0) c Set.univ =
-      ∑ k ∈ range n, (M.after c).stopProb k := by
+instance : IsMarkovKernel M.galtonWatson :=
+  ⟨fun c ↦ by change IsProbabilityMeasure ((M.next c).map _); infer_instance⟩
+
+/-- The probability that the family tree is complete within `n` generations is the probability
+of a string shorter than `n`. -/
+theorem extinctWithin_galtonWatson (n : ℕ) (c : List α) :
+    GaltonWatson.extinctWithin M.galtonWatson n c = ∑ k ∈ range n, (M.after c).stopProb k := by
   induction n generalizing c with
   | zero => simp
   | succ n ih =>
-    rw [Function.iterate_succ_apply', GaltonWatson.expand_apply_univ, lintegral_galtonWatson]
+    rw [GaltonWatson.extinctWithin_succ _ fun _ ↦ prob_le_one, lintegral_galtonWatson]
     simp only [List.map_nil, List.prod_nil, List.map_cons, List.prod_cons, mul_one, ih]
     rw [sum_range_succ', stopProb_zero, next_after, List.append_nil, add_comm]
     congr 1
@@ -428,11 +430,8 @@ theorem iterate_expand_galtonWatson_univ (n : ℕ) (c : List α) :
 of the model after it. -/
 theorem extinctionProb_galtonWatson (c : List α) :
     GaltonWatson.extinctionProb M.galtonWatson c = ∑' z, (M.after c).stringProb z := by
-  rw [GaltonWatson.extinctionProb, GaltonWatson.law_eq_iSup_iterate, iSup_apply,
-    Measure.iSup_apply_of_monotone
-      (fun m n h ↦ GaltonWatson.monotone_iterate_expand M.galtonWatson h c) .univ,
-    tsum_stringProb, ENNReal.tsum_eq_iSup_nat]
-  exact iSup_congr fun n ↦ M.iterate_expand_galtonWatson_univ n c
+  rw [GaltonWatson.extinctionProb_eq_iSup, tsum_stringProb, ENNReal.tsum_eq_iSup_nat]
+  exact iSup_congr fun n ↦ M.extinctWithin_galtonWatson n c
 
 /-- A model is tight exactly when its branching process dies out almost surely. -/
 theorem isTight_iff_extinctionProb :
