@@ -94,6 +94,17 @@ variable {L : Language α} {k : ℕ}
 
 /-! ## Inclusions -/
 
+/-- The tier-based strictly `k`-local languages are the tier-based extension of the strictly
+`k`-local ones, since a `TierStrictlyLocalGrammar` is a tier together with a strictly local
+language read on it. -/
+theorem isTierStrictlyLocal_iff_mem_tierBased :
+    L.IsTierStrictlyLocal k ↔ L ∈ tierBased {L | L.IsStrictlyLocal k} := by
+  constructor
+  · rintro ⟨G, rfl⟩
+    exact ⟨G.tier, _, _, ⟨G.permitted, rfl⟩, rfl⟩
+  · rintro ⟨T, _, _, ⟨G, rfl⟩, rfl⟩
+    exact ⟨⟨T, G⟩, rfl⟩
+
 /-- Strictly local languages are tier-based strictly local ([heinz-rawal-tanner-2011],
 Theorem 3), on the tier of the whole alphabet. -/
 theorem IsStrictlyLocal.toIsTierStrictlyLocal (h : L.IsStrictlyLocal k) :

@@ -32,12 +32,14 @@ is](##Language.exists_mem_multitierDefinite_iff).
 ## Implementation notes
 
 The equations of Lambert and Almeida use the omega power `x^ω`; `isMultitierReverseDefinite_iff`
-states the first through idempotent powers instead. Almeida leaves the proof of Pin's theorem as
-an exercise. The proof here goes through words: once a letter has occurred `n` times, where `n` is
-the size of the syntactic monoid, further occurrences leave the syntactic class unchanged, so the
-class of a word is determined by its first `n` occurrences of each letter, and these are read off
-the tier projections up to length `n` times the size of the alphabet. Such a language is multitier
-reverse definite by `Language.mem_multitierReverseDefinite_iff`.
+states the first through idempotent powers instead. Almeida states the reverse definite case,
+with the proof he gives for the finite and cofinite one, through a lemma on products in a monoid
+with `n` elements; the definite case is its dual. The proof here goes through words: once a
+letter has occurred `n` times, where `n` is the size of the syntactic monoid, further occurrences
+leave the syntactic class unchanged, so the class of a word is determined by its first `n`
+occurrences of each letter, and these are read off the tier projections up to length `n` times the
+size of the alphabet. Such a language is multitier reverse definite by
+`Language.mem_multitierReverseDefinite_iff`.
 
 ## References
 

@@ -157,9 +157,9 @@ abbrev navajoSibilantHarmony : TierStrictlyLocalGrammar Segment :=
 theorem isTierStrictlyLocal : (navajoSibilantHarmony.language 2).IsTierStrictlyLocal 2 :=
   ⟨_, rfl⟩
 
-theorem mem_multitierStrictlyLocal :
-    navajoSibilantHarmony.language 2 ∈ Language.multitierStrictlyLocal 2 :=
-  isTierStrictlyLocal.mem_multitierStrictlyLocal
+theorem mem_multitierLocallyTestable :
+    navajoSibilantHarmony.language 2 ∈ Language.multitierLocallyTestable 2 :=
+  isTierStrictlyLocal.mem_multitierLocallyTestable
 
 theorem mem_language_iff (w : List Segment) :
     w ∈ navajoSibilantHarmony.language 2 ↔

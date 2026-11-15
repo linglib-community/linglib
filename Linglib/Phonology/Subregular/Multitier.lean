@@ -43,6 +43,7 @@ The classes carry the window `k` that Lambert leaves implicit; his classes are t
 
 * [lambert-2026]
 * [heinz-rawal-tanner-2011]
+* [de-santo-graf-2019]
 * [simon-1975]
 -/
 
@@ -86,6 +87,12 @@ theorem multitier_le_comap_onTier (T : α → Prop) [DecidablePred T] :
     show onTier T (onTier T' L) ∈ multitier 𝒞
     rw [onTier_onTier]
     exact onTier_mem_multitier _ hL
+
+/-- The multitier extension of a class is that of the Boolean subalgebra it generates. -/
+@[simp] theorem multitier_closure (𝒞 : Set (Language α)) :
+    multitier (closure 𝒞 : Set (Language α)) = multitier 𝒞 :=
+  le_antisymm (multitier_le_iff.2 fun T _ ↦ closure_le.2 fun _ hL ↦ onTier_mem_multitier T hL)
+    (multitier_mono subset_closure)
 
 /-- The multitier extension is idempotent. -/
 @[simp] theorem multitier_multitier (𝒞 : Set (Language α)) :
@@ -157,8 +164,10 @@ section Classes
 variable (k)
 
 /-- The *multitier locally testable* languages are the multitier extension of the strictly
-`k`-local languages, Lambert's BTSL. -/
-def multitierStrictlyLocal : BooleanSubalgebra (Language α) := multitier {L | L.IsStrictlyLocal k}
+`k`-local languages, Lambert's BTSL. They are not the multi-tier strictly local languages of
+[de-santo-graf-2019], which close the tier-based strictly local languages under intersection
+only. -/
+def multitierLocallyTestable : BooleanSubalgebra (Language α) := multitier {L | L.IsStrictlyLocal k}
 
 /-- The *multitier definite* languages are the multitier extension of the `k`-definite
 languages, Lambert's BTD. -/
@@ -190,19 +199,8 @@ theorem multitierReverseDefinite_le_multitierGeneralizedDefinite :
       multitierGeneralizedDefinite k :=
   multitier_mono fun _ ↦ IsReverseDefinite.toIsGeneralizedDefinite
 
-/-- The tier-based strictly `k`-local languages are the tier-based extension of the strictly
-`k`-local ones, since a `TierStrictlyLocalGrammar` is a tier together with a strictly local
-language read on it. -/
-theorem isTierStrictlyLocal_iff_mem_tierBased :
-    L.IsTierStrictlyLocal k ↔ L ∈ tierBased {L | L.IsStrictlyLocal k} := by
-  constructor
-  · rintro ⟨G, rfl⟩
-    exact ⟨G.tier, _, _, ⟨G.permitted, rfl⟩, rfl⟩
-  · rintro ⟨T, _, _, ⟨G, rfl⟩, rfl⟩
-    exact ⟨⟨T, G⟩, rfl⟩
-
-theorem IsTierStrictlyLocal.mem_multitierStrictlyLocal (h : L.IsTierStrictlyLocal k) :
-    L ∈ multitierStrictlyLocal k :=
+theorem IsTierStrictlyLocal.mem_multitierLocallyTestable (h : L.IsTierStrictlyLocal k) :
+    L ∈ multitierLocallyTestable k :=
   tierBased_subset_multitier (isTierStrictlyLocal_iff_mem_tierBased.1 h)
 
 /-! ### Reversal
