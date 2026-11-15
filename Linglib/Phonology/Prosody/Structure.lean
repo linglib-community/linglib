@@ -14,7 +14,7 @@ public import Mathlib.Order.Hom.Basic
 Accounts of prosodic structure differ in what they take a representation to be: a tree of
 constituents, tiers joined by association lines, a grid. What they share is a set of nodes, each
 with a label, standing in two relations: dominance, by which one node contains another, and
-precedence, by which one wholly comes before another. A prosodic structure is that shared
+precedence, by which one comes before another. A prosodic structure is that shared
 object, and an account is related to the others by the map that sends its representations to
 prosodic structures, by which structures are in the image of that map, and by what the map
 forgets.
@@ -35,11 +35,15 @@ Dominance is the order of the nodes with the dominating node least, as for the p
 tree, so that the root is the bottom element. Precedence is given and not derived from
 dominance, and an account need not relate every two nodes by one or the other: a node stranded
 by the loss of its mother keeps its place among the nodes of its kind, and has none among the
-segments it is not linked to.
+segments it is not linked to. Nor need one node be wholly before another that it precedes:
+two syllables that share a geminate stand in precedence. The event structures of
+[bird-klein-1990] take precedence in the strict sense, disjoint from overlap, and have
+dominance as a further relation.
 
 ## References
 
 * [sagey-1988]
+* [bird-klein-1990]
 -/
 
 @[expose] public section
@@ -57,7 +61,7 @@ structure Structure (α : Type v) where
   Node : Type u
   /-- Dominance, the dominating node least. -/
   [dominance : PartialOrder Node]
-  /-- `Precedes a b`: the node `a` wholly comes before `b`. -/
+  /-- `Precedes a b`: the node `a` comes before `b`. -/
   Precedes : Node → Node → Prop
   /-- The label of a node. -/
   label : Node → α
