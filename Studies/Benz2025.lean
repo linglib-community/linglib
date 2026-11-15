@@ -87,14 +87,14 @@ theorem adopted_roundtrip (r : NominalizationReading) :
 
 theorem adopted_unique (r : NominalizationReading) (v : Verbalizer.Alloseme)
     (n : Nominalizer.Alloseme) (hr : readingFromAllosemes v n = some r)
-    (h : v.introducesEvent = false ∨ n = .zero) :
+    (h : ¬ v.IntroducesEvent ∨ n = .zero) :
     (v, n) = adoptedAllosemes r := by
   revert hr h; revert r v n; decide
 
 -- §3.5
 theorem reading_determines_contentful_head (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) :
     (readingFromAllosemes v n = some .complexEvent →
-      v.introducesEvent = true ∧ n = .zero) ∧
+      v.IntroducesEvent ∧ n = .zero) ∧
     (readingFromAllosemes v n = some .result → n = .result) ∧
     (readingFromAllosemes v n = some .content → n = .content) := by
   revert v n; decide
