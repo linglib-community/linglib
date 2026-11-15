@@ -116,8 +116,18 @@ theorem image_ofSuccessors (f : α → Set β) (s : Set α) :
     (ofSuccessors f).image s = ⋃ a ∈ s, f a := by
   ext; simp [image]
 
+@[simp] theorem image_ofSuccessors_singleton (f : α → Set β) (a : α) :
+    (ofSuccessors f).image {a} = f a := by
+  ext; simp [image]
+
 theorem mem_preimage_ofSuccessors : a ∈ (ofSuccessors f).preimage t ↔ (f a ∩ t).Nonempty :=
   ⟨fun ⟨b, ht, hb⟩ ↦ ⟨b, hb, ht⟩, fun ⟨b, hb, ht⟩ ↦ ⟨b, ht, hb⟩⟩
+
+/-- A relation is irreflexive exactly when no point lies in the image of its own singleton. -/
+theorem forall_disjoint_image_singleton_iff {R : SetRel α α} :
+    (∀ a, Disjoint (R.image {a}) {a}) ↔ R.IsIrrefl := by
+  simp only [Set.disjoint_singleton_right, mem_image, Set.mem_singleton_iff, exists_eq_left]
+  exact ⟨fun h ↦ ⟨h⟩, fun h ↦ h.irrefl⟩
 
 /-! ### Transitive closure -/
 

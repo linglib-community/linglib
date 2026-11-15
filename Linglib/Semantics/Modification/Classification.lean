@@ -64,10 +64,8 @@ theorem IsIntersective.isExtensional (h : IsIntersective adj) : IsExtensional ad
 
 /-- A privative modifier that holds of something is not subsective. -/
 theorem IsPrivative.not_isSubsective (hp : IsPrivative adj) (hne : ∃ N w x, adj N w x) :
-    ¬ IsSubsective adj := by
-  intro hs
-  obtain ⟨N, w, x, hadj⟩ := hne
-  exact isPrivative_iff_forall.mp hp N w x hadj (hs N w x hadj)
+    ¬ IsSubsective adj :=
+  fun hs ↦ hne.elim fun N ⟨w, x, h⟩ ↦ (congrFun₂ (hp.eq_bot hs N) w x).mp h
 
 /-! ### *former* -/
 
