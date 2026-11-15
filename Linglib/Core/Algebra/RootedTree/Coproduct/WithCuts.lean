@@ -150,8 +150,10 @@ theorem comulForestOfCuts_eq_sum (F : Forest (UnorderedTree α)) :
     show (1 : _) = of' (R := R) (0 : Forest (UnorderedTree α)) ⊗ₜ[R] of' 0
     rw [of'_zero, Algebra.TensorProduct.one_def]
   | cons T F ih =>
-    rw [comulForestOfCuts_cons, comulTreeOfCuts_eq_sum, ih, forestCuts_cons,
-      Multiset.sum_map_conv _ _ cutTensor_add]
+    rw [comulForestOfCuts_cons, comulTreeOfCuts_eq_sum, ih,
+      ← WithConv.ofConv_toConv (forestCuts cuts (T ::ₘ F)), toConv_forestCuts_cons]
+    exact (Multiset.sum_map_ofConv_mul (f := cutTensor (R := R)) (.toConv (treeCuts cuts T))
+      (.toConv (forestCuts cuts F)) cutTensor_add).symm
 
 /-! ### Coassociativity
 

@@ -13,9 +13,10 @@ public import Mathlib.Algebra.BigOperators.Ring.Multiset
 
 The product of two multiset sums is the sum of the pairwise products over the cartesian product,
 the `Multiset` counterpart of `Finset.sum_mul_sum` followed by `Finset.sum_product'`. A map that
-takes sums to products therefore takes the sum over a convolution `Multiset.conv` to the product
-of the two sums. The first is an `[UPSTREAM]` candidate; eventual mathlib home
-`Mathlib.Algebra.BigOperators.Ring.Multiset`, beside `Multiset.sum_map_mul_left`.
+takes sums to products therefore takes the sum over a product in the convolution semiring
+`WithConv (Multiset M)` to the product of the two sums. The first is an `[UPSTREAM]` candidate;
+eventual mathlib home `Mathlib.Algebra.BigOperators.Ring.Multiset`, beside
+`Multiset.sum_map_mul_left`.
 -/
 
 public section
@@ -30,10 +31,12 @@ theorem sum_map_mul_sum_map (s : Multiset ι) (t : Multiset κ) (f : ι → R) (
     (s.map f).sum * (t.map g).sum = ((s ×ˢ t).map fun p ↦ f p.1 * g p.2).sum :=
   Multiset.induction_on s (by simp) fun a s ih ↦ by simp [add_mul, ih, sum_map_mul_left]
 
-/-- A map taking sums to products takes the sum over a convolution to the product of the sums. -/
-theorem sum_map_conv [Add M] (s t : Multiset M) {f : M → R} (hf : ∀ x y, f (x + y) = f x * f y) :
-    ((s.conv t).map f).sum = (s.map f).sum * (t.map f).sum := by
-  rw [sum_map_mul_sum_map, conv, map_map]
+/-- A map taking sums to products takes the sum over a convolution to the product of the sums:
+the additive extension of a multiplicative map is multiplicative on `WithConv (Multiset M)`. -/
+theorem sum_map_ofConv_mul [Add M] (s t : WithConv (Multiset M)) {f : M → R}
+    (hf : ∀ x y, f (x + y) = f x * f y) :
+    ((s * t).ofConv.map f).sum = (s.ofConv.map f).sum * (t.ofConv.map f).sum := by
+  rw [sum_map_mul_sum_map, convMul_def, WithConv.ofConv_toConv, map_map]
   exact congrArg sum (map_congr rfl fun x _ ↦ hf x.1 x.2)
 
 end Multiset

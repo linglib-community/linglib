@@ -374,7 +374,7 @@ private theorem admissibleCuts_theApple : admissibleCuts theApple.toUnorderedTre
     show theD.toUnorderedTree = UnorderedTree.leaf (Vertex.lex ⟨.of .D [.N] "the", 0⟩) from rfl,
     show appleN.toUnorderedTree = UnorderedTree.leaf (Vertex.lex ⟨.of .N [] "apple", 1⟩) from rfl,
     treeCuts, treeCuts, admissibleCuts_leaf, admissibleCuts_leaf]
-  simp [Multiset.conv, Multiset.cons_product, -admissibleCuts_mk]
+  simp [Multiset.cons_product, -admissibleCuts_mk]
   exact Multiset.cons_swap _ _ _
 
 private theorem filter_admissibleCuts_theApple :
@@ -392,7 +392,7 @@ private theorem filter_admissibleCuts_theApple :
     show theD.toUnorderedTree = UnorderedTree.leaf (Vertex.lex ⟨.of .D [.N] "the", 0⟩) from rfl,
     show appleN.toUnorderedTree = UnorderedTree.leaf (Vertex.lex ⟨.of .N [] "apple", 1⟩) from rfl,
     treeCuts, treeCuts, admissibleCuts_leaf, admissibleCuts_leaf]
-  simp [Multiset.conv, Multiset.cons_product, Multiset.filter_singleton, hne, hcard,
+  simp [Multiset.cons_product, Multiset.filter_singleton, hne, hcard,
     -admissibleCuts_mk]
 
 /-- Sideward Merge of type 2(b) at the trace cuts merges *eaten* with *the* beside the remainder

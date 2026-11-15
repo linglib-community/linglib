@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Algebra.BigOperators.Ring.Multiset
 public import Linglib.Core.Combinatorics.RootedTree.Cut
 public import Mathlib.Tactic.Abel
 
@@ -177,43 +178,40 @@ private theorem map_projTripleList_recutRemainder (S : Multiset (𝓕 × 𝓛)) 
 
 /-- Re-cutting a combined crown with a combined remainder is the convolution of the parts. -/
 private theorem map_projTripleList_crown_add (s t : 𝓕 × 𝓛) :
-    (ℱ (s.1 + t.1)).map (fun c12 ↦ projTripleList (c12.1, c12.2, s.2 ++ t.2))
-      = Multiset.conv ((ℱ s.1).map (fun c12 ↦ projTripleList (c12.1, c12.2, s.2)))
-              ((ℱ t.1).map (fun c12 ↦ projTripleList (c12.1, c12.2, t.2))) := by
-  rw [forestCuts_add]
-  exact Multiset.map_conv (f := fun c : 𝓕 × 𝓕 ↦ projTripleList (c.1, c.2, s.2))
-    (f' := fun c : 𝓕 × 𝓕 ↦ projTripleList (c.1, c.2, t.2))
-    (g := fun c : 𝓕 × 𝓕 ↦ projTripleList (c.1, c.2, s.2 ++ t.2)) _ _
-    fun x y ↦ projTripleList_add x.1 y.1 x.2 y.2 s.2 t.2
+    WithConv.toConv ((ℱ (s.1 + t.1)).map fun c12 ↦ projTripleList (c12.1, c12.2, s.2 ++ t.2)) =
+      .toConv ((ℱ s.1).map fun c12 ↦ projTripleList (c12.1, c12.2, s.2)) *
+        .toConv ((ℱ t.1).map fun c12 ↦ projTripleList (c12.1, c12.2, t.2)) := by
+  rw [show ℱ (s.1 + t.1) = _ from congrArg WithConv.ofConv (toConv_forestCuts_add _ s.1 t.1)]
+  exact congrArg WithConv.toConv (Multiset.map_map_product_distrib
+    (fun x y ↦ projTripleList_add x.1 y.1 x.2 y.2 s.2 t.2) _ _)
 
 /-- Re-cutting an appended remainder with a combined crown is the convolution of the parts. -/
 private theorem map_projTripleList_remainder_add (s t : 𝓕 × 𝓛) :
-    (𝒞 (s.2 ++ t.2)).map (fun q ↦ projTripleList (s.1 + t.1, q.1, q.2))
-      = Multiset.conv ((𝒞 s.2).map (fun q ↦ projTripleList (s.1, q.1, q.2)))
-              ((𝒞 t.2).map (fun q ↦ projTripleList (t.1, q.1, q.2))) := by
-  rw [childrenCuts_append, Multiset.map_map]
-  unfold Multiset.conv
-  rw [← Multiset.prodMap_map_product, Multiset.map_map]
-  apply Multiset.map_congr rfl; rintro ⟨qs, qt⟩ _
-  exact projTripleList_add s.1 t.1 qs.1 qt.1 qs.2 qt.2
+    WithConv.toConv ((𝒞 (s.2 ++ t.2)).map fun q ↦ projTripleList (s.1 + t.1, q.1, q.2)) =
+      .toConv ((𝒞 s.2).map fun q ↦ projTripleList (s.1, q.1, q.2)) *
+        .toConv ((𝒞 t.2).map fun q ↦ projTripleList (t.1, q.1, q.2)) := by
+  rw [childrenCuts_append]
+  exact congrArg WithConv.toConv (Multiset.map_map_product_distrib
+    (fun x y ↦ projTripleList_add s.1 t.1 x.1 y.1 x.2 y.2) _ _)
 
 private theorem recutCrown_conv (S T : Multiset (𝓕 × 𝓛)) :
-    (recutCrown extract ((S ×ˢ T).map fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2))).map projTripleList =
-      Multiset.conv ((recutCrown extract S).map projTripleList)
-        ((recutCrown extract T).map projTripleList) := by
-  rw [map_projTripleList_recutCrown, map_projTripleList_recutCrown, map_projTripleList_recutCrown]
-  exact Multiset.bind_map_product (c := fun a b ↦ (a.1 + b.1, a.2 ++ b.2))
-    (map_projTripleList_crown_add extract) S T
+    WithConv.toConv ((recutCrown extract
+        ((S ×ˢ T).map fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2))).map projTripleList) =
+      .toConv ((recutCrown extract S).map projTripleList) *
+        .toConv ((recutCrown extract T).map projTripleList) := by
+  simp only [map_projTripleList_recutCrown, Multiset.toConv_bind]
+  rw [Multiset.sum_map_mul_sum_map, Multiset.map_map]
+  exact congrArg _ (Multiset.map_congr rfl fun p _ ↦ map_projTripleList_crown_add extract p.1 p.2)
 
 private theorem recutRemainder_conv (S T : Multiset (𝓕 × 𝓛)) :
-    (recutRemainder extract
-        ((S ×ˢ T).map fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2))).map projTripleList =
-      Multiset.conv ((recutRemainder extract S).map projTripleList)
-        ((recutRemainder extract T).map projTripleList) := by
-  rw [map_projTripleList_recutRemainder, map_projTripleList_recutRemainder,
-    map_projTripleList_recutRemainder]
-  exact Multiset.bind_map_product (c := fun a b ↦ (a.1 + b.1, a.2 ++ b.2))
-    (map_projTripleList_remainder_add extract) S T
+    WithConv.toConv ((recutRemainder extract
+        ((S ×ˢ T).map fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2))).map projTripleList) =
+      .toConv ((recutRemainder extract S).map projTripleList) *
+        .toConv ((recutRemainder extract T).map projTripleList) := by
+  simp only [map_projTripleList_recutRemainder, Multiset.toConv_bind]
+  rw [Multiset.sum_map_mul_sum_map, Multiset.map_map]
+  exact congrArg _
+    (Multiset.map_congr rfl fun p _ ↦ map_projTripleList_remainder_add extract p.1 p.2)
 
 /-! ### Coassociativity on a list of children
 
@@ -291,6 +289,7 @@ theorem childrenDoubleCuts_eq (h : ExtractCoherent extract) :
     rw [Multiset.singleton_bind, Multiset.singleton_bind, forestCuts_zero, childrenCuts_nil]
     simp only [Multiset.map_singleton]
   | c :: cs' => by
+    refine WithConv.toConv_injective ?_
     rw [childrenCuts_cons, recutCrown_conv, recutRemainder_conv, childDoubleCuts_eq h c,
       childrenDoubleCuts_eq h cs']
 /-- For a coherent policy, re-cutting the crowns of the cuts at one child enumerates the same
