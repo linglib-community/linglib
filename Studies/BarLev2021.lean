@@ -4,38 +4,43 @@ public import Studies.BarLevFox2020
 public import Linglib.Semantics.Questions.Partition.Basic
 public import Linglib.Semantics.Homogeneity.Plural
 public import Linglib.Data.Statistics.KrizChemla2015
-public import Linglib.Data.Examples.BarLev2021
-public import Linglib.Data.Examples.Readers
 
 /-!
 # Bar-Lev (2021): An Implicature Account of Homogeneity and Non-Maximality
 
 Bar-Lev derives homogeneity as an implicature. A plural definite means existential
 pluralization, that some atom of the plurality in a domain has the property, and its alternatives
-replace the domain by its subsets; each alternative is one of the readings of the plural
-predication (`supClosure_subset_readings`). Exhaustifying over them gives the universal
-reading, while under negation exhaustification is vacuous. Pruning the alternatives to subdomains
-of a fixed size gives the threshold readings of non-maximality, which are readings of the plural
-predication as well (`readings_subset_readings`); the question the context raises selects among
-them, and a world is gappy when it verifies the reading one question selects and falsifies
-another's.
+replace the domain by its subsets, so that they are the disjunctions of the atomic predications
+with no conjunction among them. Exhaustifying over all of them
+[gives the universal reading](##exhIEII_eq_universal), while under negation
+[exhaustification is vacuous](##exhIEII_compl_biUnion). Non-maximal readings come from
+pruning: a set of alternatives may replace the whole set when exhaustifying over it only weakens
+the universal reading, which holds exactly when it makes no alternative innocently excludable, and
+the readings so derived are [the conjunctions of alternatives that are not themselves
+alternatives, and the plain existential one](##readings_eq). They include "at least
+`k`" for every `k` and lie among Križ and Spector's candidate meanings. The question the context
+raises selects the strongest reading it determines; [every reading is selected by the question
+whether it holds](##isReading_polar), and a world is gappy, true on the reading one
+question selects and false on another's, [exactly where trivalent plural predication is
+undefined](##gappy_iff_barePlural_eq_undefined).
 
 ## Implementation notes
 
-`readings` are the threshold readings, obtained by pruning to a fixed subdomain size; the
-paper's asymmetric conjunctions of alternatives are omitted, so `IsReading` agrees with the
-paper's selection on the partitions whose only determined readings are thresholds, which
-includes the polar questions of (66), (80) and (81). The maximality constraint on prunings
-is not formalized. `Gappy` ranges over all partitions and is context-free; that a context
-fixing the partition removes the gap is carried by `reading_80` and `reading_81`.
+The prejacent and the alternatives are the disjunction of the atomic predications over `x ∩ D`
+and its closure under disjunction, the form the paper adopts once the domain is assumed to hold
+every part of the plurality; subdomains that miss the plurality contribute no alternative. The
+maximality clause of the final constraint on pruning is not formalized: `IsReading` is the
+paper's summary of its effect, the strongest derivable reading the question determines. `Gappy`
+ranges over all partitions and is context-free; that a context fixing the partition removes the
+gap is carried by `reading_80` and `reading_81`.
 
 ## TODO
 
 * The negative sentence is modelled only at the LF with negation over `∃-PL`; the LF with
-  `∃-PL` over negation and the cover-restricted `∃-PL` of §5.3, the paper's source of the
-  marginal negative non-maximal readings and of Križ and Chemla's negative gaps, are not
-  formalized.
-* The paper's full set of readings, and the non-distributive extension of §8.
+  `∃-PL` over negation and the cover-restricted `∃-PL`, the paper's source of the marginal
+  negative non-maximal readings and of Križ and Chemla's negative gaps, are not formalized.
+* That the readings of *the kids laughed* for three kids number twelve, and the non-distributive
+  extension.
 
 ## References
 
@@ -91,6 +96,28 @@ structure Separating : Prop where
   /-- All atoms of `x ∩ D` satisfy `P` together at some world. -/
   all : ∃ w, ∀ a ∈ x ∩ D, P a w
 
+theorem Separating.of_forall_subset (h : ∀ T ⊆ x ∩ D, ∃ w, ∀ a ∈ x ∩ D, P a w ↔ a ∈ T) :
+    Separating D x P where
+  single a ha :=
+    let ⟨w, hw⟩ := h {a} (Finset.singleton_subset_iff.2 ha)
+    ⟨w, fun b hb ↦ (hw b hb).trans Finset.mem_singleton⟩
+  all := let ⟨w, hw⟩ := h (x ∩ D) subset_rfl; ⟨w, fun a ha ↦ (hw a ha).2 ha⟩
+
+theorem Separating.biUnion_nonempty (h : Separating D x P) (hne : (x ∩ D).Nonempty) :
+    (⋃ b ∈ x ∩ D, atom P b).Nonempty :=
+  let ⟨w, hw⟩ := h.all
+  let ⟨a, ha⟩ := hne
+  ⟨w, Set.mem_biUnion ha (hw a ha)⟩
+
+theorem biUnion_mem_supClosure (hne : (x ∩ D).Nonempty) :
+    (⋃ b ∈ x ∩ D, atom P b) ∈ supClosure (atom P '' ↑(x ∩ D)) :=
+  Set.mem_supClosure_image.2 ⟨x ∩ D, hne, subset_rfl, rfl⟩
+
+theorem subset_biUnion_of_mem_supClosure {q : Set W}
+    (hq : q ∈ supClosure (atom P '' ↑(x ∩ D))) : q ⊆ ⋃ b ∈ x ∩ D, atom P b := by
+  obtain ⟨S, -, hS, rfl⟩ := Set.mem_supClosure_image.1 hq
+  exact Set.biUnion_subset_biUnion_left hS
+
 /-! ### Homogeneity -/
 
 /-- Exhaustifying `∃-PL` over its subdomain alternatives gives the universal reading, the
@@ -109,8 +136,7 @@ theorem exhIEII_compl_biUnion {C : Set (Set W)} (hC : C ⊆ compl '' supClosure 
     exhIEII C (⋃ b ∈ x ∩ D, atom P b)ᶜ = (⋃ b ∈ x ∩ D, atom P b)ᶜ := by
   refine exhIEII_eq_self_of_forall_subset (fun q hq ↦ ?_) hsat
   obtain ⟨_, hq', rfl⟩ := hC hq
-  obtain ⟨S, -, hS, rfl⟩ := Set.mem_supClosure_image.1 hq'
-  exact Set.compl_subset_compl.2 (Set.biUnion_subset_biUnion_left hS)
+  exact Set.compl_subset_compl.2 (subset_biUnion_of_mem_supClosure hq')
 
 -- (6a)
 theorem exists_mem_biUnion_and_not (h : Separating D x P) {a : Atom} (ha : a ∈ x ∩ D)
@@ -124,33 +150,7 @@ theorem not_of_notMem_biUnion {w : W} (hw : w ∉ ⋃ b ∈ x ∩ D, atom P b) {
     (ha : a ∈ x ∩ D) : ¬ P a w :=
   fun hPa ↦ hw (Set.mem_biUnion ha hPa)
 
-section Conjunction
-
-variable {World ι : Type*} {I : Finset ι} {p : ι → Set World}
-
--- The conjunction of the disjuncts is innocently excludable once it joins their closure.
-theorem isInnocentlyExcludable_iInter_of_insert (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i)
-    (h2 : 2 ≤ I.card) :
-    IsInnocentlyExcludable (insert (⋂ i ∈ I, p i) (supClosure (p '' I))) (⋃ i ∈ I, p i)
-      (⋂ i ∈ I, p i) := by
-  refine (isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (Set.mem_insert _ _)).2 ?_
-  intro w ⟨hw, hmin⟩
-  obtain ⟨i, hi, hwi⟩ := Set.mem_iUnion₂.1 hw
-  obtain ⟨j, hj, hji⟩ := Finset.exists_mem_ne (by omega : 1 < I.card) i
-  intro hall
-  simp only [Set.mem_iInter] at hall
-  obtain ⟨v, hv⟩ := hsep i hi
-  have hle := hmin (Set.mem_biUnion hi ((hv i hi).2 rfl)) fun q ⟨hq, hvq⟩ ↦ ⟨hq, ?_⟩
-  · exact hji ((hv j hj).1
-      (hle ⟨Or.inr (subset_supClosure (Set.mem_image_of_mem p hj)), hall j hj⟩).2)
-  rcases hq with rfl | hq
-  · exact absurd (Set.mem_iInter₂.1 hvq j hj) (by rw [hv j hj]; exact hji)
-  · obtain ⟨S, -, hS, rfl⟩ := Set.mem_supClosure_image.1 hq
-    obtain ⟨k, hk, hvk⟩ := Set.mem_iUnion₂.1 hvq
-    exact Set.mem_biUnion hk (((hv k (hS hk)).1 hvk) ▸ hwi)
-
-end Conjunction
-
+-- With a conjunctive alternative, as a floating quantifier would supply, no homogeneity.
 theorem not_forall_of_mem_exhIEII_insert_iInter (h : Separating D x P) (h2 : 2 ≤ (x ∩ D).card)
     {w : W} (hw : w ∈ exhIEII (insert (⋂ a ∈ x ∩ D, atom P a) (supClosure (atom P '' ↑(x ∩ D))))
       (⋃ b ∈ x ∩ D, atom P b)) : ¬ ∀ a ∈ x ∩ D, P a w :=
@@ -160,23 +160,244 @@ theorem not_forall_of_mem_exhIEII_insert_iInter (h : Separating D x P) (h2 : 2 �
 /-! ### Non-maximality by pruning -/
 
 variable (D x P) in
-/-- The readings of *the kids laughed* are the maximal one and the pruned ones. -/
+/-- (63): the readings of *the kids laughed* are the results of exhaustifying over a set of
+subdomain alternatives that only weakens the result of exhaustifying over all of them. -/
 def readings : Set (Set W) :=
-  {q | ∃ m, 0 < m ∧ m ≤ (x ∩ D).card ∧
-    q = exhIEII (subDisjsOfCard (x ∩ D) (atom P) m) (⋃ b ∈ x ∩ D, atom P b)}
+  (exhIEII · (⋃ b ∈ x ∩ D, atom P b)) '' {C | C ⊆ supClosure (atom P '' ↑(x ∩ D)) ∧
+    exhIEII (supClosure (atom P '' ↑(x ∩ D))) (⋃ b ∈ x ∩ D, atom P b) ⊆
+      exhIEII C (⋃ b ∈ x ∩ D, atom P b)}
+
+-- A pruning is licit exactly when it leaves nothing innocently excludable, and then
+-- exhaustification asserts every alternative it keeps.
+theorem mem_readings_iff (h : Separating D x P) (hne : (x ∩ D).Nonempty) {r : Set W} :
+    r ∈ readings D x P ↔ ∃ C ⊆ supClosure (atom P '' ↑(x ∩ D)),
+      (∀ q, ¬ IsInnocentlyExcludable C (⋃ b ∈ x ∩ D, atom P b) q) ∧
+        (⋃ b ∈ x ∩ D, atom P b) ∩ ⋂₀ C = r := by
+  simp only [readings, Set.mem_image, Set.mem_ofPred_eq,
+    exhIEII_supClosure (p := atom P) h.single hne h.all, and_assoc]
+  refine exists_congr fun C ↦ and_congr_right fun hC ↦ ?_
+  rw [iInter_subset_exhIEII_iff hC hne h.all]
+  exact and_congr_right fun hIE ↦ by rw [exhIEII_eq_inter_sInter hC hne h.all hIE]
+
+theorem subset_biUnion_of_mem_readings {r : Set W} (hr : r ∈ readings D x P) :
+    r ⊆ ⋃ b ∈ x ∩ D, atom P b := by
+  obtain ⟨C, -, rfl⟩ := hr
+  exact fun _ hw ↦ hw.1
+
+theorem forall_subset_of_mem_readings (h : Separating D x P) (hne : (x ∩ D).Nonempty)
+    {r : Set W} (hr : r ∈ readings D x P) : {w | ∀ a ∈ x, a ∈ D → P a w} ⊆ r := by
+  obtain ⟨C, ⟨-, hC⟩, rfl⟩ := hr
+  rwa [exhIEII_eq_universal h hne] at hC
+
+theorem biUnion_mem_readings (h : Separating D x P) (hne : (x ∩ D).Nonempty) :
+    (⋃ b ∈ x ∩ D, atom P b) ∈ readings D x P :=
+  ⟨{⋃ b ∈ x ∩ D, atom P b}, ⟨Set.singleton_subset_iff.2 (biUnion_mem_supClosure hne),
+    (exhIEII_singleton (h.biUnion_nonempty hne)).symm ▸ fun _ hw ↦ hw.1⟩,
+    exhIEII_singleton (h.biUnion_nonempty hne)⟩
+
+theorem forall_mem_readings (h : Separating D x P) (hne : (x ∩ D).Nonempty) :
+    {w | ∀ a ∈ x, a ∈ D → P a w} ∈ readings D x P :=
+  ⟨_, ⟨subset_rfl, subset_rfl⟩, exhIEII_eq_universal h hne⟩
+
+private theorem inter_sInter_mem_infClosure {S C : Set (Set W)} {φ : Set W} (hφ : φ ∈ S)
+    (hfin : C.Finite) (hC : C ⊆ S) : φ ∩ ⋂₀ C ∈ infClosure S := by
+  induction C, hfin using Set.Finite.induction_on with
+  | empty => simpa using subset_infClosure hφ
+  | @insert a C _ _ ih =>
+    rw [Set.sInter_insert, Set.inter_left_comm]
+    exact infClosed_infClosure (subset_infClosure (hC (Set.mem_insert _ _)))
+      (ih ((Set.subset_insert _ _).trans hC))
+
+theorem readings_subset_infClosure (h : Separating D x P) (hne : (x ∩ D).Nonempty) :
+    readings D x P ⊆ infClosure (supClosure (atom P '' ↑(x ∩ D))) := by
+  intro r hr
+  obtain ⟨C, hC, -, rfl⟩ := (mem_readings_iff h hne).1 hr
+  exact inter_sInter_mem_infClosure (biUnion_mem_supClosure hne)
+    (((x ∩ D).finite_toSet.image _).supClosure.subset hC) hC
+
+-- The readings are among Križ and Spector's candidate meanings.
+theorem readings_subset_readings (h : Separating D x P) (hne : (x ∩ D).Nonempty) :
+    readings D x P ⊆ Homogeneity.readings (fun z ↦ {w | ∀ a ∈ z, P a w}) x := by
+  rw [Homogeneity.readings_eq_latticeClosure (hne.mono Finset.inter_subset_left)]
+  exact (readings_subset_infClosure h hne).trans (infClosure_min (supClosure_min
+    ((Set.image_mono (Finset.coe_subset.2 Finset.inter_subset_left)).trans subset_latticeClosure)
+    isSublattice_latticeClosure.supClosed) isSublattice_latticeClosure.infClosed)
+
+-- A conjunction of alternatives that is not itself a proper alternative is derived by keeping
+-- every alternative it entails.
+theorem infClosure_diff_subset_readings (h : Separating D x P) (hne : (x ∩ D).Nonempty) :
+    infClosure (supClosure (atom P '' ↑(x ∩ D))) \
+      (supClosure (atom P '' ↑(x ∩ D)) \ {⋃ b ∈ x ∩ D, atom P b}) ⊆ readings D x P := by
+  rintro r ⟨⟨t, ht, hts, hrt⟩, hr⟩
+  have hrC : (⋃ b ∈ x ∩ D, atom P b) ∩ ⋂₀ {q ∈ supClosure (atom P '' ↑(x ∩ D)) | r ⊆ q} = r := by
+    refine Set.Subset.antisymm (fun w hw ↦ ?_)
+      (Set.subset_inter ?_ (Set.subset_sInter fun _ hq ↦ hq.2))
+    · rw [← hrt, Finset.inf'_eq_inf, Finset.inf_set_eq_iInter]
+      exact Set.mem_iInter₂.2 fun q hq ↦ Set.mem_sInter.1 hw.2 q
+        ⟨hts hq, hrt ▸ Finset.inf'_le id hq⟩
+    · obtain ⟨q, hq⟩ := ht
+      exact (hrt ▸ Finset.inf'_le id hq).trans (subset_biUnion_of_mem_supClosure (hts hq))
+  refine (mem_readings_iff h hne).2 ⟨_, fun _ hq ↦ hq.1, fun q hIE ↦ ?_, hrC⟩
+  have hfin := ((x ∩ D).finite_toSet.image (atom P)).supClosure.subset
+    (fun _ hq ↦ hq.1 : {q ∈ supClosure (atom P '' ↑(x ∩ D)) | r ⊆ q} ⊆ _)
+  have hmw := (isInnocentlyExcludable_iff_exhMW_subset_compl _ _ q hIE.1).1 hIE
+  obtain ⟨hqS, hrq⟩ := hIE.1
+  obtain ⟨s, -, hsx, rfl⟩ := Set.mem_supClosure_image.1 hqS
+  have hmin : ∀ q' ∈ {q ∈ supClosure (atom P '' ↑(x ∩ D)) | r ⊆ q},
+      ⋃ i ∈ s, atom P i ⊆ q' := by
+    intro q' hq'
+    obtain ⟨s', -, hs'x, rfl⟩ := Set.mem_supClosure_image.1 hq'.1
+    refine Set.biUnion_subset_biUnion_left (s := (s : Set Atom)) (s' := (s' : Set Atom)) fun i hi ↦
+      by_contra fun hi' ↦ ?_
+    obtain ⟨wi, hwi⟩ := h.single i (hsx hi)
+    obtain ⟨u, hu, hle⟩ := exists_mem_exhMW_le hfin
+      (Set.mem_biUnion (hsx hi) ((hwi i (hsx hi)).2 rfl))
+    obtain ⟨j, hj, huj⟩ := Set.mem_iUnion₂.1 hu.1
+    rcases (hle ⟨⟨supClosed_supClosure hq'.1 (subset_supClosure (Set.mem_image_of_mem _ hj)),
+      hq'.2.trans Set.subset_union_left⟩, Or.inr huj⟩).2 with hw | hw
+    · obtain ⟨k, hk, hwk⟩ := Set.mem_iUnion₂.1 hw
+      exact hi' ((hwi k (hs'x hk)).1 hwk ▸ hk)
+    · exact hmw hu (Set.mem_biUnion hi ((hwi j hj).1 hw ▸ huj))
+  have hrs : r = ⋃ i ∈ s, atom P i :=
+    hrC ▸ Set.Subset.antisymm (Set.inter_subset_right.trans (Set.sInter_subset_of_mem ⟨hqS, hrq⟩))
+      (Set.subset_inter (subset_biUnion_of_mem_supClosure hqS) (Set.subset_sInter hmin))
+  have hrφ : r = ⋃ b ∈ x ∩ D, atom P b := by_contra fun hne' ↦ hr ⟨hrs ▸ hqS, hne'⟩
+  obtain ⟨u, hu⟩ := exhMW_nonempty hfin (h.biUnion_nonempty hne)
+  exact hmw hu (by rw [← hrs, hrφ]; exact hu.1)
+
+-- When the atomic predications are independent, no proper alternative is a reading.
+theorem eq_biUnion_of_mem_readings_of_mem_supClosure
+    (hind : ∀ T ⊆ x ∩ D, ∃ w, ∀ a ∈ x ∩ D, P a w ↔ a ∈ T) (hne : (x ∩ D).Nonempty) {r : Set W}
+    (hr : r ∈ readings D x P) (hrS : r ∈ supClosure (atom P '' ↑(x ∩ D))) :
+    r = ⋃ b ∈ x ∩ D, atom P b := by
+  obtain ⟨C, hC, hIE, rfl⟩ := (mem_readings_iff (.of_forall_subset hind) hne).1 hr
+  obtain ⟨s, -, hsx, hs⟩ := Set.mem_supClosure_image.1 hrS
+  by_contra hneq
+  obtain ⟨j, hj, hjs⟩ : ∃ j ∈ x ∩ D, j ∉ s := by
+    by_contra hcon
+    push Not at hcon
+    exact hneq (Set.Subset.antisymm Set.inter_subset_left
+      (hs ▸ Set.biUnion_subset_biUnion_left (s := ((x ∩ D : Finset Atom) : Set Atom))
+        (s' := (s : Set Atom)) fun j hj ↦ hcon j hj))
+  obtain ⟨v, hv⟩ := hind ((x ∩ D).filter (· ∉ s)) (Finset.filter_subset _ _)
+  have hvφ : v ∈ ⋃ b ∈ x ∩ D, atom P b :=
+    Set.mem_biUnion hj ((hv j hj).2 (Finset.mem_filter.2 ⟨hj, hjs⟩))
+  have hvs : v ∉ ⋃ i ∈ s, atom P i := fun hmem ↦
+    let ⟨i, hi, hvi⟩ := Set.mem_iUnion₂.1 hmem
+    (Finset.mem_filter.1 ((hv i (hsx hi)).1 hvi)).2 hi
+  obtain ⟨q₀, hq₀, hvq₀⟩ : ∃ q₀ ∈ C, v ∉ q₀ := by
+    by_contra hcon
+    push Not at hcon
+    exact hvs (by rw [hs]; exact ⟨hvφ, Set.mem_sInter.2 hcon⟩)
+  obtain ⟨s₀, -, hs₀x, rfl⟩ := Set.mem_supClosure_image.1 (hC hq₀)
+  have hs₀ : ⋃ k ∈ s₀, atom P k = (⋃ b ∈ x ∩ D, atom P b) ∩ ⋂₀ C :=
+    Set.Subset.antisymm (hs ▸ Set.biUnion_subset_biUnion_left (s := (s₀ : Set Atom))
+      (s' := (s : Set Atom)) fun k hk ↦ by_contra fun hks ↦ hvq₀ (Set.mem_biUnion hk
+        ((hv k (hs₀x hk)).2 (Finset.mem_filter.2 ⟨hs₀x hk, hks⟩))))
+      (Set.inter_subset_right.trans (Set.sInter_subset_of_mem hq₀))
+  have hnIE := hIE (⋃ k ∈ s₀, atom P k)
+  rw [isInnocentlyExcludable_iff_exhMW_subset_compl C _ _ hq₀, Set.not_subset] at hnIE
+  obtain ⟨u, hu, huq⟩ := hnIE
+  exact hvq₀ (hu.2 hvφ (fun q hq ↦ ⟨hq.1, Set.mem_sInter.1
+    (hs₀ ▸ not_not.1 huq : u ∈ (⋃ b ∈ x ∩ D, atom P b) ∩ ⋂₀ C).2 q hq.1⟩) ⟨hq₀, not_not.1 huq⟩).2
+
+/-- (64): when the atomic predications are independent, the readings are the conjunctions of
+subdomain alternatives, barring the alternatives themselves other than the prejacent. -/
+theorem readings_eq (hind : ∀ T ⊆ x ∩ D, ∃ w, ∀ a ∈ x ∩ D, P a w ↔ a ∈ T)
+    (hne : (x ∩ D).Nonempty) :
+    readings D x P = infClosure (supClosure (atom P '' ↑(x ∩ D))) \
+      (supClosure (atom P '' ↑(x ∩ D)) \ {⋃ b ∈ x ∩ D, atom P b}) :=
+  Set.Subset.antisymm (fun _ hr ↦ ⟨readings_subset_infClosure (.of_forall_subset hind) hne hr,
+    fun hrS ↦ hrS.2 (eq_biUnion_of_mem_readings_of_mem_supClosure hind hne hr hrS.1)⟩)
+    (infClosure_diff_subset_readings (.of_forall_subset hind) hne)
+
+/-! ### Relevance -/
 
 variable (D x P) in
-/-- The reading a partition selects is the strongest reading it determines. -/
+/-- (69): the reading a partition selects is the strongest reading it determines. -/
 def IsReading (Q : Setoid W) (q : Set W) : Prop :=
-  q ∈ readings D x P ∧ Q.Determines q ∧ ∀ r ∈ readings D x P, Q.Determines r → q ⊆ r
+  IsLeast {r ∈ readings D x P | Q.Determines r} q
 
 theorem IsReading.unique {Q : Setoid W} {q r : Set W} (hq : IsReading D x P Q q)
     (hr : IsReading D x P Q r) : q = r :=
-  subset_antisymm (hq.2.2 r hr.1 hr.2.1) (hr.2.2 q hq.1 hq.2.1)
+  IsLeast.unique hq hr
 
-section Pruning
+-- A reading that is the cell of a world where every atom satisfies `P` is the one selected.
+theorem isReading_of_cell_eq (h : Separating D x P) (hne : (x ∩ D).Nonempty) {Q : Setoid W}
+    {q : Set W} (hq : q ∈ readings D x P) {w : W} (hw : ∀ a ∈ x, a ∈ D → P a w)
+    (hQ : Q.cell w = q) : IsReading D x P Q q := by
+  subst hQ
+  exact ⟨⟨hq, Setoid.determines_cell w⟩, fun _ hr ↦
+    hr.2.cell_subset (forall_subset_of_mem_readings h hne hr.1 hw)⟩
+
+/-- Every reading is the one selected by the polar question whether it holds. -/
+theorem isReading_polar (h : Separating D x P) (hne : (x ∩ D).Nonempty) {q : Set W}
+    (hq : q ∈ readings D x P) : IsReading D x P (Setoid.polar q) q := by
+  obtain ⟨w, hw⟩ := h.all
+  have hw' : ∀ a ∈ x, a ∈ D → P a w := fun a ha haD ↦ hw a (Finset.mem_inter.2 ⟨ha, haD⟩)
+  exact isReading_of_cell_eq h hne hq hw'
+    (Setoid.polar_cell_of_mem (forall_subset_of_mem_readings h hne hq hw'))
+
+/-! ### Gappiness -/
+
+variable (D x P) in
+/-- A world is gappy when it is true on the reading some partition selects and false on another's.
+-/
+def Gappy (w : W) : Prop :=
+  (∃ (Q : Setoid W) (q : Set W), IsReading D x P Q q ∧ w ∈ q) ∧
+    ∃ (Q : Setoid W) (q : Set W), IsReading D x P Q q ∧ w ∉ q
+
+theorem gappy_iff (h : Separating D x P) (hne : (x ∩ D).Nonempty) (w : W) :
+    Gappy D x P w ↔ (∃ a ∈ x ∩ D, P a w) ∧ ∃ a ∈ x ∩ D, ¬ P a w := by
+  constructor
+  · rintro ⟨⟨_, q, hq, hwq⟩, ⟨_, q', hq', hwq'⟩⟩
+    obtain ⟨a, ha, hPa⟩ := Set.mem_iUnion₂.1 (subset_biUnion_of_mem_readings hq.1.1 hwq)
+    refine ⟨⟨a, ha, hPa⟩, by_contra fun hcon ↦ ?_⟩
+    push Not at hcon
+    exact hwq' (forall_subset_of_mem_readings h hne hq'.1.1
+      fun a ha haD ↦ hcon a (Finset.mem_inter.2 ⟨ha, haD⟩))
+  · rintro ⟨⟨a, ha, hPa⟩, ⟨b, hb, hPb⟩⟩
+    exact ⟨⟨_, _, isReading_polar h hne (biUnion_mem_readings h hne), Set.mem_biUnion ha hPa⟩,
+      ⟨_, _, isReading_polar h hne (forall_mem_readings h hne),
+        fun hall ↦ hPb (hall b (Finset.mem_inter.1 hb).1 (Finset.mem_inter.1 hb).2)⟩⟩
+
+section Decidable
 
 variable [∀ a w, Decidable (P a w)]
+
+/-- A plain positive definite plural is gappy exactly where [kriz-2016]'s trivalent plural
+predication is undefined, where the accounts agree. -/
+theorem gappy_iff_barePlural_eq_undefined (h : Separating D x P) (hne : (x ∩ D).Nonempty)
+    (w : W) : Gappy D x P w ↔ Homogeneity.barePlural P (x ∩ D) w = .undefined := by
+  rw [gappy_iff h hne, Homogeneity.barePlural, Trivalent.supervaluation_eq_undefined_iff]
+
+-- Trivalent plural predication is true where the exhaustified sentence is, and false where
+-- the unexhaustified one is.
+theorem barePlural_eq_true_iff_mem_exhIEII (h : Separating D x P) (hne : (x ∩ D).Nonempty)
+    (w : W) : Homogeneity.barePlural P (x ∩ D) w = .true ↔
+      w ∈ exhIEII (supClosure (atom P '' ↑(x ∩ D))) (⋃ b ∈ x ∩ D, atom P b) := by
+  rw [exhIEII_supClosure (p := atom P) h.single hne h.all, Homogeneity.barePlural,
+    Trivalent.supervaluation_eq_true_iff, Set.mem_iInter₂]
+  rfl
+
+theorem barePlural_eq_false_iff_notMem_biUnion (hne : (x ∩ D).Nonempty) (w : W) :
+    Homogeneity.barePlural P (x ∩ D) w = .false ↔ w ∉ ⋃ b ∈ x ∩ D, atom P b := by
+  rw [Homogeneity.barePlural, Trivalent.supervaluation_eq_false_iff, Set.mem_iUnion₂]
+  simp [hne, atom]
+
+-- At a gappy world the trivalent negation is still undefined, while the negative sentence with
+-- negation over `∃-PL`, exhaustified over any of its alternatives, is plainly false, where the
+-- accounts part.
+theorem compl_barePlural_eq_undefined_and_notMem_exhIEII_compl (h : Separating D x P)
+    (hne : (x ∩ D).Nonempty) {w : W} (hw : Gappy D x P w) (C : Set (Set W)) :
+    (Homogeneity.barePlural P (x ∩ D) w)ᶜ = .undefined ∧
+      w ∉ exhIEII C (⋃ b ∈ x ∩ D, atom P b)ᶜ := by
+  refine ⟨Trivalent.compl_eq_undefined_iff.2
+    ((gappy_iff_barePlural_eq_undefined h hne w).1 hw), ?_⟩
+  obtain ⟨a, ha, hPa⟩ := ((gappy_iff h hne w).1 hw).1
+  exact fun hmem ↦ hmem.1 (Set.mem_biUnion ha hPa)
+
+/-! ### Threshold readings -/
 
 variable (D x P) in
 /-- How many atoms of the plurality satisfy `P` at `w`. -/
@@ -203,8 +424,14 @@ theorem atLeast_card : atLeast D x P (x ∩ D).card = {w | ∀ a ∈ x, a ∈ D 
   · rw [Finset.filter_true_of_mem fun a ha ↦
       h a (Finset.mem_inter.1 ha).1 (Finset.mem_inter.1 ha).2]
 
-/-- Exhaustifying over the size-`m` alternatives yields "at least `n + 1 - m` of the kids
-laughed". -/
+theorem gappy_iff_count (h : Separating D x P) (hne : (x ∩ D).Nonempty) (w : W) :
+    Gappy D x P w ↔ 0 < count D x P w ∧ count D x P w < (x ∩ D).card := by
+  rw [gappy_iff h hne, count, Finset.card_pos, Finset.filter_nonempty_iff, ← Finset.filter_ssubset]
+  exact and_congr_right fun _ ↦ ⟨Finset.card_lt_card, fun hlt ↦ Finset.ssubset_iff_subset_ne.2
+    ⟨Finset.filter_subset _ _, ne_of_apply_ne _ hlt.ne⟩⟩
+
+-- (62): exhaustifying over the size-`m` alternatives yields "at least `n + 1 - m` of the kids
+-- laughed".
 theorem exhIEII_pruned_eq_atLeast (h : Separating D x P) {m : ℕ} (hm : 0 < m)
     (hmn : m ≤ (x ∩ D).card) :
     exhIEII (subDisjsOfCard (x ∩ D) (atom P) m) (⋃ b ∈ x ∩ D, atom P b) =
@@ -214,102 +441,24 @@ theorem exhIEII_pruned_eq_atLeast (h : Separating D x P) {m : ℕ} (hm : 0 < m)
   change (x ∩ D).card < m + count D x P w ↔ (x ∩ D).card + 1 - m ≤ count D x P w
   omega
 
-theorem mem_readings_iff (h : Separating D x P) {q : Set W} :
-    q ∈ readings D x P ↔ ∃ k, 0 < k ∧ k ≤ (x ∩ D).card ∧ q = atLeast D x P k := by
-  constructor
-  · rintro ⟨m, hm, hmn, rfl⟩
-    exact ⟨_, by omega, by omega, exhIEII_pruned_eq_atLeast h hm hmn⟩
-  · rintro ⟨k, hk, hkn, rfl⟩
-    refine ⟨(x ∩ D).card + 1 - k, by omega, by omega, ?_⟩
-    rw [exhIEII_pruned_eq_atLeast h (by omega) (by omega)]
-    congr 1; omega
+theorem atLeast_mem_readings (h : Separating D x P) {k : ℕ} (hk : 0 < k)
+    (hkn : k ≤ (x ∩ D).card) : atLeast D x P k ∈ readings D x P := by
+  have hne : (x ∩ D).Nonempty := Finset.card_pos.1 (hk.trans_le hkn)
+  have hm : (x ∩ D).card + 1 - k ≤ (x ∩ D).card := by omega
+  have hC := subDisjsOfCard_subset_supClosure (p := atom P) hne
+    (by omega : 0 < (x ∩ D).card + 1 - k)
+  have he := exhIEII_pruned_eq_atLeast h (by omega) hm
+  rw [show (x ∩ D).card + 1 - ((x ∩ D).card + 1 - k) = k by omega] at he
+  refine ⟨_, ⟨hC, ?_⟩, he⟩
+  rw [he, exhIEII_eq_universal h hne, ← atLeast_card]
+  exact atLeast_antitone hkn
 
-theorem readings_subset_readings (h : Separating D x P) :
-    readings D x P ⊆ Homogeneity.readings (fun z ↦ {w | ∀ a ∈ z, P a w}) x := by
-  intro q hq
-  obtain ⟨k, hk, hkn, rfl⟩ := (mem_readings_iff h).1 hq
-  refine ⟨⟨{z | k ≤ (z ∩ D).card}, fun _ _ hzz hz ↦ hz.trans
-    (Finset.card_le_card (Finset.inter_subset_inter_right hzz))⟩, hkn, Set.ext fun w ↦ ⟨?_, ?_⟩⟩
-  · intro hw
-    refine ⟨(x ∩ D).filter (P · w), ?_, (Finset.filter_subset _ _).trans Finset.inter_subset_left,
-      isBot_iff_eq_bot.not.2 (Finset.nonempty_iff_ne_empty.1 (Finset.card_pos.1 (hk.trans_le hw))),
-      fun a ha ↦ (Finset.mem_filter.1 ha).2⟩
-    show k ≤ ((x ∩ D).filter (P · w) ∩ D).card
-    rw [Finset.inter_eq_left.2 ((Finset.filter_subset _ _).trans Finset.inter_subset_right)]
-    exact hw
-  · rintro ⟨z, hz, hzx, -, hP⟩
-    refine hz.trans (Finset.card_le_card fun a ha ↦ ?_)
-    rw [Finset.mem_inter] at ha
-    exact Finset.mem_filter.2 ⟨Finset.mem_inter.2 ⟨hzx ha.1, ha.2⟩, hP a ha.1⟩
-
-theorem exhIEII_supClosure_subset_exhIEII_subDisjsOfCard (h : Separating D x P)
-    (hne : (x ∩ D).Nonempty) {m : ℕ} (hm : 0 < m) (hmn : m ≤ (x ∩ D).card) :
-    exhIEII (supClosure (atom P '' ↑(x ∩ D))) (⋃ b ∈ x ∩ D, atom P b) ⊆
-      exhIEII (subDisjsOfCard (x ∩ D) (atom P) m) (⋃ b ∈ x ∩ D, atom P b) := by
-  rw [exhIEII_eq_universal h hne, exhIEII_pruned_eq_atLeast h hm hmn, ← atLeast_card]
-  exact atLeast_antitone (by omega)
-
-/-! ### Relevance and gappiness -/
-
-/-- Given the polar question whether at least `k` of the kids laughed, *the kids laughed* means
-that at least `k` did, provided every number of laughers is realized at some world. -/
-theorem isReading_polar_atLeast (h : Separating D x P)
-    (hcount : ∀ k ≤ (x ∩ D).card, ∃ w, count D x P w = k) {k : ℕ} (hk : 0 < k)
+theorem isReading_polar_atLeast (h : Separating D x P) {k : ℕ} (hk : 0 < k)
     (hkn : k ≤ (x ∩ D).card) :
-    IsReading D x P (Setoid.polar (atLeast D x P k)) (atLeast D x P k) := by
-  refine ⟨(mem_readings_iff h).2 ⟨k, hk, hkn, rfl⟩, Setoid.polar_determines, fun r hr hQ ↦ ?_⟩
-  obtain ⟨l, hl, hln, rfl⟩ := (mem_readings_iff h).1 hr
-  refine atLeast_antitone (not_lt.1 fun hkl ↦ ?_)
-  obtain ⟨w, hw⟩ := hcount l hln
-  obtain ⟨v, hv⟩ := hcount k hkn
-  have := hQ.iff (w := w) (v := v) (Setoid.polar_iff.2 (by simp only [mem_atLeast]; omega))
-  simp only [mem_atLeast, hw, hv] at this
-  omega
+    IsReading D x P (Setoid.polar (atLeast D x P k)) (atLeast D x P k) :=
+  isReading_polar h (Finset.card_pos.1 (hk.trans_le hkn)) (atLeast_mem_readings h hk hkn)
 
-variable (D x P) in
-/-- A world is gappy when it is true on the reading some partition selects and false on another's.
--/
-def Gappy (w : W) : Prop :=
-  (∃ (Q : Setoid W) (q : Set W), IsReading D x P Q q ∧ w ∈ q) ∧
-    ∃ (Q : Setoid W) (q : Set W), IsReading D x P Q q ∧ w ∉ q
-
-theorem gappy_iff (h : Separating D x P) (hcount : ∀ k ≤ (x ∩ D).card, ∃ w, count D x P w = k)
-    (w : W) : Gappy D x P w ↔ 0 < count D x P w ∧ count D x P w < (x ∩ D).card := by
-  constructor
-  · rintro ⟨⟨_, q, ⟨hq, -, -⟩, hwq⟩, ⟨_, q', ⟨hq', -, -⟩, hwq'⟩⟩
-    obtain ⟨k, hk, hkn, rfl⟩ := (mem_readings_iff h).1 hq
-    obtain ⟨l, hl, hln, rfl⟩ := (mem_readings_iff h).1 hq'
-    simp only [mem_atLeast, not_le] at hwq hwq'
-    omega
-  · rintro ⟨hpos, hlt⟩
-    exact ⟨⟨_, _, isReading_polar_atLeast h hcount hpos (count_le_card w), mem_atLeast.2 le_rfl⟩,
-      ⟨_, _, isReading_polar_atLeast h hcount (Nat.succ_pos _) hlt, by simp⟩⟩
-
-/-- A plain positive definite plural is gappy exactly where [kriz-2016]'s trivalent plural
-predication is undefined, where the accounts agree. -/
-theorem gappy_iff_barePlural_eq_undefined (h : Separating D x P)
-    (hcount : ∀ k ≤ (x ∩ D).card, ∃ w, count D x P w = k) (w : W) :
-    Gappy D x P w ↔ Homogeneity.barePlural P (x ∩ D) w = .undefined := by
-  rw [gappy_iff h hcount, Homogeneity.barePlural, Trivalent.supervaluation_eq_undefined_iff, count,
-    ← Finset.filter_ssubset, ← Finset.filter_nonempty_iff, Finset.card_pos]
-  exact and_congr_right fun _ ↦ ⟨fun hlt ↦ Finset.ssubset_iff_subset_ne.2
-    ⟨Finset.filter_subset _ _, ne_of_apply_ne _ hlt.ne⟩, Finset.card_lt_card⟩
-
-/-- At a gappy world the trivalent negation is still undefined, while the negative sentence with
-negation over `∃-PL`, exhaustified over any of its alternatives, is plainly false, where the
-accounts part. -/
-theorem compl_barePlural_eq_undefined_and_notMem_exhIEII_compl (h : Separating D x P)
-    (hcount : ∀ k ≤ (x ∩ D).card, ∃ w, count D x P w = k) {w : W} (hw : Gappy D x P w)
-    (C : Set (Set W)) :
-    (Homogeneity.barePlural P (x ∩ D) w)ᶜ = .undefined ∧
-      w ∉ exhIEII C (⋃ b ∈ x ∩ D, atom P b)ᶜ := by
-  refine ⟨Trivalent.compl_eq_undefined_iff.2
-    ((gappy_iff_barePlural_eq_undefined h hcount w).1 hw), ?_⟩
-  obtain ⟨a, ha⟩ := Finset.card_pos.1 ((gappy_iff h hcount w).1 hw).1
-  obtain ⟨ha, hPa⟩ := Finset.mem_filter.1 ha
-  exact fun hmem ↦ hmem.1 (Set.mem_biUnion ha hPa)
-
-end Pruning
+end Decidable
 
 /-! ### The model whose worlds record who laughed -/
 
@@ -321,19 +470,19 @@ abbrev holds (a : Atom) (w : Finset Atom) : Prop := a ∈ w
 
 variable (D x)
 
+theorem forall_subset_exists_holds_iff :
+    ∀ T ⊆ x ∩ D, ∃ w, ∀ a ∈ x ∩ D, holds a w ↔ a ∈ T :=
+  fun T _ ↦ ⟨T, fun _ _ ↦ Iff.rfl⟩
+
 theorem separating_holds : Separating D x holds :=
-  ⟨fun a _ ↦ ⟨{a}, fun _ _ ↦ Finset.mem_singleton⟩, ⟨x ∩ D, fun _ ↦ id⟩⟩
+  .of_forall_subset (forall_subset_exists_holds_iff D x)
 
 theorem count_holds (w : Finset Atom) : count D x holds w = (x ∩ D ∩ w).card := by
   rw [count, Finset.filter_mem_eq_inter]
 
-theorem exists_count_holds_eq (k : ℕ) (hk : k ≤ (x ∩ D).card) : ∃ w, count D x holds w = k := by
-  obtain ⟨S, hS, rfl⟩ := Finset.exists_subset_card_eq hk
-  exact ⟨S, by rw [count_holds, Finset.inter_eq_right.2 hS]⟩
-
 theorem isReading_polar_atLeast_holds {k : ℕ} (hk : 0 < k) (hkn : k ≤ (x ∩ D).card) :
     IsReading D x holds (Setoid.polar (atLeast D x holds k)) (atLeast D x holds k) :=
-  isReading_polar_atLeast (separating_holds D x) (exists_count_holds_eq D x) hk hkn
+  isReading_polar_atLeast (separating_holds D x) hk hkn
 
 end Model
 
@@ -355,8 +504,8 @@ abbrev kellyLaughed : Set (Finset Kid) := atom holds .kelly
 /-- *Jane laughed*. -/
 abbrev janeLaughed : Set (Finset Kid) := atom holds .jane
 
-/-- *Kelly or Jane laughed*, (41a), whose alternatives include the conjunction, is strengthened
-to "not both". -/
+-- (41a): *Kelly or Jane laughed*, whose alternatives include the conjunction, is strengthened
+-- to "not both".
 theorem disjunction_not_both :
     exhIEII {kellyLaughed ∪ janeLaughed, kellyLaughed, janeLaughed, kellyLaughed ∩ janeLaughed}
         (kellyLaughed ∪ janeLaughed) =
@@ -365,15 +514,15 @@ theorem disjunction_not_both :
     ⟨{.kelly}, ⟨Or.inl (Finset.mem_singleton_self _), Finset.mem_singleton_self _⟩, by decide⟩
     ⟨{.jane}, ⟨Or.inr (Finset.mem_singleton_self _), Finset.mem_singleton_self _⟩, by decide⟩
 
-/-- *The kids laughed*, (41b), whose alternatives are the subdomain alternatives alone, is
-strengthened to "both". -/
+-- (41b): *The kids laughed*, whose alternatives are the subdomain alternatives alone, is
+-- strengthened to "both".
 theorem plural_both :
     exhIEII (supClosure (atom holds '' pair)) (⋃ b ∈ pair, atom holds b) = {w | pair ⊆ w} := by
   have := exhIEII_eq_universal (separating_holds pair pair) (by decide)
   rw [Finset.inter_self] at this
   exact this.trans (Set.ext fun w ↦ ⟨fun h _ ha ↦ h _ ha ha, fun h a ha _ ↦ h ha⟩)
 
-/-- Given the partition (66), *the kids laughed* means that at least two of the kids laughed. -/
+-- Given the partition (66), *the kids laughed* means that at least two of the kids laughed.
 theorem reading_66 :
     IsReading kids kids holds (Setoid.polar (atLeast kids kids holds 2))
       (atLeast kids kids holds 2) :=
@@ -385,14 +534,14 @@ abbrev Book := Fin 10
 /-- The books. -/
 def books : Finset Book := Finset.univ
 
-/-- In the context of (80), *Mary read the books* means that she read at least five of them. -/
+-- In the context of (80), *Mary read the books* means that she read at least five of them.
 theorem reading_80 :
     IsReading books books holds (Setoid.polar (atLeast books books holds 5))
       (atLeast books books holds 5) :=
   isReading_polar_atLeast_holds books books (by decide) (by decide)
 
-/-- In the context of (81), where only reading all ten passes, *Mary read the books* has its
-maximal reading. -/
+-- In the context of (81), where only reading all ten passes, *Mary read the books* has its
+-- maximal reading.
 theorem reading_81 :
     IsReading books books holds (Setoid.polar (atLeast books books holds 10))
       (atLeast books books holds 10) :=
@@ -414,19 +563,19 @@ private theorem krizChemla_unembedded : ∀ i ∈ items, i.embedding = .unembedd
     ∀ n ∈ i.cells, (0 < n ∧ n < 9 ↔ i.condition = .gap) := by
   decide
 
-/-- On Križ and Chemla's unembedded displays the positive sentence is gappy exactly at the GAP
-displays, where every experiment found a gap (Table 2). -/
+-- On Križ and Chemla's unembedded displays the positive sentence is gappy exactly at the GAP
+-- displays, where every experiment found a gap (Table 2).
 theorem gappy_iff_krizChemla_gap :
     (∀ i ∈ items, i.embedding = .unembedded → ∀ w : Finset Symbol, i.cells = [w.card] →
       (Gappy Finset.univ Finset.univ holds w ↔ i.condition = .gap)) ∧
     ∀ t ∈ gapTests, t.embedding = .unembedded → t.found = .yes := by
   refine ⟨fun i hi he w hw ↦ ?_, by decide⟩
   have h := krizChemla_unembedded i hi he w.card (by simp [hw])
-  rw [gappy_iff (separating_holds _ _) (exists_count_holds_eq _ _), count_holds]
+  rw [gappy_iff_count (separating_holds _ _) ⟨0, by simp⟩, count_holds]
   simpa using h
 
-/-- Under negation every GAP display is false whatever is pruned, though Table 2 found a gap there
-in Experiments A1 and B1. -/
+-- Under negation every GAP display is false whatever is pruned, though Table 2 found a gap
+-- there in Experiments A1 and B1.
 theorem krizChemla_negation_residue :
     (∀ i ∈ items, i.embedding = .unembedded → i.condition = .gap → ∀ w : Finset Symbol,
       i.cells = [w.card] → ∀ C, w ∉ exhIEII C (⋃ b ∈ Finset.univ, atom holds b)ᶜ) ∧
@@ -434,13 +583,8 @@ theorem krizChemla_negation_residue :
   refine ⟨fun i hi he hc w hw C ↦ ?_, by decide⟩
   have hg := (gappy_iff_krizChemla_gap.1 i hi he w hw).2 hc
   simpa only [Finset.inter_self] using (compl_barePlural_eq_undefined_and_notMem_exhIEII_compl
-    (separating_holds _ _) (exists_count_holds_eq _ _) hg C).2
+    (separating_holds _ _) ⟨0, by simp⟩ hg C).2
 
 end KrizChemla
-
--- (82b)
-theorem rows_gappiness_positive : ∀ e ∈ Examples.all,
-    e.feature? "gappiness" = some "yes" → e.feature? "polarity" = some "positive" := by
-  decide
 
 end BarLev2021
