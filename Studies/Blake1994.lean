@@ -107,6 +107,12 @@ theorem Position.rank_injective : Function.Injective Position.rank := by decide
 
 instance : LinearOrder Position := LinearOrder.lift' Position.rank Position.rank_injective
 
+instance : OrderBot Position where
+  bot := .nom
+  bot_le := by decide
+
+instance : LocallyFiniteOrder Position := Fintype.toLocallyFiniteOrder
+
 instance : LocallyFiniteOrderBot Position := Fintype.toLocallyFiniteOrderBot
 
 /-- The position of a case. A local case goes by its direction, a case of rest with the locative
