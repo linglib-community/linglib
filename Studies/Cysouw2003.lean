@@ -754,7 +754,7 @@ theorem explicitness_rungs :
 /-- The English subject forms by referential category are the paradigm of the fragment's
 nominative pronouns. -/
 def englishSubject : Category → Finset String :=
-  PersonalPronoun.paradigm (English.Pronouns.pronouns.filter (.nom ∈ ·.cases))
+  PersonalPronoun.paradigm (English.Pronouns.personal.filter (.nom ∈ ·.cases))
 
 theorem english_pronouns :
     ∃ r ∈ rows, r.id = "cysouw2003_4_19" ∧ Setoid.ker englishSubject = r.syncretism := by

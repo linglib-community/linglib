@@ -109,7 +109,7 @@ def addresseePl : Grade → Finset PersonalPronoun
   | .polite => {ustedes}
 
 /-- The subject pronouns. -/
-def pronouns : Finset PersonalPronoun :=
+def personal : Finset PersonalPronoun :=
   {yo, tu, vos, usted, el, ella, nosotros, nosotras, vosotros, vosotras, ustedes, ellos, ellas}
 
 /-! ### Demonstrative pronouns -/

@@ -22,7 +22,7 @@ but it follows the verb, never enters a cluster and bears word stress.
 
 ## Main declarations
 
-* `Italian.Pronouns.pronouns` — the tonic series
+* `Italian.Pronouns.personal` — the tonic series
 * `Italian.Pronouns.atonic` — the atonic object pronouns by person, number, gender and case
 * `Italian.Pronouns.accusative`, `Italian.Pronouns.dative`, `Italian.Pronouns.reflexiveForms`,
   `Italian.Pronouns.reflexive` — the atonic series
@@ -132,7 +132,7 @@ def addresseePl : Grade → PersonalPronoun
   | .polite => loro_formal
 
 /-- The strong-pronoun inventory. -/
-def pronouns : Finset PersonalPronoun :=
+def personal : Finset PersonalPronoun :=
   {io, me_tonic, tu, te_tonic, lei_formal, lui, lei, noi, voi, loro_formal, loro}
 
 /-! ### The atonic series -/

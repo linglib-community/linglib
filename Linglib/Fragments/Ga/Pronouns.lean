@@ -80,7 +80,7 @@ def entry : String → PersonalPronoun :=
   PersonalPronoun.ofTable (·.1.person) (·.1.number) (fun _ ↦ none) (some ·.2.label) table
 
 /-- The personal pronoun inventory: the entry of every form of the table. -/
-def pronouns : Finset PersonalPronoun := (Finset.univ.biUnion table).image entry
+def personal : Finset PersonalPronoun := (Finset.univ.biUnion table).image entry
 
 /-- *mi* — first person singular, the form of all three cases. -/
 def mi : PersonalPronoun := entry "mi"
@@ -107,6 +107,6 @@ def nye : PersonalPronoun := entry "nyɛ"
 def ame : PersonalPronoun := entry "amɛ"
 
 /-- The forms of each referential category. -/
-def paradigm : Person.Category → Finset String := PersonalPronoun.paradigm pronouns
+def paradigm : Person.Category → Finset String := PersonalPronoun.paradigm personal
 
 end Ga.Pronouns

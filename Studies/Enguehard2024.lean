@@ -256,7 +256,7 @@ theorem bookRows_judgment :
 
 /-! ### Referents and their continuations -/
 
-open English.Pronouns (it they pronouns)
+open English.Pronouns (it they personal)
 
 /-- The rows name the pronouns by their forms. -/
 def pronounTable : List (String × PersonalPronoun) := [("it", it), ("they", they)]
@@ -284,7 +284,7 @@ theorem continuationRows_match :
 /-- The referent of an indefinite of number `n` can be resumed when the witness set has `k`
 members, that is, when a third person pronoun bears `n` and, read maximally, its number fits `k`. -/
 def Usable (n : Number) (k : ℕ) : Prop :=
-  ∃ p ∈ pronouns, p.person = some .third ∧ p.number = some n ∧ k ∈ inference n
+  ∃ p ∈ personal, p.person = some .third ∧ p.number = some n ∧ k ∈ inference n
 
 theorem usable_iff {n : Number} (hn : n ∈ numberSystem) {k : ℕ} :
     Usable n k ↔ k ∈ inference n := by

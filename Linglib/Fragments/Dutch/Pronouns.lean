@@ -12,7 +12,7 @@ addressee or several that takes singular agreement.
 
 ## Main definitions
 
-* `Dutch.Pronouns.pronouns`: the strong subject pronouns.
+* `Dutch.Pronouns.personal`: the strong subject pronouns.
 * `Dutch.Pronouns.addresseeSg`, `Dutch.Pronouns.addresseePl`: the pronouns of address at each
   grade.
 
@@ -98,7 +98,7 @@ def addresseePl : Grade → PersonalPronoun
   | .polite => u
 
 /-- The strong subject pronouns. -/
-def pronouns : Finset PersonalPronoun := {ik, jij, u, hij, zij_sg, het, wij, jullie, zij_pl}
+def personal : Finset PersonalPronoun := {ik, jij, u, hij, zij_sg, het, wij, jullie, zij_pl}
 
 /-- The familiar grade distinguishes one addressee from several, and the polite grade does not. -/
 theorem addressee_number :
