@@ -32,7 +32,6 @@ p. 54).
 ## Main results
 
 * `Adposition.isParticle_iff`: a particle takes no complement.
-* `Adposition.isSpatial_iff`: a spatial adposition marks a value with a direction.
 
 ## Implementation notes
 
