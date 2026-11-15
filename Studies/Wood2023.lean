@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.DistributedMorphology.Allosemy
+public import Linglib.Morphology.DistributedMorphology.Nominalization
 public import Linglib.Morphology.DistributedMorphology.Locality
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.InsideOut
 public import Linglib.Fragments.Icelandic.Nouns
@@ -41,15 +41,19 @@ as a prefix, while one with its own meaning heads a PP, and one that does both i
 across v (`nominal_n_local`) and forbids it in *-væðing* nominals, where *-væða* is a compound
 head attaching to a categorized word, so that two categorizers separate the root from the
 outer n (`vaeda_n_not_local`). The prefixes *marg-* and *endur-* are event modifiers: *marg-*
-adjoins to v, *endur-* to v or to n, and each needs an event variable at its host, which
-licenses *marg-* exactly on nominals whose v is eventive and *endur-* also on simple event and
-result nominals but not on simple entities (`Licensed`); the book's judgments on the prefixed
+adjoins to v and takes a predicate of eventualities, so it composes exactly under the allosemes
+of n that take one (`margComposes_iff`), and *endur-*, which adjoins to v or to n, needs an event
+variable at its host and is licensed also on simple event nominals (`Licensed`); the book's
+judgments on the prefixed
 readings of *þvottur* and *prentun* are the rows of `Data.Examples.Wood2023`, checked one by one
 (`rows_licensed`). Allosemy is contextual as allomorphy is: *aðdáun* and *viðvörun* share the
 nominalizer *-un*, and only the second has a concrete entity reading
 (`reading_not_by_nominalizer`).
 
 ## Implementation notes
+
+*marg-* is licensed where the complex head with the prefix composes, which includes the result
+alloseme of n, a case the book does not test.
 
 The exponents of the roots and affixes are the surface morphs of the fragment, so the u-umlaut
 of *söfn-un* and *vönt-un* is not undone and the theme vowel *-a* of the verb is absent, as
@@ -59,8 +63,7 @@ covers the root, v, and n. Wood's bound for allosemy, one intervening categorize
 phase looser than `ComplexHead.Active` of the root, the bound the book keeps for root suppletion;
 the study states the strict one through the substrate. A preposition adjoined to a complex head
 has no spine position, since a head does not c-command its own adjunct, so the heads between a
-preposition and the root are read off its attachment. The event-modifier account licenses
-*marg-* on a result nominal built on eventive v, a case the book does not test.
+preposition and the root are read off its attachment.
 
 ## References
 
@@ -426,37 +429,72 @@ inductive Prefix where
   | endur
   deriving DecidableEq, Repr
 
-/-- At the complex head *marg-* adjoins to v, and *endur-* to v or n. -/
-def Prefix.AdjoinsTo : Prefix → Head → Prop
-  | .marg, .v _ => True
-  | .marg, .n _ => False
-  | .endur, _ => True
+/-! #### *marg-* by composition -/
 
-/-- A head's alloseme carries an event variable for eventive v and for the simple event and
-result allosemes of n. -/
-def Head.HasEvent : Head → Prop
-  | .v a => a = .eventive
-  | .n a => a = .simpleEvent ∨ a = .result
+/-- The meaning of *marg-*: a modifier of a predicate of eventualities. -/
+inductive MargItem : Interpreter.Ty Interpreter.Base → Type
+  | marg : MargItem (.fn .vt .vt)
 
-/-- A prefix is licensed on a nominalization when some head it adjoins to there carries an
-event variable. -/
-def Licensed (p : Prefix) (d : Derivation) : Prop :=
-  ∃ h ∈ d.heads, p.AdjoinsTo h ∧ h.HasEvent
+/-- A terminal of a *marg-* nominalization: a terminal of the nominalization, or the prefix. -/
+def margItems : Terminal ⊕ Unit → List (Σ a, Item a ⊕ MargItem a)
+  | .inl t => t.items.map fun ⟨a, i⟩ ↦ ⟨a, .inl i⟩
+  | .inr () => [⟨_, .inr .marg⟩]
 
-theorem licensed_marg_iff (d : Derivation) : Licensed .marg d ↔ d.v = .eventive := by
-  simp [Licensed, Derivation.heads, Prefix.AdjoinsTo, Head.HasEvent]
+/-- The complex head of a *marg-* nominalization, the prefix adjoined to the root categorized by
+v, under n. -/
+def margNominal (d : Derivation) : Interpreter.Skeleton Unit (Terminal ⊕ Unit) :=
+  .binary () (.binary () (.leaf (.inr ()))
+    (.binary () (.leaf (.inl .root)) (.leaf (.inl (.v d.v))))) (.leaf (.inl (.n d.n)))
 
-theorem licensed_endur_iff (d : Derivation) :
-    Licensed .endur d ↔ d.v = .eventive ∨ d.n = .simpleEvent ∨ d.n = .result := by
-  simp [Licensed, Derivation.heads, Prefix.AdjoinsTo, Head.HasEvent]
+/-- *marg-* composes on a nominalization: the complex head with the prefix has a derivation. -/
+def MargComposes (d : Derivation) : Prop :=
+  (Interpreter.typeDriven nominalGrammar).derivs margItems (margNominal d) ≠ []
 
-theorem Licensed.endur {d : Derivation} (h : Licensed .marg d) : Licensed .endur d :=
-  (licensed_endur_iff d).2 (Or.inl ((licensed_marg_iff d).1 h))
+instance : DecidablePred MargComposes := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
+
+/-- *marg-* needs a predicate of eventualities below it, so it composes exactly under the
+allosemes of n that take one, the zero and the result allosemes; the simple event, state and
+entity allosemes want a root that holds of entities. -/
+theorem margComposes_iff (d : Derivation) : MargComposes d ↔ d.n = .zero ∨ d.n = .result := by
+  revert d
+  decide
+
+/-- The meaning of *marg-* in a model whose iterated eventualities are `iter`, and of the other
+terminals. -/
+def margVal {E V : Type} (m : NominalizationModel E V) (ρ : RootMeaning E V) (iter : V → Prop) :
+    {a : Interpreter.Ty Interpreter.Base} → Item a ⊕ MargItem a →
+      a.Domain E Unit { eventuality := V }
+  | _, .inl i => i.val m ρ
+  | _, .inr .marg => fun P e ↦ P e ∧ iter e
+
+-- (6.44c): the complex event reading of a *marg-* noun, iterated activities of the root's kind.
+theorem values_margNominal_cen {E V : Type} (m : NominalizationModel E V) (ρ : RootMeaning E V)
+    (iter : V → Prop) :
+    (Interpreter.typeDriven nominalGrammar).values
+        (D := Interpreter.Ty.Dom (Interpreter.Base.Dom E Unit { eventuality := V })) inferInstance
+        (margVal m ρ iter) margItems (margNominal .cen) =
+      [⟨.vt, fun e ↦ (ρ.onEvents e ∧ m.activity e) ∧ iter e⟩] :=
+  rfl
+
+/-! #### *endur-* -/
+
+/-- *endur-* is licensed on a nominalization where v or n carries an event variable: under
+eventive v, and under the simple event and result allosemes of n. -/
+def EndurLicensed (d : Derivation) : Prop :=
+  d.v = .eventive ∨ d.n = .simpleEvent ∨ d.n = .result
+
+instance : DecidablePred EndurLicensed := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+
+/-- A prefix is licensed on a nominalization: *marg-* where it composes, *endur-* where an event
+variable is present. -/
+def Licensed : Prefix → Derivation → Prop
+  | .marg, d => MargComposes d
+  | .endur, d => EndurLicensed d
 
 instance (p : Prefix) (d : Derivation) : Decidable (Licensed p d) :=
   match p with
-  | .marg => decidable_of_iff _ (licensed_marg_iff d).symm
-  | .endur => decidable_of_iff _ (licensed_endur_iff d).symm
+  | .marg => inferInstanceAs (Decidable (MargComposes d))
+  | .endur => inferInstanceAs (Decidable (EndurLicensed d))
 
 /-- The prefixes as the rows name them. -/
 def prefixTable : List (String × Prefix) := [("marg-", .marg), ("endur-", .endur)]
