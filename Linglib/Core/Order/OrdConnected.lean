@@ -4,6 +4,7 @@ public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Order.Interval.Finset.Basic
 public import Mathlib.Order.Interval.Set.OrdConnected
+public import Mathlib.Order.UpperLower.Basic
 
 /-!
 # Order-connected sets and contiguous maps
@@ -29,6 +30,8 @@ lower intervals, a map is contiguous iff some monotone map to `ℕ` has the same
   `Icc a ⊤`.
 * `Set.OrdConnected.isUpperSet_of_top_mem`: an order-connected set containing `⊤` is an upper
   set.
+* `isLowerSet_iff_ordConnected_and_bot_mem`: the nonempty lower sets are the order-connected
+  sets containing `⊥`.
 -/
 
 @[expose] public section
@@ -37,6 +40,13 @@ lower intervals, a map is contiguous iff some monotone map to `ℕ` has the same
 theorem Set.OrdConnected.isUpperSet_of_top_mem {α : Type*} [Preorder α] [OrderTop α]
     {s : Set α} (hs : s.OrdConnected) (ht : ⊤ ∈ s) : IsUpperSet s :=
   fun _ _ hab ha ↦ hs.out ha ht ⟨hab, le_top⟩
+
+/-- A nonempty set is a lower set exactly when it is order-connected and contains the bottom
+element. -/
+theorem isLowerSet_iff_ordConnected_and_bot_mem {α : Type*} [Preorder α] [OrderBot α]
+    {s : Set α} (hne : s.Nonempty) : IsLowerSet s ↔ s.OrdConnected ∧ ⊥ ∈ s :=
+  ⟨fun h ↦ ⟨h.ordConnected, h bot_le hne.some_mem⟩,
+    fun ⟨hc, hb⟩ _ _ hba ha ↦ hc.out hb ha ⟨bot_le, hba⟩⟩
 
 namespace Finset
 

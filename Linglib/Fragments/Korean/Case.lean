@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Morph
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Function
 
 /-!
 # Korean case markers
@@ -20,7 +20,7 @@ dative particles. Forms are in the Revised Romanization; Sohn writes *ka*, *(l)u
 
 * `Korean.Case`, `Korean.Case.exponents`: the case particles, with their allomorphs.
 * `Korean.Case.label`, `Korean.Case.functions`: the comparative value each is named for, and the
-  values it expresses.
+  functions it marks.
 
 ## References
 
@@ -84,15 +84,17 @@ def label : Case → _root_.Case
   | ro => .inst
   | wa => .com
 
-/-- The comparative values a particle expresses: *-e* also the goal, *-eseo* also the source, and
+/-- The functions a particle marks: *-e* also the goal, *-eseo* also the source, and
 *-(eu)ro* also the direction of motion. -/
-def functions : Case → Finset _root_.Case
-  | e => {.loc, .all}
-  | eseo => {.loc, .abl}
-  | ro => {.inst, .all}
-  | c => {c.label}
+def functions : Case → Finset _root_.Case.Function
+  | e => {.spatial none .place, .spatial none .goal}
+  | eseo => {.spatial none .place, .spatial none .source}
+  | ro => {.instrumental, .spatial none .goal}
+  | buteo => {.spatial none .source}
+  | c => c.label.functions
 
-theorem label_mem_functions (c : Case) : c.label ∈ c.functions := by
+theorem label_functions_inter_nonempty (c : Case) :
+    (c.label.functions ∩ c.functions).Nonempty := by
   cases c <;> decide
 
 end Case

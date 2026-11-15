@@ -111,7 +111,7 @@ def break_ : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
   vendlerClass := some .accomplishment
 
 /-- *tear* is a break verb (Levin's 45.1). It implies separation in contrary directions, often
@@ -127,7 +127,7 @@ def tear_ : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
 

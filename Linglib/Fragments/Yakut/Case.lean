@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Morph
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Function
 
 /-!
 # Yakut (Sakha) case
@@ -62,13 +62,15 @@ def Case.label : Case → _root_.Case
   | com => .com
   | part => .part
 
-/-- The comparative values a case expresses: the dative has taken over the function of the old
+/-- The functions a case marks: the dative has taken over the function of the old
 locative ([stachowski-menz-1998] p. 421). -/
-def Case.functions : Case → Finset _root_.Case
-  | dat => {.dat, .loc}
-  | c => {c.label}
+def Case.functions : Case → Finset _root_.Case.Function
+  | dat => {.argument .R, .spatial none .place}
+  | abl => {.spatial none .source}
+  | c => c.label.functions
 
-theorem Case.label_mem_functions (c : Case) : c.label ∈ c.functions := by
+theorem Case.label_functions_inter_nonempty (c : Case) :
+    (c.label.functions ∩ c.functions).Nonempty := by
   cases c <;> decide
 
 /-- The suffixes of a case. -/

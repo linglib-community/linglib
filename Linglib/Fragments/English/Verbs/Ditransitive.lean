@@ -139,7 +139,7 @@ def pay : Verb where
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
      (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2]),
-     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 2, 1])]
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1])]
   vendlerClass := some .accomplishment
 
 /-- "assign" — the goal may be implicit, a definite, as a first object or as a PP; the theme may
@@ -150,7 +150,7 @@ def assign : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1]),
      (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2]),
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
@@ -211,7 +211,7 @@ def award : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1]),
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
 
@@ -222,7 +222,7 @@ def forward_ : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1]),
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
 
@@ -253,7 +253,7 @@ def reserve : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.for_) (some .ben), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.for_) (some .beneficiary), [0, 2, 1]),
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
 
@@ -266,8 +266,9 @@ def pass : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp, [0, 1, 2]),
-     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2]),
-     ((ArgumentFrame.np_pp (some Adpositions.to_) (some .dat)).leaveImplicit 0 (some .def),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2]),
+     ((ArgumentFrame.np_pp (some Adpositions.to_)
+         (some (.argument .R))).leaveImplicit 0 (some .def),
        [0, 1, 2]),
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .indef), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
@@ -280,7 +281,7 @@ def hand : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 2, 1])]
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1])]
   vendlerClass := some .accomplishment
 
 /-- "mail" — transitive, ditransitive, or with a *to*-phrase (*Paul mailed a letter*). -/
@@ -290,7 +291,7 @@ def mail : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_np, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2])]
 
 /-- "lend" — neither argument may be implicit. -/
 def lend : Verb where
@@ -300,7 +301,7 @@ def lend : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 2, 1])]
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1])]
   vendlerClass := some .accomplishment
 
 end English.Verbs

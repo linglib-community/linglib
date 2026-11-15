@@ -43,8 +43,9 @@ def tell : Verb where
     [(ArgumentFrame.finiteClause, [0, 1]),
      (ArgumentFrame.np_np, [0, 2, 1]),
      (ArgumentFrame.np_np.leaveImplicit 1 (some .def), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2]),
-     ((ArgumentFrame.np_pp (some Adpositions.to_) (some .dat)).leaveImplicit 1 (some .indef),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2]),
+     ((ArgumentFrame.np_pp (some Adpositions.to_)
+         (some (.argument .R))).leaveImplicit 1 (some .indef),
        [0, 1, 2])]
   vendlerClass := some .achievement
 

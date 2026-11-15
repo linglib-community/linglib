@@ -107,6 +107,14 @@ theorem Position.rank_injective : Function.Injective Position.rank := by decide
 
 instance : LinearOrder Position := LinearOrder.lift' Position.rank Position.rank_injective
 
+instance : OrderBot Position where
+  bot := .nom
+  bot_le := by decide
+
+@[simp] theorem Position.bot_eq : (⊥ : Position) = .nom := rfl
+
+instance : LocallyFiniteOrder Position := Fintype.toLocallyFiniteOrder
+
 instance : LocallyFiniteOrderBot Position := Fintype.toLocallyFiniteOrderBot
 
 /-- The position of a case. A local case goes by its direction, a case of rest with the locative
@@ -181,32 +189,59 @@ theorem Conforms.positions_eq_of_card_eq (h : Conforms inv) (h' : Conforms inv')
   · exact Finset.eq_of_subset_of_card_le hs hc.ge
   · exact (Finset.eq_of_subset_of_card_le hs hc.le).symm
 
-theorem gaps_subset_of_conforms (h : inv ⊆ inv') (h' : Conforms inv') :
-    gaps inv ⊆ positions inv' \ positions inv := fun q hq ↦
+theorem gaps_subset_of_isLowerSet {s : Finset Position} (h : positions inv ⊆ s)
+    (hs : IsLowerSet (s : Set Position)) : gaps inv ⊆ s \ positions inv := fun _ hq ↦
   Finset.mem_sdiff.2
-    ⟨lowerClosure_min (Finset.coe_subset.2 (positions_mono h)) h' (mem_gaps.1 hq).1,
-      (mem_gaps.1 hq).2⟩
+    ⟨lowerClosure_min (Finset.coe_subset.2 h) hs (mem_gaps.1 hq).1, (mem_gaps.1 hq).2⟩
+
+theorem gaps_subset_of_conforms (h : inv ⊆ inv') (h' : Conforms inv') :
+    gaps inv ⊆ positions inv' \ positions inv :=
+  gaps_subset_of_isLowerSet (positions_mono h) h'
 
 /-! ### Labels and functions -/
 
+/-- The position of a function, that of the case named for it: S at the first position, A and P
+at the second, and a spatial function by its direction. -/
+def functionPosition : Case.Function → Option Position
+  | .argument .S => some .nom
+  | .argument .A | .argument .P => some .accErg
+  | .argument .R => some .dat
+  | .argument .T | .vocative => none
+  | .possessor => some .gen
+  | .instrumental => some .ablInst
+  | f =>
+    match f.direction? with
+    | some .place => some .loc
+    | some .source => some .ablInst
+    | _ => some .other
+
+/-- The positions a set of functions fills. -/
+def functionPositions (fs : Finset Case.Function) : Finset Position :=
+  fs.biUnion fun f ↦ (functionPosition f).toFinset
+
 section Functions
 
-variable {K : Type*} [Fintype K] (label : K → Case) (functions : K → Finset Case)
+variable {K : Type*} [Fintype K] (label : K → Case) (functions : K → Finset Case.Function)
 
 /-- A case of several functions bears one label, and this leaves only apparent gaps: when the
 functions of a language's cases conform, each gap among its labels is a position that some case
 fills with a function it is not labelled for. -/
-theorem gaps_image_subset (hm : ∀ k, label k ∈ functions k)
-    (h : Conforms (Finset.univ.biUnion functions)) :
+theorem gaps_image_subset
+    (hm : ∀ k, (position (label k)).toFinset ⊆ functionPositions (functions k))
+    (h : IsLowerSet (functionPositions (Finset.univ.biUnion functions) : Set Position)) :
     gaps (Finset.univ.image label) ⊆
-      positions (Finset.univ.biUnion functions) \ positions (Finset.univ.image label) :=
-  gaps_subset_of_conforms (Finset.image_subset_iff.2 fun k _ ↦
-    Finset.mem_biUnion.2 ⟨k, Finset.mem_univ k, hm k⟩) h
+      functionPositions (Finset.univ.biUnion functions) \ positions (Finset.univ.image label) :=
+  gaps_subset_of_isLowerSet (fun q hq ↦ by
+    obtain ⟨c, hc, hq⟩ := mem_positions.1 hq
+    obtain ⟨k, -, rfl⟩ := Finset.mem_image.1 hc
+    exact Finset.biUnion_subset_biUnion_of_subset_left _
+      (Finset.subset_biUnion_of_mem functions (Finset.mem_univ k))
+      (hm k (Option.mem_toFinset.2 hq))) h
 
 /-- Cases are labelled for the highest of their functions when each case that has a function on
 the hierarchy is labelled at that position or to its left. -/
 def LabelledForHighest : Prop :=
-  ∀ k, ∀ c ∈ functions k, ∀ q, position c = some q → ∃ p, position (label k) = some p ∧ p ≤ q
+  ∀ k, ∀ q ∈ functionPositions (functions k), ∃ p, position (label k) = some p ∧ p ≤ q
 
 instance : Decidable (LabelledForHighest label functions) := by
   unfold LabelledForHighest; infer_instance
@@ -217,18 +252,24 @@ variable {label functions}
 functions are: when the functions conform, each gap among the labels is filled by a function of
 a case labelled to its left. -/
 theorem LabelledForHighest.exists_lt_of_mem_gaps (hl : LabelledForHighest label functions)
-    (hm : ∀ k, label k ∈ functions k) (hc : Conforms (Finset.univ.biUnion functions))
+    (hm : ∀ k, (position (label k)).toFinset ⊆ functionPositions (functions k))
+    (hc : IsLowerSet (functionPositions (Finset.univ.biUnion functions) : Set Position))
     {g : Position} (hg : g ∈ gaps (Finset.univ.image label)) :
-    ∃ k p, position (label k) = some p ∧ p < g ∧ ∃ c ∈ functions k, position c = some g := by
+    ∃ k p, position (label k) = some p ∧ p < g ∧ g ∈ functionPositions (functions k) := by
   obtain ⟨hf, hn⟩ := Finset.mem_sdiff.1 (gaps_image_subset label functions hm hc hg)
-  obtain ⟨c, hcf, hcg⟩ := mem_positions.1 hf
-  obtain ⟨k, -, hk⟩ := Finset.mem_biUnion.1 hcf
-  obtain ⟨p, hp, hpg⟩ := hl k c hk g hcg
-  refine ⟨k, p, hp, lt_of_le_of_ne hpg ?_, c, hk, hcg⟩
+  obtain ⟨f, hff, hfg⟩ := Finset.mem_biUnion.1 hf
+  obtain ⟨k, -, hk⟩ := Finset.mem_biUnion.1 hff
+  have hgk : g ∈ functionPositions (functions k) := Finset.mem_biUnion.2 ⟨f, hk, hfg⟩
+  obtain ⟨p, hp, hpg⟩ := hl k g hgk
+  refine ⟨k, p, hp, lt_of_le_of_ne hpg ?_, hgk⟩
   rintro rfl
   exact hn (mem_positions.2 ⟨_, Finset.mem_image_of_mem _ (Finset.mem_univ k), hp⟩)
 
 end Functions
+
+-- The comparative values are themselves labelled for the highest of the functions they are
+-- named for: the position of a value is the first its functions fill.
+theorem labelledForHighest_functions : LabelledForHighest id Case.functions := by decide
 
 /-! ### The systems Blake cites -/
 
@@ -295,8 +336,11 @@ theorem latin_abl_functions_ancient_greek :
         Greek.Ancient.Case.gen.functions ∪ Greek.Ancient.Case.dat.functions := by
   decide
 
-theorem latin_dat_functions_ssubset_ancient_greek :
-    Latin.Case.dat.functions ⊂ Greek.Ancient.Case.dat.functions := by decide
+theorem ancient_greek_dat_functions :
+    (∀ f ∈ [.spatial none .place, .instrumental],
+        f ∈ Greek.Ancient.Case.dat.functions ∧ f ∉ Latin.Case.dat.functions) ∧
+      .argument .R ∈ Greek.Ancient.Case.dat.functions ∧
+      .argument .R ∈ Latin.Case.dat.functions := by decide
 
 /-! ### The other case inventories of the fragments
 
@@ -333,23 +377,24 @@ theorem gaps_fragments :
   decide
 
 theorem functions_conform :
-    ∀ inv ∈ [Finset.univ.biUnion Latin.Case.functions,
+    ∀ fs ∈ [Finset.univ.biUnion Latin.Case.functions,
       Finset.univ.biUnion Greek.Ancient.Case.functions,
       Finset.univ.biUnion Finnish.Case.functions, Finset.univ.biUnion Hungarian.Case.functions,
       Finset.univ.biUnion German.Basel.Case.functions,
       Finset.univ.biUnion Mongolian.Case.functions, Finset.univ.biUnion Yakut.Case.functions,
       Finset.univ.biUnion Georgian.Case.functions],
-      Conforms inv := by
+      IsLowerSet (functionPositions fs : Set Position) := by
   simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
   decide
 
 -- The datives that take in the locative are labelled for the higher function. The Finnish
--- allative and the Hungarian and Basel German datives are labelled for the lower one.
+-- allative and the Hungarian and Basel German datives are labelled for the lower one, and so is
+-- the Georgian dative, which also marks the direct object in the first series of the verb.
 theorem labelledForHighest_fragments :
     LabelledForHighest Greek.Ancient.Case.label Greek.Ancient.Case.functions ∧
       LabelledForHighest Mongolian.Case.label Mongolian.Case.functions ∧
       LabelledForHighest Yakut.Case.label Yakut.Case.functions ∧
-      LabelledForHighest Georgian.Case.label Georgian.Case.functions ∧
+      ¬ LabelledForHighest Georgian.Case.label Georgian.Case.functions ∧
       ¬ LabelledForHighest Finnish.Case.label Finnish.Case.functions ∧
       ¬ LabelledForHighest Hungarian.Case.label Hungarian.Case.functions ∧
       ¬ LabelledForHighest German.Basel.Case.label German.Basel.Case.functions := by

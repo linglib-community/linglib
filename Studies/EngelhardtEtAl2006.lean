@@ -82,7 +82,7 @@ inductive NounModifier
 /-- The property an intersective modifier meets its noun with: for a prepositional phrase, being
 located in a part of an object of the kind that the preposition marks as a place. -/
 def NounModifier.property (D : Display) : NounModifier → Fin 5 → Prop
-  | .pp p k, i => ∃ ℓ j, (ℓ, j) ∈ (D i).ground ∧ (ℓ, .place) ∈ Case.cells p.functions ∧
+  | .pp p k, i => ∃ ℓ j, (ℓ, j) ∈ (D i).ground ∧ (ℓ, .place) ∈ Case.Function.cells p.functions ∧
       (D j).kind = k
   | .other, i => (D 0).ground.map Prod.snd ≠ some i
 
