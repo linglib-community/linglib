@@ -6,47 +6,48 @@ public import Mathlib.Data.Fintype.Card
 /-!
 # Locality domains for contextual allomorphy and allosemy
 
-The category-defining heads of a complex head are cyclic: merging one sends the cyclic domains in
-its complement to the interfaces, so the heads of a word fall into cycles — a head's cycle is the
-number of cyclic heads at or below it — and a head undergoes Vocabulary Insertion in its own cycle,
-the material below the first cyclic head in the first. When a head is spelled out, the heads of its
-cycle and of the cycle before are present, the latter already realized, while earlier material is
-inactive and later cycles are not yet merged; the root, in the complement of the first cyclic head,
-is active in the first cycle only. Within a cycle each interface adds its own adjacency: a head
-conditions another only across heads null at that interface — pruned phonological zeros for
-allomorphy, semantically null heads for allosemy — so the two domains coincide exactly where the two
-kinds of nullness do. The idiom domain is a different bound, the heads below an agentive Voice, and
-neither contains the other.
+The category-defining heads of a complex head are cyclic: merging one spells out the cyclic
+domain below it. The cycle of a position is its [level](##DistributedMorphology.ComplexHead.level),
+the number of cyclic heads at or below it, the root being a position of level zero; the positions
+of one level are a cyclic head with the noncyclic heads above it, the edge of its phase, and the
+positions below are the interior. A position [is active](##DistributedMorphology.ComplexHead.Active)
+when another is spelled out if it belongs to that cycle or to the one before, so
+[material two cycles down is
+inactive](##DistributedMorphology.ComplexHead.not_active_of_add_two_le),
+[nothing is sensitive to an outer cyclic
+head](##DistributedMorphology.ComplexHead.not_active_of_lt_of_cyclic), and
+[the root is active for the first cycle
+alone](##DistributedMorphology.ComplexHead.active_bot_iff).
+Within a cycle [a head sees a position](##DistributedMorphology.ComplexHead.Sees) only across
+heads null at the interface, phonologically for allomorphy and semantically for allosemy. A probe
+above the word finds [its last cycle](##DistributedMorphology.ComplexHead.lastCycle). The idiom
+domain is level zero of the agentive heads, and neither it nor the root's domain contains the
+other.
 
-## Main definitions
+## Implementation notes
 
-* `DistributedMorphology.ComplexHead.cycle`, `DistributedMorphology.ComplexHead.insertionCycle`:
-  a head's cycle and the cycle of its insertion.
-* `DistributedMorphology.ComplexHead.Coactive`, `DistributedMorphology.ComplexHead.RootLocal`:
-  presence of one head at another's insertion, and of the root.
-* `DistributedMorphology.ComplexHead.Sees`, `DistributedMorphology.ComplexHead.SeesRoot`: presence
-  plus adjacency across heads null at an interface.
-* `DistributedMorphology.ComplexHead.lastCycle`: the heads a probe merged above the word can find.
-* `DistributedMorphology.ComplexHead.IdiomLocal`: the heads below an agentive Voice.
+* A position is the root `⊥` or a head, `WithBot (Fin s.heads.length)`, so the root's domain is
+  activity with respect to `⊥`.
+* Which heads are cyclic is a parameter; a study whose heads have categories takes the
+  categorizers, `Minimalist.Cat.IsCategorizer`.
+* Activity is the word-internal case of the Phase Impenetrability Condition: what is inactive when
+  a cyclic head is spelled out is the interior of the phase below it. Transfer on trees is in
+  `Syntax/Minimalist/Phase/Transfer.lean`, and the two are not derived from one definition.
 
-## Main results
+## TODO
 
-* `cycle_mono`, `RootLocal.of_le`: cycles grow outward and the root's domain is an initial
-  segment.
-* `not_rootLocal_of_cyclic_of_cyclic`, `RootLocal.cyclic_first`: an outer cyclic head is not local
-  to the root, and a local cyclic head is the first.
-* `not_coactive_of_lt_of_cyclic`, `not_coactive_of_cyclic_of_cyclic`: nothing sees an outer cyclic
-  head, so there is no outward sensitivity to, and no fusion with, a later category head.
-* `not_coactive_of_add_two_le`: material two cycles down is inactive.
-* `not_sees_of_not_null`, `sees_congr`: an intervening non-null head blocks conditioning, and the
-  interface domains agree where nullness agrees.
+* `lastCycle_eq_filter_level` is stated without proof. By induction on the heads from the top
+  with `lastCycle_concat_of_cyclic` and `lastCycle_concat_of_not_cyclic`: a cyclic head raises the
+  top level, leaving itself alone at it, and a noncyclic head joins the positions already there.
 
 ## References
 
-* [D. Embick, *Localism versus globalism in morphology and phonology*][embick-2010]
-* [A. Marantz, *Locality domains for contextual allomorphy across the
-  interfaces*][marantz-2013]
-* [D. Embick, *The motivation for roots in Distributed Morphology*][embick-2021]
+* [embick-2010]
+* [embick-2015]
+* [marantz-2013]
+* [embick-2021]
+* [marcolli-chomsky-berwick-2025]
+* [chomsky-2001]
 -/
 
 @[expose] public section
@@ -57,110 +58,134 @@ namespace ComplexHead
 
 variable {R H : Type*} (s : ComplexHead R H)
 
-/-! ### Cycles -/
+/-! ### Levels -/
+
+section Level
+
+variable (p : H → Prop) [DecidablePred p]
+
+/-- The number of heads satisfying `p` at or below a position, which is zero at the root. -/
+def level (i : WithBot (Fin s.heads.length)) : ℕ :=
+  i.recBotCoe 0 fun i ↦ (s.heads.take (i + 1)).countP (p ·)
+
+@[simp] theorem level_bot : s.level p ⊥ = 0 := rfl
+
+theorem level_coe (i : Fin s.heads.length) :
+    s.level p i = (s.heads.take (i + 1)).countP (p ·) := rfl
+
+variable {s p} {i j : WithBot (Fin s.heads.length)} {k : Fin s.heads.length}
+
+theorem level_mono : Monotone (s.level p) := by
+  intro i j hij
+  induction i using WithBot.recBotCoe with
+  | bot => exact Nat.zero_le _
+  | coe i =>
+    induction j using WithBot.recBotCoe with
+    | bot => exact absurd hij (WithBot.not_coe_le_bot i)
+    | coe j =>
+      exact (List.take_prefix_take_left
+        (Nat.succ_le_succ (Fin.le_def.1 (WithBot.coe_le_coe.1 hij)))).countP_le
+
+/-- A head satisfying `p` raises the level of everything below it by one. -/
+theorem level_add_one_le_of_lt (hik : i < k) (hk : p s.heads[k]) :
+    s.level p i + 1 ≤ s.level p k := by
+  have hstep : s.level p k = (s.heads.take k).countP (p ·) + 1 := by
+    rw [level_coe, List.take_succ_eq_append_getElem k.isLt, List.countP_append,
+      List.countP_singleton]
+    simp [show p s.heads[(k : ℕ)] from hk]
+  rw [hstep, Nat.add_le_add_iff_right]
+  induction i using WithBot.recBotCoe with
+  | bot => exact Nat.zero_le _
+  | coe i =>
+    exact (List.take_prefix_take_left (Fin.lt_def.1 (WithBot.coe_lt_coe.1 hik))).countP_le
+
+theorem level_pos (hk : p s.heads[k]) : 0 < s.level p k :=
+  level_add_one_le_of_lt (WithBot.bot_lt_coe k) hk
+
+/-- The level of a head is zero exactly when no head at or below it satisfies `p`. -/
+theorem level_coe_eq_zero_iff :
+    s.level p k = 0 ↔ ∀ j ≤ k, ¬ p s.heads[j] := by
+  constructor
+  · intro h j hjk hj
+    have := level_mono (p := p) (WithBot.coe_le_coe.2 hjk)
+    exact absurd (level_pos hj) (by omega)
+  · intro h
+    rw [level_coe, List.countP_eq_zero]
+    intro a ha
+    obtain ⟨n, hn, rfl⟩ := List.getElem_of_mem ha
+    rw [List.length_take] at hn
+    rw [List.getElem_take]
+    simpa using h ⟨n, by omega⟩ (Fin.le_def.2 (by simp only; omega))
+
+end Level
+
+/-! ### Cycles and presence -/
 
 variable (cyclic : H → Prop) [DecidablePred cyclic]
 
-/-- The cycle of a head, the number of cyclic heads at or below it. The root counts as cycle
-zero. -/
-def cycle (i : Fin s.heads.length) : ℕ :=
-  (Finset.univ.filter fun j : Fin s.heads.length => j ≤ i ∧ cyclic s.heads[j]).card
+/-- The cycle in which a position undergoes Vocabulary Insertion, its own, or the first for the
+root and the material below the first cyclic head. -/
+def insertionCycle (i : WithBot (Fin s.heads.length)) : ℕ := max 1 (s.level cyclic i)
 
-/-- The cycle in which a head undergoes Vocabulary Insertion, its own, or the first for the
-material below the first cyclic head. -/
-def insertionCycle (i : Fin s.heads.length) : ℕ := max 1 (s.cycle cyclic i)
+/-- Position `j` is present when position `i` is spelled out if it belongs to that cycle or to the
+one before, whose heads remain present though already realized. -/
+def Active (i j : WithBot (Fin s.heads.length)) : Prop :=
+  s.level cyclic j ≤ s.insertionCycle cyclic i ∧
+    s.insertionCycle cyclic i ≤ s.level cyclic j + 1
 
-/-- Head `j` is present when head `i` is spelled out if it belongs to that cycle or to the one
-before, whose heads remain present though already realized. -/
-def Coactive (i j : Fin s.heads.length) : Prop :=
-  s.cycle cyclic j ≤ s.insertionCycle cyclic i ∧ s.insertionCycle cyclic i ≤ s.cycle cyclic j + 1
-
-/-- The root is present for the heads of the first cycle only, the first category head and the
-noncyclic heads up to the next. -/
-def RootLocal (i : Fin s.heads.length) : Prop := s.cycle cyclic i ≤ 1
-
-instance (i j : Fin s.heads.length) : Decidable (s.Coactive cyclic i j) :=
+instance (i j : WithBot (Fin s.heads.length)) : Decidable (s.Active cyclic i j) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-instance (i : Fin s.heads.length) : Decidable (s.RootLocal cyclic i) :=
-  inferInstanceAs (Decidable (_ ≤ _))
+variable {s cyclic} {i j : WithBot (Fin s.heads.length)} {k l : Fin s.heads.length}
 
-variable {s cyclic} {i j k : Fin s.heads.length}
+theorem active_self (i : WithBot (Fin s.heads.length)) : s.Active cyclic i i := by
+  unfold Active insertionCycle; omega
 
-theorem cycle_mono (hij : i ≤ j) : s.cycle cyclic i ≤ s.cycle cyclic j :=
-  Finset.card_le_card fun x hx => by
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
-    exact ⟨hx.1.trans hij, hx.2⟩
-
-theorem one_le_cycle_of_cyclic (hi : cyclic s.heads[i]) : 1 ≤ s.cycle cyclic i :=
-  Finset.card_pos.2 ⟨i, Finset.mem_filter.2 ⟨Finset.mem_univ _, le_rfl, hi⟩⟩
-
-theorem cycle_add_one_le_of_lt_of_cyclic (hij : i < j) (hj : cyclic s.heads[j]) :
-    s.cycle cyclic i + 1 ≤ s.cycle cyclic j := by
-  have hsub :
-      insert j (Finset.univ.filter fun k : Fin s.heads.length => k ≤ i ∧ cyclic s.heads[k]) ⊆
-        Finset.univ.filter fun k : Fin s.heads.length => k ≤ j ∧ cyclic s.heads[k] := by
-    intro x hx
-    simp only [Finset.mem_insert, Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
-    rcases hx with rfl | ⟨hxi, hx⟩
-    · exact ⟨le_rfl, hj⟩
-    · exact ⟨hxi.trans hij.le, hx⟩
-  have hnot : j ∉ Finset.univ.filter fun k : Fin s.heads.length => k ≤ i ∧ cyclic s.heads[k] := by
-    simp [not_le.2 hij]
-  unfold cycle
-  rw [← Finset.card_insert_of_notMem hnot]
-  exact Finset.card_le_card hsub
-
-theorem two_le_cycle_of_cyclic_of_cyclic (hjk : j < k) (hki : k ≤ i) (hj : cyclic s.heads[j])
-    (hk : cyclic s.heads[k]) : 2 ≤ s.cycle cyclic i := by
-  have h₁ : s.cycle cyclic j + 1 ≤ s.cycle cyclic k := cycle_add_one_le_of_lt_of_cyclic hjk hk
-  have h₂ : s.cycle cyclic k ≤ s.cycle cyclic i := cycle_mono hki
-  have h₃ : 1 ≤ s.cycle cyclic j := one_le_cycle_of_cyclic hj
-  omega
-
-/-! ### The root's domain -/
-
-/-- The root's domain is an initial segment. -/
-theorem RootLocal.of_le (h : s.RootLocal cyclic i) (hji : j ≤ i) : s.RootLocal cyclic j :=
-  (cycle_mono hji).trans h
-
-/-- A cyclic head above a cyclic head is not local to the root, since category change closes the
-root's domain. -/
-theorem not_rootLocal_of_cyclic_of_cyclic (hji : j < i) (hj : cyclic s.heads[j])
-    (hi : cyclic s.heads[i]) : ¬ s.RootLocal cyclic i :=
-  fun h => absurd (two_le_cycle_of_cyclic_of_cyclic hji le_rfl hj hi)
-    (by unfold RootLocal at h; omega)
-
-/-- A local cyclic head is the first one. -/
-theorem RootLocal.cyclic_first (h : s.RootLocal cyclic i) (hi : cyclic s.heads[i]) :
-    ∀ j < i, ¬ cyclic s.heads[j] :=
-  fun _ hji hj => not_rootLocal_of_cyclic_of_cyclic hji hj hi h
-
-/-! ### Presence between heads -/
-
-theorem coactive_self (i : Fin s.heads.length) : s.Coactive cyclic i i := by
-  unfold Coactive insertionCycle; omega
-
-theorem coactive_of_cycle_eq (h : s.cycle cyclic i = s.cycle cyclic j) : s.Coactive cyclic i j := by
-  unfold Coactive insertionCycle; omega
+theorem active_of_level_eq (h : s.level cyclic i = s.level cyclic j) :
+    s.Active cyclic i j := by
+  unfold Active insertionCycle; omega
 
 /-- Nothing already in a cycle sees a later cyclic head, so there is no outward sensitivity to a
 further category head. -/
-theorem not_coactive_of_lt_of_cyclic (hij : i < j) (hi : 1 ≤ s.cycle cyclic i)
-    (hj : cyclic s.heads[j]) : ¬ s.Coactive cyclic i j := by
-  have := cycle_add_one_le_of_lt_of_cyclic hij hj
-  unfold Coactive insertionCycle; omega
+theorem not_active_of_lt_of_cyclic (hik : i < k) (hi : 1 ≤ s.level cyclic i)
+    (hk : cyclic s.heads[k]) : ¬ s.Active cyclic i k := by
+  have := level_add_one_le_of_lt hik hk
+  unfold Active insertionCycle; omega
 
 /-- Two cyclic heads are never realized in one cycle, so category-defining heads do not fuse. -/
-theorem not_coactive_of_cyclic_of_cyclic (hij : i < j) (hi : cyclic s.heads[i])
-    (hj : cyclic s.heads[j]) : ¬ s.Coactive cyclic i j :=
-  not_coactive_of_lt_of_cyclic hij (one_le_cycle_of_cyclic hi) hj
+theorem not_active_of_cyclic_of_cyclic (hkl : k < l) (hk : cyclic s.heads[k])
+    (hl : cyclic s.heads[l]) : ¬ s.Active cyclic k l :=
+  not_active_of_lt_of_cyclic (WithBot.coe_lt_coe.2 hkl) (level_pos hk) hl
 
 /-- Material two cycles down is inactive, the complement of an inner cyclic head being closed off
 once the next cyclic head is spelled out. -/
-theorem not_coactive_of_add_two_le (h : s.cycle cyclic j + 2 ≤ s.cycle cyclic i) :
-    ¬ s.Coactive cyclic i j := by
-  unfold Coactive insertionCycle; omega
+theorem not_active_of_add_two_le (h : s.level cyclic j + 2 ≤ s.level cyclic i) :
+    ¬ s.Active cyclic i j := by
+  unfold Active insertionCycle; omega
+
+/-! ### The root's domain -/
+
+/-- The root is present for the positions of the first cycle only, the first category head and
+the noncyclic heads up to the next. -/
+theorem active_bot_iff : s.Active cyclic i ⊥ ↔ s.level cyclic i ≤ 1 := by
+  unfold Active insertionCycle; simp only [level_bot]; omega
+
+/-- The root's domain is an initial segment. -/
+theorem Active.bot_of_le (h : s.Active cyclic i ⊥) (hji : j ≤ i) : s.Active cyclic j ⊥ :=
+  active_bot_iff.2 ((level_mono hji).trans (active_bot_iff.1 h))
+
+/-- A cyclic head above a cyclic head is not local to the root, since category change closes the
+root's domain. -/
+theorem not_active_bot_of_cyclic_of_cyclic (hkl : k < l) (hk : cyclic s.heads[k])
+    (hl : cyclic s.heads[l]) : ¬ s.Active cyclic l ⊥ := by
+  have h₁ := level_add_one_le_of_lt (WithBot.coe_lt_coe.2 hkl) hl
+  have h₂ := level_pos hk
+  exact not_active_of_add_two_le (by simp only [level_bot]; omega)
+
+/-- A cyclic head local to the root is the first one. -/
+theorem Active.cyclic_first (h : s.Active cyclic l ⊥) (hl : cyclic s.heads[l]) :
+    ∀ k < l, ¬ cyclic s.heads[k] :=
+  fun _ hkl hk ↦ not_active_bot_of_cyclic_of_cyclic hkl hk hl h
 
 /-! ### The last cycle
 
@@ -195,68 +220,52 @@ theorem lastCycle_concat_of_not_cyclic {r : R} {hs : List H} {h : H} (hc : ¬ cy
       h :: (⟨r, hs⟩ : ComplexHead R H).lastCycle cyclic := by
   simp [lastCycle, hc]
 
+variable (s cyclic) in
+/-- The last cycle is the positions of the highest level, outermost first. -/
+theorem lastCycle_eq_filter_level :
+    s.lastCycle cyclic =
+      (((List.finRange s.heads.length).filter fun i : Fin s.heads.length ↦
+        s.level cyclic i = s.heads.countP (cyclic ·)).map fun i ↦ s.heads[i]).reverse := by
+  sorry
+
 /-! ### Interface adjacency -/
 
 variable (s cyclic) (null : H → Prop)
 
-/-- Head `i` sees head `j` at an interface when `j` is present at `i`'s insertion and every head
-between them is null there, pruned for allomorphy and semantically null for allosemy. -/
-def Sees (i j : Fin s.heads.length) : Prop :=
-  s.Coactive cyclic i j ∧ ∀ k, min i j < k → k < max i j → null s.heads[k]
+/-- Position `i` sees position `j` at an interface when `j` is present at `i`'s insertion and
+every head between them is null there, pruned for allomorphy and semantically null for
+allosemy. -/
+def Sees (i j : WithBot (Fin s.heads.length)) : Prop :=
+  s.Active cyclic i j ∧
+    ∀ k : Fin s.heads.length, min i j < k → (k : WithBot (Fin s.heads.length)) < max i j →
+      null s.heads[k]
 
-/-- Head `i` sees the root when it is in the first cycle and every head below it is null at the
-interface. -/
-def SeesRoot (i : Fin s.heads.length) : Prop :=
-  s.RootLocal cyclic i ∧ ∀ k < i, null s.heads[k]
-
-instance [DecidablePred null] (i j : Fin s.heads.length) : Decidable (s.Sees cyclic null i j) :=
+instance [DecidablePred null] (i j : WithBot (Fin s.heads.length)) :
+    Decidable (s.Sees cyclic null i j) :=
   inferInstanceAs (Decidable (_ ∧ ∀ _, _ → _ → _))
-
-instance [DecidablePred null] (i : Fin s.heads.length) : Decidable (s.SeesRoot cyclic null i) :=
-  inferInstanceAs (Decidable (_ ∧ ∀ k < i, _))
 
 variable {s cyclic null}
 
-theorem Sees.coactive (h : s.Sees cyclic null i j) : s.Coactive cyclic i j := h.1
+theorem Sees.active (h : s.Sees cyclic null i j) : s.Active cyclic i j := h.1
 
-theorem SeesRoot.rootLocal (h : s.SeesRoot cyclic null i) : s.RootLocal cyclic i := h.1
+/-- A head sees the root when it is in the first cycle and every head below it is null. -/
+theorem sees_bot_iff :
+    s.Sees cyclic null l ⊥ ↔ s.level cyclic l ≤ 1 ∧ ∀ k < l, null s.heads[k] := by
+  simp [Sees, active_bot_iff]
 
 /-- An intervening head that is not null at the interface blocks conditioning. -/
-theorem not_sees_of_not_null (hik : min i j < k) (hkj : k < max i j) (hk : ¬ null s.heads[k]) :
+theorem not_sees_of_not_null (hik : min i j < k)
+    (hkj : (k : WithBot (Fin s.heads.length)) < max i j) (hk : ¬ null s.heads[k]) :
     ¬ s.Sees cyclic null i j :=
-  fun h => hk (h.2 k hik hkj)
+  fun h ↦ hk (h.2 k hik hkj)
 
-theorem not_seesRoot_of_not_null (hki : k < i) (hk : ¬ null s.heads[k]) :
-    ¬ s.SeesRoot cyclic null i :=
-  fun h => hk (h.2 k hki)
-
-/-- The interface domains agree wherever the two kinds of nullness agree between the heads, one
-cycle bounding both. -/
+/-- The interface domains agree wherever the two kinds of nullness agree between the positions,
+one cycle bounding both. -/
 theorem sees_congr {null' : H → Prop}
-    (h : ∀ k, min i j < k → k < max i j → (null s.heads[k] ↔ null' s.heads[k])) :
+    (h : ∀ k : Fin s.heads.length, min i j < k → (k : WithBot (Fin s.heads.length)) < max i j →
+      (null s.heads[k] ↔ null' s.heads[k])) :
     s.Sees cyclic null i j ↔ s.Sees cyclic null' i j :=
-  and_congr_right fun _ => forall_congr' fun k => forall₂_congr fun h₁ h₂ => h k h₁ h₂
-
-theorem seesRoot_congr {null' : H → Prop} (h : ∀ k < i, null s.heads[k] ↔ null' s.heads[k]) :
-    s.SeesRoot cyclic null i ↔ s.SeesRoot cyclic null' i :=
-  and_congr_right fun _ => forall₂_congr fun k hk => h k hk
-
-/-! ### The idiom domain -/
-
-variable (s) (agentive : H → Prop)
-
-/-- The heads below an agentive Voice, to whose structure special meaning may be assigned across
-cyclic heads. -/
-def IdiomLocal (i : Fin s.heads.length) : Prop :=
-  ∀ j ≤ i, ¬ agentive s.heads[j]
-
-instance [DecidablePred agentive] (i : Fin s.heads.length) : Decidable (s.IdiomLocal agentive i) :=
-  inferInstanceAs (Decidable (∀ j ≤ i, _))
-
-variable {s agentive}
-
-theorem IdiomLocal.of_le (h : s.IdiomLocal agentive i) (hji : j ≤ i) : s.IdiomLocal agentive j :=
-  fun _ hj => h _ (hj.trans hji)
+  and_congr_right fun _ ↦ forall_congr' fun k ↦ forall₂_congr fun h₁ h₂ ↦ h k h₁ h₂
 
 end ComplexHead
 

@@ -35,7 +35,7 @@ be adjacent to the root at spell-out, so v must be zero (`na_only_if_v_zero`). H
 ## Implementation notes
 
 The word is a `ComplexHead` over the heads v and Voice with v the only cyclic head, and the
-allomorphy domain is the substrate's `SeesRoot`, adjacency across phonologically null heads.
+allomorphy domain is the substrate's `Sees` of the root, adjacency across phonologically null heads.
 The lists of roots for *-ka* and *-na* are parameters. Voice is a cell of `Minimalist.Voice`,
 thematic when the vP is agentive, and its D feature is read from the cell. The reciprocal,
 denominal, modal passive and *láta* constructions of the book's sixth chapter are recorded in
@@ -220,25 +220,17 @@ def verb (r : Root) (ka hasD : Bool) : ComplexHead Root Head := ⟨r, [.v ka, .v
 def voiceIdx (r : Root) (ka hasD : Bool) : Fin (verb r ka hasD).heads.length :=
   ⟨1, by simp [verb]⟩
 
-theorem rootLocal_voice (r : Root) (ka hasD : Bool) :
-    (verb r ka hasD).RootLocal Head.Cyclic (voiceIdx r ka hasD) := by
-  unfold ComplexHead.RootLocal ComplexHead.cycle
-  have key : ∀ x : Fin (verb r ka hasD).heads.length,
-      x ≤ voiceIdx r ka hasD ∧ Head.Cyclic (verb r ka hasD).heads[x] → (x : ℕ) = 0 := by
-    rintro ⟨_ | _ | x, hx⟩ ⟨-, h₂⟩
-    · rfl
-    · simp [verb, Head.Cyclic] at h₂
-    · simp [verb] at hx
-  refine Finset.card_le_one.mpr fun a ha b hb ↦ Fin.ext ?_
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha hb
-  rw [key a ha, key b hb]
+theorem active_voice_bot (r : Root) (ka hasD : Bool) :
+    (verb r ka hasD).Active Head.Cyclic (voiceIdx r ka hasD) ⊥ :=
+  ComplexHead.active_bot_iff.2 (Nat.le_of_eq rfl)
 
-theorem seesRoot_voice_iff (r : Root) (ka hasD : Bool) :
-    (verb r ka hasD).SeesRoot Head.Cyclic Head.Null (voiceIdx r ka hasD) ↔ ka = false := by
+theorem sees_voice_bot_iff (r : Root) (ka hasD : Bool) :
+    (verb r ka hasD).Sees Head.Cyclic Head.Null (voiceIdx r ka hasD) ⊥ ↔ ka = false := by
+  rw [ComplexHead.sees_bot_iff]
   constructor
   · exact fun h ↦ h.2 ⟨0, by simp [verb]⟩ (by simp [voiceIdx, Fin.lt_def])
   · rintro rfl
-    refine ⟨rootLocal_voice r false hasD, fun k hk ↦ ?_⟩
+    refine ⟨ComplexHead.active_bot_iff.1 (active_voice_bot r false hasD), fun k hk ↦ ?_⟩
     obtain ⟨_ | k, hk'⟩ := k
     · exact rfl
     · exact absurd (show k + 1 < 1 from hk) (by omega)
@@ -250,7 +242,7 @@ def Ka (kaRoots : Set Root) (r : Root) : Prop := r ∈ kaRoots
 see at spell-out; everywhere else Voice is the elsewhere zero. -/
 def Na (naRoots : Set Root) (r : Root) (ka hasD : Bool) : Prop :=
   hasD = false ∧ r ∈ naRoots ∧
-    (verb r ka hasD).SeesRoot Head.Cyclic Head.Null (voiceIdx r ka hasD)
+    (verb r ka hasD).Sees Head.Cyclic Head.Null (voiceIdx r ka hasD) ⊥
 
 instance (naRoots : Set Root) [DecidablePred (· ∈ naRoots)] (r : Root) (ka hasD : Bool) :
     Decidable (Na naRoots r ka hasD) := inferInstanceAs (Decidable (_ ∧ _ ∧ _))
@@ -259,7 +251,7 @@ variable {naRoots : Set Root}
 
 theorem na_only_if_v_zero {r : Root} {ka hasD : Bool} (h : Na naRoots r ka hasD) :
     ka = false :=
-  (seesRoot_voice_iff r ka hasD).mp h.2.2
+  (sees_voice_bot_iff r ka hasD).mp h.2.2
 
 theorem na_ka_exclusive {r : Root} {hasD : Bool} : ¬ Na naRoots r true hasD :=
   fun h ↦ Bool.noConfusion (na_only_if_v_zero h)
@@ -268,7 +260,7 @@ theorem na_st_exclusive {r : Root} {ka : Bool} : ¬ Na naRoots r ka true :=
   fun h ↦ Bool.noConfusion h.1
 
 theorem na_of_listed {r : Root} (h : r ∈ naRoots) : Na naRoots r false false :=
-  ⟨rfl, h, (seesRoot_voice_iff r false false).mpr rfl⟩
+  ⟨rfl, h, (sees_voice_bot_iff r false false).mpr rfl⟩
 
 /-- The exponent of Voice. -/
 inductive VoiceExponent where

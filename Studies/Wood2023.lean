@@ -56,9 +56,9 @@ of *söfn-un* and *vönt-un* is not undone and the theme vowel *-a* of the verb 
 the book's own segmentation has it. The roots are identified by their forms. The prefixed
 preposition of *við-ger-ð* adjoins to n and is not inserted by the vocabulary; the derivation
 covers the root, v, and n. Wood's bound for allosemy, one intervening categorizer, is one
-phase looser than `ComplexHead.RootLocal`, the bound the book keeps for root suppletion; the study
-states the strict one through the substrate. A preposition adjoined to a complex head has no
-spine position, since a head does not c-command its own adjunct, so the heads between a
+phase looser than `ComplexHead.Active` of the root, the bound the book keeps for root suppletion;
+the study states the strict one through the substrate. A preposition adjoined to a complex head
+has no spine position, since a head does not c-command its own adjunct, so the heads between a
 preposition and the root are read off its attachment. The event-modifier account licenses
 *marg-* on a result nominal built on eventive v, a case the book does not test.
 
@@ -320,14 +320,17 @@ def vaedaNominal (r : Root) (a c : Nominalizer.Alloseme) : ComplexHead Root Head
 
 /-! ### Borer's Generalization -/
 
+/-- The position of n in the nominalization. -/
+def nIdx (r : Root) (d : Derivation) : Fin (nominal r d).heads.length := ⟨1, Nat.one_lt_two⟩
+
 theorem nominal_n_not_rootLocal (r : Root) (d : Derivation) :
-    ¬ (nominal r d).RootLocal Head.Cyclic ⟨1, Nat.one_lt_two⟩ :=
-  ComplexHead.not_rootLocal_of_cyclic_of_cyclic (j := ⟨0, Nat.two_pos⟩)
-    (Fin.mk_lt_mk.2 Nat.zero_lt_one) trivial trivial
+    ¬ (nominal r d).Active Head.Cyclic (nIdx r d) ⊥ :=
+  ComplexHead.not_active_bot_of_cyclic_of_cyclic (k := (⟨0, Nat.two_pos⟩ : Fin d.heads.length))
+    (l := nIdx r d) (Fin.lt_def.2 Nat.zero_lt_one) trivial trivial
 
 theorem borers_generalization (r : Root) {d : Derivation}
     (h : d.reading = some .complexEvent) :
-    d.v = .eventive ∧ ¬ (nominal r d).RootLocal Head.Cyclic ⟨1, Nat.one_lt_two⟩ :=
+    d.v = .eventive ∧ ¬ (nominal r d).Active Head.Cyclic (nIdx r d) ⊥ :=
   ⟨((Derivation.eventive_iff d).2 h).1, nominal_n_not_rootLocal r d⟩
 
 /-! ### The external argument -/

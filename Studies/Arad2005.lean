@@ -658,7 +658,7 @@ def verbSpine (base : Option Head) : ComplexHead Root Head := ⟨⟨0⟩, base.t
 -- (8)
 theorem verbSpine_rootLocal : ∀ base : Option Head, (∀ c ∈ base, c = .n ∨ c = .a) →
     ∀ i : Fin (verbSpine base).heads.length, (verbSpine base).heads[i] = .v →
-      ((verbSpine base).RootLocal cyclic i ↔ base = none) := by
+      ((verbSpine base).Active cyclic i ⊥ ↔ base = none) := by
   decide
 
 /-! ### Conjugation classes (§6.2.6) -/

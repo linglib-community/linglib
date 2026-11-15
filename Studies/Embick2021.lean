@@ -136,13 +136,13 @@ theorem derivedNominal_not_agentLicensed :
 -- (9), (14), (8), (13)
 theorem gerund_n_not_rootLocal :
     ∀ r ∈ rows, ∀ i : Fin r.spine.heads.length, r.spine.heads[i] = .n →
-      (r.spine.RootLocal cyclic i ↔ r.construction = .derivedNominal) := by
+      (r.spine.Active cyclic i ⊥ ↔ r.construction = .derivedNominal) := by
   decide
 
 -- (15)
 theorem inflection_rootLocal :
     ∀ r ∈ rows, r.construction = .inflected → ∀ i : Fin r.spine.heads.length,
-      r.spine.RootLocal cyclic i := by
+      r.spine.Active cyclic i ⊥ := by
   decide
 
 end Embick2021

@@ -287,9 +287,9 @@ theorem not_exists_licensing :
 inflection sees the root, and the past of *run* is no closer to its root than the past of
 *instantiate*. With Embick's ∅-Transparency every root-selected inflection does see it. -/
 theorem dm_seesRoot :
-    ∀ w ∈ dmWords, ¬ w.spine.SeesRoot Embick2010.cyclic (fun _ ↦ False) w.target ∧
+    ∀ w ∈ dmWords, ¬ w.spine.Sees Embick2010.cyclic (fun _ ↦ False) w.target ⊥ ∧
       (w.choice = .rootSelected →
-        w.spine.SeesRoot Embick2010.cyclic Embick2010.phonNull w.target) := by
+        w.spine.Sees Embick2010.cyclic Embick2010.phonNull w.target ⊥) := by
   decide +kernel
 
 end Borer2013
