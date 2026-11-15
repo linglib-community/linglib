@@ -192,6 +192,14 @@ def inherentAspect : VerbStemClass → Option Perfectivity
   | .inactive | .inchoative | .positional => some .perfective
   | .transitiveActive => none
 
+-- pp. 80, 83: the inherent aspect of the active and of the inactive class is the viewpoint of
+-- the status that leaves the class unmarked; the inchoative and positional classes, which are
+-- also inherently perfective, are marked in every status
+theorem exists_unmarked_viewpointAspect_iff (k : VerbStemClass) :
+    (∃ s, statusSuffix k s = some [] ∧ s.viewpointAspect = inherentAspect k) ↔
+      k = .active ∨ k = .inactive := by
+  cases k <;> decide
+
 /-- The place of the base's participant by rule (14) of [kraemer-wunderlich-1999]. An inherently
 imperfective verb gains an affected object, an inherently perfective one a causer. -/
 def kwBaseSubevent : Perfectivity → Subevent
