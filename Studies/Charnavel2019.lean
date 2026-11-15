@@ -162,7 +162,7 @@ variable {t : Rep} {v j : ℕ} {c : BindingClass}
 
 /-- The subject of a noun phrase labelled `Det` is its first daughter. -/
 def possessor (t : Rep) (m : TreePath) : Option TreePath :=
-  if m ∈ labeled t {.Det} then some ⟨m.toList ++ [0]⟩ else none
+  if m ∈ labeled t {.Det} then some (m.child 0) else none
 
 /-- The spell-out domains that bound the domain of the position `b` are the clauses, the verb
 phrases, and the noun phrases with a subject that c-commands `b`. -/

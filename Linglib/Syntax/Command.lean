@@ -388,9 +388,9 @@ theorem isBranching_iff_isBranchingAt {t : RoseTree β} (p : t.Positions) :
     rw [Option.mem_def, hs, Option.some.injEq] at hs'
     subst hs'
     rw [arity] at hlen
-    refine ⟨⟨⟨p.val.toList ++ [0]⟩, mem_validPaths_append_singleton_iff.mpr ⟨s, hs, by omega⟩⟩,
+    refine ⟨⟨p.val.child 0, mem_validPaths_append_singleton_iff.mpr ⟨s, hs, by omega⟩⟩,
       Positions.covBy_iff.mpr (TreePath.covBy_iff.mpr ⟨0, rfl⟩),
-      ⟨⟨p.val.toList ++ [1]⟩, mem_validPaths_append_singleton_iff.mpr ⟨s, hs, by omega⟩⟩,
+      ⟨p.val.child 1, mem_validPaths_append_singleton_iff.mpr ⟨s, hs, by omega⟩⟩,
       Positions.covBy_iff.mpr (TreePath.covBy_iff.mpr ⟨1, rfl⟩), fun h ↦ ?_⟩
     simpa using congrArg (fun q : t.Positions ↦ q.val.toList) h
 

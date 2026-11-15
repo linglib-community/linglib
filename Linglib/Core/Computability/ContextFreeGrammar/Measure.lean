@@ -41,6 +41,11 @@ treebank is tight in this sense ([chi-geman-1998]).
 * `PCFG.isProbabilityMeasure_derivationMeasure_relFreq`: the relative-frequency estimate from a
   corpus of licensed trees is tight at the root symbol of every tree of the corpus.
 
+## TODO
+
+[chi-geman-1998] also show that every iterate of the EM algorithm on a corpus of yields is tight,
+for a grammar with no null and no unit productions. Estimation from yields is not formalized.
+
 ## References
 
 * [booth-thompson-1973]
@@ -136,7 +141,8 @@ noncomputable def derivationMeasure : Kernel (Symbol T G.NT) (RoseTree (Symbol T
 
 theorem derivationMeasure_singleton_value (t : RoseTree (Symbol T G.NT)) :
     W.derivationMeasure t.value {t} = W.derivProb t :=
-  (GaltonWatson.law_singleton_value W.galtonWatson t).trans (W.galtonWatson_weight t)
+  (GaltonWatson.law_singleton_value W.galtonWatson W.offspring_univ_le_one t).trans
+    (W.galtonWatson_weight t)
 
 theorem derivationMeasure_singleton_of_ne {t : RoseTree (Symbol T G.NT)} {s : Symbol T G.NT}
     (h : t.value ≠ s) : W.derivationMeasure s {t} = 0 :=
@@ -147,13 +153,13 @@ open scoped Classical in
 and `0` otherwise. -/
 theorem derivationMeasure_singleton (t : RoseTree (Symbol T G.NT)) (s : Symbol T G.NT) :
     W.derivationMeasure s {t} = if t.value = s then W.derivProb t else 0 := by
-  rw [derivationMeasure, GaltonWatson.law_singleton, galtonWatson_weight]
+  rw [derivationMeasure, GaltonWatson.law_singleton _ W.offspring_univ_le_one, galtonWatson_weight]
   split_ifs <;> rfl
 
 /-- The derivation measure is a sub-probability measure at every symbol. -/
 theorem derivationMeasure_apply_univ_le_one (s : Symbol T G.NT) :
     W.derivationMeasure s Set.univ ≤ 1 :=
-  GaltonWatson.law_univ_le_one W.offspring_univ_le_one s
+  GaltonWatson.law_univ_le_one W.galtonWatson s
 
 instance : IsFiniteKernel W.derivationMeasure :=
   ⟨⟨1, ENNReal.one_lt_top, W.derivationMeasure_apply_univ_le_one⟩⟩
@@ -174,7 +180,7 @@ theorem derivationMeasure_nonterminal_univ (A : G.NT) :
     W.derivationMeasure (.nonterminal A) Set.univ =
       ∑ r ∈ G.rules.filter (·.input = A),
         W.weight r * (r.output.map fun s ↦ W.derivationMeasure s Set.univ).prod :=
-  (GaltonWatson.extinctionProb_eq_lintegral W.galtonWatson _).trans
+  (GaltonWatson.extinctionProb_eq_lintegral W.galtonWatson W.offspring_univ_le_one _).trans
     (W.lintegral_offspring_nonterminal A _)
 
 /-! ### Relative frequencies -/
@@ -231,7 +237,7 @@ theorem isProbabilityMeasure_derivationMeasure_relFreq (hD : ∀ t ∈ D, t.Lice
   let ν : Measure (Symbol T G.NT) := (D.map fun t' ↦ (t'.values.map Measure.dirac).sum).sum
   have hint (f : Symbol T G.NT → ℝ≥0∞) :
       ∫⁻ s, f s ∂ν = (D.map fun t' ↦ (t'.values.map f).sum).sum := by
-    simp only [ν, Measure.lintegral_multisetSum_measure, Measure.lintegral_listSum_measure,
+    simp only [ν, lintegral_multisetSum_measure, lintegral_listSum_measure,
       Multiset.map_map, List.map_map, Function.comp_def, lintegral_dirac]
   have hfin : IsFiniteMeasure ν := ⟨by
     rw [← lintegral_one, hint]

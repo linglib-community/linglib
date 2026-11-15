@@ -106,7 +106,7 @@ theorem length_children_subtree (hp : ¬ IsMax p) : p.subtree.children.length = 
 /-- A position that is not a leaf branches. -/
 theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p := by
   have h2 := length_children_subtree hp
-  have hv : ∀ i < 2, (⟨p.val.toList ++ [i]⟩ : TreePath) ∈ t.toRoseTree.validPaths := fun i hi ↦
+  have hv : ∀ i < 2, p.val.child i ∈ t.toRoseTree.validPaths := fun i hi ↦
     mem_validPaths_append_singleton_iff.2 ⟨_, p.getElem?_eq, h2 ▸ hi⟩
   refine ⟨⟨_, hv 0 (by omega)⟩, Positions.covBy_iff.2 (TreePath.covBy_iff.2 ⟨0, rfl⟩),
     ⟨_, hv 1 (by omega)⟩, Positions.covBy_iff.2 (TreePath.covBy_iff.2 ⟨1, rfl⟩), fun h ↦ ?_⟩
@@ -231,7 +231,7 @@ theorem eq_or_eq_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) (he : a 
       by
     intro r m hm
     have hr := r.2
-    rw [show r.val = ⟨a.val.toList ++ [m]⟩ from TreePath.ext hm] at hr
+    rw [show r.val = a.val.child m from TreePath.ext hm] at hr
     obtain ⟨s, hs, hms⟩ := mem_validPaths_append_singleton_iff.1 hr
     rw [a.getElem?_eq, Option.some.injEq] at hs
     exact hlen ▸ hs ▸ hms
