@@ -85,7 +85,7 @@ theorem naJuana_mem_copyRel : (naJuana, naJuana') ∈ forgotToWash.copyRel :=
     (structurallyIdentical_renumber 2 naJuana)
 
 /-- The controlled subject of (46c), the feminine clitic *=ñá*. -/
-def nya : SyntacticObject := leaf ⟨.of .D [] (Mixtec.SMPM.cl3 .feminine).form, 6⟩
+def nya : SyntacticObject := leaf ⟨.of .D [] (Mixtec.SMPM.Pronouns.cl3 .feminine).form, 6⟩
 
 /-- The pronoun that (46c) requires is a copy of its controller in no object, since the two are
 not structurally identical. -/

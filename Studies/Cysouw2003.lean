@@ -763,10 +763,10 @@ theorem english_pronouns :
 theorem english_not_respectsHorizontalHierarchy :
     ¬ Structure.RespectsHorizontalHierarchy (Setoid.ker englishSubject) := by decide +kernel
 
-theorem tagalog_maranao : Setoid.ker Tagalog.ang = Kind.maranao.pattern := by decide +kernel
+theorem tagalog_maranao : Setoid.ker Tagalog.Pronouns.ang = Kind.maranao.pattern := by decide +kernel
 
 theorem tagalog_minimalAugmented :
-    Structure.HasClusivity (Setoid.ker Tagalog.ang) .minimalAugmented := by
+    Structure.HasClusivity (Setoid.ker Tagalog.Pronouns.ang) .minimalAugmented := by
   decide +kernel
 
 end Cysouw2003
