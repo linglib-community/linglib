@@ -6,8 +6,8 @@ public import Linglib.Semantics.Modification.Basic
 /-!
 # Relation images as modifiers of sets
 
-This file classifies the image of a relation as a modifier of sets. The image of a set under a
-relation is the set of everything its members are related to.
+The image of a set under a relation is the set of everything its members are related to, so the
+image of a relation on a type is a modifier of its sets.
 
 The image is [extensive](##Modifier.isExtensive_image_iff) exactly when the relation is
 reflexive, [subsective](##Modifier.isSubsective_image_iff) exactly when the relation is contained

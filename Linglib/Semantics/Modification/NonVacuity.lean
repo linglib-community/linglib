@@ -5,8 +5,6 @@ public import Linglib.Semantics.Modification.Intensional
 /-!
 # Non-vacuity and the shift of a head noun
 
-This file defines non-vacuity and the shift of a head noun by its modifier.
-
 A predicate is non-vacuous within a domain if the domain neither excludes it nor lies within it.
 A modifier shifts its head noun if its value is vacuous within the noun and non-vacuous within
 the noun widened by that value.

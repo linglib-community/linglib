@@ -10,17 +10,14 @@ public import Linglib.Logic.Modal.Extensional
 /-!
 # Modifiers of intensional properties
 
-This file states the classes of modifiers for intensional properties and defines the modifier
-*former*.
-
 An intensional property is a function from worlds to predicates of entities. A modifier of
 intensional properties is intersective exactly when
 [it conjoins every noun with one fixed property](##Modifier.isIntersective_iff_exists_forall),
 and privative exactly when
 [nothing it yields from a noun falls under the noun](##Modifier.isPrivative_iff_forall). An
 intersective modifier is [extensional](##Modifier.IsIntersective.isExtensional). A privative
-modifier that holds of something is [not subsective](##Modifier.IsPrivative.not_isSubsective),
-and [*former* is privative](##Modifier.former_isPrivative).
+modifier that holds of something is [not subsective](##Modifier.IsPrivative.not_isSubsective).
+The modifier *former* of properties of times [is privative](##Modifier.former_isPrivative).
 
 ## Implementation notes
 

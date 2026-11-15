@@ -8,9 +8,6 @@ public import Mathlib.Order.PropInstances
 /-!
 # Modifiers
 
-This file defines modifiers and the classes of subsective, extensive, privative and intersective
-modifiers.
-
 A modifier of `τ` is a function from `τ` to itself, and modifiers stack by composition. Over an
 ordered type, a modifier is subsective if each value lies below its argument and extensive if
 each lies above it. It is privative if each value is disjoint from its argument, and intersective
