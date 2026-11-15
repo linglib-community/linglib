@@ -429,28 +429,74 @@ inductive Prefix where
   | endur
   deriving DecidableEq, Repr
 
+/-! #### The complex head handed to interpretation -/
+
+section Skeleton
+
+variable {R H P : Type}
+
+/-- The bare structure of a complex head, read for meaning: the root, and each head a sister of
+what is below it. -/
+def skeleton (s : ComplexHead R H) : Interpreter.Skeleton Unit (R ⊕ H) :=
+  s.heads.foldl (fun t h ↦ .binary () t (.leaf (.inr h))) (.leaf (.inl s.root))
+
+/-- The bare structure of a complex head with the prefix `p` adjoined above its first `k`
+heads. -/
+def prefixedSkeleton (s : ComplexHead R H) (k : ℕ) (p : P) :
+    Interpreter.Skeleton Unit (P ⊕ R ⊕ H) :=
+  (s.heads.drop k).foldl (fun t h ↦ .binary () t (.leaf (.inr (.inr h))))
+    (.binary () (.leaf (.inl p))
+      ((s.heads.take k).foldl (fun t h ↦ .binary () t (.leaf (.inr (.inr h))))
+        (.leaf (.inr (.inl s.root)))))
+
+/-- The terminal of the nominalization a head is. -/
+def Head.terminal : Head → Terminal
+  | .v a => .v a
+  | .n a => .n a
+
+/-- The items a terminal of a complex head may be, whatever its root. -/
+def headItems : R ⊕ Head → List (Σ a, Item a)
+  | .inl _ => Terminal.root.items
+  | .inr h => h.terminal.items
+
+end Skeleton
+
+-- The derivations of the nominalization's complex head are those of its three terminals.
+theorem derivs_skeleton_nominal (r : Root) (d : Derivation) :
+    (Interpreter.typeDriven nominalGrammar).derivs headItems (skeleton (nominal r d)) =
+      (Interpreter.typeDriven nominalGrammar).derivs Terminal.items
+        (Allosemy.nominal d.v d.n) :=
+  rfl
+
 /-! #### *marg-* by composition -/
 
 /-- The meaning of *marg-*: a modifier of a predicate of eventualities. -/
 inductive MargItem : Interpreter.Ty Interpreter.Base → Type
   | marg : MargItem (.fn .vt .vt)
 
-/-- A terminal of a *marg-* nominalization: a terminal of the nominalization, or the prefix. -/
-def margItems : Terminal ⊕ Unit → List (Σ a, Item a ⊕ MargItem a)
-  | .inl t => t.items.map fun ⟨a, i⟩ ↦ ⟨a, .inl i⟩
-  | .inr () => [⟨_, .inr .marg⟩]
+/-- The items of a *marg-* nominalization: those of the complex head, and the prefix. -/
+def margItems {R : Type} : Unit ⊕ R ⊕ Head → List (Σ a, Item a ⊕ MargItem a)
+  | .inl () => [⟨_, .inr .marg⟩]
+  | .inr x => (headItems x).map fun ⟨a, i⟩ ↦ ⟨a, .inl i⟩
 
-/-- The complex head of a *marg-* nominalization, the prefix adjoined to the root categorized by
-v, under n. -/
-def margNominal (d : Derivation) : Interpreter.Skeleton Unit (Terminal ⊕ Unit) :=
-  .binary () (.binary () (.leaf (.inr ()))
-    (.binary () (.leaf (.inl .root)) (.leaf (.inl (.v d.v))))) (.leaf (.inl (.n d.n)))
+/-- The complex head of a *marg-* nominalization, the prefix adjoined to v. -/
+def margNominal {R : Type} (s : ComplexHead R Head) : Interpreter.Skeleton Unit (Unit ⊕ R ⊕ Head) :=
+  prefixedSkeleton s 1 ()
 
-/-- *marg-* composes on a nominalization: the complex head with the prefix has a derivation. -/
+/-- *marg-* composes on a nominalization: the complex head with the prefix has a derivation,
+whatever the root. -/
 def MargComposes (d : Derivation) : Prop :=
-  (Interpreter.typeDriven nominalGrammar).derivs margItems (margNominal d) ≠ []
+  (Interpreter.typeDriven nominalGrammar).derivs margItems
+    (margNominal (⟨(), d.heads⟩ : ComplexHead Unit Head)) ≠ []
 
 instance : DecidablePred MargComposes := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
+
+-- The root's identity plays no part: the nominalization of any root composes with *marg-*
+-- exactly when its allosemes do.
+theorem margComposes_nominal (r : Root) (d : Derivation) :
+    (Interpreter.typeDriven nominalGrammar).derivs margItems (margNominal (nominal r d)) ≠ [] ↔
+      MargComposes d :=
+  Iff.rfl
 
 /-- *marg-* needs a predicate of eventualities below it, so it composes exactly under the
 allosemes of n that take one, the zero and the result allosemes; the simple event, state and
@@ -469,10 +515,10 @@ def margVal {E V : Type} (m : NominalizationModel E V) (ρ : RootMeaning E V) (i
 
 -- (6.44c): the complex event reading of a *marg-* noun, iterated activities of the root's kind.
 theorem values_margNominal_cen {E V : Type} (m : NominalizationModel E V) (ρ : RootMeaning E V)
-    (iter : V → Prop) :
+    (iter : V → Prop) (r : Root) :
     (Interpreter.typeDriven nominalGrammar).values
         (D := Interpreter.Ty.Dom (Interpreter.Base.Dom E Unit { eventuality := V })) inferInstance
-        (margVal m ρ iter) margItems (margNominal .cen) =
+        (margVal m ρ iter) margItems (margNominal (nominal r .cen)) =
       [⟨.vt, fun e ↦ (ρ.onEvents e ∧ m.activity e) ∧ iter e⟩] :=
   rfl
 
