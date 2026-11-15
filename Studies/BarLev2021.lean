@@ -13,14 +13,15 @@ pluralization, that some atom of the plurality in a domain has the property, and
 replace the domain by its subsets, so that they are the disjunctions of the atomic predications
 with no conjunction among them. Exhaustifying over all of them
 [gives the universal reading](##exhIEII_eq_universal), while under negation
-[exhaustification is vacuous](##exhIEII_compl_biUnion). Non-maximal readings come from
-pruning: a set of alternatives may replace the whole set when exhaustifying over it only weakens
-the universal reading, which holds exactly when it makes no alternative innocently excludable, and
-the readings so derived are [the conjunctions of alternatives that are not themselves
-alternatives, and the plain existential one](##prunedReadings_eq). They include "at least
-`k`" for every `k` and lie among Križ and Spector's candidate meanings. The question the context
-raises selects the strongest reading it determines; [every reading is selected by the question
-whether it holds](##isPrunedReading_polar), and a world is gappy, true on the reading one
+[exhaustification is vacuous](##Exhaustification.exhIEII_compl_biUnion). Non-maximal readings
+come from pruning: a set of alternatives may replace the whole set when exhaustifying over it
+only weakens the universal reading, which holds exactly when it makes no alternative innocently
+excludable, and the readings so derived are [the conjunctions of alternatives that are not
+themselves alternatives, and the plain existential
+one](##Exhaustification.prunedReadings_eq). They include "at least `k`" for every `k` and lie
+among Križ and Spector's candidate meanings. The question the context raises selects the
+strongest reading it determines; [every reading is selected by the question whether it
+holds](##Exhaustification.isPrunedReading_polar), and a world is gappy, true on the reading one
 question selects and false on another's, [exactly where trivalent plural predication is
 undefined](##gappy_iff_barePlural_eq_undefined).
 
