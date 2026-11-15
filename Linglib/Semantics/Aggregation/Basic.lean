@@ -8,6 +8,7 @@ public import Mathlib.Order.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import Linglib.Core.Order.Antisymmetrization
 public import Linglib.Semantics.Degree.Measurement
+public import Linglib.Semantics.MeasurementTheory.Scale
 
 /-!
 # Aggregation rules

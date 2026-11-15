@@ -10,8 +10,8 @@ import Mathlib.Tactic.Linarith
 
 A *differential comparative* (*3 inches taller*) says that one measure is another moved by a
 difference, and a *factor equative* (*twice as tall*) that it is another scaled by a ratio. A
-statement about measures is meaningful when it is [invariant](##Invariant) under every admissible
-change of scale. [A change of scale that is equivariant along a map of
+statement about measures is meaningful when it is `Invariant` under every admissible change of
+scale. [A change of scale that is equivariant along a map of
 amounts](##factorEquative_comp_iff) carries each statement to the one at the image amount, so [an
 affine change of scale acts on a differential by its linear
 part](##differentialComparative_comp_affineMap), and [an action that commutes with the
@@ -29,9 +29,8 @@ form of the factor equative.
 
 ## TODO
 
-The admissible changes of scale are taken as given. Measurement theory derives them from the
-representations of a qualitative structure, and `Aggregation` consumes `Invariant` from here only
-for want of that theory.
+The admissible changes of an interval and of a ratio scale are taken as given;
+`MeasurementTheory` derives only the ordinal ones from the measures of a structure.
 
 ## References
 
@@ -109,22 +108,6 @@ theorem differentialComparative_comp_affineMap {k V₁ V₂ P₁ P₂ : Type*} [
     (f : P₁ →ᵃ[k] P₂) (hf : Injective f) (μ : E → P₁) (a b : E) (d : V₁) :
     DifferentialComparative (f ∘ μ) a b (f.linear d) ↔ DifferentialComparative μ a b d :=
   differentialComparative_comp_iff hf (fun d x ↦ f.map_vadd x d) μ a b d
-
-/-! ### Invariance -/
-
-/-- A function of measures is invariant under a class of changes of scale when none of them
-changes its value. A statement invariant under the changes of a scale is meaningful on it. -/
-def Invariant {β : Type*} (S : Set (D → D)) (a : (E → D) → β) : Prop :=
-  ∀ g ∈ S, ∀ μ, a (g ∘ μ) = a μ
-
-theorem Invariant.mono {β : Type*} {S T : Set (D → D)} (h : S ⊆ T) {a : (E → D) → β}
-    (ha : Invariant T a) : Invariant S a :=
-  fun g hg ↦ ha g (h hg)
-
-/-- Comparing two measures is meaningful on an ordinal scale. -/
-theorem invariant_strictMono_lt [LinearOrder D] (a b : E) :
-    Invariant {u : D → D | StrictMono u} fun μ ↦ μ b < μ a :=
-  fun _ hu _ ↦ propext (StrictMono.lt_iff_lt hu)
 
 /-! ### Numerical scales -/
 
