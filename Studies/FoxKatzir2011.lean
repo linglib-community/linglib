@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Alternatives.Symmetric
-public import Linglib.Semantics.Alternatives.Relevance
+public import Linglib.Semantics.Exhaustification.Symmetric
+public import Linglib.Semantics.Exhaustification.Relevance
 public import Studies.Katzir2007
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
@@ -22,7 +22,7 @@ alternatives both are contradictory (`dominated_of_isSymmetric`), a universal op
 the assertion removes the symmetry and both inferences arise (`mem_exh_nec`), innocent exclusion
 negates neither symmetric alternative (`exhIE_eq_self_of_isSymmetric`), and a contextual set
 closed under negation and conjunction keeps both or neither
-(`Alternatives.IsSymmetric.mem_of_mem`). The paper's stronger condition, allowable restriction
+(`Exhaustification.IsSymmetric.mem_of_mem`). The paper's stronger condition, allowable restriction
 through exhaustive relevance, forbids pruning one of two compatible disjuncts as well
 (`not_isAllowableRestriction_pair`).
 
@@ -53,7 +53,7 @@ accessibility relation, covering the modal and the quantificational cases alike.
 
 namespace FoxKatzir2011
 
-open Alternatives Exhaustification ModalLogic Set
+open Exhaustification ModalLogic Set
 open SetRel
 
 variable {W : Type*}

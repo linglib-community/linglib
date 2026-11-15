@@ -86,7 +86,7 @@ domain `TrinhHaida2015.run_smoke_isDomain`. The examples are the rows of `Exampl
 
 namespace BrehenyEtAl2018
 
-open Alternatives Exhaustification Set TrinhHaida2015
+open Exhaustification Set TrinhHaida2015
 
 variable {W : Type*}
 

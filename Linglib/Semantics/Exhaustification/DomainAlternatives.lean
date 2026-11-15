@@ -4,7 +4,7 @@ public import Mathlib.Data.Finset.Interval
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Fintype.Basic
 public import Linglib.Logic.Modal.Basic
-public import Linglib.Semantics.Exhaustification.InnocentInclusion
+public import Linglib.Semantics.Exhaustification.Disjunctive
 public import Linglib.Semantics.Exhaustification.Antiexhaustive
 
 /-!
@@ -30,14 +30,13 @@ enrichment of the possibility of the claim.
 * `subdomainAlternatives` — the singleton or proper subdomain alternatives.
 * `AntiExhaustivity` — the negated pre-exhaustified alternative, for a singleton the negated
   exhaustification against the other members (`antiExhaustivity_singleton_iff`).
-* `RealizesWitnessSets` — every set of witnesses is possible at some world.
 
 ## Main results
 
 * `freeChoice_iff_of_isGreatest` — over a domain with a greatest member and a scope closed under
   parts, Free Choice is the possibility of the greatest member.
 * `notMem_exhIE_subdomain_iff` — anti-exhaustivity is the negated innocent pre-exhaustification
-  against every subdomain alternative, in a model realizing every set of witnesses.
+  against every subdomain alternative, when the possibilities of the members are separated.
 * `exh_subdomain_eq_empty` — without innocent exclusion that pre-exhaustification is
   contradictory.
 * `freeChoice_iff_forall_antiExhaustivity` — where the claim is possible, Free Choice is
@@ -112,18 +111,13 @@ theorem not_modalVariation_of_box_empty (h : □[R] (fun v => witnesses D Q v = 
 
 end Witnesses
 
-/-! ### Exhaustification in a model realizing every set of witnesses
+/-! ### Exhaustification against the possibility of each member
 
-When every set of witnesses is possible at some world, the characterizations of innocent exclusion
-and inclusion by verified alternatives compute the exhaustified readings of a modalized existential.
-Against the possibility of each member, innocent exclusion is vacuous (`exhIE_singletons_eq`) and
-innocent inclusion yields free choice without pre-exhaustification
-(`exhIEII_singletons_eq_freeChoice`). -/
-
-/-- A model realizes every set of witnesses when each nonempty set of members of the domain is
-the set of possible witnesses at some world. -/
-def RealizesWitnessSets : Prop :=
-  ∀ L ⊆ D, L.Nonempty → ∃ v, ∀ x ∈ D, ◇[R] (Q · x) v ↔ x ∈ L
+The possibility of the claim is the disjunction of the possibilities of the members of the domain,
+so when those are separated, each possible alone at some world and all together at some world,
+the theorems on exhaustifying a disjunction against its disjuncts apply: innocent exclusion is
+vacuous (`exhIE_singletons_eq`) and innocent inclusion yields free choice without
+pre-exhaustification (`exhIEII_singletons_eq_freeChoice`). -/
 
 section Witnessing
 
@@ -133,54 +127,26 @@ theorem diamond_claim_iff {S : Finset E} {v : W'} :
     ◇[R] (claim Q S) v ↔ ∃ x ∈ S, ◇[R] (Q · x) v :=
   ⟨fun ⟨u, hu, x, hx, hq⟩ ↦ ⟨x, hx, u, hu, hq⟩, fun ⟨x, hx, u, hu, hq⟩ ↦ ⟨u, hu, x, hx, hq⟩⟩
 
-private theorem exists_single_witness (h : RealizesWitnessSets R D Q) {x : E} (hx : x ∈ D) :
-    ∃ v, ∀ y ∈ D, ◇[R] (Q · y) v ↔ y = x :=
-  (h {x} (Finset.singleton_subset_iff.2 hx) ⟨x, by simp⟩).imp fun _ hv y hy ↦
-    (hv y hy).trans Finset.mem_singleton
+theorem setOf_diamond_claim (S : Finset E) :
+    {v | ◇[R] (claim Q S) v} = ⋃ x ∈ S, {v | ◇[R] (Q · x) v} := by
+  ext v
+  simp [diamond_claim_iff]
 
-theorem sUnion_minimal_singletons (h : RealizesWitnessSets R D Q) :
-    ⋃₀ {M | Minimal (· ∈ Preorder.satisfied (· ∈ ·) ((fun x ↦ {v | ◇[R] (Q · x) v}) '' ↑D) ''
-      {v | ◇[R] (claim Q D) v}) M} = (fun x ↦ {v | ◇[R] (Q · x) v}) '' ↑D := by
-  refine Set.Subset.antisymm (fun a ⟨_, ⟨⟨_, _, rfl⟩, _⟩, ha⟩ ↦ ha.1) ?_
-  rintro _ ⟨x, hx, rfl⟩
-  obtain ⟨v, hv⟩ := exists_single_witness h hx
-  have hvx : ◇[R] (Q · x) v := (hv x hx).2 rfl
-  refine ⟨_, ⟨⟨v, diamond_claim_iff.2 ⟨x, hx, hvx⟩, rfl⟩, ?_⟩, ⟨⟨x, hx, rfl⟩, hvx⟩⟩
-  rintro _ ⟨u, hu, rfl⟩ hle a ⟨⟨t, ht, hta⟩, hva⟩
-  subst hta
-  obtain ⟨y, hyD, hyu⟩ := diamond_claim_iff.1 hu
-  obtain rfl := (hv y hyD).1 (hle ⟨⟨y, hyD, rfl⟩, hyu⟩).2
-  obtain rfl := (hv t ht).1 hva
-  exact ⟨⟨t, ht, rfl⟩, hyu⟩
-
-theorem exhIE_singletons_eq (h : RealizesWitnessSets R D Q) :
+theorem exhIE_singletons_eq (h : Separating D fun x ↦ {v | ◇[R] (Q · x) v}) :
     exhIE ((fun x ↦ {v | ◇[R] (Q · x) v}) '' ↑D) {v | ◇[R] (claim Q D) v} =
       {v | ◇[R] (claim Q D) v} := by
-  ext w
-  rw [mem_exhIE_iff_subset_sUnion, sUnion_minimal_singletons h]
-  exact ⟨And.left, fun hw ↦ ⟨hw, fun a ha ↦ ha.1⟩⟩
+  rw [setOf_diamond_claim]
+  exact exhIE_image h.single
 
 /-- Against the possibility of each member, innocent exclusion and inclusion strengthens the
 possibility of the claim exactly to free choice, without pre-exhaustification. -/
-theorem exhIEII_singletons_eq_freeChoice (h : RealizesWitnessSets R D Q) (hD : D.Nonempty) :
+theorem exhIEII_singletons_eq_freeChoice (h : Separating D fun x ↦ {v | ◇[R] (Q · x) v})
+    (hD : D.Nonempty) :
     exhIEII ((fun x ↦ {v | ◇[R] (Q · x) v}) '' ↑D) {v | ◇[R] (claim Q D) v} =
       {w | FreeChoice R w D Q} := by
-  set B : E → Set W' := fun x ↦ {v | ◇[R] (Q · x) v}
-  have hcell : ∀ w, w ∈ cell (B '' ↑D) {v | ◇[R] (claim Q D) v} ↔ FreeChoice R w D Q := by
-    intro w
-    rw [mem_cell_iff, sUnion_minimal_singletons h]
-    constructor
-    · rintro ⟨-, hw⟩ x hx
-      have : B x ∈ Preorder.satisfied (· ∈ ·) (B '' ↑D) w := by rw [hw]; exact ⟨x, hx, rfl⟩
-      exact this.2
-    · intro hw
-      obtain ⟨x, hx⟩ := hD
-      refine ⟨diamond_claim_iff.2 ⟨x, hx, hw x hx⟩, Set.Subset.antisymm (fun a ha ↦ ha.1) ?_⟩
-      rintro _ ⟨y, hy, rfl⟩
-      exact ⟨⟨y, hy, rfl⟩, hw y hy⟩
-  obtain ⟨v, hv⟩ := h D subset_rfl hD
-  rw [exhIEII_eq_cell_of_cell_nonempty _ _ ⟨v, (hcell v).2 fun x hx ↦ (hv x hx).2 hx⟩]
-  exact Set.ext hcell
+  rw [setOf_diamond_claim, exhIEII_image h hD]
+  ext w
+  simp [FreeChoice]
 
 end Witnessing
 
@@ -282,7 +248,7 @@ theorem singleton_mem_subdomainAlternatives_proper (hS₀ : S₀ ∈ subdomainAl
   exact hne (Finset.Subset.antisymm hsub (Finset.singleton_subset_iff.2
     ((Finset.mem_singleton.1 (hsub hx)) ▸ hx)))
 
-theorem mem_exhIE_subdomain_iff (h : RealizesWitnessSets R D Q)
+theorem mem_exhIE_subdomain_iff (h : Separating D fun x ↦ {v | ◇[R] (Q · x) v})
     (hS₀ : S₀ ∈ subdomainAlternatives .proper D) :
     w ∈ exhIE ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
         {v | ◇[R] (claim Q S₀) v} ↔
@@ -301,7 +267,7 @@ theorem mem_exhIE_subdomain_iff (h : RealizesWitnessSets R D Q)
     constructor
     · rintro ⟨_, ⟨⟨v, hvφ, rfl⟩, hmin⟩, -, hvS⟩
       obtain ⟨y, hyS₀, hyv⟩ := diamond_claim_iff.1 hvφ
-      obtain ⟨u, hu⟩ := exists_single_witness h (hS₀D hyS₀)
+      obtain ⟨u, hu⟩ := h.single _ (hS₀D hyS₀)
       have huφ : u ∈ A S₀ := diamond_claim_iff.2 ⟨y, hyS₀, (hu y (hS₀D hyS₀)).2 rfl⟩
       have hle := hmin ⟨u, huφ, rfl⟩ fun a ⟨⟨T, hT, hTa⟩, hua⟩ ↦ by
         subst hTa
@@ -312,7 +278,7 @@ theorem mem_exhIE_subdomain_iff (h : RealizesWitnessSets R D Q)
       obtain rfl := (hu z (hP hS hzS)).1 hzu
       exact ⟨z, hzS, hyS₀⟩
     · rintro ⟨x, hxS, hxS₀⟩
-      obtain ⟨v, hv⟩ := exists_single_witness h (hS₀D hxS₀)
+      obtain ⟨v, hv⟩ := h.single _ (hS₀D hxS₀)
       have hvx : ◇[R] (Q · x) v := (hv x (hS₀D hxS₀)).2 rfl
       refine ⟨_, ⟨⟨v, diamond_claim_iff.2 ⟨x, hxS₀, hvx⟩, rfl⟩, ?_⟩,
         ⟨⟨S, hS, rfl⟩, diamond_claim_iff.2 ⟨x, hxS, hvx⟩⟩⟩
@@ -352,15 +318,15 @@ theorem freeChoice_iff_forall_antiExhaustivity (h : ◇[R] (claim Q D) w) :
     rw [mem_subdomainAlternatives_proper, Finset.ssubset_iff_subset_ne, AntiExhaustivity]; tauto
 
 /-- Negating the innocent pre-exhaustification of a proper subdomain is its anti-exhaustivity,
-in a model realizing every set of witnesses. -/
-theorem notMem_exhIE_subdomain_iff (h : RealizesWitnessSets R D Q)
+when the possibilities of the members are separated. -/
+theorem notMem_exhIE_subdomain_iff (h : Separating D fun x ↦ {v | ◇[R] (Q · x) v})
     (hS₀ : S₀ ∈ subdomainAlternatives .proper D) :
     w ∉ exhIE ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
         {v | ◇[R] (claim Q S₀) v} ↔ AntiExhaustivity R w D Q S₀ := by
   rw [mem_exhIE_subdomain_iff h hS₀, AntiExhaustivity]
   tauto
 
-theorem freeChoice_of_forall_notMem_exhIE (h : RealizesWitnessSets R D Q)
+theorem freeChoice_of_forall_notMem_exhIE (h : Separating D fun x ↦ {v | ◇[R] (Q · x) v})
     (hw : ◇[R] (claim Q D) w)
     (hs : ∀ S ∈ subdomainAlternatives .proper D,
       w ∉ exhIE ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
@@ -370,9 +336,9 @@ theorem freeChoice_of_forall_notMem_exhIE (h : RealizesWitnessSets R D Q)
     (notMem_exhIE_subdomain_iff h hS).1 (hs S hS)
 
 /-- Exhaustifying the possibility of a subdomain with two members against every subdomain
-alternative without innocent exclusion is contradictory, in a model realizing every set of
-witnesses. -/
-theorem exh_subdomain_eq_empty (h : RealizesWitnessSets R D Q)
+alternative without innocent exclusion is contradictory, when the possibilities of the members
+are separated. -/
+theorem exh_subdomain_eq_empty (h : Separating D fun x ↦ {v | ◇[R] (Q · x) v})
     (hS₀ : S₀ ∈ subdomainAlternatives .proper D) (h2 : 1 < S₀.card) :
     exh ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
       {v | ◇[R] (claim Q S₀) v} = ∅ := by
@@ -386,7 +352,7 @@ theorem exh_subdomain_eq_empty (h : RealizesWitnessSets R D Q)
     ⟨⟨{z}, singleton_mem_subdomainAlternatives_proper hS₀ (hS₀D hzS₀), rfl⟩,
       diamond_claim_iff.2 ⟨z, Finset.mem_singleton_self z, hzv⟩⟩
   have only : ∀ t ∈ S₀, z = t := fun t ht ↦ by
-    obtain ⟨u, hu⟩ := exists_single_witness h (hS₀D ht)
+    obtain ⟨u, hu⟩ := h.single _ (hS₀D ht)
     obtain ⟨z', hz', hz'u⟩ := diamond_claim_iff.1
       (hleast ⟨u, diamond_claim_iff.2 ⟨t, ht, (hu t (hS₀D ht)).2 rfl⟩, rfl⟩ hz).2
     rw [Finset.mem_singleton] at hz'

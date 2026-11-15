@@ -708,7 +708,6 @@ import Linglib.Processing.DiscriminativeLexicon.Realization
 import Linglib.Processing.DiscriminativeLexicon.Training
 import Linglib.Processing.Psychophysics.SignalDetection
 import Linglib.Semantics.Alternatives.Structural
-import Linglib.Semantics.Alternatives.Symmetric
 import Linglib.Semantics.ArgumentStructure.Affectedness
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 import Linglib.Semantics.ArgumentStructure.EnergySource

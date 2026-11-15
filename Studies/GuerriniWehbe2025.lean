@@ -71,7 +71,7 @@ noncomputable abbrev pexPlural (R : Set (Set W)) : W → Trivalent :=
   pexIEII (supClosure (atom P '' ↑(x ∩ D))) (⋃ b ∈ x ∩ D, atom P b) R
 
 -- (19b)
-theorem pexPlural_ne_undefined_iff (h : Separating D x P) (hne : (x ∩ D).Nonempty) :
+theorem pexPlural_ne_undefined_iff (h : Separating (x ∩ D) (atom P)) (hne : (x ∩ D).Nonempty) :
     pexPlural D x P R w ≠ .undefined ↔
       Homogeneous (supClosure (atom P '' ↑(x ∩ D)) \ {(⋃ b ∈ x ∩ D, atom P b)} ∩ R) w := by
   have hset : {a ∈ R | IsInnocentlyIncludable (supClosure (atom P '' ↑(x ∩ D)))
@@ -88,7 +88,7 @@ theorem pexPlural_ne_undefined_iff (h : Separating D x P) (hne : (x ∩ D).Nonem
 
 /-- In (20), after accommodation, a plural predication is universal as long as no alternative for
 a single atom is pruned. -/
-theorem pexPlural_eq_true_iff (h : Separating D x P) (hcard : 1 < (x ∩ D).card)
+theorem pexPlural_eq_true_iff (h : Separating (x ∩ D) (atom P)) (hcard : 1 < (x ∩ D).card)
     (hR : ∀ a ∈ x ∩ D, atom P a ∈ R) :
     pexPlural D x P R w = .true ↔ ∀ a ∈ x, a ∈ D → P a w := by
   have hne : (x ∩ D).Nonempty := Finset.card_pos.1 (by omega)
@@ -133,15 +133,11 @@ theorem pexPlural_eq_false_iff : pexPlural D x P R w = .false ↔ ∀ a ∈ x, a
   obtain ⟨a, ha, hPa⟩ := Set.mem_iUnion₂.1 hw
   exact hnone a (Finset.mem_inter.1 ha).1 (Finset.mem_inter.1 ha).2 hPa
 
-private theorem biUnion_ne_of_card_lt (h : Separating D x P) {T : Finset Atom} (hT : T ⊆ x ∩ D)
-    (hlt : T.card < (x ∩ D).card) : ⋃ i ∈ T, atom P i ≠ ⋃ i ∈ x ∩ D, atom P i := by
-  intro heq
-  obtain ⟨b, hb, hbT⟩ := Finset.exists_mem_notMem_of_card_lt_card hlt
-  obtain ⟨wb, hwb⟩ := h.single b hb
-  have hin : wb ∈ ⋃ i ∈ x ∩ D, atom P i := Set.mem_biUnion hb ((hwb b hb).2 rfl)
-  rw [← heq] at hin
-  obtain ⟨i, hi, hPi⟩ := Set.mem_iUnion₂.1 hin
-  exact hbT (((hwb i (hT hi)).1 hPi) ▸ hi)
+private theorem biUnion_ne_of_card_lt (h : Separating (x ∩ D) (atom P)) {T : Finset Atom}
+    (hT : T ⊆ x ∩ D) (hlt : T.card < (x ∩ D).card) :
+    ⋃ i ∈ T, atom P i ≠ ⋃ i ∈ x ∩ D, atom P i := fun heq ↦
+  hlt.not_ge (Finset.card_le_card
+    ((biUnion_subset_biUnion_iff h.single subset_rfl hT).1 heq.ge))
 
 section Pruning
 
@@ -149,12 +145,13 @@ variable [∀ a w, Decidable (P a w)]
 
 /-- With the alternatives over `m` atoms, as in (21), `pex` makes the plural true after
 accommodation iff all but at most `m - 1` atoms satisfy the predicate. -/
-theorem pexPlural_subDisjsOfCard_eq_true_iff (h : Separating D x P) {m : ℕ} (hm : 0 < m)
+theorem pexPlural_subDisjsOfCard_eq_true_iff (h : Separating (x ∩ D) (atom P)) {m : ℕ} (hm : 0 < m)
     (hmn : m ≤ (x ∩ D).card) :
     pexPlural D x P (subDisjsOfCard (x ∩ D) (atom P) m) w = .true ↔
-      w ∈ atLeast D x P ((x ∩ D).card + 1 - m) := by
+      w ∈ atLeastTrue (x ∩ D) (atom P) ((x ∩ D).card + 1 - m) := by
   have hne : (x ∩ D).Nonempty := Finset.card_pos.1 (by omega)
-  rw [pexIEII_eq_true_iff, pexPlural_ne_undefined_iff h hne, mem_atLeast, count]
+  rw [pexIEII_eq_true_iff, pexPlural_ne_undefined_iff h hne, mem_atLeastTrue]
+  change _ ↔ (x ∩ D).card + 1 - m ≤ ((x ∩ D).filter (P · w)).card
   have key := forall_card_eq_exists_mem_iff (I := x ∩ D) (T := (x ∩ D).filter (P · w))
     (Finset.filter_subset _ _) (m := m)
   simp only [Finset.mem_filter] at key
@@ -213,7 +210,7 @@ theorem not_informative_pexPlural :
   (pexIEII_eq_false_iff.1 h).2 hw
 
 -- (10b), (12b), (13c), (23)
-theorem not_informative_compl (h : Separating D x P) (hcard : 1 < (x ∩ D).card)
+theorem not_informative_compl (h : Separating (x ∩ D) (atom P)) (hcard : 1 < (x ∩ D).card)
     (hR : ∀ a ∈ x ∩ D, atom P a ∈ R) :
     ¬ PostAccommodationInformative {w | ¬ ∀ a ∈ x, a ∈ D → P a w} ((pexPlural D x P R)ᶜ) := fun hi ↦
   let ⟨_, hw, hf⟩ := postAccommodationInformative_iff.1 hi
@@ -232,14 +229,14 @@ accommodation iff at least two smiled. -/
 theorem pexPlural_pairs_eq_true_iff (w : Finset (Fin 3)) :
     pexPlural Finset.univ Finset.univ holds (subDisjsOfCard Finset.univ (atom holds) 2) w = .true ↔
       2 ≤ w.card := by
-  have h := pexPlural_subDisjsOfCard_eq_true_iff (w := w) (separating_holds Finset.univ
-    Finset.univ) (m := 2) two_pos (by simp)
-  simpa [Finset.inter_self, count_holds] using h
+  have h := pexPlural_subDisjsOfCard_eq_true_iff (w := w)
+    (separating_holds (Finset.univ ∩ Finset.univ)) (m := 2) two_pos (by simp)
+  simpa [Finset.inter_self, trueCount_holds] using h
 
 /-- Student `a` did not smile at `w`. -/
 abbrev notSmiled (a : Fin 3) (w : Finset (Fin 3)) : Prop := a ∉ w
 
-private theorem separating_not : Separating Finset.univ Finset.univ notSmiled :=
+private theorem separating_not : Separating (Finset.univ ∩ Finset.univ) (atom notSmiled) :=
   ⟨by decide, by decide⟩
 
 -- (31)
@@ -310,7 +307,7 @@ theorem judgments_10 :
         ((pexPlural univ univ holds (supClosure (Set.range (atom holds))))ᶜ)) :=
   ⟨iff_of_false (by decide) fun h ↦ not_informative_pexPlural
       (h.mono fun _ ⟨a, ha⟩ ↦ Set.mem_biUnion (by simp) ha),
-    iff_of_false (by decide) fun h ↦ not_informative_compl (separating_holds _ _) (by decide)
+    iff_of_false (by decide) fun h ↦ not_informative_compl (separating_holds _) (by decide)
       (fun a _ ↦ subset_supClosure (Set.mem_range_self a)) (h.mono subset_not_forall)⟩
 
 -- (12)
@@ -322,7 +319,7 @@ theorem judgments_12 :
       PostAccommodationInformative {w : Finset (Fin 2) | w ≠ univ}
         ((pexPlural univ univ holds (supClosure (Set.range (atom holds))))ᶜ)) :=
   ⟨iff_of_true (by decide) (postAccommodationInformative_iff.2 ⟨{0}, by decide, by decide⟩),
-    iff_of_false (by decide) fun h ↦ not_informative_compl (separating_holds _ _) (by decide)
+    iff_of_false (by decide) fun h ↦ not_informative_compl (separating_holds _) (by decide)
       (fun a _ ↦ subset_supClosure (Set.mem_range_self a)) (h.mono subset_not_forall)⟩
 
 /-- In (13), with at most one winner, *none of the candidates won* and *all of the candidates lost*
@@ -343,7 +340,7 @@ theorem judgments_13 :
           (supClosure (Set.range (atom fun a w ↦ a ∉ w))))) :=
   ⟨iff_of_true (by decide) (postAccommodationInformative_iff.2 ⟨{0}, by decide, by decide⟩),
     iff_of_true (by decide) (postAccommodationInformative_iff.2 ⟨{0}, by decide, by decide⟩),
-    iff_of_false (by decide) fun h ↦ not_informative_compl (separating_holds _ _) (by decide)
+    iff_of_false (by decide) fun h ↦ not_informative_compl (separating_holds _) (by decide)
       (fun a _ ↦ subset_supClosure (Set.mem_range_self a))
       (h.mono fun w hw hall ↦ by
         rw [eq_univ_of_forall fun a ↦ hall a (mem_univ a) (mem_univ a)] at hw
@@ -358,7 +355,7 @@ theorem judgments_23 :
     Examples.ex_23.judgment = .acceptable ↔
       PostAccommodationInformative {w : Finset (Fin 3) | w ≠ univ}
         ((pexPlural univ univ holds (supClosure (Set.range (atom holds))))ᶜ) :=
-  iff_of_false (by decide) fun h ↦ not_informative_compl (separating_holds _ _) (by decide)
+  iff_of_false (by decide) fun h ↦ not_informative_compl (separating_holds _) (by decide)
     (fun a _ ↦ subset_supClosure (Set.mem_range_self a)) (h.mono subset_not_forall)
 
 end Judgments

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Alternatives.Relevance
+public import Linglib.Semantics.Exhaustification.Relevance
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Presupposition.Context
@@ -36,7 +36,7 @@ exception set](##pex_but_no_eq_true_iff).
   (41b) and (50b) are written. Read literally, (56) compares a domain with every larger set of
   alternatives, and a domain lacking a non-excludable alternative fails it, since adding one
   changes nothing (`exhOnly_inter_excludable`).
-* Relevance over the context is `Alternatives.IsAllowableRestriction` over the subtype of the
+* Relevance over the context is `Exhaustification.IsAllowableRestriction` over the subtype of the
   context, with each *only*-alternative restricted to it by preimage (`onlyCtx`).
 * The ranking (58) of Informativity, `Presupposition.PostAccommodationInformative`, over Weakening
   is read off the constraints each domain satisfies; the accommodation operator of (56) is
@@ -499,12 +499,12 @@ theorem exh_onlyCtx_eq_compl {q r : Rank} (h : [q, r] = [postdoc, professor] ∨
     simp [onlyCtx_subset_onlyCtx_iff] <;> revert w <;> decide
 
 theorem not_exhaustivelyRelevant_onlyCtx {q : Rank} (hq : q = postdoc ∨ q = professor) :
-    ¬ Alternatives.ExhaustivelyRelevant (onlyCtx '' {grad, nonAcademic}) (onlyCtx q) := by
+    ¬ Exhaustification.ExhaustivelyRelevant (onlyCtx '' {grad, nonAcademic}) (onlyCtx q) := by
   obtain rfl | rfl := hq
-  · refine Alternatives.not_exhaustivelyRelevant_of_separates (u := ⟨{postdoc}, by decide⟩)
+  · refine Exhaustification.not_exhaustivelyRelevant_of_separates (u := ⟨{postdoc}, by decide⟩)
       (v := ⟨{professor}, by decide⟩) ?_ ?_ ?_ <;>
       simp [mem_exh, onlyCtx_subset_onlyCtx_iff]
-  · refine Alternatives.not_exhaustivelyRelevant_of_separates (u := ⟨{professor}, by decide⟩)
+  · refine Exhaustification.not_exhaustivelyRelevant_of_separates (u := ⟨{professor}, by decide⟩)
       (v := ⟨{postdoc}, by decide⟩) ?_ ?_ ?_ <;>
       simp [mem_exh, onlyCtx_subset_onlyCtx_iff]
 
@@ -512,9 +512,9 @@ theorem not_exhaustivelyRelevant_onlyCtx {q : Rank} (hq : q = postdoc ∨ q = pr
 theorem isAllowableRestriction_onlyCtx_iff {R : Set Rank}
     (hR : R = {nonAcademic} ∨ R = {postdoc} ∨ R = {professor} ∨ R = {nonAcademic, postdoc} ∨
       R = {nonAcademic, professor}) :
-    Alternatives.IsAllowableRestriction (range onlyCtx) (onlyCtx '' insert grad R)
+    Exhaustification.IsAllowableRestriction (range onlyCtx) (onlyCtx '' insert grad R)
       (onlyCtx grad) ↔ R = {nonAcademic} := by
-  open Alternatives BooleanSubalgebra in
+  open Exhaustification BooleanSubalgebra in
   have hER (q : Rank) (hq : q ∉ insert grad R)
       (h : ExhaustivelyRelevant (onlyCtx '' insert grad R) (onlyCtx q)) :
       ¬ IsAllowableRestriction (range onlyCtx) (onlyCtx '' insert grad R) (onlyCtx grad) :=
@@ -559,7 +559,7 @@ theorem only_ladder_subset_iff {q r : Rank} :
 
 -- over all worlds, the closure also admits pruning to *only [non-academic]* and *only [postdoc]*
 theorem isAllowableRestriction_only_ranks :
-    Alternatives.IsAllowableRestriction (range fun r ↦ only ranks ladder {r})
+    Exhaustification.IsAllowableRestriction (range fun r ↦ only ranks ladder {r})
       ((fun r ↦ only ranks ladder {r}) '' {grad, nonAcademic, postdoc})
       (only ranks ladder {grad}) := by
   refine ⟨mem_image_of_mem _ (by simp), ?_⟩
@@ -570,7 +570,7 @@ theorem isAllowableRestriction_only_ranks :
     grind
   rw [hinj.mem_set_image] at hq
   obtain rfl : q = professor := by cases q <;> simp_all
-  refine Alternatives.not_exhaustivelyRelevant_of_separates (u := {professor})
+  refine Exhaustification.not_exhaustivelyRelevant_of_separates (u := {professor})
     (v := {grad, postdoc}) ?_ ?_ ?_ <;>
     simp [mem_exh, only_ladder_subset_iff, mem_only_ladder]
 

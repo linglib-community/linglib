@@ -68,7 +68,7 @@ alternatives of *not all*.
 
 namespace TrinhHaida2015
 
-open Alternatives Exhaustification PhraseStructure Set
+open Exhaustification PhraseStructure Set
 
 variable {W : Type*}
 

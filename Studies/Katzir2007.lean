@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Cat
 public import Linglib.Semantics.Alternatives.Structural
-public import Linglib.Semantics.Alternatives.Symmetric
+public import Linglib.Semantics.Exhaustification.Symmetric
 
 /-!
 # Katzir (2007): Structurally-Defined Alternatives
@@ -138,8 +138,8 @@ theorem primary_implicature_some (hm : m allSentence ⊂ m someSentence)
 -- once it denotes what *some* does without what *all* does.
 theorem isSymmetric_someButNotAll (hm : m allSentence ⊆ m someSentence)
     (hs : m someButNotAllSentence = m someSentence \ m allSentence) :
-    Alternatives.IsSymmetric (m someSentence) (m allSentence) (m someButNotAllSentence) :=
-  hs ▸ Alternatives.isSymmetric_sdiff hm
+    Exhaustification.IsSymmetric (m someSentence) (m allSentence) (m someButNotAllSentence) :=
+  hs ▸ Exhaustification.isSymmetric_sdiff hm
 
 /-! ### Disjunction (Section 4.2) -/
 

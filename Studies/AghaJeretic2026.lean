@@ -248,8 +248,8 @@ theorem exh_subdomain {ι : Type*} [DecidableEq ι] (M : Finset ι) (hM : M.None
     exhIEII (supClosure ((fun i ↦ {s : ι → Bool | s i = true}) '' M))
         (⋃ i ∈ M, {s : ι → Bool | s i = true}) =
       ⋂ i ∈ M, {s : ι → Bool | s i = true} :=
-  exhIEII_supClosure (fun i _ ↦ ⟨fun j ↦ decide (j = i), fun j _ ↦ by simp⟩) hM
-    ⟨fun _ ↦ true, fun _ _ ↦ rfl⟩
+  exhIEII_supClosure ⟨fun i _ ↦ ⟨fun j ↦ decide (j = i), fun j _ ↦ by simp⟩,
+    ⟨fun _ ↦ true, fun _ _ ↦ rfl⟩⟩ hM
 
 /-! ### Covert modality (§4) -/
 
