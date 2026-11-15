@@ -45,7 +45,7 @@ reflexive environments that (10) sets aside do not arise in the rows.
 
 namespace Reinhart1976
 
-open Core.Order PhraseStructure PhraseStructure.Tree
+open PhraseStructure PhraseStructure.Tree
 open RoseTree (IsBranchingAt cCommand CCommands)
 
 variable {C W : Type*}
@@ -54,12 +54,12 @@ variable {C W : Type*}
 
 /-- A node commands another (1) when neither dominates the other and the S node most immediately
 dominating the first dominates the second. -/
-def Commands (t : Tree Cat W) (a b : TreePath) : Prop :=
+def Commands (t : Tree Cat W) (a b : GornAddress) : Prop :=
   (a, b) ∈ sCommand t ∧ ¬ a ≤ b ∧ ¬ b ≤ a
 
 /-- Precede-and-command is the domain relation of the received view (5). -/
-def PrecedesAndCommands (t : Tree Cat W) (a b : TreePath) : Prop :=
-  TreePath.Precedes a b ∧ Commands t a b
+def PrecedesAndCommands (t : Tree Cat W) (a b : GornAddress) : Prop :=
+  GornAddress.Precedes a b ∧ Commands t a b
 
 instance (t : Tree Cat W) : DecidableRel (Commands t) := fun _ _ ↦ by
   unfold Commands; infer_instance
@@ -68,20 +68,20 @@ instance (t : Tree Cat W) : DecidableRel (PrecedesAndCommands t) := fun _ _ ↦ 
   unfold PrecedesAndCommands; infer_instance
 
 -- (49)
-theorem cCommands_commands {t : Tree Cat W} {a b : TreePath}
+theorem cCommands_commands {t : Tree Cat W} {a b : GornAddress}
     (hS : labeled t {.S} ⊆ {p | IsBranchingAt t p}) (h : CCommands t a b) : Commands t a b :=
   ⟨upperPolar_anti _ hS h.1, h.2⟩
 
 -- (38)
-theorem cCommand_eq_Ici {t : Tree C W} {a m : TreePath} (hm : m < a) (hb : IsBranchingAt t m)
+theorem cCommand_eq_Ici {t : Tree C W} {a m : GornAddress} (hm : m < a) (hb : IsBranchingAt t m)
     (hmax : ∀ x < a, IsBranchingAt t x → x ≤ m) : {b | (a, b) ∈ cCommand t} = Set.Ici m :=
   Set.ext fun _ ↦ mem_commandRelation_iff_le ⟨⟨hb, hm⟩, fun x hx ↦ hmax x hx.2 hx.1⟩
 
 /-- In type I of (50), `a` c-commands `b` but `b` precedes `a`. -/
-def TypeI (t : Tree Cat W) (a b : TreePath) : Prop := CCommands t a b ∧ TreePath.Precedes b a
+def TypeI (t : Tree Cat W) (a b : GornAddress) : Prop := CCommands t a b ∧ GornAddress.Precedes b a
 
 /-- In type III of (50), `a` precedes and commands `b` but does not c-command it. -/
-def TypeIII (t : Tree Cat W) (a b : TreePath) : Prop :=
+def TypeIII (t : Tree Cat W) (a b : GornAddress) : Prop :=
   PrecedesAndCommands t a b ∧ ¬ CCommands t a b
 
 instance (t : Tree Cat W) : DecidableRel (TypeI t) := fun _ _ ↦ by unfold TypeI; infer_instance
@@ -90,11 +90,11 @@ instance (t : Tree Cat W) : DecidableRel (TypeIII t) := fun _ _ ↦ by
   unfold TypeIII; infer_instance
 
 /-- The two domains agree except on types I and III (50). -/
-theorem cCommands_iff_precedesAndCommands {t : Tree Cat W} {a b : TreePath}
+theorem cCommands_iff_precedesAndCommands {t : Tree Cat W} {a b : GornAddress}
     (hS : labeled t {.S} ⊆ {p | IsBranchingAt t p}) (h₁ : ¬ TypeI t a b) (h₃ : ¬ TypeIII t a b) :
     CCommands t a b ↔ PrecedesAndCommands t a b := by
   refine ⟨fun h ↦ ⟨?_, cCommands_commands hS h⟩, fun h ↦ by_contra fun h' ↦ h₃ ⟨h, h'⟩⟩
-  rcases TreePath.Precedes.trichotomy a b with hp | hp | hp | hp
+  rcases GornAddress.Precedes.trichotomy a b with hp | hp | hp | hp
   · exact absurd hp h.2.1
   · exact absurd hp h.2.2
   · exact hp
@@ -104,26 +104,28 @@ theorem cCommands_iff_precedesAndCommands {t : Tree Cat W} {a b : TreePath}
 
 /-- Under the restriction (10b), read with the domain relation `R`, two noun phrases can corefer
 just in case, if either is in the domain of the other, the one in the domain is a pronoun. -/
-def Permits (R : TreePath → TreePath → Prop) (pron : List TreePath) (a b : TreePath) : Prop :=
+def Permits (R : GornAddress → GornAddress → Prop) (pron : List GornAddress) (a b : GornAddress) :
+    Prop :=
   (R a b → b ∈ pron) ∧ (R b a → a ∈ pron)
 
 /-- Under the restriction (10a), two noun phrases can corefer just in case one is a pronoun, the
 other is not, and the non-pronoun is not in the domain of the pronoun; two names or two
 pronouns are not covered. -/
-def Permits10a (R : TreePath → TreePath → Prop) (pron : List TreePath) (a b : TreePath) : Prop :=
+def Permits10a (R : GornAddress → GornAddress → Prop) (pron : List GornAddress) (a b : GornAddress)
+    : Prop :=
   (a ∈ pron ∧ b ∉ pron → ¬ R a b) ∧ (b ∈ pron ∧ a ∉ pron → ¬ R b a)
 
-instance (R : TreePath → TreePath → Prop) [DecidableRel R] (pron : List TreePath)
-    (a b : TreePath) : Decidable (Permits R pron a b) := by
+instance (R : GornAddress → GornAddress → Prop) [DecidableRel R] (pron : List GornAddress)
+    (a b : GornAddress) : Decidable (Permits R pron a b) := by
   unfold Permits; infer_instance
 
-instance (R : TreePath → TreePath → Prop) [DecidableRel R] (pron : List TreePath)
-    (a b : TreePath) : Decidable (Permits10a R pron a b) := by
+instance (R : GornAddress → GornAddress → Prop) [DecidableRel R] (pron : List GornAddress)
+    (a b : GornAddress) : Decidable (Permits10a R pron a b) := by
   unfold Permits10a; infer_instance
 
 -- (10a), (10b)
-theorem permits10a_of_permits {R : TreePath → TreePath → Prop} {pron : List TreePath}
-    {a b : TreePath} (h : Permits R pron a b) : Permits10a R pron a b :=
+theorem permits10a_of_permits {R : GornAddress → GornAddress → Prop} {pron : List GornAddress}
+    {a b : GornAddress} (h : Permits R pron a b) : Permits10a R pron a b :=
   ⟨fun ⟨_, hb⟩ hab ↦ hb (h.1 hab), fun ⟨_, ha⟩ hba ↦ ha (h.2 hba)⟩
 
 /-! ### The trees -/
@@ -138,13 +140,13 @@ def tree37 : Tree Cat Unit :=
     .terminal .N ()]], .terminal .N ()]
 
 /-- The nodes of (37) other than the root are A, B, C, D, the lower cyclic node, E and F. -/
-def nodes37 : List TreePath :=
+def nodes37 : List GornAddress :=
   [⟨[0]⟩, ⟨[1]⟩, ⟨[2]⟩, ⟨[1, 0]⟩, ⟨[1, 1]⟩, ⟨[1, 1, 0]⟩, ⟨[1, 1, 1]⟩]
 
 /-- The nodes among `nodes` in the relation `R` to `a` form the domain of `a` under `R`, without
 `a` itself. -/
-def domain (R : TreePath → TreePath → Prop) [DecidableRel R] (nodes : List TreePath)
-    (a : TreePath) : List TreePath :=
+def domain (R : GornAddress → GornAddress → Prop) [DecidableRel R] (nodes : List GornAddress)
+    (a : GornAddress) : List GornAddress :=
   nodes.filter fun b ↦ decide (R a b)
 
 -- (37), (39a)
@@ -235,15 +237,15 @@ def trees : List (String × Tree Cat Unit) :=
    ("sententialPP", tree42), ("verbalPP", tree48b), ("vos", tree51)]
 
 /-- A position from its digits. -/
-def path (s : String) : TreePath := ⟨s.toList.map fun c ↦ c.toNat - '0'.toNat⟩
+def path (s : String) : GornAddress := ⟨s.toList.map fun c ↦ c.toNat - '0'.toNat⟩
 
 /-- An example records its tree, the two noun phrases, the pronouns among them, and the
 judgment of coreference: its `coreference` reading's where the prose gives one, else the mark. -/
 structure Row where
   tree : Tree Cat Unit
-  np₁ : TreePath
-  np₂ : TreePath
-  pron : List TreePath
+  np₁ : GornAddress
+  np₂ : GornAddress
+  pron : List GornAddress
   judgment : Judgment
 
 /-- A datum read into its row. -/

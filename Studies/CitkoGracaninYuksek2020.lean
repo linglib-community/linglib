@@ -55,7 +55,7 @@ economy bans, as Fox's Scope Economy bans vacuous scope shifting
 
 namespace CitkoGracaninYuksek2020
 
-open Minimalist Minimalist.PlanarSyntacticObject Core.Order
+open Minimalist Minimalist.PlanarSyntacticObject
 
 /-! ### The lexicon -/
 
@@ -105,8 +105,8 @@ def cs : PlanarSyntacticObject :=
 antecedent there, of a token pronounced in the first, which it reads as an E-type pronoun ((41),
 (54)). -/
 def ItReading (t : PlanarSyntacticObject) : Prop :=
-  ∃ x ∈ orphanTraces .raising t, (⟨[1]⟩ : TreePath) ≤ x.1 ∧
-    ∃ p ∈ occurrences t x.2, (⟨[0]⟩ : TreePath) ≤ p
+  ∃ x ∈ orphanTraces .raising t, (⟨[1]⟩ : GornAddress) ≤ x.1 ∧
+    ∃ p ∈ occurrences t x.2, (⟨[0]⟩ : GornAddress) ≤ p
 
 instance : DecidablePred ItReading := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 

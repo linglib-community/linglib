@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.TreePath
+public import Linglib.Core.Order.GornAddress
 public import Linglib.Data.Examples.Aremu2025b
 public import Linglib.Fragments.Yoruba.Focus
 public import Linglib.Fragments.Yoruba.Pronouns
@@ -28,7 +28,7 @@ focus itself, against an antisymmetric analysis that pied-pipes a phrase contain
 ## Implementation notes
 
 Constituents are positions in the clause `[subject [verb object adjunct]]` with the containment
-order on `TreePath`, as in `Aremu2025a`, which this file does not import: the two works appeared
+order on `GornAddress`, as in `Aremu2025a`, which this file does not import: the two works appeared
 a month apart and neither cites the other. The rows (2b), (16a) and (16b) are Standard Yorùbá.
 
 ## TODO
@@ -46,33 +46,33 @@ a month apart and neither cites the other. The rows (2b), (16a) and (16b) are St
 
 namespace Aremu2025b
 
-open Core.Order Reflex OrderDual
+open Reflex OrderDual
 
 /-! ### Constituents -/
 
 /-- The clause, the root of `[subject [verb object adjunct]]`. -/
-def clause : TreePath := ⟨[]⟩
+def clause : GornAddress := ⟨[]⟩
 
 /-- The subject. -/
-def subject : TreePath := ⟨[0]⟩
+def subject : GornAddress := ⟨[0]⟩
 
 /-- The verb phrase. -/
-def vp : TreePath := ⟨[1]⟩
+def vp : GornAddress := ⟨[1]⟩
 
 /-- The verb. -/
-def verb : TreePath := ⟨[1, 0]⟩
+def verb : GornAddress := ⟨[1, 0]⟩
 
 /-- The direct object. -/
-def object : TreePath := ⟨[1, 1]⟩
+def object : GornAddress := ⟨[1, 1]⟩
 
 /-- The adjunct. -/
-def adjunct : TreePath := ⟨[1, 2]⟩
+def adjunct : GornAddress := ⟨[1, 2]⟩
 
 /-! ### Answers and their reflexes -/
 
 /-- An answer records the focused constituent and whether it stays in place or is fronted. -/
 structure Answer where
-  focus : TreePath
+  focus : GornAddress
   strategy : Focus.Strategy
 
 namespace Answer
@@ -81,7 +81,7 @@ variable {a : Answer}
 
 /-- The overt reflexes of an answer. In place there are none; a fronted focus is displaced and
 marked by *rín*, and a fronted subject is resumed by *ó*. -/
-def reflexes (a : Answer) : Finset (Reflex TreePathᵒᵈ) :=
+def reflexes (a : Answer) : Finset (Reflex GornAddressᵒᵈ) :=
   match a.strategy with
   | .inSitu => ∅
   | .exSitu => {.displacement (toDual a.focus), .morpheme (toDual a.focus) [.free Yoruba.rin.form]}
@@ -127,7 +127,7 @@ theorem not_perceptible : ¬ Perceptible fun a : {a : Answer // a.Licensed} ↦ 
 /-! ### The rows -/
 
 /-- The positions the rows name. -/
-def positions : List (String × TreePath) :=
+def positions : List (String × GornAddress) :=
   [("subject", subject), ("vp", vp), ("verb", verb), ("object", object), ("adjunct", adjunct)]
 
 /-- The answer a row records, by its focus and whether it fronts it. -/

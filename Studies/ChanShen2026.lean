@@ -61,7 +61,7 @@ subject as well as its complement.
 
 namespace ChanShen2026
 
-open Minimalist Core.Order RoseTree
+open Minimalist RoseTree
 
 /-! ### The lexicon -/
 
@@ -174,7 +174,7 @@ instance (h : LexicalItem.Token) : Decidable (ReachesScope t h) :=
 
 /-- `m` is pronounced in matrix Spec-CP. -/
 def PronouncedAtScope (m : LexicalItem.Token) : Prop :=
-  ∃ q ∈ occurrences t m, (⟨[0]⟩ : TreePath) ≤ q
+  ∃ q ∈ occurrences t m, (⟨[0]⟩ : GornAddress) ≤ q
 
 instance (m : LexicalItem.Token) : Decidable (PronouncedAtScope t m) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))

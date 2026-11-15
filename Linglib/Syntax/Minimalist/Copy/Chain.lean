@@ -63,7 +63,7 @@ Phase Impenetrability Condition on links is in `Phase/Chain.lean`.
 
 namespace Minimalist
 
-open RoseTree SyntacticObject Core.Order PhraseStructure
+open RoseTree SyntacticObject PhraseStructure
 
 /-! ### Chains of copies -/
 
@@ -109,11 +109,11 @@ end PlanarSyntacticObject
 /-! ### Copies -/
 
 /-- The positions of `t` whose label `f` accepts, with the values, in preorder. -/
-def positions {β : Type*} (f : Vertex → Option β) (t : RoseTree Vertex) : List (TreePath × β) :=
+def positions {β : Type*} (f : Vertex → Option β) (t : RoseTree Vertex) : List (GornAddress × β) :=
   t.positionedSubtrees.filterMap fun x ↦ (f x.2.value).map (x.1, ·)
 
 theorem mem_positions_iff {β : Type*} {f : Vertex → Option β} {t : RoseTree Vertex}
-    {p : TreePath} {b : β} :
+    {p : GornAddress} {b : β} :
     (p, b) ∈ positions f t ↔ ∃ s, t[p]? = some s ∧ f s.value = some b := by
   simp only [positions, List.mem_filterMap, Option.map_eq_some_iff, Prod.mk.injEq, Prod.exists,
     mem_positionedSubtrees]
@@ -131,36 +131,36 @@ theorem nodup_map_fst_positions {β : Type*} (f : Vertex → Option β) (t : Ros
   exact hne
 
 /-- The pronounced copies, left to right. -/
-def tokenList : RoseTree Vertex → List (TreePath × LexicalItem.Token) :=
+def tokenList : RoseTree Vertex → List (GornAddress × LexicalItem.Token) :=
   positions (Sum.elim id fun _ ↦ none)
 
 /-- The deleted copies, left to right. -/
-def traceList : RoseTree Vertex → List (TreePath × LexicalItem.Token) :=
+def traceList : RoseTree Vertex → List (GornAddress × LexicalItem.Token) :=
   positions (Sum.elim (fun _ ↦ none) id)
 
 variable (hd : HeadFunction) (t : PlanarSyntacticObject) (tok : LexicalItem.Token)
 
 /-- The positions of the pronounced copies of `tok`. -/
-def occurrences : List TreePath :=
+def occurrences : List GornAddress :=
   (tokenList t.toRoseTree).filterMap fun x ↦ if x.2 = tok then some x.1 else none
 
 /-- The positions of the pronounced copies of the tokens `P` holds of. -/
-def occurrencesWith (P : LexicalItem.Token → Prop) [DecidablePred P] : List TreePath :=
+def occurrencesWith (P : LexicalItem.Token → Prop) [DecidablePred P] : List GornAddress :=
   (tokenList t.toRoseTree).filterMap fun x ↦ if P x.2 then some x.1 else none
 
 theorem occurrencesWith_eq : occurrencesWith t (· = tok) = occurrences t tok := rfl
 
 variable {t tok} in
-@[simp] theorem mem_occurrences {p : TreePath} :
+@[simp] theorem mem_occurrences {p : GornAddress} :
     p ∈ occurrences t tok ↔ (p, tok) ∈ tokenList t.toRoseTree := by
   simp [occurrences]
 
 /-- The positions of the deleted copies of `tok`. -/
-def traces : List TreePath :=
+def traces : List GornAddress :=
   (traceList t.toRoseTree).filterMap fun x ↦ if x.2 = tok then some x.1 else none
 
 /-- The chain of `tok` lists the positions of its copies, pronounced or deleted, left to right. -/
-def chain : List TreePath :=
+def chain : List GornAddress :=
   (positions (Sum.elim id id) t.toRoseTree).filterMap fun x ↦ if x.2 = tok then some x.1 else none
 
 /-- `tok` moves when it has a deleted copy. -/
@@ -177,39 +177,40 @@ instance : Decidable (IsShared t tok) := inferInstanceAs (Decidable (_ ≤ _))
 
 /-- A deleted copy has an antecedent when the projection of a pronounced copy of its token
 c-commands it. -/
-def HasAntecedent (x : TreePath × LexicalItem.Token) : Prop :=
+def HasAntecedent (x : GornAddress × LexicalItem.Token) : Prop :=
   ∃ p ∈ occurrences t x.2, CCommands t.toRoseTree (projectionAt hd t p) x.1
 
-instance (x : TreePath × LexicalItem.Token) : Decidable (HasAntecedent hd t x) :=
+instance (x : GornAddress × LexicalItem.Token) : Decidable (HasAntecedent hd t x) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The deleted copies without antecedents. -/
-def orphanTraces : List (TreePath × LexicalItem.Token) :=
+def orphanTraces : List (GornAddress × LexicalItem.Token) :=
   (traceList t.toRoseTree).filter (¬ HasAntecedent hd t ·)
 
 /-! ### Links -/
 
 /-- The copy at `p` is linked to the copy at `q` below it when its projection c-commands `q` and
 the projection of no other copy of `tok` lies between them. -/
-def IsLink (p q : TreePath) : Prop :=
+def IsLink (p q : GornAddress) : Prop :=
   CCommands t.toRoseTree (projectionAt hd t p) q ∧
     ∀ r ∈ chain t tok, CCommands t.toRoseTree (projectionAt hd t p) (projectionAt hd t r) →
       ¬ CCommands t.toRoseTree (projectionAt hd t r) q
 
-instance (p q : TreePath) : Decidable (IsLink hd t tok p q) := inferInstanceAs (Decidable (_ ∧ _))
+instance (p q : GornAddress) : Decidable (IsLink hd t tok p q) := inferInstanceAs (Decidable (_ ∧
+    _))
 
 /-- The links of the chain of `tok` pair each copy with the projection of the copy linked to it. -/
-def links : List (TreePath × TreePath) :=
+def links : List (GornAddress × GornAddress) :=
   (chain t tok).flatMap fun q ↦
     ((chain t tok).filter fun p ↦ IsLink hd t tok p q).map fun p ↦ (projectionAt hd t p, q)
 
 /-- The top of the chain of `tok` consists of the copies no copy's projection c-commands, where it
 takes scope. -/
-def chainTop : List TreePath :=
+def chainTop : List GornAddress :=
   (chain t tok).filter fun q ↦
     (chain t tok).all fun p ↦ ¬ CCommands t.toRoseTree (projectionAt hd t p) q
 
-theorem not_isLink_self (p : TreePath) : ¬ IsLink hd t tok p p :=
+theorem not_isLink_self (p : GornAddress) : ¬ IsLink hd t tok p p :=
   fun h ↦ h.1.2.1 (projectionAt_le hd t p)
 
 theorem links_eq_nil_of_length_le_one (h : (chain t tok).length ≤ 1) : links hd t tok = [] := by
@@ -228,9 +229,10 @@ theorem links_eq_nil_of_length_le_one (h : (chain t tok).length ≤ 1) : links h
 
 /-- A link of the chain of `tok` leaves the domain at `D` when it runs from inside `D` to outside,
 as movement out of an island does. -/
-def Escapes (D : TreePath) : Prop := ∃ x ∈ links hd t tok, D ≤ x.2 ∧ ¬ D ≤ x.1
+def Escapes (D : GornAddress) : Prop := ∃ x ∈ links hd t tok, D ≤ x.2 ∧ ¬ D ≤ x.1
 
-instance (D : TreePath) : Decidable (Escapes hd t tok D) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
+instance (D : GornAddress) : Decidable (Escapes hd t tok D) := inferInstanceAs (Decidable (∃ _ ∈ _,
+    _))
 
 /-- A link of the chain of `tok` leaves the projection of a head that `P` holds of. -/
 def CrossesIsland (P : LexicalItem.Token → Prop) [DecidablePred P] : Prop :=
@@ -240,7 +242,7 @@ instance (P : LexicalItem.Token → Prop) [DecidablePred P] :
     Decidable (CrossesIsland hd t tok P) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-theorem not_escapes_of_length_le_one (h : (chain t tok).length ≤ 1) (D : TreePath) :
+theorem not_escapes_of_length_le_one (h : (chain t tok).length ≤ 1) (D : GornAddress) :
     ¬ Escapes hd t tok D := by
   simp [Escapes, links_eq_nil_of_length_le_one hd t tok h]
 

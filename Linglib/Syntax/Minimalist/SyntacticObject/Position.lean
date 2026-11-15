@@ -53,7 +53,7 @@ head function (`SyntacticObject/Projection.lean`).
 
 namespace Minimalist
 
-open RoseTree SyntacticObject Core.Order PhraseStructure
+open RoseTree SyntacticObject PhraseStructure
 
 variable {L ι : Type}
 
@@ -106,11 +106,12 @@ theorem length_children_subtree (hp : ¬ IsMax p) : p.subtree.children.length = 
 /-- A position that is not a leaf branches. -/
 theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p := by
   have h2 := length_children_subtree hp
-  have hv : ∀ i < 2, p.val.child i ∈ t.toRoseTree.validPaths := fun i hi ↦
+  have hv : ∀ i < 2, p.val * .of i ∈ t.toRoseTree.validPaths := fun i hi ↦
     mem_validPaths_append_singleton_iff.2 ⟨_, p.getElem?_eq, h2 ▸ hi⟩
-  refine ⟨⟨_, hv 0 (by omega)⟩, Positions.covBy_iff.2 (TreePath.covBy_iff.2 ⟨0, rfl⟩),
-    ⟨_, hv 1 (by omega)⟩, Positions.covBy_iff.2 (TreePath.covBy_iff.2 ⟨1, rfl⟩), fun h ↦ ?_⟩
-  simpa using congrArg (fun q : t.toRoseTree.Positions ↦ q.val.toList.getLast?) h
+  refine ⟨⟨_, hv 0 (by omega)⟩, Positions.covBy_iff.2 (GornAddress.covBy_iff.2 ⟨0, rfl⟩),
+    ⟨_, hv 1 (by omega)⟩, Positions.covBy_iff.2 (GornAddress.covBy_iff.2 ⟨1, rfl⟩), fun h ↦
+        ?_⟩
+  simpa using congrArg (fun q : t.toRoseTree.Positions ↦ q.val.last?) h
 
 /-- The term at a position immediately contains the terms at its covers. -/
 theorem immediatelyContains_termAt :
@@ -227,24 +228,23 @@ variable {c d e q q' : t.toRoseTree.Positions}
 
 theorem eq_or_eq_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) (he : a ⋖ e) : e = c ∨ e = d := by
   have hlen := length_children_subtree (not_isMax_of_lt hc.lt)
-  have hlt : ∀ (r : t.toRoseTree.Positions) (m : ℕ), r.val.toList = a.val.toList ++ [m] → m < 2 :=
-      by
+  have hlt : ∀ (r : t.toRoseTree.Positions) (m : ℕ), r.val = a.val * .of m → m < 2 := by
     intro r m hm
     have hr := r.2
-    rw [show r.val = a.val.child m from TreePath.ext hm] at hr
+    rw [hm] at hr
     obtain ⟨s, hs, hms⟩ := mem_validPaths_append_singleton_iff.1 hr
     rw [a.getElem?_eq, Option.some.injEq] at hs
     exact hlen ▸ hs ▸ hms
-  obtain ⟨i, hi⟩ := TreePath.covBy_iff.1 (Positions.covBy_iff.1 hc)
-  obtain ⟨j, hj⟩ := TreePath.covBy_iff.1 (Positions.covBy_iff.1 hd)
-  obtain ⟨k, hk⟩ := TreePath.covBy_iff.1 (Positions.covBy_iff.1 he)
+  obtain ⟨i, hi⟩ := GornAddress.covBy_iff.1 (Positions.covBy_iff.1 hc)
+  obtain ⟨j, hj⟩ := GornAddress.covBy_iff.1 (Positions.covBy_iff.1 hd)
+  obtain ⟨k, hk⟩ := GornAddress.covBy_iff.1 (Positions.covBy_iff.1 he)
   have := hlt c i hi
   have := hlt d j hj
   have := hlt e k hk
-  have hij : i ≠ j := fun h ↦ hcd (Subtype.ext (TreePath.ext (by rw [hi, hj, h])))
+  have hij : i ≠ j := fun h ↦ hcd (Subtype.ext (by rw [hi, hj, h]))
   rcases (by omega : k = i ∨ k = j) with rfl | rfl
-  · exact .inl (Subtype.ext (TreePath.ext (hk.trans hi.symm)))
-  · exact .inr (Subtype.ext (TreePath.ext (hk.trans hj.symm)))
+  · exact .inl (Subtype.ext (hk.trans hi.symm))
+  · exact .inr (Subtype.ext (hk.trans hj.symm))
 
 theorem immediatelyContains_termAt_iff_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) :
     ImmediatelyContains (t.termAt a) x ↔ x = t.termAt c ∨ x = t.termAt d := by
@@ -316,17 +316,17 @@ variable (t : PlanarSyntacticObject L ι)
 
 /-- The generators in `P` properly dominating a position, the key under which a probe searching the
 object compares goals (`PhraseStructure.ancestors`). -/
-def above (P : Set TreePath) [DecidablePred (· ∈ P)] (q : t.toRoseTree.Positions) :
-    Finset TreePath :=
+def above (P : Set GornAddress) [DecidablePred (· ∈ P)] (q : t.toRoseTree.Positions) :
+    Finset GornAddress :=
   (Finset.Iio q.val).filter (· ∈ P)
 
-theorem coe_above (P : Set TreePath) [DecidablePred (· ∈ P)] (q : t.toRoseTree.Positions) :
-    (t.above P q : Set TreePath) = ancestors P q.val := by
+theorem coe_above (P : Set GornAddress) [DecidablePred (· ∈ P)] (q : t.toRoseTree.Positions) :
+    (t.above P q : Set GornAddress) = ancestors P q.val := by
   ext x
   simp [above, ancestors, and_comm]
 
 /-- The branching positions of a planar object, the generators of c-command. -/
-def branching : Set TreePath := {x | t.toRoseTree.IsBranchingAt x}
+def branching : Set GornAddress := {x | t.toRoseTree.IsBranchingAt x}
 
 instance : DecidablePred (· ∈ t.branching) :=
   fun x ↦ inferInstanceAs (Decidable (t.toRoseTree.IsBranchingAt x))
@@ -354,39 +354,40 @@ section Complement
 variable (t : PlanarSyntacticObject L ι)
 
 /-- The complement of the head at `p` is its sister. -/
-def complement (p : TreePath) : TreePath := ⟨p.toList.dropLast ++ [1 - p.toList.getLastD 0]⟩
+def complement (p : GornAddress) : GornAddress := p.parent * .of (1 - p.last?.getD 0)
 
-theorem parent_covBy_complement (p : TreePath) : p.parent ⋖ complement p :=
-  TreePath.covBy_iff.2 ⟨_, rfl⟩
+theorem parent_covBy_complement (p : GornAddress) : p.parent ⋖ complement p :=
+  GornAddress.covBy_iff.2 ⟨_, rfl⟩
 
-@[simp] theorem parent_complement (p : TreePath) : (complement p).parent = p.parent :=
-  TreePath.ext (by simp [complement])
+@[simp] theorem parent_complement (p : GornAddress) : (complement p).parent = p.parent :=
+  GornAddress.ext (by simp [complement])
 
 variable {t} in
-theorem complement_complement {h : TreePath} (hh : h ∈ t.toRoseTree.validPaths) (h0 : h ≠ ⊥) :
+theorem complement_complement {h : GornAddress} (hh : h ∈ t.toRoseTree.validPaths) (h0 : h ≠ ⊥) :
     complement (complement h) = h := by
   set hp : t.toRoseTree.Positions := ⟨h, hh⟩
   have hp0 : hp ≠ ⊥ := fun he ↦ h0 (congrArg Subtype.val he)
   have hm : Order.pred hp ⋖ hp :=
     Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using hp0)
   have hlen := PlanarSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
-  obtain ⟨i, hi⟩ := TreePath.covBy_iff.1 (Positions.covBy_iff.1 hm)
+  obtain ⟨i, hi⟩ := GornAddress.covBy_iff.1 (Positions.covBy_iff.1 hm)
   have hlt : i < 2 := by
     have hv := hp.2
-    rw [show hp.val = ⟨(Order.pred hp).val.toList ++ [i]⟩ from TreePath.ext hi] at hv
+    rw [hi] at hv
     obtain ⟨s, hs, his⟩ := mem_validPaths_append_singleton_iff.1 hv
     rw [(Order.pred hp).getElem?_eq, Option.some.injEq] at hs
     exact hlen ▸ hs ▸ his
-  have hhv : h.toList = (Order.pred hp).val.toList ++ [i] := hi
-  apply TreePath.ext
-  simp only [complement, hhv, List.dropLast_concat, List.getLastD_concat]
-  congr 2
-  omega
+  have key : complement (complement ((Order.pred hp).val * .of i)) =
+      (Order.pred hp).val * .of i := by
+    simp only [complement, GornAddress.parent_mul_of, GornAddress.last?_mul_of, Option.getD_some]
+    congr 2
+    omega
+  rwa [← show h = (Order.pred hp).val * .of i from hi] at key
 
 variable {t} in
 /-- In a syntactic object, a head other than the root c-commands exactly the positions below its
 complement. -/
-theorem mem_cCommandDomain_iff_complement_le {h q : TreePath} (hh : h ∈ t.toRoseTree.validPaths)
+theorem mem_cCommandDomain_iff_complement_le {h q : GornAddress} (hh : h ∈ t.toRoseTree.validPaths)
     (h0 : h ≠ ⊥) (hq : q ∈ t.toRoseTree.validPaths) :
     q ∈ t.toRoseTree.cCommandDomain h ↔ complement h ≤ q := by
   set hp : t.toRoseTree.Positions := ⟨h, hh⟩
@@ -397,7 +398,7 @@ theorem mem_cCommandDomain_iff_complement_le {h q : TreePath} (hh : h ∈ t.toRo
   have hlen := PlanarSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
   have hcv : complement h ∈ t.toRoseTree.validPaths := by
     refine mem_validPaths_append_singleton_iff.2 ⟨(Order.pred hp).subtree, ?_, ?_⟩
-    · rw [← TreePath.parent_toList, ← hmv]
+    · rw [← hmv]
       exact (Order.pred hp).getElem?_eq
     · rw [hlen]
       omega
@@ -405,8 +406,9 @@ theorem mem_cCommandDomain_iff_complement_le {h q : TreePath} (hh : h ∈ t.toRo
   have hmc : Order.pred hp ⋖ hc :=
     Positions.covBy_iff.2 (hmv ▸ parent_covBy_complement h)
   have hhc : hp ≠ hc := fun he ↦ by
-    have := congrArg (fun r : t.toRoseTree.Positions ↦ r.val.toList.getLastD 0) he
-    simp only [hp, hc, complement, List.getLastD_concat] at this
+    have := congrArg (fun r : t.toRoseTree.Positions ↦ r.val.last?) he
+    simp only [hp, hc, complement, GornAddress.last?_mul_of] at this
+    cases hl : h.last? <;> simp [hl] at this
     omega
   rw [RoseTree.mem_cCommandDomain, cCommands_iff_parent_lt h0
     (PlanarSyntacticObject.isBranchingAt_parent (t := t) hp0)]

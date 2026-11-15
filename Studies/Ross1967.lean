@@ -45,7 +45,7 @@ definition of islands as the domains of chopping rules are not formalized.
 
 namespace Ross1967
 
-open PhraseStructure Core.Order
+open PhraseStructure
 open PhraseStructure.Cat (N V P Adj Conj)
 
 /-! ### Trees and movements -/

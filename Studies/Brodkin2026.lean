@@ -588,7 +588,7 @@ end Globality
 
 section CCommand
 
-open PhraseStructure Core.Order
+open PhraseStructure
 
 /-- The ditransitive clause of (90), the verb raised to Voice over the internal argument, a
 demonstrative whose noun phrase is elided, and the applied argument in a rightward specifier of
@@ -604,7 +604,7 @@ def ditransitive (verb o d : String) : PhraseStructure.Tree Minimalist.Cat Strin
         Tree.node .D [Tree.terminal .N d]]]]
 
 /-- The words of the terminals a position c-commands. -/
-def cCommandedWords (t : PhraseStructure.Tree Minimalist.Cat String) (p : TreePath) :
+def cCommandedWords (t : PhraseStructure.Tree Minimalist.Cat String) (p : GornAddress) :
     List String :=
   (t.positionedTerminals.filter fun x ↦ t.CCommands p x.1).map (·.2.2)
 

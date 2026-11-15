@@ -60,7 +60,7 @@ the antecedent of an unacceptable anaphor](##exists_unacceptable_mem_centersOf_i
 
 namespace Charnavel2019
 
-open Core.Order PhraseStructure PhraseStructure.Tree Binding
+open PhraseStructure PhraseStructure.Tree Binding
 open scoped Function
 
 /-! ### Perspective centers -/
@@ -149,7 +149,7 @@ abbrev pp (x : Rep) : Rep := .node .P [w .P, x]
 abbrev cp (x : Rep) : Rep := .node .C [w .C, x]
 
 /-- The noun phrases of a representation, each with its position. -/
-def nominals (t : Rep) : List (TreePath × Item) :=
+def nominals (t : Rep) : List (GornAddress × Item) :=
   t.positionedTerminals.filterMap fun x ↦ x.2.2.map (x.1, ·)
 
 /-- The type of noun phrases of a representation. -/
@@ -161,20 +161,20 @@ abbrev Overt (t : Rep) : Type := {x : Nominal t // x.1.2 ≠ .logophor}
 variable {t : Rep} {v j : ℕ} {c : BindingClass}
 
 /-- The subject of a noun phrase labelled `Det` is its first daughter. -/
-def possessor (t : Rep) (m : TreePath) : Option TreePath :=
-  if m ∈ labeled t {.Det} then some (m.child 0) else none
+def possessor (t : Rep) (m : GornAddress) : Option GornAddress :=
+  if m ∈ labeled t {.Det} then some (m * .of 0) else none
 
 /-- The spell-out domains that bound the domain of the position `b` are the clauses, the verb
 phrases, and the noun phrases with a subject that c-commands `b`. -/
-def spellout (t : Rep) (b : TreePath) : Set TreePath :=
+def spellout (t : Rep) (b : GornAddress) : Set GornAddress :=
   {m | m ∈ labeled t {.S, .V} ∨ m ∈ t.withAccessibleSubject (possessor t) (fun _ ↦ none) b}
 
-instance (t : Rep) (b : TreePath) : DecidablePred (· ∈ spellout t b) :=
+instance (t : Rep) (b : GornAddress) : DecidablePred (· ∈ spellout t b) :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The clauses, the verb phrases and the noun phrases with a subject, which bound the
 co-arguments of every position, a possessor's own noun phrase included. -/
-def predicates (t : Rep) : Set TreePath := labeled t {.S, .V, .Det}
+def predicates (t : Rep) : Set GornAddress := labeled t {.S, .V, .Det}
 
 instance (t : Rep) : DecidablePred (· ∈ predicates t) :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∈ labeled t _))

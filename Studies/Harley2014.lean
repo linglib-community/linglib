@@ -241,7 +241,6 @@ theorem cahoot_interp_gap :
 section OneReplacement
 
 open RootCategorization (Lexicon Attachment Configuration selector)
-open Core.Order (TreePath)
 
 /-- The root √STUD of *student*, nominalized by *-ent*, with the argument *chemistry*. -/
 def student : Lexicon String := { x := .n, root := "stud", head := "ent", arg := "chemistry" }
@@ -263,7 +262,7 @@ inductive Dependent
   deriving DecidableEq, Repr
 
 /-- The position of a dependent in a configuration with an adjunct adjoined to it. -/
-def Dependent.pos {W : Type*} (k : Configuration W) : Dependent → TreePath
+def Dependent.pos {W : Type*} (k : Configuration W) : Dependent → GornAddress
   | .argument => k.arg
   | .adjunct => ⟨[1]⟩
 

@@ -68,7 +68,7 @@ available antecedents (`privileged_iff_available`), so no distractor is accessed
 
 namespace BakayEtAl2026
 
-open Core.Order PhraseStructure PhraseStructure.Tree Binding
+open PhraseStructure PhraseStructure.Tree Binding
 
 /-! ### The stimuli -/
 
@@ -114,7 +114,7 @@ inductive Role
   deriving DecidableEq, Fintype, Repr
 
 /-- The position of a noun phrase in a stimulus. -/
-def Structure.path : Structure → Role → TreePath
+def Structure.path : Structure → Role → GornAddress
   | _, .matrixSubject => ⟨[0]⟩
   | _, .embeddedSubject => ⟨[1, 0, 0]⟩
   | .possessorInSubject, .second => ⟨[1, 0, 0, 0]⟩
@@ -152,10 +152,10 @@ theorem available_iff (s : Structure) (r : Role) :
 /-- The noun phrase at `p` carries Kush's `local` feature at a retrieval site `q` when its mother
 is a clause or verb-phrase node sharing the minimal clause of `q`, so that it hangs from the
 spine of that clause. -/
-def Local (t : Tree Cat Unit) (p q : TreePath) : Prop :=
+def Local (t : Tree Cat Unit) (p q : GornAddress) : Prop :=
   p.parent ∈ labeled t {.S, .V} ∧ (p.parent, q) ∈ mateRelation (labeled t {.S})
 
-instance (t : Tree Cat Unit) (p q : TreePath) : Decidable (Local t p q) :=
+instance (t : Tree Cat Unit) (p q : GornAddress) : Decidable (Local t p q) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 theorem local_iff_available (s : Structure) (r : Role) (hr : r ≠ .reciprocal) :

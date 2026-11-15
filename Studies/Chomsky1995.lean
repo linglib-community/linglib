@@ -246,7 +246,7 @@ end PhraseStructure
 
 namespace Chomsky1995
 
-open Core.Order RoseTree PhraseStructure Minimalist
+open RoseTree PhraseStructure Minimalist
 
 /-! ### The positions of a syntactic object -/
 
@@ -319,7 +319,7 @@ def theManSawItRaised : PlanarSyntacticObject :=
   {{↑the, .traceOf man}, {↑saw, .traceOf it}}
 
 /-- The position at an address. -/
-def position (l : List ℕ) (h : (⟨l⟩ : TreePath) ∈ t.toRoseTree.validPaths := by exact rfl) :
+def position (l : List ℕ) (h : (⟨l⟩ : GornAddress) ∈ t.toRoseTree.validPaths := by exact rfl) :
     t.toRoseTree.Positions :=
   ⟨⟨l⟩, h⟩
 

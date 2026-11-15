@@ -20,7 +20,6 @@ carried position is the subtree it was.
 
 * `RoseTree.Frame`, `RoseTree.Context`: a node with one child missing, and a list of them.
 * `RoseTree.Context.plug`: the tree that a context makes of a tree.
-* `Core.Order.TreePath.appendLeft`: prefixing an address, as an order embedding of positions.
 * `RoseTree.Context.embed`: the order embedding of the positions of a tree into those of the tree
   a context makes of it.
 
@@ -35,8 +34,7 @@ carried position is the subtree it was.
 ## Implementation notes
 
 A context is a list, so that contexts compose by `++` and `plug_append`, `path_append` and
-`embed_append` say that they act on trees, addresses and positions. `TreePath.appendLeft` is
-stated here because it is first needed here.
+`embed_append` say that they act on trees, addresses and positions.
 -/
 
 @[expose] public section
@@ -48,56 +46,8 @@ theorem List.modify_append_cons_length {α : Type*} (l r : List α) (a : α) (f 
   | nil => rfl
   | cons x l ih => simp [ih]
 
-namespace Core.Order.TreePath
-
-/-- Prefixing an address is an order embedding of positions. -/
-def appendLeft (h : List ℕ) : TreePath ↪o TreePath where
-  toFun p := ⟨h ++ p.toList⟩
-  inj' _ _ e := by simpa [TreePath.ext_iff] using e
-  map_rel_iff' := by simp [le_def, List.prefix_append_right_inj]
-
-@[simp] theorem toList_appendLeft (h : List ℕ) (p : TreePath) :
-    (appendLeft h p).toList = h ++ p.toList := rfl
-
-@[simp] theorem appendLeft_nil (p : TreePath) : appendLeft [] p = p := rfl
-
-theorem appendLeft_append (h h' : List ℕ) (p : TreePath) :
-    appendLeft (h ++ h') p = appendLeft h (appendLeft h' p) :=
-  TreePath.ext (List.append_assoc h h' p.toList)
-
-/-- A position above a prefixed one is above the prefix or is itself prefixed. -/
-theorem le_appendLeft_iff {h : List ℕ} {r α : TreePath} :
-    r ≤ appendLeft h α ↔ r ≤ appendLeft h ⊥ ∨ ∃ p, p ≤ α ∧ appendLeft h p = r := by
-  constructor
-  · intro hr
-    have hr' : r.toList ∈ (h ++ α.toList).inits := (List.mem_inits _ _).mpr hr
-    rw [List.inits_append, List.mem_append] at hr'
-    rcases hr' with hr' | hr'
-    · exact .inl (le_def.mpr (by simpa using (List.mem_inits _ _).mp hr'))
-    · obtain ⟨p, hp, e⟩ := List.mem_map.mp hr'
-      exact .inr ⟨⟨p⟩, (List.mem_inits _ _).mp (List.mem_of_mem_tail hp), TreePath.ext e⟩
-  · rintro (hr | ⟨p, hp, rfl⟩)
-    · exact hr.trans ((appendLeft h).monotone bot_le)
-    · exact (appendLeft h).monotone hp
-
-theorem appendLeft_bot_le_iff {h : List ℕ} {p : TreePath} :
-    appendLeft h ⊥ ≤ p ↔ ∃ q, appendLeft h q = p := by
-  constructor
-  · intro hp
-    obtain ⟨q, hq⟩ : h <+: p.toList := by simpa using le_def.mp hp
-    exact ⟨⟨q⟩, TreePath.ext hq⟩
-  · rintro ⟨q, rfl⟩
-    exact (appendLeft h).monotone bot_le
-
-theorem parent_appendLeft (h : List ℕ) {p : TreePath} (hp : p ≠ ⊥) :
-    (appendLeft h p).parent = appendLeft h p.parent :=
-  TreePath.ext (List.dropLast_append_of_ne_nil fun e ↦ hp (TreePath.ext e))
-
-end Core.Order.TreePath
-
 namespace RoseTree
 
-open Core.Order (TreePath)
 
 variable {α : Type*}
 
@@ -160,38 +110,40 @@ theorem exists_append_of_prefix_path {c : Context α} {r : List ℕ} (h : r <+: 
   | cons f c ih => simp [Frame.plug, replaceAt_cons, List.modify_append_cons_length, ih]
 
 /-- The position that a position of a tree has in the tree a context makes of it. -/
-def embed : TreePath ↪o TreePath := TreePath.appendLeft (path c)
+def embed : GornAddress ↪o GornAddress := GornAddress.mulLeft ⟨path c⟩
 
-@[simp] theorem toList_embed (p : TreePath) : (embed c p).toList = path c ++ p.toList := rfl
+@[simp] theorem toList_embed (p : GornAddress) : (embed c p).toList = path c ++ p.toList := rfl
 
-@[simp] theorem embed_nil (p : TreePath) : embed ([] : Context α) p = p := rfl
+@[simp] theorem embed_nil (p : GornAddress) : embed ([] : Context α) p = p := rfl
 
-theorem embed_append (p : TreePath) : embed (c ++ d) p = embed c (embed d p) := by
-  rw [embed, path_append]; exact TreePath.appendLeft_append _ _ p
+theorem embed_append (p : GornAddress) : embed (c ++ d) p = embed c (embed d p) :=
+  GornAddress.ext (by simp [path_append, List.append_assoc])
 
 /-- Plugging leaves the subtrees of the plugged tree where the embedding carries their
 positions. -/
-theorem getElem?_plug_embed (p : TreePath) : (plug c t)[embed c p]? = t[p]? :=
+theorem getElem?_plug_embed (p : GornAddress) : (plug c t)[embed c p]? = t[p]? :=
   getElem?_plug_append c t p.toList
 
 variable {c}
 
 /-- A position above an embedded one is above the hole or is itself embedded. -/
-theorem le_embed_iff {r p : TreePath} :
-    r ≤ embed c p ↔ r ≤ embed c ⊥ ∨ ∃ q, q ≤ p ∧ embed c q = r :=
-  TreePath.le_appendLeft_iff
+theorem le_embed_iff {r p : GornAddress} :
+    r ≤ embed c p ↔ r ≤ embed c ⊥ ∨ ∃ q, q ≤ p ∧ embed c q = r := by
+  simp only [embed, GornAddress.mulLeft_apply, bot_eq_one, mul_one]
+  exact GornAddress.le_mul_iff
 
 /-- The positions below the hole are the embedded ones. -/
-theorem embed_bot_le_iff {p : TreePath} : embed c ⊥ ≤ p ↔ ∃ q, embed c q = p :=
-  TreePath.appendLeft_bot_le_iff
+theorem embed_bot_le_iff {p : GornAddress} : embed c ⊥ ≤ p ↔ ∃ q, embed c q = p := by
+  simp only [embed, GornAddress.mulLeft_apply, bot_eq_one, mul_one]
+  exact GornAddress.le_iff_exists_mul.trans (exists_congr fun _ ↦ eq_comm)
 
 /-- The subtree at a position above the hole is the rest of the context, plugged. -/
-theorem exists_getElem?_plug_of_le {r : TreePath} (h : r ≤ embed c ⊥) :
+theorem exists_getElem?_plug_of_le {r : GornAddress} (h : r ≤ embed c ⊥) :
     ∃ c₁ c₂, c₁ ++ c₂ = c ∧ ∀ t : RoseTree α, (plug c t)[r]? = some (plug c₂ t) := by
   obtain ⟨c₁, c₂, rfl, hr⟩ :=
-    exists_append_of_prefix_path (c := c) (r := r.toList) (by simpa using TreePath.le_def.mp h)
+    exists_append_of_prefix_path (c := c) (r := r.toList) (by simpa using GornAddress.le_def.mp h)
   exact ⟨c₁, c₂, rfl, fun t ↦ by
-    rw [getElem?_treePath, ← hr, plug_append, getElem?_plug_path]⟩
+    rw [getElem?_gornAddress, ← hr, plug_append, getElem?_plug_path]⟩
 
 end Context
 

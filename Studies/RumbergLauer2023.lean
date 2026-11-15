@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Modality.BranchingTime
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Core.Order.Minimals
-public import Linglib.Core.Order.TreePath
+public import Linglib.Core.Order.GornAddress
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -56,7 +56,7 @@ finite models are decided through the reduction of histories to maximal moments.
 
 namespace RumbergLauer2023
 
-open BranchingTime Conditional Core.Order
+open BranchingTime Conditional
 
 variable {M : Type*} [PartialOrder M]
 
@@ -362,7 +362,7 @@ inductive Game | now | win | lose
 namespace Game
 
 /-- The tree of the scenario, by Gorn address. -/
-def addr : Game → TreePath
+def addr : Game → GornAddress
   | now => ⟨[]⟩
   | win => ⟨[0]⟩
   | lose => ⟨[1]⟩
@@ -421,7 +421,7 @@ namespace Trains
 /-- The tree of the scenario, by Gorn address. The early decision leads to the two o'clock
 arrival; waiting leads to the late decision, and then to the three o'clock arrival or to
 staying. -/
-def addr : Trains → TreePath
+def addr : Trains → GornAddress
   | now => ⟨[]⟩
   | early => ⟨[0]⟩
   | arriveTwo => ⟨[0, 0]⟩
@@ -440,7 +440,7 @@ instance : IsLeftLinear Trains :=
 
 /-- The clock time of a moment is its depth in the tree, with the decisions at one and two
 and the arrivals at two and three. -/
-def time (m : Trains) : ℕ := (addr m).toList.length
+def time (m : Trains) : ℕ := (addr m).depth
 
 /-- *John comes to Konstanz today* holds on arrival. -/
 def come : Set Trains := {arriveTwo, arriveThree}
@@ -509,7 +509,7 @@ inductive Interview | now | start | good | bad | smile | frown
 namespace Interview
 
 /-- The tree of the scenario, by Gorn address. -/
-def addr : Interview → TreePath
+def addr : Interview → GornAddress
   | now => ⟨[]⟩
   | start => ⟨[0]⟩
   | good => ⟨[0, 0]⟩
@@ -526,7 +526,7 @@ instance : IsLeftLinear Interview :=
   (OrderEmbedding.ofMapLEIff addr fun _ _ ↦ Iff.rfl).isLeftLinear
 
 /-- The clock time of a moment, its depth in the tree. -/
-def time (m : Interview) : ℕ := (addr m).toList.length
+def time (m : Interview) : ℕ := (addr m).depth
 
 /-- *The interview went well*. -/
 def wentWell : Set Interview := {good}

@@ -46,15 +46,14 @@ More bounding nodes give smaller domains.
 
 namespace PhraseStructure.Tree
 
-open Core.Order
 
-variable {C W : Type*} (t : Tree C W) {P P' Q Q' : TreePath → Set TreePath}
+variable {C W : Type*} (t : Tree C W) {P P' Q Q' : GornAddress → Set GornAddress}
 
 /-- The binding configuration of `t` bounded by `P` and `Q` takes c-command as its command
 relation and gives a position `b` the binding domain that every node of `P b` properly dominating
 it dominates, and the pronominal domain that every node of `Q b` does. -/
-def configuration (P : TreePath → Set TreePath) (Q : TreePath → Set TreePath := P) :
-    Binding.Configuration TreePath where
+def configuration (P : GornAddress → Set GornAddress) (Q : GornAddress → Set GornAddress := P) :
+    Binding.Configuration GornAddress where
   commands := t.CCommands
   domain b := {a | (b, a) ∈ commandRelation (P b)}
   pronominalDomain b := {a | (b, a) ∈ commandRelation (Q b)}
@@ -62,11 +61,11 @@ def configuration (P : TreePath → Set TreePath) (Q : TreePath → Set TreePath
 instance : DecidableRel (t.configuration P Q).commands :=
   inferInstanceAs (DecidableRel t.CCommands)
 
-instance [∀ b, DecidablePred (· ∈ P b)] (b : TreePath) :
+instance [∀ b, DecidablePred (· ∈ P b)] (b : GornAddress) :
     DecidablePred (· ∈ (t.configuration P Q).domain b) :=
   fun a ↦ inferInstanceAs (Decidable ((b, a) ∈ commandRelation (P b)))
 
-instance [∀ b, DecidablePred (· ∈ Q b)] (b : TreePath) :
+instance [∀ b, DecidablePred (· ∈ Q b)] (b : GornAddress) :
     DecidablePred (· ∈ (t.configuration P Q).pronominalDomain b) :=
   fun a ↦ inferInstanceAs (Decidable ((b, a) ∈ commandRelation (Q b)))
 
@@ -77,7 +76,7 @@ theorem configuration_anti (h : ∀ b, P b ⊆ P' b) (h' : ∀ b, Q b ⊆ Q' b) 
 
 /-- The clause configuration of `t` is bounded by the clause nodes, so the binding domain of a
 position is the minimal clause containing it. -/
-abbrev clauseConfiguration {W : Type*} (t : Tree Cat W) : Binding.Configuration TreePath :=
+abbrev clauseConfiguration {W : Type*} (t : Tree Cat W) : Binding.Configuration GornAddress :=
   t.configuration fun _ ↦ labeled t {.S}
 
 /-! ### Accessible subjects
@@ -86,20 +85,20 @@ A binding domain can be the smallest category containing a subject accessible to
 that c-commands it and whose index the position could take without lying inside or around a node
 that already bears that index. -/
 
-variable (subject link : TreePath → Option TreePath)
+variable (subject link : GornAddress → Option GornAddress)
 
 /-- The subject `s` is accessible to the position `b` when it c-commands `b` and `b` neither lies
 properly inside nor properly contains the node `link s` that bears the index of `s`. -/
-def Accessible (s b : TreePath) : Prop := t.CCommands s b ∧ ∀ x ∈ link s, ¬ x < b ∧ ¬ b < x
+def Accessible (s b : GornAddress) : Prop := t.CCommands s b ∧ ∀ x ∈ link s, ¬ x < b ∧ ¬ b < x
 
-instance (s b : TreePath) : Decidable (t.Accessible link s b) :=
+instance (s b : GornAddress) : Decidable (t.Accessible link s b) :=
   inferInstanceAs (Decidable (_ ∧ ∀ _ ∈ _, _))
 
 /-- The nodes whose subject, as `subject` assigns them, is accessible to `b`. -/
-def withAccessibleSubject (b : TreePath) : Set TreePath :=
+def withAccessibleSubject (b : GornAddress) : Set GornAddress :=
   {m | ∃ s ∈ subject m, t.Accessible link s b}
 
-instance (b : TreePath) : DecidablePred (· ∈ t.withAccessibleSubject subject link b) :=
+instance (b : GornAddress) : DecidablePred (· ∈ t.withAccessibleSubject subject link b) :=
   fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 end PhraseStructure.Tree

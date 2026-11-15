@@ -53,7 +53,7 @@ which moves a non-phase, obeys the condition while violating the traditional ban
 
 namespace Boskovic2018
 
-open Core.Order Minimalist Minimalist.PlanarSyntacticObject
+open Minimalist Minimalist.PlanarSyntacticObject
 open Chomsky2013 (tok nominal IsRoot)
 
 /-! ### Labeling, phases and the PIC -/

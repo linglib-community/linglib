@@ -43,7 +43,7 @@ pivot, which ellipsis cannot create, contains no further pivot.
 
 namespace BelkNeelemanPhilip2023
 
-open Minimalist Minimalist.PlanarSyntacticObject Core.Order RoseTree
+open Minimalist Minimalist.PlanarSyntacticObject RoseTree
 
 /-! ### Pruning -/
 
@@ -54,36 +54,37 @@ structure Derivation where
   /-- The coordination, multidominated material shared. -/
   input : PlanarSyntacticObject
   /-- The branches to multidominated material, with their proxies. -/
-  forced : List (TreePath × TreePath)
+  forced : List (GornAddress × GornAddress)
   /-- The branches whose material goes unrealized, with their proxies. -/
-  free : List (TreePath × TreePath)
+  free : List (GornAddress × GornAddress)
 
 /-- `x` precedes `y` in the linear order of a tree, lexicographically by address. -/
-def Precedes (x y : TreePath) : Prop := x.toList < y.toList
+def Precedes (x y : GornAddress) : Prop := x.toList < y.toList
 
-instance (x y : TreePath) : Decidable (Precedes x y) := inferInstanceAs (Decidable (_ < _))
+instance (x y : GornAddress) : Decidable (Precedes x y) := inferInstanceAs (Decidable (_ < _))
 
 /-- Where material of the first conjunct at `x` is realized once the branches `P` are pruned:
 inside a pruned branch, at the corresponding position under its proxy. -/
-def realizedAt (P : List (TreePath × TreePath)) (x : TreePath) : TreePath :=
+def realizedAt (P : List (GornAddress × GornAddress)) (x : GornAddress) : GornAddress :=
   match P.find? (decide <| ·.1 ≤ x) with
-  | some (p, q) => ⟨q.toList ++ x.toList.drop p.toList.length⟩
+  | some (p, q) => q * x.relativeTo p
   | none => x
 
 /-- The pruning rule (86). After the prunings `P`, the branch at `p` may be pruned with proxy `q`
 when `p` lies inside the first conjunct and `q` inside the second, and the proxy's yield satisfies
 the ordering statements of `p`'s yield in the first conjunct: pronounced material of the first
 conjunct that precedes `p` is realized before `q`, and material that follows `p` after it. -/
-def MayPrune (t : PlanarSyntacticObject) (P : List (TreePath × TreePath)) (p q : TreePath) :
+def MayPrune (t : PlanarSyntacticObject) (P : List (GornAddress × GornAddress)) (p q : GornAddress)
+    :
     Prop :=
-  p.toList.head? = some 0 ∧ 1 < p.toList.length ∧ q.toList.head? = some 1 ∧
+  p.toList.head? = some 0 ∧ 1 < p.depth ∧ q.toList.head? = some 1 ∧
     t.toRoseTree[q]?.isSome ∧
     ∀ x ∈ tokenList t.toRoseTree, x.1.toList.head? = some 0 → ¬ p ≤ x.1 →
         x.2.item.phonForm?.isSome →
       (Precedes x.1 p → Precedes (realizedAt P x.1) q) ∧
         (Precedes p x.1 → Precedes q (realizedAt P x.1))
 
-instance (t : PlanarSyntacticObject) (P : List (TreePath × TreePath)) (p q : TreePath) :
+instance (t : PlanarSyntacticObject) (P : List (GornAddress × GornAddress)) (p q : GornAddress) :
     Decidable (MayPrune t P p q) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -92,7 +93,7 @@ namespace Derivation
 variable (d : Derivation)
 
 /-- All prunings, the forced ones first. -/
-def prunings : List (TreePath × TreePath) := d.forced ++ d.free
+def prunings : List (GornAddress × GornAddress) := d.forced ++ d.free
 
 /-- A derivation is licensed when each pruning obeys (86) given the ones before it; when forced
 pruning removes branches to multidominated material, the same constituent as their proxies, and
@@ -125,8 +126,8 @@ def pivotOnset : Option String :=
 /-- No material of an elided pivot follows a multidominated pivot (49), since forced pruning comes
 first, while that material still stands in the first conjunct (100). -/
 theorem Licensed.not_precedes {d : Derivation} (hd : d.Licensed)
-    {pq rs : TreePath × TreePath} (hpq : pq ∈ d.forced) (hrs : rs ∈ d.free)
-    {x : TreePath × LexicalItem.Token} (hx : x ∈ tokenList d.input.toRoseTree) (hrx : rs.1 ≤ x.1)
+    {pq rs : GornAddress × GornAddress} (hpq : pq ∈ d.forced) (hrs : rs ∈ d.free)
+    {x : GornAddress × LexicalItem.Token} (hx : x ∈ tokenList d.input.toRoseTree) (hrx : rs.1 ≤ x.1)
     (hphon : x.2.item.phonForm?.isSome) (hnf : ∀ ab ∈ d.forced, ¬ ab.1 ≤ x.1) :
     ¬ Precedes pq.1 x.1 := by
   have hrule : ∀ ab i, d.prunings[i]? = some ab → MayPrune d.input (d.prunings.take i) ab.1 ab.2 :=

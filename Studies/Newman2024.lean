@@ -63,7 +63,6 @@ namespace Newman2024
 
 open scoped List
 open Minimalist (Cat)
-open Core.Order (TreePath)
 
 /-! ### Feature-driven Merge -/
 
@@ -389,7 +388,7 @@ theorem ditransitives_licensed :
 /-- In the binding configuration of a tree, `a` commands `b` when every maximal projection
 properly dominating `a` dominates `b` and `b` does not c-command `a`. Binding is not restricted to
 a domain. -/
-def configuration (t : XTree) : Binding.Configuration TreePath where
+def configuration (t : XTree) : Binding.Configuration GornAddress where
   commands a b := (a, b) ∈ PhraseStructure.Tree.maxCommand t ∧ ¬ RoseTree.CCommands t b a
   domain _ := Set.univ
 
@@ -397,7 +396,7 @@ instance (t : XTree) : DecidableRel (configuration t).commands := fun a b ↦
   inferInstanceAs (Decidable ((a, b) ∈ PhraseStructure.Tree.maxCommand t ∧ _))
 
 /-- `leafPaths t` pairs each leaf of `t` with its position. -/
-def leafPaths (t : XTree) : List (Leaf × TreePath) :=
+def leafPaths (t : XTree) : List (Leaf × GornAddress) :=
   t.positionedTerminals.map fun x ↦ (x.2.2, x.1)
 
 /-- The leaf `x` can bind the leaf `y` in `t`. -/

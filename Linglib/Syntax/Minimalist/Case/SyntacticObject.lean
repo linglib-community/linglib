@@ -51,14 +51,14 @@ another instance by definition (`CaseAssigners.assign`).
 
 namespace Minimalist
 
-open Core.Order Case
+open Case
 
-variable (hd : HeadFunction) (t : PlanarSyntacticObject) (Φ : Finset TreePath)
-  (D : TreePath → Set TreePath) [∀ h, DecidablePred (· ∈ D h)] (h : TreePath)
+variable (hd : HeadFunction) (t : PlanarSyntacticObject) (Φ : Finset GornAddress)
+  (D : GornAddress → Set GornAddress) [∀ h, DecidablePred (· ∈ D h)] (h : GornAddress)
 
 /-- The copies of an NP standing in what the phase head at `h` transfers on its own, each at the
 projection of its token. -/
-def copiesAt (tok : LexicalItem.Token) : List TreePath :=
+def copiesAt (tok : LexicalItem.Token) : List GornAddress :=
   ((chain t tok).map (projectionAt hd t)).filter (· ∈ transferSlice Φ D h)
 
 /-- An NP is seen by the phase head at `h` when a copy of it stands in what `h` transfers. -/
@@ -77,7 +77,7 @@ def CCommandsAt (x y : LexicalItem.Token) : Prop :=
 
 /-- The head at `a` reaches an NP when it c-commands a copy of it standing in what `h`
 transfers. -/
-def ReachesAt (a : TreePath) (tok : LexicalItem.Token) : Prop :=
+def ReachesAt (a : GornAddress) (tok : LexicalItem.Token) : Prop :=
   ∃ p ∈ copiesAt hd t Φ D h tok, t.toRoseTree.CCommands a p
 
 instance (tok : LexicalItem.Token) : Decidable (VisibleAt hd t Φ D h tok) :=
@@ -89,15 +89,15 @@ instance (tok : LexicalItem.Token) : Decidable (SpelledOutAt hd t Φ D h tok) :=
 instance : DecidableRel (CCommandsAt hd t Φ D h) :=
   fun _ _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-instance (a : TreePath) (tok : LexicalItem.Token) : Decidable (ReachesAt hd t Φ D h a tok) :=
+instance (a : GornAddress) (tok : LexicalItem.Token) : Decidable (ReachesAt hd t Φ D h a tok) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The heads of `t` that project, deepest first: the pronounced tokens heading their mothers. -/
-def projectingHeads : List (TreePath × LexicalItem.Token) :=
+def projectingHeads : List (GornAddress × LexicalItem.Token) :=
   -- Sorted by bucketing on depth: `List.insertionSort` does not unfold under `decide +kernel` in
   -- a module file, which the studies' checks run in.
   (List.range t.toRoseTree.numNodes).reverse.flatMap fun n ↦
-    (tokenList t.toRoseTree).filter fun x ↦ x.1.toList.length == n && projectionAt hd t x.1 != x.1
+    (tokenList t.toRoseTree).filter fun x ↦ x.1.depth == n && projectionAt hd t x.1 != x.1
 
 /-- The probes of the phase head at `h`: the heads with an Agree case whose complement it
 transfers, deepest first, each with its case and the NPs of `U` it reaches. -/
@@ -110,12 +110,12 @@ def CaseAssigners.probesAt (g : CaseAssigners) (U : Finset LexicalItem.Token) :
 
 /-- The phase heads of `t` with their positions, innermost first. -/
 def phaseHeads (IsPhaseHead : LexicalItem.Token → Prop) [DecidablePred IsPhaseHead] :
-    List (TreePath × LexicalItem.Token) :=
+    List (GornAddress × LexicalItem.Token) :=
   (projectingHeads hd t).filter fun x ↦ decide (IsPhaseHead x.2)
 
 /-- Case for the NPs `xs` of `t`, phase by phase innermost first, `D` giving the domain of each
 phase head and `case` the case slot each NP enters with. -/
-def CaseAssigners.assignOn (g : CaseAssigners) (D : TreePath → Set TreePath)
+def CaseAssigners.assignOn (g : CaseAssigners) (D : GornAddress → Set GornAddress)
     [∀ h, DecidablePred (· ∈ D h)] (IsPhaseHead : LexicalItem.Token → Prop)
     [DecidablePred IsPhaseHead] (case : LexicalItem.Token → FeatureSlot Case)
     (xs : List LexicalItem.Token) : LexicalItem.Token → FeatureSlot (Case × Mechanism) :=

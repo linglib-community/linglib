@@ -50,7 +50,7 @@ verb form.
 namespace Storment2026
 
 open Minimalist SyntacticObject
-open Minimalist.Probe (depthFirst depth)
+open Minimalist.Probe (depthFirst)
 
 /-! ### The derivation (§2, §4) -/
 
@@ -244,10 +244,10 @@ unordered sisters finds both, while depth-first search still finds the theme alo
 theorem search_finds_theme :
     (∃ t ∈ (ex122.tStage .vpMovement).externalize?,
       t.goalsBy (t.leafProbe .D) t₀ (depthFirst ·.val) = {↑op} ∧
-        t.goalsBy (t.leafProbe .D) t₀ (depth ·.val) = {↑op}) ∧
+        t.goalsBy (t.leafProbe .D) t₀ (·.val.depth) = {↑op}) ∧
     ∃ t ∈ (ex26.tStage .vpMovement).externalize?,
       t.goalsBy (t.leafProbe .D) t₀ (depthFirst ·.val) = {↑op} ∧
-        t.goalsBy (t.leafProbe .D) t₀ (depth ·.val) = {↑op, ↑ex26.agentTok} := by
+        t.goalsBy (t.leafProbe .D) t₀ (·.val.depth) = {↑op, ↑ex26.agentTok} := by
   decide +kernel
 
 /-! ### Agreement (§3.1)

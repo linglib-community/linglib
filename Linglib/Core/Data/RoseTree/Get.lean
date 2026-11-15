@@ -6,16 +6,16 @@ Authors: Linglib contributors
 module
 
 public import Linglib.Core.Data.RoseTree.Subtree
-public import Linglib.Core.Order.TreePath
+public import Linglib.Core.Order.GornAddress
 
 /-!
 # Rose trees under Gorn addresses
 
 A Gorn address is the list of child indices on the way down from the root, and a rose tree is
 indexed by addresses: `t[p]?` is the subtree reached by following `p` down from the root, and an
-address given as a `TreePath` is read through its list. The addresses inside a tree are its
+address given as a `GornAddress` is read through its list. The addresses inside a tree are its
 positions, [`RoseTree.validPaths`](##RoseTree.validPaths), a
-[prefix-closed](##RoseTree.isLowerSet_validPaths) set of `TreePath`s, and the trees found at them
+[prefix-closed](##RoseTree.isLowerSet_validPaths) set of `GornAddress`s, and the trees found at them
 [are its subtrees](##RoseTree.isSubtree_iff_exists_getElem?). `RoseTree/Positions.lean` lists the
 positions and orders them, and `RoseTree/ReplaceAt.lean` replaces the subtree at one.
 -/
@@ -24,7 +24,6 @@ positions and orders them, and `RoseTree/ReplaceAt.lean` replaces the subtree at
 
 namespace RoseTree
 
-open Core.Order
 
 variable {α : Type*}
 
@@ -38,7 +37,7 @@ def subtreeAt (t : RoseTree α) : List ℕ → Option (RoseTree α)
 /-- The positions of `t` are the addresses inside it. Node identity is the position, never the
 subtree, since identical subtrees occur at several positions, so orders and graphs live on
 positions. -/
-def validPaths (t : RoseTree α) : Set TreePath := {p | (t.subtreeAt p.toList).isSome}
+def validPaths (t : RoseTree α) : Set GornAddress := {p | (t.subtreeAt p.toList).isSome}
 
 instance (t : RoseTree α) : DecidablePred (· ∈ t.validPaths) :=
   fun p ↦ inferInstanceAs (Decidable ((t.subtreeAt p.toList).isSome = true))
@@ -57,20 +56,21 @@ instance : LawfulGetElem (RoseTree α) (List ℕ) (RoseTree α) fun t p ↦ ⟨p
     · exact Option.not_isSome_iff_eq_none.mp h
 
 /-- A tree is indexed by positions, through their addresses. -/
-instance : GetElem? (RoseTree α) TreePath (RoseTree α) fun t p ↦ p ∈ t.validPaths where
+instance : GetElem? (RoseTree α) GornAddress (RoseTree α) fun t p ↦ p ∈ t.validPaths where
   getElem t p h := t[p.toList]'h
   getElem? t p := t[p.toList]?
 
-instance : LawfulGetElem (RoseTree α) TreePath (RoseTree α) fun t p ↦ p ∈ t.validPaths where
+instance : LawfulGetElem (RoseTree α) GornAddress (RoseTree α) fun t p ↦ p ∈ t.validPaths where
   getElem?_def t p _ := getElem?_def t p.toList
   getElem!_def t p := getElem!_def t p.toList
 
-@[simp] theorem getElem?_treePath (t : RoseTree α) (p : TreePath) : t[p]? = t[p.toList]? := rfl
+@[simp] theorem getElem?_gornAddress (t : RoseTree α) (p : GornAddress) : t[p]? = t[p.toList]? :=
+    rfl
 
-@[simp] theorem getElem_treePath (t : RoseTree α) (p : TreePath) (h : p ∈ t.validPaths) :
+@[simp] theorem getElem_gornAddress (t : RoseTree α) (p : GornAddress) (h : p ∈ t.validPaths) :
     t[p] = t[p.toList]'h := rfl
 
-theorem mem_validPaths_iff_isSome {t : RoseTree α} {p : TreePath} :
+theorem mem_validPaths_iff_isSome {t : RoseTree α} {p : GornAddress} :
     p ∈ t.validPaths ↔ t[p]?.isSome := Iff.rfl
 
 @[simp] theorem getElem?_nil (t : RoseTree α) : t[([] : List ℕ)]? = some t := rfl
@@ -114,33 +114,40 @@ theorem getElem?_map {β : Type*} (f : α → β) (t : RoseTree α) (p : List �
 @[simp] theorem validPaths_map {β : Type*} (f : α → β) (t : RoseTree α) :
     (map f t).validPaths = t.validPaths := by
   ext p
-  simp only [mem_validPaths_iff_isSome, getElem?_treePath, getElem?_map, Option.isSome_map]
+  simp only [mem_validPaths_iff_isSome, getElem?_gornAddress, getElem?_map, Option.isSome_map]
 
-theorem bot_mem_validPaths (t : RoseTree α) : (⊥ : TreePath) ∈ t.validPaths := rfl
+theorem bot_mem_validPaths (t : RoseTree α) : (⊥ : GornAddress) ∈ t.validPaths := rfl
 
 theorem mem_validPaths_cons {t : RoseTree α} {i : ℕ} {rest : List ℕ} :
-    (⟨i :: rest⟩ : TreePath) ∈ t.validPaths ↔
-      ∃ c, t.children[i]? = some c ∧ (⟨rest⟩ : TreePath) ∈ c.validPaths := by
-  simp only [mem_validPaths_iff_isSome, getElem?_treePath, getElem?_cons]
+    (⟨i :: rest⟩ : GornAddress) ∈ t.validPaths ↔
+      ∃ c, t.children[i]? = some c ∧ (⟨rest⟩ : GornAddress) ∈ c.validPaths := by
+  simp only [mem_validPaths_iff_isSome, getElem?_gornAddress, getElem?_cons]
   rcases t.children[i]? with _ | c <;> simp
 
-/-- Positions are closed under prefixes, so they inherit the rooted-tree order of `TreePath`. -/
-theorem validPaths_prefix_closed {t : RoseTree α} {p q : TreePath} (hq : q ∈ t.validPaths)
+/-- Positions are closed under prefixes, so they inherit the rooted-tree order of `GornAddress`. -/
+theorem validPaths_prefix_closed {t : RoseTree α} {p q : GornAddress} (hq : q ∈ t.validPaths)
     (hpq : p ≤ q) : p ∈ t.validPaths := by
   obtain ⟨s, hs⟩ := hpq
-  rw [mem_validPaths_iff_isSome, getElem?_treePath, ← hs, getElem?_append] at hq
+  rw [mem_validPaths_iff_isSome, getElem?_gornAddress, ← hs, getElem?_append] at hq
   exact Option.isSome_of_isSome_bind hq
 
 theorem isLowerSet_validPaths (t : RoseTree α) : IsLowerSet t.validPaths :=
   fun _ _ hpq hq ↦ validPaths_prefix_closed hq hpq
 
 theorem mem_validPaths_append_singleton_iff {t : RoseTree α} {p : List ℕ} {i : ℕ} :
-    (⟨p ++ [i]⟩ : TreePath) ∈ t.validPaths ↔ ∃ s, t[p]? = some s ∧ i < s.children.length := by
-  simp only [mem_validPaths_iff_isSome, getElem?_treePath, getElem?_append, getElem?_cons,
+    (⟨p ++ [i]⟩ : GornAddress) ∈ t.validPaths ↔ ∃ s, t[p]? = some s ∧ i < s.children.length := by
+  simp only [mem_validPaths_iff_isSome, getElem?_gornAddress, getElem?_append, getElem?_cons,
     getElem?_nil]
   cases t[p]? with
   | none => simp
   | some s => simp
+
+/-- The positions of a tree are closed under earlier sisters, so with `isLowerSet_validPaths` they
+are a tree domain in the sense of [gorn-1967]. -/
+theorem mul_of_mem_validPaths_of_le {t : RoseTree α} {p : GornAddress} {i j : ℕ}
+    (h : p * .of j ∈ t.validPaths) (hij : i ≤ j) : p * .of i ∈ t.validPaths := by
+  obtain ⟨s, hs, hj⟩ := mem_validPaths_append_singleton_iff.1 h
+  exact mem_validPaths_append_singleton_iff.2 ⟨s, hs, hij.trans_lt hj⟩
 
 /-! ### Height and size along addresses -/
 

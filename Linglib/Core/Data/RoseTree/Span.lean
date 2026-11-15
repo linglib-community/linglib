@@ -23,7 +23,7 @@ where it ends, a `NonemptyInterval ℕ`, so that containment of spans is mathlib
 intervals. Dominance and precedence of positions become containment and order of spans. A
 position below another begins no earlier and ends no later, a position that precedes another
 ends before the other begins, so the spans of a tree are nested or disjoint, and two positions
-are left-aligned (`TreePath.LeftAligned`) exactly when they begin at the same leaf.
+are left-aligned (`GornAddress.LeftAligned`) exactly when they begin at the same leaf.
 
 ## Main definitions
 
@@ -48,7 +48,6 @@ are left-aligned (`TreePath.LeftAligned`) exactly when they begin at the same le
 
 namespace RoseTree
 
-open Core.Order
 
 variable {α : Type*} {t s : RoseTree α} {p q : List ℕ}
 
@@ -196,11 +195,12 @@ private theorem sum_take_add_numLeaves_le {cs : List (RoseTree α)} {i j : ℕ} 
     fun _ _ ↦ Nat.zero_le _
 
 /-- The frontier of a subtree ends before the frontier of any subtree it precedes begins. -/
-theorem leafIndex_add_numLeaves_le_of_precedes {p q : TreePath} (hpq : p.Precedes q)
+theorem leafIndex_add_numLeaves_le_of_precedes {p q : GornAddress} (hpq : p.Precedes q)
     (hp : t[p.toList]? = some s) (hq : t[q.toList]?.isSome) :
     t.leafIndex p.toList + s.numLeaves ≤ t.leafIndex q.toList := by
   obtain ⟨r, i, j, hij, ⟨p', hp'⟩, ⟨q', hq'⟩⟩ := hpq
-  rw [List.append_assoc, List.singleton_append] at hp' hq'
+  rw [GornAddress.toList_mul, GornAddress.toList_of, List.append_assoc,
+    List.singleton_append] at hp' hq'
   rw [← hp', getElem?_append] at hp
   rw [← hq', getElem?_append] at hq
   obtain ⟨u, hu, hs⟩ := Option.bind_eq_some_iff.mp hp
@@ -244,19 +244,19 @@ theorem leafIndex_eq_zero_iff (h : t[p]?.isSome) :
 
 /-- Two positions of a tree are left-aligned exactly when their frontiers begin at the same
 leaf. -/
-theorem leftAligned_iff_leafIndex_eq {p q : TreePath} (hp : t[p.toList]?.isSome)
+theorem leftAligned_iff_leafIndex_eq {p q : GornAddress} (hp : t[p.toList]?.isSome)
     (hq : t[q.toList]?.isSome) :
     p.LeftAligned q ↔ t.leafIndex p.toList = t.leafIndex q.toList := by
   obtain ⟨s, hs⟩ := Option.isSome_iff_exists.mp hp
   obtain ⟨u, hu⟩ := Option.isSome_iff_exists.mp hq
   constructor
   · intro h
-    obtain ⟨j, k, h⟩ := TreePath.leftAligned_iff_exists.1 h
+    obtain ⟨j, k, h⟩ := GornAddress.leftAligned_iff_exists.1 h
     have := congrArg t.leafIndex h
     rwa [leafIndex_append hs, leafIndex_append hu, leafIndex_replicate_zero,
       leafIndex_replicate_zero] at this
   · intro h
-    have key : ∀ {p q : TreePath} {s : RoseTree α}, t[p.toList]? = some s →
+    have key : ∀ {p q : GornAddress} {s : RoseTree α}, t[p.toList]? = some s →
         t[q.toList]?.isSome → t.leafIndex p.toList = t.leafIndex q.toList → p ≤ q →
         p.LeftAligned q := by
       rintro p q s hs hq h ⟨r, hr⟩
@@ -264,9 +264,9 @@ theorem leftAligned_iff_leafIndex_eq {p q : TreePath} (hp : t[p.toList]?.isSome)
       rw [← hr, getElem?_append, hs, Option.bind_some] at hq
       have hr0 : r = List.replicate r.length 0 :=
         List.eq_replicate_iff.2 ⟨rfl, (leafIndex_eq_zero_iff hq).1 (by omega)⟩
-      exact TreePath.leftAligned_iff_exists.2
+      exact GornAddress.leftAligned_iff_exists.2
         ⟨r.length, 0, by rw [← hr, List.replicate_zero, List.append_nil, ← hr0]⟩
-    rcases TreePath.Precedes.trichotomy p q with hpq | hqp | hpq | hqp
+    rcases GornAddress.Precedes.trichotomy p q with hpq | hqp | hpq | hqp
     · exact key hs hq h hpq
     · exact (key hu hp h.symm hqp).symm
     · have := leafIndex_add_numLeaves_le_of_precedes hpq hs hq
@@ -303,7 +303,7 @@ theorem spanAt_le_or_le_or_snd_le_fst {u : RoseTree α} (hs : t[p]? = some s)
     (hu : t[q]? = some u) :
     t.spanAt p s ≤ t.spanAt q u ∨ t.spanAt q u ≤ t.spanAt p s ∨
       (t.spanAt p s).snd ≤ (t.spanAt q u).fst ∨ (t.spanAt q u).snd ≤ (t.spanAt p s).fst := by
-  rcases TreePath.Precedes.trichotomy ⟨p⟩ ⟨q⟩ with ⟨r, rfl⟩ | ⟨r, rfl⟩ | hpq | hqp
+  rcases GornAddress.Precedes.trichotomy ⟨p⟩ ⟨q⟩ with ⟨r, rfl⟩ | ⟨r, rfl⟩ | hpq | hqp
   · rw [getElem?_append, hs, Option.bind_some] at hu
     exact .inr (.inl (spanAt_append_le hs hu))
   · rw [getElem?_append, hu, Option.bind_some] at hs

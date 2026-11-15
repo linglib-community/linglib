@@ -84,7 +84,7 @@ attitude alone cannot](##minimal_pair), if the interval it occupies depends on t
 namespace Ogihara1989
 
 open Interpreter ModalLogic Tense Partee1973 PhraseStructure
-  PhraseStructure.Tree Core.Order
+  PhraseStructure.Tree
 open scoped Assignment Denotes SetRel
 
 section ReferenceInterval
@@ -251,45 +251,46 @@ end Word
 abbrev LF := Tree Cat Word
 
 /-- The positions of the words of an LF that satisfy a predicate, in the order of the yield. -/
-def wordPositions (t : LF) (P : Word → Prop) [DecidablePred P] : List TreePath :=
+def wordPositions (t : LF) (P : Word → Prop) [DecidablePred P] : List GornAddress :=
   (t.positionedTerminals.filter (P ·.2.2)).map (·.1)
 
 /-- The word at a position of an LF. -/
-def wordAt? (t : LF) (p : TreePath) : Option Word := (t.positionedTerminals.lookup p).map (·.2)
+def wordAt? (t : LF) (p : GornAddress) : Option Word := (t.positionedTerminals.lookup p).map (·.2)
 
 /-- The deepest position of a word in an LF, the lowest of the occurrences of a tense. -/
-def lowestOf? (t : LF) (w : Word) : Option TreePath :=
-  (wordPositions t (· = w)).argmax (·.toList.length)
+def lowestOf? (t : LF) (w : Word) : Option GornAddress :=
+  (wordPositions t (· = w)).argmax (·.depth)
 
 /-- The tense feature at a position of an LF. -/
-def featureAt? (t : LF) (p : TreePath) : Option PointAlgebra :=
+def featureAt? (t : LF) (p : GornAddress) : Option PointAlgebra :=
   (wordAt? t p).bind Word.feature?
 
 /-- The positions of the tense morphemes of an LF. -/
-def tenses (t : LF) : Finset TreePath := (wordPositions t Word.IsTense).toFinset
+def tenses (t : LF) : Finset GornAddress := (wordPositions t Word.IsTense).toFinset
 
 /-- The positions of the tense features of an LF. -/
-def features (t : LF) : Finset TreePath := (wordPositions t (·.feature?.isSome)).toFinset
+def features (t : LF) : Finset GornAddress := (wordPositions t (·.feature?.isSome)).toFinset
 
 /-- A tense `b` can be deleted when something in `F` is local for it and has the value of its
 feature: it commands `b` under `R`, and no other member of `F` that it commands commands `b`. A
 node commands itself on the reflexive relations of `Syntax/Command.lean`, so *other* excludes `b`
 as well as the commander. -/
-def Deletable (R : SetRel TreePath TreePath) (F : Finset TreePath) (t : LF) (b : TreePath) : Prop :=
+def Deletable (R : SetRel GornAddress GornAddress) (F : Finset GornAddress) (t : LF) (b :
+    GornAddress) : Prop :=
   b ∈ tenses t ∧ ∃ a ∈ F, a ≠ b ∧ a ~[R] b ∧ featureAt? t a = featureAt? t b ∧
     ∀ c ∈ F, c ≠ a → c ≠ b → a ~[R] c → ¬ c ~[R] b
 
-instance {R : SetRel TreePath TreePath} [∀ a b, Decidable (a ~[R] b)] {F : Finset TreePath}
-    {t : LF} {b : TreePath} : Decidable (Deletable R F t b) :=
+instance {R : SetRel GornAddress GornAddress} [∀ a b, Decidable (a ~[R] b)] {F : Finset GornAddress}
+    {t : LF} {b : GornAddress} : Decidable (Deletable R F t b) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The rule of chapter 2: delete a tense under an occurrence of the same morpheme that is local for
 it, where a tense commands what the first S above it dominates. -/
-abbrev TenseDeletable (t : LF) : TreePath → Prop := Deletable (sCommand t) (tenses t) t
+abbrev TenseDeletable (t : LF) : GornAddress → Prop := Deletable (sCommand t) (tenses t) t
 
 /-- The rule of chapter 3: delete a tense morpheme whose feature has the value of its local tense
 feature, where a feature c-commands what the first branching node above it dominates. -/
-abbrev TenseFeatureDeletable (t : LF) : TreePath → Prop :=
+abbrev TenseFeatureDeletable (t : LF) : GornAddress → Prop :=
   Deletable (RoseTree.cCommand t) (features t) t
 
 /-- The LFs one application of the rule of chapter 3 gives, each with an empty tense. -/
@@ -810,18 +811,18 @@ abbrev HasDeletion (g : Glottocode) : Prop := g = Glottocode.english
 def lfsOf (L : Glottocode) (t : LF) : List LF := if HasDeletion L then lfsFrom 3 t else [t]
 
 /-- The words above a position that introduce a time, top down: the ones that c-command it. -/
-def timesAbove (t : LF) (b : TreePath) : List TreePath :=
+def timesAbove (t : LF) (b : GornAddress) : List GornAddress :=
   (wordPositions t Word.IsTime).filter fun a ↦ a ≠ b ∧ a ~[RoseTree.cCommand t] b
 
 /-- The cell of a time against the speech time: the cells of the words above it and its own,
 composed from the top, the English present returning to the speech time. -/
-def speechCell (t : LF) (b : TreePath) : PointAlgebra :=
+def speechCell (t : LF) (b : GornAddress) : PointAlgebra :=
   ((timesAbove t b ++ [b]).filterMap (wordAt? t)).foldl
     (fun C w ↦ if w = .pres then ⟦Tense.present⟧ else C * w.cell) ⟦Tense.present⟧
 
 /-- The cell of a time against the time `r`: the cell of its word when `r` is the time at which the
 word is evaluated, and otherwise as the two times stand to the speech time. -/
-def cellAgainst (t : LF) (b r : TreePath) : PointAlgebra :=
+def cellAgainst (t : LF) (b r : GornAddress) : PointAlgebra :=
   match wordAt? t b with
   | some w =>
     if w ≠ .pres ∧ (timesAbove t b).getLast? = some r then w.cell
@@ -829,7 +830,7 @@ def cellAgainst (t : LF) (b r : TreePath) : PointAlgebra :=
   | none => ⊥
 
 /-- The cell of a time against `r` over several LFs. -/
-def cellIn (lfs : List LF) (b r : TreePath) : PointAlgebra :=
+def cellIn (lfs : List LF) (b r : GornAddress) : PointAlgebra :=
   (lfs.map (cellAgainst · b r)).foldr (· ⊔ ·) ⊥
 
 -- the parameter of `pastUnderPast`, read off the tree

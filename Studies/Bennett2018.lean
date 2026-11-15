@@ -39,7 +39,7 @@ word](##prosodySyntaxMatch_pos_of_subCat), so the frame is ranked above Match (�
 
 namespace Bennett2018
 
-open Prosody OptimalityTheory RoseTree Core.Order
+open Prosody OptimalityTheory RoseTree
 
 /-! ### Parses -/
 
@@ -151,7 +151,7 @@ theorem nodup_level_of_noLevelRecursion {κs : List Constituent}
   rw [getElem?_level_brackets] at hℓ
   obtain ⟨s, hs, hsℓ⟩ := Option.map_eq_some_iff.1 heq
   obtain ⟨u, hu, huℓ⟩ := Option.map_eq_some_iff.1 hℓ
-  have hle : (⟨.replicate i 1⟩ : TreePath) ≤ ⟨.replicate j 1⟩ :=
+  have hle : (⟨.replicate i 1⟩ : GornAddress) ≤ ⟨.replicate j 1⟩ :=
     ⟨.replicate (j - i) 1, by rw [List.replicate_append_replicate]; congr 1; omega⟩
   have := congrArg (·.toList.length) <| (h _).subsingleton_inter_Iic ⟨.replicate j 1⟩
     ⟨⟨s, hs, hsℓ⟩, Set.mem_Iic.2 hle⟩ ⟨⟨u, hu, huℓ⟩, Set.mem_Iic.2 le_rfl⟩

@@ -105,7 +105,7 @@ variable (t) in
 /-- The terms a probe on the head `h` finds when, at each occurrence `a` of `h`, the positions
 `cut a` are closed to its search, by the PIC or by a horizon. -/
 def goalsUnder (p : Probe t.toRoseTree.Positions) (h : SyntacticObject)
-    (cut : Core.Order.TreePath → Set Core.Order.TreePath) [∀ a, DecidablePred (· ∈ cut a)] :
+    (cut : GornAddress → Set GornAddress) [∀ a, DecidablePred (· ∈ cut a)] :
     Finset SyntacticObject :=
   (Finset.univ.filter fun g ↦ ∃ a, t.termAt a = h ∧
     p.Finds {q | t.toRoseTree.CCommands a q ∧ q.val ∉ cut a.val} (t.above
@@ -116,7 +116,7 @@ def goalsUnder (p : Probe t.toRoseTree.Positions) (h : SyntacticObject)
   simp only [goalsUnder, goals, goalsBy, Set.mem_empty_iff_false, not_false_eq_true, and_true]
 
 theorem mem_goalsUnder_of_finds {h : SyntacticObject}
-    {cut : Core.Order.TreePath → Set Core.Order.TreePath}
+    {cut : GornAddress → Set GornAddress}
     [∀ a, DecidablePred (· ∈ cut a)] {a : t.toRoseTree.Positions} (ha : t.termAt a = h)
     (hg : p.Finds {q | t.toRoseTree.CCommands a q} (t.above t.branching) g) (hgc : g.val ∉ cut
         a.val) :
