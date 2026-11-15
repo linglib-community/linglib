@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.ModelTheory.ManySorted.Simulation
+public import Linglib.Syntax.Skeleton
 public import Mathlib.Data.Nat.Notation
 
 /-!
@@ -22,8 +23,6 @@ derivations over a bare structure are found from the types alone.
 * `ManySorted.Language.Deriv`: the derivations of a type over typed lexical items.
 * `ManySorted.Language.LocallyFinite.unaryRules`, `binaryRules`: the rules that apply to given
   daughters, and `ManySorted.Language.motherTypes`, the types they give the mother.
-* `Interpreter.Skeleton`, `Interpreter.Node`: a bare structure, and the labels a constituency
-  tree gives its nodes.
 * `Interpreter`: the rules a node admits by its label and its daughters' types, and
   `Interpreter.typeDriven`, the interpreter that admits every rule that applies.
 * `Interpreter.derivs`, `Interpreter.values`: the derivations over a bare structure, and their
@@ -98,31 +97,6 @@ variable (M : L.Structure D) (ρ : ∀ {a : T}, W a → D a)
 end Deriv
 
 end ManySorted.Language
-
-namespace Interpreter
-
-/-- A bare structure over node labels `N` and leaves `L`: what a type-driven interpreter asks of
-the syntax. -/
-inductive Skeleton (N : Type v) (L : Type w) : Type (max v w)
-  /-- A leaf. -/
-  | leaf (x : L) : Skeleton N L
-  /-- A unary node. -/
-  | unary (n : N) (s : Skeleton N L) : Skeleton N L
-  /-- A binary node. -/
-  | binary (n : N) (s₁ s₂ : Skeleton N L) : Skeleton N L
-
-/-- What the semantics reads off a node of the syntax: a plain branching node, an island, or the
-index a moved phrase leaves. -/
-inductive Node where
-  /-- A plain node. -/
-  | branch
-  /-- An island for continuations. -/
-  | island
-  /-- The index `n` of a moved phrase. -/
-  | index (n : ℕ)
-  deriving DecidableEq, Repr
-
-end Interpreter
 
 /-- A type-driven interpreter for a language of rules: the rules a node admits, by its label and
 the types of its daughters. -/
