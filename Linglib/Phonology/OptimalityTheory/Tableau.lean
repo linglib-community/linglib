@@ -46,6 +46,8 @@ candidates of least profile.
   as often as a competitor, and some more often, wins under no ranking.
 * `Tableau.exists_mem_ofRanking_optimal_iff_pair`: against a single competitor, a candidate wins
   under some ranking iff the competitor does not bound it in this way.
+* `Tableau.ofRanking_optimal_eq_pair_iff`: two candidates with no other competitor both win under
+  a ranking iff no constraint tells them apart.
 * `Tableau.ofRanking_optimal_eq_argmin_filter`: when some candidate satisfies every constraint
   above the last, the winners are the candidates satisfying all of them that do best on the last.
 * `Tableau.optimal_tail`: the winners of a tableau are the winners of its tail.
@@ -219,6 +221,16 @@ theorem mem_optimal_iff_pair (hcand : t.candidates = {c, d}) :
     c ∈ t.optimal ↔ ¬ t.profile d < t.profile c := by
   simp [mem_optimal_iff, hcand]
 
+/-- Two candidates with no other competitor both win iff their profiles are equal. -/
+theorem optimal_eq_pair_iff (hcand : t.candidates = {c, d}) :
+    t.optimal = {c, d} ↔ t.profile c = t.profile d := by
+  refine ⟨fun h ↦ ?_, fun h ↦ (hcand ▸ optimal_subset).antisymm fun e he ↦ ?_⟩
+  · exact le_antisymm (le_of_mem_optimal (h ▸ by simp) (hcand ▸ by simp))
+      (le_of_mem_optimal (h ▸ by simp) (hcand ▸ by simp))
+  · have hle : ∀ x ∈ ({c, d} : Finset C), ∀ y ∈ ({c, d} : Finset C), t.profile x ≤ t.profile y := by
+      simp [h]
+    exact mem_optimal_iff.2 ⟨hcand ▸ he, fun y hy ↦ hle e he y (hcand ▸ hy)⟩
+
 end Pair
 
 /-! ### Tableau constructors -/
@@ -386,6 +398,14 @@ theorem exists_ofRanking_optimal_eq_singleton_iff_pair (hcand : candidates = {c,
   exact exists_congr fun _ ↦ optimal_eq_singleton_iff_pair hcand hne
 
 end Bounding
+
+/-- Under a ranking, two candidates with no other competitor both win iff no constraint tells them
+apart. -/
+theorem ofRanking_optimal_eq_pair_iff [DecidableEq C] (hcand : candidates = {c, d}) :
+    (ofRanking con r candidates).optimal = {c, d} ↔ ∀ i, con i c = con i d := by
+  rw [optimal_eq_pair_iff hcand]
+  refine ⟨fun h i ↦ ?_, fun h ↦ funext fun p ↦ h (r p)⟩
+  simpa using congrArg (· (r.symm i)) h
 
 end Constructors
 

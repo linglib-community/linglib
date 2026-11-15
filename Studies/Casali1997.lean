@@ -150,6 +150,19 @@ theorem optimal_eq_singleton_iff {e e' : ElidedVowel} (hne : e ≠ e') (r) :
       ∀ j ∈ violations c e, j ∉ violations c e' → r.Dominates i j :=
   optimal_eq_singleton_positionalMax_iff (candidates_eq_pair hne) hne rfl rfl r
 
+/-- An elision that violates a proper subset of the constraints the other violates is the sole
+winner under every ranking. -/
+theorem optimal_eq_singleton_of_ssubset {e e' : ElidedVowel} (hne : e ≠ e')
+    (h : violations c e ⊂ violations c e') (r : Ranking (Option Prominence) 5) :
+    (tableau c r).optimal = {e} :=
+  optimal_eq_singleton_positionalMax_of_ssubset (candidates_eq_pair hne) rfl rfl h r
+
+/-- Under any ranking the two elisions tie exactly when they violate the same constraints. -/
+theorem optimal_eq_pair_iff (r : Ranking (Option Prominence) 5) :
+    (tableau c r).optimal = {.first, .second} ↔ violations c .first = violations c .second :=
+  optimal_eq_pair_positionalMax_iff (c := .first) (d := .second) (P := protects c)
+    (del := fun e ↦ {position c e}) rfl rfl rfl r
+
 theorem optimal_eq_singleton_of_forall_dominates {e e' : ElidedVowel} (hne : e ≠ e')
     {r : Ranking (Option Prominence) 5} {i : Option Prominence} (hi : i ∉ violations c e)
     (hi' : i ∈ violations c e') (hr : ∀ j, j ≠ i → r.Dominates i j) :
