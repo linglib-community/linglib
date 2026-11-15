@@ -9,7 +9,7 @@ public import Mathlib.Basic.Rel
 /-!
 # Larson (1998): Events and Modification in Nominals
 
-This file models a noun as a relation of individuals to events and an adjective as a set of
+On Larson's analysis a noun is a relation of individuals to events and an adjective a set of
 individuals and events. An adjective modifies a noun at the individual or at the event, and
 [both readings are intersective](##Larson1998.isIntersective_ofEvent).
 
