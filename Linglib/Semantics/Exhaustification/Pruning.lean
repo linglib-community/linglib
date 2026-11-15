@@ -20,7 +20,10 @@ excludable](##mem_prunedReadings_iff), so every derived reading is a conjunction
 sub-disjunctions; when the disjuncts are independent the derived readings are [exactly those
 conjunctions that are not themselves proper
 sub-disjunctions](##prunedReadings_eq), and "at least `k` of the disjuncts hold"
-[is among them](##atLeastTrue_mem_prunedReadings) for every `k`.
+[is among them](##atLeastTrue_mem_prunedReadings) for every `k`. The question whether at least
+`k ≥ 2` hold [determines none of the sub-disjunctions](##not_determines_polar_atLeastTrue), so a
+restriction to the alternatives that are relevant one by one would prune them all, though some
+are needed to derive the reading that question selects.
 
 ## Implementation notes
 
@@ -258,6 +261,29 @@ theorem isPrunedReading_polar_atLeastTrue (h : Separating I p) {k : ℕ} (hk : 0
       (atLeastTrue I p k) :=
   isPrunedReading_polar (exhIEII_supClosure_nonempty h (Finset.card_pos.1 (hk.trans_le hkn)))
     (atLeastTrue_mem_prunedReadings h hk hkn)
+
+omit [DecidableEq ι] in
+/-- The question whether at least `k ≥ 2` of the disjuncts hold determines no sub-disjunction,
+so keeping only the alternatives that are relevant one by one prunes them all. -/
+theorem not_determines_polar_atLeastTrue (h : Separating I p) (hnone : ∃ w, ∀ i ∈ I, w ∉ p i)
+    {k : ℕ} (hk : 2 ≤ k) {q : Set World} (hq : q ∈ supClosure (p '' I)) :
+    ¬ (Setoid.polar (atLeastTrue I p k)).Determines q := by
+  intro hdet
+  obtain ⟨S, ⟨a, ha⟩, hS, rfl⟩ := Set.mem_supClosure_image.1 hq
+  obtain ⟨w, hw⟩ := h.single a (hS ha)
+  obtain ⟨v, hv⟩ := hnone
+  have hwk : w ∉ atLeastTrue I p k := by
+    have h1 : trueCount I p w = 1 := Finset.card_eq_one.2 ⟨a, Finset.ext fun j ↦ by
+      rw [Finset.mem_filter, Finset.mem_singleton]
+      exact ⟨fun ⟨hj, hwj⟩ ↦ (hw j hj).1 hwj, fun hja ↦ hja ▸ ⟨hS ha, (hw a (hS ha)).2 rfl⟩⟩⟩
+    rw [mem_atLeastTrue, h1]
+    omega
+  have hvk : v ∉ atLeastTrue I p k := fun hvk ↦
+    let ⟨i, hi, hvi⟩ := Set.mem_iUnion₂.1 (trueCount_pos.1 (lt_of_lt_of_le (by omega) hvk))
+    hv i hi hvi
+  obtain ⟨i, hi, hvi⟩ := Set.mem_iUnion₂.1 ((hdet.iff (w := w) (v := v)
+    (Setoid.polar_iff.2 (iff_of_false hwk hvk))).1 (Set.mem_biUnion ha ((hw a (hS ha)).2 rfl)))
+  exact hv i (hS hi) hvi
 
 end Count
 

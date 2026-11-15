@@ -20,7 +20,8 @@ excludable, and the readings so derived are [the conjunctions of alternatives th
 themselves alternatives, and the plain existential
 one](##Exhaustification.prunedReadings_eq). They include "at least `k`" for every `k` and lie
 among Križ and Spector's candidate meanings. The question the context raises selects the
-strongest reading it determines; [every reading is selected by the question whether it
+strongest reading it determines, not the alternatives it determines, of which the question of
+(66) [has none](##not_determines_66); [every reading is selected by the question whether it
 holds](##Exhaustification.isPrunedReading_polar), and a world is gappy, true on the reading one
 question selects and false on another's, [exactly where trivalent plural predication is
 undefined](##gappy_iff_barePlural_eq_undefined).
@@ -262,6 +263,14 @@ theorem kellyLaughed_notMem_prunedReadings :
   have hj : ({.jane} : Finset Kid) ∈ kellyLaughed :=
     heq ▸ Set.mem_biUnion (Finset.mem_univ Kid.jane) (Finset.mem_singleton_self _)
   exact absurd hj (by decide)
+
+/-- The partition (66) determines no subdomain alternative of *the kids laughed*, so pruning
+the alternatives that are irrelevant one by one would leave none, though the two-kid ones are
+needed for the reading (66) selects. -/
+theorem not_determines_66 {q : Set (Finset Kid)} (hq : q ∈ supClosure (atom holds '' ↑kids)) :
+    ¬ (Setoid.polar (atLeastTrue kids (atom holds) 2)).Determines q :=
+  not_determines_polar_atLeastTrue (separating_holds kids)
+    ⟨∅, fun _ _ ↦ Finset.notMem_empty _⟩ le_rfl hq
 
 -- Given the partition (66), *the kids laughed* means that at least two of the kids laughed.
 theorem reading_66 :
