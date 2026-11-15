@@ -10,9 +10,9 @@ A positional faithfulness constraint is a faithfulness constraint restricted to 
 position, such as the beginning of a word or a root, whose segments it protects. Restricted to
 deletion, a candidate is the set of input positions it deletes, and the MAX constraint of a set of
 positions counts the deleted positions in it. The deletion of a single position therefore violates
-exactly the constraints that protect that position, and two single deletions compete through those
-sets of constraints: one of them is optimal under some ranking exactly when the constraints
-protecting the other position are not a proper subset of those protecting its own.
+exactly the constraints that protect that position, and single deletions compete through those
+sets of constraints: one of them is optimal under some ranking exactly when the set of constraints
+protecting its position is minimal among them.
 
 ## Main definitions
 
@@ -25,9 +25,11 @@ protecting the other position are not a proper subset of those protecting its ow
 * `OptimalityTheory.maxAt_eq_maxViolAt`, `maxAt_singleton_eq_maxViolAt`: on the deletion of a set
   of positions, or of one, from a string, `maxAt` is MAX restricted to the positions in the sense
   of Correspondence Theory.
-* `OptimalityTheory.exists_mem_optimal_positionalMax_iff`: of two single deletions, one is optimal
-  under some ranking iff the constraints protecting the other position are not a proper subset of
-  those protecting its own.
+* `OptimalityTheory.exists_mem_optimal_positionalMax_iff`: among deletions of one position each,
+  one is optimal under some ranking iff the constraints protecting its position are minimal among
+  the sets protecting each.
+* `OptimalityTheory.optimal_eq_pair_positionalMax_iff`: both are optimal under a ranking iff the
+  same constraints protect the two positions.
 
 ## References
 
@@ -106,6 +108,12 @@ theorem positionalMax_lt_iff (hc : del c = {k}) (hd : del d = {k'}) :
   refine and_congr (forall_congr' fun i ↦ ?_) (exists_congr fun _ ↦ and_comm)
   split_ifs <;> simp_all
 
+theorem positionalMax_le_iff (hc : del c = {k}) (hd : del d = {k'}) :
+    (positionalMax P del · c) ≤ (positionalMax P del · d) ↔ {i | P i k} ⊆ {i | P i k'} := by
+  simp only [Pi.le_def, positionalMax_apply, hc, hd, maxAt_singleton, Set.subset_def]
+  refine forall_congr' fun i ↦ ?_
+  split_ifs <;> simp_all
+
 variable [DecidableEq C] {n : ℕ} {cands : Finset C}
 
 theorem optimal_eq_singleton_positionalMax_iff (hcand : cands = {c, d}) (hne : c ≠ d)
@@ -118,16 +126,38 @@ theorem optimal_eq_singleton_positionalMax_iff (hcand : cands = {c, d}) (hne : c
   exact exists_congr fun _ ↦ ⟨fun ⟨⟨h, h'⟩, hr⟩ ↦ ⟨h', h, fun j hj hj' ↦ hr j ⟨hj', hj⟩⟩,
     fun ⟨h', h, hr⟩ ↦ ⟨⟨h, h'⟩, fun j ⟨hj', hj⟩ ↦ hr j hj hj'⟩⟩
 
+/-- Of two single deletions, the one whose position fewer constraints protect is the sole winner
+under every ranking. -/
+theorem optimal_eq_singleton_positionalMax_of_ssubset (hcand : cands = {c, d}) (hc : del c = {k})
+    (hd : del d = {k'}) (h : {i | P i k} ⊂ {i | P i k'}) (r : Ranking ι n) :
+    (Tableau.ofRanking (positionalMax P del) r cands).optimal = {c} :=
+  Tableau.ofRanking_optimal_eq_singleton_of_forall_lt (by simp [hcand]) fun e he hne ↦ by
+    obtain rfl : e = d := by simpa [hcand, hne] using he
+    exact (positionalMax_lt_iff hc hd).2 h
+
+theorem optimal_eq_pair_positionalMax_iff (hcand : cands = {c, d}) (hc : del c = {k})
+    (hd : del d = {k'}) (r : Ranking ι n) :
+    (Tableau.ofRanking (positionalMax P del) r cands).optimal = {c, d} ↔
+      {i | P i k} = {i | P i k'} := by
+  rw [Tableau.ofRanking_optimal_eq_pair_iff hcand, Set.ext_iff]
+  refine forall_congr' fun i ↦ ?_
+  simp only [positionalMax_apply, hc, hd, maxAt_singleton]
+  split_ifs <;> simp_all
+
 variable [Fintype ι] (hn : Fintype.card ι = n)
 include hn
 
-/-- Of two single deletions, one is optimal under some ranking exactly when the constraints
-protecting the other position are not a proper subset of those protecting its own. -/
-theorem exists_mem_optimal_positionalMax_iff (hcand : cands = {c, d})
-    (hc : del c = {k}) (hd : del d = {k'}) :
-    (∃ r : Ranking ι n, c ∈ (Tableau.ofRanking (positionalMax P del) r cands).optimal) ↔
-      ¬ {i | P i k'} ⊂ {i | P i k} := by
-  rw [Tableau.exists_mem_ofRanking_optimal_iff_pair hn hcand, positionalMax_lt_iff hd hc]
+omit [DecidableEq C] in
+/-- Among deletions of one position each, one is optimal under some ranking exactly when the
+constraints protecting its position are minimal among the sets protecting each. -/
+theorem exists_mem_optimal_positionalMax_iff {pos : C → ℕ} :
+    (∃ r : Ranking ι n,
+        c ∈ (Tableau.ofRanking (positionalMax P fun d ↦ {pos d}) r cands).optimal) ↔
+      MinimalFor (· ∈ cands) (fun d ↦ {i | P i (pos d)}) c := by
+  rw [Tableau.exists_mem_ofRanking_optimal_iff_minimalFor hn fun d _ i ↦ by
+    rw [positionalMax_apply, maxAt_singleton]; split_ifs <;> simp]
+  exact and_congr_right fun _ ↦ forall_congr' fun d ↦ imp_congr_right fun _ ↦
+    imp_congr (positionalMax_le_iff rfl rfl) (positionalMax_le_iff rfl rfl)
 
 theorem exists_optimal_eq_singleton_positionalMax_iff (hcand : cands = {c, d})
     (hne : c ≠ d) (hc : del c = {k}) (hd : del d = {k'}) :

@@ -118,6 +118,26 @@ theorem soleSegment_mem_violations_second_iff :
   rw [resolve_second, c.elideV2_eq_left_iff]
   simp
 
+theorem violations_first_subset_second_iff :
+    violations c .first ⊆ violations c .second ↔
+      (c.leftKind = .root → c.rightKind = .root) ∧ (c.leftBody = [] → c.rightBody = [] ∧
+        ((∀ b ∈ c.beforeKind, ¬ b.JoinsAt .clitic c.leftKind) →
+          ¬ c.leftKind.JoinsAt .clitic c.rightKind)) := by
+  simp only [Set.subset_def, Option.forall, Prominence.forall, none_mem_violations,
+    some_mem_violations_first, some_mem_violations_second, Context.protects_v1Idx,
+    Context.protects_v2Idx]
+  tauto
+
+theorem violations_second_subset_first_iff :
+    violations c .second ⊆ violations c .first ↔
+      c.leftBody = [] ∧ (c.rightKind = .root → c.leftKind = .root) ∧
+        (¬ c.leftKind.JoinsAt .clitic c.rightKind →
+          ∀ b ∈ c.beforeKind, ¬ b.JoinsAt .clitic c.leftKind) := by
+  simp only [Set.subset_def, Option.forall, Prominence.forall, none_mem_violations,
+    some_mem_violations_first, some_mem_violations_second, Context.protects_v1Idx,
+    Context.protects_v2Idx]
+  tauto
+
 end Violations
 
 /-! ### Which vowel elides -/
@@ -134,11 +154,16 @@ private theorem candidates_eq_pair {e e' : ElidedVowel} (hne : e ≠ e') :
 
 variable {c}
 
-/-- An elision is optimal under some ranking exactly when the constraints it violates are not a
-proper superset of those the other elision violates. -/
-theorem exists_mem_optimal_iff {e e' : ElidedVowel} (hne : e ≠ e') :
-    (∃ r, e ∈ (tableau c r).optimal) ↔ ¬ violations c e' ⊂ violations c e :=
-  exists_mem_optimal_positionalMax_iff card_option_prominence (candidates_eq_pair hne) rfl rfl
+theorem forall_elidedVowel {p : ElidedVowel → Prop} : (∀ e, p e) ↔ p .first ∧ p .second :=
+  ⟨fun h ↦ ⟨h _, h _⟩, by rintro ⟨h₁, h₂⟩ (_ | _) <;> assumption⟩
+
+/-- An elision is optimal under some ranking exactly when the constraints it violates are minimal:
+if they include those the other elision violates, the two violate the same constraints. -/
+theorem exists_mem_optimal_iff {e : ElidedVowel} :
+    (∃ r, e ∈ (tableau c r).optimal) ↔
+      ∀ e', violations c e' ⊆ violations c e → violations c e ⊆ violations c e' :=
+  (exists_mem_optimal_positionalMax_iff card_option_prominence).trans
+    ⟨fun h e' ↦ h.2 (by cases e' <;> simp), fun h ↦ ⟨by cases e <;> simp, fun e' _ ↦ h e'⟩⟩
 
 theorem exists_optimal_eq_singleton_iff {e e' : ElidedVowel} (hne : e ≠ e') :
     (∃ r, (tableau c r).optimal = {e}) ↔ ¬ violations c e' ⊆ violations c e :=
@@ -150,6 +175,16 @@ theorem optimal_eq_singleton_iff {e e' : ElidedVowel} (hne : e ≠ e') (r) :
       ∀ j ∈ violations c e, j ∉ violations c e' → r.Dominates i j :=
   optimal_eq_singleton_positionalMax_iff (candidates_eq_pair hne) hne rfl rfl r
 
+theorem optimal_eq_singleton_of_ssubset {e e' : ElidedVowel} (hne : e ≠ e')
+    (h : violations c e ⊂ violations c e') (r : Ranking (Option Prominence) 5) :
+    (tableau c r).optimal = {e} :=
+  optimal_eq_singleton_positionalMax_of_ssubset (candidates_eq_pair hne) rfl rfl h r
+
+theorem optimal_eq_pair_iff (r : Ranking (Option Prominence) 5) :
+    (tableau c r).optimal = {.first, .second} ↔ violations c .first = violations c .second :=
+  optimal_eq_pair_positionalMax_iff (c := .first) (d := .second) (P := protects c)
+    (del := fun e ↦ {position c e}) rfl rfl rfl r
+
 theorem optimal_eq_singleton_of_forall_dominates {e e' : ElidedVowel} (hne : e ≠ e')
     {r : Ranking (Option Prominence) 5} {i : Option Prominence} (hi : i ∉ violations c e)
     (hi' : i ∈ violations c e') (hr : ∀ j, j ≠ i → r.Dominates i j) :
@@ -160,21 +195,14 @@ theorem exists_optimal_eq_first (h : c.leftBody ≠ []) : ∃ r, (tableau c r).o
   (exists_optimal_eq_singleton_iff (e' := .second) (by decide)).2 fun hs ↦ by
     simpa [h] using hs (show some .morphemeInitial ∈ violations c .second by simp)
 
-private theorem forall_option_prominence {P : Option Prominence → Prop} :
-    (∀ i, P i) ↔ P none ∧ P (some .wordInitial) ∧ P (some .lexical) ∧
-      P (some .morphemeInitial) ∧ P (some .soleSegment) :=
-  ⟨fun h ↦ ⟨h _, h _, h _, h _, h _⟩,
-    by rintro ⟨h₀, h₁, h₂, h₃, h₄⟩ (_ | _ | _ | _ | _) <;> assumption⟩
-
 /-- Where the first vowel begins no morph, the second vowel elides under some ranking exactly
 when the first morph is a root and the second is not. This covers the boundary between two
 lexical words, between a lexical and a function word in either order, between a prefix of more
 than one segment and a root, between a root and a suffix, and between two affixes or clitics. -/
 theorem exists_mem_optimal_second_iff (h : c.leftBody ≠ []) :
     (∃ r, .second ∈ (tableau c r).optimal) ↔ c.leftKind = .root ∧ c.rightKind ≠ .root := by
-  rw [exists_mem_optimal_iff (e' := .first) (by decide), Set.ssubset_def, Set.subset_def,
-    Set.subset_def, forall_option_prominence, forall_option_prominence]
-  simp [h]
+  simp [exists_mem_optimal_iff, forall_elidedVowel, violations_first_subset_second_iff,
+    violations_second_subset_first_iff, h]
 
 -- (15), (16)
 theorem exists_optimal_eq_of_vowelPrefix (h : c.leftBody = []) (hs : c.rightBody ≠ [])
@@ -262,10 +290,10 @@ theorem soleSegment_over_lexical {r : Ranking (Option Prominence) 5}
   split_ifs with hsuf
   · refine (optimal_eq_singleton_iff (e' := .second) (by decide) r).2
       ⟨some .soleSegment, by simpa using hsuf, by simpa using hs, ?_⟩
-    rintro (_ | _ | _ | _ | _) hj hj' <;> simp_all
+    simp_all [Option.forall, Prominence.forall]
   · refine (optimal_eq_singleton_iff (e' := .first) (by decide) r).2
       ⟨some .lexical, by simpa using hl, by simp [hr], ?_⟩
-    rintro (_ | _ | _ | _ | _) hj hj' <;> simp_all [Morph.Kind.JoinsAt]
+    simp_all [Option.forall, Prominence.forall, Morph.Kind.JoinsAt]
 
 /-! ### The survey -/
 
