@@ -30,8 +30,8 @@ underlying order. [Lexicographic pairs](##MarginalScale.lex) of a block and a lo
 are marginal scales, among them the representative model `ℚ ×ₗ ℤ`, as are [the differences in an
 order-connected subgroup](##MarginalScale.ofAddSubgroup) of an ordered group. A
 [homomorphism](##MarginalScale.IsHom) of marginal scales [embeds the blocks of one in those of the
-other](##MarginalScale.IsHom.mapBlock), and [embeddings of the blocks and of the degrees of each
-block](##MarginalScale.isHom_toLex) make a homomorphism into lexicographic pairs.
+other](##MarginalScale.IsHom.mapBlock), and a homomorphism into lexicographic pairs is [an embedding
+of the blocks and of the degrees of each block](##MarginalScale.isHomLexEquiv).
 
 ## References
 
@@ -562,6 +562,39 @@ theorem isHom_toLex (e : ml.Block ↪o β) (g : ∀ q, {x // ml.toBlock x = q} �
     subst hq; rfl
   rw [ofLex_toLex, ofLex_toLex, hg _ (toBlock_eq_toBlock.2 h.atMostMarginal)]
   exact (g _).strictMono h.lt
+
+/-- The block coordinate of a homomorphism into lexicographic pairs embeds the blocks. -/
+noncomputable def IsHom.fstOrderEmbedding (hf : ml.IsHom (lex β γ) f) : ml.Block ↪o β :=
+  hf.mapBlock.trans (lexBlockOrderIso β γ).toOrderEmbedding
+
+@[simp]
+theorem IsHom.fstOrderEmbedding_toBlock (hf : ml.IsHom (lex β γ) f) (x : α) :
+    hf.fstOrderEmbedding (ml.toBlock x) = (ofLex (f x)).1 :=
+  rfl
+
+/-- The location coordinate of a homomorphism into lexicographic pairs embeds the degrees of each
+block. -/
+def IsHom.sndOrderEmbedding (hf : ml.IsHom (lex β γ) f) (q : ml.Block) :
+    {x // ml.toBlock x = q} ↪o γ :=
+  OrderEmbedding.ofStrictMono (fun x ↦ (ofLex (f x)).2) fun a b hab ↦
+    (isHom_lex_iff.1 hf).2 <| marginallyLT_iff_lt_and_atMostMarginal.2
+      ⟨hab, toBlock_eq_toBlock.1 (a.2.trans b.2.symm)⟩
+
+@[simp]
+theorem IsHom.sndOrderEmbedding_apply (hf : ml.IsHom (lex β γ) f) (q : ml.Block)
+    (x : {x // ml.toBlock x = q}) : hf.sndOrderEmbedding q x = (ofLex (f x)).2 :=
+  rfl
+
+variable (ml β γ) in
+/-- A homomorphism into lexicographic pairs is an embedding of the blocks together with an
+embedding of the degrees of each block. -/
+noncomputable def isHomLexEquiv : {f : α → β ×ₗ γ // ml.IsHom (lex β γ) f} ≃
+    (ml.Block ↪o β) × ∀ q, {x // ml.toBlock x = q} ↪o γ where
+  toFun f := (f.2.fstOrderEmbedding, f.2.sndOrderEmbedding)
+  invFun p := ⟨_, isHom_toLex p.1 p.2⟩
+  left_inv _ := rfl
+  right_inv p := Prod.ext (DFunLike.ext _ _ <| Block.ind fun _ ↦ rfl) <| funext fun q ↦
+    DFunLike.ext _ _ fun ⟨x, hx⟩ ↦ by subst hx; rfl
 
 end Lex
 
