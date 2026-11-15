@@ -1,7 +1,8 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Morphology.DistributedMorphology.Allosemy
+public import Linglib.Morphology.DistributedMorphology.Nominalization
+public import Linglib.Semantics.Composition.Rules
 public import Linglib.Data.Examples.Benz2025
 public import Linglib.Fragments.German.Verbs
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
@@ -25,7 +26,10 @@ the complex change-of-state structure of Roßdeutscher and Kamp (Ch. 5).
 
 Alloseme selection is the substrate's own engine: allosemes are Vocabulary Items over
 neighborhoods, applicability is the Subset Principle, and the canonical choice is Elsewhere
-competition. The readings are derived from typed denotations, and the co-occurrence and
+competition. The readings are those of the licensed allosemes that compose, by type, on the
+composition engine; with (65b)'s Theme-introducing v the result alloseme does not compose over
+an interpreted v, and (69a)'s two-place root under a vacuous v is read as a relation the root
+supplies. The co-occurrence and
 nominalization paradigms are predicted cell by cell against the example rows, the Table 3
 combinations, the resultative data of Creemers and the *-ung* and *Ge-…-e* forms of
 Ch. 5, with the base verbs read from the German fragment.
@@ -110,16 +114,70 @@ def vContext (eventive : Bool) : Neighborhood (Finset Feature) :=
 def nContext (eventive : Bool) : Neighborhood (Finset Feature) :=
   complement (insert (.cat .v) (if eventive then {.eventive} else ∅))
 
-/-- `availableReadings eventive` lists the readings derivable in the nominalization structure,
-those of any licensed v alloseme composed with any licensed n alloseme. -/
-def availableReadings (eventive : Bool) : List NominalizationReading :=
-  (licensed Verbalizer.vocabulary (vContext eventive)).flatMap (λ v =>
-    (licensed Nominalizer.vocabulary (nContext eventive)).filterMap
-      (readingFromAllosemes v))
-
 theorem v_allosemes_licensed :
     licensed Verbalizer.vocabulary (vContext true) = [.eventive, .zero] ∧
     licensed Verbalizer.vocabulary (vContext false) = [.zero] := ⟨rfl, rfl⟩
+
+/-! ### The composition of the readings
+
+The meanings of the nominalization are composed from the typed items of
+`DistributedMorphology/Nominalization.lean`, the complex head `[[√ v] n]` being read with its
+zero heads pruned. -/
+
+/-- The rules of the complex head: Functional Application and Predicate Conjunction. -/
+abbrev grammar : ManySorted.Language (Interpreter.Ty Interpreter.Base) :=
+  Interpreter.application.sum Interpreter.predicateModification
+
+/-- The items a terminal of the complex head may be. Eventive v introduces the Theme, (65b), and
+the root is a predicate of entities or of eventualities, or the relation of (69a). -/
+def items : Unit ⊕ Categorizer → List (Σ a, Item a)
+  | .inl _ => [⟨_, .rootEntity⟩, ⟨_, .rootEvent⟩, ⟨_, .rootRel⟩]
+  | .inr (.v .eventive) => [⟨_, .theme⟩]
+  | .inr (.v _) => []
+  | .inr (.n a) => a.items
+
+/-- The complex head of the nominalization with the allosemes `v` and `n`. -/
+def nominal (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) :
+    ComplexHead Unit Categorizer :=
+  ⟨(), [.v v, .n n]⟩
+
+/-- The types of the derivations of the nominalization. -/
+def types (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) :
+    List (Interpreter.Ty Interpreter.Base) :=
+  ((nominal v n).skeleton Categorizer.IsZero).elim [] fun s ↦
+    ((Interpreter.typeDriven grammar).derivs items s).map (·.1)
+
+/-- The allosemes `v` and `n` compose on some construal of the root. -/
+def Composes (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) : Prop := types v n ≠ []
+
+instance : DecidableRel Composes := fun _ _ ↦ inferInstanceAs (Decidable (_ ≠ _))
+
+/-- Eventive v gives a relation between an entity and an eventuality, which the noun keeps when
+n is pruned and which only the content alloseme of n takes; with v pruned the root meets n. -/
+theorem composes_iff (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) :
+    Composes v n ↔ (v = .eventive ∧ (n = .zero ∨ n = .content)) ∨
+      (v = .zero ∧ (n = .simpleEvent ∨ n = .state ∨ n = .entity ∨ n = .result ∨
+        n = .content)) := by
+  revert v n
+  decide
+
+-- The alloseme pair adopted for each reading composes.
+theorem adopted_composes (r : NominalizationReading) :
+    Composes (adoptedAllosemes r).1 (adoptedAllosemes r).2 := by
+  revert r
+  decide
+
+/-- The result alloseme does not compose over eventive v: a result nominalization has no
+position for an argument. -/
+theorem not_composes_eventive_result : ¬ Composes .eventive .result := by decide
+
+/-- `availableReadings eventive` lists the readings of the nominalization over a root that is
+event-entailing or not: those of the allosemes of v and n licensed in their contexts that
+compose. -/
+def availableReadings (eventive : Bool) : List NominalizationReading :=
+  (licensed Verbalizer.vocabulary (vContext eventive)).flatMap fun v ↦
+    ((licensed Nominalizer.vocabulary (nContext eventive)).filter (Composes v ·)).filterMap
+      (readingFromAllosemes v)
 
 -- (32)
 theorem beobachtung_readings_available :
@@ -128,135 +186,46 @@ theorem beobachtung_readings_available :
 
 -- Table 2
 theorem nonEventive_readings :
-    availableReadings false = [.content, .simpleEvent, .simpleState, .simpleEntity] := rfl
+    availableReadings false = [.content, .simpleEvent, .simpleState, .simpleEntity] := by
+  decide
 
-/-! ### Typed alloseme denotations (Ch. 3)
+section Denotations
 
-The denotations of the deverbal allosemes, after [wood-2023] as taken over
-in Ch. 3: nominalization semantics runs over a domain in which eventualities
-are entities, and each n alloseme builds an entity predicate from what v
-hands it. The reading typology is then derived, not tabulated: readings exist
-exactly where the composition is defined
-(`readingFromAllosemes_isSome_iff_denote`), and the analytical options for
-the result and content readings compose to identical entity predicates
-(`result_options_pred_agree`, `content_options_agree`). -/
+variable {E V : Type} (m : NominalizationModel E V) (ρ : RootMeaning E V)
 
-variable {E S : Type*}
+/-- The denotations of the nominalization, one for each of its derivations. -/
+def denotations (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) :
+    List (Interpreter.Denotation E Unit { eventuality := V }) :=
+  ((nominal v n).skeleton Categorizer.IsZero).elim [] <|
+    (Interpreter.typeDriven grammar).values
+      (D := Interpreter.Ty.Dom (Interpreter.Base.Dom E Unit { eventuality := V })) inferInstance
+      (Item.val m ρ) items
 
-/-- A model for nominalization denotations embeds the eventualities into the entity domain, since
-a nominal can describe an event as an entity, and splits them into stative and dynamic; `result`
-relates an entity to the eventuality that produced it, and `hasContent` picks out the entities with
-propositional content. -/
-structure NominalizationModel (E S : Type*) where
-  /-- Eventualities as entities. -/
-  ev : S → E
-  ev_injective : Function.Injective ev
-  /-- Stative eventualities. -/
-  stative : S → Prop
-  /-- The entity is the result of the eventuality. -/
-  result : E → S → Prop
-  /-- The entity has propositional content (*rumor*, *idea*, *claim*). -/
-  hasContent : E → Prop
+/-- (65): on the event reading n is vacuous and the noun has the verb's meaning, a relation of
+the Theme to the eventuality. -/
+theorem denotations_event :
+    denotations m ρ .eventive .zero = [⟨.evt, fun x e ↦ ρ.onEvents e ∧ m.theme x e⟩] :=
+  rfl
 
-/-- A root contributes to nominalization semantics what it says of entities and of eventualities,
-and its Theme relation, which relates an eventuality of the root's kind to the entity it is
-predicated of. -/
-structure RootMeaning (E S : Type*) where
-  onEntities : E → Prop
-  onEvents : S → Prop
-  theme : E → S → Prop
+-- (67): the result reading, over a vacuous v.
+theorem denotations_result :
+    denotations m ρ .zero .result = [⟨.et, fun x ↦ ∃ e, ρ.onEvents e ∧ m.result x e⟩] :=
+  rfl
 
-/-- v hands to n verbal event content together with the Theme position it introduces under the
-eventive alloseme (§2.2), and the untouched root with no argument position under the zero
-alloseme, since v then introduces none (§3.5). -/
-inductive VerbalDenotation (E S : Type*) where
-  | eventive (p : S → Prop) (theme : E → S → Prop)
-  | zero (ρ : RootMeaning E S)
+-- (69a): the content reading over a vacuous v, the root relating the entity to an eventuality.
+theorem denotations_content :
+    denotations m ρ .zero .content = [⟨.et, fun x ↦ (∃ e, ρ.rel x e) ∧ m.hasContent x⟩] :=
+  rfl
 
-/-- `denoteV ρ a` applies the v alloseme `a` to the root `ρ`. -/
-def denoteV (ρ : RootMeaning E S) : Verbalizer.Alloseme → VerbalDenotation E S
-  | .eventive => .eventive ρ.onEvents ρ.theme
-  | .zero     => .zero ρ
+/-- The content reading also composes over eventive v, and describes the same entities as over
+a vacuous v when the root's relation is its event predicate with the Theme. -/
+theorem denotations_content_eventive
+    (h : ρ.rel = fun x e ↦ ρ.onEvents e ∧ m.theme x e) :
+    denotations m ρ .eventive .content = denotations m ρ .zero .content := by
+  rw [denotations_content, h]
+  rfl
 
-/-- A nominal denotation is the entity predicate, together with the internal-argument relation
-when the nominal retains one. The relation is
-present exactly when v introduced the Theme position — no such position
-is part of the denotation unless v contributes it (§2.2, §3.5). -/
-structure NominalDenotation (E S : Type*) where
-  /-- What the nominal describes. -/
-  pred : E → Prop
-  /-- `internalArg y x` holds when `y` saturates the Theme position of the nominal `x` (*the
-  observation of the sky*). -/
-  internalArg : Option (E → E → Prop) := none
-
-/-- `denoteN m d a` applies the n alloseme `a` to v's output `d`, and is `none` where the
-combination is uninterpretable. The CEN describes the events the verb describes and
-retains the Theme position v introduced; the SEN predicates the root's
-entity content of an event-entity; the result alloseme picks out what an
-event of the root's kind produced ([wood-2023]'s denotation); the content
-alloseme ignores the verbal layer entirely. The non-deverbal allosemes
-have their semantics in `Semantics/Possession/Relationalizer.lean`. -/
-def denoteN (m : NominalizationModel E S) :
-    VerbalDenotation E S → Nominalizer.Alloseme → Option (NominalDenotation E S)
-  | .eventive p θ, .zero =>
-      some { pred := fun x => ∃ e, x = m.ev e ∧ p e
-           , internalArg := some fun y x => ∃ e, x = m.ev e ∧ p e ∧ θ y e }
-  | .eventive p θ, .result =>
-      some { pred := fun x => ∃ e, p e ∧ m.result x e
-           , internalArg := some fun y x => ∃ e, p e ∧ θ y e ∧ m.result x e }
-  | .eventive _ _, .content => some { pred := m.hasContent }
-  | .zero ρ, .simpleEvent =>
-      some { pred := fun x => ρ.onEntities x ∧ ∃ e, x = m.ev e }
-  | .zero ρ, .state =>
-      some { pred := fun x => ∃ e, x = m.ev e ∧ m.stative e ∧ ρ.onEvents e }
-  | .zero ρ, .result =>
-      some { pred := fun x => ∃ e, ρ.onEvents e ∧ m.result x e }
-  | .zero ρ, .entity => some { pred := ρ.onEntities }
-  | .zero _, .content => some { pred := m.hasContent }
-  | _, _ => none
-
--- §3.5 [wood-2023]
-theorem result_options_pred_agree (m : NominalizationModel E S) (ρ : RootMeaning E S) :
-    (denoteN m (denoteV ρ .eventive) .result).map (·.pred)
-      = (denoteN m (denoteV ρ .zero) .result).map (·.pred) := rfl
-
--- §3.5 [wood-2023]
-theorem result_options_disagree_on_arguments (m : NominalizationModel E S)
-    (ρ : RootMeaning E S) :
-    (∃ r, denoteN m (denoteV ρ .eventive) .result = some r ∧ r.internalArg.isSome)
-      ∧ ∃ r, denoteN m (denoteV ρ .zero) .result = some r ∧ r.internalArg = none :=
-  ⟨⟨_, rfl, rfl⟩, _, rfl, rfl⟩
-
-theorem cen_retains_argument_structure (m : NominalizationModel E S) (ρ : RootMeaning E S) :
-    ∃ r, denoteN m (denoteV ρ .eventive) .zero = some r ∧ r.internalArg.isSome :=
-  ⟨_, rfl, rfl⟩
-
--- §3.5
-theorem zero_v_no_argument_structure (m : NominalizationModel E S) (ρ : RootMeaning E S)
-    (n : Nominalizer.Alloseme) {r : NominalDenotation E S}
-    (h : denoteN m (denoteV ρ .zero) n = some r) : r.internalArg = none := by
-  rcases n with _ | cn
-  · simp [denoteV, denoteN] at h
-  · cases cn <;> simp only [denoteV, denoteN, Option.some.injEq, reduceCtorEq] at h <;>
-      (try subst h) <;> rfl
-
--- §3.5
-theorem content_options_agree (m : NominalizationModel E S) (ρ : RootMeaning E S) :
-    denoteN m (denoteV ρ .eventive) .content = denoteN m (denoteV ρ .zero) .content := rfl
-
-theorem readingFromAllosemes_isSome_iff_denote (m : NominalizationModel E S)
-    (ρ : RootMeaning E S) (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) :
-    (readingFromAllosemes v n).isSome ↔ (denoteN m (denoteV ρ v) n).isSome := by
-  rcases v with _ | cv <;> rcases n with _ | cn <;> (try cases cv) <;> (try cases cn) <;>
-    simp [readingFromAllosemes, denoteV, denoteN]
-
-theorem cen_denotes_events (m : NominalizationModel E S) (ρ : RootMeaning E S)
-    {r : NominalDenotation E S} (h : denoteN m (denoteV ρ .eventive) .zero = some r) :
-    ∀ x, r.pred x → ∃ e, x = m.ev e := by
-  simp only [denoteV, denoteN, Option.some.injEq] at h
-  subst h
-  rintro x ⟨e, rfl, -⟩
-  exact ⟨e, rfl⟩
+end Denotations
 
 /-! ## Prefixes, particles, and resultatives (Ch. 4) -/
 
@@ -357,8 +326,8 @@ inductive Blocked : PreverbalElement → PreverbalElement → Prop where
 theorem blocked_iff : Blocked outer inner ↔ ¬ Allowed outer inner := by
   constructor
   · rintro (hi | ⟨ho, hi⟩)
-    · exact λ ⟨hs, _⟩ => by simp [StructurallyCompatible, IncorporationAllowed, hi] at hs
-    · exact λ ⟨_, hint⟩ => hint ⟨ho, hi⟩
+    · exact fun ⟨hs, _⟩ ↦ by simp [StructurallyCompatible, IncorporationAllowed, hi] at hs
+    · exact fun ⟨_, hint⟩ ↦ hint ⟨ho, hi⟩
   · intro h
     revert h
     cases outer <;> cases inner <;> intro h <;>
