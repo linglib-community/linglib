@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modification.Classification
+public import Linglib.Semantics.Modification.Intensional
 
 /-!
 # Noun coercion licensed by non-vacuity

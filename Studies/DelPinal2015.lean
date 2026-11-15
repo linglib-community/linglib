@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modification.Coercion
+public import Linglib.Semantics.Modification.NonVacuity
 public import Studies.Pustejovsky1995
 public import Mathlib.Order.CompleteLattice.Basic
 

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modification.Coercion
+public import Linglib.Semantics.Modification.NonVacuity
 public import Studies.Kamp1975
 public import Linglib.Data.Examples.Schema
 public import Linglib.Data.Examples.Partee2010

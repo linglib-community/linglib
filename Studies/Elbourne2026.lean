@@ -6,7 +6,7 @@ public import Linglib.Semantics.ArgumentStructure.ThematicRole
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Mode
 public import Linglib.Semantics.Composition.Sorts
-public import Linglib.Semantics.Modification.Classification
+public import Linglib.Semantics.Modification.Intensional
 public import Linglib.Semantics.Quantification.Basic
 public import Mathlib.Data.Finset.Image
 public import Mathlib.Data.Finset.Powerset
