@@ -9,6 +9,7 @@ public import Linglib.Core.Data.UnorderedTree.Basic
 public import Linglib.Core.Data.UnorderedTree.Leaves
 public import Linglib.Core.Algebra.MonoidAlgebra.Multiset
 public import Linglib.Core.Data.Multiset.Bind
+public import Linglib.Core.Data.Multiset.Sections
 public import Linglib.Core.Data.RoseTree.Basic
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 public import Mathlib.Data.Multiset.Antidiagonal
@@ -402,11 +403,7 @@ product adds crowns and trunks. -/
 theorem ofMultiset_forestCuts (F : Multiset γ) :
     AddMonoidAlgebra.ofMultiset (forestCuts cuts F) =
       (F.map fun t ↦ AddMonoidAlgebra.ofMultiset (treeCuts cuts t)).prod := by
-  induction F using Multiset.induction with
-  | empty => rw [forestCuts_zero, AddMonoidAlgebra.ofMultiset_singleton]; rfl
-  | cons t F ih =>
-    rw [forestCuts_cons, AddMonoidAlgebra.ofMultiset_map_add_product, ih, Multiset.map_cons,
-      Multiset.prod_cons]
+  rw [forestCuts, AddMonoidAlgebra.ofMultiset_map_sum_sections, Multiset.map_map]; rfl
 
 theorem forestCuts_add (F G : Multiset γ) :
     forestCuts cuts (F + G) =
@@ -428,12 +425,13 @@ theorem forestCuts_map (h : ∀ t, cuts' (f t) = (cuts t).map (Prod.map (Multise
     (F : Multiset γ) :
     forestCuts cuts' (F.map f) =
       (forestCuts cuts F).map (Prod.map (Multiset.map f) (Multiset.map f)) := by
-  induction F using Multiset.induction with
-  | empty => simp [forestCuts_zero]
-  | cons t F ih =>
-    rw [Multiset.map_cons, forestCuts_cons, treeCuts_map h, ih, forestCuts_cons]
-    exact (Multiset.map_map_product_distrib (fun _ _ ↦
-      Prod.ext (Multiset.map_add ..) (Multiset.map_add ..)) _ _).symm
+  have hF : (F.map f).map (treeCuts cuts') = (F.map (treeCuts cuts)).map
+      (Multiset.map (Prod.map (Multiset.map f) (Multiset.map f))) := by
+    rw [Multiset.map_map, Multiset.map_map]
+    exact Multiset.map_congr rfl fun t _ ↦ treeCuts_map h t
+  rw [forestCuts, hF, Multiset.sections_map, Multiset.map_map, forestCuts, Multiset.map_map]
+  exact Multiset.map_congr rfl fun s _ ↦ (map_multiset_sum
+    ((Multiset.mapAddMonoidHom f).prodMap (Multiset.mapAddMonoidHom f)) s).symm
 
 end Convolution
 
@@ -542,12 +540,12 @@ theorem forestCutChoices_cons (T : UnorderedTree α) (F : Multiset (UnorderedTre
 theorem forestCuts_eq_map_forestCutChoices (F : Multiset (UnorderedTree α)) :
     forestCuts cuts F = (forestCutChoices cuts F).map fun s ↦ (s.crown, s.trunk) := by
   change _ = (forestCutChoices cuts F).map fun s ↦ (s.map Prod.snd).sum
-  induction F using Multiset.induction with
-  | empty => simp [forestCuts_zero, forestCutChoices_zero]
-  | cons T F ih =>
-    rw [forestCuts_cons, ih, forestCutChoices_cons, Multiset.map_bind]
-    simp only [SProd.sprod, Multiset.product, Multiset.map_bind, Multiset.map_map,
-      Function.comp_def, Multiset.map_cons, Multiset.sum_cons]
+  have hF : F.map (treeCuts cuts) =
+      (F.map fun T ↦ (treeCuts cuts T).map (Prod.mk T)).map (Multiset.map Prod.snd) := by
+    rw [Multiset.map_map]
+    exact Multiset.map_congr rfl fun T _ ↦ by simp [Multiset.map_map]
+  rw [forestCuts, hF, Multiset.sections_map, Multiset.map_map]
+  rfl
 
 variable {cuts} {F G : Multiset (UnorderedTree α)} {s t : CutChoice α}
   {x : UnorderedTree α × (Multiset (UnorderedTree α) × Multiset (UnorderedTree α))}
