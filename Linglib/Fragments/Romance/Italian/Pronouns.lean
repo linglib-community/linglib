@@ -8,7 +8,8 @@ public import Linglib.Syntax.Category.Pronoun.Reflexive
 
 Italian has a tonic series of personal pronouns and an atonic series of object pronouns. The
 tonic second person distinguishes familiar *tu* and *voi* from polite *Lei*, which agrees as a
-third person singular, and the archaic polite plural *Loro*.
+third person feminine singular, and the archaic polite plural *Loro*, which agrees as a third
+person plural.
 
 The atonic first and second persons have one form each for direct object, indirect object and
 reflexive use: *mi*, *ti*, *ci* and *vi*. Only the third person tells the three apart: accusative
@@ -72,12 +73,12 @@ def tu : PersonalPronoun :=
   { form := "tu", person := some .second, number := some .singular,
     strength := some .strong }
 
-/-- The polite second person singular *Lei*, the V form. It agrees as a third person singular,
-patterns with the feminine singular clitics and binds the third-person reflexive *si*, but it
-denotes the addressee, so it triggers PCC and Fancy Constraint effects and second person plural
-resolved agreement in coordination ([adamson-zompi-2025]). -/
+/-- The polite second person singular *Lei*, the V form. It agrees as a third person feminine
+singular, patterns with the feminine singular clitics and binds the third-person reflexive *si*,
+but it denotes the addressee, so it triggers PCC and Fancy Constraint effects and second person
+plural resolved agreement in coordination ([adamson-zompi-2025]). -/
 def lei_formal : PersonalPronoun :=
-  { form := "Lei", person := some .third, number := some .singular,
+  { form := "Lei", person := some .third, number := some .singular, gender := some .Fem,
     referential := {.addressee}, strength := some .strong }
 
 /-- *lui* — 3sg masculine. -/
@@ -99,10 +100,12 @@ def voi : PersonalPronoun :=
   { form := "voi", person := some .second, number := some .plural,
     strength := some .strong }
 
-/-- *Loro* — 2pl formal (archaic, largely replaced by *voi*). -/
+/-- The polite second person plural *Loro*, archaic and largely replaced by *voi*. Like *Lei* it
+is identical in form to the third person pronoun and takes third person plural verb forms
+([maiden-robustelli-2007]), and it denotes the addressees. -/
 def loro_formal : PersonalPronoun :=
-  { form := "Loro", person := some .second, number := some .plural,
-    strength := some .strong }
+  { form := "Loro", person := some .third, number := some .plural,
+    referential := voi.referential, strength := some .strong }
 
 /-- *loro* — 3pl. -/
 def loro : PersonalPronoun :=

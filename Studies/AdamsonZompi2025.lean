@@ -3,10 +3,11 @@ module
 public import Linglib.Syntax.Agreement.PersonCaseConstraint
 public import Linglib.Syntax.Person.Lattice
 public import Linglib.Fragments.Romance.Italian.Pronouns
-public import Linglib.Fragments.Romance.Spanish.Pronouns
+public import Linglib.Fragments.Romance.Spanish.Clitics
 public import Linglib.Fragments.German.Pronouns
 public import Studies.Deal2024
 public import Studies.CoonKeine2021
+public import Studies.CharnavelMateu2015
 public import Linglib.Data.Examples.AdamsonZompi2025
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -14,23 +15,45 @@ public import Linglib.Data.Examples.Languages
 /-!
 # Polite pronouns and the person-case constraint
 
-The Italian polite pronoun LEI is formally third person feminine singular but refers to the
-addressee, and in a ditransitive clitic cluster it patterns with the second person. Adamson and
-Zompì give polite pronouns two person values, an uninterpretable one read by agreement and an
-interpretable one read at LF, and argue that the person-case constraint reads the interpretable
-one. A person restriction is stated over a person valuation of pronoun entries (`Licit`): the
-agreement valuation `Morphosyntactic` reads the fragments' `person` and the LF valuation
-`Syntacticosemantic` their `referentialPerson`.
+The Italian polite pronoun LEI has the forms and the agreement of the third person feminine
+singular and refers to the addressee. Adamson and Zompì give a polite pronoun two person values,
+an uninterpretable one that agreement copies and an interpretable one read at LF, and ask which
+of the two a person restriction on clitic clusters reads. A restriction that never bans a third
+person accusative, read over the uninterpretable value,
+[licenses a polite accusative under any dative](##AdamsonZompi2025.licit_formal_polite), and
+this holds of the P-Constraint, interaction and satisfaction, and feature gluttony alike. Read
+over the interpretable value, a restriction
+[bans a polite accusative wherever it bans a second
+person](##AdamsonZompi2025.politeness_prediction),
+which is [what the Italian, Spanish and German clusters show](##AdamsonZompi2025.rows_predicted).
+German assumed-identity copulas go the other way: there
+[polite SIE behaves as the third person plural it agrees as](##AdamsonZompi2025.assumed_identity).
 
 ## Implementation notes
 
-As in the paper, the rejection by some Weak-PCC speakers of a first person dative over accusative
-LEI is left open (`first_dative_lei`). The Person Licensing Condition, the clitic logophoric
-restriction, and the rival accounts of polite pronouns by impoverishment or by unmarked-value
-recruitment have no formal counterpart here. The reader `pair?` reads only the rows whose
-`dative` and `accusative` features name a single pronoun, which leaves out the repair rows
-(stressed pronouns and prepositional datives obviate the constraint), the ambiguous clusters and
-the camouflage resumptions.
+A cluster is the scenario of the persons its two pronouns offer to Agree (`agreed`), each of
+them optional, and a restriction licenses it when it licenses every scenario of persons the
+cluster presents (`Licit`). A strong pronoun offers no person, since it is not cliticized and
+enters no Agree relation with the applicative head; this is what makes a stressed pronoun or a
+prepositional dative obviate the constraint. The causee of a *faire infinitif* causative enters
+the Fancy Constraint as a third person whether or not it is a clitic.
+
+A polite clitic is its third person counterpart denoting the addressee (`polite`), so Italian
+*La* is `polite la`. The German pronouns of a Wackernagel cluster are weak; the fragment records
+no strength for them, and they are read as offering their person.
+
+The reader `scenario?` leaves out the rows whose gloss names two pronouns for one clitic. The
+clitic logophoric restriction is stated on Charnavel and Mateu's hierarchy of logophoric centers,
+which reads the person a clitic denotes; that some speakers reject a second person dative over
+an accusative attitude holder is not derived. The Person Licensing Condition and the accounts of
+polite pronouns by impoverishment or by recruitment of unmarked values have no formal
+counterpart here.
+
+## TODO
+
+* The rejection by some Weak-PCC speakers of a first person dative over accusative LEI is not
+  derived: the two grammars split on that cluster as they do on a first person dative over a
+  second person accusative, where the paper finds the two judgments uncorrelated.
 
 ## References
 
@@ -51,170 +74,237 @@ the camouflage resumptions.
 
 namespace AdamsonZompi2025
 
-open PCC Italian.Pronouns
+open PCC Italian.Pronouns Clause
 
-/-! ### Person restrictions over a person valuation -/
+/-! ### The two person values of a pronoun -/
 
-/-- `R` licenses the dative–accusative pair `dat`, `acc` under the person valuation `person`
-when it licenses the scenario of the dative's person over the accusative's. -/
-def Licit (R : Clause.Scenario Person → Prop) (person : PersonalPronoun → Option Person)
-    (dat acc : PersonalPronoun) : Prop :=
-  ∃ p q, person dat = some p ∧ person acc = some q ∧ R ⟨p, q⟩
+/-- The polite counterpart of a third person pronoun: its form and agreement features, denoting
+the addressee. -/
+def polite (c : PersonalPronoun) : PersonalPronoun := { c with referential := {.addressee} }
 
-instance (R : Clause.Scenario Person → Prop) [DecidablePred R]
-    (person : PersonalPronoun → Option Person) (dat acc : PersonalPronoun) :
-    Decidable (Licit R person dat acc) := by
-  unfold Licit; infer_instance
+/-- The person a pronoun offers to Agree, given the person value `person` that Agree copies.
+A strong pronoun, which is not cliticized, offers none. -/
+def agreed (person : PersonalPronoun → Option Person) (c : PersonalPronoun) : Option Person :=
+  if c.strength = some .strong then none else person c
 
-/-- The morphosyntactic prediction has `R` read agreement person. -/
-abbrev Morphosyntactic (R : Clause.Scenario Person → Prop) := Licit R (·.person)
+/-- The uninterpretable person value, the one agreement morphology realizes. -/
+abbrev formal : PersonalPronoun → Option Person := agreed (·.person)
 
-/-- The syntacticosemantic prediction has `R` read referential person. -/
-abbrev Syntacticosemantic (R : Clause.Scenario Person → Prop) :=
-  Licit R PersonalPronoun.referentialPerson
+/-- The interpretable person value, the one read at LF. -/
+abbrev interpretable : PersonalPronoun → Option Person := agreed PersonalPronoun.referentialPerson
 
-variable {R : Clause.Scenario Person → Prop} {dat acc : PersonalPronoun}
+variable {R R' : Scenario Person → Prop} {s : Scenario (Option Person)} {o : Option Person}
+  {c : PersonalPronoun} {p q : Person} {person : PersonalPronoun → Option Person}
 
-/-- The two predictions coincide on ordinary pronouns, those denoting exactly the categories
-their agreement features realize. -/
-theorem morphosyntactic_iff_of_ordinary (hd : dat.IsOrdinary) (hd' : dat.referential.Nonempty)
-    (ha : acc.IsOrdinary) (ha' : acc.referential.Nonempty) :
-    Morphosyntactic R dat acc ↔ Syntacticosemantic R dat acc := by
-  simp [Licit, PersonalPronoun.referentialPerson_eq_person hd hd',
-    PersonalPronoun.referentialPerson_eq_person ha ha']
+theorem agreed_of_strong (h : c.strength = some .strong) : agreed person c = none := by
+  simp [agreed, h]
 
-/-- Every restriction reading agreement person treats LEI as *lei*. -/
-theorem morphosyntactic_lei_formal :
-    (Morphosyntactic R dat lei_formal ↔ Morphosyntactic R dat lei) ∧
-      (Morphosyntactic R lei_formal acc ↔ Morphosyntactic R lei acc) :=
-  ⟨Iff.rfl, Iff.rfl⟩
+theorem agreed_of_ne_strong (h : c.strength ≠ some .strong) : agreed person c = person c := by
+  simp [agreed, h]
 
-/-- Every restriction reading interpretable person treats LEI as *tu*. -/
-theorem syntacticosemantic_lei_formal :
-    (Syntacticosemantic R dat lei_formal ↔ Syntacticosemantic R dat tu) ∧
-      (Syntacticosemantic R lei_formal acc ↔ Syntacticosemantic R tu acc) :=
-  ⟨Iff.rfl, Iff.rfl⟩
+@[simp] theorem formal_polite (c : PersonalPronoun) : formal (polite c) = formal c := rfl
+
+theorem interpretable_polite (h : c.strength ≠ some .strong) :
+    interpretable (polite c) = some .second := by
+  rw [interpretable, agreed_of_ne_strong (c := polite c) h]
+  exact Person.Category.sharedPerson_singleton .addressee
+
+-- Italian LEI is the third person feminine singular *lei* denoting the addressee, capitalized
+-- in writing.
+theorem lei_formal_eq : lei_formal = { polite lei with form := "Lei" } := rfl
+
+/-! ### Person restrictions on clusters -/
+
+/-- The restriction `R` licenses a cluster when it licenses every scenario of persons the
+cluster presents to Agree, the higher-ranked argument's over the accusative's. -/
+def Licit (R : Scenario Person → Prop) (s : Scenario (Option Person)) : Prop :=
+  ∀ p ∈ s.high, ∀ q ∈ s.low, R ⟨p, q⟩
+
+instance [DecidablePred R] : DecidablePred (Licit R) :=
+  fun _ ↦ inferInstanceAs (Decidable (∀ p ∈ _, ∀ q ∈ _, _))
+
+@[simp] theorem licit_some : Licit R ⟨some p, some q⟩ ↔ R ⟨p, q⟩ := by simp [Licit]
+
+@[simp] theorem licit_none_high : Licit R ⟨none, o⟩ := by simp [Licit]
+
+@[simp] theorem licit_none_low : Licit R ⟨o, none⟩ := by simp [Licit]
+
+theorem Licit.mono (h : ∀ t, R t → R' t) (hs : Licit R s) : Licit R' s :=
+  fun p hp q hq ↦ h _ (hs p hp q hq)
+
+/-- A restriction that never bans a third person accusative, read over the uninterpretable
+person value, licenses a polite accusative under any higher argument. -/
+theorem licit_formal_polite (hR : ∀ p, R ⟨p, .third⟩) (hc : c.person = some .third)
+    (o : Option Person) : Licit R ⟨o, formal (polite c)⟩ := by
+  intro p _ q hq
+  obtain rfl : q = .third := by
+    by_cases h : c.strength = some .strong <;> simp_all [agreed]
+  exact hR p
+
+/-- The PCC and politeness prediction: read over the interpretable person value, a restriction
+that bans a second person accusative under a `p` bans a polite accusative clitic under it. -/
+theorem politeness_prediction (hc : c.strength ≠ some .strong) (h : ¬ R ⟨p, .second⟩) :
+    ¬ Licit R ⟨some p, interpretable (polite c)⟩ := by
+  rwa [interpretable_polite hc, licit_some]
+
+/-! ### The morphosyntactic accounts -/
+
+-- The Weak and the Strong P-Constraint license a third person accusative under any dative.
+theorem isLicit_third : ∀ g ∈ [weakGrammar, strongGrammar], ∀ p, IsLicit g ⟨p, .third⟩ := by
+  decide
+
+-- Interaction and satisfaction: a grammar licensing anything licenses a polite accusative.
+theorem deal_licenses_polite {g : Deal2024.Grammar} {t : Scenario Person}
+    (h : Deal2024.Licit g t) (hc : c.person = some .third) (o : Option Person) :
+    Licit (Deal2024.Licit g) ⟨o, formal (polite c)⟩ :=
+  licit_formal_polite h.third hc o
+
+-- Feature gluttony: no probe is gluttonous over a polite accusative.
+theorem gluttony_licenses_polite (P : Finset Phi.PersonSegment) (ioOpaque : Bool)
+    (hc : c.person = some .third) (o : Option Person) :
+    Licit (¬ CoonKeine2021.PCCViolation P ioOpaque ·) ⟨o, formal (polite c)⟩ :=
+  licit_formal_polite (CoonKeine2021.direct_never_banned P ioOpaque) hc o
 
 /-! ### Italian -/
 
-/-- The Italian grammars are Weak for most speakers and Strong for those rejecting 1>2 and 2>1. -/
-def grammars : List Grammar := [weakGrammar, strongGrammar]
-
-theorem baseline : ∀ g ∈ grammars,
-    Syntacticosemantic (IsLicit g) tu lei ∧ Syntacticosemantic (IsLicit g) lui lei ∧
-      ¬ Syntacticosemantic (IsLicit g) lui tu := by
+-- Dative LEI over a third person accusative is licit on either person value.
+theorem lei_dative : ∀ g ∈ [weakGrammar, strongGrammar],
+    Licit (IsLicit g) ⟨formal (polite le_dat), formal la⟩ ∧
+      Licit (IsLicit g) ⟨interpretable (polite le_dat), interpretable la⟩ := by
   decide
 
-theorem lei_dative : ∀ g ∈ grammars,
-    Morphosyntactic (IsLicit g) lei_formal lei ∧
-      Syntacticosemantic (IsLicit g) lei_formal lei := by
+-- A third person dative over accusative LEI is licensed on the uninterpretable value and banned
+-- on the interpretable one.
+theorem lei_accusative : ∀ g ∈ [weakGrammar, strongGrammar],
+    Licit (IsLicit g) ⟨formal gli, formal (polite la)⟩ ∧
+      ¬ Licit (IsLicit g) ⟨interpretable gli, interpretable (polite la)⟩ := by
   decide
 
-/-- A third person dative over accusative LEI is licensed on agreement person and banned on
-interpretable person. -/
-theorem lei_accusative : ∀ g ∈ grammars,
-    Morphosyntactic (IsLicit g) lui lei_formal ∧
-      ¬ Syntacticosemantic (IsLicit g) lui lei_formal := by
-  decide
+-- Stressed LEI and a prepositional dative obviate the constraint.
+theorem lei_repairs :
+    Licit R ⟨interpretable gli, interpretable lei_formal⟩ ∧
+      Licit R ⟨interpretable lui, interpretable (polite la)⟩ :=
+  ⟨licit_none_low, licit_none_high⟩
 
-/-- The interaction–satisfaction grammars, read over agreement person, license accusative LEI. -/
-theorem deal_licenses_lei : ∀ g ∈ [Deal2024.weak, Deal2024.strong],
-    Morphosyntactic (Deal2024.Licit g) lui lei_formal := by
-  decide
-
-/-- Feature gluttony, read over agreement person, licenses accusative LEI, since a third person
-dative and a third person accusative do not glutton the Weak probe. -/
-theorem gluttony_licenses_lei :
-    Morphosyntactic (¬ CoonKeine2021.PCCViolation CoonKeine2021.weakProbe false ·) lui
-      lei_formal := by
-  decide
-
-/-- Under the Fancy Constraint with a third person causee as applied argument, a third person
-accusative is licit and second person and LEI are not. -/
+-- The Fancy Constraint: under a third person causee a third person accusative clitic is licit
+-- and second person and LEI are not.
 theorem fancy_constraint :
-    Syntacticosemantic (IsLicit weakGrammar) lui lei ∧
-      ¬ Syntacticosemantic (IsLicit weakGrammar) lui tu ∧
-      ¬ Syntacticosemantic (IsLicit weakGrammar) lui lei_formal := by
+    Licit (IsLicit weakGrammar) ⟨some .third, interpretable la⟩ ∧
+      ¬ Licit (IsLicit weakGrammar) ⟨some .third, interpretable ti⟩ ∧
+      ¬ Licit (IsLicit weakGrammar) ⟨some .third, interpretable (polite la)⟩ := by
   decide
 
-/-- Coordinated with a third person, LEI resolves to second person on its interpretable value and
-to third on its agreement value. -/
+-- Coordinated with a third person, LEI resolves to second person on its interpretable value and
+-- to third on its uninterpretable one.
 theorem resolved_person :
     lei_formal.referentialPerson.map (· ⊔ .third) = some .second ∧
-      lei_formal.person.map (· ⊔ .third) = some .third :=
-  ⟨rfl, rfl⟩
+      lei_formal.person.map (· ⊔ .third) = some .third := by
+  decide
 
+-- The two grammars split on a first person dative over accusative LEI.
 theorem first_dative_lei :
-    Syntacticosemantic (IsLicit weakGrammar) io lei_formal ∧
-      ¬ Syntacticosemantic (IsLicit strongGrammar) io lei_formal := by
+    Licit (IsLicit weakGrammar) ⟨interpretable mi, interpretable (polite la)⟩ ∧
+      ¬ Licit (IsLicit strongGrammar) ⟨interpretable mi, interpretable (polite la)⟩ := by
   decide
 
-/-! ### Spanish and German -/
+/-! ### Logophoric centers -/
 
-/-- USTED as dative over a third person accusative is licit; a third person dative over
-accusative USTED is not. -/
-theorem usted_accusative :
-    Syntacticosemantic (IsLicit weakGrammar) Spanish.Pronouns.usted Spanish.Pronouns.el ∧
-      ¬ Syntacticosemantic (IsLicit weakGrammar) Spanish.Pronouns.el Spanish.Pronouns.usted := by
-  decide
-
-/-- A third person dative over accusative SIE is banned where over third plural *sie* it is
-licit. -/
-theorem sie_accusative :
-    Syntacticosemantic (IsLicit weakGrammar) German.Pronouns.er German.Pronouns.sie_pl ∧
-      ¬ Syntacticosemantic (IsLicit weakGrammar) German.Pronouns.er
-          German.Pronouns.sie_formal := by
-  decide
-
-open CoonKeine2021 in
-/-- Under assumed identity with a third plural subject, SIE, entering with its agreement person,
-does not glutton the person probe where second plural *ihr* does, and a singular subject gluttons
-the number probe against plural SIE. -/
-theorem assumed_identity :
-    (∀ p ∈ German.Pronouns.sie_formal.person,
-      ¬ Gluttonous Goal.personSegments weakProbe [dpPl .third, dpPl p]) ∧
-      (∀ p ∈ German.Pronouns.ihr.person,
-        Gluttonous Goal.personSegments weakProbe [dpPl .third, dpPl p]) ∧
-      Gluttonous Goal.numberSegments (numberProbe weakProbe) [dp .third, dpPl .third] := by
+-- On the hierarchy of logophoric centers a third person dative excludes accusative LEI as it
+-- does a second person, and with an accusative attitude holder dative LEI is licit, as a second
+-- person dative is, where a third person dative is not.
+theorem logophoric_centers :
+    CharnavelMateu2015.Licit ([gli, la].filterMap CharnavelMateu2015.center) ∧
+      ¬ CharnavelMateu2015.Licit ([gli, ti].filterMap CharnavelMateu2015.center) ∧
+      ¬ CharnavelMateu2015.Licit ([gli, polite la].filterMap CharnavelMateu2015.center) ∧
+      ∀ d ∈ [gli, ti, polite le_dat],
+        (CharnavelMateu2015.Licit ([d].filterMap CharnavelMateu2015.center ++ [.attitudeHolder]) ↔
+          d ≠ gli) := by
   decide +kernel
 
-/-! ### The data
+/-! ### German assumed identity -/
 
-The clitic-cluster rows, Italian, Spanish and German alike, read as dative–accusative pronoun
-pairs and checked against the interpretable valuation over both grammars. -/
+open CoonKeine2021 in
+/-- The goal a pronoun presents to the copula's probe, with its agreement person and number. -/
+def goal (c : PersonalPronoun) : Option Goal :=
+  c.person.map fun p ↦ if c.number = some .plural then dpPl p else dp p
+
+open CoonKeine2021 in
+/-- An assumed-identity copula is well formed when neither the person probe nor the number probe
+is gluttonous over its two noun phrases. -/
+def IdentityLicit (goals : List Goal) : Prop :=
+  ¬ Gluttonous Goal.personSegments weakProbe goals ∧
+    ¬ Gluttonous Goal.numberSegments (numberProbe weakProbe) goals
+
+open CoonKeine2021 in
+instance : DecidablePred IdentityLicit := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+open CoonKeine2021 in
+/-- Under a third person plural subject, polite SIE is well formed where second person plural
+*ihr* is not, and under a singular subject it is ill formed, as a third person plural is. -/
+theorem assumed_identity :
+    (∀ g ∈ goal German.Pronouns.sie_formal,
+      IdentityLicit [dpPl .third, g] ∧ ¬ IdentityLicit [dp .third, g]) ∧
+      ∀ g ∈ goal German.Pronouns.ihr, ¬ IdentityLicit [dpPl .third, g] := by
+  decide +kernel
+
+/-! ### The data -/
 
 section Data
 
 open Examples
 
-/-- The dative and accusative pronouns a row's features name, by digit for the ordinary persons
-and by name for the polite pronouns, per language. -/
-def pair? (e : Datum) : Option (PersonalPronoun × PersonalPronoun) := do
-  let table ← e.byLanguage
-    [(.italian, [("1", io), ("2", tu), ("3", lui), ("LEI", lei_formal)]),
-      (.spanish, [("3", Spanish.Pronouns.el), ("USTED", Spanish.Pronouns.usted)]),
-      (.german, [("2", German.Pronouns.du), ("3", German.Pronouns.er),
-        ("3PL", German.Pronouns.sie_pl), ("SIE", German.Pronouns.sie_formal)])]
-  pure (← e.parse? "dative" table, ← e.parse? "accusative" table)
+/-- The scenario of a row under the person value `v`: the dative pronoun its features name,
+or the third person causee of a causative, over the accusative pronoun. -/
+def scenario? (v : PersonalPronoun → Option Person) (e : Datum) :
+    Option (Scenario (Option Person)) := do
+  let (dative, accusative) ← e.byLanguage
+    [(.italian,
+        ([("1", mi), ("2", ti), ("3", gli), ("LEI", polite le_dat), ("3 PP", lui)],
+          [("1", mi), ("2", ti), ("3", la), ("LEI", polite la), ("2 stressed", tu),
+            ("LEI stressed", lei_formal), ("3 resuming camouflage nominal", lo),
+            ("3 resuming imposter", lo)])),
+      (.spanish,
+        ([("3", Spanish.Clitics.se_dat)],
+          [("3", Spanish.Clitics.lo), ("USTED", polite Spanish.Clitics.lo)])),
+      (.german,
+        ([("3", German.Pronouns.er)],
+          [("2", German.Pronouns.du), ("3PL", German.Pronouns.sie_pl),
+            ("SIE", German.Pronouns.sie_formal)]))]
+  let low ← e.parse? "accusative" accusative
+  let high ← (e.parse? "dative" dative).map v <|> e.parse? "causee" [("3", some .third)]
+  pure ⟨high, v low⟩
 
-/-- The band the interpretable valuation predicts: accepted where both grammars license the
-pair, divided where the Weak grammar licenses what the Strong grammar rejects, the speaker split
-over a first person dative above accusative LEI, and rejected where neither licenses it. -/
-def predicted (p : PersonalPronoun × PersonalPronoun) : Judgment.Band :=
-  if ∀ g ∈ grammars, Syntacticosemantic (IsLicit g) p.1 p.2 then .accepted
-  else if Syntacticosemantic (IsLicit weakGrammar) p.1 p.2 then .divided
+/-- The band the P-Constraint predicts for a cluster: accepted where the Strong grammar licenses
+it, divided where only the Weak grammar does, and rejected where neither does. -/
+def predicted (s : Scenario (Option Person)) : Judgment.Band :=
+  if Licit (IsLicit strongGrammar) s then .accepted
+  else if Licit (IsLicit weakGrammar) s then .divided
   else .rejected
 
-/-- Every clitic-cluster judgment lands in the band the interpretable valuation predicts. -/
-theorem rows_predicted : Datum.Checks pair? predicted Examples.all 16 := by decide
-
-/-- Read over agreement person instead, both grammars license every rejected row whose accusative
-is polite, its agreement person differing from its interpretable person: the agreement valuation
-misses the paradigm. -/
-theorem morphosyntactic_misses : ∀ e ∈ Examples.all, ∀ p ∈ pair? e,
-    e.judgment ≠ .acceptable → p.2.person ≠ p.2.referentialPerson →
-    ∀ g ∈ grammars, Morphosyntactic (IsLicit g) p.1 p.2 := by
+/-- Read over the interpretable person value, every cluster of the three languages lands in the
+band the P-Constraint predicts, the repairs and the causatives included. -/
+theorem rows_predicted : Datum.Checks (scenario? interpretable) predicted Examples.all 25 := by
   decide
+
+/-- Read over the uninterpretable person value, the P-Constraint fits a row exactly when the row
+is accepted or the two values present the same scenario: it misses every rejected and every
+divided cluster with a polite clitic. -/
+theorem formal_fits_iff : ∀ e ∈ Examples.all,
+    (e.Fits (scenario? formal) predicted ↔
+      e.judgment = .acceptable ∨ scenario? formal e = scenario? interpretable e) := by
+  decide
+
+open CoonKeine2021 in
+/-- The two noun phrases of an assumed-identity row. -/
+def goals? (e : Datum) : Option (List Goal) := do
+  let table := [("2SG", some (dp .second)), ("3SG", some (dp .third)),
+    ("3PL", some (dpPl .third)), ("SIE", goal German.Pronouns.sie_formal)]
+  pure [← (e.parse? "DP1" table).join, ← (e.parse? "DP2" table).join]
+
+-- Every assumed-identity copula is well formed exactly when no probe is gluttonous over it.
+theorem identity_rows :
+    Datum.Checks goals? (fun gs ↦ .ofProp (IdentityLicit gs)) Examples.all 7 := by
+  decide +kernel
 
 end Data
 
