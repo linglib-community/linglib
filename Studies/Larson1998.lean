@@ -7,43 +7,34 @@ public import Linglib.Semantics.Quantification.Basic
 public import Mathlib.Basic.Rel
 
 /-!
-# Events and modification in nominals
+# Larson (1998): Events and Modification in Nominals
 
-[larson-1998] carries [davidson-1967]'s event argument into the noun: *dancer* relates an
-individual to a dancing, an adjective is a set of things of either sort, and an adjective beside
-a noun is predicated of the individual or of the event. *Olga is a beautiful dancer* is then
-ambiguous with one *beautiful*, and [both readings are
-intersective](##Larson1998.isIntersective_ofEvent) on the noun. With the event closed, the dancers
-are the domain of the relation and the beautiful dancers [the preimage of the
-adjective](##Larson1998.dom_ofEvent), which the domain does not determine: nouns true of the same
-individuals [need not stay so](##Larson1998.exists_dom_eq_dom_ofEvent_ne), with no worlds in
-play. The reading is thus [not a function of the noun's
-extension](##Larson1998.exists_not_factorsThrough_dom_ofEvent), which is why the analysis of
-[siegel-1976], on which the adjective is a function of the noun, takes the noun's intension; the
-paper's point is that the failure of substitution shows a hidden argument of the noun and not
-intensionality. An adjective false of one sort has one reading, and [a coordination has the
-readings its conjuncts share](##Larson1998.isFalseOn_inter_of_notMem_inter).
-Under the generic quantifier of [chierchia-1995a] the modified nominal is a core where it was a
-preimage, and [no longer entails the bare
-nominal](##Larson1998.exists_modifiedNominal_every_not_predicateNominal).
+On Larson's analysis a noun is a relation of individuals to events and an adjective a set of
+individuals and events. An adjective modifies a noun at the individual or at the event, and
+[both readings are intersective](##Larson1998.isIntersective_ofEvent).
+
+With the event closed, a noun holds of the domain of its relation, and a noun modified at the
+event holds of [the preimage of the adjective](##Larson1998.dom_ofEvent). Nouns with the same
+domain [can differ in that preimage](##Larson1998.exists_dom_eq_dom_ofEvent_ne), so this reading
+is [not a function of the noun's extension](##Larson1998.exists_not_factorsThrough_dom_ofEvent).
+An adjective that holds of no event, or of no individual, has one reading, and [a coordination
+has the readings its conjuncts share](##Larson1998.isFalseOn_inter_of_notMem_inter). Under a
+universal quantifier over events, [a modified nominal does not entail the bare
+one](##Larson1998.exists_modifiedNominal_every_not_predicateNominal).
 
 ## Implementation notes
 
-A noun is a `SetRel` of individuals to events and an adjective a set of the sum of the two sorts.
-The comparison class of an adjective is left out, as it is in the paper's own logical forms once
-the rules are stated. A reading the paper marks as excluded on pragmatic grounds, an aged
-presidency or a former Jerry, is here an empty relation. Where the paper suppresses the event
-quantifier the event is closed existentially, as [davidson-1967] closes it, which is the domain
-of the relation; the generic quantifier is a determiner denotation on events, with *some* and
-*every* as the two instances considered.
+* The comparison class of an adjective is left out.
+* A reading excluded on pragmatic grounds is an empty relation.
+* Where the event quantifier is suppressed, the event is closed existentially. The generic
+  quantifier is a determiner denotation on events, with *some* and *every* the instances
+  considered.
 
 ## TODO
 
-The contrast between *the invisible visible stars* and *the visible invisible stars*, with the
-generic quantifier close to the noun, is not derived: neither *some* nor *every* separates the
-two orders. The adverbial readings that survive in predicate position (*Dancer's Delight is
-fast*) and those of the adjectives of infrequency (*an occasional customer*), which the paper
-leaves open, are not formalized.
+* The contrast of *the invisible visible stars* with *the visible invisible stars* is not derived.
+* The adverbial readings in predicate position and those of the adjectives of infrequency are not
+  formalized.
 
 ## References
 
