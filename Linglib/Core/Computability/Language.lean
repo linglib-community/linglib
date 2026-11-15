@@ -30,6 +30,8 @@ variable {α β γ : Type*}
 
 namespace Language
 
+@[simp] theorem mem_singleton_iff {x y : List α} : x ∈ ({y} : Language α) ↔ x = y := Iff.rfl
+
 /-- A language over `α` is a subset of the free monoid on `α`, with union as addition and
 concatenation as multiplication. -/
 def equivSetSemiring : Language α ≃+* SetSemiring (FreeMonoid α) where

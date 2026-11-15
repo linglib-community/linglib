@@ -25,7 +25,7 @@ are not freely insertable form the least tier](##Language.IsTierStrictlyLocal.ex
 
 ## Implementation notes
 
-A tier is a decidable predicate, as in `Language.IsTierBased`, and Lambert's characterization
+A tier is a decidable predicate, as in `Language.tierBased`, and Lambert's characterization
 quantifies over tiers as that does. A symbol is freely insertable and deletable when its
 syntactic class is the identity, the algebraic form of Lambert's self-loops on every state of the
 canonical automaton. The projection is padded with `k - 1` boundaries on each side, as in
