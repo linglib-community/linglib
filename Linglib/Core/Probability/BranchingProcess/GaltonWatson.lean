@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Data.RoseTree.BinaryTree
+public import Linglib.Core.Order.TreePath
 public import Linglib.Core.MeasureTheory.Constructions.List
 public import Linglib.Core.MeasureTheory.Integral.Lebesgue.Basic
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
@@ -17,7 +18,7 @@ public import Mathlib.Probability.Independence.InfinitePi
 
 A multitype Galton–Watson process with types `ι` is an offspring kernel `ξ : Kernel ι (List ι)`:
 an individual of type `i` has offspring drawn from `ξ i`, an ordered list of types, each of which
-founds an independent copy of the process. Following [neveu-1986], every address `u : List ℕ` and
+founds an independent copy of the process. Following [neveu-1986], every address `u : TreePath` and
 type `i` draws an offspring list independently, and the family tree of an individual is a function
 of the draws. Subtrees at different children read disjoint draws, so
 [a tree is complete within `n + 1` generations with the expected product of its children's
@@ -54,7 +55,7 @@ is proved here, only the sufficient condition `GaltonWatson.ae_extinctionProb_eq
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory Kernel RoseTree
+open MeasureTheory ProbabilityTheory Kernel RoseTree Core.Order
 open scoped ENNReal
 
 instance RoseTree.instMeasurableSpace {α : Type*} : MeasurableSpace (RoseTree α) := ⊤
@@ -66,7 +67,7 @@ variable {ι : Type*} [MeasurableSpace ι]
 /-! ### The draws -/
 
 /-- A draw of offspring at every address and type; `none` is a killed individual. -/
-abbrev Draws (ι : Type*) := List ℕ × ι → Option (List ι)
+abbrev Draws (ι : Type*) := TreePath × ι → Option (List ι)
 
 open scoped Classical in
 /-- A sub-probability offspring law, with its missing mass sent to the killed state. -/
@@ -97,9 +98,9 @@ noncomputable def draws : Measure (Draws ι) := Measure.infinitePi fun p ↦ kil
 
 instance : IsProbabilityMeasure (draws ξ) := by rw [draws]; infer_instance
 
-theorem draws_eval_eq_some (hξ : ∀ i, ξ i Set.univ ≤ 1) (u : List ℕ) (i : ι) (js : List ι) :
+theorem draws_eval_eq_some (hξ : ∀ i, ξ i Set.univ ≤ 1) (u : TreePath) (i : ι) (js : List ι) :
     draws ξ {ω | ω (u, i) = some js} = ξ i {js} := by
-  rw [← killed_some (hξ i), ← Measure.infinitePi_map_eval (fun p : List ℕ × ι ↦ killed (ξ p.2))
+  rw [← killed_some (hξ i), ← Measure.infinitePi_map_eval (fun p : TreePath × ι ↦ killed (ξ p.2))
     (u, i), Measure.map_apply (measurable_pi_apply _) .of_discrete]
   rfl
 
@@ -107,16 +108,16 @@ theorem draws_eval_eq_some (hξ : ∀ i, ξ i Set.univ ≤ 1) (u : List ℕ) (i 
 
 /-- The family tree of an individual of type `i` at address `u`, if it is complete within `n`
 generations. -/
-def treeWithin (ω : Draws ι) : ℕ → List ℕ → ι → Option (RoseTree ι)
+def treeWithin (ω : Draws ι) : ℕ → TreePath → ι → Option (RoseTree ι)
   | 0, _, _ => none
   | n + 1, u, i => (ω (u, i)).bind fun js ↦
-      (js.zipIdx.mapM fun p ↦ treeWithin ω n (u ++ [p.2]) p.1).map (node i)
+      (js.zipIdx.mapM fun p ↦ treeWithin ω n (u.child p.2) p.1).map (node i)
 
 section Tree
 
 omit [MeasurableSpace ι]
 
-variable {ω : Draws ι} {u : List ℕ} {i : ι}
+variable {ω : Draws ι} {u : TreePath} {i : ι}
 
 private theorem isSome_mapM {α β : Type*} (f : α → Option β) :
     ∀ l : List α, (l.mapM f).isSome ↔ ∀ a ∈ l, (f a).isSome
@@ -146,14 +147,14 @@ private theorem exists_forall_mem_of_mono {α : Type*} {P : α → ℕ → Prop}
     simp only [List.mem_cons, forall_eq_or_imp]
     exact ⟨hP a _ _ (le_max_left ..) hn, fun b hb ↦ hP b _ _ (le_max_right ..) (hN b hb)⟩
 
-theorem isSome_treeWithin_succ (ω : Draws ι) (n : ℕ) (u : List ℕ) (i : ι) :
+theorem isSome_treeWithin_succ (ω : Draws ι) (n : ℕ) (u : TreePath) (i : ι) :
     (treeWithin ω (n + 1) u i).isSome ↔ ∃ js, ω (u, i) = some js ∧
-      ∀ p ∈ js.zipIdx, (treeWithin ω n (u ++ [p.2]) p.1).isSome := by
+      ∀ p ∈ js.zipIdx, (treeWithin ω n (u.child p.2) p.1).isSome := by
   rw [treeWithin]
   cases hω : ω (u, i) <;> simp [isSome_mapM]
 
 /-- The family tree of an individual of type `i` is rooted at `i`. -/
-theorem value_eq_of_treeWithin_eq_some : ∀ {n : ℕ} {u : List ℕ} {i : ι} {t : RoseTree ι},
+theorem value_eq_of_treeWithin_eq_some : ∀ {n : ℕ} {u : TreePath} {i : ι} {t : RoseTree ι},
     treeWithin ω n u i = some t → t.value = i
   | 0, _, _, _, h => by simp [treeWithin] at h
   | n + 1, u, i, t, h => by
@@ -165,7 +166,7 @@ theorem value_eq_of_treeWithin_eq_some : ∀ {n : ℕ} {u : List ℕ} {i : ι} {
       obtain ⟨cs, -, rfl⟩ := h
       rfl
 
-theorem treeWithin_succ_of_eq_some : ∀ {n : ℕ} {u : List ℕ} {i : ι} {t : RoseTree ι},
+theorem treeWithin_succ_of_eq_some : ∀ {n : ℕ} {u : TreePath} {i : ι} {t : RoseTree ι},
     treeWithin ω n u i = some t → treeWithin ω (n + 1) u i = some t
   | 0, _, _, _, h => by simp [treeWithin] at h
   | n + 1, u, i, t, h => by
@@ -220,10 +221,10 @@ theorem setOf_treeWithin_eq_empty {t : RoseTree ι} (h : t.value ≠ i) :
 
 /-- A node is the family tree at `u` when its children's types are drawn there and each child is
 the family tree at its address. -/
-theorem exists_treeWithin_eq_some_node (ω : Draws ι) (u : List ℕ) (i : ι)
+theorem exists_treeWithin_eq_some_node (ω : Draws ι) (u : TreePath) (i : ι)
     (cs : List (RoseTree ι)) :
     (∃ n, treeWithin ω n u i = some (node i cs)) ↔ ω (u, i) = some (cs.map value) ∧
-      ∀ p ∈ cs.zipIdx, ∃ n, treeWithin ω n (u ++ [p.2]) p.1.value = some p.1 := by
+      ∀ p ∈ cs.zipIdx, ∃ n, treeWithin ω n (u.child p.2) p.1.value = some p.1 := by
   constructor
   · rintro ⟨n, hn⟩
     cases n with
@@ -235,23 +236,23 @@ theorem exists_treeWithin_eq_some_node (ω : Draws ι) (u : List ℕ) (i : ι)
       | some js =>
         simp only [hω, Option.bind_some, Option.map_eq_some_iff, node.injEq, true_and] at hn
         obtain ⟨cs', hcs', rfl⟩ := hn
-        obtain ⟨rfl, h⟩ := (mapM_zipIdx_eq_some (g := fun k j ↦ treeWithin ω n (u ++ [k]) j)
+        obtain ⟨rfl, h⟩ := (mapM_zipIdx_eq_some (g := fun k j ↦ treeWithin ω n (u.child k) j)
           (fun _ _ _ ↦ value_eq_of_treeWithin_eq_some) js 0 cs').1 hcs'
         exact ⟨rfl, fun p hp ↦ ⟨n, h p hp⟩⟩
   · rintro ⟨hω, h⟩
     obtain ⟨N, hN⟩ := exists_forall_mem_of_mono
-      (P := fun (p : RoseTree ι × ℕ) n ↦ treeWithin ω n (u ++ [p.2]) p.1.value = some p.1)
+      (P := fun (p : RoseTree ι × ℕ) n ↦ treeWithin ω n (u.child p.2) p.1.value = some p.1)
       (fun _ _ _ hmn ↦ treeWithin_mono hmn) cs.zipIdx h
     refine ⟨N + 1, ?_⟩
     rw [treeWithin, hω, Option.bind_some,
-      (mapM_zipIdx_eq_some (g := fun k j ↦ treeWithin ω N (u ++ [k]) j)
+      (mapM_zipIdx_eq_some (g := fun k j ↦ treeWithin ω N (u.child k) j)
         (fun _ _ _ ↦ value_eq_of_treeWithin_eq_some) (cs.map value) 0 cs).2 ⟨rfl, hN⟩]
     rfl
 
 /-- A family tree is finite when the family trees of all the offspring are. -/
-theorem exists_isSome_treeWithin (ω : Draws ι) (u : List ℕ) (i : ι) :
+theorem exists_isSome_treeWithin (ω : Draws ι) (u : TreePath) (i : ι) :
     (∃ n, (treeWithin ω n u i).isSome) ↔ ∃ js, ω (u, i) = some js ∧
-      ∀ p ∈ js.zipIdx, ∃ n, (treeWithin ω n (u ++ [p.2]) p.1).isSome := by
+      ∀ p ∈ js.zipIdx, ∃ n, (treeWithin ω n (u.child p.2) p.1).isSome := by
   constructor
   · rintro ⟨n, hn⟩
     cases n with
@@ -261,7 +262,7 @@ theorem exists_isSome_treeWithin (ω : Draws ι) (u : List ℕ) (i : ι) :
       exact ⟨js, h₁, fun p hp ↦ ⟨n, h₂ p hp⟩⟩
   · rintro ⟨js, h₁, h₂⟩
     obtain ⟨N, hN⟩ := exists_forall_mem_of_mono
-      (P := fun (p : ι × ℕ) n ↦ (treeWithin ω n (u ++ [p.2]) p.1).isSome)
+      (P := fun (p : ι × ℕ) n ↦ (treeWithin ω n (u.child p.2) p.1).isSome)
       (fun _ _ _ hmn ↦ isSome_treeWithin_mono hmn) js.zipIdx h₂
     exact ⟨N + 1, (isSome_treeWithin_succ ω N u i).2 ⟨js, h₁, hN⟩⟩
 
@@ -280,19 +281,19 @@ theorem weight_node (i : ι) (cs : List (RoseTree ι)) :
 /-! ### Independence of the subtrees -/
 
 /-- The σ-algebra of the draws at the coordinates in `S`. -/
-private abbrev gen (S : Set (List ℕ × ι)) : MeasurableSpace (Draws ι) :=
+private abbrev gen (S : Set (TreePath × ι)) : MeasurableSpace (Draws ι) :=
   ⨆ q ∈ S, MeasurableSpace.comap (fun ω : Draws ι ↦ ω q) inferInstance
 
 omit [MeasurableSpace ι] in
-private theorem gen_le (S : Set (List ℕ × ι)) : gen S ≤ MeasurableSpace.pi :=
+private theorem gen_le (S : Set (TreePath × ι)) : gen S ≤ MeasurableSpace.pi :=
   iSup₂_le fun q _ ↦ (measurable_pi_apply q).comap_le
 
 omit [MeasurableSpace ι] in
-private theorem gen_mono {S T : Set (List ℕ × ι)} (h : S ⊆ T) : gen S ≤ gen T :=
+private theorem gen_mono {S T : Set (TreePath × ι)} (h : S ⊆ T) : gen S ≤ gen T :=
   biSup_mono h
 
 omit [MeasurableSpace ι] in
-private theorem measurableSet_gen_eval {S : Set (List ℕ × ι)} {q : List ℕ × ι} (hq : q ∈ S)
+private theorem measurableSet_gen_eval {S : Set (TreePath × ι)} {q : TreePath × ι} (hq : q ∈ S)
     (x : Option (List ι)) : MeasurableSet[gen S] {ω : Draws ι | ω q = x} :=
   le_biSup (fun q ↦ MeasurableSpace.comap (fun ω : Draws ι ↦ ω q) inferInstance) hq _
     ⟨{x}, .of_discrete, rfl⟩
@@ -305,24 +306,19 @@ private theorem measurableSet_forall_mem {α : Type*} {m : MeasurableSpace (Draw
   rw [this]
   exact .biInter (List.finite_toSet l).countable h
 
-private theorem indep_gen {S T : Set (List ℕ × ι)} (h : Disjoint S T) :
+private theorem indep_gen {S T : Set (TreePath × ι)} (h : Disjoint S T) :
     Indep (gen S) (gen T) (draws ξ) :=
   indep_iSup_of_disjoint (fun q ↦ (measurable_pi_apply q).comap_le)
     (iIndepFun_infinitePi (X := fun _ x ↦ x) fun _ ↦ measurable_id).iIndep h
 
 /-- The coordinates not below any child of `u` numbered `s` or more. -/
-private def before (u : List ℕ) (s : ℕ) : Set (List ℕ × ι) :=
-  {q | ∀ k, s ≤ k → ¬ u ++ [k] <+: q.1}
-
-private theorem prefix_concat_inj {u v : List ℕ} {k l : ℕ} (hk : u ++ [k] <+: v)
-    (hl : u ++ [l] <+: v) : k = l := by
-  have := (List.prefix_of_prefix_length_le hk hl (by simp)).eq_of_length (by simp)
-  simpa using this
+private def before (u : TreePath) (s : ℕ) : Set (TreePath × ι) :=
+  {q | ∀ k, s ≤ k → ¬ u.child k ≤ q.1}
 
 /-- Events below the children of `u` numbered from `s` are independent of each other and of any
 event before them. -/
-private theorem draws_inter_children {α : Type*} (u : List ℕ) {A : ℕ → α → Set (Draws ι)}
-    (hA : ∀ k a, MeasurableSet[gen {q : List ℕ × ι | u ++ [k] <+: q.1}] (A k a)) :
+private theorem draws_inter_children {α : Type*} (u : TreePath) {A : ℕ → α → Set (Draws ι)}
+    (hA : ∀ k a, MeasurableSet[gen {q : TreePath × ι | u.child k ≤ q.1}] (A k a)) :
     ∀ (l : List α) (s : ℕ) {C : Set (Draws ι)}, MeasurableSet[gen (before u s)] C →
       draws ξ (C ∩ {ω | ∀ p ∈ l.zipIdx s, ω ∈ A p.2 p.1}) =
         draws ξ C * ((l.zipIdx s).map fun p ↦ draws ξ (A p.2 p.1)).prod
@@ -331,9 +327,9 @@ private theorem draws_inter_children {α : Type*} (u : List ℕ) {A : ℕ → α
     have hCA : MeasurableSet[gen (before u (s + 1))] (C ∩ A s a) :=
       .inter (gen_mono (S := before u s) (T := before u (s + 1))
           (fun q hq k hk ↦ hq k (by omega)) _ hC)
-        (gen_mono (T := before u (s + 1)) (fun q (hq : u ++ [s] <+: q.1) k hk h ↦ by
-          have := prefix_concat_inj hq h; omega) _ (hA s a))
-    have hd : Disjoint (before (ι := ι) u s) {q | u ++ [s] <+: q.1} :=
+        (gen_mono (T := before u (s + 1)) (fun q (hq : u.child s ≤ q.1) k hk h ↦ by
+          have := TreePath.eq_of_child_le_of_child_le hq h; omega) _ (hA s a))
+    have hd : Disjoint (before (ι := ι) u s) {q | u.child s ≤ q.1} :=
       Set.disjoint_left.2 fun q hq h ↦ hq s le_rfl h
     have hset : C ∩ {ω | ∀ p ∈ (a :: l).zipIdx s, ω ∈ A p.2 p.1} =
         (C ∩ A s a) ∩ {ω | ∀ p ∈ l.zipIdx (s + 1), ω ∈ A p.2 p.1} := by
@@ -344,49 +340,50 @@ private theorem draws_inter_children {α : Type*} (u : List ℕ) {A : ℕ → α
       List.prod_cons, mul_assoc]
 
 omit [MeasurableSpace ι] in
-private theorem measurableSet_gen_eval_self (u : List ℕ) (i : ι) (x : Option (List ι)) :
+private theorem measurableSet_gen_eval_self (u : TreePath) (i : ι) (x : Option (List ι)) :
     MeasurableSet[gen (before u 0)] {ω : Draws ι | ω (u, i) = x} :=
   measurableSet_gen_eval (S := before u 0) (q := (u, i))
-    (fun k _ (h : u ++ [k] <+: u) ↦ by simpa using h.length_le) _
+    (fun k _ (h : u.child k ≤ u) ↦ (u.lt_child k).not_ge h) _
 
 /-! ### The probability of a finite tree -/
 
 omit [MeasurableSpace ι] in
-private theorem measurableSet_gen_treeWithin_eq (t : RoseTree ι) : ∀ u : List ℕ,
-    MeasurableSet[gen {q : List ℕ × ι | u <+: q.1}]
+private theorem measurableSet_gen_treeWithin_eq (t : RoseTree ι) : ∀ u : TreePath,
+    MeasurableSet[gen {q : TreePath × ι | u ≤ q.1}]
       {ω : Draws ι | ∃ n, treeWithin ω n u t.value = some t} := by
   induction t with
   | node i cs ih =>
     intro u
     have : {ω : Draws ι | ∃ n, treeWithin ω n u i = some (node i cs)} =
         {ω | ω (u, i) = some (cs.map value)} ∩ {ω | ∀ p ∈ cs.zipIdx,
-          ω ∈ {ω : Draws ι | ∃ n, treeWithin ω n (u ++ [p.2]) p.1.value = some p.1}} := by
+          ω ∈ {ω : Draws ι | ∃ n, treeWithin ω n (u.child p.2) p.1.value = some p.1}} := by
       ext ω
       exact exists_treeWithin_eq_some_node ω u i cs
     rw [value_node, this]
-    exact .inter (measurableSet_gen_eval List.prefix_rfl _) <| measurableSet_forall_mem _
-      fun p hp ↦ gen_mono (fun q hq ↦ (List.prefix_append u _).trans hq) _
+    exact .inter (measurableSet_gen_eval (S := {q : TreePath × ι | u ≤ q.1}) (q := (u, i))
+      (le_refl u) _) <| measurableSet_forall_mem _
+      fun p hp ↦ gen_mono (fun q hq ↦ (u.le_child _).trans hq) _
         (ih p.1 (List.fst_mem_of_mem_zipIdx hp) _)
 
 /-- A finite tree is the family tree of its root type, at any address, with probability
 `weight`. -/
 theorem draws_treeWithin_eq_some (hξ : ∀ i, ξ i Set.univ ≤ 1) (t : RoseTree ι) :
-    ∀ u : List ℕ, draws ξ {ω | ∃ n, treeWithin ω n u t.value = some t} = weight ξ t := by
+    ∀ u : TreePath, draws ξ {ω | ∃ n, treeWithin ω n u t.value = some t} = weight ξ t := by
   induction t with
   | node i cs ih =>
     intro u
     have hset : {ω : Draws ι | ∃ n, treeWithin ω n u i = some (node i cs)} =
         {ω | ω (u, i) = some (cs.map value)} ∩ {ω | ∀ p ∈ cs.zipIdx,
-          ω ∈ {ω : Draws ι | ∃ n, treeWithin ω n (u ++ [p.2]) p.1.value = some p.1}} := by
+          ω ∈ {ω : Draws ι | ∃ n, treeWithin ω n (u.child p.2) p.1.value = some p.1}} := by
       ext ω
       exact exists_treeWithin_eq_some_node ω u i cs
     have hprod : (cs.zipIdx.map fun p ↦ draws ξ
-        {ω : Draws ι | ∃ n, treeWithin ω n (u ++ [p.2]) p.1.value = some p.1}) =
+        {ω : Draws ι | ∃ n, treeWithin ω n (u.child p.2) p.1.value = some p.1}) =
         cs.map (weight ξ) := by
       rw [List.map_congr_left fun p hp ↦ ih p.1 (List.fst_mem_of_mem_zipIdx hp) _,
         map_zipIdx_eq_map]
     rw [value_node, hset, draws_inter_children ξ u
-      (A := fun k c ↦ {ω : Draws ι | ∃ n, treeWithin ω n (u ++ [k]) c.value = some c})
+      (A := fun k c ↦ {ω : Draws ι | ∃ n, treeWithin ω n (u.child k) c.value = some c})
       (fun k c ↦ measurableSet_gen_treeWithin_eq c _) cs 0 (measurableSet_gen_eval_self u i _),
       draws_eval_eq_some ξ hξ, hprod, weight_node]
 
@@ -396,9 +393,9 @@ variable [Countable ι]
 
 /-- An event that holds when the offspring drawn at `(u, i)` each satisfy an event below their
 own address has the expected product of the probabilities of those events. -/
-private theorem draws_eq_lintegral (hξ : ∀ i, ξ i Set.univ ≤ 1) {u : List ℕ} {i : ι}
+private theorem draws_eq_lintegral (hξ : ∀ i, ξ i Set.univ ≤ 1) {u : TreePath} {i : ι}
     {B : Set (Draws ι)} {A : ℕ → ι → Set (Draws ι)}
-    (hA : ∀ k j, MeasurableSet[gen {q : List ℕ × ι | u ++ [k] <+: q.1}] (A k j))
+    (hA : ∀ k j, MeasurableSet[gen {q : TreePath × ι | u.child k ≤ q.1}] (A k j))
     (hB : ∀ ω, ω ∈ B ↔ ∃ js, ω (u, i) = some js ∧ ∀ p ∈ js.zipIdx, ω ∈ A p.2 p.1) :
     draws ξ B = ∫⁻ js, (js.zipIdx.map fun p ↦ draws ξ (A p.2 p.1)).prod ∂ξ i := by
   have hset : B = ⋃ js : List ι,
@@ -421,31 +418,32 @@ private theorem draws_eq_lintegral (hξ : ∀ i, ξ i Set.univ ≤ 1) {u : List 
 
 omit [MeasurableSpace ι] in
 /-- Completion within `n` generations at `u` reads only the draws at addresses below `u`. -/
-private theorem measurableSet_gen_isSome : ∀ (n : ℕ) (u : List ℕ) (i : ι),
-    MeasurableSet[gen {q : List ℕ × ι | u <+: q.1}] {ω : Draws ι | (treeWithin ω n u i).isSome}
+private theorem measurableSet_gen_isSome : ∀ (n : ℕ) (u : TreePath) (i : ι),
+    MeasurableSet[gen {q : TreePath × ι | u ≤ q.1}] {ω : Draws ι | (treeWithin ω n u i).isSome}
   | 0, _, _ => by simp [treeWithin]
   | n + 1, u, i => by
     have : {ω : Draws ι | (treeWithin ω (n + 1) u i).isSome} = ⋃ js : List ι,
         ({ω | ω (u, i) = some js} ∩ {ω | ∀ p ∈ js.zipIdx,
-          ω ∈ {ω : Draws ι | (treeWithin ω n (u ++ [p.2]) p.1).isSome}}) := by
+          ω ∈ {ω : Draws ι | (treeWithin ω n (u.child p.2) p.1).isSome}}) := by
       ext ω
       simp [isSome_treeWithin_succ]
     rw [this]
-    exact .iUnion fun js ↦ .inter (measurableSet_gen_eval List.prefix_rfl _) <|
+    exact .iUnion fun js ↦ .inter (measurableSet_gen_eval (S := {q : TreePath × ι | u ≤ q.1})
+      (q := (u, i)) (le_refl u) _) <|
       measurableSet_forall_mem _ fun p _ ↦
-        gen_mono (fun q hq ↦ (List.prefix_append u _).trans hq) _
+        gen_mono (fun q hq ↦ (u.le_child _).trans hq) _
           (measurableSet_gen_isSome n _ _)
 
 omit [MeasurableSpace ι] in
-private theorem measurableSet_gen_exists_isSome (u : List ℕ) (i : ι) :
-    MeasurableSet[gen {q : List ℕ × ι | u <+: q.1}]
+private theorem measurableSet_gen_exists_isSome (u : TreePath) (i : ι) :
+    MeasurableSet[gen {q : TreePath × ι | u ≤ q.1}]
       {ω : Draws ι | ∃ n, (treeWithin ω n u i).isSome} := by
   rw [Set.ofPred_exists]
   exact .iUnion fun n ↦ measurableSet_gen_isSome n u i
 
 /-- The probability that the family tree of type `i` is complete within `n` generations. -/
 noncomputable def extinctWithin (n : ℕ) (i : ι) : ℝ≥0∞ :=
-  draws ξ {ω | (treeWithin ω n [] i).isSome}
+  draws ξ {ω | (treeWithin ω n ⊥ i).isSome}
 
 omit [Countable ι] in
 @[simp] theorem extinctWithin_zero (i : ι) : extinctWithin ξ 0 i = 0 := by
@@ -457,14 +455,14 @@ theorem monotone_extinctWithin (i : ι) : Monotone fun n ↦ extinctWithin ξ n 
 
 /-- The branching step at an address: the children's trees are independent of each other and of
 the draw at the parent. -/
-theorem draws_isSome_treeWithin_succ (hξ : ∀ i, ξ i Set.univ ≤ 1) (n : ℕ) (u : List ℕ) (i : ι) :
+theorem draws_isSome_treeWithin_succ (hξ : ∀ i, ξ i Set.univ ≤ 1) (n : ℕ) (u : TreePath) (i : ι) :
     draws ξ {ω | (treeWithin ω (n + 1) u i).isSome} = ∫⁻ js,
-      (js.zipIdx.map fun p ↦ draws ξ {ω | (treeWithin ω n (u ++ [p.2]) p.1).isSome}).prod ∂ξ i :=
+      (js.zipIdx.map fun p ↦ draws ξ {ω | (treeWithin ω n (u.child p.2) p.1).isSome}).prod ∂ξ i :=
   draws_eq_lintegral ξ hξ (fun _ j ↦ measurableSet_gen_isSome n _ j)
     fun ω ↦ isSome_treeWithin_succ ω n u i
 
 /-- The probability of completing within `n` generations does not depend on the address. -/
-theorem draws_isSome_treeWithin (hξ : ∀ i, ξ i Set.univ ≤ 1) : ∀ (n : ℕ) (u : List ℕ) (i : ι),
+theorem draws_isSome_treeWithin (hξ : ∀ i, ξ i Set.univ ≤ 1) : ∀ (n : ℕ) (u : TreePath) (i : ι),
     draws ξ {ω | (treeWithin ω n u i).isSome} = extinctWithin ξ n i
   | 0, _, _ => by simp [treeWithin]
   | n + 1, u, i => by
@@ -489,10 +487,10 @@ variable [MeasurableSingletonClass ι]
 family is killed or survives forever. -/
 noncomputable def law : Kernel ι (RoseTree ι) :=
   ofFunOfCountable fun i ↦ Measure.sum fun t ↦
-    draws ξ {ω | ∃ n, treeWithin ω n [] i = some t} • Measure.dirac t
+    draws ξ {ω | ∃ n, treeWithin ω n ⊥ i = some t} • Measure.dirac t
 
 theorem law_singleton_eq_draws (i : ι) (t : RoseTree ι) :
-    law ξ i {t} = draws ξ {ω | ∃ n, treeWithin ω n [] i = some t} := by
+    law ξ i {t} = draws ξ {ω | ∃ n, treeWithin ω n ⊥ i = some t} := by
   rw [law, ofFunOfCountable_apply, Measure.sum_apply _ .of_discrete, tsum_eq_single t fun t' h ↦ by
     simp [Measure.dirac_apply' _ (MeasurableSet.of_discrete (s := {t})), h]]
   simp
@@ -514,15 +512,15 @@ theorem law_singleton (hξ : ∀ i, ξ i Set.univ ≤ 1) (t : RoseTree ι) (i : 
 
 /-- The mass of the law is the probability that the family tree is finite. -/
 theorem law_apply_univ (i : ι) :
-    law ξ i Set.univ = draws ξ {ω | ∃ n, (treeWithin ω n [] i).isSome} := by
+    law ξ i Set.univ = draws ξ {ω | ∃ n, (treeWithin ω n ⊥ i).isSome} := by
   have hmeas (t : RoseTree ι) :
-      MeasurableSet {ω : Draws ι | ∃ n, treeWithin ω n [] i = some t} := by
+      MeasurableSet {ω : Draws ι | ∃ n, treeWithin ω n ⊥ i = some t} := by
     by_cases h : t.value = i
-    · subst h; exact gen_le _ _ (measurableSet_gen_treeWithin_eq t [])
+    · subst h; exact gen_le _ _ (measurableSet_gen_treeWithin_eq t ⊥)
     · rw [setOf_treeWithin_eq_empty h]
       exact .empty
   have hdisj : Pairwise (Function.onFun Disjoint fun t : RoseTree ι ↦
-      {ω : Draws ι | ∃ n, treeWithin ω n [] i = some t}) := fun t t' h ↦
+      {ω : Draws ι | ∃ n, treeWithin ω n ⊥ i = some t}) := fun t t' h ↦
     Set.disjoint_left.2 fun ω hω hω' ↦ by
       obtain ⟨n, hn⟩ := hω
       obtain ⟨n', hn'⟩ := hω'
@@ -544,7 +542,7 @@ family trees. -/
 noncomputable def extinctionProb (i : ι) : ℝ≥0∞ := law ξ i Set.univ
 
 omit [MeasurableSingletonClass ι] in
-theorem draws_exists_isSome_treeWithin (hξ : ∀ i, ξ i Set.univ ≤ 1) (u : List ℕ) (i : ι) :
+theorem draws_exists_isSome_treeWithin (hξ : ∀ i, ξ i Set.univ ≤ 1) (u : TreePath) (i : ι) :
     draws ξ {ω | ∃ n, (treeWithin ω n u i).isSome} = ⨆ n, extinctWithin ξ n i := by
   rw [Set.ofPred_exists, Monotone.measure_iUnion
     (s := fun n ↦ {ω : Draws ι | (treeWithin ω n u i).isSome})
@@ -555,7 +553,7 @@ theorem draws_exists_isSome_treeWithin (hξ : ∀ i, ξ i Set.univ ≤ 1) (u : L
 generations. -/
 theorem extinctionProb_eq_iSup (i : ι) : extinctionProb ξ i = ⨆ n, extinctWithin ξ n i := by
   rw [extinctionProb, law_apply_univ, Set.ofPred_exists, Monotone.measure_iUnion
-    (s := fun n ↦ {ω : Draws ι | (treeWithin ω n [] i).isSome})
+    (s := fun n ↦ {ω : Draws ι | (treeWithin ω n ⊥ i).isSome})
     fun _ _ h _ hω ↦ isSome_treeWithin_mono h hω]
   rfl
 
@@ -564,9 +562,9 @@ tree is finite exactly when the family trees of all the offspring are. -/
 theorem extinctionProb_eq_lintegral (hξ : ∀ i, ξ i Set.univ ≤ 1) (i : ι) :
     extinctionProb ξ i = ∫⁻ js, (js.map (extinctionProb ξ)).prod ∂ξ i := by
   rw [extinctionProb, law_apply_univ, draws_eq_lintegral ξ hξ
-    (B := {ω : Draws ι | ∃ n, (treeWithin ω n [] i).isSome})
-    (A := fun k j ↦ {ω : Draws ι | ∃ n, (treeWithin ω n ([] ++ [k]) j).isSome})
-    (fun k j ↦ measurableSet_gen_exists_isSome _ j) fun ω ↦ exists_isSome_treeWithin ω [] i]
+    (B := {ω : Draws ι | ∃ n, (treeWithin ω n ⊥ i).isSome})
+    (A := fun k j ↦ {ω : Draws ι | ∃ n, (treeWithin ω n ((⊥ : TreePath).child k) j).isSome})
+    (fun k j ↦ measurableSet_gen_exists_isSome _ j) fun ω ↦ exists_isSome_treeWithin ω ⊥ i]
   refine lintegral_congr fun js ↦ congrArg List.prod ?_
   rw [← map_zipIdx_eq_map (extinctionProb ξ) js]
   exact List.map_congr_left fun p _ ↦

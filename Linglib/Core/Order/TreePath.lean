@@ -10,34 +10,25 @@ public import Linglib.Core.Order.LeftLinear
 
 A `TreePath` is a position in a rose tree, written as its Gorn address: the list of child indices
 on the way down from the root. Under the prefix order, with `p ≤ q` when `p` dominates `q`, the
-positions form the rooted tree in which every node has a child for each natural number. It carries
-the order structure of `Mathlib/Order/SuccPred/Tree.lean`: the root `⊥` is the empty address,
-`Order.pred` drops the last index, `p ⊓ q` is the longest common prefix, and strict dominance is
-well founded, so ancestor chains are finite. The positions of a concrete tree form a prefix-closed
-subset (`RoseTree.validPaths`).
+positions form the rooted tree in which every node has a daughter for each natural number. It
+carries the order structure of `Mathlib/Order/SuccPred/Tree.lean`: the root `⊥` is the empty
+address, `Order.pred` drops the last index, `p ⊓ q` is the longest common prefix, and strict
+dominance is well founded, so ancestor chains are finite. A position
+[is covered exactly by its daughters](##Core.Order.TreePath.covBy_iff_exists_child), and
+[lies below at most one of them](##Core.Order.TreePath.eq_of_child_le_of_child_le). The positions
+of a concrete tree form a prefix-closed subset (`RoseTree.validPaths`).
 
-`p` precedes `q` when the two part at some position with `p` taking the earlier child. Precedence
-is lexicographic order between positions neither of which dominates the other. It is a decidable
-strict order, it passes to dominated positions, and any two positions are related by dominance or
-by precedence.
+`p` precedes `q` when the two part at some position with `p` taking the earlier daughter.
+[Precedence is lexicographic order between positions neither of which dominates the
+other](##Core.Order.TreePath.precedes_iff_lt_and_not_le). It is a decidable strict order, it passes
+to dominated positions, and [any two positions are related by dominance or by
+precedence](##Core.Order.TreePath.Precedes.trichotomy).
 
 Two positions are left-aligned when their addresses differ only in trailing first-daughter steps,
-so that the subtrees at them begin with the same leaf. Left-alignment is a decidable equivalence
+so that the subtrees at them begin with the same leaf, which is to say that
+[descending through first daughters from each reaches a common
+position](##Core.Order.TreePath.leftAligned_iff_exists). Left-alignment is a decidable equivalence
 relation, and left-aligned positions lie on one branch.
-
-## Main definitions
-
-* `Core.Order.TreePath`: Gorn addresses under the prefix order.
-* `Core.Order.TreePath.Precedes`: linear precedence of positions.
-* `Core.Order.TreePath.LeftAligned`: positions sharing a left edge.
-
-## Main results
-
-* `TreePath.covBy_iff`: `q` covers `p` exactly when `q` extends `p` by one index.
-* `TreePath.precedes_iff_lt_and_not_le`: precedence is lexicographic order minus dominance.
-* `TreePath.Precedes.trichotomy`: two positions are related by dominance or by precedence.
-* `TreePath.leftAligned_iff_exists`: positions are left-aligned exactly when descending through
-  first daughters from each reaches a common position.
 -/
 
 @[expose] public section
@@ -134,6 +125,36 @@ theorem covBy_iff {p q : TreePath} : p ⋖ q ↔ ∃ i, q.toList = p.toList ++ [
       simpa [hi] using congrArg (fun r : TreePath ↦ r.toList.length) (hparent.symm.trans h)
     simpa [hparent] using Order.pred_covBy_of_not_isMin (not_isMin_of_lt hpq)
 
+/-! ### Daughters -/
+
+/-- The daughter of a position along the index `i`. -/
+def child (p : TreePath) (i : ℕ) : TreePath := ⟨p.toList ++ [i]⟩
+
+@[simp] theorem child_toList (p : TreePath) (i : ℕ) : (p.child i).toList = p.toList ++ [i] := rfl
+
+theorem covBy_child (p : TreePath) (i : ℕ) : p ⋖ p.child i := covBy_iff.2 ⟨i, rfl⟩
+
+/-- A position is covered exactly by its daughters. -/
+theorem covBy_iff_exists_child {p q : TreePath} : p ⋖ q ↔ ∃ i, q = p.child i :=
+  covBy_iff.trans <| exists_congr fun _ ↦ TreePath.ext_iff.symm
+
+theorem lt_child (p : TreePath) (i : ℕ) : p < p.child i := (covBy_child p i).lt
+
+theorem le_child (p : TreePath) (i : ℕ) : p ≤ p.child i := (lt_child p i).le
+
+theorem child_injective (p : TreePath) : Function.Injective p.child := fun i j h ↦ by
+  simpa using congrArg TreePath.toList h
+
+/-- A position lies below at most one daughter of a position. -/
+theorem eq_of_child_le_of_child_le {p q : TreePath} {i j : ℕ} (hi : p.child i ≤ q)
+    (hj : p.child j ≤ q) : i = j :=
+  child_injective p (IsLeftLinear.eq_of_covBy_of_le (covBy_child p i) (covBy_child p j) hi hj)
+
+/-- The positions below distinct daughters are disjoint. -/
+theorem disjoint_Ici_child (p : TreePath) {i j : ℕ} (h : i ≠ j) :
+    Disjoint (Set.Ici (p.child i)) (Set.Ici (p.child j)) :=
+  Set.disjoint_left.2 fun _ hi hj ↦ h (eq_of_child_le_of_child_le hi hj)
+
 /-! ### Least common ancestors -/
 
 /-- The meet of two positions is their longest common prefix, the deepest position dominating
@@ -163,10 +184,7 @@ protected theorem lt (h : Precedes p q) : p.toList < q.toList := by
 
 protected theorem not_le (h : Precedes p q) : ¬ p ≤ q := fun hle ↦ by
   obtain ⟨r, i, j, hij, hi, hj⟩ := h
-  have hlen : (r ++ [i]).length = (r ++ [j]).length := by simp
-  rcases List.prefix_or_prefix_of_prefix (hi.trans hle) hj with h | h
-  · exact hij.ne (by simpa using h.eq_of_length hlen)
-  · exact hij.ne (by simpa using (h.eq_of_length hlen.symm).symm)
+  exact hij.ne (eq_of_child_le_of_child_le (p := ⟨r⟩) (hi.trans hle) hj)
 
 protected theorem not_ge (h : Precedes p q) : ¬ q ≤ p := by
   rintro ⟨s, hs⟩
