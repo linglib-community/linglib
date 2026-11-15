@@ -323,7 +323,7 @@ open RoseTree
 
 theorem mem_commandRelation_iff_inits (P : Set GornAddress) (a b : GornAddress) :
     a ~[commandRelation P] b ↔
-      ∀ x ∈ a.toList.inits.map GornAddress.mk, x ≠ a → x ∈ P → x ≤ b := by
+      ∀ x ∈ a.inits, x ≠ a → x ∈ P → x ≤ b := by
   constructor
   · intro h x hx hne hP
     obtain ⟨l, hl, rfl⟩ := List.mem_map.mp hx

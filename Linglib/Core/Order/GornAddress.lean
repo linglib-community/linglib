@@ -205,11 +205,42 @@ theorem depth_strictMono : StrictMono depth := fun _ _ h ↦
 
 instance : WellFoundedLT GornAddress := depth_strictMono.wellFoundedLT
 
+/-! ### Heads -/
+
+/-- The addresses dominating an address, from the root down to the address itself. -/
+def inits (p : GornAddress) : List GornAddress := p.toList.inits.map GornAddress.mk
+
+@[simp] theorem mem_inits : q ∈ p.inits ↔ q ≤ p := by
+  simp only [inits, List.mem_map, List.mem_inits]
+  exact ⟨fun ⟨l, hl, e⟩ ↦ e ▸ le_def.2 hl, fun h ↦ ⟨q.toList, le_def.1 h, rfl⟩⟩
+
 /-- The addresses at or above an address are its heads, finitely many. -/
 instance : LocallyFiniteOrderBot GornAddress :=
-  .ofIic GornAddress (fun p ↦ (p.toList.inits.map GornAddress.mk).toFinset) fun a p ↦ by
-    simp only [List.mem_toFinset, List.mem_map, List.mem_inits]
-    exact ⟨fun ⟨l, hl, e⟩ ↦ e ▸ le_def.2 hl, fun h ↦ ⟨p.toList, le_def.1 h, rfl⟩⟩
+  .ofIic GornAddress (fun p ↦ p.inits.toFinset) fun a p ↦ by
+    rw [List.mem_toFinset, mem_inits]
+
+/-- The head of an address of depth `n`, or the address itself if it is shallower. -/
+def take (n : ℕ) (p : GornAddress) : GornAddress := ⟨p.toList.take n⟩
+
+@[simp] theorem take_toList (n : ℕ) (p : GornAddress) : (p.take n).toList = p.toList.take n := rfl
+
+theorem take_le (n : ℕ) (p : GornAddress) : p.take n ≤ p := List.take_prefix n p.toList
+
+@[simp] theorem depth_take (n : ℕ) (p : GornAddress) : (p.take n).depth = min n p.depth :=
+  List.length_take
+
+theorem take_depth_of_le (h : q ≤ p) : p.take q.depth = q :=
+  GornAddress.ext (List.prefix_iff_eq_take.1 h).symm
+
+/-- The relative address of `q` with respect to `p`: what remains of `q` below `p`. -/
+def relativeTo (q p : GornAddress) : GornAddress := ⟨q.toList.drop p.depth⟩
+
+@[simp] theorem mul_relativeTo (p r : GornAddress) : (p * r).relativeTo p = r :=
+  GornAddress.ext (List.drop_left ..)
+
+theorem mul_relativeTo_of_le (h : p ≤ q) : p * q.relativeTo p = q := by
+  obtain ⟨r, rfl⟩ := GornAddress.le_iff_exists_mul.1 h
+  rw [mul_relativeTo]
 
 /-! ### Parents -/
 
@@ -225,6 +256,19 @@ def parent (p : GornAddress) : GornAddress := ⟨p.toList.dropLast⟩
 
 theorem parent_mul (s : GornAddress) (hp : p ≠ 1) : (s * p).parent = s * p.parent :=
   GornAddress.ext (List.dropLast_append_of_ne_nil fun e ↦ hp (GornAddress.ext e))
+
+/-- The last index of an address: which daughter of its parent it is. The root has none. -/
+def last? (p : GornAddress) : Option ℕ := p.toList.getLast?
+
+@[simp] theorem last?_one : last? 1 = none := rfl
+
+@[simp] theorem last?_mul_of (p : GornAddress) (i : ℕ) : (p * of i).last? = some i :=
+  List.getLast?_concat ..
+
+/-- An address other than the root is a daughter of its parent. -/
+theorem exists_eq_parent_mul_of (hp : p ≠ 1) : ∃ i, p = p.parent * of i :=
+  have h : p.toList ≠ [] := fun e ↦ hp (GornAddress.ext e)
+  ⟨p.toList.getLast h, GornAddress.ext (List.dropLast_concat_getLast h).symm⟩
 
 theorem parent_le (p : GornAddress) : p.parent ≤ p := le_def.2 (List.dropLast_prefix p.toList)
 

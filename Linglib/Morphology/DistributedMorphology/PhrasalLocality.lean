@@ -66,7 +66,7 @@ variable {C W : Type*}
 
 /-- The nodes crossed going from `α` to `β`, those that dominate `α` and not `β`. -/
 def crossed (α β : GornAddress) : List GornAddress :=
-  (α.toList.inits.map GornAddress.mk).filter fun p ↦ ¬ p ≤ β
+  α.inits.filter fun p ↦ ¬ p ≤ β
 
 theorem mem_crossed {α β p : GornAddress} : p ∈ crossed α β ↔ p ≤ α ∧ ¬ p ≤ β := by
   obtain ⟨p⟩ := p
@@ -131,7 +131,7 @@ instance [DecidableEq C] (X : C) (t : Tree C W) (α β : GornAddress) :
 /-- A proform of category `X` includes the node at `β` with the node at `α` when it may stand for a
 phrase that contains both. -/
 def Includes (X : C) (t : Tree C W) (α β : GornAddress) : Prop :=
-  ∃ p ∈ α.toList.inits.map GornAddress.mk, p ≤ β ∧ Replaceable X t p
+  ∃ p ∈ α.inits, p ≤ β ∧ Replaceable X t p
 
 instance [DecidableEq C] (X : C) (t : Tree C W) (α β : GornAddress) :
     Decidable (Includes X t α β) :=

@@ -111,7 +111,7 @@ theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p := by
   refine ⟨⟨_, hv 0 (by omega)⟩, Positions.covBy_iff.2 (GornAddress.covBy_iff.2 ⟨0, rfl⟩),
     ⟨_, hv 1 (by omega)⟩, Positions.covBy_iff.2 (GornAddress.covBy_iff.2 ⟨1, rfl⟩), fun h ↦
         ?_⟩
-  simpa using congrArg (fun q : t.toRoseTree.Positions ↦ q.val.toList.getLast?) h
+  simpa using congrArg (fun q : t.toRoseTree.Positions ↦ q.val.last?) h
 
 /-- The term at a position immediately contains the terms at its covers. -/
 theorem immediatelyContains_termAt :
@@ -354,7 +354,7 @@ section Complement
 variable (t : PlanarSyntacticObject L ι)
 
 /-- The complement of the head at `p` is its sister. -/
-def complement (p : GornAddress) : GornAddress := ⟨p.toList.dropLast ++ [1 - p.toList.getLastD 0]⟩
+def complement (p : GornAddress) : GornAddress := p.parent * .of (1 - p.last?.getD 0)
 
 theorem parent_covBy_complement (p : GornAddress) : p.parent ⋖ complement p :=
   GornAddress.covBy_iff.2 ⟨_, rfl⟩
@@ -377,11 +377,12 @@ theorem complement_complement {h : GornAddress} (hh : h ∈ t.toRoseTree.validPa
     obtain ⟨s, hs, his⟩ := mem_validPaths_append_singleton_iff.1 hv
     rw [(Order.pred hp).getElem?_eq, Option.some.injEq] at hs
     exact hlen ▸ hs ▸ his
-  have hhv : h.toList = (Order.pred hp).val.toList ++ [i] := congrArg GornAddress.toList hi
-  apply GornAddress.ext
-  simp only [complement, hhv, List.dropLast_concat, List.getLastD_concat]
-  congr 2
-  omega
+  have key : complement (complement ((Order.pred hp).val * .of i)) =
+      (Order.pred hp).val * .of i := by
+    simp only [complement, GornAddress.parent_mul_of, GornAddress.last?_mul_of, Option.getD_some]
+    congr 2
+    omega
+  rwa [← show h = (Order.pred hp).val * .of i from hi] at key
 
 variable {t} in
 /-- In a syntactic object, a head other than the root c-commands exactly the positions below its
@@ -397,7 +398,7 @@ theorem mem_cCommandDomain_iff_complement_le {h q : GornAddress} (hh : h ∈ t.t
   have hlen := PlanarSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
   have hcv : complement h ∈ t.toRoseTree.validPaths := by
     refine mem_validPaths_append_singleton_iff.2 ⟨(Order.pred hp).subtree, ?_, ?_⟩
-    · rw [← GornAddress.parent_toList, ← hmv]
+    · rw [← hmv]
       exact (Order.pred hp).getElem?_eq
     · rw [hlen]
       omega
@@ -405,8 +406,9 @@ theorem mem_cCommandDomain_iff_complement_le {h q : GornAddress} (hh : h ∈ t.t
   have hmc : Order.pred hp ⋖ hc :=
     Positions.covBy_iff.2 (hmv ▸ parent_covBy_complement h)
   have hhc : hp ≠ hc := fun he ↦ by
-    have := congrArg (fun r : t.toRoseTree.Positions ↦ r.val.toList.getLastD 0) he
-    simp only [hp, hc, complement, List.getLastD_concat] at this
+    have := congrArg (fun r : t.toRoseTree.Positions ↦ r.val.last?) he
+    simp only [hp, hc, complement, GornAddress.last?_mul_of] at this
+    cases hl : h.last? <;> simp [hl] at this
     omega
   rw [RoseTree.mem_cCommandDomain, cCommands_iff_parent_lt h0
     (PlanarSyntacticObject.isBranchingAt_parent (t := t) hp0)]

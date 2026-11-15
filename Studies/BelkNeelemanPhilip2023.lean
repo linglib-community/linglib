@@ -67,7 +67,7 @@ instance (x y : GornAddress) : Decidable (Precedes x y) := inferInstanceAs (Deci
 inside a pruned branch, at the corresponding position under its proxy. -/
 def realizedAt (P : List (GornAddress × GornAddress)) (x : GornAddress) : GornAddress :=
   match P.find? (decide <| ·.1 ≤ x) with
-  | some (p, q) => ⟨q.toList ++ x.toList.drop p.depth⟩
+  | some (p, q) => q * x.relativeTo p
   | none => x
 
 /-- The pruning rule (86). After the prunings `P`, the branch at `p` may be pruned with proxy `q`

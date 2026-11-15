@@ -461,11 +461,11 @@ theorem mem_positionsWhere_replaceAt
 
 theorem minimal_mem_positionsWhere_iff :
     Minimal (· ∈ positionsWhere P t) p ↔
-      p ∈ positionsWhere P t ∧ ∀ q ∈ p.toList.inits, ⟨q⟩ ≠ p → ⟨q⟩ ∉ positionsWhere P t := by
+      p ∈ positionsWhere P t ∧ ∀ q ∈ p.inits, q ≠ p → q ∉ positionsWhere P t := by
   rw [minimal_iff_forall_lt]
-  refine and_congr_right fun _ ↦ ⟨fun h q hq hne ↦ h ?_, fun h q hq ↦ ?_⟩
-  · exact lt_of_le_of_ne (GornAddress.le_def.mpr ((List.mem_inits _ _).mp hq)) hne
-  · exact h q.toList ((List.mem_inits _ _).mpr (GornAddress.le_def.mp hq.le)) hq.ne
+  exact and_congr_right fun _ ↦
+    ⟨fun h q hq hne ↦ h (lt_of_le_of_ne (GornAddress.mem_inits.1 hq) hne),
+      fun h q hq ↦ h q (GornAddress.mem_inits.2 hq.le) hq.ne⟩
 
 instance [DecidablePred P] : Decidable (Minimal (· ∈ positionsWhere P t) p) :=
   decidable_of_iff _ minimal_mem_positionsWhere_iff.symm

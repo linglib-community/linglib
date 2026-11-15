@@ -33,7 +33,7 @@ variable (hd : HeadFunction) (t : PlanarSyntacticObject)
 /-- The projections of the position `a`, from `a` up to its maximal projection. -/
 def projectionsOf (a : GornAddress) : List GornAddress :=
   (List.range (a.depth - (projectionAt hd t a).depth + 1)).map fun k ↦
-    ⟨a.toList.rdrop k⟩
+    a.take (a.depth - k)
 
 /-- The tokens `P` holds of that a probe on the head at `a` meets in search order: projection by
 projection, from the head up, the copies each c-commands outside `cut`, nearest first, a token

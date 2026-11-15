@@ -40,10 +40,8 @@ theorem breadthFirst_lt_of_depth_lt {a b : GornAddress} (h : a.depth < b.depth) 
   Prod.Lex.toLex_lt_toLex.2 (.inl h)
 
 theorem depth_complement {b : GornAddress} (hb : b ≠ ⊥) : (complement b).depth = b.depth := by
-  have : b.toList ≠ [] := fun h ↦ hb (GornAddress.ext h)
-  simp only [GornAddress.depth, complement, List.length_append, List.length_dropLast,
-    List.length_singleton]
-  have := List.length_pos_iff.2 this
-  omega
+  obtain ⟨i, hi⟩ := GornAddress.exists_eq_parent_mul_of hb
+  rw [hi]
+  simp [complement]
 
 end Minimalist.Probe

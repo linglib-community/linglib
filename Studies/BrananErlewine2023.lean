@@ -134,7 +134,7 @@ variable {W : Type*}
 extend to the category of the phase, so that it belongs to the extended projection containing
 the phase head. -/
 def OnSpine (t : Tree Cat W) (p : GornAddress) : Prop :=
-  ∀ l ∈ p.toList.inits, ∃ s ∈ t[l]?, (Tree.cat s).ExtendsTo t.cat
+  ∀ q ∈ p.inits, ∃ s ∈ t[q]?, (Tree.cat s).ExtendsTo t.cat
 
 instance (t : Tree Cat W) (p : GornAddress) : Decidable (OnSpine t p) := by
   unfold OnSpine; infer_instance

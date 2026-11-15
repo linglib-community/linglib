@@ -520,7 +520,7 @@ instance (p : GornAddress) : Decidable (IsMaximalProjection (headDaughterRel hd)
 
 theorem isProjectionOf_headDaughterRel_iff {h p : GornAddress} :
     IsProjectionOf (headDaughterRel hd) h p ↔
-      p ≤ h ∧ ∀ q ∈ h.toList.inits.map GornAddress.mk, p < q → headDaughterRel hd q.parent q := by
+      p ≤ h ∧ ∀ q ∈ h.inits, p < q → headDaughterRel hd q.parent q := by
   have hH : ∀ m d, headDaughterRel hd m d → m ⋖ d := fun _ _ ↦ headDaughterRel_covBy hd
   constructor
   · intro hp
@@ -568,15 +568,14 @@ instance (h p : GornAddress) : Decidable (IsLexicalHeadOf (headDaughterRel hd) h
 
 /-- The maximal projection of `h` is the lowest maximal projection dominating it. -/
 def maximalProjectionAt (h : GornAddress) : GornAddress :=
-  ⟨h.toList.take (Nat.findGreatest
-    (fun n ↦ IsMaximalProjection (headDaughterRel hd) ⟨h.toList.take n⟩) h.depth)⟩
+  h.take (Nat.findGreatest (fun n ↦ IsMaximalProjection (headDaughterRel hd) (h.take n)) h.depth)
 
 theorem maximalProjectionAt_le (h : GornAddress) : maximalProjectionAt hd h ≤ h :=
-  List.take_prefix _ _
+  GornAddress.take_le _ h
 
 theorem isMaximalProjection_maximalProjectionAt (h : GornAddress) :
     IsMaximalProjection (headDaughterRel hd) (maximalProjectionAt hd h) :=
-  Nat.findGreatest_spec (P := fun n ↦ IsMaximalProjection (headDaughterRel hd) ⟨h.toList.take n⟩)
+  Nat.findGreatest_spec (P := fun n ↦ IsMaximalProjection (headDaughterRel hd) (h.take n))
     (Nat.zero_le _) fun _ ⟨_, _, hi⟩ ↦ by simp at hi
 
 /-- `maximalProjectionAt hd h` is the least projection of `h`. -/
@@ -592,7 +591,7 @@ theorem isLeast_maximalProjectionAt (h : GornAddress) :
     (by simpa [maximalProjectionAt, Nat.findGreatest_le, GornAddress.depth] using
       GornAddress.depth_strictMono hlt)
     ((List.mem_inits _ _).1 hl).length_le
-  rw [← hl'] at hfg
+  rw [show h.take l.length = ⟨l⟩ from GornAddress.ext hl'.symm] at hfg
   by_contra hne
   exact hfg ((isMaximalProjection_headDaughterRel_iff hd).2 hne)
 
@@ -628,7 +627,7 @@ theorem not_projection_of_adjunction {m d : GornAddress}
 theorem isMaximalCategory_iff_inits (x : GornAddress) :
     IsMaximalCategory (headDaughterRel (projectionIndex hd seg))
         (headDaughterRel (adjunctionIndex hd seg)) x ↔
-      ∀ s ∈ x.toList.inits.map GornAddress.mk,
+      ∀ s ∈ x.inits,
         IsProjectionOf (headDaughterRel (adjunctionIndex hd seg)) x s →
           IsMaximalProjection (headDaughterRel (projectionIndex hd seg)) s := by
   rw [isMaximalCategory_iff_forall_above (fun _ _ ↦ headDaughterRel_covBy _)
@@ -670,7 +669,7 @@ instance (x : GornAddress) :
 
 theorem includes_iff_inits (x y : GornAddress) :
     Includes (headDaughterRel (adjunctionIndex hd seg)) x y ↔
-      x ≤ y ∧ ∀ q ∈ y.toList.inits.map GornAddress.mk,
+      x ≤ y ∧ ∀ q ∈ y.inits,
         IsProjectionOf (headDaughterRel (adjunctionIndex hd seg)) q x →
           ∀ i, adjunctionIndex hd seg q = some i → q * .of i ≤ y := by
   rw [includes_iff_forall_le (fun _ _ ↦ headDaughterRel_covBy _) (headDaughterRel_rightUnique _)]
@@ -687,7 +686,7 @@ instance (x y : GornAddress) : Decidable (Includes (headDaughterRel (adjunctionI
 
 theorem excludes_iff_inits (x y : GornAddress) :
     Excludes (headDaughterRel (adjunctionIndex hd seg)) x y ↔
-      ∀ s ∈ x.toList.inits.map GornAddress.mk,
+      ∀ s ∈ x.inits,
         IsProjectionOf (headDaughterRel (adjunctionIndex hd seg)) x s → ¬ s ≤ y := by
   rw [excludes_iff (fun _ _ ↦ headDaughterRel_covBy _) (headDaughterRel_rightUnique _)]
   exact ⟨fun h s _ hs ↦ h s hs, fun h s hs ↦ h s (List.mem_map.2 ⟨_, (List.mem_inits _ _).2

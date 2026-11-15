@@ -47,7 +47,7 @@ instance (p : GornAddress) : Decidable (IsHeadPosition t p) :=
 /-- The maximal projections a link crosses, those dominating the phrase that moves but not its
 landing site ([erlewine-2016]). -/
 def crossed (x : GornAddress × GornAddress) : Finset GornAddress :=
-  ((projectionAt hd t x.2).toList.inits.map GornAddress.mk).toFinset.filter fun Y ↦
+  (projectionAt hd t x.2).inits.toFinset.filter fun Y ↦
     Y ∈ maximalProjections hd t ∧ x.1.parent < Y ∧ Y < projectionAt hd t x.2
 
 /-- A link moves a specifier, a phrase whose sister is no head, across no maximal projection but
