@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.DistributedMorphology.Allosemy
+public import Linglib.Morphology.DistributedMorphology.Nominalization
 public import Linglib.Morphology.DistributedMorphology.Locality
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.InsideOut
 public import Linglib.Fragments.Icelandic.Nouns
@@ -332,6 +332,15 @@ theorem borers_generalization (r : Root) {d : Derivation}
     (h : d.reading = some .complexEvent) :
     d.v = .eventive ∧ ¬ (nominal r d).Active Head.Cyclic (nIdx r d) ⊥ :=
   ⟨((Derivation.eventive_iff d).2 h).1, nominal_n_not_active_bot r d⟩
+
+/-- The meaning half of the generalization on the denotations: a nominalization with a Theme
+position, as a complex event nominal has, is built on eventive v, since only v introduces the
+position. -/
+theorem eventive_of_internalArg {E S : Type*} {m : NominalizationModel E S}
+    {ρ : RootMeaning E S} {d : Derivation} {x : NominalDenotation E S}
+    (h : denoteN m (denoteV ρ d.v) d.n = some x) (hx : x.internalArg.isSome) :
+    d.v = .eventive :=
+  eq_eventive_of_internalArg_isSome h hx
 
 /-! ### The external argument -/
 
