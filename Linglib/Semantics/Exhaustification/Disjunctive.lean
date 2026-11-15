@@ -217,6 +217,28 @@ theorem exhIEII_supClosure (h : Separating I p) (hI : I.Nonempty) :
   simp only [Finset.mem_coe]
   exact Set.inter_eq_right.2 fun w hw ↦ Set.mem_biUnion hi (Set.mem_iInter₂.1 hw i hi)
 
+theorem hsplit_image :
+    ∀ i ∈ I, ∀ j ∈ I, j ≠ i → ∃ S ⊆ I, (⋃ k ∈ S, p k) ∈ p '' ↑I ∧ j ∈ S ∧ i ∉ S :=
+  fun _ _ j hj hji ↦ ⟨{j}, by simpa, ⟨j, hj, by simp⟩, by simp, by simpa using hji.symm⟩
+
+/-- Against its disjuncts alone, a disjunction of separated disjuncts has nothing innocently
+excludable. -/
+theorem exhIE_image (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i) :
+    exhIE (p '' ↑I) (⋃ i ∈ I, p i) = ⋃ i ∈ I, p i :=
+  Set.Subset.antisymm (exhIE_subset _ _) fun _ hw ↦ ⟨hw, fun q hq ↦ absurd hq
+    (not_isInnocentlyExcludable_of_subset_supClosure subset_supClosure hsplit_image hsep q)⟩
+
+/-- Exhaustifying a disjunction of separated disjuncts against the disjuncts alone gives their
+conjunction. -/
+theorem exhIEII_image (h : Separating I p) (hI : I.Nonempty) :
+    exhIEII (p '' ↑I) (⋃ i ∈ I, p i) = ⋂ i ∈ I, p i := by
+  obtain ⟨i, hi⟩ := hI
+  rw [exhIEII_eq_inter_sInter subset_supClosure ⟨i, hi⟩ h.all
+      (not_isInnocentlyExcludable_of_subset_supClosure subset_supClosure hsplit_image h.single),
+    Set.sInter_image]
+  simp only [Finset.mem_coe]
+  exact Set.inter_eq_right.2 fun w hw ↦ Set.mem_biUnion hi (Set.mem_iInter₂.1 hw i hi)
+
 theorem hsplit_subDisjsOfCard [DecidableEq ι] {m : ℕ} (hm : 0 < m) (hmI : m < I.card) :
     ∀ i ∈ I, ∀ j ∈ I, j ≠ i →
       ∃ S ⊆ I, (⋃ k ∈ S, p k) ∈ subDisjsOfCard I p m ∧ j ∈ S ∧ i ∉ S := by
