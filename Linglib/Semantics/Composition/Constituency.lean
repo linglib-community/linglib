@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Tree.Basic
+public import Linglib.Syntax.Tree.Skeleton
 public import Linglib.Semantics.Composition.Basic
 
 /-!
@@ -13,7 +13,6 @@ node a plain node or, at a category that is an island, an island.
 
 ## Main definitions
 
-* `PhraseStructure.Tree.skeleton`: the bare structure of a tree.
 * `PhraseStructure.Tree.derivs`, `PhraseStructure.Tree.values`: the derivations of a tree that an
   interpreter admits, and their values, with [the values of a node from those of its
   daughters](##PhraseStructure.Tree.values_phrase_binary).
@@ -31,19 +30,6 @@ namespace PhraseStructure.Tree
 open ManySorted ManySorted.Language Interpreter
 
 variable {C L : Type}
-
-/-- The bare structure of a tree, with the categories `island` holds of as islands: its leaves are
-words and trace indices, and it has none if a phrase has no daughter or more than two. -/
-def skeleton (island : C → Bool) : Tree C L → Option (Skeleton Node (L ⊕ ℕ))
-  | .terminal _ w => some (.leaf (.inl w))
-  | .trace n _ => some (.leaf (.inr n))
-  | .bind n _ body => (skeleton island body).map (.unary (.index n))
-  | .phrase _ _ (t :: []) => skeleton island t
-  | .phrase c _ (t₁ :: t₂ :: []) => do
-    let s₁ ← skeleton island t₁
-    let s₂ ← skeleton island t₂
-    pure (.binary (if island c then .island else .branch) s₁ s₂)
-  | _ => none
 
 variable {T : Type} {G : Language T} {W D : T → Type}
 
