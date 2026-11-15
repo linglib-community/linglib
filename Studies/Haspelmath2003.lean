@@ -356,7 +356,8 @@ theorem around :
 
 The chapter places no Latin or Japanese gram on its maps. In the prose of the grammar the Latin
 dative has every function of the first map but direction, the dative of the place to which
-being left to the poets, so it has purpose without the one function purpose is linked to. The
+being left to the poets, so it has purpose, in the few constructions that keep it, without the
+one function purpose is linked to. The
 Japanese dative particle *ni* has recipient and passive agent, which the second map joins only
 through functions *ni* does not have. -/
 

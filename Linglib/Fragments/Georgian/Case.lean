@@ -20,9 +20,10 @@ stone'. The paradigms that distinguish the seven cases are in `Georgian.Declensi
 
 ## Implementation notes
 
-`functions` leaves out the subject and the objects, whose case changes with the series of the
-verb (`Georgian.pattern`), and time, which Hewitt gives to the nominative, the dative and the
-instrumental. Hewitt also lists among the case functions an ablative, the instrumental followed
+The case of the subject and the objects changes with the series of the verb, so `functions`
+gives a case the core roles it marks in some series, the nominative S, A and P and the dative P
+and A beside the recipient; which it marks in which series is `Georgian.marking`. `functions`
+leaves out time, which Hewitt gives to the nominative, the dative and the instrumental. Hewitt also lists among the case functions an ablative, the instrumental followed
 by *-gan* 'from', which is not one of the seven cases, so `functions` has no source.
 
 ## References
@@ -64,10 +65,13 @@ def label : Case → _root_.Case
   | inst => .inst
   | adv => .ess
 
-/-- The functions a case marks: the dative also expresses location with a few nouns
-([hewitt-1995] pp. 531–532), and the adverbial the change of state (p. 534). -/
+/-- The functions a case marks: the nominative marks S, the subject of a transitive verb in the
+first series and its direct object in the second and third, the dative its direct object in the
+first series and its subject in the third, and location with a few nouns ([hewitt-1995]
+pp. 531–532), and the adverbial the change of state (p. 534). -/
 def functions : Case → Finset _root_.Case.Function
-  | dat => {.argument .R, .spatial none .place}
+  | nom => {.argument .S, .argument .A, .argument .P}
+  | dat => {.argument .R, .argument .P, .argument .A, .spatial none .place}
   | adv => {.essive, .translative}
   | c => c.label.functions
 

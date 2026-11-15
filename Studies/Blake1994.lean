@@ -267,6 +267,10 @@ theorem LabelledForHighest.exists_lt_of_mem_gaps (hl : LabelledForHighest label 
 
 end Functions
 
+-- The comparative values are themselves labelled for the highest of the functions they are
+-- named for: the position of a value is the first its functions fill.
+theorem labelledForHighest_functions : LabelledForHighest id Case.functions := by decide
+
 /-! ### The systems Blake cites -/
 
 /-- Classical Armenian (73), with the Proto-Indo-European system less the vocative. -/
@@ -384,12 +388,13 @@ theorem functions_conform :
   decide
 
 -- The datives that take in the locative are labelled for the higher function. The Finnish
--- allative and the Hungarian and Basel German datives are labelled for the lower one.
+-- allative and the Hungarian and Basel German datives are labelled for the lower one, and so is
+-- the Georgian dative, which also marks the direct object in the first series of the verb.
 theorem labelledForHighest_fragments :
     LabelledForHighest Greek.Ancient.Case.label Greek.Ancient.Case.functions ∧
       LabelledForHighest Mongolian.Case.label Mongolian.Case.functions ∧
       LabelledForHighest Yakut.Case.label Yakut.Case.functions ∧
-      LabelledForHighest Georgian.Case.label Georgian.Case.functions ∧
+      ¬ LabelledForHighest Georgian.Case.label Georgian.Case.functions ∧
       ¬ LabelledForHighest Finnish.Case.label Finnish.Case.functions ∧
       ¬ LabelledForHighest Hungarian.Case.label Hungarian.Case.functions ∧
       ¬ LabelledForHighest German.Basel.Case.label German.Basel.Case.functions := by

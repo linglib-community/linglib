@@ -65,8 +65,10 @@ def label : Case → _root_.Case
 and the ablative location and instrument as well as source. The dative marks the indirect object
 of a verb of giving ([greenough-kittredge-howard-dooge-1903] §362), the one pleased or to whom
 something seems (§§367, 375), the possessor with *esse* (§373), the agent with the gerundive
-(§374), the one benefited (§376), the possessor of what the sentence is about, in place of a
-genitive (§377), the person judging (§378), and the purpose or end (§382). -/
+and commonly with a perfect participle (§§374–375), the one benefited or harmed (§376), the
+possessor in place of a possessive genitive, *versatur mihi ante oculos* 'it comes before my
+eyes' (§377), the person judging (§378), and the purpose or end, a use that remains in a few
+constructions (§382). -/
 def functions : Case → Finset _root_.Case.Function
   | acc => {.argument .P, .spatial none .goal}
   | dat => {.argument .R, .experiencer, .predicativePossessor, .passiveAgent, .beneficiary,

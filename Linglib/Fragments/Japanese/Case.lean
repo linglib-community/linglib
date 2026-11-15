@@ -69,8 +69,10 @@ def label : Case → _root_.Case
   | gen => .gen
   | dat => .dat
 
-/-- `c.functions` are the functions `c` marks; *ni* marks the recipient, the goal,
-the time and the location of existence, and the agent of a passive ([tsujimura-2014] p. 266). -/
+/-- `c.functions` are the functions `c` marks; *ni* marks the recipient ([tsujimura-2014]
+p. 134) and the agent of a passive (p. 266), and the entry includes the goal, the time and the
+location of existence, which Tsujimura gives to a postposition *ni* 'to, at' of the same form
+(p. 300). -/
 def functions : Case → Finset _root_.Case.Function
   | dat => {.argument .R, .spatial none .place, .spatial none .goal, .temporal, .passiveAgent}
   | c => c.label.functions
