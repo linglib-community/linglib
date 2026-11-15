@@ -85,6 +85,8 @@ structure Categorizer where
   gender : Option GenderFeature := none
   /-- The selectional feature {D}. -/
   selectsD : Bool := false
+  /-- The category is n, v or a. -/
+  isCategorizer : cat.IsCategorizer := by decide
   deriving DecidableEq, Repr
 
 namespace Categorizer

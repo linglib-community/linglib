@@ -84,9 +84,9 @@ variable (r r' : Root) (hs : List Head) (s : ComplexHead Root Head)
 
 /-- The Highest Gender Hypothesis (32): a nominal agrees as its highest n would over a bare
 root. -/
-theorem highestGender {h : Categorizer} (hn : h.cat.IsCategorizer) :
+theorem highestGender (h : Categorizer) :
     cyclicGender ⟨r, hs ++ [.cat h]⟩ = cyclicGender ⟨r', [.cat h]⟩ :=
-  have hc : Head.Cyclic (.cat h) := hn
+  have hc : Head.Cyclic (.cat h) := h.isCategorizer
   (agreeingGender_lastCycle_concat_of_cyclic hc).trans
     (agreeingGender_lastCycle_concat_of_cyclic (hs := []) hc).symm
 

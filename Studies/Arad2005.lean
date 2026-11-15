@@ -656,7 +656,7 @@ above the category head of the word it is formed from. -/
 def verbSpine (base : Option Head) : ComplexHead Root Head := ⟨⟨0⟩, base.toList ++ [.v, .voice]⟩
 
 -- (8)
-theorem verbSpine_rootLocal : ∀ base : Option Head, (∀ c ∈ base, c = .n ∨ c = .a) →
+theorem verbSpine_active_bot_iff : ∀ base : Option Head, (∀ c ∈ base, c = .n ∨ c = .a) →
     ∀ i : Fin (verbSpine base).heads.length, (verbSpine base).heads[i] = .v →
       ((verbSpine base).Active cyclic i ⊥ ↔ base = none) := by
   decide

@@ -34,12 +34,6 @@ other.
   a cyclic head is spelled out is the interior of the phase below it. Transfer on trees is in
   `Syntax/Minimalist/Phase/Transfer.lean`, and the two are not derived from one definition.
 
-## TODO
-
-* `lastCycle_eq_filter_level` is stated without proof. By induction on the heads from the top
-  with `lastCycle_concat_of_cyclic` and `lastCycle_concat_of_not_cyclic`: a cyclic head raises the
-  top level, leaving itself alone at it, and a noncyclic head joins the positions already there.
-
 ## References
 
 * [embick-2010]
@@ -220,13 +214,47 @@ theorem lastCycle_concat_of_not_cyclic {r : R} {hs : List H} {h : H} (hc : ¬ cy
       h :: (⟨r, hs⟩ : ComplexHead R H).lastCycle cyclic := by
   simp [lastCycle, hc]
 
+private theorem lastCycle_mk_eq_filter_zipIdx (r : R) (hs : List H) :
+    (⟨r, hs⟩ : ComplexHead R H).lastCycle cyclic =
+      ((hs.zipIdx.filter fun x ↦
+        (hs.take (x.2 + 1)).countP (cyclic ·) = hs.countP (cyclic ·)).map Prod.fst).reverse := by
+  induction hs using List.reverseRecOn with
+  | nil => simp [lastCycle]
+  | append_singleton hs h ih =>
+    have hold : ∀ x ∈ hs.zipIdx, (hs ++ [h]).take (x.2 + 1) = hs.take (x.2 + 1) := fun x hx ↦
+      List.take_append_of_le_length (by have := List.snd_lt_of_mem_zipIdx hx; omega)
+    have hle : ∀ x ∈ hs.zipIdx, (hs.take (x.2 + 1)).countP (cyclic ·) ≤ hs.countP (cyclic ·) :=
+      fun x _ ↦ (List.take_prefix _ _).countP_le
+    by_cases hc : cyclic h
+    · have hnil : (hs.zipIdx.filter fun x ↦ (List.take (x.2 + 1) (hs ++ [h])).countP (cyclic ·) =
+          (hs ++ [h]).countP (cyclic ·)) = [] :=
+        List.filter_eq_nil_iff.2 fun x hx ↦ by
+          have := hle x hx
+          simp only [hold x hx, List.countP_append, List.countP_singleton, hc, decide_true,
+            ↓reduceIte, decide_eq_true_eq]
+          omega
+      rw [lastCycle_concat_of_cyclic hc, List.zipIdx_append, List.filter_append, hnil]
+      simp [List.take_of_length_le]
+    · have hfilter : (hs.zipIdx.filter fun x ↦
+          (List.take (x.2 + 1) (hs ++ [h])).countP (cyclic ·) = (hs ++ [h]).countP (cyclic ·)) =
+          hs.zipIdx.filter fun x ↦
+            (hs.take (x.2 + 1)).countP (cyclic ·) = hs.countP (cyclic ·) :=
+        List.filter_congr fun x hx ↦ by simp [hold x hx, hc]
+      rw [lastCycle_concat_of_not_cyclic hc, ih, List.zipIdx_append, List.filter_append, hfilter]
+      simp [List.take_of_length_le]
+
 variable (s cyclic) in
 /-- The last cycle is the positions of the highest level, outermost first. -/
 theorem lastCycle_eq_filter_level :
     s.lastCycle cyclic =
       (((List.finRange s.heads.length).filter fun i : Fin s.heads.length ↦
         s.level cyclic i = s.heads.countP (cyclic ·)).map fun i ↦ s.heads[i]).reverse := by
-  sorry
+  have hz : s.heads.zipIdx =
+      (List.finRange s.heads.length).map fun i : Fin s.heads.length ↦ (s.heads[i], (i : ℕ)) :=
+    List.ext_getElem (by simp) fun i h₁ h₂ ↦ by simp
+  rw [show s = ⟨s.root, s.heads⟩ from rfl, lastCycle_mk_eq_filter_zipIdx, hz, List.filter_map,
+    List.map_map]
+  rfl
 
 /-! ### Interface adjacency -/
 

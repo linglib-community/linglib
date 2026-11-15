@@ -323,7 +323,7 @@ def vaedaNominal (r : Root) (a c : Nominalizer.Alloseme) : ComplexHead Root Head
 /-- The position of n in the nominalization. -/
 def nIdx (r : Root) (d : Derivation) : Fin (nominal r d).heads.length := ⟨1, Nat.one_lt_two⟩
 
-theorem nominal_n_not_rootLocal (r : Root) (d : Derivation) :
+theorem nominal_n_not_active_bot (r : Root) (d : Derivation) :
     ¬ (nominal r d).Active Head.Cyclic (nIdx r d) ⊥ :=
   ComplexHead.not_active_bot_of_cyclic_of_cyclic (k := (⟨0, Nat.two_pos⟩ : Fin d.heads.length))
     (l := nIdx r d) (Fin.lt_def.2 Nat.zero_lt_one) trivial trivial
@@ -331,7 +331,7 @@ theorem nominal_n_not_rootLocal (r : Root) (d : Derivation) :
 theorem borers_generalization (r : Root) {d : Derivation}
     (h : d.reading = some .complexEvent) :
     d.v = .eventive ∧ ¬ (nominal r d).Active Head.Cyclic (nIdx r d) ⊥ :=
-  ⟨((Derivation.eventive_iff d).2 h).1, nominal_n_not_rootLocal r d⟩
+  ⟨((Derivation.eventive_iff d).2 h).1, nominal_n_not_active_bot r d⟩
 
 /-! ### The external argument -/
 

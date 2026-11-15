@@ -286,7 +286,7 @@ theorem not_exists_licensing :
 /-- In Distributed Morphology every stem is categorized by a head, so without ∅-Transparency no
 inflection sees the root, and the past of *run* is no closer to its root than the past of
 *instantiate*. With Embick's ∅-Transparency every root-selected inflection does see it. -/
-theorem dm_seesRoot :
+theorem dm_sees_bot :
     ∀ w ∈ dmWords, ¬ w.spine.Sees Embick2010.cyclic (fun _ ↦ False) w.target ⊥ ∧
       (w.choice = .rootSelected →
         w.spine.Sees Embick2010.cyclic Embick2010.phonNull w.target ⊥) := by
