@@ -17,7 +17,8 @@ paradigm gap of the genitive [only raise its acceptability](##facilitation_mono)
 *apo*-PP excludes the complex-event reading of [grimshaw-1990], so a nominal with two arguments
 [has a genitive theme and a by-phrase](##Nominal.WellFormed.genitive_and_apo): the single
 genitive restriction of [horrocks-stavrou-1987], extended to PPs, which the Grevena Greek of
-[michelioudakis-chatzikyriakidis-spathas-2024] does not obey. A possessor
+[michelioudakis-chatzikyriakidis-spathas-2024] does not obey; the Grevena *apo*-PP also
+[fronts and extracts](##displacement_rows_agree) as the standard genitive does. A possessor
 [takes surface scope exactly when it is a complement](##scope_rows_agree), as the inalienable
 genitive of [alexiadou-2003] and every *apo*-PP are.
 
@@ -36,8 +37,8 @@ genitive of [alexiadou-2003] and every *apo*-PP are.
 
 ## TODO
 
-* The fronting and sub-extraction contrasts between the two Greek varieties, and the paper's
-  table of their properties, are not encoded.
+* Of the paper's table of properties of the three expressions, the range of relations each
+  expresses and its unmarked position are not encoded.
 
 ## References
 
@@ -315,6 +316,29 @@ theorem derived_rows_agree :
 -- (12)
 theorem grevena_stacks :
     ∃ r ∈ derivedRows, r.variety = .grevena ∧ ¬ r.nominal.WellFormed ∧ Acceptable r.judgment := by
+  decide
+
+/-! ### Fronting and sub-extraction -/
+
+/-- A possessor fronted with its head noun or extracted out of its DP, (22) to (24): the variety,
+the realization of the possessor, and the judgment. -/
+structure Displaced where
+  variety : Variety
+  marking : Marking
+  judgment : Judgment
+
+/-- A row of the `displacement` group. -/
+def Displaced.ofDatum (e : Datum) : Option Displaced := do
+  guard (e.feature? "group" = some "displacement")
+  some ⟨← e.parse? "variety" varietyOf, ← e.parse? "marking" markingOf, e.judgment⟩
+
+/-- The fronting and sub-extraction rows. -/
+def displaced : List Displaced := Examples.all.filterMap Displaced.ofDatum
+
+-- (22) to (24): the Grevena apo-PP moves as the standard genitive does; the standard apo-PP
+-- does not.
+theorem displacement_rows_agree :
+    ∀ r ∈ displaced, ¬ Acceptable r.judgment ↔ r.variety = .smg ∧ r.marking = .apo := by
   decide
 
 /-! ### Scope and the merge site of the possessor -/

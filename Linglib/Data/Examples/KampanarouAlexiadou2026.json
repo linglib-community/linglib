@@ -1753,6 +1753,88 @@
     "verified": "page-image"
   },
   {
+    "id": "ka2026_7b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(7b)"
+    },
+    "language": "mode1248",
+    "primaryText": "iparxi ðinatotita aperioristis katanalosis apo krasi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "iparxi",
+        "exist.3SG"
+      ],
+      [
+        "ðinatotita",
+        "possibility.SG.ACC"
+      ],
+      [
+        "aperioristis",
+        "unlimited.SG.GEN"
+      ],
+      [
+        "katanalosis",
+        "consumption.SG.GEN"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "krasi",
+        "wine.SG.ACC"
+      ]
+    ],
+    "translation": "There is a possibility for unlimited wine consumption.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "iparxi ðinatotita aperioristis katanalosis krasju",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "The paper prints the genitive and the apo-PP as alternants, genitive first: krasju/ apo krasi.",
+    "verified": "page-image"
+  },
+  {
     "id": "ka2026_8a",
     "source": {
       "bibkey": "kampanarou-alexiadou-2026",
@@ -2697,6 +2779,398 @@
     "verified": "page-image"
   },
   {
+    "id": "ka2026_22a",
+    "source": {
+      "bibkey": "michelioudakis-chatzikyriakidis-spathas-2024",
+      "paperLabel": "(31a)"
+    },
+    "reportedIn": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(22a)"
+    },
+    "method": "unclassified",
+    "language": "mode1248",
+    "primaryText": "apu pjon u ksaefus efiji xte",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "apu",
+        "of"
+      ],
+      [
+        "pjon",
+        "who.ACC"
+      ],
+      [
+        "u",
+        "DEF.SG.NOM"
+      ],
+      [
+        "ksaefus",
+        "cousin.NOM"
+      ],
+      [
+        "efiji",
+        "leave.PST.3SG"
+      ],
+      [
+        "xte",
+        "yesterday"
+      ]
+    ],
+    "translation": "Whose cousin left yesterday?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "group",
+        "displacement"
+      ],
+      [
+        "variety",
+        "grevena"
+      ],
+      [
+        "marking",
+        "apo"
+      ],
+      [
+        "operation",
+        "fronted"
+      ]
+    ],
+    "comment": "Grevena Greek. Checked against the pages of the reporting paper, which locates the example at p. 289 of its source. The paper brackets the fronted phrase and marks its trace after the head noun.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_22b",
+    "source": {
+      "bibkey": "michelioudakis-chatzikyriakidis-spathas-2024",
+      "paperLabel": "(31b)"
+    },
+    "reportedIn": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(22b)"
+    },
+    "method": "unclassified",
+    "language": "mode1248",
+    "primaryText": "apu pjon efiji u ksaefus xte",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "apu",
+        "of"
+      ],
+      [
+        "pjon",
+        "who.ACC"
+      ],
+      [
+        "efiji",
+        "leave.PST.3SG"
+      ],
+      [
+        "u",
+        "DEF.SG.NOM"
+      ],
+      [
+        "ksaefus",
+        "cousin.NOM"
+      ],
+      [
+        "xte",
+        "yesterday"
+      ]
+    ],
+    "translation": "Whose cousin left yesterday?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "group",
+        "displacement"
+      ],
+      [
+        "variety",
+        "grevena"
+      ],
+      [
+        "marking",
+        "apo"
+      ],
+      [
+        "operation",
+        "subextracted"
+      ]
+    ],
+    "comment": "Grevena Greek. Checked against the pages of the reporting paper, which locates the example at p. 289 of its source. The paper brackets the fronted phrase and marks its trace after the head noun.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_23a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(23a)"
+    },
+    "language": "mode1248",
+    "primaryText": "apo pjon to poði espase xtes",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "pjon",
+        "who.ACC"
+      ],
+      [
+        "to",
+        "DEF.SG.NOM"
+      ],
+      [
+        "poði",
+        "leg.SG.NOM"
+      ],
+      [
+        "espase",
+        "break.PST.3SG"
+      ],
+      [
+        "xtes",
+        "yesterday"
+      ]
+    ],
+    "translation": "Whose leg broke yesterday?",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "group",
+        "displacement"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "marking",
+        "apo"
+      ],
+      [
+        "operation",
+        "fronted"
+      ]
+    ],
+    "comment": "The paper brackets the fronted phrase and marks its trace after the head noun. Acceptable if the apo-PP names the agent of espase 'broke', which is why the paper does not star it.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_23b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(23b)"
+    },
+    "language": "mode1248",
+    "primaryText": "apo pjon espase to poði xtes",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "pjon",
+        "who.ACC"
+      ],
+      [
+        "espase",
+        "break.PST.3SG"
+      ],
+      [
+        "to",
+        "DEF.SG.NOM"
+      ],
+      [
+        "poði",
+        "leg.SG.NOM"
+      ],
+      [
+        "xtes",
+        "yesterday"
+      ]
+    ],
+    "translation": "Whose leg broke yesterday?",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "group",
+        "displacement"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "marking",
+        "apo"
+      ],
+      [
+        "operation",
+        "subextracted"
+      ]
+    ],
+    "comment": "The paper brackets the fronted phrase and marks its trace after the head noun. Acceptable if the apo-PP names the agent of espase 'broke', which is why the paper does not star it.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_24a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(24a)"
+    },
+    "language": "mode1248",
+    "primaryText": "pjanu to poði espase xtes",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pjanu",
+        "whose"
+      ],
+      [
+        "to",
+        "DEF.SG.NOM"
+      ],
+      [
+        "poði",
+        "leg.SG.NOM"
+      ],
+      [
+        "espase",
+        "break.PST.3SG"
+      ],
+      [
+        "xtes",
+        "yesterday"
+      ]
+    ],
+    "translation": "Whose leg broke yesterday?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "group",
+        "displacement"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "marking",
+        "genitive"
+      ],
+      [
+        "operation",
+        "fronted"
+      ]
+    ],
+    "comment": "The paper brackets the fronted phrase and marks its trace after the head noun.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_24b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(24b)"
+    },
+    "language": "mode1248",
+    "primaryText": "pjanu espase to poði xtes",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pjanu",
+        "whose"
+      ],
+      [
+        "espase",
+        "break.PST.3SG"
+      ],
+      [
+        "to",
+        "DEF.SG.NOM"
+      ],
+      [
+        "poði",
+        "leg.SG.NOM"
+      ],
+      [
+        "xtes",
+        "yesterday"
+      ]
+    ],
+    "translation": "Whose leg broke yesterday?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "group",
+        "displacement"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "marking",
+        "genitive"
+      ],
+      [
+        "operation",
+        "subextracted"
+      ]
+    ],
+    "comment": "The paper brackets the fronted phrase and marks its trace after the head noun.",
+    "verified": "page-image"
+  },
+  {
     "id": "ka2026_30a",
     "source": {
       "bibkey": "kampanarou-alexiadou-2026",
@@ -2779,6 +3253,240 @@
       ]
     ],
     "comment": "Repeated from (4b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_32a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(32a)"
+    },
+    "language": "mode1248",
+    "primaryText": "i esθisi apo ti sokolata",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "esθisi",
+        "sensation.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "ti",
+        "DEF.SG.ACC"
+      ],
+      [
+        "sokolata",
+        "chocolate.SG.ACC"
+      ]
+    ],
+    "translation": "the sensation of the chocolate",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "i esθisi tis sokolatas",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "The paper prints the genitive and the apo-PP as alternants, genitive first, and two head nouns as alternants: esθisi/ gefsi.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_32b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(32b)"
+    },
+    "language": "mode1248",
+    "primaryText": "to kopsimo apo to kreas",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "to",
+        "DEF.SG.NOM"
+      ],
+      [
+        "kopsimo",
+        "cutting.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "kreas",
+        "meat.SG.ACC"
+      ]
+    ],
+    "translation": "the cutting of the meat",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "to kopsimo tu kreatos",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "The paper prints the genitive and the apo-PP as alternants, genitive first, and three head nouns as alternants: kopsimo/ psisimo/ ðagoma.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ka2026_33a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(33a)"
+    },
+    "language": "mode1248",
+    "primaryText": "i kinisi apo tus planites",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "kinisi",
+        "movement.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "tus",
+        "DEF.PL.ACC"
+      ],
+      [
+        "planites",
+        "planet.PL.ACC"
+      ]
+    ],
+    "translation": "the movement of the planets",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "i kinisi ton planiton",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ],
+      [
+        "themeForm",
+        "common"
+      ],
+      [
+        "head",
+        "sg"
+      ]
+    ],
+    "comment": "The paper prints the genitive and the apo-PP as alternants, genitive first.",
     "verified": "page-image"
   },
   {

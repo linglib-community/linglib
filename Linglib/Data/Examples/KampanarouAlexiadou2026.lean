@@ -323,6 +323,20 @@ def ka2026_7a : Datum :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "common"), ("head", "sg")] }
 
+def ka2026_7b : Datum :=
+  { id := "ka2026_7b"
+    source := ⟨"kampanarou-alexiadou-2026", "(7b)"⟩
+    reportedIn := none
+    method := some .elicitation
+    language := "mode1248"
+    primaryText := "iparxi ðinatotita aperioristis katanalosis apo krasi"
+    glossedTokens := [("iparxi", "exist.3SG"), ("ðinatotita", "possibility.SG.ACC"), ("aperioristis", "unlimited.SG.GEN"), ("katanalosis", "consumption.SG.GEN"), ("apo", "of"), ("krasi", "wine.SG.ACC")]
+    context := ""
+    judgment := .acceptable
+    alternatives := [("iparxi ðinatotita aperioristis katanalosis krasju", .acceptable)]
+    readings := []
+    paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "common"), ("head", "sg")] }
+
 def ka2026_8a : Datum :=
   { id := "ka2026_8a"
     source := ⟨"kampanarou-alexiadou-2026", "(8a)"⟩
@@ -476,6 +490,88 @@ def ka2026_17c : Datum :=
     readings := []
     paperFeatures := [("section", "4"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "apo"), ("aspectual", "no"), ("themeForm", "common"), ("agentForm", "common"), ("head", "sg")] }
 
+def ka2026_22a : Datum :=
+  { id := "ka2026_22a"
+    source := ⟨"michelioudakis-chatzikyriakidis-spathas-2024", "(31a)"⟩
+    reportedIn := some ⟨"kampanarou-alexiadou-2026", "(22a)"⟩
+    language := "mode1248"
+    primaryText := "apu pjon u ksaefus efiji xte"
+    glossedTokens := [("apu", "of"), ("pjon", "who.ACC"), ("u", "DEF.SG.NOM"), ("ksaefus", "cousin.NOM"), ("efiji", "leave.PST.3SG"), ("xte", "yesterday")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "4"), ("group", "displacement"), ("variety", "grevena"), ("marking", "apo"), ("operation", "fronted")] }
+
+def ka2026_22b : Datum :=
+  { id := "ka2026_22b"
+    source := ⟨"michelioudakis-chatzikyriakidis-spathas-2024", "(31b)"⟩
+    reportedIn := some ⟨"kampanarou-alexiadou-2026", "(22b)"⟩
+    language := "mode1248"
+    primaryText := "apu pjon efiji u ksaefus xte"
+    glossedTokens := [("apu", "of"), ("pjon", "who.ACC"), ("efiji", "leave.PST.3SG"), ("u", "DEF.SG.NOM"), ("ksaefus", "cousin.NOM"), ("xte", "yesterday")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "4"), ("group", "displacement"), ("variety", "grevena"), ("marking", "apo"), ("operation", "subextracted")] }
+
+def ka2026_23a : Datum :=
+  { id := "ka2026_23a"
+    source := ⟨"kampanarou-alexiadou-2026", "(23a)"⟩
+    reportedIn := none
+    method := some .elicitation
+    language := "mode1248"
+    primaryText := "apo pjon to poði espase xtes"
+    glossedTokens := [("apo", "of"), ("pjon", "who.ACC"), ("to", "DEF.SG.NOM"), ("poði", "leg.SG.NOM"), ("espase", "break.PST.3SG"), ("xtes", "yesterday")]
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "4"), ("group", "displacement"), ("variety", "smg"), ("marking", "apo"), ("operation", "fronted")] }
+
+def ka2026_23b : Datum :=
+  { id := "ka2026_23b"
+    source := ⟨"kampanarou-alexiadou-2026", "(23b)"⟩
+    reportedIn := none
+    method := some .elicitation
+    language := "mode1248"
+    primaryText := "apo pjon espase to poði xtes"
+    glossedTokens := [("apo", "of"), ("pjon", "who.ACC"), ("espase", "break.PST.3SG"), ("to", "DEF.SG.NOM"), ("poði", "leg.SG.NOM"), ("xtes", "yesterday")]
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "4"), ("group", "displacement"), ("variety", "smg"), ("marking", "apo"), ("operation", "subextracted")] }
+
+def ka2026_24a : Datum :=
+  { id := "ka2026_24a"
+    source := ⟨"kampanarou-alexiadou-2026", "(24a)"⟩
+    reportedIn := none
+    method := some .elicitation
+    language := "mode1248"
+    primaryText := "pjanu to poði espase xtes"
+    glossedTokens := [("pjanu", "whose"), ("to", "DEF.SG.NOM"), ("poði", "leg.SG.NOM"), ("espase", "break.PST.3SG"), ("xtes", "yesterday")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "4"), ("group", "displacement"), ("variety", "smg"), ("marking", "genitive"), ("operation", "fronted")] }
+
+def ka2026_24b : Datum :=
+  { id := "ka2026_24b"
+    source := ⟨"kampanarou-alexiadou-2026", "(24b)"⟩
+    reportedIn := none
+    method := some .elicitation
+    language := "mode1248"
+    primaryText := "pjanu espase to poði xtes"
+    glossedTokens := [("pjanu", "whose"), ("espase", "break.PST.3SG"), ("to", "DEF.SG.NOM"), ("poði", "leg.SG.NOM"), ("xtes", "yesterday")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "4"), ("group", "displacement"), ("variety", "smg"), ("marking", "genitive"), ("operation", "subextracted")] }
+
 def ka2026_30a : Datum :=
   { id := "ka2026_30a"
     source := ⟨"kampanarou-alexiadou-2026", "(30a)"⟩
@@ -489,6 +585,48 @@ def ka2026_30a : Datum :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "genitive"), ("agent", "apo"), ("aspectual", "no"), ("themeForm", "common"), ("agentForm", "common"), ("head", "sg")] }
+
+def ka2026_32a : Datum :=
+  { id := "ka2026_32a"
+    source := ⟨"kampanarou-alexiadou-2026", "(32a)"⟩
+    reportedIn := none
+    method := some .elicitation
+    language := "mode1248"
+    primaryText := "i esθisi apo ti sokolata"
+    glossedTokens := [("i", "DEF.SG.NOM"), ("esθisi", "sensation.SG.NOM"), ("apo", "of"), ("ti", "DEF.SG.ACC"), ("sokolata", "chocolate.SG.ACC")]
+    context := ""
+    judgment := .acceptable
+    alternatives := [("i esθisi tis sokolatas", .acceptable)]
+    readings := []
+    paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "common"), ("head", "sg")] }
+
+def ka2026_32b : Datum :=
+  { id := "ka2026_32b"
+    source := ⟨"kampanarou-alexiadou-2026", "(32b)"⟩
+    reportedIn := none
+    method := some .elicitation
+    language := "mode1248"
+    primaryText := "to kopsimo apo to kreas"
+    glossedTokens := [("to", "DEF.SG.NOM"), ("kopsimo", "cutting.SG.NOM"), ("apo", "of"), ("to", "DEF.SG.ACC"), ("kreas", "meat.SG.ACC")]
+    context := ""
+    judgment := .acceptable
+    alternatives := [("to kopsimo tu kreatos", .acceptable)]
+    readings := []
+    paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "common"), ("head", "sg")] }
+
+def ka2026_33a : Datum :=
+  { id := "ka2026_33a"
+    source := ⟨"kampanarou-alexiadou-2026", "(33a)"⟩
+    reportedIn := none
+    method := some .elicitation
+    language := "mode1248"
+    primaryText := "i kinisi apo tus planites"
+    glossedTokens := [("i", "DEF.SG.NOM"), ("kinisi", "movement.SG.NOM"), ("apo", "of"), ("tus", "DEF.PL.ACC"), ("planites", "planet.PL.ACC")]
+    context := ""
+    judgment := .acceptable
+    alternatives := [("i kinisi ton planiton", .acceptable)]
+    readings := []
+    paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no"), ("themeForm", "common"), ("head", "sg")] }
 
 def ka2026_33b : Datum :=
   { id := "ka2026_33b"
@@ -686,6 +824,6 @@ def ka2026_39b : Datum :=
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("section", "7"), ("group", "scope"), ("marking", "apo"), ("relation", "ownership")] }
 
-def all : List Datum := [ka2026_5a, ka2026_5b, ka2026_5c, ka2026_6a, ka2026_6b, ka2026_9a_book, ka2026_9a_eyes, ka2026_10a_shoulder, ka2026_10a_mom, ka2026_11a, ka2026_11b, ka2026_fn5, ka2026_14a, ka2026_14b, ka2026_15a, ka2026_15b, ka2026_28, ka2026_25a, ka2026_25b, ka2026_27a, ka2026_27b, ka2026_7a, ka2026_8a, ka2026_8b, ka2026_8c, ka2026_8d, ka2026_9b_movement, ka2026_9b_dance, ka2026_10b_existence, ka2026_10b_falling, ka2026_12, ka2026_17b, ka2026_17c, ka2026_30a, ka2026_33b, ka2026_34a, ka2026_34b, ka2026_34c, ka2026_35a, ka2026_35b, ka2026_35c, ka2026_36a, ka2026_36b, ka2026_36c, ka2026_38a, ka2026_38b, ka2026_39a, ka2026_39b]
+def all : List Datum := [ka2026_5a, ka2026_5b, ka2026_5c, ka2026_6a, ka2026_6b, ka2026_9a_book, ka2026_9a_eyes, ka2026_10a_shoulder, ka2026_10a_mom, ka2026_11a, ka2026_11b, ka2026_fn5, ka2026_14a, ka2026_14b, ka2026_15a, ka2026_15b, ka2026_28, ka2026_25a, ka2026_25b, ka2026_27a, ka2026_27b, ka2026_7a, ka2026_7b, ka2026_8a, ka2026_8b, ka2026_8c, ka2026_8d, ka2026_9b_movement, ka2026_9b_dance, ka2026_10b_existence, ka2026_10b_falling, ka2026_12, ka2026_17b, ka2026_17c, ka2026_22a, ka2026_22b, ka2026_23a, ka2026_23b, ka2026_24a, ka2026_24b, ka2026_30a, ka2026_32a, ka2026_32b, ka2026_33a, ka2026_33b, ka2026_34a, ka2026_34b, ka2026_34c, ka2026_35a, ka2026_35b, ka2026_35c, ka2026_36a, ka2026_36b, ka2026_36c, ka2026_38a, ka2026_38b, ka2026_39a, ka2026_39b]
 
 end KampanarouAlexiadou2026.Examples
