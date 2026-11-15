@@ -197,18 +197,12 @@ not replaced by a variable in the skeletons (32)–(33). -/
 theorem isPermutationInvariant_but :
     IsPermutationInvariant (Ty.et ⇒ Ty.et ⇒ Ty.det ⇒ Ty.et ⇒ .t) (but (E := E)) := by
   intro π
-  funext f g D h
+  funext (f : Set E) (g : Set E) (D : Det E) (h : Set E)
   show IsExceptionSet (fun A B ↦ D (π.symm ⁻¹' A) (π.symm ⁻¹' B)) (π ⁻¹' g) (π ⁻¹' f) (π ⁻¹' h) =
     IsExceptionSet D g f h
-  have key (S : Set E) :
-      D (π.symm ⁻¹' (π ⁻¹' g \ S)) (π.symm ⁻¹' (π ⁻¹' h)) ↔ D (g \ π.symm ⁻¹' S) h := by
-    rw [Set.preimage_sdiff, π.symm_preimage_preimage, π.symm_preimage_preimage]
-  refine propext ⟨fun hb ↦ ⟨?_, fun j hj ↦ ?_⟩, fun hb ↦ ⟨?_, fun j hj ↦ ?_⟩⟩
-  · simpa only [Set.mem_ofPred_eq, π.symm_preimage_preimage] using (key _).1 hb.1
-  · refine (π.preimage_subset f j).1 (hb.2 ((key _).2 ?_))
-    rwa [π.symm_preimage_preimage]
-  · exact (key _).2 (by rw [π.symm_preimage_preimage]; exact hb.1)
-  · simpa only [π.preimage_symm_preimage] using Set.preimage_mono (f := π) (hb.2 ((key j).1 hj))
+  simp only [IsExceptionSet, IsLeast, lowerBounds, Set.mem_ofPred_eq]
+  rw [π.injective.preimage_surjective.forall]
+  simp only [← Set.preimage_sdiff, π.symm_preimage_preimage, π.preimage_subset]
 
 /-! ### Logical skeletons and L-analyticity (§3.2) -/
 
