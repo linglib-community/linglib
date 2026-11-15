@@ -1,24 +1,24 @@
 module
 
-public import Linglib.Core.Order.CountableDenseLinearOrder
 public import Linglib.Core.Order.SuccPred.LinearLocallyFinite
 public import Linglib.Semantics.Degree.Marginality
 public import Studies.Itzhaki2021
 public import Mathlib.Analysis.Real.Hyperreal
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
+public import Mathlib.Order.CountableDenseLinearOrder
 
 /-!
 # Dinis and Jacinto (2025): A Theory of Marginal and Large Difference
 
-Dinis and Jacinto propose ML theory, eleven axioms on marginally and largely smaller than along a
-strict weak order, and give it a measurement theory. Every model is infinite, since a large
-difference decomposes into a marginal step and a further large difference, and the theory has no
-model on the naturals or the reals, but it has models in nonstandard analysis, where a marginal
-difference is an infinitesimal one. Every countable, finitely marginal model maps homomorphically
-into the representative model of rational-indexed blocks of integer-indexed locations, and any
-two such maps differ by a transformation that rescales blocks and locations within blocks. In a
-Sorites whose series is infinite, being bald as not being largely less bald than the last member
-makes the premises jointly satisfiable.
+Dinis and Jacinto's ML theory is [eleven axioms](##IsMLModel) on marginally and largely smaller than
+along a strict weak order. It has [no model on the naturals or the
+reals](##instIsEmptyMarginalScale), but the hyperreals are one, with [infinitesimal differences
+marginal](##infinitesimal). A countable model whose blocks have [finite
+intervals](##finitelyMarginal_iff) [maps homomorphically](##exists_isHom_lex_rat_int) into
+rational-indexed blocks of integer-indexed locations, [uniquely up to
+rescaling](##IsHom.exists_cautiouslyMonotone) the blocks and the locations within them. In a
+Sorites the bald are [the blocks from the last member's on](##bald_iff_toBlock_le), so [no finite
+series of marginal steps](##not_transGen_marginallyLT) reaches them from the not bald.
 
 ## Implementation notes
 
@@ -152,68 +152,58 @@ example : (lex ℚ ℤ).toBlock (toLex (0, 5)) = (lex ℚ ℤ).toBlock (toLex (0
   simp
 
 variable (ml) in
-/-- `y` is a weakly marginal successor of `x` when `x` is marginally smaller than `y` and no
-degree marginally above `x` is marginally below `y` (Definition 4.4). -/
+/-- Definition 4.4: `y` is a weakly marginal successor of `x` when `x` is marginally smaller than
+`y` and no degree marginally above `x` is marginally below `y`. -/
 def MarginalSucc (x y : α) : Prop :=
   ml.MarginallyLT x y ∧ ∀ z, ml.MarginallyLT x z → ¬ ml.MarginallyLT z y
 
+-- A weakly marginal successor is a successor: no large difference is a covering.
+theorem marginalSucc_iff_covBy : MarginalSucc ml x y ↔ x ⋖ y := by
+  refine ⟨fun h ↦ ⟨h.1.lt, fun z hxz hzy ↦ h.2 z (h.1.bounded hxz hzy).1 (h.1.bounded hxz hzy).2⟩,
+    fun h ↦ ⟨(marginallyLT_or_largelyLT_of_lt h.lt).resolve_right fun hl ↦ ?_,
+      fun z hxz hzy ↦ h.2 hxz.lt hzy.lt⟩⟩
+  obtain ⟨z, hxz, hzy⟩ := hl.exists_marginallyLT_largelyLT
+  exact h.2 hxz.lt hzy.lt
+
 variable (ml) in
-/-- An ML scale is finitely marginal when finitely many weakly marginal successions lead from
-any degree to any marginally greater one (Definition 4.5). -/
+/-- Definition 4.5: an ML scale is finitely marginal when finitely many weakly marginal successions
+lead from any degree to any marginally greater one. -/
 def FinitelyMarginal : Prop :=
   ∀ ⦃x y⦄, ml.MarginallyLT x y → Relation.TransGen (MarginalSucc ml) x y
 
-theorem MarginalSucc.Icc_subset (h : MarginalSucc ml x y) : Set.Icc x y ⊆ {x, y} :=
-  fun z ⟨hxz, hzy⟩ ↦ by
-    rcases hxz.eq_or_lt with rfl | hxz; · exact .inl rfl
-    rcases hzy.eq_or_lt with rfl | hzy; · exact .inr rfl
-    exact absurd (h.1.bounded hxz hzy).2 (h.2 z (h.1.bounded hxz hzy).1)
-
-theorem FinitelyMarginal.finite_Icc (hf : FinitelyMarginal ml) (h : ml.AtMostMarginal x y) :
-    (Set.Icc x y).Finite := by
-  rcases h with _ | h | h
+theorem finitelyMarginal_iff :
+    FinitelyMarginal ml ↔ ∀ ⦃x y⦄, ml.AtMostMarginal x y → (Set.Icc x y).Finite := by
+  have hs : MarginalSucc ml = (· ⋖ ·) := funext₂ fun _ _ ↦ propext marginalSucc_iff_covBy
+  rw [FinitelyMarginal, hs]
+  refine ⟨fun hf x y h ↦ ?_, fun hf x y h ↦ (hf h.atMostMarginal).transGen_covBy h.lt⟩
+  rcases atMostMarginal_iff.1 h with rfl | h | h
   · simp
-  · obtain hc := hf h
-    clear h
-    induction hc with
-    | single hs => exact (Set.toFinite _).subset hs.Icc_subset
-    | tail _ hs ih =>
-      exact (ih.union ((Set.toFinite _).subset hs.Icc_subset)).subset Set.Icc_subset_Icc_union_Icc
+  · exact (hf h).finite_Icc
   · simp [h.lt]
 
-theorem FinitelyMarginal.finite_Icc_block (hf : FinitelyMarginal ml)
-    (q : ml.Block) (a b : {y // ml.toBlock y = q}) : (Set.Icc a b).Finite :=
-  (hf.finite_Icc (toBlock_eq_toBlock.1 (a.2.trans b.2.symm))).preimage Subtype.val_injective.injOn
+/-- The degrees of a block of a finitely marginal scale are a locally finite order. -/
+@[instance_reducible]
+noncomputable def FinitelyMarginal.locallyFiniteOrder (hf : FinitelyMarginal ml) (q : ml.Block) :
+    LocallyFiniteOrder {x // ml.toBlock x = q} :=
+  .ofFiniteIcc fun a b ↦ (finitelyMarginal_iff.1 hf
+    (toBlock_eq_toBlock.1 (a.2.trans b.2.symm))).preimage Subtype.val_injective.injOn
 
-theorem exists_lt_of_marginallyLT {γ : Type*} [Preorder γ]
-    (h : ∀ q : ml.Block, ∃ g : {y // ml.toBlock y = q} → γ, StrictMono g) :
-    ∃ G : α → γ, ∀ ⦃x y⦄, ml.MarginallyLT x y → G x < G y := by
-  choose g hg using h
-  have e (z : α) (q) (h : ml.toBlock z = q) : g (ml.toBlock z) ⟨z, rfl⟩ = g q ⟨z, h⟩ := by
-    subst h; rfl
-  refine ⟨fun z ↦ g (ml.toBlock z) ⟨z, rfl⟩, fun x y h ↦ ?_⟩
-  have hxy : ml.toBlock x = ml.toBlock y := toBlock_eq_toBlock.2 h.atMostMarginal
-  simp only [e x _ hxy]
-  exact hg _ h.lt
-
-/-- Every countable, finitely marginal ML scale maps homomorphically into the representative
-model (Theorem 4.7). -/
+/-- Theorem 4.7: every countable, finitely marginal ML scale maps homomorphically into the
+representative model. Its blocks, a countable linear order, embed in the rationals, and the
+degrees of each block, a locally finite linear order, embed in the integers. -/
 theorem exists_isHom_lex_rat_int [Countable α] (hf : FinitelyMarginal ml) :
     ∃ f : α → ℚ ×ₗ ℤ, ml.IsHom (lex ℚ ℤ) f := by
-  obtain ⟨F, hF⟩ := Order.exists_rat_rel_iff_lt ml.LargelyLT
-  obtain ⟨G, hG⟩ := exists_lt_of_marginallyLT fun q ↦ by
-    let := LocallyFiniteOrder.ofFiniteIcc (hf.finite_Icc_block q)
-    obtain ⟨e⟩ := nonempty_orderEmbedding_int {y // ml.toBlock y = q}
-    exact ⟨e, e.strictMono⟩
-  exact ⟨fun x ↦ toLex (F x, G x), isHom_lex_iff.2 ⟨hF, hG⟩⟩
+  obtain ⟨e⟩ := Order.embedding_from_countable_to_dense ml.Block ℚ
+  have g (q : ml.Block) : Nonempty ({x // ml.toBlock x = q} ↪o ℤ) :=
+    let := hf.locallyFiniteOrder q
+    nonempty_orderEmbedding_int _
+  exact ⟨_, isHom_toLex e fun q ↦ (g q).some⟩
 
 -- §4.4
 theorem exists_isHom_lex_rat_rat [Countable α] : ∃ f : α → ℚ ×ₗ ℚ, ml.IsHom (lex ℚ ℚ) f := by
-  obtain ⟨F, hF⟩ := Order.exists_rat_rel_iff_lt ml.LargelyLT
-  obtain ⟨G, hG⟩ := exists_lt_of_marginallyLT (γ := ℚ) fun q ↦ by
-    obtain ⟨e⟩ := Order.embedding_from_countable_to_dense {y : α // ml.toBlock y = q} ℚ
-    exact ⟨e, e.strictMono⟩
-  exact ⟨fun x ↦ toLex (F x, G x), isHom_lex_iff.2 ⟨hF, hG⟩⟩
+  obtain ⟨e⟩ := Order.embedding_from_countable_to_dense ml.Block ℚ
+  exact ⟨_, isHom_toLex e fun q ↦
+    (Order.embedding_from_countable_to_dense {x // ml.toBlock x = q} ℚ).some⟩
 
 /-! ### Uniqueness -/
 
@@ -221,9 +211,9 @@ section Uniqueness
 
 variable {β γ : Type*} [LinearOrder β] [LinearOrder γ]
 
-/-- A transformation of a set of pairs is cautiously monotone-increasing when it maps blocks by
-one strictly increasing map and the locations within each block by strictly increasing maps
-(Definition 4.8). -/
+/-- Definition 4.8: a transformation of a set of pairs is cautiously monotone-increasing when it
+maps blocks by one strictly increasing map and the locations within each block by strictly
+increasing maps. -/
 def CautiouslyMonotone (X : Set (β ×ₗ γ)) (τ : β ×ₗ γ → β ×ₗ γ) : Prop :=
   ∃ (f : β → β) (g : β → γ → γ), StrictMonoOn f ((fun p ↦ (ofLex p).1) '' X) ∧
     (∀ a, StrictMonoOn (g a) {b | toLex (a, b) ∈ X}) ∧
@@ -231,7 +221,7 @@ def CautiouslyMonotone (X : Set (β ×ₗ γ)) (τ : β ×ₗ γ → β ×ₗ γ
 
 variable [Nontrivial β] [Nonempty γ] [NoMaxOrder γ] [NoMinOrder γ]
 
--- Theorem 4.9
+-- Theorem 4.9 (i)
 theorem IsHom.comp_cautiouslyMonotone {h : α → β ×ₗ γ} (hh : ml.IsHom (lex β γ) h)
     {τ : β ×ₗ γ → β ×ₗ γ} (hτ : CautiouslyMonotone (Set.range h) τ) :
     ml.IsHom (lex β γ) (τ ∘ h) := by
@@ -244,7 +234,8 @@ theorem IsHom.comp_cautiouslyMonotone {h : α → β ×ₗ γ} (hh : ml.IsHom (l
     simp only [Function.comp, hτ _ ⟨x, rfl⟩, hτ _ ⟨y, rfl⟩, ofLex_toLex, he]
     exact hg _ (by simp [← he]) ⟨y, rfl⟩ (hM hxy)
 
--- Theorem 4.9
+/-- Theorem 4.9 (ii): any two homomorphisms into lexicographic pairs differ by a cautiously
+monotone-increasing transformation. -/
 theorem IsHom.exists_cautiouslyMonotone {h u : α → β ×ₗ γ} (hh : ml.IsHom (lex β γ) h)
     (hu : ml.IsHom (lex β γ) u) : ∃ τ, CautiouslyMonotone (Set.range h) τ ∧ u = τ ∘ h := by
   obtain ⟨hhL, -⟩ := isHom_lex_iff.1 hh
@@ -281,13 +272,21 @@ def Bald (e x : α) : Prop := ¬ ml.LargelyLT x e
 
 variable {e : α}
 
-theorem bald_of_le (h : e ≤ x) : Bald ml e x := fun hl ↦ (hl.lt.trans_le h).false
+-- The bald are the degrees of the blocks from the last member's on.
+theorem bald_iff_toBlock_le : Bald ml e x ↔ ml.toBlock e ≤ ml.toBlock x :=
+  toBlock_le_toBlock.symm
 
+theorem bald_of_le (h : e ≤ x) : Bald ml e x := bald_iff_toBlock_le.2 (ml.toBlock_mono h)
+
+theorem bald_congr (h : ml.AtMostMarginal x y) : Bald ml e x ↔ Bald ml e y := by
+  rw [bald_iff_toBlock_le, bald_iff_toBlock_le, toBlock_eq_toBlock.2 h]
+
+-- Tolerance (i) and (ii), §5
 theorem Bald.tolerance :
     (¬ Bald ml e x → ml.MarginallyLT x y → ¬ Bald ml e y) ∧
-      (Bald ml e x → ml.MarginallyLT y x → Bald ml e y) := by
-  unfold Bald
-  grind [ml.irrelevance, LargelyLT]
+      (Bald ml e x → ml.MarginallyLT y x → Bald ml e y) :=
+  ⟨fun hx h ↦ (bald_congr h.atMostMarginal).not.1 hx,
+    fun hx h ↦ (bald_congr h.atMostMarginal).2 hx⟩
 
 /-- No finite chain of marginal steps leads from someone not bald to the last member, so a
 series in which each member is marginally balder than the one before satisfies the premises of

@@ -30,7 +30,8 @@ underlying order. [Lexicographic pairs](##MarginalScale.lex) of a block and a lo
 are marginal scales, among them the representative model `ℚ ×ₗ ℤ`, as are [the differences in an
 order-connected subgroup](##MarginalScale.ofAddSubgroup) of an ordered group. A
 [homomorphism](##MarginalScale.IsHom) of marginal scales [embeds the blocks of one in those of the
-other](##MarginalScale.IsHom.mapBlock).
+other](##MarginalScale.IsHom.mapBlock), and [embeddings of the blocks and of the degrees of each
+block](##MarginalScale.isHom_toLex) make a homomorphism into lexicographic pairs.
 
 ## References
 
@@ -551,6 +552,16 @@ theorem isHom_lex_iff :
 theorem IsHom.fst_eq_fst_iff (hf : ml.IsHom (lex β γ) f) :
     (ofLex (f x)).1 = (ofLex (f y)).1 ↔ ml.AtMostMarginal x y :=
   lex_atMostMarginal_iff.symm.trans hf.atMostMarginal_iff
+
+/-- An embedding of the blocks together with an embedding of the degrees of each block is a
+homomorphism into lexicographic pairs. -/
+theorem isHom_toLex (e : ml.Block ↪o β) (g : ∀ q, {x // ml.toBlock x = q} ↪o γ) :
+    ml.IsHom (lex β γ) fun x ↦ toLex (e (ml.toBlock x), g (ml.toBlock x) ⟨x, rfl⟩) := by
+  refine isHom_lex_iff.2 ⟨fun x y ↦ by simp, fun x y h ↦ ?_⟩
+  have hg (q) (hq : ml.toBlock x = q) : g (ml.toBlock x) ⟨x, rfl⟩ = g q ⟨x, hq⟩ := by
+    subst hq; rfl
+  rw [ofLex_toLex, ofLex_toLex, hg _ (toBlock_eq_toBlock.2 h.atMostMarginal)]
+  exact (g _).strictMono h.lt
 
 end Lex
 
