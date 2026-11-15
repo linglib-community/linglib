@@ -24,9 +24,9 @@ The recipient is the role `R`, the recipient of a transfer verb together with wh
 it; [malchukov-narrog-2009]'s general map of case functions likewise sets A, P, T and R beside
 the instrument, the beneficiary and the possessor. A spatial function is a direction with or
 without a localization, the two dimensions of a system of spatial cases, with a series that
-leaves the localization unspecified ([creissels-2009], [haspelmath-2009]). Functions with no name of their own carry the name of the case value, as `essive`: the
-labels of the peripheral cases are close enough to semantic roles to name them
-([haspelmath-2009]).
+leaves the localization unspecified ([creissels-2009], [haspelmath-2009]). Functions with no
+name of their own carry the name of the case value, as `essive`: the labels of the peripheral
+cases are close enough to semantic roles to name them ([haspelmath-2009]).
 
 `Case.functions` gives the positive half of a name: a case called nominative also has to leave P
 unmarked, which is a fact about the other cases of its language (`Alignment.IsNominativeMarker`).
