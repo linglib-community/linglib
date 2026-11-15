@@ -75,6 +75,8 @@ theorem squiggleInd_iff_mem_diff : SquiggleInd o fv γ ↔ γ ∈ fv \ {o} := If
 
 theorem SquiggleSet.subset (h : SquiggleSet o fv Γ) : Γ ⊆ fv := h.1
 
+theorem SquiggleSet.mem (h : SquiggleSet o fv Γ) : o ∈ Γ := h.2.1
+
 theorem SquiggleSet.nontrivial (h : SquiggleSet o fv Γ) : Γ.Nontrivial :=
   (squiggleSet_iff_nontrivial.1 h).2.2
 
