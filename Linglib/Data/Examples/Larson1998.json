@@ -1,0 +1,379 @@
+[
+ {
+  "id": "larson1998_1a",
+  "source": {
+   "bibkey": "larson-1998",
+   "paperLabel": "(1a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "Olga is a beautiful dancer.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [
+   {
+    "name": "individual",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "event",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "adjective",
+    "beautiful"
+   ]
+  ],
+  "comment": "Olga is beautiful, or her dancing is (p. 145).",
+  "verified": "page-image"
+ },
+ {
+  "id": "larson1998_2a",
+  "source": {
+   "bibkey": "larson-1998",
+   "paperLabel": "(2a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "Kathrin is an intelligent student.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [
+   {
+    "name": "individual",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "event",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "adjective",
+    "intelligent"
+   ]
+  ],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "larson1998_2b",
+  "source": {
+   "bibkey": "larson-1998",
+   "paperLabel": "(2b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "George is a skillful manager.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [
+   {
+    "name": "individual",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "event",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "adjective",
+    "skillful"
+   ]
+  ],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "larson1998_2c",
+  "source": {
+   "bibkey": "larson-1998",
+   "paperLabel": "(2c)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "Yo-yo is a good cellist.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [
+   {
+    "name": "individual",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "event",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "adjective",
+    "good"
+   ]
+  ],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "larson1998_2d",
+  "source": {
+   "bibkey": "larson-1998",
+   "paperLabel": "(2d)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "Bill is a diligent president.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [
+   {
+    "name": "individual",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "event",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "adjective",
+    "diligent"
+   ]
+  ],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "larson1998_2e",
+  "source": {
+   "bibkey": "larson-1998",
+   "paperLabel": "(2e)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "Peter is an old friend.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [
+   {
+    "name": "individual",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "event",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "adjective",
+    "old"
+   ]
+  ],
+  "comment": "A friend who is aged, or a friend of long standing (p. 146).",
+  "verified": "page-image"
+ },
+ {
+  "id": "larson1998_15",
+  "source": {
+   "bibkey": "larson-1998",
+   "paperLabel": "(15)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "Jerry is an aged president.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [
+   {
+    "name": "individual",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "event",
+    "judgment": "unacceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "adjective",
+    "aged"
+   ]
+  ],
+  "comment": "Unambiguous: the reading on which the presidency is aged is marked # (p. 152).",
+  "verified": "page-image"
+ },
+ {
+  "id": "larson1998_16",
+  "source": {
+   "bibkey": "larson-1998",
+   "paperLabel": "(16)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "Jerry is a former president.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [
+   {
+    "name": "individual",
+    "judgment": "unacceptable"
+   },
+   {
+    "name": "event",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "adjective",
+    "former"
+   ]
+  ],
+  "comment": "Unambiguous: the reading on which Jerry is former is marked # (p. 152).",
+  "verified": "page-image"
+ },
+ {
+  "id": "larson1998_17a",
+  "source": {
+   "bibkey": "larson-1998",
+   "paperLabel": "(17a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "She is a blonde and fast dancer.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "adjective",
+    "blonde"
+   ],
+   [
+    "adjective",
+    "fast"
+   ]
+  ],
+  "comment": "Coordination of a strictly intersective with a strictly nonintersective adjective (p. 153).",
+  "verified": "page-image"
+ },
+ {
+  "id": "larson1998_17b",
+  "source": {
+   "bibkey": "larson-1998",
+   "paperLabel": "(17b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "She is a blonde and beautiful dancer.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [
+   {
+    "name": "individual",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "event",
+    "judgment": "unacceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "adjective",
+    "blonde"
+   ],
+   [
+    "adjective",
+    "beautiful"
+   ]
+  ],
+  "comment": "Beautiful must be read intersectively (p. 153).",
+  "verified": "page-image"
+ },
+ {
+  "id": "larson1998_17c",
+  "source": {
+   "bibkey": "larson-1998",
+   "paperLabel": "(17c)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "She is a fast and beautiful dancer.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [
+   {
+    "name": "individual",
+    "judgment": "unacceptable"
+   },
+   {
+    "name": "event",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "adjective",
+    "fast"
+   ],
+   [
+    "adjective",
+    "beautiful"
+   ]
+  ],
+  "comment": "Beautiful must be read nonintersectively (p. 153).",
+  "verified": "page-image"
+ }
+]
