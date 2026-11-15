@@ -51,7 +51,7 @@ one](##utilitarian_coInterval).
 
 namespace VanRooij2011
 
-open Aggregation Finset Function
+open Aggregation Finset Function Measurement
 
 variable {X Ad : Type*}
 
@@ -78,9 +78,8 @@ section Sentences
 
 variable (x y z w : X) (P Q : Ad)
 
-theorem comparative_ordinalLevel : Invariant ordinalLevel (comparative x P y Q) := by
-  rintro _ ⟨u, hu : StrictMono u, rfl⟩ v
-  exact propext hu.lt_iff_lt
+theorem comparative_ordinalLevel : Invariant ordinalLevel (comparative x P y Q) :=
+  (meaningful_strictMono_lt (x, P) (y, Q)).invariant
 
 /-- A change of scale preserves every comparison of individual–adjective pairs exactly when it
 applies one strictly increasing map to all adjectives, so the measure of pairs is unique up to the
@@ -125,16 +124,13 @@ theorem differential_cardinalFull {f : Ad → ℝ → ℝ} (hf : f ∈ cardinalF
       differential x P y Q (a * d) (v.transform f) ↔ differential x P y Q d v := by
   obtain ⟨u, ⟨a, ha, b, hu⟩, rfl⟩ := hf
   refine ⟨a, ha, fun d v ↦ ?_⟩
-  have : uncurry (v.transform (const Ad u)) = fun p ↦ a * uncurry v p + b := funext fun _ ↦ hu _
-  rw [differential, differential, this]
+  rw [differential, differential, Profile.uncurry_transform_const,
+    show u ∘ uncurry v = fun p ↦ a * uncurry v p + b from funext fun _ ↦ hu _]
   exact differentialComparative_const_mul_add_const _ ha.ne' b _ _ d
 
 -- p. 349: a co-ratio scale
-theorem factor_ratioFull (n : ℝ) : Invariant ratioFull (factor x P y Q n) := by
-  rintro _ ⟨u, ⟨a, ha, hu⟩, rfl⟩ v
-  have : uncurry (v.transform (const Ad u)) = fun p ↦ a * uncurry v p := funext fun _ ↦ hu _
-  simp only [factor, this]
-  exact propext (factorEquative_const_mul _ ha.ne' _ _ n)
+theorem factor_ratioFull (n : ℝ) : Invariant ratioFull (factor x P y Q n) :=
+  (meaningful_similarity_factorEquative (x, P) (y, Q) n).invariant
 
 /-- On a co-interval scale *x is n times as P as y is Q* is meaningful only for the factor $1$,
 since a common change of origin moves every other ratio. -/
@@ -177,15 +173,18 @@ theorem universal_transform {f : Ad → ℝ → ℝ} (hf : f ∈ (ordinal : Set 
     (OrderEmbedding.ofStrictMono (f P) (mem_ordinal.1 hf P))
     (v · P) C) x
 
+theorem universal_ordinal {β : Type*} (C : Finset X) (a : Profile Ad X ℚ → β) :
+    Invariant ordinal fun v : Profile Ad X ℝ ↦ a (universal v C) :=
+  fun _ hf v ↦ congrArg a (universal_transform hf v C)
+
 /-- Read through universal degrees, *x is n times as P as y is Q* survives a separate strictly
 increasing map per adjective, so a ratio across adjectives becomes meaningful although each
 adjective's measure is only ordinal. -/
 -- p. 346
 theorem factor_universal_ordinal (C : Finset X) (x y : X) (P Q : Ad) (n : ℚ) :
     Invariant ordinal fun v : Profile Ad X ℝ ↦
-      FactorEquative (uncurry (universal v C)) (x, P) (y, Q) n := by
-  intro f hf v
-  simp only [universal_transform hf]
+      FactorEquative (uncurry (universal v C)) (x, P) (y, Q) n :=
+  universal_ordinal C fun w ↦ FactorEquative (uncurry w) (x, P) (y, Q) n
 
 -- p. 346, note 15: a relative measure is not a linear transformation of the direct measure
 theorem universal_not_affine :
@@ -215,12 +214,11 @@ section Multidimensional
 
 variable [Fintype Ad]
 
--- p. 355: the lowest dimension ranks individuals in a weak order on a co-ordinal scale, and no
--- dimension is privileged
-theorem maximin_coOrdinal [Nonempty Ad] :
-    WeakOrderValued (maximin : Rule Ad X ℝ) ∧ Anonymous (maximin : Rule Ad X ℝ) ∧
-      Invariant ordinalLevel (maximin : Rule Ad X ℝ) :=
-  ⟨maximin_weakOrderValued, maximin_anonymous, maximin_ordinalLevelInvariant⟩
+-- p. 355: the lowest dimension ranks individuals in a weak order on a co-ordinal scale, with no
+-- dimension dictating it and none privileged
+theorem maximin_coOrdinal [Nontrivial Ad] [Nontrivial X] :
+    Arrovian ordinalLevel (maximin : Rule Ad X ℝ) ∧ Anonymous (maximin : Rule Ad X ℝ) :=
+  ⟨maximin_arrovian_ordinalLevel, maximin_anonymous⟩
 
 /-- Ranking by a weighted sum of two or more dimensions needs a co-interval scale: it survives a
 common change of unit and origin but not every common strictly increasing map. -/

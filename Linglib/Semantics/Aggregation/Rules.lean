@@ -14,29 +14,13 @@ This file defines six classical aggregation rules, each ranking objects by a rel
 vectors of values, and the conditions they meet or fail. Majority rule, after May, meets every
 Arrow condition except weak-ordering outputs. The Pareto rule, after Weymark, is a quasi-ordering
 that leaves every trade-off incomparable, and Sen's Pareto extension rule makes those
-incomparabilities indifferences. The utilitarian rule meets every Arrow condition except ordinal
-invariance, failing even ratio-scale invariance. The Cobb–Douglas rule, after Tsui and Weymark, is
-ratio-scale invariant on non-negative profiles, and the maximin rule needs only ordinal level
-comparability. The Pareto rule is the infimum of the utilitarian rules with positive weights and
-the Pareto extension rule their supremum, by the self-duality of the nonnegative orthant.
-
-## Main definitions
-
-* `Aggregation.majority`: majority rule.
-* `Aggregation.paretoRule`: the Pareto rule.
-* `Aggregation.paretoExtension`: Sen's Pareto extension rule.
-* `Aggregation.utilitarian`: weighted sums of values.
-* `Aggregation.maximin`: the lowest value.
-* `Aggregation.cobbDouglas`: weighted products of values.
-
-## Main statements
-
-* `Aggregation.paretoRule_eq_iInf_utilitarian`: the Pareto rule is the infimum of the positively
-  weighted utilitarian rules.
-* `Aggregation.not_ordinalInvariant_utilitarian`: the utilitarian rule needs cardinal
-  information.
-* `Aggregation.maximin_ordinalLevelInvariant`: the maximin rule needs only ordinal level
-  comparability.
+incomparabilities indifferences. The utilitarian rule and the maximin rule each meet Arrow's
+conditions once values are comparable across individuals, the first [with a common
+unit](##Aggregation.utilitarian_arrovian_cardinalUnit) and the second [with a common ordinal
+scale](##Aggregation.maximin_arrovian_ordinalLevel); the Cobb–Douglas rule, after Tsui and
+Weymark, is ratio-scale invariant on non-negative profiles. The Pareto rule is [the infimum of the
+utilitarian rules with positive weights](##Aggregation.paretoRule_eq_iInf_utilitarian) and the
+Pareto extension rule their supremum, by the self-duality of the nonnegative orthant.
 
 ## References
 
@@ -50,7 +34,7 @@ the Pareto extension rule their supremum, by the self-duality of the nonnegative
 
 namespace Aggregation
 
-open Finset Function
+open Finset Function Measurement
 
 variable {ι α K : Type*}
 
@@ -407,12 +391,36 @@ theorem maximin_weakOrderValued : WeakOrderValued (maximin : Rule ι α K) :=
 theorem maximin_independent : Independent (maximin : Rule ι α K) :=
   independent_ofRel _
 
+theorem maximin_weakPareto : WeakPareto (maximin : Rule ι α K) := by
+  intro v x y h
+  have : univ.inf' univ_nonempty (v y) < univ.inf' univ_nonempty (v x) :=
+    (lt_inf'_iff _).2 fun i _ ↦ (inf'_le _ (mem_univ i)).trans_lt (h i)
+  exact ⟨this.le, this.not_ge⟩
+
+theorem maximin_nonDictatorial [Nontrivial ι] [Nontrivial α] [Nontrivial K] :
+    NonDictatorial (maximin : Rule ι α K) := by
+  intro i hi
+  obtain ⟨j, hj⟩ := exists_ne i
+  obtain ⟨x, y, hxy⟩ := exists_pair_ne α
+  obtain ⟨k, k', hk⟩ := exists_pair_lt K
+  classical
+  let v : Profile ι α K := fun z l ↦ if z = x ∧ l = i then k' else k
+  refine (hi v x y (by simp [v, hxy.symm, hk])).2 ?_
+  exact (inf'_le _ (mem_univ j)).trans (le_inf' _ _ fun l _ ↦ by simp [v, hj, hxy.symm])
+
 theorem maximin_anonymous : Anonymous (maximin : Rule ι α K) :=
   anonymous_ofRel fun σ ↦ funext₂ fun p q ↦ by
     have key (p : ι → K) : univ.inf' univ_nonempty (p ∘ σ) = univ.inf' univ_nonempty p :=
       le_antisymm (le_inf' _ _ fun i _ ↦ by simpa using inf'_le (p ∘ σ) (mem_univ (σ.symm i)))
         (le_inf' _ _ fun i _ ↦ inf'_le p (mem_univ (σ i)))
     simp only [Order.Preimage, key]
+
+/-- With two or more individuals the maximin rule meets Arrow's conditions with ordinal level
+comparability in place of ordinal non-comparability ([sen-1970]). -/
+theorem maximin_arrovian_ordinalLevel [Nontrivial ι] [Nontrivial α] [Nontrivial K] :
+    Arrovian ordinalLevel (maximin : Rule ι α K) :=
+  ⟨maximin_ordinalLevelInvariant, maximin_weakOrderValued, maximin_weakPareto,
+    maximin_independent, maximin_nonDictatorial⟩
 
 end Maximin
 
