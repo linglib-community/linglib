@@ -27,7 +27,7 @@ are in the Revised Romanization; Sohn writes *na*, *ce*, *wuli*, *ce-huy*, *ne*,
 
 ## Main definitions
 
-* `Korean.Pronouns.pronouns` — the personal pronouns
+* `Korean.Pronouns.personal` — the personal pronouns
 * `Korean.Pronouns.addressee` — the second person singular at each grade
 * `Korean.Pronouns.allocutiveParticles` — the speech-style particles
 
@@ -127,7 +127,7 @@ def addressee : Grade → PersonalPronoun
   | .deferential => taek
 
 /-- The personal pronouns. -/
-def pronouns : Finset PersonalPronoun :=
+def personal : Finset PersonalPronoun :=
   {na, jeo, uri, jeohui, neo, jane, dangsin, taek, geu, geunyeo, gyae, geudeul}
 
 /-- The polite speech-style particle *-yo*, of informal discourse. -/

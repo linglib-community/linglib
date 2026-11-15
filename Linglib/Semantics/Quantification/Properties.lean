@@ -375,10 +375,10 @@ theorem ScopeAntitone.quasiUniversal (h : d.ScopeAntitone) (hC : d.Conservative)
   fun A B hd ↦ (hC A B).2 (h A Set.inter_subset_left hd)
 
 theorem ScopeMonotone.rightContinuous (h : d.ScopeMonotone) : d.RightContinuous :=
-  fun A _ _ _ h₁ _ hd _ ↦ h A h₁ hd
+  fun A ↦ (isUpperSet_setOfPred.2 (h A)).ordConnected
 
 theorem ScopeAntitone.rightContinuous (h : d.ScopeAntitone) : d.RightContinuous :=
-  fun A _ _ _ _ h₂ _ hd ↦ h A h₂ hd
+  fun A ↦ (isLowerSet_setOfPred.2 (h A)).ordConnected
 
 /-- An irreflexive almost-connected conservative determiner denotation is scope antitone
 ([van-benthem-1984], Theorem 4.1.2). -/

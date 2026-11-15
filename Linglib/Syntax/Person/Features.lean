@@ -186,6 +186,9 @@ theorem prominence_le_iff {p q : Person} :
     p.prominence ≤ q.prominence ↔ (p ⊔ q).coarsen = q.coarsen := by
   revert p q; decide
 
+theorem prominence_mono : Monotone prominence := fun p q h ↦
+  prominence_le_iff.2 (by rw [sup_eq_right.2 h])
+
 /-! ### The features of a referential category -/
 
 namespace Category

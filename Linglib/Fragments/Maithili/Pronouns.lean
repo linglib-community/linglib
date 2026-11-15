@@ -89,7 +89,7 @@ def okra : PersonalPronoun := { form := "okra", person := some .third, number :=
 def hunka : PersonalPronoun := { form := "hunka", person := some .third, number := some .singular }
 
 /-- The pronoun inventory. -/
-def pronouns : Finset PersonalPronoun :=
+def personal : Finset PersonalPronoun :=
   {ham, hamra, toN, tora, ahaN, ahaNke, apne, o, okra, hunka}
 
 /-- The second person by case and grade, [kumari-chandra-2026]'s Table 3 with the nominative

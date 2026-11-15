@@ -13,18 +13,21 @@ uniformity draws the unsuffixed verb to CCəC by majority rule, while the one-me
 paradigm is left to the sonority constraint. In Judeo-Tripolitanian Arabic verbs and nouns
 pattern as in Moroccan, but adjectives are CCəC regardless of sonority while inflecting, like
 nouns, with vowel-initial suffixes only, so under McCarthy's ranking optimal paradigms select
-the levelled CəCC paradigm for them; a category-specific template for verbs and adjectives
-derives the pattern, against category-neutral phonology ([bobaljik-2008]).
+the levelled CəCC paradigm for them: for any root and any suffixes, the bare stem sides with
+[the more numerous class of suffixes](##MarcoRasin2026.majority_rules); a category-specific
+template for verbs and adjectives derives the pattern, against category-neutral phonology
+([bobaljik-2008]).
 
 ## Implementation notes
 
-The paradigms, constraints, and ranking are those of the McCarthy 2005 study, run on the
-Judeo-Tripolitanian data; schwa is epenthetic, so the input is the bare root.
-
-## TODO
-
-The paper is not on file; example numbers are transcribed from an earlier version of this
-file and are UNVERIFIED.
+* The paradigms, constraints, and ranking are those of the McCarthy 2005 study, run on the
+  Judeo-Tripolitanian data; schwa is epenthetic, so the input is the bare root.
+* The paper states OP-MAX-V over positions: a mark for each pair of members in which one has a
+  vowel where the other has none. Here it is MAX-V between two stems whose segments are
+  coindexed, the schwa of a CCəC stem and that of a CəCC stem bearing different indices; the two
+  [agree on the paper's counts](##MarcoRasin2026.opMaxV_counts).
+* The templatic constraint is read at every member's stem, where the paper's tableau shows the
+  bare form alone.
 
 ## References
 
@@ -41,15 +44,15 @@ open OptimalityTheory McCarthy2005 McCarthy2005.Arabic
 
 /-- The CCəC realisation of the root /C₁C₂C₃/ in a cell, the schwa epenthetic. -/
 def schwaMedial (c₁ c₂ c₃ : Seg) (suffix : List Seg) : Member Seg (List Seg) :=
-  ⟨suffix, [c₁, c₂, .schwa, c₃], [(0, 0), (1, 1), (2, 3)]⟩
+  ⟨suffix, [.ofIndex c₁ 0, .ofIndex c₂ 1, .ofIndex .schwa 3, .ofIndex c₃ 2]⟩
 
 /-- The CəCC realisation. -/
 def schwaInitial (c₁ c₂ c₃ : Seg) (suffix : List Seg) : Member Seg (List Seg) :=
-  ⟨suffix, [c₁, .schwa, c₂, c₃], [(0, 0), (1, 2), (2, 3)]⟩
+  ⟨suffix, [.ofIndex c₁ 0, .ofIndex .schwa 4, .ofIndex c₂ 1, .ofIndex c₃ 2]⟩
 
 /-- The candidate paradigms of a root over the bare cell, the C-initial and the V-initial
-suffixes (10): the bare stem CCəC or CəCC with the suffixed stems fixed by the phonotactics,
-or levelled to CCəC or to CəCC. -/
+suffixes, as in tableau (9): the bare stem CCəC or CəCC with the suffixed stems fixed by the
+phonotactics, or levelled to CCəC or to CəCC. -/
 def paradigms (c₁ c₂ c₃ : Seg) (cInitial vInitial : List (List Seg)) :
     Cand → Paradigm Seg (List Seg)
   | .a => ⟨root, ([] :: cInitial).map medial ++ vInitial.map initial⟩
@@ -61,77 +64,192 @@ where
   medial := schwaMedial c₁ c₂ c₃
   initial := schwaInitial c₁ c₂ c₃
 
-/-- The constraints (8) in McCarthy's ranking: \*ə]σ, \*CCC >> OP-MAX-V >> SONCON. -/
+/-- The undominated markedness constraints (7a, b): \*ə]σ and \*CCC. -/
+def phonotactics : List (Constraint (Paradigm Seg (List Seg))) :=
+  [markedness fun suf s ↦ schwaOpen (s ++ suf), markedness fun suf s ↦ ccc (s ++ suf)]
+
+/-- OP-MAX-V (7c): a mark for each ordered pair of members and each vowel of the first without
+a correspondent in the second. -/
+def opMaxV : Constraint (Paradigm Seg (List Seg)) :=
+  opFaith (Correspondence.Segment.maxViolOn IsVowel)
+
+/-- The constraints (7) in the ranking of tableau (9): \*ə]σ, \*CCC >> OP-MAX-V >> SONCON. -/
 def ranking : List (Constraint (Paradigm Seg (List Seg))) :=
-  [markedness λ suf s => schwaOpen (s ++ suf), markedness λ suf s => ccc (s ++ suf),
-   opFaith (Correspondence.Diagram.maxViolOn IsVowel), markedness λ suf s => sonCon (s ++ suf)]
+  phonotactics ++
+    [opMaxV, markedness fun suf s ↦ sonCon (s ++ suf)]
 
 /-! ### Moroccan Arabic (§2) -/
 
-/-- The Moroccan perfective suffixes (6). -/
+/-- The Moroccan perfective paradigm of /ʃrb/ 'drink', with the suffixes of tableau (9). -/
 def moroccan : Cand → Paradigm Seg (List Seg) :=
   paradigms .sh .r .b [[.t], [.n, .a], [.t, .i], [.t, .u]] [[.schwa, .t], [.u]]
 
--- (10)
-theorem moroccan_verb : (Tableau.ofLabels moroccan {.a, .b, .c, .d} ranking).optimal = {.a} := by
-  decide
+/-! ### Majority rules -/
 
--- (12)
+variable (c₁ c₂ c₃ : Seg) (s s' : List Seg)
+
+private theorem maxV_medial_medial :
+    Correspondence.Segment.maxViolOn IsVowel
+      (schwaMedial c₁ c₂ c₃ s).stem (schwaMedial c₁ c₂ c₃ s').stem = 0 := by
+  simp [Correspondence.Segment.maxViolOn, schwaMedial, Correspondence.Segment.Corresponds,
+    Correspondence.Segment.ofIndex]
+
+private theorem maxV_initial_initial :
+    Correspondence.Segment.maxViolOn IsVowel
+      (schwaInitial c₁ c₂ c₃ s).stem (schwaInitial c₁ c₂ c₃ s').stem = 0 := by
+  simp [Correspondence.Segment.maxViolOn, schwaInitial, Correspondence.Segment.Corresponds,
+    Correspondence.Segment.ofIndex]
+
+private theorem maxV_medial_initial :
+    Correspondence.Segment.maxViolOn IsVowel
+      (schwaMedial c₁ c₂ c₃ s).stem (schwaInitial c₁ c₂ c₃ s').stem = 1 := by
+  simp [Correspondence.Segment.maxViolOn, schwaMedial, schwaInitial,
+    Correspondence.Segment.Corresponds, Correspondence.Segment.ofIndex, IsVowel]
+
+private theorem maxV_initial_medial :
+    Correspondence.Segment.maxViolOn IsVowel
+      (schwaInitial c₁ c₂ c₃ s).stem (schwaMedial c₁ c₂ c₃ s').stem = 1 := by
+  simp [Correspondence.Segment.maxViolOn, schwaMedial, schwaInitial,
+    Correspondence.Segment.Corresponds, Correspondence.Segment.ofIndex, IsVowel]
+
+variable (cInitial vInitial : List (List Seg))
+
+-- Each pair of a CCəC stem and a CəCC stem draws two OP-MAX-V marks, one in each direction.
+theorem opMaxV_medial_append_initial :
+    opMaxV
+      ⟨[c₁, c₂, c₃], cInitial.map (schwaMedial c₁ c₂ c₃) ++ vInitial.map (schwaInitial c₁ c₂ c₃)⟩ =
+        2 * (cInitial.length * vInitial.length) := by
+  rw [opMaxV, opFaith_append (k := 2), List.length_map, List.length_map, mul_comm]
+  · simp only [List.mem_map, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+    exact fun s _ s' _ ↦ maxV_medial_medial c₁ c₂ c₃ s s'
+  · simp only [List.mem_map, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+    exact fun s _ s' _ ↦ maxV_initial_initial c₁ c₂ c₃ s s'
+  · simp only [List.mem_map, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+    exact fun s _ s' _ ↦ by rw [maxV_medial_initial, maxV_initial_medial]
+
+theorem opMaxV_paradigms_a :
+    opMaxV (paradigms c₁ c₂ c₃ cInitial vInitial .a) =
+      2 * ((cInitial.length + 1) * vInitial.length) :=
+  opMaxV_medial_append_initial c₁ c₂ c₃ ([] :: cInitial) vInitial
+
+theorem opMaxV_paradigms_b :
+    opMaxV (paradigms c₁ c₂ c₃ cInitial vInitial .b) =
+      2 * (cInitial.length * (vInitial.length + 1)) :=
+  (opFaith_perm _ List.perm_middle.symm).trans
+    (opMaxV_medial_append_initial c₁ c₂ c₃ cInitial ([] :: vInitial))
+
+/-- Majority rules: the paradigm whose bare stem is CCəC draws fewer OP-MAX-V marks than the
+one whose bare stem is CəCC exactly when the C-initial suffixes outnumber the V-initial ones
+(10). -/
+theorem majority_rules :
+    opMaxV (paradigms c₁ c₂ c₃ cInitial vInitial .a) <
+        opMaxV
+          (paradigms c₁ c₂ c₃ cInitial vInitial .b) ↔
+      vInitial.length < cInitial.length := by
+  rw [opMaxV_paradigms_a, opMaxV_paradigms_b, Nat.mul_lt_mul_left two_pos, Nat.add_mul,
+    Nat.mul_add, one_mul, mul_one, Nat.add_lt_add_iff_left]
+
+variable {c₁ c₂ c₃ cInitial vInitial} {labels : Finset Cand}
+
+-- Where the phonotactics leave the two paradigms that differ in the bare stem, the winner is
+-- the one whose bare stem sides with the more numerous suffixes.
+theorem optimal_of_lt
+    (h : (Tableau.ofLabels (paradigms c₁ c₂ c₃ cInitial vInitial) labels phonotactics).optimal =
+      {.a, .b}) (hlt : vInitial.length < cInitial.length) :
+    (Tableau.ofLabels (paradigms c₁ c₂ c₃ cInitial vInitial) labels ranking).optimal = {.a} := by
+  rw [ranking, Tableau.optimal_ofLabels_append, h]
+  refine Tableau.optimal_ofLabels_cons_eq_singleton (by simp) fun l hl hne ↦ ?_
+  obtain rfl : l = .b := by simpa [hne] using hl
+  exact (majority_rules c₁ c₂ c₃ cInitial vInitial).2 hlt
+
+theorem optimal_of_gt
+    (h : (Tableau.ofLabels (paradigms c₁ c₂ c₃ cInitial vInitial) labels phonotactics).optimal =
+      {.a, .b}) (hlt : cInitial.length < vInitial.length) :
+    (Tableau.ofLabels (paradigms c₁ c₂ c₃ cInitial vInitial) labels ranking).optimal = {.b} := by
+  rw [ranking, Tableau.optimal_ofLabels_append, h]
+  refine Tableau.optimal_ofLabels_cons_eq_singleton (by simp) fun l hl hne ↦ ?_
+  obtain rfl : l = .a := by simpa [hne] using hl
+  rw [opMaxV_paradigms_a, opMaxV_paradigms_b, Nat.mul_lt_mul_left two_pos, Nat.add_mul,
+    Nat.mul_add, one_mul, mul_one, Nat.add_lt_add_iff_left]
+  exact hlt
+
+/-- In the Moroccan verb the bare stem is CCəC against sonority, as in tableau (9): the
+phonotactics leave the two paradigms that differ in the bare stem, and four C-initial suffixes
+outnumber two V-initial ones. -/
+theorem moroccan_verb : (Tableau.ofLabels moroccan {.a, .b, .c, .d} ranking).optimal = {.a} :=
+  optimal_of_lt (by decide +kernel) (by decide)
+
+/-- The attested Moroccan paradigm, with four C-initial and two V-initial suffixes, draws 20
+OP-MAX-V marks against 24 with the bare stem CəCC (9), and the attested adjectival paradigm,
+with two V-initial suffixes alone, draws four (14). -/
+theorem opMaxV_counts :
+    opMaxV (moroccan .a) = 20 ∧
+      opMaxV (moroccan .b) = 24 ∧
+      opMaxV
+        (paradigms .t .r .sh [] [[.a], [.i, .n]] .a) = 4 :=
+  ⟨opMaxV_paradigms_a .., opMaxV_paradigms_b .., opMaxV_paradigms_a ..⟩
+
+-- (11)
 theorem moroccan_noun :
     (Tableau.ofLabels (paradigms .sh .r .b [] []) {.a, .b} ranking).optimal = {.b} := by
-  decide
+  decide +kernel
 
 /-! ### Judeo-Tripolitanian Arabic verbs and nouns (§3.1) -/
 
-/-- The JTA perfective suffixes (13): five C-initial, two V-initial. -/
+/-- The JTA perfect suffixes (Table 2): five C-initial, two V-initial. -/
 def jtaVerb (c₁ c₂ c₃ : Seg) : Cand → Paradigm Seg (List Seg) :=
   paradigms c₁ c₂ c₃ [[.ch], [.n, .a], [.ch], [.ch, .i], [.ch, .u]] [[.schwa, .ch], [.u]]
 
--- (13)
+-- Table 2
 theorem jta_verbs :
     ∀ r ∈ [(Seg.sh, Seg.r, Seg.b), (.g, .d, .m), (.k, .ch, .b)],
       (Tableau.ofLabels (jtaVerb r.1 r.2.1 r.2.2) {.a, .b, .c, .d} ranking).optimal = {.a} := by
-  decide
+  simp only [List.forall_mem_cons, List.not_mem_nil, false_imp_iff, implies_true, and_true]
+  exact ⟨optimal_of_lt (by decide +kernel) (by decide),
+    optimal_of_lt (by decide +kernel) (by decide), optimal_of_lt (by decide +kernel) (by decide)⟩
 
-/-- The roots of the nouns (14): CəCC with C₂ more sonorous than C₃ — *kəlb, bəntʃ, wəld,
+/-- The roots of the nouns (12): CəCC with C₂ more sonorous than C₃ — *kəlb, bəntʃ, wəld,
 səms, məlħ, tʃəlʒ* — and CCəC otherwise — *xʃəm, ħbəq, lħəm, sdər, bsəl, fħəm*. -/
 def nouns : List (Seg × Seg × Seg) × List (Seg × Seg × Seg) :=
   ([(.k, .l, .b), (.b, .n, .ch), (.w, .l, .d), (.s, .m, .s), (.m, .l, .hh), (.ch, .l, .zh)],
    [(.x, .sh, .m), (.hh, .b, .q), (.l, .hh, .m), (.s, .d, .r), (.b, .s, .l), (.f, .hh, .m)])
 
--- (14)
+-- (12)
 theorem jta_nouns :
     (∀ r ∈ nouns.1,
       (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.b}) ∧
     ∀ r ∈ nouns.2,
       (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.a} := by
-  decide
+  decide +kernel
 
 /-! ### The challenge from adjectives (§3.2–3.3)
 
 Adjectives with C₂ more sonorous than C₃ — *bjəd* 'white', *zrəq* 'blue', *trəʃ* 'deaf',
-*ħwəl* 'cross-eyed' (15), the comparatives *qrəb*, *zjən* (16) — are CCəC like verbs, but
-inflect with the V-initial suffixes *-a*, *-in* alone (18). -/
+*ħwəl* 'cross-eyed' (13a), the comparatives *qrəb*, *zjən* (Table 3) — are CCəC like verbs, but
+inflect with the V-initial suffixes *-a*, *-in* alone (Table 5). -/
 
-/-- The adjectival paradigm of a root (18): bare, feminine *-a*, plural *-in*. -/
+/-- The adjectival paradigm of a root (Table 5): bare, feminine *-a*, plural *-in*. -/
 def adjective (c₁ c₂ c₃ : Seg) : Cand → Paradigm Seg (List Seg) :=
   paradigms c₁ c₂ c₃ [] [[.a], [.i, .n]]
 
-/-- The roots of the adjectives with C₂ more sonorous than C₃, (15a) and (16). -/
+/-- The roots of the adjectives with C₂ more sonorous than C₃, (13a) and Table 3. -/
 def adjectives : List (Seg × Seg × Seg) :=
   [(.b, .j, .d), (.z, .r, .q), (.t, .r, .sh), (.hh, .w, .l), (.q, .r, .b), (.z, .j, .n)]
 
--- (19)
+/-- Optimal paradigms select the levelled CəCC paradigm for the adjectives, which surface as
+CCəC (14). -/
 theorem adjective_paradigm :
     ∀ r ∈ adjectives,
       (Tableau.ofLabels (adjective r.1 r.2.1 r.2.2) {.a, .b} ranking).optimal = {.b} := by
-  decide
+  have h : ∀ r ∈ adjectives, (Tableau.ofLabels (adjective r.1 r.2.1 r.2.2) {.a, .b}
+      phonotactics).optimal = {.a, .b} := by decide +kernel
+  exact fun r hr ↦ optimal_of_gt (h r hr) (by decide)
 
--- (20)
+-- (15)
 theorem adjective_bare :
     ∀ r ∈ adjectives,
       (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.b} := by
-  decide
+  decide +kernel
 
 /-! ### Category-specific templates (§3.3) -/
 
@@ -139,25 +257,25 @@ inductive Category
   | verb | adjective | noun
   deriving DecidableEq, Repr
 
-/-- {CCəC}_{Verb, Adj} (22): the stem of a verb or an adjective surfaces as CCəC. -/
+/-- {CCəC}_{Verb, Adj} (17): the stem of a verb or an adjective surfaces as CCəC. -/
 def template : Category → List Seg → ℕ
   | .noun, _ => 0
   | _, [_, .schwa, _, _] => 1
   | _, _ => 0
 
-/-- The ranking (23): \*ə]σ, \*CCC >> {CCəC}_{Verb, Adj} >> SONCON. -/
+/-- The ranking of tableau (18): \*ə]σ, \*CCC >> {CCəC}_{Verb, Adj} >> SONCON. -/
 def templateRanking (cat : Category) : List (Constraint (Paradigm Seg (List Seg))) :=
-  [markedness λ suf s => schwaOpen (s ++ suf), markedness λ suf s => ccc (s ++ suf),
-   markedness λ _ s => template cat s, markedness λ suf s => sonCon (s ++ suf)]
+  [markedness fun suf s ↦ schwaOpen (s ++ suf), markedness fun suf s ↦ ccc (s ++ suf),
+   markedness fun _ s ↦ template cat s, markedness fun suf s ↦ sonCon (s ++ suf)]
 
--- (23)
+/-- A template for verbs and adjectives ranked above SONCON derives the adjectives' CCəC (18). -/
 theorem template_adjective :
     ∀ r ∈ adjectives,
       (Tableau.ofLabels (adjective r.1 r.2.1 r.2.2) {.a, .b} (templateRanking .adjective)).optimal =
         {.a} := by
-  decide
+  decide +kernel
 
--- (13), (14)
+-- Table 2, (12)
 theorem template_verb_noun :
     (∀ r ∈ [(Seg.sh, Seg.r, Seg.b), (.g, .d, .m), (.k, .ch, .b)],
       (Tableau.ofLabels (jtaVerb r.1 r.2.1 r.2.2) {.a, .b, .c, .d} (templateRanking .verb)).optimal
@@ -168,6 +286,6 @@ theorem template_verb_noun :
     ∀ r ∈ nouns.2,
       (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b}
         (templateRanking .noun)).optimal = {.a} := by
-  decide
+  decide +kernel
 
 end MarcoRasin2026

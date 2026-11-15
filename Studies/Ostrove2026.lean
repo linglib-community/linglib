@@ -61,7 +61,7 @@ namespace Ostrove2026
 open Binding.MinimalPronoun
 open scoped DistributedMorphology
 open Control
-open Mixtec.SMPM
+open Mixtec.SMPM Mixtec.SMPM.Pronouns
 
 /-! ### The clause typology (26) -/
 
@@ -308,7 +308,7 @@ def controlledSubjectStrength : Pronoun.Strength := .clitic
 
 -- (65), (66)
 theorem controlledSubject_iff_mem_clitics :
-    ∀ p ∈ pronouns, p.strength = some controlledSubjectStrength ↔ p ∈ clitics := by
+    ∀ p ∈ personal, p.strength = some controlledSubjectStrength ↔ p ∈ clitics := by
   decide
 
 /-! ### The implicational universal (54) -/

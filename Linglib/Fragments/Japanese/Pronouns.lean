@@ -94,7 +94,7 @@ def addressee : Grade → PersonalPronoun
   | .polite => anata
 
 /-- The personal-pronoun inventory. -/
-def pronouns : Finset PersonalPronoun :=
+def personal : Finset PersonalPronoun :=
   {watashi, boku, ore, watashitachi, kimi, anata, kare, kanojo, karera}
 
 /-- 互い *otagai* 'each other', the reciprocal, distinct from the reflexive *jibun*. -/
