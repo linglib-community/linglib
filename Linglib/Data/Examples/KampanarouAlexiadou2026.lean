@@ -27,7 +27,7 @@ def ka2026_5a : Datum :=
     judgment := .acceptable
     alternatives := [("episkevasame to pomolo tis portas", .acceptable)]
     readings := []
-    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "common"), ("animate", "no"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
+    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "common"), ("animacy", "inanimate"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
 def ka2026_5b : Datum :=
   { id := "ka2026_5b"
@@ -41,7 +41,7 @@ def ka2026_5b : Datum :=
     judgment := .acceptable
     alternatives := [("vrasame to nero tis pijis", .acceptable)]
     readings := []
-    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "source"), ("possessor", "common"), ("animate", "no"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
+    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "source"), ("possessor", "common"), ("animacy", "inanimate"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
 def ka2026_5c : Datum :=
   { id := "ka2026_5c"
@@ -55,7 +55,7 @@ def ka2026_5c : Datum :=
     judgment := .marginal
     alternatives := [("blextike i ura tu aloɣu", .acceptable)]
     readings := []
-    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "common"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
+    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "common"), ("animacy", "animate"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
 def ka2026_6a : Datum :=
   { id := "ka2026_6a"
@@ -69,7 +69,7 @@ def ka2026_6a : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "kinship"), ("possessor", "common"), ("animate", "yes"), ("number", "pl"), ("modified", "no"), ("gap", "no")] }
+    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "kinship"), ("possessor", "common"), ("animacy", "human"), ("number", "pl"), ("modified", "no"), ("gap", "no")] }
 
 def ka2026_6b : Datum :=
   { id := "ka2026_6b"
@@ -83,7 +83,7 @@ def ka2026_6b : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "ownership"), ("possessor", "common"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
+    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "ownership"), ("possessor", "common"), ("animacy", "human"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
 def ka2026_9a_book : Datum :=
   { id := "ka2026_9a_book"
@@ -97,7 +97,7 @@ def ka2026_9a_book : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "ownership"), ("possessor", "pronoun"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
+    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "ownership"), ("possessor", "pronoun"), ("animacy", "human"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
 def ka2026_9a_eyes : Datum :=
   { id := "ka2026_9a_eyes"
@@ -111,7 +111,7 @@ def ka2026_9a_eyes : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "pronoun"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
+    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "pronoun"), ("animacy", "human"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
 def ka2026_10a_shoulder : Datum :=
   { id := "ka2026_10a_shoulder"
@@ -125,7 +125,7 @@ def ka2026_10a_shoulder : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "properName"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
+    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "properName"), ("animacy", "human"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
 def ka2026_10a_mom : Datum :=
   { id := "ka2026_10a_mom"
@@ -139,7 +139,7 @@ def ka2026_10a_mom : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "kinship"), ("possessor", "properName"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
+    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "kinship"), ("possessor", "properName"), ("animacy", "human"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
 def ka2026_11a : Datum :=
   { id := "ka2026_11a"
@@ -153,7 +153,7 @@ def ka2026_11a : Datum :=
     judgment := .questionable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "association"), ("possessor", "common"), ("animate", "no"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
+    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "association"), ("possessor", "common"), ("animacy", "inanimate"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
 def ka2026_11b : Datum :=
   { id := "ka2026_11b"
@@ -167,7 +167,7 @@ def ka2026_11b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "association"), ("possessor", "common"), ("animate", "no"), ("number", "pl"), ("modified", "no"), ("gap", "no")] }
+    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "association"), ("possessor", "common"), ("animacy", "inanimate"), ("number", "pl"), ("modified", "no"), ("gap", "no")] }
 
 def ka2026_fn5 : Datum :=
   { id := "ka2026_fn5"
@@ -181,7 +181,7 @@ def ka2026_fn5 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "association"), ("possessor", "common"), ("animate", "no"), ("number", "sg"), ("modified", "yes"), ("gap", "no")] }
+    paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "association"), ("possessor", "common"), ("animacy", "inanimate"), ("number", "sg"), ("modified", "yes"), ("gap", "no")] }
 
 def ka2026_14a : Datum :=
   { id := "ka2026_14a"
@@ -195,7 +195,7 @@ def ka2026_14a : Datum :=
     judgment := .acceptable
     alternatives := [("i epikalipsi ton sokolat-akion", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "3"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "common"), ("animate", "no"), ("number", "pl"), ("modified", "no"), ("gap", "yes")] }
+    paperFeatures := [("section", "3"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "common"), ("animacy", "inanimate"), ("number", "pl"), ("modified", "no"), ("gap", "yes")] }
 
 def ka2026_14b : Datum :=
   { id := "ka2026_14b"
@@ -209,7 +209,7 @@ def ka2026_14b : Datum :=
     judgment := .acceptable
     alternatives := [("to trixoma tu katsik-akiu", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "3"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "common"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "yes")] }
+    paperFeatures := [("section", "3"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "common"), ("animacy", "animate"), ("number", "sg"), ("modified", "no"), ("gap", "yes")] }
 
 def ka2026_15a : Datum :=
   { id := "ka2026_15a"
@@ -223,7 +223,7 @@ def ka2026_15a : Datum :=
     judgment := .unacceptable
     alternatives := [("petai psila to baloni tu aɣor-akiu", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "3"), ("group", "possessive"), ("relation", "ownership"), ("possessor", "common"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "yes")] }
+    paperFeatures := [("section", "3"), ("group", "possessive"), ("relation", "ownership"), ("possessor", "common"), ("animacy", "human"), ("number", "sg"), ("modified", "no"), ("gap", "yes")] }
 
 def ka2026_15b : Datum :=
   { id := "ka2026_15b"
@@ -237,7 +237,7 @@ def ka2026_15b : Datum :=
     judgment := .unacceptable
     alternatives := [("efije o babas tu peð-akiu", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "3"), ("group", "possessive"), ("relation", "kinship"), ("possessor", "common"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "yes")] }
+    paperFeatures := [("section", "3"), ("group", "possessive"), ("relation", "kinship"), ("possessor", "common"), ("animacy", "human"), ("number", "sg"), ("modified", "no"), ("gap", "yes")] }
 
 def ka2026_28 : Datum :=
   { id := "ka2026_28"
@@ -251,7 +251,7 @@ def ka2026_28 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("group", "possessive"), ("relation", "kinship"), ("possessor", "common"), ("animate", "yes"), ("number", "sg"), ("modified", "yes"), ("gap", "yes")] }
+    paperFeatures := [("section", "5"), ("group", "possessive"), ("relation", "kinship"), ("possessor", "common"), ("animacy", "human"), ("number", "sg"), ("modified", "yes"), ("gap", "yes")] }
 
 def ka2026_25a : Datum :=
   { id := "ka2026_25a"

@@ -62,8 +62,8 @@
         "common"
       ],
       [
-        "animate",
-        "no"
+        "animacy",
+        "inanimate"
       ],
       [
         "number",
@@ -144,8 +144,8 @@
         "common"
       ],
       [
-        "animate",
-        "no"
+        "animacy",
+        "inanimate"
       ],
       [
         "number",
@@ -226,8 +226,8 @@
         "common"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "animate"
       ],
       [
         "number",
@@ -303,8 +303,8 @@
         "common"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
@@ -380,8 +380,8 @@
         "common"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
@@ -453,8 +453,8 @@
         "pronoun"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
@@ -526,8 +526,8 @@
         "pronoun"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
@@ -603,8 +603,8 @@
         "properName"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
@@ -680,8 +680,8 @@
         "properName"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
@@ -757,8 +757,8 @@
         "common"
       ],
       [
-        "animate",
-        "no"
+        "animacy",
+        "inanimate"
       ],
       [
         "number",
@@ -834,8 +834,8 @@
         "common"
       ],
       [
-        "animate",
-        "no"
+        "animacy",
+        "inanimate"
       ],
       [
         "number",
@@ -915,8 +915,8 @@
         "common"
       ],
       [
-        "animate",
-        "no"
+        "animacy",
+        "inanimate"
       ],
       [
         "number",
@@ -993,8 +993,8 @@
         "common"
       ],
       [
-        "animate",
-        "no"
+        "animacy",
+        "inanimate"
       ],
       [
         "number",
@@ -1071,8 +1071,8 @@
         "common"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "animate"
       ],
       [
         "number",
@@ -1157,8 +1157,8 @@
         "common"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
@@ -1239,8 +1239,8 @@
         "common"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
@@ -1363,8 +1363,8 @@
         "common"
       ],
       [
-        "animate",
-        "yes"
+        "animacy",
+        "human"
       ],
       [
         "number",
