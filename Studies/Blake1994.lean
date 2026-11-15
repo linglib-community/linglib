@@ -111,6 +111,8 @@ instance : OrderBot Position where
   bot := .nom
   bot_le := by decide
 
+@[simp] theorem Position.bot_eq : (⊥ : Position) = .nom := rfl
+
 instance : LocallyFiniteOrder Position := Fintype.toLocallyFiniteOrder
 
 instance : LocallyFiniteOrderBot Position := Fintype.toLocallyFiniteOrderBot

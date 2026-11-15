@@ -1,9 +1,9 @@
 module
 
 public import Linglib.Core.Combinatorics.SimpleGraph.Induce
+public import Linglib.Core.Order.OrdConnected
 public import Linglib.Syntax.Case.Function
 public import Studies.Blake1994
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 public import Mathlib.Combinatorics.SimpleGraph.Maps
 
 /-!
@@ -15,16 +15,22 @@ Haspelmath draws one for the functions datives typically have and one for the in
 neighbours, and [the datives](##connected_dativeGrams) and [the instrumentals and
 comitatives](##connected_instrumentalGrams) he places on them are such areas. A map predicts by
 the lines it lacks: with no line from purpose to anything but direction, [a gram with purpose and
-another function has direction](##direction_mem_of_purpose_mem), the arrangement that [the French
-and German prepositions select among the three orders of purpose, direction and
-recipient](##arrangement), while the map with all three lines [excludes nothing](##vacuous).
+another function has direction](##direction_mem_of_purpose_mem), the arrangement that [French *à*
+and German *zu* select among the three orders of purpose, direction and recipient](##arrangement),
+while on the map with all three lines [any two of them are a contiguous area](##vacuous).
 
 ## Implementation notes
 
+A map has its own functions, at the grain at which some language tells them apart, so each map is
+a graph on its own type of nodes, and `toFunction` gives the function of a case or adposition
+each node stands for. Direction is motion to a goal in any localization, and the source of the
+instrumental map covers the giver of *a pension from the government* with the place of *aus
+Paris*.
+
 The chapter's universal for a chain of three functions, that a gram with the outer two has the
-middle one, is formalized where the middle function lies on every path between the outer two. On
-the circular map of instrumental functions [*ek* covers recipient and cause without
-beneficiary](##ek_recipient_cause), joined the other way round.
+middle one, is formalized where the map has no other way round: for purpose behind direction and
+for direction behind recipient. Both maps have a circle, and on each a gram of the chapter has
+two functions without one between them: [the French dative clitics and *ek*](##around).
 
 The areas are the closed curves of the figures. An implicational hierarchy is the stronger
 statement that a pattern reaches back to the start of a chain, the lower sets among the areas of
@@ -45,22 +51,56 @@ do not yet list the functions of these maps.
 
 namespace Haspelmath2003
 
-open Case (Function)
-open Case.Function
+open SimpleGraph
 
-/-! ### The functions and the maps -/
+/-! ### The map of typical dative functions -/
 
-/-- The chapter's direction, motion to a goal. -/
-abbrev direction : Function := .spatial none .goal
+/-- The functions of the map of typical dative functions (Fig. 8.1). -/
+inductive DativeFunction where
+  | direction
+  | purpose
+  | recipient
+  | experiencer
+  | predicativePossessor
+  | externalPossessor
+  | beneficiary
+  | judicantis
+  deriving DecidableEq, Fintype, Repr
 
-/-- The chapter's recipient, the recipient of a transfer. -/
-abbrev recipient : Function := .argument .R
+namespace DativeFunction
 
-/-- The chapter's source. -/
-abbrev source : Function := .spatial none .source
+/-- The function of a case or adposition a node stands for, direction as the goal with no
+localization. -/
+def toFunction : DativeFunction → Case.Function
+  | direction => .spatial none .goal
+  | purpose => .purpose
+  | recipient => .argument .R
+  | experiencer => .experiencer
+  | predicativePossessor => .predicativePossessor
+  | externalPossessor => .externalPossessor
+  | beneficiary => .beneficiary
+  | judicantis => .judicantis
 
+/-- The node a function belongs to, a goal in any localization to direction. -/
+def ofFunction : Case.Function → Option DativeFunction
+  | .spatial _ .goal => some direction
+  | .purpose => some purpose
+  | .argument .R => some recipient
+  | .experiencer => some experiencer
+  | .predicativePossessor => some predicativePossessor
+  | .externalPossessor => some externalPossessor
+  | .beneficiary => some beneficiary
+  | .judicantis => some judicantis
+  | _ => none
+
+theorem ofFunction_toFunction (n : DativeFunction) : ofFunction n.toFunction = some n := by
+  cases n <;> rfl
+
+end DativeFunction
+
+open DativeFunction in
 /-- The eight lines of the map of typical dative functions (Fig. 8.1). -/
-def dativeEdges : Finset (Sym2 Function) :=
+def dativeEdges : Finset (Sym2 DativeFunction) :=
   {s(direction, recipient), s(direction, purpose), s(recipient, experiencer),
     s(recipient, predicativePossessor), s(predicativePossessor, externalPossessor),
     s(externalPossessor, beneficiary), s(recipient, beneficiary), s(beneficiary, judicantis)}
@@ -75,10 +115,92 @@ direction ——— recipient ——————————— beneficiary —�
  purpose        experiencer
 ```
 -/
-def dativeMap : SimpleGraph Function := .fromEdgeSet ↑dativeEdges
+def dativeMap : SimpleGraph DativeFunction := .fromEdgeSet ↑dativeEdges
 
+instance : DecidableRel dativeMap.Adj :=
+  inferInstanceAs (DecidableRel (fromEdgeSet (↑dativeEdges : Set (Sym2 DativeFunction))).Adj)
+
+section
+open DativeFunction
+
+/-- English *to* (Fig. 8.1). -/
+def englishTo : Finset DativeFunction := {experiencer, recipient, direction, purpose}
+
+/-- French *à* (Figs. 8.2, 8.5), which is not used for purpose but may be used for predicative
+possession. -/
+def frenchÀ : Finset DativeFunction := {predicativePossessor, experiencer, recipient, direction}
+
+/-- The French dative clitics (Fig. 8.5), which do not express direction or predicative
+possession but have the benefactive and external-possessor senses. -/
+def frenchDative : Finset DativeFunction :=
+  {externalPossessor, experiencer, beneficiary, recipient}
+
+/-- German *zu*, which expresses purpose and direction but not recipient (p. 217). -/
+def germanZu : Finset DativeFunction := {purpose, direction}
+
+end
+
+/-- English *to*, French *à*, the French dative clitics and German *zu* each cover a contiguous
+area of the map of dative functions. -/
+theorem connected_dativeGrams :
+    ∀ g ∈ [englishTo, frenchÀ, frenchDative, germanZu], (dativeMap.induce ↑g).Connected := by
+  simp only [List.forall_mem_cons, List.not_mem_nil, false_imp_iff, implies_true, and_true]
+  refine ⟨?_, ?_, ?_, ?_⟩ <;>
+    repeat' first
+      | exact induce_coe_singleton_connected _
+      | refine induce_coe_insert_connected ?_ (by decide)
+
+/-! ### The map of instrumental and related functions -/
+
+/-- The functions of the map of instrumental and related functions (Fig. 8.12). -/
+inductive InstrumentalFunction where
+  | recipient
+  | beneficiary
+  | cause
+  | coAgent
+  | conjunctive
+  | comitative
+  | instrumental
+  | passiveAgent
+  | source
+  deriving DecidableEq, Fintype, Repr
+
+namespace InstrumentalFunction
+
+/-- The function of a case or adposition a node stands for, source as the source with no
+localization. -/
+def toFunction : InstrumentalFunction → Case.Function
+  | recipient => .argument .R
+  | beneficiary => .beneficiary
+  | cause => .cause
+  | coAgent => .coAgent
+  | conjunctive => .conjunctive
+  | comitative => .comitative
+  | instrumental => .instrumental
+  | passiveAgent => .passiveAgent
+  | source => .spatial none .source
+
+/-- The node a function belongs to, a source in any localization to source. -/
+def ofFunction : Case.Function → Option InstrumentalFunction
+  | .argument .R => some recipient
+  | .beneficiary => some beneficiary
+  | .cause => some cause
+  | .coAgent => some coAgent
+  | .conjunctive => some conjunctive
+  | .comitative => some comitative
+  | .instrumental => some instrumental
+  | .passiveAgent => some passiveAgent
+  | .spatial _ .source => some source
+  | _ => none
+
+theorem ofFunction_toFunction (n : InstrumentalFunction) : ofFunction n.toFunction = some n := by
+  cases n <;> rfl
+
+end InstrumentalFunction
+
+open InstrumentalFunction in
 /-- The ten lines of the map of instrumental and related functions (Fig. 8.12). -/
-def instrumentalEdges : Finset (Sym2 Function) :=
+def instrumentalEdges : Finset (Sym2 InstrumentalFunction) :=
   {s(recipient, beneficiary), s(beneficiary, cause), s(recipient, coAgent),
     s(coAgent, comitative), s(conjunctive, comitative), s(comitative, instrumental),
     s(instrumental, passiveAgent), s(passiveAgent, cause), s(passiveAgent, source),
@@ -94,140 +216,127 @@ def instrumentalEdges : Finset (Sym2 Function) :=
 conjunctive —— comitative —— instrumental —— passive agent —— source
 ```
 -/
-def instrumentalMap : SimpleGraph Function := .fromEdgeSet ↑instrumentalEdges
+def instrumentalMap : SimpleGraph InstrumentalFunction := .fromEdgeSet ↑instrumentalEdges
 
-instance : DecidableRel dativeMap.Adj := fun f g ↦
-  inferInstanceAs (Decidable (s(f, g) ∈ (↑dativeEdges : Set (Sym2 Function)) ∧ f ≠ g))
+instance : DecidableRel instrumentalMap.Adj :=
+  inferInstanceAs
+    (DecidableRel (fromEdgeSet (↑instrumentalEdges : Set (Sym2 InstrumentalFunction))).Adj)
 
-instance : DecidableRel instrumentalMap.Adj := fun f g ↦
-  inferInstanceAs (Decidable (s(f, g) ∈ (↑instrumentalEdges : Set (Sym2 Function)) ∧ f ≠ g))
-
-/-! ### The grams -/
-
-/-- English *to* (Fig. 8.1). -/
-def «to» : Finset Function := {experiencer, recipient, direction, purpose}
-
-/-- French *à* (Fig. 8.2), which is not used for purpose but may be used for predicative
-possession. -/
-def à : Finset Function := {predicativePossessor, experiencer, recipient, direction}
-
-/-- The French dative clitics (Fig. 8.5), which do not express direction or predicative
-possession but have the benefactive and external-possessor senses. -/
-def dativeClitic : Finset Function := {externalPossessor, experiencer, beneficiary, recipient}
-
-/-- German *zu*, which expresses purpose and direction but not recipient (p. 217). -/
-def zu : Finset Function := {purpose, direction}
+section
+open InstrumentalFunction
 
 /-- English *with* (Fig. 8.13). -/
-def «with» : Finset Function := {coAgent, comitative, instrumental}
+def englishWith : Finset InstrumentalFunction := {coAgent, comitative, instrumental}
 
 /-- French *par* (Fig. 8.13). -/
-def par : Finset Function := {passiveAgent, cause}
+def frenchPar : Finset InstrumentalFunction := {passiveAgent, cause}
 
 /-- German *aus* (Fig. 8.13). -/
-def aus : Finset Function := {cause, source}
+def germanAus : Finset InstrumentalFunction := {cause, source}
 
 /-- German *von* (Fig. 8.13). -/
-def von : Finset Function := {passiveAgent, source}
+def germanVon : Finset InstrumentalFunction := {passiveAgent, source}
 
 /-- Seychelles Creole *ek* (Fig. 8.14), every function of the map but beneficiary. -/
-def ek : Finset Function :=
+def seychellesEk : Finset InstrumentalFunction :=
   {recipient, coAgent, conjunctive, comitative, instrumental, passiveAgent, cause, source}
 
 /-- Russian *s* 'with' (Fig. 8.15). -/
-def s : Finset Function := {conjunctive, coAgent, comitative}
+def russianS : Finset InstrumentalFunction := {conjunctive, coAgent, comitative}
 
 /-- The Russian instrumental case (Fig. 8.15). -/
-def russianInstrumental : Finset Function := {instrumental, passiveAgent}
+def russianInstrumental : Finset InstrumentalFunction := {instrumental, passiveAgent}
 
-/-- English *to*, French *à*, the French dative clitics and German *zu* each cover a contiguous
-area of the map of dative functions. -/
-theorem connected_dativeGrams :
-    ∀ g ∈ [«to», à, dativeClitic, zu], (dativeMap.induce ↑g).Connected := by
-  have h₀ (f : Function) := SimpleGraph.induce_singleton_connected (G := dativeMap) f
-  simp only [List.forall_mem_cons, List.not_mem_nil, false_imp_iff, implies_true, and_true,
-    «to», à, dativeClitic, zu]
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> (repeat rw [Finset.coe_insert]) <;> rw [Finset.coe_singleton]
-  · refine .induce_insert (u := recipient) ?_ (by simp) (by decide)
-    refine .induce_insert (u := direction) ?_ (by simp) (by decide)
-    refine .induce_insert (u := purpose) (h₀ _) rfl (by decide)
-  · refine .induce_insert (u := recipient) ?_ (by simp) (by decide)
-    refine .induce_insert (u := recipient) ?_ (by simp) (by decide)
-    refine .induce_insert (u := direction) (h₀ _) rfl (by decide)
-  · refine .induce_insert (u := beneficiary) ?_ (by simp) (by decide)
-    refine .induce_insert (u := recipient) ?_ (by simp) (by decide)
-    refine .induce_insert (u := recipient) (h₀ _) rfl (by decide)
-  · refine .induce_insert (u := direction) (h₀ _) rfl (by decide)
+end
 
 /-- English *with*, French *par*, German *aus* and *von*, Seychelles Creole *ek*, Russian *s* and
 the Russian instrumental each cover a contiguous area of the map of instrumental functions. -/
 theorem connected_instrumentalGrams :
-    ∀ g ∈ [«with», par, aus, von, ek, s, russianInstrumental],
+    ∀ g ∈ [englishWith, frenchPar, germanAus, germanVon, seychellesEk, russianS,
+        russianInstrumental],
       (instrumentalMap.induce ↑g).Connected := by
-  have h₀ (f : Function) := SimpleGraph.induce_singleton_connected (G := instrumentalMap) f
-  simp only [List.forall_mem_cons, List.not_mem_nil, false_imp_iff, implies_true, and_true,
-    «with», par, aus, von, ek, s, russianInstrumental]
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> (repeat rw [Finset.coe_insert]) <;>
-    rw [Finset.coe_singleton]
-  · refine .induce_insert (u := comitative) ?_ (by simp) (by decide)
-    refine .induce_insert (u := instrumental) (h₀ _) rfl (by decide)
-  · refine .induce_insert (u := cause) (h₀ _) rfl (by decide)
-  · refine .induce_insert (u := source) (h₀ _) rfl (by decide)
-  · refine .induce_insert (u := source) (h₀ _) rfl (by decide)
-  · refine .induce_insert (u := coAgent) ?_ (by simp) (by decide)
-    refine .induce_insert (u := comitative) ?_ (by simp) (by decide)
-    refine .induce_insert (u := comitative) ?_ (by simp) (by decide)
-    refine .induce_insert (u := instrumental) ?_ (by simp) (by decide)
-    refine .induce_insert (u := passiveAgent) ?_ (by simp) (by decide)
-    refine .induce_insert (u := source) ?_ (by simp) (by decide)
-    refine .induce_insert (u := source) (h₀ _) rfl (by decide)
-  · refine .induce_insert (u := comitative) ?_ (by simp) (by decide)
-    refine .induce_insert (u := comitative) (h₀ _) rfl (by decide)
-  · refine .induce_insert (u := passiveAgent) (h₀ _) rfl (by decide)
+  simp only [List.forall_mem_cons, List.not_mem_nil, false_imp_iff, implies_true, and_true]
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
+    repeat' first
+      | exact induce_coe_singleton_connected _
+      | refine induce_coe_insert_connected ?_ (by decide)
 
 /-! ### What the maps predict -/
 
-theorem dativeMap_adj {f g : Function} :
-    dativeMap.Adj f g ↔ s(f, g) ∈ dativeEdges ∧ f ≠ g := by
-  rw [dativeMap, SimpleGraph.fromEdgeSet_adj, Finset.mem_coe]
+section Predictions
 
-theorem dativeMap_adj_purpose {g : Function} : dativeMap.Adj purpose g ↔ g = direction := by
-  simp only [dativeMap_adj, dativeEdges, Finset.mem_insert, Finset.mem_singleton, Sym2.eq_iff]
-  constructor
-  · rintro ⟨h, -⟩
-    simpa [direction, recipient] using h
-  · rintro rfl
-    simp [direction]
+open DativeFunction
 
-variable {t : Set Function}
+variable {t : Set DativeFunction} {f : DativeFunction}
 
 /-- A gram with purpose and another function has direction: with no line from purpose to
 recipient, no gram expresses the two without direction (p. 218). -/
 theorem direction_mem_of_purpose_mem (h : (dativeMap.induce t).Connected) (hp : purpose ∈ t)
-    {f : Function} (hf : f ∈ t) (hne : f ≠ purpose) : direction ∈ t := by
+    (hf : f ∈ t) (hne : f ≠ purpose) : direction ∈ t := by
   obtain ⟨a, -, b, hb, rfl, -, hab⟩ :=
-    SimpleGraph.exists_adj_of_induce_connected h (t := {purpose}) hp rfl hf hne
-  exact dativeMap_adj_purpose.1 hab ▸ hb
+    exists_adj_of_induce_preconnected h.preconnected (t := {purpose}) hp rfl hf hne
+  have key : ∀ b, dativeMap.Adj purpose b → b = direction := by decide
+  exact key b hab ▸ hb
+
+-- p. 233, the chain of direction, recipient and predicative possessor
+theorem recipient_mem_of_direction_mem (h : (dativeMap.induce t).Connected) (hd : direction ∈ t)
+    (hf : f ∈ t) (hne : f ≠ direction) (hne' : f ≠ purpose) : recipient ∈ t := by
+  obtain ⟨a, -, b, hb, ha, hb', hab⟩ :=
+    exists_adj_of_induce_preconnected h.preconnected (t := {direction, purpose}) hd (by simp) hf
+      (by simp [hne, hne'])
+  have key : ∀ a b, a = direction ∨ a = purpose → ¬ (b = direction ∨ b = purpose) →
+      dativeMap.Adj a b → b = recipient := by decide
+  exact key a b ha hb' hab ▸ hb
+
+/-- The chain of three functions with `b` in the middle. -/
+def chain (a b c : DativeFunction) : SimpleGraph DativeFunction :=
+  .fromEdgeSet ↑({s(a, b), s(b, c)} : Finset (Sym2 DativeFunction))
+
+instance (a b c : DativeFunction) : DecidableRel (chain a b c).Adj :=
+  inferInstanceAs (DecidableRel (fromEdgeSet
+    (↑({s(a, b), s(b, c)} : Finset (Sym2 DativeFunction)) : Set (Sym2 DativeFunction))).Adj)
 
 /-- Of the three orders of purpose, direction and recipient, *à*, with direction and recipient
-but not purpose, excludes the one with purpose in the middle, and *zu*, with purpose and
-direction but not recipient, the one with recipient in the middle; the map has the third
-((4), p. 217). -/
+but not purpose, is not a contiguous area on the one with purpose in the middle, nor *zu*, with
+purpose and direction but not recipient, on the one with recipient in the middle; the map has
+the third ((4), p. 217). -/
 theorem arrangement :
-    ¬ (SimpleGraph.fromEdgeSet {s(direction, purpose), s(purpose, recipient)}).Adj
-        direction recipient ∧
-      ¬ (SimpleGraph.fromEdgeSet {s(direction, recipient), s(recipient, purpose)}).Adj
-        direction purpose ∧
-      dativeMap.Adj direction recipient ∧ dativeMap.Adj direction purpose := by
-  refine ⟨?_, ?_, by decide, by decide⟩ <;> simp [direction, recipient]
+    ¬ ((chain direction purpose recipient).induce {direction, recipient}).Connected ∧
+      ¬ ((chain direction recipient purpose).induce {purpose, direction}).Connected ∧
+      chain purpose direction recipient ≤ dativeMap ∧
+      direction ∈ frenchÀ ∧ recipient ∈ frenchÀ ∧ purpose ∉ frenchÀ ∧
+      germanZu = {purpose, direction} := by
+  refine ⟨?_, ?_, ?_, by decide, by decide, by decide, rfl⟩
+  · rw [induce_pair_connected_iff (by decide)]; decide
+  · rw [induce_pair_connected_iff (by decide)]; decide
+  · intro a b; revert a b; decide
 
-/-- With a line added from recipient to purpose every nonempty set of functions is a contiguous
-area, so the map excludes no gram (Fig. 8.4). -/
-theorem vacuous {t : Set Function} (ht : t.Nonempty) :
-    ((⊤ : SimpleGraph Function).induce t).Connected :=
-  SimpleGraph.induce_top_connected_iff.2 ht
+/-- With a line added from recipient to purpose, any two of purpose, direction and recipient are
+a contiguous area, so the map excludes no gram (Fig. 8.4). -/
+theorem vacuous : ∀ a ∈ [purpose, direction, recipient], ∀ b ∈ [purpose, direction, recipient],
+    a ≠ b → ((chain purpose direction recipient ⊔ fromEdgeSet {s(recipient, purpose)}).induce
+      {a, b}).Connected := by
+  simp only [List.forall_mem_cons, List.not_mem_nil, false_imp_iff, implies_true, and_true]
+  refine ⟨⟨?_, ?_, ?_⟩, ⟨?_, ?_, ?_⟩, ?_, ?_, ?_⟩ <;> intro h <;>
+    first
+      | exact absurd rfl h
+      | exact induce_pair_connected_of_adj (by simp [chain])
 
-theorem ek_recipient_cause : recipient ∈ ek ∧ cause ∈ ek ∧ beneficiary ∉ ek := by decide
+end Predictions
+
+/-! ### Circles
+
+Each map has a circle, recipient, predicative possessor, external possessor and beneficiary on
+the first and recipient, beneficiary, cause, passive agent, instrumental, comitative and co-agent
+on the second, and a gram can cover two functions of a circle the other way round: the French
+dative clitics have recipient and external possessor without predicative possessor, and *ek* has
+recipient and cause without beneficiary. -/
+
+theorem around :
+    (.recipient ∈ frenchDative ∧ .externalPossessor ∈ frenchDative ∧
+        .predicativePossessor ∉ frenchDative) ∧
+      .recipient ∈ seychellesEk ∧ .cause ∈ seychellesEk ∧ .beneficiary ∉ seychellesEk := by
+  decide
 
 /-! ### Hierarchies
 
@@ -239,12 +348,11 @@ contiguous area of the chain of positions that contains the first, the nominativ
 open Blake1994 in
 theorem conforms_iff_connected {inv : Finset Case} :
     Conforms inv ↔ positions inv = ∅ ∨
-      ((SimpleGraph.hasse Position).induce ↑(positions inv)).Connected ∧
-        Position.nom ∈ positions inv := by
+      ((hasse Position).induce ↑(positions inv)).Connected ∧ Position.nom ∈ positions inv := by
   rcases (positions inv).eq_empty_or_nonempty with h | h
   · simp [Conforms, h, isLowerSet_empty]
-  · rw [← Finset.mem_coe, show Position.nom = ⊥ from rfl,
-      SimpleGraph.induce_hasse_connected_and_bot_mem_iff]
-    simp [Conforms, h, h.ne_empty]
+  · rw [Conforms, isLowerSet_iff_ordConnected_and_bot_mem (Finset.coe_nonempty.2 h),
+      induce_hasse_connected_iff]
+    simp [h, h.ne_empty]
 
 end Haspelmath2003
