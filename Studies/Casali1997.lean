@@ -154,11 +154,16 @@ private theorem candidates_eq_pair {e e' : ElidedVowel} (hne : e ≠ e') :
 
 variable {c}
 
-/-- An elision is optimal under some ranking exactly when the constraints it violates are not a
-proper superset of those the other elision violates. -/
-theorem exists_mem_optimal_iff {e e' : ElidedVowel} (hne : e ≠ e') :
-    (∃ r, e ∈ (tableau c r).optimal) ↔ ¬ violations c e' ⊂ violations c e :=
-  exists_mem_optimal_positionalMax_iff card_option_prominence (candidates_eq_pair hne) rfl rfl
+theorem forall_elidedVowel {p : ElidedVowel → Prop} : (∀ e, p e) ↔ p .first ∧ p .second :=
+  ⟨fun h ↦ ⟨h _, h _⟩, by rintro ⟨h₁, h₂⟩ (_ | _) <;> assumption⟩
+
+/-- An elision is optimal under some ranking exactly when the constraints it violates are minimal:
+if they include those the other elision violates, the two violate the same constraints. -/
+theorem exists_mem_optimal_iff {e : ElidedVowel} :
+    (∃ r, e ∈ (tableau c r).optimal) ↔
+      ∀ e', violations c e' ⊆ violations c e → violations c e ⊆ violations c e' :=
+  (exists_mem_optimal_positionalMax_iff card_option_prominence).trans
+    ⟨fun h e' ↦ h.2 (by cases e' <;> simp), fun h ↦ ⟨by cases e <;> simp, fun e' _ ↦ h e'⟩⟩
 
 theorem exists_optimal_eq_singleton_iff {e e' : ElidedVowel} (hne : e ≠ e') :
     (∃ r, (tableau c r).optimal = {e}) ↔ ¬ violations c e' ⊆ violations c e :=
@@ -196,8 +201,8 @@ lexical words, between a lexical and a function word in either order, between a 
 than one segment and a root, between a root and a suffix, and between two affixes or clitics. -/
 theorem exists_mem_optimal_second_iff (h : c.leftBody ≠ []) :
     (∃ r, .second ∈ (tableau c r).optimal) ↔ c.leftKind = .root ∧ c.rightKind ≠ .root := by
-  simp [exists_mem_optimal_iff (e' := .first), Set.ssubset_def,
-    violations_first_subset_second_iff, violations_second_subset_first_iff, h]
+  simp [exists_mem_optimal_iff, forall_elidedVowel, violations_first_subset_second_iff,
+    violations_second_subset_first_iff, h]
 
 -- (15), (16)
 theorem exists_optimal_eq_of_vowelPrefix (h : c.leftBody = []) (hs : c.rightBody ≠ [])

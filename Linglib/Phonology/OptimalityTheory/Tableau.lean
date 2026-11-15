@@ -10,6 +10,7 @@ public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Core.Order.Argmax
 public import Linglib.Core.Order.PiLex
 public import Mathlib.Algebra.Order.Group.PiLex
+public import Mathlib.Order.Prod.Lex.Basic
 
 /-!
 # Tableaux
@@ -46,6 +47,9 @@ candidates of least profile.
   as often as a competitor, and some more often, wins under no ranking.
 * `Tableau.exists_mem_ofRanking_optimal_iff_pair`: against a single competitor, a candidate wins
   under some ranking iff the competitor does not bound it in this way.
+* `Tableau.exists_mem_ofRanking_optimal_iff_minimalFor`: among candidates that violate each
+  constraint at most once, a candidate wins under some ranking iff no candidate's violations are a
+  proper part of its own.
 * `Tableau.ofRanking_optimal_eq_pair_iff`: two candidates with no other competitor both win under
   a ranking iff no constraint tells them apart.
 * `Tableau.ofRanking_optimal_eq_argmin_filter`: when some candidate satisfies every constraint
@@ -396,6 +400,28 @@ theorem exists_ofRanking_optimal_eq_singleton_iff_pair (hcand : candidates = {c,
     (∃ r : Ranking ι n, (ofRanking con r candidates).optimal = {c}) ↔ ∃ i, con i c < con i d := by
   rw [← Pi.exists_toLex_comp_lt_iff hn]
   exact exists_congr fun _ ↦ optimal_eq_singleton_iff_pair hcand hne
+
+omit [DecidableEq C] in
+/-- Among candidates that violate each constraint at most once, a candidate wins under some
+ranking iff no candidate's violations are a proper part of its own. -/
+theorem exists_mem_ofRanking_optimal_iff_minimalFor
+    (h : ∀ d ∈ candidates, ∀ i, con i d ≤ 1) :
+    (∃ r : Ranking ι n, c ∈ (ofRanking con r candidates).optimal) ↔
+      MinimalFor (· ∈ candidates) (fun d i ↦ con i d) c := by
+  refine ⟨fun ⟨r, hr⟩ ↦ ⟨optimal_subset hr, fun d hd hle ↦ by_contra fun hnle ↦ ?_⟩, fun hc ↦ ?_⟩
+  · exact ofRanking_notMem_optimal_of_lt hd (lt_of_le_not_ge hle hnle) hr
+  · obtain ⟨σ, hσ⟩ := Ranking.exists_dominates_iff
+      (fun i ↦ toLex (con i c, Fintype.equivFinOfCardEq hn i))
+      (fun i j hij ↦ (Fintype.equivFinOfCardEq hn).injective (Prod.ext_iff.1 hij).2) hn
+    refine ⟨σ, mem_optimal_iff.2 ⟨hc.prop, fun d hd ↦ not_lt.1 fun hlt ↦ ?_⟩⟩
+    obtain ⟨i, hi, hdom⟩ := ofRanking_profile_lt_iff_exists_dominates.1 hlt
+    obtain ⟨j, hj⟩ : ∃ j, con j c < con j d := by
+      by_contra hno
+      exact (hc.le_of_le hd fun j ↦ not_lt.1 fun hj ↦ hno ⟨j, hj⟩) i |>.not_gt hi
+    have hij : con i c ≤ con j c :=
+      (Prod.Lex.toLex_lt_toLex.1 ((hσ i j).1 (hdom j hj))).elim le_of_lt fun h ↦ h.1.le
+    have := h d hd j
+    omega
 
 end Bounding
 

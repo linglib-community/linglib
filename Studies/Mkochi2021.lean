@@ -98,9 +98,8 @@ theorem exists_mem_optimal_second_iff_leftBody_eq_nil (hl : c.leftKind = .bound 
     (hr : c.rightKind = .bound .after a') :
     (∃ r, .second ∈ (tableau c r).optimal) ↔ c.leftBody = [] := by
   by_cases h : c.leftBody = [] <;>
-    simp [exists_mem_optimal_iff (e' := .first), Set.ssubset_def,
-      violations_first_subset_second_iff, violations_second_subset_first_iff, hl, hr, h,
-      Morph.Kind.JoinsAt]
+    simp [exists_mem_optimal_iff, forall_elidedVowel, violations_first_subset_second_iff,
+      violations_second_subset_first_iff, hl, hr, h, Morph.Kind.JoinsAt]
 
 /-- Two final-vowel suffixes after a root, as in (10): the first is a vowel, a consonant and a
 vowel, and its last vowel elides under every ranking. -/
