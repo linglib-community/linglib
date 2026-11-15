@@ -46,6 +46,45 @@ theorem subDisjsOfCard_subset_supClosure (hI : I.Nonempty) {m : ℕ} (hm : 0 < m
   · exact Set.mem_supClosure_image.2 ⟨I, hI, subset_rfl, rfl⟩
   · exact Set.mem_supClosure_image.2 ⟨S, Finset.card_pos.1 (hcard ▸ hm), hS, rfl⟩
 
+variable (I p) in
+/-- The disjuncts are separated: each holds alone at some world, and all hold together at some
+world. -/
+structure Separating : Prop where
+  /-- Each disjunct holds alone at some world. -/
+  single : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i
+  /-- All the disjuncts hold together at some world. -/
+  all : ∃ w, ∀ i ∈ I, w ∈ p i
+
+/-- Independent disjuncts, any combination of which is realized at some world, are separated. -/
+theorem Separating.of_forall_subset [DecidableEq ι]
+    (h : ∀ T ⊆ I, ∃ w, ∀ i ∈ I, w ∈ p i ↔ i ∈ T) : Separating I p where
+  single i hi :=
+    let ⟨w, hw⟩ := h {i} (Finset.singleton_subset_iff.2 hi)
+    ⟨w, fun j hj ↦ (hw j hj).trans Finset.mem_singleton⟩
+  all := let ⟨w, hw⟩ := h I subset_rfl; ⟨w, fun i hi ↦ (hw i hi).2 hi⟩
+
+theorem Separating.biUnion_nonempty (h : Separating I p) (hI : I.Nonempty) :
+    (⋃ i ∈ I, p i).Nonempty :=
+  let ⟨w, hw⟩ := h.all
+  let ⟨i, hi⟩ := hI
+  ⟨w, Set.mem_biUnion hi (hw i hi)⟩
+
+theorem biUnion_mem_supClosure (hI : I.Nonempty) : (⋃ i ∈ I, p i) ∈ supClosure (p '' I) :=
+  Set.mem_supClosure_image.2 ⟨I, hI, subset_rfl, rfl⟩
+
+theorem subset_biUnion_of_mem_supClosure {q : Set World} (hq : q ∈ supClosure (p '' I)) :
+    q ⊆ ⋃ i ∈ I, p i := by
+  obtain ⟨S, -, hS, rfl⟩ := Set.mem_supClosure_image.1 hq
+  exact Set.biUnion_subset_biUnion_left hS
+
+/-- Under negation every negated disjunction is entailed by the negated prejacent, so
+exhaustification over any of them is vacuous. -/
+theorem exhIEII_compl_biUnion {C : Set (Set World)} (hC : C ⊆ compl '' supClosure (p '' I))
+    (hsat : (⋃ i ∈ I, p i)ᶜ.Nonempty) : exhIEII C (⋃ i ∈ I, p i)ᶜ = (⋃ i ∈ I, p i)ᶜ := by
+  refine exhIEII_eq_self_of_forall_subset (fun q hq ↦ ?_) hsat
+  obtain ⟨_, hq', rfl⟩ := hC hq
+  exact Set.compl_subset_compl.2 (subset_biUnion_of_mem_supClosure hq')
+
 section Family
 
 variable {A : Set (Set World)}
@@ -143,12 +182,13 @@ theorem hsplit_supClosure :
   fun _ _ j hj hji ↦ ⟨{j}, by simpa, Set.mem_supClosure_image.2 ⟨{j}, by simp, by simpa, rfl⟩,
     by simp, by simpa using hji.symm⟩
 
-theorem exhIEII_supClosure (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i) (hI : I.Nonempty)
-    (hall : ∃ w, ∀ i ∈ I, w ∈ p i) :
+/-- Exhaustifying a disjunction of separated disjuncts over its closure under disjunction gives
+their conjunction. -/
+theorem exhIEII_supClosure (h : Separating I p) (hI : I.Nonempty) :
     exhIEII (supClosure (p '' I)) (⋃ i ∈ I, p i) = ⋂ i ∈ I, p i := by
   obtain ⟨i, hi⟩ := hI
-  rw [exhIEII_eq_inter_sInter le_rfl ⟨i, hi⟩ hall
-      (not_isInnocentlyExcludable_of_subset_supClosure le_rfl hsplit_supClosure hsep),
+  rw [exhIEII_eq_inter_sInter le_rfl ⟨i, hi⟩ h.all
+      (not_isInnocentlyExcludable_of_subset_supClosure le_rfl hsplit_supClosure h.single),
     Set.sInter_supClosure,
     Set.sInter_image]
   simp only [Finset.mem_coe]
@@ -197,11 +237,50 @@ theorem subDisjsOfCard_card : subDisjsOfCard I p I.card = {⋃ i ∈ I, p i} := 
   rintro ⟨S, hS, hcard, rfl⟩
   rw [Finset.eq_of_subset_of_card_le hS hcard.ge]
 
-theorem exhIEII_subDisjsOfCard [DecidableEq ι] [∀ w i, Decidable (w ∈ p i)]
-    (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) {m : ℕ}
-    (hm : 0 < m) (hmI : m ≤ I.card) :
-    exhIEII (subDisjsOfCard I p m) (⋃ i ∈ I, p i) =
-      {w | I.card < m + (I.filter fun i ↦ w ∈ p i).card} := by
+section Count
+
+variable [∀ w i, Decidable (w ∈ p i)]
+
+variable (I p) in
+/-- The number of disjuncts true at `w`. -/
+def trueCount (w : World) : ℕ := (I.filter fun i ↦ w ∈ p i).card
+
+variable (I p) in
+/-- At least `k` of the disjuncts are true. -/
+def atLeastTrue (k : ℕ) : Set World := {w | k ≤ trueCount I p w}
+
+@[simp] theorem mem_atLeastTrue {k : ℕ} {w : World} :
+    w ∈ atLeastTrue I p k ↔ k ≤ trueCount I p w := Iff.rfl
+
+theorem trueCount_le_card (w : World) : trueCount I p w ≤ I.card := Finset.card_filter_le _ _
+
+theorem trueCount_pos {w : World} : 0 < trueCount I p w ↔ w ∈ ⋃ i ∈ I, p i := by
+  simp [trueCount, Finset.card_pos, Finset.filter_nonempty_iff]
+
+theorem trueCount_eq_card {w : World} : trueCount I p w = I.card ↔ w ∈ ⋂ i ∈ I, p i := by
+  simp [trueCount, Finset.card_filter_eq_iff]
+
+theorem atLeastTrue_antitone : Antitone (atLeastTrue I p) := fun _ _ hkl _ hw ↦ hkl.trans hw
+
+theorem atLeastTrue_one : atLeastTrue I p 1 = ⋃ i ∈ I, p i :=
+  Set.ext fun _ ↦ trueCount_pos
+
+theorem atLeastTrue_card : atLeastTrue I p I.card = ⋂ i ∈ I, p i :=
+  Set.ext fun w ↦ ⟨fun h ↦ trueCount_eq_card.1 (le_antisymm (trueCount_le_card w) h),
+    fun h ↦ (trueCount_eq_card.2 h).ge⟩
+
+/-- Exhaustifying over the disjunctions of `m` disjuncts gives "at least `|I| + 1 - m` of them
+hold". -/
+theorem exhIEII_subDisjsOfCard [DecidableEq ι] (h : Separating I p) {m : ℕ} (hm : 0 < m)
+    (hmI : m ≤ I.card) :
+    exhIEII (subDisjsOfCard I p m) (⋃ i ∈ I, p i) = atLeastTrue I p (I.card + 1 - m) := by
+  obtain ⟨hsep, hall⟩ := h
+  suffices key : exhIEII (subDisjsOfCard I p m) (⋃ i ∈ I, p i) =
+      {w | I.card < m + (I.filter fun i ↦ w ∈ p i).card} by
+    rw [key]
+    ext w
+    change I.card < m + trueCount I p w ↔ I.card + 1 - m ≤ trueCount I p w
+    omega
   have hI : I.Nonempty := Finset.card_pos.1 (by omega)
   rcases hmI.lt_or_eq with hmI | rfl
   swap
@@ -240,6 +319,8 @@ theorem exhIEII_subDisjsOfCard [DecidableEq ι] [∀ w i, Decidable (w ∈ p i)]
     · exact Set.mem_biUnion hiI hwi
     · obtain ⟨j, hj, _, hwj⟩ := h S' hS' hcard'
       exact Set.mem_biUnion hj hwj
+
+end Count
 
 /-- Once the conjunction of the disjuncts joins their closure under disjunction, it is innocently
 excludable. -/
