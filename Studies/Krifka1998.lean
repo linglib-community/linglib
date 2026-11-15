@@ -98,7 +98,7 @@ theorem exists_isTelic_not_qua :
   · exact h (x := ({0}, ⟨(3, 4), by decide⟩)) rfl (y := ({0, 1}, ⟨(3, 4), by decide⟩)) rfl
       (fun hxy ↦ absurd (congrArg Prod.fst hxy) (by decide))
       (Prod.mk_le_mk.2 ⟨(by decide : ({0} : Finset (Fin 2)) ⊆ {0, 1}), le_rfl⟩)
-  · have hi := (h ({0}, ⟨(0, 1), by decide⟩) ({0}, ⟨(1, 1), by decide⟩) trivial trivial
+  · have hi := (@h ({0}, ⟨(0, 1), by decide⟩) ({0}, ⟨(1, 1), by decide⟩) trivial trivial
       (Prod.mk_le_mk.2 ⟨le_rfl, NonemptyInterval.le_def.2 ⟨by decide, by decide⟩⟩)).left
     refine hi.not_precedes (e'' := ({0}, ⟨(0, 0), by decide⟩)) ?_ ?_
     · exact Prod.mk_le_mk.2 ⟨le_rfl, NonemptyInterval.le_def.2 ⟨by decide, by decide⟩⟩
