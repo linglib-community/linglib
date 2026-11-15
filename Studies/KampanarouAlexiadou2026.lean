@@ -26,8 +26,8 @@ genitive of [alexiadou-2003] and every *apo*-PP are.
 
 ## Implementation notes
 
-* The paper marks variation among speakers with `?`, so a row is `Acceptable` unless its mark is
-  in the rejected band.
+* The paper marks variation among speakers with `?`, so a row counts as accepted from that mark
+  up, `.marginal ≤ r.judgment`.
 * The readings of a derived nominal are the library's `NominalizationReading`; the paper
   contrasts the complex-event reading with the rest, and `Nominal.Licenses` treats the rest
   alike. The paper pluralizes only nominals with an *apo* theme and no modifier, so its rows do
@@ -54,11 +54,6 @@ genitive of [alexiadou-2003] and every *apo*-PP are.
 namespace KampanarouAlexiadou2026
 
 open DistributedMorphology.Allosemy
-
-/-- A mark the paper accepts: none, or `?`, its mark for variation among speakers. -/
-def Acceptable (j : Judgment) : Prop := j.band ≠ .rejected
-
-instance : DecidablePred Acceptable := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
 
 /-- The realization of a possessor or of an argument. -/
 inductive Marking
@@ -143,18 +138,18 @@ def rows : List Row := groupRows "possessive" fun e ↦ do
 -- (5), (14)
 theorem partitive_alternates :
     ∀ r ∈ rows, r.relation.IsPartitive → r.possessor.nominality = .commonNoun →
-      Acceptable r.judgment := by
+      .marginal ≤ r.judgment := by
   decide
 
 -- (9a), (10a)
 theorem individual_resists :
-    ∀ r ∈ rows, r.possessor.nominality ≠ .commonNoun → ¬ Acceptable r.judgment := by
+    ∀ r ∈ rows, r.possessor.nominality ≠ .commonNoun → ¬ .marginal ≤ r.judgment := by
   decide
 
 -- (6), (11a), (15)
 theorem nonpartitive_resists :
     ∀ r ∈ rows, ¬ r.relation.IsPartitive → .plural ∉ r.possessor.facilitators →
-      .modified ∉ r.possessor.facilitators → ¬ Acceptable r.judgment := by
+      .modified ∉ r.possessor.facilitators → ¬ .marginal ≤ r.judgment := by
   decide
 
 /-- Within a relation, acceptability is monotone in the facilitation order: plural marking (11),
@@ -172,17 +167,17 @@ theorem relation_matters :
 /-- A paradigm gap of the genitive does not suffice for the apo-PP: the owner and the kin of
 (15) have no genitive and still resist it. -/
 theorem gap_not_sufficient :
-    ∃ r ∈ rows, .gap ∈ r.possessor.facilitators ∧ ¬ Acceptable r.judgment := by
+    ∃ r ∈ rows, .gap ∈ r.possessor.facilitators ∧ ¬ .marginal ≤ r.judgment := by
   decide
 
 -- (5)
 theorem gap_not_necessary :
-    ∃ r ∈ rows, .gap ∉ r.possessor.facilitators ∧ Acceptable r.judgment := by
+    ∃ r ∈ rows, .gap ∉ r.possessor.facilitators ∧ .marginal ≤ r.judgment := by
   decide
 
 -- (5c), (14b): animacy does not block the apo-PP.
 theorem animate_alternates :
-    ∃ r ∈ rows, r.possessor.animacy ≠ .inanimate ∧ Acceptable r.judgment := by
+    ∃ r ∈ rows, r.possessor.animacy ≠ .inanimate ∧ .marginal ≤ r.judgment := by
   decide
 
 /-! ### Recursive possessives -/
@@ -199,7 +194,7 @@ def stacked : List Stacked := groupRows "stacking" fun e ↦ do
   some ⟨← e.parse? "inner" markingOf, ← e.parse? "outer" markingOf, e.judgment⟩
 
 -- (25), (27)
-theorem innermost_alternates : ∀ s ∈ stacked, Acceptable s.judgment ↔ s.outer = .genitive := by
+theorem innermost_alternates : ∀ s ∈ stacked, .marginal ≤ s.judgment ↔ s.outer = .genitive := by
   decide
 
 /-! ### Derived nominals and the single argument restriction -/
@@ -303,12 +298,12 @@ def derivedRows : List DerivedRow := groupRows "derived" fun e ↦ do
 /-- In Standard Modern Greek a derived nominal is accepted exactly when some reading is
 available to it. -/
 theorem derived_rows_agree :
-    ∀ r ∈ derivedRows, r.variety = .smg → (Acceptable r.judgment ↔ r.nominal.WellFormed) := by
+    ∀ r ∈ derivedRows, r.variety = .smg → (.marginal ≤ r.judgment ↔ r.nominal.WellFormed) := by
   decide
 
 -- (12)
 theorem grevena_stacks :
-    ∃ r ∈ derivedRows, r.variety = .grevena ∧ ¬ r.nominal.WellFormed ∧ Acceptable r.judgment := by
+    ∃ r ∈ derivedRows, r.variety = .grevena ∧ ¬ r.nominal.WellFormed ∧ .marginal ≤ r.judgment := by
   decide
 
 /-! ### Fronting and sub-extraction -/
@@ -327,7 +322,7 @@ def displaced : List Displaced := groupRows "displacement" fun e ↦ do
 -- (22) to (24): the Grevena apo-PP moves as the standard genitive does; the standard apo-PP
 -- does not.
 theorem displacement_rows_agree :
-    ∀ r ∈ displaced, ¬ Acceptable r.judgment ↔ r.variety = .smg ∧ r.marking = .apo := by
+    ∀ r ∈ displaced, ¬ .marginal ≤ r.judgment ↔ r.variety = .smg ∧ r.marking = .apo := by
   decide
 
 /-! ### Scope and the merge site of the possessor -/
@@ -361,10 +356,16 @@ def scopeRows : List ScopeRow := groupRows "scope" fun e ↦ do
   some ⟨← e.parse? "marking" markingOf, ← e.parse? "relation" relationOf,
     ← e.readings.lookup "surface"⟩
 
+-- Every example of the paper is a row of one of the five groups.
+theorem rows_exhaustive :
+    rows.length + stacked.length + derivedRows.length + displaced.length + scopeRows.length =
+      Examples.all.length := by
+  decide
+
 /-- Surface scope is available exactly for a complement possessor: the inalienable genitive (38a)
 and both apo-PPs (39), not the alienable genitive (38b). -/
 theorem scope_rows_agree :
-    ∀ r ∈ scopeRows, Acceptable r.surface ↔ r.marking.site r.relation = .complement := by
+    ∀ r ∈ scopeRows, .marginal ≤ r.surface ↔ r.marking.site r.relation = .complement := by
   decide
 
 end KampanarouAlexiadou2026
