@@ -7,7 +7,6 @@ module
 
 public import Linglib.Phonology.Subregular.TierStrictlyLocal
 public import Linglib.Core.Computability.Definite
-public import Linglib.Core.Computability.Language
 public import Linglib.Core.Computability.LocallyTestable
 public import Linglib.Core.Computability.PiecewiseTestable
 public import Linglib.Core.Computability.Variety.Basic
@@ -17,12 +16,9 @@ public import Mathlib.Data.Fintype.Pi
 /-!
 # Multitier extensions of subregular classes
 
-A tier is a set of salient symbols, and a language holds *on a tier* of a word when it contains
-the word's projection, what is left after erasing the symbols off the tier. Reading a language on
-a tier is a homomorphism `Language.onTier T` of Boolean algebras. The *tier-based extension* of a
-class `𝒞` of languages collects the members of `𝒞` read on some tier, and Lambert's *multitier
-extension* `Language.multitier 𝒞` is the Boolean subalgebra these generate, so that the parts of a
-Boolean combination may sit on different tiers.
+The tier-based extension of a class `𝒞` of languages collects the members of `𝒞` read on some
+tier. Lambert's *multitier extension* `Language.multitier 𝒞` is the Boolean subalgebra these
+generate, so that the parts of a Boolean combination may sit on different tiers.
 
 The multitier extension [lies in a Boolean subalgebra exactly when the subalgebra holds every
 member of `𝒞` on every tier](##Language.multitier_le_iff). It is therefore [closed under reading on
@@ -40,13 +36,8 @@ testable](##Language.exists_isPiecewiseTestable_of_mem_multitierFiniteOrCofinite
 
 ## Implementation notes
 
-A tier is a predicate `T : α → Prop` together with its decidability, as for `FreeMonoid.filter`:
-`tierBased` quantifies over both, `∃ T, ∃ _ : DecidablePred T, …`, in the manner of mathlib's
-`ComputablePred`, so a `TierStrictlyLocalGrammar` is literally such a witness. The base language
-of a tier-based language ranges over the whole alphabet. Lambert takes it over the symbols of the
-tier, which gives the same extension for a class whose members over the tier's symbols are the
-restrictions of its members over the alphabet, as for every class here. The classes carry the
-window `k` that Lambert leaves implicit; his classes are their unions over `k`.
+The classes carry the window `k` that Lambert leaves implicit; his classes are their unions over
+`k`.
 
 ## References
 
@@ -63,48 +54,7 @@ open BooleanSubalgebra
 
 variable {α : Type*} {𝒞 𝒟 : Set (Language α)} {L : Language α} {k : ℕ} {w w₁ w₂ : List α}
 
-/-! ### Reading a language on a tier -/
-
-section OnTier
-
-variable (T T' : α → Prop) [DecidablePred T] [DecidablePred T']
-
-/-- The language `L` read on the tier `T`, Lambert's `[L]_T`: the words whose projection to `T`
-lies in `L`. It is the inverse image of `L` under `FreeMonoid.filter T`, as a homomorphism of
-Boolean algebras. -/
-def onTier : BoundedLatticeHom (Language α) (Language α) where
-  toFun L := {w | w.filter T ∈ L}
-  map_sup' _ _ := rfl
-  map_inf' _ _ := rfl
-  map_top' := rfl
-  map_bot' := rfl
-
-variable {T} in
-@[simp] theorem mem_onTier : w ∈ onTier T L ↔ w.filter T ∈ L := Iff.rfl
-
-/-- On the tier of the whole alphabet a language reads as itself. -/
-@[simp] theorem onTier_true : onTier (fun _ : α ↦ True) L = L := Language.ext fun _ ↦ by simp
-
-theorem onTier_onTier : onTier T (onTier T' L) = onTier (fun a ↦ T' a ∧ T a) L :=
-  Language.ext fun w ↦ by simp [List.filter_filter]
-
-end OnTier
-
-/-! ### Tier-based and multitier extensions -/
-
-/-- The *tier-based extension* of a class `𝒞` consists of the members of `𝒞` read on a tier. -/
-def tierBased (𝒞 : Set (Language α)) : Set (Language α) :=
-  {L | ∃ (T : α → Prop) (_ : DecidablePred T), ∃ L' ∈ 𝒞, onTier T L' = L}
-
-theorem onTier_mem_tierBased (T : α → Prop) [DecidablePred T] (h : L ∈ 𝒞) :
-    onTier T L ∈ tierBased 𝒞 :=
-  ⟨T, _, L, h, rfl⟩
-
-theorem subset_tierBased : 𝒞 ⊆ tierBased 𝒞 := fun L h ↦ ⟨fun _ ↦ True, inferInstance, L, h, by simp⟩
-
-theorem tierBased_mono (h : 𝒞 ⊆ 𝒟) : tierBased 𝒞 ⊆ tierBased 𝒟 := by
-  rintro _ ⟨T, _, L, hL, rfl⟩
-  exact onTier_mem_tierBased T (h hL)
+/-! ### The multitier extension -/
 
 /-- The *multitier extension* of a class `𝒞` is the Boolean subalgebra of `Language α` generated
 by its tier-based extension. -/
@@ -254,6 +204,35 @@ theorem isTierStrictlyLocal_iff_mem_tierBased :
 theorem IsTierStrictlyLocal.mem_multitierStrictlyLocal (h : L.IsTierStrictlyLocal k) :
     L ∈ multitierStrictlyLocal k :=
   tierBased_subset_multitier (isTierStrictlyLocal_iff_mem_tierBased.1 h)
+
+/-! ### Reversal
+
+Reversal commutes with reading on a tier and with the Boolean operations, so it carries the
+multitier extension of a class to that of the reversed class, and exchanges the multitier definite
+and reverse definite languages. -/
+
+theorem reverse_mem_multitier (h : L ∈ multitier 𝒞) : L.reverse ∈ multitier (reverse '' 𝒞) := by
+  unfold multitier at h ⊢
+  induction h using closure_bot_sup_induction with
+  | mem _ hL =>
+    obtain ⟨T, _, L', hL', rfl⟩ := hL
+    rw [reverse_onTier]
+    exact subset_closure (onTier_mem_tierBased T ⟨L', hL', rfl⟩)
+  | bot => exact bot_mem
+  | sup _ _ _ _ ih₁ ih₂ => exact sup_mem ih₁ ih₂
+  | compl _ _ ih => exact compl_mem ih
+
+/-- A language is multitier definite exactly when its reversal is multitier reverse definite. -/
+theorem reverse_mem_multitierReverseDefinite_iff :
+    L.reverse ∈ multitierReverseDefinite k ↔ L ∈ multitierDefinite k := by
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · rw [← L.reverse_reverse]
+    refine multitier_mono ?_ (reverse_mem_multitier h)
+    rintro _ ⟨L', hL', rfl⟩
+    exact isReverseDefinite_iff_isDefinite_reverse.1 hL'
+  · refine multitier_mono ?_ (reverse_mem_multitier h)
+    rintro _ ⟨L', hL', rfl⟩
+    exact isReverseDefinite_iff_isDefinite_reverse.2 (by rwa [reverse_reverse])
 
 /-! ### Tier affixes
 

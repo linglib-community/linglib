@@ -53,7 +53,8 @@ Prove the equivalence of the order-based and tier-based formulae for Kagoshima J
 (43)) and for Karanga Shona ((46)–(49)), and the piecewise testability of the Tsuut'ina
 grammar. The description of the Karanga Shona stem by substrings ((50)), which makes it locally
 testable, are not formalized. Of the equations for the multitier classes ((60)–(63), Table 6),
-only (62) is proved (`Language.exists_mem_multitierReverseDefinite_iff`).
+(61) and (62) are proved (`Language.exists_mem_multitierDefinite_iff`,
+`Language.exists_mem_multitierReverseDefinite_iff`).
 
 ## References
 
