@@ -3,25 +3,23 @@ module
 public import Linglib.Semantics.Modification.Intensional
 
 /-!
-# Noun coercion licensed by non-vacuity
+# Non-vacuity and the shift of a head noun
 
-[kamp-partee-1995]'s non-vacuity principle asks that a predicate have both a positive and a
-negative extension in its local domain, and their head primacy principle makes the extension of
-the head noun the local domain of its modifier. In order terms a predicate is non-vacuous within
-a domain when the domain neither excludes it nor lies within it, so the two ways of being vacuous
-are those of the modifier classes: a privative adjective is
-[excluded by its head](##Modifier.IsPrivative.not_isNonVacuous), and a tautologous one such as
-*real* [contains it](##not_isNonVacuous_self). [partee-2010]'s proposal is that the head is then
-shifted, as a last resort, to include the adjective's value, *fur* to real or fake fur, and a
-privative adjective [shifts its head](##Modifier.IsPrivative.shiftsHead_iff) exactly when there
-are things in its value and things in the noun.
+This file defines non-vacuity and the shift of a head noun by its modifier.
+
+A predicate is non-vacuous within a domain if the domain neither excludes it nor lies within it.
+A modifier shifts its head noun if its value is vacuous within the noun and non-vacuous within
+the noun widened by that value.
+
+A privative modifier is [vacuous within its noun](##Modifier.IsPrivative.not_isNonVacuous), and
+[so is the identity](##not_isNonVacuous_self). A privative modifier
+[shifts its noun](##Modifier.IsPrivative.shiftsHead_iff) exactly when something is in its value
+and something is in the noun.
 
 ## Implementation notes
 
-Head primacy is taken in its simplest form, which makes the local domain the positive extension of
-the head. `IsNonVacuous` is bivalent, where [kamp-partee-1995] work with partial predicates.
-Complement coercion (`Studies/Pustejovsky1995.lean`) and the type shifts of noun phrases
-(`Semantics/Quantification/Individual.lean`) are different notions.
+Non-vacuity and the choice of the noun as domain are Kamp and Partee's principles, and the shift
+is Partee's. `IsNonVacuous` is bivalent, where their predicates are partial.
 
 ## References
 

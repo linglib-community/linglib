@@ -10,20 +10,22 @@ public import Linglib.Logic.Modal.Extensional
 /-!
 # Modifiers of intensional properties
 
-An intensional property is a function from worlds to predicates of entities, and attributive
-adjectives denote modifiers of intensional properties. At these modifiers the order-theoretic
-classes of `Semantics/Modification/Basic.lean` take their familiar form: an intersective modifier
-[conjoins every noun with one fixed property](##Modifier.isIntersective_iff_exists_forall) and is
-[extensional](##Modifier.IsIntersective.isExtensional), nothing a privative modifier yields from
-a noun [falls under the noun](##Modifier.isPrivative_iff_forall), and a privative modifier that
-holds of something [is not subsective](##Modifier.IsPrivative.not_isSubsective), as
-[*former*](##Modifier.former_isPrivative) is not over properties of times. The classification
-descends from [parsons-1970] and [kamp-1975] through [kamp-partee-1995], whose labels these are.
+This file states the classes of modifiers for intensional properties and defines the modifier
+*former*.
+
+An intensional property is a function from worlds to predicates of entities. A modifier of
+intensional properties is intersective exactly when
+[it conjoins every noun with one fixed property](##Modifier.isIntersective_iff_exists_forall),
+and privative exactly when
+[nothing it yields from a noun falls under the noun](##Modifier.isPrivative_iff_forall). An
+intersective modifier is [extensional](##Modifier.IsIntersective.isExtensional). A privative
+modifier that holds of something is [not subsective](##Modifier.IsPrivative.not_isSubsective),
+and [*former* is privative](##Modifier.former_isPrivative).
 
 ## Implementation notes
 
-Extensionality is independent of the classes; `Studies/Kamp1975.lean` gives the witnesses.
-Whether adjectives uniformly denote `Modifier (W → E → Prop)` is a theoretical claim
+Extensionality is independent of the classes, with witnesses in `Studies/Kamp1975.lean`. That
+every adjective denotes a modifier of intensional properties is a theoretical claim
 (`Studies/Elbourne2026.lean`).
 
 ## References

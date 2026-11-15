@@ -8,17 +8,24 @@ public import Mathlib.Order.PropInstances
 /-!
 # Modifiers
 
-A modifier combines with an expression to give another of the same type ([mcnally-2016]), so a
-modifier of `τ` is a function from `τ` to itself. [parsons-1970] construes adjectives and adverbs
-as such functions on properties, which makes repeated modification composition. The classes of
-[parsons-1970] and [kamp-1975] are order-theoretic: a modifier is subsective, Parsons's standard
-and Kamp's affirmative, when each value lies below its argument, privative when value and argument
-are disjoint, and intersective, Kamp's predicative, when it is the meet with a fixed element; a
-modifier whose values lie above its arguments is extensive. Stacking intersective modifiers
-[meets their elements](##Modifier.intersective_inf), and the intersective modifiers are
-[those that commute with all of them](##Modifier.isIntersective_iff_forall_commute) and, over a
-Boolean algebra, [the subsective ones that distribute over
+This file defines modifiers and the classes of subsective, extensive, privative and intersective
+modifiers.
+
+A modifier of `τ` is a function from `τ` to itself, and modifiers stack by composition. Over an
+ordered type, a modifier is subsective if each value lies below its argument and extensive if
+each lies above it. It is privative if each value is disjoint from its argument, and intersective
+if it is the meet with a fixed element.
+
+Stacking intersective modifiers [meets their elements](##Modifier.intersective_inf). A modifier
+is intersective exactly when
+[it commutes with every intersective modifier](##Modifier.isIntersective_iff_forall_commute) and,
+over a Boolean algebra, exactly when [it is subsective and distributes over
 joins](##Modifier.isIntersective_iff_isSubsective_and_map_sup).
+
+## Implementation notes
+
+Parsons calls the subsective modifiers standard. Kamp calls them affirmative and the intersective
+ones predicative.
 
 ## References
 

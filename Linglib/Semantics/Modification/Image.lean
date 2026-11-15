@@ -6,11 +6,13 @@ public import Linglib.Semantics.Modification.Basic
 /-!
 # Relation images as modifiers of sets
 
-The image of a relation is a modifier of sets that acts on each member separately, as the
-modifiers of numerals and of scalar alternatives do, and relations are ordered as their images
-are. So the image is [extensive](##Modifier.isExtensive_image_iff) when the relation is reflexive,
-[subsective](##Modifier.isSubsective_image_iff) when the relation relates nothing to anything
-else, and [privative](##Modifier.isPrivative_image_iff) only when the relation is empty.
+This file classifies the image of a relation as a modifier of sets. The image of a set under a
+relation is the set of everything its members are related to.
+
+The image is [extensive](##Modifier.isExtensive_image_iff) exactly when the relation is
+reflexive, [subsective](##Modifier.isSubsective_image_iff) exactly when the relation is contained
+in the identity, and [privative](##Modifier.isPrivative_image_iff) exactly when the relation is
+empty.
 
 ## References
 
