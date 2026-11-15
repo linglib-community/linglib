@@ -390,6 +390,13 @@ theorem isSubtree_subtree : IsSubtree s p.subtree ↔ ∃ q, p ≤ q ∧ q.subtr
     have := q.getElem?_eq
     rwa [← hr, getElem?_append, getElem?_eq, Option.bind_some] at this
 
+theorem isSubtree_subtree_self (p : Positions t) : IsSubtree p.subtree t :=
+  isSubtree_iff_exists_getElem?.2 ⟨_, p.getElem?_eq⟩
+
+theorem exists_subtree_eq (h : IsSubtree s t) : ∃ p : Positions t, p.subtree = s := by
+  obtain ⟨l, hl⟩ := isSubtree_iff_exists_getElem?.1 h
+  exact ⟨⟨⟨l⟩, (getElem?_eq_some_iff.mp hl).1⟩, subtree_eq_iff.2 hl⟩
+
 theorem mem_children_subtree : c ∈ p.subtree.children ↔ ∃ q, p ⋖ q ∧ q.subtree = c := by
   simp only [covBy_iff, GornAddress.covBy_iff]
   constructor

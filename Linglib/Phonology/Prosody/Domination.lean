@@ -10,6 +10,7 @@ public import Linglib.Phonology.OptimalityTheory.Constraint.Alignment
 public import Linglib.Core.Data.RoseTree.Positions
 public import Mathlib.Order.Antichain
 public import Mathlib.Order.Cover
+public import Mathlib.Order.Grade
 
 /-!
 # Constraints on prosodic domination
@@ -29,6 +30,13 @@ and daughters is [the absence of recursion at any depth](##Prosody.noLevelRecurs
 tree [is strictly layered](##Prosody.isStrictlyLayered_iff) exactly when it violates none of
 the four, and a tree satisfying Headedness
 [has a node at every level below its root](##Prosody.exists_isSubtree_level_eq).
+
+The constraints are facts about one map, from the nodes of a structure ordered by dominance to
+the categories. Layeredness says that [the map is
+antitone](##Prosody.layeredness_eq_zero_iff_antitone), and the Strict Layer Hypothesis that [it
+grades the nodes](##Prosody.isStrictlyLayered_iff_covBy): a daughter is one category below its
+mother and a node without daughters is of the lowest. Nothing in that reading asks the nodes to
+form a tree.
 
 ## Implementation notes
 
@@ -146,6 +154,9 @@ daughter, so `ω(f(ω))`, which recurses through an intervening foot, satisfies 
 maximal and minimal ω-projections differ; that tree violates Layeredness, and
 [in a layered tree the two agree](##Prosody.noLevelRecursion_iff). The intonational utterance υ
 is the maximal ι-projection. -/
+
+/-- The category of the node at a position of `t`. -/
+def levelAt {t : RoseTree (Constituent L M)} (p : t.Positions) : L := p.subtree.value.level
 
 /-- The positions of `t` at the level `ℓ`. -/
 abbrev levelPositions (ℓ : L) (t : RoseTree (Constituent L M)) : Set GornAddress :=
@@ -352,6 +363,57 @@ theorem isStrictlyLayered_iff : IsStrictlyLayered t ↔ layeredness t = 0 ∧ he
     exact exhaustivity_eq_zero_iff.1 (he _).1 s hs rfl c hc <| lt_of_le_of_ne
       (layeredness_eq_zero_iff.1 hl s hs c (.of_mem_children hc))
       (nonrecursivity_eq_zero_iff.1 (he _).2 s hs rfl c hc)
+
+/-! ### The hierarchy grades dominance
+
+The positions of a tree are ordered by dominance, the root least, and `levelAt` sends each to
+its category. Selkirk's constraints are order-theoretic properties of this map. -/
+
+omit [DecidableRel (α := L) (· ⋖ ·)] [OrderBot L] in
+/-- **Layeredness says the category map is antitone**: a position dominated by another is of
+its category or below. -/
+theorem layeredness_eq_zero_iff_antitone : layeredness t = 0 ↔ Antitone (levelAt (t := t)) := by
+  rw [layeredness_eq_zero_iff]
+  refine ⟨fun h p q hpq ↦ h _ p.isSubtree_subtree_self _
+    (Positions.isSubtree_subtree.2 ⟨q, hpq, rfl⟩), fun h s hs r hr ↦ ?_⟩
+  obtain ⟨p, rfl⟩ := Positions.exists_subtree_eq hs
+  obtain ⟨q, hpq, rfl⟩ := Positions.isSubtree_subtree.1 hr
+  exact h hpq
+
+omit [DecidableRel (α := L) (· ⋖ ·)] in
+/-- **The Strict Layer Hypothesis says the hierarchy grades dominance**: a tree is strictly
+layered exactly when each daughter is one category below its mother and each position without
+daughters is of the lowest category. -/
+theorem isStrictlyLayered_iff_covBy : IsStrictlyLayered t ↔
+    (∀ ⦃p q : t.Positions⦄, p ⋖ q → levelAt q ⋖ levelAt p) ∧
+      ∀ ⦃p : t.Positions⦄, IsMax p → levelAt p = ⊥ := by
+  rw [isStrictlyLayered_iff_forall]
+  constructor
+  · refine fun H ↦ ⟨fun p q hpq ↦ (H _ p.isSubtree_subtree_self).2 _
+      (Positions.mem_children_subtree.2 ⟨q, hpq, rfl⟩), fun p hp ↦ ?_⟩
+    by_contra hne
+    exact (H _ p.isSubtree_subtree_self).1 hne (Positions.isMax_iff.1 hp)
+  · rintro ⟨hcov, hmax⟩ s hs
+    obtain ⟨p, rfl⟩ := Positions.exists_subtree_eq hs
+    refine ⟨fun hne hnil ↦ hne (hmax (Positions.isMax_iff.2 hnil)), fun c hc ↦ ?_⟩
+    obtain ⟨q, hpq, rfl⟩ := Positions.mem_children_subtree.1 hc
+    exact hcov hpq
+
+/-- In a strictly layered tree a dominated position is of a strictly lower category. -/
+theorem IsStrictlyLayered.strictAnti_levelAt (h : IsStrictlyLayered t) :
+    StrictAnti (levelAt (t := t)) := fun _ _ hpq ↦
+  ((isStrictlyLayered_iff_covBy.1 h).1
+      (Order.pred_covBy_of_not_isMin (not_isMin_of_lt hpq))).lt.trans_le
+    (layeredness_eq_zero_iff_antitone.1 (isStrictlyLayered_iff.1 h).1 (Order.le_pred_of_lt hpq))
+
+/-- The positions of a strictly layered tree are graded by the hierarchy, the root highest and
+the positions without daughters lowest. -/
+abbrev IsStrictlyLayered.gradeMaxOrder (h : IsStrictlyLayered t) :
+    GradeMaxOrder Lᵒᵈ t.Positions where
+  grade p := OrderDual.toDual (levelAt p)
+  grade_strictMono _ _ hpq := OrderDual.toDual_lt_toDual.2 (h.strictAnti_levelAt hpq)
+  covBy_grade _ _ hpq := ((isStrictlyLayered_iff_covBy.1 h).1 hpq).toDual
+  isMax_grade _ hp := (isStrictlyLayered_iff_covBy.1 h).2 hp ▸ isMin_bot.toDual
 
 end Exhaustivity
 
