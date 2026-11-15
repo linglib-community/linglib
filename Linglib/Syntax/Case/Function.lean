@@ -21,19 +21,26 @@ definitions of their markers](##Case.isMarker_roles_functions).
 ## Implementation notes
 
 The recipient is the role `R`, the recipient of a transfer verb together with what is coded like
-it. A spatial function is a direction with or without a localization. Functions with no name of
-their own in the sources read carry the name of the case value, as `essive`.
+it; [malchukov-narrog-2009]'s general map of case functions likewise sets A, P, T and R beside
+the instrument, the beneficiary and the possessor. A spatial function is a direction with or
+without a localization, which [haspelmath-2009] reports as a category-system of its own beside
+case. Functions with no name of their own carry the name of the case value, as `essive`: the
+labels of the peripheral cases are close enough to semantic roles to name them
+([haspelmath-2009]).
 
 `Case.functions` gives the positive half of a name: a case called nominative also has to leave P
 unmarked, which is a fact about the other cases of its language (`Alignment.IsNominativeMarker`).
 A spatial value is named for its direction in its localization. The allative and the ablative
-are named both for the goal and the source with no localization, their general use, and for
-those of the exterior, as in the Finnic series; a fragment states which its case has. The oblique
+are named both for the goal and the source with no localization, the basic terms for those
+directions, and for those of the exterior, as in the Uralic series ([haspelmath-2009]); a
+fragment states which its case has. The oblique
 is named for no function.
 
 ## References
 
 * [haspelmath-2003]
+* [haspelmath-2009]
+* [malchukov-narrog-2009]
 * [haspelmath-2010]
 * [haspelmath-2011]
 * [haspelmath-2022]

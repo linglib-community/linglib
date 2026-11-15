@@ -217,9 +217,11 @@ theorem directObject_affixes_eq_A_iff (v : VerbClass) (s : Series) :
 
 /-! ### The marking of the core arguments -/
 
-/-- The case of each argument role in a series: S is the subject of an intransitive verb, A and
-P the subject and the direct object of a transitive one, the theme of a ditransitive with P, and
-R its indirect object. -/
+/-- The case of each argument role in a series ([hewitt-1995] pp. 549–550): S is the subject of
+an intransitive verb, A and P the subject and the direct object of a transitive one, the theme of
+a ditransitive with P, and R its indirect object. Hewitt calls the first series
+nominative-accusative and the second ergative-absolutive, its nominative a
+nominative(-absolutive) (p. 145). -/
 def marking (s : Series) : ArgumentRole → Case
   | .S => (pattern .intransitive s).subject.case
   | .A => (pattern .transitive s).subject.case
