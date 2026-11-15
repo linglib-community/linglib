@@ -8,6 +8,7 @@ public import Mathlib.Order.Atoms
 public import Mathlib.Order.SupClosed
 public import Mathlib.Order.Zorn
 public import Linglib.Core.Data.Fintype.Order
+public import Linglib.Core.Order.SupClosed
 
 /-!
 # Algebraic mereology
@@ -133,22 +134,32 @@ theorem cum_maximal_unique (hCum : CUM P) {x y : α} (hx : Maximal P x) (hy : Ma
 /-! ### Algebraic closure -/
 
 /-- The algebraic closure `*P` of `P` ([link-1983]) is the least predicate containing `P` and
-closed under binary sum. The inductive presentation supports induction on sums;
-`setOf_algClosure` identifies it with mathlib's `supClosure`. -/
-inductive AlgClosure (P : α → Prop) : α → Prop where
-  /-- Every `P`-element is in `*P`. -/
-  | base {x : α} : P x → AlgClosure P x
-  /-- `*P` is closed under sum. -/
-  | sum {x y : α} : AlgClosure P x → AlgClosure P y → AlgClosure P (x ⊔ y)
+closed under binary sum, the predicate of mathlib's `supClosure`. -/
+abbrev AlgClosure (P : α → Prop) : α → Prop := (· ∈ supClosure {x | P x})
 
-theorem algClosure_cum : CUM (AlgClosure P) := fun _ hx _ hy ↦ .sum hx hy
+/-- Every `P`-element is in `*P`. -/
+theorem AlgClosure.base {x : α} (h : P x) : AlgClosure P x := subset_supClosure h
+
+/-- `*P` is closed under sum. -/
+theorem AlgClosure.sum {x y : α} (hx : AlgClosure P x) (hy : AlgClosure P y) :
+    AlgClosure P (x ⊔ y) :=
+  supClosed_supClosure hx hy
+
+/-- Induction on sums: a property of the `P`-elements that sums preserve holds throughout
+`*P`. -/
+@[elab_as_elim]
+theorem AlgClosure.induction {motive : (x : α) → AlgClosure P x → Prop}
+    (base : ∀ {x} (h : P x), motive x (.base h))
+    (sum : ∀ {x y} (hx : AlgClosure P x) (hy : AlgClosure P y), motive x hx → motive y hy →
+      motive (x ⊔ y) (hx.sum hy))
+    {x : α} (h : AlgClosure P x) : motive x h :=
+  supClosure_induction (fun _ ha ↦ base ha) (fun _ _ ha hb ↦ sum ha hb) h
+
+theorem algClosure_cum : CUM (AlgClosure P) := supClosed_supClosure
 
 theorem algClosure_mono {Q : α → Prop} (h : ∀ x, P x → Q x) :
-    ∀ x, AlgClosure P x → AlgClosure Q x := by
-  intro x hx
-  induction hx with
-  | base hp => exact .base (h _ hp)
-  | sum _ _ ih₁ ih₂ => exact .sum ih₁ ih₂
+    ∀ x, AlgClosure P x → AlgClosure Q x :=
+  fun _ hx ↦ supClosure_mono (fun x hx ↦ h x hx) hx
 
 theorem algClosure_finsetSup' {ι : Type*} {s : Finset ι} (hs : s.Nonempty) {f : ι → α}
     (hf : ∀ i ∈ s, AlgClosure P (f i)) : AlgClosure P (s.sup' hs f) :=
@@ -157,33 +168,21 @@ theorem algClosure_finsetSup' {ι : Type*} {s : Finset ι} (hs : s.Nonempty) {f 
 theorem AlgClosure.map {β : Type*} [SemilatticeSup β] {Q : β → Prop} {f : α → β}
     (hf : ∀ x y, f (x ⊔ y) = f x ⊔ f y) (h : ∀ x, P x → Q (f x)) {x : α}
     (hx : AlgClosure P x) : AlgClosure Q (f x) := by
-  induction hx with
+  induction hx using AlgClosure.induction with
   | base hx => exact .base (h _ hx)
-  | sum _ _ ih ih' => exact hf _ _ ▸ .sum ih ih'
+  | sum _ _ ih ih' => exact hf _ _ ▸ ih.sum ih'
 
 theorem algClosure_has_base {x : α} (h : AlgClosure P x) : ∃ a, P a ∧ a ≤ x := by
-  induction h with
+  induction h using AlgClosure.induction with
   | base hp => exact ⟨_, hp, le_rfl⟩
   | sum _ _ ih₁ _ => obtain ⟨a, ha, hle⟩ := ih₁; exact ⟨a, ha, hle.trans le_sup_left⟩
 
 theorem algClosure_of_cum (hCum : CUM P) {x : α} : AlgClosure P x ↔ P x :=
-  ⟨fun h ↦ by induction h with
-    | base h => exact h
-    | sum _ _ ihx ihy => exact hCum ihx ihy,
-   .base⟩
-
-theorem setOf_algClosure (P : α → Prop) : {x | AlgClosure P x} = supClosure {x | P x} :=
-  Set.Subset.antisymm
-    (fun _ h ↦ by
-      induction (h : AlgClosure P _) with
-      | base h => exact subset_supClosure h
-      | sum _ _ ihx ihy => exact supClosed_supClosure ihx ihy)
-    (supClosure_min (fun _ ↦ .base) algClosure_cum)
+  Set.ext_iff.1 hCum.supClosure_eq x
 
 theorem algClosure_iff_exists_sup' (P : α → Prop) (x : α) :
-    AlgClosure P x ↔ ∃ (t : Finset α) (ht : t.Nonempty), (∀ y ∈ t, P y) ∧ t.sup' ht id = x := by
-  rw [← Set.mem_ofPred_eq (p := AlgClosure P), setOf_algClosure]
-  exact Iff.rfl
+    AlgClosure P x ↔ ∃ (t : Finset α) (ht : t.Nonempty), (∀ y ∈ t, P y) ∧ t.sup' ht id = x :=
+  Iff.rfl
 
 section OrderBot
 
@@ -298,7 +297,7 @@ theorem not_isPlural_of_subsingleton (h : ∀ a b, P a → P b → a = b) (x : �
   fun ⟨_, _, _, _, _, ha, hb, hne⟩ ↦ hne (h _ _ ha hb)
 
 theorem of_algClosure_of_atom (hx : AlgClosure P x) (h : Atom x) : P x := by
-  induction hx with
+  induction hx using AlgClosure.induction with
   | base hp => exact hp
   | @sum a b _ _ iha ihb =>
     by_cases ha : IsBot a
@@ -315,7 +314,7 @@ theorem isPlural_iff_of_atom (hP : ∀ ⦃a⦄, P a → Atom a) :
     exact ⟨hx, fun h ↦ ha.ne (h.eq ha.le (hP hPa).not_isBot)⟩
   · rintro ⟨hx, hne⟩
     refine ⟨hx, ?_⟩
-    induction hx with
+    induction hx using AlgClosure.induction with
     | base h => exact absurd (hP h) hne
     | @sum y z hy hz ihy ihz =>
       by_cases hay : Atom y

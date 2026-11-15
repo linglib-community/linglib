@@ -132,7 +132,7 @@ theorem mem_sums_iff {y : Finset ι} : y ∈ sums ↔ Mereology.AlgClosure (· �
     rw [cons_eq_insert, insert_eq, ← sup_eq_union]
     exact .sum (.base (by simp)) ih
   · intro hy
-    induction hy with
+    induction hy using Mereology.AlgClosure.induction with
     | base h => obtain ⟨a, -, rfl⟩ := mem_map.1 h; exact singleton_nonempty a
     | sum _ _ ih _ => exact ih.mono le_sup_left
 

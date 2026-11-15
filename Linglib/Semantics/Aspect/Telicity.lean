@@ -213,11 +213,9 @@ theorem SINC.inc_of_sum (h : SINC θ) (hs : SUM θ) : INC θ :=
   ⟨θ, h, fun x e ↦ (algClosure_of_cum (x := (x, e)) (sum_iff_cum_uncurry.1 hs)).symm⟩
 
 /-- An incremental relation is summative, being a closure under sums. -/
-theorem INC.sum (h : INC θ) : SUM θ := by
-  obtain ⟨θ', -, hθ⟩ := h
-  have : Function.uncurry θ = AlgClosure (Function.uncurry θ') :=
-    funext fun ⟨x, e⟩ ↦ propext (hθ x e)
-  exact sum_iff_cum_uncurry.2 (this ▸ algClosure_cum)
+theorem INC.sum (h : INC θ) : SUM θ :=
+  let ⟨_, _, hθ⟩ := h
+  fun _ _ h₁ _ _ h₂ ↦ (hθ _ _).mpr (((hθ _ _).mp h₁).sum ((hθ _ _).mp h₂))
 
 /-- The property of a thematic relation that an incrementality class names. A verb is classed
 by the strongest that its theme relation has. -/

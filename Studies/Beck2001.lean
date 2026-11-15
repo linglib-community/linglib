@@ -122,7 +122,6 @@ theorem eachOther_dom_iff :
     obtain ⟨z, hz, -⟩ := algClosure_has_base hd
     exact ⟨z, hz⟩
   · refine DirectedOn.iota_isGreatest_dom algClosure_cum.directedOn ?_ ⟨z, .base hz⟩
-    rw [setOf_algClosure]
     exact ((Finset.finite_toSet y.powerset).subset fun _ h ↦ by simpa using h.2.1).supClosure
 
 private theorem algClosure_otherAtoms_iff :
@@ -160,7 +159,7 @@ theorem eachOther_atom_singleton_eq_some_iff :
   · simp [eachOther_atom_singleton_self, Part.notMem_none]
   · simp only [ne_eq, h, not_false_eq_true, true_and]
     exact ⟨fun hd ↦ Part.mem_unique hd (eachOther_atom_singleton_of_ne h),
-      fun e ↦ e ▸ eachOther_atom_singleton_of_ne h⟩
+      fun e ↦ by rw [e]; exact eachOther_atom_singleton_of_ne h⟩
 
 open Classical in
 -- (111), (112)
@@ -201,7 +200,7 @@ noncomputable def strongReading (Cov : Finset α → Prop) (R : Finset α → Fi
 private theorem sdiff_nonempty_of_algClosure (hA : (A : Set α).Subsingleton)
     {p : Finset α × Finset α} (hp : AlgClosure (fun p ↦ (p.2 \ p.1).Nonempty) p) (hle : p.2 ≤ A) :
     (A \ p.1).Nonempty := by
-  induction hp with
+  induction hp using AlgClosure.induction with
   | base h => exact h.mono (Finset.sdiff_subset_sdiff hle le_rfl)
   | sum _ _ ih ih' =>
     obtain ⟨a, ha⟩ := ih (le_sup_left.trans hle)
@@ -333,7 +332,7 @@ theorem exists_cell_of_weakReading_eq_true (h : weakReading Cov R A = .true) (ha
       (fun d p ↦ Cov p.1 ∧ Cov p.2 ∧ R p.1 d) p = .true) p →
         ∀ a ∈ p.1, ∃ z, Cov z ∧ z ≤ p.1 ∧ a ∈ z from this h a ha
   intro p hp
-  induction hp with
+  induction hp using AlgClosure.induction with
   | @base p h =>
     obtain ⟨_, -, hc, -⟩ := presupOfReferent_eq_true_iff.1 h
     exact fun a ha ↦ ⟨p.1, hc, le_rfl, ha⟩
@@ -737,7 +736,7 @@ private theorem algClosure_triple_iff {β γ : Type*} [DecidableEq β] [Decidabl
             (∀ a ∈ p.1, ∃ t ∈ p.2.2, ∃ b ∈ p.2.1, R a b t) ∧
               ∀ b ∈ p.2.1, ∃ t ∈ p.2.2, ∃ a ∈ p.1, R a b t from this
     intro p hp
-    induction hp with
+    induction hp using AlgClosure.induction with
     | base h =>
       obtain ⟨a, b, t, hR, rfl⟩ := h
       simpa using hR
