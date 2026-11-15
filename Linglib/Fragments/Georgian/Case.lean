@@ -23,8 +23,9 @@ stone'. The paradigms that distinguish the seven cases are in `Georgian.Declensi
 The case of the subject and the objects changes with the series of the verb, so `functions`
 gives a case the core roles it marks in some series, the nominative S, A and P and the dative P
 and A beside the recipient; which it marks in which series is `Georgian.marking`. `functions`
-leaves out time, which Hewitt gives to the nominative, the dative and the instrumental. Hewitt also lists among the case functions an ablative, the instrumental followed
-by *-gan* 'from', which is not one of the seven cases, so `functions` has no source.
+leaves out time, which Hewitt gives to the nominative, the dative and the instrumental. Hewitt
+also lists among the case functions an ablative, the instrumental followed by *-gan* 'from',
+which is not one of the seven cases, so `functions` has no source.
 
 ## References
 
