@@ -75,34 +75,34 @@ theorem iff_of_pattern (hO : Invariant ordinal a) (hI : Independent a)
     a v x y ↔ a w x y := by
   let f : Profile ι α K → ι → K → K := fun u i t ↦
     if u x i = u y i then t - u x i else (t - u x i) / |u y i - u x i|
-  have hf : ∀ u, f u ∈ ordinal := fun u ↦ by
-    rw [mem_ordinal]
-    intro i s t hst
+  have hf : ∀ u, Pi.map (f u) ∈ ordinal := fun u ↦ by
+    refine map_mem_ordinal fun i s t hst ↦ ?_
     dsimp only [f]
     split_ifs with h
     · exact sub_lt_sub_right hst _
     · exact div_lt_div_of_pos_right (sub_lt_sub_right hst _)
         (abs_pos.2 (sub_ne_zero.2 (Ne.symm h)))
-  have hx : ∀ u : Profile ι α K, Profile.transform (f u) u x = 0 := fun u ↦ funext fun i ↦ by
-    simp only [Profile.transform, f]
+  have hx : ∀ u : Profile ι α K, Pi.map (f u) (u x) = 0 := fun u ↦ funext fun i ↦ by
+    simp only [Pi.map_apply, f]
     split_ifs <;> simp
-  have hy : ∀ u : Profile ι α K, Profile.transform (f u) u y =
+  have hy : ∀ u : Profile ι α K, Pi.map (f u) (u y) =
       fun i ↦ if u x i < u y i then 1 else if u y i < u x i then -1 else 0 := fun u ↦
     funext fun i ↦ by
-      simp only [Profile.transform, f]
+      simp only [Pi.map_apply, f]
       rcases lt_trichotomy (u x i) (u y i) with hlt | heq | hgt
       · rw [ite_eq_right hlt.ne, ite_eq_left hlt, abs_of_pos (sub_pos.2 hlt),
           div_self (sub_pos.2 hlt).ne']
       · simp [heq]
       · rw [ite_eq_right hgt.ne', ite_eq_right (lt_asymm hgt), ite_eq_left hgt,
           abs_of_neg (sub_neg.2 hgt), div_neg, div_self (sub_neg.2 hgt).ne]
-  have hyw : Profile.transform (f v) v y = Profile.transform (f w) w y := by
+  have hyw : Pi.map (f v) (v y) = Pi.map (f w) (w y) := by
     rw [hy, hy]
     funext i
     simp only [(h i).1, (h i).2]
-  calc a v x y ↔ a (v.transform (f v)) x y := by rw [hO (f v) (hf v) v]
-    _ ↔ a (w.transform (f w)) x y := hI _ _ x y (by rw [hx, hx]) hyw
-    _ ↔ a w x y := by rw [hO (f w) (hf w) w]
+  calc a v x y ↔ a (Pi.map (f v) ∘ v) x y := by rw [hO _ (hf v) v]
+    _ ↔ a (Pi.map (f w) ∘ w) x y :=
+      hI _ _ x y (by rw [Function.comp_apply, Function.comp_apply, hx, hx]) hyw
+    _ ↔ a w x y := by rw [hO _ (hf w) w]
 
 theorem decisiveOn_of_almost (hW : WeakOrderValued a) (hP : WeakPareto a) (hI : Independent a)
     {G : Finset ι} {x y : α} (hxy : x ≠ y) (h : AlmostDecisiveOn a G x y) {z : α}
