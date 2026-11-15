@@ -425,6 +425,64 @@ theorem isMax_iff : IsMax p ↔ p.subtree.children = [] := by
       obtain rfl := Option.some.inj (p.getElem?_eq.symm.trans hu)
       simp [h] at hi
 
+section OrderIso
+
+variable {t t' : RoseTree α} (f : t.Positions ≃o t'.Positions)
+  (hf : ∀ p q, (f p).val.Precedes (f q).val ↔ p.val.Precedes q.val)
+include hf
+
+/-- An order isomorphism of positions respecting precedence that fixes a position fixes its
+daughters, by strong induction on the index of the daughter. -/
+private theorem val_apply_mul_of {q : t.Positions} (hq : (f q).val = q.val) (i : ℕ)
+    (hi : q.val * .of i ∈ t.validPaths) :
+    (f ⟨q.val * .of i, hi⟩).val = q.val * .of i := by
+  induction i using Nat.strong_induction_on with
+  | _ i ih =>
+  set p : t.Positions := ⟨q.val * .of i, hi⟩
+  obtain ⟨j, hj⟩ := GornAddress.covBy_iff.1 (Positions.covBy_iff.1 ((apply_covBy_apply_iff f).2
+    ((Positions.covBy_iff (p := q) (q := p)).2 (GornAddress.covBy_mul_of q.val i))))
+  rw [hq] at hj
+  rw [hj]
+  rcases lt_trichotomy j i with hji | rfl | hij
+  · -- an earlier sister of `p` is already fixed, so `f` would identify it with `p`
+    have hj' : q.val * .of j ∈ t.validPaths := mul_of_mem_validPaths_of_le hi hji.le
+    have he : (⟨q.val * .of j, hj'⟩ : t.Positions) = p :=
+      f.injective (Subtype.ext ((ih j hji hj').trans hj.symm))
+    exact absurd (GornAddress.of_injective (mul_left_cancel (congrArg Subtype.val he))) hji.ne
+  · rfl
+  · -- the preimage of the `i`th daughter is an earlier sister of `p`, already fixed
+    have hi' : q.val * .of i ∈ t'.validPaths :=
+      mul_of_mem_validPaths_of_le (by rw [← hj]; exact (f p).2) hij.le
+    set r := f.symm ⟨q.val * .of i, hi'⟩
+    have hr : q ⋖ r := by
+      have h : f q ⋖ ⟨q.val * .of i, hi'⟩ :=
+        Positions.covBy_iff.2 (by rw [hq]; exact GornAddress.covBy_mul_of q.val i)
+      simpa [r] using (apply_covBy_apply_iff f.symm).2 h
+    obtain ⟨k, hk⟩ := GornAddress.covBy_iff.1 (Positions.covBy_iff.1 hr)
+    have hki : k < i := by
+      have h := (hf r p).1 (by
+        rw [show f r = ⟨q.val * .of i, hi'⟩ from f.apply_symm_apply _, hj]
+        exact GornAddress.precedes_mul_of_iff.2 hij)
+      rwa [hk, GornAddress.precedes_mul_of_iff] at h
+    have hk' : q.val * .of k ∈ t.validPaths := hk ▸ r.2
+    have h := ih k hki hk'
+    rw [show (⟨q.val * .of k, hk'⟩ : t.Positions) = r from Subtype.ext hk.symm,
+      f.apply_symm_apply] at h
+    exact absurd (GornAddress.of_injective (mul_left_cancel h)) hki.ne'
+
+/-- An order isomorphism of the positions of two trees that preserves and reflects precedence
+fixes every address. -/
+theorem val_apply_of_precedes_iff (p : t.Positions) :
+    (f p).val = p.val := by
+  obtain ⟨⟨l⟩, hp⟩ := p
+  induction l using List.reverseRecOn with
+  | nil => exact congrArg Subtype.val f.map_bot
+  | append_singleton l i ih =>
+    exact val_apply_mul_of f hf (q := ⟨⟨l⟩, validPaths_prefix_closed hp
+      (GornAddress.le_def.2 (List.prefix_append _ _))⟩) (ih _) i hp
+
+end OrderIso
+
 end Positions
 
 /-! ### Positions satisfying a predicate -/

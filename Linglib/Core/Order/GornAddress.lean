@@ -428,6 +428,15 @@ protected theorem trichotomy (p q : GornAddress) :
 
 end Precedes
 
+/-- Two daughters of an address stand in precedence exactly as their indices are ordered. -/
+theorem precedes_mul_of_iff {p : GornAddress} {i j : ℕ} :
+    Precedes (p * of i) (p * of j) ↔ i < j := by
+  refine ⟨fun h ↦ ?_, fun hij ↦ ⟨p, i, j, hij, le_rfl, le_rfl⟩⟩
+  by_contra hij
+  rcases (not_lt.1 hij).eq_or_lt with rfl | hji
+  · exact Precedes.irrefl _ h
+  · exact h.asymm ⟨p, j, i, hji, le_rfl, le_rfl⟩
+
 /-! ### Left edges -/
 
 /-- Two positions are left-aligned when their addresses agree once trailing first-daughter steps
