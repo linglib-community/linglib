@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.Basic.Rel
+public import Linglib.Core.Relation.SetRel
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Order.PropInstances
@@ -20,9 +20,10 @@ modifier whose values lie above its arguments is extensive. Stacking intersectiv
 Boolean algebra, [the subsective ones that distribute over
 joins](##Modifier.isIntersective_iff_isSubsective_and_map_sup).
 The image of a relation is a modifier of sets that acts on each member separately, as the
-modifiers of numerals do. It is [extensive](##Modifier.isExtensive_image_iff) when the relation is
-reflexive, [subsective](##Modifier.isSubsective_image_iff) when the relation relates nothing to
-anything else, and [privative](##Modifier.isPrivative_image_iff) only when the relation is empty.
+modifiers of numerals do, and relations are ordered as their images are. So the image is
+[extensive](##Modifier.isExtensive_image_iff) when the relation is reflexive,
+[subsective](##Modifier.isSubsective_image_iff) when the relation relates nothing to anything
+else, and [privative](##Modifier.isPrivative_image_iff) only when the relation is empty.
 
 ## References
 
@@ -88,6 +89,11 @@ theorem IsPrivative.eq_bot (hp : IsPrivative m) (hs : IsSubsective m) (x : α) :
   le_bot_iff.mp (hp x le_rfl (hs x))
 
 end OrderBot
+
+/-- Over a Heyting algebra a modifier is privative exactly when it lies below the complement, as
+a subsective one lies below the identity. -/
+theorem isPrivative_iff_le_compl [HeytingAlgebra α] {m : Modifier α} : IsPrivative m ↔ m ≤ compl :=
+  forall_congr' fun _ ↦ le_compl_iff_disjoint_right.symm
 
 /-- A privative modifier maps the top element to the bottom, as nothing is a fake entity. -/
 theorem IsPrivative.map_top [PartialOrder α] [BoundedOrder α] {m : Modifier α}
@@ -173,14 +179,15 @@ section Image
 variable {R : SetRel α α}
 
 /-- The image of a relation is extensive exactly when the relation is reflexive. -/
-theorem isExtensive_image_iff : IsExtensive R.image ↔ R.IsRefl :=
-  ⟨fun h ↦ ⟨fun a ↦ by simpa using h {a}⟩, fun _ ↦ R.self_subset_image⟩
+theorem isExtensive_image_iff : IsExtensive R.image ↔ R.IsRefl := by
+  rw [← SetRel.id_subset_iff, ← SetRel.image_le_image_iff, SetRel.image_id_eq]
+  rfl
 
 /-- The image of a relation is subsective exactly when the relation relates nothing to anything
 else. -/
-theorem isSubsective_image_iff : IsSubsective R.image ↔ R ⊆ .id :=
-  ⟨fun h ⟨a, b⟩ hab ↦ (h {a} ⟨a, rfl, hab⟩ : b = a).symm,
-    fun h _ _ ⟨_, ha, hab⟩ ↦ (h hab : _ = _) ▸ ha⟩
+theorem isSubsective_image_iff : IsSubsective R.image ↔ R ⊆ .id := by
+  rw [← SetRel.image_le_image_iff, SetRel.image_id_eq]
+  rfl
 
 /-- The image of a relation is privative only when the relation is empty, since a set `{a, b}`
 with `a` related to `b` meets its own image. -/

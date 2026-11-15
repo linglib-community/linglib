@@ -534,12 +534,6 @@ theorem Update.lower_image (R : Update S) : CCP.lower R.image = R := by
 theorem CCP.image_lower (φ : CCP S) (hd : CCP.IsDistributive φ) : (lower φ).image = φ :=
   funext fun σ ↦ (hd σ).symm
 
-theorem Update.image_le_image_iff : R.image ≤ R'.image ↔ R ⊆ R' :=
-  ⟨fun h ⟨i, _⟩ r ↦ by
-      obtain ⟨_, rfl, r'⟩ := h {i} ⟨i, rfl, r⟩
-      exact r',
-    fun h _ ↦ image_subset_image_left h⟩
-
 /-! ### The static fragment
 
 Van Benthem's additivity ([van-benthem-1986]; [rothschild-yalcin-2016];

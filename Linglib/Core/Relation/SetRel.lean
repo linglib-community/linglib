@@ -50,6 +50,18 @@ theorem core_subset_core_left (h : R₁ ⊆ R₂) : R₂.core t ⊆ R₁.core t 
 
 instance isRefl_id : (SetRel.id : SetRel α α).IsRefl := ⟨fun _ ↦ rfl⟩
 
+/-! ### The image as an order embedding -/
+
+/-- Relations are ordered as their images are. -/
+theorem image_le_image_iff : R₁.image ≤ R₂.image ↔ R₁ ⊆ R₂ :=
+  ⟨fun h ⟨a, _⟩ r ↦ by
+      obtain ⟨_, rfl, r'⟩ := h {a} ⟨a, rfl, r⟩
+      exact r',
+    fun h _ ↦ image_subset_image_left h⟩
+
+theorem image_id_eq : (SetRel.id : SetRel α α).image = id :=
+  funext image_id
+
 /-! ### Decidability over finite codomains -/
 
 instance [Fintype β] (R : SetRel α β) (t : Set β) (a : α) [∀ b, Decidable (a ~[R] b)]
