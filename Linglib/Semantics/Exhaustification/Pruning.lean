@@ -27,9 +27,11 @@ are needed to derive the reading that question selects.
 
 ## Implementation notes
 
-`IsPrunedReading` states the outcome of minimal pruning, the strongest derived reading the
-question determines; the requirement that the pruned set be a maximal one with a relevant result
-is not stated separately.
+The constraint on pruning is stated twice: `IsLicensedPruning` is the rule, a maximal weakening
+restriction with a relevant result, and `IsPrunedReading` is its outcome, the strongest derived
+reading the question determines. For a disjunction
+[they agree](##isPrunedReading_iff_exists_isLicensedPruning), because two weakening restrictions
+weaken together and pruning less gives a stronger reading.
 
 ## References
 
@@ -98,6 +100,11 @@ theorem isPrunedReading_polar (hne : (exhIEII F S).Nonempty) (hq : q ∈ prunedR
   isPrunedReading_of_cell_eq hq hw
     (Setoid.polar_cell_of_mem (exhIEII_subset_of_mem_prunedReadings hq hw))
 
+/-- A pruning is licensed by a question when it is a maximal weakening restriction of the formal
+alternatives whose result the question determines. -/
+def IsLicensedPruning (F : Set (Set W)) (S : Set W) (Q : Setoid W) (A : Set (Set W)) : Prop :=
+  Maximal (fun A ↦ IsWeakeningRestriction F A S ∧ Q.Determines (exhIEII A S)) A
+
 end General
 
 /-! ### Pruning the sub-disjunctions of a disjunction -/
@@ -117,6 +124,75 @@ theorem iInter_subset_of_mem_prunedReadings (h : Separating I p) (hne : I.Nonemp
 theorem iInter_mem_prunedReadings (h : Separating I p) (hne : I.Nonempty) :
     ⋂ i ∈ I, p i ∈ prunedReadings (supClosure (p '' I)) (⋃ i ∈ I, p i) :=
   exhIEII_supClosure h hne ▸ exhIEII_mem_prunedReadings
+
+theorem isWeakeningRestriction_iff (h : Separating I p) (hne : I.Nonempty)
+    {A : Set (Set World)} :
+    IsWeakeningRestriction (supClosure (p '' I)) A (⋃ i ∈ I, p i) ↔
+      A ⊆ supClosure (p '' I) ∧ ∀ q, ¬ IsInnocentlyExcludable A (⋃ i ∈ I, p i) q :=
+  and_congr_right fun hA ↦ by
+    rw [exhIEII_supClosure h hne, iInter_subset_exhIEII_iff hA hne h.all]
+
+section Weakening
+
+variable {A B : Set (Set World)} (h : Separating I p) (hne : I.Nonempty)
+  (hA : IsWeakeningRestriction (supClosure (p '' I)) A (⋃ i ∈ I, p i))
+  (hB : IsWeakeningRestriction (supClosure (p '' I)) B (⋃ i ∈ I, p i))
+include h hne hA
+
+theorem exhIEII_eq_of_isWeakeningRestriction :
+    exhIEII A (⋃ i ∈ I, p i) = (⋃ i ∈ I, p i) ∩ ⋂₀ A :=
+  exhIEII_eq_inter_sInter hA.1 hne h.all ((isWeakeningRestriction_iff h hne).1 hA).2
+
+include hB
+
+/-- Two weakening restrictions of the sub-disjunctions weaken together. -/
+theorem IsWeakeningRestriction.union :
+    IsWeakeningRestriction (supClosure (p '' I)) (A ∪ B) (⋃ i ∈ I, p i) :=
+  (isWeakeningRestriction_iff h hne).2 ⟨Set.union_subset hA.1 hB.1,
+    not_isInnocentlyExcludable_union h.single hA.1 hB.1
+      ((isWeakeningRestriction_iff h hne).1 hA).2 ((isWeakeningRestriction_iff h hne).1 hB).2⟩
+
+theorem exhIEII_union :
+    exhIEII (A ∪ B) (⋃ i ∈ I, p i) = exhIEII A (⋃ i ∈ I, p i) ∩ exhIEII B (⋃ i ∈ I, p i) := by
+  rw [exhIEII_eq_of_isWeakeningRestriction h hne (hA.union h hne hB),
+    exhIEII_eq_of_isWeakeningRestriction h hne hA, exhIEII_eq_of_isWeakeningRestriction h hne hB,
+    Set.sInter_union]
+  ext w
+  simp only [Set.mem_inter_iff]
+  tauto
+
+/-- Among weakening restrictions, pruning less gives a stronger reading. -/
+theorem exhIEII_anti_of_isWeakeningRestriction (hAB : A ⊆ B) :
+    exhIEII B (⋃ i ∈ I, p i) ⊆ exhIEII A (⋃ i ∈ I, p i) := by
+  rw [exhIEII_eq_of_isWeakeningRestriction h hne hA, exhIEII_eq_of_isWeakeningRestriction h hne hB]
+  exact Set.inter_subset_inter_right _ (Set.sInter_subset_sInter hAB)
+
+end Weakening
+
+/-- The reading a question selects is the result of a pruning it licenses: the strongest derived
+reading the question determines is what a maximal weakening restriction with a relevant result
+yields. -/
+theorem isPrunedReading_iff_exists_isLicensedPruning (h : Separating I p) (hne : I.Nonempty)
+    {Q : Setoid World} {q : Set World} :
+    IsPrunedReading (supClosure (p '' I)) (⋃ i ∈ I, p i) Q q ↔
+      ∃ C, IsLicensedPruning (supClosure (p '' I)) (⋃ i ∈ I, p i) Q C ∧
+        exhIEII C (⋃ i ∈ I, p i) = q := by
+  constructor
+  · rintro ⟨⟨⟨C₀, hC₀, rfl⟩, hdet⟩, hleast⟩
+    have hfin : {A | IsWeakeningRestriction (supClosure (p '' I)) A (⋃ i ∈ I, p i) ∧
+        Q.Determines (exhIEII A (⋃ i ∈ I, p i))}.Finite :=
+      (I.finite_toSet.image p).supClosure.finite_subsets.subset fun A hA ↦ hA.1.1
+    obtain ⟨C, hC₀C, hC⟩ := hfin.exists_le_maximal ⟨hC₀, hdet⟩
+    exact ⟨C, hC, Set.Subset.antisymm
+      (exhIEII_anti_of_isWeakeningRestriction h hne hC₀ hC.prop.1 hC₀C)
+      (hleast ⟨⟨C, hC.prop.1, rfl⟩, hC.prop.2⟩)⟩
+  · rintro ⟨C, hC, rfl⟩
+    refine ⟨⟨⟨C, hC.prop.1, rfl⟩, hC.prop.2⟩, ?_⟩
+    rintro _ ⟨⟨C', hC', rfl⟩, hdet⟩
+    have hU := hC.2 ⟨hC.prop.1.union h hne hC', by
+      rw [exhIEII_union h hne hC.prop.1 hC']; exact hC.prop.2.inter hdet⟩ Set.subset_union_left
+    exact exhIEII_anti_of_isWeakeningRestriction h hne hC' hC.prop.1
+      (Set.subset_union_right.trans hU)
 
 /-- A pruning only weakens exactly when it leaves nothing innocently excludable, and then
 exhaustification asserts every alternative it keeps. -/

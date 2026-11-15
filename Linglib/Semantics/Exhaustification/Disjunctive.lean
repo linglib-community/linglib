@@ -200,6 +200,37 @@ theorem isInnocentlyIncludable_iff_of_subset_supClosure (hI : I.Nonempty)
 
 end Family
 
+/-- Two sets of sub-disjunctions that each make nothing innocently excludable make nothing
+innocently excludable together. -/
+theorem not_isInnocentlyExcludable_union {A B : Set (Set World)}
+    (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i) (hA : A ⊆ supClosure (p '' I))
+    (hB : B ⊆ supClosure (p '' I)) (hIEA : ∀ q, ¬ IsInnocentlyExcludable A (⋃ i ∈ I, p i) q)
+    (hIEB : ∀ q, ¬ IsInnocentlyExcludable B (⋃ i ∈ I, p i) q) (q : Set World) :
+    ¬ IsInnocentlyExcludable (A ∪ B) (⋃ i ∈ I, p i) q := by
+  have key : ∀ {A B : Set (Set World)}, A ⊆ supClosure (p '' I) → B ⊆ supClosure (p '' I) →
+      (∀ q, ¬ IsInnocentlyExcludable A (⋃ i ∈ I, p i) q) → q ∈ A →
+      ¬ IsInnocentlyExcludable (A ∪ B) (⋃ i ∈ I, p i) q := by
+    intro A B hA hB hIEA hqA hq
+    have hfin : (A ∪ B).Finite :=
+      (I.finite_toSet.image p).supClosure.subset (Set.union_subset hA hB)
+    have hmw := (isInnocentlyExcludable_iff_exhMW_subset_compl (A ∪ B) _ q hq.1).1 hq
+    have hnot := hIEA q
+    rw [isInnocentlyExcludable_iff_exhMW_subset_compl A _ q hqA, Set.not_subset] at hnot
+    obtain ⟨u₁, hu₁, hu₁q⟩ := hnot
+    obtain ⟨S, -, hS, rfl⟩ := Set.mem_supClosure_image.1 (hA hqA)
+    obtain ⟨i, hi, hu₁i⟩ := Set.mem_iUnion₂.1 (not_not.1 hu₁q)
+    obtain ⟨w, hw⟩ := hsep i (hS hi)
+    obtain ⟨u, hu, huw⟩ := exists_mem_exhMW_le hfin
+      (Set.mem_biUnion (hS hi) ((hw i (hS hi)).2 rfl) : w ∈ ⋃ i ∈ I, p i)
+    refine hmw hu (hu₁.2 hu.1 (fun r ⟨hr, hur⟩ ↦ ⟨hr, ?_⟩) ⟨hqA, not_not.1 hu₁q⟩).2
+    obtain ⟨T, -, hT, rfl⟩ := Set.mem_supClosure_image.1 (hA hr)
+    obtain ⟨k, hk, hwk⟩ := Set.mem_iUnion₂.1 (huw ⟨Or.inl hr, hur⟩).2
+    exact Set.mem_biUnion hk ((hw k (hT hk)).1 hwk ▸ hu₁i)
+  intro hq
+  rcases hq.1 with hqA | hqB
+  · exact key hA hB hIEA hqA hq
+  · exact key hB hA hIEB hqB (Set.union_comm A B ▸ hq)
+
 theorem hsplit_supClosure :
     ∀ i ∈ I, ∀ j ∈ I, j ≠ i → ∃ S ⊆ I, (⋃ k ∈ S, p k) ∈ supClosure (p '' I) ∧ j ∈ S ∧ i ∉ S :=
   fun _ _ j hj hji ↦ ⟨{j}, by simpa, Set.mem_supClosure_image.2 ⟨{j}, by simp, by simpa, rfl⟩,

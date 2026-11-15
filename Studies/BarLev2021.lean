@@ -8,23 +8,18 @@ public import Linglib.Data.Statistics.KrizChemla2015
 /-!
 # Bar-Lev (2021): An Implicature Account of Homogeneity and Non-Maximality
 
-Bar-Lev derives homogeneity as an implicature. A plural definite means existential
-pluralization, that some atom of the plurality in a domain has the property, and its alternatives
-replace the domain by its subsets, so that they are the disjunctions of the atomic predications
+Bar-Lev derives homogeneity as an implicature. A plural definite means that some atom of the
+plurality has the property, and its alternatives are the disjunctions of the atomic predications,
 with no conjunction among them. Exhaustifying over all of them
-[gives the universal reading](##exhIEII_eq_universal), while under negation
-[exhaustification is vacuous](##Exhaustification.exhIEII_compl_biUnion). Non-maximal readings
-come from pruning: a set of alternatives may replace the whole set when exhaustifying over it
-only weakens the universal reading, which holds exactly when it makes no alternative innocently
-excludable, and the readings so derived are [the conjunctions of alternatives that are not
-themselves alternatives, and the plain existential
-one](##Exhaustification.prunedReadings_eq). They include "at least `k`" for every `k` and lie
-among Križ and Spector's candidate meanings. The question the context raises selects the
-strongest reading it determines, not the alternatives it determines, of which the question of
-(66) [has none](##not_determines_66); [every reading is selected by the question whether it
-holds](##Exhaustification.isPrunedReading_polar), and a world is gappy, true on the reading one
-question selects and false on another's, [exactly where trivalent plural predication is
-undefined](##gappy_iff_barePlural_eq_undefined).
+[gives the universal reading](##exhIEII_eq_universal); under negation
+[it is vacuous](##Exhaustification.exhIEII_compl_biUnion). Non-maximal readings come from pruning
+alternatives so that the result only weakens, which derives [the conjunctions of alternatives that
+are not themselves alternatives](##Exhaustification.prunedReadings_eq). The question selects the
+strongest of these it determines, [the result of a maximal pruning whose result is
+relevant](##Exhaustification.isPrunedReading_iff_exists_isLicensedPruning), whereas pruning the
+alternatives that are irrelevant one by one [would leave none](##not_determines_66). A world is
+gappy, true on one question's reading and false on another's, [exactly where trivalent plural
+predication is undefined](##gappy_iff_barePlural_eq_undefined).
 
 ## Implementation notes
 
