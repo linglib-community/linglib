@@ -11,29 +11,31 @@ A deverbal noun is a complex head, a root categorized by v and then by n, and it
 the ways the meanings of the three compose. This file gives the allosemes of v and n their typed
 denotations, after [wood-2023], as lexical items of the composition engine, and reads the
 meanings of the complex head off its derivations by Functional Application and Predicate
-Conjunction. The root is a predicate of entities, of eventualities, or a relation between the
-two, as the head next to it requires. The eventive alloseme of v says that the eventuality is an
-activity; the zero allosemes of v and n are the identity. The contentful allosemes of n make an
-entity predicate: of a root that holds of an entity which is an event or a state, of a root that
-holds of an entity, or, from a predicate of eventualities, of what such an eventuality produced.
+Conjunction. A head with a zero alloseme is pruned, so that what is below it meets the next
+head. The root is a predicate of entities or of eventualities, as the head next to it requires.
+The eventive alloseme of v says that the eventuality is an activity. The simple event, state and
+entity allosemes of n take a predicate of entities, and the result alloseme takes a predicate
+of eventualities to the entities such an eventuality produced.
 
-So the complex event noun, eventive v under zero n, [stays a predicate of
-eventualities](##denotations_eventive_zero), while every other reading is a predicate of
-entities; the result reading [composes with either alloseme of v](##denotations_eventive_result),
-and the two options differ by the activity. Which pairs of allosemes compose
-[follows from their types](##composes_iff).
+The complex event noun, eventive v under zero n, [is a predicate of
+eventualities](##denotations_eventive_zero), and the nouns of the other allosemes of n are
+predicates of entities; the result alloseme [composes over either alloseme of
+v](##denotations_eventive_result), and over eventive v it adds that the eventuality was an
+activity. [Which pairs of allosemes compose](##composes_iff) is read off the derivations.
 
 ## Implementation notes
 
 * The alloseme of v is the one [wood-2023] adopts when event structure is built in the
-  semantics, an activity that conjoins with the root; the version with a Theme role, which that
-  work calls a simplification, is not used.
-* Events and states are one sort of eventuality, told apart by `stative`, and the simple event
-  alloseme describes the eventualities that are not states.
-* The content alloseme is that of [benz-2025]: its root is a relation between an entity and an
-  eventuality, and the noun describes the entities with propositional content that stand in it.
-  No alloseme of v composes with that relation other than the identity.
-* A zero alloseme is the identity at the three types a root may take.
+  semantics, an activity that conjoins with the root. The version with a Theme role, which that
+  work calls a simplification and [benz-2025] uses, is not an item here.
+* Events and states are one sort of eventuality, told apart by `stative`: the simple event
+  alloseme describes the eventualities that are not states, and nothing relates the activities
+  to the states. A root that holds of states therefore conjoins with the activity, where
+  [wood-2023] combines an end-state root with v by a rule of its own.
+* The content alloseme of [benz-2025], and the allosemes of n that attach to roots, have no
+  item, so no noun is composed with them here.
+* With both heads pruned nothing is next to the root to fix its type, and the complex head has
+  no bare structure.
 
 ## TODO
 
@@ -62,12 +64,8 @@ inductive Item : Ty Base → Type
   | rootEntity : Item .et
   /-- The root as a predicate of eventualities. -/
   | rootEvent : Item .vt
-  /-- The root as a relation between an entity and an eventuality. -/
-  | rootRel : Item .evt
   /-- Eventive v: the eventuality is an activity. -/
   | activity : Item .vt
-  /-- A zero alloseme at a type. -/
-  | id (a : Ty Base) : Item (a ⇒ a)
   /-- The simple event alloseme of n. -/
   | simpleEvent : Item (.et ⇒ .et)
   /-- The state alloseme of n. -/
@@ -76,8 +74,6 @@ inductive Item : Ty Base → Type
   | entity : Item (.et ⇒ .et)
   /-- The result alloseme of n. -/
   | result : Item (.vt ⇒ .et)
-  /-- The content alloseme of n. -/
-  | content : Item (.evt ⇒ .et)
 
 /-- A terminal of the complex head: the root, v with its alloseme, or n with its alloseme. -/
 inductive Terminal where
@@ -86,58 +82,54 @@ inductive Terminal where
   | n (a : Nominalizer.Alloseme)
   deriving DecidableEq
 
-/-- The items of a zero alloseme, the identity at each type a root takes. -/
-def zeroItems : List (Σ a, Item a) := [⟨_, .id .et⟩, ⟨_, .id .vt⟩, ⟨_, .id .evt⟩]
-
-/-- The items a terminal may be. The root takes whatever type the head next to it needs; the
-allosemes of n that attach to roots have no item here. -/
+/-- The items a terminal may be. The root takes the type the head next to it needs; a zero
+alloseme has no item, its head being pruned. -/
 def Terminal.items : Terminal → List (Σ a, Item a)
-  | .root => [⟨_, .rootEntity⟩, ⟨_, .rootEvent⟩, ⟨_, .rootRel⟩]
+  | .root => [⟨_, .rootEntity⟩, ⟨_, .rootEvent⟩]
   | .v .eventive => [⟨_, .activity⟩]
-  | .v .zero => zeroItems
-  | .n .zero => zeroItems
   | .n .simpleEvent => [⟨_, .simpleEvent⟩]
   | .n .state => [⟨_, .state⟩]
   | .n .entity => [⟨_, .entity⟩]
   | .n .result => [⟨_, .result⟩]
-  | .n .content => [⟨_, .content⟩]
-  | .n _ => []
+  | _ => []
 
-/-- The complex head of a nominalization, the root categorized by v and then by n. -/
-def nominal (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) : Skeleton Unit Terminal :=
-  .binary () (.binary () (.leaf .root) (.leaf (.v v))) (.leaf (.n n))
+/-- The bare structure of a nominalization, the root under the heads whose alloseme is not zero,
+v below n; there is none when both are pruned. -/
+def nominal : Verbalizer.Alloseme → Nominalizer.Alloseme → Option (Skeleton Unit Terminal)
+  | .zero, .zero => none
+  | .zero, n => some (.binary () (.leaf .root) (.leaf (.n n)))
+  | v, .zero => some (.binary () (.leaf .root) (.leaf (.v v)))
+  | v, n => some (.binary () (.binary () (.leaf .root) (.leaf (.v v))) (.leaf (.n n)))
 
 /-- The types of the derivations of a nominalization. -/
 def nominalTypes (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) : List (Ty Base) :=
-  ((typeDriven nominalGrammar).derivs Terminal.items (nominal v n)).map (·.1)
+  (nominal v n).elim [] fun s ↦ ((typeDriven nominalGrammar).derivs Terminal.items s).map (·.1)
 
 /-- The allosemes `v` and `n` compose on some construal of the root. -/
 def Composes (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) : Prop := nominalTypes v n ≠ []
 
 instance : DecidableRel Composes := fun _ _ ↦ inferInstanceAs (Decidable (_ ≠ _))
 
-/-- Which allosemes compose follows from their types: eventive v gives a predicate of
-eventualities, which only the zero and result allosemes of n take, and under zero v every
-deverbal alloseme of n finds a root of its type. -/
+/-- Eventive v gives a predicate of eventualities, which among the allosemes of n only the
+result alloseme takes, and which the noun keeps when n is pruned; with v pruned the root meets n
+and takes the type it needs. -/
 theorem composes_iff (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) :
     Composes v n ↔ (v = .eventive ∧ (n = .zero ∨ n = .result)) ∨
-      (v = .zero ∧ n ≠ .relational ∧ n ≠ .sortal ∧ n ≠ .alienator) := by
+      (v = .zero ∧ (n = .simpleEvent ∨ n = .state ∨ n = .entity ∨ n = .result)) := by
   revert v n
   decide
 
--- The reading table and composition differ at two cells: two zero allosemes compose, to the bare
--- root, and the content alloseme does not compose with eventive v.
+-- Apart from the content alloseme, which has no item, the allosemes that compose are those the
+-- reading table gives a reading.
 theorem composes_iff_reading {v : Verbalizer.Alloseme} {n : Nominalizer.Alloseme}
-    (h : ¬ (v = .zero ∧ n = .zero)) (h' : ¬ (v = .eventive ∧ n = .content)) :
-    Composes v n ↔ (readingFromAllosemes v n).isSome := by
+    (h : n ≠ .content) : Composes v n ↔ (readingFromAllosemes v n).isSome := by
   revert v n
   decide
 
 /-! ### Denotations -/
 
 /-- A model for nominalizations: eventualities are entities, some of them states and some
-activities; `result x e` says that the entity `x` is the result of `e`, and `hasContent` picks
-out the entities with propositional content. -/
+activities, and `result x e` says that the entity `x` is the result of `e`. -/
 structure NominalizationModel (E V : Type) where
   /-- Eventualities as entities. -/
   ev : V ↪ E
@@ -147,14 +139,11 @@ structure NominalizationModel (E V : Type) where
   activity : V → Prop
   /-- The entity is the result of the eventuality. -/
   result : E → V → Prop
-  /-- The entity has propositional content. -/
-  hasContent : E → Prop
 
-/-- What a root says of entities, of eventualities, and of an entity with an eventuality. -/
+/-- What a root says of entities and of eventualities. -/
 structure RootMeaning (E V : Type) where
   onEntities : E → Prop
   onEvents : V → Prop
-  rel : E → V → Prop
 
 variable {E V : Type} (m : NominalizationModel E V) (ρ : RootMeaning E V)
 
@@ -162,21 +151,18 @@ variable {E V : Type} (m : NominalizationModel E V) (ρ : RootMeaning E V)
 def Item.val : {a : Ty Base} → Item a → a.Domain E Unit { eventuality := V }
   | _, .rootEntity => ρ.onEntities
   | _, .rootEvent => ρ.onEvents
-  | _, .rootRel => ρ.rel
   | _, .activity => m.activity
-  | _, .id _ => fun x ↦ x
   | _, .simpleEvent => fun P x ↦ P x ∧ ∃ e, x = m.ev e ∧ ¬ m.stative e
   | _, .state => fun P x ↦ P x ∧ ∃ s, x = m.ev s ∧ m.stative s
   | _, .entity => fun P ↦ P
   | _, .result => fun P x ↦ ∃ e, P e ∧ m.result x e
-  | _, .content => fun R x ↦ (∃ e, R x e) ∧ m.hasContent x
 
 /-- The denotations of a nominalization, one for each of its derivations. -/
 def denotations (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) :
     List (Denotation E Unit { eventuality := V }) :=
-  (typeDriven nominalGrammar).values
+  (nominal v n).elim [] <| (typeDriven nominalGrammar).values
     (D := Ty.Dom (Base.Dom E Unit { eventuality := V })) inferInstance (Item.val m ρ)
-    Terminal.items (nominal v n)
+    Terminal.items
 
 /-- The complex event noun has the meaning of the verb, a predicate of eventualities. -/
 theorem denotations_eventive_zero :
@@ -203,11 +189,6 @@ theorem denotations_eventive_result :
 -- The result noun over zero v, with no activity.
 theorem denotations_zero_result :
     denotations m ρ .zero .result = [⟨.et, fun x ↦ ∃ e, ρ.onEvents e ∧ m.result x e⟩] :=
-  rfl
-
--- The content noun.
-theorem denotations_zero_content :
-    denotations m ρ .zero .content = [⟨.et, fun x ↦ (∃ e, ρ.rel x e) ∧ m.hasContent x⟩] :=
   rfl
 
 end DistributedMorphology.Allosemy
