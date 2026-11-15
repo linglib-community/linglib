@@ -163,15 +163,17 @@ def free : List Categorizer := [relationalN false, alienatorN]
 /-- The class of a nominal over the root `r` with the n's `hs`, the gender a probe finds in its
 last cycle, which is the o-class (gender II) by default. Every categorizer is a cyclic head. -/
 def classOf (r : Root) (hs : List Categorizer) : NounClass :=
-  agreeingGender headClass .o ((⟨r, hs⟩ : ComplexHead Root Categorizer).lastCycle fun _ ↦ True)
+  (agreeingGender headClass
+    ((⟨r, hs⟩ : ComplexHead Root Categorizer).lastCycle fun _ ↦ True)).getD .o
 
 theorem switch (r : Root) : classOf r ipossessed = .a ∧ classOf r free = .o := by
   simp only [classOf, ComplexHead.lastCycle]
   decide
 
 theorem free_cyclic (r : Root) :
-    classOf r free = .o ∧ agreeingGender headClass .o free.reverse = .a :=
-  agreeingGender_lastCycle_plain (hs := []) trivial (by decide) (by decide)
+    classOf r free = .o ∧ agreeingGender headClass free.reverse = some .a := by
+  simp only [classOf, ComplexHead.lastCycle]
+  decide
 
 theorem bodyPartTerms_free (r : Root) : ∀ n ∈ bodyPartTerms, n.gender = classOf r free := by
   simp only [classOf, ComplexHead.lastCycle]

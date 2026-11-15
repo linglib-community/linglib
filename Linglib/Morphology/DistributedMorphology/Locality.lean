@@ -175,21 +175,25 @@ def lastCycle : List H :=
   s.heads.reverse.takeWhile (fun h ↦ !decide (cyclic h)) ++
     (s.heads.reverse.dropWhile (fun h ↦ !decide (cyclic h))).take 1
 
-theorem lastCycle_mk_append {r : R} {hs above : List H} {h : H} (hc : cyclic h)
-    (ha : ∀ a ∈ above, ¬ cyclic a) :
-    (⟨r, hs ++ h :: above⟩ : ComplexHead R H).lastCycle cyclic = above.reverse ++ [h] := by
-  have key : ∀ l : List H, (∀ a ∈ l, ¬ cyclic a) →
-      (l ++ h :: hs.reverse).takeWhile (fun x ↦ !decide (cyclic x)) ++
-        ((l ++ h :: hs.reverse).dropWhile (fun x ↦ !decide (cyclic x))).take 1 = l ++ [h] := by
-    intro l hl
-    induction l with
-    | nil => simp [hc]
-    | cons a l ih =>
-      have ha' : ¬ cyclic a := hl a (by simp)
-      simp only [List.cons_append, List.takeWhile_cons, List.dropWhile_cons, ha', decide_false,
-        Bool.not_false, ↓reduceIte] at ih ⊢
-      rw [ih fun b hb ↦ hl b (by simp [hb])]
-  simpa [lastCycle, List.reverse_append] using key above.reverse (by simpa using ha)
+variable (s cyclic) in
+/-- The last cycle is an initial stretch of the heads read from the top. -/
+theorem lastCycle_prefix : s.lastCycle cyclic <+: s.heads.reverse := by
+  conv_rhs => rw [← List.takeWhile_append_dropWhile (p := fun h ↦ !decide (cyclic h))
+    (l := s.heads.reverse)]
+  exact (List.prefix_append_right_inj _).2 (List.take_prefix 1 _)
+
+/-- Merging a cyclic head closes the cycles below it and starts a new one. -/
+@[simp]
+theorem lastCycle_concat_of_cyclic {r : R} {hs : List H} {h : H} (hc : cyclic h) :
+    (⟨r, hs ++ [h]⟩ : ComplexHead R H).lastCycle cyclic = [h] := by
+  simp [lastCycle, hc]
+
+/-- A noncyclic head joins the cycle of the word it merges with. -/
+@[simp]
+theorem lastCycle_concat_of_not_cyclic {r : R} {hs : List H} {h : H} (hc : ¬ cyclic h) :
+    (⟨r, hs ++ [h]⟩ : ComplexHead R H).lastCycle cyclic =
+      h :: (⟨r, hs⟩ : ComplexHead R H).lastCycle cyclic := by
+  simp [lastCycle, hc]
 
 /-! ### Interface adjacency -/
 
