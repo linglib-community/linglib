@@ -313,6 +313,34 @@ theorem not_ordinalInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠
     (hj : 0 < c j) : ¬ Invariant ordinal (utilitarian c : Rule ι α K) :=
   fun h ↦ not_ratioInvariant_utilitarian c hij hi hj (h.mono ratio_subset_ordinal)
 
+/-- The utilitarian rule needs differences of values: a strictly increasing map applied to every
+individual alike already changes it. -/
+theorem not_ordinalLevelInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠ j) (hi : 0 < c i)
+    (hj : 0 < c j) : ¬ Invariant ordinalLevel (utilitarian c : Rule ι α K) := by
+  intro h
+  obtain ⟨x, y, hxy⟩ := exists_pair_ne α
+  obtain ⟨u, hu, hu₀, hu₁, hu₂⟩ : ∃ u : K → K,
+      StrictMono u ∧ u 0 = 0 ∧ u (-c j) = -c j ∧ u (c i) = 2 * c i :=
+    ⟨fun t ↦ max t (2 * t), fun s t hst ↦ max_lt (hst.trans_le (le_max_left _ _))
+      ((mul_lt_mul_of_pos_left hst two_pos).trans_le (le_max_right _ _)), by simp,
+      max_eq_left (by linarith), max_eq_right (by linarith)⟩
+  classical
+  let v : Profile ι α K := fun z ↦
+    if z = x then Pi.single i (-c j) + Pi.single j (c i) else 0
+  have hx : (v.transform (const ι u)) x = Pi.single i (-c j) + Pi.single j (2 * c i) :=
+    funext fun l ↦ by
+      by_cases h₁ : l = i
+      · subst h₁; simp [Profile.transform, v, hij, hu₁]
+      · by_cases h₂ : l = j
+        · subst h₂; simp [Profile.transform, v, h₁, hu₂]
+        · simp [Profile.transform, v, h₁, h₂, hu₀]
+  have hy : (v.transform (const ι u)) y = 0 := funext fun l ↦ by
+    simp [Profile.transform, v, hxy.symm, hu₀]
+  have := (congrFun₂ (h _ ⟨u, hu, rfl⟩ v) y x).mpr (by simp [v, hxy.symm, mul_comm])
+  rw [utilitarian_apply, hx, hy] at this
+  simp only [dotProduct_add, dotProduct_single, dotProduct_zero] at this
+  nlinarith [mul_pos hi hj]
+
 omit c
 
 /-- The Pareto rule ranks `x` weakly above `y` iff every utilitarian rule with positive weights
@@ -372,6 +400,19 @@ theorem maximin_ordinalLevelInvariant : Invariant ordinalLevel (maximin : Rule �
     rfl
   funext p q
   simp only [Order.Preimage, ge_iff_le, key, hu.le_iff_le]
+
+theorem maximin_weakOrderValued : WeakOrderValued (maximin : Rule ι α K) :=
+  weakOrderValued_ofRel
+
+theorem maximin_independent : Independent (maximin : Rule ι α K) :=
+  independent_ofRel _
+
+theorem maximin_anonymous : Anonymous (maximin : Rule ι α K) :=
+  anonymous_ofRel fun σ ↦ funext₂ fun p q ↦ by
+    have key (p : ι → K) : univ.inf' univ_nonempty (p ∘ σ) = univ.inf' univ_nonempty p :=
+      le_antisymm (le_inf' _ _ fun i _ ↦ by simpa using inf'_le (p ∘ σ) (mem_univ (σ.symm i)))
+        (le_inf' _ _ fun i _ ↦ inf'_le p (mem_univ (σ i)))
+    simp only [Order.Preimage, key]
 
 end Maximin
 
