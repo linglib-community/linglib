@@ -150,9 +150,11 @@ def strongItems : List (VocabularyItem Feature String) :=
 /-- The exponent of n for root `r` in case `c`. -/
 def strongN (r : Root) (c : Case) : Option String := subsetPrinciple strongItems (site r c)
 
-/-- A use of a Telugu postposition is the postposition with a value it marks. -/
+/-- A use of a Telugu postposition is the postposition with a comparative value named for a
+function it marks. -/
 abbrev PostpositionUse :=
-  Σ a : {a // a ∈ Telugu.Adpositions.inventory}, {c // c ∈ a.1.functions}
+  Σ a : {a // a ∈ Telugu.Adpositions.inventory},
+    {c : Case // (c.functions ∩ a.1.functions).Nonempty}
 
 /-- A cell of the paradigms (1) and (8), a case or a use of a postposition. -/
 inductive ParadigmCell where

@@ -307,8 +307,9 @@ def hit : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.on)
+         (some (.spatial (some .surface) .place)), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
   vendlerClass := some .activity
 
 /-- "push" — AgPat verb (Levin 12) -/
@@ -373,7 +374,7 @@ def fling : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_np, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2])]
   vendlerClass := some .activity
 
 /-- "slam" — Levin 17.1 Throw verbs; a hitting verb for [levin-2026] (32a).
@@ -383,7 +384,7 @@ def slam : Verb where
   levin := some Levin1993.Index.slam
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
   vendlerClass := some .activity
 
@@ -394,7 +395,8 @@ def punch : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1])]
+     (ArgumentFrame.np_pp (some Adpositions.on)
+         (some (.spatial (some .surface) .place)), [0, 2, 1])]
   vendlerClass := some .activity
 
 /-- "smack" — verb of surface contact, hitting (Levin 18.1,
@@ -405,8 +407,9 @@ def smack : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3]),
+     (ArgumentFrame.np_pp (some Adpositions.on)
+         (some (.spatial (some .surface) .place)), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3]),
      (ArgumentFrame.np, [3, 1])]
   vendlerClass := some .activity
 
@@ -418,8 +421,9 @@ def thump : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.on)
+         (some (.spatial (some .surface) .place)), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
   vendlerClass := some .activity
 
 /-- "bang" — verb of surface contact, hitting (Levin 18.1,
@@ -430,15 +434,17 @@ def bang : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.on)
+         (some (.spatial (some .surface) .place)), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
   vendlerClass := some .activity
 
 /-- "thrash" — Levin 18.3 Spank verbs; a hitting verb for [levin-2026] (32a). -/
 def thrash : Verb where
   morphs := [.root "thrash"]
   levin := some Levin1993.Index.thrash
-  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.on) (some .sup)]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.on)
+      (some (.spatial (some .surface) .place))]
   vendlerClass := some .activity
 
 /-- "hammer" — Levin 18.1 Hit verbs. -/
@@ -448,8 +454,9 @@ def hammer : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.on)
+         (some (.spatial (some .surface) .place)), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
   vendlerClass := some .activity
 
 /-- "scrape" — verb of surface contact, wiping (Levin 10.4,
@@ -463,7 +470,7 @@ def scrape : Verb where
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
   vendlerClass := some .activity
 
 /-- "wipe" — Levin 10.4 Wipe verbs, manner subclass. -/
@@ -475,7 +482,7 @@ def wipe : Verb where
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
   vendlerClass := some .activity
 
 /-- "carry" — AgPat verb (Levin 11.4) -/
@@ -484,7 +491,7 @@ def carry : Verb where
   levin := some Levin1993.Index.carry
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
   vendlerClass := some .activity
   incrementality := some .cumulative
@@ -495,7 +502,7 @@ def drag : Verb where
   levin := some Levin1993.Index.drag
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
   vendlerClass := some .activity
   incrementality := some .cumulative

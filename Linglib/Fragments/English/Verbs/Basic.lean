@@ -186,12 +186,12 @@ def go : Verb where
   vendlerClass := some .achievement
   levinExcluded := {LevinClass.meander}
 
-/-- In *run into the room* the spatial value *into* marks, the illative, makes a verb of manner of
-motion directed and telic, while *run behind the house* leaves it as it is, and so does any path
-phrase *sleep*, which selects none. -/
-example : (∀ c ∈ Adpositions.into.functions, c.kind = .spatial →
-      (run.withPath (.ofCase c)).direction = some .goal ∧
-        (run.withPath (.ofCase c)).vendlerClass = some .accomplishment) ∧
+/-- In *run into the room* the spatial function *into* marks, the goal in the interior, makes a
+verb of manner of motion directed and telic, while *run behind the house* leaves it as it is, and
+so does any path phrase *sleep*, which selects none. -/
+example : (∀ f ∈ Adpositions.into.functions, f.kind = .spatial →
+      (run.withPath (.ofFunction f)).direction = some .goal ∧
+        (run.withPath (.ofFunction f)).vendlerClass = some .accomplishment) ∧
     run.withPath Adposition.behind = run.toVerb ∧ sleep.withPath (.ofCase .ill) = sleep.toVerb :=
   ⟨by decide, rfl, rfl⟩
 
@@ -221,8 +221,9 @@ def kick : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.on)
+         (some (.spatial (some .surface) .place)), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
     [some accomplishmentSubjectProfile, some contactObject, none, none]
   vendlerClass := some .activity
 
@@ -249,8 +250,9 @@ def give : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 2, 1]),
-     ((ArgumentFrame.np_pp (some Adpositions.to_) (some .dat)).leaveImplicit 0 (some .indef),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1]),
+     ((ArgumentFrame.np_pp (some Adpositions.to_)
+         (some (.argument .R))).leaveImplicit 0 (some .indef),
        [0, 2, 1]),
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
@@ -292,7 +294,7 @@ def buy : Verb where
   past := "bought"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.for_) (some .ben), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.for_) (some .beneficiary), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
     [some possessionTransfer.subjectProfile, none, none]
   vendlerClass := some .accomplishment
@@ -328,8 +330,9 @@ def sell : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp, [0, 1, 2]),
-     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2]),
-     ((ArgumentFrame.np_pp (some Adpositions.to_) (some .dat)).leaveImplicit 0 (some .def),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2]),
+     ((ArgumentFrame.np_pp (some Adpositions.to_)
+         (some (.argument .R))).leaveImplicit 0 (some .def),
        [0, 1, 2]),
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .indef), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
@@ -398,10 +401,10 @@ def build : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.for_) (some .ben), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.for_) (some .beneficiary), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.out), [0, 1, 3]),
-     (ArgumentFrame.np_pp (some Adpositions.into) (some .transl), [0, 3, 1])]
+     (ArgumentFrame.np_pp (some Adpositions.into) (some .translative), [0, 3, 1])]
     [some accomplishmentSubjectProfile, some creationObject, none, none]
   vendlerClass := some .accomplishment
   incrementality := some .strict
@@ -444,7 +447,7 @@ def sweep : Verb where
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
     [some wipeManner.subjectProfile, none, none]
   vendlerClass := some .activity
   passivizable := true
@@ -459,7 +462,7 @@ def sweep_instr : Verb where
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
     [some wipeInstrument.subjectProfile, none, none]
   vendlerClass := some .activity
   passivizable := true

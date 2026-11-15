@@ -38,7 +38,7 @@ def crack : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
   vendlerClass := some .achievement
   scaleDimension := some .cracking
 
@@ -50,7 +50,7 @@ def dent : Verb where
   levin := some Levin1993.Index.dent
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .achievement
   scaleDimension := some .denting
@@ -65,8 +65,9 @@ def scratch : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.on)
+         (some (.spatial (some .surface) .place)), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
   vendlerClass := some .achievement
   scaleDimension := some .scratching
 
@@ -79,7 +80,7 @@ def shatter : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .achievement
 
@@ -91,7 +92,7 @@ def burn : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
 
@@ -101,7 +102,7 @@ def destroy : Verb where
   levin := some Levin1993.Index.destroy
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .accomplishment
 
@@ -115,7 +116,7 @@ def melt : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 3, 1])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
@@ -147,9 +148,9 @@ def change : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.into) (some .transl), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.into) (some .translative), [0, 1, 2]),
      (⟨some .nominal, [.nominal, .adposition (some Adpositions.from_),
-     .adposition (some Adpositions.into) (some .transl)]⟩, [0, 1, 3, 2])]
+     .adposition (some Adpositions.into) (some .translative)]⟩, [0, 1, 3, 2])]
   vendlerClass := some .accomplishment
 
 /-- "damage" — partial destruction; not listed by Levin. -/
@@ -227,7 +228,7 @@ def shut : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .accomplishment
 
@@ -251,7 +252,7 @@ def stretch : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
   vendlerClass := some .accomplishment
 
 /-- "switch" — Levin's change-of-state lists do not include *switch*. -/
@@ -316,7 +317,7 @@ def turn : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.into) (some .transl), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.into) (some .translative), [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinExcluded := {LevinClass.crane, .hurt, .meander, .roll}
 
@@ -340,7 +341,7 @@ def freeze : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
   vendlerClass := some .accomplishment
 
 /-- "heat" — Levin 45.4 Other Change of State verbs. Causative/inchoative alternation. -/
@@ -350,7 +351,7 @@ def heat : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .accomplishment
 
@@ -365,7 +366,7 @@ def bend : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
   vendlerClass := some .activity
   scaleDimension := some .straightness
   scalePolarity := .negative
@@ -378,7 +379,7 @@ def boil : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .accomplishment
   scaleDimension := some .boiling
@@ -403,7 +404,7 @@ def increase : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .activity
   scaleDimension := some .quantity
@@ -418,7 +419,7 @@ def straighten : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .accomplishment
   scaleDimension := some .straightness
@@ -431,7 +432,7 @@ def flatten : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .accomplishment
   scaleDimension := some .flatness
@@ -444,7 +445,7 @@ def open_ : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
   vendlerClass := some .accomplishment
   scaleDimension := some .openness
 
@@ -456,7 +457,7 @@ def lengthen : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .activity
   scaleDimension := some .length
@@ -469,7 +470,7 @@ def widen : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .activity
   scaleDimension := some .width
@@ -482,7 +483,7 @@ def cool : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .activity
   scaleDimension := some .temperature
@@ -495,7 +496,7 @@ def warm : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .activity
   scaleDimension := some .temperature
