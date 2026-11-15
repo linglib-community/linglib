@@ -33,7 +33,9 @@ allows a node two mothers, as a geminate has.
 
 Dominance is the order of the nodes with the dominating node least, as for the positions of a
 tree, so that the root is the bottom element. Precedence is given and not derived from
-dominance: a node stranded by the loss of its mother keeps its place in time.
+dominance, and an account need not relate every two nodes by one or the other: a node stranded
+by the loss of its mother keeps its place among the nodes of its kind, and has none among the
+segments it is not linked to.
 
 ## References
 

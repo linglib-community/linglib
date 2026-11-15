@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Finset.Dedup
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Data.Finset.SDiff
-public import Linglib.Phonology.Prosody.Mora
+public import Linglib.Phonology.Prosody.Structure.Moraic
 public import Linglib.Phonology.Segmental.PHOIBLE
 
 /-!
@@ -407,6 +407,13 @@ theorem la_free_stranded : la_free.stranded = {.of 0} := by decide
 theorem no_rightward_vowel_loss : ¬ (la_free.linkMora (.of 0) 2).NoCrossing :=
   not_noCrossing_link_of_onset (c := 1) (by decide) (by decide) (by decide)
 
+/-- The same exclusion on the prosodic structure of the form, where the stranded mora precedes
+the second syllable and the onset precedes the nucleus. -/
+theorem no_rightward_vowel_loss_structure :
+    ¬ (la_free.linkMora (.of 0) 2).toStructure.NoCrossing :=
+  MoraicForm.not_noCrossing_linkMora_of_onset (c := 1) (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide) (by decide)
+
 -- (56)
 theorem lla_surface : surface (cl la_free fromRight) = [(l, 2), (a, 1)] := by decide
 
@@ -423,6 +430,12 @@ theorem talp_no_vowel_lengthening : ¬ (talp_free.linkMora (.of 4) 1).NoCrossing
   not_noCrossing_link_of_coda (c := 2) (by decide) (by decide) (by decide)
 
 -- (7)
+-- The same exclusion on the prosodic structure: the mora of the coda precedes the stranded one.
+theorem talp_no_vowel_lengthening_structure :
+    ¬ (talp_free.linkMora (.of 4) 1).toStructure.NoCrossing :=
+  MoraicForm.not_noCrossing_linkMora_of_coda (c := 2) (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide)
+
 theorem talp_consonant_lengthening : (talp_free.linkMora (.of 4) 2).NoCrossing := by decide
 
 theorem talp_consonant_length : (talp_free.linkMora (.of 4) 2).lineCount 2 = 2 := by decide
