@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Relation.SetRel
+public import Mathlib.Basic.Rel
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Order.PropInstances
@@ -19,11 +19,6 @@ modifier whose values lie above its arguments is extensive. Stacking intersectiv
 [those that commute with all of them](##Modifier.isIntersective_iff_forall_commute) and, over a
 Boolean algebra, [the subsective ones that distribute over
 joins](##Modifier.isIntersective_iff_isSubsective_and_map_sup).
-The image of a relation is a modifier of sets that acts on each member separately, as the
-modifiers of numerals do, and relations are ordered as their images are. So the image is
-[extensive](##Modifier.isExtensive_image_iff) when the relation is reflexive,
-[subsective](##Modifier.isSubsective_image_iff) when the relation relates nothing to anything
-else, and [privative](##Modifier.isPrivative_image_iff) only when the relation is empty.
 
 ## References
 
@@ -41,24 +36,21 @@ namespace Modifier
 
 variable {α : Type*}
 
+/-! ### Subsective and extensive modifiers -/
+
 section LE
 
 variable [LE α] {m : Modifier α}
 
 /-- A modifier `m` is subsective if `m x ≤ x` for every `x`, so that a skillful surgeon is a
 surgeon. -/
+@[to_dual IsExtensive /-- A modifier `m` is extensive if `x ≤ m x` for every `x`, the order dual
+of subsective, so that *at least three* holds of three. -/]
 def IsSubsective (m : Modifier α) : Prop :=
   ∀ x, m x ≤ x
 
+@[to_dual isExtensive_iff_id_le]
 theorem isSubsective_iff_le_id : IsSubsective m ↔ m ≤ id :=
-  Iff.rfl
-
-/-- A modifier `m` is extensive if `x ≤ m x` for every `x`, the order dual of subsective, so that
-*at least three* holds of three. -/
-def IsExtensive (m : Modifier α) : Prop :=
-  ∀ x, x ≤ m x
-
-theorem isExtensive_iff_id_le : IsExtensive m ↔ id ≤ m :=
   Iff.rfl
 
 end LE
@@ -67,13 +59,22 @@ section Preorder
 
 variable [Preorder α] {m n : Modifier α}
 
+@[to_dual isExtensive_id]
+theorem isSubsective_id : IsSubsective (id : Modifier α) :=
+  fun _ ↦ le_rfl
+
+@[to_dual]
 theorem IsSubsective.comp (hm : IsSubsective m) (hn : IsSubsective n) : IsSubsective (m ∘ n) :=
   fun x ↦ (hm (n x)).trans (hn x)
 
-theorem IsExtensive.comp (hm : IsExtensive m) (hn : IsExtensive n) : IsExtensive (m ∘ n) :=
-  fun x ↦ (hn x).trans (hm (n x))
+/-- A modifier below a subsective one is subsective. -/
+@[to_dual /-- A modifier above an extensive one is extensive. -/]
+theorem IsSubsective.mono (hn : IsSubsective n) (h : m ≤ n) : IsSubsective m :=
+  fun x ↦ (h x).trans (hn x)
 
 end Preorder
+
+/-! ### Privative modifiers -/
 
 section OrderBot
 
@@ -83,6 +84,10 @@ variable [PartialOrder α] [OrderBot α] {m : Modifier α}
 not a gun. -/
 def IsPrivative (m : Modifier α) : Prop :=
   ∀ x, Disjoint (m x) x
+
+/-- A modifier below a privative one is privative. -/
+theorem IsPrivative.mono {n : Modifier α} (hn : IsPrivative n) (h : m ≤ n) : IsPrivative m :=
+  fun x ↦ (hn x).mono_left (h x)
 
 /-- A modifier that is both privative and subsective holds of nothing. -/
 theorem IsPrivative.eq_bot (hp : IsPrivative m) (hs : IsSubsective m) (x : α) : m x = ⊥ :=
@@ -104,9 +109,11 @@ theorem IsPrivative.map_top [PartialOrder α] [BoundedOrder α] {m : Modifier α
     (hp : IsPrivative m) : m ⊤ = ⊥ :=
   disjoint_top.mp (hp ⊤)
 
+/-! ### Intersective modifiers -/
+
 section SemilatticeInf
 
-variable [SemilatticeInf α] {m : Modifier α}
+variable [SemilatticeInf α] {m n : Modifier α}
 
 /-- `intersective q` meets its argument with `q`; on predicates it is pointwise conjunction, the
 meaning of restrictive relative clauses, intersective adjectives and manner adverbs. -/
@@ -131,6 +138,12 @@ theorem intersective_isIntersective (q : α) : IsIntersective (intersective q) :
 theorem IsIntersective.isSubsective (h : IsIntersective m) : IsSubsective m :=
   fun x ↦ h.elim fun _ hq ↦ (hq x).trans_le inf_le_right
 
+theorem IsIntersective.comp (hm : IsIntersective m) (hn : IsIntersective n) :
+    IsIntersective (m ∘ n) := by
+  obtain ⟨q, hq⟩ := hm
+  obtain ⟨r, hr⟩ := hn
+  exact ⟨q ⊓ r, fun x ↦ by rw [Function.comp_apply, hr, hq, inf_assoc]⟩
+
 /-- A modifier is subsective exactly when what it yields from the meet of `q` with anything lies
 below `q`, so that an intersective modifier under a subsective one still holds. -/
 theorem isSubsective_iff_forall_map_inf_le : IsSubsective m ↔ ∀ q x, m (q ⊓ x) ≤ q :=
@@ -139,6 +152,9 @@ theorem isSubsective_iff_forall_map_inf_le : IsSubsective m ↔ ∀ q x, m (q �
 section OrderTop
 
 variable [OrderTop α]
+
+theorem isIntersective_id : IsIntersective (id : Modifier α) :=
+  ⟨⊤, fun x ↦ (top_inf_eq x).symm⟩
 
 /-- An intersective modifier is the meet with its value at `⊤`. -/
 theorem isIntersective_iff_forall_eq_map_top_inf : IsIntersective m ↔ ∀ x, m x = m ⊤ ⊓ x :=
@@ -175,30 +191,5 @@ theorem isIntersective_iff_isSubsective_and_map_sup [BooleanAlgebra α] {m : Mod
     simp only [hq, inf_sup_left]
   · rw [← sup_compl_eq_top (x := x), hm, inf_sup_right, inf_eq_left.2 (hs x),
       (disjoint_compl_left.mono_left (hs xᶜ)).eq_bot, sup_bot_eq]
-
-/-! ### Images of relations -/
-
-section Image
-
-variable {R : SetRel α α}
-
-/-- The image of a relation is extensive exactly when the relation is reflexive. -/
-theorem isExtensive_image_iff : IsExtensive R.image ↔ R.IsRefl := by
-  rw [← SetRel.id_subset_iff, ← SetRel.image_le_image_iff, SetRel.image_id_eq]
-  rfl
-
-/-- The image of a relation is subsective exactly when the relation relates nothing to anything
-else. -/
-theorem isSubsective_image_iff : IsSubsective R.image ↔ R ⊆ .id := by
-  rw [← SetRel.image_le_image_iff, SetRel.image_id_eq]
-  rfl
-
-/-- The image of a relation is privative only when the relation is empty, since a set `{a, b}`
-with `a` related to `b` meets its own image. -/
-theorem isPrivative_image_iff : IsPrivative R.image ↔ R = ∅ := by
-  refine ⟨fun h ↦ Set.eq_empty_iff_forall_notMem.2 fun ⟨a, b⟩ hab ↦ ?_, fun h s ↦ by simp [h]⟩
-  exact Set.disjoint_left.1 (h {a, b}) ⟨a, by simp, hab⟩ (by simp)
-
-end Image
 
 end Modifier

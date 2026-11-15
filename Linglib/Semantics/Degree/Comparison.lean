@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Core.Relation.SetRel
-public import Linglib.Semantics.Modification.Basic
+public import Linglib.Semantics.Modification.Image
 public import Linglib.Semantics.Negation.Polarity
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Order.UpperLower.Closure
