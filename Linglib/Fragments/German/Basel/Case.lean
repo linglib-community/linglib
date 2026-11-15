@@ -52,6 +52,14 @@ def Case.label : Case → _root_.Case
   | acc => .acc
   | dat => .dat
 
+/-- The comparative values a case expresses: the dative also marks the possessor (§193). -/
+def Case.functions : Case → Finset _root_.Case
+  | dat => {.dat, .gen}
+  | c => {c.label}
+
+theorem Case.label_mem_functions (c : Case) : c.label ∈ c.functions := by
+  cases c <;> decide
+
 /-- The forms of the definite article (§83): *der* in the masculine and *s* in the neuter
 nominative and accusative singular, *d* or *die* in the feminine singular and the plural, *em*
 in the masculine and neuter dative singular, *der* in the feminine and *de* in the plural. -/

@@ -21,6 +21,7 @@ genitive as a superficial exception to the case hierarchy.
 ## Main definitions
 
 * `Hungarian.Case`, `Hungarian.Case.label`: the cases with a comparative label, and that label.
+* `Hungarian.Case.functions`: the comparative values a case expresses.
 
 ## Main results
 
@@ -111,5 +112,13 @@ theorem Case.cells_image_label : _root_.Case.cells (Finset.univ.image Case.label
     (.univ : Finset Spatial.Localization) ×ˢ
       ({.place, .source, .goal} : Finset Spatial.Path.Direction) := by
   decide
+
+/-- The comparative values a case expresses: the dative also marks the possessor. -/
+def Case.functions : Case → Finset _root_.Case
+  | dat => {.dat, .gen}
+  | c => {c.label}
+
+theorem Case.label_mem_functions (c : Case) : c.label ∈ c.functions := by
+  cases c <;> decide
 
 end Hungarian

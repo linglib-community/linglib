@@ -6,13 +6,14 @@ public import Linglib.Syntax.Case.Basic
 # Mongolian case
 
 Mongolian (Khalkha and Chakhar) has seven cases: nominative, accusative, genitive, dative,
-ablative, instrumental and comitative. The inventory has no dedicated locative, which
-postpositions express. [gong-2022]'s account of how the structural cases are assigned is in
-`Studies/Gong2022.lean`.
+ablative, instrumental and comitative. The inventory has no dedicated locative: the dative
+expresses location, as in *Gowi-d* 'in the Gobi' ([gong-2026]), and so do postpositions.
+[gong-2022]'s account of how the structural cases are assigned is in `Studies/Gong2022.lean`.
 
 ## References
 
 * [gong-2022]
+* [gong-2026]
 -/
 
 @[expose] public section
@@ -46,5 +47,13 @@ def Case.label : Case → _root_.Case
   | abl => .abl
   | inst => .inst
   | com => .com
+
+/-- The comparative values a case expresses: the dative also expresses location. -/
+def Case.functions : Case → Finset _root_.Case
+  | dat => {.dat, .loc}
+  | c => {c.label}
+
+theorem Case.label_mem_functions (c : Case) : c.label ∈ c.functions := by
+  cases c <;> decide
 
 end Mongolian
