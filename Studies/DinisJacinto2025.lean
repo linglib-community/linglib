@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.SuccPred.LinearLocallyFinite
+public import Linglib.Semantics.Degree.Marginality.Hom
 public import Linglib.Semantics.Degree.Marginality.Hyperreal
 public import Studies.Itzhaki2021
 public import Mathlib.Analysis.Real.Hyperreal

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Degree.Marginality
+public import Linglib.Semantics.Degree.Marginality.Constructions
 public import Mathlib.Analysis.Real.Hyperreal
 
 /-!

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Semantics.Degree.Comparison
-public import Linglib.Semantics.Degree.Marginality
+public import Linglib.Semantics.Degree.Marginality.Hom
 public import Studies.DinisJacinto2025
 public import Mathlib.Order.Lattice.Nat
 
