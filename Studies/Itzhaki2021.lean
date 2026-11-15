@@ -1,8 +1,8 @@
 module
 
-public import Linglib.Core.Algebra.Order.Archimedean.Class
 public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Semantics.Degree.Comparison
+public import Linglib.Semantics.Degree.Marginality.Hyperreal
 public import Mathlib.Algebra.Order.Ring.StandardPart
 public import Mathlib.Analysis.Real.Hyperreal
 
@@ -25,7 +25,9 @@ one grain, read through either size map.
 ## Implementation notes
 
 * The finite and the infinitesimal hyperreals are mathlib's subgroups of archimedean classes at
-  least and above that of `1`, and the standard part is mathlib's `stdPart`.
+  least and above that of `1`, and the standard part is mathlib's `stdPart`. Being finitely close
+  and being infinitely less are at most marginal difference and largely smaller than in
+  `Hyperreal.finiteScale`, from which their transitivity and congruence come.
 * Whether the size of a heap is known is a parameter of the qualitative size; no result depends on
   it.
 * The pluralities of the heap model are their sizes, as the paper reduces them (fn. 23), and the
@@ -46,7 +48,7 @@ one grain, read through either size map.
 
 namespace Itzhaki2021
 
-open ArchimedeanClass Hyperreal Relation
+open ArchimedeanClass Hyperreal Relation MarginalScale
 
 /-! ### Finite, infinitesimal and infinite hyperreals -/
 
@@ -69,6 +71,18 @@ def FinitelyClose (a b : ℝ*) : Prop := a - b ∈ finites
 
 /-- `a` is infinitely less than `b` when it is less and not finitely close (78). -/
 def InfinitelyLess (a b : ℝ*) : Prop := a < b ∧ ¬ FinitelyClose a b
+
+-- (74) is at most marginal difference in the scale of finite differences.
+theorem finitelyClose_iff_atMostMarginal {a b : ℝ*} :
+    FinitelyClose a b ↔ finiteScale.AtMostMarginal a b := by
+  rw [finiteScale_atMostMarginal_iff, FinitelyClose, mem_finites, mk_sub_comm]
+
+-- (78) is largely smaller than in the scale of finite differences.
+theorem infinitelyLess_iff_largelyLT {a b : ℝ*} :
+    InfinitelyLess a b ↔ finiteScale.LargelyLT a b := by
+  rw [LargelyLT, marginallyLT_iff_lt_and_atMostMarginal, ← finitelyClose_iff_atMostMarginal,
+    InfinitelyLess]
+  tauto
 
 /-- Being indistinguishable is an equivalence relation (11). -/
 instance : IsEquiv ℝ* InfinitesimallyClose where
@@ -385,19 +399,13 @@ def LeUpToFinite (a b : ℝ*) : Prop := FinitelyClose a b ∨ InfinitelyLess a b
 
 /-- Being infinitely less is transitive (78). -/
 instance instIsTransInfinitelyLess : IsTrans ℝ* InfinitelyLess where
-  trans a b c hab hbc := by
-    refine ⟨hab.1.trans hbc.1, fun hac ↦ hab.2 ?_⟩
-    have hca : c - a ∈ finites := by simpa using finites.neg_mem hac
-    have hba : b - a ∈ finites := (ordConnected_closedBallAddSubgroup 0).out finites.zero_mem hca
-      ⟨sub_nonneg.2 hab.1.le, sub_le_sub_right hbc.1.le a⟩
-    exact FinitelyClose.symm hba
+  trans _ _ _ hab hbc := infinitelyLess_iff_largelyLT.2 <|
+    (infinitelyLess_iff_largelyLT.1 hab).trans (infinitelyLess_iff_largelyLT.1 hbc)
 
 theorem InfinitelyLess.of_finitelyClose {a b c : ℝ*} (hab : FinitelyClose a b)
-    (hbc : InfinitelyLess b c) : InfinitelyLess a c := by
-  refine ⟨lt_of_not_ge fun hca ↦ hbc.2 ?_, fun hac ↦ hbc.2 (hab.symm.trans hac)⟩
-  have : c - b ∈ finites := (ordConnected_closedBallAddSubgroup 0).out finites.zero_mem hab
-    ⟨(sub_pos.2 hbc.1).le, by linarith⟩
-  exact FinitelyClose.symm this
+    (hbc : InfinitelyLess b c) : InfinitelyLess a c :=
+  infinitelyLess_iff_largelyLT.2 <| (finitelyClose_iff_atMostMarginal.1 hab).largelyLT_congr_left.2
+    (infinitelyLess_iff_largelyLT.1 hbc)
 
 theorem leUpToFinite_iff_not_infinitelyLess {a b : ℝ*} :
     LeUpToFinite a b ↔ ¬ InfinitelyLess b a := by
@@ -405,17 +413,9 @@ theorem leUpToFinite_iff_not_infinitelyLess {a b : ℝ*} :
   grind [FinitelyClose.refl]
 
 theorem LeUpToFinite.add_one {a S : ℝ*} (h : LeUpToFinite a S) : LeUpToFinite (a + 1) S := by
-  have h1 : (1 : ℝ*) ∈ finites := mem_finites.2 (by simp)
-  rcases h with h | ⟨hlt, hn⟩
-  · refine .inl ?_
-    have := finites.add_mem h h1
-    rwa [sub_add_eq_add_sub] at this
-  · by_cases hf : FinitelyClose (a + 1) S
-    · exact .inl hf
-    refine .inr ⟨lt_of_not_ge fun hle ↦ hn ?_, hf⟩
-    have : S - a ∈ finites := (ordConnected_closedBallAddSubgroup 0).out finites.zero_mem h1
-      ⟨(sub_pos.2 hlt).le, by linarith⟩
-    simpa [FinitelyClose] using finites.neg_mem this
+  have ha : finiteScale.AtMostMarginal a (a + 1) := finiteScale_atMostMarginal_iff.2 (by simp)
+  rw [leUpToFinite_iff_not_infinitelyLess, infinitelyLess_iff_largelyLT] at h ⊢
+  rwa [← ha.largelyLT_congr_right]
 
 -- (81)
 theorem finitelyClose_or_infinitelyLess {a b : ℝ*} (h : a < b) :
