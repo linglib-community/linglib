@@ -43,7 +43,7 @@ parse builds them; `markHeadFoot` then promotes the rightmost foot to head foot,
 Right. -/
 
 /-- Foot Construction (14c) parses a weight string from left to right into moraic trochees. -/
-def parseCells : Yield → List Tree
+def parseCells : Yield → List MetricalTree
   | [] => []
   | [w] =>
       if Syllable.Weight.heavy ≤ w then [.ft false [.σ w true]]
@@ -62,11 +62,11 @@ theorem parseCells_heavy {w : Syllable.Weight} (hw : Syllable.Weight.heavy ≤ w
   cases rest <;> simp [parseCells, hw]
 
 /-- Is this ω-daughter an `f`-level foot? -/
-def isFootChild : Tree → Bool
+def isFootChild : MetricalTree → Bool
   | .node a _ => decide (a.level = .ft)
 
 /-- By End Rule Right (16), the first foot with no foot to its right is promoted to head foot. -/
-def markHeadFoot : List Tree → List Tree
+def markHeadFoot : List MetricalTree → List MetricalTree
   | [] => []
   | .node a ds :: rest =>
       if a.level = .ft ∧ !rest.any isFootChild then
@@ -76,12 +76,12 @@ def markHeadFoot : List Tree → List Tree
 
 /-- The Cairene parse builds a prosodic word over moraic trochees from left to right, with the
 rightmost foot heading the word. -/
-def parse (y : Yield) : Tree := .om (markHeadFoot (parseCells y))
+def parse (y : Yield) : MetricalTree := .om false (markHeadFoot (parseCells y))
 
 /-! ### Quantity-sensitive stress
 
 The forms are those of (12), as their post-extrametricality weight profiles (`1` light CV, `2`
-heavy). `Tree.columns ∘ parse` recovers the stress: the column of `3` is the primary, `2` a
+heavy). `MetricalTree.columns ∘ parse` recovers the stress: the column of `3` is the primary, `2` a
 secondary, `1` unstressed. -/
 
 /-- *kátaba* 'he wrote' (Classical) is all light. -/
@@ -102,29 +102,29 @@ syllable light by Mora Extrametricality. -/
 def sajaratuhuma : Yield := [1, 1, 1, 1, 1, 1]
 
 -- (12c.ii), (15d)
-theorem gridColumns_kataba : Tree.columns (parse kataba) = [3, 1, 1] := by decide
+theorem gridColumns_kataba : MetricalTree.columns (parse kataba) = [3, 1, 1] := by decide
 
 -- (12b), (15b)
-theorem gridColumns_mudarris : Tree.columns (parse mudarris) = [1, 3, 1] := by decide
+theorem gridColumns_mudarris : MetricalTree.columns (parse mudarris) = [1, 3, 1] := by decide
 
 -- (12c.ii), (15d)
-theorem gridColumns_Pinkasara : Tree.columns (parse Pinkasara) = [2, 3, 1, 1] := by decide
+theorem gridColumns_Pinkasara : MetricalTree.columns (parse Pinkasara) = [2, 3, 1, 1] := by decide
 
 -- (12a), (15a)
-theorem gridColumns_katabt : Tree.columns (parse katabt) = [1, 3] := by decide
+theorem gridColumns_katabt : MetricalTree.columns (parse katabt) = [1, 3] := by decide
 
 -- (12c.i), (15c)
-theorem gridColumns_mudarrisit : Tree.columns (parse mudarrisit) = [1, 2, 3, 1] := by decide
+theorem gridColumns_mudarrisit : MetricalTree.columns (parse mudarrisit) = [1, 2, 3, 1] := by decide
 
 -- (12c.i), (15c)
-theorem gridColumns_Padwiyatuhu : Tree.columns (parse Padwiyatuhu) = [2, 2, 1, 3, 1] := by
+theorem gridColumns_Padwiyatuhu : MetricalTree.columns (parse Padwiyatuhu) = [2, 2, 1, 3, 1] := by
   decide
 
 -- (12c.i), (15c)
 theorem gridColumns_sajaratuhuma :
-    Tree.columns (parse sajaratuhuma) = [2, 1, 2, 1, 3, 1] := by decide
+    MetricalTree.columns (parse sajaratuhuma) = [2, 1, 2, 1, 3, 1] := by decide
 
-theorem headTerminals_kataba : Tree.headTerminals (parse kataba) = [.σ 1 true] := by decide
+theorem headTerminals_kataba : MetricalTree.headTerminals (parse kataba) = [.σ 1 true] := by decide
 
 /-! ### The Continuous Column Constraint blocks final promotion
 
@@ -150,7 +150,8 @@ theorem promotedKataba_not_continuous : ¬ Marks.IsContinuous promotedKataba := 
 
 -- [prince-1983]
 theorem kataba_final_below_peak :
-    (Tree.columns (parse kataba)).getLast?.getD 0 < Grid.peak (Tree.columns (parse kataba)) := by
+    (MetricalTree.columns (parse kataba)).getLast?.getD 0 <
+      Grid.peak (MetricalTree.columns (parse kataba)) := by
   decide
 
 /-! ### The Iambic/Trochaic Law (§4.5.2)
@@ -263,7 +264,7 @@ theorem IsMoraicTrochee.conformsToITL (h : f.IsMoraicTrochee w)
 
 /-- Every foot of the Cairene parse conforms to the Iambic/Trochaic Law under moraic counting,
 being a heavy syllable alone or two lights of one mora each. -/
-theorem parseCells_conformsToITL : ∀ {y : Yield}, (∀ x ∈ y, 0 < x) → ∀ {t : Tree},
+theorem parseCells_conformsToITL : ∀ {y : Yield}, (∀ x ∈ y, 0 < x) → ∀ {t : MetricalTree},
     t ∈ parseCells y → t.value.level = .ft →
       ∃ f : Foot Syllable.Weight, f.toProsTree id = t ∧ ConformsToITL id f
   | [], _, _, ht, _ => by simp [parseCells] at ht

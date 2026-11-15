@@ -182,6 +182,20 @@ theorem nodup_map_fst_positionedSubtrees (t : RoseTree α) :
     (t.positionedSubtrees.map Prod.fst).Nodup :=
   List.pairwise_map.mpr ((pairwise_lt_positionedSubtrees t).imp fun h he ↦ (he ▸ h).false)
 
+/-- The subtrees of the subtree at `p` are the subtrees at the positions that `p` dominates. -/
+theorem isSubtree_iff_exists_le_getElem? {t s r : RoseTree α} {p : GornAddress}
+    (hp : t[p.toList]? = some s) :
+    IsSubtree r s ↔ ∃ q : GornAddress, p ≤ q ∧ t[q.toList]? = some r := by
+  rw [isSubtree_iff_exists_getElem?]
+  constructor
+  · rintro ⟨l, hl⟩
+    exact ⟨⟨p.toList ++ l⟩, List.prefix_append _ _, by simp [getElem?_append, hp, hl]⟩
+  · rintro ⟨q, hle, hq⟩
+    obtain ⟨l, hl⟩ := GornAddress.le_def.1 hle
+    refine ⟨l, ?_⟩
+    rw [← hl, getElem?_append, hp] at hq
+    simpa using hq
+
 /-- The address of the first subtree of `t`, in preorder, equal to `s`. -/
 def addressOf? [DecidableEq α] (t s : RoseTree α) : Option (List ℕ) :=
   (t.positionedSubtrees.find? (·.2 = s)).map (·.1.toList)
@@ -375,6 +389,13 @@ theorem isSubtree_subtree : IsSubtree s p.subtree ↔ ∃ q, p ≤ q ∧ q.subtr
     refine ⟨r, ?_⟩
     have := q.getElem?_eq
     rwa [← hr, getElem?_append, getElem?_eq, Option.bind_some] at this
+
+theorem isSubtree_subtree_self (p : Positions t) : IsSubtree p.subtree t :=
+  isSubtree_iff_exists_getElem?.2 ⟨_, p.getElem?_eq⟩
+
+theorem exists_subtree_eq (h : IsSubtree s t) : ∃ p : Positions t, p.subtree = s := by
+  obtain ⟨l, hl⟩ := isSubtree_iff_exists_getElem?.1 h
+  exact ⟨⟨⟨l⟩, (getElem?_eq_some_iff.mp hl).1⟩, subtree_eq_iff.2 hl⟩
 
 theorem mem_children_subtree : c ∈ p.subtree.children ↔ ∃ q, p ⋖ q ∧ q.subtree = c := by
   simp only [covBy_iff, GornAddress.covBy_iff]

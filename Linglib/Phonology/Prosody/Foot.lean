@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Phonology.Prosody.Syllable
-public import Linglib.Core.Data.RoseTree.Licensed
+public import Linglib.Phonology.Prosody.Hierarchy
 
 /-!
 # Metrical feet
@@ -16,9 +15,8 @@ prosodic tree [is a well-formed foot](##Prosody.Foot.isFoot_toProsTree) whose σ
 
 ## Main definitions
 
-* `IsConstituent` — well-formedness at a prosodic level on the prosodic-tree carrier: a tree
-  rooted at that level and licensed by the Layeredness relation `Constituent.Licenses`;
-  `IsFoot` is the `f` level, an `f`-node over a non-empty list of σ-leaves.
+* `IsFoot` — a well-formed foot on the prosodic tree, an `f`-node over a non-empty list of
+  σ-leaves.
 * `Foot` — a headed constituent over syllable positions (`head : Fin _`, so non-empty).
 * `Foot.IsTrochaic` / `IsIambic` / `IsBinary` / `IsDegenerate` — derived shape predicates.
 * `Foot.moraCount` — mora count under a weight reading (the quantity axis).
@@ -46,38 +44,28 @@ prosodic tree [is a well-formed foot](##Prosody.Foot.isFoot_toProsTree) whose σ
 
 namespace Prosody
 
-/-! ### Carrier well-formedness -/
-
-/-- A well-formed prosodic constituent at the level `ℓ` is a tree rooted in an `ℓ`-node and
-licensed by `Constituent.Licenses`, so every node dominates only the levels Layeredness allows
-under it. -/
-def IsConstituent (ℓ : Level) (t : Tree) : Prop :=
-  t.value.level = ℓ ∧ t.Licensed Constituent.Licenses
-
-instance (ℓ : Level) (t : Tree) : Decidable (IsConstituent ℓ t) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+/-! ### The well-formed foot -/
 
 /-- A well-formed foot is a licensed tree rooted in an `f`-node, so an `f`-node dominating a
     non-empty list of σ-leaves, the inviolable Layeredness and σ-Headedness core
     ([selkirk-1980]; [hayes-1995]). Foot binarity (FtBin) and the contested recursive,
     internally layered feet of [martinez-paricio-kager-2015] are violable and deferred;
     these are flat feet, the sibling of `IsWord`'s Layeredness. -/
-abbrev IsFoot : Tree → Prop := IsConstituent .ft
+abbrev IsFoot {M : Type*} : RoseTree (Constituent Level M) → Prop := IsConstituent .ft
 
-theorem IsFoot.syl_leaf {t : Tree} (h : IsFoot t) {c : Tree} (hc : c ∈ t.children) :
-    c.value.level = .syl ∧ c.children = [] := by
+theorem IsFoot.syl_leaf {M : Type*} {t c : RoseTree (Constituent Level M)} (h : IsFoot t)
+    (hc : c ∈ t.children) : c.value.level = .syl ∧ c.children = [] := by
   rcases t with ⟨a, cs⟩
   obtain ⟨hft, hl⟩ := h
-  obtain ⟨b, rfl⟩ : ∃ b, a = .ft b := by cases a <;> simp_all [Constituent.level]
-  have hsyl := (RoseTree.licensed_node_iff.mp hl).1.2 c.value (List.mem_map_of_mem hc)
+  have hR := (RoseTree.licensed_node_iff.mp hl).1
+  rw [Constituent.Licenses, show a.level = .ft from hft] at hR
+  have hsyl : c.value.level = .syl :=
+    hR.2 _ (List.mem_map.2 ⟨c.value, List.mem_map_of_mem hc, rfl⟩)
   refine ⟨hsyl, ?_⟩
   rcases c with ⟨cl, ccs⟩
-  obtain ⟨w, h', rfl⟩ : ∃ w h', cl = .syl w h' := by cases cl <;> simp_all [Constituent.level]
-  simpa [Constituent.Licenses] using (RoseTree.licensed_node_iff.mp (hl.of_mem hc)).1
-
--- A σ-leaf is a non-`f` node, so not a foot; a flat `f`-node over a σ-leaf is one.
-example : ¬ IsFoot (.node (.syl 2) []) := by decide
-example : IsFoot (.node .ft [.node (.syl 2) []]) := by decide
+  have hc' := (RoseTree.licensed_node_iff.mp (hl.of_mem hc)).1
+  rw [Constituent.Licenses, show cl.level = .syl from hsyl] at hc'
+  simpa [Level.Licenses] using hc'
 
 /-! ### The canonical foot -/
 
@@ -170,13 +158,12 @@ end Shapes
 
 /-! ### Re-representations (preserving the head) -/
 
-/-- As a prosodic tree ([selkirk-1980]; [ito-mester-2003]) a foot is a depth-1 `.f` node over
-    `.σ` leaves, the head σ marked via `Constituent.isHead`. The `.f` node
-    itself is marked `isHead` when the foot heads its ω (the `isHead` argument, set by the
-    caller building the word tree). -/
-def toProsTree (w : S → Syllable.Weight) (f : Foot S) (isHead : Bool := false) : Tree :=
-  .node (.ft isHead) ((List.finRange f.syllables.length).map (fun i =>
-    .node (.syl (w (f.syllables.get i)) (decide (i = f.head))) []))
+/-- As a metrical tree ([selkirk-1980]; [ito-mester-2003]) a foot is an `f` node over σ
+    leaves, the head σ marked strong. The `f` node itself is marked strong when the foot heads
+    its ω (the `isHead` argument, set by the caller building the word tree). -/
+def toProsTree (w : S → Syllable.Weight) (f : Foot S) (isHead : Bool := false) : MetricalTree :=
+  .node ⟨.ft, 0, isHead⟩ ((List.finRange f.syllables.length).map (fun i =>
+    .node ⟨.syl, w (f.syllables.get i), decide (i = f.head)⟩ []))
 
 /-- In the **metrical grid** of a foot in isolation ([hayes-1995]) the head σ carries `2` grid
     marks and every other σ `1`. -/
@@ -188,7 +175,7 @@ def headFlags (f : Foot S) : List Bool :=
   (List.finRange f.syllables.length).map (fun i => decide (i = f.head))
 
 /-- The σ-leaves' head flags read off a tree. -/
-def childHeadFlags : Tree → List Bool
+def childHeadFlags : MetricalTree → List Bool
   | .node _ cs => cs.map (fun | .node a _ => a.isHead)
 
 @[simp] theorem toGrid_length (f : Foot S) :
@@ -209,8 +196,8 @@ theorem isFoot_toProsTree (w : S → Syllable.Weight) (f : Foot S) :
   have hpos : 0 < f.syllables.length := f.head.pos
   refine ⟨rfl, RoseTree.licensed_node_iff.mpr ⟨⟨?_, ?_⟩, ?_⟩⟩
   · simpa [List.finRange_eq_nil_iff] using hpos.ne'
-  · simp [Constituent.level]
-  · simp [Constituent.Licenses]
+  · simp
+  · simp [Constituent.Licenses, Level.Licenses]
 
 end Foot
 

@@ -146,14 +146,20 @@ its audibility is the blocked elision cascade
 (`prosodic_reflex_audible`). -/
 
 /-- A minimal prosodic word. -/
-def ω : Prosody.Tree := .node .om [.node .syl []]
+def ω : Prosody.Tree := .om [.σ]
 
 /-- V and O wrapped into one φ. -/
-def wrapped : Prosody.Tree := .node .iota [.node .ph [ω, ω]]
+def wrapped : Prosody.Tree := .iota [.ph [ω, ω]]
 
 /-- O separated into its own φ. -/
 def separated : Prosody.Tree :=
-  .node .iota [.node .ph [ω], .node .ph [ω]]
+  .iota [.ph [ω], .ph [ω]]
+
+-- Both candidates are layered intonational phrases, and neither has a recursive φ.
+theorem candidates_isUtterance :
+    Prosody.IsUtterance wrapped ∧ Prosody.IsUtterance separated ∧
+      Prosody.nonrecursivity .ph wrapped = 0 ∧ Prosody.nonrecursivity .ph separated = 0 := by
+  decide
 
 /-- ALIGN-Focus is violated when no φ begins at the focus's left edge, the object at leaf 1. -/
 def alignFocus : Constraint Prosody.Tree :=
