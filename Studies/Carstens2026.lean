@@ -86,17 +86,11 @@ def visible : G := n.outer.getD n.core
 def genders : List G := n.core :: n.outer.toList
 
 open DistributedMorphology in
-theorem visible_eq_agreeingGender (r : Root) (d : G) :
-    n.visible =
-        agreeingGender some d ((⟨r, n.genders⟩ : ComplexHead Root G).lastCycle fun _ ↦ True) ∧
-      n.visible = agreeingGender some d n.genders.reverse := by
-  rcases h : n.outer with _ | o
-  · have := agreeingGender_lastCycle (gender := some) (default := d) (r := r) (hs := [])
-      (above := []) (h := n.core) (cyclic := fun _ ↦ True) trivial (by simp)
-    simp_all [visible, genders, agreeingGender_cons_of_eq_some]
-  · have := agreeingGender_lastCycle (gender := some) (default := d) (r := r) (hs := [n.core])
-      (above := []) (h := o) (cyclic := fun _ ↦ True) trivial (by simp)
-    simp_all [visible, genders, agreeingGender_cons_of_eq_some]
+theorem visible_eq_agreeingGender (r : Root) :
+    agreeingGender some ((⟨r, n.genders⟩ : ComplexHead Root G).lastCycle fun _ ↦ True) =
+        some n.visible ∧
+      agreeingGender some n.genders.reverse = some n.visible := by
+  rcases h : n.outer with _ | o <;> simp [visible, genders, h, ComplexHead.lastCycle]
 
 /-- The visible gender's feature as percolation sees it, annotated with the interpretability of
 the gender's n. -/

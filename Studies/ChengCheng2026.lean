@@ -25,8 +25,8 @@ noun phrase.
 ## TODO
 
 * §5.4 attributes the idiosyncrasy of *dǎ*+N to a First Phase defined by *dǎ*, but the noun's
-  root is not local to *dǎ*. Whether it belongs to idioms below Voice (`ComplexHead.IdiomLocal`)
-  or to the noun, which (68) bears on, needs sourced data on *diànhuà*.
+  root is not local to *dǎ*. Whether it belongs to idioms below Voice (level zero of the agentive
+  heads) or to the noun, which (68) bears on, needs sourced data on *diànhuà*.
 * Whether *dǎ-yíng* (22) admits the potential infix, the mark of a resultative in footnote 20,
   needs a sourced judgment.
 * The independence claims of §3 beyond `subsetPrinciple_v`, and the light verbs of §6.3.
