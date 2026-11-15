@@ -259,7 +259,7 @@ def wordAt? (t : LF) (p : GornAddress) : Option Word := (t.positionedTerminals.l
 
 /-- The deepest position of a word in an LF, the lowest of the occurrences of a tense. -/
 def lowestOf? (t : LF) (w : Word) : Option GornAddress :=
-  (wordPositions t (· = w)).argmax (·.toList.length)
+  (wordPositions t (· = w)).argmax (·.depth)
 
 /-- The tense feature at a position of an LF. -/
 def featureAt? (t : LF) (p : GornAddress) : Option PointAlgebra :=

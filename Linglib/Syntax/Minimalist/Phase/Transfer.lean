@@ -160,7 +160,7 @@ variable (hd t) in
 or the root where there is none. [chomsky-2015] computes labels there. -/
 def phaseLevel (Φ : Finset GornAddress) (q : t.toRoseTree.Positions) : t.toRoseTree.Positions :=
   ⟨⟨q.val.toList.take
-      ((Φ.filter (complement · ≤ q.val)).sup (projectionAt hd t · |>.toList.length))⟩,
+      ((Φ.filter (complement · ≤ q.val)).sup (projectionAt hd t · |>.depth))⟩,
     isLowerSet_validPaths _ (GornAddress.le_def.2 (List.take_prefix _ _)) q.2⟩
 
 theorem phaseLevel_le (q : t.toRoseTree.Positions) : phaseLevel hd t Φ q ≤ q :=
@@ -171,7 +171,7 @@ theorem projectionAt_le_phaseLevel {q : t.toRoseTree.Positions} (hΦ : h ∈ Φ)
     (hp : projectionAt hd t h ≤ h.parent) : projectionAt hd t h ≤ (phaseLevel hd t Φ q).val := by
   have hq := hp.trans ((parent_covBy_complement h).le.trans hc)
   exact GornAddress.le_def.2 (List.prefix_take_iff.2 ⟨GornAddress.le_def.1 hq,
-    Finset.le_sup (f := (projectionAt hd t · |>.toList.length)) (Finset.mem_filter.2 ⟨hΦ, hc⟩)⟩)
+    Finset.le_sup (f := (projectionAt hd t · |>.depth)) (Finset.mem_filter.2 ⟨hΦ, hc⟩)⟩)
 
 theorem phaseLevel_eq_bot {q : t.toRoseTree.Positions} (hq : ∀ h ∈ Φ, ¬ complement h ≤ q.val) :
     phaseLevel hd t Φ q = ⊥ := by

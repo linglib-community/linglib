@@ -15,8 +15,8 @@ by depth alone.
 
 ## Main definitions
 
-* `Minimalist.Probe.depthFirst`, `Minimalist.Probe.breadthFirst`, `Minimalist.Probe.depth`: the
-  three search orders.
+* `Minimalist.Probe.depthFirst`, `Minimalist.Probe.breadthFirst`: the two ordered searches; search
+  over unordered sisters is by `GornAddress.depth`.
 
 ## References
 
@@ -33,18 +33,16 @@ before the nodes it dominates and the nodes of a left daughter before those of i
 def depthFirst (q : GornAddress) : List ℕ := q.toList
 
 /-- Breadth-first search, left to right: by depth, then left to right. -/
-def breadthFirst (q : GornAddress) : ℕ ×ₗ List ℕ := toLex (q.toList.length, q.toList)
+def breadthFirst (q : GornAddress) : ℕ ×ₗ List ℕ := toLex (q.depth, q.toList)
 
-/-- Breadth-first search over unordered sisters: by depth alone. -/
-def depth (q : GornAddress) : ℕ := q.toList.length
-
-theorem breadthFirst_lt_of_depth_lt {a b : GornAddress} (h : depth a < depth b) :
+theorem breadthFirst_lt_of_depth_lt {a b : GornAddress} (h : a.depth < b.depth) :
     breadthFirst a < breadthFirst b :=
   Prod.Lex.toLex_lt_toLex.2 (.inl h)
 
-theorem depth_complement {b : GornAddress} (hb : b ≠ ⊥) : depth (complement b) = depth b := by
+theorem depth_complement {b : GornAddress} (hb : b ≠ ⊥) : (complement b).depth = b.depth := by
   have : b.toList ≠ [] := fun h ↦ hb (GornAddress.ext h)
-  simp only [depth, complement, List.length_append, List.length_dropLast, List.length_singleton]
+  simp only [GornAddress.depth, complement, List.length_append, List.length_dropLast,
+    List.length_singleton]
   have := List.length_pos_iff.2 this
   omega
 

@@ -266,9 +266,6 @@ theorem covBy_iff : p ⋖ q ↔ ∃ i, q = p * of i := by
   · rintro ⟨i, rfl⟩
     exact covBy_mul_of p i
 
-theorem covBy_iff_toList : p ⋖ q ↔ ∃ i, q.toList = p.toList ++ [i] :=
-  covBy_iff.trans <| exists_congr fun _ ↦ GornAddress.ext_iff
-
 /-- An address lies below at most one immediate successor of an address. -/
 theorem of_inj_of_mul_of_le {i j : ℕ} (hi : p * of i ≤ q) (hj : p * of j ≤ q) : i = j :=
   of_injective <| mul_right_injective p <|

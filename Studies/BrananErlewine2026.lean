@@ -40,7 +40,7 @@ deep, so breadth-first search cannot prefer the theme (9).
 namespace BrananErlewine2026
 
 open Minimalist
-open Minimalist.Probe (depthFirst breadthFirst depth breadthFirst_lt_of_depth_lt depth_complement)
+open Minimalist.Probe (depthFirst breadthFirst breadthFirst_lt_of_depth_lt depth_complement)
 
 /-! ### Breadth-first search and Closest (2) -/
 
@@ -49,13 +49,13 @@ variable {t : PlanarSyntacticObject} {p : Probe t.toRoseTree.Positions} {s : Set
   {a b : t.toRoseTree.Positions}
 
 -- (2)
-theorem eq_complement_of_finds_depth (ha : p.Finds s (depth ·.val) a) (hb : b ∈ s)
+theorem eq_complement_of_finds_depth (ha : p.Finds s (·.val.depth) a) (hb : b ∈ s)
     (hsb : p.sat b) (hba : t.toRoseTree.CCommands b.val a.val) : a.val = complement b.val := by
   have hb0 : b.val ≠ ⊥ := fun h ↦ hba.2.1 (h ▸ bot_le)
   have hc : complement b.val ≤ a.val :=
     (mem_cCommandDomain_iff_complement_le b.2 hb0 a.2).1 hba
   refine (hc.eq_of_not_lt fun hlt ↦ ha.inspects.2 hb hsb ?_).symm
-  show depth b.val < depth a.val
+  show b.val.depth < a.val.depth
   rw [← depth_complement hb0]
   exact GornAddress.depth_strictMono hlt
 
@@ -143,8 +143,8 @@ theorem finds_depthFirst_iff (hs : ∀ q ∈ s, RightBranching q.val.toList) :
 theorem ex9 : ∃ t ∈ (Collins2005.ex9.preRaising .partP false).externalize?,
     ↑Collins2005.ex9.patient ∈ t.goalsBy (t.leafProbe .D) Collins2005.infl₀ (depthFirst ·.val) ∧
       ↑Collins2005.ex9.agent ∉ t.goalsBy (t.leafProbe .D) Collins2005.infl₀ (depthFirst ·.val) ∧
-      ↑Collins2005.ex9.patient ∈ t.goalsBy (t.leafProbe .D) Collins2005.infl₀ (depth ·.val) ∧
-      ↑Collins2005.ex9.agent ∈ t.goalsBy (t.leafProbe .D) Collins2005.infl₀ (depth ·.val) := by
+      ↑Collins2005.ex9.patient ∈ t.goalsBy (t.leafProbe .D) Collins2005.infl₀ (·.val.depth) ∧
+      ↑Collins2005.ex9.agent ∈ t.goalsBy (t.leafProbe .D) Collins2005.infl₀ (·.val.depth) := by
   decide +kernel
 
 end BrananErlewine2026

@@ -440,7 +440,7 @@ instance : IsLeftLinear Trains :=
 
 /-- The clock time of a moment is its depth in the tree, with the decisions at one and two
 and the arrivals at two and three. -/
-def time (m : Trains) : ℕ := (addr m).toList.length
+def time (m : Trains) : ℕ := (addr m).depth
 
 /-- *John comes to Konstanz today* holds on arrival. -/
 def come : Set Trains := {arriveTwo, arriveThree}
@@ -526,7 +526,7 @@ instance : IsLeftLinear Interview :=
   (OrderEmbedding.ofMapLEIff addr fun _ _ ↦ Iff.rfl).isLeftLinear
 
 /-- The clock time of a moment, its depth in the tree. -/
-def time (m : Interview) : ℕ := (addr m).toList.length
+def time (m : Interview) : ℕ := (addr m).depth
 
 /-- *The interview went well*. -/
 def wentWell : Set Interview := {good}

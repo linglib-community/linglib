@@ -32,7 +32,7 @@ variable (hd : HeadFunction) (t : PlanarSyntacticObject)
 
 /-- The projections of the position `a`, from `a` up to its maximal projection. -/
 def projectionsOf (a : GornAddress) : List GornAddress :=
-  (List.range (a.toList.length - (projectionAt hd t a).toList.length + 1)).map fun k ↦
+  (List.range (a.depth - (projectionAt hd t a).depth + 1)).map fun k ↦
     ⟨a.toList.rdrop k⟩
 
 /-- The tokens `P` holds of that a probe on the head at `a` meets in search order: projection by
@@ -42,7 +42,7 @@ def cyclicGoals (P : LexicalItem.Token → Prop) [DecidablePred P] (cut : Set Go
     [DecidablePred (· ∈ cut)] (a : GornAddress) : List LexicalItem.Token :=
   ((projectionsOf hd t a).flatMap fun p ↦ (List.range t.toRoseTree.numNodes).flatMap fun n ↦
     ((positions (Sum.elim id id) t.toRoseTree).filter fun x ↦
-      x.1.toList.length == n && decide (P x.2) && decide (t.toRoseTree.CCommands p x.1) &&
+      x.1.depth == n && decide (P x.2) && decide (t.toRoseTree.CCommands p x.1) &&
         decide (x.1 ∉ cut)).map (·.2)).eraseDups
 
 variable {hd t} {P : LexicalItem.Token → Prop} [DecidablePred P] {cut : Set GornAddress}
@@ -72,6 +72,6 @@ theorem mem_cyclicGoals :
     exact ⟨hPy, p, hp, q, hm, hcc, hcut⟩
   · rintro ⟨hPx, p, hp, q, hm, hcc, hcut⟩
     obtain ⟨s, hs, -⟩ := mem_positions_iff.1 hm
-    exact ⟨p, hp, q.toList.length, length_lt_numNodes hs, (q, x), ⟨hm, ⟨⟨rfl, hPx⟩, hcc⟩, hcut⟩, rfl⟩
+    exact ⟨p, hp, q.depth, length_lt_numNodes hs, (q, x), ⟨hm, ⟨⟨rfl, hPx⟩, hcc⟩, hcut⟩, rfl⟩
 
 end Minimalist

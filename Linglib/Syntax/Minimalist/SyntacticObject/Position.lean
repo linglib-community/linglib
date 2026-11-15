@@ -108,8 +108,8 @@ theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p := by
   have h2 := length_children_subtree hp
   have hv : ∀ i < 2, p.val * .of i ∈ t.toRoseTree.validPaths := fun i hi ↦
     mem_validPaths_append_singleton_iff.2 ⟨_, p.getElem?_eq, h2 ▸ hi⟩
-  refine ⟨⟨_, hv 0 (by omega)⟩, Positions.covBy_iff.2 (GornAddress.covBy_iff_toList.2 ⟨0, rfl⟩),
-    ⟨_, hv 1 (by omega)⟩, Positions.covBy_iff.2 (GornAddress.covBy_iff_toList.2 ⟨1, rfl⟩), fun h ↦
+  refine ⟨⟨_, hv 0 (by omega)⟩, Positions.covBy_iff.2 (GornAddress.covBy_iff.2 ⟨0, rfl⟩),
+    ⟨_, hv 1 (by omega)⟩, Positions.covBy_iff.2 (GornAddress.covBy_iff.2 ⟨1, rfl⟩), fun h ↦
         ?_⟩
   simpa using congrArg (fun q : t.toRoseTree.Positions ↦ q.val.toList.getLast?) h
 
@@ -228,24 +228,23 @@ variable {c d e q q' : t.toRoseTree.Positions}
 
 theorem eq_or_eq_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) (he : a ⋖ e) : e = c ∨ e = d := by
   have hlen := length_children_subtree (not_isMax_of_lt hc.lt)
-  have hlt : ∀ (r : t.toRoseTree.Positions) (m : ℕ), r.val.toList = a.val.toList ++ [m] → m < 2 :=
-      by
+  have hlt : ∀ (r : t.toRoseTree.Positions) (m : ℕ), r.val = a.val * .of m → m < 2 := by
     intro r m hm
     have hr := r.2
-    rw [show r.val = a.val * .of m from GornAddress.ext hm] at hr
+    rw [hm] at hr
     obtain ⟨s, hs, hms⟩ := mem_validPaths_append_singleton_iff.1 hr
     rw [a.getElem?_eq, Option.some.injEq] at hs
     exact hlen ▸ hs ▸ hms
-  obtain ⟨i, hi⟩ := GornAddress.covBy_iff_toList.1 (Positions.covBy_iff.1 hc)
-  obtain ⟨j, hj⟩ := GornAddress.covBy_iff_toList.1 (Positions.covBy_iff.1 hd)
-  obtain ⟨k, hk⟩ := GornAddress.covBy_iff_toList.1 (Positions.covBy_iff.1 he)
+  obtain ⟨i, hi⟩ := GornAddress.covBy_iff.1 (Positions.covBy_iff.1 hc)
+  obtain ⟨j, hj⟩ := GornAddress.covBy_iff.1 (Positions.covBy_iff.1 hd)
+  obtain ⟨k, hk⟩ := GornAddress.covBy_iff.1 (Positions.covBy_iff.1 he)
   have := hlt c i hi
   have := hlt d j hj
   have := hlt e k hk
-  have hij : i ≠ j := fun h ↦ hcd (Subtype.ext (GornAddress.ext (by rw [hi, hj, h])))
+  have hij : i ≠ j := fun h ↦ hcd (Subtype.ext (by rw [hi, hj, h]))
   rcases (by omega : k = i ∨ k = j) with rfl | rfl
-  · exact .inl (Subtype.ext (GornAddress.ext (hk.trans hi.symm)))
-  · exact .inr (Subtype.ext (GornAddress.ext (hk.trans hj.symm)))
+  · exact .inl (Subtype.ext (hk.trans hi.symm))
+  · exact .inr (Subtype.ext (hk.trans hj.symm))
 
 theorem immediatelyContains_termAt_iff_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) :
     ImmediatelyContains (t.termAt a) x ↔ x = t.termAt c ∨ x = t.termAt d := by
@@ -358,7 +357,7 @@ variable (t : PlanarSyntacticObject L ι)
 def complement (p : GornAddress) : GornAddress := ⟨p.toList.dropLast ++ [1 - p.toList.getLastD 0]⟩
 
 theorem parent_covBy_complement (p : GornAddress) : p.parent ⋖ complement p :=
-  GornAddress.covBy_iff_toList.2 ⟨_, rfl⟩
+  GornAddress.covBy_iff.2 ⟨_, rfl⟩
 
 @[simp] theorem parent_complement (p : GornAddress) : (complement p).parent = p.parent :=
   GornAddress.ext (by simp [complement])
@@ -371,14 +370,14 @@ theorem complement_complement {h : GornAddress} (hh : h ∈ t.toRoseTree.validPa
   have hm : Order.pred hp ⋖ hp :=
     Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using hp0)
   have hlen := PlanarSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
-  obtain ⟨i, hi⟩ := GornAddress.covBy_iff_toList.1 (Positions.covBy_iff.1 hm)
+  obtain ⟨i, hi⟩ := GornAddress.covBy_iff.1 (Positions.covBy_iff.1 hm)
   have hlt : i < 2 := by
     have hv := hp.2
-    rw [show hp.val = ⟨(Order.pred hp).val.toList ++ [i]⟩ from GornAddress.ext hi] at hv
+    rw [hi] at hv
     obtain ⟨s, hs, his⟩ := mem_validPaths_append_singleton_iff.1 hv
     rw [(Order.pred hp).getElem?_eq, Option.some.injEq] at hs
     exact hlen ▸ hs ▸ his
-  have hhv : h.toList = (Order.pred hp).val.toList ++ [i] := hi
+  have hhv : h.toList = (Order.pred hp).val.toList ++ [i] := congrArg GornAddress.toList hi
   apply GornAddress.ext
   simp only [complement, hhv, List.dropLast_concat, List.getLastD_concat]
   congr 2

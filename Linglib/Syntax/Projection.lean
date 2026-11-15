@@ -569,7 +569,7 @@ instance (h p : GornAddress) : Decidable (IsLexicalHeadOf (headDaughterRel hd) h
 /-- The maximal projection of `h` is the lowest maximal projection dominating it. -/
 def maximalProjectionAt (h : GornAddress) : GornAddress :=
   ⟨h.toList.take (Nat.findGreatest
-    (fun n ↦ IsMaximalProjection (headDaughterRel hd) ⟨h.toList.take n⟩) h.toList.length)⟩
+    (fun n ↦ IsMaximalProjection (headDaughterRel hd) ⟨h.toList.take n⟩) h.depth)⟩
 
 theorem maximalProjectionAt_le (h : GornAddress) : maximalProjectionAt hd h ≤ h :=
   List.take_prefix _ _

@@ -97,7 +97,7 @@ def projectingHeads : List (GornAddress × LexicalItem.Token) :=
   -- Sorted by bucketing on depth: `List.insertionSort` does not unfold under `decide +kernel` in
   -- a module file, which the studies' checks run in.
   (List.range t.toRoseTree.numNodes).reverse.flatMap fun n ↦
-    (tokenList t.toRoseTree).filter fun x ↦ x.1.toList.length == n && projectionAt hd t x.1 != x.1
+    (tokenList t.toRoseTree).filter fun x ↦ x.1.depth == n && projectionAt hd t x.1 != x.1
 
 /-- The probes of the phase head at `h`: the heads with an Agree case whose complement it
 transfers, deepest first, each with its case and the NPs of `U` it reaches. -/

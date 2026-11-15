@@ -67,7 +67,7 @@ instance (x y : GornAddress) : Decidable (Precedes x y) := inferInstanceAs (Deci
 inside a pruned branch, at the corresponding position under its proxy. -/
 def realizedAt (P : List (GornAddress × GornAddress)) (x : GornAddress) : GornAddress :=
   match P.find? (decide <| ·.1 ≤ x) with
-  | some (p, q) => ⟨q.toList ++ x.toList.drop p.toList.length⟩
+  | some (p, q) => ⟨q.toList ++ x.toList.drop p.depth⟩
   | none => x
 
 /-- The pruning rule (86). After the prunings `P`, the branch at `p` may be pruned with proxy `q`
@@ -77,7 +77,7 @@ conjunct that precedes `p` is realized before `q`, and material that follows `p`
 def MayPrune (t : PlanarSyntacticObject) (P : List (GornAddress × GornAddress)) (p q : GornAddress)
     :
     Prop :=
-  p.toList.head? = some 0 ∧ 1 < p.toList.length ∧ q.toList.head? = some 1 ∧
+  p.toList.head? = some 0 ∧ 1 < p.depth ∧ q.toList.head? = some 1 ∧
     t.toRoseTree[q]?.isSome ∧
     ∀ x ∈ tokenList t.toRoseTree, x.1.toList.head? = some 0 → ¬ p ≤ x.1 →
         x.2.item.phonForm?.isSome →

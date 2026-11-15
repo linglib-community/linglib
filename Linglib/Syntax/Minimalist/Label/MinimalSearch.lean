@@ -398,7 +398,7 @@ theorem labelDaughter_of_headDaughterRel_label {t : PlanarSyntacticObject}
   rw [dite_eq_left (hci ▸ c.2), decide_eq_true_eq] at hp
   obtain ⟨hcard, hsub⟩ := hp
   obtain ⟨a, ha⟩ := Finset.card_eq_one.1 hcard
-  have hcov : n ⋖ c := Positions.covBy_iff.2 (GornAddress.covBy_iff_toList.2 ⟨i, hc⟩)
+  have hcov : n ⋖ c := Positions.covBy_iff.2 (GornAddress.covBy_iff.2 ⟨i, hci.symm⟩)
   refine ⟨hcov, a, ha, ?_⟩
   have : (⟨n.val * .of i, hci ▸ c.2⟩ : t.toRoseTree.Positions) = c := Subtype.ext hci
   exact this ▸ hsub (ha ▸ Finset.mem_singleton_self a)

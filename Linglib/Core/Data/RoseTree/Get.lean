@@ -142,6 +142,13 @@ theorem mem_validPaths_append_singleton_iff {t : RoseTree α} {p : List ℕ} {i 
   | none => simp
   | some s => simp
 
+/-- The positions of a tree are closed under earlier sisters, so with `isLowerSet_validPaths` they
+are a tree domain in the sense of [gorn-1967]. -/
+theorem mul_of_mem_validPaths_of_le {t : RoseTree α} {p : GornAddress} {i j : ℕ}
+    (h : p * .of j ∈ t.validPaths) (hij : i ≤ j) : p * .of i ∈ t.validPaths := by
+  obtain ⟨s, hs, hj⟩ := mem_validPaths_append_singleton_iff.1 h
+  exact mem_validPaths_append_singleton_iff.2 ⟨s, hs, hij.trans_lt hj⟩
+
 /-! ### Height and size along addresses -/
 
 theorem exists_mem_children_height_add_one {t : RoseTree α} (h : 1 < t.height) :
