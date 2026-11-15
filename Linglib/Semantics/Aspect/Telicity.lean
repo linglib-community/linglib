@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.Minimals
 public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Semantics.Events.Precedence
 public import Linglib.Semantics.Mereology.Relation
@@ -32,7 +33,9 @@ event neither precede nor follow it, `NoPartPrecedes`, which follows from Krifka
 overlapping events do not precede each other (`noPartPrecedes_of_overlap`) and holds of any
 temporal precedence on a part structure of events
 (`IsTemporalPrecedence.noPartPrecedes`). A final part is an
-initial part under the converse precedence, so results about final parts are transported.
+initial part under the converse precedence, so results about final parts are transported, and
+an initial part is a minimal part in the order of precedence, which is why precedence is a strict
+order.
 
 ## References
 
@@ -55,24 +58,10 @@ section Telicity
 
 variable [PartialOrder β] (precedes : β → β → Prop)
 
-/-- An initial part of an event is a part that no part of the event precedes. -/
-structure IsInitialPart (e' e : β) : Prop where
-  le : e' ≤ e
-  not_precedes : ¬ ∃ e'', e'' ≤ e ∧ precedes e'' e'
-
-/-- A final part of an event is a part that no part of the event follows, an initial part under
-the converse precedence. -/
-abbrev IsFinalPart (e' e : β) : Prop := IsInitialPart (flip precedes) e' e
-
-/-- A predicate is telic when every `P`-part of a `P`-event is an initial and a final part of
-it. -/
-def IsTelic (P : β → Prop) : Prop :=
-  ∀ e e', P e → P e' → e' ≤ e → IsInitialPart precedes e' e ∧ IsFinalPart precedes e' e
-
 /-- Parts of an event neither precede nor follow it. -/
 def NoPartPrecedes : Prop := ∀ a b : β, a ≤ b → ¬ precedes a b ∧ ¬ precedes b a
 
-variable {precedes} {P : β → Prop} {a b e e' : β}
+variable {precedes} {a b : β}
 
 theorem NoPartPrecedes.part_not_precedes (h : NoPartPrecedes precedes) (hle : a ≤ b) :
     ¬ precedes a b := (h a b hle).left
@@ -80,14 +69,9 @@ theorem NoPartPrecedes.part_not_precedes (h : NoPartPrecedes precedes) (hle : a 
 theorem NoPartPrecedes.not_precedes_part (h : NoPartPrecedes precedes) (hle : a ≤ b) :
     ¬ precedes b a := (h a b hle).right
 
-theorem NoPartPrecedes.flip (h : NoPartPrecedes precedes) : NoPartPrecedes (flip precedes) :=
+theorem NoPartPrecedes.swap (h : NoPartPrecedes precedes) :
+    NoPartPrecedes (Function.swap precedes) :=
   fun _ _ hle ↦ ⟨h.not_precedes_part hle, h.part_not_precedes hle⟩
-
-theorem IsTelic.isInitialPart (h : IsTelic precedes P) (he : P e) (he' : P e') (hle : e' ≤ e) :
-    IsInitialPart precedes e' e := (h e e' he he' hle).left
-
-theorem IsTelic.isFinalPart (h : IsTelic precedes P) (he : P e) (he' : P e') (hle : e' ≤ e) :
-    IsFinalPart precedes e' e := (h e e' he he' hle).right
 
 /-- Parts of an event neither precede nor follow it if overlapping events do not precede each
 other ([krifka-1998] (35)) and no event is null. -/
@@ -95,18 +79,54 @@ theorem noPartPrecedes_of_overlap [NoBotOrder β] (h : ∀ a b, Overlap a b → 
     NoPartPrecedes precedes := fun a b hle ↦
   ⟨h a b (.of_le (not_isBot a) hle), h b a (Overlap.of_le (not_isBot a) hle).symm⟩
 
+variable (precedes) [IsStrictOrder β precedes]
+
+/-- An initial part of an event is a part that no part of the event precedes: a minimal element
+of the parts of the event in the order of precedence. -/
+def IsInitialPart (e' e : β) : Prop :=
+  e' ∈ (partialOrderOfSO precedes).toPreorder.minimals (Set.Iic e)
+
+/-- A final part of an event is a part that no part of the event follows, an initial part under
+the converse precedence. -/
+abbrev IsFinalPart (e' e : β) : Prop := IsInitialPart (Function.swap precedes) e' e
+
+/-- A predicate is telic when every `P`-part of a `P`-event is an initial and a final part of
+it. -/
+def IsTelic (P : β → Prop) : Prop :=
+  ∀ e e', P e → P e' → e' ≤ e → IsInitialPart precedes e' e ∧ IsFinalPart precedes e' e
+
+variable {precedes} {P : β → Prop} {e e' e'' : β}
+
+theorem isInitialPart_iff :
+    IsInitialPart precedes e' e ↔ e' ≤ e ∧ ∀ ⦃e''⦄, e'' ≤ e → ¬ precedes e'' e' :=
+  Preorder.mem_minimals_iff.trans <| and_congr_right fun _ ↦
+    ⟨fun h _ h'' hp ↦ (h h'' (.inr hp)).elim (fun heq ↦ irrefl_of precedes _ (heq ▸ hp))
+        fun hp' ↦ irrefl_of precedes _ (_root_.trans hp hp'),
+      fun h _ h'' hle ↦ hle.elim (fun heq ↦ .inl heq.symm) fun hp ↦ (h h'' hp).elim⟩
+
+theorem IsInitialPart.le (h : IsInitialPart precedes e' e) : e' ≤ e := (isInitialPart_iff.mp h).left
+
+theorem IsInitialPart.not_precedes (h : IsInitialPart precedes e' e) (h'' : e'' ≤ e) :
+    ¬ precedes e'' e' := (isInitialPart_iff.mp h).right h''
+
+theorem IsTelic.isInitialPart (h : IsTelic precedes P) (he : P e) (he' : P e') (hle : e' ≤ e) :
+    IsInitialPart precedes e' e := (h e e' he he' hle).left
+
+theorem IsTelic.isFinalPart (h : IsTelic precedes P) (he : P e) (he' : P e') (hle : e' ≤ e) :
+    IsFinalPart precedes e' e := (h e e' he he' hle).right
+
 theorem isInitialPart_self (h : NoPartPrecedes precedes) (e : β) :
     IsInitialPart precedes e e :=
-  ⟨le_rfl, fun ⟨_, h', hp⟩ ↦ h.part_not_precedes h' hp⟩
+  isInitialPart_iff.mpr ⟨le_rfl, fun _ h' hp ↦ h.part_not_precedes h' hp⟩
 
 theorem isFinalPart_self (h : NoPartPrecedes precedes) (e : β) : IsFinalPart precedes e e :=
-  isInitialPart_self h.flip e
+  isInitialPart_self h.swap e
 
-theorem IsTelic.flip {P : β → Prop} (h : IsTelic precedes P) : IsTelic (flip precedes) P :=
+theorem IsTelic.swap (h : IsTelic precedes P) : IsTelic (Function.swap precedes) P :=
   fun _ _ he he' hle ↦ ⟨h.isFinalPart he he' hle, h.isInitialPart he he' hle⟩
 
 /-- Quantized predicates are telic. -/
-theorem isTelic_of_qua (h : NoPartPrecedes precedes) {P : β → Prop} (hP : QUA P) :
+theorem isTelic_of_qua (h : NoPartPrecedes precedes) (hP : QUA P) :
     IsTelic precedes P := fun e e' he he' hle ↦ by
   obtain rfl : e' = e := by_contra fun hne ↦ hP he' he hne hle
   exact ⟨isInitialPart_self h _, isFinalPart_self h _⟩
@@ -138,7 +158,8 @@ theorem isTelic_runTime_eq [PartialOrder β] {T : Type*} [LinearOrder T]
     (I : NonemptyInterval T) : IsTelic (Precedes : β → β → Prop) (τ · = I) := by
   intro e e' he he' hle
   have hτe : τ e' = τ e := he'.trans he.symm
-  refine ⟨⟨hle, ?_⟩, ⟨hle, ?_⟩⟩ <;> rintro ⟨e'', h'', hp⟩
+  refine ⟨isInitialPart_iff.mpr ⟨hle, fun e'' h'' hp ↦ ?_⟩,
+    isInitialPart_iff.mpr ⟨hle, fun e'' h'' hp ↦ ?_⟩⟩
   · change (τ e'').snd < (τ e').fst at hp
     rw [hτe] at hp
     exact hp.not_ge ((NonemptyInterval.le_def.1 (hτ h'')).1.trans (τ e'').fst_le_snd)
@@ -150,18 +171,19 @@ end Precedence
 
 /-- A cumulative predicate true of two events, a part of one following the other, is not
 telic. -/
-theorem not_isTelic_of_cum [SemilatticeSup β] {precedes : β → β → Prop} {P : β → Prop}
+theorem not_isTelic_of_cum [SemilatticeSup β] {precedes : β → β → Prop}
+    [IsStrictOrder β precedes] {P : β → Prop}
     (hP : CUM P) {e e' e'' : β} (he : P e) (he' : P e') (h'' : e'' ≤ e)
     (hp : precedes e' e'') : ¬ IsTelic precedes P :=
-  fun hT ↦ (hT.isFinalPart (hP he he') he' le_sup_right).not_precedes
-    ⟨e'', h''.trans le_sup_left, hp⟩
+  fun hT ↦ (hT.isFinalPart (hP he he') he' le_sup_right).not_precedes (h''.trans le_sup_left) hp
 
 /-- A divisive predicate true of an event with a part preceding another part is not telic, as
 the divisive reference of activities makes them atelic ([champollion-krifka-2016]). -/
-theorem not_isTelic_of_div [PartialOrder β] {precedes : β → β → Prop} {P : β → Prop}
+theorem not_isTelic_of_div [PartialOrder β] {precedes : β → β → Prop}
+    [IsStrictOrder β precedes] {P : β → Prop}
     (hP : DIV P) {e e' e'' : β} (he : P e) (h' : e' ≤ e) (h'' : e'' ≤ e)
     (hp : precedes e' e'') : ¬ IsTelic precedes P :=
-  fun hT ↦ (hT.isFinalPart he (hP h' he) h').not_precedes ⟨e'', h'', hp⟩
+  fun hT ↦ (hT.isFinalPart he (hP h' he) h').not_precedes h'' hp
 
 end InitialFinal
 

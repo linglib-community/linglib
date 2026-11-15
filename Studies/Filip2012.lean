@@ -63,8 +63,8 @@ abbrev Telic (P : β → Prop) : Prop := QUA P
 /-- (24): an atelic predicate is cumulative. -/
 abbrev Atelic (P : β → Prop) : Prop := CUM P
 
-theorem isTelic_of_telic {precedes : β → β → Prop} (h : NoPartPrecedes precedes) {P : β → Prop}
-    (hP : Telic P) : IsTelic precedes P :=
+theorem isTelic_of_telic {precedes : β → β → Prop} [IsStrictOrder β precedes]
+    (h : NoPartPrecedes precedes) {P : β → Prop} (hP : Telic P) : IsTelic precedes P :=
   isTelic_of_qua h hP
 
 /-! ### The three classes of verbs (28) -/
