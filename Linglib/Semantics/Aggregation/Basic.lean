@@ -7,6 +7,7 @@ public import Mathlib.Logic.Relation
 public import Mathlib.Order.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import Linglib.Core.Order.Antisymmetrization
+public import Linglib.Semantics.Degree.Measurement
 
 /-!
 # Aggregation rules
@@ -69,7 +70,7 @@ infima and suprema of relations on vectors to those of rules.
 
 namespace Aggregation
 
-open Function
+open Function Measurement
 
 variable {ι α K : Type*}
 
@@ -94,6 +95,17 @@ theorem Invariant.mono {β : Type*} {S T : Set (ι → K → K)} (h : S ⊆ T) {
     (ha : Invariant T a) : Invariant S a :=
   fun f hf ↦ ha f (h hf)
 
+theorem Profile.uncurry_transform_const (u : K → K) (v : Profile ι α K) :
+    uncurry (v.transform (const ι u)) = u ∘ uncurry v :=
+  rfl
+
+/-- A statement about the measure of object–individual pairs that is meaningful on a scale is
+invariant under its changes of scale applied to every individual alike. -/
+theorem _root_.Measurement.Meaningful.invariant {S : Set (K → K)} {φ : (α × ι → K) → Prop}
+    (h : Meaningful S φ) : Invariant (const ι '' S) fun v : Profile ι α K ↦ φ (uncurry v) := by
+  rintro _ ⟨u, hu, rfl⟩ v
+  exact propext (h u hu (uncurry v))
+
 /-- Vectors of strictly increasing transformations, one for each individual; invariance under
 them is ordinal non-comparability. -/
 def ordinal [Preorder K] : Set (ι → K → K) := Set.univ.pi fun _ ↦ {u | StrictMono u}
@@ -117,14 +129,6 @@ theorem ordinalLevel_subset_ordinal [Preorder K] : ordinalLevel ⊆ (ordinal : S
 section Cardinal
 
 variable [Semiring K] [PartialOrder K]
-
-/-- The positive affine transformations `t ↦ a * t + b` with `0 < a`, the changes of scale of
-an interval scale. -/
-def positiveAffine : Set (K → K) := {u | ∃ a : K, 0 < a ∧ ∃ b : K, ∀ t, u t = a * t + b}
-
-/-- The similarity transformations `t ↦ a * t` with `0 < a`, the changes of scale of a ratio
-scale. -/
-def similarity : Set (K → K) := {u | ∃ a : K, 0 < a ∧ ∀ t, u t = a * t}
 
 /-- Vectors of positive affine transformations, one for each individual; invariance under them
 is cardinal non-comparability. -/
@@ -151,9 +155,6 @@ def ratioFull : Set (ι → K → K) := const ι '' similarity
 theorem mem_ratio {f : ι → K → K} : f ∈ ratio ↔ ∀ i, f i ∈ similarity :=
   Set.mem_univ_pi
 
-theorem similarity_subset_positiveAffine : similarity ⊆ (positiveAffine : Set (K → K)) :=
-  fun _ ⟨a, ha, hu⟩ ↦ ⟨a, ha, 0, fun t ↦ by rw [hu, add_zero]⟩
-
 theorem cardinalFull_subset_cardinalUnit : cardinalFull ⊆ (cardinalUnit : Set (ι → K → K)) := by
   rintro _ ⟨u, ⟨a, ha, b, hu⟩, rfl⟩
   exact ⟨a, ha, fun _ ↦ b, fun _ ↦ hu⟩
@@ -171,11 +172,6 @@ theorem ratioFull_subset_ratio : ratioFull ⊆ (ratio : Set (ι → K → K)) :=
   const_image_subset_pi
 
 variable [IsStrictOrderedRing K]
-
-theorem positiveAffine_subset_strictMono : positiveAffine ⊆ {u : K → K | StrictMono u} :=
-  fun _ ⟨a, ha, b, hu⟩ s t hst ↦ by
-    simp only [hu]
-    exact add_lt_add_left (mul_lt_mul_of_pos_left hst ha) _
 
 theorem cardinal_subset_ordinal : cardinal ⊆ (ordinal : Set (ι → K → K)) :=
   Set.pi_mono fun _ _ ↦ positiveAffine_subset_strictMono

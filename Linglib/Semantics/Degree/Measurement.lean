@@ -10,7 +10,8 @@ import Mathlib.Tactic.Linarith
 
 A *differential comparative* (*3 inches taller*) says that two measures differ by a given amount,
 and a *factor equative* (*twice as tall*) that one measure is a given multiple of another. A
-statement about measures is meaningful when every admissible change of scale preserves it: every
+statement about measures is [meaningful](##Measurement.Meaningful) when every admissible change of
+scale preserves it: every
 strictly increasing map on an ordinal scale, every positive affine map on an interval scale, every
 positive scaling on a ratio scale. A differential needs differences but no zero, and [an affine
 change of scale acts on its amount by its linear part](##differentialComparative_comp_affineMap). A
@@ -188,3 +189,55 @@ theorem factorEquative_comp_strictMono_iff [Ring D] [LinearOrder D] [IsStrictOrd
     exact ⟨1, fun μ a b ↦ by simp [FactorEquative, hg.injective.eq_iff]⟩
 
 end Factor
+
+/-! ### Changes of scale -/
+
+namespace Measurement
+
+section Scale
+
+variable {K : Type*} [Semiring K] [PartialOrder K]
+
+/-- The positive affine transformations `t ↦ a * t + b` with `0 < a`, the changes of scale of
+an interval scale. -/
+def positiveAffine : Set (K → K) := {u | ∃ a : K, 0 < a ∧ ∃ b : K, ∀ t, u t = a * t + b}
+
+/-- The similarity transformations `t ↦ a * t` with `0 < a`, the changes of scale of a ratio
+scale. -/
+def similarity : Set (K → K) := {u | ∃ a : K, 0 < a ∧ ∀ t, u t = a * t}
+
+theorem similarity_subset_positiveAffine : similarity ⊆ (positiveAffine : Set (K → K)) :=
+  fun _ ⟨a, ha, hu⟩ ↦ ⟨a, ha, 0, fun t ↦ by rw [hu, add_zero]⟩
+
+theorem positiveAffine_subset_strictMono [IsStrictOrderedRing K] :
+    positiveAffine ⊆ {u : K → K | StrictMono u} :=
+  fun _ ⟨a, ha, b, hu⟩ s t hst ↦ by
+    simp only [hu]
+    exact add_lt_add_left (mul_lt_mul_of_pos_left hst ha) _
+
+end Scale
+
+variable {D : Type*}
+
+/-- A statement about a measure is meaningful on a scale whose changes are `S` when every change
+of scale in `S` preserves it. -/
+def Meaningful (S : Set (D → D)) (φ : (E → D) → Prop) : Prop :=
+  ∀ u ∈ S, ∀ μ, φ (u ∘ μ) ↔ φ μ
+
+theorem Meaningful.mono {S T : Set (D → D)} (h : S ⊆ T) {φ : (E → D) → Prop}
+    (hφ : Meaningful T φ) : Meaningful S φ :=
+  fun u hu ↦ hφ u (h hu)
+
+/-- Comparing two measures is meaningful on an ordinal scale. -/
+theorem meaningful_strictMono_lt [LinearOrder D] (a b : E) :
+    Meaningful {u : D → D | StrictMono u} fun μ ↦ μ b < μ a :=
+  fun _ hu _ ↦ StrictMono.lt_iff_lt hu
+
+/-- A factor equative is meaningful on a ratio scale. -/
+theorem meaningful_similarity_factorEquative [CommSemiring D] [PartialOrder D] [IsCancelMulZero D]
+    (a b : E) (n : D) : Meaningful similarity fun μ ↦ FactorEquative μ a b n := by
+  rintro u ⟨c, hc, hu⟩ μ
+  rw [show u ∘ μ = fun x ↦ c * μ x from funext fun _ ↦ hu _]
+  exact factorEquative_const_mul μ hc.ne' a b n
+
+end Measurement
