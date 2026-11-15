@@ -382,7 +382,7 @@ or several. -/
 def label : HeadFunction := fun t x ↦
   if hx : x ∈ t.toRoseTree.validPaths then
     (List.range 2).find? fun i ↦
-      if hc : (⟨x.toList ++ [i]⟩ : TreePath) ∈ t.toRoseTree.validPaths then
+      if hc : x.child i ∈ t.toRoseTree.validPaths then
         decide ((t.labelsAt ⟨x, hx⟩).card = 1 ∧ t.labelsAt ⟨x, hx⟩ ⊆ t.labelsAt ⟨_, hc⟩)
       else false
   else none
@@ -392,7 +392,7 @@ theorem labelDaughter_of_headDaughterRel_label {t : PlanarSyntacticObject}
     {n c : t.toRoseTree.Positions} (h : headDaughterRel (label t) n.val c.val) :
         t.LabelDaughter n c := by
   obtain ⟨i, hi, hc⟩ := h
-  have hci : (⟨n.val.toList ++ [i]⟩ : TreePath) = c.val := TreePath.ext hc.symm
+  have hci : n.val.child i = c.val := TreePath.ext hc.symm
   simp only [label, dite_eq_left n.2] at hi
   have hp := List.find?_some hi
   rw [dite_eq_left (hci ▸ c.2), decide_eq_true_eq] at hp
@@ -400,7 +400,7 @@ theorem labelDaughter_of_headDaughterRel_label {t : PlanarSyntacticObject}
   obtain ⟨a, ha⟩ := Finset.card_eq_one.1 hcard
   have hcov : n ⋖ c := Positions.covBy_iff.2 (TreePath.covBy_iff.2 ⟨i, hc⟩)
   refine ⟨hcov, a, ha, ?_⟩
-  have : (⟨⟨n.val.toList ++ [i]⟩, hci ▸ c.2⟩ : t.toRoseTree.Positions) = c := Subtype.ext hci
+  have : (⟨n.val.child i, hci ▸ c.2⟩ : t.toRoseTree.Positions) = c := Subtype.ext hci
   exact this ▸ hsub (ha ▸ Finset.mem_singleton_self a)
 
 end Minimalist.HeadFunction

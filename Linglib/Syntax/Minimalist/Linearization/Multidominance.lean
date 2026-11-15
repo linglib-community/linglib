@@ -156,8 +156,8 @@ theorem candidates_ne_nil (hs : IsSubtree s t.toRoseTree) (hroot : s ≠ t.toRos
     ⟨hmem.2, fun g hg ⟨hmg, hne⟩ ↦ hne (hmg.eq_of_numNodes_le (List.le_of_mem_argmax hg hm))⟩
   obtain ⟨pm, hpm, hpmm⟩ := hpos m hmem.1 (numNodes_lt_of_mem hmem.2)
   obtain ⟨j, hj⟩ := List.mem_iff_getElem?.1 hmem.2
-  refine List.ne_nil_of_mem (a := ⟨pm.toList ++ [j]⟩) (mem_candidates.2 ⟨?_, m, ?_, hhigh, ?_⟩)
-  · rw [getElem?_append, hpmm]
+  refine List.ne_nil_of_mem (a := pm.child j) (mem_candidates.2 ⟨?_, m, ?_, hhigh, ?_⟩)
+  · rw [TreePath.child_toList, getElem?_append, hpmm]
     simpa using hj
   · simpa [TreePath.parent] using hpmm
   · simpa [TreePath.parent] using hpm
@@ -429,9 +429,9 @@ theorem spellOutPositionAux_getLast?
       · rw [← hr, getElem?_append, hm, Option.bind_some] at hQm
         exact absurd (numNodes_lt_of_getElem?_cons hQm) (lt_irrefl _)
     · exact List.le_of_lt h.lt
-    · have hQs : (⟨Q.toList ++ [P.toList.getLast hPne]⟩ : TreePath) ∈ positionsOf t s :=
-        mem_positionsOf.2 (by rw [getElem?_append, hQm]; simpa using hms)
-      exact absurd (h.mono (TreePath.parent_le P) (List.prefix_append _ _)).lt (hP.2 _ hQs)
+    · have hQs : Q.child (P.toList.getLast hPne) ∈ positionsOf t s :=
+        mem_positionsOf.2 (by rw [TreePath.child_toList, getElem?_append, hQm]; simpa using hms)
+      exact absurd (h.mono (TreePath.parent_le P) (Q.le_child _)).lt (hP.2 _ hQs)
 
 /-- Where no mother of a term dominates another, as sharing leaves them, pronouncing each term under
 its highest mother pronounced last pronounces each token at its last occurrence: the tokens

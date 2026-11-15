@@ -116,7 +116,7 @@ instance (p : TreePath) : Decidable (IsFiniteAt t p) :=
 /-- The first daughter of the node `m` whose category lies in `L`. -/
 def daughter? (t : Rep) (m : TreePath) (L : Set Cat) [DecidablePred (· ∈ L)] : Option TreePath :=
   ((t[m]?.map RoseTree.children).getD []).zipIdx.findSome? fun x ↦
-    if Tree.cat x.1 ∈ L then some ⟨m.toList ++ [x.2]⟩ else none
+    if Tree.cat x.1 ∈ L then some (m.child x.2) else none
 
 /-! ### Noun phrases -/
 

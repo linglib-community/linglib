@@ -500,7 +500,7 @@ theorem isMinimalProjection_headDaughterRel_iff {p : TreePath} :
   · intro h
     cases hp : hd p with
     | none => rfl
-    | some i => exact absurd ⟨i, hp, rfl⟩ (h ⟨p.toList ++ [i]⟩)
+    | some i => exact absurd ⟨i, hp, rfl⟩ (h (p.child i))
   · rintro h d ⟨i, hi, -⟩
     rw [h] at hi
     cases hi
@@ -643,7 +643,7 @@ theorem isMaximalCategory_iff_inits (x : TreePath) :
 theorem isMaximalCategory_append_singleton {m : TreePath} {i : ℕ} (hm : ¬ seg m)
     (hi : hd m ≠ some i) :
     IsMaximalCategory (headDaughterRel (projectionIndex hd seg))
-      (headDaughterRel (adjunctionIndex hd seg)) ⟨m.toList ++ [i]⟩ := by
+      (headDaughterRel (adjunctionIndex hd seg)) (m.child i) := by
   have hmother {c : TreePath} {j : ℕ} (h : m.toList ++ [i] = c.toList ++ [j]) : c = m ∧ j = i := by
     obtain ⟨h₁, h₂⟩ := List.append_inj' h rfl
     exact ⟨TreePath.ext h₁.symm, (List.singleton_inj.mp h₂).symm⟩
@@ -671,7 +671,7 @@ theorem includes_iff_inits (x y : TreePath) :
     Includes (headDaughterRel (adjunctionIndex hd seg)) x y ↔
       x ≤ y ∧ ∀ q ∈ y.toList.inits.map TreePath.mk,
         IsProjectionOf (headDaughterRel (adjunctionIndex hd seg)) q x →
-          ∀ i, adjunctionIndex hd seg q = some i → (⟨q.toList ++ [i]⟩ : TreePath) ≤ y := by
+          ∀ i, adjunctionIndex hd seg q = some i → q.child i ≤ y := by
   rw [includes_iff_forall_le (fun _ _ ↦ headDaughterRel_covBy _) (headDaughterRel_rightUnique _)]
   refine and_congr_right fun _ ↦ ⟨fun h q hqy hq i hi ↦ h q hq ?_ _ ⟨i, hi, rfl⟩,
     fun h q hq hqy d ⟨i, hi, hd'⟩ ↦ ?_⟩

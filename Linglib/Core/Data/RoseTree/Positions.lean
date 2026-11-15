@@ -382,7 +382,7 @@ theorem mem_children_subtree : c ∈ p.subtree.children ↔ ∃ q, p ⋖ q ∧ q
     obtain ⟨i, hi⟩ := List.mem_iff_getElem?.1 hc
     have hq : t[p.val.toList ++ [i]]? = some c := by
       simp [getElem?_append, getElem?_eq, hi]
-    exact ⟨⟨⟨p.val.toList ++ [i]⟩, (getElem?_eq_some_iff.mp hq).1⟩, ⟨i, rfl⟩,
+    exact ⟨⟨p.val.child i, (getElem?_eq_some_iff.mp hq).1⟩, ⟨i, rfl⟩,
       subtree_eq_iff.2 hq⟩
   · rintro ⟨q, ⟨i, hi⟩, rfl⟩
     have := q.getElem?_eq
@@ -398,7 +398,7 @@ theorem isMax_iff : IsMax p ↔ p.subtree.children = [] := by
     · exact (Subtype.ext (TreePath.ext (by simpa using hs.symm)) : q = p).le
     · obtain ⟨u, hu, hi⟩ := mem_validPaths_append_singleton_iff.1
         (validPaths_prefix_closed q.2 (TreePath.le_def.2 ⟨s, by simp [← hs]⟩) :
-          (⟨p.val.toList ++ [i]⟩ : TreePath) ∈ t.validPaths)
+          p.val.child i ∈ t.validPaths)
       obtain rfl := Option.some.inj (p.getElem?_eq.symm.trans hu)
       simp [h] at hi
 
