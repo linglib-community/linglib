@@ -23,7 +23,11 @@ asymmetries that [hayes-1989] derives from the ban are instances of it: a strand
 [cannot be filled across an onset](##Prosody.MoraicForm.not_noCrossing_linkMora_of_onset) from
 the syllable to its right, and it
 [cannot be filled across a moraic coda](##Prosody.MoraicForm.not_noCrossing_linkMora_of_coda)
-from the nucleus to its left.
+from the nucleus to its left. The condition is
+[decided from the lines of the form](##Prosody.MoraicForm.toStructure_noCrossing_iff), and it
+[differs from
+`MoraicForm.NoCrossing`](##Prosody.MoraicForm.exists_noCrossing_toStructure_not_noCrossing) on a
+consonant linked to its syllable after a later mora.
 
 ## Implementation notes
 
@@ -210,6 +214,170 @@ theorem not_noCrossing_linkMora_of_coda (hc : (Mora.of c, c) ∈ X.moraSegment)
       (b := ⟨.segment c, hcs⟩) (Finset.mem_insert_of_mem hc)
   · exact toStructure_lt_of_link (X := X.linkMora m v) (Finset.mem_insert_self _ _)
   · exact toStructure_precedes_segment (X := X.linkMora m v) hvs hcs hvc
+
+section Decidable
+
+open Finset
+
+variable (X)
+
+/-! ### Dominance, decided -/
+
+/-- The nodes a node is linked to below it. -/
+def linked : Node → Finset Node
+  | .word w => (X.wordSyllable.filter (·.1 = w)).image (fun p ↦ .syllable p.2) ∪
+      (X.wordSegment.filter (·.1 = w)).image (fun p ↦ .segment p.2)
+  | .syllable s => (X.syllableMora.filter (·.1 = s)).image (fun p ↦ .mora p.2) ∪
+      (X.syllableSegment.filter (·.1 = s)).image (fun p ↦ .segment p.2)
+  | .mora m => (X.moraSegment.filter (·.1 = m)).image (fun p ↦ .segment p.2)
+  | .segment _ => ∅
+
+/-- The nodes reached from a node by at most `n` lines down. -/
+def reach : ℕ → Node → Finset Node
+  | 0, a => {a}
+  | n + 1, a => insert a ((X.linked a).biUnion (reach n))
+
+/-- The nodes a node dominates. A line lowers the tier, so three lines reach every one. -/
+def dominated (a : Node) : Finset Node := X.reach 3 a
+
+variable {X}
+
+@[simp] theorem mem_linked {a b : Node} : b ∈ X.linked a ↔ X.Link a b := by
+  cases a <;> cases b <;> simp [linked, Link]
+
+theorem Tier.toNat_le_three (t : Tier) : t.toNat ≤ 3 := by
+  cases t <;> decide
+
+theorem dom_of_mem_reach {n : ℕ} {a b : Node} (h : b ∈ X.reach n a) : X.Dom a b := by
+  induction n generalizing a with
+  | zero => exact (mem_singleton.1 h) ▸ Relation.ReflTransGen.refl
+  | succ n ih =>
+    rcases mem_insert.1 h with rfl | h
+    · exact Relation.ReflTransGen.refl
+    · obtain ⟨c, hc, hb⟩ := mem_biUnion.1 h
+      exact .head (mem_linked.1 hc) (ih hb)
+
+theorem mem_reach_of_dom {a b : Node} (h : X.Dom a b) {n : ℕ} (hn : a.tier.toNat ≤ n) :
+    b ∈ X.reach n a := by
+  induction h using Relation.ReflTransGen.head_induction_on generalizing n with
+  | refl => cases n <;> simp [reach]
+  | head hac _ ih =>
+    cases n with
+    | zero => exact absurd (hac.tier_lt.trans_le hn) (Nat.not_lt_zero _)
+    | succ n => exact mem_insert_of_mem (mem_biUnion.2
+        ⟨_, mem_linked.2 hac, ih (Nat.lt_succ_iff.1 (hac.tier_lt.trans_le hn))⟩)
+
+@[simp] theorem mem_dominated {a b : Node} : b ∈ X.dominated a ↔ X.Dom a b :=
+  ⟨dom_of_mem_reach, fun h ↦ mem_reach_of_dom h a.tier.toNat_le_three⟩
+
+variable (X) in
+instance : DecidableRel X.Dom := fun _ _ ↦ decidable_of_iff _ mem_dominated
+
+/-! #### Dominance tier by tier -/
+
+theorem Node.exists {P : Node → Prop} : (∃ a, P a) ↔ (∃ w, P (.word w)) ∨
+    (∃ s, P (.syllable s)) ∨ (∃ m, P (.mora m)) ∨ ∃ i, P (.segment i) := by
+  refine ⟨fun ⟨a, h⟩ ↦ ?_, ?_⟩
+  · cases a
+    exacts [.inl ⟨_, h⟩, .inr (.inl ⟨_, h⟩), .inr (.inr (.inl ⟨_, h⟩)), .inr (.inr (.inr ⟨_, h⟩))]
+  · rintro (⟨_, h⟩ | ⟨_, h⟩ | ⟨_, h⟩ | ⟨_, h⟩) <;> exact ⟨_, h⟩
+
+/-- A node dominates itself and what its linked dominate. -/
+theorem dom_iff {a b : Node} : X.Dom a b ↔ b = a ∨ ∃ c, X.Link a c ∧ X.Dom c b := by
+  rw [Dom, Relation.ReflTransGen.cases_head_iff, eq_comm]
+
+/-- A segment dominates only itself. -/
+@[simp] theorem dom_segment_iff {i : ℕ} {b : Node} : X.Dom (.segment i) b ↔ b = .segment i :=
+  ⟨Dom.eq_of_segment, fun h ↦ h ▸ Relation.ReflTransGen.refl⟩
+
+/-- A mora dominates itself and the segments it is linked to. -/
+@[simp] theorem dom_mora_iff {m : Mora} {b : Node} :
+    X.Dom (.mora m) b ↔ b = .mora m ∨ ∃ i, (m, i) ∈ X.moraSegment ∧ b = .segment i := by
+  rw [dom_iff]
+  simp [Node.exists, Link]
+
+/-- A syllable dominates itself, what its morae dominate, and the segments it is linked to. -/
+@[simp] theorem dom_syllable_iff {s : ℕ} {b : Node} :
+    X.Dom (.syllable s) b ↔ b = .syllable s ∨
+      (∃ m, (s, m) ∈ X.syllableMora ∧ X.Dom (.mora m) b) ∨
+        ∃ i, (s, i) ∈ X.syllableSegment ∧ b = .segment i := by
+  rw [dom_iff]
+  simp only [Node.exists, Link, false_and, exists_false, false_or, dom_segment_iff]
+
+/-- A word dominates itself, what its syllables dominate, and the segments it is linked to. -/
+@[simp] theorem dom_word_iff {w : ℕ} {b : Node} :
+    X.Dom (.word w) b ↔ b = .word w ∨
+      (∃ s, (w, s) ∈ X.wordSyllable ∧ X.Dom (.syllable s) b) ∨
+        ∃ i, (w, i) ∈ X.wordSegment ∧ b = .segment i := by
+  rw [dom_iff]
+  simp only [Node.exists, Link, false_and, exists_false, false_or, dom_segment_iff]
+
+/-- Only a prosodic node properly dominates anything. -/
+theorem Dom.isProsodic {a b : Node} (h : X.Dom a b) (hne : a ≠ b) : a.IsProsodic := by
+  cases a with
+  | segment i => exact absurd h.eq_of_segment.symm hne
+  | _ => nofun
+
+/-! ### No Crossing, decided -/
+
+variable (X)
+
+instance : DecidablePred X.Mem
+  | .word w => inferInstanceAs (Decidable (w ∈ X.words))
+  | .syllable s => inferInstanceAs (Decidable (s ∈ X.syllables))
+  | .mora m => inferInstanceAs (Decidable (m ∈ X.morae))
+  | .segment i => inferInstanceAs (Decidable (i ∈ X.slots))
+
+/-- Precedence on the nodes of a form, as in `toStructure`: a node precedes another at a later
+slot when neither dominates the other and both are prosodic or both are segments. -/
+def Precedes (a b : Node) : Prop :=
+  (a.IsProsodic ↔ b.IsProsodic) ∧ a.slot < b.slot ∧ ¬X.Dom a b ∧ ¬X.Dom b a
+
+instance : DecidableRel X.Precedes := fun a b ↦
+  inferInstanceAs (Decidable ((a.IsProsodic ↔ b.IsProsodic) ∧ a.slot < b.slot ∧ ¬X.Dom a b ∧
+    ¬X.Dom b a))
+
+/-- The prosodic nodes of a form: its words, syllables and morae. -/
+def prosodicNodes : Finset Node :=
+  X.words.image .word ∪ X.syllables.image .syllable ∪ X.morae.image .mora
+
+variable {X}
+
+theorem toStructure_precedes_iff {a b : X.toStructure.Node} :
+    X.toStructure.Precedes a b ↔ X.Precedes a.val b.val := Iff.rfl
+
+@[simp] theorem mem_prosodicNodes {a : Node} : a ∈ X.prosodicNodes ↔ X.Mem a ∧ a.IsProsodic := by
+  cases a <;> simp [prosodicNodes, Mem, Node.IsProsodic, Node.tier]
+
+theorem toStructure_lt_iff {a b : X.toStructure.Node} : a < b ↔ X.Dom a.val b.val ∧ a.val ≠ b.val :=
+  lt_iff_le_and_ne.trans (and_congr_right' Subtype.ext_iff.not)
+
+/-- No Crossing on the structure of a form ranges over pairs of prosodic nodes and the nodes
+present that each properly dominates. -/
+theorem toStructure_noCrossing_iff : X.toStructure.NoCrossing ↔
+    ∀ a ∈ X.prosodicNodes, ∀ a' ∈ X.prosodicNodes, X.Precedes a a' →
+      ∀ b ∈ (X.dominated a).erase a, ∀ b' ∈ (X.dominated a').erase a',
+        X.Mem b → X.Mem b' → ¬X.Precedes b' b := by
+  simp only [mem_prosodicNodes, mem_erase, mem_dominated]
+  refine ⟨fun h a ha a' ha' hp b hb b' hb' hbm hbm' ↦ ?_, fun h a a' b b' hp hab hab' ↦ ?_⟩
+  · exact h (a := ⟨a, ha.1⟩) (a' := ⟨a', ha'.1⟩) (b := ⟨b, hbm⟩) (b' := ⟨b', hbm'⟩) hp
+      (toStructure_lt_iff.2 ⟨hb.2, hb.1.symm⟩) (toStructure_lt_iff.2 ⟨hb'.2, hb'.1.symm⟩)
+  · rw [toStructure_lt_iff] at hab hab'
+    exact h a.val ⟨a.2, hab.1.isProsodic hab.2⟩ a'.val ⟨a'.2, hab'.1.isProsodic hab'.2⟩ hp
+      b.val ⟨hab.2.symm, hab.1⟩ b'.val ⟨hab'.2.symm, hab'.1⟩ b.2 b'.2
+
+instance : Decidable X.toStructure.NoCrossing := decidable_of_iff _ toStructure_noCrossing_iff.symm
+
+/-- The two conditions differ off the forms of [hayes-1989]: a consonant linked to its syllable
+after a mora headed later than the nucleus crosses nothing on the prosodic structure, and counts
+as a crossing for `MoraicForm.NoCrossing`, which sets a syllable and its own morae on one row
+of slots. -/
+theorem exists_noCrossing_toStructure_not_noCrossing :
+    ∃ X : MoraicForm ℕ, X.WellFormed ∧ X.toStructure.NoCrossing ∧ ¬X.NoCrossing :=
+  ⟨ofLines [0, 1, 2, 3] (syllableMora := {(1, .of 1), (1, .of 2)})
+    (syllableSegment := {(1, 0), (1, 3)}) (moraSegment := {(.of 1, 1), (.of 2, 2)}), by decide⟩
+
+end Decidable
 
 end MoraicForm
 

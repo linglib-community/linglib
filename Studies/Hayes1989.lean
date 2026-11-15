@@ -573,4 +573,17 @@ theorem spreeek_weight : spreeek.weight 3 = 3 := by decide
 
 theorem spreeek_noCrossing : spreeek.NoCrossing := by decide
 
+/-! ### The ban on crossing lines and the prosodic structure -/
+
+/-- On every form of the derivations above, the ban on crossing lines holds exactly when the
+prosodic structure of the form has no crossing. -/
+theorem noCrossing_toStructure_iff : ∀ X ∈ [kasnus, kaanus, kasnus.delete 2, smereo, savmak,
+    davul, odwos, odwos_flop, cl odwos_flop fromLeft, tale, tal_free, taal, ala, la_free,
+    la_free.linkMora (.of 0) 2, cl la_free fromRight, talpa, talp_free,
+    talp_free.linkMora (.of 4) 1, talp_free.linkMora (.of 4) 2, bagien, bagien_gf, baggyen,
+    baagyen, asta, cl (asta.delete 1) fromRight, amba, aamba, aika, akka, pas_light, pas_heavy,
+    sultni, sultali, θangxta, spreeke, spreeek],
+    X.toStructure.NoCrossing ↔ X.NoCrossing := by
+  decide
+
 end Hayes1989
