@@ -52,16 +52,6 @@ open OptimalityTheory
 
 variable {M : Type*}
 
-/-- **Parse-into-`ℓ`** ([ito-mester-2003]) counts σ-leaves dominated by no `ℓ`-node. -/
-def parseInto (ℓ : Level) : Constraint (RoseTree (Constituent Level M)) := fun t => go false t where
-  go (under : Bool) : RoseTree (Constituent Level M) → Nat
-    | .node a cs =>
-        let u := under || decide (a.level = ℓ)
-        (if a.level = .syl ∧ cs = [] ∧ u = false then 1 else 0) + goList u cs
-  goList (under : Bool) : List (RoseTree (Constituent Level M)) → Nat
-    | [] => 0
-    | c :: cs => go under c + goList under cs
-
 /-- The σ-weight content of a foot node's direct σ-daughters. -/
 def footContent (cs : List Tree) : List Syllable.Weight :=
   cs.filterMap fun c => match c with

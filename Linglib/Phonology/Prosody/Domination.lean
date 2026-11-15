@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Prosody.Foot
-public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
+public import Linglib.Phonology.OptimalityTheory.Constraint.Alignment
 public import Linglib.Core.Data.RoseTree.Positions
 public import Mathlib.Order.Antichain
 public import Mathlib.Order.Cover
@@ -19,7 +19,11 @@ category may dominate which. Layeredness forbids a node from dominating a higher
 Headedness requires every node above the syllable to dominate the next level down; Exhaustivity
 forbids a node of a level from immediately dominating a node more than one level down, and
 Nonrecursivity forbids it from dominating its own level. Each is a violation count on the
-prosodic tree. Layeredness, counted on mothers and daughters, [holds of everything a node
+prosodic tree. The three stated of a node and its daughters count such pairs; Headedness, like
+the Parse-into-`ℓ` of [ito-mester-2003], is an alignment of the positions of the tree under
+dominance, each node of one family needing a partner in another below or above it.
+
+Layeredness, counted on mothers and daughters, [holds of everything a node
 dominates](##Prosody.layeredness_eq_zero_iff), and in a layered tree Nonrecursivity on mothers
 and daughters is [the absence of recursion at any depth](##Prosody.noLevelRecursion_iff). A
 tree [is strictly layered](##Prosody.isStrictlyLayered_iff) exactly when it violates none of
@@ -39,6 +43,7 @@ only foot lies inside a prosodic word it dominates satisfies it.
 ## References
 
 * [selkirk-1996]
+* [ito-mester-2003]
 * [ito-mester-2009]
 -/
 
@@ -245,12 +250,52 @@ variable [OrderBot L]
 
 /-- **Headedness** ([selkirk-1996]): one violation for each node above the lowest level that
 dominates no node of the next level down. -/
-def headedness : Constraint (RoseTree (Constituent L M)) := fun t ↦ t.subtrees.countP fun s ↦
-  s.value.level ≠ ⊥ ∧ ∀ r ∈ s.subtrees, ¬r.value.level ⋖ s.value.level
+def headedness : Constraint (RoseTree (Constituent L M)) :=
+  (Constraint.align fun (a b : GornAddress × RoseTree (Constituent L M)) ↦
+    a.1 ≤ b.1 ∧ b.2.value.level ⋖ a.2.value.level).comap fun t ↦
+      (t.positionedSubtrees.filter fun x ↦ x.2.value.level ≠ ⊥, t.positionedSubtrees)
 
 theorem headedness_eq_zero_iff : headedness t = 0 ↔ ∀ s, IsSubtree s t →
     s.value.level ≠ ⊥ → ∃ r, IsSubtree r s ∧ r.value.level ⋖ s.value.level := by
-  simp [headedness, mem_subtrees]
+  rw [headedness, Constraint.comap, Function.comp_apply, Constraint.align_eq_zero_iff]
+  constructor
+  · intro h s hs hne
+    obtain ⟨p, hp⟩ := isSubtree_iff_exists_getElem?.1 hs
+    obtain ⟨⟨q, r⟩, hq, hle, hcov⟩ := h (⟨p⟩, s)
+      (List.mem_filter.2 ⟨mem_positionedSubtrees.2 hp, by simpa using hne⟩)
+    exact ⟨r, (isSubtree_iff_exists_le_getElem? (p := ⟨p⟩) hp).2
+      ⟨q, hle, mem_positionedSubtrees.1 hq⟩, hcov⟩
+  · rintro h ⟨p, s⟩ hps
+    obtain ⟨hmem, hne⟩ := List.mem_filter.1 hps
+    have hp := mem_positionedSubtrees.1 hmem
+    obtain ⟨r, hr, hcov⟩ := h s (isSubtree_iff_exists_getElem?.2 ⟨_, hp⟩) (by simpa using hne)
+    obtain ⟨q, hle, hq⟩ := (isSubtree_iff_exists_le_getElem? hp).1 hr
+    exact ⟨(q, r), mem_positionedSubtrees.2 hq, hle, hcov⟩
+
+omit [DecidableRel (α := L) (· ⋖ ·)] in
+/-- **Parse-into-`ℓ`** ([ito-mester-2003]): one violation for each terminal, a node of the lowest
+level without daughters, that no `ℓ`-node dominates. -/
+def parseInto (ℓ : L) : Constraint (RoseTree (Constituent L M)) :=
+  (Constraint.align fun (a b : GornAddress × RoseTree (Constituent L M)) ↦ b.1 ≤ a.1).comap
+    fun t ↦ (t.positionedSubtrees.filter fun x ↦ x.2.value.level = ⊥ ∧ x.2.children = [],
+      t.positionedSubtrees.filter fun x ↦ x.2.value.level = ℓ)
+
+omit [DecidableRel (α := L) (· ⋖ ·)] in
+theorem parseInto_eq_zero_iff : parseInto ℓ t = 0 ↔ ∀ (q : GornAddress) (s : _),
+    t[q.toList]? = some s → s.value.level = ⊥ → s.children = [] →
+      ∃ p ∈ levelPositions ℓ t, p ≤ q := by
+  rw [parseInto, Constraint.comap, Function.comp_apply, Constraint.align_eq_zero_iff]
+  constructor
+  · intro h q s hq hb hc
+    obtain ⟨⟨p, u⟩, hpu, hle⟩ := h (q, s)
+      (List.mem_filter.2 ⟨mem_positionedSubtrees.2 hq, by simp [hb, hc]⟩)
+    obtain ⟨hmem, hu⟩ := List.mem_filter.1 hpu
+    exact ⟨p, ⟨u, mem_positionedSubtrees.1 hmem, by simpa using hu⟩, hle⟩
+  · rintro h ⟨q, s⟩ hqs
+    obtain ⟨hmem, hs⟩ := List.mem_filter.1 hqs
+    have hs' : s.value.level = ⊥ ∧ s.children = [] := by simpa using hs
+    obtain ⟨p, ⟨u, hu, huℓ⟩, hle⟩ := h q s (mem_positionedSubtrees.1 hmem) hs'.1 hs'.2
+    exact ⟨(p, u), List.mem_filter.2 ⟨mem_positionedSubtrees.2 hu, by simpa using huℓ⟩, hle⟩
 
 /-- **Headedness fills the hierarchy**: a tree satisfying Headedness has a node at every level
 from its root down, so that an utterance of a single syllable is a syllable, a foot, a word and
