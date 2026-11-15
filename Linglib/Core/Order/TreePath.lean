@@ -8,12 +8,12 @@ public import Linglib.Core.Order.LeftLinear
 /-!
 # Tree positions
 
-A `TreePath` is a position in a rose tree, written as its Gorn address: the list of child indices
-on the way down from the root. Under the prefix order, with `p ≤ q` when `p` dominates `q`, the
-positions form the rooted tree in which every node has a daughter for each natural number. It
-carries the order structure of `Mathlib/Order/SuccPred/Tree.lean`: the root `⊥` is the empty
-address, `Order.pred` drops the last index, `p ⊓ q` is the longest common prefix, and strict
-dominance is well founded, so ancestor chains are finite. A position
+A `TreePath` is a position in a rose tree, written as its address in the sense of [gorn-1967]: the
+list of child indices on the way down from the root. Under the prefix order, with `p ≤ q` when `p`
+dominates `q`, the positions form the rooted tree in which every node has a daughter for each
+natural number. It carries the order structure of `Mathlib/Order/SuccPred/Tree.lean`: the root `⊥`
+is the empty address, `Order.pred` drops the last index, `p ⊓ q` is the longest common prefix, and
+strict dominance is well founded, so ancestor chains are finite. A position
 [is covered exactly by its daughters](##Core.Order.TreePath.covBy_iff_exists_child), and
 [lies below at most one of them](##Core.Order.TreePath.eq_of_child_le_of_child_le). The positions
 of a concrete tree form a prefix-closed subset (`RoseTree.validPaths`).
@@ -29,6 +29,10 @@ so that the subtrees at them begin with the same leaf, which is to say that
 [descending through first daughters from each reaches a common
 position](##Core.Order.TreePath.leftAligned_iff_exists). Left-alignment is a decidable equivalence
 relation, and left-aligned positions lie on one branch.
+
+## References
+
+* [gorn-1967]
 -/
 
 @[expose] public section
