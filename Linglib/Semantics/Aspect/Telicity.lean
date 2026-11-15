@@ -9,39 +9,21 @@ public import Linglib.Semantics.Mereology.Relation
 
 Krifka treats telicity as a property of event predicates: a predicate is telic when every part
 of one of its events that it also applies to is both an initial and a final part of that event.
-Quantized predicates are telic though not conversely, since a predicate that fixes the run time,
-*from three to four*, is telic without being quantized, and cumulative or divisive predicates that
-apply to events with successive parts are not. Telicity originates in the thematic relation. A
+[Quantized predicates are telic](##Aspect.isTelic_of_qua)
+[though not conversely](##Aspect.exists_isTelic_not_qua), since a predicate that fixes the run
+time, *from three to four*, [is telic](##Aspect.isTelic_runTime_eq) without being quantized, and
+[cumulative](##Aspect.not_isTelic_of_cum) or [divisive](##Aspect.not_isTelic_of_div) predicates
+that apply to events with successive parts are not. Telicity originates in the thematic relation. A
 relation is strictly incremental when the parts of the object and of the event correspond one to
 one, as for the object of *eat*, and incremental when it is the closure of such a relation under
-sums, which admits the backups of *read the article*. The reference properties of the object
-carry over to the verb phrase: cumulativity along a summative relation, and quantization along a
-relation with unique participants that maps to subobjects. For a thematic function these are a
-sum homomorphism and an injective one, so *drink milk* is cumulative and *drink two liters of
-milk* quantized.
-
-## Main definitions
-
-* `IsTelic`: every part of an event of the predicate that the predicate applies to is an initial
-  and a final part of it.
-* `SINC`, `INC`: strict incrementality and incrementality of a thematic relation.
-* `Incrementality.Holds`: the property an incrementality class of `Aspect/Defs.lean` names.
-* `VP`: the verb phrase of a relation and an object predicate.
-
-## Main results
-
-* `isTelic_of_qua`, `exists_isTelic_not_qua`: quantized predicates are telic, not conversely.
-* `isTelic_runTime_eq`: under precedence by run times a predicate that fixes the run time is
-  telic.
-* `IsTemporalPrecedence.isTelic_of_qua`: quantized predicates are telic under a temporal
-  precedence on the part structure of events.
-* `not_isTelic_of_cum`, `not_isTelic_of_div`: cumulative and divisive predicates with successive
-  events or parts are not telic.
-* `SINC.inc_of_sum`, `INC.sum`: a summative strictly incremental relation is incremental, and an
-  incremental relation is summative.
-* `vp_cum`, `vp_qua`: cumulativity and quantization carry over from the object to the verb
-  phrase; `SINC.vp_qua` is the case of a summative strictly incremental relation, and
-  `vp_cum_graph` and `vp_qua_graph` are the cases of a thematic function.
+sums, which admits the backups of *read the article*; a strictly incremental relation that is
+summative [relates each object to one event](##Aspect.SINC.gue_of_sum). The reference properties
+of the object carry over to the verb phrase: [cumulativity](##Aspect.vp_cum) along a summative
+relation, [quantization](##Aspect.vp_qua) along a relation with unique participants that maps to
+subobjects, and [divisiveness](##Aspect.mo_iff_forall_div_vp) along exactly the relations that
+map to objects. For a thematic function these are a sum homomorphism and an injective one, so
+*drink milk* [is cumulative](##Aspect.vp_cum_graph) and *drink two liters of milk*
+[quantized](##Aspect.vp_qua_graph).
 
 ## Implementation notes
 
@@ -211,6 +193,13 @@ theorem SINC.me (h : SINC θ) : ME θ := h.ue.me
 
 theorem SINC.mo (h : SINC θ) : MO θ := h.uo.mo
 
+theorem SINC.up_of_sum (h : SINC θ) (hs : SUM θ) : UP θ := h.uo.up_of_sum hs
+
+/-- A summative strictly incremental relation relates each object to one event, so strict
+incrementality and summativity are compatible only for relations like that of *eat*, not that of
+*read* ([krifka-1998], after (51)). -/
+theorem SINC.gue_of_sum (h : SINC θ) (hs : SUM θ) : GUE θ := h.ue.gue_of_sum hs
+
 /-- A relation is incremental when it is the closure of some strictly incremental relation under
 sums. -/
 def INC (θ : α → β → Prop) : Prop :=
@@ -266,7 +255,14 @@ theorem vp_qua (hU : UP θ) (hm : MSO θ) (hObj : QUA OBJ) : QUA (VP θ OBJ) :=
 from the object to the verb phrase, since summativity and unique objects give unique
 participants. -/
 theorem SINC.vp_qua (h : SINC θ) (hs : SUM θ) (hObj : QUA OBJ) : QUA (VP θ OBJ) :=
-  Aspect.vp_qua (h.uo.up_of_sum hs) h.mso hObj
+  Aspect.vp_qua (h.up_of_sum hs) h.mso hObj
+
+/-- A relation maps to objects iff it carries divisive reference from the object to the verb
+phrase. -/
+theorem mo_iff_forall_div_vp : MO θ ↔ ∀ OBJ : α → Prop, DIV OBJ → DIV (VP θ OBJ) :=
+  mo_iff_forall_isLowerSet.trans ⟨fun h OBJ ↦ h {x | OBJ x}, fun h s ↦ h (· ∈ s)⟩
+
+theorem vp_div (hm : MO θ) (hObj : DIV OBJ) : DIV (VP θ OBJ) := mo_iff_forall_div_vp.1 hm OBJ hObj
 
 omit [SemilatticeSup α] [SemilatticeSup β] in
 theorem vp_eq (θ : α → β → Prop) (y : α) : VP θ (· = y) = θ y :=

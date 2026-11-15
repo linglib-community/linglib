@@ -174,6 +174,11 @@ def read (x : Finset (Fin 2)) (e : Finset (Fin 3)) : Prop :=
 
 theorem read_inc : INC read := ⟨readOnce, readOnce_sinc, fun _ _ ↦ Iff.rfl⟩
 
+-- *Read* is summative and the article has two readings, so it is not strictly incremental.
+theorem not_sinc_read : ¬ SINC read := fun h ↦
+  absurd (h.gue_of_sum read_inc.sum (.base (by decide) : read Finset.univ {0, 1})
+    (.base (by decide) : read Finset.univ {0, 2})) (by decide)
+
 /-- An event precedes another if all its times are earlier. -/
 def precedes (a b : Finset (Fin 3)) : Prop := ∀ i ∈ a, ∀ j ∈ b, i < j
 
