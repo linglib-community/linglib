@@ -231,7 +231,7 @@ theorem isProbabilityMeasure_derivationMeasure_relFreq (hD : ∀ t ∈ D, t.Lice
   let ν : Measure (Symbol T G.NT) := (D.map fun t' ↦ (t'.values.map Measure.dirac).sum).sum
   have hint (f : Symbol T G.NT → ℝ≥0∞) :
       ∫⁻ s, f s ∂ν = (D.map fun t' ↦ (t'.values.map f).sum).sum := by
-    simp only [ν, Measure.lintegral_multisetSum_measure, Measure.lintegral_listSum_measure,
+    simp only [ν, lintegral_multisetSum_measure, lintegral_listSum_measure,
       Multiset.map_map, List.map_map, Function.comp_def, lintegral_dirac]
   have hfin : IsFiniteMeasure ν := ⟨by
     rw [← lintegral_one, hint]

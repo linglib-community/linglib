@@ -7,10 +7,9 @@ module
 
 public import Linglib.Core.Data.RoseTree.BinaryTree
 public import Linglib.Core.Data.RoseTree.Get
-public import Linglib.Core.MeasureTheory.Constructions.List
+public import Linglib.Core.MeasureTheory.Integral.Lebesgue.Basic
 public import Mathlib.Order.Iterate
-public import Linglib.Core.Probability.Kernel.Basic
-public import Linglib.Core.Probability.Kernel.Composition.Lemmas
+public import Linglib.Core.Probability.Kernel.Traverse
 public import Mathlib.Probability.Kernel.IonescuTulcea.Traj
 
 /-!
@@ -112,21 +111,14 @@ noncomputable def fill : Kernel (PartialTree ι) (RoseTree ι) :=
     | .inl i => κ i
     | .inr i => (Measure.listProd μs).map (node i), .of_discrete⟩
 
-/-- Fill the holes of a list of partial trees independently. -/
-noncomputable def fillList : Kernel (List (PartialTree ι)) (List (RoseTree ι)) :=
-  ⟨fun ss => Measure.listProd (ss.map (fill κ)), .of_discrete⟩
-
 @[simp] theorem fill_inl (i : ι) (cs : List (PartialTree ι)) : fill κ (node (.inl i) cs) = κ i := by
   simp only [fill, coe_mk, fold_node]
 
 @[simp] theorem fill_hole (i : ι) : fill κ (hole i) = κ i := fill_inl κ i []
 
 theorem fill_inr (i : ι) (cs : List (PartialTree ι)) :
-    fill κ (node (.inr i) cs) = (fillList κ cs).map (node i) := by
-  simp only [fill, fillList, coe_mk, fold_node]
-
-@[simp] theorem fillList_apply (ss : List (PartialTree ι)) :
-    fillList κ ss = Measure.listProd (ss.map (fill κ)) := rfl
+    fill κ (node (.inr i) cs) = ((fill κ).traverse cs).map (node i) := by
+  simp only [fill, Kernel.traverse, coe_mk, fold_node]
 
 variable {κ} [Countable ι]
 
@@ -137,7 +129,7 @@ theorem fill_univ_le_one (hκ : ∀ i, κ i Set.univ ≤ 1) (s : PartialTree ι)
     cases s with
     | inl i => rw [fill_inl]; exact hκ i
     | inr i =>
-      rw [fill_inr, Measure.map_apply .of_discrete .univ, Set.preimage_univ, fillList_apply]
+      rw [fill_inr, Measure.map_apply .of_discrete .univ, Set.preimage_univ, traverse_apply]
       exact Measure.listProd_univ_le_one fun μ hμ => by
         obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hμ
         exact ih c hc
@@ -153,29 +145,24 @@ theorem isProbabilityMeasure_fill [IsMarkovKernel κ] (s : PartialTree ι) :
       have := Measure.isProbabilityMeasure_listProd fun μ hμ => by
         obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hμ
         exact ih c hc
-      rw [fill_inr, fillList_apply]
+      rw [fill_inr, traverse_apply]
       infer_instance
 
 instance [IsMarkovKernel κ] : IsMarkovKernel (fill κ) := ⟨isProbabilityMeasure_fill⟩
 
-instance [IsMarkovKernel κ] : IsMarkovKernel (fillList κ) :=
-  ⟨fun ss => Measure.isProbabilityMeasure_listProd fun μ hμ => by
-    obtain ⟨c, -, rfl⟩ := List.mem_map.mp hμ
-    exact isProbabilityMeasure_fill c⟩
-
-theorem fillList_map_hole_singleton_of_ne
+theorem traverse_fill_map_hole_singleton_of_ne
     (hκ : ∀ i (c : RoseTree ι), c.value ≠ i → κ i {c} = 0) :
     ∀ (js : List ι) (cs : List (RoseTree ι)), cs.map value ≠ js →
-      fillList κ (js.map hole) {cs} = 0
+      (fill κ).traverse (js.map hole) {cs} = 0
   | [], [], h => absurd rfl h
   | [], _ :: _, _ => by simp
   | _ :: _, [], _ => by simp
   | j :: rest, c :: cs, h => by
-    rw [fillList_apply, List.map_cons, List.map_cons, Measure.listProd_cons_singleton_cons,
+    rw [traverse_apply, List.map_cons, List.map_cons, Measure.listProd_cons_singleton_cons,
       fill_hole]
     by_cases hc : c.value = j
     · simp only [List.map_cons, hc, ne_eq, List.cons.injEq, true_and] at h
-      rw [← fillList_apply, fillList_map_hole_singleton_of_ne hκ rest cs h, mul_zero]
+      rw [← traverse_apply, traverse_fill_map_hole_singleton_of_ne hκ rest cs h, mul_zero]
     · rw [hκ j c hc, zero_mul]
 
 end Fill
@@ -193,10 +180,6 @@ noncomputable def generation : Kernel (PartialTree ι) (PartialTree ι) :=
     | .inl i => (ξ i).map fun js => node (.inr i) (js.map hole)
     | .inr i => (Measure.listProd μs).map (node (.inr i)), .of_discrete⟩
 
-/-- One synchronous generation on a list of partial trees. -/
-noncomputable def generationList : Kernel (List (PartialTree ι)) (List (PartialTree ι)) :=
-  ⟨fun ss => Measure.listProd (ss.map (generation ξ)), .of_discrete⟩
-
 @[simp] theorem generation_inl (i : ι) (cs : List (PartialTree ι)) :
     generation ξ (node (.inl i) cs) = (ξ i).map fun js => node (.inr i) (js.map hole) := by
   simp only [generation, coe_mk, fold_node]
@@ -206,11 +189,8 @@ noncomputable def generationList : Kernel (List (PartialTree ι)) (List (Partial
   generation_inl ξ i []
 
 theorem generation_inr (i : ι) (cs : List (PartialTree ι)) :
-    generation ξ (node (.inr i) cs) = (generationList ξ cs).map (node (.inr i)) := by
-  simp only [generation, generationList, coe_mk, fold_node]
-
-@[simp] theorem generationList_apply (ss : List (PartialTree ι)) :
-    generationList ξ ss = Measure.listProd (ss.map (generation ξ)) := rfl
+    generation ξ (node (.inr i) cs) = ((generation ξ).traverse cs).map (node (.inr i)) := by
+  simp only [generation, Kernel.traverse, coe_mk, fold_node]
 
 variable [Countable ι]
 
@@ -227,33 +207,10 @@ theorem isProbabilityMeasure_generation [IsMarkovKernel ξ] (s : PartialTree ι)
       have := Measure.isProbabilityMeasure_listProd fun μ hμ => by
         obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hμ
         exact ih c hc
-      rw [generation_inr, generationList_apply]
+      rw [generation_inr, traverse_apply]
       infer_instance
 
 instance [IsMarkovKernel ξ] : IsMarkovKernel (generation ξ) := ⟨isProbabilityMeasure_generation ξ⟩
-
-instance [IsMarkovKernel ξ] : IsMarkovKernel (generationList ξ) :=
-  ⟨fun ss => Measure.isProbabilityMeasure_listProd fun μ hμ => by
-    obtain ⟨c, -, rfl⟩ := List.mem_map.mp hμ
-    exact isProbabilityMeasure_generation ξ c⟩
-
-theorem fillList_comp_generationList {κ : Kernel ι (RoseTree ι)} (ss : List (PartialTree ι)) :
-    fillList κ ∘ₘ generationList ξ ss =
-      Measure.listProd (ss.map fun s => fill κ ∘ₘ generation ξ s) := by
-  induction ss with
-  | nil =>
-    rw [generationList_apply, List.map_nil, Measure.listProd_nil,
-      Measure.dirac_bind (Kernel.measurable _), fillList_apply, List.map_nil, List.map_nil,
-      Measure.listProd_nil]
-  | cons s ss ih =>
-    rw [List.map_cons, Measure.listProd_cons, ← ih, generationList_apply, List.map_cons,
-      Measure.listProd_cons, ← generationList_apply, ← Measure.parallelComp_comp_prod,
-      Measure.map_comp _ _ .of_discrete,
-      Measure.bind_map Measurable.of_discrete.aemeasurable (Kernel.measurable _).aemeasurable]
-    congr 1
-    funext ⟨s', ss'⟩
-    rw [Function.uncurry_apply_pair, fillList_apply, List.map_cons,
-      Measure.listProd_cons, ← fillList_apply, Kernel.map_apply _ .of_discrete, parallelComp_apply]
 
 variable [MeasurableSingletonClass ι]
 
@@ -272,7 +229,7 @@ instance [IsMarkovKernel ξ] [IsMarkovKernel κ] : IsMarkovKernel (expand ξ κ)
   rw [expand]; infer_instance
 
 theorem expand_apply' (i : ι) (s : Set (RoseTree ι)) :
-    expand ξ κ i s = ∫⁻ js, fillList κ (js.map hole) (node i ⁻¹' s) ∂ξ i := by
+    expand ξ κ i s = ∫⁻ js, (fill κ).traverse (js.map hole) (node i ⁻¹' s) ∂ξ i := by
   rw [expand_apply, Measure.bind_apply .of_discrete (Kernel.aemeasurable _), generation_hole,
     lintegral_map (Kernel.measurable_coe _ .of_discrete) .of_discrete]
   simp_rw [fill_inr, Measure.map_apply .of_discrete .of_discrete]
@@ -282,7 +239,7 @@ offspring. -/
 theorem expand_apply_univ (i : ι) :
     expand ξ κ i Set.univ = ∫⁻ js, (js.map fun j => κ j Set.univ).prod ∂ξ i := by
   rw [expand_apply']
-  simp only [Set.preimage_univ, fillList_apply, Measure.listProd_univ, List.map_map]
+  simp only [Set.preimage_univ, traverse_apply, Measure.listProd_univ, List.map_map]
   rfl
 
 theorem fill_expand_apply (s : PartialTree ι) : fill (expand ξ κ) s = fill κ ∘ₘ generation ξ s := by
@@ -291,7 +248,7 @@ theorem fill_expand_apply (s : PartialTree ι) : fill (expand ξ κ) s = fill κ
     cases s with
     | inl i => rw [fill_inl, expand_apply, generation_hole, generation_inl]
     | inr i =>
-      rw [fill_inr, fillList_apply, List.map_congr_left ih, ← fillList_comp_generationList,
+      rw [fill_inr, traverse_apply, List.map_congr_left ih, ← traverse_comp_traverse_apply,
         generation_inr,
         Measure.map_bind (Kernel.measurable _).aemeasurable Measurable.of_discrete.aemeasurable,
         Measure.bind_map Measurable.of_discrete.aemeasurable (Kernel.measurable _).aemeasurable]
@@ -336,7 +293,7 @@ theorem ωScottContinuous_fill (s : PartialTree ι) :
     cases s with
     | inl i => exact ωScottContinuous.apply i
     | inr i =>
-      simp only [fill_inr, fillList_apply]
+      simp only [fill_inr, traverse_apply]
       exact Measure.ωScottContinuous_map
         (Measure.ωScottContinuous_listProd (F := fun c κ => fill (ofFunOfCountable κ) c) ih)
         .of_discrete
@@ -387,28 +344,28 @@ theorem law_singleton_of_ne {t : RoseTree ι} {i : ι} (h : t.value ≠ i) : law
     exact h rfl
   simp [this]
 
-theorem fillList_law_map_hole_singleton {cs : List (RoseTree ι)}
+theorem traverse_fill_law_map_hole_singleton {cs : List (RoseTree ι)}
     (h : ∀ c ∈ cs, law ξ c.value {c} = weight ξ c) :
-    fillList (law ξ) ((cs.map value).map hole) {cs} = (cs.map (weight ξ)).prod := by
+    (fill (law ξ)).traverse ((cs.map value).map hole) {cs} = (cs.map (weight ξ)).prod := by
   induction cs with
   | nil => simp
   | cons c cs ih =>
-    rw [List.map_cons, List.map_cons, fillList_apply, List.map_cons,
+    rw [List.map_cons, List.map_cons, traverse_apply, List.map_cons,
       Measure.listProd_cons_singleton_cons, fill_hole, h c (List.mem_cons_self ..), List.map_cons,
-      List.prod_cons, ← fillList_apply, ih fun d hd => h d (List.mem_cons_of_mem _ hd)]
+      List.prod_cons, ← traverse_apply, ih fun d hd => h d (List.mem_cons_of_mem _ hd)]
 
 theorem law_singleton_value (t : RoseTree ι) : law ξ t.value {t} = weight ξ t := by
   induction t using RoseTree.rec' with
   | node i cs ih =>
     rw [value_node, ← expand_law, expand_apply', weight_node]
     have hpre : node i ⁻¹' ({node i cs} : Set (RoseTree ι)) = {cs} := by ext; simp
-    have hind : (fun js => fillList (law ξ) (js.map hole) {cs}) =
+    have hind : (fun js => (fill (law ξ)).traverse (js.map hole) {cs}) =
         ({cs.map value} : Set (List ι)).indicator fun _ => (cs.map (weight ξ)).prod := by
       funext js
       by_cases hs : cs.map value = js
       · subst hs
-        rw [fillList_law_map_hole_singleton ξ ih, Set.indicator_of_mem (Set.mem_singleton _)]
-      · rw [fillList_map_hole_singleton_of_ne (fun _ _ => law_singleton_of_ne ξ) _ _ hs,
+        rw [traverse_fill_law_map_hole_singleton ξ ih, Set.indicator_of_mem (Set.mem_singleton _)]
+      · rw [traverse_fill_map_hole_singleton_of_ne (fun _ _ => law_singleton_of_ne ξ) _ _ hs,
           Set.indicator_of_notMem (by simpa using Ne.symm hs)]
     rw [hpre, hind, lintegral_indicator_const .of_discrete, mul_comm]
 
@@ -463,7 +420,7 @@ tree is finite exactly when the family trees of all the offspring are. -/
 theorem extinctionProb_eq_lintegral (i : ι) :
     extinctionProb ξ i = ∫⁻ js, (js.map (extinctionProb ξ)).prod ∂ξ i := by
   conv_lhs => rw [extinctionProb, ← expand_law, expand_apply']
-  simp only [Set.preimage_univ, fillList_apply, Measure.listProd_univ, List.map_map]
+  simp only [Set.preimage_univ, traverse_apply, Measure.listProd_univ, List.map_map]
   rfl
 
 /-! ### The mean offspring -/
@@ -477,7 +434,7 @@ theorem lintegral_mean (f : ι → ℝ≥0∞) (i : ι) :
   show ∫⁻ j, f j ∂(ξ i).bind _ = _
   rw [Measure.lintegral_bind Measurable.of_discrete.aemeasurable
     Measurable.of_discrete.aemeasurable]
-  simp only [Measure.lintegral_listSum_measure, List.map_map, Function.comp_def, lintegral_dirac]
+  simp only [lintegral_listSum_measure, List.map_map, Function.comp_def, lintegral_dirac]
 
 variable {ξ}
 
