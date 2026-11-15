@@ -335,22 +335,19 @@ section Typology
 open PCC
 
 theorem weak_strong_typology :
-    (∀ s ∈ cliticPairs, PCCViolation weakProbe false s ↔ ¬ IsLicit weakGrammar s) ∧
-      ∀ s ∈ cliticPairs, PCCViolation weakProbe true s ↔ ¬ IsLicit strongGrammar s := by
+    (∀ s ∈ cliticPairs, PCCViolation weakProbe false s ↔ ¬ Weak s) ∧
+      ∀ s ∈ cliticPairs, PCCViolation weakProbe true s ↔ ¬ Strong s := by
   decide +kernel
 
+-- The probe is not gluttonous over two like persons, where the Ultrastrong constraint bans
+-- two participants.
 theorem ultrastrong_typology :
-    (∀ s ∈ cliticPairs, s ≠ ⟨.second, .second⟩ →
-      (PCCViolation ultrastrongProbe false s ↔ ¬ IsLicit ultraStrongGrammar s)) ∧
-    ¬ PCCViolation ultrastrongProbe false ⟨.second, .second⟩ ∧
-      ¬ IsLicit ultraStrongGrammar ⟨.second, .second⟩ := by
+    (∀ s ∈ distinctPairs, PCCViolation ultrastrongProbe false s ↔ ¬ Ultrastrong s) ∧
+      ∀ p ∈ persons, ¬ PCCViolation ultrastrongProbe false ⟨p, p⟩ := by
   decide +kernel
 
 theorem meFirst_typology :
-    (∀ s ∈ cliticPairs, s ≠ ⟨.first, .first⟩ →
-      (PCCViolation meFirstProbe false s ↔ ¬ IsLicit meFirstGrammar s)) ∧
-    ¬ PCCViolation meFirstProbe false ⟨.first, .first⟩ ∧
-      ¬ IsLicit meFirstGrammar ⟨.first, .first⟩ := by
+    ∀ s ∈ cliticPairs, PCCViolation meFirstProbe false s ↔ ¬ MeFirst s := by
   decide +kernel
 
 end Typology

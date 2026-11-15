@@ -13,21 +13,18 @@ This file formalizes the predictions of Pancheva and Zubizarreta's P-Constraint,
 proposal that Person Case Constraint effects are the syntactic encoding of perspective: an
 interpretable person feature on the applicative head marks the indirect object as the
 point-of-view center of its domain, and a clitic combination is licit exactly when selecting
-the indirect object as that center satisfies the constraint (`ApplDomain`,
-`PConstraintSatisfied`, `isLicit_iff_pConstraint`). The Person Hierarchy 1 > 2 > 3 is derived
-from the count of positive person features rather than stipulated
-(`personHierarchy_from_features`). The constraint's four parameters, the prominence
-threshold, the domain of application, P-Uniqueness, and P-Primacy, generate the five attested
-varieties, strong, ultra-strong, weak, super-strong, and me-first, together with three
-predicted ones, each checked against the paper's examples (`strong_predictions` and its
-siblings, `french_strong_examples` and its siblings), and the attested varieties are ordered
-by containment of their licit sets (`strong_le_ultra`, `ultra_le_weak`, `super_le_strong`).
-The three prominence values correspond to Sells's logophoric roles pivot, self, and source
-(`prominenceToSellsRole`).
+the indirect object as that center satisfies the constraint (`PConstraintSatisfied`, `IsLicit`).
+The Person Hierarchy 1 > 2 > 3 is [derived from the count of positive person
+features](##PanchevaZubizarreta2018.personHierarchy_from_features) rather than stipulated. The
+constraint's four parameters, the prominence threshold, the domain of application, P-Uniqueness,
+and P-Primacy, generate the five attested varieties, strong, ultra-strong, weak, super-strong,
+and me-first, together with three predicted ones, and the grammars of four of them
+[license the combinations of the descriptive
+varieties](##PanchevaZubizarreta2018.isLicit_iff_variety). The three prominence values
+correspond to Sells's logophoric roles pivot, self, and source (`prominenceToSellsRole`).
 
 ## Implementation notes
 
-The grammars and the licitness predicate live in `Syntax/Agreement/PersonCaseConstraint`.
 The Italian and Spanish clitic combinations are read off the Fragments, the French, Catalan,
 Kambera, and Bulgarian ones off the parameter settings, since no clitic Fragment exists for
 those languages. The paper's separation of the Clitic Logophoric Restriction from the PCC,
@@ -37,9 +34,9 @@ semantic constraint outside this model.
 
 ## TODO
 
-The substrate's P-Primacy checks only the indirect object's [+author], so the ultra-strong
-grammar licenses the ⟨1, 1⟩ combination that the descriptive statement (14d) bans
-(`ultra_one_one_licensed`); the paper does not walk the mechanism through that cell.
+P-Primacy checks only the indirect object's [+author], so the ultra-strong grammar licenses the
+⟨1, 1⟩ combination that the descriptive statement (14d) bans (`ultra_one_one_licensed`); the
+paper does not walk the mechanism through that cell.
 
 ## References
 
@@ -53,8 +50,74 @@ grammar licenses the ⟨1, 1⟩ combination that the descriptive statement (14d)
 namespace PanchevaZubizarreta2018
 
 open PCC
+open Clause (Scenario)
 
-/-! ### The applicative domain -/
+/-! ### Prominence thresholds: cuts on the [author] ⟹ [participant] ⟹ [proximate] chain -/
+
+/-- The prominence a grammar requires of its IO is `proximate` (the default), `participant`, or
+`author`. -/
+inductive ProminenceThreshold where
+  | proximate | participant | author
+  deriving DecidableEq, Repr, Fintype
+
+/-- The restrictiveness chain `proximate < participant < author`. -/
+instance : LinearOrder ProminenceThreshold :=
+  LinearOrder.lift' (·.ctorIdx) (by decide)
+
+/-- A person meets a prominence threshold by its own features, speech-act participants meeting
+`proximate` and `participant` and the speaker `author`. A 3P meets `proximate` only
+contextually (`IOSatisfiesProminence`). -/
+def ProminenceThreshold.InherentlyMetBy : ProminenceThreshold → Person → Prop
+  | .proximate | .participant => Person.IsSAP
+  | .author => Person.IncludesSpeaker
+
+instance : (t : ProminenceThreshold) → DecidablePred t.InherentlyMetBy
+  | .proximate | .participant => inferInstanceAs (DecidablePred Person.IsSAP)
+  | .author => inferInstanceAs (DecidablePred Person.IncludesSpeaker)
+
+theorem ProminenceThreshold.inherentlyMetBy_antitone (p : Person) :
+    Antitone (InherentlyMetBy · p) := fun t₁ t₂ ht hm => by
+  revert ht hm
+  cases p <;> cases t₁ <;> cases t₂ <;> decide
+
+/-! ### The grammars -/
+
+/-- A grammar sets the four P-Constraint parameters, the prominence threshold, P-Uniqueness,
+P-Primacy, and the domain restriction. P-Primacy presupposes P-Uniqueness
+(`primacy_le_uniqueness`); field defaults are the paper's defaults, so `{}` is the strong
+PCC. -/
+structure Grammar where
+  /-- The threshold of P-Prominence, which the IO must meet. -/
+  prominence : ProminenceThreshold := .proximate
+  /-- Under P-Uniqueness at most one DP may bear the required prominence. -/
+  uniqueness : Bool := true
+  /-- Under P-Primacy a [+author] IO wins a tie. -/
+  primacy : Bool := false
+  /-- On a restricted domain the constraint applies only where a prominence-bearing DP is
+  present. -/
+  restrictedDomain : Bool := false
+  /-- P-Primacy presupposes active P-Uniqueness. -/
+  primacy_le_uniqueness : primacy ≤ uniqueness := by decide
+
+/-- The strong PCC keeps all defaults, so the DO must be 3P. -/
+def strongGrammar : Grammar := {}
+/-- The ultra-strong PCC adds P-Primacy, so ⟨1,2⟩ is licit and ⟨2,1⟩ not. -/
+def ultraStrongGrammar : Grammar := { primacy := true }
+/-- The weak PCC drops P-Uniqueness, so SAPs may co-occur. -/
+def weakGrammar : Grammar := { uniqueness := false }
+/-- The super-strong PCC has `participant` prominence, so the IO must be a SAP and ⟨3,3⟩ is
+banned. -/
+def superStrongGrammar : Grammar := { prominence := .participant }
+/-- The me-first PCC has `author` prominence on a restricted domain. -/
+def meFirstGrammar : Grammar := { prominence := .author, restrictedDomain := true }
+/-- The predicted PG1 has `participant` prominence with P-Primacy. -/
+def pg1Grammar : Grammar := { prominence := .participant, primacy := true }
+/-- The predicted PG2 has `participant` prominence without P-Uniqueness. -/
+def pg2Grammar : Grammar := { prominence := .participant, uniqueness := false }
+/-- The predicted PG3 has `author` prominence on the unrestricted domain. -/
+def pg3Grammar : Grammar := { prominence := .author }
+
+/-! ### The P-Constraint, the four clauses of (12) -/
 
 /-- The applicative phase holds the indirect object introduced by Appl, the direct object inside
 VP, and the argument selected as point-of-view center. -/
@@ -64,28 +127,69 @@ structure ApplDomain where
   povCenter : Person
   deriving DecidableEq
 
+section PConstraint
+
+variable (g : Grammar) (a : ApplDomain)
+
+/-- (12b) The IO meets P-Prominence inherently, or, under a `proximate` threshold only, by
+contextual marking when paired with another non-proximate 3P. -/
+def IOSatisfiesProminence : Prop :=
+  g.prominence.InherentlyMetBy a.io ∨
+    (g.prominence = .proximate ∧
+     ¬ g.prominence.InherentlyMetBy a.io ∧ ¬ g.prominence.InherentlyMetBy a.do_)
+
+instance : Decidable (IOSatisfiesProminence g a) := inferInstanceAs (Decidable (_ ∨ _))
+
+/-- (12c) The DO does not also inherently meet P-Prominence. -/
+def UniquenessSatisfied : Prop := ¬ g.prominence.InherentlyMetBy a.do_
+
+instance : Decidable (UniquenessSatisfied g a) := inferInstanceAs (Decidable (¬ _))
+
+/-- (12d) A [+author] IO rescues an otherwise-blocking configuration when P-Primacy is on. The
+rescue checks only the IO. -/
+def PrimacyRescues : Prop := g.primacy ∧ a.io.IncludesSpeaker
+
+instance : Decidable (PrimacyRescues g a) := inferInstanceAs (Decidable (_ ∧ _))
+
+/-- (12a) A domain is exempt on a restricted domain when no DP bears the prominence feature. The
+restriction presupposes an argument matching the P-Prominence value (§4.5, the restricted
+application "matches the feature value set in P-Prominence"; for me-first, ApplPs with a
+[+author] argument). -/
+def DomainExempt : Prop :=
+  g.restrictedDomain ∧
+    ¬ g.prominence.InherentlyMetBy a.io ∧ ¬ g.prominence.InherentlyMetBy a.do_
+
+instance : Decidable (DomainExempt g a) := inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
 /-- The P-Constraint holds over an Appl domain when the domain is exempt, or the indirect object
 is the point-of-view center, satisfies the prominence threshold, and P-Uniqueness holds or
 P-Primacy rescues it. -/
-def PConstraintSatisfied (g : Grammar) (a : ApplDomain) : Prop :=
-  DomainExempt g ⟨a.io, a.do_⟩ ∨
-    (a.povCenter = a.io ∧ IOSatisfiesProminence g ⟨a.io, a.do_⟩ ∧
-      (g.uniqueness → UniquenessSatisfied g a.do_ ∨ PrimacyRescues g a.io))
+def PConstraintSatisfied : Prop :=
+  DomainExempt g a ∨
+    (a.povCenter = a.io ∧ IOSatisfiesProminence g a ∧
+      (g.uniqueness → UniquenessSatisfied g a ∨ PrimacyRescues g a))
 
-instance (g : Grammar) (a : ApplDomain) : Decidable (PConstraintSatisfied g a) :=
-  inferInstanceAs (Decidable (_ ∨ _))
+instance : Decidable (PConstraintSatisfied g a) := inferInstanceAs (Decidable (_ ∨ _))
 
-/-- A clitic combination is licit exactly when the domain centered on the indirect object satisfies
-the P-Constraint (§4.5). -/
-theorem isLicit_iff_pConstraint (g : Grammar) (s : Clause.Scenario Person) :
-    IsLicit g s ↔ PConstraintSatisfied g ⟨s.high, s.low, s.high⟩ := by
-  constructor
-  · rintro (h | ⟨hp, hr⟩)
-    · exact Or.inl h
-    · exact Or.inr ⟨rfl, hp, hr⟩
-  · rintro (h | ⟨_, hp, hr⟩)
-    · exact Or.inl h
-    · exact Or.inr ⟨hp, hr⟩
+/-- A clitic combination is licit when the domain centered on its indirect object satisfies the
+P-Constraint (§4.5). -/
+def IsLicit (s : Scenario Person) : Prop := PConstraintSatisfied g ⟨s.high, s.low, s.high⟩
+
+instance : DecidablePred (IsLicit g) :=
+  fun _ ↦ inferInstanceAs (Decidable (PConstraintSatisfied ..))
+
+/-- The person combinations `g` predicts licit. -/
+def licitFinset : Finset (Scenario Person) := {s ∈ cliticPairs | IsLicit g s}
+
+/-- Grammars are preordered by inclusion of their licit combinations. The order is only a
+preorder, since distinct parameter settings can share a licit set
+(`restricted_participant_surfaces_as_strong`). -/
+instance : Preorder Grammar := Preorder.lift licitFinset
+
+instance (g₁ g₂ : Grammar) : Decidable (g₁ ≤ g₂) :=
+  inferInstanceAs (Decidable (licitFinset g₁ ⊆ licitFinset g₂))
+
+end PConstraint
 
 /-! ### The Person Hierarchy -/
 
@@ -102,6 +206,15 @@ theorem personHierarchy_from_features (p q : Person) :
   cases p <;> cases q <;> decide
 
 /-! ### The varieties (§4) -/
+
+/-- The strong and the weak grammar license exactly the combinations of the Strong and the Weak
+constraint, and on distinct persons the ultra-strong and the me-first grammar those of the
+Ultrastrong and the Me-first constraint. -/
+theorem isLicit_iff_variety :
+    (∀ s, IsLicit strongGrammar s ↔ Strong s) ∧ (∀ s, IsLicit weakGrammar s ↔ Weak s) ∧
+      ∀ s ∈ distinctPairs, (IsLicit ultraStrongGrammar s ↔ Ultrastrong s) ∧
+        (IsLicit meFirstGrammar s ↔ MeFirst s) := by
+  decide
 
 /-- Under the strong PCC (14a) the direct object must be third person. -/
 theorem strong_predictions :
@@ -248,7 +361,7 @@ theorem bulgarian_me_first_examples :
 -- §4.5
 theorem mefirst_one_one_excluded : ¬ IsLicit meFirstGrammar ⟨.first, .first⟩ := by decide
 
-/-- The substrate's P-Primacy checks only the indirect object's [+author], so the ultra-strong
+/-- P-Primacy checks only the indirect object's [+author], so the ultra-strong
 grammar licenses ⟨1, 1⟩ where the descriptive statement (14d) bans it. -/
 theorem ultra_one_one_licensed : IsLicit ultraStrongGrammar ⟨.first, .first⟩ := by decide
 

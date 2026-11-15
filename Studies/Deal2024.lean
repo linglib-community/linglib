@@ -4,6 +4,7 @@ public import Linglib.Syntax.Agreement.PersonCaseConstraint
 public import Linglib.Syntax.Minimalist.Probe.Agree
 public import Linglib.Syntax.Agreement.PersonSegment
 public import Studies.CoonKeine2021
+public import Studies.PanchevaZubizarreta2018
 public import Studies.Haspelmath2021
 public import Linglib.Syntax.Clause.Scenario
 public import Linglib.Syntax.Person.Class
@@ -175,8 +176,8 @@ must outrank the direct object on 1 > 2 > 3; that if there is a second person, i
 indirect object; that the indirect object must outrank the direct object on 2 > 1 > 3; and
 nothing. -/
 def PCCType.Licit : PCCType → Scenario Person → Prop
-  | .strong, s => ¬ s.low.IsSAP
-  | .weak, s => ¬ s.high.IsSAP → ¬ s.low.IsSAP
+  | .strong, s => PCC.Strong s
+  | .weak, s => PCC.Weak s
   | .meFirst, s => ¬ s.low.IncludesSpeaker
   | .strictlyDescending, s => s.low.prominence < s.high.prominence
   | .youFirst, s => addressee ∉ spec s.low
@@ -184,8 +185,8 @@ def PCCType.Licit : PCCType → Scenario Person → Prop
   | .none, _ => True
 
 instance : (t : PCCType) → DecidablePred t.Licit
-  | .strong, _ => inferInstanceAs (Decidable (¬ _))
-  | .weak, _ => inferInstanceAs (Decidable (_ → _))
+  | .strong, _ => inferInstanceAs (Decidable (PCC.Strong _))
+  | .weak, _ => inferInstanceAs (Decidable (PCC.Weak _))
   | .meFirst, _ => inferInstanceAs (Decidable (¬ _))
   | .strictlyDescending, _ => inferInstanceAs (Decidable (_ < _))
   | .youFirst, _ => inferInstanceAs (Decidable (¬ _))
@@ -289,14 +290,15 @@ theorem sd_off_diagonal_iff_outranks (s : Scenario Person)
 
 /-! ### The competitors (section 7) -/
 
+open PanchevaZubizarreta2018 in
 /-- On the six cells of table (1) the four varieties coincide with the P-Constraint grammars of
 [pancheva-zubizarreta-2018], strictly descending with ultra-strong. -/
 theorem agrees_with_pConstraint :
     ∀ s ∈ PCC.distinctPairs,
-      (Licit strong s ↔ PCC.IsLicit PCC.strongGrammar s) ∧
-        (Licit weak s ↔ PCC.IsLicit PCC.weakGrammar s) ∧
-        (Licit meFirst s ↔ PCC.IsLicit PCC.meFirstGrammar s) ∧
-        (Licit strictlyDescending s ↔ PCC.IsLicit PCC.ultraStrongGrammar s) := by
+      (Licit strong s ↔ IsLicit strongGrammar s) ∧
+        (Licit weak s ↔ IsLicit weakGrammar s) ∧
+        (Licit meFirst s ↔ IsLicit meFirstGrammar s) ∧
+        (Licit strictlyDescending s ↔ IsLicit ultraStrongGrammar s) := by
   decide +kernel
 
 /-- On the six cells the four varieties coincide with the gluttony probes of

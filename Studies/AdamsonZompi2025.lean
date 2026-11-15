@@ -21,7 +21,8 @@ an uninterpretable one that agreement copies and an interpretable one read at LF
 of the two a person restriction on clitic clusters reads. A restriction that never bans a third
 person accusative, read over the uninterpretable value,
 [licenses a polite accusative under any dative](##AdamsonZompi2025.licit_formal_polite), and
-this holds of the P-Constraint, interaction and satisfaction, and feature gluttony alike. Read
+this holds of the Strong constraint and the varieties it entails, of interaction and
+satisfaction, and of feature gluttony alike. Read
 over the interpretable value, a restriction
 [bans a polite accusative wherever it bans a second
 person](##AdamsonZompi2025.politeness_prediction),
@@ -52,13 +53,12 @@ counterpart here.
 ## TODO
 
 * The rejection by some Weak-PCC speakers of a first person dative over accusative LEI is not
-  derived: the two grammars split on that cluster as they do on a first person dative over a
+  derived: the two constraints split on that cluster as they do on a first person dative over a
   second person accusative, where the paper finds the two judgments uncorrelated.
 
 ## References
 
 * [adamson-zompi-2025]
-* [pancheva-zubizarreta-2018]
 * [deal-2024]
 * [coon-keine-2021]
 * [bejar-rezac-2003]
@@ -149,9 +149,10 @@ theorem politeness_prediction (hc : c.strength ≠ some .strong) (h : ¬ R ⟨p,
 
 /-! ### The morphosyntactic accounts -/
 
--- The Weak and the Strong P-Constraint license a third person accusative under any dative.
-theorem isLicit_third : ∀ g ∈ [weakGrammar, strongGrammar], ∀ p, IsLicit g ⟨p, .third⟩ := by
-  decide
+-- The Strong constraint licenses a polite accusative, and with it every variety it entails.
+theorem strong_licenses_polite (hc : c.person = some .third) (o : Option Person) :
+    Licit Strong ⟨o, formal (polite c)⟩ :=
+  licit_formal_polite strong_third hc o
 
 -- Interaction and satisfaction: a grammar licensing anything licenses a polite accusative.
 theorem deal_licenses_polite {g : Deal2024.Grammar} {t : Scenario Person}
@@ -167,17 +168,18 @@ theorem gluttony_licenses_polite (P : Finset Phi.PersonSegment) (ioOpaque : Bool
 
 /-! ### Italian -/
 
--- Dative LEI over a third person accusative is licit on either person value.
-theorem lei_dative : ∀ g ∈ [weakGrammar, strongGrammar],
-    Licit (IsLicit g) ⟨formal (polite le_dat), formal la⟩ ∧
-      Licit (IsLicit g) ⟨interpretable (polite le_dat), interpretable la⟩ := by
+-- Dative LEI over a third person accusative is licit on either person value, under the Strong
+-- constraint and so under the Weak one.
+theorem lei_dative :
+    Licit Strong ⟨formal (polite le_dat), formal la⟩ ∧
+      Licit Strong ⟨interpretable (polite le_dat), interpretable la⟩ := by
   decide
 
--- A third person dative over accusative LEI is licensed on the uninterpretable value and banned
--- on the interpretable one.
-theorem lei_accusative : ∀ g ∈ [weakGrammar, strongGrammar],
-    Licit (IsLicit g) ⟨formal gli, formal (polite la)⟩ ∧
-      ¬ Licit (IsLicit g) ⟨interpretable gli, interpretable (polite la)⟩ := by
+-- A third person dative over accusative LEI is licensed on the uninterpretable value even by
+-- the Strong constraint and banned on the interpretable one even by the Weak one.
+theorem lei_accusative :
+    Licit Strong ⟨formal gli, formal (polite la)⟩ ∧
+      ¬ Licit Weak ⟨interpretable gli, interpretable (polite la)⟩ := by
   decide
 
 -- Stressed LEI and a prepositional dative obviate the constraint.
@@ -189,9 +191,9 @@ theorem lei_repairs :
 -- The Fancy Constraint: under a third person causee a third person accusative clitic is licit
 -- and second person and LEI are not.
 theorem fancy_constraint :
-    Licit (IsLicit weakGrammar) ⟨some .third, interpretable la⟩ ∧
-      ¬ Licit (IsLicit weakGrammar) ⟨some .third, interpretable ti⟩ ∧
-      ¬ Licit (IsLicit weakGrammar) ⟨some .third, interpretable (polite la)⟩ := by
+    Licit Strong ⟨some .third, interpretable la⟩ ∧
+      ¬ Licit Weak ⟨some .third, interpretable ti⟩ ∧
+      ¬ Licit Weak ⟨some .third, interpretable (polite la)⟩ := by
   decide
 
 -- Coordinated with a third person, LEI resolves to second person on its interpretable value and
@@ -201,10 +203,10 @@ theorem resolved_person :
       lei_formal.person.map (· ⊔ .third) = some .third := by
   decide
 
--- The two grammars split on a first person dative over accusative LEI.
+-- The two constraints split on a first person dative over accusative LEI.
 theorem first_dative_lei :
-    Licit (IsLicit weakGrammar) ⟨interpretable mi, interpretable (polite la)⟩ ∧
-      ¬ Licit (IsLicit strongGrammar) ⟨interpretable mi, interpretable (polite la)⟩ := by
+    Licit Weak ⟨interpretable mi, interpretable (polite la)⟩ ∧
+      ¬ Licit Strong ⟨interpretable mi, interpretable (polite la)⟩ := by
   decide
 
 /-! ### Logophoric centers -/
@@ -274,19 +276,19 @@ def scenario? (v : PersonalPronoun → Option Person) (e : Datum) :
   let high ← (e.parse? "dative" dative).map v <|> e.parse? "causee" [("3", some .third)]
   pure ⟨high, v low⟩
 
-/-- The band the P-Constraint predicts for a cluster: accepted where the Strong grammar licenses
-it, divided where only the Weak grammar does, and rejected where neither does. -/
+/-- The band the Person Case Constraint predicts for a cluster: accepted where the Strong
+constraint licenses it, divided where only the Weak one does, and rejected where neither does. -/
 def predicted (s : Scenario (Option Person)) : Judgment.Band :=
-  if Licit (IsLicit strongGrammar) s then .accepted
-  else if Licit (IsLicit weakGrammar) s then .divided
+  if Licit Strong s then .accepted
+  else if Licit Weak s then .divided
   else .rejected
 
 /-- Read over the interpretable person value, every cluster of the three languages lands in the
-band the P-Constraint predicts, the repairs and the causatives included. -/
+band the constraint predicts, the repairs and the causatives included. -/
 theorem rows_predicted : Datum.Checks (scenario? interpretable) predicted Examples.all 25 := by
   decide
 
-/-- Read over the uninterpretable person value, the P-Constraint fits a row exactly when the row
+/-- Read over the uninterpretable person value, the constraint fits a row exactly when the row
 is accepted or the two values present the same scenario: it misses every rejected and every
 divided cluster with a polite clitic. -/
 theorem formal_fits_iff : ∀ e ∈ Examples.all,
