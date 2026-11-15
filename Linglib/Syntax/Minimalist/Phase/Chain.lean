@@ -36,7 +36,7 @@ phase](##Minimalist.withinComplement_iff_exists_mem_cCommandDomain).
 
 namespace Minimalist
 
-open RoseTree SyntacticObject Core.Order PhraseStructure
+open RoseTree SyntacticObject PhraseStructure
 
 variable (hd : HeadFunction) (t : PlanarSyntacticObject) (tok : LexicalItem.Token)
 
@@ -62,12 +62,13 @@ theorem withinComplement_iff_exists_mem_cCommandDomain {t : PlanarSyntacticObjec
 /-- A link of the chain of `tok` leaves the phase headed at `h` when it runs from a position the
 head c-commands, the phase's interior, to a position outside the head's maximal projection; the
 Phase Impenetrability Condition forbids it, and a link to the edge does not leave. -/
-def Crosses (h : TreePath) : Prop :=
+def Crosses (h : GornAddress) : Prop :=
   ∃ x ∈ links hd t tok, x.2 ∈ t.toRoseTree.cCommandDomain h ∧ ¬ projectionAt hd t h ≤ x.1
 
-instance (h : TreePath) : Decidable (Crosses hd t tok h) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
+instance (h : GornAddress) : Decidable (Crosses hd t tok h) := inferInstanceAs (Decidable (∃ _ ∈ _,
+    _))
 
-theorem not_crosses_of_length_le_one (h : (chain t tok).length ≤ 1) (p : TreePath) :
+theorem not_crosses_of_length_le_one (h : (chain t tok).length ≤ 1) (p : GornAddress) :
     ¬ Crosses hd t tok p := by
   simp [Crosses, links_eq_nil_of_length_le_one hd t tok h]
 

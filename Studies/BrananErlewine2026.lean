@@ -39,7 +39,7 @@ deep, so breadth-first search cannot prefer the theme (9).
 
 namespace BrananErlewine2026
 
-open Minimalist Core.Order
+open Minimalist
 open Minimalist.Probe (depthFirst breadthFirst depth breadthFirst_lt_of_depth_lt depth_complement)
 
 /-! ### Breadth-first search and Closest (2) -/
@@ -57,7 +57,7 @@ theorem eq_complement_of_finds_depth (ha : p.Finds s (depth ·.val) a) (hb : b �
   refine (hc.eq_of_not_lt fun hlt ↦ ha.inspects.2 hb hsb ?_).symm
   show depth b.val < depth a.val
   rw [← depth_complement hb0]
-  exact TreePath.length_strictMono hlt
+  exact GornAddress.depth_strictMono hlt
 
 theorem eq_complement_of_finds_breadthFirst (ha : p.Finds s (breadthFirst ·.val) a) (hb : b ∈ s)
     (hsb : p.sat b) (hba : t.toRoseTree.CCommands b.val a.val) : a.val = complement b.val :=

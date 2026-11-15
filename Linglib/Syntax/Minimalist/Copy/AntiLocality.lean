@@ -34,29 +34,29 @@ phase head no way out is proved in `Phase/Transfer.lean`.
 
 namespace Minimalist
 
-open Core.Order RoseTree
+open RoseTree
 
 variable (hd : HeadFunction) (t : PlanarSyntacticObject)
 
 /-- A pronounced head occupies the position. -/
-def IsHeadPosition (p : TreePath) : Prop := ∃ x ∈ tokenList t.toRoseTree, x.1 = p
+def IsHeadPosition (p : GornAddress) : Prop := ∃ x ∈ tokenList t.toRoseTree, x.1 = p
 
-instance (p : TreePath) : Decidable (IsHeadPosition t p) :=
+instance (p : GornAddress) : Decidable (IsHeadPosition t p) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The maximal projections a link crosses, those dominating the phrase that moves but not its
 landing site ([erlewine-2016]). -/
-def crossed (x : TreePath × TreePath) : Finset TreePath :=
-  ((projectionAt hd t x.2).toList.inits.map TreePath.mk).toFinset.filter fun Y ↦
+def crossed (x : GornAddress × GornAddress) : Finset GornAddress :=
+  ((projectionAt hd t x.2).toList.inits.map GornAddress.mk).toFinset.filter fun Y ↦
     Y ∈ maximalProjections hd t ∧ x.1.parent < Y ∧ Y < projectionAt hd t x.2
 
 /-- A link moves a specifier, a phrase whose sister is no head, across no maximal projection but
 the one it leaves, which [erlewine-2016]'s Spec-to-Spec anti-locality bans. -/
-def SpecToSpec (x : TreePath × TreePath) : Prop :=
+def SpecToSpec (x : GornAddress × GornAddress) : Prop :=
   projectionAt hd t x.2 ≠ ⊥ ∧ ¬ IsHeadPosition t (complement (projectionAt hd t x.2)) ∧
     (crossed hd t x).card ≤ 1
 
-instance (x : TreePath × TreePath) : Decidable (SpecToSpec hd t x) :=
+instance (x : GornAddress × GornAddress) : Decidable (SpecToSpec hd t x) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 /-- No link of any chain moves a specifier across no maximal projection but its own. -/
@@ -68,11 +68,11 @@ instance : Decidable (ObeysAntiLocality hd t) :=
 
 /-- A link moves the complement of a head to a specifier of the head's phrase, which
 [abels-2003]'s anti-locality bans. -/
-def CompToSpec (x : TreePath × TreePath) : Prop :=
+def CompToSpec (x : GornAddress × GornAddress) : Prop :=
   IsHeadPosition t (complement (projectionAt hd t x.2)) ∧
     projectionAt hd t (complement (projectionAt hd t x.2)) ≤ x.1.parent
 
-instance (x : TreePath × TreePath) : Decidable (CompToSpec hd t x) :=
+instance (x : GornAddress × GornAddress) : Decidable (CompToSpec hd t x) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 end Minimalist

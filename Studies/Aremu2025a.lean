@@ -54,7 +54,7 @@ a modal that its associate scopes below](##split_scope).
 
 namespace Aremu2025a
 
-open Core.Order Reflex OrderDual Focus Set Minimalist Minimalist.PlanarSyntacticObject
+open Reflex OrderDual Focus Set Minimalist Minimalist.PlanarSyntacticObject
 open BrananErlewine2023 (LeftAlignedOn prominent xp)
 
 /-! ### Derivations -/
@@ -190,27 +190,27 @@ theorem extraction_over_ni :
 Constituents are positions by grammatical function in `[subject [verb object adjunct]]`, ordered by
 containment. -/
 
-def clause : TreePath := ⟨[]⟩
-def subject : TreePath := ⟨[0]⟩
-def vp : TreePath := ⟨[1]⟩
-def verb : TreePath := ⟨[1, 0]⟩
-def object : TreePath := ⟨[1, 1]⟩
-def adjunct : TreePath := ⟨[1, 2]⟩
+def clause : GornAddress := ⟨[]⟩
+def subject : GornAddress := ⟨[0]⟩
+def vp : GornAddress := ⟨[1]⟩
+def verb : GornAddress := ⟨[1, 0]⟩
+def object : GornAddress := ⟨[1, 1]⟩
+def adjunct : GornAddress := ⟨[1, 2]⟩
 
 /-- The positions the rows name. -/
-def positionNames : List (String × TreePath) :=
+def positionNames : List (String × GornAddress) :=
   [("clause", clause), ("subject", subject), ("vp", vp), ("verb", verb), ("object", object),
     ("adjunct", adjunct)]
 
 /-- The phrases Branan and Erlewine's rule aligns. -/
-def clausePhrases : List TreePath :=
+def clausePhrases : List GornAddress :=
   prominent (.node .v [xp .D "S", .node .V [.terminal .V "V", xp .D "O", xp .P "A"]]) []
 
 /-- A subject, or a non-subject, whose focus behaves alike (p. 110). -/
-def Associate.ofPosition (m : TreePath) : Associate :=
+def Associate.ofPosition (m : GornAddress) : Associate :=
   if m = Aremu2025a.subject then .subject else .object
 
-theorem siteOf_ofPosition_eq_pronoun_iff {m : TreePath} :
+theorem siteOf_ofPosition_eq_pronoun_iff {m : GornAddress} :
     siteOf .matrix (.ofPosition m) = .pronoun ↔ m = subject := by
   by_cases hm : m = subject
   · subst hm; exact iff_of_true (by decide +kernel) rfl
@@ -219,13 +219,13 @@ theorem siteOf_ofPosition_eq_pronoun_iff {m : TreePath} :
 /-- An answer to a question. -/
 structure Answer where
   /-- The logical focus. -/
-  focus : TreePath
+  focus : GornAddress
   /-- What it fronts before *ni*. -/
-  fronted : Option TreePath
+  fronted : Option GornAddress
   /-- The number of the focus, which a resumptive agrees with. -/
   number : Number := .singular
 
-variable {a : Answer} {m : TreePath}
+variable {a : Answer} {m : GornAddress}
 
 namespace Answer
 
@@ -234,11 +234,11 @@ def pronoun (a : Answer) : Option PersonalPronoun :=
   Yoruba.Pronouns.pastPresentSubject .third a.number
 
 /-- The resumptive of a fronted subject. -/
-def resumptive (a : Answer) : Finset (Reflex TreePathᵒᵈ) :=
+def resumptive (a : Answer) : Finset (Reflex GornAddressᵒᵈ) :=
   (a.pronoun.map fun r ↦ .morpheme (toDual subject) [.free r.form]).toFinset
 
 /-- A fronted constituent is followed by *ni*, and resumed where a gap is out or else displaced. -/
-def reflexes (a : Answer) : Finset (Reflex TreePathᵒᵈ) :=
+def reflexes (a : Answer) : Finset (Reflex GornAddressᵒᵈ) :=
   match a.fronted with
   | none => ∅
   | some m => {.morpheme (toDual m) [.free Yoruba.ni.form]} ∪
@@ -322,7 +322,7 @@ theorem licensed_antiPiedPipes_iff :
         (by decide +kernel : ∀ x ∈ clausePhrases, x.LeftAligned subject → x = subject) x
           (List.mem_of_find?_eq_some hx) hxy
       obtain rfl := (BrananErlewine2023.le_of_mem_leftmost hx).lt_or_eq.resolve_left
-        fun hlt ↦ hc.not_ge (TreePath.le_parent_of_lt hlt)
+        fun hlt ↦ hc.not_ge (GornAddress.le_parent_of_lt hlt)
       exact ⟨hf, hm⟩
   · rintro ⟨hf, hs⟩
     refine ⟨⟨fun h ↦ absurd (hf.symm.trans h) (by decide), fun m hm ↦ ?_⟩, subject, hs,
@@ -343,7 +343,7 @@ theorem not_perceptible : ¬ Perceptible fun a : {a : Answer // a.Licensed} ↦ 
   fun h ↦ Finset.not_nonempty_empty (h ⟨{ focus := object, fronted := none }, by decide +kernel⟩)
 
 /-- The relativizable position of a constituent. -/
-def relativePosition? (m : TreePath) : Option Relativization.Position :=
+def relativePosition? (m : GornAddress) : Option Relativization.Position :=
   if m = subject then some .subject
   else if m = object then some .directObject
   else if m = adjunct then some .oblique

@@ -31,17 +31,17 @@ function its analysis assumes.
 
 namespace Minimalist
 
-open Core.Order PhraseStructure
+open PhraseStructure
 
 /-- A head function gives, at each position of a planar syntactic object, the index of its head
 daughter, `none` where no daughter projects. -/
-abbrev HeadFunction := PlanarSyntacticObject → TreePath → Option ℕ
+abbrev HeadFunction := PlanarSyntacticObject → GornAddress → Option ℕ
 
 variable (hd : HeadFunction) (t : PlanarSyntacticObject)
 
 /-- The maximal projections of a planar object, the positions that are no position's head
 daughter. -/
-def maximalProjections : Set TreePath := {x | IsMaximalProjection (headDaughterRel (hd t)) x}
+def maximalProjections : Set GornAddress := {x | IsMaximalProjection (headDaughterRel (hd t)) x}
 
 instance : DecidablePred (· ∈ maximalProjections hd t) :=
   fun x ↦ inferInstanceAs (Decidable (IsMaximalProjection (headDaughterRel (hd t)) x))
@@ -52,12 +52,12 @@ theorem maximalProjections_eq :
 
 /-- The maximal projection of the position `p`, the highest position reached from `p` by climbing
 while the position is the head daughter of its mother. -/
-def projectionAt (p : TreePath) : TreePath := maximalProjectionAt (hd t) p
+def projectionAt (p : GornAddress) : GornAddress := maximalProjectionAt (hd t) p
 
-theorem projectionAt_le (p : TreePath) : projectionAt hd t p ≤ p := maximalProjectionAt_le _ p
+theorem projectionAt_le (p : GornAddress) : projectionAt hd t p ≤ p := maximalProjectionAt_le _ p
 
 /-- The lexical head of the phrase at `p`, reached by descending through head daughters. -/
-def lexicalHeadAt (p : TreePath) : TreePath :=
-  (fun q ↦ (hd t q).elim q q.child)^[t.toRoseTree.subtrees.length] p
+def lexicalHeadAt (p : GornAddress) : GornAddress :=
+  (fun q ↦ (hd t q).elim q (q * .of ·))^[t.toRoseTree.subtrees.length] p
 
 end Minimalist

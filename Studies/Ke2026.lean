@@ -49,7 +49,7 @@ movement through every edge satisfies (`ex13`), and only when whole phases are s
 
 namespace Ke2026
 
-open Core.Order Minimalist
+open Minimalist
 
 /-! ### The derivation of (13) -/
 
@@ -118,19 +118,19 @@ complement is complete. -/
 def AfterNextPhase (t : PlanarSyntacticObject) : Schedule :=
   fun Φ h s ↦ ∃ z ∈ Φ, complement z ≤ projectionAt .raising t h ∧ s < projectionAt .raising t z
 
-instance (t : PlanarSyntacticObject) (Φ : Finset TreePath) (h s : TreePath) :
+instance (t : PlanarSyntacticObject) (Φ : Finset GornAddress) (h s : GornAddress) :
     Decidable (AfterNextPhase t Φ h s) :=
   inferInstanceAs (Decidable (∃ _ ∈ Φ, _))
 
 /-- No link of a chain in the object a derivation derives leaves a domain `D` of its phase heads
 transferred under the schedule `σ`. -/
-def ObeysTransfer (d : Derivation) (D : PlanarSyntacticObject → TreePath → Set TreePath)
+def ObeysTransfer (d : Derivation) (D : PlanarSyntacticObject → GornAddress → Set GornAddress)
     [∀ t h, DecidablePred (· ∈ D t h)] (σ : PlanarSyntacticObject → Schedule)
     [∀ t Φ h s, Decidable (σ t Φ h s)] : Prop :=
   ∀ t ∈ d.externalize?, ∀ y ∈ tokenList t.toRoseTree,
     ¬ LinkLeaves .raising t y.2 (sealed (occurrencesWith t IsPhaseHead).toFinset (D t) (σ t))
 
-instance (d : Derivation) (D : PlanarSyntacticObject → TreePath → Set TreePath)
+instance (d : Derivation) (D : PlanarSyntacticObject → GornAddress → Set GornAddress)
     [∀ t h, DecidablePred (· ∈ D t h)] (σ : PlanarSyntacticObject → Schedule)
     [∀ t Φ h s, Decidable (σ t Φ h s)] : Decidable (ObeysTransfer d D σ) := by
   unfold ObeysTransfer; infer_instance

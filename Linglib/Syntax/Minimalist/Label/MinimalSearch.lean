@@ -63,7 +63,7 @@ the object, so the lower copy of a phrase that has moved on is invisible to it.
 
 namespace Minimalist.PlanarSyntacticObject
 
-open RoseTree SyntacticObject Core.Order
+open RoseTree SyntacticObject
 
 variable (t : PlanarSyntacticObject)
 
@@ -374,7 +374,7 @@ end Minimalist.PlanarSyntacticObject
 
 namespace Minimalist.HeadFunction
 
-open RoseTree Core.Order PhraseStructure
+open RoseTree PhraseStructure
 
 /-- The label head function, [chomsky-2013]'s: the head daughter of a position is the daughter
 containing the one head minimal search from it finds, and there is none where search finds no head
@@ -382,7 +382,7 @@ or several. -/
 def label : HeadFunction := fun t x ↦
   if hx : x ∈ t.toRoseTree.validPaths then
     (List.range 2).find? fun i ↦
-      if hc : x.child i ∈ t.toRoseTree.validPaths then
+      if hc : x * .of i ∈ t.toRoseTree.validPaths then
         decide ((t.labelsAt ⟨x, hx⟩).card = 1 ∧ t.labelsAt ⟨x, hx⟩ ⊆ t.labelsAt ⟨_, hc⟩)
       else false
   else none
@@ -392,15 +392,15 @@ theorem labelDaughter_of_headDaughterRel_label {t : PlanarSyntacticObject}
     {n c : t.toRoseTree.Positions} (h : headDaughterRel (label t) n.val c.val) :
         t.LabelDaughter n c := by
   obtain ⟨i, hi, hc⟩ := h
-  have hci : n.val.child i = c.val := TreePath.ext hc.symm
+  have hci : n.val * .of i = c.val := GornAddress.ext hc.symm
   simp only [label, dite_eq_left n.2] at hi
   have hp := List.find?_some hi
   rw [dite_eq_left (hci ▸ c.2), decide_eq_true_eq] at hp
   obtain ⟨hcard, hsub⟩ := hp
   obtain ⟨a, ha⟩ := Finset.card_eq_one.1 hcard
-  have hcov : n ⋖ c := Positions.covBy_iff.2 (TreePath.covBy_iff.2 ⟨i, hc⟩)
+  have hcov : n ⋖ c := Positions.covBy_iff.2 (GornAddress.covBy_iff_toList.2 ⟨i, hc⟩)
   refine ⟨hcov, a, ha, ?_⟩
-  have : (⟨n.val.child i, hci ▸ c.2⟩ : t.toRoseTree.Positions) = c := Subtype.ext hci
+  have : (⟨n.val * .of i, hci ▸ c.2⟩ : t.toRoseTree.Positions) = c := Subtype.ext hci
   exact this ▸ hsub (ha ▸ Finset.mem_singleton_self a)
 
 end Minimalist.HeadFunction

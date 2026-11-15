@@ -44,7 +44,7 @@ C's φ ∨ δ probe moves the one bearing δ, by Best Match.
 
 namespace HammerlyMathieu2026
 
-open Minimalist Probe Core.Order
+open Minimalist Probe
 
 /-! ### Features, section 3.1 -/
 
@@ -213,7 +213,7 @@ def isNominal (t : PlanarSyntacticObject) (q : t.toRoseTree.Positions) : Bool :=
 
 /-- Closeness in the clause: the maximal projections above a position, under which the specifiers
 of a head and the head itself are equidistant. -/
-abbrev closeness (t : PlanarSyntacticObject) : t.toRoseTree.Positions → Finset TreePath :=
+abbrev closeness (t : PlanarSyntacticObject) : t.toRoseTree.Positions → Finset GornAddress :=
   t.above (maximalProjections .raising t)
 
 /-- A stage of the derivation: the object built, what the heads have copied, and the token the
@@ -247,7 +247,7 @@ instance (t : PlanarSyntacticObject) (hq : t.toRoseTree.Positions) :
 /-- A probing head at the position `hp` of the object: it Agrees by `agr` under Best Match,
 recording what it copies, and attracts the nominal it agrees with by `epp`, which re-merges as its
 outer specifier. -/
-def probeStep (v : Voice) (x : Clause) (h : LexicalItem.Token) (hp : TreePath)
+def probeStep (v : Voice) (x : Clause) (h : LexicalItem.Token) (hp : GornAddress)
     (agr epp : Spec Feature) (st : Stage) : Stage :=
   let t := st.obj
   if hhp : hp ∈ t.toRoseTree.validPaths then
@@ -402,7 +402,7 @@ theorem target_inverse_plain :
 
 /-- The stages a probing head may leave when, as two reviewers suggest, a tie moves either goal: one
 for each nominal the probe agrees with, or the object unchanged if it agrees with none. -/
-def probeOptions (v : Voice) (x : Clause) (h : LexicalItem.Token) (hp : TreePath)
+def probeOptions (v : Voice) (x : Clause) (h : LexicalItem.Token) (hp : GornAddress)
     (agr epp : Spec Feature) (st : Stage) : Multiset Stage :=
   let t := st.obj
   if hhp : hp ∈ t.toRoseTree.validPaths then

@@ -58,53 +58,53 @@ into a context, which carries its positions along.
 
 namespace DistributedMorphology
 
-open PhraseStructure PhraseStructure.Tree Core.Order
+open PhraseStructure PhraseStructure.Tree
 
 variable {C W : Type*}
 
 /-! ### The two formulations -/
 
 /-- The nodes crossed going from `α` to `β`, those that dominate `α` and not `β`. -/
-def crossed (α β : TreePath) : List TreePath :=
-  (α.toList.inits.map TreePath.mk).filter fun p ↦ ¬ p ≤ β
+def crossed (α β : GornAddress) : List GornAddress :=
+  (α.toList.inits.map GornAddress.mk).filter fun p ↦ ¬ p ≤ β
 
-theorem mem_crossed {α β p : TreePath} : p ∈ crossed α β ↔ p ≤ α ∧ ¬ p ≤ β := by
+theorem mem_crossed {α β p : GornAddress} : p ∈ crossed α β ↔ p ≤ α ∧ ¬ p ≤ β := by
   obtain ⟨p⟩ := p
-  simp [crossed, List.mem_inits, TreePath.le_def]
+  simp [crossed, List.mem_inits, GornAddress.le_def]
 
 /-- **Locality, Bobaljik's formulation.** A trigger at `β` may condition the head at `α` when no
 maximal projection is crossed going from `α` to `β`. -/
-def MayCondition [DecidableEq C] (t : Tree C W) (α β : TreePath) : Prop :=
+def MayCondition [DecidableEq C] (t : Tree C W) (α β : GornAddress) : Prop :=
   ∀ p ∈ crossed α β, IsHeadAt t p ∨ ¬ IsMaximalCategory (Tree.ProjectsAt t) (Tree.AdjoinsAt t) p
 
 /-- **Locality, the refined formulation.** A trigger at `β` may condition the head at `α` when no
 phrasal node at all is crossed going from `α` to `β`. -/
-def MayCondition' (t : Tree C W) (α β : TreePath) : Prop := ∀ p ∈ crossed α β, IsHeadAt t p
+def MayCondition' (t : Tree C W) (α β : GornAddress) : Prop := ∀ p ∈ crossed α β, IsHeadAt t p
 
-instance [DecidableEq C] (t : Tree C W) (α β : TreePath) : Decidable (MayCondition t α β) :=
+instance [DecidableEq C] (t : Tree C W) (α β : GornAddress) : Decidable (MayCondition t α β) :=
   List.decidableBAll _ _
 
-instance (t : Tree C W) (α β : TreePath) : Decidable (MayCondition' t α β) :=
+instance (t : Tree C W) (α β : GornAddress) : Decidable (MayCondition' t α β) :=
   List.decidableBAll _ _
 
-theorem MayCondition'.mayCondition [DecidableEq C] {t : Tree C W} {α β : TreePath}
+theorem MayCondition'.mayCondition [DecidableEq C] {t : Tree C W} {α β : GornAddress}
     (h : MayCondition' t α β) : MayCondition t α β :=
   fun p hp ↦ .inl (h p hp)
 
-theorem mayCondition_iff [DecidableEq C] {t : Tree C W} {α β : TreePath} :
+theorem mayCondition_iff [DecidableEq C] {t : Tree C W} {α β : GornAddress} :
     MayCondition t α β ↔ ∀ p, p ≤ α → ¬ p ≤ β →
       IsHeadAt t p ∨ ¬ IsMaximalCategory (Tree.ProjectsAt t) (Tree.AdjoinsAt t) p :=
   ⟨fun h p hα hβ ↦ h p (mem_crossed.mpr ⟨hα, hβ⟩),
     fun h p hp ↦ h p (mem_crossed.mp hp).1 (mem_crossed.mp hp).2⟩
 
-theorem mayCondition'_iff {t : Tree C W} {α β : TreePath} :
+theorem mayCondition'_iff {t : Tree C W} {α β : GornAddress} :
     MayCondition' t α β ↔ ∀ p, p ≤ α → ¬ p ≤ β → IsHeadAt t p :=
   ⟨fun h p hα hβ ↦ h p (mem_crossed.mpr ⟨hα, hβ⟩),
     fun h p hp ↦ h p (mem_crossed.mp hp).1 (mem_crossed.mp hp).2⟩
 
 /-- **The refinement changes nothing within a complex head.** Whatever a head-level node
 contains may condition anything else it contains. -/
-theorem mayCondition'_of_isHeadAt {t : Tree C W} {h α β : TreePath} (hh : IsHeadAt t h)
+theorem mayCondition'_of_isHeadAt {t : Tree C W} {h α β : GornAddress} (hh : IsHeadAt t h)
     (hα : h ≤ α) (hβ : h ≤ β) : MayCondition' t α β :=
   mayCondition'_iff.mpr fun _ hp hpβ ↦
     (IsLeftLinear.comparable_of_le_common hp hα).elim (fun hph ↦ absurd (hph.trans hβ) hpβ)
@@ -113,58 +113,58 @@ theorem mayCondition'_of_isHeadAt {t : Tree C W} {h α β : TreePath} (hh : IsHe
 /-! ### Pronominal stranding -/
 
 /-- A proform of category `X` may stand for the node at `p` when it is a phrase of category `X`. -/
-def Replaceable (X : C) (t : Tree C W) (p : TreePath) : Prop :=
+def Replaceable (X : C) (t : Tree C W) (p : GornAddress) : Prop :=
   ∃ s ∈ t[p.toList]?, ¬ Tree.IsHead s ∧ s.value.cat = X
 
 /-- A proform of category `X` strands the node at `β` from the node at `α` when it may stand for a
 phrase that contains `α` and not `β`. -/
-def Strands (X : C) (t : Tree C W) (α β : TreePath) : Prop :=
+def Strands (X : C) (t : Tree C W) (α β : GornAddress) : Prop :=
   ∃ p ∈ crossed α β, Replaceable X t p
 
-instance [DecidableEq C] (X : C) (t : Tree C W) (p : TreePath) : Decidable (Replaceable X t p) :=
+instance [DecidableEq C] (X : C) (t : Tree C W) (p : GornAddress) : Decidable (Replaceable X t p) :=
   inferInstanceAs (Decidable (∃ s ∈ _, _))
 
-instance [DecidableEq C] (X : C) (t : Tree C W) (α β : TreePath) :
+instance [DecidableEq C] (X : C) (t : Tree C W) (α β : GornAddress) :
     Decidable (Strands X t α β) :=
   List.decidableBEx _ _
 
 /-- A proform of category `X` includes the node at `β` with the node at `α` when it may stand for a
 phrase that contains both. -/
-def Includes (X : C) (t : Tree C W) (α β : TreePath) : Prop :=
-  ∃ p ∈ α.toList.inits.map TreePath.mk, p ≤ β ∧ Replaceable X t p
+def Includes (X : C) (t : Tree C W) (α β : GornAddress) : Prop :=
+  ∃ p ∈ α.toList.inits.map GornAddress.mk, p ≤ β ∧ Replaceable X t p
 
-instance [DecidableEq C] (X : C) (t : Tree C W) (α β : TreePath) :
+instance [DecidableEq C] (X : C) (t : Tree C W) (α β : GornAddress) :
     Decidable (Includes X t α β) :=
   List.decidableBEx _ _
 
-theorem strands_iff {X : C} {t : Tree C W} {α β : TreePath} :
+theorem strands_iff {X : C} {t : Tree C W} {α β : GornAddress} :
     Strands X t α β ↔ ∃ p, p ≤ α ∧ ¬ p ≤ β ∧ Replaceable X t p := by
   simp only [Strands, mem_crossed, and_assoc]
 
-theorem includes_iff {X : C} {t : Tree C W} {α β : TreePath} :
+theorem includes_iff {X : C} {t : Tree C W} {α β : GornAddress} :
     Includes X t α β ↔ ∃ p, p ≤ α ∧ p ≤ β ∧ Replaceable X t p := by
   refine exists_congr fun ⟨p⟩ ↦ and_congr_left fun _ ↦ ?_
-  simp [List.mem_inits, TreePath.le_def]
+  simp [List.mem_inits, GornAddress.le_def]
 
-theorem includes_comm {X : C} {t : Tree C W} {α β : TreePath} :
+theorem includes_comm {X : C} {t : Tree C W} {α β : GornAddress} :
     Includes X t α β ↔ Includes X t β α := by
   simp only [includes_iff, and_left_comm]
 
 /-- A proform that may stand for a phrase containing a node strands or includes every other
 node. -/
-theorem strands_or_includes_iff {X : C} {t : Tree C W} {α β : TreePath} :
+theorem strands_or_includes_iff {X : C} {t : Tree C W} {α β : GornAddress} :
     Strands X t α β ∨ Includes X t α β ↔ ∃ p, p ≤ α ∧ Replaceable X t p := by
   simp only [strands_iff, includes_iff, ← exists_or, ← and_or_left, ← or_and_right]
   exact exists_congr fun p ↦ and_congr_right fun _ ↦ and_iff_right (em' _)
 
-theorem not_replaceable_of_isHeadAt {X : C} {t : Tree C W} {p : TreePath} (h : IsHeadAt t p) :
+theorem not_replaceable_of_isHeadAt {X : C} {t : Tree C W} {p : GornAddress} (h : IsHeadAt t p) :
     ¬ Replaceable X t p := by
   rintro ⟨s, hs, hh, -⟩
   exact hh (h s hs)
 
 /-- **Locality is the absence of stranding.** A trigger may condition a head under the refined
 formulation exactly when no proform strands it from the head. -/
-theorem mayCondition'_iff_forall_not_strands {t : Tree C W} {α β : TreePath} :
+theorem mayCondition'_iff_forall_not_strands {t : Tree C W} {α β : GornAddress} :
     MayCondition' t α β ↔ ∀ X, ¬ Strands X t α β := by
   refine ⟨fun h X ⟨p, hp, hr⟩ ↦ not_replaceable_of_isHeadAt (h p hp) hr, fun h p hp ↦ ?_⟩
   by_contra hh
@@ -175,14 +175,14 @@ theorem mayCondition'_iff_forall_not_strands {t : Tree C W} {α β : TreePath} :
 
 /-- The labels of the terminals that may condition the head at `α` under the refined
 formulation. -/
-def localSet (t : Tree C W) (α : TreePath) : Set (C × W) :=
-  {l | ∃ p : TreePath, t[p.toList]? = some (terminal l.1 l.2) ∧ MayCondition' t α p}
+def localSet (t : Tree C W) (α : GornAddress) : Set (C × W) :=
+  {l | ∃ p : GornAddress, t[p.toList]? = some (terminal l.1 l.2) ∧ MayCondition' t α p}
 
 /-- The labels of the terminals that may condition the head at `α`, in the order of the yield. -/
-def localLabels (t : Tree C W) (α : TreePath) : List (C × W) :=
+def localLabels (t : Tree C W) (α : GornAddress) : List (C × W) :=
   t.positionedTerminals.filterMap fun x ↦ if MayCondition' t α x.1 then some x.2 else none
 
-theorem mem_localSet_iff {t : Tree C W} {α : TreePath} {l : C × W} :
+theorem mem_localSet_iff {t : Tree C W} {α : GornAddress} {l : C × W} :
     l ∈ localSet t α ↔ l ∈ localLabels t α := by
   simp only [localSet, localLabels, Set.mem_ofPred_eq, List.mem_filterMap,
     Option.ite_none_right_eq_some, Option.some.injEq]
@@ -193,7 +193,7 @@ theorem mem_localSet_iff {t : Tree C W} {α : TreePath} {l : C × W} :
     exact ⟨x.1, getElem?_of_mem_positionedTerminals hx, hm⟩
 
 /-- The complex head containing the node at `α`, its highest head-level ancestor. -/
-def x0At (t : Tree C W) (α : TreePath) : Option (Tree C W) :=
+def x0At (t : Tree C W) (α : GornAddress) : Option (Tree C W) :=
   (α.toList.inits.find? fun p ↦ decide (∀ s ∈ t[p]?, Tree.IsHead s)).bind (t[·]?)
 
 /-! ### Embedding -/
@@ -209,16 +209,16 @@ private theorem inits_eq_nil_cons (α : List ℕ) : α.inits = [] :: α.inits.ta
 theorem _root_.PhraseStructure.Tree.IsHead.of_plug (h : Tree.IsHead (c.plug t)) : t.IsHead :=
   RoseTree.Licensed.of_getElem? h (c.getElem?_plug_path t)
 
-theorem isHeadAt_plug (q : TreePath) : IsHeadAt (c.plug t) (c.embed q) ↔ IsHeadAt t q := by
+theorem isHeadAt_plug (q : GornAddress) : IsHeadAt (c.plug t) (c.embed q) ↔ IsHeadAt t q := by
   simp only [IsHeadAt, c.getElem?_plug_embed]
 
 /-- No node above a phrase is head-level. -/
-theorem not_isHeadAt_plug_of_le (ht : ¬ Tree.IsHead t) {r : TreePath} (hr : r ≤ c.embed ⊥) :
+theorem not_isHeadAt_plug_of_le (ht : ¬ Tree.IsHead t) {r : GornAddress} (hr : r ≤ c.embed ⊥) :
     ¬ IsHeadAt (c.plug t) r := fun hh ↦ by
   obtain ⟨c₁, c₂, rfl, hs⟩ := RoseTree.Context.exists_getElem?_plug_of_le hr
   exact ht (Tree.IsHead.of_plug c₂ (hh _ (hs t)))
 
-theorem mayCondition'_plug (α γ : TreePath) :
+theorem mayCondition'_plug (α γ : GornAddress) :
     MayCondition' (c.plug t) (c.embed α) (c.embed γ) ↔ MayCondition' t α γ := by
   simp only [mayCondition'_iff]
   constructor
@@ -230,13 +230,13 @@ theorem mayCondition'_plug (α γ : TreePath) :
     · exact (isHeadAt_plug c p).mpr (hm p hp fun h ↦ hγ (c.embed.le_iff_le.mpr h))
 
 /-- Nothing outside a phrase may condition a head inside it. -/
-theorem not_mayCondition'_plug (ht : ¬ Tree.IsHead t) (α : TreePath) {β : TreePath}
+theorem not_mayCondition'_plug (ht : ¬ Tree.IsHead t) (α : GornAddress) {β : GornAddress}
     (hβ : ¬ c.embed ⊥ ≤ β) : ¬ MayCondition' (c.plug t) (c.embed α) β := fun hm ↦
   not_isHeadAt_plug_of_le c ht le_rfl
     (mayCondition'_iff.mp hm _ (c.embed.monotone bot_le) hβ)
 
 /-- Embedding a phrase with a phrasal root leaves the labels local to its heads unchanged. -/
-theorem localSet_plug (ht : ¬ Tree.IsHead t) (α : TreePath) :
+theorem localSet_plug (ht : ¬ Tree.IsHead t) (α : GornAddress) :
     localSet (c.plug t) (c.embed α) = localSet t α := by
   ext l
   constructor
@@ -251,31 +251,31 @@ theorem localSet_plug (ht : ¬ Tree.IsHead t) (α : TreePath) :
       (mayCondition'_plug c α γ).mpr hm⟩
 
 /-- Embedding a phrase with a phrasal root leaves the complex heads of its nodes unchanged. -/
-theorem x0At_plug (ht : ¬ Tree.IsHead t) (α : TreePath) :
+theorem x0At_plug (ht : ¬ Tree.IsHead t) (α : GornAddress) :
     x0At (c.plug t) (c.embed α) = x0At t α := by
   simp only [x0At, RoseTree.Context.toList_embed]
   have hnone : c.path.inits.find? (fun p ↦ decide (∀ s ∈ (c.plug t)[p]?, Tree.IsHead s)) = none :=
     List.find?_eq_none.mpr fun r hr h ↦ not_isHeadAt_plug_of_le c ht (r := ⟨r⟩)
-      (TreePath.le_def.mpr (by simpa using (List.mem_inits _ _).mp hr)) (of_decide_eq_true h)
+      (GornAddress.le_def.mpr (by simpa using (List.mem_inits _ _).mp hr)) (of_decide_eq_true h)
   rw [List.inits_append, List.find?_append, hnone, Option.none_or, List.find?_map,
     inits_eq_nil_cons α.toList, List.find?_cons]
   have h0 : ¬ ∀ s ∈ t[([] : List ℕ)]?, Tree.IsHead s := by simpa using ht
   simp only [h0, decide_false, List.tail_cons, Function.comp_def,
     RoseTree.Context.getElem?_plug_append, Option.bind_map]
 
-private theorem replaceable_iff {X : C} {t : Tree C W} {p : TreePath} :
+private theorem replaceable_iff {X : C} {t : Tree C W} {p : GornAddress} :
     Replaceable X t p ↔
       t[p.toList]?.map (fun s ↦ (decide (Tree.IsHead s), s.value.cat)) =
         some (false, X) := by
   simp [Replaceable]
 
-private theorem replaceable_plug {X : C} (p : TreePath) :
+private theorem replaceable_plug {X : C} (p : GornAddress) :
     Replaceable X (c.plug t) (c.embed p) ↔ Replaceable X t p := by
   simp [Replaceable]
 
 /-- **Stranding is local to a phrase.** A proform strands one node of a phrase from another
 within a context exactly when it does in the phrase alone. -/
-theorem strands_plug {X : C} (α β : TreePath) :
+theorem strands_plug {X : C} (α β : GornAddress) :
     Strands X (c.plug t) (c.embed α) (c.embed β) ↔ Strands X t α β := by
   simp only [strands_iff]
   constructor
@@ -287,20 +287,20 @@ theorem strands_plug {X : C} (α β : TreePath) :
     exact ⟨c.embed p, c.embed.le_iff_le.mpr hα, fun h ↦ hβ (c.embed.le_iff_le.mp h),
       (replaceable_plug c p).mpr hr⟩
 
-theorem Includes.plug {X : C} {α β : TreePath} (h : Includes X t α β) :
+theorem Includes.plug {X : C} {α β : GornAddress} (h : Includes X t α β) :
     Includes X (c.plug t) (c.embed α) (c.embed β) := by
   obtain ⟨p, hα, hβ, hr⟩ := includes_iff.mp h
   exact includes_iff.mpr ⟨c.embed p, c.embed.le_iff_le.mpr hα, c.embed.le_iff_le.mpr hβ,
     (replaceable_plug c p).mpr hr⟩
 
 private theorem sig_plug_of_le {t₁ t₂ : Tree C W} (h₁ : ¬ Tree.IsHead t₁)
-    (h₂ : ¬ Tree.IsHead t₂) (hv : t₁.value = t₂.value) {r : TreePath} (hr : r ≤ c.embed ⊥) :
+    (h₂ : ¬ Tree.IsHead t₂) (hv : t₁.value = t₂.value) {r : GornAddress} (hr : r ≤ c.embed ⊥) :
     (c.plug t₁)[r.toList]?.map (fun s ↦ (decide (Tree.IsHead s), s.value.cat)) =
       (c.plug t₂)[r.toList]?.map (fun s ↦ (decide (Tree.IsHead s), s.value.cat)) := by
   obtain ⟨c₁, c₂, rfl, hs⟩ := RoseTree.Context.exists_getElem?_plug_of_le hr
   have e₁ := hs t₁
   have e₂ := hs t₂
-  rw [RoseTree.getElem?_treePath] at e₁ e₂
+  rw [RoseTree.getElem?_gornAddress] at e₁ e₂
   rw [e₁, e₂]
   simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
   refine ⟨decide_eq_decide.mpr (iff_of_false (fun h ↦ h₁ (Tree.IsHead.of_plug c₂ h))
@@ -312,8 +312,8 @@ private theorem sig_plug_of_le {t₁ t₂ : Tree C W} (h₁ : ¬ Tree.IsHead t�
 /-- Two phrases that agree at their roots and along the way to a node are stranded from alike
 within a context. -/
 theorem strands_plug_congr {t₁ t₂ : Tree C W} (h₁ : ¬ Tree.IsHead t₁) (h₂ : ¬ Tree.IsHead t₂)
-    (hv : t₁.value = t₂.value) {α : TreePath}
-    (hα : ∀ p, p ≤ α → p ≠ ⊥ → t₁[p]? = t₂[p]?) (X : C) (β : TreePath) :
+    (hv : t₁.value = t₂.value) {α : GornAddress}
+    (hα : ∀ p, p ≤ α → p ≠ ⊥ → t₁[p]? = t₂[p]?) (X : C) (β : GornAddress) :
     Strands X (c.plug t₁) (c.embed α) β ↔ Strands X (c.plug t₂) (c.embed α) β := by
   refine exists_congr fun r ↦ and_congr_right fun hr ↦ ?_
   rw [replaceable_iff, replaceable_iff]

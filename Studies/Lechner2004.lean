@@ -54,7 +54,7 @@ surface Principle B account of (24) are not formalized.
 
 namespace Lechner2004
 
-open Core.Order PhraseStructure PhraseStructure.Tree Binding
+open PhraseStructure PhraseStructure.Tree Binding
 open RoseTree (IsBranchingAt CCommands cCommands_replaceAt_of_le cCommands_replaceAt_self)
 
 /-! ### Trees and coreference -/
@@ -70,15 +70,15 @@ abbrev word (c : Cat) : Tree Cat Unit := .terminal c ()
 abbrev nominalIn : Tree Cat Unit := .node .N [np, word .N]
 
 /-- The binding configuration of the positions `p` and `q` of `t` reads them as `0` and `1`. -/
-abbrev pairConfiguration (t : Tree Cat Unit) (p q : TreePath) : Configuration (Fin 2) :=
+abbrev pairConfiguration (t : Tree Cat Unit) (p q : GornAddress) : Configuration (Fin 2) :=
   t.clauseConfiguration.comap ![p, q]
 
 /-- A nominal of class `k` at `q` of `t` may corefer with the nominal at `p` when, if a nominal
 occupies `q`, it meets its binding condition under the dependency relating the two. -/
-def MayCorefer (t : Tree Cat Unit) (p q : TreePath) (k : BindingClass) : Prop :=
+def MayCorefer (t : Tree Cat Unit) (p q : GornAddress) (k : BindingClass) : Prop :=
   t[q]? = some np → (pairConfiguration t p q).Condition (pair 0 1) ∅ 1 k
 
-instance (t : Tree Cat Unit) (p q : TreePath) (k : BindingClass) :
+instance (t : Tree Cat Unit) (p q : GornAddress) (k : BindingClass) :
     Decidable (MayCorefer t p q k) :=
   inferInstanceAs (Decidable (_ → _))
 
@@ -96,9 +96,9 @@ structure CDComparative where
   /-- The *than*-clause, a trace at the deletion site. -/
   thanClause : Tree Cat Unit
   /-- The deletion site. -/
-  site : TreePath
+  site : GornAddress
   /-- The pronoun coindexed with the name. -/
-  pronoun : TreePath
+  pronoun : GornAddress
   /-- The antecedent adjective phrase of the matrix clause. -/
   antecedent : Tree Cat Unit
   /-- The address of the name inside the antecedent. -/
@@ -107,7 +107,7 @@ structure CDComparative where
 namespace CDComparative
 
 /-- `c.copy` is the position the copy of the name would occupy in the *than*-clause. -/
-def copy (c : CDComparative) : TreePath := ⟨c.site.toList ++ c.name⟩
+def copy (c : CDComparative) : GornAddress := ⟨c.site.toList ++ c.name⟩
 
 /-- `c.reconstructed` is the *than*-clause with the antecedent reconstructed at the site. -/
 def reconstructed (c : CDComparative) : Tree Cat Unit :=
@@ -143,9 +143,9 @@ def Resolution.Permits (r : Resolution) (c : CDComparative) : Prop :=
 instance (r : Resolution) (c : CDComparative) : Decidable (r.Permits c) :=
   inferInstanceAs (Decidable (MayCorefer _ _ _ _))
 
-theorem cCommands_copy_iff (c : CDComparative) {p : TreePath} (hsp : ¬ c.site ≤ p)
+theorem cCommands_copy_iff (c : CDComparative) {p : GornAddress} (hsp : ¬ c.site ≤ p)
     (hps : ¬ p ≤ c.site) : CCommands c.reconstructed p c.copy ↔ CCommands c.thanClause p c.site :=
-  cCommands_replaceAt_of_le (TreePath.le_def.2 (List.prefix_append _ _)) hsp hps
+  cCommands_replaceAt_of_le (GornAddress.le_def.2 (List.prefix_append _ _)) hsp hps
 
 /-- `proudOfJohn` is the antecedent *d-proud of John* of (24) and (25). -/
 def proudOfJohn : Tree Cat Unit := .node .Adj [word .Adj, .node .P [word .P, np]]
@@ -194,7 +194,7 @@ inductive TestContext where
 
 /-- `k.pronounName m r` orders a matrix term at `m` and a remnant's nominal at `r` as pronoun and
 name. -/
-def TestContext.pronounName : TestContext → TreePath → TreePath → TreePath × TreePath
+def TestContext.pronounName : TestContext → GornAddress → GornAddress → GornAddress × GornAddress
   | .a, m, r => (m, r)
   | .b, m, r => (r, m)
 
@@ -205,13 +205,13 @@ structure PhrasalComparative where
   /-- The matrix clause, a trace at the base of the *than*-phrase. -/
   matrix : Tree Cat Unit
   /-- The base of the *than*-phrase. -/
-  thanPhrase : TreePath
+  thanPhrase : GornAddress
   /-- The correlate of the remnant. -/
-  correlate : TreePath
+  correlate : GornAddress
   /-- The remnant. -/
   remnant : Tree Cat Unit
   /-- The matrix term coindexed with the remnant's nominal. -/
-  mTerm : TreePath
+  mTerm : GornAddress
   /-- The address of the coindexed nominal inside the remnant. -/
   inRemnant : List ℕ
   /-- Which of the two is the pronoun. -/
@@ -238,33 +238,34 @@ def direct : Tree Cat Unit :=
 
 /-- In the Gapped clause the remnant c-commands a matrix term exactly when the correlate
 c-commands it in the matrix clause (Prediction V). -/
-theorem gapped_cCommands_iff (m : TreePath) :
+theorem gapped_cCommands_iff (m : GornAddress) :
     CCommands e.gapped e.correlate m ↔ CCommands e.matrix e.correlate m :=
   cCommands_replaceAt_self
 
 /-- A matrix term outside the correlate c-commands a position of the remnant in the Gapped clause
 exactly when it c-commands the correlate in the matrix clause. -/
-theorem cCommands_gapped_iff {m : TreePath} (hcm : ¬ e.correlate ≤ m) (hmc : ¬ m ≤ e.correlate)
+theorem cCommands_gapped_iff {m : GornAddress} (hcm : ¬ e.correlate ≤ m) (hmc : ¬ m ≤ e.correlate)
     (q : List ℕ) :
     CCommands e.gapped m ⟨e.correlate.toList ++ q⟩ ↔ CCommands e.matrix m e.correlate :=
-  cCommands_replaceAt_of_le (TreePath.le_def.2 (List.prefix_append _ _)) hcm hmc
+  cCommands_replaceAt_of_le (GornAddress.le_def.2 (List.prefix_append _ _)) hcm hmc
 
-theorem cCommands_sentence_iff {m : TreePath} (htm : ¬ e.thanPhrase ≤ m)
+theorem cCommands_sentence_iff {m : GornAddress} (htm : ¬ e.thanPhrase ≤ m)
     (hmt : ¬ m ≤ e.thanPhrase) (q : List ℕ) :
     CCommands e.sentence m ⟨e.thanPhrase.toList ++ q⟩ ↔ CCommands e.matrix m e.thanPhrase :=
-  cCommands_replaceAt_of_le (TreePath.le_def.2 (List.prefix_append _ _)) htm hmt
+  cCommands_replaceAt_of_le (GornAddress.le_def.2 (List.prefix_append _ _)) htm hmt
 
 theorem not_cCommands_direct (m q : List ℕ) :
     ¬ CCommands e.direct ⟨1 :: 1 :: m⟩ ⟨0 :: q⟩ := by
   rintro ⟨h, -, -⟩
   have hb : IsBranchingAt e.direct ⟨[1]⟩ := ⟨_, rfl, by simp⟩
-  have hlt : (⟨[1]⟩ : TreePath) < ⟨1 :: 1 :: m⟩ :=
-    lt_of_le_of_ne (TreePath.le_def.2 ⟨1 :: m, rfl⟩) (by simp)
-  simpa [TreePath.le_def] using h hb hlt
+  have hlt : (⟨[1]⟩ : GornAddress) < ⟨1 :: 1 :: m⟩ :=
+    lt_of_le_of_ne (GornAddress.le_def.2 ⟨1 :: m, rfl⟩) (by simp)
+  simpa [GornAddress.le_def] using h hb hlt
 
 theorem direct_cCommands (m : List ℕ) : CCommands e.direct ⟨[0]⟩ ⟨1 :: m⟩ := by
-  refine ⟨fun ⟨l⟩ _ hx ↦ ?_, by simp [TreePath.le_def], by simp [TreePath.le_def]⟩
-  obtain rfl : l = [] := List.length_eq_zero_iff.1 (by simpa using TreePath.length_strictMono hx)
+  refine ⟨fun ⟨l⟩ _ hx ↦ ?_, by simp [GornAddress.le_def], by simp [GornAddress.le_def]⟩
+  obtain rfl : l = [] := List.length_eq_zero_iff.1 <| by
+    simpa [GornAddress.depth] using GornAddress.depth_strictMono hx
   exact List.nil_prefix
 
 end PhrasalComparative
@@ -279,13 +280,13 @@ inductive Analysis where
 
 /-- `a.rep e` is the representation of `e` under `a`, with the positions of the matrix term and of
 the remnant's nominal. -/
-def Analysis.rep : Analysis → PhrasalComparative → Tree Cat Unit × TreePath × TreePath
+def Analysis.rep : Analysis → PhrasalComparative → Tree Cat Unit × GornAddress × GornAddress
   | .reduction, e => (e.gapped, e.mTerm, ⟨e.correlate.toList ++ e.inRemnant⟩)
   | .directRaised, e => (e.direct, ⟨1 :: 1 :: e.mTerm.toList⟩, ⟨0 :: e.inRemnant⟩)
   | .directBase, e => (e.sentence, e.mTerm, ⟨e.thanPhrase.toList ++ 1 :: e.inRemnant⟩)
 
 /-- `a.pronounName e` gives the positions of the pronoun and the name in `a.rep e`. -/
-def Analysis.pronounName (a : Analysis) (e : PhrasalComparative) : TreePath × TreePath :=
+def Analysis.pronounName (a : Analysis) (e : PhrasalComparative) : GornAddress × GornAddress :=
   e.context.pronounName (a.rep e).2.1 (a.rep e).2.2
 
 /-- An analysis permits the coreferential reading when the name meets Condition C in its

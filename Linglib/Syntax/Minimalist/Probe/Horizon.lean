@@ -52,7 +52,7 @@ phrase, so no element escapes through its edge.
 
 namespace Minimalist
 
-open Core.Order RoseTree SyntacticObject
+open RoseTree SyntacticObject
 
 /-- A probe's horizon setting is the head that hosts it and the category that terminates its
 search, its horizon; a probe without horizon searches into any domain. -/
@@ -165,25 +165,25 @@ def spineOf : RoseTree Vertex → ClauseSpine
   | _ => ⟨[]⟩
 
 /-- The spine of the node at `p`. -/
-def spineAt (p : TreePath) : ClauseSpine := t.toRoseTree[p]?.elim ⟨[]⟩ (spineOf η)
+def spineAt (p : GornAddress) : ClauseSpine := t.toRoseTree[p]?.elim ⟨[]⟩ (spineOf η)
 
 /-- The positions behind the horizon `c` of the probe at `a`, those dominated by a node the probe
 c-commands whose spine contains `c` ([keine-2019]'s Horizons). -/
-def horizon (a : TreePath) (c : Cat) : Set TreePath :=
+def horizon (a : GornAddress) (c : Cat) : Set GornAddress :=
   {q | ∃ x ∈ Finset.Iio q, t.toRoseTree.CCommands a x ∧ c ∈ spineAt η t x}
 
-instance (a : TreePath) (c : Cat) : DecidablePred (· ∈ horizon η t a c) :=
+instance (a : GornAddress) (c : Cat) : DecidablePred (· ∈ horizon η t a c) :=
   fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The positions closed to the search of a probe with setting `p` at `a`, those behind its
 horizon; none when it has no horizon. -/
-def HorizonSetting.cut (p : HorizonSetting) (a : TreePath) : Set TreePath :=
+def HorizonSetting.cut (p : HorizonSetting) (a : GornAddress) : Set GornAddress :=
   {q | ∃ c ∈ p.horizon, q ∈ Minimalist.horizon η t a c}
 
-instance (p : HorizonSetting) (a : TreePath) : DecidablePred (· ∈ p.cut η t a) :=
+instance (p : HorizonSetting) (a : GornAddress) : DecidablePred (· ∈ p.cut η t a) :=
   fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-variable {η t} {a q : TreePath} {c c' : Cat} {p : HorizonSetting} {l r : RoseTree Vertex}
+variable {η t} {a q : GornAddress} {c c' : Cat} {p : HorizonSetting} {l r : RoseTree Vertex}
   {tok : LexicalItem.Token}
 
 /-- The spine of a tree is an extended projection. -/

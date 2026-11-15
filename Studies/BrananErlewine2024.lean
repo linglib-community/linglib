@@ -47,7 +47,7 @@ subject-relative form and Rejang relatives with *gi* show both exceptions.
 
 namespace BrananErlewine2024
 
-open Minimalist Minimalist.PlanarSyntacticObject Core.Order
+open Minimalist Minimalist.PlanarSyntacticObject
 
 /-! ### The probe -/
 
@@ -76,31 +76,31 @@ namespace Relative
 variable (r : Relative)
 
 /-- The goals of the probe on the head at `h`, the occurrences of D heads in its complement. -/
-def goals (h : TreePath) : List (TreePath × LexicalItem.Token) :=
+def goals (h : GornAddress) : List (GornAddress × LexicalItem.Token) :=
   (tokenList r.tree.toRoseTree).filter fun x ↦ x.2.item.cat = .D ∧ complement h ≤ x.1
 
 /-- The features of a goal, [D] unless it is a clitic, and [REL] on the relative operator. -/
-def feats (g : TreePath × LexicalItem.Token) : Finset Feature :=
+def feats (g : GornAddress × LexicalItem.Token) : Finset Feature :=
   (if g.2 ∈ r.clitics then ∅ else {.d}) ∪ (if g.2.item.IsWh then {.rel} else ∅)
 
 /-- The probe on the goals of the relative clause. -/
-def probe : Probe (TreePath × LexicalItem.Token) := relD.toProbe r.feats
+def probe : Probe (GornAddress × LexicalItem.Token) := relD.toProbe r.feats
 
 /-- A goal of the probe on the head at `h` is closest when no other potential goal, a goal that
 satisfies the probe, c-commands it (8). -/
-def Closest (h : TreePath) (g : TreePath × LexicalItem.Token) : Prop :=
+def Closest (h : GornAddress) (g : GornAddress × LexicalItem.Token) : Prop :=
   g ∈ r.goals h ∧ r.probe.sat g ∧ ∀ g' ∈ r.goals h, r.probe.sat g' → g' ≠ g →
     ¬ r.tree.toRoseTree.CCommands (projectionAt .raising r.tree g'.1) (projectionAt .raising r.tree
         g.1)
 
-instance (h : TreePath) : DecidablePred (r.Closest h) := fun _ ↦ by
+instance (h : GornAddress) : DecidablePred (r.Closest h) := fun _ ↦ by
   unfold Closest; infer_instance
 
 /-- The probe on the head at `h` attracts a closest goal it interacts with. -/
-def Attracts (h : TreePath) (g : TreePath × LexicalItem.Token) : Prop :=
+def Attracts (h : GornAddress) (g : GornAddress × LexicalItem.Token) : Prop :=
   r.Closest h g ∧ r.probe.int g
 
-instance (h : TreePath) : DecidablePred (r.Attracts h) := fun _ ↦ by
+instance (h : GornAddress) : DecidablePred (r.Attracts h) := fun _ ↦ by
   unfold Attracts; infer_instance
 
 /-- Every probing head attracts a goal. -/

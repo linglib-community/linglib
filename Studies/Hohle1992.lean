@@ -51,7 +51,7 @@ pronouns without a particle, and verb-final verbs.
 
 namespace Hohle1992
 
-open Core.Order PhraseStructure
+open PhraseStructure
 open RoseTree (cCommand)
 
 /-! ### The peripheral structure of (76) -/
@@ -121,10 +121,11 @@ theorem not_complementizer_and_verbSecond :
 
 /-- The relation SR of (60), read as c-command with reconstruction (footnote 7). `k₁` stands
 in SR to `k₂` in `t` when `k₂` c-commands `k₁` or a trace that `k₁` binds. -/
-def SR (t : Tree Node String) (binds : List (TreePath × TreePath)) (k₁ k₂ : TreePath) : Prop :=
+def SR (t : Tree Node String) (binds : List (GornAddress × GornAddress)) (k₁ k₂ : GornAddress) :
+    Prop :=
   (k₂, k₁) ∈ cCommand t ∨ ∃ b ∈ binds, b.1 = k₁ ∧ (k₂, b.2) ∈ cCommand t
 
-instance (t : Tree Node String) (binds : List (TreePath × TreePath)) (k₁ k₂ : TreePath) :
+instance (t : Tree Node String) (binds : List (GornAddress × GornAddress)) (k₁ k₂ : GornAddress) :
     Decidable (SR t binds k₁ k₂) := by
   unfold SR; infer_instance
 
@@ -132,9 +133,9 @@ instance (t : Tree Node String) (binds : List (TreePath × TreePath)) (k₁ k₂
 accented word carrying VERUM and the position of the negation particle. -/
 structure Configuration where
   tree : Tree Node String
-  binds : List (TreePath × TreePath)
-  focus : TreePath
-  neg : TreePath
+  binds : List (GornAddress × GornAddress)
+  focus : GornAddress
+  neg : GornAddress
 
 /-- In (55a) verum focus is on the fronted finite verb, reconstructed to its trace. -/
 def negatedF : Configuration := ⟨fClause, [(⟨[1, 0]⟩, ⟨[1, 1, 3]⟩)], ⟨[1, 0]⟩, ⟨[1, 1, 1]⟩⟩
@@ -269,12 +270,12 @@ instance (t : Tree Node String) : Decidable (IsBarePi t) := by unfold IsBarePi; 
 /-- By (97), in a local tree `[Kₖ Kⱼ Kᵢ]` whose second daughter is a bare `Π` and whose first
 daughter is not phonologically empty, VERUM is introduced over the translation of `Kᵢ`; by (98ii)
 it is assigned to `Kⱼ`, so an accent on `Kⱼ` yields verum focus. -/
-def IntroducesVerum (t : Tree Node String) (kj : TreePath) : Prop :=
+def IntroducesVerum (t : Tree Node String) (kj : GornAddress) : Prop :=
   match kj.toList.getLast?, t[kj.toList.dropLast]? with
   | some 0, some (Tree.node _ [a, b]) => ¬ PhonEmpty a ∧ IsBarePi b
   | _, _ => False
 
-instance (t : Tree Node String) (kj : TreePath) : Decidable (IntroducesVerum t kj) := by
+instance (t : Tree Node String) (kj : GornAddress) : Decidable (IntroducesVerum t kj) := by
   unfold IntroducesVerum; split <;> infer_instance
 
 -- (55a)

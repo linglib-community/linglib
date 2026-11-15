@@ -27,27 +27,26 @@ list.
 
 namespace Minimalist
 
-open Core.Order
 
 variable (hd : HeadFunction) (t : PlanarSyntacticObject)
 
 /-- The projections of the position `a`, from `a` up to its maximal projection. -/
-def projectionsOf (a : TreePath) : List TreePath :=
+def projectionsOf (a : GornAddress) : List GornAddress :=
   (List.range (a.toList.length - (projectionAt hd t a).toList.length + 1)).map fun k ↦
     ⟨a.toList.rdrop k⟩
 
 /-- The tokens `P` holds of that a probe on the head at `a` meets in search order: projection by
 projection, from the head up, the copies each c-commands outside `cut`, nearest first, a token
 counting only where it is first met. -/
-def cyclicGoals (P : LexicalItem.Token → Prop) [DecidablePred P] (cut : Set TreePath)
-    [DecidablePred (· ∈ cut)] (a : TreePath) : List LexicalItem.Token :=
+def cyclicGoals (P : LexicalItem.Token → Prop) [DecidablePred P] (cut : Set GornAddress)
+    [DecidablePred (· ∈ cut)] (a : GornAddress) : List LexicalItem.Token :=
   ((projectionsOf hd t a).flatMap fun p ↦ (List.range t.toRoseTree.numNodes).flatMap fun n ↦
     ((positions (Sum.elim id id) t.toRoseTree).filter fun x ↦
       x.1.toList.length == n && decide (P x.2) && decide (t.toRoseTree.CCommands p x.1) &&
         decide (x.1 ∉ cut)).map (·.2)).eraseDups
 
-variable {hd t} {P : LexicalItem.Token → Prop} [DecidablePred P] {cut : Set TreePath}
-  [DecidablePred (· ∈ cut)] {a : TreePath} {x : LexicalItem.Token}
+variable {hd t} {P : LexicalItem.Token → Prop} [DecidablePred P] {cut : Set GornAddress}
+  [DecidablePred (· ∈ cut)] {a : GornAddress} {x : LexicalItem.Token}
 
 private theorem length_lt_numNodes {β : Type*} {r s : RoseTree β} {q : List ℕ} (h : r[q]? = some s) :
     q.length < r.numNodes := by

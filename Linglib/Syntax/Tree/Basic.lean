@@ -479,10 +479,9 @@ in `Syntax/Tree/Command.lean`, the command relations. The terminals, paired with
 are the word-bearing leaves, so the order of the yield is precedence
 (`RoseTree.pairwise_precedes_positionedLeaves`). -/
 
-open Core.Order
 
 /-- The terminals, left to right, each paired with its position. -/
-def positionedTerminals (t : Tree C W) : List (TreePath × (C × W)) :=
+def positionedTerminals (t : Tree C W) : List (GornAddress × (C × W)) :=
   t.positionedLeaves.filterMap fun x ↦ x.2.terminal?.map (x.1, ·)
 
 theorem map_snd_positionedTerminals (t : Tree C W) :
@@ -493,7 +492,7 @@ theorem map_snd_positionedTerminals (t : Tree C W) :
   funext x
   simp [Option.map_map, Function.comp_def]
 
-theorem getElem?_of_mem_positionedTerminals {t : Tree C W} {x : TreePath × (C × W)}
+theorem getElem?_of_mem_positionedTerminals {t : Tree C W} {x : GornAddress × (C × W)}
     (h : x ∈ t.positionedTerminals) :
     t[x.1]? = some (terminal x.2.1 x.2.2) := by
   obtain ⟨⟨p, l⟩, hl, hx⟩ := List.mem_filterMap.mp h

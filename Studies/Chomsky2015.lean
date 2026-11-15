@@ -47,7 +47,7 @@ criterial position leaves the interrogative C to label the clause by itself, as 
 
 namespace Chomsky2015
 
-open Core.Order Minimalist Minimalist.PlanarSyntacticObject
+open Minimalist Minimalist.PlanarSyntacticObject
 open Chomsky2013 (tok nominal Feature IsRoot IsCategorizer IsLabeledWith AgreedVia)
 
 /-! ### Weak heads and agreement -/

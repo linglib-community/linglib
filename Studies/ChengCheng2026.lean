@@ -47,7 +47,7 @@ namespace ChengCheng2026
 open DistributedMorphology DistributedMorphology.RootCategorization
 open Morphology hiding Feature
 open Harley2017 (Feature)
-open PhraseStructure Core.Order
+open PhraseStructure
 
 /-! ### Three heads -/
 
@@ -136,12 +136,12 @@ def tree : Combination → Tree Cat Unit
   | noun => nounTree
 
 /-- The position of *dǎ*. -/
-def daPos : Combination → TreePath
+def daPos : Combination → GornAddress
   | root => (Configuration.modifier lexicon).head
   | noun => ⟨[0]⟩
 
 /-- The position of the root after *dǎ*. -/
-def rootPos : Combination → TreePath
+def rootPos : Combination → GornAddress
   | root => (Configuration.modifier lexicon).root
   | noun => ⟨[1, 0, 0]⟩
 

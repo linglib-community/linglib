@@ -9,7 +9,7 @@ public import Mathlib.Order.Zorn
 
 The branching-time model of Prior and Thomason depicts the open future as an order of moments
 that is linear towards the past and branches towards the future: a left-linear partial order
-(`Core.Order.IsLeftLinear`). A history is a complete possible course of the world, a maximal
+(`IsLeftLinear`). A history is a complete possible course of the world, a maximal
 chain of moments, mathlib's `Flag`; the histories through a moment are its possible futures
 (`histories`). Propositions are sets, of moments or of moment–history pairs.
 

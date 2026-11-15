@@ -53,29 +53,29 @@ when the phase of the lowest phase head whose complement contains it is complete
 
 namespace Minimalist
 
-open Core.Order RoseTree
+open RoseTree
 
 /-- A cut assigns to each stage, the root of the object built so far, the positions an operation
 at that stage cannot inspect. -/
-abbrev Cut := TreePath → Set TreePath
+abbrev Cut := GornAddress → Set GornAddress
 
 /-- A schedule says, given the phase heads, whether the domain of `h` is transferred by stage `s`.
 -/
-abbrev Schedule := Finset TreePath → TreePath → TreePath → Prop
+abbrev Schedule := Finset GornAddress → GornAddress → GornAddress → Prop
 
 variable (hd : HeadFunction) (t : PlanarSyntacticObject)
 
 /-- The head whose complement a phase head transfers: the phase head itself, or, where it has
 deleted, the lexical head of its complement, which inherits its phasehood. -/
-def transferHead (deleted : Finset TreePath) (h : TreePath) : TreePath :=
+def transferHead (deleted : Finset GornAddress) (h : GornAddress) : GornAddress :=
   if h ∈ deleted then lexicalHeadAt hd t (complement h) else h
 
 /-- The complement of the head that transfers, [chomsky-2000]'s transfer domain. -/
-def complementDomain (deleted : Finset TreePath) (h : TreePath) : Set TreePath :=
+def complementDomain (deleted : Finset GornAddress) (h : GornAddress) : Set GornAddress :=
   Set.Ici (complement (transferHead hd t deleted h))
 
 /-- The phase short of its root, transferred whole. -/
-def wholePhaseDomain (h : TreePath) : Set TreePath := Set.Ioi (projectionAt hd t h)
+def wholePhaseDomain (h : GornAddress) : Set GornAddress := Set.Ioi (projectionAt hd t h)
 
 /-- [chomsky-2000]'s schedule: the domain of `h` is transferred once its phase is complete, at every
 stage above it. -/
@@ -86,29 +86,29 @@ contains the phase of `h` has merged. -/
 def Pic2 : Schedule := fun Φ h s ↦ ∃ z ∈ Φ, s ≤ z.parent ∧ complement z ≤ projectionAt hd t h
 
 /-- The positions sealed at stage `s`: the domains of the phase heads transferred by then. -/
-def sealed (Φ : Finset TreePath) (D : TreePath → Set TreePath) (σ : Schedule) : Cut :=
+def sealed (Φ : Finset GornAddress) (D : GornAddress → Set GornAddress) (σ : Schedule) : Cut :=
   fun s ↦ {q | ∃ h ∈ Φ, σ Φ h s ∧ q ∈ D h}
 
-instance (deleted : Finset TreePath) (h : TreePath) :
+instance (deleted : Finset GornAddress) (h : GornAddress) :
     DecidablePred (· ∈ complementDomain hd t deleted h) :=
   fun q ↦ decidable_of_iff (complement (transferHead hd t deleted h) ≤ q) Iff.rfl
 
-instance (h : TreePath) : DecidablePred (· ∈ wholePhaseDomain hd t h) :=
+instance (h : GornAddress) : DecidablePred (· ∈ wholePhaseDomain hd t h) :=
   fun q ↦ decidable_of_iff (projectionAt hd t h < q) Iff.rfl
 
-instance (Φ : Finset TreePath) (h s : TreePath) : Decidable (Pic1 hd t Φ h s) :=
+instance (Φ : Finset GornAddress) (h s : GornAddress) : Decidable (Pic1 hd t Φ h s) :=
   inferInstanceAs (Decidable (_ < _))
 
-instance (Φ : Finset TreePath) (h s : TreePath) : Decidable (Pic2 hd t Φ h s) :=
+instance (Φ : Finset GornAddress) (h s : GornAddress) : Decidable (Pic2 hd t Φ h s) :=
   inferInstanceAs (Decidable (∃ _ ∈ Φ, _))
 
-instance (Φ : Finset TreePath) (D : TreePath → Set TreePath) (σ : Schedule)
-    [∀ h, DecidablePred (· ∈ D h)] [∀ h s, Decidable (σ Φ h s)] (s : TreePath) :
+instance (Φ : Finset GornAddress) (D : GornAddress → Set GornAddress) (σ : Schedule)
+    [∀ h, DecidablePred (· ∈ D h)] [∀ h s, Decidable (σ Φ h s)] (s : GornAddress) :
     DecidablePred (· ∈ sealed Φ D σ s) :=
   fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ Φ, _))
 
-variable {hd t} {Φ : Finset TreePath} {D : TreePath → Set TreePath} {σ : Schedule}
-  {deleted : Finset TreePath} {h s : TreePath}
+variable {hd t} {Φ : Finset GornAddress} {D : GornAddress → Set GornAddress} {σ : Schedule}
+  {deleted : Finset GornAddress} {h s : GornAddress}
 
 theorem isUpperSet_complementDomain : IsUpperSet (complementDomain hd t deleted h) :=
   isUpperSet_Ici _
@@ -140,8 +140,8 @@ theorem sealed_pic2_subset_pic1 : sealed Φ D (Pic2 hd t) s ⊆ sealed Φ D (Pic
 
 /-- The positions in the domain of `h` outside the domain of every phase head inside it: what the
 domain of `h` transfers on its own. -/
-def transferSlice (Φ : Finset TreePath) (D : TreePath → Set TreePath) (h : TreePath) :
-    Set TreePath :=
+def transferSlice (Φ : Finset GornAddress) (D : GornAddress → Set GornAddress) (h : GornAddress) :
+    Set GornAddress :=
   {q | q ∈ D h ∧ ∀ h' ∈ Φ, h' ∈ D h → q ∉ D h'}
 
 instance [∀ h, DecidablePred (· ∈ D h)] : DecidablePred (· ∈ transferSlice Φ D h) :=
@@ -149,7 +149,7 @@ instance [∀ h, DecidablePred (· ∈ D h)] : DecidablePred (· ∈ transferSli
 
 theorem transferSlice_subset : transferSlice Φ D h ⊆ D h := fun _ hq ↦ hq.1
 
-theorem disjoint_transferSlice {h' : TreePath} (hh' : h' ∈ Φ) (hin : h' ∈ D h) :
+theorem disjoint_transferSlice {h' : GornAddress} (hh' : h' ∈ Φ) (hin : h' ∈ D h) :
     Disjoint (transferSlice Φ D h) (D h') :=
   Set.disjoint_left.2 fun _ hq hq' ↦ hq.2 h' hh' hin hq'
 
@@ -158,25 +158,25 @@ theorem disjoint_transferSlice {h' : TreePath} (hh' : h' ∈ Φ) (hin : h' ∈ D
 variable (hd t) in
 /-- The phase level of a position: the phase of the lowest phase head whose complement contains it,
 or the root where there is none. [chomsky-2015] computes labels there. -/
-def phaseLevel (Φ : Finset TreePath) (q : t.toRoseTree.Positions) : t.toRoseTree.Positions :=
+def phaseLevel (Φ : Finset GornAddress) (q : t.toRoseTree.Positions) : t.toRoseTree.Positions :=
   ⟨⟨q.val.toList.take
       ((Φ.filter (complement · ≤ q.val)).sup (projectionAt hd t · |>.toList.length))⟩,
-    isLowerSet_validPaths _ (TreePath.le_def.2 (List.take_prefix _ _)) q.2⟩
+    isLowerSet_validPaths _ (GornAddress.le_def.2 (List.take_prefix _ _)) q.2⟩
 
 theorem phaseLevel_le (q : t.toRoseTree.Positions) : phaseLevel hd t Φ q ≤ q :=
-  Subtype.coe_le_coe.1 (TreePath.le_def.2 (List.take_prefix _ _))
+  Subtype.coe_le_coe.1 (GornAddress.le_def.2 (List.take_prefix _ _))
 
 theorem projectionAt_le_phaseLevel {q : t.toRoseTree.Positions} (hΦ : h ∈ Φ) (hc : complement h ≤
     q.val)
     (hp : projectionAt hd t h ≤ h.parent) : projectionAt hd t h ≤ (phaseLevel hd t Φ q).val := by
   have hq := hp.trans ((parent_covBy_complement h).le.trans hc)
-  exact TreePath.le_def.2 (List.prefix_take_iff.2 ⟨TreePath.le_def.1 hq,
+  exact GornAddress.le_def.2 (List.prefix_take_iff.2 ⟨GornAddress.le_def.1 hq,
     Finset.le_sup (f := (projectionAt hd t · |>.toList.length)) (Finset.mem_filter.2 ⟨hΦ, hc⟩)⟩)
 
 theorem phaseLevel_eq_bot {q : t.toRoseTree.Positions} (hq : ∀ h ∈ Φ, ¬ complement h ≤ q.val) :
     phaseLevel hd t Φ q = ⊥ := by
   have : Φ.filter (complement · ≤ q.val) = ∅ := Finset.filter_eq_empty_iff.2 hq
-  exact Subtype.ext (TreePath.ext (by simp [phaseLevel, this]))
+  exact Subtype.ext (GornAddress.ext (by simp [phaseLevel, this]))
 
 /-! ### Chain links that leave a cut -/
 
@@ -190,7 +190,7 @@ instance (tok : LexicalItem.Token) (cut : Cut) [∀ s, DecidablePred (· ∈ cut
     Decidable (LinkLeaves hd t tok cut) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-theorem mem_links {tok : LexicalItem.Token} {x : TreePath × TreePath} :
+theorem mem_links {tok : LexicalItem.Token} {x : GornAddress × GornAddress} :
     x ∈ links hd t tok ↔ ∃ q ∈ chain t tok, ∃ p ∈ chain t tok, IsLink hd t tok p q ∧
       x = (projectionAt hd t p, q) := by
   simp only [links, List.mem_flatMap, List.mem_map, List.mem_filter, decide_eq_true_eq]
@@ -200,14 +200,14 @@ theorem mem_links {tok : LexicalItem.Token} {x : TreePath × TreePath} :
   · rintro ⟨q, hq, p, hp, hl, rfl⟩
     exact ⟨q, hq, p, ⟨hp, hl⟩, rfl⟩
 
-theorem mem_validPaths_of_mem_chain {tok : LexicalItem.Token} {p : TreePath}
+theorem mem_validPaths_of_mem_chain {tok : LexicalItem.Token} {p : GornAddress}
     (hp : p ∈ chain t tok) : p ∈ t.toRoseTree.validPaths := by
   simp only [chain, List.mem_filterMap, Option.ite_none_right_eq_some, Option.some.injEq] at hp
   obtain ⟨⟨p', b⟩, hpb, -, rfl⟩ := hp
   obtain ⟨s, hs, -⟩ := mem_positions_iff.1 hpb
   exact (getElem?_eq_some_iff.mp hs).1
 
-theorem parent_lt_of_mem_links {tok : LexicalItem.Token} {x : TreePath × TreePath}
+theorem parent_lt_of_mem_links {tok : LexicalItem.Token} {x : GornAddress × GornAddress}
     (hx : x ∈ links hd t tok) : x.1.parent < x.2 ∧ ¬ x.1 ≤ x.2 := by
   obtain ⟨q, -, p, hp, hl, rfl⟩ := mem_links.1 hx
   have hv : projectionAt hd t p ∈ t.toRoseTree.validPaths :=
@@ -217,12 +217,12 @@ theorem parent_lt_of_mem_links {tok : LexicalItem.Token} {x : TreePath × TreePa
     (a := ⟨projectionAt hd t p, hv⟩) fun h ↦ h0 (congrArg Subtype.val h)
   exact (cCommands_iff_parent_lt h0 hb).1 hl.1
 
-theorem not_le_fst_iff {tok : LexicalItem.Token} {x : TreePath × TreePath} {D : TreePath}
+theorem not_le_fst_iff {tok : LexicalItem.Token} {x : GornAddress × GornAddress} {D : GornAddress}
     (hx : x ∈ links hd t tok) (hD : D ≤ x.2) : ¬ D ≤ x.1 ↔ x.1.parent < D := by
   obtain ⟨hpx, hnx⟩ := parent_lt_of_mem_links hx
   have h0 : x.1 ≠ ⊥ := fun h ↦ hnx (h ▸ bot_le)
   have hcov : x.1.parent ⋖ x.1 := by
-    rw [← TreePath.pred_eq_parent]
+    rw [← GornAddress.pred_eq_parent]
     exact Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using h0)
   constructor
   · intro hDx
@@ -234,7 +234,7 @@ theorem not_le_fst_iff {tok : LexicalItem.Token} {x : TreePath × TreePath} {D :
 
 /-- An island is a cut: a link escapes the domain at `D` exactly when it leaves the positions `D`
 dominates, sealed at every stage above `D`. -/
-theorem escapes_iff {tok : LexicalItem.Token} {D : TreePath} :
+theorem escapes_iff {tok : LexicalItem.Token} {D : GornAddress} :
     Escapes hd t tok D ↔ LinkLeaves hd t tok (sealed {D} Set.Ici fun _ h s ↦ s < h) := by
   unfold Escapes LinkLeaves
   refine exists_congr fun x ↦ and_congr_right fun hx ↦ ?_
@@ -244,7 +244,7 @@ theorem escapes_iff {tok : LexicalItem.Token} {D : TreePath} :
 
 /-- The condition on chain links is a cut: a link leaves the phase of `h` exactly when it leaves the
 complement of `h`, sealed at every stage above the phase. -/
-theorem crosses_iff {tok : LexicalItem.Token} {h : TreePath} (hh : h ∈ t.toRoseTree.validPaths)
+theorem crosses_iff {tok : LexicalItem.Token} {h : GornAddress} (hh : h ∈ t.toRoseTree.validPaths)
     (h0 : h ≠ ⊥) (hproj : projectionAt hd t h ≤ h.parent) :
     Crosses hd t tok h ↔
       LinkLeaves hd t tok (sealed {h} (complementDomain hd t ∅) (Pic1 hd t)) := by
@@ -264,8 +264,8 @@ theorem crosses_iff {tok : LexicalItem.Token} {h : TreePath} (hh : h ∈ t.toRos
 /-- A link that moves the complement of a phase head, landing outside it, moves it to a
 specifier of the head's phrase or leaves the complement after the phase is complete: with the
 PIC, Abels's anti-locality leaves the complement of a phase head no way out. -/
-theorem compToSpec_or_mem_sealed {tok : LexicalItem.Token} {x : TreePath × TreePath}
-    {h : TreePath} (hh : h ∈ t.toRoseTree.validPaths) (h0 : h ≠ ⊥) (hhead : IsHeadPosition t h)
+theorem compToSpec_or_mem_sealed {tok : LexicalItem.Token} {x : GornAddress × GornAddress}
+    {h : GornAddress} (hh : h ∈ t.toRoseTree.validPaths) (h0 : h ≠ ⊥) (hhead : IsHeadPosition t h)
     (hx : x ∈ links hd t tok) (hr : projectionAt hd t x.2 = complement h)
     (hin : ¬ complement h ≤ x.1.parent) :
     CompToSpec hd t x ∨ x.2 ∈ sealed {h} (complementDomain hd t ∅) (Pic1 hd t) x.1.parent := by
@@ -274,12 +274,12 @@ theorem compToSpec_or_mem_sealed {tok : LexicalItem.Token} {x : TreePath × Tree
     ((IsLeftLinear.comparable_of_le_common (parent_lt_of_mem_links hx).1.le hcx).resolve_right
       hin).lt_of_ne fun he ↦ hin he.ge
   have hle : x.1.parent ≤ h.parent := by
-    simpa [TreePath.pred_eq_parent] using Order.le_pred_of_lt hlt
+    simpa [GornAddress.pred_eq_parent] using Order.le_pred_of_lt hlt
   have hcomp : CompToSpec hd t x ↔ projectionAt hd t h ≤ x.1.parent := by
     rw [CompToSpec, hr, complement_complement hh h0]
     exact and_iff_right hhead
   rcases IsLeftLinear.comparable_of_le_common (projectionAt_le hd t h)
-    (hle.trans (TreePath.parent_le h)) with hph | hph
+    (hle.trans (GornAddress.parent_le h)) with hph | hph
   · exact .inl (hcomp.2 hph)
   · rcases hph.lt_or_eq with hph | hph
     · refine .inr ⟨h, Finset.mem_singleton_self h, hph, ?_⟩

@@ -126,7 +126,6 @@ import Linglib.Core.Order.Ortholattice
 import Linglib.Core.Order.PartialUnify
 import Linglib.Core.Order.PreorderLattice
 import Linglib.Core.Order.StrictBounds
-import Linglib.Core.Order.TreePath
 import Linglib.Core.Order.UpperLower.Closure
 import Linglib.Core.Order.UpperLower.Finset
 import Linglib.Core.Order.WellFoundedSet

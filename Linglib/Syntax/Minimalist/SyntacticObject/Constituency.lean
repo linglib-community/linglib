@@ -40,7 +40,7 @@ a Minimalist object through this tree.
 
 namespace Minimalist
 
-open PhraseStructure Core.Order
+open PhraseStructure
 
 /-- The index of a trace by the token it is the trace of: `0` for the index-free trace and the
 token's identifier plus one otherwise, so that no token's trace shares the index-free trace's. -/

@@ -48,7 +48,7 @@ against the rows rather than presupposed by their coding.
 
 namespace BhattTakahashi2011
 
-open Core.Order PhraseStructure
+open PhraseStructure
 open PhraseStructure.Tree
 open RoseTree (cCommand CCommands)
 
@@ -56,7 +56,7 @@ open RoseTree (cCommand CCommands)
 
 /-- Under reduction, whatever c-commands the associate in the matrix clause c-commands every
 position of the standard, as Generalization (10) states. -/
-theorem standard_cCommanded_of_associate (e : Lechner2004.PhrasalComparative) {m : TreePath}
+theorem standard_cCommanded_of_associate (e : Lechner2004.PhrasalComparative) {m : GornAddress}
     (hcm : ¬ e.correlate ≤ m) (hmc : ¬ m ≤ e.correlate) (h : CCommands e.matrix m e.correlate)
     (q : List ℕ) : CCommands e.gapped m ⟨e.correlate.toList ++ q⟩ :=
   (e.cCommands_gapped_iff hcm hmc q).2 h
@@ -138,8 +138,8 @@ theorem hindi_urdu_binding :
 trace. -/
 structure ThanClause where
   tree : Tree Unit String
-  qp : TreePath
-  trace : TreePath
+  qp : GornAddress
+  trace : GornAddress
 
 /-- In the reduced *than*-clause of (43a), *than Craige assigned every second year student d-many
 papers*, in a VP shell, the quantifier's base position c-commands the degree trace. -/

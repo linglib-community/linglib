@@ -74,7 +74,7 @@ Root under the complement attachment and with the categorizer under the modifier
 
 namespace DistributedMorphology.RootCategorization
 
-open PhraseStructure PhraseStructure.Tree Core.Order
+open PhraseStructure PhraseStructure.Tree
 
 variable {W : Type*}
 
@@ -107,11 +107,11 @@ structure Configuration (W : Type*) where
   /-- The phrase. -/
   tree : Tree Cat W
   /-- The position of the Root. -/
-  root : TreePath
+  root : GornAddress
   /-- The position of the head. -/
-  head : TreePath
+  head : GornAddress
   /-- The position of the internal argument. -/
-  arg : TreePath
+  arg : GornAddress
 
 namespace Configuration
 
@@ -326,7 +326,7 @@ theorem not_strands_arg (c : RoseTree.Context (Tree.Label Cat W)) (a : Attachmen
 /-- **Pronominalization cannot decide.** In every context a proform strands from the Root under
 one attachment whatever it strands under the other. -/
 theorem strands_plug_complement_iff_modifier (c : RoseTree.Context (Tree.Label Cat W))
-    (L : Lexicon W) (X : Cat) (β : TreePath) :
+    (L : Lexicon W) (X : Cat) (β : GornAddress) :
     Strands X ((complement L).plug c).tree ((complement L).plug c).root β ↔
       Strands X ((modifier L).plug c).tree ((modifier L).plug c).root β := by
   refine strands_plug_congr c (t₁ := (complement L).tree) (t₂ := (modifier L).tree)
@@ -338,21 +338,21 @@ theorem strands_plug_complement_iff_modifier (c : RoseTree.Context (Tree.Label C
 
 theorem strands_specifier (L : Lexicon W) :
     Strands (.head L.x) (specifier L).tree (specifier L).root (specifier L).arg :=
-  ⟨⟨[1]⟩, (by decide : (⟨[1]⟩ : TreePath) ∈ crossed ⟨[1, 0, 0]⟩ ⟨[0]⟩), _, rfl,
+  ⟨⟨[1]⟩, (by decide : (⟨[1]⟩ : GornAddress) ∈ crossed ⟨[1, 0, 0]⟩ ⟨[0]⟩), _, rfl,
     not_isHead_node _ _, rfl⟩
 
 /-- The category of the head a node is merged with, that of its mother; the root of a tree is
 merged with none. -/
-def selector (t : Tree Cat W) (β : TreePath) : Option Cat :=
+def selector (t : Tree Cat W) (β : GornAddress) : Option Cat :=
   if β = ⊥ then none else t[β.parent]?.map Tree.cat
 
 /-- Within a context a node of a phrase other than its root is merged with the head it was. -/
-theorem selector_plug (c : RoseTree.Context (Tree.Label Cat W)) (t : Tree Cat W) {β : TreePath}
+theorem selector_plug (c : RoseTree.Context (Tree.Label Cat W)) (t : Tree Cat W) {β : GornAddress}
     (hβ : β ≠ ⊥) : selector (c.plug t) (c.embed β) = selector t β := by
-  have h : c.embed β ≠ ⊥ := fun e ↦ hβ (TreePath.ext (List.append_eq_nil_iff.mp
-    (congrArg TreePath.toList e)).2)
+  have h : c.embed β ≠ ⊥ := fun e ↦ hβ (GornAddress.ext (List.append_eq_nil_iff.mp
+    (congrArg GornAddress.toList e)).2)
   rw [selector, selector, ite_eq_right h, ite_eq_right hβ, RoseTree.Context.embed,
-    TreePath.parent_appendLeft _ hβ]
+    GornAddress.mulLeft_apply, GornAddress.parent_mul _ hβ]
   exact congrArg _ (c.getElem?_plug_embed t β.parent)
 
 theorem selector_arg_eq_root_iff (a : Attachment) (L : Lexicon W) :

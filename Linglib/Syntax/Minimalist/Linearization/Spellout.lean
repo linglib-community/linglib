@@ -61,17 +61,17 @@ everywhere.
 
 namespace Minimalist
 
-open RoseTree SyntacticObject Core.Order
+open RoseTree SyntacticObject
 
 variable (t : PlanarSyntacticObject)
 
 /-! ### Ellipsis -/
 
 /-- The [E] heads. -/
-def eHeads : List TreePath := occurrencesWith t (·.item.HasE)
+def eHeads : List GornAddress := occurrencesWith t (·.item.HasE)
 
 /-- The complements of the [E] heads, one per elided term, the last of its positions. -/
-def elidedDomains : List TreePath :=
+def elidedDomains : List GornAddress :=
   ((eHeads t).map complement).pwFilter
     fun p q ↦ t.toRoseTree[p]? ≠ t.toRoseTree[q]?
 
@@ -94,7 +94,7 @@ theorem isSilenced_iff_exists_mem_elidedDomains {tok : LexicalItem.Token} :
       exact Decidable.or_iff_not_imp_left.2 fun hxy hyz ↦ hxz ((not_not.1 hxy).trans hyz)
     refine ⟨K, hK, ⟨K.toList ++ q⟩, ?_, ⟨q, rfl⟩⟩
     rw [mem_occurrences, tokenList, mem_positions_iff] at hp ⊢
-    rwa [getElem?_treePath, getElem?_append, ← hKh, ← getElem?_append, hq]
+    rwa [getElem?_gornAddress, getElem?_append, ← hKh, ← getElem?_append, hq]
   · obtain ⟨h, hh, rfl⟩ := List.mem_map.1 (List.pwFilter_subset _ hK)
     exact ⟨h, hh, hp⟩
 
@@ -131,7 +131,7 @@ theorem pfYield_sublist : (pfYield t).Sublist ((tokenList t.toRoseTree).map Prod
 /-! ### Pronunciation Economy -/
 
 /-- The pronounced tokens when ellipsis applies at the domains `Ks` alone. -/
-def pfYieldEliding (Ks : List TreePath) : List LexicalItem.Token :=
+def pfYieldEliding (Ks : List GornAddress) : List LexicalItem.Token :=
   (tokens t).filter fun tok ↦ ¬ ∃ K ∈ Ks, ∃ p ∈ occurrences t tok, K ≤ p
 
 theorem pfYieldEliding_elidedDomains : pfYieldEliding t (elidedDomains t) = pfYield t :=
@@ -139,10 +139,10 @@ theorem pfYieldEliding_elidedDomains : pfYieldEliding t (elidedDomains t) = pfYi
     decide_eq_decide.2 (not_congr (isSilenced_iff_exists_mem_elidedDomains t)).symm
 
 /-- Ellipsis applies vacuously at `K` when the other applications alone pronounce the same forms. -/
-def AppliesVacuously (K : TreePath) : Prop :=
+def AppliesVacuously (K : GornAddress) : Prop :=
   (pfYieldEliding t ((elidedDomains t).erase K)).filterMap (·.item.phonForm?) = pfPhon t
 
-instance (K : TreePath) : Decidable (AppliesVacuously t K) :=
+instance (K : GornAddress) : Decidable (AppliesVacuously t K) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- Pronunciation Economy: ellipsis applies only where it has an effect on pronunciation. -/
