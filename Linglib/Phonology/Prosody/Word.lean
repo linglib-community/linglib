@@ -1,41 +1,25 @@
 module
 
-public import Linglib.Phonology.Prosody.Foot
-public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
-public import Mathlib.Order.Antichain
-public import Linglib.Core.Data.RoseTree.Positions
+public import Linglib.Phonology.Prosody.Domination
 
 /-!
 # Prosodic words (ω)
 
-A prosodic word ω is a node of the prosodic tree (`Prosody.Tree`), and well-formedness is a
-declarative property of that carrier rather than a separate inductive. `IsWord` carves out the
-well-formed ω-trees as the Strict-Layer core (Selkirk 1996): an ω-node whose daughters are only
-feet, recursive sub-words, or stray syllables, the inviolable Layeredness constraint. The OT
-studies score raw `Tree` candidates, so theorems take `IsWord` as a hypothesis on the carrier
-rather than bundling a subtype.
+A prosodic word ω is a node of the prosodic tree, and `IsWord` is its well-formedness on that
+carrier: an ω-node dominating only feet, prosodic words and stray syllables, the Layeredness of
+[selkirk-1996]. A stray syllable and an ω over an ω (the extended prosodic word of
+[ito-mester-2009]) are admitted, since Exhaustivity and Nonrecursivity are violable; a
+[nonrecursive word](##Prosody.isWord_children) has only feet and syllables as daughters. The
+word-size notions `MinimalWord`, `MaximalWord` and `PerfectWord` are stated over the feet of the
+tree, and [the perfect word is the one that is both minimal and
+maximal](##Prosody.perfectWord_iff_minimal_and_maximal).
 
-Exhaustivity and No-Recursion are violable OT constraints, not part of `IsWord`: a stray σ (a
-free clitic) and an ω-over-ω (Itô and Mester's 2009 extended prosodic word) are both admitted,
-and `parseInto` and `noRec` score them on the carrier. Headedness, that an ω dominates a foot, is
-the typical case but is not presupposed: footless languages have ω directly over σ (DeLisi 2015,
-per Dolatian 2020).
+## Implementation notes
 
-## Main definitions
-
-* `IsWord` — the Layeredness predicate, a tree rooted in an ω-node and licensed by
-  `Constituent.Licenses`; theorems take it as a hypothesis on the carrier
-  (mathlib's `Squarefree`-style), there is no bundled subtype.
-* `noRec` / `parseInto` — the violable OT constraints over the carrier (`Constraint Tree`).
-* `maximalProjections` / `minimalProjections` — the topmost / bottommost ℓ-positions, `Minimal`
-  and `Maximal` under dominance; `NoLevelRecursion` — the ℓ-positions form an antichain.
-* `feet` / `moraCount` / `unfootedCount` — carrier folds extracting feet, morae, stray σ.
-* `MinimalWord` / `MaximalWord` / `PerfectWord` — the word-size notions over the carrier.
-
-## Main results
-
-* `maximalProjections_eq_minimalProjections` — under transitive No-Recursion at `ℓ`, the maximal
-  and minimal ℓ-projections coincide (every ℓ-node is at once topmost and bottommost).
+The Optimality-theoretic studies score candidate trees that `IsWord` rules out, so theorems take
+`IsWord` as a hypothesis on the tree and there is no subtype of words. `IsWord` does not require
+a foot: [dolatian-2020] reports languages with ω directly over σ, and candidates often leave
+foot structure out.
 
 ## References
 
@@ -65,65 +49,6 @@ holds the ill-formed candidates `IsWord` rules out). List-recursion auxes
 are local `where`s. -/
 
 open OptimalityTheory
-
-/-- **No-Recursion** ([ito-mester-2009]) counts parent–child pairs sharing a level, an element
-    parsed into the same category twice. -/
-def noRec : Constraint Tree := fun t => go t where
-  go : Tree → Nat
-    | .node a cs => (cs.filter (fun c => c.value.level = a.level)).length + goList cs
-  goList : List Tree → Nat
-    | [] => 0
-    | c :: cs => go c + goList cs
-
-/-! #### Maximal and minimal projections
-
-The **projections** of a level `ℓ` ([ito-mester-2009]) are its extremal nodes under dominance.
-The **maximal** ℓ-projections are the ℓ-nodes no ℓ-node dominates, and the **minimal** ones are
-the ℓ-nodes dominating no ℓ-node. Since the root is the least position, these are the `Minimal`
-and `Maximal` members of the ℓ-positions. **Transitive No-Recursion** at `ℓ`, that no ℓ-node
-properly dominates another, says that the ℓ-positions form an antichain, and it collapses the
-two. `noRec` scores only a direct ℓ-over-ℓ, so `ω(f(ω))`, which recurses through an
-intervening foot, has `noRec = 0` while its maximal and minimal ω-projections differ. The
-intonational utterance υ is the maximal ι-projection. -/
-
-/-- The positions of `t` at the level `ℓ`. -/
-abbrev levelPositions (ℓ : Level) (t : Tree) : Set GornAddress :=
-  RoseTree.positionsWhere (fun s ↦ s.value.level = ℓ) t
-
-/-- The maximal `ℓ`-projections of `t`, its topmost `ℓ`-nodes. -/
-abbrev maximalProjections (ℓ : Level) (t : Tree) : Set GornAddress :=
-  {p | Minimal (· ∈ levelPositions ℓ t) p}
-
-/-- The minimal `ℓ`-projections of `t`, its bottommost `ℓ`-nodes. -/
-abbrev minimalProjections (ℓ : Level) (t : Tree) : Set GornAddress :=
-  {p | Maximal (· ∈ levelPositions ℓ t) p}
-
-/-- Transitive No-Recursion at `ℓ`: no `ℓ`-node of `t` properly dominates another. -/
-abbrev NoLevelRecursion (ℓ : Level) (t : Tree) : Prop :=
-  IsAntichain (· ≤ ·) (levelPositions ℓ t)
-
-instance (ℓ : Level) (t : Tree) : Decidable (NoLevelRecursion ℓ t) :=
-  decidable_of_iff (∀ p ∈ t.vertices, ∀ q ∈ t.vertices, (⟨p⟩ : GornAddress) ∈ levelPositions ℓ t →
-      (⟨q⟩ : GornAddress) ∈ levelPositions ℓ t → p <+: q → p = q)
-    ⟨fun h _ hp _ hq hne hle ↦ hne <| congrArg GornAddress.mk <| h _
-        (RoseTree.mem_vertices.2 (Option.isSome_iff_exists.2 ⟨_, hp.choose_spec.1⟩)) _
-        (RoseTree.mem_vertices.2 (Option.isSome_iff_exists.2 ⟨_, hq.choose_spec.1⟩)) hp hq hle,
-      fun h _ _ _ _ hp hq hle ↦ congrArg GornAddress.toList (h.eq hp hq hle)⟩
-
-/-- **No-Recursion collapses the projections**: under transitive No-Recursion at `ℓ`, every
-`ℓ`-node is at once topmost and bottommost. -/
-theorem maximalProjections_eq_minimalProjections {ℓ : Level} {t : Tree}
-    (h : NoLevelRecursion ℓ t) : maximalProjections ℓ t = minimalProjections ℓ t := by
-  ext p
-  exact h.minimal_mem_iff.trans h.maximal_mem_iff.symm
-
-/-- Under transitive No-Recursion at `ℓ`, at most one `ℓ`-node dominates a given position: the
-positions dominating it form a chain, which meets an antichain in at most one member. A tree
-without recursion therefore stacks no more nodes over a terminal than there are levels. -/
-theorem NoLevelRecursion.subsingleton_inter_Iic {ℓ : Level} {t : Tree}
-    (h : NoLevelRecursion ℓ t) (q : GornAddress) : (levelPositions ℓ t ∩ Set.Iic q).Subsingleton :=
-  subsingleton_of_isChain_of_isAntichain
-    (fun _ hp _ hr _ ↦ List.prefix_or_prefix_of_prefix hp.2 hr.2) (h.subset Set.inter_subset_left)
 
 /-- **Parse-into-`ℓ`** ([ito-mester-2003]) counts σ-leaves dominated by no `ℓ`-node. -/
 def parseInto (ℓ : Level) : Constraint Tree := fun t => go false t where
@@ -162,17 +87,15 @@ def moraCount : Tree → Nat := fun t => go t where
 
 /-! ### The well-formed prosodic word ω
 
-`IsWord` is the inviolable Layeredness core ([selkirk-1996]): a tree rooted in an ω-node and
-licensed by `Constituent.Licenses`. Licensing is decidable by structural recursion, so a winner
-can be certified `IsWord` by `decide`. -/
+`IsWord` is the Layeredness of [selkirk-1996] at the word: a tree rooted in an ω-node and
+licensed by `Constituent.Licenses`. Licensing is decidable, so a winner can be certified
+`IsWord` by `decide`. -/
 
 /-- A well-formed prosodic word is a licensed tree rooted in an ω-node, so an ω-node dominating
-    only feet, recursive ω's, and stray σ, never φ or ι. This is the inviolable **Layeredness**
-    core. Headedness (a foot daughter, the minimal-word effect of [selkirk-1996]) is the typical
-    case but is not presupposed, since footless languages have ω directly over σ (DeLisi 2015,
-    per [dolatian-2020]) and the OT recursion candidates abstract the foot level. Exhaustivity (a
-    stray σ) and Nonrecursivity (ω-over-ω) are violable OT constraints, so both are admitted
-    here. -/
+    only feet, prosodic words and stray syllables, never φ or ι: the Layeredness of
+    [selkirk-1996]. A foot daughter is not required, since [dolatian-2020] reports languages
+    with ω directly over σ and candidates often leave foot structure out; a stray σ and an ω
+    over an ω are admitted, Exhaustivity and Nonrecursivity being violable. -/
 abbrev IsWord : Tree → Prop := IsConstituent .om
 
 theorem isWord_children {a : Constituent} {cs : List Tree}
@@ -185,13 +108,8 @@ theorem isWord_children {a : Constituent} {cs : List Tree}
   have hle : c.value.level ≤ a.level := by
     obtain ⟨hd, rfl⟩ : ∃ hd, a = .om hd := by cases a <;> simp_all [Constituent.level]
     exact (RoseTree.licensed_node_iff.mp hl).1 c.value (List.mem_map_of_mem hc)
-  have hne : c.value.level ≠ a.level := by
-    intro h
-    have e : noRec (.node a cs)
-        = (cs.filter (fun c => c.value.level = a.level)).length + noRec.goList cs := rfl
-    have := List.length_pos_of_mem (List.mem_filter.2 ⟨hc, by simp [h]⟩ :
-      c ∈ cs.filter (fun c => c.value.level = a.level))
-    omega
+  have hne : c.value.level ≠ a.level :=
+    nonrecursivity_eq_zero_iff.1 (noRec_eq_zero_iff.1 hr _) _ (.refl _) rfl c hc
   rw [ha] at hle hne
   rcases c with ⟨cl, ccs⟩
   simp only [RoseTree.value_node] at hle hne ⊢

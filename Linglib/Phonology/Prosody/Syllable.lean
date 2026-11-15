@@ -41,9 +41,9 @@ nodes of its own level or below.
   the ι root is unrepresentable.
 * The prosodic tree is an ordered rose tree, so No-Tangling holds by construction. It is the
   carrier of candidates for the violable constraints defined with feet and words, so it includes
-  ill-formed structures that `IsWord` rules out; Selkirk's Nonrecursivity and Exhaustivity,
-  which she takes to be violable, are the constraints `noRec` and `parseInto`, not part of
-  `Constituent.Licenses`.
+  ill-formed structures that `IsWord` rules out; the Nonrecursivity and Exhaustivity of
+  [selkirk-1996], which are violable, are the constraints `nonrecursivity` and `exhaustivity`,
+  not part of `Constituent.Licenses`.
 
 ## TODO
 
@@ -239,12 +239,11 @@ def level : Constituent → Level
 @[simp] theorem level_ph (h : Bool) : (ph h).level = .ph := rfl
 @[simp] theorem level_iota : iota.level = .iota := rfl
 
-/-- Under the *Layeredness* of [selkirk-1996] a node dominates only nodes of its own level or
-    below. `Licenses a ks`
-    says that `a` may dominate daughters labelled `ks`: a syllable dominates nothing, a foot a
-    non-empty list of syllables, so that foot recursion is excluded, and ω, φ, and ι dominate any
-    node at or below their level, so that recursion at those levels and level skipping, a
-    syllable or a foot directly under a φ, are admitted. -/
+/-- `Licenses a ks` says that `a` may dominate daughters labelled `ks`. Every node obeys the
+    *Layeredness* of [selkirk-1996], dominating only its own level or below; ω, φ, and ι obey
+    nothing further, so that recursion at those levels and level skipping, a syllable or a foot
+    directly under a φ, are admitted. The syllable and the foot are strictly layered: a syllable
+    dominates nothing, and a foot a non-empty list of syllables. -/
 def Licenses : Constituent → List Constituent → Prop
   | .syl .., ks => ks = []
   | .ft _, ks => ks ≠ [] ∧ ∀ k ∈ ks, k.level = .syl

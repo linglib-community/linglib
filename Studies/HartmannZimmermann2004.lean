@@ -155,6 +155,12 @@ def wrapped : Prosody.Tree := .node .iota [.node .ph [ω, ω]]
 def separated : Prosody.Tree :=
   .node .iota [.node .ph [ω], .node .ph [ω]]
 
+-- Both candidates are layered intonational phrases, and neither has a recursive φ.
+theorem candidates_isUtterance :
+    Prosody.IsUtterance wrapped ∧ Prosody.IsUtterance separated ∧
+      Prosody.nonrecursivity .ph wrapped = 0 ∧ Prosody.nonrecursivity .ph separated = 0 := by
+  decide
+
 /-- ALIGN-Focus is violated when no φ begins at the focus's left edge, the object at leaf 1. -/
 def alignFocus : Constraint Prosody.Tree :=
   Constraint.alignLeft.comap fun t ↦ ([⟨(1, 2), by decide⟩], Prosody.levelSpans .ph t)
