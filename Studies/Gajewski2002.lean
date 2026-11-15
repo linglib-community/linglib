@@ -21,14 +21,14 @@ halves of the paper.
 The logical items are the denotations invariant under permutations of the domain, the
 criterion of van Benthem: a permutation of the entity domain lifts through the
 type hierarchy (`permLift`), and an item is logical when every lifted permutation
-fixes it (`PermutationInvariant`). Truth-functional conjunction is fixed because the lift is
-the identity at type `t` (`permutationInvariant_and`), expletive *there*, which denotes the
+fixes it (`IsPermutationInvariant`). Truth-functional conjunction is fixed because the lift is
+the identity at type `t` (`isPermutationInvariant_and`), expletive *there*, which denotes the
 whole domain, is fixed, and the domain and the empty set are the only invariant properties
-(`permutationInvariant_et_iff`), so a contingent predicate like *new-student* is not a logical
+(`isPermutationInvariant_et_iff`), so a contingent predicate like *new-student* is not a logical
 item. Invariance at the determiner type is exactly the quantity invariance the Quantification
-substrate states on `Det` (`permutationInvariant_det_iff`), so the logicality of *every*, *some*
+substrate states on `Det` (`isPermutationInvariant_det_iff`), so the logicality of *every*, *some*
 and *no* follows from the isomorphism invariance of their Lindström classes rather than being
-stipulated. Von Fintel's *but* is a logical item too (`permutationInvariant_but`).
+stipulated. Von Fintel's *but* is a logical item too (`isPermutationInvariant_but`).
 
 The logical skeleton of a sentence replaces each maximal constituent without logical items by
 a distinct variable of its semantic type; a skeleton is a predicate on type-sorted assignments
@@ -104,43 +104,60 @@ variable {E : Type}
 /-! ### Logical items by permutation invariance (§3.1) -/
 
 /-- A permutation of the entity domain lifts to every type (17), as the permutation itself at
-`e`, the identity at `t`, and conjugation at `⟨a,b⟩`. -/
-def permLift (π : Equiv.Perm E) : ∀ ty : Ty Base, Equiv.Perm (Ty.Domain E Unit ty)
-  | .base .e => π
-  | .t | .base .d | .base .n | .base .v | .base .s => Equiv.refl _
-  | .fn a b => (permLift π a).arrowCongr (permLift π b)
-  | .comp _ _ => Equiv.refl _
+`e`, the identity at `t`, and conjugation at `⟨a,b⟩`; the lift is a group homomorphism. -/
+def permLift : ∀ ty : Ty Base, Equiv.Perm E →* Equiv.Perm (Ty.Domain E Unit ty)
+  | .base .e => .id _
+  | .t | .base .d | .base .n | .base .v | .base .s | .comp _ _ => 1
+  | .fn a b => .mk' (fun π ↦ (permLift a π).arrowCongr (permLift b π)) fun π σ ↦ by
+      rw [map_mul, map_mul]; rfl
+
+@[simp] theorem permLift_fn_apply (π : Equiv.Perm E) {a b : Ty Base}
+    (f : Ty.Domain E Unit (a ⇒ b)) (x : Ty.Domain E Unit a) :
+    permLift (a ⇒ b) π f x = permLift b π (f ((permLift a π).symm x)) :=
+  rfl
 
 @[simp] theorem permLift_et_apply (π : Equiv.Perm E) (P : E → Prop) :
-    permLift π Ty.et P = P ∘ ⇑π.symm :=
+    permLift Ty.et π P = P ∘ ⇑π.symm :=
   rfl
 
 @[simp] theorem permLift_det_apply (π : Equiv.Perm E) (Q : Det E) (A B : Set E) :
-    permLift π Ty.det Q A B = Q (π ⁻¹' A) (π ⁻¹' B) :=
+    permLift Ty.det π Q A B = Q (π ⁻¹' A) (π ⁻¹' B) :=
   rfl
+
+-- lifting commutes with function application
+theorem permLift_apply_apply (π : Equiv.Perm E) {a b : Ty Base}
+    (f : Ty.Domain E Unit (a ⇒ b)) (x : Ty.Domain E Unit a) :
+    permLift (a ⇒ b) π f (permLift a π x) = permLift b π (f x) := by
+  rw [permLift_fn_apply, Equiv.symm_apply_apply]
 
 /-- An item is permutation invariant (18) when every lifted permutation fixes it, van
 Benthem's criterion for the logical items. -/
-def PermutationInvariant (ty : Ty Base) (x : Ty.Domain E Unit ty) : Prop :=
-  ∀ π : Equiv.Perm E, permLift π ty x = x
+def IsPermutationInvariant (ty : Ty Base) (x : Ty.Domain E Unit ty) : Prop :=
+  ∀ π : Equiv.Perm E, permLift ty π x = x
+
+-- a logical item applied to a logical item is a logical item
+theorem IsPermutationInvariant.app {a b : Ty Base} {f : Ty.Domain E Unit (a ⇒ b)}
+    {x : Ty.Domain E Unit a} (hf : IsPermutationInvariant (a ⇒ b) f)
+    (hx : IsPermutationInvariant a x) : IsPermutationInvariant b (f x) := fun π ↦ by
+  rw [← permLift_apply_apply, hf π, hx π]
 
 /-- Truth-functional conjunction is a logical item (20), preserved because the lift is the
 identity at type `t`. -/
-theorem permutationInvariant_and :
-    PermutationInvariant (E := E) (.t ⇒ .t ⇒ .t) fun u v : Prop ↦ u ∧ v :=
+theorem isPermutationInvariant_and :
+    IsPermutationInvariant (E := E) (.t ⇒ .t ⇒ .t) fun u v : Prop ↦ u ∧ v :=
   fun _ ↦ rfl
 
 -- (36)
-theorem permutationInvariant_not : PermutationInvariant (E := E) (.t ⇒ .t) Not :=
+theorem isPermutationInvariant_not : IsPermutationInvariant (E := E) (.t ⇒ .t) Not :=
   fun _ ↦ rfl
 
 -- (23c)
-theorem permutationInvariant_there : PermutationInvariant Ty.et fun _ : E ↦ True :=
+theorem isPermutationInvariant_there : IsPermutationInvariant Ty.et fun _ : E ↦ True :=
   fun _ ↦ rfl
 
 /-- The whole domain and the empty set are the only permutation-invariant properties (25). -/
-theorem permutationInvariant_et_iff {P : E → Prop} :
-    PermutationInvariant Ty.et P ↔ P = (fun _ ↦ True) ∨ P = (fun _ ↦ False) := by
+theorem isPermutationInvariant_et_iff {P : E → Prop} :
+    IsPermutationInvariant Ty.et P ↔ P = (fun _ ↦ True) ∨ P = (fun _ ↦ False) := by
   refine ⟨fun h ↦ ?_, by rintro (rfl | rfl) π <;> rfl⟩
   by_cases hP : ∃ a, P a
   · obtain ⟨a, ha⟩ := hP
@@ -149,24 +166,24 @@ theorem permutationInvariant_et_iff {P : E → Prop} :
     exact (congrFun (h π⁻¹) a).mpr ha
   · exact .inr (funext fun x ↦ eq_false fun hx ↦ hP ⟨x, hx⟩)
 
-theorem permutationInvariant_det_iff {Q : Det E} :
-    PermutationInvariant Ty.det Q ↔ QuantityInvariant Q :=
+theorem isPermutationInvariant_det_iff {Q : Det E} :
+    IsPermutationInvariant Ty.det Q ↔ QuantityInvariant Q :=
   ⟨fun h π A B ↦ iff_of_eq (congr_fun₂ (h π) A B),
     fun h π ↦ funext₂ fun A B ↦ propext (h π A B)⟩
 
 -- (25)
-theorem permutationInvariant_some : PermutationInvariant Ty.det (Det.some : Det E) :=
-  permutationInvariant_det_iff.2
+theorem isPermutationInvariant_some : IsPermutationInvariant Ty.det (Det.some : Det E) :=
+  isPermutationInvariant_det_iff.2
     (by rw [← Lindstrom.someDet_toDet]; exact Lindstrom.Det.realize_quantityInvariant _)
 
 -- (35), (34a)
-theorem permutationInvariant_every : PermutationInvariant Ty.det (every : Det E) :=
-  permutationInvariant_det_iff.2
+theorem isPermutationInvariant_every : IsPermutationInvariant Ty.det (every : Det E) :=
+  isPermutationInvariant_det_iff.2
     (by rw [← Lindstrom.everyDet_toDet]; exact Lindstrom.Det.realize_quantityInvariant _)
 
 -- (11a)
-theorem permutationInvariant_no : PermutationInvariant Ty.det (no : Det E) :=
-  permutationInvariant_det_iff.2
+theorem isPermutationInvariant_no : IsPermutationInvariant Ty.det (no : Det E) :=
+  isPermutationInvariant_det_iff.2
     (by rw [← Lindstrom.noDet_toDet]; exact Lindstrom.Det.realize_quantityInvariant _)
 
 /-- Von Fintel's ||but|| (31) factors the least-exception schema compositionally; the
@@ -177,8 +194,8 @@ def but : Ty.Domain E Unit (Ty.et ⇒ Ty.et ⇒ Ty.det ⇒ Ty.et ⇒ .t) :=
 
 /-- ||but|| is a permutation-invariant element of its type (31), a logical constant, so it is
 not replaced by a variable in the skeletons (32)–(33). -/
-theorem permutationInvariant_but :
-    PermutationInvariant (Ty.et ⇒ Ty.et ⇒ Ty.det ⇒ Ty.et ⇒ .t) (but (E := E)) := by
+theorem isPermutationInvariant_but :
+    IsPermutationInvariant (Ty.et ⇒ Ty.et ⇒ Ty.det ⇒ Ty.et ⇒ .t) (but (E := E)) := by
   intro π
   funext f g D h
   show IsExceptionSet (fun A B ↦ D (π.symm ⁻¹' A) (π.symm ⁻¹' B)) (π ⁻¹' g) (π ⁻¹' f) (π ⁻¹' h) =
