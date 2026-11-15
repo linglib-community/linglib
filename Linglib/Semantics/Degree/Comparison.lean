@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modification.Basic
+public import Linglib.Semantics.Modification.Image
 public import Linglib.Semantics.Negation.Polarity
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Order.UpperLower.Closure
@@ -119,38 +119,40 @@ orderings of [kennedy-2015] (4). -/
 
 /-! ### Comparisons as modifiers
 
-A comparison is a modifier of degree sets acting pointwise through its interval, so the modified
+A comparison is a modifier of degree sets acting on each degree through its interval, so the modified
 numeral is the modifier applied to the bare numeral's two-sided meaning: *at least* is the upward
 closure, *at most* the downward closure and *exactly* the identity. The two halves of
 [kennedy-2015] (4) are then properties of the modifier, extensive when the comparison is inclusive
 and disjoint from each singleton when it is strict. -/
 
-/-- The modifier of degree sets that a comparison is, pointwise through its interval. -/
-def modifier (c : Comparison) : Modifier (Set α) := Modifier.pointwise c.interval
+/-- The modifier of degree sets that a comparison is, the image of the relation of each threshold
+to its interval. -/
+def modifier (c : Comparison) : Modifier (Set α) := (SetRel.ofSuccessors c.interval).image
 
 @[simp] theorem modifier_singleton (c : Comparison) (n : α) : c.modifier {n} = c.interval n :=
-  Modifier.pointwise_singleton _ n
+  SetRel.image_ofSuccessors_singleton _ n
 
 theorem modifier_ge (s : Set α) : Comparison.ge.modifier s = upperClosure s :=
-  (coe_upperClosure s).symm
+  (SetRel.image_ofSuccessors _ s).trans (coe_upperClosure s).symm
 
 theorem modifier_le (s : Set α) : Comparison.le.modifier s = lowerClosure s :=
-  (coe_lowerClosure s).symm
+  (SetRel.image_ofSuccessors _ s).trans (coe_lowerClosure s).symm
 
 theorem modifier_eq : (Comparison.eq.modifier : Modifier (Set α)) = id :=
-  Modifier.pointwise_singleton_eq_id
+  funext fun s ↦ (SetRel.image_ofSuccessors _ s).trans (Set.biUnion_of_singleton s)
 
 theorem isExtensive_modifier_iff [Nonempty α] (c : Comparison) :
     Modifier.IsExtensive (c.modifier : Modifier (Set α)) ↔ ¬ c.IsStrict := by
-  rw [modifier, Modifier.isExtensive_pointwise_iff]
-  exact ⟨fun h ↦ (c.self_mem_interval_iff (Classical.arbitrary α)).1 (h _),
-    fun h n ↦ (c.self_mem_interval_iff n).2 h⟩
+  rw [modifier, Modifier.isExtensive_image_iff]
+  exact ⟨fun h ↦ (c.self_mem_interval_iff (Classical.arbitrary α)).1 (h.refl _),
+    fun h ↦ ⟨fun n ↦ (c.self_mem_interval_iff n).2 h⟩⟩
 
 theorem disjoint_modifier_singleton_iff [Nonempty α] (c : Comparison) :
     (∀ n : α, Disjoint (c.modifier {n}) {n}) ↔ c.IsStrict := by
-  rw [modifier, Modifier.disjoint_pointwise_singleton_iff]
-  exact ⟨fun h ↦ by_contra fun hs ↦ h (Classical.arbitrary α) ((c.self_mem_interval_iff _).2 hs),
-    fun h n hn ↦ (c.self_mem_interval_iff n).1 hn h⟩
+  rw [modifier, SetRel.forall_disjoint_image_singleton_iff]
+  exact ⟨fun h ↦ by_contra fun hs ↦
+      h.irrefl (Classical.arbitrary α) ((c.self_mem_interval_iff _).2 hs),
+    fun h ↦ ⟨fun n hn ↦ (c.self_mem_interval_iff n).1 hn h⟩⟩
 
 end Preorder
 

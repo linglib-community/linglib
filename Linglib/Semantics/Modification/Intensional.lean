@@ -10,25 +10,19 @@ public import Linglib.Logic.Modal.Extensional
 /-!
 # Modifiers of intensional properties
 
-An intensional property is a function from worlds to predicates of entities, and attributive
-adjectives denote modifiers of intensional properties. At these modifiers Kamp's order-theoretic
-classes (`Semantics/Modification/Basic.lean`) take their familiar pointwise form, an intersective
-modifier is extensional, and a privative modifier that holds of something is not subsective. The
-classification descends from Parsons and Kamp through Kamp and Partee; the labels are Partee's.
-
-## Main results
-
-* `Modifier.isIntersective_iff_exists_forall`, `Modifier.isPrivative_iff_forall`: the classes
-  stated pointwise for modifiers of intensional properties, `W → E → Prop`.
-* `Modifier.IsIntersective.isExtensional`: intersective modifiers are extensional.
-* `Modifier.IsPrivative.not_isSubsective`: a privative modifier that holds of something is not
-  subsective.
-* `Modifier.former_isPrivative`: *former*, over properties of times, is privative.
+An intensional property is a function from worlds to predicates of entities. A modifier of
+intensional properties is intersective exactly when
+[it conjoins every noun with one fixed property](##Modifier.isIntersective_iff_exists_forall),
+and privative exactly when
+[nothing it yields from a noun falls under the noun](##Modifier.isPrivative_iff_forall). An
+intersective modifier is [extensional](##Modifier.IsIntersective.isExtensional). A privative
+modifier that holds of something is [not subsective](##Modifier.IsPrivative.not_isSubsective).
+The modifier *former* of properties of times [is privative](##Modifier.former_isPrivative).
 
 ## Implementation notes
 
-Extensionality is independent of the classes; `Studies/Kamp1975.lean` gives the witnesses.
-Whether adjectives uniformly denote `Modifier (W → E → Prop)` is a theoretical claim
+Extensionality is independent of the classes, with witnesses in `Studies/Kamp1975.lean`. That
+every adjective denotes a modifier of intensional properties is a theoretical claim
 (`Studies/Elbourne2026.lean`).
 
 ## References
@@ -64,10 +58,8 @@ theorem IsIntersective.isExtensional (h : IsIntersective adj) : IsExtensional ad
 
 /-- A privative modifier that holds of something is not subsective. -/
 theorem IsPrivative.not_isSubsective (hp : IsPrivative adj) (hne : ∃ N w x, adj N w x) :
-    ¬ IsSubsective adj := by
-  intro hs
-  obtain ⟨N, w, x, hadj⟩ := hne
-  exact isPrivative_iff_forall.mp hp N w x hadj (hs N w x hadj)
+    ¬ IsSubsective adj :=
+  fun hs ↦ hne.elim fun N ⟨w, x, h⟩ ↦ (congrFun₂ (hp.eq_bot hs N) w x).mp h
 
 /-! ### *former* -/
 

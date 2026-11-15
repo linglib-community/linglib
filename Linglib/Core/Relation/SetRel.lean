@@ -50,6 +50,18 @@ theorem core_subset_core_left (h : R₁ ⊆ R₂) : R₂.core t ⊆ R₁.core t 
 
 instance isRefl_id : (SetRel.id : SetRel α α).IsRefl := ⟨fun _ ↦ rfl⟩
 
+/-! ### The image as an order embedding -/
+
+/-- Relations are ordered as their images are. -/
+theorem image_le_image_iff : R₁.image ≤ R₂.image ↔ R₁ ⊆ R₂ :=
+  ⟨fun h ⟨a, _⟩ r ↦ by
+      obtain ⟨_, rfl, r'⟩ := h {a} ⟨a, rfl, r⟩
+      exact r',
+    fun h _ ↦ image_subset_image_left h⟩
+
+theorem image_id_eq : (SetRel.id : SetRel α α).image = id :=
+  funext image_id
+
 /-! ### Decidability over finite codomains -/
 
 instance [Fintype β] (R : SetRel α β) (t : Set β) (a : α) [∀ b, Decidable (a ~[R] b)]
@@ -116,8 +128,18 @@ theorem image_ofSuccessors (f : α → Set β) (s : Set α) :
     (ofSuccessors f).image s = ⋃ a ∈ s, f a := by
   ext; simp [image]
 
+@[simp] theorem image_ofSuccessors_singleton (f : α → Set β) (a : α) :
+    (ofSuccessors f).image {a} = f a := by
+  ext; simp [image]
+
 theorem mem_preimage_ofSuccessors : a ∈ (ofSuccessors f).preimage t ↔ (f a ∩ t).Nonempty :=
   ⟨fun ⟨b, ht, hb⟩ ↦ ⟨b, hb, ht⟩, fun ⟨b, hb, ht⟩ ↦ ⟨b, ht, hb⟩⟩
+
+/-- A relation is irreflexive exactly when no point lies in the image of its own singleton. -/
+theorem forall_disjoint_image_singleton_iff {R : SetRel α α} :
+    (∀ a, Disjoint (R.image {a}) {a}) ↔ R.IsIrrefl := by
+  simp only [Set.disjoint_singleton_right, mem_image, Set.mem_singleton_iff, exists_eq_left]
+  exact ⟨fun h ↦ ⟨h⟩, fun h ↦ h.irrefl⟩
 
 /-! ### Transitive closure -/
 

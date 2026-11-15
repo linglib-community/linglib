@@ -2,48 +2,33 @@ module
 
 public import Mathlib.Basic.Rel
 public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Order.PropInstances
 
 /-!
 # Modifiers
 
-A modifier of `τ` is a function from `τ` to itself, as Parsons treats adjectives and adverbs as
-functions on the predicates they modify; adjectives, adverbs and relative clauses are modifiers
-of different types `τ`, and modifiers stack by composition. Kamp's classification of adjective
-meanings is order-theoretic: over an ordered type, a modifier is subsective when it maps each
-argument below itself, privative when its value is disjoint from its argument, and intersective
-when it is the meet with a fixed element. Its order dual, a modifier mapping each argument above
-itself, is extensive.
+A modifier of `τ` is a function from `τ` to itself, and modifiers stack by composition. Over an
+ordered type, a modifier is subsective if each value lies below its argument and extensive if
+each lies above it. It is privative if each value is disjoint from its argument, and intersective
+if it is the meet with a fixed element.
 
-A modifier of sets can act pointwise, sending a set to the union of the values of a map on its
-members, which is `SetRel.image`. The modifiers of numerals and of scalar alternatives are of this
-kind, and Kamp's classes then read off the map: extensive when every point is in its own value,
-subsective when no value leaves its point, and privative only for the empty map, while being
-disjoint from every singleton argument is irreflexivity.
+Stacking intersective modifiers [meets their elements](##Modifier.intersective_inf). A modifier
+is intersective exactly when
+[it commutes with every intersective modifier](##Modifier.isIntersective_iff_forall_commute) and,
+over a Boolean algebra, exactly when [it is subsective and distributes over
+joins](##Modifier.isIntersective_iff_isSubsective_and_map_sup).
 
-`Semantics/Modification/Classification.lean` specializes the classes to intensional properties.
+## Implementation notes
 
-## Main definitions
-
-* `Modifier τ`: the functions from `τ` to `τ`.
-* `Modifier.intersective q`: the meet with `q`.
-* `Modifier.IsSubsective`, `IsPrivative`, `IsIntersective`: Kamp's classes, and
-  `Modifier.IsExtensive`, the dual of subsective.
-* `Modifier.pointwise r`: the modifier of sets acting pointwise through `r`.
-
-## Main results
-
-* `Modifier.isIntersective_iff_map_inf`, `Modifier.isIntersective_iff_forall_commute`: the
-  intersective modifiers are those commuting with meets, and with every intersective modifier.
-* `Modifier.isExtensive_pointwise_iff`, `isSubsective_pointwise_iff`: the classes of a
-  pointwise modifier, read off its map.
-* `Modifier.isPrivative_pointwise_iff`: a pointwise modifier is privative only when its
-  map is empty everywhere.
+Parsons calls the subsective modifiers standard. Kamp calls them affirmative and the intersective
+ones predicative.
 
 ## References
 
 * [parsons-1970]
 * [kamp-1975]
+* [mcnally-2016]
 -/
 
 @[expose] public section
@@ -55,40 +40,84 @@ namespace Modifier
 
 variable {α : Type*}
 
+/-! ### Subsective and extensive modifiers -/
+
+section LE
+
+variable [LE α] {m : Modifier α}
+
 /-- A modifier `m` is subsective if `m x ≤ x` for every `x`, so that a skillful surgeon is a
 surgeon. -/
-def IsSubsective [LE α] (m : Modifier α) : Prop :=
+@[to_dual IsExtensive /-- A modifier `m` is extensive if `x ≤ m x` for every `x`, the order dual
+of subsective, so that *at least three* holds of three. -/]
+def IsSubsective (m : Modifier α) : Prop :=
   ∀ x, m x ≤ x
 
-theorem isSubsective_iff_le_id [LE α] {m : Modifier α} :
-    IsSubsective m ↔ m ≤ id :=
+@[to_dual isExtensive_iff_id_le]
+theorem isSubsective_iff_le_id : IsSubsective m ↔ m ≤ id :=
   Iff.rfl
+
+end LE
+
+section Preorder
+
+variable [Preorder α] {m n : Modifier α}
+
+@[to_dual isExtensive_id]
+theorem isSubsective_id : IsSubsective (id : Modifier α) :=
+  fun _ ↦ le_rfl
+
+@[to_dual]
+theorem IsSubsective.comp (hm : IsSubsective m) (hn : IsSubsective n) : IsSubsective (m ∘ n) :=
+  fun x ↦ (hm (n x)).trans (hn x)
+
+/-- A modifier below a subsective one is subsective. -/
+@[to_dual /-- A modifier above an extensive one is extensive. -/]
+theorem IsSubsective.mono (hn : IsSubsective n) (h : m ≤ n) : IsSubsective m :=
+  fun x ↦ (h x).trans (hn x)
+
+end Preorder
+
+/-! ### Privative modifiers -/
+
+section OrderBot
+
+variable [PartialOrder α] [OrderBot α] {m : Modifier α}
 
 /-- A modifier `m` is privative if `m x` is disjoint from `x` for every `x`, so that a fake gun is
 not a gun. -/
-def IsPrivative [PartialOrder α] [OrderBot α] (m : Modifier α) : Prop :=
+def IsPrivative (m : Modifier α) : Prop :=
   ∀ x, Disjoint (m x) x
 
-theorem IsPrivative.eq_bot [PartialOrder α] [OrderBot α] {m : Modifier α}
-    (hp : IsPrivative m) (hs : IsSubsective m) (x : α) : m x = ⊥ :=
+/-- A modifier below a privative one is privative. -/
+theorem IsPrivative.mono {n : Modifier α} (hn : IsPrivative n) (h : m ≤ n) : IsPrivative m :=
+  fun x ↦ (hn x).mono_left (h x)
+
+/-- A modifier that is both privative and subsective holds of nothing. -/
+theorem IsPrivative.eq_bot (hp : IsPrivative m) (hs : IsSubsective m) (x : α) : m x = ⊥ :=
   le_bot_iff.mp (hp x le_rfl (hs x))
+
+/-- A modifier is both privative and subsective exactly when it holds of nothing. -/
+theorem isPrivative_and_isSubsective_iff : IsPrivative m ∧ IsSubsective m ↔ ∀ x, m x = ⊥ :=
+  ⟨fun h ↦ h.1.eq_bot h.2, fun h ↦ ⟨fun x ↦ h x ▸ disjoint_bot_left, fun x ↦ h x ▸ bot_le⟩⟩
+
+end OrderBot
+
+/-- Over a Heyting algebra a modifier is privative exactly when it lies below the complement, as
+a subsective one lies below the identity. -/
+theorem isPrivative_iff_le_compl [HeytingAlgebra α] {m : Modifier α} : IsPrivative m ↔ m ≤ compl :=
+  forall_congr' fun _ ↦ le_compl_iff_disjoint_right.symm
 
 /-- A privative modifier maps the top element to the bottom, as nothing is a fake entity. -/
 theorem IsPrivative.map_top [PartialOrder α] [BoundedOrder α] {m : Modifier α}
     (hp : IsPrivative m) : m ⊤ = ⊥ :=
   disjoint_top.mp (hp ⊤)
 
+/-! ### Intersective modifiers -/
+
 section SemilatticeInf
 
-variable [SemilatticeInf α]
-
-/-- A modifier is intersective if it is the meet with some fixed element. -/
-def IsIntersective (m : Modifier α) : Prop :=
-  ∃ q, ∀ x, m x = q ⊓ x
-
-theorem IsIntersective.isSubsective {m : Modifier α} (h : IsIntersective m) :
-    IsSubsective m :=
-  fun x ↦ h.elim fun _ hq ↦ (hq x).trans_le inf_le_right
+variable [SemilatticeInf α] {m n : Modifier α}
 
 /-- `intersective q` meets its argument with `q`; on predicates it is pointwise conjunction, the
 meaning of restrictive relative clauses, intersective adjectives and manner adverbs. -/
@@ -96,22 +125,55 @@ def intersective (q : α) : Modifier α := (q ⊓ ·)
 
 @[simp] theorem intersective_apply (q x : α) : intersective q x = q ⊓ x := rfl
 
-theorem intersective_comm (q r : α) : intersective q r = intersective r q :=
-  inf_comm q r
+/-- Stacking two intersective modifiers is intersective modification by the meet. -/
+theorem intersective_inf (q r : α) : intersective (q ⊓ r) = intersective q ∘ intersective r :=
+  funext fun _ ↦ inf_assoc ..
+
+@[simp] theorem intersective_top [OrderTop α] : intersective (⊤ : α) = id :=
+  funext fun _ ↦ top_inf_eq _
+
+/-- A modifier is intersective if it is the meet with some fixed element. -/
+def IsIntersective (m : Modifier α) : Prop :=
+  ∃ q, ∀ x, m x = q ⊓ x
 
 theorem intersective_isIntersective (q : α) : IsIntersective (intersective q) :=
   ⟨q, fun _ ↦ rfl⟩
 
-/-- A modifier is intersective exactly when meeting its argument with `q` meets its value with `q`,
-and it is then the meet with its value at `⊤`. -/
-theorem isIntersective_iff_map_inf [OrderTop α] {m : Modifier α} :
-    IsIntersective m ↔ ∀ x q, m (x ⊓ q) = m x ⊓ q :=
-  ⟨fun ⟨r, hr⟩ x q ↦ by simp only [hr, inf_assoc], fun h ↦ ⟨m ⊤, fun x ↦ by simpa using h ⊤ x⟩⟩
+theorem IsIntersective.isSubsective (h : IsIntersective m) : IsSubsective m :=
+  fun x ↦ h.elim fun _ hq ↦ (hq x).trans_le inf_le_right
+
+theorem IsIntersective.comp (hm : IsIntersective m) (hn : IsIntersective n) :
+    IsIntersective (m ∘ n) := by
+  obtain ⟨q, hq⟩ := hm
+  obtain ⟨r, hr⟩ := hn
+  exact ⟨q ⊓ r, fun x ↦ by rw [Function.comp_apply, hr, hq, inf_assoc]⟩
+
+/-- A modifier is subsective exactly when what it yields from the meet of `q` with anything lies
+below `q`, so that an intersective modifier under a subsective one still holds. -/
+theorem isSubsective_iff_forall_map_inf_le : IsSubsective m ↔ ∀ q x, m (q ⊓ x) ≤ q :=
+  ⟨fun h _ _ ↦ (h _).trans inf_le_left, fun h x ↦ by simpa using h x x⟩
+
+section OrderTop
+
+variable [OrderTop α]
+
+theorem isIntersective_id : IsIntersective (id : Modifier α) :=
+  ⟨⊤, fun x ↦ (top_inf_eq x).symm⟩
+
+/-- An intersective modifier is the meet with its value at `⊤`. -/
+theorem isIntersective_iff_forall_eq_map_top_inf : IsIntersective m ↔ ∀ x, m x = m ⊤ ⊓ x :=
+  ⟨fun ⟨q, hq⟩ x ↦ by rw [hq ⊤, inf_top_eq, hq], fun h ↦ ⟨m ⊤, h⟩⟩
+
+/-- A modifier is intersective exactly when meeting its argument with `q` meets its value with
+`q`. -/
+theorem isIntersective_iff_map_inf : IsIntersective m ↔ ∀ x q, m (x ⊓ q) = m x ⊓ q :=
+  ⟨fun ⟨r, hr⟩ x q ↦ by simp only [hr, inf_assoc],
+    fun h ↦ isIntersective_iff_forall_eq_map_top_inf.2 fun x ↦ by simpa using h ⊤ x⟩
 
 /-- A modifier is intersective exactly when it commutes with every intersective modifier, so that
 the order of an intersective modifier and another one matters only when the other is not
 intersective. -/
-theorem isIntersective_iff_forall_commute [OrderTop α] {m : Modifier α} :
+theorem isIntersective_iff_forall_commute :
     IsIntersective m ↔ ∀ q, Function.Commute m (intersective q) := by
   rw [isIntersective_iff_map_inf]
   refine ⟨fun h q x ↦ ?_, fun h x q ↦ ?_⟩
@@ -119,77 +181,19 @@ theorem isIntersective_iff_forall_commute [OrderTop α] {m : Modifier α} :
   · rw [inf_comm x q, inf_comm (m x) q]
     exact h q x
 
-/-- A modifier is subsective exactly when what it yields from the meet of `q` with anything lies
-below `q`, so that an intersective modifier under a subsective one still holds. -/
-theorem isSubsective_iff_forall_map_inf_le {m : Modifier α} :
-    IsSubsective m ↔ ∀ q x, m (q ⊓ x) ≤ q :=
-  ⟨fun h _ _ ↦ (h _).trans inf_le_left, fun h x ↦ by simpa using h x x⟩
+end OrderTop
 
 end SemilatticeInf
 
-/-- A modifier `m` is extensive if `x ≤ m x` for every `x`, the order dual of subsective, so that
-*at least three* holds of three. -/
-def IsExtensive [LE α] (m : Modifier α) : Prop :=
-  ∀ x, x ≤ m x
-
-theorem isExtensive_iff_id_le [LE α] {m : Modifier α} : IsExtensive m ↔ id ≤ m :=
-  Iff.rfl
-
-theorem IsSubsective.comp [Preorder α] {m n : Modifier α} (hm : IsSubsective m)
-    (hn : IsSubsective n) : IsSubsective (m ∘ n) :=
-  fun x ↦ (hm (n x)).trans (hn x)
-
-theorem IsExtensive.comp [Preorder α] {m n : Modifier α} (hm : IsExtensive m)
-    (hn : IsExtensive n) : IsExtensive (m ∘ n) :=
-  fun x ↦ (hn x).trans (hm (n x))
-
-/-! ### Pointwise modifiers of sets -/
-
-section Pointwise
-
-variable {β : Type*}
-
-/-- `pointwise r` sends a set to the union of the values of `r` on its members. -/
-def pointwise (r : α → Set β) : Set α → Set β := fun s ↦ ⋃ a ∈ s, r a
-
-variable {r : α → Set β} {s : Set α} {b : β}
-
-@[simp] theorem mem_pointwise : b ∈ pointwise r s ↔ ∃ a ∈ s, b ∈ r a := by
-  simp [pointwise]
-
-@[simp] theorem pointwise_singleton (r : α → Set β) (a : α) : pointwise r {a} = r a :=
-  Set.biUnion_singleton a r
-
-theorem pointwise_eq_image (r : α → Set β) (s : Set α) :
-    pointwise r s = SetRel.image {p | p.2 ∈ r p.1} s := by
-  ext b; simp [SetRel.image]
-
-theorem pointwise_singleton_eq_id : pointwise (fun a : α ↦ ({a} : Set α)) = id :=
-  funext Set.biUnion_of_singleton
-
-variable {r : α → Set α}
-
-theorem isExtensive_pointwise_iff : IsExtensive (pointwise r) ↔ ∀ a, a ∈ r a :=
-  ⟨fun h a ↦ by simpa using h {a}, fun h _ a ha ↦ mem_pointwise.2 ⟨a, ha, h a⟩⟩
-
-theorem isSubsective_pointwise_iff : IsSubsective (pointwise r) ↔ ∀ a, r a ⊆ {a} := by
-  refine ⟨fun h a ↦ by simpa using h {a}, fun h s b hb ↦ ?_⟩
-  obtain ⟨a, ha, hba⟩ := mem_pointwise.1 hb
-  exact (h a hba).symm ▸ ha
-
-/-- A pointwise modifier is privative only when its map is empty everywhere, since an argument
-`{a, b}` with `b ∈ r a` meets its own value. -/
-theorem isPrivative_pointwise_iff : IsPrivative (pointwise r) ↔ ∀ a, r a = ∅ := by
-  refine ⟨fun h a ↦ Set.eq_empty_iff_forall_notMem.2 fun b hb ↦ ?_, fun h s ↦ ?_⟩
-  · exact Set.disjoint_left.1 (h {a, b}) (mem_pointwise.2 ⟨a, by simp, hb⟩) (by simp)
-  · refine Set.disjoint_left.2 fun b hb _ ↦ ?_
-    obtain ⟨a, _, hba⟩ := mem_pointwise.1 hb
-    simp [h a] at hba
-
-theorem disjoint_pointwise_singleton_iff :
-    (∀ a, Disjoint (pointwise r {a}) {a}) ↔ ∀ a, a ∉ r a := by
-  simp [Set.disjoint_singleton_right]
-
-end Pointwise
+/-- Over a Boolean algebra a modifier is intersective exactly when it is subsective and
+distributes over joins, so that a gray cat or dog is a gray cat or a gray dog. -/
+theorem isIntersective_iff_isSubsective_and_map_sup [BooleanAlgebra α] {m : Modifier α} :
+    IsIntersective m ↔ IsSubsective m ∧ ∀ x y, m (x ⊔ y) = m x ⊔ m y := by
+  refine ⟨fun h ↦ ⟨h.isSubsective, fun x y ↦ ?_⟩,
+    fun ⟨hs, hm⟩ ↦ isIntersective_iff_forall_eq_map_top_inf.2 fun x ↦ ?_⟩
+  · obtain ⟨q, hq⟩ := h
+    simp only [hq, inf_sup_left]
+  · rw [← sup_compl_eq_top (x := x), hm, inf_sup_right, inf_eq_left.2 (hs x),
+      (disjoint_compl_left.mono_left (hs xᶜ)).eq_bot, sup_bot_eq]
 
 end Modifier

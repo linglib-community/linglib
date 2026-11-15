@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modification.Coercion
+public import Linglib.Semantics.Modification.NonVacuity
 public import Studies.Kamp1975
 public import Linglib.Data.Examples.Schema
 public import Linglib.Data.Examples.Partee2010
@@ -166,11 +166,10 @@ theorem subsective_plus_coercion {adj : Modifier (W → E → Prop)} (hp : IsPri
 are both Ns and things in the privative's value (p. 280). -/
 theorem real_isNonVacuous_iff {adj : Modifier (W → E → Prop)} (hp : IsPrivative adj)
     (N : W → E → Prop) (w : W) :
-    ¬ IsNonVacuous (id N) w (N w) ∧
-      (IsNonVacuous (id N) w (N w ⊔ adj N w) ↔ (∃ x, N w x) ∧ ∃ x, adj N w x) := by
-  refine ⟨not_isNonVacuous_self N w, ?_⟩
-  change IsNonVacuous N w _ ↔ _
-  rw [sup_comm, isNonVacuous_sup_self_iff]
+    ¬ IsNonVacuous (id N w) (N w) ∧
+      (IsNonVacuous (id N w) (N w ⊔ adj N w) ↔ (∃ x, N w x) ∧ ∃ x, adj N w x) := by
+  refine ⟨not_isNonVacuous_self (N w), ?_⟩
+  rw [id_eq, sup_comm, isNonVacuous_sup_self_iff]
   exact and_congr_right fun _ ↦ exists_congr fun x ↦
     ⟨And.left, fun h ↦ ⟨h, Modifier.isPrivative_iff_forall.1 hp N w x h⟩⟩
 

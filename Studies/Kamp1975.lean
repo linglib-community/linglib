@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modification.Classification
+public import Linglib.Semantics.Modification.Intensional
 public import Linglib.Logic.Trivalent.Basic
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Algebra.Order.Ring.Rat
@@ -206,7 +206,7 @@ end MeasuredComparative
 /-! ### A member of each class
 
 Each class in the hierarchy is non-empty: explicit denotations that
-provably satisfy each definition from `Classification.lean`, modeling
+provably satisfy each definition, modeling
 the classic examples from the literature — "gray" (intersective), "fake"
 (privative), "skillful" (subsective but not extensional), "alleged"
 (non-subsective/modal).
