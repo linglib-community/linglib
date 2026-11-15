@@ -77,7 +77,7 @@ theory of questions here.
 
 namespace SchwarzWagner2026
 
-open Set Exhaustification Alternatives NeoGricean Aristotelian PhraseStructure Tree
+open Set Exhaustification NeoGricean Aristotelian PhraseStructure Tree
 
 /-! ### The blocking constraint -/
 

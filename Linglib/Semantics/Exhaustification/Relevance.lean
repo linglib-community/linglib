@@ -18,7 +18,7 @@ to it by preimage.
 
 ## Main definitions
 
-* `Alternatives.ExhaustivelyRelevant`, `Alternatives.IsAllowableRestriction`
+* `Exhaustification.ExhaustivelyRelevant`, `Exhaustification.IsAllowableRestriction`
 
 ## References
 
@@ -27,9 +27,7 @@ to it by preimage.
 
 @[expose] public section
 
-namespace Alternatives
-
-open Exhaustification
+namespace Exhaustification
 
 variable {W : Type*}
 
@@ -79,4 +77,4 @@ theorem exhIE_mem_closure {S : Set W} (hfin : A.Finite) (hS : S ∈ A) :
       not_and]
   exact heq ▸ BooleanSubalgebra.sdiff_mem (BooleanSubalgebra.subset_closure hS) hsup
 
-end Alternatives
+end Exhaustification

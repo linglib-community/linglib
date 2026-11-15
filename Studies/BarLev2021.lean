@@ -1,7 +1,7 @@
 module
 
 public import Studies.BarLevFox2020
-public import Linglib.Semantics.Alternatives.Pruning
+public import Linglib.Semantics.Exhaustification.Pruning
 public import Linglib.Semantics.Homogeneity.Plural
 public import Linglib.Data.Statistics.KrizChemla2015
 
@@ -18,10 +18,10 @@ come from pruning: a set of alternatives may replace the whole set when exhausti
 only weakens the universal reading, which holds exactly when it makes no alternative innocently
 excludable, and the readings so derived are [the conjunctions of alternatives that are not
 themselves alternatives, and the plain existential
-one](##Alternatives.prunedReadings_eq). They include "at least `k`" for every `k` and lie
+one](##Exhaustification.prunedReadings_eq). They include "at least `k`" for every `k` and lie
 among Križ and Spector's candidate meanings. The question the context raises selects the
 strongest reading it determines; [every reading is selected by the question whether it
-holds](##Alternatives.isPrunedReading_polar), and a world is gappy, true on the reading one
+holds](##Exhaustification.isPrunedReading_polar), and a world is gappy, true on the reading one
 question selects and false on another's, [exactly where trivalent plural predication is
 undefined](##gappy_iff_barePlural_eq_undefined).
 
@@ -30,7 +30,7 @@ undefined](##gappy_iff_barePlural_eq_undefined).
 The prejacent and the alternatives are the disjunction of the atomic predications over the atoms
 of the plurality and its closure under disjunction, the form the paper adopts once the domain is
 assumed to hold every part of the plurality; the general theory of exhaustifying and pruning such
-a disjunction is `Exhaustification.exhIEII_supClosure` and `Alternatives.prunedReadings`.
+a disjunction is `Exhaustification.exhIEII_supClosure` and `Exhaustification.prunedReadings`.
 `Gappy` ranges over all partitions and is context-free; that a context fixing the partition
 removes the gap is carried by `reading_80` and `reading_81`.
 
@@ -63,7 +63,7 @@ removes the gap is carried by `reading_80` and `reading_81`.
 
 namespace BarLev2021
 
-open Exhaustification Alternatives
+open Exhaustification
 
 variable {Atom W : Type*} {x : Finset Atom} {P : Atom → W → Prop}
 

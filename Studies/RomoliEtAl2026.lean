@@ -227,7 +227,7 @@ private theorem threshold_nine (ctx : AugurzkyEtAl2023.Context) :
   cases ctx <;> simp [AugurzkyEtAl2023.Context.threshold, nine]
 
 theorem isReading_alternatives (ctx : AugurzkyEtAl2023.Context) :
-    Alternatives.IsPrunedReading (supClosure (atom BarLev2021.holds '' ↑nine))
+    Exhaustification.IsPrunedReading (supClosure (atom BarLev2021.holds '' ↑nine))
       (⋃ b ∈ nine, atom BarLev2021.holds b) (ctx.question nine)
       (Exhaustification.exhIEII (alternatives ctx) (⋃ b ∈ nine, atom BarLev2021.holds b)) := by
   have hk := threshold_nine ctx

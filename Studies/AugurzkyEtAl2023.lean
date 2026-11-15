@@ -337,8 +337,8 @@ theorem krizChemla_asymmetry_of_existential :
 section BarLev
 
 open BarLev2021 (atom)
-open Exhaustification (atLeastTrue mem_atLeastTrue)
-open Alternatives (IsPrunedReading isPrunedReading_polar_atLeastTrue)
+open Exhaustification (atLeastTrue mem_atLeastTrue IsPrunedReading
+  isPrunedReading_polar_atLeastTrue)
 
 variable {α : Type*} (x : Finset α)
 

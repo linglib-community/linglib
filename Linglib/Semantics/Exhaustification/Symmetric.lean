@@ -27,7 +27,7 @@ alternatives about sets of propositions, Fox and Katzir's symmetric alternatives
 
 @[expose] public section
 
-namespace Alternatives
+namespace Exhaustification
 
 variable {W : Type*} {s s₁ s₂ : Set W}
 
@@ -84,4 +84,4 @@ theorem isSymmetric_coe [DecidableEq W] (A B C : Finset W) :
     refine ⟨by rw [← Finset.coe_union, hu], ?_⟩
     exact Finset.disjoint_coe.2 (Finset.disjoint_iff_inter_eq_empty.2 hd)
 
-end Alternatives
+end Exhaustification

@@ -10,17 +10,17 @@ Pruning replaces the formal alternatives of a sentence by a subset. Crnič, Chem
 constrain it to weaken: the result of exhaustifying over the subset must be entailed by the
 result over the whole set. Bar-Lev adds that the question under discussion selects, among the
 readings so derived, the strongest one it determines, and [every derived reading is selected by
-the polar question whether it holds](##Alternatives.isPrunedReading_polar). This is a different
+the polar question whether it holds](##isPrunedReading_polar). This is a different
 constraint from Fox and Katzir's `IsAllowableRestriction`, which keeps the alternatives that are
 relevant one by one.
 
 For a disjunction of separated disjuncts with its closure under disjunction as alternatives, a
 pruning weakens [exactly when it makes nothing innocently
-excludable](##Alternatives.mem_prunedReadings_iff), so every derived reading is a conjunction of
+excludable](##mem_prunedReadings_iff), so every derived reading is a conjunction of
 sub-disjunctions; when the disjuncts are independent the derived readings are [exactly those
 conjunctions that are not themselves proper
-sub-disjunctions](##Alternatives.prunedReadings_eq), and "at least `k` of the disjuncts hold"
-[is among them](##Alternatives.atLeastTrue_mem_prunedReadings) for every `k`.
+sub-disjunctions](##prunedReadings_eq), and "at least `k` of the disjuncts hold"
+[is among them](##atLeastTrue_mem_prunedReadings) for every `k`.
 
 ## Implementation notes
 
@@ -37,9 +37,7 @@ is not stated separately.
 
 @[expose] public section
 
-namespace Alternatives
-
-open Exhaustification
+namespace Exhaustification
 
 /-! ### The weakening constraint -/
 
@@ -263,4 +261,4 @@ theorem isPrunedReading_polar_atLeastTrue (h : Separating I p) {k : ℕ} (hk : 0
 
 end Count
 
-end Alternatives
+end Exhaustification
