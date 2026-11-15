@@ -139,21 +139,25 @@ theorem comulTreeOfCuts_eq_sum (T : UnorderedTree α) :
   rw [Multiset.map_cons, Multiset.sum_cons, Multiset.map_map]
   congr 1
 
-/-- `comulForestOfCuts` as a single multiset sum over `forestCuts`. -/
+/-- `cutTensor` as a monoid homomorphism from pairs of forests under disjoint union. -/
+noncomputable def cutTensorHom :
+    Multiplicative (Forest (UnorderedTree α) × Forest (UnorderedTree α)) →*
+      ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) where
+  toFun p := cutTensor p.toAdd
+  map_one' := by
+    change of' (R := R) (0 : Forest (UnorderedTree α)) ⊗ₜ[R] of' 0 = 1
+    rw [of'_zero, Algebra.TensorProduct.one_def]
+  map_mul' p q := cutTensor_add p.toAdd q.toAdd
+
+/-- `comulForestOfCuts` as a single multiset sum over `forestCuts`: both are the image of the
+product of the `treeCuts` in the monoid semiring under the lift of `cutTensor`. -/
 theorem comulForestOfCuts_eq_sum (F : Forest (UnorderedTree α)) :
     comulForestOfCuts (R := R) cuts F =
       ((forestCuts cuts F).map (cutTensor (R := R))).sum := by
-  induction F using Multiset.induction with
-  | empty =>
-    rw [comulForestOfCuts_zero, forestCuts_zero, Multiset.map_singleton,
-        Multiset.sum_singleton]
-    show (1 : _) = of' (R := R) (0 : Forest (UnorderedTree α)) ⊗ₜ[R] of' 0
-    rw [of'_zero, Algebra.TensorProduct.one_def]
-  | cons T F ih =>
-    rw [comulForestOfCuts_cons, comulTreeOfCuts_eq_sum, ih,
-      ← WithConv.ofConv_toConv (forestCuts cuts (T ::ₘ F)), toConv_forestCuts_cons]
-    exact (Multiset.sum_map_ofConv_mul (f := cutTensor (R := R)) (.toConv (treeCuts cuts T))
-      (.toConv (forestCuts cuts F)) cutTensor_add).symm
+  refine .trans ?_ (AddMonoidAlgebra.lift_ofMultiset (cutTensorHom (R := R)) _)
+  rw [ofMultiset_forestCuts, map_multiset_prod, Multiset.map_map, comulForestOfCuts]
+  exact congrArg _ (Multiset.map_congr rfl fun T _ ↦ (comulTreeOfCuts_eq_sum cuts T).trans
+    (AddMonoidAlgebra.lift_ofMultiset (cutTensorHom (R := R)) _).symm)
 
 /-! ### Coassociativity
 

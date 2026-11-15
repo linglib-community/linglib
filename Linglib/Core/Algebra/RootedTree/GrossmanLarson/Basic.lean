@@ -101,8 +101,8 @@ theorem insertion_of'_add (A B C : Forest (UnorderedTree α)) :
         insertion (of' (R := R) A) (of' p.1) * insertion (of' B) (of' p.2)).sum := by
   rw [insertion_of'_of', insertionMultiset_add_host, Multiset.map_bind, Multiset.sum_bind]
   refine congrArg Multiset.sum (Multiset.map_congr rfl fun p _ ↦ ?_)
-  rw [insertion_of'_of', insertion_of'_of']
-  exact Multiset.sum_map_ofConv_mul (.toConv _) (.toConv _) of'_add
+  rw [insertion_of'_of', insertion_of'_of', Multiset.sum_map_mul_sum_map, Multiset.map_map]
+  simp only [Function.comp_def, of'_add]
 
 /-- (iii) of Proposition 3.7 of [oudom-guin-2008]: grafting into a product splits the guests
 between the two factors, `(x y) ∘ z = (x ∘ z₍₁₎)(y ∘ z₍₂₎)`. -/
