@@ -248,7 +248,8 @@ structure SEINC : Prop where
   exp : EXP precedes θ
   mo : MO θ
 
-variable {precedes θ} [IsStrictOrder β precedes] (h : SEINC precedes θ) (h₀ : ∀ x e, θ x e → ¬ IsBot x) {x : α} {e e' : β}
+variable {precedes θ} [IsStrictOrder β precedes] (h : SEINC precedes θ)
+  (h₀ : ∀ x e, θ x e → ¬ IsBot x) {x : α} {e e' : β}
 include h h₀
 
 theorem isInitialPart_of_seinc (hx : θ x e) (hx' : θ x e') (hle : e' ≤ e) :
