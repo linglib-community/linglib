@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Function
 
 /-!
 # Mongolian case
@@ -48,12 +48,14 @@ def Case.label : Case → _root_.Case
   | inst => .inst
   | com => .com
 
-/-- The comparative values a case expresses: the dative also expresses location. -/
-def Case.functions : Case → Finset _root_.Case
-  | dat => {.dat, .loc}
-  | c => {c.label}
+/-- The functions a case marks: the dative also expresses location. -/
+def Case.functions : Case → Finset _root_.Case.Function
+  | dat => {.argument .R, .spatial none .place}
+  | abl => {.spatial none .source}
+  | c => c.label.functions
 
-theorem Case.label_mem_functions (c : Case) : c.label ∈ c.functions := by
+theorem Case.label_functions_inter_nonempty (c : Case) :
+    (c.label.functions ∩ c.functions).Nonempty := by
   cases c <;> decide
 
 end Mongolian

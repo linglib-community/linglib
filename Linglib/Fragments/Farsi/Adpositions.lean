@@ -26,7 +26,7 @@ namespace Farsi.Adpositions
 /-- *ba* 'with', marking a companion, *mæn ba færzad šam xord-æm* 'I ate dinner with Farzad',
 [mahootian-1997] p. 81, (329); it takes the pronominal clitics, *ba-hatun* 'with you', p. 265. -/
 def ba : Adposition :=
-  { morphs := [.free "ba"], linearization := {.pre}, functions := {.com},
+  { morphs := [.free "ba"], linearization := {.pre}, functions := {.comitative},
     complements := {some .np} }
 
 end Farsi.Adpositions

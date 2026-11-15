@@ -29,7 +29,8 @@ def se : Comparative :=
   , standardCase := some .abl
   , degreeMarkers := [.free "zyaadaa"] }
 
-theorem standardCase_mem_functions : ∀ k ∈ se.standardCase, k ∈ Adpositions.se.functions := by
+theorem standardCase_functions_inter_nonempty :
+    ∀ k ∈ se.standardCase, (k.functions ∩ Adpositions.se.functions).Nonempty := by
   decide
 
 /-- The superlative is the comparative with a universal standard, *sab se*. -/

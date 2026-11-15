@@ -112,11 +112,11 @@ inductive Position where
 
 namespace Position
 
-/-- The adpositional position selecting `p` in a use marking `c`, a value `p` marks, or no value,
-as for the *at* of *laugh at*; its type of case is that of `c`. -/
-def adposition (p : Option Adposition := none) (c : Option Case := none)
+/-- The adpositional position selecting `p` in a use marking `c`, a function `p` marks, or no
+function, as for the *at* of *laugh at*; its type of case is that of `c`. -/
+def adposition (p : Option Adposition := none) (c : Option Case.Function := none)
     (_h : ∀ a ∈ p, ∀ x ∈ c, x ∈ a.functions := by decide) : Position :=
-  .adpositional (c.map Case.kind) p
+  .adpositional (c.map Case.Function.kind) p
 
 /-- The position's recorded coding, if clausal. -/
 def coding? : Position → Option Clause.ComplementType
@@ -449,7 +449,7 @@ def np_np : ArgumentFrame := ⟨some .nominal, [.nominal, .nominal]⟩
 
 /-- The PP frame has one adpositional complement, selecting `p` in a use marking `c` when
     given. -/
-def pp (p : Option Adposition := none) (c : Option Case := none)
+def pp (p : Option Adposition := none) (c : Option Case.Function := none)
     (h : ∀ a ∈ p, ∀ x ∈ c, x ∈ a.functions := by decide) : ArgumentFrame :=
   ⟨some .nominal, [.adposition p c h]⟩
 
@@ -459,7 +459,7 @@ def spatialPP : ArgumentFrame := ⟨some .nominal, [.adpositional (some .spatial
 
 /-- The NP + PP frame has a nominal plus an adpositional complement, selecting `p` in a use
     marking `c` when given. -/
-def np_pp (p : Option Adposition := none) (c : Option Case := none)
+def np_pp (p : Option Adposition := none) (c : Option Case.Function := none)
     (h : ∀ a ∈ p, ∀ x ∈ c, x ∈ a.functions := by decide) : ArgumentFrame :=
   ⟨some .nominal, [.nominal, .adposition p c h]⟩
 

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Word.Basic
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Function
 public import Linglib.Syntax.Category.Particle.Additive
 
 /-!
@@ -100,13 +100,13 @@ notation. -/
 def toWord : Morphology.Word := { form := toString c.morph, cat := .CCONJ }
 
 /-- A coordinator is also comitative when its morph is one of the forms `ms` of a marker whose
-case values `fs` include the comitative, so that 'and' is 'with', [stassen-2000]'s lexical
+functions `fs` include the comitative, so that 'and' is 'with', [stassen-2000]'s lexical
 identity of the coordinator with the comitative marker. The marker is an adposition, with its
 morphs and functions, or a case of the language, with its exponents and functions. -/
-def IsAlsoComitative (ms : List Morphology.Morph) (fs : Finset Case) : Prop :=
-  c.morph ∈ ms ∧ .com ∈ fs
+def IsAlsoComitative (ms : List Morphology.Morph) (fs : Finset Case.Function) : Prop :=
+  c.morph ∈ ms ∧ .comitative ∈ fs
 
-instance (ms : List Morphology.Morph) (fs : Finset Case) :
+instance (ms : List Morphology.Morph) (fs : Finset Case.Function) :
     Decidable (c.IsAlsoComitative ms fs) :=
   inferInstanceAs (Decidable (_ ∧ _))
 

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Function
 
 /-!
 # Georgian case
@@ -16,7 +16,7 @@ stone'. The paradigms that distinguish the seven cases are in `Georgian.Declensi
 
 * `Georgian.Case`: the seven cases, in Hewitt's order.
 * `Georgian.Case.label`, `Georgian.Case.functions`: the comparative value each case is named for,
-  and the values it expresses.
+  and the functions it marks.
 
 ## Implementation notes
 
@@ -64,14 +64,15 @@ def label : Case → _root_.Case
   | inst => .inst
   | adv => .ess
 
-/-- The comparative values a case expresses: the dative also expresses location with a few nouns
+/-- The functions a case marks: the dative also expresses location with a few nouns
 ([hewitt-1995] pp. 531–532), and the adverbial the change of state (p. 534). -/
-def functions : Case → Finset _root_.Case
-  | dat => {.dat, .loc}
-  | adv => {.ess, .transl}
-  | c => {c.label}
+def functions : Case → Finset _root_.Case.Function
+  | dat => {.argument .R, .spatial none .place}
+  | adv => {.essive, .translative}
+  | c => c.label.functions
 
-theorem label_mem_functions (c : Case) : c.label ∈ c.functions := by
+theorem label_functions_inter_nonempty (c : Case) :
+    (c.label.functions ∩ c.functions).Nonempty := by
   cases c <;> decide
 
 end Case

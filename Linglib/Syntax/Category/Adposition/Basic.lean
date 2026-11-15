@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Spatial
+public import Linglib.Syntax.Case.Function
 public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Word.Basic
 public import Mathlib.Data.Finset.Image
@@ -12,7 +12,7 @@ An adposition is a grammatical word that forms a phrase with a term it governs a
 affix, relates that term to another unit, mostly a verb, noun or adjective, by marking the
 grammatical and semantic link between them (Hagège's definition, p. 8). Case markers and
 adpositions cannot be told apart consistently across languages (Haspelmath p. 97), so an entry
-records the relations it marks as the comparative case values that case markers mark, a set
+records the relations it marks as the functions that case markers mark (`Case.Function`), a set
 because adpositions are polysemous, beside its exponent as morphs, the positions it takes
 relative to its term, and the complements it takes. An adposition may occur without its term:
 *in* is transitive in *She stayed in the house* and intransitive in *She stayed in* (Huddleston
@@ -50,7 +50,7 @@ p. 54).
   adpositions bound or free, the attachment of each piece recorded in its morph.
 * `IsSimple` is Hagège's simple adposition; his complex adposition is an adposition with a case
   affix (§2.2.3), which he keeps apart from a compound one (p. 129).
-* `functions` is `∅` where no comparative value fits, as for *despite*.
+* `functions` is `∅` where no function fits, as for *despite*.
 * The case an adposition governs on its complement (Corbett) is a fact about a language's own
   case values and is left to the fragments.
 
@@ -102,15 +102,15 @@ inductive Complement where
 end Adposition
 
 /-- An adposition is its exponent, the positions it takes relative to the term it governs, the
-comparative case values it marks, and the complements it takes, `none` for its use without
+functions it marks, and the complements it takes, `none` for its use without
 one. -/
 structure Adposition where
   /-- The exponent, in surface order. -/
   morphs : List Morph
   /-- The positions relative to the governed term. -/
   linearization : Finset Adposition.Linearization
-  /-- The comparative case values marked. -/
-  functions : Finset Case
+  /-- The functions marked. -/
+  functions : Finset Case.Function
   /-- The complements taken; `none` is the use without a complement. -/
   complements : Finset (Option Adposition.Complement)
   deriving DecidableEq
@@ -181,12 +181,9 @@ theorem isParticle_iff : a.IsParticle ↔ ¬ a.IsTransitive := by
 
 /-! ### The values marked -/
 
-/-- A spatial adposition marks a spatial value. -/
-def IsSpatial : Prop := ∃ c ∈ a.functions, c.kind = .spatial
+/-- A spatial adposition marks a spatial function. -/
+def IsSpatial : Prop := ∃ f ∈ a.functions, f.kind = .spatial
 
-instance : Decidable a.IsSpatial := inferInstanceAs (Decidable (∃ c ∈ a.functions, _))
-
-theorem isSpatial_iff : a.IsSpatial ↔ ∃ c ∈ a.functions, c.dirOf.isSome := by
-  simp [IsSpatial, Case.kind_eq_spatial_iff]
+instance : Decidable a.IsSpatial := inferInstanceAs (Decidable (∃ f ∈ a.functions, _))
 
 end Adposition

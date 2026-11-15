@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Morph
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Function
 
 /-!
 # Japanese case markers
@@ -24,7 +24,7 @@ single *ni* entry, the matter of `Studies/SadakaneKoizumi1995.lean`.
 * `Japanese.Case`, `Japanese.Case.exponents`: the four cases of the case particles, and the
   particles.
 * `Japanese.Case.label`, `Japanese.Case.functions`: the comparative value each case is named for,
-  and the values it expresses.
+  and the functions it marks.
 * `Japanese.Case.droppable`: the cases whose particles casual speech drops.
 
 ## References
@@ -69,13 +69,14 @@ def label : Case → _root_.Case
   | gen => .gen
   | dat => .dat
 
-/-- `c.functions` are the comparative values `c` expresses; *ni* marks the recipient, the goal,
+/-- `c.functions` are the functions `c` marks; *ni* marks the recipient, the goal,
 the time and the location of existence. -/
-def functions : Case → Finset _root_.Case
-  | dat => {.dat, .loc, .all, .tem}
-  | c => {c.label}
+def functions : Case → Finset _root_.Case.Function
+  | dat => {.argument .R, .spatial none .place, .spatial none .goal, .temporal}
+  | c => c.label.functions
 
-theorem label_mem_functions (c : Case) : c.label ∈ c.functions := by
+theorem label_functions_inter_nonempty (c : Case) :
+    (c.label.functions ∩ c.functions).Nonempty := by
   cases c <;> decide
 
 /-- The cases whose particles casual speech drops, the nominative and the accusative. -/

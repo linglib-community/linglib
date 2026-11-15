@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Morph
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Function
 
 /-!
 # Classical Tibetan role particles
@@ -17,7 +17,7 @@ target of a verb of motion alike (p. 269).
 
 * `ClassicalTibetan.Case`, `ClassicalTibetan.Case.exponents`: the role particles.
 * `ClassicalTibetan.Case.label`, `ClassicalTibetan.Case.functions`: the comparative value each is
-  named for, and the values it expresses.
+  named for, and the functions it marks.
 
 ## Implementation notes
 
@@ -60,14 +60,16 @@ def label : Case → _root_.Case
   | source | boundedSource => .abl
   | accompaniment => .com
 
-/-- The comparative values a particle expresses: the agency also the instrument, and a locus also
+/-- The functions a particle marks: the agency also the instrument, and a locus also
 the goal of motion. -/
-def functions : Case → Finset _root_.Case
-  | agency => {.erg, .inst}
-  | locus | boundedLocus => {.loc, .all}
-  | c => {c.label}
+def functions : Case → Finset _root_.Case.Function
+  | agency => {.argument .A, .instrumental}
+  | locus | boundedLocus => {.spatial none .place, .spatial none .goal}
+  | source | boundedSource => {.spatial none .source}
+  | c => c.label.functions
 
-theorem label_mem_functions (c : Case) : c.label ∈ c.functions := by
+theorem label_functions_inter_nonempty (c : Case) :
+    (c.label.functions ∩ c.functions).Nonempty := by
   cases c <;> decide
 
 /-- The role particle of a case. -/

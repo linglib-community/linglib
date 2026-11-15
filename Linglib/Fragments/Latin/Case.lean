@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Function
 
 /-!
 # Latin case
@@ -20,7 +20,7 @@ of an inflectional case system.
 
 * `Latin.Case`: the six cases, in the order of the school paradigms.
 * `Latin.Case.label`, `Latin.Case.functions`: the comparative value each case is named for, and
-  the values it expresses.
+  the functions it marks.
 
 ## References
 
@@ -58,14 +58,15 @@ def label : Case → _root_.Case
   | dat => .dat
   | abl => .abl
 
-/-- The comparative values a case expresses: the accusative also expresses the goal of motion,
+/-- The functions a case marks: the accusative also expresses the goal of motion,
 and the ablative location and instrument as well as source. -/
-def functions : Case → Finset _root_.Case
-  | acc => {.acc, .all}
-  | abl => {.abl, .loc, .inst}
-  | c => {c.label}
+def functions : Case → Finset _root_.Case.Function
+  | acc => {.argument .P, .spatial none .goal}
+  | abl => {.spatial none .source, .spatial none .place, .instrumental}
+  | c => c.label.functions
 
-theorem label_mem_functions (c : Case) : c.label ∈ c.functions := by
+theorem label_functions_inter_nonempty (c : Case) :
+    (c.label.functions ∩ c.functions).Nonempty := by
   cases c <;> decide
 
 end Case
