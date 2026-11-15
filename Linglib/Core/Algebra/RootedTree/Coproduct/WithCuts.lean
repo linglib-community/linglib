@@ -154,10 +154,10 @@ product of the `treeCuts` in the monoid semiring under the lift of `cutTensor`. 
 theorem comulForestOfCuts_eq_sum (F : Forest (UnorderedTree α)) :
     comulForestOfCuts (R := R) cuts F =
       ((forestCuts cuts F).map (cutTensor (R := R))).sum := by
-  refine .trans ?_ (AddMonoidAlgebra.lift_ofMultiset (cutTensorHom (R := R)) _)
+  refine .trans ?_ (AddMonoidAlgebra.lift_ofMultiset (R := ℕ) (cutTensorHom (R := R)) _)
   rw [ofMultiset_forestCuts, map_multiset_prod, Multiset.map_map, comulForestOfCuts]
   exact congrArg _ (Multiset.map_congr rfl fun T _ ↦ (comulTreeOfCuts_eq_sum cuts T).trans
-    (AddMonoidAlgebra.lift_ofMultiset (cutTensorHom (R := R)) _).symm)
+    (AddMonoidAlgebra.lift_ofMultiset (R := ℕ) (cutTensorHom (R := R)) _).symm)
 
 /-! ### Coassociativity
 

@@ -177,38 +177,38 @@ private theorem map_projTripleList_recutRemainder (S : Multiset (𝓕 × 𝓛)) 
 
 /-- Re-cutting a combined crown with a combined remainder is the product of the parts. -/
 private theorem map_projTripleList_crown_add (s t : 𝓕 × 𝓛) :
-    AddMonoidAlgebra.ofMultiset
+    AddMonoidAlgebra.ofMultiset ℕ
         ((ℱ (s.1 + t.1)).map fun c12 ↦ projTripleList (c12.1, c12.2, s.2 ++ t.2)) =
-      .ofMultiset ((ℱ s.1).map fun c12 ↦ projTripleList (c12.1, c12.2, s.2)) *
-        .ofMultiset ((ℱ t.1).map fun c12 ↦ projTripleList (c12.1, c12.2, t.2)) := by
+      .ofMultiset ℕ ((ℱ s.1).map fun c12 ↦ projTripleList (c12.1, c12.2, s.2)) *
+        .ofMultiset ℕ ((ℱ t.1).map fun c12 ↦ projTripleList (c12.1, c12.2, t.2)) := by
   rw [forestCuts_add, ← AddMonoidAlgebra.ofMultiset_map_add_product]
   exact congrArg _ (Multiset.map_map_product_distrib
     (fun x y ↦ projTripleList_add x.1 y.1 x.2 y.2 s.2 t.2) _ _)
 
 /-- Re-cutting an appended remainder with a combined crown is the product of the parts. -/
 private theorem map_projTripleList_remainder_add (s t : 𝓕 × 𝓛) :
-    AddMonoidAlgebra.ofMultiset
+    AddMonoidAlgebra.ofMultiset ℕ
         ((𝒞 (s.2 ++ t.2)).map fun q ↦ projTripleList (s.1 + t.1, q.1, q.2)) =
-      .ofMultiset ((𝒞 s.2).map fun q ↦ projTripleList (s.1, q.1, q.2)) *
-        .ofMultiset ((𝒞 t.2).map fun q ↦ projTripleList (t.1, q.1, q.2)) := by
+      .ofMultiset ℕ ((𝒞 s.2).map fun q ↦ projTripleList (s.1, q.1, q.2)) *
+        .ofMultiset ℕ ((𝒞 t.2).map fun q ↦ projTripleList (t.1, q.1, q.2)) := by
   rw [childrenCuts_append, ← AddMonoidAlgebra.ofMultiset_map_add_product]
   exact congrArg _ (Multiset.map_map_product_distrib
     (fun x y ↦ projTripleList_add s.1 t.1 x.1 y.1 x.2 y.2) _ _)
 
 private theorem recutCrown_mul (S T : Multiset (𝓕 × 𝓛)) :
-    AddMonoidAlgebra.ofMultiset ((recutCrown extract
+    AddMonoidAlgebra.ofMultiset ℕ ((recutCrown extract
         ((S ×ˢ T).map fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2))).map projTripleList) =
-      .ofMultiset ((recutCrown extract S).map projTripleList) *
-        .ofMultiset ((recutCrown extract T).map projTripleList) := by
+      .ofMultiset ℕ ((recutCrown extract S).map projTripleList) *
+        .ofMultiset ℕ ((recutCrown extract T).map projTripleList) := by
   simp only [map_projTripleList_recutCrown, AddMonoidAlgebra.ofMultiset_bind]
   rw [Multiset.sum_map_mul_sum_map, Multiset.map_map]
   exact congrArg _ (Multiset.map_congr rfl fun p _ ↦ map_projTripleList_crown_add extract p.1 p.2)
 
 private theorem recutRemainder_mul (S T : Multiset (𝓕 × 𝓛)) :
-    AddMonoidAlgebra.ofMultiset ((recutRemainder extract
+    AddMonoidAlgebra.ofMultiset ℕ ((recutRemainder extract
         ((S ×ˢ T).map fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2))).map projTripleList) =
-      .ofMultiset ((recutRemainder extract S).map projTripleList) *
-        .ofMultiset ((recutRemainder extract T).map projTripleList) := by
+      .ofMultiset ℕ ((recutRemainder extract S).map projTripleList) *
+        .ofMultiset ℕ ((recutRemainder extract T).map projTripleList) := by
   simp only [map_projTripleList_recutRemainder, AddMonoidAlgebra.ofMultiset_bind]
   rw [Multiset.sum_map_mul_sum_map, Multiset.map_map]
   exact congrArg _
@@ -290,7 +290,7 @@ theorem childrenDoubleCuts_eq (h : ExtractCoherent extract) :
     rw [Multiset.singleton_bind, Multiset.singleton_bind, forestCuts_zero, childrenCuts_nil]
     simp only [Multiset.map_singleton]
   | c :: cs' => by
-    refine AddMonoidAlgebra.ofMultiset_injective ?_
+    refine AddMonoidAlgebra.ofMultiset_injective ℕ ?_
     rw [childrenCuts_cons, recutCrown_mul, recutRemainder_mul, childDoubleCuts_eq h c,
       childrenDoubleCuts_eq h cs']
 /-- For a coherent policy, re-cutting the crowns of the cuts at one child enumerates the same

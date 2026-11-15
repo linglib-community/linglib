@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Algebra.MonoidAlgebra.Multiset
 public import Mathlib.Algebra.MonoidAlgebra.Basic
 public import Mathlib.LinearAlgebra.Finsupp.VectorSpace
 
@@ -307,22 +308,21 @@ theorem coeff_of' (F G : Forest T) [Decidable (F = G)] :
 theorem ext_coeff (h : ∀ F, p.coeff F = q.coeff F) : p = q :=
   ext (AddMonoidAlgebra.coeff_inj.mp (Finsupp.ext h))
 
+/-- The sum of the basis vectors of a multiset of forests is the multiset in the monoid algebra. -/
+theorem sum_map_of' (s : Multiset (Forest T)) :
+    (s.map (of' (R := R))).sum = ⟨AddMonoidAlgebra.ofMultiset R s⟩ := by
+  refine toFinsupp_injective ?_
+  rw [← toFinsuppAlgEquiv_apply, map_multiset_sum, Multiset.map_map]
+  rfl
+
 theorem coeff_sum_map_of' [DecidableEq T] (s : Multiset (Forest T)) (F : Forest T) :
     ((s.map (of' (R := R))).sum).coeff F = s.count F := by
-  induction s using Multiset.induction with
-  | empty => simp
-  | cons G s ih =>
-    rw [Multiset.map_cons, Multiset.sum_cons, coeff_add, ih, coeff_of', Multiset.count_cons]
-    split_ifs <;> subst_vars <;> simp_all [add_comm]
+  rw [sum_map_of', coeff_def, AddMonoidAlgebra.coeff_ofMultiset]
 
 theorem sum_map_of'_injective [CharZero R] :
-    Function.Injective fun s : Multiset (Forest T) ↦ (s.map (of' (R := R))).sum := by
-  classical
-  intro s t h
-  ext F
-  have := congrArg (coeff · F) h
-  simp only [coeff_sum_map_of'] at this
-  exact_mod_cast this
+    Function.Injective fun s : Multiset (Forest T) ↦ (s.map (of' (R := R))).sum :=
+  fun s t h ↦ AddMonoidAlgebra.ofMultiset_injective R <|
+    congrArg toFinsupp ((sum_map_of' s).symm.trans (h.trans (sum_map_of' t)))
 
 variable (R) in
 /-- `coeff` bundled as a linear functional (`Polynomial.lcoeff` analogue). -/
