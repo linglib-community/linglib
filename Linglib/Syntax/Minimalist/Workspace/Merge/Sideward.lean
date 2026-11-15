@@ -69,7 +69,7 @@ private theorem mergeOpOfCuts_pair_eq_mul (lbl : α) {S S' T T' : UnorderedTree 
     mergeOpOfCuts (R := R) cuts lbl S S' (of' {T, T'}) = of' {UnorderedTree.node lbl {S, S'}} *
       (((treeCuts cuts T).filter (·.1 = A)).map fun p ↦ of' (R := R) p.2).sum *
       (((treeCuts cuts T').filter (·.1 = B)).map fun p ↦ of' (R := R) p.2).sum := by
-  rw [mergeOpOfCuts_apply_of', forestCuts_pair, Multiset.conv, Multiset.filter_map,
+  rw [mergeOpOfCuts_apply_of', forestCuts_pair, Multiset.filter_map,
     Multiset.filter_congr (q := fun x : (Forest _ × Forest _) × (Forest _ × Forest _) ↦
       x.1.1 = A ∧ x.2.1 = B) fun ⟨a, b⟩ hx ↦ h a (Multiset.mem_product.mp hx).1 b
         (Multiset.mem_product.mp hx).2,
