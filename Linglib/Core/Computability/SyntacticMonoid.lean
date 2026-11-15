@@ -119,6 +119,25 @@ theorem syntacticClass_reverse_eq_iff {u v : List α} :
   rw [syntacticClass_eq_iff, syntacticClass_eq_iff]
   refine ⟨fun h x y ↦ ?_, fun h x y ↦ ?_⟩ <;> simpa using h y.reverse x.reverse
 
+/-- Sending a word to the syntactic class of its reversal is a homomorphism to the opposite of the
+syntactic monoid. -/
+def reverseSyntacticHom (L : Language α) : FreeMonoid α →* L.SyntacticMonoidᵐᵒᵖ where
+  toFun w := .op (L.syntacticClass w.toList.reverse)
+  map_one' := by simp
+  map_mul' u v := by simp [FreeMonoid.toList_mul, List.reverse_append]
+
+/-- The syntactic monoid of the reversal of a language is the opposite of its syntactic monoid. -/
+noncomputable def syntacticMonoidReverseEquiv (L : Language α) :
+    L.reverse.SyntacticMonoid ≃* L.SyntacticMonoidᵐᵒᵖ :=
+  (Con.congr (d := Con.ker L.reverseSyntacticHom) (MulEquiv.refl _) <| Con.ext fun u v ↦ by
+    change L.reverse.syntacticCon u v ↔
+      MulOpposite.op (L.syntacticClass u.toList.reverse) = .op (L.syntacticClass v.toList.reverse)
+    rw [MulOpposite.op_inj, ← syntacticClass_reverse_eq_iff, ← toSyntacticMonoid_eq_iff]
+    rfl).trans <|
+  Con.quotientKerEquivOfSurjective L.reverseSyntacticHom fun x ↦ by
+    obtain ⟨u, hu⟩ := L.syntacticClass_surjective x.unop
+    exact ⟨FreeMonoid.ofList u.reverse, by simp [reverseSyntacticHom, hu]⟩
+
 /-! ### Universal property -/
 
 /-- `φ` *recognizes* `L` when `L` is the `FreeMonoid.ofList`-pullback of a union of

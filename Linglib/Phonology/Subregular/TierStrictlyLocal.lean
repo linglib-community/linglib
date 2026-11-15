@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Subregular.StrictlyLocal
+public import Linglib.Phonology.Subregular.TierBased
 public import Mathlib.Data.List.Basic
 public import Mathlib.Computability.Language
 
@@ -25,7 +26,7 @@ are not freely insertable form the least tier](##Language.IsTierStrictlyLocal.ex
 
 ## Implementation notes
 
-A tier is a decidable predicate, as in `Language.IsTierBased`, and Lambert's characterization
+A tier is a decidable predicate, as in `Language.tierBased`, and Lambert's characterization
 quantifies over tiers as that does. A symbol is freely insertable and deletable when its
 syntactic class is the identity, the algebraic form of Lambert's self-loops on every state of the
 canonical automaton. The projection is padded with `k - 1` boundaries on each side, as in
@@ -61,10 +62,10 @@ attribute [instance] decTier
 
 variable {k : ℕ} {G : TierStrictlyLocalGrammar α} {w : List α}
 
-/-- The language generated at width `k` is the preimage, under erasure of the symbols off the
-tier, of the strictly `k`-local language of `permitted`. -/
+/-- The language generated at width `k` is the strictly `k`-local language of `permitted` read on
+the tier. -/
 def language (k : ℕ) (G : TierStrictlyLocalGrammar α) : Language α :=
-  {w | w.filter (G.tier ·) ∈ G.permitted.language k}
+  Language.onTier G.tier (G.permitted.language k)
 
 @[simp] lemma mem_language : w ∈ G.language k ↔ w.filter (G.tier ·) ∈ G.permitted.language k :=
   Iff.rfl
@@ -73,12 +74,12 @@ def language (k : ℕ) (G : TierStrictlyLocalGrammar α) : Language α :=
 identity. -/
 theorem syntacticClass_eq_one_of_not_tier {a : α} (ha : ¬ G.tier a) :
     (G.language k).syntacticClass [a] = 1 :=
-  Language.syntacticClass_eq_one_iff.2 fun u v ↦ by simp [List.filter_append, ha]
+  Language.syntacticClass_onTier_eq_one ha
 
 /-- A symbol whose syntactic class is not the identity is on the tier. -/
 theorem tier_of_syntacticClass_ne_one {a : α} (h : (G.language k).syntacticClass [a] ≠ 1) :
     G.tier a :=
-  Decidable.by_contra fun ha ↦ h (G.syntacticClass_eq_one_of_not_tier ha)
+  Language.of_syntacticClass_onTier_ne_one h
 
 end TierStrictlyLocalGrammar
 
@@ -92,6 +93,17 @@ def IsTierStrictlyLocal (L : Language α) (k : ℕ) : Prop :=
 variable {L : Language α} {k : ℕ}
 
 /-! ## Inclusions -/
+
+/-- The tier-based strictly `k`-local languages are the tier-based extension of the strictly
+`k`-local ones, since a `TierStrictlyLocalGrammar` is a tier together with a strictly local
+language read on it. -/
+theorem isTierStrictlyLocal_iff_mem_tierBased :
+    L.IsTierStrictlyLocal k ↔ L ∈ tierBased {L | L.IsStrictlyLocal k} := by
+  constructor
+  · rintro ⟨G, rfl⟩
+    exact ⟨G.tier, _, _, ⟨G.permitted, rfl⟩, rfl⟩
+  · rintro ⟨T, _, _, ⟨G, rfl⟩, rfl⟩
+    exact ⟨⟨T, G⟩, rfl⟩
 
 /-- Strictly local languages are tier-based strictly local ([heinz-rawal-tanner-2011],
 Theorem 3), on the tier of the whole alphabet. -/
@@ -168,20 +180,15 @@ theorem isTierStrictlyLocal_iff_exists_tier (hk : 2 ≤ k) :
 /-- **Lambert's least tier** ([lambert-2023], §4.1). A tier-based strictly `k`-local language is
 generated at width `k` on its salient symbols, those whose syntactic class is not the identity.
 They lie on the tier of every grammar for it by
-`TierStrictlyLocalGrammar.tier_of_syntacticClass_ne_one`, so this tier is the least. -/
+`TierStrictlyLocalGrammar.tier_of_syntacticClass_ne_one`, so this tier is the least. It is the
+strictly local instance of `Language.onTier_salient`. -/
 theorem IsTierStrictlyLocal.exists_salient_tier (h : L.IsTierStrictlyLocal k) :
     ∃ G : TierStrictlyLocalGrammar α, G.language k = L ∧
       ∀ a, G.tier a ↔ L.syntacticClass [a] ≠ 1 := by
   classical
   obtain ⟨G, rfl⟩ := h
-  let G' : TierStrictlyLocalGrammar α :=
-    ⟨fun a ↦ (G.language k).syntacticClass [a] ≠ 1, G.permitted⟩
-  refine ⟨G', Set.ext fun w ↦ ?_, fun _ ↦ Iff.rfl⟩
-  have hw := mem_iff_of_syntacticClass_eq
-    (syntacticClass_filter (p := G'.tier) (fun a ha ↦ by simpa [G'] using ha) w)
-  rw [TierStrictlyLocalGrammar.mem_language, ← hw, TierStrictlyLocalGrammar.mem_language,
-    List.filter_eq_self.2 fun a ha ↦ decide_eq_true
-      (G.tier_of_syntacticClass_ne_one (of_decide_eq_true (List.mem_filter.1 ha).2))]
+  exact ⟨⟨fun a ↦ (G.language k).syntacticClass [a] ≠ 1, G.permitted⟩, onTier_salient rfl,
+    fun _ ↦ Iff.rfl⟩
 
 /-- **Tier-based strictly local languages are star-free** ([heinz-rawal-tanner-2011],
 Theorem 6). Over a finite alphabet a tier-based strictly local language is the preimage of a

@@ -100,6 +100,10 @@ def IsPiecewiseTestable (L : Language α) (k : ℕ) : Prop :=
 
 variable {L M : Language α} {k : ℕ}
 
+theorem IsPiecewiseTestable.mono {k' : ℕ} (h : L.IsPiecewiseTestable k) (hk : k ≤ k') :
+    L.IsPiecewiseTestable k' :=
+  fun _ _ e ↦ h <| Set.ext fun _ ↦ and_congr_left fun hs ↦ subseqSet_eq_iff e (hs.trans hk)
+
 theorem IsPiecewiseTestable.compl (h : L.IsPiecewiseTestable k) : Lᶜ.IsPiecewiseTestable k :=
   fun _ _ e ↦ congrArg Not (h e)
 
