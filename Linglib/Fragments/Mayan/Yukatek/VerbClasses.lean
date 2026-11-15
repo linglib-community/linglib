@@ -14,15 +14,12 @@ unmarked in the completive, the inchoatives derived from stative roots, the posi
 spatial configurations, and the transitives. The status also fixes which set of person
 markers cross-references the sole argument of an intransitive, the split that
 `Yukatek.markerSet` records. Bohnemeyer's tables of status semantics and status
-patterns and Hofling's Yucatecan sketch are the sources; the verbs are those of Bohnemeyer's
-examples, whose classification by causation and linking is the matter of
-`Studies/Bohnemeyer2004.lean`.
+patterns and Hofling's Yucatecan sketch are the sources.
 
 ## Main definitions
 
 * `Yukatek.StatusCategory`, `Yukatek.VerbStemClass`, `Yukatek.statusSuffix`: the four statuses,
   the five stem classes, and the status suffix of each class.
-* `Yukatek.Verb`, `Yukatek.verbs`: the verbs of Bohnemeyer's examples with their stem classes.
 
 ## Implementation notes
 
@@ -92,104 +89,5 @@ def statusSuffix : VerbStemClass → StatusCategory → Option String
   | .transitiveActive, .completive => some "-ah"
   | .transitiveActive, .subjunctive => some "-ø/-eh"
   | .transitiveActive, .imperative => some "-ø/-eh"
-
-/-! ### Verbs -/
-
-/-- A verb with its stem class. -/
-structure Verb where
-  /-- The stem, in Bohnemeyer's orthography. -/
-  form : String
-  /-- The gloss. -/
-  gloss : String
-  /-- The stem class. -/
-  stemClass : VerbStemClass
-  deriving DecidableEq, Repr
-
-/-- *meyah* 'work', active. -/
-def meyah : Verb := ⟨"meyah", "work", .active⟩
-
-/-- *bàaxal* 'play', active. -/
-def bàaxal : Verb := ⟨"bàaxal", "play", .active⟩
-
-/-- *balak'* 'roll', active. -/
-def balak' : Verb := ⟨"balak'", "roll", .active⟩
-
-/-- *péek* 'move, wiggle', active. -/
-def péek : Verb := ⟨"péek", "move", .active⟩
-
-/-- *tsíirin* 'buzz', active. -/
-def tsíirin : Verb := ⟨"tsíirin", "buzz", .active⟩
-
-/-- *chíik* 'shake, rattle', active. -/
-def chíik : Verb := ⟨"chíik", "shake", .active⟩
-
-/-- *háarax* 'slide', active. -/
-def háarax : Verb := ⟨"háarax", "slide", .active⟩
-
-/-- *húuy* 'stir, agitate', active. -/
-def húuy : Verb := ⟨"húuy", "stir", .active⟩
-
-/-- *mosòon* 'whirl, revolve', active. -/
-def mosòon : Verb := ⟨"mosòon", "whirl", .active⟩
-
-/-- *pirix* 'flick', active. -/
-def pirix : Verb := ⟨"pirix", "flick", .active⟩
-
-/-- *walak'* 'turn, revolve', active. -/
-def walak' : Verb := ⟨"walak'", "turn", .active⟩
-
-/-- *nik'ich* 'squeak', active. -/
-def nik'ich : Verb := ⟨"nik'ich", "squeak", .active⟩
-
-/-- *kim* 'die', inactive. -/
-def kim : Verb := ⟨"kim", "die", .inactive⟩
-
-/-- *lúub* 'fall', inactive. -/
-def lúub : Verb := ⟨"lúub", "fall", .inactive⟩
-
-/-- *hàan* 'eat', inactive. -/
-def hàan : Verb := ⟨"hàan", "eat", .inactive⟩
-
-/-- *ka'n* 'get tired', inactive. -/
-def ka'n : Verb := ⟨"ka'n", "get tired", .inactive⟩
-
-/-- *na'k* 'ascend', inactive. -/
-def na'k : Verb := ⟨"na'k", "ascend", .inactive⟩
-
-/-- *la'b* 'deteriorate', inactive. -/
-def la'b : Verb := ⟨"la'b", "deteriorate", .inactive⟩
-
-/-- *t'íil* 'last, drag on', inactive. -/
-def t'íil : Verb := ⟨"t'íil", "last", .inactive⟩
-
-/-- *ts'u'k* 'rot', inactive. -/
-def ts'u'k : Verb := ⟨"ts'u'k", "rot", .inactive⟩
-
-/-- *bòox-tal* 'blacken', inchoative. -/
-def bòoxtal : Verb := ⟨"bòox-tal", "blacken", .inchoative⟩
-
-/-- *chichan-tal* 'shrink', inchoative. -/
-def chichantal : Verb := ⟨"chichan-tal", "shrink", .inchoative⟩
-
-/-- *kul-tal* 'sit down', positional. -/
-def kultal : Verb := ⟨"kul-tal", "sit down", .positional⟩
-
-/-- *wa'l-tal* 'stand up', positional. -/
-def wa'ltal : Verb := ⟨"wa'l-tal", "stand up", .positional⟩
-
-/-- *chil-tal* 'lie down', positional. -/
-def chiltal : Verb := ⟨"chil-tal", "lie down", .positional⟩
-
-/-- *xol-tal* 'kneel', positional. -/
-def xoltal : Verb := ⟨"xol-tal", "kneel", .positional⟩
-
-/-- *hats'* 'hit', transitive. -/
-def hats' : Verb := ⟨"hats'", "hit", .transitiveActive⟩
-
-/-- The verbs of Bohnemeyer's examples. -/
-def verbs : List Verb :=
-  [meyah, bàaxal, balak', péek, tsíirin, chíik, háarax, húuy, mosòon, pirix, walak', nik'ich,
-    kim, lúub, hàan, ka'n, na'k, la'b, t'íil, ts'u'k, bòoxtal, chichantal, kultal, wa'ltal,
-    chiltal, xoltal, hats']
 
 end Yukatek
