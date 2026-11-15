@@ -186,9 +186,10 @@ def possession : List (String × List Categorizer) :=
 /-- The analysis predicts the class of every attested body-part and kinship phrase from how its
 noun is possessed, (39), (40), (44), (45), (48) and (51). -/
 theorem rows_class (r : Root) : ∀ e ∈ Examples.all, e.language = .teop →
-    ∀ s ∈ e.parse? "possession" possession,
-      ∀ c ∈ e.parse? "gender" [("I", NounClass.a), ("II", .o)],
-        classOf r s = c := by
+    (e.feature? "possession").isSome → (e.feature? "gender").isSome →
+      ∃ s ∈ e.parse? "possession" possession,
+        ∃ c ∈ e.parse? "gender" [("I", NounClass.a), ("II", .o)],
+          classOf r s = c := by
   simp only [classOf, ComplexHead.lastCycle]
   decide
 
