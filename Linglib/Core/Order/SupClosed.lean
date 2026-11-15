@@ -19,6 +19,7 @@ exactly when the points sent there are sup-closed.
 
 ## Main results
 
+* `supClosure_induction`: induction on the sup-closure of a set.
 * `mem_supClosure_image`, `mem_infClosure_image`: membership in the closure of an image.
 * `Set.mem_supClosure_image`, `Set.mem_infClosure_image`: the same for a family of sets.
 * `sInf_supClosure`, `sSup_infClosure`: the closures keep the infimum and the supremum.
@@ -34,6 +35,17 @@ variable {ι α : Type*}
 section SemilatticeSup
 
 variable [SemilatticeSup α] {f : ι → α} {s : Set ι} {a : α}
+
+/-- An induction principle for the sup-closure: a property that holds of the members of a set and
+is preserved by joins holds throughout its sup-closure. -/
+@[elab_as_elim]
+theorem supClosure_induction {s : Set α} {p : (a : α) → a ∈ supClosure s → Prop}
+    (mem : ∀ a (ha : a ∈ s), p a (subset_supClosure ha))
+    (sup : ∀ a b (ha : a ∈ supClosure s) (hb : b ∈ supClosure s), p a ha → p b hb →
+      p (a ⊔ b) (supClosed_supClosure ha hb))
+    {a : α} (ha : a ∈ supClosure s) : p a ha :=
+  (supClosure_min (t := {a | ∃ h : a ∈ supClosure s, p a h}) (fun a ha ↦ ⟨_, mem a ha⟩)
+    (fun a ⟨ha, hpa⟩ b ⟨hb, hpb⟩ ↦ ⟨_, sup a b ha hb hpa hpb⟩) ha).2
 
 @[to_dual]
 theorem mem_supClosure_image :

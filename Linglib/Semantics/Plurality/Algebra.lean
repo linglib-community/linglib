@@ -160,7 +160,7 @@ def AtomJoinPrime (E : Type*) [SemilatticeSup E] : Prop :=
 `P`. -/
 theorem IsDistr.of_algClosure_of_atom_le (hP : IsDistr P) (hJP : AtomJoinPrime E)
     (h : AlgClosure P x) (hy : Atom y) (hle : y ≤ x) : P y := by
-  induction h with
+  induction h using AlgClosure.induction with
   | base hp => exact ((hP _ hp).eq hle hy.not_isBot) ▸ hp
   | @sum a b _ _ iha ihb => exact (hJP y hy a b hle).elim iha ihb
 
@@ -177,7 +177,7 @@ theorem algClosure_image_singleton (S : Set α) (x : Finset α) :
     AlgClosure (· ∈ ({·} : α → Finset α) '' S) x ↔ x.Nonempty ∧ ↑x ⊆ S := by
   constructor
   · intro h
-    induction h with
+    induction h using AlgClosure.induction with
     | base h => obtain ⟨a, ha, rfl⟩ := h; exact ⟨Finset.singleton_nonempty a, by simpa⟩
     | sum _ _ ih ih' =>
       refine ⟨ih.1.mono Finset.subset_union_left, ?_⟩

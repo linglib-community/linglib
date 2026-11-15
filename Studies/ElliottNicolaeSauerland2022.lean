@@ -819,7 +819,7 @@ def starred (x : E) : Set (Set E) := {v | AlgClosure (· ∈ v) x}
 
 theorem singleton_mem_starred_iff : {g} ∈ starred x ↔ x = g := by
   refine ⟨fun h ↦ ?_, fun h ↦ .base h⟩
-  induction h with
+  induction h using AlgClosure.induction with
   | base h => exact h
   | sum _ _ ih₁ ih₂ => rw [ih₁, ih₂, sup_idem]
 
@@ -827,13 +827,13 @@ theorem starred_subset_of_pair_mem (h : {g₁, g₂} ∈ starred x) :
     starred g₁ ∩ starred g₂ ⊆ starred x := by
   rintro v ⟨h₁, h₂⟩
   change AlgClosure _ x at h
-  induction h with
+  induction h using AlgClosure.induction with
   | base h => rcases h with rfl | rfl <;> assumption
   | sum _ _ ih₁ ih₂ => exact .sum ih₁ ih₂
 
 theorem starred_ne_univ : starred g ≠ univ := fun h ↦ by
   have hemp {x : E} : ¬ AlgClosure (· ∈ (∅ : Set E)) x := fun hx ↦ by
-    induction hx with
+    induction hx using AlgClosure.induction with
     | base h => exact h
     | sum _ _ ih _ => exact ih
   exact hemp (h ▸ mem_univ _ : (∅ : Set E) ∈ starred g)

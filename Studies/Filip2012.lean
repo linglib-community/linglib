@@ -63,8 +63,8 @@ abbrev Telic (P : β → Prop) : Prop := QUA P
 /-- (24): an atelic predicate is cumulative. -/
 abbrev Atelic (P : β → Prop) : Prop := CUM P
 
-theorem isTelic_of_telic {precedes : β → β → Prop} (h : NoPartPrecedes precedes) {P : β → Prop}
-    (hP : Telic P) : IsTelic precedes P :=
+theorem isTelic_of_telic {precedes : β → β → Prop} [IsStrictOrder β precedes]
+    (h : NoPartPrecedes precedes) {P : β → Prop} (hP : Telic P) : IsTelic precedes P :=
   isTelic_of_qua h hP
 
 /-! ### The three classes of verbs (28) -/
@@ -80,13 +80,13 @@ def Persistent (θ : α → β → Prop) : Prop := ∀ x e, θ x e → ∀ e', e
 omit [SemilatticeSup α] in
 theorem telic_of_quantized {θ : α → β → Prop} (h : Quantized θ) (OBJ : α → Prop) :
     Telic (VP θ OBJ) :=
-  qua_of_forall λ _ _ ⟨_, _, hθ⟩ hlt ⟨_, _, hθ'⟩ => h _ _ hθ _ _ hlt hθ'
+  qua_of_forall fun _ _ ⟨_, _, hθ⟩ hlt ⟨_, _, hθ'⟩ ↦ h _ _ hθ _ _ hlt hθ'
 
 omit [SemilatticeSup α] in
 /-- (26): an atelic verb forms no telic predicate whatever its object: a proper part of one of
 its eventualities is one too. -/
 theorem not_telic_of_persistent {θ : α → β → Prop} (h : Persistent θ) (OBJ : α → Prop)
-    {e e' : β} (hlt : e' < e) (he : VP θ OBJ e) : ¬ Telic (VP θ OBJ) := λ hQ =>
+    {e e' : β} (hlt : e' < e) (he : VP θ OBJ e) : ¬ Telic (VP θ OBJ) := fun hQ ↦
   let ⟨x, hx, hθ⟩ := he
   hQ ⟨x, hx, h x e hθ e' hlt.le⟩ he hlt.ne hlt.le
 
@@ -101,12 +101,12 @@ theorem incremental_underspecified {θ : α → β → Prop} (h : SINC θ) (hU :
     (∃ OBJ : α → Prop, CUM OBJ ∧ Atelic (VP θ OBJ) ∧ ¬ Telic (VP θ OBJ)) := by
   obtain ⟨x, y, e, e', hlt, hlt', hθ, hθ'⟩ := h.extended
   refine ⟨⟨(· = x), singleton_qua x, vp_qua hU h.mso (singleton_qua x), e, x, rfl, hθ⟩,
-    ⟨λ _ => True, λ _ _ _ _ => trivial, vp_cum hs (λ _ _ _ _ => trivial), λ hQ => ?_⟩⟩
+    ⟨fun _ ↦ True, fun _ _ _ _ ↦ trivial, vp_cum hs (fun _ _ _ _ ↦ trivial), fun hQ ↦ ?_⟩⟩
   exact hQ ⟨y, trivial, hθ'⟩ ⟨x, trivial, hθ⟩ hlt'.ne hlt'.le
 
 /-- (29i): telicity does not require incrementality — a quantized verb is not strictly
 incremental, its eventualities having no proper parts in the relation. -/
-theorem not_sinc_of_quantized {θ : α → β → Prop} (h : Quantized θ) : ¬ SINC θ := λ hS =>
+theorem not_sinc_of_quantized {θ : α → β → Prop} (h : Quantized θ) : ¬ SINC θ := fun hS ↦
   let ⟨x, y, e, e', _, hlt', hθ, hθ'⟩ := hS.extended
   h x e hθ y e' hlt' hθ'
 

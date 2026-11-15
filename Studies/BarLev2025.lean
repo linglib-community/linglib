@@ -113,7 +113,7 @@ theorem power_cover (hx : x.Nonempty) (hC : ∀ z ∈ C, z.Nonempty)
     suffices ∀ z, AlgClosure (P · w) z → z ⊆ x → AlgClosure (fun y ↦ y ∈ C ∧ P y w) z from
       this x h subset_rfl
     intro z hz
-    induction hz with
+    induction hz using AlgClosure.induction with
     | base hPa =>
       exact fun hax ↦ .base ⟨hpow _ hax (Finset.nonempty_iff_ne_empty.2 fun h ↦ hP w (h ▸ hPa)),
         hPa⟩

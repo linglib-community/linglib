@@ -60,11 +60,11 @@ variable {T : Type*} [PartialOrder β] [PartialOrder T] (τ : β → T)
 
 /-- `e'` is a temporal part of `e`, in the part relation of a temporal measure (55), if it is
 part of `e` and `e` has a part whose runtime does not overlap the runtime of `e'`. -/
-def IsTemporalPart (e' e : β) : Prop := e' ≤ e ∧ ∃ e'' ≤ e, ¬ Overlap (τ e') (τ e'')
+structure IsTemporalPart (e' e : β) : Prop where
+  le : e' ≤ e
+  exists_not_overlap : ∃ e'' ≤ e, ¬ Overlap (τ e') (τ e'')
 
 variable {τ}
-
-theorem IsTemporalPart.le {e' e : β} (h : IsTemporalPart τ e' e) : e' ≤ e := h.1
 
 theorem IsTemporalPart.ne {e' e : β} (hτ : Monotone τ) (h : IsTemporalPart τ e' e)
     (h₀ : ∀ e'', e'' ≤ e → ¬ IsBot (τ e'')) : e' ≠ e := by
@@ -73,6 +73,38 @@ theorem IsTemporalPart.ne {e' e : β} (hτ : Monotone τ) (h : IsTemporalPart τ
   exact hov ⟨τ e'', h₀ e'' he'', hτ he'', le_rfl⟩
 
 end MeasureAdverbial
+
+/-! ### Telicity without quantization
+
+With events ordered by their participants and run times, the predicate true of the events that run
+from three to four is telic under temporal precedence, though it holds of an event and of a proper
+part with the same run time; under the same precedence the predicate true of every event is not
+telic. -/
+
+section NotQua
+
+open Event
+
+/-- An event of the model is a set of participants with a run time. -/
+abbrev Ev : Type := Finset (Fin 2) × NonemptyInterval ℕ
+
+local instance : TemporalTrace Ev ℕ := ⟨Prod.snd⟩
+
+-- A telic predicate need not be quantized.
+theorem exists_isTelic_not_qua :
+    ∃ P : Ev → Prop, IsTelic (Precedes : Ev → Ev → Prop) P ∧ ¬ QUA P ∧
+      ¬ IsTelic (Precedes : Ev → Ev → Prop) fun _ ↦ True := by
+  refine ⟨(τ · = ⟨(3, 4), by decide⟩), isTelic_runTime_eq monotone_snd _, fun h ↦ ?_, fun h ↦ ?_⟩
+  · exact h (x := ({0}, ⟨(3, 4), by decide⟩)) rfl (y := ({0, 1}, ⟨(3, 4), by decide⟩)) rfl
+      (fun hxy ↦ absurd (congrArg Prod.fst hxy) (by decide))
+      (Prod.mk_le_mk.2 ⟨(by decide : ({0} : Finset (Fin 2)) ⊆ {0, 1}), le_rfl⟩)
+  · have hi := (@h ({0}, ⟨(0, 1), by decide⟩) ({0}, ⟨(1, 1), by decide⟩) trivial trivial
+      (Prod.mk_le_mk.2 ⟨le_rfl, NonemptyInterval.le_def.2 ⟨by decide, by decide⟩⟩)).left
+    refine hi.not_precedes (e'' := ({0}, ⟨(0, 0), by decide⟩)) ?_ ?_
+    · exact Prod.mk_le_mk.2 ⟨le_rfl, NonemptyInterval.le_def.2 ⟨by decide, by decide⟩⟩
+    · exact (by decide : (0 : ℕ) < 1)
+
+end NotQua
 
 /-! ### Eating apples -/
 
@@ -83,8 +115,8 @@ consumes. -/
 def eat (x e : Finset (Fin 3)) : Prop := x = e
 
 theorem eat_sinc : SINC eat where
-  ue _ _ h _ hle := ⟨_, ⟨h ▸ hle, rfl⟩, fun _ hz ↦ hz.2.symm⟩
-  uo _ _ h _ hle := ⟨_, ⟨h ▸ hle, rfl⟩, fun _ hz ↦ hz.2⟩
+  ue _ _ h _ hle := ⟨_, ⟨h ▸ hle, rfl⟩, fun _ ⟨_, hz⟩ ↦ hz.symm⟩
+  uo _ _ h _ hle := ⟨_, ⟨h ▸ hle, rfl⟩, fun _ ⟨_, hz⟩ ↦ hz⟩
   extended := ⟨{0, 1}, {0}, {0, 1}, {0}, by decide, by decide, rfl, rfl⟩
 
 theorem eat_sum : SUM eat := sum_graph (SupHom.id _)
@@ -174,10 +206,20 @@ def read (x : Finset (Fin 2)) (e : Finset (Fin 3)) : Prop :=
 
 theorem read_inc : INC read := ⟨readOnce, readOnce_sinc, fun _ _ ↦ Iff.rfl⟩
 
-/-- An event precedes another if all its times are earlier. -/
-def precedes (a b : Finset (Fin 3)) : Prop := ∀ i ∈ a, ∀ j ∈ b, i < j
+-- *Read* is summative and the article has two readings, so it is not strictly incremental.
+theorem not_sinc_read : ¬ SINC read := fun h ↦
+  absurd (h.gue_of_sum read_inc.sum (.base (by decide) : read Finset.univ {0, 1})
+    (.base (by decide) : read Finset.univ {0, 2})) (by decide)
+
+/-- An event precedes another if all its times are earlier, neither being empty. -/
+def precedes (a b : Finset (Fin 3)) : Prop := a.Nonempty ∧ b.Nonempty ∧ ∀ i ∈ a, ∀ j ∈ b, i < j
 
 instance : DecidableRel precedes := fun _ _ ↦ by unfold precedes; infer_instance
+
+instance : IsStrictOrder (Finset (Fin 3)) precedes where
+  irrefl _ := fun ⟨⟨i, hi⟩, _, h⟩ ↦ lt_irrefl i (h i hi i hi)
+  trans _ _ _ := fun ⟨ha, ⟨j, hj⟩, h₁⟩ ⟨_, hc, h₂⟩ ↦
+    ⟨ha, hc, fun i hi k hk ↦ (h₁ i hi j hj).trans (h₂ j hj k hk)⟩
 
 /-- *Read the article* is not telic, since the strict reading `{0, 1}` is a part of the reading
 `{0, 1, 2}` that the re-reading `{2}` follows. -/
@@ -187,8 +229,8 @@ theorem not_isTelic_read : ¬ IsTelic precedes (read Finset.univ) := fun h ↦ b
       (y := (Finset.univ, {0, 2})) (.base (by decide)) (.base (by decide))
     rwa [show ((Finset.univ, {0, 1}) ⊔ (Finset.univ, {0, 2}) : Finset (Fin 2) × Finset (Fin 3)) =
       (Finset.univ, {0, 1, 2}) from by decide] at this
-  exact (h {0, 1, 2} {0, 1} hsum (.base (by decide)) (by decide)).2.2
-    ⟨{2}, by decide, by unfold flip; decide⟩
+  exact (h.isFinalPart (e' := {0, 1}) hsum (.base (by decide)) (by decide)).not_precedes
+    (e'' := {2}) (by decide) (by decide : precedes {0, 1} {2})
 
 end Reading
 
@@ -202,22 +244,25 @@ variable [SemilatticeSup α] [SemilatticeSup β] (precedes : β → β → Prop)
 def EXP : Prop := ∀ x y e e', θ x e → θ y e' → precedes e e' → ¬ Overlap x y
 
 /-- A relation is strictly expansive incremental if it is expansive and maps to objects. -/
-def SEINC : Prop := EXP precedes θ ∧ MO θ
+structure SEINC : Prop where
+  exp : EXP precedes θ
+  mo : MO θ
 
-variable {precedes θ} (h : SEINC precedes θ) (h₀ : ∀ x e, θ x e → ¬ IsBot x) {x : α} {e e' : β}
+variable {precedes θ} [IsStrictOrder β precedes] (h : SEINC precedes θ)
+  (h₀ : ∀ x e, θ x e → ¬ IsBot x) {x : α} {e e' : β}
 include h h₀
 
 theorem isInitialPart_of_seinc (hx : θ x e) (hx' : θ x e') (hle : e' ≤ e) :
     IsInitialPart precedes e' e :=
-  ⟨hle, fun ⟨e'', h'', hp⟩ ↦
-    let ⟨y, hy, hθ⟩ := h.2 hx h''
-    h.1 y x e'' e' hθ hx' hp ⟨y, h₀ y e'' hθ, le_rfl, hy⟩⟩
+  isInitialPart_iff.mpr ⟨hle, fun e'' h'' hp ↦
+    let ⟨y, hy, hθ⟩ := h.mo hx h''
+    h.exp y x e'' e' hθ hx' hp ⟨y, h₀ y e'' hθ, le_rfl, hy⟩⟩
 
 theorem isFinalPart_of_seinc (hx : θ x e) (hx' : θ x e') (hle : e' ≤ e) :
     IsFinalPart precedes e' e :=
-  ⟨hle, fun ⟨e'', h'', hp⟩ ↦
-    let ⟨y, hy, hθ⟩ := h.2 hx h''
-    h.1 x y e' e'' hx' hθ hp ⟨y, h₀ y e'' hθ, hy, le_rfl⟩⟩
+  isInitialPart_iff.mpr ⟨hle, fun e'' h'' hp ↦
+    let ⟨y, hy, hθ⟩ := h.mo hx h''
+    h.exp x y e' e'' hx' hθ hp ⟨y, h₀ y e'' hθ, hy, le_rfl⟩⟩
 
 theorem isTelic_of_seinc (x : α) : IsTelic precedes (θ x) :=
   fun _ _ hx hx' hle ↦
@@ -228,7 +273,7 @@ unique participants is telic, as *eat two apples* is. -/
 theorem isTelic_vp_of_seinc (hUP : UP θ) {OBJ : α → Prop} (hOBJ : QUA OBJ) :
     IsTelic precedes (VP θ OBJ) := by
   rintro e e' ⟨x, hOx, hx⟩ ⟨x', hOx', hx'⟩ hle
-  obtain ⟨x'', hx''le, hx''⟩ := h.2 hx hle
+  obtain ⟨x'', hx''le, hx''⟩ := h.mo hx hle
   obtain rfl := hUP hx' hx''
   obtain rfl : x' = x := by_contra fun hne ↦ hOBJ hOx' hOx hne hx''le
   exact ⟨isInitialPart_of_seinc h h₀ hx hx' hle, isFinalPart_of_seinc h h₀ hx hx' hle⟩
@@ -250,7 +295,10 @@ def ADJ : Prop :=
 
 /-- A strict movement relation has the adjacency property, maps to objects, and takes paths as
 objects. -/
-def SMR : Prop := ADJ adjα adjβ θ ∧ MO θ ∧ ∀ x e, θ x e → isPath x
+structure SMR : Prop where
+  adj : ADJ adjα adjβ θ
+  mo : MO θ
+  path : ∀ x e, θ x e → isPath x
 
 /-- The closure of a relation under sums of temporally ordered events. -/
 inductive PrecedenceClosure (θ' : α → β → Prop) : α → β → Prop where
@@ -263,13 +311,7 @@ temporally ordered events. -/
 def MR : Prop :=
   ∃ θ', SMR adjα adjβ isPath θ' ∧ ∀ x e, θ x e ↔ PrecedenceClosure precedes θ' x e
 
-/-- The subpaths of a movement adjacent to `y` are the paths of its initial parts. -/
-def Source (y x : α) (e : β) : Prop :=
-  ∀ x' e', θ x' e' → x' ≤ x → e' ≤ e → (adjα x' y ↔ IsInitialPart precedes e' e)
-
-/-- The subpaths of a movement adjacent to `y` are the paths of its final parts. -/
-def Goal (y x : α) (e : β) : Prop :=
-  ∀ x' e', θ x' e' → x' ≤ x → e' ≤ e → (adjα x' y ↔ IsFinalPart precedes e' e)
+section
 
 variable {adjα adjβ precedes isPath θ}
 
@@ -280,6 +322,20 @@ theorem mr_of_smr (h : SMR adjα adjβ isPath θ)
     induction hcl with
     | base h => exact h
     | sum _ _ hp ih₁ ih₂ => exact hClosed _ _ _ _ ih₁ ih₂ hp⟩⟩
+
+end
+
+variable [IsStrictOrder β precedes]
+
+/-- The subpaths of a movement adjacent to `y` are the paths of its initial parts. -/
+def Source (y x : α) (e : β) : Prop :=
+  ∀ x' e', θ x' e' → x' ≤ x → e' ≤ e → (adjα x' y ↔ IsInitialPart precedes e' e)
+
+/-- The subpaths of a movement adjacent to `y` are the paths of its final parts. -/
+def Goal (y x : α) (e : β) : Prop :=
+  ∀ x' e', θ x' e' → x' ≤ x → e' ≤ e → (adjα x' y ↔ IsFinalPart precedes e' e)
+
+variable {adjα adjβ precedes isPath θ}
 
 /-- A movement with a specified source and goal is telic under mapping to objects and
 uniqueness of participants, as *walk from the university to the capitol* is. -/
