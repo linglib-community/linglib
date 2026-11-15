@@ -13,8 +13,10 @@ distinct from the nominative only in the singular of non-neuter second-declensio
 The ablative continues three cases that were once distinct, an ablative, a locative and an
 instrumental, and it expresses source, location and instrument accordingly. A separate locative
 survives for names of towns and a few nouns such as *domī* 'at home'. The goal of motion is
-expressed by the accusative, there being no allative. Blake takes Latin as his running example
-of an inflectional case system.
+expressed by the accusative, there being no allative; the dative of the place to which is a
+use of the poets and of later prose ([greenough-kittredge-howard-dooge-1903] §428) and is not
+among the functions of the dative here. Blake takes Latin as his running example of an
+inflectional case system.
 
 ## Main definitions
 
@@ -25,6 +27,7 @@ of an inflectional case system.
 ## References
 
 * [blake-1994]
+* [greenough-kittredge-howard-dooge-1903]
 -/
 
 @[expose] public section
@@ -59,9 +62,15 @@ def label : Case → _root_.Case
   | abl => .abl
 
 /-- The functions a case marks: the accusative also expresses the goal of motion,
-and the ablative location and instrument as well as source. -/
+and the ablative location and instrument as well as source. The dative marks the indirect object
+of a verb of giving ([greenough-kittredge-howard-dooge-1903] §362), the one pleased or to whom
+something seems (§§367, 375), the possessor with *esse* (§373), the agent with the gerundive
+(§374), the one benefited (§376), the possessor of what the sentence is about, in place of a
+genitive (§377), the person judging (§378), and the purpose or end (§382). -/
 def functions : Case → Finset _root_.Case.Function
   | acc => {.argument .P, .spatial none .goal}
+  | dat => {.argument .R, .experiencer, .predicativePossessor, .passiveAgent, .beneficiary,
+      .externalPossessor, .judicantis, .purpose}
   | abl => {.spatial none .source, .spatial none .place, .instrumental}
   | c => c.label.functions
 

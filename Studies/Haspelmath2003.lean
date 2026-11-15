@@ -4,6 +4,7 @@ public import Linglib.Core.Combinatorics.SimpleGraph.Induce
 public import Linglib.Core.Order.OrdConnected
 public import Linglib.Syntax.Case.Function
 public import Studies.Blake1994
+public import Linglib.Fragments.Japanese.Case
 public import Mathlib.Combinatorics.SimpleGraph.Maps
 
 /-!
@@ -18,6 +19,8 @@ the lines it lacks: with no line from purpose to anything but direction, [a gram
 another function has direction](##direction_mem_of_purpose_mem), the arrangement that [French *à*
 and German *zu* select among the three orders of purpose, direction and recipient](##arrangement),
 while on the map with all three lines [any two of them are a contiguous area](##vacuous).
+Of the cases of the fragments, [the Latin dative does not cover a contiguous area of the first
+map](##latin_dative), nor [Japanese *ni* of the second](##japanese_ni).
 
 ## Implementation notes
 
@@ -38,13 +41,16 @@ a linear map, as [in the case hierarchy](##conforms_iff_connected).
 
 ## TODO
 
-The grams are stated here as the figures draw them; the adpositions and cases of the fragments
-do not yet list the functions of these maps.
+The grams of the figures are stated here as drawn. Of the fragments' own cases and adpositions
+only the Latin dative and Japanese *ni* list the functions of these maps from a grammar; the
+English prepositions of the figures do not yet.
 
 ## References
 
 * [haspelmath-2003]
 * [blake-1994]
+* [greenough-kittredge-howard-dooge-1903]
+* [tsujimura-2014]
 -/
 
 @[expose] public section
@@ -95,6 +101,10 @@ def ofFunction : Case.Function → Option DativeFunction
 
 theorem ofFunction_toFunction (n : DativeFunction) : ofFunction n.toFunction = some n := by
   cases n <;> rfl
+
+/-- The functions of the map among the functions of a case or adposition. -/
+def area (fs : Finset Case.Function) : Finset DativeFunction :=
+  Finset.univ.filter fun n ↦ ∃ f ∈ fs, ofFunction f = some n
 
 end DativeFunction
 
@@ -195,6 +205,10 @@ def ofFunction : Case.Function → Option InstrumentalFunction
 
 theorem ofFunction_toFunction (n : InstrumentalFunction) : ofFunction n.toFunction = some n := by
   cases n <;> rfl
+
+/-- The functions of the map among the functions of a case or adposition. -/
+def area (fs : Finset Case.Function) : Finset InstrumentalFunction :=
+  Finset.univ.filter fun n ↦ ∃ f ∈ fs, ofFunction f = some n
 
 end InstrumentalFunction
 
@@ -311,8 +325,8 @@ theorem arrangement :
   · rw [induce_pair_connected_iff (by decide)]; decide
   · intro a b; revert a b; decide
 
-/-- With a line added from recipient to purpose, any two of purpose, direction and recipient are
-a contiguous area, so the map excludes no gram (Fig. 8.4). -/
+-- With a line added from recipient to purpose, any two of purpose, direction and recipient are
+-- a contiguous area, so the map excludes no gram (Fig. 8.4).
 theorem vacuous : ∀ a ∈ [purpose, direction, recipient], ∀ b ∈ [purpose, direction, recipient],
     a ≠ b → ((chain purpose direction recipient ⊔ fromEdgeSet {s(recipient, purpose)}).induce
       {a, b}).Connected := by
@@ -336,6 +350,38 @@ theorem around :
     (.recipient ∈ frenchDative ∧ .externalPossessor ∈ frenchDative ∧
         .predicativePossessor ∉ frenchDative) ∧
       .recipient ∈ seychellesEk ∧ .cause ∈ seychellesEk ∧ .beneficiary ∉ seychellesEk := by
+  decide
+
+/-! ### Two cases of the fragments
+
+The chapter places no Latin or Japanese gram on its maps. In the prose of the grammar the Latin
+dative has every function of the first map but direction, the dative of the place to which
+being left to the poets, so it has purpose without the one function purpose is linked to. The
+Japanese dative particle *ni* has recipient and passive agent, which the second map joins only
+through functions *ni* does not have. -/
+
+/-- The Latin dative marks every function of the map of dative functions but direction, and so
+does not cover a contiguous area of it; with direction, its use in poetry, it covers the whole
+map. -/
+theorem latin_dative :
+    DativeFunction.area (Latin.Case.functions .dat) = Finset.univ.erase .direction ∧
+      ¬ (dativeMap.induce ↑(DativeFunction.area (Latin.Case.functions .dat))).Connected := by
+  have h : DativeFunction.area (Latin.Case.functions .dat) = Finset.univ.erase .direction := by
+    decide
+  refine ⟨h, fun hc ↦ ?_⟩
+  have := direction_mem_of_purpose_mem (f := .recipient) hc (by rw [h]; decide)
+    (by rw [h]; decide) (by decide)
+  rw [h] at this
+  exact absurd this (by decide)
+
+theorem japanese_ni :
+    InstrumentalFunction.area (Japanese.Case.functions .dat) = {.recipient, .passiveAgent} ∧
+      ¬ (instrumentalMap.induce
+        ↑(InstrumentalFunction.area (Japanese.Case.functions .dat))).Connected := by
+  have h : InstrumentalFunction.area (Japanese.Case.functions .dat) =
+      {.recipient, .passiveAgent} := by decide
+  refine ⟨h, ?_⟩
+  rw [h, Finset.coe_insert, Finset.coe_singleton, induce_pair_connected_iff (by decide)]
   decide
 
 /-! ### Hierarchies

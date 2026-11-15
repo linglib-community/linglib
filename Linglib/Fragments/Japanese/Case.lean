@@ -70,9 +70,9 @@ def label : Case → _root_.Case
   | dat => .dat
 
 /-- `c.functions` are the functions `c` marks; *ni* marks the recipient, the goal,
-the time and the location of existence. -/
+the time and the location of existence, and the agent of a passive ([tsujimura-2014] p. 266). -/
 def functions : Case → Finset _root_.Case.Function
-  | dat => {.argument .R, .spatial none .place, .spatial none .goal, .temporal}
+  | dat => {.argument .R, .spatial none .place, .spatial none .goal, .temporal, .passiveAgent}
   | c => c.label.functions
 
 theorem label_functions_inter_nonempty (c : Case) :

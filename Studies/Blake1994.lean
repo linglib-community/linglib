@@ -332,8 +332,11 @@ theorem latin_abl_functions_ancient_greek :
         Greek.Ancient.Case.gen.functions ∪ Greek.Ancient.Case.dat.functions := by
   decide
 
-theorem latin_dat_functions_ssubset_ancient_greek :
-    Latin.Case.dat.functions ⊂ Greek.Ancient.Case.dat.functions := by decide
+theorem ancient_greek_dat_functions :
+    (∀ f ∈ [.spatial none .place, .instrumental],
+        f ∈ Greek.Ancient.Case.dat.functions ∧ f ∉ Latin.Case.dat.functions) ∧
+      .argument .R ∈ Greek.Ancient.Case.dat.functions ∧
+      .argument .R ∈ Latin.Case.dat.functions := by decide
 
 /-! ### The other case inventories of the fragments
 
