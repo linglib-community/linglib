@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Aggregation.Rules
 public import Linglib.Semantics.Degree.Measurement
 public import Linglib.Semantics.Degree.UniversalScale
+public import Linglib.Semantics.MeasurementTheory.Homogeneity
 
 /-!
 # van Rooij (2011): Measurement and Interadjective Comparisons
@@ -157,6 +158,24 @@ theorem differenceComparative_cardinalUnit :
     mul_lt_mul_iff_of_pos_left ha]
 
 end Sentences
+
+/-! ### How much a scale fixes -/
+
+-- p. 350: on a co-ordinal scale the measures of any pairs can take any values in the same order,
+-- so the numbers represent nothing beyond the order
+theorem exists_mem_ordinalLevel_forall_eq {M : ℕ} (v : Profile Ad X ℝ) (a : Fin M → X × Ad)
+    (ha : StrictMono (uncurry v ∘ a)) {b : Fin M → ℝ} (hb : StrictMono b) :
+    ∃ g ∈ (ordinalLevel : Set ((Ad → ℝ) → Ad → ℝ)), ∀ i, uncurry (g ∘ v) (a i) = b i :=
+  let ⟨g, _, hg⟩ := isPointHomogeneous_univ M _ b ha hb
+  ⟨_, ⟨g, g.strictMono, rfl⟩, hg⟩
+
+-- p. 349: on a co-interval scale the measures of two pairs can take any two values in the same
+-- order, the choice of a unit and an origin
+theorem exists_mem_cardinalFull_forall_eq (v : Profile Ad X ℝ) (a : Fin 2 → X × Ad)
+    (ha : StrictMono (uncurry v ∘ a)) {b : Fin 2 → ℝ} (hb : StrictMono b) :
+    ∃ g ∈ (cardinalFull : Set ((Ad → ℝ) → Ad → ℝ)), ∀ i, uncurry (g ∘ v) (a i) = b i :=
+  let ⟨g, ⟨c, hc, d, hgc⟩, hg⟩ := isPointHomogeneous_two_positiveAffine _ b ha hb
+  ⟨_, ⟨g, ⟨c, hc, d, hgc⟩, rfl⟩, hg⟩
 
 /-! ### Bale's universal degrees -/
 
