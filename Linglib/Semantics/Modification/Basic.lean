@@ -8,11 +8,12 @@ public import Mathlib.Order.PropInstances
 /-!
 # Modifiers
 
-A modifier of `τ` is a function from `τ` to itself, as [parsons-1970] treats adjectives and
-adverbs as functions on the predicates they modify, and modifiers stack by composition.
-[kamp-1975]'s classes of adjective meanings are order-theoretic: a modifier is subsective, Kamp's
-affirmative, when each value lies below its argument, privative when value and argument are
-disjoint, and intersective, Kamp's predicative, when it is the meet with a fixed element; a
+A modifier combines with an expression to give another of the same type ([mcnally-2016]), so a
+modifier of `τ` is a function from `τ` to itself. [parsons-1970] construes adjectives and adverbs
+as such functions on properties, which makes repeated modification composition. The classes of
+[parsons-1970] and [kamp-1975] are order-theoretic: a modifier is subsective, Parsons's standard
+and Kamp's affirmative, when each value lies below its argument, privative when value and argument
+are disjoint, and intersective, Kamp's predicative, when it is the meet with a fixed element; a
 modifier whose values lie above its arguments is extensive. Stacking intersective modifiers
 [meets their elements](##Modifier.intersective_inf), and the intersective modifiers are
 [those that commute with all of them](##Modifier.isIntersective_iff_forall_commute) and, over a
@@ -27,6 +28,7 @@ anything else, and [privative](##Modifier.isPrivative_image_iff) only when the r
 
 * [parsons-1970]
 * [kamp-1975]
+* [mcnally-2016]
 -/
 
 @[expose] public section
