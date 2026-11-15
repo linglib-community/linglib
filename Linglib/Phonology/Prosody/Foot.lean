@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Phonology.Prosody.Syllable
-public import Linglib.Core.Data.RoseTree.Licensed
+public import Linglib.Phonology.Prosody.Hierarchy
 
 /-!
 # Metrical feet
@@ -16,9 +15,8 @@ prosodic tree [is a well-formed foot](##Prosody.Foot.isFoot_toProsTree) whose σ
 
 ## Main definitions
 
-* `IsConstituent` — well-formedness at a prosodic level on the prosodic-tree carrier: a tree
-  rooted at that level and licensed by the Layeredness relation `Constituent.Licenses`;
-  `IsFoot` is the `f` level, an `f`-node over a non-empty list of σ-leaves.
+* `IsFoot` — a well-formed foot on the prosodic tree, an `f`-node over a non-empty list of
+  σ-leaves.
 * `Foot` — a headed constituent over syllable positions (`head : Fin _`, so non-empty).
 * `Foot.IsTrochaic` / `IsIambic` / `IsBinary` / `IsDegenerate` — derived shape predicates.
 * `Foot.moraCount` — mora count under a weight reading (the quantity axis).
@@ -46,16 +44,7 @@ prosodic tree [is a well-formed foot](##Prosody.Foot.isFoot_toProsTree) whose σ
 
 namespace Prosody
 
-/-! ### Carrier well-formedness -/
-
-/-- A well-formed prosodic constituent at the level `ℓ` is a tree rooted in an `ℓ`-node and
-licensed by `Constituent.Licenses`, so every node dominates only the levels Layeredness allows
-under it. -/
-def IsConstituent (ℓ : Level) (t : Tree) : Prop :=
-  t.value.level = ℓ ∧ t.Licensed Constituent.Licenses
-
-instance (ℓ : Level) (t : Tree) : Decidable (IsConstituent ℓ t) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+/-! ### The well-formed foot -/
 
 /-- A well-formed foot is a licensed tree rooted in an `f`-node, so an `f`-node dominating a
     non-empty list of σ-leaves, the inviolable Layeredness and σ-Headedness core

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Prosody.Syllable
+public import Linglib.Phonology.Prosody.Hierarchy
 public import Linglib.Phonology.OptimalityTheory.Constraint.Alignment
 public import Linglib.Core.Data.RoseTree.Span
 
