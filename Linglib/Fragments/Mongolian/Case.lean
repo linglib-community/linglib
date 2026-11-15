@@ -14,6 +14,7 @@ expresses location, as in *Gowi-d* 'in the Gobi' ([gong-2026]), and so do postpo
 
 * [gong-2022]
 * [gong-2026]
+* [creissels-2009]
 -/
 
 @[expose] public section
@@ -48,7 +49,8 @@ def Case.label : Case → _root_.Case
   | inst => .inst
   | com => .com
 
-/-- The functions a case marks: the dative also expresses location. -/
+/-- The functions a case marks: the dative also expresses location, and not the goal of motion,
+which has a marker of its own ([creissels-2009]). -/
 def Case.functions : Case → Finset _root_.Case.Function
   | dat => {.argument .R, .spatial none .place}
   | abl => {.spatial none .source}

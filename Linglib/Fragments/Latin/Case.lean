@@ -28,6 +28,7 @@ inflectional case system.
 
 * [blake-1994]
 * [greenough-kittredge-howard-dooge-1903]
+* [naess-2009]
 -/
 
 @[expose] public section
@@ -64,11 +65,12 @@ def label : Case → _root_.Case
 /-- The functions a case marks: the accusative also expresses the goal of motion,
 and the ablative location and instrument as well as source. The dative marks the indirect object
 of a verb of giving ([greenough-kittredge-howard-dooge-1903] §362), the one pleased or to whom
-something seems (§§367, 375), the possessor with *esse* (§373), the agent with the gerundive
-and commonly with a perfect participle (§§374–375), the one benefited or harmed (§376), the
+something seems (§§367, 375), the possessor with *esse* (§373), the agent of a perfect
+participle (§375), the one benefited or harmed (§376), the
 possessor in place of a possessive genitive, *versatur mihi ante oculos* 'it comes before my
 eyes' (§377), the person judging (§378), and the purpose or end, a use that remains in a few
-constructions (§382). -/
+constructions (§382). The dative with the gerundive, the person on whom the necessity rests
+(§374), is a dative of obligation ([naess-2009]) and is not entered as an agent. -/
 def functions : Case → Finset _root_.Case.Function
   | acc => {.argument .P, .spatial none .goal}
   | dat => {.argument .R, .experiencer, .predicativePossessor, .passiveAgent, .beneficiary,

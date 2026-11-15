@@ -23,8 +23,8 @@ definitions of their markers](##Case.isMarker_roles_functions).
 The recipient is the role `R`, the recipient of a transfer verb together with what is coded like
 it; [malchukov-narrog-2009]'s general map of case functions likewise sets A, P, T and R beside
 the instrument, the beneficiary and the possessor. A spatial function is a direction with or
-without a localization, which [haspelmath-2009] reports as a category-system of its own beside
-case. Functions with no name of their own carry the name of the case value, as `essive`: the
+without a localization, the two dimensions of a system of spatial cases, with a series that
+leaves the localization unspecified ([creissels-2009], [haspelmath-2009]). Functions with no name of their own carry the name of the case value, as `essive`: the
 labels of the peripheral cases are close enough to semantic roles to name them
 ([haspelmath-2009]).
 
@@ -41,6 +41,7 @@ is named for no function.
 * [haspelmath-2003]
 * [haspelmath-2009]
 * [malchukov-narrog-2009]
+* [creissels-2009]
 * [haspelmath-2010]
 * [haspelmath-2011]
 * [haspelmath-2022]
