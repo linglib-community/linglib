@@ -4,6 +4,7 @@ public import Mathlib.Tactic.Order
 public import Linglib.Semantics.Reference.Determiner
 public import Linglib.Data.Wordlist.Terenghi2023
 public import Linglib.Data.Examples.Languages
+public import Linglib.Fragments.Romance.Spanish.Determiners
 
 /-!
 # Terenghi (2023): Missing person
@@ -15,7 +16,8 @@ and the measure narrows the relation: those of a three-way measure [partition
 NEAR](##Vectors.existsUnique_near). Mundari [grades each of its terms, Brazilian Portuguese only its
 non-local term and Satawal only its participant terms](##graded). A demonstrative read at such a
 relation [denotes where its term locates](##mem_denote_near_iff), Harbour's semantics when there is
-no measure, and Spanish *ese* [has two readings that overlap but differ](##ese_readings).
+no measure. Spanish *ese* [has two readings that overlap but differ](##ese_readings), of which only
+the hearer's [narrows the *ese* of the grammars](##ese_anchors).
 
 ## Implementation notes
 
@@ -44,6 +46,7 @@ no measure, and Spanish *ese* [has two readings that overlap but differ](##ese_r
 
 * [terenghi-2023]
 * [harbour-2016]
+* [butt-benjamin-2019]
 -/
 
 @[expose] public section
@@ -93,7 +96,6 @@ def DistanceClass.nearer : DistanceClass := ⟨some 2, 1⟩
 @[inherit_doc DistanceClass.nearest]
 def DistanceClass.near : DistanceClass := ⟨some 1, 0⟩
 
-/-- The classes of a three-way measure partition the lengths NEAR admits. -/
 theorem distanceClass_partition {cut : ℕ → D} (h₂₁ : cut 2 < cut 1)
     {v : D} (hv : v < cut 0) :
     ∃! k, k ∈ [DistanceClass.nearest, .nearer, .near] ∧ k.Mem cut v := by
@@ -143,8 +145,6 @@ theorem Vectors.near_subset_near_none (V : Vectors E D) (k : Option DistanceClas
     V.near k ⊆ V.near none :=
   fun _ h ↦ ⟨h.1, by simp⟩
 
-/-- The relations of a three-way measure partition NEAR: a referent near an atom stands to it in
-exactly one of them. -/
 theorem Vectors.existsUnique_near (V : Vectors E D) (h₂₁ : V.cut 2 < V.cut 1) {a : Finset Role}
     {y : E} (h : (a, y) ∈ V.near none) :
     ∃! k, k ∈ [DistanceClass.nearest, .nearer, .near] ∧ (a, y) ∈ V.near (some k) := by
@@ -237,25 +237,57 @@ theorem portuguese_local_centred :
       ⟨Person.second.participantSets, none⟩ ∈ terms Glottocode.brazilianPortuguese := by
   decide +kernel
 
-/-! ### The dual anchor -/
+/-! ### Spanish
+
+The fragment enters the Spanish demonstratives as Butt and Benjamin describe them: *este* near the
+speaker, *ese* at any distance from the speaker, *aquel* away from both participants. -/
+
+-- (10a); Table 3.2
+/-- The grammar's *este* and *aquel* are the first and third terms of the ternary system, and its
+*ese* covers the anchors of the second and third, as the *ese* of the Latin American binary system
+does. -/
+theorem spanish_anchors :
+    Spanish.Determiners.este.deixis = Term.dem1.anchors ∧
+      Spanish.Determiners.aquel.deixis = Term.dem3.anchors ∧
+        Spanish.Determiners.ese.deixis = Term.dem2.anchors ∪ Term.dem3.anchors := by
+  decide
+
+theorem mem_denote_ese_of_mem_denote_aquel {E W : Type} (N : SetRel (Finset Role) E)
+    {R : (ℕ → E) → W → Set E} {d : ℕ} {g : ℕ → E} {s : W} {x : E}
+    (h : x ∈ Spanish.Determiners.aquel.denote R d N g s) :
+    x ∈ Spanish.Determiners.ese.denote R d N g s := by
+  rw [DemonstrativeDeterminer.mem_denote] at h ⊢
+  exact ⟨SetRel.image_mono (Finset.coe_subset.2 (by decide)) h.1, h.2⟩
 
 /-- *ese* near the hearer. -/
-def eseHearer : DeicticTerm := ⟨Person.second.participantSets, none⟩
+def eseHearer : DeicticTerm := ⟨Term.dem2.anchors, none⟩
 
 /-- *ese* at an intermediate distance from the speaker. -/
-def eseSpeaker : DeicticTerm := ⟨Person.first.participantSets, some .nearer⟩
+def eseSpeaker : DeicticTerm := ⟨Term.dem1.anchors, some .nearer⟩
 
-/-- The vectors to one referent whose lengths from the speaker's atoms are `s` and from the other
-atoms `h`, under the cut-offs `9 > 6 > 3`. -/
-def config (s h : ℕ) : Vectors Unit ℕ :=
-  ⟨fun a _ ↦ if Role.speaker ∈ a then s else h, fun n ↦ 9 - 3 * n⟩
+/-- The hearer reading narrows the grammar's *ese*, and the speaker reading anchors outside it. -/
+theorem ese_anchors :
+    eseHearer.anchors ⊆ Spanish.Determiners.ese.deixis ∧
+      Disjoint eseSpeaker.anchors Spanish.Determiners.ese.deixis := by
+  decide
+
+/-- The vectors to one referent whose lengths from the speaker's atoms are `s`, from the hearer's
+atom `h` and from the others' atom `o`, under the cut-offs `9 > 6 > 3`. -/
+def config (s h o : ℕ) : Vectors Unit ℕ :=
+  ⟨fun a _ ↦ if Role.speaker ∈ a then s else if Role.addressee ∈ a then h else o,
+    fun n ↦ 9 - 3 * n⟩
+
+theorem ese_not_aquel :
+    (⟨Spanish.Determiners.ese.deixis, none⟩ : DeicticTerm).Locates (config 12 1 12) () ∧
+      ¬ (⟨Spanish.Determiners.aquel.deixis, none⟩ : DeicticTerm).Locates (config 12 1 12) () := by
+  decide
 
 /-- The two readings of *ese* overlap but differ: either may locate a referent the other does not,
 and both may locate the same one. -/
 theorem ese_readings :
-    (eseHearer.Locates (config 8 1) () ∧ ¬ eseSpeaker.Locates (config 8 1) ()) ∧
-      (eseSpeaker.Locates (config 4 12) () ∧ ¬ eseHearer.Locates (config 4 12) ()) ∧
-        (eseHearer.Locates (config 4 2) () ∧ eseSpeaker.Locates (config 4 2) ()) := by
+    (eseHearer.Locates (config 8 1 12) () ∧ ¬ eseSpeaker.Locates (config 8 1 12) ()) ∧
+      (eseSpeaker.Locates (config 4 12 12) () ∧ ¬ eseHearer.Locates (config 4 12 12) ()) ∧
+        (eseHearer.Locates (config 4 2 12) () ∧ eseSpeaker.Locates (config 4 2 12) ()) := by
   decide
 
 end Terenghi2023
