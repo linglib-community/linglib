@@ -164,4 +164,61 @@ theorem serboCroatian :
     fun hr ↦ Tableau.ofRanking_optimal_eq_singleton_of_rel hr (by simp) (by decide),
     fun hr ↦ Tableau.ofRanking_optimal_eq_singleton_of_rel hr (by simp) (by decide)⟩
 
+/-! ### The hierarchies of the paper
+
+The paper states each grammar as strata, leaving the order within a stratum open. Each ranking
+below lists the strata in order, with Headedness first, and is one of the rankings its theorem
+quantifies over. -/
+
+/-- A ranking of the English hierarchy in its revised form (42), the alignment of lexical words
+over Nonrecursivity over the alignment of prosodic words and Exhaustivity. -/
+def english : Ranking Con 7 :=
+  .ofList [.headedness, .wdConL, .wdConR, .nonRec, .pwdConL, .pwdConR, .exh]
+
+/-- A ranking of the first Serbo-Croatian dialect of (47). -/
+def ns1 : Ranking Con 7 :=
+  .ofList [.headedness, .nonRec, .exh, .wdConL, .wdConR, .pwdConL, .pwdConR]
+
+/-- A ranking of the second Serbo-Croatian dialect of (47). -/
+def ns2 : Ranking Con 7 :=
+  .ofList [.headedness, .wdConL, .wdConR, .pwdConL, .pwdConR, .nonRec, .exh]
+
+/-- A ranking of the third Serbo-Croatian dialect of (47). -/
+def ns3 : Ranking Con 7 :=
+  .ofList [.headedness, .wdConL, .wdConR, .exh, .nonRec, .pwdConL, .pwdConR]
+
+-- (36), (42)
+theorem english_respects :
+    Requires [.wdConL, .wdConR, .nonRec] [.pwdConL, .pwdConR, .exh] ≤ english.Dominates :=
+  fun i j h ↦ by revert i j; decide
+
+-- (47a)
+theorem ns1_respects :
+    Requires [.nonRec, .exh] [.wdConL, .wdConR, .pwdConL, .pwdConR] ≤ ns1.Dominates :=
+  fun i j h ↦ by revert i j; decide
+
+-- (47b)
+theorem ns2_respects :
+    Requires [.wdConL, .wdConR, .pwdConL, .pwdConR, .nonRec] [.exh] ≤ ns2.Dominates :=
+  fun i j h ↦ by revert i j; decide
+
+-- (47c)
+theorem ns3_respects :
+    Requires [.wdConL, .wdConR, .exh] [.nonRec, .pwdConL, .pwdConR] ≤ ns3.Dominates :=
+  fun i j h ↦ by revert i j; decide
+
+-- English: the free clitic.
+example : (Tableau.ofRanking (con.comap Parse.tree) english Finset.univ).optimal = {.free} :=
+  english_free english_respects
+
+-- The three dialects: the internal, the free and the affixal clitic.
+example : (Tableau.ofRanking (con.comap Parse.tree) ns1 Finset.univ).optimal = {.internal} :=
+  serboCroatian.1 ns1_respects
+
+example : (Tableau.ofRanking (con.comap Parse.tree) ns2 Finset.univ).optimal = {.free} :=
+  serboCroatian.2.1 ns2_respects
+
+example : (Tableau.ofRanking (con.comap Parse.tree) ns3 Finset.univ).optimal = {.affixal} :=
+  serboCroatian.2.2 ns3_respects
+
 end Selkirk1996

@@ -286,4 +286,15 @@ theorem starVV_dominates_of_erdesz {r : Ranking Con 5}
   obtain rfl := (con_erdesz_lt_iff i).1 hi
   exact ⟨hr _ (by decide +kernel), hr _ (by decide +kernel)⟩
 
+/-- The reranking (8b) as a ranking of all five constraints, with the two that Table 2 does not
+print placed below it. -/
+def v1Deletion : Ranking Con 5 :=
+  .ofList (Wordlist.Hierarchy.v1Deletion.order ++ [.maxLong, .maxMS])
+
+-- The premise of `starVV_dominates_of_erdesz` holds of the reranking (8b).
+theorem erdesz_v1Deletion :
+    (Tableau.ofRanking (con erdesz) v1Deletion
+      {∅, {.first}, {.second}, {.first, .second}}).optimal = {{.first}} := by
+  decide +kernel
+
 end Vago2017
