@@ -16,6 +16,7 @@ Lemmas on mathlib's `IndepSet` that mathlib does not state: symmetry and complem
 independence of null and sure events from every event, the product rule and the
 inclusion-exclusion law on real-valued masses, the conditional probability of one independent
 event given the other, and independence under a uniform measure as an equation between counts.
+For random variables, conditioning on one leaves the law of an independent one unchanged.
 `[UPSTREAM]` candidates for `Mathlib/Probability/Independence/Basic.lean`.
 -/
 
@@ -85,5 +86,15 @@ theorem indepSet_uniformOn_iff [Finite Ω] [MeasurableSingletonClass Ω] (u : Se
   · rw [div_mul_div_comm, div_eq_div_iff (by positivity) (by positivity)]
     norm_cast
     rw [← mul_assoc, Nat.mul_left_inj h0.ne']
+
+/-- Conditioning on a random variable leaves the law of an independent one unchanged. -/
+theorem IndepFun.map_cond {β γ : Type*} [MeasurableSpace β] [MeasurableSpace γ] {X : Ω → β}
+    {Y : Ω → γ} {s : Set β} (h : IndepFun X Y μ) (hX : Measurable X) (hY : Measurable Y)
+    (hs : MeasurableSet s) (hs₀ : μ (X ⁻¹' s) ≠ 0) (hs' : μ (X ⁻¹' s) ≠ ∞ := by finiteness) :
+    (μ[|X in s]).map Y = μ.map Y := by
+  ext t ht
+  rw [Measure.map_apply hY ht, Measure.map_apply hY ht, ProbabilityTheory.cond_apply (hX hs),
+    h.measure_inter_preimage_eq_mul _ _ hs ht, ← mul_assoc, ENNReal.inv_mul_cancel hs₀ hs',
+    one_mul]
 
 end ProbabilityTheory
