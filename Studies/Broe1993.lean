@@ -24,11 +24,13 @@ bear it, and a redundancy rule $p \to q$ holds of the inventory exactly when
 [the node of $p$ lies below the node of $q$](##Broe1993.ofAttribute_le_ofAttribute_iff_forall_mem).
 Removing segments from an inventory keeps every description and shrinks its class, a map of
 lattices that [reaches every node of the smaller lattice](##Broe1993.collapse_surjective) and
-preserves meets, and descriptions with different classes may come to denote the same one. In the
-worked example, the four vowels of Quileute bear every combination of [high] and [back] and
+preserves meets, and descriptions with different classes
+[may come to denote the same one](##Broe1993.quileute_collapse_not_injective). In the worked
+example, the four vowels of Quileute bear every combination of [high] and [back] and
 [no value predicts another](##Broe1993.quileute_no_redundancy); without the low front vowel
-[[−back] lies below [+high] and [−high] below [+back]](##Broe1993.quileutePrime_redundancy). The
-join of two segments' nodes holds what they share, so that
+[[−back] lies below [+high] and [−high] below [+back]](##Broe1993.quileutePrime_redundancy).
+[The join of two segments' nodes](##Broe1993.extent_ofObject_sup_ofObject) is the natural class
+of what they share, so that
 [/i/ and /u/ join lower than /i/ and /ɑ/](##Broe1993.quileutePrime_similarity).
 
 ## Implementation notes
@@ -154,15 +156,16 @@ theorem disjoint_ofAttribute_iff :
     Set.subset_empty_iff, Set.eq_empty_iff_forall_notMem, Subtype.forall]
   simp [mem_lowerPolar_iff]
 
--- §6.4: the nodes of some segments join below those of others when they share what those share
-theorem ofObjects_le_ofObjects_iff_inf'_le {T : Finset Segment} (hS : S ⊆ I) (hT : T ⊆ I)
-    (hneS : S.Nonempty) (hneT : T.Nonempty) :
-    ofObjects bears[I] {x : I | (x : Segment) ∈ S} ≤
-        ofObjects bears[I] {x : I | (x : Segment) ∈ T} ↔
-      T.inf' hneT id ≤ S.inf' hneS id := by
-  rw [← intent_subset_intent_iff, intent_ofObjects, intent_ofObjects, upperPolar_bears hS hneS,
-    upperPolar_bears hT hneT, le_iff_forall_bears]
-  rfl
+/-- The join of the nodes of two segments is the natural class of what they share (§6.4), so that
+more similar segments join lower in the lattice. -/
+theorem extent_ofObject_sup_ofObject {y : Segment} (hx : x ∈ I) (hy : y ∈ I) :
+    (ofObject bears[I] ⟨x, hx⟩ ⊔ ofObject bears[I] ⟨y, hy⟩).extent =
+      {z : I | (z : Segment) ∈ (x ⊓ y).naturalClass I} := by
+  rw [ofObjects_sup_ofObjects, extent_ofObjects, ← lowerPolar_bears]
+  congr 1
+  ext p
+  simp only [upperPolar_union, Set.mem_inter_iff, mem_upperPolar_singleton, Set.mem_ofPred_eq,
+    bears_iff_ofSpecs_le, le_inf_iff]
 
 /-- Removing segments from an inventory collapses its lattice of representations: a node goes to
 the node with the same feature values, whose class is what is left of its class. -/
@@ -173,7 +176,7 @@ def collapse (h : I' ⊆ I) : sInfHom (Representations I) (Representations I') :
     collapse h (ofAttributes _ t) = ofAttributes _ t :=
   comap_ofAttributes (r := bears[I]) t
 
-/-- Every node of the lattice of a smaller inventory is the collapse of a node of the larger. -/
+-- every node of the lattice of a smaller inventory is the collapse of a node of the larger
 theorem collapse_surjective (h : I' ⊆ I) : Function.Surjective (collapse h) :=
   comap_surjective bears[I] _
 
@@ -440,29 +443,24 @@ theorem quileutePrime_synonymy :
   rw [disjoint_ofAttribute_iff]
   decide +kernel
 
+-- (8): [−high, +back] and [−high] are distinct nodes of (5) that the collapse identifies
+theorem quileute_collapse_not_injective (h : vowels' ⊆ vowels) :
+    ¬Function.Injective (collapse h) := by
+  intro hinj
+  have := hinj (a₁ := ofAttributes bears[vowels] {(.high, false), (.back, true)})
+    (a₂ := ofAttribute bears[vowels] (.high, false))
+    (by rw [collapse_ofAttributes, collapse_ofAttributes]; exact quileutePrime_synonymy.1)
+  rw [ofAttributes_pair_eq_left_iff, ofAttribute_le_ofAttribute_iff_forall_mem] at this
+  revert this
+  decide +kernel
+
 /-- The lattice orders pairs of segments by similarity (§6.4): /i/ and /u/, which share [+high],
 join strictly below /i/ and /ɑ/, which share nothing, and the joins of /u/ with /ɑ/ and with /i/
 are unordered. -/
 theorem quileutePrime_similarity :
-    ofObjects bears[vowels'] {x | (x : Segment) ∈ ({i, u} : Finset Segment)} <
-        ofObjects bears[vowels'] {x | (x : Segment) ∈ ({i, «ɑ»} : Finset Segment)} ∧
-      ¬ofObjects bears[vowels'] {x | (x : Segment) ∈ ({u, «ɑ»} : Finset Segment)} ≤
-        ofObjects bears[vowels'] {x | (x : Segment) ∈ ({u, i} : Finset Segment)} ∧
-      ¬ofObjects bears[vowels'] {x | (x : Segment) ∈ ({u, i} : Finset Segment)} ≤
-        ofObjects bears[vowels'] {x | (x : Segment) ∈ ({u, «ɑ»} : Finset Segment)} := by
-  have hiu : ({i, u} : Finset Segment) ⊆ vowels' := by decide +kernel
-  have hia : ({i, «ɑ»} : Finset Segment) ⊆ vowels' := by decide +kernel
-  have hua : ({u, «ɑ»} : Finset Segment) ⊆ vowels' := by decide +kernel
-  have hui : ({u, i} : Finset Segment) ⊆ vowels' := by decide +kernel
-  rw [lt_iff_le_not_ge,
-    ofObjects_le_ofObjects_iff_inf'_le hiu hia (Finset.insert_nonempty _ _)
-      (Finset.insert_nonempty _ _),
-    ofObjects_le_ofObjects_iff_inf'_le hia hiu (Finset.insert_nonempty _ _)
-      (Finset.insert_nonempty _ _),
-    ofObjects_le_ofObjects_iff_inf'_le hua hui (Finset.insert_nonempty _ _)
-      (Finset.insert_nonempty _ _),
-    ofObjects_le_ofObjects_iff_inf'_le hui hua (Finset.insert_nonempty _ _)
-      (Finset.insert_nonempty _ _)]
+    (i ⊓ u).naturalClass vowels' ⊂ (i ⊓ «ɑ»).naturalClass vowels' ∧
+      ¬(u ⊓ «ɑ»).naturalClass vowels' ⊆ (u ⊓ i).naturalClass vowels' ∧
+      ¬(u ⊓ i).naturalClass vowels' ⊆ (u ⊓ «ɑ»).naturalClass vowels' := by
   decide +kernel
 
 end Segment
