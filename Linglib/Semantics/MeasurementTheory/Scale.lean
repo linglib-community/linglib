@@ -1,7 +1,8 @@
 module
 
+public import Mathlib.Data.Finset.Sort
 public import Mathlib.Data.Set.Image
-public import Linglib.Semantics.MeasurementTheory.Invariance
+public import Linglib.Semantics.MeasurementTheory.Homogeneity
 
 /-!
 # Ordinal scales
@@ -9,11 +10,12 @@ public import Linglib.Semantics.MeasurementTheory.Invariance
 A measure represents an order when the order of its values is the order of the things measured. Two
 measures of one order [differ by a strictly increasing map on the range of the
 first](##MeasurementTheory.forall_le_iff_le_iff_exists_strictMono), which is what makes the scale
-ordinal. A statement about a measure is reference invariant when every measure of the same order
-gives it the same value, that is, when it [depends only on the order the measure
-induces](##MeasurementTheory.factorsThrough_preimage_le_iff). Such a statement is
-[invariant](##Function.FactorsThrough.invariant_univ) under every strictly increasing change of
-scale, as [comparing two measures](##MeasurementTheory.invariant_univ_lt) is.
+ordinal; on a finite domain they [differ by an order automorphism of the
+degrees](##MeasurementTheory.exists_orderIso_comp_eq). A statement about a measure is reference
+invariant when every measure of the same order gives it the same value, that is, when it [depends
+only on the order the measure induces](##MeasurementTheory.factorsThrough_preimage_le_iff). Such a
+statement is [invariant](##Function.FactorsThrough.invariant_univ) under every strictly increasing
+change of scale, as [comparing two measures](##MeasurementTheory.invariant_univ_lt) is.
 
 ## Implementation notes
 
@@ -24,8 +26,6 @@ of the first measure, and need not extend to the whole degree type.
 
 ## TODO
 
-* For a finite domain and real degrees the reparametrization extends to an order isomorphism of
-  the reals, [krantz-1971]'s uniqueness theorem for ordinal measurement.
 * The converse of `Function.FactorsThrough.invariant_univ`, for maps on the range of a measure.
 * Extensive and difference structures, whose measures differ by a similarity and by a positive
   affine map.
@@ -58,6 +58,31 @@ theorem forall_le_iff_le_iff_exists_strictMono [LinearOrder D] [LinearOrder D'] 
     exact le_antisymm ((h _ _).2 he.ge) ((h _ _).2 he.le)
   · rintro ⟨g, hg, rfl⟩ a b
     exact hg.le_iff_le
+
+/-- On a finite domain two measures in an ordered field that order alike differ by an order
+automorphism of the field. -/
+-- [krantz-1971] Theorem 1, p. 15
+theorem exists_orderIso_comp_eq [Finite E] {K : Type*} [Field K] [LinearOrder K]
+    [IsStrictOrderedRing K] {μ ν : E → K} (h : ∀ a b, ν a ≤ ν b ↔ μ a ≤ μ b) :
+    ∃ g : K ≃o K, ν = g ∘ μ := by
+  classical
+  obtain ⟨g₀, hg₀, rfl⟩ := forall_le_iff_le_iff_exists_strictMono.1 h
+  have : Fintype E := Fintype.ofFinite E
+  let S : Finset K := Finset.univ.image μ
+  have hmem (i : Fin S.card) : (S.orderEmbOfFin rfl i : K) ∈ range μ := by
+    obtain ⟨e, -, he⟩ := Finset.mem_image.1 (S.orderEmbOfFin_mem rfl i)
+    exact ⟨e, he⟩
+  obtain ⟨g, -, hg⟩ := isPointHomogeneous_univ (K := K) S.card (fun i ↦ S.orderEmbOfFin rfl i)
+    (fun i ↦ g₀ ⟨_, hmem i⟩) (S.orderEmbOfFin rfl).strictMono
+    fun i j hij ↦ hg₀ (Subtype.mk_lt_mk.2 ((S.orderEmbOfFin rfl).strictMono hij))
+  refine ⟨g, funext fun e ↦ ?_⟩
+  obtain ⟨i, hi⟩ : ∃ i, S.orderEmbOfFin rfl i = μ e := by
+    have he : μ e ∈ (S : Set K) := Finset.mem_image_of_mem μ (Finset.mem_univ e)
+    rwa [← Finset.range_orderEmbOfFin S rfl] at he
+  calc g₀ (rangeFactorization μ e) = g₀ ⟨S.orderEmbOfFin rfl i, hmem i⟩ :=
+        congrArg g₀ (Subtype.ext hi.symm)
+    _ = g (S.orderEmbOfFin rfl i) := (hg i).symm
+    _ = g (μ e) := by rw [hi]
 
 /-- A function of measures depends only on the order the measure induces exactly when it agrees
 on any two measures that order alike. -/
