@@ -5,11 +5,11 @@ module
 
 The classificatory vocabulary of aspect follows the two components of Smith's theory. An
 aspectual class, Smith's situation type, is one of Vendler's four classes or her semelfactive,
-and is determined by three features: whether the situation has a natural endpoint, whether it takes time and whether
-it involves change. Viewpoint is the presentation of a situation: Klein's four relations between
-the topic time and the situation time together with Smith's neutral viewpoint, and at its
-coarsest the opposition of perfective and imperfective. The operators that viewpoints denote are
-in `Semantics/Aspect/Viewpoint.lean`.
+and is determined by three features: whether the situation has a natural endpoint, whether it
+takes time and whether it involves change. Viewpoint is the presentation of a situation: Klein's
+four relations between the topic time and the situation time together with Smith's neutral
+viewpoint, and at its coarsest the opposition of perfective and imperfective. The operators that
+viewpoints denote are in `Semantics/Aspect/Viewpoint.lean`.
 
 ## Implementation notes
 
@@ -83,23 +83,6 @@ theorem eq_of_features (ht : c.telicity = d.telicity) (hd : c.duration = d.durat
     (hy : c.dynamicity = d.dynamicity) : c = d := by
   revert ht hd hy
   cases c <;> cases d <;> decide
-
-/-- Add a natural endpoint, by which an activity becomes an accomplishment and a semelfactive
-an achievement. -/
-def telicize : AspectualClass → AspectualClass
-  | activity => accomplishment
-  | semelfactive => achievement
-  | c => c
-
-theorem telicity_telicize (h : c.dynamicity = .dynamic) : c.telicize.telicity = .telic := by
-  cases c <;> first | rfl | cases h
-
-@[simp] theorem duration_telicize (c : AspectualClass) : c.telicize.duration = c.duration := by
-  cases c <;> rfl
-
-@[simp] theorem dynamicity_telicize (c : AspectualClass) :
-    c.telicize.dynamicity = c.dynamicity := by
-  cases c <;> rfl
 
 end AspectualClass
 

@@ -37,8 +37,8 @@ tested against them.
 * `Dutch.Verbs.pastParticiple_particle`, `Dutch.Verbs.pastParticiple_prefix`: a particle
   precedes the *ge-* of the participle and a prefix replaces it.
 * `Dutch.Verbs.opgebeld`, `Dutch.Verbs.ontdekt`: the grammar's examples.
-* `Dutch.Verbs.perfect_withPath_intransitive`: a bounded directional phrase gives a dynamic
-  intransitive verb *zijn*.
+* `Dutch.Verbs.perfect_withPath_intransitive`: a directional phrase gives an intransitive verb
+  that selects it *zijn*.
 * `Dutch.Verbs.perfectAuxiliary_mem`: the rule gives every entry an auxiliary its perfect takes.
 
 ## Implementation notes
@@ -202,7 +202,7 @@ grammar's unaccusativity tests assign it (§2.1), which introduces no external a
 def komen : Verb :=
   { simplex "komen" "gekomen" with
     voiceType := some .nonThematic, perfectAuxiliaries := {.be},
-    valency := .ofFrame ArgumentFrame.intransitive, aspectualClass := some .achievement,
+    valency := .ofFrame ArgumentFrame.intransitive,
     direction := some .goal }
 
 /-- *sterven* 'die' is an unaccusative verb denoting a transition, as in *De oude man is
@@ -210,20 +210,20 @@ gestorven*. -/
 def sterven : Verb :=
   { simplex "sterven" "gestorven" with
     voiceType := some .nonThematic, perfectAuxiliaries := {.be},
-    valency := .ofFrame ArgumentFrame.intransitive, aspectualClass := some .achievement }
+    valency := .ofFrame ArgumentFrame.intransitive [some {.changeOfState, .causallyAffected}] }
 
 /-- *groeien* 'grow', an unaccusative verb of change along a scale of size. -/
 def groeien : Verb :=
   { simplex "groeien" "gegroeid" with
     voiceType := some .nonThematic, perfectAuxiliaries := {.be},
-    valency := .ofFrame ArgumentFrame.intransitive, aspectualClass := some .accomplishment,
+    valency := .ofFrame ArgumentFrame.intransitive,
     scaleDimension := some .generalSize }
 
 /-- *stijgen* 'rise', an unaccusative verb of change along a scale of height. -/
 def stijgen : Verb :=
   { simplex "stijgen" "gestegen" with
     voiceType := some .nonThematic, perfectAuxiliaries := {.be},
-    valency := .ofFrame ArgumentFrame.intransitive, aspectualClass := some .accomplishment,
+    valency := .ofFrame ArgumentFrame.intransitive,
     scaleDimension := some .height }
 
 /-- *blijven* 'stay' is an unaccusative verb expressing that a state continues to exist (§1.2),
@@ -232,7 +232,7 @@ longer!'. -/
 def blijven : Verb :=
   { simplex "blijven" "gebleven" with
     voiceType := some .nonThematic, perfectAuxiliaries := {.be},
-    valency := .ofFrame ArgumentFrame.intransitive, aspectualClass := some .state,
+    valency := .ofFrame ArgumentFrame.intransitive,
     phasal := some .continuation }
 
 /-- *overblijven* 'remain, be left', formed on *blijven* with the particle *over*. -/
@@ -242,14 +242,14 @@ def overblijven : Verb := particleVerb "over" blijven
 def duren : Verb :=
   { simplex "duren" "geduurd" with
     perfectAuxiliaries := {.have},
-    valency := .ofFrame ArgumentFrame.intransitive, aspectualClass := some .state }
+    valency := .ofFrame ArgumentFrame.intransitive }
 
 /-- *staan* 'stand' is a stative verb of location, an atelic unaccusative verb with *hebben*, as
 in *Jan heeft lang op het perron gestaan*. -/
 def staan : Verb :=
   { simplex "staan" "gestaan" with
     voiceType := some .nonThematic, perfectAuxiliaries := {.have},
-    valency := .ofFrame ArgumentFrame.intransitive, aspectualClass := some .state }
+    valency := .ofFrame ArgumentFrame.intransitive }
 
 /-- *bestaan* 'exist', formed on *staan* with the prefix *be-*. -/
 def bestaan : Verb := prefixVerb "be" staan
@@ -258,15 +258,13 @@ def bestaan : Verb := prefixVerb "be" staan
 def blazen : Verb :=
   { simplex "blazen" "geblazen" with
     perfectAuxiliaries := {.have},
-    valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile],
-      aspectualClass := some .activity }
+    valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile] }
 
 /-- *werken* 'work', *gewerkt*, an intransitive activity with an agentive subject. -/
 def werken : Verb :=
   { simplex "werken" "gewerkt" with
     perfectAuxiliaries := {.have},
-    valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile],
-    aspectualClass := some .activity }
+    valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile] }
 
 /-- *lopen* 'walk, run', *loop - liep - gelopen*, an agentive verb of manner of motion, intransitive
 ([levin-hovav-1995] p. 148). -/
@@ -274,7 +272,6 @@ def lopen : Verb :=
   { simplex "lopen" "gelopen" with
     perfectAuxiliaries := {.be, .have},
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
-      aspectualClass := some .activity,
     direction := some .place }
 
 /-- *wandelen* 'walk' is an intransitive verb of manner of motion, as in *De jongen heeft
@@ -283,7 +280,6 @@ def wandelen : Verb :=
   { simplex "wandelen" "gewandeld" with
     perfectAuxiliaries := {.be, .have},
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
-      aspectualClass := some .activity,
     direction := some .place }
 
 /-- *rollen* 'roll', a nonagentive verb of manner of motion, unaccusative ([levin-hovav-1995]
@@ -292,7 +288,6 @@ def rollen : Verb :=
   { simplex "rollen" "gerold" with
     voiceType := some .nonThematic, perfectAuxiliaries := {.be, .have},
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
-      aspectualClass := some .activity,
     direction := some .place }
 
 /-! ### The perfect auxiliary -/
@@ -305,26 +300,24 @@ def Verb.withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
     (v.withPath p).toVerb = v.toVerb.withPath p := rfl
 
 /-- The auxiliary of the perfect of `v` on the frame `fr` ([broekhuis-corver-2026e] §§2.1–2.2) is
-*zijn* on an intransitive frame when the verb is telic and either unaccusative or a verb of motion
-with a direction, as a directional phrase gives a verb of manner of motion one; the direction makes
-such a verb unaccusative unless a recorded voice introduces an external argument, and the rule
-does not ask. It is *hebben* otherwise, for transitive and intransitive verbs and for atelic
-unaccusative ones, and *zijn* for *blijven*, whose state continues. -/
+*zijn* on an intransitive frame for a verb of motion with a direction, as a directional phrase
+gives a verb of manner of motion one, and for an unaccusative verb that denotes a transition from
+one state to another, to an endpoint or along a scale, the grammar's telic unaccusatives. It is
+*hebben* otherwise, for transitive and intransitive verbs and for the unaccusative verbs without a
+transition, and *zijn* for *blijven*, whose state continues. -/
 def perfectAuxiliary (v : Verb) (fr : ArgumentFrame) : PerfectAuxiliary :=
   if v.phasal = some .continuation then .be
-  else if fr.IsIntransitive ∧ (v.IsUnaccusative ∨ ∃ d ∈ v.direction, d ≠ .place) ∧
-      v.aspectualClass.any (·.telicity == .telic) then .be
+  else if fr.IsIntransitive ∧ ((∃ d ∈ v.direction, d ≠ .place) ∨ v.IsUnaccusative ∧
+      ((∃ θ ∈ v.slotProfile? .external, .changeOfState ∈ θ) ∨ v.scaleDimension.isSome)) then .be
   else .have
 
-/-- A bounded directional phrase gives a dynamic intransitive verb *zijn*, as in *De jongen is
+/-- A directional phrase gives an intransitive verb that selects it *zijn*, as in *De jongen is
 naar Groningen gewandeld* (§2.2, (274b)). -/
 theorem perfect_withPath_intransitive {v : Verb} {p : Adposition.SpatialReading}
-    (hv : v.TakesSpatial) (hb : p.IsBounded) {c : Aspect.AspectualClass}
-    (hc : v.aspectualClass = some c) (hdyn : c.dynamicity = .dynamic) :
+    (hv : v.TakesSpatial) (hp : p.direction ≠ .place) :
     perfectAuxiliary (v.withPath p) .intransitive = .be := by
-  simp [perfectAuxiliary, Verb.withPath, hv, hb.direction_ne_place, hb, hc,
-    ArgumentFrame.intransitive, ArgumentFrame.IsIntransitive,
-    Aspect.AspectualClass.telicity_telicize hdyn]
+  simp [perfectAuxiliary, Verb.withPath, _root_.Verb.withPath, hv, hp,
+    ArgumentFrame.intransitive, ArgumentFrame.IsIntransitive]
 
 /-- *Wandelen* takes *hebben*, with *zijn* under a directional phrase and *hebben* under a
 locational one (§2.2, (273)–(275)). -/

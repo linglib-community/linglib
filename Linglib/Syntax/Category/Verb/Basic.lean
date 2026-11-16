@@ -42,16 +42,12 @@ def find? (verbs : List Verb) (form : String) (tag : SenseTag := .default) : Opt
 
 /-- The predicate a verb forms with a path phrase of reading `p`. A directional phrase that the
 verb selects as a complement gives the theme's path its direction, the directed motion use of a
-verb of manner of motion ([levin-hovav-1995] p. 185), and a bounded one an endpoint, which makes
-the predicate telic ([zwarts-2005]). A locative phrase, and a phrase the verb does not select, an
-adjunct, leave the verb as it is: *correre* 'run' has a directed motion use in Italian but
-*nuotare* 'swim' has none ([sorace-2000] §4.3). -/
+verb of manner of motion ([levin-hovav-1995] p. 185). A locative phrase, and a phrase the verb
+does not select, an adjunct, leave the verb as it is: *correre* 'run' has a directed motion use
+in Italian but *nuotare* 'swim' has none ([sorace-2000] §4.3). -/
 def withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
   if p.direction = .place ∨ ¬ v.TakesSpatial then v else
-    { v with
-      direction := some p.direction
-      aspectualClass :=
-        if p.IsBounded then v.aspectualClass.map (·.telicize) else v.aspectualClass }
+    { v with direction := some p.direction }
 
 section withPath
 
@@ -66,15 +62,6 @@ variable {v : Verb} {p : Adposition.SpatialReading}
 @[simp] theorem direction_withPath (hv : v.TakesSpatial) (h : p.direction ≠ .place) :
     (v.withPath p).direction = some p.direction := by
   simp [withPath, hv, h]
-
-@[simp] theorem aspectualClass_withPath_of_isBounded (hv : v.TakesSpatial) (hb : p.IsBounded) :
-    (v.withPath p).aspectualClass = v.aspectualClass.map (·.telicize) := by
-  simp [withPath, hv, hb.direction_ne_place, hb]
-
-@[simp] theorem aspectualClass_withPath_of_not_isBounded (hb : ¬ p.IsBounded) :
-    (v.withPath p).aspectualClass = v.aspectualClass := by
-  unfold withPath
-  split_ifs <;> rfl
 
 end withPath
 
