@@ -401,19 +401,20 @@ theorem john_saw_every_man_iff (hman : ∃ x, man' x) (σ τ υ : Equiv.Perm (Fi
     (S σ (lex j) (VP τ (lex saw') (NP υ every (lex man')))).eval ↔
       Quantifier.Det.every man' (saw' · j) :=
   (john_saw_det j man' saw' _ _ σ τ υ).to_iff.trans
-    (ChoiceFunction.forall_apply_iff_every hman (saw' · j))
+    (ChoiceFunction.forall_apply_mem_iff (A := man') (B := (saw' · j)) hman)
 
 theorem john_saw_every_man_iff_of_not_exists (hman : ¬ ∃ x, man' x)
     (σ τ υ : Equiv.Perm (Fin 2)) :
     (S σ (lex j) (VP τ (lex saw') (NP υ every (lex man')))).eval ↔ ∀ x, saw' x j :=
-  (john_saw_det j man' saw' _ _ σ τ υ).to_iff.trans
-    (ChoiceFunction.forall_apply_iff_of_not_exists hman (saw' · j))
+  (john_saw_det j man' saw' _ _ σ τ υ).to_iff.trans <| by
+    obtain rfl : man' = (∅ : Set E) := Set.eq_empty_iff_forall_notMem.2 fun x hx ↦ hman ⟨x, hx⟩
+    exact ChoiceFunction.forall_apply_empty_iff (p := (saw' · j))
 
 theorem john_saw_no_man_iff (hman : ∃ x, man' x) (σ τ υ : Equiv.Perm (Fin 2)) :
     (S σ (lex j) (VP τ (lex saw') (NP υ no (lex man')))).eval ↔
       Quantifier.Det.no man' (saw' · j) :=
   (john_saw_det j man' saw' _ _ σ τ υ).to_iff.trans <|
-    (ChoiceFunction.exists_apply_iff_some hman (saw' · j)).not.trans
+    (ChoiceFunction.exists_apply_mem_iff (A := man') (B := (saw' · j)) hman).not.trans
       Quantifier.Det.no_iff_not_some.symm
 
 theorem exists_forall_mem_apply_iff_most [Finite E] {N : E → Prop} (hN : ∃ x, N x) (V : E → Prop) :
@@ -428,7 +429,7 @@ theorem exists_forall_mem_apply_iff_most [Finite E] {N : E → Prop} (hN : ∃ x
   refine ⟨fun ⟨C, hC, hV⟩ ↦ ?_, fun h ↦ ?_⟩
   · have hsub : (· N) '' C ⊆ {x | N x ∧ V x} := by
       rintro _ ⟨f, hf, rfl⟩
-      exact ⟨f.apply_of_exists hN, hV f hf⟩
+      exact ⟨f.apply_mem (A := N) hN, hV f hf⟩
     have := Set.ncard_le_ncard hsub
     have := hC N
     omega
@@ -446,18 +447,22 @@ theorem exists_forall_mem_apply_iff_most [Finite E] {N : E → Prop} (hN : ∃ x
       ext x
       refine ⟨?_, fun ⟨hx, hVx⟩ ↦ ?_⟩
       · rintro ⟨f, hf, rfl⟩
-        exact ⟨f.apply_of_exists hN, hf⟩
+        exact ⟨f.apply_mem (A := P) hN, hf⟩
       · obtain ⟨f, rfl⟩ := ChoiceFunction.exists_apply_eq hx
         exact ⟨f, hVx, rfl⟩
     rw [hC]
     omega
   have hsup : {x | P x} ⊆ (fun f : ChoiceFunction E ↦ f P) '' C := fun x hx ↦ by
-    obtain ⟨f, hf⟩ := ChoiceFunction.exists_forall_mem_apply_eq (T := {P, N})
-      (fun Q _ ↦ if Q = P then x else s) fun Q hQ _ ↦ by
+    obtain ⟨f, hf⟩ := ChoiceFunction.exists_eqOn (T := ({P, N} : Set (Set E)))
+      (fun Q ↦ if Q = P then x else s) fun Q hQ _ ↦ by
         rcases hQ with h | h
-        · simpa [h] using hx
-        · simpa [show Q = N from h, Ne.symm hP] using hs
-    exact ⟨f, by simpa [C, hf N (by simp), Ne.symm hP] using hVs, by simpa using hf P (by simp)⟩
+        · simp only [h, ↓reduceIte]
+          exact hx
+        · simp only [show Q = N from h, Ne.symm hP, ↓reduceIte]
+          exact hs
+    have hfN := hf (show N ∈ ({P, N} : Set (Set E)) by simp)
+    have hfP := hf (show P ∈ ({P, N} : Set (Set E)) by simp)
+    exact ⟨f, by simpa [C, hfN, Ne.symm hP] using hVs, by simpa using hfP⟩
   have hne : ((fun f : ChoiceFunction E ↦ f P) '' C).Nonempty := by
     obtain ⟨f, hf⟩ := ChoiceFunction.exists_apply_eq hs
     exact ⟨f P, f, by simpa [C, hf] using hVs, rfl⟩
@@ -535,9 +540,11 @@ theorem a_everyone_iff_everyone_a [Nonempty E] (σS σVP σN σVP' σN' : Equiv.
       (someoneSawAFriendOfEveryone saw' friendOf σS σVP' (Equiv.swap 0 1) σN').eval := by
   rcases perm_fin_two σS with rfl | rfl
   · rw [(ex43a saw' friendOf σVP σN).2, (ex43b saw' friendOf σVP' σN').2]
-    exact exists_congr fun y ↦ ChoiceFunction.exists_forall_apply_iff friendOf (saw' · y)
+    exact exists_congr fun y ↦ ChoiceFunction.exists_forall_apply_iff (R := friendOf)
+      (p := fun _ ↦ (saw' · y)) fun _ _ _ ↦ rfl
   · rw [(ex43c saw' friendOf σVP σN).2, (ex43d saw' friendOf σVP' σN').2]
-    exact ChoiceFunction.exists_forall_apply_iff friendOf fun z ↦ ∃ y, saw' z y
+    exact ChoiceFunction.exists_forall_apply_iff (R := friendOf)
+      (p := fun _ z ↦ ∃ y, saw' z y) fun _ _ _ ↦ rfl
 
 /-! ### Generalized coordination -/
 

@@ -50,7 +50,7 @@ variable {ι α S E : Type*}
 /-- The discourse pronoun on the witness set `G` and the choice function `f`: at each point of
 evaluation the pick of `f` from `G`, undefined where `G` is empty. -/
 def pro (G : S → Set E) (f : S → ChoiceFunction E) (s : S) : Part E :=
-  ⟨(G s).Nonempty, fun _ ↦ f s (· ∈ G s)⟩
+  ⟨(G s).Nonempty, fun _ ↦ f s (G s)⟩
 
 /-- The clause that predicates `VP` of the pronoun, undefined where the pronoun is. -/
 noncomputable def clause (G : S → Set E) (f : S → ChoiceFunction E) (VP : S → E → Prop) (s : S) :
@@ -72,13 +72,13 @@ theorem clause_eq_undefined_iff : clause G f VP s = .undefined ↔ ¬ (G s).None
 
 @[simp]
 theorem clause_eq_true_iff :
-    clause G f VP s = .true ↔ (G s).Nonempty ∧ VP s (f s (· ∈ G s)) := by
+    clause G f VP s = .true ↔ (G s).Nonempty ∧ VP s (f s (G s)) := by
   simp only [clause, ofPart_eq_true_iff, Part.mem_map_iff, pro, Part.mem_mk_iff]
   exact ⟨fun ⟨_, ⟨_, ⟨h, rfl⟩, rfl⟩, ha⟩ ↦ ⟨h, ha⟩, fun ⟨h, ha⟩ ↦ ⟨_, ⟨_, ⟨h, rfl⟩, rfl⟩, ha⟩⟩
 
 @[simp]
 theorem clause_eq_false_iff :
-    clause G f VP s = .false ↔ (G s).Nonempty ∧ ¬ VP s (f s (· ∈ G s)) := by
+    clause G f VP s = .false ↔ (G s).Nonempty ∧ ¬ VP s (f s (G s)) := by
   simp only [clause, ofPart_eq_false_iff, Part.mem_map_iff, pro, Part.mem_mk_iff]
   exact ⟨fun ⟨_, ⟨_, ⟨h, rfl⟩, rfl⟩, ha⟩ ↦ ⟨h, ha⟩, fun ⟨h, ha⟩ ↦ ⟨_, ⟨_, ⟨h, rfl⟩, rfl⟩, ha⟩⟩
 
@@ -107,7 +107,7 @@ theorem meetMiddle_antecedent_clause_ne_undefined :
 
 theorem meetMiddle_antecedent_clause_eq_true_iff :
     meetMiddle (antecedent G s) (clause G f VP s) = .true ↔
-      (G s).Nonempty ∧ VP s (f s (· ∈ G s)) := by
+      (G s).Nonempty ∧ VP s (f s (G s)) := by
   simp
 
 theorem meetMiddle_compl_antecedent_clause_eq_undefined_iff :
@@ -128,7 +128,7 @@ theorem joinMiddle_compl_antecedent_clause_ne_undefined :
 
 theorem joinMiddle_compl_antecedent_clause_eq_true_iff :
     joinMiddle (antecedent G s)ᶜ (clause G f VP s) = .true ↔
-      ¬ (G s).Nonempty ∨ VP s (f s (· ∈ G s)) := by
+      ¬ (G s).Nonempty ∨ VP s (f s (G s)) := by
   simp only [joinMiddle_eq_true_iff, compl_eq_true_iff, compl_eq_false_iff,
     antecedent_eq_false_iff, antecedent_eq_true_iff, clause_eq_true_iff]
   tauto
@@ -183,7 +183,7 @@ theorem filtering_antecedent_clause_ne_undefined :
 theorem filtering_every_antecedent_clause_eq_true_iff :
     filtering Det.every (fun y ↦ p y ⊓ antecedent G (b y))
         (fun y ↦ clause G f VP (b y)) = .true ↔
-      ∀ y, p y = .true → (G (b y)).Nonempty → VP (b y) (f (b y) (· ∈ G (b y))) := by
+      ∀ y, p y = .true → (G (b y)).Nonempty → VP (b y) (f (b y) (G (b y))) := by
   classical
   simp only [filtering_eq_true_iff, inf_eq_true_iff, antecedent_eq_true_iff,
     ne_eq, clause_eq_undefined_iff, not_not, and_imp, Det.every, Set.subset_def, mem_posExt,
@@ -220,16 +220,16 @@ theorem forall_meetMiddle_eq_true_iff [Nonempty E] :
       (G s).Nonempty ∧ ∀ x ∈ G s, VP s x := by
   simp only [meetMiddle_antecedent_clause_eq_true_iff]
   refine ⟨fun h ↦ ⟨(h fun _ ↦ .epsilon).1, fun x hx ↦ ?_⟩, fun h f ↦
-    ⟨h.1, h.2 _ ((f s).apply_of_exists h.1)⟩⟩
-  obtain ⟨g, hg⟩ := ChoiceFunction.exists_apply_eq (N := (· ∈ G s)) hx
+    ⟨h.1, h.2 _ ((f s).apply_mem h.1)⟩⟩
+  obtain ⟨g, hg⟩ := ChoiceFunction.exists_apply_eq (A := G s) hx
   exact hg ▸ (h fun _ ↦ g).2
 
 theorem exists_meetMiddle_eq_true_iff :
     (∃ f : S → ChoiceFunction E, meetMiddle (antecedent G s) (clause G f VP s) = .true) ↔
       ∃ x ∈ G s, VP s x := by
   simp only [meetMiddle_antecedent_clause_eq_true_iff]
-  refine ⟨fun ⟨f, h⟩ ↦ ⟨_, (f s).apply_of_exists h.1, h.2⟩, fun ⟨x, hx, hVP⟩ ↦ ?_⟩
-  obtain ⟨g, hg⟩ := ChoiceFunction.exists_apply_eq (N := (· ∈ G s)) hx
+  refine ⟨fun ⟨f, h⟩ ↦ ⟨_, (f s).apply_mem h.1, h.2⟩, fun ⟨x, hx, hVP⟩ ↦ ?_⟩
+  obtain ⟨g, hg⟩ := ChoiceFunction.exists_apply_eq (A := G s) hx
   exact ⟨fun _ ↦ g, ⟨x, hx⟩, hg ▸ hVP⟩
 
 theorem forall_donkey_eq_true_iff [Nonempty E] :
@@ -237,8 +237,8 @@ theorem forall_donkey_eq_true_iff [Nonempty E] :
         (fun y ↦ clause G f VP (b y)) = .true) ↔
       ∀ y, p y = .true → ∀ x ∈ G (b y), VP (b y) x := by
   simp only [filtering_every_antecedent_clause_eq_true_iff]
-  refine ⟨fun h y hy x hx ↦ ?_, fun h f y hy hG ↦ h y hy _ ((f (b y)).apply_of_exists hG)⟩
-  obtain ⟨g, hg⟩ := ChoiceFunction.exists_apply_eq (N := (· ∈ G (b y))) hx
+  refine ⟨fun h y hy x hx ↦ ?_, fun h f y hy hG ↦ h y hy _ ((f (b y)).apply_mem hG)⟩
+  obtain ⟨g, hg⟩ := ChoiceFunction.exists_apply_eq (A := G (b y)) hx
   exact hg ▸ h (fun _ ↦ g) y hy ⟨x, hx⟩
 
 /-- Existential quantification over the choice function gives the existential reading of a
@@ -248,18 +248,15 @@ theorem exists_donkey_eq_true_iff [Nonempty E] :
     (∃ f : S → ChoiceFunction E, filtering Det.every (fun y ↦ p y ⊓ antecedent G (b y))
         (fun y ↦ clause G f VP (b y)) = .true) ↔
       ∀ y, p y = .true → (G (b y)).Nonempty → ∃ x ∈ G (b y), VP (b y) x := by
-  classical
   simp only [filtering_every_antecedent_clause_eq_true_iff]
-  refine ⟨fun ⟨f, h⟩ y hy hG ↦ ⟨_, (f (b y)).apply_of_exists hG, h y hy hG⟩, fun h ↦ ?_⟩
-  have key (s : S) (hs : ∃ x ∈ G s, VP s x) :
-      ∃ g : ChoiceFunction E, VP s (g (· ∈ G s)) :=
-    let ⟨x, hx, hVP⟩ := hs
-    let ⟨g, hg⟩ := ChoiceFunction.exists_apply_eq (N := (· ∈ G s)) hx
-    ⟨g, hg ▸ hVP⟩
-  refine ⟨fun s ↦ if hs : ∃ x ∈ G s, VP s x then (key s hs).choose else .epsilon,
-    fun y hy hG ↦ ?_⟩
-  have hs := h y hy hG
-  simpa only [dite_eq_left hs] using (key (b y) hs).choose_spec
+  refine ⟨fun ⟨f, h⟩ y hy hG ↦ ⟨_, (f (b y)).apply_mem hG, h y hy hG⟩, fun h ↦ ?_⟩
+  obtain ⟨F, hF⟩ := Classical.skolem.1 fun s ↦
+    show ∃ g : ChoiceFunction E, (∃ x ∈ G s, VP s x) → VP s (g (G s)) from
+      (em (∃ x ∈ G s, VP s x)).elim
+        (fun hs ↦ ((ChoiceFunction.exists_apply_iff (hs.imp fun _ h ↦ h.1) (VP s)).2 hs).imp
+          fun _ h _ ↦ h)
+        fun hs ↦ ⟨.epsilon, fun h ↦ (hs h).elim⟩
+  exact ⟨F, fun y hy hG ↦ hF (b y) (h y hy hG)⟩
 
 /-! ### Indices -/
 

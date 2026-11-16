@@ -563,15 +563,12 @@ section ChoiceFunction
 
 open Quantifier
 
--- *Some* at a predicate restrictor and scope, as the choice-function lemmas supply them.
-private theorem some_iff_exists {A B : E → Prop} : Det.some A B ↔ ∃ x, A x ∧ B x := .rfl
-
-theorem cf_exceptional_cond (rel dies : E → Prop) (rich : Prop) (hrel : ∃ x, rel x)
+theorem cf_exceptional_cond (rel : Set E) (dies : E → Prop) (rich : Prop) (hrel : rel.Nonempty)
     (s : Stack E) :
     (∃ f : ChoiceFunction E, dies (f rel) → rich) ↔
-      holds (indef rel >>= fun x ↦ pure (dies x → rich)) s := by
-  refine (ChoiceFunction.exists_apply_iff_some hrel fun x ↦ dies x → rich).trans ?_
-  simp only [holds, indef, Det.some, Set.mem_stateT_bind, Set.mem_stateT_pure, Set.mem_ofPred_eq]
+      holds (indef (· ∈ rel) >>= fun x ↦ pure (dies x → rich)) s := by
+  refine (ChoiceFunction.exists_apply_iff hrel fun x ↦ dies x → rich).trans ?_
+  simp only [holds, indef, Set.mem_stateT_bind, Set.mem_stateT_pure, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨x, hx, h⟩
     exact ⟨_, ⟨(x, s), ⟨hx, rfl⟩, rfl⟩, h⟩
@@ -580,45 +577,47 @@ theorem cf_exceptional_cond (rel dies : E → Prop) (rich : Prop) (hrel : ∃ x,
 
 /-- Closing the choice function above *no candidate* gives the [schwarz-2001] reading that no
 candidate submitted every paper he wrote (4.35, `Examples.ex4_4`) ((4.35)). -/
-theorem cf_no_candidate_iff [Nonempty E] (cand : E → Prop) (paperBy submitted : E → E → Prop)
-    (hwrote : ∀ x, cand x → ∃ y, paperBy x y) (hinj : Set.InjOn paperBy {x | cand x}) :
+theorem cf_no_candidate_iff [Nonempty E] (cand : E → Prop) (paperBy : E → Set E)
+    (submitted : E → E → Prop) (hwrote : ∀ x, cand x → (paperBy x).Nonempty)
+    (hinj : Set.InjOn paperBy {x | cand x}) :
     (∃ f : ChoiceFunction E, ¬ ∃ x, cand x ∧ submitted (f (paperBy x)) x) ↔
-      ¬ ∃ x, cand x ∧ ∀ y, paperBy x y → submitted y x := by
+      ¬ ∃ x, cand x ∧ ∀ y ∈ paperBy x, submitted y x := by
   have h := ChoiceFunction.exists_forall_apply_iff_of_injective (ι := {x | cand x})
     (Set.injOn_iff_injective.1 hinj) (fun x ↦ hwrote x x.2) fun x y ↦ ¬ submitted y x
-  simp only [Set.domRestrict_apply, Subtype.forall, Set.mem_ofPred_eq, some_iff_exists] at h
+  simp only [Set.domRestrict_apply, Subtype.forall, Set.mem_ofPred_eq] at h
   push Not
   simpa using h
 
-theorem cf_same_restrictor_iff (girl : E → Prop) (boysFancied gave : E → E → Prop) {B : E → Prop}
-    (hB : ∃ y, B y) (hsame : ∀ x, girl x → boysFancied x = B) :
+theorem cf_same_restrictor_iff (girl : E → Prop) (boysFancied : E → Set E)
+    (gave : E → E → Prop) {B : Set E} (hB : B.Nonempty)
+    (hsame : ∀ x, girl x → boysFancied x = B) :
     (∃ f : ChoiceFunction E, ∀ x, girl x → gave (f (boysFancied x)) x) ↔
-      ∃ y, B y ∧ ∀ x, girl x → gave y x := by
-  rw [← some_iff_exists, ← ChoiceFunction.exists_apply_iff_some hB]
+      ∃ y ∈ B, ∀ x, girl x → gave y x := by
+  rw [← ChoiceFunction.exists_apply_iff hB fun y ↦ ∀ x, girl x → gave y x]
   exact exists_congr fun f ↦ forall₂_congr fun x hx ↦ by rw [hsame x hx]
 
-theorem cf_layered_iff [Nonempty E] (linguist : E → Prop) (bookBy : E → E → Prop)
-    (read : E → Prop) (hling : ∃ x, linguist x) (hbook : ∀ x, linguist x → ∃ y, bookBy x y)
-    (hinj : Set.InjOn bookBy {x | linguist x}) :
+theorem cf_layered_iff [Nonempty E] (linguist : Set E) (bookBy : E → Set E)
+    (read : E → Prop) (hling : linguist.Nonempty) (hbook : ∀ x ∈ linguist, (bookBy x).Nonempty)
+    (hinj : Set.InjOn bookBy linguist) :
     (∃ f : ChoiceFunction E, ¬ ∃ g : ChoiceFunction E, read (f (bookBy (g linguist)))) ↔
-      ∀ x, linguist x → ∃ y, bookBy x y ∧ ¬ read y := by
+      ∀ x ∈ linguist, ∃ y ∈ bookBy x, ¬ read y := by
   have hneg (f : ChoiceFunction E) : (¬ ∃ g : ChoiceFunction E, read (f (bookBy (g linguist)))) ↔
-      ∀ x, linguist x → ¬ read (f (bookBy x)) := by
+      ∀ x ∈ linguist, ¬ read (f (bookBy x)) := by
     rw [not_exists]
-    exact ChoiceFunction.forall_apply_iff_every hling fun z ↦ ¬ read (f (bookBy z))
-  have h := ChoiceFunction.exists_forall_apply_iff_of_injective (ι := {x | linguist x})
+    exact ChoiceFunction.forall_apply_iff hling fun z ↦ ¬ read (f (bookBy z))
+  have h := ChoiceFunction.exists_forall_apply_iff_of_injective (ι := linguist)
     (Set.injOn_iff_injective.1 hinj) (fun x ↦ hbook x x.2) fun _ y ↦ ¬ read y
-  simp only [Set.domRestrict_apply, Subtype.forall, Set.mem_ofPred_eq, some_iff_exists] at h
+  simp only [Set.domRestrict_apply, Subtype.forall] at h
   simpa only [hneg] using h
 
 theorem cf_disjunction_iff [Nonempty E] (cand : E → Prop) (vita portfolio : E → E)
     (submit : E → E → Prop)
-    (hinj : Set.InjOn (fun x y ↦ y = vita x ∨ y = portfolio x) {x | cand x}) :
-    (∃ f : ChoiceFunction E, ¬ ∃ x, cand x ∧ submit (f fun y ↦ y = vita x ∨ y = portfolio x) x) ↔
+    (hinj : Set.InjOn (fun x ↦ ({vita x, portfolio x} : Set E)) {x | cand x}) :
+    (∃ f : ChoiceFunction E, ¬ ∃ x, cand x ∧ submit (f {vita x, portfolio x}) x) ↔
       ¬ ∃ x, cand x ∧ submit (vita x) x ∧ submit (portfolio x) x := by
   have h := ChoiceFunction.exists_forall_apply_iff_of_injective (ι := {x | cand x})
     (Set.injOn_iff_injective.1 hinj) (fun x ↦ ⟨vita x, .inl rfl⟩) fun x y ↦ ¬ submit y x.1
-  simp only [Set.domRestrict_apply, Subtype.forall, Set.mem_ofPred_eq, some_iff_exists] at h
+  simp only [Set.domRestrict_apply, Subtype.forall, Set.mem_ofPred_eq] at h
   push Not
   simpa [or_imp, forall_and, imp_iff_not_or] using h
 
