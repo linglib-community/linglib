@@ -1,8 +1,8 @@
 module
 
-public import Mathlib.Probability.Independence.Basic
 public import Linglib.Core.MeasureTheory.Measure.Tilted
-public import Linglib.Core.Probability.UniformOn
+public import Linglib.Core.Probability.Independence.Basic
+public import Linglib.Semantics.Causation.CausalModel.Measurable
 public import Linglib.Data.Examples.CaoWhiteLassiter2025
 public import Studies.NadathurLauer2020
 
@@ -193,6 +193,14 @@ theorem suf_eq_dirac_of_make (ν : Measure U) [IsProbabilityMeasure ν] {u₀ : 
 
 end Model
 
+-- §2.4: the displayed conditional probability
+theorem suf_apply {U V : Type*} {α : V → Type*} [DecidableEq V] [Finite V] [MeasurableSpace U]
+    [∀ v, MeasurableSpace (α v)] {M : CausalModel U V α} [M.IsAcyclic] [∀ v, Nonempty (α v)]
+    (hM : ∀ v, Measurable (Function.uncurry (M.eqn v))) (ν : Measure U) (obs : ∀ v, Part (α v))
+    (c : V) (x : α c) (e : V) {t : Set (α e)} (ht : MeasurableSet t) :
+    suf M ν obs c x e t = ν[(fun u ↦ M[c ← x].solve u e) ⁻¹' t | M.contexts obs] :=
+  Measure.map_apply ((measurable_pi_apply e).comp (measurable_solve_intervene hM _ _)) ht
+
 /-- A time index for a causal model (the paper's definition 1) places each parent exactly one
 timestep before its child. -/
 structure TimeIndex {U V : Type*} {α : V → Type*} (M : CausalModel U V α) where
@@ -268,11 +276,9 @@ variable [Nonempty X] [Nonempty Y] {x₀ x : X} {y₀ y : Y} {u : X → Y}
 
 theorem contexts_exchange :
     (exchange x₀).contexts [.causer ← x₀, .causee ← y₀] = (fun u : X → Y ↦ u x₀) ⁻¹' {y₀} := by
+  rw [contexts_update (by simp), contexts_update rfl, contexts_bot]
   ext u
-  simp only [contexts, Set.mem_ofPred_eq, Part.pi_le_iff]
-  refine ⟨fun h ↦ ?_, fun h v ↦ ?_⟩
-  · simpa [eq_comm] using h .causee
-  · cases v <;> simp_all
+  simp
 
 variable [MeasurableSpace Y] [MeasurableSingletonClass Y]
 
@@ -281,11 +287,7 @@ theorem suf_exchange (ν : Measure (X → Y)) [IsFiniteMeasure ν]
     suf (exchange x₀) ν [.causer ← x₀, .causee ← y₀] .causer x .causee = ν.map fun u ↦ u x := by
   rw [suf, contexts_exchange]
   simp only [solve_exchange_intervene_causee]
-  ext t ht
-  rw [Measure.map_apply (measurable_pi_apply x) ht, Measure.map_apply (measurable_pi_apply x) ht,
-    cond_apply (measurable_pi_apply x₀ (measurableSet_singleton y₀)),
-    h.measure_inter_preimage_eq_mul _ _ (measurableSet_singleton y₀) ht, ← mul_assoc,
-    ENNReal.inv_mul_cancel hc (measure_ne_top _ _), one_mul]
+  exact h.map_cond (measurable_pi_apply x₀) (measurable_pi_apply x) (measurableSet_singleton y₀) hc
 
 /-- When the causee replies to each move by an independent draw from a policy, the SUF of a move
 other than the actual one is the policy after that move (§2.4). -/
