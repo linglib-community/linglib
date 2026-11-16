@@ -27,8 +27,6 @@ own point. The inflectional typology of auxiliary verb constructions is in
   account.
 * `AuxiliarySelectionHierarchy`: the verb types of the Auxiliary Selection Hierarchy, a bounded
   linear order with the type most consistent in taking *be* at the bottom.
-* `AuxiliarySelectionHierarchy.ofVerb`: the type of a verb entry, read off its aspect, its
-  direction of motion and its subject's volition.
 
 ## References
 
@@ -118,34 +116,6 @@ instance : BoundedOrder AuxiliarySelectionHierarchy where
 
 @[simp] theorem bot_eq_changeOfLocation : (⊥ : AuxiliarySelectionHierarchy) = changeOfLocation :=
   rfl
-
-/-! ### The type of a verb entry -/
-
-/-- The type of a monadic verb, read off its entry ([sorace-2000] §§3–4). A state is the
-continuation of a state when the entry is phasal continuation, as *remain* is, and the existence of
-one otherwise. A telic verb is a change of location when it lexicalizes a direction of motion and a
-change of state otherwise. An atelic dynamic verb is a change of state when it measures change
-along a scale, as *rise* does; a motional process when it displaces its theme; and otherwise a
-nonmotional or an uncontrolled process, as its subject is volitional or not. `none` when the entry
-lacks the aspectual class, or a process lacks the subject profile. -/
-def ofVerb (v : Verb) : Option AuxiliarySelectionHierarchy := do
-  let c ← v.aspectualClass
-  if c.dynamicity = .stative then
-    pure (if v.phasal = some .continuation then continuationOfState else existenceOfState)
-  else if c.telicity = .telic then
-    pure (if v.direction.any (· != .place) then changeOfLocation else changeOfState)
-  else if v.scaleDimension.isSome then pure changeOfState
-  else if v.direction.isSome then pure motionalProcess
-  else (v.slotProfile? .external).map fun θ ↦
-    if .volition ∈ θ then nonmotionalProcess else uncontrolledProcess
-
-/-- A bounded directional phrase makes a dynamic verb a change of location, the bottom of the
-hierarchy ([sorace-2000] §4.3, [levin-hovav-1995] p. 185). -/
-theorem ofVerb_withPath_eq_bot {v : Verb} {p : Adposition.SpatialReading} (hv : v.TakesSpatial)
-    (hb : p.IsBounded) {c : Aspect.AspectualClass} (hc : v.aspectualClass = some c)
-    (hdyn : c.dynamicity = .dynamic) : ofVerb (v.withPath p) = some ⊥ := by
-  simp [ofVerb, hv, hb.direction_ne_place, hb, hc, hdyn,
-    Aspect.AspectualClass.telicity_telicize hdyn]
 
 end AuxiliarySelectionHierarchy
 

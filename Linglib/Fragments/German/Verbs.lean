@@ -147,7 +147,6 @@ def rennen : Verb :=
   { Verb.ofStem (strong "rennen" "rennt" "rannte" "gerannt") with
     perfectAuxiliaries := {.be},
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
-      aspectualClass := some .activity,
     direction := some .place }
 
 /-- *brechen* 'break' is an achievement. -/
@@ -160,14 +159,14 @@ def zerbrechen : Verb :=
   { Verb.ofStem (brechen.stem.inseparable "zer") with
     valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
-/-- *frieren* 'freeze' is an unaccusative achievement, *der See ist gefroren* 'the lake has frozen',
-and an impersonal verb, *es hat in der Nacht gefroren* 'there was a frost in the night'
-([durrell-2011] §12.3.2c). -/
+/-- *frieren* 'freeze' expresses a change of state its subject undergoes, *der See ist gefroren*
+'the lake has frozen', and is also an impersonal verb, *es hat in der Nacht gefroren* 'there was
+a frost in the night' ([durrell-2011] §12.3.2c). -/
 def frieren : Verb :=
   { Verb.ofStem (strong "frieren" "friert" "fror" "gefroren") with
     voiceType := some .nonThematic, perfectAuxiliaries := {.be, .have},
-    valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.impersonal, [])],
-    aspectualClass := some .achievement }
+    valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.impersonal, [])]
+      [some {.changeOfState, .causallyAffected}] }
 
 /-- *schießen* 'shoot' is a transitive verb. -/
 def schiessen : Verb :=
@@ -394,7 +393,6 @@ def laufen : Verb :=
   { Verb.ofStem (strong "laufen" "läuft" "lief" "gelaufen") with
     perfectAuxiliaries := {.be},
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
-      aspectualClass := some .activity,
     direction := some .place }
 
 /-- *ankommen* 'arrive' is formed on *kommen* with the separable *an-*, a verb of motion to a goal:
@@ -402,7 +400,7 @@ def laufen : Verb :=
 def ankommen : Verb :=
   { Verb.ofStem ((strong "kommen" "kommt" "kam" "gekommen").separable "an") with
     perfectAuxiliaries := {.be},
-    valency := .ofFrame ArgumentFrame.intransitive, aspectualClass := some .achievement,
+    valency := .ofFrame ArgumentFrame.intransitive,
     direction := some .goal }
 
 /-- *tanzen* 'dance' names the activity as such, *Ich habe als junger Mann viel getanzt*, and
@@ -412,21 +410,19 @@ def tanzen : Verb :=
   { Verb.ofStem (weak "tanzen") with
     perfectAuxiliaries := {.be, .have},
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP]
-      [some activitySubjectProfile, none],
-    aspectualClass := some .activity}
+      [some activitySubjectProfile, none]}
 
 /-- *arbeiten* 'work' denotes a continuous action, *Ich habe gestern lange gearbeitet*. -/
 def arbeiten : Verb :=
   { Verb.ofStem (weak "arbeiten") with
     perfectAuxiliaries := {.have},
-    valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile],
-      aspectualClass := some .activity }
+    valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile] }
 
 /-- *bleiben* 'stay, remain' denotes the continuation of a state, *Wir sind in Dessau geblieben*. -/
 def bleiben : Verb :=
   { Verb.ofStem (strong "bleiben" "bleibt" "blieb" "geblieben") with
     perfectAuxiliaries := {.be},
-    valency := .ofFrame ArgumentFrame.intransitive, aspectualClass := some .state,
+    valency := .ofFrame ArgumentFrame.intransitive,
     phasal := some .continuation }
 
 /-- *liegen* 'lie' denotes a state, *ich habe gelegen* in standard German in Germany, where South
@@ -434,7 +430,7 @@ German commonly has *ich bin gelegen*. -/
 def liegen : Verb :=
   { Verb.ofStem (strong "liegen" "liegt" "lag" "gelegen") with
     perfectAuxiliaries := {.have},
-    valency := .ofFrame ArgumentFrame.intransitive, aspectualClass := some .state }
+    valency := .ofFrame ArgumentFrame.intransitive }
 
 /-- `allVerbs` lists the entries. -/
 def allVerbs : List Verb :=
