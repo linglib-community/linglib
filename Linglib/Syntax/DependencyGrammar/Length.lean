@@ -575,12 +575,6 @@ noncomputable def Graph.siblingArrangement : Arrangement (g.siblings v) #(g.sibl
     ((Fintype.bijective_iff_injective_and_card _).2
       ⟨(g.siblingRank_strictMono v).injective, by simp⟩)
 
-/-- The phrase length of a position is the number of words of its yield. -/
-def Graph.phraseLength (c : Fin n) : ℕ := #(g.yield c).toFinset
-
-theorem Graph.phraseLength_eq_ncard (c : Fin n) : g.phraseLength c = (g.yield c).ncard :=
-  (Set.ncard_eq_toFinset_card' _).symm
-
 @[simp] theorem Graph.self_mem_siblings : v ∈ g.siblings v := mem_insert_self _ _
 
 variable {g v}
@@ -597,12 +591,12 @@ theorem Graph.mem_siblings_of_adj {w : Fin n} (h : g.Adj v w) : w ∈ g.siblings
 
 theorem Graph.yieldDist_eq_boundaryDist (hF : g.IsForest) (hP : g.IsProjective) {w : Fin n}
     (h : g.Adj v w) :
-    g.yieldDist v w = (g.siblingArrangement v).boundaryDist (fun c ↦ g.phraseLength c)
+    g.yieldDist v w = (g.siblingArrangement v).boundaryDist (fun c ↦ #(g.yield c).toFinset)
       ⟨v, g.self_mem_siblings v⟩ ⟨w, Graph.mem_siblings_of_adj h⟩ := by
   have hvw : v ≠ w := hF.ne_of_adj h
   rw [Graph.yieldDist_eq_one_add_sum hF hP h, Arrangement.boundaryDist, ite_eq_right (by simpa)]
   congr 1
-  simp only [Graph.siblingArrangement_precedes, Graph.phraseLength_eq_ncard, sum_filter]
+  simp only [Graph.siblingArrangement_precedes, ← Set.ncard_eq_toFinset_card', sum_filter]
   refine Eq.trans ?_ (sum_coe_sort (g.siblings v)
     fun c ↦ if v < c ∧ c < w ∨ w < c ∧ c < v then (g.yield c).ncard else 0).symm
   rw [Graph.siblings, sum_insert (by simpa using hF.not_adj_self), ite_eq_right (by simp),
@@ -611,7 +605,7 @@ theorem Graph.yieldDist_eq_boundaryDist (hF : g.IsForest) (hP : g.IsProjective) 
 /-- The sum of a head's yield distances is the head's measure in the sibling arrangement. -/
 theorem Graph.sum_yieldDist_eq_sum_boundaryDist (hF : g.IsForest) (hP : g.IsProjective) :
     ∑ w ∈ g.children v, g.yieldDist v w =
-      ∑ c, (g.siblingArrangement v).boundaryDist (fun c ↦ g.phraseLength c)
+      ∑ c, (g.siblingArrangement v).boundaryDist (fun c ↦ #(g.yield c).toFinset)
         ⟨v, g.self_mem_siblings v⟩ c := by
   rw [← sum_erase univ (Arrangement.boundaryDist_self ..)]
   refine sum_bij' (fun w hw ↦ ⟨w, Graph.mem_siblings_of_adj (by simpa using hw)⟩)

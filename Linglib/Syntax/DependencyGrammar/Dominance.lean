@@ -22,7 +22,7 @@ dominates the other have disjoint yields.
 ## Main definitions
 
 * `Dominates`: the reflexive-transitive closure of the arc relation. `Graph.yield` is the set of
-  positions a position dominates, and `Graph.projection` lists it in ascending order.
+  positions a position dominates.
 * `Graph.IsForest`: no position dominates its own head, and no position has two heads.
 * `Graph.IsTree`: a forest whose root dominates every position.
 * `DominanceOrder`: the positions ordered by dominance, on a forest a partial order with the head
@@ -79,12 +79,6 @@ def Graph.yield (g : Graph L n) (v : Fin n) : Set (Fin n) :=
 instance (g : Graph L n) (v : Fin n) : DecidablePred (· ∈ g.yield v) :=
   fun _ ↦ inferInstanceAs (Decidable (Dominates g v _))
 
-/-- The projection of `v` is its yield in ascending order of position. -/
-def Graph.projection (g : Graph L n) (v : Fin n) : List (Fin n) :=
-  (List.finRange n).filter (fun x ↦ decide (x ∈ g.yield v))
-
-@[simp] theorem Graph.mem_projection : x ∈ g.projection v ↔ Dominates g v x := by
-  simp [Graph.projection]
 
 theorem Graph.exists_adj_mem_yield (hx : x ∈ g.yield v) (hne : x ≠ v) :
     ∃ u, g.Adj v u ∧ x ∈ g.yield u :=
