@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Rakosi2020` — typed example data
@@ -571,5 +573,29 @@ def ex_18 : Datum :=
     paperFeatures := [("antecedent", "boundPro"), ("anaphor", "egymás")] }
 
 def all : List Datum := [ex_1a, ex_1b, ex_2a, ex_2b, ex_3a, ex_3b, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_6, ex_7a, ex_7a_, ex_7b, ex_7b_, ex_8a, ex_8a_, ex_8b, ex_8b_, ex_9a, ex_9b, ex_9c, ex_9d, ex_10, ex_10_, ex_11a, ex_11a_, ex_11b, ex_11b_, ex_12, ex_12_, ex_13, ex_14, ex_14_, ex_15a, ex_15b, ex_15c, ex_16, ex_16_, ex_17, ex_18]
+
+/-- The subject antecedents the paper compares. -/
+inductive Antecedent where
+  /-- atomic: a singular noun phrase denoting one individual -/
+  | atomic
+  /-- plural: a plural noun phrase -/
+  | plural
+  /-- inclusive: a singular subject included in the reference of a plural reflexive (§2) -/
+  | inclusive
+  /-- quantified: a quantified noun phrase, whose noun head is singular (§3) -/
+  | quantified
+  /-- coordinate: two conjoined singular noun phrases (§4) -/
+  | coordinate
+  /-- collective: a singular collective noun (§5) -/
+  | collective
+  /-- boundPro: a singular null pronoun bound by a plural in a higher clause (§6) -/
+  | boundPro
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `antecedent`. -/
+def antecedent (e : Datum) : Option Antecedent :=
+  e.parse? "antecedent" [("atomic", .atomic), ("plural", .plural), ("inclusive", .inclusive),
+    ("quantified", .quantified), ("coordinate", .coordinate), ("collective", .collective),
+    ("boundPro", .boundPro)]
 
 end Rakosi2020.Examples

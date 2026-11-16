@@ -1,2151 +1,2198 @@
-[
-  {
-    "id": "rakosi2020_1a",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(1a)"
-    },
-    "language": "hung1274",
-    "primaryText": "A gyerek-ek látták egymás-t a tükörben.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
-      ],
-      [
-        "gyerek-ek",
-        "child-PL"
-      ],
-      [
-        "látták",
-        "saw.3PL"
-      ],
-      [
-        "egymás-t",
-        "each_other-ACC"
-      ],
-      [
-        "a",
-        "the"
-      ],
-      [
-        "tükörben.",
-        "mirror.in"
+{
+  "features": [
+    {
+      "key": "antecedent",
+      "lean": "antecedent",
+      "type": "Antecedent",
+      "doc": "The subject antecedents the paper compares.",
+      "levels": [
+        {
+          "name": "atomic",
+          "label": "atomic",
+          "doc": "a singular noun phrase denoting one individual"
+        },
+        {
+          "name": "plural",
+          "label": "plural",
+          "doc": "a plural noun phrase"
+        },
+        {
+          "name": "inclusive",
+          "label": "inclusive",
+          "doc": "a singular subject included in the reference of a plural reflexive (§2)"
+        },
+        {
+          "name": "quantified",
+          "label": "quantified",
+          "doc": "a quantified noun phrase, whose noun head is singular (§3)"
+        },
+        {
+          "name": "coordinate",
+          "label": "coordinate",
+          "doc": "two conjoined singular noun phrases (§4)"
+        },
+        {
+          "name": "collective",
+          "label": "collective",
+          "doc": "a singular collective noun (§5)"
+        },
+        {
+          "name": "boundPro",
+          "label": "boundPro",
+          "doc": "a singular null pronoun bound by a plural in a higher clause (§6)"
+        }
       ]
-    ],
-    "translation": "The children saw each other in the mirror.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "plural"
-      ],
-      [
-        "anaphor",
-        "egymás"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_1b",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(1b)"
-    },
-    "language": "hung1274",
-    "primaryText": "A gyerek-ek látták maguk-at a tükörben.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
-      ],
-      [
-        "gyerek-ek",
-        "child-PL"
-      ],
-      [
-        "látták",
-        "saw.3PL"
-      ],
-      [
-        "maguk-at",
-        "themselves-ACC"
-      ],
-      [
-        "a",
-        "the"
-      ],
-      [
-        "tükörben.",
-        "mirror.in"
-      ]
-    ],
-    "translation": "The children saw themselves in the mirror.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "plural"
-      ],
-      [
-        "anaphor",
-        "maguk"
-      ]
-    ],
-    "comment": "The paper labels this sub-example \"a.\" (misprint for b.).",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_2a",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(2a)"
-    },
-    "language": "hung1274",
-    "primaryText": "A gyerek látta egymás-t a tükörben.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
-      ],
-      [
-        "gyerek",
-        "child"
-      ],
-      [
-        "látta",
-        "saw.3SG"
-      ],
-      [
-        "egymás-t",
-        "each_other-ACC"
-      ],
-      [
-        "a",
-        "the"
-      ],
-      [
-        "tükörben.",
-        "mirror.in"
-      ]
-    ],
-    "translation": "*The child saw each other in the mirror.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "atomic"
-      ],
-      [
-        "anaphor",
-        "egymás"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_2b",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(2b)"
-    },
-    "language": "hung1274",
-    "primaryText": "A gyerek látta magá-t a tükörben.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
-      ],
-      [
-        "gyerek",
-        "child"
-      ],
-      [
-        "látta",
-        "saw.3SG"
-      ],
-      [
-        "magá-t",
-        "oneself-ACC"
-      ],
-      [
-        "a",
-        "the"
-      ],
-      [
-        "tükörben.",
-        "mirror.in"
-      ]
-    ],
-    "translation": "The child saw himself in the mirror.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "atomic"
-      ],
-      [
-        "anaphor",
-        "maga"
-      ]
-    ],
-    "comment": "The paper labels this sub-example \"a.\" (misprint for b.). The prose calls it (2b).",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_3a",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(3a)"
-    },
-    "method": "corpus",
-    "language": "hung1274",
-    "primaryText": "Látom magunk-at ülni az autóban.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Látom",
-        "see.1SG"
-      ],
-      [
-        "magunk-at",
-        "ourselves-ACC"
-      ],
-      [
-        "ülni",
-        "sit.INF"
-      ],
-      [
-        "az",
-        "the"
-      ],
-      [
-        "autóban.",
-        "car.in"
-      ]
-    ],
-    "translation": "I see us sitting in the car.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "inclusive"
-      ],
-      [
-        "anaphor",
-        "magunk"
-      ]
-    ],
-    "comment": "Inclusive reference anaphora; Hungarian National Corpus.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_3b",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(3b)"
-    },
-    "method": "corpus",
-    "language": "hung1274",
-    "primaryText": "Sokszor sajnálom magunk-at.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Sokszor",
-        "often"
-      ],
-      [
-        "sajnálom",
-        "feel_sorry.1SG"
-      ],
-      [
-        "magunk-at.",
-        "ourselves-ACC"
-      ]
-    ],
-    "translation": "I often feel sorry for us.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "inclusive"
-      ],
-      [
-        "anaphor",
-        "magunk"
-      ]
-    ],
-    "comment": "Inclusive reference anaphora (den Dikken et al. 2001): the 1SG subject is included in the denotation of the 1PL reflexive; Hungarian National Corpus.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_4a",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(4a)"
-    },
-    "language": "hung1274",
-    "primaryText": "Csak én sajnálom magunk-at.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Csak",
-        "only"
-      ],
-      [
-        "én",
-        "I"
-      ],
-      [
-        "sajnálom",
-        "feel_sorry.1SG"
-      ],
-      [
-        "magunk-at.",
-        "ourselves-ACC"
-      ]
-    ],
-    "translation": "Only I feel sorry for us.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "referential",
-        "judgment": "acceptable"
+    }
+  ],
+  "examples": [
+    {
+      "id": "rakosi2020_1a",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(1a)"
       },
-      {
-        "name": "bound variable",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "inclusive"
+      "language": "hung1274",
+      "primaryText": "A gyerek-ek látták egymás-t a tükörben.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "gyerek-ek",
+          "child-PL"
+        ],
+        [
+          "látták",
+          "saw.3PL"
+        ],
+        [
+          "egymás-t",
+          "each_other-ACC"
+        ],
+        [
+          "a",
+          "the"
+        ],
+        [
+          "tükörben.",
+          "mirror.in"
+        ]
       ],
-      [
-        "anaphor",
-        "magunk"
-      ]
-    ],
-    "comment": "Under *csak* the inclusive reflexive is only referential: no other people feel sorry for us, not for themselves.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_4b",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(4b)"
+      "translation": "The children saw each other in the mirror.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "plural"
+        ],
+        [
+          "anaphor",
+          "egymás"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "Csak mi sajnáljuk magunk-at.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Csak",
-        "only"
-      ],
-      [
-        "mi",
-        "we"
-      ],
-      [
-        "sajnáljuk",
-        "feel_sorry.1PL"
-      ],
-      [
-        "magunk-at.",
-        "ourselves-ACC"
-      ]
-    ],
-    "translation": "Only we feel sorry for ourselves.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "bound variable",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "plural"
-      ],
-      [
-        "anaphor",
-        "magunk"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_4c",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(4c)"
-    },
-    "language": "hung1274",
-    "primaryText": "Csak mi sajnáljuk egymás-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Csak",
-        "only"
-      ],
-      [
-        "mi",
-        "we"
-      ],
-      [
-        "sajnáljuk",
-        "feel_sorry.1PL"
-      ],
-      [
-        "egymás-t.",
-        "each_other-ACC"
-      ]
-    ],
-    "translation": "Only we feel sorry for each other.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "bound variable",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "plural"
-      ],
-      [
-        "anaphor",
-        "egymás"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_5a",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(5a)"
-    },
-    "language": "hung1274",
-    "primaryText": "A gyerek-ek jól viselték maguk-at.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
-      ],
-      [
-        "gyerek-ek",
-        "child-PL"
-      ],
-      [
-        "jól",
-        "well"
-      ],
-      [
-        "viselték",
-        "behave.3PL"
-      ],
-      [
-        "maguk-at.",
-        "themselves-ACC"
-      ]
-    ],
-    "translation": "The children behaved themselves.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "plural"
-      ],
-      [
-        "anaphor",
-        "maguk"
-      ]
-    ],
-    "comment": "Inherently reflexive verb: the object can only be a reflexive anaphor.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_5b",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(5b)"
-    },
-    "language": "hung1274",
-    "primaryText": "A gyerek jól viselte maguk-at.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
-      ],
-      [
-        "gyerek",
-        "child"
-      ],
-      [
-        "jól",
-        "well"
-      ],
-      [
-        "viselte",
-        "behave.3SG"
-      ],
-      [
-        "maguk-at.",
-        "themselves-ACC"
-      ]
-    ],
-    "translation": "*The child behaved themselves.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "atomic"
-      ],
-      [
-        "anaphor",
-        "maguk"
-      ]
-    ],
-    "comment": "No collective construal of the object is available, so the inclusive reading is out.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_6",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(6)"
-    },
-    "language": "hung1274",
-    "primaryText": "Sokszor sajnálom egymás-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Sokszor",
-        "often"
-      ],
-      [
-        "sajnálom",
-        "feel_sorry.1SG"
-      ],
-      [
-        "egymás-t.",
-        "each_other-ACC"
-      ]
-    ],
-    "translation": "*I often feel sorry for each other.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "inclusive"
-      ],
-      [
-        "anaphor",
-        "egymás"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_7a",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(7a)"
-    },
-    "language": "hung1274",
-    "primaryText": "A gyerek-ek látták a kép-et.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
-      ],
-      [
-        "gyerek-ek",
-        "child-PL"
-      ],
-      [
-        "látták",
-        "saw.3PL"
-      ],
-      [
-        "a",
-        "the"
-      ],
-      [
-        "kép-et.",
-        "picture-ACC"
-      ]
-    ],
-    "translation": "The children saw the picture.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "plural"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_7a_",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(7a')"
-    },
-    "language": "hung1274",
-    "primaryText": "A gyerek-ek látta a kép-et.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
-      ],
-      [
-        "gyerek-ek",
-        "child-PL"
-      ],
-      [
-        "látta",
-        "saw.3SG"
-      ],
-      [
-        "a",
-        "the"
-      ],
-      [
-        "kép-et.",
-        "picture-ACC"
-      ]
-    ],
-    "translation": "The children saw the picture.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "plural"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_7b",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(7b)"
-    },
-    "language": "hung1274",
-    "primaryText": "Két gyerek látta a kép-et.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Két",
-        "two"
-      ],
-      [
-        "gyerek",
-        "child"
-      ],
-      [
-        "látta",
-        "saw.3SG"
-      ],
-      [
-        "a",
-        "the"
-      ],
-      [
-        "kép-et.",
-        "picture-ACC"
-      ]
-    ],
-    "translation": "Two children saw the picture.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "Minden gyerek látta a kép-et.",
-        "judgment": "acceptable"
+    {
+      "id": "rakosi2020_1b",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(1b)"
       },
-      {
-        "form": "Néhány gyerek látta a kép-et.",
-        "judgment": "acceptable"
+      "language": "hung1274",
+      "primaryText": "A gyerek-ek látták maguk-at a tükörben.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "gyerek-ek",
+          "child-PL"
+        ],
+        [
+          "látták",
+          "saw.3PL"
+        ],
+        [
+          "maguk-at",
+          "themselves-ACC"
+        ],
+        [
+          "a",
+          "the"
+        ],
+        [
+          "tükörben.",
+          "mirror.in"
+        ]
+      ],
+      "translation": "The children saw themselves in the mirror.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "plural"
+        ],
+        [
+          "anaphor",
+          "maguk"
+        ]
+      ],
+      "comment": "The paper labels this sub-example \"a.\" (misprint for b.).",
+      "verified": "page-image"
+    },
+    {
+      "id": "rakosi2020_2a",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(2a)"
       },
-      {
-        "form": "Két gyerek-ek látta a kép-et.",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "quantified"
-      ]
-    ],
-    "comment": "Printed with Két/Minden/Néhány 'two/every/some' and gyerek(*-ek): the row is the numeral with the singular noun head, the alternatives the other quantifiers and the starred plural head.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_7b_",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(7b')"
+      "language": "hung1274",
+      "primaryText": "A gyerek látta egymás-t a tükörben.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "gyerek",
+          "child"
+        ],
+        [
+          "látta",
+          "saw.3SG"
+        ],
+        [
+          "egymás-t",
+          "each_other-ACC"
+        ],
+        [
+          "a",
+          "the"
+        ],
+        [
+          "tükörben.",
+          "mirror.in"
+        ]
+      ],
+      "translation": "*The child saw each other in the mirror.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "atomic"
+        ],
+        [
+          "anaphor",
+          "egymás"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "Két gyerek látták a kép-et.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Két",
-        "two"
+    {
+      "id": "rakosi2020_2b",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(2b)"
+      },
+      "language": "hung1274",
+      "primaryText": "A gyerek látta magá-t a tükörben.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "gyerek",
+          "child"
+        ],
+        [
+          "látta",
+          "saw.3SG"
+        ],
+        [
+          "magá-t",
+          "oneself-ACC"
+        ],
+        [
+          "a",
+          "the"
+        ],
+        [
+          "tükörben.",
+          "mirror.in"
+        ]
       ],
-      [
-        "gyerek",
-        "child"
+      "translation": "The child saw himself in the mirror.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "atomic"
+        ],
+        [
+          "anaphor",
+          "maga"
+        ]
       ],
-      [
-        "látták",
-        "saw.3PL"
-      ],
-      [
-        "a",
-        "the"
-      ],
-      [
-        "kép-et.",
-        "picture-ACC"
-      ]
-    ],
-    "translation": "Two children saw the picture.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "quantified"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_8a",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(8a)"
+      "comment": "The paper labels this sub-example \"a.\" (misprint for b.). The prose calls it (2b).",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "A két gyerek jól érezte magá-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
+    {
+      "id": "rakosi2020_3a",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(3a)"
+      },
+      "method": "corpus",
+      "language": "hung1274",
+      "primaryText": "Látom magunk-at ülni az autóban.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Látom",
+          "see.1SG"
+        ],
+        [
+          "magunk-at",
+          "ourselves-ACC"
+        ],
+        [
+          "ülni",
+          "sit.INF"
+        ],
+        [
+          "az",
+          "the"
+        ],
+        [
+          "autóban.",
+          "car.in"
+        ]
       ],
-      [
-        "két",
-        "two"
+      "translation": "I see us sitting in the car.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "inclusive"
+        ],
+        [
+          "anaphor",
+          "magunk"
+        ]
       ],
-      [
-        "gyerek",
-        "child"
-      ],
-      [
-        "jól",
-        "well"
-      ],
-      [
-        "érezte",
-        "felt.3SG"
-      ],
-      [
-        "magá-t.",
-        "oneself-ACC"
-      ]
-    ],
-    "translation": "The two children felt well.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "quantified"
-      ],
-      [
-        "anaphor",
-        "maga"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_8a_",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(8a')"
+      "comment": "Inclusive reference anaphora; Hungarian National Corpus.",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "A két gyerek jól érezte maguk-at.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
+    {
+      "id": "rakosi2020_3b",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(3b)"
+      },
+      "method": "corpus",
+      "language": "hung1274",
+      "primaryText": "Sokszor sajnálom magunk-at.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Sokszor",
+          "often"
+        ],
+        [
+          "sajnálom",
+          "feel_sorry.1SG"
+        ],
+        [
+          "magunk-at.",
+          "ourselves-ACC"
+        ]
       ],
-      [
-        "két",
-        "two"
+      "translation": "I often feel sorry for us.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "inclusive"
+        ],
+        [
+          "anaphor",
+          "magunk"
+        ]
       ],
-      [
-        "gyerek",
-        "child"
-      ],
-      [
-        "jól",
-        "well"
-      ],
-      [
-        "érezte",
-        "felt.3SG"
-      ],
-      [
-        "maguk-at.",
-        "themselves-ACC"
-      ]
-    ],
-    "translation": "The two children felt well.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "quantified"
-      ],
-      [
-        "anaphor",
-        "maguk"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_8b",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(8b)"
+      "comment": "Inclusive reference anaphora (den Dikken et al. 2001): the 1SG subject is included in the denotation of the 1PL reflexive; Hungarian National Corpus.",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "Néhány gyerek jól érezte magá-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Néhány",
-        "some"
+    {
+      "id": "rakosi2020_4a",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(4a)"
+      },
+      "language": "hung1274",
+      "primaryText": "Csak én sajnálom magunk-at.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Csak",
+          "only"
+        ],
+        [
+          "én",
+          "I"
+        ],
+        [
+          "sajnálom",
+          "feel_sorry.1SG"
+        ],
+        [
+          "magunk-at.",
+          "ourselves-ACC"
+        ]
       ],
-      [
-        "gyerek",
-        "child"
+      "translation": "Only I feel sorry for us.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "referential",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "bound variable",
+          "judgment": "ungrammatical"
+        }
       ],
-      [
-        "jól",
-        "well"
+      "paperFeatures": [
+        [
+          "antecedent",
+          "inclusive"
+        ],
+        [
+          "anaphor",
+          "magunk"
+        ]
       ],
-      [
-        "érezte",
-        "felt.3SG"
-      ],
-      [
-        "magá-t.",
-        "oneself-ACC"
-      ]
-    ],
-    "translation": "Some children felt well.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "quantified"
-      ],
-      [
-        "anaphor",
-        "maga"
-      ]
-    ],
-    "comment": "The paper labels this sub-example \"a.\" (misprint for b.).",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_8b_",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(8b')"
+      "comment": "Under *csak* the inclusive reflexive is only referential: no other people feel sorry for us, not for themselves.",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "Néhány gyerek jól érezte maguk-at.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Néhány",
-        "some"
+    {
+      "id": "rakosi2020_4b",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(4b)"
+      },
+      "language": "hung1274",
+      "primaryText": "Csak mi sajnáljuk magunk-at.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Csak",
+          "only"
+        ],
+        [
+          "mi",
+          "we"
+        ],
+        [
+          "sajnáljuk",
+          "feel_sorry.1PL"
+        ],
+        [
+          "magunk-at.",
+          "ourselves-ACC"
+        ]
       ],
-      [
-        "gyerek",
-        "child"
+      "translation": "Only we feel sorry for ourselves.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "bound variable",
+          "judgment": "acceptable"
+        }
       ],
-      [
-        "jól",
-        "well"
+      "paperFeatures": [
+        [
+          "antecedent",
+          "plural"
+        ],
+        [
+          "anaphor",
+          "magunk"
+        ]
       ],
-      [
-        "érezte",
-        "felt.3SG"
-      ],
-      [
-        "maguk-at.",
-        "themselves-ACC"
-      ]
-    ],
-    "translation": "Some children felt well.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "quantified"
-      ],
-      [
-        "anaphor",
-        "maguk"
-      ]
-    ],
-    "comment": "The paper labels this sub-example \"a.\" (misprint for b.).",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_9a",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(9a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "method": "corpus",
-    "language": "hung1274",
-    "primaryText": "A szobában három kisgyerek kergeti egymás-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
+    {
+      "id": "rakosi2020_4c",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(4c)"
+      },
+      "language": "hung1274",
+      "primaryText": "Csak mi sajnáljuk egymás-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Csak",
+          "only"
+        ],
+        [
+          "mi",
+          "we"
+        ],
+        [
+          "sajnáljuk",
+          "feel_sorry.1PL"
+        ],
+        [
+          "egymás-t.",
+          "each_other-ACC"
+        ]
       ],
-      [
-        "szobában",
-        "room.in"
+      "translation": "Only we feel sorry for each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "bound variable",
+          "judgment": "acceptable"
+        }
       ],
-      [
-        "három",
-        "three"
+      "paperFeatures": [
+        [
+          "antecedent",
+          "plural"
+        ],
+        [
+          "anaphor",
+          "egymás"
+        ]
       ],
-      [
-        "kisgyerek",
-        "little.child"
-      ],
-      [
-        "kergeti",
-        "chase.3SG"
-      ],
-      [
-        "egymás-t.",
-        "each_other-ACC"
-      ]
-    ],
-    "translation": "Three little children are chasing each other in the room.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "quantified"
-      ],
-      [
-        "anaphor",
-        "egymás"
-      ]
-    ],
-    "comment": "Hungarian National Corpus.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_9b",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(9b)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "Néhány szomszéd gyerek nagyon szereti egymás-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Néhány",
-        "some"
+    {
+      "id": "rakosi2020_5a",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(5a)"
+      },
+      "language": "hung1274",
+      "primaryText": "A gyerek-ek jól viselték maguk-at.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "gyerek-ek",
+          "child-PL"
+        ],
+        [
+          "jól",
+          "well"
+        ],
+        [
+          "viselték",
+          "behave.3PL"
+        ],
+        [
+          "maguk-at.",
+          "themselves-ACC"
+        ]
       ],
-      [
-        "szomszéd",
-        "neighbour"
+      "translation": "The children behaved themselves.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "plural"
+        ],
+        [
+          "anaphor",
+          "maguk"
+        ]
       ],
-      [
-        "gyerek",
-        "child"
-      ],
-      [
-        "nagyon",
-        "much"
-      ],
-      [
-        "szereti",
-        "love.3SG"
-      ],
-      [
-        "egymás-t.",
-        "each_other-ACC"
-      ]
-    ],
-    "translation": "Some children from the neighbourhood love each other very much.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "quantified"
-      ],
-      [
-        "anaphor",
-        "egymás"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_9c",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(9c)"
+      "comment": "Inherently reflexive verb: the object can only be a reflexive anaphor.",
+      "verified": "page-image"
     },
-    "method": "corpus",
-    "language": "hung1274",
-    "primaryText": "Otthon mindenki szerette egymás-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Otthon",
-        "home"
+    {
+      "id": "rakosi2020_5b",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(5b)"
+      },
+      "language": "hung1274",
+      "primaryText": "A gyerek jól viselte maguk-at.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "gyerek",
+          "child"
+        ],
+        [
+          "jól",
+          "well"
+        ],
+        [
+          "viselte",
+          "behave.3SG"
+        ],
+        [
+          "maguk-at.",
+          "themselves-ACC"
+        ]
       ],
-      [
-        "mindenki",
-        "everyone"
+      "translation": "*The child behaved themselves.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "atomic"
+        ],
+        [
+          "anaphor",
+          "maguk"
+        ]
       ],
-      [
-        "szerette",
-        "loved.3SG"
-      ],
-      [
-        "egymás-t.",
-        "each_other-ACC"
-      ]
-    ],
-    "translation": "At home, everyone loved each other.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "quantified"
-      ],
-      [
-        "anaphor",
-        "egymás"
-      ]
-    ],
-    "comment": "Pronominal quantifier antecedent; Hungarian National Corpus.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_9d",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(9d)"
+      "comment": "No collective construal of the object is available, so the inclusive reading is out.",
+      "verified": "page-image"
     },
-    "method": "corpus",
-    "language": "hung1274",
-    "primaryText": "A sokaságban senki se keresi egymás-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
+    {
+      "id": "rakosi2020_6",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(6)"
+      },
+      "language": "hung1274",
+      "primaryText": "Sokszor sajnálom egymás-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Sokszor",
+          "often"
+        ],
+        [
+          "sajnálom",
+          "feel_sorry.1SG"
+        ],
+        [
+          "egymás-t.",
+          "each_other-ACC"
+        ]
       ],
-      [
-        "sokaságban",
-        "crowd.in"
+      "translation": "*I often feel sorry for each other.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "inclusive"
+        ],
+        [
+          "anaphor",
+          "egymás"
+        ]
       ],
-      [
-        "senki",
-        "nobody"
-      ],
-      [
-        "se",
-        "not"
-      ],
-      [
-        "keresi",
-        "search_for.3SG"
-      ],
-      [
-        "egymás-t.",
-        "each_other-ACC"
-      ]
-    ],
-    "translation": "Nobody is searching for each other in the crowd.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "quantified"
-      ],
-      [
-        "anaphor",
-        "egymás"
-      ]
-    ],
-    "comment": "Pronominal quantifier antecedent; Hungarian National Corpus.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_10",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(10)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "Kati és Éva látta a képet.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Kati",
-        "Kati"
+    {
+      "id": "rakosi2020_7a",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(7a)"
+      },
+      "language": "hung1274",
+      "primaryText": "A gyerek-ek látták a kép-et.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "gyerek-ek",
+          "child-PL"
+        ],
+        [
+          "látták",
+          "saw.3PL"
+        ],
+        [
+          "a",
+          "the"
+        ],
+        [
+          "kép-et.",
+          "picture-ACC"
+        ]
       ],
-      [
-        "és",
-        "and"
+      "translation": "The children saw the picture.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "plural"
+        ]
       ],
-      [
-        "Éva",
-        "Éva"
-      ],
-      [
-        "látta",
-        "saw.3SG"
-      ],
-      [
-        "a",
-        "the"
-      ],
-      [
-        "képet.",
-        "picture-ACC"
-      ]
-    ],
-    "translation": "Kati and Éva saw the picture.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "coordinate"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_10_",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(10')"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "Kati és Éva látták a képet.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Kati",
-        "Kati"
+    {
+      "id": "rakosi2020_7a_",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(7a')"
+      },
+      "language": "hung1274",
+      "primaryText": "A gyerek-ek látta a kép-et.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "gyerek-ek",
+          "child-PL"
+        ],
+        [
+          "látta",
+          "saw.3SG"
+        ],
+        [
+          "a",
+          "the"
+        ],
+        [
+          "kép-et.",
+          "picture-ACC"
+        ]
       ],
-      [
-        "és",
-        "and"
+      "translation": "The children saw the picture.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "plural"
+        ]
       ],
-      [
-        "Éva",
-        "Éva"
-      ],
-      [
-        "látták",
-        "saw.3PL"
-      ],
-      [
-        "a",
-        "the"
-      ],
-      [
-        "képet.",
-        "picture-ACC"
-      ]
-    ],
-    "translation": "Kati and Éva saw the picture.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "coordinate"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_11a",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(11a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "Kati és Éva kihúzta magát.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Kati",
-        "Kati"
+    {
+      "id": "rakosi2020_7b",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(7b)"
+      },
+      "language": "hung1274",
+      "primaryText": "Két gyerek látta a kép-et.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Két",
+          "two"
+        ],
+        [
+          "gyerek",
+          "child"
+        ],
+        [
+          "látta",
+          "saw.3SG"
+        ],
+        [
+          "a",
+          "the"
+        ],
+        [
+          "kép-et.",
+          "picture-ACC"
+        ]
       ],
-      [
-        "és",
-        "and"
+      "translation": "Two children saw the picture.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [
+        {
+          "form": "Minden gyerek látta a kép-et.",
+          "judgment": "acceptable"
+        },
+        {
+          "form": "Néhány gyerek látta a kép-et.",
+          "judgment": "acceptable"
+        },
+        {
+          "form": "Két gyerek-ek látta a kép-et.",
+          "judgment": "ungrammatical"
+        }
       ],
-      [
-        "Éva",
-        "Éva"
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "quantified"
+        ]
       ],
-      [
-        "kihúzta",
-        "out.drew.3SG"
-      ],
-      [
-        "magát.",
-        "herself"
-      ]
-    ],
-    "translation": "Kati and Éva drew themselves up.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "coordinate"
-      ],
-      [
-        "anaphor",
-        "maga"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_11a_",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(11a')"
+      "comment": "Printed with Két/Minden/Néhány 'two/every/some' and gyerek(*-ek): the row is the numeral with the singular noun head, the alternatives the other quantifiers and the starred plural head.",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "Kati és Éva kihúzta magukat.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Kati",
-        "Kati"
+    {
+      "id": "rakosi2020_7b_",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(7b')"
+      },
+      "language": "hung1274",
+      "primaryText": "Két gyerek látták a kép-et.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Két",
+          "two"
+        ],
+        [
+          "gyerek",
+          "child"
+        ],
+        [
+          "látták",
+          "saw.3PL"
+        ],
+        [
+          "a",
+          "the"
+        ],
+        [
+          "kép-et.",
+          "picture-ACC"
+        ]
       ],
-      [
-        "és",
-        "and"
+      "translation": "Two children saw the picture.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "quantified"
+        ]
       ],
-      [
-        "Éva",
-        "Éva"
-      ],
-      [
-        "kihúzta",
-        "out.drew.3SG"
-      ],
-      [
-        "magukat.",
-        "themselves"
-      ]
-    ],
-    "translation": "Kati and Éva drew themselves up.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "coordinate"
-      ],
-      [
-        "anaphor",
-        "maguk"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_11b",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(11b)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "Kati és Éva kihúzták magukat.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Kati",
-        "Kati"
+    {
+      "id": "rakosi2020_8a",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(8a)"
+      },
+      "language": "hung1274",
+      "primaryText": "A két gyerek jól érezte magá-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "két",
+          "two"
+        ],
+        [
+          "gyerek",
+          "child"
+        ],
+        [
+          "jól",
+          "well"
+        ],
+        [
+          "érezte",
+          "felt.3SG"
+        ],
+        [
+          "magá-t.",
+          "oneself-ACC"
+        ]
       ],
-      [
-        "és",
-        "and"
+      "translation": "The two children felt well.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "quantified"
+        ],
+        [
+          "anaphor",
+          "maga"
+        ]
       ],
-      [
-        "Éva",
-        "Éva"
-      ],
-      [
-        "kihúzták",
-        "out.drew.3PL"
-      ],
-      [
-        "magukat.",
-        "themselves"
-      ]
-    ],
-    "translation": "Kati and Éva drew themselves up.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "coordinate"
-      ],
-      [
-        "anaphor",
-        "maguk"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_11b_",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(11b')"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "Kati és Éva kihúzták magát.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Kati",
-        "Kati"
+    {
+      "id": "rakosi2020_8a_",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(8a')"
+      },
+      "language": "hung1274",
+      "primaryText": "A két gyerek jól érezte maguk-at.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "két",
+          "two"
+        ],
+        [
+          "gyerek",
+          "child"
+        ],
+        [
+          "jól",
+          "well"
+        ],
+        [
+          "érezte",
+          "felt.3SG"
+        ],
+        [
+          "maguk-at.",
+          "themselves-ACC"
+        ]
       ],
-      [
-        "és",
-        "and"
+      "translation": "The two children felt well.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "quantified"
+        ],
+        [
+          "anaphor",
+          "maguk"
+        ]
       ],
-      [
-        "Éva",
-        "Éva"
-      ],
-      [
-        "kihúzták",
-        "out.drew.3PL"
-      ],
-      [
-        "magát.",
-        "herself"
-      ]
-    ],
-    "translation": "Kati and Éva drew themselves up.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "coordinate"
-      ],
-      [
-        "anaphor",
-        "maga"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_12",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(12)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "Kati és Éva látta egymás-t a tükörben.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Kati",
-        "Kati"
+    {
+      "id": "rakosi2020_8b",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(8b)"
+      },
+      "language": "hung1274",
+      "primaryText": "Néhány gyerek jól érezte magá-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Néhány",
+          "some"
+        ],
+        [
+          "gyerek",
+          "child"
+        ],
+        [
+          "jól",
+          "well"
+        ],
+        [
+          "érezte",
+          "felt.3SG"
+        ],
+        [
+          "magá-t.",
+          "oneself-ACC"
+        ]
       ],
-      [
-        "és",
-        "and"
+      "translation": "Some children felt well.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "quantified"
+        ],
+        [
+          "anaphor",
+          "maga"
+        ]
       ],
-      [
-        "Éva",
-        "Éva"
-      ],
-      [
-        "látta",
-        "saw.3SG"
-      ],
-      [
-        "egymás-t",
-        "each_other-ACC"
-      ],
-      [
-        "a",
-        "the"
-      ],
-      [
-        "tükörben.",
-        "mirror.in"
-      ]
-    ],
-    "translation": "Kati and Éva saw each other in the mirror.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "coordinate"
-      ],
-      [
-        "anaphor",
-        "egymás"
-      ]
-    ],
-    "comment": "The paper glosses tükörben as \"picture-ACC\" (copied from (10)) and prints \"mirorr\" in the translation.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_12_",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(12')"
+      "comment": "The paper labels this sub-example \"a.\" (misprint for b.).",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "Kati és Éva látták egymás-t a tükörben.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Kati",
-        "Kati"
+    {
+      "id": "rakosi2020_8b_",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(8b')"
+      },
+      "language": "hung1274",
+      "primaryText": "Néhány gyerek jól érezte maguk-at.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Néhány",
+          "some"
+        ],
+        [
+          "gyerek",
+          "child"
+        ],
+        [
+          "jól",
+          "well"
+        ],
+        [
+          "érezte",
+          "felt.3SG"
+        ],
+        [
+          "maguk-at.",
+          "themselves-ACC"
+        ]
       ],
-      [
-        "és",
-        "and"
+      "translation": "Some children felt well.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "quantified"
+        ],
+        [
+          "anaphor",
+          "maguk"
+        ]
       ],
-      [
-        "Éva",
-        "Éva"
-      ],
-      [
-        "látták",
-        "saw.3PL"
-      ],
-      [
-        "egymás-t",
-        "each_other-ACC"
-      ],
-      [
-        "a",
-        "the"
-      ],
-      [
-        "tükörben.",
-        "mirror.in"
-      ]
-    ],
-    "translation": "Kati and Éva saw each other in the mirror.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "coordinate"
-      ],
-      [
-        "anaphor",
-        "egymás"
-      ]
-    ],
-    "comment": "The paper glosses tükörben as \"picture-ACC\" (copied from (10)) and prints \"mirorr\" in the translation.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_13",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(13)"
+      "comment": "The paper labels this sub-example \"a.\" (misprint for b.).",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "A személyzet úgy gondolta, hogy ők már eleget dolgoztak.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
+    {
+      "id": "rakosi2020_9a",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(9a)"
+      },
+      "method": "corpus",
+      "language": "hung1274",
+      "primaryText": "A szobában három kisgyerek kergeti egymás-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "szobában",
+          "room.in"
+        ],
+        [
+          "három",
+          "three"
+        ],
+        [
+          "kisgyerek",
+          "little.child"
+        ],
+        [
+          "kergeti",
+          "chase.3SG"
+        ],
+        [
+          "egymás-t.",
+          "each_other-ACC"
+        ]
       ],
-      [
-        "személyzet",
-        "staff"
+      "translation": "Three little children are chasing each other in the room.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "quantified"
+        ],
+        [
+          "anaphor",
+          "egymás"
+        ]
       ],
-      [
-        "úgy",
-        "so"
-      ],
-      [
-        "gondolta,",
-        "thought.3SG"
-      ],
-      [
-        "hogy",
-        "that"
-      ],
-      [
-        "ők",
-        "they"
-      ],
-      [
-        "már",
-        "already"
-      ],
-      [
-        "eleget",
-        "enough"
-      ],
-      [
-        "dolgoztak.",
-        "worked.3PL"
-      ]
-    ],
-    "translation": "The staff thought that they had worked enough.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [],
-    "comment": "The operative test for a collective noun that denotes a distributable plurality: it licenses plural cross-clausal anaphora, with the main verb singular.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_14",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(14)"
+      "comment": "Hungarian National Corpus.",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "A személyzet fáradt volt.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
+    {
+      "id": "rakosi2020_9b",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(9b)"
+      },
+      "language": "hung1274",
+      "primaryText": "Néhány szomszéd gyerek nagyon szereti egymás-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Néhány",
+          "some"
+        ],
+        [
+          "szomszéd",
+          "neighbour"
+        ],
+        [
+          "gyerek",
+          "child"
+        ],
+        [
+          "nagyon",
+          "much"
+        ],
+        [
+          "szereti",
+          "love.3SG"
+        ],
+        [
+          "egymás-t.",
+          "each_other-ACC"
+        ]
       ],
-      [
-        "személyzet",
-        "staff"
+      "translation": "Some children from the neighbourhood love each other very much.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "quantified"
+        ],
+        [
+          "anaphor",
+          "egymás"
+        ]
       ],
-      [
-        "fáradt",
-        "tired"
-      ],
-      [
-        "volt.",
-        "was.3SG"
-      ]
-    ],
-    "translation": "The staff was tired.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "collective"
-      ]
-    ],
-    "comment": "Collective nouns never trigger plural agreement.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_14_",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(14')"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "A személyzet fáradt voltak.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
+    {
+      "id": "rakosi2020_9c",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(9c)"
+      },
+      "method": "corpus",
+      "language": "hung1274",
+      "primaryText": "Otthon mindenki szerette egymás-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Otthon",
+          "home"
+        ],
+        [
+          "mindenki",
+          "everyone"
+        ],
+        [
+          "szerette",
+          "loved.3SG"
+        ],
+        [
+          "egymás-t.",
+          "each_other-ACC"
+        ]
       ],
-      [
-        "személyzet",
-        "staff"
+      "translation": "At home, everyone loved each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "quantified"
+        ],
+        [
+          "anaphor",
+          "egymás"
+        ]
       ],
-      [
-        "fáradt",
-        "tired"
-      ],
-      [
-        "voltak.",
-        "were.3PL"
-      ]
-    ],
-    "translation": "The staff was tired.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "collective"
-      ]
-    ],
-    "comment": "Collective nouns never trigger plural agreement.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_15a",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(15a)"
+      "comment": "Pronominal quantifier antecedent; Hungarian National Corpus.",
+      "verified": "page-image"
     },
-    "method": "corpus",
-    "language": "hung1274",
-    "primaryText": "A személyzet riadtan nézte egymás-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
+    {
+      "id": "rakosi2020_9d",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(9d)"
+      },
+      "method": "corpus",
+      "language": "hung1274",
+      "primaryText": "A sokaságban senki se keresi egymás-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "sokaságban",
+          "crowd.in"
+        ],
+        [
+          "senki",
+          "nobody"
+        ],
+        [
+          "se",
+          "not"
+        ],
+        [
+          "keresi",
+          "search_for.3SG"
+        ],
+        [
+          "egymás-t.",
+          "each_other-ACC"
+        ]
       ],
-      [
-        "személyzet",
-        "staff"
+      "translation": "Nobody is searching for each other in the crowd.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "quantified"
+        ],
+        [
+          "anaphor",
+          "egymás"
+        ]
       ],
-      [
-        "riadtan",
-        "frightened"
-      ],
-      [
-        "nézte",
-        "watch.3SG"
-      ],
-      [
-        "egymás-t.",
-        "each_other-ACC"
-      ]
-    ],
-    "translation": "The staff were watching each other frightened.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "collective"
-      ],
-      [
-        "anaphor",
-        "egymás"
-      ]
-    ],
-    "comment": "Hungarian National Corpus, abbreviated. The gloss line prints \"frigthened\".",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_15b",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(15b)"
+      "comment": "Pronominal quantifier antecedent; Hungarian National Corpus.",
+      "verified": "page-image"
     },
-    "method": "corpus",
-    "language": "hung1274",
-    "primaryText": "A Facebookon szidta egymás-t a család.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
+    {
+      "id": "rakosi2020_10",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(10)"
+      },
+      "language": "hung1274",
+      "primaryText": "Kati és Éva látta a képet.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Kati",
+          "Kati"
+        ],
+        [
+          "és",
+          "and"
+        ],
+        [
+          "Éva",
+          "Éva"
+        ],
+        [
+          "látta",
+          "saw.3SG"
+        ],
+        [
+          "a",
+          "the"
+        ],
+        [
+          "képet.",
+          "picture-ACC"
+        ]
       ],
-      [
-        "Facebookon",
-        "Facebook.on"
+      "translation": "Kati and Éva saw the picture.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "coordinate"
+        ]
       ],
-      [
-        "szidta",
-        "cursed.3SG"
-      ],
-      [
-        "egymás-t",
-        "each_other-ACC"
-      ],
-      [
-        "a",
-        "the"
-      ],
-      [
-        "család.",
-        "family"
-      ]
-    ],
-    "translation": "The family were cursing each other on Facebook.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "collective"
-      ],
-      [
-        "anaphor",
-        "egymás"
-      ]
-    ],
-    "comment": "Hungarian National Corpus, abbreviated.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_15c",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(15c)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "method": "corpus",
-    "language": "hung1274",
-    "primaryText": "A pár az interneten találta meg egymás-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "A",
-        "the"
+    {
+      "id": "rakosi2020_10_",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(10')"
+      },
+      "language": "hung1274",
+      "primaryText": "Kati és Éva látták a képet.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Kati",
+          "Kati"
+        ],
+        [
+          "és",
+          "and"
+        ],
+        [
+          "Éva",
+          "Éva"
+        ],
+        [
+          "látták",
+          "saw.3PL"
+        ],
+        [
+          "a",
+          "the"
+        ],
+        [
+          "képet.",
+          "picture-ACC"
+        ]
       ],
-      [
-        "pár",
-        "couple"
+      "translation": "Kati and Éva saw the picture.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "coordinate"
+        ]
       ],
-      [
-        "az",
-        "the"
-      ],
-      [
-        "interneten",
-        "internet.on"
-      ],
-      [
-        "találta",
-        "found.3SG"
-      ],
-      [
-        "meg",
-        "PRT"
-      ],
-      [
-        "egymás-t.",
-        "each_other-ACC"
-      ]
-    ],
-    "translation": "The couple found each other on the internet.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "collective"
-      ],
-      [
-        "anaphor",
-        "egymás"
-      ]
-    ],
-    "comment": "Hungarian National Corpus, abbreviated.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_16",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(16)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "Az egész család jól érezte magá-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Az",
-        "the"
+    {
+      "id": "rakosi2020_11a",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(11a)"
+      },
+      "language": "hung1274",
+      "primaryText": "Kati és Éva kihúzta magát.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Kati",
+          "Kati"
+        ],
+        [
+          "és",
+          "and"
+        ],
+        [
+          "Éva",
+          "Éva"
+        ],
+        [
+          "kihúzta",
+          "out.drew.3SG"
+        ],
+        [
+          "magát.",
+          "herself"
+        ]
       ],
-      [
-        "egész",
-        "whole"
+      "translation": "Kati and Éva drew themselves up.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "coordinate"
+        ],
+        [
+          "anaphor",
+          "maga"
+        ]
       ],
-      [
-        "család",
-        "family"
-      ],
-      [
-        "jól",
-        "well"
-      ],
-      [
-        "érezte",
-        "felt.3SG"
-      ],
-      [
-        "magá-t.",
-        "itself-ACC"
-      ]
-    ],
-    "translation": "The whole family enjoyed themselves.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "collective"
-      ],
-      [
-        "anaphor",
-        "maga"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_16_",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(16')"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "Az egész család jól érezte maguk-at.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Az",
-        "the"
+    {
+      "id": "rakosi2020_11a_",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(11a')"
+      },
+      "language": "hung1274",
+      "primaryText": "Kati és Éva kihúzta magukat.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Kati",
+          "Kati"
+        ],
+        [
+          "és",
+          "and"
+        ],
+        [
+          "Éva",
+          "Éva"
+        ],
+        [
+          "kihúzta",
+          "out.drew.3SG"
+        ],
+        [
+          "magukat.",
+          "themselves"
+        ]
       ],
-      [
-        "egész",
-        "whole"
+      "translation": "Kati and Éva drew themselves up.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "coordinate"
+        ],
+        [
+          "anaphor",
+          "maguk"
+        ]
       ],
-      [
-        "család",
-        "family"
-      ],
-      [
-        "jól",
-        "well"
-      ],
-      [
-        "érezte",
-        "felt.3SG"
-      ],
-      [
-        "maguk-at.",
-        "themselves-ACC"
-      ]
-    ],
-    "translation": "The whole family enjoyed themselves.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "collective"
-      ],
-      [
-        "anaphor",
-        "maguk"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_17",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(17)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "hung1274",
-    "primaryText": "Péter és Éva az-t gondolja, hogy szereti egymás-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Péter",
-        "Péter"
+    {
+      "id": "rakosi2020_11b",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(11b)"
+      },
+      "language": "hung1274",
+      "primaryText": "Kati és Éva kihúzták magukat.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Kati",
+          "Kati"
+        ],
+        [
+          "és",
+          "and"
+        ],
+        [
+          "Éva",
+          "Éva"
+        ],
+        [
+          "kihúzták",
+          "out.drew.3PL"
+        ],
+        [
+          "magukat.",
+          "themselves"
+        ]
       ],
-      [
-        "és",
-        "and"
+      "translation": "Kati and Éva drew themselves up.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "coordinate"
+        ],
+        [
+          "anaphor",
+          "maguk"
+        ]
       ],
-      [
-        "Éva",
-        "Éva"
-      ],
-      [
-        "az-t",
-        "that-ACC"
-      ],
-      [
-        "gondolja,",
-        "think.3SG"
-      ],
-      [
-        "hogy",
-        "that"
-      ],
-      [
-        "szereti",
-        "love.3SG"
-      ],
-      [
-        "egymás-t.",
-        "each_other-ACC"
-      ]
-    ],
-    "translation": "Péter and Éva think that they love each other.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "Péter és Éva az-t gondolja, hogy ő szereti egymás-t.",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "readings": [
-      {
-        "name": "broad scope",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "boundPro"
-      ],
-      [
-        "anaphor",
-        "egymás"
-      ]
-    ],
-    "comment": "The pro-dropped singular embedded subject is the local antecedent; an overt pronoun is out, and only the broad-scope reading (Péter thinks he loves Éva and Éva thinks she loves Péter) is available. Expands the printed hogy (*ő) szereti: the row is the variant without ő, the alternative the starred one.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rakosi2020_18",
-    "source": {
-      "bibkey": "rakosi-2020",
-      "paperLabel": "(18)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "method": "corpus",
-    "language": "hung1274",
-    "primaryText": "Álmomban két macska voltam, és játszottam egymás-sal.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Álmomban",
-        "dream.POSS.1SG.in"
+    {
+      "id": "rakosi2020_11b_",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(11b')"
+      },
+      "language": "hung1274",
+      "primaryText": "Kati és Éva kihúzták magát.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Kati",
+          "Kati"
+        ],
+        [
+          "és",
+          "and"
+        ],
+        [
+          "Éva",
+          "Éva"
+        ],
+        [
+          "kihúzták",
+          "out.drew.3PL"
+        ],
+        [
+          "magát.",
+          "herself"
+        ]
       ],
-      [
-        "két",
-        "two"
+      "translation": "Kati and Éva drew themselves up.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "coordinate"
+        ],
+        [
+          "anaphor",
+          "maga"
+        ]
       ],
-      [
-        "macska",
-        "cat"
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rakosi2020_12",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(12)"
+      },
+      "language": "hung1274",
+      "primaryText": "Kati és Éva látta egymás-t a tükörben.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Kati",
+          "Kati"
+        ],
+        [
+          "és",
+          "and"
+        ],
+        [
+          "Éva",
+          "Éva"
+        ],
+        [
+          "látta",
+          "saw.3SG"
+        ],
+        [
+          "egymás-t",
+          "each_other-ACC"
+        ],
+        [
+          "a",
+          "the"
+        ],
+        [
+          "tükörben.",
+          "mirror.in"
+        ]
       ],
-      [
-        "voltam,",
-        "was.1SG"
+      "translation": "Kati and Éva saw each other in the mirror.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "coordinate"
+        ],
+        [
+          "anaphor",
+          "egymás"
+        ]
       ],
-      [
-        "és",
-        "and"
+      "comment": "The paper glosses tükörben as \"picture-ACC\" (copied from (10)) and prints \"mirorr\" in the translation.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rakosi2020_12_",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(12')"
+      },
+      "language": "hung1274",
+      "primaryText": "Kati és Éva látták egymás-t a tükörben.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Kati",
+          "Kati"
+        ],
+        [
+          "és",
+          "and"
+        ],
+        [
+          "Éva",
+          "Éva"
+        ],
+        [
+          "látták",
+          "saw.3PL"
+        ],
+        [
+          "egymás-t",
+          "each_other-ACC"
+        ],
+        [
+          "a",
+          "the"
+        ],
+        [
+          "tükörben.",
+          "mirror.in"
+        ]
       ],
-      [
-        "játszottam",
-        "played.1SG"
+      "translation": "Kati and Éva saw each other in the mirror.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "coordinate"
+        ],
+        [
+          "anaphor",
+          "egymás"
+        ]
       ],
-      [
-        "egymás-sal.",
-        "each_other-with"
-      ]
-    ],
-    "translation": "I was two cats in my dreams and I was playing with each other.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "Álmomban két macska voltam, és én játszottam egymás-sal.",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "antecedent",
-        "boundPro"
+      "comment": "The paper glosses tükörben as \"picture-ACC\" (copied from (10)) and prints \"mirorr\" in the translation.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rakosi2020_13",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(13)"
+      },
+      "language": "hung1274",
+      "primaryText": "A személyzet úgy gondolta, hogy ők már eleget dolgoztak.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "személyzet",
+          "staff"
+        ],
+        [
+          "úgy",
+          "so"
+        ],
+        [
+          "gondolta,",
+          "thought.3SG"
+        ],
+        [
+          "hogy",
+          "that"
+        ],
+        [
+          "ők",
+          "they"
+        ],
+        [
+          "már",
+          "already"
+        ],
+        [
+          "eleget",
+          "enough"
+        ],
+        [
+          "dolgoztak.",
+          "worked.3PL"
+        ]
       ],
-      [
-        "anaphor",
-        "egymás"
-      ]
-    ],
-    "comment": "Frigyes Karinthy; an anecdotal, creative use, with obligatory pro-drop of the 1SG antecedent as in (17). Expands the printed és (*én) játszottam: the row is the variant without én, the alternative the starred one.",
-    "verified": "page-image"
-  }
-]
+      "translation": "The staff thought that they had worked enough.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "The operative test for a collective noun that denotes a distributable plurality: it licenses plural cross-clausal anaphora, with the main verb singular.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rakosi2020_14",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(14)"
+      },
+      "language": "hung1274",
+      "primaryText": "A személyzet fáradt volt.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "személyzet",
+          "staff"
+        ],
+        [
+          "fáradt",
+          "tired"
+        ],
+        [
+          "volt.",
+          "was.3SG"
+        ]
+      ],
+      "translation": "The staff was tired.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "collective"
+        ]
+      ],
+      "comment": "Collective nouns never trigger plural agreement.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rakosi2020_14_",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(14')"
+      },
+      "language": "hung1274",
+      "primaryText": "A személyzet fáradt voltak.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "személyzet",
+          "staff"
+        ],
+        [
+          "fáradt",
+          "tired"
+        ],
+        [
+          "voltak.",
+          "were.3PL"
+        ]
+      ],
+      "translation": "The staff was tired.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "collective"
+        ]
+      ],
+      "comment": "Collective nouns never trigger plural agreement.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rakosi2020_15a",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(15a)"
+      },
+      "method": "corpus",
+      "language": "hung1274",
+      "primaryText": "A személyzet riadtan nézte egymás-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "személyzet",
+          "staff"
+        ],
+        [
+          "riadtan",
+          "frightened"
+        ],
+        [
+          "nézte",
+          "watch.3SG"
+        ],
+        [
+          "egymás-t.",
+          "each_other-ACC"
+        ]
+      ],
+      "translation": "The staff were watching each other frightened.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "collective"
+        ],
+        [
+          "anaphor",
+          "egymás"
+        ]
+      ],
+      "comment": "Hungarian National Corpus, abbreviated. The gloss line prints \"frigthened\".",
+      "verified": "page-image"
+    },
+    {
+      "id": "rakosi2020_15b",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(15b)"
+      },
+      "method": "corpus",
+      "language": "hung1274",
+      "primaryText": "A Facebookon szidta egymás-t a család.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "Facebookon",
+          "Facebook.on"
+        ],
+        [
+          "szidta",
+          "cursed.3SG"
+        ],
+        [
+          "egymás-t",
+          "each_other-ACC"
+        ],
+        [
+          "a",
+          "the"
+        ],
+        [
+          "család.",
+          "family"
+        ]
+      ],
+      "translation": "The family were cursing each other on Facebook.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "collective"
+        ],
+        [
+          "anaphor",
+          "egymás"
+        ]
+      ],
+      "comment": "Hungarian National Corpus, abbreviated.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rakosi2020_15c",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(15c)"
+      },
+      "method": "corpus",
+      "language": "hung1274",
+      "primaryText": "A pár az interneten találta meg egymás-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "A",
+          "the"
+        ],
+        [
+          "pár",
+          "couple"
+        ],
+        [
+          "az",
+          "the"
+        ],
+        [
+          "interneten",
+          "internet.on"
+        ],
+        [
+          "találta",
+          "found.3SG"
+        ],
+        [
+          "meg",
+          "PRT"
+        ],
+        [
+          "egymás-t.",
+          "each_other-ACC"
+        ]
+      ],
+      "translation": "The couple found each other on the internet.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "collective"
+        ],
+        [
+          "anaphor",
+          "egymás"
+        ]
+      ],
+      "comment": "Hungarian National Corpus, abbreviated.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rakosi2020_16",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(16)"
+      },
+      "language": "hung1274",
+      "primaryText": "Az egész család jól érezte magá-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Az",
+          "the"
+        ],
+        [
+          "egész",
+          "whole"
+        ],
+        [
+          "család",
+          "family"
+        ],
+        [
+          "jól",
+          "well"
+        ],
+        [
+          "érezte",
+          "felt.3SG"
+        ],
+        [
+          "magá-t.",
+          "itself-ACC"
+        ]
+      ],
+      "translation": "The whole family enjoyed themselves.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "collective"
+        ],
+        [
+          "anaphor",
+          "maga"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rakosi2020_16_",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(16')"
+      },
+      "language": "hung1274",
+      "primaryText": "Az egész család jól érezte maguk-at.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Az",
+          "the"
+        ],
+        [
+          "egész",
+          "whole"
+        ],
+        [
+          "család",
+          "family"
+        ],
+        [
+          "jól",
+          "well"
+        ],
+        [
+          "érezte",
+          "felt.3SG"
+        ],
+        [
+          "maguk-at.",
+          "themselves-ACC"
+        ]
+      ],
+      "translation": "The whole family enjoyed themselves.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "collective"
+        ],
+        [
+          "anaphor",
+          "maguk"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rakosi2020_17",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(17)"
+      },
+      "language": "hung1274",
+      "primaryText": "Péter és Éva az-t gondolja, hogy szereti egymás-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Péter",
+          "Péter"
+        ],
+        [
+          "és",
+          "and"
+        ],
+        [
+          "Éva",
+          "Éva"
+        ],
+        [
+          "az-t",
+          "that-ACC"
+        ],
+        [
+          "gondolja,",
+          "think.3SG"
+        ],
+        [
+          "hogy",
+          "that"
+        ],
+        [
+          "szereti",
+          "love.3SG"
+        ],
+        [
+          "egymás-t.",
+          "each_other-ACC"
+        ]
+      ],
+      "translation": "Péter and Éva think that they love each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [
+        {
+          "form": "Péter és Éva az-t gondolja, hogy ő szereti egymás-t.",
+          "judgment": "ungrammatical"
+        }
+      ],
+      "readings": [
+        {
+          "name": "broad scope",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "boundPro"
+        ],
+        [
+          "anaphor",
+          "egymás"
+        ]
+      ],
+      "comment": "The pro-dropped singular embedded subject is the local antecedent; an overt pronoun is out, and only the broad-scope reading (Péter thinks he loves Éva and Éva thinks she loves Péter) is available. Expands the printed hogy (*ő) szereti: the row is the variant without ő, the alternative the starred one.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rakosi2020_18",
+      "source": {
+        "bibkey": "rakosi-2020",
+        "paperLabel": "(18)"
+      },
+      "method": "corpus",
+      "language": "hung1274",
+      "primaryText": "Álmomban két macska voltam, és játszottam egymás-sal.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Álmomban",
+          "dream.POSS.1SG.in"
+        ],
+        [
+          "két",
+          "two"
+        ],
+        [
+          "macska",
+          "cat"
+        ],
+        [
+          "voltam,",
+          "was.1SG"
+        ],
+        [
+          "és",
+          "and"
+        ],
+        [
+          "játszottam",
+          "played.1SG"
+        ],
+        [
+          "egymás-sal.",
+          "each_other-with"
+        ]
+      ],
+      "translation": "I was two cats in my dreams and I was playing with each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [
+        {
+          "form": "Álmomban két macska voltam, és én játszottam egymás-sal.",
+          "judgment": "ungrammatical"
+        }
+      ],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "antecedent",
+          "boundPro"
+        ],
+        [
+          "anaphor",
+          "egymás"
+        ]
+      ],
+      "comment": "Frigyes Karinthy; an anecdotal, creative use, with obligatory pro-drop of the 1SG antecedent as in (17). Expands the printed és (*én) játszottam: the row is the variant without én, the alternative the starred one.",
+      "verified": "page-image"
+    }
+  ]
+}
