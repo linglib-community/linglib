@@ -21,9 +21,7 @@ event, entails the atelic one and is preferred. *Widen* thus has no telic readin
 
 On every set of positive difference values the measure of change agrees with Hay, Kennedy and
 Levin's difference value, so the two accounts differ only in the values a modifier names: a measure
-phrase requires at least its degree of change here and exactly that degree there. The English
-fragment's degree achievements take the aspectual class that Interpretive Economy gives their base
-scales.
+phrase requires at least its degree of change here and exactly that degree there.
 
 ## Implementation notes
 
@@ -208,19 +206,6 @@ theorem defaultAspectualClass_eq {α T : Type*} (d : ScalarDimension) (m : α �
   simp only [Boundedness.ofOrder_Ici, Boundedness.ofOrder_degreeShape]
   rfl
 
-/-- `daVerbs` lists the fragment's degree achievements. -/
-def daVerbs : List Verb :=
-  [English.Verbs.bend.toVerb, English.Verbs.boil.toVerb,
-   English.Verbs.rust.toVerb, English.Verbs.increase.toVerb,
-   English.Verbs.clean.toVerb, English.Verbs.dry.toVerb, English.Verbs.straighten.toVerb,
-   English.Verbs.flatten.toVerb, English.Verbs.open_.toVerb,
-   English.Verbs.lengthen.toVerb, English.Verbs.widen.toVerb,
-   English.Verbs.cool.toVerb, English.Verbs.warm.toVerb]
-
-theorem da_aspectual_classes_agree :
-    ∀ v ∈ daVerbs, v.aspectualClass = v.changeScale.map (·.defaultAspectualClass) := by
-  decide
-
 /-- The adjective–verb pairs of the fragment are *clean*, *dry*, *straight*, *flat* and *open*
 with scales closed above, *bent* with one closed only below, and *long*, *wide*, *cool* and
 *warm* with open ones. -/
@@ -238,12 +223,6 @@ def pairs : List (Adjective × Verb) :=
 
 theorem adjective_verb_scales :
     ∀ p ∈ pairs, p.2.changeScale = p.1.boundedness := by
-  decide
-
--- (1), (6)
-theorem telic_iff_hasMax :
-    ∀ v ∈ daVerbs, ∃ b ∈ v.changeScale,
-      (v.aspectualClass.map (·.telicity) = some .telic ↔ b.HasMax) := by
   decide
 
 end KennedyLevin2008

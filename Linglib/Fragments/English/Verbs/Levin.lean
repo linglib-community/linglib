@@ -87,7 +87,6 @@ def clean : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
-  aspectualClass := some .accomplishment
   scaleDimension := some .cleanliness
   incrementality := some .strict
 
