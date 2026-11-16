@@ -13,29 +13,20 @@ public import Linglib.Syntax.Minimalist.Copy.AntiLocality
 
 Transfer seals the domain of a phase head, so that an operation at a later stage cannot inspect it:
 the Phase Impenetrability Condition is the effect of Transfer on the search space. A stage is the
-root of the object built so far, a position of the finished object, and a cut assigns to each stage
-the positions sealed by then. A phase head's domain is its complement, or the whole phase short of
-its root, transferred once the phase is complete or once the next phase head merges; a deleted
-phase head passes its phasehood to the head of its complement. A position reaches its phase level
-when the phase of the lowest phase head whose complement contains it is complete.
-
-## Main definitions
-
-* `Minimalist.Cut`: the positions sealed at each stage.
-* `Minimalist.complementDomain`, `Minimalist.wholePhaseDomain`: transfer domains.
-* `Minimalist.Pic1`, `Minimalist.Pic2`: when a phase head's domain is transferred.
-* `Minimalist.sealed`: the positions the transferred domains seal.
-* `Minimalist.transferSlice`: what a phase head transfers on its own, outside inner domains.
-* `Minimalist.phaseLevel`: the stage at which a position reaches its phase level.
-* `Minimalist.LinkLeaves`: a link of a chain leaves the positions a cut seals.
-
-## Main results
-
-* `Minimalist.isUpperSet_sealed`, `Minimalist.sealed_anti`: sealed sets are closed under dominance
-  and grow as the derivation proceeds.
-* `Minimalist.sealed_pic2_subset_pic1`: the next-phase condition seals less.
-* `Minimalist.escapes_iff`, `Minimalist.crosses_iff`: islands and the condition on chain links are
-  cuts.
+root of the object built so far, a position of the finished object, and a `Cut` assigns to each
+stage the positions `sealed` by then. A phase head's domain is its complement or the whole phase
+short of its root, [the larger of the two](##Minimalist.complementDomain_subset_wholePhaseDomain),
+transferred on a `Schedule`; a deleted phase head passes its phasehood to the head of its
+complement. A schedule is the merger of the head, the completion of its phase, as in
+[chomsky-2000], or either of these [put off to the next phase](##Minimalist.Schedule.ofNextPhase),
+as in [chomsky-2001], and waiting for the next head to merge
+[waits past the phase's own completion](##Minimalist.Schedule.ofNextPhase_atMerger_le_atCompletion).
+Sealed sets are [closed under dominance](##Minimalist.isUpperSet_sealed),
+[grow as the derivation proceeds](##Minimalist.sealed_anti), and
+[shrink with the domain and with a later schedule](##Minimalist.sealed_mono). Islands and the
+condition on chain links [are](##Minimalist.escapes_iff) [cuts](##Minimalist.crosses_iff). A
+position reaches its `phaseLevel` when the phase of the lowest phase head whose complement contains
+it is complete.
 
 ## Implementation notes
 
@@ -65,41 +56,49 @@ abbrev Schedule := Finset GornAddress → GornAddress → GornAddress → Prop
 
 variable (hd : HeadFunction) (t : PlanarSyntacticObject)
 
-/-- The head whose complement a phase head transfers: the phase head itself, or, where it has
-deleted, the lexical head of its complement, which inherits its phasehood. -/
+/-- The head that transfers for a phase head: the phase head itself, or, where it has deleted, the
+lexical head of its complement, which inherits its phasehood. -/
 def transferHead (deleted : Finset GornAddress) (h : GornAddress) : GornAddress :=
   if h ∈ deleted then lexicalHeadAt hd t (complement h) else h
 
-/-- The complement of the head that transfers, [chomsky-2000]'s transfer domain. -/
-def complementDomain (deleted : Finset GornAddress) (h : GornAddress) : Set GornAddress :=
-  Set.Ici (complement (transferHead hd t deleted h))
+/-- The complement of a phase head, [chomsky-2000]'s transfer domain. -/
+def complementDomain (h : GornAddress) : Set GornAddress := Set.Ici (complement h)
 
 /-- The phase short of its root, transferred whole. -/
 def wholePhaseDomain (h : GornAddress) : Set GornAddress := Set.Ioi (projectionAt hd t h)
 
-/-- [chomsky-2000]'s schedule: the domain of `h` is transferred once its phase is complete, at every
-stage above it. -/
-def Pic1 : Schedule := fun _ h s ↦ s < projectionAt hd t h
+/-- The domain of `h` is transferred once `h` has merged. -/
+def Schedule.atMerger : Schedule := fun _ h s ↦ s ≤ h.parent
 
-/-- [chomsky-2001]'s schedule: the domain of `h` is transferred once a phase head whose complement
-contains the phase of `h` has merged. -/
-def Pic2 : Schedule := fun Φ h s ↦ ∃ z ∈ Φ, s ≤ z.parent ∧ complement z ≤ projectionAt hd t h
+/-- The domain of `h` is transferred once its phase is complete, at every stage above it: the
+timing of [chomsky-2000]'s Phase Impenetrability Condition. -/
+def Schedule.atCompletion : Schedule := fun _ h s ↦ s < projectionAt hd t h
+
+/-- The schedule `σ` put off by a phase: the domain of `h` is transferred once `σ` holds of a phase
+head whose complement contains the phase of `h`. Applied to merger it is the timing of
+[chomsky-2001]'s condition. -/
+def Schedule.ofNextPhase (σ : Schedule) : Schedule :=
+  fun Φ h s ↦ ∃ z ∈ Φ, σ Φ z s ∧ complement z ≤ projectionAt hd t h
 
 /-- The positions sealed at stage `s`: the domains of the phase heads transferred by then. -/
 def sealed (Φ : Finset GornAddress) (D : GornAddress → Set GornAddress) (σ : Schedule) : Cut :=
   fun s ↦ {q | ∃ h ∈ Φ, σ Φ h s ∧ q ∈ D h}
 
-instance (deleted : Finset GornAddress) (h : GornAddress) :
-    DecidablePred (· ∈ complementDomain hd t deleted h) :=
-  fun q ↦ decidable_of_iff (complement (transferHead hd t deleted h) ≤ q) Iff.rfl
+instance (h : GornAddress) : DecidablePred (· ∈ complementDomain h) :=
+  fun q ↦ decidable_of_iff (complement h ≤ q) Iff.rfl
 
 instance (h : GornAddress) : DecidablePred (· ∈ wholePhaseDomain hd t h) :=
   fun q ↦ decidable_of_iff (projectionAt hd t h < q) Iff.rfl
 
-instance (Φ : Finset GornAddress) (h s : GornAddress) : Decidable (Pic1 hd t Φ h s) :=
+instance (Φ : Finset GornAddress) (h s : GornAddress) : Decidable (Schedule.atMerger Φ h s) :=
+  inferInstanceAs (Decidable (_ ≤ _))
+
+instance (Φ : Finset GornAddress) (h s : GornAddress) :
+    Decidable (Schedule.atCompletion hd t Φ h s) :=
   inferInstanceAs (Decidable (_ < _))
 
-instance (Φ : Finset GornAddress) (h s : GornAddress) : Decidable (Pic2 hd t Φ h s) :=
+instance (σ : Schedule) (Φ : Finset GornAddress) (h s : GornAddress)
+    [∀ z, Decidable (σ Φ z s)] : Decidable (Schedule.ofNextPhase hd t σ Φ h s) :=
   inferInstanceAs (Decidable (∃ _ ∈ Φ, _))
 
 instance (Φ : Finset GornAddress) (D : GornAddress → Set GornAddress) (σ : Schedule)
@@ -108,10 +107,9 @@ instance (Φ : Finset GornAddress) (D : GornAddress → Set GornAddress) (σ : S
   fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ Φ, _))
 
 variable {hd t} {Φ : Finset GornAddress} {D : GornAddress → Set GornAddress} {σ : Schedule}
-  {deleted : Finset GornAddress} {h s : GornAddress}
+  {h s : GornAddress}
 
-theorem isUpperSet_complementDomain : IsUpperSet (complementDomain hd t deleted h) :=
-  isUpperSet_Ici _
+theorem isUpperSet_complementDomain : IsUpperSet (complementDomain h) := isUpperSet_Ici _
 
 theorem isUpperSet_wholePhaseDomain : IsUpperSet (wholePhaseDomain hd t h) := isUpperSet_Ioi _
 
@@ -123,18 +121,44 @@ theorem isUpperSet_sealed (hD : ∀ h, IsUpperSet (D h)) : IsUpperSet (sealed Φ
 theorem sealed_anti (hσ : ∀ h, Antitone (σ Φ h)) : Antitone (sealed Φ D σ) :=
   fun _ _ hs _ ⟨h, hΦ, hσh, hq⟩ ↦ ⟨h, hΦ, hσ h hs hσh, hq⟩
 
-theorem antitone_pic1 : Antitone (Pic1 hd t Φ h) := fun _ _ hs h ↦ lt_of_le_of_lt hs h
+namespace Schedule
 
-theorem antitone_pic2 : Antitone (Pic2 hd t Φ h) :=
-  fun _ _ hs ⟨z, hz, hzs, hc⟩ ↦ ⟨z, hz, hs.trans hzs, hc⟩
+theorem antitone_atMerger : Antitone (atMerger Φ h) := fun _ _ hs h ↦ hs.trans h
 
-theorem pic1_of_pic2 (hp : Pic2 hd t Φ h s) : Pic1 hd t Φ h s :=
-  let ⟨z, _, hs, hc⟩ := hp
-  hs.trans_lt ((parent_covBy_complement z).lt.trans_le hc)
+theorem antitone_atCompletion : Antitone (atCompletion hd t Φ h) :=
+  fun _ _ hs h ↦ lt_of_le_of_lt hs h
 
-/-- [chomsky-2001]'s condition seals less than [chomsky-2000]'s. -/
-theorem sealed_pic2_subset_pic1 : sealed Φ D (Pic2 hd t) s ⊆ sealed Φ D (Pic1 hd t) s :=
-  fun _ ⟨h, hΦ, hσ, hq⟩ ↦ ⟨h, hΦ, pic1_of_pic2 hσ, hq⟩
+theorem antitone_ofNextPhase (hσ : ∀ z, Antitone (σ Φ z)) : Antitone (ofNextPhase hd t σ Φ h) :=
+  fun _ _ hs ⟨z, hz, hz', hc⟩ ↦ ⟨z, hz, hσ z hs hz', hc⟩
+
+theorem ofNextPhase_mono {σ τ : Schedule} (hστ : σ ≤ τ) :
+    ofNextPhase hd t σ ≤ ofNextPhase hd t τ :=
+  fun Φ _ s ⟨z, hz, hσ, hc⟩ ↦ ⟨z, hz, hστ Φ z s hσ, hc⟩
+
+/-- A phase is complete only after its head has merged. -/
+theorem atCompletion_le_atMerger : atCompletion hd t ≤ atMerger := fun _ h s hs ↦ by
+  have : s ≤ Order.pred h := Order.le_pred_of_lt (lt_of_lt_of_le hs (projectionAt_le hd t h))
+  exact this
+
+/-- The next phase head merges only after the phase is complete. -/
+theorem ofNextPhase_atMerger_le_atCompletion : ofNextPhase hd t atMerger ≤ atCompletion hd t :=
+  fun _ _ _ ⟨z, _, hs, hc⟩ ↦ hs.trans_lt ((parent_covBy_complement z).lt.trans_le hc)
+
+end Schedule
+
+theorem mem_sealed {q : GornAddress} : q ∈ sealed Φ D σ s ↔ ∃ h ∈ Φ, σ Φ h s ∧ q ∈ D h := Iff.rfl
+
+/-- Smaller domains transferred later seal less. -/
+theorem sealed_mono {D' : GornAddress → Set GornAddress} {σ' : Schedule}
+    (hD : ∀ h ∈ Φ, D h ⊆ D' h) (hσ : ∀ h ∈ Φ, σ Φ h s → σ' Φ h s) :
+    sealed Φ D σ s ⊆ sealed Φ D' σ' s :=
+  fun _ ⟨h, hΦ, hs, hq⟩ ↦ ⟨h, hΦ, hσ h hΦ hs, hD h hΦ hq⟩
+
+/-- A phase contains the complement of its head, so transferring it whole seals the head and the
+edge besides. -/
+theorem complementDomain_subset_wholePhaseDomain (hp : projectionAt hd t h ≤ h.parent) :
+    complementDomain h ⊆ wholePhaseDomain hd t h := fun _ hq ↦
+  (hp.trans_lt (parent_covBy_complement h).lt).trans_le hq
 
 /-! ### What a phase head transfers on its own -/
 
@@ -189,6 +213,13 @@ def LinkLeaves (tok : LexicalItem.Token) (cut : Cut) : Prop :=
 instance (tok : LexicalItem.Token) (cut : Cut) [∀ s, DecidablePred (· ∈ cut s)] :
     Decidable (LinkLeaves hd t tok cut) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+variable {tok : LexicalItem.Token} {cut cut' : Cut} in
+/-- A link that leaves a cut leaves every cut that seals more. -/
+theorem LinkLeaves.mono (h : cut ≤ cut') (hl : LinkLeaves hd t tok cut) :
+    LinkLeaves hd t tok cut' :=
+  let ⟨x, hx, hc⟩ := hl
+  ⟨x, hx, h _ hc⟩
 
 theorem mem_links {tok : LexicalItem.Token} {x : GornAddress × GornAddress} :
     x ∈ links hd t tok ↔ ∃ q ∈ chain t tok, ∃ p ∈ chain t tok, IsLink hd t tok p q ∧
@@ -247,12 +278,12 @@ complement of `h`, sealed at every stage above the phase. -/
 theorem crosses_iff {tok : LexicalItem.Token} {h : GornAddress} (hh : h ∈ t.toRoseTree.validPaths)
     (h0 : h ≠ ⊥) (hproj : projectionAt hd t h ≤ h.parent) :
     Crosses hd t tok h ↔
-      LinkLeaves hd t tok (sealed {h} (complementDomain hd t ∅) (Pic1 hd t)) := by
+      LinkLeaves hd t tok (sealed {h} complementDomain (.atCompletion hd t)) := by
   unfold Crosses LinkLeaves
   refine exists_congr fun x ↦ and_congr_right fun hx ↦ ?_
   obtain ⟨q, hq, p, -, -, rfl⟩ := mem_links.1 hx
-  simp only [sealed, Finset.mem_singleton, exists_eq_left, Pic1, complementDomain, transferHead,
-    Finset.notMem_empty, ↓reduceIte, Set.mem_Ici, Set.mem_ofPred_eq]
+  simp only [sealed, Finset.mem_singleton, exists_eq_left, Schedule.atCompletion,
+    complementDomain, Set.mem_Ici, Set.mem_ofPred_eq]
   rw [mem_cCommandDomain_iff_complement_le hh h0 (mem_validPaths_of_mem_chain hq)]
   have hle : ∀ hc : complement h ≤ q, projectionAt hd t h ≤ q := fun hc ↦
     hproj.trans ((parent_covBy_complement h).le.trans hc)
@@ -268,7 +299,7 @@ theorem compToSpec_or_mem_sealed {tok : LexicalItem.Token} {x : GornAddress × G
     {h : GornAddress} (hh : h ∈ t.toRoseTree.validPaths) (h0 : h ≠ ⊥) (hhead : IsHeadPosition t h)
     (hx : x ∈ links hd t tok) (hr : projectionAt hd t x.2 = complement h)
     (hin : ¬ complement h ≤ x.1.parent) :
-    CompToSpec hd t x ∨ x.2 ∈ sealed {h} (complementDomain hd t ∅) (Pic1 hd t) x.1.parent := by
+    CompToSpec hd t x ∨ x.2 ∈ sealed {h} complementDomain (.atCompletion hd t) x.1.parent := by
   have hcx : complement h ≤ x.2 := hr ▸ projectionAt_le hd t x.2
   have hlt : x.1.parent < complement h :=
     ((IsLeftLinear.comparable_of_le_common (parent_lt_of_mem_links hx).1.le hcx).resolve_right
@@ -283,7 +314,7 @@ theorem compToSpec_or_mem_sealed {tok : LexicalItem.Token} {x : GornAddress × G
   · exact .inl (hcomp.2 hph)
   · rcases hph.lt_or_eq with hph | hph
     · refine .inr ⟨h, Finset.mem_singleton_self h, hph, ?_⟩
-      simpa [complementDomain, transferHead] using hcx
+      exact hcx
     · exact .inl (hcomp.2 hph.ge)
 
 end Minimalist

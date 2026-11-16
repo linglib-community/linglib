@@ -549,7 +549,7 @@ def senayaCases (ls : List Licenser) (object : Bool) :
     Option (List (FeatureSlot (_root_.Case × _root_.Case.Mechanism))) :=
   (clause object).externalize?.map fun t ↦
     (clauseNominals object).map
-      ((underLicensers ls).assignOn .raising t (complementDomain .raising t ∅) (·.item.cat = .C)
+      ((underLicensers ls).assignOn .raising t complementDomain (·.item.cat = .C)
         (fun _ ↦ .unvalued) (clauseNominals object))
 
 /-- Read off Senaya's clauses, case under each activation of the licensers values what licensing
@@ -566,7 +566,7 @@ def toyCases (ls : List Licenser) :
     Option (List (FeatureSlot (_root_.Case × _root_.Case.Mechanism))) :=
   (clause true).externalize?.map fun t ↦
     (clauseNominals true).map
-      ((underLicensers ls).assignOn .raising t (complementDomain .raising t ∅)
+      ((underLicensers ls).assignOn .raising t complementDomain
         (fun a ↦ a.item.cat = .v ∨ a.item.cat = .C) (fun _ ↦ .unvalued) (clauseNominals true))
 
 /-- Read off the toy language's transitive clause, case under each activation values what

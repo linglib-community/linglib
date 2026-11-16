@@ -334,7 +334,7 @@ far, when it lies in no complement of a phase head transferred by then under the
 def TreeAccessible (pic : PlanarSyntacticObject → Schedule) (sp : Spine) (i : ℕ) : Prop :=
   ∀ hd ∈ sp[i]?, ∀ q ∈ occurrences (probeTree sp i hd) subj,
     q ∉ sealed (occurrencesWith (probeTree sp i hd) (· ∈ phaseHeads sp)).toFinset
-      (complementDomain .raising (probeTree sp i hd) ∅) (pic (probeTree sp i hd)) ⊥
+      complementDomain (pic (probeTree sp i hd)) ⊥
 
 instance (pic : PlanarSyntacticObject → Schedule) [∀ t Φ h s, Decidable (pic t Φ h s)]
     (sp : Spine) (i : ℕ) : Decidable (TreeAccessible pic sp i) :=
@@ -343,24 +343,24 @@ instance (pic : PlanarSyntacticObject → Schedule) [∀ t Φ h s, Decidable (pi
 /-- In simple clauses (9)–(14) the subject is accessible to a head exactly when it is under
 [chomsky-2000]'s condition on the tree the derivation has built. -/
 theorem simple_accessible_iff (e : Bool) :
-    ∀ i < 2, Accessible (simple e) i ↔ TreeAccessible (Pic1 .raising) (simple e) i := by
+    ∀ i < 2, Accessible (simple e) i ↔ TreeAccessible (Schedule.atCompletion .raising) (simple e) i := by
   cases e <;> decide
 
 /-- The same in auxiliary constructions (16)–(21). -/
 theorem auxV_accessible_iff (e : Bool) :
-    ∀ i < 3, Accessible (auxV e) i ↔ TreeAccessible (Pic1 .raising) (auxV e) i := by
+    ∀ i < 3, Accessible (auxV e) i ↔ TreeAccessible (Schedule.atCompletion .raising) (auxV e) i := by
   cases e <;> decide
 
 /-- The same in reduced clauses (34)–(42). -/
 theorem reduced_accessible_iff (e : Bool) :
-    ∀ i < 2, Accessible (reduced e) i ↔ TreeAccessible (Pic1 .raising) (reduced e) i := by
+    ∀ i < 2, Accessible (reduced e) i ↔ TreeAccessible (Schedule.atCompletion .raising) (reduced e) i := by
   cases e <;> decide
 
 /-- Under [chomsky-2001]'s condition, T would agree with a subject left in the complement of Voice,
 against the default agreement of (6) and (11). -/
 theorem nextPhase_overgenerates :
-    ¬ TreeAccessible (Pic1 .raising) (simple false) 1 ∧
-      TreeAccessible (Pic2 .raising) (simple false) 1 := by
+    ¬ TreeAccessible (Schedule.atCompletion .raising) (simple false) 1 ∧
+      TreeAccessible (Schedule.ofNextPhase .raising · .atMerger) (simple false) 1 := by
   decide
 
 end Pietraszko2026
