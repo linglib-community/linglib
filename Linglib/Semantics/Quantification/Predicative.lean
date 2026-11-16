@@ -53,6 +53,15 @@ def BE : CompleteLatticeHom (Quantifier E) (Set E) where
 @[simp] theorem BE_some (A : Set E) : BE (Det.some A) = A :=
   Set.ext fun _ ↦ Set.inter_singleton_nonempty
 
+/-- `Quantifier.map` as a complete lattice homomorphism. -/
+def mapHom {F : Type*} (f : E → F) : CompleteLatticeHom (Quantifier E) (Quantifier F) where
+  toFun := map f
+  map_sInf' _ := funext fun _ ↦ by simp [map]
+  map_sSup' _ := funext fun _ ↦ by simp [map]
+
+@[simp] theorem mapHom_apply {F : Type*} (f : E → F) (Q : Quantifier E) :
+    mapHom f Q = Q.map f := rfl
+
 theorem some_injective : Function.Injective (Det.some : Det E) :=
   Function.LeftInverse.injective BE_some
 

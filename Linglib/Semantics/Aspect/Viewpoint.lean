@@ -111,8 +111,8 @@ def ViewpointType.ttTSitRelation {T : Type*} [LinearOrder T]
   match v with
   | .imperfective => tt < tsit
   | .perfective => tsit ≤ tt
-  | .perfect => tsit.IsBefore tt
-  | .prospective => tt.IsBefore tsit
+  | .perfect => tsit.snd ≤ tt.fst
+  | .prospective => tt.snd ≤ tsit.fst
   | .neutral => tsit.fst ∈ tt ∧ (tsit.fst < tsit.snd → tsit.fst < tt.snd)
 
 instance {T : Type*} [LinearOrder T] (v : ViewpointType) (tt tsit : NonemptyInterval T) :
@@ -133,8 +133,7 @@ def ViewpointType.cell : ViewpointType → IntervalAlgebra
 theorem ViewpointType.ttTSitRelation_iff {T : Type*} [LinearOrder T] (v : ViewpointType)
     (tt tsit : NonemptyInterval T) :
     v.ttTSitRelation tt tsit ↔ (tsit, tt) ∈ IntervalAlgebra.toSetRel v.cell := by
-  cases v <;> simp [ttTSitRelation, cell, Allen.ofEndpoints, NonemptyInterval.IsBefore,
-    compare_lt_iff_lt, compare_gt_iff_gt]
+  cases v <;> simp [ttTSitRelation, cell, Allen.ofEndpoints, compare_lt_iff_lt, compare_gt_iff_gt]
 
 /-! ### Operators -/
 

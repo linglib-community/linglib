@@ -3,7 +3,6 @@ module
 public import Linglib.Fragments.Mandarin.Aspect
 public import Linglib.Semantics.Aspect.SubintervalProperty
 public import Linglib.Semantics.Degree.Comparison
-public import Linglib.Semantics.Quantification.Predicative
 public import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Data.Part
 public import Studies.Champollion2017
@@ -15,7 +14,7 @@ Zhao's dissertation analyzes the Mandarin particles *le*, *méi-yǒu* and *guò*
 event in time with verbs and a degree on a scale in comparatives. A verbal projection denotes a
 quantifier over events, atomically distributive when the traces it applies at form a lower set,
 which for an existential quantifier is [the subinterval
-property](##Zhao2025.hasSubintervalProperty_iff_forall_atomDist). *Le* is defined only of a
+property](##Aspect.hasSubintervalProperty_iff_forall_atomDist). *Le* is defined only of a
 quantifier that is not, so it [rejects a stative](##Zhao2025.not_le_dom_of_hasSubintervalProperty),
 and a duration argument or a measure phrase [repairs the failure](##Zhao2025.le_dom_dur_iff)
 whatever length it names, a length being measured only off points. *Guò* introduces events whose
@@ -27,15 +26,14 @@ asserts](##Zhao2025.le_get_some_iff_mem_perfect) weak precedence.
 
 Times and degrees are the points of an order, traces its closed intervals, and a point is the
 interval `NonemptyInterval.pure`; the dissertation also admits non-convex sums of points, which its
-analyses do not use. An event quantifier is a `Quantifier` over events and its traces are those of
-its image `Quantifier.map` along the trace function, so Atomic Distributivity is stated of the
-predicative content `Quantifier.BE` of that image. The particles take the measurement of their
-evaluation argument as an interval, a point for the utterance time or a height and a run time for
-a matrix event. *Le* is commonly called a perfective marker; the dissertation strips its temporal
-content down to precedence, which is the relation `Aspect` assigns to the perfect, [not the
-perfective](##Zhao2025.pure_notMem_denote_le) under which `Fragments/Mandarin/Aspect.lean` enters
-it. A surpassing
-event is one whose trace has the measurement of its theme `NonemptyInterval.During` it.
+analyses do not use. An event quantifier is a `Quantifier` over events, and Atomic Distributivity,
+(5.83), is `Aspect.AtomDist`, the traces the quantifier applies at forming a lower set. The
+particles take the measurement of their evaluation argument as an interval, a point for the
+utterance time or a height and a run time for a matrix event. *Le* is commonly called a perfective
+marker; the dissertation strips its temporal content down to precedence, which is the relation
+`Aspect` assigns to the perfect, [not the perfective](##Zhao2025.pure_notMem_denote_le) under which
+`Fragments/Mandarin/Aspect.lean` enters it. A surpassing event is one whose trace has the
+measurement of its theme `NonemptyInterval.During` it.
 
 The presupposition is formalized as printed, so a quantifier that applies at no trace is
 atomically distributive and neither particle is defined of it. The library takes states and
@@ -64,7 +62,7 @@ formalized.
 
 namespace Zhao2025
 
-open Quantifier Set
+open Quantifier Set Aspect
 
 variable {E X α : Type*}
 
@@ -102,41 +100,6 @@ section Preorder
 variable [Preorder α] {τ : E → NonemptyInterval α} {V : Quantifier E} {A : Set E}
   {i : NonemptyInterval α}
 
-/-- (5.83): a quantifier over events is atomically distributive along the trace `τ` when the
-traces it applies at have divisive reference. -/
-def AtomDist (τ : E → NonemptyInterval α) (V : Quantifier E) : Prop :=
-  Mereology.DIV fun i ↦ V {e | τ e = i}
-
-theorem atomDist_iff_isLowerSet_BE : AtomDist τ V ↔ IsLowerSet (BE (V.map τ)) := .rfl
-
-theorem atomDist_iff :
-    AtomDist τ V ↔ ∀ i, V {e | τ e = i} → ∀ i' ≤ i, V {e | τ e = i'} :=
-  ⟨fun h _ hi _ hle ↦ h hle hi, fun h _ _ hle hi ↦ h _ hi _ hle⟩
-
-theorem atomDist_some_iff : AtomDist τ (Det.some A) ↔ IsLowerSet (τ '' A) := by
-  rw [atomDist_iff_isLowerSet_BE, map_some, BE_some]
-
--- an atomically distributive quantifier that applies at a trace applies at each of its points
-theorem AtomDist.pure (h : AtomDist τ V) (hi : V {e | τ e = i}) {x : α} (hx : x ∈ i) :
-    V {e | τ e = .pure x} :=
-  h (NonemptyInterval.le_def.2 (NonemptyInterval.mem_def.1 hx)) hi
-
-theorem not_atomDist_iff_of_forall_pure (hV : ∀ x, ¬ V {e | τ e = .pure x}) :
-    ¬ AtomDist τ V ↔ ∃ i, V {e | τ e = i} :=
-  ⟨fun h ↦ by_contra fun hi ↦ h fun i _ _ hi' ↦ absurd ⟨i, hi'⟩ hi,
-    fun ⟨i, hi⟩ h ↦ hV i.fst (h.pure hi ⟨le_rfl, i.fst_le_snd⟩)⟩
-
--- (5.39)–(5.41)
-theorem not_atomDist_some (hne : A.Nonempty) (hA : ∀ e ∈ A, ¬ (τ e).IsPoint) :
-    ¬ AtomDist τ (Det.some A) :=
-  (not_atomDist_iff_of_forall_pure fun _ ⟨e, he, hτ⟩ ↦ hA e he (hτ ▸ rfl)).2
-    (let ⟨e, he⟩ := hne; ⟨τ e, e, he, rfl⟩)
-
-theorem atomDist_some_preimage (hτ : IsLowerSet (range τ)) {S : Set (NonemptyInterval α)}
-    (hS : IsLowerSet S) : AtomDist τ (Det.some (τ ⁻¹' S)) := by
-  rw [atomDist_some_iff, image_preimage_eq_inter_range]
-  exact hS.inter hτ
-
 -- (5.53)
 theorem atomDist_some_lt_fst (hτ : IsLowerSet (range τ)) (m : α) :
     AtomDist τ (Det.some {e | m < (τ e).fst}) :=
@@ -144,12 +107,6 @@ theorem atomDist_some_lt_fst (hτ : IsLowerSet (range τ)) (m : α) :
     ha.trans_le (NonemptyInterval.le_def.1 hba).1
 
 end Preorder
-
--- the subinterval property is Atomic Distributivity of the existential quantifier over time
-theorem hasSubintervalProperty_iff_forall_atomDist {W T : Type*} [LinearOrder T]
-    [TemporalTrace E T] {P : W → E → Prop} :
-    Aspect.HasSubintervalProperty P ↔ ∀ w, AtomDist Event.τ (Det.some {e | P w e}) :=
-  forall_congr' fun _ ↦ atomDist_some_iff.symm
 
 /-! ### Duration arguments and measure phrases -/
 
@@ -192,10 +149,10 @@ section Particles
 variable [Preorder α] {τ : E → NonemptyInterval α} {V : Quantifier E} {a : NonemptyInterval α}
 
 /-- (6.3): *le* is defined only of a quantifier that is not atomically distributive, and asserts
-that it applies to the events whose trace is before `a`, the measurement of the evaluation
+that it applies to the events whose trace precedes `a`, the measurement of the evaluation
 argument. -/
 def le (τ : E → NonemptyInterval α) (V : Quantifier E) (a : NonemptyInterval α) : Part Prop :=
-  ⟨¬ AtomDist τ V, fun _ ↦ V {e | (τ e).IsBefore a}⟩
+  ⟨¬ AtomDist τ V, fun _ ↦ V {e | (τ e).snd ≤ a.fst}⟩
 
 /-- (6.18): *méi-yǒu* is the negation of *le*, with the same presupposition. -/
 def meiyou (τ : E → NonemptyInterval α) (V : Quantifier E) (a : NonemptyInterval α) : Part Prop :=
@@ -206,7 +163,7 @@ def meiyou (τ : E → NonemptyInterval α) (V : Quantifier E) (a : NonemptyInte
 @[simp] theorem meiyou_dom : (meiyou τ V a).Dom ↔ ¬ AtomDist τ V := .rfl
 
 @[simp] theorem le_get (h : (le τ V a).Dom) :
-    (le τ V a).get h ↔ V {e | (τ e).IsBefore a} := .rfl
+    (le τ V a).get h ↔ V {e | (τ e).snd ≤ a.fst} := .rfl
 
 @[simp] theorem meiyou_get (h : (meiyou τ V a).Dom) :
     (meiyou τ V a).get h ↔ ¬ (le τ V a).get h := .rfl
