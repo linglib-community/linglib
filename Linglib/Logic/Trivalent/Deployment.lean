@@ -503,55 +503,46 @@ variable {R : Set U} {A A' : U → Trivalent}
 argument. -/
 theorem deployQuantifier_ne_undefined_iff :
     deployQuantifier Q A ≠ .undefined ↔ ∀ X ∈ interval A, ∀ Y ∈ interval A, (Q X ↔ Q Y) := by
-  rw [deployQuantifier_eq_supervaluationOn, ne_eq, supervaluationOn_eq_undefined_iff]
-  refine ⟨fun h X hX Y hY ↦ ?_, fun h ⟨⟨X, hX, hQX⟩, Y, hY, hQY⟩ ↦ hQY ((h X hX Y hY).1 hQX)⟩
-  by_cases hQX : Q X <;> by_cases hQY : Q Y
-  · exact iff_of_true hQX hQY
-  · exact (h ⟨⟨X, hX, hQX⟩, Y, hY, hQY⟩).elim
-  · exact (h ⟨⟨Y, hY, hQY⟩, X, hX, hQX⟩).elim
-  · exact iff_of_false hQX hQY
+  rw [deployQuantifier_eq_supervaluationOn, supervaluationOn_ne_undefined_iff]
+  rfl
 
-private theorem forall_mem_interval_of_eqOn {P : Set U → Prop} (hP : ∀ B, P B ↔ P (R ∩ B))
-    (h : Set.EqOn A A' R) (hA : ∀ X ∈ interval A, P X) : ∀ X ∈ interval A', P X := by
-  intro X' hX'
-  obtain ⟨h₁, h₂⟩ : posExt A' ⊆ X' ∧ X' ⊆ (negExt A')ᶜ := hX'
-  have hX : posExt A ⊆ R ∩ X' ∪ posExt A \ R ∧ R ∩ X' ∪ posExt A \ R ⊆ (negExt A)ᶜ := by
-    refine ⟨fun u hu ↦ ?_, ?_⟩
-    · by_cases hr : u ∈ R
-      · exact .inl ⟨hr, h₁ (mem_posExt.2 ((h hr).symm.trans (mem_posExt.1 hu)))⟩
-      · exact .inr ⟨hu, hr⟩
-    · rintro u (⟨hr, hx⟩ | ⟨hp, -⟩) hn
-      · exact h₂ hx (mem_negExt.2 ((h hr).symm.trans (mem_negExt.1 hn)))
-      · exact posExt_subset A hp hn
-  have e : R ∩ (R ∩ X' ∪ posExt A \ R) = R ∩ X' := by
-    ext u
-    simp only [Set.mem_inter_iff, Set.mem_union, Set.mem_sdiff]
-    tauto
-  exact (hP X').2 (e ▸ (hP _).1 (hA _ hX))
+/-- Intersecting the sets in the interval of a predicate with `R` gives the interval between the
+intersections of its ends. -/
+theorem image_inter_interval (R : Set U) (A : U → Trivalent) :
+    (R ∩ ·) '' Set.Icc (posExt A) (negExt A)ᶜ = Set.Icc (R ∩ posExt A) (R ∩ (negExt A)ᶜ) := by
+  refine Set.Subset.antisymm ?_ fun X hX ↦ ⟨X ∪ posExt A, ⟨Set.subset_union_right,
+    Set.union_subset (hX.2.trans Set.inter_subset_right) (posExt_subset A)⟩, ?_⟩
+  · rintro _ ⟨Y, hY, rfl⟩
+    exact ⟨Set.inter_subset_inter_right _ hY.1, Set.inter_subset_inter_right _ hY.2⟩
+  · change R ∩ (X ∪ posExt A) = X
+    rw [Set.inter_union_distrib_left, Set.inter_eq_right.2 (hX.2.trans Set.inter_subset_left),
+      Set.union_eq_left.2 hX.1]
+
+/-- A quantifier that lives on `R` is deployed on the part of its argument inside `R`. -/
+theorem deployQuantifier_eq_supervaluationOn_inter {Q : Quantifier U} (hQ : Q.LivesOn R)
+    (A : U → Trivalent) : deployQuantifier Q A =
+      supervaluationOn (Set.Icc (R ∩ posExt A) (R ∩ (negExt A)ᶜ)) Q := by
+  rw [deployQuantifier_eq_supervaluationOn, supervaluationOn_congr fun X _ ↦ hQ X,
+    ← image_inter_interval, supervaluationOn_image]
+  rfl
 
 /-- A quantifier that lives on `R` is deployed on what its argument does on `R`. -/
 theorem deployQuantifier_congr_of_livesOn {Q : Quantifier U} (hQ : Q.LivesOn R)
     (h : Set.EqOn A A' R) : deployQuantifier Q A = deployQuantifier Q A' := by
-  rw [deployQuantifier_eq_supervaluationOn, deployQuantifier_eq_supervaluationOn]
-  refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_
-  · simp only [supervaluationOn_eq_true_iff]
-    exact ⟨forall_mem_interval_of_eqOn hQ h, forall_mem_interval_of_eqOn hQ h.symm⟩
-  · simp only [supervaluationOn_eq_false_iff]
-    have hP : ∀ B, ¬ Q B ↔ ¬ Q (R ∩ B) := fun B ↦ not_congr (hQ B)
-    exact ⟨fun hA ↦ ⟨(interval A').coe_nonempty, forall_mem_interval_of_eqOn hP h hA.2⟩,
-      fun hA ↦ ⟨(interval A).coe_nonempty, forall_mem_interval_of_eqOn hP h.symm hA.2⟩⟩
+  rw [deployQuantifier_eq_supervaluationOn_inter hQ, deployQuantifier_eq_supervaluationOn_inter hQ]
+  exact congrArg₂ (fun B C ↦ supervaluationOn (Set.Icc B C) Q)
+    (h.inter_preimage_eq {Trivalent.true}) (h.inter_preimage_eq {Trivalent.false}ᶜ)
 
 open Classical in
 /-- A quantifier that lives on `R`, deployed on a predicate defined throughout `R`, has its
 classical value: the gaps of the argument outside `R` are filtered. -/
 theorem deployQuantifier_of_livesOn {Q : Quantifier U} (hQ : Q.LivesOn R)
     (h : ∀ u ∈ R, A u ≠ .undefined) : deployQuantifier Q A = ofProp (Q (posExt A)) := by
-  have hE : Set.EqOn A (fun u ↦ ofProp (u ∈ posExt A)) R := fun u hu ↦ by
-    rcases (A u).trichotomy with hf | hd | ht
-    · simp [mem_posExt, hf]
-    · exact absurd hd (h u hu)
-    · simp [mem_posExt, ht]
-  exact (deployQuantifier_congr_of_livesOn hQ hE).trans (deployQuantifier_ofProp Q _)
+  have e : R ∩ (negExt A)ᶜ = R ∩ posExt A := Set.ext fun u ↦ and_congr_right fun hu ↦ by
+    have := h u hu
+    cases hA : A u <;> simp_all
+  rw [deployQuantifier_eq_supervaluationOn_inter hQ, e, Set.Icc_self, supervaluationOn_singleton]
+  exact ofProp_congr (hQ _).symm
 
 end LivesOn
 
