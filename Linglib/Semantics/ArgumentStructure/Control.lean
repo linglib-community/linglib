@@ -26,11 +26,12 @@ no participant of a raising verb fills the slot it raises into (`Diathesis.IsRai
 
 ## Implementation notes
 
-`IsRaisingAt` and `IsControlledAt` are `Function.FactorsThrough` at two maps, so they are
-predicates on the bare relation, as `Monotone` is on a function, and a relation that reads the
-whole property satisfies neither. The argument `c` is any function of the other arguments, the
-bearer of a thematic role in Chierchia's sense; the participant in a slot is the case of a
-projection. Equality in `Φ` is logical equivalence when propositions are sets of worlds.
+`IsRaisingAt` and `IsControlledAt` are predicates on the bare relation, as `Monotone` is on a
+function, and a relation that reads the whole property satisfies neither. Being controlled is
+`Function.FactorsThrough` evaluation at `c x`, for each `x`. The argument `c` is any function of
+the other arguments, the bearer of a thematic role in Chierchia's sense; the participant in a
+slot is the case of a projection. Equality in `Φ` is logical equivalence when propositions are
+sets of worlds.
 
 ## References
 
@@ -48,61 +49,52 @@ namespace ArgumentStructure
 variable {E Φ X Y : Type*} {R : (E → Φ) → X → Φ} {c : X → E}
 
 /-- A relation to a property is raising at `c` when it depends only on the proposition the
-property forms with `c x`. -/
+property forms with `c x`: two properties forming one proposition with two arguments are related
+alike. -/
 def IsRaisingAt (R : (E → Φ) → X → Φ) (c : X → E) : Prop :=
-  FactorsThrough (uncurry R) fun a ↦ a.1 (c a.2)
+  ∀ ⦃P Q : E → Φ⦄ ⦃x y : X⦄, P (c x) = Q (c y) → R P x = R Q y
 
 /-- A relation to a property is controlled at `c` when it depends on the property only through
 the proposition it forms with `c x`. -/
 def IsControlledAt (R : (E → Φ) → X → Φ) (c : X → E) : Prop :=
-  FactorsThrough (uncurry R) fun a ↦ (a.1 (c a.2), a.2)
+  ∀ ⦃P Q : E → Φ⦄ ⦃x : X⦄, P (c x) = Q (c x) → R P x = R Q x
 
 theorem IsRaisingAt.isControlledAt (h : IsRaisingAt R c) : IsControlledAt R c :=
-  fun _ _ hab ↦ h (congrArg Prod.fst hab)
+  fun _ _ _ hPQ ↦ h hPQ
 
-theorem IsControlledAt.of_eq {R' : Φ → X → Φ} (h : ∀ P x, R P x = R' (P (c x)) x) :
-    IsControlledAt R c := by
-  rintro ⟨P, x⟩ ⟨Q, y⟩ hab
-  obtain ⟨hφ, rfl⟩ := Prod.mk.inj hab
-  simp only [uncurry, h]
-  exact congrArg (R' · x) hφ
-
-theorem IsRaisingAt.of_eq {S : Φ → Φ} (h : ∀ P x, R P x = S (P (c x))) : IsRaisingAt R c :=
-  fun ⟨P, x⟩ ⟨Q, y⟩ hab ↦ by simp only [uncurry, h]; exact congrArg S hab
+theorem isControlledAt_iff_forall_factorsThrough :
+    IsControlledAt R c ↔ ∀ x, FactorsThrough (R · x) (eval (c x)) :=
+  ⟨fun h _ _ _ hPQ ↦ h hPQ, fun h _ _ x hPQ ↦ h x hPQ⟩
 
 /-- A relation is controlled at `c` exactly when it is a relation to a proposition, taken at the
 proposition the property forms with `c x`. -/
-theorem isControlledAt_iff [Nonempty Φ] :
-    IsControlledAt R c ↔ ∃ R' : Φ → X → Φ, ∀ P x, R P x = R' (P (c x)) x := by
-  rw [IsControlledAt, factorsThrough_iff]
-  exact ⟨fun ⟨e, he⟩ ↦ ⟨fun φ x ↦ e (φ, x), fun P x ↦ congrFun he (P, x)⟩,
-    fun ⟨R', h⟩ ↦ ⟨fun a ↦ R' a.1 a.2, funext fun ⟨P, x⟩ ↦ h P x⟩⟩
+theorem isControlledAt_iff :
+    IsControlledAt R c ↔ ∃ R' : Φ → X → Φ, ∀ P x, R P x = R' (P (c x)) x :=
+  ⟨fun h ↦ ⟨fun φ x ↦ R (fun _ ↦ φ) x, fun _ _ ↦ h rfl⟩,
+    fun ⟨R', h⟩ P Q x hPQ ↦ by rw [h, h, hPQ]⟩
 
+open Classical in
 /-- A relation is raising at `c` exactly when it is a property of propositions, taken at the
 proposition the property forms with `c x`. -/
-theorem isRaisingAt_iff [Nonempty Φ] :
-    IsRaisingAt R c ↔ ∃ S : Φ → Φ, ∀ P x, R P x = S (P (c x)) := by
-  rw [IsRaisingAt, factorsThrough_iff]
-  exact ⟨fun ⟨e, he⟩ ↦ ⟨e, fun P x ↦ congrFun he (P, x)⟩,
-    fun ⟨S, h⟩ ↦ ⟨S, funext fun ⟨P, x⟩ ↦ h P x⟩⟩
+theorem isRaisingAt_iff : IsRaisingAt R c ↔ ∃ S : Φ → Φ, ∀ P x, R P x = S (P (c x)) :=
+  ⟨fun h ↦ ⟨fun φ ↦ if hX : Nonempty X then R (fun _ ↦ φ) hX.some else φ, fun P x ↦ by
+      simp only [(⟨x⟩ : Nonempty X), ↓reduceDIte]; exact h rfl⟩,
+    fun ⟨S, h⟩ P Q x y hPQ ↦ by rw [h, h, hPQ]⟩
 
 /-- The controlling argument is followed along a map of the other arguments, as across the
 diatheses of a verb. -/
 theorem IsControlledAt.comp (h : IsControlledAt R c) (σ : Y → X) :
-    IsControlledAt (fun P y ↦ R P (σ y)) (c ∘ σ) := by
-  rintro ⟨P, y⟩ ⟨Q, z⟩ hab
-  obtain ⟨hφ, rfl⟩ := Prod.mk.inj hab
-  exact h (a := (P, σ y)) (b := (Q, σ y)) (Prod.ext hφ rfl)
+    IsControlledAt (fun P y ↦ R P (σ y)) (c ∘ σ) :=
+  fun _ _ _ hPQ ↦ h hPQ
 
 theorem IsRaisingAt.comp (h : IsRaisingAt R c) (σ : Y → X) :
     IsRaisingAt (fun P y ↦ R P (σ y)) (c ∘ σ) :=
-  fun ⟨P, y⟩ ⟨Q, z⟩ hab ↦ h (a := (P, σ y)) (b := (Q, σ z)) hab
+  fun _ _ _ _ hPQ ↦ h hPQ
 
 /-- What a raising relation entails of the argument it is raising at, it entails of every entity
 some argument takes there: its meaning does not depend on that argument as such. -/
 theorem IsRaisingAt.le_of_le [LE Φ] (h : IsRaisingAt R c) {α : E → Φ}
-    (hα : ∀ P x, R P x ≤ α (c x)) (P : E → Φ) (x y : X) : R P x ≤ α (c y) := by
-  have : R P x = R (fun _ ↦ P (c x)) y := h (a := (P, x)) (b := (fun _ ↦ P (c x), y)) rfl
-  exact this ▸ hα _ y
+    (hα : ∀ P x, R P x ≤ α (c x)) (P : E → Φ) (x y : X) : R P x ≤ α (c y) :=
+  h (Q := fun _ ↦ P (c x)) (y := y) rfl ▸ hα _ y
 
 end ArgumentStructure

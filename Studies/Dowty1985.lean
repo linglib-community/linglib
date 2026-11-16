@@ -56,9 +56,7 @@ it reads the property only at that noun-phrase meaning, so the R-analysis descri
 two things. -/
 theorem rAnalysis_iff {δ : (N → W → Prop) → N → W → Prop} :
     (∃ r, δ = ofRAnalysis r) ↔ IsControlledAt δ id :=
-  ⟨fun ⟨r, hr⟩ ↦ hr ▸ .of_eq (R' := r) fun _ _ ↦ rfl, fun h ↦
-    let ⟨r, hr⟩ := isControlledAt_iff.1 h
-    ⟨r, funext fun P ↦ funext fun a ↦ hr P a⟩⟩
+  isControlledAt_iff.trans (exists_congr fun _ ↦ by simp only [funext_iff, ofRAnalysis, id]) |>.symm
 
 /-- (13): the meaning of a Raising verb is a property `S` of the proposition its complement forms
 with its subject. -/
@@ -72,10 +70,8 @@ def Postulate15 (δ : (N → W → Prop) → N → W → Prop) : Prop :=
 
 theorem postulate15_iff_isRaisingAt {δ : (N → W → Prop) → N → W → Prop} :
     Postulate15 δ ↔ IsRaisingAt δ id :=
-  ⟨fun h ⟨P, a⟩ ⟨Q, b⟩ hab ↦ funext fun w ↦
-      propext (h a b P Q (fun w ↦ iff_of_eq (congrFun hab w)) w),
-    fun h a b P Q hPQ w ↦ iff_of_eq (congrFun
-      (h (a := (P, a)) (b := (Q, b)) (funext fun w ↦ propext (hPQ w))) w)⟩
+  ⟨fun h P Q a b hPQ ↦ funext fun w ↦ propext (h a b P Q (fun w ↦ iff_of_eq (congrFun hPQ w)) w),
+    fun h _ _ _ _ hPQ w ↦ iff_of_eq (congrFun (h (funext fun w ↦ propext (hPQ w))) w)⟩
 
 /-- The restriction on Raising verbs is the same whether or not it mentions a property of
 propositions. -/
