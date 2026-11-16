@@ -109,7 +109,7 @@ inductive Person where
   | student
 
 /-- *Mann* 'man' holds at a lecture of its ornithologist and of the student. -/
-def man : (ℕ → Person) → Fin 2 → Set Person := fun _ l x ↦ x = .ornithologist l ∨ x = .student
+def man : (ℕ → Person) → Fin 2 → Set Person := fun _ l ↦ {x | x = .ornithologist l ∨ x = .student}
 
 /-- The assignment on which the indefinite *ein Ornithologe* binds the index to a lecture's
 ornithologist. -/
@@ -120,7 +120,7 @@ ornithologist, (28) being the one-lecture case. -/
 theorem covarying_anaphora (l : Fin 2) :
     Definite.unique man (boundTo l) l = Part.none ∧
       (.ornithologist l) ∈ Definite.anaphoric man 1 (boundTo l) l :=
-  weak_eq_none_strong_eq_some (y := .student) (.inl rfl) (.inr rfl) nofun
+  weak_eq_none_strong_eq_some (y := .student) (Or.inl rfl) (Or.inr rfl) nofun
 
 /-! ### Two mechanisms of covariation (§2.3) -/
 
@@ -352,11 +352,11 @@ def predicted (sc : Scenario) : Definite.Strength → Bool
 
 theorem weakAvailable_iff : ∀ sc : Scenario, sc.WeakAvailable ↔ sc.weak = true
   | plain true _ => iff_of_true (Definite.unique_dom.2
-      ⟨0, .inl rfl, fun _ h ↦ h.resolve_right fun ⟨h, _⟩ ↦ nomatch h⟩) rfl
+      ⟨0, Or.inl rfl, fun _ h ↦ h.resolve_right fun ⟨h, _⟩ ↦ nomatch h⟩) rfl
   | plain false _ => iff_of_false (by
       show ¬ (Definite.unique (plainNoun false) (fun _ ↦ 0) ()).Dom
-      rw [Definite.unique_eq_none_of_ne (x := 0) (y := 1) (.inl rfl)
-        (.inr ⟨rfl, rfl⟩) (by decide)]
+      rw [Definite.unique_eq_none_of_ne (x := 0) (y := 1) (Or.inl rfl)
+        (Or.inr ⟨rfl, rfl⟩) (by decide)]
       exact Part.not_none_dom) Bool.false_ne_true
   | relational true _ => iff_of_true (by
       show (Definite.unique (shift mayorOf) (fun _ ↦ ∅) {.station}).Dom

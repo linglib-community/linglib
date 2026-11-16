@@ -251,7 +251,8 @@ def negation : Set (Denotation E) :=
 
 /-- *Buy* at its own type and lifted by SHIFT. -/
 def buyReadings : Set (Denotation E) :=
-  {⟨ind ⇒ ind ⇒ .t, fun y x ↦ buy x y⟩, ⟨quant ⇒ ind ⇒ .t, fun Q ↦ shift buy (Quantifier.toCont.symm Q)⟩}
+  {⟨ind ⇒ ind ⇒ .t, fun y x ↦ buy x y⟩,
+    ⟨quant ⇒ ind ⇒ .t, fun Q ↦ shift buy (Quantifier.toCont.symm Q)⟩}
 
 /-- The words of (23) and (25a). -/
 inductive Word
