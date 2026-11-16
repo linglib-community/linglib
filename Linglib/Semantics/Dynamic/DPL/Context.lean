@@ -34,6 +34,9 @@ context by recursion, and the formula's interpretation has it.
 * `DPL.HasContext.comp`: composition is typed by the product of the contexts.
 * `DPL.Formula.hasContext_eval`: a formula's interpretation has its context, whose inputs are
   the free variables and whose blocks are the active quantifier variables.
+* `DPL.Formula.dependsOn_dom_eval`, `DPL.Formula.eqOn_of_eval`, `DPL.Formula.isTest_eval`: truth
+  depends only on the free variables, only the active quantifier variables change, and a formula
+  with none is a test.
 * `DPL.Formula.IsScopeBound.mem_dom_eval_iff`: on the scope-bound formulas dynamic truth is
   first-order satisfaction.
 
@@ -46,7 +49,8 @@ the test at a set and the reset at a variable: the paper's implication context `
 test at the inputs of `c * d`. The paper's language has neither disjunction nor primitive
 negation and universal quantification; their contexts are those the paper's definitions of them
 yield, tests at the inputs. The context of a formula is not always the least one its
-interpretation has: `x ≐ x` reads `x` and denotes the identity.
+interpretation has: `x ≐ x` reads `x` and denotes the identity. The converse of `isTest_eval`
+fails likewise, a test such as `x ≐ y ⋏ ∃[x] (x ≐ y)` having an active quantifier variable.
 
 ## References
 
@@ -374,6 +378,28 @@ theorem hasContext_eval (φ : Formula L V) : HasContext (φ.eval M) φ.context :
   | imp φ ψ ihφ ihψ => exact ihφ.impl ihψ
   | ex x φ ih => exact (hasContext_randomAssign x).comp ih
   | all x φ ih => exact (hasContext_randomAssign x).impl ih
+
+section
+
+variable {M} {φ : Formula L V} {g h : V → M}
+
+/-- Whether a formula is true at an assignment depends only on its free variables
+([groenendijk-stokhof-1991]'s Fact 8). -/
+theorem dependsOn_dom_eval : DependsOn (· ∈ (φ.eval M).dom) (↑φ.fv : Set V) :=
+  context_I φ ▸ (φ.hasContext_eval M).dependsOn_dom
+
+/-- An output differs from its input only at the active quantifier variables
+([groenendijk-stokhof-1991]'s Fact 9). -/
+theorem eqOn_of_eval (hgh : g ~[φ.eval M] h) : Set.EqOn g h (↑φ.aqv : Set V)ᶜ :=
+  context_B φ ▸ (φ.hasContext_eval M).blocks hgh
+
+variable (M) in
+/-- A formula with no active quantifier variable is a test ([groenendijk-stokhof-1991]'s
+Fact 5): its outputs differ from their inputs nowhere. -/
+theorem isTest_eval (h : φ.aqv = ∅) : IsTest (φ.eval M) :=
+  fun ⟨_, _⟩ hgk ↦ funext fun _ ↦ eqOn_of_eval hgk (by simp [h])
+
+end
 
 /-- A scope-bound formula is true under the dynamic interpretation exactly where it is
 satisfied as a first-order formula ([groenendijk-stokhof-1991]'s Fact 19). -/

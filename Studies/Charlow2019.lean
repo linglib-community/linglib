@@ -1,6 +1,6 @@
 module
 
-public import Studies.GroenendijkStokhof1991
+public import Linglib.Semantics.Dynamic.DPL.Context
 
 /-!
 # Charlow (2019): Where is the destructive update problem?
@@ -173,7 +173,7 @@ theorem reachable_iff_finite : reachable L g h ↔ {x | g x ≠ h x}.Finite := b
   · rintro ⟨φ, hφ⟩
     refine φ.aqv.finite_toSet.subset fun x hx ↦ ?_
     by_contra hxφ
-    exact hx (GroenendijkStokhof1991.eqOn_of_eval hφ hxφ)
+    exact hx (eqOn_of_eval hφ hxφ)
   · intro hfin
     refine ⟨exs hfin.toFinset.toList .top, (mem_eval_exs E _).mpr ⟨h, fun y hy ↦ ?_, rfl⟩⟩
     by_contra hne

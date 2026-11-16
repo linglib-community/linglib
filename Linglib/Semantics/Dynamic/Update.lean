@@ -172,6 +172,13 @@ theorem test_injective : Function.Injective (test : Condition S → Update S) :=
 @[simp] theorem test_comp_test (C₁ C₂ : Condition S) : test C₁ ○ test C₂ = test (C₁ ∩ C₂) := by
   ext ⟨i, j⟩; simp only [mem_comp, mem_test]; grind
 
+/-- A sequence of tests tests the conjunction of their conditions. -/
+theorem prod_map_test {α : Type*} (C : α → Condition S) (l : List α) :
+    (l.map fun a ↦ test (C a)).prod = test (⋂ a ∈ l, C a) := by
+  induction l with
+  | nil => simp [one_def]
+  | cons a l ih => simp [ih, mul_def, Set.iInter_or, Set.iInter_inter_distrib]
+
 @[simp] theorem neg_test (C : Condition S) : neg (test C) = Cᶜ := by rw [neg, dom_test]
 
 @[simp] theorem image_test (C σ : Set S) : (test C).image σ = σ ∩ C := by

@@ -545,22 +545,12 @@ theorem eval_ex_imp : ((∃[x] φ) ⟿ ψ).eval M = (∀[x] (φ ⟿ ψ)).eval M 
 
 /-! #### Free variables, active quantifiers, and entailment
 
-Facts 8 and 9 are the two halves of the typing of a formula by its context
-(`DPL.Formula.hasContext_eval`): truth depends only on the free variables, and only the active
-quantifier variables change. With them the properties entailment lacks in general are restored
-under conditions on the two sets. -/
+Facts 8 and 9 are the two halves of the typing of a formula by its context, the substrate's
+`DPL.Formula.dependsOn_dom_eval` and `DPL.Formula.eqOn_of_eval`: truth depends only on the free
+variables, and only the active quantifier variables change. With them the properties entailment
+lacks in general are restored under conditions on the two sets. -/
 
 variable {M φ ψ χ} {g h : V → M}
-
--- Fact 8
-theorem dependsOn_dom_eval : DependsOn (· ∈ (φ.eval M).dom) (↑φ.fv : Set V) := by
-  rw [← context_I]
-  exact (φ.hasContext_eval M).dependsOn_dom
-
--- Fact 9
-theorem eqOn_of_eval (hgh : g ~[φ.eval M] h) : Set.EqOn g h (↑φ.aqv : Set V)ᶜ := by
-  rw [← context_B]
-  exact (φ.hasContext_eval M).blocks hgh
 
 theorem mem_dom_eval_iff (hd : Disjoint φ.aqv ψ.fv) (hgh : g ~[φ.eval M] h) :
     g ∈ (ψ.eval M).dom ↔ h ∈ (ψ.eval M).dom :=
@@ -780,10 +770,10 @@ variable [DecidableEq V] (M : Type x) [L.Structure M]
 private theorem eval_toDPL_of_conditions (K : DRS L V)
     (h : ∀ c ∈ K.conditions, c.toDPL.eval M = test {f : V → M | VerifiesConditionTotal f c}) :
     K.toDPL.eval M = K.toRel := by
-  ext ⟨g, k⟩
-  rw [DRS.toDPL_eq, mem_eval_exs, eval_conjs_map M _ _ _ h]
-  simp only [mem_test, Finset.mem_toList, DRS.toRel_iff, verifiesTotal_iff, Set.mem_ofPred_eq]
-  exact ⟨fun ⟨_, hk, rfl, hv⟩ ↦ ⟨hk, hv⟩, fun ⟨hk, hv⟩ ↦ ⟨k, hk, rfl, hv⟩⟩
+  rw [DRS.toDPL_eq, eval_exs, eval_conjs, List.map_map,
+    (List.map_congr_left h : K.conditions.map (eval M ∘ Condition.toDPL) = _), prod_map_test,
+    ← box_toFinset, Finset.toList_toFinset, DRS.toRel]
+  exact congrArg _ (Set.ext fun f ↦ by simp [verifiesTotal_iff])
 
 -- Fact 25
 theorem _root_.DRT.Condition.eval_toDPL (c : Condition L V) :

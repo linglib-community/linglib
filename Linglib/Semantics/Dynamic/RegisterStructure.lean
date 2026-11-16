@@ -345,6 +345,16 @@ theorem box_insert (r : R) (s : Finset R) (C : Condition S) :
   · rw [box, Finset.noncommProd_insert_of_notMem _ _ _ _ hr, mul_assoc, mul_def]
     rfl
 
+/-- Resetting a list of registers one after another and then testing `C` is the box over the
+set of those registers. -/
+theorem box_toFinset (l : List R) (C : Condition S) :
+    box l.toFinset C = (l.map randomAssign).prod * test C := by
+  induction l with
+  | nil => simp
+  | cons r l ih =>
+    rw [List.toFinset_cons, box_insert, ih, List.map_cons, List.prod_cons, mul_assoc]
+    rfl
+
 theorem mem_box_insert {s : Finset R} :
     i ~[box (insert r s) C] j ↔ ∃ e, extend i r e ~[box s C] j := by
   rw [box_insert, ← dexists, mem_dexists]

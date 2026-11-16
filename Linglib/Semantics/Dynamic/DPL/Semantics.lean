@@ -8,28 +8,18 @@ public import Mathlib.ModelTheory.Semantics
 # The interpretations of dynamic predicate logic
 
 A formula of `DPL/Syntax.lean` has two interpretations in a structure `M`. The dynamic one,
-`Formula.eval`, is Groenendijk and Stokhof's, a relation between assignments, built from the
-update algebra of `Update.lean`, with conjunction as composition, the existential as a random
-reset followed by its scope, and everything else a test. The static one is that of predicate
-logic, mathlib's satisfaction of the formula read as a first-order formula,
-`φ.toFormula.Realize`. A formula is true at an assignment under the dynamic interpretation when
-it has an output there, `(φ.eval M).dom`; the two notions of truth agree on the scope-bound
-formulas (`DPL/Context.lean`) and differ where a quantifier binds outside its scope.
-
-## Main definitions
-
-* `DPL.Formula.eval`: the dynamic interpretation.
-
-## Main results
-
-* `DPL.Formula.isTest_eval`: a formula with no active quantifier variable is a test.
+`Formula.eval`, is Groenendijk and Stokhof's, a relation between assignments in the update
+algebra of `Update.lean`: conjunction is composition, the existential a random reset followed by
+its scope, and everything else a test. The static one is mathlib's satisfaction of the formula
+read as a first-order formula. A formula is true at an assignment when it has an output there.
+A list of conjuncts denotes [the product of its members](##DPL.Formula.eval_conjs), and an
+existential closure [resets its variables and then interprets its
+scope](##DPL.Formula.eval_exs). What a formula reads and changes is in `DPL/Context.lean`.
 
 ## Implementation notes
 
 `eval` is stated through the substrate's `dexists` and `dforall`, so that the laws of the update
 algebra apply to it as they stand; `mem_dexists` and `mem_dforall` unfold them at assignments.
-The converse of `isTest_eval` fails, a test such as `x ≐ y ⋏ ∃[x] (x ≐ y)` having an active
-quantifier variable.
 
 ## References
 
@@ -49,7 +39,7 @@ variable {L : Language.{u, v}} {V : Type w} [DecidableEq V] (M : Type x) [L.Stru
 /-- The dynamic interpretation relates the input assignments to their output assignments. -/
 def eval : Formula L V → Update (V → M)
   | top => .id
-  | rel R ts => test {g | Structure.RelMap R fun i => (ts i).realize g}
+  | rel R ts => test {g | Structure.RelMap R fun i ↦ (ts i).realize g}
   | equal t₁ t₂ => test {g | t₁.realize g = t₂.realize g}
   | neg φ => test (Update.neg (eval φ))
   | conj φ ψ => eval φ ○ eval ψ
@@ -77,51 +67,30 @@ open scoped DPL
 @[simp] theorem eval_all : (∀[x] φ).eval M = test (dforall x (φ.eval M)) := rfl
 
 @[simp] theorem eval_rel {n : ℕ} (R : L.Relations n) (ts : Fin n → L.Term V) :
-    (rel R ts).eval M = test {g | Structure.RelMap R fun i => (ts i).realize g} := rfl
+    (rel R ts).eval M = test {g | Structure.RelMap R fun i ↦ (ts i).realize g} := rfl
 
 @[simp] theorem eval_equal (t₁ t₂ : L.Term V) :
     (t₁ ≐ t₂).eval M = test {g | t₁.realize g = t₂.realize g} := rfl
 
+/-- A conjunction of a list of formulas denotes the sequence of their interpretations. -/
+theorem eval_conjs (φs : List (Formula L V)) : (conjs φs).eval M = (φs.map (eval M)).prod := by
+  induction φs with
+  | nil => rfl
+  | cons φ φs ih => rw [conjs_cons, eval_conj, ih, List.map_cons, List.prod_cons, mul_def]
+
+/-- An existential closure resets its variables one after another and then interprets its
+scope. -/
+theorem eval_exs (xs : List V) :
+    (exs xs φ).eval M = (xs.map randomAssign).prod * φ.eval M := by
+  induction xs with
+  | nil => rw [exs_nil, List.map_nil, List.prod_nil, one_mul]
+  | cons x xs ih =>
+    rw [exs_cons, eval_ex, ih, dexists, List.map_cons, List.prod_cons, mul_assoc]
+    rfl
+
 theorem mem_eval_exs {xs : List V} {g h : V → M} :
     g ~[(exs xs φ).eval M] h ↔ ∃ k, (∀ y ∉ xs, k y = g y) ∧ k ~[φ.eval M] h := by
-  induction xs generalizing g with
-  | nil => exact ⟨fun hgh ↦ ⟨g, fun _ _ ↦ rfl, hgh⟩,
-      fun ⟨k, hk, hkh⟩ ↦ (funext fun y ↦ hk y List.not_mem_nil : k = g) ▸ hkh⟩
-  | cons x xs ih =>
-    rw [exs_cons, eval_ex, mem_dexists]
-    simp only [RegisterStructure.extend_eq_update]
-    constructor
-    · rintro ⟨e, he⟩
-      obtain ⟨k, hk, hkh⟩ := ih.mp he
-      refine ⟨k, fun y hy ↦ ?_, hkh⟩
-      have hyx : y ≠ x := fun h ↦ hy (by simp [h])
-      rw [hk y fun h ↦ hy (List.mem_cons_of_mem _ h), Function.update_of_ne hyx]
-    · rintro ⟨k, hk, hkh⟩
-      refine ⟨k x, ih.mpr ⟨k, fun y hy ↦ ?_, hkh⟩⟩
-      obtain rfl | hyx := eq_or_ne y x
-      · rw [Function.update_self]
-      · rw [Function.update_of_ne hyx, hk y (by simp [hyx, hy])]
-
-theorem eval_conjs_map {α : Type*} (t : α → Formula L V) (C : α → Set (V → M)) (as : List α)
-    (h : ∀ a ∈ as, (t a).eval M = test (C a)) :
-    (conjs (as.map t)).eval M = test {f | ∀ a ∈ as, f ∈ C a} := by
-  induction as with
-  | nil => simp
-  | cons a as ih =>
-    rw [List.map_cons, conjs_cons, eval_conj, h a List.mem_cons_self,
-      ih fun b hb ↦ h b (List.mem_cons_of_mem _ hb), test_comp_test]
-    exact congrArg test (Set.ext fun f ↦ by simp)
-
-variable {φ} in
-/-- A formula with no active quantifier variable is a test, since atoms, negations,
-disjunctions, implications and universals are and conjunction preserves it. -/
-theorem isTest_eval (h : φ.aqv = ∅) : IsTest (φ.eval M) := by
-  induction φ with
-  | top => exact subset_rfl
-  | conj φ ψ ihφ ihψ =>
-    rw [aqv_conj, Finset.union_eq_empty] at h
-    exact (ihφ h.1).comp (ihψ h.2)
-  | ex x φ => exact absurd h (Finset.insert_ne_empty _ _)
-  | _ => exact isTest_test _
+  rw [eval_exs, ← mul_one (List.prod _), one_def, ← test_univ, ← box_toFinset, mul_def]
+  simp [mem_box_iff]
 
 end DPL.Formula
