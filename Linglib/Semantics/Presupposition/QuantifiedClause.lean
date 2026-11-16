@@ -79,7 +79,7 @@ variable (I : Atom → Set (W × E))
 
 /-- The truth set of a clause. -/
 def truth (c : QuantifiedClause Atom) : Set W :=
-  scopeTruth c.quantifier (fun w e ↦ (w, e) ∈ c.restrictor.truth I) (c.scope.truth I)
+  scopeTruth c.quantifier (fun w ↦ Prod.mk w ⁻¹' c.restrictor.truth I) (c.scope.truth I)
 
 namespace Arg
 
@@ -91,8 +91,8 @@ def fill (q : NumberTree) : Arg Atom → Formula Atom → QuantifiedClause Atom
 /-- The truth set of the clause as a function of the denotation of the argument that holds the
 gap. -/
 def truth (q : NumberTree) : Arg Atom → Set (W × E) → Set W
-  | restrictor S => restrictorTruth q fun w e ↦ (w, e) ∈ S.truth I
-  | scope R => scopeTruth q fun w e ↦ (w, e) ∈ R.truth I
+  | restrictor S => restrictorTruth q fun w ↦ Prod.mk w ⁻¹' S.truth I
+  | scope R => scopeTruth q fun w ↦ Prod.mk w ⁻¹' R.truth I
 
 /-- The meanings that the good finals of the clause at parsing point `n` give the argument that
 holds the gap: at the first parsing point after a restrictor one for every scope, as Expressivity
@@ -100,8 +100,8 @@ has it, and otherwise the clause's own. -/
 def continuations (q : NumberTree) : Arg Atom → ℕ∞ → Set (Set (W × E) → Set W)
   | restrictor S, n =>
     if n = 0 then Set.range (restrictorTruth q)
-    else {restrictorTruth q fun w e ↦ (w, e) ∈ S.truth I}
-  | scope R, _ => {scopeTruth q fun w e ↦ (w, e) ∈ R.truth I}
+    else {restrictorTruth q fun w ↦ Prod.mk w ⁻¹' S.truth I}
+  | scope R, _ => {scopeTruth q fun w ↦ Prod.mk w ⁻¹' R.truth I}
 
 theorem truth_mem_continuations (q : NumberTree) (n : ℕ∞) (a : Arg Atom) :
     a.truth I q ∈ a.continuations I q n := by

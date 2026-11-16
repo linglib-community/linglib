@@ -286,11 +286,11 @@ theorem universalProjection_clause_restrict_eq_undefined_iff {R : Set S} :
 restricted to the local context that the first quantifier gives its scope, the pronoun under a
 second quantifier is defined only where the second restrictor lies within the first. -/
 theorem subordination_constraint {W : Type*} [Finite E]
-    {q : NumberTree} {A : W → E → Prop} {C : Set W} {R : Set (W × E)}
+    {q : NumberTree} {A : W → Set E} {C : Set W} {R : Set (W × E)}
     (hR : IsLocalContext C {scopeTruth q A} R) {G : W × E → Set E}
     {f : W × E → ChoiceFunction E} {VP : W × E → E → Prop} {Q : Det E} {p : E → Trivalent} {w : W}
     (h : Det.universalProjection Q p (fun y ↦ clause (restrict R G) f VP (w, y)) ≠ .undefined)
-    {y : E} (hy : p y = .true) : A w y := by
+    {y : E} (hy : p y = .true) : y ∈ A w := by
   rw [ne_eq, universalProjection_clause_restrict_eq_undefined_iff, not_not] at h
   have hw := (h y hy).1
   rw [hR.unique (isLocalContext_scopeTruth q A C)] at hw
