@@ -56,18 +56,10 @@ theorem speaker_zero_real_singleton_lt_iff_klDiv [IsProbabilityMeasure (b o)]
     [∀ u, IsZeroOrProbabilityMeasure (L u)] (hα : 0 < α) :
     (speaker α 0 L b o).real {u} < (speaker α 0 L b o).real {u'} ↔
       klDiv (b o) (L u') < klDiv (b o) (L u) := by
-  by_cases h : ∃ u₀, b o ≪ L u₀
-  · obtain ⟨u₀, hu₀⟩ := h
-    rw [speaker_real_singleton_lt_iff hα.le ⟨u₀, fun _ hw hL ↦ hw (hu₀ hL)⟩]
-    simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one,
-      geomMean_eq_exp_neg_lintegral_surprisal, lintegral_surprisal_eq_ofReal_add_klDiv]
-    rw [ENNReal.rpow_lt_rpow_iff hα, EReal.exp_lt_exp_iff, EReal.neg_lt_neg_iff,
-      EReal.coe_ennreal_lt_coe_ennreal_iff, ENNReal.add_lt_add_iff_left ENNReal.ofReal_ne_top]
-  · push Not at h
-    have h0 (v : U) : (speaker α 0 L b o).real {v} = 0 := by
-      rw [measureReal_def, (speaker_apply_singleton_eq_zero_iff_not_ac hα).2 (h v),
-        ENNReal.toReal_zero]
-    rw [h0, h0, klDiv_of_not_ac (h u), klDiv_of_not_ac (h u')]
-    exact iff_of_false (lt_irrefl _) (lt_irrefl _)
+  rw [speaker_real_singleton_lt_iff hα.le]
+  simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one,
+    geomMean_eq_exp_neg_lintegral_surprisal, lintegral_surprisal_eq_ofReal_add_klDiv]
+  rw [ENNReal.rpow_lt_rpow_iff hα, EReal.exp_lt_exp_iff, EReal.neg_lt_neg_iff,
+    EReal.coe_ennreal_lt_coe_ennreal_iff, ENNReal.add_lt_add_iff_left ENNReal.ofReal_ne_top]
 
 end RSA

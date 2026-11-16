@@ -290,17 +290,21 @@ most bimoraic. -/
 def raisingGuard : StringFormula Slot := empty x ⊓ nextBearsL ⊓ (bearsL x.pred).not
 
 /-- Pre-downstep h-epenthesis as a process. -/
-def raising : Docking Slot := .ofQF raisingGuard (append .h)
+def raising : List Slot → List Slot := raisingGuard.rewrite (append .h)
 
 /-- Spreading h-epenthesis ((16)): every registerless mora of the stretch before a downstep
 takes `h`. The look-ahead is unbounded, so the guard is not quantifier-free. -/
-def spreading : Docking Slot where
-  dock := append .h
-  Docks m i := m[i]? = some (some []) ∧ ∃ k < m.length, i < k ∧
+def spreading.Docks (m : List Slot) (i : ℕ) : Prop :=
+  m[i]? = some (some []) ∧ ∃ k < m.length, i < k ∧
     (m[k]? = some (some [.l]) ∨ m[k]? = some (some [.l, .l])) ∧
     ∀ j < k, i < j → m[j]? = some (some []) ∨ m[j]? = some none
-  lt_length h := (List.getElem?_eq_some_iff.1 h.1).1
-  decDocks _ _ := inferInstance
+
+instance (m : List Slot) (i : ℕ) : Decidable (spreading.Docks m i) := by
+  unfold spreading.Docks; infer_instance
+
+/-- Spreading h-epenthesis as a process: `h` docks on the moras `spreading.Docks` picks out. -/
+def spreading (m : List Slot) : List Slot :=
+  m.mapIdx fun i a ↦ if spreading.Docks m i then append .h a else a
 
 /-- Utterance-initial neutralisation (§3.5, §4.5): the first mora's downstep is left
 unrealized, there being no preceding register to contrast with; the feature is not
@@ -309,8 +313,8 @@ initial boundary. -/
 def neutralizationGuard : StringFormula Slot := (first x).not ⊓ first x.pred ⊓ bar x.pred
 
 /-- Utterance-initial neutralisation as a process. -/
-def neutralization : Docking Slot :=
-  .ofQF neutralizationGuard (Option.map (·.filter (· ≠ RegisterFeature.l)))
+def neutralization : List Slot → List Slot :=
+  neutralizationGuard.rewrite (Option.map (·.filter (· ≠ RegisterFeature.l)))
 
 /-- Downstep displacement, first half (§4.6): the downstep on the last mora of a bimoraic
 syllable spreads to the next syllable's first mora, stacking on a downstep there. -/
@@ -318,14 +322,15 @@ def spreadLGuard : StringFormula Slot :=
   bar x.pred ⊓ bearsL x.pred.pred ⊓ (first x.pred.pred).not ⊓ (bar x.pred.pred.pred).not
 
 /-- The spreading half of displacement as a process. -/
-def spreadL : Docking Slot := .ofQF spreadLGuard (append .l)
+def spreadL : List Slot → List Slot := spreadLGuard.rewrite (append .l)
 
 /-- Downstep displacement, second half: the spread downstep delinks from its host. -/
 def delinkLGuard : StringFormula Slot :=
   bearsL x ⊓ (first x).not ⊓ (bar x.pred).not ⊓ bar x.succ ⊓ (last x.succ).not
 
 /-- The delinking half of displacement as a process. -/
-def delinkL : Docking Slot := .ofQF delinkLGuard (Option.map (·.erase RegisterFeature.l))
+def delinkL : List Slot → List Slot :=
+  delinkLGuard.rewrite (Option.map (·.erase RegisterFeature.l))
 
 /-- The final syllable bears no register feature. -/
 def finalRegisterless : StringFormula Slot :=
@@ -333,7 +338,7 @@ def finalRegisterless : StringFormula Slot :=
 
 /-- Drubea's final raising (§3.3, §4.8): h% docks on an utterance-final registerless
 syllable. -/
-def finalRaising : Docking Slot := .ofQF finalRegisterless (append .h)
+def finalRaising : List Slot → List Slot := finalRegisterless.rewrite (append .h)
 
 /-- Numèè's final lowering (§3.4, §4.8): l% docks on a light final syllable after a
 registerless syllable, whether the final is registerless or downstepped. -/
@@ -342,20 +347,20 @@ def finalLoweringGuard : StringFormula Slot :=
     (bar x.pred.pred.pred ⊔ (empty x.pred.pred.pred ⊓ bar x.pred.pred.pred.pred))
 
 /-- Numèè's final lowering as a process. -/
-def finalLowering : Docking Slot := .ofQF finalLoweringGuard (append .l)
+def finalLowering : List Slot → List Slot := finalLoweringGuard.rewrite (append .l)
 
 /-- The surface form of a morpheme sequence under the processes its transcription shows, in
 order. -/
-def derive (steps : List (Docking Slot)) (ws : List (Registered Syllable)) :
+def derive (steps : List (List Slot → List Slot)) (ws : List (Registered Syllable)) :
     Registered Syllable :=
-  ⟨(concat ws).syllables, unmark (steps.foldl (fun m D ↦ D.map m) (marked (concat ws)))⟩
+  ⟨(concat ws).syllables, unmark (steps.foldl (fun m D ↦ D m) (marked (concat ws)))⟩
 
 /-- The baseline: level 4 of the 1-to-5 scale (§3.5). -/
 def baseline : Int := 4
 
 /-- The level each mora reaches, the utterance-initial downstep unrealized. -/
 def realize (r : Registered Syllable) : List Int :=
-  RegisterTier.realize baseline (unmark (neutralization.map (marked r)))
+  RegisterTier.realize baseline (unmark (neutralization (marked r)))
 
 /-- The level of each syllable: that of its last mora. -/
 def syllableLevels (r : Registered Syllable) (levels : List Int) : List Int :=
@@ -363,7 +368,7 @@ def syllableLevels (r : Registered Syllable) (levels : List Int) : List Int :=
 
 /-! ### Locality
 
-Every process but `spreading` is `Docking.ofQF`, so on words over the register alphabet it
+Every process but `spreading` is a `StringFormula.rewrite`, so on words over the register alphabet it
 is computed by a one-copy relabelling transduction, the quantifier-free logical transductions
 of [chandlee-jardine-2019]. -/
 
@@ -372,7 +377,7 @@ theorem marked_mem_alphabet : ∀ s ∈ Drubea.stems ++ Numee.stems, ∀ a ∈ m
 
 theorem raising_apply_relabel {s : Registered Syllable} (hs : s ∈ Drubea.stems ++ Numee.stems) :
     (Transduction.relabel raisingGuard (append .h) alphabet).apply (marked s) =
-      raising.map (marked s) :=
+      raising (marked s) :=
   Transduction.apply_relabel (marked_mem_alphabet s hs)
 
 theorem guards_bounded :
@@ -382,9 +387,9 @@ theorem guards_bounded :
   decide
 
 theorem raising_boundedDependence :
-    BoundedDependence raising.map .left ∧ BoundedDependence raising.map .right :=
-  ⟨Docking.ofQF_boundedDependence_left guards_bounded.1 _,
-    Docking.ofQF_boundedDependence_right guards_bounded.1 _⟩
+    BoundedDependence raising .left ∧ BoundedDependence raising .right :=
+  ⟨boundedDependence_rewrite_left guards_bounded.1 _,
+    boundedDependence_rewrite_right guards_bounded.1 _⟩
 
 theorem spreading_not_qf :
     ¬ ∃ (l r : ℕ) (φ : StringFormula Slot), Bounded l r φ ∧
@@ -487,7 +492,7 @@ theorem ex57_levels :
 
 -- (16)
 theorem spreading_stretch :
-    spreading.map [none, some [], some [], none, some [], some [.l]] =
+    spreading [none, some [], some [], none, some [], some [.l]] =
       [none, some [.h], some [.h], none, some [.h], some [.l]] := by
   decide
 
@@ -541,7 +546,7 @@ theorem ex52_double :
 -- (18), (63)
 theorem ex18_contour :
     RegisterTier.realize baseline
-        (unmark (neutralization.map
+        (unmark (neutralization
           [none, some [.l], none, some [.l, .h], none, some [.l]])) =
       [4, 4, 3] := by
   decide

@@ -422,16 +422,14 @@ theorem isIBOptimum_id (hρ : ∀ a, ρ {a} ≠ 0) {β : ℝ} (hβ : 0 < β) :
   refine Kernel.ext fun m => ?_
   rw [Kernel.id_apply]
   unfold ibUpdate
-  refine (Kernel.ofWeights_apply_eq_dirac (b₀ := m) (hρ m) (measure_ne_top _ _)
-    fun w => ?_).symm
-  rw [Measure.id_comp, hdec, Kernel.id_apply]
-  by_cases hwm : w = m
-  · subst hwm
-    simp
+  refine (Kernel.ofWeights_apply_eq_dirac (b₀ := m) ?_ ?_ fun w hwm => ?_).symm <;>
+    rw [Measure.id_comp, hdec, Kernel.id_apply]
+  · simpa using hρ m
+  · simp
   · have hac : ¬ Measure.dirac m ≪ Measure.dirac w := fun h => one_ne_zero <|
       (Measure.dirac_apply_of_mem (Set.mem_singleton m)).symm.trans <| h <| by
         rw [Measure.dirac_apply, Set.indicator_of_notMem (by simpa using hwm)]
-    simp [hwm, klDiv_of_not_ac hac, EReal.coe_mul_top_of_pos hβ]
+    simp [klDiv_of_not_ac hac, EReal.coe_mul_top_of_pos hβ]
 
 end Hard
 

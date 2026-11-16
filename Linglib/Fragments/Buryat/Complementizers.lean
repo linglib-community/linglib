@@ -68,10 +68,7 @@ def zha : Complementizer where
 /-- The clause-typing inventory — closed per §4.3.1 ex. 30–32. -/
 def complementizers : List Complementizer := [ge, aasha, zha]
 
-/-! ### Clause-embedding verbs
-
-Vendler class stays unset (`Verb.Aspect.vendlerClass` convention for
-clause-embedding verbs). -/
+/-! ### Clause-embedding verbs -/
 
 /-- The nominalized complement frame of the ex. 35–36 alternation:
 [noonan-2007]-nominalized coding with an overt genitive embedded subject

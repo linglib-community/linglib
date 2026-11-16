@@ -214,8 +214,7 @@ theorem approximate_prefers_round {p : Price} (hp : ¬ p.IsRound) (h₁ : μ (se
     (h₂ : μ (sem p.round) ≠ 0) (a : Bool) :
     (S1 μ c ((p, a), (.approximate, .price))).real {p}
         < (S1 μ c ((p, a), (.approximate, .price))).real {p.round} ↔ 1 < c := by
-  rw [S1, qudSpeaker, speaker_dirac_real_singleton_lt_iff zero_le_one
-    ⟨p, by rw [map_L0_approximate μ h₁ rfl]; simp⟩,
+  rw [S1, qudSpeaker, speaker_dirac_real_singleton_lt_iff zero_le_one,
     map_L0_approximate μ h₁ rfl, map_L0_approximate μ h₂ (Price.round_round p),
     ENNReal.one_rpow, cost, cost, ite_eq_right hp, ite_eq_left (Price.isRound_round p)]
   simp only [one_mul]

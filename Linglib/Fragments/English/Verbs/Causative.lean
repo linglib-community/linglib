@@ -31,7 +31,6 @@ def cause : Verb where
   morphs := [.root "cause"]
   levin := some Levin1993.Index.cause
   valency := .ofFrame toInfinitive.withObject (controller := some 1)
-  vendlerClass := some .accomplishment
   implicative := ⟨.some .positive, ⊥⟩
 
 /-- *make* takes an object and a bare infinitive, *make him leave*. Levin does not class it (the
@@ -41,7 +40,6 @@ def make : Verb where
   levin := some Levin1993.Index.make
   past := "made"
   valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
-  vendlerClass := some .accomplishment
   implicative := ⟨.some .positive, ⊥⟩
   levinExcluded := {LevinClass.build, .dub}
 
@@ -51,7 +49,6 @@ def let_ : Verb where
   levin := none
   past := "let"
   valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
-  vendlerClass := some .achievement
 
 /-- *have* in its causative use takes an object and a bare infinitive, *have him leave*. -/
 def have_caus : Verb where
@@ -60,7 +57,6 @@ def have_caus : Verb where
   thirdSg := "has"
   past := "had"
   valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
-  vendlerClass := some .achievement
   implicative := ⟨.some .positive, ⊥⟩
   senseTag := .causative
 
@@ -72,7 +68,6 @@ def get_caus : Verb where
   past := "got"
   pastPart := "gotten"
   valency := .ofFrame toInfinitive.withObject (controller := some 1)
-  vendlerClass := some .accomplishment
   senseTag := .causative
   levinExcluded := {LevinClass.get}
 
@@ -81,7 +76,6 @@ def force : Verb where
   morphs := [.root "force"]
   levin := none
   valency := .ofFrame toInfinitive.withObject (controller := some 1)
-  vendlerClass := some .accomplishment
   implicative := ⟨.some .positive, ⊥⟩
 
 /-- *prevent* takes an object and a *from*-gerund, *prevent him from leaving*. -/
@@ -89,7 +83,6 @@ def prevent : Verb where
   morphs := [.root "prevent"]
   levin := none
   valency := .ofFrame ArgumentFrame.gerund.withObject (controller := some 1)
-  vendlerClass := some .accomplishment
   implicative := ⟨.some .negative, ⊥⟩
 
 /-! ### Lexical Causatives -/
@@ -99,7 +92,6 @@ def kill : Verb where
   morphs := [.root "kill"]
   levin := some Levin1993.Index.kill
   valency := .ofFrame ArgumentFrame.np
-  vendlerClass := some .accomplishment
 
 /-- "break" — Levin 45.1 break verbs, a change in "material integrity" with no specification
     of how the change comes about ([levin-1993]:241). -/
@@ -112,7 +104,6 @@ def break_ : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
-  vendlerClass := some .accomplishment
 
 /-- *tear* is a break verb (Levin's 45.1). It implies separation in contrary directions, often
 with some force, is compatible with careful action, and imposes few conditions on its patient, so
@@ -128,7 +119,6 @@ def tear_ : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
-  vendlerClass := some .accomplishment
   incrementality := some .strict
 
 end English.Verbs

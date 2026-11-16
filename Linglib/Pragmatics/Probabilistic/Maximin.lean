@@ -93,17 +93,12 @@ theorem maximinSpeaker_apply_singleton_eq_zero_iff_speaker [IsFiniteMeasure (b o
   rw [maximinSpeaker_apply_singleton_eq_zero_iff hα hb, speaker_apply_singleton_eq_zero_iff hα]
 
 /-- Row preference of the MaxiMin speaker compares the weights; the normalization cancels. -/
-theorem maximinSpeaker_real_singleton_lt_iff (hα : 0 ≤ α) (hb : ∃ w, b o {w} ≠ 0)
-    (h0 : ∃ u, ∀ w, b o {w} ≠ 0 → L u {w} ≠ 0) {u u' : U} :
+theorem maximinSpeaker_real_singleton_lt_iff (hα : 0 ≤ α) (hb : ∃ w, b o {w} ≠ 0) {u u' : U} :
     (maximinSpeaker α C L b o).real {u} < (maximinSpeaker α C L b o).real {u'} ↔
       essInf (fun w ↦ L u {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) <
         essInf (fun w ↦ L u' {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
   Kernel.ofWeights_real_singleton_lt_iff o
-    (fun h ↦ let ⟨u₀, hu₀⟩ := h0
-      ENNReal.rpow_mul_ofReal_exp_ne_zero hα (fun h' ↦ (ENNReal.essInf_eq_zero_iff.1 h').elim fun w ⟨hw, hL⟩ ↦
-        hu₀ w hw hL) _
-        (Finset.sum_eq_zero_iff.mp h u₀ (Finset.mem_univ _)))
-    (ENNReal.sum_ne_top.mpr fun _ _ ↦ ENNReal.rpow_mul_ofReal_exp_ne_top hα (essInf_ne_top hb) _)
+    fun _ ↦ ENNReal.rpow_mul_ofReal_exp_ne_top hα (essInf_ne_top hb) _
 
 end MaxiMin
 

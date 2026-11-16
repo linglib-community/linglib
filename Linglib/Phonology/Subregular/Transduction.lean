@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Subregular.Docking
+public import Linglib.Phonology.Subregular.StringModel
+public import Linglib.Phonology.Subregular.Dependence
 public import Linglib.Phonology.Subregular.ISL
 public import Mathlib.Data.List.Find
 
@@ -33,8 +34,9 @@ rather than defined by formulas of its own. Transductions that define it, such a
 * `Transduction.LeftLocal r`: every guard reads at most `r` positions back and none forward.
 * `ISLRule.toTransduction`: the left-local transduction with a clause for each window and
   symbol, guarded by `StringFormula.window`.
-* `Transduction.relabel`: the relabelling transduction of a quantifier-free docking process over
-  a finite alphabet.
+* `StringFormula.rewrite`: the string function that changes the symbols where a quantifier-free
+  formula holds and keeps the others.
+* `Transduction.relabel`: the relabelling transduction that computes it over a finite alphabet.
 
 ## Main results
 
@@ -47,8 +49,10 @@ rather than defined by formulas of its own. Transductions that define it, such a
 * `isLeftInputStrictlyLocal_iff_exists_leftLocal`: over a finite alphabet, the
   `(r + 1)`-left input strictly local functions are those of the transductions left-local with
   radius `r`.
-* `Transduction.apply_relabel`: on words over the alphabet, the relabelling transduction of a
-  quantifier-free docking process computes its map.
+* `StringFormula.boundedDependence_rewrite_left`, `StringFormula.boundedDependence_rewrite_right`:
+  rewriting where a bounded formula holds depends boundedly on both sides.
+* `Transduction.apply_relabel`: on words over the alphabet, the relabelling transduction computes
+  `StringFormula.rewrite`.
 
 ## Implementation notes
 
@@ -249,12 +253,53 @@ theorem isLeftInputStrictlyLocal_iff_exists_leftLocal [DecidableEq α] [Fintype 
     funext fun w ↦ ?_⟩, fun ⟨T, hT, hf⟩ ↦ hf ▸ hT.isLeftInputStrictlyLocal⟩
   rw [ρ.apply_toTransduction _ fun a _ ↦ Finset.mem_toList.2 (Finset.mem_univ a), hρ]
 
+/-! ### Rewriting where a formula holds -/
+
+namespace StringFormula
+
+variable [DecidableEq α] {w : List α} {i : ℕ}
+
+/-- `φ.rewrite g w` applies `g` to the symbols of `w` at the positions where `φ` holds and keeps
+the others. -/
+def rewrite (φ : StringFormula α) (g : α → α) (w : List α) : List α :=
+  w.mapIdx fun i a ↦ if φ.HoldsAt w i then g a else a
+
+@[simp] theorem length_rewrite (φ : StringFormula α) (g : α → α) :
+    (φ.rewrite g w).length = w.length := by simp [rewrite]
+
+theorem getElem?_rewrite (φ : StringFormula α) (g : α → α) :
+    (φ.rewrite g w)[i]? = w[i]?.map fun a ↦ if φ.HoldsAt w i then g a else a := by
+  simp [rewrite, List.getElem?_mapIdx]
+
+/-- With a formula bounded by `l` back and `r` forward, the output at a position reads only the
+input on that window. -/
+theorem getElem?_rewrite_congr {φ : StringFormula α} {l r : ℕ} (hφ : Bounded l r φ) (g : α → α)
+    {w w' : List α} (hag : ∀ j, i - l ≤ j → j ≤ i + r → w[j]? = w'[j]?) :
+    (φ.rewrite g w)[i]? = (φ.rewrite g w')[i]? := by
+  have hR : φ.HoldsAt w i ↔ φ.HoldsAt w' i := hφ.holdsAt_congr rfl
+    (fun _ _ ↦ hag _ (by omega) (by omega)) fun _ _ ↦ hag _ (by omega) (by omega)
+  simp only [getElem?_rewrite, hag i (by omega) (by omega), hR]
+
+/-- Rewriting where a bounded formula holds depends boundedly on the left. -/
+theorem boundedDependence_rewrite_left {φ : StringFormula α} {l r : ℕ} (hφ : Bounded l r φ)
+    (g : α → α) : BoundedDependence (φ.rewrite g) .left :=
+  ⟨l, fun _ _ _ h ↦ getElem?_rewrite_congr hφ g fun j h₁ _ ↦
+    List.drop_eq_drop_iff_getElem?.mp h j h₁⟩
+
+/-- Rewriting where a bounded formula holds depends boundedly on the right. -/
+theorem boundedDependence_rewrite_right {φ : StringFormula α} {l r : ℕ} (hφ : Bounded l r φ)
+    (g : α → α) : BoundedDependence (φ.rewrite g) .right :=
+  ⟨r, fun _ _ _ h ↦ getElem?_rewrite_congr hφ g fun j _ h₂ ↦
+    List.take_eq_take_iff_getElem?.mp h j (by omega)⟩
+
+end StringFormula
+
 namespace Transduction
 
 /-! ### Relabelling transductions -/
 
-/-- The relabelling transduction of the quantifier-free docking process with guard `φ` over the
-symbols `alphabet`: each symbol is docked where the guard holds and kept elsewhere. -/
+/-- The relabelling transduction with guard `φ` over the symbols `alphabet`: each symbol is
+changed by `dock` where the guard holds and kept elsewhere. -/
 def relabel (φ : StringFormula α) (dock : α → α) (alphabet : List α) : Transduction α α :=
   ⟨alphabet.flatMap fun a ↦
     [(φ ⊓ StringFormula.label a (.var 0), [dock a]),
@@ -270,10 +315,10 @@ private theorem flatMap_range_toList_eq_mapIdx {γ δ : Type*} (f : ℕ → γ �
       List.mapIdx_cons, ← flatMap_range_toList_eq_mapIdx (fun i ↦ f (i + 1)) l]
     simp
 
-/-- On a word over the alphabet, the relabelling transduction computes the docking map. -/
+/-- On a word over the alphabet, the relabelling transduction computes `StringFormula.rewrite`. -/
 theorem apply_relabel {φ : StringFormula α} {dock : α → α} {alphabet : List α} {w : List α}
     (hw : ∀ a ∈ w, a ∈ alphabet) :
-    (relabel φ dock alphabet).apply w = (Docking.ofQF φ dock).map w := by
+    (relabel φ dock alphabet).apply w = φ.rewrite dock w := by
   have hmem {cl} : cl ∈ (relabel φ dock alphabet).clauses ↔ ∃ a ∈ alphabet,
       cl = (φ ⊓ StringFormula.label a (.var 0), [dock a]) ∨
         cl = (φ.not ⊓ StringFormula.label a (.var 0), [a]) := by

@@ -217,10 +217,10 @@ theorem picksAt_extends_smaller_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
   rw [picksAt_binary_iff_exists_favoring_isMinOn (nasalSubstitution_gen c) SubSt.noConfusion]
   obtain ⟨x, hx, hmin⟩ := h_c'
   obtain ⟨z, hz, hzmin⟩ :=
-    Equiv.Perm.exists_isMinOn_symm ⟨x, h_D (favoring_subset_active hx)⟩ σ
+    Equiv.exists_isMinOn_symm ⟨x, h_D (favoring_subset_active hx)⟩ σ
   refine ⟨z, ?_, hzmin⟩
   by_cases hz' : z ∈ active con c' .yes .no
-  · rw [Equiv.Perm.eq_of_isMinOn_symm hz' (favoring_subset_active hx)
+  · rw [Equiv.eq_of_isMinOn_symm hz' (favoring_subset_active hx)
       (hzmin.of_subset (coe_subset.2 h_D)) hmin]
     exact h_Y hx
   · exact h_extra z hz hz'

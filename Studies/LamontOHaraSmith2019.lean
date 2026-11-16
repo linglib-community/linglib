@@ -30,8 +30,8 @@ second](##doubleEdged_isWeaklyDeterministic) are weakly deterministic too.
   keeps it.
 * The proof for plateauing splits a word into Ls, an H, blocks `Lʲ H`, and Ls. A writes each block
   as H, HH or `Lʲ⁻² HLH`, and B, reading right to left, holds back at most one H.
-* The two variants are `Tone.Surfacing` processes, stated by which units surface H, where the
-  paper gives non-deterministic transducers.
+* The two variants are stated by which units surface H, where the paper gives non-deterministic
+  transducers.
 * The paper presents the two variants as regular maps outside the weakly deterministic class, on
   the ground that a first pass must leave its markup within a bounded window of the edge it
   describes. `IsWeaklyDeterministic` asks of the first pass only that it be left-subsequential
@@ -342,19 +342,19 @@ private theorem blocks_eq_append {js : List ℕ} (h : js ≠ []) : ∃ m, blocks
       exact ⟨replicate j .O ++ .H :: m, by rw [blocks, hm]; simp⟩
 
 private theorem utp_map_blocks (a : ℕ) (js : List ℕ) (t : ℕ) :
-    utp.map (replicate a .O ++ .H :: (blocks js ++ replicate t .O))
+    utp .H (replicate a .O ++ .H :: (blocks js ++ replicate t .O))
       = replicate a .O ++ .H :: (replicate (blocks js).length .H ++ replicate t .O) := by
   rcases eq_or_ne js [] with rfl | h
-  · simpa [blocks] using utp.map_single a t
+  · simpa [blocks] using utp_single a t
   · obtain ⟨m, hm⟩ := blocks_eq_append h
-    rw [hm, append_assoc, singleton_append, utp.map_plateau]
+    rw [hm, append_assoc, singleton_append, utp_plateau]
     simp [replicate_succ]
 
 -- B after A computes unbounded tonal plateauing (Figure 1).
 theorem utp_map_eq_resolve_mark (w : List AssociationState) :
-    utp.map w = resolveRight.runRight (markLeft.run w) := by
+    utp .H w = resolveRight.runRight (markLeft.run w) := by
   rcases decomposition w with ⟨a, rfl⟩ | ⟨a, js, t, rfl⟩
-  · simp only [utp.map_toneless, SubsequentialTransducer.runRight, SubsequentialTransducer.run,
+  · simp only [utp_replicate_O, SubsequentialTransducer.runRight, SubsequentialTransducer.run,
       SubsequentialTransducer.runFrom, markLeft_start, (markLeft_replicate .q0 (.inl rfl) a).1,
       (markLeft_replicate .q0 (.inl rfl) a).2, markLeft_finalOutput, markFinal, append_nil,
       reverse_replicate, resolveRight_start, (resolveRight_replicate a).1.1,
@@ -368,7 +368,7 @@ theorem length_markLeft_run (w : List AssociationState) : (markLeft.run w).lengt
   · rw [markLeft_run]; simp [length_codes]
 
 /-- Unbounded tonal plateauing is weakly deterministic in Heinz and Lai's sense. -/
-theorem utp_isWeaklyDeterministic : IsWeaklyDeterministic utp.map :=
+theorem utp_isWeaklyDeterministic : IsWeaklyDeterministic (utp AssociationState.H) :=
   ⟨markLeft.run, resolveRight.runRight, markLeft.isLeftSubsequential,
     fun w ↦ (length_markLeft_run w).le, resolveRight.isRightSubsequential,
     funext fun w ↦ (utp_map_eq_resolve_mark w).symm⟩
@@ -377,47 +377,52 @@ theorem utp_isWeaklyDeterministic : IsWeaklyDeterministic utp.map :=
 
 /-- In first-last plateauing a unit surfaces H when it is H, or when the first and the last unit
 of the word are both H. -/
-def firstLast : Surfacing AssociationState where
-  hi := .H
-  lo := .O
-  Surfaces w i := w[i]? = some .H ∨ i < w.length ∧ w.head? = some .H ∧ w.getLast? = some .H
-  hi_ne_lo := by decide
-  lt_length h := h.elim (fun h ↦ (List.getElem?_eq_some_iff.mp h).1) (·.1)
-  surfaces_of_hi := .inl
-  decSurfaces _ _ := inferInstanceAs (Decidable (_ ∨ _))
+def firstLast.Surfaces (w : List AssociationState) (i : ℕ) : Prop :=
+  w[i]? = some .H ∨ w.head? = some .H ∧ w.getLast? = some .H
 
-example : firstLast.map [.H, .O, .O, .O, .H] = replicate 5 .H ∧
-    firstLast.map [.H, .O, .O, .H, .O] = [.H, .O, .O, .H, .O] := by
+instance (w : List AssociationState) (i : ℕ) : Decidable (firstLast.Surfaces w i) :=
+  inferInstanceAs (Decidable (_ ∨ _))
+
+/-- First-last plateauing writes H at the units that surface H and L at the others. -/
+def firstLast (w : List AssociationState) : List AssociationState :=
+  w.mapIdx fun i _ ↦ if firstLast.Surfaces w i then .H else .O
+
+example : firstLast [.H, .O, .O, .O, .H] = replicate 5 .H ∧
+    firstLast [.H, .O, .O, .H, .O] = [.H, .O, .O, .H, .O] := by
   decide
 
-theorem firstLast_map (w : List AssociationState) :
-    firstLast.map w
+theorem getElem?_firstLast (w : List AssociationState) (i : ℕ) :
+    (firstLast w)[i]? = w[i]?.map fun _ ↦
+      if firstLast.Surfaces w i then AssociationState.H else AssociationState.O := by
+  simp [firstLast, getElem?_mapIdx]
+
+theorem firstLast_eq (w : List AssociationState) :
+    firstLast w
       = if w.head? = some .H ∧ w.getLast? = some .H then replicate w.length .H else w := by
   refine ext_getElem? fun i ↦ ?_
-  split_ifs with h <;> rw [Surfacing.map_getElem?]
+  split_ifs with h <;> rw [getElem?_firstLast]
   · rcases lt_or_ge i w.length with hi | hi
-    · simp [firstLast, hi, h]
+    · simp [firstLast.Surfaces, hi, h]
     · simp [hi.not_gt]
   · rcases h' : w[i]? with _ | a
     · simp
-    · cases a <;> simp [firstLast, h, h']
+    · cases a <;> simp [firstLast.Surfaces, h, h']
 
 /-- First-last plateauing is unbounded circumambient: a unit between two edge Hs surfaces H, and
 making either edge toneless, however far away it is, leaves the unit toneless. -/
-theorem firstLast_isUnboundedCircumambient : IsUnboundedCircumambient firstLast.map :=
-  firstLast.isUnboundedCircumambient_of_flanks (xOn := .H) (yOn := .H) (xOff := .O) (yOff := .O)
+theorem firstLast_isUnboundedCircumambient : IsUnboundedCircumambient firstLast :=
+  .of_flanks (fill := .O) (xOn := .H) (yOn := .H) (xOff := .O) (yOff := .O)
     (n := fun d ↦ 2 * d + 2) (t := fun d ↦ d + 1) (fun d ↦ by omega) (fun d ↦ by omega)
-    (fun d ↦ .inr ⟨by rw [length_flankWord]; omega, rfl, getLast?_flankWord⟩)
-    (fun d h ↦ by
-      rcases h with h | ⟨-, h, -⟩
-      · rw [getElem?_flankWord_mid (by omega) (by omega)] at h
-        simp [firstLast] at h
-      · simp at h)
-    (fun d h ↦ by
-      rcases h with h | ⟨-, -, h⟩
-      · rw [getElem?_flankWord_mid (by omega) (by omega)] at h
-        simp [firstLast] at h
-      · simp at h)
+    (fun d ↦ by
+      rw [firstLast_eq, ite_eq_left ⟨head?_flankWord, getLast?_flankWord⟩, getElem?_replicate,
+        ite_eq_left (by rw [length_flankWord]; omega)]
+      decide)
+    (fun d ↦ by
+      rw [firstLast_eq, ite_eq_right (by simp)]
+      exact getElem?_flankWord_mid (by omega) (by omega))
+    (fun d ↦ by
+      rw [firstLast_eq, ite_eq_right (by simp)]
+      exact getElem?_flankWord_mid (by omega) (by omega))
 
 /-- Reading right to left after the first unit has been moved to the end, the second pass starts
 before the moved unit, is `low` after a moved L, `high` after a moved H, `faithful` after a moved
@@ -476,9 +481,9 @@ private theorem plateauRight_runFrom_plateau (w : List AssociationState) :
   | nil => rfl
   | cons a w ih => simp [ih, replicate_succ]
 
-theorem firstLast_map_eq_plateau_rotate (w : List AssociationState) :
-    firstLast.map w = plateauRight.runRight (w.rotate 1) := by
-  rw [firstLast_map]
+theorem firstLast_eq_plateau_rotate (w : List AssociationState) :
+    firstLast w = plateauRight.runRight (w.rotate 1) := by
+  rw [firstLast_eq]
   rcases w with _ | ⟨a, w⟩
   · decide
   · rw [rotate_cons_succ, rotate_zero]
@@ -492,9 +497,9 @@ theorem firstLast_map_eq_plateau_rotate (w : List AssociationState) :
 
 /-- First-last plateauing is weakly deterministic in Heinz and Lai's sense: a left-to-right pass
 moves the first unit to the end of the word, where the right-to-left pass reads it first. -/
-theorem firstLast_isWeaklyDeterministic : IsWeaklyDeterministic firstLast.map :=
-  (funext firstLast_map_eq_plateau_rotate :
-      firstLast.map = plateauRight.runRight ∘ fun w ↦ w.rotate 1) ▸
+theorem firstLast_isWeaklyDeterministic : IsWeaklyDeterministic firstLast :=
+  (funext firstLast_eq_plateau_rotate :
+      firstLast = plateauRight.runRight ∘ fun w ↦ w.rotate 1) ▸
     plateauRight.isRightSubsequential.isWeaklyDeterministic_comp_rotate
 
 /-! ### Double-edged spread -/
@@ -502,104 +507,111 @@ theorem firstLast_isWeaklyDeterministic : IsWeaklyDeterministic firstLast.map :=
 /-- In double-edged spread a unit surfaces H when it is H, or when the word has an H and none
 before the unit or none after it: the first H spreads to the left edge and the last to the right
 edge. -/
-def doubleEdged : Surfacing AssociationState where
-  hi := .H
-  lo := .O
-  Surfaces w i :=
-    w[i]? = some .H ∨ i < w.length ∧ .H ∈ w ∧ (.H ∉ w.take i ∨ .H ∉ w.drop (i + 1))
-  hi_ne_lo := by decide
-  lt_length h := h.elim (fun h ↦ (List.getElem?_eq_some_iff.mp h).1) (·.1)
-  surfaces_of_hi := .inl
-  decSurfaces _ _ := inferInstanceAs (Decidable (_ ∨ _))
+def doubleEdged.Surfaces (w : List AssociationState) (i : ℕ) : Prop :=
+  w[i]? = some .H ∨ .H ∈ w ∧ (.H ∉ w.take i ∨ .H ∉ w.drop (i + 1))
 
-example : doubleEdged.map [.O, .O, .O, .H, .O, .O, .H, .O, .O, .H, .O, .O, .O]
+instance (w : List AssociationState) (i : ℕ) : Decidable (doubleEdged.Surfaces w i) :=
+  inferInstanceAs (Decidable (_ ∨ _))
+
+/-- Double-edged spread writes H at the units that surface H and L at the others. -/
+def doubleEdged (w : List AssociationState) : List AssociationState :=
+  w.mapIdx fun i _ ↦ if doubleEdged.Surfaces w i then .H else .O
+
+example : doubleEdged [.O, .O, .O, .H, .O, .O, .H, .O, .O, .H, .O, .O, .O]
     = [.H, .H, .H, .H, .O, .O, .H, .O, .O, .H, .H, .H, .H] ∧
-    doubleEdged.map [.O, .O, .O, .O] = [.O, .O, .O, .O] := by
+    doubleEdged [.O, .O, .O, .O] = [.O, .O, .O, .O] := by
   decide
+
+theorem getElem?_doubleEdged (w : List AssociationState) (i : ℕ) :
+    (doubleEdged w)[i]? = w[i]?.map fun _ ↦
+      if doubleEdged.Surfaces w i then AssociationState.H else AssociationState.O := by
+  simp [doubleEdged, getElem?_mapIdx]
 
 /-- Double-edged spread is unbounded circumambient: a toneless unit before the only H of a word
 surfaces H, and an H added far to its left, or the H far to its right removed, leaves it
 toneless. -/
-theorem doubleEdged_isUnboundedCircumambient : IsUnboundedCircumambient doubleEdged.map :=
-  doubleEdged.isUnboundedCircumambient_of_flanks (xOn := .O) (yOn := .H) (xOff := .H) (yOff := .O)
+theorem doubleEdged_isUnboundedCircumambient : IsUnboundedCircumambient doubleEdged :=
+  .of_flanks (fill := .O) (xOn := .O) (yOn := .H) (xOff := .H) (yOff := .O)
     (n := fun d ↦ 2 * d + 2) (t := fun d ↦ d + 1) (fun d ↦ by omega) (fun d ↦ by omega)
-    (fun d ↦ .inr ⟨by rw [length_flankWord]; omega, by simp [flankWord],
-      .inl fun h ↦ absurd ((mem_take_flankWord_iff (by decide) (by omega)).mp h) (by decide)⟩)
-    (fun d h ↦ by
-      rcases h with h | ⟨-, -, h | h⟩
+    (fun d ↦ by
+      rw [getElem?_doubleEdged, getElem?_flankWord_mid (by omega) (by omega), Option.map_some,
+        ite_eq_left (.inr ⟨by simp [flankWord], .inl fun h ↦
+          absurd ((mem_take_flankWord_iff (by decide) (by omega)).mp h) (by decide)⟩)]
+      decide)
+    (fun d ↦ by
+      rw [getElem?_doubleEdged, getElem?_flankWord_mid (by omega) (by omega), Option.map_some,
+        ite_eq_right]
+      rintro (h | ⟨-, h | h⟩)
       · rw [getElem?_flankWord_mid (by omega) (by omega)] at h
-        simp [doubleEdged] at h
+        exact absurd h (by decide)
       · exact h ((mem_take_flankWord_iff (by decide) (by omega)).mpr rfl)
       · exact h ((mem_drop_flankWord_iff (by decide) (by omega)).mpr rfl))
-    (fun d h ↦ by
-      rcases h with h | ⟨-, h, -⟩
+    (fun d ↦ by
+      rw [getElem?_doubleEdged, getElem?_flankWord_mid (by omega) (by omega), Option.map_some,
+        ite_eq_right]
+      rintro (h | ⟨h, -⟩)
       · rw [getElem?_flankWord_mid (by omega) (by omega)] at h
-        simp [doubleEdged] at h
-      · simp [doubleEdged, flankWord] at h)
+        exact absurd h (by decide)
+      · simp [flankWord] at h)
 
-/-- The first H of a word spreads to its left edge; a word without an H becomes all H. -/
-def spreadLeft : List AssociationState → List AssociationState
-  | [] => []
-  | .H :: w => .H :: w
-  | .O :: w => .H :: spreadLeft w
+/-- The left-to-right pass that writes H until it has read an H and copies afterwards: the first
+H of a word spreads to its left edge, and a word without an H becomes all H. -/
+def spread : Mealy Bool AssociationState AssociationState :=
+  .ofFlag (fun a ↦ decide (a = .H)) fun b a ↦ if b then a else .H
 
-@[simp] theorem length_spreadLeft (w : List AssociationState) :
-    (spreadLeft w).length = w.length := by
+private theorem spread_runFrom_true (w : List AssociationState) : spread.runFrom true w = w := by
   induction w with
   | nil => rfl
-  | cons a w ih => cases a <;> simp [spreadLeft, ih]
+  | cons a w ih => exact congrArg (a :: ·) ih
 
-private theorem getElem?_spreadLeft (w : List AssociationState) (i : ℕ) :
-    (spreadLeft w)[i]? = w[i]?.map fun a ↦ if .H ∈ w.take i then a else .H := by
-  induction w generalizing i with
-  | nil => simp [spreadLeft]
-  | cons a w ih => cases a <;> cases i <;> simp [spreadLeft, ih]
+private theorem spread_run_H (w : List AssociationState) : spread.run (.H :: w) = .H :: w :=
+  congrArg (AssociationState.H :: ·) (spread_runFrom_true w)
 
-private theorem spreadLeft_append_H (v r : List AssociationState) :
-    spreadLeft (v ++ .H :: r) = spreadLeft v ++ .H :: r := by
+private theorem spread_run_O (w : List AssociationState) :
+    spread.run (.O :: w) = .H :: spread.run w :=
+  rfl
+
+private theorem getElem?_spread_run (w : List AssociationState) (i : ℕ) :
+    (spread.run w)[i]? = w[i]?.map fun a ↦ if .H ∈ w.take i then a else .H := by
+  simp [spread, Mealy.getElem?_ofFlag_run]
+
+private theorem getElem?_spread_runRight (w : List AssociationState) (i : ℕ) :
+    (spread.runRight w)[i]? = w[i]?.map fun a ↦ if .H ∈ w.drop (i + 1) then a else .H := by
+  simp [spread, Mealy.getElem?_ofFlag_runRight]
+
+private theorem spread_run_append_H (v r : List AssociationState) :
+    spread.run (v ++ .H :: r) = spread.run v ++ .H :: r := by
   induction v with
-  | nil => rfl
-  | cons a v ih => cases a <;> simp [spreadLeft, ih]
+  | nil => exact spread_run_H r
+  | cons a v ih => cases a <;> simp [spread_run_H, spread_run_O, ih]
 
-private theorem mem_drop_spreadLeft {w : List AssociationState} (h : .H ∈ w) (j : ℕ) :
-    .H ∈ (spreadLeft w).drop j ↔ .H ∈ w.drop j := by
+private theorem mem_drop_spread_run {w : List AssociationState} (h : .H ∈ w) (j : ℕ) :
+    .H ∈ (spread.run w).drop j ↔ .H ∈ w.drop j := by
   induction w generalizing j with
   | nil => simp at h
   | cons a w ih =>
     cases a with
-    | H => rfl
+    | H => rw [spread_run_H]
     | O =>
       have hw : .H ∈ w := by simpa using h
       cases j with
-      | zero => simp [spreadLeft, hw]
-      | succ j => simpa [spreadLeft] using ih hw j
+      | zero => simp [spread_run_O, hw]
+      | succ j => simpa [spread_run_O] using ih hw j
 
-private theorem getElem?_revConj_spreadLeft (w : List AssociationState) (i : ℕ) :
-    (revConj spreadLeft w)[i]? = w[i]?.map fun a ↦ if .H ∈ w.drop (i + 1) then a else .H := by
-  rcases lt_or_ge i w.length with hi | hi
-  · rw [revConj, getElem?_reverse (by simpa using hi), getElem?_spreadLeft, length_spreadLeft,
-      length_reverse, getElem?_reverse (by omega), take_reverse,
-      show w.length - 1 - (w.length - 1 - i) = i by omega,
-      show w.length - (w.length - 1 - i) = i + 1 by omega]
-    simp
-  · rw [getElem?_eq_none (by simpa [revConj] using hi), getElem?_eq_none hi]
-    rfl
-
-theorem doubleEdged_map (w : List AssociationState) :
-    doubleEdged.map w = if .H ∈ w then revConj spreadLeft (spreadLeft w) else w := by
+theorem doubleEdged_eq (w : List AssociationState) :
+    doubleEdged w = if .H ∈ w then spread.runRight (spread.run w) else w := by
   refine ext_getElem? fun i ↦ ?_
-  split_ifs with h <;> rw [Surfacing.map_getElem?]
-  · simp only [getElem?_revConj_spreadLeft, getElem?_spreadLeft, mem_drop_spreadLeft h]
+  split_ifs with h <;> rw [getElem?_doubleEdged]
+  · simp only [getElem?_spread_runRight, getElem?_spread_run, mem_drop_spread_run h]
     rcases h' : w[i]? with _ | a
     · simp
-    · obtain ⟨hi, ha⟩ := List.getElem?_eq_some_iff.mp h'
-      cases a <;> by_cases h₁ : .H ∈ w.take i <;> by_cases h₂ : .H ∈ w.drop (i + 1) <;>
-        simp [doubleEdged, h, hi, ha, h₁, h₂]
+    · cases a <;> by_cases h₁ : .H ∈ w.take i <;> by_cases h₂ : .H ∈ w.drop (i + 1) <;>
+        simp [doubleEdged.Surfaces, h, h', h₁, h₂]
   · rcases h' : w[i]? with _ | a
     · simp
     · cases a
       · exact absurd (mem_of_getElem? h') h
-      · simp [doubleEdged, h, h']
+      · simp [doubleEdged.Surfaces, h, h']
 
 /-- The first pass starts before the first unit, is `toneless` having read only Ls, and `toned`
 after an H. -/
@@ -642,16 +654,16 @@ private theorem spreadEdge_runFrom_toned (w : List AssociationState) :
   | cons a w ih => simp [ih]
 
 private theorem spreadEdge_runFrom_toneless (w : List AssociationState) :
-    spreadEdge.runFrom .toneless w = spreadLeft w ++ [if .H ∈ w then .H else .O] := by
+    spreadEdge.runFrom .toneless w = spread.run w ++ [if .H ∈ w then .H else .O] := by
   induction w with
   | nil => rfl
-  | cons a w ih => cases a <;> simp [spreadLeft, ih, spreadEdge_runFrom_toned]
+  | cons a w ih => cases a <;> simp [spread_run_H, spread_run_O, ih, spreadEdge_runFrom_toned]
 
 private theorem spreadEdge_run_cons (a : AssociationState) (w : List AssociationState) :
     spreadEdge.run (a :: w)
-      = (spreadLeft (a :: w)).tail ++ [if .H ∈ a :: w then .H else .O] := by
+      = (spread.run (a :: w)).tail ++ [if .H ∈ a :: w then .H else .O] := by
   cases a <;>
-    simp [SubsequentialTransducer.run, spreadLeft, spreadEdge_runFrom_toned,
+    simp [SubsequentialTransducer.run, spread_run_H, spread_run_O, spreadEdge_runFrom_toned,
       spreadEdge_runFrom_toneless]
 
 theorem length_spreadEdge_run (w : List AssociationState) :
@@ -709,10 +721,10 @@ private theorem closeRight_runFrom_copy (w : List AssociationState) :
   | cons a w ih => simp [ih]
 
 private theorem closeRight_runFrom_spread (w : List AssociationState) :
-    closeRight.runFrom .spread w = spreadLeft w ++ [.H] := by
+    closeRight.runFrom .spread w = spread.run w ++ [.H] := by
   induction w with
   | nil => rfl
-  | cons a w ih => cases a <;> simp [spreadLeft, ih, closeRight_runFrom_copy]
+  | cons a w ih => cases a <;> simp [spread_run_H, spread_run_O, ih, closeRight_runFrom_copy]
 
 private theorem closeRight_runRight_concat_O (w : List AssociationState) :
     closeRight.runRight (w ++ [.O]) = replicate (w.length + 1) .O := by
@@ -720,30 +732,27 @@ private theorem closeRight_runRight_concat_O (w : List AssociationState) :
     closeRight_runFrom_toneless]
 
 private theorem closeRight_runRight_concat_H (w : List AssociationState) :
-    closeRight.runRight (w ++ [.H]) = .H :: revConj spreadLeft w := by
+    closeRight.runRight (w ++ [.H]) = .H :: spread.runRight w := by
   simp [SubsequentialTransducer.runRight, SubsequentialTransducer.run,
-    closeRight_runFrom_spread, revConj]
+    closeRight_runFrom_spread, Mealy.runRight]
 
-theorem doubleEdged_map_eq_close_spread (w : List AssociationState) :
-    doubleEdged.map w = closeRight.runRight (spreadEdge.run w) := by
+theorem doubleEdged_eq_close_spread (w : List AssociationState) :
+    doubleEdged w = closeRight.runRight (spreadEdge.run w) := by
   rcases w with _ | ⟨a, w⟩
   · decide
-  · rw [doubleEdged_map, spreadEdge_run_cons]
+  · rw [doubleEdged_eq, spreadEdge_run_cons]
     split_ifs with h
     · rw [closeRight_runRight_concat_H]
-      cases a <;> simp [spreadLeft, revConj, spreadLeft_append_H _ []]
-    · rw [closeRight_runRight_concat_O, length_tail, length_spreadLeft]
-      exact eq_replicate_iff.mpr ⟨rfl, fun b hb ↦ by
-        cases b
-        · exact absurd hb h
-        · rfl⟩
+      cases a <;> simp [spread_run_H, spread_run_O, Mealy.runRight, spread_run_append_H _ []]
+    · rw [closeRight_runRight_concat_O, length_tail, Mealy.length_run]
+      exact eq_replicate_O_iff.mpr h
 
 /-- Double-edged spread is weakly deterministic in Heinz and Lai's sense: a left-to-right pass
 spreads the first H and ends the word with a record of whether it had one, and the right-to-left
 pass spreads the last H. -/
-theorem doubleEdged_isWeaklyDeterministic : IsWeaklyDeterministic doubleEdged.map :=
+theorem doubleEdged_isWeaklyDeterministic : IsWeaklyDeterministic doubleEdged :=
   ⟨spreadEdge.run, closeRight.runRight, spreadEdge.isLeftSubsequential,
     fun w ↦ (length_spreadEdge_run w).le, closeRight.isRightSubsequential,
-    funext fun w ↦ (doubleEdged_map_eq_close_spread w).symm⟩
+    funext fun w ↦ (doubleEdged_eq_close_spread w).symm⟩
 
 end LamontOHaraSmith2019

@@ -182,16 +182,12 @@ theorem speaker_apply_singleton_ne_zero (hα : 0 ≤ α) (h : ∀ w, b o {w} ≠
     fun _ ↦ geomMean_weight_ne_top hα _
 
 /-- Row preference of the speaker compares the weights; the normalization cancels. -/
-theorem speaker_real_singleton_lt_iff (hα : 0 ≤ α) (h0 : ∃ u, ∀ w, b o {w} ≠ 0 → L u {w} ≠ 0)
-    {u u' : U} :
+theorem speaker_real_singleton_lt_iff (hα : 0 ≤ α) {u u' : U} :
     (speaker α C L b o).real {u} < (speaker α C L b o).real {u'} ↔
       (b o).geomMean (fun w ↦ L u {w}) ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) <
         (b o).geomMean (fun w ↦ L u' {w}) ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
   speaker_eq_ofWeights α C L b ▸ Kernel.ofWeights_real_singleton_lt_iff o
-    (fun h ↦ let ⟨u₀, hu₀⟩ := h0
-      ENNReal.rpow_mul_ofReal_exp_ne_zero hα (Measure.geomMean_ne_zero hu₀) _
-        (Finset.sum_eq_zero_iff.mp h u₀ (Finset.mem_univ _)))
-    (ENNReal.sum_ne_top.mpr fun _ _ ↦ geomMean_weight_ne_top hα _)
+    fun _ ↦ geomMean_weight_ne_top hα _
 
 /-- The odds of two utterances under the speaker are the odds of the geometric means of their
 listeners' masses over her belief, to the power `α`, times the exponential of the cost
@@ -330,14 +326,12 @@ theorem speaker_dirac_zero_real_singleton [IsFiniteKernel L] (hα : 0 ≤ α) (u
 
 /-- Row-preference of the speaker reduces to comparing the weighted listener values; the
 normalization cancels. -/
-theorem speaker_dirac_real_singleton_lt_iff [IsFiniteKernel L] (hα : 0 ≤ α) (h0 : ∃ u, L u {w} ≠ 0)
-    {u u' : U} :
+theorem speaker_dirac_real_singleton_lt_iff [IsFiniteKernel L] (hα : 0 ≤ α) {u u' : U} :
     (speaker α C L Measure.dirac w).real {u} < (speaker α C L Measure.dirac w).real {u'} ↔
       L u {w} ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
         < L u' {w} ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) := by
   have := speaker_real_singleton_lt_iff (C := C) (L := L) (b := Measure.dirac) (o := w) (u := u)
     (u' := u') hα
-    (h0.imp fun _ hu _ hw' ↦ Measure.eq_of_dirac_apply_singleton_ne_zero hw' ▸ hu)
   simpa only [Measure.geomMean_dirac] using this
 
 theorem speaker_dirac_real_singleton_div [IsFiniteKernel L] (hα : 0 ≤ α) (h : L u {w} ≠ 0)
@@ -353,7 +347,7 @@ theorem speaker_dirac_real_singleton_lt_iff_log [IsFiniteKernel L] (hα : 0 < α
     (hu : L u {w} ≠ 0) (hu' : L u' {w} ≠ 0) :
     (speaker α C L Measure.dirac w).real {u} < (speaker α C L Measure.dirac w).real {u'} ↔
       Real.log (L u {w}).toReal - C u < Real.log (L u' {w}).toReal - C u' := by
-  rw [speaker_dirac_real_singleton_lt_iff hα.le ⟨u, hu⟩,
+  rw [speaker_dirac_real_singleton_lt_iff hα.le,
     ← ENNReal.toReal_lt_toReal (ENNReal.rpow_mul_ofReal_exp_ne_top hα.le (measure_ne_top _ _) _)
       (ENNReal.rpow_mul_ofReal_exp_ne_top hα.le (measure_ne_top _ _) _),
     ENNReal.toReal_rpow_mul_ofReal_exp hu (measure_ne_top _ _), ENNReal.toReal_rpow_mul_ofReal_exp hu' (measure_ne_top _ _),

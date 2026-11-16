@@ -9,59 +9,25 @@ public import Mathlib.Data.Finset.Max
 public import Mathlib.Order.Interval.Finset.Nat
 public import Linglib.Core.Data.List.TakeDrop
 public import Linglib.Core.Computability.ShuffleIdeal
+public import Linglib.Core.Order.OrdConnected
 public import Linglib.Phonology.Subregular.Dependence
-public import Linglib.Phonology.Autosegmental.OCP
-public import Linglib.Phonology.Autosegmental.Realization
 public import Linglib.Phonology.Autosegmental.Hull
-public import Linglib.Phonology.Tone.Basic
-public import Linglib.Phonology.Tone.Surfacing
+public import Linglib.Phonology.Tone.AssociationState
 
 /-!
 # Unbounded tonal plateauing
 
-Hyman and Katamba's plateauing rule for Luganda makes every tone-bearing unit between two
-H-toned units surface H. Over Jardine's string rendering, a word over `AssociationState` records
-each timing unit's association state (`H` associated to a H tone, `O` unassociated), and `utp`, a
-`Tone.Surfacing` process, rewrites it pointwise by its surfacing predicate, the two-sided window
-`H ∈ w.take (i + 1) ∧ H ∈ w.drop i` asking for an H at or before `i` and one at or after it. The
-map is `utp.map`, the surfacing set `plateau`.
-
-What surfaces is the representation. The string reads back into two-tier autosegmental
-representations by `AssociationState.toAR`, and the output representation `plateauAR w` is the
-OCP-merged input, hull-closed — fusion then spreading. Timing slot `i` surfaces with H in
-`plateauAR w` exactly when `utp.Surfaces w i` (`utp.surfaces_iff_surfacesWith_plateauAR`).
-
-The map is the flagship *unbounded circumambient* process: whether a position changes
-depends on unboundedly distant material on **both** sides, in the strong witness form
-`utp.isUnboundedCircumambient` — perturbing either far side alone reverts the change — with the
-weaker `utp.twoSidedUnboundedDependence` as a corollary. `Studies/MeinhardtEtAl2024` excludes
-the map from the non-interacting bimachines, and `Studies/LamontOHaraSmith2019` shows it weakly
-deterministic in Heinz and Lai's sense.
-
-## Main definitions
-
-* `Tone.AssociationState` — the H/Ø string alphabet, a timing unit's association to an H tone
-  (distinct from `Tone.TBUKind`, the phonological typology of timing units).
-* `Tone.AssociationState.toAR`, `Tone.plateauAR` — the translation of a timing unit into a one-slot
-  representation, and the output representation (OCP-merged input, hull-closed).
-* `Tone.utp` — plateauing as a `Tone.Surfacing` process; `utp.map` the map.
-* `Tone.plateau` — the set of surfacing positions.
-
-## Main results
-
-* `utp.surfaces_iff_surfacesWith_plateauAR` — surfacing is H-linkedness in the output
-  representation.
-* `utp.map_getElem?_H_iff` / `utp.map_getElem?_O_iff` — pointwise characterization of the map.
-* `utp.map_eq_plateau_indicator`, `plateau_eq_Icc` — the output is the indicator word of an
-  interval, from the first trigger to the last.
-* `utp.map_toneless`, `utp.map_single`, `utp.map_plateau` — the rule schemata: toneless words
-  and lone Hs are unchanged; everything between the outermost Hs surfaces H.
-* `utp.map_getElem?_H_of_getElem?_H`, `utp.map_mono`, `utp.map_map` — plateauing is a closure
-  operator in the pointwise H-order: extensive, monotone, idempotent.
-* `utp.mem_range_map_iff` — the outputs of plateauing are the words without an `H O H`
-  subsequence.
-* `utp.isUnboundedCircumambient` — deleting either flanking H reverts the plateau target, at
-  every distance.
+Hyman and Katamba's plateauing rule for Luganda makes every tone-bearing unit between two H-toned
+units surface H. Over any alphabet with a letter `a` for the H-toned unit, `utp a` rewrites to `a`
+the units with an `a` at or before them and an `a` at or after them (`utp.Surfaces`, the output
+predicate for `a`) and keeps the others. [The positions of `a` in the output are the
+order-connected hull of its positions in the input](##Tone.highs_utp), so plateauing is a closure
+operator on sets of positions, and [the words it fixes](##Tone.utp_eq_self_iff), which are its
+outputs, are those in which `a` occupies an interval. Whether a unit changes depends on
+unboundedly distant material on both sides: [deleting either flanking `a` reverts
+it](##Tone.utp_isUnboundedCircumambient). Over Jardine's two letters H and Ø the same unit is
+H-linked in [the OCP-merged, hull-closed
+input](##Tone.utp.surfaces_iff_surfacesWith_plateauAR).
 
 ## References
 
@@ -73,94 +39,372 @@ deterministic in Heinz and Lai's sense.
 
 namespace Tone
 
-/-! ### The tone-bearing-unit alphabet -/
-
-/-- A tone-bearing unit's association state is `H` for a TBU associated to a H tone and `O`
-for an unspecified TBU (Jardine's Ø). -/
-inductive AssociationState | H | O
-  deriving DecidableEq, Repr
-
-instance : Fintype AssociationState := ⟨{.H, .O}, fun a ↦ by cases a <;> decide⟩
-
-/-! ### The output representation
-
-The string reads back into two-tier representations, and plateauing on representations is
-OCP-fusion followed by hull-closure of the association lines (Hyman and Katamba's rule as an
-operation on structures). -/
-
 open Autosegmental Subregular
 
-namespace AssociationState
+variable {α : Type*} {a : α} {w : List α} {i j k : ℕ}
 
-/-- A TBU contributes its H tone to the melody if it is H-toned, and nothing otherwise. -/
-def melody : AssociationState → List TRN
-  | .H => [.H]
-  | .O => []
+/-! ### The plateauing map -/
 
-@[simp] theorem melody_H : melody .H = [.H] := rfl
+/-- The positions of `w` that hold the letter `a`. -/
+def highs (a : α) (w : List α) : Set ℕ := {i | w[i]? = some a}
 
-@[simp] theorem melody_O : melody .O = [] := rfl
+@[simp] theorem mem_highs : i ∈ highs a w ↔ w[i]? = some a := Iff.rfl
 
-theorem length_melody (a : AssociationState) : (melody a).length = if a = .H then 1 else 0 := by
-  cases a <;> rfl
+/-- Unit `i` of `w` surfaces `a` under plateauing when an `a` lies at or before it and one at or
+after it. -/
+def utp.Surfaces (a : α) (w : List α) (i : ℕ) : Prop :=
+  a ∈ w.take (i + 1) ∧ a ∈ w.drop i
 
-theorem sum_length_melody (w : List AssociationState) :
-    (w.map fun a => (melody a).length).sum = w.count .H := by
-  induction w with
-  | nil => rfl
-  | cons a w ih => cases a <;> simp [ih, Nat.add_comm]
+instance [DecidableEq α] (a : α) (w : List α) (i : ℕ) : Decidable (utp.Surfaces a w i) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- A TBU translates into the primitive with one timing slot carrying the TBU's melody
-(Jardine's reading of the string as a representation). -/
-def toAR (a : AssociationState) : AR (TwoTier TRN Unit) := AR.primitive (melody a) ()
+/-- Unbounded tonal plateauing rewrites to `a` the units that surface `a` and keeps the others. -/
+def utp [DecidableEq α] (a : α) (w : List α) : List α :=
+  w.mapIdx fun i b ↦ if utp.Surfaces a w i then a else b
 
-@[simp] theorem word_toAR_upper (a : AssociationState) : (toAR a).word .upper = melody a := rfl
+theorem utp.surfaces_def : utp.Surfaces a w i ↔ a ∈ w.take (i + 1) ∧ a ∈ w.drop i :=
+  Iff.rfl
 
-@[simp] theorem word_toAR_lower (a : AssociationState) : (toAR a).word .lower = [()] := rfl
+theorem utp.Surfaces.lt_length (h : utp.Surfaces a w i) : i < w.length :=
+  List.lt_length_of_mem_drop h.2
 
-@[simp] theorem link_toAR (a : AssociationState) (p q : ℕ) :
-    (toAR a).Link .upper .lower p q ↔ p < (melody a).length ∧ q = 0 := by
-  simp [toAR]
+/-- An underlying `a` surfaces. -/
+theorem utp.surfaces_of_getElem? (h : w[i]? = some a) : utp.Surfaces a w i :=
+  ⟨List.mem_take_iff_getElem?.mpr ⟨_, Nat.lt_succ_self _, h⟩,
+    List.mem_drop_iff_getElem?.mpr ⟨_, le_rfl, h⟩⟩
 
-@[simp] theorem word_prod_map_toAR_upper (w : List AssociationState) :
-    (w.map toAR).prod.word .upper = List.replicate (w.count .H) TRN.H := by
-  induction w with
-  | nil => rfl
-  | cons a w ih => cases a <;> simp [ih, List.replicate_succ]
+theorem utp.surfaces_iff :
+    utp.Surfaces a w i ↔ (∃ j ≤ i, w[j]? = some a) ∧ ∃ j ≥ i, w[j]? = some a := by
+  rw [utp.surfaces_def, List.mem_take_iff_getElem?, List.mem_drop_iff_getElem?]
+  simp
 
-@[simp] theorem word_prod_map_toAR_lower (w : List AssociationState) :
-    (w.map toAR).prod.word .lower = List.replicate w.length () := by
-  induction w with
-  | nil => rfl
-  | cons a w ih => simp [ih, List.replicate_succ]
+theorem utp.surfaces_of_le_of_le (hi : utp.Surfaces a w i) (hk : utp.Surfaces a w k)
+    (hij : i ≤ j) (hjk : j ≤ k) : utp.Surfaces a w j :=
+  ⟨w.take_subset_take_left (by omega) hi.1, w.drop_subset_drop_left (by omega) hk.2⟩
 
-theorem link_prod_map_toAR (w : List AssociationState) (p j : ℕ) :
-    (w.map toAR).prod.Link .upper .lower p j ↔
-      p = (w.take j).count .H ∧ w[j]? = some .H := by
-  have hoff : AR.tierOffset toAR .upper w j = (w.take j).count .H := by
-    simp only [AR.tierOffset, word_toAR_upper, sum_length_melody]
-  rw [AR.link_prod_map_of_length_eq_one toAR fun _ ↦ rfl]
-  simp only [link_toAR, hoff, and_true, length_melody, List.getElem?_eq_some_iff]
+theorem utp.mem_of_surfaces (h : utp.Surfaces a w i) : a ∈ w :=
+  List.take_subset _ _ h.1
+
+theorem utp.surfaces_reverse (hi : i < w.length) :
+    utp.Surfaces a w.reverse i ↔ utp.Surfaces a w (w.length - 1 - i) := by
+  rw [utp.surfaces_def, utp.surfaces_def, List.take_reverse, List.drop_reverse,
+    List.mem_reverse, List.mem_reverse,
+    show w.length - (i + 1) = w.length - 1 - i from by omega,
+    show w.length - i = (w.length - 1 - i) + 1 from by omega, and_comm]
+
+theorem utp.surfaces_split {b : α} (h : w[i]? = some b) :
+    utp.Surfaces a w i ↔ b = a ∨ (a ∈ w.take i ∧ a ∈ w.drop (i + 1)) := by
+  rcases eq_or_ne b a with rfl | hb
+  · simp [utp.surfaces_of_getElem? h]
+  · obtain ⟨hi, hib⟩ := List.getElem?_eq_some_iff.mp h
+    rw [utp.surfaces_def, List.take_add_one, h, List.drop_eq_getElem_cons hi, hib]
+    simp [hb, Ne.symm hb]
+
+section
+
+variable [DecidableEq α]
+
+@[simp] theorem length_utp : (utp a w).length = w.length := by simp [utp]
+
+theorem getElem?_utp :
+    (utp a w)[i]? = w[i]?.map fun b ↦ if utp.Surfaces a w i then a else b := by
+  simp [utp, List.getElem?_mapIdx]
+
+theorem getElem?_utp_of_not_surfaces (h : ¬ utp.Surfaces a w i) : (utp a w)[i]? = w[i]? := by
+  simp [getElem?_utp, h]
+
+theorem getElem?_utp_eq_iff : (utp a w)[j]? = some a ↔ utp.Surfaces a w j := by
+  refine ⟨fun h ↦ ?_, fun hs ↦ by
+    simp [getElem?_utp, hs, List.getElem?_eq_getElem hs.lt_length]⟩
+  by_contra hs
+  exact hs (utp.surfaces_of_getElem? (getElem?_utp_of_not_surfaces hs ▸ h))
+
+theorem utp_reverse : utp a w.reverse = (utp a w).reverse := by
+  refine List.ext_getElem? fun i => ?_
+  by_cases hi : i < w.length
+  · rw [getElem?_utp, List.getElem?_reverse (by simpa using hi),
+      List.getElem?_reverse (by simpa using hi), length_utp, getElem?_utp]
+    simp only [utp.surfaces_reverse hi]
+  · rw [List.getElem?_eq_none (by simp; omega), List.getElem?_eq_none (by simp; omega)]
+
+/-! ### The plateau set -/
+
+/-- The plateau of `w` is the set of positions that surface `a`. -/
+def plateau (a : α) (w : List α) : Finset ℕ :=
+  (Finset.range w.length).filter (utp.Surfaces a w)
+
+@[simp] theorem mem_plateau : j ∈ plateau a w ↔ utp.Surfaces a w j := by
+  simp only [plateau, Finset.mem_filter, Finset.mem_range, and_iff_right_iff_imp]
+  exact utp.Surfaces.lt_length
+
+@[simp] theorem plateau_nonempty : (plateau a w).Nonempty ↔ a ∈ w :=
+  ⟨fun ⟨_, hj⟩ => utp.mem_of_surfaces (mem_plateau.mp hj), fun hw =>
+    have ⟨i, hi⟩ := List.mem_iff_getElem?.mp hw
+    ⟨i, mem_plateau.mpr (utp.surfaces_of_getElem? hi)⟩⟩
+
+theorem plateau_eq_Icc_of {lo hi : ℕ} (hlo : w[lo]? = some a) (hhi : w[hi]? = some a)
+    (hb : ∀ j, w[j]? = some a → lo ≤ j ∧ j ≤ hi) : plateau a w = Finset.Icc lo hi := by
+  ext j
+  rw [mem_plateau, Finset.mem_Icc, utp.surfaces_iff]
   constructor
-  · rintro ⟨hj, hle, hlt⟩
-    split_ifs at hlt with h
-    · exact ⟨by omega, hj, h⟩
-    · omega
-  · rintro ⟨rfl, hj, h⟩
-    exact ⟨hj, le_rfl, by simp [h]⟩
+  · rintro ⟨⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩
+    have hb₁ := hb j₁ h₁; have hb₂ := hb j₂ h₂; omega
+  · exact fun hj => ⟨⟨lo, hj.1, hlo⟩, hi, hj.2, hhi⟩
 
-theorem link_collapse_prod_map_toAR (w : List AssociationState) (k j : ℕ) :
-    ((w.map toAR).prod.collapse .upper).Link .upper .lower k j ↔ k = 0 ∧ w[j]? = some .H := by
-  rw [AR.link_collapse]
-  simp only [repointIdx_self, repointIdx_of_ne (by decide : Tier.lower ≠ Tier.upper),
-    link_prod_map_toAR, word_prod_map_toAR_upper, OCP.runIdx_replicate]
+/-- The plateau is an interval, from the first trigger to the last. -/
+theorem plateau_eq_Icc (hne : (plateau a w).Nonempty) :
+    plateau a w = Finset.Icc ((plateau a w).min' hne) ((plateau a w).max' hne) := by
+  ext j
+  rw [Finset.mem_Icc]
+  refine ⟨fun hj => ⟨(plateau a w).min'_le j hj, (plateau a w).le_max' j hj⟩, fun ⟨h₁, h₂⟩ =>
+    mem_plateau.mpr (utp.surfaces_of_le_of_le (mem_plateau.mp ((plateau a w).min'_mem hne))
+      (mem_plateau.mp ((plateau a w).max'_mem hne)) h₁ h₂)⟩
+
+/-! ### Plateauing as a hull
+
+The positions of `a` in the output are the order-connected hull of its positions in the input.
+Extensivity, monotonicity and idempotence are those of the closure operator. -/
+
+/-- The positions of `a` in `utp a w` are the order-connected hull of its positions in `w`. -/
+theorem highs_utp (a : α) (w : List α) :
+    highs a (utp a w) = Set.ordConnectedHull (highs a w) := by
+  ext i
+  rw [Set.mem_ordConnectedHull, mem_highs, getElem?_utp_eq_iff, utp.surfaces_iff]
+  exact ⟨fun ⟨⟨x, hx, hxH⟩, y, hy, hyH⟩ ↦ ⟨x, hxH, y, hyH, hx, hy⟩,
+    fun ⟨x, hxH, y, hyH, hx, hy⟩ ↦ ⟨⟨x, hx, hxH⟩, y, hy, hyH⟩⟩
+
+theorem coe_plateau (a : α) (w : List α) :
+    (plateau a w : Set ℕ) = Set.ordConnectedHull (highs a w) := by
+  rw [← highs_utp]
+  ext i
+  simp [getElem?_utp_eq_iff]
+
+/-- Every `a` survives plateauing. -/
+theorem highs_subset_highs_utp (a : α) (w : List α) : highs a w ⊆ highs a (utp a w) :=
+  highs_utp a w ▸ Set.ordConnectedHull.le_closure _
+
+theorem getElem?_utp_of_getElem?_eq (h : w[i]? = some a) : (utp a w)[i]? = some a :=
+  highs_subset_highs_utp a w h
+
+/-- Plateauing is monotone: more `a`s in give more `a`s out. -/
+theorem highs_utp_mono {w' : List α} (h : highs a w ⊆ highs a w') :
+    highs a (utp a w) ⊆ highs a (utp a w') := by
+  rw [highs_utp, highs_utp]
+  exact Set.ordConnectedHull.monotone h
+
+theorem utp.surfaces_mono {w' : List α} (hw : highs a w ⊆ highs a w')
+    (h : utp.Surfaces a w i) : utp.Surfaces a w' i :=
+  getElem?_utp_eq_iff.mp (highs_utp_mono hw (getElem?_utp_eq_iff.mpr h))
+
+theorem mem_utp_iff : a ∈ utp a w ↔ a ∈ w :=
+  ⟨fun h => have ⟨_, hi⟩ := List.mem_iff_getElem?.mp h
+    utp.mem_of_surfaces (getElem?_utp_eq_iff.mp hi),
+   fun h => have ⟨i, hi⟩ := List.mem_iff_getElem?.mp h
+    List.mem_iff_getElem?.mpr ⟨i, getElem?_utp_of_getElem?_eq hi⟩⟩
+
+theorem utp.surfaces_utp : utp.Surfaces a (utp a w) i ↔ utp.Surfaces a w i := by
+  rw [← getElem?_utp_eq_iff, ← mem_highs, highs_utp, highs_utp,
+    Set.ordConnectedHull.idempotent, ← highs_utp, mem_highs, getElem?_utp_eq_iff]
+
+@[simp] theorem plateau_utp : plateau a (utp a w) = plateau a w := by
+  ext j
+  rw [mem_plateau, mem_plateau, utp.surfaces_utp]
+
+/-- Plateauing is idempotent, a plateau being already closed. -/
+@[simp] theorem utp_utp (w : List α) : utp a (utp a w) = utp a w := by
+  refine List.ext_getElem? fun i ↦ ?_
+  by_cases hs : utp.Surfaces a w i
+  · rw [getElem?_utp_eq_iff.mpr hs, getElem?_utp_eq_iff.mpr (utp.surfaces_utp.mpr hs)]
+  · rw [getElem?_utp_of_not_surfaces (mt utp.surfaces_utp.mp hs)]
+
+/-! ### The outputs of plateauing
+
+A word is an output of plateauing exactly when plateauing fixes it, and it is fixed exactly when
+`a` occupies an interval, that is, when no other letter stands between two `a`s. -/
+
+theorem utp_eq_self_iff_forall : utp a w = w ↔ ∀ i, utp.Surfaces a w i → w[i]? = some a := by
+  refine ⟨fun h i hi ↦ h ▸ getElem?_utp_eq_iff.mpr hi, fun h ↦ List.ext_getElem? fun i ↦ ?_⟩
+  by_cases hs : utp.Surfaces a w i
+  · rw [getElem?_utp_eq_iff.mpr hs, h i hs]
+  · exact getElem?_utp_of_not_surfaces hs
+
+/-- Plateauing fixes the words in which `a` occupies an order-connected set of positions. -/
+theorem utp_eq_self_iff : utp a w = w ↔ (highs a w).OrdConnected := by
+  rw [utp_eq_self_iff_forall, ← Set.ordConnectedHull_eq_self_iff, ← highs_utp]
+  exact ⟨fun h ↦ Set.Subset.antisymm (fun i hi ↦ h i (getElem?_utp_eq_iff.mp hi))
+    (highs_subset_highs_utp a w), fun h i hi ↦ h.subset (getElem?_utp_eq_iff.mpr hi)⟩
+
+theorem utp_of_notMem (h : a ∉ w) : utp a w = w :=
+  utp_eq_self_iff_forall.mpr fun _ hs ↦ absurd (utp.mem_of_surfaces hs) h
+
+theorem range_utp : Set.range (utp a) = Function.fixedPoints (utp a) :=
+  Set.ext fun w => ⟨fun ⟨_, hv⟩ => hv ▸ utp_utp _, fun h => ⟨w, h⟩⟩
+
+omit [DecidableEq α] in
+theorem sublist_iff_exists_surfaces {b : α} (hb : b ≠ a) :
+    [a, b, a].Sublist w ↔ ∃ i, utp.Surfaces a w i ∧ w[i]? = some b := by
+  simp only [List.cons_sublist_iff, List.nil_sublist, and_true, utp.surfaces_iff]
   constructor
-  · rintro ⟨p, q, ⟨-, h⟩, rfl, rfl⟩
-    exact ⟨rfl, h⟩
-  · rintro ⟨rfl, h⟩
-    exact ⟨_, j, ⟨rfl, h⟩, rfl, rfl⟩
+  · rintro ⟨r₁, r₂, rfl, h₁, s₁, s₂, rfl, h₂, t₁, t₂, rfl, h₃⟩
+    obtain ⟨p, hp⟩ := List.mem_iff_getElem?.mp h₁
+    obtain ⟨j, hj⟩ := List.mem_iff_getElem?.mp h₂
+    obtain ⟨q, hq⟩ := List.mem_iff_getElem?.mp h₃
+    have hp' := (List.getElem?_eq_some_iff.mp hp).1
+    have hj' := (List.getElem?_eq_some_iff.mp hj).1
+    refine ⟨r₁.length + j, ⟨⟨p, by omega, ?_⟩, r₁.length + s₁.length + q, by omega, ?_⟩, ?_⟩
+    · rwa [List.getElem?_append_left hp']
+    · rw [List.getElem?_append_right (by omega),
+        show r₁.length + s₁.length + q - r₁.length = s₁.length + q by omega,
+        List.getElem?_append_right (by omega), Nat.add_sub_cancel_left,
+        List.getElem?_append_left (List.getElem?_eq_some_iff.mp hq).1]
+      exact hq
+    · rw [List.getElem?_append_right (by omega), Nat.add_sub_cancel_left,
+        List.getElem?_append_left hj']
+      exact hj
+  · rintro ⟨i, ⟨⟨p, hpi, hp⟩, q, hiq, hq⟩, hi⟩
+    have hpi' : p < i := lt_of_le_of_ne hpi fun e => by
+      subst e; exact hb (Option.some.inj (hi.symm.trans hp))
+    have hiq' : i < q := lt_of_le_of_ne hiq fun e => by
+      subst e; exact hb (Option.some.inj (hi.symm.trans hq))
+    refine ⟨w.take (p + 1), w.drop (p + 1), (List.take_append_drop _ _).symm,
+      List.mem_take_iff_getElem?.mpr ⟨p, by omega, hp⟩,
+      (w.drop (p + 1)).take (i - p), w.drop (i + 1), ?_,
+      List.mem_take_iff_getElem?.mpr ⟨i - (p + 1), by omega, ?_⟩,
+      w.drop (i + 1), [], (List.append_nil _).symm,
+      List.mem_drop_iff_getElem?.mpr ⟨q, by omega, hq⟩⟩
+    · conv_lhs => rw [← List.take_append_drop (i - p) (w.drop (p + 1))]
+      rw [List.drop_drop]
+      congr 2
+      omega
+    · rw [List.getElem?_drop, show p + 1 + (i - (p + 1)) = i by omega]
+      exact hi
 
-end AssociationState
+/-- The outputs of plateauing are the words with no other letter between two `a`s. -/
+theorem mem_range_utp_iff :
+    w ∈ Set.range (utp a) ↔ ∀ b, b ≠ a → w ∉ Language.shuffleIdeal [a, b, a] := by
+  rw [range_utp, Function.mem_fixedPoints, Function.IsFixedPt, utp_eq_self_iff_forall]
+  refine ⟨fun h b hb hmem ↦ ?_, fun h i hs ↦ ?_⟩
+  · obtain ⟨i, hs, hib⟩ := (sublist_iff_exists_surfaces hb).mp (Language.mem_shuffleIdeal.mp hmem)
+    exact hb (Option.some.inj (hib.symm.trans (h i hs)))
+  · by_contra hne
+    have hi := hs.lt_length
+    exact h w[i] (fun e ↦ hne (by rw [List.getElem?_eq_getElem hi, e]))
+      (Language.mem_shuffleIdeal.mpr ((sublist_iff_exists_surfaces
+        fun e ↦ hne (by rw [List.getElem?_eq_getElem hi, e])).mpr
+        ⟨i, hs, List.getElem?_eq_getElem hi⟩))
+
+/-! ### Unbounded circumambience -/
+
+/-- Plateauing is unbounded circumambient: a unit between two flanking `a`s surfaces `a` at every
+distance, and deleting either flank leaves it as it was. -/
+theorem utp_isUnboundedCircumambient {b : α} (hb : b ≠ a) : IsUnboundedCircumambient (utp a) :=
+  .of_flanks (fill := b) (xOn := a) (yOn := a) (xOff := b) (yOff := b)
+    (n := fun d ↦ 2 * d + 2) (t := fun d ↦ d + 1) (fun d ↦ by omega) (fun d ↦ by omega)
+    (fun d ↦ by
+      rw [getElem?_utp_eq_iff.mpr ⟨(mem_take_flankWord_iff hb (by omega)).mpr rfl,
+        (mem_drop_flankWord_iff hb (by omega)).mpr rfl⟩]
+      exact fun e ↦ hb (Option.some.inj e).symm)
+    (fun d ↦ by
+      rw [getElem?_utp_of_not_surfaces fun hs ↦
+        hb ((mem_take_flankWord_iff hb (by omega)).mp hs.1)]
+      exact getElem?_flankWord_mid (by omega) (by omega))
+    (fun d ↦ by
+      rw [getElem?_utp_of_not_surfaces fun hs ↦
+        hb ((mem_drop_flankWord_iff hb (by omega)).mp hs.2)]
+      exact getElem?_flankWord_mid (by omega) (by omega))
+
+theorem utp_twoSidedUnboundedDependence {b : α} (hb : b ≠ a) :
+    TwoSidedUnboundedDependence (utp a) :=
+  (utp_isUnboundedCircumambient hb).twoSidedUnboundedDependence
+
+end
+
+/-! ### Words over H and Ø
+
+Jardine's string rendering has two letters. There a word is its length and its high positions,
+the plateauing rule takes the form of his three schemata, and the word reads back into a
+representation: plateauing is OCP-fusion followed by hull-closure of the association lines,
+Hyman and Katamba's rule as an operation on structures. -/
+
+variable {w : List AssociationState}
+
+/-- A word over H and Ø is determined by its length and its high positions. -/
+theorem eq_of_highs_eq {w w' : List AssociationState} (hl : w.length = w'.length)
+    (h : highs .H w = highs .H w') : w = w' := by
+  refine List.ext_getElem hl fun i h₁ h₂ ↦ ?_
+  have hi : w[i]? = some .H ↔ w'[i]? = some .H := Set.ext_iff.mp h i
+  rw [List.getElem?_eq_getElem h₁, List.getElem?_eq_getElem h₂] at hi
+  cases hw : w[i] <;> cases hw' : w'[i] <;> simp_all
+
+theorem getElem?_utp_eq_O_iff :
+    (utp .H w)[j]? = some .O ↔ j < w.length ∧ ¬ utp.Surfaces .H w j := by
+  by_cases hs : utp.Surfaces .H w j
+  · simp [getElem?_utp_eq_iff.mpr hs, hs]
+  · rw [getElem?_utp_of_not_surfaces hs]
+    refine ⟨fun h ↦ ⟨(List.getElem?_eq_some_iff.mp h).1, hs⟩, fun ⟨hj, _⟩ ↦ ?_⟩
+    rw [List.getElem?_eq_getElem hj]
+    cases hw : w[j] with
+    | H => exact absurd (utp.surfaces_of_getElem? (by rw [List.getElem?_eq_getElem hj, hw])) hs
+    | O => rfl
+
+/-- Over H and Ø, `utp` writes the indicator word of its plateau. -/
+theorem utp_eq_plateau_indicator :
+    utp .H w
+      = (List.range w.length).map fun i =>
+          if i ∈ plateau .H w then AssociationState.H else AssociationState.O := by
+  refine List.ext_getElem? fun i ↦ ?_
+  rcases lt_or_ge i w.length with hi | hi
+  · by_cases hs : utp.Surfaces .H w i
+    · rw [getElem?_utp_eq_iff.mpr hs]
+      simp [hs, hi]
+    · rw [getElem?_utp_eq_O_iff.mpr ⟨hi, hs⟩]
+      simp [hs, hi]
+  · rw [List.getElem?_eq_none (by simpa using hi), List.getElem?_eq_none (by simpa using hi)]
+
+/-- A toneless word is unchanged. -/
+theorem utp_replicate_O (n : ℕ) : utp AssociationState.H (List.replicate n .O) = List.replicate n .O :=
+  utp_of_notMem (by simp)
+
+/-- A word with a single H is unchanged — one H cannot trigger a plateau. -/
+theorem utp_single (m n : ℕ) :
+    utp AssociationState.H (List.replicate m .O ++ .H :: List.replicate n .O)
+      = List.replicate m .O ++ .H :: List.replicate n .O := by
+  have hH : ∀ j, (List.replicate m AssociationState.O ++ AssociationState.H ::
+      List.replicate n AssociationState.O)[j]? = some AssociationState.H ↔ j = m := fun j => by
+    simp only [List.getElem?_append, List.getElem?_cons, List.getElem?_replicate,
+      List.length_replicate]
+    split_ifs <;> simp_all <;> omega
+  rw [utp_eq_plateau_indicator, plateau_eq_Icc_of ((hH m).mpr rfl) ((hH m).mpr rfl)
+    fun j hj => by rw [hH j] at hj; omega]
+  refine List.ext_getElem (by simp) fun i h₁ h₂ => ?_
+  simp only [List.getElem_map, List.getElem_range, List.getElem_append, List.getElem_cons,
+    List.getElem_replicate, List.length_replicate, Finset.mem_Icc]
+  split_ifs <;> first | rfl | omega
+
+/-- Everything between the outermost Hs surfaces H; the medial material `w` is
+arbitrary. -/
+theorem utp_plateau (m p : ℕ) (w : List AssociationState) :
+    utp AssociationState.H (List.replicate m .O ++ .H :: (w ++ .H :: List.replicate p .O))
+      = List.replicate m .O ++ (List.replicate (w.length + 2) .H ++ List.replicate p .O) := by
+  have hb : ∀ j, (List.replicate m AssociationState.O ++ AssociationState.H ::
+      (w ++ AssociationState.H :: List.replicate p AssociationState.O))[j]? =
+        some AssociationState.H → m ≤ j ∧ j ≤ m + 1 + w.length := fun j hj => by
+    simp only [List.getElem?_append, List.getElem?_cons, List.getElem?_replicate,
+      List.length_replicate] at hj
+    split_ifs at hj <;> first | omega | simp_all
+  rw [utp_eq_plateau_indicator, plateau_eq_Icc_of (by simp) (by
+      simp only [List.getElem?_append, List.getElem?_cons, List.getElem?_replicate,
+        List.length_replicate]
+      split_ifs <;> first | rfl | omega) hb]
+  refine List.ext_getElem (by simp; omega) fun i h₁ h₂ => ?_
+  simp only [List.getElem_map, List.getElem_range, List.getElem_append,
+    List.getElem_replicate, List.length_replicate, Finset.mem_Icc]
+  split_ifs <;> first | rfl | omega
+
+/-- No plateau without two Hs; `HØØH ↦ HHHH`. -/
+example : utp AssociationState.H [.O, .O, .O, .H] = [.O, .O, .O, .H] := by decide
+example : utp AssociationState.H [.H, .O, .O, .O] = [.H, .O, .O, .O] := by decide
+example : utp AssociationState.H [.H, .O, .O, .H] = [.H, .H, .H, .H] := by decide
 
 /-- The output representation, in coordinates, is the OCP-merge and then the hull, both at the
 melody tier. -/
@@ -192,299 +436,10 @@ theorem surfacesWith_plateauAR (w : List AssociationState) (j : ℕ) :
     (List.count_pos_iff.mpr (List.take_subset _ _ hA)).ne'
   simp [plateauAR, hn]
 
-/-! ### The plateauing process -/
-
-/-- Unbounded tonal plateauing is the surfacing process in which TBU `i` surfaces H iff some
-H-toned TBU lies at or before it and some at or after it. -/
-@[simps hi lo]
-def utp : Surfacing AssociationState where
-  hi := .H
-  lo := .O
-  Surfaces w i := .H ∈ w.take (i + 1) ∧ .H ∈ w.drop i
-  hi_ne_lo := by decide
-  lt_length h := List.lt_length_of_mem_drop h.2
-  surfaces_of_hi h :=
-    ⟨List.mem_take_iff_getElem?.mpr ⟨_, Nat.lt_succ_self _, h⟩,
-      List.mem_drop_iff_getElem?.mpr ⟨_, le_rfl, h⟩⟩
-  decSurfaces w i := inferInstanceAs (Decidable (_ ∧ _))
-
-variable {w : List AssociationState} {i j k : ℕ}
-
-theorem utp.surfaces_def : utp.Surfaces w i ↔ .H ∈ w.take (i + 1) ∧ .H ∈ w.drop i :=
-  Iff.rfl
-
-/-- What surfaces is the representation. `utp.Surfaces w i` is the H-linkedness of timing slot
+/-- What surfaces is the representation. `utp.Surfaces .H w i` is the H-linkedness of timing slot
 `i` in the output representation `plateauAR w`, the OCP-merged, hull-closed realization. -/
 theorem utp.surfaces_iff_surfacesWith_plateauAR :
-    utp.Surfaces w i ↔ (plateauAR w).SurfacesWith TRN.H i :=
+    utp.Surfaces .H w i ↔ (plateauAR w).SurfacesWith TRN.H i :=
   (surfacesWith_plateauAR w i).symm
-
-theorem utp.surfaces_iff :
-    utp.Surfaces w i ↔ (∃ j ≤ i, w[j]? = some .H) ∧ ∃ j ≥ i, w[j]? = some .H := by
-  rw [utp.surfaces_def, List.mem_take_iff_getElem?, List.mem_drop_iff_getElem?]
-  simp
-
-theorem utp.surfaces_of_le_of_le (hi : utp.Surfaces w i) (hk : utp.Surfaces w k)
-    (hij : i ≤ j) (hjk : j ≤ k) : utp.Surfaces w j :=
-  utp.surfaces_def.mpr
-    ⟨w.take_subset_take_left (by omega) (utp.surfaces_def.mp hi).1,
-      w.drop_subset_drop_left (by omega) (utp.surfaces_def.mp hk).2⟩
-
-theorem utp.H_mem_of_surfaces (h : utp.Surfaces w i) : .H ∈ w :=
-  List.take_subset _ _ (utp.surfaces_def.mp h).1
-
-theorem utp.surfaces_reverse (hi : i < w.length) :
-    utp.Surfaces w.reverse i ↔ utp.Surfaces w (w.length - 1 - i) := by
-  rw [utp.surfaces_def, utp.surfaces_def, List.take_reverse, List.drop_reverse,
-    List.mem_reverse, List.mem_reverse,
-    show w.length - (i + 1) = w.length - 1 - i from by omega,
-    show w.length - i = (w.length - 1 - i) + 1 from by omega, and_comm]
-
-theorem utp.surfaces_split {a : AssociationState} (h : w[i]? = some a) :
-    utp.Surfaces w i ↔ a = .H ∨ (.H ∈ w.take i ∧ .H ∈ w.drop (i + 1)) := by
-  rcases eq_or_ne a .H with rfl | ha
-  · simp [utp.surfaces_of_hi h]
-  · obtain ⟨hi, hia⟩ := List.getElem?_eq_some_iff.mp h
-    rw [utp.surfaces_def, List.take_add_one, h, List.drop_eq_getElem_cons hi, hia]
-    simp [ha, Ne.symm ha]
-
-theorem utp.map_getElem? :
-    (utp.map w)[i]? =
-      w[i]?.map fun _ => if utp.Surfaces w i then AssociationState.H else AssociationState.O :=
-  Surfacing.map_getElem? utp
-
-theorem utp.map_getElem?_H_iff : (utp.map w)[j]? = some .H ↔ utp.Surfaces w j :=
-  utp.map_getElem?_hi_iff
-
-theorem utp.map_getElem?_O_iff :
-    (utp.map w)[j]? = some .O ↔ j < w.length ∧ ¬ utp.Surfaces w j :=
-  utp.map_getElem?_lo_iff
-
-theorem utp.map_reverse : utp.map w.reverse = (utp.map w).reverse := by
-  refine List.ext_getElem? fun i => ?_
-  by_cases hi : i < w.length
-  · rw [utp.map_getElem?, List.getElem?_reverse (by simpa using hi),
-      List.getElem?_reverse (by simpa using hi), Surfacing.map_length, utp.map_getElem?]
-    simp only [utp.surfaces_reverse hi]
-  · rw [List.getElem?_eq_none (by simp; omega), List.getElem?_eq_none (by simp; omega)]
-
-/-! ### The plateau set -/
-
-/-- The plateau of `w` is the set of positions that surface H. -/
-def plateau (w : List AssociationState) : Finset ℕ := utp.support w
-
-@[simp] theorem mem_plateau : j ∈ plateau w ↔ utp.Surfaces w j := utp.mem_support
-
-@[simp] theorem plateau_nonempty : (plateau w).Nonempty ↔ .H ∈ w :=
-  ⟨fun ⟨_, hj⟩ => utp.H_mem_of_surfaces (mem_plateau.mp hj), fun hw =>
-    have ⟨i, hi⟩ := List.mem_iff_getElem?.mp hw
-    ⟨i, mem_plateau.mpr (utp.surfaces_of_hi hi)⟩⟩
-
-/-- `utp.map` writes the indicator word of its plateau. -/
-theorem utp.map_eq_plateau_indicator :
-    utp.map w
-      = (List.range w.length).map fun i =>
-          if i ∈ plateau w then AssociationState.H else AssociationState.O :=
-  utp.map_eq_indicator
-
-theorem plateau_eq_Icc_of {lo hi : ℕ} (hlo : w[lo]? = some .H) (hhi : w[hi]? = some .H)
-    (hb : ∀ j, w[j]? = some .H → lo ≤ j ∧ j ≤ hi) : plateau w = Finset.Icc lo hi := by
-  ext j
-  rw [mem_plateau, Finset.mem_Icc, utp.surfaces_iff]
-  constructor
-  · rintro ⟨⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩
-    have hb₁ := hb j₁ h₁; have hb₂ := hb j₂ h₂; omega
-  · exact fun hj => ⟨⟨lo, hj.1, hlo⟩, hi, hj.2, hhi⟩
-
-/-- The plateau is an interval, from the first trigger to the last. -/
-theorem plateau_eq_Icc (hne : (plateau w).Nonempty) :
-    plateau w = Finset.Icc ((plateau w).min' hne) ((plateau w).max' hne) := by
-  ext j
-  rw [Finset.mem_Icc]
-  refine ⟨fun hj => ⟨(plateau w).min'_le j hj, (plateau w).le_max' j hj⟩, fun ⟨h₁, h₂⟩ =>
-    mem_plateau.mpr (utp.surfaces_of_le_of_le (mem_plateau.mp ((plateau w).min'_mem hne))
-      (mem_plateau.mp ((plateau w).max'_mem hne)) h₁ h₂)⟩
-
-/-! ### Closure laws
-
-Plateauing is a closure operator in the pointwise H-order: extensive
-(`utp.map_getElem?_H_of_getElem?_H`), monotone (`utp.map_mono`), idempotent (`utp.map_map`). The
-engine is convexity: the output's Hs are the plateau, an interval, so plateauing the
-output surfaces nothing new (`utp.surfaces_map`). -/
-
-/-- Every H survives plateauing. -/
-theorem utp.map_getElem?_H_of_getElem?_H (h : w[i]? = some .H) :
-    (utp.map w)[i]? = some .H :=
-  utp.map_getElem?_hi_of_getElem?_hi h
-
-theorem utp.surfaces_mono {w' : List AssociationState}
-    (hw : ∀ j : ℕ, w[j]? = some AssociationState.H → w'[j]? = some AssociationState.H)
-    (h : utp.Surfaces w i) :
-    utp.Surfaces w' i := by
-  obtain ⟨⟨l, hl, hlH⟩, r, hr, hrH⟩ := utp.surfaces_iff.mp h
-  exact utp.surfaces_iff.mpr ⟨⟨l, hl, hw l hlH⟩, r, hr, hw r hrH⟩
-
-/-- Plateauing is monotone, pointwise more Hs in giving pointwise more Hs out. -/
-theorem utp.map_mono {w' : List AssociationState}
-    (hw : ∀ j : ℕ, w[j]? = some AssociationState.H → w'[j]? = some AssociationState.H) (j : ℕ)
-    (h : (utp.map w)[j]? = some AssociationState.H) : (utp.map w')[j]? = some AssociationState.H :=
-  utp.map_getElem?_H_iff.mpr (utp.surfaces_mono hw (utp.map_getElem?_H_iff.mp h))
-
-theorem utp.H_mem_map : .H ∈ utp.map w ↔ .H ∈ w :=
-  ⟨fun h => have ⟨_, hi⟩ := List.mem_iff_getElem?.mp h
-    utp.H_mem_of_surfaces (utp.map_getElem?_H_iff.mp hi),
-   fun h => have ⟨i, hi⟩ := List.mem_iff_getElem?.mp h
-    List.mem_iff_getElem?.mpr ⟨i, utp.map_getElem?_H_of_getElem?_H hi⟩⟩
-
-theorem utp.surfaces_map : utp.Surfaces (utp.map w) i ↔ utp.Surfaces w i := by
-  constructor
-  · intro h
-    obtain ⟨⟨j₁, hj₁, h₁⟩, j₂, hj₂, h₂⟩ := utp.surfaces_iff.mp h
-    rw [utp.map_getElem?_H_iff] at h₁ h₂
-    obtain ⟨⟨l, hl, hlH⟩, -⟩ := utp.surfaces_iff.mp h₁
-    obtain ⟨-, r, hr, hrH⟩ := utp.surfaces_iff.mp h₂
-    exact utp.surfaces_iff.mpr ⟨⟨l, by omega, hlH⟩, r, by omega, hrH⟩
-  · exact fun h => utp.surfaces_iff.mpr ⟨⟨i, le_rfl, utp.map_getElem?_H_iff.mpr h⟩,
-      i, le_rfl, utp.map_getElem?_H_iff.mpr h⟩
-
-@[simp] theorem plateau_map : plateau (utp.map w) = plateau w := by
-  ext j
-  rw [mem_plateau, mem_plateau, utp.surfaces_map]
-
-/-- Plateauing is idempotent, a plateau being already closed. -/
-@[simp] theorem utp.map_map : utp.map (utp.map w) = utp.map w := by
-  rw [utp.map_eq_plateau_indicator (w := utp.map w), plateau_map, Surfacing.map_length,
-    ← utp.map_eq_plateau_indicator]
-
-/-! ### The outputs of plateauing
-
-A word is an output of plateauing exactly when plateauing fixes it, and it is fixed exactly
-when no `O` lies between two `H`s: the outputs are the words without an `H O H` subsequence. -/
-
-theorem utp.map_eq_self_iff : utp.map w = w ↔ ∀ i, utp.Surfaces w i → w[i]? = some .H := by
-  refine ⟨fun h i hi => h ▸ utp.map_getElem?_H_iff.mpr hi, fun h => List.ext_getElem? fun i => ?_⟩
-  by_cases hi : i < w.length
-  · by_cases hs : utp.Surfaces w i
-    · rw [utp.map_getElem?_H_iff.mpr hs, h i hs]
-    · rw [utp.map_getElem?_O_iff.mpr ⟨hi, hs⟩]
-      obtain ⟨a, ha⟩ : ∃ a, w[i]? = some a := ⟨w[i], List.getElem?_eq_getElem hi⟩
-      cases a with
-      | H => exact absurd (utp.surfaces_of_hi ha) hs
-      | O => exact ha.symm
-  · rw [List.getElem?_eq_none (by simpa using hi), List.getElem?_eq_none (by omega)]
-
-theorem utp.range_map : Set.range utp.map = Function.fixedPoints utp.map :=
-  Set.ext fun w => ⟨fun ⟨_, hv⟩ => hv ▸ utp.map_map, fun h => ⟨w, h⟩⟩
-
-theorem HOH_sublist_iff :
-    [AssociationState.H, .O, .H].Sublist w ↔ ∃ i, utp.Surfaces w i ∧ w[i]? = some .O := by
-  simp only [List.cons_sublist_iff, List.nil_sublist, and_true, utp.surfaces_iff]
-  constructor
-  · rintro ⟨r₁, r₂, rfl, h₁, s₁, s₂, rfl, h₂, t₁, t₂, rfl, h₃⟩
-    obtain ⟨a, ha⟩ := List.mem_iff_getElem?.mp h₁
-    obtain ⟨j, hj⟩ := List.mem_iff_getElem?.mp h₂
-    obtain ⟨b, hb⟩ := List.mem_iff_getElem?.mp h₃
-    have ha' := (List.getElem?_eq_some_iff.mp ha).1
-    have hj' := (List.getElem?_eq_some_iff.mp hj).1
-    refine ⟨r₁.length + j, ⟨⟨a, by omega, ?_⟩, r₁.length + s₁.length + b, by omega, ?_⟩, ?_⟩
-    · rwa [List.getElem?_append_left ha']
-    · rw [List.getElem?_append_right (by omega),
-        show r₁.length + s₁.length + b - r₁.length = s₁.length + b by omega,
-        List.getElem?_append_right (by omega), Nat.add_sub_cancel_left,
-        List.getElem?_append_left (List.getElem?_eq_some_iff.mp hb).1]
-      exact hb
-    · rw [List.getElem?_append_right (by omega), Nat.add_sub_cancel_left,
-        List.getElem?_append_left hj']
-      exact hj
-  · rintro ⟨i, ⟨⟨a, hai, ha⟩, c, hic, hc⟩, hi⟩
-    have hai' : a < i := lt_of_le_of_ne hai fun h => by subst h; simp_all
-    have hic' : i < c := lt_of_le_of_ne hic fun h => by subst h; simp_all
-    refine ⟨w.take (a + 1), w.drop (a + 1), (List.take_append_drop _ _).symm,
-      List.mem_take_iff_getElem?.mpr ⟨a, by omega, ha⟩,
-      (w.drop (a + 1)).take (i - a), w.drop (i + 1), ?_,
-      List.mem_take_iff_getElem?.mpr ⟨i - (a + 1), by omega, ?_⟩,
-      w.drop (i + 1), [], (List.append_nil _).symm,
-      List.mem_drop_iff_getElem?.mpr ⟨c, by omega, hc⟩⟩
-    · conv_lhs => rw [← List.take_append_drop (i - a) (w.drop (a + 1))]
-      rw [List.drop_drop]
-      congr 2
-      omega
-    · rw [List.getElem?_drop, show a + 1 + (i - (a + 1)) = i by omega]
-      exact hi
-
-/-- The outputs of plateauing are the words without an `H O H` subsequence. -/
-theorem utp.mem_range_map_iff : w ∈ Set.range utp.map ↔ w ∉ Language.shuffleIdeal [.H, .O, .H] := by
-  rw [utp.range_map, Function.mem_fixedPoints, Function.IsFixedPt, utp.map_eq_self_iff,
-    Language.mem_shuffleIdeal, HOH_sublist_iff]
-  push Not
-  refine forall_congr' fun i ↦ ⟨fun h hs ↦ by simp [h hs], fun h hs ↦ ?_⟩
-  have := utp.lt_length hs
-  cases ha : w[i]? with
-  | none => simp_all
-  | some a => cases a <;> simp_all
-
-/-! ### The plateauing rule
-
-The rule schemata as theorems about `utp` rather than clauses of its definition. -/
-
-/-- A toneless word is unchanged. -/
-theorem utp.map_toneless (n : ℕ) : utp.map (List.replicate n .O) = List.replicate n .O := by
-  have h : plateau (List.replicate n AssociationState.O) = ∅ :=
-    Finset.not_nonempty_iff_eq_empty.mp (by simp)
-  simp [utp.map_eq_plateau_indicator, h, List.map_const']
-
-/-- A word with a single H is unchanged — one H cannot trigger a plateau. -/
-theorem utp.map_single (m n : ℕ) :
-    utp.map (List.replicate m .O ++ .H :: List.replicate n .O)
-      = List.replicate m .O ++ .H :: List.replicate n .O := by
-  have hH : ∀ j, (List.replicate m AssociationState.O ++ AssociationState.H ::
-      List.replicate n AssociationState.O)[j]? = some AssociationState.H ↔ j = m := fun j => by
-    simp only [List.getElem?_append, List.getElem?_cons, List.getElem?_replicate,
-      List.length_replicate]
-    split_ifs <;> simp_all <;> omega
-  rw [utp.map_eq_plateau_indicator, plateau_eq_Icc_of ((hH m).mpr rfl) ((hH m).mpr rfl)
-    fun j hj => by rw [hH j] at hj; omega]
-  refine List.ext_getElem (by simp) fun i h₁ h₂ => ?_
-  simp only [List.getElem_map, List.getElem_range, List.getElem_append, List.getElem_cons,
-    List.getElem_replicate, List.length_replicate, Finset.mem_Icc]
-  split_ifs <;> first | rfl | omega
-
-/-- Everything between the outermost Hs surfaces H; the medial material `w` is
-arbitrary. -/
-theorem utp.map_plateau (m p : ℕ) (w : List AssociationState) :
-    utp.map (List.replicate m .O ++ .H :: (w ++ .H :: List.replicate p .O))
-      = List.replicate m .O ++ (List.replicate (w.length + 2) .H ++ List.replicate p .O) := by
-  have hb : ∀ j, (List.replicate m AssociationState.O ++ AssociationState.H ::
-      (w ++ AssociationState.H :: List.replicate p AssociationState.O))[j]? =
-        some AssociationState.H → m ≤ j ∧ j ≤ m + 1 + w.length := fun j hj => by
-    simp only [List.getElem?_append, List.getElem?_cons, List.getElem?_replicate,
-      List.length_replicate] at hj
-    split_ifs at hj <;> first | omega | simp_all
-  rw [utp.map_eq_plateau_indicator, plateau_eq_Icc_of (by simp) (by
-      simp only [List.getElem?_append, List.getElem?_cons, List.getElem?_replicate,
-        List.length_replicate]
-      split_ifs <;> first | rfl | omega) hb]
-  refine List.ext_getElem (by simp; omega) fun i h₁ h₂ => ?_
-  simp only [List.getElem_map, List.getElem_range, List.getElem_append,
-    List.getElem_replicate, List.length_replicate, Finset.mem_Icc]
-  split_ifs <;> first | rfl | omega
-
-/-- No plateau without two Hs; `HØØH ↦ HHHH`. -/
-example : utp.map [.O, .O, .O, .H] = [.O, .O, .O, .H] := by decide
-example : utp.map [.H, .O, .O, .O] = [.H, .O, .O, .O] := by decide
-example : utp.map [.H, .O, .O, .H] = [.H, .H, .H, .H] := by decide
-
-/-! ### Unbounded circumambience
-
-Whether the target surfaces is controlled by unboundedly distant flanks: instantiate
-the flank-witness template with `2d+2` toneless TBUs between the flanks. -/
-
-/-- UTP is unbounded circumambient. Its trigger is the two-sided window conjunction, so deleting
-either flanking H reverts the plateau target. -/
-theorem utp.isUnboundedCircumambient : IsUnboundedCircumambient utp.map :=
-  utp.isUnboundedCircumambient_of_surfaces_iff fun _ _ => utp.surfaces_def
-
-theorem utp.twoSidedUnboundedDependence : TwoSidedUnboundedDependence utp.map :=
-  utp.isUnboundedCircumambient.twoSidedUnboundedDependence
 
 end Tone

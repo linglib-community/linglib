@@ -39,7 +39,6 @@ def know : Verb where
   past := "knew"
   pastPart := "known"
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
-  vendlerClass := some .state
   passivizable := false
   complementSig := some .mono
   attitude := some (.doxastic .epistemic)
@@ -51,7 +50,6 @@ def regret : Verb where
   levin := some Levin1993.Index.regret
   doubling := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .state
   passivizable := false
   attitude := some (.preferential .negative)
   factivity := some .full
@@ -61,7 +59,6 @@ def resent : Verb where
   morphs := [.root "resent"]
   levin := some Levin1993.Index.resent
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .state
   attitude := some (.preferential .negative)
   factivity := some .full
 
@@ -70,7 +67,6 @@ def realize : Verb where
   morphs := [.root "realize"]
   levin := none
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .achievement
   passivizable := false
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
@@ -80,7 +76,6 @@ def discover : Verb where
   morphs := [.root "discover"]
   levin := some Levin1993.Index.discover
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
-  vendlerClass := some .achievement
   passivizable := false
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
@@ -90,7 +85,6 @@ def notice : Verb where
   morphs := [.root "notice"]
   levin := some Levin1993.Index.notice
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .achievement
   passivizable := false
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
@@ -109,7 +103,6 @@ def believe : Verb where
   valency := .ofLinks
     [(.finiteClause, [some 0, some 1]), (toInfinitive.withObject, [some 0, none, some 1])]
     (controls := [none, some (.complement 0)])
-  vendlerClass := some .state
   scaleDimension := some .confidence
   passivizable := false
   opaqueContext := true
@@ -122,7 +115,6 @@ def think : Verb where
   levin := some Levin1993.Index.think
   past := "thought"
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .state
   passivizable := false
   opaqueContext := true
   attitude := some (.doxastic .doxastic)
@@ -135,7 +127,6 @@ def doubt : Verb where
   morphs := [.root "doubt"]
   levin := none
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
-  vendlerClass := some .state
   scaleDimension := some .confidence
   scalePolarity := .negative
   opaqueContext := true
@@ -149,7 +140,6 @@ def want : Verb where
   morphs := [.root "want"]
   levin := some Levin1993.Index.want
   valency := .ofFrame toInfinitive (controller := some 0)
-  vendlerClass := some .state
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
@@ -163,7 +153,6 @@ def intend : Verb where
   morphs := [.root "intend"]
   levin := some Levin1993.Index.intend
   valency := .ofFrame toInfinitive (controller := some 0)
-  vendlerClass := some .state
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
@@ -178,7 +167,6 @@ def decide_ : Verb where
   levin := none
   valency := .ofFrames [toInfinitive, ArgumentFrame.finiteClause]
     (controllers := [some 0])
-  vendlerClass := some .achievement
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -189,7 +177,6 @@ def hope : Verb where
   levin := some Levin1993.Index.hope
   valency := .ofFrames [ArgumentFrame.finiteClause, toInfinitive]
     (controllers := [none, some 0])
-  vendlerClass := some .state
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
@@ -203,7 +190,6 @@ def pray : Verb where
   levin := some Levin1993.Index.pray
   valency := .ofFrames [ArgumentFrame.finiteClause, toInfinitive]
     (controllers := [none, some 0])
-  vendlerClass := some .state
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
@@ -218,7 +204,6 @@ def expect : Verb where
     [(.finiteClause, [some 0, some 1]), (toInfinitive, [some 0, some 1]),
       (toInfinitive.withObject, [some 0, none, some 1])]
     (controls := [none, some .external, some (.complement 0)])
-  vendlerClass := some .state
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
@@ -228,7 +213,6 @@ def wish : Verb where
   morphs := [.root "wish"]
   levin := some Levin1993.Index.wish
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .state
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
@@ -238,7 +222,6 @@ def fear : Verb where
   morphs := [.root "fear"]
   levin := some Levin1993.Index.fear
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .state
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .negative)
@@ -248,7 +231,6 @@ def dread : Verb where
   morphs := [.root "dread"]
   levin := some Levin1993.Index.dread
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .state
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .negative)
@@ -258,7 +240,6 @@ def worry : Verb where
   morphs := [.root "worry"]
   levin := some Levin1993.Index.worry
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .state
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .negative)
@@ -275,7 +256,6 @@ def reveal : Verb where
   levin := some Levin1993.Index.reveal
   valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
-  vendlerClass := some .achievement
   attitude := some (.doxastic .doxastic)
   factivity := some .full
 
@@ -286,7 +266,6 @@ def acknowledge : Verb where
   levin := some Levin1993.Index.acknowledge
   valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
-  vendlerClass := some .achievement
 
 
 /-- "admit" — optionally factive communication verb
@@ -297,7 +276,6 @@ def admit : Verb where
   doubling := true
   valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
-  vendlerClass := some .achievement
 
 /-- "announce" — communication verb -/
 def announce : Verb where
@@ -305,7 +283,6 @@ def announce : Verb where
   levin := some Levin1993.Index.announce
   valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
-  vendlerClass := some .achievement
 
 /-- "confess" — optionally factive communication verb -/
 def confess : Verb where
@@ -313,7 +290,6 @@ def confess : Verb where
   levin := some Levin1993.Index.confess
   valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
-  vendlerClass := some .achievement
 
 /-- "inform" — optionally factive communication verb with recipient -/
 def inform : Verb where
@@ -321,7 +297,6 @@ def inform : Verb where
   levin := none
   valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
-  vendlerClass := some .achievement
 
 /-- "suggest" — non-factive communication verb -/
 def suggest : Verb where
@@ -329,14 +304,12 @@ def suggest : Verb where
   levin := some Levin1993.Index.suggest
   valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
-  vendlerClass := some .achievement
 
 /-- "pretend" — anti-veridical attitude verb -/
 def pretend : Verb where
   morphs := [.root "pretend"]
   levin := none
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
   opaqueContext := true
 
 /-- "confirm" — evidential verb -/
@@ -344,28 +317,24 @@ def confirm : Verb where
   morphs := [.root "confirm"]
   levin := some Levin1993.Index.confirm
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .achievement
 
 /-- "demonstrate" — evidential verb -/
 def demonstrate : Verb where
   morphs := [.root "demonstrate"]
   levin := some Levin1993.Index.demonstrate
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .achievement
 
 /-- "establish" — evidential verb -/
 def establish : Verb where
   morphs := [.root "establish"]
   levin := some Levin1993.Index.establish
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .achievement
 
 /-- "prove" — evidential verb -/
 def prove : Verb where
   morphs := [.root "prove"]
   levin := some Levin1993.Index.prove
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .achievement
 
 /-! ### Question-Embedding -/
 
@@ -374,7 +343,6 @@ def wonder : Verb where
   morphs := [.root "wonder"]
   levin := some Levin1993.Index.wonder
   valency := .ofFrame ArgumentFrame.question
-  vendlerClass := some .state
   opaqueContext := true
 
 /-- "ask" — embeds questions -/
@@ -383,7 +351,6 @@ def ask : Verb where
   levin := some Levin1993.Index.ask
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.question
-  vendlerClass := some .achievement
 
 /-- "investigate" — rogative, embeds interrogatives only -/
 def investigate : Verb where
@@ -391,21 +358,18 @@ def investigate : Verb where
   levin := some Levin1993.Index.investigate
   valency := .ofFrames
     [ArgumentFrame.question, ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef)]
-  vendlerClass := some .activity
 
 /-- *depend on* is a rogative predicate, embedding only interrogatives ([dayal-2025]). -/
 def depend_on : Verb where
   morphs := [.root "depend", .free "on"]
   levin := none
   valency := .ofFrame ArgumentFrame.question
-  vendlerClass := some .state
 
 /-- "remember" in factive/question-embedding sense. -/
 def remember_rog : Verb where
   morphs := [.root "remember"]
   levin := some Levin1993.Index.remember
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
-  vendlerClass := some .state
   passivizable := false
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
@@ -420,7 +384,6 @@ def forget_rog : Verb where
   pastPart := "forgotten"
   doubling := true
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.gerund, ArgumentFrame.question]
-  vendlerClass := some .state
   passivizable := false
   attitude := some (.doxastic .epistemic)
   factivity := some .full

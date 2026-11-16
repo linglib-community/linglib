@@ -103,7 +103,7 @@ otherwise (b.iii–v). -/
 def perfectAuxiliary (v : Verb) (fr : ArgumentFrame) : PerfectAuxiliary :=
   if fr.HasNominal ∧ .acc ∈ v.objects then .have
   else if v.direction.isSome ∨ v.phasal = some .continuation ∨ fr.argumentRole .external = some .S ∧
-      (v.vendlerClass.any (·.telicity == .telic) ∨ v.scaleDimension.isSome) then .be
+      ((∃ θ ∈ v.slotProfile? .external, .changeOfState ∈ θ) ∨ v.scaleDimension.isSome) then .be
   else .have
 
 /-- A directional phrase makes an intransitive verb take *sein* (§12.3.2c). -/

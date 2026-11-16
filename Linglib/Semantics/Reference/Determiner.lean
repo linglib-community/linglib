@@ -17,16 +17,18 @@ with the pronouns of `Semantics/Reference/Pronoun.lean`:
 |---|---|---|
 | lexical record | `PersonalPronoun` | `Article`, `DemonstrativeDeterminer` |
 | referent | `g i` | `iota` of a restrictor (`Definite.unique`, `Definite.anaphoric`) |
-| defined where | `g i` is in the φ-domain (`phiDom`) | the restrictor has one member and `g d` is in the `vicinity` |
+| defined where | `g i` is in the φ-domain (`phiDom`) | the restrictor has one member and `g d` is located at the deictic content |
 
 A determiner denotes what its description does, so the two pick the same individual by
 construction. A demonstrative's deictic content narrows where it denotes, so deixis filters the
-referent but never selects it (`DemonstrativeDeterminer.mem_denote`). Following Harbour's
-spatial head χ, a demonstrative denotes where the indexed referent lies in the vicinity of a
-referent whose participants form one of its participant sets: the χ-image of the preimage of
-those sets under `SpeechAct.Context.participants`. For the first person's sets that preimage is the
-first person's φ-domain, and for the other persons' sets it is their φ-domain less the more
-prominent ones'.
+referent but never selects it (`DemonstrativeDeterminer.mem_denote`). A demonstrative reads a
+relation between participant sets and referents, a referent standing to a set when it is located
+at the referents with those participants, and denotes where the indexed referent is in the image
+of its participant sets. Harbour's spatial head χ gives one such relation, the vicinity of a
+referent with those participants
+([`SpeechAct.Context.near`](##SpeechAct.Context.near)); the relation of a referent to its own
+participants gives the personal pronoun's person
+([`image_inv_graph_participants`](##SpeechAct.Context.image_inv_graph_participants)).
 
 ## Main declarations
 
@@ -39,18 +41,17 @@ prominent ones'.
 ## Implementation notes
 
 Context is the entity assignment `ℕ → E` and the world coordinate is the resource situation
-`W`, as for `PersonalPronoun.denote`. A demonstrative also reads the context of utterance, whose
-agent and addressee fix the participants of a referent, and a vicinity relation `χ : SetRel E E`.
-Harbour leaves the anchoring referent free; the presupposition closes it existentially, his reading
-of English *here* as the vicinity of any group containing the speaker. A demonstrative without a
-deictic contrast covers every participant set and so presupposes only that its referent lies in some
-vicinity: its deictic centre is the whole discourse space, as Terenghi puts it. Harbour's (16) and
-Moroney's (147)–(148) put the deictic condition inside the restriction, where it can select among
-the restrictor's satisfiers; here it is a presupposition on the indexed referent of the
-strong-article description, and the two coincide whenever the index supplies a referent that meets
-the condition. Distance, visibility and elevation, which cross-cut the person cells, are not
-modeled. `QuantificationalDeterminer`, whose denotation is a determiner denotation rather than an
-individual one, has no `Definite`.
+`W`, as for `PersonalPronoun.denote`. A demonstrative also reads a relation
+`N : SetRel (Finset Role) E` locating referents at participant sets. Harbour leaves the anchoring
+referent free; `SpeechAct.Context.near` closes it existentially, his reading of English *here* as
+the vicinity of any group containing the speaker. A demonstrative without a deictic contrast covers
+every participant set and so presupposes only that its referent is located somewhere: its deictic
+centre is the whole discourse space, as Terenghi puts it. Harbour's (16) and Moroney's (147)–(148)
+put the deictic condition inside the restriction, where it can select among the restrictor's
+satisfiers; here it is a presupposition on the indexed referent of the strong-article description,
+and the two coincide whenever the index supplies a referent that meets the condition. Distance,
+visibility and elevation enter through the relation. `QuantificationalDeterminer`, whose denotation
+is a determiner denotation rather than an individual one, has no `Definite`.
 
 ## References
 
@@ -74,67 +75,55 @@ variable {E W : Type} (R : (ℕ → E) → W → Set E) (d : ℕ) (possessor : (
 
 section Demonstrative
 
-variable {P T : Type} [PartialOrder E] (c : Context W E P T) (χ : SetRel E E)
+/-- The referents whose participants form one of the sets `S` are the image of `S` under the
+relation of a referent to its participants. -/
+theorem _root_.SpeechAct.Context.image_inv_graph_participants {P T : Type} [PartialOrder E]
+    (c : Context W E P T) (S : Set (Finset Role)) :
+    (Function.graph c.participants).inv.image S = c.participants ⁻¹' S := by
+  rw [SetRel.image_inv, Set.preimage_eq]
 
-/-- The vicinity of a demonstrative holds the referents in the vicinity of a referent whose
-participants form one of its participant sets. It is the domain of the demonstrative's deictic
-feature, as `PersonalPronoun.phiDom` is of a pronoun's φ-features. -/
-def _root_.DemonstrativeDeterminer.vicinity (dem : DemonstrativeDeterminer) : Set E :=
-  χ.image (c.participants ⁻¹' dem.deixis)
+/-- At a context, a referent is near a participant set when it is in the vicinity `χ` of a
+referent with those participants: Harbour's spatial head applied to a person. -/
+def _root_.SpeechAct.Context.near {P T : Type} [PartialOrder E] (c : Context W E P T)
+    (χ : SetRel E E) : SetRel (Finset Role) E :=
+  (Function.graph c.participants).inv ○ χ
 
-variable {c χ} in
-@[simp] theorem _root_.DemonstrativeDeterminer.mem_vicinity {dem : DemonstrativeDeterminer}
-    {x : E} : x ∈ dem.vicinity c χ ↔ ∃ y, c.participants y ∈ dem.deixis ∧ y ~[χ] x := by
-  simp [DemonstrativeDeterminer.vicinity, SetRel.image]
+@[simp] theorem _root_.SpeechAct.Context.image_near {P T : Type} [PartialOrder E]
+    (c : Context W E P T) (χ : SetRel E E) (S : Set (Finset Role)) :
+    (c.near χ).image S = χ.image (c.participants ⁻¹' S) := by
+  rw [SpeechAct.Context.near, SetRel.image_comp, c.image_inv_graph_participants]
 
-theorem _root_.DemonstrativeDeterminer.vicinity_mono {dem₁ dem₂ : DemonstrativeDeterminer}
-    (h : dem₁.deixis ⊆ dem₂.deixis) : dem₁.vicinity c χ ⊆ dem₂.vicinity c χ :=
-  SetRel.image_mono (Set.preimage_mono (Finset.coe_subset.2 h))
-
-/-- Two demonstratives with complementary participant sets cover between them every referent in
-the vicinity of anything. -/
-theorem _root_.DemonstrativeDeterminer.vicinity_union_of_compl
-    {dem₁ dem₂ : DemonstrativeDeterminer} (h : dem₂.deixis = dem₁.deixisᶜ) :
-    dem₁.vicinity c χ ∪ dem₂.vicinity c χ = {x | ∃ y, y ~[χ] x} := by
-  ext x
-  simp only [Set.mem_union, DemonstrativeDeterminer.mem_vicinity, h, Finset.mem_compl,
-    Set.mem_ofPred_eq]
-  constructor
-  · rintro (⟨y, -, hy⟩ | ⟨y, -, hy⟩) <;> exact ⟨y, hy⟩
-  · rintro ⟨y, hy⟩
-    by_cases hm : c.participants y ∈ dem₁.deixis
-    · exact .inl ⟨y, hm, hy⟩
-    · exact .inr ⟨y, hm, hy⟩
+variable (N : SetRel (Finset Role) E)
 
 /-- A demonstrative determiner denotes the referent of the demonstrative description at discourse
-index `d` where the indexed referent `g d` lies in its vicinity, and nothing elsewhere. -/
+index `d` where the indexed referent `g d` is located at one of its participant sets, and nothing
+elsewhere. -/
 noncomputable def _root_.DemonstrativeDeterminer.denote (dem : DemonstrativeDeterminer) :
     Definite (ℕ → E) W E :=
-  fun g w ↦ Part.assert (g d ∈ dem.vicinity c χ)
+  fun g w ↦ Part.assert (g d ∈ N.image dem.deixis)
     fun _ ↦ anaphoric R d g w
 
-/-- A demonstrative determiner denotes on every model, the restrictor, the index, the context of
-utterance and the vicinity relation being the Reader arguments of its domain. -/
+/-- A demonstrative determiner denotes on every model, the restrictor, the index and the relation
+locating referents at participant sets being the Reader arguments of its domain. -/
 noncomputable instance : Denotes DemonstrativeDeterminer
-    (∀ (E W P T : Type) [PartialOrder E], ((ℕ → E) → W → Set E) → ℕ → Context W E P T →
-      SetRel E E →
+    (∀ (E W : Type), ((ℕ → E) → W → Set E) → ℕ → SetRel (Finset Role) E →
       Definite (ℕ → E) W E) :=
-  ⟨fun dem _ _ _ _ _ ↦ dem.denote⟩
+  ⟨fun dem _ _ ↦ dem.denote⟩
 
-variable {R d c χ} in
-/-- A demonstrative denotes what the anaphoric description does, where the indexed referent is in
-its vicinity: deixis filters the referent and never selects it. -/
+variable {R d N} in
+/-- A demonstrative denotes what the anaphoric description does, where the indexed referent is
+located at one of its participant sets: deixis filters the referent and never selects it. -/
 @[simp] theorem _root_.DemonstrativeDeterminer.mem_denote {dem : DemonstrativeDeterminer}
     {g : ℕ → E} {s : W} {x : E} :
-    x ∈ dem.denote R d c χ g s ↔
-      g d ∈ dem.vicinity c χ ∧ x ∈ anaphoric R d g s := by
+    x ∈ dem.denote R d N g s ↔
+      g d ∈ N.image dem.deixis ∧ x ∈ anaphoric R d g s := by
   simp only [DemonstrativeDeterminer.denote, Part.mem_assert_iff, exists_prop]
 
-variable {R d c χ} in
+variable {R d N} in
 /-- Two demonstratives denote the same individual where both denote. -/
 theorem _root_.DemonstrativeDeterminer.eq_of_mem_denote {dem₁ dem₂ : DemonstrativeDeterminer}
-    {g : ℕ → E} {s : W} {x y : E} (hx : x ∈ dem₁.denote R d c χ g s)
-    (hy : y ∈ dem₂.denote R d c χ g s) : x = y :=
+    {g : ℕ → E} {s : W} {x y : E} (hx : x ∈ dem₁.denote R d N g s)
+    (hy : y ∈ dem₂.denote R d N g s) : x = y :=
   Part.mem_unique (DemonstrativeDeterminer.mem_denote.1 hx).2
     (DemonstrativeDeterminer.mem_denote.1 hy).2
 

@@ -153,7 +153,7 @@ prior expectation, the comparison of Figure 1C. -/
 theorem endorse_iff (hlam : 0 < lam) (hw : μ {w} ≠ 0) (hZ : expectedMeaning μ ν prev ≠ 0) :
     Endorsed lam μ ν prev w ↔ expectedMeaning μ ν prev < meaning ν prev .generic w := by
   rw [Endorsed, endorser, speaker_dirac_real_singleton_lt_iff (L := listener μ ν prev) (w := w)
-    hlam.le ⟨.silent, by rwa [listener_silent]⟩]
+    hlam.le]
   simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
   rw [ENNReal.rpow_lt_rpow_iff hlam, listener_silent, listener_generic_apply,
     ENNReal.lt_div_iff_mul_lt (Or.inl hZ) (Or.inl (expectedMeaning_ne_top μ ν prev)), mul_comm,
@@ -300,7 +300,7 @@ theorem boundary_of_symm (μ : Measure W) [IsProbabilityMeasure μ] (σ : W ≃ 
       (endorser lam μ uniformThreshold prev w).real {.silent} := by
     rw [endorser,
       speaker_dirac_real_singleton_lt_iff (L := listener μ uniformThreshold prev) (w := w)
-      hlam.le ⟨.silent, by rwa [listener_silent]⟩]
+      hlam.le]
     simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
     rw [ENNReal.rpow_lt_rpow_iff hlam, listener_silent, listener_generic_apply,
       expectedMeaning_uniformThreshold prev μ hp, meaning_uniformThreshold prev hp, hE, hhalf,

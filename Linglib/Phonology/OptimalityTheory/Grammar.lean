@@ -39,63 +39,65 @@ hypothesis `G.extent.Nonempty` of the statements that need it.
 
 namespace OptimalityTheory
 
-variable {n : ℕ}
+variable {ι : Type*} {n : ℕ}
 
-/-- An *Optimality-theoretic grammar* over `n` constraints: a formal concept of the satisfaction
+/-- An *Optimality-theoretic grammar* over the constraints `ι`: a formal concept of the satisfaction
 relation between rankings and ERCs. Its extent is the set of its rankings and its intent the set
 of ERCs that all of them satisfy. -/
-abbrev Grammar (n : ℕ) := Concept (Ranking (Fin n) n) (ERC (Fin n)) ERC.SatisfiedBy
+abbrev Grammar (ι : Type*) (n : ℕ) := Concept (Ranking ι n) (ERC ι) ERC.SatisfiedBy
 
 namespace Grammar
 
-variable {E E' : Set (ERC (Fin n))} {σ : Ranking (Fin n) n} {G : Grammar n}
+variable {E E' : Set (ERC ι)} {σ : Ranking ι n} {G : Grammar ι n}
 
 /-- The grammar presented by a set of ERCs, whose rankings are those satisfying all of them. -/
-abbrev ofERCs (E : Set (ERC (Fin n))) : Grammar n := Concept.ofAttributes _ E
+abbrev ofERCs (E : Set (ERC ι)) : Grammar ι n := Concept.ofAttributes _ E
 
 theorem mem_extent_ofERCs : σ ∈ (ofERCs E).extent ↔ ∀ α ∈ E, α.SatisfiedBy σ := Iff.rfl
 
-theorem coe_linearExtensions (E : Finset (ERC (Fin n))) :
-    (ERC.linearExtensions E : Set (Ranking (Fin n) n)) =
-      (ofERCs (E : Set (ERC (Fin n)))).extent := by
+theorem coe_linearExtensions [Fintype ι] [DecidableEq ι] (E : Finset (ERC ι)) :
+    ((ERC.linearExtensions E : Finset (Ranking ι n)) : Set (Ranking ι n)) =
+      (ofERCs (E : Set (ERC ι))).extent := by
   ext σ
   rw [Finset.mem_coe, ERC.mem_linearExtensions, mem_extent_ofERCs]
   rfl
 
 /-- Two sets of ERCs present the same grammar iff the same rankings satisfy them. -/
-theorem ofERCs_eq_iff : ofERCs E = ofERCs E' ↔
-    ∀ σ : Ranking (Fin n) n, (∀ α ∈ E, α.SatisfiedBy σ) ↔ ∀ α ∈ E', α.SatisfiedBy σ :=
+theorem ofERCs_eq_iff : (ofERCs E : Grammar ι n) = ofERCs E' ↔
+    ∀ σ : Ranking ι n, (∀ α ∈ E, α.SatisfiedBy σ) ↔ ∀ α ∈ E', α.SatisfiedBy σ :=
   Concept.extent_injective.eq_iff.symm.trans Set.ext_iff
 
 /-- Over at least one constraint the bottom grammar has no ranking, since no ranking satisfies
 the ERC with every constraint loser-preferring. -/
-theorem extent_bot [NeZero n] : (⊥ : Grammar n).extent = ∅ := by
+theorem extent_bot [Nonempty ι] : (⊥ : Grammar ι n).extent = ∅ := by
+  obtain ⟨i⟩ := ‹Nonempty ι›
   refine Set.eq_empty_of_forall_notMem fun σ hσ ↦ ?_
   have h : ERC.SatisfiedBy σ (fun _ ↦ .L) :=
     Concept.extent_subset_extent_iff.2 (bot_le (a := ofERCs {fun _ ↦ .L})) hσ
       (Set.mem_singleton _)
-  obtain ⟨w, hw, -⟩ := (ERC.satisfiedBy_iff_dominance σ _).1 h 0 rfl
+  obtain ⟨w, hw, -⟩ := (ERC.satisfiedBy_iff_dominance σ _).1 h i rfl
   exact absurd hw (by decide)
 
 /-- A grammar over at least one constraint is inconsistent iff it has no ranking. -/
-theorem eq_bot_iff_extent [NeZero n] : G = ⊥ ↔ G.extent = ∅ :=
+theorem eq_bot_iff_extent [Nonempty ι] : G = ⊥ ↔ G.extent = ∅ :=
   ⟨fun h ↦ h ▸ extent_bot, fun h ↦ Concept.ext (h.trans extent_bot.symm)⟩
 
 /-! ### The antimatroid of a grammar -/
 
 /-- The antimatroid of a grammar with a ranking: the antimatroid of its conditions, whose feasible
 sets are the top segments of its rankings (`toAntimatroid_isFeasible`). -/
-def toAntimatroid (G : Grammar n) (h : G.extent.Nonempty) : Antimatroid (Fin n) :=
+def toAntimatroid [Fintype ι] (G : Grammar ι n) (h : G.extent.Nonempty) : Antimatroid ι :=
   ERC.toAntimatroid G.intent (h.imp fun _ hσ _ hα ↦ G.rel_extent_intent hσ hα)
 
-theorem toAntimatroid_isFeasible (h : G.extent.Nonempty) (S : Set (Fin n)) :
+theorem toAntimatroid_isFeasible [Fintype ι] (h : G.extent.Nonempty) (S : Set ι) :
     (G.toAntimatroid h).IsFeasible S ↔ ∃ σ ∈ G.extent, ∃ k : Fin (n + 1), ↑(σ.take k) = S := by
   rw [toAntimatroid, ERC.toAntimatroid_isFeasible, ← G.lowerPolar_intent]
   rfl
 
 /-- The antimatroid of the grammar that a set of ERCs presents is the antimatroid of the set. -/
-theorem toAntimatroid_ofERCs_isFeasible (h : (ofERCs E).extent.Nonempty) (S : Set (Fin n)) :
-    ((ofERCs E).toAntimatroid h).IsFeasible S ↔ ERC.IsFeasible E S :=
+theorem toAntimatroid_ofERCs_isFeasible [Fintype ι]
+    (h : (ofERCs E : Grammar ι n).extent.Nonempty) (S : Set ι) :
+    ((ofERCs E).toAntimatroid h).IsFeasible S ↔ ERC.IsFeasible n E S :=
   toAntimatroid_isFeasible h S
 
 end Grammar
@@ -116,11 +118,11 @@ them all are the linear extensions of the relation. -/
 
 section Rel
 
-variable {r : Fin n → Fin n → Prop} {σ : Ranking (Fin n) n}
+variable [DecidableEq ι] {r : ι → ι → Prop} {σ : Ranking ι n}
 
 /-- The ERCs of a relation: the simple ERC `a ≫ b` for each related pair, which is trivial when
 `a = b`. -/
-def ERC.ofRel (r : Fin n → Fin n → Prop) : Set (ERC (Fin n)) :=
+def ERC.ofRel (r : ι → ι → Prop) : Set (ERC ι) :=
   {α | ∃ a b, r a b ∧ simpleERC a b = α}
 
 theorem ERC.forall_mem_ofRel_satisfiedBy_iff :
@@ -130,41 +132,42 @@ theorem ERC.forall_mem_ofRel_satisfiedBy_iff :
   obtain ⟨a, b, hab, rfl⟩ := hα
   exact (simpleERC_satisfiedBy_toRel_iff a b σ).2 (h a b hab)
 
-theorem ERC.isSimple_or_isTrivial_of_mem_ofRel {α : ERC (Fin n)} (hα : α ∈ ERC.ofRel r) :
+theorem ERC.isSimple_or_isTrivial_of_mem_ofRel {α : ERC ι} (hα : α ∈ ERC.ofRel r) :
     α.IsSimple ∨ α.IsTrivial := by
   obtain ⟨a, b, -, rfl⟩ := hα
   exact simpleERC_isSimple_or_isTrivial a b
 
 /-- The grammar of a relation on the constraints, whose rankings are its linear extensions. -/
-def Grammar.ofRel (r : Fin n → Fin n → Prop) : Grammar n := .ofERCs (ERC.ofRel r)
+def Grammar.ofRel (r : ι → ι → Prop) : Grammar ι n := .ofERCs (ERC.ofRel r)
 
 @[simp] theorem Grammar.mem_extent_ofRel :
     σ ∈ (Grammar.ofRel r).extent ↔ σ.IsLinearExtension r :=
   ERC.forall_mem_ofRel_satisfiedBy_iff
 
-theorem Grammar.extent_ofRel (r : Fin n → Fin n → Prop) [DecidableRel r] :
-    (Grammar.ofRel r).extent = ↑(Ranking.linearExtensions r) := by
+theorem Grammar.extent_ofRel [Fintype ι] (r : ι → ι → Prop) [DecidableRel r] :
+    (Grammar.ofRel r : Grammar ι n).extent = ↑(Ranking.linearExtensions (n := n) r) := by
   ext σ
   rw [Grammar.mem_extent_ofRel, Finset.mem_coe, Ranking.mem_linearExtensions]
 
 /-- A ranking is the only ranking of the grammar of its own order. -/
-theorem Grammar.extent_ofRel_toRel (σ : Ranking (Fin n) n) :
+theorem Grammar.extent_ofRel_toRel (σ : Ranking ι n) :
     (Grammar.ofRel σ.toRel).extent = {σ} := by
   ext τ
   rw [Grammar.mem_extent_ofRel, Set.mem_singleton_iff, Ranking.IsLinearExtension,
     Ranking.toRel_le_toRel_iff, eq_comm]
 
 /-- The grammar of a partial order has a ranking. -/
-theorem Grammar.extent_ofRel_nonempty (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r] :
-    (Grammar.ofRel r).extent.Nonempty :=
-  (Ranking.exists_isLinearExtension r).imp fun _ ↦ Grammar.mem_extent_ofRel.2
+theorem Grammar.extent_ofRel_nonempty [Fintype ι] (r : ι → ι → Prop) [IsPartialOrder ι r]
+    (hn : Fintype.card ι = n := by simp) : (Grammar.ofRel r : Grammar ι n).extent.Nonempty :=
+  (Ranking.exists_isLinearExtension r hn).imp fun _ ↦ Grammar.mem_extent_ofRel.2
 
-private theorem forall_isFeasible_ofRel_iff (h : (Grammar.ofRel r).extent.Nonempty)
-    {S : Finset (Fin n)} :
-    (∀ α ∈ ERC.ofRel r, ERC.IsFeasible {α} (S : Set (Fin n))) ↔
+private theorem forall_isFeasible_ofRel_iff [Fintype ι]
+    (h : (Grammar.ofRel r : Grammar ι n).extent.Nonempty)
+    {S : Finset ι} :
+    (∀ α ∈ ERC.ofRel r, ERC.IsFeasible n {α} (S : Set ι)) ↔
       ∀ a b, r a b → b ∈ S → a ∈ S := by
   obtain ⟨σ, hσ⟩ := h
-  have hsat : ∀ α ∈ ERC.ofRel r, ∃ σ : Ranking (Fin n) n, ERC.SatisfiedBy σ α :=
+  have hsat : ∀ α ∈ ERC.ofRel r, ∃ σ : Ranking ι n, ERC.SatisfiedBy σ α :=
     fun α hα ↦ ⟨σ, hσ hα⟩
   refine ⟨fun h a b hrel hbS ↦ ?_, fun h α hα ↦ ?_⟩
   · rcases eq_or_ne a b with rfl | hab
@@ -183,9 +186,10 @@ private theorem forall_isFeasible_ofRel_iff (h : (Grammar.ofRel r).extent.Nonemp
 /-- The feasible sets of the antimatroid of a relation's grammar are its order ideals, the sets
 containing every constraint that the relation ranks above one of their members
 ([dilworth-1940], [merchant-riggle-2016]). -/
-theorem Grammar.toAntimatroid_ofRel_isFeasible (h : (Grammar.ofRel r).extent.Nonempty)
-    {S : Finset (Fin n)} :
-    ((Grammar.ofRel r).toAntimatroid h).IsFeasible (↑S : Set (Fin n)) ↔
+theorem Grammar.toAntimatroid_ofRel_isFeasible [Fintype ι]
+    (h : (Grammar.ofRel r : Grammar ι n).extent.Nonempty)
+    {S : Finset ι} :
+    ((Grammar.ofRel r).toAntimatroid h).IsFeasible (↑S : Set ι) ↔
       ∀ a b, r a b → b ∈ S → a ∈ S := by
   refine (Grammar.toAntimatroid_ofERCs_isFeasible (E := ERC.ofRel r) h _).trans ?_
   rw [ERC.isFeasible_iff_forall_singleton_of_simple h

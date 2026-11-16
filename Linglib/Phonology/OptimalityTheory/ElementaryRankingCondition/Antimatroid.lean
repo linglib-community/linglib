@@ -8,7 +8,7 @@ public import Mathlib.Order.Prod.Lex.Basic
 # ERC sets and antimatroids
 
 Merchant and Riggle show that consistent sets of elementary ranking conditions (ERCs) over `n`
-constraints and antimatroids on `Fin n` are the same objects. A set of ERCs determines the
+constraints and antimatroids on the constraints are the same objects. A set of ERCs determines the
 family of the top segments of the rankings that satisfy it, which is an antimatroid; an
 antimatroid determines one ERC for each of its rooted circuits. The two maps are inverse to
 each other, the second up to logical equivalence, and both preserve entailment.
@@ -41,7 +41,7 @@ each other, the second up to logical equivalence, and both preserve entailment.
   satisfied by the same rankings. Equality fails, since a chain's rooted circuits include its
   transitive edges, so the theorem states the equivalence.
 * Antimatroids carry a ground set, as mathlib's `Matroid` does; the inverse laws assume it is
-  all of `Fin n`, which is the paper's setting.
+  every constraint, which is the paper's setting.
 
 ## References
 
@@ -56,35 +56,39 @@ namespace OptimalityTheory
 
 namespace ERC
 
-variable {n : ℕ} {E F : Set (ERC (Fin n))} {S T : Set (Fin n)}
+variable {ι : Type*} [Fintype ι] {n : ℕ} {E F : Set (ERC ι)} {S T : Set ι}
 
 /-! ### The feasible sets of a set of ERCs -/
 
 /-- A set of constraints is feasible for a set of ERCs when it is the set of the top `k`
 constraints of a ranking that satisfies all of them. -/
-def IsFeasible (E : Set (ERC (Fin n))) (S : Set (Fin n)) : Prop :=
-  ∃ r : Ranking (Fin n) n, (∀ α ∈ E, SatisfiedBy r α) ∧ ∃ k, ↑(r.take k) = S
+def IsFeasible (n : ℕ) (E : Set (ERC ι)) (S : Set ι) : Prop :=
+  ∃ r : Ranking ι n, (∀ α ∈ E, SatisfiedBy r α) ∧ ∃ k, ↑(r.take k) = S
 
-theorem isFeasible_take {r : Ranking (Fin n) n} (hr : ∀ α ∈ E, SatisfiedBy r α)
-    (k : Fin (n + 1)) : IsFeasible E ↑(r.take k) :=
+omit [Fintype ι] in
+theorem isFeasible_take {r : Ranking ι n} (hr : ∀ α ∈ E, SatisfiedBy r α)
+    (k : Fin (n + 1)) : IsFeasible n E ↑(r.take k) :=
   ⟨r, hr, k, rfl⟩
 
-theorem isFeasible_coe_iff (E : Finset (ERC (Fin n))) (S : Finset (Fin n)) :
-    IsFeasible (E : Set (ERC (Fin n))) (S : Set (Fin n)) ↔
-      ∃ r ∈ linearExtensions E, ∃ k, r.take k = S := by
+theorem isFeasible_coe_iff [DecidableEq ι] (E : Finset (ERC ι)) (S : Finset ι) :
+    IsFeasible n (E : Set (ERC ι)) (S : Set ι) ↔
+      ∃ r ∈ linearExtensions (n := n) E, ∃ k, r.take k = S := by
   simp [IsFeasible]
 
-theorem linearExtensions_nonempty_iff (E : Finset (ERC (Fin n))) :
-    (linearExtensions E).Nonempty ↔ ∃ r : Ranking (Fin n) n, ∀ α ∈ (E : Set _), SatisfiedBy r α :=
+theorem linearExtensions_nonempty_iff [DecidableEq ι] (E : Finset (ERC ι)) :
+    (linearExtensions (n := n) E).Nonempty ↔
+      ∃ r : Ranking ι n, ∀ α ∈ (E : Set _), SatisfiedBy r α :=
   by simp [Finset.Nonempty]
 
-theorem IsFeasible.mono (h : ∀ r : Ranking (Fin n) n, (∀ α ∈ E, SatisfiedBy r α) →
-    ∀ α ∈ F, SatisfiedBy r α) (hS : IsFeasible E S) : IsFeasible F S := by
+omit [Fintype ι] in
+theorem IsFeasible.mono (h : ∀ r : Ranking ι n, (∀ α ∈ E, SatisfiedBy r α) →
+    ∀ α ∈ F, SatisfiedBy r α) (hS : IsFeasible n E S) : IsFeasible n F S := by
   obtain ⟨r, hr, k, hk⟩ := hS
   exact ⟨r, h r hr, k, hk⟩
 
-theorem satisfiedBy_iff_forall_isFeasible_take (r : Ranking (Fin n) n) :
-    (∀ α ∈ E, SatisfiedBy r α) ↔ ∀ k, IsFeasible E ↑(r.take k) := by
+omit [Fintype ι] in
+theorem satisfiedBy_iff_forall_isFeasible_take (r : Ranking ι n) :
+    (∀ α ∈ E, SatisfiedBy r α) ↔ ∀ k, IsFeasible n E ↑(r.take k) := by
   refine ⟨fun h k ↦ isFeasible_take h k, fun h α hα ↦ ?_⟩
   rw [satisfiedBy_iff_dominance]
   intro l hl
@@ -99,9 +103,9 @@ theorem satisfiedBy_iff_forall_isFeasible_take (r : Ranking (Fin n) n) :
   simp only [Ranking.mem_take, Fin.val_succ] at hw
   omega
 
-theorem isFeasible_singleton_iff {α : ERC (Fin n)} (hα : ∃ r : Ranking (Fin n) n, SatisfiedBy r α)
-    (S : Finset (Fin n)) :
-    IsFeasible {α} ↑S ↔ ((∃ l ∈ S, α l = .L) → ∃ w ∈ S, α w = .W) := by
+theorem isFeasible_singleton_iff {α : ERC ι} (hα : ∃ r : Ranking ι n, SatisfiedBy r α)
+    (S : Finset ι) :
+    IsFeasible n {α} ↑S ↔ ((∃ l ∈ S, α l = .L) → ∃ w ∈ S, α w = .W) := by
   classical
   constructor
   · rintro ⟨r, hr, k, hk⟩ ⟨l, hlS, hlL⟩
@@ -110,10 +114,10 @@ theorem isFeasible_singleton_iff {α : ERC (Fin n)} (hα : ∃ r : Ranking (Fin 
     exact ⟨w, hk ▸ r.mem_take_of_dominates hdom (hk ▸ hlS), hwW⟩
   · intro hloc
     obtain ⟨r₀, hr₀⟩ := hα
-    let key : Fin n → ℕ ×ₗ (ℕ ×ₗ Fin n) := fun i ↦
-      toLex (if i ∈ S then 0 else 1, toLex (if α i = .W then 0 else 1, i))
-    obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff (n := n) key fun i j h ↦
-      congrArg Prod.snd (toLex_inj.mp (congrArg Prod.snd (toLex_inj.mp h)))
+    let key : ι → ℕ ×ₗ (ℕ ×ₗ Fin n) := fun i ↦
+      toLex (if i ∈ S then 0 else 1, toLex (if α i = .W then 0 else 1, r₀.symm i))
+    obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff key (fun i j h ↦ r₀.symm.injective
+      (congrArg Prod.snd (toLex_inj.mp (congrArg Prod.snd (toLex_inj.mp h))))) r₀.card_eq
     obtain ⟨k, hk⟩ := r.exists_take_eq S fun i hi j hj ↦
       (hr i j).2 (Prod.Lex.lt_iff.2 (Or.inl (by simp [key, hi, hj])))
     refine ⟨r, fun β hβ ↦ ?_, k, by rw [hk]⟩
@@ -132,21 +136,21 @@ theorem isFeasible_singleton_iff {α : ERC (Fin n)} (hα : ∃ r : Ranking (Fin 
 
 /-! ### Union closure -/
 
-theorem IsFeasible.union (hS : IsFeasible E S) (hT : IsFeasible E T) :
-    IsFeasible E (S ∪ T) := by
+theorem IsFeasible.union (hS : IsFeasible n E S) (hT : IsFeasible n E T) :
+    IsFeasible n E (S ∪ T) := by
   classical
   obtain ⟨r₁, hr₁, k₁, rfl⟩ := hS
   obtain ⟨r₂, hr₂, k₂, rfl⟩ := hT
   set S' := r₁.take k₁
   set T' := r₂.take k₂
-  let b : Fin n → ℕ := fun i ↦ if i ∈ S' then 0 else if i ∈ T' then 1 else 2
-  let g : Fin n → Ranking (Fin n) n := fun i ↦ if b i = 1 then r₂ else r₁
+  let b : ι → ℕ := fun i ↦ if i ∈ S' then 0 else if i ∈ T' then 1 else 2
+  let g : ι → Ranking ι n := fun i ↦ if b i = 1 then r₂ else r₁
   have hkey : Function.Injective fun i ↦ toLex (b i, (g i).symm i) := by
     intro i j h
     obtain ⟨hb, hg⟩ := Prod.mk.inj (toLex_inj.mp h)
     rw [show g j = g i by simp only [g, hb]] at hg
     exact (g i).symm.injective hg
-  obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff (n := n) _ hkey
+  obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff _ hkey r₁.card_eq
   have hlt : ∀ w l, b w ≤ b l → (g l).Dominates w l → r.Dominates w l := by
     intro w l hb hwl
     rw [hr, Prod.Lex.lt_iff]
@@ -185,10 +189,10 @@ theorem IsFeasible.union (hS : IsFeasible E S) (hT : IsFeasible E T) :
 
 /-- The antimatroid of a consistent set of ERCs, whose feasible sets are the top segments of the
 rankings that satisfy it. -/
-def toAntimatroid (E : Set (ERC (Fin n)))
-    (hcons : ∃ r : Ranking (Fin n) n, ∀ α ∈ E, SatisfiedBy r α) : Antimatroid (Fin n) where
+def toAntimatroid (E : Set (ERC ι))
+    (hcons : ∃ r : Ranking ι n, ∀ α ∈ E, SatisfiedBy r α) : Antimatroid ι where
   E := Set.univ
-  IsFeasible := IsFeasible E
+  IsFeasible := IsFeasible n E
   empty_feasible := by
     obtain ⟨r, hr⟩ := hcons
     exact ⟨r, hr, 0, by simp⟩
@@ -221,13 +225,13 @@ def toAntimatroid (E : Set (ERC (Fin n)))
       Set.sdiff_singleton_eq_self (by simp)]
   union_closed _ _ := IsFeasible.union
 
-@[simp] theorem toAntimatroid_E (hcons : ∃ r : Ranking (Fin n) n, ∀ α ∈ E, SatisfiedBy r α) :
+@[simp] theorem toAntimatroid_E (hcons : ∃ r : Ranking ι n, ∀ α ∈ E, SatisfiedBy r α) :
     (toAntimatroid E hcons).E = Set.univ :=
   rfl
 
 @[simp] theorem toAntimatroid_isFeasible
-    (hcons : ∃ r : Ranking (Fin n) n, ∀ α ∈ E, SatisfiedBy r α) :
-    (toAntimatroid E hcons).IsFeasible S ↔ IsFeasible E S :=
+    (hcons : ∃ r : Ranking ι n, ∀ α ∈ E, SatisfiedBy r α) :
+    (toAntimatroid E hcons).IsFeasible S ↔ IsFeasible n E S :=
   Iff.rfl
 
 /-! ### The simple fragment
@@ -241,17 +245,17 @@ feasible for each of them. A set feasible for each is a top segment of the ranki
 it first and the rest after, each in the order of a ranking satisfying all the ERCs, since each
 ERC's loser in the set has its unique winner in the set. -/
 theorem isFeasible_iff_forall_singleton_of_simple
-    (hcons : ∃ r : Ranking (Fin n) n, ∀ α ∈ E, SatisfiedBy r α)
-    (hsimple : ∀ α ∈ E, α.IsSimple ∨ α.IsTrivial) (S : Finset (Fin n)) :
-    IsFeasible E ↑S ↔ ∀ α ∈ E, IsFeasible {α} ↑S := by
+    (hcons : ∃ r : Ranking ι n, ∀ α ∈ E, SatisfiedBy r α)
+    (hsimple : ∀ α ∈ E, α.IsSimple ∨ α.IsTrivial) (S : Finset ι) :
+    IsFeasible n E ↑S ↔ ∀ α ∈ E, IsFeasible n {α} ↑S := by
   classical
   refine ⟨fun h α hα ↦ h.mono fun r hr β hβ ↦ hr β (Set.mem_singleton_iff.mp hβ ▸ hα),
     fun h ↦ ?_⟩
   obtain ⟨r₀, hr₀⟩ := hcons
   have hloc := fun α hα ↦ (isFeasible_singleton_iff ⟨r₀, hr₀ α hα⟩ S).mp (h α hα)
-  let key : Fin n → ℕ ×ₗ Fin n := fun i ↦ toLex (if i ∈ S then 0 else 1, r₀.symm i)
-  obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff (n := n) key fun i j h ↦
-    r₀.symm.injective (congrArg Prod.snd (toLex_inj.mp h))
+  let key : ι → ℕ ×ₗ Fin n := fun i ↦ toLex (if i ∈ S then 0 else 1, r₀.symm i)
+  obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff key (fun i j h ↦
+    r₀.symm.injective (congrArg Prod.snd (toLex_inj.mp h))) r₀.card_eq
   obtain ⟨k, hk⟩ := r.exists_take_eq S fun i hi j hj ↦
     (hr i j).2 (Prod.Lex.lt_iff.2 (Or.inl (by simp [key, hi, hj])))
   refine ⟨r, fun α hα ↦ ?_, k, by rw [hk]⟩
@@ -272,13 +276,13 @@ theorem isFeasible_iff_forall_singleton_of_simple
 of them: two ERCs over four constraints, each with two winners, admit a set that holds a winner
 of each ERC whose loser it holds without being a top segment of a ranking satisfying both. -/
 theorem exists_forall_isFeasible_singleton_not_isFeasible :
-    ∃ (E : Finset (ERC (Fin 4))) (S : Finset (Fin 4)), (linearExtensions E).Nonempty ∧
-      (∀ α ∈ E, IsFeasible {α} (S : Set (Fin 4))) ∧
-        ¬ IsFeasible (E : Set (ERC (Fin 4))) (S : Set (Fin 4)) := by
+    ∃ (E : Finset (ERC (Fin 4))) (S : Finset (Fin 4)), (linearExtensions (n := 4) E).Nonempty ∧
+      (∀ α ∈ E, IsFeasible 4 {α} (S : Set (Fin 4))) ∧
+        ¬ IsFeasible 4 (E : Set (ERC (Fin 4))) (S : Set (Fin 4)) := by
   refine ⟨{fun i ↦ if i = 0 then .W else if i = 1 then .L else if i = 2 then .W else .e,
     fun i ↦ if i = 0 then .L else if i = 1 then .W else if i = 2 then .e else .W}, {0, 1},
     by decide +kernel, fun α hα ↦ ?_, by rw [isFeasible_coe_iff]; decide +kernel⟩
-  obtain ⟨r, hr⟩ : (linearExtensions ({fun i ↦ if i = 0 then .W else if i = 1 then .L else
+  obtain ⟨r, hr⟩ : (linearExtensions (n := 4) ({fun i ↦ if i = 0 then .W else if i = 1 then .L else
       if i = 2 then .W else .e, fun i ↦ if i = 0 then .L else if i = 1 then .W else if i = 2 then
       .e else .W} : Finset (ERC (Fin 4)))).Nonempty := by decide +kernel
   rw [isFeasible_singleton_iff ⟨r, mem_linearExtensions.mp hr α hα⟩]
@@ -290,25 +294,28 @@ theorem exists_forall_isFeasible_singleton_not_isFeasible :
 open Classical in
 /-- The ERC of a rooted circuit has the other members of its carrier as winners, its root as
 loser, and the constraints outside the carrier as neutral. -/
-noncomputable def ofRootedCircuit {A : Antimatroid (Fin n)} (rc : A.RootedCircuit) :
-    ERC (Fin n) :=
+noncomputable def ofRootedCircuit {A : Antimatroid ι} (rc : A.RootedCircuit) :
+    ERC ι :=
   fun k ↦ if k ∈ rc.carrier ∧ k ≠ rc.root then .W else if k = rc.root then .L else .e
 
 /-- The ERCs of an antimatroid, one for each of its rooted circuits. -/
-noncomputable def ofAntimatroid (A : Antimatroid (Fin n)) : Set (ERC (Fin n)) :=
+noncomputable def ofAntimatroid (A : Antimatroid ι) : Set (ERC ι) :=
   Set.range (ofRootedCircuit (A := A))
 
-variable {A B : Antimatroid (Fin n)}
+variable {A B : Antimatroid ι}
 
-@[simp] theorem ofRootedCircuit_eq_L_iff (rc : A.RootedCircuit) (k : Fin n) :
+omit [Fintype ι] in
+@[simp] theorem ofRootedCircuit_eq_L_iff (rc : A.RootedCircuit) (k : ι) :
     ofRootedCircuit rc k = .L ↔ k = rc.root := by
   unfold ofRootedCircuit; grind
 
-@[simp] theorem ofRootedCircuit_eq_W_iff (rc : A.RootedCircuit) (k : Fin n) :
+omit [Fintype ι] in
+@[simp] theorem ofRootedCircuit_eq_W_iff (rc : A.RootedCircuit) (k : ι) :
     ofRootedCircuit rc k = .W ↔ k ∈ rc.carrier ∧ k ≠ rc.root := by
   unfold ofRootedCircuit; grind
 
-theorem ofRootedCircuit_eq_simpleERC (rc : A.RootedCircuit) {w l : Fin n}
+omit [Fintype ι] in
+theorem ofRootedCircuit_eq_simpleERC [DecidableEq ι] (rc : A.RootedCircuit) {w l : ι}
     (hcarrier : rc.carrier = {w, l}) (hroot : rc.root = l) (hwl : w ≠ l) :
     ofRootedCircuit rc = simpleERC w l := by
   funext k
@@ -318,7 +325,7 @@ theorem ofRootedCircuit_eq_simpleERC (rc : A.RootedCircuit) {w l : Fin n}
 
 /-! ### Dietrich's characterization -/
 
-theorem satisfiedBy_ofAntimatroid_iff (hE : A.E = Set.univ) (r : Ranking (Fin n) n) :
+theorem satisfiedBy_ofAntimatroid_iff (hE : A.E = Set.univ) (r : Ranking ι n) :
     (∀ α ∈ ofAntimatroid A, SatisfiedBy r α) ↔ ∀ k, A.IsFeasible ↑(r.take k) := by
   classical
   constructor
@@ -327,7 +334,7 @@ theorem satisfiedBy_ofAntimatroid_iff (hE : A.E = Set.univ) (r : Ranking (Fin n)
     | zero => simpa using A.empty_feasible
     | succ k ih =>
       rw [Ranking.take_succ, Finset.coe_insert]
-      set P : Set (Fin n) := ↑(r.take k.castSucc)
+      set P : Set ι := ↑(r.take k.castSucc)
       by_contra hnotfeas
       have hxP : r k ∉ P := by simp [P]
       have hcrit : ¬∃ F, A.IsFeasible F ∧ F ∩ (A.E \ P) = {r k} := by
@@ -348,7 +355,7 @@ theorem satisfiedBy_ofAntimatroid_iff (hE : A.E = Set.univ) (r : Ranking (Fin n)
           · rintro (h | h)
             · by_cases hyP : y ∈ P
               · exact Or.inr hyP
-              · exact Or.inl (show y ∈ ({r k} : Set (Fin n)) from hFP ▸ ⟨h, hyP⟩)
+              · exact Or.inl (show y ∈ ({r k} : Set ι) from hFP ▸ ⟨h, hyP⟩)
             · exact Or.inr h
         exact hnotfeas (hins ▸ A.union_closed F P hF ih)
       obtain ⟨rc, hroot, hcarrier⟩ := A.exists_rootedCircuit_of_critical
@@ -363,7 +370,7 @@ theorem satisfiedBy_ofAntimatroid_iff (hE : A.E = Set.univ) (r : Ranking (Fin n)
     rw [satisfiedBy_iff_dominance]
     intro l hl
     obtain rfl := (ofRootedCircuit_eq_L_iff rc l).mp hl
-    set P : Set (Fin n) := ↑(r.take (r.symm rc.root).succ)
+    set P : Set ι := ↑(r.take (r.symm rc.root).succ)
     have hmem : rc.root ∈ P ∩ rc.carrier := ⟨by simp [P], rc.root_mem⟩
     obtain ⟨w, hwmem, hwne⟩ : ∃ w ∈ P ∩ rc.carrier, w ≠ rc.root := by
       by_contra hall
@@ -377,8 +384,8 @@ theorem satisfiedBy_ofAntimatroid_iff (hE : A.E = Set.univ) (r : Ranking (Fin n)
 
 /-! ### The inverse laws -/
 
-private theorem exists_feasible_enum_list {S : Set (Fin n)} (hS : A.IsFeasible S) :
-    ∃ l : List (Fin n), l.Nodup ∧ {x | x ∈ l} = S ∧ ∀ i, A.IsFeasible {x | x ∈ l.take i} := by
+private theorem exists_feasible_enum_list {S : Set ι} (hS : A.IsFeasible S) :
+    ∃ l : List ι, l.Nodup ∧ {x | x ∈ l} = S ∧ ∀ i, A.IsFeasible {x | x ∈ l.take i} := by
   induction hcard : S.ncard using Nat.strong_induction_on generalizing S with
   | _ m ih =>
     rcases Set.eq_empty_or_nonempty S with rfl | hne
@@ -404,9 +411,9 @@ private theorem exists_feasible_enum_list {S : Set (Fin n)} (hS : A.IsFeasible S
       · rw [List.take_append, Nat.sub_eq_zero_of_le h]
         simpa using hfeas' i
 
-private theorem exists_feasible_ext_list (hE : A.E = Set.univ) {S : Set (Fin n)}
+private theorem exists_feasible_ext_list (hE : A.E = Set.univ) {S : Set ι}
     (hS : A.IsFeasible S) :
-    ∃ l : List (Fin n), l.Nodup ∧ (∀ x ∈ l, x ∉ S) ∧ {x | x ∈ l} = Set.univ \ S ∧
+    ∃ l : List ι, l.Nodup ∧ (∀ x ∈ l, x ∉ S) ∧ {x | x ∈ l} = Set.univ \ S ∧
       ∀ i, A.IsFeasible (S ∪ {x | x ∈ l.take i}) := by
   induction hcard : (Set.univ \ S).ncard using Nat.strong_induction_on generalizing S with
   | _ m ih =>
@@ -445,8 +452,9 @@ private theorem exists_feasible_ext_list (hE : A.E = Set.univ) {S : Set (Fin n)}
           rw [heq]
           exact hfeas' j
 
-theorem isFeasible_ofAntimatroid_iff (hE : A.E = Set.univ) (S : Set (Fin n)) :
-    IsFeasible (ofAntimatroid A) S ↔ A.IsFeasible S := by
+theorem isFeasible_ofAntimatroid_iff (hn : Fintype.card ι = n) (hE : A.E = Set.univ)
+    (S : Set ι) :
+    IsFeasible n (ofAntimatroid A) S ↔ A.IsFeasible S := by
   classical
   refine ⟨fun ⟨r, hsat, k, hk⟩ ↦ hk ▸ (satisfiedBy_ofAntimatroid_iff hE r).mp hsat k,
     fun hS ↦ ?_⟩
@@ -460,7 +468,7 @@ theorem isFeasible_ofAntimatroid_iff (hE : A.E = Set.univ) (S : Set (Fin n)) :
     · exact List.mem_append_left _ (hset₀.superset hx)
     · exact List.mem_append_right _ (hset₁.superset ⟨Set.mem_univ x, hx⟩)
   set e := List.Nodup.getEquivOfForallMemList l hnd hcover
-  have hlen : l.length = n := by simpa using Fintype.card_congr e
+  have hlen : l.length = n := by simpa [hn] using Fintype.card_congr e
   have hchain : ∀ (k : ℕ) (hk : k < n + 1),
       ↑(Ranking.take ((finCongr hlen).symm.trans e) ⟨k, hk⟩) = {x | x ∈ l.take k} := by
     intro k hk
@@ -485,7 +493,7 @@ theorem isFeasible_ofAntimatroid_iff (hE : A.E = Set.univ) (S : Set (Fin n)) :
     · rw [hldef, List.take_append, Nat.sub_eq_zero_of_le h]
       simpa using hfeas₀ k
   · have hlen₀ : S.ncard = l₀.length := by
-      rw [← hset₀, show {x | x ∈ l₀} = (↑l₀.toFinset : Set (Fin n)) by simp [List.coe_toFinset],
+      rw [← hset₀, show {x | x ∈ l₀} = (↑l₀.toFinset : Set ι) by simp [List.coe_toFinset],
         Set.ncard_coe_finset, List.toFinset_card_of_nodup hnd₀]
     have hcard : S.ncard ≤ n := by
       have : l₀.length ≤ l.length := by simp [hldef]
@@ -494,25 +502,25 @@ theorem isFeasible_ofAntimatroid_iff (hE : A.E = Set.univ) (S : Set (Fin n)) :
     rw [hchain S.ncard (by omega), hlen₀, hldef, List.take_left]
     exact hset₀
 
-theorem exists_satisfiedBy_ofAntimatroid (hE : A.E = Set.univ) :
-    ∃ r : Ranking (Fin n) n, ∀ α ∈ ofAntimatroid A, SatisfiedBy r α := by
-  obtain ⟨r, hr, -⟩ := (isFeasible_ofAntimatroid_iff hE _).mpr A.ground_feasible
+theorem exists_satisfiedBy_ofAntimatroid (hn : Fintype.card ι = n) (hE : A.E = Set.univ) :
+    ∃ r : Ranking ι n, ∀ α ∈ ofAntimatroid A, SatisfiedBy r α := by
+  obtain ⟨r, hr, -⟩ := (isFeasible_ofAntimatroid_iff hn hE _).mpr A.ground_feasible
   exact ⟨r, hr⟩
 
 /-- An antimatroid is the antimatroid of its ERCs. -/
-theorem toAntimatroid_ofAntimatroid (hE : A.E = Set.univ) :
-    toAntimatroid (ofAntimatroid A) (exists_satisfiedBy_ofAntimatroid hE) = A :=
-  Antimatroid.ext hE.symm (funext fun S ↦ propext (isFeasible_ofAntimatroid_iff hE S))
+theorem toAntimatroid_ofAntimatroid (hn : Fintype.card ι = n) (hE : A.E = Set.univ) :
+    toAntimatroid (ofAntimatroid A) (exists_satisfiedBy_ofAntimatroid hn hE) = A :=
+  Antimatroid.ext hE.symm (funext fun S ↦ propext (isFeasible_ofAntimatroid_iff hn hE S))
 
 /-- The ERCs of the antimatroid of `E` are satisfied by exactly the rankings that satisfy
 `E`. -/
 theorem satisfiedBy_ofAntimatroid_toAntimatroid_iff
-    (hcons : ∃ r : Ranking (Fin n) n, ∀ α ∈ E, SatisfiedBy r α) (r : Ranking (Fin n) n) :
+    (hcons : ∃ r : Ranking ι n, ∀ α ∈ E, SatisfiedBy r α) (r : Ranking ι n) :
     (∀ α ∈ ofAntimatroid (toAntimatroid E hcons), SatisfiedBy r α) ↔ ∀ α ∈ E, SatisfiedBy r α :=
   by rw [satisfiedBy_ofAntimatroid_iff rfl, satisfiedBy_iff_forall_isFeasible_take]; rfl
 
 theorem satisfiedBy_ofAntimatroid_mono (hA : A.E = Set.univ) (hB : B.E = Set.univ)
-    (h : ∀ S, A.IsFeasible S → B.IsFeasible S) (r : Ranking (Fin n) n)
+    (h : ∀ S, A.IsFeasible S → B.IsFeasible S) (r : Ranking ι n)
     (hr : ∀ α ∈ ofAntimatroid A, SatisfiedBy r α) : ∀ α ∈ ofAntimatroid B, SatisfiedBy r α :=
   (satisfiedBy_ofAntimatroid_iff hB r).mpr fun k ↦
     h _ ((satisfiedBy_ofAntimatroid_iff hA r).mp hr k)

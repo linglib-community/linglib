@@ -227,22 +227,6 @@ theorem util_ne_top (α c : ℝ) (p : HeartState × Phi) (u : Utterance) : util 
   · exact bot_ne_top
   · exact EReal.coe_ne_top _
 
-theorem util_exists_ne_bot (α c : ℝ) (p : HeartState × Phi) : ∃ u, util α c p u ≠ ⊥ := by
-  obtain ⟨s, φ⟩ := p
-  cases s
-  · exact ⟨(.terrible, false), by
-      rw [util_ungated (by norm_num [meaning, acceptance])]
-      exact EReal.coe_ne_bot _⟩
-  · exact ⟨(.bad, false), by
-      rw [util_ungated (by norm_num [meaning, acceptance])]
-      exact EReal.coe_ne_bot _⟩
-  · exact ⟨(.good, false), by
-      rw [util_ungated (by norm_num [meaning, acceptance])]
-      exact EReal.coe_ne_bot _⟩
-  · exact ⟨(.amazing, false), by
-      rw [util_ungated (by norm_num [meaning, acceptance])]
-      exact EReal.coe_ne_bot _⟩
-
 /-- The first-order speaker (5) is the score speaker of `util`. -/
 noncomputable def speaker (α c : ℝ) : Kernel (HeartState × Phi) Utterance :=
   Kernel.softmax (util α c)
@@ -252,7 +236,7 @@ instance (α c : ℝ) : IsFiniteKernel (speaker α c) :=
 
 theorem speaker_real_singleton_lt_iff (α c : ℝ) (p : HeartState × Phi) (u u' : Utterance) :
     (speaker α c p).real {u} < (speaker α c p).real {u'} ↔ util α c p u < util α c p u' :=
-  Kernel.softmax_real_singleton_lt_iff (util_ne_top α c p) (util_exists_ne_bot α c p)
+  Kernel.softmax_real_singleton_lt_iff (util_ne_top α c p)
 
 theorem speaker_apply_eq_zero_of_meaning_eq_zero (α c : ℝ) {s : HeartState} {φ : Phi}
     {u : Utterance} (h0 : meaning u s = 0) (hφ : φ ≠ .p0) : speaker α c (s, φ) {u} = 0 :=
