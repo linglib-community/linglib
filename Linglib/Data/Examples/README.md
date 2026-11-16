@@ -99,6 +99,24 @@ a particle), which a study matches against a fragment's inventory, and a number,
 verb, the case of a noun) is not recorded at all: read it off the gloss
 (`GlossedWord.features`).
 
+### Typed readings
+
+The readings a paper tests are declared the same way when they form a closed set, under a
+top-level `readings` key beside `features`:
+
+```json
+"readings": {"lean": "reading", "type": "Reading", "doc": "The readings the paper tests.",
+             "levels": [{"name": "boundVariable", "label": "bound variable", "doc": "..."}, ...]}
+```
+
+The generator emits the enum, its `label` and a reader
+`Examples.reading : Datum → Examples.Reading → Option Judgment`, and rejects a row that judges a
+reading not declared, a row that judges one twice, and a level no row judges. A study then writes
+`Examples.reading e .boundVariable` where it wrote `e.readings.lookup "bound variable"`, and maps
+its own reading type into the enum by a total function (`AghaJeretic2026.forceReading`). A paper
+whose readings are open-ended, paraphrases or scope orders over arbitrary operators, leaves them
+as strings.
+
 ## Languages
 
 `languages.csv` is the language table of the data: one Glottolog row (name, level, macroarea,

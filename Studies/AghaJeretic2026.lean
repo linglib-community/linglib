@@ -131,21 +131,21 @@ theorem vfiWeak_negRaises_iff (f g g' : Background W) (w : W) :
 /-- A weak necessity modal never takes scope below negation. -/
 theorem weak_never_narrow :
     ∀ e ∈ Examples.all, e.feature? "force" = some "weak" → (e.feature? "negation").isSome →
-      e.readings.lookup "wide" = some .acceptable ∧
-        e.readings.lookup "narrow" = some .unacceptable := by
+      Examples.reading e .wide = some .acceptable ∧
+        Examples.reading e .narrow = some .unacceptable := by
   decide
 
 /-- *Must* takes scope below negation exactly when the negation is in a higher clause. -/
 theorem must_narrow_iff_higher :
     ∀ e ∈ Examples.all, e.feature? "modal" = some "must" →
-      (e.readings.lookup "narrow" = some .acceptable ↔ e.feature? "negation" = some "higher") := by
+      (Examples.reading e .narrow = some .acceptable ↔ e.feature? "negation" = some "higher") := by
   decide
 
 /-- *Have to* takes scope below negation wherever the negation is. -/
 theorem haveTo_always_narrow :
     ∀ e ∈ Examples.all, e.feature? "modal" = some "have to" →
-      e.readings.lookup "narrow" = some .acceptable ∧
-        e.readings.lookup "wide" = some .unacceptable := by
+      Examples.reading e .narrow = some .acceptable ∧
+        Examples.reading e .wide = some .unacceptable := by
   decide
 
 /-! ### Polarity-sensitive variable force (§3) -/
@@ -220,25 +220,25 @@ def environment? (e : Datum) : Option Environment :=
   e.parse? "environment" [("unembedded", Environment.unembedded),
     ("clausemate negation", .clausemateNegation), ("other DE", .otherDE)]
 
-/-- The key under which a row records a force's reading. -/
-def forceKey : ModalForce → String
-  | .possibility => "possibility"
-  | .necessity => "necessity"
-  | .weakNecessity => "weak necessity"
+/-- The reading of a row that a force is. -/
+def forceReading : ModalForce → Examples.Reading
+  | .possibility => .possibility
+  | .necessity => .necessity
+  | .weakNecessity => .weakNecessity
 
 /-- The projections license exactly the readings the chapter's table records. -/
 theorem projection_matches_table :
     ∀ e ∈ Examples.all, e.feature? "table" = some "true" →
       ∀ π ∈ projection? e, ∀ env ∈ environment? e, ∀ r,
-        (e.readings.lookup (forceKey r) = some .acceptable ↔ Available π env r) := by
+        (Examples.reading e (forceReading r) = some .acceptable ↔ Available π env r) := by
   decide
 
 /-- Every reading the chapter's examples record is licensed, and every reading they exclude is
 not. -/
 theorem readings_licensed :
     ∀ e ∈ Examples.all, ∀ π ∈ projection? e, ∀ env ∈ environment? e, ∀ r,
-      (e.readings.lookup (forceKey r) = some .acceptable → Available π env r) ∧
-        (e.readings.lookup (forceKey r) = some .unacceptable → ¬ Available π env r) := by
+      (Examples.reading e (forceReading r) = some .acceptable → Available π env r) ∧
+        (Examples.reading e (forceReading r) = some .unacceptable → ¬ Available π env r) := by
   decide
 
 /-! ### Exhaustification of subdomain alternatives (§3.2) -/
@@ -258,8 +258,8 @@ theorem exh_subdomain {ι : Type*} [DecidableEq ι] (M : Finset ι) (hM : M.None
 *could* reading, where a weak determiner allows both, (90)–(92). -/
 theorem strong_determiner_should :
     ∀ e ∈ Examples.all, e.feature? "construction" = some "infinitival relative" →
-      e.readings.lookup "should" = some .acceptable ∧
-        (e.readings.lookup "could" = some .acceptable ↔ e.feature? "determiner" = some "weak") := by
+      Examples.reading e .should = some .acceptable ∧
+        (Examples.reading e .could = some .acceptable ↔ e.feature? "determiner" = some "weak") := by
   decide
 
 end AghaJeretic2026

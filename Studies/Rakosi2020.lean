@@ -124,7 +124,7 @@ theorem reflexive_acceptable_iff_agree :
 -- (4a), (4b)
 theorem boundVariable_iff_agree :
     ∀ e ∈ all, ∀ r ∈ reflexives, HasAnaphor e r.toPronoun → ∀ v ∈ verb? e,
-      ∀ j ∈ e.readings.lookup "bound variable",
+      ∀ j ∈ Examples.reading e .boundVariable,
         (j = .acceptable ↔ HasPhi.Agree r.toPronoun v) := by
   decide
 

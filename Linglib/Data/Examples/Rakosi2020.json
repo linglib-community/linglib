@@ -44,6 +44,28 @@
       ]
     }
   ],
+  "readings": {
+    "lean": "reading",
+    "type": "Reading",
+    "doc": "The readings the paper tests an anaphor for.",
+    "levels": [
+      {
+        "name": "referential",
+        "label": "referential",
+        "doc": "the anaphor refers, as a pronoun does"
+      },
+      {
+        "name": "boundVariable",
+        "label": "bound variable",
+        "doc": "the anaphor is a variable bound by its antecedent"
+      },
+      {
+        "name": "broadScope",
+        "label": "broad scope",
+        "doc": "the reciprocal takes scope over the matrix verb"
+      }
+    ]
+  },
   "examples": [
     {
       "id": "rakosi2020_1a",

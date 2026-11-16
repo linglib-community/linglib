@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `AghaJeretic2026` — typed example data
@@ -823,5 +824,37 @@ def ex_92b : Datum :=
     paperFeatures := [("construction", "infinitival relative"), ("determiner", "strong")] }
 
 def all : List Datum := [ex_6a, ex_6b, ex_6c, ex_6d, ex_8a, ex_8b, ex_8c, ex_11a, ex_11b, ex_12a, ex_12b, ex_15a, ex_15b, ex_16a, ex_16b, ex_17, ex_23, ex_18a, ex_18b, ex_18c, ex_19a, ex_19b, ex_19c, ex_20a, ex_20b, ex_20c, ex_26a, ex_28a, ex_43, ex_44, ex_45, ex_46, ex_48, ex_49, ex_51, ex_52, ex_53, ex_55, ex_56, ex_57, ex_58, table_oqa_unembedded, table_oqa_clausemate, table_oqa_other, table_baiji_unembedded, table_baiji_clausemate, table_baiji_other, table_far_unembedded, table_far_clausemate, table_far_other, table_anga_unembedded, table_anga_clausemate, table_anga_other, ex_79a, ex_85a, ex_91a, ex_91b, ex_92a, ex_92b]
+
+/-- The readings the chapter judges a modal sentence for. -/
+inductive Reading where
+  /-- wide: the modal takes scope over negation -/
+  | wide
+  /-- narrow: the modal takes scope under negation -/
+  | narrow
+  /-- possibility: the modal is read as a possibility -/
+  | possibility
+  /-- necessity: the modal is read as a strong necessity -/
+  | necessity
+  /-- weak necessity: the modal is read as a weak necessity -/
+  | weakNecessity
+  /-- could: the sentence is paraphrased with *could* -/
+  | could
+  /-- should: the sentence is paraphrased with *should* -/
+  | should
+  deriving DecidableEq, Repr, Fintype
+
+/-- The name the rows give the reading. -/
+def Reading.label : Reading → String
+  | .wide => "wide"
+  | .narrow => "narrow"
+  | .possibility => "possibility"
+  | .necessity => "necessity"
+  | .weakNecessity => "weak necessity"
+  | .could => "could"
+  | .should => "should"
+
+/-- The judgment a row records for the reading, if it records one. -/
+def reading (e : Datum) (r : Reading) : Option Judgment :=
+  e.readings.lookup r.label
 
 end AghaJeretic2026.Examples
