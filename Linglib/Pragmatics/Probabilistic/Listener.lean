@@ -14,8 +14,10 @@ call probabilistic pragmatics, in mathlib's probability vocabulary. The
 [listener](##RSA.listener) reweights a prior by the mass each state's measure gives the utterance
 heard. At the channel of a speaker who is only [truthful](##RSA.truthful) she is the [literal
 listener](##RSA.literalListener), who [conditions the prior on the
-extension](##RSA.literalListener_apply), and at a
-speaker the pragmatic listener, [mathlib's posterior](##RSA.listener_apply_eq_posterior). Where
+extension](##RSA.literalListener_apply) and is [certain of a state the utterance is true at
+alone](##RSA.literalListener_apply_singleton_eq_one_iff_eq_singleton), at a meaning that holds to
+a degree the [graded listener](##RSA.gradedListener), who reweights the prior by the degree, and
+at a speaker the pragmatic listener, [mathlib's posterior](##RSA.listener_apply_eq_posterior). Where
 the speaker gives an utterance one mass throughout an event, the listener who conditions on the
 event [holds the prior conditioned on it](##RSA.cond_listener_apply).
 
@@ -465,6 +467,36 @@ theorem literalListener_apply_singleton_ne_zero_iff [IsFiniteMeasure μ] (u : U)
   · rw [literalListener_apply_singleton_of_notMem μ sem h]
     exact iff_of_false (fun h' ↦ h' rfl) fun h' ↦ h h'.1
 
+/-- The literal listener is certain of a state exactly when the utterance is true there, the
+state is possible, and no other state at which the utterance is true is. -/
+theorem literalListener_apply_singleton_eq_one_iff [IsFiniteMeasure μ] {u : U} {w : W} :
+    literalListener μ sem u {w} = 1 ↔ w ∈ sem u ∧ μ {w} ≠ 0 ∧ μ (sem u \ {w}) = 0 := by
+  by_cases h : w ∈ sem u
+  · have hle : μ {w} ≤ μ (sem u) := measure_mono (Set.singleton_subset_iff.2 h)
+    rw [literalListener_apply_singleton μ sem h,
+      measure_sdiff (Set.singleton_subset_iff.2 h) (MeasurableSet.singleton w).nullMeasurableSet
+        (measure_ne_top _ _), tsub_eq_zero_iff_le, and_iff_right h]
+    refine ⟨fun h1 ↦ ?_, fun ⟨h0, h2⟩ ↦ ?_⟩
+    · have hw : μ {w} ≠ 0 := fun h0 ↦ by rw [h0, mul_zero] at h1; exact zero_ne_one h1
+      rw [← ENNReal.div_eq_inv_mul] at h1
+      exact ⟨hw, ((ENNReal.div_eq_one_iff (fun h0 ↦ hw (nonpos_iff_eq_zero.1 (h0 ▸ hle)))
+        (measure_ne_top _ _)).1 h1).ge⟩
+    · rw [le_antisymm h2 hle]
+      exact ENNReal.inv_mul_cancel h0 (measure_ne_top _ _)
+  · rw [literalListener_apply_singleton_of_notMem μ sem h]
+    exact iff_of_false zero_ne_one fun h' ↦ h h'.1
+
+/-- Under a prior that leaves every state possible, the literal listener is certain of a state
+exactly when the utterance is true there alone. -/
+theorem literalListener_apply_singleton_eq_one_iff_eq_singleton [IsFiniteMeasure μ]
+    (hμ : ∀ x, μ {x} ≠ 0) {u : U} {w : W} :
+    literalListener μ sem u {w} = 1 ↔ sem u = {w} := by
+  rw [literalListener_apply_singleton_eq_one_iff, Set.eq_singleton_iff_unique_mem]
+  exact and_congr_right fun _ ↦ (and_iff_right (hμ w)).trans
+    ⟨fun h0 x hx ↦ by_contra fun hne ↦
+        hμ x (measure_mono_null (Set.singleton_subset_iff.2 (by simpa using ⟨hx, hne⟩)) h0),
+      fun h ↦ by rw [Set.sdiff_eq_empty.2 (show sem u ⊆ {w} from fun x hx ↦ h x hx), measure_empty]⟩
+
 theorem literalListener_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpace W']
     [DiscreteMeasurableSpace W'] [MeasurableSpace U'] [Countable U'] [MeasurableSingletonClass U']
     [Fintype W] [Fintype W'] (e : W ≃ W') {μ : Measure W} {μ' : Measure W'} {sem : U → Set W}
@@ -480,6 +512,73 @@ theorem literalListener_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpac
 end Boolean
 
 end Truthful
+
+/-! ##### The listener of a graded meaning
+
+An utterance may hold of a state to a degree. The literal listener of a graded meaning reweights
+the prior by the degree, and at degrees zero and one she is the literal listener of the
+extension. -/
+
+section Graded
+
+/-- The literal listener of a graded meaning reweights the prior by the degree to which the
+utterance holds of each state, a negative degree counting as zero, and normalizes. -/
+noncomputable def gradedListener (μ : Measure W) (m : U → W → ℝ) : Kernel U W :=
+  Kernel.ofDensity μ fun u w ↦ ENNReal.ofReal (m u w)
+
+theorem gradedListener_eq_ofDensity (μ : Measure W) (m : U → W → ℝ) :
+    gradedListener μ m = Kernel.ofDensity μ fun u w ↦ ENNReal.ofReal (m u w) :=
+  rfl
+
+instance (μ : Measure W) (m : U → W → ℝ) : IsFiniteKernel (gradedListener μ m) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
+
+/-- At a meaning with degrees zero and one the graded listener is the literal listener of its
+extension. -/
+theorem gradedListener_indicator (μ : Measure W) (sem : U → Set W) :
+    gradedListener μ (fun u ↦ (sem u).indicator 1) = literalListener μ sem := by
+  rw [literalListener_eq_ofDensity, gradedListener_eq_ofDensity]
+  congr 1
+  funext u w
+  by_cases h : w ∈ sem u <;> simp [h]
+
+variable [Fintype W] [MeasurableSingletonClass W] {μ : Measure W} {m : U → W → ℝ} {u : U}
+  {w w' : W}
+
+theorem gradedListener_apply_singleton_ne_zero_iff [IsFiniteMeasure μ] :
+    gradedListener μ m u {w} ≠ 0 ↔ 0 < m u w ∧ μ {w} ≠ 0 := by
+  rw [gradedListener,
+    Kernel.ofDensity_apply_singleton_ne_zero_iff μ (fun _ ↦ ENNReal.ofReal_ne_top), ne_eq,
+    ENNReal.ofReal_eq_zero, not_le]
+
+theorem gradedListener_real_singleton [IsFiniteMeasure μ] (hm : ∀ w', 0 ≤ m u w') (w : W) :
+    (gradedListener μ m u).real {w} = m u w * μ.real {w} / ∑ w', m u w' * μ.real {w'} := by
+  rw [gradedListener, Kernel.ofDensity_real_singleton _ _ _ fun _ ↦ ENNReal.ofReal_ne_top]
+  simp only [ENNReal.toReal_ofReal (hm _)]
+
+variable [Nonempty W] (hm : ∀ w', 0 ≤ m u w') (hpos : 0 < ∑ w', m u w')
+include hm hpos
+
+/-- Against the uniform prior the graded listener gives a state its share of the degrees. -/
+theorem gradedListener_uniformOn_apply_singleton (w : W) :
+    gradedListener (uniformOn Set.univ) m u {w} = ENNReal.ofReal (m u w / ∑ w', m u w') :=
+  Kernel.ofDensity_uniformOn_ofReal_apply_singleton _ u w hm hpos
+
+theorem gradedListener_uniformOn_real_singleton (w : W) :
+    (gradedListener (uniformOn Set.univ) m u).real {w} = m u w / ∑ w', m u w' := by
+  rw [measureReal_def, gradedListener_uniformOn_apply_singleton hm hpos,
+    ENNReal.toReal_ofReal (div_nonneg (hm w) hpos.le)]
+
+/-- Against the uniform prior the graded listener ranks the states as the meaning does. -/
+theorem gradedListener_uniformOn_apply_singleton_lt_iff :
+    gradedListener (uniformOn Set.univ) m u {w} < gradedListener (uniformOn Set.univ) m u {w'} ↔
+      m u w < m u w' := by
+  rw [gradedListener_uniformOn_apply_singleton hm hpos,
+    gradedListener_uniformOn_apply_singleton hm hpos,
+    ENNReal.ofReal_lt_ofReal_iff_of_nonneg (div_nonneg (hm w) hpos.le),
+    div_lt_div_iff_of_pos_right hpos]
+
+end Graded
 
 end Listener
 

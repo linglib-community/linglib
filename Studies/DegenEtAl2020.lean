@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Pragmatics.Probabilistic.Literal
+public import Linglib.Semantics.Reference.Iota
 
 /-!
 # Degen, Hawkins, Graf, Kreiss and Goodman (2020): When Redundancy Is Useful: A Bayesian Approach to "Overinformative" Referring Expressions
@@ -32,6 +33,7 @@ information, and adds more the less noisy it is.
 ## References
 
 * [degen-etal-2020]
+* [dale-reiter-1995]
 * [frank-goodman-2012]
 -/
 
@@ -135,11 +137,7 @@ variable [MeasurableSpace E] [MeasurableSingletonClass E] [Fintype U] [Measurabl
 
 /-- The literal listener (1) normalizes the meaning of an expression over the objects at a
 uniform prior. -/
-noncomputable def L0 (m : U → E → ℝ) : Kernel U E :=
-  Kernel.ofDensity (uniformOn Set.univ) fun u o ↦ ENNReal.ofReal (m u o)
-
-instance (m : U → E → ℝ) : IsFiniteKernel (L0 m) :=
-  inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
+noncomputable abbrev L0 (m : U → E → ℝ) : Kernel U E := gradedListener (uniformOn Set.univ) m
 
 /-- The speaker of (3) and (4) at rationality `α` chooses an expression in proportion to the
 exponential of `α` times its utility, the log of the listener's probability of the object less
@@ -157,61 +155,57 @@ theorem S1_apply_singleton_of_equiv {U' : Type*} [Fintype U'] [MeasurableSpace U
     (h : ∀ v, m' (τ v) = m v) (o : E) (u : U) :
     S1 α C m' o {τ u} = S1 α (C ∘ τ) m o {u} :=
   speaker_dirac_apply_singleton_of_equiv τ α C (fun v ↦ by
-    rw [L0, L0, Kernel.ofDensity_apply, Kernel.ofDensity_apply, h]) u
+    rw [L0, L0, gradedListener_eq_ofDensity, gradedListener_eq_ofDensity, Kernel.ofDensity_apply,
+      Kernel.ofDensity_apply, h]) u
+
+private theorem L0_ne_zero (h : 0 < m u o) : L0 m u {o} ≠ 0 :=
+  gradedListener_apply_singleton_ne_zero_iff.2 ⟨h, uniformOn_univ_singleton_ne_zero o⟩
+
+private theorem L0_eq_zero (h : m u o = 0) : L0 m u {o} = 0 :=
+  not_not.1 fun h' ↦ (gradedListener_apply_singleton_ne_zero_iff.1 h').1.ne' h
+
+/-- The literal listener of a Boolean meaning is certain of an object exactly when the expression
+is true of it alone: the object is the denotation of the definite description, and the expression
+a distinguishing description in the sense of [dale-reiter-1995]. -/
+theorem L0_indicator_apply_singleton_eq_one_iff [DiscreteMeasurableSpace E] (sem : U → Set E) :
+    L0 (fun u ↦ (sem u).indicator 1) u {o} = 1 ↔ o ∈ iota (sem u) := by
+  rw [L0, gradedListener_indicator, mem_iota_iff_eq_singleton]
+  exact literalListener_apply_singleton_eq_one_iff_eq_singleton _ sem
+    uniformOn_univ_singleton_ne_zero
+
+theorem S1_real_eq_one (hα : 0 < α) (hu : 0 < m u o)
+    (hother : ∀ v, v ≠ u → m v o = 0) : (S1 α C m o).real {u} = 1 := by
+  rw [measureReal_def, S1, speaker_dirac_apply_singleton_eq_one hα (L0_ne_zero hu)
+    fun v hv ↦ L0_eq_zero (hother v hv), ENNReal.toReal_one]
 
 variable [Nonempty E]
-
-theorem L0_apply (hm : ∀ o', 0 ≤ m u o') (hpos : 0 < ∑ o', m u o') (o : E) :
-    L0 m u {o} = ENNReal.ofReal (m u o / ∑ o', m u o') :=
-  Kernel.ofDensity_uniformOn_ofReal_apply_singleton _ u o hm hpos
-
-theorem L0_real_singleton (hm : ∀ o', 0 ≤ m u o') (hpos : 0 < ∑ o', m u o') (o : E) :
-    (L0 m u).real {o} = m u o / ∑ o', m u o' := by
-  rw [measureReal_def, L0_apply hm hpos, ENNReal.toReal_ofReal (div_nonneg (hm o) hpos.le)]
-
-private theorem L0_ne_zero (hm : ∀ v o', 0 ≤ m v o') (h : 0 < m u o) : L0 m u {o} ≠ 0 := by
-  rw [L0_apply (hm u) (sum_pos_of_pos hm h)]
-  exact (ENNReal.ofReal_pos.2 (div_pos h (sum_pos_of_pos hm h))).ne'
-
-private theorem L0_eq_zero (h : m u o = 0) : L0 m u {o} = 0 := by
-  rw [L0, Kernel.ofDensity_uniformOn_apply_singleton, h, ENNReal.ofReal_zero, ENNReal.zero_div]
 
 theorem S1_real_div (hα : 0 ≤ α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o) (hu' : 0 < m u' o) :
     (S1 α C m o).real {u'} / (S1 α C m o).real {u} =
       ((m u' o / ∑ o', m u' o') / (m u o / ∑ o', m u o')) ^ α *
         Real.exp (-(α * (C u' - C u))) := by
-  rw [S1, speaker_dirac_real_singleton_div hα (L0_ne_zero hm hu), ← measureReal_def,
-    ← measureReal_def, L0_real_singleton (hm u) (sum_pos_of_pos hm hu),
-    L0_real_singleton (hm u') (sum_pos_of_pos hm hu')]
+  rw [S1, speaker_dirac_real_singleton_div hα (L0_ne_zero hu), ← measureReal_def,
+    ← measureReal_def, gradedListener_uniformOn_real_singleton (hm u) (sum_pos_of_pos hm hu),
+    gradedListener_uniformOn_real_singleton (hm u') (sum_pos_of_pos hm hu')]
 
 theorem S1_real_lt_iff (hα : 0 < α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o)
     (hu' : 0 < m u' o) :
     (S1 α C m o).real {u} < (S1 α C m o).real {u'} ↔
       Real.log (m u o / ∑ o', m u o') - C u < Real.log (m u' o / ∑ o', m u' o') - C u' := by
-  rw [S1, speaker_dirac_real_singleton_lt_iff_log hα (L0_ne_zero hm hu) (L0_ne_zero hm hu'),
-    ← measureReal_def, ← measureReal_def, L0_real_singleton (hm u) (sum_pos_of_pos hm hu),
-    L0_real_singleton (hm u') (sum_pos_of_pos hm hu')]
+  rw [S1, speaker_dirac_real_singleton_lt_iff_log hα (L0_ne_zero hu) (L0_ne_zero hu'),
+    ← measureReal_def, ← measureReal_def,
+    gradedListener_uniformOn_real_singleton (hm u) (sum_pos_of_pos hm hu),
+    gradedListener_uniformOn_real_singleton (hm u') (sum_pos_of_pos hm hu')]
 
 theorem S1_real_of_pair (hα : 0 < α) (huu' : u ≠ u') (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o)
     (hu' : 0 < m u' o) (hsupp : ∀ v, 0 < m v o → v = u ∨ v = u') :
     (S1 α C m o).real {u} = Real.sigmoid (α * ((Real.log (m u o / ∑ o', m u o') - C u) -
       (Real.log (m u' o / ∑ o', m u' o') - C u'))) := by
-  rw [S1, speaker_dirac_real_singleton_of_pair hα huu' (L0_ne_zero hm hu) (L0_ne_zero hm hu')
+  rw [S1, speaker_dirac_real_singleton_of_pair hα huu' (L0_ne_zero hu) (L0_ne_zero hu')
       fun v hv ↦ hsupp v ((hm v o).lt_of_ne fun h ↦ hv (L0_eq_zero h.symm)),
-    ← measureReal_def, ← measureReal_def, L0_real_singleton (hm u) (sum_pos_of_pos hm hu),
-    L0_real_singleton (hm u') (sum_pos_of_pos hm hu')]
-
-theorem S1_real_eq_one (hα : 0 < α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o)
-    (hother : ∀ v, v ≠ u → m v o = 0) : (S1 α C m o).real {u} = 1 := by
-  rw [measureReal_def, S1, speaker_dirac_apply_singleton_eq_one hα (L0_ne_zero hm hu)
-    fun v hv ↦ L0_eq_zero (hother v hv), ENNReal.toReal_one]
-
-/-- The literal listener ranks the objects as the meaning does. -/
-theorem L0_singleton_lt_iff (hm : ∀ o', 0 ≤ m u o') (hpos : 0 < ∑ o', m u o') {o o' : E} :
-    L0 m u {o} < L0 m u {o'} ↔ m u o < m u o' := by
-  rw [L0_apply hm hpos, L0_apply hm hpos,
-    ENNReal.ofReal_lt_ofReal_iff_of_nonneg (div_nonneg (hm o) hpos.le),
-    div_lt_div_iff_of_pos_right hpos]
+    ← measureReal_def, ← measureReal_def,
+    gradedListener_uniformOn_real_singleton (hm u) (sum_pos_of_pos hm hu),
+    gradedListener_uniformOn_real_singleton (hm u') (sum_pos_of_pos hm hu')]
 
 end Model
 
@@ -414,8 +408,10 @@ theorem boolean_no_preference (α : ℝ) :
     (S1 α 0 (meaning 1 1) .smallBlue).real {.small} =
       (S1 α 0 (meaning 1 1) .smallBlue).real {.smallBlue} := by
   have hnn := meaning_nonneg (xs := 1) (xc := 1) zero_le_one le_rfl zero_le_one le_rfl
-  have h1 := L0_apply (hnn .small) (by rw [row_small]; norm_num) Pin.smallBlue
-  have h2 := L0_apply (hnn .smallBlue) (by rw [row_smallBlue]; norm_num) Pin.smallBlue
+  have h1 := gradedListener_uniformOn_apply_singleton (hnn .small)
+    (by rw [row_small]; norm_num) Pin.smallBlue
+  have h2 := gradedListener_uniformOn_apply_singleton (hnn .smallBlue)
+    (by rw [row_smallBlue]; norm_num) Pin.smallBlue
   rw [row_small, meaning_small] at h1
   rw [row_smallBlue, meaning_smallBlue] at h2
   norm_num at h1 h2

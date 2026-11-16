@@ -226,36 +226,23 @@ section Listener
 variable (P : Measure State) (m : Utterance → State → ℝ)
 
 /-- The literal listener of (1) under a graded meaning reweights the prior by the degree. -/
-noncomputable def L0 : Kernel Utterance State :=
-  Kernel.ofDensity P fun u st ↦ ENNReal.ofReal (m u st)
-
-instance : IsFiniteKernel (L0 P m) := inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
+noncomputable abbrev L0 : Kernel Utterance State := gradedListener P m
 
 -- (2) is (11) and (12) at degree one
 theorem L0_fuzzy_one_one : L0 P (fuzzy 1 1) = literalListener P extension := by
-  rw [literalListener_eq_ofDensity, L0]
+  rw [literalListener_eq_ofDensity, L0, gradedListener_eq_ofDensity]
   congr 1
   funext u st
   cases u <;> cases st <;> simp [fuzzy, extension]
 
 variable [IsFiniteMeasure P]
 
-theorem L0_ne_zero {u : Utterance} {st : State} (h : 0 < m u st) (hst : P {st} ≠ 0) :
-    L0 P m u {st} ≠ 0 :=
-  (Kernel.ofDensity_apply_singleton_ne_zero_iff P (fun _ ↦ ENNReal.ofReal_ne_top) st).2
-    ⟨(ENNReal.ofReal_pos.2 h).ne', hst⟩
-
 variable {m} (hm : ∀ u st, 0 ≤ m u st)
 include hm
 
-theorem L0_real (u : Utterance) (st : State) :
-    (L0 P m u).real {st} = m u st * P.real {st} / ∑ st', m u st' * P.real {st'} := by
-  rw [L0, Kernel.ofDensity_real_singleton _ _ _ fun _ ↦ ENNReal.ofReal_ne_top]
-  simp only [ENNReal.toReal_ofReal (hm _ _)]
-
 theorem L0_null_real [IsProbabilityMeasure P] (hnull : ∀ st, m .null st = 1) (st : State) :
     (L0 P m .null).real {st} = P.real {st} := by
-  rw [L0_real P hm]
+  rw [gradedListener_real_singleton (hm _)]
   simp only [hnull, one_mul, sum_measureReal_singleton_eq_one, div_one]
 
 end Listener
@@ -373,7 +360,7 @@ theorem standardSpeaker_pos_lt_null_iff :
 theorem statePrior_lt_L0_real_iff {m : Utterance → State → ℝ} (hm : ∀ u st, 0 ≤ m u st)
     {u : Utterance} (hsum : m u .pos + m u .neg = 1) (st : State) :
     s.statePrior st < (L0 s.prior m u).real {st} ↔ 1 / 2 < m u st := by
-  rw [L0_real s.prior hm, sum_state]
+  rw [gradedListener_real_singleton (hm _), sum_state]
   simp only [prior_real_singleton]
   have hp := s.p_pos
   have hp1 := s.p_lt_one
@@ -396,9 +383,10 @@ theorem speaker_fuzzy_pos_lt_null {n σ : ℝ} (hn0 : 0 ≤ n) (hn1 : n ≤ 1) (
     (s.speaker (L0 s.prior (fuzzy n σ)) .pos).real {.pos} <
       (s.speaker (L0 s.prior (fuzzy n σ)) .pos).real {.null} := by
   have hm := fuzzy_nonneg hn0 hn1 hσ0.le (by linarith : σ ≤ 1)
-  have hpos := L0_ne_zero s.prior (fuzzy n σ) (u := .pos) (st := .pos) hσ0 (s.prior_ne_zero .pos)
+  have hpos : L0 s.prior (fuzzy n σ) .pos {.pos} ≠ 0 :=
+    gradedListener_apply_singleton_ne_zero_iff.2 ⟨hσ0, s.prior_ne_zero .pos⟩
   rw [speaker, speaker_dirac_real_singleton_lt_iff_log s.α_pos hpos
-      (L0_ne_zero s.prior (fuzzy n σ) (u := .null) (st := .pos) one_pos (s.prior_ne_zero .pos)),
+      (gradedListener_apply_singleton_ne_zero_iff.2 ⟨one_pos, s.prior_ne_zero .pos⟩),
     ← measureReal_def, ← measureReal_def, L0_null_real s.prior hm (fun _ ↦ rfl),
     prior_real_singleton]
   have hle : (L0 s.prior (fuzzy n σ) .pos).real {.pos} ≤ s.p :=
