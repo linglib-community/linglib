@@ -69,7 +69,7 @@ instance {P : κ → Prop} {R : ι → κ → Prop} [DecidablePred P] [∀ x, De
   fun y ↦ inferInstanceAs (Decidable (P y ∧ R x y))
 
 instance {P : Set κ} {R : ι → κ → Prop} [DecidablePred (· ∈ P)] [∀ x, DecidablePred (R x)]
-    (x : ι) : DecidablePred (· ∈ π P R x) :=
+    (x : ι) : DecidablePred (· ∈ π P (fun x ↦ {y | R x y}) x) :=
   fun y ↦ inferInstanceAs (Decidable (y ∈ P ∧ R x y))
 
 /-! ### Possessors -/
@@ -82,7 +82,7 @@ instance [Fintype κ] {P : κ → Prop} {R : ι → κ → Prop} [DecidablePred 
   fun x ↦ inferInstanceAs (Decidable (∃ y, P y ∧ R x y))
 
 instance [Fintype κ] {P : Set κ} {R : ι → κ → Prop} [DecidablePred (· ∈ P)]
-    [∀ x, DecidablePred (R x)] : DecidablePred (dom P R) :=
+    [∀ x, DecidablePred (R x)] : DecidablePred (dom (· ∈ P) R) :=
   fun x ↦ inferInstanceAs (Decidable (∃ y, y ∈ P ∧ R x y))
 
 theorem dom_iSup_self (R : ι → κ → Prop) (x : ι) : dom (⨆ x, R x) R x ↔ ∃ y, R x y :=

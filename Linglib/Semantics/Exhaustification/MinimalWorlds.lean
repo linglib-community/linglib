@@ -81,7 +81,7 @@ theorem exhMW_nonempty (hfin : ALT.Finite) (hφ : φ.Nonempty) : (exhMW ALT φ).
 
 theorem exhMW_univ : exhMW Set.univ φ = φ := by
   refine Set.Subset.antisymm (fun _ h ↦ h.1) fun u hu ↦ ⟨hu, fun v _ hvu ↦ ?_⟩
-  obtain rfl : v = u := (hvu ⟨trivial, rfl⟩).2
+  obtain rfl : u = v := (hvu (a := {v}) ⟨trivial, rfl⟩).2
   exact le_rfl
 
 /-- Over finitely many worlds and alternatives, membership in the minimal worlds is decidable. -/

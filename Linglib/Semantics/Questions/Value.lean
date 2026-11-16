@@ -145,7 +145,8 @@ theorem utility_eq_valueOfInformation_id [Nonempty W]
   rcases eq_or_ne (μ (Q.part ⁻¹' {c})) 0 with h | h
   · simp [measureReal_def, h]
   obtain ⟨w₀, hw₀⟩ := nonempty_of_measure_ne_zero h
-  rw [decisionValue_cond_eq_integral U μ (fun w hw ↦ hQ (hw.trans hw₀.symm)) .of_discrete h]
+  rw [decisionValue_cond_eq_integral U μ (s := Q.part ⁻¹' {c}) (fun w hw ↦ hQ (hw.trans hw₀.symm))
+    .of_discrete h]
 
 theorem utility_bot [Nonempty W] :
     utility U μ ⊥ = valueOfInformation (decisionValue U) Kernel.id μ :=
