@@ -146,80 +146,77 @@ sentient but brings about no change. -/
 def neglectSubject : EntailmentProfile :=
   {.volition, .sentience, .independentExistence}
 
-/-- The entry of a transitive verb with the given subject and object entailments, situation
-type and sense. -/
-def transitive (form : String) (subj obj : EntailmentProfile) (cls : Aspect.AspectualClass)
-    (tag : SenseTag := .default) : Verb :=
+/-- The entry of a transitive verb with the given subject and object entailments and sense. -/
+def transitive (form : String) (subj obj : EntailmentProfile) (tag : SenseTag := .default) :
+    Verb :=
   { morphs := [.root form], valency := .ofFrame ArgumentFrame.np [some subj, some obj],
-    aspectualClass := some cls, senseTag := tag }
+    senseTag := tag }
 
 /-- *laver* 'wash' ([staps-rooryck-2024] Table 1). -/
 def laver : Verb :=
-  transitive "laver" accomplishmentSubjectProfile accomplishmentObjectProfile .accomplishment
+  transitive "laver" accomplishmentSubjectProfile accomplishmentObjectProfile
 
 /-- *briser* 'break' ([staps-rooryck-2024] Table 1). -/
 def briser : Verb :=
-  transitive "briser" accomplishmentSubjectProfile accomplishmentObjectProfile .achievement
+  transitive "briser" accomplishmentSubjectProfile accomplishmentObjectProfile
 
 /-- *écrire* 'write', a verb of creation ([staps-rooryck-2024] Table 1). -/
 def ecrire : Verb :=
-  transitive "écrire" accomplishmentSubjectProfile creationObject .accomplishment
+  transitive "écrire" accomplishmentSubjectProfile creationObject
 
 /-- *construire* 'build', a verb of creation ([staps-rooryck-2024] Table 1). -/
 def construire : Verb :=
-  transitive "construire" accomplishmentSubjectProfile creationObject .accomplishment
+  transitive "construire" accomplishmentSubjectProfile creationObject
 
 /-- *tuer* 'kill', whose object does not survive the event ([staps-rooryck-2024] Table 1). -/
 def tuer : Verb :=
   transitive "tuer" accomplishmentSubjectProfile
-    (insert .dependentExistence accomplishmentObjectProfile) .achievement
+    (insert .dependentExistence accomplishmentObjectProfile)
 
 /-- *aimer* 'love', a stative psych verb ([staps-rooryck-2024] Table 1). -/
-def aimer : Verb := transitive "aimer" experiencerProfile independentParticipant .state
+def aimer : Verb := transitive "aimer" experiencerProfile independentParticipant
 
 /-- *adorer* 'adore, worship', a stative psych verb ([staps-rooryck-2024] §3.2). -/
-def adorer : Verb := transitive "adorer" experiencerProfile independentParticipant .state
+def adorer : Verb := transitive "adorer" experiencerProfile independentParticipant
 
 /-- *respecter* 'respect', a stative psych verb ([staps-rooryck-2024] Table 1). -/
-def respecter : Verb := transitive "respecter" experiencerProfile independentParticipant .state
+def respecter : Verb := transitive "respecter" experiencerProfile independentParticipant
 
 /-- *accompagner* 'accompany' ([staps-rooryck-2024] §3.2). -/
 def accompagner : Verb :=
-  transitive "accompagner" companionSubject independentParticipant .activity
+  transitive "accompagner" companionSubject independentParticipant
 
 /-- *suivre* 'follow' in its goal-directed sense, with a volitional subject
 ([staps-rooryck-2024] §3.3). -/
 def suivreDyn : Verb :=
-  transitive "suivre" activitySubjectProfile independentParticipant .activity
+  transitive "suivre" activitySubjectProfile independentParticipant
 
 /-- *suivre* 'follow' in its stative positional sense, a purely spatial relation
 ([staps-rooryck-2024] §3.3). -/
 def suivreStat : Verb :=
-  transitive "suivre" independentParticipant independentParticipant .state .stative
+  transitive "suivre" independentParticipant independentParticipant .stative
 
 /-- *précéder* 'precede' in its stative positional sense ([staps-rooryck-2024] §3.3). -/
 def preceder : Verb :=
-  transitive "précéder" independentParticipant independentParticipant .state
+  transitive "précéder" independentParticipant independentParticipant
 
 /-- *abandonner* 'abandon' in its telic sense, an event of leaving behind
 ([staps-rooryck-2024] §3.4, with examples from [authier-revuz-1972]). -/
 def abandonner : Verb :=
   transitive "abandonner" accomplishmentSubjectProfile accomplishmentObjectProfile
-    .accomplishment
 
 /-- *abandonner* 'neglect' in its atelic stative sense ([staps-rooryck-2024] §3.4, with
 examples from [authier-revuz-1972]). -/
 def abandonnerStat : Verb :=
-  transitive "abandonner" neglectSubject independentParticipant .state .stative
+  transitive "abandonner" neglectSubject independentParticipant .stative
 
 /-- *délaisser* 'leave behind' in its telic sense ([staps-rooryck-2024] §3.4). -/
 def delaisser : Verb :=
   transitive "délaisser" accomplishmentSubjectProfile accomplishmentObjectProfile
-    .accomplishment
 
 /-- *délaisser* 'neglect' in its atelic stative sense ([staps-rooryck-2024] §3.4). -/
 def delaisserStat : Verb :=
-  transitive "délaisser" neglectSubject independentParticipant .state .stative
+  transitive "délaisser" neglectSubject independentParticipant .stative
 
 /-! ### Monadic verbs
 

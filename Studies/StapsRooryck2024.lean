@@ -203,11 +203,11 @@ theorem le_iff_of_not_change :
 end Construal
 
 /-- The construal a verb entry lexicalizes reads change off the subject's causation entailment,
-volitionality off its volition entailment, and telicity off the aspectual class. -/
+volitionality off its volition entailment, and telicity off the object's change of state. -/
 def construal (v : Verb) : Construal :=
   let p := (v.slotProfile? .external).getD ∅
   ⟨decide (.causation ∈ p), decide (.volition ∈ p),
-    decide ((v.aspectualClass.map Aspect.AspectualClass.telicity).getD .atelic = .telic)⟩
+    decide (∃ θ ∈ v.slotProfile? (.complement 0), .changeOfState ∈ θ)⟩
 
 /-- *Par* selects a sense whose construal is at least as proto-agentive as that of every
 sense the verb makes available. -/
