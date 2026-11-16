@@ -148,6 +148,14 @@ theorem differential_cardinalFull {f : Ad → ℝ ↪o ℝ} (hf : f ∈ cardinal
 theorem factor_ratioFull (n : ℝ) : Invariant (ratioFull Ad ℝ) (factor x P y Q n) :=
   (invariant_similarity_factorEquative (x, P) (y, Q) n).uncurry
 
+-- pp. 349–350: adjectives measured as the same additive quantities, such as height and width,
+-- support factors across adjectives whichever unit measures them
+theorem factor_iff_of_orderAddMonoidHom {M : Type*} [AddCommGroup M] [LinearOrder M]
+    [IsOrderedAddMonoid M] (f g : M →+o ℝ) (hf : Injective f) (hg : Injective g)
+    (d : X → Ad → M) (n : ℝ) :
+    factor x P y Q n (fun x P ↦ g (d x P)) ↔ factor x P y Q n fun x P ↦ f (d x P) :=
+  factorEquative_comp_orderAddMonoidHom_iff f g hf hg (uncurry d) (x, P) (y, Q) n
+
 /-- On a co-interval scale *x is n times as P as y is Q* is meaningful only for the factor $1$,
 since a common change of origin moves every other ratio. -/
 theorem factor_cardinalFull_iff {n : ℝ} (hne : (x, P) ≠ (y, Q)) :
