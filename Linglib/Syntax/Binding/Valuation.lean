@@ -39,8 +39,10 @@ profile of saturation (predication, structure sharing).
 
 ## Implementation notes
 
-The dependency is the relation `L` of `Binding.Configuration.Binds`, here a `SetRel` so that
-composition, the identity and the antecedents of a position are mathlib's. Grammatical
+The dependency is directed, from antecedent to dependent, and is a `SetRel` so that composition,
+the identity and the antecedents of a position are mathlib's. Coindexation, the relation `L` of
+`Binding.Configuration.Binds`, is symmetric; the dependency it gives is the binding relation
+itself, `{(a, b) | s.Binds L a b}`, whose codomain is the bound positions. Grammatical
 dependencies share Koster's configurational-matrix format, as Neeleman and van de Koot state it,
 and its clauses are mathlib vocabulary and are not named here: refinement `r ⊆ s`,
 `Relator.LeftUnique` and `dependent ⊆ r.cod`. Control shift varies the antecedent across readings
