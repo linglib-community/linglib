@@ -279,11 +279,11 @@ end Bathroom
 /-! ### Double negation (§2.1, §3.3) -/
 
 -- (49) [groenendijk-stokhof-1991]
+open Update SetRel AntidomainMonoid in
 theorem dne_bus_not_dpl [Nontrivial E] :
     (∀ φ : BilateralUpdate W V E, ~~φ = φ) ∧
       ∃ (x : ℕ) (φ : Update (ℕ → E)),
-        Update.test (Update.neg (Update.test (Update.neg (Update.dexists x φ)))) ≠
-          Update.dexists x φ :=
+        ∼∼(Update.randomAssign x ○ φ) ≠ Update.randomAssign x ○ φ :=
   ⟨BilateralUpdate.neg_neg, GroenendijkStokhof1991.dne_fails_anaphora⟩
 
 /-! ### Partial familiarity (§3.3, (56)–(57)) -/

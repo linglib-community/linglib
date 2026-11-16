@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.Algebra.Group.Defs
+public import Linglib.Core.Algebra.AntidomainMonoid.Test
 import Linglib.Core.Data.Set.Lattice.Order
 public import Linglib.Core.Relation.SetRel
 public import Linglib.Core.Data.Set.Functor
@@ -26,8 +26,9 @@ is in `Collapse.lean`.
 ## Main definitions
 
 * `Update S`, `Condition S`: relations on states, sets of states.
-* `Update.test`, `Update.neg`, `Update.impl`, `Update.disj`: the test of a
-  condition, and the conditions `D.domᶜ`, `D₁.core D₂.dom`, and `D₁.dom ∪ D₂.dom`.
+* `Update.test`: the test of a condition. With the antidomain `∼D = test D.domᶜ` the updates
+  are an `AntidomainMonoid`, whose dynamic implication and disjunction are the tests of
+  `D₁.core D₂.dom` and `D₁.dom ∪ D₂.dom`.
 * `Update.IsTest`: updates that never change the state.
 * `Update.maxBy`: the outputs of an update at which a valuation is locally maximal.
 * `Update.cumul`, `Update.strictLift`: the cumulative and the strict lift of an update to plural
@@ -61,7 +62,7 @@ The algebraic instances are scoped: `Update S` abbreviates a set of pairs and
 `CCP S` a function type. Sequencing distributes over arbitrary unions by
 mathlib's `SetRel.comp_sUnion` and `SetRel.sUnion_comp`, and the image is left
 adjoint to the core by `SetRel.image_core_gc`.
-`Update.neg` does not validate double-negation elimination and `CCP.negTest`
+The antidomain does not validate double-negation elimination and `CCP.negTest`
 is not `CCP.neg`; the framework-specific repairs and comparisons live in the
 studies. [groenendijk-stokhof-1991]'s entailment notions live in
 `Studies/GroenendijkStokhof1991.lean`.
@@ -69,6 +70,8 @@ studies. [groenendijk-stokhof-1991]'s entailment notions live in
 ## References
 
 * [J. Groenendijk and M. Stokhof, *Dynamic Predicate Logic*][groenendijk-stokhof-1991]
+* [M. Hollenberg, *An Equational Axiomatization of Dynamic Negation and Relational
+  Composition*][hollenberg-1997]
 * [H. Kamp and U. Reyle, *From Discourse to Logic*][kamp-reyle-1993]
 * [R. Muskens, *Combining Montague Semantics and Discourse Representation*][muskens-1996]
 * [I. Heim, *The Semantics of Definite and Indefinite Noun Phrases*][heim-1982]
@@ -110,15 +113,6 @@ variable {S : Type*} {C C₁ C₂ t : Condition S} {D D₁ D₂ : Update S} {i j
 /-- `test C` checks `C` without changing the state. -/
 def test (C : Condition S) : Update S := {(a, b) | a = b ∧ b ∈ C}
 
-/-- `neg D` holds at `i` iff `D` has no output from `i`. -/
-def neg (D : Update S) : Condition S := D.domᶜ
-
-/-- `impl D₁ D₂` holds at `i` iff every `D₁`-output from `i` has a `D₂`-output. -/
-def impl (D₁ D₂ : Update S) : Condition S := D₁.core D₂.dom
-
-/-- `disj D₁ D₂` holds at `i` iff some disjunct has an output from `i`. -/
-def disj (D₁ D₂ : Update S) : Condition S := D₁.dom ∪ D₂.dom
-
 @[simp] theorem mem_test : i ~[test C] j ↔ i = j ∧ j ∈ C := Iff.rfl
 
 theorem mem_comp_test : i ~[D ○ test C] j ↔ i ~[D] j ∧ j ∈ C :=
@@ -127,32 +121,28 @@ theorem mem_comp_test : i ~[D ○ test C] j ↔ i ~[D] j ∧ j ∈ C :=
 theorem mem_test_comp : i ~[test C ○ D] j ↔ i ∈ C ∧ i ~[D] j :=
   ⟨fun ⟨_, ⟨rfl, hC⟩, h⟩ ↦ ⟨hC, h⟩, fun ⟨hC, h⟩ ↦ ⟨i, ⟨rfl, hC⟩, h⟩⟩
 
-@[simp] theorem mem_neg : i ∈ neg D ↔ ¬∃ k, i ~[D] k := Iff.rfl
-
-@[simp] theorem mem_impl : i ∈ impl D₁ D₂ ↔ ∀ ⦃h⦄, i ~[D₁] h → ∃ k, h ~[D₂] k := Iff.rfl
-
-@[simp] theorem mem_disj : i ∈ disj D₁ D₂ ↔ (∃ k, i ~[D₁] k) ∨ ∃ k, i ~[D₂] k := Iff.rfl
-
 theorem mem_test_iff_left : i ~[test C] j ↔ i = j ∧ i ∈ C :=
   ⟨by rintro ⟨rfl, h⟩; exact ⟨rfl, h⟩, by rintro ⟨rfl, h⟩; exact ⟨rfl, h⟩⟩
 
-theorem neg_eq_core_empty (D : Update S) : neg D = D.core ∅ := by
-  ext; simp [neg]
-
 /-! ### The update monoid -/
 
-/-- `Update S` is a monoid under composition with the identity as unit (scoped, since
-`Update S` abbreviates a set of pairs). -/
-scoped instance : Monoid (Update S) where
+/-- `Update S` is a monoid under composition with the identity as unit and the empty update as
+zero (scoped, since `Update S` abbreviates a set of pairs). -/
+scoped instance : MonoidWithZero (Update S) where
   mul := comp
   one := .id
+  zero := ∅
   mul_assoc := comp_assoc
   one_mul := id_comp
   mul_one := comp_id
+  zero_mul := empty_comp
+  mul_zero := comp_empty
 
 theorem mul_def (D₁ D₂ : Update S) : D₁ * D₂ = D₁ ○ D₂ := rfl
 
 theorem one_def : (1 : Update S) = .id := rfl
+
+theorem zero_def : (0 : Update S) = ∅ := rfl
 
 /-! ### Tests -/
 
@@ -172,7 +162,22 @@ theorem test_injective : Function.Injective (test : Condition S → Update S) :=
 @[simp] theorem test_comp_test (C₁ C₂ : Condition S) : test C₁ ○ test C₂ = test (C₁ ∩ C₂) := by
   ext ⟨i, j⟩; simp only [mem_comp, mem_test]; grind
 
-@[simp] theorem neg_test (C : Condition S) : neg (test C) = Cᶜ := by rw [neg, dom_test]
+/-- A sequence of tests tests the conjunction of their conditions. -/
+theorem prod_map_test {α : Type*} (C : α → Condition S) (l : List α) :
+    (l.map fun a ↦ test (C a)).prod = test (⋂ a ∈ l, C a) := by
+  induction l with
+  | nil => simp [one_def]
+  | cons a l ih => simp [ih, mul_def, Set.iInter_or, Set.iInter_inter_distrib]
+
+@[simp] theorem test_empty : test (∅ : Condition S) = ∅ := by ext ⟨i, j⟩; simp
+
+theorem test_union (C₁ C₂ : Condition S) : test (C₁ ∪ C₂) = test C₁ ∪ test C₂ := by
+  ext ⟨i, j⟩; simp only [mem_test, Set.mem_union]; grind
+
+/-- Testing its domain before an update changes nothing. -/
+@[simp] theorem test_dom_comp (D : Update S) : test D.dom ○ D = D := by
+  ext ⟨i, j⟩
+  exact ⟨fun ⟨_, ⟨rfl, _⟩, h⟩ ↦ h, fun h ↦ ⟨i, ⟨rfl, j, h⟩, h⟩⟩
 
 @[simp] theorem image_test (C σ : Set S) : (test C).image σ = σ ∩ C := by
   ext; simp only [mem_image, mem_test]; grind
@@ -212,21 +217,82 @@ theorem IsTest.eq_test_dom (h : IsTest D) : D = test D.dom := by
 theorem IsTest.cod_eq_dom (h : IsTest D) : D.cod = D.dom := by
   rw [h.eq_test_dom, cod_test, dom_test]
 
-theorem neg_eq_compl_dom (D : Update S) : neg D = D.domᶜ := rfl
-
-theorem impl_eq_core_dom (D₁ D₂ : Update S) : impl D₁ D₂ = D₁.core D₂.dom := rfl
-
-theorem disj_eq_dom_union_dom (D₁ D₂ : Update S) : disj D₁ D₂ = D₁.dom ∪ D₂.dom := rfl
-
-theorem impl_comp (D₁ D₂ D₃ : Update S) : impl (D₁ ○ D₂) D₃ = impl D₁ (test (impl D₂ D₃)) := by
-  simp only [impl_eq_core_dom, dom_test, core_comp]
-
 theorem dom_comp (D₁ D₂ : Update S) : (D₁ ○ D₂).dom = D₁.preimage D₂.dom := by
   rw [← preimage_univ_right, preimage_comp, preimage_univ_right]
 
-theorem impl_eq_neg_comp_test_neg (D₁ D₂ : Update S) :
-    impl D₁ D₂ = neg (D₁ ○ test (neg D₂)) := by
-  simp only [neg_eq_compl_dom, dom_comp, dom_test, ← core_compl, compl_compl, impl_eq_core_dom]
+theorem dom_comp_test (D : Update S) (C : Condition S) : (D ○ test C).dom = D.preimage C := by
+  rw [dom_comp, dom_test]
+
+/-! ### The antidomain
+
+The updates are the antidomain monoid of [hollenberg-1997]'s dynamic relation algebras: the
+antidomain of an update is the test of where it has no output, which interprets negation in
+dynamic predicate logic. Dynamic implication and disjunction are then the tests of the
+conditions `D₁.core D₂.dom` and `D₁.dom ∪ D₂.dom`. -/
+
+open AntidomainMonoid in
+scoped instance : AntidomainMonoid (Update S) where
+  antidomain D := test D.domᶜ
+  isAntidomain :=
+    { mul_self := fun D ↦ by
+        ext ⟨i, j⟩; simp only [mul_def, zero_def, mem_test_comp]; simp; grind
+      comm := fun D₁ D₂ ↦ by simp only [mul_def, test_comp_test, Set.inter_comm]
+      map_map_mul_self := fun D ↦ by simp only [mul_def, dom_test, compl_compl, test_dom_comp]
+      map_eq_mul := fun D₁ D₂ ↦ by
+        simp only [mul_def, test_comp_test, dom_comp, dom_test]
+        rw [← Set.compl_union, ← preimage_union, Set.union_compl_self, preimage_univ_right]
+      map_mul_mul_self := fun D₁ D₂ ↦ by
+        ext ⟨i, j⟩
+        simp only [mul_def]
+        rw [mem_comp_test]
+        exact ⟨fun h ↦
+          ⟨h, fun ⟨k, hk⟩ ↦ (mem_test_comp.1 h).1 ⟨k, j, (mem_test_comp.1 h).2, hk⟩⟩, And.left⟩ }
+
+open AntidomainMonoid
+
+theorem antidomain_def (D : Update S) : ∼D = test D.domᶜ := rfl
+
+@[simp] theorem mem_antidomain : i ~[∼D] j ↔ i = j ∧ ¬∃ k, j ~[D] k := Iff.rfl
+
+@[simp] theorem dom_antidomain (D : Update S) : (∼D).dom = D.domᶜ := dom_test _
+
+@[simp] theorem antidomain_test (C : Condition S) : ∼(test C) = test Cᶜ := by
+  rw [antidomain_def, dom_test]
+
+/-- The double antidomain of an update is the test of its domain. -/
+theorem antidomain_antidomain (D : Update S) : ∼∼D = test D.dom := by
+  rw [antidomain_def, dom_antidomain, compl_compl]
+
+/-- Dynamic implication tests that every output of the first update is an input of the second. -/
+theorem dimp_eq (D₁ D₂ : Update S) : dimp D₁ D₂ = test (D₁.core D₂.dom) := by
+  rw [dimp, antidomain_def, antidomain_def, mul_def, dom_comp_test, ← core_compl, compl_compl]
+
+/-- Dynamic disjunction tests that one of the updates has an output. -/
+theorem dor_eq (D₁ D₂ : Update S) : dor D₁ D₂ = test (D₁.dom ∪ D₂.dom) := by
+  rw [dor, antidomain_def D₁, antidomain_def D₂, mul_def, test_comp_test, antidomain_test,
+    Set.compl_inter, compl_compl, compl_compl]
+
+/-- The tests are the fixed points of the double antidomain. -/
+theorem isTest_iff_antidomain_antidomain : IsTest D ↔ ∼∼D = D :=
+  ⟨fun h ↦ (antidomain_antidomain D).trans h.eq_test_dom.symm,
+    fun h ↦ h ▸ antidomain_antidomain D ▸ isTest_test _⟩
+
+/-- The conditions are the Boolean algebra of tests of the monoid of updates: `test` is an order
+isomorphism onto the tests, with the domain as its inverse. -/
+def testOrderIso : Condition S ≃o Test (Update S) where
+  toFun C := ⟨test C, by rw [antidomain_antidomain, dom_test]⟩
+  invFun D := (D : Update S).dom
+  left_inv C := dom_test C
+  right_inv D := Test.coe_injective ((antidomain_antidomain _).symm.trans
+    D.antidomain_antidomain_coe)
+  map_rel_iff' {C₁ C₂} := Test.le_iff_mul_eq.trans <| by
+    change test C₁ ○ test C₂ = test C₁ ↔ C₁ ⊆ C₂
+    rw [test_comp_test, test_inj, Set.inter_eq_left]
+
+@[simp] theorem coe_testOrderIso (C : Condition S) : (testOrderIso C : Update S) = test C := rfl
+
+@[simp] theorem testOrderIso_symm_apply (D : Test (Update S)) :
+    testOrderIso.symm D = (D : Update S).dom := rfl
 
 /-! ### Maximization -/
 
