@@ -5,19 +5,19 @@ public import Linglib.Semantics.Exhaustification.InnocentExclusion
 /-!
 # Exhaustifying a disjunction with a conjunctive disjunct
 
-A disjunction `(a ∧ b) ∨ c` strengthens under innocent exclusion, against its substitution
-alternatives — the connective replacements and the subconstituents — to its strongly
-exhaustive reading `(a ∧ b ∧ ¬c) ∨ (c ∧ ¬a ∧ ¬b)`, each disjunct exclusive of the material of
-the other. With that reading, the second premise `a` of the illusory inference from
-disjunction makes its conclusion `b` classically valid: the scalar-implicature route to the
-illusion. Against the four-member Sauerland set the strengthening does not arise — innocent
-exclusion only denies the conjunction of the disjuncts — so the subconstituent alternatives
-are load-bearing.
+Among the worlds of `(a ∧ b) ∨ c`, those verifying a minimal set of the atoms `a`, `b`, `c` are
+[the worlds of `(a ∧ b ∧ ¬c) ∨ (c ∧ ¬a ∧ ¬b)`](##Exhaustification.exhMW_inter_union), each
+disjunct exclusive of the material of the other: the strongly exhaustive reading, under which the
+second premise `a` of the illusory inference from disjunction leaves only worlds of `b`. Innocent
+exclusion yields that reading [against the positive
+propositions](##Exhaustification.exhIE_latticeClosure_inter_union), the closure of the atoms under
+conjunction and disjunction, and against [any set of positive propositions containing the atoms,
+`a ∧ c` and `b ∧ c`](##Exhaustification.exhIE_inter_union), since such a set ranks worlds as the
+atoms do and the two conjunctions hold at every world that is not minimal.
 
 ## References
 
 * [spector-2007]
-* [sauerland-2004]
 * [sable-meyer-mascarenhas-2022]
 * [bade-picat-chung-mascarenhas-2022]
 -/
@@ -28,62 +28,42 @@ namespace Exhaustification
 
 open Set
 
-variable {W : Type*} {a b c : Set W}
+variable {W : Type*} {ALT : Set (Set W)} {a b c : Set W}
 
-/-- The alternatives of `(a ∧ b) ∨ c` by substitution of connectives and of subconstituents. -/
-def conjDisjAlternatives (a b c : Set W) : Set (Set W) :=
-  {(a ∩ b) ∪ c, (a ∩ b) ∩ c, a ∪ c, b ∪ c, a ∩ c, b ∩ c, a ∩ b, a, b, c}
-
-theorem exhIE_conjDisjAlternatives (hab : ((a ∩ b) \ c).Nonempty)
-    (hc : (c \ (a ∪ b)).Nonempty) :
-    exhIE (conjDisjAlternatives a b c) ((a ∩ b) ∪ c) = ((a ∩ b) \ c) ∪ (c \ (a ∪ b)) := by
+theorem exhMW_inter_union (hab : ((a ∩ b) \ c).Nonempty) (hc : (c \ (a ∪ b)).Nonempty) :
+    exhMW {a, b, c} ((a ∩ b) ∪ c) = ((a ∩ b) \ c) ∪ (c \ (a ∪ b)) := by
   obtain ⟨x, ⟨hxa, hxb⟩, hxc⟩ := hab
   obtain ⟨y, hyc, hyab⟩ := hc
-  have hya : y ∉ a := fun h ↦ hyab (Or.inl h)
-  have hyb : y ∉ b := fun h ↦ hyab (Or.inr h)
-  have hM : IsMinimalCover (conjDisjAlternatives a b c) ((a ∩ b) ∪ c) {x, y} := by
-    refine ⟨?_, fun w hw ↦ ?_, ?_⟩
-    · rintro v (rfl | rfl)
-      exacts [Or.inl ⟨hxa, hxb⟩, Or.inr hyc]
-    · rcases hw with ⟨hwa, hwb⟩ | hwc
-      · refine ⟨x, Or.inl rfl, fun q ⟨hq, hxq⟩ ↦ ⟨hq, ?_⟩⟩
-        simp only [conjDisjAlternatives, mem_insert_iff, mem_singleton_iff] at hq
-        rcases hq with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
-        exacts [Or.inl ⟨hwa, hwb⟩, (hxc hxq.2).elim, Or.inl hwa, Or.inl hwb, (hxc hxq.2).elim,
-          (hxc hxq.2).elim, ⟨hwa, hwb⟩, hwa, hwb, (hxc hxq).elim]
-      · refine ⟨y, Or.inr rfl, fun q ⟨hq, hyq⟩ ↦ ⟨hq, ?_⟩⟩
-        simp only [conjDisjAlternatives, mem_insert_iff, mem_singleton_iff] at hq
-        rcases hq with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
-        exacts [Or.inr hwc, (hya hyq.1.1).elim, Or.inr hwc, Or.inr hwc, (hya hyq.1).elim,
-          (hyb hyq.1).elim, (hya hyq.1).elim, (hya hyq).elim, (hyb hyq).elim, hwc]
-    · rintro v (rfl | rfl) u (rfl | rfl) huv
-      · exact subset_rfl
-      · exact (hxc (huv ⟨by simp [conjDisjAlternatives], hyc⟩).2).elim
-      · exact (hya (huv ⟨by simp [conjDisjAlternatives], hxa⟩).2).elim
-      · exact subset_rfl
-  rw [hM.exhIE_eq]
   ext u
-  simp only [conjDisjAlternatives, mem_insert_iff, mem_singleton_iff, forall_eq_or_imp,
-    forall_eq, mem_ofPred_eq, mem_union, mem_inter_iff, mem_sdiff]
-  constructor
-  · rintro ⟨hu, h⟩
-    rcases hu with ⟨hua, hub⟩ | huc
-    · refine Or.inl ⟨⟨hua, hub⟩, fun huc ↦ ?_⟩
-      exact h.2.2.2.2.1 (by simp_all) ⟨hua, huc⟩
-    · by_cases hua : u ∈ a
-      · exact (h.2.2.2.2.1 (by simp_all) ⟨hua, huc⟩).elim
-      · by_cases hub : u ∈ b
-        · exact (h.2.2.2.2.2.1 (by simp_all) ⟨hub, huc⟩).elim
-        · exact Or.inr ⟨huc, fun h' ↦ h'.elim hua hub⟩
-  · rintro (⟨⟨hua, hub⟩, huc⟩ | ⟨huc, huab⟩)
-    · refine ⟨Or.inl ⟨hua, hub⟩, ?_⟩
-      simp_all
-    · refine ⟨Or.inr huc, ?_⟩
-      simp_all
+  simp only [mem_exhMW, MinimalFor, Set.subset_def, Preorder.mem_satisfied, mem_insert_iff,
+    mem_singleton_iff, and_imp, forall_eq_or_imp, forall_eq, true_or, or_true, true_and,
+    mem_union, mem_inter_iff, mem_sdiff] at hyab ⊢
+  refine ⟨fun ⟨hu, hmin⟩ ↦ ?_, fun hu ↦ ⟨by tauto, fun v hv ↦ by tauto⟩⟩
+  have hx := hmin (j := x) (.inl ⟨hxa, hxb⟩)
+  have hy := hmin (j := y) (.inr hyc)
+  tauto
 
-theorem stronglyExhaustive_inter_subset : (((a ∩ b) \ c) ∪ (c \ (a ∪ b))) ∩ a ⊆ b := by
-  rintro u ⟨⟨⟨-, hub⟩, -⟩ | ⟨-, huab⟩, hua⟩
-  · exact hub
-  · exact (huab (Or.inl hua)).elim
+/-- Innocent exclusion strengthens `(a ∧ b) ∨ c` to `(a ∧ b ∧ ¬c) ∨ (c ∧ ¬a ∧ ¬b)` against any
+alternatives built from `a`, `b`, `c` by conjunction and disjunction that include the three and the
+conjunctions `a ∧ c` and `b ∧ c`. -/
+theorem exhIE_inter_union (h₁ : {a, b, c, a ∩ c, b ∩ c} ⊆ ALT)
+    (h₂ : ALT ⊆ latticeClosure {a, b, c}) (hab : ((a ∩ b) \ c).Nonempty)
+    (hc : (c \ (a ∪ b)).Nonempty) :
+    exhIE ALT ((a ∩ b) ∪ c) = ((a ∩ b) \ c) ∪ (c \ (a ∪ b)) := by
+  have hMW : exhMW ALT ((a ∩ b) ∪ c) = ((a ∩ b) \ c) ∪ (c \ (a ∪ b)) := by
+    rw [exhMW_eq_of_subset_latticeClosure (fun q hq ↦ h₁ (by grind)) h₂,
+      exhMW_inter_union hab hc]
+  refine Subset.antisymm (fun u hu ↦ ?_) (hMW ▸ exhMW_subset_exhIE ALT _)
+  have hac := hu.2 _ <| (isInnocentlyExcludable_iff_exhMW_subset_compl ALT _ (a ∩ c)
+    (h₁ (by simp))).2 (hMW ▸ by grind)
+  have hbc := hu.2 _ <| (isInnocentlyExcludable_iff_exhMW_subset_compl ALT _ (b ∩ c)
+    (h₁ (by simp))).2 (hMW ▸ by grind)
+  have := hu.1
+  grind
+
+theorem exhIE_latticeClosure_inter_union (hab : ((a ∩ b) \ c).Nonempty)
+    (hc : (c \ (a ∪ b)).Nonempty) :
+    exhIE (latticeClosure {a, b, c}) ((a ∩ b) ∪ c) = ((a ∩ b) \ c) ∪ (c \ (a ∪ b)) := by
+  rw [exhIE_latticeClosure _ _ (by simp), exhMW_inter_union hab hc]
 
 end Exhaustification

@@ -13,28 +13,20 @@ public import Mathlib.Order.SupClosed
 This file defines Fox's innocent exclusion. A set of alternatives is a consistent exclusion when
 denying all of them is consistent with the prejacent; an alternative is innocently excludable when
 it belongs to every maximal consistent exclusion, and `exhIE` asserts the prejacent and denies the
-innocently excludable alternatives. The maximal consistent exclusions are the sets of alternatives
-false at a minimal world, so an alternative is innocently excludable iff it fails at every minimal
-world, and minimal-world exhaustification entails innocent exclusion. The exclusion component,
-restricted to a relevance set, is `excludesIE`. Over finitely many worlds and an indexed family of
-alternatives, innocent excludability and membership in `exhIE` are decidable.
-
-## Main statements
-
-* `Exhaustification.maximal_sdiff_satisfied_iff`: the alternatives false at a prejacent world form
-  a maximal consistent exclusion iff the world is minimal.
-* `Exhaustification.isInnocentlyExcludable_iff_exhMW_subset_compl`: an alternative is innocently
-  excludable iff it fails at every minimal world.
-* `Exhaustification.exhIE_eq_exh_of_nonempty`: when plain exhaustification is consistent, innocent
-  exclusion is plain exhaustification.
-* `Exhaustification.exhMW_eq_exhIE_of_infClosed`: over finitely many alternatives closed under
-  conjunction, minimal-world exhaustification is innocent exclusion.
-* `Exhaustification.mem_exhIE_iff_subset_sUnion`: innocent exclusion keeps the prejacent worlds
-  verifying only alternatives that some minimal verified set contains.
+innocently excludable alternatives. The maximal consistent exclusions are
+[the sets of alternatives false at a minimal world](##Exhaustification.maximal_sdiff_satisfied_iff),
+so an alternative is innocently excludable iff
+[it fails at every minimal world](##Exhaustification.isInnocentlyExcludable_iff_exhMW_subset_compl),
+and innocent exclusion is plain exhaustification
+[when that is consistent](##Exhaustification.exhIE_eq_exh_of_nonempty). Over finitely many
+alternatives [closed under conjunction](##Exhaustification.exhMW_eq_exhIE_of_infClosed), and so
+over [the closure of finitely many propositions under conjunction and
+disjunction](##Exhaustification.exhIE_latticeClosure), it keeps exactly the minimal worlds.
 
 ## References
 
 * [fox-2007]
+* [spector-2007]
 * [spector-2016]
 -/
 
@@ -447,6 +439,34 @@ theorem exhMW_eq_exhIE_of_infClosed_sUnion_image (hfin : ALT.Finite)
     (hinf : InfClosed (sUnion '' 𝒫 ALT)) : exhMW ALT φ = exhIE ALT φ := by
   rw [← exhMW_sUnion_image_powerset, ← exhIE_sUnion_image_powerset]
   exact exhMW_eq_exhIE_of_infClosed _ _ (hfin.finite_subsets.image _) hinf
+
+variable {ALT φ} in
+/-- Closing the alternatives under conjunction and disjunction, or under any part of that closure,
+leaves the ranking of worlds by their true alternatives unchanged: the propositions true at `v`
+whenever they are true at `u` form a sublattice. -/
+theorem satisfied_subset_satisfied_iff_of_subset_latticeClosure {S : Set (Set World)}
+    (h₁ : S ⊆ ALT) (h₂ : ALT ⊆ latticeClosure S) {u v : World} :
+    Preorder.satisfied (· ∈ ·) ALT u ⊆ Preorder.satisfied (· ∈ ·) ALT v ↔
+      Preorder.satisfied (· ∈ ·) S u ⊆ Preorder.satisfied (· ∈ ·) S v := by
+  refine ⟨fun h q hq ↦ ⟨hq.1, (h ⟨h₁ hq.1, hq.2⟩).2⟩, fun h q hq ↦ ⟨hq.1, ?_⟩⟩
+  have hsub : IsSublattice {q : Set World | u ∈ q → v ∈ q} :=
+    ⟨fun _ hp _ hq huv ↦ huv.imp hp hq, fun _ hp _ hq huv ↦ ⟨hp huv.1, hq huv.2⟩⟩
+  exact latticeClosure_min (fun q hq huq ↦ (h ⟨hq, huq⟩).2) hsub (h₂ hq.1) hq.2
+
+variable {ALT φ} in
+theorem exhMW_eq_of_subset_latticeClosure {S : Set (Set World)} (h₁ : S ⊆ ALT)
+    (h₂ : ALT ⊆ latticeClosure S) : exhMW ALT φ = exhMW S φ := by
+  ext u
+  simp only [mem_exhMW, MinimalFor, satisfied_subset_satisfied_iff_of_subset_latticeClosure h₁ h₂]
+
+@[simp] theorem exhMW_latticeClosure : exhMW (latticeClosure ALT) φ = exhMW ALT φ :=
+  exhMW_eq_of_subset_latticeClosure subset_latticeClosure subset_rfl
+
+/-- Against the closure of finitely many propositions under conjunction and disjunction, the
+positive propositions of [spector-2007], innocent exclusion keeps the minimal worlds. -/
+theorem exhIE_latticeClosure (hfin : ALT.Finite) : exhIE (latticeClosure ALT) φ = exhMW ALT φ := by
+  rw [← exhMW_eq_exhIE_of_infClosed _ _ hfin.latticeClosure isSublattice_latticeClosure.infClosed,
+    exhMW_latticeClosure]
 
 /-! ### Verified alternatives
 
