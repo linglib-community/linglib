@@ -230,7 +230,7 @@ variable [Fintype X] [MeasurableSpace X] [MeasurableSingletonClass X]
 
 theorem speaker_qudListener_dirac {α : ℝ} (hα : 0 ≤ α) (κ : U → ℝ) (m : M) :
     speaker α κ (qudListener L q) Measure.dirac m =
-      speaker α κ (L.map q) Measure.dirac (q m) := by
+      qudSpeaker α κ L q m := by
   have hn : (n : ℝ≥0∞) ≠ 0 := by
     rw [Nat.cast_ne_zero, ← hq m]
     exact Set.ncard_ne_zero_of_mem (a := m) rfl
@@ -244,7 +244,7 @@ theorem speaker_qudListener_dirac {α : ℝ} (hα : 0 ≤ α) (κ : U → ℝ) (
         (L.map q u' {q m} ^ α * ENNReal.ofReal (Real.exp (-(α * κ u')))) := fun u' ↦ by
     rw [qudListener_apply_singleton_of_ncard L q hq, Kernel.map_apply_singleton,
       ENNReal.div_rpow_of_nonneg _ _ hα, div_eq_mul_inv, mul_comm (_ ^ α), mul_assoc]
-  rw [speaker_dirac_apply_singleton, speaker_dirac_apply_singleton]
+  rw [qudSpeaker, speaker_dirac_apply_singleton, speaker_dirac_apply_singleton]
   simp only [hw]
   rw [← Finset.mul_sum, ENNReal.mul_div_mul_left _ _ hc0 hc]
 

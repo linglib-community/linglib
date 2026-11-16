@@ -83,14 +83,18 @@ theorem cond_eq_of_restrict_eq {μ ν : Measure Ω} {s : Set Ω} (h : μ.restric
     μ[|s] = ν[|s] := by
   rw [cond, cond, ← Measure.restrict_apply_self μ, ← Measure.restrict_apply_self ν, h]
 
-/-- Reweighting by a density that is a positive finite constant on an event does not change the
-measure conditioned on the event. -/
+/-- Reweighting by a density that is almost everywhere a positive finite constant on an event does
+not change the measure conditioned on the event. -/
+theorem cond_withDensity_of_ae_eq (μ : Measure Ω) {f : Ω → ℝ≥0∞} {s : Set Ω}
+    (hs : MeasurableSet s) {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞)
+    (h : ∀ᵐ ω ∂μ.restrict s, f ω = c) : (μ.withDensity f)[|s] = μ[|s] := by
+  refine (cond_eq_of_restrict_eq ?_).trans (cond_smul hc0 hc μ s)
+  rw [restrict_withDensity hs, withDensity_congr_ae h, withDensity_const, Measure.restrict_smul]
+
 theorem cond_withDensity_of_forall_mem_eq (μ : Measure Ω) {f : Ω → ℝ≥0∞} {s : Set Ω}
     (hs : MeasurableSet s) {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞) (h : ∀ ω ∈ s, f ω = c) :
-    (μ.withDensity f)[|s] = μ[|s] := by
-  refine (cond_eq_of_restrict_eq ?_).trans (cond_smul hc0 hc μ s)
-  rw [restrict_withDensity hs, withDensity_congr_ae (ae_restrict_of_forall_mem hs h),
-    withDensity_const, Measure.restrict_smul]
+    (μ.withDensity f)[|s] = μ[|s] :=
+  cond_withDensity_of_ae_eq μ hs hc0 hc (ae_restrict_of_forall_mem hs h)
 
 theorem cond_univ_withDensity_mul (μ : Measure Ω) {f g : Ω → ℝ≥0∞} (hf : Measurable f)
     (hg : Measurable g) (hfin : μ.withDensity f Set.univ ≠ ∞) :

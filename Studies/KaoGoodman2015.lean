@@ -89,10 +89,10 @@ instance (μ : Measure Meaning) : IsFiniteKernel (L0 μ) :=
 /-- The question-indexed speaker knows the answer to her question and is informative about the
 literal listener's belief about it (eq. 1), at rationality `α` and no utterance cost. -/
 noncomputable def S1 (μ : Measure Meaning) (α : ℝ) (p : Meaning × QUD) : Measure Weather :=
-  speaker α 0 ((L0 μ).map (project p.2)) Measure.dirac (project p.2 p.1)
+  qudSpeaker α 0 (L0 μ) (project p.2) p.1
 
 instance (μ : Measure Meaning) (α : ℝ) (p : Meaning × QUD) : IsFiniteMeasure (S1 μ α p) :=
-  inferInstanceAs (IsFiniteMeasure (speaker _ _ _ _ _))
+  inferInstanceAs (IsFiniteMeasure (qudSpeaker _ _ _ _ _))
 
 /-- The pragmatic listener over meaning and question inverts the speaker against the product of
 the meaning prior and the question prior; its first marginal is the meaning listener. -/
@@ -108,7 +108,7 @@ variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
 theorem listener_ne_zero_iff (hα : 0 < α) (u : Weather) (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
       ∃ q, ν {q} ≠ 0 ∧ ∃ m', project q m' = project q m ∧ m'.1 = u ∧ μ {m'} ≠ 0 :=
-  listener_prod_fst_speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff hα 0 μ ν sem
+  listener_prod_fst_qudSpeaker_listener_truthful_apply_singleton_ne_zero_iff hα 0 μ ν sem
     project u m
 
 -- Under the valence question, "terrible" can hyperbolically mean bad weather with negative
@@ -146,7 +146,7 @@ omit [IsProbabilityMeasure ν] in
 theorem S1_state_apply_singleton_of_ne (hα : 0 < α) {s u : Weather} (h : s ≠ u) (A : Affect) :
     S1 μ α ((s, A), .state) {u} = 0 := by
   by_contra h'
-  obtain ⟨m', hm', hu, -⟩ := (speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff hα 0
+  obtain ⟨m', hm', hu, -⟩ := (qudSpeaker_listener_truthful_apply_singleton_ne_zero_iff hα 0
     μ sem (project .state) (s, A) u).mp h'
   exact h ((Sum.inl.inj hm').symm.trans hu)
 
@@ -181,7 +181,7 @@ through Bayes' rule at the pragmatic listener alone. -/
 theorem S1_compProd_congr (hπ : ∀ u, π {u} ≠ 0) (hπ' : ∀ u, π' {u} ≠ 0) (p : Meaning × QUD) :
     S1 (π ⊗ₘ κ) α p = S1 (π' ⊗ₘ κ) α p := by
   have h : L0 (π ⊗ₘ κ) = L0 (π' ⊗ₘ κ) :=
-    Kernel.ext fun u ↦ by rw [L0_compProd π κ (hπ u), L0_compProd π' κ (hπ' u)]
+    listener_truthful_preimage_fst_compProd_congr π π' κ hπ hπ'
   rw [S1, S1, h]
 
 omit [IsProbabilityMeasure π'] in
@@ -217,7 +217,7 @@ omit [IsProbabilityMeasure π'] in
 private theorem S1_valence_apply (hπ : ∀ u, π {u} ≠ 0) (m : Meaning) (t : Weather) :
     S1 (π ⊗ₘ κ) α (m, .valence) {t} =
       κ t (Prod.fst ⁻¹' {m.2.1}) ^ α / ∑ u, κ u (Prod.fst ⁻¹' {m.2.1}) ^ α := by
-  rw [S1, speaker_dirac_zero_apply_singleton]
+  rw [S1, qudSpeaker, speaker_dirac_zero_apply_singleton]
   simp only [project, map_L0_valence π κ hπ]
 
 omit [IsProbabilityMeasure π'] in
@@ -239,13 +239,13 @@ theorem S1_arousal_lt_iff (hπ : ∀ u, π {u} ≠ 0) (hα : 0 < α) (m : Meanin
   have hL (w : Weather) : (L0 (π ⊗ₘ κ)).map (project .arousal) w {project .arousal m} =
       κ w (Prod.snd ⁻¹' {m.2.2}) := map_L0_arousal π κ hπ w m.2.2
   by_cases h0 : ∃ w, κ w (Prod.snd ⁻¹' {m.2.2}) ≠ 0
-  · rw [S1, speaker_dirac_real_singleton_lt_iff hα.le (h0.imp fun w hw ↦ by rwa [hL])]
+  · rw [S1, qudSpeaker, speaker_dirac_real_singleton_lt_iff hα.le (h0.imp fun w hw ↦ by rwa [hL])]
     simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one,
       ENNReal.rpow_lt_rpow_iff hα, hL]
   · simp only [ne_eq, not_exists, not_not] at h0
     have hS (w : Weather) : (S1 (π ⊗ₘ κ) α (m, .arousal)).real {w} = 0 := by
-      rw [measureReal_def, S1, speaker_dirac_apply_singleton_eq_zero hα (by rw [hL, h0]),
-        ENNReal.toReal_zero]
+      rw [measureReal_def, S1, qudSpeaker,
+        speaker_dirac_apply_singleton_eq_zero hα (by rw [hL, h0]), ENNReal.toReal_zero]
     rw [hS, hS, h0, h0]
     exact iff_of_false (lt_irrefl _) (lt_irrefl _)
 

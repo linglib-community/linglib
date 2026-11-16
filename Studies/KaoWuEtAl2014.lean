@@ -130,16 +130,25 @@ def cost (c : ℝ) (u : Price) : ℝ := if u.IsRound then 1 else c
 the literal listener's distribution over the topical subspace (eq. 6), at unit rationality, less
 the cost. -/
 noncomputable def S1 (μ : Measure Meaning) (c : ℝ) (p : Meaning × Goal) : Measure Price :=
-  speaker 1 (cost c) ((L0 μ).map (project p.2)) Measure.dirac (project p.2 p.1)
+  qudSpeaker 1 (cost c) (L0 μ) (project p.2) p.1
 
 instance (μ : Measure Meaning) (c : ℝ) (p : Meaning × Goal) : IsFiniteMeasure (S1 μ c p) :=
-  inferInstanceAs (IsFiniteMeasure (speaker _ _ _ _ _))
+  inferInstanceAs (IsFiniteMeasure (qudSpeaker _ _ _ _ _))
 
 /-- The pragmatic listener over meaning and goal, eq. 10, inverts the speaker against the product
 of the meaning prior and the goal prior; its first marginal is the meaning listener. -/
 noncomputable def L1 (μ : Measure Meaning) (ν : Measure Goal) (c : ℝ) :
     Kernel Price (Meaning × Goal) :=
   listener (μ.prod ν) (S1 μ c)
+
+-- The speaker does not depend on the price prior: priors that leave every price possible and
+-- share the affect prior have the same speaker.
+theorem S1_compProd_congr (π π' : Measure Price) [IsProbabilityMeasure π] [IsProbabilityMeasure π']
+    (κ : Kernel Price Bool) [IsMarkovKernel κ] (hπ : ∀ s, π {s} ≠ 0) (hπ' : ∀ s, π' {s} ≠ 0)
+    (c : ℝ) (p : Meaning × Goal) : S1 (π ⊗ₘ κ) c p = S1 (π' ⊗ₘ κ) c p := by
+  have h : L0 (π ⊗ₘ κ) = L0 (π' ⊗ₘ κ) :=
+    listener_truthful_preimage_fst_compProd_congr π π' κ hπ hπ'
+  rw [S1, S1, h]
 
 section Support
 
@@ -152,7 +161,7 @@ at which the utterance is literally true. -/
 theorem listener_ne_zero_iff (u : Price) (m : Meaning) :
     (L1 μ ν c u).fst {m} ≠ 0
       ↔ μ {m} ≠ 0 ∧ ∃ g, ν {g} ≠ 0 ∧ ∃ m', project g m' = project g m ∧ m'.1 = u ∧ μ {m'} ≠ 0 :=
-  listener_prod_fst_speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff one_pos
+  listener_prod_fst_qudSpeaker_listener_truthful_apply_singleton_ne_zero_iff one_pos
     (cost c) μ ν sem project u m
 
 /-- A low price with affect is a possible meaning of a high price under the affect goal whenever the
@@ -206,7 +215,7 @@ theorem approximate_prefers_round {p : Price} (hp : ¬ p.IsRound) (h₁ : μ (se
     (h₂ : μ (sem p.round) ≠ 0) (a : Bool) :
     (S1 μ c ((p, a), (.approximate, .price))).real {p}
         < (S1 μ c ((p, a), (.approximate, .price))).real {p.round} ↔ 1 < c := by
-  rw [S1, speaker_dirac_real_singleton_lt_iff zero_le_one
+  rw [S1, qudSpeaker, speaker_dirac_real_singleton_lt_iff zero_le_one
     ⟨p, by rw [map_L0_approximate μ h₁ rfl]; simp⟩,
     map_L0_approximate μ h₁ rfl, map_L0_approximate μ h₂ (Price.round_round p),
     ENNReal.one_rpow, cost, cost, ite_eq_right hp, ite_eq_left (Price.isRound_round p)]

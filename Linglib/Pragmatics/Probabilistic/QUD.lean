@@ -7,20 +7,22 @@ public import Linglib.Pragmatics.Probabilistic.LexicalUncertainty
 # Speakers who address a question
 
 A question under discussion is a function `q : W → X` from states to answers. In the models of
-Kao and colleagues the speaker knows the answer `q w` at her state and is informative about the
-answer alone: she addresses the pushforward `L.map q` of the listener's belief about the state.
-Under a literal listener this pushforward gives an answer [the prior's share of the states with
-that answer where the utterance is true](##listener_truthful_map_apply_singleton), so the speaker
-[produces an utterance exactly when it is true at a state of positive prior with her
-answer](##speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff), whether or not it is
-true at hers. A listener unsure of the question holds it as a latent coordinate of the state, as
-in lexical uncertainty, and such an utterance leads her to states where it is false, which is how
-the models derive hyperbole, metaphor and irony. The question is [sufficient for the
-listener](##cond_listener_speaker_map_dirac_preimage): she learns the speaker's answer, and given
-the answer, [or the question and the answer when she is unsure of the
-question](##cond_listener_prod_speaker_map_dirac_preimage), she believes what the prior does. In these models an utterance names one coordinate of
-the state, and at a prior that factors through that coordinate [the literal listener does not
-depend on its marginal](##listener_truthful_preimage_fst_compProd).
+Kao and colleagues [the speaker](##RSA.qudSpeaker) knows the answer `q w` at her state and is
+informative about the answer alone: she addresses the pushforward `L.map q` of the listener's
+belief about the state. At the identity question she is [the speaker who knows the
+state](##RSA.qudSpeaker_id), at a constant one she [only weighs costs](##RSA.qudSpeaker_const),
+and [a coarser question lets her say more](##RSA.qudSpeaker_apply_singleton_ne_zero_of_coarser).
+Under a literal listener she [produces an utterance exactly when it is true at a state of positive
+prior with her answer](##RSA.qudSpeaker_listener_truthful_apply_singleton_ne_zero_iff), whether or
+not it is true at hers. A listener unsure of the question holds it as a latent coordinate of the
+state, as in lexical uncertainty, and such an utterance leads her to states where it is false,
+which is how the models derive hyperbole, metaphor and irony. The question is [sufficient for the
+listener](##RSA.cond_listener_qudSpeaker_preimage): she learns the speaker's answer, and given the
+answer, [or the question and the answer when she is unsure of the
+question](##RSA.cond_listener_prod_qudSpeaker_preimage), she believes what the prior does. In
+these models an utterance names one coordinate of the state, and at a prior that factors through
+that coordinate [the literal listener does not depend on its
+marginal](##RSA.listener_truthful_preimage_fst_compProd_congr).
 
 ## References
 
@@ -29,7 +31,7 @@ depend on its marginal](##listener_truthful_preimage_fst_compProd).
 * [kao-goodman-2015]
 -/
 
-public section
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal
@@ -59,79 +61,150 @@ theorem listener_restrict_truthful_map_apply_singleton [Countable W] [DiscreteMe
     Measure.restrict_apply .of_discrete]
   congr 2 <;> ext <;> simp [and_comm, and_left_comm]
 
-variable [Fintype W] [Fintype U] [Fintype X] {α : ℝ}
+omit [MeasurableSingletonClass U] in
+/-- A coarser question raises the listener's probability of the answer at a state. -/
+theorem map_apply_singleton_le_of_coarser {X' : Type*} [MeasurableSpace X']
+    [MeasurableSingletonClass X'] [Countable W] [MeasurableSingletonClass W] (L : Kernel U W)
+    {q : W → X} {q' : W → X'} {w : W} (h : ∀ w', q w' = q w → q' w' = q' w) (u : U) :
+    L.map q u {q w} ≤ L.map q' u {q' w} := by
+  rw [Kernel.map_apply_singleton, Kernel.map_apply_singleton]
+  exact measure_mono fun w' hw' ↦ h w' hw'
+
+/-! ### The speaker -/
+
+variable [Fintype U] [Fintype X] {α : ℝ}
+
+/-- The speaker who addresses the question `q`. At the state `w` she knows the answer `q w` and
+soft-maximizes the log of the listener's probability of that answer, less the cost. -/
+noncomputable def qudSpeaker (α : ℝ) (C : U → ℝ) (L : Kernel U W) (q : W → X) (w : W) :
+    Measure U :=
+  speaker α C (L.map q) Measure.dirac (q w)
+
+section
+
+variable (C : U → ℝ) (L : Kernel U W) (q : W → X)
+
+instance (w : W) : IsZeroOrProbabilityMeasure (qudSpeaker α C L q w) :=
+  inferInstanceAs (IsZeroOrProbabilityMeasure (speaker α C (L.map q) Measure.dirac (q w)))
+
+omit [MeasurableSingletonClass U] in
+variable {q} in
+theorem qudSpeaker_eq_of_eq {w w' : W} (h : q w = q w') :
+    qudSpeaker α C L q w = qudSpeaker α C L q w' := by
+  rw [qudSpeaker, qudSpeaker, h]
+
+omit [MeasurableSingletonClass U] in
+/-- At the identity question she is the speaker who knows the state. -/
+theorem qudSpeaker_id (L : Kernel U X) (x : X) :
+    qudSpeaker α C L id x = speaker α C L Measure.dirac x := by
+  rw [qudSpeaker, Kernel.map_id, id]
+
+/-- At a constant question the answer tells the listener nothing and she only weighs costs. -/
+theorem qudSpeaker_const [Countable W] [MeasurableSingletonClass W] [IsMarkovKernel L] (x : X)
+    (w : W) (u : U) :
+    qudSpeaker α C L (fun _ ↦ x) w {u} =
+      ENNReal.ofReal (Real.exp (-(α * C u))) / ∑ u', ENNReal.ofReal (Real.exp (-(α * C u'))) := by
+  have h (v : U) : L.map (fun _ ↦ x) v {x} = 1 := by
+    rw [Kernel.map_apply_singleton, Set.preimage_const_of_mem (Set.mem_singleton x), measure_univ]
+  simp only [qudSpeaker, speaker_dirac_apply_singleton, h, ENNReal.one_rpow, one_mul]
+
+variable {C L q} in
+/-- A coarser question lets her say more: an utterance she can produce addressing a question she
+can produce addressing any question that identifies at least the states it does. -/
+theorem qudSpeaker_apply_singleton_ne_zero_of_coarser {X' : Type*} [MeasurableSpace X']
+    [MeasurableSingletonClass X'] [Fintype X'] [Countable W] [MeasurableSingletonClass W]
+    [IsFiniteKernel L] (hα : 0 < α) {q' : W → X'} {w : W}
+    (h : ∀ w', q w' = q w → q' w' = q' w) {u : U} (hu : qudSpeaker α C L q w {u} ≠ 0) :
+    qudSpeaker α C L q' w {u} ≠ 0 := by
+  rw [qudSpeaker, speaker_dirac_apply_singleton_ne_zero_iff hα] at hu ⊢
+  exact fun h0 ↦ hu (le_antisymm ((map_apply_singleton_le_of_coarser L h u).trans h0.le) zero_le)
+
+end
 
 /-- **Nonliteral production.** The speaker who addresses a question to a literal listener
 produces an utterance exactly when it is true at a state of positive prior with the same answer as
 hers, whether or not it is true at her own state. -/
-theorem speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff
+theorem qudSpeaker_listener_truthful_apply_singleton_ne_zero_iff [Fintype W]
     [DiscreteMeasurableSpace W] (hα : 0 < α) (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ]
     (sem : U → Set W) (q : W → X) (w : W) (u : U) :
-    speaker α C ((listener μ (truthful sem)).map q) Measure.dirac (q w) {u} ≠ 0 ↔
+    qudSpeaker α C (listener μ (truthful sem)) q w {u} ≠ 0 ↔
       ∃ w', q w' = q w ∧ w' ∈ sem u ∧ μ {w'} ≠ 0 := by
-  simp only [speaker_dirac_apply_singleton_ne_zero_iff hα, Kernel.map_apply_singleton_ne_zero_iff,
-    listener_truthful_apply_singleton_ne_zero_iff]
+  simp only [qudSpeaker, speaker_dirac_apply_singleton_ne_zero_iff hα,
+    Kernel.map_apply_singleton_ne_zero_iff, listener_truthful_apply_singleton_ne_zero_iff]
+
+/-! ### The listener -/
 
 /-- A meaning under uncertainty about the question is possible after an utterance exactly when it
 has positive prior and, under some question of positive prior, shares its answer with a state of
 positive prior where the utterance is true. -/
-theorem listener_prod_fst_speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff
+theorem listener_prod_fst_qudSpeaker_listener_truthful_apply_singleton_ne_zero_iff [Fintype W]
     {B : Type*} [MeasurableSpace B] [Fintype B] [MeasurableSingletonClass B]
     [DiscreteMeasurableSpace W] (hα : 0 < α) (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ]
     (ν : Measure B) [IsFiniteMeasure ν] (sem : U → Set W) (q : B → W → X) (u : U) (w : W) :
-    (listener (μ.prod ν) (fun p ↦ speaker α C ((listener μ (truthful sem)).map (q p.2))
-        Measure.dirac (q p.2 p.1)) u).fst {w} ≠ 0 ↔
+    (listener (μ.prod ν) (fun p ↦ qudSpeaker α C (listener μ (truthful sem)) (q p.2) p.1) u).fst
+        {w} ≠ 0 ↔
       μ {w} ≠ 0 ∧ ∃ b, ν {b} ≠ 0 ∧ ∃ w', q b w' = q b w ∧ w' ∈ sem u ∧ μ {w'} ≠ 0 := by
   rw [listener_prod_fst_apply_singleton_ne_zero_iff]
-  simp only [speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff hα]
+  simp only [qudSpeaker_listener_truthful_apply_singleton_ne_zero_iff hα]
 
-omit [Fintype W] in
 /-- **A question is sufficient for the listener.** Against a speaker who addresses a question, the
-listener who learns the speaker's answer, at an answer where the speaker can produce the
-utterance, holds the prior conditioned on that answer. -/
-theorem cond_listener_speaker_map_dirac_preimage [DiscreteMeasurableSpace W] (C : U → ℝ)
-    (L : Kernel U W) (μ : Measure W) [IsFiniteMeasure μ] (q : W → X) {u : U} {x : X}
-    (h : speaker α C (L.map q) Measure.dirac x {u} ≠ 0) :
-    (listener μ (fun w ↦ speaker α C (L.map q) Measure.dirac (q w)) u)[|q ⁻¹' {x}] =
-      μ[|q ⁻¹' {x}] := by
+listener who learns the speaker's answer, at a state where the speaker can produce the utterance,
+holds the prior conditioned on that answer. -/
+theorem cond_listener_qudSpeaker_preimage [DiscreteMeasurableSpace W] (C : U → ℝ)
+    (L : Kernel U W) (μ : Measure W) [IsFiniteMeasure μ] (q : W → X) {u : U} {w : W}
+    (h : qudSpeaker α C L q w {u} ≠ 0) :
+    (listener μ (qudSpeaker α C L q) u)[|q ⁻¹' {q w}] = μ[|q ⁻¹' {q w}] := by
   refine cond_listener_apply .of_discrete h (measure_ne_top _ _)
-    (fun w hw ↦ by rw [show q w = x from hw]) (ne_top_of_le_ne_top (measure_ne_top μ Set.univ) ?_)
-  calc ∫⁻ w, speaker α C (L.map q) Measure.dirac (q w) {u} ∂μ ≤ ∫⁻ _, 1 ∂μ :=
-        lintegral_mono fun w ↦ (measure_mono (Set.subset_univ _)).trans
-          (speaker_apply_univ_le_one ..)
+    (fun w' hw' ↦ by rw [qudSpeaker_eq_of_eq C L hw'])
+    (ne_top_of_le_ne_top (measure_ne_top μ Set.univ) ?_)
+  calc ∫⁻ w, qudSpeaker α C L q w {u} ∂μ ≤ ∫⁻ _, 1 ∂μ := lintegral_mono fun _ ↦ prob_le_one
     _ = μ Set.univ := by rw [lintegral_one]
 
-omit [Fintype W] in
 /-- A listener unsure of the question who learns the question and the speaker's answer to it, at
-an answer where the speaker can produce the utterance, holds the prior conditioned on them. -/
-theorem cond_listener_prod_speaker_map_dirac_preimage {B : Type*} [MeasurableSpace B]
+a state where the speaker can produce the utterance, holds the prior conditioned on them. -/
+theorem cond_listener_prod_qudSpeaker_preimage {B : Type*} [MeasurableSpace B]
     [MeasurableSingletonClass B] [DiscreteMeasurableSpace W] (C : U → ℝ) (L : Kernel U W)
     (μ : Measure W) [IsFiniteMeasure μ] (ν : Measure B) [IsFiniteMeasure ν] (q : B → W → X) {u : U}
-    {b : B} {x : X} (h : speaker α C (L.map (q b)) Measure.dirac x {u} ≠ 0) :
-    (listener (μ.prod ν) (fun p ↦ speaker α C (L.map (q p.2)) Measure.dirac (q p.2 p.1)) u)[|
-        (q b ⁻¹' {x}) ×ˢ {b}] = (μ.prod ν)[|(q b ⁻¹' {x}) ×ˢ {b}] := by
+    {b : B} {w : W} (h : qudSpeaker α C L (q b) w {u} ≠ 0) :
+    (listener (μ.prod ν) (fun p ↦ qudSpeaker α C L (q p.2) p.1) u)[|
+        (q b ⁻¹' {q b w}) ×ˢ {b}] = (μ.prod ν)[|(q b ⁻¹' {q b w}) ×ˢ {b}] := by
   refine cond_listener_apply (MeasurableSet.of_discrete.prod (measurableSet_singleton b)) h
     (measure_ne_top _ _) (fun p hp ↦ ?_)
     (ne_top_of_le_ne_top (measure_ne_top (μ.prod ν) Set.univ) ?_)
-  · obtain ⟨hx, rfl⟩ : q b p.1 = x ∧ p.2 = b := hp
-    rw [hx]
-  · calc ∫⁻ p, speaker α C (L.map (q p.2)) Measure.dirac (q p.2 p.1) {u} ∂μ.prod ν
-        ≤ ∫⁻ _, 1 ∂μ.prod ν := lintegral_mono fun p ↦
-          (measure_mono (Set.subset_univ _)).trans (speaker_apply_univ_le_one ..)
+  · obtain ⟨hx, rfl⟩ : q b p.1 = q b w ∧ p.2 = b := hp
+    exact congrArg (· {u}) (qudSpeaker_eq_of_eq C L hx)
+  · calc ∫⁻ p, qudSpeaker α C L (q p.2) p.1 {u} ∂μ.prod ν ≤ ∫⁻ _, 1 ∂μ.prod ν :=
+          lintegral_mono fun _ ↦ prob_le_one
       _ = (μ.prod ν) Set.univ := by rw [lintegral_one]
 
 /-! ### Utterances that name a coordinate -/
 
+section Coordinate
+
+variable {A B : Type*} [MeasurableSpace A] [MeasurableSpace B] [DiscreteMeasurableSpace A]
+  [Countable A] (π π' : Measure A) [IsFiniteMeasure π]
+  [IsFiniteMeasure π'] (κ : Kernel A B) [IsMarkovKernel κ]
+
+omit [IsFiniteMeasure π'] in
 /-- At a prior that composes a prior over the coordinate named with a kernel to the rest, the
 literal listener of an utterance that names a value of positive prior believes that value and the
-kernel there, whatever the prior over the coordinate. -/
-theorem listener_truthful_preimage_fst_compProd {A B : Type*} [MeasurableSpace A]
-    [MeasurableSpace B] [DiscreteMeasurableSpace A] [DiscreteMeasurableSpace B] [Countable A]
-    (π : Measure A) [IsFiniteMeasure π] (κ : Kernel A B) [IsMarkovKernel κ] {a : A}
-    (ha : π {a} ≠ 0) :
+kernel there. -/
+theorem listener_truthful_preimage_fst_compProd {a : A} (ha : π {a} ≠ 0) :
     listener (π ⊗ₘ κ) (truthful fun a : A ↦ (Prod.fst ⁻¹' {a} : Set (A × B))) a =
       Measure.dirac a ⊗ₘ κ := by
   rw [listener_truthful_apply' (π ⊗ₘ κ) _ a (measurable_fst (measurableSet_singleton a))]
   exact Measure.cond_preimage_fst_singleton_compProd π κ ha (measure_ne_top _ _)
+
+/-- The literal listener of utterances that name a coordinate does not depend on the prior over
+that coordinate, so long as it leaves every value possible. -/
+theorem listener_truthful_preimage_fst_compProd_congr (hπ : ∀ a, π {a} ≠ 0)
+    (hπ' : ∀ a, π' {a} ≠ 0) :
+    listener (π ⊗ₘ κ) (truthful fun a : A ↦ (Prod.fst ⁻¹' {a} : Set (A × B))) =
+      listener (π' ⊗ₘ κ) (truthful fun a : A ↦ (Prod.fst ⁻¹' {a} : Set (A × B))) :=
+  Kernel.ext fun a ↦ by
+    rw [listener_truthful_preimage_fst_compProd π κ (hπ a),
+      listener_truthful_preimage_fst_compProd π' κ (hπ' a)]
+
+end Coordinate
 
 end RSA

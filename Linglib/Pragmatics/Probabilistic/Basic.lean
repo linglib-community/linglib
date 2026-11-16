@@ -150,6 +150,17 @@ theorem cond_listener_apply {μ : Measure W} {S : W → Measure U} {u : U} {s : 
     (by rwa [withDensity_apply _ .univ, Measure.restrict_univ]), Set.univ_inter]
   exact cond_withDensity_of_forall_mem_eq μ hs hc0 hc h
 
+/-- The listener who conditions on an event of positive prior holds the prior conditioned on it
+exactly when the speaker's mass on the utterance is almost surely one positive constant on the
+event. -/
+theorem cond_listener_apply_eq_iff {μ : Measure W} [IsFiniteMeasure μ] {S : W → Measure U} {u : U}
+    {s : Set W} (hs : MeasurableSet s) (hS : AEMeasurable (fun w ↦ S w {u}) (μ.restrict s))
+    (h0 : μ s ≠ 0) (hfin : ∫⁻ w, S w {u} ∂μ ≠ ∞) :
+    (listener μ S u)[|s] = μ[|s] ↔ ∃ c, c ≠ 0 ∧ c ≠ ∞ ∧ ∀ᵐ w ∂μ.restrict s, S w {u} = c := by
+  rw [listener_apply, cond_cond_eq_cond_inter' .univ hs
+    (by rwa [withDensity_apply _ .univ, Measure.restrict_univ]), Set.univ_inter]
+  exact cond_withDensity_eq_cond_iff μ hs hS h0 (measure_ne_top _ _)
+
 /-- An utterance does not raise the probability of an event when the speaker's mass on it,
 integrated over the event and weighted by the prior of the complement, is at most her mass
 integrated over the complement and weighted by the prior of the event. -/
