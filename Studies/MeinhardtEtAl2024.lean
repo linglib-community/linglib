@@ -484,14 +484,14 @@ Lamont, O'Hara and Smith that §5.2 and Fig. 12 take up: their first pass is len
 alphabet-preserving and still tells the second pass what lies beyond its reach. -/
 
 theorem utp_not_isNonInteractingBimachineComputable :
-    ¬ IsNonInteractingBimachineComputable Tone.utp :=
+    ¬ IsNonInteractingBimachineComputable (Tone.utp Tone.AssociationState.H) :=
   not_isNonInteractingBimachineComputable_of_isUnboundedCircumambient
-    Tone.utp_isUnboundedCircumambient
+    (Tone.utp_isUnboundedCircumambient (b := .O) (by decide))
 
 theorem exists_isWeaklyDeterministic_not_isNonInteractingBimachineComputable :
     ∃ f : List Tone.AssociationState → List Tone.AssociationState,
       IsWeaklyDeterministic f ∧ ¬ IsNonInteractingBimachineComputable f :=
-  ⟨Tone.utp, LamontOHaraSmith2019.utp_isWeaklyDeterministic,
+  ⟨Tone.utp .H, LamontOHaraSmith2019.utp_isWeaklyDeterministic,
     utp_not_isNonInteractingBimachineComputable⟩
 
 /-! ### A bounded two-sided rule

@@ -524,20 +524,10 @@ theorem luganda_isPiecewiseTestable : luganda.IsPiecewiseTestable 3 :=
     ((isPiecewiseTestable_compl_shuffleIdeal (by decide)).union
       (isPiecewiseTestable_shuffleIdeal (by decide)))
 
-/-- A tone as a timing unit's association state, low read as unspecified (§5.1). -/
-def Tone.toAssociationState : Tone → _root_.Tone.AssociationState
-  | .high => .H
-  | .low => .O
-
 theorem plateauing_iff_mem_range_utp (w : List Tone) :
-    w ∉ shuffleIdeal [.high, .low, .high] ↔
-      w.map Tone.toAssociationState ∈ Set.range _root_.Tone.utp := by
-  have hinj : Function.Injective Tone.toAssociationState := fun a b h ↦ by
-    cases a <;> cases b <;> first | rfl | cases h
-  rw [_root_.Tone.mem_range_utp_iff, not_iff_not]
-  refine ⟨fun h ↦ h.map Tone.toAssociationState, fun h ↦ ?_⟩
-  obtain ⟨l, hl, he⟩ := sublist_map_iff.mp h
-  rwa [show l = [.high, .low, .high] from (map_injective_iff.mpr hinj) he.symm] at hl
+    w ∉ shuffleIdeal [.high, .low, .high] ↔ w ∈ Set.range (_root_.Tone.utp Tone.high) := by
+  rw [_root_.Tone.mem_range_utp_iff]
+  exact ⟨fun h b hb ↦ by cases b; exacts [h, absurd rfl hb], fun h ↦ h .low (by decide)⟩
 
 /-- The accepted witness `ℓᵏℓhhℓℓᵏ`. -/
 private abbrev toneIn (k : ℕ) : List Tone := sandwich k .low [.low, .high, .high, .low] k .low

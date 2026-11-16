@@ -14,9 +14,7 @@ public import Linglib.Phonology.Tone.Basic
 # Words of tone-bearing units
 
 Jardine's string rendering of a tonal word records, for each tone-bearing unit, whether it is
-associated to an H tone (`H`) or unassociated (`O`, his Ø). A word over these two letters is its
-length together with [its set of high positions](##Tone.eq_of_highs_eq), so a length-preserving
-map on such words is an operation on sets of positions. The word reads back into a two-tier
+associated to an H tone (`H`) or unassociated (`O`, his Ø). The word reads back into a two-tier
 autosegmental representation by `AssociationState.toAR`.
 
 ## References
@@ -37,20 +35,6 @@ inductive AssociationState | H | O
   deriving DecidableEq, Repr
 
 instance : Fintype AssociationState := ⟨{.H, .O}, fun a ↦ by cases a <;> decide⟩
-
-/-- The positions of a word that are associated to an H tone. -/
-def highs (w : List AssociationState) : Set ℕ := {i | w[i]? = some .H}
-
-@[simp] theorem mem_highs {w : List AssociationState} {i : ℕ} : i ∈ highs w ↔ w[i]? = some .H :=
-  Iff.rfl
-
-/-- A word is determined by its length and its high positions. -/
-theorem eq_of_highs_eq {w w' : List AssociationState} (hl : w.length = w'.length)
-    (h : highs w = highs w') : w = w' := by
-  refine List.ext_getElem hl fun i h₁ h₂ ↦ ?_
-  have hi : w[i]? = some .H ↔ w'[i]? = some .H := Set.ext_iff.mp h i
-  rw [List.getElem?_eq_getElem h₁, List.getElem?_eq_getElem h₂] at hi
-  cases hw : w[i] <;> cases hw' : w'[i] <;> simp_all
 
 theorem eq_replicate_O_iff {w : List AssociationState} :
     w = List.replicate w.length .O ↔ .H ∉ w :=

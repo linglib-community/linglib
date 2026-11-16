@@ -59,7 +59,7 @@ def ofAnalysis (a : Wordlist.Analysis) : List AssociationState × List Associati
 
 /-- The map (36) reproduces every plateau of Section 2.2, Luganda (8) to (12), Zulu (18b) and
 Saramaccan (21). -/
-theorem utp_map_forms : ∀ a ∈ Wordlist.analyses, utp (ofAnalysis a).1 = (ofAnalysis a).2 := by
+theorem utp_map_forms : ∀ a ∈ Wordlist.analyses, utp .H (ofAnalysis a).1 = (ofAnalysis a).2 := by
   decide
 
 variable {w : List AssociationState} {j k : ℕ}
@@ -71,8 +71,8 @@ the map preserves length, so a machine reading in either direction would have to
 unboundedly many symbols. -/
 
 /-- UTP is subsequential in neither direction (§4.2, online appendix). -/
-theorem utp_not_isSubsequential : ∀ d, ¬ IsSubsequential d utp :=
-  utp_twoSidedUnboundedDependence.not_isSubsequential fun _ ↦ length_utp
+theorem utp_not_isSubsequential : ∀ d, ¬ IsSubsequential d (utp AssociationState.H) :=
+  (utp_twoSidedUnboundedDependence (b := .O) (by decide)).not_isSubsequential fun _ ↦ length_utp
 
 /-! ### The (43) mark-up decomposition
 
@@ -102,7 +102,7 @@ theorem markLeft_run_getElem?_H_iff :
 
 /-- UTP is the left-to-right marking pass followed by the right-to-left resolving pass of (43). -/
 theorem utp_eq_resolve_mark (w : List AssociationState) :
-    utp w = resolveRight.runRight (markLeft.run w) := by
+    utp .H w = resolveRight.runRight (markLeft.run w) := by
   have hmark (i : ℕ) :
       Mark.H ∈ (markLeft.run w).drop (i + 1) ↔ AssociationState.H ∈ w.drop (i + 1) := by
     simp only [List.mem_iff_getElem?, List.getElem?_drop, markLeft_run_getElem?_H_iff]
@@ -124,8 +124,9 @@ theorem utp_eq_resolve_mark (w : List AssociationState) :
         simp [utp.surfaces_split ha, hL, hR]
 
 /-- UTP is computable by a bimachine via the (43) decomposition, hence regular (§4.2). -/
-theorem utp_isBimachineComputable : IsBimachineComputable utp := by
-  rw [show utp = resolveRight.runRight ∘ markLeft.run from funext utp_eq_resolve_mark]
+theorem utp_isBimachineComputable : IsBimachineComputable (utp AssociationState.H) := by
+  rw [show utp AssociationState.H = resolveRight.runRight ∘ markLeft.run from
+    funext utp_eq_resolve_mark]
   exact resolveRight.isRightSubsequential.isBimachineComputable.comp
     markLeft.isLeftSubsequential.isBimachineComputable
 
@@ -137,13 +138,13 @@ plateau, Hyman and Katamba's rule as given in (7). -/
 
 open Autosegmental in
 theorem link_collapse_prod_map_toAR_map :
-    (((utp w).map AssociationState.toAR).prod.collapse .upper).Link .upper .lower k j ↔
-      k = 0 ∧ utp.Surfaces w j := by
-  rw [AssociationState.link_collapse_prod_map_toAR, getElem?_utp_eq_H_iff]
+    (((utp .H w).map AssociationState.toAR).prod.collapse .upper).Link .upper .lower k j ↔
+      k = 0 ∧ utp.Surfaces .H w j := by
+  rw [AssociationState.link_collapse_prod_map_toAR, getElem?_utp_eq_iff]
 
 /-- `HØØH` fuses to one H linked to all four TBUs. -/
 example : ∀ j < 4,
-    (((utp [.H, .O, .O, .H]).map AssociationState.toAR).prod.collapse .upper).Link .upper .lower
+    (((utp AssociationState.H [.H, .O, .O, .H]).map AssociationState.toAR).prod.collapse .upper).Link .upper .lower
       0 j := by
   simp only [link_collapse_prod_map_toAR_map, true_and]
   decide

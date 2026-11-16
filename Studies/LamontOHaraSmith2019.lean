@@ -342,7 +342,7 @@ private theorem blocks_eq_append {js : List ℕ} (h : js ≠ []) : ∃ m, blocks
       exact ⟨replicate j .O ++ .H :: m, by rw [blocks, hm]; simp⟩
 
 private theorem utp_map_blocks (a : ℕ) (js : List ℕ) (t : ℕ) :
-    utp (replicate a .O ++ .H :: (blocks js ++ replicate t .O))
+    utp .H (replicate a .O ++ .H :: (blocks js ++ replicate t .O))
       = replicate a .O ++ .H :: (replicate (blocks js).length .H ++ replicate t .O) := by
   rcases eq_or_ne js [] with rfl | h
   · simpa [blocks] using utp_single a t
@@ -352,7 +352,7 @@ private theorem utp_map_blocks (a : ℕ) (js : List ℕ) (t : ℕ) :
 
 -- B after A computes unbounded tonal plateauing (Figure 1).
 theorem utp_map_eq_resolve_mark (w : List AssociationState) :
-    utp w = resolveRight.runRight (markLeft.run w) := by
+    utp .H w = resolveRight.runRight (markLeft.run w) := by
   rcases decomposition w with ⟨a, rfl⟩ | ⟨a, js, t, rfl⟩
   · simp only [utp_replicate_O, SubsequentialTransducer.runRight, SubsequentialTransducer.run,
       SubsequentialTransducer.runFrom, markLeft_start, (markLeft_replicate .q0 (.inl rfl) a).1,
@@ -368,7 +368,7 @@ theorem length_markLeft_run (w : List AssociationState) : (markLeft.run w).lengt
   · rw [markLeft_run]; simp [length_codes]
 
 /-- Unbounded tonal plateauing is weakly deterministic in Heinz and Lai's sense. -/
-theorem utp_isWeaklyDeterministic : IsWeaklyDeterministic utp :=
+theorem utp_isWeaklyDeterministic : IsWeaklyDeterministic (utp AssociationState.H) :=
   ⟨markLeft.run, resolveRight.runRight, markLeft.isLeftSubsequential,
     fun w ↦ (length_markLeft_run w).le, resolveRight.isRightSubsequential,
     funext fun w ↦ (utp_map_eq_resolve_mark w).symm⟩
