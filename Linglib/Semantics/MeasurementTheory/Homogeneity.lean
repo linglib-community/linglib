@@ -3,6 +3,8 @@ module
 public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Algebra.Order.Group.OrderIso
 public import Mathlib.Algebra.Order.GroupWithZero.OrderIso
+public import Mathlib.Algebra.Order.Positive.Field
+public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.ENat.Lattice
 public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Order.Fin.Basic
@@ -19,10 +21,14 @@ import Mathlib.Tactic.Ring
 A set of order automorphisms of a linear order is `M`-point homogeneous when it carries any
 increasing `M`-tuple to any other, and `N`-point unique when two members agreeing at `N` points are
 equal. The largest such `M` and the least such `N` are what measurement theory calls the scale type
-of a totally ordered structure, read from its automorphisms. An ordered group acting on itself by
-translation is [`1`-point homogeneous](##MeasurementTheory.isPointHomogeneous_one_range_mulLeft) and
-[`1`-point unique](##MeasurementTheory.isPointUnique_one_range_mulLeft), the ratio and difference
-scales. The positive affine maps of an ordered field have
+of a totally ordered structure, read from its automorphisms. A nontrivial ordered group acting on
+itself by translation has [homogeneity](##MeasurementTheory.homogeneity_range_mulLeft) and
+[uniqueness](##MeasurementTheory.uniqueness_range_mulLeft) `1`. That is the difference scale,
+and it is the ratio scale on positive degrees, where [the similarities are the translations of the
+multiplicative group](##MeasurementTheory.range_mulLeft_eq_setOf_similarity). On a whole ordered
+field the similarities fix zero, and have [homogeneity
+`0`](##MeasurementTheory.homogeneity_similarity) and [uniqueness
+`2`](##MeasurementTheory.uniqueness_similarity). The positive affine maps of an ordered field have
 [homogeneity](##MeasurementTheory.homogeneity_positiveAffine) and
 [uniqueness](##MeasurementTheory.uniqueness_positiveAffine) `2`, the interval scale. All its order
 automorphisms are [homogeneous at every length](##MeasurementTheory.isPointHomogeneous_univ) and
@@ -62,6 +68,9 @@ points are equal. -/
 -- [luce-krantz-suppes-tversky-1990] Definition 20.1, p. 116
 def IsPointUnique (S : Set (A ≃o A)) (N : ℕ) : Prop :=
   ∀ g ∈ S, ∀ h ∈ S, ∀ a : Fin N → A, StrictMono a → (∀ i, g (a i) = h (a i)) → g = h
+
+theorem IsPointUnique.anti (h : S ⊆ T) (hT : IsPointUnique T N) : IsPointUnique S N :=
+  fun g hg k hk ↦ hT g (h hg) k (h hk)
 
 theorem IsPointUnique.succ (h : IsPointUnique S N) : IsPointUnique S (N + 1) :=
   fun g hg k hk a ha hgk ↦
@@ -146,6 +155,54 @@ theorem isPointUnique_one_range_mulLeft :
 
 end Group
 
+section CommGroup
+
+variable {G : Type*} [CommGroup G] [LinearOrder G] [IsOrderedMonoid G] [Nontrivial G]
+
+@[to_additive]
+theorem not_isPointHomogeneous_two_range_mulLeft :
+    ¬ IsPointHomogeneous (range (OrderIso.mulLeft : G → G ≃o G)) 2 := by
+  intro h
+  obtain ⟨c, hc⟩ := exists_one_lt' (α := G)
+  have hcc : c < c * c := by simpa using hc
+  obtain ⟨_, ⟨r, rfl⟩, hr⟩ := h ![1, c] ![1, c * c]
+    (Fin.strictMono_iff_lt_succ.2 fun i ↦ by rw [Fin.fin_one_eq_zero i]; simpa using hc)
+    (Fin.strictMono_iff_lt_succ.2 fun i ↦ by
+      rw [Fin.fin_one_eq_zero i]; simpa using hc.trans hcc)
+  have h₀ : r = 1 := by simpa using hr 0
+  have h₁ : r * c = c * c := by simpa using hr 1
+  rw [h₀, one_mul] at h₁
+  exact hcc.ne h₁
+
+@[to_additive]
+theorem not_isPointUnique_zero_range_mulLeft :
+    ¬ IsPointUnique (range (OrderIso.mulLeft : G → G ≃o G)) 0 := by
+  intro h
+  obtain ⟨c, hc⟩ := exists_one_lt' (α := G)
+  have := h _ ⟨1, rfl⟩ _ ⟨c, rfl⟩ Fin.elim0 (fun i ↦ i.elim0) fun i ↦ i.elim0
+  have := congrArg (fun g : G ≃o G ↦ g 1) this
+  simp only [OrderIso.mulLeft_apply, mul_one] at this
+  exact hc.ne this
+
+/-- A nontrivial ordered group acting on itself by translation carries any point to any other and
+no two to any two. -/
+@[to_additive /-- A nontrivial ordered additive group acting on itself
+by translation carries any point to any other and no two to any two. -/]
+theorem homogeneity_range_mulLeft :
+    homogeneity (range (OrderIso.mulLeft : G → G ≃o G)) = 1 := by
+  simpa using homogeneity_eq isPointHomogeneous_one_range_mulLeft
+    (not_isPointHomogeneous_two_range_mulLeft (G := G))
+
+/-- A translation of a nontrivial ordered group is fixed by its value at one point. -/
+@[to_additive /-- A translation of a nontrivial ordered additive group is
+fixed by its value at one point. -/]
+theorem uniqueness_range_mulLeft :
+    uniqueness (range (OrderIso.mulLeft : G → G ≃o G)) = 1 := by
+  simpa using uniqueness_eq isPointUnique_one_range_mulLeft
+    (not_isPointUnique_zero_range_mulLeft (G := G))
+
+end CommGroup
+
 section Field
 
 variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
@@ -199,14 +256,17 @@ theorem not_isPointHomogeneous_three_positiveAffine :
   norm_num [Fin.val_one, Fin.val_two] at e₀ e₁ e₂
   linarith
 
-theorem not_isPointUnique_one_positiveAffine :
-    ¬ IsPointUnique (positiveAffine : Set (K ≃o K)) 1 := by
+theorem not_isPointUnique_one_similarity : ¬ IsPointUnique (similarity : Set (K ≃o K)) 1 := by
   intro h
-  have := h (affineIso 1 one_pos 0) ⟨1, one_pos, 0, affineIso_apply _ _ _⟩
-    (affineIso 2 two_pos 0) ⟨2, two_pos, 0, affineIso_apply _ _ _⟩ (fun _ ↦ 0)
+  have := h (affineIso 1 one_pos 0) ⟨1, one_pos, fun _ ↦ by simp [affineIso_apply]⟩
+    (affineIso 2 two_pos 0) ⟨2, two_pos, fun _ ↦ by simp [affineIso_apply]⟩ (fun _ ↦ 0)
     (Subsingleton.strictMono _) (fun _ ↦ by simp [affineIso_apply])
   have := congrArg (fun g : K ≃o K ↦ g 1) this
   simp [affineIso_apply] at this
+
+theorem not_isPointUnique_one_positiveAffine :
+    ¬ IsPointUnique (positiveAffine : Set (K ≃o K)) 1 :=
+  fun h ↦ not_isPointUnique_one_similarity (h.anti similarity_subset_positiveAffine)
 
 /-- The positive affine maps carry any two points to any two, in order, and no three. -/
 theorem homogeneity_positiveAffine : homogeneity (positiveAffine : Set (K ≃o K)) = 2 :=
@@ -215,6 +275,41 @@ theorem homogeneity_positiveAffine : homogeneity (positiveAffine : Set (K ≃o K
 /-- A positive affine map is fixed by its values at two points, and not by its value at one. -/
 theorem uniqueness_positiveAffine : uniqueness (positiveAffine : Set (K ≃o K)) = 2 :=
   uniqueness_eq isPointUnique_two_positiveAffine not_isPointUnique_one_positiveAffine
+
+/-! ### Similarities -/
+
+theorem not_isPointHomogeneous_one_similarity :
+    ¬ IsPointHomogeneous (similarity : Set (K ≃o K)) 1 := by
+  intro h
+  obtain ⟨g, ⟨a, -, hg⟩, hg'⟩ := h (fun _ ↦ 0) (fun _ ↦ 1) (Subsingleton.strictMono _)
+    (Subsingleton.strictMono _)
+  have := hg' 0
+  rw [hg, mul_zero] at this
+  exact zero_ne_one this
+
+/-- On a whole ordered field the similarities fix zero, so they carry no point to every other. -/
+theorem homogeneity_similarity : homogeneity (similarity : Set (K ≃o K)) = 0 := by
+  have h₀ : IsPointHomogeneous (similarity : Set (K ≃o K)) 0 := fun _ _ _ _ ↦
+    ⟨OrderIso.refl K, ⟨1, one_pos, fun t ↦ (one_mul t).symm⟩, fun i ↦ i.elim0⟩
+  simpa using homogeneity_eq h₀ not_isPointHomogeneous_one_similarity
+
+/-- A similarity of an ordered field is fixed by its values at two points, and not by its value at
+one, since all agree at zero. -/
+theorem uniqueness_similarity : uniqueness (similarity : Set (K ≃o K)) = 2 :=
+  uniqueness_eq (isPointUnique_two_positiveAffine.anti similarity_subset_positiveAffine)
+    not_isPointUnique_one_similarity
+
+/-- On the positive degrees the similarities are the translations of the multiplicative group, so
+that the ratio scale is the scale of an ordered group acting on itself. -/
+theorem range_mulLeft_eq_setOf_similarity :
+    range (OrderIso.mulLeft : {x : K // 0 < x} → {x : K // 0 < x} ≃o {x : K // 0 < x}) =
+      {g | ∃ a : K, 0 < a ∧ ∀ t : {x : K // 0 < x}, (g t : K) = a * t} := by
+  ext g
+  constructor
+  · rintro ⟨r, rfl⟩
+    exact ⟨r, r.2, fun t ↦ by simp⟩
+  · rintro ⟨a, ha, hg⟩
+    exact ⟨⟨a, ha⟩, DFunLike.ext _ _ fun t ↦ Subtype.ext (by simp [hg])⟩
 
 /-! ### Ordinal scales -/
 

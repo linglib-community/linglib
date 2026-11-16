@@ -53,7 +53,8 @@ variable [Semiring K] [PartialOrder K] [FunLike F K K]
 scale. -/
 def positiveAffine : Set F := {g | ∃ a : K, 0 < a ∧ ∃ b : K, ∀ t, g t = a * t + b}
 
-/-- The similarities `t ↦ a * t` with `0 < a`, the changes of scale of a ratio scale. -/
+/-- The similarities `t ↦ a * t` with `0 < a`, the changes of unit of a scale with a zero; on
+positive degrees they are the changes of scale of a ratio scale. -/
 def similarity : Set F := {g | ∃ a : K, 0 < a ∧ ∀ t, g t = a * t}
 
 theorem similarity_subset_positiveAffine : (similarity : Set F) ⊆ positiveAffine :=
