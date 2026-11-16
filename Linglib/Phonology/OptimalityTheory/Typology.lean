@@ -13,34 +13,22 @@ public import Mathlib.Algebra.BigOperators.Pi
 
 An OT system pairs each input's candidates with a constraint set on input–output mappings
 (`ConstraintSystem`). Under a ranking, the winners of every input's tableau form the ranking's
-language. Following Merchant and Prince, the rankings with the same language form a ranking
-grammar, and the grammars partition the rankings into the system's typology, the kernel of the
-language map.
+[language](##OptimalityTheory.ConstraintSystem.language). A ranking
+[picks](##OptimalityTheory.ConstraintSystem.PicksAt) an output when it is the sole winner, which
+holds iff [against each rival some constraint preferring it dominates every constraint
+preferring the rival](##OptimalityTheory.ConstraintSystem.picksAt_iff_exists_dominates).
+Following Merchant and Prince, the rankings with the same language form a ranking grammar, and
+the grammars partition the rankings into the system's
+[typology](##OptimalityTheory.ConstraintSystem.typology), the kernel of the language map.
 
-A system with finitely many inputs has the same typology as its joint system. The joint system is
-a single tableau whose candidates choose a candidate for every input and whose violations are
-summed over the inputs, the Minkowski sum of the system's tableaux. Prince shows that its language
-is the product of the languages, so summation loses no ranking information. Magri traces this to
-the additivity of the lexicographic order, under which minimizing a sum over a product of
-candidate sets minimizes each summand (`Finset.mem_argmin_piFinset_sum`).
-
-## Main definitions
-
-* `ConstraintSystem.tableau`: the tableau of an input under a ranking.
-* `ConstraintSystem.language`: the winners of each input under a ranking.
-* `ConstraintSystem.typology`: the partition of the rankings by their languages.
-* `ConstraintSystem.PicksAt`: a ranking has a given output as its sole winner at an input.
-
-## Main results
-
-* `ConstraintSystem.language_eq_singleton_iff`: a ranking selects `o` alone at an input iff `o`
-  is a candidate lexicographically below every other.
-* `ConstraintSystem.mem_language_iff_of_mem`: tied winners have the same violations, so the
-  language at an input consists of the candidates with any one winner's violations.
-* `ConstraintSystem.language_joint`: the language of the joint system is the product of the
-  languages.
-* `ConstraintSystem.typology_joint`: one tableau suffices, the joint system having the system's
-  typology when every input has a candidate.
+A system with finitely many inputs has
+[the same typology as its joint system](##OptimalityTheory.ConstraintSystem.typology_joint), a
+single tableau whose candidates choose a candidate for every input and whose violations are
+summed over the inputs, the Minkowski sum of the system's tableaux. Prince shows that
+[its language is the product of the languages](##OptimalityTheory.ConstraintSystem.language_joint),
+so summation loses no ranking information. Magri traces this to the additivity of the
+lexicographic order, under which minimizing a sum over a product of candidate sets minimizes each
+summand (`Finset.mem_argmin_piFinset_sum`).
 
 ## References
 
@@ -114,6 +102,13 @@ lexicographically below every other candidate's. -/
 theorem picksAt_iff : S.PicksAt r i o ↔ o ∈ S.gen i ∧ ∀ o' ∈ S.gen i, o' ≠ o →
     toLex (fun k ↦ S.con (r k) (i, o)) < toLex (fun k ↦ S.con (r k) (i, o')) :=
   language_eq_singleton_iff
+
+/-- A ranking picks `o` iff `o` is a candidate and, against each rival, some constraint
+preferring `o` dominates every constraint preferring the rival. -/
+theorem picksAt_iff_exists_dominates : S.PicksAt r i o ↔ o ∈ S.gen i ∧ ∀ o' ∈ S.gen i, o' ≠ o →
+    ∃ c, S.con c (i, o) < S.con c (i, o') ∧
+      ∀ c', S.con c' (i, o') < S.con c' (i, o) → r.Dominates c c' :=
+  Tableau.ofRanking_optimal_eq_singleton_iff
 
 /-- Picking is decided by comparing the candidate with each rival, without computing the set of
 winners. -/
