@@ -12,7 +12,9 @@ A change of scale acts on the degrees, and so on every measure. A function of me
 its value, and a statement invariant under the changes of a scale is meaningful on it. The changes
 of an ordinal scale are the strictly increasing maps, those of an interval scale the [positive
 affine maps](##MeasurementTheory.positiveAffine), and those of a ratio scale, whose degrees are
-positive, the [similarities](##MeasurementTheory.similarity).
+positive, the [similarities](##MeasurementTheory.similarity). These are the maps relating any two
+measures of an order, of the differences of a torsor, and of an ordered group, as `Scale`,
+`Difference` and `Extensive` show.
 
 ## Implementation notes
 

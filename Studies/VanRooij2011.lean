@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Aggregation.Rules
 public import Linglib.Semantics.Degree.Measurement
 public import Linglib.Semantics.Degree.UniversalScale
+public import Linglib.Semantics.MeasurementTheory.Difference
 public import Linglib.Semantics.MeasurementTheory.Homogeneity
 
 /-!
@@ -147,6 +148,24 @@ theorem differential_cardinalFull {f : Ad → ℝ ↪o ℝ} (hf : f ∈ cardinal
 -- p. 349: a co-ratio scale
 theorem factor_ratioFull (n : ℝ) : Invariant (ratioFull Ad ℝ) (factor x P y Q n) :=
   (invariant_similarity_factorEquative (x, P) (y, Q) n).uncurry
+
+-- pp. 349–350: height and width share their minimum and are measured in an absolute way, so
+-- they form a co-ratio scale; here they are measures of the same additive quantities, and
+-- factors across them hold whichever unit is chosen
+theorem factor_iff_of_orderAddMonoidHom {M : Type*} [AddCommGroup M] [LinearOrder M]
+    [IsOrderedAddMonoid M] (f g : M →+o ℝ) (hf : Injective f) (hg : Injective g)
+    (d : X → Ad → M) (n : ℝ) :
+    factor x P y Q n (fun x P ↦ g (d x P)) ↔ factor x P y Q n fun x P ↦ f (d x P) :=
+  factorEquative_comp_orderAddMonoidHom_iff f g hf hg (uncurry d) (x, P) (y, Q) n
+
+-- p. 342, note 7: under two measures of the same differences, the differences keep their ratios
+theorem sub_mul_sub_eq_of_isDifferenceMeasure {V D : Type*} [AddCommGroup V] [LinearOrder V]
+    [IsOrderedAddMonoid V] [AddTorsor V D] {φ ψ : D → ℝ} (hφ : IsDifferenceMeasure φ)
+    (hψ : IsDifferenceMeasure ψ) (a b c d : D) :
+    (ψ a - ψ b) * (φ c - φ d) = (φ a - φ b) * (ψ c - ψ d) := by
+  obtain ⟨k, -, h⟩ := hφ.exists_pos_forall_sub_eq hψ
+  rw [h a b, h c d]
+  ring
 
 /-- On a co-interval scale *x is n times as P as y is Q* is meaningful only for the factor $1$,
 since a common change of origin moves every other ratio. -/

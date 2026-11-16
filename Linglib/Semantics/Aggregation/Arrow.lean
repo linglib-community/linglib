@@ -286,6 +286,12 @@ theorem exists_isDictator (hO : Invariant (ordinal ι K) a) (hW : WeakOrderValue
   obtain ⟨i, rfl⟩ := Finset.card_eq_one.1 hcard
   exact ⟨i, fun v p q h ↦ hG.2 v p q fun j hj ↦ (Finset.mem_singleton.1 hj) ▸ h⟩
 
+/-- Arrow's theorem for a rule that is a function of the individuals' orderings of the objects. -/
+theorem exists_isDictator_of_factorsThrough
+    (h : Function.FactorsThrough a fun v i ↦ (v · i) ⁻¹'o (· ≤ ·)) (hW : WeakOrderValued a)
+    (hP : WeakPareto a) (hI : Independent a) (h₃ : 3 ≤ Fintype.card α) : ∃ i, IsDictator a i :=
+  exists_isDictator (invariant_ordinal_of_factorsThrough h) hW hP hI h₃
+
 /-- Arrow's theorem is an impossibility, since no rule meets all of Arrow's conditions. -/
 theorem arrow (h₃ : 3 ≤ Fintype.card α) (a : Rule ι α K) : ¬ Arrovian (ordinal ι K) a :=
   fun ⟨hO, hW, hP, hI, hD⟩ ↦ let ⟨i, hi⟩ := exists_isDictator hO hW hP hI h₃; hD i hi

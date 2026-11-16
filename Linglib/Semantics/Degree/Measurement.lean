@@ -2,7 +2,7 @@ module
 
 public import Mathlib.LinearAlgebra.AffineSpace.AffineMap
 public import Mathlib.Algebra.Order.Ring.Defs
-public import Linglib.Semantics.MeasurementTheory.Invariance
+public import Linglib.Semantics.MeasurementTheory.Extensive
 
 import Mathlib.Tactic.Linarith
 
@@ -27,11 +27,6 @@ $1$](##factorEquative_comp_strictMono_iff) survive.
 Amounts act on degrees, ratios by `SMul` and differences by `VAdd`, so a ratio need not itself be a
 degree, and dates or degrees Celsius need no origin. The differential comparative is the additive
 form of the factor equative.
-
-## TODO
-
-The changes of an interval and of a ratio scale are taken as given, where measurement theory
-derives them from the representations of a qualitative structure.
 
 ## References
 
@@ -197,5 +192,14 @@ theorem exists_differentialComparative_comp_iff [Semiring K] [PartialOrder K]
   obtain ⟨c, hc, b, hu⟩ := hu
   exact ⟨c, hc, fun μ x y d ↦ differentialComparative_comp_iff (σ := (c * ·)) u.injective
     (fun m x ↦ by simp only [vadd_eq_add, hu, mul_add, add_assoc]) μ x y d⟩
+
+/-- A factor equative has the same truth value under any two additive measures of the same
+quantities, so ratios are meaningful in extensive measurement. -/
+theorem factorEquative_comp_orderAddMonoidHom_iff {M : Type*} [AddCommGroup M] [LinearOrder M]
+    [IsOrderedAddMonoid M] (f g : M →+o ℝ) (hf : Injective f) (hg : Injective g) (d : E → M)
+    (a b : E) (n : ℝ) : FactorEquative (g ∘ d) a b n ↔ FactorEquative (f ∘ d) a b n := by
+  obtain ⟨u, ⟨c, hc, hu⟩, hgu⟩ := exists_mem_similarity_eq_comp f g hf hg
+  rw [hgu]
+  exact (invariant_similarity_factorEquative a b n u.toOrderEmbedding ⟨c, hc, hu⟩ (f ∘ d)).to_iff
 
 end Meaningful
