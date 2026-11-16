@@ -358,7 +358,7 @@ theorem sw_ne_sv : sw ≠ sv := fun h ↦
   absurd (congrArg (·.sel .cn wearsCap) h) (by simp [sw, sv, candidate_sel])
 
 /-- The six pairs of a world and a candidate selection function. -/
-def pairs : Set (W × SelectionFunction W) := Set.univ ×ˢ {sw, sv}
+noncomputable def pairs : Set (W × SelectionFunction W) := Set.univ ×ˢ {sw, sv}
 
 instance : MeasurableSpace (SelectionFunction W) := ⊤
 

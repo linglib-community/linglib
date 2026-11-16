@@ -373,7 +373,7 @@ exhaustifying against all of them. -/
 theorem exh_setOf_not_dominated (hC : C.Finite) (p : Set W) :
     exh {q ∈ C | ¬ Dominated C q} p = exh C p := by
   refine Set.Subset.antisymm (fun w hw ↦ ⟨hw.1, fun q hq hwq ↦ ?_⟩)
-    (exh_antitone (fun _ h ↦ h.1) p)
+    (exh_antitone (Set.sep_subset _ _) p)
   obtain ⟨m, hm, hmd, hwm, hmq⟩ := exists_mem_subset_not_dominated hC hq hwq
   exact (hw.2 m ⟨hm, hmd⟩ hwm).trans hmq
 

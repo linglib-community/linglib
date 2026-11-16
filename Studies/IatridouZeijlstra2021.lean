@@ -263,7 +263,7 @@ theorem not_widened_rb_of_finite [DenselyOrdered T] [NoMinOrder T] {t : T}
     · obtain ⟨s, hs⟩ := exists_lt τ.fst
       exact ⟨s, hs, fun e hP hlt ↦ (hE.subset ⟨hP, hlt⟩).elim⟩
     · obtain ⟨m, ⟨_, hm⟩, hmax⟩ :=
-        Set.exists_max_image _ (fun e ↦ (Event.τ e).fst) (hfin.subset fun _ he ↦ he.1) hne
+        Set.exists_max_image _ (fun e ↦ (Event.τ e).fst) (hfin.sep _) hne
       obtain ⟨s, hms, hs⟩ := exists_between hm
       exact ⟨s, hs, fun e hP hlt ↦ (hmax e ⟨hP, hlt⟩).trans_lt hms⟩
   obtain ⟨e, hP, hse, hlt⟩ := event_near_lb h hs
@@ -374,10 +374,10 @@ theorem two_until_overgenerates (hP : ∀ e, ¬ P w e) {s t : T} (h : s < t) :
 temporal argument on the least-exception semantics, says that `t₀` is the only such time, which
 entails the punctual *until* of [giannakidou-2002], the event at `t₀` included. -/
 theorem eventiveUntil_of_exceptive {t₀ : T}
-    (h : Quantifier.Exceptive.IsExceptionSet .no ⊤ (· = t₀) fun t ↦ ∃ e, P w e ∧ t ∈ Event.τ e) :
+    (h : Quantifier.Exceptive.IsExceptionSet .no ⊤ {t₀} {t | ∃ e, P w e ∧ t ∈ Event.τ e}) :
     Giannakidou2002.eventiveUntil P w t₀ := by
   have key : ∀ t, (∃ e, P w e ∧ t ∈ Event.τ e) ↔ t = t₀ := fun t ↦ by
-    simpa using congrFun (Quantifier.Exceptive.isExceptionSet_no_iff.1 h) t
+    simpa using Set.ext_iff.1 (Quantifier.Exceptive.isExceptionSet_no_iff.1 h) t
   exact ⟨(key t₀).2 rfl,
     fun e hP ↦ ((key _).1 ⟨e, hP, mem_def.2 ⟨le_rfl, (Event.τ e).fst_le_snd⟩⟩).ge⟩
 

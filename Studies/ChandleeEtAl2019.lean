@@ -138,7 +138,7 @@ theorem IsAdequate.image_toAntisymmetrization [WellFoundedLT (L.Factor k)]
   have hF := subset_forbidden hG.subset_factors
     (hG.language_eq ▸ (L.strictlyLocalClosure M k).le_closure D)
   have hle (m) (hm : m ∈ mostGeneral L M k D) : ∃ g ∈ G, g ≤ m :=
-    hG.exists_le _ (fun _ hg ↦ hg.prop.1) (language_mostGeneral D) m hm
+    hG.exists_le (mostGeneral L M k D) (fun _ hg ↦ hg.prop.1) (language_mostGeneral D) m hm
   refine subset_antisymm (Set.image_mono fun g hg ↦ ⟨hF hg, fun f hf hfg ↦ ?_⟩) ?_
   · obtain ⟨m, hm, hmf⟩ := exists_mem_mostGeneral_le hf
     obtain ⟨g', hg', hg'm⟩ := hle m hm

@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Control.Monad.Cont
+public import Linglib.Semantics.Quantification.Continuation
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Reference.ChoiceFunction
 public import Linglib.Data.Examples.Barker2002
@@ -273,7 +274,7 @@ def VS (σ : Equiv.Perm (Fin 2)) (vs : Deriv ι (Prop → E → Prop)) (s : Deri
 /-- NP → Det N, `Det(N)`, with determiners denoting choice functions. -/
 def NP (σ : Equiv.Perm (Fin 2)) (det : Deriv ι (ChoiceFunction E)) (n : Deriv ι (E → Prop)) :
     Deriv ι E :=
-  binary (fun D P ↦ D P) σ det n
+  binary (fun D P ↦ D {x | P x}) σ det n
 
 /-- N → Nr PPof, `Nr(PP)`. -/
 def N (σ : Equiv.Perm (Fin 2)) (nr : Deriv ι (E → E → Prop)) (pp : Deriv ι E) :
@@ -292,7 +293,7 @@ def someone : Deriv String E := quant "someone" fun k ↦ ∃ x, k x
 /-- The expository NP → Det N applies a generalized-quantifier determiner to the continuized
 nominal, so the determiner scopes under whatever the nominal contains. -/
 def NPgq (w : String) (Q : Quantifier.Det E) (n : Deriv String (E → Prop)) : Deriv String E :=
-  bind w (fun P ↦ Q P) n
+  bind w (fun P ↦ Quantifier.toCont (Q {x | P x})) n
 
 /-- *every* quantifies universally over choice functions. -/
 def every : Deriv String (ChoiceFunction E) := quant "every" fun D ↦ ∀ f, D f
@@ -307,7 +308,7 @@ def no : Deriv String (ChoiceFunction E) := quant "no" fun D ↦ ¬ ∃ f, D f
 property. -/
 def most : Deriv String (ChoiceFunction E) :=
   quant "most" fun D ↦ ∃ C : Set (ChoiceFunction E),
-    (∀ P : E → Prop, {x | P x}.ncard < 2 * ((· P) '' C).ncard) ∧ ∀ f ∈ C, D f
+    (∀ P : Set E, P.ncard < 2 * ((· P) '' C).ncard) ∧ ∀ f ∈ C, D f
 
 variable (j m : E) (left' slept' man' woman' : E → Prop) (saw' liked' friendOf : E → E → Prop)
   (thought' : Prop → E → Prop) (the : ChoiceFunction E)
@@ -324,7 +325,7 @@ theorem everyone_left (σ : Equiv.Perm (Fin 2)) :
   rfl
 
 theorem john_saw_NPgq (w : String) (Q : Quantifier.Det E) (σ τ : Equiv.Perm (Fin 2)) :
-    (S σ (lex j) (VP τ (lex saw') (NPgq w Q (lex man')))).eval = Q man' (saw' · j) := by
+    (S σ (lex j) (VP τ (lex saw') (NPgq w Q (lex man')))).eval = Q {x | man' x} {x | saw' x j} := by
   rw [eval, S, continuize_binary_of_pure_left _ _ rfl, VP,
     continuize_binary_of_pure_left _ _ rfl]
   rfl
@@ -363,7 +364,7 @@ def theFriendOfEveryone (σ τ : ℕ → Equiv.Perm (Fin 2)) : ℕ → Deriv Str
 
 theorem continuize_theFriendOfEveryone (σ τ : ℕ → Equiv.Perm (Fin 2)) (n : ℕ) :
     (theFriendOfEveryone friendOf the σ τ n).continuize =
-      (fun y ↦ (fun z ↦ the (friendOf z))^[n] y) <$> everyone.continuize := by
+      (fun y ↦ (fun z ↦ the {x | friendOf z x})^[n] y) <$> everyone.continuize := by
   induction n with
   | zero => exact (id_map _).symm
   | succ n ih =>
@@ -375,7 +376,7 @@ theorem continuize_theFriendOfEveryone (σ τ : ℕ → Equiv.Perm (Fin 2)) (n :
 theorem someone_saw_theFriendOfEveryone_surface (σ τ : ℕ → Equiv.Perm (Fin 2))
     (υ : Equiv.Perm (Fin 2)) (n : ℕ) :
     (S 1 someone (VP υ (lex saw') (theFriendOfEveryone friendOf the σ τ n))).eval =
-      ∃ x, ∀ y, saw' ((fun z ↦ the (friendOf z))^[n] y) x := by
+      ∃ x, ∀ y, saw' ((fun z ↦ the {x | friendOf z x})^[n] y) x := by
   rw [eval, S, continuize_binary_one, VP, continuize_binary_of_pure_left _ _ rfl,
     continuize_theFriendOfEveryone]
   rfl
@@ -383,7 +384,7 @@ theorem someone_saw_theFriendOfEveryone_surface (σ τ : ℕ → Equiv.Perm (Fin
 theorem someone_saw_theFriendOfEveryone_inverse (σ τ : ℕ → Equiv.Perm (Fin 2))
     (υ : Equiv.Perm (Fin 2)) (n : ℕ) :
     (S (Equiv.swap 0 1) someone (VP υ (lex saw') (theFriendOfEveryone friendOf the σ τ n))).eval =
-      ∀ y, ∃ x, saw' ((fun z ↦ the (friendOf z))^[n] y) x := by
+      ∀ y, ∃ x, saw' ((fun z ↦ the {x | friendOf z x})^[n] y) x := by
   rw [eval, S, continuize_binary_swap, VP, continuize_binary_of_pure_left _ _ rfl,
     continuize_theFriendOfEveryone]
   rfl
@@ -392,67 +393,65 @@ theorem someone_saw_theFriendOfEveryone_inverse (σ τ : ℕ → Equiv.Perm (Fin
 
 theorem john_saw_det (w : String) (Q : Cont Prop (ChoiceFunction E)) (σ τ υ : Equiv.Perm (Fin 2)) :
     (S σ (lex j) (VP τ (lex saw') (NP υ (quant w Q) (lex man')))).eval =
-      Q fun f ↦ saw' (f man') j := by
+      Q fun f ↦ saw' (f {x | man' x}) j := by
   rw [eval, S, continuize_binary_of_pure_left _ _ rfl, VP,
     continuize_binary_of_pure_left _ _ rfl, NP, continuize_binary_of_pure_right _ _ _ rfl]
   rfl
 
 theorem john_saw_every_man_iff (hman : ∃ x, man' x) (σ τ υ : Equiv.Perm (Fin 2)) :
     (S σ (lex j) (VP τ (lex saw') (NP υ every (lex man')))).eval ↔
-      Quantifier.Det.every man' (saw' · j) :=
+      Quantifier.Det.every {x | man' x} {x | saw' x j} :=
   (john_saw_det j man' saw' _ _ σ τ υ).to_iff.trans
-    (ChoiceFunction.forall_apply_mem_iff (A := man') (B := (saw' · j)) hman)
+    (ChoiceFunction.forall_apply_mem_iff (A := {x | man' x}) (B := {x | saw' x j}) hman)
 
 theorem john_saw_every_man_iff_of_not_exists (hman : ¬ ∃ x, man' x)
     (σ τ υ : Equiv.Perm (Fin 2)) :
     (S σ (lex j) (VP τ (lex saw') (NP υ every (lex man')))).eval ↔ ∀ x, saw' x j :=
   (john_saw_det j man' saw' _ _ σ τ υ).to_iff.trans <| by
-    obtain rfl : man' = (∅ : Set E) := Set.eq_empty_iff_forall_notMem.2 fun x hx ↦ hman ⟨x, hx⟩
+    obtain rfl : man' = fun _ ↦ False := funext fun x ↦ eq_false fun hx ↦ hman ⟨x, hx⟩
     exact ChoiceFunction.forall_apply_empty_iff (p := (saw' · j))
 
 theorem john_saw_no_man_iff (hman : ∃ x, man' x) (σ τ υ : Equiv.Perm (Fin 2)) :
     (S σ (lex j) (VP τ (lex saw') (NP υ no (lex man')))).eval ↔
-      Quantifier.Det.no man' (saw' · j) :=
+      Quantifier.Det.no {x | man' x} {x | saw' x j} :=
   (john_saw_det j man' saw' _ _ σ τ υ).to_iff.trans <|
-    (ChoiceFunction.exists_apply_mem_iff (A := man') (B := (saw' · j)) hman).not.trans
+    (ChoiceFunction.exists_apply_mem_iff (A := {x | man' x}) (B := {x | saw' x j}) hman).not.trans
       Quantifier.Det.no_iff_not_some.symm
 
-theorem exists_forall_mem_apply_iff_most [Finite E] {N : E → Prop} (hN : ∃ x, N x) (V : E → Prop) :
+theorem exists_forall_mem_apply_iff_most [Finite E] {N : Set E} (hN : N.Nonempty) (V : Set E) :
     (∃ C : Set (ChoiceFunction E),
-      (∀ P : E → Prop, {x | P x}.ncard < 2 * ((· P) '' C).ncard) ∧ ∀ f ∈ C, V (f N)) ↔
+      (∀ P : Set E, P.ncard < 2 * ((· P) '' C).ncard) ∧ ∀ f ∈ C, f N ∈ V) ↔
       Quantifier.Det.most N V := by
   classical
   rw [Quantifier.Det.most_apply]
-  change _ ↔ {x | N x ∧ ¬ V x}.ncard < {x | N x ∧ V x}.ncard
-  have hNV : {x | N x}.ncard = {x | N x ∧ V x}.ncard + {x | N x ∧ ¬ V x}.ncard :=
-    (Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | N x} {x | V x}).symm
+  have hNV : N.ncard = (N ∩ V).ncard + (N \ V).ncard :=
+    (Set.ncard_inter_add_ncard_sdiff_eq_ncard N V).symm
   refine ⟨fun ⟨C, hC, hV⟩ ↦ ?_, fun h ↦ ?_⟩
-  · have hsub : (· N) '' C ⊆ {x | N x ∧ V x} := by
+  · have hsub : (· N) '' C ⊆ N ∩ V := by
       rintro _ ⟨f, hf, rfl⟩
-      exact ⟨f.apply_mem (A := N) hN, hV f hf⟩
+      exact ⟨f.apply_mem hN, hV f hf⟩
     have := Set.ncard_le_ncard hsub
     have := hC N
     omega
-  obtain ⟨s, hs, hVs⟩ : ∃ s, N s ∧ V s := by
+  obtain ⟨s, hs, hVs⟩ : (N ∩ V).Nonempty := by
     by_contra hne
-    have : {x | N x ∧ V x} = (∅ : Set E) := Set.eq_empty_of_forall_notMem fun x hx ↦ hne ⟨x, hx⟩
-    rw [this, Set.ncard_empty] at h
+    rw [Set.not_nonempty_iff_eq_empty.1 hne, Set.ncard_empty] at h
     omega
   have : Nonempty E := ⟨s⟩
-  let C : Set (ChoiceFunction E) := {f | V (f N)}
+  let C : Set (ChoiceFunction E) := {f | f N ∈ V}
   refine ⟨C, fun P ↦ ?_, fun f hf ↦ hf⟩
   by_cases hP : P = N
   · subst hP
-    have hC : (fun f : ChoiceFunction E ↦ f P) '' C = {x | P x ∧ V x} := by
+    have hC : (fun f : ChoiceFunction E ↦ f P) '' C = P ∩ V := by
       ext x
       refine ⟨?_, fun ⟨hx, hVx⟩ ↦ ?_⟩
       · rintro ⟨f, hf, rfl⟩
-        exact ⟨f.apply_mem (A := P) hN, hf⟩
+        exact ⟨f.apply_mem hN, hf⟩
       · obtain ⟨f, rfl⟩ := ChoiceFunction.exists_apply_eq hx
         exact ⟨f, hVx, rfl⟩
     rw [hC]
     omega
-  have hsup : {x | P x} ⊆ (fun f : ChoiceFunction E ↦ f P) '' C := fun x hx ↦ by
+  have hsup : P ⊆ (fun f : ChoiceFunction E ↦ f P) '' C := fun x hx ↦ by
     obtain ⟨f, hf⟩ := ChoiceFunction.exists_eqOn (T := ({P, N} : Set (Set E)))
       (fun Q ↦ if Q = P then x else s) fun Q hQ _ ↦ by
         rcases hQ with h | h
@@ -472,9 +471,9 @@ theorem exists_forall_mem_apply_iff_most [Finite E] {N : E → Prop} (hN : ∃ x
 
 theorem john_saw_most_men_iff [Finite E] (hman : ∃ x, man' x) (σ τ υ : Equiv.Perm (Fin 2)) :
     (S σ (lex j) (VP τ (lex saw') (NP υ most (lex man')))).eval ↔
-      Quantifier.Det.most man' (saw' · j) :=
+      Quantifier.Det.most {x | man' x} {x | saw' x j} :=
   (john_saw_det j man' saw' _ _ σ τ υ).to_iff.trans
-    (exists_forall_mem_apply_iff_most hman (saw' · j))
+    (exists_forall_mem_apply_iff_most (N := {x | man' x}) hman {x | saw' x j})
 
 /-! ### The scopings of *someone saw a friend of everyone* -/
 
@@ -486,7 +485,7 @@ theorem ex43a (σVP σN : Equiv.Perm (Fin 2)) :
     (someoneSawAFriendOfEveryone saw' friendOf 1 σVP 1 σN).scopeOrder =
       ["someone", "a", "everyone"] ∧
     (someoneSawAFriendOfEveryone saw' friendOf 1 σVP 1 σN).eval =
-      ∃ y, ∃ f : ChoiceFunction E, ∀ x, saw' (f (friendOf x)) y := by
+      ∃ y, ∃ f : ChoiceFunction E, ∀ x, saw' (f {z | friendOf x z}) y := by
   rcases perm_fin_two σVP with rfl | rfl <;> rcases perm_fin_two σN with rfl | rfl <;>
     exact ⟨rfl, rfl⟩
 
@@ -494,7 +493,7 @@ theorem ex43b (σVP σN : Equiv.Perm (Fin 2)) :
     (someoneSawAFriendOfEveryone saw' friendOf 1 σVP (Equiv.swap 0 1) σN).scopeOrder =
       ["someone", "everyone", "a"] ∧
     (someoneSawAFriendOfEveryone saw' friendOf 1 σVP (Equiv.swap 0 1) σN).eval =
-      ∃ y, ∀ x, ∃ f : ChoiceFunction E, saw' (f (friendOf x)) y := by
+      ∃ y, ∀ x, ∃ f : ChoiceFunction E, saw' (f {z | friendOf x z}) y := by
   rcases perm_fin_two σVP with rfl | rfl <;> rcases perm_fin_two σN with rfl | rfl <;>
     exact ⟨rfl, rfl⟩
 
@@ -502,7 +501,7 @@ theorem ex43c (σVP σN : Equiv.Perm (Fin 2)) :
     (someoneSawAFriendOfEveryone saw' friendOf (Equiv.swap 0 1) σVP 1 σN).scopeOrder =
       ["a", "everyone", "someone"] ∧
     (someoneSawAFriendOfEveryone saw' friendOf (Equiv.swap 0 1) σVP 1 σN).eval =
-      ∃ f : ChoiceFunction E, ∀ x, ∃ y, saw' (f (friendOf x)) y := by
+      ∃ f : ChoiceFunction E, ∀ x, ∃ y, saw' (f {z | friendOf x z}) y := by
   rcases perm_fin_two σVP with rfl | rfl <;> rcases perm_fin_two σN with rfl | rfl <;>
     exact ⟨rfl, rfl⟩
 
@@ -510,7 +509,7 @@ theorem ex43d (σVP σN : Equiv.Perm (Fin 2)) :
     (someoneSawAFriendOfEveryone saw' friendOf (Equiv.swap 0 1) σVP (Equiv.swap 0 1)
       σN).scopeOrder = ["everyone", "a", "someone"] ∧
     (someoneSawAFriendOfEveryone saw' friendOf (Equiv.swap 0 1) σVP (Equiv.swap 0 1)
-      σN).eval = ∀ x, ∃ f : ChoiceFunction E, ∃ y, saw' (f (friendOf x)) y := by
+      σN).eval = ∀ x, ∃ f : ChoiceFunction E, ∃ y, saw' (f {z | friendOf x z}) y := by
   rcases perm_fin_two σVP with rfl | rfl <;> rcases perm_fin_two σN with rfl | rfl <;>
     exact ⟨rfl, rfl⟩
 
@@ -540,10 +539,10 @@ theorem a_everyone_iff_everyone_a [Nonempty E] (σS σVP σN σVP' σN' : Equiv.
       (someoneSawAFriendOfEveryone saw' friendOf σS σVP' (Equiv.swap 0 1) σN').eval := by
   rcases perm_fin_two σS with rfl | rfl
   · rw [(ex43a saw' friendOf σVP σN).2, (ex43b saw' friendOf σVP' σN').2]
-    exact exists_congr fun y ↦ ChoiceFunction.exists_forall_apply_iff (R := friendOf)
-      (p := fun _ ↦ (saw' · y)) fun _ _ _ ↦ rfl
+    exact exists_congr fun y ↦ ChoiceFunction.exists_forall_apply_iff
+      (R := fun x ↦ {z | friendOf x z}) (p := fun _ ↦ (saw' · y)) fun _ _ _ ↦ rfl
   · rw [(ex43c saw' friendOf σVP σN).2, (ex43d saw' friendOf σVP' σN').2]
-    exact ChoiceFunction.exists_forall_apply_iff (R := friendOf)
+    exact ChoiceFunction.exists_forall_apply_iff (R := fun x ↦ {z | friendOf x z})
       (p := fun _ z ↦ ∃ y, saw' z y) fun _ _ _ ↦ rfl
 
 /-! ### Generalized coordination -/

@@ -164,7 +164,7 @@ open scoped Classical
 /-- *Zero* NP over a restrictor, the at least numeral and its exhaustification against the higher
 numerals ((39), (40)). -/
 def zero : PolarityItem.Licenser :=
-  .scalar ⟨⟨NonemptyPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop,
+  .scalar ⟨⟨NonemptyPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop,
       fun p B ↦ 0 ∈ countDegrees p.A (plural B)⟩,
     fun p B ↦ IsGreatest (countDegrees p.A (plural B)) 0⟩
 
@@ -189,7 +189,7 @@ instance : DecidablePred zero.Licenses := fun e ↦ isFalse (not_licenses_zero e
 /-- Kennedy's *zero*, with its exactly meaning basic and so no exhaustivity operator to split its
 meaning. -/
 def kennedyZero : PolarityItem.Licenser :=
-  .classical ⟨NonemptyPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop,
+  .classical ⟨NonemptyPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop,
     fun p B ↦ MaxIn {0} (countDegrees p.A (plural B))⟩
 
 /-- Kennedy's *zero* is *no* ((73)), so it licenses what *no* licenses, strong items included,

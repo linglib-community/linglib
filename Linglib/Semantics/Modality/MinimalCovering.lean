@@ -147,8 +147,9 @@ dropped. -/
 theorem IsMinCover.isSuperCover (h : IsMinCover C S) (hS : S.Nonempty) : IsSuperCover C S := by
   obtain ⟨v, hv⟩ := hS
   obtain ⟨c, hc, -⟩ := h.subset_sUnion hv
-  exact ⟨⟨c, hc⟩, fun c hc ↦ ((isMinCover_iff_inter_sdiff.1 h).2 c hc).mono
-    fun _ hv ↦ ⟨hv.2.1, hv.1⟩, h.subset_sUnion⟩
+  exact ⟨⟨c, hc⟩, fun c hc ↦
+    let ⟨v, hvS, hvc, _⟩ := (isMinCover_iff_inter_sdiff.1 h).2 c hc
+    ⟨v, hvc, hvS⟩, h.subset_sUnion⟩
 
 /-! ### The unilateral modals -/
 

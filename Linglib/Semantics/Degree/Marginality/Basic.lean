@@ -259,7 +259,8 @@ theorem LargelyLT.infinite_setOf (h : ml.LargelyLT x y) :
   exact (hmax ⟨hxz.trans hzw, hwy⟩ hzw.lt.le).not_gt hzw.lt
 
 theorem LargelyLT.infinite_Ioo (h : ml.LargelyLT x y) : (Set.Ioo x y).Infinite :=
-  h.infinite_setOf.mono fun _ hz ↦ ⟨hz.1.lt, hz.2.lt⟩
+  h.infinite_setOf.mono (s := {z | ml.MarginallyLT x z ∧ ml.LargelyLT z y}) fun _ hz ↦
+    ⟨hz.1.lt, hz.2.lt⟩
 
 theorem isUpperSet_setOf_largelyLT (x : α) : IsUpperSet {y | ml.LargelyLT x y} :=
   fun _ _ hle h ↦ hle.eq_or_lt.elim (· ▸ h) h.trans_lt

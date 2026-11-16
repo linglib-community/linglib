@@ -86,7 +86,7 @@ def present (u : NonemptyInterval T) (p : W → Set (NonemptyInterval T)) : Set 
 theorem present_subset : present u p ⊆ {w | u ∈ p w} := fun _ h ↦ h (mem_Iic.2 le_rfl)
 
 theorem present_eq_of_isLowerSet (h : ∀ w, IsLowerSet (p w)) : present u p = {w | u ∈ p w} :=
-  Set.ext fun w ↦ by rw [present, mem_ofPred_eq, durative_eq_of_isLowerSet (h w), mem_ofPred_eq]
+  Set.ext fun w ↦ by rw [present, mem_ofPred_eq, durative_eq_of_isLowerSet (h w)]; rfl
 
 /-- (20): the non-past holds where the property holds of a reference time no part of which
 precedes the utterance time `u`. -/

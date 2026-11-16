@@ -146,7 +146,7 @@ theorem lfp_eq_superoptimalSet (h : (f '' pairs).IsWF) :
   have hLG : unblockedSet Competes pairs f L = G := by
     rw [← hGL]; exact (unblockedSq pairs f).map_gfp
   refine le_antisymm (lfp_le_gfp _) (not_not.1 fun hne ↦ ?_)
-  obtain ⟨p, ⟨hpG, hpL⟩, hmin⟩ := (h.mono (Set.image_mono fun x hx ↦
+  obtain ⟨p, ⟨hpG, hpL⟩, hmin⟩ := (h.mono (Set.image_mono (s := G \ L) fun x hx ↦
     superoptimalSet_subset pairs f hx.1)).exists_forall_not_lt (s := G \ L)
       (Set.not_subset.1 hne)
   have hp : p ∈ unblockedSet Competes pairs f L := hLG.symm ▸ hpG
@@ -290,8 +290,8 @@ private theorem blocks_inter_iff {e : F × M → F × M → Prop} (he : ∀ {r q
     (hf : (f '' pairs).IsWF) {A B : Set (F × M)} (hA : unblockedSet e pairs f B = A)
     (hB : B ⊆ pairs) : Blocks e f (A ∩ B) p ↔ Blocks e f B p := by
   refine ⟨.mono Set.inter_subset_right, fun hb ↦ ?_⟩
-  obtain ⟨q, ⟨hqB, hq, hqp⟩, hmin⟩ := (hf.mono (Set.image_mono fun _ hx ↦
-    hB hx.1)).exists_forall_not_lt (s := {q ∈ B | e q p ∧ f q < f p}) hb
+  obtain ⟨q, ⟨hqB, hq, hqp⟩, hmin⟩ := (hf.mono (Set.image_mono
+    ((Set.sep_subset _ _).trans hB))).exists_forall_not_lt (s := {q ∈ B | e q p ∧ f q < f p}) hb
   refine ⟨q, ⟨hA ▸ ⟨hB hqB, ?_⟩, hqB⟩, hq, hqp⟩
   rintro ⟨r, hrB, hr, hrq⟩
   exact hmin r ⟨hrB, he hr hq, _root_.trans hrq hqp⟩ hrq
@@ -444,7 +444,7 @@ theorem exists_remaining_stage_eq_empty (hf : (f '' pairs).IsWF) :
   refine not_injective_of_ordinal.{max u v} (stage pairs f : Ordinal.{max u v} → Set (F × M))
     (.of_lt_imp_ne fun a b hab heq ↦ ?_)
   obtain ⟨p, hp⟩ := Set.IsPWO.exists_minimalFor f _
-    (hf.mono (Set.image_mono fun _ hx ↦ hx.1)).isPWO (hne a)
+    (hf.mono (Set.image_mono (Set.sep_subset _ _))).isPWO (hne a)
   refine notMem_of_mem_remaining hp.prop (heq ▸ stage_mono pairs f (Order.succ_le_of_lt hab) ?_)
   rw [stage_succ]
   exact .inr hp
@@ -471,7 +471,8 @@ private theorem le_ncard_lt (hV : (f '' pairs).Finite) (n : ℕ) {p : F × M}
         ⟨hp0, fun j hj hmem ↦ absurd hj (not_lt.2 (hmin j hmem))⟩))
     calc n + 1 ≤ {v ∈ f '' pairs | v < f q}.ncard + 1 := Nat.succ_le_succ (ih hq)
       _ = (insert (f q) {v ∈ f '' pairs | v < f q}).ncard :=
-        (Set.ncard_insert_of_notMem (fun h ↦ lt_irrefl _ h.2) (hV.subset (Set.sep_subset _ _))).symm
+        (Set.ncard_insert_of_notMem (s := {v ∈ f '' pairs | v < f q}) (fun h ↦ lt_irrefl _ h.2)
+          (hV.subset (Set.sep_subset _ _))).symm
       _ ≤ {v ∈ f '' pairs | v < f p}.ncard := Set.ncard_le_ncard
         (Set.insert_subset ⟨⟨q, hq.1, rfl⟩, hqp⟩ fun _ hv ↦ ⟨hv.1, hv.2.trans hqp⟩)
         (hV.subset (Set.sep_subset _ _))

@@ -670,7 +670,7 @@ theorem not_single_modal :
   have hm : (⟨.repairs, .ride⟩ : World) ∈
       ((⊥ : Background World).restrict {v | Want ep () noon v}).accessibleWorlds w :=
     Background.mem_accessibleWorlds_restrict.2 ⟨by simp, mem_maximals_discrete rfl⟩
-  rw [bestWorlds_orderingSource (PreferenceStructure.consistent_single_iff.2 ⟨_, hm, .inl rfl⟩)]
+  rw [bestWorlds_orderingSource (PreferenceStructure.consistent_single_iff.2 ⟨_, hm, Or.inl rfl⟩)]
   exact ⟨hm, fun _ ht ↦ ht.1 ▸ .inl rfl⟩
 
 end AirportScenario

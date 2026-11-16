@@ -84,7 +84,7 @@ noncomputable def anaphoric (R : (ι → E) → W → Set E) (d : ι) : Definite
 /-- The anaphoric definite denotes `x` iff `x` is its antecedent and the restrictor holds of the
 antecedent at the situation, so the index selects and the situation only decides definedness. -/
 @[simp] theorem mem_anaphoric : x ∈ anaphoric R d g s ↔ g d ∈ R g s ∧ x = g d :=
-  (Set.Subsingleton.mem_iota fun _ ha _ hb ↦ ha.2.trans hb.2.symm).trans
+  (Set.Subsingleton.mem_iota (s := R g s ∩ {g d}) fun _ ha _ hb ↦ ha.2.trans hb.2.symm).trans
     ⟨fun ⟨h, hx⟩ ↦ ⟨hx ▸ h, hx⟩, fun ⟨h, hx⟩ ↦ ⟨hx ▸ h, hx⟩⟩
 
 /-- The anaphoric definite is defined iff the restrictor holds of its antecedent at the
@@ -130,7 +130,7 @@ variable {possessor : Ctx → W → E} {rel : Ctx → W → E → E → Prop}
 `rel` to the `possessor`. -/
 noncomputable def possessive (R : Ctx → W → Set E) (possessor : Ctx → W → E)
     (rel : Ctx → W → E → E → Prop) : Definite Ctx W E :=
-  unique fun c s ↦ Possession.π (R c s) (rel c s) (possessor c s)
+  unique fun c s ↦ Possession.π (R c s) (fun x ↦ {y | rel c s x y}) (possessor c s)
 
 /-- The possessive denotes `x` iff `x` is the unique satisfier of the restrictor that stands in the
 possession relation to the possessor. -/

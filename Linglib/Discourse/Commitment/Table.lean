@@ -317,7 +317,7 @@ theorem stack_settle_push_of_not_decidedBy (h : ¬ P.DecidedBy (K.commonGround �
   simp [h]
 
 theorem settle_commit_self : (K.commit a p).settle p = K.settle p :=
-  Table.ext rfl (Set.insert_inter_of_notMem (not_not.2 rfl)) rfl
+  Table.ext rfl (Set.insert_inter_of_notMem (t := {q : A × Set W | q.2 ≠ p}) (not_not.2 rfl)) rfl
 
 /-- M' with the asserted proposition pops the assertion and strips its commitment. -/
 theorem settle_assert_self : (K.assert a p).settle p = K.settle p :=

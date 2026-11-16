@@ -381,7 +381,7 @@ theorem exclusive_eq_true_iff {W : Type*} {P : ι → Set W} {w : W} (hP : ∀ j
   simp
 
 theorem holds_subset_holds {j : ι} (h : holds i ⊆ (holds j : Set (Set ι))) : j = i := by
-  simpa using h (mem_singleton i)
+  simpa using h (a := {i}) (mem_singleton i)
 
 /-- Something at or above `i` holds. -/
 def reaches [Preorder ι] (i : ι) : Set (Set ι) := {w | ∃ j ∈ w, i ≤ j}

@@ -138,7 +138,7 @@ def den (hs : List Head) (P : W → E → Prop) : Complement W E T :=
 its plan the complement holds at a time from `t` on. -/
 def mod (plan : E → NonemptyInterval T → W → Set W) (C : Complement W E T) :
     Complement W E T :=
-  fun w t s ↦ ∀ w' ∈ plan s t w, ∃ t', t.snd ≤ t'.fst ∧ C.closure w' t'
+  fun w t s ↦ ∀ w' ∈ plan s t w, ∃ t', t.snd ≤ t'.fst ∧ t' ∈ C.closure w'
 
 variable {P : W → E → Prop} {C : Complement W E T}
   {plan : E → NonemptyInterval T → W → Set W} {h : Head} {hs : List Head} {w : W}
@@ -189,12 +189,12 @@ subjective now, the run time of `e`, that starts before `e` does. -/
 def PreEx (C : Complement W E T) (e : E) (w : W) : Prop :=
   Event.PreExists τ (C w (τ e)) (τ e)
 
-theorem PreEx.closure (h : PreEx C e w) : C.closure w (τ e) :=
+theorem PreEx.closure (h : PreEx C e w) : τ e ∈ C.closure w :=
   Event.PreExists.exists h
 
 -- (32), (34): the presupposition of an anterior complement is its truth at the subjective now
 theorem preEx_den_cons_iff :
-    PreEx (den (h :: hs) P) e w ↔ (den (h :: hs) P).closure w (τ e) :=
+    PreEx (den (h :: hs) P) e w ↔ τ e ∈ (den (h :: hs) P).closure w :=
   Event.preExists_iff_exists_of_precedes fun _ ↦ precedes_of_den_cons
 
 -- (36)
@@ -284,7 +284,7 @@ def Presupposes (hs : List Head)
 /-- Some state plans the predicate, which *…but he did not have to stop by the flower shop*
 denies. -/
 def Planned (P : W → E → Prop) (plan : E → NonemptyInterval T → W → Set W) (w : W) : Prop :=
-  ∃ t, (mod plan (aspP P)).closure w t
+  ∃ t, t ∈ (mod plan (aspP P)).closure w
 
 -- (5a), (12a)
 theorem presupposes_nil_planned : Presupposes W E [] Planned :=

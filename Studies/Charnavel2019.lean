@@ -201,7 +201,7 @@ instance : Decidable (Licit t v) :=
 theorem LocallyBound.clause {b : Nominal t} (h : (configuration t).LocallyBound (Coindexed v) b) :
     (t.clauseConfiguration.comap (·.1.1)).LocallyBound (Coindexed v) b :=
   let ⟨a, ha, hab⟩ := h
-  ⟨a, upperPolar_anti _ (fun _ hm ↦ .inl (t.labeled_mono (by simp) hm)) ha, hab⟩
+  ⟨a, upperPolar_anti _ (fun _ hm ↦ Set.mem_union_left _ (t.labeled_mono (by simp) hm)) ha, hab⟩
 
 /-! ### The silent pronoun
 

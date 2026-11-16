@@ -86,7 +86,7 @@ theorem qua_of_forall (h : ∀ x y, P x → y < x → ¬ P y) : QUA P :=
   fun _ ha _ hb hne hle ↦ h _ _ hb (lt_of_le_of_ne hle hne) ha
 
 theorem singleton_qua (n : α) : QUA (· = n) :=
-  Set.Subsingleton.isAntichain (fun _ ha _ hb ↦ ha.trans hb.symm) _
+  Set.Subsingleton.isAntichain (s := {x | x = n}) (fun _ ha _ hb ↦ ha.trans hb.symm) _
 
 theorem qua_pullback [PartialOrder β] {d : α → β} (hd : StrictMono d) {P : β → Prop}
     (hP : QUA P) : QUA (P ∘ d) :=

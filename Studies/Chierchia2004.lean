@@ -504,7 +504,7 @@ theorem exactlyTwoSmokeOrDrink_independent :
   have hne' : smokes ≠ univ := fun h ↦ by
     simpa [smokes] using eq_univ_iff_forall.1 h (0, fun _ ↦ (false, false))
   have hlt : smokes ∩ drinks ⊂ smokes ∪ drinks :=
-    (ssubset_iff_of_subset fun _ hp ↦ Or.inl hp.1).2
+    (ssubset_iff_of_subset (s := smokes ∩ drinks) fun _ hp ↦ Or.inl hp.1).2
       ⟨(0, fun _ ↦ (true, false)), Or.inl rfl, fun h ↦ Bool.false_ne_true h.2⟩
   have hsd : smokesOrDrinks.strengthen.strong = (smokes ∪ drinks) \ (smokes ∩ drinks) := by
     rw [smokesOrDrinks, disj_strongApply hne hne', strengthen_strong_eq_sdiff]
@@ -554,7 +554,8 @@ def haveMany : Set (Fin 4) := {n | 2 ≤ n}
 def haveAll : Set (Fin 4) := {n | n = 3}
 
 theorem haveMany_ssubset_haveSome : haveMany ⊂ haveSome :=
-  (ssubset_iff_of_subset fun _ (hn : (2 : Fin 4) ≤ _) ↦ (by decide : (1 : Fin 4) ≤ 2).trans hn).2
+  (ssubset_iff_of_subset (s := haveMany) (t := haveSome)
+    fun _ (hn : (2 : Fin 4) ≤ _) ↦ (by decide : (1 : Fin 4) ≤ 2).trans hn).2
     ⟨1, show (1 : Fin 4) ≤ 1 from le_rfl, show ¬(2 : Fin 4) ≤ 1 by decide⟩
 
 theorem haveAll_ssubset_haveMany : haveAll ⊂ haveMany :=

@@ -125,7 +125,7 @@ theorem sortallyReducible_iff (hd : d.Conservative) :
 theorem generateCompleteBoolean_individual (Q : Quantifier α) :
     GenerateCompleteBoolean (Set.range individual) Q := by
   refine (generateCompleteBoolean_iff_factorsThrough (B := Quantifier α) (W := Set α)
-    (OrderIso.refl _)).2 ?_
+    Set.memOrderIso.symm).2 ?_
   refine fun A B e ↦ congrArg _ (Set.ext fun a ↦ ?_)
   exact iff_of_eq (congrFun e ⟨individual a, a, rfl⟩)
 
@@ -187,7 +187,7 @@ omit [Fintype α] in
 /-- Theorem 4(b): the co-intersective functions are the type ⟨1⟩ quantifiers through the complement
 of the scope. -/
 def coIntersectiveOrderIso : invariants (fun p : Set α × Set α ↦ p.1 \ p.2) ≃o Quantifier α :=
-  invariantsOrderIso (s := fun T ↦ (Set.univ, Tᶜ)) fun T ↦ by simp
+  (invariantsOrderIso (s := fun T ↦ (Set.univ, Tᶜ)) fun T ↦ by simp).trans Set.memOrderIso
 
 private theorem ncard_coIntersective :
     {d : Det α | d.CoIntersective}.ncard = 2 ^ 2 ^ Fintype.card α := by
@@ -269,9 +269,9 @@ def IsPredicateAnaphor (F : (α → α → Prop) → Set α) : Prop :=
 theorem aec_acc (Q : Quantifier α) : AEC (acc Q) := fun _ _ _ _ e ↦ by simp [acc, e]
 
 theorem aec_iff_exists_acc : AEC F ↔ ∃ Q : Quantifier α, F = acc Q :=
-  ⟨fun h ↦ ⟨fun X ↦ ∃ a, a ∈ F fun _ ↦ X, funext fun R ↦ Set.ext fun x ↦
-    ⟨fun hx ↦ ⟨x, (h R (fun _ ↦ {y | R x y}) x x rfl).1 hx⟩,
-      fun ⟨w, ha⟩ ↦ (h (fun _ ↦ {y | R x y}) R w x rfl).1 ha⟩⟩,
+  ⟨fun h ↦ ⟨fun X ↦ ∃ a, a ∈ F fun _ ↦ (· ∈ X), funext fun R ↦ Set.ext fun x ↦
+    ⟨fun hx ↦ ⟨x, (h R (fun _ ↦ R x) x x rfl).1 hx⟩,
+      fun ⟨w, ha⟩ ↦ (h (fun _ ↦ R x) R w x rfl).1 ha⟩⟩,
     fun ⟨Q, h⟩ ↦ h ▸ aec_acc Q⟩
 
 /-- The Accusative Extensions Condition is the Accusative Anaphor Condition together with

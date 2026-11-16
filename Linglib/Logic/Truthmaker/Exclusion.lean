@@ -271,7 +271,7 @@ theorem exclusiveNeg_iUnion {ι : Type*} (P : ι → Set S) :
   constructor
   · rintro ⟨Q, ⟨hQ, hPQ⟩, rfl⟩
     refine Set.mem_iSups.2 ⟨fun i ↦ sSup {q ∈ Q | ∃ p ∈ P i, excl q p},
-      fun i ↦ ⟨_, ⟨fun q hq ↦ hq.2, fun p hp ↦ ?_⟩, rfl⟩, ?_⟩
+      fun i ↦ ⟨_, ⟨fun q hq ↦ (Set.mem_sep_iff.1 hq).2, fun p hp ↦ ?_⟩, rfl⟩, ?_⟩
     · obtain ⟨q, hq, hqp⟩ := hPQ (Set.mem_iUnion_of_mem i hp)
       exact ⟨q, ⟨hq, p, hp, hqp⟩, hqp⟩
     · rw [← sSup_iUnion]
@@ -402,8 +402,8 @@ theorem exclusionaryNeg_iSups {ι : Type*} (hU : UpwardExclusion excl)
   · rw [mem_upperClosure_exclusiveNeg, upperClosure_iUnion, UpperSet.mem_iInf_iff]
     simp only [mem_upperClosure_exclusiveNeg, ← hU.conflict_iff]
     refine ⟨fun h ↦ by_contra fun hcon ↦ ?_, fun ⟨i, hi⟩ y hy ↦ ?_⟩
-    · obtain ⟨f, hf⟩ := Set.univ_pi_nonempty_iff.2 fun i ↦
-        (show ∃ p ∈ P i, ¬ Conflict excl x p by simpa using not_exists.1 hcon i)
+    · obtain ⟨f, hf⟩ := (Set.univ_pi_nonempty_iff (t := fun i ↦ {p ∈ P i | ¬ Conflict excl x p})).2
+        fun i ↦ (show ∃ p ∈ P i, ¬ Conflict excl x p by simpa using not_exists.1 hcon i)
       have hc := h _ (Set.iSup_mem_iSups fun i ↦ (Set.mem_univ_pi.1 hf i).1)
       rw [← sSup_range] at hc
       obtain ⟨_, ⟨i, rfl⟩, hci⟩ := exists_conflict_of_conflict_sSup hU hD hc

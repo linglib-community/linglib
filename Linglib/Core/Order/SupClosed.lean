@@ -62,8 +62,9 @@ end SemilatticeSup
 
 @[to_dual]
 theorem sInf_supClosure [CompleteLattice α] (s : Set α) : sInf (supClosure s) = sInf s :=
-  le_antisymm (sInf_le_sInf subset_supClosure) <| le_sInf <| supClosure_min
-    (fun _ ↦ sInf_le) fun _ ha _ _ ↦ le_sup_of_le_left ha
+  le_antisymm (sInf_le_sInf subset_supClosure) <| le_sInf fun _ hb ↦
+    supClosure_min (t := {b | sInf s ≤ b}) (fun _ ↦ sInf_le)
+      (fun _ ha _ _ ↦ le_sup_of_le_left ha) hb
 
 /-! ### Greatest elements of lower sets -/
 

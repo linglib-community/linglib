@@ -359,14 +359,14 @@ theorem deployQuantifier_of_monotone (hQ : Monotone Q) (A : U → Trivalent) :
     deployQuantifier Q A =
       supervaluationOn Set.univ fun d : Designation ↦ Q {u | d.threshold ≤ A u} :=
   (deployQuantifier_eq_supervaluationOn_standards Q A).trans
-    (supervaluationOn_pi_eq_const_of_monotone (Q := Q) A fun _ _ h ↦ hQ h)
+    (supervaluationOn_pi_eq_const_of_monotone (Q := fun p ↦ Q {u | p u}) A fun _ _ h ↦ hQ h)
 
 /-- An antitone quantifier deployed on a predicate is settled by its K3 and LP readings. -/
 theorem deployQuantifier_of_antitone (hQ : Antitone Q) (A : U → Trivalent) :
     deployQuantifier Q A =
       supervaluationOn Set.univ fun d : Designation ↦ Q {u | d.threshold ≤ A u} :=
   (deployQuantifier_eq_supervaluationOn_standards Q A).trans
-    (supervaluationOn_pi_eq_const_of_antitone (Q := Q) A fun _ _ h ↦ hQ h)
+    (supervaluationOn_pi_eq_const_of_antitone (Q := fun p ↦ Q {u | p u}) A fun _ _ h ↦ hQ h)
 
 /-- On a classical predicate, a deployed quantifier is the quantifier. -/
 @[simp] theorem deployQuantifier_ofProp (Q : Set U → Prop) (R : Set U) [DecidablePred (· ∈ R)]

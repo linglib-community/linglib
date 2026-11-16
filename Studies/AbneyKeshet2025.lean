@@ -747,10 +747,14 @@ theorem realize_valuables116_sgIndef_iff (hw : h .w = world w₀) :
     fun hg => (hg ⟨by decide, by decide⟩).trans hw
   rw [expandSelf_valuables116_sgIndef]
   simp only [Formula.realize_conj, Formula.realize_subset, Formula.realize_labelDef, and_true,
-    Term.realize_sigma_eq_image S.model h (f := Sum.inr) fun g hg =>
-      realize_valuablesA_sgIndef S g (hl hg),
-    Term.realize_sigma_eq_image S.model h (f := Sum.inr) fun g hg =>
-      realize_valuablesL_sgIndef S g (hl hg),
+    Term.realize_sigma_eq_image S.model h (f := Sum.inr)
+      (s := {p | S.rel .person w₀ ![p] ∧ ∃ v, S.rel .valuable w₀ ![v] ∧ S.rel .bring w₀ ![p, v]})
+      fun g hg => realize_valuablesA_sgIndef S g (hl hg),
+    Term.realize_sigma_eq_image S.model h (f := Sum.inr)
+      (s := {p | S.rel .person w₀ ![p] ∧
+        (∃ v, S.rel .valuable w₀ ![v] ∧ S.rel .bring w₀ ![p, v]) ∧
+          ∀ v, S.rel .valuable w₀ ![v] → S.rel .bring w₀ ![p, v] → S.rel .lock w₀ ![p, v]})
+      fun g hg => realize_valuablesL_sgIndef S g (hl hg),
     Set.image_subset_image_iff Sum.inr_injective]
   exact ⟨fun H p hp hv => (@H p ⟨hp, hv⟩).2.2, fun H p ⟨hp, hv⟩ => ⟨hp, hv, H p hp hv⟩⟩
 

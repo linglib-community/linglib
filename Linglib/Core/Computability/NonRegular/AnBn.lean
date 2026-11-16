@@ -76,7 +76,7 @@ pairwise distinct, since `bⁿ` is in the one by `aᵐ` exactly when `m = n`. -/
 theorem not_isRegular_anbn (hab : a ≠ b) : ¬ (anbn a b).IsRegular := fun h ↦
   Finite.false <| h.finite_of_injective_leftQuotient (ι := ℕ) fun _ n hmn ↦
     (replicate_append_replicate_mem_anbn_iff hab).1 <|
-      (congrFun hmn (replicate n b)).mpr (replicate_append_replicate_mem_anbn n)
+      (Set.ext_iff.1 hmn (replicate n b)).2 (replicate_append_replicate_mem_anbn n)
 
 end Language
 

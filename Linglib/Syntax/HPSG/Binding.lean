@@ -149,7 +149,7 @@ variable {U : Type*} (I : Interpretation sig U)
 /-- Local o-command gives a binding configuration on the entities of an interpretation, in which
 every domain is the whole universe, local o-command being local already. -/
 def configuration : _root_.Binding.Configuration U where
-  commands a b := I.R .locO ![a, b]
+  commands a b := ![a, b] ∈ I.R .locO
   domain _ := Set.univ
 
 /-- Two entities are codependent when they share their index, gender and number, that is, when
@@ -179,13 +179,13 @@ variable {I} {r : U}
 open _root_.Binding.Configuration
 
 theorem satisfies_principleA_iff (hr : I.IsRootedAt r) (g : ℕ → U) :
-    I.Satisfies g r principleA ↔ ∀ x, I.S x = .ana → ∀ y, I.R .locO ![y, x] →
-      ∃ z, I.R .locO ![z, x] ∧ Codependent I z x := by
+    I.Satisfies g r principleA ↔ ∀ x, I.S x = .ana → ∀ y, ![y, x] ∈ I.R .locO →
+      ∃ z, ![z, x] ∈ I.R .locO ∧ Codependent I z x := by
   simp [principleA, locallyOBinds, coindexed, agrees, hr _, le_ana_iff, Matrix.comp_vec2',
     Codependent]
 
 theorem satisfies_principleB_iff (hr : I.IsRootedAt r) (g : ℕ → U) :
-    I.Satisfies g r principleB ↔ ∀ x, I.S x = .ppro → ∀ y, I.R .locO ![y, x] →
+    I.Satisfies g r principleB ↔ ∀ x, I.S x = .ppro → ∀ y, ![y, x] ∈ I.R .locO →
       ¬ Codependent I y x := by
   simp [principleB, locallyOBinds, coindexed, agrees, hr _, le_ppro_iff, Matrix.comp_vec2',
     Codependent]
@@ -193,11 +193,11 @@ theorem satisfies_principleB_iff (hr : I.IsRootedAt r) (g : ℕ → U) :
 /-- At a root of which every entity is a component, and with nothing locally o-commanding
 itself, the principles hold exactly when codependence satisfies the framework-neutral Conditions
 A and B over local o-command, with the anaphors that nothing locally o-commands exempt. -/
-theorem satisfies_grammar_iff (hr : I.IsRootedAt r) (hirr : ∀ x, ¬ I.R .locO ![x, x]) :
+theorem satisfies_grammar_iff (hr : I.IsRootedAt r) (hirr : ∀ x, ![x, x] ∉ I.R .locO) :
     (∀ d ∈ grammar, I.Satisfies (fun _ ↦ r) r d) ↔
       (configuration I).Satisfies (Codependent I) (configuration I).exempt
         fun x ↦ (I.S x).bindingClass := by
-  have hne {a b : U} (h : I.R .locO ![a, b]) : a ≠ b := fun e ↦ hirr b (e ▸ h)
+  have hne {a b : U} (h : ![a, b] ∈ I.R .locO) : a ≠ b := fun e ↦ hirr b (e ▸ h)
   simp only [grammar, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq,
     satisfies_principleA_iff hr, satisfies_principleB_iff hr, Satisfies,
     Srt.bindingClass_eq_some_iff]
@@ -213,7 +213,7 @@ theorem satisfies_grammar_iff (hr : I.IsRootedAt r) (hirr : ∀ x, ¬ I.R .locO 
   · exact h x _ (.inr ⟨hx, rfl⟩) ⟨y, trivial, hne hy, hc, hy⟩
 
 theorem satisfies_of_models (hI : I.Models grammar) (hr : I.IsRootedAt r)
-    (hirr : ∀ x, ¬ I.R .locO ![x, x]) :
+    (hirr : ∀ x, ![x, x] ∉ I.R .locO) :
     (configuration I).Satisfies (Codependent I) (configuration I).exempt
       fun x ↦ (I.S x).bindingClass :=
   (satisfies_grammar_iff hr hirr).1 (hI r)

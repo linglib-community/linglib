@@ -426,7 +426,7 @@ def near : SetRel (Finset (Fin 2)) (Finset (Fin 2)) := Set.univ
 def g₀ : ℕ → Finset (Fin 2) := fun _ ↦ ∅
 
 /-- *this* with a trivial restrictor denotes the indexed referent, which is in its vicinity. -/
-example : ∅ ∈ English.Determiners.this.denote (fun _ _ _ ↦ True) 0 (ctx.near near) g₀ () := by
+example : ∅ ∈ English.Determiners.this.denote (fun _ _ ↦ Set.univ) 0 (ctx.near near) g₀ () := by
   refine DemonstrativeDeterminer.mem_denote.2 ⟨?_, ?_⟩
   · rw [SpeechAct.Context.image_near]
     exact ⟨{0}, by simp [English.Determiners.this,
@@ -436,7 +436,7 @@ example : ∅ ∈ English.Determiners.this.denote (fun _ _ _ ↦ True) 0 (ctx.ne
 
 /-- With no vicinities, even a demonstrative without a deictic contrast denotes nothing. -/
 example (dem : DemonstrativeDeterminer) :
-    ¬ (dem.denote (fun _ _ _ ↦ True) 0 (ctx.near ∅) g₀ ()).Dom := by
+    ¬ (dem.denote (fun _ _ ↦ Set.univ) 0 (ctx.near ∅) g₀ ()).Dom := by
   rintro ⟨hv, -⟩
   rw [SpeechAct.Context.image_near] at hv
   obtain ⟨x, -, hx⟩ := hv

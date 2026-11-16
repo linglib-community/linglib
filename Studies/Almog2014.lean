@@ -88,9 +88,9 @@ theorem const_ne_dthat_of_ne {intended : E} (h : desc c ≠ intended) :
 /-! ### The Russell–Partee–Kaplan challenge -/
 
 theorem not_exists_individual_eq_forall (a b : E) (hab : a ≠ b) :
-    ¬ ∃ e : E, Quantifier.individual e = fun P ↦ ∀ x, P x := by
+    ¬ ∃ e : E, Quantifier.individual e = fun P ↦ ∀ x, x ∈ P := by
   rintro ⟨e, he⟩
-  have h : ∀ x, x = e := (congrFun he (· = e)).mp rfl
+  have h : ∀ x, x = e := (congrFun he {x | x = e}).mp rfl
   exact hab ((h a).trans (h b).symm)
 
 end Almog2014

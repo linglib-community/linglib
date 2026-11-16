@@ -133,7 +133,7 @@ theorem isOpen_a_ne_b : isOpen .a ≠ isOpen .b := fun h ↦ by
 
 theorem isAntichain_gas : IsAntichain (· ⊆ ·) gas := by
   rintro _ ⟨s, rfl⟩ _ ⟨t, rfl⟩ hne hsub
-  exact hne (congrArg isOpen (hsub (Set.mem_singleton s) : t ∈ ({s} : Set Station)).symm)
+  exact hne (congrArg isOpen (hsub (a := {s}) (Set.mem_singleton s) : t ∈ ({s} : Set Station)).symm)
 
 theorem trueAnswers_gas_univ : trueAnswers gas Set.univ = {isOpen .a, isOpen .b} := by
   ext p
@@ -299,7 +299,7 @@ answers at `w` when the `P`s are `det` `cn`s there (p. 181). -/
 def externalAnswers (det : Det E) (cn : E → Set W) (φ : E → Set (Set W)) (w : W) :
     Set (Set W) :=
   {O | w ∈ O ∧ ∃ (P : Set E) (f : E → Set W), O = {v | ∀ y ∈ P, v ∈ f y} ∧
-    det (w ∈ cn ·) (· ∈ P) ∧ ∀ y ∈ P, w ∈ cn y ∧ f y ∈ φ y}
+    det {y | w ∈ cn y} P ∧ ∀ y ∈ P, w ∈ cn y ∧ f y ∈ φ y}
 
 theorem not_assumption_externalAnswers :
     ¬Assumption (externalAnswers Det.some (fun _ : Unit ↦ ({true} : Set Bool))
@@ -319,7 +319,7 @@ section SingularWhich
 variable {η φ : E → Set W} {w : W} {K : SetRel W W}
 
 /-- The proposition that the `η` that `φ` is `x`, with Russellian *the* (p. 192). -/
-def theAnswer (η φ : E → Set W) (x : E) : Set W := {w | Det.the (fun y ↦ w ∈ η y ∧ w ∈ φ y) (· = x)}
+def theAnswer (η φ : E → Set W) (x : E) : Set W := {w | Det.the {y | w ∈ η y ∧ w ∈ φ y} {x}}
 
 theorem mem_theAnswer {x : E} : w ∈ theAnswer η φ x ↔ ∀ y, w ∈ η y ∧ w ∈ φ y ↔ y = x :=
   ⟨fun ⟨_, h, hx⟩ ↦ hx ▸ h, fun h ↦ ⟨x, h, rfl⟩⟩

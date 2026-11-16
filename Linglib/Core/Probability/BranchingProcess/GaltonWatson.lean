@@ -329,7 +329,7 @@ private theorem draws_inter_children {α : Type*} (u : GornAddress) {A : ℕ →
     have hCA : MeasurableSet[gen (before u (s + 1))] (C ∩ A s a) :=
       .inter (gen_mono (S := before u s) (T := before u (s + 1))
           (fun q hq k hk ↦ hq k (by omega)) _ hC)
-        (gen_mono (T := before u (s + 1)) (fun q (hq : u * .of s ≤ q.1) k hk h ↦ by
+        (gen_mono (S := {q | u * .of s ≤ q.1}) (T := before u (s + 1)) (fun q hq k hk h ↦ by
           have := GornAddress.of_inj_of_mul_of_le hq h; omega) _ (hA s a))
     have hd : Disjoint (before (ι := ι) u s) {q | u * .of s ≤ q.1} :=
       Set.disjoint_left.2 fun q hq h ↦ hq s le_rfl h

@@ -74,13 +74,14 @@ variable {I V W : Type*}
 /-- The inertia worlds of a state, `INERTIA(s)` of (25), are the best worlds of the state's
 circumstances under an inertial ordering of its own ([dowty-1979], [kratzer-2013]): `bestWorlds`
 with the state in place of a world. -/
-def inertiaWorlds (circumstances inertia : V → Set (W → Prop)) (s : V) : Set W :=
+def inertiaWorlds (circumstances : V → Set (W → Prop)) (inertia : V → Set (Set W)) (s : V) :
+    Set W :=
   (premisePreorder (inertia s)).minimals {w | sInf (circumstances s) w}
 
 /-- The head *a* (25), anchored to the attitude state, is necessity over the state's inertia
 worlds, with the eventuality argument of its complement closed over what the state causes. -/
-def aP (circumstances inertia : V → Set (W → Prop)) (causeStar : W → SetRel V V)
-    (P : W → V → Prop) (s : V) : Prop :=
+def aP (circumstances : V → Set (W → Prop)) (inertia : V → Set (Set W))
+    (causeStar : W → SetRel V V) (P : W → V → Prop) (s : V) : Prop :=
   □[.ofSuccessors (inertiaWorlds circumstances inertia)] (causedClosure causeStar s P) s
 
 -- (134) [grano-2024]
@@ -110,8 +111,9 @@ def Frame.convincere (F : Frame I V W) (P : V → Prop) (x y : I) (e : V) (w : W
   ∃ s, F.convince e w ∧ F.agent e y w ∧ F.patient e x w ∧ F.cause e s ∧ F.rationalAttitude s ∧
     F.experiencer x s ∧ P s
 
-variable (F : Frame I V W) (con : V → Option (Set W)) (circumstances inertia : V → Set (W → Prop))
-  (causeStar : W → SetRel V V) (P : W → V → Prop) (x y : I) (e : V) (w : W)
+variable (F : Frame I V W) (con : V → Option (Set W)) (circumstances : V → Set (W → Prop))
+  (inertia : V → Set (Set W)) (causeStar : W → SetRel V V) (P : W → V → Prop) (x y : I) (e : V)
+  (w : W)
 
 /-- The belief report is *convincere* with the *di*-complement, whose closure head (23b) turns the
 bare infinitive into a proposition held at the state's content worlds. -/

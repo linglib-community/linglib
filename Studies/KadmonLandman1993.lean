@@ -117,7 +117,8 @@ def sorryThat (A : Set World) : Set World := wants best Aᶜ
 /-- *Sorry* satisfies the strengthening condition, so it licenses *any*. -/
 theorem strengthening_sorryThat {Entity : Type*} {D D' : Set Entity} (P : Entity → Set World)
     (hD : D ⊆ D') : Strengthening (sorryThat best) D D' P :=
-  de_satisfies_strengthening (fun _ _ h _ hw ↦ hw.trans (Set.compl_subset_compl.2 h)) D D' P hD
+  de_satisfies_strengthening (C := sorryThat best)
+    (fun _ _ h _ hw ↦ hw.trans (Set.compl_subset_compl.2 h)) D D' P hD
 
 end Adversatives
 

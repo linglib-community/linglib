@@ -522,8 +522,8 @@ theorem not_stronglyStable_of_isSymmetric [Finite ι] (h3 : 2 < Nat.card ι)
   have hσb : σ ⊆ {I | b ∈ I} := hmin ⟨hat b, by simp⟩
   have hna : σ ∉ range (fun i ↦ {I : Set ι | i ∈ I}) := by
     rintro ⟨k, rfl⟩
-    have ha : a ∈ ({k} : Set ι) := hσa rfl
-    have hb : b ∈ ({k} : Set ι) := hσb rfl
+    have ha : a ∈ ({k} : Set ι) := hσa (a := {k}) rfl
+    have hb : b ∈ ({k} : Set ι) := hσb (a := {k}) rfl
     exact hab (ha.trans hb.symm)
   exact not_subset_atom (hsym σ hσ hna) hI a (show c ∉ ({a, b} : Set ι) by
     simp [hac.symm, hbc.symm]) hσa
@@ -700,7 +700,7 @@ theorem weaklyStable_and_not_bilaterallyWeaklyStable_no [Finite ι] [Nontrivial 
     · exact quantityInvariant_mem_singleton_univ
     · exact quantityInvariant_mem_singleton_empty.compl
     · exact quantityInvariant_mem_singleton_empty
-  have hN := mem_every_some_of_bilaterallyWeaklyStable (fun i ↦ .inl ⟨i, rfl⟩) hsym h
+  have hN := mem_every_some_of_bilaterallyWeaklyStable (fun i ↦ Or.inl ⟨i, rfl⟩) hsym h
     (φ := {B | Det.no univ B}) (by simp) (by
       rintro ⟨k, hk⟩
       simpa [setOf_no_univ] using (congrArg (∅ ∈ ·) hk))
@@ -886,7 +886,7 @@ theorem exists_quantityInvariant_not_isUpperSet :
     · exact ⟨_, ⟨⟨_, .inr rfl, compl_compl _⟩, h⟩, by
         rintro _ ⟨⟨_, rfl | rfl, rfl⟩, hw⟩ <;> simp_all⟩
     · exact ⟨_, ⟨⟨_, .inl rfl, rfl⟩, h⟩, by rintro _ ⟨⟨_, rfl | rfl, rfl⟩, hw⟩ <;> simp_all⟩
-  refine ⟨_, fun _ ↦ .inl rfl,
+  refine ⟨_, fun _ ↦ Or.inl rfl,
     fun φ _ ↦ ⟨hsym φ, univ, fun B ↦ by rw [univ_inter], fun σ _ ↦ hsym φ σ⟩, hA,
     ⟨hA.1.weaklyStable _, hA.2.weaklyStable _⟩, _, .inr rfl, fun ⟨_, h⟩ ↦ ?_,
     fun h ↦ h (empty_subset univ) (notMem_empty ()) (mem_univ ())⟩
@@ -901,7 +901,7 @@ theorem scopeMonotone_of_bilaterallyStronglyStable [Nontrivial ι] {D : Set (Det
       (range (fun i ↦ {B : Set ι | individual i B}) ∪ ⋃ d ∈ D, range fun A ↦ {B | d A B})) :
     ∀ d ∈ D, d.ScopeMonotone := by
   refine fun d hd ↦ Det.scopeMonotone_iff_isUpperSet.2 fun A ↦
-    (isUpperSet_of_bilaterallyStronglyStable (fun i ↦ .inl ⟨i, rfl⟩) ?_ h).2.2 _
+    (isUpperSet_of_bilaterallyStronglyStable (fun i ↦ Or.inl ⟨i, rfl⟩) ?_ h).2.2 _
       (.inr (mem_biUnion hd ⟨A, rfl⟩))
   rintro φ (⟨i, rfl⟩ | hφ)
   · exact exists_det_apply_eq_iff_livesOn.1 ⟨Det.every, Det.conservative_every,
@@ -966,8 +966,8 @@ theorem stronglyStable_and_not_bilaterallyStronglyStable_nobody [Nontrivial ι] 
       · exact hwψ.mono (inter_subset_inter_right _ (mem_Ici.1 hB))
     · rw [mem_singleton_iff.1 hψ, hN] at hwψ
       exact absurd (mem_singleton_iff.1 hwψ) hne.ne_empty
-  · have hup := (isUpperSet_of_bilaterallyStronglyStable (fun i ↦ .inl (.inl ⟨i, rfl⟩)) ?_ h).2.2
-      _ (.inr rfl)
+  · have hup := (isUpperSet_of_bilaterallyStronglyStable
+      (fun i ↦ Or.inl (Or.inl ⟨i, rfl⟩)) ?_ h).2.2 _ (.inr rfl)
     · obtain ⟨i⟩ := (inferInstance : Nonempty ι)
       rw [hN] at hup
       exact absurd (mem_singleton_iff.1 (hup (empty_subset univ) rfl)) (nonempty_iff_ne_empty.1
@@ -1040,8 +1040,7 @@ include hF
 
 theorem compl_mem (hneg : {J : Set (Fin 1) | 0 ∉ J} ∈ F 1) {n : ℕ} {φ : Set (Set (Fin n))}
     (hφ : φ ∈ F n) : φᶜ ∈ F n := by
-  convert hF.comp_mem n 1 _ (fun _ ↦ φ) hneg fun _ ↦ hφ using 1
-  ext I; simp
+  exact hF.comp_mem n 1 _ (fun _ ↦ φ) hneg fun _ ↦ hφ
 
 -- a clone with both constants that holds a function not monotone holds negation
 theorem neg_mem (htop : univ ∈ F 1) (hbot : ∅ ∈ F 1) {n : ℕ} {φ : Set (Set (Fin n))}
@@ -1077,7 +1076,7 @@ end IsClone
 theorem isClone_isUpperSet : IsClone (fun n ↦ {φ : Set (Set (Fin n)) | IsUpperSet φ}) ∧
     ∀ n, 0 < n → {φ : Set (Set (Fin n)) | IsUpperSet φ} ≠ univ := by
   refine ⟨⟨fun n i I J hIJ (hI : i ∈ I) ↦ hIJ hI, fun n k g f hg hf I J hIJ hI ↦
-    hg (fun j (hj : I ∈ f j) ↦ hf j hIJ hj) hI⟩, fun n hn h ↦ ?_⟩
+    hg (a := {j | I ∈ f j}) (fun j hj ↦ hf j hIJ hj) hI⟩, fun n hn h ↦ ?_⟩
   have : {I : Set (Fin n) | ⟨0, hn⟩ ∈ I}ᶜ ∈ {φ : Set (Set (Fin n)) | IsUpperSet φ} := h ▸ mem_univ _
   exact this (empty_subset {(⟨0, hn⟩ : Fin n)}) (notMem_empty (⟨0, hn⟩ : Fin n)) (mem_singleton _)
 
@@ -1180,7 +1179,7 @@ theorem exists_isClone_bilaterallyWeaklyStable_not_isUpperSet :
       (∀ n, BilaterallyWeaklyStable (range fun i : Fin n ↦ {I | i ∈ I}) (F n)) ∧
       ({{0}, {1}} : Set (Set (Fin 2))) ∈ F 2 ∧ ¬ IsUpperSet ({{0}, {1}} : Set (Set (Fin 2))) := by
   refine ⟨fun n ↦ {φ | ∅ ∉ φ}, ⟨fun n i ↦ notMem_empty i, fun n k g f hg hf h0 ↦
-    hg (eq_empty_of_forall_notMem (fun j hj ↦ hf j hj) ▸ h0)⟩, fun n h ↦ ?_,
+    hg (eq_empty_of_forall_notMem (s := {j | ∅ ∈ f j}) (fun j hj ↦ hf j hj) ▸ h0)⟩, fun n h ↦ ?_,
     fun n ↦ ⟨fun w ↦ ?_, fun w ↦ ?_⟩, by simp, fun h ↦ ?_⟩
   · have h' : {φ : Set (Set (Fin n)) | ∅ ∉ φ} = univ := h
     exact (show (univ : Set (Set (Fin n))) ∈ {φ : Set (Set (Fin n)) | ∅ ∉ φ} by

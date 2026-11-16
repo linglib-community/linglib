@@ -136,7 +136,7 @@ theorem isRegular_iff_finite_syntacticSemigroup :
 /-! ### Boolean combinations -/
 
 theorem syntacticSemigroupCon_compl : Lᶜ.syntacticSemigroupCon = L.syntacticSemigroupCon :=
-  Con.syntactic_compl
+  Con.syntactic_compl (S := {u : FreeSemigroup α | u.toFreeMonoid.toList ∈ L})
 
 theorem inf_syntacticSemigroupCon_le_syntacticSemigroupCon_inf {L' : Language α} :
     L.syntacticSemigroupCon ⊓ L'.syntacticSemigroupCon ≤ (L ⊓ L').syntacticSemigroupCon :=

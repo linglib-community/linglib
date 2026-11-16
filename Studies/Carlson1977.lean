@@ -138,7 +138,8 @@ lawn* and *All dogs are mammals* give *Mammals are sitting on my lawn* (119). -/
 theorem mem_image_of_mem_image (hk : M.RealizedByInstances inst k)
     (hk' : M.RealizedByInstances inst k') (hsub : ∀ ⦃x⦄, x ~[inst] k → x ~[inst] k')
     {P : Set Stage} (hP : k ∈ M.R.image P) : k' ∈ M.R.image P :=
-  (mem_image_iff hk' P).2 <| ((mem_image_iff hk P).1 hP).mono (Set.inter_subset_inter_left _ hsub)
+  (mem_image_iff hk' P).2 <| ((mem_image_iff hk P).1 hP).mono
+    (Set.inter_subset_inter_left _ fun _ hx ↦ hsub hx)
 
 /-- A kind is everywhere exactly when at every place some of its instances are there, the
 universal over places outscoping the existential in *Dogs are everywhere* (135c). -/

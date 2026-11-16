@@ -227,7 +227,7 @@ def relApp (x y : ℕ) : Desc Sig := .rel ρ fun i ↦ ![x, y] (i.cast hρ)
 
 /-- The binary relation that an interpretation assigns to `ρ`. -/
 def binRel {U : Type*} (I : Interpretation Sig U) (a b : U) : Prop :=
-  I.R ρ fun i ↦ ![a, b] (i.cast hρ)
+  (fun i ↦ ![a, b] (i.cast hρ)) ∈ I.R ρ
 
 /-- The objects at the variables `1` and `2` have the same sort among `σs`. -/
 def sameSpecies (σs : List Srt) : Desc Sig :=
@@ -254,7 +254,8 @@ variable {U : Type*} {I : Interpretation Sig U} {ρ hρ} {D : Set U} {g : ℕ �
 
 private theorem satisfiesOn_relApp {x y : ℕ} :
     I.SatisfiesOn D g u (relApp ρ hρ x y) ↔ binRel ρ hρ I (g x) (g y) :=
-  Iff.of_eq <| congrArg (I.R ρ) <| funext fun i ↦ congrFun (Matrix.comp_vec2' g x y) (i.cast hρ)
+  Iff.of_eq <| congrArg (· ∈ I.R ρ) <| funext fun i ↦
+    congrFun (Matrix.comp_vec2' g x y) (i.cast hρ)
 
 private theorem satisfiesOn_sameSpecies {σs : List Srt} (hσ : ∀ σ, σ ∈ σs ↔ IsSpecies σ) :
     I.SatisfiesOn D (Function.update (Function.update g 1 a) 2 b) u (sameSpecies σs) ↔
@@ -421,9 +422,9 @@ list or two, with each index its own `INT` value when the signature declares `IN
     | .INT, .i1 => if intensional then some .i1 else none
     | .INT, .i2 => if intensional then some .i2 else none
     | _, _ => none
-  R _ _ := False
+  R _ := ∅
 
-instance (c o i : Bool) (ρ : (sig i).Rel) : DecidablePred ((utterance c o i).R ρ) :=
+instance (c o i : Bool) (ρ : (sig i).Rel) : DecidablePred (· ∈ (utterance c o i).R ρ) :=
   fun _ ↦ inferInstanceAs (Decidable False)
 
 section WithCopies
@@ -432,9 +433,9 @@ variable {i : Bool} {U : Type*} (I : Interpretation (sig i) U) (C : U → U → 
 
 /-- The interpretation `I` with the copy relation `C`. -/
 @[reducible] def withCopies : Interpretation (sig i) U :=
-  { I with R := fun _ xs ↦ C (xs 0) (xs 1) }
+  { I with R := fun _ ↦ {xs | C (xs 0) (xs 1)} }
 
-instance [DecidableRel C] (ρ : (sig i).Rel) : DecidablePred ((withCopies I C).R ρ) :=
+instance [DecidableRel C] (ρ : (sig i).Rel) : DecidablePred (· ∈ (withCopies I C).R ρ) :=
   fun xs ↦ inferInstanceAs (Decidable (C (xs 0) (xs 1)))
 
 variable {I C} {r a b : U}

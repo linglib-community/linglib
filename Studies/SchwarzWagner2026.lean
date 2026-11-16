@@ -8,6 +8,7 @@ public import Linglib.Semantics.Composition.Rules
 public import Linglib.Core.Data.RoseTree.Licensed
 public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantification.Continuation
 public import Studies.Fox2007
 public import Studies.Katzir2007
 public import Studies.TrinhHaida2015
@@ -413,13 +414,13 @@ abbrev Denotation (E W : Type) : Type := Σ a : Ty Unit, W → a.Dom (Dom E)
 /-- Word meanings relative to a world: a predicate's extension varies with the world, and the
 determiners are the hub's. -/
 def denotes : Word → Option (Denotation E W)
-  | .some_ => some ⟨det, fun _ ↦ Det.some⟩
-  | .all_ => some ⟨det, fun _ ↦ Det.every⟩
-  | .nall => some ⟨det, fun _ ↦ nallDet⟩
-  | .noun => some ⟨et, fun _ ↦ A⟩
-  | .pred => some ⟨et, X⟩
-  | .antonym => some ⟨et, fun w ↦ ((X w)ᶜ : Set E)⟩
-  | .not_ => some ⟨et ⇒ et, fun _ (P : Set E) ↦ (Pᶜ : Set E)⟩
+  | .some_ => some ⟨det, fun _ P ↦ toCont (Det.some {x | P x})⟩
+  | .all_ => some ⟨det, fun _ P ↦ toCont (Det.every {x | P x})⟩
+  | .nall => some ⟨det, fun _ P ↦ toCont (nallDet {x | P x})⟩
+  | .noun => some ⟨et, fun _ ↦ (· ∈ A)⟩
+  | .pred => some ⟨et, fun w ↦ (· ∈ X w)⟩
+  | .antonym => some ⟨et, fun w ↦ (· ∈ (X w)ᶜ)⟩
+  | .not_ => some ⟨et ⇒ et, fun _ P x ↦ ¬ P x⟩
 
 /-- The meanings of a tree, by Functional Application at each world. -/
 def meanings (t : Tree Cat Word) : List (Denotation E W) :=
@@ -431,7 +432,8 @@ def meanings (t : Tree Cat Word) : List (Denotation E W) :=
 /-- The paper's simplex meanings: those of the sentences no more complex than the assertion, in its
 plain sense of deleting constituents and replacing them by lexical items. -/
 def simplex (c : Case) : Set (Set W) :=
-  {q | ∃ ψ, atMostAsComplex ↑(lex c) ψ (prejacent c) ∧ (⟨.t, q⟩ : Denotation E W) ∈ meanings A X ψ}
+  {q | ∃ ψ, atMostAsComplex ↑(lex c) ψ (prejacent c) ∧
+    (⟨.t, (· ∈ q)⟩ : Denotation E W) ∈ meanings A X ψ}
 
 /-- The determiners' square at the restrictor, at the predicate's extension in each world. -/
 def sqAt : Square (Set W) where
@@ -444,7 +446,11 @@ variable {A X}
 
 theorem sqAt_relations (hA : A.Nonempty) : SquareRelations (sqAt A X) :=
   (Det.square_relations hA).map (F := BoundedLatticeHom (Quantifier E) (Set W))
-    (CompleteLatticeHom.setPreimage X).toBoundedLatticeHom
+    { toFun Q := {w | Q (X w)}
+      map_sup' _ _ := rfl
+      map_inf' _ _ := rfl
+      map_top' := rfl
+      map_bot' := rfl }
 
 -- Two members of the restrictor make the square nondegenerate over the possible extensions.
 example {a b : E} (ha : a ∈ A) (hb : b ∈ A) (hab : a ≠ b) (t : Triangle) :
@@ -461,18 +467,18 @@ def squareOf (sq : Square (Set W)) : Case → Square (Set W)
   | _ => sq
 
 /-- What each category can denote, for determiners `Ds`, predicates `Fs`, and negation if `N`. -/
-def Table (A : Set E) (N : Prop) (Fs : Set (W → E → Prop)) (Ds : Set (Det E)) :
+def Table (A : Set E) (N : Prop) (Fs : Set (W → Set E)) (Ds : Set (Det E)) :
     Cat → Set (Denotation E W)
   | .S => {d | d.1 ≠ .t ∨ ∃ D ∈ Ds, ∃ f ∈ Fs, d = ⟨.t, fun w ↦ D A (f w)⟩}
-  | .N => {d | (∃ D ∈ Ds, d = ⟨det, fun _ ↦ D⟩) ∨ (∃ D ∈ Ds, d = ⟨ett, fun _ ↦ D A⟩) ∨
-      d = ⟨et, fun _ ↦ A⟩}
-  | .Det => {d | ∃ D ∈ Ds, d = ⟨det, fun _ ↦ D⟩}
-  | .V => {d | (∃ f ∈ Fs, d = ⟨et, f⟩) ∨
-      (N ∧ d = ⟨et ⇒ et, fun _ (P : Set E) ↦ (Pᶜ : Set E)⟩)}
-  | .Neg => {d | N ∧ d = ⟨et ⇒ et, fun _ (P : Set E) ↦ (Pᶜ : Set E)⟩}
+  | .N => {d | (∃ D ∈ Ds, d = ⟨det, fun _ P ↦ toCont (D {x | P x})⟩) ∨
+      (∃ D ∈ Ds, d = ⟨ett, fun _ ↦ toCont (D A)⟩) ∨ d = ⟨et, fun _ ↦ (· ∈ A)⟩}
+  | .Det => {d | ∃ D ∈ Ds, d = ⟨det, fun _ P ↦ toCont (D {x | P x})⟩}
+  | .V => {d | (∃ f ∈ Fs, d = ⟨et, fun w ↦ (· ∈ f w)⟩) ∨
+      (N ∧ d = ⟨et ⇒ et, fun _ P x ↦ ¬ P x⟩)}
+  | .Neg => {d | N ∧ d = ⟨et ⇒ et, fun _ P x ↦ ¬ P x⟩}
   | _ => ∅
 
-variable {N : Prop} {Fs : Set (W → E → Prop)} {Ds : Set (Det E)} {Ws : Finset Word}
+variable {N : Prop} {Fs : Set (W → Set E)} {Ds : Set (Det E)} {Ws : Finset Word}
   {c : Case} {q : Set W}
 
 theorem table_unary {c a : Cat} (ha : a ∈ pat c) : Table A N Fs Ds a ⊆ Table A N Fs Ds c := by
@@ -489,7 +495,7 @@ theorem table_unary {c a : Cat} (ha : a ∈ pat c) : Table A N Fs Ds a ⊆ Table
     · exact Or.inr hd
     · exact hd
 
-theorem table_binary (hneg : N → ∀ f ∈ Fs, (fun w ↦ (f w : Set E)ᶜ) ∈ Fs) {c a b : Cat}
+theorem table_binary (hneg : N → ∀ f ∈ Fs, (fun w ↦ (f w)ᶜ) ∈ Fs) {c a b : Cat}
     (hab : [a, b].Sublist (pat c)) : ∀ x ∈ Table A N Fs Ds a, ∀ y ∈ Table A N Fs Ds b,
       ∀ (u : Ty Unit) (m : Application x.1 y.1 u),
         (⟨u, fun w ↦ m.eval (Dom E) (x.2 w) (y.2 w)⟩ : Denotation E W) ∈ Table A N Fs Ds c := by
@@ -563,11 +569,11 @@ theorem licensed_of_alt {source : Set (Tree Cat Word)} {φ ψ : Tree Cat Word}
 
 theorem simplex_subset (hs : ∀ s ∈ (↑(lex c) : Set (Tree Cat Word)), s.Licensed (Licit Ws))
     (hφ : (prejacent c).Licensed (Licit Ws))
-    (hneg : N → ∀ f ∈ Fs, (fun w ↦ (f w : Set E)ᶜ) ∈ Fs)
+    (hneg : N → ∀ f ∈ Fs, (fun w ↦ (f w)ᶜ) ∈ Fs)
     (hsome : .some_ ∈ Ws → Det.some ∈ Ds) (hall : .all_ ∈ Ws → Det.every ∈ Ds)
     (hnall : .nall ∈ Ws → nallDet ∈ Ds) (hpred : .pred ∈ Ws → X ∈ Fs)
     (hant : .antonym ∈ Ws → (fun w ↦ (X w)ᶜ) ∈ Fs) (hnot : .not_ ∈ Ws → N)
-    (hq : q ∈ simplex A X c) : ∃ D ∈ Ds, ∃ f ∈ Fs, q = fun w ↦ D A (f w) := by
+    (hq : q ∈ simplex A X c) : ∃ D ∈ Ds, ∃ f ∈ Fs, q = {w | D A (f w)} := by
   obtain ⟨ψ, hψ, h⟩ := hq
   have hcat : Tree.cat ψ = .S := hψ.cat_eq.trans (by cases c <;> rfl)
   have hT (c : Cat) (w d) (hw : Licit Ws (.terminal c w) List.nil) (hd : denotes A X w = some d) :
@@ -588,7 +594,8 @@ theorem simplex_subset (hs : ∀ s ∈ (↑(lex c) : Set (Tree Cat Word)), s.Lic
   rw [hcat] at hm
   rcases hm with h0 | ⟨D, hD, f, hf, he⟩
   · exact absurd rfl h0
-  · exact ⟨D, hD, f, hf, eq_of_heq (Sigma.mk.inj_iff.1 he).2⟩
+  · exact ⟨D, hD, f, hf,
+      Set.ext fun w ↦ iff_of_eq (congrFun (eq_of_heq (Sigma.mk.inj_iff.1 he).2) w)⟩
 
 theorem nall_compl_iff {B : Set E} : nallDet A Bᶜ ↔ Det.some A B :=
   (not_congr Det.no_iff_not_some).trans not_not
@@ -652,7 +659,7 @@ theorem O_mem_simplex (hc : c = .negated ∨ c = .antonym ∨ c = .lexicalized) 
   · refine ⟨sentence .some_ (.terminal .V .pred), .single ?_, List.mem_cons_self⟩
     exact .set _ ⟨1, by simp⟩ (c' := Tree.terminal Cat.V Word.pred)
       (.here (.contract (by simp) rfl trivial))
-  · have hO : (squareOf (sqAt A X) .antonym).O = fun w ↦ Det.some A (X w)ᶜ :=
+  · have hO : (squareOf (sqAt A X) .antonym).O = {w | Det.some A (X w)ᶜ} :=
       Set.ext fun _ ↦ some_compl_iff.symm
     rw [hO]
     exact ⟨sentence .some_ (.terminal .V .antonym),

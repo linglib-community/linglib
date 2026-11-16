@@ -260,7 +260,8 @@ def marriage : Backgrounds World where
 
 /-- The speaker wants to marry Alice and wants to marry Sue. -/
 theorem want_alice_and_want_sue (w : World) :
-    ∃ φ, spanish .subjunctive marriage.want = some φ ∧ φ marriesAlice w ∧ φ marriesSue w :=
+    ∃ φ, spanish .subjunctive marriage.want = some φ ∧
+      φ (· ∈ marriesAlice) w ∧ φ (· ∈ marriesSue) w :=
   ⟨fun p w ↦ goodPossibility doxPlus bul w {v | p v}, rfl,
     ⟨(true, false), by simp [doxPlus, marriesAlice, marriesSue],
       fun _ _ hv ↦ hv marriesAlice (by simp [bul]) rfl⟩,

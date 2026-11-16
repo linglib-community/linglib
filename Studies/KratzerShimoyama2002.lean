@@ -130,7 +130,7 @@ theorem opNeg_eq_denote {c : Coordinator} (hc : c.role = .negative) (A : Set (W 
 gives the indeterminate quantifier's reading (§2). -/
 theorem denote_image_eq_reading [Fintype E] (q : IndeterminateQuantifier)
     (P : E → W → Prop) (A : Set E) :
-    q.particle.denote (P '' A) = fun w ↦ q.reading E (· ∈ A) (P · w) := by
+    q.particle.denote (P '' A) = fun w ↦ q.reading E A {x | P x w} := by
   funext w
   rw [Coordinator.denote_apply, Set.image_image]
   rfl

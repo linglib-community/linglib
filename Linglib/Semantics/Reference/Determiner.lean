@@ -84,7 +84,7 @@ theorem _root_.SpeechAct.Context.image_inv_graph_participants {P T : Type} [Part
 
 /-- At a context, a referent is near a participant set when it is in the vicinity `χ` of a
 referent with those participants: Harbour's spatial head applied to a person. -/
-def _root_.SpeechAct.Context.near {P T : Type} [PartialOrder E] (c : Context W E P T)
+noncomputable def _root_.SpeechAct.Context.near {P T : Type} [PartialOrder E] (c : Context W E P T)
     (χ : SetRel E E) : SetRel (Finset Role) E :=
   (Function.graph c.participants).inv ○ χ
 

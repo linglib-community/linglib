@@ -553,7 +553,7 @@ theorem isMinCover_iff_alternativeness {C : Set (Set W)} {S : Set W} :
     IsMinCover C S ↔
       S ⊆ ⋃₀ C ∧ (∀ X ∈ C, (X ∩ S).Nonempty) ∧ Simons2005.Alternativeness C S := by
   rw [isMinCover_iff_inter_sdiff]
-  refine and_congr_right fun _ ↦ ⟨fun h ↦ ⟨fun X hX ↦ (h X hX).mono fun _ hv ↦ ⟨hv.2.1, hv.1⟩,
+  refine and_congr_right fun _ ↦ ⟨fun h ↦ ⟨fun X hX ↦ let ⟨v, hv⟩ := h X hX; ⟨v, hv.2.1, hv.1⟩,
     fun X hX ↦ ?_⟩, fun ⟨_, h⟩ X hX ↦ ?_⟩
   · obtain ⟨x, hxS, hxX, hx⟩ := h X hX
     exact ⟨x, ⟨hxX, hxS⟩, fun Y hY hYX hxY ↦ hx ⟨Y, ⟨hY, hYX⟩, hxY⟩⟩
