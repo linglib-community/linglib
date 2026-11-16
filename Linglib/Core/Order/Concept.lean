@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.Defs
 public import Mathlib.Order.Concept
+public import Mathlib.Order.Hom.CompleteLattice
 public import Mathlib.Order.UpperLower.Basic
 public import Linglib.Core.Order.Ortholattice
 
@@ -27,7 +28,9 @@ below that of `a` exactly when [every object with `b` has
 `a`](##Concept.ofAttribute_le_ofAttribute_iff), the attribute implication from `b` to `a`. A
 preorder on the attributes [reverses along the attribute
 concepts](##Concept.antitone_ofAttribute_iff) exactly when each object's attributes form a lower
-set of it.
+set of it. A map into the objects pulls concepts back to those of the restricted context,
+[preserving meets](##Concept.comap), and [every concept of the restricted context arises this
+way](##Concept.comap_surjective).
 
 ## References
 
@@ -244,5 +247,62 @@ theorem antitone_ofAttribute_iff [Preorder β] :
   exact ⟨fun h _ _ _ hab hb ↦ h hab hb, fun h _ _ hab _ hb ↦ h _ hab hb⟩
 
 end Implication
+
+/-! ### Restricting the objects -/
+
+section Comap
+
+variable {α α' β : Type*} {r : α → β → Prop} (f : α' → α)
+
+/-- Pulling the concepts of `r` back along a map `f` of objects, to the concepts of the context
+whose objects are those of `f`'s domain: a concept goes to the one with the same attributes. The
+map preserves all meets. -/
+def comap : sInfHom (Concept α β r) (Concept α' β fun a ↦ r (f a)) where
+  toFun c := ofAttributes _ c.intent
+  map_sInf' S := by
+    ext a
+    simp only [extent_ofAttributes, extent_sInf, Set.biInter_image, mem_lowerPolar_iff,
+      Set.mem_iInter₂]
+    rw [← mem_lowerPolar_iff, lowerPolar_intent, extent_sInf, Set.mem_iInter₂]
+    exact forall₂_congr fun c _ ↦ by rw [← c.lowerPolar_intent]; rfl
+
+variable {f}
+
+@[simp] theorem extent_comap (c : Concept α β r) : (comap f c).extent = f ⁻¹' c.extent := by
+  rw [← c.lowerPolar_intent]; rfl
+
+@[simp] theorem comap_ofAttributes (t : Set β) :
+    comap f (ofAttributes r t) = ofAttributes _ t :=
+  ext (by rw [extent_comap]; rfl)
+
+variable (r f) in
+/-- Every concept of the restricted context is the restriction of one of the whole context. -/
+theorem comap_surjective : Function.Surjective (comap (r := r) f) :=
+  fun c ↦ ⟨ofAttributes r c.intent, (comap_ofAttributes _).trans ofAttributes_intent⟩
+
+end Comap
+
+section Generated
+
+variable {α β : Type*} {r : α → β → Prop}
+
+/-- The join of the concepts two sets of objects generate is the concept their union generates. -/
+theorem ofObjects_sup_ofObjects (s s' : Set α) :
+    ofObjects r s ⊔ ofObjects r s' = ofObjects r (s ∪ s') :=
+  ext' (upperPolar_union r s s').symm
+
+/-- The meet of the concepts two sets of attributes generate is the concept their union
+generates. -/
+theorem ofAttributes_inf_ofAttributes (t t' : Set β) :
+    ofAttributes r t ⊓ ofAttributes r t' = ofAttributes r (t ∪ t') :=
+  ext (lowerPolar_union r t t').symm
+
+/-- Adding an attribute to a description leaves its concept unchanged exactly when the
+description implies the attribute. -/
+theorem ofAttributes_pair_eq_left_iff {b b' : β} :
+    ofAttributes r {b, b'} = ofAttribute r b ↔ ofAttribute r b ≤ ofAttribute r b' := by
+  rw [← Set.singleton_union, ← ofAttributes_inf_ofAttributes, inf_eq_left]
+
+end Generated
 
 end Concept
