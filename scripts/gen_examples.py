@@ -19,8 +19,8 @@ The `Linglib.lean` root import is not touched: the lakefile globs every
 submodule, and `scripts/mk_all.py` regenerates the root before a release.
 
 JSON file format: a top-level JSON array of example objects, or an object
-`{"features": [...], "examples": [...]}` that also declares the paper's feature taxonomy
-(see Typed features below). Each
+`{"features": [...], "readings": {...}, "examples": [...]}` that also declares the paper's
+feature taxonomy and its readings (see Typed features and Typed readings below). Each
 object's keys are the fields of the `Datum` Lean struct, plus the
 record-only keys `discourseSegments`, `translation`, `comment` and `verified`:
 
@@ -88,6 +88,17 @@ emits each type as an enum and its reader over `Datum`, an `Option` of the type 
 `multiple` key, the `List` of the values, so that a study reads the feature by a total map from
 the enum rather than a table of strings, and a value that drifts fails here rather than leaving
 a theorem silently vacuous. Undeclared keys stay strings.
+
+Typed readings: a paper whose readings form a closed set declares them once, beside `features`:
+
+  "readings": {"lean": "reading", "type": "Reading", "doc": "The readings the paper tests.",
+               "levels": [{"name": "boundVariable", "label": "bound variable", "doc": "..."}, ...]}
+
+Every reading a row judges must then be a declared level, a row judges a reading at most once,
+and every level is judged in some row. The module emits the enum, its `label` and a reader
+`reading : Datum → Reading → Option Judgment`, so that a study names a reading by a constructor
+and a name that drifts fails here. A paper that does not declare its readings keeps them as
+strings.
 
 Dependencies: pure stdlib (json module).
 """
@@ -363,13 +374,56 @@ TYPE_IDENT = re.compile(r"^[A-Z][A-Za-z0-9]*$")
 
 
 def split_data(data, where: str):
-    """The declared features and the example rows of a paper's JSON."""
+    """The declared features, the declared readings (or `None`) and the example rows of a
+    paper's JSON."""
     if isinstance(data, list):
-        return [], data
-    if isinstance(data, dict) and set(data) <= {"features", "examples"} and "examples" in data:
-        return data.get("features", []), data["examples"]
+        return [], None, data
+    if (isinstance(data, dict) and set(data) <= {"features", "readings", "examples"}
+            and "examples" in data):
+        return data.get("features", []), data.get("readings"), data["examples"]
     raise ValueError(f"{where}: top level must be an array of examples or an object with "
-                     f"`features` and `examples`")
+                     f"`examples` and optionally `features` and `readings`")
+
+
+def validate_levels(levels: list, w: str) -> set:
+    """Check the levels of a declared taxonomy and return their labels."""
+    names, labels = set(), set()
+    for lv in levels:
+        if set(lv) != {"name", "label", "doc"}:
+            raise ValueError(f"{w}: a level needs exactly `name`, `label` and `doc`")
+        if not IDENT.match(lv["name"]) or lv["name"] in LEAN_KEYWORDS:
+            raise ValueError(f"{w}: level name {lv['name']!r} is not a Lean identifier")
+        if lv["name"] in names or lv["label"] in labels:
+            raise ValueError(f"{w}: duplicate level {lv['name']!r} / {lv['label']!r}")
+        names.add(lv["name"]); labels.add(lv["label"])
+    return labels
+
+
+def validate_readings(rd, features: list, examples: list, where: str) -> None:
+    if rd is None:
+        return
+    w = f"{where}.readings"
+    if set(rd) != {"lean", "type", "doc", "levels"}:
+        raise ValueError(f"{w}: needs exactly `lean`, `type`, `doc` and `levels`")
+    if not IDENT.match(rd["lean"]) or rd["lean"] in LEAN_KEYWORDS:
+        raise ValueError(f"{w}: `lean` {rd['lean']!r} is not a Lean identifier")
+    if not TYPE_IDENT.match(rd["type"]):
+        raise ValueError(f"{w}: `type` {rd['type']!r} is not a Lean type name")
+    if any(rd["lean"] == ft["lean"] or rd["type"] == ft["type"] for ft in features):
+        raise ValueError(f"{w}: `lean` or `type` repeats a declared feature's")
+    labels = validate_levels(rd["levels"], w)
+    seen = set()
+    for ex in examples:
+        names = [x["name"] for x in ex.get("readings", [])]
+        for n in names:
+            if n not in labels:
+                raise ValueError(f"{where}: {ex.get('id')}: reading {n!r} is not a declared "
+                                 f"level of {rd['type']}")
+        if len(names) != len(set(names)):
+            raise ValueError(f"{where}: {ex.get('id')}: a reading is judged twice")
+        seen |= set(names)
+    if seen != labels:
+        raise ValueError(f"{w}: no row judges {sorted(labels - seen)}")
 
 
 def validate_features(features: list, examples: list, where: str) -> None:
@@ -390,15 +444,7 @@ def validate_features(features: list, examples: list, where: str) -> None:
             if v in seen:
                 raise ValueError(f"{w}: duplicate {what} {v!r}")
             seen.add(v)
-        names, labels = set(), set()
-        for lv in ft["levels"]:
-            if set(lv) != {"name", "label", "doc"}:
-                raise ValueError(f"{w}: a level needs exactly `name`, `label` and `doc`")
-            if not IDENT.match(lv["name"]) or lv["name"] in LEAN_KEYWORDS:
-                raise ValueError(f"{w}: level name {lv['name']!r} is not a Lean identifier")
-            if lv["name"] in names or lv["label"] in labels:
-                raise ValueError(f"{w}: duplicate level {lv['name']!r} / {lv['label']!r}")
-            names.add(lv["name"]); labels.add(lv["label"])
+        labels = validate_levels(ft["levels"], w)
         occurs = False
         for ex in examples:
             vals = [v for k, v in ex.get("paperFeatures", []) if k == ft["key"]]
@@ -437,7 +483,20 @@ def emit_feature(ft: dict) -> str:
             f"  deriving DecidableEq, Repr, Fintype\n\n{reader}")
 
 
-def emit_module(author_year: str, examples: list, features: list | None = None) -> str:
+def emit_readings(rd: dict) -> str:
+    ctors = "\n".join(f"  /-- {lv['label']}: {lv['doc']} -/\n  | {lv['name']}" for lv in rd["levels"])
+    arms = "\n".join(f"  | .{lv['name']} => {lean_string(lv['label'])}" for lv in rd["levels"])
+    return (f"/-- {rd['doc']} -/\ninductive {rd['type']} where\n{ctors}\n"
+            f"  deriving DecidableEq, Repr, Fintype\n\n"
+            f"/-- The name the rows give the reading. -/\n"
+            f"def {rd['type']}.label : {rd['type']} → String\n{arms}\n\n"
+            f"/-- The judgment a row records for the reading, if it records one. -/\n"
+            f"def {rd['lean']} (e : Datum) (r : {rd['type']}) : Option Judgment :=\n"
+            f"  e.readings.lookup r.label")
+
+
+def emit_module(author_year: str, examples: list, features: list | None = None,
+                readings: dict | None = None) -> str:
     ay_lower = author_year.lower()
     if author_year not in CONTRIBUTION_METHODS:
         raise ValueError(f"no row in {CONTRIBUTIONS.relative_to(ROOT)}; add `{author_year},<method>` "
@@ -455,9 +514,11 @@ def emit_module(author_year: str, examples: list, features: list | None = None) 
         all_def = f"def all : List Datum := [{', '.join(local_ids)}]"
     features = features or []
     feats = "".join("\n\n" + emit_feature(ft) for ft in features)
+    if readings is not None:
+        feats += "\n\n" + emit_readings(readings)
     imports = "import Linglib.Data.Examples.Schema" + (
-        "\nimport Linglib.Data.Examples.Readers\nimport Mathlib.Tactic.DeriveFintype"
-        if features else "")
+        "\nimport Linglib.Data.Examples.Readers" if features else "") + (
+        "\nimport Mathlib.Tactic.DeriveFintype" if features or readings is not None else "")
 
     return f"""{imports}
 
@@ -498,9 +559,12 @@ def process(author_year: str, check: bool) -> bool:
         sys.exit(1)
 
     try:
-        features, examples = split_data(examples, str(json_path.relative_to(ROOT)))
-        validate_features(features, examples, str(json_path.relative_to(ROOT)))
-        module_text = as_module_if_possible(emit_module(author_year, examples, features))
+        where = str(json_path.relative_to(ROOT))
+        features, readings, examples = split_data(examples, where)
+        validate_features(features, examples, where)
+        validate_readings(readings, features, examples, where)
+        module_text = as_module_if_possible(
+            emit_module(author_year, examples, features, readings))
     except ValueError as e:
         sys.stderr.write(f"FATAL: {json_path.relative_to(ROOT)}: {e}\n")
         sys.exit(1)
@@ -717,10 +781,15 @@ def fmt(author_year: str) -> bool:
     with open(json_path, encoding="utf-8") as f:
         data = json.load(f)
     if isinstance(data, dict):
-        features, examples = split_data(data, str(json_path))
+        features, readings, examples = split_data(data, str(json_path))
         body = format_examples(examples).rstrip("\n").replace("\n", "\n  ")
-        feats = json.dumps(features, ensure_ascii=False, indent=2).replace("\n", "\n  ")
-        text = f'{{\n  "features": {feats},\n  "examples": {body}\n}}\n'
+        head = ""
+        for key, val in (("features", features if "features" in data else None),
+                         ("readings", readings)):
+            if val is not None:
+                dumped = json.dumps(val, ensure_ascii=False, indent=2).replace("\n", "\n  ")
+                head += f'  "{key}": {dumped},\n'
+        text = f'{{\n{head}  "examples": {body}\n}}\n'
         examples = data
     else:
         text = format_examples(data)
