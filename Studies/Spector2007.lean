@@ -65,14 +65,6 @@ section Gricean
 
 variable {W : Type*} (Q : Setoid W)
 
-/-- An information state relativized to the question is the union of the cells it meets. -/
-def relativize (i : Set W) : Set W := {w | ∃ w' ∈ i, Q w' w}
-
-theorem subset_relativize (i : Set W) : i ⊆ relativize Q i := fun w hw ↦ ⟨w, hw, Q.refl' w⟩
-
-@[simp] theorem relativize_bot (i : Set W) : relativize ⊥ i = i := by
-  ext w; simp [relativize]
-
 /-- An answer is strongly relevant when it excludes a cell and does not cut across cells. -/
 def StronglyRelevant (α : Set W) : Prop :=
   (∃ w, Q.cell w ∩ α = ∅) ∧ ∀ w, w ∈ α ↔ Q.cell w ⊆ α
@@ -80,7 +72,7 @@ def StronglyRelevant (α : Set W) : Prop :=
 /-- The answer `α` is optimal in state `i` with respect to the alternative set `S` when the
 relativized state entails `α` and no member of `S` it entails is stronger. -/
 def IsOptimal (S : Set (Set W)) (α i : Set W) : Prop :=
-  relativize Q i ⊆ α ∧ ∀ α' ∈ S, relativize Q i ⊆ α' → ¬ α' ⊂ α
+  Q.saturation i ⊆ α ∧ ∀ α' ∈ S, Q.saturation i ⊆ α' → ¬ α' ⊂ α
 
 /-- The consistent states in which `α` is optimal. -/
 def optimalStates (S : Set (Set W)) (α : Set W) : Set (Set W) :=
@@ -88,7 +80,7 @@ def optimalStates (S : Set (Set W)) (α : Set W) : Set (Set W) :=
 
 /-- The maximally informed optimal states are those no other optimal state is stronger than. -/
 def maximalStates (S : Set (Set W)) (α : Set W) : Set (Set W) :=
-  {i | i ∈ optimalStates Q S α ∧ ∀ i' ∈ optimalStates Q S α, ¬ relativize Q i' ⊂ relativize Q i}
+  {i | i ∈ optimalStates Q S α ∧ ∀ i' ∈ optimalStates Q S α, ¬ Q.saturation i' ⊂ Q.saturation i}
 
 /-- An answer implicates what every maximally informed optimal state entails. -/
 def Implicates (S : Set (Set W)) (α β : Set W) : Prop := ∀ i ∈ maximalStates Q S α, i ⊆ β
@@ -215,7 +207,7 @@ omit [DecidableEq Atom] in
 assertion `Implicature.IsOptimalAssertion`. -/
 theorem isOptimal_bot_iff {W : Type*} {S : Set (Set W)} {α i : Set W} :
     IsOptimal ⊥ S α i ↔ Implicature.IsOptimalAssertion S α i := by
-  simp only [IsOptimal, relativize_bot, Implicature.isOptimalAssertion_iff]
+  simp only [IsOptimal, Setoid.saturation_bot, Implicature.isOptimalAssertion_iff]
 
 theorem IsPositive.empty_notMem {P : Proposition Atom} (hP : IsPositive P) : ∅ ∉ P := fun h ↦
   hP.ne_univ (Set.eq_univ_of_forall fun V ↦ hP.mem_of_subset h (Finset.empty_subset V))
@@ -264,7 +256,7 @@ theorem sUnion_mem_positives {A : Set (Proposition Atom)} (hA : A ⊆ positives)
 
 theorem isOptimal_iff {P i : Proposition Atom} (hP : IsPositive P) (hi : i.Nonempty) :
     IsOptimal ⊥ positives P i ↔ Pos i = P := by
-  simp only [IsOptimal, relativize_bot, positives, Set.mem_ofPred_eq]
+  simp only [IsOptimal, Setoid.saturation_bot, positives, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨hiP, hopt⟩
     have hsub : Pos i ⊆ P := fun _ ⟨V', hV', hle⟩ ↦ hP.mem_of_subset (hiP hV') hle
@@ -296,7 +288,7 @@ theorem maximalStates_eq {P : Proposition Atom} (hP : IsPositive P) :
     exact (satisfied_positives_subset_iff.1 h.le).antisymm
       (satisfied_positives_subset_iff.1 h.ge) ▸ hw
   ext i
-  simp only [maximalStates, Set.mem_ofPred_eq, Set.mem_singleton_iff, relativize_bot]
+  simp only [maximalStates, Set.mem_ofPred_eq, Set.mem_singleton_iff, Setoid.saturation_bot]
   constructor
   · rintro ⟨hi, hmax⟩
     by_contra hne

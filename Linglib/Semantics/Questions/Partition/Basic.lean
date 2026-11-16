@@ -22,7 +22,10 @@ questions (`isCoatom_iff`). A proposition a question determines is [cariani-2013
 [von-fintel-gillies-2010]; *determines* is [ciardelli-2022]'s word for the dependency of one
 question on another, here of the polar question whether `p`, and `Setoid.DeterminesOn` is his
 dependency relative to a set of worlds. The converse relation, a state settling a question, is
-membership in a `Question`.
+membership in a `Question`. Information, a set of worlds, is compatible with the cells it does
+not rule out, and information is closer to an answer than weaker information when it rules out
+a cell that the weaker information leaves open (`Setoid.CloserToAnswer`), the partial answer of
+[groenendijk-stokhof-1984].
 
 ## Main definitions
 
@@ -31,6 +34,9 @@ membership in a `Question`.
 * `Setoid.Determines Q p` — `Q` determines `p`: `p` is a union of cells.
 * `Setoid.DeterminesOn Q p c` — `Q` determines `p` on the worlds of `c`.
 * `Setoid.ofProps ps` — the question raised by a finite family of propositions.
+* `Setoid.saturation Q s` — the union of the cells that `s` meets.
+* `Setoid.compatible Q J` — the cells compatible with the information `J`.
+* `Setoid.CloserToAnswer Q J K` — `J` rules out a cell that `K ⊇ J` leaves open.
 
 ## References
 
@@ -108,6 +114,37 @@ theorem polar_cell_of_notMem (hw : w ∉ p) : (polar p).cell w = pᶜ := by
 
 @[simp] theorem polar_compl : polar pᶜ = polar p :=
   Setoid.ext fun _ _ ↦ by simp only [polar_iff, Set.mem_compl_iff, not_iff_not]
+
+/-- The cells of a polar question are the proposition and its complement, when nonempty. -/
+theorem mem_classes_polar_iff {s : Set W} :
+    s ∈ (polar p).classes ↔ s.Nonempty ∧ (s = p ∨ s = pᶜ) := by
+  refine ⟨?_, fun ⟨⟨w, hw⟩, h⟩ ↦ ⟨w, ?_⟩⟩
+  · rintro ⟨w, rfl⟩
+    refine ⟨⟨w, (polar p).refl' w⟩, ?_⟩
+    by_cases hw : w ∈ p
+    · exact .inl (polar_cell_of_mem hw)
+    · exact .inr (polar_cell_of_notMem hw)
+  · rcases h with rfl | rfl
+    · exact (polar_cell_of_mem hw).symm
+    · exact (polar_cell_of_notMem hw).symm
+
+/-- Two propositions raise the same polar question exactly when they are equal or
+complementary. -/
+theorem polar_eq_polar_iff : polar p = polar q ↔ p = q ∨ p = qᶜ := by
+  refine ⟨fun h ↦ ?_, ?_⟩
+  · rcases p.eq_empty_or_nonempty with rfl | ⟨w, hw⟩
+    · rcases q.eq_empty_or_nonempty with rfl | ⟨w, hw⟩
+      · exact .inl rfl
+      · have := congrArg (·.cell w) h
+        simp only [polar_cell_of_mem hw, polar_cell_of_notMem (Set.notMem_empty w)] at this
+        exact .inr (by rw [← this, compl_compl])
+    · have := congrArg (·.cell w) h
+      by_cases hq : w ∈ q
+      · exact .inl (by simpa only [polar_cell_of_mem hw, polar_cell_of_mem hq] using this)
+      · exact .inr (by simpa only [polar_cell_of_mem hw, polar_cell_of_notMem hq] using this)
+  · rintro (rfl | rfl)
+    · rfl
+    · exact polar_compl
 
 instance [DecidablePred (· ∈ p)] : DecidableRel (polar p) :=
   fun _ _ ↦ decidable_of_iff _ polar_iff.symm
@@ -258,5 +295,56 @@ theorem ofProps_determines {p : Finset W} (hp : p ∈ ps) : (ofProps ps).Determi
 
 theorem le_ofProps_iff : Q ≤ ofProps ps ↔ ∀ p ∈ ps, Q.Determines ↑p :=
   le_iInf₂_iff
+
+/-- Two worlds are equivalent for the question raised by a family of propositions when every
+member treats them alike. -/
+theorem iInf_mem_polar_iff {A : Set (Set W)} :
+    (⨅ a ∈ A, polar a) w v ↔ ∀ a ∈ A, (w ∈ a ↔ v ∈ a) := by
+  simp only [Setoid.iInf_iff, polar_iff]
+
+/-! ### Saturation -/
+
+/-- The saturation of a set of worlds is the union of the cells it meets. -/
+def saturation (Q : Setoid W) (s : Set W) : Set W := {v | ∃ w ∈ s, Q w v}
+
+theorem subset_saturation (Q : Setoid W) (s : Set W) : s ⊆ Q.saturation s :=
+  fun w hw ↦ ⟨w, hw, Q.refl' w⟩
+
+@[simp] theorem saturation_bot (s : Set W) : (⊥ : Setoid W).saturation s = s := by
+  ext w
+  simp [saturation]
+
+theorem determines_saturation (Q : Setoid W) (s : Set W) : Q.Determines (Q.saturation s) :=
+  determines_iff.2 fun _ _ h ↦ ⟨fun ⟨w, hw, hwu⟩ ↦ ⟨w, hw, Q.trans' hwu h⟩,
+    fun ⟨w, hw, hwv⟩ ↦ ⟨w, hw, Q.trans' hwv (Q.symm' h)⟩⟩
+
+/-! ### Answers compatible with information -/
+
+variable {J K : Set W}
+
+/-- The cells of `Q` compatible with the information `J`, those that `J` does not rule out
+([groenendijk-stokhof-1984]). -/
+def compatible (Q : Setoid W) (J : Set W) : Set (Set W) := {X ∈ Q.classes | (X ∩ J).Nonempty}
+
+theorem compatible_mono (Q : Setoid W) (h : J ⊆ K) : Q.compatible J ⊆ Q.compatible K :=
+  fun _ hX ↦ ⟨hX.1, hX.2.mono (Set.inter_subset_inter_right _ h)⟩
+
+/-- `J` is closer to an answer to `Q` than `K` when it lies within `K` and rules out a cell that
+`K` leaves open. Information `K` updated with a proposition `p` receives a partial answer when
+`K ∩ p` is closer to an answer than `K` ([groenendijk-stokhof-1984]). -/
+def CloserToAnswer (Q : Setoid W) (J K : Set W) : Prop := J ⊆ K ∧ Q.compatible J ⊂ Q.compatible K
+
+/-- `J` gives access to the true answer at `w` when the cell of `w` is compatible with it. -/
+def GivesAccess (Q : Setoid W) (J : Set W) (w : W) : Prop := Q.cell w ∈ Q.compatible J
+
+theorem givesAccess_iff : Q.GivesAccess J w ↔ (Q.cell w ∩ J).Nonempty :=
+  and_iff_right (Q.mem_classes w)
+
+theorem closerToAnswer_iff :
+    Q.CloserToAnswer J K ↔ J ⊆ K ∧ ∃ w, (Q.cell w ∩ K).Nonempty ∧ ¬ (Q.cell w ∩ J).Nonempty := by
+  refine and_congr_right fun hJK ↦ ?_
+  rw [Set.ssubset_iff_of_subset (Q.compatible_mono hJK)]
+  exact ⟨fun ⟨_, ⟨⟨w, rfl⟩, hK⟩, hJ⟩ ↦ ⟨w, hK, fun h ↦ hJ ⟨Q.mem_classes w, h⟩⟩,
+    fun ⟨w, hK, hJ⟩ ↦ ⟨_, ⟨Q.mem_classes w, hK⟩, fun h ↦ hJ h.2⟩⟩
 
 end Setoid

@@ -16,6 +16,8 @@ tree of questions whose children are the subquestions pursued to answer their pa
 
 ## Main definitions
 
+* `Question.IsRelevantTo`: a move is relevant to a set of questions when some alternative of it
+  partially answers one of them.
 * `Discourse.Strategy`: strategies of inquiry as `RoseTree (Question W)`.
 * `Discourse.Strategy.WellFormed`: every question in a subtree is a contextual subquestion of the
   subtree's root.
@@ -43,7 +45,7 @@ whose resolving states are their positive answers, one child entailing the paren
 node complete. The converse of `IsComplete`, the parent entailing the meet of the children, is
 what (13) rules out.
 
-`Question.IsRelevantTo` (in `Semantics/Questions/Resolution.lean`) is existential, so weaker
+`Question.IsRelevantTo` is existential, so weaker
 than (15), which requires every complete answer to the move to contextually entail a partial
 answer to the QUD; and it targets a set of questions where (15) targets only `last(QUD)`. The set
 version is the relevance assumption of Ippolito, Kiss and Williams, used by the definedness
@@ -62,6 +64,30 @@ caller's obligation. Ginzburg's KoS orders the QUD partially, with its own updat
 -/
 
 @[expose] public section
+
+namespace Question
+
+variable {W : Type*}
+
+/-! ### Relevance of a move to the questions under discussion -/
+
+/-- A move with denotation `den` is **relevant** to the questions in
+`qs` when some alternative of `den` partially answers some question in
+`qs` — the assertion clause of [roberts-2012]'s Relevance, existentially
+weakened and extended to a question set. -/
+def IsRelevantTo (den : Question W) (qs : Set (Question W)) : Prop :=
+  ∃ a ∈ alt den, ∃ q ∈ qs, PartiallyAnsweredBy q a
+
+theorem isRelevantTo_polar_iff {p : Set W} {qs : Set (Question W)}
+    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
+    (polar p).IsRelevantTo qs ↔
+      (∃ q ∈ qs, PartiallyAnsweredBy q p) ∨
+        ∃ q ∈ qs, PartiallyAnsweredBy q pᶜ := by
+  simp only [IsRelevantTo, alt_polar_of_nontrivial hne hnu,
+    Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
+    exists_eq_left]
+
+end Question
 
 namespace Discourse
 

@@ -2,24 +2,24 @@ module
 
 public import Linglib.Semantics.Questions.Basic
 public import Linglib.Data.Examples.Thomas2026
-public import Mathlib.Probability.ConditionalProbability
+public import Linglib.Core.Probability.Independence.Basic
 
 /-!
 # Thomas (2026): A Probabilistic, Question-Based Approach to Additivity
 
 This file formalizes [thomas-2026]'s felicity conditions for additive *too*, which unify its
-canonical use, a second answer to a salient question, (2), with the argument-building use in
-which the antecedent and the prejacent together argue for a conclusion, (1) and (18). The
-account is stated in an inquisitive question semantics with a listener's probability measure
-over worlds. A proposition is relevant to a question if it shifts the probability of one of the
-question's alternatives, (61); it answers the question if it raises the probability of some
-resolution, a nonempty set of alternatives, by a factor exceeding that of every resolution not
-entailed by it, (62); and one proposition evidences a resolution more strongly than another if
-it gives it the higher conditional probability, (63). *Too* requires an antecedent proposition
-and a question relevant to the discourse such that the antecedent answers the question, the
-conjunction of antecedent and prejacent answers it and evidences its resolution more strongly
-than the antecedent alone, and the prejacent neither entails that resolution nor could be
-weakened without weakening the evidence, (64).
+canonical use, a second answer to a salient question, (2), with the argument-building use in which
+the antecedent and the prejacent together argue for a conclusion, (1) and (18). The account is
+stated in an inquisitive question semantics with a listener's probability measure over worlds. A
+proposition is relevant to a question if it shifts the probability of one of the question's
+alternatives, (61), which is to say that it is not independent of them; it answers the question if
+it raises the probability of some resolution, a nonempty set of alternatives, by a factor
+exceeding that of every resolution not entailed by it, (62); and one proposition evidences a
+resolution more strongly than another if it gives it the higher conditional probability, (63).
+*Too* requires an antecedent proposition and a question relevant to the discourse such that the
+antecedent answers the question, the conjunction of antecedent and prejacent answers it and
+evidences its resolution more strongly than the antecedent alone, and the prejacent neither
+entails that resolution nor could be weakened without weakening the evidence, (64).
 
 The definitions are `Relevant`, `IsResolutionOf`, `Answers`, `EvidencesMore` and
 `TooFelicitous`. Answering needs a positive prior on the evidence, `IsResolutionOf.ne_zero`,
@@ -38,7 +38,11 @@ resolution by the same factor answers no question, `not_answers_of_impact_eq`, a
 ## Implementation notes
 
 The listener's belief state is a probability measure, and conditioning is mathlib's
-`ProbabilityTheory.cond`, so the paper's statements hold at every prior. The resolution
+`ProbabilityTheory.cond`, so the paper's statements hold at every prior. Relevance is the
+failure of independence between two sets of alternatives; `relevant_iff_exists_cond_ne` recovers
+the inequality between conditional and prior probability where the conditioning alternative
+has positive probability, and a proposition of probability zero is relevant to no question
+(`not_relevant_ofSet_of_measure_eq_zero`). The resolution
 evidenced by a proposition, which the paper calls unique, is only unique up to nesting: the
 dominance clause of (62) waives resolutions containing the candidate, so the felicity
 condition quantifies existentially over the resolution that the conjunction evidences and
@@ -69,9 +73,10 @@ variable {W : Type*} [MeasurableSpace W] (μ : Measure W)
 /-! ### Relevance and answerhood (section 5.1.3) -/
 
 /-- Relevance (61a): a question is relevant to a question if some alternative of the first
-shifts the probability of some alternative of the second. -/
+shifts the probability of some alternative of the second, that is, if their alternatives are not
+independent. -/
 def Relevant (R S : Question W) : Prop :=
-  ∃ A ∈ alt R, ∃ A' ∈ alt S, μ[A' | A] ≠ μ A'
+  ¬ IndepSets (alt R) (alt S) μ
 
 /-- The impact of a proposition on a proposition: the factor by which learning the first
 raises the probability of the second. -/
@@ -130,12 +135,36 @@ theorem IsResolutionOf.subset_or_subset {𝒜' : Set (Set W)} (h : IsResolutionO
   exact lt_asymm (h.dominates 𝒜' h'.subset_alt h'.nonempty hcon.1)
     (h'.dominates 𝒜 h.subset_alt h.nonempty hcon.2)
 
+theorem Relevant.symm {R S : Question W} (h : Relevant μ R S) : Relevant μ S R :=
+  fun h' ↦ h h'.symm
+
+-- A proposition of probability zero is relevant to no question.
+theorem not_relevant_ofSet_of_measure_eq_zero (h : μ R = 0) : ¬ Relevant μ (ofSet R) Q := by
+  rw [Relevant, not_not, alt_ofSet, IndepSets_iff]
+  rintro _ A' rfl -
+  rw [measure_mono_null Set.inter_subset_left h, h, zero_mul]
+
+-- The printed form of (61a), when the alternatives of the first question are measurable and
+-- have positive probability.
+theorem relevant_iff_exists_cond_ne [IsFiniteMeasure μ] {R S : Question W}
+    (hR : ∀ A ∈ alt R, MeasurableSet A ∧ μ A ≠ 0) :
+    Relevant μ R S ↔ ∃ A ∈ alt R, ∃ A' ∈ alt S, μ[A' | A] ≠ μ A' := by
+  rw [Relevant, IndepSets_iff]
+  simp only [not_forall]
+  exact ⟨fun ⟨A, A', hA, hA', h⟩ ↦ ⟨A, hA, A', hA',
+      mt (cond_apply_eq_iff_measure_inter_eq_mul (hR A hA).1 (hR A hA).2).1 h⟩,
+    fun ⟨A, hA, A', hA', h⟩ ↦ ⟨A, A', hA, hA',
+      mt (cond_apply_eq_iff_measure_inter_eq_mul (hR A hA).1 (hR A hA).2).2 h⟩⟩
+
 /-- An answer through a single alternative is relevant to the question (section 5.1.3). -/
-theorem IsResolutionOf.relevant (h : IsResolutionOf μ Q {A} R) : Relevant μ (ofSet R) Q := by
-  refine ⟨R, by simp, A, h.subset_alt rfl, ?_⟩
-  have := h.raises
-  rw [Set.sInter_singleton] at this
-  exact this.ne'
+theorem IsResolutionOf.relevant [IsFiniteMeasure μ] (hR : MeasurableSet R)
+    (h : IsResolutionOf μ Q {A} R) : Relevant μ (ofSet R) Q := by
+  refine (relevant_iff_exists_cond_ne ?_).2 ⟨R, by simp, A, h.subset_alt rfl, ?_⟩
+  · simp only [alt_ofSet, Set.mem_singleton_iff, forall_eq]
+    exact ⟨hR, h.ne_zero⟩
+  · have := h.raises
+    rw [Set.sInter_singleton] at this
+    exact this.ne'
 
 /-- A prejacent leaving every resolution's conditional probability unchanged fails the conjunction
 condition ((72), (25)). -/

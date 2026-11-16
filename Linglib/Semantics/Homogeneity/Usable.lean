@@ -20,7 +20,7 @@ of addressing, holding when the issue determines the proposition (`Setoid.Determ
 
 * `sufficientlyTrue`, `addressesIssue`, `usable`: Križ's weakened Quality.
 * `communicatedContent`: worlds compatible with what is communicated.
-* `isStronglyRelevantProp`: constancy on issue cells.
+* `stronglyRelevantSet`: the candidates that an issue determines.
 
 ## References
 
@@ -142,25 +142,17 @@ theorem communicatedContent_antitone {q q' : Setoid W} (p : W → Trivalent) (hR
 /-! ### Strong relevance
 
 Bivalent counterpart of `addressesIssue`, from [kriz-spector-2021]: a `W → Prop` is *strongly
-relevant* to an issue when it is constant on each cell, that is, when the issue determines it;
+relevant* to an issue when it is constant on each cell, that is, when the issue determines it
+(`Setoid.Determines`);
 Addressing has it as its special case on bivalent propositions
 (`KrizSpector2021.addressesIssue_iff_stronglyRelevant`). -/
 
-/-- A proposition is strongly relevant to an issue iff the issue determines it. -/
-abbrev isStronglyRelevantProp (q : Setoid W) (p : W → Prop) : Prop := q.Determines {w | p w}
-
 /-- Filter a set of propositions to those strongly relevant to `q`. -/
 def stronglyRelevantSet (q : Setoid W) (candidates : Set (W → Prop)) : Set (W → Prop) :=
-  { p ∈ candidates | isStronglyRelevantProp q p }
-
-theorem trivial_relevant_iff_constant (p : W → Prop) :
-    isStronglyRelevantProp ⊤ p ↔ ∀ w₁ w₂ : W, p w₁ ↔ p w₂ :=
-  Setoid.top_determines_iff
-
-theorem exact_all_relevant (p : W → Prop) : isStronglyRelevantProp ⊥ p := Setoid.bot_determines
+  { p ∈ candidates | q.Determines {w | p w} }
 
 theorem exact_stronglyRelevantSet_eq (candidates : Set (W → Prop)) :
     stronglyRelevantSet ⊥ candidates = candidates :=
-  Set.sep_eq_self_iff_mem_true.2 fun p _ ↦ exact_all_relevant p
+  Set.sep_eq_self_iff_mem_true.2 fun _ _ ↦ Setoid.bot_determines
 
 end Homogeneity

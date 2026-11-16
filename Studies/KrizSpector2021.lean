@@ -72,7 +72,7 @@ finite. A candidate interpretation is presented by its domain; `reading D P` is 
 existential quantifier over `D` applied to the predicate `P` on pluralities. Sentence
 frames take the domain as an argument (`TrueOnAll x φ`), which covers negation and
 non-monotonic embeddings such as the paper's (22). Strong relevance is the substrate's
-`Homogeneity.isStronglyRelevantProp`, constancy on the cells of the issue, the paper's
+`Setoid.Determines`, constancy on the cells of the issue, the paper's
 gloss of (25). The reading-list example (26)–(28) is stated for any thresholds
 `0 < lo ≤ hi ≤ |books|` in place of the paper's 3, 8, and 10.
 
@@ -384,14 +384,14 @@ variable (q : Setoid W) (x : Finset Atom) (φ : Finset (Finset Atom) → W → P
 
 /-- The sentence is judged true when every strongly relevant candidate is true. -/
 def TrueOnRelevant (w : W) : Prop :=
-  ∀ D ∈ Cand x, isStronglyRelevantProp q (φ D) → φ D w
+  ∀ D ∈ Cand x, q.Determines {w | φ D w} → φ D w
 
 /-- The sentence is judged false when every strongly relevant candidate is false. -/
 def FalseOnRelevant (w : W) : Prop :=
-  ∀ D ∈ Cand x, isStronglyRelevantProp q (φ D) → ¬ φ D w
+  ∀ D ∈ Cand x, q.Determines {w | φ D w} → ¬ φ D w
 
 /-- Felicity requires some strongly relevant candidate (the paper's fn. 17). -/
-def Felicitous : Prop := ∃ D ∈ Cand x, isStronglyRelevantProp q (φ D)
+def Felicitous : Prop := ∃ D ∈ Cand x, q.Determines {w | φ D w}
 
 theorem trueOnRelevant_and_falseOnRelevant_iff (w : W) :
     TrueOnRelevant q x φ w ∧ FalseOnRelevant q x φ w ↔ ¬ Felicitous q x φ := by
@@ -466,9 +466,9 @@ theorem reading_powersetCard {n : ℕ} (hn₀ : 0 < n) (hn : n ≤ Fintype.card 
 
 theorem stronglyRelevant_powersetCard {lo hi n : ℕ} (hn₀ : 0 < n) (hn : n ≤ Fintype.card Book)
     (h : n = lo ∨ n = hi) :
-    isStronglyRelevantProp (issue lo hi)
-      (reading (conv (insert Finset.univ (Finset.powersetCard n (Finset.univ : Finset Book))))
-        readP) := by
+    (issue lo hi).Determines {w |
+      reading (conv (insert Finset.univ (Finset.powersetCard n (Finset.univ : Finset Book))))
+        readP w} := by
   refine Setoid.determines_iff.2 fun w v hwv ↦ ?_
   show reading _ readP w ↔ reading _ readP v
   rw [reading_powersetCard hn₀ hn, reading_powersetCard hn₀ hn]
@@ -525,7 +525,7 @@ end ReadingList
 on bivalent propositions. -/
 theorem addressesIssue_iff_stronglyRelevant {S : W → Trivalent}
     (hbiv : Trivalent.IsBivalent S) (q : Setoid W) :
-    addressesIssue q S ↔ isStronglyRelevantProp q (· ∈ Trivalent.posExt S) := by
+    addressesIssue q S ↔ q.Determines (Trivalent.posExt S) := by
   constructor
   · intro h
     refine Setoid.determines_iff.2 fun w₁ w₂ hr ↦ ?_
