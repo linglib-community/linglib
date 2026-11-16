@@ -65,6 +65,7 @@ for predicates on which the temporal trace is strictly monotone.
 namespace Krifka1989
 
 open Mereology Aspect
+open scoped SetRel
 
 /-! ### Reference types (§2) -/
 
@@ -173,15 +174,15 @@ from the verb phrase, for which the paper states them. -/
 
 section Transfer
 
-variable {O E : Type*} [SemilatticeSup O] [SemilatticeSup E] {θ : O → E → Prop} {δ : O → Prop}
+variable {O E : Type*} [SemilatticeSup O] [SemilatticeSup E] {θ : SetRel O E} {δ : O → Prop}
 
 /-- (D 34): An event is iterative on an object if some part of the object is subjected to two
 parts of the event. -/
-def ITER (θ : O → E → Prop) (e : E) (x : O) : Prop :=
-  θ x e ∧ ∃ e' e'' x', e' ≤ e ∧ e'' ≤ e ∧ e' ≠ e'' ∧ x' ≤ x ∧ θ x' e' ∧ θ x' e''
+def ITER (θ : SetRel O E) (e : E) (x : O) : Prop :=
+  x ~[θ] e ∧ ∃ e' e'' x', e' ≤ e ∧ e'' ≤ e ∧ e' ≠ e'' ∧ x' ≤ x ∧ x' ~[θ] e' ∧ x' ~[θ] e''
 
 /-- (D 35): A relation is gradual if it has uniqueness of objects and both mappings. -/
-structure GRAD (θ : O → E → Prop) : Prop where
+structure GRAD (θ : SetRel O E) : Prop where
   up : UP θ
   mo : MO θ
   me : ME θ
@@ -195,29 +196,30 @@ theorem cum_and_vp {α : E → Prop} (hα : CUM α) (hδ : CUM δ) (hθ : SUM θ
     CUM fun e ↦ α e ∧ VP θ δ e :=
   hα.inter (vp_cum hθ hδ)
 
-theorem iter_sup (hθ : SUM θ) {x : O} {e₁ e₂ : E} (h₁ : θ x e₁) (h₂ : θ x e₂) (hne : e₁ ≠ e₂) :
-    ITER θ (e₁ ⊔ e₂) x :=
-  ⟨by simpa using hθ h₁ h₂, e₁, e₂, x, le_sup_left, le_sup_right, hne, le_rfl, h₁, h₂⟩
+theorem iter_sup (hθ : SUM θ) {x : O} {e₁ e₂ : E} (h₁ : x ~[θ] e₁) (h₂ : x ~[θ] e₂)
+    (hne : e₁ ≠ e₂) : ITER θ (e₁ ⊔ e₂) x :=
+  ⟨by simpa using hθ.sup h₁ h₂, e₁, e₂, x, le_sup_left, le_sup_right, hne, le_rfl, h₁, h₂⟩
 
 -- (T 10)
 theorem not_iter_of_gue (h : GUE θ) (e : E) (x : O) : ¬ ITER θ e x :=
-  fun ⟨_, _, _, _, _, _, hne, _, h', h''⟩ ↦ hne (h h' h'')
+  fun ⟨_, _, _, _, _, _, hne, _, h', h''⟩ ↦ hne (h.eq h' h'')
 
 /-- A summative relation has uniqueness of events iff no event is iterative: uniqueness of
 events excludes iteration (T 10), and two events of one object sum to an iterative event. -/
 theorem gue_iff_forall_not_iter (hθ : SUM θ) : GUE θ ↔ ∀ e x, ¬ ITER θ e x :=
-  ⟨not_iter_of_gue, fun h _ _ _ h₁ h₂ ↦ by_contra fun hne ↦ h _ _ (iter_sup hθ h₁ h₂ hne)⟩
+  ⟨not_iter_of_gue,
+    fun h ↦ gue_iff.2 fun _ _ _ h₁ h₂ ↦ by_contra fun hne ↦ h _ _ (iter_sup hθ h₁ h₂ hne)⟩
 
 -- (T 8)
 theorem exists_iter (hδ : SNG δ) (hθ : SUM θ) (hs : SCUM (VP θ δ)) {x : O} {e : E} (hx : δ x)
-    (he : θ x e) : ∃ e', ITER θ (e ⊔ e') x := by
+    (he : x ~[θ] e) : ∃ e', ITER θ (e ⊔ e') x := by
   obtain ⟨e', ⟨y, hy, he'⟩, hne⟩ : ∃ e', VP θ δ e' ∧ e ≠ e' := by
     by_contra! h
     exact hs.not_sng ⟨e, ⟨x, hx, he⟩, fun e' he' ↦ (h e' he').symm⟩
   exact ⟨e', iter_sup hθ he (hδ.unique hy hx ▸ he') hne⟩
 
 -- (T 9)
-theorem not_scum_vp (hδ : SNG δ) (hθ : SUM θ) {x : O} {e : E} (hx : δ x) (he : θ x e)
+theorem not_scum_vp (hδ : SNG δ) (hθ : SUM θ) {x : O} {e : E} (hx : δ x) (he : x ~[θ] e)
     (hi : ∀ e', ¬ ITER θ (e ⊔ e') x) : ¬ SCUM (VP θ δ) := fun hs ↦
   let ⟨e', h⟩ := exists_iter hδ hθ hs hx he
   hi e' h
@@ -228,7 +230,7 @@ theorem qua_vp_of_not_iter (hδ : QUA δ) (hu : UP θ) (hm : MO θ)
     (hi : ∀ e x, δ x → ¬ ITER θ e x) : QUA (VP θ δ) :=
   qua_of_forall fun e e' ⟨x, hx, hθ⟩ hlt ⟨x', hx', hθ'⟩ ↦
     let ⟨y, hy, hθy⟩ := hm hθ hlt.le
-    have hyx' : y = x' := hu hθy hθ'
+    have hyx' : y = x' := hu.eq (SetRel.mem_inv.1 hθy) hθ'
     hδ hx' hx
       (fun h ↦ hi e x hx ⟨hθ, e', e, x, hlt.le, le_rfl, hlt.ne, le_rfl, h ▸ hθ', hθ⟩)
       (hyx' ▸ hy)
@@ -245,7 +247,7 @@ theorem exists_lt_not_vp (hδ : SQUA δ) (hm : ME θ) (hu : UP θ) {e : E} (he :
   obtain ⟨x, hx, hθx⟩ := he
   obtain ⟨y, hyx⟩ := hδ.exists_lt x hx
   obtain ⟨e', he', hθy⟩ := hm hθx hyx.le
-  have hn : ¬ VP θ δ e' := fun ⟨z, hz, hθz⟩ ↦ hδ.qua (hu hθz hθy ▸ hz) hx hyx.ne hyx.le
+  have hn : ¬ VP θ δ e' := fun ⟨z, hz, hθz⟩ ↦ hδ.qua (hu.eq hθz hθy ▸ hz) hx hyx.ne hyx.le
   exact ⟨e', lt_of_le_of_ne he' fun h ↦ hn (h ▸ ⟨x, hx, hθx⟩), hn⟩
 
 end Transfer
@@ -258,12 +260,12 @@ below one letter is read in two events, one a part of the other. -/
 
 /-- The patient relation of a letter that every event reads, the event `true` containing the
 event `false`. -/
-def readTwice : Unit → Bool → Prop := fun _ _ ↦ True
+def readTwice : SetRel Unit Bool := Set.univ
 
-theorem readTwice_sum : SUM readTwice := fun _ _ _ _ _ _ ↦ trivial
+theorem readTwice_sum : SUM readTwice := supClosed_univ
 
 theorem readTwice_grad : GRAD readTwice :=
-  ⟨fun _ _ _ _ _ ↦ rfl, fun _ _ _ _ _ ↦ ⟨(), le_rfl, trivial⟩,
+  ⟨up_iff.2 fun _ _ _ _ _ ↦ rfl, fun _ _ _ _ _ ↦ ⟨(), le_rfl, trivial⟩,
     fun _ e _ _ _ ↦ ⟨e, le_rfl, trivial⟩⟩
 
 theorem iter_readTwice : ITER readTwice true () :=

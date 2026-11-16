@@ -48,6 +48,7 @@ order.
 namespace Aspect
 
 open Mereology
+open scoped SetRel
 
 /-! ### Telicity by initial and final parts -/
 
@@ -202,15 +203,15 @@ section Incremental
 /-- A relation is strictly incremental when a part of a related object is related to exactly one
 part of the event and conversely, and some related pair has related proper parts, so the
 relation is not confined to atoms. -/
-structure SINC [PartialOrder α] [PartialOrder β] (θ : α → β → Prop) : Prop where
+structure SINC [PartialOrder α] [PartialOrder β] (θ : SetRel α β) : Prop where
   ue : UE θ
   uo : UO θ
   /-- Some related pair has related proper parts. -/
-  extended : ∃ (x y : α) (e e' : β), y < x ∧ e' < e ∧ θ x e ∧ θ y e'
+  extended : ∃ (x y : α) (e e' : β), y < x ∧ e' < e ∧ x ~[θ] e ∧ y ~[θ] e'
 
 section PartialOrder
 
-variable [PartialOrder α] [PartialOrder β] {θ : α → β → Prop}
+variable [PartialOrder α] [PartialOrder β] {θ : SetRel α β}
 
 theorem SINC.mse (h : SINC θ) : MSE θ := h.ue.mse_of_uo h.uo
 
@@ -222,7 +223,7 @@ theorem SINC.mo (h : SINC θ) : MO θ := h.uo.mo
 
 end PartialOrder
 
-variable [SemilatticeSup α] [SemilatticeSup β] {θ : α → β → Prop}
+variable [SemilatticeSup α] [SemilatticeSup β] {θ : SetRel α β}
 
 theorem SINC.up_of_sum (h : SINC θ) (hs : SUM θ) : UP θ := h.uo.up_of_sum hs
 
@@ -233,21 +234,20 @@ theorem SINC.gue_of_sum (h : SINC θ) (hs : SUM θ) : GUE θ := h.ue.gue_of_sum 
 
 /-- A relation is incremental when it is the closure of some strictly incremental relation under
 sums. -/
-def INC (θ : α → β → Prop) : Prop :=
-  ∃ θ', SINC θ' ∧ ∀ x e, θ x e ↔ AlgClosure (Function.uncurry θ') (x, e)
+def INC (θ : SetRel α β) : Prop := ∃ θ', SINC θ' ∧ θ = supClosure θ'
 
 /-- A summative strictly incremental relation is incremental, being its own closure. -/
 theorem SINC.inc_of_sum (h : SINC θ) (hs : SUM θ) : INC θ :=
-  ⟨θ, h, fun x e ↦ (algClosure_of_cum (x := (x, e)) (sum_iff_cum_uncurry.1 hs)).symm⟩
+  ⟨θ, h, hs.supClosure_eq.symm⟩
 
 /-- An incremental relation is summative, being a closure under sums. -/
 theorem INC.sum (h : INC θ) : SUM θ :=
   let ⟨_, _, hθ⟩ := h
-  fun _ _ h₁ _ _ h₂ ↦ (hθ _ _).mpr (((hθ _ _).mp h₁).sum ((hθ _ _).mp h₂))
+  hθ ▸ supClosed_supClosure
 
 /-- The property of a thematic relation that an incrementality class names. A verb is classed
 by the strongest that its theme relation has. -/
-def Incrementality.Holds : Incrementality → (α → β → Prop) → Prop
+def Incrementality.Holds : Incrementality → SetRel α β → Prop
   | .strict, θ => SINC θ
   | .incremental, θ => INC θ
   | .cumulative, θ => SUM θ
@@ -269,15 +269,16 @@ section VP
 
 /-- The verb phrase of a relation and an object predicate holds of the events with some object
 of the predicate. -/
-def VP (θ : α → β → Prop) (OBJ : α → Prop) : β → Prop := fun e ↦ ∃ y, OBJ y ∧ θ y e
+def VP (θ : SetRel α β) (OBJ : α → Prop) : β → Prop := fun e ↦ ∃ y, OBJ y ∧ y ~[θ] e
 
-theorem vp_eq (θ : α → β → Prop) (y : α) : VP θ (· = y) = θ y :=
+theorem vp_eq (θ : SetRel α β) (y : α) : VP θ (· = y) = (y ~[θ] ·) :=
   funext fun _ ↦ propext ⟨fun ⟨_, h, hθ⟩ ↦ h ▸ hθ, fun h ↦ ⟨y, rfl, h⟩⟩
 
-theorem vp_graph (f : β → α) (OBJ : α → Prop) : VP (· = f ·) OBJ = OBJ ∘ f :=
-  funext fun _ ↦ propext ⟨by rintro ⟨_, h, rfl⟩; exact h, fun h ↦ ⟨_, h, rfl⟩⟩
+theorem vp_graph (f : β → α) (OBJ : α → Prop) : VP (Function.graph f).inv OBJ = OBJ ∘ f :=
+  funext fun e ↦ propext
+    ⟨fun ⟨_, h, he⟩ ↦ show OBJ (f e) from (he : f e = _) ▸ h, fun h ↦ ⟨_, h, rfl⟩⟩
 
-variable {θ : α → β → Prop} {OBJ : α → Prop}
+variable {θ : SetRel α β} {OBJ : α → Prop}
 
 section Preorder
 
@@ -298,21 +299,20 @@ theorem vp_qua [PartialOrder α] [PartialOrder β] (hU : UP θ) (hm : MSO θ) (h
     QUA (VP θ OBJ) :=
   qua_of_forall fun _ _ ⟨_, hy, hθ⟩ hlt ⟨_, hz, hθz⟩ ↦
     let ⟨_, hlt', hθ'⟩ := hm hθ hlt
-    hObj (hU hθz hθ' ▸ hz) hy hlt'.ne hlt'.le
+    hObj (hU.eq hθz (SetRel.mem_inv.1 hθ') ▸ hz) hy hlt'.ne hlt'.le
 
 variable [SemilatticeSup α] [SemilatticeSup β]
 
 /-- A summative relation carries cumulativity from the object to the verb phrase. -/
-theorem vp_cum (hθ : SUM θ) (hObj : CUM OBJ) : CUM (VP θ OBJ) :=
-  fun _ ⟨_, h₁, hθ₁⟩ _ ⟨_, h₂, hθ₂⟩ ↦ ⟨_, hObj h₁ h₂, hθ hθ₁ hθ₂⟩
+theorem vp_cum (hθ : SUM θ) (hObj : CUM OBJ) : CUM (VP θ OBJ) := SupClosed.relImage hθ hObj
 
 /-- Along a summative relation with unique participants, a verb phrase is cumulative only if the
 object predicate holds of the sum of any two of its objects that the relation relates to
 events. -/
 theorem not_cum_vp (hs : SUM θ) (hU : UP θ) {x y : α} {e₁ e₂ : β} (hx : OBJ x) (hy : OBJ y)
-    (hθ₁ : θ x e₁) (hθ₂ : θ y e₂) (hSum : ¬ OBJ (x ⊔ y)) : ¬ CUM (VP θ OBJ) := fun hCum ↦
+    (hθ₁ : x ~[θ] e₁) (hθ₂ : y ~[θ] e₂) (hSum : ¬ OBJ (x ⊔ y)) : ¬ CUM (VP θ OBJ) := fun hCum ↦
   let ⟨_, hz, hθ⟩ := hCum ⟨x, hx, hθ₁⟩ ⟨y, hy, hθ₂⟩
-  hSum (hU hθ (hs hθ₁ hθ₂) ▸ hz)
+  hSum (hU.eq hθ (hs.sup hθ₁ hθ₂) ▸ hz)
 
 /-- A summative strictly incremental relation, as *eat* is ([krifka-1998]), carries quantization
 from the object to the verb phrase, since summativity and unique objects give unique
@@ -323,7 +323,7 @@ theorem SINC.vp_qua (h : SINC θ) (hs : SUM θ) (hObj : QUA OBJ) : QUA (VP θ OB
 /-- A cumulative object predicate along a sum homomorphism gives a cumulative verb phrase, so
 *drink milk* is cumulative ([champollion-krifka-2016]). -/
 theorem vp_cum_graph {F : Type*} [FunLike F β α] [SupHomClass F β α] (f : F) (hObj : CUM OBJ) :
-    CUM (VP (· = f ·) OBJ) :=
+    CUM (VP (Function.graph f).inv OBJ) :=
   vp_cum (sum_graph f) hObj
 
 /-- A quantized object predicate along an injective sum homomorphism gives a quantized verb
@@ -331,7 +331,7 @@ phrase, so *drink two liters of milk* is quantized ([champollion-krifka-2016]). 
 homomorphism places the participant of a proper subevent below the whole participant, and
 injectivity makes it a proper part. -/
 theorem vp_qua_graph {F : Type*} [FunLike F β α] [SupHomClass F β α] (f : F)
-    (hf : Function.Injective f) (hObj : QUA OBJ) : QUA (VP (· = f ·) OBJ) :=
+    (hf : Function.Injective f) (hObj : QUA OBJ) : QUA (VP (Function.graph f).inv OBJ) :=
   vp_qua (up_graph f) ((mso_graph_iff f).2 ((OrderHomClass.mono f).strictMono_of_injective hf))
     hObj
 

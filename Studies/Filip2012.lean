@@ -52,6 +52,7 @@ diagnostic data (1), (25), (26), (31), (37) are rows of `Data/Examples/Filip2012
 namespace Filip2012
 
 open Mereology ArgumentStructure Aspect
+open scoped SetRel
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
@@ -71,32 +72,32 @@ theorem isTelic_of_telic {precedes : β → β → Prop} [IsStrictOrder β prece
 
 /-- A telic verb (28i): no eventuality in its relation has a proper part in it — *recover*,
 *arrive*, *burst*. -/
-def Quantized (θ : α → β → Prop) : Prop := ∀ x e, θ x e → ∀ y e', e' < e → ¬ θ y e'
+def Quantized (θ : SetRel α β) : Prop := ∀ x e, x ~[θ] e → ∀ y e', e' < e → ¬ y ~[θ] e'
 
 /-- An atelic verb (28ii): its relation persists to the parts of an eventuality, the subinterval
 property (19) — *run*, *watch*, *believe*. -/
-def Persistent (θ : α → β → Prop) : Prop := ∀ x e, θ x e → ∀ e', e' ≤ e → θ x e'
+def Persistent (θ : SetRel α β) : Prop := ∀ x e, x ~[θ] e → ∀ e', e' ≤ e → x ~[θ] e'
 
 omit [SemilatticeSup α] in
-theorem telic_of_quantized {θ : α → β → Prop} (h : Quantized θ) (OBJ : α → Prop) :
+theorem telic_of_quantized {θ : SetRel α β} (h : Quantized θ) (OBJ : α → Prop) :
     Telic (VP θ OBJ) :=
   qua_of_forall fun _ _ ⟨_, _, hθ⟩ hlt ⟨_, _, hθ'⟩ ↦ h _ _ hθ _ _ hlt hθ'
 
 omit [SemilatticeSup α] in
 /-- (26): an atelic verb forms no telic predicate whatever its object: a proper part of one of
 its eventualities is one too. -/
-theorem not_telic_of_persistent {θ : α → β → Prop} (h : Persistent θ) (OBJ : α → Prop)
+theorem not_telic_of_persistent {θ : SetRel α β} (h : Persistent θ) (OBJ : α → Prop)
     {e e' : β} (hlt : e' < e) (he : VP θ OBJ e) : ¬ Telic (VP θ OBJ) := fun hQ ↦
   let ⟨x, hx, hθ⟩ := he
   hQ ⟨x, hx, h x e hθ e' hlt.le⟩ he hlt.ne hlt.le
 
-theorem atelic_of_persistent {θ : α → β → Prop} (hθ : SUM θ) {OBJ : α → Prop}
+theorem atelic_of_persistent {θ : SetRel α β} (hθ : SUM θ) {OBJ : α → Prop}
     (hObj : CUM OBJ) : Atelic (VP θ OBJ) :=
   vp_cum hθ hObj
 
 /-- An incremental verb is lexically unmarked for telicity, being telic with some quantized object
 and atelic with some cumulative one ((27), (28iii), (29ii)). -/
-theorem incremental_underspecified {θ : α → β → Prop} (h : SINC θ) (hU : UP θ) (hs : SUM θ) :
+theorem incremental_underspecified {θ : SetRel α β} (h : SINC θ) (hU : UP θ) (hs : SUM θ) :
     (∃ OBJ : α → Prop, QUA OBJ ∧ Telic (VP θ OBJ) ∧ ∃ e, VP θ OBJ e) ∧
     (∃ OBJ : α → Prop, CUM OBJ ∧ Atelic (VP θ OBJ) ∧ ¬ Telic (VP θ OBJ)) := by
   obtain ⟨x, y, e, e', hlt, hlt', hθ, hθ'⟩ := h.extended
@@ -106,7 +107,7 @@ theorem incremental_underspecified {θ : α → β → Prop} (h : SINC θ) (hU :
 
 /-- (29i): telicity does not require incrementality — a quantized verb is not strictly
 incremental, its eventualities having no proper parts in the relation. -/
-theorem not_sinc_of_quantized {θ : α → β → Prop} (h : Quantized θ) : ¬ SINC θ := fun hS ↦
+theorem not_sinc_of_quantized {θ : SetRel α β} (h : Quantized θ) : ¬ SINC θ := fun hS ↦
   let ⟨x, y, e, e', _, hlt', hθ, hθ'⟩ := hS.extended
   h x e hθ y e' hlt' hθ'
 
