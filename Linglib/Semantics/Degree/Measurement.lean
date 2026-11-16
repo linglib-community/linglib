@@ -2,6 +2,7 @@ module
 
 public import Mathlib.LinearAlgebra.AffineSpace.AffineMap
 public import Mathlib.Algebra.Order.Ring.Defs
+public import Linglib.Semantics.MeasurementTheory.Difference
 public import Linglib.Semantics.MeasurementTheory.Extensive
 
 import Mathlib.Tactic.Linarith
@@ -27,11 +28,6 @@ $1$](##factorEquative_comp_strictMono_iff) survive.
 Amounts act on degrees, ratios by `SMul` and differences by `VAdd`, so a ratio need not itself be a
 degree, and dates or degrees Celsius need no origin. The differential comparative is the additive
 form of the factor equative.
-
-## TODO
-
-The changes of an interval scale are taken as given, where measurement theory derives them from
-the representations of a difference structure.
 
 ## References
 
@@ -206,5 +202,19 @@ theorem factorEquative_comp_orderAddMonoidHom_iff {M : Type*} [AddCommGroup M] [
   obtain ⟨u, ⟨c, hc, hu⟩, hgu⟩ := exists_mem_similarity_comp_eq f g hf hg
   rw [hgu]
   exact (invariant_similarity_factorEquative a b n u.toOrderEmbedding ⟨c, hc, hu⟩ (f ∘ d)).to_iff
+
+/-- Under two measures of the same differences a differential is carried to the differential
+rescaled by a positive unit, so differentials are meaningful in difference measurement once the
+unit is fixed. -/
+theorem exists_differentialComparative_comp_iff_of_isDifferenceMeasure {V P : Type*}
+    [AddCommGroup V] [LinearOrder V] [IsOrderedAddMonoid V] [AddTorsor V P] {φ ψ : P → ℝ}
+    (hφ : IsDifferenceMeasure φ) (hψ : IsDifferenceMeasure ψ) :
+    ∃ c > 0, ∀ (d : E → P) a b (amount : ℝ),
+      DifferentialComparative (ψ ∘ d) a b (c * amount) ↔
+        DifferentialComparative (φ ∘ d) a b amount := by
+  obtain ⟨u, ⟨c₀, hc₀, b₀, hu⟩, rfl⟩ := exists_mem_positiveAffine_comp_eq hφ hψ
+  obtain ⟨c, hc, h⟩ := exists_differentialComparative_comp_iff (E := E) (u := u.toOrderEmbedding)
+    ⟨c₀, hc₀, b₀, hu⟩
+  exact ⟨c, hc, fun d a b amount ↦ h (φ ∘ d) a b amount⟩
 
 end Meaningful

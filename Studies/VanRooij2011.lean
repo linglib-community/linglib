@@ -156,6 +156,15 @@ theorem factor_iff_of_orderAddMonoidHom {M : Type*} [AddCommGroup M] [LinearOrde
     factor x P y Q n (fun x P ↦ g (d x P)) ↔ factor x P y Q n fun x P ↦ f (d x P) :=
   factorEquative_comp_orderAddMonoidHom_iff f g hf hg (uncurry d) (x, P) (y, Q) n
 
+-- p. 342, note 7: under two measures of the same differences, the differences keep their ratios
+theorem sub_mul_sub_eq_of_isDifferenceMeasure {V D : Type*} [AddCommGroup V] [LinearOrder V]
+    [IsOrderedAddMonoid V] [AddTorsor V D] {φ ψ : D → ℝ} (hφ : IsDifferenceMeasure φ)
+    (hψ : IsDifferenceMeasure ψ) (a b c d : D) :
+    (ψ a - ψ b) * (φ c - φ d) = (φ a - φ b) * (ψ c - ψ d) := by
+  obtain ⟨k, -, h⟩ := hφ.exists_pos_forall_sub_eq hψ
+  rw [h a b, h c d]
+  ring
+
 /-- On a co-interval scale *x is n times as P as y is Q* is meaningful only for the factor $1$,
 since a common change of origin moves every other ratio. -/
 theorem factor_cardinalFull_iff {n : ℝ} (hne : (x, P) ≠ (y, Q)) :

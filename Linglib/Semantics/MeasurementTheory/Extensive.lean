@@ -24,7 +24,6 @@ a concatenation that is associative only up to equivalence and has no inverses.
 
 * The representation and uniqueness theorems for a closed extensive structure in that sense, by way
   of its group of differences.
-* Difference structures, whose measures differ by a positive affine map.
 
 ## References
 
