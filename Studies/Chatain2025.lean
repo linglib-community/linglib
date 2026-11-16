@@ -88,10 +88,13 @@ theorem antecedent_eq_false_iff : antecedent G s = .false ↔ ¬ (G s).Nonempty 
 theorem antecedent_ne_undefined : antecedent G s ≠ .undefined := by
   simp [antecedent]
 
-/-! ### Filtering by the connectives -/
+/-! ### Filtering by the connectives
 
-/-- *There is a phone-book and it is in the cabinet*: the first conjunct filters the pronoun's
-presupposition. -/
+The pronoun's presupposition is filtered after its antecedent (*there is a phone-book and it is in
+the cabinet*) and by a `but` that filters in both directions; it projects when the pronoun comes
+first, where the antecedent is then redundant; and after a negated antecedent the conjunction is
+defined only where it is false. -/
+
 theorem meetMiddle_antecedent_clause_ne_undefined :
     meetMiddle (antecedent G s) (clause G f VP s) ≠ .undefined := by
   simp
@@ -101,13 +104,10 @@ theorem meetMiddle_antecedent_clause_eq_true_iff :
       (G s).Nonempty ∧ VP s (f s (· ∈ G s)) := by
   simp
 
-/-- *There isn't a phone-book and it is in the cabinet* is defined only where there is a
-phone-book. -/
 theorem meetMiddle_compl_antecedent_clause_eq_undefined_iff :
     meetMiddle (antecedent G s)ᶜ (clause G f VP s) = .undefined ↔ ¬ (G s).Nonempty := by
   simp
 
-/-- *There isn't a phone-book and it is in the cabinet* is true nowhere. -/
 theorem meetMiddle_compl_antecedent_clause_ne_true :
     meetMiddle (antecedent G s)ᶜ (clause G f VP s) ≠ .true := by
   simp only [ne_eq, meetMiddle_eq_true_iff, compl_eq_true_iff, antecedent_eq_false_iff,
@@ -127,21 +127,15 @@ theorem joinMiddle_compl_antecedent_clause_eq_true_iff :
     antecedent_eq_false_iff, antecedent_eq_true_iff, clause_eq_true_iff]
   tauto
 
-/-- *It is in the cabinet and there is a phone-book*: the presupposition of a first conjunct
-projects. -/
 theorem meetMiddle_clause_antecedent_eq_undefined_iff :
     meetMiddle (clause G f VP s) (antecedent G s) = .undefined ↔ ¬ (G s).Nonempty := by
   simp
 
-/-- Where *it is in the cabinet and there is a phone-book* is defined its second conjunct is
-true, so in a context that satisfies the presupposition the second conjunct is redundant. -/
 theorem antecedent_eq_true_of_meetMiddle_clause_ne_undefined
     (h : meetMiddle (clause G f VP s) (antecedent G s) ≠ .undefined) :
     antecedent G s = .true := by
   simpa using h
 
-/-- *It's not available at the library now but there is a phone-book*: a conjunction that
-filters in both directions lets the antecedent follow the pronoun. -/
 theorem clause_inf_antecedent_ne_undefined : clause G f VP s ⊓ antecedent G s ≠ .undefined := by
   simp
 
@@ -167,9 +161,6 @@ theorem filtering_eq_true_iff :
       (∀ x, p x = .true → q x ≠ .undefined) ∧ Q (posExt p) (posExt q) := by
   simp [filtering]
 
-/-- *Every tourist bought a ticket. Most have already used it*: under a quantifier binding the
-witness set, the pronoun presupposes that the witness set of every individual in the restrictor
-is nonempty. -/
 theorem filtering_clause_eq_undefined_iff :
     filtering Q p (fun y ↦ clause G f VP (b y)) = .undefined ↔
       ¬ ∀ y, p y = .true → (G (b y)).Nonempty := by
@@ -183,8 +174,6 @@ theorem filtering_antecedent_clause_ne_undefined :
   classical
   simp
 
-/-- A donkey sentence with *every* is true when every individual in the restrictor with a
-nonempty witness set stands in the relation to the pick from it. -/
 theorem filtering_every_antecedent_clause_eq_true_iff :
     filtering Det.every (fun y ↦ p y ⊓ antecedent G (b y))
         (fun y ↦ clause G f VP (b y)) = .true ↔
@@ -208,8 +197,6 @@ theorem filtering_kLE_deployQuantifier (hQ : (Q (posExt p)).LivesOn (posExt p)) 
       transplication_true_left]
   · exact .inl (filtering_eq_undefined_iff.2 hd)
 
-/-- Under deployment a quantifier that lives on the individuals with a nonempty witness set
-filters the pronoun's presupposition, with no projection rule assumed. -/
 theorem deployQuantifier_clause_ne_undefined {Q : Quantifier α}
     (hQ : Q.LivesOn {y | (G (b y)).Nonempty}) :
     deployQuantifier Q (fun y ↦ clause G f VP (b y)) ≠ .undefined := by
@@ -217,10 +204,11 @@ theorem deployQuantifier_clause_ne_undefined {Q : Quantifier α}
   rw [deployQuantifier_of_livesOn hQ fun y hy ↦ by simpa using hy]
   exact ofProp_ne_undefined
 
-/-! ### Existential and universal readings -/
+/-! ### Existential and universal readings
 
-/-- Universal quantification over the choice function gives the universal reading of a
-conjunction. -/
+Quantifying universally over the choice function gives the universal reading of a conjunction and
+of a donkey sentence, and quantifying existentially the existential one. -/
+
 theorem forall_meetMiddle_eq_true_iff [Nonempty E] :
     (∀ f : S → ChoiceFunction E, meetMiddle (antecedent G s) (clause G f VP s) = .true) ↔
       (G s).Nonempty ∧ ∀ x ∈ G s, VP s x := by
@@ -230,8 +218,6 @@ theorem forall_meetMiddle_eq_true_iff [Nonempty E] :
   obtain ⟨g, hg⟩ := ChoiceFunction.exists_apply_eq (N := (· ∈ G s)) hx
   exact hg ▸ (h fun _ ↦ g).2
 
-/-- Existential quantification over the choice function gives the existential reading of a
-conjunction. -/
 theorem exists_meetMiddle_eq_true_iff :
     (∃ f : S → ChoiceFunction E, meetMiddle (antecedent G s) (clause G f VP s) = .true) ↔
       ∃ x ∈ G s, VP s x := by
@@ -240,8 +226,6 @@ theorem exists_meetMiddle_eq_true_iff :
   obtain ⟨g, hg⟩ := ChoiceFunction.exists_apply_eq (N := (· ∈ G s)) hx
   exact ⟨fun _ ↦ g, ⟨x, hx⟩, hg ▸ hVP⟩
 
-/-- Universal quantification over the choice function gives the universal reading of a donkey
-sentence. -/
 theorem forall_donkey_eq_true_iff [Nonempty E] :
     (∀ f : S → ChoiceFunction E, filtering Det.every (fun y ↦ p y ⊓ antecedent G (b y))
         (fun y ↦ clause G f VP (b y)) = .true) ↔
@@ -281,9 +265,6 @@ def Expressive (G : ι → S → Set E) (f : ι → S → ChoiceFunction E) : Pr
 example : Expressive (ι := (S → Set E) × (S → ChoiceFunction E)) Prod.fst Prod.snd :=
   fun x ↦ ⟨x, rfl⟩
 
-/-- A claim holds on every expressive family that gives the index `i` the witness set `W` iff it
-holds of every choice function: the constraint on indexing fixes the witness set of an
-indefinite's index and leaves its choice function free. -/
 theorem forall_expressive_iff
     (h : ∃ (G : ι → S → Set E) (f : ι → S → ChoiceFunction E), Expressive G f) (i : ι)
     (W : S → Set E) (φ : (S → ChoiceFunction E) → Prop) :
@@ -299,7 +280,11 @@ theorem forall_expressive_iff
     hφ (G ∘ Equiv.swap i j) (f ∘ Equiv.swap i j) (hGf.comp (Equiv.swap i j).surjective)
       (by simp [hi, hG])
 
-/-! ### The subordination constraint -/
+/-! ### The subordination constraint
+
+With the witness set restricted to the local context of its indefinite, a pronoun under a second
+quantifier presupposes that the second restrictor lies within the first (*every tourist bought a
+ticket. # Most locals have already used it*). -/
 
 /-- The witness set of an indefinite in the local context `R`: empty at the points outside
 it. -/
@@ -310,9 +295,6 @@ def restrict (R : Set S) (G : S → Set E) (s : S) : Set E :=
 theorem restrict_nonempty_iff {R : Set S} : (restrict R G s).Nonempty ↔ s ∈ R ∧ (G s).Nonempty := by
   simp [restrict, Set.Nonempty]
 
-/-- *Every tourist bought a ticket. # Most locals have already used it*: with the witness set
-restricted to the local context of its indefinite, the pronoun under a second quantifier
-presupposes that the second restrictor lies within the first. -/
 theorem filtering_clause_restrict_eq_undefined_iff {R : Set S} :
     filtering Q p (fun y ↦ clause (restrict R G) f VP (b y)) = .undefined ↔
       ¬ ∀ y, p y = .true → b y ∈ R ∧ (G (b y)).Nonempty := by
