@@ -48,11 +48,6 @@ conditional of the closest worlds.
 * `mem_closestImp_iff_forall_compatible`: the conditional of the closest worlds is the
   supervaluation over completions.
 
-## Implementation notes
-
-Propositions are sets of worlds and choice functions choose from properties, so the world
-selected for `A` is the one chosen from the property of being in `A`.
-
 ## References
 
 * [R. C. Stalnaker, *A Theory of Conditionals* (1968)][stalnaker-1968]
@@ -67,22 +62,19 @@ namespace Conditional
 /-- A selection function ([stalnaker-1968]) is a choice function at each world that picks the
 world itself from every proposition true there. -/
 structure SelectionFunction (W : Type*) where
-  /-- The choice function at each world. -/
-  choice : W → ChoiceFunction W
+  /-- The choice function at each world: `sel w A` is the world selected at `w` for `A`. -/
+  sel : W → ChoiceFunction W
   /-- A world at which the proposition holds selects itself. -/
-  centering' : ∀ (w : W) (A : Set W), w ∈ A → choice w (· ∈ A) = w
+  centering' : ∀ (w : W) (A : Set W), w ∈ A → sel w A = w
 
 namespace SelectionFunction
 
 variable {W : Type*} {w v : W} {A : Set W}
 
-/-- The world selected at `w` for `A`. -/
-def sel (s : SelectionFunction W) (w : W) (A : Set W) : W := s.choice w (· ∈ A)
-
 /-- The world selected for a possible proposition is one at which it holds. -/
 theorem inclusion (s : SelectionFunction W) (w : W) (A : Set W) (hA : A.Nonempty) :
     s.sel w A ∈ A :=
-  (s.choice w).apply_of_exists hA
+  (s.sel w).apply_mem hA
 
 theorem centering (s : SelectionFunction W) (w : W) (A : Set W) (hw : w ∈ A) : s.sel w A = w :=
   s.centering' w A hw
@@ -90,8 +82,8 @@ theorem centering (s : SelectionFunction W) (w : W) (A : Set W) (hw : w ∈ A) :
 /-- The selection function of a selection map satisfying inclusion and centering. -/
 def ofSel (sel : W → Set W → W) (inclusion : ∀ w A, A.Nonempty → sel w A ∈ A)
     (centering : ∀ w A, w ∈ A → sel w A = w) : SelectionFunction W where
-  choice w := ⟨fun P ↦ sel w {x | P x}, fun P hP ↦ inclusion w {x | P x} hP⟩
-  centering' w A hw := centering w {x | x ∈ A} hw
+  sel w := ⟨sel w, fun A hA ↦ inclusion w A hA⟩
+  centering' := centering
 
 @[simp]
 theorem sel_ofSel {sel : W → Set W → W} {h₁ h₂} : (ofSel sel h₁ h₂).sel w A = sel w A :=

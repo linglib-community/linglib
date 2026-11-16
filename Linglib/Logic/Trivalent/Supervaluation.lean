@@ -152,6 +152,17 @@ theorem supervaluationOn_eq_undefined_iff :
   unfold supervaluationOn
   split_ifs <;> simp_all
 
+/-- A supervaluation is defined iff the predicate has one value throughout the set. -/
+theorem supervaluationOn_ne_undefined_iff :
+    supervaluationOn s P ≠ .undefined ↔ ∀ a ∈ s, ∀ b ∈ s, (P a ↔ P b) := by
+  rw [ne_eq, supervaluationOn_eq_undefined_iff]
+  grind
+
+theorem supervaluationOn_singleton (a : α) [Decidable (P a)] :
+    supervaluationOn {a} P = ofProp (P a) := by
+  refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_ <;>
+    simp [supervaluationOn_eq_true_iff, supervaluationOn_eq_false_iff]
+
 theorem nontrivial_of_supervaluationOn_eq_undefined (h : supervaluationOn s P = .undefined) :
     s.Nontrivial :=
   let ⟨⟨a, ha, hPa⟩, b, hb, hPb⟩ := supervaluationOn_eq_undefined_iff.1 h

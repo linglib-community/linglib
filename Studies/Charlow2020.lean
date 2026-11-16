@@ -440,19 +440,17 @@ theorem not_dependsOn_paper_wide :
 /-- With a choice function (67), the reading (69) of (53) holds iff no candidate submitted every
 paper she wrote. -/
 theorem cf_reading_iff [Nonempty E] (hwrote : ∀ x ∈ cand, ∃ y ∈ paper, wrote y x)
-    (hinj : Set.InjOn (fun x y ↦ y ∈ paper ∧ wrote y x) cand) :
-    (∃ f : ChoiceFunction E,
-        ¬ ∃ x ∈ cand, subm (f fun y ↦ y ∈ paper ∧ wrote y x) x) ↔
+    (hinj : Set.InjOn (fun x ↦ {y ∈ paper | wrote y x}) cand) :
+    (∃ f : ChoiceFunction E, ¬ ∃ x ∈ cand, subm (f {y ∈ paper | wrote y x}) x) ↔
       ¬ ∃ x ∈ cand, ∀ y ∈ paper, wrote y x → subm y x := by
   simpa [and_imp] using Charlow2014.cf_no_candidate_iff (· ∈ cand)
-    (fun x y ↦ y ∈ paper ∧ wrote y x) (fun y x ↦ subm y x)
+    (fun x ↦ {y ∈ paper | wrote y x}) (fun y x ↦ subm y x)
     (fun x hx ↦ (hwrote x hx).imp fun _ ↦ id) hinj
 
 /-- The reading (69) does not entail the bound reading of (53). -/
 theorem cf_reading_not_imp_bound :
     ¬ ∀ (cand paper : Set (Fin 3)) (wrote subm : Fin 3 → Fin 3 → Prop) (g : ℕ → Fin 3),
-    (∃ f : ChoiceFunction (Fin 3),
-        ¬ ∃ x ∈ cand, subm (f fun y ↦ y ∈ paper ∧ wrote y x) x) →
+    (∃ f : ChoiceFunction (Fin 3), ¬ ∃ x ∈ cand, subm (f {y ∈ paper | wrote y x}) x) →
       sSup (det Det.no cand (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y))
         g) := by
   intro h
@@ -502,7 +500,7 @@ section AlternativeSemantics
 choice function flattens the alternatives of `m` at each value of the index. -/
 def abstractChoice (n : ℕ) (m : ReaderT (ℕ → E) Set Prop) :
     ReaderT (ℕ → E) Set (E → Prop) :=
-  fun g ↦ Set.range fun f : ChoiceFunction Prop ↦ fun x ↦ f (· ∈ m (Function.update g n x))
+  fun g ↦ Set.range fun f : ChoiceFunction Prop ↦ fun x ↦ f (m (Function.update g n x))
 
 /-- Composed point-wise with the abstraction (74), `nobody [λ₀ t₀ met a phonologist]` has a true
 alternative exactly when nobody met every phonologist (77). -/
@@ -514,16 +512,16 @@ theorem nobody_met_iff (human phon : Set E) (met : E → E → Prop) (hphon : ph
   simp only [abstractChoice, sSup_Prop_eq, Set.mem_image, Set.mem_range, Function.update_self]
   constructor
   · rintro ⟨_, ⟨_, ⟨f, rfl⟩, rfl⟩, h⟩ ⟨x, hx, hall⟩
-    obtain ⟨y, hy, hq⟩ := f.apply_of_exists (P := fun q ↦ ∃ y ∈ phon, met y x = q)
-      (hphon.elim fun y hy ↦ ⟨_, y, hy, rfl⟩)
+    obtain ⟨y, hy, hq⟩ := f.apply_mem (A := (fun y ↦ met y x) '' phon) (hphon.image _)
     exact h ⟨x, hx, show f _ from hq ▸ hall y hy⟩
   · intro h
     push Not at h
-    obtain ⟨f, hf⟩ := (ChoiceFunction.exists_forall_apply_iff (ι := human)
-      (fun x q ↦ ∃ y ∈ phon, met y x.1 = q) Not).2 fun x ↦ by
+    obtain ⟨f, hf⟩ := (ChoiceFunction.exists_forall_apply_iff
+      (R := fun x : human ↦ (fun y ↦ met y x.1) '' phon) (p := fun _ ↦ Not)
+      fun _ _ _ ↦ rfl).2 fun x ↦ by
         obtain ⟨y, hy, hn⟩ := h x x.2
         obtain ⟨f, hf⟩ := ChoiceFunction.exists_apply_eq
-          (N := fun q ↦ ∃ y ∈ phon, met y x.1 = q) ⟨y, hy, rfl⟩
+          (A := (fun y ↦ met y x.1) '' phon) ⟨y, hy, rfl⟩
         exact ⟨f, hf ▸ hn⟩
     exact ⟨_, ⟨_, ⟨f, rfl⟩, rfl⟩, fun ⟨x, hx, hfx⟩ ↦ hf ⟨x, hx⟩ hfx⟩
 
@@ -532,7 +530,7 @@ theorem abstractChoice_subset_pi (n : ℕ) (m : ReaderT (ℕ → E) Set Prop)
     (g : ℕ → E) (hm : ∀ x, (m (Function.update g n x)).Nonempty) :
     abstractChoice n m g ⊆ Set.univ.pi fun x ↦ m (Function.update g n x) := by
   rintro _ ⟨f, rfl⟩
-  exact Set.mem_univ_pi.2 fun x ↦ f.apply_of_exists (hm x)
+  exact Set.mem_univ_pi.2 fun x ↦ f.apply_mem (hm x)
 
 /-- When the alternatives are nonempty and distinct values of the index give distinct ones, the
 two lines of (74) agree. -/
@@ -542,9 +540,8 @@ theorem abstractChoice_eq_pi (n : ℕ) (m : ReaderT (ℕ → E) Set Prop)
     abstractChoice n m g = Set.univ.pi fun x ↦ m (Function.update g n x) := by
   refine (abstractChoice_subset_pi n m g hm).antisymm fun P hP ↦ ?_
   obtain ⟨f, hf⟩ := (ChoiceFunction.exists_forall_apply_iff_of_injective
-    (R := fun x ↦ (· ∈ m (Function.update g n x)))
-    (fun _ _ h ↦ hinj (Set.ext fun y ↦ iff_of_eq (congrFun h y)))
-    hm fun x ↦ (· = P x)).2 fun x ↦ ⟨P x, Set.mem_univ_pi.1 hP x, rfl⟩
+    (R := fun x ↦ m (Function.update g n x)) hinj hm fun x ↦ (· = P x)).2 fun x ↦
+      ⟨P x, Set.mem_univ_pi.1 hP x, rfl⟩
   exact ⟨f, funext hf⟩
 
 -- (74)
@@ -560,9 +557,9 @@ theorem abstractChoice_met_linguist (ling : Set E) (met : E → E → Prop)
       exact ⟨y, hy, propext ⟨fun h' ↦ (hm h').elim, fun h' ↦ (hp h').elim⟩⟩
   refine ⟨Set.ext fun P ↦ ?_, Set.eq_univ_of_forall fun P ↦
     Set.mem_univ_pi.2 fun x ↦ by rw [hu x]; exact Set.mem_univ _⟩
-  simp only [abstractChoice, Function.update_self, hu, Set.mem_univ, Set.mem_range]
-  refine ⟨fun ⟨f, hf⟩ ↦ ⟨f fun _ ↦ True, hf⟩, fun ⟨p, hp⟩ ↦ ?_⟩
-  obtain ⟨f, hf⟩ := ChoiceFunction.exists_apply_eq (N := fun _ : Prop ↦ True) (x := p) trivial
+  simp only [abstractChoice, Function.update_self, hu, Set.mem_range]
+  refine ⟨fun ⟨f, hf⟩ ↦ ⟨f Set.univ, hf⟩, fun ⟨p, hp⟩ ↦ ?_⟩
+  obtain ⟨f, hf⟩ := ChoiceFunction.exists_apply_eq (A := Set.univ) (x := p) trivial
   exact ⟨f, hf ▸ hp⟩
 
 -- (74)
@@ -578,13 +575,13 @@ theorem abstractChoice_ne_pi [Nontrivial E] (ling : Set E) (met : E → E → Pr
 
 -- (75), (74)
 theorem range_skolem_eq_pi (ling : Set E) (met : E → E → Prop) (hling : ling.Nonempty) :
-    Set.range (fun F : E → ChoiceFunction E ↦ fun x ↦ met (F x (· ∈ ling)) x) =
+    Set.range (fun F : E → ChoiceFunction E ↦ fun x ↦ met (F x ling) x) =
       Set.univ.pi fun x ↦ (fun y ↦ met y x) '' ling := by
   ext P
   refine ⟨fun ⟨F, hF⟩ ↦ hF ▸ Set.mem_univ_pi.2 fun x ↦
-    ⟨_, (F x).apply_of_exists hling, rfl⟩, fun hP ↦ ?_⟩
+    ⟨_, (F x).apply_mem hling, rfl⟩, fun hP ↦ ?_⟩
   choose y hy hyP using fun x ↦ (Set.mem_univ_pi.1 hP x : ∃ y ∈ ling, met y x = P x)
-  choose F hF using fun x ↦ ChoiceFunction.exists_apply_eq (N := (· ∈ ling)) (hy x)
+  choose F hF using fun x ↦ ChoiceFunction.exists_apply_eq (A := ling) (hy x)
   exact ⟨F, funext fun x ↦ (congrArg (met · x) (hF x)).trans (hyP x)⟩
 
 end AlternativeSemantics

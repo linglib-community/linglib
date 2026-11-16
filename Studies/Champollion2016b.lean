@@ -469,7 +469,7 @@ theorem holds_lfLocal (hN : N.Nonempty) (hN' : N'.Nonempty) :
     ⟦lfLocal⟧ ↔ Det.some (Minimal (Det.some N ⊓ Det.some N')) S := by
   have h {N : Set E} (hN : N.Nonempty) :
       (fun Q ↦ ∃ f : ChoiceFunction E, individual (f N) Q) = Det.some N :=
-    funext fun Q ↦ propext (ChoiceFunction.exists_apply_iff_some hN Q)
+    funext fun Q ↦ propext (ChoiceFunction.exists_apply_mem_iff hN)
   simp [lfLocal]
   show Det.some (Minimal ((fun Q ↦ ∃ f : ChoiceFunction E, individual (f N) Q) ⊓
     fun Q ↦ ∃ f : ChoiceFunction E, individual (f N') Q)) S ↔ _
