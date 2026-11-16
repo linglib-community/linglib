@@ -42,6 +42,7 @@ mirror image orders long before short before a final head.
 ## Main results
 
 * `Graph.totalLength_map`: transport along an isometry preserves total dependency length.
+* `Graph.IsTree.map`: transport preserves treehood.
 * `Graph.yieldDist_eq_one_add_sum`: on a projective forest, the yield distance from a head to a
   dependent is one more than the yield sizes of the dependents between them.
 * `WordOrder.Arrangement.sum_boundaryDist_after_le`: no rearrangement of the elements after a
@@ -316,6 +317,34 @@ def Graph.map (g : Graph L n) (σ : Equiv.Perm (Fin n)) : Graph L n :=
 @[simp] theorem Graph.map_adj (g : Graph L n) (σ : Equiv.Perm (Fin n))
     (v w : Fin n) : (g.map σ).Adj v w ↔ g.Adj (σ.symm v) (σ.symm w) :=
   Iff.rfl
+
+@[simp] theorem Graph.map_linked (g : Graph L n) (σ : Equiv.Perm (Fin n))
+    (v w : Fin n) : (g.map σ).Linked v w ↔ g.Linked (σ.symm v) (σ.symm w) :=
+  Iff.rfl
+
+@[simp] theorem Graph.map_one (g : Graph L n) : g.map 1 = g := rfl
+
+theorem Graph.map_map (g : Graph L n) (σ τ : Equiv.Perm (Fin n)) :
+    (g.map σ).map τ = g.map (τ * σ) := rfl
+
+theorem Graph.dominates_map {g : Graph L n} {σ : Equiv.Perm (Fin n)} {v w : Fin n} :
+    Dominates (g.map σ) v w ↔ Dominates g (σ.symm v) (σ.symm w) :=
+  ⟨fun h ↦ ReflTransGen.lift (r := (g.map σ).Adj) (p := g.Adj) σ.symm (fun _ _ h ↦ h) _ _ h,
+    fun h ↦ by
+      simpa [Function.onFun] using ReflTransGen.lift (r := g.Adj) (p := (g.map σ).Adj) σ
+        (fun a b h ↦ by simpa [Function.onFun] using h) _ _ h⟩
+
+theorem Graph.IsForest.map {g : Graph L n} (hF : g.IsForest) (σ : Equiv.Perm (Fin n)) :
+    (g.map σ).IsForest where
+  not_dominates_of_adj _ _ h hd := hF.not_dominates_of_adj h (Graph.dominates_map.1 hd)
+  leftUnique_adj _ _ _ hu hv := σ.symm.injective (hF.leftUnique_adj hu hv)
+
+/-- A linearization of a tree is a tree. -/
+theorem Graph.IsTree.map {g : Graph L n} (hT : g.IsTree) (σ : Equiv.Perm (Fin n)) :
+    (g.map σ).IsTree where
+  toIsForest := hT.toIsForest.map σ
+  root_dominates v :=
+    Graph.dominates_map.2 (by simpa [Graph.map] using hT.root_dominates (σ.symm v))
 
 /-- The mirror image, transported along position reversal. -/
 def Graph.mirror (g : Graph L n) : Graph L n := g.map Fin.revPerm

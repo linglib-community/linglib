@@ -416,6 +416,19 @@ theorem six_mul_sum_crossings_map_add_of_isTree (hT : g.IsTree) :
   rw [← two_mul_disjointLinkPairs_add_sum_degree_sq_of_isTree hT, mul_add, mul_left_comm]
   omega
 
+variable (g) in
+/-- Relinearizing along `σ` is an isomorphism of the undirected views. -/
+def mapIso (σ : Perm (Fin n)) : g.toSimpleGraph ≃g (g.map σ).toSimpleGraph where
+  toEquiv := σ
+  map_rel_iff' := by simp
+
+@[simp] theorem mapIso_apply (σ : Perm (Fin n)) (v : Fin n) : mapIso g σ v = σ v := rfl
+
+-- relinearizing preserves the tree, and so the second moment of the degrees
+theorem sum_degree_sq_map (σ : Perm (Fin n)) :
+    ∑ v, (g.map σ).toSimpleGraph.degree v ^ 2 = ∑ v, g.toSimpleGraph.degree v ^ 2 :=
+  (Fintype.sum_equiv σ _ _ fun v ↦ by rw [← mapIso_apply, (mapIso g σ).degree_eq]).symm
+
 /-! ### The range of the second moment and of the expected crossings -/
 
 -- eq. 16, upper bound
