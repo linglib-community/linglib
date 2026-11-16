@@ -41,20 +41,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "1"
-      ],
-      [
         "antecedent",
         "plural"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3pl"
       ],
       [
         "anaphor",
@@ -106,20 +94,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "1"
-      ],
-      [
         "antecedent",
         "plural"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3pl"
       ],
       [
         "anaphor",
@@ -171,20 +147,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "1"
-      ],
-      [
         "antecedent",
         "atomic"
-      ],
-      [
-        "semanticNumber",
-        "singular"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -236,20 +200,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "1"
-      ],
-      [
         "antecedent",
         "atomic"
-      ],
-      [
-        "semanticNumber",
-        "singular"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -260,11 +212,62 @@
     "verified": "page-image"
   },
   {
+    "id": "rakosi2020_3a",
+    "source": {
+      "bibkey": "rakosi-2020",
+      "paperLabel": "(3a)"
+    },
+    "method": "corpus",
+    "language": "hung1274",
+    "primaryText": "Látom magunk-at ülni az autóban.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Látom",
+        "see.1SG"
+      ],
+      [
+        "magunk-at",
+        "ourselves-ACC"
+      ],
+      [
+        "ülni",
+        "sit.INF"
+      ],
+      [
+        "az",
+        "the"
+      ],
+      [
+        "autóban.",
+        "car.in"
+      ]
+    ],
+    "translation": "I see us sitting in the car.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "inclusive"
+      ],
+      [
+        "anaphor",
+        "magunk"
+      ]
+    ],
+    "comment": "Inclusive reference anaphora; Hungarian National Corpus.",
+    "verified": "page-image"
+  },
+  {
     "id": "rakosi2020_3b",
     "source": {
       "bibkey": "rakosi-2020",
       "paperLabel": "(3b)"
     },
+    "method": "corpus",
     "language": "hung1274",
     "primaryText": "Sokszor sajnálom magunk-at.",
     "discourseSegments": [],
@@ -289,20 +292,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "2"
-      ],
-      [
         "antecedent",
         "inclusive"
-      ],
-      [
-        "semanticNumber",
-        "singular"
-      ],
-      [
-        "verb",
-        "1sg"
       ],
       [
         "anaphor",
@@ -355,20 +346,8 @@
     ],
     "paperFeatures": [
       [
-        "section",
-        "2"
-      ],
-      [
         "antecedent",
         "inclusive"
-      ],
-      [
-        "semanticNumber",
-        "singular"
-      ],
-      [
-        "verb",
-        "1sg"
       ],
       [
         "anaphor",
@@ -417,20 +396,8 @@
     ],
     "paperFeatures": [
       [
-        "section",
-        "2"
-      ],
-      [
         "antecedent",
         "plural"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "1pl"
       ],
       [
         "anaphor",
@@ -479,20 +446,8 @@
     ],
     "paperFeatures": [
       [
-        "section",
-        "2"
-      ],
-      [
         "antecedent",
         "plural"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "1pl"
       ],
       [
         "anaphor",
@@ -540,20 +495,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "2"
-      ],
-      [
         "antecedent",
         "plural"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3pl"
       ],
       [
         "anaphor",
@@ -601,20 +544,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "2"
-      ],
-      [
         "antecedent",
         "atomic"
-      ],
-      [
-        "semanticNumber",
-        "singular"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -654,24 +585,205 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "2"
-      ],
-      [
         "antecedent",
         "inclusive"
       ],
       [
-        "semanticNumber",
-        "singular"
-      ],
-      [
-        "verb",
-        "1sg"
-      ],
-      [
         "anaphor",
         "egymás"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "rakosi2020_7a",
+    "source": {
+      "bibkey": "rakosi-2020",
+      "paperLabel": "(7a)"
+    },
+    "language": "hung1274",
+    "primaryText": "A gyerek-ek látták a kép-et.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "A",
+        "the"
+      ],
+      [
+        "gyerek-ek",
+        "child-PL"
+      ],
+      [
+        "látták",
+        "saw.3PL"
+      ],
+      [
+        "a",
+        "the"
+      ],
+      [
+        "kép-et.",
+        "picture-ACC"
+      ]
+    ],
+    "translation": "The children saw the picture.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "plural"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "rakosi2020_7a_",
+    "source": {
+      "bibkey": "rakosi-2020",
+      "paperLabel": "(7a')"
+    },
+    "language": "hung1274",
+    "primaryText": "A gyerek-ek látta a kép-et.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "A",
+        "the"
+      ],
+      [
+        "gyerek-ek",
+        "child-PL"
+      ],
+      [
+        "látta",
+        "saw.3SG"
+      ],
+      [
+        "a",
+        "the"
+      ],
+      [
+        "kép-et.",
+        "picture-ACC"
+      ]
+    ],
+    "translation": "The children saw the picture.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "plural"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "rakosi2020_7b",
+    "source": {
+      "bibkey": "rakosi-2020",
+      "paperLabel": "(7b)"
+    },
+    "language": "hung1274",
+    "primaryText": "Két gyerek látta a kép-et.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Két",
+        "two"
+      ],
+      [
+        "gyerek",
+        "child"
+      ],
+      [
+        "látta",
+        "saw.3SG"
+      ],
+      [
+        "a",
+        "the"
+      ],
+      [
+        "kép-et.",
+        "picture-ACC"
+      ]
+    ],
+    "translation": "Two children saw the picture.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Minden gyerek látta a kép-et.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Néhány gyerek látta a kép-et.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Két gyerek-ek látta a kép-et.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "quantified"
+      ]
+    ],
+    "comment": "Printed with Két/Minden/Néhány 'two/every/some' and gyerek(*-ek): the row is the numeral with the singular noun head, the alternatives the other quantifiers and the starred plural head.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rakosi2020_7b_",
+    "source": {
+      "bibkey": "rakosi-2020",
+      "paperLabel": "(7b')"
+    },
+    "language": "hung1274",
+    "primaryText": "Két gyerek látták a kép-et.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Két",
+        "two"
+      ],
+      [
+        "gyerek",
+        "child"
+      ],
+      [
+        "látták",
+        "saw.3PL"
+      ],
+      [
+        "a",
+        "the"
+      ],
+      [
+        "kép-et.",
+        "picture-ACC"
+      ]
+    ],
+    "translation": "Two children saw the picture.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "quantified"
       ]
     ],
     "comment": "",
@@ -719,20 +831,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "3"
-      ],
-      [
         "antecedent",
         "quantified"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -784,20 +884,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "3"
-      ],
-      [
         "antecedent",
         "quantified"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -845,20 +933,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "3"
-      ],
-      [
         "antecedent",
         "quantified"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -906,20 +982,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "3"
-      ],
-      [
         "antecedent",
         "quantified"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -935,6 +999,7 @@
       "bibkey": "rakosi-2020",
       "paperLabel": "(9a)"
     },
+    "method": "corpus",
     "language": "hung1274",
     "primaryText": "A szobában három kisgyerek kergeti egymás-t.",
     "discourseSegments": [],
@@ -971,20 +1036,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "3"
-      ],
-      [
         "antecedent",
         "quantified"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -1036,20 +1089,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "3"
-      ],
-      [
         "antecedent",
         "quantified"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -1065,6 +1106,7 @@
       "bibkey": "rakosi-2020",
       "paperLabel": "(9c)"
     },
+    "method": "corpus",
     "language": "hung1274",
     "primaryText": "Otthon mindenki szerette egymás-t.",
     "discourseSegments": [],
@@ -1093,20 +1135,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "3"
-      ],
-      [
         "antecedent",
         "quantified"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -1122,6 +1152,7 @@
       "bibkey": "rakosi-2020",
       "paperLabel": "(9d)"
     },
+    "method": "corpus",
     "language": "hung1274",
     "primaryText": "A sokaságban senki se keresi egymás-t.",
     "discourseSegments": [],
@@ -1158,20 +1189,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "3"
-      ],
-      [
         "antecedent",
         "quantified"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -1179,6 +1198,104 @@
       ]
     ],
     "comment": "Pronominal quantifier antecedent; Hungarian National Corpus.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rakosi2020_10",
+    "source": {
+      "bibkey": "rakosi-2020",
+      "paperLabel": "(10)"
+    },
+    "language": "hung1274",
+    "primaryText": "Kati és Éva látta a képet.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Kati",
+        "Kati"
+      ],
+      [
+        "és",
+        "and"
+      ],
+      [
+        "Éva",
+        "Éva"
+      ],
+      [
+        "látta",
+        "saw.3SG"
+      ],
+      [
+        "a",
+        "the"
+      ],
+      [
+        "képet.",
+        "picture-ACC"
+      ]
+    ],
+    "translation": "Kati and Éva saw the picture.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "coordinate"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "rakosi2020_10_",
+    "source": {
+      "bibkey": "rakosi-2020",
+      "paperLabel": "(10')"
+    },
+    "language": "hung1274",
+    "primaryText": "Kati és Éva látták a képet.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Kati",
+        "Kati"
+      ],
+      [
+        "és",
+        "and"
+      ],
+      [
+        "Éva",
+        "Éva"
+      ],
+      [
+        "látták",
+        "saw.3PL"
+      ],
+      [
+        "a",
+        "the"
+      ],
+      [
+        "képet.",
+        "picture-ACC"
+      ]
+    ],
+    "translation": "Kati and Éva saw the picture.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "coordinate"
+      ]
+    ],
+    "comment": "",
     "verified": "page-image"
   },
   {
@@ -1219,20 +1336,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "4"
-      ],
-      [
         "antecedent",
         "coordinate"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -1280,20 +1385,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "4"
-      ],
-      [
         "antecedent",
         "coordinate"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -1341,20 +1434,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "4"
-      ],
-      [
         "antecedent",
         "coordinate"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3pl"
       ],
       [
         "anaphor",
@@ -1402,20 +1483,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "4"
-      ],
-      [
         "antecedent",
         "coordinate"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3pl"
       ],
       [
         "anaphor",
@@ -1471,20 +1540,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "4"
-      ],
-      [
         "antecedent",
         "coordinate"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -1540,20 +1597,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "4"
-      ],
-      [
         "antecedent",
         "coordinate"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3pl"
       ],
       [
         "anaphor",
@@ -1561,6 +1606,62 @@
       ]
     ],
     "comment": "The paper glosses tükörben as \"picture-ACC\" (copied from (10)) and prints \"mirorr\" in the translation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rakosi2020_13",
+    "source": {
+      "bibkey": "rakosi-2020",
+      "paperLabel": "(13)"
+    },
+    "language": "hung1274",
+    "primaryText": "A személyzet úgy gondolta, hogy ők már eleget dolgoztak.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "A",
+        "the"
+      ],
+      [
+        "személyzet",
+        "staff"
+      ],
+      [
+        "úgy",
+        "so"
+      ],
+      [
+        "gondolta,",
+        "thought.3SG"
+      ],
+      [
+        "hogy",
+        "that"
+      ],
+      [
+        "ők",
+        "they"
+      ],
+      [
+        "már",
+        "already"
+      ],
+      [
+        "eleget",
+        "enough"
+      ],
+      [
+        "dolgoztak.",
+        "worked.3PL"
+      ]
+    ],
+    "translation": "The staff thought that they had worked enough.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The operative test for a collective noun that denotes a distributable plurality: it licenses plural cross-clausal anaphora, with the main verb singular.",
     "verified": "page-image"
   },
   {
@@ -1593,29 +1694,53 @@
     "translation": "The staff was tired.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "A személyzet fáradt voltak.",
-        "judgment": "ungrammatical"
-      }
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "5"
+        "antecedent",
+        "collective"
+      ]
+    ],
+    "comment": "Collective nouns never trigger plural agreement.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rakosi2020_14_",
+    "source": {
+      "bibkey": "rakosi-2020",
+      "paperLabel": "(14')"
+    },
+    "language": "hung1274",
+    "primaryText": "A személyzet fáradt voltak.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "A",
+        "the"
       ],
+      [
+        "személyzet",
+        "staff"
+      ],
+      [
+        "fáradt",
+        "tired"
+      ],
+      [
+        "voltak.",
+        "were.3PL"
+      ]
+    ],
+    "translation": "The staff was tired.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
       [
         "antecedent",
         "collective"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ]
     ],
     "comment": "Collective nouns never trigger plural agreement.",
@@ -1627,6 +1752,7 @@
       "bibkey": "rakosi-2020",
       "paperLabel": "(15a)"
     },
+    "method": "corpus",
     "language": "hung1274",
     "primaryText": "A személyzet riadtan nézte egymás-t.",
     "discourseSegments": [],
@@ -1659,20 +1785,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "5"
-      ],
-      [
         "antecedent",
         "collective"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -1688,6 +1802,7 @@
       "bibkey": "rakosi-2020",
       "paperLabel": "(15b)"
     },
+    "method": "corpus",
     "language": "hung1274",
     "primaryText": "A Facebookon szidta egymás-t a család.",
     "discourseSegments": [],
@@ -1724,20 +1839,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "5"
-      ],
-      [
         "antecedent",
         "collective"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -1753,6 +1856,7 @@
       "bibkey": "rakosi-2020",
       "paperLabel": "(15c)"
     },
+    "method": "corpus",
     "language": "hung1274",
     "primaryText": "A pár az interneten találta meg egymás-t.",
     "discourseSegments": [],
@@ -1793,20 +1897,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "5"
-      ],
-      [
         "antecedent",
         "collective"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -1858,20 +1950,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "5"
-      ],
-      [
         "antecedent",
         "collective"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -1923,20 +2003,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "5"
-      ],
-      [
         "antecedent",
         "collective"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -2006,20 +2074,8 @@
     ],
     "paperFeatures": [
       [
-        "section",
-        "6"
-      ],
-      [
         "antecedent",
         "boundPro"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "3sg"
       ],
       [
         "anaphor",
@@ -2035,6 +2091,7 @@
       "bibkey": "rakosi-2020",
       "paperLabel": "(18)"
     },
+    "method": "corpus",
     "language": "hung1274",
     "primaryText": "Álmomban két macska voltam, és játszottam egymás-sal.",
     "discourseSegments": [],
@@ -2080,20 +2137,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "section",
-        "6"
-      ],
-      [
         "antecedent",
         "boundPro"
-      ],
-      [
-        "semanticNumber",
-        "plural"
-      ],
-      [
-        "verb",
-        "1sg"
       ],
       [
         "anaphor",
