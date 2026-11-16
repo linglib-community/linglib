@@ -60,7 +60,7 @@ instance [DecidableEq V] (x : E) : Decidable (extension kb D x) := by
   unfold extension; infer_instance
 
 /-- The description holds of the referent and of no distractor. -/
-abbrev Distinguishing : Prop := Distinguishes (extension kb) C r D
+abbrev Distinguishing : Prop := Distinguishes (extension kb D) C r
 
 /-- A distinguishing description with the fewest property occurrences. -/
 def IsMinimal : Prop := MinimalFor (Distinguishing kb r C) card D
@@ -87,17 +87,13 @@ theorem distinguishing_val_iff (hC : C.Nonempty) {L : DaleReiter1995.Description
   rw [Distinguishing, distinguishes_prop_iff hC, DaleReiter1995.distinguishing_iff]
   simp [extension]
 
+-- Definition 1: the description's extension in the setting is the referent alone
+theorem distinguishing_iff_eq_singleton [DecidableEq E] (hC : C.Nonempty) (hr : r ∉ C) :
+    Distinguishing kb r C D ↔ {x | extension kb D x ∧ x ∈ insert r C} = {r} :=
+  (distinguishes_iff_mem_iota hC hr).trans mem_iota_iff_eq_singleton
+
 theorem not_distinguishing_zero (hC : C.Nonempty) : ¬ Distinguishing kb r C 0 :=
-  fun h ↦ ((distinguishes_prop_iff hC).1 h).2 _ hC.choose_spec
-    fun _ h ↦ (Multiset.notMem_zero _ h).elim
-
-theorem Distinguishing.extension_referent (hC : C.Nonempty) (h : Distinguishing kb r C D) :
-    extension kb D r :=
-  ((distinguishes_prop_iff hC).1 h).1
-
-theorem Distinguishing.not_extension (hC : C.Nonempty) (h : Distinguishing kb r C D) {c : E}
-    (hc : c ∈ C) : ¬ extension kb D c :=
-  ((distinguishes_prop_iff hC).1 h).2 c hc
+  fun h ↦ h.not_apply hC.choose_spec fun _ h ↦ (Multiset.notMem_zero _ h).elim
 
 theorem isMinimal_of_card_eq_one (hC : C.Nonempty) (h : Distinguishing kb r C D)
     (h1 : card D = 1) : IsMinimal kb r C D :=
@@ -183,9 +179,9 @@ theorem theorem1 :
 
 theorem theorem2 (hC : C.Nonempty) (h : Distinguishing kb r C D) :
     ¬ Mixed kb r C D ∧ ¬ PurelyUnderSpecified kb r C D ∧ ¬ Wrong kb r D :=
-  ⟨fun ⟨⟨_, _, hc, hce⟩, _⟩ ↦ h.not_extension hC hc hce,
-    fun ⟨⟨_, _, hc, hce⟩, _⟩ ↦ h.not_extension hC hc hce,
-    fun ⟨p, hp, hpr⟩ ↦ hpr (h.extension_referent hC p hp)⟩
+  ⟨fun ⟨⟨_, _, hc, hce⟩, _⟩ ↦ h.not_apply hc hce,
+    fun ⟨⟨_, _, hc, hce⟩, _⟩ ↦ h.not_apply hc hce,
+    fun ⟨p, hp, hpr⟩ ↦ hpr (h.apply hC p hp)⟩
 
 theorem theorem3 (hC : C.Nonempty) :
     List.Pairwise (fun P Q : Description A V → Prop ↦ ∀ D, ¬ (P D ∧ Q D))
@@ -226,7 +222,7 @@ theorem theorem4 (hC : C.Nonempty) (h : DuplicateOverSpecified kb r C D) :
   · by_cases hq : ∃ q ∈ D, q ≠ p ∧ Superfluous kb r C D q
     · obtain ⟨q, hq, hqp, hqs⟩ := hq
       refine .inl ⟨q, hq, fun hqt ↦ hqp ?_, hqs⟩
-      have hr := hs.1.extension_referent hC
+      have hr := hs.1.apply hC
       exact Prod.ext (hqt.trans hpt.symm)
         (Applies.snd_eq (hr q hq) (hr p hp) (hqt.trans hpt.symm))
     · exact .inr ⟨p, hp, hpt, hs, fun q hq' hqp hqs ↦ hq ⟨q, hq', hqp, hqs⟩⟩

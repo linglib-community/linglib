@@ -209,11 +209,11 @@ theorem S1_real_eq_one (hα : 0 < α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m 
 
 theorem distinguishes_L0_iff (hm : ∀ o', 0 ≤ m u o') (hpos : 0 < ∑ o', m u o') (D : Finset E)
     (r : E) :
-    Distinguishes (fun u o ↦ L0 m u {o}) D r u ↔ Distinguishes m D r u :=
-  distinguishes_comp_iff (φ := fun x ↦ ENNReal.ofReal (x / ∑ o', m u o'))
+    Distinguishes (fun o ↦ L0 m u {o}) D r ↔ Distinguishes (m u) D r := by
+  rw [funext (L0_apply hm hpos)]
+  exact distinguishes_comp_iff (φ := fun x ↦ ENNReal.ofReal (x / ∑ o', m u o'))
     (s := Set.Ici 0) (fun _ ha _ _ hab ↦ (ENNReal.ofReal_lt_ofReal_iff_of_nonneg
-      (div_nonneg ha hpos.le)).2 ((div_lt_div_iff_of_pos_right hpos).2 hab))
-    hm (L0_apply hm hpos)
+      (div_nonneg ha hpos.le)).2 ((div_lt_div_iff_of_pos_right hpos).2 hab)) hm
 
 end Model
 
@@ -393,12 +393,12 @@ theorem overmodification_odds_lt_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤
     gain_swap_lt_iff one_pos hs0 hs1 hc0 hc1]
 
 theorem small_distinguishes_iff :
-    Distinguishes (meaning xs xc) {.bigBlue, .bigRed} .smallBlue .small ↔ 1/2 < xs := by
+    Distinguishes (meaning xs xc .small) {.bigBlue, .bigRed} .smallBlue ↔ 1/2 < xs := by
   simp [Distinguishes, meaning, noisy, Utterance.size, Utterance.color, Pin.size]
   constructor <;> intro h <;> linarith
 
 theorem smallBlue_distinguishes_iff (hc : 0 < xc) :
-    Distinguishes (meaning xs xc) {.bigBlue, .bigRed} .smallBlue .smallBlue ↔
+    Distinguishes (meaning xs xc .smallBlue) {.bigBlue, .bigRed} .smallBlue ↔
       1/2 < xs ∧ 1 < xs + xc := by
   simp [Distinguishes, meaning, noisy, Utterance.size, Utterance.color, Pin.size,
     Pin.color]

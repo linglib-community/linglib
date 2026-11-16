@@ -81,7 +81,7 @@ instance [DecidableEq V] (kb : KB E A V) (L : Description A V) (x : E) :
 distinguishes it from `C`, so that every pair holds of `r` and every distractor fails some
 pair. -/
 def Distinguishing (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V) : Prop :=
-  extension kb L r ∧ Distinguishes (extension kb) C r L
+  extension kb L r ∧ Distinguishes (extension kb L) C r
 
 instance [DecidableEq V] (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V) :
     Decidable (Distinguishing kb r C L) := by
@@ -89,12 +89,15 @@ instance [DecidableEq V] (kb : KB E A V) (r : E) (C : Finset E) (L : Description
 
 theorem distinguishing_iff {kb : KB E A V} {r : E} {C : Finset E} {L : Description A V} :
     Distinguishing kb r C L ↔
-      (∀ p ∈ L, Applies kb r p) ∧ ∀ c ∈ C, ∃ p ∈ L, ¬ Applies kb c p := by
-  simp only [Distinguishing, Distinguishes, Prop.lt_iff, extension]
-  refine and_congr_right fun h ↦ forall₂_congr fun c _ ↦ ?_
-  rw [and_iff_left h]
-  push Not
-  exact Iff.rfl
+      (∀ p ∈ L, Applies kb r p) ∧ ∀ c ∈ C, ∃ p ∈ L, ¬ Applies kb c p :=
+  and_congr_right fun h ↦ (distinguishes_iff_forall_not h).trans <| by
+    simp only [extension, not_forall, exists_prop]
+
+-- §2.2: an accurate description of the referent and of no other member of the context set
+theorem distinguishing_iff_mem_iota [DecidableEq E] {kb : KB E A V} {r : E} {C : Finset E}
+    {L : Description A V} (hr : r ∉ C) :
+    Distinguishing kb r C L ↔ r ∈ iota {x | extension kb L x ∧ x ∈ insert r C} :=
+  and_distinguishes_iff_mem_iota hr
 
 /-- The members of the contrast set a pair rules out (§2.2). -/
 def rulesOut [DecidableEq V] (kb : KB E A V) (C : Finset E) (p : A × V) : Finset E :=
@@ -106,8 +109,8 @@ theorem distinguishing_iff_biUnion [DecidableEq E] [DecidableEq V] (kb : KB E A 
     Distinguishing kb r C L ↔
       (∀ p ∈ L, Applies kb r p) ∧ C ⊆ L.biUnion (rulesOut kb C) := by
   simp only [distinguishing_iff, rulesOut, subset_iff, mem_biUnion, mem_filter]
-  exact and_congr_right λ _ => forall₂_congr λ c hc =>
-    exists_congr λ p => and_congr_right λ _ => (and_iff_right hc).symm
+  exact and_congr_right fun _ ↦ forall₂_congr fun c hc ↦
+    exists_congr fun p ↦ and_congr_right fun _ ↦ (and_iff_right hc).symm
 
 /-! ### Four interpretations of brevity (§3.1) -/
 
