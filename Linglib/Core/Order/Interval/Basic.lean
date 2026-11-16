@@ -9,7 +9,8 @@ public import Mathlib.Order.Interval.Basic
 This file defines the relations between two nonempty intervals of an ordered type that mathlib's
 `NonemptyInterval` API leaves implicit, and their counterparts on `Interval`, the intervals with
 a null element. Two intervals overlap when neither lies strictly beyond the other, and `i₁`
-precedes `i₂` when it ends strictly before `i₂` starts. `During`, `FinalSubinterval` and
+precedes `i₂` when it ends strictly before `i₂` starts, and is before it when it ends no later.
+`During`, `FinalSubinterval` and
 `NonfinalSubinterval` refine containment, the last being the subinterval into which a longer one
 extends into the future, and `IsPoint` singles out the intervals with a single element. In a linear
 order two intervals overlap exactly when neither precedes the other, so their `position` is one of
@@ -23,7 +24,8 @@ into `WithTop α`, and `Interval.Ici a` is the ray `[a, ⊤]`.
 
 ## Main definitions
 
-* `NonemptyInterval.Overlaps`, `NonemptyInterval.Precedes`: the order of two intervals, and
+* `NonemptyInterval.Overlaps`, `NonemptyInterval.Precedes`, `NonemptyInterval.IsBefore`: the
+  order of two intervals, and
   `NonemptyInterval.position` the position of one relative to the other.
 * `NonemptyInterval.During`, `NonemptyInterval.FinalSubinterval`,
   `NonemptyInterval.NonfinalSubinterval`: refinements of containment.
@@ -101,6 +103,11 @@ instance {s t : NonemptyInterval α} [DecidableLE α] : Decidable (s < t) :=
 def Precedes (i₁ i₂ : NonemptyInterval α) : Prop :=
   i₁.snd < i₂.fst
 
+/-- `i₁` is before `i₂` when `i₁` ends no later than `i₂` starts, so that the two share at most
+an endpoint. -/
+def IsBefore (i₁ i₂ : NonemptyInterval α) : Prop :=
+  i₁.snd ≤ i₂.fst
+
 /-- `i₁` lies during `i₂` when it is strictly inside `i₂` on both sides. -/
 def During (i₁ i₂ : NonemptyInterval α) : Prop :=
   i₂.fst < i₁.fst ∧ i₁.snd < i₂.snd
@@ -112,6 +119,9 @@ def NonfinalSubinterval (i₁ i₂ : NonemptyInterval α) : Prop :=
 
 instance [DecidableLE α] : Decidable (i₁.Precedes i₂) :=
   decidable_of_iff' _ lt_iff_le_not_ge
+
+instance [DecidableLE α] : Decidable (i₁.IsBefore i₂) :=
+  inferInstanceAs (Decidable (_ ≤ _))
 
 instance [DecidableLE α] : Decidable (i₁.During i₂) :=
   @instDecidableAnd _ _ (decidable_of_iff' _ lt_iff_le_not_ge)
@@ -131,6 +141,14 @@ theorem NonfinalSubinterval.not_finalSubinterval (h : i₁.NonfinalSubinterval i
   fun h' ↦ h.2.ne h'.2
 
 theorem during_irrefl (i : NonemptyInterval α) : ¬ i.During i := fun h ↦ lt_irrefl _ h.1
+
+/-- A point has no proper subinterval. -/
+theorem IsPoint.isMin (h : i₁.IsPoint) : IsMin i₁ := fun i hle ↦
+  le_def.2 ⟨i.fst_le_snd.trans ((le_def.1 hle).2.trans_eq h.symm),
+    h.symm.trans_le ((le_def.1 hle).1.trans i.fst_le_snd)⟩
+
+theorem During.not_isPoint (h : i₁.During i₂) : ¬ i₂.IsPoint :=
+  fun hp ↦ ((h.1.trans_le i₁.fst_le_snd).trans h.2).ne hp
 
 theorem During.not_precedes (h : i₁.During i₂) : ¬ i₁.Precedes i₂ :=
   fun h' ↦ lt_irrefl _ ((h.1.trans_le i₁.fst_le_snd).trans h')
@@ -160,6 +178,24 @@ theorem precedes_trans {i₃ : NonemptyInterval α} (h₁₂ : i₁.Precedes i�
 theorem precedes_of_le_of_precedes {i₃ : NonemptyInterval α} (h₁ : i₁ ≤ i₂)
     (h₂ : i₂.Precedes i₃) : i₁.Precedes i₃ :=
   (le_def.1 h₁).2.trans_lt h₂
+
+theorem Precedes.isBefore (h : i₁.Precedes i₂) : i₁.IsBefore i₂ :=
+  le_of_lt h
+
+theorem IsBefore.trans {i₃ : NonemptyInterval α} (h₁₂ : i₁.IsBefore i₂) (h₂₃ : i₂.IsBefore i₃) :
+    i₁.IsBefore i₃ :=
+  le_trans (le_trans h₁₂ i₂.fst_le_snd) h₂₃
+
+theorem IsBefore.mono {j₁ j₂ : NonemptyInterval α} (h : i₁.IsBefore i₂) (h₁ : j₁ ≤ i₁)
+    (h₂ : j₂ ≤ i₂) : j₁.IsBefore j₂ :=
+  le_trans (le_trans (le_def.1 h₁).2 h) (le_def.1 h₂).1
+
+@[simp] theorem isBefore_pure {a b : α} : (pure a).IsBefore (pure b) ↔ a ≤ b :=
+  .rfl
+
+theorem isBefore_iff_forall_mem : i₁.IsBefore i₂ ↔ ∀ a ∈ i₁, ∀ b ∈ i₂, a ≤ b :=
+  ⟨fun h _ ha _ hb ↦ le_trans (le_trans (mem_def.1 ha).2 h) (mem_def.1 hb).1,
+    fun h ↦ h _ (mem_def.2 ⟨i₁.fst_le_snd, le_rfl⟩) _ (mem_def.2 ⟨le_rfl, i₂.fst_le_snd⟩)⟩
 
 theorem Precedes.not_overlaps (h : i₁.Precedes i₂) : ¬ i₁.Overlaps i₂ :=
   fun ⟨_, h₂⟩ ↦ lt_irrefl _ (h.trans_le h₂)

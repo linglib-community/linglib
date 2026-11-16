@@ -322,9 +322,9 @@ variable {T : Type*} [LinearOrder T] {i j : NonemptyInterval T}
   rw [precedes, mem_ofPred]
   simp [relation, ofEndpoints, NonemptyInterval.Precedes, compare_lt_iff_lt]
 
-@[simp] theorem relation_mem_isBefore : relation i j ∈ isBefore ↔ i.snd ≤ j.fst := by
+@[simp] theorem relation_mem_isBefore : relation i j ∈ isBefore ↔ i.IsBefore j := by
   rw [isBefore, mem_ofPred]
-  simp [relation, ofEndpoints, compare_le_iff_le]
+  simp [relation, ofEndpoints, NonemptyInterval.IsBefore, compare_le_iff_le]
 
 @[simp] theorem relation_mem_le : relation i j ∈ le ↔ i ≤ j := by
   rw [le, mem_ofPred]

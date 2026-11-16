@@ -1,9 +1,12 @@
 module
 
+public import Linglib.Fragments.Mandarin.Aspect
 public import Linglib.Semantics.Aspect.SubintervalProperty
+public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Quantification.Predicative
 public import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Data.Part
+public import Studies.Champollion2017
 
 /-!
 # Zhao (2025): Cross-Linguistic and Cross-Domain Temporal Expressions
@@ -29,14 +32,18 @@ its image `Quantifier.map` along the trace function, so Atomic Distributivity is
 predicative content `Quantifier.BE` of that image. The particles take the measurement of their
 evaluation argument as an interval, a point for the utterance time or a height and a run time for
 a matrix event. *Le* is commonly called a perfective marker; the dissertation strips its temporal
-content down to precedence, which is the relation `Aspect` assigns to the perfect. A surpassing
+content down to precedence, which is the relation `Aspect` assigns to the perfect, [not the
+perfective](##Zhao2025.pure_notMem_denote_le) under which `Fragments/Mandarin/Aspect.lean` enters
+it. A surpassing
 event is one whose trace has the measurement of its theme `NonemptyInterval.During` it.
 
 The presupposition is formalized as printed, so a quantifier that applies at no trace is
 atomically distributive and neither particle is defined of it. The library takes states and
 activities alike to have the subinterval property; here an activity fails it because of its
-minimal parts. The first part of the dissertation, the ⌜then⌝-present puzzle, is joint work with
-Tsilia, formalized in `Studies/TsiliaZhao2026.lean`.
+minimal parts, as does [any predicate](##Zhao2025.le_dom_of_subintervalReferenceUniv) with the
+stratified subinterval reference of `Studies/Champollion2017.lean`. The first part of the
+dissertation, the ⌜then⌝-present puzzle, is joint work with Tsilia, formalized in
+`Studies/TsiliaZhao2026.lean`.
 
 ## TODO
 
@@ -48,6 +55,7 @@ formalized.
 
 * [zhao-2025]
 * [champollion-2015]
+* [champollion-2017]
 * [bennett-partee-1972]
 * [tsilia-zhao-2026]
 -/
@@ -95,16 +103,18 @@ variable [Preorder α] {τ : E → NonemptyInterval α} {V : Quantifier E} {A : 
   {i : NonemptyInterval α}
 
 /-- (5.83): a quantifier over events is atomically distributive along the trace `τ` when the
-traces it applies at form a lower set. -/
+traces it applies at have divisive reference. -/
 def AtomDist (τ : E → NonemptyInterval α) (V : Quantifier E) : Prop :=
-  IsLowerSet (BE (V.map τ))
+  Mereology.DIV fun i ↦ V {e | τ e = i}
+
+theorem atomDist_iff_isLowerSet_BE : AtomDist τ V ↔ IsLowerSet (BE (V.map τ)) := .rfl
 
 theorem atomDist_iff :
     AtomDist τ V ↔ ∀ i, V {e | τ e = i} → ∀ i' ≤ i, V {e | τ e = i'} :=
   ⟨fun h _ hi _ hle ↦ h hle hi, fun h _ _ hle hi ↦ h _ hi _ hle⟩
 
 theorem atomDist_some_iff : AtomDist τ (Det.some A) ↔ IsLowerSet (τ '' A) := by
-  rw [AtomDist, map_some, BE_some]
+  rw [atomDist_iff_isLowerSet_BE, map_some, BE_some]
 
 -- an atomically distributive quantifier that applies at a trace applies at each of its points
 theorem AtomDist.pure (h : AtomDist τ V) (hi : V {e | τ e = i}) {x : α} (hx : x ∈ i) :
@@ -135,8 +145,7 @@ theorem atomDist_some_lt_fst (hτ : IsLowerSet (range τ)) (m : α) :
 
 end Preorder
 
-/-- A predicate of events in time has the subinterval property exactly when its existential
-quantifier is atomically distributive over time at every world. -/
+-- the subinterval property is Atomic Distributivity of the existential quantifier over time
 theorem hasSubintervalProperty_iff_forall_atomDist {W T : Type*} [LinearOrder T]
     [TemporalTrace E T] {P : W → E → Prop} :
     Aspect.HasSubintervalProperty P ↔ ∀ w, AtomDist Event.τ (Det.some {e | P w e}) :=
@@ -183,10 +192,10 @@ section Particles
 variable [Preorder α] {τ : E → NonemptyInterval α} {V : Quantifier E} {a : NonemptyInterval α}
 
 /-- (6.3): *le* is defined only of a quantifier that is not atomically distributive, and asserts
-that it applies to the events whose trace precedes `a`, the measurement of the evaluation
+that it applies to the events whose trace is before `a`, the measurement of the evaluation
 argument. -/
 def le (τ : E → NonemptyInterval α) (V : Quantifier E) (a : NonemptyInterval α) : Part Prop :=
-  ⟨¬ AtomDist τ V, fun _ ↦ V {e | (τ e).snd ≤ a.fst}⟩
+  ⟨¬ AtomDist τ V, fun _ ↦ V {e | (τ e).IsBefore a}⟩
 
 /-- (6.18): *méi-yǒu* is the negation of *le*, with the same presupposition. -/
 def meiyou (τ : E → NonemptyInterval α) (V : Quantifier E) (a : NonemptyInterval α) : Part Prop :=
@@ -197,7 +206,7 @@ def meiyou (τ : E → NonemptyInterval α) (V : Quantifier E) (a : NonemptyInte
 @[simp] theorem meiyou_dom : (meiyou τ V a).Dom ↔ ¬ AtomDist τ V := .rfl
 
 @[simp] theorem le_get (h : (le τ V a).Dom) :
-    (le τ V a).get h ↔ V {e | (τ e).snd ≤ a.fst} := .rfl
+    (le τ V a).get h ↔ V {e | (τ e).IsBefore a} := .rfl
 
 @[simp] theorem meiyou_get (h : (meiyou τ V a).Dom) :
     (meiyou τ V a).get h ↔ ¬ (le τ V a).get h := .rfl
@@ -227,6 +236,24 @@ theorem le_get_some_iff_mem_perfect (h : (le Event.τ (Det.some {e | P w e}) a).
       a ∈ Aspect.ViewpointType.perfect.denote P w :=
   exists_congr fun _ ↦ and_comm
 
+-- the fragment's perfective holds at no point of evaluation of a predicate without point events
+theorem pure_notMem_denote_le (hP : ∀ e, P w e → ¬ (Event.τ e).IsPoint) (t : T) :
+    .pure t ∉ Mandarin.Aspect.le.viewpoint.denote P w :=
+  fun ⟨e, hle, he⟩ ↦ hP e he <|
+    le_antisymm (Event.τ e).fst_le_snd ((NonemptyInterval.le_def.1 hle).2.trans
+      (NonemptyInterval.le_def.1 hle).1)
+
+/-- A predicate with the stratified subinterval reference of [champollion-2017] has no event at a
+point, a point having no proper subinterval, so *le* is defined of its existential quantifier. -/
+theorem le_dom_of_subintervalReferenceUniv [SemilatticeSup E] {Q : E → Prop} (hne : ∃ e, Q e)
+    (h : Champollion2017.SubintervalReferenceUniv Q) :
+    (le Event.τ (Det.some {e | Q e}) a).Dom :=
+  not_atomDist_some hne fun e he hp ↦ by
+    have hSR : e ∈ supClosure {y | Q y ∧ Event.τ y < Event.τ e} := h e he
+    rw [show {y | Q y ∧ Event.τ y < Event.τ e} = ∅ from
+      eq_empty_of_forall_notMem fun y hy ↦ hp.isMin.not_lt hy.2, supClosure_empty] at hSR
+    exact hSR
+
 end Time
 
 section Norm
@@ -245,6 +272,12 @@ theorem le_dom_dur_some_iff :
     (le τ (dur τ P (Det.some A)) a).Dom ↔ ∃ e ∈ A, ∃ ℓ ∈ norm (τ e), P ℓ := by
   rw [le_dom_dur_iff fun ⟨_, _, h⟩ ↦ h, dur_some]
   exact ⟨fun ⟨_, e, ⟨he, hP⟩, _⟩ ↦ ⟨e, he, hP⟩, fun ⟨e, he, hP⟩ ↦ ⟨τ e, e, ⟨he, hP⟩, rfl⟩⟩
+
+-- (5.45): a modified numeral, *less than*, *at least* or *exactly* `d`, is one such measure phrase
+theorem le_dom_dur_interval_iff (c : Comparison) (d : α) :
+    (le τ (dur τ (· ∈ c.interval d) (Det.some A)) a).Dom ↔
+      ∃ e ∈ A, ∃ ℓ ∈ norm (τ e), c.Rel ℓ d :=
+  le_dom_dur_some_iff
 
 -- (6.5): the degree use of *le* with a measure phrase yields a comparison by more than `d`
 theorem add_lt_of_le_get [IsOrderedAddMonoid α] {m n d : α}
@@ -266,13 +299,10 @@ section Guo
 variable [Preorder α] {τ : E → NonemptyInterval α} {θ : E → NonemptyInterval α} {S : Set E}
   {a : NonemptyInterval α}
 
-theorem not_isPoint_of_during {i j : NonemptyInterval α} (h : j.During i) : ¬ i.IsPoint :=
-  fun hp ↦ ((h.1.trans_le j.fst_le_snd).trans h.2).ne hp
-
 -- (6.73), (6.74): *guò* licenses *méi-yǒu*, whatever the description of the surpassing events
 theorem meiyou_dom_of_surpasses (hne : S.Nonempty) (hS : ∀ e ∈ S, (θ e).During (τ e)) :
     (meiyou τ (Det.some S) a).Dom :=
-  not_atomDist_some hne fun e he ↦ not_isPoint_of_during (hS e he)
+  not_atomDist_some hne fun e he ↦ (hS e he).not_isPoint
 
 /-- (6.68), (6.70): a *guò* sentence quantifies over surpassing events, (6.45), whose trace starts
 strictly before the measurement of their theme and ends strictly after it. Specified by [th] for a
