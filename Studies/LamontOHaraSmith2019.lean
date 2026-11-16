@@ -15,24 +15,39 @@ public import Linglib.Phonology.Tone.Plateauing
 Unbounded tonal plateauing turns every toneless unit between two high tones into a high tone, so
 the fate of a target depends on material unboundedly far away on both sides. Heinz and Lai, and
 Jardine after them, conjectured that such maps are not weakly deterministic. Lamont, O'Hara and
-Smith show that plateauing is weakly deterministic in Heinz and Lai's sense (Figure 1). A
-left-to-right pass that preserves length and alphabet rewrites every HLH as HHH, so that HLH
-never survives it, and then writes HLH as a code for an H with another H to its left; a
-right-to-left pass decodes it.
-
-## Main definitions
-
-* `markLeft`, `resolveRight`: the transducers A and B of Figure 1
+Smith show that [plateauing is weakly deterministic](##utp_isWeaklyDeterministic) in Heinz and
+Lai's sense: a left-to-right pass that preserves length and alphabet rewrites every HLH as HHH and
+then writes HLH as a code for an H with another H to its left, and a right-to-left pass decodes
+it. They go on to two variants, first-last plateauing, where a word plateaus only when its first
+and last units are high, and double-edged spread, where the first high tone spreads to the left
+edge of the word and the last to the right edge. Under the same definition
+[both](##firstLast_isWeaklyDeterministic) [variants](##doubleEdged_isWeaklyDeterministic) are
+weakly deterministic, by a first pass that moves the first unit of the word to its end.
 
 ## Implementation notes
 
 * A toneless unit is `Tone.AssociationState.O`, the paper's L. Since
-  `SubsequentialTransducer.runRight` reverses the run, B's blocks are written reversed. The figure
-  gives B no H transition from `q4`; A never writes an H there, and B keeps it.
-* The proof splits a word into Ls, an H, blocks `Lʲ H`, and Ls. A writes each block as H, HH or
-  `Lʲ⁻² HLH`, and B, reading right to left, holds back at most one H.
-* Not formalized: §2, where first-last plateauing and double-edged spread are shown regular but
-  not weakly deterministic by a counting argument, and the characterization of Theorem 3.1.
+  `SubsequentialTransducer.runRight` reverses the run, the blocks of a right-to-left pass are
+  written reversed. The figure gives B no H transition from `q4`; A never writes an H there, and B
+  keeps it.
+* The proof for plateauing splits a word into Ls, an H, blocks `Lʲ H`, and Ls. A writes each block
+  as H, HH or `Lʲ⁻² HLH`, and B, reading right to left, holds back at most one H.
+* The paper presents first-last plateauing and double-edged spread as regular maps outside the
+  weakly deterministic class, on the ground that a first pass must leave its markup within a
+  bounded window of the edge it describes. `IsWeaklyDeterministic` asks of the first pass only
+  that it be left-subsequential and not lengthen its input, over the same alphabet, and a pass
+  that writes the first unit last meets that: `rotate` and `spreadEdge` both preserve length. For
+  double-edged spread the first unit need not be kept, since it surfaces H exactly when the word
+  has an H, and the first pass ends the word with that fact instead.
+* The two variants are defined directly as maps, not by the non-deterministic transducers of the
+  paper's figures.
+
+## TODO
+
+* Whether the weakly deterministic maps are a proper subclass of the regular ones is not settled
+  here: the file has no regular map proved outside `IsWeaklyDeterministic`.
+* The characterization of the weakly deterministic unbounded circumambient maps by banned
+  substrings (the paper's last section) is not formalized.
 
 ## References
 
@@ -348,7 +363,6 @@ theorem utp_map_eq_resolve_mark (w : List AssociationState) :
       (resolveRight_replicate a).1.2, resolveRight_finalOutput, resolveFinal]
   · rw [resolve_mark, utp_map_blocks]
 
-/-- A preserves length. -/
 theorem length_markLeft_run (w : List AssociationState) : (markLeft.run w).length = w.length := by
   rcases decomposition w with ⟨a, rfl⟩ | ⟨a, js, t, rfl⟩
   · simp [SubsequentialTransducer.run, SubsequentialTransducer.runFrom,
@@ -360,5 +374,308 @@ theorem utp_isWeaklyDeterministic : IsWeaklyDeterministic utp.map :=
   ⟨markLeft.run, resolveRight.runRight, markLeft.isLeftSubsequential,
     fun w ↦ (length_markLeft_run w).le, resolveRight.isRightSubsequential,
     funext fun w ↦ (utp_map_eq_resolve_mark w).symm⟩
+
+/-! ### First-last plateauing -/
+
+/-- First-last plateauing makes every unit high when the first and the last unit are high, and
+changes nothing otherwise. -/
+def firstLast (w : List AssociationState) : List AssociationState :=
+  if w.head? = some .H ∧ w.getLast? = some .H then replicate w.length .H else w
+
+example : firstLast [.H, .O, .O, .O, .H] = replicate 5 .H ∧
+    firstLast [.H, .O, .O, .H, .O] = [.H, .O, .O, .H, .O] := by
+  decide
+
+/-- The first pass is in `q0` before the first unit, and afterwards in `qH` or `qL` according to
+what that unit was. -/
+inductive RotateState
+  | q0 | qH | qL
+  deriving DecidableEq, Repr, Fintype
+
+/-- The transitions of the first pass. -/
+@[simp] def rotateStep : RotateState → AssociationState → RotateState
+  | .q0, .H => .qH | .q0, .O => .qL
+  | .qH, _ => .qH
+  | .qL, _ => .qL
+
+/-- The first pass writes nothing for the first unit and copies the rest. -/
+@[simp] def rotateOutput : RotateState → AssociationState → List AssociationState
+  | .q0, _ => []
+  | .qH, a => [a]
+  | .qL, a => [a]
+
+/-- At the end of the word the first pass writes the first unit. -/
+@[simp] def rotateFinal : RotateState → List AssociationState
+  | .q0 => []
+  | .qH => [.H]
+  | .qL => [.O]
+
+/-- The left-to-right pass that moves the first unit of a word to its end. -/
+def rotate : SubsequentialTransducer RotateState AssociationState AssociationState where
+  start := .q0
+  step := rotateStep
+  output := rotateOutput
+  finalOutput := rotateFinal
+
+@[simp] theorem rotate_start : rotate.start = .q0 := rfl
+@[simp] theorem rotate_step : rotate.step = rotateStep := rfl
+@[simp] theorem rotate_output : rotate.output = rotateOutput := rfl
+@[simp] theorem rotate_finalOutput : rotate.finalOutput = rotateFinal := rfl
+
+private theorem rotate_runFrom {s : RotateState} (hs : s ≠ .q0) (w : List AssociationState) :
+    rotate.runFrom s w = w ++ rotateFinal s := by
+  induction w with
+  | nil => simp
+  | cons a w ih => cases s <;> simp_all
+
+theorem rotate_run_cons (a : AssociationState) (w : List AssociationState) :
+    rotate.run (a :: w) = w ++ [a] := by
+  cases a <;> simp [SubsequentialTransducer.run, rotate_runFrom]
+
+theorem length_rotate_run (w : List AssociationState) : (rotate.run w).length = w.length := by
+  rcases w with _ | ⟨a, w⟩
+  · rfl
+  · simp [rotate_run_cons]
+
+/-- Reading right to left, the second pass is in `q0` before the moved unit, in `q1` copying after
+a moved L, in `q2` after a moved H, in `q3` copying after a moved H and a final L, and in `q4`
+writing Hs after a moved H and a final H. -/
+inductive PlateauState
+  | q0 | q1 | q2 | q3 | q4
+  deriving DecidableEq, Repr, Fintype
+
+/-- The transitions of the second pass. -/
+@[simp] def plateauStep : PlateauState → AssociationState → PlateauState
+  | .q0, .H => .q2 | .q0, .O => .q1
+  | .q1, _ => .q1
+  | .q2, .H => .q4 | .q2, .O => .q3
+  | .q3, _ => .q3
+  | .q4, _ => .q4
+
+/-- The second pass copies, except that it writes nothing for the moved unit and writes H for
+every unit once the moved unit and the final unit are both H. -/
+@[simp] def plateauOutput : PlateauState → AssociationState → List AssociationState
+  | .q0, _ => []
+  | .q1, a => [a]
+  | .q2, a => [a]
+  | .q3, a => [a]
+  | .q4, _ => [.H]
+
+/-- At the end of the word the second pass writes the moved unit back. -/
+@[simp] def plateauFinal : PlateauState → List AssociationState
+  | .q0 => []
+  | .q1 => [.O]
+  | _ => [.H]
+
+/-- The right-to-left pass that reads the moved first unit, then the last unit, and plateaus when
+both are H, as run by `runRight`. -/
+def plateauRight : SubsequentialTransducer PlateauState AssociationState AssociationState where
+  start := .q0
+  step := plateauStep
+  output := plateauOutput
+  finalOutput := plateauFinal
+
+@[simp] theorem plateauRight_start : plateauRight.start = .q0 := rfl
+@[simp] theorem plateauRight_step : plateauRight.step = plateauStep := rfl
+@[simp] theorem plateauRight_output : plateauRight.output = plateauOutput := rfl
+@[simp] theorem plateauRight_finalOutput : plateauRight.finalOutput = plateauFinal := rfl
+
+private theorem plateauRight_runFrom (w : List AssociationState) :
+    plateauRight.runFrom .q1 w = w ++ [.O] ∧ plateauRight.runFrom .q3 w = w ++ [.H] ∧
+      plateauRight.runFrom .q4 w = replicate (w.length + 1) .H := by
+  induction w with
+  | nil => simp
+  | cons a w ih => simp [ih, replicate_succ]
+
+theorem firstLast_eq_plateau_rotate (w : List AssociationState) :
+    firstLast w = plateauRight.runRight (rotate.run w) := by
+  rcases w with _ | ⟨a, w⟩
+  · decide
+  · rw [rotate_run_cons]
+    rcases eq_nil_or_concat w with rfl | ⟨u, c, rfl⟩
+    · cases a <;> decide
+    · have hl : (a :: (u ++ [c])).getLast? = some c := by rw [← cons_append, getLast?_concat]
+      cases a <;> cases c <;>
+        simp [firstLast, hl, SubsequentialTransducer.runRight, SubsequentialTransducer.run,
+          plateauRight_runFrom, ← replicate_succ]
+
+/-- First-last plateauing is weakly deterministic in Heinz and Lai's sense: a left-to-right pass
+moves the first unit to the end of the word, where the right-to-left pass reads it first. -/
+theorem firstLast_isWeaklyDeterministic : IsWeaklyDeterministic firstLast :=
+  ⟨rotate.run, plateauRight.runRight, rotate.isLeftSubsequential,
+    fun w ↦ (length_rotate_run w).le, plateauRight.isRightSubsequential,
+    funext fun w ↦ (firstLast_eq_plateau_rotate w).symm⟩
+
+/-! ### Double-edged spread -/
+
+/-- The first H of a word spreads to its left edge. -/
+def spreadLeft : List AssociationState → List AssociationState
+  | [] => []
+  | .H :: w => .H :: w
+  | .O :: w => .H :: spreadLeft w
+
+/-- In double-edged spread the first H of a word spreads to its left edge and the last H to its
+right edge; a word without an H is unchanged. -/
+def doubleEdged (w : List AssociationState) : List AssociationState :=
+  if .H ∈ w then spreadLeft (spreadLeft w.reverse).reverse else w
+
+example : doubleEdged [.O, .O, .O, .H, .O, .O, .H, .O, .O, .H, .O, .O, .O]
+    = [.H, .H, .H, .H, .O, .O, .H, .O, .O, .H, .H, .H, .H] ∧
+    doubleEdged [.O, .O, .O, .O] = [.O, .O, .O, .O] := by
+  decide
+
+private theorem spreadLeft_append_H (v r : List AssociationState) :
+    spreadLeft (v ++ .H :: r) = spreadLeft v ++ .H :: r := by
+  induction v with
+  | nil => rfl
+  | cons a v ih => cases a <;> simp [spreadLeft, ih]
+
+private theorem spreadLeft_replicate (n : ℕ) :
+    spreadLeft (replicate n .O) = replicate n .H := by
+  induction n with
+  | zero => rfl
+  | succ n ih => simp [replicate_succ, spreadLeft, ih]
+
+/-- The first pass is in `q0` before the first unit, in `q1` having read only Ls, and in `q2`
+after an H. -/
+inductive EdgeState
+  | q0 | q1 | q2
+  deriving DecidableEq, Repr, Fintype
+
+/-- The transitions of the first pass. -/
+@[simp] def edgeStep : EdgeState → AssociationState → EdgeState
+  | .q0, .H => .q2 | .q0, .O => .q1
+  | .q1, .H => .q2 | .q1, .O => .q1
+  | .q2, _ => .q2
+
+/-- The first pass writes nothing for the first unit, H for every other unit up to the first H,
+and copies the rest. -/
+@[simp] def edgeOutput : EdgeState → AssociationState → List AssociationState
+  | .q0, _ => []
+  | .q1, _ => [.H]
+  | .q2, a => [a]
+
+/-- At the end of the word the first pass writes whether the word had an H. -/
+@[simp] def edgeFinal : EdgeState → List AssociationState
+  | .q0 => []
+  | .q1 => [.O]
+  | .q2 => [.H]
+
+/-- The left-to-right pass that spreads the first H leftward, drops the first unit, and ends the
+word with an H exactly when it had one. -/
+def spreadEdge : SubsequentialTransducer EdgeState AssociationState AssociationState where
+  start := .q0
+  step := edgeStep
+  output := edgeOutput
+  finalOutput := edgeFinal
+
+@[simp] theorem spreadEdge_start : spreadEdge.start = .q0 := rfl
+@[simp] theorem spreadEdge_step : spreadEdge.step = edgeStep := rfl
+@[simp] theorem spreadEdge_output : spreadEdge.output = edgeOutput := rfl
+@[simp] theorem spreadEdge_finalOutput : spreadEdge.finalOutput = edgeFinal := rfl
+
+private theorem spreadEdge_runFrom_q2 (w : List AssociationState) :
+    spreadEdge.runFrom .q2 w = w ++ [.H] := by
+  induction w with
+  | nil => rfl
+  | cons a w ih => simp [ih]
+
+private theorem spreadEdge_runFrom_q1 (k : ℕ) :
+    spreadEdge.runFrom .q1 (replicate k .O) = replicate k .H ++ [.O] ∧
+      ∀ u, spreadEdge.runFrom .q1 (replicate k .O ++ .H :: u)
+        = replicate k .H ++ .H :: (u ++ [.H]) := by
+  induction k with
+  | zero => simp [spreadEdge_runFrom_q2]
+  | succ k ih => simp [replicate_succ, ih.1, ih.2]
+
+/-- Reading right to left, the second pass is in `q0` before the last unit, in `q1` when that unit
+says the word has no H, in `q2` up to the last H of the word, and in `q3` after it. -/
+inductive CloseState
+  | q0 | q1 | q2 | q3
+  deriving DecidableEq, Repr, Fintype
+
+/-- The transitions of the second pass. -/
+@[simp] def closeStep : CloseState → AssociationState → CloseState
+  | .q0, .H => .q2 | .q0, .O => .q1
+  | .q1, _ => .q1
+  | .q2, .H => .q3 | .q2, .O => .q2
+  | .q3, _ => .q3
+
+/-- The second pass writes nothing for the last unit, L throughout a word without an H, and
+otherwise H up to the last H of the word and a copy after it. -/
+@[simp] def closeOutput : CloseState → AssociationState → List AssociationState
+  | .q0, _ => []
+  | .q1, _ => [.O]
+  | .q2, _ => [.H]
+  | .q3, a => [a]
+
+/-- At the end of the word the second pass writes the dropped first unit back. -/
+@[simp] def closeFinal : CloseState → List AssociationState
+  | .q0 => []
+  | .q1 => [.O]
+  | _ => [.H]
+
+/-- The right-to-left pass that spreads the last H rightward and restores the first unit, as run
+by `runRight`. -/
+def closeRight : SubsequentialTransducer CloseState AssociationState AssociationState where
+  start := .q0
+  step := closeStep
+  output := closeOutput
+  finalOutput := closeFinal
+
+@[simp] theorem closeRight_start : closeRight.start = .q0 := rfl
+@[simp] theorem closeRight_step : closeRight.step = closeStep := rfl
+@[simp] theorem closeRight_output : closeRight.output = closeOutput := rfl
+@[simp] theorem closeRight_finalOutput : closeRight.finalOutput = closeFinal := rfl
+
+private theorem closeRight_runFrom (w : List AssociationState) :
+    closeRight.runFrom .q1 w = replicate (w.length + 1) .O ∧
+      closeRight.runFrom .q3 w = w ++ [.H] ∧
+      closeRight.runFrom .q2 w = spreadLeft w ++ [.H] := by
+  induction w with
+  | nil => simp [spreadLeft]
+  | cons a w ih => cases a <;> simp [ih, replicate_succ, spreadLeft]
+
+private theorem spreadEdge_run (k : ℕ) :
+    spreadEdge.run (replicate (k + 1) .O) = replicate k .H ++ [.O] ∧
+      ∀ u, spreadEdge.run (replicate (k + 1) .O ++ .H :: u)
+        = replicate k .H ++ .H :: (u ++ [.H]) := by
+  simp [SubsequentialTransducer.run, replicate_succ, spreadEdge_runFrom_q1]
+
+theorem doubleEdged_eq_close_spread (w : List AssociationState) :
+    doubleEdged w = closeRight.runRight (spreadEdge.run w) := by
+  rcases decomposition w with ⟨a, rfl⟩ | ⟨a, js, t, rfl⟩
+  · rcases a with _ | k
+    · decide
+    · rw [(spreadEdge_run k).1]
+      simp [doubleEdged, SubsequentialTransducer.runRight, SubsequentialTransducer.run,
+        closeRight_runFrom]
+  · generalize blocks js ++ replicate t .O = u
+    rcases a with _ | k
+    · simp [doubleEdged, SubsequentialTransducer.runRight, SubsequentialTransducer.run,
+        spreadEdge_runFrom_q2, closeRight_runFrom, spreadLeft_append_H, spreadLeft]
+    · rw [(spreadEdge_run k).2]
+      simp [doubleEdged, SubsequentialTransducer.runRight, SubsequentialTransducer.run,
+        closeRight_runFrom, spreadLeft_append_H, spreadLeft_replicate]
+      rfl
+
+theorem length_spreadEdge_run (w : List AssociationState) :
+    (spreadEdge.run w).length = w.length := by
+  rcases decomposition w with ⟨a, rfl⟩ | ⟨a, js, t, rfl⟩
+  · rcases a with _ | k
+    · rfl
+    · simp [(spreadEdge_run k).1]
+  · generalize blocks js ++ replicate t .O = u
+    rcases a with _ | k
+    · simp [SubsequentialTransducer.run, spreadEdge_runFrom_q2]
+    · simp [(spreadEdge_run k).2]; omega
+
+/-- Double-edged spread is weakly deterministic in Heinz and Lai's sense: a left-to-right pass
+spreads the first H and ends the word with a record of whether it had one, and the right-to-left
+pass spreads the last H. -/
+theorem doubleEdged_isWeaklyDeterministic : IsWeaklyDeterministic doubleEdged :=
+  ⟨spreadEdge.run, closeRight.runRight, spreadEdge.isLeftSubsequential,
+    fun w ↦ (length_spreadEdge_run w).le, closeRight.isRightSubsequential,
+    funext fun w ↦ (doubleEdged_eq_close_spread w).symm⟩
 
 end LamontOHaraSmith2019
