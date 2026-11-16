@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.LeftLinear
+public import Linglib.Core.Order.Laminar
 public import Mathlib.Data.Finset.Piecewise
 public import Mathlib.Data.Fintype.Defs
 
@@ -13,18 +13,21 @@ class nodes, a map `node : F → Option N`, where `a ≤ b` when node `a` domina
 at or below it, [the preimage](##Phonology.FeatureGeometry.coe_featureClass) of the subtree
 `Set.Ici a` under the node. Feature classes therefore
 [shrink along dominance](##Phonology.FeatureGeometry.antitone_featureClass) and, in a tree, are
-[disjoint across incomparable nodes](##Phonology.FeatureGeometry.disjoint_featureClass).
+[disjoint across incomparable nodes](##Phonology.FeatureGeometry.disjoint_featureClass), so that
+[no two overlap](##Phonology.FeatureGeometry.isLaminar_range_featureClass) unless one contains
+the other, the condition Padgett carries over to classes taken as bare sets of features.
 Assimilation spreads a class from one segment onto another, `Finset.piecewise` on the class, so
 spreading a node
-[carries every class it dominates](##Phonology.FeatureGeometry.eqOn_piecewise_of_le) and [leaves every incomparable class
-untouched](##Phonology.FeatureGeometry.eqOn_piecewise_of_incompRel).
+[carries every class it dominates](##Phonology.FeatureGeometry.eqOn_piecewise_of_le) and
+[leaves every incomparable class untouched](##Phonology.FeatureGeometry.eqOn_piecewise_of_incompRel).
 
 ## Implementation notes
 
 The placement is `Option`-valued so that a geometry may leave features of the inventory
-unplaced. A tree is a left-linear order, which mathlib's rooted trees are. A set of features is
-exhaustively dominated by a node, in Halle, Vaux and Wolfe's sense, when it is the node's feature
-class; single-feature spreading is `Function.update`.
+unplaced. A tree is a left-linear order, which mathlib's rooted trees are, and so is a forest of
+class labels with no root, the grouping of `Phonology/Segmental/FeatureClass.lean`. A set of
+features is exhaustively dominated by a node, in Halle, Vaux and Wolfe's sense, when it is the
+node's feature class; single-feature spreading is `Function.update`.
 
 ## References
 
@@ -94,6 +97,16 @@ theorem disjoint_featureClass (h : IncompRel (· ≤ ·) a b) :
   Finset.disjoint_coe.1 <| by
     simpa only [coe_featureClass] using ((Set.disjoint_image_iff (Option.some_injective N)).2
       (IsLeftLinear.disjoint_Ici_iff.2 h)).preimage node
+
+variable (node) in
+/-- The feature classes of a tree do not overlap: any two are nested or disjoint. -/
+theorem isLaminar_range_featureClass : IsLaminar (Set.range (featureClass node)) := by
+  rintro _ ⟨a, rfl⟩ _ ⟨b, rfl⟩
+  by_cases hab : a ≤ b
+  · exact .inr (.inl (antitone_featureClass hab))
+  by_cases hba : b ≤ a
+  · exact .inl (antitone_featureClass hba)
+  · exact .inr (.inr (disjoint_featureClass ⟨hab, hba⟩))
 
 variable [DecidableEq F] {β : Type*} (src tgt : F → β)
 

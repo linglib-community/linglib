@@ -113,7 +113,7 @@ def identPharExp : Constraint Cand := fun c ↦
 
 /-- IDENT[PLACE]: corresponding segments that differ in place. -/
 def identPlace : Constraint Cand := fun c ↦
-  c.identViolFeature (Segment.restrict FeatureClass.place) .lhs .rhs
+  c.identViolFeature (Segment.restrict FeatureClass.place.features) .lhs .rhs
 
 /-! ### The Prosodic Word
 

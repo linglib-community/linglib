@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Phonology.FeatureGeometry
 public import Linglib.Phonology.Segmental.Defs
 public import Mathlib.Data.Finset.Card
 
@@ -7,25 +8,22 @@ public import Mathlib.Data.Finset.Card
 # Feature classes
 
 Hayes's grouping of the distinctive features into manner, laryngeal and place features, with the
-place features split among the three major articulators [labial], [coronal] and [dorsal]. The
-classes are finite sets of features, the place class is their union, and a complex segment is one
-with more than one major articulator. Two segments are homorganic when they agree on the major
+place features split among the three major articulators [labial], [coronal] and [dorsal]. Each
+feature has [the class](##Phonology.Feature.featureClass?) it is listed under, and
+[the features of a class](##Phonology.FeatureClass.features) are those listed under it or under a
+class it contains, so the place class is the union of the three articulator classes. A
+[complex segment](##Phonology.Segment.IsComplex) is one with more than one major articulator, and
+two segments are [homorganic](##Phonology.Segment.Homorganic) when they agree on the major
 articulator features.
-
-## Main definitions
-
-* `FeatureClass`, `Feature.featureClass?`: the five classes and the class of each feature.
-* `FeatureClass.features`, `FeatureClass.place`: the features of a class, and the place class.
-* `Feature.majorArticulators`, `Segment.articulators`, `Segment.IsComplex`: the major articulator
-  features, the major articulators of a segment, and complex segments.
-* `Segment.Homorganic`: agreement on the major articulator features.
 
 ## Implementation notes
 
-The classes are sets rather than the nodes of a tree. Hayes treats Place as a group concept and
-draws no tree, Padgett defines feature classes as sets of features, and Halle, Vaux and Wolfe
-record that there is no consensus on which revisions of the geometry to adopt. Trees are instances
-of `Phonology/FeatureGeometry.lean` in the studies of the works that argue for them.
+The class labels are ordered by containment alone, Place above the three articulators, with
+manner and laryngeal beside it: a forest with no root, whose feature classes are those of
+`Phonology/FeatureGeometry.lean`. Hayes treats Place as a group concept and draws no tree, Padgett
+defines feature classes as sets of features, and Halle, Vaux and Wolfe record that there is no
+consensus on which revisions of the geometry to adopt. Trees are built in the studies of the works
+that argue for them.
 
 [tense], which Hayes's consonant charts print under the place heading but his list of the place
 features leaves out, and the tongue-root features [ATR] and [RTR] belong to no class.
@@ -43,11 +41,30 @@ features leaves out, and the tongue-root features [ATR] and [RTR] belong to no c
 namespace Phonology
 
 /-- The feature classes: the manner and laryngeal features, headed as such in Hayes's consonant
-charts ([hayes-2009] Table 4.7), and the place features of each major articulator, the columns of
-his list of the place features ([hayes-2009] p. 89). -/
+charts ([hayes-2009] Table 4.7), the place features ([hayes-2009] p. 89), which Padgett's Place
+"simply stands for" ([padgett-2002] p. 82), and the place features of each major articulator, the
+columns of Hayes's list. -/
 inductive FeatureClass where
-  | manner | laryngeal | labial | coronal | dorsal
+  | manner | laryngeal | place | labial | coronal | dorsal
   deriving DecidableEq, Repr, Fintype
+
+namespace FeatureClass
+
+/-- `a ≤ b` when class `a` contains class `b`: the place class contains the three articulator
+classes. -/
+instance : PartialOrder FeatureClass where
+  le a b := a = b ∨ a = place ∧ (b = labial ∨ b = coronal ∨ b = dorsal)
+  le_refl := by decide
+  le_trans := by decide
+  le_antisymm := by decide
+
+instance : DecidableLE FeatureClass := fun a b ↦
+  inferInstanceAs (Decidable (a = b ∨ a = place ∧ (b = labial ∨ b = coronal ∨ b = dorsal)))
+
+/-- No class lies in two classes neither of which contains the other. -/
+instance : IsLeftLinear FeatureClass := ⟨by decide⟩
+
+end FeatureClass
 
 /-- The class of a feature, with [syllabic] a manner feature by the sonority hierarchy
 ([hayes-2009] §4.4.1), and none for [tense], [ATR] and [RTR]. -/
@@ -62,22 +79,13 @@ def Feature.featureClass? : Feature → Option FeatureClass
 
 namespace FeatureClass
 
-/-- The features of a class. -/
-def features (c : FeatureClass) : Finset Feature := Finset.univ.filter (·.featureClass? = some c)
+/-- The features of a class, those listed under it or under a class it contains. -/
+def features (c : FeatureClass) : Finset Feature :=
+  FeatureGeometry.featureClass Feature.featureClass? c
 
-/-- The place class, the union of the three articulator classes: Hayes's place features
-([hayes-2009] p. 89), and Padgett's Place, which "simply stands for the set {[labial],
-[coronal], [dorsal], …}" ([padgett-2002] p. 82). -/
-def place : Finset Feature := labial.features ∪ coronal.features ∪ dorsal.features
-
-variable {f : Feature} {c : FeatureClass}
-
-@[simp] theorem mem_features : f ∈ c.features ↔ f.featureClass? = some c := by simp [features]
-
-theorem mem_place :
-    f ∈ place ↔ f.featureClass? = some .labial ∨ f.featureClass? = some .coronal ∨
-      f.featureClass? = some .dorsal := by
-  simp [place]
+/-- The place features are those of the three major articulators. -/
+theorem features_place : place.features = labial.features ∪ coronal.features ∪ dorsal.features := by
+  decide
 
 end FeatureClass
 

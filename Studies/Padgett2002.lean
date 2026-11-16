@@ -76,6 +76,9 @@ instance : PartialOrder Node where
 
 instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (a ∈ List.iterate pred b _))
 
+/-- Each node of (3) has a single mother. -/
+instance : IsLeftLinear Node := ⟨by decide⟩
+
 end Node
 
 /-- The node each feature of (3) hangs from, with [aspirated] and [glottalized] read as [spread
@@ -109,6 +112,15 @@ theorem classes_eq_featureClass :
       vplace = featureClass node .vplace ∧ height = featureClass node .height ∧
       color = featureClass node .color := by
   decide
+
+-- p. 99: feature classes do not overlap, subset relations aside, an assumption carried over from
+-- the geometry, where it is the single mother node condition.
+theorem isLaminar_classes :
+    IsLaminar ({laryngeal, oral, vplace, height, color} : Set (Finset Feature)) := by
+  obtain ⟨h₁, h₂, h₃, h₄, h₅⟩ := classes_eq_featureClass
+  refine (isLaminar_range_featureClass node).mono ?_
+  rintro _ (rfl | rfl | rfl | rfl | rfl)
+  exacts [⟨_, h₁.symm⟩, ⟨_, h₂.symm⟩, ⟨_, h₃.symm⟩, ⟨_, h₄.symm⟩, ⟨_, h₅.symm⟩]
 
 /-! ### SPREAD (26) -/
 
