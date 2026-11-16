@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.SetRel
+public import Linglib.Core.Order.Hom.SupPMap
 public import Linglib.Semantics.Mereology
 public import Mathlib.Order.UpperLower.Fibration
 
@@ -24,7 +24,11 @@ relation with unique events [gives each object one event](##Mereology.UE.gue_of_
 When the relation is the converse graph of a thematic function, as in [champollion-krifka-2016],
 the conditions become properties of the function: summativity is preservation of sums, general
 uniqueness of events is injectivity, mapping to subobjects is strict monotonicity, and mapping to
-events is mathlib's `Relation.Fibration` for the part orders.
+events is mathlib's `Relation.Fibration` for the part orders. A summative relation with unique
+participants is always such a converse graph, of [a partial sum
+homomorphism](##Mereology.UP.inv_graph_toSupPMap) defined on the events that have a participant,
+and it [maps to objects](##Mereology.mo_graph_supPMap_iff) exactly when that domain is closed under
+parts.
 
 ## References
 
@@ -321,5 +325,46 @@ theorem sum_graph {F : Type*} [FunLike F β α] [SupHomClass F β α] (f : F) : 
   (SetRel.supClosed_graph f).relInv
 
 end GraphSum
+
+/-! ### Partial thematic functions
+
+A thematic role need not be defined on every event. A summative relation with unique participants
+is the converse graph of a partially defined sum homomorphism from events to objects, defined on
+the events that have a participant. -/
+
+section SupPMap
+
+variable [SemilatticeSup α] [SemilatticeSup β] {θ : SetRel α β}
+
+theorem sum_graph_supPMap (f : β →⊔. α) : SUM f.graph.inv := f.supClosed_graph.relInv
+
+theorem up_graph_supPMap (f : β →⊔. α) : UP f.graph.inv :=
+  GUE.inv (θ := f.graph) f.injOn_fst_graph
+
+/-- The converse graph of a partial thematic function maps to objects iff the function is defined
+on every part of an event it is defined on. -/
+theorem mo_graph_supPMap_iff (f : β →⊔. α) : MO f.graph.inv ↔ IsLowerSet f.domain := by
+  refine ⟨fun h e e' hle he ↦ ?_, fun h e x hex e' hle ↦ ?_⟩
+  · obtain ⟨_, _, he', _⟩ := h (show (e, f ⟨e, he⟩) ∈ f.graph.inv.inv from ⟨he, rfl⟩) hle
+    exact he'
+  · obtain ⟨he, rfl⟩ : ∃ he : e ∈ f.domain, f ⟨e, he⟩ = x := hex
+    exact ⟨f ⟨e', h hle he⟩, f.mono (show (⟨e', h hle he⟩ : f.domain) ≤ ⟨e, he⟩ from hle),
+      h hle he, rfl⟩
+
+/-- A summative relation with unique participants, as the partial sum homomorphism sending an
+event to its participant. -/
+noncomputable def UP.toSupPMap (hU : UP θ) (hS : SUM θ) : β →⊔. α :=
+  θ.inv.toSupPMap hS.inv hU.inv
+
+@[simp]
+theorem UP.domain_toSupPMap (hU : UP θ) (hS : SUM θ) : (hU.toSupPMap hS).domain = θ.cod := rfl
+
+/-- A summative relation with unique participants is the converse graph of its partial thematic
+function. -/
+@[simp]
+theorem UP.inv_graph_toSupPMap (hU : UP θ) (hS : SUM θ) : (hU.toSupPMap hS).graph.inv = θ := by
+  rw [UP.toSupPMap, SetRel.graph_toSupPMap, SetRel.inv_inv]
+
+end SupPMap
 
 end Mereology
