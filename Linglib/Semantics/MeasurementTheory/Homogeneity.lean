@@ -69,6 +69,11 @@ points are equal. -/
 def IsPointUnique (S : Set (A ≃o A)) (N : ℕ) : Prop :=
   ∀ g ∈ S, ∀ h ∈ S, ∀ a : Fin N → A, StrictMono a → (∀ i, g (a i) = h (a i)) → g = h
 
+theorem IsPointHomogeneous.mono (h : S ⊆ T) (hS : IsPointHomogeneous S M) :
+    IsPointHomogeneous T M := fun a b ha hb ↦
+  let ⟨g, hg, hgab⟩ := hS a b ha hb
+  ⟨g, h hg, hgab⟩
+
 theorem IsPointUnique.anti (h : S ⊆ T) (hT : IsPointUnique T N) : IsPointUnique S N :=
   fun g hg k hk ↦ hT g (h hg) k (h hk)
 

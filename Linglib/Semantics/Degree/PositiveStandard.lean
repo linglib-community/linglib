@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Order.UpperLower.Principal
 public import Linglib.Semantics.Degree.Boundedness
+public import Linglib.Semantics.MeasurementTheory.Homogeneity
 public import Mathlib.Order.Interval.Set.ProjIcc
 public import Mathlib.Order.UpperLower.CompleteLattice
 public import Mathlib.Order.UpperLower.Principal
@@ -13,9 +14,12 @@ A standard is an upper set of degrees, and the positive form of a measure at it 
 the standard. Kennedy's `PositiveStandard`s are the degrees above the least, those from the greatest
 and those above a contextual threshold, and Interpretive Economy uses a standard the scale itself
 fixes when there is one. Reading "fixes" as [invariance under every
-automorphism](##UpperSet.IsInvariant), [the invariant standards are the trivial and the endpoint
-ones](##UpperSet.isInvariant_iff_of_exists_orderIso) wherever an automorphism carries any degree
-between the endpoints to any other, so [a contextual standard is admitted exactly on an open
+automorphism](##UpperSet.IsInvariant), which is [the positive form being meaningful on an ordinal
+scale](##UpperSet.isInvariant_iff_invariant_preimage), [the invariant standards are the trivial and
+the endpoint ones](##UpperSet.isInvariant_iff_of_exists_orderIso) wherever an automorphism carries
+any degree between the endpoints to any other, and [only the trivial
+ones](##UpperSet.isInvariant_iff_of_isPointHomogeneous) on a homogeneous scale, where no degree is
+distinguished. So [a contextual standard is admitted exactly on an open
 scale](##Boundedness.admits_contextual). [Only the minimum and the maximum are
 complementary](##PositiveStandard.complementary_iff). A difference function measures on the ray
 above a degree and so takes the minimum standard, at which [the positive form is a
@@ -74,10 +78,38 @@ theorem IsInvariant.apply_mem (hU : IsInvariant U) (f : D ≃o D) {x : D} (hx : 
   rw [← hU f, UpperSet.mem_map]
   simpa using hx
 
+/-- A standard is invariant exactly when the positive form at it is unchanged by every order
+automorphism of the degrees, a meaningful statement on an ordinal scale. -/
+theorem isInvariant_iff_invariant_preimage :
+    IsInvariant U ↔ MeasurementTheory.Invariant (Set.univ : Set (D ≃o D))
+      fun μ : D → D ↦ μ ⁻¹' (U : Set D) := by
+  refine ⟨fun hU g _ μ ↦ Set.ext fun x ↦ ?_, fun h f ↦ SetLike.ext fun x ↦ ?_⟩
+  · exact ⟨fun hx ↦ by simpa using hU.apply_mem g.symm hx, fun hx ↦ hU.apply_mem g hx⟩
+  · have := Set.ext_iff.1 (h f.symm (Set.mem_univ _) id) x
+    rw [UpperSet.mem_map]
+    exact this
+
 end Invariant
 
 section Homogeneous
 variable {D : Type*} [LinearOrder D] {U : UpperSet D}
+
+/-- On a homogeneous scale, where an automorphism carries any degree to any other, no degree is
+distinguished and only the trivial standards are invariant. -/
+theorem isInvariant_iff_of_isPointHomogeneous
+    (h : MeasurementTheory.IsPointHomogeneous (Set.univ : Set (D ≃o D)) 1) :
+    IsInvariant U ↔ U = ⊥ ∨ U = ⊤ := by
+  refine ⟨fun hU ↦ ?_, ?_⟩
+  · by_cases hne : ∃ x, x ∈ U
+    · obtain ⟨x, hx⟩ := hne
+      refine .inl (SetLike.ext fun y ↦ ?_)
+      obtain ⟨f, -, hf⟩ := h (fun _ ↦ x) (fun _ ↦ y) (Subsingleton.strictMono _)
+        (Subsingleton.strictMono _)
+      simpa [← hf 0] using hU.apply_mem f hx
+    · push Not at hne
+      exact .inr (SetLike.ext fun y ↦ by simpa using hne y)
+  · rintro (rfl | rfl)
+    exacts [isInvariant_bot, isInvariant_top]
 
 /-- Where an automorphism carries any degree strictly between the endpoints to any other, the
 invariant standards are the trivial ones and the endpoint ones. -/
