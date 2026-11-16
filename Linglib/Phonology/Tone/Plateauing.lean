@@ -80,6 +80,8 @@ for an unspecified TBU (Jardine's Ø). -/
 inductive AssociationState | H | O
   deriving DecidableEq, Repr
 
+instance : Fintype AssociationState := ⟨{.H, .O}, fun a ↦ by cases a <;> decide⟩
+
 /-! ### The output representation
 
 The string reads back into two-tier representations, and plateauing on representations is

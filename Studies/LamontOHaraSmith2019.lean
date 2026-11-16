@@ -12,27 +12,40 @@ public import Linglib.Phonology.Tone.Plateauing
 /-!
 # Lamont, O'Hara and Smith (2019): Weakly deterministic transformations are subregular
 
-Unbounded tonal plateauing turns every toneless unit between two high tones into a high tone, so
-the fate of a target depends on material unboundedly far away on both sides. Heinz and Lai, and
-Jardine after them, conjectured that such maps are not weakly deterministic. Lamont, O'Hara and
-Smith show that plateauing is weakly deterministic in Heinz and Lai's sense (Figure 1). A
-left-to-right pass that preserves length and alphabet rewrites every HLH as HHH, so that HLH
-never survives it, and then writes HLH as a code for an H with another H to its left; a
-right-to-left pass decodes it.
-
-## Main definitions
-
-* `markLeft`, `resolveRight`: the transducers A and B of Figure 1
+Unbounded tonal plateauing makes every toneless unit between two high tones high, so a target
+depends on material unboundedly far away on both sides, and Heinz and Lai conjectured that such
+maps are not weakly deterministic. Lamont, O'Hara and Smith show that [plateauing
+is](##utp_isWeaklyDeterministic): a left-to-right pass that preserves length and alphabet leaves
+HLH as a code for an H with another H to its left, and a right-to-left pass decodes it. Their two
+variants, [first-last plateauing](##firstLast_isUnboundedCircumambient) and [double-edged
+spread](##doubleEdged_isUnboundedCircumambient), depend on both sides in the same way, and under
+the same definition [the first](##firstLast_isWeaklyDeterministic) and [the
+second](##doubleEdged_isWeaklyDeterministic) are weakly deterministic too.
 
 ## Implementation notes
 
 * A toneless unit is `Tone.AssociationState.O`, the paper's L. Since
-  `SubsequentialTransducer.runRight` reverses the run, B's blocks are written reversed. The figure
-  gives B no H transition from `q4`; A never writes an H there, and B keeps it.
-* The proof splits a word into Ls, an H, blocks `Lʲ H`, and Ls. A writes each block as H, HH or
-  `Lʲ⁻² HLH`, and B, reading right to left, holds back at most one H.
-* Not formalized: §2, where first-last plateauing and double-edged spread are shown regular but
-  not weakly deterministic by a counting argument, and the characterization of Theorem 3.1.
+  `SubsequentialTransducer.runRight` reverses the run, the blocks of a right-to-left pass are
+  written reversed. The figure gives B no H transition from `q4`; A never writes an H there, and B
+  keeps it.
+* The proof for plateauing splits a word into Ls, an H, blocks `Lʲ H`, and Ls. A writes each block
+  as H, HH or `Lʲ⁻² HLH`, and B, reading right to left, holds back at most one H.
+* The two variants are `Tone.Surfacing` processes, stated by which units surface H, where the
+  paper gives non-deterministic transducers.
+* The paper presents the two variants as regular maps outside the weakly deterministic class, on
+  the ground that a first pass must leave its markup within a bounded window of the edge it
+  describes. `IsWeaklyDeterministic` asks of the first pass only that it be left-subsequential
+  and not lengthen its input, over the same alphabet, which a pass that writes the first unit
+  last meets (`IsRightSubsequential.isWeaklyDeterministic_comp_rotate`).
+* For double-edged spread the first unit need not be kept, since it surfaces H exactly when the
+  word has an H; the first pass ends the word with that fact instead.
+
+## TODO
+
+* Whether the weakly deterministic maps are a proper subclass of the regular ones is not settled
+  here: the file has no regular map proved outside `IsWeaklyDeterministic`.
+* The characterization of the weakly deterministic unbounded circumambient maps by banned
+  substrings (the paper's last section) is not formalized.
 
 ## References
 
@@ -45,7 +58,7 @@ right-to-left pass decodes it.
 
 namespace LamontOHaraSmith2019
 
-open Tone List
+open Tone List Subregular
 
 /-! ### The transducers -/
 
@@ -337,7 +350,7 @@ private theorem utp_map_blocks (a : ℕ) (js : List ℕ) (t : ℕ) :
     rw [hm, append_assoc, singleton_append, utp.map_plateau]
     simp [replicate_succ]
 
-/-- B after A computes unbounded tonal plateauing (Figure 1). -/
+-- B after A computes unbounded tonal plateauing (Figure 1).
 theorem utp_map_eq_resolve_mark (w : List AssociationState) :
     utp.map w = resolveRight.runRight (markLeft.run w) := by
   rcases decomposition w with ⟨a, rfl⟩ | ⟨a, js, t, rfl⟩
@@ -348,7 +361,6 @@ theorem utp_map_eq_resolve_mark (w : List AssociationState) :
       (resolveRight_replicate a).1.2, resolveRight_finalOutput, resolveFinal]
   · rw [resolve_mark, utp_map_blocks]
 
-/-- A preserves length. -/
 theorem length_markLeft_run (w : List AssociationState) : (markLeft.run w).length = w.length := by
   rcases decomposition w with ⟨a, rfl⟩ | ⟨a, js, t, rfl⟩
   · simp [SubsequentialTransducer.run, SubsequentialTransducer.runFrom,
@@ -360,5 +372,378 @@ theorem utp_isWeaklyDeterministic : IsWeaklyDeterministic utp.map :=
   ⟨markLeft.run, resolveRight.runRight, markLeft.isLeftSubsequential,
     fun w ↦ (length_markLeft_run w).le, resolveRight.isRightSubsequential,
     funext fun w ↦ (utp_map_eq_resolve_mark w).symm⟩
+
+/-! ### First-last plateauing -/
+
+/-- In first-last plateauing a unit surfaces H when it is H, or when the first and the last unit
+of the word are both H. -/
+def firstLast : Surfacing AssociationState where
+  hi := .H
+  lo := .O
+  Surfaces w i := w[i]? = some .H ∨ i < w.length ∧ w.head? = some .H ∧ w.getLast? = some .H
+  hi_ne_lo := by decide
+  lt_length h := h.elim (fun h ↦ (List.getElem?_eq_some_iff.mp h).1) (·.1)
+  surfaces_of_hi := .inl
+  decSurfaces _ _ := inferInstanceAs (Decidable (_ ∨ _))
+
+example : firstLast.map [.H, .O, .O, .O, .H] = replicate 5 .H ∧
+    firstLast.map [.H, .O, .O, .H, .O] = [.H, .O, .O, .H, .O] := by
+  decide
+
+theorem firstLast_map (w : List AssociationState) :
+    firstLast.map w
+      = if w.head? = some .H ∧ w.getLast? = some .H then replicate w.length .H else w := by
+  refine ext_getElem? fun i ↦ ?_
+  split_ifs with h <;> rw [Surfacing.map_getElem?]
+  · rcases lt_or_ge i w.length with hi | hi
+    · simp [firstLast, hi, h]
+    · simp [hi.not_gt]
+  · rcases h' : w[i]? with _ | a
+    · simp
+    · cases a <;> simp [firstLast, h, h']
+
+/-- First-last plateauing is unbounded circumambient: a unit between two edge Hs surfaces H, and
+making either edge toneless, however far away it is, leaves the unit toneless. -/
+theorem firstLast_isUnboundedCircumambient : IsUnboundedCircumambient firstLast.map :=
+  firstLast.isUnboundedCircumambient_of_flanks (xOn := .H) (yOn := .H) (xOff := .O) (yOff := .O)
+    (n := fun d ↦ 2 * d + 2) (t := fun d ↦ d + 1) (fun d ↦ by omega) (fun d ↦ by omega)
+    (fun d ↦ .inr ⟨by rw [length_flankWord]; omega, rfl, getLast?_flankWord⟩)
+    (fun d h ↦ by
+      rcases h with h | ⟨-, h, -⟩
+      · rw [getElem?_flankWord_mid (by omega) (by omega)] at h
+        simp [firstLast] at h
+      · simp at h)
+    (fun d h ↦ by
+      rcases h with h | ⟨-, -, h⟩
+      · rw [getElem?_flankWord_mid (by omega) (by omega)] at h
+        simp [firstLast] at h
+      · simp at h)
+
+/-- Reading right to left after the first unit has been moved to the end, the second pass starts
+before the moved unit, is `low` after a moved L, `high` after a moved H, `faithful` after a moved
+H and a final L, and `plateau` after a moved H and a final H. -/
+inductive PlateauState
+  | start | low | high | faithful | plateau
+  deriving DecidableEq, Repr, Fintype
+
+/-- The transitions of the second pass. -/
+@[simp] def plateauStep : PlateauState → AssociationState → PlateauState
+  | .start, .H => .high | .start, .O => .low
+  | .low, _ => .low
+  | .high, .H => .plateau | .high, .O => .faithful
+  | .faithful, _ => .faithful
+  | .plateau, _ => .plateau
+
+/-- The second pass copies, except that it writes nothing for the moved unit and writes H for
+every unit once the moved unit and the final unit are both H. -/
+@[simp] def plateauOutput : PlateauState → AssociationState → List AssociationState
+  | .start, _ => []
+  | .low, a => [a]
+  | .high, a => [a]
+  | .faithful, a => [a]
+  | .plateau, _ => [.H]
+
+/-- At the end of the word the second pass writes the moved unit back. -/
+@[simp] def plateauFinal : PlateauState → List AssociationState
+  | .start => []
+  | .low => [.O]
+  | _ => [.H]
+
+/-- The right-to-left pass that reads the moved first unit, then the last unit, and plateaus when
+both are H, as run by `runRight`. -/
+@[simps]
+def plateauRight : SubsequentialTransducer PlateauState AssociationState AssociationState where
+  start := .start
+  step := plateauStep
+  output := plateauOutput
+  finalOutput := plateauFinal
+
+private theorem plateauRight_runFrom_low (w : List AssociationState) :
+    plateauRight.runFrom .low w = w ++ [.O] := by
+  induction w with
+  | nil => rfl
+  | cons a w ih => simp [ih]
+
+private theorem plateauRight_runFrom_faithful (w : List AssociationState) :
+    plateauRight.runFrom .faithful w = w ++ [.H] := by
+  induction w with
+  | nil => rfl
+  | cons a w ih => simp [ih]
+
+private theorem plateauRight_runFrom_plateau (w : List AssociationState) :
+    plateauRight.runFrom .plateau w = replicate (w.length + 1) .H := by
+  induction w with
+  | nil => rfl
+  | cons a w ih => simp [ih, replicate_succ]
+
+theorem firstLast_map_eq_plateau_rotate (w : List AssociationState) :
+    firstLast.map w = plateauRight.runRight (w.rotate 1) := by
+  rw [firstLast_map]
+  rcases w with _ | ⟨a, w⟩
+  · decide
+  · rw [rotate_cons_succ, rotate_zero]
+    rcases eq_nil_or_concat w with rfl | ⟨u, c, rfl⟩
+    · cases a <;> decide
+    · have hl : (a :: (u ++ [c])).getLast? = some c := by rw [← cons_append, getLast?_concat]
+      cases a <;> cases c <;>
+        simp [hl, SubsequentialTransducer.runRight, SubsequentialTransducer.run,
+          plateauRight_runFrom_low, plateauRight_runFrom_faithful, plateauRight_runFrom_plateau,
+          ← replicate_succ]
+
+/-- First-last plateauing is weakly deterministic in Heinz and Lai's sense: a left-to-right pass
+moves the first unit to the end of the word, where the right-to-left pass reads it first. -/
+theorem firstLast_isWeaklyDeterministic : IsWeaklyDeterministic firstLast.map :=
+  (funext firstLast_map_eq_plateau_rotate :
+      firstLast.map = plateauRight.runRight ∘ fun w ↦ w.rotate 1) ▸
+    plateauRight.isRightSubsequential.isWeaklyDeterministic_comp_rotate
+
+/-! ### Double-edged spread -/
+
+/-- In double-edged spread a unit surfaces H when it is H, or when the word has an H and none
+before the unit or none after it: the first H spreads to the left edge and the last to the right
+edge. -/
+def doubleEdged : Surfacing AssociationState where
+  hi := .H
+  lo := .O
+  Surfaces w i :=
+    w[i]? = some .H ∨ i < w.length ∧ .H ∈ w ∧ (.H ∉ w.take i ∨ .H ∉ w.drop (i + 1))
+  hi_ne_lo := by decide
+  lt_length h := h.elim (fun h ↦ (List.getElem?_eq_some_iff.mp h).1) (·.1)
+  surfaces_of_hi := .inl
+  decSurfaces _ _ := inferInstanceAs (Decidable (_ ∨ _))
+
+example : doubleEdged.map [.O, .O, .O, .H, .O, .O, .H, .O, .O, .H, .O, .O, .O]
+    = [.H, .H, .H, .H, .O, .O, .H, .O, .O, .H, .H, .H, .H] ∧
+    doubleEdged.map [.O, .O, .O, .O] = [.O, .O, .O, .O] := by
+  decide
+
+/-- Double-edged spread is unbounded circumambient: a toneless unit before the only H of a word
+surfaces H, and an H added far to its left, or the H far to its right removed, leaves it
+toneless. -/
+theorem doubleEdged_isUnboundedCircumambient : IsUnboundedCircumambient doubleEdged.map :=
+  doubleEdged.isUnboundedCircumambient_of_flanks (xOn := .O) (yOn := .H) (xOff := .H) (yOff := .O)
+    (n := fun d ↦ 2 * d + 2) (t := fun d ↦ d + 1) (fun d ↦ by omega) (fun d ↦ by omega)
+    (fun d ↦ .inr ⟨by rw [length_flankWord]; omega, by simp [flankWord],
+      .inl fun h ↦ absurd ((mem_take_flankWord_iff (by decide) (by omega)).mp h) (by decide)⟩)
+    (fun d h ↦ by
+      rcases h with h | ⟨-, -, h | h⟩
+      · rw [getElem?_flankWord_mid (by omega) (by omega)] at h
+        simp [doubleEdged] at h
+      · exact h ((mem_take_flankWord_iff (by decide) (by omega)).mpr rfl)
+      · exact h ((mem_drop_flankWord_iff (by decide) (by omega)).mpr rfl))
+    (fun d h ↦ by
+      rcases h with h | ⟨-, h, -⟩
+      · rw [getElem?_flankWord_mid (by omega) (by omega)] at h
+        simp [doubleEdged] at h
+      · simp [doubleEdged, flankWord] at h)
+
+/-- The first H of a word spreads to its left edge; a word without an H becomes all H. -/
+def spreadLeft : List AssociationState → List AssociationState
+  | [] => []
+  | .H :: w => .H :: w
+  | .O :: w => .H :: spreadLeft w
+
+@[simp] theorem length_spreadLeft (w : List AssociationState) :
+    (spreadLeft w).length = w.length := by
+  induction w with
+  | nil => rfl
+  | cons a w ih => cases a <;> simp [spreadLeft, ih]
+
+private theorem getElem?_spreadLeft (w : List AssociationState) (i : ℕ) :
+    (spreadLeft w)[i]? = w[i]?.map fun a ↦ if .H ∈ w.take i then a else .H := by
+  induction w generalizing i with
+  | nil => simp [spreadLeft]
+  | cons a w ih => cases a <;> cases i <;> simp [spreadLeft, ih]
+
+private theorem spreadLeft_append_H (v r : List AssociationState) :
+    spreadLeft (v ++ .H :: r) = spreadLeft v ++ .H :: r := by
+  induction v with
+  | nil => rfl
+  | cons a v ih => cases a <;> simp [spreadLeft, ih]
+
+private theorem mem_drop_spreadLeft {w : List AssociationState} (h : .H ∈ w) (j : ℕ) :
+    .H ∈ (spreadLeft w).drop j ↔ .H ∈ w.drop j := by
+  induction w generalizing j with
+  | nil => simp at h
+  | cons a w ih =>
+    cases a with
+    | H => rfl
+    | O =>
+      have hw : .H ∈ w := by simpa using h
+      cases j with
+      | zero => simp [spreadLeft, hw]
+      | succ j => simpa [spreadLeft] using ih hw j
+
+private theorem getElem?_revConj_spreadLeft (w : List AssociationState) (i : ℕ) :
+    (revConj spreadLeft w)[i]? = w[i]?.map fun a ↦ if .H ∈ w.drop (i + 1) then a else .H := by
+  rcases lt_or_ge i w.length with hi | hi
+  · rw [revConj, getElem?_reverse (by simpa using hi), getElem?_spreadLeft, length_spreadLeft,
+      length_reverse, getElem?_reverse (by omega), take_reverse,
+      show w.length - 1 - (w.length - 1 - i) = i by omega,
+      show w.length - (w.length - 1 - i) = i + 1 by omega]
+    simp
+  · rw [getElem?_eq_none (by simpa [revConj] using hi), getElem?_eq_none hi]
+    rfl
+
+theorem doubleEdged_map (w : List AssociationState) :
+    doubleEdged.map w = if .H ∈ w then revConj spreadLeft (spreadLeft w) else w := by
+  refine ext_getElem? fun i ↦ ?_
+  split_ifs with h <;> rw [Surfacing.map_getElem?]
+  · simp only [getElem?_revConj_spreadLeft, getElem?_spreadLeft, mem_drop_spreadLeft h]
+    rcases h' : w[i]? with _ | a
+    · simp
+    · obtain ⟨hi, ha⟩ := List.getElem?_eq_some_iff.mp h'
+      cases a <;> by_cases h₁ : .H ∈ w.take i <;> by_cases h₂ : .H ∈ w.drop (i + 1) <;>
+        simp [doubleEdged, h, hi, ha, h₁, h₂]
+  · rcases h' : w[i]? with _ | a
+    · simp
+    · cases a
+      · exact absurd (mem_of_getElem? h') h
+      · simp [doubleEdged, h, h']
+
+/-- The first pass starts before the first unit, is `toneless` having read only Ls, and `toned`
+after an H. -/
+inductive EdgeState
+  | start | toneless | toned
+  deriving DecidableEq, Repr, Fintype
+
+/-- The transitions of the first pass. -/
+@[simp] def edgeStep : EdgeState → AssociationState → EdgeState
+  | .start, .H => .toned | .start, .O => .toneless
+  | .toneless, .H => .toned | .toneless, .O => .toneless
+  | .toned, _ => .toned
+
+/-- The first pass writes nothing for the first unit, H for every other unit up to the first H,
+and copies the rest. -/
+@[simp] def edgeOutput : EdgeState → AssociationState → List AssociationState
+  | .start, _ => []
+  | .toneless, _ => [.H]
+  | .toned, a => [a]
+
+/-- At the end of the word the first pass writes whether the word had an H. -/
+@[simp] def edgeFinal : EdgeState → List AssociationState
+  | .start => []
+  | .toneless => [.O]
+  | .toned => [.H]
+
+/-- The left-to-right pass that spreads the first H leftward, drops the first unit, and ends the
+word with an H exactly when it had one. -/
+@[simps]
+def spreadEdge : SubsequentialTransducer EdgeState AssociationState AssociationState where
+  start := .start
+  step := edgeStep
+  output := edgeOutput
+  finalOutput := edgeFinal
+
+private theorem spreadEdge_runFrom_toned (w : List AssociationState) :
+    spreadEdge.runFrom .toned w = w ++ [.H] := by
+  induction w with
+  | nil => rfl
+  | cons a w ih => simp [ih]
+
+private theorem spreadEdge_runFrom_toneless (w : List AssociationState) :
+    spreadEdge.runFrom .toneless w = spreadLeft w ++ [if .H ∈ w then .H else .O] := by
+  induction w with
+  | nil => rfl
+  | cons a w ih => cases a <;> simp [spreadLeft, ih, spreadEdge_runFrom_toned]
+
+private theorem spreadEdge_run_cons (a : AssociationState) (w : List AssociationState) :
+    spreadEdge.run (a :: w)
+      = (spreadLeft (a :: w)).tail ++ [if .H ∈ a :: w then .H else .O] := by
+  cases a <;>
+    simp [SubsequentialTransducer.run, spreadLeft, spreadEdge_runFrom_toned,
+      spreadEdge_runFrom_toneless]
+
+theorem length_spreadEdge_run (w : List AssociationState) :
+    (spreadEdge.run w).length = w.length := by
+  rcases w with _ | ⟨a, w⟩
+  · rfl
+  · simp [spreadEdge_run_cons]
+
+/-- Reading right to left, the second pass starts before the last unit, is `toneless` when that
+unit says the word has no H, is `spread` up to the last H of the word, and `copy` after it. -/
+inductive CloseState
+  | start | toneless | spread | copy
+  deriving DecidableEq, Repr, Fintype
+
+/-- The transitions of the second pass. -/
+@[simp] def closeStep : CloseState → AssociationState → CloseState
+  | .start, .H => .spread | .start, .O => .toneless
+  | .toneless, _ => .toneless
+  | .spread, .H => .copy | .spread, .O => .spread
+  | .copy, _ => .copy
+
+/-- The second pass writes nothing for the last unit, L throughout a word without an H, and
+otherwise H up to the last H of the word and a copy after it. -/
+@[simp] def closeOutput : CloseState → AssociationState → List AssociationState
+  | .start, _ => []
+  | .toneless, _ => [.O]
+  | .spread, _ => [.H]
+  | .copy, a => [a]
+
+/-- At the end of the word the second pass writes the dropped first unit back. -/
+@[simp] def closeFinal : CloseState → List AssociationState
+  | .start => []
+  | .toneless => [.O]
+  | _ => [.H]
+
+/-- The right-to-left pass that spreads the last H rightward and restores the first unit, as run
+by `runRight`. -/
+@[simps]
+def closeRight : SubsequentialTransducer CloseState AssociationState AssociationState where
+  start := .start
+  step := closeStep
+  output := closeOutput
+  finalOutput := closeFinal
+
+private theorem closeRight_runFrom_toneless (w : List AssociationState) :
+    closeRight.runFrom .toneless w = replicate (w.length + 1) .O := by
+  induction w with
+  | nil => rfl
+  | cons a w ih => simp [ih, replicate_succ]
+
+private theorem closeRight_runFrom_copy (w : List AssociationState) :
+    closeRight.runFrom .copy w = w ++ [.H] := by
+  induction w with
+  | nil => rfl
+  | cons a w ih => simp [ih]
+
+private theorem closeRight_runFrom_spread (w : List AssociationState) :
+    closeRight.runFrom .spread w = spreadLeft w ++ [.H] := by
+  induction w with
+  | nil => rfl
+  | cons a w ih => cases a <;> simp [spreadLeft, ih, closeRight_runFrom_copy]
+
+private theorem closeRight_runRight_concat_O (w : List AssociationState) :
+    closeRight.runRight (w ++ [.O]) = replicate (w.length + 1) .O := by
+  simp [SubsequentialTransducer.runRight, SubsequentialTransducer.run,
+    closeRight_runFrom_toneless]
+
+private theorem closeRight_runRight_concat_H (w : List AssociationState) :
+    closeRight.runRight (w ++ [.H]) = .H :: revConj spreadLeft w := by
+  simp [SubsequentialTransducer.runRight, SubsequentialTransducer.run,
+    closeRight_runFrom_spread, revConj]
+
+theorem doubleEdged_map_eq_close_spread (w : List AssociationState) :
+    doubleEdged.map w = closeRight.runRight (spreadEdge.run w) := by
+  rcases w with _ | ⟨a, w⟩
+  · decide
+  · rw [doubleEdged_map, spreadEdge_run_cons]
+    split_ifs with h
+    · rw [closeRight_runRight_concat_H]
+      cases a <;> simp [spreadLeft, revConj, spreadLeft_append_H _ []]
+    · rw [closeRight_runRight_concat_O, length_tail, length_spreadLeft]
+      exact eq_replicate_iff.mpr ⟨rfl, fun b hb ↦ by
+        cases b
+        · exact absurd hb h
+        · rfl⟩
+
+/-- Double-edged spread is weakly deterministic in Heinz and Lai's sense: a left-to-right pass
+spreads the first H and ends the word with a record of whether it had one, and the right-to-left
+pass spreads the last H. -/
+theorem doubleEdged_isWeaklyDeterministic : IsWeaklyDeterministic doubleEdged.map :=
+  ⟨spreadEdge.run, closeRight.runRight, spreadEdge.isLeftSubsequential,
+    fun w ↦ (length_spreadEdge_run w).le, closeRight.isRightSubsequential,
+    funext fun w ↦ (doubleEdged_map_eq_close_spread w).symm⟩
 
 end LamontOHaraSmith2019

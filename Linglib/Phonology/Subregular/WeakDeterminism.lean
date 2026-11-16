@@ -16,7 +16,10 @@ The length bound keeps the first pass from marking up its output: [every regular
 into the two scans](##isBimachineComputable_iff_exists_comp), but through new symbols in between,
 and over an alphabet of two or more letters new symbols can be coded as longer strings.
 Subsequential functions that do not lengthen their input are weakly deterministic, and [a weakly
-deterministic function is regular](##IsWeaklyDeterministic.isBimachineComputable).
+deterministic function is regular](##IsWeaklyDeterministic.isBimachineComputable). The bound does
+not keep the first pass from moving symbols: [a right-subsequential function after the pass that
+writes the first symbol last](##IsRightSubsequential.isWeaklyDeterministic_comp_rotate) is weakly
+deterministic, so the second pass may begin with what stood at the far edge.
 
 ## Implementation notes
 
@@ -50,6 +53,15 @@ the identity. -/
 theorem IsLeftSubsequential.isWeaklyDeterministic (hf : IsLeftSubsequential f)
     (hlen : ∀ x, (f x).length ≤ x.length) : IsWeaklyDeterministic f :=
   ⟨f, id, hf, hlen, isRightSubsequential_id, rfl⟩
+
+/-- A right-subsequential function after the pass that moves the first symbol of a word to its
+end is weakly deterministic. -/
+theorem IsRightSubsequential.isWeaklyDeterministic_comp_rotate [Finite α] {g : List α → List α}
+    (hg : IsRightSubsequential g) : IsWeaklyDeterministic (g ∘ fun xs ↦ xs.rotate 1) :=
+  have := Fintype.ofFinite α
+  ⟨_, g, funext (SubsequentialTransducer.run_rotate (α := α)) ▸
+    (SubsequentialTransducer.rotate α).isLeftSubsequential,
+    fun xs ↦ (xs.length_rotate 1).le, hg, rfl⟩
 
 /-- A weakly deterministic function is computed by a bimachine. -/
 theorem IsWeaklyDeterministic.isBimachineComputable (hf : IsWeaklyDeterministic f) :
