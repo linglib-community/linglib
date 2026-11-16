@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Composition.Sorts
+public import Linglib.Semantics.Quantification.Continuation
 public import Linglib.Semantics.Quantification.Exceptive
 public import Linglib.Semantics.Quantification.Lindstrom
 public import Studies.BarwiseCooper1981
@@ -120,8 +121,8 @@ def permLift : ∀ ty : Ty Base, Equiv.Perm E →* Equiv.Perm (Ty.Domain E Unit 
     permLift Ty.et π P = P ∘ ⇑π.symm :=
   rfl
 
-@[simp] theorem permLift_det_apply (π : Equiv.Perm E) (Q : Det E) (A B : Set E) :
-    permLift Ty.det π Q A B = Q (π ⁻¹' A) (π ⁻¹' B) :=
+@[simp] theorem permLift_det_apply (π : Equiv.Perm E) (Q : Ty.Domain E Unit Ty.det)
+    (A B : E → Prop) : permLift Ty.det π Q A B = Q (A ∘ ⇑π) (B ∘ ⇑π) :=
   rfl
 
 -- lifting commutes with function application
@@ -167,22 +168,25 @@ theorem isPermutationInvariant_et_iff {P : E → Prop} :
   · exact .inr (funext fun x ↦ eq_false fun hx ↦ hP ⟨x, hx⟩)
 
 theorem isPermutationInvariant_det_iff {Q : Det E} :
-    IsPermutationInvariant Ty.det Q ↔ QuantityInvariant Q :=
-  ⟨fun h π A B ↦ iff_of_eq (congr_fun₂ (h π) A B),
-    fun h π ↦ funext₂ fun A B ↦ propext (h π A B)⟩
+    IsPermutationInvariant Ty.det (fun A ↦ toCont (Q {x | A x})) ↔ QuantityInvariant Q :=
+  ⟨fun h π A B ↦ iff_of_eq (congr_fun₂ (h π) (· ∈ A) (· ∈ B)),
+    fun h π ↦ funext₂ fun A B ↦ propext (h π {x | A x} {x | B x})⟩
 
 -- (25)
-theorem isPermutationInvariant_some : IsPermutationInvariant Ty.det (Det.some : Det E) :=
+theorem isPermutationInvariant_some :
+    IsPermutationInvariant Ty.det fun A ↦ toCont ((Det.some : Det E) {x | A x}) :=
   isPermutationInvariant_det_iff.2
     (by rw [← Lindstrom.someDet_toDet]; exact Lindstrom.Det.realize_quantityInvariant _)
 
 -- (35), (34a)
-theorem isPermutationInvariant_every : IsPermutationInvariant Ty.det (every : Det E) :=
+theorem isPermutationInvariant_every :
+    IsPermutationInvariant Ty.det fun A ↦ toCont ((every : Det E) {x | A x}) :=
   isPermutationInvariant_det_iff.2
     (by rw [← Lindstrom.everyDet_toDet]; exact Lindstrom.Det.realize_quantityInvariant _)
 
 -- (11a)
-theorem isPermutationInvariant_no : IsPermutationInvariant Ty.det (no : Det E) :=
+theorem isPermutationInvariant_no :
+    IsPermutationInvariant Ty.det fun A ↦ toCont ((no : Det E) {x | A x}) :=
   isPermutationInvariant_det_iff.2
     (by rw [← Lindstrom.noDet_toDet]; exact Lindstrom.Det.realize_quantityInvariant _)
 
@@ -190,19 +194,21 @@ theorem isPermutationInvariant_no : IsPermutationInvariant Ty.det (no : Det E) :
 exception `f` is the least set whose subtraction from the restrictor `g` makes the
 quantification `D _ h` true. -/
 def but : Ty.Domain E Unit (Ty.et ⇒ Ty.et ⇒ Ty.det ⇒ Ty.et ⇒ .t) :=
-  fun f g D h ↦ IsExceptionSet D g f h
+  fun f g D h ↦ IsExceptionSet (fun A ↦ toCont.symm (D (· ∈ A))) {x | g x} {x | f x} {x | h x}
 
 /-- ||but|| is a permutation-invariant element of its type (31), a logical constant, so it is
 not replaced by a variable in the skeletons (32)–(33). -/
 theorem isPermutationInvariant_but :
     IsPermutationInvariant (Ty.et ⇒ Ty.et ⇒ Ty.det ⇒ Ty.et ⇒ .t) (but (E := E)) := by
   intro π
-  funext (f : Set E) (g : Set E) (D : Det E) (h : Set E)
-  show IsExceptionSet (fun A B ↦ D (π.symm ⁻¹' A) (π.symm ⁻¹' B)) (π ⁻¹' g) (π ⁻¹' f) (π ⁻¹' h) =
-    IsExceptionSet D g f h
+  funext f g D h
+  show IsExceptionSet (fun A B ↦ D (· ∈ π.symm ⁻¹' A) (· ∈ π.symm ⁻¹' B)) (π ⁻¹' {x | g x})
+      (π ⁻¹' {x | f x}) (π ⁻¹' {x | h x}) =
+    IsExceptionSet (fun A B ↦ D (· ∈ A) (· ∈ B)) {x | g x} {x | f x} {x | h x}
   simp only [IsExceptionSet, IsLeast, lowerBounds, Set.mem_ofPred_eq]
   rw [π.injective.preimage_surjective.forall]
   simp only [← Set.preimage_sdiff, π.symm_preimage_preimage, π.preimage_subset]
+  rfl
 
 /-! ### Logical skeletons and L-analyticity (§3.2) -/
 
@@ -241,14 +247,14 @@ end Skeleton
 /-- The skeleton (25) of a *there*-sentence applies the determiner to a property variable and
 to *there*, which denotes the domain (23c). -/
 def thereSkeleton (Q : Det E) : Skeleton E fun _ : Unit ↦ Ty.et :=
-  ⟨fun g ↦ Q (g ()) Set.univ⟩
+  ⟨fun g ↦ Q {x | g () x} Set.univ⟩
 
 /-- With a conservative positive strong determiner the *there*-skeleton is an L-tautology
 (30), [barwise-cooper-1981]'s consequence that the domain belongs to every strong
 quantifier. -/
 theorem thereSkeleton_isLTautology {Q : Det E} (hc : Conservative Q) (hs : PositiveStrong Q) :
     (thereSkeleton Q).IsLTautology :=
-  fun g ↦ BarwiseCooper1981.there_of_positiveStrong hc hs (g ())
+  fun g ↦ BarwiseCooper1981.there_of_positiveStrong hc hs _
 
 -- (25)
 theorem thereSkeleton_some_not_isLAnalytic (a : E) :
@@ -262,9 +268,9 @@ theorem thereSkeleton_some_not_isLAnalytic (a : E) :
 theorem thereSkeleton_atLeast_two_not_isLAnalytic :
     ¬ (thereSkeleton (atLeast 2 : Det Bool)).IsLAnalytic := by
   rintro (h | h)
-  · have ht : (atLeast 2 : Det Bool) ∅ Set.univ := h fun _ ↦ (∅ : Set Bool)
+  · have ht : (atLeast 2 : Det Bool) ∅ Set.univ := h fun _ _ ↦ False
     exact absurd ht (by decide)
-  · refine h (fun _ ↦ Set.univ) ?_
+  · refine h (fun _ _ ↦ True) ?_
     show (atLeast 2 : Det Bool) Set.univ Set.univ
     decide
 
@@ -274,7 +280,7 @@ theorem thereSkeleton_atLeast_two_not_isLAnalytic :
 and scope variables around the logical determiner, with the exception set nonempty as the
 paper's footnote requires. -/
 def exceptiveSkeleton (Q : Det E) : Skeleton E fun _ : Fin 3 ↦ Ty.et :=
-  ⟨fun g ↦ (∃ x, g 1 x) ∧ but (g 1) (g 0) Q (g 2)⟩
+  ⟨fun g ↦ (∃ x, g 1 x) ∧ but (g 1) (g 0) (fun A ↦ toCont (Q {x | A x})) (g 2)⟩
 
 -- (33)
 theorem exceptiveSkeleton_isLContradiction {Q : Det E} (h : RestrictorMonotone Q) :
@@ -308,7 +314,7 @@ theorem exceptiveSkeleton_most_not_isLAnalytic :
 /-- The skeleton (35) of *every woman is a woman*, with distinct variables for the two
 occurrences. -/
 def everyIsSkeleton (E : Type) : Skeleton E fun _ : Fin 2 ↦ Ty.et :=
-  ⟨fun g ↦ every (g 0) (g 1)⟩
+  ⟨fun g ↦ every {x | g 0 x} {x | g 1 x}⟩
 
 theorem everyIsSkeleton_not_isLAnalytic (a : E) : ¬ (everyIsSkeleton E).IsLAnalytic := by
   rintro (h | h)
