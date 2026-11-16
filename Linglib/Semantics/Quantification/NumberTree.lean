@@ -991,7 +991,8 @@ theorem toDet_all_iff {A B : Set α} : NumberTree.all.toDet A B ↔ A ⊆ B := b
 /-- The determiner denotation of a tree depends on whether an individual is in its scope only if
 the individual is in its restrictor and the tree is not constant on the restrictor's row. -/
 theorem dependsOn_toDet_compl_singleton_iff (A : Set α) (e : α) :
-    DependsOn (q.toDet A) {e}ᶜ ↔ (e ∈ A → q.ConstantOnRow A.ncard) := by
+    Set.DependsOn (q.toDet A) {e}ᶜ ↔ (e ∈ A → q.ConstantOnRow A.ncard) := by
+  rw [Set.dependsOn_iff_forall_mem]
   refine ⟨fun hdep hA ↦ by_contra fun hc ↦ ?_, fun h D D' hD ↦ propext ?_⟩
   · obtain ⟨a, b, hab, hq⟩ := not_constantOnRow_iff.1 hc
     obtain ⟨S, hS, hSb⟩ := Set.exists_subset_card_eq (s := A \ {e}) (n := b)
@@ -1002,8 +1003,8 @@ theorem dependsOn_toDet_compl_singleton_iff (A : Set α) (e : α) :
     have h₂ : (A ∩ insert e S).ncard = b + 1 := by
       rw [Set.inter_eq_right.2 (Set.insert_subset hA fun _ h ↦ (hS h).1),
         Set.ncard_insert_of_notMem heS, hSb]
-    have hagree : ∀ i ∈ ({e}ᶜ : Set α), (i ∈ S) = (i ∈ insert e S) :=
-      fun i hi ↦ propext (or_iff_right hi).symm
+    have hagree : ∀ i ∈ ({e}ᶜ : Set α), i ∈ S ↔ i ∈ insert e S :=
+      fun i hi ↦ (or_iff_right hi).symm
     have e₁ : q.toDet A S ↔ q (a + 1) b := by
       rw [toDet_iff_of_ncard rfl h₁, ← hab, show a + b + 1 - b = a + 1 by omega]
     have e₂ : q.toDet A (insert e S) ↔ q a (b + 1) := by
@@ -1014,7 +1015,7 @@ theorem dependsOn_toDet_compl_singleton_iff (A : Set α) (e : α) :
       have := Set.ncard_inter_add_ncard_sdiff_eq_ncard A D
       have := Set.ncard_inter_add_ncard_sdiff_eq_ncard A D'
       exact h hA _ _ _ _ (by omega) (by omega)
-    · have hs : ∀ P : Prop → Prop, {x | x ∈ A ∧ P (D x)} = {x | x ∈ A ∧ P (D' x)} := fun P ↦
+    · have hs : ∀ P : Prop → Prop, {x | x ∈ A ∧ P (x ∈ D)} = {x | x ∈ A ∧ P (x ∈ D')} := fun P ↦
         Set.ext fun x ↦ by
           by_cases hx : x = e
           · subst hx; simp [hA]
@@ -1023,7 +1024,8 @@ theorem dependsOn_toDet_compl_singleton_iff (A : Set α) (e : α) :
       exact Iff.of_eq (congrArg₂ q (congrArg Set.ncard (hs Not)) (congrArg Set.ncard (hs id)))
 
 theorem exists_not_dependsOn_toDet_restrictor_iff (e : α) :
-    (∃ B, ¬ DependsOn (fun A ↦ q.toDet A B) {e}ᶜ) ↔ ¬ q.ConstantBelow (Nat.card α) := by
+    (∃ B, ¬ Set.DependsOn (fun A ↦ q.toDet A B) {e}ᶜ) ↔ ¬ q.ConstantBelow (Nat.card α) := by
+  simp only [Set.dependsOn_iff_forall_mem]
   refine ⟨fun ⟨B, hB⟩ hc ↦ hB fun A A' _ ↦ propext ?_, fun hc ↦ ?_⟩
   · show q.toDet A B ↔ q.toDet A' B
     rw [toDet_apply, toDet_apply]
@@ -1040,8 +1042,8 @@ theorem exists_not_dependsOn_toDet_restrictor_iff (e : α) :
   have heT : e ∉ T := fun h ↦ (hT h).2 rfl
   have heS : e ∉ S := fun h ↦ heT (hST h)
   have hA' : (insert e T).ncard = a + b + 1 := by rw [Set.ncard_insert_of_notMem heT, hTn]
-  have hagree : ∀ i ∈ ({e}ᶜ : Set α), (i ∈ T) = (i ∈ insert e T) :=
-    fun i hi ↦ propext (or_iff_right hi).symm
+  have hagree : ∀ i ∈ ({e}ᶜ : Set α), i ∈ T ↔ i ∈ insert e T :=
+    fun i hi ↦ (or_iff_right hi).symm
   rcases hq with hq | hq
   · refine ⟨S, fun hdep ↦ hq ?_⟩
     have h₁ : (T ∩ S).ncard = b := by rw [Set.inter_eq_right.2 hST, hSb]
