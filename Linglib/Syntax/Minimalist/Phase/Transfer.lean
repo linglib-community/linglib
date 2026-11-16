@@ -13,29 +13,18 @@ public import Linglib.Syntax.Minimalist.Copy.AntiLocality
 
 Transfer seals the domain of a phase head, so that an operation at a later stage cannot inspect it:
 the Phase Impenetrability Condition is the effect of Transfer on the search space. A stage is the
-root of the object built so far, a position of the finished object, and a cut assigns to each stage
-the positions sealed by then. A phase head's domain is its complement, or the whole phase short of
-its root, transferred once the phase is complete or once the next phase head merges; a deleted
-phase head passes its phasehood to the head of its complement. A position reaches its phase level
-when the phase of the lowest phase head whose complement contains it is complete.
-
-## Main definitions
-
-* `Minimalist.Cut`: the positions sealed at each stage.
-* `Minimalist.complementDomain`, `Minimalist.wholePhaseDomain`: transfer domains.
-* `Minimalist.Pic1`, `Minimalist.Pic2`: when a phase head's domain is transferred.
-* `Minimalist.sealed`: the positions the transferred domains seal.
-* `Minimalist.transferSlice`: what a phase head transfers on its own, outside inner domains.
-* `Minimalist.phaseLevel`: the stage at which a position reaches its phase level.
-* `Minimalist.LinkLeaves`: a link of a chain leaves the positions a cut seals.
-
-## Main results
-
-* `Minimalist.isUpperSet_sealed`, `Minimalist.sealed_anti`: sealed sets are closed under dominance
-  and grow as the derivation proceeds.
-* `Minimalist.sealed_pic2_subset_pic1`: the next-phase condition seals less.
-* `Minimalist.escapes_iff`, `Minimalist.crosses_iff`: islands and the condition on chain links are
-  cuts.
+root of the object built so far, a position of the finished object, and a `Cut` assigns to each
+stage the positions `sealed` by then. A phase head's domain is its complement or the whole phase
+short of its root, [the larger of the two](##Minimalist.complementDomain_subset_wholePhaseDomain),
+transferred once the phase is complete (`Pic1`) or once the next phase head merges (`Pic2`); a
+deleted phase head passes its phasehood to the head of its complement. Sealed sets are
+[closed under dominance](##Minimalist.isUpperSet_sealed),
+[grow as the derivation proceeds](##Minimalist.sealed_anti), and
+[shrink with the domain and with a later schedule](##Minimalist.sealed_mono), so that
+[the next-phase condition seals less](##Minimalist.sealed_pic2_subset_pic1). Islands and the
+condition on chain links [are](##Minimalist.escapes_iff) [cuts](##Minimalist.crosses_iff). A
+position reaches its `phaseLevel` when the phase of the lowest phase head whose complement contains
+it is complete.
 
 ## Implementation notes
 
@@ -132,9 +121,24 @@ theorem pic1_of_pic2 (hp : Pic2 hd t Φ h s) : Pic1 hd t Φ h s :=
   let ⟨z, _, hs, hc⟩ := hp
   hs.trans_lt ((parent_covBy_complement z).lt.trans_le hc)
 
+theorem mem_sealed {q : GornAddress} : q ∈ sealed Φ D σ s ↔ ∃ h ∈ Φ, σ Φ h s ∧ q ∈ D h := Iff.rfl
+
+/-- Smaller domains transferred later seal less. -/
+theorem sealed_mono {D' : GornAddress → Set GornAddress} {σ' : Schedule}
+    (hD : ∀ h ∈ Φ, D h ⊆ D' h) (hσ : ∀ h ∈ Φ, σ Φ h s → σ' Φ h s) :
+    sealed Φ D σ s ⊆ sealed Φ D' σ' s :=
+  fun _ ⟨h, hΦ, hs, hq⟩ ↦ ⟨h, hΦ, hσ h hΦ hs, hD h hΦ hq⟩
+
 /-- [chomsky-2001]'s condition seals less than [chomsky-2000]'s. -/
 theorem sealed_pic2_subset_pic1 : sealed Φ D (Pic2 hd t) s ⊆ sealed Φ D (Pic1 hd t) s :=
-  fun _ ⟨h, hΦ, hσ, hq⟩ ↦ ⟨h, hΦ, pic1_of_pic2 hσ, hq⟩
+  sealed_mono (fun _ _ ↦ subset_rfl) fun _ _ ↦ pic1_of_pic2
+
+/-- A phase contains the complement of its head, so transferring it whole seals the head and the
+edge besides. -/
+theorem complementDomain_subset_wholePhaseDomain (hp : projectionAt hd t h ≤ h.parent) :
+    complementDomain hd t ∅ h ⊆ wholePhaseDomain hd t h := fun q hq ↦
+  (hp.trans_lt (parent_covBy_complement h).lt).trans_le
+    (by simpa [complementDomain, transferHead] using hq)
 
 /-! ### What a phase head transfers on its own -/
 
@@ -189,6 +193,13 @@ def LinkLeaves (tok : LexicalItem.Token) (cut : Cut) : Prop :=
 instance (tok : LexicalItem.Token) (cut : Cut) [∀ s, DecidablePred (· ∈ cut s)] :
     Decidable (LinkLeaves hd t tok cut) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+variable {tok : LexicalItem.Token} {cut cut' : Cut} in
+/-- A link that leaves a cut leaves every cut that seals more. -/
+theorem LinkLeaves.mono (h : cut ≤ cut') (hl : LinkLeaves hd t tok cut) :
+    LinkLeaves hd t tok cut' :=
+  let ⟨x, hx, hc⟩ := hl
+  ⟨x, hx, h _ hc⟩
 
 theorem mem_links {tok : LexicalItem.Token} {x : GornAddress × GornAddress} :
     x ∈ links hd t tok ↔ ∃ q ∈ chain t tok, ∃ p ∈ chain t tok, IsLink hd t tok p q ∧
