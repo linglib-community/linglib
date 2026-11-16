@@ -23,8 +23,9 @@ other, Soft Palate is not under Place, and Place is exactly the three oral artic
 Designated articulators are unary terminal features rather than nodes (section 1.2.2), so the
 labiovelar [k͡p] of (4) carries both [labial] and [dorsal] while the labialised [kʷ] carries
 [dorsal] beside [+round], and only the first is a complex segment. Spreading operates on terminal
-features (section 1.2.3), so a rule may spread any subset of a node's features and the tree only
-names the classes. Irish Nasal Place Assimilation spreads the Place class, carrying each oral
+features (section 1.2.3): a rule spreading more than one feature targets the set a node
+exhaustively dominates and spreads each feature on its own tier, so blocking one does not stop
+the rest. Irish Nasal Place Assimilation spreads the Place class, carrying each oral
 articulator's class and leaving the sister Soft Palate alone, and Dorsal Assimilation (44)
 spreads the terminal [dorsal] alone, leaving the target's [back] untouched, where spreading the
 Tongue Body node would carry it, the prediction (45) of a Place-node analysis that the data
