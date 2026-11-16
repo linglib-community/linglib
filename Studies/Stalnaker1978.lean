@@ -412,9 +412,9 @@ end Violations
 -- statement is true in every context, and *Sherlock Holmes does not exist* is true at the
 -- actual world
 theorem judgments :
-    (youAreAFool.diag id .i ↔ Examples.fool.feature? "truthValue" = some "true") ∧
-      (oneMeterLong.IsAPriori id ↔ Examples.meter.feature? "truthValue" = some "true") ∧
-      (holmesDoesNotExist.diag id .i ↔ Examples.holmes.feature? "truthValue" = some "true") :=
+    (youAreAFool.diag id .i ↔ Examples.fool.verdict = some true) ∧
+      (oneMeterLong.IsAPriori id ↔ Examples.meter.verdict = some true) ∧
+      (holmesDoesNotExist.diag id .i ↔ Examples.holmes.verdict = some true) :=
   ⟨iff_of_true (show youAreAFool .i .i by decide) (by decide),
     iff_of_true oneMeterLong_isAPriori.1 (by decide),
     iff_of_true (show holmesDoesNotExist .i .i by decide) (by decide)⟩

@@ -24,9 +24,10 @@ def coin_heads : Datum :=
     glossedTokens := []
     context := "A coin is being flipped but has not yet landed, and nothing else about the situation predetermines how it will land."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("truthValue", "false")] }
+    paperFeatures := [] }
 
 def coin_tails : Datum :=
   { id := "dowty1979_coin_tails"
@@ -37,9 +38,10 @@ def coin_tails : Datum :=
     glossedTokens := []
     context := "A coin is being flipped but has not yet landed, and nothing else about the situation predetermines how it will land."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("truthValue", "false")] }
+    paperFeatures := [] }
 
 def ex28 : Datum :=
   { id := "dowty1979_ex28"
@@ -50,9 +52,10 @@ def ex28 : Datum :=
     glossedTokens := []
     context := "John fell asleep while watching television, so his watching did not extend beyond the time he fell asleep."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("truthValue", "true")] }
+    paperFeatures := [] }
 
 def all : List Datum := [coin_heads, coin_tails, ex28]
 

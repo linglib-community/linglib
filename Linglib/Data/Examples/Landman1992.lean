@@ -24,9 +24,10 @@ def ex3 : Datum :=
     glossedTokens := []
     context := "Mary started drawing a circle and was interrupted before she came even close to having drawn one."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("truthValue", "true")] }
+    paperFeatures := [] }
 
 def ex4 : Datum :=
   { id := "landman1992_ex4"
@@ -37,9 +38,10 @@ def ex4 : Datum :=
     glossedTokens := []
     context := "Mary started drawing a circle and was interrupted before she came even close to having drawn one."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("truthValue", "false")] }
+    paperFeatures := [] }
 
 def ex13 : Datum :=
   { id := "landman1992_ex13"
@@ -50,9 +52,10 @@ def ex13 : Datum :=
     glossedTokens := []
     context := "Mary was halfway across the street when a truck hit her; evaluated at the interval at which the truck is seconds away."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("truthValue", "true")] }
+    paperFeatures := [] }
 
 def ex17_sink : Datum :=
   { id := "landman1992_ex17_sink"
@@ -63,9 +66,10 @@ def ex17_sink : Datum :=
     glossedTokens := []
     context := "Mary gets into the water in France; she is not a very good swimmer; she swims for an hour, and sinks."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("truthValue", "false")] }
+    paperFeatures := [] }
 
 def ex17_miracle : Datum :=
   { id := "landman1992_ex17_miracle"
@@ -76,9 +80,10 @@ def ex17_miracle : Datum :=
     glossedTokens := []
     context := "Mary gets into the water in France; she is not a very good swimmer, but through divine intervention she actually manages to make it across the ocean. Asked after half an hour of swimming."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("truthValue", "true")] }
+    paperFeatures := [] }
 
 def ex18 : Datum :=
   { id := "landman1992_ex18"
@@ -89,9 +94,10 @@ def ex18 : Datum :=
     glossedTokens := []
     context := "A big and busy street with two trucks in two lanes: the first truck hits Mary, and the second drives one truck-length behind the first, so that if the first truck hadn't hit her, the second would have (19)."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("truthValue", "true")] }
+    paperFeatures := [] }
 
 def ex20 : Datum :=
   { id := "landman1992_ex20"
@@ -102,9 +108,10 @@ def ex20 : Datum :=
     glossedTokens := []
     context := "Mary, a person of moderate physical capacities, is battling the Roman army. She manages to kill a couple of soldiers before she gets killed."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("truthValue", "false")] }
+    paperFeatures := [] }
 
 def all : List Datum := [ex3, ex4, ex13, ex17_sink, ex17_miracle, ex18, ex20]
 
