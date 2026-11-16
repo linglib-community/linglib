@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Pragmatics.NeoGricean.Basic
-public import Linglib.Semantics.Alternatives.Sauerland
 public import Linglib.Core.Data.Fintype.Sets
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Prod
@@ -39,9 +38,30 @@ substituted, so one proposition can carry several indices, as *A* does in (51).
 
 namespace Sauerland2004
 
-open NeoGricean Sauerland Set
+open NeoGricean Set
 
 attribute [local instance] Set.decidableSubsetOfFintype Set.decidableSSubsetOfFintype
+
+/-- The scale of disjunction (40). -/
+inductive Connective where
+  | or
+  /-- The operator `L` of (39), which keeps the left disjunct. -/
+  | L
+  /-- The operator `R` of (39), which keeps the right disjunct. -/
+  | R
+  | and
+  deriving DecidableEq, Fintype
+
+/-- The proposition a connective forms from two propositions. -/
+def Connective.apply {W : Type*} : Connective → Set W → Set W → Set W
+  | .or, A, B => A ∪ B
+  | .L, A, _ => A
+  | .R, _, B => B
+  | .and, A, B => A ∩ B
+
+instance {W : Type*} (c : Connective) (A B : Set W) [DecidablePred (· ∈ A)]
+    [DecidablePred (· ∈ B)] : DecidablePred (· ∈ c.apply A B) := by
+  cases c <;> unfold Connective.apply <;> infer_instance
 
 /-- The `i`th atomic sentence, true at the valuations that make it true. -/
 def atom {n : ℕ} (i : Fin n) : Set (Fin n → Bool) := {w | w i}

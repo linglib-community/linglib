@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
-public import Linglib.Semantics.Alternatives.Sauerland
+public import Linglib.Core.Order.SupClosed
 
 /-!
 # Exhaustification and the closure of the alternatives
@@ -15,9 +15,7 @@ alternatives that [include every conjunction of finitely many propositions and a
 them by conjunction and disjunction](##Exhaustification.exhIE_eq_exhMW_of_infClosure_subset) give it
 the minimal worlds over those propositions. Finitely many alternatives
 [closed under conjunction](##Exhaustification.exhMW_eq_exhIE_of_infClosed) are the case where the
-propositions are the alternatives themselves, and [Sauerland's alternatives of a
-sentence](##Exhaustification.exhIE_eval_image_alternatives) the case where they are its elementary
-sentences.
+propositions are the alternatives themselves.
 
 ## Implementation notes
 
@@ -129,12 +127,5 @@ exclusion keeps the minimal worlds over the propositions themselves ([spector-20
 theorem exhIE_latticeClosure (hfin : ALT.Finite) : exhIE (latticeClosure ALT) φ = exhMW ALT φ :=
   exhIE_eq_exhMW_of_infClosure_subset hfin
     (infClosure_min subset_latticeClosure isSublattice_latticeClosure.infClosed) subset_rfl
-
-/-- Innocent exclusion against Sauerland's alternatives of a sentence keeps the minimal worlds
-over its elementary sentences ([spector-2016]). -/
-theorem exhIE_eval_image_alternatives {ι : Type*} (p : ι → Set World) (S : Sauerland.Sentence ι) :
-    exhIE (Sauerland.Sentence.eval p '' S.alternatives) φ = exhMW (p '' S.atoms) φ :=
-  exhIE_eq_exhMW_of_infClosure_subset (S.finite_atoms.image p)
-    (S.infClosure_image_atoms_subset p) (S.eval_image_alternatives_subset p)
 
 end Exhaustification

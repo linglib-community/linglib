@@ -3,6 +3,8 @@ module
 public import Linglib.Semantics.Exhaustification.ConjunctiveDisjunct
 public import Mathlib.Order.WithBot
 public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Set.NAry
+public import Studies.Sauerland2004
 
 /-!
 # Spector (2016): Comparing Exhaustivity Operators
@@ -24,7 +26,7 @@ under conjunction and disjunction always does (`Exhaustification.exhMW_latticeCl
 makes innocent exclusion exclusive too (`exhIE_or_and`). The paper's shortcut for computing
 innocent exclusion over a large alternative set, running the minimal-world operator over the
 elementary propositions instead, holds for the alternatives of [sauerland-2004]
-(`Exhaustification.exhIE_eval_image_alternatives`) and for the closure of the elementary
+(`exhIE_eval_image_alternatives`) and for the closure of the elementary
 propositions under conjunction and disjunction (`Exhaustification.exhIE_latticeClosure`), and is
 illustrated on *either Mary came, or both Peter and Sue did* (`exhMW_or_and_three`,
 `exhIE_alternatives_or_and_three`, `exhIE_or_and_three`).
@@ -38,9 +40,11 @@ world with at least `n` stars, or infinitely many, is minimal (`exhMW_stars`, `e
 The closure of a set of propositions under conjunction and disjunction is mathlib's
 `latticeClosure`, the closure under finite meets and joins. The theorem on the alternatives of
 [sauerland-2004] is proved for any prejacent, not only the sentence whose alternatives they
-are. Independence of the disjuncts is the existence of a world verifying one disjunct alone,
-assumed only where a case needs it. The alternative sets of the illustrations are the paper's,
-without the prejacent, which the substrate's compatible sets carry separately.
+are, and every connective of a sentence may be replaced, `L` and `R` included, which for a
+sentence built from *or* and *and* is the paper's definition. Independence of the disjuncts is
+the existence of a world verifying one disjunct alone, assumed only where a case needs it. The
+alternative sets of the illustrations are the paper's, without the prejacent, which the
+substrate's compatible sets carry separately.
 
 ## References
 
@@ -166,22 +170,106 @@ theorem exhMW_or_and_three (hm : (m \ (p ∪ s)).Nonempty) :
   congr 1
   grind
 
-/-- Innocent exclusion against Sauerland's alternatives of `m ∨ (p ∧ s)` is the minimal-world
-operator over `m`, `p`, `s`. -/
-theorem exhIE_alternatives_or_and_three (hm : (m \ (p ∪ s)).Nonempty) :
-    exhIE (Sauerland.Sentence.eval ![m, p, s] ''
-        (Sauerland.Sentence.conn .or (.atom 0) (.conn .and (.atom 1) (.atom 2))).alternatives)
-      (m ∪ (p ∩ s)) = (m \ (p ∪ s)) ∪ ((p ∩ s) \ m) := by
-  rw [exhIE_eval_image_alternatives, ← exhMW_or_and_three hm]
-  congr 1
-  ext q
-  simp [Sauerland.Sentence.atoms, or_comm, or_left_comm]
-
 /-- Innocent exclusion against every conjunction and disjunction of `m`, `p`, `s` is the
 minimal-world operator over the three. -/
 theorem exhIE_or_and_three (hm : (m \ (p ∪ s)).Nonempty) :
     exhIE (latticeClosure {m, p, s}) (m ∪ (p ∩ s)) = (m \ (p ∪ s)) ∪ ((p ∩ s) \ m) := by
   rw [exhIE_latticeClosure _ _ (by simp), exhMW_or_and_three hm]
+
+/-! ### Sauerland's alternatives -/
+
+open Sauerland2004 (Connective)
+
+/-- A sentence built from elementary sentences by the connectives of the scale of disjunction. -/
+inductive Sentence (ι : Type*) where
+  | atom (i : ι)
+  | conn (c : Connective) (x y : Sentence ι)
+
+namespace Sentence
+
+variable {ι : Type*} (p : ι → Set World)
+
+/-- The elementary sentences occurring in a sentence. -/
+def atoms : Sentence ι → Set ι
+  | atom i => {i}
+  | conn _ x y => x.atoms ∪ y.atoms
+
+/-- The proposition a sentence expresses, given those its elementary sentences express. -/
+def eval : Sentence ι → Set World
+  | atom i => p i
+  | conn c x y => c.apply x.eval y.eval
+
+/-- Definition 6: the alternatives of a sentence replace each of its connectives by a member of
+the scale. -/
+def alternatives : Sentence ι → Set (Sentence ι)
+  | atom i => {atom i}
+  | conn _ x y => ⋃ c, image2 (conn c) x.alternatives y.alternatives
+
+@[simp] theorem alternatives_atom (i : ι) : (atom i).alternatives = {atom i} := rfl
+
+@[simp] theorem mem_alternatives_conn {c : Connective} {x y z : Sentence ι} :
+    z ∈ (conn c x y).alternatives ↔
+      ∃ c', ∃ x' ∈ x.alternatives, ∃ y' ∈ y.alternatives, conn c' x' y' = z := by
+  simp [alternatives]
+
+theorem self_mem_alternatives : ∀ S : Sentence ι, S ∈ S.alternatives
+  | atom _ => rfl
+  | conn c x y =>
+    mem_alternatives_conn.2 ⟨c, x, x.self_mem_alternatives, y, y.self_mem_alternatives, rfl⟩
+
+theorem finite_atoms : ∀ S : Sentence ι, S.atoms.Finite
+  | atom _ => finite_singleton _
+  | conn _ x y => x.finite_atoms.union y.finite_atoms
+
+theorem eval_image_alternatives_subset : ∀ S : Sentence ι,
+    eval p '' S.alternatives ⊆ latticeClosure (p '' S.atoms)
+  | atom i => by simp [atoms, eval]
+  | conn c x y => by
+    rintro _ ⟨z, hz, rfl⟩
+    obtain ⟨c', x', hx', y', hy', rfl⟩ := mem_alternatives_conn.1 hz
+    have hx := latticeClosure_mono (image_mono (subset_union_left (t := y.atoms)))
+      (x.eval_image_alternatives_subset ⟨x', hx', rfl⟩)
+    have hy := latticeClosure_mono (image_mono (subset_union_right (s := x.atoms)))
+      (y.eval_image_alternatives_subset ⟨y', hy', rfl⟩)
+    cases c'
+    exacts [isSublattice_latticeClosure.supClosed hx hy, hx, hy,
+      isSublattice_latticeClosure.infClosed hx hy]
+
+-- Fact 2: keep with `L` or `R` the side holding the conjuncts, and conjoin where both hold some.
+theorem infClosure_image_atoms_subset : ∀ S : Sentence ι,
+    infClosure (p '' S.atoms) ⊆ eval p '' S.alternatives
+  | atom i => by simp [atoms, eval]
+  | conn c x y => by
+    rw [atoms, image_union, infClosure_union]
+    rintro _ ((ha | hb) | ⟨a, ha, b, hb, rfl⟩)
+    · obtain ⟨x', hx', rfl⟩ := x.infClosure_image_atoms_subset ha
+      exact ⟨conn .L x' y,
+        mem_alternatives_conn.2 ⟨_, x', hx', y, y.self_mem_alternatives, rfl⟩, rfl⟩
+    · obtain ⟨y', hy', rfl⟩ := y.infClosure_image_atoms_subset hb
+      exact ⟨conn .R x y',
+        mem_alternatives_conn.2 ⟨_, x, x.self_mem_alternatives, y', hy', rfl⟩, rfl⟩
+    · obtain ⟨x', hx', rfl⟩ := x.infClosure_image_atoms_subset ha
+      obtain ⟨y', hy', rfl⟩ := y.infClosure_image_atoms_subset hb
+      exact ⟨conn .and x' y', mem_alternatives_conn.2 ⟨_, x', hx', y', hy', rfl⟩, rfl⟩
+
+end Sentence
+
+/-- Theorem 12: innocent exclusion against Sauerland's alternatives of a sentence keeps the
+minimal worlds over its elementary sentences. -/
+theorem exhIE_eval_image_alternatives {ι : Type*} (p : ι → Set World) (S : Sentence ι)
+    (φ : Set World) :
+    exhIE (Sentence.eval p '' S.alternatives) φ = exhMW (p '' S.atoms) φ :=
+  exhIE_eq_exhMW_of_infClosure_subset (S.finite_atoms.image p)
+    (S.infClosure_image_atoms_subset p) (S.eval_image_alternatives_subset p)
+
+theorem exhIE_alternatives_or_and_three (hm : (m \ (p ∪ s)).Nonempty) :
+    exhIE (Sentence.eval ![m, p, s] ''
+        (Sentence.conn .or (.atom 0) (.conn .and (.atom 1) (.atom 2))).alternatives)
+      (m ∪ (p ∩ s)) = (m \ (p ∪ s)) ∪ ((p ∩ s) \ m) := by
+  rw [exhIE_eval_image_alternatives _ _ _, ← exhMW_or_and_three hm]
+  congr 1
+  ext q
+  simp [Sentence.atoms, or_comm, or_left_comm]
 
 /-! ### Infinitely many alternatives -/
 
