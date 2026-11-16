@@ -186,16 +186,16 @@ vicinity, it denotes nothing and the definite does. -/
 theorem not_lexicalizes_demonstrative (dem : DemonstrativeDeterminer) (τ : CovertShift) :
     ¬ (demonstrative dem).Lexicalizes τ := by
   have key : ∀ k : Definite (ℕ → Unit) Unit Unit, (k (fun _ ↦ ()) ()).Dom →
-      dem.denote (fun _ _ _ ↦ True) 0 ∅ ≠ k := fun k hk h ↦ by
+      dem.denote (fun _ _ ↦ Set.univ) 0 ∅ ≠ k := fun k hk h ↦ by
     rw [← h] at hk
     obtain ⟨hv, -⟩ := hk
     simp at hv
   cases τ
   · exact id
-  · exact fun h ↦ key (Definite.unique fun _ _ _ ↦ True)
+  · exact fun h ↦ key (Definite.unique fun _ _ ↦ Set.univ)
       (Definite.unique_dom.2 ⟨(), trivial, fun _ _ ↦ rfl⟩)
       (h Unit Unit ∅ _ 0)
-  · exact fun h ↦ key (Definite.anaphoric (fun _ _ _ ↦ True) 0)
+  · exact fun h ↦ key (Definite.anaphoric (fun _ _ ↦ Set.univ) 0)
       (Definite.anaphoric_dom.2 trivial)
       (h Unit Unit ∅ _ 0)
   · exact id
@@ -211,10 +211,10 @@ theorem not_lexicalizes_possessive (p : PossessiveDeterminer) (τ : CovertShift)
       simp at hk
   cases τ
   · exact id
-  · exact fun h ↦ key (Definite.unique fun _ _ _ ↦ True)
+  · exact fun h ↦ key (Definite.unique fun _ _ ↦ Set.univ)
       (Definite.unique_dom.2 ⟨(), trivial, fun _ _ ↦ rfl⟩)
       (h Unit Unit _ _ _)
-  · exact fun h ↦ key (Definite.anaphoric (fun _ _ _ ↦ True) 0)
+  · exact fun h ↦ key (Definite.anaphoric (fun _ _ ↦ Set.univ) 0)
       (Definite.anaphoric_dom.2 trivial) (h Unit Unit _ 0 _ _)
   · exact id
 

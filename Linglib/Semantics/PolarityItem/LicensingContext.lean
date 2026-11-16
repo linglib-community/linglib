@@ -106,7 +106,7 @@ the scopes at which `Q` holds and every scale-mate that holds there is entailed 
 is evaluated with the restrictor fixed and quantifies over scopes ([gajewski-2011]'s `O` with
 `ALT-1`). -/
 def exhaustified (Q : Det α) (C : Set (Det α)) : Det α :=
-  fun A ↦ Exhaustification.exh ((· A) '' C) (Q A)
+  fun A P ↦ P ∈ Exhaustification.exh ((fun Q' : Det α ↦ {P | Q' A P}) '' C) {P | Q A P}
 
 theorem exhaustified_iff : exhaustified Q C A P ↔ Q A P ∧ ∀ Q' ∈ C, Q' A P → Q A ≤ Q' A :=
   ⟨fun ⟨h, h'⟩ ↦ ⟨h, fun Q' hQ' hP ↦ h' _ ⟨Q', hQ', rfl⟩ hP⟩,
@@ -118,7 +118,8 @@ theorem not_exhaustified_of_not_le (hQ' : Q' ∈ C) (hP : Q' A P) (h : ¬ Q A �
 
 theorem exhaustified_eq_of_forall_le (h : ∀ Q' ∈ C, ∀ P, Q' A P → Q A ≤ Q' A) :
     exhaustified Q C A = Q A :=
-  Exhaustification.exh_eq_self_iff.2 (by rintro _ ⟨Q', hQ', rfl⟩ ⟨P, _, hP⟩; exact h Q' hQ' P hP)
+  funext fun P ↦ congrArg (P ∈ ·) (Exhaustification.exh_eq_self_iff.2
+    (by rintro _ ⟨Q', hQ', rfl⟩ ⟨P, _, hP⟩; exact h Q' hQ' P hP))
 
 open NaturalLogic in
 /-- The scope of a universal over a nonempty restrictor is multiplicative. -/
@@ -339,7 +340,7 @@ structure Attitude where
   /-- The domain. -/
   base : W → Set W
   /-- The ordering source. -/
-  g : W → Set (W → Prop)
+  g : W → Set (Set W)
 
 /-- A measure of the members of a comparison class, and the individual described. -/
 structure Superlative where
@@ -655,7 +656,7 @@ theorem not_isStrawsonUE_onlyFocus : ¬ onlyFocus.licenser.IsStrawsonUE :=
   not_forall.2 ⟨⟨Bool, Unit, true⟩, Focus.not_isStrawsonUE_only_eq⟩
 
 theorem not_isStrawsonUE_adversative : ¬ adversative.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨Fin 3, fun _ ↦ {0}, fun _ ↦ .univ, fun _ ↦ {(· = 1)}⟩,
+  not_forall.2 ⟨⟨Fin 3, fun _ ↦ {0}, fun _ ↦ .univ, fun _ ↦ {{1}}⟩,
     Desire.BestWorlds.not_isStrawsonUE_regret⟩
 
 theorem not_isStrawsonUE_superlative : ¬ superlative.licenser.IsStrawsonUE :=
@@ -708,7 +709,7 @@ theorem isStrawsonDE_adversative : adversative.licenser.IsStrawsonDE := fun p �
 
 theorem not_holds_adversative : ¬ adversative.licenser.Holds .anti := fun h ↦
   Desire.BestWorlds.not_antitone_posExt_regret (ProjectivitySignature.holdsFor_anti_iff.mp
-    (h ⟨Bool, fun _ ↦ {true}, fun _ ↦ .univ, fun _ ↦ {(· = false)}⟩))
+    (h ⟨Bool, fun _ ↦ {true}, fun _ ↦ .univ, fun _ ↦ {{false}}⟩))
 
 theorem isStrawsonDE_superlative : superlative.licenser.IsStrawsonDE := fun p ↦
   isStrawsonDE_trivalentSuperlative p.μ p.x
