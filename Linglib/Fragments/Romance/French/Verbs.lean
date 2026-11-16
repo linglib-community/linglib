@@ -146,12 +146,12 @@ sentient but brings about no change. -/
 def neglectSubject : EntailmentProfile :=
   {.volition, .sentience, .independentExistence}
 
-/-- The entry of a transitive verb with the given subject and object entailments, Vendler
-class and sense. -/
-def transitive (form : String) (subj obj : EntailmentProfile) (cls : Aspect.VendlerClass)
+/-- The entry of a transitive verb with the given subject and object entailments, situation
+type and sense. -/
+def transitive (form : String) (subj obj : EntailmentProfile) (cls : Aspect.SituationType)
     (tag : SenseTag := .default) : Verb :=
   { morphs := [.root form], valency := .ofFrame ArgumentFrame.np [some subj, some obj],
-    vendlerClass := some cls, senseTag := tag }
+    situationType := some cls, senseTag := tag }
 
 /-- *laver* 'wash' ([staps-rooryck-2024] Table 1). -/
 def laver : Verb :=
@@ -231,7 +231,7 @@ def aller : Verb where
   morphs := [.root "aller"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  vendlerClass := some .achievement
+  situationType := some .achievement
   direction := some .goal
 
 /-- *arriver* 'arrive', a verb of motion to a goal. -/
@@ -239,7 +239,7 @@ def arriver : Verb where
   morphs := [.root "arriver"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  vendlerClass := some .achievement
+  situationType := some .achievement
   direction := some .goal
 
 /-- *entrer* 'enter', a verb of motion to a goal. -/
@@ -247,7 +247,7 @@ def entrer : Verb where
   morphs := [.root "entrer"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  vendlerClass := some .achievement
+  situationType := some .achievement
   direction := some .goal
 
 /-- *retourner* 'go back', a verb of motion to a goal. -/
@@ -255,7 +255,7 @@ def retourner : Verb where
   morphs := [.root "retourner"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  vendlerClass := some .achievement
+  situationType := some .achievement
   direction := some .goal
 
 /-- *tomber* 'fall', a verb of motion in a direction. -/
@@ -263,7 +263,7 @@ def tomber : Verb where
   morphs := [.root "tomber"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  vendlerClass := some .achievement
+  situationType := some .achievement
   direction := some .goal
 
 /-- *venir* 'come', a verb of motion to a goal. -/
@@ -271,7 +271,7 @@ def venir : Verb where
   morphs := [.root "venir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  vendlerClass := some .achievement
+  situationType := some .achievement
   direction := some .goal
 
 /-- *partir* 'leave', a verb of motion from a source. -/
@@ -279,7 +279,7 @@ def partir : Verb where
   morphs := [.root "partir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  vendlerClass := some .achievement
+  situationType := some .achievement
   direction := some .source
 
 /-- *sortir* 'go out', a verb of motion from a source. -/
@@ -287,7 +287,7 @@ def sortir : Verb where
   morphs := [.root "sortir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  vendlerClass := some .achievement
+  situationType := some .achievement
   direction := some .source
 
 /-- *décéder* 'die', a change of state. -/
@@ -295,35 +295,35 @@ def deceder : Verb where
   morphs := [.root "décéder"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  vendlerClass := some .achievement
+  situationType := some .achievement
 
 /-- *devenir* 'become', a change of state. -/
 def devenir : Verb where
   morphs := [.root "devenir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  vendlerClass := some .achievement
+  situationType := some .achievement
 
 /-- *mourir* 'die', a change of state. -/
 def mourir : Verb where
   morphs := [.root "mourir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  vendlerClass := some .achievement
+  situationType := some .achievement
 
 /-- *naître* 'be born', a change of state. -/
 def naitre : Verb where
   morphs := [.root "naître"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  vendlerClass := some .achievement
+  situationType := some .achievement
 
 /-- *rester* 'stay', the continuation of a state. -/
 def rester : Verb where
   morphs := [.root "rester"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  vendlerClass := some .state
+  situationType := some .state
   phasal := some .continuation
 
 /-- *aboutir* 'succeed, end up', telic. -/
@@ -331,14 +331,14 @@ def aboutir : Verb where
   morphs := [.root "aboutir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be, .have}
-  vendlerClass := some .achievement
+  situationType := some .achievement
 
 /-- *atterrir* 'land', telic. -/
 def atterrir : Verb where
   morphs := [.root "atterrir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be, .have}
-  vendlerClass := some .achievement
+  situationType := some .achievement
 
 /-- *disparaître* 'disappear', with *avoir* for the event, *Elle a disparu prématurément*, and, now
 rarely, *être* for the state, *Il est aujourd'hui disparu*. -/
@@ -346,21 +346,21 @@ def disparaitre : Verb where
   morphs := [.root "disparaître"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be, .have}
-  vendlerClass := some .achievement
+  situationType := some .achievement
 
 /-- *paraître* 'appear, come out'. -/
 def paraitre : Verb where
   morphs := [.root "paraître"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be, .have}
-  vendlerClass := some .achievement
+  situationType := some .achievement
 
 /-- *grandir* 'grow', a change along a scale of size. -/
 def grandir : Verb where
   morphs := [.root "grandir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be, .have}
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
   scaleDimension := some .generalSize
 
 /-- *survivre* 'survive', stative. -/
@@ -368,28 +368,28 @@ def survivre : Verb where
   morphs := [.root "survivre"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.have}
-  vendlerClass := some .state
+  situationType := some .state
 
 /-- *exister* 'exist', stative. -/
 def exister : Verb where
   morphs := [.root "exister"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.have}
-  vendlerClass := some .state
+  situationType := some .state
 
 /-- *travailler* 'work', an activity whose subject controls it. -/
 def travailler : Verb where
   morphs := [.root "travailler"]
   valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile]
   perfectAuxiliaries := {.have}
-  vendlerClass := some .activity
+  situationType := some .activity
 
 /-- *courir* 'run', a verb of manner of motion, which selects no directional phrase. -/
 def courir : Verb where
   morphs := [.root "courir"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.have}
-  vendlerClass := some .activity
+  situationType := some .activity
   direction := some .place
 
 /-- *nager* 'swim', a verb of manner of motion, which selects no directional phrase. -/
@@ -397,7 +397,7 @@ def nager : Verb where
   morphs := [.root "nager"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.have}
-  vendlerClass := some .activity
+  situationType := some .activity
   direction := some .place
 
 /-! ### The perfect auxiliary
@@ -456,14 +456,14 @@ def allVerbs : List Verb :=
 
 theorem telic_or_continuation_of_perfectAuxiliaries_eq_be :
     ∀ v ∈ allVerbs, v.perfectAuxiliaries = {.be} →
-      v.vendlerClass.map (·.telicity) = some .telic ∨ v.phasal = some .continuation := by
+      v.situationType.map (·.telicity) = some .telic ∨ v.phasal = some .continuation := by
   decide
 
 /-- Telicity does not bring *être* with it, since a telic verb of §813a takes *avoir* for the
 action. -/
 theorem exists_telic_and_have_mem :
     ∃ v ∈ allVerbs,
-      .have ∈ v.perfectAuxiliaries ∧ v.vendlerClass.map (·.telicity) = some .telic := by
+      .have ∈ v.perfectAuxiliaries ∧ v.situationType.map (·.telicity) = some .telic := by
   decide
 
 end French.Verbs

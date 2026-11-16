@@ -312,7 +312,7 @@ theorem italian_perfect_eq_be_iff {v : Italian.Verb} {fr : ArgumentFrame}
     (ht : ofVerb v.toVerb = some t) :
     Italian.Verbs.perfectAuxiliary v fr = .be ↔ t ≤ .existenceOfState := by
   simp only [Italian.Verbs.perfectAuxiliary, hfr, ite_false]
-  rcases hc : v.vendlerClass with _ | c <;> simp_all [ofVerb]
+  rcases hc : v.situationType with _ | c <;> simp_all [ofVerb]
   split_ifs at ht <;> simp_all [Option.isSome_iff_ne_none]
   all_goals first | (subst ht; decide) | (obtain ⟨a, -, rfl⟩ := ht; split_ifs <;> decide)
 

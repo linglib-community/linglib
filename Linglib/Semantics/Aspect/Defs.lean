@@ -14,7 +14,7 @@ in `Semantics/Aspect/Viewpoint.lean`.
 ## Implementation notes
 
 * Smith's table of features marks states as lacking telicity and notes that the feature is
-  irrelevant to static situations; `VendlerClass.telicity` gives states the value `atelic`.
+  irrelevant to static situations; `SituationType.telicity` gives states the value `atelic`.
 
 ## References
 
@@ -52,7 +52,7 @@ inductive Dynamicity
 
 /-- The five situation types are the four classes of [vendler-1957] and the semelfactives of
 [smith-1997]. -/
-inductive VendlerClass
+inductive SituationType
   | state
   | activity
   | achievement
@@ -60,24 +60,24 @@ inductive VendlerClass
   | semelfactive
   deriving DecidableEq, Repr, Inhabited
 
-namespace VendlerClass
+namespace SituationType
 
 /-- The telicity of a situation type. -/
-def telicity : VendlerClass → Telicity
+def telicity : SituationType → Telicity
   | state | activity | semelfactive => .atelic
   | achievement | accomplishment => .telic
 
 /-- The duration of a situation type. -/
-def duration : VendlerClass → Duration
+def duration : SituationType → Duration
   | state | activity | accomplishment => .durative
   | achievement | semelfactive => .punctual
 
 /-- The dynamicity of a situation type. -/
-def dynamicity : VendlerClass → Dynamicity
+def dynamicity : SituationType → Dynamicity
   | state => .stative
   | activity | achievement | accomplishment | semelfactive => .dynamic
 
-variable {c d : VendlerClass}
+variable {c d : SituationType}
 
 theorem eq_of_features (ht : c.telicity = d.telicity) (hd : c.duration = d.duration)
     (hy : c.dynamicity = d.dynamicity) : c = d := by
@@ -86,7 +86,7 @@ theorem eq_of_features (ht : c.telicity = d.telicity) (hd : c.duration = d.durat
 
 /-- Add a natural endpoint, by which an activity becomes an accomplishment and a semelfactive
 an achievement. -/
-def telicize : VendlerClass → VendlerClass
+def telicize : SituationType → SituationType
   | activity => accomplishment
   | semelfactive => achievement
   | c => c
@@ -94,14 +94,14 @@ def telicize : VendlerClass → VendlerClass
 theorem telicity_telicize (h : c.dynamicity = .dynamic) : c.telicize.telicity = .telic := by
   cases c <;> first | rfl | cases h
 
-@[simp] theorem duration_telicize (c : VendlerClass) : c.telicize.duration = c.duration := by
+@[simp] theorem duration_telicize (c : SituationType) : c.telicize.duration = c.duration := by
   cases c <;> rfl
 
-@[simp] theorem dynamicity_telicize (c : VendlerClass) :
+@[simp] theorem dynamicity_telicize (c : SituationType) :
     c.telicize.dynamicity = c.dynamicity := by
   cases c <;> rfl
 
-end VendlerClass
+end SituationType
 
 /-- The incrementality of a verb's theme relation is the strongest of [krifka-1998]'s properties
 it has, strictly incremental (*eat*, *draw*), incremental (*read*), or cumulative without

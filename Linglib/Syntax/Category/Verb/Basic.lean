@@ -50,7 +50,7 @@ def withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
   if p.direction = .place ∨ ¬ v.TakesSpatial then v else
     { v with
       direction := some p.direction
-      vendlerClass := if p.IsBounded then v.vendlerClass.map (·.telicize) else v.vendlerClass }
+      situationType := if p.IsBounded then v.situationType.map (·.telicize) else v.situationType }
 
 section withPath
 
@@ -66,12 +66,12 @@ variable {v : Verb} {p : Adposition.SpatialReading}
     (v.withPath p).direction = some p.direction := by
   simp [withPath, hv, h]
 
-@[simp] theorem vendlerClass_withPath_of_isBounded (hv : v.TakesSpatial) (hb : p.IsBounded) :
-    (v.withPath p).vendlerClass = v.vendlerClass.map (·.telicize) := by
+@[simp] theorem situationType_withPath_of_isBounded (hv : v.TakesSpatial) (hb : p.IsBounded) :
+    (v.withPath p).situationType = v.situationType.map (·.telicize) := by
   simp [withPath, hv, hb.direction_ne_place, hb]
 
-@[simp] theorem vendlerClass_withPath_of_not_isBounded (hb : ¬ p.IsBounded) :
-    (v.withPath p).vendlerClass = v.vendlerClass := by
+@[simp] theorem situationType_withPath_of_not_isBounded (hb : ¬ p.IsBounded) :
+    (v.withPath p).situationType = v.situationType := by
   unfold withPath
   split_ifs <;> rfl
 

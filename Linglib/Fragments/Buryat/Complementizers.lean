@@ -70,7 +70,7 @@ def complementizers : List Complementizer := [ge, aasha, zha]
 
 /-! ### Clause-embedding verbs
 
-Vendler class stays unset (`Verb.Aspect.vendlerClass` convention for
+Situation type stays unset (`Verb.Aspect.situationType` convention for
 clause-embedding verbs). -/
 
 /-- The nominalized complement frame of the ex. 35–36 alternation:

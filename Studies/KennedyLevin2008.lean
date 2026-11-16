@@ -22,7 +22,7 @@ event, entails the atelic one and is preferred. *Widen* thus has no telic readin
 On every set of positive difference values the measure of change agrees with Hay, Kennedy and
 Levin's difference value, so the two accounts differ only in the values a modifier names: a measure
 phrase requires at least its degree of change here and exactly that degree there. The English
-fragment's degree achievements take the Vendler class that Interpretive Economy gives their base
+fragment's degree achievements take the situation type that Interpretive Economy gives their base
 scales.
 
 ## Implementation notes
@@ -200,9 +200,9 @@ end Modifiers
 
 /-! ### The English degree achievements -/
 
-theorem defaultVendlerClass_eq {α T : Type*} (d : ScalarDimension) (m : α → T → d.Scale)
+theorem defaultSituationType_eq {α T : Type*} (d : ScalarDimension) (m : α → T → d.Scale)
     (x : α) (i : T) :
-    d.defaultVendlerClass =
+    d.defaultSituationType =
       if (Boundedness.ofOrder (Ici (m x i))).defaultStandard = .maxEndpoint then .accomplishment
       else .activity := by
   simp only [Boundedness.ofOrder_Ici, Boundedness.ofOrder_degreeShape]
@@ -217,8 +217,8 @@ def daVerbs : List Verb :=
    English.Verbs.lengthen.toVerb, English.Verbs.widen.toVerb,
    English.Verbs.cool.toVerb, English.Verbs.warm.toVerb]
 
-theorem da_vendler_classes_agree :
-    ∀ v ∈ daVerbs, v.vendlerClass = v.changeScale.map (·.defaultVendlerClass) := by
+theorem da_situation_types_agree :
+    ∀ v ∈ daVerbs, v.situationType = v.changeScale.map (·.defaultSituationType) := by
   decide
 
 /-- The adjective–verb pairs of the fragment are *clean*, *dry*, *straight*, *flat* and *open*
@@ -243,7 +243,7 @@ theorem adjective_verb_scales :
 -- (1), (6)
 theorem telic_iff_hasMax :
     ∀ v ∈ daVerbs, ∃ b ∈ v.changeScale,
-      (v.vendlerClass.map (·.telicity) = some .telic ↔ b.HasMax) := by
+      (v.situationType.map (·.telicity) = some .telic ↔ b.HasMax) := by
   decide
 
 end KennedyLevin2008

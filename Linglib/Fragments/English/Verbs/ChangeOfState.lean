@@ -39,7 +39,7 @@ def crack : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
-  vendlerClass := some .achievement
+  situationType := some .achievement
   scaleDimension := some .cracking
 
 /-- "dent" — Levin 21.2 Carve verbs. Physical disturbance CoS verb.
@@ -52,7 +52,7 @@ def dent : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  vendlerClass := some .achievement
+  situationType := some .achievement
   scaleDimension := some .denting
 
 /-- "scratch" — Levin 21.1 Cut verbs, a physical disturbance CoS verb for
@@ -68,7 +68,7 @@ def scratch : Verb where
      (ArgumentFrame.np_pp (some Adpositions.on)
          (some (.spatial (some .surface) .place)), [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
-  vendlerClass := some .achievement
+  situationType := some .achievement
   scaleDimension := some .scratching
 
 /-- "shatter" — Levin 45.1 Break verbs. NOT a physical disturbance verb.
@@ -82,7 +82,7 @@ def shatter : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  vendlerClass := some .achievement
+  situationType := some .achievement
 
 /-- "burn" — destruction or transformation by fire or heat; Levin 45.4 other change-of-state
     verbs. -/
@@ -93,7 +93,7 @@ def burn : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
   incrementality := some .strict
 
 /-- "destroy" — Levin 44 destroy verbs. -/
@@ -104,7 +104,7 @@ def destroy : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 /-- "melt" — change of consistency by heat; Levin 45.4 other change-of-state verbs. A base
     transitive that takes a double-object benefactive ("melt me some ice cream") and an
@@ -118,7 +118,7 @@ def melt : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 3, 1])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
   incrementality := some .strict
 
 /-! ### Further change-of-state verbs
@@ -131,7 +131,7 @@ def activate : Verb where
   morphs := [.root "activate"]
   levin := none
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 
 /-- "affect" — Levin 31.1 amuse verbs. -/
@@ -139,7 +139,7 @@ def affect : Verb where
   morphs := [.root "affect"]
   levin := some Levin1993.Index.affect
   valency := .ofFrame ArgumentFrame.np
-  vendlerClass := some .activity
+  situationType := some .activity
 
 /-- "change" — transformation; Levin 26.6 turn verbs. -/
 def change : Verb where
@@ -151,14 +151,14 @@ def change : Verb where
      (ArgumentFrame.np_pp (some Adpositions.into) (some .translative), [0, 1, 2]),
      (⟨some .nominal, [.nominal, .adposition (some Adpositions.from_),
      .adposition (some Adpositions.into) (some .translative)]⟩, [0, 1, 3, 2])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 /-- "damage" — partial destruction; not listed by Levin. -/
 def damage : Verb where
   morphs := [.root "damage"]
   levin := none
   valency := .ofFrame ArgumentFrame.np
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 
 /-- "eliminate" — removal; Levin 42.1 murder verbs. -/
@@ -166,7 +166,7 @@ def eliminate : Verb where
   morphs := [.root "eliminate"]
   levin := some Levin1993.Index.eliminate
   valency := .ofFrame ArgumentFrame.np
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 /-- "hurt" — Levin 40.8.3 hurt verbs. -/
 def hurt : Verb where
@@ -174,28 +174,28 @@ def hurt : Verb where
   levin := some Levin1993.Index.hurt
   past := "hurt"
   valency := .ofFrame ArgumentFrame.np
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 /-- "restore" — Levin 13.2 contribute verbs. -/
 def restore : Verb where
   morphs := [.root "restore"]
   levin := some Levin1993.Index.restore
   valency := .ofFrame ArgumentFrame.np
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 /-- "trigger" — sets a process off; not listed by Levin. -/
 def trigger : Verb where
   morphs := [.root "trigger"]
   levin := none
   valency := .ofFrame ArgumentFrame.np
-  vendlerClass := some .achievement
+  situationType := some .achievement
 
 /-- "bury" — covering with earth. Levin's concealment class (§16) does not list *bury*. -/
 def bury : Verb where
   morphs := [.root "bury"]
   levin := none
   valency := .ofFrame ArgumentFrame.np
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 
 /-- "drop" — Levin 45.6 calibratable change-of-state verbs. -/
@@ -203,21 +203,21 @@ def drop : Verb where
   morphs := [.root "drop"]
   levin := some Levin1993.Index.drop
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 /-- "lift" — Levin 9.4 verbs of putting with a specified direction. -/
 def lift : Verb where
   morphs := [.root "lift"]
   levin := some Levin1993.Index.lift
   valency := .ofFrame ArgumentFrame.np
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 /-- "lock" — securing with a lock; Levin lists *lock* only among the tape verbs (§22.4). -/
 def lock : Verb where
   morphs := [.root "lock"]
   levin := some Levin1993.Index.lock
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 
 /-- "shut" — Levin 45.4 other change-of-state verbs, zero-related to the adjective. -/
@@ -230,7 +230,7 @@ def shut : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 /-- "spread" — Levin 9.7 spray/load verbs. -/
 def spread : Verb where
@@ -243,7 +243,7 @@ def spread : Verb where
      (ArgumentFrame.pp (some Adpositions.at_), [0, 2]),
      (ArgumentFrame.np_spatialPP, [0, 1, 2]),
      (ArgumentFrame.np_pp (some Adpositions.with_), [0, 2, 1])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 /-- "stretch" — Levin 45.4 other change-of-state verbs. -/
 def stretch : Verb where
@@ -253,14 +253,14 @@ def stretch : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 /-- "switch" — Levin's change-of-state lists do not include *switch*. -/
 def switch : Verb where
   morphs := [.root "switch"]
   levin := none
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 
 /-- "close" — Levin 45.4 other change-of-state verbs, zero-related to the adjective, and
@@ -269,14 +269,14 @@ def close : Verb where
   morphs := [.root "close"]
   levin := some Levin1993.Index.close
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 /-- "dry" — Levin 45.4 other change-of-state verbs, zero-related to the adjective. -/
 def dry : Verb where
   morphs := [.root "dry"]
   levin := some Levin1993.Index.dry
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
   scaleDimension := some .wetness
   scalePolarity := .negative
 
@@ -285,7 +285,7 @@ def enhance : Verb where
   morphs := [.root "enhance"]
   levin := none
   valency := .ofFrame ArgumentFrame.np
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 /-- "extend" — Levin 47.1 exist verbs, 13.2 contribute verbs and 13.3 verbs of future
     having. -/
@@ -293,21 +293,21 @@ def extend : Verb where
   morphs := [.root "extend"]
   levin := some Levin1993.Index.extend
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 /-- "lower" — Levin 9.4 verbs of putting with a specified direction. -/
 def lower : Verb where
   morphs := [.root "lower"]
   levin := some Levin1993.Index.lower
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 /-- "slow" — Levin 45.4 other change-of-state verbs, zero-related to the adjective. -/
 def slow : Verb where
   morphs := [.root "slow"]
   levin := some Levin1993.Index.slow
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
-  vendlerClass := some .activity
+  situationType := some .activity
   scaleDimension := some .speed
 
 /-- "turn" — Levin 26.6 turn verbs (*turn the prince into a frog*). -/
@@ -318,7 +318,7 @@ def turn : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.into) (some .translative), [0, 1, 2])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
   levinExcluded := {LevinClass.crane, .hurt, .meander, .roll}
 
 /-- "wake up" — the particle verb of awakening; Levin lists *waken* but not *wake*. -/
@@ -328,7 +328,7 @@ def wakeUp : Verb where
   past := "woke"
   pastPart := "woken"
   valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
-  vendlerClass := some .achievement
+  situationType := some .achievement
 
 /-! ### Change of State (§ 45) -/
 
@@ -342,7 +342,7 @@ def freeze : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 /-- "heat" — Levin 45.4 Other Change of State verbs. Causative/inchoative alternation. -/
 def heat : Verb where
@@ -353,7 +353,7 @@ def heat : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
 
 /-- "bend" — Levin 45.2 Bend verbs. Causative/inchoative alternation.
     Degree achievement on the scale of *bent*, the negative pole of straightness. That scale has
@@ -367,7 +367,7 @@ def bend : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
-  vendlerClass := some .activity
+  situationType := some .activity
   scaleDimension := some .straightness
   scalePolarity := .negative
 
@@ -381,7 +381,7 @@ def boil : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
   scaleDimension := some .boiling
 
 /-- "rust" — Levin 45.5 Entity-Specific CoS verbs. Inchoative only.
@@ -391,7 +391,7 @@ def rust : Verb where
   levin := some Levin1993.Index.rust
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
-  vendlerClass := some .activity
+  situationType := some .activity
   scaleDimension := some .corrosion
 
 /-- *increase* is a degree achievement on an open scale, with no maximum quantity. Levin lists it
@@ -406,7 +406,7 @@ def increase : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  vendlerClass := some .activity
+  situationType := some .activity
   scaleDimension := some .quantity
 
 /-! ### Degree achievement verb pairs ([kennedy-2007]) -/
@@ -421,7 +421,7 @@ def straighten : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
   scaleDimension := some .straightness
 
 /-- "flatten" — Closed-scale degree achievement (base adj: flat).
@@ -434,7 +434,7 @@ def flatten : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
   scaleDimension := some .flatness
 
 /-- "open" — Closed-scale degree achievement (base adj: open, closed scale).
@@ -446,7 +446,7 @@ def open_ : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2])]
-  vendlerClass := some .accomplishment
+  situationType := some .accomplishment
   scaleDimension := some .openness
 
 /-- "lengthen" — Open-scale degree achievement (base adj: long, open scale).
@@ -459,7 +459,7 @@ def lengthen : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  vendlerClass := some .activity
+  situationType := some .activity
   scaleDimension := some .length
 
 /-- "widen" — Open-scale degree achievement (base adj: wide, open scale).
@@ -472,7 +472,7 @@ def widen : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  vendlerClass := some .activity
+  situationType := some .activity
   scaleDimension := some .width
 
 /-- "cool" — Open-scale degree achievement (base adj: cool, open scale).
@@ -485,7 +485,7 @@ def cool : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  vendlerClass := some .activity
+  situationType := some .activity
   scaleDimension := some .temperature
 
 /-- "warm" — Open-scale degree achievement (base adj: warm, open scale).
@@ -498,7 +498,7 @@ def warm : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-  vendlerClass := some .activity
+  situationType := some .activity
   scaleDimension := some .temperature
 
 end English.Verbs

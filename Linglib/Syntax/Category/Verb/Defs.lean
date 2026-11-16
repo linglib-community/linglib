@@ -130,15 +130,15 @@ structure ArgStructure where
   perfectAuxiliaries : Finset Verb.PerfectAuxiliary := ∅
   deriving BEq
 
-/-- The aspectual class of a verb is its Vendler class, lexical viewpoint, scale, direction of
+/-- The aspectual class of a verb is its situation type, lexical viewpoint, scale, direction of
     motion, incrementality and phasal class. -/
 structure Aspect where
-  /-- [vendler-1957] aspectual class of the verb's base VP.
+  /-- The situation type ([vendler-1957], [smith-1997]) of the verb's base VP.
       For verbs whose class depends on the object NP (eat apples = activity,
       eat two apples = accomplishment), record the class with a quantized
-      (bounded) object. `none` for verbs where Vendler class is inapplicable
+      (bounded) object. `none` for verbs where situation type is inapplicable
       (e.g., clause-embedding verbs). -/
-  vendlerClass : Option VendlerClass := none
+  situationType : Option SituationType := none
   /-- The viewpoint the stem lexicalizes, in a language that encodes the opposition of perfective
       and imperfective on verb stems, as the Slavic languages do, at its dictionary value; `none`
       where the language does not. -/
@@ -210,7 +210,7 @@ def Verb.standard (v : Verb) : Option PositiveStandard :=
 /-- The scale along which a degree achievement measures change is the scale of a verb that is not
 a state, since a state measures no change. -/
 def Verb.changeScale (v : Verb) : Option Boundedness :=
-  if v.vendlerClass = some .state then none else v.boundedness
+  if v.situationType = some .state then none else v.boundedness
 
 /-! ### ArgumentFrame accessors
 

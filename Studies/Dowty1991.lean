@@ -266,7 +266,7 @@ theorem intransClass_changeOfState :
 /-- The class Table 1 assigns to an intransitive verb entry, by the profile the entry records for
 its sole argument and the telicity of its aspectual class. -/
 def verbClass (v : Verb) : Option IntransClass :=
-  return intransClass (← v.slotProfile? .external) (← v.vendlerClass).telicity
+  return intransClass (← v.slotProfile? .external) (← v.situationType).telicity
 
 theorem verbClass_run_arrive :
     verbClass English.Verbs.run.toVerb = some .unergative ∧

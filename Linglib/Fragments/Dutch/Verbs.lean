@@ -202,7 +202,7 @@ grammar's unaccusativity tests assign it (§2.1), which introduces no external a
 def komen : Verb :=
   { simplex "komen" "gekomen" with
     voiceType := some .nonThematic, perfectAuxiliaries := {.be},
-    valency := .ofFrame ArgumentFrame.intransitive, vendlerClass := some .achievement,
+    valency := .ofFrame ArgumentFrame.intransitive, situationType := some .achievement,
     direction := some .goal }
 
 /-- *sterven* 'die' is an unaccusative verb denoting a transition, as in *De oude man is
@@ -210,20 +210,20 @@ gestorven*. -/
 def sterven : Verb :=
   { simplex "sterven" "gestorven" with
     voiceType := some .nonThematic, perfectAuxiliaries := {.be},
-    valency := .ofFrame ArgumentFrame.intransitive, vendlerClass := some .achievement }
+    valency := .ofFrame ArgumentFrame.intransitive, situationType := some .achievement }
 
 /-- *groeien* 'grow', an unaccusative verb of change along a scale of size. -/
 def groeien : Verb :=
   { simplex "groeien" "gegroeid" with
     voiceType := some .nonThematic, perfectAuxiliaries := {.be},
-    valency := .ofFrame ArgumentFrame.intransitive, vendlerClass := some .accomplishment,
+    valency := .ofFrame ArgumentFrame.intransitive, situationType := some .accomplishment,
     scaleDimension := some .generalSize }
 
 /-- *stijgen* 'rise', an unaccusative verb of change along a scale of height. -/
 def stijgen : Verb :=
   { simplex "stijgen" "gestegen" with
     voiceType := some .nonThematic, perfectAuxiliaries := {.be},
-    valency := .ofFrame ArgumentFrame.intransitive, vendlerClass := some .accomplishment,
+    valency := .ofFrame ArgumentFrame.intransitive, situationType := some .accomplishment,
     scaleDimension := some .height }
 
 /-- *blijven* 'stay' is an unaccusative verb expressing that a state continues to exist (§1.2),
@@ -232,7 +232,7 @@ longer!'. -/
 def blijven : Verb :=
   { simplex "blijven" "gebleven" with
     voiceType := some .nonThematic, perfectAuxiliaries := {.be},
-    valency := .ofFrame ArgumentFrame.intransitive, vendlerClass := some .state,
+    valency := .ofFrame ArgumentFrame.intransitive, situationType := some .state,
     phasal := some .continuation }
 
 /-- *overblijven* 'remain, be left', formed on *blijven* with the particle *over*. -/
@@ -242,14 +242,14 @@ def overblijven : Verb := particleVerb "over" blijven
 def duren : Verb :=
   { simplex "duren" "geduurd" with
     perfectAuxiliaries := {.have},
-    valency := .ofFrame ArgumentFrame.intransitive, vendlerClass := some .state }
+    valency := .ofFrame ArgumentFrame.intransitive, situationType := some .state }
 
 /-- *staan* 'stand' is a stative verb of location, an atelic unaccusative verb with *hebben*, as
 in *Jan heeft lang op het perron gestaan*. -/
 def staan : Verb :=
   { simplex "staan" "gestaan" with
     voiceType := some .nonThematic, perfectAuxiliaries := {.have},
-    valency := .ofFrame ArgumentFrame.intransitive, vendlerClass := some .state }
+    valency := .ofFrame ArgumentFrame.intransitive, situationType := some .state }
 
 /-- *bestaan* 'exist', formed on *staan* with the prefix *be-*. -/
 def bestaan : Verb := prefixVerb "be" staan
@@ -259,14 +259,14 @@ def blazen : Verb :=
   { simplex "blazen" "geblazen" with
     perfectAuxiliaries := {.have},
     valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile],
-      vendlerClass := some .activity }
+      situationType := some .activity }
 
 /-- *werken* 'work', *gewerkt*, an intransitive activity with an agentive subject. -/
 def werken : Verb :=
   { simplex "werken" "gewerkt" with
     perfectAuxiliaries := {.have},
     valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile],
-    vendlerClass := some .activity }
+    situationType := some .activity }
 
 /-- *lopen* 'walk, run', *loop - liep - gelopen*, an agentive verb of manner of motion, intransitive
 ([levin-hovav-1995] p. 148). -/
@@ -274,7 +274,7 @@ def lopen : Verb :=
   { simplex "lopen" "gelopen" with
     perfectAuxiliaries := {.be, .have},
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
-      vendlerClass := some .activity,
+      situationType := some .activity,
     direction := some .place }
 
 /-- *wandelen* 'walk' is an intransitive verb of manner of motion, as in *De jongen heeft
@@ -283,7 +283,7 @@ def wandelen : Verb :=
   { simplex "wandelen" "gewandeld" with
     perfectAuxiliaries := {.be, .have},
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
-      vendlerClass := some .activity,
+      situationType := some .activity,
     direction := some .place }
 
 /-- *rollen* 'roll', a nonagentive verb of manner of motion, unaccusative ([levin-hovav-1995]
@@ -292,7 +292,7 @@ def rollen : Verb :=
   { simplex "rollen" "gerold" with
     voiceType := some .nonThematic, perfectAuxiliaries := {.be, .have},
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
-      vendlerClass := some .activity,
+      situationType := some .activity,
     direction := some .place }
 
 /-! ### The perfect auxiliary -/
@@ -313,18 +313,18 @@ unaccusative ones, and *zijn* for *blijven*, whose state continues. -/
 def perfectAuxiliary (v : Verb) (fr : ArgumentFrame) : PerfectAuxiliary :=
   if v.phasal = some .continuation then .be
   else if fr.IsIntransitive ∧ (v.IsUnaccusative ∨ ∃ d ∈ v.direction, d ≠ .place) ∧
-      v.vendlerClass.any (·.telicity == .telic) then .be
+      v.situationType.any (·.telicity == .telic) then .be
   else .have
 
 /-- A bounded directional phrase gives a dynamic intransitive verb *zijn*, as in *De jongen is
 naar Groningen gewandeld* (§2.2, (274b)). -/
 theorem perfect_withPath_intransitive {v : Verb} {p : Adposition.SpatialReading}
-    (hv : v.TakesSpatial) (hb : p.IsBounded) {c : Aspect.VendlerClass}
-    (hc : v.vendlerClass = some c) (hdyn : c.dynamicity = .dynamic) :
+    (hv : v.TakesSpatial) (hb : p.IsBounded) {c : Aspect.SituationType}
+    (hc : v.situationType = some c) (hdyn : c.dynamicity = .dynamic) :
     perfectAuxiliary (v.withPath p) .intransitive = .be := by
   simp [perfectAuxiliary, Verb.withPath, hv, hb.direction_ne_place, hb, hc,
     ArgumentFrame.intransitive, ArgumentFrame.IsIntransitive,
-    Aspect.VendlerClass.telicity_telicize hdyn]
+    Aspect.SituationType.telicity_telicize hdyn]
 
 /-- *Wandelen* takes *hebben*, with *zijn* under a directional phrase and *hebben* under a
 locational one (§2.2, (273)–(275)). -/

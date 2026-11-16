@@ -28,7 +28,7 @@ def say : Verb where
   past := "said"
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .achievement
+  situationType := some .achievement
 
 /-- "tell" — communication verb with recipient.
     Also ditransitive ("tell me a story"). The direct object may be implicit in the double
@@ -47,7 +47,7 @@ def tell : Verb where
      ((ArgumentFrame.np_pp (some Adpositions.to_)
          (some (.argument .R))).leaveImplicit 1 (some .indef),
        [0, 1, 2])]
-  vendlerClass := some .achievement
+  situationType := some .achievement
 
 /-- "claim" — communication verb, speaker doesn't endorse. It takes a finite clause or an
 infinitive its subject controls (*claimed to be rich*). -/
@@ -56,7 +56,7 @@ def claim : Verb where
   levin := some Levin1993.Index.claim
   speechActVerb := true
   valency := .ofFrames [.finiteClause, toInfinitive] (controllers := [none, some 0])
-  vendlerClass := some .achievement
+  situationType := some .achievement
 
 /-! ### Manner of Speaking (Levin 37.3)
 
@@ -68,7 +68,7 @@ def whisper : Verb where
   levin := some Levin1993.Index.whisper
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
+  situationType := some .activity
 
 /-- "murmur" — Levin 37.3 Manner of Speaking verbs. -/
 def murmur : Verb where
@@ -76,7 +76,7 @@ def murmur : Verb where
   levin := some Levin1993.Index.murmur
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
+  situationType := some .activity
 
 /-- "shout" — Levin 37.3 Manner of Speaking verbs. -/
 def shout : Verb where
@@ -84,7 +84,7 @@ def shout : Verb where
   levin := some Levin1993.Index.shout
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
+  situationType := some .activity
 
 /-- "cry" — Levin 37.3 Manner of Speaking verbs. -/
 def cry : Verb where
@@ -92,7 +92,7 @@ def cry : Verb where
   levin := some Levin1993.Index.cry
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
+  situationType := some .activity
 
 /-- "scream" — Levin 37.3 Manner of Speaking verbs. -/
 def scream : Verb where
@@ -100,7 +100,7 @@ def scream : Verb where
   levin := some Levin1993.Index.scream
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
+  situationType := some .activity
 
 /-- "mumble" — Levin 37.3 Manner of Speaking verbs. -/
 def mumble : Verb where
@@ -108,7 +108,7 @@ def mumble : Verb where
   levin := some Levin1993.Index.mumble
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
+  situationType := some .activity
 
 /-- "mutter" — Levin 37.3 Manner of Speaking verbs. -/
 def mutter : Verb where
@@ -116,7 +116,7 @@ def mutter : Verb where
   levin := some Levin1993.Index.mutter
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
+  situationType := some .activity
 
 /-- "shriek" — Levin 37.3 Manner of Speaking verbs. -/
 def shriek : Verb where
@@ -124,7 +124,7 @@ def shriek : Verb where
   levin := some Levin1993.Index.shriek
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
+  situationType := some .activity
 
 /-- "yell" — Levin 37.3 Manner of Speaking verbs. -/
 def yell : Verb where
@@ -132,7 +132,7 @@ def yell : Verb where
   levin := some Levin1993.Index.yell
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
+  situationType := some .activity
 
 /-- "groan" — Levin 37.3 Manner of Speaking verbs. -/
 def groan : Verb where
@@ -140,7 +140,7 @@ def groan : Verb where
   levin := some Levin1993.Index.groan
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
+  situationType := some .activity
 
 /-- "grumble" — Levin 37.3 Manner of Speaking verbs. -/
 def grumble : Verb where
@@ -148,7 +148,7 @@ def grumble : Verb where
   levin := some Levin1993.Index.grumble
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
+  situationType := some .activity
 
 /-- "hiss" — Levin 37.3 Manner of Speaking verbs. -/
 def hiss : Verb where
@@ -156,7 +156,7 @@ def hiss : Verb where
   levin := some Levin1993.Index.hiss
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
+  situationType := some .activity
 
 /-- "sigh" — Levin 40.2 Nonverbal Expression verbs. -/
 def sigh : Verb where
@@ -164,7 +164,7 @@ def sigh : Verb where
   levin := some Levin1993.Index.sigh
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
+  situationType := some .activity
 
 /-- "whimper" — Levin 37.3 Manner of Speaking verbs. -/
 def whimper : Verb where
@@ -172,7 +172,7 @@ def whimper : Verb where
   levin := some Levin1993.Index.whimper
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
+  situationType := some .activity
 
 /-- "snap" — Levin 37.3 Manner of Speaking verbs. -/
 def snap : Verb where
@@ -180,7 +180,7 @@ def snap : Verb where
   levin := some Levin1993.Index.snap
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
+  situationType := some .activity
 
 /-- "speak" — Levin 37.5 Talk verbs. -/
 def speak : Verb where
@@ -190,7 +190,7 @@ def speak : Verb where
   pastPart := "spoken"
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.intransitive
-  vendlerClass := some .activity
+  situationType := some .activity
   passivizable := false
 
 /-- "talk" — Levin 37.5 Talk verbs. -/
@@ -199,7 +199,7 @@ def talk : Verb where
   levin := some Levin1993.Index.talk
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.intransitive
-  vendlerClass := some .activity
+  situationType := some .activity
   passivizable := false
 
 end English.Verbs

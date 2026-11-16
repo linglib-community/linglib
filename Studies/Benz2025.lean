@@ -436,7 +436,7 @@ instance (s : StructureSolution) (pe : PreverbalElement) : Decidable (s.Admits p
 
 /-- *-ung* requires complex change-of-state event structure ([rossdeutscher-kamp-2010],
 endorsed at §5.3.1), the accomplishments of the fragment. -/
-def CanUngNominalize (v : German.Verb) : Prop := v.vendlerClass = some .accomplishment
+def CanUngNominalize (v : German.Verb) : Prop := v.situationType = some .accomplishment
 
 instance (v : German.Verb) : Decidable (CanUngNominalize v) :=
   inferInstanceAs (Decidable (_ = _))

@@ -22,7 +22,7 @@ alternate between frames: *kai* 'remember' takes the controlled `ni`-clause (ex 
 
 An implication signature in Karttunen's sense (`Verb.implicative`) is recorded where it is textbook;
 the paper uses implicativity for the contrast of ex 89, where the irrealis marker is absent exactly
-under the implicatives, but does not classify the verbs itself. Vendler class stays unset, the
+under the implicatives, but does not classify the verbs itself. Situation type stays unset, the
 convention for clause-embedding verbs. Identifiers are ASCII (see `Fragments/Ga/Clause`); the IPA
 orthography is in `form`.
 

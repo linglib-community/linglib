@@ -29,7 +29,7 @@ against the transparent syntax–semantics mapping.
 
 * `clauseSort`: the sort a complementizer imposes; `selectsClause` the aspectual heads'
   selection (§4.1).
-* `Predicted`: a verb–complementizer pairing derived from the verb's sort and Vendler class,
+* `Predicted`: a verb–complementizer pairing derived from the verb's sort and situation type,
   with the sample verbs' sorts in `verbEntry`.
 * `licensedIn`: incorporation licensing by clause position (§3.1).
 
@@ -65,8 +65,8 @@ inductive AspectualHead
   | vEvent
   deriving DecidableEq
 
-/-- The aspectual head a verb's Vendler class determines. -/
-def AspectualHead.ofVendler (vc : VendlerClass) : AspectualHead :=
+/-- The aspectual head a verb's situation type determines. -/
+def AspectualHead.ofSituationType (vc : SituationType) : AspectualHead :=
   match vc.dynamicity with
   | .stative => .vState
   | .dynamic => .vEvent
@@ -90,7 +90,7 @@ theorem pu_requires_stative {h : AspectualHead} (hp : selectsClause h pu) : h = 
 head selects `c`'s clause. -/
 def Predicted (v : Verb) (s : NominalSort) (c : Complementizer) : Prop :=
   clauseSort c = some s ∧
-    ∀ h ∈ (v.vendlerClass.map AspectualHead.ofVendler).toList, selectsClause h c
+    ∀ h ∈ (v.situationType.map AspectualHead.ofSituationType).toList, selectsClause h c
 
 instance (v : Verb) (s : NominalSort) (c : Complementizer) : Decidable (Predicted v s c) :=
   inferInstanceAs (Decidable (_ ∧ _))
