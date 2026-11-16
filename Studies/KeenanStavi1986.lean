@@ -280,7 +280,8 @@ theorem intersective_noBut (a : α) : Intersective (noBut a) := fun R T R' T' h 
 correspondence is an isomorphism onto the type ⟨1⟩ quantifiers, the possible NP denotations
 (PROP 15). -/
 def existentialOrderIso : existentialSubalgebra (α := α) ≃o Quantifier α :=
-  invariantsOrderIso (s := fun T ↦ (Set.univ, T)) fun T ↦ Set.univ_inter T
+  (invariantsOrderIso (s := fun T ↦ (Set.univ, T)) fun T ↦ Set.univ_inter T).trans
+    Set.memOrderIso
 
 theorem card_existential [Fintype α] :
     Nat.card (existentialSubalgebra (α := α)) = 2 ^ 2 ^ Fintype.card α := by

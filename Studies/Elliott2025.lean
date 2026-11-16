@@ -567,11 +567,11 @@ theorem none_inf_noun : Det.none ⊓ noun N = (· = polarize N ⊥) := by
 group, so it is scopeless and the universal force stays with the ∆-operator. -/
 theorem all_scopeless :
     Quantifier.Det.some (Set.ofPred (Det.all ⊓ noun N)) = individual (polarize N ⊤) :=
-  some_eq_individual_iff.2 (all_inf_noun N)
+  some_eq_individual_iff.2 (by rw [all_inf_noun N]; rfl)
 
 theorem none_scopeless :
     Quantifier.Det.some (Set.ofPred (Det.none ⊓ noun N)) = individual (polarize N ⊥) :=
-  some_eq_individual_iff.2 (none_inf_noun N)
+  some_eq_individual_iff.2 (by rw [none_inf_noun N]; rfl)
 
 /-- *Exactly two* of three individuals holds of several groups, so its existential raising is no
 individual and an exceptional scope reading is predicted. -/

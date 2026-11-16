@@ -103,10 +103,10 @@ theorem generateCompleteBoolean_iff_mem_closure {X : Set B} {x : B} (hX : X.Fini
 
 namespace Set
 
-/-- Binary relations are the power set of the product. -/
-def curryOrderIso (X Y : Type*) : (X → Y → Prop) ≃o Set (X × Y) where
-  toFun F := {p | F p.1 p.2}
-  invFun S x y := (x, y) ∈ S
+/-- Functions into a power set are the power set of the product. -/
+def curryOrderIso (X Y : Type*) : (X → Set Y) ≃o Set (X × Y) where
+  toFun F := {p | p.2 ∈ F p.1}
+  invFun S x := {y | (x, y) ∈ S}
   left_inv _ := rfl
   right_inv _ := rfl
   map_rel_iff' := Prod.forall.trans <| forall_congr' fun _ ↦ .rfl
