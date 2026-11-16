@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Reference.Distinguishing
 public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
@@ -207,13 +206,12 @@ theorem S1_real_eq_one (hα : 0 < α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m 
   rw [measureReal_def, S1, speaker_dirac_apply_singleton_eq_one hα (L0_ne_zero hm hu)
     fun v hv ↦ L0_eq_zero (hother v hv), ENNReal.toReal_one]
 
-theorem distinguishes_L0_iff (hm : ∀ o', 0 ≤ m u o') (hpos : 0 < ∑ o', m u o') (D : Finset E)
-    (r : E) :
-    Distinguishes (fun o ↦ L0 m u {o}) D r ↔ Distinguishes (m u) D r := by
-  rw [funext (L0_apply hm hpos)]
-  exact distinguishes_comp_iff (φ := fun x ↦ ENNReal.ofReal (x / ∑ o', m u o'))
-    (s := Set.Ici 0) (fun _ ha _ _ hab ↦ (ENNReal.ofReal_lt_ofReal_iff_of_nonneg
-      (div_nonneg ha hpos.le)).2 ((div_lt_div_iff_of_pos_right hpos).2 hab)) hm
+/-- The literal listener ranks the objects as the meaning does. -/
+theorem L0_singleton_lt_iff (hm : ∀ o', 0 ≤ m u o') (hpos : 0 < ∑ o', m u o') {o o' : E} :
+    L0 m u {o} < L0 m u {o'} ↔ m u o < m u o' := by
+  rw [L0_apply hm hpos, L0_apply hm hpos,
+    ENNReal.ofReal_lt_ofReal_iff_of_nonneg (div_nonneg (hm o) hpos.le),
+    div_lt_div_iff_of_pos_right hpos]
 
 end Model
 
@@ -392,15 +390,17 @@ theorem overmodification_odds_lt_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤
     Real.rpow_lt_rpow_iff (gain_pos hc0 hc1 hs0 hs1).le (gain_pos hs0 hs1 hc0 hc1).le hα,
     gain_swap_lt_iff one_pos hs0 hs1 hc0 hc1]
 
-theorem small_distinguishes_iff :
-    Distinguishes (meaning xs xc .small) {.bigBlue, .bigRed} .smallBlue ↔ 1/2 < xs := by
-  simp [Distinguishes, meaning, noisy, Utterance.size, Utterance.color, Pin.size]
+theorem small_lt_smallBlue_iff :
+    (∀ o ∈ ({.bigBlue, .bigRed} : Finset Pin),
+      meaning xs xc .small o < meaning xs xc .small .smallBlue) ↔ 1/2 < xs := by
+  simp [meaning, noisy, Utterance.size, Utterance.color, Pin.size]
   constructor <;> intro h <;> linarith
 
-theorem smallBlue_distinguishes_iff (hc : 0 < xc) :
-    Distinguishes (meaning xs xc .smallBlue) {.bigBlue, .bigRed} .smallBlue ↔
+theorem smallBlue_lt_smallBlue_iff (hc : 0 < xc) :
+    (∀ o ∈ ({.bigBlue, .bigRed} : Finset Pin),
+      meaning xs xc .smallBlue o < meaning xs xc .smallBlue .smallBlue) ↔
       1/2 < xs ∧ 1 < xs + xc := by
-  simp [Distinguishes, meaning, noisy, Utterance.size, Utterance.color, Pin.size,
+  simp [meaning, noisy, Utterance.size, Utterance.color, Pin.size,
     Pin.color]
   constructor
   · rintro ⟨h1, h2⟩

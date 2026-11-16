@@ -13,7 +13,7 @@ is real, numerical, nominal or duplicate-attribute according to which of its occ
 superfluous; an under-specification, whose extension in the setting properly contains the
 referent, is mixed when some occurrence can be dropped without changing the extension and pure
 otherwise; a wrong description has a property false of the referent. The paper's four theorems
-hold for any knowledge base and nonempty set of distractors, and the worked examples of its
+hold for any knowledge base and set of distractors, and the worked examples of its
 running scene are classified.
 
 ## Implementation notes
@@ -60,7 +60,10 @@ instance [DecidableEq V] (x : E) : Decidable (extension kb D x) := by
   unfold extension; infer_instance
 
 /-- The description holds of the referent and of no distractor. -/
-abbrev Distinguishing : Prop := Distinguishes (extension kb D) C r
+def Distinguishing : Prop := extension kb D r ∧ ∀ c ∈ C, ¬ extension kb D c
+
+instance [DecidableEq V] : Decidable (Distinguishing kb r C D) := by
+  unfold Distinguishing; infer_instance
 
 /-- A distinguishing description with the fewest property occurrences. -/
 def IsMinimal : Prop := MinimalFor (Distinguishing kb r C) card D
@@ -82,18 +85,19 @@ instance [DecidableEq V] : Decidable (Wrong kb r D) := by
 
 variable {kb r C D}
 
-theorem distinguishing_val_iff (hC : C.Nonempty) {L : DaleReiter1995.Description A V} :
-    Distinguishing kb r C L.val ↔ DaleReiter1995.Distinguishing kb r C L := by
-  rw [Distinguishing, distinguishes_prop_iff hC, DaleReiter1995.distinguishing_iff]
-  simp [extension]
+theorem distinguishing_val_iff {L : DaleReiter1995.Description A V} :
+    Distinguishing kb r C L.val ↔ DaleReiter1995.Distinguishing kb r C L :=
+  Iff.rfl
 
--- Definition 1: the description's extension in the setting is the referent alone
-theorem distinguishing_iff_eq_singleton [DecidableEq E] (hC : C.Nonempty) (hr : r ∉ C) :
-    Distinguishing kb r C D ↔ {x | extension kb D x ∧ x ∈ insert r C} = {r} :=
-  (distinguishes_iff_mem_iota hC hr).trans mem_iota_iff_eq_singleton
+-- Definition 1: the description's extension in the setting, the referent and the distractors,
+-- is the referent alone
+theorem distinguishing_iff_eq_singleton (hr : r ∉ C) :
+    Distinguishing kb r C D ↔ {x | extension kb D x} ∩ insert r ↑C = {r} := by
+  rw [← mem_iota_iff_eq_singleton, mem_iota_inter_insert (Finset.mem_coe.not.2 hr)]
+  exact Iff.rfl
 
 theorem not_distinguishing_zero (hC : C.Nonempty) : ¬ Distinguishing kb r C 0 :=
-  fun h ↦ h.not_apply hC.choose_spec fun _ h ↦ (Multiset.notMem_zero _ h).elim
+  fun h ↦ h.2 _ hC.choose_spec fun _ h ↦ (Multiset.notMem_zero _ h).elim
 
 theorem isMinimal_of_card_eq_one (hC : C.Nonempty) (h : Distinguishing kb r C D)
     (h1 : card D = 1) : IsMinimal kb r C D :=
@@ -177,13 +181,12 @@ theorem theorem1 :
   ⟨MinimalFor.prop, fun ⟨_, _, _, h⟩ ↦ h.1, And.left, fun ⟨_, _, _, h, _⟩ ↦ h.1,
     fun ⟨_, _, _, h⟩ ↦ h.1⟩
 
-theorem theorem2 (hC : C.Nonempty) (h : Distinguishing kb r C D) :
+theorem theorem2 (h : Distinguishing kb r C D) :
     ¬ Mixed kb r C D ∧ ¬ PurelyUnderSpecified kb r C D ∧ ¬ Wrong kb r D :=
-  ⟨fun ⟨⟨_, _, hc, hce⟩, _⟩ ↦ h.not_apply hc hce,
-    fun ⟨⟨_, _, hc, hce⟩, _⟩ ↦ h.not_apply hc hce,
-    fun ⟨p, hp, hpr⟩ ↦ hpr (h.apply hC p hp)⟩
+  ⟨fun ⟨⟨_, _, hc, hce⟩, _⟩ ↦ h.2 _ hc hce, fun ⟨⟨_, _, hc, hce⟩, _⟩ ↦ h.2 _ hc hce,
+    fun ⟨p, hp, hpr⟩ ↦ hpr (h.1 p hp)⟩
 
-theorem theorem3 (hC : C.Nonempty) :
+theorem theorem3 :
     List.Pairwise (fun P Q : Description A V → Prop ↦ ∀ D, ¬ (P D ∧ Q D))
       [IsMinimal kb r C, RealOverSpecified kb t r C, NumericallyOverSpecified kb r C,
         NominallyOverSpecified kb t r C, Mixed kb r C, PurelyUnderSpecified kb r C,
@@ -191,7 +194,7 @@ theorem theorem3 (hC : C.Nonempty) :
   have dist : ∀ D : Description A V, _ := fun D ↦ @theorem1 E A V _ _ kb t r C D
   have under : ∀ D, Distinguishing kb r C D →
       ¬ Mixed kb r C D ∧ ¬ PurelyUnderSpecified kb r C D ∧ ¬ Wrong kb r D :=
-    fun _ ↦ theorem2 hC
+    fun _ ↦ theorem2
   refine .cons ?_ (.cons ?_ (.cons ?_ (.cons ?_ (.cons ?_ (.cons ?_ (.cons ?_ .nil))))))
   all_goals simp only [List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true,
     and_true]
@@ -215,14 +218,14 @@ theorem theorem3 (hC : C.Nonempty) :
   · exact ⟨fun D ⟨hm, _, hp⟩ ↦ hp hm, fun D ⟨hm, hw⟩ ↦ hm.1.not_wrong hw⟩
   · exact fun D ⟨hp, hw⟩ ↦ hp.1.not_wrong hw
 
-theorem theorem4 (hC : C.Nonempty) (h : DuplicateOverSpecified kb r C D) :
+theorem theorem4 (h : DuplicateOverSpecified kb r C D) :
     RealOverSpecified kb t r C D ∨ NominallyOverSpecified kb t r C D := by
   obtain ⟨p, hp, -, hs⟩ := h
   by_cases hpt : p.1 = t
   · by_cases hq : ∃ q ∈ D, q ≠ p ∧ Superfluous kb r C D q
     · obtain ⟨q, hq, hqp, hqs⟩ := hq
       refine .inl ⟨q, hq, fun hqt ↦ hqp ?_, hqs⟩
-      have hr := hs.1.apply hC
+      have hr := hs.1.1
       exact Prod.ext (hqt.trans hpt.symm)
         (Applies.snd_eq (hr q hq) (hr p hp) (hqt.trans hpt.symm))
     · exact .inr ⟨p, hp, hpt, hs, fun q hq' hqp hqs ↦ hq ⟨q, hq', hqp, hqs⟩⟩

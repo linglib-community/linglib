@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Reference.Distinguishing
+public import Linglib.Semantics.Reference.Iota
+public import Mathlib.Data.Finset.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fintype.Sum
@@ -77,11 +78,10 @@ instance [DecidableEq V] (kb : KB E A V) (L : Description A V) (x : E) :
     Decidable (extension kb L x) := by
   unfold extension; infer_instance
 
-/-- A distinguishing description of `r` against the contrast set `C` holds of `r` and
-distinguishes it from `C`, so that every pair holds of `r` and every distractor fails some
-pair. -/
+/-- A distinguishing description of `r` against the contrast set `C` holds of `r` and of no
+member of `C`, the two conditions of (3). -/
 def Distinguishing (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V) : Prop :=
-  extension kb L r ∧ Distinguishes (extension kb L) C r
+  extension kb L r ∧ ∀ c ∈ C, ¬ extension kb L c
 
 instance [DecidableEq V] (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V) :
     Decidable (Distinguishing kb r C L) := by
@@ -89,15 +89,16 @@ instance [DecidableEq V] (kb : KB E A V) (r : E) (C : Finset E) (L : Description
 
 theorem distinguishing_iff {kb : KB E A V} {r : E} {C : Finset E} {L : Description A V} :
     Distinguishing kb r C L ↔
-      (∀ p ∈ L, Applies kb r p) ∧ ∀ c ∈ C, ∃ p ∈ L, ¬ Applies kb c p :=
-  and_congr_right fun h ↦ (distinguishes_iff_forall_not h).trans <| by
-    simp only [extension, not_forall, exists_prop]
+      (∀ p ∈ L, Applies kb r p) ∧ ∀ c ∈ C, ∃ p ∈ L, ¬ Applies kb c p := by
+  simp only [Distinguishing, extension, not_forall, exists_prop]
 
--- §2.2: an accurate description of the referent and of no other member of the context set
-theorem distinguishing_iff_mem_iota [DecidableEq E] {kb : KB E A V} {r : E} {C : Finset E}
+-- §2.2: an accurate description of the referent and of no other member of the context set,
+-- which is the referent and the contrast set
+theorem distinguishing_iff_mem_iota {kb : KB E A V} {r : E} {C : Finset E}
     {L : Description A V} (hr : r ∉ C) :
-    Distinguishing kb r C L ↔ r ∈ iota {x | extension kb L x ∧ x ∈ insert r C} :=
-  and_distinguishes_iff_mem_iota hr
+    Distinguishing kb r C L ↔ r ∈ iota ({x | extension kb L x} ∩ insert r ↑C) := by
+  rw [mem_iota_inter_insert (mem_coe.not.2 hr)]
+  exact Iff.rfl
 
 /-- The members of the contrast set a pair rules out (§2.2). -/
 def rulesOut [DecidableEq V] (kb : KB E A V) (C : Finset E) (p : A × V) : Finset E :=
