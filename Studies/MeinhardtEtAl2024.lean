@@ -468,11 +468,11 @@ Tutrugbu's conditional blocking, the paper's (3), is unbounded circumambient (De
 semiambient and no non-interacting bimachine computes it. -/
 
 -- Def. 3
-theorem tutrugbu_not_isSemiambient : ¬ IsSemiambient McCollumEtAl2020.tutrugbu.map :=
+theorem tutrugbu_not_isSemiambient : ¬ IsSemiambient McCollumEtAl2020.tutrugbu :=
   not_isSemiambient_of_isUnboundedCircumambient McCollumEtAl2020.tutrugbu_isUnboundedCircumambient
 
 theorem tutrugbu_not_isNonInteractingBimachineComputable :
-    ¬ IsNonInteractingBimachineComputable McCollumEtAl2020.tutrugbu.map :=
+    ¬ IsNonInteractingBimachineComputable McCollumEtAl2020.tutrugbu :=
   not_isNonInteractingBimachineComputable_of_isUnboundedCircumambient
     McCollumEtAl2020.tutrugbu_isUnboundedCircumambient
 
@@ -484,14 +484,14 @@ Lamont, O'Hara and Smith that §5.2 and Fig. 12 take up: their first pass is len
 alphabet-preserving and still tells the second pass what lies beyond its reach. -/
 
 theorem utp_not_isNonInteractingBimachineComputable :
-    ¬ IsNonInteractingBimachineComputable Tone.utp.map :=
+    ¬ IsNonInteractingBimachineComputable Tone.utp :=
   not_isNonInteractingBimachineComputable_of_isUnboundedCircumambient
-    Tone.utp.isUnboundedCircumambient
+    Tone.utp_isUnboundedCircumambient
 
 theorem exists_isWeaklyDeterministic_not_isNonInteractingBimachineComputable :
     ∃ f : List Tone.AssociationState → List Tone.AssociationState,
       IsWeaklyDeterministic f ∧ ¬ IsNonInteractingBimachineComputable f :=
-  ⟨Tone.utp.map, LamontOHaraSmith2019.utp_isWeaklyDeterministic,
+  ⟨Tone.utp, LamontOHaraSmith2019.utp_isWeaklyDeterministic,
     utp_not_isNonInteractingBimachineComputable⟩
 
 /-! ### A bounded two-sided rule

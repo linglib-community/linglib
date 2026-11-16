@@ -531,10 +531,10 @@ def Tone.toAssociationState : Tone → _root_.Tone.AssociationState
 
 theorem plateauing_iff_mem_range_utp (w : List Tone) :
     w ∉ shuffleIdeal [.high, .low, .high] ↔
-      w.map Tone.toAssociationState ∈ Set.range _root_.Tone.utp.map := by
+      w.map Tone.toAssociationState ∈ Set.range _root_.Tone.utp := by
   have hinj : Function.Injective Tone.toAssociationState := fun a b h ↦ by
     cases a <;> cases b <;> first | rfl | cases h
-  rw [_root_.Tone.utp.mem_range_map_iff, not_iff_not]
+  rw [_root_.Tone.mem_range_utp_iff, not_iff_not]
   refine ⟨fun h ↦ h.map Tone.toAssociationState, fun h ↦ ?_⟩
   obtain ⟨l, hl, he⟩ := sublist_map_iff.mp h
   rwa [show l = [.high, .low, .high] from (map_injective_iff.mpr hinj) he.symm] at hl
