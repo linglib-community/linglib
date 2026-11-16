@@ -86,18 +86,11 @@ theorem sum_crossings_map :
   simp only [crossings_map]
   exact Fintype.sum_equiv (Equiv.inv _) _ _ fun _ ↦ rfl
 
-variable (g) in
-/-- Relinearizing along `σ` is an isomorphism of the undirected views. -/
-def mapIso (σ : Perm (Fin n)) : g.toSimpleGraph ≃g (g.map σ).toSimpleGraph where
-  toEquiv := σ
-  map_rel_iff' := by simp
-
-@[simp] theorem mapIso_apply (σ : Perm (Fin n)) (v : Fin n) : mapIso g σ v = σ v := rfl
-
 -- relinearizing preserves the tree, and so the second moment of the degrees
 theorem sum_degree_sq_map (σ : Perm (Fin n)) :
-    ∑ v, (g.map σ).toSimpleGraph.degree v ^ 2 = ∑ v, g.toSimpleGraph.degree v ^ 2 :=
-  (Fintype.sum_equiv σ _ _ fun v ↦ by rw [← mapIso_apply, (mapIso g σ).degree_eq]).symm
+    ∑ v, (g.map σ).toSimpleGraph.degree v ^ 2 = ∑ v, g.toSimpleGraph.degree v ^ 2 := by
+  convert g.toSimpleGraph.sum_degree_sq_comap σ.symm using 4
+  exact toSimpleGraph_map σ
 
 /-! ### Expected crossings and potential crossings -/
 

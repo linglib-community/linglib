@@ -292,6 +292,11 @@ theorem six_mul_card_edgeFinset_eq (h1 : ∀ v, 1 ≤ G.degree v) (h2 : ∀ v, G
     smul_eq_mul] at h
   omega
 
+/-- Relabelling the vertices permutes the degrees. -/
+theorem sum_degree_sq_comap (σ : Perm V) :
+    ∑ v, (G.comap σ).degree v ^ 2 = ∑ v, G.degree v ^ 2 :=
+  Fintype.sum_equiv σ _ _ fun v ↦ congrArg (· ^ 2) ((Iso.comap σ G).degree_eq v).symm
+
 variable [DecidableEq V]
 
 private theorem card_adj_fst (v : V) : #{q : V × V | G.Adj q.1 q.2 ∧ q.1 = v} = G.degree v := by
