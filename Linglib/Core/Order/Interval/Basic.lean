@@ -132,6 +132,17 @@ theorem NonfinalSubinterval.not_finalSubinterval (h : i₁.NonfinalSubinterval i
 
 theorem during_irrefl (i : NonemptyInterval α) : ¬ i.During i := fun h ↦ lt_irrefl _ h.1
 
+theorem pure_le_iff {a : α} : pure a ≤ i₁ ↔ a ∈ i₁ :=
+  .rfl
+
+/-- A point has no proper subinterval. -/
+theorem IsPoint.isMin (h : i₁.IsPoint) : IsMin i₁ := fun i hle ↦
+  le_def.2 ⟨i.fst_le_snd.trans ((le_def.1 hle).2.trans_eq h.symm),
+    h.symm.trans_le ((le_def.1 hle).1.trans i.fst_le_snd)⟩
+
+theorem During.not_isPoint (h : i₁.During i₂) : ¬ i₂.IsPoint :=
+  fun hp ↦ ((h.1.trans_le i₁.fst_le_snd).trans h.2).ne hp
+
 theorem During.not_precedes (h : i₁.During i₂) : ¬ i₁.Precedes i₂ :=
   fun h' ↦ lt_irrefl _ ((h.1.trans_le i₁.fst_le_snd).trans h')
 
@@ -165,6 +176,12 @@ theorem Precedes.not_overlaps (h : i₁.Precedes i₂) : ¬ i₁.Overlaps i₂ :
   fun ⟨_, h₂⟩ ↦ lt_irrefl _ (h.trans_le h₂)
 
 end Preorder
+
+/-- The intervals without a proper subinterval are the points. -/
+theorem isMin_iff_isPoint {α : Type*} [PartialOrder α] {i : NonemptyInterval α} :
+    IsMin i ↔ i.IsPoint :=
+  ⟨fun h ↦ le_antisymm i.fst_le_snd
+    (le_def.1 (h (pure_le_iff.2 (mem_def.2 ⟨le_rfl, i.fst_le_snd⟩)))).2, IsPoint.isMin⟩
 
 section LinearOrder
 
