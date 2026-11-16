@@ -80,10 +80,10 @@ def sem (u : Weather) : Set Meaning := Prod.fst ⁻¹' {u}
 
 /-- The literal listener conditions the prior on the state named. -/
 noncomputable def L0 (μ : Measure Meaning) : Kernel Weather Meaning :=
-  listener μ (truthful sem)
+  literalListener μ sem
 
 instance (μ : Measure Meaning) : IsFiniteKernel (L0 μ) :=
-  inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
+  inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
 /-- The question-indexed speaker knows the answer to her question and is informative about the
 literal listener's belief about it (eq. 1), at rationality `α` and no utterance cost. -/
@@ -107,7 +107,7 @@ variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
 theorem listener_ne_zero_iff (hα : 0 < α) (u : Weather) (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
       ∃ q, ν {q} ≠ 0 ∧ ∃ m', project q m' = project q m ∧ m'.1 = u ∧ μ {m'} ≠ 0 :=
-  listener_prod_fst_qudSpeaker_listener_truthful_apply_singleton_ne_zero_iff hα 0 μ ν sem
+  listener_prod_fst_qudSpeaker_literalListener_apply_singleton_ne_zero_iff hα 0 μ ν sem
     project u m
 
 -- Under the valence question, "terrible" can hyperbolically mean bad weather with negative
@@ -145,7 +145,7 @@ omit [IsProbabilityMeasure ν] in
 theorem S1_state_apply_singleton_of_ne (hα : 0 < α) {s u : Weather} (h : s ≠ u) (A : Affect) :
     S1 μ α ((s, A), .state) {u} = 0 := by
   by_contra h'
-  obtain ⟨m', hm', hu, -⟩ := (qudSpeaker_listener_truthful_apply_singleton_ne_zero_iff hα 0
+  obtain ⟨m', hm', hu, -⟩ := (qudSpeaker_literalListener_apply_singleton_ne_zero_iff hα 0
     μ sem (project .state) (s, A) u).mp h'
   exact h ((Sum.inl.inj hm').symm.trans hu)
 
@@ -172,7 +172,7 @@ omit [IsProbabilityMeasure π'] in
 -- The literal listener who hears a state named believes that state and the affect prior there.
 theorem L0_compProd {u : Weather} (hu : π {u} ≠ 0) :
     L0 (π ⊗ₘ κ) u = Measure.dirac u ⊗ₘ κ :=
-  listener_truthful_preimage_fst_compProd π κ hu
+  literalListener_preimage_fst_compProd π κ hu
 
 /-- The speaker does not depend on the weather context: two contexts that leave every state
 possible and share the affect prior have the same speaker, so the context enters an interpretation
@@ -180,7 +180,7 @@ through Bayes' rule at the pragmatic listener alone. -/
 theorem S1_compProd_congr (hπ : ∀ u, π {u} ≠ 0) (hπ' : ∀ u, π' {u} ≠ 0) (p : Meaning × QUD) :
     S1 (π ⊗ₘ κ) α p = S1 (π' ⊗ₘ κ) α p := by
   have h : L0 (π ⊗ₘ κ) = L0 (π' ⊗ₘ κ) :=
-    listener_truthful_preimage_fst_compProd_congr π π' κ hπ hπ'
+    literalListener_preimage_fst_compProd_congr π π' κ hπ hπ'
   rw [S1, S1, h]
 
 omit [IsProbabilityMeasure π'] in

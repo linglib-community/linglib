@@ -70,10 +70,10 @@ def sem (u : Cat) : Set Meaning := {m | m.1 = u}
 
 /-- The literal listener conditions the prior on the category named. -/
 noncomputable def L0 (μ : Measure Meaning) : Kernel Cat Meaning :=
-  listener μ (truthful sem)
+  literalListener μ sem
 
 instance (μ : Measure Meaning) : IsFiniteKernel (L0 μ) :=
-  inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
+  inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
 /-- The goal-indexed speaker (eq. 2) knows the value of her goal's feature and is informative
 about the literal listener's belief about it (eq. 1), at rationality `α` and no utterance cost. -/
@@ -118,7 +118,7 @@ theorem S1_compProd_congr (π π' : Measure Cat) [IsProbabilityMeasure π] [IsPr
     (κ : Kernel Cat Features) [IsMarkovKernel κ] (hπ : ∀ c, π {c} ≠ 0) (hπ' : ∀ c, π' {c} ≠ 0)
     (p : Meaning × Goal) : S1 (π ⊗ₘ κ) α p = S1 (π' ⊗ₘ κ) α p := by
   have h : L0 (π ⊗ₘ κ) = L0 (π' ⊗ₘ κ) :=
-    listener_truthful_preimage_fst_compProd_congr π π' κ hπ hπ'
+    literalListener_preimage_fst_compProd_congr π π' κ hπ hπ'
   rw [S1, S1, h]
 
 end Speaker
@@ -131,7 +131,7 @@ variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
 theorem listener_ne_zero_iff (hα : 0 < α) (u : Cat) (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
       ∃ g, ν {g} ≠ 0 ∧ ∃ m', project g m' = project g m ∧ m'.1 = u ∧ μ {m'} ≠ 0 :=
-  listener_prod_fst_qudSpeaker_listener_truthful_apply_singleton_ne_zero_iff hα 0 μ ν sem
+  listener_prod_fst_qudSpeaker_literalListener_apply_singleton_ne_zero_iff hα 0 μ ν sem
     project u m
 
 /-- A person with the goal's feature value is a possible, nonliteral meaning of the animal's

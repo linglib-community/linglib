@@ -7,8 +7,8 @@ public import Linglib.Pragmatics.Probabilistic.Speaker
 # The speaker against the literal listener
 
 Against the literal listener the speaker [sees her belief only through the utterances it
-entails](##RSA.speaker_listener_truthful_apply_eq_iff), and when she knows the state she [produces
-exactly the utterances true there](##RSA.speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff).
+entails](##RSA.speaker_literalListener_apply_eq_iff), and when she knows the state she [produces
+exactly the utterances true there](##RSA.speaker_literalListener_dirac_apply_singleton_ne_zero_iff).
 The pragmatic listener is the listener of this speaker.
 
 ## References
@@ -91,41 +91,41 @@ variable [Fintype W] [MeasurableSingletonClass W] [Fintype U] [MeasurableSinglet
   [Countable O] [MeasurableSingletonClass O] {α : ℝ} {C : U → ℝ} {b : O → Measure W} {o : O}
   {μ : Measure W} {sem : U → Set W} {u u' : U}
 
-private theorem geomMean_listener_truthful (β : Measure W) [IsProbabilityMeasure β] (u : U) :
-    β.geomMean (fun w ↦ listener μ (truthful sem) u {w}) =
+private theorem geomMean_literalListener (β : Measure W) [IsProbabilityMeasure β] (u : U) :
+    β.geomMean (fun w ↦ literalListener μ sem u {w}) =
       β.geomMean (fun w ↦ μ {w}) * (β.geomMean ((sem u).indicator 1) * (μ (sem u))⁻¹) := by
-  rw [listener_truthful_eq_ofDensity, geomMean_ofDensity]
+  rw [literalListener_eq_ofDensity, geomMean_ofDensity]
   congr 3
   rw [← lintegral_fintype, lintegral_indicator_one .of_discrete]
 
 variable [IsFiniteMeasure μ]
 
-theorem speaker_listener_truthful_apply_singleton_eq_zero_iff (hα : 0 < α) [IsFiniteMeasure (b o)]
+theorem speaker_literalListener_apply_singleton_eq_zero_iff (hα : 0 < α) [IsFiniteMeasure (b o)]
     (hb : b o ≪ μ) :
-    speaker α C (listener μ (truthful sem)) b o {u} = 0 ↔ ¬ ∀ᵐ w ∂b o, w ∈ sem u := by
+    speaker α C (literalListener μ sem) b o {u} = 0 ↔ ¬ ∀ᵐ w ∂b o, w ∈ sem u := by
   rw [speaker_apply_singleton_eq_zero_iff hα, ae_iff_of_countable, not_forall]
   refine exists_congr fun w ↦ ?_
   rw [Classical.not_imp]
   refine and_congr_right fun hw ↦ ?_
-  rw [← not_iff_not, not_not, ← ne_eq, listener_truthful_apply_singleton_ne_zero_iff]
+  rw [← not_iff_not, not_not, ← ne_eq, literalListener_apply_singleton_ne_zero_iff]
   exact and_iff_left fun h ↦ hw (hb h)
 
 /-- Against the literal listener the speaker's mass on an utterance her belief entails is its
 weight, the inverse of its extension's prior mass to the power `α` times the cost weight, over the
 sum of the weights of the utterances her belief entails. -/
-theorem speaker_listener_truthful_apply_singleton (hα : 0 < α) [IsProbabilityMeasure (b o)]
+theorem speaker_literalListener_apply_singleton (hα : 0 < α) [IsProbabilityMeasure (b o)]
     (hb : b o ≪ μ) (u : U) :
-    speaker α C (listener μ (truthful sem)) b o {u} =
+    speaker α C (literalListener μ sem) b o {u} =
       {v | ∀ᵐ w ∂b o, w ∈ sem v}.indicator
           (fun v ↦ (μ (sem v))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C v)))) u /
         ∑ v, {v | ∀ᵐ w ∂b o, w ∈ sem v}.indicator
           (fun v ↦ (μ (sem v))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C v)))) v := by
   classical
-  have key (v : U) : (b o).geomMean (fun w ↦ listener μ (truthful sem) v {w}) ^ α *
+  have key (v : U) : (b o).geomMean (fun w ↦ literalListener μ sem v {w}) ^ α *
         ENNReal.ofReal (Real.exp (-(α * C v))) =
       (b o).geomMean (fun w ↦ μ {w}) ^ α * {v | ∀ᵐ w ∂b o, w ∈ sem v}.indicator
         (fun v ↦ (μ (sem v))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C v)))) v := by
-    rw [geomMean_listener_truthful, Measure.geomMean_indicator_one]
+    rw [geomMean_literalListener, Measure.geomMean_indicator_one]
     by_cases hv : ∀ᵐ w ∂b o, w ∈ sem v
     · rw [ite_eq_left hv, Set.indicator_of_mem (show v ∈ {v | ∀ᵐ w ∂b o, w ∈ sem v} from hv),
         one_mul, ENNReal.mul_rpow_of_nonneg _ _ hα.le, mul_assoc]
@@ -141,25 +141,25 @@ variable {O' : Type*} [MeasurableSpace O'] [Countable O'] [MeasurableSingletonCl
 
 /-- Against the literal listener two beliefs yield the same speaker exactly when they entail the
 same utterances. -/
-theorem speaker_listener_truthful_apply_eq_iff (hα : 0 < α) [IsProbabilityMeasure (b o)]
+theorem speaker_literalListener_apply_eq_iff (hα : 0 < α) [IsProbabilityMeasure (b o)]
     [IsProbabilityMeasure (b' o')] (hb : b o ≪ μ) (hb' : b' o' ≪ μ) :
-    speaker α C (listener μ (truthful sem)) b' o' = speaker α C (listener μ (truthful sem)) b o ↔
+    speaker α C (literalListener μ sem) b' o' = speaker α C (literalListener μ sem) b o ↔
       ∀ u, (∀ᵐ w ∂b' o', w ∈ sem u) ↔ ∀ᵐ w ∂b o, w ∈ sem u := by
   refine ⟨fun h u ↦ ?_, fun h ↦ Measure.ext_of_singleton fun u ↦ ?_⟩
-  · rw [← not_iff_not, ← speaker_listener_truthful_apply_singleton_eq_zero_iff hα hb' (C := C),
-      ← speaker_listener_truthful_apply_singleton_eq_zero_iff hα hb (C := C), h]
-  · simp only [speaker_listener_truthful_apply_singleton hα hb,
-      speaker_listener_truthful_apply_singleton hα hb', h]
+  · rw [← not_iff_not, ← speaker_literalListener_apply_singleton_eq_zero_iff hα hb' (C := C),
+      ← speaker_literalListener_apply_singleton_eq_zero_iff hα hb (C := C), h]
+  · simp only [speaker_literalListener_apply_singleton hα hb,
+      speaker_literalListener_apply_singleton hα hb', h]
 
 /-- An utterance a belief entails loses mass to a belief that entails at least as much, whose
 speaker has more to choose from. -/
-theorem speaker_listener_truthful_apply_singleton_le (hα : 0 < α) [IsProbabilityMeasure (b o)]
+theorem speaker_literalListener_apply_singleton_le (hα : 0 < α) [IsProbabilityMeasure (b o)]
     [IsProbabilityMeasure (b' o')] (hb : b o ≪ μ) (hb' : b' o' ≪ μ)
     (h : ∀ v, (∀ᵐ w ∂b o, w ∈ sem v) → ∀ᵐ w ∂b' o', w ∈ sem v) (hu : ∀ᵐ w ∂b o, w ∈ sem u) :
-    speaker α C (listener μ (truthful sem)) b' o' {u} ≤
-      speaker α C (listener μ (truthful sem)) b o {u} := by
-  rw [speaker_listener_truthful_apply_singleton hα hb,
-    speaker_listener_truthful_apply_singleton hα hb',
+    speaker α C (literalListener μ sem) b' o' {u} ≤
+      speaker α C (literalListener μ sem) b o {u} := by
+  rw [speaker_literalListener_apply_singleton hα hb,
+    speaker_literalListener_apply_singleton hα hb',
     Set.indicator_of_mem (show u ∈ {v | ∀ᵐ w ∂b o, w ∈ sem v} from hu),
     Set.indicator_of_mem (show u ∈ {v | ∀ᵐ w ∂b' o', w ∈ sem v} from h u hu)]
   exact ENNReal.div_le_div_left (Finset.sum_le_sum fun v _ ↦
@@ -167,20 +167,20 @@ theorem speaker_listener_truthful_apply_singleton_le (hα : 0 < α) [IsProbabili
 
 /-- Among the utterances her belief entails, the speaker at no cost prefers the one of smaller
 prior mass. -/
-theorem speaker_zero_listener_truthful_real_singleton_lt_iff (hα : 0 < α)
+theorem speaker_zero_literalListener_real_singleton_lt_iff (hα : 0 < α)
     [IsProbabilityMeasure (b o)] (hb : b o ≪ μ) (hu : ∀ᵐ w ∂b o, w ∈ sem u)
     (hu' : ∀ᵐ w ∂b o, w ∈ sem u') :
-    (speaker α 0 (listener μ (truthful sem)) b o).real {u} <
-        (speaker α 0 (listener μ (truthful sem)) b o).real {u'} ↔
+    (speaker α 0 (literalListener μ sem) b o).real {u} <
+        (speaker α 0 (literalListener μ sem) b o).real {u'} ↔
       μ (sem u') < μ (sem u) := by
   classical
   have h1 (v : U) (hv : ∀ᵐ w ∂b o, w ∈ sem v) : (b o).geomMean ((sem v).indicator 1) = 1 := by
     rw [Measure.geomMean_indicator_one, ite_eq_left hv]
   rw [speaker_real_singleton_lt_iff hα.le ⟨u, fun w hw ↦
-    (listener_truthful_apply_singleton_ne_zero_iff μ sem u w).2
+    (literalListener_apply_singleton_ne_zero_iff μ sem u w).2
       ⟨ae_iff_of_countable.1 hu w hw, fun hμ ↦ hw (hb hμ)⟩⟩]
   simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
-  rw [ENNReal.rpow_lt_rpow_iff hα, geomMean_listener_truthful, geomMean_listener_truthful, h1 u hu,
+  rw [ENNReal.rpow_lt_rpow_iff hα, geomMean_literalListener, geomMean_literalListener, h1 u hu,
     h1 u' hu', one_mul, one_mul,
     ENNReal.mul_lt_mul_iff_right (Measure.geomMean_ne_zero fun _ hw hμ ↦ hw (hb hμ))
       (Measure.geomMean_ne_top fun _ _ ↦ measure_ne_top _ _), ENNReal.inv_lt_inv]
@@ -203,40 +203,40 @@ private theorem dirac_absolutelyContinuous {μ : Measure W} (h : μ {w} ≠ 0) :
 
 variable [MeasurableSingletonClass U]
 
-theorem speaker_listener_truthful_dirac_eq_one (hα : 0 < α)
+theorem speaker_literalListener_dirac_eq_one (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) (hμ : μ {w} ≠ 0)
     (hmem : w ∈ sem u) (hother : ∀ u' ≠ u, w ∉ sem u') :
-    speaker α C (listener μ (truthful sem)) Measure.dirac w {u} = 1 :=
+    speaker α C (literalListener μ sem) Measure.dirac w {u} = 1 :=
   speaker_dirac_apply_singleton_eq_one hα
     (by
-      rw [listener_truthful_apply_singleton μ sem hmem]
+      rw [literalListener_apply_singleton μ sem hmem]
       exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) hμ)
-    fun u' hu' ↦ listener_truthful_apply_singleton_of_notMem μ sem (hother u' hu')
+    fun u' hu' ↦ literalListener_apply_singleton_of_notMem μ sem (hother u' hu')
 
-theorem speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff (hα : 0 < α)
+theorem speaker_literalListener_dirac_apply_singleton_ne_zero_iff (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ]
     (sem : U → Set W) (u : U) (w : W) :
-    speaker α C (listener μ (truthful sem)) Measure.dirac w {u} ≠ 0
+    speaker α C (literalListener μ sem) Measure.dirac w {u} ≠ 0
       ↔ w ∈ sem u ∧ μ {w} ≠ 0 := by
   rw [speaker_dirac_apply_singleton_ne_zero_iff hα,
-    listener_truthful_apply_singleton_ne_zero_iff μ sem u w]
+    literalListener_apply_singleton_ne_zero_iff μ sem u w]
 
-theorem speaker_listener_truthful_dirac_apply_singleton_eq_zero (hα : 0 < α)
+theorem speaker_literalListener_dirac_apply_singleton_eq_zero (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) (sem : U → Set W) (h : w ∉ sem u) :
-    speaker α C (listener μ (truthful sem)) Measure.dirac w {u} = 0 :=
-  speaker_dirac_apply_singleton_eq_zero hα (listener_truthful_apply_singleton_of_notMem μ sem h)
+    speaker α C (literalListener μ sem) Measure.dirac w {u} = 0 :=
+  speaker_dirac_apply_singleton_eq_zero hα (literalListener_apply_singleton_of_notMem μ sem h)
 
 /-- A speaker who knows the state says only what is true there. -/
-theorem ae_speaker_listener_truthful_dirac_mem (hα : 0 < α) (C : U → ℝ) (μ : Measure W)
+theorem ae_speaker_literalListener_dirac_mem (hα : 0 < α) (C : U → ℝ) (μ : Measure W)
     (sem : U → Set W) (w : W) :
-    ∀ᵐ u ∂speaker α C (listener μ (truthful sem)) Measure.dirac w, w ∈ sem u :=
+    ∀ᵐ u ∂speaker α C (literalListener μ sem) Measure.dirac w, w ∈ sem u :=
   ae_iff_of_countable.2 fun _ hu ↦
-    by_contra fun h ↦ hu (speaker_listener_truthful_dirac_apply_singleton_eq_zero hα C μ sem h)
+    by_contra fun h ↦ hu (speaker_literalListener_dirac_apply_singleton_eq_zero hα C μ sem h)
 
-theorem speaker_listener_truthful_dirac_real_singleton_eq_zero (hα : 0 < α)
+theorem speaker_literalListener_dirac_real_singleton_eq_zero (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) (sem : U → Set W) (h : w ∉ sem u) :
-    (speaker α C (listener μ (truthful sem)) Measure.dirac w).real {u} = 0 := by
-  rw [measureReal_def, speaker_listener_truthful_dirac_apply_singleton_eq_zero hα C μ sem h,
+    (speaker α C (literalListener μ sem) Measure.dirac w).real {u} = 0 := by
+  rw [measureReal_def, speaker_literalListener_dirac_apply_singleton_eq_zero hα C μ sem h,
     ENNReal.toReal_zero]
 
 section SingletonUniv
@@ -249,62 +249,62 @@ include hα hμ huu' hu hu' hsupp
 /-- A speaker who knows the state and can say only what is true there alone or what is true
 everywhere says the first with the logistic probability of the cost it adds, less the log prior
 of the state, discounted. -/
-theorem speaker_listener_truthful_dirac_real_singleton_of_eq_singleton :
-    (speaker α C (listener μ (truthful sem)) Measure.dirac w).real {u} =
+theorem speaker_literalListener_dirac_real_singleton_of_eq_singleton :
+    (speaker α C (literalListener μ sem) Measure.dirac w).real {u} =
       Real.sigmoid (α * (C u' - C u - Real.log (μ.real {w}))) := by
-  have h1 := listener_truthful_apply_singleton_of_eq_singleton μ sem hu hμ
-  have h2 := listener_truthful_apply_singleton_of_eq_univ μ sem hu' w
+  have h1 := literalListener_apply_singleton_of_eq_singleton μ sem hu hμ
+  have h2 := literalListener_apply_singleton_of_eq_univ μ sem hu' w
   rw [speaker_dirac_real_singleton_of_pair hα huu' (h1 ▸ one_ne_zero) (h2 ▸ hμ) fun v hv ↦
-      hsupp v ((listener_truthful_apply_singleton_ne_zero_iff μ sem v w).1 hv).1,
+      hsupp v ((literalListener_apply_singleton_ne_zero_iff μ sem v w).1 hv).1,
     h1, h2, ENNReal.toReal_one, Real.log_one, ← measureReal_def]
   congr 1; ring
 
-theorem speaker_listener_truthful_dirac_real_singleton_of_eq_univ :
-    (speaker α C (listener μ (truthful sem)) Measure.dirac w).real {u'} =
+theorem speaker_literalListener_dirac_real_singleton_of_eq_univ :
+    (speaker α C (literalListener μ sem) Measure.dirac w).real {u'} =
       Real.sigmoid (α * (C u - C u' + Real.log (μ.real {w}))) := by
-  have h1 := listener_truthful_apply_singleton_of_eq_singleton μ sem hu hμ
-  have h2 := listener_truthful_apply_singleton_of_eq_univ μ sem hu' w
+  have h1 := literalListener_apply_singleton_of_eq_singleton μ sem hu hμ
+  have h2 := literalListener_apply_singleton_of_eq_univ μ sem hu' w
   rw [speaker_dirac_real_singleton_of_pair hα huu'.symm (h2 ▸ hμ) (h1 ▸ one_ne_zero) fun v hv ↦
-      (hsupp v ((listener_truthful_apply_singleton_ne_zero_iff μ sem v w).1 hv).1).symm,
+      (hsupp v ((literalListener_apply_singleton_ne_zero_iff μ sem v w).1 hv).1).symm,
     h1, h2, ENNReal.toReal_one, Real.log_one, ← measureReal_def]
   congr 1; ring
 
 end SingletonUniv
 
-theorem speaker_listener_truthful_dirac_congr (hα : 0 < α)
+theorem speaker_literalListener_dirac_congr (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W)
     {w w' : W} (hw : μ {w} ≠ 0) (hw' : μ {w'} ≠ 0) (h : ∀ u, w ∈ sem u ↔ w' ∈ sem u) :
-    speaker α C (listener μ (truthful sem)) Measure.dirac w'
-      = speaker α C (listener μ (truthful sem)) Measure.dirac w :=
-  (speaker_listener_truthful_apply_eq_iff hα (dirac_absolutelyContinuous hw)
+    speaker α C (literalListener μ sem) Measure.dirac w'
+      = speaker α C (literalListener μ sem) Measure.dirac w :=
+  (speaker_literalListener_apply_eq_iff hα (dirac_absolutelyContinuous hw)
     (dirac_absolutelyContinuous hw')).2 fun u ↦ by
       rw [ae_dirac_mem_iff, ae_dirac_mem_iff, h u]
 
-theorem speaker_listener_truthful_dirac_le_of_subset (hα : 0 < α)
+theorem speaker_literalListener_dirac_le_of_subset (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) {w w' : W}
     (hw : μ {w} ≠ 0) (hsub : ∀ u, w ∈ sem u → w' ∈ sem u) {u : U} (hu : w ∈ sem u) :
-    speaker α C (listener μ (truthful sem)) Measure.dirac w' {u}
-      ≤ speaker α C (listener μ (truthful sem)) Measure.dirac w {u} := by
+    speaker α C (literalListener μ sem) Measure.dirac w' {u}
+      ≤ speaker α C (literalListener μ sem) Measure.dirac w {u} := by
   rcases eq_or_ne (μ {w'}) 0 with hw' | hw'
   · rw [speaker_dirac_apply_singleton_eq_zero hα (not_not.mp fun h ↦
-      ((listener_truthful_apply_singleton_ne_zero_iff μ sem u w').mp h).2 hw')]
+      ((literalListener_apply_singleton_ne_zero_iff μ sem u w').mp h).2 hw')]
     exact zero_le
-  · exact speaker_listener_truthful_apply_singleton_le hα (dirac_absolutelyContinuous hw)
+  · exact speaker_literalListener_apply_singleton_le hα (dirac_absolutelyContinuous hw)
       (dirac_absolutelyContinuous hw')
       (fun v hv ↦ ae_dirac_mem_iff.2 (hsub v (ae_dirac_mem_iff.1 hv))) (ae_dirac_mem_iff.2 hu)
 
-theorem speaker_listener_truthful_dirac_zero_real_singleton_of_pair (hα : 0 < α)
+theorem speaker_literalListener_dirac_zero_real_singleton_of_pair (hα : 0 < α)
     (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) (hμ : μ {w} ≠ 0)
     {u u' : U} (huu' : u ≠ u') (hu : w ∈ sem u) (hu' : w ∈ sem u')
     (hsupp : ∀ v, w ∈ sem v → v = u ∨ v = u') :
-    (speaker α 0 (listener μ (truthful sem)) Measure.dirac w).real {u} =
+    (speaker α 0 (literalListener μ sem) Measure.dirac w).real {u} =
       μ.real (sem u') ^ α / (μ.real (sem u) ^ α + μ.real (sem u') ^ α) := by
   have hx : 0 < μ.real {w} := ENNReal.toReal_pos hμ (measure_ne_top _ _)
   have hpos {v : U} (hv : w ∈ sem v) : 0 < μ.real (sem v) :=
     hx.trans_le (measureReal_mono (Set.singleton_subset_iff.2 hv))
-  have hterm {v : U} (hv : w ∈ sem v) : (listener μ (truthful sem) v {w} ^ α).toReal =
+  have hterm {v : U} (hv : w ∈ sem v) : (literalListener μ sem v {w} ^ α).toReal =
       μ.real {w} ^ α / μ.real (sem v) ^ α := by
-    rw [← ENNReal.toReal_rpow, ← measureReal_def, listener_truthful_real_singleton μ sem hv,
+    rw [← ENNReal.toReal_rpow, ← measureReal_def, literalListener_real_singleton μ sem hv,
       Real.div_rpow hx.le (hpos hv).le]
   rw [speaker_dirac_zero_real_singleton hα.le, Finset.sum_eq_add u u' huu' (fun v _ hv ↦ ?_)
       (by simp) (by simp), hterm hu, hterm hu']
@@ -312,7 +312,7 @@ theorem speaker_listener_truthful_dirac_zero_real_singleton_of_pair (hα : 0 < �
     have := hpos hu'
     field_simp
     ring
-  · rw [listener_truthful_apply_singleton_of_notMem μ sem fun h ↦ (hsupp v h).elim hv.1 hv.2,
+  · rw [literalListener_apply_singleton_of_notMem μ sem fun h ↦ (hsupp v h).elim hv.1 hv.2,
       ENNReal.zero_rpow_of_pos hα, ENNReal.toReal_zero]
 
 end Dirac
@@ -325,11 +325,11 @@ section Listener
 
 variable [Fintype W] [DiscreteMeasurableSpace W] [Fintype U] [MeasurableSingletonClass U]
 
-theorem listener_speaker_listener_truthful_apply_singleton_of_notMem {α : ℝ} (hα : 0 < α)
+theorem listener_speaker_literalListener_apply_singleton_of_notMem {α : ℝ} (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) (sem : U → Set W) {u : U} {w : W} (hw : w ∉ sem u) :
-    listener μ (speaker α C (listener μ (truthful sem)) Measure.dirac) u {w} = 0 :=
+    listener μ (speaker α C (literalListener μ sem) Measure.dirac) u {w} = 0 :=
   listener_apply_singleton_eq_zero (speaker_dirac_apply_singleton_eq_zero hα
-    (listener_truthful_apply_singleton_of_notMem μ sem hw))
+    (literalListener_apply_singleton_of_notMem μ sem hw))
 
 end Listener
 

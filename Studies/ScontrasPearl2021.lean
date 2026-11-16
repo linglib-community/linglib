@@ -245,15 +245,15 @@ variable (D : NumberTree) [DecidableRel D] (n : ℕ)
 /-- The literal listener is uniform on the extension of the utterance under the scope
 interpretation, with no world prior (fn. 6). -/
 noncomputable def L0 (i : Scope) : Kernel Utt (World n) :=
-  listener (uniformOn Set.univ) (truthful fun u ↦ (↑(ext D n i u) : Set (World n)))
+  literalListener (uniformOn Set.univ) (fun u ↦ (↑(ext D n i u) : Set (World n)))
 
 instance (i : Scope) : IsFiniteKernel (L0 D n i) :=
-  inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
+  inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
 theorem map_L0_apply (i : Scope) (q : QUD) (u : Utt) (w : World n) :
     (L0 D n i).map (project n q) u {project n q w}
       = uniformOn ↑(ext D n i u) (↑(cell n q w) : Set (World n)) := by
-  rw [Kernel.map_apply_singleton, L0, listener_uniformOn_truthful_apply]
+  rw [Kernel.map_apply_singleton, L0, literalListener_uniformOn_apply]
   congr 1
   ext w'
   simp [cell]

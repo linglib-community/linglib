@@ -57,7 +57,7 @@ variable (μ : Measure W) (α cs cn : ℝ)
 /-- The speaker knows the situation and soft-maximizes informativity to the literal listener, to
 whom a report conveys its situation and silence the prior; a report costs `cs`, silence `cn`. -/
 noncomputable def S : Kernel W (Option W) :=
-  speaker α (Option.elim · cn fun _ ↦ cs) (listener μ (truthful extension)) Measure.dirac
+  speaker α (Option.elim · cn fun _ ↦ cs) (literalListener μ extension) Measure.dirac
 
 /-- The listener observes whether the speaker spoke, not what she reported. -/
 noncomputable def spoke : Kernel W Bool := (S μ α cs cn).map Option.isSome
@@ -67,7 +67,7 @@ noncomputable def L1 : Kernel Bool W := listener μ (spoke μ α cs cn)
 
 /-- When asked, the speaker has no silent option and chooses among the reports. -/
 noncomputable def askedS : Kernel W W :=
-  speaker α (fun _ ↦ cs) (listener μ (truthful fun v ↦ ({v} : Set W))) Measure.dirac
+  speaker α (fun _ ↦ cs) (literalListener μ (fun v ↦ ({v} : Set W))) Measure.dirac
 
 instance : IsFiniteKernel (S μ α cs cn) := inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
 
@@ -82,7 +82,7 @@ theorem spoke_apply_true (hα : 0 < α) (v : W) :
     spoke μ α cs cn v {true} = S μ α cs cn v {some v} := by
   rw [spoke, Kernel.map_apply' _ .of_discrete _ (.singleton true), S,
     ← measure_inter_conull (t := {u | v ∈ extension u})
-      (ae_iff.1 (ae_speaker_listener_truthful_dirac_mem hα _ μ extension v))]
+      (ae_iff.1 (ae_speaker_literalListener_dirac_mem hα _ μ extension v))]
   congr 1
   ext (_ | w) <;> simp [extension, eq_comm]
 
@@ -94,7 +94,7 @@ theorem spoke_real_true (hα : 0 < α) {v : W} (hv : μ {v} ≠ 0) :
     (spoke μ α cs cn v).real {true} =
       Real.sigmoid (α * ((surprisal μ v).toReal - (cs - cn))) := by
   rw [measureReal_def, spoke_apply_true μ α cs cn hα, ← measureReal_def, S,
-    speaker_listener_truthful_dirac_real_singleton_of_eq_singleton hα _ μ extension hv
+    speaker_literalListener_dirac_real_singleton_of_eq_singleton hα _ μ extension hv
       (Option.some_ne_none v) rfl rfl, toReal_surprisal prob_le_one]
   · simp only [Option.elim]
     ring_nf
@@ -104,7 +104,7 @@ theorem spoke_real_true (hα : 0 < α) {v : W} (hv : μ {v} ≠ 0) :
 theorem spoke_apply_true_eq_zero_iff (hα : 0 < α) {v : W} :
     spoke μ α cs cn v {true} = 0 ↔ μ {v} = 0 := by
   rw [spoke_apply_true μ α cs cn hα, ← not_iff_not, ← ne_eq, S,
-    speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff hα _ μ extension]
+    speaker_literalListener_dirac_apply_singleton_ne_zero_iff hα _ μ extension]
   exact and_iff_right rfl
 
 /-! ### The listener -/
@@ -206,8 +206,8 @@ theorem listener_asked_eq_prior (hα : 0 < α) :
     rcases eq_or_ne (μ {v}) 0 with hv | hv
     · rw [hv, mul_zero]
     have := isProbabilityMeasure_speaker_dirac hα.le (fun _ ↦ cs)
-      (listener μ (truthful fun v ↦ ({v} : Set W))) (w := v)
-      ⟨v, by rw [listener_truthful_apply_singleton_of_eq_singleton μ _ rfl hv]; exact one_ne_zero⟩
+      (literalListener μ (fun v ↦ ({v} : Set W))) (w := v)
+      ⟨v, by rw [literalListener_apply_singleton_of_eq_singleton μ _ rfl hv]; exact one_ne_zero⟩
     rw [Kernel.map_apply' _ measurable_const _ (.singleton true),
       Set.preimage_const_of_mem (Set.mem_singleton true), askedS, measure_univ, one_mul]
   refine Measure.ext_of_singleton fun w ↦ ?_

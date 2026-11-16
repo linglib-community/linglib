@@ -191,13 +191,13 @@ instance : DiscreteMeasurableSpace g.Complete :=
 
 /-- The global literal listener (eq. 1) is uniform on the referents the utterance is true of. -/
 noncomputable def globalL0 : Kernel g.Complete W :=
-  listener (uniformOn Set.univ) (truthful fun u : g.Complete ↦ (g.sem u.val : Set W))
+  literalListener (uniformOn Set.univ) (fun u : g.Complete ↦ (g.sem u.val : Set W))
 
 instance : IsFiniteKernel g.globalL0 := inferInstanceAs (IsFiniteKernel (listener _ _))
 
 theorem globalL0_apply (u : g.Complete) (r : W) :
     g.globalL0 u {r} = if r ∈ g.sem u.val then ((g.sem u.val).card : ℝ≥0∞)⁻¹ else 0 :=
-  listener_uniformOn_truthful_apply_singleton (fun u : g.Complete ↦ g.sem u.val) u r
+  literalListener_uniformOn_apply_singleton (fun u : g.Complete ↦ g.sem u.val) u r
 
 /-- An utterance is weakly informative about `r` (§2.4) when the global literal listener gives
 `r` at least chance probability. -/

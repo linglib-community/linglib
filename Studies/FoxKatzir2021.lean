@@ -294,8 +294,8 @@ cost, the rational speaker of the Rational Speech Acts model weighs each true me
 inverse size of its extension to the power of her rationality, and as the rationality goes to
 zero she chooses uniformly among the true messages, as the naive speaker (12) does. -/
 theorem tendsto_speaker_naiveSpeaker (t : T) (m : M) :
-    Tendsto (fun α : ℝ ↦ (RSA.speaker α 0 (RSA.listener (uniformOn Set.univ)
-        (RSA.truthful fun u ↦ (sem u : Set T))) Measure.dirac t).real {m}) (𝓝[>] 0)
+    Tendsto (fun α : ℝ ↦ (RSA.speaker α 0 (RSA.literalListener (uniformOn Set.univ)
+        (fun u ↦ (sem u : Set T))) Measure.dirac t).real {m}) (𝓝[>] 0)
       (𝓝 ((naiveSpeaker {p | p.2 ∈ sem p.1} univ t).real {m})) := by
   convert RSA.tendsto_speaker_uniformOn_dirac_real_singleton_nhdsGT_zero sem t m using 2
   rw [naiveSpeaker_real_singleton]

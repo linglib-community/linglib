@@ -10,7 +10,7 @@ public import Linglib.Core.Probability.UniformOn
 # Rational speech acts at a uniform prior
 
 With finitely many states, Boolean meanings and a uniform prior, the literal listener is
-[uniform on the extension](##RSA.listener_uniformOn_truthful_apply) of what she hears, and the
+[uniform on the extension](##RSA.literalListener_uniformOn_apply) of what she hears, and the
 speaker who knows the state weighs a true utterance by the inverse size of its extension to the
 power of her rationality, so she [prefers the smaller of two true
 extensions](##RSA.speaker_uniformOn_dirac_real_singleton_lt_iff). Her normalizer at a state is the
@@ -128,24 +128,24 @@ variable {W U : Type*} [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace 
 /-! ### The literal listener -/
 
 /-- The literal listener at a uniform prior. -/
-local notation "L₀" => listener (uniformOn (Set.univ : Set W)) (truthful fun u ↦ (sem u : Set W))
+local notation "L₀" => literalListener (uniformOn (Set.univ : Set W)) (fun u ↦ (sem u : Set W))
 
 /-- The literal listener at a uniform prior (eq. 5) is uniform on the extension of the
 utterance. -/
-theorem listener_uniformOn_truthful_apply (u : U) : L₀ u = uniformOn ↑(sem u) := by
-  rw [listener_truthful_apply, uniformOn_univ_cond]
+theorem literalListener_uniformOn_apply (u : U) : L₀ u = uniformOn ↑(sem u) := by
+  rw [literalListener_apply, uniformOn_univ_cond]
 
 section
 
 variable [DecidableEq W]
 
-theorem listener_uniformOn_truthful_apply_singleton (u : U) (w : W) :
+theorem literalListener_uniformOn_apply_singleton (u : U) (w : W) :
     L₀ u {w} = if w ∈ sem u then ((sem u).card : ℝ≥0∞)⁻¹ else 0 := by
-  rw [listener_uniformOn_truthful_apply, uniformOn_finset_apply_singleton]
+  rw [literalListener_uniformOn_apply, uniformOn_finset_apply_singleton]
 
-theorem listener_uniformOn_truthful_real_singleton (u : U) (w : W) :
+theorem literalListener_uniformOn_real_singleton (u : U) (w : W) :
     (L₀ u).real {w} = if w ∈ sem u then ((sem u).card : ℝ)⁻¹ else 0 := by
-  rw [measureReal_def, listener_uniformOn_truthful_apply_singleton]
+  rw [measureReal_def, literalListener_uniformOn_apply_singleton]
   split <;> simp
 
 end
@@ -163,7 +163,7 @@ variable {α : ℝ}
 
 theorem speaker_uniformOn_dirac_apply_singleton_ne_zero_iff (hα : 0 < α) (C : U → ℝ) (w : W)
     (u : U) : speaker α C L₀ Measure.dirac w {u} ≠ 0 ↔ w ∈ sem u := by
-  rw [speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff hα]
+  rw [speaker_literalListener_dirac_apply_singleton_ne_zero_iff hα]
   exact and_iff_left (uniformOn_univ_singleton_ne_zero w)
 
 /-- Of two utterances true at a state, the speaker prefers the one with the smaller extension, at
@@ -173,7 +173,7 @@ theorem speaker_uniformOn_dirac_real_singleton_lt_iff (hα : 0 < α) {w : W} {u 
     (h : w ∈ sem u) (h' : w ∈ sem u') :
     (S₁[α] w).real {u} < (S₁[α] w).real {u'} ↔ (sem u').card < (sem u).card := by
   have : Nonempty W := ⟨w⟩
-  rw [speaker_zero_listener_truthful_real_singleton_lt_iff (sem := fun v ↦ (sem v : Set W))
+  rw [speaker_zero_literalListener_real_singleton_lt_iff (sem := fun v ↦ (sem v : Set W))
     (u := u) (u' := u') hα (absolutelyContinuous_uniformOn_univ _)
     ((ae_dirac_iff .of_discrete).2 h) ((ae_dirac_iff .of_discrete).2 h'), ← not_le,
     uniformOn_univ_le_iff, not_le, Set.ncard_coe_finset, Set.ncard_coe_finset]
@@ -187,7 +187,7 @@ variable [DecidableEq W]
 
 private theorem sum_rpow_listener (hα : 0 < α) (A : Finset U) (w : W) :
     ∑ u ∈ A, L₀ u {w} ^ α = (profile sem A w).invPowSum α := by
-  simp_rw [listener_uniformOn_truthful_apply_singleton, apply_ite (· ^ α),
+  simp_rw [literalListener_uniformOn_apply_singleton, apply_ite (· ^ α),
     ENNReal.zero_rpow_of_pos hα, ← Finset.sum_filter]
   rw [profile, Multiset.invPowSum, Multiset.map_map]
   rfl
@@ -204,7 +204,7 @@ theorem speaker_uniformOn_dirac_apply_singleton (hα : 0 < α) (w : W) (u : U) :
     S₁[α] w {u} = (if w ∈ sem u then ((sem u).card : ℝ≥0∞)⁻¹ ^ α else 0) /
       (profile sem Finset.univ w).invPowSum α := by
   rw [speaker_dirac_zero_apply_singleton, sum_rpow_listener sem hα]
-  simp only [listener_uniformOn_truthful_apply_singleton, apply_ite (· ^ α),
+  simp only [literalListener_uniformOn_apply_singleton, apply_ite (· ^ α),
     ENNReal.zero_rpow_of_pos hα]
 
 theorem speaker_uniformOn_dirac_apply_singleton_eq_of_card_eq (hα : 0 < α) {w : W} {u u' : U}
@@ -258,7 +258,7 @@ theorem tendsto_speaker_uniformOn_dirac_real_singleton_nhdsGT_zero (w : W) (u : 
   classical
   have hset : {v | L₀ v {w} ≠ 0} = ↑(Finset.univ.filter (w ∈ sem ·)) := by
     ext v
-    simp [listener_truthful_apply_singleton_ne_zero_iff, uniformOn_univ_singleton_ne_zero]
+    simp [literalListener_apply_singleton_ne_zero_iff, uniformOn_univ_singleton_ne_zero]
   simpa only [hset, uniformOn_finset_real_singleton, Finset.mem_filter, Finset.mem_univ, true_and,
     ite_div, one_div, zero_div] using
     tendsto_speaker_dirac_real_singleton_nhdsGT_zero (L := L₀) 0 w u
@@ -294,7 +294,7 @@ variable {X : Type*} [MeasurableSpace X] [Countable X] [MeasurableSingletonClass
 that state. -/
 theorem speaker_uniformOn_apply_eq_dirac (hα : 0 < α) (hS : ∀ w, b x {w} ≠ 0 ↔ w ∈ S) {w : W}
     (h : ∀ u, S ⊆ sem u ↔ w ∈ sem u) : speaker α 0 L₀ b x = S₁[α] w :=
-  (speaker_listener_truthful_apply_eq_iff hα (absolutelyContinuous_uniformOn_univ _)
+  (speaker_literalListener_apply_eq_iff hα (absolutelyContinuous_uniformOn_univ _)
     (absolutelyContinuous_uniformOn_univ _)).2 fun u ↦ by
       rw [ae_mem_iff hS, ae_dirac_iff .of_discrete, Finset.coe_subset, Finset.mem_coe, h u]
 
@@ -302,7 +302,7 @@ variable [DecidableEq W]
 
 /-- A speaker with a belief of support `S` weighs each utterance true throughout `S` by the
 inverse size of its extension to the power `α`: the uniform case of
-`RSA.speaker_listener_truthful_apply_singleton`. -/
+`RSA.speaker_literalListener_apply_singleton`. -/
 theorem speaker_uniformOn_apply_singleton (hα : 0 < α) (hS : ∀ w, b x {w} ≠ 0 ↔ w ∈ S) (u : U) :
     speaker α 0 L₀ b x {u} = (if S ⊆ sem u then ((sem u).card : ℝ≥0∞)⁻¹ ^ α else 0) /
       ∑ u', if S ⊆ sem u' then ((sem u').card : ℝ≥0∞)⁻¹ ^ α else 0 := by
@@ -318,7 +318,7 @@ theorem speaker_uniformOn_apply_singleton (hα : 0 < α) (hS : ∀ w, b x {w} �
     · rw [uniformOn_univ, Measure.count_apply_finset, ENNReal.inv_div (.inl (by simp)) (.inl hW),
         div_eq_mul_inv, ENNReal.mul_rpow_of_nonneg _ _ hα.le]
     · rw [mul_zero]
-  rw [speaker_listener_truthful_apply_singleton hα (absolutelyContinuous_uniformOn_univ _), key,
+  rw [speaker_literalListener_apply_singleton hα (absolutelyContinuous_uniformOn_univ _), key,
     Finset.sum_congr rfl fun v _ ↦ key v, ← Finset.mul_sum, ENNReal.mul_div_mul_left _ _
       (ENNReal.rpow_pos (pos_iff_ne_zero.2 hW) (by simp)).ne'
       (ENNReal.rpow_ne_top_of_nonneg hα.le (by simp))]
@@ -514,10 +514,10 @@ theorem listener_uniformOn_family_real_lt_of_divPowSum
       ∑ p ∈ E₂, (if p.1 ∈ sem p.2 u then (D / (sem p.2 u).card) ^ k else 0) *
         ∏ q ∈ Finset.univ.erase p, (profile (sem q.2) Finset.univ q.1).divPowSum D k) :
     (listener (uniformOn Set.univ) (fun p : W × Λ ↦ speaker (k : ℝ) 0
-      (listener (uniformOn Set.univ) (truthful fun u ↦ (sem p.2 u : Set W))) Measure.dirac p.1)
+      (literalListener (uniformOn Set.univ) (fun u ↦ (sem p.2 u : Set W))) Measure.dirac p.1)
         u).real ↑E₁ <
       (listener (uniformOn Set.univ) (fun p : W × Λ ↦ speaker (k : ℝ) 0
-        (listener (uniformOn Set.univ) (truthful fun u ↦ (sem p.2 u : Set W))) Measure.dirac p.1)
+        (literalListener (uniformOn Set.univ) (fun u ↦ (sem p.2 u : Set W))) Measure.dirac p.1)
           u).real ↑E₂ := by
   have := sum_div_lt_sum_div_of_cleared
     (z := fun p : W × Λ ↦ (profile (sem p.2) Finset.univ p.1).divPowSum D k)

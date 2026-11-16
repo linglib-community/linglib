@@ -116,10 +116,10 @@ theorem mem_sem {u : Price} {m : Meaning} : m ∈ sem u ↔ m.1 = u := Iff.rfl
 
 /-- The literal listener conditions the prior on the price named, eq. 9. -/
 noncomputable def L0 (μ : Measure Meaning) : Kernel Price Meaning :=
-  listener μ (truthful sem)
+  literalListener μ sem
 
 instance (μ : Measure Meaning) : IsFiniteKernel (L0 μ) :=
-  inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
+  inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
 /-- The cost `C(u)` of eq. 7 is one at a round price and the fitted parameter `c` at a sharp
 one. -/
@@ -146,7 +146,7 @@ theorem S1_compProd_congr (π π' : Measure Price) [IsProbabilityMeasure π] [Is
     (κ : Kernel Price Bool) [IsMarkovKernel κ] (hπ : ∀ s, π {s} ≠ 0) (hπ' : ∀ s, π' {s} ≠ 0)
     (c : ℝ) (p : Meaning × Goal) : S1 (π ⊗ₘ κ) c p = S1 (π' ⊗ₘ κ) c p := by
   have h : L0 (π ⊗ₘ κ) = L0 (π' ⊗ₘ κ) :=
-    listener_truthful_preimage_fst_compProd_congr π π' κ hπ hπ'
+    literalListener_preimage_fst_compProd_congr π π' κ hπ hπ'
   rw [S1, S1, h]
 
 section Support
@@ -160,7 +160,7 @@ at which the utterance is literally true. -/
 theorem listener_ne_zero_iff (u : Price) (m : Meaning) :
     (L1 μ ν c u).fst {m} ≠ 0
       ↔ μ {m} ≠ 0 ∧ ∃ g, ν {g} ≠ 0 ∧ ∃ m', project g m' = project g m ∧ m'.1 = u ∧ μ {m'} ≠ 0 :=
-  listener_prod_fst_qudSpeaker_listener_truthful_apply_singleton_ne_zero_iff one_pos
+  listener_prod_fst_qudSpeaker_literalListener_apply_singleton_ne_zero_iff one_pos
     (cost c) μ ν sem project u m
 
 /-- A low price with affect is a possible meaning of a high price under the affect goal whenever the
@@ -202,7 +202,7 @@ variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (c : ℝ)
 theorem map_L0_approximate {u p : Price} (hμ : μ (sem u) ≠ 0) (hp : u.round = p.round)
     (a : Bool) : (L0 μ).map (project (.approximate, .price)) u
       {project (.approximate, .price) (p, a)} = 1 := by
-  rw [L0, listener_truthful_map_apply_singleton,
+  rw [L0, literalListener_map_apply_singleton,
     Set.inter_eq_self_of_subset_left (fun m hm ↦ by
       simp only [Set.mem_preimage, Set.mem_singleton_iff, project, Price.project, mem_sem.mp hm, hp]
       rfl),

@@ -181,7 +181,7 @@ def cost (m : Msg) : ℝ := if m.IsDisjunction then c else 0
 
 /-- The literal listener (10) conditions a flat prior on the message's extension. -/
 noncomputable def L0 (l : Lex) : Kernel Msg World :=
-  listener (uniformOn Set.univ) (truthful fun m ↦ (sem l m : Set World))
+  literalListener (uniformOn Set.univ) (fun m ↦ (sem l m : Set World))
 
 instance (l : Lex) : IsFiniteKernel (L0 l) := inferInstanceAs (IsFiniteKernel (listener _ _))
 
@@ -292,7 +292,7 @@ noncomputable def l0r (l : Lex) (m : Msg) (w : World) : ℝ :=
 
 theorem L0_rpow_toReal {α : ℝ} (hα : 0 < α) (l : Lex) (m : Msg) (w : World) :
     (L0 l m {w} ^ α).toReal = l0r l m w ^ α := by
-  rw [L0, listener_uniformOn_truthful_apply_singleton, l0r]
+  rw [L0, literalListener_uniformOn_apply_singleton, l0r]
   split_ifs
   · rw [← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast]
   · rw [ENNReal.zero_rpow_of_pos hα, ENNReal.toReal_zero, Real.zero_rpow hα.ne']

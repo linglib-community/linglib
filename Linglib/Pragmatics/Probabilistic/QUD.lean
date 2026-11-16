@@ -14,7 +14,7 @@ belief about the state. At the identity question she is [the speaker who knows t
 state](##RSA.qudSpeaker_id), at a constant one she [only weighs costs](##RSA.qudSpeaker_const),
 and [a coarser question lets her say more](##RSA.qudSpeaker_apply_singleton_ne_zero_of_coarser).
 Under a literal listener she [produces an utterance exactly when it is true at a state of positive
-prior with her answer](##RSA.qudSpeaker_listener_truthful_apply_singleton_ne_zero_iff), whether or
+prior with her answer](##RSA.qudSpeaker_literalListener_apply_singleton_ne_zero_iff), whether or
 not it is true at hers. A listener unsure of the question holds it as a latent coordinate of the
 state, as in lexical uncertainty, and such an utterance leads her to states where it is false,
 which is how the models derive hyperbole, metaphor and irony. The question is [sufficient for the
@@ -23,7 +23,7 @@ answer, [or the question and the answer when she is unsure of the
 question](##RSA.cond_listener_prod_qudSpeaker_preimage), she believes what the prior does. In
 these models an utterance names one coordinate of the state, and at a prior that factors through
 that coordinate [the literal listener does not depend on its
-marginal](##RSA.listener_truthful_preimage_fst_compProd_congr).
+marginal](##RSA.literalListener_preimage_fst_compProd_congr).
 
 ## References
 
@@ -105,28 +105,28 @@ end
 /-- **Nonliteral production.** The speaker who addresses a question to a literal listener
 produces an utterance exactly when it is true at a state of positive prior with the same answer as
 hers, whether or not it is true at her own state. -/
-theorem qudSpeaker_listener_truthful_apply_singleton_ne_zero_iff [Fintype W]
+theorem qudSpeaker_literalListener_apply_singleton_ne_zero_iff [Fintype W]
     [DiscreteMeasurableSpace W] (hα : 0 < α) (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ]
     (sem : U → Set W) (q : W → X) (w : W) (u : U) :
-    qudSpeaker α C (listener μ (truthful sem)) q w {u} ≠ 0 ↔
+    qudSpeaker α C (literalListener μ sem) q w {u} ≠ 0 ↔
       ∃ w', q w' = q w ∧ w' ∈ sem u ∧ μ {w'} ≠ 0 := by
   simp only [qudSpeaker, speaker_dirac_apply_singleton_ne_zero_iff hα,
-    Kernel.map_apply_singleton_ne_zero_iff, listener_truthful_apply_singleton_ne_zero_iff]
+    Kernel.map_apply_singleton_ne_zero_iff, literalListener_apply_singleton_ne_zero_iff]
 
 /-! ### The listener -/
 
 /-- A meaning under uncertainty about the question is possible after an utterance exactly when it
 has positive prior and, under some question of positive prior, shares its answer with a state of
 positive prior where the utterance is true. -/
-theorem listener_prod_fst_qudSpeaker_listener_truthful_apply_singleton_ne_zero_iff [Fintype W]
+theorem listener_prod_fst_qudSpeaker_literalListener_apply_singleton_ne_zero_iff [Fintype W]
     {B : Type*} [MeasurableSpace B] [Fintype B] [MeasurableSingletonClass B]
     [DiscreteMeasurableSpace W] (hα : 0 < α) (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ]
     (ν : Measure B) [IsFiniteMeasure ν] (sem : U → Set W) (q : B → W → X) (u : U) (w : W) :
-    (listener (μ.prod ν) (fun p ↦ qudSpeaker α C (listener μ (truthful sem)) (q p.2) p.1) u).fst
+    (listener (μ.prod ν) (fun p ↦ qudSpeaker α C (literalListener μ sem) (q p.2) p.1) u).fst
         {w} ≠ 0 ↔
       μ {w} ≠ 0 ∧ ∃ b, ν {b} ≠ 0 ∧ ∃ w', q b w' = q b w ∧ w' ∈ sem u ∧ μ {w'} ≠ 0 := by
   rw [listener_prod_fst_apply_singleton_ne_zero_iff]
-  simp only [qudSpeaker_listener_truthful_apply_singleton_ne_zero_iff hα]
+  simp only [qudSpeaker_literalListener_apply_singleton_ne_zero_iff hα]
 
 /-- **A question is sufficient for the listener.** Against a speaker who addresses a question, the
 listener who learns the speaker's answer, at a state where the speaker can produce the utterance,

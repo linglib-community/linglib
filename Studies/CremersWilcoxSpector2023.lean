@@ -326,19 +326,19 @@ variable (P : Measure World) (hP : ∀ w, P {w} ≠ 0) (m : Meaning)
 
 /-- The literal listener conditions the prior on the message's extension (eq. 1). -/
 noncomputable def L0 : Kernel Message World :=
-  RSA.listener P (RSA.truthful m.extension)
+  RSA.literalListener P m.extension
 
 instance : IsFiniteKernel (L0 P m) :=
-  inferInstanceAs (IsFiniteKernel (RSA.listener _ (RSA.truthful _)))
+  inferInstanceAs (IsFiniteKernel (RSA.literalListener _ _))
 
 theorem L0_ne_top (u : Message) (w : World) : L0 P m u {w} ≠ ∞ := measure_ne_top _ _
 
 theorem L0_eq_zero {u : Message} {w : World} (h : m.sat u w = false) : L0 P m u {w} = 0 :=
-  RSA.listener_truthful_apply_singleton_of_notMem P m.extension
+  RSA.literalListener_apply_singleton_of_notMem P m.extension
     (by rw [Meaning.mem_extension, h]; exact Bool.false_ne_true)
 
 theorem L0_literal_a [IsProbabilityMeasure P] (w : World) : L0 P literal .a {w} = P {w} :=
-  RSA.listener_truthful_apply_singleton_of_eq_univ P literal.extension
+  RSA.literalListener_apply_singleton_of_eq_univ P literal.extension
     (literal.extension_eq_univ fun w ↦ by cases w <;> rfl) w
 
 variable (s : Setting)
@@ -366,17 +366,17 @@ variable [IsFiniteMeasure P]
 include hP
 
 theorem L0_ne_zero {u : Message} {w : World} (h : m.sat u w = true) : L0 P m u {w} ≠ 0 := by
-  rw [L0, RSA.listener_truthful_apply_singleton P m.extension h]
+  rw [L0, RSA.literalListener_apply_singleton P m.extension h]
   exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) (hP w)
 
 theorem L0_eq_one {u : Message} {w : World} (h : ∀ w', m.sat u w' = true ↔ w' = w) :
     L0 P m u {w} = 1 :=
-  RSA.listener_truthful_apply_singleton_of_eq_singleton P m.extension
+  RSA.literalListener_apply_singleton_of_eq_singleton P m.extension
     (m.extension_eq_singleton h) (hP w)
 
 theorem L0_apply_univ (u : Message) : L0 P m u Set.univ = 1 :=
   let ⟨w, hw⟩ := m.exists_world u
-  RSA.listener_truthful_apply_univ P m.extension fun h ↦
+  RSA.literalListener_apply_univ P m.extension fun h ↦
     hP w (measure_mono_null (Set.singleton_subset_iff.mpr hw) h)
 
 theorem weight_toReal {u : Message} {w : World} (h : m.sat u w = true) :
@@ -427,7 +427,7 @@ include hP
 
 theorem speaker_literal_wab_a :
     (speaker P literal s .wab).real {.a} = s.logistic (s.cAndB + Real.log (P.real {.wab})) := by
-  rw [speaker, L0, RSA.speaker_listener_truthful_dirac_real_singleton_of_eq_univ s.lam_pos s.cost P
+  rw [speaker, L0, RSA.speaker_literalListener_dirac_real_singleton_of_eq_univ s.lam_pos s.cost P
     literal.extension (hP .wab) (u := .aAndB) (by decide)
     (literal.extension_eq_singleton (by decide)) (literal.extension_eq_univ (by decide))
     fun v hv ↦ by rw [Meaning.mem_extension] at hv; revert hv; cases v <;> decide]
@@ -435,7 +435,7 @@ theorem speaker_literal_wab_a :
 
 theorem speaker_literal_wa_a :
     (speaker P literal s .wa).real {.a} = s.logistic (s.cAndNotB + Real.log (P.real {.wa})) := by
-  rw [speaker, L0, RSA.speaker_listener_truthful_dirac_real_singleton_of_eq_univ s.lam_pos s.cost P
+  rw [speaker, L0, RSA.speaker_literalListener_dirac_real_singleton_of_eq_univ s.lam_pos s.cost P
     literal.extension (hP .wa) (u := .aAndNotB) (by decide)
     (literal.extension_eq_singleton (by decide)) (literal.extension_eq_univ (by decide))
     fun v hv ↦ by rw [Meaning.mem_extension] at hv; revert hv; cases v <;> decide]
@@ -740,10 +740,10 @@ instance [IsFiniteMeasure ρ] : IsFiniteMeasure (svJoint s ρ) := by
 
 /-- The literal listener of an interpretation, over worlds and questions (item 3). -/
 noncomputable def svL0 (i : Interpretation) : Kernel Message (World × QUD) :=
-  RSA.listener (svJoint s ρ) (RSA.truthful fun u ↦ Prod.fst ⁻¹' i.meaning.extension u)
+  RSA.literalListener (svJoint s ρ) (fun u ↦ Prod.fst ⁻¹' i.meaning.extension u)
 
 instance (i : Interpretation) : IsFiniteKernel (svL0 s ρ i) :=
-  inferInstanceAs (IsFiniteKernel (RSA.listener _ (RSA.truthful _)))
+  inferInstanceAs (IsFiniteKernel (RSA.literalListener _ _))
 
 /-- The supervaluationist speaker, who maximizes her expected utility over the interpretations
 under the prior `ν` (items 4 and 5). -/
@@ -781,7 +781,7 @@ include hρ
 theorem svL0_map_answer_eq_zero_iff (i : Interpretation) (u : Message) (w : World) (q : QUD) :
     (svL0 s ρ i).map answer u {answer (w, q)} = 0 ↔
       ∀ v, q.answer v = q.answer w → i.meaning.sat u v = false := by
-  rw [svL0, RSA.listener_truthful_map_apply_singleton, ENNReal.div_eq_zero_iff,
+  rw [svL0, RSA.literalListener_map_apply_singleton, ENNReal.div_eq_zero_iff,
     or_iff_left (measure_ne_top _ _), measure_null_iff_singleton (Set.to_countable _)]
   have hprod (p : World × QUD) : svJoint s ρ {p} ≠ 0 := by
     rw [← Prod.mk.eta (p := p), svJoint_apply_singleton]
@@ -952,14 +952,14 @@ variable (s : Setting)
 /-- The literal listener of a message under a chosen interpretation (item 1 of the §4.4
 model). -/
 noncomputable def liL0 : Kernel (Message × Interpretation) World :=
-  RSA.listener s.prior (RSA.truthful fun x ↦ x.2.meaning.extension x.1)
+  RSA.literalListener s.prior (fun x ↦ x.2.meaning.extension x.1)
 
 instance : IsFiniteKernel (liL0 s) :=
-  inferInstanceAs (IsFiniteKernel (RSA.listener _ (RSA.truthful _)))
+  inferInstanceAs (IsFiniteKernel (RSA.literalListener _ _))
 
 theorem liL0_apply (x : Message × Interpretation) : liL0 s x = s.L0 x.2.meaning x.1 := by
-  rw [liL0, RSA.listener_truthful_apply]
-  exact (RSA.listener_truthful_apply _ _ _).symm
+  rw [liL0, RSA.literalListener_apply]
+  exact (RSA.literalListener_apply _ _ _).symm
 
 /-- The speaker over messages and interpretations (item 3 of the §4.4 model). -/
 noncomputable def liSpeaker : Kernel World (Message × Interpretation) :=

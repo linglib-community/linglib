@@ -184,7 +184,7 @@ abbrev semSet (u : Utterance) : Set World := ↑(sem u)
 
 /-- The literal listener conditions the common ground on the utterance. -/
 noncomputable abbrev L0 (cg : Measure World) : Kernel Utterance World :=
-  listener cg (truthful semSet)
+  literalListener cg semSet
 
 /-- The pragmatic speaker, without softmax terms or costs (footnote 3). -/
 noncomputable abbrev S1 (cg : Measure World) : Kernel World Utterance :=
@@ -207,7 +207,7 @@ variable {cg : Measure World}
 theorem L1_apply_singleton_eq_zero {u : Utterance} {w : World} (hw : w ∉ sem u) :
     L1 cg u {w} = 0 :=
   listener_apply_singleton_eq_zero (speaker_dirac_apply_singleton_eq_zero one_pos
-    (listener_truthful_apply_singleton_of_notMem cg semSet (Finset.mem_coe.not.mpr hw)))
+    (literalListener_apply_singleton_of_notMem cg semSet (Finset.mem_coe.not.mpr hw)))
 
 theorem S1_real_singleton (w : World) (u : Utterance) :
     (S1 cg w).real {u} = (L0 cg u {w}).toReal / ∑ u', (L0 cg u' {w}).toReal := by
@@ -216,14 +216,14 @@ theorem S1_real_singleton (w : World) (u : Utterance) :
 
 theorem L0_toReal_of_notMem {u : Utterance} {w : World} (hw : w ∉ sem u) :
     (L0 cg u {w}).toReal = 0 := by
-  rw [listener_truthful_apply_singleton_of_notMem cg semSet (Finset.mem_coe.not.mpr hw),
+  rw [literalListener_apply_singleton_of_notMem cg semSet (Finset.mem_coe.not.mpr hw),
     ENNReal.toReal_zero]
 
 variable [IsFiniteMeasure cg]
 
 theorem L0_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u)
     (hcg : cg {w} ≠ 0) : L0 cg u {w} ≠ 0 := by
-  rw [listener_truthful_apply_singleton cg semSet (Finset.mem_coe.mpr hw)]
+  rw [literalListener_apply_singleton cg semSet (Finset.mem_coe.mpr hw)]
   exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) hcg
 
 theorem S1_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u)
@@ -236,7 +236,7 @@ theorem L1_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u
 
 theorem L0_toReal {u : Utterance} {w : World} (hw : w ∈ sem u) :
     (L0 cg u {w}).toReal = cg.real {w} / ∑ x ∈ sem u, cg.real {x} := by
-  rw [listener_truthful_apply_singleton cg semSet (Finset.mem_coe.mpr hw),
+  rw [literalListener_apply_singleton cg semSet (Finset.mem_coe.mpr hw),
     ENNReal.toReal_mul,
     ENNReal.toReal_inv, sum_measureReal_singleton, measureReal_def, measureReal_def,
     inv_mul_eq_div]
@@ -252,7 +252,7 @@ theorem s1_turn1_informativity :
     (S1 cg₁ .nancy).real {.studyScience} = 0 ∧
     (S1 cg₁ .nancy).real {.null} < (S1 cg₁ .nancy).real {.studyHumanity} ∧
     (S1 cg₁ .nancy).real {.studyHumanity} = (S1 cg₁ .nancy).real {.likeOutdoors} :=
-  ⟨speaker_listener_truthful_dirac_real_singleton_eq_zero one_pos _ _ _ (by decide),
+  ⟨speaker_literalListener_dirac_real_singleton_eq_zero one_pos _ _ _ (by decide),
     speaker_uniformOn_dirac_real_singleton_lt_of_card_lt sem one_pos (by decide) (by decide)
       (by decide),
     congrArg ENNReal.toReal (speaker_uniformOn_dirac_apply_singleton_eq_of_card_eq sem one_pos
@@ -348,8 +348,8 @@ theorem s1_prefers_new :
         (by decide) hn⟩]
     simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
       ENNReal.ofReal_one, mul_one]
-    rw [listener_truthful_apply_singleton μ semSet (u := .studyHumanity) (by decide),
-      listener_truthful_apply_singleton μ semSet (u := .likeOutdoors) (by decide),
+    rw [literalListener_apply_singleton μ semSet (u := .studyHumanity) (by decide),
+      literalListener_apply_singleton μ semSet (u := .likeOutdoors) (by decide),
       ENNReal.mul_lt_mul_iff_left hn (measure_ne_top _ _), ENNReal.inv_lt_inv,
       ← sum_measure_singleton, ← sum_measure_singleton,
       show sem .likeOutdoors = {.katie, .nancy} by decide,
@@ -361,8 +361,8 @@ theorem s1_prefers_new :
         (by decide) hi⟩]
     simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
       ENNReal.ofReal_one, mul_one]
-    rw [listener_truthful_apply_singleton μ semSet (u := .likeIndoors) (by decide),
-      listener_truthful_apply_singleton μ semSet (u := .studyScience) (by decide),
+    rw [literalListener_apply_singleton μ semSet (u := .likeIndoors) (by decide),
+      literalListener_apply_singleton μ semSet (u := .studyScience) (by decide),
       ENNReal.mul_lt_mul_iff_left hi (measure_ne_top _ _), ENNReal.inv_lt_inv,
       ← sum_measure_singleton, ← sum_measure_singleton,
       show sem .studyScience = {.ina, .katie} by decide,

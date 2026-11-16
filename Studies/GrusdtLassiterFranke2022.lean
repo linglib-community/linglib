@@ -251,12 +251,12 @@ theorem prior_real_singleton (s : State) : prior.real {s} = 1 / 3 := by
   rw [measureReal_def, prior_singleton, ENNReal.toReal_inv, one_div]; simp
 
 /-- The literal listener conditions the prior on the utterance's extension. -/
-noncomputable def L0 : Kernel Utt State := listener prior (truthful ext)
+noncomputable def L0 : Kernel Utt State := literalListener prior ext
 
-instance : IsFiniteKernel L0 := inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
+instance : IsFiniteKernel L0 := inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
 theorem L0_apply (u : Utt) : L0 u = uniformOn (ext u) := by
-  rw [L0, listener_truthful_apply, prior, uniformOn,
+  rw [L0, literalListener_apply, prior, uniformOn,
     cond_cond_eq_cond_inter MeasurableSet.univ .of_discrete, Set.univ_inter]
   rfl
 

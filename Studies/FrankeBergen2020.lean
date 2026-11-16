@@ -359,7 +359,7 @@ def ext (p : Parse) (u : Utterance) : Finset World :=
 
 /-- The literal listener under a parse (eq. 5) is uniform on the extension of the utterance. -/
 noncomputable abbrev literal (p : Parse) : Kernel Utterance World :=
-  RSA.listener (uniformOn Set.univ) (RSA.truthful fun u ↦ (ext p u : Set World))
+  RSA.literalListener (uniformOn Set.univ) (fun u ↦ (ext p u : Set World))
 
 /-- The speaker under a parse (eq. 7) knows the world and addresses that parse's literal
 listener. -/
@@ -376,7 +376,7 @@ def giSem (cl : Utterance × Parse) : Finset World := ext cl.2 cl.1
 
 /-- The GI speaker (eq. 21a) chooses an utterance together with a parse. -/
 noncomputable abbrev giSpeaker (α : ℝ) : Kernel World (Utterance × Parse) :=
-  RSA.speaker α 0 (RSA.listener (uniformOn Set.univ) (RSA.truthful fun c ↦ (giSem c : Set World)))
+  RSA.speaker α 0 (RSA.literalListener (uniformOn Set.univ) (fun c ↦ (giSem c : Set World)))
     Measure.dirac
 
 /-- The GI listener (eq. 21b) hears the utterance of the speaker's choice and infers the world
@@ -414,7 +414,7 @@ def liSem (cl : Utterance × LIParse) : Finset World := ext cl.2.toParse cl.1
 
 /-- The LI speaker (eq. 18a) chooses an utterance together with a matrix-free parse. -/
 noncomputable abbrev liSpeaker (α : ℝ) : Kernel World (Utterance × LIParse) :=
-  RSA.speaker α 0 (RSA.listener (uniformOn Set.univ) (RSA.truthful fun c ↦ (liSem c : Set World)))
+  RSA.speaker α 0 (RSA.literalListener (uniformOn Set.univ) (fun c ↦ (liSem c : Set World)))
     Measure.dirac
 
 /-- The LI listener (eq. 18b), marginalized to worlds. -/
@@ -513,7 +513,7 @@ theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
       = (speaker ∅ α wNA).real {.ss} :=
         Fintype.sum_eq_single LULex.lit fun
           | .lit, hl => absurd rfl hl
-          | .oi, _ => RSA.speaker_listener_truthful_dirac_real_singleton_eq_zero hα _ _ _
+          | .oi, _ => RSA.speaker_literalListener_dirac_real_singleton_eq_zero hα _ _ _
               (by decide +kernel : wNA ∉ ext LULex.oi.toParse .ss)
     _ < (speaker LULex.oi.toParse α wNS).real {.ss} := by
         rw [RSA.speaker_uniformOn_dirac_real_singleton_of_profile_replicate
@@ -559,7 +559,7 @@ theorem perParse_ss_prefers_o {α : ℝ} (hα : 0 < α) :
   calc (∑ w : World, (speaker pM α w).real {.ss})
       = (speaker pM α wNS).real {.ss} :=
         Fintype.sum_eq_single wNS fun w hw ↦
-          RSA.speaker_listener_truthful_dirac_real_singleton_eq_zero hα _ _ _ fun hmem ↦
+          RSA.speaker_literalListener_dirac_real_singleton_eq_zero hα _ _ _ fun hmem ↦
             hw ((m_ss_singleton w).mp (mem_ext.mp hmem))
     _ < 1 :=
         RSA.speaker_real_singleton_lt_one (nofun : Utterance.sn ≠ Utterance.ss)

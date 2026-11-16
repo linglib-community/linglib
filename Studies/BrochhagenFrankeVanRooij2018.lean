@@ -88,7 +88,7 @@ chance that the hearer of the level below guesses the state, and a pragmatic hea
 speaker of the level below by Bayes' rule. -/
 noncomputable def agents (pr : Measure S) (lam : ℝ) (L : M → Set S) : ℕ → Kernel S M × Kernel M S
   | 0 => (Kernel.softmax fun s m ↦ ((lam * (L m).indicator 1 s : ℝ) : EReal),
-      listener pr (truthful L))
+      literalListener pr L)
   | n + 1 => (actionSpeaker lam 0 (agents pr lam L n).2 fun a ↦ Pi.single a 1,
       listener pr fun s ↦ (agents pr lam L n).1 s)
 
@@ -103,7 +103,7 @@ theorem agents_zero_fst :
     (agents pr lam L 0).1 = Kernel.softmax fun s m ↦ ((lam * (L m).indicator 1 s : ℝ) : EReal) :=
   rfl
 
-theorem agents_zero_snd : (agents pr lam L 0).2 = listener pr (truthful L) := rfl
+theorem agents_zero_snd : (agents pr lam L 0).2 = literalListener pr L := rfl
 
 theorem agents_succ_fst (n : ℕ) :
     (agents pr lam L (n + 1)).1 = actionSpeaker lam 0 (agents pr lam L n).2 fun a ↦ Pi.single a 1 :=
@@ -152,8 +152,8 @@ theorem agents_zero_snd_real (m : M) (s : S) [Decidable (s ∈ L m)] :
     ((agents pr lam L 0).2 m).real {s} = if s ∈ L m then pr.real {s} / pr.real (L m) else 0 := by
   rw [agents_zero_snd]
   split_ifs with h
-  · exact listener_truthful_real_singleton pr L h
-  · rw [measureReal_def, listener_truthful_apply_singleton_of_notMem pr L h, ENNReal.toReal_zero]
+  · exact literalListener_real_singleton pr L h
+  · rw [measureReal_def, literalListener_apply_singleton_of_notMem pr L h, ENNReal.toReal_zero]
 
 private theorem softmax_apply_eq {α β : Type*} [MeasurableSpace α] [MeasurableSpace β] [Countable α]
     [MeasurableSingletonClass α] [Fintype β] {score score' : α → β → EReal} {a a' : α}
@@ -193,9 +193,9 @@ theorem success_image (L' : M → Set S) (e : S ≃ S) (he : ∀ s, pr {e s} = p
 the hearer's chance of guessing the state, sends every message with positive probability. -/
 theorem speaker_eq_zero_and_agents_fst_ne_zero {α : ℝ} (hα : 0 < α) {s : S} {m : M}
     (h : s ∉ L m) :
-    speaker α 0 (listener pr (truthful L)) Measure.dirac s {m} = 0 ∧
+    speaker α 0 (literalListener pr L) Measure.dirac s {m} = 0 ∧
       ∀ n, (agents pr lam L n).1 s {m} ≠ 0 :=
-  ⟨speaker_dirac_apply_singleton_eq_zero hα (listener_truthful_apply_singleton_of_notMem pr L h),
+  ⟨speaker_dirac_apply_singleton_eq_zero hα (literalListener_apply_singleton_of_notMem pr L h),
     fun n ↦ agents_fst_apply_ne_zero pr lam L n s m⟩
 
 end Agents

@@ -151,7 +151,7 @@ theorem sem_thinkNeg_ssubset_sem_knowNeg : sem .thinkNeg ⊂ sem .knowNeg := by 
 /-- The literal listener within an assumption set (5) samples a world of the set at which the
 utterance is true and returns its answer to the question. -/
 noncomputable def L0 (A : Finset World) (q : Question) : Kernel Utt Bool :=
-  (listener (Measure.count.restrict ↑A) (truthful fun u ↦ (↑(sem u) : Set World))).map q.answer
+  (literalListener (Measure.count.restrict ↑A) (fun u ↦ (↑(sem u) : Set World))).map q.answer
 
 instance (A : Finset World) (q : Question) : IsFiniteKernel (L0 A q) :=
   inferInstanceAs (IsFiniteKernel (Kernel.map _ _))

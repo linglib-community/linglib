@@ -86,7 +86,7 @@ variable {U : Type*} [MeasurableSpace U] [Fintype U] [MeasurableSingletonClass U
 /-- The literal listener `Plex` of section 1 conditions the uniform prior on the extension of
 the utterance. -/
 noncomputable abbrev literal : Kernel U (Fin (N + 1)) :=
-  RSA.listener (uniformOn Set.univ) (RSA.truthful fun u ↦ (sem u : Set (Fin (N + 1))))
+  RSA.literalListener (uniformOn Set.univ) (fun u ↦ (sem u : Set (Fin (N + 1))))
 
 /-- The informed speaker knows the state and addresses the literal listener. -/
 noncomputable abbrev informed : Kernel (Fin (N + 1)) U :=
@@ -257,10 +257,10 @@ theorem some_partial {n : ℕ} (hn : n = 1 ∨ n = 2) :
     rw [show (3 : Fin 4) = Fin.last 3 from rfl]
     rcases hn with rfl | rfl
     · rw [speaker_last hα (by norm_num) (s := 1) (by decide)]
-      exact RSA.speaker_listener_truthful_dirac_eq_one hα _ _ _
+      exact RSA.speaker_literalListener_dirac_eq_one hα _ _ _
         (uniformOn_univ_singleton_ne_zero _) (by decide) (by decide)
     · rw [speaker_last hα (by norm_num) (s := 2) (by decide)]
-      exact RSA.speaker_listener_truthful_dirac_eq_one hα _ _ _
+      exact RSA.speaker_literalListener_dirac_eq_one hα _ _ _
         (uniformOn_univ_singleton_ne_zero _) (by decide) (by decide)
   rw [listener, RSA.listener_uniformOn_real_le_iff,
     measureReal_def (speaker QUtt.extension α n 3), h3, ENNReal.toReal_one]
@@ -285,7 +285,7 @@ theorem one_full {s : Fin 4} (hs : 1 < s) :
 example : listener QUtt.extension α 2 .all {3} = 0 := by
   refine RSA.listener_apply_singleton_eq_zero ?_
   rw [show (3 : Fin 4) = Fin.last 3 from rfl, speaker_last hα (by norm_num) (s := 2) (by decide)]
-  exact RSA.speaker_listener_truthful_dirac_apply_singleton_eq_zero hα _ _ _ (by decide)
+  exact RSA.speaker_literalListener_dirac_apply_singleton_eq_zero hα _ _ _ (by decide)
 
 private theorem numeral_speaker_real {n : ℕ} (hn : n ≤ 3) (s : Fin 4) (u : NumUtt) :
     (speaker NumUtt.extension α n s).real {u} = ∑ k, (hypergeometric 3 n s).real {k} *
@@ -294,14 +294,14 @@ private theorem numeral_speaker_real {n : ℕ} (hn : n ≤ 3) (s : Fin 4) (u : N
 
 private theorem informed_zero (u : NumUtt) :
     (informed NumUtt.extension α 0).real {u} = 0 :=
-  RSA.speaker_listener_truthful_dirac_real_singleton_eq_zero hα _ _ _ (by cases u <;> decide)
+  RSA.speaker_literalListener_dirac_real_singleton_eq_zero hα _ _ _ (by cases u <;> decide)
 
 private theorem informed_one_one : (informed NumUtt.extension α 1).real {.one} = 1 := by
-  rw [measureReal_def, RSA.speaker_listener_truthful_dirac_eq_one hα _ _ _
+  rw [measureReal_def, RSA.speaker_literalListener_dirac_eq_one hα _ _ _
     (uniformOn_univ_singleton_ne_zero _) (by decide) (by decide), ENNReal.toReal_one]
 
 private theorem informed_one_two : (informed NumUtt.extension α 1).real {.two} = 0 :=
-  RSA.speaker_listener_truthful_dirac_real_singleton_eq_zero hα _ _ _ (by decide)
+  RSA.speaker_literalListener_dirac_real_singleton_eq_zero hα _ _ _ (by decide)
 
 private theorem informed_two_lt :
     (informed NumUtt.extension α 2).real {.one} <

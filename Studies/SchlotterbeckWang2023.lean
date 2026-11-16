@@ -239,10 +239,10 @@ theorem l0_indicator [DecidableEq R] (ext : U → Finset R → Finset R) (us : L
   induction us with
   | nil => simp [l0, extSeq]
   | cons u us ih =>
-    have h := (listener_truthful_eq_ofDensity (uniformOn (extSeq ext us : Set R))
+    have h := (literalListener_eq_ofDensity (uniformOn (extSeq ext us : Set R))
       fun u' ↦ ((ext u' (extSeq ext us) : Set R))).symm
     simp only [l0, sharp]
-    rw [ih, supp_uniformOn, h, listener_truthful_apply, extSeq, Finset.coe_inter,
+    rw [ih, supp_uniformOn, h, literalListener_apply, extSeq, Finset.coe_inter,
       uniformOn_cond (Finset.finite_toSet _) .of_discrete]
 
 theorem l0_single_lt_iff [DecidableEq R] (ext : U → Finset R → Finset R)
