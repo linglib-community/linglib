@@ -11,7 +11,7 @@ predicates. Objects, events and times form join semilattices, and a predicate is
 it is closed under join and quantized when no instance is a proper part of another, so that
 [only a predicate of at most one thing is both](##Mereology.qua_and_cum_iff_subsingleton). A
 measure phrase turns a predicate that is not quantized into one that is, which is why
-[measure phrases do not iterate](##Krifka1989.not_qmod_measureMod): *five ounces of gold* is
+[measure phrases do not iterate](##Krifka1989.not_qmod_and_eq): *five ounces of gold* is
 already quantized. A thematic relation transfers the reference type of its nominal argument to
 the verbal predicate. Summativity carries cumulativity across, and uniqueness of objects with
 mapping to objects carries quantization across
@@ -41,7 +41,7 @@ atom holds of every predicate when the part order on events is well founded
 
 Measure functions are total here. The bare plural (8) binds the number argument of a count noun
 existentially, so with a total measure it has the extension of the underlying predicate
-(`exists_measureMod`) and is cumulative when that predicate is; Krifka derives its cumulativity
+(`exists_and_eq`) and is cumulative when that predicate is; Krifka derives its cumulativity
 from additivity, for a measure function that may be partial. The measure of an event (D 41) is
 the measure of its run time, which is additive over events whose run times do not overlap
 (D 43) and not over all non-overlapping events, so the durative adverbial (15) is quantizing
@@ -142,26 +142,26 @@ theorem qmod_iff [PartialOrder α] {f : (α → Prop) → α → Prop} (h : QUA 
   ⟨QMOD.not_qua, (⟨·, h⟩)⟩
 
 -- (8)
-theorem exists_measureMod (P : α → Prop) (μ : α → M) : (fun x ↦ ∃ n, MeasureMod P μ n x) = P :=
+theorem exists_and_eq (P : α → Prop) (μ : α → M) : (fun x ↦ ∃ n, P x ∧ μ x = n) = P :=
   funext fun _ ↦ propext ⟨fun ⟨_, h, _⟩ ↦ h, fun h ↦ ⟨_, h, rfl⟩⟩
 
 variable [SemilatticeSup α] [HasRemainders α] [AddCommMonoid M] [PartialOrder M]
   [AddLeftStrictMono M] (μ : α → M) [IsExtensiveMeasure μ] (n : M)
 
 -- (6)
-theorem qua_measureMod (P : α → Prop) : QUA (MeasureMod P μ n) :=
-  measureMod_qua ((IsExtensiveMeasure.strictMono μ).strictMonoOn _) n
+theorem qua_and_eq (P : α → Prop) : QUA fun x ↦ P x ∧ μ x = n :=
+  qua_and_eq_of_strictMonoOn ((IsExtensiveMeasure.strictMono μ).strictMonoOn _) n
 
 -- (4)
-theorem qmod_measureMod (hP : CUM P) {x y : α} (hx : P x) (hy : P y) (hxy : x ≠ y) :
-    QMOD P (MeasureMod · μ n) :=
-  ⟨fun hQ ↦ hxy (qua_and_cum_iff_subsingleton.1 ⟨hQ, hP⟩ hx hy), qua_measureMod μ n P⟩
+theorem qmod_and_eq (hP : CUM P) {x y : α} (hx : P x) (hy : P y) (hxy : x ≠ y) :
+    QMOD P fun P x ↦ P x ∧ μ x = n :=
+  ⟨fun hQ ↦ hxy (qua_and_cum_iff_subsingleton.1 ⟨hQ, hP⟩ hx hy), qua_and_eq μ n P⟩
 
 /-- (3c): No modifier is quantizing for a measure phrase, which is already quantized, so
 measure phrases do not iterate (*five ounces of seven cube centimeters of gold*). -/
-theorem not_qmod_measureMod (P : α → Prop) (f : (α → Prop) → α → Prop) :
-    ¬ QMOD (MeasureMod P μ n) f :=
-  fun h ↦ h.not_qua (qua_measureMod μ n P)
+theorem not_qmod_and_eq (P : α → Prop) (f : (α → Prop) → α → Prop) :
+    ¬ QMOD (fun x ↦ P x ∧ μ x = n) f :=
+  fun h ↦ h.not_qua (qua_and_eq μ n P)
 
 end Nominal
 
@@ -289,13 +289,13 @@ variable [PartialOrder E] [SemilatticeSup T] [HasRemainders T] [AddCommMonoid M]
   [AddLeftStrictMono M] (μ : T → M) [IsExtensiveMeasure μ] (n : M)
 
 -- (D 41)
-theorem qua_measureMod_comp (hτ : StrictMonoOn τ {e | P e}) : QUA (MeasureMod P (μ ∘ τ) n) :=
-  measureMod_qua ((IsExtensiveMeasure.strictMono μ).comp_strictMonoOn hτ) n
+theorem qua_and_comp_eq (hτ : StrictMonoOn τ {e | P e}) : QUA fun e ↦ P e ∧ μ (τ e) = n :=
+  qua_and_eq_of_strictMonoOn ((IsExtensiveMeasure.strictMono μ).comp_strictMonoOn hτ) n
 
 -- (15): *for an hour* is quantizing for exactly the predicates that are not quantized
 theorem qmod_durative_iff (hτ : StrictMonoOn τ {e | P e}) :
-    QMOD P (MeasureMod · (μ ∘ τ) n) ↔ ¬ QUA P :=
-  qmod_iff (qua_measureMod_comp μ n hτ)
+    QMOD P (fun P e ↦ P e ∧ μ (τ e) = n) ↔ ¬ QUA P :=
+  qmod_iff (qua_and_comp_eq μ n hτ)
 
 end Durative
 

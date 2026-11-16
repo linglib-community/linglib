@@ -29,8 +29,7 @@ or none, as a classical mereology does. Atoms and overlap are stated relative to
 * `HasRemainders α`: every proper part is completed to the whole by a non-overlapping part.
 * `IsClassicalMereology α`: classical extensional mereology, in which every inhabited predicate
   has a unique sum.
-* `IsExtensiveMeasure μ`: extensive measure functions, and measure modification `MeasureMod` by
-  them.
+* `IsExtensiveMeasure μ`: extensive measure functions.
 * `OverlapPred`, `DisjointPred`, `IsMaxDisjointIn`, `nullSchema`: individuation perspectives.
 
 ## Main results
@@ -40,8 +39,8 @@ or none, as a classical mereology does. Atoms and overlap are stated relative to
 * `IsClassicalMereology.existsUnique_remainder`: in a classical mereology a proper part has a
   unique remainder, so classical mereologies, like Boolean algebras, have remainders.
 * `IsExtensiveMeasure.strictMono`: over a carrier with remainders an extensive measure is strictly
-  monotone, so measure modification by it is quantized (`measureMod_qua`); the atom count is
-  likewise extensive on sums of atoms (`qua_algClosure_atomCount`).
+  monotone, so the elements of a given measure are quantized (`qua_and_eq_of_strictMonoOn`); the
+  atom count is likewise extensive on sums of atoms (`qua_algClosure_atomCount`).
 * `atomsBelow_finset`, `atomCount_finset`: the atomic parts of a finite set are its singletons,
   so its atom count is its cardinality.
 * `nullSchema_eq`: every member of a predicate lies in some individuation perspective.
@@ -603,14 +602,10 @@ elements and positivity, and derive from the remainder principle that a proper p
 than the whole. [champollion-krifka-2016] call a measure extensive on a set when it has that
 property there. Either way, the measure phrases such a measure builds are quantized. -/
 
-/-- Measure modification restricts `R` to its elements of measure `n`, as *five ounces* restricts
-*gold* in the measure construction of [krifka-1989]. -/
-def MeasureMod {M : Type*} (R : α → Prop) (μ : α → M) (n : M) : α → Prop := fun x ↦ R x ∧ μ x = n
-
-/-- Measure modification gives a quantized predicate if the measure is strictly monotone on the
-predicate it restricts. -/
-theorem measureMod_qua {M : Type*} [PartialOrder α] [Preorder M] {R : α → Prop} {μ : α → M}
-    (hμ : StrictMonoOn μ {x | R x}) (n : M) : QUA (MeasureMod R μ n) :=
+/-- The `R`-elements of measure `n` are quantized if the measure is strictly monotone on `R`, as
+*five ounces of gold* is in the measure construction of [krifka-1989]. -/
+theorem qua_and_eq_of_strictMonoOn {M : Type*} [PartialOrder α] [Preorder M] {R : α → Prop}
+    {μ : α → M} (hμ : StrictMonoOn μ {x | R x}) (n : M) : QUA fun x ↦ R x ∧ μ x = n :=
   fun _ hx _ hy hne hle ↦ (hμ hx.1 hy.1 (lt_of_le_of_ne hle hne)).ne (hx.2.trans hy.2.symm)
 
 theorem atomCount_strictMonoOn [SemilatticeSup α] [Fintype α] {P : α → Prop}
@@ -628,8 +623,8 @@ theorem atomCount_strictMonoOn [SemilatticeSup α] [Fintype α] {P : α → Prop
 /-- The sums of `P`-atoms with `n` atoms form an antichain, so *two cats* is quantized
 ([champollion-krifka-2016]). -/
 theorem qua_algClosure_atomCount [SemilatticeSup α] [Fintype α] {P : α → Prop}
-    (hP : ∀ ⦃a⦄, P a → Atom a) (n : ℕ) : QUA (MeasureMod (AlgClosure P) (atomCount α) n) :=
-  measureMod_qua (atomCount_strictMonoOn hP) n
+    (hP : ∀ ⦃a⦄, P a → Atom a) (n : ℕ) : QUA fun x ↦ AlgClosure P x ∧ atomCount α x = n :=
+  qua_and_eq_of_strictMonoOn (atomCount_strictMonoOn hP) n
 
 section ExtensiveMeasure
 
