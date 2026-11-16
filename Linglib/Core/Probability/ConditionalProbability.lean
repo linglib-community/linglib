@@ -13,8 +13,8 @@ public import Mathlib.MeasureTheory.Measure.WithDensity
 
 Lemmas on mathlib's conditional measure `μ[|s]` that mathlib does not state: the real-valued
 form of `cond_apply`, pushforwards and products, invariance under scaling with the composition
-of two Bayesian updates, and nested events: ratios, the chain rule, and conditioning up to null
-sets.
+of two Bayesian updates, nested events (ratios, the chain rule, and conditioning up to null
+sets), and thresholds on a conditional probability.
 
 ## Implementation notes
 
@@ -133,5 +133,26 @@ theorem cond_absolutelyContinuous_cond_iff (hs : MeasurableSet s) (ht : Measurab
     μ[|s] ≪ μ[|t] ↔ s ≤ᵐ[μ] t :=
   ⟨fun h ↦ (ae_cond_mem_iff hs).1 (h.ae_le (ae_cond_mem ht)), fun h ↦
     cond_cond_of_ae_le hs ht h ▸ cond_absolutelyContinuous⟩
+
+/-! ### Thresholds
+
+A conditional probability clears a threshold when the joint mass clears that share of the
+conditioning event, and it is `0` or `1` when the conditioning event lies almost surely outside
+or inside the event. -/
+
+theorem lt_cond_iff_mul_lt (hs : MeasurableSet s) {c : ℝ≥0∞} :
+    c < μ[t | s] ↔ c * μ s < μ (s ∩ t) := by
+  rcases eq_or_ne (μ s) 0 with h0 | h0
+  · simp [cond_eq_zero_of_meas_eq_zero h0, h0, measure_mono_null Set.inter_subset_left h0]
+  · rw [cond_apply hs, ← ENNReal.div_eq_inv_mul,
+      ENNReal.lt_div_iff_mul_lt (.inl h0) (.inl (measure_ne_top _ _))]
+
+theorem cond_apply_eq_zero_iff (hs : MeasurableSet s) : μ[t | s] = 0 ↔ s ≤ᵐ[μ] tᶜ :=
+  measure_eq_zero_iff_ae_notMem.trans (ae_cond_mem_iff hs)
+
+theorem cond_apply_eq_one_iff (hs : MeasurableSet s) (ht : MeasurableSet t) (hcs : μ s ≠ 0) :
+    μ[t | s] = 1 ↔ s ≤ᵐ[μ] t :=
+  have := cond_isProbabilityMeasure (μ := μ) hcs
+  (mem_ae_iff_prob_eq_one ht).symm.trans (ae_cond_mem_iff hs)
 
 end ProbabilityTheory

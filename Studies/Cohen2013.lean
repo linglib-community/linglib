@@ -72,7 +72,7 @@ nettles](##nettles_aux_focus_iff).
 
 namespace Cohen2013
 
-open Quantifier
+open Quantifier MeasureTheory ProbabilityTheory
 
 /-! ### The reinterpretation devices -/
 
@@ -91,7 +91,7 @@ $T_G$, turning a property of individuals into the property of a kind whose insta
 bear it; with $R$ inclusion in the interval around a moment it is the habitual shift $\gamma$,
 turning a property of intervals into the property of a moment. -/
 def reinterpret (P : α → Prop) (x : β) : Prop :=
-  Cohen1999.gen .count Set.univ {y | R y x} {y | P y}
+  Cohen1999.gen (uniformOn Set.univ) {y | R y x} {y | P y}
 
 instance [MeasurableSingletonClass α] [Fintype α] [∀ b, DecidablePred (R · b)] (P : α → Prop)
     [DecidablePred P] (x : β) : Decidable (reinterpret R P x) := by
@@ -370,14 +370,16 @@ abbrev eatsSomething : Fin 5 → Prop := fun _ ↦ True
 
 -- (7a), (9a)
 theorem nettles_object_focus :
-    Cohen1999.gen .count {x | eatsSomething x} Set.univ {x | ¬ eatsNettles x} ∧
+    Cohen1999.gen (uniformOn {x | eatsSomething x}) Set.univ {x | ¬ eatsNettles x} ∧
       ∃ x, eatsNettles x :=
   ⟨by decide, 4, rfl⟩
 
 /-- With focus on the auxiliary, *Cows do not eat nettles* denies that any cow eats nettles. -/
 theorem nettles_aux_focus_iff {α : Type*} [MeasurableSpace α] [MeasurableSingletonClass α]
     [Fintype α] (cow eats : α → Prop) [DecidablePred cow] [DecidablePred eats] :
-    ¬ Cohen1999.gen .count {x | eats x} {x | cow x} {x | eats x} ↔ ∀ x, cow x → ¬ eats x := by
-  simp [Cohen1999.gen_self_iff .of_discrete, Set.eq_empty_iff_forall_notMem]
+    ¬ Cohen1999.gen (uniformOn {x | eats x}) {x | cow x} {x | eats x} ↔ ∀ x, cow x → ¬ eats x := by
+  rw [uniformOn, Cohen1999.gen_cond_self .of_discrete .of_discrete, not_not,
+    Measure.count_eq_zero_iff, Set.eq_empty_iff_forall_notMem]
+  exact ⟨fun h x hc he ↦ h x ⟨he, hc⟩, fun h x hx ↦ h x hx.2 hx.1⟩
 
 end Cohen2013
