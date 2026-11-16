@@ -96,8 +96,8 @@ of any skill `ρ ≠ 0`; random players make no difference between the two (§2.
 theorem softOptimalPolicy_pair_lt_singleton (hab : a ≠ b) (hρ₀ : ρ ≠ 0) (hρ : ρ ≠ ∞) :
     softOptimalPolicy {a, b} ρ {a} < softOptimalPolicy {a} ρ {a} := by
   have : Nonempty A := ⟨a⟩
-  rw [softOptimalPolicy_singleton_self, softOptimalPolicy_apply_singleton_of_mem _ (.inl rfl),
-    Set.ncard_pair hab]
+  rw [softOptimalPolicy_singleton_self,
+    softOptimalPolicy_apply_singleton_of_mem _ (Set.mem_insert a _), Set.ncard_pair hab]
   refine ENNReal.add_lt_add_right (ENNReal.div_ne_top ?_ (by simp)) (ENNReal.half_lt_self hρ₀ hρ)
   exact ne_top_of_le_ne_top ENNReal.one_ne_top tsub_le_self
 
