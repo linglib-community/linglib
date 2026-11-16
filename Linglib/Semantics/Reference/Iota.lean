@@ -12,7 +12,10 @@ public import Mathlib.Order.UpperLower.Basic
 The iota operator takes a set of individuals to its only member, when it has exactly one: it is
 [the partial inverse](##mem_iota_iff_eq_singleton) of the singleton map, Partee's *ident*, which
 sends an individual to the property of being it, so `iota s` is [the unique member of
-`s`](##mem_iota) and is undefined when `s` is empty or has several members.
+`s`](##mem_iota) and is undefined when `s` is empty or has several members. Among an individual
+and a set of others, the only member of `s` is that individual exactly when [it is in `s` and
+none of the others is](##mem_iota_inter_insert), the two conditions of Dale and Reiter's
+distinguishing description of a referent against its contrast set.
 
 On individuals ordered by part-of, the definite picks out the largest member of a set,
 `iota {d | IsGreatest X d}`. On an antichain, such as a set of atoms, [the largest member is the
@@ -39,6 +42,7 @@ put the two on different heads.
 ## References
 
 * [russell-1905]
+* [dale-reiter-1995]
 * [partee-1987]
 * [coppock-beaver-2015]
 * [sharvy-1980]
@@ -66,6 +70,14 @@ theorem iota_dom : (iota s).Dom ↔ ∃! x, x ∈ s := Iff.rfl
 /-- `iota` is the partial inverse of the singleton map: it denotes `e` exactly at `{e}`. -/
 theorem mem_iota_iff_eq_singleton : e ∈ iota s ↔ s = {e} :=
   mem_iota.trans Set.eq_singleton_iff_unique_mem.symm
+
+/-- Among `e` and the members of `t`, the only member of `s` is `e` exactly when `e` is in `s`
+and no member of `t` is. -/
+theorem mem_iota_inter_insert {t : Set E} (he : e ∉ t) :
+    e ∈ iota (s ∩ insert e t) ↔ e ∈ s ∧ ∀ x ∈ t, x ∉ s :=
+  mem_iota.trans
+    ⟨fun h ↦ ⟨h.1.1, fun x hx hxs ↦ he (h.2 x ⟨hxs, .inr hx⟩ ▸ hx)⟩,
+      fun h ↦ ⟨⟨h.1, .inl rfl⟩, fun x ⟨hxs, hx⟩ ↦ hx.elim id fun hxt ↦ (h.2 x hxt hxs).elim⟩⟩
 
 @[simp] theorem iota_singleton (j : E) : iota {j} = Part.some j :=
   Part.eq_some_iff.2 (mem_iota_iff_eq_singleton.2 rfl)

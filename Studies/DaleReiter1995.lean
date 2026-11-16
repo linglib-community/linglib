@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Reference.Distinguishing
+public import Linglib.Semantics.Reference.Iota
+public import Mathlib.Data.Finset.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fintype.Sum
@@ -77,11 +78,10 @@ instance [DecidableEq V] (kb : KB E A V) (L : Description A V) (x : E) :
     Decidable (extension kb L x) := by
   unfold extension; infer_instance
 
-/-- A distinguishing description of `r` against the contrast set `C` holds of `r` and
-distinguishes it from `C`, so that every pair holds of `r` and every distractor fails some
-pair. -/
+/-- A distinguishing description of `r` against the contrast set `C` holds of `r` and of no
+member of `C`, the two conditions of (3). -/
 def Distinguishing (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V) : Prop :=
-  extension kb L r ∧ Distinguishes (extension kb) C r L
+  extension kb L r ∧ ∀ c ∈ C, ¬ extension kb L c
 
 instance [DecidableEq V] (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V) :
     Decidable (Distinguishing kb r C L) := by
@@ -90,10 +90,14 @@ instance [DecidableEq V] (kb : KB E A V) (r : E) (C : Finset E) (L : Description
 theorem distinguishing_iff {kb : KB E A V} {r : E} {C : Finset E} {L : Description A V} :
     Distinguishing kb r C L ↔
       (∀ p ∈ L, Applies kb r p) ∧ ∀ c ∈ C, ∃ p ∈ L, ¬ Applies kb c p := by
-  simp only [Distinguishing, Distinguishes, Prop.lt_iff, extension]
-  refine and_congr_right fun h ↦ forall₂_congr fun c _ ↦ ?_
-  rw [and_iff_left h]
-  push Not
+  simp only [Distinguishing, extension, not_forall, exists_prop]
+
+-- §2.2: an accurate description of the referent and of no other member of the context set,
+-- which is the referent and the contrast set
+theorem distinguishing_iff_mem_iota {kb : KB E A V} {r : E} {C : Finset E}
+    {L : Description A V} (hr : r ∉ C) :
+    Distinguishing kb r C L ↔ r ∈ iota ({x | extension kb L x} ∩ insert r ↑C) := by
+  rw [mem_iota_inter_insert (mem_coe.not.2 hr)]
   exact Iff.rfl
 
 /-- The members of the contrast set a pair rules out (§2.2). -/
@@ -106,8 +110,8 @@ theorem distinguishing_iff_biUnion [DecidableEq E] [DecidableEq V] (kb : KB E A 
     Distinguishing kb r C L ↔
       (∀ p ∈ L, Applies kb r p) ∧ C ⊆ L.biUnion (rulesOut kb C) := by
   simp only [distinguishing_iff, rulesOut, subset_iff, mem_biUnion, mem_filter]
-  exact and_congr_right λ _ => forall₂_congr λ c hc =>
-    exists_congr λ p => and_congr_right λ _ => (and_iff_right hc).symm
+  exact and_congr_right fun _ ↦ forall₂_congr fun c hc ↦
+    exists_congr fun p ↦ and_congr_right fun _ ↦ (and_iff_right hc).symm
 
 /-! ### Four interpretations of brevity (§3.1) -/
 
@@ -121,7 +125,7 @@ variable {kb r C L}
 theorem isShortest_of_card_two (hL : Distinguishing kb r C L) (h2 : L.card = 2)
     (h0 : ¬ Distinguishing kb r C ∅) (h1 : ∀ p, ¬ Distinguishing kb r C {p}) :
     IsShortest kb r C L :=
-  minimalFor_iff_forall_lt.mpr ⟨hL, λ L' hlt hL' => by
+  minimalFor_iff_forall_lt.mpr ⟨hL, fun L' hlt hL' ↦ by
     have : L'.card = 0 ∨ L'.card = 1 := by omega
     rcases this with h | h
     · obtain rfl := card_eq_zero.mp h
@@ -159,10 +163,10 @@ theorem noUnnecessary_iff_minimal :
 
 -- §3.2.1
 theorem IsShortest.noUnnecessary (h : IsShortest kb r C L) : NoUnnecessary kb r C L :=
-  ⟨h.1, λ _ hp => h.not_prop_of_lt (card_erase_lt_of_mem hp)⟩
+  ⟨h.1, fun _ hp ↦ h.not_prop_of_lt (card_erase_lt_of_mem hp)⟩
 
 theorem IsShortest.locallyBrief (h : IsShortest kb r C L) : LocallyBrief kb r C L :=
-  ⟨h.noUnnecessary, λ S hS hS2 p => h.not_prop_of_lt (by
+  ⟨h.noUnnecessary, fun S hS hS2 p ↦ h.not_prop_of_lt (by
     have h₁ := card_insert_le p (L \ S)
     have h₂ := card_sdiff_of_subset hS
     have h₃ := card_le_card hS
@@ -184,7 +188,7 @@ def greedyAux :
   | 0, C, _, L => if C.Nonempty then none else some L
   | n + 1, C, P, L =>
     if C.Nonempty then
-      match P.argmin (λ p => (C.filter (Applies kb · p)).card) with
+      match P.argmin (fun p ↦ (C.filter (Applies kb · p)).card) with
       | none => none
       | some p => greedyAux n (C.filter (Applies kb · p)) (P.erase p) (insert p L)
     else some L
@@ -249,7 +253,7 @@ theorem flat_userKnows [DecidableEq V] {kb : KB E A V} {t : A} (x : E) (a : A) (
 
 /-- The remaining distractors the user knows not to bear the pair (Fig. 6, RulesOut). -/
 def rulesOut (C : Finset E) (a : A) (v : V) : Finset E :=
-  C.filter λ x => d.userKnows x a v = .fails
+  C.filter fun x ↦ d.userKnows x a v = .fails
 
 /-- Fig. 6's FindBestValue, the initial value when the user knows it to hold of `r`, refined
 to a more specific value only when that rules out more distractors. -/
@@ -393,31 +397,31 @@ theorem loop_spec (r : E) : ∀ (P : List A) (C : Finset E) (L L' : Description 
     simp only [loop] at h
     split_ifs at h with hC
     · obtain ⟨L₀, rfl, hsub, hrule, hadm⟩ := loop_spec r rest _ _ L' h
-      refine ⟨L₀, rfl, (d.step_subset r a C L).trans hsub, λ c hc => ?_, λ p hp => ?_⟩
+      refine ⟨L₀, rfl, (d.step_subset r a C L).trans hsub, fun c hc ↦ ?_, fun p hp ↦ ?_⟩
       · by_cases hc' : c ∈ (d.step r a C L).1
         · exact hrule c hc'
         · obtain ⟨p, hp, hcp⟩ := d.step_ruledOut r a C L hc hc'
           exact ⟨p, hsub hp, hcp⟩
-      · exact (hadm p hp).elim (λ h => d.step_mem r a C L h) .inr
+      · exact (hadm p hp).elim (fun h ↦ d.step_mem r a C L h) .inr
     · obtain rfl := Option.some.inj h
       exact ⟨_, rfl, d.step_subset r a C L,
-        λ c hc => d.step_ruledOut r a C L hc λ h => hC ⟨c, h⟩,
-        λ p hp => d.step_mem r a C L hp⟩
+        fun c hc ↦ d.step_ruledOut r a C L hc fun h ↦ hC ⟨c, h⟩,
+        fun p hp ↦ d.step_mem r a C L hp⟩
 
 -- Fig. 6, §4.3
 theorem makeReferringExpression_rulesOut {r : E} {C : Finset E} {P : List A}
     {L : Description A V} (h : d.makeReferringExpression r C P = some L) :
     ∀ c ∈ C, ∃ p ∈ L, d.userKnows c p.1 p.2 = .fails := by
   obtain ⟨L₀, rfl, -, hrule, -⟩ := d.loop_spec r P C ∅ L h
-  exact λ c hc => (hrule c hc).imp λ p hp => ⟨d.withType_subset r _ hp.1, hp.2⟩
+  exact fun c hc ↦ (hrule c hc).imp fun p hp ↦ ⟨d.withType_subset r _ hp.1, hp.2⟩
 
 -- Fig. 6, §4.3
 theorem makeReferringExpression_mem {r : E} {C : Finset E} {P : List A}
     {L : Description A V} (h : d.makeReferringExpression r C P = some L) :
     ∀ p ∈ L, d.userKnows r p.1 p.2 = .holds ∨ d.basicLevel r p.1 = some p.2 := by
   obtain ⟨L₀, rfl, -, -, hadm⟩ := d.loop_spec r P C ∅ L h
-  exact λ p hp => (d.withType_mem r L₀ hp).elim
-    (λ h => .inl ((hadm p h).resolve_left (by simp))) .inr
+  exact fun p hp ↦ (d.withType_mem r L₀ hp).elim
+    (fun h ↦ .inl ((hadm p h).resolve_left (by simp))) .inr
 
 -- Fig. 6, §4.3
 theorem makeReferringExpression_type {r : E} {C : Finset E} {P : List A}
@@ -440,7 +444,7 @@ theorem flat_distinguishing {kb : KB E A V} {t : A} {r : E} {C : Finset E} {P : 
       (flat_userKnows r p.1 p.2).1.mp id
   · obtain ⟨p, hp, hcp⟩ := (flat kb t).makeReferringExpression_rulesOut h c hc
     obtain ⟨w, hw, hwv⟩ := (flat_userKnows c p.1 p.2).2.mp hcp
-    exact ⟨p, hp, λ hap => hwv (Option.some.inj (hw.symm.trans hap))⟩
+    exact ⟨p, hp, fun hap ↦ hwv (Option.some.inj (hw.symm.trans hap))⟩
 
 end
 
@@ -587,7 +591,7 @@ def contrast : Finset Cup := {.object2, .object3, .object4, .object5, .object6, 
 
 /-- Object1's properties in the paper's order. -/
 def properties : List (Attr × Value) :=
-  [.property .size, .property .color, .property .material].filterMap λ a =>
+  [.property .size, .property .color, .property .material].filterMap fun a ↦
     (kb .object1 a).map ((a, ·))
 
 -- §3.1.2

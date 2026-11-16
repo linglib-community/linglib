@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Reference.Distinguishing
 public import Linglib.Pragmatics.Probabilistic.Literal
+public import Studies.DaleReiter1995
 
 /-!
 # Degen, Hawkins, Graf, Kreiss and Goodman (2020): When Redundancy Is Useful: A Bayesian Approach to "Overinformative" Referring Expressions
@@ -13,7 +13,10 @@ and an expression of two adjectives multiplies their degrees. The literal listen
 degrees over the objects of the context, and the speaker chooses an expression in proportion to
 the exponential of its utility, the log of the listener's probability of the intended object less
 the cost of the expression. An adjective that the Boolean semantics makes redundant then adds
-information, and adds more the less noisy it is.
+information, and adds more the less noisy it is. An expression is a description in the sense of
+Dale and Reiter, a set of attribute-value pairs over a knowledge base, and at semantic values of
+one the literal listener is certain of an object exactly when the expression is [a distinguishing
+description of it](##DegenEtAl2020.L0_degree_one_apply_singleton_eq_one_iff).
 
 ## Implementation notes
 
@@ -33,6 +36,7 @@ information, and adds more the less noisy it is.
 ## References
 
 * [degen-etal-2020]
+* [dale-reiter-1995]
 * [frank-goodman-2012]
 -/
 
@@ -51,6 +55,25 @@ def noisy (x : ℝ) (p : Prop) [Decidable p] : ℝ := if p then x else 1 - x
 theorem noisy_nonneg {x : ℝ} (h0 : 0 ≤ x) (h1 : x ≤ 1) (p : Prop) [Decidable p] :
     0 ≤ noisy x p := by
   unfold noisy; split_ifs <;> linarith
+
+section Description
+
+open DaleReiter1995
+
+variable {E A V : Type*} [DecidableEq V]
+
+/-- The degree to which a description holds of an object is the product, over its
+attribute-value pairs, of the degree to which each holds, (5) and (6), where `x` gives the
+semantic value of each attribute. -/
+def degree (x : A → ℝ) (kb : KB E A V) (L : Description A V) (o : E) : ℝ :=
+  ∏ p ∈ L, noisy (x p.1) (Applies kb o p)
+
+theorem degree_one (kb : KB E A V) (L : Description A V) :
+    degree 1 kb L = {o | extension kb L o}.indicator 1 := by
+  funext o
+  simp [degree, noisy, extension, Set.indicator, Finset.prod_ite_zero]
+
+end Description
 
 /-! ### The gain of a redundant adjective -/
 
@@ -136,11 +159,7 @@ variable [MeasurableSpace E] [MeasurableSingletonClass E] [Fintype U] [Measurabl
 
 /-- The literal listener (1) normalizes the meaning of an expression over the objects at a
 uniform prior. -/
-noncomputable def L0 (m : U → E → ℝ) : Kernel U E :=
-  Kernel.ofDensity (uniformOn Set.univ) fun u o ↦ ENNReal.ofReal (m u o)
-
-instance (m : U → E → ℝ) : IsFiniteKernel (L0 m) :=
-  inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
+noncomputable abbrev L0 (m : U → E → ℝ) : Kernel U E := gradedListener (uniformOn Set.univ) m
 
 /-- The speaker of (3) and (4) at rationality `α` chooses an expression in proportion to the
 exponential of `α` times its utility, the log of the listener's probability of the object less
@@ -158,62 +177,74 @@ theorem S1_apply_singleton_of_equiv {U' : Type*} [Fintype U'] [MeasurableSpace U
     (h : ∀ v, m' (τ v) = m v) (o : E) (u : U) :
     S1 α C m' o {τ u} = S1 α (C ∘ τ) m o {u} :=
   speaker_dirac_apply_singleton_of_equiv τ α C (fun v ↦ by
-    rw [L0, L0, Kernel.ofDensity_apply, Kernel.ofDensity_apply, h]) u
+    rw [L0, L0, gradedListener_eq_ofDensity, gradedListener_eq_ofDensity, Kernel.ofDensity_apply,
+      Kernel.ofDensity_apply, h]) u
+
+private theorem L0_ne_zero (h : 0 < m u o) : L0 m u {o} ≠ 0 :=
+  gradedListener_apply_singleton_ne_zero_iff.2 ⟨h, uniformOn_univ_singleton_ne_zero o⟩
+
+private theorem L0_eq_zero (h : m u o = 0) : L0 m u {o} = 0 :=
+  not_not.1 fun h' ↦ (gradedListener_apply_singleton_ne_zero_iff.1 h').1.ne' h
+
+-- the Boolean listener is certain of an object exactly when the expression is true of it alone
+theorem L0_indicator_apply_singleton_eq_one_iff [DiscreteMeasurableSpace E] (sem : U → Set E) :
+    L0 (fun u ↦ (sem u).indicator 1) u {o} = 1 ↔ o ∈ iota (sem u) := by
+  rw [L0, gradedListener_indicator, mem_iota_iff_eq_singleton]
+  exact literalListener_apply_singleton_eq_one_iff_eq_singleton _ sem
+    uniformOn_univ_singleton_ne_zero
+
+section Description
+
+open DaleReiter1995
+
+variable {A V : Type*} [DecidableEq V] {kb : KB E A V}
+
+/-- With semantic values of one, the literal listener is certain of an object exactly when the
+expression is a distinguishing description of it against the other objects, in the sense of
+[dale-reiter-1995]. -/
+theorem L0_degree_one_apply_singleton_eq_one_iff [DecidableEq E] [DiscreteMeasurableSpace E]
+    (d : U → Description A V) :
+    L0 (fun u ↦ degree 1 kb (d u)) u {o} = 1 ↔
+      Distinguishing kb o (Finset.univ.erase o) (d u) := by
+  rw [funext fun u ↦ degree_one kb (d u), L0_indicator_apply_singleton_eq_one_iff,
+    distinguishing_iff_mem_iota (Finset.notMem_erase o _)]
+  simp
+
+end Description
+
+theorem S1_real_eq_one (hα : 0 < α) (hu : 0 < m u o)
+    (hother : ∀ v, v ≠ u → m v o = 0) : (S1 α C m o).real {u} = 1 := by
+  rw [measureReal_def, S1, speaker_dirac_apply_singleton_eq_one hα (L0_ne_zero hu)
+    fun v hv ↦ L0_eq_zero (hother v hv), ENNReal.toReal_one]
 
 variable [Nonempty E]
-
-theorem L0_apply (hm : ∀ o', 0 ≤ m u o') (hpos : 0 < ∑ o', m u o') (o : E) :
-    L0 m u {o} = ENNReal.ofReal (m u o / ∑ o', m u o') :=
-  Kernel.ofDensity_uniformOn_ofReal_apply_singleton _ u o hm hpos
-
-theorem L0_real_singleton (hm : ∀ o', 0 ≤ m u o') (hpos : 0 < ∑ o', m u o') (o : E) :
-    (L0 m u).real {o} = m u o / ∑ o', m u o' := by
-  rw [measureReal_def, L0_apply hm hpos, ENNReal.toReal_ofReal (div_nonneg (hm o) hpos.le)]
-
-private theorem L0_ne_zero (hm : ∀ v o', 0 ≤ m v o') (h : 0 < m u o) : L0 m u {o} ≠ 0 := by
-  rw [L0_apply (hm u) (sum_pos_of_pos hm h)]
-  exact (ENNReal.ofReal_pos.2 (div_pos h (sum_pos_of_pos hm h))).ne'
-
-private theorem L0_eq_zero (h : m u o = 0) : L0 m u {o} = 0 := by
-  rw [L0, Kernel.ofDensity_uniformOn_apply_singleton, h, ENNReal.ofReal_zero, ENNReal.zero_div]
 
 theorem S1_real_div (hα : 0 ≤ α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o) (hu' : 0 < m u' o) :
     (S1 α C m o).real {u'} / (S1 α C m o).real {u} =
       ((m u' o / ∑ o', m u' o') / (m u o / ∑ o', m u o')) ^ α *
         Real.exp (-(α * (C u' - C u))) := by
-  rw [S1, speaker_dirac_real_singleton_div hα (L0_ne_zero hm hu), ← measureReal_def,
-    ← measureReal_def, L0_real_singleton (hm u) (sum_pos_of_pos hm hu),
-    L0_real_singleton (hm u') (sum_pos_of_pos hm hu')]
+  rw [S1, speaker_dirac_real_singleton_div hα (L0_ne_zero hu), ← measureReal_def,
+    ← measureReal_def, gradedListener_uniformOn_real_singleton (hm u) (sum_pos_of_pos hm hu),
+    gradedListener_uniformOn_real_singleton (hm u') (sum_pos_of_pos hm hu')]
 
 theorem S1_real_lt_iff (hα : 0 < α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o)
     (hu' : 0 < m u' o) :
     (S1 α C m o).real {u} < (S1 α C m o).real {u'} ↔
       Real.log (m u o / ∑ o', m u o') - C u < Real.log (m u' o / ∑ o', m u' o') - C u' := by
-  rw [S1, speaker_dirac_real_singleton_lt_iff_log hα (L0_ne_zero hm hu) (L0_ne_zero hm hu'),
-    ← measureReal_def, ← measureReal_def, L0_real_singleton (hm u) (sum_pos_of_pos hm hu),
-    L0_real_singleton (hm u') (sum_pos_of_pos hm hu')]
+  rw [S1, speaker_dirac_real_singleton_lt_iff_log hα (L0_ne_zero hu) (L0_ne_zero hu'),
+    ← measureReal_def, ← measureReal_def,
+    gradedListener_uniformOn_real_singleton (hm u) (sum_pos_of_pos hm hu),
+    gradedListener_uniformOn_real_singleton (hm u') (sum_pos_of_pos hm hu')]
 
 theorem S1_real_of_pair (hα : 0 < α) (huu' : u ≠ u') (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o)
     (hu' : 0 < m u' o) (hsupp : ∀ v, 0 < m v o → v = u ∨ v = u') :
     (S1 α C m o).real {u} = Real.sigmoid (α * ((Real.log (m u o / ∑ o', m u o') - C u) -
       (Real.log (m u' o / ∑ o', m u' o') - C u'))) := by
-  rw [S1, speaker_dirac_real_singleton_of_pair hα huu' (L0_ne_zero hm hu) (L0_ne_zero hm hu')
+  rw [S1, speaker_dirac_real_singleton_of_pair hα huu' (L0_ne_zero hu) (L0_ne_zero hu')
       fun v hv ↦ hsupp v ((hm v o).lt_of_ne fun h ↦ hv (L0_eq_zero h.symm)),
-    ← measureReal_def, ← measureReal_def, L0_real_singleton (hm u) (sum_pos_of_pos hm hu),
-    L0_real_singleton (hm u') (sum_pos_of_pos hm hu')]
-
-theorem S1_real_eq_one (hα : 0 < α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o)
-    (hother : ∀ v, v ≠ u → m v o = 0) : (S1 α C m o).real {u} = 1 := by
-  rw [measureReal_def, S1, speaker_dirac_apply_singleton_eq_one hα (L0_ne_zero hm hu)
-    fun v hv ↦ L0_eq_zero (hother v hv), ENNReal.toReal_one]
-
-theorem distinguishes_L0_iff (hm : ∀ o', 0 ≤ m u o') (hpos : 0 < ∑ o', m u o') (D : Finset E)
-    (r : E) :
-    Distinguishes (fun u o ↦ L0 m u {o}) D r u ↔ Distinguishes m D r u :=
-  distinguishes_comp_iff (φ := fun x ↦ ENNReal.ofReal (x / ∑ o', m u o'))
-    (s := Set.Ici 0) (fun _ ha _ _ hab ↦ (ENNReal.ofReal_lt_ofReal_iff_of_nonneg
-      (div_nonneg ha hpos.le)).2 ((div_lt_div_iff_of_pos_right hpos).2 hab))
-    hm (L0_apply hm hpos)
+    ← measureReal_def, ← measureReal_def,
+    gradedListener_uniformOn_real_singleton (hm u) (sum_pos_of_pos hm hu),
+    gradedListener_uniformOn_real_singleton (hm u') (sum_pos_of_pos hm hu')]
 
 end Model
 
@@ -267,23 +298,35 @@ inductive Utterance where
 instance : MeasurableSpace Utterance := ⊤
 instance : DiscreteMeasurableSpace Utterance := ⟨fun _ ↦ trivial⟩
 
-/-- The size an expression names, if any. -/
-def Utterance.size : Utterance → Option Size
-  | .big | .bigBlue | .bigRed => some .big
-  | .small | .smallBlue => some .small
-  | .blue | .red => none
+/-- The two attributes of a pin. -/
+inductive Attr where
+  | size
+  | color
+  deriving DecidableEq, Repr
 
-/-- The colour an expression names, if any. -/
-def Utterance.color : Utterance → Option Color
-  | .blue | .bigBlue | .smallBlue => some .blue
-  | .red | .bigRed => some .red
-  | .big | .small => none
+/-- The knowledge base of the context gives each pin its size and its colour. -/
+def kb : DaleReiter1995.KB Pin Attr (Size ⊕ Color)
+  | o, .size => some (.inl o.size)
+  | o, .color => some (.inr o.color)
 
-/-- The meaning of an expression is the product, over the adjectives it contains, of the degree
-to which each holds of the pin, (5) and (6), with semantic value `xs` for size and `xc` for
-colour. -/
-def meaning (xs xc : ℝ) (u : Utterance) (o : Pin) : ℝ :=
-  (u.size.elim 1 fun s ↦ noisy xs (o.size = s)) * (u.color.elim 1 fun c ↦ noisy xc (o.color = c))
+/-- The attribute-value pairs an expression names. -/
+def Utterance.description : Utterance → DaleReiter1995.Description Attr (Size ⊕ Color)
+  | .big => {(.size, .inl .big)}
+  | .small => {(.size, .inl .small)}
+  | .blue => {(.color, .inr .blue)}
+  | .red => {(.color, .inr .red)}
+  | .bigBlue => {(.size, .inl .big), (.color, .inr .blue)}
+  | .bigRed => {(.size, .inl .big), (.color, .inr .red)}
+  | .smallBlue => {(.size, .inl .small), (.color, .inr .blue)}
+
+/-- The semantic value of an attribute, `xs` for size and `xc` for colour. -/
+def value (xs xc : ℝ) : Attr → ℝ
+  | .size => xs
+  | .color => xc
+
+/-- The meaning of an expression is the degree to which its description holds of the pin, the
+product over the adjectives it contains of the degree to which each holds, (5) and (6). -/
+def meaning (xs xc : ℝ) (u : Utterance) (o : Pin) : ℝ := degree (value xs xc) kb u.description o
 
 section Overmodification
 
@@ -291,41 +334,47 @@ variable {xs xc α : ℝ} {C : Utterance → ℝ}
 
 theorem meaning_nonneg (hs0 : 0 ≤ xs) (hs1 : xs ≤ 1) (hc0 : 0 ≤ xc) (hc1 : xc ≤ 1)
     (u : Utterance) (o : Pin) : 0 ≤ meaning xs xc u o := by
-  refine mul_nonneg ?_ ?_
-  · cases u.size <;> [exact zero_le_one; exact noisy_nonneg hs0 hs1 _]
-  · cases u.color <;> [exact zero_le_one; exact noisy_nonneg hc0 hc1 _]
+  refine Finset.prod_nonneg fun p _ ↦ ?_
+  obtain ⟨a, v⟩ := p
+  cases a <;> [exact noisy_nonneg hs0 hs1 _; exact noisy_nonneg hc0 hc1 _]
 
 private theorem sum_pin (f : Pin → ℝ) : ∑ o, f o = f .bigBlue + f .bigRed + f .smallBlue := by
   rw [show (Finset.univ : Finset Pin) = {.bigBlue, .bigRed, .smallBlue} from rfl,
     Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton, add_assoc]
 
 private theorem row_small : ∑ o, meaning xs xc .small o = 2 - xs := by
-  rw [sum_pin]; simp [meaning, noisy, Utterance.size, Utterance.color, Pin.size]
+  rw [sum_pin]; simp [meaning, noisy,
+      degree, Utterance.description, value, DaleReiter1995.Applies, kb, Pin.size]
   ring
 
 private theorem row_smallBlue : ∑ o, meaning xs xc .smallBlue o = (1 - xs) + xs * xc := by
-  rw [sum_pin]; simp [meaning, noisy, Utterance.size, Utterance.color, Pin.size, Pin.color]
+  rw [sum_pin]; simp [meaning, noisy,
+      degree, Utterance.description, value, DaleReiter1995.Applies, kb, Pin.size, Pin.color]
   ring
 
 private theorem row_red : ∑ o, meaning xs xc .red o = 2 - xc := by
-  rw [sum_pin]; simp [meaning, noisy, Utterance.size, Utterance.color, Pin.color]
+  rw [sum_pin]; simp [meaning, noisy,
+      degree, Utterance.description, value, DaleReiter1995.Applies, kb, Pin.color]
   ring
 
 private theorem row_bigRed : ∑ o, meaning xs xc .bigRed o = xs + (1 - xs) * (1 - xc) := by
-  rw [sum_pin]; simp [meaning, noisy, Utterance.size, Utterance.color, Pin.size, Pin.color]
+  rw [sum_pin]; simp [meaning, noisy,
+      degree, Utterance.description, value, DaleReiter1995.Applies, kb, Pin.size, Pin.color]
   ring
 
 private theorem meaning_small : meaning xs xc .small .smallBlue = xs := by
-  simp [meaning, noisy, Utterance.size, Utterance.color, Pin.size]
+  simp [meaning, noisy, degree, Utterance.description, value, DaleReiter1995.Applies, kb, Pin.size]
 
 private theorem meaning_smallBlue : meaning xs xc .smallBlue .smallBlue = xs * xc := by
-  simp [meaning, noisy, Utterance.size, Utterance.color, Pin.size, Pin.color]
+  simp [meaning, noisy,
+      degree, Utterance.description, value, DaleReiter1995.Applies, kb, Pin.size, Pin.color]
 
 private theorem meaning_red : meaning xs xc .red .bigRed = xc := by
-  simp [meaning, noisy, Utterance.size, Utterance.color, Pin.color]
+  simp [meaning, noisy, degree, Utterance.description, value, DaleReiter1995.Applies, kb, Pin.color]
 
 private theorem meaning_bigRed : meaning xs xc .bigRed .bigRed = xs * xc := by
-  simp [meaning, noisy, Utterance.size, Utterance.color, Pin.size, Pin.color]
+  simp [meaning, noisy,
+      degree, Utterance.description, value, DaleReiter1995.Applies, kb, Pin.size, Pin.color]
 
 theorem gain_smallBlue (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hc0 : 0 < xc) :
     (meaning xs xc .smallBlue .smallBlue / ∑ o, meaning xs xc .smallBlue o) /
@@ -392,34 +441,22 @@ theorem overmodification_odds_lt_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤
     Real.rpow_lt_rpow_iff (gain_pos hc0 hc1 hs0 hs1).le (gain_pos hs0 hs1 hc0 hc1).le hα,
     gain_swap_lt_iff one_pos hs0 hs1 hc0 hc1]
 
-theorem small_distinguishes_iff :
-    Distinguishes (meaning xs xc) {.bigBlue, .bigRed} .smallBlue .small ↔ 1/2 < xs := by
-  simp [Distinguishes, meaning, noisy, Utterance.size, Utterance.color, Pin.size]
-  constructor <;> intro h <;> linarith
+theorem meaning_one_one : meaning 1 1 = fun u ↦ degree 1 kb u.description := by
+  funext u o
+  exact congrArg (degree · kb u.description o) (funext fun a ↦ by cases a <;> rfl)
 
-theorem smallBlue_distinguishes_iff (hc : 0 < xc) :
-    Distinguishes (meaning xs xc) {.bigBlue, .bigRed} .smallBlue .smallBlue ↔
-      1/2 < xs ∧ 1 < xs + xc := by
-  simp [Distinguishes, meaning, noisy, Utterance.size, Utterance.color, Pin.size,
-    Pin.color]
-  constructor
-  · rintro ⟨h1, h2⟩
-    exact ⟨by nlinarith, by nlinarith⟩
-  · rintro ⟨h1, h2⟩
-    exact ⟨by nlinarith, by nlinarith⟩
-
-/-- With Boolean values the redundant modifier adds nothing, since *small* and *small blue* both
-identify the small blue pin with certainty and are produced alike. -/
+/-- With Boolean values the redundant modifier adds nothing, since *small* and *small blue* are
+both distinguishing descriptions of the small blue pin, identify it with certainty and are
+produced alike. -/
 theorem boolean_no_preference (α : ℝ) :
     (S1 α 0 (meaning 1 1) .smallBlue).real {.small} =
       (S1 α 0 (meaning 1 1) .smallBlue).real {.smallBlue} := by
-  have hnn := meaning_nonneg (xs := 1) (xc := 1) zero_le_one le_rfl zero_le_one le_rfl
-  have h1 := L0_apply (hnn .small) (by rw [row_small]; norm_num) Pin.smallBlue
-  have h2 := L0_apply (hnn .smallBlue) (by rw [row_smallBlue]; norm_num) Pin.smallBlue
-  rw [row_small, meaning_small] at h1
-  rw [row_smallBlue, meaning_smallBlue] at h2
-  norm_num at h1 h2
-  simp only [S1, measureReal_def, speaker_dirac_zero_apply_singleton, h1, h2]
+  have h (u : Utterance) (hu : DaleReiter1995.Distinguishing kb .smallBlue
+      (Finset.univ.erase .smallBlue) u.description) : L0 (meaning 1 1) u {.smallBlue} = 1 := by
+    rw [meaning_one_one]
+    exact (L0_degree_one_apply_singleton_eq_one_iff _).2 hu
+  simp only [S1, measureReal_def, speaker_dirac_zero_apply_singleton, h .small (by decide),
+    h .smallBlue (by decide)]
 
 end Overmodification
 
