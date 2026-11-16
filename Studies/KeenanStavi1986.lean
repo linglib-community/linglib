@@ -170,9 +170,10 @@ theorem card_nested [Fintype α] : Nat.card (Nested α) = 3 ^ Fintype.card α :=
     Nat.card_eq_fintype_card, Fintype.card_fin]
 
 theorem card_consDet [Fintype α] : Nat.card (ConsDet α) = 2 ^ 3 ^ Fintype.card α := by
-  rw [Nat.card_congr conservativeOrderIso.toEquiv]
-  change Nat.card (Nested α → Prop) = _
-  rw [Nat.card_fun, Nat.card_eq_fintype_card (α := Prop), Fintype.card_prop, card_nested]
+  classical
+  have := Fintype.ofEquiv _ (nestedEquivFin3 (α := α)).symm
+  rw [Nat.card_congr conservativeOrderIso.toEquiv, Nat.card_eq_fintype_card, Fintype.card_set,
+    ← Nat.card_eq_fintype_card, card_nested]
 
 theorem mk_consDet :
     _root_.Cardinal.mk (ConsDet α) =

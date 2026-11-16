@@ -343,7 +343,8 @@ theorem notMem_dom_wide_atomicPlural (hwy : w ≠ y) (M : IModel E) (P : E → P
     {i} ∉ (wide w w' x y M P id (atomic y ∩ (Team.dep (val w) (val y))ᶜ)).dom := by
   rw [wide, singleton_mem_dom_intro_comp_iff]
   rintro ⟨s, -, h⟩
-  exact notMem_dom_intro_test_singleton hwy (fun _ hJ ↦ hJ.2.2) h
+  exact notMem_dom_intro_test_singleton hwy
+    (Set.inter_subset_right.trans Set.inter_subset_right) h
 
 /-- On the wide dependent plural reading of *All the boys want to meet policemen* ((133), (134)),
 each boy has an atomic policeman he wants to meet, not all the same (§8). -/

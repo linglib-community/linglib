@@ -83,10 +83,10 @@ number. -/
     | .NUM, .subj => some .nSing
     | .NUM, .obj => some objNum
     | _, _ => none
-  R _ xs := xs 0 = .subj ∧ xs 1 = .obj
+  R _ := {xs | xs 0 = .subj ∧ xs 1 = .obj}
 
 instance (objSort : Binding.Srt) (objIdx objGend objNum : ClauseEnt) (ρ : Binding.sig.Rel) :
-    DecidablePred ((clause objSort objIdx objGend objNum).R ρ) :=
+    DecidablePred (· ∈ (clause objSort objIdx objGend objNum).R ρ) :=
   fun xs ↦ inferInstanceAs (Decidable (xs 0 = .subj ∧ xs 1 = .obj))
 
 theorem clause_isTotallyWellTyped :
@@ -117,7 +117,7 @@ theorem clause_satisfies_conditions :
       fun x ↦ (I.S x).bindingClass :=
   Binding.satisfies_of_models
     ((show (clause .ana .iSubj .gFem .nSing).Models Binding.grammar by decide).generated .s)
-    Interpretation.isRootedAt_generated fun _ h ↦ by cases h.1.symm.trans h.2
+    Interpretation.isRootedAt_generated fun _ ⟨h₁, h₂⟩ ↦ by cases h₁.symm.trans h₂
 
 /-! ### Long-distance dependencies -/
 

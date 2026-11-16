@@ -432,7 +432,8 @@ def meanings (t : Tree Cat Word) : List (Denotation E W) :=
 /-- The paper's simplex meanings: those of the sentences no more complex than the assertion, in its
 plain sense of deleting constituents and replacing them by lexical items. -/
 def simplex (c : Case) : Set (Set W) :=
-  {q | ∃ ψ, atMostAsComplex ↑(lex c) ψ (prejacent c) ∧ (⟨.t, (· ∈ q)⟩ : Denotation E W) ∈ meanings A X ψ}
+  {q | ∃ ψ, atMostAsComplex ↑(lex c) ψ (prejacent c) ∧
+    (⟨.t, (· ∈ q)⟩ : Denotation E W) ∈ meanings A X ψ}
 
 /-- The determiners' square at the restrictor, at the predicate's extension in each world. -/
 def sqAt : Square (Set W) where

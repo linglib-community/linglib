@@ -212,7 +212,7 @@ example : sig.approp .nsWhIntCl .MTR = some .overtExpr ∧
 mention the relation. -/
 def noRel {U : Type*} (ρ : sig.Rel) : Set (Fin (sig.arity ρ) → U) := ∅
 
-instance {U : Type*} (ρ : sig.Rel) : DecidablePred (@noRel U ρ) := fun _ ↦ instDecidableFalse
+instance {U : Type*} (ρ : sig.Rel) : DecidablePred (· ∈ @noRel U ρ) := fun _ ↦ instDecidableFalse
 
 /-! ### Constructions -/
 
@@ -445,8 +445,8 @@ def memberDef : Desc sig :=
 
 theorem satisfies_memberDef_iff : I.Satisfies g u memberDef ↔
     ∀ x, I.IsComponentOf u x → ∀ l, I.IsComponentOf u l →
-      (I.R .member ![x, l] ↔ I.S l ≤ .nelist ∧
-        (I.A .FIRST l = some x ∨ ∃ y, I.A .REST l = some y ∧ I.R .member ![x, y])) := by
+      (![x, l] ∈ I.R .member ↔ I.S l ≤ .nelist ∧
+        (I.A .FIRST l = some x ∨ ∃ y, I.A .REST l = some y ∧ ![x, y] ∈ I.R .member)) := by
   have e01 (x l : U) :
       (fun i ↦ Function.update (Function.update g 0 x) 1 l (![0, 1] i)) = ![x, l] := by
     funext i; fin_cases i <;> rfl
@@ -482,7 +482,7 @@ private theorem and_or_listMem_iff (hI : I.IsWellTyped) {x l : U} :
 
 theorem models_memberDef_of_forall (hI : I.IsWellTyped)
     (h : ∀ u x l, I.IsComponentOf u x → I.IsComponentOf u l →
-      (I.R .member ![x, l] ↔ ListMem I x l)) : I.Models [memberDef] := by
+      (![x, l] ∈ I.R .member ↔ ListMem I x l)) : I.Models [memberDef] := by
   intro u d hd
   rw [List.mem_singleton.1 hd]
   refine satisfies_memberDef_iff.2 fun x hx l hl ↦ ?_
@@ -496,7 +496,7 @@ the first is an element of the second. -/
 theorem models_memberDef_iff (hI : I.IsWellTyped)
     (hwf : WellFounded fun b a ↦ I.A .REST a = some b) :
     I.Models [memberDef] ↔ ∀ u x l, I.IsComponentOf u x → I.IsComponentOf u l →
-      (I.R .member ![x, l] ↔ ListMem I x l) := by
+      (![x, l] ∈ I.R .member ↔ ListMem I x l) := by
   refine ⟨fun hM u x l hx hl ↦ ?_, models_memberDef_of_forall hI⟩
   have hu := satisfies_memberDef_iff.1 (hM u _ (List.mem_singleton_self _))
   induction l using hwf.induction with

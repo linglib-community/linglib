@@ -43,7 +43,7 @@ variable {Srt : Type u} [PartialOrder Srt] {Sig : Signature Srt} {U : Type v}
 def generated : Interpretation Sig {v // I.IsComponentOf r v} where
   S v := I.S v
   A α v := (I.A α v).pmap (fun w hw ↦ ⟨w, v.2.tail ⟨α, hw⟩⟩) fun _ h ↦ h
-  R ρ xs := I.R ρ fun i ↦ xs i
+  R ρ := {xs | (fun i ↦ (xs i : U)) ∈ I.R ρ}
 
 /-- An interpretation is rooted at `r` when every entity is a component of `r`. -/
 def IsRootedAt : Prop := ∀ v, I.IsComponentOf r v
