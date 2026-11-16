@@ -35,9 +35,8 @@ minimal-world operator over the elementary sentences are not formalized; the sho
 shown for the closure of the elementary propositions under conjunction and disjunction, which
 is mathlib's `latticeClosure`, the closure under finite meets and joins. Independence of the
 disjuncts is the existence of a world verifying one disjunct alone, assumed only where a case
-needs it. The
-alternative sets of the illustrations are the paper's, without the prejacent, which the
-substrate's compatible sets carry separately.
+needs it. The alternative sets of the illustrations are the paper's, without the prejacent,
+which the substrate's compatible sets carry separately.
 
 ## References
 
