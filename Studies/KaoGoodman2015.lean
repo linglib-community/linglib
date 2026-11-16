@@ -7,17 +7,30 @@ public import Linglib.Pragmatics.Probabilistic.QUD
 /-!
 # Kao and Goodman (2015): Let's Talk (Ironically) About the Weather
 
-Kao and Goodman model irony on the RSA kernel pipeline. The model is that of Kao and colleagues
-for hyperbole, over meanings that pair a weather state with the speaker's affect toward it, the
-question being the state or a dimension of affect (eq. 1). The paper's contribution is the affect
-space, valence together with the arousal dimension it finds in its elicited emotion ratings.
+Kao and Goodman model irony with the question-under-discussion model that Kao and colleagues gave
+for hyperbole, over meanings that pair a weather state with the speaker's valence and arousal
+toward it. A weather context is a prior $\pi$ over states and the affect prior a kernel $\kappa$
+from states to affect, so the literal listener who hears a state named believes $\kappa$ there
+whatever the context, and [the speaker is the same in every
+context](##KaoGoodman2015.S1_compProd_congr). The context enters at the pragmatic listener, who
+[keeps the prior odds among the states the utterance does not
+name](##KaoGoodman2015.nonliteral_odds): one "terrible" is hyperbole where bad weather is expected
+and irony where amazing weather is. The affect space decides which affect she infers. With valence
+the only affect in question, the utterance at whose state positive valence is least likely [never
+raises its probability](##KaoGoodman2015.valence_le_prior). A speaker who addresses her arousal
+[prefers the utterance at whose state her arousal is likelier](##KaoGoodman2015.S1_arousal_lt_iff),
+and through the high arousal of terrible weather [a positive reading is
+reached](##KaoGoodman2015.irony).
 
 ## Implementation notes
 
-* Priors are arguments. The state prior of a weather context and the affect prior of
-  Experiment 1, the probabilities of positive valence and high arousal at each state, enter as
-  one probability measure on meanings, and the question prior as a probability measure on
-  questions.
+* Priors are arguments. The definitions take one measure on meanings, and the results about
+  contexts take it as $\pi \otimes \kappa$, the state prior of a weather context composed with
+  the affect prior of Experiment 1. The question prior is a measure on questions.
+* Experiment 1's priors give every state and every affect positive probability, and then every
+  meaning of positive prior is possible after every utterance. The results on possible meanings,
+  `irony` and `valence_flip_needs_arousal`, describe priors with zeros, the limit in which an
+  affect is excluded at a state.
 * The model's fits to Experiment 2 are not stated.
 
 ## References
@@ -64,7 +77,7 @@ def project : QUD → Meaning → Weather ⊕ Bool
   | .arousal, m => .inr m.2.2
 
 /-- An utterance is true of the meanings whose state it names. -/
-def sem (u : Weather) : Set Meaning := {m | m.1 = u}
+def sem (u : Weather) : Set Meaning := Prod.fst ⁻¹' {u}
 
 /-- The literal listener conditions the prior on the state named. -/
 noncomputable def L0 (μ : Measure Meaning) : Kernel Weather Meaning :=
@@ -87,6 +100,8 @@ noncomputable def L1 (μ : Measure Meaning) (ν : Measure QUD) (α : ℝ) :
     Kernel Weather (Meaning × QUD) :=
   listener (μ.prod ν) (S1 μ α)
 
+section Listener
+
 variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
   [IsProbabilityMeasure ν] (α : ℝ)
 
@@ -95,10 +110,10 @@ theorem listener_ne_zero_iff (hα : 0 < α) (u : Weather) (m : Meaning) :
       ∃ q, ν {q} ≠ 0 ∧ ∃ m', project q m' = project q m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
   rw [L1, listener_prod_fst_apply_singleton_ne_zero_iff]
   simp only [S1, L0, speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff hα, sem,
-    Set.mem_ofPred_eq]
+    Set.mem_preimage, Set.mem_singleton_iff]
 
-/-- Under the valence question, "terrible" can hyperbolically mean bad weather with negative
-valence, through the negative valence of terrible weather. -/
+-- Under the valence question, "terrible" can hyperbolically mean bad weather with negative
+-- valence, through the negative valence of terrible weather.
 theorem hyperbole (hα : 0 < α) (hν : ν {.valence} ≠ 0) {a a' : Bool}
     (hbad : μ {(.bad, false, a)} ≠ 0) (hterrible : μ {(.terrible, false, a')} ≠ 0) :
     (L1 μ ν α .terrible).fst {(.bad, false, a)} ≠ 0 := by
@@ -113,9 +128,8 @@ theorem irony (hα : 0 < α) (hν : ν {.arousal} ≠ 0) {v : Bool}
   rw [listener_ne_zero_iff μ ν α hα]
   exact ⟨hamazing, .arousal, hν, (.terrible, v, true), rfl, rfl, hterrible⟩
 
-/-- Without the arousal question, a positive-valence reading of "terrible" needs positive
-valence to be possible at terrible weather itself, since a negative utterance carries no true
-information about positive affect. -/
+-- Without the arousal question, a positive-valence reading of "terrible" needs positive valence
+-- to be possible at terrible weather itself.
 theorem valence_flip_needs_arousal (hα : 0 < α) (hν : ∀ q, ν {q} ≠ 0 → q ≠ .arousal)
     {s : Weather} {a : Bool} (h : (L1 μ ν α .terrible).fst {(s, true, a)} ≠ 0) :
     ∃ a', μ {(.terrible, true, a')} ≠ 0 := by
@@ -128,5 +142,224 @@ theorem valence_flip_needs_arousal (hα : 0 < α) (hν : ∀ q, ν {q} ≠ 0 →
   · obtain rfl : v' = true := Sum.inr.inj hm'
     exact ⟨a', hμ⟩
   · exact absurd rfl (hν _ hq)
+
+omit [IsProbabilityMeasure ν] in
+theorem S1_state_apply_singleton_of_ne (hα : 0 < α) {s u : Weather} (h : s ≠ u) (A : Affect) :
+    S1 μ α ((s, A), .state) {u} = 0 := by
+  by_contra h'
+  obtain ⟨m', hm', hu, -⟩ := (speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff hα 0
+    μ sem (project .state) (s, A) u).mp h'
+  exact h ((Sum.inl.inj hm').symm.trans hu)
+
+omit [IsProbabilityMeasure ν] in
+/-- Among the states an utterance does not name, at one affect, the listener keeps the prior
+odds: the speaker says the same of them under every question, so which nonliteral state the
+listener infers is decided by the weather context and the affect prior. -/
+theorem nonliteral_odds (hα : 0 < α) {u s s' : Weather} (hs : s ≠ u) (hs' : s' ≠ u) (A : Affect) :
+    (L1 μ ν α u).fst {(s, A)} * μ {(s', A)} = (L1 μ ν α u).fst {(s', A)} * μ {(s, A)} := by
+  change (L1 μ ν α).fst u _ * _ = (L1 μ ν α).fst u _ * _
+  rw [L1, listener_prod_fst]
+  refine listener_apply_singleton_mul_eq_of_apply_eq _ _ ?_
+  simp only [Measure.finsetSum_apply, Measure.smul_apply]
+  refine Finset.sum_congr rfl fun q _ ↦ ?_
+  cases q
+  · rw [S1_state_apply_singleton_of_ne μ α hα hs, S1_state_apply_singleton_of_ne μ α hα hs']
+  · rfl
+  · rfl
+
+end Listener
+
+section Context
+
+variable (π π' : Measure Weather) [IsProbabilityMeasure π] [IsProbabilityMeasure π']
+  (κ : Kernel Weather Affect) [IsMarkovKernel κ] (ν : Measure QUD) [IsProbabilityMeasure ν] (α : ℝ)
+
+omit [IsProbabilityMeasure π'] in
+-- The literal listener who hears a state named believes that state and the affect prior there.
+theorem L0_compProd {u : Weather} (hu : π {u} ≠ 0) :
+    L0 (π ⊗ₘ κ) u = Measure.dirac u ⊗ₘ κ := by
+  rw [L0, listener_truthful_apply]
+  exact Measure.cond_preimage_fst_singleton_compProd π κ hu (measure_ne_top _ _)
+
+/-- The speaker does not depend on the weather context: two contexts that leave every state
+possible and share the affect prior have the same speaker, so the context enters an interpretation
+through Bayes' rule at the pragmatic listener alone. -/
+theorem S1_compProd_congr (hπ : ∀ u, π {u} ≠ 0) (hπ' : ∀ u, π' {u} ≠ 0) (p : Meaning × QUD) :
+    S1 (π ⊗ₘ κ) α p = S1 (π' ⊗ₘ κ) α p := by
+  have h : L0 (π ⊗ₘ κ) = L0 (π' ⊗ₘ κ) :=
+    Kernel.ext fun u ↦ by rw [L0_compProd π κ (hπ u), L0_compProd π' κ (hπ' u)]
+  rw [S1, S1, h]
+
+omit [IsProbabilityMeasure π'] in
+private theorem map_L0_state (hπ : ∀ u, π {u} ≠ 0) (u s : Weather) :
+    (L0 (π ⊗ₘ κ)).map (project .state) u {.inl s} = if u = s then 1 else 0 := by
+  rw [Kernel.map_apply_singleton, L0_compProd π κ (hπ u),
+    Measure.dirac_compProd_apply .of_discrete]
+  split_ifs with h
+  · rw [show Prod.mk u ⁻¹' (project .state ⁻¹' {Sum.inl s}) = Set.univ by ext; simp [project, h],
+      measure_univ]
+  · rw [show Prod.mk u ⁻¹' (project .state ⁻¹' {Sum.inl s}) = ∅ by ext; simp [project, h],
+      measure_empty]
+
+omit [IsProbabilityMeasure π'] in
+private theorem map_L0_valence (hπ : ∀ u, π {u} ≠ 0) (u : Weather) (v : Bool) :
+    (L0 (π ⊗ₘ κ)).map (project .valence) u {.inr v} = κ u (Prod.fst ⁻¹' {v}) := by
+  rw [Kernel.map_apply_singleton, L0_compProd π κ (hπ u),
+    Measure.dirac_compProd_apply .of_discrete]
+  congr 1
+  ext ⟨v', a⟩
+  simp [project]
+
+omit [IsProbabilityMeasure π'] in
+private theorem S1_state_apply_self (hπ : ∀ u, π {u} ≠ 0) (hα : 0 < α) (t : Weather)
+    (A : Affect) : S1 (π ⊗ₘ κ) α ((t, A), .state) {t} = 1 := by
+  have h1 : (L0 (π ⊗ₘ κ)).map (project .state) t {.inl t} ≠ 0 := by
+    simp [map_L0_state π κ hπ]
+  have h2 : ∀ u' ≠ t, (L0 (π ⊗ₘ κ)).map (project .state) u' {.inl t} = 0 := fun u' hu' ↦ by
+    simp [map_L0_state π κ hπ, hu']
+  exact speaker_dirac_apply_singleton_eq_one hα h1 h2
+
+omit [IsProbabilityMeasure π'] in
+private theorem S1_valence_apply (hπ : ∀ u, π {u} ≠ 0) (m : Meaning) (t : Weather) :
+    S1 (π ⊗ₘ κ) α (m, .valence) {t} =
+      κ t (Prod.fst ⁻¹' {m.2.1}) ^ α / ∑ u, κ u (Prod.fst ⁻¹' {m.2.1}) ^ α := by
+  rw [S1, speaker_dirac_zero_apply_singleton]
+  simp only [project, map_L0_valence π κ hπ]
+
+omit [IsProbabilityMeasure π'] in
+private theorem map_L0_arousal (hπ : ∀ u, π {u} ≠ 0) (u : Weather) (a : Bool) :
+    (L0 (π ⊗ₘ κ)).map (project .arousal) u {.inr a} = κ u (Prod.snd ⁻¹' {a}) := by
+  rw [Kernel.map_apply_singleton, L0_compProd π κ (hπ u),
+    Measure.dirac_compProd_apply .of_discrete]
+  congr 1
+  ext ⟨v, a'⟩
+  simp [project]
+
+omit [IsProbabilityMeasure π'] in
+/-- A speaker who addresses her arousal prefers the utterance at whose state her arousal is
+likelier. Where arousal is high at both extremes of the weather, "terrible" is a good utterance
+for a speaker excited by amazing weather. -/
+theorem S1_arousal_lt_iff (hπ : ∀ u, π {u} ≠ 0) (hα : 0 < α) (m : Meaning) {u u' : Weather} :
+    (S1 (π ⊗ₘ κ) α (m, .arousal)).real {u} < (S1 (π ⊗ₘ κ) α (m, .arousal)).real {u'} ↔
+      κ u (Prod.snd ⁻¹' {m.2.2}) < κ u' (Prod.snd ⁻¹' {m.2.2}) := by
+  have hL (w : Weather) : (L0 (π ⊗ₘ κ)).map (project .arousal) w {project .arousal m} =
+      κ w (Prod.snd ⁻¹' {m.2.2}) := map_L0_arousal π κ hπ w m.2.2
+  by_cases h0 : ∃ w, κ w (Prod.snd ⁻¹' {m.2.2}) ≠ 0
+  · rw [S1, speaker_dirac_real_singleton_lt_iff hα.le (h0.imp fun w hw ↦ by rwa [hL])]
+    simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one,
+      ENNReal.rpow_lt_rpow_iff hα, hL]
+  · simp only [ne_eq, not_exists, not_not] at h0
+    have hS (w : Weather) : (S1 (π ⊗ₘ κ) α (m, .arousal)).real {w} = 0 := by
+      rw [measureReal_def, S1, speaker_dirac_apply_singleton_eq_zero hα (by rw [hL, h0]),
+        ENNReal.toReal_zero]
+    rw [hS, hS, h0, h0]
+    exact iff_of_false (lt_irrefl _) (lt_irrefl _)
+
+private theorem sum_qud (f : QUD → ℝ≥0∞) : ∑ q, f q = f .state + f .valence + f .arousal := by
+  rw [show (Finset.univ : Finset QUD) = {.state, .valence, .arousal} from rfl]
+  simp [add_assoc]
+
+omit [IsProbabilityMeasure π'] [IsProbabilityMeasure ν] in
+/-- With valence the only affect in question, the utterance at whose state positive valence is
+least likely never raises the listener's probability of positive valence above its prior: the
+speaker has no reason to choose a negative utterance to express positive affect. -/
+theorem valence_le_prior (hπ : ∀ u, π {u} ≠ 0) (hα : 0 < α) (hν : ν {.arousal} = 0) {t : Weather}
+    (ht : ∀ u, κ t (Prod.fst ⁻¹' {true}) ≤ κ u (Prod.fst ⁻¹' {true})) :
+    (L1 (π ⊗ₘ κ) ν α t).fst {m | m.2.1 = true} ≤ (π ⊗ₘ κ) {m | m.2.1 = true} := by
+  set Q : Set Affect := Prod.fst ⁻¹' {true} with hQ
+  set P : Set Meaning := Prod.snd ⁻¹' Q with hP
+  set σ : Bool → ℝ≥0∞ := fun v ↦
+    κ t (Prod.fst ⁻¹' {v}) ^ α / ∑ u, κ u (Prod.fst ⁻¹' {v}) ^ α with hσ
+  change (L1 (π ⊗ₘ κ) ν α).fst t P ≤ (π ⊗ₘ κ) P
+  have hQc : (Prod.fst ⁻¹' {false} : Set Affect) = Qᶜ := by ext ⟨v, a⟩; cases v <;> simp [hQ]
+  have hcompl : ∀ u, κ u Qᶜ ≤ κ t Qᶜ := fun u ↦ by
+    rw [prob_compl_eq_one_sub .of_discrete, prob_compl_eq_one_sub .of_discrete]
+    exact tsub_le_tsub_left (ht u) 1
+  -- the speaker's mass on `t`, summed over questions
+  have hg : ∀ m : Meaning, (∑ q, ν {q} • S1 (π ⊗ₘ κ) α (m, q)) {t} =
+      ν {.state} * (sem t).indicator 1 m + ν {.valence} * σ m.2.1 := fun ⟨s, A⟩ ↦ by
+    simp only [Measure.finsetSum_apply, Measure.smul_apply, sum_qud, smul_eq_mul, hν, zero_mul,
+      add_zero, S1_valence_apply π κ α hπ, hσ]
+    by_cases hs : s = t
+    · subst hs
+      rw [S1_state_apply_self π κ α hπ hα, Set.indicator_of_mem (by simp [sem]), Pi.one_apply]
+    · rw [S1_state_apply_singleton_of_ne _ α hα hs,
+        Set.indicator_of_notMem (by simpa [sem] using hs)]
+  -- the masses of the four cells
+  have hμP : (π ⊗ₘ κ) P = ∫⁻ a, κ a Q ∂π := Measure.compProd_apply .of_discrete
+  have hμN : (π ⊗ₘ κ) Pᶜ = ∫⁻ a, κ a Qᶜ ∂π := Measure.compProd_apply .of_discrete
+  have hTP : (π ⊗ₘ κ) (sem t ∩ P) = π {t} * κ t Q := by
+    rw [show sem t ∩ P = {t} ×ˢ Q by ext; simp [sem, hP],
+      Measure.compProd_apply_prod .of_discrete .of_discrete, Measure.restrict_singleton,
+      lintegral_smul_measure, lintegral_dirac, smul_eq_mul]
+  have hTN : (π ⊗ₘ κ) (sem t ∩ Pᶜ) = π {t} * κ t Qᶜ := by
+    rw [show sem t ∩ Pᶜ = {t} ×ˢ Qᶜ by ext; simp [sem, hP],
+      Measure.compProd_apply_prod .of_discrete .of_discrete, Measure.restrict_singleton,
+      lintegral_smul_measure, lintegral_dirac, smul_eq_mul]
+  have hle : κ t Q ≤ (π ⊗ₘ κ) P := by
+    rw [hμP]
+    calc κ t Q = ∫⁻ _, κ t Q ∂π := by rw [lintegral_const, measure_univ, mul_one]
+      _ ≤ ∫⁻ a, κ a Q ∂π := lintegral_mono ht
+  have hge : (π ⊗ₘ κ) Pᶜ ≤ κ t Qᶜ := by
+    rw [hμN]
+    calc ∫⁻ a, κ a Qᶜ ∂π ≤ ∫⁻ _, κ t Qᶜ ∂π := lintegral_mono hcompl
+      _ = κ t Qᶜ := by rw [lintegral_const, measure_univ, mul_one]
+  -- the two integrals of the speaker's mass
+  have hA : ∫⁻ m in P, ν {.state} * (sem t).indicator 1 m + ν {.valence} * σ m.2.1 ∂(π ⊗ₘ κ) =
+      ν {.state} * (π {t} * κ t Q) + ν {.valence} * σ true * (π ⊗ₘ κ) P := by
+    rw [lintegral_add_left (.of_discrete), lintegral_const_mul _ (.of_discrete),
+      lintegral_indicator_one .of_discrete, Measure.restrict_apply .of_discrete, hTP,
+      setLIntegral_congr_fun (g := fun _ ↦ ν {.valence} * σ true) .of_discrete
+        (fun m hm ↦ by rw [show m.2.1 = true from hm]), setLIntegral_const]
+  have hB : ∫⁻ m in Pᶜ, ν {.state} * (sem t).indicator 1 m + ν {.valence} * σ m.2.1 ∂(π ⊗ₘ κ) =
+      ν {.state} * (π {t} * κ t Qᶜ) + ν {.valence} * σ false * (π ⊗ₘ κ) Pᶜ := by
+    rw [lintegral_add_left (.of_discrete), lintegral_const_mul _ (.of_discrete),
+      lintegral_indicator_one .of_discrete, Measure.restrict_apply .of_discrete, hTN,
+      setLIntegral_congr_fun (g := fun _ ↦ ν {.valence} * σ false) .of_discrete
+        (fun m hm ↦ by rw [show m.2.1 = false from Bool.not_eq_true _ ▸ hm]), setLIntegral_const]
+  -- the softmax of the least likely affect is below that of its complement
+  have hσle : (π ⊗ₘ κ) Pᶜ ≠ 0 → σ true ≤ σ false := fun hN ↦ by
+    simp only [hσ, hQc]
+    have hY0 : ∑ u, κ u Qᶜ ^ α ≠ 0 := fun h0 ↦ hN <| by
+      rw [hμN]
+      refine (lintegral_eq_zero_iff (.of_discrete)).2 (.of_forall fun u ↦ ?_)
+      exact (ENNReal.rpow_eq_zero_iff_of_pos hα).1
+        ((Finset.sum_eq_zero_iff.1 h0) u (Finset.mem_univ u))
+    have hY : ∑ u, κ u Qᶜ ^ α ≠ ∞ :=
+      ENNReal.sum_ne_top.2 fun u _ ↦ ENNReal.rpow_ne_top_of_nonneg hα.le (measure_ne_top _ _)
+    refine ENNReal.div_le_of_le_mul ?_
+    rw [← ENNReal.mul_div_right_comm, ENNReal.le_div_iff_mul_le (.inl hY0) (.inl hY),
+      Finset.mul_sum, Finset.mul_sum]
+    refine Finset.sum_le_sum fun u _ ↦ ?_
+    rw [mul_comm (κ t Qᶜ ^ α)]
+    exact mul_le_mul' (ENNReal.rpow_le_rpow (ht u) hα.le)
+      (ENNReal.rpow_le_rpow (hcompl u) hα.le)
+  -- Bayes' rule
+  rw [L1, listener_prod_fst, listener_apply, cond_apply .univ, Set.univ_inter,
+    withDensity_apply _ .univ, withDensity_apply _ .of_discrete, Measure.restrict_univ,
+    ← lintegral_add_compl _ (.of_discrete : MeasurableSet P)]
+  simp_rw [hg]
+  rw [hA, hB, ← ENNReal.div_eq_inv_mul]
+  refine ENNReal.div_le_of_le_mul ?_
+  set A := ν {.state} * (π {t} * κ t Q) + ν {.valence} * σ true * (π ⊗ₘ κ) P
+  set B := ν {.state} * (π {t} * κ t Qᶜ) + ν {.valence} * σ false * (π ⊗ₘ κ) Pᶜ
+  have hAB : A * (π ⊗ₘ κ) Pᶜ ≤ B * (π ⊗ₘ κ) P := by
+    rw [add_mul, add_mul]
+    refine add_le_add ?_ ?_
+    · calc ν {.state} * (π {t} * κ t Q) * (π ⊗ₘ κ) Pᶜ
+          ≤ ν {.state} * (π {t} * (π ⊗ₘ κ) P) * κ t Qᶜ := by gcongr
+        _ = ν {.state} * (π {t} * κ t Qᶜ) * (π ⊗ₘ κ) P := by ring
+    · rcases eq_or_ne ((π ⊗ₘ κ) Pᶜ) 0 with hN | hN
+      · simp [hN]
+      · calc ν {.valence} * σ true * (π ⊗ₘ κ) P * (π ⊗ₘ κ) Pᶜ
+            ≤ ν {.valence} * σ false * (π ⊗ₘ κ) P * (π ⊗ₘ κ) Pᶜ := by gcongr; exact hσle hN
+          _ = ν {.valence} * σ false * (π ⊗ₘ κ) Pᶜ * (π ⊗ₘ κ) P := by ring
+  calc A = A * ((π ⊗ₘ κ) P + (π ⊗ₘ κ) Pᶜ) := by
+        rw [prob_add_prob_compl (.of_discrete), mul_one]
+    _ = A * (π ⊗ₘ κ) P + A * (π ⊗ₘ κ) Pᶜ := mul_add _ _ _
+    _ ≤ A * (π ⊗ₘ κ) P + B * (π ⊗ₘ κ) P := by gcongr
+    _ = (π ⊗ₘ κ) P * (A + B) := by ring
+
+end Context
 
 end KaoGoodman2015

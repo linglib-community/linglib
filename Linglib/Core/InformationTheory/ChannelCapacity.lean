@@ -111,6 +111,7 @@ private theorem freeEnergy_uniformOn [Nonempty C] (ν : Measure C) [IsProbabilit
 
 variable (κ : Kernel C W) [IsMarkovKernel κ] (μ : Measure C) [IsProbabilityMeasure μ]
 
+omit [Fintype W] [MeasurableSingletonClass W] in
 theorem condEntropy_snd_fst_compProd :
     H[Prod.snd | Prod.fst ; μ ⊗ₘ κ] = ∑ c, μ.real {c} * Hm[κ c] := by
   rw [condEntropy_eq_sum _ measurable_fst]

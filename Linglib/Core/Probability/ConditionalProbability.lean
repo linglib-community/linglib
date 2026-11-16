@@ -39,6 +39,10 @@ theorem cond_real_apply (hs : MeasurableSet s) (e : Set Ω) :
     μ[|s].real e = μ.real (s ∩ e) / μ.real s := by
   simp only [measureReal_def, cond_apply hs, ENNReal.toReal_mul, ENNReal.toReal_inv, inv_mul_eq_div]
 
+/-- Conditioning on a point of positive finite mass gives the point mass. -/
+theorem cond_singleton {a : Ω} (h₀ : μ {a} ≠ 0) (h : μ {a} ≠ ∞) : μ[|{a}] = Measure.dirac a := by
+  rw [cond, Measure.restrict_singleton, smul_smul, ENNReal.inv_mul_cancel h₀ h, one_smul]
+
 end ProbabilityTheory
 
 /-! ### Pushforwards and products -/
