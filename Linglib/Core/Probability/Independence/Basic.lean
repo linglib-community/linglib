@@ -14,9 +14,9 @@ public import Mathlib.Probability.Independence.Basic
 
 Lemmas on mathlib's `IndepSet` that mathlib does not state: symmetry and complements, the
 independence of null and sure events from every event, the product rule and the
-inclusion-exclusion law on real-valued masses, independence as conditioning that leaves a
-probability unchanged, independence from a disjoint union, and independence under a uniform
-measure as an equation between counts.
+inclusion-exclusion law on real-valued masses, the product rule as conditioning that leaves a
+probability unchanged, independence of an event from a family and from a disjoint union, and
+independence under a uniform measure as an equation between counts.
 `[UPSTREAM]` candidates for `Mathlib/Probability/Independence/Basic.lean`.
 -/
 
@@ -81,15 +81,12 @@ theorem cond_apply_eq_iff_measure_inter_eq_mul (hs : MeasurableSet s) (hs₀ : �
   · rw [← h, ← mul_assoc, ENNReal.mul_inv_cancel hs₀ hs', one_mul]
   · rw [h, ← mul_assoc, ENNReal.inv_mul_cancel hs₀ hs', one_mul]
 
-/-- Two events are independent exactly when conditioning on the first, if it has positive mass,
-leaves the probability of the second unchanged. -/
-theorem indepSet_iff_cond_apply_eq [IsZeroOrProbabilityMeasure μ] (hs : MeasurableSet s)
-    (ht : MeasurableSet t) : IndepSet s t μ ↔ (μ s ≠ 0 → μ[t|s] = μ t) := by
-  rw [indepSet_iff_measure_inter_eq_mul hs ht μ]
-  refine ⟨fun h hs₀ ↦ (cond_apply_eq_iff_measure_inter_eq_mul hs hs₀).2 h, fun h ↦ ?_⟩
-  rcases eq_or_ne (μ s) 0 with hs₀ | hs₀
-  · rw [measure_mono_null Set.inter_subset_left hs₀, hs₀, zero_mul]
-  · exact (cond_apply_eq_iff_measure_inter_eq_mul hs hs₀).1 (h hs₀)
+/-- A single event is independent of a family of events when it satisfies the product rule with
+each. -/
+theorem indepSets_singleton_left {S : Set (Set Ω)} :
+    IndepSets {s} S μ ↔ ∀ t ∈ S, μ (s ∩ t) = μ s * μ t := by
+  rw [IndepSets_iff]
+  exact ⟨fun h t ht ↦ h s t rfl ht, fun h _ t hs ht ↦ Set.mem_singleton_iff.1 hs ▸ h t ht⟩
 
 /-- An event independent of each of two disjoint events is independent of their union. -/
 theorem IndepSet.union_right [IsZeroOrProbabilityMeasure μ] {u : Set Ω} (h₁ : IndepSet s t μ)

@@ -34,6 +34,7 @@ a cell that the weaker information leaves open (`Setoid.CloserToAnswer`), the pa
 * `Setoid.Determines Q p` — `Q` determines `p`: `p` is a union of cells.
 * `Setoid.DeterminesOn Q p c` — `Q` determines `p` on the worlds of `c`.
 * `Setoid.ofProps ps` — the question raised by a finite family of propositions.
+* `Setoid.saturation Q s` — the union of the cells that `s` meets.
 * `Setoid.compatible Q J` — the cells compatible with the information `J`.
 * `Setoid.CloserToAnswer Q J K` — `J` rules out a cell that `K ⊇ J` leaves open.
 
@@ -113,6 +114,19 @@ theorem polar_cell_of_notMem (hw : w ∉ p) : (polar p).cell w = pᶜ := by
 
 @[simp] theorem polar_compl : polar pᶜ = polar p :=
   Setoid.ext fun _ _ ↦ by simp only [polar_iff, Set.mem_compl_iff, not_iff_not]
+
+/-- The cells of a polar question are the proposition and its complement, when nonempty. -/
+theorem mem_classes_polar_iff {s : Set W} :
+    s ∈ (polar p).classes ↔ s.Nonempty ∧ (s = p ∨ s = pᶜ) := by
+  refine ⟨?_, fun ⟨⟨w, hw⟩, h⟩ ↦ ⟨w, ?_⟩⟩
+  · rintro ⟨w, rfl⟩
+    refine ⟨⟨w, (polar p).refl' w⟩, ?_⟩
+    by_cases hw : w ∈ p
+    · exact .inl (polar_cell_of_mem hw)
+    · exact .inr (polar_cell_of_notMem hw)
+  · rcases h with rfl | rfl
+    · exact (polar_cell_of_mem hw).symm
+    · exact (polar_cell_of_notMem hw).symm
 
 /-- Two propositions raise the same polar question exactly when they are equal or
 complementary. -/
@@ -287,6 +301,22 @@ member treats them alike. -/
 theorem iInf_mem_polar_iff {A : Set (Set W)} :
     (⨅ a ∈ A, polar a) w v ↔ ∀ a ∈ A, (w ∈ a ↔ v ∈ a) := by
   simp only [Setoid.iInf_iff, polar_iff]
+
+/-! ### Saturation -/
+
+/-- The saturation of a set of worlds is the union of the cells it meets. -/
+def saturation (Q : Setoid W) (s : Set W) : Set W := {v | ∃ w ∈ s, Q w v}
+
+theorem subset_saturation (Q : Setoid W) (s : Set W) : s ⊆ Q.saturation s :=
+  fun w hw ↦ ⟨w, hw, Q.refl' w⟩
+
+@[simp] theorem saturation_bot (s : Set W) : (⊥ : Setoid W).saturation s = s := by
+  ext w
+  simp [saturation]
+
+theorem determines_saturation (Q : Setoid W) (s : Set W) : Q.Determines (Q.saturation s) :=
+  determines_iff.2 fun _ _ h ↦ ⟨fun ⟨w, hw, hwu⟩ ↦ ⟨w, hw, Q.trans' hwu h⟩,
+    fun ⟨w, hw, hwv⟩ ↦ ⟨w, hw, Q.trans' hwv (Q.symm' h)⟩⟩
 
 /-! ### Answers compatible with information -/
 

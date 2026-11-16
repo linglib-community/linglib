@@ -94,12 +94,10 @@ theorem mem_closure_iff_determines (hA : A.Finite) :
     have sat : ∀ c : Set W, (c = b ∨ c = bᶜ) →
         ∃ Y ∈ BooleanSubalgebra.closure A', Y ∩ c = X ∩ c := by
       intro c hc
-      refine ⟨{v | ∃ w ∈ X ∩ c, (⨅ a ∈ A', Setoid.polar a) w v},
-        ih (Setoid.determines_iff.2 fun u v huv ↦
-          ⟨fun ⟨w, hw, hwu⟩ ↦ ⟨w, hw, Setoid.trans' _ hwu huv⟩,
-            fun ⟨w, hw, hwv⟩ ↦ ⟨w, hw, Setoid.trans' _ hwv (Setoid.symm' _ huv)⟩⟩), ?_⟩
+      refine ⟨_, ih (Setoid.determines_saturation _ (X ∩ c)), ?_⟩
       ext v
-      refine ⟨fun ⟨⟨w, hw, hwv⟩, hvc⟩ ↦ ⟨?_, hvc⟩, fun hv ↦ ⟨⟨v, hv, Setoid.refl' _ v⟩, hv.2⟩⟩
+      refine ⟨fun ⟨⟨w, hw, hwv⟩, hvc⟩ ↦ ⟨?_, hvc⟩,
+        fun hv ↦ ⟨Setoid.subset_saturation _ _ hv, hv.2⟩⟩
       refine (Setoid.determines_iff.1 hX w v (Setoid.iInf_mem_polar_iff.2 ?_)).1 hw.1
       rintro a (rfl | ha)
       · rcases hc with rfl | rfl
