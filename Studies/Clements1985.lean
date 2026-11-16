@@ -325,7 +325,8 @@ theorem preaspiration (v c : Segment) :
         ↑(featureClass classNode? Node.supralaryngeal) ∧
       Set.EqOn ((Spreading.node .supralaryngeal).apply v c) c
         ↑(featureClass classNode? Node.laryngeal) :=
-  ⟨Spreading.apply_eqOn _ v c, eqOn_piecewise_of_incompRel v c ⟨by decide, by decide⟩⟩
+  ⟨Spreading.apply_eqOn _ v c,
+    Finset.eqOn_piecewise_of_disjoint (disjoint_featureClass ⟨by decide, by decide⟩)⟩
 
 /-! ### Primary and secondary place features (§4) -/
 

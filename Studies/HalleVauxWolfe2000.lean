@@ -173,17 +173,17 @@ variable (src tgt : Segment)
 `tgt`, the substrate's `Finset.piecewise` on the Place class. -/
 def placeAssimilation : Segment := (featureClass node Node.place).piecewise src tgt
 
-/-- Spreading Place carries the whole Tongue Body class, `eqOn_piecewise_of_le`; in the same way
+/-- Spreading Place carries the whole Tongue Body class, which Place contains; in the same way
 the Lips and Tongue Blade classes. -/
 theorem placeAssimilation_eqOn_tongueBody :
     Set.EqOn (placeAssimilation src tgt) src ↑(featureClass node Node.tongueBody) :=
-  eqOn_piecewise_of_le src tgt (by decide)
+  Finset.eqOn_piecewise_of_subset (antitone_featureClass (by decide))
 
 /-- Soft Palate is a sister of Place, so Place assimilation leaves [nasal] where it was and the
-assimilated nasal is still a nasal (`eqOn_piecewise_of_incompRel`). -/
+assimilated nasal is still a nasal, the two classes being disjoint. -/
 theorem placeAssimilation_nasal : placeAssimilation src tgt .nasal = tgt .nasal :=
-  eqOn_piecewise_of_incompRel (a := Node.place) (b := Node.softPalate) src tgt
-    ⟨by decide, by decide⟩
+  Finset.eqOn_piecewise_of_disjoint
+    (disjoint_featureClass (a := Node.place) (b := Node.softPalate) ⟨by decide, by decide⟩)
     (by decide : Feature.nasal ∈ featureClass node Node.softPalate)
 
 /-- Irish Dorsal Assimilation (44) spreads the designated articulator alone, the terminal

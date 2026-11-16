@@ -405,7 +405,7 @@ def colorSpreading (src tgt : Segment) : Segment := (featureClass node .color).p
 
 theorem eqOn_colorSpreading (src tgt : Segment) :
     Set.EqOn (colorSpreading src tgt) src ↑color :=
-  classes_eq_featureClass.2.2.2.2 ▸ eqOn_piecewise_of_le src tgt le_rfl
+  classes_eq_featureClass.2.2.2.2 ▸ Finset.eqOn_piecewise_of_subset subset_rfl
 
 /-- No spreading or non-spreading of a Color node yields the suffix vowel of [son-lar] (9) or of
 [petrolʸ-ü] (23). -/
