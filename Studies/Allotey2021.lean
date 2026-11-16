@@ -5,8 +5,8 @@ public import Linglib.Fragments.Ga.Verbs
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Data.WALS.Features.F101A
 public import Linglib.Syntax.Binding.MinimalPronoun
-public import Linglib.Syntax.Control.Head
-public import Linglib.Syntax.Control.Basic
+public import Linglib.Syntax.Clause.Finiteness
+public import Linglib.Syntax.Binding.Valuation
 public import Studies.Landau2013
 public import Linglib.Data.Examples.Allotey2021
 public import Linglib.Data.Examples.Readers
@@ -28,10 +28,10 @@ Gã is therefore a non-pro-drop language (§2.1). The WALS 101A coding of Gã,
 made from Ablorh-Odjidja's grammar, is affixal too.
 
 Everything is read off the paper's example rows and the Fragment. The control
-profile of a clause type is Landau's signature as the rows attest it
-(`Control.ofAttested`): no row attests a criterial configuration of the
-`ni`-clause, so it is obligatory control, while the finite `akɛ`-clause attests
-free reference. Complementizer selection is `Verb.Takes` over the Fragment's
+profile of a clause type is the clauses of Landau's signature its rows refute:
+no row attests a criterial configuration of the `ni`-clause, so it is obligatory
+control, while the finite `akɛ`-clause attests free reference, refuting
+co-dependence. Complementizer selection is `Verb.Takes` over the Fragment's
 frames; every finiteness diagnostic is a row theorem conditioned on the
 complementizer's finiteness alone, the paper's convergence argument; Table 4 is
 the exponents the rows show in each irrealis context, and the tone-hosting
@@ -44,10 +44,13 @@ subject pronouns (§4.2), and is stated here rather than in the Fragment because
 WALS codes the same markers as affixes; `wals_codes_affixes` records
 the discrepancy and `no_agreement_rows` the paper's evidence against it. The
 bound-variable row of Table 2 rests on the *de se* example (53); the paper
-has no *only* test, so `Control.Diagnostic.strictUnderOnly` is never attested
+has no *only* test, so `Landau2013.Diagnostic.strictUnderOnly` is never attested
 and the bound-variable clause of the signature holds unrefuted rather than
 tested. The paper tests reference only in the `ni`- and `akɛ`-clauses, so the
-comparison with Landau's scale of finiteness is stated for those two.
+comparison with Landau's calculus is stated for those two. The thesis adopts
+Landau's properties of PRO and does not apply his calculus of tense and agreement
+to Gã; `landau_predicts_control_iff` does, and finds that it fits only if the
+finite clause bears agreement, which the thesis argues Gã lacks.
 
 ## References
 
@@ -71,7 +74,7 @@ comparison with Landau's scale of finiteness is stated for those two.
 
 namespace Allotey2021
 
-open Binding.MinimalPronoun Control Ga Ga.Pronouns Morphology
+open Binding.MinimalPronoun Binding Ga Ga.Pronouns Morphology
 
 /-! ### Pronouns (Table 3) -/
 
@@ -265,48 +268,52 @@ theorem controlled_form_covaries : table (.sg2, .subjective) ≠ table (.pl2, .s
   decide
 
 /-- The diagnostics the rows attest for a clause type. -/
-def attested (c : EmbeddedClauseType) : Set Diagnostic :=
+def attested (c : EmbeddedClauseType) : Set Landau2013.Diagnostic :=
   {d | ∃ row ∈ Examples.all, clauseTypeOf row = some c ∧ Landau2013.attests row d}
 
 instance (c : EmbeddedClauseType) : DecidablePred (· ∈ attested c) := fun d ↦ by
   unfold attested; infer_instance
 
-/-- The control profile of a clause type in [landau-2013]'s signature, the clauses no attested
-    diagnostic refutes. -/
-def gaProfile (c : EmbeddedClauseType) : Set Landau2013.Clause74 :=
-  ofAttested (attested c)
-
 theorem attested_ni : attested .ni = ∅ := by
   rw [Set.eq_empty_iff_forall_notMem]; decide +kernel
 
-theorem ni_obligatory : gaProfile .ni = Set.univ :=
-  ofAttested_eq_univ_iff.2 attested_ni
-
-theorem admits_ni : admits (gaProfile .ni) = ∅ := admits_eq_empty_iff.2 ni_obligatory
+theorem ni_obligatory : Landau2013.refutes '' attested .ni = ∅ :=
+  Set.image_eq_empty.2 attested_ni
 
 theorem arbitrary_mem_attested_ake : .arbitraryControl ∈ attested .ake := by
   decide +kernel
 
-theorem ake_not_obligatory : gaProfile .ake ≠ Set.univ := fun h ↦
-  Set.notMem_empty _ (ofAttested_eq_univ_iff.1 h ▸ arbitrary_mem_attested_ake)
+theorem ake_refutes_codependent : .codependent ∈ Landau2013.refutes '' attested .ake :=
+  ⟨_, arbitrary_mem_attested_ake, rfl⟩
 
 /-! ### Landau's scale -/
 
-/-- Gã clause types on [landau-2004]'s finiteness scale — a scale position, not
-    a mood claim. Unrestricted TAM and independent tense both coincide with the
-    complementizer's finiteness (exx 109–111, 118–119). -/
-def gaToLandau (c : EmbeddedClauseType) : ClauseClass :=
-  .ofFiniteness (decide c.complementizer.IsFinite) (decide c.complementizer.IsFinite)
+/-- The tense of a Gã clause type in [landau-2004]'s calculus. Unrestricted tense, aspect and
+mood and a tense of the clause's own both coincide with the complementizer's finiteness
+(exx 109–111, 118–119), so no clause type has dependent tense. -/
+def gaToLandau (c : EmbeddedClauseType) : Clause.EmbeddedTense :=
+  .ofFiniteness c.complementizer.IsFinite c.complementizer.IsFinite
 
-theorem ga_no_fSubjunctive (c : EmbeddedClauseType) : gaToLandau c ≠ .fSubjunctive := by
+theorem ga_no_dependent (c : EmbeddedClauseType) : gaToLandau c ≠ .dependent := by
   cases c <;> decide
 
-theorem landau_predicts_control (c : EmbeddedClauseType) (hc : c ≠ .keji) (agr : Bool) :
-    gaProfile c = Set.univ ↔ (gaToLandau c).HasOC agr := by
-  cases c with
-  | keji => exact absurd rfl hc
-  | ni => exact iff_of_true ni_obligatory (by cases agr <;> decide)
-  | ake => exact iff_of_false ake_not_obligatory (by cases agr <;> decide)
+/-- [landau-2004]'s calculus gives the `ni`- and `akɛ`-clauses their control profiles exactly
+when the inflectional head bears agreement: without it the finite `akɛ`-clause, tensed and
+unagreeing, is assigned `[−R]` and predicted to be controlled. The verb shows no agreement in
+either clause (`no_agreement_rows`). -/
+theorem landau_predicts_control_iff (agr : Bool) :
+    (∀ c, c ≠ .keji → (Landau2013.refutes '' attested c = ∅ ↔ (gaToLandau c).HasOC agr)) ↔
+      agr = true := by
+  cases agr
+  · refine iff_of_false (fun h ↦ ?_) (by decide)
+    exact Set.nonempty_iff_ne_empty.1 ⟨_, ake_refutes_codependent⟩
+      ((h .ake (by decide)).2 (by decide))
+  · refine iff_of_true (fun c hc ↦ ?_) rfl
+    cases c with
+    | keji => exact absurd rfl hc
+    | ni => exact iff_of_true ni_obligatory (by decide)
+    | ake =>
+      exact iff_of_false (Set.nonempty_iff_ne_empty.1 ⟨_, ake_refutes_codependent⟩) (by decide)
 
 theorem not_isFinite_codings_iff (c : EmbeddedClauseType) :
     (∀ cd ∈ c.frame.codings, ¬ cd.IsFinite) ↔ ¬ c.complementizer.IsFinite := by
