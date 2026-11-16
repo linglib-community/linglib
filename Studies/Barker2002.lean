@@ -539,8 +539,8 @@ theorem a_everyone_iff_everyone_a [Nonempty E] (σS σVP σN σVP' σN' : Equiv.
       (someoneSawAFriendOfEveryone saw' friendOf σS σVP' (Equiv.swap 0 1) σN').eval := by
   rcases perm_fin_two σS with rfl | rfl
   · rw [(ex43a saw' friendOf σVP σN).2, (ex43b saw' friendOf σVP' σN').2]
-    exact exists_congr fun y ↦ ChoiceFunction.exists_forall_apply_iff (R := fun x ↦ {z | friendOf x z})
-      (p := fun _ ↦ (saw' · y)) fun _ _ _ ↦ rfl
+    exact exists_congr fun y ↦ ChoiceFunction.exists_forall_apply_iff
+      (R := fun x ↦ {z | friendOf x z}) (p := fun _ ↦ (saw' · y)) fun _ _ _ ↦ rfl
   · rw [(ex43c saw' friendOf σVP σN).2, (ex43d saw' friendOf σVP' σN').2]
     exact ChoiceFunction.exists_forall_apply_iff (R := fun x ↦ {z | friendOf x z})
       (p := fun _ z ↦ ∃ y, saw' z y) fun _ _ _ ↦ rfl
