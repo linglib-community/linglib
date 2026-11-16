@@ -176,9 +176,7 @@ theorem speaker_zero_literalListener_real_singleton_lt_iff (hα : 0 < α)
   classical
   have h1 (v : U) (hv : ∀ᵐ w ∂b o, w ∈ sem v) : (b o).geomMean ((sem v).indicator 1) = 1 := by
     rw [Measure.geomMean_indicator_one, ite_eq_left hv]
-  rw [speaker_real_singleton_lt_iff hα.le ⟨u, fun w hw ↦
-    (literalListener_apply_singleton_ne_zero_iff μ sem u w).2
-      ⟨ae_iff_of_countable.1 hu w hw, fun hμ ↦ hw (hb hμ)⟩⟩]
+  rw [speaker_real_singleton_lt_iff hα.le]
   simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
   rw [ENNReal.rpow_lt_rpow_iff hα, geomMean_literalListener, geomMean_literalListener, h1 u hu,
     h1 u' hu', one_mul, one_mul,

@@ -337,12 +337,7 @@ theorem S2_real_lt_iff (p : World × Lex) (m₁ m₂ : Msg) :
     (S2 α β c p).real {m₁} < (S2 α β c p).real {m₂} ↔
       (l1 α c p.2 m₁).real {p.1} ^ α * (L1 α c m₁).snd.real {p.2} ^ β * costFactor c m₁
         < (l1 α c p.2 m₂).real {p.1} ^ α * (L1 α c m₂).snd.real {p.2} ^ β * costFactor c m₂ := by
-  have hnull : ∀ p : World × Lex, p.1 ∈ sem p.2 .null := by decide
-  have h0 : ∑ m, l1 α c p.2 m {p.1} ^ α * (L1 α c m).snd {p.2} ^ β *
-      ENNReal.ofReal (Real.exp (-cost c m)) ≠ 0 := fun h =>
-    S2_weight_ne_zero hα (hnull p) (Finset.sum_eq_zero_iff.1 h .null (Finset.mem_univ _))
-  rw [S2, Kernel.ofWeights_real_singleton_lt_iff _ h0
-    (ENNReal.sum_ne_top.2 fun m _ => S2_weight_ne_top hα hβ p m),
+  rw [S2, Kernel.ofWeights_real_singleton_lt_iff _ fun m => S2_weight_ne_top hα hβ p m,
     ← ENNReal.toReal_lt_toReal (S2_weight_ne_top hα hβ p m₁) (S2_weight_ne_top hα hβ p m₂)]
   simp only [ENNReal.toReal_mul, ← ENNReal.toReal_rpow, measureReal_def,
     ENNReal.toReal_ofReal (Real.exp_pos _).le, costFactor]

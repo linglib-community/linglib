@@ -167,8 +167,8 @@ theorem speaker_lt_iff (hlam : 0 < lam) (hμ : ∀ t, μ {t} ≠ 0) (g : Goal) (
     (speaker g μ lam c t).real {u} < (speaker g μ lam c t).real {u'} ↔
       utility g μ c t u < utility g μ c t u' := by
   rw [speaker_eq_softmax hlam hμ, Kernel.softmax_real_singleton_lt_iff
-    (fun v ↦ by split_ifs; exacts [EReal.coe_ne_top _, bot_ne_top])
-    ⟨u, by rw [ite_eq_left hu]; exact EReal.coe_ne_bot _⟩, ite_eq_left hu, ite_eq_left hu',
+    (fun v ↦ by split_ifs; exacts [EReal.coe_ne_top _, bot_ne_top]), ite_eq_left hu,
+    ite_eq_left hu',
     EReal.coe_lt_coe_iff, mul_lt_mul_iff_right₀ hlam]
 
 theorem speaker_real_singleton (hlam : 0 < lam) (hμ : ∀ t, μ {t} ≠ 0) (g : Goal) (hu : t ∈ ⟦u⟧ᴹ)
