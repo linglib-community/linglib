@@ -8,13 +8,14 @@ public import Linglib.Data.Examples.Languages
 /-!
 # Terenghi (2023): Missing person
 
-A demonstrative locates its referent near a discourse atom, the speaker, the hearer, both or
-neither, and a measure can further class the vectors from that atom by length, so every system has a
-person core that distance contrasts modify. The classes of lengths [partition the region near an
-atom](##distanceClass_partition); Mundari [grades each of its terms, Brazilian Portuguese only its
-non-local term and Satawal only its participant terms](##graded); and without a measure the
-semantics [is Harbour's, at the relation NEAR](##locates_iff_mem_image). Spanish *ese* [has two readings
-that overlap but differ](##ese_readings), as Harbour observes of person- and distance-based medials.
+A demonstrative locates its referent near a discourse atom, and a measure can further class the
+vectors from that atom by length, so every system has a person core that distance contrasts modify.
+A term locates the referents in the image of its anchors under a relation of atoms to referents,
+and the measure narrows the relation: those of a three-way measure [partition
+NEAR](##Vectors.existsUnique_near). Mundari [grades each of its terms, Brazilian Portuguese only its
+non-local term and Satawal only its participant terms](##graded). A demonstrative read at such a
+relation [denotes where its term locates](##mem_denote_near_iff), Harbour's semantics when there is
+no measure, and Spanish *ese* [has two readings that overlap but differ](##ese_readings).
 
 ## Implementation notes
 
@@ -132,20 +133,43 @@ structure DeicticTerm where
   distance : Option DistanceClass
   deriving DecidableEq
 
-/-- A term locates a referent near one of its anchors, at a length in its class. -/
+/-- The relation of an atom to the referents NEAR it whose vector has a length in the class `k`,
+and to every referent NEAR it when there is no class: a measure narrows the relation and leaves
+the anchors alone. -/
+def Vectors.near (V : Vectors E D) (k : Option DistanceClass) : SetRel (Finset Role) E :=
+  {p | V.Near p.1 p.2 ∧ ∀ c ∈ k, c.Mem V.cut (V.length p.1 p.2)}
+
+theorem Vectors.near_subset_near_none (V : Vectors E D) (k : Option DistanceClass) :
+    V.near k ⊆ V.near none :=
+  fun _ h ↦ ⟨h.1, by simp⟩
+
+/-- The relations of a three-way measure partition NEAR: a referent near an atom stands to it in
+exactly one of them. -/
+theorem Vectors.existsUnique_near (V : Vectors E D) (h₂₁ : V.cut 2 < V.cut 1) {a : Finset Role}
+    {y : E} (h : (a, y) ∈ V.near none) :
+    ∃! k, k ∈ [DistanceClass.nearest, .nearer, .near] ∧ (a, y) ∈ V.near (some k) := by
+  obtain ⟨k, hk, huniq⟩ := distanceClass_partition h₂₁ h.1
+  exact ⟨k, ⟨hk.1, h.1, by simpa using hk.2⟩,
+    fun k' hk' ↦ huniq k' ⟨hk'.1, by simpa using hk'.2.2⟩⟩
+
+/-- A term locates the referents in the image of its anchors under the relation of its class. -/
 def DeicticTerm.Locates (t : DeicticTerm) (V : Vectors E D) (y : E) : Prop :=
-  ∃ a ∈ t.anchors, V.Near a y ∧ ∀ k ∈ t.distance, k.Mem V.cut (V.length a y)
+  y ∈ (V.near t.distance).image t.anchors
 
 instance (t : DeicticTerm) (V : Vectors E D) (y : E) : Decidable (t.Locates V y) :=
-  inferInstanceAs (Decidable (∃ a ∈ t.anchors, _))
+  inferInstanceAs (Decidable (∃ a ∈ t.anchors,
+    V.Near a y ∧ ∀ k ∈ t.distance, k.Mem V.cut (V.length a y)))
 
-/-- Without a measure, a term locates the referents in the image of its anchors under NEAR, so a
-demonstrative's denotation at that relation is Harbour's with the vicinity of an anchor taken as
-NEAR its atom. -/
-theorem locates_iff_mem_image (V : Vectors E D) (δ : Finset (Finset Role)) (x : E) :
-    (⟨δ, none⟩ : DeicticTerm).Locates V x ↔
-      x ∈ SetRel.image {p : Finset Role × E | V.Near p.1 p.2} δ := by
-  simp [DeicticTerm.Locates]
+/-- A demonstrative read at the relation of a class denotes what the anaphoric description does
+where the term with its participant sets as anchors and that class locates the indexed referent:
+Harbour's semantics with the vicinity of an anchor taken as NEAR its atom, and graded where the
+term carries a measure. -/
+theorem mem_denote_near_iff {E W : Type} (V : Vectors E D) (k : Option DistanceClass)
+    (dem : DemonstrativeDeterminer) {R : (ℕ → E) → W → Set E} {d : ℕ} {g : ℕ → E} {s : W}
+    {x : E} :
+    x ∈ dem.denote R d (V.near k) g s ↔
+      (⟨dem.deixis, k⟩ : DeicticTerm).Locates V (g d) ∧ x ∈ Definite.anaphoric R d g s :=
+  DemonstrativeDeterminer.mem_denote
 
 /-! ### The paradigms -/
 
