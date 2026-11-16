@@ -69,40 +69,38 @@ theorem decisive_of_decisiveOn {G : Finset ι} (hne : G.Nonempty)
 
 variable [Field K] [IsStrictOrderedRing K]
 
-theorem iff_of_pattern (hO : Invariant ordinal a) (hI : Independent a)
+theorem iff_of_pattern (hO : Invariant (ordinal ι K) a) (hI : Independent a)
     {v w : Profile ι α K} {x y : α}
     (h : ∀ i, (v x i < v y i ↔ w x i < w y i) ∧ (v y i < v x i ↔ w y i < w x i)) :
     a v x y ↔ a w x y := by
-  let f : Profile ι α K → ι → K → K := fun u i t ↦
-    if u x i = u y i then t - u x i else (t - u x i) / |u y i - u x i|
-  have hf : ∀ u, Pi.map (f u) ∈ ordinal := fun u ↦ by
-    refine map_mem_ordinal fun i s t hst ↦ ?_
-    dsimp only [f]
+  have hmono (u : Profile ι α K) (i : ι) : StrictMono fun t : K ↦
+      if u x i = u y i then t - u x i else (t - u x i) / |u y i - u x i| := fun s t hst ↦ by
+    dsimp only
     split_ifs with h
     · exact sub_lt_sub_right hst _
     · exact div_lt_div_of_pos_right (sub_lt_sub_right hst _)
         (abs_pos.2 (sub_ne_zero.2 (Ne.symm h)))
-  have hx : ∀ u : Profile ι α K, Pi.map (f u) (u x) = 0 := fun u ↦ funext fun i ↦ by
-    simp only [Pi.map_apply, f]
+  let f : Profile ι α K → ι → K ↪o K := fun u i ↦ OrderEmbedding.ofStrictMono _ (hmono u i)
+  have hx : ∀ u : Profile ι α K, f u • u x = 0 := fun u ↦ funext fun i ↦ by
+    simp only [Pi.smul_apply', OrderEmbedding.smul_def, f, OrderEmbedding.coe_ofStrictMono]
     split_ifs <;> simp
-  have hy : ∀ u : Profile ι α K, Pi.map (f u) (u y) =
+  have hy : ∀ u : Profile ι α K, f u • u y =
       fun i ↦ if u x i < u y i then 1 else if u y i < u x i then -1 else 0 := fun u ↦
     funext fun i ↦ by
-      simp only [Pi.map_apply, f]
+      simp only [Pi.smul_apply', OrderEmbedding.smul_def, f, OrderEmbedding.coe_ofStrictMono]
       rcases lt_trichotomy (u x i) (u y i) with hlt | heq | hgt
       · rw [ite_eq_right hlt.ne, ite_eq_left hlt, abs_of_pos (sub_pos.2 hlt),
           div_self (sub_pos.2 hlt).ne']
       · simp [heq]
       · rw [ite_eq_right hgt.ne', ite_eq_right (lt_asymm hgt), ite_eq_left hgt,
           abs_of_neg (sub_neg.2 hgt), div_neg, div_self (sub_neg.2 hgt).ne]
-  have hyw : Pi.map (f v) (v y) = Pi.map (f w) (w y) := by
+  have hyw : f v • v y = f w • w y := by
     rw [hy, hy]
     funext i
     simp only [(h i).1, (h i).2]
-  calc a v x y ↔ a (Pi.map (f v) ∘ v) x y := by rw [hO _ (hf v) v]
-    _ ↔ a (Pi.map (f w) ∘ w) x y :=
-      hI _ _ x y (by rw [Function.comp_apply, Function.comp_apply, hx, hx]) hyw
-    _ ↔ a w x y := by rw [hO _ (hf w) w]
+  calc a v x y ↔ a (f v • v) x y := by rw [hO _ (Set.mem_univ _) v]
+    _ ↔ a (f w • w) x y := hI _ _ x y ((hx v).trans (hx w).symm) hyw
+    _ ↔ a w x y := by rw [hO _ (Set.mem_univ _) w]
 
 theorem decisiveOn_of_almost (hW : WeakOrderValued a) (hP : WeakPareto a) (hI : Independent a)
     {G : Finset ι} {x y : α} (hxy : x ≠ y) (h : AlmostDecisiveOn a G x y) {z : α}
@@ -192,7 +190,7 @@ theorem decisiveOn_of_almost_of_ne (hW : WeakOrderValued a) (hP : WeakPareto a)
   · exact hq
   · exact (A u q hqu.symm hq.almost w huw.symm hwq).1
 
-theorem exists_decisive_ssubset (hO : Invariant ordinal a) (hW : WeakOrderValued a)
+theorem exists_decisive_ssubset (hO : Invariant (ordinal ι K) a) (hW : WeakOrderValued a)
     (hP : WeakPareto a) (hI : Independent a) (h₃ : 3 ≤ Fintype.card α) {G : Finset ι}
     (hG : Decisive a G) (h₂ : 2 ≤ G.card) : ∃ G' ⊂ G, Decisive a G' := by
   classical
@@ -263,7 +261,7 @@ variable [Fintype ι]
 
 /-- Arrow's theorem says that with three or more alternatives a rule that is ordinally invariant,
 outputs weak orderings, respects weak Pareto and is independent has a dictator. -/
-theorem exists_isDictator (hO : Invariant ordinal a) (hW : WeakOrderValued a)
+theorem exists_isDictator (hO : Invariant (ordinal ι K) a) (hW : WeakOrderValued a)
     (hP : WeakPareto a) (hI : Independent a) (h₃ : 3 ≤ Fintype.card α) :
     ∃ i, IsDictator a i := by
   classical
@@ -287,7 +285,7 @@ theorem exists_isDictator (hO : Invariant ordinal a) (hW : WeakOrderValued a)
   exact ⟨i, fun v p q h ↦ hG.2 v p q fun j hj ↦ (Finset.mem_singleton.1 hj) ▸ h⟩
 
 /-- Arrow's theorem is an impossibility, since no rule meets all of Arrow's conditions. -/
-theorem arrow (h₃ : 3 ≤ Fintype.card α) (a : Rule ι α K) : ¬ Arrovian ordinal a :=
+theorem arrow (h₃ : 3 ≤ Fintype.card α) (a : Rule ι α K) : ¬ Arrovian (ordinal ι K) a :=
   fun ⟨hO, hW, hP, hI, hD⟩ ↦ let ⟨i, hi⟩ := exists_isDictator hO hW hP hI h₃; hD i hi
 
 end Arrow

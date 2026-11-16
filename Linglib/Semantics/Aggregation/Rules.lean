@@ -70,11 +70,10 @@ theorem majority_independent : Independent (majority : Rule ι α K) :=
 theorem majority_paretoIndifferent : ParetoIndifferent (majority : Rule ι α K) :=
   paretoIndifferent_ofRel fun _ ↦ le_rfl
 
-theorem majority_ordinalInvariant : Invariant ordinal (majority : Rule ι α K) :=
-  invariant_ofRel fun g hg ↦ by
-    obtain ⟨f, hf, rfl⟩ := mem_ordinal.1 hg
+theorem majority_ordinalInvariant : Invariant (ordinal ι K) (majority : Rule ι α K) :=
+  invariant_ofRel fun f _ ↦ by
     funext p q
-    simp only [Order.Preimage, Pi.map_apply, (hf _).le_iff_le]
+    simp only [Order.Preimage, Pi.smul_apply', OrderEmbedding.smul_def, OrderEmbedding.le_iff_le]
 
 theorem majority_anonymous : Anonymous (majority : Rule ι α K) :=
   anonymous_ofRel fun σ ↦ funext₂ fun p q ↦ by
@@ -164,11 +163,11 @@ section Linear
 
 variable [LinearOrder K]
 
-theorem paretoRule_ordinalInvariant : Invariant ordinal (paretoRule : Rule ι α K) :=
-  invariant_ofRel fun g hg ↦ by
-    obtain ⟨f, hf, rfl⟩ := mem_ordinal.1 hg
+theorem paretoRule_ordinalInvariant : Invariant (ordinal ι K) (paretoRule : Rule ι α K) :=
+  invariant_ofRel fun f _ ↦ by
     funext p q
-    simp only [Order.Preimage, ge_iff_le, Pi.le_def, Pi.map_apply, (hf _).le_iff_le]
+    simp only [Order.Preimage, ge_iff_le, Pi.le_def, Pi.smul_apply', OrderEmbedding.smul_def,
+      OrderEmbedding.le_iff_le]
 
 variable [Nontrivial ι] [Nontrivial K]
 
@@ -236,10 +235,10 @@ theorem utilitarian_weakPareto (hc : ∀ i, 0 ≤ c i) (hpos : ∃ i, 0 < c i) :
   exact ⟨this.le, this.not_ge⟩
 
 theorem utilitarian_cardinalUnitInvariant :
-    Invariant cardinalUnit (utilitarian c : Rule ι α K) := by
+    Invariant (cardinalUnit ι K) (utilitarian c : Rule ι α K) := by
   refine invariant_ofRel ?_
-  rintro _ ⟨f, ⟨s, hs, b, hf⟩, rfl⟩
-  have key : ∀ p, Pi.map f p = s • p + b := fun p ↦ funext fun i ↦ by simp [hf]
+  rintro f ⟨s, hs, b, hf⟩
+  have key : ∀ p : ι → K, f • p = s • p + b := fun p ↦ funext fun i ↦ by simp [hf]
   funext p q
   simp only [Order.Preimage, ge_iff_le, key, dotProduct_add, dotProduct_smul, smul_eq_mul,
     add_le_add_iff_right, mul_le_mul_iff_of_pos_left hs]
@@ -262,7 +261,7 @@ theorem utilitarian_nonDictatorial [Nontrivial α] (h₂ : ∀ i, ∃ j, j ≠ i
 /-- With positive weights on two or more individuals the utilitarian rule meets Arrow's conditions
 with cardinal unit comparability in place of ordinal non-comparability ([sen-1970]). -/
 theorem utilitarian_arrovian_cardinalUnit [Nontrivial ι] [Nontrivial α] (hc : ∀ i, 0 < c i) :
-    Arrovian cardinalUnit (utilitarian c : Rule ι α K) :=
+    Arrovian (cardinalUnit ι K) (utilitarian c : Rule ι α K) :=
   ⟨utilitarian_cardinalUnitInvariant c, utilitarian_weakOrderValued c,
     utilitarian_weakPareto c (fun i ↦ (hc i).le) ⟨Classical.arbitrary ι, hc _⟩,
     utilitarian_independent c,
@@ -276,56 +275,61 @@ theorem not_weakPareto_utilitarian_zero [Nontrivial α] :
   exact (h (fun z _ ↦ if z = x then 1 else 0) x y fun _ ↦ by simp [hxy.symm]).2 (by simp)
 
 theorem not_ratioInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠ j) (hi : 0 < c i)
-    (hj : 0 < c j) : ¬ Invariant ratio (utilitarian c : Rule ι α K) := by
+    (hj : 0 < c j) : ¬ Invariant (ratio ι K) (utilitarian c : Rule ι α K) := by
   intro h
   obtain ⟨x, y, hxy⟩ := exists_pair_ne α
   classical
   let v : Profile ι α K := fun z ↦
     if z = x then Pi.single i (c j) else if z = y then Pi.single j (c i) else 0
-  let f : ι → K → K := fun l t ↦ if l = j then 2 * t else t
-  have hf : Pi.map f ∈ ratio := mem_ratio.2 ⟨f, fun l ↦ ⟨if l = j then 2 else 1,
-    by split_ifs <;> norm_num, fun t ↦ by simp only [f]; split_ifs <;> simp⟩, rfl⟩
-  have hx : Pi.map f (v x) = Pi.single i (c j) := funext fun l ↦ by
-    simp only [Pi.map_apply, v, f, ite_true, Pi.single_apply]
+  obtain ⟨e, he⟩ : ∃ e : K ↪o K, ∀ t, e t = 2 * t :=
+    ⟨OrderEmbedding.ofStrictMono (2 * ·) fun _ _ h ↦ mul_lt_mul_of_pos_left h two_pos,
+      fun _ ↦ rfl⟩
+  let f : ι → K ↪o K := fun l ↦ if l = j then e else RelEmbedding.refl _
+  have hf : f ∈ ratio ι K := mem_ratio.2 fun l ↦ ⟨if l = j then 2 else 1,
+    by split_ifs <;> norm_num, fun t ↦ by simp only [f]; split_ifs <;> simp [he]⟩
+  have hx : f • v x = Pi.single i (c j) := funext fun l ↦ by
+    simp only [Pi.smul_apply', OrderEmbedding.smul_def, v, f, ite_true, Pi.single_apply]
     split_ifs <;> simp_all
-  have hy : Pi.map f (v y) = Pi.single j (2 * c i) := funext fun l ↦ by
-    simp only [Pi.map_apply, v, f, hxy.symm, ite_false, ite_true, Pi.single_apply]
+  have hy : f • v y = Pi.single j (2 * c i) := funext fun l ↦ by
+    simp only [Pi.smul_apply', OrderEmbedding.smul_def, v, f, hxy.symm, ite_false, ite_true,
+      Pi.single_apply]
     split_ifs <;> simp_all
   have := congrFun (congrFun (h _ hf v) x) y
-  simp only [utilitarian_apply, comp_apply, hx, hy, eq_iff_iff] at this
+  simp only [utilitarian_apply, Pi.smul_apply, hx, hy, eq_iff_iff] at this
   simp only [v, ite_true, hxy.symm, ite_false, dotProduct_single, mul_comm (c j) (c i)] at this
   have hpos := mul_pos hi hj
   exact (this.2 le_rfl).not_gt (by linarith)
 
 theorem not_ordinalInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠ j) (hi : 0 < c i)
-    (hj : 0 < c j) : ¬ Invariant ordinal (utilitarian c : Rule ι α K) :=
-  fun h ↦ not_ratioInvariant_utilitarian c hij hi hj (h.mono ratio_subset_ordinal)
+    (hj : 0 < c j) : ¬ Invariant (ordinal ι K) (utilitarian c : Rule ι α K) :=
+  fun h ↦ not_ratioInvariant_utilitarian c hij hi hj (h.mono (Set.subset_univ _))
 
 /-- The utilitarian rule needs differences of values: a strictly increasing map applied to every
 individual alike already changes it. -/
 theorem not_ordinalLevelInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠ j) (hi : 0 < c i)
-    (hj : 0 < c j) : ¬ Invariant ordinalLevel (utilitarian c : Rule ι α K) := by
+    (hj : 0 < c j) : ¬ Invariant (ordinalLevel ι K) (utilitarian c : Rule ι α K) := by
   intro h
   obtain ⟨x, y, hxy⟩ := exists_pair_ne α
-  obtain ⟨u, hu, hu₀, hu₁, hu₂⟩ : ∃ u : K → K,
-      StrictMono u ∧ u 0 = 0 ∧ u (-c j) = -c j ∧ u (c i) = 2 * c i :=
-    ⟨fun t ↦ max t (2 * t), fun s t hst ↦ max_lt (hst.trans_le (le_max_left _ _))
-      ((mul_lt_mul_of_pos_left hst two_pos).trans_le (le_max_right _ _)), by simp,
+  obtain ⟨u, hu₀, hu₁, hu₂⟩ : ∃ u : K ↪o K,
+      u 0 = 0 ∧ u (-c j) = -c j ∧ u (c i) = 2 * c i :=
+    ⟨OrderEmbedding.ofStrictMono (fun t ↦ max t (2 * t)) fun s t hst ↦
+      max_lt (hst.trans_le (le_max_left _ _))
+        ((mul_lt_mul_of_pos_left hst two_pos).trans_le (le_max_right _ _)), by simp,
       max_eq_left (by linarith), max_eq_right (by linarith)⟩
   classical
   let v : Profile ι α K := fun z ↦
     if z = x then Pi.single i (-c j) + Pi.single j (c i) else 0
-  have hx : u ∘ v x = Pi.single i (-c j) + Pi.single j (2 * c i) :=
+  have hx : const ι u • v x = Pi.single i (-c j) + Pi.single j (2 * c i) :=
     funext fun l ↦ by
       by_cases h₁ : l = i
       · subst h₁; simp [v, hij, hu₁]
       · by_cases h₂ : l = j
         · subst h₂; simp [v, h₁, hu₂]
         · simp [v, h₁, h₂, hu₀]
-  have hy : u ∘ v y = 0 := funext fun l ↦ by
+  have hy : const ι u • v y = 0 := funext fun l ↦ by
     simp [v, hxy.symm, hu₀]
-  have := (congrFun₂ (h _ ⟨u, hu, rfl⟩ v) y x).mpr (by simp [v, hxy.symm, mul_comm])
-  simp only [utilitarian_apply, comp_apply] at this
+  have := (congrFun₂ (h _ ⟨u, Set.mem_univ _, rfl⟩ v) y x).mpr (by simp [v, hxy.symm, mul_comm])
+  simp only [utilitarian_apply, Pi.smul_apply] at this
   rw [hx, hy] at this
   simp only [dotProduct_add, dotProduct_single, dotProduct_zero] at this
   nlinarith [mul_pos hi hj]
@@ -380,13 +384,14 @@ theorem maximin_apply :
 
 /-- The maximin rule needs only ordinal level comparability, since a common strictly increasing
 map moves every lowest value alike. -/
-theorem maximin_ordinalLevelInvariant : Invariant ordinalLevel (maximin : Rule ι α K) := by
+theorem maximin_ordinalLevelInvariant : Invariant (ordinalLevel ι K) (maximin : Rule ι α K) := by
   refine invariant_ofRel ?_
-  rintro _ ⟨u, hu : StrictMono u, rfl⟩
-  have key (p : ι → K) : univ.inf' univ_nonempty (u ∘ p) = u (univ.inf' univ_nonempty p) := by
-    rw [apply_inf'_eq_inf'_comp univ_nonempty u fun a b ↦ hu.monotone.map_min]
+  rintro _ ⟨u, -, rfl⟩
+  have key (p : ι → K) :
+      univ.inf' univ_nonempty (const ι u • p) = u (univ.inf' univ_nonempty p) :=
+    (apply_inf'_eq_inf'_comp univ_nonempty u fun a b ↦ u.monotone.map_min).symm
   funext p q
-  simp only [Order.Preimage, ge_iff_le, key, hu.le_iff_le]
+  simp only [Order.Preimage, ge_iff_le, key, u.le_iff_le]
 
 theorem maximin_weakOrderValued : WeakOrderValued (maximin : Rule ι α K) :=
   weakOrderValued_ofRel
@@ -421,7 +426,7 @@ theorem maximin_anonymous : Anonymous (maximin : Rule ι α K) :=
 /-- With two or more individuals the maximin rule meets Arrow's conditions with ordinal level
 comparability in place of ordinal non-comparability ([sen-1970]). -/
 theorem maximin_arrovian_ordinalLevel [Nontrivial ι] [Nontrivial α] [Nontrivial K] :
-    Arrovian ordinalLevel (maximin : Rule ι α K) :=
+    Arrovian (ordinalLevel ι K) (maximin : Rule ι α K) :=
   ⟨maximin_ordinalLevelInvariant, maximin_weakOrderValued, maximin_weakPareto,
     maximin_independent, maximin_nonDictatorial⟩
 
@@ -450,13 +455,12 @@ theorem cobbDouglas_paretoIndifferent : ParetoIndifferent (cobbDouglas c : Rule 
 theorem cobbDouglas_independent : Independent (cobbDouglas c : Rule ι α ℝ) :=
   independent_ofRel _
 
-theorem cobbDouglas_comp_of_nonneg {g : (ι → ℝ) → ι → ℝ} (hg : g ∈ ratio)
-    (hv : ∀ x i, 0 ≤ v x i) : cobbDouglas c (g ∘ v) = cobbDouglas c v := by
-  obtain ⟨f, hf, rfl⟩ := mem_ratio.1 hg
-  choose s hs hf using hf
+theorem cobbDouglas_smul_of_nonneg {f : ι → ℝ ↪o ℝ} (hf : f ∈ ratio ι ℝ)
+    (hv : ∀ x i, 0 ≤ v x i) : cobbDouglas c (f • v) = cobbDouglas c v := by
+  choose s hs hf using mem_ratio.1 hf
   funext x y
-  simp only [cobbDouglas_apply, comp_apply, Pi.map_apply, hf, Real.mul_rpow (hs _).le (hv _ _),
-    prod_mul_distrib]
+  simp only [cobbDouglas_apply, Pi.smul_apply, Pi.smul_apply', OrderEmbedding.smul_def, hf,
+    Real.mul_rpow (hs _).le (hv _ _), prod_mul_distrib]
   exact propext (mul_le_mul_iff_of_pos_left (prod_pos fun i _ ↦ Real.rpow_pos_of_pos (hs i) _))
 
 end CobbDouglas

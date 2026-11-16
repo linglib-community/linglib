@@ -5,6 +5,7 @@ public import Mathlib.Algebra.Order.Group.OrderIso
 public import Mathlib.Data.ENat.Lattice
 public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Order.Fin.Basic
+public import Linglib.Semantics.MeasurementTheory.Invariance
 
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
@@ -162,12 +163,8 @@ private def affineIso (a : K) (ha : 0 < a) (b : K) : K ≃o K where
   right_inv y := by simp [ha.ne', mul_div_cancel₀]
   map_rel_iff' {x y} := by simp [mul_le_mul_iff_of_pos_left ha]
 
-/-- The positive affine maps `x ↦ a * x + b` of an ordered field, as order automorphisms. -/
-def positiveAffine : Set (K ≃o K) :=
-  {g | ∃ a : K, 0 < a ∧ ∃ b : K, ∀ x, g x = a * x + b}
-
 theorem isPointHomogeneous_two_positiveAffine :
-    IsPointHomogeneous (positiveAffine (K := K)) 2 := by
+    IsPointHomogeneous (positiveAffine : Set (K ≃o K)) 2 := by
   intro p q hp hq
   have hp' : 0 < p 1 - p 0 := sub_pos.2 (hp (by decide))
   have hq' : 0 < q 1 - q 0 := sub_pos.2 (hq (by decide))
@@ -181,7 +178,7 @@ theorem isPointHomogeneous_two_positiveAffine :
     field_simp
     ring
 
-theorem isPointUnique_two_positiveAffine : IsPointUnique (positiveAffine (K := K)) 2 := by
+theorem isPointUnique_two_positiveAffine : IsPointUnique (positiveAffine : Set (K ≃o K)) 2 := by
   rintro g ⟨a, -, b, hg⟩ h ⟨c, -, d, hh⟩ p hp hgh
   have hp' : 0 < p 1 - p 0 := sub_pos.2 (hp (by decide))
   have e₀ := hgh 0
@@ -195,7 +192,7 @@ theorem isPointUnique_two_positiveAffine : IsPointUnique (positiveAffine (K := K
   exact DFunLike.ext _ _ fun x ↦ by rw [hg, hh, hbd]
 
 theorem not_isPointHomogeneous_three_positiveAffine :
-    ¬ IsPointHomogeneous (positiveAffine (K := K)) 3 := by
+    ¬ IsPointHomogeneous (positiveAffine : Set (K ≃o K)) 3 := by
   intro h
   obtain ⟨g, ⟨a, -, b, hg⟩, hgab⟩ := h (fun i ↦ ((i.1 : ℕ) : K)) (fun i ↦ ((i.1 ^ 2 : ℕ) : K))
     (fun i j hij ↦ Nat.cast_lt.2 hij)
@@ -207,7 +204,8 @@ theorem not_isPointHomogeneous_three_positiveAffine :
   norm_num [Fin.val_one, Fin.val_two] at e₀ e₁ e₂
   linarith
 
-theorem not_isPointUnique_one_positiveAffine : ¬ IsPointUnique (positiveAffine (K := K)) 1 := by
+theorem not_isPointUnique_one_positiveAffine :
+    ¬ IsPointUnique (positiveAffine : Set (K ≃o K)) 1 := by
   intro h
   have := h (affineIso 1 one_pos 0) ⟨1, one_pos, 0, fun _ ↦ rfl⟩
     (affineIso 2 two_pos 0) ⟨2, two_pos, 0, fun _ ↦ rfl⟩ (fun _ ↦ 0) (Subsingleton.strictMono _)
@@ -216,11 +214,11 @@ theorem not_isPointUnique_one_positiveAffine : ¬ IsPointUnique (positiveAffine 
   simp [affineIso] at this
 
 /-- The positive affine maps carry any two points to any two, in order, and no three. -/
-theorem homogeneity_positiveAffine : homogeneity (positiveAffine (K := K)) = 2 :=
+theorem homogeneity_positiveAffine : homogeneity (positiveAffine : Set (K ≃o K)) = 2 :=
   homogeneity_eq isPointHomogeneous_two_positiveAffine not_isPointHomogeneous_three_positiveAffine
 
 /-- A positive affine map is fixed by its values at two points, and not by its value at one. -/
-theorem uniqueness_positiveAffine : uniqueness (positiveAffine (K := K)) = 2 :=
+theorem uniqueness_positiveAffine : uniqueness (positiveAffine : Set (K ≃o K)) = 2 :=
   uniqueness_eq isPointUnique_two_positiveAffine not_isPointUnique_one_positiveAffine
 
 /-! ### Ordinal scales -/

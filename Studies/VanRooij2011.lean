@@ -79,8 +79,8 @@ section Sentences
 
 variable (x y z w : X) (P Q : Ad)
 
-theorem comparative_ordinalLevel : Invariant ordinalLevel (comparative x P y Q) :=
-  (invariant_strictMono_lt (x, P) (y, Q)).uncurry
+theorem comparative_ordinalLevel : Invariant (ordinalLevel Ad ℝ) (comparative x P y Q) :=
+  (invariant_univ_lt (x, P) (y, Q)).uncurry
 
 /-- A change of scale preserves every comparison of individual–adjective pairs exactly when it
 applies one strictly increasing map to all adjectives, so the measure of pairs is unique up to the
@@ -88,8 +88,10 @@ transformations of a co-ordinal scale. -/
 -- pp. 348–349
 theorem forall_comparative_comp_iff [Nontrivial X] {g : (Ad → ℝ) → Ad → ℝ} :
     (∀ (v : Profile Ad X ℝ) x P y Q,
-      comparative x P y Q (g ∘ v) ↔ comparative x P y Q v) ↔ g ∈ ordinalLevel := by
-  refine ⟨fun h ↦ ?_, fun hg v x P y Q ↦ (comparative_ordinalLevel x y P Q g hg v).to_iff⟩
+      comparative x P y Q (g ∘ v) ↔ comparative x P y Q v) ↔
+      ∃ u : ℝ ↪o ℝ, ∀ p P, g p P = u (p P) := by
+  refine ⟨fun h ↦ ?_, fun ⟨u, hu⟩ v x P y Q ↦ by
+    simp only [comparative, comp_apply, hu, u.lt_iff_lt]⟩
   obtain ⟨x, y, hxy⟩ := exists_pair_ne X
   classical
   have key (p q : Ad → ℝ) (P Q : Ad) : g q Q < g p P ↔ q Q < p P := by
@@ -98,61 +100,68 @@ theorem forall_comparative_comp_iff [Nontrivial X] {g : (Ad → ℝ) → Ad → 
     le_antisymm (not_lt.1 fun hlt ↦ lt_irrefl (p P) ((key p _ P P').1 hlt))
       (not_lt.1 fun hlt ↦ lt_irrefl (p P) ((key _ p P' P).1 hlt))
   rcases isEmpty_or_nonempty Ad with _ | ⟨⟨P₀⟩⟩
-  · exact ⟨id, strictMono_id, Subsingleton.elim _ _⟩
-  · exact ⟨fun t ↦ g (fun _ ↦ t) P₀, fun s t hst ↦ (key _ _ P₀ P₀).2 hst,
-      funext₂ fun p P ↦ (hconst p P P₀).symm⟩
+  · exact ⟨RelEmbedding.refl _, fun _ P ↦ isEmptyElim P⟩
+  · exact ⟨OrderEmbedding.ofStrictMono (fun t ↦ g (fun _ ↦ t) P₀)
+      fun s t hst ↦ (key _ _ P₀ P₀).2 hst, fun p P ↦ hconst p P P₀⟩
 
 /-- A common unit with a separate origin for each adjective does not make a comparison across two
 adjectives meaningful. -/
 -- p. 349, note 17
 theorem not_comparative_cardinalUnit (hPQ : P ≠ Q) :
-    ¬ Invariant cardinalUnit (comparative x P y Q) := by
+    ¬ Invariant (cardinalUnit Ad ℝ) (comparative x P y Q) := by
   intro h
   classical
   let v : Profile Ad X ℝ := fun _ i ↦ if i = P then 1 else 0
-  let g : (Ad → ℝ) → Ad → ℝ := fun p i ↦ 1 * p i + if i = Q then 2 else 0
+  let f : Ad → ℝ ↪o ℝ := fun i ↦ OrderEmbedding.ofStrictMono
+    (fun t ↦ 1 * t + if i = Q then 2 else 0) fun s t hst ↦ by
+      show 1 * s + _ < 1 * t + _
+      linarith
   have h₁ : comparative x P y Q v := by simp [comparative, v, hPQ.symm]
-  have h₂ : ¬ comparative x P y Q (g ∘ v) := by
-    norm_num [comparative, v, g, hPQ, hPQ.symm]
-  exact h₂ (h g (mem_cardinalUnit.2 ⟨1, one_pos, _, rfl⟩) v ▸ h₁)
+  have h₂ : ¬ comparative x P y Q (f • v) := by
+    norm_num [comparative, v, f, hPQ, hPQ.symm]
+  exact h₂ (h f ⟨1, one_pos, fun i ↦ if i = Q then 2 else 0, fun _ _ ↦ rfl⟩ v ▸ h₁)
 
-theorem not_comparative_ordinal (hPQ : P ≠ Q) : ¬ Invariant ordinal (comparative x P y Q) :=
-  fun h ↦ not_comparative_cardinalUnit x y P Q hPQ (h.mono cardinalUnit_subset_ordinal)
+theorem not_comparative_ordinal (hPQ : P ≠ Q) : ¬ Invariant (ordinal Ad ℝ) (comparative x P y Q) :=
+  fun h ↦ not_comparative_cardinalUnit x y P Q hPQ (h.mono (Set.subset_univ _))
 
 -- p. 349: a co-interval scale makes "5 cm taller than Mary is wide" meaningful
-theorem differential_cardinalFull {g : (Ad → ℝ) → Ad → ℝ} (hg : g ∈ cardinalFull) :
+theorem differential_cardinalFull {f : Ad → ℝ ↪o ℝ} (hf : f ∈ cardinalFull Ad ℝ) :
     ∃ a > 0, ∀ d (v : Profile Ad X ℝ),
-      differential x P y Q (a * d) (g ∘ v) ↔ differential x P y Q d v := by
-  obtain ⟨u, hu, rfl⟩ := hg
+      differential x P y Q (a * d) (f • v) ↔ differential x P y Q d v := by
+  obtain ⟨u, hu, rfl⟩ := hf
   obtain ⟨a, ha, h⟩ := exists_differentialComparative_comp_iff (E := X × Ad) hu
   exact ⟨a, ha, fun d v ↦ h (uncurry v) _ _ d⟩
 
 -- p. 349: a co-ratio scale
-theorem factor_ratioFull (n : ℝ) : Invariant ratioFull (factor x P y Q n) :=
+theorem factor_ratioFull (n : ℝ) : Invariant (ratioFull Ad ℝ) (factor x P y Q n) :=
   (invariant_similarity_factorEquative (x, P) (y, Q) n).uncurry
 
 /-- On a co-interval scale *x is n times as P as y is Q* is meaningful only for the factor $1$,
 since a common change of origin moves every other ratio. -/
 theorem factor_cardinalFull_iff {n : ℝ} (hne : (x, P) ≠ (y, Q)) :
-    Invariant cardinalFull (factor x P y Q n) ↔ n = 1 := by
+    Invariant (cardinalFull Ad ℝ) (factor x P y Q n) ↔ n = 1 := by
   refine ⟨fun h ↦ ?_, ?_⟩
   · classical
     have hyQ : ¬ (y = x ∧ Q = P) := fun ⟨h₁, h₂⟩ ↦ hne (by rw [h₁, h₂])
     let v : Profile Ad X ℝ := fun z i ↦ if z = x ∧ i = P then n else 1
     have h₁ : factor x P y Q n v := by simp [factor, FactorEquative, v, hyQ]
-    have h₂ := (h _ ⟨fun t ↦ 1 * t + 1, ⟨1, one_pos, 1, fun _ ↦ rfl⟩, rfl⟩ v).mpr h₁
-    simp only [factor, FactorEquative, uncurry_apply_pair, comp_apply, smul_eq_mul, v,
-      and_self, ite_true, hyQ, ite_false] at h₂
+    obtain ⟨e, he⟩ : ∃ e : ℝ ↪o ℝ, ∀ t, e t = 1 * t + 1 :=
+      ⟨OrderEmbedding.ofStrictMono (fun t ↦ 1 * t + 1) fun s t hst ↦ by
+        show 1 * s + 1 < 1 * t + 1
+        linarith, fun _ ↦ rfl⟩
+    have h₂ := (h _ ⟨e, ⟨1, one_pos, 1, he⟩, rfl⟩ v).mpr h₁
+    simp only [factor, FactorEquative, uncurry_apply_pair, Pi.smul_apply, Pi.smul_apply',
+      const_apply, OrderEmbedding.smul_def, he, smul_eq_mul, v, and_self, ite_true, hyQ,
+      ite_false] at h₂
     linarith
   · rintro rfl _ ⟨u, ⟨a, ha, b, hu⟩, rfl⟩ v
     simp [factor, FactorEquative, hu, ha.ne']
 
 -- p. 349, note 17: each origin cancels within its own difference
 theorem differenceComparative_cardinalUnit :
-    Invariant cardinalUnit (differenceComparative x y P z w Q) := by
-  rintro g hg v
-  obtain ⟨a, ha, b, rfl⟩ := mem_cardinalUnit.1 hg
-  simp only [differenceComparative, comp_apply]
+    Invariant (cardinalUnit Ad ℝ) (differenceComparative x y P z w Q) := by
+  rintro f ⟨a, ha, b, hf⟩ v
+  simp only [differenceComparative, Pi.smul_apply, Pi.smul_apply', OrderEmbedding.smul_def, hf]
   rw [show ∀ s t c : ℝ, a * s + c - (a * t + c) = a * (s - t) from fun _ _ _ ↦ by ring,
     show ∀ s t c : ℝ, a * s + c - (a * t + c) = a * (s - t) from fun _ _ _ ↦ by ring,
     mul_lt_mul_iff_of_pos_left ha]
@@ -165,17 +174,17 @@ end Sentences
 -- so the numbers represent nothing beyond the order
 theorem exists_mem_ordinalLevel_forall_eq {M : ℕ} (v : Profile Ad X ℝ) (a : Fin M → X × Ad)
     (ha : StrictMono (uncurry v ∘ a)) {b : Fin M → ℝ} (hb : StrictMono b) :
-    ∃ g ∈ (ordinalLevel : Set ((Ad → ℝ) → Ad → ℝ)), ∀ i, uncurry (g ∘ v) (a i) = b i :=
+    ∃ f ∈ ordinalLevel Ad ℝ, ∀ i, uncurry (f • v) (a i) = b i :=
   let ⟨g, _, hg⟩ := isPointHomogeneous_univ M _ b ha hb
-  ⟨_, ⟨g, g.strictMono, rfl⟩, hg⟩
+  ⟨_, ⟨g.toOrderEmbedding, Set.mem_univ _, rfl⟩, hg⟩
 
 -- p. 349: on a co-interval scale the measures of two pairs can take any two values in the same
 -- order, the choice of a unit and an origin
 theorem exists_mem_cardinalFull_forall_eq (v : Profile Ad X ℝ) (a : Fin 2 → X × Ad)
     (ha : StrictMono (uncurry v ∘ a)) {b : Fin 2 → ℝ} (hb : StrictMono b) :
-    ∃ g ∈ (cardinalFull : Set ((Ad → ℝ) → Ad → ℝ)), ∀ i, uncurry (g ∘ v) (a i) = b i :=
+    ∃ f ∈ cardinalFull Ad ℝ, ∀ i, uncurry (f • v) (a i) = b i :=
   let ⟨g, ⟨c, hc, d, hgc⟩, hg⟩ := isPointHomogeneous_two_positiveAffine _ b ha hb
-  ⟨_, ⟨g, ⟨c, hc, d, hgc⟩, rfl⟩, hg⟩
+  ⟨_, ⟨g.toOrderEmbedding, ⟨c, hc, d, hgc⟩, rfl⟩, hg⟩
 
 /-! ### Bale's universal degrees -/
 
@@ -185,22 +194,20 @@ section Universal
 noncomputable def universal (v : Profile Ad X ℝ) (C : Finset X) : Profile Ad X ℚ :=
   fun x P ↦ universalDegree (v · P) C x
 
-theorem universal_comp {g : (Ad → ℝ) → Ad → ℝ} (hg : g ∈ ordinal) (v : Profile Ad X ℝ)
-    (C : Finset X) : universal (g ∘ v) C = universal v C := by
-  obtain ⟨f, hf, rfl⟩ := mem_ordinal.1 hg
-  exact funext₂ fun x P ↦ congrFun
-    (universalDegree_comp (OrderEmbedding.ofStrictMono (f P) (hf P)) (v · P) C) x
+theorem universal_smul (f : Ad → ℝ ↪o ℝ) (v : Profile Ad X ℝ) (C : Finset X) :
+    universal (f • v) C = universal v C :=
+  funext₂ fun x P ↦ congrFun (universalDegree_comp (f P) (v · P) C) x
 
 theorem universal_ordinal {β : Type*} (C : Finset X) (a : Profile Ad X ℚ → β) :
-    Invariant ordinal fun v : Profile Ad X ℝ ↦ a (universal v C) :=
-  fun _ hg v ↦ congrArg a (universal_comp hg v C)
+    Invariant (ordinal Ad ℝ) fun v : Profile Ad X ℝ ↦ a (universal v C) :=
+  fun f _ v ↦ congrArg a (universal_smul f v C)
 
 /-- Read through universal degrees, *x is n times as P as y is Q* survives a separate strictly
 increasing map per adjective, so a ratio across adjectives becomes meaningful although each
 adjective's measure is only ordinal. -/
 -- p. 346
 theorem factor_universal_ordinal (C : Finset X) (x y : X) (P Q : Ad) (n : ℚ) :
-    Invariant ordinal fun v : Profile Ad X ℝ ↦
+    Invariant (ordinal Ad ℝ) fun v : Profile Ad X ℝ ↦
       FactorEquative (uncurry (universal v C)) (x, P) (y, Q) n :=
   universal_ordinal C fun w ↦ FactorEquative (uncurry w) (x, P) (y, Q) n
 
@@ -235,7 +242,7 @@ variable [Fintype Ad]
 -- p. 355: the lowest dimension ranks individuals in a weak order on a co-ordinal scale, with no
 -- dimension dictating it and none privileged
 theorem maximin_coOrdinal [Nontrivial Ad] [Nontrivial X] :
-    Arrovian ordinalLevel (maximin : Rule Ad X ℝ) ∧ Anonymous (maximin : Rule Ad X ℝ) :=
+    Arrovian (ordinalLevel Ad ℝ) (maximin : Rule Ad X ℝ) ∧ Anonymous (maximin : Rule Ad X ℝ) :=
   ⟨maximin_arrovian_ordinalLevel, maximin_anonymous⟩
 
 /-- Ranking by a weighted sum of two or more dimensions needs a co-interval scale: it survives a
@@ -243,9 +250,9 @@ common change of unit and origin but not every common strictly increasing map. -
 -- p. 355
 theorem utilitarian_coInterval [Nontrivial X] (c : Ad → ℝ) {P Q : Ad} (hPQ : P ≠ Q)
     (hP : 0 < c P) (hQ : 0 < c Q) :
-    Invariant cardinalFull (utilitarian c : Rule Ad X ℝ) ∧
-      ¬ Invariant ordinalLevel (utilitarian c : Rule Ad X ℝ) :=
-  ⟨(utilitarian_cardinalUnitInvariant c).mono cardinalFull_subset_cardinalUnit,
+    Invariant (cardinalFull Ad ℝ) (utilitarian c : Rule Ad X ℝ) ∧
+      ¬ Invariant (ordinalLevel Ad ℝ) (utilitarian c : Rule Ad X ℝ) :=
+  ⟨(utilitarian_cardinalUnitInvariant c).mono (cardinalFull_subset_cardinalUnit Ad ℝ),
     not_ordinalLevelInvariant_utilitarian c hPQ hP hQ⟩
 
 end Multidimensional
