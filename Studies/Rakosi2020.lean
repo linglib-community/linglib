@@ -115,8 +115,7 @@ instance (p : Pronoun) : DecidablePred (· ∈ rowsWith p) := fun _ ↦
 /-- The features of the verb the anaphor is an argument of, read off the gloss line: the last
 word glossed with a person. -/
 def verb? (e : Datum) : Option Morphology.Features :=
-  (e.glossedWords.map fun w ↦ Morphology.Features.ofLabels w.labels).reverse.find?
-    fun f ↦ (f .person).isSome
+  (e.glossedWords.map (·.features)).reverse.find? fun f ↦ (f .person).isSome
 
 /-- The number of the verb. -/
 def verbNumber? (e : Datum) : Option Number := (verb? e).bind (· .number)

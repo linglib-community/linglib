@@ -330,7 +330,7 @@ theorem rows_agree : ∀ r ∈ rows, r.signature.implied r.matrix = r.entails :=
 /-- The complement of an example, its word glossed as an infinitive. -/
 def complement? (e : Datum) : Option (List Phonology.Segment) := do
   let w ← e.glossedTokens.find? fun w ↦
-    Morphology.Features.ofLabels (Gloss.labels w.2) .verbForm == (UD.VerbForm.Inf : Flat _)
+    Morphology.Features.ofGloss w.2 .verbForm == (UD.VerbForm.Inf : Flat _)
   (w.1.toList.filter (· ≠ '-')).mapM Finnish.ofChar
 
 theorem complement_mem_infinitiveForms : ∀ e ∈ Examples.all, ∃ v ∈ Finnish.verbs,

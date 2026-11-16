@@ -71,7 +71,7 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
   `Agreement.ConjunctAgreement`, which derives the exclusion of the more distant last conjunct
   (`Agreement.ConjunctAgreement.eq_nearest_of_conjuncts_eq_singleton`). An example fits an option
   when its target agrees (`HasPhi.Agree`) with the conjunct the option picks or with the resolved
-  features, all read off the glosses' category labels (`Morphology.Features.ofLabels`), a conjunct
+  features, all read off the glosses' category labels (`Morphology.Features.ofGloss`), a conjunct
   whose gloss marks no number being singular; the target's side is read off the order of the
   words.
 * Number resolution is the book's rule and is shown to be the substrate's resolution, the
@@ -742,7 +742,7 @@ theorem resolveNumber_eq_resolve :
 /-- The features a conjunct's gloss marks, its number being singular where the gloss marks none,
 as in the Arabic examples. -/
 def conjunctFeatures (g : String) : Morphology.Features :=
-  let f := Morphology.Features.ofLabels (Gloss.labels g)
+  let f := Morphology.Features.ofGloss g
   Function.update f .number ↑((f .number).unbotD .singular)
 
 /-- Slovene resolves the gender of conjuncts by its rules (`Corbett1991.Slovene.rules`): all
@@ -898,8 +898,8 @@ def conjuncts? (row : Datum) : Option (List Morphology.Features) :=
 
 /-- `target? row` is the features a row's target marks. -/
 def target? (row : Datum) : Option Morphology.Features :=
-  ((row.feature? "targetForm").bind fun w ↦ row.glossedTokens.lookup w).map fun g ↦
-    Morphology.Features.ofLabels (Gloss.labels g)
+  ((row.feature? "targetForm").bind fun w ↦ row.glossedTokens.lookup w).map
+    Morphology.Features.ofGloss
 
 /-- `targetSide? row` is the side of the conjuncts a row's target is on, read off the order of its
 words, head-initial if it precedes them. -/
