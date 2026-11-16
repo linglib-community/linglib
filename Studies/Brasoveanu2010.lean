@@ -770,7 +770,7 @@ private theorem courtAt₂_output' (hJ : {iStar} ~[courtSentence M courtAt₂] J
   have hw (c : E) (hc : M.convention c) :
       M.woman w ∧ M.courtAt M.harvey w c ∧ value Dref.u₄ (cell Dref.u₃ (.some c) J) = {w} := by
     obtain ⟨w', hw', hcourt, hcell⟩ := h c hc
-    have : w' ∈ value Dref.u₄ J := value_mono (fun _ hk ↦ hk.1) (hcell ▸ Set.mem_singleton w')
+    have : w' ∈ value Dref.u₄ J := value_mono (Set.sep_subset _ _) (hcell ▸ Set.mem_singleton w')
     rw [hv₄, Set.mem_singleton_iff] at this
     subst this
     exact ⟨hw', hcourt, hcell⟩

@@ -870,8 +870,8 @@ theorem transparent_infinitelyMany_of_finite {P : Set (Unit × ℕ)}
     (hP : {n | ((), n) ∉ P}.Finite) : Transparent Set.univ {infinitelyMany} P := by
   rintro f rfl d ⟨⟩ -
   change {n | ((), n) ∈ P ∩ d}.Infinite ↔ {n | ((), n) ∈ d}.Infinite
-  exact ⟨fun h ↦ h.mono fun _ hn ↦ hn.2,
-    fun h ↦ (h.sdiff hP).mono fun _ hn ↦ ⟨by simpa using hn.2, hn.1⟩⟩
+  exact ⟨fun h ↦ h.mono (s := {n | ((), n) ∈ P ∩ d}) fun _ hn ↦ hn.2,
+    fun h ↦ (h.sdiff hP).mono (s := _ \ _) fun _ hn ↦ ⟨by simpa using hn.2, hn.1⟩⟩
 
 /-- The scope of *infinitely many* has no local context. Leaving out any one individual is
 transparent, so a least transparent restriction would contain no individual, but the empty
@@ -1041,7 +1041,8 @@ theorem strongKleeneAcceptable_trigger_iff (hR : R.triggers = []) (r : Version) 
       TransparentAt C {scopeTruth q fun w ↦ Prod.mk w ⁻¹' R.truth J} (J p) (J a) := by
   simp only [StrongKleeneAcceptable, completions_trigger hR, Set.mem_singleton_iff, forall_eq]
   rw [transparentAt_scopeTruth_iff]
-  refine forall₂_congr fun w _ ↦ Iff.trans ?_ (forall_resolution_iff _)
+  refine forall₂_congr fun w _ ↦ Iff.trans ?_
+    (forall_resolution_iff (P := Prod.mk w ⁻¹' J p) (A := Prod.mk w ⁻¹' J a) _)
   simp only [TokenDefined, resolve_trigger_iff J hR]
   exact ⟨fun h ρ ρ' ↦ h (fun _ _ _ _ ↦ True) (fun e _ _ _ ↦ ρ e) (fun _ _ _ _ ↦ True)
     (fun e _ _ _ ↦ ρ' e), fun h _ ρS _ ρS' ↦ h (ρS · [] p a) (ρS' · [] p a)⟩
@@ -1051,7 +1052,8 @@ theorem supervaluationAcceptable_trigger_iff (hR : R.triggers = []) (r : Version
       TransparentAt C {scopeTruth q fun w ↦ Prod.mk w ⁻¹' R.truth J} (J p) (J a) := by
   simp only [SupervaluationAcceptable, completions_trigger hR, Set.mem_singleton_iff, forall_eq]
   rw [transparentAt_scopeTruth_iff]
-  refine forall₂_congr fun w _ ↦ Iff.trans ?_ (forall_resolution_iff _)
+  refine forall₂_congr fun w _ ↦ Iff.trans ?_
+    (forall_resolution_iff (P := Prod.mk w ⁻¹' J p) (A := Prod.mk w ⁻¹' J a) _)
   simp only [SupervaluationDefined, resolve_trigger_iff J hR]
   exact ⟨fun h ρ ρ' ↦ h (fun e _ _ ↦ ρ e) (fun e _ _ ↦ ρ' e),
     fun h σ σ' ↦ h (σ · p a) (σ' · p a)⟩

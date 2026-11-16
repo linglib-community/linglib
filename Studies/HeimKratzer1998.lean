@@ -365,12 +365,11 @@ theorem rel_val : ∀ {a : Ty Base} (i : Item a), Rel a i.val i.pval
       ⟨_, by cases hx; rfl, rfl⟩⟩⟩
   | _, .det s => fun _ _ _ ↦ ⟨_, rfl, fun A f hf ↦ ⟨_, rfl, fun B f' hf' ↦ ⟨_, rfl, by
       have key {P : ToyEntity → Prop} {p : ToyEntity → Part Prop}
-          (h : Ty.CbvRel (D := Dom) .et P p) : {x | True ∈ p x} = P := by
+          (h : Ty.CbvRel (D := Dom) .et P p) : {x | True ∈ p x} = {x | P x} := by
         ext x
         obtain ⟨y, hy, hyr⟩ := h x x rfl
         cases hyr
         simp [hy]
-        rfl
       show _ = s.denote ToyEntity {x | True ∈ f x} {x | True ∈ f' x}
       rw [key hf, key hf']
       rfl⟩⟩⟩
