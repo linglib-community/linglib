@@ -26,7 +26,6 @@ disjunction](##Exhaustification.exhIE_latticeClosure), it keeps exactly the mini
 ## References
 
 * [fox-2007]
-* [spector-2007]
 * [spector-2016]
 -/
 
@@ -457,8 +456,8 @@ theorem exhMW_eq_exhIE_of_infClosed_sUnion_image (hfin : ALT.Finite)
 
 variable {ALT φ} in
 /-- Closing the alternatives under conjunction and disjunction, or under any part of that closure,
-leaves the minimal worlds unchanged: the propositions true at `v` whenever they are true at `u`
-form a sublattice. -/
+leaves the minimal worlds unchanged ([spector-2016]): the propositions true at `v` whenever they
+are true at `u` form a sublattice. -/
 theorem exhMW_eq_of_subset_latticeClosure {S : Set (Set World)} (h₁ : S ⊆ ALT)
     (h₂ : ALT ⊆ latticeClosure S) : exhMW ALT φ = exhMW S φ := by
   refine exhMW_congr (Preorder.ofCriteria_eq_of_subset h₁ fun q hq u v h ↦ ?_)
@@ -469,8 +468,8 @@ theorem exhMW_eq_of_subset_latticeClosure {S : Set (Set World)} (h₁ : S ⊆ AL
 @[simp] theorem exhMW_latticeClosure : exhMW (latticeClosure ALT) φ = exhMW ALT φ :=
   exhMW_eq_of_subset_latticeClosure subset_latticeClosure subset_rfl
 
-/-- Against the closure of finitely many propositions under conjunction and disjunction, the
-positive propositions of [spector-2007], innocent exclusion keeps the minimal worlds. -/
+/-- Against the closure of finitely many propositions under conjunction and disjunction, innocent
+exclusion keeps the minimal worlds over the propositions themselves ([spector-2016]). -/
 theorem exhIE_latticeClosure (hfin : ALT.Finite) : exhIE (latticeClosure ALT) φ = exhMW ALT φ := by
   rw [← exhMW_eq_exhIE_of_infClosed _ _ hfin.latticeClosure isSublattice_latticeClosure.infClosed,
     exhMW_latticeClosure]

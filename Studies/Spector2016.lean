@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Linglib.Semantics.Exhaustification.ConjunctiveDisjunct
 public import Mathlib.Order.WithBot
 
 /-!
@@ -16,11 +16,12 @@ disjunction changes neither (`exhIE_sUnion_image_powerset`). Here are the illust
 practical consequences. With a single alternative the operators agree (`elementary`). For a
 disjunction with only its disjuncts as alternatives, the minimal-world operator returns the
 exclusive reading while innocent exclusion is vacuous (`exhMW_or`, `exhIE_or`); adding the
-conjunction as an alternative leaves the order on worlds, and so the minimal worlds,
-unchanged (`satisfied_or_and_subset_iff`) and makes innocent exclusion exclusive too
-(`exhIE_or_and`). The paper's shortcut for computing innocent exclusion over a large
-alternative set, running the minimal-world operator over the elementary propositions instead,
-is illustrated on *either Mary came, or both Peter and Sue did* (`exhMW_or_and_three`).
+conjunction as an alternative leaves the minimal worlds unchanged, as closing the alternatives
+under conjunction and disjunction always does (`Exhaustification.exhMW_latticeClosure`), and
+makes innocent exclusion exclusive too (`exhIE_or_and`). The paper's shortcut for computing
+innocent exclusion over a large alternative set, running the minimal-world operator over the
+elementary propositions instead (`Exhaustification.exhIE_latticeClosure`), is illustrated on
+*either Mary came, or both Peter and Sue did* (`exhMW_or_and_three`, `exhIE_or_and_three`).
 Finally, a vacuous minimal-world operator makes innocent exclusion vacuous
 (`exhIE_eq_of_exhMW_eq`), which settles the infinite case of *there are at least n stars*
 against the alternatives *exactly m* and *at least m* for every `m` ([schwarz-2013]): every
@@ -31,8 +32,10 @@ world with at least `n` stars, or infinitely many, is minimal (`exhMW_stars`, `e
 The third operator the paper compares, which denies every non-entailed alternative, and the
 theorem that innocent exclusion over the alternatives of [sauerland-2004] equals the
 minimal-world operator over the elementary sentences are not formalized; the shortcut is
-shown by computing the minimal worlds directly. Independence of the disjuncts is the
-existence of a world verifying one disjunct alone, assumed only where a case needs it. The
+shown for the closure of the elementary propositions under conjunction and disjunction, which
+is mathlib's `latticeClosure`, the closure under finite meets and joins. Independence of the
+disjuncts is the existence of a world verifying one disjunct alone, assumed only where a case
+needs it. The
 alternative sets of the illustrations are the paper's, without the prejacent, which the
 substrate's compatible sets carry separately.
 
@@ -113,28 +116,13 @@ theorem exhIE_or (hA : (A \ B).Nonempty) (hB : (B \ A).Nonempty) :
   · exact absurd hwA (hsub (Or.inl ⟨hwA, hwB⟩))
   · exact absurd hw'B (hsub (Or.inr ⟨hw'B, hw'A⟩))
 
-theorem exhMW_congr {ALT ALT' : Set (Set World)} (φ : Set World)
-    (h : ∀ u v, satisfied (· ∈ ·) ALT u ⊆ satisfied (· ∈ ·) ALT v ↔
-      satisfied (· ∈ ·) ALT' u ⊆ satisfied (· ∈ ·) ALT' v) :
-    exhMW ALT φ = exhMW ALT' φ := by
-  ext u
-  simp only [mem_exhMW, MinimalFor, h]
-
-theorem satisfied_or_and_subset_iff (u v : World) :
-    satisfied (· ∈ ·) {A, B, A ∩ B} u ⊆ satisfied (· ∈ ·) {A, B, A ∩ B} v ↔
-      satisfied (· ∈ ·) {A, B} u ⊆ satisfied (· ∈ ·) {A, B} v := by
-  constructor
-  · rintro h a ⟨rfl | rfl, hau⟩
-    · exact ⟨Or.inl rfl, (h ⟨Or.inl rfl, hau⟩).2⟩
-    · exact ⟨Or.inr rfl, (h ⟨Or.inr (Or.inl rfl), hau⟩).2⟩
-  · rintro h a ⟨rfl | rfl | rfl, hau⟩
-    · exact ⟨Or.inl rfl, (h ⟨Or.inl rfl, hau⟩).2⟩
-    · exact ⟨Or.inr (Or.inl rfl), (h ⟨Or.inr rfl, hau⟩).2⟩
-    · exact ⟨Or.inr (Or.inr rfl), (h ⟨Or.inl rfl, hau.1⟩).2, (h ⟨Or.inr rfl, hau.2⟩).2⟩
-
 theorem exhMW_or_and (hA : (A \ B).Nonempty) :
-    exhMW {A, B, A ∩ B} (A ∪ B) = (A \ B) ∪ (B \ A) :=
-  (exhMW_congr (A ∪ B) (satisfied_or_and_subset_iff (A := A) (B := B))).trans (exhMW_or hA)
+    exhMW {A, B, A ∩ B} (A ∪ B) = (A \ B) ∪ (B \ A) := by
+  rw [exhMW_eq_of_subset_latticeClosure (S := {A, B}) (by grind) ?_, exhMW_or hA]
+  rintro q (rfl | rfl | rfl)
+  exacts [subset_latticeClosure (by simp), subset_latticeClosure (by simp),
+    isSublattice_latticeClosure.infClosed (subset_latticeClosure (by simp))
+      (subset_latticeClosure (by simp))]
 
 theorem exhIE_or_and (hA : (A \ B).Nonempty) (hB : (B \ A).Nonempty) :
     exhIE {A, B, A ∩ B} (A ∪ B) = (A \ B) ∪ (B \ A) := by
@@ -169,37 +157,17 @@ theorem exhIE_or_and (hA : (A \ B).Nonempty) (hB : (B \ A).Nonempty) :
 
 variable {m p s : Set World}
 
-theorem exhMW_or_and_three (hm : ∃ w, w ∈ m ∧ w ∉ p ∧ w ∉ s) :
+theorem exhMW_or_and_three (hm : (m \ (p ∪ s)).Nonempty) :
     exhMW {m, p, s} (m ∪ (p ∩ s)) = (m \ (p ∪ s)) ∪ ((p ∩ s) \ m) := by
-  obtain ⟨w, hwm, hwp, hws⟩ := hm
-  ext u
-  constructor
-  · rintro ⟨hu, hmin⟩
-    by_cases hmu : u ∈ m
-    · refine Or.inl ⟨hmu, fun hpsu ↦ ?_⟩
-      have hle : satisfied (· ∈ ·) {m, p, s} w ⊆ satisfied (· ∈ ·) {m, p, s} u := by
-        rintro a ⟨rfl | rfl | rfl, haw⟩
-        · exact ⟨Or.inl rfl, hmu⟩
-        · exact absurd haw hwp
-        · exact absurd haw hws
-      rcases hpsu with hpu | hsu
-      · exact hwp (hmin (Or.inl hwm) hle ⟨Or.inr (Or.inl rfl), hpu⟩).2
-      · exact hws (hmin (Or.inl hwm) hle ⟨Or.inr (Or.inr rfl), hsu⟩).2
-    · exact Or.inr ⟨hu.resolve_left hmu, hmu⟩
-  · rintro (⟨hmu, hpsu⟩ | ⟨⟨hpu, hsu⟩, hmu⟩)
-    · refine ⟨Or.inl hmu, fun v hv hle a ⟨ha, hau⟩ ↦ ⟨ha, ?_⟩⟩
-      have hmv : v ∈ m :=
-        hv.resolve_right fun hpsv ↦ hpsu (Or.inl (hle ⟨Or.inr (Or.inl rfl), hpsv.1⟩).2)
-      rcases ha with rfl | rfl | rfl
-      · exact hmv
-      · exact (hpsu (Or.inl hau)).elim
-      · exact (hpsu (Or.inr hau)).elim
-    · refine ⟨Or.inr ⟨hpu, hsu⟩, fun v hv hle a ⟨ha, hau⟩ ↦ ⟨ha, ?_⟩⟩
-      have hpsv : v ∈ p ∧ v ∈ s := hv.resolve_left fun hmv ↦ hmu (hle ⟨Or.inl rfl, hmv⟩).2
-      rcases ha with rfl | rfl | rfl
-      · exact absurd hau hmu
-      · exact hpsv.1
-      · exact hpsv.2
+  rw [union_comm m, union_comm (m \ _), ← exhMW_inter_union hm]
+  congr 1
+  grind
+
+/-- Innocent exclusion against every conjunction and disjunction of `m`, `p`, `s` is the
+minimal-world operator over the three. -/
+theorem exhIE_or_and_three (hm : (m \ (p ∪ s)).Nonempty) :
+    exhIE (latticeClosure {m, p, s}) (m ∪ (p ∩ s)) = (m \ (p ∪ s)) ∪ ((p ∩ s) \ m) := by
+  rw [exhIE_latticeClosure _ _ (by simp), exhMW_or_and_three hm]
 
 /-! ### Infinitely many alternatives -/
 

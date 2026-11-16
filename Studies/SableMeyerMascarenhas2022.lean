@@ -172,16 +172,15 @@ abbrev C : Set World := {w | w .c = true}
 exhaustive reading, innocent exclusion against the positive propositions. -/
 theorem gapNegation_eq_exh :
     exhIE (latticeClosure {A, B, C}) ((A ∩ B) ∪ C) = {w | ∃ m ∈ system1P1, w = fillGaps m} := by
-  rw [exhIE_latticeClosure_inter_union ⟨fillGaps (model true true ⊥), by decide⟩
-    ⟨fillGaps (model ⊥ ⊥ true), by decide⟩]
+  rw [exhIE_latticeClosure_inter_union ⟨fillGaps (model ⊥ ⊥ true), by decide⟩]
   ext w
   simp only [system1P1, List.mem_cons, List.not_mem_nil, or_false, exists_eq_or_imp,
     exists_eq_left]
   revert w; decide
 
 theorem gapNegation_valid : {w | ∃ m ∈ system1P1, w = fillGaps m} ∩ A ⊆ B := by
-  rw [← gapNegation_eq_exh, exhIE_latticeClosure_inter_union
-    ⟨fillGaps (model true true ⊥), by decide⟩ ⟨fillGaps (model ⊥ ⊥ true), by decide⟩]
+  rw [← gapNegation_eq_exh,
+    exhIE_latticeClosure_inter_union ⟨fillGaps (model ⊥ ⊥ true), by decide⟩]
   rintro w ⟨⟨⟨-, hwB⟩, -⟩ | ⟨-, hwAB⟩, hwA⟩
   exacts [hwB, (hwAB (.inl hwA)).elim]
 
