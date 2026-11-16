@@ -334,7 +334,7 @@ theorem exh_mates_weak_of_notMem (hA : .strong ∉ A) : exh (mates A) (primal wk
 theorem exh_mates_weak_of_mem (hA : .strong ∈ A) (h : (wk \ st).Nonempty) :
     exh (mates A) (primal wk st) .weak = wk \ st := by
   have himg : insert wk (primal wk st '' A) = {wk, st} := by
-    refine Set.insert_subset_iff.2 ⟨.inl rfl, ?_⟩ |>.antisymm
+    refine Set.insert_subset_iff.2 ⟨Set.mem_insert _ _, ?_⟩ |>.antisymm
       (Set.insert_subset_insert (Set.singleton_subset_iff.2 ⟨.strong, hA, rfl⟩))
     rintro _ ⟨i, -, rfl⟩
     cases i <;> simp [primal]

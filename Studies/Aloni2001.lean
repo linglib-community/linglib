@@ -227,7 +227,7 @@ theorem IsProper.eq_transport (hR : IsProper R) {w w' : W} {d d' : D} (h : R (w,
 
 /-- The concepts of a proper method, one through each world-individual pair, are its classes of
 pairs (Definition 4.2.3), each of which picks out one individual in each world (Lemma 4.2.5). -/
-def IsProper.concepts (hR : IsProper R) : Set (W → D) :=
+noncomputable def IsProper.concepts (hR : IsProper R) : Set (W → D) :=
   range fun x : W × D ↦ fun w' ↦ hR.transport x.1 w' x.2
 
 theorem IsProper.transport_self (hR : IsProper R) (w : W) (d : D) : hR.transport w w d = d :=

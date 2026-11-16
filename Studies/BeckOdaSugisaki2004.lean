@@ -141,7 +141,7 @@ theorem yori_negative_entails_unbought (C : Set Entity) (bought : Entity → Pro
 the uniqueness presupposition of the *yori*-clause ((94), (95)). -/
 theorem er_everyone_without_shared_book :
     ∃ (read : Fin 2 → Fin 3 → Prop) (μ : Fin 3 → ℕ),
-      er (scopeDegrees (fun S => ∀ b, Det.some (read b) S) (Set.Iic ∘ μ)) (Set.Iic (μ 2)) ∧
+      er (scopeDegrees (fun S => ∀ b, Det.some {x | read b x} S) (Set.Iic ∘ μ)) (Set.Iic (μ 2)) ∧
         ¬ ∃ x, ∀ b, read b x := by
   refine ⟨fun b x => x.val = b.val, ![1, 1, 2],
     ⟨1, _, ⟨fun b => ?_, fun d hd => ?_⟩, isGreatest_Iic, by simp⟩, ?_⟩

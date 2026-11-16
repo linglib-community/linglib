@@ -122,8 +122,9 @@ theorem vfiWeak_negRaises_iff (f g g' : Background W) (w : W) :
     (∀ p : Set W, p ∉ weakNecessity f g g' w → pᶜ ∈ weakNecessity f g g' w) ↔
       ((premisePreorder (g' w)).minimals (bestWorlds f g w)).Subsingleton := by
   simp only [mem_weakNecessity]
-  exact ModalLogic.box_not_of_not_box_at_iff
+  have key := ModalLogic.box_not_of_not_box_at_iff
     (R := .ofSuccessors fun _ ↦ (premisePreorder (g' w)).minimals (bestWorlds f g w)) (w := w)
+  exact ⟨fun h ↦ key.1 fun q ↦ h {v | q v}, fun h r ↦ key.2 h (· ∈ r)⟩
 
 /-! ### Scope under negation ((18)–(20)) -/
 

@@ -225,7 +225,7 @@ variable {W : Finset ℕ} (μs : Measure W) (ν : Measure ℝ) {r : ℝ≥0∞} 
 
 /-- The speaker chooses the scale of width `w` and reports the scale point nearest the value as
 `n`. -/
-def reportedOn (w : W) (n : ℤ) : Set (W × ℝ) :=
+noncomputable def reportedOn (w : W) (n : ℤ) : Set (W × ℝ) :=
   {w} ×ˢ (nearestMultiple ((w : ℕ) : ℝ) ⁻¹' {(n : ℝ)})
 
 theorem measure_reportedOn_of_dvd [SFinite ν]
