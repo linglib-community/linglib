@@ -92,6 +92,14 @@ theorem ofCriteria_insert (sat : α → C → Prop) (c : C) (criteria : Set C) :
     ofCriteria sat (insert c criteria) = ofCriteria sat criteria ⊓ ofCriterion (sat · c) :=
   Preorder.ext fun _ _ ↦ Set.forall_mem_insert.trans and_comm
 
+/-- Criteria whose satisfiers are lower sets of the criteria-derived preorder can be added to the
+criteria without changing it. -/
+theorem ofCriteria_eq_of_subset {sat : α → C → Prop} {criteria criteria' : Set C}
+    (h₁ : criteria ⊆ criteria')
+    (h₂ : ∀ c ∈ criteria', ofCriteria sat criteria ≤ ofCriterion (sat · c)) :
+    ofCriteria sat criteria' = ofCriteria sat criteria :=
+  Preorder.ext fun _ _ ↦ ⟨fun h c hc ↦ h c (h₁ hc), fun h c hc ↦ h₂ c hc h⟩
+
 end ofCriterion
 
 /-! ### The satisfied criteria as a valuation -/

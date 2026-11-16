@@ -53,13 +53,11 @@ theorem exhIE_inter_union (h₁ : {a, b, c, a ∩ c, b ∩ c} ⊆ ALT)
   have hMW : exhMW ALT ((a ∩ b) ∪ c) = ((a ∩ b) \ c) ∪ (c \ (a ∪ b)) := by
     rw [exhMW_eq_of_subset_latticeClosure (fun q hq ↦ h₁ (by grind)) h₂,
       exhMW_inter_union hab hc]
-  refine Subset.antisymm (fun u hu ↦ ?_) (hMW ▸ exhMW_subset_exhIE ALT _)
-  have hac := hu.2 _ <| (isInnocentlyExcludable_iff_exhMW_subset_compl ALT _ (a ∩ c)
-    (h₁ (by simp))).2 (hMW ▸ by grind)
-  have hbc := hu.2 _ <| (isInnocentlyExcludable_iff_exhMW_subset_compl ALT _ (b ∩ c)
-    (h₁ (by simp))).2 (hMW ▸ by grind)
-  have := hu.1
-  grind
+  rw [(exhIE_eq_exhMW_iff ALT _).2 fun u hu hmin ↦ ?_, hMW]
+  rw [hMW] at hmin ⊢
+  by_cases hac : u ∈ a ∩ c
+  · exact ⟨a ∩ c, h₁ (by simp), hac, by grind⟩
+  · exact ⟨b ∩ c, h₁ (by simp), by grind, by grind⟩
 
 theorem exhIE_latticeClosure_inter_union (hab : ((a ∩ b) \ c).Nonempty)
     (hc : (c \ (a ∪ b)).Nonempty) :

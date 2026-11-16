@@ -334,6 +334,19 @@ theorem exhIE_eq_setOf_exhMW_subset_compl :
     exhIE ALT φ = {u | u ∈ φ ∧ ∀ a ∈ ALT, exhMW ALT φ ⊆ aᶜ → u ∉ a} :=
   exhIE_eq_of_iff ALT φ (isInnocentlyExcludable_iff_exhMW_subset_compl ALT φ)
 
+/-- Innocent exclusion keeps exactly the minimal worlds iff every other world of the prejacent
+verifies an alternative false at all of them. -/
+theorem exhIE_eq_exhMW_iff :
+    exhIE ALT φ = exhMW ALT φ ↔
+      ∀ u ∈ φ, u ∉ exhMW ALT φ → ∃ a ∈ ALT, u ∈ a ∧ exhMW ALT φ ⊆ aᶜ := by
+  rw [(exhMW_subset_exhIE ALT φ).ge_iff_eq'.symm, exhIE_eq_setOf_exhMW_subset_compl]
+  refine ⟨fun h u hu hmin ↦ ?_, fun h u hu ↦ ?_⟩
+  · by_contra hn
+    exact hmin (h ⟨hu, fun a ha hMW hua ↦ hn ⟨a, ha, hua, hMW⟩⟩)
+  · by_contra hmin
+    obtain ⟨a, ha, hua, hMW⟩ := h u hu.1 hmin
+    exact hu.2 a ha hMW hua
+
 variable {ALT φ} in
 /-- When denying every alternative is consistent with the prejacent, every alternative is
 innocently excludable. -/
@@ -393,32 +406,34 @@ prejacent world above another verifies the conjunction of the alternatives true 
 every minimal world falsifies. -/
 theorem exhMW_eq_exhIE_of_infClosed (hfin : ALT.Finite) (hinf : InfClosed ALT) :
     exhMW ALT φ = exhIE ALT φ := by
-  refine (exhMW_subset_exhIE ALT φ).antisymm fun u hu ↦
-    ⟨hu.1, fun v hv hvu ↦ by_contra fun huv ↦ ?_⟩
+  refine ((exhIE_eq_exhMW_iff ALT φ).2 fun u hu hmin ↦ ?_).symm
+  obtain ⟨v, hv, hvu, huv⟩ : ∃ v ∈ φ, Preorder.satisfied (· ∈ ·) ALT v ⊆
+      Preorder.satisfied (· ∈ ·) ALT u ∧ ¬ Preorder.satisfied (· ∈ ·) ALT u ⊆
+        Preorder.satisfied (· ∈ ·) ALT v := by
+    simpa [mem_exhMW, MinimalFor, hu] using hmin
   have hne : {a ∈ ALT | u ∈ a}.Nonempty := by
     by_contra h
     exact huv fun a ha ↦ (h ⟨a, ha⟩).elim
-  have hA : ⋂₀ {a ∈ ALT | u ∈ a} ∈ ALT :=
-    hinf.sInf_mem_of_nonempty (hfin.subset fun _ h ↦ h.1) hne fun _ h ↦ h.1
-  refine hu.2 _ ((isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ hA).2 ?_) fun a ha ↦ ha.2
-  rintro w ⟨-, hmin⟩ hwA
+  refine ⟨⋂₀ {a ∈ ALT | u ∈ a}, hinf.sInf_mem_of_nonempty (hfin.subset fun _ h ↦ h.1) hne
+    fun _ h ↦ h.1, fun a ha ↦ ha.2, fun w hw hwA ↦ huv ?_⟩
   have huw : Preorder.satisfied (· ∈ ·) ALT u ⊆ Preorder.satisfied (· ∈ ·) ALT w :=
     fun a ha ↦ ⟨ha.1, hwA a ha⟩
-  exact huv (huw.trans (hmin hv (hvu.trans huw)))
+  exact huw.trans (hw.2 hv (hvu.trans huw))
 
-theorem satisfied_sUnion_image_powerset_subset_iff {u v : World} :
-    Preorder.satisfied (· ∈ ·) (sUnion '' 𝒫 ALT) u ⊆
-        Preorder.satisfied (· ∈ ·) (sUnion '' 𝒫 ALT) v ↔
-      Preorder.satisfied (· ∈ ·) ALT u ⊆ Preorder.satisfied (· ∈ ·) ALT v := by
-  refine ⟨fun h a ⟨ha, hua⟩ ↦ ⟨ha, ?_⟩, fun h _ ⟨⟨X, hX, hXa⟩, hua⟩ ↦ ⟨⟨X, hX, hXa⟩, ?_⟩⟩
-  · exact (h ⟨⟨{a}, singleton_subset_iff.2 ha, sUnion_singleton a⟩, hua⟩).2
-  · subst hXa
-    obtain ⟨b, hb, hub⟩ := hua
-    exact ⟨b, hb, (h ⟨hX hb, hub⟩).2⟩
+variable {ALT φ} in
+/-- Alternative sets that rank worlds alike have the same minimal worlds. -/
+theorem exhMW_congr {ALT' : Set (Set World)}
+    (h : Preorder.ofCriteria (· ∈ ·) ALT' = Preorder.ofCriteria (· ∈ ·) ALT) :
+    exhMW ALT' φ = exhMW ALT φ := by
+  ext u
+  simp only [mem_exhMW, MinimalFor, Preorder.satisfied_subset_iff]
+  rw [h]
 
 theorem exhMW_sUnion_image_powerset : exhMW (sUnion '' 𝒫 ALT) φ = exhMW ALT φ := by
-  ext u
-  simp only [mem_exhMW, MinimalFor, satisfied_sUnion_image_powerset_subset_iff]
+  refine exhMW_congr (Preorder.ofCriteria_eq_of_subset
+    (fun a ha ↦ ⟨{a}, singleton_subset_iff.2 ha, sUnion_singleton a⟩) ?_)
+  rintro _ ⟨X, hX, rfl⟩ u v h ⟨q, hq, hvq⟩
+  exact ⟨q, hq, h q (hX hq) hvq⟩
 
 /-- Innocent exclusion is unchanged by closing the alternatives under disjunction, since a
 disjunction fails at every minimal world iff each disjunct does. -/
@@ -442,22 +457,14 @@ theorem exhMW_eq_exhIE_of_infClosed_sUnion_image (hfin : ALT.Finite)
 
 variable {ALT φ} in
 /-- Closing the alternatives under conjunction and disjunction, or under any part of that closure,
-leaves the ranking of worlds by their true alternatives unchanged: the propositions true at `v`
-whenever they are true at `u` form a sublattice. -/
-theorem satisfied_subset_satisfied_iff_of_subset_latticeClosure {S : Set (Set World)}
-    (h₁ : S ⊆ ALT) (h₂ : ALT ⊆ latticeClosure S) {u v : World} :
-    Preorder.satisfied (· ∈ ·) ALT u ⊆ Preorder.satisfied (· ∈ ·) ALT v ↔
-      Preorder.satisfied (· ∈ ·) S u ⊆ Preorder.satisfied (· ∈ ·) S v := by
-  refine ⟨fun h q hq ↦ ⟨hq.1, (h ⟨h₁ hq.1, hq.2⟩).2⟩, fun h q hq ↦ ⟨hq.1, ?_⟩⟩
-  have hsub : IsSublattice {q : Set World | u ∈ q → v ∈ q} :=
-    ⟨fun _ hp _ hq huv ↦ huv.imp hp hq, fun _ hp _ hq huv ↦ ⟨hp huv.1, hq huv.2⟩⟩
-  exact latticeClosure_min (fun q hq huq ↦ (h ⟨hq, huq⟩).2) hsub (h₂ hq.1) hq.2
-
-variable {ALT φ} in
+leaves the minimal worlds unchanged: the propositions true at `v` whenever they are true at `u`
+form a sublattice. -/
 theorem exhMW_eq_of_subset_latticeClosure {S : Set (Set World)} (h₁ : S ⊆ ALT)
     (h₂ : ALT ⊆ latticeClosure S) : exhMW ALT φ = exhMW S φ := by
-  ext u
-  simp only [mem_exhMW, MinimalFor, satisfied_subset_satisfied_iff_of_subset_latticeClosure h₁ h₂]
+  refine exhMW_congr (Preorder.ofCriteria_eq_of_subset h₁ fun q hq u v h ↦ ?_)
+  have hsub : IsSublattice {q : Set World | v ∈ q → u ∈ q} :=
+    ⟨fun _ hp _ hq hv ↦ hv.imp hp hq, fun _ hp _ hq hv ↦ ⟨hp hv.1, hq hv.2⟩⟩
+  exact latticeClosure_min h hsub (h₂ hq)
 
 @[simp] theorem exhMW_latticeClosure : exhMW (latticeClosure ALT) φ = exhMW ALT φ :=
   exhMW_eq_of_subset_latticeClosure subset_latticeClosure subset_rfl
