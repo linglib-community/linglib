@@ -649,7 +649,7 @@ theorem update_iff (ξ : (W → Trivalent)) (σ τ : Set W) :
   show τ ∈ CCP.Partial.ofTrivalent ξ σ ↔ _
   rw [CCP.Partial.mem_ofTrivalent]
   refine and_congr (forall₂_congr fun i _ ↦ ?_) ?_
-  · rw [Set.mem_ofPred_eq, presupVal_eq_true_iff, Trivalent.mem_compl_gapExt]
+  · exact Trivalent.mem_compl_gapExt.trans (presupVal_eq_true_iff _).symm
   · have e : {w ∈ σ | ξ w = .true} = σ ∩ {i | ofProp (ξ i = .true) = .true} :=
       Set.ext fun i ↦ by simp
     rw [e]

@@ -390,8 +390,8 @@ theorem map_restrict_eq_dirac_iff [Countable ι] (d : Measure (c.DRS))
   · intro h i
     refine Measure.eq_dirac_of_ae_eq ?_
     rw [ae_map_iff (hmeas i).aemeasurable .of_discrete, ae_iff]
-    exact measure_mono_null
-      (fun s hs (hg : C.IsGluing (Context.DRS.presheaf L V) x s) => hs (hg i)) h
+    exact measure_mono_null (t := {s | ¬ C.IsGluing (Context.DRS.presheaf L V) x s})
+      (fun s hs hg => hs (hg i)) h
 
 end Multivalued
 
