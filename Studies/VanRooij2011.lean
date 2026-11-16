@@ -104,6 +104,17 @@ theorem forall_comparative_comp_iff [Nontrivial X] {g : (Ad → ℝ) → Ad → 
   · exact ⟨OrderEmbedding.ofStrictMono (fun t ↦ g (fun _ ↦ t) P₀)
       fun s t hst ↦ (key _ _ P₀ P₀).2 hst, fun p P ↦ hconst p P P₀⟩
 
+-- pp. 349, 351: two measures of pairs support the same comparisons exactly when the second is a
+-- strictly increasing reparametrization of the first
+theorem forall_comparative_iff_iff_exists_strictMono {v w : Profile Ad X ℝ} :
+    (∀ x P y Q, comparative x P y Q w ↔ comparative x P y Q v) ↔
+      ∃ g : Set.range (uncurry v) → ℝ, StrictMono g ∧
+        uncurry w = g ∘ Set.rangeFactorization (uncurry v) :=
+  Iff.trans ⟨fun h (a b : X × Ad) ↦
+      not_lt.symm.trans ((not_congr (h a.1 a.2 b.1 b.2)).trans not_lt),
+    fun h x P y Q ↦ not_le.symm.trans ((not_congr (h (x, P) (y, Q))).trans not_le)⟩
+    forall_le_iff_le_iff_exists_strictMono
+
 /-- A common unit with a separate origin for each adjective does not make a comparison across two
 adjectives meaningful. -/
 -- p. 349, note 17

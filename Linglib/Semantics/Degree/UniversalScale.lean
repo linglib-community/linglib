@@ -5,6 +5,7 @@ public import Mathlib.Order.Setoid.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Degree.CresswellDegree
+public import Linglib.Semantics.MeasurementTheory.Scale
 
 /-!
 # The universal scale
@@ -12,7 +13,8 @@ public import Linglib.Semantics.Degree.CresswellDegree
 A measure `μ : E → D` orders a finite comparison class `C` by a quasi-order whose classes are the
 values `C.image μ`. Bale's universal degree of a member is the position of its class: one plus
 the number of classes below it, over the number of classes, a rational between zero and one.
-Universal degrees record positions and nothing else. They are
+Universal degrees record positions and nothing else. They [depend only on the order the measure
+induces](##factorsThrough_universalDegree), so they are
 [unchanged by any order embedding of the scale](##universalDegree_comp), and on a comparison
 class two measures give the same universal degrees
 [exactly when they induce the same quasi-order](##ker_universalDegree). Comparing two
@@ -109,8 +111,9 @@ private theorem card_image_le_of_eq_imp {D₁ D₂ : Type*} [DecidableEq D₁] [
     rw [← Function.invFunOn_eq (f := f) ⟨a, ha, rfl⟩, ← Function.invFunOn_eq (f := f) ⟨b, hb, rfl⟩]
     exact h _ (Function.invFunOn_mem ⟨a, ha, rfl⟩) _ (Function.invFunOn_mem ⟨b, hb, rfl⟩) hdd
 
-theorem universalDegree_congr {ν : E → D'} (h : ∀ a ∈ C, ∀ b ∈ C, μ a ≤ μ b ↔ ν a ≤ ν b)
-    (hx : x ∈ C) : universalDegree μ C x = universalDegree ν C x := by
+theorem universalDegree_eq_of_forall_le_iff {ν : E → D'}
+    (h : ∀ a ∈ C, ∀ b ∈ C, μ a ≤ μ b ↔ ν a ≤ ν b) (hx : ∀ a ∈ C, μ a ≤ μ x ↔ ν a ≤ ν x) :
+    universalDegree μ C x = universalDegree ν C x := by
   have : Nonempty E := ⟨x⟩
   have card_image : ∀ T ⊆ C, #(T.image μ) = #(T.image ν) := fun T hT ↦
     have heq : ∀ a ∈ T, ∀ b ∈ T, μ a = μ b ↔ ν a = ν b := fun a ha b hb ↦ by grind
@@ -118,7 +121,17 @@ theorem universalDegree_congr {ν : E → D'} (h : ∀ a ∈ C, ∀ b ∈ C, μ 
       (card_image_le_of_eq_imp ν μ fun a ha b hb ↦ (heq a ha b hb).1)
   rw [universalDegree, universalDegree, relativeRank, relativeRank, filter_image, filter_image,
     card_image _ (filter_subset _ _), card_image C subset_rfl,
-    filter_congr fun a ha ↦ h a ha x hx]
+    filter_congr fun a ha ↦ hx a ha]
+
+theorem universalDegree_congr {ν : E → D'} (h : ∀ a ∈ C, ∀ b ∈ C, μ a ≤ μ b ↔ ν a ≤ ν b)
+    (hx : x ∈ C) : universalDegree μ C x = universalDegree ν C x :=
+  universalDegree_eq_of_forall_le_iff h fun a ha ↦ h a ha x hx
+
+/-- Universal degrees depend only on the order the measure induces. -/
+theorem factorsThrough_universalDegree (C : Finset E) :
+    Function.FactorsThrough (fun μ : E → D ↦ universalDegree μ C) fun μ ↦ μ ⁻¹'o (· ≤ ·) :=
+  factorsThrough_preimage_le_iff.2 fun _ _ h ↦ funext fun x ↦
+    universalDegree_eq_of_forall_le_iff (fun a _ b _ ↦ h a b) fun a _ ↦ h a x
 
 /-- On a comparison class, universal degrees are a complete invariant of the quasi-order a
 measure induces, so two measures give the same universal degrees exactly when they order the
