@@ -162,18 +162,18 @@ The empty slot in the type landscape is a lower-bound degree quantifier, the Mon
 def MAX (D : Set (Set ℕ)) : Set ℕ → Prop := MaxIn (⋂₀ D)
 
 -- (54)
-theorem MAX_individual (n : ℕ) : MAX (individual n) = MaxIn {n} :=
+theorem MAX_individual (n : ℕ) : MAX {P | individual n P} = MaxIn {n} :=
   congrArg MaxIn (sInter_individual n)
 
 /-- At its landing site `MAX` of the lower-bound quantifier is its exhaustification against the
 higher numerals, a strengthening that moves with the numeral. -/
 theorem MAX_individual_iff_isGreatest {n : ℕ} {P : Set ℕ} :
-    MAX (individual n) P ↔ IsGreatest P n := by
+    MAX {P | individual n P} P ↔ IsGreatest P n := by
   rw [MAX_individual]; exact maxIn_singleton
 
 -- (51)
 theorem MAX_individual_zero_iff [DecidableEq α] {A B : Set α} :
-    MAX (individual 0) (countDegrees A (plural B)) ↔ Det.no A B := by
+    MAX {P | individual 0 P} (countDegrees A (plural B)) ↔ Det.no A B := by
   rw [MAX_individual]; exact maxIn_zero_countDegrees_iff
 
 section Polarity
@@ -184,9 +184,9 @@ open scoped Classical
 /-- With `MAX` apart from the numeral, *zero* is a scalar licenser, the lower-bound numeral below
 `MAX` and its `MAX` above it. -/
 def zeroWithMAX : PolarityItem.Licenser :=
-  .scalar ⟨⟨NonemptyPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop,
+  .scalar ⟨⟨NonemptyPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop,
       fun p B ↦ individual 0 (countDegrees p.A (plural B))⟩,
-    fun p B ↦ MAX (individual 0) (countDegrees p.A (plural B))⟩
+    fun p B ↦ MAX {P | individual 0 P} (countDegrees p.A (plural B))⟩
 
 theorem zeroWithMAX_eq_zero : zeroWithMAX = BylininaNouwen2018.zero := by
   simp only [zeroWithMAX, BylininaNouwen2018.zero]
