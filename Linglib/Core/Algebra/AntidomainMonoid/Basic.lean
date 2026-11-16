@@ -5,12 +5,10 @@ public import Mathlib.Algebra.GroupWithZero.Defs
 /-!
 # Antidomain monoids
 
-An antidomain monoid is a monoid with zero and an operation `∼` sending an element to the test of
-where it cannot be executed. The binary relations on a type are the motivating example, with
-`∼R` the identity on the states outside the domain of `R`; there composition and `∼` are the
-propositional part of dynamic predicate logic, in which `∼` interprets negation,
-`∼(x * ∼y)` implication and `∼(∼x * ∼y)` disjunction. The axioms are the five equations of
-[desharnais-jipsen-struth-2009], whose name this is; they
+`[UPSTREAM]` An antidomain monoid is a monoid with zero and an operation `∼` sending an element
+to the test of where it cannot be executed. The binary relations on a type are the motivating
+example, with `∼R` the identity on the points outside the domain of `R`. The axioms are the
+five equations of [desharnais-jipsen-struth-2009], whose name this is; they
 [are equivalent](##IsAntidomain.of_distrib) to those of [hollenberg-1997], which prove every
 equation true of relations, and they [determine the operation](##IsAntidomain.unique) from the
 monoid, as [hollenberg-visser-1999] show.

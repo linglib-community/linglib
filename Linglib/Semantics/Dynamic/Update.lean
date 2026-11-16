@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.AntidomainMonoid.Test
+public import Linglib.Core.Algebra.AntidomainMonoid.Test
 import Linglib.Core.Data.Set.Lattice.Order
 public import Linglib.Core.Relation.SetRel
 public import Linglib.Core.Data.Set.Functor

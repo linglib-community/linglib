@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.AntidomainMonoid.Basic
+public import Linglib.Core.Algebra.AntidomainMonoid.Basic
 public import Mathlib.Order.BooleanAlgebra.Basic
 
 /-!
