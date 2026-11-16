@@ -3,8 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-
 module
+
+public import Mathlib.Data.Option.NAry
 
 /-!
 # The Calculus of Control
@@ -23,13 +24,6 @@ the Hebrew subjunctive effect, inexpressible on a flat tense scale.
 [landau-2004]'s scale of finiteness (`ClauseClass`) abbreviates clauses with a
 fully specified I, and `ClauseClass.HasOC` is derived from the calculus via
 `ClauseClass.toClause`.
-
-## Main definitions
-
-- `Control.Head`, `Control.Head.r`, `Control.Clause`
-- `Control.Clause.HasControl`: control as the elsewhere condition
-- `Control.ClauseClass`: the scale of finiteness, with derived
-  `ClauseClass.HasOC`
 
 ## References
 
@@ -57,7 +51,7 @@ structure Head where
     assigned `[+R]` when both features are positive and `[−R]` otherwise, and a
     head lacking a slot is assigned nothing. -/
 def Head.r (h : Head) : Option Bool :=
-  h.tense.bind fun t ↦ h.agr.map (t && ·)
+  Option.map₂ (· && ·) h.tense h.agr
 
 theorem Head.r_eq_some_true_iff {h : Head} :
     h.r = some true ↔ h.tense = some true ∧ h.agr = some true := by

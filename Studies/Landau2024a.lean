@@ -96,14 +96,14 @@ def attested (c : ClauseType) (p : Position) : Set Diagnostic :=
 instance (c : ClauseType) (p : Position) : DecidablePred (· ∈ attested c p) := fun d ↦ by
   unfold attested; infer_instance
 
-/-- A clause type in a position shows obligatory control when every clause of the signature
-holds, no row attesting a diagnostic. -/
+/-- A clause type in a position shows obligatory control when no row attests a diagnostic
+refuting a clause of the signature. -/
 def IsOC (c : ClauseType) (p : Position) : Prop :=
-  ofAttested (ι := Landau2013.Clause74) (attested c p) = Set.univ
+  Landau2013.refutes '' attested c p = ∅
 
 instance (c : ClauseType) (p : Position) : Decidable (IsOC c p) :=
   decidable_of_iff (∀ d, d ∉ attested c p) <| by
-    rw [IsOC, ofAttested_eq_univ_iff, Set.eq_empty_iff_forall_notMem]
+    rw [IsOC, Set.image_eq_empty, Set.eq_empty_iff_forall_notMem]
 
 /-- The control statuses, obligatory, non-obligatory and no control. -/
 inductive Status where

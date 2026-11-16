@@ -28,10 +28,10 @@ Gã is therefore a non-pro-drop language (§2.1). The WALS 101A coding of Gã,
 made from Ablorh-Odjidja's grammar, is affixal too.
 
 Everything is read off the paper's example rows and the Fragment. The control
-profile of a clause type is Landau's signature as the rows attest it
-(`Control.ofAttested`): no row attests a criterial configuration of the
-`ni`-clause, so it is obligatory control, while the finite `akɛ`-clause attests
-free reference. Complementizer selection is `Verb.Takes` over the Fragment's
+profile of a clause type is the clauses of Landau's signature its rows refute:
+no row attests a criterial configuration of the `ni`-clause, so it is obligatory
+control, while the finite `akɛ`-clause attests free reference, refuting
+co-dependence. Complementizer selection is `Verb.Takes` over the Fragment's
 frames; every finiteness diagnostic is a row theorem conditioned on the
 complementizer's finiteness alone, the paper's convergence argument; Table 4 is
 the exponents the rows show in each irrealis context, and the tone-hosting
@@ -271,24 +271,17 @@ def attested (c : EmbeddedClauseType) : Set Diagnostic :=
 instance (c : EmbeddedClauseType) : DecidablePred (· ∈ attested c) := fun d ↦ by
   unfold attested; infer_instance
 
-/-- The control profile of a clause type in [landau-2013]'s signature, the clauses no attested
-    diagnostic refutes. -/
-def gaProfile (c : EmbeddedClauseType) : Set Landau2013.Clause74 :=
-  ofAttested (attested c)
-
 theorem attested_ni : attested .ni = ∅ := by
   rw [Set.eq_empty_iff_forall_notMem]; decide +kernel
 
-theorem ni_obligatory : gaProfile .ni = Set.univ :=
-  ofAttested_eq_univ_iff.2 attested_ni
-
-theorem admits_ni : admits (gaProfile .ni) = ∅ := admits_eq_empty_iff.2 ni_obligatory
+theorem ni_obligatory : Landau2013.refutes '' attested .ni = ∅ :=
+  Set.image_eq_empty.2 attested_ni
 
 theorem arbitrary_mem_attested_ake : .arbitraryControl ∈ attested .ake := by
   decide +kernel
 
-theorem ake_not_obligatory : gaProfile .ake ≠ Set.univ := fun h ↦
-  Set.notMem_empty _ (ofAttested_eq_univ_iff.1 h ▸ arbitrary_mem_attested_ake)
+theorem ake_refutes_codependent : .codependent ∈ Landau2013.refutes '' attested .ake :=
+  ⟨_, arbitrary_mem_attested_ake, rfl⟩
 
 /-! ### Landau's scale -/
 
@@ -302,11 +295,13 @@ theorem ga_no_fSubjunctive (c : EmbeddedClauseType) : gaToLandau c ≠ .fSubjunc
   cases c <;> decide
 
 theorem landau_predicts_control (c : EmbeddedClauseType) (hc : c ≠ .keji) (agr : Bool) :
-    gaProfile c = Set.univ ↔ (gaToLandau c).HasOC agr := by
+    Landau2013.refutes '' attested c = ∅ ↔ (gaToLandau c).HasOC agr := by
   cases c with
   | keji => exact absurd rfl hc
   | ni => exact iff_of_true ni_obligatory (by cases agr <;> decide)
-  | ake => exact iff_of_false ake_not_obligatory (by cases agr <;> decide)
+  | ake =>
+    exact iff_of_false (Set.nonempty_iff_ne_empty.1 ⟨_, ake_refutes_codependent⟩)
+      (by cases agr <;> decide)
 
 theorem not_isFinite_codings_iff (c : EmbeddedClauseType) :
     (∀ cd ∈ c.frame.codings, ¬ cd.IsFinite) ↔ ¬ c.complementizer.IsFinite := by

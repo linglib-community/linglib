@@ -48,7 +48,7 @@ computed from the frame's coding
 complement-taking is cross-categorial: Noonan's complement-taking predicates include adjectives
 and nouns. Control dependencies are recorded on diatheses (`Diathesis.controlRel`), and how one
 is enforced, by structure sharing, movement or binding, is a framework's analysis over them
-(`Syntax/Control/Defs.lean`). Attitude and opacity are recorded on `Clause.Embedding.Reading`, the
+(`Syntax/Control/Basic.lean`). Attitude and opacity are recorded on `Clause.Embedding.Reading`, the
 selection of clause-typers on `Verb.Takes`, and Deal's CP-external shells in
 `Studies/Deal2026.lean`.
 

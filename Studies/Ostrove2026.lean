@@ -169,14 +169,10 @@ theorem attested_eq_empty_iff (c : EmbeddedClauseType) :
   rw [Set.eq_empty_iff_forall_notMem]
   cases c <;> decide +kernel
 
-/-- The control profile of a clause type in [landau-2013]'s signature, the clauses no attested
-diagnostic refutes. -/
-def smpmProfile (c : EmbeddedClauseType) : Set Landau2013.Clause74 :=
-  ofAttested (attested c)
-
+/-- No clause of [landau-2013]'s signature is refuted exactly in the untensed subjunctive. -/
 theorem isObligatory_iff (c : EmbeddedClauseType) :
-    smpmProfile c = Set.univ ↔ c = .untensedSubjunctive := by
-  rw [smpmProfile, ofAttested_eq_univ_iff, attested_eq_empty_iff]
+    Landau2013.refutes '' attested c = ∅ ↔ c = .untensedSubjunctive := by
+  rw [Set.image_eq_empty, attested_eq_empty_iff]
 
 -- (37)
 theorem partialControl_rows : ∀ row ∈ Examples.all,
@@ -203,7 +199,7 @@ theorem smpmToLandau_landauToSMPM (c : ClauseClass) : smpmToLandau (landauToSMPM
 /-- Landau's calculus predicts every clause type's control profile iff the clauses are `[+Agr]`,
 failing at `[−Agr]` on the tensed subjunctive (18b). -/
 theorem landau_predicts_control_iff (agr : Bool) :
-    (∀ c, smpmProfile c = Set.univ ↔ (smpmToLandau c).HasOC agr) ↔ agr = true := by
+    (∀ c, Landau2013.refutes '' attested c = ∅ ↔ (smpmToLandau c).HasOC agr) ↔ agr = true := by
   simp only [isObligatory_iff]
   cases agr <;> decide +kernel
 

@@ -164,7 +164,9 @@ theorem available_iff_logophoric {r : Table80Row}
   · exact fun _ _ _ h a b p hab ha hb ↦ hab (IsSaturating.eq_of_controllers h ha hb)
   · exact ⟨_, _, _, hw, 0, 1, 3, by decide, ⟨2, by simp⟩, ⟨2, by simp⟩⟩
   · exact fun _ _ _ h ↦ IsSaturating.not_isPartial h
-  · exact ⟨_, _, _, hw, 0, 3, ⟨2, by simp⟩, by decide⟩
+  · refine ⟨_, _, _, hw, 3, ⟨0, 2, by simp⟩, 1, ?_, by decide⟩
+    rintro _ ⟨a, ⟨_, rfl, m, ha, -⟩, rfl⟩
+    rcases ha with h | h <;> simp [Prod.ext_iff] at h <;> simp [h.1]
   · exact fun _ _ _ h ↦ IsSaturating.not_isSplit h
   · exact ⟨_, _, _, hw, fun h ↦
       absurd (h (a := 0) (b := 1) (c := 3) ⟨2, by simp⟩ ⟨2, by simp⟩) (by decide)⟩
