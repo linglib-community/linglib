@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Logic.Equiv.Basic
-public import Linglib.Logic.Trivalent.Deployment
+public import Linglib.Logic.Trivalent.UniversalInference
 public import Linglib.Semantics.Presupposition.QuantifiedLocalContext
 public import Linglib.Semantics.Reference.ChoiceFunction
 
@@ -11,7 +11,7 @@ public import Linglib.Semantics.Reference.ChoiceFunction
 A discourse pronoun denotes the pick of a choice function from a witness set and is undefined
 where the set is empty (`pro`), and an indexed indefinite asserts that its witness set is
 nonempty (`antecedent`), so a pronoun is accessible where an existence presupposition is
-satisfied. Under Middle Kleene connectives and determiners with a filtering restrictor the
+satisfied. Under Middle Kleene connectives and universally projecting determiners the
 presupposition is filtered after the antecedent, in a bathroom disjunction and in a donkey
 sentence, and projects when the pronoun comes first. Quantifying over the choice function gives
 the universal and existential readings, and restricting the witness set to the local context of
@@ -145,63 +145,42 @@ theorem antecedent_eq_true_of_meetMiddle_clause_ne_undefined
 theorem clause_inf_antecedent_ne_undefined : clause G f VP s ⊓ antecedent G s ≠ .undefined := by
   simp
 
-/-! ### Pronouns under quantifiers -/
+/-! ### Pronouns under quantifiers
 
-open Classical in
-/-- A determiner whose restrictor filters the presuppositions of its scope: undefined unless the
-scope is defined wherever the restrictor is true, and otherwise the value of the two-valued
-determiner on the positive extensions. -/
-noncomputable def filtering (Q : Det α) (p q : α → Trivalent) : Trivalent :=
-  transplication (ofProp (∀ x, p x = .true → q x ≠ .undefined)) (ofProp (Q (posExt p) (posExt q)))
+Determiners are read by universal projection (`Quantifier.Det.universalProjection`): undefined
+unless the scope is defined wherever the restrictor is true. -/
 
 variable {Q : Det α} {p q : α → Trivalent} {b : α → S}
 
-@[simp]
-theorem filtering_eq_undefined_iff :
-    filtering Q p q = .undefined ↔ ¬ ∀ x, p x = .true → q x ≠ .undefined := by
-  simp [filtering]
-
-@[simp]
-theorem filtering_eq_true_iff :
-    filtering Q p q = .true ↔
-      (∀ x, p x = .true → q x ≠ .undefined) ∧ Q (posExt p) (posExt q) := by
-  simp [filtering]
-
-theorem filtering_clause_eq_undefined_iff :
-    filtering Q p (fun y ↦ clause G f VP (b y)) = .undefined ↔
+theorem universalProjection_clause_eq_undefined_iff :
+    Det.universalProjection Q p (fun y ↦ clause G f VP (b y)) = .undefined ↔
       ¬ ∀ y, p y = .true → (G (b y)).Nonempty := by
   simp
 
 /-- *Every tourist who bought a ticket has already used it*: the indefinite in the restrictor
 filters the presupposition of the pronoun in the scope, whatever the determiner. -/
-theorem filtering_antecedent_clause_ne_undefined :
-    filtering Q (fun y ↦ p y ⊓ antecedent G (b y)) (fun y ↦ clause G f VP (b y)) ≠
+theorem universalProjection_antecedent_clause_ne_undefined :
+    Det.universalProjection Q (fun y ↦ p y ⊓ antecedent G (b y)) (fun y ↦ clause G f VP (b y)) ≠
       .undefined := by
   classical
   simp
 
-theorem filtering_every_antecedent_clause_eq_true_iff :
-    filtering Det.every (fun y ↦ p y ⊓ antecedent G (b y))
+theorem universalProjection_every_antecedent_clause_eq_true_iff :
+    Det.universalProjection Det.every (fun y ↦ p y ⊓ antecedent G (b y))
         (fun y ↦ clause G f VP (b y)) = .true ↔
       ∀ y, p y = .true → (G (b y)).Nonempty → VP (b y) (f (b y) (G (b y))) := by
   classical
-  simp only [filtering_eq_true_iff, inf_eq_true_iff, antecedent_eq_true_iff,
+  simp only [Det.universalProjection_eq_true_iff, inf_eq_true_iff, antecedent_eq_true_iff,
     ne_eq, clause_eq_undefined_iff, not_not, and_imp, Det.every, Set.subset_def, mem_posExt,
     clause_eq_true_iff]
   exact ⟨fun h y hy hG ↦ (h.2 y hy hG).2, fun h ↦ ⟨fun _ _ hG ↦ hG, fun y hy hG ↦ ⟨hG, h y hy hG⟩⟩⟩
 
 /-- The universal rule is below deployment: for a determiner that lives on its restrictor,
-where `filtering` is defined it has the deployed value, so a presupposition satisfied under the
-universal rule is satisfied under deployment. -/
-theorem filtering_kLE_deployQuantifier (hQ : (Q (posExt p)).LivesOn (posExt p)) :
-    filtering Q p q ≤ₖ deployQuantifier (Q (posExt p)) q := by
-  classical
-  rw [kLE_iff]
-  by_cases hd : ∀ x, p x = .true → q x ≠ .undefined
-  · refine .inr ?_
-    rw [deployQuantifier_of_livesOn hQ fun u hu ↦ hd u hu, filtering, ofProp_eq_true_iff.2 hd,
-      transplication_true_left]
-  · exact .inl (filtering_eq_undefined_iff.2 hd)
+universal projection has the deployed value wherever it is defined, so a presupposition
+satisfied under the universal rule is satisfied under deployment. -/
+theorem universalProjection_kLE_deployQuantifier (hQ : (Q (posExt p)).LivesOn (posExt p)) :
+    Q.universalProjection p q ≤ₖ deployQuantifier (Q (posExt p)) q :=
+  Quantifier.universalProjection_kLE_deployQuantifier hQ
 
 theorem deployQuantifier_clause_ne_undefined {Q : Quantifier α}
     (hQ : Q.LivesOn {y | (G (b y)).Nonempty}) :
@@ -233,10 +212,10 @@ theorem exists_meetMiddle_eq_true_iff :
   exact ⟨fun _ ↦ g, ⟨x, hx⟩, hg ▸ hVP⟩
 
 theorem forall_donkey_eq_true_iff [Nonempty E] :
-    (∀ f : S → ChoiceFunction E, filtering Det.every (fun y ↦ p y ⊓ antecedent G (b y))
-        (fun y ↦ clause G f VP (b y)) = .true) ↔
+    (∀ f : S → ChoiceFunction E, Det.universalProjection Det.every
+        (fun y ↦ p y ⊓ antecedent G (b y)) (fun y ↦ clause G f VP (b y)) = .true) ↔
       ∀ y, p y = .true → ∀ x ∈ G (b y), VP (b y) x := by
-  simp only [filtering_every_antecedent_clause_eq_true_iff]
+  simp only [universalProjection_every_antecedent_clause_eq_true_iff]
   refine ⟨fun h y hy x hx ↦ ?_, fun h f y hy hG ↦ h y hy _ ((f (b y)).apply_mem hG)⟩
   obtain ⟨g, hg⟩ := ChoiceFunction.exists_apply_eq (A := G (b y)) hx
   exact hg ▸ h (fun _ ↦ g) y hy ⟨x, hx⟩
@@ -245,10 +224,10 @@ theorem forall_donkey_eq_true_iff [Nonempty E] :
 donkey sentence. The choice function varies with the point of evaluation, so each value of the
 bound variable gets its own pick. -/
 theorem exists_donkey_eq_true_iff [Nonempty E] :
-    (∃ f : S → ChoiceFunction E, filtering Det.every (fun y ↦ p y ⊓ antecedent G (b y))
-        (fun y ↦ clause G f VP (b y)) = .true) ↔
+    (∃ f : S → ChoiceFunction E, Det.universalProjection Det.every
+        (fun y ↦ p y ⊓ antecedent G (b y)) (fun y ↦ clause G f VP (b y)) = .true) ↔
       ∀ y, p y = .true → (G (b y)).Nonempty → ∃ x ∈ G (b y), VP (b y) x := by
-  simp only [filtering_every_antecedent_clause_eq_true_iff]
+  simp only [universalProjection_every_antecedent_clause_eq_true_iff]
   refine ⟨fun ⟨f, h⟩ y hy hG ↦ ⟨_, (f (b y)).apply_mem hG, h y hy hG⟩, fun h ↦ ?_⟩
   obtain ⟨F, hF⟩ := Classical.skolem.1 fun s ↦
     show ∃ g : ChoiceFunction E, (∃ x ∈ G s, VP s x) → VP s (g (G s)) from
@@ -298,8 +277,8 @@ def restrict (R : Set S) (G : S → Set E) (s : S) : Set E :=
 theorem restrict_nonempty_iff {R : Set S} : (restrict R G s).Nonempty ↔ s ∈ R ∧ (G s).Nonempty := by
   simp [restrict, Set.Nonempty]
 
-theorem filtering_clause_restrict_eq_undefined_iff {R : Set S} :
-    filtering Q p (fun y ↦ clause (restrict R G) f VP (b y)) = .undefined ↔
+theorem universalProjection_clause_restrict_eq_undefined_iff {R : Set S} :
+    Det.universalProjection Q p (fun y ↦ clause (restrict R G) f VP (b y)) = .undefined ↔
       ¬ ∀ y, p y = .true → b y ∈ R ∧ (G (b y)).Nonempty := by
   simp
 
@@ -310,9 +289,9 @@ theorem subordination_constraint {W : Type*} [Finite E]
     {q : NumberTree} {A : W → E → Prop} {C : Set W} {R : Set (W × E)}
     (hR : IsLocalContext C {scopeTruth q A} R) {G : W × E → Set E}
     {f : W × E → ChoiceFunction E} {VP : W × E → E → Prop} {Q : Det E} {p : E → Trivalent} {w : W}
-    (h : filtering Q p (fun y ↦ clause (restrict R G) f VP (w, y)) ≠ .undefined) {y : E}
-    (hy : p y = .true) : A w y := by
-  rw [ne_eq, filtering_clause_restrict_eq_undefined_iff, not_not] at h
+    (h : Det.universalProjection Q p (fun y ↦ clause (restrict R G) f VP (w, y)) ≠ .undefined)
+    {y : E} (hy : p y = .true) : A w y := by
+  rw [ne_eq, universalProjection_clause_restrict_eq_undefined_iff, not_not] at h
   have hw := (h y hy).1
   rw [hR.unique (isLocalContext_scopeTruth q A C)] at hw
   exact hw.2.1
