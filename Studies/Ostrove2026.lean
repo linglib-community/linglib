@@ -4,7 +4,7 @@ public import Linglib.Syntax.Binding.MinimalPronoun
 public import Linglib.Fragments.Mixtec.SMPM.Pronouns
 public import Linglib.Fragments.Mixtec.SMPM.Verbs
 public import Linglib.Syntax.Control.Head
-public import Linglib.Syntax.Control.Basic
+public import Linglib.Syntax.Binding.Valuation
 public import Linglib.Syntax.Control.Diagnostics
 public import Studies.Landau2013
 public import Studies.Allotey2021
@@ -60,7 +60,7 @@ namespace Ostrove2026
 
 open Binding.MinimalPronoun
 open scoped DistributedMorphology
-open Control
+open Control Binding
 open Mixtec.SMPM Mixtec.SMPM.Pronouns
 
 /-! ### The clause typology (26) -/

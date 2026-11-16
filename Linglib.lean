@@ -842,7 +842,6 @@ import Linglib.Syntax.Comparative
 import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Syntax.ConstructionGrammar.Composition
 import Linglib.Syntax.ConstructionGrammar.Licensing
-import Linglib.Syntax.Control.Basic
 import Linglib.Syntax.Control.Head
 import Linglib.Syntax.Control.Diagnostics
 import Linglib.Syntax.DependencyGrammar.Basic

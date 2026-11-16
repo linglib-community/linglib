@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Copy.FormCopy
-public import Linglib.Syntax.Control.Basic
+public import Linglib.Syntax.Binding.Valuation
 public import Linglib.Fragments.Mixtec.SMPM.Pronouns
 public import Linglib.Fragments.Mixtec.SMPM.Verbs
 public import Studies.Landau2013
@@ -36,7 +36,7 @@ blind to.
 
 The controlled subject of (46c) is the feminine clitic of the San Martín Peras Mixtec fragment.
 The semantic clause of Form Copy, copies interpreted in exactly the same way, is exhaustive
-control over the copy relation (`Control.IsExhaustive`). The example rows are read as
+control over the copy relation (`Binding.IsExhaustive`). The example rows are read as
 diagnostics by `Landau2013.attests`: a reading on which the embedded subject
 excludes its antecedent ((56), (57)) is a free reading, refuting co-dependence, and a strict
 reading under *only* ((58), (59)) refutes variable binding. Every row with a silent subject is
@@ -61,7 +61,7 @@ across languages ((53)) and the collective plurality of the partially controlled
 
 namespace Landau2024b
 
-open Minimalist SyntacticObject Control
+open Minimalist SyntacticObject Control Binding
 
 /-! ### Controlled pronouns (46) -/
 

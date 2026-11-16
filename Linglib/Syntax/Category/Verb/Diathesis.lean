@@ -113,7 +113,7 @@ def participantRole (d : Diathesis n) (i : Fin n) : Option ArgumentRole :=
 
 /-- The control dependencies as a relation on the frame's sites, each from the slot depended on
 to the subject depending on it: Stiebels's control dependency, open as to how it is enforced
-(`Syntax/Control/Basic.lean`). -/
+(`Syntax/Binding/Valuation.lean`). -/
 def controlRel (d : Diathesis n) : SetRel ArgumentFrame.Site ArgumentFrame.Site :=
   {p | ∃ x ∈ d.control, p = (.slot x.1, .subjectOf x.2)}
 

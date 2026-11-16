@@ -6,7 +6,7 @@ public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Data.WALS.Features.F101A
 public import Linglib.Syntax.Binding.MinimalPronoun
 public import Linglib.Syntax.Control.Head
-public import Linglib.Syntax.Control.Basic
+public import Linglib.Syntax.Binding.Valuation
 public import Studies.Landau2013
 public import Linglib.Data.Examples.Allotey2021
 public import Linglib.Data.Examples.Readers
@@ -71,7 +71,7 @@ comparison with Landau's scale of finiteness is stated for those two.
 
 namespace Allotey2021
 
-open Binding.MinimalPronoun Control Ga Ga.Pronouns Morphology
+open Binding.MinimalPronoun Control Binding Ga Ga.Pronouns Morphology
 
 /-! ### Pronouns (Table 3) -/
 

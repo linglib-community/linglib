@@ -10,34 +10,41 @@ public import Mathlib.Logic.Relator
 public import Mathlib.Order.Bounds.Basic
 
 /-!
-# Control dependencies
+# Dependencies under a valuation
 
-A control dependency is a relation `SetRel Pos Pos` on argument positions, read
-`antecedent ~[d] dependent`, with a valuation `val : Pos → Ref` assigning referents. This is
-Stiebels's definition of control as referential inclusion, "open as to how the control reading
-is obtained": each controller's referent is part of the dependent's (`IsInclusive`). The reading
-types are Landau's and compare the dependent's referent with those of all its controllers
-together, the set `val '' d.preimage {b}`: a reading is partial when the dependent strictly exceeds
-some bound of them, and [under inclusion it is not partial](##Control.IsInclusive.not_isPartial_iff)
-exactly when the dependent is their least upper bound. A split dependency, one with two
-controllers of a dependent, can therefore be read either way.
+Binding theory says where the antecedent of a position may be (`Syntax/Binding/Basic.lean`). This
+file says what an antecedent shares with its dependent. The dependency is a relation
+`SetRel Pos Pos` on positions, read `antecedent ~[d] dependent`, and a valuation `val : Pos → Ref`
+assigns each position a value: its referent, or the item that occupies it. The conditions hold of
+any such dependency, whether of an anaphor on its binder, of a controlled subject on its
+controller, or of one copy of a moved phrase on another.
+
+A dependency is *inclusive* when each antecedent's value is part of its dependent's, Stiebels's
+definition of control, "open as to how the control reading is obtained". Landau's readings compare
+the dependent with all its antecedents together, the set `val '' d.preimage {b}`: a reading is
+partial when the dependent strictly exceeds some bound of them, and [under inclusion it is not
+partial](##Binding.IsInclusive.not_isPartial_iff) exactly when the dependent is their least upper
+bound. A split dependency, one with two antecedents of a dependent, can therefore be read either
+way.
 
 `IsExhaustive` is the stronger, pairwise condition that related positions are co-valued, which
-[agrees with the least upper bound](##Control.isExhaustive_iff_isLUB) when each dependent has one
-controller. It is the hypothesis under which a valuation
-[descends to the quotient](##Control.IsExhaustive.lift) by the dependency, and what a dependency
-shares is a choice of valuation: functional control, in Bresnan's sense, shares the occupant of
-each position, anaphoric control only its referent. A shared occupant transports along every map
-of it, so one observed mismatch [refutes](##Control.not_isExhaustive_of_mismatch) occupant
-sharing, the argument of the overt-copy diagnostics of Polinsky and Potsdam. `IsSaturating` is
-the bi-unique, exhaustive profile of saturation (predication, structure sharing).
+[agrees with the least upper bound](##Binding.isExhaustive_iff_isLUB) when each dependent has one
+antecedent. It is the hypothesis under which a valuation [descends to the
+quotient](##Binding.IsExhaustive.lift) by the dependency, and what a dependency shares is a
+choice of valuation: functional control, in Bresnan's sense, shares the occupant of each position,
+anaphoric control only its referent. A shared occupant transports along every map of it, so one
+observed mismatch [refutes](##Binding.not_isExhaustive_of_mismatch) occupant sharing, the argument
+of the overt-copy diagnostics of Polinsky and Potsdam. `IsSaturating` is the bi-unique, exhaustive
+profile of saturation (predication, structure sharing).
 
 ## Implementation notes
 
-Grammatical dependencies share Koster's configurational-matrix format, as Neeleman and van de
-Koot state it, and its clauses are mathlib vocabulary and are not named here: refinement
-`r ⊆ s`, `Relator.LeftUnique` and `dependent ⊆ r.cod`. Control shift varies the antecedent across
-readings of one construction, so it is not a property of a single dependency.
+The dependency is the relation `L` of `Binding.Configuration.Binds`, here a `SetRel` so that
+composition, the identity and the antecedents of a position are mathlib's. Grammatical
+dependencies share Koster's configurational-matrix format, as Neeleman and van de Koot state it,
+and its clauses are mathlib vocabulary and are not named here: refinement `r ⊆ s`,
+`Relator.LeftUnique` and `dependent ⊆ r.cod`. Control shift varies the antecedent across readings
+of one construction, so it is not a property of a single dependency.
 
 ## References
 
@@ -51,7 +58,7 @@ readings of one construction, so it is not a property of a single dependency.
 
 @[expose] public section
 
-namespace Control
+namespace Binding
 
 open SetRel
 
@@ -107,13 +114,13 @@ theorem not_isExhaustive_of_mismatch {P : Item → Prop} (h : a ~[ante] b) (hPa 
 section Preorder
 variable [Preorder Ref]
 
-/-- A dependency is referentially inclusive ([stiebels-2007]) when each controller's referent is
+/-- A dependency is referentially inclusive ([stiebels-2007]) when each antecedent's referent is
 part of its dependent's. -/
 def IsInclusive (val : Pos → Ref) (d : SetRel Pos Pos) : Prop :=
   d ⊆ {(a, b) | val a ≤ val b}
 
 /-- A dependency has a partial reading ([landau-2000]) when some dependent's referent strictly
-exceeds a bound of its controllers' referents. -/
+exceeds a bound of its antecedents' referents. -/
 def IsPartial (val : Pos → Ref) (d : SetRel Pos Pos) : Prop :=
   ∃ b ∈ d.cod, ∃ u ∈ upperBounds (val '' d.preimage {b}), u < val b
 
@@ -128,8 +135,8 @@ theorem isInclusive_iff :
 theorem IsExhaustive.isInclusive (hs : IsExhaustive val d) : IsInclusive val d :=
   fun _ h ↦ (hs h).le
 
-/-- A partial reading puts some controller's referent strictly below its dependent's. With two
-controllers the converse fails, each being a proper part of their sum. -/
+/-- A partial reading puts some antecedent's referent strictly below its dependent's. With two
+antecedents the converse fails, each being a proper part of their sum. -/
 theorem IsPartial.exists_lt (h : IsPartial val d) : ∃ a b, a ~[d] b ∧ val a < val b :=
   let ⟨b, ⟨a, hab⟩, _, hu, hlt⟩ := h
   ⟨a, b, hab, (hu ⟨a, ⟨b, rfl, hab⟩, rfl⟩).trans_lt hlt⟩
@@ -158,8 +165,8 @@ theorem IsPartial.of_comp (h : IsPartial val (bind ○ pred)) (hp : IsExhaustive
 
 end Preorder
 
-/-- With one controller per dependent, a dependency is exhaustive exactly when each dependent's
-referent is the least upper bound of its controllers'. -/
+/-- With one antecedent per dependent, a dependency is exhaustive exactly when each dependent's
+referent is the least upper bound of its antecedents'. -/
 theorem isExhaustive_iff_isLUB [PartialOrder Ref] (hd : Relator.LeftUnique (· ~[d] ·)) :
     IsExhaustive val d ↔ ∀ b ∈ d.cod, IsLUB (val '' d.preimage {b}) (val b) := by
   have hs {a b} (hab : a ~[d] b) : val '' d.preimage {b} = {val a} :=
@@ -173,7 +180,7 @@ theorem isExhaustive_iff_isLUB [PartialOrder Ref] (hd : Relator.LeftUnique (· ~
     exact isLUB_singleton.unique this
 
 /-- Under referential inclusion a dependency has no partial reading exactly when each dependent's
-referent is the least upper bound of its controllers', whether one or several. -/
+referent is the least upper bound of its antecedents', whether one or several. -/
 theorem IsInclusive.not_isPartial_iff [SemilatticeInf Ref] (h : IsInclusive val d) :
     ¬ IsPartial val d ↔ ∀ b ∈ d.cod, IsLUB (val '' d.preimage {b}) (val b) := by
   refine ⟨fun hp b hb ↦ ⟨isInclusive_iff.1 h b, fun u hu ↦ ?_⟩, fun hl ⟨b, hb, u, hu, hlt⟩ ↦
@@ -184,16 +191,16 @@ theorem IsInclusive.not_isPartial_iff [SemilatticeInf Ref] (h : IsInclusive val 
 
 /-! ### Split control and saturation -/
 
-/-- A dependency is split when some dependent has two distinct controllers, that is, when it is
+/-- A dependency is split when some dependent has two distinct antecedents, that is, when it is
 not left-unique. -/
 abbrev IsSplit (d : SetRel Pos Pos) : Prop :=
   ¬ Relator.LeftUnique (· ~[d] ·)
 
 /-- A dependency is saturating, as predication and structure sharing are, when each dependent has a
-unique controller, each controller saturates a single slot, and the referent is shared
+unique antecedent, each antecedent saturates a single slot, and the referent is shared
 exhaustively. -/
 structure IsSaturating (val : Pos → Ref) (d : SetRel Pos Pos) : Prop where
-  /-- Each dependent has one controller and each controller one dependent. -/
+  /-- Each dependent has one antecedent and each antecedent one dependent. -/
   biUnique : Relator.BiUnique (· ~[d] ·)
   /-- Related positions are co-valued. -/
   exhaustive : IsExhaustive val d
@@ -201,11 +208,11 @@ structure IsSaturating (val : Pos → Ref) (d : SetRel Pos Pos) : Prop where
 theorem IsSaturating.not_isPartial [Preorder Ref] (h : IsSaturating val d) : ¬ IsPartial val d :=
   h.exhaustive.not_isPartial
 
-theorem IsSaturating.eq_of_controllers (h : IsSaturating val d) (ha : a ~[d] p)
+theorem IsSaturating.eq_of_antecedents (h : IsSaturating val d) (ha : a ~[d] p)
     (hb : b ~[d] p) : a = b :=
   h.biUnique.1 ha hb
 
 theorem IsSaturating.not_isSplit (h : IsSaturating val d) : ¬ IsSplit d :=
   not_not_intro h.biUnique.1
 
-end Control
+end Binding

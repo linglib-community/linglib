@@ -36,7 +36,7 @@ so they fall outside it (`Landau2024b.pronoun_not_mem_copyRel`).
 
 namespace Manzini2026
 
-open Minimalist SyntacticObject Control
+open Minimalist SyntacticObject Binding
 
 /-- *Gianni*, the matrix subject of (31a). -/
 def gianni : SyntacticObject := leaf ⟨.of .N [] "Gianni", 0⟩
