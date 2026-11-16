@@ -265,15 +265,15 @@ theorem exists_dominates_iff [Fintype ι] {β : Type*} [LinearOrder β] (f : ι 
 
 /-- Any two distinct constraints are ranked in either order by some ranking. -/
 theorem exists_dominates [Fintype ι] [DecidableEq ι] {i j : ι} (hij : i ≠ j)
-    (h : Fintype.card ι = n := by simp) : ∃ σ : Ranking ι n, σ.Dominates i j := by
-  let e := Fintype.equivFinOfCardEq h
-  obtain ⟨σ, hσ⟩ := exists_dominates_iff (n := n) (fun c ↦ if c = i then 0 else (e c : ℕ) + 1)
+    (hn : Fintype.card ι = n := by simp) : ∃ σ : Ranking ι n, σ.Dominates i j := by
+  let e := Fintype.equivFinOfCardEq hn
+  obtain ⟨σ, hσ⟩ := exists_dominates_iff (fun c ↦ if c = i then 0 else (e c : ℕ) + 1)
     (fun c d hcd ↦ by
       by_cases hc : c = i <;> by_cases hd : d = i <;> simp only [hc, hd, ite_true, ite_false] at hcd
       · exact hc.trans hd.symm
       · omega
       · omega
-      · exact e.injective (Fin.ext (by omega))) h
+      · exact e.injective (Fin.ext (by omega))) hn
   exact ⟨σ, (hσ i j).2 (by simp [hij.symm])⟩
 
 end Ranking

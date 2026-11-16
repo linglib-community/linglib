@@ -158,8 +158,8 @@ theorem Grammar.extent_ofRel_toRel (σ : Ranking ι n) :
 
 /-- The grammar of a partial order has a ranking. -/
 theorem Grammar.extent_ofRel_nonempty [Fintype ι] (r : ι → ι → Prop) [IsPartialOrder ι r]
-    (h : Fintype.card ι = n := by simp) : (Grammar.ofRel r : Grammar ι n).extent.Nonempty :=
-  (Ranking.exists_isLinearExtension r h).imp fun _ ↦ Grammar.mem_extent_ofRel.2
+    (hn : Fintype.card ι = n := by simp) : (Grammar.ofRel r : Grammar ι n).extent.Nonempty :=
+  (Ranking.exists_isLinearExtension r hn).imp fun _ ↦ Grammar.mem_extent_ofRel.2
 
 private theorem forall_isFeasible_ofRel_iff [Fintype ι]
     (h : (Grammar.ofRel r : Grammar ι n).extent.Nonempty)

@@ -290,16 +290,16 @@ theorem not_satisfiedBy_neg (hα : ∃ k, α k ≠ .e) (h : α.SatisfiedBy r) : 
 
 open Finset in
 /-- The rankings satisfying an ERC, counted against all rankings: their number times the number
-of non-neutral constraints is `n!` times the number of winner-preferring ones. -/
-theorem card_filter_satisfiedBy_mul_card [DecidableEq ι] (h : Fintype.card ι = n) (α : ERC ι) :
-    #{σ : Ranking ι n | α.SatisfiedBy σ} * #α.support = n.factorial * #α.W := by
+of non-neutral constraints is the number of rankings times the number of winner-preferring
+ones. -/
+theorem card_filter_satisfiedBy_mul_card [DecidableEq ι] (α : ERC ι) :
+    #{σ : Ranking ι n | α.SatisfiedBy σ} * #α.support = Fintype.card (Ranking ι n) * #α.W := by
   rcases α.support.eq_empty_or_nonempty with hs | ⟨k, hk⟩
   · have hW : α.W = ∅ := subset_empty.1 (hs ▸ W_subset_support)
     rw [hs, hW, card_empty, mul_zero, mul_zero]
   · have hα : ∃ k, α k ≠ .e := ⟨k, mem_support.1 hk⟩
-    have := Equiv.card_filter_isMinOn_symm_univ_mul_card (β := Fin n)
-      ((Fintype.card_fin n).trans h.symm) α.support α.W
-    rw [h, Finset.inter_eq_left.2 W_subset_support] at this
+    have := Equiv.card_filter_isMinOn_symm_univ_mul_card (β := Fin n) α.support α.W
+    rw [Finset.inter_eq_left.2 W_subset_support] at this
     convert this using 3
     ext σ
     simp only [mem_filter, mem_univ, true_and, satisfiedBy_iff_exists_isMinOn hα]
@@ -313,6 +313,11 @@ end ERC
 A ranking satisfies a finite set of ERCs when it satisfies each member. The set is *consistent*
 when some ranking satisfies it, that is, when `ERC.linearExtensions E` is nonempty, and `E`
 *entails* `E'` when `ERC.linearExtensions E ⊆ ERC.linearExtensions E'`. -/
+
+/-- The rankings of `n` constraints number `n!`. -/
+theorem Ranking.card_eq_factorial [Fintype ι] [DecidableEq ι] (hn : Fintype.card ι = n) :
+    Fintype.card (Ranking ι n) = n.factorial := by
+  rw [Fintype.card_equiv (Fintype.equivFinOfCardEq hn).symm, Fintype.card_fin]
 
 namespace ERC
 
@@ -332,14 +337,14 @@ def linearExtensions (E : Finset (ERC ι)) : Finset (Ranking ι n) :=
   ext r; simp
 
 /-- Some ranking puts `p` first and `q` second. -/
-private theorem exists_ranking_first_second (h : Fintype.card ι = n) (p q : ι) :
+private theorem exists_ranking_first_second (hn : Fintype.card ι = n) (p q : ι) :
     ∃ r : Ranking ι n, (∀ c, c ≠ p → r.Dominates p c) ∧
       ∀ c, c ≠ p → c ≠ q → r.Dominates q c := by
   let k : ι → ℕ := fun c ↦ if c = p then 0 else if c = q then 1 else 2
-  obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff (n := n)
-    (fun c ↦ toLex (k c, Fintype.equivFinOfCardEq h c))
-    (fun c d hcd ↦ (Fintype.equivFinOfCardEq h).injective
-      (Prod.ext_iff.mp (toLex.injective hcd)).2) h
+  obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff
+    (fun c ↦ toLex (k c, Fintype.equivFinOfCardEq hn c))
+    (fun c d hcd ↦ (Fintype.equivFinOfCardEq hn).injective
+      (Prod.ext_iff.mp (toLex.injective hcd)).2) hn
   refine ⟨r, fun c hc ↦ (hr p c).2 (Prod.Lex.toLex_lt_toLex.2 (.inl ?_)),
     fun c hcp hcq ↦ (hr q c).2 (Prod.Lex.toLex_lt_toLex.2 (.inl ?_))⟩
   all_goals (simp only [k]; split_ifs <;> simp_all)
@@ -356,9 +361,9 @@ assumes both ERCs nontrivial, with a `W` and an `L` each, whereas the proof need
 the entailing ERC and an `L` in the entailed one: a coordinate on which `α` exceeds `β` yields a
 ranking satisfying `α` alone, which puts that coordinate first and a `W` of `α` or an `L` of `β`
 second. -/
-theorem linearExtensions_singleton_subset_iff (h : Fintype.card ι = n) {α β : ERC ι}
-    (hα : ∃ k, α k = .W)
-    (hβ : ∃ k, β k = .L) : linearExtensions (n := n) {α} ⊆ linearExtensions {β} ↔ α ≤ β := by
+theorem linearExtensions_singleton_subset_iff {α β : ERC ι} (hα : ∃ k, α k = .W)
+    (hβ : ∃ k, β k = .L) (hn : Fintype.card ι = n := by simp) :
+    linearExtensions (n := n) {α} ⊆ linearExtensions {β} ↔ α ≤ β := by
   refine ⟨fun hsub i ↦ le_of_not_gt fun hlt ↦ ?_, linearExtensions_singleton_subset_of_le⟩
   have h' (r : Ranking ι n) (hr : α.SatisfiedBy r) : β.SatisfiedBy r := by
     have hmem : r ∈ linearExtensions {α} := by simpa using hr
@@ -374,7 +379,7 @@ theorem linearExtensions_singleton_subset_iff (h : Fintype.card ι = n) {α β :
   have hcases : ∀ x y : ERCVal, y < x → (y = .L ∧ x ≠ .L) ∨ (x = .W ∧ y ≠ .W) := by decide
   rcases hcases _ _ hlt with ⟨hβi, hαi⟩ | ⟨hαi, hβi⟩
   · -- `i` first: `β` fails at `i`, and `α` holds through `i` or through `w` second
-    obtain ⟨r, h₁, h₂⟩ := exists_ranking_first_second h i w
+    obtain ⟨r, h₁, h₂⟩ := exists_ranking_first_second hn i w
     have hαr : α.SatisfiedBy r := (satisfiedBy_iff_dominance r α).2 fun c hc ↦ by
       have hci : c ≠ i := fun e ↦ hαi (e ▸ hc)
       by_cases hαW : α i = .W
@@ -383,7 +388,7 @@ theorem linearExtensions_singleton_subset_iff (h : Fintype.card ι = n) {α β :
     obtain ⟨x, -, hx⟩ := (satisfiedBy_iff_dominance r β).1 (h' r hαr) i hβi
     exact first h₁ x hx
   · -- `i` first: `α` holds through `i`, and `β` fails at `i` or at `l` second
-    obtain ⟨r, h₁, h₂⟩ := exists_ranking_first_second h i l
+    obtain ⟨r, h₁, h₂⟩ := exists_ranking_first_second hn i l
     have hαr : α.SatisfiedBy r := (satisfiedBy_iff_dominance r α).2 fun c hc ↦
       ⟨i, hαi, h₁ c fun e ↦ by simp [e, hαi] at hc⟩
     have hβr := (satisfiedBy_iff_dominance r β).1 (h' r hαr)
@@ -446,9 +451,9 @@ theorem simpleERC_satisfiedBy_toRel_iff (i j : ι) (r : Ranking ι n) :
   · exact iff_of_true (ERC.trivial_satisfiedBy (simpleERC_self_isTrivial i) r) (le_refl _)
   · rw [simpleERC_satisfiedBy_iff hij, r.toRel_iff_dominates hij]
 
-theorem simpleERC_consistent [Fintype ι] (hij : i ≠ j) (h : Fintype.card ι = n := by simp) :
+theorem simpleERC_consistent [Fintype ι] (hij : i ≠ j) (hn : Fintype.card ι = n := by simp) :
     (ERC.linearExtensions (n := n) {simpleERC i j}).Nonempty :=
-  have ⟨r, hr⟩ := Ranking.exists_dominates hij h
+  have ⟨r, hr⟩ := Ranking.exists_dominates hij hn
   ⟨r, by simp [(simpleERC_satisfiedBy_iff hij r).mpr hr]⟩
 
 theorem simpleERC_isSimple (hij : i ≠ j) : (simpleERC i j).IsSimple :=

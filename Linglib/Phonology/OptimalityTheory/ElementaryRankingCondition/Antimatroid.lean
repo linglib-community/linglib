@@ -116,7 +116,7 @@ theorem isFeasible_singleton_iff {α : ERC ι} (hα : ∃ r : Ranking ι n, Sati
     obtain ⟨r₀, hr₀⟩ := hα
     let key : ι → ℕ ×ₗ (ℕ ×ₗ Fin n) := fun i ↦
       toLex (if i ∈ S then 0 else 1, toLex (if α i = .W then 0 else 1, r₀.symm i))
-    obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff (n := n) key (fun i j h ↦ r₀.symm.injective
+    obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff key (fun i j h ↦ r₀.symm.injective
       (congrArg Prod.snd (toLex_inj.mp (congrArg Prod.snd (toLex_inj.mp h))))) r₀.card_eq
     obtain ⟨k, hk⟩ := r.exists_take_eq S fun i hi j hj ↦
       (hr i j).2 (Prod.Lex.lt_iff.2 (Or.inl (by simp [key, hi, hj])))
@@ -150,7 +150,7 @@ theorem IsFeasible.union (hS : IsFeasible n E S) (hT : IsFeasible n E T) :
     obtain ⟨hb, hg⟩ := Prod.mk.inj (toLex_inj.mp h)
     rw [show g j = g i by simp only [g, hb]] at hg
     exact (g i).symm.injective hg
-  obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff (n := n) _ hkey r₁.card_eq
+  obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff _ hkey r₁.card_eq
   have hlt : ∀ w l, b w ≤ b l → (g l).Dominates w l → r.Dominates w l := by
     intro w l hb hwl
     rw [hr, Prod.Lex.lt_iff]
@@ -254,7 +254,7 @@ theorem isFeasible_iff_forall_singleton_of_simple
   obtain ⟨r₀, hr₀⟩ := hcons
   have hloc := fun α hα ↦ (isFeasible_singleton_iff ⟨r₀, hr₀ α hα⟩ S).mp (h α hα)
   let key : ι → ℕ ×ₗ Fin n := fun i ↦ toLex (if i ∈ S then 0 else 1, r₀.symm i)
-  obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff (n := n) key (fun i j h ↦
+  obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff key (fun i j h ↦
     r₀.symm.injective (congrArg Prod.snd (toLex_inj.mp h))) r₀.card_eq
   obtain ⟨k, hk⟩ := r.exists_take_eq S fun i hi j hj ↦
     (hr i j).2 (Prod.Lex.lt_iff.2 (Or.inl (by simp [key, hi, hj])))

@@ -88,9 +88,9 @@ variable [Fintype ι]
 
 /-- Every grammar has a linear extension, by Szpilrajn's theorem. -/
 theorem exists_isLinearExtension (r : ι → ι → Prop) [IsPartialOrder ι r]
-    (h : Fintype.card ι = n := by simp) : ∃ σ : Ranking ι n, σ.IsLinearExtension r := by
+    (hn : Fintype.card ι = n := by simp) : ∃ σ : Ranking ι n, σ.IsLinearExtension r := by
   obtain ⟨s, hs, hsub⟩ := extend_partialOrder r
-  obtain ⟨σ, rfl⟩ := Ranking.exists_toRel_eq (n := n) s h
+  obtain ⟨σ, rfl⟩ := Ranking.exists_toRel_eq s hn
   exact ⟨σ, hsub⟩
 
 variable [DecidableEq ι]
@@ -118,9 +118,9 @@ theorem linearExtensions_eq (ι : Type*) [Fintype ι] [DecidableEq ι] (n : ℕ)
   eq_univ_of_forall fun _ ↦ mem_linearExtensions.2 fun _ _ h ↦ h ▸ le_refl _
 
 theorem linearExtensions_nonempty (r : ι → ι → Prop) [IsPartialOrder ι r]
-    [DecidableRel r] (h : Fintype.card ι = n := by simp) :
+    [DecidableRel r] (hn : Fintype.card ι = n := by simp) :
     (linearExtensions (n := n) r).Nonempty :=
-  (exists_isLinearExtension r h).imp fun _ ↦ mem_linearExtensions.2
+  (exists_isLinearExtension r hn).imp fun _ ↦ mem_linearExtensions.2
 
 end Fintype
 

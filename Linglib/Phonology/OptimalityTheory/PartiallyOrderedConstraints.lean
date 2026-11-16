@@ -247,7 +247,7 @@ theorem ERC.uniformOn_real_lex_pos [IsPartialOrder ι r] [DecidableRel r]
         obtain ⟨d, hd, -⟩ := h_lead x (ERC.W_subset_support hx) (notMem_empty x)
         exact notMem_empty d hd
     rw [this, card_empty, inter_empty, card_empty, Nat.cast_zero, zero_div, div_zero]
-  · have hpos := (Ranking.linearExtensions_nonempty (n := n) r hn).card_pos
+  · have hpos := (Ranking.linearExtensions_nonempty r hn).card_pos
     rw [div_eq_div_iff (by exact_mod_cast hpos.ne') (by exact_mod_cast hne.card_pos.ne')]
     exact_mod_cast (ERC.card_filter_lex_pos_mul_card hD h_lead h_aut).trans (Nat.mul_comm _ _)
 
@@ -259,10 +259,10 @@ theorem ERC.uniformOn_real_satisfiedBy (α : ERC ι) (h : ∃ k, α k ≠ .e)
       (#α.W : ℝ) / #α.support := by
   obtain ⟨k, hk⟩ := h
   rw [← Finset.coe_univ, uniformOn_finset_real_setOf, Finset.card_univ,
-    Fintype.card_equiv (Fintype.equivFinOfCardEq hn).symm, Fintype.card_fin,
-    div_eq_div_iff (by positivity)
+    Ranking.card_eq_factorial hn, div_eq_div_iff (by positivity)
       (by exact_mod_cast (Finset.card_pos.2 ⟨k, ERC.mem_support.2 hk⟩).ne')]
-  exact_mod_cast (α.card_filter_satisfiedBy_mul_card hn).trans (Nat.mul_comm _ _)
+  exact_mod_cast (Ranking.card_eq_factorial hn ▸ α.card_filter_satisfiedBy_mul_card).trans
+    (Nat.mul_comm _ _)
 
 end Rate
 
@@ -365,7 +365,7 @@ theorem uniformOn_real_picksAt_discrete_binary
     (hn : Fintype.card ι = n := by simp) :
     (uniformOn (Set.univ : Set (Ranking ι n))).real {σ | S.PicksAt σ i chosen} =
       (#(favoring S.con i chosen other) : ℝ) / #(active S.con i chosen other) := by
-  have h := uniformOn_real_picksAt_binary (n := n) (r := (· = ·)) (hn := hn) h_two h_ne Subset.rfl
+  have h := uniformOn_real_picksAt_binary (r := (· = ·)) (hn := hn) h_two h_ne Subset.rfl
     (fun a ha h ↦ absurd ha h) fun d hd d' hd' ↦
       ⟨Equiv.swap d d', Equiv.swap_apply_left d d', Equiv.Perm.swap_apply_mem_iff hd hd', by
         ext a b
@@ -416,7 +416,7 @@ theorem uniformOn_real_picksAt_stratified_binary [IsPartialOrder ι inner]
           (active S.con i chosen other).filter (stratumOf · = k)) : ℝ) /
         #((active S.con i chosen other).filter (stratumOf · = k)) := by
   rw [uniformOn_finset_real_setOf, div_eq_div_iff
-    (by exact_mod_cast (Ranking.linearExtensions_nonempty (n := n) _ hn).card_pos.ne')
+    (by exact_mod_cast (Ranking.linearExtensions_nonempty _ hn).card_pos.ne')
     (by exact_mod_cast h_dec.card_pos.ne')]
   exact_mod_cast (card_filter_picksAt_stratified_binary h_two h_ne h_triv h_tie h_dec).trans
     (Nat.mul_comm _ _)

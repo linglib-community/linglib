@@ -108,13 +108,10 @@ variable [Fintype α] [Fintype β]
 
 open scoped Classical in
 /-- The enumerations placing an element of `Y` first among `D`, counted `#D` times, number
-`(card α)! * #(Y ∩ D)`. -/
-theorem card_filter_isMinOn_symm_univ_mul_card (h : Fintype.card β = Fintype.card α)
-    (D Y : Finset α) :
-    #{σ : β ≃ α | ∃ x ∈ Y ∩ D, IsMinOn σ.symm D x} * #D = (Fintype.card α).factorial *
-      #(Y ∩ D) := by
-  have h' := card_filter_isMinOn_symm_mul_card (univ : Finset (β ≃ α)) D Y fun y hy y' hy' ↦
+`#(Y ∩ D)` times all the enumerations. -/
+theorem card_filter_isMinOn_symm_univ_mul_card (D Y : Finset α) :
+    #{σ : β ≃ α | ∃ x ∈ Y ∩ D, IsMinOn σ.symm D x} * #D = Fintype.card (β ≃ α) * #(Y ∩ D) :=
+  card_filter_isMinOn_symm_mul_card (univ : Finset (β ≃ α)) D Y fun y hy y' hy' ↦
     ⟨swap y y', swap_apply_left y y', Perm.swap_apply_mem_iff hy hy', fun _ ↦ by simp⟩
-  rwa [card_univ, Fintype.card_equiv (Fintype.equivOfCardEq h), h] at h'
 
 end Equiv
