@@ -59,8 +59,8 @@ def invariantsOrderIso {s : β → Set α × Set α} (hs : RightInverse s f) : i
 theorem card_invariants [Finite β] (hf : Surjective f) :
     Nat.card (invariants f) = 2 ^ Nat.card β := by
   rw [Nat.card_congr (invariantsOrderIso (rightInverse_surjInv hf)).toEquiv]
-  change Nat.card (β → Prop) = _
-  rw [Nat.card_fun, Nat.card_eq_fintype_card (α := Prop), Fintype.card_prop]
+  have := Fintype.ofFinite β
+  rw [Nat.card_eq_fintype_card, Fintype.card_set, Nat.card_eq_fintype_card]
 
 /-- The atoms of a class are the fibres of its function. -/
 theorem isAtom_invariants_iff (hf : Surjective f) {d : invariants f} :
