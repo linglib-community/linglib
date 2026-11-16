@@ -910,18 +910,19 @@ def Label.ty : Label → Interpreter.Ty Interpreter.Base
 
 /-- The premises mean *every person*, *love* and *some person*, the two quantifiers being the
     generalized quantifiers of the determiners. -/
-def scopeEnv {E : Type} (person : E → Prop) (love : E → E → Prop) :
+def scopeEnv {E : Type} (person : Set E) (love : E → E → Prop) :
     Env (fun x ↦ Interpreter.Ty.Domain E Unit x.ty) everybodyLovesSomebody.flatten :=
-  .cons (every person) (.cons love (.cons (Det.some person) .nil))
+  .cons (Quantifier.toCont (every person))
+    (.cons love (.cons (Quantifier.toCont (Det.some person)) .nil))
 
 /-- The surface proof means the surface-scope reading, every person loving some person. -/
-theorem surface_eval {E : Type} (person : E → Prop) (love : E → E → Prop) :
+theorem surface_eval {E : Type} (person : Set E) (love : E → E → Prop) :
     surface.eval (scopeEnv person love) =
       iterate every Det.some person person fun x y ↦ love y x :=
   rfl
 
 /-- The inverse proof means the inverse-scope reading, some person loved by every person. -/
-theorem inverse_eval {E : Type} (person : E → Prop) (love : E → E → Prop) :
+theorem inverse_eval {E : Type} (person : Set E) (love : E → E → Prop) :
     inverse.eval (scopeEnv person love) =
       iterate Det.some every person person fun y x ↦ love y x :=
   rfl
@@ -931,14 +932,14 @@ open HeimKratzer1998.Toy (person sees) in
     Quantifier Raising trees. -/
 theorem meanings_qr_eq_eval :
     HeimKratzer1998.meanings HeimKratzer1998.tree_surface =
-        [⟨.t, fun _ ↦ surface.eval (scopeEnv person sees)⟩] ∧
+        [⟨.t, fun _ ↦ surface.eval (scopeEnv {x | person x} sees)⟩] ∧
       HeimKratzer1998.meanings HeimKratzer1998.tree_inverse =
-        [⟨.t, fun _ ↦ inverse.eval (scopeEnv person sees)⟩] :=
+        [⟨.t, fun _ ↦ inverse.eval (scopeEnv {x | person x} sees)⟩] :=
   ⟨HeimKratzer1998.meanings_surface, HeimKratzer1998.meanings_inverse⟩
 
 open HeimKratzer1998.Toy (person sees) in
 theorem readings_differ :
-    surface.eval (scopeEnv person sees) ∧ ¬ inverse.eval (scopeEnv person sees) :=
+    surface.eval (scopeEnv {x | person x} sees) ∧ ¬ inverse.eval (scopeEnv {x | person x} sees) :=
   ⟨HeimKratzer1998.surface_scope_true, HeimKratzer1998.inverse_scope_false⟩
 
 /-! ### Completeness and Coherence
