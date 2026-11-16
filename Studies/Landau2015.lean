@@ -131,9 +131,9 @@ inductive Table80Row where
 
 /-- The clause class of an inflected complement on each tier, untensed under predication and
 tensed under logophoric control ((4), (5)). -/
-def Tier.inflectedClass : Tier → ClauseClass
-  | .predicative => .cSubjunctive
-  | .logophoric => .fSubjunctive
+def Tier.inflectedClass : Tier → EmbeddedTense
+  | .predicative => .anaphoric
+  | .logophoric => .dependent
 
 /-- A row of table (80) is available on a tier. The three saturation rows are available when some
 dependency realizing the tier shows them, referents measured in `ℕ`; the inflected-complement row

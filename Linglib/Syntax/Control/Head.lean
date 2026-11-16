@@ -10,36 +10,46 @@ public import Mathlib.Data.Option.NAry
 /-!
 # The Calculus of Control
 
-[landau-2004]'s calculus, as codified in [landau-2013] ((137)/(178)): each
-clausal head — I and C — may carry slots for `[T]` and `[Agr]`, and the
-R-assignment rule applies to a head that has both. A head both of whose
-features are positive is assigned `[+R]`, licensing an independent referential
-subject; a head with both slots and a negative value is assigned `[−R]`; a head
-lacking a slot, as in the defective complements of raising, ECM and small
-clauses, is assigned nothing, and the calculus says nothing about control there
-(`Clause.not_hasControl_of_r_eq_none`). Control is the *elsewhere* case among
-clauses whose I is fully specified. Mutual cancellation ([landau-2013] fn. 6):
-when C is `[+T, +Agr]` as well as I, R-assignment cancels and OC re-emerges —
-the Hebrew subjunctive effect, inexpressible on a flat tense scale.
-[landau-2004]'s scale of finiteness (`ClauseClass`) abbreviates clauses with a
-fully specified I, and `ClauseClass.HasOC` is derived from the calculus via
-`ClauseClass.toClause`.
+[landau-2004]'s calculus: each clausal head, I and C, may carry slots for `[T]` and `[Agr]`, and
+the R-assignment rule applies to a head that has both. A head both of whose features are positive
+is assigned `[+R]`, and a head with both slots and a negative value `[−R]`; a head lacking a slot,
+as in the complements of raising and ECM verbs and in small clauses, is assigned nothing. The
+subject of the clause checks the `[R]` of I: a lexical noun phrase or *pro* is `[+R]`, and PRO is
+`[−R]`. So a clause whose I is `[−R]` [licenses PRO and no referential
+subject](##Control.Clause.licensesPRO_and_not_licensesReferential_iff), which is obligatory control,
+and a clause whose I is `[+R]` licenses a referential subject. When C is `[+R]` as well, the two
+cancel and PRO is licensed too, so that such a clause [licenses both
+subjects](##Control.Clause.licensesPRO_and_licensesReferential_iff): the free subjunctives of the
+Balkan languages and the subjunctives of Hebrew have these features, and a null subject there is
+PRO [only where the language has no *pro* to put there](##Control.Clause.nullSubject_isPRO_iff),
+as Hebrew has none in the third person.
+
+The tense a complement's verb selects fixes `[T]` on both heads, and `EmbeddedTense.toClause`
+builds the clause of a tense at given agreement values, from which obligatory control is computed.
+
+## Implementation notes
+
+The licensing conditions are those of the derivations for indicatives, the two Balkan
+subjunctives, Hebrew subjunctives and infinitives with exhaustive and partial control, as the
+paper's two feature tables classify them. A clause both of whose heads are `[−R]`, the paper's
+uncontrolled inflected infinitive of Hungarian, is not treated: `LicensesPRO` holds of it.
+[landau-2013] states the calculus as a rule on I alone, with the cancellation in a footnote, and
+[landau-2015] subsumes the `[±T]` split under the attitude and nonattitude contexts
+(`Studies/Landau2015.lean`).
 
 ## References
 
 * [landau-2004]
 * [landau-2013]
 * [landau-2015]
-* [ostrove-2026]
 -/
 
 @[expose] public section
 
 namespace Control
 
-/-- A clausal head as the calculus sees it: its `[T]` and `[Agr]` values, `none`
-    where the head has no slot for the feature ([landau-2004]; [landau-2013]
-    (137)). -/
+/-- A clausal head as the calculus sees it: its `[T]` and `[Agr]` values, `none` where the head
+has no slot for the feature. -/
 structure Head where
   /-- Semantic tense, `[±T]`, `none` without a `[T]` slot. -/
   tense : Option Bool
@@ -47,9 +57,8 @@ structure Head where
   agr : Option Bool
   deriving DecidableEq, Repr
 
-/-- The R-assignment rule ([landau-2013] (137)): a head with both slots is
-    assigned `[+R]` when both features are positive and `[−R]` otherwise, and a
-    head lacking a slot is assigned nothing. -/
+/-- (39): the R-assignment rule. A head with both slots is assigned `[+R]` when both features are
+positive and `[−R]` otherwise, and a head lacking a slot is assigned nothing. -/
 def Head.r (h : Head) : Option Bool :=
   Option.map₂ (· && ·) h.tense h.agr
 
@@ -69,76 +78,103 @@ structure Clause where
   c : Head
   deriving DecidableEq, Repr
 
-/-- Control is the elsewhere case ([landau-2013] (178) with fn. 6): a clause
-    whose I has both slots has control unless I is `[+R]`, and with a `[+R]` I
-    keeps it only when C is `[+R]` too — mutual cancellation. -/
-def Clause.HasControl (cl : Clause) : Prop :=
+/-- A clause licenses PRO when its I is `[−R]`, which PRO checks, or when its I and its C are
+both `[+R]` and check each other. -/
+def Clause.LicensesPRO (cl : Clause) : Prop :=
   cl.i.r = some false ∨ cl.i.r = some true ∧ cl.c.r = some true
 
-instance (cl : Clause) : Decidable cl.HasControl :=
+/-- A clause licenses a referential subject, a lexical noun phrase or *pro*, when its I is
+`[+R]`. -/
+def Clause.LicensesReferential (cl : Clause) : Prop := cl.i.r = some true
+
+instance (cl : Clause) : Decidable cl.LicensesPRO :=
   inferInstanceAs (Decidable (_ ∨ _ ∧ _))
 
-/-- Mutual cancellation: a fully specified `[+R]` C restores OC in a clause whose
-    I is fully specified — Hebrew subjunctives ([landau-2013] fn. 6). -/
-theorem Clause.hasControl_of_c_r_eq_some_true {cl : Clause} (hi : cl.i.r.isSome)
-    (hc : cl.c.r = some true) : cl.HasControl := by
-  obtain ⟨_ | _, hb⟩ := Option.isSome_iff_exists.1 hi
-  · exact .inl hb
-  · exact .inr ⟨hb, hc⟩
+instance (cl : Clause) : Decidable cl.LicensesReferential :=
+  inferInstanceAs (Decidable (_ = _))
 
-/-- A clause whose I lacks a slot falls outside the R-assignment rule, so the
-    calculus gives it no control, whatever its C ([landau-2013] (137)). -/
-theorem Clause.not_hasControl_of_r_eq_none {cl : Clause} (h : cl.i.r = none) :
-    ¬ cl.HasControl := by
-  simp [Clause.HasControl, h]
+/-- Obligatory control: a clause licenses PRO and no referential subject exactly when its I is
+`[−R]`. -/
+theorem Clause.licensesPRO_and_not_licensesReferential_iff {cl : Clause} :
+    cl.LicensesPRO ∧ ¬ cl.LicensesReferential ↔ cl.i.r = some false := by
+  simp only [LicensesPRO, LicensesReferential]
+  rcases cl.i.r with _ | _ | _ <;> simp
 
-/-! ### Clause classes -/
+/-- A clause licenses both PRO and a referential subject exactly when its I and its C are both
+`[+R]`, as in a Balkan free subjunctive and a Hebrew subjunctive. -/
+theorem Clause.licensesPRO_and_licensesReferential_iff {cl : Clause} :
+    cl.LicensesPRO ∧ cl.LicensesReferential ↔ cl.i.r = some true ∧ cl.c.r = some true := by
+  simp only [LicensesPRO, LicensesReferential]
+  rcases cl.i.r with _ | _ | _ <;> simp
 
-/-- [landau-2004]'s scale positions, in [ostrove-2026]'s terminology:
-    C-subjunctives are `[−T]` complements (OC whatever the Agr value),
-    F-subjunctives `[+T]` complements (OC unless `[+Agr]`, per the OC-NC
-    generalization), and `finite` the fully finite remainder. The positions are tense cells,
-    not mood or finiteness categories — `[−T]` covers bare infinitives
-    and untensed subjunctives alike, and OC occurs in inflected
-    complements. [landau-2015] subsumes the `[±T]` split under
-    attitude/nonattitude (the tier reading lives with
-    `Studies/Landau2015.lean`). -/
-inductive ClauseClass where
-  /-- `[−T]` complement: OC at any Agr value -/
-  | cSubjunctive
-  /-- `[+T]` complement: OC unless `[+Agr]` -/
-  | fSubjunctive
-  /-- Fully finite: `[+T, +Agr]` on I. No control unless C is fully specified
-      too (mutual cancellation, `Clause.hasControl_of_c_r_eq_some_true`) -/
-  | finite
+/-- A clause whose I lacks a slot falls outside the R-assignment rule and licenses neither
+subject by it, whatever its C. -/
+theorem Clause.not_licensesPRO_of_r_eq_none {cl : Clause} (h : cl.i.r = none) :
+    ¬ cl.LicensesPRO := by
+  simp [Clause.LicensesPRO, h]
+
+-- (34)
+/-- A null subject is PRO or, in a language that has it, *pro*. In a clause that licenses PRO it
+must be PRO exactly when the clause licenses no referential subject or the language has no
+*pro*. -/
+theorem Clause.nullSubject_isPRO_iff {cl : Clause} (h : cl.LicensesPRO) (hasPro : Prop) :
+    ¬ (cl.LicensesReferential ∧ hasPro) ↔ cl.i.r = some false ∨ ¬ hasPro := by
+  simp only [LicensesPRO, LicensesReferential] at h ⊢
+  rcases hi : cl.i.r with _ | _ | _ <;> simp_all
+
+/-! ### The tense of a complement -/
+
+/-- (35): the tense of a complement clause. Anaphoric tense is identical to the matrix tense,
+`[−T]` on I and C; dependent tense is selected by the matrix verb, `[+T]` on I and C; independent
+tense is free, `[+T]` on I and nothing on C. The criterion is semantic: a clause may be untensed
+despite its tense morphology, as the controlled subjunctives of the Balkan languages are, which
+have anaphoric tense, where the free subjunctives have dependent tense. -/
+inductive EmbeddedTense where
+  /-- `[−T]` on I and C. -/
+  | anaphoric
+  /-- `[+T]` on I and C. -/
+  | dependent
+  /-- `[+T]` on I, no `[T]` on C. -/
+  | independent
   deriving DecidableEq, Repr
 
-/-- The scale position determined by the two clause-typology observables
-    of [ostrove-2026]-style fragments: unrestricted TAM marks a fully
-    finite clause; among the TAM-restricted clauses, independent tense
-    separates `[+T]` from `[−T]` ([landau-2004]'s feature, diagnosed by
-    temporal mismatch). Per-language scale maps derive from this single
-    classifier rather than restating the case table. -/
-def ClauseClass.ofFiniteness (unrestrictedTAM independentTense : Bool) : ClauseClass :=
-  if unrestrictedTAM then .finite
-  else if independentTense then .fSubjunctive else .cSubjunctive
+/-- The tense determined by two observables of a clause type: unrestricted tense, aspect and mood
+marks independent tense, and among the restricted clauses a tense of the clause's own separates
+dependent from anaphoric tense. -/
+def EmbeddedTense.ofFiniteness (unrestrictedTAM independentTense : Prop)
+    [Decidable unrestrictedTAM] [Decidable independentTense] : EmbeddedTense :=
+  if unrestrictedTAM then .independent
+  else if independentTense then .dependent else .anaphoric
 
-/-- The clause a scale position abbreviates, at a given Agr value: an I with both
-    slots, `[±T]` per the position, and a C with neither. The scale cannot express
-    a fully specified C — mutual cancellation needs the calculus directly. -/
-def ClauseClass.toClause (c : ClauseClass) (agr : Bool) : Clause :=
-  ⟨⟨some (decide (c ≠ .cSubjunctive)), some (if c = .finite then true else agr)⟩, ⟨none, none⟩⟩
+/-- (35), (37), (38): the clause of a tense, at the agreement value `agr` of I and, for dependent
+tense, `cAgr` of C. Agreement on C needs `[+T]` there, and an indicative, the clause of
+independent tense, has agreement on I. -/
+def EmbeddedTense.toClause (t : EmbeddedTense) (agr : Bool) (cAgr : Bool := false) : Clause :=
+  match t with
+  | .anaphoric => ⟨⟨some false, some agr⟩, ⟨some false, none⟩⟩
+  | .dependent => ⟨⟨some true, some agr⟩, ⟨some true, if cAgr then some true else none⟩⟩
+  | .independent => ⟨⟨some true, some true⟩, ⟨none, none⟩⟩
 
-/-- OC is realized in a clause class iff the calculus leaves control at
-    the clause it abbreviates: the elsewhere condition on `toClause`. -/
-def ClauseClass.HasOC (c : ClauseClass) (agr : Bool) : Prop :=
-  (c.toClause agr).HasControl
+/-- A complement of a tense shows obligatory control when its clause licenses PRO and no
+referential subject. -/
+def EmbeddedTense.HasOC (t : EmbeddedTense) (agr : Bool) (cAgr : Bool := false) : Prop :=
+  (t.toClause agr cAgr).LicensesPRO ∧ ¬ (t.toClause agr cAgr).LicensesReferential
 
-instance (c : ClauseClass) (agr : Bool) : Decidable (c.HasOC agr) :=
-  inferInstanceAs (Decidable (Clause.HasControl _))
+instance (t : EmbeddedTense) (agr cAgr : Bool) : Decidable (t.HasOC agr cAgr) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-theorem ClauseClass.hasOC_iff (c : ClauseClass) (agr : Bool) :
-    c.HasOC agr ↔ c = .cSubjunctive ∨ (c = .fSubjunctive ∧ agr = false) := by
-  cases c <;> cases agr <;> decide
+/-- Anaphoric tense gives obligatory control whatever the agreement, and dependent tense gives it
+without agreement on I, whatever C carries. -/
+theorem EmbeddedTense.hasOC_iff (t : EmbeddedTense) (agr cAgr : Bool) :
+    t.HasOC agr cAgr ↔ t = .anaphoric ∨ (t = .dependent ∧ agr = false) := by
+  cases t <;> cases agr <;> cases cAgr <;> decide
+
+-- (38), (69)
+/-- A complement with dependent tense and agreement on both heads, a Balkan free subjunctive or a
+Hebrew subjunctive, licenses PRO and a referential subject alike. -/
+theorem EmbeddedTense.dependent_licenses_both :
+    (EmbeddedTense.dependent.toClause true true).LicensesPRO ∧
+      (EmbeddedTense.dependent.toClause true true).LicensesReferential := by
+  decide
 
 end Control

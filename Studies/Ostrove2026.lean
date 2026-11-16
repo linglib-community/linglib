@@ -183,16 +183,16 @@ theorem partialControl_rows : ∀ row ∈ Examples.all,
 
 /-- The clause types on the finiteness scale of [landau-2004], untensed subjunctives being
 C-subjunctives and tensed ones F-subjunctives (§3). -/
-def landauToSMPM : ClauseClass → EmbeddedClauseType
-  | .cSubjunctive => .untensedSubjunctive
-  | .fSubjunctive => .tensedSubjunctive
-  | .finite => .finite
+def landauToSMPM : EmbeddedTense → EmbeddedClauseType
+  | .anaphoric => .untensedSubjunctive
+  | .dependent => .tensedSubjunctive
+  | .independent => .finite
 
 /-- The scale position of a clause type, from its TAM and tense properties. -/
-def smpmToLandau (c : EmbeddedClauseType) : ClauseClass :=
-  .ofFiniteness (decide (UnrestrictedTAM c)) (decide (IndependentTense c))
+def smpmToLandau (c : EmbeddedClauseType) : EmbeddedTense :=
+  .ofFiniteness (UnrestrictedTAM c) (IndependentTense c)
 
-theorem smpmToLandau_landauToSMPM (c : ClauseClass) : smpmToLandau (landauToSMPM c) = c := by
+theorem smpmToLandau_landauToSMPM (c : EmbeddedTense) : smpmToLandau (landauToSMPM c) = c := by
   cases c <;> decide +kernel
 
 /-- Landau's calculus predicts every clause type's control profile iff the clauses are `[+Agr]`,

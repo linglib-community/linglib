@@ -288,10 +288,10 @@ theorem ake_refutes_codependent : .codependent ∈ Landau2013.refutes '' atteste
 /-- Gã clause types on [landau-2004]'s finiteness scale — a scale position, not
     a mood claim. Unrestricted TAM and independent tense both coincide with the
     complementizer's finiteness (exx 109–111, 118–119). -/
-def gaToLandau (c : EmbeddedClauseType) : ClauseClass :=
-  .ofFiniteness (decide c.complementizer.IsFinite) (decide c.complementizer.IsFinite)
+def gaToLandau (c : EmbeddedClauseType) : EmbeddedTense :=
+  .ofFiniteness c.complementizer.IsFinite c.complementizer.IsFinite
 
-theorem ga_no_fSubjunctive (c : EmbeddedClauseType) : gaToLandau c ≠ .fSubjunctive := by
+theorem ga_no_dependent (c : EmbeddedClauseType) : gaToLandau c ≠ .dependent := by
   cases c <;> decide
 
 theorem landau_predicts_control (c : EmbeddedClauseType) (hc : c ≠ .keji) (agr : Bool) :
