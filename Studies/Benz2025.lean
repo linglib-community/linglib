@@ -71,38 +71,6 @@ def readingOf (e : Datum) : Option NominalizationReading :=
   | some "Content" => some .content
   | _ => none
 
-/-! ### Readings from allosemes -/
-
-/-- The alloseme pair deriving each reading on the adopted analysis, where v is semantically
-vacuous on all readings but the CEN (§3.5, following [wood-2023]). By `adopted_roundtrip` and
-`adopted_unique`, this is the unique derivation of each reading in which the two heads are not
-both contentful. -/
-def adoptedAllosemes : NominalizationReading → Verbalizer.Alloseme × Nominalizer.Alloseme
-  | .complexEvent => (.eventive, .zero)
-  | .simpleEvent  => (.zero, .simpleEvent)
-  | .result       => (.zero, .result)
-  | .simpleState  => (.zero, .state)
-  | .simpleEntity => (.zero, .entity)
-  | .content      => (.zero, .content)
-
-theorem adopted_roundtrip (r : NominalizationReading) :
-    readingFromAllosemes (adoptedAllosemes r).1 (adoptedAllosemes r).2 = some r := by
-  cases r <;> rfl
-
-theorem adopted_unique (r : NominalizationReading) (v : Verbalizer.Alloseme)
-    (n : Nominalizer.Alloseme) (hr : readingFromAllosemes v n = some r)
-    (h : ¬ v.IntroducesEvent ∨ n = .zero) :
-    (v, n) = adoptedAllosemes r := by
-  revert hr h; revert r v n; decide
-
--- §3.5
-theorem reading_determines_contentful_head (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) :
-    (readingFromAllosemes v n = some .complexEvent →
-      v.IntroducesEvent ∧ n = .zero) ∧
-    (readingFromAllosemes v n = some .result → n = .result) ∧
-    (readingFromAllosemes v n = some .content → n = .content) := by
-  revert v n; decide
-
 /-! ### Alloseme selection in the nominalization structure -/
 
 /-- `vContext eventive` is v's context in the nominalization structure [n [v √]], with the root,
@@ -115,8 +83,8 @@ def nContext (eventive : Bool) : Neighborhood (Finset Feature) :=
   complement (insert (.cat .v) (if eventive then {.eventive} else ∅))
 
 theorem v_allosemes_licensed :
-    licensed Verbalizer.vocabulary (vContext true) = [.eventive, .zero] ∧
-    licensed Verbalizer.vocabulary (vContext false) = [.zero] := ⟨rfl, rfl⟩
+    licensed Verbalizer.vocabulary (vContext true) = [.eventive, 0] ∧
+    licensed Verbalizer.vocabulary (vContext false) = [0] := ⟨rfl, rfl⟩
 
 /-! ### The composition of the readings
 
@@ -155,17 +123,33 @@ instance : DecidableRel Composes := fun _ _ ↦ inferInstanceAs (Decidable (_ �
 /-- Eventive v gives a relation between an entity and an eventuality, which the noun keeps when
 n is pruned and which only the content alloseme of n takes; with v pruned the root meets n. -/
 theorem composes_iff (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) :
-    Composes v n ↔ (v = .eventive ∧ (n = .zero ∨ n = .content)) ∨
-      (v = .zero ∧ (n = .simpleEvent ∨ n = .state ∨ n = .entity ∨ n = .result ∨
+    Composes v n ↔ (v = .eventive ∧ (n = 0 ∨ n = .content)) ∨
+      (v = 0 ∧ (n = .simpleEvent ∨ n = .state ∨ n = .entity ∨ n = .result ∨
         n = .content)) := by
   revert v n
   decide
+
+/-- The alloseme pair deriving each reading on the adopted analysis, where v is semantically
+vacuous on all readings but the complex event one (§3.5, following [wood-2023]). -/
+def adoptedAllosemes (r : NominalizationReading) : Verbalizer.Alloseme × Nominalizer.Alloseme :=
+  (if r = .complexEvent then .eventive else 0, Nominalizer.Alloseme.readingEquiv.symm r)
 
 -- The alloseme pair adopted for each reading composes.
 theorem adopted_composes (r : NominalizationReading) :
     Composes (adoptedAllosemes r).1 (adoptedAllosemes r).2 := by
   revert r
   decide
+
+/-- The adopted pair is the only derivation of a reading that composes with one of the two heads
+vacuous. -/
+theorem adopted_unique {v : Verbalizer.Alloseme} {n : Nominalizer.Alloseme} (hc : Composes v n)
+    (h : v = 0 ∨ n = 0) : (v, n) = adoptedAllosemes n.reading := by
+  revert hc h; revert v n; decide
+
+-- §3.5: the complex event reading has an interpreted v.
+theorem eventive_of_complexEvent {v : Verbalizer.Alloseme} {n : Nominalizer.Alloseme}
+    (hc : Composes v n) (h : n.reading = .complexEvent) : v = .eventive := by
+  revert hc h; revert v n; decide
 
 /-- The result alloseme does not compose over eventive v: a result nominalization has no
 position for an argument. -/
@@ -176,8 +160,7 @@ event-entailing or not: those of the allosemes of v and n licensed in their cont
 compose. -/
 def availableReadings (eventive : Bool) : List NominalizationReading :=
   (licensed Verbalizer.vocabulary (vContext eventive)).flatMap fun v ↦
-    ((licensed Nominalizer.vocabulary (nContext eventive)).filter (Composes v ·)).filterMap
-      (readingFromAllosemes v)
+    ((licensed Nominalizer.vocabulary (nContext eventive)).filter (Composes v ·)).map (·.reading)
 
 -- (32)
 theorem beobachtung_readings_available :
@@ -204,24 +187,24 @@ def denotations (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) :
 /-- (65): on the event reading n is vacuous and the noun has the verb's meaning, a relation of
 the Theme to the eventuality. -/
 theorem denotations_event :
-    denotations m ρ .eventive .zero = [⟨.evt, fun x e ↦ ρ.onEvents e ∧ m.theme x e⟩] :=
+    denotations m ρ .eventive 0 = [⟨.evt, fun x e ↦ ρ.onEvents e ∧ m.theme x e⟩] :=
   rfl
 
 -- (67): the result reading, over a vacuous v.
 theorem denotations_result :
-    denotations m ρ .zero .result = [⟨.et, fun x ↦ ∃ e, ρ.onEvents e ∧ m.result x e⟩] :=
+    denotations m ρ 0 .result = [⟨.et, fun x ↦ ∃ e, ρ.onEvents e ∧ m.result x e⟩] :=
   rfl
 
 -- (69a): the content reading over a vacuous v, the root relating the entity to an eventuality.
 theorem denotations_content :
-    denotations m ρ .zero .content = [⟨.et, fun x ↦ (∃ e, ρ.rel x e) ∧ m.hasContent x⟩] :=
+    denotations m ρ 0 .content = [⟨.et, fun x ↦ (∃ e, ρ.rel x e) ∧ m.hasContent x⟩] :=
   rfl
 
 /-- The content reading also composes over eventive v, and describes the same entities as over
 a vacuous v when the root's relation is its event predicate with the Theme. -/
 theorem denotations_content_eventive
     (h : ρ.rel = fun x e ↦ ρ.onEvents e ∧ m.theme x e) :
-    denotations m ρ .eventive .content = denotations m ρ .zero .content := by
+    denotations m ρ .eventive .content = denotations m ρ 0 .content := by
   rw [denotations_content, h]
   rfl
 

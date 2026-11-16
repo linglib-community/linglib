@@ -60,7 +60,7 @@ of `Data/Examples/Harley2014.json`.
 namespace Harley2014
 
 open DistributedMorphology
-open DistributedMorphology.Allosemy (toInterpreted embedding)
+open DistributedMorphology.Allosemy (embedding)
 open Morphology
 open Clause Clause.Arguments
 
@@ -201,9 +201,8 @@ theorem cahoot_no_elsewhere : winner? cahootLF ∅ = none := by decide
 /-! ### Both flanks on the `Realization` carrier
 
 Form varies across contexts (`IsProperlySuppletive`), meaning does not vary
-but gaps (an empty `interp` fiber outside the frame, via
-`Allosemy.toInterpreted`): `vocabulary` is the List-2 map, `cahootLF` the
-List-3 map. -/
+but gaps (an empty fiber outside the frame): `vocabulary` is the List-2 map,
+`cahootLF` the List-3 map. -/
 
 /-- List 2 is the `Realization` by Vocabulary Insertion, whose fiber at a root is its
 Elsewhere-selected exponent, and `∅` at an index with no item. -/
@@ -224,16 +223,15 @@ theorem run_isProperlySuppletive : realization.IsProperlySuppletive run := by
     by simp [Morphology.Realization.IsLicensed, hpl], ?_⟩
   rw [hsg, hpl, ne_eq, Finset.singleton_inj]; decide
 
-/-- √548 as a List-3 `Realization.Interpreted` view. -/
-def cahootHead :
-    Morphology.Realization.Interpreted Unit (Neighborhood (Finset Allosemy.Feature)) Unit String :=
-  toInterpreted cahootLF
+/-- The List-3 realization of √548, its interpretation in each neighborhood. -/
+def cahootHead : Morphology.Realization Unit (Neighborhood (Finset Allosemy.Feature)) String :=
+  toRealization cahootLF fun _ n ↦ n
 
 /-- The idiom's root is interpreted only inside its frame, so elsewhere it fails licensing rather
 than showing allosemy (§2.3). -/
 theorem cahoot_interp_gap :
-    cahootHead.interp.realize () (embedding {.cat .n}) = {"a conspiracy"} ∧
-      cahootHead.interp.realize () ∅ = ∅ := by
+    cahootHead.realize () (embedding {.cat .n}) = {"a conspiracy"} ∧
+      cahootHead.realize () ∅ = ∅ := by
   refine ⟨?_, ?_⟩ <;> decide
 
 /-! ### One-replacement and the selection of objects -/

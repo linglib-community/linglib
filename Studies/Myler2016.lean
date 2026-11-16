@@ -187,20 +187,26 @@ theorem attributive_rows :
 
 /-! ### The meaning of a *have* sentence -/
 
-/-- The Voice alloseme a *have* sentence's complement selects ((62)): the
-substrate's competition over `Voice.vocabulary`. -/
-def voiceAlloseme (eventiveVoiceP stative : Bool) : Voice.Alloseme :=
-  Voice.Alloseme.fromComplement
-    ((if eventiveVoiceP then {.cat .v, .eventive} else ∅) ∪ if stative then {.stative} else ∅ :
-      Finset Allosemy.Feature)
+/-- Voice over the copula of a *have* sentence, whose complement has the features `below`. -/
+def haveContext (below : Finset Allosemy.Feature) : Neighborhood (Finset Allosemy.Feature) :=
+  ⟨∅, [{.cat .v}, below], []⟩
 
-/-- Over a relational complement Voice is the expletive identity `⟦v⟧ = λx.x` (61), as with the
-*have* of (7a) and §4.1.1. -/
-theorem expletive_voice_passes_complement : voiceAlloseme false false = .expletive := by decide
+/-- Over a relational complement Voice is expletive, the identity of (62c), so the sentence
+means what its complement means, as with the *have* of (7a) and §4.1.1. -/
+theorem expletive_voice_passes_complement :
+    subsetPrinciple Voice.vocabulary (haveContext {.cat .D}) = some 0 := by decide
 
--- (7b), §4.1.2
-theorem contentful_voice_adds_theta :
-    (voiceAlloseme false true).AssignsTheta ∧ (voiceAlloseme true false).AssignsTheta := by
+-- (56), §4.1.2.2: over an eventive VoiceP the subject of *have* is the engineer.
+theorem engineer_over_eventive_voiceP :
+    subsetPrinciple Voice.vocabulary (haveContext {.cat .Voice, .eventive}) = some .engineer := by
   decide
+
+-- (40b), (62b): a stative vP makes the subject its holder, the experiencer of (7b).
+theorem holder_over_stative :
+    subsetPrinciple Voice.vocabulary (complement {.cat .v, .stative}) = some .holder := by decide
+
+-- (62a): an agentive vP makes the subject its agent.
+theorem agent_over_agentive :
+    subsetPrinciple Voice.vocabulary (complement {.cat .v, .agentive}) = some .agent := by decide
 
 end Myler2016

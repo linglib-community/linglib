@@ -260,44 +260,39 @@ structure Derivation where
 
 namespace Derivation
 
-/-- The reading the allosemes yield. -/
-def reading (d : Derivation) : Option NominalizationReading := readingFromAllosemes d.v d.n
+/-- The reading of the noun, that of its alloseme of n. -/
+def reading (d : Derivation) : NominalizationReading := d.n.reading
 
 /-- The heads of the nominalization, innermost first. -/
 def heads (d : Derivation) : List Categorizer := [.v d.v, .n d.n]
 
 /-- The complex event derivation has eventive v and zero n. -/
-def cen : Derivation := ⟨.eventive, .zero⟩
+def cen : Derivation := ⟨.eventive, 0⟩
 
 /-- The simple event derivation has zero v and the simple event alloseme of n. -/
-def sen : Derivation := ⟨.zero, .simpleEvent⟩
+def sen : Derivation := ⟨0, .simpleEvent⟩
 
 /-- The simple entity derivation has zero v and the entity alloseme of n. -/
-def simpleEntity : Derivation := ⟨.zero, .entity⟩
+def simpleEntity : Derivation := ⟨0, .entity⟩
 
 /-- The result derivation has eventive v and the result alloseme of n. -/
 def result : Derivation := ⟨.eventive, .result⟩
 
-theorem reading_cen : cen.reading = some .complexEvent := rfl
+theorem reading_cen : cen.reading = .complexEvent := rfl
 
-theorem reading_sen : sen.reading = some .simpleEvent := rfl
+theorem reading_sen : sen.reading = .simpleEvent := rfl
 
-theorem reading_simpleEntity : simpleEntity.reading = some .simpleEntity := rfl
+theorem reading_simpleEntity : simpleEntity.reading = .simpleEntity := rfl
 
-theorem reading_result : result.reading = some .result := rfl
+theorem reading_result : result.reading = .result := rfl
 
 /-- The nP denotes an event when v is eventive and n passes its meaning up unchanged. -/
-def Eventive (d : Derivation) : Prop := d.v = .eventive ∧ d.n = .zero
+def Eventive (d : Derivation) : Prop := d.v = .eventive ∧ d.n = 0
 
 instance : DecidablePred Eventive := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-theorem eventive_iff (d : Derivation) : d.Eventive ↔ d.reading = some .complexEvent := by
-  revert d; decide
-
-theorem exists_reading (rd : NominalizationReading) : ∃ d : Derivation, d.reading = some rd := by
-  cases rd
-  exacts [⟨cen, rfl⟩, ⟨sen, rfl⟩, ⟨result, rfl⟩, ⟨⟨.zero, .state⟩, rfl⟩, ⟨simpleEntity, rfl⟩,
-    ⟨⟨.zero, .content⟩, rfl⟩]
+theorem Eventive.reading_eq {d : Derivation} (h : d.Eventive) : d.reading = .complexEvent :=
+  congrArg Nominalizer.Alloseme.reading h.2
 
 end Derivation
 
@@ -327,11 +322,6 @@ theorem nominal_n_not_active_bot (r : Root) (d : Derivation) :
   ComplexHead.not_active_bot_of_cyclic_of_cyclic (k := (⟨0, Nat.two_pos⟩ : Fin d.heads.length))
     (l := nIdx r d) (Fin.lt_def.2 Nat.zero_lt_one) trivial trivial
 
-theorem borers_generalization (r : Root) {d : Derivation}
-    (h : d.reading = some .complexEvent) :
-    d.v = .eventive ∧ ¬ (nominal r d).Active Categorizer.Cyclic (nIdx r d) ⊥ :=
-  ⟨((Derivation.eventive_iff d).2 h).1, nominal_n_not_active_bot r d⟩
-
 /-! ### The external argument -/
 
 /-- The contentful allosemes of i*, the external-argument head that is Voice in the verbal
@@ -342,13 +332,13 @@ inductive IStar.Contentful where
   deriving DecidableEq, Repr, Fintype
 
 /-- The allosemes of i*. -/
-abbrev IStar.Alloseme := Allosemy.Alloseme IStar.Contentful
+abbrev IStar.Alloseme := WithZero IStar.Contentful
 
 namespace IStar.Alloseme
 
-@[match_pattern] def agent : IStar.Alloseme := Allosemy.Alloseme.of .agent
+@[match_pattern] def agent : IStar.Alloseme := WithZero.coe .agent
 
-@[match_pattern] def possessor : IStar.Alloseme := Allosemy.Alloseme.of .possessor
+@[match_pattern] def possessor : IStar.Alloseme := WithZero.coe .possessor
 
 end IStar.Alloseme
 
@@ -365,8 +355,7 @@ def Derivation.features (d : Derivation) : Finset Feature :=
   if d.Eventive then {.cat .n, .eventive} else {.cat .n}
 
 theorem iStar_agent_iff (d : Derivation) :
-    IStar.alloseme d.features = .agent ↔ d.reading = some .complexEvent := by
-  rw [← Derivation.eventive_iff]
+    IStar.alloseme d.features = .agent ↔ d.Eventive := by
   by_cases h : d.Eventive
   · rw [Derivation.features, ite_eq_left h]; exact iff_of_true (by decide) h
   · rw [Derivation.features, ite_eq_right h]; exact iff_of_false (by decide) h
@@ -459,17 +448,28 @@ instance : DecidablePred Derivation.Composes := fun _ ↦ inferInstanceAs (Decid
 result alloseme takes, and which the noun keeps when n is pruned; with v pruned the root meets n
 and takes the type it needs. -/
 theorem Derivation.composes_iff (d : Derivation) :
-    d.Composes ↔ (d.v = .eventive ∧ (d.n = .zero ∨ d.n = .result)) ∨
-      (d.v = .zero ∧ (d.n = .simpleEvent ∨ d.n = .state ∨ d.n = .entity ∨ d.n = .result)) := by
+    d.Composes ↔ (d.v = .eventive ∧ (d.n = 0 ∨ d.n = .result)) ∨
+      (d.v = 0 ∧ (d.n = .simpleEvent ∨ d.n = .state ∨ d.n = .entity ∨ d.n = .result)) := by
   revert d
   decide
 
--- Apart from the content alloseme, the allosemes that compose are those the reading table
--- gives a reading.
-theorem Derivation.composes_iff_reading {d : Derivation} (h : d.n ≠ .content) :
-    d.Composes ↔ d.reading.isSome := by
+-- Among the derivations that compose, the complex event reading is that of eventive v under
+-- the zero alloseme of n.
+theorem Derivation.eventive_iff_reading {d : Derivation} (hc : d.Composes) :
+    d.Eventive ↔ d.reading = .complexEvent := by
   revert d
   decide
+
+-- Every reading but the content one has a derivation that composes.
+theorem Derivation.exists_composes_reading {rd : NominalizationReading} (h : rd ≠ .content) :
+    ∃ d : Derivation, d.Composes ∧ d.reading = rd := by
+  revert rd
+  decide
+
+theorem borers_generalization (r : Root) {d : Derivation} (hc : d.Composes)
+    (h : d.reading = .complexEvent) :
+    d.v = .eventive ∧ ¬ (nominal r d).Active Categorizer.Cyclic (nIdx r d) ⊥ :=
+  ⟨((Derivation.eventive_iff_reading hc).2 h).1, nominal_n_not_active_bot r d⟩
 
 section Denotations
 
@@ -536,7 +536,7 @@ instance : DecidablePred MargComposes := fun _ ↦ inferInstanceAs (Decidable (_
 it composes exactly on eventive v under the allosemes of n that keep or take such a predicate,
 the zero and the result allosemes. -/
 theorem margComposes_iff (d : Derivation) :
-    MargComposes d ↔ d.v = .eventive ∧ (d.n = .zero ∨ d.n = .result) := by
+    MargComposes d ↔ d.v = .eventive ∧ (d.n = 0 ∨ d.n = .result) := by
   revert d
   decide
 
