@@ -24,9 +24,10 @@ def ex11 : Datum :=
     glossedTokens := []
     context := "Max does not in fact cross the street because a bus, cruising along P St. at thirty miles per hour, hits him."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("truthValue", "true")] }
+    paperFeatures := [] }
 
 def ex39 : Datum :=
   { id := "portner1998_ex39"
@@ -37,9 +38,10 @@ def ex39 : Datum :=
     glossedTokens := []
     context := "Max does not in fact cross the street because a bus, cruising along P St. at thirty miles per hour, hits him."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("truthValue", "true")] }
+    paperFeatures := [] }
 
 def ex18_ordinary : Datum :=
   { id := "portner1998_ex18_ordinary"
@@ -50,9 +52,10 @@ def ex18_ordinary : Datum :=
     glossedTokens := []
     context := "Mary, an ordinary person, attacks the town barracks and fights whomever she sees; there is really no chance that she can wipe out the local garrison, much less the whole army."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("truthValue", "false")] }
+    paperFeatures := [] }
 
 def ex18_hero : Datum :=
   { id := "portner1998_ex18_hero"
@@ -63,9 +66,10 @@ def ex18_hero : Datum :=
     glossedTokens := []
     context := "Mary, against all odds, actually succeeds in destroying the whole Roman army."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("truthValue", "true")] }
+    paperFeatures := [] }
 
 def all : List Datum := [ex11, ex39, ex18_ordinary, ex18_hero]
 

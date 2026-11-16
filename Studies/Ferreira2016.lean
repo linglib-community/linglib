@@ -313,13 +313,13 @@ theorem not_mem_IMP_accident :
 true, the Atlantic and the habit after the accident false. -/
 theorem truthValue_rows :
     (now ∈ IMP atomize streetBase notInterrupted cross .stopped ↔
-        Examples.ex45.feature? "truthValue" = some "true") ∧
+        Examples.ex45.verdict = some true) ∧
       (now ∈ IMP atomize atlanticBase notInterrupted cross .stopped ↔
-        Examples.ex46.feature? "truthValue" = some "true") ∧
+        Examples.ex46.verdict = some true) ∧
       (utterance ∈ IMP PL soccerBase keepsPlaying playSoccer .plays ↔
-        Examples.ex54.feature? "truthValue" = some "true") ∧
+        Examples.ex54.verdict = some true) ∧
       (utterance ∈ IMP PL accidentBase keepsPlaying playSoccer .plays ↔
-        Examples.ex54_accident.feature? "truthValue" = some "true") :=
+        Examples.ex54_accident.verdict = some true) :=
   ⟨iff_of_true mem_IMP_street (by decide), iff_of_false not_mem_IMP_atlantic (by decide),
     iff_of_true mem_IMP_soccer (by decide), iff_of_false not_mem_IMP_accident (by decide)⟩
 

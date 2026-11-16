@@ -435,9 +435,10 @@ def ex_4_17d : Datum :=
     glossedTokens := []
     context := "At 10 A.M. John and Bill are peeping into a room where Sue is. John, near-sighted, says Mary is in the room. Bill denies it. One minute later Sue is still in the room and Bill reports this to Kent, adding: But that's not true. The one that is in the room is Sue."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("truthValue", "true")] }
+    paperFeatures := [] }
 
 def ex_4_24_Case_1 : Datum :=
   { id := "ogihara1989_4_24_Case_1"

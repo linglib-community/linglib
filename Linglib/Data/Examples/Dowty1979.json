@@ -13,14 +13,10 @@
     "translation": "",
     "context": "A coin is being flipped but has not yet landed, and nothing else about the situation predetermines how it will land.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "truthValue",
-        "false"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "(24) requires that The coin is coming up heads and The coin is coming up tails should both be true, but this is a counterintuitive result (p. 147); the relevant worlds include both outcomes, so neither counts as true (p. 148).",
     "verified": "page-image"
   },
@@ -38,14 +34,10 @@
     "translation": "",
     "context": "A coin is being flipped but has not yet landed, and nothing else about the situation predetermines how it will land.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "truthValue",
-        "false"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "As for heads (pp. 147-148).",
     "verified": "page-image"
   },
@@ -63,14 +55,10 @@
     "translation": "",
     "context": "John fell asleep while watching television, so his watching did not extend beyond the time he fell asleep.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "truthValue",
-        "true"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "(28) clearly does not require us to suppose that the period of John's watching television extended beyond the time of his falling asleep, but Bennett and Partee's analysis would require that it did (p. 150).",
     "verified": "page-image"
   }
