@@ -23,6 +23,7 @@ exactly when the points sent there are sup-closed.
 * `mem_supClosure_image`, `mem_infClosure_image`: membership in the closure of an image.
 * `Set.mem_supClosure_image`, `Set.mem_infClosure_image`: the same for a family of sets.
 * `sInf_supClosure`, `sSup_infClosure`: the closures keep the infimum and the supremum.
+* `infClosure_union`: the inf-closure of a union.
 * `IsLowerSet.exists_isGreatest_iff`: a finite lower set has a greatest element iff it is
   nonempty and sup-closed.
 * `exists_isLeast_range_inter_iff`: the same for the least value of an order-reversing embedding.
@@ -125,6 +126,36 @@ theorem exists_isLeast_range_inter_iff [Finite α] (hf : ∀ a b, f a ≤ f b �
   exact ⟨a, (isLeast_range_inter_iff hf).1 h⟩
 
 end Greatest
+
+section Lattice
+
+variable [Lattice α]
+
+/-- The inf-closure of a union consists of the two inf-closures and the meets across them. -/
+theorem infClosure_union (s t : Set α) :
+    infClosure (s ∪ t) =
+      infClosure s ∪ infClosure t ∪ Set.image2 (· ⊓ ·) (infClosure s) (infClosure t) := by
+  refine (infClosure_min ?_ ?_).antisymm (Set.union_subset (Set.union_subset
+    (infClosure_mono Set.subset_union_left) (infClosure_mono Set.subset_union_right)) ?_)
+  · exact Set.union_subset (fun a ha ↦ .inl (.inl (subset_infClosure ha)))
+      fun a ha ↦ .inl (.inr (subset_infClosure ha))
+  · have hs := infClosed_infClosure (s := s)
+    have ht := infClosed_infClosure (s := t)
+    rintro _ ((ha | hb) | ⟨a, ha, b, hb, rfl⟩) _ ((ha' | hb') | ⟨a', ha', b', hb', rfl⟩)
+    · exact .inl (.inl (hs ha ha'))
+    · exact .inr ⟨_, ha, _, hb', rfl⟩
+    · exact .inr ⟨_, hs ha ha', _, hb', inf_assoc ..⟩
+    · exact .inr ⟨_, ha', _, hb, inf_comm ..⟩
+    · exact .inl (.inr (ht hb hb'))
+    · exact .inr ⟨_, ha', _, ht hb hb', inf_left_comm ..⟩
+    · exact .inr ⟨_, hs ha ha', _, hb, inf_right_comm ..⟩
+    · exact .inr ⟨_, ha, _, ht hb hb', (inf_assoc ..).symm⟩
+    · exact .inr ⟨_, hs ha ha', _, ht hb hb', inf_inf_inf_comm ..⟩
+  · rintro _ ⟨a, ha, b, hb, rfl⟩
+    exact infClosed_infClosure (infClosure_mono Set.subset_union_left ha)
+      (infClosure_mono Set.subset_union_right hb)
+
+end Lattice
 
 namespace Set
 

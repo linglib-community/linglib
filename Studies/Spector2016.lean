@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.ConjunctiveDisjunct
 public import Mathlib.Order.WithBot
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Spector (2016): Comparing Exhaustivity Operators
@@ -22,8 +23,11 @@ conjunction as an alternative leaves the minimal worlds unchanged, as closing th
 under conjunction and disjunction always does (`Exhaustification.exhMW_latticeClosure`), and
 makes innocent exclusion exclusive too (`exhIE_or_and`). The paper's shortcut for computing
 innocent exclusion over a large alternative set, running the minimal-world operator over the
-elementary propositions instead (`Exhaustification.exhIE_latticeClosure`), is illustrated on
-*either Mary came, or both Peter and Sue did* (`exhMW_or_and_three`, `exhIE_or_and_three`).
+elementary propositions instead, holds for the alternatives of [sauerland-2004]
+(`Exhaustification.exhIE_eval_image_alternatives`) and for the closure of the elementary
+propositions under conjunction and disjunction (`Exhaustification.exhIE_latticeClosure`), and is
+illustrated on *either Mary came, or both Peter and Sue did* (`exhMW_or_and_three`,
+`exhIE_alternatives_or_and_three`, `exhIE_or_and_three`).
 Finally, a vacuous minimal-world operator makes innocent exclusion vacuous
 (`exhIE_eq_of_exhMW_eq`), which settles the infinite case of *there are at least n stars*
 against the alternatives *exactly m* and *at least m* for every `m` ([schwarz-2013]): every
@@ -31,15 +35,12 @@ world with at least `n` stars, or infinitely many, is minimal (`exhMW_stars`, `e
 
 ## Implementation notes
 
-The theorem that innocent exclusion over the alternatives of [sauerland-2004] equals the
-minimal-world operator over the elementary sentences is formalized up to the generation of the
-alternatives: `Exhaustification.exhIE_eq_exhMW_of_infClosure_subset` gives it for any
-alternatives that include the conjunctions of the elementary propositions and lie in their
-closure under conjunction and disjunction, mathlib's `latticeClosure`, the closure under finite
-meets and joins. Independence of the
-disjuncts is the existence of a world verifying one disjunct alone, assumed only where a case
-needs it. The alternative sets of the illustrations are the paper's, without the prejacent,
-which the substrate's compatible sets carry separately.
+The closure of a set of propositions under conjunction and disjunction is mathlib's
+`latticeClosure`, the closure under finite meets and joins. The theorem on the alternatives of
+[sauerland-2004] is proved for any prejacent, not only the sentence whose alternatives they
+are. Independence of the disjuncts is the existence of a world verifying one disjunct alone,
+assumed only where a case needs it. The alternative sets of the illustrations are the paper's,
+without the prejacent, which the substrate's compatible sets carry separately.
 
 ## References
 
@@ -164,6 +165,17 @@ theorem exhMW_or_and_three (hm : (m \ (p ∪ s)).Nonempty) :
   rw [union_comm m, union_comm (m \ _), ← exhMW_inter_union hm]
   congr 1
   grind
+
+/-- Innocent exclusion against Sauerland's alternatives of `m ∨ (p ∧ s)` is the minimal-world
+operator over `m`, `p`, `s`. -/
+theorem exhIE_alternatives_or_and_three (hm : (m \ (p ∪ s)).Nonempty) :
+    exhIE (Sauerland.Sentence.eval ![m, p, s] ''
+        (Sauerland.Sentence.conn .or (.atom 0) (.conn .and (.atom 1) (.atom 2))).alternatives)
+      (m ∪ (p ∩ s)) = (m \ (p ∪ s)) ∪ ((p ∩ s) \ m) := by
+  rw [exhIE_eval_image_alternatives, ← exhMW_or_and_three hm]
+  congr 1
+  ext q
+  simp [Sauerland.Sentence.atoms, or_comm, or_left_comm]
 
 /-- Innocent exclusion against every conjunction and disjunction of `m`, `p`, `s` is the
 minimal-world operator over the three. -/

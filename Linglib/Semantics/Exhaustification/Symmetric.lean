@@ -14,8 +14,7 @@ problem for scalar implicature, and [fox-katzir-2011]'s definition of it. The fi
 `IsSymmetric`, shows that the second symmetric alternative is the assertion without the first,
 that symmetric alternatives are complements below the assertion (`isSymmetric_iff_isCompl`), and
 that a set of propositions closed under negation and conjunction, a `BooleanSubalgebra`, contains
-both or neither. The namespace `Alternatives` is the owner of terms of the theory of formal
-alternatives about sets of propositions, Fox and Katzir's symmetric alternatives here.
+both or neither.
 
 ## References
 

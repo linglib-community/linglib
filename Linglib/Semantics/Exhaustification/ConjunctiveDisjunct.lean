@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Linglib.Semantics.Exhaustification.Closure
 
 /-!
 # Exhaustifying a disjunction with a conjunctive disjunct
