@@ -47,7 +47,10 @@ bound-variable row of Table 2 rests on the *de se* example (53); the paper
 has no *only* test, so `Landau2013.Diagnostic.strictUnderOnly` is never attested
 and the bound-variable clause of the signature holds unrefuted rather than
 tested. The paper tests reference only in the `ni`- and `akɛ`-clauses, so the
-comparison with Landau's scale of finiteness is stated for those two.
+comparison with Landau's calculus is stated for those two. The thesis adopts
+Landau's properties of PRO and does not apply his calculus of tense and agreement
+to Gã; `landau_predicts_control_iff` does, and finds that it fits only if the
+finite clause bears agreement, which the thesis argues Gã lacks.
 
 ## References
 
@@ -285,23 +288,32 @@ theorem ake_refutes_codependent : .codependent ∈ Landau2013.refutes '' atteste
 
 /-! ### Landau's scale -/
 
-/-- Gã clause types on [landau-2004]'s finiteness scale — a scale position, not
-    a mood claim. Unrestricted TAM and independent tense both coincide with the
-    complementizer's finiteness (exx 109–111, 118–119). -/
+/-- The tense of a Gã clause type in [landau-2004]'s calculus. Unrestricted tense, aspect and
+mood and a tense of the clause's own both coincide with the complementizer's finiteness
+(exx 109–111, 118–119), so no clause type has dependent tense. -/
 def gaToLandau (c : EmbeddedClauseType) : Clause.EmbeddedTense :=
   .ofFiniteness c.complementizer.IsFinite c.complementizer.IsFinite
 
 theorem ga_no_dependent (c : EmbeddedClauseType) : gaToLandau c ≠ .dependent := by
   cases c <;> decide
 
-theorem landau_predicts_control (c : EmbeddedClauseType) (hc : c ≠ .keji) (agr : Bool) :
-    Landau2013.refutes '' attested c = ∅ ↔ (gaToLandau c).HasOC agr := by
-  cases c with
-  | keji => exact absurd rfl hc
-  | ni => exact iff_of_true ni_obligatory (by cases agr <;> decide)
-  | ake =>
-    exact iff_of_false (Set.nonempty_iff_ne_empty.1 ⟨_, ake_refutes_codependent⟩)
-      (by cases agr <;> decide)
+/-- [landau-2004]'s calculus gives the `ni`- and `akɛ`-clauses their control profiles exactly
+when the inflectional head bears agreement: without it the finite `akɛ`-clause, tensed and
+unagreeing, is assigned `[−R]` and predicted to be controlled. The verb shows no agreement in
+either clause (`no_agreement_rows`). -/
+theorem landau_predicts_control_iff (agr : Bool) :
+    (∀ c, c ≠ .keji → (Landau2013.refutes '' attested c = ∅ ↔ (gaToLandau c).HasOC agr)) ↔
+      agr = true := by
+  cases agr
+  · refine iff_of_false (fun h ↦ ?_) (by decide)
+    exact Set.nonempty_iff_ne_empty.1 ⟨_, ake_refutes_codependent⟩
+      ((h .ake (by decide)).2 (by decide))
+  · refine iff_of_true (fun c hc ↦ ?_) rfl
+    cases c with
+    | keji => exact absurd rfl hc
+    | ni => exact iff_of_true ni_obligatory (by decide)
+    | ake =>
+      exact iff_of_false (Set.nonempty_iff_ne_empty.1 ⟨_, ake_refutes_codependent⟩) (by decide)
 
 theorem not_isFinite_codings_iff (c : EmbeddedClauseType) :
     (∀ cd ∈ c.frame.codings, ¬ cd.IsFinite) ↔ ¬ c.complementizer.IsFinite := by

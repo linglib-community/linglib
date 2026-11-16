@@ -148,14 +148,14 @@ def EmbeddedTense.ofFiniteness (unrestrictedTAM independentTense : Prop)
   else if independentTense then .dependent else .anaphoric
 
 /-- (35), (37), (38): the clause of a tense, at the agreement value `agr` of I and, for dependent
-tense, `cAgr` of C. Agreement on C needs `[+T]` there, and an indicative, the clause of
-independent tense, has agreement on I. -/
+tense, `cAgr` of C. Agreement on C needs `[+T]` there. An indicative is the clause of independent
+tense with agreement on I. -/
 def EmbeddedTense.toFiniteness (t : EmbeddedTense) (agr : Bool) (cAgr : Bool := false) :
     Finiteness :=
   match t with
   | .anaphoric => ⟨⟨some false, some agr⟩, ⟨some false, none⟩⟩
   | .dependent => ⟨⟨some true, some agr⟩, ⟨some true, if cAgr then some true else none⟩⟩
-  | .independent => ⟨⟨some true, some true⟩, ⟨none, none⟩⟩
+  | .independent => ⟨⟨some true, some agr⟩, ⟨none, none⟩⟩
 
 /-- A complement of a tense shows obligatory control when its clause licenses PRO and no
 referential subject. -/
@@ -165,10 +165,11 @@ def EmbeddedTense.HasOC (t : EmbeddedTense) (agr : Bool) (cAgr : Bool := false) 
 instance (t : EmbeddedTense) (agr cAgr : Bool) : Decidable (t.HasOC agr cAgr) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Anaphoric tense gives obligatory control whatever the agreement, and dependent tense gives it
-without agreement on I, whatever C carries. -/
+/-- Anaphoric tense gives obligatory control whatever the agreement, and a tensed complement
+gives it exactly without agreement on I, whatever C carries: tense and agreement together are what
+cancel control. -/
 theorem EmbeddedTense.hasOC_iff (t : EmbeddedTense) (agr cAgr : Bool) :
-    t.HasOC agr cAgr ↔ t = .anaphoric ∨ (t = .dependent ∧ agr = false) := by
+    t.HasOC agr cAgr ↔ t = .anaphoric ∨ agr = false := by
   cases t <;> cases agr <;> cases cAgr <;> decide
 
 -- (38), (69)
