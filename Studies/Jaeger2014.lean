@@ -1378,13 +1378,13 @@ private theorem icrR_one : game.icrR 1 = {r | r () 0 = 0} := by
   ext r
   rw [SemanticGame.icrR_succ, icrR_zero, SemanticGame.receiverStep,
     show game.senderCR {fun _ _ ↦ 0} = {fun _ _ ↦ 0} from icrR_zero ▸ icrS_zero,
-    Set.mem_ofPred_eq, Set.mem_ofPred_eq, SemanticGame.mem_receiverCR_iff]
+    Set.mem_ofPred_eq, SemanticGame.mem_receiverCR_iff]
   constructor
   · rintro ⟨⟨σ, q, hσ, -, hBR⟩, -⟩
     rw [coe_support_eq_singleton] at hσ
     subst hσ
     simpa [e0] using hBR () 0
-  · intro hr
+  · intro (hr : r () 0 = 0)
     refine ⟨⟨.single _, .single (), coe_support_eq_singleton.2 rfl, by simp, fun c ↦ ?_⟩,
       fun f _ c ↦ ?_⟩
     · cases c; rw [Fin.forall_fin_two]
