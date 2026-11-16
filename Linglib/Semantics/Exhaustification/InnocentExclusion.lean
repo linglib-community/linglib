@@ -434,6 +434,12 @@ theorem exhMW_sUnion_image_powerset : exhMW (sUnion '' 𝒫 ALT) φ = exhMW ALT 
   rintro _ ⟨X, hX, rfl⟩ u v h ⟨q, hq, hvq⟩
   exact ⟨q, hq, h q (hX hq) hvq⟩
 
+theorem exhMW_sInter_image_powerset : exhMW (sInter '' 𝒫 ALT) φ = exhMW ALT φ := by
+  refine exhMW_congr (Preorder.ofCriteria_eq_of_subset
+    (fun a ha ↦ ⟨{a}, singleton_subset_iff.2 ha, sInter_singleton a⟩) ?_)
+  rintro _ ⟨X, hX, rfl⟩ u v h hv q hq
+  exact h q (hX hq) (hv q hq)
+
 /-- Innocent exclusion is unchanged by closing the alternatives under disjunction, since a
 disjunction fails at every minimal world iff each disjunct does. -/
 theorem exhIE_sUnion_image_powerset : exhIE (sUnion '' 𝒫 ALT) φ = exhIE ALT φ := by

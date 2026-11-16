@@ -8,7 +8,9 @@ public import Mathlib.Order.WithBot
 
 This file formalizes the worked cases of [spector-2016], which compares the exhaustivity
 operator based on minimal worlds, `exhMW`, with the operator of [fox-2007] based on innocent
-exclusion, `exhIE`. The paper's general results live in the substrate: the minimal-world
+exclusion, `exhIE`, and with the operator `exh` that denies every alternative the prejacent
+does not entail. The paper's general results live in the substrate: all three agree when `exh`
+is consistent (`exhIE_eq_exh_of_nonempty`, `exhMW_eq_exh_of_nonempty`), the minimal-world
 operator entails the innocent-exclusion operator, an alternative is innocently excludable
 exactly when the minimal worlds falsify it, closing the alternatives under conjunction makes
 the two operators coincide (`exhMW_eq_exhIE_of_infClosed`), and closing them under
@@ -29,9 +31,8 @@ world with at least `n` stars, or infinitely many, is minimal (`exhMW_stars`, `e
 
 ## Implementation notes
 
-The third operator the paper compares, which denies every non-entailed alternative, and the
-theorem that innocent exclusion over the alternatives of [sauerland-2004] equals the
-minimal-world operator over the elementary sentences are not formalized; the shortcut is
+The theorem that innocent exclusion over the alternatives of [sauerland-2004] equals the
+minimal-world operator over the elementary sentences is not formalized; the shortcut is
 shown for the closure of the elementary propositions under conjunction and disjunction, which
 is mathlib's `latticeClosure`, the closure under finite meets and joins. Independence of the
 disjuncts is the existence of a world verifying one disjunct alone, assumed only where a case
