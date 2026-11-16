@@ -1,36 +1,28 @@
 module
 
-public import Linglib.Core.ModelTheory.ManySorted.Traverse
-public import Mathlib.Data.Set.Image
+public import Linglib.Core.ModelTheory.ManySorted.Comap
+public import Linglib.Semantics.Composition.Rules
 
 /-!
-# Continuized values
+# Continuized grammars
 
-A continuized value is a function of its context, and a context takes the value, and whatever is
-still to come, to an answer. Continuized values are computations: applying one to another
-evaluates the function first, so the context of the argument contains the function and the
-context of the function still awaits the argument. The structure on these computations of a
-structure for a language of rules, `ManySorted.Language.Structure.applicative`, is the
-continuized grammar, and a derivation over lifted items [has the lift of its
-value](##Continuized.realize_applicative_lift). Applying in the context of each other is a second
-application, `Continuized.symmetric`.
+A continuized constituent is a computation at the effect of continuations: a function of its
+context, which takes its value to an answer. A grammar of binary rules has a continuized grammar
+over the same types. Its rule in order gives the second daughter a context that contains the
+first, and gives the first a context whose answer still awaits the second, so the two daughters
+are continuized at different answer types. Its symmetric rule is Structured App: each daughter is
+in the context of the other, at one answer type. A derivation is continuized at an answer type
+by continuizing its rules in order (`ManySorted.Language.Term.continuize`), and where its items
+only return their values [it returns its value](##Interpreter.realize_continuize).
 
 ## Main definitions
 
-* `Continuized`: the continuized values of a type, with `Continuized.lift` and `Continuized.map`,
-  computations by evaluation in order.
-* `Continuized.symmetric`: the computations in which each of two values is in the context of the
-  other.
-* `Continuized.saturations`: the answers a context gives.
-
-## Implementation notes
-
-A context of [barker-2022] has a type `α → R` for any `R` ending in the type of answers. Here the
-arguments that `R` awaits are a single index, so a context is a family `α → ι → Ω` of answers,
-and a continuized value is a function of contexts over every index type. Evaluation in order is
-not a lawful applicative functor: a value may inspect the whole of its context, as a
-presupposition trigger does, and then associating an application differently changes the index
-it sees.
+* `Interpreter.Continuized`, `Interpreter.continuized`: the rules of the continuized grammar,
+  and the grammar.
+* `Interpreter.Ty.arrows`: the answer type that awaits arguments of given types.
+* `ManySorted.Language.Term.continuize`: a derivation continuized at an answer that awaits
+  arguments of given types.
+* `Interpreter.saturations`: the answers a value gives, over the arguments it awaits.
 
 ## References
 
@@ -40,79 +32,141 @@ it sees.
 
 @[expose] public section
 
-universe u v w
+open ManySorted ManySorted.Language
 
-/-- A continuized value of type `α` with answers in `Ω`: a function of its context, which takes
-the value and an index `ι` for whatever is still to come to an answer. -/
-def Continuized (Ω : Type v) (α : Type u) : Type (max (u + 1) v) :=
-  ∀ ι : Type u, (α → ι → Ω) → ι → Ω
+namespace Interpreter
 
-namespace Continuized
+variable {B : Type} {L : Language.{0, 0} (Ty B)} {D : B → Type}
 
-variable {Ω : Type v} {α β : Type u}
+/-- The rules of the continuized grammar of a grammar, one in order and one symmetric for each
+of its binary rules, at each answer type. -/
+inductive Continuized (L : Language.{0, 0} (Ty B)) : Ty B → Ty B → Ty B → Type
+  /-- The rule in order: the answer of the first daughter awaits the second. -/
+  | seq {a b c : Ty B} (f : L.Binary a b c) (r : Ty B) :
+      Continuized L (.comp (.C (b ⇒ r)) a) (.comp (.C r) b) (.comp (.C r) c)
+  /-- The symmetric rule: both daughters at one answer type. -/
+  | sym {a b c : Ty B} (f : L.Binary a b c) (r : Ty B) :
+      Continuized L (.comp (.C r) a) (.comp (.C r) b) (.comp (.C r) c)
 
-/-- The value that gives itself to its context. -/
-def lift (a : α) : Continuized Ω α := fun _ κ ↦ κ a
+/-- The meaning of a continuized rule. In order, the context of the second daughter contains the
+first, and the context of the first is a function of the second's value. Symmetrically, the
+context of each contains the other. -/
+def Continuized.eval (D : B → Type) [M : L.Structure (Ty.Dom D)] :
+    {l r u : Ty B} → Continuized L l r u → l.Dom D → r.Dom D → u.Dom D
+  | _, _, _, .seq f _, β, γ => fun κ ↦ γ (β fun x y ↦ κ (M.funMap f (x, y)))
+  | _, _, _, .sym f _, β, γ => fun κ ↦ β fun x ↦ γ fun y ↦ κ (M.funMap f (x, y))
 
-/-- A continuized value under a function of values. -/
-def map (h : α → β) (m : Continuized Ω α) : Continuized Ω β := fun ι κ ↦ m ι fun x ↦ κ (h x)
+/-- The continuized grammar of a grammar, as a language over the types. -/
+@[reducible] def continuized (L : Language.{0, 0} (Ty B)) : Language.{0, 0} (Ty B) :=
+  .mk₂ (fun _ _ ↦ PEmpty) (Continuized L)
 
-/-- Evaluation in order: the context of the argument contains the function, and the context of
-the function awaits the argument. -/
-instance : Applicative (Continuized.{u, v} Ω) where
-  pure := lift
-  map := map
-  seq f x := fun ι κ ↦ x () ι fun a i ↦ f (_ × ι) (fun g p ↦ κ (g p.1) p.2) (a, i)
+instance [L.Structure (Ty.Dom D)] : (continuized L).Structure (Ty.Dom D) :=
+  .mk₂ nofun (Continuized.eval D)
 
-/-- Evaluation of a function and its argument each in the context of the other. -/
-@[reducible] def symmetric : Applicative (Continuized.{u, v} Ω) where
-  pure := lift
-  map := map
-  seq f x := fun ι κ ↦ f ι fun g ↦ x () ι fun a ↦ κ (g a)
+/-- The answer type that awaits arguments of the types `l` before an answer of type `p`. -/
+abbrev Ty.arrows : List (Ty B) → Ty B → Ty B
+  | [], p => p
+  | a :: l, p => a ⇒ Ty.arrows l p
 
-/-- The answer of a continuized answer in the empty context. -/
-def lower (m : Continuized Ω Ω) : Ω := m PUnit (fun a _ ↦ a) ⟨⟩
+/-- The answers of type `p` that a value gives, over the arguments it awaits. -/
+def saturations (D : B → Type) (p : Ty B) :
+    (l : List (Ty B)) → (Ty.arrows l p).Dom D → Set (p.Dom D)
+  | [], f => {f}
+  | _ :: l, f => ⋃ x, saturations D p l (f x)
 
-@[simp] theorem map_lift (h : α → β) (a : α) : map h (lift a : Continuized Ω α) = lift (h a) := rfl
+/-- A lexical item of a grammar as an item of its continuized grammar, at an answer that awaits
+arguments of the types `l`. -/
+inductive Continuized.Item (p : Ty B) (W : Ty B → Type) : Ty B → Type
+  /-- The item `x` at the answer type `Ty.arrows l p`. -/
+  | at {a : Ty B} (x : W a) (l : List (Ty B)) : Item p W (.comp (.C (Ty.arrows l p)) a)
 
-@[simp] theorem lower_lift (a : Ω) : lower (lift a) = a := rfl
+end Interpreter
 
-theorem pure_eq_lift (a : α) : (pure a : Continuized.{u, v} Ω α) = lift a := rfl
+namespace ManySorted
 
-open ManySorted ManySorted.Language in
-/-- A derivation whose items are lifted has, in the structure on continuized values, the lift of
-its value. -/
-theorem realize_applicative_lift {S : Type u} {L : Language.{u, u} S} {D γ : S → Type u}
-    (M : L.Structure D) (ρ : ∀ {s : S}, γ s → D s) {s : S} (t : L.Term γ (.of s)) :
-    t.realize (M.applicative (Continuized.{u, v} Ω)) (fun x ↦ lift (ρ x)) = lift (t.realize M ρ) :=
-  Term.realize_applicative_pure M (fun _ _ ↦ rfl) (fun _ _ ↦ rfl) ρ t
+open Interpreter
 
-open ManySorted ManySorted.Language in
-/-- A derivation whose items are lifted has, evaluated symmetrically, the lift of its value. -/
-theorem realize_applicative_symmetric_lift {S : Type u} {L : Language.{u, u} S}
-    {D γ : S → Type u} (M : L.Structure D) (ρ : ∀ {s : S}, γ s → D s) {s : S}
-    (t : L.Term γ (.of s)) :
-    t.realize (@Structure.applicative _ _ _ (Continuized.{u, v} Ω) symmetric M)
-        (fun x ↦ lift (ρ x)) = lift (t.realize M ρ) :=
-  @Term.realize_applicative_pure _ _ _ _ (Continuized.{u, v} Ω) symmetric M (fun _ _ ↦ rfl)
-    (fun _ _ ↦ rfl) ρ _ t
+variable {B : Type} {L : Language.{0, 0} (Ty B)} {D : B → Type} {W : Ty B → Type} (p : Ty B)
 
-/-- The answers a context gives, over its values and whatever is still to come. -/
-def saturations {α ι : Type*} (κ : α → ι → Ω) : Set Ω := Set.range fun p : α × ι ↦ κ p.1 p.2
+/-- The types of the arguments of a shape, in order. -/
+def Signature.types : Signature (Ty B) → List (Ty B)
+  | .nil => []
+  | .of a => [a]
+  | .prod σ τ => σ.types ++ τ.types
 
-section Saturations
+/-- The shape of continuized arguments, at an answer that awaits arguments of the types `l`:
+each argument also awaits the arguments after it. -/
+def Signature.continuize : Signature (Ty B) → List (Ty B) → Signature (Ty B)
+  | .nil, _ => .nil
+  | .of a, l => .of (.comp (.C (Ty.arrows l p)) a)
+  | .prod σ τ, l => .prod (σ.continuize (τ.types ++ l)) (τ.continuize l)
 
-variable {α ι δ ε : Type*} {κ : α → ι → Ω} {κ' : δ → ε → Ω}
+/-- A derivation continuized at an answer that awaits arguments of the types `l`: each rule is
+continuized in order, and each item is taken at the answer its position gives it. -/
+def Language.Term.continuize [L.IsBinary] :
+    {σ : Signature (Ty B)} → L.Term W σ → (l : List (Ty B)) →
+      (continuized L).Term (Continuized.Item p W) (σ.continuize p l)
+  | _, .var x, l => .var (.at x l)
+  | _, .prod a b, l => .prod (a.continuize _) (b.continuize l)
+  | _, .nil, _ => .nil
+  | _, .func (σ := σ) (t := u) f d, l =>
+    match σ, f, d with
+    | .prod (.of _) (.of _), f, d => .func (Continuized.seq f (Ty.arrows l p)) (d.continuize l)
+    | .nil, f, _ => (IsBinary.isEmpty_of_ne .nil u fun _ _ h ↦ nomatch h).elim f
+    | .of a, f, _ => (IsBinary.isEmpty_of_ne (.of a) u fun _ _ h ↦ nomatch h).elim f
+    | .prod .nil τ, f, _ => (IsBinary.isEmpty_of_ne (.prod .nil τ) u fun _ _ h ↦ nomatch h).elim f
+    | .prod (.prod σ₁ σ₂) τ, f, _ =>
+      (IsBinary.isEmpty_of_ne (.prod (.prod σ₁ σ₂) τ) u fun _ _ h ↦ nomatch h).elim f
+    | .prod (.of a) .nil, f, _ =>
+      (IsBinary.isEmpty_of_ne (.prod (.of a) .nil) u fun _ _ h ↦ nomatch h).elim f
+    | .prod (.of a) (.prod τ₁ τ₂), f, _ =>
+      (IsBinary.isEmpty_of_ne (.prod (.of a) (.prod τ₁ τ₂)) u fun _ _ h ↦ nomatch h).elim f
 
-theorem mem_saturations {p : Ω} : p ∈ saturations κ ↔ ∃ a i, κ a i = p :=
-  ⟨fun ⟨⟨a, i⟩, h⟩ ↦ ⟨a, i, h⟩, fun ⟨a, i, h⟩ ↦ ⟨(a, i), h⟩⟩
+end ManySorted
 
-theorem saturations_subset (h : ∀ a i, ∃ d e, κ' d e = κ a i) :
-    saturations κ ⊆ saturations κ' := by
-  rintro _ ⟨⟨a, i⟩, rfl⟩
-  obtain ⟨d, e, h⟩ := h a i
-  exact ⟨(d, e), h⟩
+namespace Interpreter
 
-end Saturations
+variable {B : Type} {L : Language.{0, 0} (Ty B)} {D : B → Type} {W : Ty B → Type} {p : Ty B}
+  [L.IsBinary] [M : L.Structure (Ty.Dom D)]
 
-end Continuized
+/-- Continuized arguments that each only return the argument of a shape. -/
+private def Returns : (σ : Signature (Ty B)) → (l : List (Ty B)) → σ.Interpret (Ty.Dom D) →
+    (σ.continuize p l).Interpret (Ty.Dom D) → Prop
+  | .nil, _, _, _ => True
+  | .of _, _, x, m => m = fun κ ↦ κ x
+  | .prod σ τ, l, x, m => Returns σ (τ.types ++ l) x.1 m.1 ∧ Returns τ l x.2 m.2
+
+private theorem returns_realize_continuize (ρ : ∀ {a : Ty B}, W a → a.Dom D)
+    (den : ∀ {a : Ty B}, Continuized.Item p W a → a.Dom D)
+    (hden : ∀ {a : Ty B} (x : W a) (l : List (Ty B)), den (.at x l) = fun κ ↦ κ (ρ x)) :
+    ∀ {σ : Signature (Ty B)} (t : L.Term W σ) (l : List (Ty B)),
+      Returns σ l (t.realize M ρ) ((t.continuize p l).realize inferInstance den)
+  | _, .var x, l => hden x l
+  | _, .prod a b, l =>
+    ⟨returns_realize_continuize ρ den hden a _, returns_realize_continuize ρ den hden b l⟩
+  | _, .nil, _ => trivial
+  | _, .func (σ := σ) (t := u) f d, l =>
+    match σ, f, d with
+    | .prod (.of _) (.of _), f, d => by
+      obtain ⟨h₁, h₂⟩ := returns_realize_continuize ρ den hden d l
+      exact congrArg₂ (Continuized.eval D (.seq f (Ty.arrows l p))) h₁ h₂
+    | .nil, f, _ => (IsBinary.isEmpty_of_ne .nil u fun _ _ h ↦ nomatch h).elim f
+    | .of a, f, _ => (IsBinary.isEmpty_of_ne (.of a) u fun _ _ h ↦ nomatch h).elim f
+    | .prod .nil τ, f, _ => (IsBinary.isEmpty_of_ne (.prod .nil τ) u fun _ _ h ↦ nomatch h).elim f
+    | .prod (.prod σ₁ σ₂) τ, f, _ =>
+      (IsBinary.isEmpty_of_ne (.prod (.prod σ₁ σ₂) τ) u fun _ _ h ↦ nomatch h).elim f
+    | .prod (.of a) .nil, f, _ =>
+      (IsBinary.isEmpty_of_ne (.prod (.of a) .nil) u fun _ _ h ↦ nomatch h).elim f
+    | .prod (.of a) (.prod τ₁ τ₂), f, _ =>
+      (IsBinary.isEmpty_of_ne (.prod (.of a) (.prod τ₁ τ₂)) u fun _ _ h ↦ nomatch h).elim f
+
+/-- A continuized derivation whose items only return their values returns the value of the
+derivation: continuizing changes no meaning that does not consult its context. -/
+theorem realize_continuize (ρ : ∀ {a : Ty B}, W a → a.Dom D)
+    (den : ∀ {a : Ty B}, Continuized.Item p W a → a.Dom D)
+    (hden : ∀ {a : Ty B} (x : W a) (l : List (Ty B)), den (.at x l) = fun κ ↦ κ (ρ x))
+    {a : Ty B} (d : L.Deriv W a) (l : List (Ty B)) :
+    (d.continuize p l).realize inferInstance den = fun κ ↦ κ (d.realize M ρ) :=
+  returns_realize_continuize ρ den hden d l
+
+end Interpreter

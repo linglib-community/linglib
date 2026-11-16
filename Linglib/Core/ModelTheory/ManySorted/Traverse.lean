@@ -26,8 +26,6 @@ traversal](##ManySorted.Language.Term.sequence_realize_applicative).
 * `ManySorted.Language.Term.traverse`: the traversal of a term by an action on its variables.
 * `Applicative.LiftsRel`, `ManySorted.Language.Structure.IsLogicalRel.applicative`: a logical
   relation lifts to the structures on computations.
-* `ManySorted.Language.Structure.isLogicalRel_applicative`: returning a value is a logical
-  relation from a structure to its structure on computations.
 -/
 
 @[expose] public section
@@ -100,40 +98,7 @@ theorem Structure.IsLogicalRel.applicative {M : L.Structure D} {M' : L.Structure
 
 end LiftsRel
 
-private theorem sequence_eq_pure
-    (hmap : ∀ {γ δ : Type u} (f : γ → δ) (a : γ), f <$> (pure a : A γ) = pure (f a))
-    (hseq : ∀ {γ δ : Type u} (f : γ → δ) (a : γ), (pure f : A (γ → δ)) <*> pure a = pure (f a)) :
-    ∀ {σ : Signature S} {x : σ.Interpret D} {p : σ.Interpret fun s ↦ A (D s)},
-      σ.LiftRel (D := D) (D' := fun s ↦ A (D s)) (fun _ a m ↦ m = pure a) x p →
-        Signature.Interpret.sequence σ p = pure x
-  | .nil, _, _, _ => rfl
-  | .of _, _, _, h => h
-  | .prod _ _, _, _, h => by
-    rw [Signature.Interpret.sequence, sequence_eq_pure hmap hseq h.1,
-      sequence_eq_pure hmap hseq h.2, hmap, hseq]
-
-/-- The computation that only returns a value is a logical relation from a structure to its
-structure on computations, where mapping and applying such computations returns the value mapped
-and applied, as in a lawful applicative functor: a symbol takes them to the one that returns its
-value. -/
-theorem Structure.isLogicalRel_applicative (M : L.Structure D)
-    (hmap : ∀ {γ δ : Type u} (f : γ → δ) (a : γ), f <$> (pure a : A γ) = pure (f a))
-    (hseq : ∀ {γ δ : Type u} (f : γ → δ) (a : γ), (pure f : A (γ → δ)) <*> pure a = pure (f a)) :
-    M.IsLogicalRel (M.applicative A) fun _ a m ↦ m = pure a where
-  funMap f := fun _ _ h ↦ by
-    change (M.applicative A).funMap f _ = pure _
-    rw [Structure.funMap_applicative, sequence_eq_pure hmap hseq h, hmap]
-
 namespace Term
-
-/-- A term whose variables only return values has, in the structure on computations, the
-computation that returns its value. -/
-theorem realize_applicative_pure (M : L.Structure D)
-    (hmap : ∀ {γ δ : Type u} (f : γ → δ) (a : γ), f <$> (pure a : A γ) = pure (f a))
-    (hseq : ∀ {γ δ : Type u} (f : γ → δ) (a : γ), (pure f : A (γ → δ)) <*> pure a = pure (f a))
-    (ρ : ∀ {s : S}, α s → D s) {s : S} (t : L.Term α (.of s)) :
-    t.realize (M.applicative A) (fun x ↦ pure (ρ x)) = pure (t.realize M ρ) :=
-  (M.isLogicalRel_applicative hmap hseq).realize (fun _ ↦ rfl) t
 
 /-- The traversal of a term by an action on its variables, one occurrence after another. -/
 def traverse (g : ∀ {s : S}, α s → A (β s)) : {σ : Signature S} → L.Term α σ → A (L.Term β σ)

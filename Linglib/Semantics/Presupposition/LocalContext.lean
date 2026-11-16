@@ -19,7 +19,7 @@ restriction, and a presupposition is *satisfied* when the local context entails 
 * `Presupposition.Satisfied`: satisfaction of a presupposition in the local context.
 * `Presupposition.TransparentAt`: transparency for the resolutions of a trigger.
 * `Presupposition.StablyTransparent`: transparency for the truth values all continuations share.
-* `Presupposition.commitments`: the worlds at which a set of propositions do not all agree.
+* `Presupposition.commitments`: what some of a set of propositions include and some exclude.
 
 ## Main results
 
@@ -321,11 +321,19 @@ end TruthFunctional
 
 /-! ### Commitments -/
 
-/-- The commitments of a set of propositions are the worlds that some of them include and some
-exclude. For the propositions a sentence may still express these are the worlds at which its
-truth value is open, [barker-2022]'s semantic commitments of a context: the least upper bound of
-the propositions less their greatest lower bound. -/
-def commitments (S : Set (Set W)) : Set W := ⋃₀ S \ ⋂₀ S
+/-- The commitments of a set of propositions: what some of them include and some exclude, their
+least upper bound less their greatest lower bound. For the propositions a sentence may still
+express these are the worlds at which its truth value is open, [barker-2022]'s semantic
+commitments of a context. Propositions are the elements of any complete Boolean algebra, sets of
+worlds or predicates of them. -/
+def commitments {β : Type*} [CompleteBooleanAlgebra β] (S : Set β) : β := sSup S \ sInf S
+
+/-- The commitments of predicates of worlds, at a world. -/
+theorem commitments_apply {S : Set (W → Prop)} {w : W} :
+    commitments S w ↔ (∃ p ∈ S, p w) ∧ ∃ p ∈ S, ¬ p w := by
+  simp only [commitments, Pi.sdiff_apply, sSup_apply, sInf_apply, iSup_Prop_eq, iInf_Prop_eq]
+  change _ ∧ ¬ _ ↔ _
+  simp
 
 section Commitments
 
