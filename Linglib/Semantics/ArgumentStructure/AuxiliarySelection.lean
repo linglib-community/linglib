@@ -127,9 +127,9 @@ one otherwise. A telic verb is a change of location when it lexicalizes a direct
 change of state otherwise. An atelic dynamic verb is a change of state when it measures change
 along a scale, as *rise* does; a motional process when it displaces its theme; and otherwise a
 nonmotional or an uncontrolled process, as its subject is volitional or not. `none` when the entry
-lacks the situation type, or a process lacks the subject profile. -/
+lacks the aspectual class, or a process lacks the subject profile. -/
 def ofVerb (v : Verb) : Option AuxiliarySelectionHierarchy := do
-  let c ← v.situationType
+  let c ← v.aspectualClass
   if c.dynamicity = .stative then
     pure (if v.phasal = some .continuation then continuationOfState else existenceOfState)
   else if c.telicity = .telic then
@@ -142,10 +142,10 @@ def ofVerb (v : Verb) : Option AuxiliarySelectionHierarchy := do
 /-- A bounded directional phrase makes a dynamic verb a change of location, the bottom of the
 hierarchy ([sorace-2000] §4.3, [levin-hovav-1995] p. 185). -/
 theorem ofVerb_withPath_eq_bot {v : Verb} {p : Adposition.SpatialReading} (hv : v.TakesSpatial)
-    (hb : p.IsBounded) {c : Aspect.SituationType} (hc : v.situationType = some c)
+    (hb : p.IsBounded) {c : Aspect.AspectualClass} (hc : v.aspectualClass = some c)
     (hdyn : c.dynamicity = .dynamic) : ofVerb (v.withPath p) = some ⊥ := by
   simp [ofVerb, hv, hb.direction_ne_place, hb, hc, hdyn,
-    Aspect.SituationType.telicity_telicize hdyn]
+    Aspect.AspectualClass.telicity_telicize hdyn]
 
 end AuxiliarySelectionHierarchy
 

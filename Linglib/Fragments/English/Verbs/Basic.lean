@@ -120,7 +120,7 @@ def sleep : Verb where
   past := "slept"
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
-  situationType := some .state
+  aspectualClass := some .state
 
 /-- "sneeze" — intransitive -/
 def sneeze : Verb where
@@ -142,7 +142,7 @@ def run : Verb where
      (ArgumentFrame.spatialPP, [0, 2])]
     [some activitySubjectProfile, none, none]
   passivizable := false
-  situationType := some .activity
+  aspectualClass := some .activity
   direction := some .place
 
 /-- "dance" — intransitive activity -/
@@ -151,7 +151,7 @@ def dance : Verb where
   levin := some Levin1993.Index.dance
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
-  situationType := some .activity
+  aspectualClass := some .activity
 
 /-- "arrive" — unaccusative intransitive -/
 def arrive : Verb where
@@ -160,7 +160,7 @@ def arrive : Verb where
   valency := .ofFrame ArgumentFrame.intransitive [some achievementSubjectProfile]
   voiceType := some .nonThematic
   passivizable := false
-  situationType := some .achievement
+  aspectualClass := some .achievement
   direction := some .goal
 
 /-- *come*, an unaccusative verb of inherently directed motion like *arrive* (51.1). -/
@@ -172,7 +172,7 @@ def come : Verb where
   valency := .ofFrame ArgumentFrame.intransitive
   voiceType := some .nonThematic
   passivizable := false
-  situationType := some .achievement
+  aspectualClass := some .achievement
   direction := some .goal
 
 /-- "go" — Levin 51.1 inherently directed motion, suppletive in the past. -/
@@ -183,7 +183,7 @@ def go : Verb where
   pastPart := "gone"
   valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
-  situationType := some .achievement
+  aspectualClass := some .achievement
   levinExcluded := {LevinClass.meander}
 
 /-- In *run into the room* the spatial function *into* marks, the goal in the interior, makes a
@@ -191,7 +191,7 @@ verb of manner of motion directed and telic, while *run behind the house* leaves
 so does any path phrase *sleep*, which selects none. -/
 example : (∀ f ∈ Adpositions.into.functions, f.kind = .spatial →
       (run.withPath (.ofFunction f)).direction = some .goal ∧
-        (run.withPath (.ofFunction f)).situationType = some .accomplishment) ∧
+        (run.withPath (.ofFunction f)).aspectualClass = some .accomplishment) ∧
     run.withPath Adposition.behind = run.toVerb ∧ sleep.withPath (.ofCase .ill) = sleep.toVerb :=
   ⟨by decide, rfl, rfl⟩
 
@@ -211,7 +211,7 @@ def eat : Verb where
      ArgumentFrame.objectDrop (some .indef),
      ArgumentFrame.pp (some Adpositions.at_)]
     [some accomplishmentSubjectProfile, some consumptionObject]
-  situationType := some .accomplishment
+  aspectualClass := some .accomplishment
   incrementality := some .strict
 
 /-- "kick" — transitive -/
@@ -225,7 +225,7 @@ def kick : Verb where
          (some (.spatial (some .surface) .place)), [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
     [some accomplishmentSubjectProfile, some contactObject, none, none]
-  situationType := some .activity
+  aspectualClass := some .activity
 
 /-- The conative *at* of *eat at* marks no value, so *eat* selects no spatial phrase, while the
 *on* of *kick him on the shin* locates the contact on a surface. -/
@@ -255,7 +255,7 @@ def give : Verb where
          (some (.argument .R))).leaveImplicit 0 (some .indef),
        [0, 2, 1]),
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
-  situationType := some .accomplishment
+  aspectualClass := some .accomplishment
 
 /-- "put" — locative -/
 def put : Verb where
@@ -263,21 +263,21 @@ def put : Verb where
   levin := some Levin1993.Index.put
   past := "put"
   valency := .ofFrame ArgumentFrame.np_pp
-  situationType := some .achievement
+  aspectualClass := some .achievement
 
 /-- "weigh" — measure predicate selecting for mass/weight. -/
 def weigh : Verb where
   morphs := [.root "weigh"]
   levin := some Levin1993.Index.weigh
   valency := .ofFrame ArgumentFrame.np
-  situationType := some .state
+  aspectualClass := some .state
 
 /-- "cover" — motion/extent predicate selecting for distance. -/
 def cover : Verb where
   morphs := [.root "cover"]
   levin := some Levin1993.Index.cover
   valency := .ofFrame ArgumentFrame.np
-  situationType := some .accomplishment
+  aspectualClass := some .accomplishment
   incrementality := some .strict
 
 /-- "measure" — general measurement predicate. -/
@@ -285,7 +285,7 @@ def measure : Verb where
   morphs := [.root "measure"]
   levin := some Levin1993.Index.measure
   valency := .ofFrame ArgumentFrame.np
-  situationType := some .state
+  aspectualClass := some .state
 
 /-- "buy" — irregular transitive -/
 def buy : Verb where
@@ -297,7 +297,7 @@ def buy : Verb where
      (ArgumentFrame.np_pp (some Adpositions.for_) (some .beneficiary), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
     [some possessionTransfer.subjectProfile, none, none]
-  situationType := some .accomplishment
+  aspectualClass := some .accomplishment
 
 /-- "meet" — irregular transitive -/
 def meet : Verb where
@@ -305,7 +305,7 @@ def meet : Verb where
   levin := some Levin1993.Index.meet
   past := "met"
   valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.objectDrop (some .reciprocal)]
-  situationType := some .achievement
+  aspectualClass := some .achievement
 
 /-- "set" — irregular; the base, past and past participle forms coincide. -/
 def set_ : Verb where
@@ -313,7 +313,7 @@ def set_ : Verb where
   levin := some Levin1993.Index.set
   past := "set"
   valency := .ofFrame ArgumentFrame.np
-  situationType := some .achievement
+  aspectualClass := some .achievement
 
 /-- "clarify" — regular transitive. -/
 def clarify : Verb where
@@ -337,7 +337,7 @@ def sell : Verb where
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .indef), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
     [some possessionTransfer.subjectProfile, none, none]
-  situationType := some .accomplishment
+  aspectualClass := some .accomplishment
 
 /-- "leave" — transitive (also used intransitively with argument drop) -/
 def leave : Verb where
@@ -345,7 +345,7 @@ def leave : Verb where
   levin := some Levin1993.Index.leave
   past := "left"
   valency := .ofFrame ArgumentFrame.np
-  situationType := some .achievement
+  aspectualClass := some .achievement
 
 /-- "see" — transitive; factive with a finite-clause complement -/
 def see : Verb where
@@ -355,7 +355,7 @@ def see : Verb where
   pastPart := "seen"
   valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause]
     [some perception.subjectProfile, none]
-  situationType := some .state
+  aspectualClass := some .state
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
 
@@ -366,7 +366,7 @@ def devour : Verb where
   morphs := [.root "devour"]
   levin := some Levin1993.Index.devour
   valency := .ofFrame ArgumentFrame.np
-  situationType := some .accomplishment
+  aspectualClass := some .accomplishment
   incrementality := some .strict
 
 /-- "drink" — Levin 39.1 Eat verbs. -/
@@ -379,7 +379,7 @@ def drink : Verb where
     [ArgumentFrame.np,
      ArgumentFrame.objectDrop (some .indef),
      ArgumentFrame.pp (some Adpositions.at_)]
-  situationType := some .accomplishment
+  aspectualClass := some .accomplishment
   incrementality := some .strict
 
 /-- "read" — Levin 14 Learn verbs, with learn and study; also listed among the verbs of
@@ -389,7 +389,7 @@ def read : Verb where
   levin := some Levin1993.Index.read
   past := "read"
   valency := .ofFrame ArgumentFrame.np
-  situationType := some .accomplishment
+  aspectualClass := some .accomplishment
   incrementality := some .incremental
 
 /-- "build" — creation verb, strictly incremental theme.
@@ -406,7 +406,7 @@ def build : Verb where
      (ArgumentFrame.np_pp (some Adpositions.out), [0, 1, 3]),
      (ArgumentFrame.np_pp (some Adpositions.into) (some .translative), [0, 3, 1])]
     [some accomplishmentSubjectProfile, some creationObject, none, none]
-  situationType := some .accomplishment
+  aspectualClass := some .accomplishment
   incrementality := some .strict
 
 /-- "write" — Levin 25.2 Scribble verbs, cross-listed with the build verbs;
@@ -425,7 +425,7 @@ def write : Verb where
      (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 2, 1]),
      ((ArgumentFrame.np_pp).leaveImplicit 0 (some .indef), [0, 1, 2]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1])]
-  situationType := some .accomplishment
+  aspectualClass := some .accomplishment
   incrementality := some .strict
 
 /-- "do", the lexical verb of *She does her best*, a lexeme apart from the auxiliary *do*
@@ -449,7 +449,7 @@ def sweep : Verb where
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
     [some wipeManner.subjectProfile, none, none]
-  situationType := some .activity
+  aspectualClass := some .activity
   passivizable := true
 
 /-- "sweep" instrument sense — obligatorily agentive, broom lexicalized. -/
@@ -464,7 +464,7 @@ def sweep_instr : Verb where
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
     [some wipeInstrument.subjectProfile, none, none]
-  situationType := some .activity
+  aspectualClass := some .activity
   passivizable := true
   senseTag := .instrumental
 

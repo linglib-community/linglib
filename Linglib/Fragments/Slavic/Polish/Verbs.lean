@@ -10,7 +10,7 @@ Verbal prefixes and simplex verbs of Polish, the material of the studies of verb
 listed below. A prefix is a morph with its form only: the position a prefix occupies in a word is
 a study's analysis. A verb records its citation form, the infinitive, and its lexical aspect at
 the dictionary value: the simplex verbs are imperfective except the semelfactives in *-nąć*. The
-situation type is recorded for the semelfactives and the statives.
+aspectual class is recorded for the semelfactives and the statives.
 
 ## Implementation notes
 
@@ -68,19 +68,19 @@ def s : Morph := .pref "s"
 /-- *siedzieć* 'sit'. -/
 def siedziec : Verb where
   morphs := [.root "siedzieć"]
-  situationType := some .state
+  aspectualClass := some .state
   perfectivity := some .imperfective
 
 /-- *kochać* 'love'. -/
 def kochac : Verb where
   morphs := [.root "kochać"]
-  situationType := some .state
+  aspectualClass := some .state
   perfectivity := some .imperfective
 
 /-- *lubić* 'like'. -/
 def lubic : Verb where
   morphs := [.root "lubić"]
-  situationType := some .state
+  aspectualClass := some .state
   perfectivity := some .imperfective
 
 /-! ### Verbs of becoming in *-eć* -/
@@ -152,31 +152,31 @@ def gasnac : Verb where
 /-- *warknąć* 'snarl once'. -/
 def warknac : Verb where
   morphs := [.root "warknąć"]
-  situationType := some .semelfactive
+  aspectualClass := some .semelfactive
   perfectivity := some .perfective
 
 /-- *kopnąć* 'kick once'. -/
 def kopnac : Verb where
   morphs := [.root "kopnąć"]
-  situationType := some .semelfactive
+  aspectualClass := some .semelfactive
   perfectivity := some .perfective
 
 /-- *machnąć* 'wave once'. -/
 def machnac : Verb where
   morphs := [.root "machnąć"]
-  situationType := some .semelfactive
+  aspectualClass := some .semelfactive
   perfectivity := some .perfective
 
 /-- *miauknąć* 'meow once'. -/
 def miauknac : Verb where
   morphs := [.root "miauknąć"]
-  situationType := some .semelfactive
+  aspectualClass := some .semelfactive
   perfectivity := some .perfective
 
 /-- *szepnąć* 'whisper once'. -/
 def szepnac : Verb where
   morphs := [.root "szepnąć"]
-  situationType := some .semelfactive
+  aspectualClass := some .semelfactive
   perfectivity := some .perfective
 
 /-! ### Other simplex verbs -/

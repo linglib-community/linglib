@@ -31,7 +31,7 @@ def stop : Verb where
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1])]
     (controllers := [some 0])
-  situationType := some .achievement
+  aspectualClass := some .achievement
   passivizable := false
   phasal := some .cessation
 
@@ -45,7 +45,7 @@ def quit : Verb where
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1])]
     (controllers := [some 0])
-  situationType := some .achievement
+  aspectualClass := some .achievement
   passivizable := false
   phasal := some .cessation
 
@@ -58,7 +58,7 @@ def start : Verb where
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1])]
     (controllers := [some 0])
-  situationType := some .achievement
+  aspectualClass := some .achievement
   passivizable := false
   phasal := some .inception
 
@@ -76,7 +76,7 @@ def begin_ : Verb where
      (ArgumentFrame.intransitive, [some 1]),
      (toInfinitive, [none, some 1])]
     (controls := [some .external, none, none, some .external])
-  situationType := some .achievement
+  aspectualClass := some .achievement
   passivizable := false
   phasal := some .inception
 
@@ -89,7 +89,7 @@ def continue_ : Verb where
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1])]
     (controllers := [some 0])
-  situationType := some .activity
+  aspectualClass := some .activity
   passivizable := false
   phasal := some .continuation
 
@@ -103,7 +103,7 @@ def keep : Verb where
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1])]
     (controllers := [some 0])
-  situationType := some .activity
+  aspectualClass := some .activity
   passivizable := false
   phasal := some .continuation
 

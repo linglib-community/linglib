@@ -122,42 +122,42 @@ theorem ScalarDimension.hasGreatest_scale_iff (d : ScalarDimension) :
 /-- A degree achievement on a scale of shape `b` is by default an accomplishment when Interpretive
     Economy prefers the maximum standard on `b` with a least degree adjoined, the scale of its
     measure of change, and an activity otherwise ([kennedy-levin-2008]). -/
-def Boundedness.defaultSituationType (b : Boundedness) : SituationType :=
+def Boundedness.defaultAspectualClass (b : Boundedness) : AspectualClass :=
   if b.withMin.defaultStandard = .maxEndpoint then .accomplishment else .activity
 
-theorem Boundedness.defaultSituationType_eq_accomplishment_iff {b : Boundedness} :
-    b.defaultSituationType = .accomplishment ↔ b.HasMax := by
+theorem Boundedness.defaultAspectualClass_eq_accomplishment_iff {b : Boundedness} :
+    b.defaultAspectualClass = .accomplishment ↔ b.HasMax := by
   cases b <;> decide
 
-theorem Boundedness.telicity_defaultSituationType_eq_telic_iff {b : Boundedness} :
-    b.defaultSituationType.telicity = .telic ↔ b.HasMax := by
+theorem Boundedness.telicity_defaultAspectualClass_eq_telic_iff {b : Boundedness} :
+    b.defaultAspectualClass.telicity = .telic ↔ b.HasMax := by
   cases b <;> decide
 
-/-- The default situation type of a degree achievement towards the positive pole of a dimension is
+/-- The default aspectual class of a degree achievement towards the positive pole of a dimension is
     that of the dimension's scale. -/
-def ScalarDimension.defaultSituationType (d : ScalarDimension) : SituationType :=
-  d.boundedness.defaultSituationType
+def ScalarDimension.defaultAspectualClass (d : ScalarDimension) : AspectualClass :=
+  d.boundedness.defaultAspectualClass
 
 /-- The default telicity of a degree achievement on a dimension is that of its default situation
     type. -/
 def ScalarDimension.defaultTelicity (d : ScalarDimension) : Telicity :=
-  d.defaultSituationType.telicity
+  d.defaultAspectualClass.telicity
 
 /-- A degree achievement is telic by default exactly when the degrees of its scale have a
     greatest element ([kennedy-levin-2008]). -/
 theorem ScalarDimension.defaultTelicity_telic_iff_hasGreatest (d : ScalarDimension) :
     d.defaultTelicity = .telic ↔ ∃ m : d.Scale, IsTop m :=
-  Boundedness.telicity_defaultSituationType_eq_telic_iff.trans
+  Boundedness.telicity_defaultAspectualClass_eq_telic_iff.trans
     (ScalarDimension.hasGreatest_scale_iff d).symm
 
-@[simp] theorem ScalarDimension.telicity_defaultSituationType (d : ScalarDimension) :
-    d.defaultSituationType.telicity = d.defaultTelicity := rfl
+@[simp] theorem ScalarDimension.telicity_defaultAspectualClass (d : ScalarDimension) :
+    d.defaultAspectualClass.telicity = d.defaultTelicity := rfl
 
-@[simp] theorem ScalarDimension.duration_defaultSituationType (d : ScalarDimension) :
-    d.defaultSituationType.duration = .durative := by
-  unfold defaultSituationType Boundedness.defaultSituationType; cases d.boundedness <;> rfl
+@[simp] theorem ScalarDimension.duration_defaultAspectualClass (d : ScalarDimension) :
+    d.defaultAspectualClass.duration = .durative := by
+  unfold defaultAspectualClass Boundedness.defaultAspectualClass; cases d.boundedness <;> rfl
 
-@[simp] theorem ScalarDimension.dynamicity_defaultSituationType (d : ScalarDimension) :
-    d.defaultSituationType.dynamicity = .dynamic := by
-  unfold defaultSituationType Boundedness.defaultSituationType; cases d.boundedness <;> rfl
+@[simp] theorem ScalarDimension.dynamicity_defaultAspectualClass (d : ScalarDimension) :
+    d.defaultAspectualClass.dynamicity = .dynamic := by
+  unfold defaultAspectualClass Boundedness.defaultAspectualClass; cases d.boundedness <;> rfl
 

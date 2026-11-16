@@ -50,7 +50,8 @@ def withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
   if p.direction = .place ∨ ¬ v.TakesSpatial then v else
     { v with
       direction := some p.direction
-      situationType := if p.IsBounded then v.situationType.map (·.telicize) else v.situationType }
+      aspectualClass :=
+        if p.IsBounded then v.aspectualClass.map (·.telicize) else v.aspectualClass }
 
 section withPath
 
@@ -66,12 +67,12 @@ variable {v : Verb} {p : Adposition.SpatialReading}
     (v.withPath p).direction = some p.direction := by
   simp [withPath, hv, h]
 
-@[simp] theorem situationType_withPath_of_isBounded (hv : v.TakesSpatial) (hb : p.IsBounded) :
-    (v.withPath p).situationType = v.situationType.map (·.telicize) := by
+@[simp] theorem aspectualClass_withPath_of_isBounded (hv : v.TakesSpatial) (hb : p.IsBounded) :
+    (v.withPath p).aspectualClass = v.aspectualClass.map (·.telicize) := by
   simp [withPath, hv, hb.direction_ne_place, hb]
 
-@[simp] theorem situationType_withPath_of_not_isBounded (hb : ¬ p.IsBounded) :
-    (v.withPath p).situationType = v.situationType := by
+@[simp] theorem aspectualClass_withPath_of_not_isBounded (hb : ¬ p.IsBounded) :
+    (v.withPath p).aspectualClass = v.aspectualClass := by
   unfold withPath
   split_ifs <;> rfl
 

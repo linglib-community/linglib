@@ -94,7 +94,7 @@ namespace Verbalizer
 /-- The Aktionsart profile of a bare stem is atelic, lacking a right boundary, Section 2.3; it is
 punctual for the semelfactive, Section 2.3.1, and stative for the statives, which lack a left
 boundary, Section 5. -/
-def profile : Verbalizer → Aspect.SituationType
+def profile : Verbalizer → Aspect.AspectualClass
   | semelfactive => .semelfactive
   | stative => .state
   | _ => .activity
@@ -707,10 +707,10 @@ theorem stem_perfectivity : ∀ a ∈ attested ++ starred,
     (a.stem.verb.perfectivity = some .perfective ↔ Perfective a.stem.verbalizer []) := by
   decide
 
-/-- The fragment's situation type of a stem, where it records one, is the profile of the stem's
+/-- The fragment's aspectual class of a stem, where it records one, is the profile of the stem's
 verbalizer: the statives are states and the semelfactives semelfactive. -/
-theorem stem_situationType : ∀ a ∈ attested ++ starred,
-    a.stem.verb.situationType ∈ [none, some a.stem.verbalizer.profile] := by
+theorem stem_aspectualClass : ∀ a ∈ attested ++ starred,
+    a.stem.verb.aspectualClass ∈ [none, some a.stem.verbalizer.profile] := by
   decide
 
 /-- Every infinitive without the Secondary Imperfective spells out its form: the prefixes, outermost

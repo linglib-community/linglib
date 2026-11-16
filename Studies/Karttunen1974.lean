@@ -80,13 +80,13 @@ open Aspect
 
 /-- Durative *until* selects a durative, atelic main clause — the classes with the
 subinterval property. -/
-def SatisfiesDurativeRestriction (c : SituationType) : Prop :=
+def SatisfiesDurativeRestriction (c : AspectualClass) : Prop :=
   c.telicity = .atelic ∧ c.duration = .durative
 
 instance : DecidablePred SatisfiesDurativeRestriction := fun _ ↦
   inferInstanceAs (Decidable (_ ∧ _))
 
-theorem satisfiesDurativeRestriction_iff (c : SituationType) :
+theorem satisfiesDurativeRestriction_iff (c : AspectualClass) :
     SatisfiesDurativeRestriction c ↔ c = .state ∨ c = .activity := by
   cases c <;> decide
 

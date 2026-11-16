@@ -218,7 +218,7 @@ def venire : Verb where
   morphs := [.root "venire"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  situationType := some .achievement
+  aspectualClass := some .achievement
   direction := some .goal
 
 /-- *arrivare* 'arrive', a verb of change of location. -/
@@ -226,7 +226,7 @@ def arrivare : Verb where
   morphs := [.root "arrivare"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  situationType := some .achievement
+  aspectualClass := some .achievement
   direction := some .goal
 
 /-- *cadere* 'fall', a verb of change with a direction ([levin-hovav-1995] p. 147). -/
@@ -234,7 +234,7 @@ def cadere : Verb where
   morphs := [.root "cadere"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  situationType := some .achievement
+  aspectualClass := some .achievement
   direction := some .goal
 
 /-- *salire* 'go up', a change along a scale of height. -/
@@ -242,7 +242,7 @@ def salire : Verb where
   morphs := [.root "salire"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  situationType := some .accomplishment
+  aspectualClass := some .accomplishment
   scaleDimension := some .height
 
 /-- *marcire* 'go off, rot', a verb of change of state. -/
@@ -250,21 +250,21 @@ def marcire : Verb where
   morphs := [.root "marcire"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  situationType := some .accomplishment
+  aspectualClass := some .accomplishment
 
 /-- *fiorire* 'bloom', a verb of change of state. -/
 def fiorire : Verb where
   morphs := [.root "fiorire"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  situationType := some .achievement
+  aspectualClass := some .achievement
 
 /-- *rimanere* 'remain', the persistence of a state. -/
 def rimanere : Verb where
   morphs := [.root "rimanere"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  situationType := some .state
+  aspectualClass := some .state
   phasal := some .continuation
 
 /-- *durare* 'last', which takes *essere* for the permanence of a state and *avere* where the
@@ -273,28 +273,28 @@ def durare : Verb where
   morphs := [.root "durare"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be, .have}
-  situationType := some .state
+  aspectualClass := some .state
 
 /-- *esistere* 'exist', existence in a state. -/
 def esistere : Verb where
   morphs := [.root "esistere"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  situationType := some .state
+  aspectualClass := some .state
 
 /-- *bastare* 'be enough', existence in a state. -/
 def bastare : Verb where
   morphs := [.root "bastare"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  situationType := some .state
+  aspectualClass := some .state
 
 /-- *sembrare* 'seem', a state predicated of the subject. -/
 def sembrare : Verb where
   morphs := [.root "sembrare"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be}
-  situationType := some .state
+  aspectualClass := some .state
 
 /-- *appartenere* 'belong', which takes *essere* for a state, *L'anello era appartenuto alla regina
 Vittoria*, and *avere* where the subject controls it, *Non ho mai appartenuto al PCI*. -/
@@ -302,28 +302,28 @@ def appartenere : Verb where
   morphs := [.root "appartenere"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.be, .have}
-  situationType := some .state
+  aspectualClass := some .state
 
 /-- *lavorare* 'work', an activity whose subject controls it. -/
 def lavorare : Verb where
   morphs := [.root "lavorare"]
   valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile]
   perfectAuxiliaries := {.have}
-  situationType := some .activity
+  aspectualClass := some .activity
 
 /-- *chiacchierare* 'chat', an activity whose subject controls it. -/
 def chiacchierare : Verb where
   morphs := [.root "chiacchierare"]
   valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile]
   perfectAuxiliaries := {.have}
-  situationType := some .activity
+  aspectualClass := some .activity
 
 /-- *correre* 'run', a verb of manner of motion that selects a directional phrase. -/
 def correre : Verb where
   morphs := [.root "correre"]
   valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP]
   perfectAuxiliaries := {.be, .have}
-  situationType := some .activity
+  aspectualClass := some .activity
   direction := some .place
 
 /-- *saltare* 'jump', a verb of manner of motion that selects a directional phrase. -/
@@ -331,7 +331,7 @@ def saltare : Verb where
   morphs := [.root "saltare"]
   valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP]
   perfectAuxiliaries := {.be, .have}
-  situationType := some .activity
+  aspectualClass := some .activity
   direction := some .place
 
 /-- *nuotare* 'swim', a verb of manner of motion that selects no directional phrase. -/
@@ -339,7 +339,7 @@ def nuotare : Verb where
   morphs := [.root "nuotare"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.have}
-  situationType := some .activity
+  aspectualClass := some .activity
   direction := some .place
 
 /-- *tossire* 'cough', an activity whose subject does not control it. -/
@@ -347,14 +347,14 @@ def tossire : Verb where
   morphs := [.root "tossire"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.have}
-  situationType := some .semelfactive
+  aspectualClass := some .semelfactive
 
 /-- *squillare* 'ring', an activity whose subject does not control it. -/
 def squillare : Verb where
   morphs := [.root "squillare"]
   valency := .ofFrame ArgumentFrame.intransitive
   perfectAuxiliaries := {.have}
-  situationType := some .activity
+  aspectualClass := some .activity
 
 /-- `allVerbs` lists the entries. -/
 def allVerbs : List Verb :=
@@ -371,7 +371,7 @@ def allVerbs : List Verb :=
 change, to an endpoint or along a scale, and *avere* when an activity is in the foreground. -/
 def perfectAuxiliary (v : Verb) (fr : ArgumentFrame) : PerfectAuxiliary :=
   if fr.HasNominal then .have
-  else if v.situationType.any (fun c ↦ c.dynamicity = .stative ∨ c.telicity = .telic) ∨
+  else if v.aspectualClass.any (fun c ↦ c.dynamicity = .stative ∨ c.telicity = .telic) ∨
       v.scaleDimension.isSome then .be
   else .have
 

@@ -7,7 +7,7 @@ public import Linglib.Semantics.Aspect.Viewpoint
 # Smith (1997): The Parameter of Aspect
 
 This file formalizes Smith's two-component theory, in which a sentence's aspectual meaning
-combines a situation type (`SituationType`) and an independently chosen viewpoint
+combines a aspectual class (`AspectualClass`) and an independently chosen viewpoint
 (`ViewpointType`).
 
 ## Implementation notes
@@ -133,7 +133,7 @@ theorem neutral_between_perf_imperf :
 
 /-- An aspectual interpretation: a situation type and a viewpoint, chosen independently. -/
 structure AspectualInterpretation where
-  situationType : SituationType
+  situationType : AspectualClass
   viewpoint : ViewpointType
   deriving DecidableEq
 
@@ -171,11 +171,11 @@ def perfectiveEffect (ai : AspectualInterpretation) : PerfectiveEffect :=
   | _ => .noEffect
 
 /-- Under the perfective, completion is conveyed exactly by the telic situation types. -/
-theorem completion_iff_telic (c : SituationType) :
+theorem completion_iff_telic (c : AspectualClass) :
     perfectiveEffect ⟨c, .perfective⟩ = .completion ↔ c.telicity = .telic := by
   cases c <;> decide
 
-theorem imperfective_noEffect (c : SituationType) :
+theorem imperfective_noEffect (c : AspectualClass) :
     perfectiveEffect ⟨c, .imperfective⟩ = .noEffect := rfl
 
 /-! ### The aspectual systems of Part II, section 4.2 -/

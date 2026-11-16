@@ -50,7 +50,7 @@ is added to the causal representation, so a state yields the achievement
 of its onset — "They were bored in a minute" denotes the onset of
 boredom — and an activity a bounded accomplishment. Other types are left
 as they are. -/
-def inchoativeAddition (p : SituationType) : SituationType :=
+def inchoativeAddition (p : AspectualClass) : AspectualClass :=
   if p.dynamicity = .stative then .achievement
   else if p = .activity then .accomplishment
   else p
@@ -58,31 +58,31 @@ def inchoativeAddition (p : SituationType) : SituationType :=
 /-- The selection operator (§5.1.2): the onset phase of a durative
 situation is selected, an achievement — ex. (41)'s reading on which the
 frame measures the delay before the program began to air. -/
-def onsetSelection (p : SituationType) : SituationType :=
+def onsetSelection (p : AspectualClass) : AspectualClass :=
   if p.duration = .durative then .achievement else p
 
 /-- The reconciliation operators available to the frame adverbial. -/
-def reconciliation : List (SituationType → SituationType) :=
+def reconciliation : List (AspectualClass → AspectualClass) :=
   [inchoativeAddition, onsetSelection]
 
 /-- The progressive's complement is inherently processual (§5.2.1): the
 override conforms any input to the activity type — states via the
 addition of `hold` and an effector to their causal representation, telic
 events via their processual construal. -/
-def conformToActivity : SituationType → SituationType :=
+def conformToActivity : AspectualClass → AspectualClass :=
   fun _ ↦ .activity
 
 /-! ### The frame adverbial construction (Figure 5, concord) -/
 
 /-- The frame adverbial's composition rule: the `within` frame demands a
 telic event and the construct denotes that same type. -/
-def frameAdverbialRule : CompositionRule SituationType
+def frameAdverbialRule : CompositionRule AspectualClass
   | [p] => if p.telicity = .telic then some p else none
   | _ => none
 
 /-- The frame adverbial construction (Figure 5): an *in*-headed adjunct
 added to the verbal valence. -/
-def frameAdverbial : Construction (CompositionRule SituationType) :=
+def frameAdverbial : Construction (CompositionRule AspectualClass) :=
   { form :=
       [ { filler := .open_ .VERB, isHead := true }
       , { filler := .fixed "in" }
@@ -94,7 +94,7 @@ def frameAdverbial : Construction (CompositionRule SituationType) :=
 /-- The progressive's composition rule: an activity complement yields the
 state holding during the activity's interval, by selection of an
 intermediate rest in its temporal representation. -/
-def progressiveRule : CompositionRule SituationType
+def progressiveRule : CompositionRule AspectualClass
   | [p] => if p = .activity then some .state else none
   | _ => none
 
@@ -106,7 +106,7 @@ def progressiveComplement : Slot String := { filler := .open_ .VERB, gf := some 
 
 /-- The progressive construction (Figure 6): auxiliary *be* with a subject and a participial
 complement. -/
-def progressive : Construction (CompositionRule SituationType) :=
+def progressive : Construction (CompositionRule AspectualClass) :=
   { form :=
       [ progressiveSubject
       , { filler := .headed "be" .AUX, isHead := true }
@@ -130,7 +130,7 @@ theorem progressive_coinstantiation {E : Type*} {x e s : E} :
 
 /-- A unary rule preserves type when its output type is its input's —
 (27)'s concord constructions; (28)'s shift constructions fail it. -/
-def PreservesType (r : CompositionRule SituationType) : Prop :=
+def PreservesType (r : CompositionRule AspectualClass) : Prop :=
   ∀ p q, r [p] = some q → q = p
 
 theorem frameAdverbial_concord : PreservesType frameAdverbialRule := by
@@ -180,7 +180,7 @@ theorem progressive_coerces_telic :
 /-- Progressive predications denote states whatever the Aktionsart of the
 complement (§5.2.1): the apparent paradox of a stativizing construction
 accepting stative input dissolves under the override. -/
-theorem progressive_stativizes (p : SituationType) :
+theorem progressive_stativizes (p : AspectualClass) :
     progressiveRule.override [conformToActivity] [p] = [.state] := by
   cases p <;> decide
 
