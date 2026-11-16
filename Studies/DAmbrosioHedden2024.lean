@@ -59,7 +59,7 @@ comparative is vague.
 
 namespace DAmbrosioHedden2024
 
-open Aggregation Finset Quantifier Sassoon2013 Trivalent
+open Aggregation Finset MeasurementTheory Quantifier Sassoon2013 Trivalent
 
 variable {ι O K : Type*}
 
@@ -182,7 +182,8 @@ transitive, and the Pareto rule, transitive but not complete, so an adjective th
 theorem nontrivial_ordinal_weakPareto_independent_nonDictatorial [Fintype ι] [LinearOrder K]
     [Nontrivial ι] [Nontrivial O] [Nontrivial K] :
     Set.Nontrivial
-      {a : Rule ι O K | Invariant ordinal a ∧ WeakPareto a ∧ Independent a ∧ NonDictatorial a} :=
+      {a : Rule ι O K |
+        Invariant (ordinal ι K) a ∧ WeakPareto a ∧ Independent a ∧ NonDictatorial a} :=
   Set.nontrivial_of_mem_mem_ne
     ⟨majority_ordinalInvariant, majority_weakPareto, majority_independent, majority_nonDictatorial⟩
     ⟨paretoRule_ordinalInvariant, paretoRule_strongPareto.weakPareto, paretoRule_independent,
@@ -228,7 +229,7 @@ theorem supervaluationOn_utilitarian_eq_undefined_iff :
 admit every positively weighted utilitarian rule, so an adjective they govern is vague
 (p. 268). -/
 theorem nontrivial_arrovian_cardinalUnit [Nontrivial ι] [Nontrivial O] :
-    {a : Rule ι O K | Arrovian cardinalUnit a}.Nontrivial := by
+    {a : Rule ι O K | Arrovian (cardinalUnit ι K) a}.Nontrivial := by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne O
   obtain ⟨v, -, hv⟩ := exists_incompRel_paretoRule (K := K) hxy (Classical.arbitrary ι)
   refine (nontrivial_of_supervaluationOn_eq_undefined

@@ -7,7 +7,7 @@ public import Mathlib.Logic.Relation
 public import Mathlib.Order.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import Linglib.Core.Order.Antisymmetrization
-public import Linglib.Semantics.Degree.Measurement
+public import Linglib.Semantics.MeasurementTheory.Invariance
 
 /-!
 # Aggregation rules
@@ -18,13 +18,13 @@ assigns each profile a relation on the objects, read `x ⪰ y`. In social choice
 are voters and the objects social states; for a multidimensional adjective the individuals are
 its dimensions and the relation is its comparative.
 
-The information a rule may use is fixed by invariance under a class of changes of scale on
-vectors of values. On a single scale the changes of scale are the strictly increasing maps of an
-ordinal scale, the positive affine maps of an interval scale and the similarities of a ratio
-scale. A class applies such maps separately to each individual (non-comparability), one map to
-every individual (full comparability), or affine maps with a common unit (unit comparability).
-Arrow's conditions, the strong Pareto condition, Pareto indifference and anonymity are predicates
-on rules.
+The information a rule may use is fixed by invariance under a class of vectors of changes of
+scale, one for each individual. On a single scale the changes of scale are the strictly increasing
+maps of an ordinal scale, the positive affine maps of an interval scale and the similarities of a
+ratio scale. A class applies such maps separately to each individual (non-comparability), one map
+to every individual (full comparability), or affine maps with a common unit (unit
+comparability). Arrow's conditions, the strong Pareto condition, Pareto indifference and anonymity
+are predicates on rules.
 
 A rule ranks vectors, `ofRel R`, when each output is the preimage, under the profile, of one
 relation `R` on vectors of values. Every classical rule does, and on three or more objects a rule
@@ -70,7 +70,7 @@ infima and suprema of relations on vectors to those of rules.
 
 namespace Aggregation
 
-open Function
+open Function MeasurementTheory
 
 variable {ι α K : Type*}
 
@@ -82,152 +82,93 @@ abbrev Rule (ι α K : Type*) := Profile ι α K → α → α → Prop
 
 /-! ### Informational invariance
 
-The information a rule may use is fixed by its `Invariant` classes: sets of changes of scale on
-vectors of values, applying a change of scale to each individual or one to all alike. -/
+The information a rule may use is fixed by its `Invariant` classes: sets of vectors of changes of
+scale, one for each individual, acting on a profile coordinatewise. -/
 
 /-- A statement about the measure of object–individual pairs that is invariant on a scale is
 invariant under its changes of scale applied to every individual alike. -/
-theorem _root_.Invariant.uncurry {β : Type*} {S : Set (K → K)} {φ : (α × ι → K) → β}
-    (h : Invariant S φ) :
-    Invariant ((fun u (p : ι → K) ↦ u ∘ p) '' S)
-      fun v : Profile ι α K ↦ φ (Function.uncurry v) := by
+theorem _root_.MeasurementTheory.Invariant.uncurry {β G : Type*} [SMul G K] {S : Set G}
+    {φ : (α × ι → K) → β} (h : Invariant S φ) :
+    Invariant (const ι '' S) fun v : Profile ι α K ↦ φ (Function.uncurry v) := by
   rintro _ ⟨u, hu, rfl⟩ v
   exact h u hu (Function.uncurry v)
 
-/-- Applying one transformation to every individual is a special case of applying one to each. -/
-theorem comp_image_subset_map_pi {S : Set (K → K)} :
-    (fun u (p : ι → K) ↦ u ∘ p) '' S ⊆ Pi.map '' Set.univ.pi fun _ ↦ S := by
-  rintro _ ⟨u, hu, rfl⟩
-  exact ⟨fun _ ↦ u, fun _ _ ↦ hu, rfl⟩
+/-- Applying one change of scale to every individual is a special case of applying one to each. -/
+theorem const_image_subset_pi {G : Type*} {S : Set G} :
+    const ι '' S ⊆ Set.univ.pi fun _ ↦ S := by
+  rintro _ ⟨u, hu, rfl⟩ i -
+  exact hu
 
-/-- A strictly increasing transformation for each individual; invariance under them is ordinal
+section Classes
+
+variable (ι K)
+
+/-- A strictly increasing change of scale for each individual; invariance under them is ordinal
 non-comparability. -/
-def ordinal [Preorder K] : Set ((ι → K) → ι → K) :=
-  Pi.map '' Set.univ.pi fun _ ↦ {u | StrictMono u}
+def ordinal [LE K] : Set (ι → K ↪o K) := Set.univ
 
-/-- One strictly increasing transformation applied to every individual; invariance under these
+/-- One strictly increasing change of scale applied to every individual; invariance under these
 is ordinal level comparability. -/
-def ordinalLevel [Preorder K] : Set ((ι → K) → ι → K) :=
-  (fun u p ↦ u ∘ p) '' {u | StrictMono u}
+def ordinalLevel [LE K] : Set (ι → K ↪o K) := Set.range (const ι)
 
-theorem map_mem_ordinal [Preorder K] {f : ι → K → K} (hf : ∀ i, StrictMono (f i)) :
-    Pi.map f ∈ ordinal :=
-  ⟨f, fun i _ ↦ hf i, rfl⟩
+variable {ι K} in
+theorem mem_ordinal [LE K] (f : ι → K ↪o K) : f ∈ ordinal ι K :=
+  Set.mem_univ f
 
-theorem mem_ordinal [Preorder K] {g : (ι → K) → ι → K} :
-    g ∈ ordinal ↔ ∃ f : ι → K → K, (∀ i, StrictMono (f i)) ∧ Pi.map f = g := by
-  simp [ordinal]
-
-theorem ordinalLevel_subset_ordinal [Preorder K] :
-    ordinalLevel ⊆ (ordinal : Set ((ι → K) → ι → K)) :=
-  comp_image_subset_map_pi
-
-section Cardinal
+variable {ι K} in
+theorem subset_ordinal [LE K] (S : Set (ι → K ↪o K)) : S ⊆ ordinal ι K :=
+  Set.subset_univ S
 
 variable [Semiring K] [PartialOrder K]
 
-/-- The positive affine transformations `t ↦ a * t + b` with `0 < a`, the changes of scale of
-an interval scale. -/
-def positiveAffine : Set (K → K) := {u | ∃ a : K, 0 < a ∧ ∃ b : K, ∀ t, u t = a * t + b}
-
-/-- The similarity transformations `t ↦ a * t` with `0 < a`, the changes of scale of a ratio
-scale. -/
-def similarity : Set (K → K) := {u | ∃ a : K, 0 < a ∧ ∀ t, u t = a * t}
-
-/-- A positive affine transformation for each individual; invariance under them is cardinal
+/-- A positive affine change of scale for each individual; invariance under them is cardinal
 non-comparability. -/
-def cardinal : Set ((ι → K) → ι → K) := Pi.map '' Set.univ.pi fun _ ↦ positiveAffine
+def cardinal : Set (ι → K ↪o K) := Set.univ.pi fun _ ↦ positiveAffine
 
-/-- Positive affine transformations with a common unit; invariance under them is cardinal unit
+/-- Positive affine changes of scale with a common unit; invariance under them is cardinal unit
 comparability. -/
-def cardinalUnit : Set ((ι → K) → ι → K) :=
-  Pi.map '' {f | ∃ a : K, 0 < a ∧ ∃ b : ι → K, ∀ i t, f i t = a * t + b i}
+def cardinalUnit : Set (ι → K ↪o K) :=
+  {f | ∃ a : K, 0 < a ∧ ∃ b : ι → K, ∀ i t, f i t = a * t + b i}
 
-/-- One positive affine transformation applied to every individual; invariance under these is
+/-- One positive affine change of scale applied to every individual; invariance under these is
 cardinal full comparability. -/
-def cardinalFull : Set ((ι → K) → ι → K) := (fun u p ↦ u ∘ p) '' positiveAffine
+def cardinalFull : Set (ι → K ↪o K) := const ι '' positiveAffine
 
-/-- A similarity transformation for each individual; invariance under them is ratio-scale
-non-comparability. -/
-def ratio : Set ((ι → K) → ι → K) := Pi.map '' Set.univ.pi fun _ ↦ similarity
+/-- A similarity for each individual; invariance under them is ratio-scale non-comparability. -/
+def ratio : Set (ι → K ↪o K) := Set.univ.pi fun _ ↦ similarity
 
-/-- One similarity transformation applied to every individual; invariance under these is
-ratio-scale full comparability. -/
-def ratioFull : Set ((ι → K) → ι → K) := (fun u p ↦ u ∘ p) '' similarity
+/-- One similarity applied to every individual; invariance under these is ratio-scale full
+comparability. -/
+def ratioFull : Set (ι → K ↪o K) := const ι '' similarity
 
-theorem mem_ratio {g : (ι → K) → ι → K} :
-    g ∈ ratio ↔ ∃ f : ι → K → K, (∀ i, f i ∈ similarity) ∧ Pi.map f = g := by
-  simp [ratio]
+variable {ι K}
 
-theorem mem_cardinalUnit {g : (ι → K) → ι → K} :
-    g ∈ cardinalUnit ↔ ∃ a : K, 0 < a ∧ ∃ b : ι → K, g = fun p i ↦ a * p i + b i := by
-  constructor
-  · rintro ⟨f, ⟨a, ha, b, hf⟩, rfl⟩
-    exact ⟨a, ha, b, funext₂ fun p i ↦ hf i (p i)⟩
-  · rintro ⟨a, ha, b, rfl⟩
-    exact ⟨fun i t ↦ a * t + b i, ⟨a, ha, b, fun _ _ ↦ rfl⟩, rfl⟩
+@[simp]
+theorem mem_ratio {f : ι → K ↪o K} : f ∈ ratio ι K ↔ ∀ i, f i ∈ similarity :=
+  Set.mem_univ_pi
 
-theorem similarity_subset_positiveAffine : similarity ⊆ (positiveAffine : Set (K → K)) :=
-  fun _ ⟨a, ha, hu⟩ ↦ ⟨a, ha, 0, fun t ↦ by rw [hu, add_zero]⟩
+variable (ι K)
 
-theorem cardinalFull_subset_cardinalUnit :
-    cardinalFull ⊆ (cardinalUnit : Set ((ι → K) → ι → K)) := by
+theorem cardinalFull_subset_cardinalUnit : cardinalFull ι K ⊆ cardinalUnit ι K := by
   rintro _ ⟨u, ⟨a, ha, b, hu⟩, rfl⟩
-  exact ⟨fun _ ↦ u, ⟨a, ha, fun _ ↦ b, fun _ ↦ hu⟩, rfl⟩
+  exact ⟨a, ha, fun _ ↦ b, fun _ ↦ hu⟩
 
-theorem cardinalUnit_subset_cardinal : cardinalUnit ⊆ (cardinal : Set ((ι → K) → ι → K)) :=
-  Set.image_mono fun _ ⟨a, ha, b, hf⟩ i _ ↦ ⟨a, ha, b i, hf i⟩
+theorem cardinalUnit_subset_cardinal : cardinalUnit ι K ⊆ cardinal ι K :=
+  fun _ ⟨a, ha, b, hf⟩ i _ ↦ ⟨a, ha, b i, hf i⟩
 
-theorem ratioFull_subset_cardinalFull : ratioFull ⊆ (cardinalFull : Set ((ι → K) → ι → K)) :=
+theorem ratioFull_subset_cardinalFull : ratioFull ι K ⊆ cardinalFull ι K :=
   Set.image_mono similarity_subset_positiveAffine
 
-theorem ratio_subset_cardinal : ratio ⊆ (cardinal : Set ((ι → K) → ι → K)) :=
-  Set.image_mono (Set.pi_mono fun _ _ ↦ similarity_subset_positiveAffine)
+theorem ratio_subset_cardinal : ratio ι K ⊆ cardinal ι K :=
+  Set.pi_mono fun _ _ ↦ similarity_subset_positiveAffine
 
-theorem ratioFull_subset_ratio : ratioFull ⊆ (ratio : Set ((ι → K) → ι → K)) :=
-  comp_image_subset_map_pi
+theorem ratioFull_subset_ratio : ratioFull ι K ⊆ ratio ι K :=
+  const_image_subset_pi
 
-/-- A factor equative is meaningful on a ratio scale. -/
-theorem invariant_similarity_factorEquative {E K : Type*} [CommSemiring K] [PartialOrder K]
-    [IsCancelMulZero K] (a b : E) (n : K) :
-    Invariant similarity fun μ : E → K ↦ FactorEquative μ a b n := by
-  rintro u ⟨c, hc, hu⟩ μ
-  obtain rfl : u = (c * ·) := funext hu
-  exact propext (factorEquative_const_smul (c := c) (mul_right_injective₀ hc.ne') μ a b n)
+theorem cardinalFull_subset_ordinalLevel : cardinalFull ι K ⊆ ordinalLevel ι K :=
+  Set.image_subset_range _ _
 
-/-- A change of scale of an interval scale carries each differential to the differential rescaled
-by its unit. -/
-theorem exists_differentialComparative_comp_iff {E K : Type*} [Ring K] [IsDomain K]
-    [PartialOrder K] {u : K → K} (hu : u ∈ positiveAffine) :
-    ∃ c > 0, ∀ (μ : E → K) a b (d : K),
-      DifferentialComparative (u ∘ μ) a b (c * d) ↔ DifferentialComparative μ a b d := by
-  obtain ⟨c, hc, b, hu⟩ := hu
-  obtain rfl : u = fun t ↦ c * t + b := funext hu
-  exact ⟨c, hc, fun μ x y d ↦ differentialComparative_comp_iff (σ := (c * ·))
-    ((add_left_injective b).comp (mul_right_injective₀ hc.ne'))
-    (fun m x ↦ by simp only [vadd_eq_add, comp_apply, mul_add, add_assoc]) μ x y d⟩
-
-variable [IsStrictOrderedRing K]
-
-theorem positiveAffine_subset_strictMono : positiveAffine ⊆ {u : K → K | StrictMono u} :=
-  fun _ ⟨a, ha, b, hu⟩ s t hst ↦ by
-    simp only [hu]
-    exact add_lt_add_left (mul_lt_mul_of_pos_left hst ha) _
-
-theorem cardinal_subset_ordinal : cardinal ⊆ (ordinal : Set ((ι → K) → ι → K)) :=
-  Set.image_mono (Set.pi_mono fun _ _ ↦ positiveAffine_subset_strictMono)
-
-theorem cardinalFull_subset_ordinalLevel :
-    cardinalFull ⊆ (ordinalLevel : Set ((ι → K) → ι → K)) :=
-  Set.image_mono positiveAffine_subset_strictMono
-
-theorem cardinalUnit_subset_ordinal : cardinalUnit ⊆ (ordinal : Set ((ι → K) → ι → K)) :=
-  cardinalUnit_subset_cardinal.trans cardinal_subset_ordinal
-
-theorem ratio_subset_ordinal : ratio ⊆ (ordinal : Set ((ι → K) → ι → K)) :=
-  ratio_subset_cardinal.trans cardinal_subset_ordinal
-
-end Cardinal
+end Classes
 
 /-! ### Conditions on rules -/
 
@@ -297,7 +238,7 @@ end Conditions
 invariant under `T`, outputs weak orderings, satisfies weak Pareto and independence, and has no
 dictator. Arrow's own conditions take `T` to be `ordinal`. -/
 @[mk_iff]
-structure Arrovian [Preorder K] (T : Set ((ι → K) → ι → K)) (a : Rule ι α K) : Prop where
+structure Arrovian [Preorder K] (T : Set (ι → K ↪o K)) (a : Rule ι α K) : Prop where
   /-- The rule is invariant under `T`. -/
   invariant : Invariant T a
   /-- Every output is a weak ordering. -/
@@ -354,9 +295,9 @@ theorem anonymous_ofRel (h : ∀ σ : Equiv.Perm ι, (· ∘ σ) ⁻¹'o R = R) 
 
 /-- A rule that ranks vectors is invariant under a class of changes of scale when each
 of them leaves the ranking of vectors unchanged. -/
-theorem invariant_ofRel {T : Set ((ι → K) → ι → K)} (h : ∀ g ∈ T, g ⁻¹'o R = R) :
-    Invariant T (ofRel R : Rule ι α K) :=
-  fun g hg v ↦ congrArg (v ⁻¹'o ·) (h g hg)
+theorem invariant_ofRel [LE K] {T : Set (ι → K ↪o K)}
+    (h : ∀ f ∈ T, (fun p : ι → K ↦ f • p) ⁻¹'o R = R) : Invariant T (ofRel R : Rule ι α K) :=
+  fun f hf v ↦ congrArg (v ⁻¹'o ·) (h f hf)
 
 /-- On two or more objects, a rule that ranks vectors satisfies weak Pareto exactly when its
 ranking of vectors puts a vector strictly above every vector it dominates in each coordinate. -/

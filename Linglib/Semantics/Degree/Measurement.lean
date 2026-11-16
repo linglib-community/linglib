@@ -2,6 +2,7 @@ module
 
 public import Mathlib.LinearAlgebra.AffineSpace.AffineMap
 public import Mathlib.Algebra.Order.Ring.Defs
+public import Linglib.Semantics.MeasurementTheory.Invariance
 
 import Mathlib.Tactic.Linarith
 
@@ -10,8 +11,8 @@ import Mathlib.Tactic.Linarith
 
 A *differential comparative* (*3 inches taller*) says that one measure is another moved by a
 difference, and a *factor equative* (*twice as tall*) that it is another scaled by a ratio. A
-statement about measures is meaningful when it is [invariant](##Invariant) under every admissible
-change of scale. [A change of scale that is equivariant along a map of
+statement about measures is meaningful when it is `Invariant` under every admissible change of
+scale. [A change of scale that is equivariant along a map of
 amounts](##factorEquative_comp_iff) carries each statement to the one at the image amount, so [an
 affine change of scale acts on a differential by its linear
 part](##differentialComparative_comp_affineMap), and [an action that commutes with the
@@ -29,9 +30,8 @@ form of the factor equative.
 
 ## TODO
 
-The admissible changes of scale are taken as given. Measurement theory derives them from the
-representations of a qualitative structure, and `Aggregation` consumes `Invariant` from here only
-for want of that theory.
+The changes of an interval and of a ratio scale are taken as given, where measurement theory
+derives them from the representations of a qualitative structure.
 
 ## References
 
@@ -43,7 +43,7 @@ for want of that theory.
 
 @[expose] public section
 
-open Function
+open Function MeasurementTheory
 
 variable {E M N C D D' : Type*}
 
@@ -110,22 +110,6 @@ theorem differentialComparative_comp_affineMap {k V₁ V₂ P₁ P₂ : Type*} [
     DifferentialComparative (f ∘ μ) a b (f.linear d) ↔ DifferentialComparative μ a b d :=
   differentialComparative_comp_iff hf (fun d x ↦ f.map_vadd x d) μ a b d
 
-/-! ### Invariance -/
-
-/-- A function of measures is invariant under a class of changes of scale when none of them
-changes its value. A statement invariant under the changes of a scale is meaningful on it. -/
-def Invariant {β : Type*} (S : Set (D → D)) (a : (E → D) → β) : Prop :=
-  ∀ g ∈ S, ∀ μ, a (g ∘ μ) = a μ
-
-theorem Invariant.mono {β : Type*} {S T : Set (D → D)} (h : S ⊆ T) {a : (E → D) → β}
-    (ha : Invariant T a) : Invariant S a :=
-  fun g hg ↦ ha g (h hg)
-
-/-- Comparing two measures is meaningful on an ordinal scale. -/
-theorem invariant_strictMono_lt [LinearOrder D] (a b : E) :
-    Invariant {u : D → D | StrictMono u} fun μ ↦ μ b < μ a :=
-  fun _ hu _ ↦ propext (StrictMono.lt_iff_lt hu)
-
 /-! ### Numerical scales -/
 
 -- [sassoon-2010] (13b)
@@ -188,3 +172,30 @@ theorem factorEquative_comp_strictMono_iff [Ring D] [LinearOrder D] [IsStrictOrd
     simpa using ((factorEquative_add_const_iff (E := E) 1 n n').1 hn').2
   · rintro rfl g hg
     exact ⟨1, fun μ a b ↦ by simp [FactorEquative, hg.injective.eq_iff]⟩
+
+/-! ### Meaningful statements -/
+
+section Meaningful
+
+variable {K : Type*}
+
+/-- A factor equative is meaningful on a ratio scale. -/
+theorem invariant_similarity_factorEquative [CommSemiring K] [PartialOrder K] [IsCancelMulZero K]
+    (a b : E) (n : K) :
+    Invariant (similarity : Set (K ↪o K)) fun μ : E → K ↦ FactorEquative μ a b n := by
+  rintro g ⟨c, hc, hg⟩ μ
+  have : g • μ = fun x ↦ c • μ x := funext fun x ↦ hg (μ x)
+  rw [this]
+  exact propext (factorEquative_const_smul (c := c) (mul_right_injective₀ hc.ne') μ a b n)
+
+/-- A change of scale of an interval scale carries each differential to the differential rescaled
+by its unit. -/
+theorem exists_differentialComparative_comp_iff [Semiring K] [PartialOrder K]
+    {u : K ↪o K} (hu : u ∈ positiveAffine) :
+    ∃ c > 0, ∀ (μ : E → K) a b (d : K),
+      DifferentialComparative (u ∘ μ) a b (c * d) ↔ DifferentialComparative μ a b d := by
+  obtain ⟨c, hc, b, hu⟩ := hu
+  exact ⟨c, hc, fun μ x y d ↦ differentialComparative_comp_iff (σ := (c * ·)) u.injective
+    (fun m x ↦ by simp only [vadd_eq_add, hu, mul_add, add_assoc]) μ x y d⟩
+
+end Meaningful
