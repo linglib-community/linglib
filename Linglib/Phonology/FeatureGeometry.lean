@@ -18,8 +18,8 @@ at or below it, [the preimage](##Phonology.FeatureGeometry.coe_featureClass) of 
 the other, the condition Padgett carries over to classes taken as bare sets of features.
 Assimilation spreads a class from one segment onto another, `Finset.piecewise` on the class, so
 spreading a node
-[carries every class it dominates](##Phonology.FeatureGeometry.eqOn_piecewise_of_le) and
-[leaves every incomparable class untouched](##Phonology.FeatureGeometry.eqOn_piecewise_of_incompRel).
+[carries every class it dominates](##Phonology.FeatureGeometry.eqOn_piecewise_of_le) and [leaves
+every incomparable class untouched](##Phonology.FeatureGeometry.eqOn_piecewise_of_incompRel).
 
 ## Implementation notes
 
