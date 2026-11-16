@@ -1,6 +1,8 @@
 module
 
-public import Linglib.Pragmatics.Probabilistic.Basic
+public import Linglib.Pragmatics.Probabilistic.Latent
+public import Linglib.Pragmatics.Probabilistic.Literal
+public import Linglib.Pragmatics.Probabilistic.Parse
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!
@@ -29,25 +31,6 @@ open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
 namespace RSA
-
-/-- With two actions, the expected reward of a choice weighs the reward of the first by its share
-and of the second by the rest. -/
-theorem integral_of_pair {A : Type*} [Fintype A] [MeasurableSpace A] [DiscreteMeasurableSpace A]
-    {ν : Measure A} [IsProbabilityMeasure ν] {f : A → ℝ} {a a' : A} (haa' : a ≠ a')
-    (hall : ∀ c, c = a ∨ c = a') :
-    ∫ c, f c ∂ν = ν.real {a} * f a + (1 - ν.real {a}) * f a' := by
-  rw [integral_fintype .of_finite, Fintype.sum_eq_add a a' haa'
-    (fun c hc ↦ absurd (hall c) (not_or.mpr hc)),
-    ← measureReal_singleton_add_singleton_of_pair ν haa' (fun c _ ↦ hall c)]
-  simp only [smul_eq_mul]
-  ring
-
-/-- When an action is a guess of the state, rewarded when right, the expected reward of a guess is
-its mass. -/
-theorem integral_pi_single {X : Type*} [Fintype X] [DecidableEq X] [MeasurableSpace X]
-    [DiscreteMeasurableSpace X] (ν : Measure X) [IsFiniteMeasure ν] (x : X) :
-    ∫ y, (Pi.single y 1 : X → ℝ) x ∂ν = ν.real {x} := by
-  simp [integral_fintype .of_finite, Pi.single_apply]
 
 section Policy
 

@@ -1,8 +1,9 @@
 module
 
 public import Linglib.Data.Examples.HeKaiserIskarous2025
-public import Linglib.Pragmatics.Probabilistic.LexicalUncertainty
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Pragmatics.Probabilistic.Latent
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # He, Kaiser and Iskarous (2025): Modeling sentence polarity asymmetries
@@ -231,8 +232,8 @@ noncomputable def L0 : Kernel Utterance State :=
 instance : IsFiniteKernel (L0 P m) := inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
 
 -- (2) is (11) and (12) at degree one
-theorem L0_fuzzy_one_one : L0 P (fuzzy 1 1) = listener P (truthful extension) := by
-  rw [listener_truthful_eq_ofDensity, L0]
+theorem L0_fuzzy_one_one : L0 P (fuzzy 1 1) = literalListener P extension := by
+  rw [literalListener_eq_ofDensity, L0]
   congr 1
   funext u st
   cases u <;> cases st <;> simp [fuzzy, extension]
@@ -277,15 +278,15 @@ variable (π : Measure State) [IsProbabilityMeasure π] {st : State} (hπ : π {
 include hπ
 
 theorem speaker_truthful_real :
-    (s.speaker (listener π (truthful extension)) st).real {st.utterance} =
+    (s.speaker (literalListener π extension) st).real {st.utterance} =
       Real.sigmoid (s.α * (s.cost .null - s.cost st.utterance - Real.log (π.real {st}))) :=
-  speaker_listener_truthful_dirac_real_singleton_of_eq_singleton s.α_pos s.cost π extension hπ
+  speaker_literalListener_dirac_real_singleton_of_eq_singleton s.α_pos s.cost π extension hπ
     (by cases st <;> decide) (extension_utterance st) rfl fun _ ↦ eq_or_eq_null_of_mem_extension
 
 theorem speaker_truthful_real_null :
-    (s.speaker (listener π (truthful extension)) st).real {.null} =
+    (s.speaker (literalListener π extension) st).real {.null} =
       Real.sigmoid (s.α * (s.cost st.utterance - s.cost .null + Real.log (π.real {st}))) :=
-  speaker_listener_truthful_dirac_real_singleton_of_eq_univ s.α_pos s.cost π extension hπ
+  speaker_literalListener_dirac_real_singleton_of_eq_univ s.α_pos s.cost π extension hπ
     (by cases st <;> decide) (extension_utterance st) rfl fun _ ↦ eq_or_eq_null_of_mem_extension
 
 end Boolean
@@ -293,7 +294,7 @@ end Boolean
 /-- The speaker of the standard model under a prior addresses the Boolean literal listener of
 that prior, (1) to (3). -/
 noncomputable def standardSpeaker (π : Measure State) : Kernel State Utterance :=
-  s.speaker (listener π (truthful extension))
+  s.speaker (literalListener π extension)
 
 /-- The speaker of the fuzzy model under a prior addresses the fuzzy literal listener of that
 prior, the positive degree being the sigmoid of the prior of the positive state, (11) to (13). -/
@@ -520,7 +521,7 @@ private theorem averaged_standardSpeaker_real (π : Measure State) [IsProbabilit
       s.statePrior st * Real.sigmoid (s.α * (s.cost .null - s.cost st.utterance -
         Real.log (π.real {st}))) := by
   have h0 (st' : State) (h : st' ≠ st) : (s.standardSpeaker π st').real {st.utterance} = 0 :=
-    speaker_listener_truthful_dirac_real_singleton_eq_zero s.α_pos s.cost π extension
+    speaker_literalListener_dirac_real_singleton_eq_zero s.α_pos s.cost π extension
       (not_mem_extension_utterance h)
   rw [averaged_real, sum_state]
   cases st
@@ -604,7 +605,7 @@ theorem isProbabilityMeasure_wonkyListener (st : State) :
       exact mul_ne_zero (s.prior_ne_zero st) hw)
     (by
       rw [standardSpeaker, speaker,
-        speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff s.α_pos]
+        speaker_literalListener_dirac_apply_singleton_ne_zero_iff s.α_pos]
       exact ⟨by rw [extension_utterance]; rfl, s.worldPrior_ne_zero _ st⟩)
 
 omit hn in

@@ -111,8 +111,8 @@ theorem S1_eq_ofWeights_prior (hα : α ≠ 0) {π : U → ℝ≥0∞} (hπ0 : �
 
 theorem L1_indicator (sem : U → Set M) {r : R} (hr : f r = fun u ↦ (sem u).indicator 1) :
     L1 μ f α κ r =
-      RSA.listener μ (speaker α κ (RSA.listener μ (truthful sem)) Measure.dirac) := by
-  rw [L1, S1, L0, hr, listener_truthful_eq_ofDensity]
+      RSA.listener μ (speaker α κ (RSA.literalListener μ sem) Measure.dirac) := by
+  rw [L1, S1, L0, hr, literalListener_eq_ofDensity]
 
 /-- Under a Boolean rhetorical function, standard RSA gives no listener mass to meanings outside the
 utterance's extension (Appendix A.2). -/
@@ -120,7 +120,7 @@ theorem L1_indicator_apply_singleton_of_notMem (hα : 0 < α) (sem : U → Set M
     (hr : f r = fun u ↦ (sem u).indicator 1) {u : U} {m : M} (hm : m ∉ sem u) :
     L1 μ f α κ r u {m} = 0 := by
   rw [L1_indicator μ f α κ sem hr]
-  exact listener_speaker_listener_truthful_apply_singleton_of_notMem hα κ μ sem hm
+  exact listener_speaker_literalListener_apply_singleton_of_notMem hα κ μ sem hm
 
 theorem listener_apply_singleton [Fintype R] [MeasurableSpace R] [DiscreteMeasurableSpace R]
     (ρ : Kernel U R) (u : U) (m : M) :
@@ -230,7 +230,7 @@ variable [Fintype X] [MeasurableSpace X] [MeasurableSingletonClass X]
 
 theorem speaker_qudListener_dirac {α : ℝ} (hα : 0 ≤ α) (κ : U → ℝ) (m : M) :
     speaker α κ (qudListener L q) Measure.dirac m =
-      speaker α κ (L.map q) Measure.dirac (q m) := by
+      qudSpeaker α κ L q m := by
   have hn : (n : ℝ≥0∞) ≠ 0 := by
     rw [Nat.cast_ne_zero, ← hq m]
     exact Set.ncard_ne_zero_of_mem (a := m) rfl
@@ -244,7 +244,7 @@ theorem speaker_qudListener_dirac {α : ℝ} (hα : 0 ≤ α) (κ : U → ℝ) (
         (L.map q u' {q m} ^ α * ENNReal.ofReal (Real.exp (-(α * κ u')))) := fun u' ↦ by
     rw [qudListener_apply_singleton_of_ncard L q hq, Kernel.map_apply_singleton,
       ENNReal.div_rpow_of_nonneg _ _ hα, div_eq_mul_inv, mul_comm (_ ^ α), mul_assoc]
-  rw [speaker_dirac_apply_singleton, speaker_dirac_apply_singleton]
+  rw [qudSpeaker, speaker_dirac_apply_singleton, speaker_dirac_apply_singleton]
   simp only [hw]
   rw [← Finset.mul_sum, ENNReal.mul_div_mul_left _ _ hc0 hc]
 
@@ -287,7 +287,7 @@ theorem kaoGoodman2015_S1 (μ : Measure KaoGoodman2015.Meaning) [IsFiniteMeasure
     KaoGoodman2015.S1 μ α (m, q) =
       S1 μ (rhetoricalOfQUD μ (KaoGoodman2015.L0 μ) KaoGoodman2015.project) α 0 q m := by
   have : ∀ u, IsZeroOrProbabilityMeasure (KaoGoodman2015.L0 μ u) := fun u ↦
-    inferInstanceAs (IsZeroOrProbabilityMeasure (RSA.listener μ (truthful KaoGoodman2015.sem) u))
+    inferInstanceAs (IsZeroOrProbabilityMeasure (RSA.literalListener μ KaoGoodman2015.sem u))
   rw [S1, L0_rhetoricalOfQUD μ hμ]
   exact (speaker_qudListener_dirac _ _ (ncard_project_kaoGoodman2015 q) hα 0 m).symm
 
@@ -299,7 +299,7 @@ theorem kaoWuEtAl2014_S1 (μ : Measure KaoWuEtAl2014.Meaning) [IsFiniteMeasure �
       S1 μ (rhetoricalOfQUD μ (KaoWuEtAl2014.L0 μ) KaoWuEtAl2014.project) 1
         (KaoWuEtAl2014.cost c) g m := by
   have : ∀ u, IsZeroOrProbabilityMeasure (KaoWuEtAl2014.L0 μ u) := fun u ↦
-    inferInstanceAs (IsZeroOrProbabilityMeasure (RSA.listener μ (truthful KaoWuEtAl2014.sem) u))
+    inferInstanceAs (IsZeroOrProbabilityMeasure (RSA.literalListener μ KaoWuEtAl2014.sem u))
   rw [S1, L0_rhetoricalOfQUD μ hμ]
   exact (speaker_qudListener_dirac _ _ (ncard_project_kaoWuEtAl2014 g) zero_le_one _ m).symm
 
@@ -309,13 +309,13 @@ end AffectAware
 
 theorem finite_setOf_qudListener (μ : Measure M) :
     {ν : Measure M | ∃ (sem : U → Set M) (X : Type*) (q : M → X) (u : U),
-      ν = qudListener (RSA.listener μ (truthful sem)) q u}.Finite :=
+      ν = qudListener (RSA.literalListener μ sem) q u}.Finite :=
   (Set.finite_range fun p : Set M × (M → Set M) ↦
       (∑ m, μ[|p.1] (p.2 m))⁻¹ • ∑ m, μ[|p.1] (p.2 m) • Measure.dirac m).subset <| by
     rintro ν ⟨sem, X, q, u, rfl⟩
     refine ⟨(sem u, fun m ↦ q ⁻¹' {q m}), ?_⟩
     simp only [qudListener, Kernel.ofWeights, Kernel.ofFunOfCountable_apply,
-      listener_truthful_apply]
+      literalListener_apply]
 
 /-- Over two or more meanings and a prior of positive mass everywhere, some literal listener of the
 framework is no question-under-discussion RSA literal listener (Lemma 2). -/
@@ -323,7 +323,7 @@ theorem exists_L0_ne_qudListener [Nontrivial M] (μ : Measure M) [IsFiniteMeasur
     (hμ : ∀ m, μ {m} ≠ 0) :
     ∃ f : R → U → M → ℝ≥0∞, (∀ r u m, f r u m ≤ 1) ∧
       ∀ (sem : U → Set M) {X : Type*} (q : M → X) (r : R) (u u' : U),
-        L0 μ f r u ≠ qudListener (RSA.listener μ (truthful sem)) q u' := by
+        L0 μ f r u ≠ qudListener (RSA.literalListener μ sem) q u' := by
   obtain ⟨m₁, m₂, hne⟩ := exists_pair_ne M
   set ν : ℝ≥0∞ → Measure M := fun t ↦ t • Measure.dirac m₁ + (1 - t) • Measure.dirac m₂ with hν
   have huniv : ∀ t ∈ Set.Ioo (0 : ℝ≥0∞) 1, ν t Set.univ = 1 := fun t ht ↦ by

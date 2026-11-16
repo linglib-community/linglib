@@ -146,7 +146,7 @@ def change : Finset World := {.TF, .FT}
 /-- The literal listener within a context set under a question samples a world of the context
 set at which the utterance is true and returns the question's answer there. -/
 noncomputable def L0 (C : Finset World) (q : QUD) : Kernel Utterance (Finset World) :=
-  (RSA.listener (Measure.count.restrict ↑C) (truthful fun u ↦ u.sem)).map q.cell
+  (RSA.literalListener (Measure.count.restrict ↑C) (fun u ↦ u.sem)).map q.cell
 
 instance (C : Finset World) (q : QUD) : IsFiniteKernel (L0 C q) :=
   inferInstanceAs (IsFiniteKernel (Kernel.map _ _))

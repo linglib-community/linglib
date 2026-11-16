@@ -151,7 +151,7 @@ example : gradedMeaning Scenario.s3.aspects (1 / 5) .madeNoDifference = 1 / 5 :=
 
 /-- The literal listener is uniform on the scenarios an expression is true of. -/
 noncomputable abbrev literal : Kernel CausalExpression Scenario :=
-  RSA.listener (uniformOn Set.univ) (truthful fun u ↦ (sem u : Set Scenario))
+  RSA.literalListener (uniformOn Set.univ) (fun u ↦ (sem u : Set Scenario))
 
 /-- The first-level speaker knows the scenario and addresses the literal listener at
 rationality `α`. -/
@@ -164,7 +164,7 @@ noncomputable abbrev listener (α : ℝ) : Kernel CausalExpression Scenario :=
 
 -- Table 1c
 theorem literal_enabled : literal .enabled {.s1} = 2⁻¹ ∧ literal .enabled {.s3} = 0 := by
-  rw [listener_uniformOn_truthful_apply_singleton, listener_uniformOn_truthful_apply_singleton,
+  rw [literalListener_uniformOn_apply_singleton, literalListener_uniformOn_apply_singleton,
     ite_eq_left (by decide), ite_eq_right (by decide), show (sem .enabled).card = 2 from by decide]
   norm_num
 

@@ -2,9 +2,9 @@ module
 
 public import Studies.Fox2018
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Pragmatics.Probabilistic.Basic
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.TFAE
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Enguehard (2025): Upward monotonicity and the strongest answer condition
@@ -54,7 +54,7 @@ communicative stability](##Enguehard2025.weaklyStable_iff_isOptimal).
   negation express every proposition, and the two constants with any non-monotone function
   compose to negation.
 * Optimality in the probabilistic model of the appendix compares the literal listener's mass at
-  the world, `RSA.listener μ (RSA.truthful sem)`, strictly across the true messages with other
+  the world, `RSA.literalListener μ sem`, strictly across the true messages with other
   meanings, which is the paper's assumption that no two messages tie; the utility is its
   logarithm, which the comparison drops. A prior is a probability measure giving every world
   positive mass, and the worlds are finitely many, where the paper also allows countably many.
@@ -1212,7 +1212,7 @@ variable [MeasurableSpace W] [DiscreteMeasurableSpace W] {U : Type*} [Measurable
 listener gives `w` more mass than that of any true message with another meaning. -/
 def IsOptimal (μ : Measure W) (w : W) (u : U) : Prop :=
   w ∈ sem u ∧ ∀ u', w ∈ sem u' → sem u' ≠ sem u →
-    RSA.listener μ (RSA.truthful sem) u' {w} < RSA.listener μ (RSA.truthful sem) u {w}
+    RSA.literalListener μ sem u' {w} < RSA.literalListener μ sem u {w}
 
 /-- A.3: a message is optimal at `w` for some prior giving every world positive mass iff its
 meaning is minimal among the meanings true at `w`, so that which message the pragmatic speaker
@@ -1222,11 +1222,11 @@ theorem exists_prior_iff_minimal [Fintype W] {w : W} {u : U} :
       Minimal (· ∈ trueAnswers (range sem) w) (sem u) := by
   -- the literal listener's mass at `w` falls as the prior mass of the meaning rises
   have key : ∀ (μ : Measure W) [IsFiniteMeasure μ], μ {w} ≠ 0 → ∀ {u u' : U}, w ∈ sem u →
-      w ∈ sem u' → (RSA.listener μ (RSA.truthful sem) u' {w} <
-        RSA.listener μ (RSA.truthful sem) u {w} ↔ μ (sem u) < μ (sem u')) := by
+      w ∈ sem u' → (RSA.literalListener μ sem u' {w} <
+        RSA.literalListener μ sem u {w} ↔ μ (sem u) < μ (sem u')) := by
     intro μ _ hw u u' hu hu'
-    rw [RSA.listener_truthful_apply_singleton μ sem hu,
-      RSA.listener_truthful_apply_singleton μ sem hu',
+    rw [RSA.literalListener_apply_singleton μ sem hu,
+      RSA.literalListener_apply_singleton μ sem hu',
       ENNReal.mul_lt_mul_iff_left hw (measure_ne_top μ _), ENNReal.inv_lt_inv]
   constructor
   · rintro ⟨μ, _, hpos, hu, hopt⟩

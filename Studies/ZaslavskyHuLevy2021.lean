@@ -68,7 +68,7 @@ theorem freeEnergy_le_freeEnergy_speaker [Nonempty M] [IsFiniteMeasure P] {α : 
     [∀ u, IsZeroOrProbabilityMeasure (L u)] :
     RSA.freeEnergy P Kernel.id C α S L ≤
       RSA.freeEnergy P Kernel.id C α (RSA.speaker α C L Measure.dirac) L :=
-  RSA.freeEnergy_le_freeEnergy_speaker (RSA.dirac_ae_eq_posterior_id P) hα S L
+  RSA.freeEnergy_le_freeEnergy_speaker (ProbabilityTheory.dirac_ae_eq_posterior_id P) hα S L
 
 section Listener
 
@@ -155,7 +155,7 @@ theorem freeEnergy_le_freeEnergy_speaker_succ (t : ℕ) :
       RSA.freeEnergy P Kernel.id C α (RSA.speaker α C (listener P C α l (t + 1)) Measure.dirac)
         (listener P C α l (t + 1)) :=
   have := isMarkovKernel_speaker_listener (C := C) hP hl hα hm t
-  RSA.freeEnergy_le_freeEnergy_speaker (RSA.dirac_ae_eq_posterior_id P) hα _ _
+  RSA.freeEnergy_le_freeEnergy_speaker (ProbabilityTheory.dirac_ae_eq_posterior_id P) hα _ _
 
 /-- The tradeoff converges along the recursion to a real number, being monotone, bounded above
 and nowhere `−∞`. -/
@@ -163,7 +163,7 @@ theorem exists_tendsto_freeEnergy : ∃ g : ℝ, Tendsto (fun t ↦ RSA.freeEner
     (RSA.speaker α C (listener P C α l t) Measure.dirac) (listener P C α l t)) atTop (𝓝 g) :=
   have : IsMarkovKernel (RSA.speaker α C (Kernel.ofDensity P l) Measure.dirac) :=
     isMarkovKernel_speaker_listener (C := C) hP hl hα hm 0
-  RSA.exists_tendsto_freeEnergy_iterate_recurse (RSA.dirac_ae_eq_posterior_id P) hα
+  RSA.exists_tendsto_freeEnergy_iterate_recurse (ProbabilityTheory.dirac_ae_eq_posterior_id P) hα
     (fun o ↦ by rw [Measure.id_comp]; exact hP o) (Kernel.ofDensity P l)
 
 end Recursion

@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Pragmatics.Probabilistic.Basic
 public import Linglib.Semantics.Reference.Distinguishing
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Degen, Hawkins, Graf, Kreiss and Goodman (2020): When Redundancy Is Useful: A Bayesian Approach to "Overinformative" Referring Expressions

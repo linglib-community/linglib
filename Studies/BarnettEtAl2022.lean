@@ -4,12 +4,12 @@ public import Linglib.Core.Combinatorics.SetFamily.FourFunctions
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Linglib.Core.Probability.UniformOn
-public import Linglib.Pragmatics.Probabilistic.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.List.GetD
 public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Barnett, Griffiths and Hawkins (2022): A Pragmatic Account of the Weak Evidence Effect

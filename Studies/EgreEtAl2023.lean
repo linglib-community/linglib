@@ -38,7 +38,7 @@ interpretation rule (`wir`).
   kernel (`RSA.listener_apply_eq_posterior`).
 * The lexical uncertainty model is stated over arbitrary finite types of worlds, observations,
   interpretations and messages. Appendix A's two steps are general:
-  `RSA.speaker_listener_truthful_apply_eq_iff`, that against a literal listener the speaker
+  `RSA.speaker_literalListener_apply_eq_iff`, that against a literal listener the speaker
   depends on her belief only through the messages it entails, and
   `RSA.speaker_ofDensity_apply_congr`, that the prior cancels against a reweighted prior.
 
@@ -195,19 +195,19 @@ noncomputable def betweenMeaning (p : ℕ × ℕ) : ℕ → ℝ≥0∞ := (Set.I
 
 theorem ofDensity_betweenMeaning (μ : Measure ℕ) :
     Kernel.ofDensity μ betweenMeaning =
-      RSA.listener μ (RSA.truthful (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2)) :=
-  (RSA.listener_truthful_eq_ofDensity μ _).symm
+      RSA.literalListener μ (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2) :=
+  (RSA.literalListener_eq_ofDensity μ _).symm
 
 -- §3.2.2, (ii)
-theorem listener_truthful_unif_betweenMeaning {N a b : ℕ} (hb : b ≤ N) (k : ℕ) :
+theorem literalListener_unif_betweenMeaning {N a b : ℕ} (hb : b ≤ N) (k : ℕ) :
     Kernel.ofDensity (unif N) betweenMeaning (a, b) {k} =
       if k ∈ Set.Icc a b then ((b + 1 - a : ℕ) : ℝ≥0∞)⁻¹ else 0 := by
   rw [ofDensity_betweenMeaning]
   split_ifs with h
-  · refine (RSA.listener_truthful_apply_singleton (unif N)
+  · refine (RSA.literalListener_apply_singleton (unif N)
       (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2) h).trans ?_
     rw [unif_apply_Icc hb, unif_apply_singleton, ite_eq_left (h.2.trans hb), mul_one]
-  · exact RSA.listener_truthful_apply_singleton_of_notMem _
+  · exact RSA.literalListener_apply_singleton_of_notMem _
       (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2) h
 
 /-! ### The ratio inequality (§4) -/
@@ -255,9 +255,9 @@ theorem between_ratio {a b k₁ k₂ : ℕ} (hk₁ : k₁ ∈ Set.Icc a b) (hk�
     (Kernel.ofDensity μ betweenMeaning (a, b)).real {k₁} /
         (Kernel.ofDensity μ betweenMeaning (a, b)).real {k₂} =
       μ.real {k₁} / μ.real {k₂} := by
-  have h₁ := RSA.listener_truthful_apply_singleton μ (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2)
+  have h₁ := RSA.literalListener_apply_singleton μ (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2)
     (u := (a, b)) hk₁
-  have h₂ := RSA.listener_truthful_apply_singleton μ (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2)
+  have h₂ := RSA.literalListener_apply_singleton μ (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2)
     (u := (a, b)) hk₂
   rw [ofDensity_betweenMeaning, measureReal_def, measureReal_def, h₁, h₂, ENNReal.toReal_mul,
     ENNReal.toReal_mul, mul_div_mul_left _ _ (ENNReal.toReal_ne_zero.mpr
@@ -313,28 +313,28 @@ theorem L0_around4_apply_singleton (x : Fin 9) :
 
 theorem L0_between1_7_apply_singleton (x : Fin 9) :
     L0 .between1_7 {x} = if x ∈ Set.Icc 1 7 then 7⁻¹ else 0 := by
-  have h : L0 .between1_7 = RSA.listener Measure.count
-      (RSA.truthful (fun _ : Msg ↦ Set.Icc (1 : Fin 9) 7)) .between1_7 := by
-    rw [RSA.listener_truthful_eq_ofDensity]; rfl
+  have h : L0 .between1_7 = RSA.literalListener Measure.count
+      (fun _ : Msg ↦ Set.Icc (1 : Fin 9) 7) .between1_7 := by
+    rw [RSA.literalListener_eq_ofDensity]; rfl
   rw [h]
   split_ifs with hx
-  · rw [RSA.listener_truthful_apply_singleton Measure.count
+  · rw [RSA.literalListener_apply_singleton Measure.count
       (fun _ : Msg ↦ Set.Icc (1 : Fin 9) 7) hx, Measure.count_singleton, mul_one, ← Finset.coe_Icc,
       Measure.count_apply_finset, show (Finset.Icc (1 : Fin 9) 7).card = 7 by decide]
     rfl
-  · exact RSA.listener_truthful_apply_singleton_of_notMem Measure.count
+  · exact RSA.literalListener_apply_singleton_of_notMem Measure.count
       (fun _ : Msg ↦ Set.Icc (1 : Fin 9) 7) hx
 
 theorem L0_exactly4_apply_singleton (x : Fin 9) : L0 .exactly4 {x} = if x = 4 then 1 else 0 := by
   have h : L0 .exactly4 =
-      RSA.listener Measure.count (RSA.truthful (fun _ : Msg ↦ ({4} : Set (Fin 9)))) .exactly4 := by
-    rw [RSA.listener_truthful_eq_ofDensity]; rfl
+      RSA.literalListener Measure.count (fun _ : Msg ↦ ({4} : Set (Fin 9))) .exactly4 := by
+    rw [RSA.literalListener_eq_ofDensity]; rfl
   rw [h]
   split_ifs with hx
-  · rw [RSA.listener_truthful_apply_singleton Measure.count
+  · rw [RSA.literalListener_apply_singleton Measure.count
       (fun _ : Msg ↦ ({4} : Set (Fin 9))) (Set.mem_singleton_iff.mpr hx), Measure.count_singleton,
       Measure.count_singleton, inv_one, mul_one]
-  · exact RSA.listener_truthful_apply_singleton_of_notMem Measure.count
+  · exact RSA.literalListener_apply_singleton_of_notMem Measure.count
       (fun _ : Msg ↦ ({4} : Set (Fin 9))) (fun h ↦ hx (Set.mem_singleton_iff.mp h))
 
 /-- The speaker's belief of Table 1 has these weights, peaked at 4 with support `[1, 7]`. -/
@@ -526,12 +526,12 @@ After an observation she believes the joint prior conditioned on it, so her util
 and 5) is the expected log of the listener's joint cell under her belief, less the message
 cost. -/
 noncomputable def luS1 (i : I) : Kernel O M :=
-  RSA.speaker lam cost (RSA.listener P (RSA.truthful fun m ↦ sem i m ×ˢ Set.univ)) fun o ↦
+  RSA.speaker lam cost (RSA.literalListener P (fun m ↦ sem i m ×ˢ Set.univ)) fun o ↦
     P[|Prod.snd ⁻¹' {o}]
 
 theorem luS1_apply_singleton_eq_zero_iff (hlam : 0 < lam) {o : O} {i : I} {m : M} :
     luS1 P sem cost lam i o {m} = 0 ↔ ¬ Quality P sem o i m := by
-  rw [luS1, RSA.speaker_listener_truthful_apply_singleton_eq_zero_iff hlam (o := o)
+  rw [luS1, RSA.speaker_literalListener_apply_singleton_eq_zero_iff hlam (o := o)
       cond_absolutelyContinuous, ae_cond_mem_iff .of_discrete, snd_preimage_ae_le_iff_quality]
 
 theorem luS1_eq_of_sameSupport (hlam : 0 < lam) {o₁ o₂ : O} (hs : SameSupport P o₁ o₂)
@@ -539,7 +539,7 @@ theorem luS1_eq_of_sameSupport (hlam : 0 < lam) {o₁ o₂ : O} (hs : SameSuppor
     luS1 P sem cost lam i o₂ = luS1 P sem cost lam i o₁ :=
   have := cond_isProbabilityMeasure ho₁
   have := cond_isProbabilityMeasure ho₂
-  (RSA.speaker_listener_truthful_apply_eq_iff hlam (o := o₁) (o' := o₂) cond_absolutelyContinuous
+  (RSA.speaker_literalListener_apply_eq_iff hlam (o := o₁) (o' := o₂) cond_absolutelyContinuous
     cond_absolutelyContinuous).2 fun m ↦ by
       rw [ae_cond_mem_iff .of_discrete, ae_cond_mem_iff .of_discrete,
         snd_preimage_ae_le_iff_quality, snd_preimage_ae_le_iff_quality,

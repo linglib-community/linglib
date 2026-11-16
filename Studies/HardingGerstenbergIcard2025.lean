@@ -185,7 +185,7 @@ noncomputable abbrev μ : Measure World := uniformOn Set.univ
 
 /-- The literal listener (2) conditions the uniform prior on the interpretation set. -/
 noncomputable abbrev L0 : Kernel Msg World :=
-  RSA.listener μ (truthful fun m ↦ (sem m : Set World))
+  RSA.literalListener μ (fun m ↦ (sem m : Set World))
 
 /-- The prior as a listener who has heard nothing. -/
 noncomputable abbrev prior : Kernel Msg World := Kernel.const Msg μ
@@ -194,7 +194,7 @@ theorem expectedReward_L0 (a : Act) :
     ∫ w, reward a w ∂(L0 0) = 0 ∧
       ∫ w, reward a w ∂(L0 1) = if a = 1 then 1 else -1 := by
   fin_cases a <;> simp [integral_fintype .of_finite, smul_eq_mul, Fin.sum_univ_two,
-    listener_uniformOn_truthful_apply_singleton, measureReal_def, sem, reward]
+    literalListener_uniformOn_apply_singleton, measureReal_def, sem, reward]
 
 theorem expectedReward_prior (m : Msg) (a : Act) : ∫ w, reward a w ∂(prior m) = 0 := by
   fin_cases a <;> simp [integral_fintype .of_finite, smul_eq_mul, Fin.sum_univ_two,
@@ -352,17 +352,17 @@ world and −1 elsewhere. -/
 def reward : Act → World → ℝ := fun a w => if a = 0 then 0 else if w = 1 then 1 else -1
 
 noncomputable abbrev L0 : Kernel Msg World :=
-  RSA.listener (uniformOn Set.univ) (truthful fun m ↦ (sem m : Set World))
+  RSA.literalListener (uniformOn Set.univ) (fun m ↦ (sem m : Set World))
 
 theorem L0_conj_eq : (L0 0).real {2} = (L0 1).real {2} := by
-  simp [listener_uniformOn_truthful_apply_singleton, measureReal_def, sem]
+  simp [literalListener_uniformOn_apply_singleton, measureReal_def, sem]
 
 theorem expectedReward_L0 :
     ∫ w, reward 0 w ∂(L0 0) = 0 ∧ ∫ w, reward 1 w ∂(L0 0) = -1 ∧
       ∫ w, reward 0 w ∂(L0 1) = 0 ∧ ∫ w, reward 1 w ∂(L0 1) = -1 / 3 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
     simp [integral_fintype .of_finite, smul_eq_mul, Fin.sum_univ_four,
-        listener_uniformOn_truthful_apply_singleton,
+        literalListener_uniformOn_apply_singleton,
       measureReal_def, sem, reward] <;> norm_num
 
 /-- The two messages are not equally useful, since at any rationality the listener replaces the
@@ -399,19 +399,19 @@ def reward : Act → World → ℝ :=
   ![![1, -1, 0], ![-1, 1, 0], ![0, 0, 1]]
 
 noncomputable abbrev L0 : Kernel Msg World :=
-  RSA.listener (uniformOn Set.univ) (truthful fun m ↦ (sem m : Set World))
+  RSA.literalListener (uniformOn Set.univ) (fun m ↦ (sem m : Set World))
 
 theorem expectedReward_L0_conj (a : Act) :
     ∫ w, reward a w ∂(L0 2) = if a = 2 then 1 else 0 := by
   fin_cases a <;> simp [integral_fintype .of_finite, smul_eq_mul, Fin.sum_univ_three,
-    listener_uniformOn_truthful_apply_singleton, measureReal_def, sem, reward]
+    literalListener_uniformOn_apply_singleton, measureReal_def, sem, reward]
 
 theorem expectedReward_L0_C :
     ∫ w, reward 0 w ∂(L0 0) = 1 / 2 ∧ ∫ w, reward 1 w ∂(L0 0) = -1 / 2 ∧
       ∫ w, reward 2 w ∂(L0 0) = 1 / 2 := by
   refine ⟨?_, ?_, ?_⟩ <;>
     simp [integral_fintype .of_finite, smul_eq_mul, Fin.sum_univ_three,
-        listener_uniformOn_truthful_apply_singleton,
+        literalListener_uniformOn_apply_singleton,
       measureReal_def, sem, reward]
   norm_num
 

@@ -60,6 +60,10 @@ theorem ae_eq_iff_eq_dirac [IsProbabilityMeasure μ] : (∀ᵐ x ∂μ, x = a) �
 
 alias ⟨eq_dirac_of_ae_eq, _⟩ := ae_eq_iff_eq_dirac
 
+theorem eq_of_dirac_apply_singleton_ne_zero {a b : α} (h : dirac a {b} ≠ 0) : b = a := by
+  rw [dirac_apply' a (measurableSet_singleton b)] at h
+  exact (Set.mem_singleton_iff.1 (Set.mem_of_indicator_ne_zero h)).symm
+
 end Dirac
 
 section FinsetSum
