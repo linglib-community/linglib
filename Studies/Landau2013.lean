@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Control.Diagnostics
+public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Schema
 public import Linglib.Data.Examples.Readers
 
@@ -16,7 +16,9 @@ Landau's signature of obligatory control has two clauses: the controller must
 be a co-dependent of the clause, and the controlled element, or part of it, is interpreted as a
 bound variable. The familiar criteria follow from the two clauses: co-dependence excludes
 arbitrary, long-distance, and non-c-commanding control and forces the sloppy reading under
-ellipsis, and variable binding excludes the strict reading under *only*. `refutes` records this
+ellipsis, and variable binding excludes the strict reading under *only*. `Diagnostic` lists these
+five configurations, which are the book's own and not a battery other accounts share: Williams's
+five criteria and Hornstein's seven are different lists. `refutes` records this
 derivation as the clause each diagnostic refutes, so the clauses a construction fails are the image
 of the diagnostics it shows, and a construction is obligatory control when that image is empty.
 `attests` reads a row of example data as the diagnostics it attests; the studies of controlled
@@ -39,7 +41,20 @@ human-reference clause of the non-obligatory signature is not modelled.
 
 namespace Landau2013
 
-open Control
+/-- (75)–(79): the configurations the signature of obligatory control excludes, three of
+antecedence and two readings. -/
+inductive Diagnostic where
+  /-- A free reading of the controlled element, arbitrary control. -/
+  | arbitraryControl
+  /-- A non-local antecedent, long-distance control. -/
+  | longDistanceControl
+  /-- A non-c-commanding antecedent. -/
+  | nonCCommandingControl
+  /-- A strict reading under VP-ellipsis. -/
+  | strictEllipsis
+  /-- A strict (non-bound-variable) reading under *only*. -/
+  | strictUnderOnly
+  deriving DecidableEq, Repr, Fintype
 
 /-- (74): the two clauses of the signature of obligatory control. The co-dependence clause admits
 implicit and split control, and the bound-variable clause, through "part of it", partial

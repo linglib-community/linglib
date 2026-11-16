@@ -5,7 +5,6 @@ public import Linglib.Fragments.Mixtec.SMPM.Pronouns
 public import Linglib.Fragments.Mixtec.SMPM.Verbs
 public import Linglib.Syntax.Control.Head
 public import Linglib.Syntax.Binding.Valuation
-public import Linglib.Syntax.Control.Diagnostics
 public import Studies.Landau2013
 public import Studies.Allotey2021
 public import Linglib.Data.Examples.Ostrove2026
@@ -157,7 +156,7 @@ theorem frontingOut_iff : ∀ row ∈ Examples.all, row.feature? "fronting" = so
 
 /-- The diagnostics the rows attest for a clause type. The paper tests neither long-distance
 antecedents nor readings under *only*. -/
-def attested (c : EmbeddedClauseType) : Set Diagnostic :=
+def attested (c : EmbeddedClauseType) : Set Landau2013.Diagnostic :=
   {d | ∃ row ∈ Examples.all, clauseTypeOf row = some c ∧ Landau2013.attests row d}
 
 instance (c : EmbeddedClauseType) : DecidablePred (· ∈ attested c) := fun d ↦ by

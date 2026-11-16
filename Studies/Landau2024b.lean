@@ -61,7 +61,7 @@ across languages ((53)) and the collective plurality of the partially controlled
 
 namespace Landau2024b
 
-open Minimalist SyntacticObject Control Binding
+open Minimalist SyntacticObject Binding
 
 /-! ### Controlled pronouns (46) -/
 
@@ -184,7 +184,7 @@ def subjectOf (row : Datum) : Option Subject :=
   row.parse? "embeddedSubject" [("PRO", .pro), ("for", .forNP)]
 
 /-- The diagnostics the rows attest for a kind of subject. -/
-def attested (s : Subject) : Set Diagnostic :=
+def attested (s : Subject) : Set Landau2013.Diagnostic :=
   {d | ∃ row ∈ Examples.all, subjectOf row = some s ∧ Landau2013.attests row d}
 
 instance (s : Subject) : DecidablePred (· ∈ attested s) := fun d ↦ by

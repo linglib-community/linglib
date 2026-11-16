@@ -44,7 +44,7 @@ subject pronouns (§4.2), and is stated here rather than in the Fragment because
 WALS codes the same markers as affixes; `wals_codes_affixes` records
 the discrepancy and `no_agreement_rows` the paper's evidence against it. The
 bound-variable row of Table 2 rests on the *de se* example (53); the paper
-has no *only* test, so `Control.Diagnostic.strictUnderOnly` is never attested
+has no *only* test, so `Landau2013.Diagnostic.strictUnderOnly` is never attested
 and the bound-variable clause of the signature holds unrefuted rather than
 tested. The paper tests reference only in the `ni`- and `akɛ`-clauses, so the
 comparison with Landau's scale of finiteness is stated for those two.
@@ -265,7 +265,7 @@ theorem controlled_form_covaries : table (.sg2, .subjective) ≠ table (.pl2, .s
   decide
 
 /-- The diagnostics the rows attest for a clause type. -/
-def attested (c : EmbeddedClauseType) : Set Diagnostic :=
+def attested (c : EmbeddedClauseType) : Set Landau2013.Diagnostic :=
   {d | ∃ row ∈ Examples.all, clauseTypeOf row = some c ∧ Landau2013.attests row d}
 
 instance (c : EmbeddedClauseType) : DecidablePred (· ∈ attested c) := fun d ↦ by

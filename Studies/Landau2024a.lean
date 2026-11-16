@@ -89,7 +89,7 @@ def positionOf (row : Datum) : Option Position :=
   row.parse? "position" [("complement", .complement), ("subject", .subject)]
 
 /-- The diagnostics the rows attest for a clause type in a position. -/
-def attested (c : ClauseType) (p : Position) : Set Diagnostic :=
+def attested (c : ClauseType) (p : Position) : Set Landau2013.Diagnostic :=
   {d | ∃ row ∈ Examples.all, clauseTypeOf row = some c ∧ positionOf row = some p ∧
     Landau2013.attests row d}
 
