@@ -24,7 +24,7 @@ abnormal deflation (with disjoined causes, a less normal $C$ is less causal), wh
 
 * Worlds are the draws of C and A under independent Bernoulli priors, the paper's sampling
   propensities, and each causal structure's effect is an event; the measure is the substrate's
-  `CausalStrength.score` in the round C = A = E = 1.
+  `causalStrength` in the round C = A = E = 1.
 * The paper names two candidates for sufficiency (§4.3); the substrate takes Cheng and Pearl's,
   conditioned on the absence of cause and effect, and `resampleSufficiency_eq_sufficiency` shows
   the other agrees on the collider. As `cond` of a null event is the zero measure, the closed forms
@@ -38,7 +38,7 @@ abnormal deflation (with disjoined causes, a less normal $C$ is less causal), wh
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory Set Filter Topology unitInterval CausalStrength
+open MeasureTheory ProbabilityTheory Set Filter Topology unitInterval
 open scoped ENNReal
 
 namespace IcardEtAl2017
@@ -69,7 +69,7 @@ instance : ∀ s, DecidablePred (· ∈ effect s)
 /-- `strength x y s` is the actual causal strength of `C = 1` for `E = 1` when `C = A = E = 1`,
 under the priors `x` of `C` and `y` of `A`, eq. (1). -/
 noncomputable def strength (x y : I) (s : CausalStructure) : ℝ :=
-  score (prior x y) (fun _ ↦ true) (effect s) {c}
+  causalStrength (prior x y) (fun _ ↦ true) (effect s) {c}
 
 variable {x y : I}
 
@@ -89,11 +89,11 @@ private theorem ber_false_ne_zero {q : I} (h : q < 1) : Ber(true, false, q) {fal
 private theorem preimage_update_c (s : CausalStructure) (b : Bool) :
     (Function.update · c b) ⁻¹' effect s =
       match s, b with
-      | .conjunctive, true => cause (fun _ ↦ true) {a}
+      | .conjunctive, true => pluralCause (fun _ ↦ true) {a}
       | .conjunctive, false => ∅
       | .disjunctive, true => univ
-      | .disjunctive, false => cause (fun _ ↦ true) {a} := by
-  cases s <;> cases b <;> ext w <;> simp [effect, mem_cause]
+      | .disjunctive, false => pluralCause (fun _ ↦ true) {a} := by
+  cases s <;> cases b <;> ext w <;> simp [effect, mem_pluralCause]
 
 /-! ### The desiderata (§3.2, §5, Table 5)
 
@@ -152,29 +152,31 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 removing the cause removes the outcome, where both hold, and the probability that adding the cause
 produces the outcome, where neither holds, by the probabilities of the two cases. -/
 noncomputable def PNS (μ : Measure (ι → Bool)) (X : ι) (E : Set (ι → Bool)) : ℝ :=
-  μ.real (cause (fun _ ↦ true) {X} ∩ E) *
-      (μ[|cause (fun _ ↦ true) {X} ∩ E]).real {w | Function.update w X false ∉ E} +
-    μ.real (cause (fun _ ↦ false) {X} ∩ Eᶜ) *
-      (μ[|cause (fun _ ↦ false) {X} ∩ Eᶜ]).real {w | Function.update w X true ∈ E}
+  μ.real (pluralCause (fun _ ↦ true) {X} ∩ E) *
+      (μ[|pluralCause (fun _ ↦ true) {X} ∩ E]).real {w | Function.update w X false ∉ E} +
+    μ.real (pluralCause (fun _ ↦ false) {X} ∩ Eᶜ) *
+      (μ[|pluralCause (fun _ ↦ false) {X} ∩ Eᶜ]).real {w | Function.update w X true ∈ E}
 
 variable {ν : ι → Measure Bool} [∀ i, IsProbabilityMeasure (ν i)] {X : ι} {E : Set (ι → Bool)}
 
-private theorem cond_real_pi_cause_singleton {b : Bool} {B : Set (ι → Bool)} (hb : ν X {b} ≠ 0) :
-    ((Measure.pi ν)[|cause (fun _ ↦ b) {X}]).real B =
+private theorem cond_real_pi_pluralCause_singleton {b : Bool}
+    {B : Set (ι → Bool)} (hb : ν X {b} ≠ 0) :
+    ((Measure.pi ν)[|pluralCause (fun _ ↦ b) {X}]).real B =
       (Measure.pi ν).real ((Function.update · X b) ⁻¹' B) := by
-  have h : cause (fun _ ↦ b) {X} ∩ B = cause (fun _ ↦ b) {X} ∩ (Function.update · X b) ⁻¹' B := by
-    ext w; simp only [mem_inter_iff, mem_cause, Finset.mem_singleton, forall_eq, mem_preimage]
+  have h : pluralCause (fun _ ↦ b) {X} ∩ B = pluralCause (fun _ ↦ b) {X} ∩
+      (Function.update · X b) ⁻¹' B := by
+    ext w; simp only [mem_inter_iff, mem_pluralCause, Finset.mem_singleton, forall_eq, mem_preimage]
     exact and_congr_right fun h ↦ by rw [← h, Function.update_eq_self]
   rw [measureReal_def, cond_apply .of_discrete, h, ← cond_apply .of_discrete, ← measureReal_def,
-    (indepSet_pi_cause_singleton fun w b' ↦ by simp).cond_real_apply .of_discrete
-      (by rwa [measure_pi_cause, Finset.prod_singleton])]
+    (indepSet_pi_pluralCause_singleton fun w b' ↦ by simp).cond_real_apply .of_discrete
+      (by rwa [measure_pi_pluralCause, Finset.prod_singleton])]
 
 private theorem deltaP_pi (h₁ : ν X {true} ≠ 0) (h₀ : ν X {false} ≠ 0) :
-    deltaP (Measure.pi ν) (cause (fun _ ↦ true) {X}) E =
+    deltaP (Measure.pi ν) (pluralCause (fun _ ↦ true) {X}) E =
       (Measure.pi ν).real ((Function.update · X true) ⁻¹' E) -
         (Measure.pi ν).real ((Function.update · X false) ⁻¹' E) := by
-  rw [deltaP, cond_real_pi_cause_singleton h₁, compl_cause_singleton, Bool.not_true,
-    cond_real_pi_cause_singleton h₀]
+  rw [deltaP, cond_real_pi_pluralCause_singleton h₁, compl_pluralCause_singleton, Bool.not_true,
+    cond_real_pi_pluralCause_singleton h₀]
 
 omit [DecidableEq ι] in
 private theorem measureReal_mul_cond_real {μ : Measure (ι → Bool)} [IsFiniteMeasure μ]
@@ -183,13 +185,13 @@ private theorem measureReal_mul_cond_real {μ : Measure (ι → Bool)} [IsFinite
     cond_mul_eq_inter .of_discrete]
 
 private theorem PNS_eq {μ : Measure (ι → Bool)} [IsFiniteMeasure μ] :
-    PNS μ X E = μ.real (cause (fun _ ↦ true) {X} ∩ ((Function.update · X true) ⁻¹' E \
+    PNS μ X E = μ.real (pluralCause (fun _ ↦ true) {X} ∩ ((Function.update · X true) ⁻¹' E \
         (Function.update · X false) ⁻¹' E)) +
-      μ.real (cause (fun _ ↦ false) {X} ∩ ((Function.update · X true) ⁻¹' E \
+      μ.real (pluralCause (fun _ ↦ false) {X} ∩ ((Function.update · X true) ⁻¹' E \
         (Function.update · X false) ⁻¹' E)) := by
   rw [PNS, measureReal_mul_cond_real, measureReal_mul_cond_real]
   congr 2 <;> ext w <;>
-    simp only [mem_inter_iff, mem_cause, Finset.mem_singleton, forall_eq, mem_compl_iff,
+    simp only [mem_inter_iff, mem_pluralCause, Finset.mem_singleton, forall_eq, mem_compl_iff,
       mem_ofPred_eq, Set.mem_sdiff, mem_preimage]
   · constructor
     · rintro ⟨⟨h, hE⟩, h'⟩; exact ⟨h, ⟨by rwa [← h, Function.update_eq_self], h'⟩⟩
@@ -201,10 +203,10 @@ private theorem PNS_eq {μ : Measure (ι → Bool)} [IsFiniteMeasure μ] :
 -- §3.3: under a product measure, PNS is ΔP for an outcome monotone in the cause
 theorem PNS_eq_deltaP (h₁ : ν X {true} ≠ 0) (h₀ : ν X {false} ≠ 0)
     (hmono : (Function.update · X false) ⁻¹' E ⊆ (Function.update · X true) ⁻¹' E) :
-    PNS (Measure.pi ν) X E = deltaP (Measure.pi ν) (cause (fun _ ↦ true) {X}) E := by
+    PNS (Measure.pi ν) X E = deltaP (Measure.pi ν) (pluralCause (fun _ ↦ true) {X}) E := by
   rw [PNS_eq, measureReal_def, measureReal_def,
-    measure_pi_cause_singleton_inter (fun w b ↦ by simp),
-    measure_pi_cause_singleton_inter (fun w b ↦ by simp), ← ENNReal.toReal_add
+    measure_pi_pluralCause_singleton_inter (fun w b ↦ by simp),
+    measure_pi_pluralCause_singleton_inter (fun w b ↦ by simp), ← ENNReal.toReal_add
     (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))
     (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)), ← add_mul,
     ← measure_union (Set.disjoint_singleton.2 (by decide)) .of_discrete,
@@ -219,16 +221,19 @@ inductive ExistingMeasure | sp | deltaP | powerPC | pns
 
 /-- The strength of `C = 1` for `E = 1` that an existing measure assigns on the collider. -/
 noncomputable def ExistingMeasure.strength : ExistingMeasure → I → I → CausalStructure → ℝ
-  | .sp, x, y, s => SP (prior x y) (cause (fun _ ↦ true) {c}) (effect s)
-  | .deltaP, x, y, s => IcardEtAl2017.deltaP (prior x y) (cause (fun _ ↦ true) {c}) (effect s)
-  | .powerPC, x, y, s => IcardEtAl2017.powerPC (prior x y) (cause (fun _ ↦ true) {c}) (effect s)
+  | .sp, x, y, s => SP (prior x y) (pluralCause (fun _ ↦ true) {c}) (effect s)
+  | .deltaP, x, y, s => IcardEtAl2017.deltaP (prior x y) (pluralCause (fun _ ↦ true) {c}) (effect s)
+  | .powerPC, x, y, s => IcardEtAl2017.powerPC (prior x y)
+      (pluralCause (fun _ ↦ true) {c}) (effect s)
   | .pns, x, y, s => PNS (prior x y) c (effect s)
 
-private theorem real_cause_a_true : (prior x y).real (cause (fun _ ↦ true) {a}) = y := by
-  rw [measureReal_pi_cause, Finset.prod_singleton, ber_real_true, ite_eq_right (by decide)]
+private theorem real_pluralCause_a_true :
+    (prior x y).real (pluralCause (fun _ ↦ true) {a}) = y := by
+  rw [measureReal_pi_pluralCause, Finset.prod_singleton, ber_real_true, ite_eq_right (by decide)]
 
-private theorem real_cause_a_false : (prior x y).real (cause (fun _ ↦ false) {a}) = 1 - y := by
-  rw [measureReal_pi_cause, Finset.prod_singleton, ber_real_false, ite_eq_right (by decide)]
+private theorem real_pluralCause_a_false : (prior x y).real (pluralCause (fun _ ↦ false) {a}) =
+    1 - y := by
+  rw [measureReal_pi_pluralCause, Finset.prod_singleton, ber_real_false, ite_eq_right (by decide)]
 
 private theorem monotone_effect (s : CausalStructure) :
     (Function.update · c false) ⁻¹' effect s ⊆ (Function.update · c true) ⁻¹' effect s := by
@@ -239,18 +244,20 @@ theorem table1_conjunctive (hx : x ∈ Ioo 0 1) (m : ExistingMeasure) :
     m.strength x y .conjunctive = match m with
       | .sp => (1 - x) * y
       | .deltaP | .powerPC | .pns => y := by
-  have hΔ : deltaP (prior x y) (cause (fun _ ↦ true) {c}) (effect .conjunctive) = y := by
+  have hΔ : deltaP (prior x y) (pluralCause (fun _ ↦ true) {c}) (effect .conjunctive) = y := by
     rw [deltaP_pi (X := c) (ber_true_ne_zero hx.1) (ber_false_ne_zero hx.2), preimage_update_c,
-      preimage_update_c, measureReal_empty, sub_zero, real_cause_a_true]
-  have hE : effect .conjunctive = cause (fun _ ↦ true) {c, a} := by ext w; simp [effect, mem_cause]
+      preimage_update_c, measureReal_empty, sub_zero, real_pluralCause_a_true]
+  have hE : effect .conjunctive = pluralCause (fun _ ↦ true) {c, a} :=
+      by ext w; simp [effect, mem_pluralCause]
   cases m <;> dsimp only [ExistingMeasure.strength]
-  · rw [SP, cond_real_pi_cause_singleton (X := c) (ber_true_ne_zero hx.1), preimage_update_c,
-      real_cause_a_true, hE, measureReal_pi_cause, Finset.prod_pair (by decide), ber_real_true,
+  · rw [SP, cond_real_pi_pluralCause_singleton (X := c) (ber_true_ne_zero hx.1), preimage_update_c,
+      real_pluralCause_a_true, hE, measureReal_pi_pluralCause,
+      Finset.prod_pair (by decide), ber_real_true,
       ber_real_true, ite_eq_left rfl, ite_eq_right (by decide)]
     ring
   · exact hΔ
-  · rw [powerPC, hΔ, compl_cause_singleton, Bool.not_true,
-      cond_real_pi_cause_singleton (X := c) (ber_false_ne_zero hx.2), preimage_compl,
+  · rw [powerPC, hΔ, compl_pluralCause_singleton, Bool.not_true,
+      cond_real_pi_pluralCause_singleton (X := c) (ber_false_ne_zero hx.2), preimage_compl,
       preimage_update_c, compl_empty, probReal_univ, div_one]
   · rw [PNS_eq_deltaP (X := c) (ber_true_ne_zero hx.1) (ber_false_ne_zero hx.2)
       (monotone_effect _), hΔ]
@@ -261,21 +268,21 @@ theorem table1_disjunctive (hx : x ∈ Ioo 0 1) (hy : y < 1) (m : ExistingMeasur
       | .sp => (1 - x) * (1 - y)
       | .deltaP | .pns => 1 - y
       | .powerPC => 1 := by
-  have hΔ : deltaP (prior x y) (cause (fun _ ↦ true) {c}) (effect .disjunctive) = 1 - y := by
+  have hΔ : deltaP (prior x y) (pluralCause (fun _ ↦ true) {c}) (effect .disjunctive) = 1 - y := by
     rw [deltaP_pi (X := c) (ber_true_ne_zero hx.1) (ber_false_ne_zero hx.2), preimage_update_c,
-      preimage_update_c, probReal_univ, real_cause_a_true]
-  have hE : (effect .disjunctive)ᶜ = cause (fun _ ↦ false) {c, a} := by
-    ext w; simp [effect, mem_cause]
+      preimage_update_c, probReal_univ, real_pluralCause_a_true]
+  have hE : (effect .disjunctive)ᶜ = pluralCause (fun _ ↦ false) {c, a} := by
+    ext w; simp [effect, mem_pluralCause]
   cases m <;> dsimp only [ExistingMeasure.strength]
-  · rw [SP, cond_real_pi_cause_singleton (X := c) (ber_true_ne_zero hx.1), preimage_update_c,
+  · rw [SP, cond_real_pi_pluralCause_singleton (X := c) (ber_true_ne_zero hx.1), preimage_update_c,
       probReal_univ, ← compl_compl (effect .disjunctive), probReal_compl_eq_one_sub .of_discrete,
-      hE, measureReal_pi_cause, Finset.prod_pair (by decide), ber_real_false, ber_real_false,
+      hE, measureReal_pi_pluralCause, Finset.prod_pair (by decide), ber_real_false, ber_real_false,
       ite_eq_left rfl, ite_eq_right (by decide)]
     ring
   · exact hΔ
-  · rw [powerPC, hΔ, compl_cause_singleton, Bool.not_true,
-      cond_real_pi_cause_singleton (X := c) (ber_false_ne_zero hx.2), preimage_compl,
-      preimage_update_c, compl_cause_singleton, Bool.not_true, real_cause_a_false]
+  · rw [powerPC, hΔ, compl_pluralCause_singleton, Bool.not_true,
+      cond_real_pi_pluralCause_singleton (X := c) (ber_false_ne_zero hx.2), preimage_compl,
+      preimage_update_c, compl_pluralCause_singleton, Bool.not_true, real_pluralCause_a_false]
     exact div_self (sub_pos.2 (show (y : ℝ) < 1 from hy)).ne'
   · rw [PNS_eq_deltaP (X := c) (ber_true_ne_zero hx.1) (ber_false_ne_zero hx.2)
       (monotone_effect _), hΔ]
@@ -343,30 +350,30 @@ end ExistingMeasure
 /-! ### Necessity and sufficiency (§4.3, Table 2) -/
 
 -- Table 2
-theorem necessity_disjunctive (μ : Measure (Cause → Bool)) :
-    necessity μ (fun _ ↦ true) (effect .disjunctive) {c} = 0 :=
-  necessity_eq_zero (by decide)
+theorem necessityStrength_disjunctive (μ : Measure (Cause → Bool)) :
+    necessityStrength μ (fun _ ↦ true) (effect .disjunctive) {c} = 0 :=
+  necessityStrength_eq_zero (by decide)
 
 -- Table 2
-theorem necessity_conjunctive (hx : x < 1) :
-    necessity (prior x y) (fun _ ↦ true) (effect .conjunctive) {c} = 1 :=
-  necessity_eq_one (by decide)
-    (by rw [measure_pi_compl_cause_singleton]; exact ber_false_ne_zero hx)
+theorem necessityStrength_conjunctive (hx : x < 1) :
+    necessityStrength (prior x y) (fun _ ↦ true) (effect .conjunctive) {c} = 1 :=
+  necessityStrength_eq_one (by decide)
+    (by rw [measure_pi_compl_pluralCause_singleton]; exact ber_false_ne_zero hx)
 
 -- Table 2
-theorem sufficiency_conjunctive (hx : x < 1) :
-    sufficiency (prior x y) (fun _ ↦ true) (effect .conjunctive) {c} = y := by
-  rw [sufficiency_singleton (X := c) (by exact ber_false_ne_zero hx)]
+theorem sufficiencyStrength_conjunctive (hx : x < 1) :
+    sufficiencyStrength (prior x y) (fun _ ↦ true) (effect .conjunctive) {c} = y := by
+  rw [sufficiencyStrength_singleton (X := c) (by exact ber_false_ne_zero hx)]
   simp only [Bool.not_true, preimage_update_c, sdiff_empty, compl_empty, probReal_univ, div_one]
-  exact real_cause_a_true
+  exact real_pluralCause_a_true
 
 -- Table 2
-theorem sufficiency_disjunctive (hx : x < 1) (hy : y < 1) :
-    sufficiency (prior x y) (fun _ ↦ true) (effect .disjunctive) {c} = 1 := by
-  have hy' : (prior x y).real (cause (fun _ ↦ true) {a})ᶜ ≠ 0 := by
-    rw [compl_cause_singleton, Bool.not_true, real_cause_a_false]
+theorem sufficiencyStrength_disjunctive (hx : x < 1) (hy : y < 1) :
+    sufficiencyStrength (prior x y) (fun _ ↦ true) (effect .disjunctive) {c} = 1 := by
+  have hy' : (prior x y).real (pluralCause (fun _ ↦ true) {a})ᶜ ≠ 0 := by
+    rw [compl_pluralCause_singleton, Bool.not_true, real_pluralCause_a_false]
     exact (sub_pos.2 (show (y : ℝ) < 1 from hy)).ne'
-  rw [sufficiency_singleton (X := c) (by exact ber_false_ne_zero hx)]
+  rw [sufficiencyStrength_singleton (X := c) (by exact ber_false_ne_zero hx)]
   simp only [Bool.not_true, preimage_update_c]
   rw [← compl_eq_univ_sdiff, div_self hy']
 
@@ -377,23 +384,23 @@ noncomputable def resampleSufficiency {ι : Type*} [DecidableEq ι] (μ : Measur
   μ.real {w | S.piecewise w₀ w ∈ E}
 
 -- §4.3
-theorem resampleSufficiency_eq_sufficiency (s : CausalStructure) (hx : x < 1) (hy : y < 1) :
+theorem resampleSufficiency_eq_sufficiencyStrength (s : CausalStructure) (hx : x < 1) (hy : y < 1) :
     resampleSufficiency (prior x y) (fun _ ↦ true) (effect s) {c} =
-      sufficiency (prior x y) (fun _ ↦ true) (effect s) {c} := by
+      sufficiencyStrength (prior x y) (fun _ ↦ true) (effect s) {c} := by
   have h (s : CausalStructure) : {w : Cause → Bool | ({c} : Finset Cause).piecewise
       (fun _ ↦ true) w ∈ effect s} = (Function.update · c true) ⁻¹' effect s := by
     ext w; simp [Finset.piecewise_singleton]
   unfold resampleSufficiency
   cases s
-  · rw [sufficiency_conjunctive hx, h, preimage_update_c, real_cause_a_true]
-  · rw [sufficiency_disjunctive hx hy, h, preimage_update_c, probReal_univ]
+  · rw [sufficiencyStrength_conjunctive hx, h, preimage_update_c, real_pluralCause_a_true]
+  · rw [sufficiencyStrength_disjunctive hx hy, h, preimage_update_c, probReal_univ]
 
 /-! ### The measure (§4.4) -/
 
 -- (3)
 theorem strength_conjunctive (hx : x < 1) : strength x y .conjunctive = x * y - x + 1 := by
-  rw [strength, score_singleton (X := c) (by exact ber_false_ne_zero hx),
-    sufficiency_conjunctive hx]
+  rw [strength, causalStrength_singleton (X := c) (by exact ber_false_ne_zero hx),
+    sufficiencyStrength_conjunctive hx]
   simp only [Bool.not_true, ↓reduceIte]
   rw [ite_eq_right (show Function.update (fun _ : Cause ↦ true) c false ∉ effect .conjunctive
       by decide), ber_real_true, ber_real_false]
@@ -401,8 +408,8 @@ theorem strength_conjunctive (hx : x < 1) : strength x y .conjunctive = x * y - 
 
 -- (2)
 theorem strength_disjunctive (hx : x < 1) (hy : y < 1) : strength x y .disjunctive = x := by
-  rw [strength, score_singleton (X := c) (by exact ber_false_ne_zero hx),
-    sufficiency_disjunctive hx hy]
+  rw [strength, causalStrength_singleton (X := c) (by exact ber_false_ne_zero hx),
+    sufficiencyStrength_disjunctive hx hy]
   simp only [Bool.not_true, ↓reduceIte]
   rw [ite_eq_left (show Function.update (fun _ : Cause ↦ true) c false ∈ effect .disjunctive
       by decide), mul_one, add_zero, ber_real_true]
@@ -437,11 +444,12 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι] (μ : Measure (ι → Bool))
 /-- A step's test draws a world given the cause's absence when the cause is absent, a necessity
 test, and given the absence of cause and outcome when it is present, a sufficiency test. -/
 noncomputable def test : Kernel Bool (ι → Bool) :=
-  Kernel.ofFunOfCountable fun x ↦ if x then μ[|(cause w₀ S)ᶜ ∩ Eᶜ] else μ[|(cause w₀ S)ᶜ]
+  Kernel.ofFunOfCountable fun x ↦ if x then μ[|(pluralCause w₀ S)ᶜ ∩ Eᶜ] else
+  μ[|(pluralCause w₀ S)ᶜ]
 
 /-- A step of the algorithm draws whether the cause holds, then a test world. -/
 noncomputable def step : Measure (Bool × (ι → Bool)) :=
-  (μ.map fun w ↦ decide (w ∈ cause w₀ S)) ⊗ₘ test μ w₀ E S
+  (μ.map fun w ↦ decide (w ∈ pluralCause w₀ S)) ⊗ₘ test μ w₀ E S
 
 /-- A step hits when its necessity test removes the outcome or its sufficiency test produces it. -/
 noncomputable def hit (z : Bool × (ι → Bool)) : ℝ :=
@@ -450,7 +458,7 @@ noncomputable def hit (z : Bool × (ι → Bool)) : ℝ :=
 
 omit [Fintype ι] [DecidableEq ι] in
 private theorem test_apply (x : Bool) :
-    test μ w₀ E S x = if x then μ[|(cause w₀ S)ᶜ ∩ Eᶜ] else μ[|(cause w₀ S)ᶜ] := rfl
+    test μ w₀ E S x = if x then μ[|(pluralCause w₀ S)ᶜ ∩ Eᶜ] else μ[|(pluralCause w₀ S)ᶜ] := rfl
 
 instance : IsFiniteKernel (test μ w₀ E S) :=
   ⟨⟨1, ENNReal.one_lt_top, fun x ↦ by cases x <;> simp [test_apply, prob_le_one]⟩⟩
@@ -458,8 +466,8 @@ instance : IsFiniteKernel (test μ w₀ E S) :=
 instance [IsFiniteMeasure μ] : IsFiniteMeasure (step μ w₀ E S) := by unfold step; infer_instance
 
 omit [Fintype ι] [DecidableEq ι] in
-theorem isProbabilityMeasure_step [IsProbabilityMeasure μ] (h₀ : μ (cause w₀ S)ᶜ ≠ 0)
-    (h₁ : μ ((cause w₀ S)ᶜ ∩ Eᶜ) ≠ 0) : IsProbabilityMeasure (step μ w₀ E S) := by
+theorem isProbabilityMeasure_step [IsProbabilityMeasure μ] (h₀ : μ (pluralCause w₀ S)ᶜ ≠ 0)
+    (h₁ : μ ((pluralCause w₀ S)ᶜ ∩ Eᶜ) ≠ 0) : IsProbabilityMeasure (step μ w₀ E S) := by
   have : IsMarkovKernel (test μ w₀ E S) := ⟨fun x ↦ by
     cases x <;> simp only [test_apply, Bool.false_eq_true, ↓reduceIte] <;>
       exact cond_isProbabilityMeasure (by assumption)⟩
@@ -467,22 +475,22 @@ theorem isProbabilityMeasure_step [IsProbabilityMeasure μ] (h₀ : μ (cause w�
 
 -- (1)
 theorem integral_hit_step [IsFiniteMeasure μ] :
-    ∫ z, hit w₀ E S z ∂(step μ w₀ E S) = score μ w₀ E S := by
-  have h (b : Bool) : (fun w ↦ decide (w ∈ cause w₀ S)) ⁻¹' {b} =
-      if b then cause w₀ S else (cause w₀ S)ᶜ := by cases b <;> ext <;> simp
+    ∫ z, hit w₀ E S z ∂(step μ w₀ E S) = causalStrength μ w₀ E S := by
+  have h (b : Bool) : (fun w ↦ decide (w ∈ pluralCause w₀ S)) ⁻¹' {b} =
+      if b then pluralCause w₀ S else (pluralCause w₀ S)ᶜ := by cases b <;> ext <;> simp
   rw [step, Measure.integral_compProd Integrable.of_finite, integral_fintype Integrable.of_finite]
   simp only [Fintype.sum_bool, hit, test_apply, ↓reduceIte, Bool.false_eq_true]
   rw [integral_indicator_one .of_discrete, integral_indicator_one .of_discrete,
     map_measureReal_apply (by fun_prop) .of_discrete,
-    map_measureReal_apply (by fun_prop) .of_discrete, h, h, score]
-  simp [sufficiency, necessity, smul_eq_mul]
+    map_measureReal_apply (by fun_prop) .of_discrete, h, h, causalStrength]
+  simp [sufficiencyStrength, necessityStrength, smul_eq_mul]
 
 /-- The sampling algorithm converges, in that on almost every run of independent steps the
 proportion of hits tends to the actual causal strength, eq. (1). -/
 theorem ae_tendsto_hits [IsFiniteMeasure μ] [IsProbabilityMeasure (step μ w₀ E S)] :
     ∀ᵐ ω ∂(Measure.infinitePi fun _ : ℕ ↦ step μ w₀ E S),
       Tendsto (fun K : ℕ ↦ (K : ℝ)⁻¹ * ∑ k ∈ Finset.range K, hit w₀ E S (ω k)) atTop
-        (𝓝 (score μ w₀ E S)) := by
+        (𝓝 (causalStrength μ w₀ E S)) := by
   set P := Measure.infinitePi fun _ : ℕ ↦ step μ w₀ E S
   have hmeas : Measurable (hit w₀ E S) := measurable_of_countable _
   have hlaw (n : ℕ) : P.map (· n) = step μ w₀ E S := Measure.infinitePi_map_eval _ n
