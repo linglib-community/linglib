@@ -19,9 +19,9 @@ starts in: in the paper's long-distance question Transfer
 instead from Fox and Pesetsky's preservation of spell-out order, which
 [only movement through every edge satisfies](##linearizes_iff), and only when whole phases are
 spelled out, since under complement spell-out
-[every stop reverses an order](##complement_linearizes_iff). A phase with nothing left to move,
-such as the embedded CP of a declarative, need not wait, while
-[a vP must](##cp_at_completion), its subject raising out of it.
+[every stop reverses an order](##complement_linearizes_iff). The phases that must wait are
+[those a chain link leaves](##forall_not_linkLeaves_hybrid_iff): the vPs of a declarative, whose
+subjects raise, but not its embedded CP.
 
 ## Implementation notes
 
@@ -36,6 +36,9 @@ such as the embedded CP of a declarative, need not wait, while
   a domain transferred by the stage it lands at. A phase is its head's projection under
   `HeadFunction.raising`, so a phase head's specifiers are in its phase. The root is the last
   stage, so the transfer of the root phase seals nothing.
+* A phase is spelled out when it is complete, whether or not its transfer waits. Spelled out only
+  when the next phase is complete, vP₁ no longer holds the wh-phrase, and
+  [the derivation that skips its edge linearizes](##skip_linearizes_nextPhase).
 * Which phases wait is a parameter of the schedule. In the paper it follows from the feature
   criterion: a phase waits when it contains an unvalued feature.
 
@@ -102,6 +105,48 @@ theorem sealed_hybrid_subset_pic1 :
     simpa [complementDomain, transferHead] using
       hc.trans (show projectionAt hd t h < q from hq).le⟩
 
+-- the more phases wait, the later each domain is transferred
+theorem hybrid_anti {W' : Finset GornAddress} (hW : W ⊆ W') (hp : Hybrid hd t W' Φ h s) :
+    Hybrid hd t W Φ h s := by
+  by_cases h' : h ∈ W'
+  · by_cases h'' : h ∈ W
+    · simpa only [Hybrid, h', h'', ↓reduceIte] using hp
+    · simpa only [Hybrid, h'', ↓reduceIte] using pic1_of_pic2 (pic2_of_hybrid h' hp)
+  · have h'' : h ∉ W := fun x ↦ h' (hW x)
+    simpa only [Hybrid, h', h'', ↓reduceIte] using hp
+
+variable (hd t) in
+/-- Some chain link leaves the phase of `h` after it is complete. -/
+def Leaves (h : GornAddress) : Prop :=
+  ∃ y ∈ tokenList t.toRoseTree,
+    LinkLeaves hd t y.2 (sealed {h} (wholePhaseDomain hd t) (Pic1 hd t))
+
+instance (h : GornAddress) : Decidable (Leaves hd t h) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+/-- Whole-phase Transfer is obeyed with the phases in `W` waiting exactly when it is obeyed with
+every phase waiting and `W` contains each phase that a chain link leaves: these are the phases that
+must wait, and any other may be transferred as soon as it is complete. -/
+theorem forall_not_linkLeaves_hybrid_iff :
+    (∀ y ∈ tokenList t.toRoseTree,
+        ¬ LinkLeaves hd t y.2 (sealed Φ (wholePhaseDomain hd t) (Hybrid hd t W))) ↔
+      (∀ y ∈ tokenList t.toRoseTree,
+        ¬ LinkLeaves hd t y.2 (sealed Φ (wholePhaseDomain hd t) (Hybrid hd t Φ))) ∧
+      ∀ h ∈ Φ, Leaves hd t h → h ∈ W := by
+  refine ⟨fun H ↦ ⟨fun y hy hl ↦ H y hy (hl.mono fun s ↦ sealed_mono (fun _ _ ↦ subset_rfl)
+      fun h hΦ hp ↦ ?_), fun h hΦ ⟨y, hy, hl⟩ ↦ by_contra fun hW ↦ H y hy (hl.mono fun s ↦ ?_)⟩,
+    fun ⟨H, HW⟩ y hy ⟨x, hx, h, hΦ, hσ, hq⟩ ↦ ?_⟩
+  · by_cases hW : h ∈ W
+    · simpa only [Hybrid, hW, hΦ, ↓reduceIte] using hp
+    · simpa only [Hybrid, hW, ↓reduceIte] using pic1_of_pic2 (pic2_of_hybrid hΦ hp)
+  · rintro q ⟨h', hh', hp, hq⟩
+    obtain rfl := Finset.mem_singleton.1 hh'
+    exact ⟨h', hΦ, by simp only [Hybrid, hW, ↓reduceIte]; exact hp, hq⟩
+  · by_cases hW : h ∈ W
+    · exact H y hy ⟨x, hx, h, hΦ, by simpa only [Hybrid, hW, hΦ, ↓reduceIte] using hσ, hq⟩
+    · simp only [Hybrid, hW, ↓reduceIte] at hσ
+      exact hW (HW h hΦ ⟨y, hy, x, hx, h, Finset.mem_singleton_self h, hσ, hq⟩)
+
 end Schedule
 
 /-- The phase heads, v and C. -/
@@ -129,6 +174,17 @@ theorem ObeysTransfer.of_pic1 {d : Derivation}
   h t ht y hy <| hl.mono fun s ↦ by
     have : occurrencesWith t (fun _ ↦ False) = [] := by simp [occurrencesWith]
     simpa [this] using sealed_hybrid_subset_pic1
+
+theorem obeysTransfer_iff_leaves {d : Derivation} {W : LexicalItem.Token → Prop}
+    [DecidablePred W] :
+    ObeysTransfer d (wholePhaseDomain .raising) W ↔
+      ObeysTransfer d (wholePhaseDomain .raising) IsPhaseHead ∧ ∀ t ∈ d.externalize?,
+        ∀ h ∈ occurrencesWith t IsPhaseHead, Leaves .raising t h → h ∈ occurrencesWith t W :=
+  ⟨fun H ↦ ⟨fun t ht ↦ (forall_not_linkLeaves_hybrid_iff.1 (H t ht)).1, fun t ht h hh hl ↦
+      List.mem_toFinset.1
+        ((forall_not_linkLeaves_hybrid_iff.1 (H t ht)).2 h (List.mem_toFinset.2 hh) hl)⟩,
+    fun ⟨H, HW⟩ t ht ↦ forall_not_linkLeaves_hybrid_iff.2
+      ⟨H t ht, fun h hh hl ↦ List.mem_toFinset.2 (HW t ht h (List.mem_toFinset.1 hh) hl)⟩⟩
 
 /-! ### The derivation of (13) -/
 
@@ -185,6 +241,18 @@ theorem complement_linearizes_iff (r : Finset Landing) :
     (derivation r).Linearizes (complementSchedule (derivation r)) ↔ r = ∅ := by
   revert r; decide +kernel
 
+/-- The schedule that spells each phase out when the next phase is complete, and the last when it
+is itself complete. -/
+def nextPhaseSchedule (d : Derivation) : List (ℕ × ℕ) :=
+  (d.phaseStages .raising IsPhaseHead).zip
+    ((d.phaseStages .raising IsPhaseHead).tail ++ [d.length])
+
+-- fn. 20: spelled out only when transferred, vP₁ no longer holds *to whom*, and skipping its edge
+-- reverses no order
+theorem skip_linearizes_nextPhase :
+    (derivation {.CP₁, .vP₂}).Linearizes (nextPhaseSchedule (derivation {.CP₁, .vP₂})) := by
+  decide +kernel
+
 /-! ### The domain and timing of Transfer -/
 
 /-- In (13), with whole phases transferred and every phase waiting for the next, Transfer is obeyed
@@ -220,12 +288,22 @@ def declarative : Derivation :=
   ⟨visited, [.em .right bill, .em .left v₁, .em .left mary, .em .left t₁, .im mary, .em .left c₁,
     .em .left say, .em .left v₂, .em .left john, .em .left t₂, .im john, .em .left c₂]⟩
 
-/-- In (10) the embedded CP can be transferred as soon as it is complete, while the vPs must wait
-for their subjects to raise; in (13) the CP that *to whom* passes through must wait as well. -/
-theorem cp_at_completion :
+-- (10): the vPs must wait, their subjects raising out of them, and the embedded CP need not
+theorem leaves_declarative : ∀ t ∈ declarative.externalize?,
+    ∀ h ∈ occurrencesWith t IsPhaseHead,
+      Leaves .raising t h ↔ h ∈ occurrencesWith t (·.item.cat = .v) := by
+  decide +kernel
+
+-- (13): every phase *to whom* passes through must wait, the embedded CP included
+theorem leaves_ex13 : ∀ t ∈ (derivation .univ).externalize?,
+    ∀ h ∈ occurrencesWith t IsPhaseHead,
+      Leaves .raising t h ↔ h ∈ occurrencesWith t (· ≠ cQ) := by
+  decide +kernel
+
+-- (10), p. 695
+theorem obeysTransfer_declarative :
     ObeysTransfer declarative (wholePhaseDomain .raising) (·.item.cat = .v) ∧
-      ¬ ObeysTransfer declarative (wholePhaseDomain .raising) (·.item.cat = .C) ∧
-      ¬ ObeysTransfer (derivation .univ) (wholePhaseDomain .raising) (·.item.cat = .v) := by
+      ¬ ObeysTransfer declarative (wholePhaseDomain .raising) (·.item.cat = .C) := by
   decide +kernel
 
 end Ke2026
