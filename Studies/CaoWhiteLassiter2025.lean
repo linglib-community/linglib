@@ -1,33 +1,43 @@
 module
 
-public import Mathlib.Basic.NNReal.Basic
-public import Mathlib.Data.Set.Card
+public import Mathlib.Probability.Independence.Basic
+public import Linglib.Core.MeasureTheory.Measure.Tilted
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Data.Examples.CaoWhiteLassiter2025
-public import Mathlib.Probability.ConditionalProbability
 public import Studies.NadathurLauer2020
 
 /-!
 # Cao, White and Lassiter (2025): Cause, make, and force as graded causatives
 
-Cao, White and Lassiter treat English *cause*, *make* and *force* as graded causatives. Where
-Nadathur and Lauer give *make* a categorical truth condition, causal sufficiency, they measure
-three quantities in a structural causal model of tic-tac-toe: Pearl's probability of sufficiency
-(`suf`), a simplified version of Halpern and Kleiman-Weiner's degree of intention, and the number
-of alternative actions open to the causee. No one quantity determines which verb speakers accept;
-each verb has its own set of reliable interactions. As in the model of Cao, Geiger, Kreiss, Icard
-and Gerstenberg, the models are time-indexed (`TimeIndex`) and their agents play a
-soft-optimality policy.
+Cao, White and Lassiter grade English *cause*, *make* and *force* by three measures on a causal
+model of tic-tac-toe whose players follow a soft-optimal policy: Pearl's probability of
+sufficiency `suf`, the number `alt` of alternatives open to the causee, and a degree of intention,
+[an exponential tilting](##intention_real_singleton) of the law of the action on the goal that
+[is 1 for an action without alternatives](##intention_eq_one_of_alt). When the causee replies to
+each move independently, the sufficiency of a move for a reply is
+[the policy's probability of that reply](##suf_exchange_pi), for the best players
+[1 over the number of best replies](##suf_exchange_professional). Nadathur and Lauer's categorical
+*make* [entails sufficiency 1](##suf_eq_one_of_make).
 
-The paper's in-text judgments, its examples (3)–(11), are rows in
-`Data/Examples/CaoWhiteLassiter2025.json`; the regression estimates stay in prose.
+## Implementation notes
+
+`softOptimalPolicy` takes the set of highest-utility moves and divides `ρ` among them, as the
+paper's comparison of two boards does for a board with two best replies; with one best move it is
+the displayed `ρ + (1 - ρ) / n`. The edge labels of the paper's game-tree figure give the best
+move `ρ` and divide `1 - ρ` among the other moves.
+
+`exchange` is one causer move and the causee's reply, the two timesteps the comparison of two
+boards reads from the game. Its context is the causee's reply to each move the causer could make.
+
+## TODO
+
+* The tic-tac-toe model itself: boards, the minimax utility, and the measures of the 30 stimuli.
 
 ## References
 
 * [cao-white-lassiter-2025]
 * [pearl-2019]
 * [halpern-kleiman-weiner-2018]
-* [frankfurt-1969]
 * [nadathur-lauer-2020]
 * [cao-geiger-kreiss-icard-gerstenberg-2023]
 -/
@@ -36,177 +46,161 @@ The paper's in-text judgments, its examples (3)–(11), are rows in
 
 namespace CaoWhiteLassiter2025
 
-open CausalModel
-open scoped ENNReal NNReal
+open CausalModel MeasureTheory ProbabilityTheory
+open scoped ENNReal
 
-/-! ### Soft-optimality policy
+/-! ### Soft-optimal policy -/
 
-The paper's mechanism for agent moves (§2.1.1). The highest-utility move — minimax over the game
-tree, with terminal utility `Winner × (EmptySpace + 1)` — is taken with probability `ρ + (1−ρ)/n`
-and every other available move with `(1−ρ)/n`, for `n` the number of empty spaces. The skill
-parameter interpolates between a uniformly random player ("assume that the players are infants"),
-under which the paper's worked SUF contrast between two board states collapses, and a
-deterministic professional. -/
+section Policy
 
-section
-variable {A : Type*} [MeasurableSpace A] (best : A) (ρ : ℝ≥0∞)
+variable {A : Type*} [MeasurableSpace A] (best : Set A) (ρ : ℝ≥0∞) {a b : A}
 
-open MeasureTheory ProbabilityTheory
-
-/-- A player of skill `ρ` plays the highest-utility move `best` with probability `ρ` and otherwise a
-uniform random move. -/
+/-- A player of skill `ρ` plays a uniformly random highest-utility move with probability `ρ` and
+otherwise a uniformly random move. -/
 noncomputable def softOptimalPolicy : Measure A :=
-  (1 - ρ) • uniformOn Set.univ + ρ • Measure.dirac best
+  ρ • uniformOn best + (1 - ρ) • uniformOn Set.univ
 
-theorem isProbabilityMeasure_softOptimalPolicy [Finite A] [Nonempty A] (hρ : ρ ≤ 1) :
-    IsProbabilityMeasure (softOptimalPolicy best ρ) :=
-  ⟨by simp [softOptimalPolicy, tsub_add_cancel_of_le hρ]⟩
-
-theorem softOptimalPolicy_zero : softOptimalPolicy best 0 = uniformOn Set.univ := by
+@[simp] theorem softOptimalPolicy_zero : softOptimalPolicy best 0 = uniformOn Set.univ := by
   simp [softOptimalPolicy]
 
-theorem softOptimalPolicy_one : softOptimalPolicy best 1 = Measure.dirac best := by
+@[simp] theorem softOptimalPolicy_one : softOptimalPolicy best 1 = uniformOn best := by
   simp [softOptimalPolicy]
 
-variable [Fintype A] [MeasurableSingletonClass A]
+variable [MeasurableSingletonClass A]
 
-@[simp] theorem softOptimalPolicy_singleton_best :
-    softOptimalPolicy best ρ {best} = ρ + (1 - ρ) / Fintype.card A := by
-  simp [softOptimalPolicy, uniformOn_univ_apply_singleton, div_eq_mul_inv, add_comm]
+theorem isProbabilityMeasure_softOptimalPolicy [Finite A] {best : Set A} (hbest : best.Nonempty)
+    (hρ : ρ ≤ 1) : IsProbabilityMeasure (softOptimalPolicy best ρ) := by
+  have := isProbabilityMeasure_uniformOn best.toFinite hbest
+  have := hbest.to_type
+  exact ⟨by simp [softOptimalPolicy, add_tsub_cancel_of_le hρ]⟩
 
-@[simp] theorem softOptimalPolicy_singleton_of_ne {a : A} (h : a ≠ best) :
+variable [Fintype A] {best}
+
+theorem softOptimalPolicy_apply_singleton_of_mem (h : a ∈ best) :
+    softOptimalPolicy best ρ {a} = ρ / best.ncard + (1 - ρ) / Fintype.card A := by
+  simp [softOptimalPolicy, uniformOn_apply_singleton_of_mem best.toFinite h,
+    uniformOn_univ_apply_singleton, div_eq_mul_inv]
+
+theorem softOptimalPolicy_apply_singleton_of_notMem (h : a ∉ best) :
     softOptimalPolicy best ρ {a} = (1 - ρ) / Fintype.card A := by
-  simp [softOptimalPolicy, uniformOn_univ_apply_singleton, h.symm, div_eq_mul_inv]
+  simp [softOptimalPolicy, uniformOn_apply_singleton_of_notMem h,
+    uniformOn_univ_apply_singleton, div_eq_mul_inv]
 
-end
+-- §2.1.1
+theorem softOptimalPolicy_singleton_self :
+    softOptimalPolicy {a} ρ {a} = ρ + (1 - ρ) / Fintype.card A := by
+  simp [softOptimalPolicy_apply_singleton_of_mem]
 
-/-! ### The ALT measure
+-- §2.4: the only best reply against one of two best replies; at `ρ = 0` they do not differ
+theorem softOptimalPolicy_pair_lt_singleton (hab : a ≠ b) (hρ₀ : ρ ≠ 0) (hρ : ρ ≠ ∞) :
+    softOptimalPolicy {a, b} ρ {a} < softOptimalPolicy {a} ρ {a} := by
+  have : Nonempty A := ⟨a⟩
+  rw [softOptimalPolicy_singleton_self, softOptimalPolicy_apply_singleton_of_mem _ (.inl rfl),
+    Set.ncard_pair hab]
+  refine ENNReal.add_lt_add_right (ENNReal.div_ne_top ?_ (by simp)) (ENNReal.half_lt_self hρ₀ hρ)
+  exact ne_top_of_le_ne_top ENNReal.one_ne_top tsub_le_self
 
-ALT (§2.2) counts the alternative actions available to the causee, excluding the one actually
-taken — `ALT(Y₁) = 5` at the paper's fig. 2a board state. `ALT = 0` is the Frankfurt-style
-could-not-have-done-otherwise configuration. -/
+end Policy
 
-section
-variable {A : Type*} [Fintype A] (taken : A)
+/-! ### Alternatives and intention -/
 
-/-- The number of alternative actions available to the causee is the number of actions of
-positive probability other than the one taken. -/
-noncomputable def altCount [MeasurableSpace A] (μ : MeasureTheory.Measure A) : ℕ :=
-  ({a | μ {a} ≠ 0} \ {taken}).ncard
+section Intention
 
-theorem altCount_eq_zero_iff [MeasurableSpace A] (μ : MeasureTheory.Measure A) :
-    altCount taken μ = 0 ↔ ∀ a ≠ taken, μ {a} = 0 := by
-  rw [altCount, Set.ncard_eq_zero (Set.toFinite _), Set.sdiff_eq_empty,
-    Set.subset_singleton_iff]
-  exact forall_congr' fun b => not_imp_comm
+/-- ALT is the number of actions available to the causee other than the one taken (§2.2). -/
+noncomputable def alt {A : Type*} (available : Set A) (taken : A) : ℕ :=
+  (available \ {taken}).ncard
 
-/-! ### The INT measure
+theorem alt_eq_zero_iff {A : Type*} {available : Set A} {a : A} (h : available.Finite) :
+    alt available a = 0 ↔ available ⊆ {a} := by
+  rw [alt, Set.ncard_eq_zero (h.subset Set.sdiff_subset), Set.sdiff_eq_empty]
 
-The paper's §2.3 displayed equation, a simplified [halpern-kleiman-weiner-2018] degree of
-intention:
+variable {Ω A : Type*} [MeasurableSpace Ω] [MeasurableSpace A] (ν : Measure Ω) (act : Ω → A)
+  (goal : Set Ω) (util : A → ℝ) {available : Set A} {a : A}
 
-`INT(a) = Pr(A = a ∧ G) · u′(a) / Σ_{a′} Pr(A = a′ ∧ G) · u′(a′)`
+/-- INT gives each action its degree of intention (§2.3): the probability, over the worlds `ν`,
+that the agent takes the action and the goal results, reweighted by the exponential of the
+action's utility and normalized over the actions. It is the exponential tilting by utility of the
+law of the action on the goal. -/
+noncomputable def intention : Measure A :=
+  ((ν.restrict goal).map act).tilted util
 
-"the probability that an action performed in a state will result in the desired outcome,
-normalized by the probability of all alternative actions that would have resulted in the same
-outcome", each term weighted by exponentiated utility `u′ = eᵘ`, the exponential serving only to
-make the weights strictly positive. Here `pr a′` is the joint probability that the agent takes
-`a′` and the goal results, and the weight is abstracted to any `w : A → ℝ≥0`; `modelIntention`
-instantiates `pr` over a `SEM`.
+variable {ν act goal util}
 
-The simplification costs the principle it is motivated by: [halpern-kleiman-weiner-2018] hold,
-after [frankfurt-1969], that an action an agent could not have avoided is never intentional,
-while under this measure such an action is maximally intentional, its sole goal-conducive
-alternative being itself. It is ALT rather than INT that registers the paper's *made*/*forced*
-contrast in (8). -/
+theorem intention_const [IsFiniteMeasure ν] (hact : Measurable act) (c : ℝ) :
+    intention ν act goal (fun _ ↦ c) = (ν[|goal]).map act := by
+  rw [intention, tilted_const', Measure.map_apply hact .univ, Set.preimage_univ,
+    Measure.restrict_apply_univ, ProbabilityTheory.cond, Measure.map_smul _ hact.aemeasurable]
 
-variable (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (a : A)
+variable [Fintype A] [MeasurableSingletonClass A] [IsFiniteMeasure ν]
 
-/-- The goal-weighted share of action `a` among all goal-conducive
-    alternatives. -/
-noncomputable def intentionDegree : ℝ≥0∞ :=
-  (pr a * w a) / ∑ a', pr a' * w a'
+/-- The degree of intention of an action is the paper's displayed quotient (§2.3). -/
+theorem intention_real_singleton (hact : Measurable act) (a : A) :
+    (intention ν act goal util).real {a} =
+      ν.real (act ⁻¹' {a} ∩ goal) * Real.exp (util a) /
+        ∑ a', ν.real (act ⁻¹' {a'} ∩ goal) * Real.exp (util a') := by
+  have h (b : A) : ((ν.restrict goal).map act).real {b} = ν.real (act ⁻¹' {b} ∩ goal) := by
+    rw [measureReal_def, Measure.map_apply hact (measurableSet_singleton b),
+      Measure.restrict_apply (hact (measurableSet_singleton b)), measureReal_def]
+  rw [intention, tilted_real_singleton]
+  simp_rw [h]
 
-theorem intentionDegree_le_one : intentionDegree pr w a ≤ 1 :=
-  ENNReal.div_le_of_le_mul <| by
-    simpa using Finset.single_le_sum (f := fun a' => pr a' * w a') (fun _ _ => zero_le)
-      (Finset.mem_univ a)
+theorem intention_apply_singleton_eq_one (hact : Measurable act)
+    (h : ∀ᵐ ω ∂ν.restrict goal, act ω = a) (h₀ : ν goal ≠ 0) :
+    intention ν act goal util {a} = 1 := by
+  have : NeZero ((ν.restrict goal).map act) :=
+    ⟨fun h0 ↦ h₀ <| by simpa [Measure.map_apply hact .univ] using congr($h0 Set.univ)⟩
+  have : IsProbabilityMeasure (intention ν act goal util) := isProbabilityMeasure_tilted .of_finite
+  rw [← prob_compl_eq_zero_iff (measurableSet_singleton a)]
+  refine tilted_absolutelyContinuous _ _ ?_
+  rw [Measure.map_apply hact (measurableSet_singleton a).compl]
+  exact h
 
-theorem intentionDegree_eq_one_of_no_alternatives
-    (h : ∀ a ≠ taken, pr a = 0) (h0 : pr taken ≠ 0) (hw : w taken ≠ 0)
-    (htop : pr taken ≠ ∞) :
-    intentionDegree pr w taken = 1 := by
-  rw [intentionDegree, Finset.sum_eq_single_of_mem taken (Finset.mem_univ taken)
-    fun a _ ha => by rw [h a ha, zero_mul]]
-  exact ENNReal.div_self (mul_ne_zero h0 (ENNReal.coe_ne_zero.mpr hw))
-    (ENNReal.mul_ne_top htop ENNReal.coe_ne_top)
+/-- An action without alternatives has degree of intention 1: when the causee could not have done
+otherwise, ALT is 0 and INT is maximal. -/
+theorem intention_eq_one_of_alt (hact : Measurable act) (hfin : available.Finite)
+    (hav : ∀ᵐ ω ∂ν.restrict goal, act ω ∈ available) (h : alt available a = 0) (h₀ : ν goal ≠ 0) :
+    intention ν act goal util {a} = 1 :=
+  intention_apply_singleton_eq_one hact (hav.mono fun _ hω ↦ (alt_eq_zero_iff hfin).1 h hω) h₀
 
-/-- An agent who could not have done otherwise comes out maximally intentional, since the
-simplified INT does not carry the alternative-possibilities condition; ALT is what separates
-*made* from *forced*. -/
-theorem intentionDegree_eq_one_of_altCount_eq_zero [MeasurableSpace A]
-    (μ : MeasureTheory.Measure A) [MeasureTheory.IsFiniteMeasure μ]
-    (hle : ∀ a, pr a ≤ μ {a}) (h : altCount taken μ = 0) (h0 : pr taken ≠ 0)
-    (hw : w taken ≠ 0) : intentionDegree pr w taken = 1 :=
-  intentionDegree_eq_one_of_no_alternatives taken pr w
-    (fun a ha => le_zero_iff.mp ((altCount_eq_zero_iff taken μ).mp h a ha ▸ hle a))
-    h0 hw (ne_top_of_le_ne_top (MeasureTheory.measure_ne_top μ _) (hle taken))
+end Intention
 
-end
+/-! ### Sufficiency -/
 
 section Model
 
 variable {U V : Type*} {α : V → Type*} [DecidableEq V] [MeasurableSpace U]
   (M : CausalModel U V α) [M.IsAcyclic] [∀ v, Nonempty (α v)]
 
-/-- The paper's INT over a causal model instantiates `intentionDegree` with `pr a′` the
-    probability, over contexts drawn from `ν`, that under the intervention holding `X` at `x` the
-    action variable takes the value `a′` and the outcome satisfies the goal: the paper's
-    `Pr((M,u⃗) ⊨ A = a⃗′ ∧ G = g⃗)`. -/
-noncomputable def modelIntention (ν : MeasureTheory.Measure U) (X : Finset V) (x : ∀ v : X, α v)
-    (act : V) [Fintype (α act)] (goal : Set (∀ v, α v)) (w : α act → ℝ≥0) (a : α act) : ℝ≥0∞ :=
-  intentionDegree
-    (fun a' ↦ ν {u | (M.intervene X x).solve u act = a' ∧ (M.intervene X x).solve u ∈ goal}) w a
-
 /-- SUF, Pearl's probability of sufficiency ([pearl-2019]), is the probability, among the
-    contexts drawn from `ν` in which the observation `obs` holds, that setting `c := x` makes
-    `e = y`. -/
-noncomputable def suf (ν : MeasureTheory.Measure U) (obs : ∀ v, Part (α v)) (c : V) (x : α c)
-    (e : V) (y : α e) : ℝ≥0∞ :=
-  ProbabilityTheory.cond ν (M.contexts obs) {u | M[c ← x].solve u e = y}
+contexts drawn from `ν` in which the observation `obs` holds, that setting `c := x` makes
+`e = y` (§2.4). -/
+noncomputable def suf (ν : Measure U) (obs : ∀ v, Part (α v)) (c : V) (x : α c) (e : V)
+    (y : α e) : ℝ≥0∞ :=
+  ν[{u | M[c ← x].solve u e = y} | M.contexts obs]
 
-variable {M}
+variable {M} (ν : Measure U) (c : V) (x : α c) (e : V) (y : α e)
 
-theorem suf_bot (ν : MeasureTheory.Measure U) [MeasureTheory.IsProbabilityMeasure ν] (c : V)
-    (x : α c) (e : V) (y : α e) :
+theorem suf_bot [IsProbabilityMeasure ν] :
     suf M ν ⊥ c x e y = ν {u | M[c ← x].solve u e = y} := by
-  rw [suf, contexts_bot, ProbabilityTheory.cond_univ]
-
-/-! ### Deterministic limit
-
-With a certain context SUF collapses to a {0,1} indicator, and wherever Nadathur and Lauer's
-categorical *make* holds of the empty background, SUF is 1 whatever the distribution over
-contexts. The converse fails: a single context can make the intervention yield the effect without
-the effect being settled by the strict development, so the categorical *make* semantics is
-strictly stronger than maximal graded SUF. -/
+  rw [suf, contexts_bot, cond_univ]
 
 open Classical in
-theorem suf_dirac [MeasurableSingletonClass U] (u₀ : U) (c : V) (x : α c) (e : V) (y : α e) :
-    suf M (MeasureTheory.Measure.dirac u₀) ⊥ c x e y =
-      if M[c ← x].solve u₀ e = y then 1 else 0 := by
-  rw [suf_bot, MeasureTheory.Measure.dirac_apply, Set.indicator_apply]
+theorem suf_dirac [MeasurableSingletonClass U] (u₀ : U) :
+    suf M (Measure.dirac u₀) ⊥ c x e y = if M[c ← x].solve u₀ e = y then 1 else 0 := by
+  rw [suf_bot, Measure.dirac_apply, Set.indicator_apply]
   simp only [Set.mem_ofPred_eq, Pi.one_apply]
+
+variable {c x e y}
 
 /-- Nadathur and Lauer's *make* entails maximal SUF. Whenever *make* holds of the empty
 background, SUF is 1 under every distribution over contexts. -/
-theorem suf_eq_one_of_make (ν : MeasureTheory.Measure U) [MeasureTheory.IsProbabilityMeasure ν]
-    {u₀ : U} {c e : V} {x : α c} {y : α e} (h : NadathurLauer2020.Make M ⊥ u₀ c x e y) :
-    suf M ν ⊥ c x e y = 1 := by
+theorem suf_eq_one_of_make [IsProbabilityMeasure ν] {u₀ : U}
+    (h : NadathurLauer2020.Make M ⊥ u₀ c x e y) : suf M ν ⊥ c x e y = 1 := by
   have h' := h.1.2
   rw [Function.update_idem] at h'
   have hall : {u | M[c ← x].solve u e = y} = Set.univ :=
     Set.eq_univ_of_forall h'.solve_intervene_singleton_eq
-  rw [suf_bot, hall, MeasureTheory.measure_univ]
+  rw [suf_bot, hall, measure_univ]
 
 end Model
 
@@ -222,76 +216,114 @@ theorem TimeIndex.isAcyclic {U V : Type*} {α : V → Type*} {M : CausalModel U 
     (ti : TimeIndex M) : M.IsAcyclic :=
   .of_depth _ ti.time fun h ↦ by have := ti.parent_succ h; omega
 
-/-! ### The paper's judgment data
+/-! ### One exchange
 
-The in-text contrasts are rows in `Data.Examples.CaoWhiteLassiter2025`: the
-non-interchangeability triplets (3)–(4), the gym gradability triplets (5)–(7), the
-could-have-done-otherwise pair (8), the intent-denial continuations (9)–(10), and the
-*make*/*let* sufficiency pair (11). -/
+The paper compares the SUF of two moves of player X for the same reply of player O. The
+comparison reads two timesteps of the game, a move and the reply to it. -/
 
-/-- In (8), *made* tolerates a could-have-done-otherwise continuation and *forced* resists it. -/
-theorem judgment_differs_make_force :
-    Examples.cwl2025_ex8a.judgment ≠ Examples.cwl2025_ex8b.judgment := by decide
-
--- (5), (7)
-theorem gym_grades_stronger_verbs :
-    Examples.cwl2025_ex5a.judgment = Examples.cwl2025_ex6a.judgment ∧
-      Examples.cwl2025_ex6a.judgment = Examples.cwl2025_ex7a.judgment ∧
-      Examples.cwl2025_ex5c.judgment ≠ Examples.cwl2025_ex7c.judgment := by decide
-
-/-! ### A probabilistic model
-
-SUF is a probability when the background is uncertain. In a model whose `effect` holds when the
-`cause` and a background `noise` both do, and whose noise is true with probability `p`, setting
-the cause makes the effect true with probability `p`, strictly between the 0 and 1 of the
-categorical semantics. -/
-
-namespace ProbabilisticExample
-
-/-- The vertices are the cause, the background noise, and the effect. -/
-inductive V | cause | noise | effect
+/-- The variables of one exchange are the causer's move and the causee's reply. -/
+inductive Turn | causer | causee
   deriving DecidableEq, Fintype, Repr
 
-/-- The effect reads the cause and the noise. -/
-def edges : Finset (V × V) := {(.cause, .effect), (.noise, .effect)}
+section Exchange
 
-/-- The effect holds when the cause and the noise both do; the context settles the noise, and the
-cause is off unless set. -/
-def model : CausalModel Bool V fun _ ↦ Bool where
-  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
+universe u
+
+variable {X Y : Type u}
+
+/-- The causer's variable takes moves in `X` and the causee's takes replies in `Y`. -/
+abbrev Turn.Val (X Y : Type u) : Turn → Type u
+  | .causer => X
+  | .causee => Y
+
+instance [Nonempty X] [Nonempty Y] : ∀ v, Nonempty (Turn.Val X Y v)
+  | .causer => ‹_›
+  | .causee => ‹_›
+
+/-- The reply reads the move. -/
+def Turn.edges : Finset (Turn × Turn) := {(.causer, .causee)}
+
+/-- In one exchange the causer actually moves `x₀`, and the context settles what the causee
+replies to each move the causer could make. -/
+def exchange (x₀ : X) : CausalModel (X → Y) Turn (Turn.Val X Y) where
+  graph := ⟨fun w v ↦ (w, v) ∈ Turn.edges⟩
   eqn
-    | .cause => fun _ _ ↦ false
-    | .noise => fun u _ ↦ u
-    | .effect => fun _ x ↦ x .cause && x .noise
+    | .causer => fun _ _ ↦ x₀
+    | .causee => fun u s ↦ u (s .causer)
 
-instance : DecidableRel model.graph.Adj := fun w v ↦ inferInstanceAs (Decidable ((w, v) ∈ edges))
+instance (x₀ : X) : DecidableRel (exchange (Y := Y) x₀).graph.Adj :=
+  fun w v ↦ inferInstanceAs (Decidable ((w, v) ∈ Turn.edges))
 
-/-- The model is time-indexed in the sense of the paper's definition 1, with `cause` and `noise`
-at step 0 and `effect` at step 1. -/
-def timeIndex : TimeIndex model where
-  time := fun | .effect => 1 | _ => 0
-  parent_succ := by decide
+/-- An exchange is time-indexed, the move at step 0 and the reply at step 1. -/
+def exchange.timeIndex (x₀ : X) : TimeIndex (exchange (Y := Y) x₀) where
+  time
+    | .causer => 0
+    | .causee => 1
+  parent_succ {w v} (h : (w, v) ∈ Turn.edges) := by revert w v; decide
 
-instance : model.IsAcyclic := timeIndex.isAcyclic
+instance (x₀ : X) : (exchange (Y := Y) x₀).IsAcyclic := (exchange.timeIndex x₀).isAcyclic
 
-/-- In the background the noise is true with probability `p`. -/
-noncomputable def background (p : ℝ≥0∞) : MeasureTheory.Measure Bool :=
-  p • MeasureTheory.Measure.dirac true + (1 - p) • MeasureTheory.Measure.dirac false
+variable [Nonempty X] [Nonempty Y] {x₀ x : X} {y₀ y : Y} {u : X → Y}
 
-theorem effect_iff (b : Bool) :
-    model[.cause ← true].solve b .effect = true ↔ b = true := by
-  cases b <;> decide
+@[simp] theorem solve_exchange_causer : (exchange x₀).solve u Turn.causer = x₀ :=
+  solve_apply u Turn.causer
 
-/-- SUF is the probability of the noise, graded as the paper's measure requires. -/
-theorem suf_eq {p : ℝ≥0∞} (hp : p ≤ 1) :
-    suf model (background p) ⊥ .cause true .effect true = p := by
-  have : MeasureTheory.IsProbabilityMeasure (background p) :=
-    ⟨by simp [background, add_tsub_cancel_of_le hp]⟩
-  have h : {b : Bool | model[.cause ← true].solve b .effect = true} = {true} :=
-    Set.ext fun b ↦ effect_iff b
-  rw [suf_bot, h]
-  simp [background]
+@[simp] theorem solve_exchange_causee : (exchange x₀).solve u Turn.causee = u x₀ := by
+  rw [solve_apply]
+  exact congrArg u solve_exchange_causer
 
-end ProbabilisticExample
+@[simp] theorem solve_exchange_intervene_causee :
+    (exchange x₀)[Turn.causer ← x].solve u Turn.causee = u x := by
+  rw [solve_intervene_of_notMem (by decide)]
+  exact congrArg u (solve_intervene_singleton_self (M := exchange x₀) .causer x)
+
+theorem contexts_exchange :
+    (exchange x₀).contexts [.causer ← x₀, .causee ← y₀] = {u : X → Y | u x₀ = y₀} := by
+  ext u
+  simp only [contexts, Set.mem_ofPred_eq, Part.pi_le_iff]
+  refine ⟨fun h ↦ ?_, fun h v ↦ ?_⟩
+  · simpa [eq_comm] using h .causee
+  · cases v <;> simp [h]
+
+variable [MeasurableSpace Y] [MeasurableSingletonClass Y]
+
+theorem suf_exchange (ν : Measure (X → Y)) [IsFiniteMeasure ν]
+    (h : IndepFun (fun u ↦ u x₀) (fun u ↦ u x) ν) (hc : ν {u | u x₀ = y₀} ≠ 0) :
+    suf (exchange x₀) ν [.causer ← x₀, .causee ← y₀] .causer x .causee y = ν {u | u x = y} := by
+  have hs : MeasurableSet {u : X → Y | u x₀ = y₀} :=
+    show MeasurableSet ((fun u : X → Y ↦ u x₀) ⁻¹' {y₀}) from
+      measurable_pi_apply x₀ (measurableSet_singleton y₀)
+  have hmul : ν ({u | u x₀ = y₀} ∩ {u | u x = y}) = ν {u | u x₀ = y₀} * ν {u | u x = y} :=
+    h.measure_inter_preimage_eq_mul {y₀} {y} (measurableSet_singleton y₀)
+      (measurableSet_singleton y)
+  rw [suf, contexts_exchange]
+  simp only [solve_exchange_intervene_causee]
+  rw [cond_apply hs, hmul, ← mul_assoc, ENNReal.inv_mul_cancel hc (measure_ne_top _ _), one_mul]
+
+/-- When the causee replies to each move by an independent draw from a policy, the SUF of a move
+other than the actual one for a reply is the policy's probability of that reply after the move
+(§2.4). -/
+theorem suf_exchange_pi [Fintype X] (π : X → Measure Y) [∀ x, IsProbabilityMeasure (π x)]
+    (hx : x ≠ x₀) (hc : π x₀ {y₀} ≠ 0) :
+    suf (exchange x₀) (Measure.pi π) [.causer ← x₀, .causee ← y₀] .causer x .causee y =
+      π x {y} := by
+  have hpi (x : X) (y : Y) : Measure.pi π {u | u x = y} = π x {y} :=
+    (measurePreserving_eval π x).measure_preimage (measurableSet_singleton y).nullMeasurableSet
+  have hind : iIndepFun (fun (i : X) (u : X → Y) ↦ u i) (Measure.pi π) :=
+    iIndepFun_pi (μ := π) (X := fun _ ↦ id) fun _ ↦ aemeasurable_id
+  rw [suf_exchange _ (hind.indepFun hx.symm) (by rwa [hpi]), hpi]
+
+/-- Between players who always pick a best move, the SUF of a move for a best reply to it is 1
+over the number of best replies: 1 when the reply is forced and 1/2 when there are two (§2.4). -/
+theorem suf_exchange_professional [Fintype X] [Finite Y] (best : X → Set Y)
+    (hbest : ∀ x, (best x).Nonempty) (hx : x ≠ x₀) (hy₀ : y₀ ∈ best x₀) (hy : y ∈ best x) :
+    suf (exchange x₀) (Measure.pi fun x ↦ softOptimalPolicy (best x) 1)
+      [.causer ← x₀, .causee ← y₀] .causer x .causee y = ((best x).ncard : ℝ≥0∞)⁻¹ := by
+  have (x : X) := isProbabilityMeasure_uniformOn (best x).toFinite (hbest x)
+  simp_rw [softOptimalPolicy_one]
+  rw [suf_exchange_pi _ hx, uniformOn_apply_singleton_of_mem (best x).toFinite hy]
+  simp [uniformOn_apply_singleton_of_mem (best x₀).toFinite hy₀]
+
+end Exchange
 
 end CaoWhiteLassiter2025

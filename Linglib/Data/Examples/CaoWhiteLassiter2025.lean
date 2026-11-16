@@ -32,6 +32,7 @@ def cwl2025_ex3b : Datum :=
   { id := "cwl2025_ex3b"
     source := ⟨"cao-white-lassiter-2025", "(3b)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "A CAT [...] made himself look as much as possible like a doctor..."
     glossedTokens := []
