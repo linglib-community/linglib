@@ -169,7 +169,7 @@ theorem lt_cond_iff_mul_lt (hs : MeasurableSet s) {c : ℝ≥0∞} :
       ENNReal.lt_div_iff_mul_lt (.inl h0) (.inl (measure_ne_top _ _))]
 
 theorem cond_apply_eq_zero_iff (hs : MeasurableSet s) : μ[t | s] = 0 ↔ s ≤ᵐ[μ] tᶜ :=
-  measure_eq_zero_iff_ae_notMem.trans (ae_cond_mem_iff hs)
+  measure_eq_zero_iff_ae_notMem.trans (ae_cond_mem_iff (t := tᶜ) hs)
 
 theorem cond_apply_eq_one_iff (hs : MeasurableSet s) (ht : MeasurableSet t) (hcs : μ s ≠ 0) :
     μ[t | s] = 1 ↔ s ≤ᵐ[μ] t :=
