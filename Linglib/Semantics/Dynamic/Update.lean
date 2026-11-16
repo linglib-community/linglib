@@ -233,22 +233,20 @@ conditions `D₁.core D₂.dom` and `D₁.dom ∪ D₂.dom`. -/
 open AntidomainMonoid in
 scoped instance : AntidomainMonoid (Update S) where
   antidomain D := test D.domᶜ
-  isAntidomain := by
-    have hc (D : Update S) (C : Condition S) : (D ○ test C).dom = D.preimage C := dom_comp_test D C
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-    · simp [zero_def, one_def]
-    · intro D; ext ⟨i, j⟩; simp only [mul_def, zero_def, mem_test_comp]; simp; grind
-    · intro D₁ D₂; simp only [mul_def, test_comp_test, Set.inter_comm]
-    · intro D; simp only [mul_def, dom_test, compl_compl, test_dom_comp]
-    · intro D₁ D₂; simp only [mul_def, test_comp_test, dom_test, compl_compl]
-    · intro D₁ D₂; ext ⟨i, j⟩
-      simp only [mul_def]
-      rw [mem_comp_test]
-      exact ⟨fun h ↦ ⟨h, fun ⟨k, hk⟩ ↦ (mem_test_comp.1 h).1 ⟨k, j, (mem_test_comp.1 h).2, hk⟩⟩,
-        And.left⟩
-    · intro D₁ D₂ D₃
-      simp only [mul_def, test_comp_test, dom_test, compl_compl, hc, dom_comp,
-        Set.compl_inter, preimage_union]
+  isAntidomain :=
+    { mul_self := fun D ↦ by
+        ext ⟨i, j⟩; simp only [mul_def, zero_def, mem_test_comp]; simp; grind
+      comm := fun D₁ D₂ ↦ by simp only [mul_def, test_comp_test, Set.inter_comm]
+      map_map_mul_self := fun D ↦ by simp only [mul_def, dom_test, compl_compl, test_dom_comp]
+      map_eq_mul := fun D₁ D₂ ↦ by
+        simp only [mul_def, test_comp_test, dom_comp, dom_test]
+        rw [← Set.compl_union, ← preimage_union, Set.union_compl_self, preimage_univ_right]
+      modusPonens := fun D₁ D₂ ↦ by
+        ext ⟨i, j⟩
+        simp only [mul_def]
+        rw [mem_comp_test]
+        exact ⟨fun h ↦
+          ⟨h, fun ⟨k, hk⟩ ↦ (mem_test_comp.1 h).1 ⟨k, j, (mem_test_comp.1 h).2, hk⟩⟩, And.left⟩ }
 
 open AntidomainMonoid
 
