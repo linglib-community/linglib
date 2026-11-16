@@ -67,7 +67,7 @@ variable {S E ι : Type*}
 (51), gives the narrow reading (50). -/
 theorem closure_below_negation_iff {N : Set E} {VP : E → Prop} (hN : N.Nonempty) :
     (¬ ∃ f : ChoiceFunction E, VP (f N)) ↔ ¬ ∃ x ∈ N, VP x :=
-  not_congr (ChoiceFunction.exists_apply_iff hN VP)
+  not_congr (ChoiceFunction.exists_apply_iff_of_nonempty hN VP)
 
 /-- Under negation, the free function of (67) gives the narrow reading for every predicate iff its
 pick is the restrictor's only member at the situation. -/
@@ -81,7 +81,7 @@ theorem negation_narrow_iff (f : S → ChoiceFunction E) {s : S} {P : S → Set 
 /-- Closing the choice function above a conditional gives the wide reading of (60). -/
 theorem closure_above_conditional_iff {N : Set E} {A : E → Prop} {p : Prop} (hN : N.Nonempty) :
     (∃ f : ChoiceFunction E, A (f N) → p) ↔ ∃ x ∈ N, (A x → p) :=
-  ChoiceFunction.exists_apply_iff hN fun x ↦ A x → p
+  ChoiceFunction.exists_apply_iff_of_nonempty hN fun x ↦ A x → p
 
 /-! ### *biara* -/
 
@@ -93,7 +93,7 @@ variable {B : Set E} {R : ι → E → Prop}
 read by every woman. -/
 theorem wide_iff (hB : B.Nonempty) :
     (∃ f : ChoiceFunction E, ∀ z, R z (f B)) ↔ ∃ x ∈ B, ∀ z, R z x :=
-  ChoiceFunction.exists_apply_iff hB fun x ↦ ∀ z, R z x
+  ChoiceFunction.exists_apply_iff_of_nonempty hB fun x ↦ ∀ z, R z x
 
 /-- With the individual index bound by *biara*, some function makes (55b) true iff every woman read
 a book (24). -/

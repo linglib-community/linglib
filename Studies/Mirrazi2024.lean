@@ -57,7 +57,7 @@ theorem intensional_iff_of_fixed {N : W → Set E} {B : Set E} (hB : B.Nonempty)
     (hN : ∀ w, w₀ ~[R] w → N w = B) :
     (∃ f : ChoiceFunction E, Box R (fun w ↦ ¬ VP (f (N w)) w) w₀) ↔
       Det.some B {x | Box R (¬ VP x ·) w₀} := by
-  refine Iff.trans ?_ (ChoiceFunction.exists_apply_iff hB fun x ↦ Box R (¬ VP x ·) w₀)
+  refine Iff.trans ?_ (ChoiceFunction.exists_apply_iff_of_nonempty hB fun x ↦ Box R (¬ VP x ·) w₀)
   exact exists_congr fun f ↦ forall₂_congr fun w hw ↦
     iff_of_eq (congrArg (fun N' ↦ ¬ VP (f N') w) (hN w hw))
 

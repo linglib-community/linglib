@@ -567,7 +567,7 @@ theorem cf_exceptional_cond (rel : Set E) (dies : E → Prop) (rich : Prop) (hre
     (s : Stack E) :
     (∃ f : ChoiceFunction E, dies (f rel) → rich) ↔
       holds (indef (· ∈ rel) >>= fun x ↦ pure (dies x → rich)) s := by
-  refine (ChoiceFunction.exists_apply_iff hrel fun x ↦ dies x → rich).trans ?_
+  refine (ChoiceFunction.exists_apply_iff_of_nonempty hrel fun x ↦ dies x → rich).trans ?_
   simp only [holds, indef, Set.mem_stateT_bind, Set.mem_stateT_pure, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨x, hx, h⟩
@@ -593,7 +593,7 @@ theorem cf_same_restrictor_iff (girl : E → Prop) (boysFancied : E → Set E)
     (hsame : ∀ x, girl x → boysFancied x = B) :
     (∃ f : ChoiceFunction E, ∀ x, girl x → gave (f (boysFancied x)) x) ↔
       ∃ y ∈ B, ∀ x, girl x → gave y x := by
-  rw [← ChoiceFunction.exists_apply_iff hB fun y ↦ ∀ x, girl x → gave y x]
+  rw [← ChoiceFunction.exists_apply_iff_of_nonempty hB fun y ↦ ∀ x, girl x → gave y x]
   exact exists_congr fun f ↦ forall₂_congr fun x hx ↦ by rw [hsame x hx]
 
 theorem cf_layered_iff [Nonempty E] (linguist : Set E) (bookBy : E → Set E)
@@ -604,7 +604,7 @@ theorem cf_layered_iff [Nonempty E] (linguist : Set E) (bookBy : E → Set E)
   have hneg (f : ChoiceFunction E) : (¬ ∃ g : ChoiceFunction E, read (f (bookBy (g linguist)))) ↔
       ∀ x ∈ linguist, ¬ read (f (bookBy x)) := by
     rw [not_exists]
-    exact ChoiceFunction.forall_apply_iff hling fun z ↦ ¬ read (f (bookBy z))
+    exact ChoiceFunction.forall_apply_iff_of_nonempty hling fun z ↦ ¬ read (f (bookBy z))
   have h := ChoiceFunction.exists_forall_apply_iff_of_injective (ι := linguist)
     (Set.injOn_iff_injective.1 hinj) (fun x ↦ hbook x x.2) fun _ y ↦ ¬ read y
   simp only [Set.domRestrict_apply, Subtype.forall] at h

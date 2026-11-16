@@ -427,18 +427,7 @@ theorem supervaluationOn_kLE_supervaluationOn {α : Type*} {s t : Set α} {P : �
     supervaluationOn_eq_false_iff]
   exact ⟨fun hs a ha ↦ hs a (h ha), fun hs ↦ ⟨ht, fun a ha ↦ hs.2 a (h ha)⟩⟩
 
-open Classical in
-/-- A trivalent quantifier extends `Q` when it has the value of `Q` at every classical
-predicate. -/
-def Extends (Q : Set U → Prop) (T : (U → Trivalent) → Trivalent) : Prop :=
-  ∀ R : Set U, T (fun u ↦ ofProp (u ∈ R)) = ofProp (Q R)
-
-/-- A trivalent quantifier is regular when more information about its argument gives more
-information about its value ([kleene-1952]). -/
-def IsRegular (T : (U → Trivalent) → Trivalent) : Prop :=
-  ∀ ⦃A A' : U → Trivalent⦄, (∀ u, A u ≤ₖ A' u) → T A ≤ₖ T A'
-
-theorem extends_deployQuantifier (Q : Set U → Prop) : Extends Q (deployQuantifier Q) :=
+theorem isExtensionOf_deployQuantifier (Q : Set U → Prop) : IsExtensionOf Q (deployQuantifier Q) :=
   fun R ↦ by classical exact deployQuantifier_ofProp Q R
 
 theorem isRegular_deployQuantifier (Q : Set U → Prop) : IsRegular (deployQuantifier Q) :=
@@ -449,7 +438,7 @@ theorem isRegular_deployQuantifier (Q : Set U → Prop) : IsRegular (deployQuant
 
 /-- The deployment of a quantifier is its greatest regular extension: a regular extension has
 the deployed value wherever it is defined. -/
-theorem IsRegular.kLE_deployQuantifier (hT : IsRegular T) (hQ : Extends Q T)
+theorem IsRegular.kLE_deployQuantifier (hT : IsRegular T) (hQ : IsExtensionOf Q T)
     (A : U → Trivalent) : T A ≤ₖ deployQuantifier Q A := by
   classical
   have key (X : Set U) (hX : X ∈ interval A) : T A ≤ₖ ofProp (Q X) := by
@@ -468,7 +457,7 @@ theorem isRegular_forallWeak : IsRegular (forallWeak (ι := U)) := fun A A' h �
   · exact .inr (congrArg _ (funext fun u ↦ (kLE_iff.1 (h u)).resolve_left (hd u)))
   · exact .inl (by simpa using hd)
 
-theorem extends_forallWeak : Extends (· = Set.univ) (forallWeak (ι := U)) := fun R ↦ by
+theorem isExtensionOf_forallWeak : IsExtensionOf (· = Set.univ) (forallWeak (ι := U)) := fun R ↦ by
   refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_ <;> simp [Set.eq_univ_iff_forall]
 
 /-- Haug's universal is not regular: a gap filled by `false` turns `true` into `false`. -/
@@ -509,7 +498,7 @@ theorem deployQuantifier_ne_undefined_iff :
 /-- Intersecting the sets in the interval of a predicate with `R` gives the interval between the
 intersections of its ends. -/
 theorem image_inter_interval (R : Set U) (A : U → Trivalent) :
-    (R ∩ ·) '' Set.Icc (posExt A) (negExt A)ᶜ = Set.Icc (R ∩ posExt A) (R ∩ (negExt A)ᶜ) := by
+    (R ∩ ·) '' (interval A : Set (Set U)) = Set.Icc (R ∩ posExt A) (R ∩ (negExt A)ᶜ) := by
   refine Set.Subset.antisymm ?_ fun X hX ↦ ⟨X ∪ posExt A, ⟨Set.subset_union_right,
     Set.union_subset (hX.2.trans Set.inter_subset_right) (posExt_subset A)⟩, ?_⟩
   · rintro _ ⟨Y, hY, rfl⟩

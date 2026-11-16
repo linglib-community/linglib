@@ -22,14 +22,14 @@ its indefinite gives the subordination constraint.
 A point of evaluation `S` is a world, or a world with an assignment once binders are present, and
 a binder is the family `b : α → S` of points at which its variable takes each value. The
 constraint on indexing fixes the witness set of an indefinite's index, so the definitions take a
-witness set and a choice function rather than an index (`forall_expressive_iff`). The paper's
+witness set and a choice function rather than an index (`forall_isExpressive_iff`). The paper's
 examples are the rows of `Data.Examples.Chatain2025`.
 
 ## TODO
 
 * The constraint on choice-function variation, which bars a choice function from varying with a
   binder that its witness set is constant in, and the expressivity constraint weakened to match
-  are not formalized: `Expressive` and the two readings quantify over unrestricted families.
+  are not formalized: `IsExpressive` and the two readings quantify over unrestricted families.
 
 ## References
 
@@ -253,7 +253,7 @@ theorem exists_donkey_eq_true_iff [Nonempty E] :
   obtain ⟨F, hF⟩ := Classical.skolem.1 fun s ↦
     show ∃ g : ChoiceFunction E, (∃ x ∈ G s, VP s x) → VP s (g (G s)) from
       (em (∃ x ∈ G s, VP s x)).elim
-        (fun hs ↦ ((ChoiceFunction.exists_apply_iff (hs.imp fun _ h ↦ h.1) (VP s)).2 hs).imp
+        (fun hs ↦ ((ChoiceFunction.exists_apply_iff_of_nonempty (hs.imp fun _ h ↦ h.1) (VP s)).2 hs).imp
           fun _ h _ ↦ h)
         fun hs ↦ ⟨.epsilon, fun h ↦ (hs h).elim⟩
   exact ⟨F, fun y hy hG ↦ hF (b y) (h y hy hG)⟩
@@ -261,18 +261,18 @@ theorem exists_donkey_eq_true_iff [Nonempty E] :
 /-! ### Indices -/
 
 /-- The expressivity constraint: every witness set and choice function is named by an index. -/
-def Expressive (G : ι → S → Set E) (f : ι → S → ChoiceFunction E) : Prop :=
+def IsExpressive (G : ι → S → Set E) (f : ι → S → ChoiceFunction E) : Prop :=
   Function.Surjective fun i ↦ (G i, f i)
 
 /-- The pairs of a witness set and a choice function index themselves expressively. -/
-example : Expressive (ι := (S → Set E) × (S → ChoiceFunction E)) Prod.fst Prod.snd :=
+example : IsExpressive (ι := (S → Set E) × (S → ChoiceFunction E)) Prod.fst Prod.snd :=
   fun x ↦ ⟨x, rfl⟩
 
-theorem forall_expressive_iff
-    (h : ∃ (G : ι → S → Set E) (f : ι → S → ChoiceFunction E), Expressive G f) (i : ι)
+theorem forall_isExpressive_iff
+    (h : ∃ (G : ι → S → Set E) (f : ι → S → ChoiceFunction E), IsExpressive G f) (i : ι)
     (W : S → Set E) (φ : (S → ChoiceFunction E) → Prop) :
     (∀ (G : ι → S → Set E) (f : ι → S → ChoiceFunction E),
-      Expressive G f → G i = W → φ (f i)) ↔ ∀ γ, φ γ := by
+      IsExpressive G f → G i = W → φ (f i)) ↔ ∀ γ, φ γ := by
   classical
   refine ⟨fun hφ γ ↦ ?_, fun hφ _ f _ _ ↦ hφ (f i)⟩
   obtain ⟨G, f, hGf⟩ := h
@@ -306,7 +306,7 @@ theorem filtering_clause_restrict_eq_undefined_iff {R : Set S} :
 /-- *Every tourist bought a ticket. # Most locals have already used it*: when the witness set is
 restricted to the local context that the first quantifier gives its scope, the pronoun under a
 second quantifier is defined only where the second restrictor lies within the first. -/
-theorem restrictor_of_filtering_clause_restrict_ne_undefined {W : Type*} [Finite E]
+theorem subordination_constraint {W : Type*} [Finite E]
     {q : NumberTree} {A : W → E → Prop} {C : Set W} {R : Set (W × E)}
     (hR : IsLocalContext C {scopeTruth q A} R) {G : W × E → Set E}
     {f : W × E → ChoiceFunction E} {VP : W × E → E → Prop} {Q : Det E} {p : E → Trivalent} {w : W}

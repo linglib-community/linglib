@@ -15,7 +15,7 @@ independent (`ChoiceFunction.skolem`), so closing the variable existentially ove
 restrictor gives the existential reading, and closing it above a binder gives the reading with
 the existential below the binder when the restrictors differ with the bound variable. At an
 empty restrictor existential closure holds whenever anything satisfies the scope
-(`ChoiceFunction.exists_apply_iff_or`).
+(`ChoiceFunction.exists_apply_iff`).
 
 ## Implementation notes
 
@@ -113,13 +113,13 @@ theorem exists_eqOn {T : Set (Set E)} (g : Set E → E) (hg : ∀ A ∈ T, A.Non
 section One
 
 /-- Existential closure over a nonempty restrictor is existential quantification over it. -/
-theorem exists_apply_iff (hA : A.Nonempty) (p : E → Prop) :
+theorem exists_apply_iff_of_nonempty (hA : A.Nonempty) (p : E → Prop) :
     (∃ f : ChoiceFunction E, p (f A)) ↔ ∃ x ∈ A, p x :=
   ⟨fun ⟨f, h⟩ ↦ ⟨_, f.apply_mem hA, h⟩, fun ⟨_, hx, h⟩ ↦
     let ⟨f, hf⟩ := exists_apply_eq hx; ⟨f, hf ▸ h⟩⟩
 
 /-- Universal closure over a nonempty restrictor is universal quantification over it. -/
-theorem forall_apply_iff (hA : A.Nonempty) (p : E → Prop) :
+theorem forall_apply_iff_of_nonempty (hA : A.Nonempty) (p : E → Prop) :
     (∀ f : ChoiceFunction E, p (f A)) ↔ ∀ x ∈ A, p x :=
   ⟨fun h _ hx ↦ let ⟨f, hf⟩ := exists_apply_eq hx; hf ▸ h f, fun h f ↦ h _ (f.apply_mem hA)⟩
 
@@ -133,21 +133,29 @@ theorem forall_apply_empty_iff : (∀ f : ChoiceFunction E, p (f ∅)) ↔ ∀ x
 
 /-- Existential closure with no assumption on the restrictor: over the empty set it holds as soon
 as anything satisfies the scope. -/
-theorem exists_apply_iff_or :
+theorem exists_apply_iff :
     (∃ f : ChoiceFunction E, p (f A)) ↔ (∃ x ∈ A, p x) ∨ A = ∅ ∧ ∃ x, p x := by
   rcases A.eq_empty_or_nonempty with rfl | hA
   · simp [exists_apply_empty_iff]
-  · simp [exists_apply_iff hA p, hA.ne_empty]
+  · simp [exists_apply_iff_of_nonempty hA p, hA.ne_empty]
+
+/-- Universal closure with no assumption on the restrictor: over the empty set it requires
+everything to satisfy the scope. -/
+theorem forall_apply_iff :
+    (∀ f : ChoiceFunction E, p (f A)) ↔ (∀ x ∈ A, p x) ∧ (A = ∅ → ∀ x, p x) := by
+  rcases A.eq_empty_or_nonempty with rfl | hA
+  · simp [forall_apply_empty_iff]
+  · simp [forall_apply_iff_of_nonempty hA p, hA.ne_empty]
 
 /-- Existential closure over a nonempty restrictor is the existential reading. -/
 theorem exists_apply_mem_iff (hA : A.Nonempty) :
     (∃ f : ChoiceFunction E, f A ∈ B) ↔ Det.some A B :=
-  exists_apply_iff hA (· ∈ B)
+  exists_apply_iff_of_nonempty hA (· ∈ B)
 
 /-- Universal closure over a nonempty restrictor is the universal reading. -/
 theorem forall_apply_mem_iff (hA : A.Nonempty) :
     (∀ f : ChoiceFunction E, f A ∈ B) ↔ Det.every A B :=
-  forall_apply_iff hA (· ∈ B)
+  forall_apply_iff_of_nonempty hA (· ∈ B)
 
 /-- A choice function whose pick is in the scope witnesses the existential reading. -/
 theorem some_of_apply_mem (f : ChoiceFunction E) (hA : A.Nonempty) (h : f A ∈ B) :
@@ -170,8 +178,8 @@ quantification over each. -/
 theorem exists₂_apply_iff {A' : Set E} (hA : A.Nonempty) (hA' : A'.Nonempty)
     (p : E → E → Prop) :
     (∃ f₁ f₂ : ChoiceFunction E, p (f₁ A) (f₂ A')) ↔ ∃ x ∈ A, ∃ y ∈ A', p x y :=
-  (exists_apply_iff hA _).trans <| exists_congr fun x ↦ and_congr_right fun _ ↦
-    exists_apply_iff hA' (p x)
+  (exists_apply_iff_of_nonempty hA _).trans <| exists_congr fun x ↦ and_congr_right fun _ ↦
+    exists_apply_iff_of_nonempty hA' (p x)
 
 end One
 
@@ -195,13 +203,13 @@ theorem exists_forall_apply_iff_of_injective [Nonempty E] {R : ι → Set E} (hR
     (hne : ∀ i, (R i).Nonempty) (p : ι → E → Prop) :
     (∃ f : ChoiceFunction E, ∀ i, p i (f (R i))) ↔ ∀ i, ∃ x ∈ R i, p i x :=
   (exists_forall_apply_iff (hR.factorsThrough _)).trans <|
-    forall_congr' fun i ↦ exists_apply_iff (hne i) (p i)
+    forall_congr' fun i ↦ exists_apply_iff_of_nonempty (hne i) (p i)
 
 /-- Closing a family of choice functions above a binder of its index gives the reading with the
 existential below the binder. -/
 theorem exists_pi_apply_iff {N : S → Set E} (hN : ∀ s, (N s).Nonempty) (p : S → E → Prop) :
     (∃ F : S → ChoiceFunction E, ∀ s, p s (F s (N s))) ↔ ∀ s, ∃ x ∈ N s, p s x :=
-  Classical.skolem.symm.trans <| forall_congr' fun s ↦ exists_apply_iff (hN s) (p s)
+  Classical.skolem.symm.trans <| forall_congr' fun s ↦ exists_apply_iff_of_nonempty (hN s) (p s)
 
 /-- Universal closure of a family of choice functions is universal quantification over each
 restrictor. -/
