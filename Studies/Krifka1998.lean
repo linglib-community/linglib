@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Aspect.Telicity
+public import Studies.Krifka1989
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.FinCases
 
@@ -49,6 +50,7 @@ two non-contemporaneous events are atelic.
 namespace Krifka1998
 
 open Mereology Aspect
+open scoped SetRel
 
 variable {α β : Type*}
 
@@ -112,14 +114,14 @@ section Eat
 
 /-- In a model of *eat* with three apples, an eating event is identified with the apples it
 consumes. -/
-def eat (x e : Finset (Fin 3)) : Prop := x = e
+def eat : SetRel (Finset (Fin 3)) (Finset (Fin 3)) := SetRel.id
 
 theorem eat_sinc : SINC eat where
-  ue _ _ h _ hle := ⟨_, ⟨h ▸ hle, rfl⟩, fun _ ⟨_, hz⟩ ↦ hz.symm⟩
-  uo _ _ h _ hle := ⟨_, ⟨h ▸ hle, rfl⟩, fun _ ⟨_, hz⟩ ↦ hz⟩
+  ue _ _ h _ hle := ⟨_, ⟨hle.trans_eq h, rfl⟩, fun _ ⟨_, hz⟩ ↦ Eq.symm hz⟩
+  uo _ _ h _ hle := ⟨_, ⟨hle.trans_eq (Eq.symm h), rfl⟩, fun _ ⟨_, hz⟩ ↦ hz⟩
   extended := ⟨{0, 1}, {0}, {0, 1}, {0}, by decide, by decide, rfl, rfl⟩
 
-theorem eat_sum : SUM eat := sum_graph (SupHom.id _)
+theorem eat_sum : SUM eat := fun ⟨_, _⟩ h₁ ⟨_, _⟩ h₂ ↦ congr_arg₂ (· ⊔ ·) h₁ h₂
 
 /-- *eat apples* is cumulative, since the bare plural is cumulative and *eat* is summative. -/
 theorem eat_apples_cum : CUM (VP eat Finset.Nonempty) :=
@@ -133,9 +135,19 @@ theorem eat_two_apples_qua : QUA (VP eat (Finset.card · = 2)) :=
 
 end Eat
 
-theorem qua_vp_eq [SemilatticeSup α] [SemilatticeSup β] {θ : α → β → Prop} (h : SINC θ)
+theorem qua_vp_eq [SemilatticeSup α] [SemilatticeSup β] {θ : SetRel α β} (h : SINC θ)
     (y : α) : QUA (VP θ (· = y)) :=
   vp_eq θ y ▸ h.uo.qua_of_mso h.mso y
+
+-- Uniqueness of events is mapping to events without the iterativity of Krifka (1989).
+theorem ue_iff_me_and_forall_not_iter [SemilatticeSup α] [SemilatticeSup β] {θ : SetRel α β} :
+    UE θ ↔ ME θ ∧ ∀ e x, ¬ Krifka1989.ITER θ e x :=
+  ⟨fun h ↦ ⟨h.me, fun _ _ ⟨hxe, _, _, _, h', h'', hne, hx', hθ', hθ''⟩ ↦
+      hne ((h hxe hx').unique ⟨h', hθ'⟩ ⟨h'', hθ''⟩)⟩,
+    fun ⟨hm, hi⟩ x e hxe y hy ↦
+      let ⟨e', he', hθ⟩ := hm hxe hy
+      ⟨e', ⟨he', hθ⟩, fun e'' ⟨he'', hθ''⟩ ↦ by_contra fun hne ↦
+        hi e x ⟨hxe, e'', e', y, he'', he', hne, hy, hθ'', hθ⟩⟩⟩
 
 /-! ### Strict incrementality without cumulativity
 
@@ -145,10 +157,10 @@ object predicate true of `{0, 1}` and of `{2}` gives a verb phrase true of `{0}`
 It is not cumulative, since `{0}` and `{2}` would sum to a third object of `{0}`. -/
 
 /-- The event `{0}` has the objects `{0}` and `{2}`. -/
-def twoThemes (x : Finset (Fin 3)) (e : Finset (Fin 2)) : Prop :=
-  (x, e) ∈ [(∅, ∅), ({0}, {0}), ({1}, {1}), ({0, 1}, {0, 1}), ({2}, {0})]
+def twoThemes : SetRel (Finset (Fin 3)) (Finset (Fin 2)) :=
+  {p | p ∈ [(∅, ∅), ({0}, {0}), ({1}, {1}), ({0, 1}, {0, 1}), ({2}, {0})]}
 
-instance : DecidableRel twoThemes := fun _ _ ↦ by unfold twoThemes; infer_instance
+instance : DecidablePred (· ∈ twoThemes) := fun _ ↦ by unfold twoThemes; infer_instance
 
 theorem twoThemes_sinc : SINC twoThemes where
   ue x e h y hy := by
@@ -157,7 +169,7 @@ theorem twoThemes_sinc : SINC twoThemes where
     fin_cases x <;> fin_cases e <;> fin_cases y <;> decide
   uo e x h e' he' := by
     revert h he'
-    unfold ExistsUnique flip
+    simp only [ExistsUnique, SetRel.mem_inv]
     fin_cases x <;> fin_cases e <;> fin_cases e' <;> decide
   extended := ⟨{0, 1}, {0}, {0, 1}, {0}, by decide, by decide, by decide, by decide⟩
 
@@ -184,10 +196,14 @@ namespace Reading
 def paragraph (i : Fin 3) : Fin 2 := if i = 0 then 0 else 1
 
 /-- An event is a strict reading of some paragraphs if it reads each of them exactly once. -/
-def readOnce (x : Finset (Fin 2)) (e : Finset (Fin 3)) : Prop :=
-  (∀ p, p ∈ x ↔ ∃ i ∈ e, paragraph i = p) ∧ ∀ i ∈ e, ∀ j ∈ e, paragraph i = paragraph j → i = j
+def readOnce : SetRel (Finset (Fin 2)) (Finset (Fin 3)) :=
+  {(x, e) | (∀ p, p ∈ x ↔ ∃ i ∈ e, paragraph i = p) ∧
+    ∀ i ∈ e, ∀ j ∈ e, paragraph i = paragraph j → i = j}
 
-instance : DecidableRel readOnce := fun _ _ ↦ by unfold readOnce; infer_instance
+instance : DecidablePred (· ∈ readOnce) := fun (x, e) ↦ by
+  change Decidable ((∀ p, p ∈ x ↔ ∃ i ∈ e, paragraph i = p) ∧
+    ∀ i ∈ e, ∀ j ∈ e, paragraph i = paragraph j → i = j)
+  infer_instance
 
 theorem readOnce_sinc : SINC readOnce where
   ue x e h y hy := by
@@ -196,20 +212,20 @@ theorem readOnce_sinc : SINC readOnce where
     fin_cases x <;> fin_cases e <;> fin_cases y <;> decide
   uo e x h e' he' := by
     revert h he'
-    unfold ExistsUnique flip
+    simp only [ExistsUnique, SetRel.mem_inv]
     fin_cases x <;> fin_cases e <;> fin_cases e' <;> decide
   extended := ⟨{0, 1}, {0}, {0, 1}, {0}, by decide, by decide, by decide, by decide⟩
 
 /-- Reading is the closure of strict reading under sums. -/
-def read (x : Finset (Fin 2)) (e : Finset (Fin 3)) : Prop :=
-  AlgClosure (Function.uncurry readOnce) (x, e)
+def read : SetRel (Finset (Fin 2)) (Finset (Fin 3)) := supClosure readOnce
 
-theorem read_inc : INC read := ⟨readOnce, readOnce_sinc, fun _ _ ↦ Iff.rfl⟩
+theorem read_inc : INC read := ⟨readOnce, readOnce_sinc, rfl⟩
 
 -- *Read* is summative and the article has two readings, so it is not strictly incremental.
 theorem not_sinc_read : ¬ SINC read := fun h ↦
-  absurd (h.gue_of_sum read_inc.sum (.base (by decide) : read Finset.univ {0, 1})
-    (.base (by decide) : read Finset.univ {0, 2})) (by decide)
+  absurd ((h.gue_of_sum read_inc.sum).eq
+    (subset_supClosure (by decide) : Finset.univ ~[read] {0, 1})
+    (subset_supClosure (by decide) : Finset.univ ~[read] {0, 2})) (by decide)
 
 /-- An event precedes another if all its times are earlier, neither being empty. -/
 def precedes (a b : Finset (Fin 3)) : Prop := a.Nonempty ∧ b.Nonempty ∧ ∀ i ∈ a, ∀ j ∈ b, i < j
@@ -223,13 +239,13 @@ instance : IsStrictOrder (Finset (Fin 3)) precedes where
 
 /-- *Read the article* is not telic, since the strict reading `{0, 1}` is a part of the reading
 `{0, 1, 2}` that the re-reading `{2}` follows. -/
-theorem not_isTelic_read : ¬ IsTelic precedes (read Finset.univ) := fun h ↦ by
-  have hsum : read Finset.univ {0, 1, 2} := by
-    have := AlgClosure.sum (P := Function.uncurry readOnce) (x := (Finset.univ, {0, 1}))
-      (y := (Finset.univ, {0, 2})) (.base (by decide)) (.base (by decide))
-    rwa [show ((Finset.univ, {0, 1}) ⊔ (Finset.univ, {0, 2}) : Finset (Fin 2) × Finset (Fin 3)) =
-      (Finset.univ, {0, 1, 2}) from by decide] at this
-  exact (h.isFinalPart (e' := {0, 1}) hsum (.base (by decide)) (by decide)).not_precedes
+theorem not_isTelic_read : ¬ IsTelic precedes (Finset.univ ~[read] ·) := fun h ↦ by
+  have h₁ : Finset.univ ~[read] {0, 1} := subset_supClosure (by decide)
+  have h₂ : Finset.univ ~[read] {0, 2} := subset_supClosure (by decide)
+  have hsum : Finset.univ ~[read] {0, 1, 2} := by
+    have := read_inc.sum.sup h₁ h₂
+    rwa [show ({0, 1} ⊔ {0, 2} : Finset (Fin 3)) = {0, 1, 2} from by decide, sup_idem] at this
+  exact (h.isFinalPart (e' := {0, 1}) hsum h₁ (by decide)).not_precedes
     (e'' := {2}) (by decide) (by decide : precedes {0, 1} {2})
 
 end Reading
@@ -238,10 +254,10 @@ end Reading
 
 section Expansion
 
-variable [SemilatticeSup α] [SemilatticeSup β] (precedes : β → β → Prop) (θ : α → β → Prop)
+variable [SemilatticeSup α] [SemilatticeSup β] (precedes : β → β → Prop) (θ : SetRel α β)
 
 /-- A relation is expansive if the objects of temporally ordered events do not overlap. -/
-def EXP : Prop := ∀ x y e e', θ x e → θ y e' → precedes e e' → ¬ Overlap x y
+def EXP : Prop := ∀ x y e e', x ~[θ] e → y ~[θ] e' → precedes e e' → ¬ Overlap x y
 
 /-- A relation is strictly expansive incremental if it is expansive and maps to objects. -/
 structure SEINC : Prop where
@@ -249,22 +265,22 @@ structure SEINC : Prop where
   mo : MO θ
 
 variable {precedes θ} [IsStrictOrder β precedes] (h : SEINC precedes θ)
-  (h₀ : ∀ x e, θ x e → ¬ IsBot x) {x : α} {e e' : β}
+  (h₀ : ∀ x e, x ~[θ] e → ¬ IsBot x) {x : α} {e e' : β}
 include h h₀
 
-theorem isInitialPart_of_seinc (hx : θ x e) (hx' : θ x e') (hle : e' ≤ e) :
+theorem isInitialPart_of_seinc (hx : x ~[θ] e) (hx' : x ~[θ] e') (hle : e' ≤ e) :
     IsInitialPart precedes e' e :=
   isInitialPart_iff.mpr ⟨hle, fun e'' h'' hp ↦
     let ⟨y, hy, hθ⟩ := h.mo hx h''
     h.exp y x e'' e' hθ hx' hp ⟨y, h₀ y e'' hθ, le_rfl, hy⟩⟩
 
-theorem isFinalPart_of_seinc (hx : θ x e) (hx' : θ x e') (hle : e' ≤ e) :
+theorem isFinalPart_of_seinc (hx : x ~[θ] e) (hx' : x ~[θ] e') (hle : e' ≤ e) :
     IsFinalPart precedes e' e :=
   isInitialPart_iff.mpr ⟨hle, fun e'' h'' hp ↦
     let ⟨y, hy, hθ⟩ := h.mo hx h''
     h.exp x y e' e'' hx' hθ hp ⟨y, h₀ y e'' hθ, hy, le_rfl⟩⟩
 
-theorem isTelic_of_seinc (x : α) : IsTelic precedes (θ x) :=
+theorem isTelic_of_seinc (x : α) : IsTelic precedes (x ~[θ] ·) :=
   fun _ _ hx hx' hle ↦
     ⟨isInitialPart_of_seinc h h₀ hx hx' hle, isFinalPart_of_seinc h h₀ hx hx' hle⟩
 
@@ -274,7 +290,7 @@ theorem isTelic_vp_of_seinc (hUP : UP θ) {OBJ : α → Prop} (hOBJ : QUA OBJ) :
     IsTelic precedes (VP θ OBJ) := by
   rintro e e' ⟨x, hOx, hx⟩ ⟨x', hOx', hx'⟩ hle
   obtain ⟨x'', hx''le, hx''⟩ := h.mo hx hle
-  obtain rfl := hUP hx' hx''
+  obtain rfl := hUP.eq hx' (SetRel.mem_inv.1 hx'')
   obtain rfl : x' = x := by_contra fun hne ↦ hOBJ hOx' hOx hne hx''le
   exact ⟨isInitialPart_of_seinc h h₀ hx hx' hle, isFinalPart_of_seinc h h₀ hx hx' hle⟩
 
@@ -285,12 +301,12 @@ end Expansion
 section Movement
 
 variable [SemilatticeSup α] [SemilatticeSup β] (adjα : α → α → Prop) (adjβ : β → β → Prop)
-  (precedes : β → β → Prop) (isPath : α → Prop) (θ : α → β → Prop)
+  (precedes : β → β → Prop) (isPath : α → Prop) (θ : SetRel α β)
 
 /-- A relation has the adjacency property if two subevents of a movement are temporally
 adjacent iff their paths are spatially adjacent. -/
 def ADJ : Prop :=
-  ∀ x e y z e' e'', θ x e → e' ≤ e → e'' ≤ e → y ≤ x → z ≤ x → θ y e' → θ z e'' →
+  ∀ x e y z e' e'', x ~[θ] e → e' ≤ e → e'' ≤ e → y ≤ x → z ≤ x → y ~[θ] e' → z ~[θ] e'' →
     (adjβ e' e'' ↔ adjα y z)
 
 /-- A strict movement relation has the adjacency property, maps to objects, and takes paths as
@@ -298,25 +314,26 @@ objects. -/
 structure SMR : Prop where
   adj : ADJ adjα adjβ θ
   mo : MO θ
-  path : ∀ x e, θ x e → isPath x
+  path : ∀ x e, x ~[θ] e → isPath x
 
 /-- The closure of a relation under sums of temporally ordered events. -/
-inductive PrecedenceClosure (θ' : α → β → Prop) : α → β → Prop where
-  | base {x : α} {e : β} : θ' x e → PrecedenceClosure θ' x e
+inductive PrecedenceClosure (θ' : SetRel α β) : α → β → Prop where
+  | base {x : α} {e : β} : x ~[θ'] e → PrecedenceClosure θ' x e
   | sum {x₁ x₂ : α} {e₁ e₂ : β} : PrecedenceClosure θ' x₁ e₁ → PrecedenceClosure θ' x₂ e₂ →
       precedes e₁ e₂ → PrecedenceClosure θ' (x₁ ⊔ x₂) (e₁ ⊔ e₂)
 
 /-- A movement relation (71) is the closure of a strict movement relation under sums of
 temporally ordered events. -/
 def MR : Prop :=
-  ∃ θ', SMR adjα adjβ isPath θ' ∧ ∀ x e, θ x e ↔ PrecedenceClosure precedes θ' x e
+  ∃ θ', SMR adjα adjβ isPath θ' ∧ ∀ x e, x ~[θ] e ↔ PrecedenceClosure precedes θ' x e
 
 section
 
 variable {adjα adjβ precedes isPath θ}
 
 theorem mr_of_smr (h : SMR adjα adjβ isPath θ)
-    (hClosed : ∀ x₁ x₂ e₁ e₂, θ x₁ e₁ → θ x₂ e₂ → precedes e₁ e₂ → θ (x₁ ⊔ x₂) (e₁ ⊔ e₂)) :
+    (hClosed : ∀ x₁ x₂ e₁ e₂, x₁ ~[θ] e₁ → x₂ ~[θ] e₂ → precedes e₁ e₂ →
+      (x₁ ⊔ x₂) ~[θ] (e₁ ⊔ e₂)) :
     MR adjα adjβ precedes isPath θ :=
   ⟨θ, h, fun _ _ ↦ ⟨.base, fun hcl ↦ by
     induction hcl with
@@ -329,11 +346,11 @@ variable [IsStrictOrder β precedes]
 
 /-- The subpaths of a movement adjacent to `y` are the paths of its initial parts. -/
 def Source (y x : α) (e : β) : Prop :=
-  ∀ x' e', θ x' e' → x' ≤ x → e' ≤ e → (adjα x' y ↔ IsInitialPart precedes e' e)
+  ∀ x' e', x' ~[θ] e' → x' ≤ x → e' ≤ e → (adjα x' y ↔ IsInitialPart precedes e' e)
 
 /-- The subpaths of a movement adjacent to `y` are the paths of its final parts. -/
 def Goal (y x : α) (e : β) : Prop :=
-  ∀ x' e', θ x' e' → x' ≤ x → e' ≤ e → (adjα x' y ↔ IsFinalPart precedes e' e)
+  ∀ x' e', x' ~[θ] e' → x' ≤ x → e' ≤ e → (adjα x' y ↔ IsFinalPart precedes e' e)
 
 variable {adjα adjβ precedes isPath θ}
 
@@ -342,10 +359,10 @@ uniqueness of participants, as *walk from the university to the capitol* is. -/
 theorem isTelic_sourceGoal (hax : NoPartPrecedes precedes) (hMO : MO θ) (hUP : UP θ)
     (u v : α) :
     IsTelic precedes
-      (fun e ↦ ∃ x, θ x e ∧ Source adjα precedes θ u x e ∧ Goal adjα precedes θ v x e) := by
+      (fun e ↦ ∃ x, x ~[θ] e ∧ Source adjα precedes θ u x e ∧ Goal adjα precedes θ v x e) := by
   rintro e e' ⟨x, hx, hS, hG⟩ ⟨x', hx', hS', hG'⟩ hle
   obtain ⟨x'', hx''le, hx''⟩ := hMO hx hle
-  obtain rfl := hUP hx' hx''
+  obtain rfl := hUP.eq hx' (SetRel.mem_inv.1 hx'')
   exact ⟨(hS x' e' hx' hx''le hle).1 ((hS' x' e' hx' le_rfl le_rfl).2 (isInitialPart_self hax e')),
     (hG x' e' hx' hx''le hle).1 ((hG' x' e' hx' le_rfl le_rfl).2 (isFinalPart_self hax e'))⟩
 
@@ -386,11 +403,10 @@ def support (L : List (Seg × Fin 7)) : List (Finset Seg × Finset (Fin 7)) :=
   L.map (fun p ↦ ({p.1}, {p.2})) ++ [((L.map Prod.fst).toFinset, (L.map Prod.snd).toFinset)]
 
 /-- The movement relation a diagram depicts. -/
-def Movement (L : List (Seg × Fin 7)) (x : Finset Seg) (e : Finset (Fin 7)) : Prop :=
-  (x, e) ∈ support L
+def Movement (L : List (Seg × Fin 7)) : SetRel (Finset Seg) (Finset (Fin 7)) :=
+  {p | p ∈ support L}
 
-instance (L : List (Seg × Fin 7)) (x : Finset Seg) (e : Finset (Fin 7)) :
-    Decidable (Movement L x e) := by
+instance (L : List (Seg × Fin 7)) : DecidablePred (· ∈ Movement L) := fun _ ↦ by
   unfold Movement; infer_instance
 
 private theorem adj_movement_iff {L : List (Seg × Fin 7)} :

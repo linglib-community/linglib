@@ -1,18 +1,28 @@
 module
 
 public import Linglib.Semantics.Aspect.Telicity
-public import Mathlib.Order.WellFounded
+public import Mathlib.Order.Minimal
 
 /-!
 # Krifka (1989): Nominal Reference, Temporal Constitution and Quantification in Event Semantics
 
 Krifka relates the reference of nominal predicates to the temporal constitution of verbal
 predicates. Objects, events and times form join semilattices, and a predicate is cumulative when
-it is closed under join and quantized when no instance is a proper part of another. Measure
-phrases and count nouns are quantized because their measure functions are extensive. A thematic
-relation transfers the reference type of its nominal argument to the verbal predicate:
-summativity carries cumulativity across, and uniqueness and mapping properties carry quantization
-across when the relation is not iterative.
+it is closed under join and quantized when no instance is a proper part of another, so that
+[only a predicate of at most one thing is both](##Mereology.qua_and_cum_iff_subsingleton). A
+measure phrase turns a predicate that is not quantized into one that is, which is why
+[measure phrases do not iterate](##Krifka1989.not_qmod_and_eq): *five ounces of gold* is
+already quantized. A thematic relation transfers the reference type of its nominal argument to
+the verbal predicate. Summativity carries cumulativity across, and uniqueness of objects with
+mapping to objects carries quantization across
+[when no event is iterative on its object](##Krifka1989.qua_vp_of_not_iter), a condition that
+[cannot be dropped](##Krifka1989.not_qua_vp_readTwice) and that for a summative relation
+[is uniqueness of events](##Krifka1989.gue_iff_forall_not_iter). Even an iterative predicate
+with a strictly quantized object is not divisive, since
+[each of its events has a proper part outside it](##Krifka1989.exists_lt_not_vp). A durative
+adverbial is a measure phrase for events and so
+[rejects quantized predicates](##Krifka1989.qmod_durative_iff), and a time-span adverbial
+[is upward entailing](##Krifka1989.inSpan_mono) in its measure.
 
 ## Implementation notes
 
@@ -20,10 +30,29 @@ The paper's relations are stated with the library's object-first thematic relati
 uniqueness of objects is `UP`, uniqueness of events `GUE`, mapping to objects `MO`, mapping to
 events `ME`, and summativity `SUM`. Its part structures satisfy relative complementarity (D 9),
 which the measure theorems assume as `Mereology.HasRemainders`. Theorem (T 3) needs a nonempty
-predicate, since the empty predicate is both quantized and strictly cumulative. The proof of
-(T 13) shows that every verbal event has a part outside the predicate; its conclusion that the
-event contains an atom holds when the part order on events is well founded
-(`atm_of_wellFoundedLT`). The sections on negation (§6) and quantification (§7) are prose.
+predicate, since the empty predicate is both quantized and strictly cumulative.
+
+Theorems (T 8) and (T 11) are stated for what their proofs establish. For (T 8) that is
+iterativity of the sum of the given event with a second one; for (T 11) it is quantization when
+no event is iterative on an object of the nominal predicate. The proof of (T 13) shows that every
+verbal event has a proper part outside the predicate; its conclusion that the event contains an
+atom holds of every predicate when the part order on events is well founded
+(`atm_of_wellFoundedLT`).
+
+Measure functions are total here. The bare plural (8) binds the number argument of a count noun
+existentially, so with a total measure it has the extension of the underlying predicate
+(`exists_and_eq`) and is cumulative when that predicate is; Krifka derives its cumulativity
+from additivity, for a measure function that may be partial. The measure of an event (D 41) is
+the measure of its run time, which is additive over events whose run times do not overlap
+(D 43) and not over all non-overlapping events, so the durative adverbial (15) is quantizing
+for predicates on which the temporal trace is strictly monotone.
+
+## TODO
+
+* Maximal events (D 44)–(D 45), negation as the modifier (22), (28) to maximal events containing
+  no event of the predicate, and the quantifiers of §7.
+* The second step of the argument from (20), that an atomic predicate has smallest convex times
+  containing its events.
 
 ## References
 
@@ -36,65 +65,64 @@ event contains an atom holds when the part order on events is well founded
 namespace Krifka1989
 
 open Mereology Aspect
+open scoped SetRel
 
 /-! ### Reference types (§2) -/
 
 section Reference
 
-variable {α : Type*} [SemilatticeSup α]
+variable {α : Type*} {P : α → Prop}
 
-/-- A predicate has singular reference (D 11) if it holds of exactly one element. -/
-def SNG (P : α → Prop) : Prop := ∃ x, P x ∧ ∀ y, P y → x = y
+/-- (D 11): A predicate has singular reference if it holds of exactly one element. -/
+abbrev SNG (P : α → Prop) : Prop := ∃! x, P x
 
-/-- A predicate has strictly cumulative reference (D 13) if it is cumulative and not
-singular. -/
-def SCUM (P : α → Prop) : Prop := CUM P ∧ ¬ SNG P
+theorem SNG.subsingleton (h : SNG P) : {x | P x}.Subsingleton := fun _ hx _ hy ↦ h.unique hx hy
 
-/-- A predicate has strictly quantized reference (D 15) if it is quantized and every instance
+section PartialOrder
+
+variable [PartialOrder α]
+
+/-- (D 15): A predicate has strictly quantized reference if it is quantized and every instance
 has a proper part. -/
 structure SQUA (P : α → Prop) : Prop where
   qua : QUA P
   exists_lt : ∀ x, P x → ∃ y, y < x
 
-/-- A predicate has atomic reference (D 18) if every instance has a part that is a `P`-atom
+/-- (D 18): A predicate has atomic reference if every instance has a part that is a `P`-atom
 (D 17). -/
 def ATM (P : α → Prop) : Prop := ∀ x, P x → ∃ y ≤ x, atomize P y
 
-theorem qua_of_sng {P : α → Prop} (h : SNG P) : QUA P :=
-  let ⟨_, _, hx⟩ := h
-  qua_of_forall fun a b ha hlt hb ↦ hlt.ne ((hx b hb).symm.trans (hx a ha))
+-- (T 1)
+theorem SNG.qua (h : SNG P) : QUA P := h.subsingleton.isAntichain _
 
-theorem cum_of_sng {P : α → Prop} (h : SNG P) : CUM P := by
-  obtain ⟨x, hx, huniq⟩ := h
-  intro a ha b hb
-  rw [← huniq a ha, ← huniq b hb, sup_idem]
-  exact hx
+-- (T 4)
+theorem atm_of_qua (h : QUA P) : ATM P := fun x hx ↦ ⟨x, le_rfl, h.minimal_mem_iff.2 hx⟩
 
-theorem not_scum_of_qua {P : α → Prop} (hne : ∃ x, P x) (h : QUA P) : ¬ SCUM P := by
-  rintro ⟨hcum, hsng⟩
-  obtain ⟨x, hx⟩ := hne
-  refine hsng ⟨x, hx, fun y hy ↦ ?_⟩
-  by_contra hxy
-  have hsup := hcum hx hy
-  rcases eq_or_ne (x ⊔ y) x with hxs | hxs
-  · exact h hy hx (Ne.symm hxy) (hxs ▸ le_sup_right)
-  · exact h hx hsup hxs.symm le_sup_left
+theorem atm_of_wellFoundedLT [WellFoundedLT α] (P : α → Prop) : ATM P :=
+  exists_minimal_le_of_wellFoundedLT P
 
-theorem atm_of_qua {P : α → Prop} (h : QUA P) : ATM P := fun x hx ↦
-  ⟨x, le_rfl, hx, fun z hz hzx ↦ by
-    rcases eq_or_lt_of_le hzx with rfl | hlt
-    · exact le_rfl
-    · exact (h hz hx hlt.ne hlt.le).elim⟩
+end PartialOrder
 
-theorem qua_of_isExtensiveMeasure [HasRemainders α] {M : Type*} [AddCommMonoid M]
-    [PartialOrder M] [AddLeftStrictMono M] (μ : α → M) [IsExtensiveMeasure μ] (n : M) :
-    QUA (μ · = n) :=
+variable [SemilatticeSup α]
+
+/-- (D 13): A predicate has strictly cumulative reference if it is cumulative and not
+singular. -/
+structure SCUM (P : α → Prop) : Prop where
+  cum : CUM P
+  not_sng : ¬ SNG P
+
+-- (T 2)
+theorem SNG.cum (h : SNG P) : CUM P := (qua_and_cum_iff_subsingleton.2 h.subsingleton).2
+
+-- (T 3)
+theorem not_scum_of_qua (hne : ∃ x, P x) (h : QUA P) : ¬ SCUM P := fun hs ↦
+  hs.not_sng <| existsUnique_of_exists_of_unique hne fun _ _ hx hy ↦
+    qua_and_cum_iff_subsingleton.1 ⟨h, hs.cum⟩ hx hy
+
+-- (T 6)
+theorem qua_measure_eq [HasRemainders α] {M : Type*} [AddCommMonoid M] [PartialOrder M]
+    [AddLeftStrictMono M] (μ : α → M) [IsExtensiveMeasure μ] (n : M) : QUA (μ · = n) :=
   qua_pullback (IsExtensiveMeasure.strictMono μ) (singleton_qua n)
-
-theorem atm_of_wellFoundedLT [WellFoundedLT α] (P : α → Prop) : ATM P := fun x hx ↦ by
-  obtain ⟨y, ⟨hy, hyx⟩, hmin⟩ :=
-    WellFounded.has_min wellFounded_lt {y | P y ∧ y ≤ x} ⟨x, hx, le_rfl⟩
-  exact ⟨y, hyx, hy, fun z hz hzy ↦ (eq_of_le_of_not_lt hzy (hmin z ⟨hz, hzy.trans hyx⟩)).symm.le⟩
 
 end Reference
 
@@ -102,159 +130,185 @@ end Reference
 
 section Nominal
 
-variable {α M : Type*} [SemilatticeSup α] [HasRemainders α] [AddCommMonoid M] [PartialOrder M]
-  [AddLeftStrictMono M]
+variable {α M : Type*} {P : α → Prop}
 
-omit [HasRemainders α] in
-theorem barePlural_cum (P : α → Prop) : CUM (AlgClosure P) := algClosure_cum
+/-- (D 28): A modifier is quantizing for a predicate if the predicate is not quantized and the
+modified predicate is. -/
+structure QMOD [PartialOrder α] (P : α → Prop) (f : (α → Prop) → α → Prop) : Prop where
+  not_qua : ¬ QUA P
+  qua : QUA (f P)
 
--- (4), (3c)
-theorem measure_qmod {P : α → Prop} (hP : CUM P) {x y : α} (hx : P x) (hy : P y) (hxy : x ≠ y)
-    (μ : α → M) [IsExtensiveMeasure μ] (n : M) : ¬ QUA P ∧ QUA (QMOD P μ n) :=
-  ⟨fun hQ ↦ qua_cum_incompatible hQ hx hy hxy hP,
-    qmod_qua ((IsExtensiveMeasure.strictMono μ).strictMonoOn _) n⟩
+theorem qmod_iff [PartialOrder α] {f : (α → Prop) → α → Prop} (h : QUA (f P)) :
+    QMOD P f ↔ ¬ QUA P :=
+  ⟨QMOD.not_qua, (⟨·, h⟩)⟩
+
+-- (8)
+theorem exists_and_eq (P : α → Prop) (μ : α → M) : (fun x ↦ ∃ n, P x ∧ μ x = n) = P :=
+  funext fun _ ↦ propext ⟨fun ⟨_, h, _⟩ ↦ h, fun h ↦ ⟨_, h, rfl⟩⟩
+
+variable [SemilatticeSup α] [HasRemainders α] [AddCommMonoid M] [PartialOrder M]
+  [AddLeftStrictMono M] (μ : α → M) [IsExtensiveMeasure μ] (n : M)
 
 -- (6)
-theorem countNoun_qua (P : α → Prop) (NU : α → M) [IsExtensiveMeasure NU] (n : M) :
-    QUA (QMOD P NU n) :=
-  qmod_qua ((IsExtensiveMeasure.strictMono NU).strictMonoOn _) n
+theorem qua_and_eq (P : α → Prop) : QUA fun x ↦ P x ∧ μ x = n :=
+  qua_and_eq_of_strictMonoOn ((IsExtensiveMeasure.strictMono μ).strictMonoOn _) n
+
+-- (4)
+theorem qmod_and_eq (hP : CUM P) {x y : α} (hx : P x) (hy : P y) (hxy : x ≠ y) :
+    QMOD P fun P x ↦ P x ∧ μ x = n :=
+  ⟨fun hQ ↦ hxy (qua_and_cum_iff_subsingleton.1 ⟨hQ, hP⟩ hx hy), qua_and_eq μ n P⟩
+
+/-- (3c): No modifier is quantizing for a measure phrase, which is already quantized, so
+measure phrases do not iterate (*five ounces of seven cube centimeters of gold*). -/
+theorem not_qmod_and_eq (P : α → Prop) (f : (α → Prop) → α → Prop) :
+    ¬ QMOD (fun x ↦ P x ∧ μ x = n) f :=
+  fun h ↦ h.not_qua (qua_and_eq μ n P)
 
 end Nominal
 
-/-! ### Transfer of reference from objects to events (§4) -/
+/-! ### Transfer of reference from objects to events (§4)
+
+The verbal predicate (12) of a verb, a nominal predicate `δ` and a thematic relation `θ` is the
+verb conjoined with the verb phrase `VP θ δ`. Quantization and atomicity pass to the conjunction
+from the verb phrase, for which the paper states them. -/
 
 section Transfer
 
-variable {O E : Type*} [SemilatticeSup O] [SemilatticeSup E]
+variable {O E : Type*} [SemilatticeSup O] [SemilatticeSup E] {θ : SetRel O E} {δ : O → Prop}
 
-/-- The verbal predicate (12) conjoins a verb with the verb phrase of a thematic relation and a
-nominal predicate. -/
-def ofTheta (α : E → Prop) (δ : O → Prop) (θ : O → E → Prop) : E → Prop :=
-  fun e ↦ α e ∧ VP θ δ e
-
-/-- An event is iterative on an object (D 34) if some part of the object is subjected to two
+/-- (D 34): An event is iterative on an object if some part of the object is subjected to two
 parts of the event. -/
-def ITER (θ : O → E → Prop) (e : E) (x : O) : Prop :=
-  θ x e ∧ ∃ e' e'' x', e' ≤ e ∧ e'' ≤ e ∧ e' ≠ e'' ∧ x' ≤ x ∧ θ x' e' ∧ θ x' e''
+def ITER (θ : SetRel O E) (e : E) (x : O) : Prop :=
+  x ~[θ] e ∧ ∃ e' e'' x', e' ≤ e ∧ e'' ≤ e ∧ e' ≠ e'' ∧ x' ≤ x ∧ x' ~[θ] e' ∧ x' ~[θ] e''
 
-/-- A relation is gradual (D 35) if it has uniqueness of objects and both mappings. -/
-structure GRAD (θ : O → E → Prop) : Prop where
+/-- (D 35): A relation is gradual if it has uniqueness of objects and both mappings. -/
+structure GRAD (θ : SetRel O E) : Prop where
   up : UP θ
   mo : MO θ
   me : ME θ
 
-variable {α : E → Prop} {δ : O → Prop} {θ : O → E → Prop}
+theorem GRAD.uo (h : GRAD θ) : UO θ := h.up.uo_of_mo h.mo
 
-theorem cum_ofTheta (hα : CUM α) (hδ : CUM δ) (hθ : SUM θ) : CUM (ofTheta α δ θ) :=
+theorem GRAD.ue_of_gue (h : GRAD θ) (hg : GUE θ) : UE θ := hg.ue_of_me h.me
+
+-- (T 7)
+theorem cum_and_vp {α : E → Prop} (hα : CUM α) (hδ : CUM δ) (hθ : SUM θ) :
+    CUM fun e ↦ α e ∧ VP θ δ e :=
   hα.inter (vp_cum hθ hδ)
 
-theorem exists_iter (hδ : SNG δ) (hθ : SUM θ) (hne : ∃ e, ofTheta α δ θ e)
-    (hs : SCUM (ofTheta α δ θ)) : ∃ e x, ITER θ e x := by
-  obtain ⟨e₁, hα₁, x₁, hx₁, hθ₁⟩ := hne
-  obtain ⟨hcum, hsng⟩ := hs
-  have : ∃ e₂, ofTheta α δ θ e₂ ∧ e₁ ≠ e₂ := by
-    by_contra h
-    exact hsng ⟨e₁, ⟨hα₁, x₁, hx₁, hθ₁⟩, fun e₂ he₂ ↦ by
-      by_contra hne
-      exact h ⟨e₂, he₂, hne⟩⟩
-  obtain ⟨e₂, ⟨_, x₂, hx₂, hθ₂⟩, hne⟩ := this
-  obtain ⟨x, _, huniq⟩ := hδ
-  rw [← huniq x₁ hx₁] at hθ₁
-  rw [← huniq x₂ hx₂] at hθ₂
-  exact ⟨e₁ ⊔ e₂, x, by simpa using hθ hθ₁ hθ₂, e₁, e₂, x, le_sup_left,
-    le_sup_right, hne, le_rfl, hθ₁, hθ₂⟩
+theorem iter_sup (hθ : SUM θ) {x : O} {e₁ e₂ : E} (h₁ : x ~[θ] e₁) (h₂ : x ~[θ] e₂)
+    (hne : e₁ ≠ e₂) : ITER θ (e₁ ⊔ e₂) x :=
+  ⟨by simpa using hθ.sup h₁ h₂, e₁, e₂, x, le_sup_left, le_sup_right, hne, le_rfl, h₁, h₂⟩
 
-theorem not_scum_of_not_iter (hδ : SNG δ) (hθ : SUM θ) (hne : ∃ e, ofTheta α δ θ e)
-    (hi : ∀ e x, ¬ ITER θ e x) : ¬ SCUM (ofTheta α δ θ) := fun hs ↦
-  let ⟨e, x, h⟩ := exists_iter hδ hθ hne hs; hi e x h
-
+-- (T 10)
 theorem not_iter_of_gue (h : GUE θ) (e : E) (x : O) : ¬ ITER θ e x :=
-  fun ⟨_, _, _, _, _, _, hne, _, h', h''⟩ ↦ hne (h h' h'')
+  fun ⟨_, _, _, _, _, _, hne, _, h', h''⟩ ↦ hne (h.eq h' h'')
 
-theorem mso_of_not_iter (hm : MO θ) (hi : ∀ e x, ¬ ITER θ e x) : MSO θ := fun _ _ hxe _ hlt ↦
-  let ⟨y, hy, hθ⟩ := hm hxe hlt.le
-  ⟨y, lt_of_le_of_ne hy fun h ↦ hi _ _ ⟨hxe, _, _, y, hlt.le, le_rfl, hlt.ne, hy, hθ, h ▸ hxe⟩, hθ⟩
+/-- A summative relation has uniqueness of events iff no event is iterative: uniqueness of
+events excludes iteration (T 10), and two events of one object sum to an iterative event. -/
+theorem gue_iff_forall_not_iter (hθ : SUM θ) : GUE θ ↔ ∀ e x, ¬ ITER θ e x :=
+  ⟨not_iter_of_gue,
+    fun h ↦ gue_iff.2 fun _ _ _ h₁ h₂ ↦ by_contra fun hne ↦ h _ _ (iter_sup hθ h₁ h₂ hne)⟩
 
-theorem qua_ofTheta (hδ : QUA δ) (hu : UP θ) (hm : MO θ) (hi : ∀ e x, ¬ ITER θ e x) :
-    QUA (ofTheta α δ θ) :=
-  (vp_qua hu (mso_of_not_iter hm hi) hδ).subset fun _ ⟨_, h⟩ ↦ h
+-- (T 8)
+theorem exists_iter (hδ : SNG δ) (hθ : SUM θ) (hs : SCUM (VP θ δ)) {x : O} {e : E} (hx : δ x)
+    (he : x ~[θ] e) : ∃ e', ITER θ (e ⊔ e') x := by
+  obtain ⟨e', ⟨y, hy, he'⟩, hne⟩ : ∃ e', VP θ δ e' ∧ e ≠ e' := by
+    by_contra! h
+    exact hs.not_sng ⟨e, ⟨x, hx, he⟩, fun e' he' ↦ (h e' he').symm⟩
+  exact ⟨e', iter_sup hθ he (hδ.unique hy hx ▸ he') hne⟩
 
-theorem qua_ofTheta_of_gue (hδ : QUA δ) (hu : UP θ) (hm : MO θ) (hg : GUE θ) :
-    QUA (ofTheta α δ θ) :=
-  qua_ofTheta hδ hu hm (not_iter_of_gue hg)
+-- (T 9)
+theorem not_scum_vp (hδ : SNG δ) (hθ : SUM θ) {x : O} {e : E} (hx : δ x) (he : x ~[θ] e)
+    (hi : ∀ e', ¬ ITER θ (e ⊔ e') x) : ¬ SCUM (VP θ δ) := fun hs ↦
+  let ⟨e', h⟩ := exists_iter hδ hθ hs hx he
+  hi e' h
 
-theorem exists_le_not_ofTheta (hδ : SQUA δ) (hm : ME θ) (hu : UP θ) (e : E)
-    (he : ofTheta α δ θ e) : ∃ e' ≤ e, ¬ ofTheta α δ θ e' := by
-  obtain ⟨_, x, hx, hθx⟩ := he
+/-- (T 11): Uniqueness of objects and mapping to objects carry quantization from the object to
+the verb phrase when no event is iterative on an object of the nominal predicate. -/
+theorem qua_vp_of_not_iter (hδ : QUA δ) (hu : UP θ) (hm : MO θ)
+    (hi : ∀ e x, δ x → ¬ ITER θ e x) : QUA (VP θ δ) :=
+  qua_of_forall fun e e' ⟨x, hx, hθ⟩ hlt ⟨x', hx', hθ'⟩ ↦
+    let ⟨y, hy, hθy⟩ := hm hθ hlt.le
+    have hyx' : y = x' := hu.eq (SetRel.mem_inv.1 hθy) hθ'
+    hδ hx' hx
+      (fun h ↦ hi e x hx ⟨hθ, e', e, x, hlt.le, le_rfl, hlt.ne, le_rfl, h ▸ hθ', hθ⟩)
+      (hyx' ▸ hy)
+
+-- (T 12)
+theorem qua_vp_of_gue (hδ : QUA δ) (hu : UP θ) (hm : MO θ) (hg : GUE θ) : QUA (VP θ δ) :=
+  qua_vp_of_not_iter hδ hu hm fun e x _ ↦ not_iter_of_gue hg e x
+
+/-- (T 13): With a strictly quantized object, uniqueness of objects and mapping to events give
+every event of the verb phrase a proper part outside it, the part subjected to a proper part of
+the object. -/
+theorem exists_lt_not_vp (hδ : SQUA δ) (hm : ME θ) (hu : UP θ) {e : E} (he : VP θ δ e) :
+    ∃ e' < e, ¬ VP θ δ e' := by
+  obtain ⟨x, hx, hθx⟩ := he
   obtain ⟨y, hyx⟩ := hδ.exists_lt x hx
   obtain ⟨e', he', hθy⟩ := hm hθx hyx.le
-  refine ⟨e', he', fun ⟨_, z, hz, hθz⟩ ↦ ?_⟩
-  have hzy : z = y := hu hθz hθy
-  subst hzy
-  exact hδ.qua hz hx hyx.ne hyx.le
-
-/-! ### The classification of thematic relations (14) -/
-
-/-- The five classes of (14) are gradual effected patient (*write a letter*), gradual consumed
-patient (*eat an apple*), gradual patient (*read a letter*), affected patient (*touch a
-cat*), and stimulus (*see a horse*). -/
-inductive ThematicClass
-  | gradualEffectedPatient
-  | gradualConsumedPatient
-  | gradualPatient
-  | affectedPatient
-  | stimulus
-  deriving DecidableEq, Repr
-
-/-- The gradual classes. -/
-def ThematicClass.Gradual : ThematicClass → Prop
-  | .gradualEffectedPatient | .gradualConsumedPatient | .gradualPatient => True
-  | .affectedPatient | .stimulus => False
-
-/-- The classes with uniqueness of events. -/
-def ThematicClass.UniqueEvents : ThematicClass → Prop
-  | .gradualEffectedPatient | .gradualConsumedPatient => True
-  | .gradualPatient | .affectedPatient | .stimulus => False
-
-/-- `c.Requires θ` holds when `θ` meets what (14) requires of the class `c`, namely
-summativity throughout, graduality for the gradual classes, and uniqueness of events for
-effected and consumed patients. -/
-structure ThematicClass.Requires (c : ThematicClass) (θ : O → E → Prop) : Prop where
-  sum : SUM θ
-  grad : c.Gradual → GRAD θ
-  gue : c.UniqueEvents → GUE θ
-
-theorem qua_of_uniqueEvents {c : ThematicClass} (hc : c.UniqueEvents) (h : c.Requires θ)
-    (hδ : QUA δ) : QUA (ofTheta α δ θ) := by
-  have hg : GRAD θ := h.grad (by cases c <;> trivial)
-  exact qua_ofTheta_of_gue hδ hg.up hg.mo (h.gue hc)
-
-theorem gradualPatient_transfer (h : ThematicClass.gradualPatient.Requires θ) :
-    (CUM α → CUM δ → CUM (ofTheta α δ θ)) ∧
-      (SQUA δ → ∀ e, ofTheta α δ θ e → ∃ e' ≤ e, ¬ ofTheta α δ θ e') :=
-  ⟨fun hα hδ ↦ cum_ofTheta hα hδ h.sum,
-    fun hδ ↦ exists_le_not_ofTheta hδ (h.grad trivial).me (h.grad trivial).up⟩
+  have hn : ¬ VP θ δ e' := fun ⟨z, hz, hθz⟩ ↦ hδ.qua (hu.eq hθz hθy ▸ hz) hx hyx.ne hyx.le
+  exact ⟨e', lt_of_le_of_ne he' fun h ↦ hn (h ▸ ⟨x, hx, hθx⟩), hn⟩
 
 end Transfer
+
+/-! ### Reading the letter twice
+
+The classification (14) separates the gradual patient of *read a letter* from the effected and
+consumed patients of *write a letter* and *eat an apple* by uniqueness of events. In the model
+below one letter is read in two events, one a part of the other. -/
+
+/-- The patient relation of a letter that every event reads, the event `true` containing the
+event `false`. -/
+def readTwice : SetRel Unit Bool := Set.univ
+
+theorem readTwice_sum : SUM readTwice := supClosed_univ
+
+theorem readTwice_grad : GRAD readTwice :=
+  ⟨up_iff.2 fun _ _ _ _ _ ↦ rfl, fun _ _ _ _ _ ↦ ⟨(), le_rfl, trivial⟩,
+    fun _ e _ _ _ ↦ ⟨e, le_rfl, trivial⟩⟩
+
+theorem iter_readTwice : ITER readTwice true () :=
+  ⟨trivial, false, true, (), Bool.false_le _, le_rfl, Bool.false_ne_true, le_rfl, trivial,
+    trivial⟩
+
+/-- A gradual and summative relation does not carry quantization across when it is iterative:
+*read the letter* holds of both readings of the one letter. -/
+theorem not_qua_vp_readTwice : ¬ QUA (VP readTwice (· = ())) := fun h ↦
+  h (show VP readTwice (· = ()) false from ⟨(), rfl, trivial⟩)
+    (show VP readTwice (· = ()) true from ⟨(), rfl, trivial⟩) Bool.false_ne_true
+    (Bool.false_le _)
 
 /-! ### Temporal adverbials (§5) -/
 
 section Adverbials
 
-variable {E T M : Type*} [SemilatticeSup T]
+variable {E T M : Type*} {P : E → Prop} {τ : E → T}
 
--- (15)
-theorem durative_qua [SemilatticeSup E] [HasRemainders E] [AddCommMonoid M] [PartialOrder M]
-    [AddLeftStrictMono M] (P : E → Prop) (μ' : E → M) [IsExtensiveMeasure μ'] (n : M) :
-    QUA (QMOD P μ' n) :=
-  countNoun_qua P μ' n
+section Durative
 
-/-- A time-span adverbial (16) holds of an event that lies within a convex time of the given
+variable [PartialOrder E] [SemilatticeSup T] [HasRemainders T] [AddCommMonoid M] [PartialOrder M]
+  [AddLeftStrictMono M] (μ : T → M) [IsExtensiveMeasure μ] (n : M)
+
+-- (D 41)
+theorem qua_and_comp_eq (hτ : StrictMonoOn τ {e | P e}) : QUA fun e ↦ P e ∧ μ (τ e) = n :=
+  qua_and_eq_of_strictMonoOn ((IsExtensiveMeasure.strictMono μ).comp_strictMonoOn hτ) n
+
+-- (15): *for an hour* is quantizing for exactly the predicates that are not quantized
+theorem qmod_durative_iff (hτ : StrictMonoOn τ {e | P e}) :
+    QMOD P (fun P e ↦ P e ∧ μ (τ e) = n) ↔ ¬ QUA P :=
+  qmod_iff (qua_and_comp_eq μ n hτ)
+
+end Durative
+
+variable [Preorder T]
+
+/-- (16): A time-span adverbial holds of an event that lies within a convex time of the given
 measure. -/
 def inSpan (P : E → Prop) (τ : E → T) (Conv : T → Prop) (μ : T → M) (n : M) : E → Prop :=
   fun e ↦ P e ∧ ∃ t, Conv t ∧ μ t = n ∧ τ e ≤ t
 
--- (17)
+-- (17), (20)
 theorem inSpan_mono (P : E → Prop) (τ : E → T) (Conv : T → Prop) (μ : T → M) {n n' : M}
     (h : ∀ t, Conv t → μ t = n → ∃ t', Conv t' ∧ μ t' = n' ∧ t ≤ t') :
     ∀ e, inSpan P τ Conv μ n e → inSpan P τ Conv μ n' e := by

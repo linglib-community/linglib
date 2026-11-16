@@ -76,10 +76,9 @@ theorem mem_pluralize_of_withNumber {den : CountNoun World Atom} {n : ℕ} {w : 
   ⟨n, h⟩
 
 /-- The count noun `ofAtoms D` counts atoms: `x` consists of `n` `D`s when it is a nonempty
-individual of `D`-atoms whose extensive measure `Finset.card` is `n`, the measure phrase of
-`Mereology.QMOD`. -/
+individual of `D`-atoms whose extensive measure `Finset.card` is `n`. -/
 def ofAtoms (D : World → Set Atom) : CountNoun World Atom :=
-  fun w n ↦ {x | QMOD (fun x : Finset Atom ↦ x.Nonempty ∧ ↑x ⊆ D w) Finset.card n x}
+  fun w n ↦ {x | (x.Nonempty ∧ ↑x ⊆ D w) ∧ x.card = n}
 
 variable {D : World → Set Atom} {w : World} {x y : Finset Atom} {n m : ℕ}
 
@@ -112,7 +111,7 @@ theorem pluralize_ofAtoms_eq_empty (hD : D w = ∅) : pluralize (ofAtoms D) w = 
 /-- Numeral phrases are quantized: a proper part of `n` dogs is not `n` dogs. -/
 theorem qua_withNumber_ofAtoms [DecidableEq Atom] (D : World → Set Atom) (n : ℕ) (w : World) :
     QUA (· ∈ withNumber n (ofAtoms D) w) :=
-  qmod_qua ((IsExtensiveMeasure.strictMono Finset.card).strictMonoOn _) n
+  qua_and_eq_of_strictMonoOn ((IsExtensiveMeasure.strictMono Finset.card).strictMonoOn _) n
 
 theorem cum_pluralize_ofAtoms [DecidableEq Atom] (D : World → Set Atom) (w : World) :
     CUM (· ∈ pluralize (ofAtoms D) w) := fun x hx y hy ↦ by

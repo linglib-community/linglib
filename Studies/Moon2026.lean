@@ -54,6 +54,7 @@ self-connection of (22), and without its temporal parameter.
 namespace Moon2026
 
 open Mereology Aspect
+open scoped SetRel
 
 /-! ### Mereotopology -/
 
@@ -175,21 +176,21 @@ theorem mixedDrink_middle_ground {a b : α} (ha : mixedDrinkDen C recipe μ phas
     ¬ CUM (mixedDrinkDen C recipe μ phase) ∧ ¬ QUA (mixedDrinkDen C recipe μ phase) :=
   connectivity_middle_ground (fun _ ↦ selfConnected_of_mixedDrinkDen) ha hb hDisc hx hy hlt
 
-theorem middle_ground_stable {β : Type*} [SemilatticeSup β] {θ : α → β → Prop} (h : SINC θ)
+theorem middle_ground_stable {β : Type*} [SemilatticeSup β] {θ : SetRel α β} (h : SINC θ)
     (hU : UP θ) (hs : SUM θ) {OBJ : α → Prop} {a b : α} {e_a e_b : β} (ha : OBJ a) (hb : OBJ b)
-    (hθ_a : θ a e_a) (hθ_b : θ b e_b) (hSum : ¬ OBJ (a ⊔ b)) {x y : α} {e_x : β} (hx : OBJ x)
-    (hy : OBJ y) (hlt : y < x) (hθ_x : θ x e_x) : ¬ CUM (VP θ OBJ) ∧ ¬ QUA (VP θ OBJ) := by
+    (hθ_a : a ~[θ] e_a) (hθ_b : b ~[θ] e_b) (hSum : ¬ OBJ (a ⊔ b)) {x y : α} {e_x : β} (hx : OBJ x)
+    (hy : OBJ y) (hlt : y < x) (hθ_x : x ~[θ] e_x) : ¬ CUM (VP θ OBJ) ∧ ¬ QUA (VP θ OBJ) := by
   refine ⟨not_cum_vp hs hU ha hb hθ_a hθ_b hSum, fun hQua ↦ ?_⟩
   obtain ⟨e_y, he_y_lt, hθ_y⟩ := h.mse hθ_x hlt
   exact hQua ⟨y, hy, hθ_y⟩ ⟨x, hx, hθ_x⟩ he_y_lt.ne he_y_lt.le
 
-theorem mixedDrink_VP_propagation_gap {β : Type*} [SemilatticeSup β] {drinkTheme : α → β → Prop}
+theorem mixedDrink_VP_propagation_gap {β : Type*} [SemilatticeSup β] {drinkTheme : SetRel α β}
     (h : SINC drinkTheme) (hU : UP drinkTheme) (hs : SUM drinkTheme) {a b : α} {e_a e_b : β}
     (ha : mixedDrinkDen C recipe μ phase a) (hb : mixedDrinkDen C recipe μ phase b)
-    (hθ_a : drinkTheme a e_a) (hθ_b : drinkTheme b e_b)
+    (hθ_a : a ~[drinkTheme] e_a) (hθ_b : b ~[drinkTheme] e_b)
     (hSum : ¬ mixedDrinkDen C recipe μ phase (a ⊔ b)) {x y : α} {e_x : β}
     (hx : mixedDrinkDen C recipe μ phase x) (hy : mixedDrinkDen C recipe μ phase y) (hlt : y < x)
-    (hθ_x : drinkTheme x e_x) :
+    (hθ_x : x ~[drinkTheme] e_x) :
     ¬ CUM (VP drinkTheme (mixedDrinkDen C recipe μ phase)) ∧
       ¬ QUA (VP drinkTheme (mixedDrinkDen C recipe μ phase)) :=
   middle_ground_stable h hU hs ha hb hθ_a hθ_b hSum hx hy hlt hθ_x
