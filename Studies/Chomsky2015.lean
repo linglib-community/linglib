@@ -24,7 +24,7 @@ criterial position leaves the interrogative C to label the clause by itself, as 
 * The phase heads are C and v*. An occurrence is labeled in the object built at its phase level
   (`Minimalist.phaseLevel`), and the label stays.
 * Transfer seals the complement of a phase head, or of the head inheriting its phasehood, once its
-  phase is complete (`Minimalist.Pic1`). A phase is its head's projection by labels
+  phase is complete (`Minimalist.Schedule.atCompletion`). A phase is its head's projection by labels
   (`HeadFunction.label`), projection being labeling.
 * The matrix clauses of (2′), (3′) and (4) are cut down to the raised wh-phrase over the verb or
   *do*.
@@ -134,7 +134,7 @@ def ViolatesPic (I : LexicalItem.Token → Prop) [DecidablePred I] (t : PlanarSy
     (tok : LexicalItem.Token) : Prop :=
   LinkLeaves .label t tok (sealed (occurrencesWith t IsPhaseHead).toFinset
     (fun h ↦ complementDomain (transferHead .label t (occurrencesWith t I).toFinset h))
-    (Pic1 .label t))
+    (.atCompletion .label t))
 
 instance (I : LexicalItem.Token → Prop) [DecidablePred I] (t : PlanarSyntacticObject)
     (tok : LexicalItem.Token) : Decidable (ViolatesPic I t tok) :=

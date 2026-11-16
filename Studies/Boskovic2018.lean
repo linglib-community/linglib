@@ -112,7 +112,7 @@ def ObeysPic (hd : HeadFunction) (Φ : LexicalItem.Token → Prop) [DecidablePre
     (d : Derivation) : Prop :=
   ∀ t ∈ d.externalize?, ∀ x ∈ tokenList t.toRoseTree,
     ¬ LinkLeaves hd t x.2
-      (sealed (occurrencesWith t Φ).toFinset complementDomain (Pic1 hd t))
+      (sealed (occurrencesWith t Φ).toFinset complementDomain (.atCompletion hd t))
 
 instance (hd : HeadFunction) (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] (d : Derivation) :
     Decidable (ObeysPic hd Φ d) := by

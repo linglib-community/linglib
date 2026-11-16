@@ -249,7 +249,7 @@ def goalsIn (d : Derivation) (l : Locus) : List Arg :=
     ((Minimalist.tokenList t.toRoseTree).find? (·.2.item.cat == l.cat)).elim [] fun a ↦
       (Minimalist.cyclicGoals .raising t (·.item.cat = .D)
         (Minimalist.sealed (phaseSet t) Minimalist.complementDomain
-          (Minimalist.Pic1 .raising t) a.1.parent) a.1).filterMap argOf
+          (Minimalist.Schedule.atCompletion .raising t) a.1.parent) a.1).filterMap argOf
 
 /-- The goals a probe at `l` meets in the clause (30) with its object in position `pos`. -/
 def goals (l : Locus) (pos : ObjectPosition) : List Arg := goalsIn (clause pos) l
