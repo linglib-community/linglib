@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Order.Comparable
 public import Mathlib.Order.Preorder.Chain
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.SuccPred.Archimedean
@@ -81,6 +82,15 @@ variable {M : Type*} [PartialOrder M] [IsLeftLinear M]
 theorem isChain_Iic (m : M) : IsChain (· ≤ ·) (Set.Iic m) := by
   intro a ha b hb _
   exact comparable_of_le_common (Set.mem_Iic.mp ha) (Set.mem_Iic.mp hb)
+
+/-- In a left-linear order two principal up-sets are disjoint exactly when their generators are
+incomparable: the subtrees under two nodes of a tree share a node only when one node lies under
+the other. -/
+theorem disjoint_Ici_iff {a b : M} :
+    Disjoint (Set.Ici a) (Set.Ici b) ↔ IncompRel (· ≤ ·) a b :=
+  ⟨fun h ↦ ⟨fun hab ↦ Set.disjoint_left.1 h hab le_rfl,
+      fun hba ↦ Set.disjoint_right.1 h hba le_rfl⟩,
+    fun h ↦ Set.disjoint_left.2 fun _ ha hb ↦ (comparable_of_le_common ha hb).elim h.1 h.2⟩
 
 theorem le_of_lt_of_covBy {a b m : M} (hm : m ⋖ a) (hb : b < a) : b ≤ m :=
   (comparable_of_le_common hb.le hm.le).elim id fun h ↦

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Phonology.Segmental.Defs
+public import Linglib.Core.Order.Laminar
 public import Mathlib.Data.Finset.Card
 
 /-!
@@ -8,24 +9,19 @@ public import Mathlib.Data.Finset.Card
 
 Hayes's grouping of the distinctive features into manner, laryngeal and place features, with the
 place features split among the three major articulators [labial], [coronal] and [dorsal]. The
-classes are finite sets of features, the place class is their union, and a complex segment is one
-with more than one major articulator. Two segments are homorganic when they agree on the major
-articulator features.
-
-## Main definitions
-
-* `FeatureClass`, `Feature.featureClass?`: the five classes and the class of each feature.
-* `FeatureClass.features`, `FeatureClass.place`: the features of a class, and the place class.
-* `Feature.majorArticulators`, `Segment.articulators`, `Segment.IsComplex`: the major articulator
-  features, the major articulators of a segment, and complex segments.
-* `Segment.Homorganic`: agreement on the major articulator features.
+classes are finite sets of features, [the features](##Phonology.FeatureClass.features) listed
+under each of five labels, and [the place class](##Phonology.FeatureClass.place) is the union of
+the three articulator classes. [No two of them overlap](##Phonology.FeatureClass.isLaminar) unless
+one contains the other. A [complex segment](##Phonology.Segment.IsComplex) is one with more than
+one major articulator, and two segments are [homorganic](##Phonology.Segment.Homorganic) when they
+agree on the major articulator features.
 
 ## Implementation notes
 
 The classes are sets rather than the nodes of a tree. Hayes treats Place as a group concept and
 draws no tree, Padgett defines feature classes as sets of features, and Halle, Vaux and Wolfe
-record that there is no consensus on which revisions of the geometry to adopt. Trees are instances
-of `Phonology/FeatureGeometry.lean` in the studies of the works that argue for them.
+record that there is no consensus on which revisions of the geometry to adopt. Trees are built
+on `Phonology/FeatureGeometry.lean` in the studies of the works that argue for them.
 
 [tense], which Hayes's consonant charts print under the place heading but his list of the place
 features leaves out, and the tongue-root features [ATR] and [RTR] belong to no class.
@@ -78,6 +74,18 @@ theorem mem_place :
     f ∈ place ↔ f.featureClass? = some .labial ∨ f.featureClass? = some .coronal ∨
       f.featureClass? = some .dorsal := by
   simp [place]
+
+/-- The classes do not overlap: the five listed classes are pairwise disjoint and the place class
+contains three of them. -/
+theorem isLaminar : IsLaminar (insert place (Set.range features)) := by
+  have h : ∀ c d : FeatureClass, c.features ⊆ d.features ∨ d.features ⊆ c.features ∨
+      Disjoint c.features d.features := by decide
+  have hp : ∀ c : FeatureClass, c.features ⊆ place ∨ Disjoint c.features place := by decide
+  rintro _ (rfl | ⟨c, rfl⟩) _ (rfl | ⟨d, rfl⟩)
+  · exact .inl le_rfl
+  · exact (hp d).elim (fun h ↦ .inr (.inl h)) fun h ↦ .inr (.inr h.symm)
+  · exact (hp c).elim .inl fun h ↦ .inr (.inr h)
+  · exact h c d
 
 end FeatureClass
 
