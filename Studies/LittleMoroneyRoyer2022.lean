@@ -19,18 +19,19 @@ takes the first path and Shan the second, with constituency `[[Num Clf] N]` agai
 
 A count noun denotes Link's star of its atoms, the singletons of its individuals, so the noun is
 `Mereology.AlgClosure` over `({·} : α → Finset α) '' dog`. Both derivations are by Functional
-Application alone: the Ch'ol root is measure modification by the atom count, `Mereology.QMOD`, and
-the Shan root is the partition numeral `IoninMatushansky2006.cardMod` over the atomized noun,
-`Mereology.atomize`. The distributional diagnostics of the paper's §4, its case against a uniform
-classifier semantics such as Chierchia's, then follow from the lexical types.
+Application alone: the Ch'ol root is measure modification by the atom count,
+`Mereology.MeasureMod`, and the Shan root is the partition numeral
+`IoninMatushansky2006.cardMod` over the atomized noun, `Mereology.atomize`. The distributional
+diagnostics of the paper's §4, its case against a uniform classifier semantics such as
+Chierchia's, then follow from the lexical types.
 
 ## Implementation notes
 
 Pluralities are `Finset α`, so μ# is `Finset.card` at type `⟨e,n⟩`, and its strict monotonicity
-is all that quantization needs (`qmod_dogs_qua`). The strategies part at zero, where the partition
-numeral holds of the empty sum that the noun excludes. Prediction 2 of §4, nouns that need no
-classifier, rests on Vietnamese rather than Ch'ol or Shan data and is not formalized, nor is the
-paper's remark on plural marking: Ch'ol classifiers co-occur with the plural, against Borer's
+is all that quantization needs (`measureMod_dogs_qua`). The strategies part at zero, where the
+partition numeral holds of the empty sum that the noun excludes. Prediction 2 of §4, nouns that
+need no classifier, rests on Vietnamese rather than Ch'ol or Shan data and is not formalized, nor
+is the paper's remark on plural marking: Ch'ol classifiers co-occur with the plural, against Borer's
 complementarity, which the paper keeps for classifier-for-noun languages such as Shan.
 
 ## References
@@ -77,9 +78,9 @@ theorem dogs_iff (x : Finset α) : dogs dog x ↔ x.Nonempty ∧ ↑x ⊆ dog :=
 theorem atomize_dogs : atomize (dogs dog) = (· ∈ ({·} : α → Finset α) '' dog) :=
   atomize_algClosure fun _ ⟨a, _, h⟩ ↦ h ▸ atom_iff_isAtom.2 (Finset.isAtom_singleton a)
 
-theorem qmod_dogs_iff {n : ℕ} (hn : n ≠ 0) (x : Finset α) :
-    QMOD (dogs dog) Finset.card n x ↔ x.card = n ∧ ↑x ⊆ dog := by
-  simp only [QMOD, dogs_iff, ← Finset.card_pos]
+theorem measureMod_dogs_iff {n : ℕ} (hn : n ≠ 0) (x : Finset α) :
+    MeasureMod (dogs dog) Finset.card n x ↔ x.card = n ∧ ↑x ⊆ dog := by
+  simp only [MeasureMod, dogs_iff, ← Finset.card_pos]
   grind
 
 /-! ### The lexicon -/
@@ -122,9 +123,9 @@ Ch'ol classifier μ# ((8)), *ocho* measure modification by μ# to eight ((34b)),
 partition numeral ((10), `IoninMatushansky2006.cardMod`), a Shan classifier atomization ((13),
 `Mereology.atomize`), and the nouns 'dog'. -/
 def Item.val : {a : Ty Base} → Item a → a.Dom (Base.Dom (Finset α) Unit)
-  | _, .measureNumeral => fun m P ↦ QMOD P m 2
+  | _, .measureNumeral => fun m P ↦ MeasureMod P m 2
   | _, .measure => Finset.card
-  | _, .measuredNumeral => fun P ↦ QMOD P Finset.card 8
+  | _, .measuredNumeral => fun P ↦ MeasureMod P Finset.card 8
   | _, .partitionNumeral => cardMod 2
   | _, .atomizer => atomize
   | _, .noun => dogs dog
@@ -143,13 +144,13 @@ def cholTree : Tree Unit Word := .bin cholNumClf (.leaf .tsi)
 
 /-- The Ch'ol root is the noun measure-modified by the atom count to two ((51)). -/
 theorem meanings_cholTree :
-    meanings dog cholTree = [⟨.et, QMOD (dogs dog) Finset.card 2⟩] :=
+    meanings dog cholTree = [⟨.et, MeasureMod (dogs dog) Finset.card 2⟩] :=
   rfl
 
 /-- Numeral and classifier compose without a noun, into a measure phrase that restricts any
 predicate to its pluralities of two atoms ((45)–(46), Prediction 4). -/
 theorem meanings_cholNumClf :
-    meanings dog cholNumClf = [⟨.et ⇒ .et, fun P ↦ QMOD P Finset.card 2⟩] :=
+    meanings dog cholNumClf = [⟨.et ⇒ .et, fun P ↦ MeasureMod P Finset.card 2⟩] :=
   rfl
 
 /-- The classifier, a measure of type `⟨e,n⟩`, cannot compose with the noun
@@ -160,7 +161,7 @@ theorem meanings_cholClfNoun :
 
 /-- *ocho* composes with the noun directly ((33), Prediction 1). -/
 theorem meanings_ocho :
-    meanings dog (.bin (.leaf .ocho) (.leaf .tsi)) = [⟨.et, QMOD (dogs dog) Finset.card 8⟩] :=
+    meanings dog (.bin (.leaf .ocho) (.leaf .tsi)) = [⟨.et, MeasureMod (dogs dog) Finset.card 8⟩] :=
   rfl
 
 /-- *ocho* rejects the classifier ((34), Prediction 1). -/
@@ -196,14 +197,14 @@ theorem meanings_shanNumClf :
 
 /-! ### One denotation for *two dogs* -/
 
-theorem qmod_dogs_qua (n : ℕ) : QUA (QMOD (dogs dog) Finset.card n) :=
-  qmod_qua (Finset.card_strictMono.strictMonoOn _) n
+theorem measureMod_dogs_qua (n : ℕ) : QUA (MeasureMod (dogs dog) Finset.card n) :=
+  measureMod_qua (Finset.card_strictMono.strictMonoOn _) n
 
 /-- Derivationally distinct, the two strategies denote the same pluralities for every nonzero
 numeral (§4.5). -/
-theorem qmod_iff_cardMod_atomize {n : ℕ} (hn : n ≠ 0) (x : Finset α) :
-    QMOD (dogs dog) Finset.card n x ↔ cardMod n (atomize (dogs dog)) x := by
-  rw [qmod_dogs_iff dog hn, atomize_dogs, cardMod_atoms_iff]
+theorem measureMod_iff_cardMod_atomize {n : ℕ} (hn : n ≠ 0) (x : Finset α) :
+    MeasureMod (dogs dog) Finset.card n x ↔ cardMod n (atomize (dogs dog)) x := by
+  rw [measureMod_dogs_iff dog hn, atomize_dogs, cardMod_atoms_iff]
 
 /-- Three dogs and a cat, the model of (6) with a cat added for the noun to exclude. -/
 inductive Animal | a | b | c | cat
@@ -218,9 +219,9 @@ example (x : Finset Animal) :
 
 -- *two dogs* denotes `{ab, ac, bc}` ((51)–(52)).
 example (x : Finset Animal) :
-    QMOD (dogs {.cat}ᶜ) Finset.card 2 x ↔
+    MeasureMod (dogs {.cat}ᶜ) Finset.card 2 x ↔
       x ∈ ({{.a, .b}, {.a, .c}, {.b, .c}} : Finset (Finset Animal)) := by
-  simp only [qmod_dogs_iff _ two_ne_zero, Set.subset_compl_singleton_iff, Finset.mem_coe]
+  simp only [measureMod_dogs_iff _ two_ne_zero, Set.subset_compl_singleton_iff, Finset.mem_coe]
   revert x
   decide
 

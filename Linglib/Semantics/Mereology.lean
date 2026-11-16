@@ -29,16 +29,18 @@ or none, as a classical mereology does. Atoms and overlap are stated relative to
 * `HasRemainders α`: every proper part is completed to the whole by a non-overlapping part.
 * `IsClassicalMereology α`: classical extensional mereology, in which every inhabited predicate
   has a unique sum.
-* `IsExtensiveMeasure μ`: extensive measure functions, and the measure phrases `QMOD` they build.
+* `IsExtensiveMeasure μ`: extensive measure functions, and measure modification `MeasureMod` by
+  them.
 * `OverlapPred`, `DisjointPred`, `IsMaxDisjointIn`, `nullSchema`: individuation perspectives.
 
 ## Main results
 
-* `qua_cum_incompatible`: a quantized predicate with two members is not cumulative.
+* `qua_and_cum_iff_subsingleton`: a predicate is quantized and cumulative iff it holds of at most
+  one element, so a quantized predicate with two members is not cumulative.
 * `IsClassicalMereology.existsUnique_remainder`: in a classical mereology a proper part has a
   unique remainder, so classical mereologies, like Boolean algebras, have remainders.
 * `IsExtensiveMeasure.strictMono`: over a carrier with remainders an extensive measure is strictly
-  monotone, so the measure phrases it builds are quantized (`qmod_qua`); the atom count is
+  monotone, so measure modification by it is quantized (`measureMod_qua`); the atom count is
   likewise extensive on sums of atoms (`qua_algClosure_atomCount`).
 * `atomsBelow_finset`, `atomCount_finset`: the atomic parts of a finite set are its singletons,
   so its atom count is its cardinality.
@@ -111,16 +113,13 @@ abbrev CUM (P : α → Prop) : Prop := SupClosed {x | P x}
 instance [Fintype α] [DecidablePred P] : Decidable (CUM P) :=
   decidable_of_iff (∀ x, P x → ∀ y, P y → P (x ⊔ y)) Iff.rfl
 
-/-- A quantized predicate with two members is not cumulative ([krifka-1989] (T 3)). -/
-theorem qua_cum_incompatible (hQ : QUA P) {x y : α} (hx : P x) (hy : P y) (hne : x ≠ y) :
-    ¬ CUM P := by
-  intro hC
-  have hxy : P (x ⊔ y) := hC hx hy
-  rcases eq_or_lt_of_le (le_sup_left : x ≤ x ⊔ y) with hx_eq | hx_lt
-  · rcases eq_or_lt_of_le (le_sup_right : y ≤ x ⊔ y) with hy_eq | hy_lt
-    · exact hne (hx_eq.trans hy_eq.symm)
-    · exact hQ hy hxy hy_lt.ne hy_lt.le
-  · exact hQ hx hxy hx_lt.ne hx_lt.le
+/-- A predicate is both quantized and cumulative iff it holds of at most one element: the two
+parts of a sum that the predicate holds of are the sum itself. So a quantized predicate with two
+members is not cumulative ([krifka-1989] (T 3)). -/
+theorem qua_and_cum_iff_subsingleton : QUA P ∧ CUM P ↔ {x | P x}.Subsingleton :=
+  ⟨fun ⟨hQ, hC⟩ _ hx _ hy ↦
+      (hQ.eq hx (hC hx hy) le_sup_left).trans (hQ.eq hy (hC hx hy) le_sup_right).symm,
+    fun h ↦ ⟨h.isAntichain _, fun x hx y hy ↦ by rw [h hx hy, sup_idem]; exact hy⟩⟩
 
 theorem cum_maximal_iff_isGreatest (hCum : CUM P) {x : α} :
     Maximal P x ↔ IsGreatest {y | P y} x :=
@@ -604,14 +603,14 @@ elements and positivity, and derive from the remainder principle that a proper p
 than the whole. [champollion-krifka-2016] call a measure extensive on a set when it has that
 property there. Either way, the measure phrases such a measure builds are quantized. -/
 
-/-- The measure phrase "`n` units of `R`" denotes the `R`-elements of measure `n`, as
-[krifka-1989] analyses *five ounces of gold*. -/
-def QMOD {M : Type*} (R : α → Prop) (μ : α → M) (n : M) : α → Prop := fun x ↦ R x ∧ μ x = n
+/-- Measure modification restricts `R` to its elements of measure `n`, as *five ounces* restricts
+*gold* in the measure construction of [krifka-1989]. -/
+def MeasureMod {M : Type*} (R : α → Prop) (μ : α → M) (n : M) : α → Prop := fun x ↦ R x ∧ μ x = n
 
-/-- A measure phrase is quantized if its measure is strictly monotone on the predicate it
-restricts. -/
-theorem qmod_qua {M : Type*} [PartialOrder α] [Preorder M] {R : α → Prop} {μ : α → M}
-    (hμ : StrictMonoOn μ {x | R x}) (n : M) : QUA (QMOD R μ n) :=
+/-- Measure modification gives a quantized predicate if the measure is strictly monotone on the
+predicate it restricts. -/
+theorem measureMod_qua {M : Type*} [PartialOrder α] [Preorder M] {R : α → Prop} {μ : α → M}
+    (hμ : StrictMonoOn μ {x | R x}) (n : M) : QUA (MeasureMod R μ n) :=
   fun _ hx _ hy hne hle ↦ (hμ hx.1 hy.1 (lt_of_le_of_ne hle hne)).ne (hx.2.trans hy.2.symm)
 
 theorem atomCount_strictMonoOn [SemilatticeSup α] [Fintype α] {P : α → Prop}
@@ -629,8 +628,8 @@ theorem atomCount_strictMonoOn [SemilatticeSup α] [Fintype α] {P : α → Prop
 /-- The sums of `P`-atoms with `n` atoms form an antichain, so *two cats* is quantized
 ([champollion-krifka-2016]). -/
 theorem qua_algClosure_atomCount [SemilatticeSup α] [Fintype α] {P : α → Prop}
-    (hP : ∀ ⦃a⦄, P a → Atom a) (n : ℕ) : QUA (QMOD (AlgClosure P) (atomCount α) n) :=
-  qmod_qua (atomCount_strictMonoOn hP) n
+    (hP : ∀ ⦃a⦄, P a → Atom a) (n : ℕ) : QUA (MeasureMod (AlgClosure P) (atomCount α) n) :=
+  measureMod_qua (atomCount_strictMonoOn hP) n
 
 section ExtensiveMeasure
 
