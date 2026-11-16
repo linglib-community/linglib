@@ -21,7 +21,9 @@ reward of the listener's action, in expectation (4), less the message's cost (6)
 the goodness of an explanation is the gain in expected reward over acting on the prior alone (8),
 `goodness`. When the listener's interests are unknown the decision problem is the manipulation
 game (Definition 2), whose reward for a variable is the probability over contexts that intervening
-on it changes FACT, `manipulationReward`. In the roof example (Example 2) citing the thatched
+on it changes FACT, `manipulationReward`; with the roof less probable than the drought it favours
+the roof in the conjunctive structure, `RoofReplacement.manipulationReward_semConj_lt`, and the
+drought in the disjunctive one. In the roof example (Example 2) citing the thatched
 roof and citing the drought are equally informative but not equally useful, since only the
 former bears on replacing a roof (Table 1), so at any rationality the listener replaces the roof
 more readily after the former, `RoofReplacement.policy_replace_lt`. In the late-meeting example
@@ -44,8 +46,8 @@ cited variable to the fact. Priors are uniform, as in the examples.
 
 ## TODO
 
-* Table 4, the manipulation-game rewards of Example 2, from the four structural models and a
-  product prior over the contexts; the roof and milk interpretation sets from actual causation.
+* The roof and milk interpretation sets from actual causation, and the speaker's preference
+  between the roof and the drought from the manipulation-game rewards.
 
 ## References
 
@@ -80,14 +82,19 @@ end Framework
 
 section ManipulationGame
 
-variable {U V : Type*} [DecidableEq V] [Fintype U]
+variable {U V : Type*} {α : V → Type*} [DecidableEq V] (M : CausalModel U V α) [M.IsAcyclic]
+  [∀ v, Nonempty (α v)]
 
-open Classical CausalModel in
+open CausalModel in
+/-- The contexts in which some intervention on `X` changes whether FACT holds (Definition 2). -/
+def manipulates (X : V) (fact : Set (∀ v, α v)) : Set U :=
+  {u | ∃ x, ¬(M[X ← x].solve u ∈ fact ↔ M.solve u ∈ fact)}
+
 /-- The reward of intervening on `X` in a model (Definition 2) is the probability, over contexts
-drawn with weights `P`, that intervening on `X` changes FACT. -/
-noncomputable def manipulationReward (P : U → ℝ) (M : CausalModel U V fun _ ↦ Bool)
-    [M.IsAcyclic] (X fact : V) : ℝ :=
-  ∑ u, P u * if M[X ← true].solve u fact ≠ M[X ← false].solve u fact then 1 else 0
+drawn from `ν`, that some intervention on `X` changes whether FACT holds. -/
+noncomputable def manipulationReward [MeasurableSpace U] (ν : Measure U) (X : V)
+    (fact : Set (∀ v, α v)) : ℝ :=
+  ν.real (manipulates M X fact)
 
 end ManipulationGame
 
@@ -374,6 +381,126 @@ theorem policy_replace_lt {βL : ℝ} (hβ : 0 < βL) :
     policy_real_of_pair L0 reward (u := 0) (a := 0) (a' := 1) (by decide) (by decide), h00, h01,
     h10, h11]
   exact Real.sigmoid_lt (by nlinarith)
+
+/-! #### The manipulation game of the four structures -/
+
+/-- The endogenous variables are the thatched roof, the drought and the fire. -/
+inductive Var | R | D | F
+  deriving DecidableEq, Fintype, Repr
+
+/-- The context settles whether the roof is thatched and whether there was a drought. -/
+structure Context where
+  R : Bool
+  D : Bool
+  deriving DecidableEq, Fintype, Inhabited, Repr
+
+instance : MeasurableSpace Context := ⊤
+
+/-- Only the roof bears on the fire. -/
+def edgesR : Finset (Var × Var) := {(.R, .F)}
+
+/-- Only the drought bears on the fire. -/
+def edgesD : Finset (Var × Var) := {(.D, .F)}
+
+/-- The roof and the drought both bear on the fire. -/
+def edges : Finset (Var × Var) := {(.R, .F), (.D, .F)}
+
+/-- The structure in which the house catches fire just in case its roof is thatched. -/
+def semR : CausalModel Context Var fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edgesR⟩
+  eqn | .R => fun u _ ↦ u.R | .D => fun u _ ↦ u.D | .F => fun _ x ↦ x .R
+
+/-- The structure in which the house catches fire just in case there was a drought. -/
+def semD : CausalModel Context Var fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edgesD⟩
+  eqn | .R => fun u _ ↦ u.R | .D => fun u _ ↦ u.D | .F => fun _ x ↦ x .D
+
+/-- The conjunctive structure, in which the fire needs both. -/
+def semConj : CausalModel Context Var fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
+  eqn | .R => fun u _ ↦ u.R | .D => fun u _ ↦ u.D | .F => fun _ x ↦ x .R && x .D
+
+/-- The disjunctive structure, in which either suffices for the fire. -/
+def semDisj : CausalModel Context Var fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
+  eqn | .R => fun u _ ↦ u.R | .D => fun u _ ↦ u.D | .F => fun _ x ↦ x .R || x .D
+
+instance : DecidableRel semR.graph.Adj := fun w v ↦ inferInstanceAs (Decidable ((w, v) ∈ edgesR))
+
+instance : DecidableRel semD.graph.Adj := fun w v ↦ inferInstanceAs (Decidable ((w, v) ∈ edgesD))
+
+instance : DecidableRel semConj.graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable ((w, v) ∈ edges))
+
+instance : DecidableRel semDisj.graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable ((w, v) ∈ edges))
+
+instance : semR.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
+
+instance : semD.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
+
+instance : semConj.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
+
+instance : semDisj.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
+
+/-- The explanandum: the house catches fire. -/
+def fire : Set (Var → Bool) := {w | w .F = true}
+
+-- Table 4: the contexts in which intervening on a variable changes whether the house catches
+-- fire; a reward of the table is the probability of the set
+theorem manipulates_semR_R : manipulates semR .R fire = Set.univ :=
+  Set.eq_univ_of_forall fun ⟨r, d⟩ ↦ by
+    cases r <;> cases d <;> simp only [manipulates, fire, Set.mem_ofPred_eq] <;> decide
+
+theorem manipulates_semR_D : manipulates semR .D fire = ∅ :=
+  Set.eq_empty_of_forall_notMem fun ⟨r, d⟩ ↦ by
+    cases r <;> cases d <;> simp only [manipulates, fire, Set.mem_ofPred_eq] <;> decide
+
+theorem manipulates_semD_R : manipulates semD .R fire = ∅ :=
+  Set.eq_empty_of_forall_notMem fun ⟨r, d⟩ ↦ by
+    cases r <;> cases d <;> simp only [manipulates, fire, Set.mem_ofPred_eq] <;> decide
+
+theorem manipulates_semD_D : manipulates semD .D fire = Set.univ :=
+  Set.eq_univ_of_forall fun ⟨r, d⟩ ↦ by
+    cases r <;> cases d <;> simp only [manipulates, fire, Set.mem_ofPred_eq] <;> decide
+
+theorem manipulates_semConj_R : manipulates semConj .R fire = {u | u.D = true} :=
+  Set.ext fun ⟨r, d⟩ ↦ by
+    cases r <;> cases d <;> simp only [manipulates, fire, Set.mem_ofPred_eq] <;> decide
+
+theorem manipulates_semConj_D : manipulates semConj .D fire = {u | u.R = true} :=
+  Set.ext fun ⟨r, d⟩ ↦ by
+    cases r <;> cases d <;> simp only [manipulates, fire, Set.mem_ofPred_eq] <;> decide
+
+theorem manipulates_semDisj_R : manipulates semDisj .R fire = {u | u.D = false} :=
+  Set.ext fun ⟨r, d⟩ ↦ by
+    cases r <;> cases d <;> simp only [manipulates, fire, Set.mem_ofPred_eq] <;> decide
+
+theorem manipulates_semDisj_D : manipulates semDisj .D fire = {u | u.R = false} :=
+  Set.ext fun ⟨r, d⟩ ↦ by
+    cases r <;> cases d <;> simp only [manipulates, fire, Set.mem_ofPred_eq] <;> decide
+
+variable (ν : Measure Context)
+
+-- §4.3.1: with the roof less probable than the drought, intervening on the roof earns more in
+-- the conjunctive structure
+theorem manipulationReward_semConj_lt (h : ν.real {u | u.R = true} < ν.real {u | u.D = true}) :
+    manipulationReward semConj ν .D fire < manipulationReward semConj ν .R fire := by
+  rw [manipulationReward, manipulationReward, manipulates_semConj_R, manipulates_semConj_D]
+  exact h
+
+-- §4.3.1: and less in the disjunctive structure
+theorem manipulationReward_semDisj_lt [IsProbabilityMeasure ν]
+    (h : ν.real {u | u.R = true} < ν.real {u | u.D = true}) :
+    manipulationReward semDisj ν .R fire < manipulationReward semDisj ν .D fire := by
+  have hc (p : Context → Bool) : ν.real {u | p u = false} = 1 - ν.real {u | p u = true} := by
+    rw [← probReal_compl_eq_one_sub MeasurableSpace.measurableSet_top]
+    congr 1
+    ext u
+    simp
+  rw [manipulationReward, manipulationReward, manipulates_semDisj_R, manipulates_semDisj_D,
+    hc (·.D), hc (·.R)]
+  linarith
 
 end RoofReplacement
 
