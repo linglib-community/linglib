@@ -29,6 +29,7 @@ rather than a curated feature, the first step from annotated stimuli toward pars
   gloss, an element being a category label when written without lower-case letters, and the
   labels of a gloss.
 * `GlossedWord.IsAligned`: the word is segmented as its gloss is.
+* `Datum.glossedWord?`: the glossed word of a row printed as a given form.
 * `GlossedWord.stem`, `GlossedWord.wordform`, `GlossedWord.labels`,
   `GlossedWord.lexicalGloss?`, `GlossedWord.lexicalMorph?`: the first surface morph and the
   joined word, decapitalized, the word's category labels, and its first lexical gloss with the
@@ -179,6 +180,10 @@ def lexicalMorph? : Option (List Char) :=
 def wordform : List Char := w.morphs.flatten.map Gloss.toLower
 
 end GlossedWord
+
+/-- The glossed word of the row printed as `w`, the first if there are several. -/
+def Datum.glossedWord? (e : Datum) (w : String) : Option GlossedWord :=
+  ((e.glossedTokens.map (·.1)).zip e.glossedWords).lookup w
 
 /-- The row's gloss-line stream: each glossed word's form, split at its internal spaces, the
 stream that declared forms are matched against. -/
