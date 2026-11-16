@@ -70,7 +70,7 @@ infima and suprema of relations on vectors to those of rules.
 
 namespace Aggregation
 
-open Function
+open Function MeasurementTheory
 
 variable {ι α K : Type*}
 
@@ -87,8 +87,8 @@ scale, one for each individual, acting on a profile coordinatewise. -/
 
 /-- A statement about the measure of object–individual pairs that is invariant on a scale is
 invariant under its changes of scale applied to every individual alike. -/
-theorem _root_.Invariant.uncurry {β : Type*} [LE K] {S : Set (K ↪o K)} {φ : (α × ι → K) → β}
-    (h : Invariant S φ) :
+theorem _root_.MeasurementTheory.Invariant.uncurry {β G : Type*} [SMul G K] {S : Set G}
+    {φ : (α × ι → K) → β} (h : Invariant S φ) :
     Invariant (const ι '' S) fun v : Profile ι α K ↦ φ (Function.uncurry v) := by
   rintro _ ⟨u, hu, rfl⟩ v
   exact h u hu (Function.uncurry v)
@@ -109,10 +109,15 @@ def ordinal [LE K] : Set (ι → K ↪o K) := Set.univ
 
 /-- One strictly increasing change of scale applied to every individual; invariance under these
 is ordinal level comparability. -/
-def ordinalLevel [LE K] : Set (ι → K ↪o K) := const ι '' Set.univ
+def ordinalLevel [LE K] : Set (ι → K ↪o K) := Set.range (const ι)
 
-theorem ordinalLevel_subset_ordinal [LE K] : ordinalLevel ι K ⊆ ordinal ι K :=
-  Set.subset_univ _
+variable {ι K} in
+theorem mem_ordinal [LE K] (f : ι → K ↪o K) : f ∈ ordinal ι K :=
+  Set.mem_univ f
+
+variable {ι K} in
+theorem subset_ordinal [LE K] (S : Set (ι → K ↪o K)) : S ⊆ ordinal ι K :=
+  Set.subset_univ S
 
 variable [Semiring K] [PartialOrder K]
 
@@ -161,7 +166,7 @@ theorem ratioFull_subset_ratio : ratioFull ι K ⊆ ratio ι K :=
   const_image_subset_pi
 
 theorem cardinalFull_subset_ordinalLevel : cardinalFull ι K ⊆ ordinalLevel ι K :=
-  Set.image_mono (Set.subset_univ _)
+  Set.image_subset_range _ _
 
 end Classes
 

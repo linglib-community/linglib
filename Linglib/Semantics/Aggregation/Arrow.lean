@@ -32,6 +32,8 @@ with two or more members has a decisive proper subgroup.
 
 namespace Aggregation
 
+open MeasurementTheory
+
 variable {ι α K : Type*}
 
 /-! ### Arrow's theorem -/
@@ -98,9 +100,9 @@ theorem iff_of_pattern (hO : Invariant (ordinal ι K) a) (hI : Independent a)
     rw [hy, hy]
     funext i
     simp only [(h i).1, (h i).2]
-  calc a v x y ↔ a (f v • v) x y := by rw [hO _ (Set.mem_univ _) v]
+  calc a v x y ↔ a (f v • v) x y := by rw [hO _ (mem_ordinal _) v]
     _ ↔ a (f w • w) x y := hI _ _ x y ((hx v).trans (hx w).symm) hyw
-    _ ↔ a w x y := by rw [hO _ (Set.mem_univ _) w]
+    _ ↔ a w x y := by rw [hO _ (mem_ordinal _) w]
 
 theorem decisiveOn_of_almost (hW : WeakOrderValued a) (hP : WeakPareto a) (hI : Independent a)
     {G : Finset ι} {x y : α} (hxy : x ≠ y) (h : AlmostDecisiveOn a G x y) {z : α}

@@ -10,15 +10,15 @@ public import Linglib.Semantics.MeasurementTheory.Homogeneity
 
 Van Rooij measures individual–adjective pairs on one scale, so that *x is P-er than y is Q* compares
 two values of a single measure, and asks which changes of scale such a statement survives. The
-changes that preserve every comparison of pairs are [exactly the strictly increasing maps applied
-to all adjectives alike](##forall_comparative_comp_iff), a co-ordinal scale; [a separate
-origin for each adjective](##not_comparative_cardinalUnit) already undoes the comparison. A
-differential across adjectives needs a common unit and origin, a co-interval scale, on which a
-factor across adjectives [survives only as the factor $1$](##factor_cardinalFull_iff). Bale's
-universal degrees normalize each adjective's ranking and so [make ratios across adjectives
-meaningful](##factor_universal_ordinal) from merely ordinal measures, which van Rooij counts
-against them. On a shared scale the dimensions of a multidimensional adjective combine into a weak
-order, by their minimum on a co-ordinal scale and [by a weighted sum only on a co-interval
+changes that preserve every comparison of pairs are [exactly the strictly increasing maps applied to
+all adjectives alike](##forall_comparative_comp_iff), a co-ordinal scale; [a separate origin for
+each adjective](##not_comparative_cardinalUnit) already undoes the comparison. A differential across
+adjectives needs a common unit and origin, a co-interval scale, on which a factor across adjectives
+[survives only as the factor $1$](##factor_cardinalFull_iff). Bale's universal degrees normalize
+each adjective's ranking and so [make ratios across adjectives
+meaningful](##factor_universal_ordinal) from merely ordinal measures, a consequence van Rooij calls
+surprising. On a shared scale the dimensions of a multidimensional adjective combine into a weak
+order, by their minimum on a co-ordinal scale and [by a weighted sum on a co-interval
 one](##utilitarian_coInterval).
 
 ## Implementation notes
@@ -52,7 +52,7 @@ one](##utilitarian_coInterval).
 
 namespace VanRooij2011
 
-open Aggregation Finset Function
+open Aggregation Finset Function MeasurementTheory
 
 variable {X Ad : Type*}
 
@@ -79,13 +79,14 @@ section Sentences
 
 variable (x y z w : X) (P Q : Ad)
 
-theorem comparative_ordinalLevel : Invariant (ordinalLevel Ad ℝ) (comparative x P y Q) :=
-  (invariant_univ_lt (x, P) (y, Q)).uncurry
+theorem comparative_ordinalLevel : Invariant (ordinalLevel Ad ℝ) (comparative x P y Q) := by
+  rw [ordinalLevel, ← Set.image_univ]
+  exact (invariant_univ_lt (x, P) (y, Q)).uncurry
 
 /-- A change of scale preserves every comparison of individual–adjective pairs exactly when it
 applies one strictly increasing map to all adjectives, so the measure of pairs is unique up to the
 transformations of a co-ordinal scale. -/
--- pp. 348–349
+-- the co-ordinal scale, pp. 348–349
 theorem forall_comparative_comp_iff [Nontrivial X] {g : (Ad → ℝ) → Ad → ℝ} :
     (∀ (v : Profile Ad X ℝ) x P y Q,
       comparative x P y Q (g ∘ v) ↔ comparative x P y Q v) ↔
@@ -117,7 +118,7 @@ theorem forall_comparative_iff_iff_exists_strictMono {v w : Profile Ad X ℝ} :
 
 /-- A common unit with a separate origin for each adjective does not make a comparison across two
 adjectives meaningful. -/
--- p. 349, note 17
+-- the class of note 17, p. 349
 theorem not_comparative_cardinalUnit (hPQ : P ≠ Q) :
     ¬ Invariant (cardinalUnit Ad ℝ) (comparative x P y Q) := by
   intro h
@@ -133,7 +134,7 @@ theorem not_comparative_cardinalUnit (hPQ : P ≠ Q) :
   exact h₂ (h f ⟨1, one_pos, fun i ↦ if i = Q then 2 else 0, fun _ _ ↦ rfl⟩ v ▸ h₁)
 
 theorem not_comparative_ordinal (hPQ : P ≠ Q) : ¬ Invariant (ordinal Ad ℝ) (comparative x P y Q) :=
-  fun h ↦ not_comparative_cardinalUnit x y P Q hPQ (h.mono (Set.subset_univ _))
+  fun h ↦ not_comparative_cardinalUnit x y P Q hPQ (h.mono (subset_ordinal _))
 
 -- p. 349: a co-interval scale makes "5 cm taller than Mary is wide" meaningful
 theorem differential_cardinalFull {f : Ad → ℝ ↪o ℝ} (hf : f ∈ cardinalFull Ad ℝ) :
@@ -168,7 +169,8 @@ theorem factor_cardinalFull_iff {n : ℝ} (hne : (x, P) ≠ (y, Q)) :
   · rintro rfl _ ⟨u, ⟨a, ha, b, hu⟩, rfl⟩ v
     simp [factor, FactorEquative, hu, ha.ne']
 
--- p. 349, note 17: each origin cancels within its own difference
+-- the class of note 17, p. 349: each origin cancels within its own difference, as for (12)
+-- and (13), p. 348
 theorem differenceComparative_cardinalUnit :
     Invariant (cardinalUnit Ad ℝ) (differenceComparative x y P z w Q) := by
   rintro f ⟨a, ha, b, hf⟩ v
@@ -181,16 +183,16 @@ end Sentences
 
 /-! ### How much a scale fixes -/
 
--- p. 350: on a co-ordinal scale the measures of any pairs can take any values in the same order,
--- so the numbers represent nothing beyond the order
+-- the co-ordinal scale of p. 349: the measures of any pairs can take any values in the same
+-- order
 theorem exists_mem_ordinalLevel_forall_eq {M : ℕ} (v : Profile Ad X ℝ) (a : Fin M → X × Ad)
     (ha : StrictMono (uncurry v ∘ a)) {b : Fin M → ℝ} (hb : StrictMono b) :
     ∃ f ∈ ordinalLevel Ad ℝ, ∀ i, uncurry (f • v) (a i) = b i :=
   let ⟨g, _, hg⟩ := isPointHomogeneous_univ M _ b ha hb
-  ⟨_, ⟨g.toOrderEmbedding, Set.mem_univ _, rfl⟩, hg⟩
+  ⟨_, ⟨g.toOrderEmbedding, rfl⟩, hg⟩
 
--- p. 349: on a co-interval scale the measures of two pairs can take any two values in the same
--- order, the choice of a unit and an origin
+-- the co-interval scale of p. 349: the measures of two pairs can take any two values in the
+-- same order, the choice of a unit and an origin
 theorem exists_mem_cardinalFull_forall_eq (v : Profile Ad X ℝ) (a : Fin 2 → X × Ad)
     (ha : StrictMono (uncurry v ∘ a)) {b : Fin 2 → ℝ} (hb : StrictMono b) :
     ∃ f ∈ cardinalFull Ad ℝ, ∀ i, uncurry (f • v) (a i) = b i :=
@@ -207,7 +209,8 @@ noncomputable def universal (v : Profile Ad X ℝ) (C : Finset X) : Profile Ad X
 
 theorem universal_smul (f : Ad → ℝ ↪o ℝ) (v : Profile Ad X ℝ) (C : Finset X) :
     universal (f • v) C = universal v C :=
-  funext₂ fun x P ↦ congrFun (universalDegree_comp (f P) (v · P) C) x
+  funext₂ fun x P ↦ congrFun
+    ((factorsThrough_universalDegree C).invariant_univ (f P) (Set.mem_univ _) (v · P)) x
 
 theorem universal_ordinal {β : Type*} (C : Finset X) (a : Profile Ad X ℚ → β) :
     Invariant (ordinal Ad ℝ) fun v : Profile Ad X ℝ ↦ a (universal v C) :=
@@ -256,8 +259,9 @@ theorem maximin_coOrdinal [Nontrivial Ad] [Nontrivial X] :
     Arrovian (ordinalLevel Ad ℝ) (maximin : Rule Ad X ℝ) ∧ Anonymous (maximin : Rule Ad X ℝ) :=
   ⟨maximin_arrovian_ordinalLevel, maximin_anonymous⟩
 
-/-- Ranking by a weighted sum of two or more dimensions needs a co-interval scale: it survives a
-common change of unit and origin but not every common strictly increasing map. -/
+/-- Ranking by a weighted sum of two or more dimensions is meaningful on a co-interval scale and
+not on a co-ordinal one: it survives a common change of unit and origin but not every common
+strictly increasing map. -/
 -- p. 355
 theorem utilitarian_coInterval [Nontrivial X] (c : Ad → ℝ) {P Q : Ad} (hPQ : P ≠ Q)
     (hP : 0 < c P) (hQ : 0 < c Q) :

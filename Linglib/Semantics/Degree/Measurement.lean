@@ -43,7 +43,7 @@ derives them from the representations of a qualitative structure.
 
 @[expose] public section
 
-open Function
+open Function MeasurementTheory
 
 variable {E M N C D D' : Type*}
 
@@ -190,7 +190,7 @@ theorem invariant_similarity_factorEquative [CommSemiring K] [PartialOrder K] [I
 
 /-- A change of scale of an interval scale carries each differential to the differential rescaled
 by its unit. -/
-theorem exists_differentialComparative_comp_iff [Ring K] [IsDomain K] [PartialOrder K]
+theorem exists_differentialComparative_comp_iff [Semiring K] [PartialOrder K]
     {u : K ↪o K} (hu : u ∈ positiveAffine) :
     ∃ c > 0, ∀ (μ : E → K) a b (d : K),
       DifferentialComparative (u ∘ μ) a b (c * d) ↔ DifferentialComparative μ a b d := by

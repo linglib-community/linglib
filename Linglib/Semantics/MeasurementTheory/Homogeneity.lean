@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Algebra.Order.Group.OrderIso
+public import Mathlib.Algebra.Order.GroupWithZero.OrderIso
 public import Mathlib.Data.ENat.Lattice
 public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Order.Fin.Basic
@@ -16,21 +17,23 @@ import Mathlib.Tactic.Ring
 # Homogeneity and uniqueness of order automorphisms
 
 A set of order automorphisms of a linear order is `M`-point homogeneous when it carries any
-increasing `M`-tuple to any other, and `N`-point unique when two members agreeing at `N` points
-are equal. The largest such `M` and the least such `N` are what measurement theory calls the
-scale type of a totally ordered structure, read from its automorphisms. An ordered group acting on
-itself by translation is [`1`-point homogeneous](##isPointHomogeneous_one_range_mulLeft) and
-[`1`-point unique](##isPointUnique_one_range_mulLeft), the ratio and difference scales. The
-positive affine maps of an ordered field have [homogeneity](##homogeneity_positiveAffine) and
-[uniqueness](##uniqueness_positiveAffine) `2`, the interval scale. All its order automorphisms are
-[homogeneous at every length](##isPointHomogeneous_univ) and [unique at
-none](##not_isPointUnique_univ), the ordinal scale.
+increasing `M`-tuple to any other, and `N`-point unique when two members agreeing at `N` points are
+equal. The largest such `M` and the least such `N` are what measurement theory calls the scale type
+of a totally ordered structure, read from its automorphisms. An ordered group acting on itself by
+translation is [`1`-point homogeneous](##MeasurementTheory.isPointHomogeneous_one_range_mulLeft) and
+[`1`-point unique](##MeasurementTheory.isPointUnique_one_range_mulLeft), the ratio and difference
+scales. The positive affine maps of an ordered field have
+[homogeneity](##MeasurementTheory.homogeneity_positiveAffine) and
+[uniqueness](##MeasurementTheory.uniqueness_positiveAffine) `2`, the interval scale. All its order
+automorphisms are [homogeneous at every length](##MeasurementTheory.isPointHomogeneous_univ) and
+[unique at none](##MeasurementTheory.not_isPointUnique_univ), the ordinal scale.
 
 ## Implementation notes
 
 Homogeneity and uniqueness are properties of a set of order automorphisms of a linear order, so
 each kind of structure names its automorphisms and no type of relational structures is needed. On
-an order with fewer than `M` elements every set is vacuously `M`-point homogeneous.
+an order with fewer than `M` elements every set is vacuously `M`-point homogeneous, so that on a
+finite order `homogeneity` is `⊤`.
 
 ## References
 
@@ -41,6 +44,8 @@ an order with fewer than `M` elements every set is vacuously `M`-point homogeneo
 @[expose] public section
 
 open Set
+
+namespace MeasurementTheory
 
 variable {A : Type*} [LinearOrder A] {S T : Set (A ≃o A)} {M N : ℕ}
 
@@ -57,14 +62,6 @@ points are equal. -/
 -- [luce-krantz-suppes-tversky-1990] Definition 20.1, p. 116
 def IsPointUnique (S : Set (A ≃o A)) (N : ℕ) : Prop :=
   ∀ g ∈ S, ∀ h ∈ S, ∀ a : Fin N → A, StrictMono a → (∀ i, g (a i) = h (a i)) → g = h
-
-theorem IsPointHomogeneous.mono (h : S ⊆ T) (hS : IsPointHomogeneous S M) :
-    IsPointHomogeneous T M := fun a b ha hb ↦
-  let ⟨g, hg, hgab⟩ := hS a b ha hb
-  ⟨g, h hg, hgab⟩
-
-theorem IsPointUnique.anti (h : S ⊆ T) (hT : IsPointUnique T N) : IsPointUnique S N :=
-  fun g hg k hk ↦ hT g (h hg) k (h hk)
 
 theorem IsPointUnique.succ (h : IsPointUnique S N) : IsPointUnique S (N + 1) :=
   fun g hg k hk a ha hgk ↦
@@ -156,12 +153,12 @@ variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
 /-! ### Interval scales -/
 
 /-- The map `x ↦ a * x + b` with `0 < a`, as an order automorphism. -/
-private def affineIso (a : K) (ha : 0 < a) (b : K) : K ≃o K where
-  toFun x := a * x + b
-  invFun y := (y - b) / a
-  left_inv x := by simp [ha.ne']
-  right_inv y := by simp [ha.ne', mul_div_cancel₀]
-  map_rel_iff' {x y} := by simp [mul_le_mul_iff_of_pos_left ha]
+private def affineIso (a : K) (ha : 0 < a) (b : K) : K ≃o K :=
+  (OrderIso.mulLeft₀ a ha).trans (OrderIso.addRight b)
+
+private theorem affineIso_apply (a : K) (ha : 0 < a) (b x : K) :
+    affineIso a ha b x = a * x + b := by
+  simp [affineIso]
 
 theorem isPointHomogeneous_two_positiveAffine :
     IsPointHomogeneous (positiveAffine : Set (K ≃o K)) 2 := by
@@ -169,14 +166,12 @@ theorem isPointHomogeneous_two_positiveAffine :
   have hp' : 0 < p 1 - p 0 := sub_pos.2 (hp (by decide))
   have hq' : 0 < q 1 - q 0 := sub_pos.2 (hq (by decide))
   refine ⟨affineIso ((q 1 - q 0) / (p 1 - p 0)) (div_pos hq' hp')
-    (q 0 - (q 1 - q 0) / (p 1 - p 0) * p 0), ⟨_, div_pos hq' hp', _, fun _ ↦ rfl⟩, ?_⟩
-  rw [Fin.forall_fin_two]
-  refine ⟨?_, ?_⟩
-  · show (q 1 - q 0) / (p 1 - p 0) * p 0 + (q 0 - (q 1 - q 0) / (p 1 - p 0) * p 0) = q 0
-    ring
-  · show (q 1 - q 0) / (p 1 - p 0) * p 1 + (q 0 - (q 1 - q 0) / (p 1 - p 0) * p 0) = q 1
-    field_simp
-    ring
+    (q 0 - (q 1 - q 0) / (p 1 - p 0) * p 0),
+    ⟨_, div_pos hq' hp', _, affineIso_apply _ _ _⟩, ?_⟩
+  rw [Fin.forall_fin_two, affineIso_apply, affineIso_apply]
+  refine ⟨by ring, ?_⟩
+  field_simp
+  ring
 
 theorem isPointUnique_two_positiveAffine : IsPointUnique (positiveAffine : Set (K ≃o K)) 2 := by
   rintro g ⟨a, -, b, hg⟩ h ⟨c, -, d, hh⟩ p hp hgh
@@ -207,11 +202,11 @@ theorem not_isPointHomogeneous_three_positiveAffine :
 theorem not_isPointUnique_one_positiveAffine :
     ¬ IsPointUnique (positiveAffine : Set (K ≃o K)) 1 := by
   intro h
-  have := h (affineIso 1 one_pos 0) ⟨1, one_pos, 0, fun _ ↦ rfl⟩
-    (affineIso 2 two_pos 0) ⟨2, two_pos, 0, fun _ ↦ rfl⟩ (fun _ ↦ 0) (Subsingleton.strictMono _)
-    (fun _ ↦ by simp [affineIso])
+  have := h (affineIso 1 one_pos 0) ⟨1, one_pos, 0, affineIso_apply _ _ _⟩
+    (affineIso 2 two_pos 0) ⟨2, two_pos, 0, affineIso_apply _ _ _⟩ (fun _ ↦ 0)
+    (Subsingleton.strictMono _) (fun _ ↦ by simp [affineIso_apply])
   have := congrArg (fun g : K ≃o K ↦ g 1) this
-  simp [affineIso] at this
+  simp [affineIso_apply] at this
 
 /-- The positive affine maps carry any two points to any two, in order, and no three. -/
 theorem homogeneity_positiveAffine : homogeneity (positiveAffine : Set (K ≃o K)) = 2 :=
@@ -265,7 +260,7 @@ theorem isPointHomogeneous_univ (M : ℕ) : IsPointHomogeneous (univ : Set (K �
     rcases M with _ | M
     · refine ⟨affineIso 1 one_pos (b 0 - a 0), mem_univ _, fun i ↦ ?_⟩
       obtain rfl : i = 0 := Fin.eq_zero i
-      show 1 * a 0 + (b 0 - a 0) = b 0
+      rw [affineIso_apply]
       ring
     · have hpq : b (Fin.last M).castSucc < g (a (Fin.last (M + 1))) := by
         rw [← hg (Fin.last M)]
@@ -309,3 +304,5 @@ theorem uniqueness_univ : uniqueness (univ : Set (K ≃o K)) = ⊤ :=
   uniqueness_eq_top not_isPointUnique_univ
 
 end Field
+
+end MeasurementTheory

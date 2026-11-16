@@ -34,7 +34,7 @@ Pareto extension rule their supremum, by the self-duality of the nonnegative ort
 
 namespace Aggregation
 
-open Finset Function
+open Finset Function MeasurementTheory
 
 variable {ι α K : Type*}
 
@@ -302,7 +302,7 @@ theorem not_ratioInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠ j
 
 theorem not_ordinalInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠ j) (hi : 0 < c i)
     (hj : 0 < c j) : ¬ Invariant (ordinal ι K) (utilitarian c : Rule ι α K) :=
-  fun h ↦ not_ratioInvariant_utilitarian c hij hi hj (h.mono (Set.subset_univ _))
+  fun h ↦ not_ratioInvariant_utilitarian c hij hi hj (h.mono (subset_ordinal _))
 
 /-- The utilitarian rule needs differences of values: a strictly increasing map applied to every
 individual alike already changes it. -/
@@ -328,7 +328,7 @@ theorem not_ordinalLevelInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : 
         · simp [v, h₁, h₂, hu₀]
   have hy : const ι u • v y = 0 := funext fun l ↦ by
     simp [v, hxy.symm, hu₀]
-  have := (congrFun₂ (h _ ⟨u, Set.mem_univ _, rfl⟩ v) y x).mpr (by simp [v, hxy.symm, mul_comm])
+  have := (congrFun₂ (h _ ⟨u, rfl⟩ v) y x).mpr (by simp [v, hxy.symm, mul_comm])
   simp only [utilitarian_apply, Pi.smul_apply] at this
   rw [hx, hy] at this
   simp only [dotProduct_add, dotProduct_single, dotProduct_zero] at this
@@ -386,7 +386,7 @@ theorem maximin_apply :
 map moves every lowest value alike. -/
 theorem maximin_ordinalLevelInvariant : Invariant (ordinalLevel ι K) (maximin : Rule ι α K) := by
   refine invariant_ofRel ?_
-  rintro _ ⟨u, -, rfl⟩
+  rintro _ ⟨u, rfl⟩
   have key (p : ι → K) :
       univ.inf' univ_nonempty (const ι u • p) = u (univ.inf' univ_nonempty p) :=
     (apply_inf'_eq_inf'_comp univ_nonempty u fun a b ↦ u.monotone.map_min).symm

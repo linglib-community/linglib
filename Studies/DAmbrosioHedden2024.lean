@@ -59,7 +59,7 @@ comparative is vague.
 
 namespace DAmbrosioHedden2024
 
-open Aggregation Finset Quantifier Sassoon2013 Trivalent
+open Aggregation Finset MeasurementTheory Quantifier Sassoon2013 Trivalent
 
 variable {ι O K : Type*}
 

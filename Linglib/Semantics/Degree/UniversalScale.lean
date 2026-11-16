@@ -38,7 +38,7 @@ quasi-order, can be read on `C.image μ`, where universal degrees are computed.
 
 @[expose] public section
 
-open Finset
+open Finset MeasurementTheory
 
 /-! ### Positions in a finite scale -/
 
