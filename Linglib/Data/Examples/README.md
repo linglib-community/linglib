@@ -71,6 +71,33 @@ aligned by construction, and morpheme alignment is a property of the pairs.
 Printed results (ratings, rates, statistics) go to `Data/Statistics/`, not
 `paperFeatures`.
 
+## Typed features
+
+A column whose values form a closed set is declared, not left as strings. The data file is then
+an object `{"features": [...], "examples": [...]}`, and each feature names a `paperFeatures` key,
+the Lean `type` of its values, the `lean` name of its reader and its `levels`:
+
+```json
+{"key": "antecedent", "lean": "antecedent", "type": "Antecedent",
+ "doc": "The subject antecedents the paper compares.",
+ "levels": [{"name": "atomic", "label": "atomic", "doc": "a singular noun phrase ..."}, ...]}
+```
+
+The generator emits the type as an enum in `<AuthorYear>.Examples` with its reader
+(`Examples.antecedent : Datum → Option Examples.Antecedent`, or a `List` for a feature declared
+`"multiple": true`), and rejects a row whose value is not a declared level, a key that repeats
+without `multiple`, and a declared key no row records. A study defines its analysis as functions
+on the enum and writes no table of labels, so a value that drifts fails when the module is
+generated instead of leaving a theorem vacuous. `Rakosi2020.json` and `Angelopoulos2026.json` are
+examples.
+
+Declare a column when the paper's own taxonomy is finite: its constructions, conditions,
+diagnostics, classes. Leave as a string a column that names a lexical entry by its form (a verb,
+a particle), which a study matches against a fragment's inventory, and a number, which
+`Datum.nat?` reads. A column that restates what the gloss line shows (the person and number of a
+verb, the case of a noun) is not recorded at all: read it off the gloss
+(`GlossedWord.features`).
+
 ## Languages
 
 `languages.csv` is the language table of the data: one Glottolog row (name, level, macroarea,
@@ -216,9 +243,22 @@ aimed at. Known gaps:
   (Bakay et al. 2026, syntactic minimal pairs).
 - **Paradigm clusters** where N sentences only mean something together
   (Reinhart's (11a)–(11d)).
-- **Typed columns**: `paperFeatures` values are strings that each study
-  reads through its own table of labels (`parse?`), so a value the table
-  omits is skipped silently rather than rejected when the module is
-  generated.
+- **Alignment level of the gloss line.** A word whose surface and gloss segment differently
+  (1,263 of 33,423 glossed words, in 116 files, mostly as the source prints them) is dropped by
+  `Datum.glossedWords` together with its category labels. The plan follows `pyigt`, the CLDF
+  library for interlinear text: the generator segments the gloss line and records each word as
+  morpheme-aligned (Rule 2) or word-aligned (Rule 1 only), a reader of morphs requires the
+  first, and a reader of a word's labels accepts both. Lean then splits no strings in the
+  kernel.
+- **Declared abbreviations.** A gloss element counts as a category label when it has no
+  lower-case letter, which misses sources that write `2.sg` or `caus`. The Leipzig rules let a
+  work list its own abbreviations; a data file would declare them and the generator would check
+  its labels against the standard list and the declared ones.
+- **Readings into a collection.** `Datum.Fits` and `Datum.Checks` take a reader into `Option`.
+  A column that names a lexical entry is matched against a `Finset` inventory, so such a
+  theorem is written with a bounded quantifier over the inventory and carries no coverage
+  count; a fit over `Option`, `List` and `Finset` readers alike would cover it.
+- **Adoption of typed features.** Most data files predate them and their studies read closed
+  columns through `parse?` tables; a column is declared when its study is next audited.
 
 Extensions land when a consuming study demands them.
