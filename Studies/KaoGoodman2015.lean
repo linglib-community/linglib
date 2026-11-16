@@ -107,10 +107,9 @@ variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
 
 theorem listener_ne_zero_iff (hα : 0 < α) (u : Weather) (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
-      ∃ q, ν {q} ≠ 0 ∧ ∃ m', project q m' = project q m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [L1, listener_prod_fst_apply_singleton_ne_zero_iff]
-  simp only [S1, L0, speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff hα, sem,
-    Set.mem_preimage, Set.mem_singleton_iff]
+      ∃ q, ν {q} ≠ 0 ∧ ∃ m', project q m' = project q m ∧ m'.1 = u ∧ μ {m'} ≠ 0 :=
+  listener_prod_fst_speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff hα 0 μ ν sem
+    project u m
 
 -- Under the valence question, "terrible" can hyperbolically mean bad weather with negative
 -- valence, through the negative valence of terrible weather.
@@ -157,11 +156,7 @@ odds: the speaker says the same of them under every question, so which nonlitera
 listener infers is decided by the weather context and the affect prior. -/
 theorem nonliteral_odds (hα : 0 < α) {u s s' : Weather} (hs : s ≠ u) (hs' : s' ≠ u) (A : Affect) :
     (L1 μ ν α u).fst {(s, A)} * μ {(s', A)} = (L1 μ ν α u).fst {(s', A)} * μ {(s, A)} := by
-  change (L1 μ ν α).fst u _ * _ = (L1 μ ν α).fst u _ * _
-  rw [L1, listener_prod_fst]
-  refine listener_apply_singleton_mul_eq_of_apply_eq _ _ ?_
-  simp only [Measure.finsetSum_apply, Measure.smul_apply]
-  refine Finset.sum_congr rfl fun q _ ↦ ?_
+  refine listener_prod_fst_apply_singleton_mul_eq μ ν (S1 μ α) fun q _ ↦ ?_
   cases q
   · rw [S1_state_apply_singleton_of_ne μ α hα hs, S1_state_apply_singleton_of_ne μ α hα hs']
   · rfl
@@ -177,9 +172,8 @@ variable (π π' : Measure Weather) [IsProbabilityMeasure π] [IsProbabilityMeas
 omit [IsProbabilityMeasure π'] in
 -- The literal listener who hears a state named believes that state and the affect prior there.
 theorem L0_compProd {u : Weather} (hu : π {u} ≠ 0) :
-    L0 (π ⊗ₘ κ) u = Measure.dirac u ⊗ₘ κ := by
-  rw [L0, listener_truthful_apply]
-  exact Measure.cond_preimage_fst_singleton_compProd π κ hu (measure_ne_top _ _)
+    L0 (π ⊗ₘ κ) u = Measure.dirac u ⊗ₘ κ :=
+  listener_truthful_preimage_fst_compProd π κ hu
 
 /-- The speaker does not depend on the weather context: two contexts that leave every state
 possible and share the affect prior have the same speaker, so the context enters an interpretation
@@ -317,9 +311,8 @@ theorem valence_le_prior (hπ : ∀ u, π {u} ≠ 0) (hα : 0 < α) (hν : ν {.
       lintegral_indicator_one .of_discrete, Measure.restrict_apply .of_discrete, hTN,
       setLIntegral_congr_fun (g := fun _ ↦ ν {.valence} * σ false) .of_discrete
         (fun m hm ↦ by rw [show m.2.1 = false from Bool.not_eq_true _ ▸ hm]), setLIntegral_const]
-  -- the softmax of the least likely affect is below that of its complement
+  -- the least likely affect gets at most the uniform share, its complement at least that
   have hσle : (π ⊗ₘ κ) Pᶜ ≠ 0 → σ true ≤ σ false := fun hN ↦ by
-    simp only [hσ, hQc]
     have hY0 : ∑ u, κ u Qᶜ ^ α ≠ 0 := fun h0 ↦ hN <| by
       rw [hμN]
       refine (lintegral_eq_zero_iff (.of_discrete)).2 (.of_forall fun u ↦ ?_)
@@ -327,38 +320,28 @@ theorem valence_le_prior (hπ : ∀ u, π {u} ≠ 0) (hα : 0 < α) (hν : ν {.
         ((Finset.sum_eq_zero_iff.1 h0) u (Finset.mem_univ u))
     have hY : ∑ u, κ u Qᶜ ^ α ≠ ∞ :=
       ENNReal.sum_ne_top.2 fun u _ ↦ ENNReal.rpow_ne_top_of_nonneg hα.le (measure_ne_top _ _)
-    refine ENNReal.div_le_of_le_mul ?_
-    rw [← ENNReal.mul_div_right_comm, ENNReal.le_div_iff_mul_le (.inl hY0) (.inl hY),
-      Finset.mul_sum, Finset.mul_sum]
-    refine Finset.sum_le_sum fun u _ ↦ ?_
-    rw [mul_comm (κ t Qᶜ ^ α)]
-    exact mul_le_mul' (ENNReal.rpow_le_rpow (ht u) hα.le)
-      (ENNReal.rpow_le_rpow (hcompl u) hα.le)
+    calc σ true ≤ (Fintype.card Weather : ℝ≥0∞)⁻¹ := by
+          simpa [hσ] using Kernel.ofWeights_apply_singleton_le_inv_card
+            (w := fun (_ : Unit) u ↦ κ u Q ^ α) (a := ()) (b := t)
+            fun u ↦ ENNReal.rpow_le_rpow (ht u) hα.le
+      _ ≤ σ false := by
+          simpa [hσ, hQc] using Kernel.inv_card_le_ofWeights_apply_singleton
+            (w := fun (_ : Unit) u ↦ κ u Qᶜ ^ α) (a := ()) (b := t)
+            (fun u ↦ ENNReal.rpow_le_rpow (hcompl u) hα.le) hY0 hY
   -- Bayes' rule
-  rw [L1, listener_prod_fst, listener_apply, cond_apply .univ, Set.univ_inter,
-    withDensity_apply _ .univ, withDensity_apply _ .of_discrete, Measure.restrict_univ,
-    ← lintegral_add_compl _ (.of_discrete : MeasurableSet P)]
+  rw [L1, listener_prod_fst]
+  refine listener_apply_le_of_setLIntegral_mul_le .of_discrete ?_
   simp_rw [hg]
-  rw [hA, hB, ← ENNReal.div_eq_inv_mul]
-  refine ENNReal.div_le_of_le_mul ?_
-  set A := ν {.state} * (π {t} * κ t Q) + ν {.valence} * σ true * (π ⊗ₘ κ) P
-  set B := ν {.state} * (π {t} * κ t Qᶜ) + ν {.valence} * σ false * (π ⊗ₘ κ) Pᶜ
-  have hAB : A * (π ⊗ₘ κ) Pᶜ ≤ B * (π ⊗ₘ κ) P := by
-    rw [add_mul, add_mul]
-    refine add_le_add ?_ ?_
-    · calc ν {.state} * (π {t} * κ t Q) * (π ⊗ₘ κ) Pᶜ
-          ≤ ν {.state} * (π {t} * (π ⊗ₘ κ) P) * κ t Qᶜ := by gcongr
-        _ = ν {.state} * (π {t} * κ t Qᶜ) * (π ⊗ₘ κ) P := by ring
-    · rcases eq_or_ne ((π ⊗ₘ κ) Pᶜ) 0 with hN | hN
-      · simp [hN]
-      · calc ν {.valence} * σ true * (π ⊗ₘ κ) P * (π ⊗ₘ κ) Pᶜ
-            ≤ ν {.valence} * σ false * (π ⊗ₘ κ) P * (π ⊗ₘ κ) Pᶜ := by gcongr; exact hσle hN
-          _ = ν {.valence} * σ false * (π ⊗ₘ κ) Pᶜ * (π ⊗ₘ κ) P := by ring
-  calc A = A * ((π ⊗ₘ κ) P + (π ⊗ₘ κ) Pᶜ) := by
-        rw [prob_add_prob_compl (.of_discrete), mul_one]
-    _ = A * (π ⊗ₘ κ) P + A * (π ⊗ₘ κ) Pᶜ := mul_add _ _ _
-    _ ≤ A * (π ⊗ₘ κ) P + B * (π ⊗ₘ κ) P := by gcongr
-    _ = (π ⊗ₘ κ) P * (A + B) := by ring
+  rw [hA, hB, add_mul, add_mul]
+  refine add_le_add ?_ ?_
+  · calc ν {.state} * (π {t} * κ t Q) * (π ⊗ₘ κ) Pᶜ
+        ≤ ν {.state} * (π {t} * (π ⊗ₘ κ) P) * κ t Qᶜ := by gcongr
+      _ = ν {.state} * (π {t} * κ t Qᶜ) * (π ⊗ₘ κ) P := by ring
+  · rcases eq_or_ne ((π ⊗ₘ κ) Pᶜ) 0 with hN | hN
+    · simp [hN]
+    · calc ν {.valence} * σ true * (π ⊗ₘ κ) P * (π ⊗ₘ κ) Pᶜ
+          ≤ ν {.valence} * σ false * (π ⊗ₘ κ) P * (π ⊗ₘ κ) Pᶜ := by gcongr; exact hσle hN
+        _ = ν {.valence} * σ false * (π ⊗ₘ κ) Pᶜ * (π ⊗ₘ κ) P := by ring
 
 end Context
 

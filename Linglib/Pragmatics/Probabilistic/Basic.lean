@@ -140,6 +140,33 @@ theorem listener_apply_eq_of_apply_singleton_eq_mul {μ : Measure W} {S : W → 
     listener μ S u' = listener μ S u :=
   Kernel.ofDensity_apply_eq_of_eq_mul μ (f := fun _ w ↦ S w {u}) hc0 hc h
 
+/-- **Sufficiency.** Where the speaker gives the utterance one positive mass throughout an event,
+the listener who conditions on the event holds the prior conditioned on it: within the event the
+utterance tells her nothing. -/
+theorem cond_listener_apply {μ : Measure W} {S : W → Measure U} {u : U} {s : Set W}
+    (hs : MeasurableSet s) {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞) (h : ∀ w ∈ s, S w {u} = c)
+    (hfin : ∫⁻ w, S w {u} ∂μ ≠ ∞) : (listener μ S u)[|s] = μ[|s] := by
+  rw [listener_apply, cond_cond_eq_cond_inter' .univ hs
+    (by rwa [withDensity_apply _ .univ, Measure.restrict_univ]), Set.univ_inter]
+  exact cond_withDensity_of_forall_mem_eq μ hs hc0 hc h
+
+/-- An utterance does not raise the probability of an event when the speaker's mass on it,
+integrated over the event and weighted by the prior of the complement, is at most her mass
+integrated over the complement and weighted by the prior of the event. -/
+theorem listener_apply_le_of_setLIntegral_mul_le {μ : Measure W} [IsProbabilityMeasure μ]
+    {S : W → Measure U} {u : U} {E : Set W} (hE : MeasurableSet E)
+    (h : (∫⁻ w in E, S w {u} ∂μ) * μ Eᶜ ≤ (∫⁻ w in Eᶜ, S w {u} ∂μ) * μ E) :
+    listener μ S u E ≤ μ E := by
+  rw [listener_apply, cond_apply .univ, Set.univ_inter, withDensity_apply _ .univ,
+    withDensity_apply _ hE, Measure.restrict_univ, ← lintegral_add_compl _ hE,
+    ← ENNReal.div_eq_inv_mul]
+  refine ENNReal.div_le_of_le_mul ?_
+  calc ∫⁻ w in E, S w {u} ∂μ
+      = (∫⁻ w in E, S w {u} ∂μ) * μ E + (∫⁻ w in E, S w {u} ∂μ) * μ Eᶜ := by
+        rw [← mul_add, prob_add_prob_compl hE, mul_one]
+    _ ≤ (∫⁻ w in E, S w {u} ∂μ) * μ E + (∫⁻ w in Eᶜ, S w {u} ∂μ) * μ E := by gcongr
+    _ = μ E * ((∫⁻ w in E, S w {u} ∂μ) + ∫⁻ w in Eᶜ, S w {u} ∂μ) := by ring
+
 variable [MeasurableSingletonClass W]
 
 theorem listener_apply_singleton' (u : U) (w : W) :

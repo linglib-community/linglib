@@ -14,17 +14,13 @@ averaged over lexica, and [the two presentations agree](##listener_prod_fst); he
 the lexicon is [the listener of the speaker averaged over states](##listener_prod_snd). A state
 is possible after an utterance exactly when it has positive prior and some lexicon of positive
 prior has its speaker produce the utterance there
-([the union of the lexica's supports](##listener_prod_fst_apply_singleton_ne_zero_iff)).
+([the union of the lexica's supports](##listener_prod_fst_apply_singleton_ne_zero_iff)), and two
+states the speakers of every such lexicon treat alike [keep their prior
+odds](##listener_prod_fst_apply_singleton_mul_eq).
 
 Nothing requires the latent to be a lexicon: a threshold, a comparison class, a scope reading, a
 question under discussion or the prior that the speaker knows and the listener does not enters
 the same way.
-
-## Main statements
-
-* `RSA.listener_prod_fst`
-* `RSA.listener_prod_snd`
-* `RSA.listener_prod_fst_apply_singleton_ne_zero_iff`
 
 ## References
 
@@ -74,6 +70,20 @@ theorem listener_prod_snd (μ : Measure A) (ν : Measure B) (S : A × B → Meas
     exact congrArg _ <| Finset.sum_congr rfl fun _ _ ↦ by
       rw [Finset.sum_mul]
       exact Finset.sum_congr rfl fun _ _ ↦ by ring
+
+/-- Against a product prior, the listener keeps the prior odds of two states at which the speaker
+gives the utterance the same mass at every value of positive prior of the second coordinate. -/
+theorem listener_prod_fst_apply_singleton_mul_eq (μ : Measure A) (ν : Measure B)
+    (S : A × B → Measure U) {u : U} {a₁ a₂ : A}
+    (h : ∀ b, ν {b} ≠ 0 → S (a₁, b) {u} = S (a₂, b) {u}) :
+    (listener (μ.prod ν) S).fst u {a₁} * μ {a₂} = (listener (μ.prod ν) S).fst u {a₂} * μ {a₁} := by
+  rw [listener_prod_fst]
+  refine listener_apply_singleton_mul_eq_of_apply_eq _ _ ?_
+  simp only [Measure.finsetSum_apply, Measure.smul_apply]
+  refine Finset.sum_congr rfl fun b _ ↦ ?_
+  rcases eq_or_ne (ν {b}) 0 with hb | hb
+  · rw [hb, zero_smul, zero_smul]
+  · rw [h b hb]
 
 variable (μ : Measure A) [IsFiniteMeasure μ] (ν : Measure B) [IsFiniteMeasure ν]
   (S : A × B → Measure U) [∀ p, IsFiniteMeasure (S p)] (u : U) (a : A)
