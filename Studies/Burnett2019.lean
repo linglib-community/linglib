@@ -2,12 +2,12 @@ module
 
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Linglib.Data.Statistics.Burnett2019
-public import Linglib.Pragmatics.Probabilistic.Basic
 public import Linglib.Pragmatics.SocialMeaning.Dimension
 public import Linglib.Pragmatics.SocialMeaning.IndexicalField
 public import Linglib.Pragmatics.SocialMeaning.Persona
 public import Studies.Eckert2008
 public import Studies.Labov2012
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Burnett (2019): Signalling games, sociolinguistic variation and the construction of style
@@ -75,7 +75,7 @@ variable [Fintype V] [MeasurableSpace V] [MeasurableSingletonClass V]
 
 /-- The literal listener conditions the prior on the variant's Eckert–Montague field (11). -/
 noncomputable abbrev L0 (prior : Measure (Persona G)) : Kernel V (Persona G) :=
-  listener prior (truthful fun v ↦ ↑(F.personae v))
+  literalListener prior (fun v ↦ ↑(F.personae v))
 
 /-- The speaker is the softmax of the literal listener's informativity at rationality `α`, the
 variants costing nothing (12), (13). -/
@@ -96,7 +96,7 @@ theorem indexes_S1 {α : ℝ} (hα : 0 < α) (prior : Measure (Persona G)) [IsFi
     (AssociationField.ofKernel (S1 F α prior)).Indexes v π ↔
       (∃ p ∈ F.indexes v, p ∈ π.1) ∧ prior {π} ≠ 0 := by
   rw [AssociationField.indexes_ofKernel,
-    speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff hα, Finset.mem_coe,
+    speaker_literalListener_dirac_apply_singleton_ne_zero_iff hα, Finset.mem_coe,
     GroundedField.mem_personae, GroundedField.meets_iff]
 
 end Game
@@ -136,11 +136,11 @@ variable [Fintype V] [MeasurableSpace V] [MeasurableSingletonClass V] {prior : M
 include hα
 
 theorem S1_symm_persona_real_singleton : (S1 F α prior h.symm.persona).real {v} = 0 :=
-  speaker_listener_truthful_dirac_real_singleton_eq_zero hα 0 prior _
+  speaker_literalListener_dirac_real_singleton_eq_zero hα 0 prior _
     (Finset.mem_coe.not.2 h.symm_persona_notMem_personae)
 
 theorem L1_real_singleton_symm_persona : (L1 F α prior v).real {h.symm.persona} = 0 := by
-  rw [measureReal_def, listener_speaker_listener_truthful_apply_singleton_of_notMem hα 0 prior
+  rw [measureReal_def, listener_speaker_literalListener_apply_singleton_of_notMem hα 0 prior
     (fun u ↦ ↑(F.personae u)) (w := h.symm.persona)
     (Finset.mem_coe.not.2 h.symm_persona_notMem_personae), ENNReal.toReal_zero]
 
@@ -180,7 +180,7 @@ personae shift between the variants together. -/
 theorem S1_eq {p p' : Persona G} (hp : prior {p} ≠ 0) (hp' : prior {p'} ≠ 0)
     (hl : p ≠ h.persona) (hr : p ≠ h.symm.persona) (hl' : p' ≠ h.persona)
     (hr' : p' ≠ h.symm.persona) : S1 F α prior p' = S1 F α prior p :=
-  speaker_listener_truthful_dirac_congr hα 0 prior _ hp hp' fun u ↦ by
+  speaker_literalListener_dirac_congr hα 0 prior _ hp hp' fun u ↦ by
     simp only [Finset.mem_coe, h.mem_personae_of_ne hl hr (hvw u),
       h.mem_personae_of_ne hl' hr' (hvw u)]
 
@@ -232,13 +232,13 @@ include hvw hα
 persona but the one its rival indexes. -/
 theorem S1_real_singleton_of_ne {p : Persona G} (hp : prior {p} ≠ 0) (hl : p ≠ h.persona)
     (hr : p ≠ h.symm.persona) : (S1 F α prior p).real {v} = share h prior α := by
-  rw [speaker_listener_truthful_dirac_zero_real_singleton_of_pair hα prior _ hp h.ne
+  rw [speaker_literalListener_dirac_zero_real_singleton_of_pair hα prior _ hp h.ne
     (h.mem_personae_of_ne hl hr (.inl rfl)) (h.mem_personae_of_ne hl hr (.inr rfl))
     fun u _ ↦ hvw u, measureReal_personae h, measureReal_personae h.symm, share]
 
 theorem S1_persona_real_singleton (hp : prior {h.persona} ≠ 0) :
     (S1 F α prior h.persona).real {v} = 1 := by
-  rw [measureReal_def, speaker_listener_truthful_dirac_eq_one (u := v) hα 0 prior
+  rw [measureReal_def, speaker_literalListener_dirac_eq_one (u := v) hα 0 prior
     (fun u ↦ ↑(F.personae u)) hp (Finset.mem_coe.2 h.persona_mem_personae) fun u hu ↦ ?_,
     ENNReal.toReal_one]
   obtain rfl := (hvw u).resolve_left hu

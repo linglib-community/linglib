@@ -303,10 +303,10 @@ theorem expectedReward_listener_filter {S : U → Finset (K → V)} {u : U} (p :
     [DecidablePred p] (hp : ∃ x, p x) (f : K) (hS : S u = univ.filter fun w ↦ p (w f))
     (val : V → ℝ) (feat : A → Finset K) (a : A) :
     ∫ w, reward val feat a w
-        ∂(RSA.listener (uniformOn Set.univ) (truthful fun u ↦ (S u : Set (K → V))) u) =
+        ∂(RSA.literalListener (uniformOn Set.univ) (fun u ↦ (S u : Set (K → V))) u) =
       ∑ k ∈ feat a, if k = f then (∑ x with p x, val x) / (univ.filter p).card
         else (∑ x, val x) / Fintype.card V := by
-  simp only [integral_fintype .of_finite, smul_eq_mul, listener_uniformOn_truthful_real_singleton,
+  simp only [integral_fintype .of_finite, smul_eq_mul, literalListener_uniformOn_real_singleton,
       hS, mem_filter, mem_univ,
     true_and,
     reward, mul_sum]
@@ -359,11 +359,11 @@ def featSpotted : Fin 3 → Finset Feature
 
 /-- The literal listener (3) at the uniform prior over worlds. -/
 noncomputable abbrev listener : Kernel (Feature × Value) (Feature → Value) :=
-  RSA.listener (uniformOn Set.univ) (truthful fun u ↦ (sem u : Set (Feature → Value)))
+  RSA.literalListener (uniformOn Set.univ) (fun u ↦ (sem u : Set (Feature → Value)))
 
 /-- The prior as a listener who has heard nothing. -/
 noncomputable abbrev prior : Kernel (Feature × Value) (Feature → Value) :=
-  RSA.listener (uniformOn Set.univ) (truthful fun _ ↦ ((univ : Finset (Feature → Value)) : Set _))
+  RSA.literalListener (uniformOn Set.univ) (fun _ ↦ ((univ : Finset (Feature → Value)) : Set _))
 
 variable (fs : Fin 3 → Finset Feature) (u : Feature × Value) (a : Fin 3) {β βS : ℝ}
 

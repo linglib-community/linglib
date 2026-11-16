@@ -1,6 +1,8 @@
 module
 
-public import Linglib.Pragmatics.Probabilistic.Basic
+public import Linglib.Pragmatics.Probabilistic.Latent
+public import Linglib.Pragmatics.Probabilistic.Literal
+public import Linglib.Pragmatics.Probabilistic.Parse
 
 /-!
 # The recursion
@@ -13,7 +15,7 @@ alike](##RSA.iterate_recurse_apply_eq_of_apply_eq), whatever their costs.
 When the speaker knows the state, a listener keeps [exactly the states the listener she started
 from allows](##RSA.iterate_recurse_id_dirac_apply_singleton_ne_zero_iff), so that [no finite level
 excludes a state where an utterance is
-true](##RSA.iterate_recurse_listener_truthful_apply_singleton_ne_zero_iff): the recursion sharpens
+true](##RSA.iterate_recurse_literalListener_apply_singleton_ne_zero_iff): the recursion sharpens
 preferences among those states without making any of them impossible.
 
 ## References
@@ -140,13 +142,13 @@ theorem iterate_recurse_id_dirac_apply_singleton_ne_zero_iff [IsFiniteKernel L] 
 
 /-- When the speaker knows the state and the recursion starts from the literal listener, no level
 excludes a state of positive prior where the utterance is true, or admits any other. -/
-theorem iterate_recurse_listener_truthful_apply_singleton_ne_zero_iff {sem : U → Set W} (hα : 0 < α)
+theorem iterate_recurse_literalListener_apply_singleton_ne_zero_iff {sem : U → Set W} (hα : 0 < α)
     (n : ℕ) :
-    (recurse μ Kernel.id Measure.dirac α C)^[n] (listener μ (truthful sem)) u {w} ≠ 0 ↔
+    (recurse μ Kernel.id Measure.dirac α C)^[n] (literalListener μ sem) u {w} ≠ 0 ↔
       w ∈ sem u ∧ μ {w} ≠ 0 := by
   rw [iterate_recurse_id_dirac_apply_singleton_ne_zero_iff hα fun u w h ↦
-    ((listener_truthful_apply_singleton_ne_zero_iff μ sem u w).1 h).2,
-    listener_truthful_apply_singleton_ne_zero_iff]
+    ((literalListener_apply_singleton_ne_zero_iff μ sem u w).1 h).2,
+    literalListener_apply_singleton_ne_zero_iff]
 
 end Support
 

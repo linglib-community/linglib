@@ -72,7 +72,7 @@ nettles](##nettles_aux_focus_iff).
 
 namespace Cohen2013
 
-open Quantifier
+open Quantifier MeasureTheory ProbabilityTheory
 
 /-! ### The reinterpretation devices -/
 
@@ -83,8 +83,7 @@ def shift {E : Type*} (V : E → E → Prop) : (Set E → Prop) → E → Prop :
 
 section Reinterpret
 
-variable {α β : Type*} [MeasurableSpace α] [MeasurableSingletonClass α] [Fintype α]
-  (R : α → β → Prop) [∀ b, DecidablePred (R · b)]
+variable {α β : Type*} [MeasurableSpace α] (R : α → β → Prop)
 
 /-- The reinterpretation both devices perform,
 $\lambda x.\,\mathbf{gen}_y[R(y, x)][P(y)]$: with $R$ instantiation it is Predicate Transfer's
@@ -92,13 +91,14 @@ $T_G$, turning a property of individuals into the property of a kind whose insta
 bear it; with $R$ inclusion in the interval around a moment it is the habitual shift $\gamma$,
 turning a property of intervals into the property of a moment. -/
 def reinterpret (P : α → Prop) (x : β) : Prop :=
-  Cohen1999.gen Finset.univ (R · x) (fun _ ↦ True) P
+  Cohen1999.gen (uniformOn Set.univ) {y | R y x} {y | P y}
 
-instance (P : α → Prop) [DecidablePred P] (x : β) : Decidable (reinterpret R P x) := by
+instance [MeasurableSingletonClass α] [Fintype α] [∀ b, DecidablePred (R · b)] (P : α → Prop)
+    [DecidablePred P] (x : β) : Decidable (reinterpret R P x) := by
   unfold reinterpret; infer_instance
 
-theorem monotone_reinterpret : Monotone (reinterpret R) := fun _ _ h _ ↦
-  Cohen1999.monotone_gen h
+theorem monotone_reinterpret : Monotone (reinterpret R) := fun _ _ h x ↦
+  Cohen1999.scopeMonotone_gen {y | R y x} fun y ↦ h y
 
 end Reinterpret
 
@@ -370,14 +370,16 @@ abbrev eatsSomething : Fin 5 → Prop := fun _ ↦ True
 
 -- (7a), (9a)
 theorem nettles_object_focus :
-    Cohen1999.gen Finset.univ (fun _ ↦ True) eatsSomething (fun x ↦ ¬ eatsNettles x) ∧
+    Cohen1999.gen (uniformOn {x | eatsSomething x}) Set.univ {x | ¬ eatsNettles x} ∧
       ∃ x, eatsNettles x :=
   ⟨by decide, 4, rfl⟩
 
 /-- With focus on the auxiliary, *Cows do not eat nettles* denies that any cow eats nettles. -/
 theorem nettles_aux_focus_iff {α : Type*} [MeasurableSpace α] [MeasurableSingletonClass α]
     [Fintype α] (cow eats : α → Prop) [DecidablePred cow] [DecidablePred eats] :
-    ¬ Cohen1999.gen Finset.univ cow eats eats ↔ ∀ x, cow x → ¬ eats x := by
-  simp [Cohen1999.gen_self_iff, Finset.filter_nonempty_iff]
+    ¬ Cohen1999.gen (uniformOn {x | eats x}) {x | cow x} {x | eats x} ↔ ∀ x, cow x → ¬ eats x := by
+  rw [uniformOn, Cohen1999.gen_cond_self .of_discrete .of_discrete, not_not,
+    Measure.count_eq_zero_iff, Set.eq_empty_iff_forall_notMem]
+  exact ⟨fun h x hc he ↦ h x ⟨he, hc⟩, fun h x hx ↦ h x hx.2 hx.1⟩
 
 end Cohen2013

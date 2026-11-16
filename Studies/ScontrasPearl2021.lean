@@ -3,7 +3,7 @@ module
 public import Linglib.Core.MeasureTheory.Measure.Real
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.Probability.Kernel.Basic
-public import Linglib.Pragmatics.Probabilistic.LexicalUncertainty
+public import Linglib.Pragmatics.Probabilistic.QUD
 public import Linglib.Pragmatics.Probabilistic.Uniform
 public import Linglib.Semantics.Quantification.NumberTree
 public import Linglib.Semantics.Degree.Comparison
@@ -245,15 +245,15 @@ variable (D : NumberTree) [DecidableRel D] (n : ℕ)
 /-- The literal listener is uniform on the extension of the utterance under the scope
 interpretation, with no world prior (fn. 6). -/
 noncomputable def L0 (i : Scope) : Kernel Utt (World n) :=
-  listener (uniformOn Set.univ) (truthful fun u ↦ (↑(ext D n i u) : Set (World n)))
+  literalListener (uniformOn Set.univ) (fun u ↦ (↑(ext D n i u) : Set (World n)))
 
 instance (i : Scope) : IsFiniteKernel (L0 D n i) :=
-  inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
+  inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
 theorem map_L0_apply (i : Scope) (q : QUD) (u : Utt) (w : World n) :
     (L0 D n i).map (project n q) u {project n q w}
       = uniformOn ↑(ext D n i u) (↑(cell n q w) : Set (World n)) := by
-  rw [Kernel.map_apply_singleton, L0, listener_uniformOn_truthful_apply]
+  rw [Kernel.map_apply_singleton, L0, literalListener_uniformOn_apply]
   congr 1
   ext w'
   simp [cell]
@@ -265,11 +265,11 @@ answer to the question and is informative at rationality `α` about the belief o
 interpretation's literal listener about it. The utterances are costless (fn. 8). -/
 noncomputable def S1 : Kernel (World n × (Scope × QUD)) Utt :=
   Kernel.ofFunOfCountable fun p ↦
-    speaker α 0 ((L0 D n p.2.1).map (project n p.2.2)) Measure.dirac (project n p.2.2 p.1)
+    qudSpeaker α 0 (L0 D n p.2.1) (project n p.2.2) p.1
 
 theorem S1_apply (w : World n) (l : Scope × QUD) :
     S1 D n α (w, l) =
-      speaker α 0 ((L0 D n l.1).map (project n l.2)) Measure.dirac (project n l.2 w) := rfl
+      qudSpeaker α 0 (L0 D n l.1) (project n l.2) w := rfl
 
 instance : IsFiniteKernel (S1 D n α) :=
   ⟨⟨1, ENNReal.one_lt_top, fun p ↦ speaker_apply_univ_le_one α 0
@@ -278,7 +278,7 @@ instance : IsFiniteKernel (S1 D n α) :=
 theorem isMarkovKernel_S1 (hα : 0 ≤ α) : IsMarkovKernel (S1 D n α) := by
   refine ⟨fun p ↦ ?_⟩
   obtain ⟨w, l⟩ := p
-  rw [S1_apply]
+  rw [S1_apply, qudSpeaker]
   exact isProbabilityMeasure_speaker_dirac hα 0 _ ⟨.null, by
     rw [map_L0_apply, Ne, uniformOn_eq_zero_iff (Finset.finite_toSet _)]
     exact Set.nonempty_iff_ne_empty.mp
@@ -344,13 +344,13 @@ private theorem sum_utt (f : Utt → ℝ) : ∑ u, f u = f .amb + f .null :=
 theorem share_eq (hα : 0 ≤ α) (l : Scope × QUD) (w : World n) :
     share D n α l w
       = cellMass D n l .amb w ^ α / (cellMass D n l .amb w ^ α + cellMass D n l .null w ^ α) := by
-  rw [share, S1_apply, speaker_dirac_zero_real_singleton hα, sum_utt]
+  rw [share, S1_apply, qudSpeaker, speaker_dirac_zero_real_singleton hα, sum_utt]
   simp only [cellMass, measureReal_def, ENNReal.toReal_rpow]
 
 theorem share_nonneg (l : Scope × QUD) (w : World n) : 0 ≤ share D n α l w := measureReal_nonneg
 
 theorem share_le_one (l : Scope × QUD) (w : World n) : share D n α l w ≤ 1 := by
-  rw [share, S1_apply]
+  rw [share, S1_apply, qudSpeaker]
   exact speaker_real_singleton_le_one _ _ _ _ _ _
 
 theorem share_lt_one (hα : 0 ≤ α) (l : Scope × QUD) (w : World n) : share D n α l w < 1 := by
@@ -631,7 +631,8 @@ theorem map_L0_every_all (hn : 0 < n) (i : Scope) (w : World n) :
 -- §3.2, §5.1
 theorem S1_all_scope (hn : 0 < n) (w : World n) :
     S1 NumberTree.all n α (w, (.surface, .all)) = S1 NumberTree.all n α (w, (.inverse, .all)) := by
-  rw [S1_apply, S1_apply, speaker_dirac_eq_ofWeights, speaker_dirac_eq_ofWeights]
+  rw [S1_apply, S1_apply, qudSpeaker, qudSpeaker, speaker_dirac_eq_ofWeights,
+    speaker_dirac_eq_ofWeights]
   have key : ∀ u, (L0 NumberTree.all n .surface).map (project n .all) u {project n .all w}
       = (L0 NumberTree.all n .inverse).map (project n .all) u {project n .all w} := by
     intro u

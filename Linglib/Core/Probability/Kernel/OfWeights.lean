@@ -101,6 +101,33 @@ theorem ofWeights_apply_singleton_ne_zero {w : α → β → ℝ≥0∞} {a : α
   rw [ofWeights_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, not_or]
   exact ⟨h, ENNReal.sum_ne_top.mpr fun c _ ↦ htop c⟩
 
+/-- The least weight gets at most the uniform share. -/
+theorem ofWeights_apply_singleton_le_inv_card {w : α → β → ℝ≥0∞} {a : α} {b : β}
+    (h : ∀ c, w a b ≤ w a c) : ofWeights w a {b} ≤ (Fintype.card β : ℝ≥0∞)⁻¹ := by
+  have : Nonempty β := ⟨b⟩
+  have hsum : (Fintype.card β : ℝ≥0∞) * w a b ≤ ∑ c, w a c := by
+    simpa using Finset.card_nsmul_le_sum Finset.univ (w a) (w a b) fun c _ ↦ h c
+  rw [ofWeights_apply_singleton]
+  refine ENNReal.div_le_of_le_mul ?_
+  calc w a b = (Fintype.card β : ℝ≥0∞)⁻¹ * (Fintype.card β * w a b) := by
+        rw [← mul_assoc, ENNReal.inv_mul_cancel (Nat.cast_ne_zero.2 Fintype.card_ne_zero)
+          (ENNReal.natCast_ne_top _), one_mul]
+    _ ≤ (Fintype.card β : ℝ≥0∞)⁻¹ * ∑ c, w a c := by gcongr
+
+/-- The greatest weight gets at least the uniform share. -/
+theorem inv_card_le_ofWeights_apply_singleton {w : α → β → ℝ≥0∞} {a : α} {b : β}
+    (h : ∀ c, w a c ≤ w a b) (h0 : ∑ c, w a c ≠ 0) (htop : ∑ c, w a c ≠ ∞) :
+    (Fintype.card β : ℝ≥0∞)⁻¹ ≤ ofWeights w a {b} := by
+  have : Nonempty β := ⟨b⟩
+  have hsum : ∑ c, w a c ≤ (Fintype.card β : ℝ≥0∞) * w a b := by
+    simpa using Finset.sum_le_card_nsmul Finset.univ (w a) (w a b) fun c _ ↦ h c
+  rw [ofWeights_apply_singleton, ENNReal.le_div_iff_mul_le (.inl h0) (.inl htop)]
+  calc (Fintype.card β : ℝ≥0∞)⁻¹ * ∑ c, w a c
+      ≤ (Fintype.card β : ℝ≥0∞)⁻¹ * (Fintype.card β * w a b) := by gcongr
+    _ = w a b := by
+        rw [← mul_assoc, ENNReal.inv_mul_cancel (Nat.cast_ne_zero.2 Fintype.card_ne_zero)
+          (ENNReal.natCast_ne_top _), one_mul]
+
 theorem isProbabilityMeasure_ofWeights_of_absolutelyContinuous {w : α → β → ℝ≥0∞} {a : α}
     {μ : Measure β} [IsProbabilityMeasure μ] (htop : ∀ b, w a b ≠ ∞) (hμ : μ ≪ ofWeights w a) :
     IsProbabilityMeasure (ofWeights w a) := by

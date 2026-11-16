@@ -174,8 +174,8 @@ noncomputable def listener (φ : ℝ≥0∞) (μ : Measure State) : Kernel (List
 instance : IsFiniteKernel (listener φ μ) := inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
 
 theorem listener_zero (μ : Measure State) :
-    listener 0 μ = RSA.listener μ (truthful extension) := by
-  rw [listener, listener_truthful_eq_ofDensity]
+    listener 0 μ = RSA.literalListener μ extension := by
+  rw [listener, literalListener_eq_ofDensity]
   exact congrArg _ (funext noisy_zero)
 
 theorem lintegral_noisy_ne_top [IsFiniteMeasure μ] (hφ : φ ≠ ∞) (us : List Sentence) :
@@ -336,16 +336,16 @@ variable {μ : Measure State} {α : ℝ} {β : ℝ≥0} {syl : Syllogism} {c c' 
 
 theorem beliefAlignment_zero (μ : Measure State) (α : ℝ) :
     beliefAlignment 0 μ α =
-      speaker α 0 (RSA.listener μ (truthful fun c ↦ extension (Conclusion.said c)))
+      speaker α 0 (RSA.literalListener μ (fun c ↦ extension (Conclusion.said c)))
         fun syl ↦ μ[|extension syl.premises] := by
   unfold beliefAlignment reasoner naive
   rw [listener_zero]
   congr 1
   · funext c
-    exact (RSA.listener_truthful_apply μ _ _).trans
-      (RSA.listener_truthful_apply μ (fun c ↦ extension (Conclusion.said c)) c).symm
+    exact (RSA.literalListener_apply μ _ _).trans
+      (RSA.literalListener_apply μ (fun c ↦ extension (Conclusion.said c)) c).symm
   · funext syl
-    exact RSA.listener_truthful_apply μ _ _
+    exact RSA.literalListener_apply μ _ _
 
 private theorem ae_le_iff_subset (hμ : ∀ s, μ {s} ≠ 0) {A B : Set State} :
     A ≤ᵐ[μ] B ↔ A ⊆ B :=
@@ -362,7 +362,7 @@ private theorem measure_lt_of_notMem (hμ : ∀ s, μ {s} ≠ 0) {A B : Set Stat
 theorem beliefAlignment_zero_apply_singleton_eq_zero_iff (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α) :
     beliefAlignment 0 μ α syl {c} = 0 ↔
       ¬ extension syl.premises ⊆ extension (Conclusion.said c) := by
-  rw [beliefAlignment_zero, speaker_listener_truthful_apply_singleton_eq_zero_iff hα (o := syl)
+  rw [beliefAlignment_zero, speaker_literalListener_apply_singleton_eq_zero_iff hα (o := syl)
       cond_absolutelyContinuous, ae_cond_mem_iff .of_discrete, ae_le_iff_subset hμ]
 
 theorem beliefAlignment_zero_real_singleton_lt_iff (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α)
@@ -374,7 +374,7 @@ theorem beliefAlignment_zero_real_singleton_lt_iff (hμ : ∀ s, μ {s} ≠ 0) (
   have := cond_isProbabilityMeasure (μ := μ) (s := extension syl.premises) fun h ↦
     let ⟨s, hs⟩ := hne; hμ s (measure_mono_null (Set.singleton_subset_iff.2 hs) h)
   rw [beliefAlignment_zero]
-  exact speaker_zero_listener_truthful_real_singleton_lt_iff hα (o := syl) cond_absolutelyContinuous
+  exact speaker_zero_literalListener_real_singleton_lt_iff hα (o := syl) cond_absolutelyContinuous
     ((ae_cond_mem_iff .of_discrete).2 ((ae_le_iff_subset hμ).2 hc))
     ((ae_cond_mem_iff .of_discrete).2 ((ae_le_iff_subset hμ).2 hc'))
 

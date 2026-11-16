@@ -1,10 +1,10 @@
 module
 
-public import Linglib.Pragmatics.Probabilistic.Basic
 public import Linglib.Pragmatics.SocialMeaning.Dimension
 public import Linglib.Pragmatics.SocialMeaning.Persona
 public import Mathlib.Analysis.Complex.ExponentialBounds
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Henderson and McCready (2024): Signaling without Saying: The Semantics and Pragmatics of Dogwhistles
@@ -84,9 +84,9 @@ noncomputable def Listener.L0 (L : Listener P M) : Kernel M P :=
 
 /-- A likelihood that is zero or one, as for a lexicalized social meaning, gives Burnett's literal
 listener, who conditions the prior on the personae the message is true of. -/
-theorem Listener.L0_eq_listener_truthful (L : Listener P M)
+theorem Listener.L0_eq_literalListener (L : Listener P M)
     (h : ∀ p m, L.likelihood p {m} = 0 ∨ L.likelihood p {m} = 1) :
-    L.L0 = listener L.prior (truthful fun m ↦ {p | L.likelihood p {m} = 1}) := by
+    L.L0 = literalListener L.prior (fun m ↦ {p | L.likelihood p {m} = 1}) := by
   refine congrArg (Kernel.ofDensity L.prior) (funext₂ fun m p ↦ ?_)
   rw [truthful_apply_singleton]
   rcases h p m with h | h <;> simp [h]

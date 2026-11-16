@@ -102,7 +102,7 @@ variable [MeasurableSpace E] [DiscreteMeasurableSpace E]
 
 /-- On hearing a word, the literal listener conditions the uniform prior on its extension. -/
 noncomputable def literal : Kernel (Word C S) E :=
-  RSA.listener (uniformOn Set.univ) (RSA.truthful fun w : Word C S ↦ (⟦w⟧ᴹ : Set E))
+  RSA.literalListener (uniformOn Set.univ) (fun w : Word C S ↦ (⟦w⟧ᴹ : Set E))
 
 /-- The speaker at rationality `α` is `S(w | r) ∝ L₀(r | w) ^ α`, the paper's second equation at
 `α = 1`. -/
@@ -123,11 +123,11 @@ variable {α : ℝ} {w w₁ w₂ : Word C S} {r r' : E}
 
 theorem speaker_real_singleton_eq_zero (hα : 0 < α) (h : r ∉ ⟦w⟧ᴹ) :
     (speaker M α r).real {w} = 0 :=
-  RSA.speaker_listener_truthful_dirac_real_singleton_eq_zero hα _ _ _ h
+  RSA.speaker_literalListener_dirac_real_singleton_eq_zero hα _ _ _ h
 
 theorem speaker_real_singleton_pos (hα : 0 ≤ α) (h : r ∈ ⟦w⟧ᴹ) : 0 < (speaker M α r).real {w} :=
   ENNReal.toReal_pos (RSA.speaker_dirac_apply_singleton_ne_zero hα
-    ((RSA.listener_truthful_apply_singleton_ne_zero_iff _ _ _ _).2
+    ((RSA.literalListener_apply_singleton_ne_zero_iff _ _ _ _).2
       ⟨h, uniformOn_univ_singleton_ne_zero _⟩)) (measure_ne_top _ _)
 
 /-- By the size principle, of two words true of an object the speaker prefers the one with the
@@ -140,7 +140,7 @@ variable [DecidableEq E]
 
 theorem literal_apply_singleton (w : Word C S) (r : E) :
     literal M w {r} = if r ∈ ⟦w⟧ᴹ then (⟦w⟧ᴹ.card : ℝ≥0∞)⁻¹ else 0 :=
-  RSA.listener_uniformOn_truthful_apply_singleton _ w r
+  RSA.literalListener_uniformOn_apply_singleton _ w r
 
 /-- Of two objects a word is true of, the speaker uses the word more for the one whose other
 feature more objects share, the object whose alternative word is the less informative. -/
@@ -270,12 +270,12 @@ theorem unique_circle (hα : 0 < α) :
 theorem fully_rational_picks_circle :
     Filter.Tendsto (fun α ↦ (speaker M α .blueCircle).real {.circle}) Filter.atTop (𝓝 1) := by
   refine RSA.tendsto_speaker_dirac_real_singleton_atTop ?_ fun u hu ↦ ?_
-  · exact (RSA.listener_truthful_apply_singleton_ne_zero_iff _ _ _ _).2
+  · exact (RSA.literalListener_apply_singleton_ne_zero_iff _ _ _ _).2
       ⟨by decide, uniformOn_univ_singleton_ne_zero _⟩
   · simp only [Pi.zero_apply, neg_zero, Real.exp_zero, mul_one]
     rw [← measureReal_def, ← measureReal_def, literal,
-      RSA.listener_uniformOn_truthful_real_singleton,
-      RSA.listener_uniformOn_truthful_real_singleton]
+      RSA.literalListener_uniformOn_real_singleton,
+      RSA.literalListener_uniformOn_real_singleton]
     have h1 : ⟦Word.circle⟧ᴹ.card = 1 := by decide
     have h2 : ⟦Word.blue⟧ᴹ.card = 2 := by decide
     obtain ⟨a, v⟩ := u

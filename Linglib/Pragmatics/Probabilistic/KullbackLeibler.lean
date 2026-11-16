@@ -1,7 +1,9 @@
 module
 
 public import Linglib.Core.InformationTheory.Entropy.Surprisal
-public import Linglib.Pragmatics.Probabilistic.Basic
+public import Linglib.Pragmatics.Probabilistic.Latent
+public import Linglib.Pragmatics.Probabilistic.Literal
+public import Linglib.Pragmatics.Probabilistic.Parse
 
 /-!
 # The speaker and the Kullback–Leibler divergence

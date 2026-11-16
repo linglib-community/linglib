@@ -40,6 +40,8 @@ namespace Tone
 
 open Autosegmental Subregular
 
+instance : Fintype AssociationState := ⟨{.H, .O}, fun a ↦ by cases a <;> decide⟩
+
 /-! ### The output representation
 
 Plateauing on representations is OCP-fusion followed by hull-closure of the association lines,

@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Presupposition.LocalContext
 public import Linglib.Semantics.Quantification.NumberTree
+public import Linglib.Logic.Trivalent.Deployment
 
 /-!
 # Local contexts in quantified sentences
@@ -111,6 +112,52 @@ theorem transparentAt_scopeTruth_iff {q : NumberTree} {A : W → E → Prop} {C 
         (w, e) ∈ d ↔ (w, e) ∈ a := by
       simpa [hp] using congrArg ((w, e) ∈ ·) hd
     exact h w hw (fun e ↦ (w, e) ∈ d) (fun e ↦ (w, e) ∈ d') (agree hd) (agree hd')
+
+/-! ### Deployment -/
+
+open Trivalent in
+/-- A trigger in the nuclear scope is transparent at its assertion iff the quantifier deployed on
+the trigger's trivalent meaning is defined at every world of the context. -/
+theorem transparentAt_scopeTruth_iff_deployQuantifier {q : NumberTree} {A : W → E → Prop}
+    {C : Set W} (p : W × E → Trivalent) :
+    TransparentAt C {scopeTruth q A} (gapExt p)ᶜ (posExt p) ↔
+      ∀ w ∈ C, deployQuantifier (q.toDet (A w)) (fun e ↦ p (w, e)) ≠ .undefined := by
+  rw [transparentAt_scopeTruth_iff]
+  refine forall₂_congr fun w _ ↦ ?_
+  rw [deployQuantifier_ne_undefined_iff]
+  have key (D : Set E) : (∀ e, (w, e) ∈ (gapExt p)ᶜ → (D e ↔ (w, e) ∈ posExt p)) ↔
+      D ∈ interval fun e ↦ p (w, e) := by
+    change (∀ e, p (w, e) ≠ .undefined → (D e ↔ p (w, e) = .true)) ↔
+      (∀ e, p (w, e) = .true → D e) ∧ ∀ e, D e → ¬ p (w, e) = .false
+    refine ⟨fun h ↦ ⟨fun e he ↦ (h e (he ▸ by decide)).2 he, fun e hD hn ↦ ?_⟩,
+      fun h e hdef ↦ ⟨fun hD ↦ ?_, h.1 e⟩⟩
+    · exact absurd (hn.symm.trans ((h e (hn ▸ by decide)).1 hD)) (by decide)
+    · rcases (p (w, e)).trichotomy with hf | hd | ht
+      exacts [absurd hf (h.2 e hD), absurd hd hdef, ht]
+  exact ⟨fun h X hX Y hY ↦ h X Y ((key X).2 hX) ((key Y).2 hY),
+    fun h D D' hD hD' ↦ h D ((key D).1 hD) D' ((key D').1 hD')⟩
+
+open Trivalent in
+/-- A presupposition of the nuclear scope is transparent iff the deployed quantifier is defined
+at every world of the context whatever a trigger with that presupposition asserts. -/
+theorem transparent_scopeTruth_iff_forall_deployQuantifier {q : NumberTree} {A : W → E → Prop}
+    {C : Set W} {P : Set (W × E)} :
+    Transparent C {scopeTruth q A} P ↔ ∀ p : W × E → Trivalent, (gapExt p)ᶜ = P →
+      ∀ w ∈ C, deployQuantifier (q.toDet (A w)) (fun e ↦ p (w, e)) ≠ .undefined := by
+  classical
+  rw [transparent_iff_forall_transparentAt]
+  refine ⟨fun h p hp ↦ ?_, fun h a ↦ ?_⟩
+  · subst hp
+    exact (transparentAt_scopeTruth_iff_deployQuantifier p).1 (h (posExt p))
+  · have hgap : (gapExt fun x ↦ if x ∈ P then ofProp (x ∈ a) else .undefined)ᶜ = P := by
+      ext x
+      by_cases hx : x ∈ P <;> simp [hx]
+    have hpos : posExt (fun x ↦ if x ∈ P then ofProp (x ∈ a) else .undefined) = P ⊓ a := by
+      ext x
+      by_cases hx : x ∈ P <;> simp [hx]
+    have := (transparentAt_scopeTruth_iff_deployQuantifier _).2 (h _ hgap)
+    rw [hgap, hpos] at this
+    exact fun f hf d hd ↦ this f hf d (by rw [hd, ← inf_assoc, inf_idem])
 
 section Finite
 

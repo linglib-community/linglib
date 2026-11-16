@@ -40,7 +40,7 @@ her there, every speaker's free energy is `⊥` and the comparison is empty.
 * The speaker's belief is any family `b` that agrees with the posterior of the prior given her
   observation at almost every observation, `b =ᵐ[κ ∘ₘ μ] κ†μ`. The listener `listener μ κ` of the
   observation kernel is one, and so is the point mass for a speaker who observes the state itself
-  (`RSA.dirac_ae_eq_posterior_id`).
+  (`ProbabilityTheory.dirac_ae_eq_posterior_id`).
 * The source states the two decompositions as maximality claims and proves them, by Lagrange
   multipliers, for a speaker who knows the state. The statements here are for a speaker who
   observes it through a kernel, and they give the size of the gap.
@@ -609,16 +609,5 @@ theorem tendsto_sum_klDiv_speaker_iterate_recurse :
     (tsum_sum_klDiv_speaker_iterate_recurse_ne_top hb hα hκ L)
 
 end Recursion
-
-/-! ### The speaker who knows the state -/
-
-/-- A speaker who observes the state itself believes the point mass at it. -/
-theorem dirac_ae_eq_posterior_id [MeasurableSingletonClass W] [StandardBorelSpace W] [Nonempty W]
-    [IsFiniteMeasure μ] :
-    (Measure.dirac : W → Measure W) =ᵐ[(Kernel.id : Kernel W W) ∘ₘ μ]
-      (Kernel.id : Kernel W W)†μ := by
-  rw [Measure.id_comp]
-  filter_upwards [posterior_id μ] with w hw
-  rw [hw, Kernel.id_apply]
 
 end RSA

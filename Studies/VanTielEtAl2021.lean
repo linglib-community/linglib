@@ -1,11 +1,11 @@
 module
 
-public import Linglib.Pragmatics.Probabilistic.Basic
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Data.Examples.VanTielEtAl2021
 public import Linglib.Data.Statistics.VanTielEtAl2021
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Probability.Kernel.Composition.Comp
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # van Tiel, Franke and Sauerland (2021): Probabilistic Pragmatics Explains Gradience and Focality in Natural Language Quantification
