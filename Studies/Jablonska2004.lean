@@ -724,9 +724,8 @@ theorem spells : ∀ a ∈ attested ++ starred, a.form.cell = Wordlist.inf → .
 /-! ### The tests of Section 2.1
 
 The paper tests (im)perfectivity in two ways: a phase verb takes only an imperfective complement,
-and only an imperfective present-tense form has the actual present reading
-(`Aspect.viewpointPrediction`). The perfectivity the model derives for a form predicts the
-judgments of the sentences that test it. -/
+and only an imperfective present-tense form has the actual present reading. The perfectivity the
+model derives for a form predicts the judgments of the sentences that test it. -/
 
 /-- The perfectivity of the derived predicate. -/
 def Analysis.perfectivity (a : Analysis) : Aspect.Perfectivity :=
@@ -759,15 +758,14 @@ theorem tests_wellFormed :
 /-- A phase verb with its complement is accepted exactly when the complement is derived imperfective
 ((33a), (46a)). -/
 theorem phaseTests_judgment : ∀ t ∈ phaseTests,
-    (t.sentence.judgment = .acceptable ↔
-      Aspect.viewpointPrediction t.verb.perfectivity = .accept) := by
+    (t.sentence.judgment = .acceptable ↔ t.verb.perfectivity = .imperfective) := by
   decide
 
 /-- A present-tense form has the actual present reading exactly when it is derived imperfective
 ((33b), (46b), (80b)). -/
 theorem presentTests_reading : ∀ t ∈ presentTests,
     (t.sentence.readings.lookup "actual present" = some .acceptable ↔
-      Aspect.viewpointPrediction t.verb.perfectivity = .accept) := by
+      t.verb.perfectivity = .imperfective) := by
   decide
 
 /-! ### The paper's limits

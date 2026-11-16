@@ -241,15 +241,9 @@ theorem adjective_verb_scales :
   decide
 
 -- (1), (6)
-theorem inX_iff_hasMax (b : Boundedness) :
-    (inXPrediction b.defaultVendlerClass = .accept ↔ b.HasMax) ∧
-      (forXPrediction b.defaultVendlerClass = .accept ↔ ¬ b.HasMax) := by
-  cases b <;> decide
-
-theorem diagnostics :
+theorem telic_iff_hasMax :
     ∀ v ∈ daVerbs, ∃ b ∈ v.changeScale,
-      (v.vendlerClass.map inXPrediction = some .accept ↔ b.HasMax) ∧
-        (v.vendlerClass.map forXPrediction = some .accept ↔ ¬ b.HasMax) := by
+      (v.vendlerClass.map (·.telicity) = some .telic ↔ b.HasMax) := by
   decide
 
 end KennedyLevin2008
