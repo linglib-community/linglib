@@ -1,2911 +1,2955 @@
-[
-  {
-    "id": "aghajeretic2026_6a",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(6a)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "You must do the dishes, but you don't have to.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "test",
-        "contradiction"
-      ],
-      [
-        "first",
-        "strong"
-      ],
-      [
-        "second",
-        "strong"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_6b",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(6b)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "You have to do the dishes, but you don't have to.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "test",
-        "contradiction"
-      ],
-      [
-        "first",
-        "strong"
-      ],
-      [
-        "second",
-        "strong"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_6c",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(6c)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "You are required to do the dishes, but you don't have to.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "test",
-        "contradiction"
-      ],
-      [
-        "first",
-        "strong"
-      ],
-      [
-        "second",
-        "strong"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_6d",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(6d)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "You have to do the dishes, but you are not required to.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "test",
-        "contradiction"
-      ],
-      [
-        "first",
-        "strong"
-      ],
-      [
-        "second",
-        "strong"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_8a",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(8a)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "You ought to wash the dishes, but you don't have to.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "test",
-        "contradiction"
-      ],
-      [
-        "first",
-        "weak"
-      ],
-      [
-        "second",
-        "strong"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_8b",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(8b)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "You should do the dishes, but you don't have to.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "test",
-        "contradiction"
-      ],
-      [
-        "first",
-        "weak"
-      ],
-      [
-        "second",
-        "strong"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_8c",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(8c)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "You are supposed to do the dishes, but you don't have to.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "test",
-        "contradiction"
-      ],
-      [
-        "first",
-        "weak"
-      ],
-      [
-        "second",
-        "strong"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_11a",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(11a)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "You have to wash the dishes, and (in fact), you must.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "test",
-        "triviality"
-      ],
-      [
-        "first",
-        "strong"
-      ],
-      [
-        "second",
-        "strong"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_11b",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(11b)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "You must wash the dishes, and (in fact) you have to.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "test",
-        "triviality"
-      ],
-      [
-        "first",
-        "strong"
-      ],
-      [
-        "second",
-        "strong"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_12a",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(12a)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "You should wash the dishes, and (in fact) you must.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "test",
-        "triviality"
-      ],
-      [
-        "first",
-        "weak"
-      ],
-      [
-        "second",
-        "strong"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_12b",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(12b)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "You ought to wash the dishes, and in fact, you have to.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "test",
-        "triviality"
-      ],
-      [
-        "first",
-        "weak"
-      ],
-      [
-        "second",
-        "strong"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_15a",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(15a)"
-    },
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "prepi na plinis ta piata ala dhen ise ipexreomenos na to kanis",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "prepi",
-        "must"
-      ],
-      [
-        "na",
-        "NA"
-      ],
-      [
-        "plinis",
-        "wash"
-      ],
-      [
-        "ta",
-        "the"
-      ],
-      [
-        "piata",
-        "dishes"
-      ],
-      [
-        "ala",
-        "but"
-      ],
-      [
-        "dhen",
-        "NEG"
-      ],
-      [
-        "ise",
-        "are"
-      ],
-      [
-        "ipexreomenos",
-        "obliged"
-      ],
-      [
-        "na",
-        "NA"
-      ],
-      [
-        "to",
-        "it"
-      ],
-      [
-        "kanis",
-        "do"
-      ]
-    ],
-    "translation": "You must wash the dishes but you are not obliged to do it.",
-    "context": "",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "modal",
-        "prepi"
-      ],
-      [
-        "force",
-        "strong"
-      ],
-      [
-        "test",
-        "contradiction"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_15b",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(15b)"
-    },
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "tha eprepe na plinis ta piata ala dhen ise ipexreomenos na to kanis",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "tha",
-        "FUT"
-      ],
-      [
-        "eprepe",
-        "must.PST"
-      ],
-      [
-        "na",
-        "NA"
-      ],
-      [
-        "plinis",
-        "wash"
-      ],
-      [
-        "ta",
-        "the"
-      ],
-      [
-        "piata",
-        "dishes"
-      ],
-      [
-        "ala",
-        "but"
-      ],
-      [
-        "dhen",
-        "NEG"
-      ],
-      [
-        "ise",
-        "are"
-      ],
-      [
-        "ipexreomenos",
-        "obliged"
-      ],
-      [
-        "na",
-        "NA"
-      ],
-      [
-        "to",
-        "it"
-      ],
-      [
-        "kanis",
-        "do"
-      ]
-    ],
-    "translation": "You ought to wash the dishes but you are not obliged to do it.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "modal",
-        "prepi+CF"
-      ],
-      [
-        "force",
-        "weak"
-      ],
-      [
-        "derivation",
-        "CF"
-      ],
-      [
-        "test",
-        "contradiction"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_16a",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(16a)"
-    },
-    "reportedIn": null,
-    "language": "stan1290",
-    "primaryText": "tu dois faire la vaisselle, mais tu n'es pas obligé",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "tu",
-        "you"
-      ],
-      [
-        "dois",
-        "must"
-      ],
-      [
-        "faire",
-        "do"
-      ],
-      [
-        "la",
-        "the"
-      ],
-      [
-        "vaisselle",
-        "dishes"
-      ],
-      [
-        "mais",
-        "but"
-      ],
-      [
-        "tu",
-        "you"
-      ],
-      [
-        "n'es",
-        "NEG.are"
-      ],
-      [
-        "pas",
-        "NEG"
-      ],
-      [
-        "obligé",
-        "obliged"
-      ]
-    ],
-    "translation": "You must do the dishes but you are not obliged to do them.",
-    "context": "",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "modal",
-        "devoir"
-      ],
-      [
-        "force",
-        "strong"
-      ],
-      [
-        "test",
-        "contradiction"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_16b",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(16b)"
-    },
-    "reportedIn": null,
-    "language": "stan1290",
-    "primaryText": "tu devrais faire la vaisselle, mais tu n'es pas obligé",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "tu",
-        "you"
-      ],
-      [
-        "devrais",
-        "must.COND"
-      ],
-      [
-        "faire",
-        "do"
-      ],
-      [
-        "la",
-        "the"
-      ],
-      [
-        "vaisselle",
-        "dishes"
-      ],
-      [
-        "mais",
-        "but"
-      ],
-      [
-        "tu",
-        "you"
-      ],
-      [
-        "n'es",
-        "NEG.are"
-      ],
-      [
-        "pas",
-        "NEG"
-      ],
-      [
-        "obligé",
-        "obliged"
-      ]
-    ],
-    "translation": "You ought to do the dishes but you are not obliged to do them.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "modal",
-        "devoir+CF"
-      ],
-      [
-        "force",
-        "weak"
-      ],
-      [
-        "derivation",
-        "CF"
-      ],
-      [
-        "test",
-        "contradiction"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_17",
-    "source": {
-      "bibkey": "rubinstein-2014",
-      "paperLabel": "(21a)"
-    },
-    "reportedIn": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(17)"
-    },
-    "language": "hebr1245",
-    "primaryText": "yoter/haxi tov še-hu yitpater, aval hu lo xayav lehitpater",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "yoter/haxi",
-        "more/most"
-      ],
-      [
-        "tov",
-        "good"
-      ],
-      [
-        "še-hu",
-        "that-he"
-      ],
-      [
-        "yitpater",
-        "will.resign"
-      ],
-      [
-        "aval",
-        "but"
-      ],
-      [
-        "hu",
-        "he"
-      ],
-      [
-        "lo",
-        "NEG"
-      ],
-      [
-        "xayav",
-        "must"
-      ],
-      [
-        "lehitpater",
-        "resign"
-      ]
-    ],
-    "translation": "It is better/best that he will resign, but he doesn't have to resign.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "modal",
-        "yoter tov"
-      ],
-      [
-        "force",
-        "weak"
-      ],
-      [
-        "derivation",
-        "comparative"
-      ],
-      [
-        "test",
-        "contradiction"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_23",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(23)"
-    },
-    "reportedIn": null,
-    "language": "java1254",
-    "primaryText": "wong wong jawa kudu-ne iso ngomong kromo, terus anak-e rojo yo kudu iso",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "wong",
-        "person"
-      ],
-      [
-        "wong",
-        "person"
-      ],
-      [
-        "jawa",
-        "java"
-      ],
-      [
-        "kudu-ne",
-        "ROOT.NEC-NE"
-      ],
-      [
-        "iso",
-        "CIRC.POS"
-      ],
-      [
-        "ngomong",
-        "AV.talk"
-      ],
-      [
-        "kromo",
-        "high.speech"
-      ],
-      [
-        "terus",
-        "then"
-      ],
-      [
-        "anak-e",
-        "child-DEF"
-      ],
-      [
-        "rojo",
-        "king"
-      ],
-      [
-        "yo",
-        "PRT.YES"
-      ],
-      [
-        "kudu",
-        "ROOT.NEC"
-      ],
-      [
-        "iso",
-        "CIRC.POS"
-      ]
-    ],
-    "translation": "Javanese people ought to be able to speak Krama, and the Sultan's son has to be able to.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "modal",
-        "kudu+NE"
-      ],
-      [
-        "force",
-        "weak"
-      ],
-      [
-        "derivation",
-        "NE"
-      ],
-      [
-        "test",
-        "triviality"
-      ],
-      [
-        "first",
-        "weak"
-      ],
-      [
-        "second",
-        "strong"
-      ]
-    ],
-    "comment": "The chapter presents the example in discussing Vander Klok & Hohaus 2020 and gives no locator in it.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_18a",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(18a)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "He should not go.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
+{
+  "readings": {
+    "lean": "reading",
+    "type": "Reading",
+    "doc": "The readings the chapter judges a modal sentence for.",
+    "levels": [
       {
         "name": "wide",
-        "judgment": "acceptable"
+        "label": "wide",
+        "doc": "the modal takes scope over negation"
       },
       {
         "name": "narrow",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "should"
-      ],
-      [
-        "force",
-        "weak"
-      ],
-      [
-        "negation",
-        "clausemate"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_18b",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(18b)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "He must not go.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "wide",
-        "judgment": "acceptable"
+        "label": "narrow",
+        "doc": "the modal takes scope under negation"
       },
-      {
-        "name": "narrow",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "must"
-      ],
-      [
-        "force",
-        "strong"
-      ],
-      [
-        "negation",
-        "clausemate"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_18c",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(18c)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "He doesn't have to go.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "wide",
-        "judgment": "unacceptable"
-      },
-      {
-        "name": "narrow",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "have to"
-      ],
-      [
-        "force",
-        "strong"
-      ],
-      [
-        "negation",
-        "clausemate"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_19a",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(19a)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Ann doesn't think Bill should go.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "wide",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "narrow",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "should"
-      ],
-      [
-        "force",
-        "weak"
-      ],
-      [
-        "negation",
-        "higher"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_19b",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(19b)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Ann doesn't think Bill must go.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "wide",
-        "judgment": "unacceptable"
-      },
-      {
-        "name": "narrow",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "must"
-      ],
-      [
-        "force",
-        "strong"
-      ],
-      [
-        "negation",
-        "higher"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_19c",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(19c)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Ann doesn't think Bill has to go.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "wide",
-        "judgment": "unacceptable"
-      },
-      {
-        "name": "narrow",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "have to"
-      ],
-      [
-        "force",
-        "strong"
-      ],
-      [
-        "negation",
-        "higher"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_20a",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(20a)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "It's not the case that Bill should go.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "wide",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "narrow",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "should"
-      ],
-      [
-        "force",
-        "weak"
-      ],
-      [
-        "negation",
-        "higher"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_20b",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(20b)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "It's not the case Bill must go.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "wide",
-        "judgment": "unacceptable"
-      },
-      {
-        "name": "narrow",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "must"
-      ],
-      [
-        "force",
-        "strong"
-      ],
-      [
-        "negation",
-        "higher"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_20c",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(20c)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "It's not the case that Bill has to go.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "wide",
-        "judgment": "unacceptable"
-      },
-      {
-        "name": "narrow",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "have to"
-      ],
-      [
-        "force",
-        "strong"
-      ],
-      [
-        "negation",
-        "higher"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_26a",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(26a)"
-    },
-    "reportedIn": null,
-    "language": "afri1274",
-    "primaryText": "Ek moet nog na die partyjie toe gaan!",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Ek",
-        "I"
-      ],
-      [
-        "moet",
-        "NEC"
-      ],
-      [
-        "nog",
-        "still"
-      ],
-      [
-        "na",
-        "to"
-      ],
-      [
-        "die",
-        "the"
-      ],
-      [
-        "partyjie",
-        "party"
-      ],
-      [
-        "toe",
-        "to"
-      ],
-      [
-        "gaan",
-        "go"
-      ]
-    ],
-    "translation": "I still should/have to go to the party!",
-    "context": "It's your last day at work before your leave, and there's a lot left to do. You catch sight of your calendar and realise the summer party is this afternoon. Talking to your colleague:",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "modal",
-        "moet"
-      ],
-      [
-        "force",
-        "weak"
-      ],
-      [
-        "test",
-        "contradiction"
-      ]
-    ],
-    "comment": "The chapter presents the example with Weingartz & Hohaus 2024 and gives no locator in it. Consistently followed by (26b) 'But actually, I don't have to.'",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_28a",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(28a)"
-    },
-    "reportedIn": null,
-    "language": "samo1305",
-    "primaryText": "E tatau ona ou alu i le pātī.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "E",
-        "TAM"
-      ],
-      [
-        "tatau",
-        "NEC"
-      ],
-      [
-        "ona",
-        "that"
-      ],
-      [
-        "ou",
-        "I"
-      ],
-      [
-        "alu",
-        "go"
-      ],
-      [
-        "i",
-        "to"
-      ],
-      [
-        "le",
-        "the"
-      ],
-      [
-        "pātī",
-        "party"
-      ]
-    ],
-    "translation": "I should go to the party.",
-    "context": "It's your last day at work before your leave, and there's a lot left to do. You catch sight of your calendar and realise the summer party is this afternoon. Talking to your colleague:",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "modal",
-        "tatau"
-      ],
-      [
-        "force",
-        "weak"
-      ],
-      [
-        "test",
-        "contradiction"
-      ]
-    ],
-    "comment": "The chapter presents the example with Weingartz & Hohaus 2024 and gives no locator in it; its context is (26)'s. Consistently followed by (28b) 'But I don't have to.' The chapter glosses pātī 'part'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_43",
-    "source": {
-      "bibkey": "deal-2011",
-      "paperLabel": "(1)"
-    },
-    "reportedIn": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(43)"
-    },
-    "language": "nezp1238",
-    "primaryText": "'inéhne-no'qa 'ee kii lepít cíickan",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "'inéhne-no'qa",
-        "take-MODAL"
-      ],
-      [
-        "'ee",
-        "you"
-      ],
-      [
-        "kii",
-        "DEM"
-      ],
-      [
-        "lepít",
-        "two"
-      ],
-      [
-        "cíickan",
-        "blanket"
-      ]
-    ],
-    "translation": "You can take these two blankets. / You should take these two blankets.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
       {
         "name": "possibility",
-        "judgment": "acceptable"
+        "label": "possibility",
+        "doc": "the modal is read as a possibility"
       },
       {
         "name": "necessity",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "o'qa"
-      ],
-      [
-        "environment",
-        "unembedded"
-      ]
-    ],
-    "comment": "The chapter prints the two translations as (43a) and (43b).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_44",
-    "source": {
-      "bibkey": "deal-2011",
-      "paperLabel": "(49)"
-    },
-    "reportedIn": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(44)"
-    },
-    "language": "nezp1238",
-    "primaryText": "wéet'u 'ee kiy-ó'qa",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "wéet'u",
-        "not"
-      ],
-      [
-        "'ee",
-        "you"
-      ],
-      [
-        "kiy-ó'qa",
-        "go-MODAL"
-      ]
-    ],
-    "translation": "You can't go.",
-    "context": "You are explaining to someone who thinks they have to leave that they are not in fact required to do so. It's not necessary for them to leave.",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
+        "label": "necessity",
+        "doc": "the modal is read as a strong necessity"
       },
       {
-        "name": "necessity",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "o'qa"
-      ],
-      [
-        "environment",
-        "clausemate negation"
-      ]
-    ],
-    "comment": "Marked # in the context: the intended 'You don't have to go' is unavailable, and the actual 'You can't go' is weird there.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_45",
-    "source": {
-      "bibkey": "deal-2011",
-      "paperLabel": "(60)"
-    },
-    "reportedIn": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(45)"
-    },
-    "language": "nezp1238",
-    "primaryText": "c'alawi 'a-múu-no'qa saykiptaw'atóo-na, kaa 'e-múu-nu'",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "c'alawi",
-        "if"
-      ],
-      [
-        "'a-múu-no'qa",
-        "3OBJ-call-MODAL"
-      ],
-      [
-        "saykiptaw'atóo-na",
-        "doctor-OBJ"
-      ],
-      [
-        "kaa",
-        "then"
-      ],
-      [
-        "'e-múu-nu'",
-        "3OBJ-call-PR"
-      ]
-    ],
-    "translation": "If I can call the doctor, I will.",
-    "context": "Prompt: If I have to call the doctor, I will.",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
+        "name": "weakNecessity",
+        "label": "weak necessity",
+        "doc": "the modal is read as a weak necessity"
       },
-      {
-        "name": "necessity",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "o'qa"
-      ],
-      [
-        "environment",
-        "other DE"
-      ]
-    ],
-    "comment": "Intended 'If I have to call the doctor' is unavailable.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_46",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(46)"
-    },
-    "reportedIn": null,
-    "language": "sion1247",
-    "primaryText": "Tsiaya-jã'ã je'e-ñe ba-'i-ji.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Tsiaya-jã'ã",
-        "river-PATH"
-      ],
-      [
-        "je'e-ñe",
-        "cross-INF"
-      ],
-      [
-        "ba-'i-ji",
-        "be-ASRT"
-      ]
-    ],
-    "translation": "One has to cross the river.",
-    "context": "San Pablo is on the other side of the river. A asks a stranger, B, how to get there. B answers:",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "unacceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "ba'iji"
-      ],
-      [
-        "environment",
-        "unembedded"
-      ]
-    ],
-    "comment": "The possibility reading attempted in (47) is unavailable out of the blue.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_48",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(48)"
-    },
-    "reportedIn": null,
-    "language": "sion1247",
-    "primaryText": "Sai-ye beo-ji.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Sai-ye",
-        "go-INF"
-      ],
-      [
-        "beo-ji",
-        "NEG.be-3S"
-      ]
-    ],
-    "translation": "We mustn't go.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "ba'iji"
-      ],
-      [
-        "environment",
-        "clausemate negation"
-      ]
-    ],
-    "comment": "'We don't have to go' is impossible.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_49",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(49)"
-    },
-    "reportedIn": null,
-    "language": "sion1247",
-    "primaryText": "Sai-ye ba-'i-to, sa-si-'i.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Sai-ye",
-        "go-INF"
-      ],
-      [
-        "ba-'i-to",
-        "be-IPF-COND"
-      ],
-      [
-        "sa-si-'i",
-        "go-FUT-OTH"
-      ]
-    ],
-    "translation": "If I can / must go, I will go.",
-    "context": "I am waiting to see if there is going to be a spot for me in the boat. My friend asks me if I want to go.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "ba'iji"
-      ],
-      [
-        "environment",
-        "other DE"
-      ]
-    ],
-    "comment": "The chapter prints two answers with this conditional: (49a) 'Yë-yë. …' 'Yes. If I can (#must) go, I will go.' and (49b) 'Coe-yë. …' 'No. But if I must (#can) go, I will go.'",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_51",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(51)"
-    },
-    "reportedIn": null,
-    "language": "swed1254",
-    "primaryText": "Alice får gå ut, men hon får också stanna.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Alice",
-        "Alice"
-      ],
-      [
-        "får",
-        "fa"
-      ],
-      [
-        "gå",
-        "go"
-      ],
-      [
-        "ut",
-        "out"
-      ],
-      [
-        "men",
-        "but"
-      ],
-      [
-        "hon",
-        "she"
-      ],
-      [
-        "får",
-        "fa"
-      ],
-      [
-        "också",
-        "also"
-      ],
-      [
-        "stanna",
-        "stay"
-      ]
-    ],
-    "translation": "Alice is allowed to go out, but she is also allowed to stay.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "får"
-      ],
-      [
-        "environment",
-        "unembedded"
-      ]
-    ],
-    "comment": "The necessity reading of får is shown by (52). The chapter glosses får 'fa' here and 'MOD' in (52)-(56).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_52",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(52)"
-    },
-    "reportedIn": null,
-    "language": "swed1254",
-    "primaryText": "Isac får betala en bot.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Isac",
-        "Isac"
-      ],
-      [
-        "får",
-        "MOD"
-      ],
-      [
-        "betala",
-        "pay"
-      ],
-      [
-        "en",
-        "a"
-      ],
-      [
-        "bot",
-        "fine"
-      ]
-    ],
-    "translation": "Isac has to pay a fine.",
-    "context": "I'm telling a story in which Isac illegally parked the car, and the police caught him.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "necessity",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "får"
-      ],
-      [
-        "environment",
-        "unembedded"
-      ]
-    ],
-    "comment": "The necessity reading of får unembedded.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_53",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(53)"
-    },
-    "reportedIn": null,
-    "language": "swed1254",
-    "primaryText": "Peter får inte lämna fängelset.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Peter",
-        "Peter"
-      ],
-      [
-        "får",
-        "MOD"
-      ],
-      [
-        "inte",
-        "not"
-      ],
-      [
-        "lämna",
-        "leave"
-      ],
-      [
-        "fängelset",
-        "prison"
-      ]
-    ],
-    "translation": "Peter is not allowed to leave the prison.",
-    "context": "Peter is a prisoner.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "får"
-      ],
-      [
-        "environment",
-        "clausemate negation"
-      ]
-    ],
-    "comment": "The negated-necessity reading attempted in (54) is unavailable.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_55",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(55)"
-    },
-    "reportedIn": null,
-    "language": "swed1254",
-    "primaryText": "Om Lucas får äta glass blir han glad.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Om",
-        "if"
-      ],
-      [
-        "Lucas",
-        "Lucas"
-      ],
-      [
-        "får",
-        "MOD"
-      ],
-      [
-        "äta",
-        "eat"
-      ],
-      [
-        "glass",
-        "ice.cream"
-      ],
-      [
-        "blir",
-        "be.fut"
-      ],
-      [
-        "han",
-        "he"
-      ],
-      [
-        "glad",
-        "happy"
-      ]
-    ],
-    "translation": "If Lucas is allowed to have ice cream, he will be happy.",
-    "context": "Lucas loves ice cream, but only eats it when his mom gives him permission.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "får"
-      ],
-      [
-        "environment",
-        "other DE"
-      ]
-    ],
-    "comment": "The necessity reading of får in a conditional antecedent is shown by (56).",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_56",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(56)"
-    },
-    "reportedIn": null,
-    "language": "swed1254",
-    "primaryText": "Om Maria får betala en böter blir hon olycklig.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Om",
-        "if"
-      ],
-      [
-        "Maria",
-        "Maria"
-      ],
-      [
-        "får",
-        "MOD"
-      ],
-      [
-        "betala",
-        "pay"
-      ],
-      [
-        "en",
-        "a"
-      ],
-      [
-        "böter",
-        "fine"
-      ],
-      [
-        "blir",
-        "be.fut"
-      ],
-      [
-        "hon",
-        "she"
-      ],
-      [
-        "olycklig",
-        "unhappy"
-      ]
-    ],
-    "translation": "If Maria has to pay a fine, she will be unhappy.",
-    "context": "Maria took the train without paying and is worried about getting caught.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "necessity",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "får"
-      ],
-      [
-        "environment",
-        "other DE"
-      ]
-    ],
-    "comment": "The necessity reading of får in a conditional antecedent.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_57",
-    "source": {
-      "bibkey": "newkirk-2022a",
-      "paperLabel": ""
-    },
-    "reportedIn": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(57)"
-    },
-    "language": "nand1264",
-    "primaryText": "Kabunga a-anga-na-sy-a oko kalhasi ko munabwire",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Kabunga might/should be coming to class today.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "weak necessity",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "anga"
-      ],
-      [
-        "environment",
-        "unembedded"
-      ]
-    ],
-    "comment": "From Newkirk 2022. Strong necessity is unavailable, as (60) shows. The chapter prints two contexts, one for epistemic possibility (the professor never knows whether Kábunga will come) and one for epistemic weak necessity (it is Monday, when Kábunga is usually there). Its gloss line, 'Kabunga SM.c1-MOD-TM-come-FV c17 today', does not align with the words after the verb, so no glossed tokens are given.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_58",
-    "source": {
-      "bibkey": "newkirk-2022a",
-      "paperLabel": ""
-    },
-    "reportedIn": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(58)"
-    },
-    "language": "nand1264",
-    "primaryText": "nga-oko reglema yi-ka-bug-a, si-u-anga-sat-a",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "nga-oko",
-        "COMP-COMP"
-      ],
-      [
-        "reglema",
-        "c9.rules"
-      ],
-      [
-        "yi-ka-bug-a",
-        "SM.c9-TM-say-FV"
-      ],
-      [
-        "si-u-anga-sat-a",
-        "NEG-SM.2sg-MOD-dance-FV"
-      ]
-    ],
-    "translation": "According to the rules, you can't play.",
-    "context": "A player has been hurt in a football match, and the ref is speaking to them, and saying:",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "weak necessity",
-        "judgment": "unacceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "anga"
-      ],
-      [
-        "environment",
-        "clausemate negation"
-      ]
-    ],
-    "comment": "From Newkirk 2022. The negated-necessity reading attempted in (59) is unavailable.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_table_oqa_unembedded",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "§3.2 table"
-    },
-    "reportedIn": null,
-    "language": "nezp1238",
-    "primaryText": "o'qa",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "weak necessity",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "o'qa"
-      ],
-      [
-        "environment",
-        "unembedded"
-      ],
-      [
-        "table",
-        "true"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_table_oqa_clausemate",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "§3.2 table"
-    },
-    "reportedIn": null,
-    "language": "nezp1238",
-    "primaryText": "o'qa",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "unacceptable"
-      },
-      {
-        "name": "weak necessity",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "o'qa"
-      ],
-      [
-        "environment",
-        "clausemate negation"
-      ],
-      [
-        "table",
-        "true"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_table_oqa_other",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "§3.2 table"
-    },
-    "reportedIn": null,
-    "language": "nezp1238",
-    "primaryText": "o'qa",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "unacceptable"
-      },
-      {
-        "name": "weak necessity",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "o'qa"
-      ],
-      [
-        "environment",
-        "other DE"
-      ],
-      [
-        "table",
-        "true"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_table_baiji_unembedded",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "§3.2 table"
-    },
-    "reportedIn": null,
-    "language": "sion1247",
-    "primaryText": "ba'iji",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "unacceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "weak necessity",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "ba'iji"
-      ],
-      [
-        "environment",
-        "unembedded"
-      ],
-      [
-        "table",
-        "true"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_table_baiji_clausemate",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "§3.2 table"
-    },
-    "reportedIn": null,
-    "language": "sion1247",
-    "primaryText": "ba'iji",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "unacceptable"
-      },
-      {
-        "name": "weak necessity",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "ba'iji"
-      ],
-      [
-        "environment",
-        "clausemate negation"
-      ],
-      [
-        "table",
-        "true"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_table_baiji_other",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "§3.2 table"
-    },
-    "reportedIn": null,
-    "language": "sion1247",
-    "primaryText": "ba'iji",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "weak necessity",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "ba'iji"
-      ],
-      [
-        "environment",
-        "other DE"
-      ],
-      [
-        "table",
-        "true"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_table_far_unembedded",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "§3.2 table"
-    },
-    "reportedIn": null,
-    "language": "swed1254",
-    "primaryText": "får",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "weak necessity",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "får"
-      ],
-      [
-        "environment",
-        "unembedded"
-      ],
-      [
-        "table",
-        "true"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_table_far_clausemate",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "§3.2 table"
-    },
-    "reportedIn": null,
-    "language": "swed1254",
-    "primaryText": "får",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "unacceptable"
-      },
-      {
-        "name": "weak necessity",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "får"
-      ],
-      [
-        "environment",
-        "clausemate negation"
-      ],
-      [
-        "table",
-        "true"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_table_far_other",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "§3.2 table"
-    },
-    "reportedIn": null,
-    "language": "swed1254",
-    "primaryText": "får",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "weak necessity",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "får"
-      ],
-      [
-        "environment",
-        "other DE"
-      ],
-      [
-        "table",
-        "true"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_table_anga_unembedded",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "§3.2 table"
-    },
-    "reportedIn": null,
-    "language": "nand1264",
-    "primaryText": "anga",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "unacceptable"
-      },
-      {
-        "name": "weak necessity",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "anga"
-      ],
-      [
-        "environment",
-        "unembedded"
-      ],
-      [
-        "table",
-        "true"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_table_anga_clausemate",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "§3.2 table"
-    },
-    "reportedIn": null,
-    "language": "nand1264",
-    "primaryText": "anga",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "unacceptable"
-      },
-      {
-        "name": "weak necessity",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "anga"
-      ],
-      [
-        "environment",
-        "clausemate negation"
-      ],
-      [
-        "table",
-        "true"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_table_anga_other",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "§3.2 table"
-    },
-    "reportedIn": null,
-    "language": "nand1264",
-    "primaryText": "anga",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "possibility",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "necessity",
-        "judgment": "unacceptable"
-      },
-      {
-        "name": "weak necessity",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "modal",
-        "anga"
-      ],
-      [
-        "environment",
-        "other DE"
-      ],
-      [
-        "table",
-        "true"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_79a",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(79a)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "You don't succeed if you work hard.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "wide",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "narrow",
-        "judgment": "marginal"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "construction",
-        "bare conditional"
-      ],
-      [
-        "negation",
-        "clausemate"
-      ]
-    ],
-    "comment": "The chapter calls the strong reading, that hard work never results in success, the most salient and preferred one.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_85a",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(85a)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Babies don't eat arugula.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "wide",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "narrow",
-        "judgment": "unacceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "construction",
-        "generic"
-      ],
-      [
-        "negation",
-        "clausemate"
-      ]
-    ],
-    "comment": "The chapter reports the reading that babies never eat arugula as the salient one. The chapter says the weaker reading, (86) 'Babies don't always eat arugula', does not seem available.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_91a",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(91a)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "A man for John to play against is in the next room.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
       {
         "name": "could",
-        "judgment": "acceptable"
+        "label": "could",
+        "doc": "the sentence is paraphrased with *could*"
       },
       {
         "name": "should",
-        "judgment": "acceptable"
+        "label": "should",
+        "doc": "the sentence is paraphrased with *should*"
       }
-    ],
-    "paperFeatures": [
-      [
-        "construction",
-        "infinitival relative"
-      ],
-      [
-        "determiner",
-        "weak"
-      ]
-    ],
-    "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's.",
-    "verified": "page-image"
+    ]
   },
-  {
-    "id": "aghajeretic2026_91b",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(91b)"
-    },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Three men for John to play against are in the next room.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "could",
-        "judgment": "acceptable"
+  "examples": [
+    {
+      "id": "aghajeretic2026_6a",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(6a)"
       },
-      {
-        "name": "should",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "construction",
-        "infinitival relative"
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "You must do the dishes, but you don't have to.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "test",
+          "contradiction"
+        ],
+        [
+          "first",
+          "strong"
+        ],
+        [
+          "second",
+          "strong"
+        ]
       ],
-      [
-        "determiner",
-        "weak"
-      ]
-    ],
-    "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_92a",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(92a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "The men for John to play against are in the next room.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "could",
-        "judgment": "unacceptable"
+    {
+      "id": "aghajeretic2026_6b",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(6b)"
       },
-      {
-        "name": "should",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "construction",
-        "infinitival relative"
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "You have to do the dishes, but you don't have to.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "test",
+          "contradiction"
+        ],
+        [
+          "first",
+          "strong"
+        ],
+        [
+          "second",
+          "strong"
+        ]
       ],
-      [
-        "determiner",
-        "strong"
-      ]
-    ],
-    "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's.",
-    "verified": "page-image"
-  },
-  {
-    "id": "aghajeretic2026_92b",
-    "source": {
-      "bibkey": "agha-jeretic-2026",
-      "paperLabel": "(92b)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Every man for John to play against is in the next room.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {
-        "name": "could",
-        "judgment": "unacceptable"
+    {
+      "id": "aghajeretic2026_6c",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(6c)"
       },
-      {
-        "name": "should",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "construction",
-        "infinitival relative"
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "You are required to do the dishes, but you don't have to.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "test",
+          "contradiction"
+        ],
+        [
+          "first",
+          "strong"
+        ],
+        [
+          "second",
+          "strong"
+        ]
       ],
-      [
-        "determiner",
-        "strong"
-      ]
-    ],
-    "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's.",
-    "verified": "page-image"
-  }
-]
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_6d",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(6d)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "You have to do the dishes, but you are not required to.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "test",
+          "contradiction"
+        ],
+        [
+          "first",
+          "strong"
+        ],
+        [
+          "second",
+          "strong"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_8a",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(8a)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "You ought to wash the dishes, but you don't have to.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "test",
+          "contradiction"
+        ],
+        [
+          "first",
+          "weak"
+        ],
+        [
+          "second",
+          "strong"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_8b",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(8b)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "You should do the dishes, but you don't have to.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "test",
+          "contradiction"
+        ],
+        [
+          "first",
+          "weak"
+        ],
+        [
+          "second",
+          "strong"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_8c",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(8c)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "You are supposed to do the dishes, but you don't have to.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "test",
+          "contradiction"
+        ],
+        [
+          "first",
+          "weak"
+        ],
+        [
+          "second",
+          "strong"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_11a",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(11a)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "You have to wash the dishes, and (in fact), you must.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "test",
+          "triviality"
+        ],
+        [
+          "first",
+          "strong"
+        ],
+        [
+          "second",
+          "strong"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_11b",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(11b)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "You must wash the dishes, and (in fact) you have to.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "test",
+          "triviality"
+        ],
+        [
+          "first",
+          "strong"
+        ],
+        [
+          "second",
+          "strong"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_12a",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(12a)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "You should wash the dishes, and (in fact) you must.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "test",
+          "triviality"
+        ],
+        [
+          "first",
+          "weak"
+        ],
+        [
+          "second",
+          "strong"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_12b",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(12b)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "You ought to wash the dishes, and in fact, you have to.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "test",
+          "triviality"
+        ],
+        [
+          "first",
+          "weak"
+        ],
+        [
+          "second",
+          "strong"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_15a",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(15a)"
+      },
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "prepi na plinis ta piata ala dhen ise ipexreomenos na to kanis",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "prepi",
+          "must"
+        ],
+        [
+          "na",
+          "NA"
+        ],
+        [
+          "plinis",
+          "wash"
+        ],
+        [
+          "ta",
+          "the"
+        ],
+        [
+          "piata",
+          "dishes"
+        ],
+        [
+          "ala",
+          "but"
+        ],
+        [
+          "dhen",
+          "NEG"
+        ],
+        [
+          "ise",
+          "are"
+        ],
+        [
+          "ipexreomenos",
+          "obliged"
+        ],
+        [
+          "na",
+          "NA"
+        ],
+        [
+          "to",
+          "it"
+        ],
+        [
+          "kanis",
+          "do"
+        ]
+      ],
+      "translation": "You must wash the dishes but you are not obliged to do it.",
+      "context": "",
+      "judgment": "unacceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "modal",
+          "prepi"
+        ],
+        [
+          "force",
+          "strong"
+        ],
+        [
+          "test",
+          "contradiction"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_15b",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(15b)"
+      },
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "tha eprepe na plinis ta piata ala dhen ise ipexreomenos na to kanis",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "tha",
+          "FUT"
+        ],
+        [
+          "eprepe",
+          "must.PST"
+        ],
+        [
+          "na",
+          "NA"
+        ],
+        [
+          "plinis",
+          "wash"
+        ],
+        [
+          "ta",
+          "the"
+        ],
+        [
+          "piata",
+          "dishes"
+        ],
+        [
+          "ala",
+          "but"
+        ],
+        [
+          "dhen",
+          "NEG"
+        ],
+        [
+          "ise",
+          "are"
+        ],
+        [
+          "ipexreomenos",
+          "obliged"
+        ],
+        [
+          "na",
+          "NA"
+        ],
+        [
+          "to",
+          "it"
+        ],
+        [
+          "kanis",
+          "do"
+        ]
+      ],
+      "translation": "You ought to wash the dishes but you are not obliged to do it.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "modal",
+          "prepi+CF"
+        ],
+        [
+          "force",
+          "weak"
+        ],
+        [
+          "derivation",
+          "CF"
+        ],
+        [
+          "test",
+          "contradiction"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_16a",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(16a)"
+      },
+      "reportedIn": null,
+      "language": "stan1290",
+      "primaryText": "tu dois faire la vaisselle, mais tu n'es pas obligé",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "tu",
+          "you"
+        ],
+        [
+          "dois",
+          "must"
+        ],
+        [
+          "faire",
+          "do"
+        ],
+        [
+          "la",
+          "the"
+        ],
+        [
+          "vaisselle",
+          "dishes"
+        ],
+        [
+          "mais",
+          "but"
+        ],
+        [
+          "tu",
+          "you"
+        ],
+        [
+          "n'es",
+          "NEG.are"
+        ],
+        [
+          "pas",
+          "NEG"
+        ],
+        [
+          "obligé",
+          "obliged"
+        ]
+      ],
+      "translation": "You must do the dishes but you are not obliged to do them.",
+      "context": "",
+      "judgment": "unacceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "modal",
+          "devoir"
+        ],
+        [
+          "force",
+          "strong"
+        ],
+        [
+          "test",
+          "contradiction"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_16b",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(16b)"
+      },
+      "reportedIn": null,
+      "language": "stan1290",
+      "primaryText": "tu devrais faire la vaisselle, mais tu n'es pas obligé",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "tu",
+          "you"
+        ],
+        [
+          "devrais",
+          "must.COND"
+        ],
+        [
+          "faire",
+          "do"
+        ],
+        [
+          "la",
+          "the"
+        ],
+        [
+          "vaisselle",
+          "dishes"
+        ],
+        [
+          "mais",
+          "but"
+        ],
+        [
+          "tu",
+          "you"
+        ],
+        [
+          "n'es",
+          "NEG.are"
+        ],
+        [
+          "pas",
+          "NEG"
+        ],
+        [
+          "obligé",
+          "obliged"
+        ]
+      ],
+      "translation": "You ought to do the dishes but you are not obliged to do them.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "modal",
+          "devoir+CF"
+        ],
+        [
+          "force",
+          "weak"
+        ],
+        [
+          "derivation",
+          "CF"
+        ],
+        [
+          "test",
+          "contradiction"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_17",
+      "source": {
+        "bibkey": "rubinstein-2014",
+        "paperLabel": "(21a)"
+      },
+      "reportedIn": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(17)"
+      },
+      "language": "hebr1245",
+      "primaryText": "yoter/haxi tov še-hu yitpater, aval hu lo xayav lehitpater",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "yoter/haxi",
+          "more/most"
+        ],
+        [
+          "tov",
+          "good"
+        ],
+        [
+          "še-hu",
+          "that-he"
+        ],
+        [
+          "yitpater",
+          "will.resign"
+        ],
+        [
+          "aval",
+          "but"
+        ],
+        [
+          "hu",
+          "he"
+        ],
+        [
+          "lo",
+          "NEG"
+        ],
+        [
+          "xayav",
+          "must"
+        ],
+        [
+          "lehitpater",
+          "resign"
+        ]
+      ],
+      "translation": "It is better/best that he will resign, but he doesn't have to resign.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "modal",
+          "yoter tov"
+        ],
+        [
+          "force",
+          "weak"
+        ],
+        [
+          "derivation",
+          "comparative"
+        ],
+        [
+          "test",
+          "contradiction"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_23",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(23)"
+      },
+      "reportedIn": null,
+      "language": "java1254",
+      "primaryText": "wong wong jawa kudu-ne iso ngomong kromo, terus anak-e rojo yo kudu iso",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "wong",
+          "person"
+        ],
+        [
+          "wong",
+          "person"
+        ],
+        [
+          "jawa",
+          "java"
+        ],
+        [
+          "kudu-ne",
+          "ROOT.NEC-NE"
+        ],
+        [
+          "iso",
+          "CIRC.POS"
+        ],
+        [
+          "ngomong",
+          "AV.talk"
+        ],
+        [
+          "kromo",
+          "high.speech"
+        ],
+        [
+          "terus",
+          "then"
+        ],
+        [
+          "anak-e",
+          "child-DEF"
+        ],
+        [
+          "rojo",
+          "king"
+        ],
+        [
+          "yo",
+          "PRT.YES"
+        ],
+        [
+          "kudu",
+          "ROOT.NEC"
+        ],
+        [
+          "iso",
+          "CIRC.POS"
+        ]
+      ],
+      "translation": "Javanese people ought to be able to speak Krama, and the Sultan's son has to be able to.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "modal",
+          "kudu+NE"
+        ],
+        [
+          "force",
+          "weak"
+        ],
+        [
+          "derivation",
+          "NE"
+        ],
+        [
+          "test",
+          "triviality"
+        ],
+        [
+          "first",
+          "weak"
+        ],
+        [
+          "second",
+          "strong"
+        ]
+      ],
+      "comment": "The chapter presents the example in discussing Vander Klok & Hohaus 2020 and gives no locator in it.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_18a",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(18a)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "He should not go.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "wide",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "narrow",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "should"
+        ],
+        [
+          "force",
+          "weak"
+        ],
+        [
+          "negation",
+          "clausemate"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_18b",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(18b)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "He must not go.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "wide",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "narrow",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "must"
+        ],
+        [
+          "force",
+          "strong"
+        ],
+        [
+          "negation",
+          "clausemate"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_18c",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(18c)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "He doesn't have to go.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "wide",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "narrow",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "have to"
+        ],
+        [
+          "force",
+          "strong"
+        ],
+        [
+          "negation",
+          "clausemate"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_19a",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(19a)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Ann doesn't think Bill should go.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "wide",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "narrow",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "should"
+        ],
+        [
+          "force",
+          "weak"
+        ],
+        [
+          "negation",
+          "higher"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_19b",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(19b)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Ann doesn't think Bill must go.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "wide",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "narrow",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "must"
+        ],
+        [
+          "force",
+          "strong"
+        ],
+        [
+          "negation",
+          "higher"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_19c",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(19c)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Ann doesn't think Bill has to go.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "wide",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "narrow",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "have to"
+        ],
+        [
+          "force",
+          "strong"
+        ],
+        [
+          "negation",
+          "higher"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_20a",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(20a)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "It's not the case that Bill should go.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "wide",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "narrow",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "should"
+        ],
+        [
+          "force",
+          "weak"
+        ],
+        [
+          "negation",
+          "higher"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_20b",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(20b)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "It's not the case Bill must go.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "wide",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "narrow",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "must"
+        ],
+        [
+          "force",
+          "strong"
+        ],
+        [
+          "negation",
+          "higher"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_20c",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(20c)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "It's not the case that Bill has to go.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "wide",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "narrow",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "have to"
+        ],
+        [
+          "force",
+          "strong"
+        ],
+        [
+          "negation",
+          "higher"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_26a",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(26a)"
+      },
+      "reportedIn": null,
+      "language": "afri1274",
+      "primaryText": "Ek moet nog na die partyjie toe gaan!",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Ek",
+          "I"
+        ],
+        [
+          "moet",
+          "NEC"
+        ],
+        [
+          "nog",
+          "still"
+        ],
+        [
+          "na",
+          "to"
+        ],
+        [
+          "die",
+          "the"
+        ],
+        [
+          "partyjie",
+          "party"
+        ],
+        [
+          "toe",
+          "to"
+        ],
+        [
+          "gaan",
+          "go"
+        ]
+      ],
+      "translation": "I still should/have to go to the party!",
+      "context": "It's your last day at work before your leave, and there's a lot left to do. You catch sight of your calendar and realise the summer party is this afternoon. Talking to your colleague:",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "modal",
+          "moet"
+        ],
+        [
+          "force",
+          "weak"
+        ],
+        [
+          "test",
+          "contradiction"
+        ]
+      ],
+      "comment": "The chapter presents the example with Weingartz & Hohaus 2024 and gives no locator in it. Consistently followed by (26b) 'But actually, I don't have to.'",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_28a",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(28a)"
+      },
+      "reportedIn": null,
+      "language": "samo1305",
+      "primaryText": "E tatau ona ou alu i le pātī.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "E",
+          "TAM"
+        ],
+        [
+          "tatau",
+          "NEC"
+        ],
+        [
+          "ona",
+          "that"
+        ],
+        [
+          "ou",
+          "I"
+        ],
+        [
+          "alu",
+          "go"
+        ],
+        [
+          "i",
+          "to"
+        ],
+        [
+          "le",
+          "the"
+        ],
+        [
+          "pātī",
+          "party"
+        ]
+      ],
+      "translation": "I should go to the party.",
+      "context": "It's your last day at work before your leave, and there's a lot left to do. You catch sight of your calendar and realise the summer party is this afternoon. Talking to your colleague:",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "modal",
+          "tatau"
+        ],
+        [
+          "force",
+          "weak"
+        ],
+        [
+          "test",
+          "contradiction"
+        ]
+      ],
+      "comment": "The chapter presents the example with Weingartz & Hohaus 2024 and gives no locator in it; its context is (26)'s. Consistently followed by (28b) 'But I don't have to.' The chapter glosses pātī 'part'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_43",
+      "source": {
+        "bibkey": "deal-2011",
+        "paperLabel": "(1)"
+      },
+      "reportedIn": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(43)"
+      },
+      "language": "nezp1238",
+      "primaryText": "'inéhne-no'qa 'ee kii lepít cíickan",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "'inéhne-no'qa",
+          "take-MODAL"
+        ],
+        [
+          "'ee",
+          "you"
+        ],
+        [
+          "kii",
+          "DEM"
+        ],
+        [
+          "lepít",
+          "two"
+        ],
+        [
+          "cíickan",
+          "blanket"
+        ]
+      ],
+      "translation": "You can take these two blankets. / You should take these two blankets.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "o'qa"
+        ],
+        [
+          "environment",
+          "unembedded"
+        ]
+      ],
+      "comment": "The chapter prints the two translations as (43a) and (43b).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_44",
+      "source": {
+        "bibkey": "deal-2011",
+        "paperLabel": "(49)"
+      },
+      "reportedIn": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(44)"
+      },
+      "language": "nezp1238",
+      "primaryText": "wéet'u 'ee kiy-ó'qa",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "wéet'u",
+          "not"
+        ],
+        [
+          "'ee",
+          "you"
+        ],
+        [
+          "kiy-ó'qa",
+          "go-MODAL"
+        ]
+      ],
+      "translation": "You can't go.",
+      "context": "You are explaining to someone who thinks they have to leave that they are not in fact required to do so. It's not necessary for them to leave.",
+      "judgment": "unacceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "o'qa"
+        ],
+        [
+          "environment",
+          "clausemate negation"
+        ]
+      ],
+      "comment": "Marked # in the context: the intended 'You don't have to go' is unavailable, and the actual 'You can't go' is weird there.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_45",
+      "source": {
+        "bibkey": "deal-2011",
+        "paperLabel": "(60)"
+      },
+      "reportedIn": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(45)"
+      },
+      "language": "nezp1238",
+      "primaryText": "c'alawi 'a-múu-no'qa saykiptaw'atóo-na, kaa 'e-múu-nu'",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "c'alawi",
+          "if"
+        ],
+        [
+          "'a-múu-no'qa",
+          "3OBJ-call-MODAL"
+        ],
+        [
+          "saykiptaw'atóo-na",
+          "doctor-OBJ"
+        ],
+        [
+          "kaa",
+          "then"
+        ],
+        [
+          "'e-múu-nu'",
+          "3OBJ-call-PR"
+        ]
+      ],
+      "translation": "If I can call the doctor, I will.",
+      "context": "Prompt: If I have to call the doctor, I will.",
+      "judgment": "unacceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "o'qa"
+        ],
+        [
+          "environment",
+          "other DE"
+        ]
+      ],
+      "comment": "Intended 'If I have to call the doctor' is unavailable.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_46",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(46)"
+      },
+      "reportedIn": null,
+      "language": "sion1247",
+      "primaryText": "Tsiaya-jã'ã je'e-ñe ba-'i-ji.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Tsiaya-jã'ã",
+          "river-PATH"
+        ],
+        [
+          "je'e-ñe",
+          "cross-INF"
+        ],
+        [
+          "ba-'i-ji",
+          "be-ASRT"
+        ]
+      ],
+      "translation": "One has to cross the river.",
+      "context": "San Pablo is on the other side of the river. A asks a stranger, B, how to get there. B answers:",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "ba'iji"
+        ],
+        [
+          "environment",
+          "unembedded"
+        ]
+      ],
+      "comment": "The possibility reading attempted in (47) is unavailable out of the blue.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_48",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(48)"
+      },
+      "reportedIn": null,
+      "language": "sion1247",
+      "primaryText": "Sai-ye beo-ji.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Sai-ye",
+          "go-INF"
+        ],
+        [
+          "beo-ji",
+          "NEG.be-3S"
+        ]
+      ],
+      "translation": "We mustn't go.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "ba'iji"
+        ],
+        [
+          "environment",
+          "clausemate negation"
+        ]
+      ],
+      "comment": "'We don't have to go' is impossible.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_49",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(49)"
+      },
+      "reportedIn": null,
+      "language": "sion1247",
+      "primaryText": "Sai-ye ba-'i-to, sa-si-'i.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Sai-ye",
+          "go-INF"
+        ],
+        [
+          "ba-'i-to",
+          "be-IPF-COND"
+        ],
+        [
+          "sa-si-'i",
+          "go-FUT-OTH"
+        ]
+      ],
+      "translation": "If I can / must go, I will go.",
+      "context": "I am waiting to see if there is going to be a spot for me in the boat. My friend asks me if I want to go.",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "ba'iji"
+        ],
+        [
+          "environment",
+          "other DE"
+        ]
+      ],
+      "comment": "The chapter prints two answers with this conditional: (49a) 'Yë-yë. …' 'Yes. If I can (#must) go, I will go.' and (49b) 'Coe-yë. …' 'No. But if I must (#can) go, I will go.'",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_51",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(51)"
+      },
+      "reportedIn": null,
+      "language": "swed1254",
+      "primaryText": "Alice får gå ut, men hon får också stanna.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Alice",
+          "Alice"
+        ],
+        [
+          "får",
+          "fa"
+        ],
+        [
+          "gå",
+          "go"
+        ],
+        [
+          "ut",
+          "out"
+        ],
+        [
+          "men",
+          "but"
+        ],
+        [
+          "hon",
+          "she"
+        ],
+        [
+          "får",
+          "fa"
+        ],
+        [
+          "också",
+          "also"
+        ],
+        [
+          "stanna",
+          "stay"
+        ]
+      ],
+      "translation": "Alice is allowed to go out, but she is also allowed to stay.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "får"
+        ],
+        [
+          "environment",
+          "unembedded"
+        ]
+      ],
+      "comment": "The necessity reading of får is shown by (52). The chapter glosses får 'fa' here and 'MOD' in (52)-(56).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_52",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(52)"
+      },
+      "reportedIn": null,
+      "language": "swed1254",
+      "primaryText": "Isac får betala en bot.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Isac",
+          "Isac"
+        ],
+        [
+          "får",
+          "MOD"
+        ],
+        [
+          "betala",
+          "pay"
+        ],
+        [
+          "en",
+          "a"
+        ],
+        [
+          "bot",
+          "fine"
+        ]
+      ],
+      "translation": "Isac has to pay a fine.",
+      "context": "I'm telling a story in which Isac illegally parked the car, and the police caught him.",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "necessity",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "får"
+        ],
+        [
+          "environment",
+          "unembedded"
+        ]
+      ],
+      "comment": "The necessity reading of får unembedded.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_53",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(53)"
+      },
+      "reportedIn": null,
+      "language": "swed1254",
+      "primaryText": "Peter får inte lämna fängelset.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Peter",
+          "Peter"
+        ],
+        [
+          "får",
+          "MOD"
+        ],
+        [
+          "inte",
+          "not"
+        ],
+        [
+          "lämna",
+          "leave"
+        ],
+        [
+          "fängelset",
+          "prison"
+        ]
+      ],
+      "translation": "Peter is not allowed to leave the prison.",
+      "context": "Peter is a prisoner.",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "får"
+        ],
+        [
+          "environment",
+          "clausemate negation"
+        ]
+      ],
+      "comment": "The negated-necessity reading attempted in (54) is unavailable.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_55",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(55)"
+      },
+      "reportedIn": null,
+      "language": "swed1254",
+      "primaryText": "Om Lucas får äta glass blir han glad.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Om",
+          "if"
+        ],
+        [
+          "Lucas",
+          "Lucas"
+        ],
+        [
+          "får",
+          "MOD"
+        ],
+        [
+          "äta",
+          "eat"
+        ],
+        [
+          "glass",
+          "ice.cream"
+        ],
+        [
+          "blir",
+          "be.fut"
+        ],
+        [
+          "han",
+          "he"
+        ],
+        [
+          "glad",
+          "happy"
+        ]
+      ],
+      "translation": "If Lucas is allowed to have ice cream, he will be happy.",
+      "context": "Lucas loves ice cream, but only eats it when his mom gives him permission.",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "får"
+        ],
+        [
+          "environment",
+          "other DE"
+        ]
+      ],
+      "comment": "The necessity reading of får in a conditional antecedent is shown by (56).",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_56",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(56)"
+      },
+      "reportedIn": null,
+      "language": "swed1254",
+      "primaryText": "Om Maria får betala en böter blir hon olycklig.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Om",
+          "if"
+        ],
+        [
+          "Maria",
+          "Maria"
+        ],
+        [
+          "får",
+          "MOD"
+        ],
+        [
+          "betala",
+          "pay"
+        ],
+        [
+          "en",
+          "a"
+        ],
+        [
+          "böter",
+          "fine"
+        ],
+        [
+          "blir",
+          "be.fut"
+        ],
+        [
+          "hon",
+          "she"
+        ],
+        [
+          "olycklig",
+          "unhappy"
+        ]
+      ],
+      "translation": "If Maria has to pay a fine, she will be unhappy.",
+      "context": "Maria took the train without paying and is worried about getting caught.",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "necessity",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "får"
+        ],
+        [
+          "environment",
+          "other DE"
+        ]
+      ],
+      "comment": "The necessity reading of får in a conditional antecedent.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_57",
+      "source": {
+        "bibkey": "newkirk-2022a",
+        "paperLabel": ""
+      },
+      "reportedIn": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(57)"
+      },
+      "language": "nand1264",
+      "primaryText": "Kabunga a-anga-na-sy-a oko kalhasi ko munabwire",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Kabunga might/should be coming to class today.",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "weak necessity",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "anga"
+        ],
+        [
+          "environment",
+          "unembedded"
+        ]
+      ],
+      "comment": "From Newkirk 2022. Strong necessity is unavailable, as (60) shows. The chapter prints two contexts, one for epistemic possibility (the professor never knows whether Kábunga will come) and one for epistemic weak necessity (it is Monday, when Kábunga is usually there). Its gloss line, 'Kabunga SM.c1-MOD-TM-come-FV c17 today', does not align with the words after the verb, so no glossed tokens are given.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_58",
+      "source": {
+        "bibkey": "newkirk-2022a",
+        "paperLabel": ""
+      },
+      "reportedIn": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(58)"
+      },
+      "language": "nand1264",
+      "primaryText": "nga-oko reglema yi-ka-bug-a, si-u-anga-sat-a",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "nga-oko",
+          "COMP-COMP"
+        ],
+        [
+          "reglema",
+          "c9.rules"
+        ],
+        [
+          "yi-ka-bug-a",
+          "SM.c9-TM-say-FV"
+        ],
+        [
+          "si-u-anga-sat-a",
+          "NEG-SM.2sg-MOD-dance-FV"
+        ]
+      ],
+      "translation": "According to the rules, you can't play.",
+      "context": "A player has been hurt in a football match, and the ref is speaking to them, and saying:",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "weak necessity",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "anga"
+        ],
+        [
+          "environment",
+          "clausemate negation"
+        ]
+      ],
+      "comment": "From Newkirk 2022. The negated-necessity reading attempted in (59) is unavailable.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_table_oqa_unembedded",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "§3.2 table"
+      },
+      "reportedIn": null,
+      "language": "nezp1238",
+      "primaryText": "o'qa",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "weak necessity",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "o'qa"
+        ],
+        [
+          "environment",
+          "unembedded"
+        ],
+        [
+          "table",
+          "true"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_table_oqa_clausemate",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "§3.2 table"
+      },
+      "reportedIn": null,
+      "language": "nezp1238",
+      "primaryText": "o'qa",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "weak necessity",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "o'qa"
+        ],
+        [
+          "environment",
+          "clausemate negation"
+        ],
+        [
+          "table",
+          "true"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_table_oqa_other",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "§3.2 table"
+      },
+      "reportedIn": null,
+      "language": "nezp1238",
+      "primaryText": "o'qa",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "weak necessity",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "o'qa"
+        ],
+        [
+          "environment",
+          "other DE"
+        ],
+        [
+          "table",
+          "true"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_table_baiji_unembedded",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "§3.2 table"
+      },
+      "reportedIn": null,
+      "language": "sion1247",
+      "primaryText": "ba'iji",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "weak necessity",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "ba'iji"
+        ],
+        [
+          "environment",
+          "unembedded"
+        ],
+        [
+          "table",
+          "true"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_table_baiji_clausemate",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "§3.2 table"
+      },
+      "reportedIn": null,
+      "language": "sion1247",
+      "primaryText": "ba'iji",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "weak necessity",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "ba'iji"
+        ],
+        [
+          "environment",
+          "clausemate negation"
+        ],
+        [
+          "table",
+          "true"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_table_baiji_other",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "§3.2 table"
+      },
+      "reportedIn": null,
+      "language": "sion1247",
+      "primaryText": "ba'iji",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "weak necessity",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "ba'iji"
+        ],
+        [
+          "environment",
+          "other DE"
+        ],
+        [
+          "table",
+          "true"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_table_far_unembedded",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "§3.2 table"
+      },
+      "reportedIn": null,
+      "language": "swed1254",
+      "primaryText": "får",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "weak necessity",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "får"
+        ],
+        [
+          "environment",
+          "unembedded"
+        ],
+        [
+          "table",
+          "true"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_table_far_clausemate",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "§3.2 table"
+      },
+      "reportedIn": null,
+      "language": "swed1254",
+      "primaryText": "får",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "weak necessity",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "får"
+        ],
+        [
+          "environment",
+          "clausemate negation"
+        ],
+        [
+          "table",
+          "true"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_table_far_other",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "§3.2 table"
+      },
+      "reportedIn": null,
+      "language": "swed1254",
+      "primaryText": "får",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "weak necessity",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "får"
+        ],
+        [
+          "environment",
+          "other DE"
+        ],
+        [
+          "table",
+          "true"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_table_anga_unembedded",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "§3.2 table"
+      },
+      "reportedIn": null,
+      "language": "nand1264",
+      "primaryText": "anga",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "weak necessity",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "anga"
+        ],
+        [
+          "environment",
+          "unembedded"
+        ],
+        [
+          "table",
+          "true"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_table_anga_clausemate",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "§3.2 table"
+      },
+      "reportedIn": null,
+      "language": "nand1264",
+      "primaryText": "anga",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "weak necessity",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "anga"
+        ],
+        [
+          "environment",
+          "clausemate negation"
+        ],
+        [
+          "table",
+          "true"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_table_anga_other",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "§3.2 table"
+      },
+      "reportedIn": null,
+      "language": "nand1264",
+      "primaryText": "anga",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "possibility",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "necessity",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "weak necessity",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "modal",
+          "anga"
+        ],
+        [
+          "environment",
+          "other DE"
+        ],
+        [
+          "table",
+          "true"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_79a",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(79a)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "You don't succeed if you work hard.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "wide",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "narrow",
+          "judgment": "marginal"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "construction",
+          "bare conditional"
+        ],
+        [
+          "negation",
+          "clausemate"
+        ]
+      ],
+      "comment": "The chapter calls the strong reading, that hard work never results in success, the most salient and preferred one.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_85a",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(85a)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Babies don't eat arugula.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "wide",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "narrow",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "construction",
+          "generic"
+        ],
+        [
+          "negation",
+          "clausemate"
+        ]
+      ],
+      "comment": "The chapter reports the reading that babies never eat arugula as the salient one. The chapter says the weaker reading, (86) 'Babies don't always eat arugula', does not seem available.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_91a",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(91a)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "A man for John to play against is in the next room.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "could",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "should",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "construction",
+          "infinitival relative"
+        ],
+        [
+          "determiner",
+          "weak"
+        ]
+      ],
+      "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_91b",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(91b)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Three men for John to play against are in the next room.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "could",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "should",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "construction",
+          "infinitival relative"
+        ],
+        [
+          "determiner",
+          "weak"
+        ]
+      ],
+      "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_92a",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(92a)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The men for John to play against are in the next room.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "could",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "should",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "construction",
+          "infinitival relative"
+        ],
+        [
+          "determiner",
+          "strong"
+        ]
+      ],
+      "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aghajeretic2026_92b",
+      "source": {
+        "bibkey": "agha-jeretic-2026",
+        "paperLabel": "(92b)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Every man for John to play against is in the next room.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "alternatives": [],
+      "readings": [
+        {
+          "name": "could",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "should",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "construction",
+          "infinitival relative"
+        ],
+        [
+          "determiner",
+          "strong"
+        ]
+      ],
+      "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's.",
+      "verified": "page-image"
+    }
+  ]
+}

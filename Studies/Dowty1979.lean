@@ -224,15 +224,15 @@ theorem prog_waltz_not_past :
 coin right where (24) does not. -/
 theorem truthValue_rows :
     (iv 0 0 ∈ prog (fun _ _ ↦ Set.univ) heads true ↔
-        Examples.coin_heads.feature? "truthValue" = some "true") ∧
+        Examples.coin_heads.verdict = some true) ∧
       (iv 0 0 ∈ prog (fun _ _ ↦ Set.univ) tails true ↔
-        Examples.coin_tails.feature? "truthValue" = some "true") ∧
+        Examples.coin_tails.verdict = some true) ∧
       (iv 1 1 ∈ possibleProg splitAfterOne watch true ↔
-        Examples.ex28.feature? "truthValue" = some "true") ∧
+        Examples.ex28.verdict = some true) ∧
       ¬ (iv 0 0 ∈ possibleProg splitAfterZero heads true ↔
-        Examples.coin_heads.feature? "truthValue" = some "true") ∧
+        Examples.coin_heads.verdict = some true) ∧
       ¬ (iv 1 1 ∈ bennettPartee watch true ↔
-        Examples.ex28.feature? "truthValue" = some "true") :=
+        Examples.ex28.verdict = some true) :=
   ⟨iff_of_false (not_prog_heads true) (by decide), iff_of_false (not_prog_tails true) (by decide),
     iff_of_true possibleProg_watch (by decide),
     fun h ↦ absurd (h.1 (possibleProg_heads true)) (by decide),

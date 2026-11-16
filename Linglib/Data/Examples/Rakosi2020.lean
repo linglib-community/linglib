@@ -682,4 +682,24 @@ def antecedent (e : Datum) : Option Antecedent :=
     ("quantified", .quantified), ("coordinate", .coordinate), ("collective", .collective),
     ("boundPro", .boundPro)]
 
+/-- The readings the paper tests an anaphor for. -/
+inductive Reading where
+  /-- referential: the anaphor refers, as a pronoun does -/
+  | referential
+  /-- bound variable: the anaphor is a variable bound by its antecedent -/
+  | boundVariable
+  /-- broad scope: the reciprocal takes scope over the matrix verb -/
+  | broadScope
+  deriving DecidableEq, Repr, Fintype
+
+/-- The name the rows give the reading. -/
+def Reading.label : Reading → String
+  | .referential => "referential"
+  | .boundVariable => "bound variable"
+  | .broadScope => "broad scope"
+
+/-- The judgment a row records for the reading, if it records one. -/
+def reading (e : Datum) (r : Reading) : Option Judgment :=
+  e.readings.lookup r.label
+
 end Rakosi2020.Examples

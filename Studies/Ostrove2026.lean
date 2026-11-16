@@ -192,7 +192,8 @@ def landauToSMPM : Landau2004.EmbeddedTense → EmbeddedClauseType
 def smpmToLandau (c : EmbeddedClauseType) : Landau2004.EmbeddedTense :=
   .ofFiniteness (UnrestrictedTAM c) (IndependentTense c)
 
-theorem smpmToLandau_landauToSMPM (c : Landau2004.EmbeddedTense) : smpmToLandau (landauToSMPM c) = c := by
+theorem smpmToLandau_landauToSMPM (c : Landau2004.EmbeddedTense) :
+    smpmToLandau (landauToSMPM c) = c := by
   cases c <;> decide +kernel
 
 /-- Landau's calculus predicts every clause type's control profile iff the clauses are `[+Agr]`,

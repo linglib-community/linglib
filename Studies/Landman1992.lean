@@ -382,21 +382,21 @@ noncomputable abbrev miracle : Model (NonemptyInterval ℕ) ℕ := interrupted 0
 the event semantics makes the interrupted drawing (3) false. -/
 theorem truthValue_rows :
     ((once.progAt (complete 1) 0).Nonempty ↔
-        Examples.ex3.feature? "truthValue" = some "true") ∧
+        Examples.ex3.verdict = some true) ∧
       ((Aspect.PRFV (T := ℕ) (complete 1) 0).Nonempty ↔
-        Examples.ex4.feature? "truthValue" = some "true") ∧
+        Examples.ex4.verdict = some true) ∧
       ((once.progAt (complete 1) 0).Nonempty ↔
-        Examples.ex13.feature? "truthValue" = some "true") ∧
+        Examples.ex13.verdict = some true) ∧
       ((hopeless.progAt (complete 5) 0).Nonempty ↔
-        Examples.ex17_sink.feature? "truthValue" = some "true") ∧
+        Examples.ex17_sink.verdict = some true) ∧
       ((miracle.progAt (complete 0) 0).Nonempty ↔
-        Examples.ex17_miracle.feature? "truthValue" = some "true") ∧
+        Examples.ex17_miracle.verdict = some true) ∧
       ((twoTrucks.progAt (complete 2) 0).Nonempty ↔
-        Examples.ex18.feature? "truthValue" = some "true") ∧
+        Examples.ex18.verdict = some true) ∧
       ((hopeless.progAt (complete 5) 0).Nonempty ↔
-        Examples.ex20.feature? "truthValue" = some "true") ∧
+        Examples.ex20.verdict = some true) ∧
       ¬ ((Aspect.IMPF (T := ℕ) (fun w _ ↦ {w}) (complete 1) 0).Nonempty ↔
-        Examples.ex3.feature? "truthValue" = some "true") := by
+        Examples.ex3.verdict = some true) := by
   have hu (n : ℕ) : Set.Icc 1 n ⊆ (Set.univ : Set ℕ) := Set.subset_univ _
   have hh : ¬ Set.Icc 1 5 ⊆ Set.Iic (2 : ℕ) := fun h ↦ absurd (h ⟨by decide, by decide⟩ :
     (3 : ℕ) ∈ Set.Iic 2) (by decide)

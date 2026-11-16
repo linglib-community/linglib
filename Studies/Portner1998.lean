@@ -186,17 +186,17 @@ theorem prog_hero :
 imperfective of the event semantics make (11) false. -/
 theorem truthValue_rows :
     (InProgress circ (fun _ ↦ notInterrupted) (iv 0 1) crossing .hit ↔
-        Examples.ex11.feature? "truthValue" = some "true") ∧
+        Examples.ex11.verdict = some true) ∧
       (InProgress circ (fun _ ↦ notInterrupted) (iv 0 1) walkIntoBus .hit ↔
-        Examples.ex39.feature? "truthValue" = some "true") ∧
+        Examples.ex39.verdict = some true) ∧
       (InProgress (fun _ _ ↦ ordinary) (fun _ ↦ defeatsSoldiers) (iv 0 1) wipeOut .killedEarly ↔
-        Examples.ex18_ordinary.feature? "truthValue" = some "true") ∧
+        Examples.ex18_ordinary.verdict = some true) ∧
       (InProgress (fun _ _ ↦ ⊥) (fun _ ↦ defeatsSoldiers) (iv 0 1) wipeOut .wipesOut ↔
-        Examples.ex18_hero.feature? "truthValue" = some "true") ∧
+        Examples.ex18_hero.verdict = some true) ∧
       ¬ (iv 0 1 ∈ Dowty1979.prog (fun _ _ ↦ {Bus.hit}) (Landman1992.sentenceOf crossing) .hit ↔
-        Examples.ex11.feature? "truthValue" = some "true") ∧
+        Examples.ex11.verdict = some true) ∧
       ¬ ((Aspect.IMPF (T := ℕ) (fun w _ ↦ {w}) crossing Bus.hit).Nonempty ↔
-        Examples.ex11.feature? "truthValue" = some "true") := by
+        Examples.ex11.verdict = some true) := by
   refine ⟨iff_of_true prog_crossing (by decide), iff_of_true prog_walkIntoBus (by decide),
     iff_of_false (not_prog_ordinary _) (by decide), iff_of_true prog_hero (by decide),
     fun h ↦ not_dowtyProg_bus (h.2 (by decide)), ?_⟩

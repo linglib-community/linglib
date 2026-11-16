@@ -273,12 +273,12 @@ restriction, so that *would*, Gen over the trips by (22), is true, (42b); *used 
 (42c), once its reference interval must be characterized by actual trips. -/
 theorem actualization_rows :
     (habit ∈ UNBOUNDED (Hab gnomic indicating bus) false ↔
-      Examples.ex42a.feature? "truthValue" = some "true") ∧
+      Examples.ex42a.verdict = some true) ∧
     ((∃ s, τ s = habit ∧ Hab gnomic indicating toWork false s) ∧
         Gen τ gnomic byBus toWork habit false ↔
-      Examples.ex42b.feature? "truthValue" = some "true") ∧
+      Examples.ex42b.verdict = some true) ∧
     (.pure 5 ∈ retro (fun w ↦ {i | Characterizes bus w i} ∩ UNBOUNDED (Hab gnomic indicating bus) w)
-        false ↔ Examples.ex42c.feature? "truthValue" = some "true") := by
+        false ↔ Examples.ex42c.verdict = some true) := by
   refine ⟨iff_of_true ⟨habit, le_rfl, hab_of_single_trip.1⟩ (by decide),
     iff_of_true ⟨⟨habit, rfl, hab_habit ⟨1, rfl⟩ ⟨2, rfl⟩⟩,
       gen_iff.2 fun _ _ h ↦ .of_forall fun _ ↦ h ▸ le_rfl⟩ (by decide), iff_of_false ?_ (by decide)⟩
