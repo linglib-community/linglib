@@ -173,24 +173,25 @@ variable {b : Ty Base} {κ : Set W → b.Domain E W → Set W} {x : Set W}
 commitments of the context of the gap. -/
 theorem isLocalContext_subset_commitments (hκ : ∀ y, IsTruthFunctional (κ · y))
     (hx : IsLocalContext univ (range fun y q ↦ κ q y) x) :
-    x ⊆ {w | contextCommitments E [st, b] κ w} := fun w hw ↦ by
+    x ⊆ {w | contextCommitments E [st, b] (fun q y w ↦ w ∈ κ {w | q w} y) w} := fun w hw ↦ by
   have h := (hx.subset_commitments (by rintro _ ⟨y, rfl⟩; exact hκ y) hw).2
   obtain ⟨⟨_, hp, h₁⟩, _, hq, h₂⟩ := mem_commitments.1 h
   simp only [mem_iUnion, mem_range, exists_prop, exists_exists_eq_and] at hp hq
   obtain ⟨y, q, rfl⟩ := hp
   obtain ⟨y', q', rfl⟩ := hq
-  exact contextCommitments₂.2 ⟨⟨q, y, h₁⟩, q', y', h₂⟩
+  exact contextCommitments₂.2 ⟨⟨(· ∈ q), y, h₁⟩, (· ∈ q'), y', h₂⟩
 
 -- A sentence-final gap: the commitments are the local context of transparency.
 theorem isLocalContext_commitments {κ : Set W → Set W} (hκ : IsTruthFunctional κ) :
-    IsLocalContext univ {κ} {w | contextCommitments E [st] κ w} := by
+    IsLocalContext univ {κ} {w | contextCommitments E [st] (fun q w ↦ w ∈ κ {w | q w}) w} := by
   convert isLocalContext_singleton_of_isTruthFunctional (C := univ) hκ using 1
   rw [univ_inter]
   ext w
-  refine (contextCommitments₁ (E := E) (a := st) (κ := κ)).trans ?_
+  refine (contextCommitments₁ (E := E) (a := st)).trans ?_
   rw [mem_commitments]
   simp only [mem_range, exists_exists_eq_and]
-  rfl
+  exact ⟨fun ⟨⟨_, h⟩, _, h'⟩ ↦ ⟨⟨_, h⟩, _, h'⟩,
+    fun ⟨⟨q, h⟩, q', h'⟩ ↦ ⟨⟨(· ∈ q), h⟩, (· ∈ q'), h'⟩⟩
 
 -- In *(p and _) or c*, the local context of transparency is `p`.
 theorem isLocalContext_and_or (p : Set W) :
@@ -274,7 +275,8 @@ variable (c rain : W → Prop)
 /-- *Might* as a test: the *might* of domain semantics at the commitments of the local
 context. -/
 def mightTest : Item E W (st ⇒ st) :=
-  fun l κ ↦ κ fun p ↦ (Sentence.ofProp p).might (contextCommitments E ((st ⇒ st) :: l) κ)
+  fun l κ ↦ κ fun p ↦
+    (Sentence.ofProp {w | p w}).might {w | contextCommitments E ((st ⇒ st) :: l) κ w}
 
 -- In *not rain and [might] rain*, the context of the modal contains the left conjunct.
 theorem value_modal_right_conjunct (t : Item E W (st ⇒ st)) (κ : (W → Prop) → W → Prop) :
