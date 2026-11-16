@@ -232,11 +232,11 @@
     "translation": "",
     "context": "Ruti started a new job. She decided to go to work by bus. She only went there once, and shortly after that she died. In a eulogy, one could say:",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["form", "simple"],
-      ["truthValue", "true"]
+      ["form", "simple"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -255,11 +255,11 @@
     "translation": "",
     "context": "Ruti started a new job. She decided to go to work by bus. She only went there once, and shortly after that she died. In a eulogy, one could say:",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["form", "would"],
-      ["truthValue", "true"]
+      ["form", "would"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -278,11 +278,11 @@
     "translation": "",
     "context": "Ruti started a new job. She decided to go to work by bus. She only went there once, and shortly after that she died. In a eulogy, one could say:",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["form", "usedTo"],
-      ["truthValue", "false"]
+      ["form", "usedTo"]
     ],
     "comment": "",
     "verified": "page-image"

@@ -36,7 +36,7 @@ so they fall outside it (`Landau2024b.pronoun_not_mem_copyRel`).
 
 namespace Manzini2026
 
-open Minimalist SyntacticObject Control
+open Minimalist SyntacticObject Binding
 
 /-- *Gianni*, the matrix subject of (31a). -/
 def gianni : SyntacticObject := leaf ⟨.of .N [] "Gianni", 0⟩
@@ -82,13 +82,25 @@ theorem hasDistinctItems_epistemicParse : epistemicParse.HasDistinctItems := by
   rcases ha with rfl | rfl | rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl | rfl | rfl <;>
     first | rfl | simp [LexicalItem.of] at hab
 
+theorem gianni'_not_mem_copyRel : (gianni', gianni') ∉ rootParse.copyRel := by
+  rintro ⟨⟨z, -, ⟨w, hw, hwx, hwz, hne⟩, hz⟩, -⟩
+  simp only [rootParse, berlo, gianni, gianni', renumber, map_leaf, terms_merge, terms_leaf,
+    Multiset.mem_cons, Multiset.mem_add, Multiset.mem_singleton] at hw
+  rcases hw with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    simp_all [gianni, gianni', renumber, LexicalItem.of]
+  rcases hwz with rfl | rfl
+  · exact hne rfl
+  · simp [containsOrEq_iff_eq_or_contains] at hz
+
 theorem isPartial_rootParse_not_epistemicParse :
     (∃ val : SyntacticObject → Set ℕ, IsPartial val rootParse.copyRel) ∧
       ∀ val : SyntacticObject → Set ℕ, ¬ IsPartial val epistemicParse.copyRel := by
-  refine ⟨⟨fun x ↦ if x = gianni' then {0, 1} else {0}, gianni, gianni', dovere_transfer.2.1,
-    ?_⟩, fun val h ↦ ?_⟩
-  · have hne : gianni ≠ gianni' := by simp [gianni, gianni', renumber]
-    simp only [hne, ↓reduceIte]
+  refine ⟨⟨fun x ↦ if x = gianni' then {0, 1} else {0}, gianni', ⟨gianni, dovere_transfer.2.1⟩,
+    {0}, ?_, ?_⟩, fun val h ↦ ?_⟩
+  · rintro _ ⟨x, ⟨_, rfl, hx⟩, rfl⟩
+    have hne : x ≠ gianni' := fun h ↦ gianni'_not_mem_copyRel (h ▸ hx)
+    simp [hne]
+  · simp only [↓reduceIte]
     exact (Set.ssubset_iff_of_subset (by simp)).2 ⟨1, by simp, by simp⟩
   · obtain ⟨_, _, hxy, ⟨_, hne⟩, _⟩ := Landau2024b.exists_isRepetition_of_isPartial h
     exact hne (copyRel_subset_id hasDistinctItems_epistemicParse hxy)

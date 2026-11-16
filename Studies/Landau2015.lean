@@ -1,8 +1,8 @@
 module
 
-public import Linglib.Syntax.Control.Basic
+public import Linglib.Syntax.Binding.Valuation
 public import Mathlib.Data.Fin.VecNotation
-public import Linglib.Syntax.Control.Head
+public import Linglib.Syntax.Clause.Finiteness
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Syntax.Category.Verb.Defs
@@ -31,7 +31,7 @@ The book was checked against the author's 2014 manuscript, whose numbering agree
 citations here. A tier is a shape of control dependency (`Tier.Realizes`): predication is
 saturating, and logophoric control composes a binding leg over predication. Table (80)'s three
 saturation rows, control shift, partial control and split control, are derived from that shape,
-since `Control.IsSaturating` denies them of predication and the binding leg admits them; its
+since `Binding.IsSaturating` denies them of predication and the binding leg admits them; its
 inflected-complement row is the OC-NC generalization, and its rows on non-human PRO and implicit
 control are recorded as the book states them. In a single dependency, control shift and split
 control both show as a dependent with two controllers; the dependency does not record whether
@@ -49,7 +49,7 @@ they are alternatives or act jointly. Obligatory
 
 namespace Landau2015
 
-open Control SetRel
+open Binding SetRel
 
 /-! ### The two tiers -/
 
@@ -119,21 +119,21 @@ inductive Table80Row where
   represented argument, so exhaustive-control verbs resist impersonal passives (98). -/
   | implicitControl
   /-- Control shift (§4.3) is out under predication, which is bi-unique
-  (`Control.IsSaturating.eq_of_controllers`), so no other argument can saturate the predicate. -/
+  (`Binding.IsSaturating.eq_of_antecedents`), so no other argument can saturate the predicate. -/
   | controlShift
   /-- Partial control (§5) is out under a saturating dependency, which is exhaustive
-  (`Control.IsSaturating.not_isPartial`). -/
+  (`Binding.IsSaturating.not_isPartial`). -/
   | partialControl
   /-- Split control (§5) is out under a saturating dependency, which has a unique controller
-  (`Control.IsSaturating.not_isSplit`). -/
+  (`Binding.IsSaturating.not_isSplit`). -/
   | splitControl
   deriving DecidableEq, Repr
 
 /-- The clause class of an inflected complement on each tier, untensed under predication and
 tensed under logophoric control ((4), (5)). -/
-def Tier.inflectedClass : Tier → ClauseClass
-  | .predicative => .cSubjunctive
-  | .logophoric => .fSubjunctive
+def Tier.inflectedClass : Tier → Clause.EmbeddedTense
+  | .predicative => .anaphoric
+  | .logophoric => .dependent
 
 /-- A row of table (80) is available on a tier. The three saturation rows are available when some
 dependency realizing the tier shows them, referents measured in `ℕ`; the inflected-complement row
@@ -161,10 +161,12 @@ theorem available_iff_logophoric {r : Table80Row}
   have hw := realizes_logophoric_witness
   rcases hr with rfl | rfl | rfl <;> cases t <;> simp only [Table80Row.Available, reduceCtorEq,
     iff_false, not_exists, not_and, iff_true]
-  · exact fun _ _ _ h a b p hab ha hb ↦ hab (IsSaturating.eq_of_controllers h ha hb)
+  · exact fun _ _ _ h a b p hab ha hb ↦ hab (IsSaturating.eq_of_antecedents h ha hb)
   · exact ⟨_, _, _, hw, 0, 1, 3, by decide, ⟨2, by simp⟩, ⟨2, by simp⟩⟩
   · exact fun _ _ _ h ↦ IsSaturating.not_isPartial h
-  · exact ⟨_, _, _, hw, 0, 3, ⟨2, by simp⟩, by decide⟩
+  · refine ⟨_, _, _, hw, 3, ⟨0, 2, by simp⟩, 1, ?_, by decide⟩
+    rintro _ ⟨a, ⟨_, rfl, m, ha, -⟩, rfl⟩
+    rcases ha with h | h <;> simp [Prod.ext_iff] at h <;> simp [h.1]
   · exact fun _ _ _ h ↦ IsSaturating.not_isSplit h
   · exact ⟨_, _, _, hw, fun h ↦
       absurd (h (a := 0) (b := 1) (c := 3) ⟨2, by simp⟩ ⟨2, by simp⟩) (by decide)⟩

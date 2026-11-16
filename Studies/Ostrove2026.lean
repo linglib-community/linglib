@@ -3,9 +3,8 @@ module
 public import Linglib.Syntax.Binding.MinimalPronoun
 public import Linglib.Fragments.Mixtec.SMPM.Pronouns
 public import Linglib.Fragments.Mixtec.SMPM.Verbs
-public import Linglib.Syntax.Control.Head
-public import Linglib.Syntax.Control.Basic
-public import Linglib.Syntax.Control.Diagnostics
+public import Linglib.Syntax.Clause.Finiteness
+public import Linglib.Syntax.Binding.Valuation
 public import Studies.Landau2013
 public import Studies.Allotey2021
 public import Linglib.Data.Examples.Ostrove2026
@@ -60,7 +59,7 @@ namespace Ostrove2026
 
 open Binding.MinimalPronoun
 open scoped DistributedMorphology
-open Control
+open Binding
 open Mixtec.SMPM Mixtec.SMPM.Pronouns
 
 /-! ### The clause typology (26) -/
@@ -157,7 +156,7 @@ theorem frontingOut_iff : ∀ row ∈ Examples.all, row.feature? "fronting" = so
 
 /-- The diagnostics the rows attest for a clause type. The paper tests neither long-distance
 antecedents nor readings under *only*. -/
-def attested (c : EmbeddedClauseType) : Set Diagnostic :=
+def attested (c : EmbeddedClauseType) : Set Landau2013.Diagnostic :=
   {d | ∃ row ∈ Examples.all, clauseTypeOf row = some c ∧ Landau2013.attests row d}
 
 instance (c : EmbeddedClauseType) : DecidablePred (· ∈ attested c) := fun d ↦ by
@@ -169,14 +168,10 @@ theorem attested_eq_empty_iff (c : EmbeddedClauseType) :
   rw [Set.eq_empty_iff_forall_notMem]
   cases c <;> decide +kernel
 
-/-- The control profile of a clause type in [landau-2013]'s signature, the clauses no attested
-diagnostic refutes. -/
-def smpmProfile (c : EmbeddedClauseType) : Set Landau2013.Clause74 :=
-  ofAttested (attested c)
-
+/-- No clause of [landau-2013]'s signature is refuted exactly in the untensed subjunctive. -/
 theorem isObligatory_iff (c : EmbeddedClauseType) :
-    smpmProfile c = Set.univ ↔ c = .untensedSubjunctive := by
-  rw [smpmProfile, ofAttested_eq_univ_iff, attested_eq_empty_iff]
+    Landau2013.refutes '' attested c = ∅ ↔ c = .untensedSubjunctive := by
+  rw [Set.image_eq_empty, attested_eq_empty_iff]
 
 -- (37)
 theorem partialControl_rows : ∀ row ∈ Examples.all,
@@ -188,22 +183,22 @@ theorem partialControl_rows : ∀ row ∈ Examples.all,
 
 /-- The clause types on the finiteness scale of [landau-2004], untensed subjunctives being
 C-subjunctives and tensed ones F-subjunctives (§3). -/
-def landauToSMPM : ClauseClass → EmbeddedClauseType
-  | .cSubjunctive => .untensedSubjunctive
-  | .fSubjunctive => .tensedSubjunctive
-  | .finite => .finite
+def landauToSMPM : Clause.EmbeddedTense → EmbeddedClauseType
+  | .anaphoric => .untensedSubjunctive
+  | .dependent => .tensedSubjunctive
+  | .independent => .finite
 
 /-- The scale position of a clause type, from its TAM and tense properties. -/
-def smpmToLandau (c : EmbeddedClauseType) : ClauseClass :=
-  .ofFiniteness (decide (UnrestrictedTAM c)) (decide (IndependentTense c))
+def smpmToLandau (c : EmbeddedClauseType) : Clause.EmbeddedTense :=
+  .ofFiniteness (UnrestrictedTAM c) (IndependentTense c)
 
-theorem smpmToLandau_landauToSMPM (c : ClauseClass) : smpmToLandau (landauToSMPM c) = c := by
+theorem smpmToLandau_landauToSMPM (c : Clause.EmbeddedTense) : smpmToLandau (landauToSMPM c) = c := by
   cases c <;> decide +kernel
 
 /-- Landau's calculus predicts every clause type's control profile iff the clauses are `[+Agr]`,
 failing at `[−Agr]` on the tensed subjunctive (18b). -/
 theorem landau_predicts_control_iff (agr : Bool) :
-    (∀ c, smpmProfile c = Set.univ ↔ (smpmToLandau c).HasOC agr) ↔ agr = true := by
+    (∀ c, Landau2013.refutes '' attested c = ∅ ↔ (smpmToLandau c).HasOC agr) ↔ agr = true := by
   simp only [isObligatory_iff]
   cases agr <;> decide +kernel
 

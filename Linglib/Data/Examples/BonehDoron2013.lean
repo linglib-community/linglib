@@ -168,9 +168,10 @@ def ex42a : Datum :=
     glossedTokens := []
     context := "Ruti started a new job. She decided to go to work by bus. She only went there once, and shortly after that she died. In a eulogy, one could say:"
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("form", "simple"), ("truthValue", "true")] }
+    paperFeatures := [("form", "simple")] }
 
 def ex42b : Datum :=
   { id := "bonehdoron2013_ex42b"
@@ -181,9 +182,10 @@ def ex42b : Datum :=
     glossedTokens := []
     context := "Ruti started a new job. She decided to go to work by bus. She only went there once, and shortly after that she died. In a eulogy, one could say:"
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("form", "would"), ("truthValue", "true")] }
+    paperFeatures := [("form", "would")] }
 
 def ex42c : Datum :=
   { id := "bonehdoron2013_ex42c"
@@ -194,9 +196,10 @@ def ex42c : Datum :=
     glossedTokens := []
     context := "Ruti started a new job. She decided to go to work by bus. She only went there once, and shortly after that she died. In a eulogy, one could say:"
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("form", "usedTo"), ("truthValue", "false")] }
+    paperFeatures := [("form", "usedTo")] }
 
 def ex47a_barePlural : Datum :=
   { id := "bonehdoron2013_ex47a_barePlural"
