@@ -5,7 +5,7 @@ public import Linglib.Fragments.Ga.Verbs
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Data.WALS.Features.F101A
 public import Linglib.Syntax.Binding.MinimalPronoun
-public import Linglib.Syntax.Clause.Finiteness
+public import Studies.Landau2004
 public import Linglib.Syntax.Binding.Valuation
 public import Studies.Landau2013
 public import Linglib.Data.Examples.Allotey2021
@@ -291,7 +291,7 @@ theorem ake_refutes_codependent : .codependent ∈ Landau2013.refutes '' atteste
 /-- The tense of a Gã clause type in [landau-2004]'s calculus. Unrestricted tense, aspect and
 mood and a tense of the clause's own both coincide with the complementizer's finiteness
 (exx 109–111, 118–119), so no clause type has dependent tense. -/
-def gaToLandau (c : EmbeddedClauseType) : Clause.EmbeddedTense :=
+def gaToLandau (c : EmbeddedClauseType) : Landau2004.EmbeddedTense :=
   .ofFiniteness c.complementizer.IsFinite c.complementizer.IsFinite
 
 theorem ga_no_dependent (c : EmbeddedClauseType) : gaToLandau c ≠ .dependent := by

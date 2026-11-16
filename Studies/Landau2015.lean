@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Binding.Valuation
 public import Mathlib.Data.Fin.VecNotation
-public import Linglib.Syntax.Clause.Finiteness
+public import Studies.Landau2004
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Syntax.Category.Verb.Defs
@@ -131,7 +131,7 @@ inductive Table80Row where
 
 /-- The clause class of an inflected complement on each tier, untensed under predication and
 tensed under logophoric control ((4), (5)). -/
-def Tier.inflectedClass : Tier → Clause.EmbeddedTense
+def Tier.inflectedClass : Tier → Landau2004.EmbeddedTense
   | .predicative => .anaphoric
   | .logophoric => .dependent
 
