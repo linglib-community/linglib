@@ -406,7 +406,8 @@ theorem english_demonstratives_author_bipartition :
 theorem preimage_participants_this {W E P T : Type*} [PartialOrder E]
     (c : SpeechAct.Context W E P T) :
     c.participants ⁻¹' English.Determiners.this.deixis = Person.dom c (some .first) :=
-  Set.ext fun _ ↦ Person.participants_mem_participantSets_first c _
+  Set.ext fun _ ↦ (Person.participants_mem_participantSets_first c _).trans
+    (Person.mem_dom_first c _).symm
 
 namespace SpatialModel
 
@@ -425,29 +426,31 @@ def near : SetRel (Finset (Fin 2)) (Finset (Fin 2)) := Set.univ
 def g₀ : ℕ → Finset (Fin 2) := fun _ ↦ ∅
 
 /-- *this* with a trivial restrictor denotes the indexed referent, which is in its vicinity. -/
-example : ∅ ∈ English.Determiners.this.denote (fun _ _ _ ↦ True) 0 ctx near g₀ () := by
-  refine DemonstrativeDeterminer.mem_denote.2
-    ⟨DemonstrativeDeterminer.mem_vicinity.2 ⟨{0}, ?_, trivial⟩, ?_⟩
-  · simp [English.Determiners.this, Person.participants_mem_participantSets_first, ctx]
+example : ∅ ∈ English.Determiners.this.denote (fun _ _ _ ↦ True) 0 (ctx.near near) g₀ () := by
+  refine DemonstrativeDeterminer.mem_denote.2 ⟨?_, ?_⟩
+  · rw [SpeechAct.Context.image_near]
+    exact ⟨{0}, by simp [English.Determiners.this,
+      Person.participants_mem_participantSets_first, ctx], trivial⟩
   · exact (mem_iota (s := {x : Finset (Fin 2) | True ∧ x = g₀ 0})).2
       ⟨⟨trivial, rfl⟩, fun _ hx ↦ hx.2⟩
 
 /-- With no vicinities, even a demonstrative without a deictic contrast denotes nothing. -/
 example (dem : DemonstrativeDeterminer) :
-    ¬ (dem.denote (fun _ _ _ ↦ True) 0 ctx ∅ g₀ ()).Dom := by
+    ¬ (dem.denote (fun _ _ _ ↦ True) 0 (ctx.near ∅) g₀ ()).Dom := by
   rintro ⟨hv, -⟩
-  obtain ⟨x, -, hx⟩ := DemonstrativeDeterminer.mem_vicinity.1 hv
+  rw [SpeechAct.Context.image_near] at hv
+  obtain ⟨x, -, hx⟩ := hv
   exact hx
 
 /-- When a referent lies both in the speaker's vicinity and in the addressee's, *this* and *that*
 both hold of it, so the two cells' vicinities need not partition the space. -/
-example : g₀ 0 ∈ English.Determiners.this.vicinity ctx near ∧
-    g₀ 0 ∈ English.Determiners.that.vicinity ctx near := by
-  refine ⟨DemonstrativeDeterminer.mem_vicinity.2 ⟨{0}, ?_, trivial⟩,
-    DemonstrativeDeterminer.mem_vicinity.2 ⟨{1}, ?_, trivial⟩⟩
+example : g₀ 0 ∈ (ctx.near near).image English.Determiners.this.deixis ∧
+    g₀ 0 ∈ (ctx.near near).image English.Determiners.that.deixis := by
+  simp only [SpeechAct.Context.image_near]
+  refine ⟨⟨{0}, ?_, trivial⟩, ⟨{1}, ?_, trivial⟩⟩
   · simp [English.Determiners.this, Person.participants_mem_participantSets_first, ctx]
-  · simp only [English.Determiners.that, Finset.mem_compl,
-      Person.participants_mem_participantSets_first, Person.mem_dom_first, ctx]
+  · simp only [English.Determiners.that, Set.mem_preimage, Finset.mem_coe, Finset.mem_compl,
+      Person.participants_mem_participantSets_first, ctx]
     decide
 
 end SpatialModel

@@ -131,8 +131,8 @@ open scoped Denotes
 /-- A determiner lexicalizes a covert shift when it denotes what the shift denotes on every
 restrictor in its domain, [dayal-2004]'s Blocking Principle. An article lexicalizes ι when one of
 its readings is the bare definite on every model, and ι^x when one is the strong article at every
-index. A demonstrative would have to equal the shift at every context of utterance and vicinity
-relation, and a possessive at every possessor and possession relation, which their presuppositions
+index. A demonstrative would have to equal the shift at every relation locating referents at
+participant sets, and a possessive at every possessor and possession relation, which their presuppositions
 prevent (`not_lexicalizes_demonstrative`, `not_lexicalizes_possessive`). An indefinite article is
 ∃, and no determiner is ∩. -/
 def Lexicalizes : Entry → CovertShift → Prop
@@ -141,12 +141,10 @@ def Lexicalizes : Entry → CovertShift → Prop
   | .article a, .iotaAnaphoric => ∀ (E W : Type) (R : (ℕ → E) → W → Set E) (d : ℕ),
       Definite.anaphoric R d ∈ a.denotations R d
   | .article a, .exists => ∃ d ∈ a.definiteness, d < .definite
-  | .demonstrative dem, .iota => ∀ (E W P T : Type) [PartialOrder E]
-      (c : SpeechAct.Context W E P T) (χ : SetRel E E) (R : (ℕ → E) → W → Set E) (d : ℕ),
-      dem.denote R d c χ = Definite.unique R
-  | .demonstrative dem, .iotaAnaphoric => ∀ (E W P T : Type) [PartialOrder E]
-      (c : SpeechAct.Context W E P T) (χ : SetRel E E) (R : (ℕ → E) → W → Set E) (d : ℕ),
-      dem.denote R d c χ = Definite.anaphoric R d
+  | .demonstrative dem, .iota => ∀ (E W : Type) (N : SetRel (Finset SpeechAct.Role) E)
+      (R : (ℕ → E) → W → Set E) (d : ℕ), dem.denote R d N = Definite.unique R
+  | .demonstrative dem, .iotaAnaphoric => ∀ (E W : Type) (N : SetRel (Finset SpeechAct.Role) E)
+      (R : (ℕ → E) → W → Set E) (d : ℕ), dem.denote R d N = Definite.anaphoric R d
   | .possessive p, .iota => ∀ (E W : Type) (R : (ℕ → E) → W → Set E) (possessor : (ℕ → E) → W → E)
       (rel : (ℕ → E) → W → E → E → Prop), p.denote R possessor rel = Definite.unique R
   | .possessive p, .iotaAnaphoric => ∀ (E W : Type) (R : (ℕ → E) → W → Set E) (d : ℕ)
@@ -166,9 +164,6 @@ private theorem unique_ne_anaphoric : Definite.unique top ≠ Definite.anaphoric
   rw [← h, Definite.unique_eq_none_of_ne (R := top) (x := true) (y := false)
     trivial trivial (by decide)] at hm
   exact Part.notMem_none _ hm
-
-/-- A context of utterance on the one-element types. -/
-private abbrev unitContext : SpeechAct.Context Unit Unit Unit Unit := ⟨(), (), (), (), ()⟩
 
 theorem lexicalizes_article_iota_iff (a : Article) :
     (article a).Lexicalizes .iota ↔ .uniqueness ∈ a.strengths := by
@@ -191,7 +186,7 @@ vicinity, it denotes nothing and the definite does. -/
 theorem not_lexicalizes_demonstrative (dem : DemonstrativeDeterminer) (τ : CovertShift) :
     ¬ (demonstrative dem).Lexicalizes τ := by
   have key : ∀ k : Definite (ℕ → Unit) Unit Unit, (k (fun _ ↦ ()) ()).Dom →
-      dem.denote (fun _ _ _ ↦ True) 0 unitContext ⊥ ≠ k := fun k hk h ↦ by
+      dem.denote (fun _ _ _ ↦ True) 0 ∅ ≠ k := fun k hk h ↦ by
     rw [← h] at hk
     obtain ⟨hv, -⟩ := hk
     simp at hv
@@ -199,10 +194,10 @@ theorem not_lexicalizes_demonstrative (dem : DemonstrativeDeterminer) (τ : Cove
   · exact id
   · exact fun h ↦ key (Definite.unique fun _ _ _ ↦ True)
       (Definite.unique_dom.2 ⟨(), trivial, fun _ _ ↦ rfl⟩)
-      (h Unit Unit Unit Unit unitContext ⊥ _ 0)
+      (h Unit Unit ∅ _ 0)
   · exact fun h ↦ key (Definite.anaphoric (fun _ _ _ ↦ True) 0)
       (Definite.anaphoric_dom.2 trivial)
-      (h Unit Unit Unit Unit unitContext ⊥ _ 0)
+      (h Unit Unit ∅ _ 0)
   · exact id
 
 /-- A possessive lexicalizes no covert shift: under the empty possession relation it is undefined
