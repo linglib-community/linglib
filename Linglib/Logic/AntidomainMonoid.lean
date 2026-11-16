@@ -19,7 +19,10 @@ show. The name is that of [desharnais-jipsen-struth-2009].
 The axioms are a predicate `IsAntidomain` on an operation of a monoid with zero, so that two
 operations on one monoid can be compared; `AntidomainMonoid` bundles the operation with its
 proof. Three of [hollenberg-visser-1999]'s ten axioms are those of a monoid with zero.
-[visser-1997] generates the same algebra from composition and dynamic implication.
+[desharnais-jipsen-struth-2009] axiomatize the same operations by six equations, of which one
+holds in every monoid with zero; `isAntidomain_iff` is the equivalence, and `IsAntidomain.mk'`
+builds an antidomain from the shorter list. [visser-1997] generates the same algebra from
+composition and dynamic implication.
 
 ## References
 
@@ -30,9 +33,9 @@ proof. Three of [hollenberg-visser-1999]'s ten axioms are those of a monoid with
 
 ## TODO
 
-[desharnais-jipsen-struth-2009] axiomatize the antidomain monoids by six equations; their
-equivalence with the axioms here is `isAntidomain_iff`. The Heyting algebras, with meet as the
-product and pseudocomplement as `∼`, are antidomain monoids that are not algebras of relations.
+The Heyting algebras, with meet as the product and pseudocomplement as `∼`, are antidomain
+monoids that are not algebras of relations; the instance is not stated. Nor is the Boolean
+algebra that the antidomain elements form.
 -/
 
 @[expose] public section
@@ -111,14 +114,102 @@ theorem unique (ha : IsAntidomain a) (hb : IsAntidomain b) : a = b := by
 
 end IsAntidomain
 
+namespace IsAntidomain
+
+variable [MonoidWithZero M] {a : M → M}
+
+/-- The antidomain of `x` is the meet of where `x` cannot be followed by `y` and where it
+cannot be followed by the antidomain of `y`. -/
+theorem map_eq_mul (h : IsAntidomain a) (x y : M) : a x = a (x * y) * a (x * a y) := by
+  have := h.distrib x y (a y)
+  rwa [h.comm, h.mul_self, h.map_zero, mul_one, h.map_map_mul] at this
+
+/-- An operation satisfying the five equations of [desharnais-jipsen-struth-2009] is an
+antidomain operation. -/
+theorem mk' (h₁ : ∀ x, a x * x = 0) (h₃ : ∀ x y, a x * a y = a y * a x)
+    (h₄ : ∀ x, a (a x) * x = x) (h₅ : ∀ x y, a x = a (x * y) * a (x * a y))
+    (h₆ : ∀ x y, a (x * y) * x = a (x * y) * x * a y) : IsAntidomain a := by
+  have one : a 1 = 0 := by simpa using h₁ 1
+  have zero : a 0 = 1 := by simpa [one] using h₄ 1
+  have anti (x : M) : a x * a (a x) = 0 := by rw [h₃, h₁]
+  have triple (x : M) : a (a (a x)) = a x := by
+    have := h₅ (a (a x)) x
+    rwa [h₄, h₁, zero, mul_one] at this
+  -- Test composition: the double antidomain of a product of tests absorbs each factor.
+  have absorb (p q : M) : a (a (a p * a q)) = a (a (a p * a q)) * a p := by
+    have h0 : a (a p) * a (a (a p * a q)) = 0 :=
+      calc a (a p) * a (a (a p * a q))
+          = a (a p * a q) * a (a p * a (a q)) * a (a (a p * a q)) := by rw [← h₅ (a p) (a q)]
+        _ = a (a p * a q) * a (a (a p * a q)) * a (a p * a (a q)) := by
+            rw [mul_assoc, h₃ (a p * a (a q)), ← mul_assoc]
+        _ = 0 := by rw [anti, zero_mul]
+    have := h₆ (a (a (a p * a q))) (a (a p))
+    rwa [h₃ (a (a p * a q)) (a p), h0, zero, one_mul, triple] at this
+  have test (x y : M) : a (a (a x * a y)) = a x * a y := by
+    have hy := absorb y x
+    rw [h₃ y x] at hy
+    calc a (a (a x * a y)) = a (a (a x * a y)) * a y := hy
+      _ = a (a (a x * a y)) * a x * a y := congrArg (· * a y) (absorb x y)
+      _ = a x * a y := by rw [mul_assoc, h₄]
+  -- A test annihilating `x` lies below the antidomain of `x`.
+  have le (t x : M) (h : a t * x = 0) : a t = a t * a x := by
+    have := h₅ (a t) x
+    rw [h, zero, one_mul] at this
+    rw [← test, ← this, triple]
+  -- Locality.
+  have loc (x y : M) : a (x * a (a y)) = a (x * y) := by
+    have hv : x * a (a y) * y = x * y := by rw [mul_assoc, h₄]
+    have h : a (x * a (a y)) * (x * y) = 0 := by rw [← hv, ← mul_assoc, h₁, zero_mul]
+    have h' : a (x * y) * (x * a (a y)) = 0 := by
+      have := h₆ (x * a (a y)) y
+      rw [hv] at this
+      rw [this, mul_assoc, mul_assoc, h₁, mul_zero, mul_zero]
+    rw [le _ _ h, h₃, ← le _ _ h']
+  -- Distribution: each side absorbs the other.
+  have dist (x y z : M) : a (x * a (a y * a z)) = a (x * y) * a (x * z) := by
+    have hA : a (x * a (a y * a z)) * x = a (x * a (a y * a z)) * x * (a y * a z) := by
+      have := h₆ x (a (a y * a z))
+      rwa [test] at this
+    have hAB : a (x * a (a y * a z)) = a (x * a (a y * a z)) * a (x * y) :=
+      le _ _ (by rw [← mul_assoc, hA, h₃ y z]; simp only [mul_assoc, h₁, mul_zero])
+    have hAC : a (x * a (a y * a z)) = a (x * a (a y * a z)) * a (x * z) :=
+      le _ _ (by rw [← mul_assoc, hA]; simp only [mul_assoc, h₁, mul_zero])
+    have hwq : a (x * y) * a (x * z) * x = a (x * y) * a (x * z) * x * a z :=
+      calc a (x * y) * a (x * z) * x = a (x * y) * (a (x * z) * x) := mul_assoc ..
+        _ = a (x * y) * (a (x * z) * x * a z) := congrArg (a (x * y) * ·) (h₆ x z)
+        _ = a (x * y) * a (x * z) * x * a z := by simp only [mul_assoc]
+    have hwp : a (x * y) * a (x * z) * x = a (x * y) * a (x * z) * x * a y :=
+      calc a (x * y) * a (x * z) * x = a (x * z) * (a (x * y) * x) := by
+            rw [h₃ (x * y) (x * z), mul_assoc]
+        _ = a (x * z) * (a (x * y) * x * a y) := congrArg (a (x * z) * ·) (h₆ x y)
+        _ = a (x * y) * a (x * z) * x * a y := by rw [h₃ (x * y) (x * z)]; simp only [mul_assoc]
+    have hw : a (x * y) * a (x * z) * x * a (a y * a z) = 0 :=
+      calc a (x * y) * a (x * z) * x * a (a y * a z)
+          = a (x * y) * a (x * z) * x * a y * a z * a (a y * a z) := by rw [← hwp, ← hwq]
+        _ = a (x * y) * a (x * z) * x * (a (a (a y * a z)) * a (a y * a z)) := by
+            rw [test]; simp only [mul_assoc]
+        _ = 0 := by rw [h₁, mul_zero]
+    have hBC : a (x * y) * a (x * z) = a (x * y) * a (x * z) * a (x * a (a y * a z)) := by
+      have := le (a (a (x * y) * a (x * z))) (x * a (a y * a z))
+        (by rw [test, ← mul_assoc]; exact hw)
+      rwa [test] at this
+    calc a (x * a (a y * a z)) = a (x * a (a y * a z)) * a (x * z) := hAC
+      _ = a (x * a (a y * a z)) * a (x * y) * a (x * z) := by rw [← hAB]
+      _ = a (x * y) * a (x * z) * a (x * a (a y * a z)) := by
+          rw [mul_assoc, ← test (x * y) (x * z), h₃]
+      _ = a (x * y) * a (x * z) := hBC.symm
+  exact ⟨zero, h₁, h₃, h₄, test, h₆, fun x y z ↦ by rw [dist, test]⟩
+
+end IsAntidomain
+
 /-- The six equations by which [desharnais-jipsen-struth-2009] axiomatize the antidomain
-monoids. -/
+monoids; the sixth, that zero is absorbing on the right, holds in every monoid with zero. -/
 theorem isAntidomain_iff [MonoidWithZero M] {a : M → M} :
     IsAntidomain a ↔ (∀ x, a x * x = 0) ∧ (∀ x y, a x * a y = a y * a x) ∧
       (∀ x, a (a x) * x = x) ∧ (∀ x y, a x = a (x * y) * a (x * a y)) ∧
-      ∀ x y, a (x * y) * x = a (x * y) * x * a y := by
-  -- TODO: the source obtains both directions by automated proving and prints no derivation.
-  sorry
+      ∀ x y, a (x * y) * x = a (x * y) * x * a y :=
+  ⟨fun h ↦ ⟨h.mul_self, h.comm, h.map_map_mul_self, h.map_eq_mul, h.modusPonens⟩,
+    fun ⟨h₁, h₃, h₄, h₅, h₆⟩ ↦ .mk' h₁ h₃ h₄ h₅ h₆⟩
 
 /-- An antidomain monoid is a monoid with zero and an antidomain operation `∼`. -/
 class AntidomainMonoid (M : Type*) extends MonoidWithZero M where
