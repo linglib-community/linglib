@@ -400,25 +400,6 @@ end MinimalCover
 
 /-! ### Closure under conjunction and disjunction -/
 
-/-- With finitely many alternatives closed under conjunction the two exhaustifiers coincide. A
-prejacent world above another verifies the conjunction of the alternatives true at it, which
-every minimal world falsifies. -/
-theorem exhMW_eq_exhIE_of_infClosed (hfin : ALT.Finite) (hinf : InfClosed ALT) :
-    exhMW ALT φ = exhIE ALT φ := by
-  refine ((exhIE_eq_exhMW_iff ALT φ).2 fun u hu hmin ↦ ?_).symm
-  obtain ⟨v, hv, hvu, huv⟩ : ∃ v ∈ φ, Preorder.satisfied (· ∈ ·) ALT v ⊆
-      Preorder.satisfied (· ∈ ·) ALT u ∧ ¬ Preorder.satisfied (· ∈ ·) ALT u ⊆
-        Preorder.satisfied (· ∈ ·) ALT v := by
-    simpa [mem_exhMW, MinimalFor, hu] using hmin
-  have hne : {a ∈ ALT | u ∈ a}.Nonempty := by
-    by_contra h
-    exact huv fun a ha ↦ (h ⟨a, ha⟩).elim
-  refine ⟨⋂₀ {a ∈ ALT | u ∈ a}, hinf.sInf_mem_of_nonempty (hfin.subset fun _ h ↦ h.1) hne
-    fun _ h ↦ h.1, fun a ha ↦ ha.2, fun w hw hwA ↦ huv ?_⟩
-  have huw : Preorder.satisfied (· ∈ ·) ALT u ⊆ Preorder.satisfied (· ∈ ·) ALT w :=
-    fun a ha ↦ ⟨ha.1, hwA a ha⟩
-  exact huw.trans (hw.2 hv (hvu.trans huw))
-
 variable {ALT φ} in
 /-- Alternative sets that rank worlds alike have the same minimal worlds. -/
 theorem exhMW_congr {ALT' : Set (Set World)}
@@ -440,6 +421,51 @@ theorem exhMW_sInter_image_powerset : exhMW (sInter '' 𝒫 ALT) φ = exhMW ALT 
   rintro _ ⟨X, hX, rfl⟩ u v h hv q hq
   exact h q (hX hq) (hv q hq)
 
+variable {ALT φ} in
+/-- Closing the alternatives under conjunction and disjunction, or under any part of that closure,
+leaves the minimal worlds unchanged ([spector-2016]): the propositions true at `v` whenever they
+are true at `u` form a sublattice. -/
+theorem exhMW_eq_of_subset_latticeClosure {S : Set (Set World)} (h₁ : S ⊆ ALT)
+    (h₂ : ALT ⊆ latticeClosure S) : exhMW ALT φ = exhMW S φ := by
+  refine exhMW_congr (Preorder.ofCriteria_eq_of_subset h₁ fun q hq u v h ↦ ?_)
+  have hsub : IsSublattice {q : Set World | v ∈ q → u ∈ q} :=
+    ⟨fun _ hp _ hq hv ↦ hv.imp hp hq, fun _ hp _ hq hv ↦ ⟨hp hv.1, hq hv.2⟩⟩
+  exact latticeClosure_min h hsub (h₂ hq)
+
+@[simp] theorem exhMW_latticeClosure : exhMW (latticeClosure ALT) φ = exhMW ALT φ :=
+  exhMW_eq_of_subset_latticeClosure subset_latticeClosure subset_rfl
+
+variable {ALT φ} in
+/-- Alternatives that include every conjunction of finitely many propositions `E`, and are built
+from `E` by conjunction and disjunction, give innocent exclusion the minimal worlds over `E`
+([spector-2016]). A prejacent world above another verifies the conjunction of the members of `E`
+true at it, which every minimal world falsifies. -/
+theorem exhIE_eq_exhMW_of_infClosure_subset {E : Set (Set World)} (hfin : E.Finite)
+    (h₁ : infClosure E ⊆ ALT) (h₂ : ALT ⊆ latticeClosure E) : exhIE ALT φ = exhMW E φ := by
+  have hMW : exhMW ALT φ = exhMW E φ :=
+    exhMW_eq_of_subset_latticeClosure (subset_infClosure.trans h₁) h₂
+  rw [← hMW]
+  refine (exhIE_eq_exhMW_iff ALT φ).2 fun u hu hmin ↦ ?_
+  rw [hMW] at hmin ⊢
+  obtain ⟨v, hv, hvu, huv⟩ : ∃ v ∈ φ, Preorder.satisfied (· ∈ ·) E v ⊆
+      Preorder.satisfied (· ∈ ·) E u ∧ ¬ Preorder.satisfied (· ∈ ·) E u ⊆
+        Preorder.satisfied (· ∈ ·) E v := by
+    simpa [mem_exhMW, MinimalFor, hu] using hmin
+  have hne : {a ∈ E | u ∈ a}.Nonempty := by
+    by_contra h
+    exact huv fun a ha ↦ (h ⟨a, ha⟩).elim
+  refine ⟨⋂₀ {a ∈ E | u ∈ a}, h₁ (infClosed_infClosure.sInf_mem_of_nonempty
+    (hfin.subset fun _ h ↦ h.1) hne fun _ h ↦ subset_infClosure h.1), fun a ha ↦ ha.2,
+    fun w hw hwA ↦ huv ?_⟩
+  have huw : Preorder.satisfied (· ∈ ·) E u ⊆ Preorder.satisfied (· ∈ ·) E w :=
+    fun a ha ↦ ⟨ha.1, hwA a ha⟩
+  exact huw.trans (hw.2 hv (hvu.trans huw))
+
+/-- With finitely many alternatives closed under conjunction the two exhaustifiers coincide. -/
+theorem exhMW_eq_exhIE_of_infClosed (hfin : ALT.Finite) (hinf : InfClosed ALT) :
+    exhMW ALT φ = exhIE ALT φ :=
+  (exhIE_eq_exhMW_of_infClosure_subset hfin hinf.infClosure_eq.subset subset_latticeClosure).symm
+
 /-- Innocent exclusion is unchanged by closing the alternatives under disjunction, since a
 disjunction fails at every minimal world iff each disjunct does. -/
 theorem exhIE_sUnion_image_powerset : exhIE (sUnion '' 𝒫 ALT) φ = exhIE ALT φ := by
@@ -460,25 +486,11 @@ theorem exhMW_eq_exhIE_of_infClosed_sUnion_image (hfin : ALT.Finite)
   rw [← exhMW_sUnion_image_powerset, ← exhIE_sUnion_image_powerset]
   exact exhMW_eq_exhIE_of_infClosed _ _ (hfin.finite_subsets.image _) hinf
 
-variable {ALT φ} in
-/-- Closing the alternatives under conjunction and disjunction, or under any part of that closure,
-leaves the minimal worlds unchanged ([spector-2016]): the propositions true at `v` whenever they
-are true at `u` form a sublattice. -/
-theorem exhMW_eq_of_subset_latticeClosure {S : Set (Set World)} (h₁ : S ⊆ ALT)
-    (h₂ : ALT ⊆ latticeClosure S) : exhMW ALT φ = exhMW S φ := by
-  refine exhMW_congr (Preorder.ofCriteria_eq_of_subset h₁ fun q hq u v h ↦ ?_)
-  have hsub : IsSublattice {q : Set World | v ∈ q → u ∈ q} :=
-    ⟨fun _ hp _ hq hv ↦ hv.imp hp hq, fun _ hp _ hq hv ↦ ⟨hp hv.1, hq hv.2⟩⟩
-  exact latticeClosure_min h hsub (h₂ hq)
-
-@[simp] theorem exhMW_latticeClosure : exhMW (latticeClosure ALT) φ = exhMW ALT φ :=
-  exhMW_eq_of_subset_latticeClosure subset_latticeClosure subset_rfl
-
 /-- Against the closure of finitely many propositions under conjunction and disjunction, innocent
 exclusion keeps the minimal worlds over the propositions themselves ([spector-2016]). -/
-theorem exhIE_latticeClosure (hfin : ALT.Finite) : exhIE (latticeClosure ALT) φ = exhMW ALT φ := by
-  rw [← exhMW_eq_exhIE_of_infClosed _ _ hfin.latticeClosure isSublattice_latticeClosure.infClosed,
-    exhMW_latticeClosure]
+theorem exhIE_latticeClosure (hfin : ALT.Finite) : exhIE (latticeClosure ALT) φ = exhMW ALT φ :=
+  exhIE_eq_exhMW_of_infClosure_subset hfin
+    (infClosure_min subset_latticeClosure isSublattice_latticeClosure.infClosed) subset_rfl
 
 /-! ### Verified alternatives
 

@@ -32,9 +32,11 @@ world with at least `n` stars, or infinitely many, is minimal (`exhMW_stars`, `e
 ## Implementation notes
 
 The theorem that innocent exclusion over the alternatives of [sauerland-2004] equals the
-minimal-world operator over the elementary sentences is not formalized; the shortcut is
-shown for the closure of the elementary propositions under conjunction and disjunction, which
-is mathlib's `latticeClosure`, the closure under finite meets and joins. Independence of the
+minimal-world operator over the elementary sentences is formalized up to the generation of the
+alternatives: `Exhaustification.exhIE_eq_exhMW_of_infClosure_subset` gives it for any
+alternatives that include the conjunctions of the elementary propositions and lie in their
+closure under conjunction and disjunction, mathlib's `latticeClosure`, the closure under finite
+meets and joins. Independence of the
 disjuncts is the existence of a world verifying one disjunct alone, assumed only where a case
 needs it. The alternative sets of the illustrations are the paper's, without the prejacent,
 which the substrate's compatible sets carry separately.

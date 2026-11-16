@@ -53,8 +53,8 @@ ordering source, reflexivity alone does not make best-worlds possibility veridic
 * The indefinite instance uses the `Overlaps` selection rule: its match is on the witness,
   which bare propositions cannot see, and the paper gives no criterion beyond "related to".
 * (4b) is `Exhaustification.exhIE_latticeClosure_inter_union`, against the closure of the atoms
-  under conjunction and disjunction; `Exhaustification.exhIE_inter_union` gives it for smaller
-  alternative sets.
+  under conjunction and disjunction; `Exhaustification.exhIE_eq_exhMW_of_infClosure_subset`
+  gives it for any part of that closure containing the conjunctions of the atoms.
 * Criteria A–C of the anatomy are derived from the paper's own contrast verdicts, with the
   marginal order contrast counting as a difference, as the paper's classification requires; D
   and the full classification are the paper's marks in the `anatomy` rows.
