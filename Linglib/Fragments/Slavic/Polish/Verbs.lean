@@ -9,8 +9,7 @@ public import Linglib.Syntax.Category.Verb.Defs
 Verbal prefixes and simplex verbs of Polish, the material of the studies of verbal prefixation
 listed below. A prefix is a morph with its form only: the position a prefix occupies in a word is
 a study's analysis. A verb records its citation form, the infinitive, and its lexical aspect at
-the dictionary value: the simplex verbs are imperfective except the semelfactives in *-nąć*. The
-aspectual class is recorded for the semelfactives and the statives.
+the dictionary value: the simplex verbs are imperfective except the semelfactives in *-nąć*.
 
 ## Implementation notes
 
@@ -68,19 +67,16 @@ def s : Morph := .pref "s"
 /-- *siedzieć* 'sit'. -/
 def siedziec : Verb where
   morphs := [.root "siedzieć"]
-  aspectualClass := some .state
   perfectivity := some .imperfective
 
 /-- *kochać* 'love'. -/
 def kochac : Verb where
   morphs := [.root "kochać"]
-  aspectualClass := some .state
   perfectivity := some .imperfective
 
 /-- *lubić* 'like'. -/
 def lubic : Verb where
   morphs := [.root "lubić"]
-  aspectualClass := some .state
   perfectivity := some .imperfective
 
 /-! ### Verbs of becoming in *-eć* -/
@@ -152,31 +148,26 @@ def gasnac : Verb where
 /-- *warknąć* 'snarl once'. -/
 def warknac : Verb where
   morphs := [.root "warknąć"]
-  aspectualClass := some .semelfactive
   perfectivity := some .perfective
 
 /-- *kopnąć* 'kick once'. -/
 def kopnac : Verb where
   morphs := [.root "kopnąć"]
-  aspectualClass := some .semelfactive
   perfectivity := some .perfective
 
 /-- *machnąć* 'wave once'. -/
 def machnac : Verb where
   morphs := [.root "machnąć"]
-  aspectualClass := some .semelfactive
   perfectivity := some .perfective
 
 /-- *miauknąć* 'meow once'. -/
 def miauknac : Verb where
   morphs := [.root "miauknąć"]
-  aspectualClass := some .semelfactive
   perfectivity := some .perfective
 
 /-- *szepnąć* 'whisper once'. -/
 def szepnac : Verb where
   morphs := [.root "szepnąć"]
-  aspectualClass := some .semelfactive
   perfectivity := some .perfective
 
 /-! ### Other simplex verbs -/

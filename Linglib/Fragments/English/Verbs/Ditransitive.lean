@@ -32,7 +32,6 @@ def charge : Verb where
     [ArgumentFrame.np_np,
      ArgumentFrame.np_np.leaveImplicit 1 (some .indef),
      ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
-  aspectualClass := some .accomplishment
 
 /-- "cost" — either object may be implicit, the second as an indefinite and the first as a
 definite. -/
@@ -44,7 +43,6 @@ def cost : Verb where
     [ArgumentFrame.np_np,
      ArgumentFrame.np_np.leaveImplicit 1 (some .indef),
      ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
-  aspectualClass := some .state
 
 /-- "fine" — the second object may be implicit, an indefinite; the first may not
 (*They fined an astronomical amount*). -/
@@ -52,7 +50,6 @@ def fine : Verb where
   morphs := [.root "fine"]
   levin := some Levin1993.Index.fine
   valency := .ofFrames [ArgumentFrame.np_np, ArgumentFrame.np_np.leaveImplicit 1 (some .indef)]
-  aspectualClass := some .accomplishment
 
 /-- "tip" — either object may be implicit, the second as an indefinite and the first as a
 definite. -/
@@ -63,7 +60,6 @@ def tip : Verb where
     [ArgumentFrame.np_np,
      ArgumentFrame.np_np.leaveImplicit 1 (some .indef),
      ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
-  aspectualClass := some .accomplishment
 
 /-- "strike" — either object may be implicit, the second as an indefinite and the first as a
 definite. -/
@@ -75,7 +71,6 @@ def strike_ : Verb where
     [ArgumentFrame.np_np,
      ArgumentFrame.np_np.leaveImplicit 1 (some .indef),
      ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
-  aspectualClass := some .achievement
   senseTag := .default
 
 /-- "forgive" — either object may be implicit, each a definite. -/
@@ -88,21 +83,18 @@ def forgive : Verb where
     [ArgumentFrame.np_np,
      ArgumentFrame.np_np.leaveImplicit 1 (some .def),
      ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
-  aspectualClass := some .accomplishment
 
 /-- "spare" — the second object may be implicit, a definite; the first may not. -/
 def spare : Verb where
   morphs := [.root "spare"]
   levin := some Levin1993.Index.spare
   valency := .ofFrames [ArgumentFrame.np_np, ArgumentFrame.np_np.leaveImplicit 1 (some .def)]
-  aspectualClass := some .accomplishment
 
 /-- "deny" — the first object may be implicit, a definite; the second may not. -/
 def deny : Verb where
   morphs := [.root "deny"]
   levin := some Levin1993.Index.deny
   valency := .ofFrames [ArgumentFrame.np_np, ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
-  aspectualClass := some .accomplishment
 
 /-- "permit" — the first object may be implicit, a definite; the second may not. -/
 def permit : Verb where
@@ -110,14 +102,12 @@ def permit : Verb where
   levin := none
   doubling := true
   valency := .ofFrames [ArgumentFrame.np_np, ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
-  aspectualClass := some .accomplishment
 
 /-- "begrudge" — neither object may be implicit. -/
 def begrudge : Verb where
   morphs := [.root "begrudge"]
   levin := none
   valency := .ofFrame ArgumentFrame.np_np
-  aspectualClass := some .state
 
 /-- "bet" — neither object may be implicit. -/
 def bet : Verb where
@@ -125,7 +115,6 @@ def bet : Verb where
   levin := some Levin1993.Index.bet
   past := "bet"
   valency := .ofFrame ArgumentFrame.np_np
-  aspectualClass := some .accomplishment
 
 /-! ### Alternating verbs -/
 
@@ -140,7 +129,6 @@ def pay : Verb where
      (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
      (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1])]
-  aspectualClass := some .accomplishment
 
 /-- "assign" — the goal may be implicit, a definite, as a first object or as a PP; the theme may
 not. -/
@@ -153,7 +141,6 @@ def assign : Verb where
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1]),
      (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2]),
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
-  aspectualClass := some .accomplishment
 
 /-- "serve" — the direct object may be implicit in the double object frame only, an indefinite;
 the PP may be implicit, a definite. -/
@@ -165,7 +152,6 @@ def serve : Verb where
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
-  aspectualClass := some .accomplishment
 
 /-- "teach" — the direct object may be implicit in the double object frame only, and the PP may
 be implicit, each an indefinite. -/
@@ -178,7 +164,6 @@ def teach : Verb where
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .indef), [0, 2, 1])]
-  aspectualClass := some .activity
 
 /-- "feed" — the direct object may be implicit in the double object frame only, an
 indefinite; the goal may not. -/
@@ -190,7 +175,6 @@ def feed : Verb where
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2])]
-  aspectualClass := some .activity
 
 /-- "show" — the direct object may be implicit in the double object frame only, a definite
 (*Show me*); the goal may not. -/
@@ -202,7 +186,6 @@ def show_ : Verb where
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_np.leaveImplicit 1 (some .def), [0, 1, 2])]
-  aspectualClass := some .accomplishment
 
 /-- "award" — the PP may be implicit, a definite; the theme may not. -/
 def award : Verb where
@@ -213,7 +196,6 @@ def award : Verb where
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1]),
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
-  aspectualClass := some .accomplishment
 
 /-- "forward" — the PP may be implicit, a definite; the theme may not. -/
 def forward_ : Verb where
@@ -224,7 +206,6 @@ def forward_ : Verb where
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1]),
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
-  aspectualClass := some .accomplishment
 
 /-- "grant" — the PP may be implicit, a definite; the theme may not. -/
 def grant : Verb where
@@ -234,7 +215,6 @@ def grant : Verb where
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
-  aspectualClass := some .accomplishment
 
 /-- "offer" — the PP may be implicit, a definite; the theme may not. -/
 def offer : Verb where
@@ -244,7 +224,6 @@ def offer : Verb where
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
-  aspectualClass := some .accomplishment
 
 /-- "reserve" — the PP may be implicit, a definite; the theme may not. -/
 def reserve : Verb where
@@ -255,7 +234,6 @@ def reserve : Verb where
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.for_) (some .beneficiary), [0, 2, 1]),
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
-  aspectualClass := some .accomplishment
 
 /-- "pass" — the direct object may be implicit in the prepositional frame only, a definite
 (*She wouldn't pass to me*); the PP may be implicit, an indefinite. Its theme is participant 1
@@ -272,7 +250,6 @@ def pass : Verb where
        [0, 1, 2]),
      ((ArgumentFrame.np_pp).leaveImplicit 1 (some .indef), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
-  aspectualClass := some .accomplishment
 
 /-- "hand" — Levin 11.1 Send verbs; neither argument may be implicit. -/
 def hand : Verb where
@@ -282,7 +259,6 @@ def hand : Verb where
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1])]
-  aspectualClass := some .accomplishment
 
 /-- "mail" — transitive, ditransitive, or with a *to*-phrase (*Paul mailed a letter*). -/
 def mail : Verb where
@@ -302,6 +278,5 @@ def lend : Verb where
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 2, 1])]
-  aspectualClass := some .accomplishment
 
 end English.Verbs

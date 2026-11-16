@@ -707,12 +707,6 @@ theorem stem_perfectivity : ∀ a ∈ attested ++ starred,
     (a.stem.verb.perfectivity = some .perfective ↔ Perfective a.stem.verbalizer []) := by
   decide
 
-/-- The fragment's aspectual class of a stem, where it records one, is the profile of the stem's
-verbalizer: the statives are states and the semelfactives semelfactive. -/
-theorem stem_aspectualClass : ∀ a ∈ attested ++ starred,
-    a.stem.verb.aspectualClass ∈ [none, some a.stem.verbalizer.profile] := by
-  decide
-
 /-- Every infinitive without the Secondary Imperfective spells out its form: the prefixes, outermost
 first, and the stem are the morphs of the attested word, accepted or starred. The Secondary
 Imperfective replaces the stem's verbalizer, which the fragment's citation forms do not
