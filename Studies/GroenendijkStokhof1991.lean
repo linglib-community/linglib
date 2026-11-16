@@ -200,7 +200,8 @@ theorem close_comp_disj : ◇(φ ○ (ψ ⋎ χ)) = ((φ ○ ψ) ⋎ (φ ○ χ)
   exact antidomain_antidomain_mul_dor φ ψ χ
 
 theorem disj_close_comp : (φ ⋎ (◇ψ ○ χ)) = ((φ ⋎ ψ) ○ (φ ⋎ χ)) := by
-  simp only [dor_eq, test_comp_test, dom_comp, preimage_test, Set.union_inter_distrib_left]
+  rw [close_eq_neg_neg]
+  exact dor_antidomain_antidomain_mul φ ψ χ
 
 /-! #### Implication -/
 

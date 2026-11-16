@@ -35,8 +35,7 @@ the same algebra from composition and dynamic implication.
 ## TODO
 
 The Heyting algebras, with meet as the product and pseudocomplement as `∼`, are antidomain
-monoids that are not algebras of relations; the instance is not stated. Nor is the Boolean
-algebra that the antidomain elements form.
+monoids that are not algebras of relations; the instance is not stated.
 -/
 
 @[expose] public section

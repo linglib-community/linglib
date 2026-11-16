@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.AntidomainMonoid
+public import Linglib.Logic.AntidomainMonoid.Test
 import Linglib.Core.Data.Set.Lattice.Order
 public import Linglib.Core.Relation.SetRel
 public import Linglib.Core.Data.Set.Functor
@@ -276,6 +276,23 @@ theorem dor_eq (D₁ D₂ : Update S) : dor D₁ D₂ = test (D₁.dom ∪ D₂.
 theorem isTest_iff_antidomain_antidomain : IsTest D ↔ ∼∼D = D :=
   ⟨fun h ↦ (antidomain_antidomain D).trans h.eq_test_dom.symm,
     fun h ↦ h ▸ antidomain_antidomain D ▸ isTest_test _⟩
+
+/-- The conditions are the Boolean algebra of tests of the monoid of updates: `test` is an order
+isomorphism onto the tests, with the domain as its inverse. -/
+def testOrderIso : Condition S ≃o Test (Update S) where
+  toFun C := ⟨test C, by rw [antidomain_antidomain, dom_test]⟩
+  invFun D := (D : Update S).dom
+  left_inv C := dom_test C
+  right_inv D := Test.coe_injective ((antidomain_antidomain _).symm.trans
+    D.antidomain_antidomain_coe)
+  map_rel_iff' {C₁ C₂} := Test.le_iff_mul_eq.trans <| by
+    change test C₁ ○ test C₂ = test C₁ ↔ C₁ ⊆ C₂
+    rw [test_comp_test, test_inj, Set.inter_eq_left]
+
+@[simp] theorem coe_testOrderIso (C : Condition S) : (testOrderIso C : Update S) = test C := rfl
+
+@[simp] theorem testOrderIso_symm_apply (D : Test (Update S)) :
+    testOrderIso.symm D = (D : Update S).dom := rfl
 
 /-! ### Maximization -/
 
