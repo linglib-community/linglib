@@ -41,7 +41,6 @@ def leo : Verb where
   morphs := [.root "léo"]
   valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
-  aspectualClass := some .activity
 
 /-- *pistévo* (πιστεύω) 'believe' — doxastic, stative; the impersonal
     passive *pistévetai oti* is standard. -/
@@ -49,7 +48,6 @@ def pistevo : Verb where
   morphs := [.root "pistévo"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .doxastic)
-  aspectualClass := some .state
   opaqueContext := true
 
 /-- *kséro* (ξέρω) 'know' (alongside *gnorízo*) — factive epistemic,
@@ -59,7 +57,6 @@ def ksero : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
-  aspectualClass := some .state
 
 /-- *katalavéno* (καταλαβαίνω) 'understand' — eventive (allows
     manner adverbs in [angelopoulos-2026] ex. 21b),
@@ -69,7 +66,6 @@ def katalaveno : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
-  aspectualClass := some .achievement
 
 /-- *sinidhitopió* (συνειδητοποιώ) 'realize' — eventive (achievement),
     factive epistemic ([angelopoulos-2026] ex. 21b). -/
@@ -78,14 +74,12 @@ def sinidhitopio : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
-  aspectualClass := some .achievement
 
 /-- *eksigó* (εξηγώ) 'explain' — accomplishment, takes *oti*
     yielding *explanans* reading ([angelopoulos-2026] ex. 4a). -/
 def eksigo : Verb where
   morphs := [.root "eksigó"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  aspectualClass := some .accomplishment
 
 /-! ### Matrix verbs selecting *pu*
 
@@ -98,7 +92,6 @@ def metaniono : Verb where
   morphs := [.root "metanióno"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.preferential .negative)
-  aspectualClass := some .state
 
 /-- *aréso* (αρέσω) 'appeal to / be liked by' — Class III experiencer,
     stative ([angelopoulos-2026] ex. 13, 14; [landau-2010]). -/
@@ -106,7 +99,6 @@ def areso : Verb where
   morphs := [.root "aréso"]
   valency := .ofFrame ({ ArgumentFrame.finiteClause with external := none })
   attitude := some (.preferential .positive)
-  aspectualClass := some .state
 
 /-- *xérome* (χαίρομαι) 'be happy/glad' — preferential positive,
     stative. -/
@@ -114,7 +106,6 @@ def xerome : Verb where
   morphs := [.root "xérome"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.preferential .positive)
-  aspectualClass := some .state
 
 /-! ### Verbs compatible with both *oti* and *pu*
 
@@ -132,7 +123,6 @@ def thimame : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
-  aspectualClass := some .achievement
 
 /-- *thimáme* — stative direct-perception recollection sense
     ('remember him reading'), the one available with *pu*
@@ -144,7 +134,6 @@ def thimameStat : Verb where
   senseTag := .stative
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
-  aspectualClass := some .state
 
 /-- *thimóno* (θυμώνω) 'get angry' — eventive (achievement) sense, the
     one available with *oti*; the stative sense is `thimonoStat`
@@ -153,7 +142,6 @@ def thimono : Verb where
   morphs := [.root "thimóno"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.preferential .negative)
-  aspectualClass := some .achievement
 
 /-- *thimóno* — stative 'be angry' sense, the one available with *pu*
     ([angelopoulos-2026] ex. 19, 23). -/
@@ -162,7 +150,6 @@ def thimonoStat : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   senseTag := .stative
   attitude := some (.preferential .negative)
-  aspectualClass := some .state
 
 /-- *nomízo* (νομίζω) 'think' — doxastic, non-veridical, stative; takes *oti*, and *na*
     under matrix negation or question ([roussou-2010]). -/
@@ -170,7 +157,6 @@ def nomizo : Verb where
   morphs := [.root "nomízo"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .doxastic)
-  aspectualClass := some .state
   opaqueContext := true
 
 /-- *paradhéxome* (παραδέχομαι) 'admit' — factive speech-act verb; takes *oti* and not
@@ -182,7 +168,6 @@ def paradhexome : Verb where
   speechActVerb := true
   attitude := some (.doxastic .doxastic)
   factivity := some .semi
-  aspectualClass := some .achievement
 
 /-- *antilamvánome* (αντιλαμβάνομαι) 'realize' — factive epistemic, eventive; takes *oti*
     and not *pu* ([roussou-2010]). -/
@@ -191,7 +176,6 @@ def antilamvanome : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
-  aspectualClass := some .achievement
 
 /-- *anisixó* (ανησυχώ) 'worry' — preferential (negative valence) experiencer verb,
     stative; takes *pu* on the factive reading and *oti* otherwise ([roussou-2010]). -/
@@ -199,7 +183,6 @@ def anisixo : Verb where
   morphs := [.root "anisixó"]
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.preferential .negative)
-  aspectualClass := some .state
 
 /-! ### Interrogative and volitional predicates -/
 
@@ -208,7 +191,6 @@ def anisixo : Verb where
 def anarotjeme : Verb where
   morphs := [.root "anarotjéme"]
   valency := .ofFrame ArgumentFrame.question
-  aspectualClass := some .state
   senseTag := .rogative
 
 /-- *thélo* (θέλω) 'want' — volitional, taking only a *na*-clause ([roussou-2010]). -/
@@ -216,7 +198,6 @@ def thelo : Verb where
   morphs := [.root "thélo"]
   valency := .ofFrame ({ complements := [.clausal (coding := some .subjunctive)] })
   attitude := some (.preferential .positive)
-  aspectualClass := some .state
 
 /-- *elpízo* (ελπίζω) 'hope' — takes a *na*-clause or an *oti*-clause ([grano-2024],
     from [giannakidou-mari-2021]). -/
@@ -227,7 +208,6 @@ def elpizo : Verb where
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
-  aspectualClass := some .state
 
 /-- *protítheme* (προτίθεμαι) 'intend' — takes only a *na*-clause ([grano-2024], from
     [giannakidou-mari-2021], in the third singular *protíthete*). -/
@@ -237,7 +217,6 @@ def protitheme : Verb where
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive)
-  aspectualClass := some .state
 
 /-- *vázo* (βάζω) 'put', causative 'make' — takes an object and a *na*-clause
     ([grano-2024]). -/
@@ -255,6 +234,5 @@ def simveni : Verb where
   morphs := [.root "simvéni"]
   valency := .ofFrame
     { external := none, complements := [.clausal (coding := some .subjunctive)] }
-  aspectualClass := some .achievement
 
 end Greek.StandardModern.Verbs

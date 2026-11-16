@@ -435,11 +435,12 @@ instance (s : StructureSolution) (pe : PreverbalElement) : Decidable (s.Admits p
   cases s <;> unfold StructureSolution.Admits <;> infer_instance
 
 /-- *-ung* requires complex change-of-state event structure ([rossdeutscher-kamp-2010],
-endorsed at §5.3.1), the accomplishments of the fragment. -/
-def CanUngNominalize (v : German.Verb) : Prop := v.aspectualClass = some .accomplishment
+endorsed at §5.3.1), read off the entry as an object that undergoes a change of state. -/
+def CanUngNominalize (v : German.Verb) : Prop :=
+  ∃ θ ∈ v.slotProfile? (.complement 0), .changeOfState ∈ θ
 
 instance (v : German.Verb) : Decidable (CanUngNominalize v) :=
-  inferInstanceAs (Decidable (_ = _))
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 def typeOf : String → Option NominalizationType
   | "ung" => some .ung

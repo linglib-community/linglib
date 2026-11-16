@@ -130,15 +130,9 @@ structure ArgStructure where
   perfectAuxiliaries : Finset Verb.PerfectAuxiliary := ∅
   deriving BEq
 
-/-- The aspect of a verb is its aspectual class, lexical viewpoint, scale, direction of
-    motion, incrementality and phasal class. -/
+/-- The aspect of a verb is its lexical viewpoint, scale, direction of motion, incrementality
+    and phasal class. -/
 structure Aspect where
-  /-- The aspectual class ([dowty-1979], [smith-1997]) of the verb's base VP.
-      For verbs whose class depends on the object NP (eat apples = activity,
-      eat two apples = accomplishment), record the class with a quantized
-      (bounded) object. `none` for verbs where aspectual class is inapplicable
-      (e.g., clause-embedding verbs). -/
-  aspectualClass : Option AspectualClass := none
   /-- The viewpoint the stem lexicalizes, in a language that encodes the opposition of perfective
       and imperfective on verb stems, as the Slavic languages do, at its dictionary value; `none`
       where the language does not. -/

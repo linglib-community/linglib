@@ -99,42 +99,44 @@ def bauen : Verb :=
 
 /-! ### Verbs of Benz's resultatives and nominalizations -/
 
-/-- *hämmern* 'hammer' is an activity. -/
+/-- *hämmern* 'hammer' is a transitive verb. -/
 def haemmern : Verb :=
   { Verb.ofStem (weak "hämmern") with
-    valency := .ofFrame ArgumentFrame.np, aspectualClass := some .activity, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
-/-- *malen* 'paint' is an activity. -/
+/-- *malen* 'paint' is a transitive verb. -/
 def malen : Verb :=
   { Verb.ofStem (weak "malen") with
-    valency := .ofFrame ArgumentFrame.np, aspectualClass := some .activity, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
-/-- *bemalen* 'paint over' is an accomplishment formed on *malen* with the inseparable *be-*. -/
+/-- *bemalen* 'paint over' is formed on *malen* with the inseparable *be-*, and its object
+undergoes a change of state. -/
 def bemalen : Verb :=
   { Verb.ofStem (malen.stem.inseparable "be") with
-    valency := .ofFrame ArgumentFrame.np, aspectualClass := some .accomplishment,
+    valency := .ofFrame ArgumentFrame.np [none, some accomplishmentObjectProfile],
     objects := [.acc] }
 
-/-- *küssen* 'kiss' is an activity. -/
+/-- *küssen* 'kiss' is a transitive verb. -/
 def kuessen : Verb :=
   { Verb.ofStem (weak "küssen") with
-    valency := .ofFrame ArgumentFrame.np, aspectualClass := some .activity, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
-/-- *führen* 'lead' is an activity. -/
+/-- *führen* 'lead' is a transitive verb. -/
 def fuehren : Verb :=
   { Verb.ofStem (weak "führen") with
-    valency := .ofFrame ArgumentFrame.np, aspectualClass := some .activity, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
-/-- *einführen* 'introduce' is an accomplishment formed on *führen* with the separable *ein-*. -/
+/-- *einführen* 'introduce' is formed on *führen* with the separable *ein-*, and its object
+undergoes a change of state. -/
 def einfuehren : Verb :=
   { Verb.ofStem (fuehren.stem.separable "ein") with
-    valency := .ofFrame ArgumentFrame.np, aspectualClass := some .accomplishment,
+    valency := .ofFrame ArgumentFrame.np [none, some accomplishmentObjectProfile],
     objects := [.acc] }
 
-/-- *rauben* 'rob' is an activity. -/
+/-- *rauben* 'rob' is a transitive verb. -/
 def rauben : Verb :=
   { Verb.ofStem (weak "rauben") with
-    valency := .ofFrame ArgumentFrame.np, aspectualClass := some .activity, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *verkaufen* 'sell' is formed on *kaufen* with the inseparable *ver-*. -/
 def verkaufen : Verb :=
@@ -149,10 +151,10 @@ def rennen : Verb :=
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
     direction := some .place }
 
-/-- *brechen* 'break' is an achievement. -/
+/-- *brechen* 'break' is a transitive verb. -/
 def brechen : Verb :=
   { Verb.ofStem (strong "brechen" "bricht" "brach" "gebrochen") with
-    valency := .ofFrame ArgumentFrame.np, aspectualClass := some .achievement, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *zerbrechen* 'break' is a lexical causative formed on *brechen* with the inseparable *zer-*. -/
 def zerbrechen : Verb :=
@@ -177,16 +179,16 @@ def schiessen : Verb :=
 def schaemen : Verb :=
   { Verb.ofStem (weak "schämen") with valency := .ofFrame ArgumentFrame.intransitive }
 
-/-- *beobachten* 'observe' is an accomplishment with the inseparable *be-*. -/
+/-- *beobachten* 'observe' is formed with the inseparable *be-*. -/
 def beobachten : Verb :=
   { Verb.ofStem ((weak "obachten").inseparable "be") with
-    valency := .ofFrame ArgumentFrame.np, aspectualClass := some .accomplishment,
+    valency := .ofFrame ArgumentFrame.np,
     objects := [.acc] }
 
-/-- *verbinden* 'connect' is an accomplishment formed on *binden* with the inseparable *ver-*. -/
+/-- *verbinden* 'connect' is formed on *binden* with the inseparable *ver-*. -/
 def verbinden : Verb :=
   { Verb.ofStem ((strong "binden" "bindet" "band" "gebunden").inseparable "ver") with
-    valency := .ofFrame ArgumentFrame.np, aspectualClass := some .accomplishment,
+    valency := .ofFrame ArgumentFrame.np,
     objects := [.acc] }
 
 /-! ### Attitude verbs -/
@@ -318,13 +320,13 @@ def zurVerantwortungZiehen : Verb :=
 *dass*-clause. -/
 def beenden : Verb :=
   { Verb.ofStem ((weak "enden").inseparable "be") with
-    valency := .ofFrame ArgumentFrame.np, aspectualClass := some .accomplishment,
+    valency := .ofFrame ArgumentFrame.np,
     objects := [.acc] }
 
 /-- *streichen* 'cancel' takes a noun phrase and no *dass*-clause. -/
 def streichen : Verb :=
   { Verb.ofStem (strong "streichen" "streicht" "strich" "gestrichen") with
-    valency := .ofFrame ArgumentFrame.np, aspectualClass := some .accomplishment,
+    valency := .ofFrame ArgumentFrame.np,
     objects := [.acc] }
 
 /-- *übereilen* 'rush' is formed on *eilen* with the inseparable *über-*, and takes a noun phrase
@@ -337,7 +339,7 @@ def uebereilen : Verb :=
 phrase and no *dass*-clause. -/
 def entwickeln : Verb :=
   { Verb.ofStem ((weak "wickeln").inseparable "ent") with
-    valency := .ofFrame ArgumentFrame.np, aspectualClass := some .accomplishment,
+    valency := .ofFrame ArgumentFrame.np,
     objects := [.acc] }
 
 /-- *veranlassen* 'induce' is a weak verb formed with *ver-* on the noun *Anlass* 'occasion', and
