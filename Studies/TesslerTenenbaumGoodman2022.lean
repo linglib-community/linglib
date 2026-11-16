@@ -316,12 +316,10 @@ theorem withFigure_apply_none_eq_one (h0 : S syl {none} ≠ 0) (h : ∀ c ≠ no
     (fun c _ hc ↦ by rw [h c hc, mul_zero]) fun hn ↦ absurd (Finset.mem_univ _) hn]
   exact ENNReal.div_self (by simpa [figuralWeight] using h0) (weight_ne_top β S syl none)
 
-theorem withFigure_real_singleton_lt_iff (h0 : S syl {none} ≠ 0) :
+theorem withFigure_real_singleton_lt_iff :
     (withFigure β S syl).real {c} < (withFigure β S syl).real {c'} ↔
       figuralWeight β syl c * (S syl).real {c} < figuralWeight β syl c' * (S syl).real {c'} := by
-  rw [withFigure, Kernel.ofWeights_real_singleton_lt_iff syl
-    (fun h ↦ h0 (by simpa [figuralWeight] using Finset.sum_eq_zero_iff.1 h none (by simp)))
-    (ENNReal.sum_ne_top.2 fun c _ ↦ weight_ne_top β S syl c),
+  rw [withFigure, Kernel.ofWeights_real_singleton_lt_iff syl fun c ↦ weight_ne_top β S syl c,
     ← ENNReal.toReal_lt_toReal (weight_ne_top β S syl c) (weight_ne_top β S syl c'),
     ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.coe_toReal, ENNReal.coe_toReal,
     measureReal_def, measureReal_def]
@@ -426,10 +424,7 @@ theorem barbara_prefers_all (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α) (hβ : 1 
         (beliefAlignment 0 μ α barbara).real {ac .all} := fun hc hs ↦
     (beliefAlignment_zero_real_singleton_lt_iff hμ hα hne (barbara_entails_all.trans hc)
       barbara_entails_all).2 (measure_lt_of_notMem hμ hc hs (by decide))
-  have h0 : beliefAlignment 0 μ α barbara {none} ≠ 0 :=
-    (beliefAlignment_zero_apply_singleton_eq_zero_iff hμ hα).not_left.2
-      (extension_said_none ▸ Set.subset_univ _)
-  rw [withFigure_real_singleton_lt_iff h0, withFigure_real_singleton_lt_iff h0,
+  rw [withFigure_real_singleton_lt_iff, withFigure_real_singleton_lt_iff,
     figuralWeight_barbara, figuralWeight_barbara]
   have hβ' : (1 : ℝ) ≤ β := by exact_mod_cast hβ
   have h1 := hlt hsome (by decide)

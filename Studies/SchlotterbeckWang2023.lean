@@ -276,16 +276,13 @@ noncomputable def uttSpeaker (β : ℝ) (cost : ℕ → ℝ≥0∞) (pLang : Lis
 variable {μ sem}
 
 theorem seqSpeaker_real_lt_iff [IsProbabilityMeasure μ] (hβ : 0 ≤ β) (hcost : ∀ n, cost n ≠ ∞)
-    (hp : ∀ us u, pLang us u ≠ ∞) {n : ℕ}
-    (h0 : ∃ v : Fin n → U, seqWeight μ sem β cost pLang r (List.ofFn v) ≠ 0) {v v' : Fin n → U} :
+    (hp : ∀ us u, pLang us u ≠ ∞) {n : ℕ} {v v' : Fin n → U} :
     (seqSpeaker μ sem β cost pLang n r).real {v} <
         (seqSpeaker μ sem β cost pLang n r).real {v'} ↔
       seqWeight μ sem β cost pLang r (List.ofFn v) <
         seqWeight μ sem β cost pLang r (List.ofFn v') :=
-  Kernel.ofWeights_real_singleton_lt_iff r
-    (fun h => let ⟨v₀, hv₀⟩ := h0; hv₀ (Finset.sum_eq_zero_iff.mp h v₀ (Finset.mem_univ _)))
-    (ENNReal.sum_ne_top.mpr fun _ _ => ENNReal.prod_ne_top fun _ _ =>
-      ENNReal.mul_ne_top (utility_ne_top hβ hcost _) (hp _ _))
+  Kernel.ofWeights_real_singleton_lt_iff r fun _ => ENNReal.prod_ne_top fun _ _ =>
+    ENNReal.mul_ne_top (utility_ne_top hβ hcost _) (hp _ _)
 
 -- (3)
 theorem globalSpeaker_apply_singleton_eq {n : ℕ} {P : (Fin n → U) → ℝ≥0∞} {v v' : Fin n → U}
@@ -296,18 +293,14 @@ theorem globalSpeaker_apply_singleton_eq {n : ℕ} {P : (Fin n → U) → ℝ≥
 -- (6)
 theorem uttSpeaker_real_lt_iff [IsProbabilityMeasure μ] (hβ : 0 ≤ β) (hcost : ∀ n, cost n ≠ ∞)
     (hp : ∀ us u, pLang us u ≠ ∞) {α : ℝ} (hα : 0 ≤ α) {n : ℕ} {P : (Fin n → U) → ℝ≥0∞}
-    (hP : ∀ v, P v ≠ ∞)
-    (h0 : ∃ v : Fin n → U, seqWeight μ sem β cost pLang r (List.ofFn v) ^ α * P v ≠ 0)
-    {v v' : Fin n → U} :
+    (hP : ∀ v, P v ≠ ∞) {v v' : Fin n → U} :
     (uttSpeaker μ sem β cost pLang α P r).real {v} <
         (uttSpeaker μ sem β cost pLang α P r).real {v'} ↔
       seqWeight μ sem β cost pLang r (List.ofFn v) ^ α * P v <
         seqWeight μ sem β cost pLang r (List.ofFn v') ^ α * P v' :=
-  Kernel.ofWeights_real_singleton_lt_iff r
-    (fun h => let ⟨v₀, hv₀⟩ := h0; hv₀ (Finset.sum_eq_zero_iff.mp h v₀ (Finset.mem_univ _)))
-    (ENNReal.sum_ne_top.mpr fun v _ => ENNReal.mul_ne_top
-      (ENNReal.rpow_ne_top_of_nonneg hα (ENNReal.prod_ne_top fun _ _ =>
-        ENNReal.mul_ne_top (utility_ne_top hβ hcost _) (hp _ _))) (hP v))
+  Kernel.ofWeights_real_singleton_lt_iff r fun v => ENNReal.mul_ne_top
+    (ENNReal.rpow_ne_top_of_nonneg hα (ENNReal.prod_ne_top fun _ _ =>
+      ENNReal.mul_ne_top (utility_ne_top hβ hcost _) (hp _ _))) (hP v)
 
 /-- At a uniform prior, sharp context-independent meanings and the paper's language model, the
 sequence speaker prefers first the adjective true of fewer referents, the relevance effect. -/
@@ -332,11 +325,7 @@ theorem seqSpeaker_real_lt_of_card_lt [DecidableEq U] [DecidableEq R] (hβ : 0 <
     l0_perm (m := fun u ↦ ((ext u : Set R)).indicator 1)
       (sharp_apply_le_one (fun u _ ↦ ext u) · ∅)
       (List.Perm.swap a b [])
-  rw [seqSpeaker_real_lt_iff hβ.le hcost (fun _ _ => alternation_ne_top _ _)
-    ⟨![a, b], by
-      rw [ofFn_pair, seqWeight_pair_alternation]
-      exact mul_ne_zero (by simp) (mul_ne_zero (hu _ (by simp [extSeq, ha]))
-        (hu _ (by simp [extSeq, ha, hb])))⟩,
+  rw [seqSpeaker_real_lt_iff hβ.le hcost (fun _ _ => alternation_ne_top _ _),
     ofFn_pair, ofFn_pair, alternation_comm,
     seqWeight_pair_lt_iff_of_l0_eq hβ.le hcost hl (hu _ (by simp [extSeq, ha, hb])),
     utility_single_lt_iff hβ (hcost0 1) (hcost 1), l0_single_lt_iff (fun u _ => ext u) hb ha]

@@ -317,13 +317,8 @@ theorem speaker_real_lt_iff (hα : 0 < α) (hw : μ {w} ≠ 0) (hσ : ∀ i, w �
   have hb : ∃ p, Measure.count.prod (Measure.dirac w) {p} ≠ 0 :=
     ⟨(Classical.arbitrary ι, w), (Measure.prod_dirac_apply_singleton_ne_zero_iff _ _ _).2
       ⟨by simp, rfl⟩⟩
-  have h0 : ∃ u, ∀ p, Measure.count.prod (Measure.dirac w) {p} ≠ 0 →
-      parseListener (fun i ↦ literalListener μ (parse i)) u {p} ≠ 0 := ⟨σ, fun ⟨i, v⟩ hp ↦ by
-    obtain ⟨-, rfl⟩ := (Measure.prod_dirac_apply_singleton_ne_zero_iff _ _ (i, v)).1 hp
-    rw [parseListener_apply_singleton]
-    exact (literalListener_apply_singleton_ne_zero_iff μ (parse i) σ v).2 ⟨hσ i, hw⟩⟩
   rw [speaker, maximinSpeaker_real_singleton_lt_iff
-    (b := fun w ↦ Measure.count.prod (Measure.dirac w)) hα.le hb h0]
+    (b := fun w ↦ Measure.count.prod (Measure.dirac w)) hα.le hb]
   simp only [essInf_prod_dirac_parseListener, Measure.count_singleton, ne_eq, one_ne_zero,
     not_false_eq_true, iInf_pos]
   rw [← ENNReal.toReal_lt_toReal (weight_ne_top hα.le w _) (weight_ne_top hα.le w _),

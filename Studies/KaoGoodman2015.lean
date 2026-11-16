@@ -237,16 +237,9 @@ theorem S1_arousal_lt_iff (hπ : ∀ u, π {u} ≠ 0) (hα : 0 < α) (m : Meanin
       κ u (Prod.snd ⁻¹' {m.2.2}) < κ u' (Prod.snd ⁻¹' {m.2.2}) := by
   have hL (w : Weather) : (L0 (π ⊗ₘ κ)).map (project .arousal) w {project .arousal m} =
       κ w (Prod.snd ⁻¹' {m.2.2}) := map_L0_arousal π κ hπ w m.2.2
-  by_cases h0 : ∃ w, κ w (Prod.snd ⁻¹' {m.2.2}) ≠ 0
-  · rw [S1, qudSpeaker, speaker_dirac_real_singleton_lt_iff hα.le (h0.imp fun w hw ↦ by rwa [hL])]
-    simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one,
-      ENNReal.rpow_lt_rpow_iff hα, hL]
-  · simp only [ne_eq, not_exists, not_not] at h0
-    have hS (w : Weather) : (S1 (π ⊗ₘ κ) α (m, .arousal)).real {w} = 0 := by
-      rw [measureReal_def, S1, qudSpeaker,
-        speaker_dirac_apply_singleton_eq_zero hα (by rw [hL, h0]), ENNReal.toReal_zero]
-    rw [hS, hS, h0, h0]
-    exact iff_of_false (lt_irrefl _) (lt_irrefl _)
+  rw [S1, qudSpeaker, speaker_dirac_real_singleton_lt_iff hα.le]
+  simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one,
+    ENNReal.rpow_lt_rpow_iff hα, hL]
 
 private theorem sum_qud (f : QUD → ℝ≥0∞) : ∑ q, f q = f .state + f .valence + f .arousal := by
   rw [show (Finset.univ : Finset QUD) = {.state, .valence, .arousal} from rfl]

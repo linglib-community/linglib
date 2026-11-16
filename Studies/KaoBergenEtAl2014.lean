@@ -103,12 +103,11 @@ theorem speaker_odds :
 
 /-- The speaker names the animal rather than the person exactly when the goal's feature value
 is likelier under the animal than under the person. -/
-theorem names_animal_iff (hα : 0 < α)
-    (h0 : ∃ u, (L0 μ).map (project g) u {project g m} ≠ 0) :
+theorem names_animal_iff (hα : 0 < α) :
     (S1 μ α (m, g)).real {.person} < (S1 μ α (m, g)).real {.animal}
       ↔ (L0 μ).map (project g) .person {project g m} <
         (L0 μ).map (project g) .animal {project g m} := by
-  rw [S1, qudSpeaker, speaker_dirac_real_singleton_lt_iff hα.le h0]
+  rw [S1, qudSpeaker, speaker_dirac_real_singleton_lt_iff hα.le]
   simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one,
     ENNReal.rpow_lt_rpow_iff hα]
 
