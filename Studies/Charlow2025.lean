@@ -270,7 +270,7 @@ variable {E : Type*}
 
 instance : Substrate (Update (ℕ → E)) where
   conj := SetRel.comp
-  neg φ := Update.test (Update.neg φ)
+  neg φ := Update.test (SetRel.dom φ)ᶜ
 
 /-- Program disjunction on DPL relations is the union of the outputs. -/
 instance : ProgramDisj (Update (ℕ → E)) where
@@ -341,7 +341,7 @@ theorem down_up (m : Update (ℕ → E)) :
 
 theorem down_neg_up (m : Update (ℕ → E)) :
     Lift.down (Lift.neg (Lift.up (Δ := Decomposed (Update (ℕ → E))) m)) =
-      Update.test (Update.neg m) :=
+      Update.test (SetRel.dom m)ᶜ :=
   rel_ext λ g h => by
     constructor
     · rintro ⟨k, ⟨rfl, h3⟩, hm | hneg⟩
@@ -353,12 +353,13 @@ theorem down_neg_up (m : Update (ℕ → E)) :
 theorem not_neg_neg [Nontrivial E] :
     ∃ M : Decomposed (Update (ℕ → E)), Lift.neg (Lift.neg M) ≠ M := by
   obtain ⟨x, φ, h⟩ := GroenendijkStokhof1991.dne_fails_anaphora (E := E)
-  exact ⟨⟨Update.dexists x φ, Update.dexists x φ⟩, λ e => h (congrArg atIssue e)⟩
+  exact ⟨⟨SetRel.comp (Update.randomAssign x) φ, SetRel.comp (Update.randomAssign x) φ⟩,
+    λ e => h (congrArg atIssue e)⟩
 
 theorem exists_atIssue_eq_neg {Atom : Type*} (ia : Atom → Update (ℕ → E))
     (ie : ℕ → Update (ℕ → E)) (φ : Formula Atom) :
-    ∃ X, (liftInterp (Δ := Decomposed (Update (ℕ → E))) ia ie φ).atIssue =
-      Update.test (Update.neg X) := by
+    ∃ X : Update (ℕ → E), (liftInterp (Δ := Decomposed (Update (ℕ → E))) ia ie φ).atIssue =
+      Update.test (SetRel.dom X)ᶜ := by
   induction φ with
   | atom a => exact ⟨_, rfl⟩
   | exi n => exact ⟨_, rfl⟩
@@ -376,8 +377,8 @@ theorem neg_neg_liftInterp {Atom : Type*} (ia : Atom → Update (ℕ → E))
     simp only at hX
     subst hX
     show Decomposed.mk
-      (Update.test (Update.neg (Update.test (Update.neg (Update.test (Update.neg X)))))) n = _
-    rw [(GroenendijkStokhof1991.neg_neg_eq_self_iff_isTest _).2 (Update.isTest_test _)]
+      (Update.test (SetRel.dom (Update.test (SetRel.dom (Update.test (SetRel.dom X)ᶜ))ᶜ))ᶜ) n = _
+    rw [Update.dom_test, Update.dom_test, compl_compl]
 
 end Decomposed
 

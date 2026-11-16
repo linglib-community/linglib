@@ -22,8 +22,8 @@ cylindrification is the weakest precondition of `[r]`.
 
 * `RegisterStructure R S E`, with its canonical instance at `V → E`.
 * `RegisterStructure.cylindricAlgebra`: the cylindric algebra of conditions.
-* `Update.randomAssign`, `Update.dexists`, `Update.dforall`: random assignment and the dynamic
-  quantifiers.
+* `Update.randomAssign`: random assignment, whose composition with an update is the dynamic
+  existential quantifier and whose core is the universal.
 * `Update.box`: the box `[u₁ … uₙ | C]` over a finite set of registers.
 * `Update.Fixes`, `Update.maxAt`: an update leaves a register unchanged, and maximization over a
   register's value.
@@ -33,8 +33,8 @@ cylindrification is the weakest precondition of `[r]`.
 * `Update.randomAssign_comp_self`, `Update.commute_randomAssign`: random assignments are
   idempotent and commute; with the `SetRel.IsRefl`, `IsSymm` and `IsTrans` instances, each is an
   equivalence.
-* `Update.preimage_randomAssign`, `Update.core_randomAssign`, `Update.dom_dexists`: the weakest
-  precondition of `[r]` is cylindrification and its dual the universal; an existential is true
+* `Update.preimage_randomAssign`, `Update.core_randomAssign`, `Update.dom_randomAssign_comp`: the
+  weakest precondition of `[r]` is cylindrification and its dual the universal; an existential is true
   where the cylindrification of its scope's truth set is.
 * `Update.commute_test_randomAssign_iff`: a test commutes with `[r]` exactly when `r` is outside
   the dimension set of its condition.
@@ -246,24 +246,17 @@ theorem commute_test_randomAssign_iff : Commute (test C) (randomAssign r) ↔ r 
     exact ⟨fun ⟨hi, e, hj⟩ ↦ ⟨⟨e, hj⟩, hj ▸ (h i e).2 hi⟩,
       fun ⟨⟨e, hj⟩, hC⟩ ↦ ⟨(h i e).1 (hj ▸ hC), e, hj⟩⟩
 
-/-- The existential update `∃r(D)` is `[r]; D`. -/
-def dexists (r : R) (D : Update S) : Update S :=
-  randomAssign r ○ D
-
-/-- The universal condition `∀r(D)` holds iff `D` has an output from every `r`-variant, which is
-the clause of [groenendijk-stokhof-1991] for the universal. -/
-def dforall (r : R) (D : Update S) : Condition S :=
-  impl (randomAssign r) D
-
-theorem mem_dexists {D : Update S} : i ~[dexists r D] j ↔ ∃ e, extend i r e ~[D] j :=
+theorem mem_randomAssign_comp {D : Update S} :
+    i ~[randomAssign r ○ D] j ↔ ∃ e, extend i r e ~[D] j :=
   ⟨by rintro ⟨_, ⟨e, rfl⟩, hD⟩; exact ⟨e, hD⟩, fun ⟨e, hD⟩ ↦ ⟨_, ⟨e, rfl⟩, hD⟩⟩
 
-theorem mem_dforall {D : Update S} : i ∈ dforall r D ↔ ∀ e, extend i r e ∈ D.dom :=
-  ⟨fun h e ↦ h ⟨e, rfl⟩, by rintro h _ ⟨e, rfl⟩; exact h e⟩
+theorem mem_core_randomAssign : i ∈ (randomAssign r).core t ↔ ∀ e : E, extend i r e ∈ t := by
+  rw [core_randomAssign]; rfl
 
-/-- An existential is true where the cylindrification of its scope's truth set is. -/
-theorem dom_dexists (D : Update S) : (dexists r D).dom = cyl r D.dom := by
-  rw [← preimage_univ_right, dexists, preimage_comp, preimage_univ_right, preimage_randomAssign]
+/-- A reset followed by an update is true where the cylindrification of the update's truth set
+is: the existential quantifier of [groenendijk-stokhof-1991]. -/
+theorem dom_randomAssign_comp (D : Update S) : (randomAssign r ○ D).dom = cyl r D.dom := by
+  rw [dom_comp, preimage_randomAssign]
 
 /-! ### Frame conditions and maximization -/
 
@@ -305,15 +298,15 @@ def box (s : Finset R) (C : Condition S) : Update S :=
 @[simp] theorem box_empty (C : Condition S) : box (∅ : Finset R) C = test C := by
   simp [box]
 
-theorem box_singleton (r : R) (C : Condition S) : box {r} C = dexists r (test C) := by
-  rw [box, Finset.noncommProd_singleton, mul_def, dexists]
+theorem box_singleton (r : R) (C : Condition S) : box {r} C = randomAssign r ○ test C := by
+  rw [box, Finset.noncommProd_singleton, mul_def]
 
 theorem mem_box_singleton : i ~[box {r} C] j ↔ i ~[randomAssign r] j ∧ j ∈ C := by
-  rw [box_singleton, dexists, mem_comp_test]
+  rw [box_singleton, mem_comp_test]
 
 theorem mem_box_singleton_comp {D : Update S} :
     i ~[box {r} C ○ D] j ↔ ∃ e, extend i r e ∈ C ∧ extend i r e ~[D] j := by
-  rw [box_singleton, dexists, comp_assoc, ← dexists, mem_dexists]
+  rw [box_singleton, comp_assoc, mem_randomAssign_comp]
   simp only [mem_test_comp]
 
 theorem commute_box_randomAssign (s : Finset R) (h : r ∉ dimSet C) :
@@ -357,7 +350,7 @@ theorem box_toFinset (l : List R) (C : Condition S) :
 
 theorem mem_box_insert {s : Finset R} :
     i ~[box (insert r s) C] j ↔ ∃ e, extend i r e ~[box s C] j := by
-  rw [box_insert, ← dexists, mem_dexists]
+  rw [box_insert, mem_randomAssign_comp]
 
 theorem mem_box_insert_of_mem {s : Finset R} {k : S} (hk : i ~[randomAssign r] k)
     (hj : k ~[box s C] j) : i ~[box (insert r s) C] j := by

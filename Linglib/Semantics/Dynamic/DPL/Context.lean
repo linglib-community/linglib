@@ -306,20 +306,21 @@ theorem dom_comp (hR : HasContext R c) (hS : HasContext S d) (hd : Disjoint c.B 
         let ⟨j, hj⟩ := (hR.mem_dom_iff hS hd hk).mp hf
         ⟨j, k, hk, hj⟩⟩
 
-/-- The negation of a `c`-relation is a test at its inputs. -/
-theorem neg (h : HasContext R c) : HasContext (test (Update.neg R)) (Context.test c.I) :=
+/-- The antidomain of a `c`-relation is a test at its inputs. -/
+theorem neg (h : HasContext R c) : HasContext (test R.domᶜ) (Context.test c.I) :=
   hasContext_test_iff.mpr fun _ _ hI ↦ congrArg Not (h.dependsOn_dom hI)
 
 /-- The DPL implication of a `c`-relation and a `d`-relation is typed by the paper's `c → d`, the
 test at the inputs of `c * d` (Theorem 3.9), by the typing of composition and negation. -/
 theorem impl (hR : HasContext R c) (hS : HasContext S d) :
-    HasContext (test (Update.impl R S)) (Context.test (c * d).I) := by
-  rw [impl_eq_neg_comp_test_neg]
-  exact (hR.comp hS.neg).neg
+    HasContext (test (R.core S.dom)) (Context.test (c * d).I) := by
+  have h : R.core S.dom = (R ○ test S.domᶜ).domᶜ := by
+    rw [dom_comp_test, ← core_compl, compl_compl]
+  exact h ▸ (hR.comp hS.neg).neg
 
 /-- The disjunction of a `c`-relation and a `d`-relation is a test at their inputs. -/
 theorem disj (hR : HasContext R c) (hS : HasContext S d) :
-    HasContext (test (Update.disj R S)) (Context.test (c.I ∪ d.I)) :=
+    HasContext (test (R.dom ∪ S.dom)) (Context.test (c.I ∪ d.I)) :=
   hasContext_test_iff.mpr fun _ _ hI ↦ by
     have h₁ := hR.dependsOn_dom fun v hv ↦ hI v (Finset.coe_subset.mpr Finset.subset_union_left hv)
     have h₂ := hS.dependsOn_dom fun v hv ↦ hI v (Finset.coe_subset.mpr Finset.subset_union_right hv)
@@ -409,21 +410,23 @@ theorem IsScopeBound.mem_dom_eval_iff {φ : Formula L V} (h : φ.IsScopeBound) {
   | top => exact iff_of_true ⟨g, rfl⟩ (by simp [toFormula])
   | rel R ts => simp [toFormula]
   | equal t₁ t₂ => simp [toFormula]
-  | neg φ ih => simp [toFormula, neg_eq_compl_dom, ih h]
+  | neg φ ih => simp [toFormula, ih h]
   | conj φ ψ ihφ ihψ =>
     obtain ⟨hφ, hψ, hd⟩ := h
     rw [eval_conj, (φ.hasContext_eval M).dom_comp (ψ.hasContext_eval M)
       (by rwa [context_B, context_I])]
     simp [toFormula, ihφ hφ, ihψ hψ]
-  | disj φ ψ ihφ ihψ => simp [toFormula, disj_eq_dom_union_dom, ihφ h.1, ihψ h.2]
+  | disj φ ψ ihφ ihψ => simp [toFormula, ihφ h.1, ihψ h.2]
   | imp φ ψ ihφ ihψ =>
     obtain ⟨hφ, hψ, hd⟩ := h
-    rw [eval_imp, dom_test, impl_eq_neg_comp_test_neg, neg_eq_compl_dom,
+    rw [eval_imp, dom_test, ← compl_compl (ψ.eval M).dom, core_compl, ← dom_comp_test,
       (φ.hasContext_eval M).dom_comp (ψ.hasContext_eval M).neg (by rwa [context_B, context_I]),
-      dom_test, neg_eq_compl_dom]
+      dom_test]
     simp [toFormula, ihφ hφ, ihψ hψ]
-  | ex x φ ih => simp [toFormula, dom_dexists, ih h]
-  | all x φ ih => simp [toFormula, mem_dforall, ih h]
+  | ex x φ ih => simp [toFormula, dom_randomAssign_comp, ih h]
+  | all x φ ih =>
+    rw [eval_all, dom_test, mem_core_randomAssign]
+    simp [toFormula, ih h]
 
 end Formula
 

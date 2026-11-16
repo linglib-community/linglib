@@ -24,9 +24,9 @@ own a dog*, the kind pronoun *them* is therefore interpretable and a partitive i
 * Assignments are total functions into a heterogeneous value type with a value marking
   indices outside the domain; an anaphor's presupposition is a conjunct of its update, so a
   failed presupposition makes the update empty rather than undefined.
-* Negation is the paper's VP negation, the substrate's `test (neg φ)`; the sentential negation
-  with its condition that the negated existential extend the input differs only in ways
-  irrelevant to projection. The concept referent's presupposition is a hypothesis of the
+* Negation is the paper's VP negation, the test `test φ.domᶜ` of where `φ` has no output; the
+  sentential negation with its condition that the negated existential extend the input
+  differs only in ways irrelevant to projection. The concept referent's presupposition is a hypothesis of the
   projection theorems; the paper derives it from the head noun's partial lexical entry.
 * Which concepts sponsor kinds (*dogs from the animal shelter* does not) is left to the
   lexicon, as in the paper.
@@ -58,7 +58,7 @@ namespace Krifka2026
 
 open Mereology
 open DynamicSemantics (Update Condition)
-open DynamicSemantics.Update (test neg)
+open DynamicSemantics.Update (test)
 open SetRel
 
 variable {World E : Type*}
@@ -163,7 +163,7 @@ theorem entity_trapped_by_test {n : ℕ} {C : Condition (HAssign World E)}
 asymmetry lies only in where the two referents are introduced. -/
 theorem concept_entity_asymmetry {nC nE : ℕ} {P : World → Set E} {noun : English.Nouns.Noun}
     {φ : Update (HAssign World E)} {g h : HAssign World E}
-    (hPresup : g nC = .concept P noun) (hNovel : g nE = .undef) (hNeg : g ~[test (neg φ)] h) :
+    (hPresup : g nC = .concept P noun) (hNovel : g nE = .undef) (hNeg : g ~[test φ.domᶜ] h) :
     h nC = .concept P noun ∧ h nE = .undef :=
   ⟨concept_survives_test hPresup hNeg, entity_trapped_by_test hNovel hNeg⟩
 
@@ -192,7 +192,7 @@ def partitive (n m : ℕ) : Update (HAssign World E) :=
 partitive cannot take the entity referent ((5a)–(5c)). -/
 theorem anaphora_after_negation {nC nE m : ℕ} {P : World → Set E} {noun : English.Nouns.Noun}
     {φ : Update (HAssign World E)} {g h : HAssign World E}
-    (hPresup : g nC = .concept P noun) (hNovel : g nE = .undef) (hNeg : g ~[test (neg φ)] h) :
+    (hPresup : g nC = .concept P noun) (hNovel : g nE = .undef) (hNeg : g ~[test φ.domᶜ] h) :
     (∃ h', h ~[kindPronoun noun nC m] h') ∧ (∀ K, h ~[K P] h → h ~[emptyNP nC K] h) ∧
       ¬ ∃ h', h ~[partitive nE m] h' :=
   ⟨⟨_, P, concept_survives_test hPresup hNeg, rfl⟩,
@@ -224,7 +224,7 @@ def ownADog : Update (HAssign Unit (Individual Ent)) :=
   entityIntro 3 (test {g | ∃ P noun x, g 2 = .concept P noun ∧ g 3 = .entity x ∧ x ∈ P ()})
 
 /-- *John₁ doesn't own [a₃ [dog]₂]* (44e) is the VP negation, the test of the negated update. -/
-def doesntOwnADog : Update (HAssign Unit (Individual Ent)) := test (neg ownADog)
+def doesntOwnADog : Update (HAssign Unit (Individual Ent)) := test ownADog.domᶜ
 
 /-- The negated sentence holds in the model, there being no dogs, and returns the input. -/
 theorem doesntOwnADog_g₀ : g₀ ~[doesntOwnADog] g₀ :=
