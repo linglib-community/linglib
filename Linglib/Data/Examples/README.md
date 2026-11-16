@@ -245,11 +245,13 @@ aimed at. Known gaps:
   (Reinhart's (11a)–(11d)).
 - **Alignment level of the gloss line.** A word whose surface and gloss segment differently
   (1,263 of 33,423 glossed words, in 116 files, mostly as the source prints them) is dropped by
-  `Datum.glossedWords` together with its category labels. The plan follows `pyigt`, the CLDF
-  library for interlinear text: the generator segments the gloss line and records each word as
-  morpheme-aligned (Rule 2) or word-aligned (Rule 1 only), a reader of morphs requires the
-  first, and a reader of a word's labels accepts both. Lean then splits no strings in the
-  kernel.
+  `Datum.glossedWords` together with its category labels. CLDF records the level of an example
+  as `LGR_Conformance` (`WORD_ALIGNED`, `MORPHEME_ALIGNED`), which the export already derives
+  (`lgr_conformance` in `scripts/export_examples_cldf.py`) and `pyigt` checks before reading
+  morphs. The plan is to have the generator use that one derivation, segment the gloss line and
+  emit the level on the Lean row under CLDF's name, so that a reader of morphs requires
+  `MORPHEME_ALIGNED`, a reader of a word's labels accepts both, and Lean splits no strings in
+  the kernel.
 - **Declared abbreviations.** A gloss element counts as a category label when it has no
   lower-case letter, which misses sources that write `2.sg` or `caus`. The Leipzig rules let a
   work list its own abbreviations; a data file would declare them and the generator would check
@@ -258,6 +260,10 @@ aimed at. Known gaps:
   A column that names a lexical entry is matched against a `Finset` inventory, so such a
   theorem is written with a bounded quantifier over the inventory and carries no coverage
   count; a fit over `Option`, `List` and `Finset` readers alike would cover it.
+- **Typed features in the CLDF export.** A declared feature is a CLDF parameter with its codes,
+  but the export writes every feature into the custom JSON column `Paper_Features`. Whether the
+  declared ones fit CLDF's `ParameterTable` and `CodeTable` for values attached to an example
+  is to be checked against the specification before anything is written.
 - **Adoption of typed features.** Most data files predate them and their studies read closed
   columns through `parse?` tables; a column is declared when its study is next audited.
 
