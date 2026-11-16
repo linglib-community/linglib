@@ -55,7 +55,7 @@ theorem flat_makeReferringExpression_type (kb : KB E A V) (t : A) (r : E) (C : F
   have hbest : (flat kb t).findBestValue r C t 0 v = some v := by
     simp [findBestValue, flat, hr]
   have hrule : (flat kb t).rulesOut C t v = C :=
-    Finset.filter_true_of_mem λ c hc => by
+    Finset.filter_true_of_mem fun c hc ↦ by
       obtain ⟨w, hw, hwv⟩ := hC c hc
       simp [flat, hw, hwv]
   have hstep : (flat kb t).step r t C ∅ =
@@ -81,7 +81,7 @@ theorem makeReferringExpression_congr_type (kb₁ kb₂ : KB E A V) (t : A) (r :
       (flat kb₂ t).makeReferringExpression r C (t :: rest) := by
   rw [flat_makeReferringExpression_type kb₁ t r C rest hr hC,
     flat_makeReferringExpression_type kb₂ t r C rest (h r ▸ hr)
-      λ c hc => (hC c hc).imp λ w hw => ⟨h c ▸ hw.1, hw.2⟩]
+      fun c hc ↦ (hC c hc).imp fun w hw ↦ ⟨h c ▸ hw.1, hw.2⟩]
 
 end IA
 
@@ -110,7 +110,7 @@ def scene (tomatoColor : ObjectValue) : KB Object Attr ObjectValue
 theorem tomato_bare (tomatoColor : ObjectValue) :
     (flat (scene tomatoColor) .type).makeReferringExpression .tomato {.pineapple, .cucumber}
         [.type, .property .color] = some {(.type, .tomato)} :=
-  flat_makeReferringExpression_type _ _ _ _ _ rfl λ c hc => by
+  flat_makeReferringExpression_type _ _ _ _ _ rfl fun c hc ↦ by
     simp only [Finset.mem_insert, Finset.mem_singleton] at hc
     rcases hc with rfl | rfl <;> exact ⟨_, rfl, by decide⟩
 
@@ -120,7 +120,7 @@ theorem tomato_bare (tomatoColor : ObjectValue) :
 typicality score for the object. -/
 def DecisionRule (rate : ℚ → ℚ) : Prop := StrictAnti rate
 
-theorem decision_rule_not_ia (c : ℚ) : ¬ DecisionRule λ _ => c :=
-  λ h => lt_irrefl c (h zero_lt_one)
+theorem decision_rule_not_ia (c : ℚ) : ¬ DecisionRule fun _ ↦ c :=
+  fun h ↦ lt_irrefl c (h zero_lt_one)
 
 end WesterbeekKoolenMaes2015

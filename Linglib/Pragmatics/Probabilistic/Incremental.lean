@@ -16,26 +16,14 @@ public import Mathlib.Data.List.ReduceOption
 # Incremental RSA: string meanings and the incremental speaker
 
 Incremental rational speech act models run the pipeline word by word. In the model of Cohn-Gordon,
-Goodman and Potts an incomplete string gets its meaning from the complete utterances that continue
-it, the speaker chooses each word, or the end of the utterance, against a listener of the string so
-far, and the probability of an utterance is the product of her choices along it: she is an
-autoregressive sequence model. With graded word meanings the value of an utterance is the product
-of the values of its words, as in the models of Waldon and Degen and of Schlotterbeck and Wang.
-
-## Main definitions
-
-* `RSA.prodMeaning lex us w`: the product over the words `us` of their values `lex u w`.
-* `RSA.continuations utts pfx`, `RSA.stringMeaning utts m pfx`: the complete utterances that
-  continue a prefix, and the mean of the utterance meaning `m` over them.
-* `RSA.stopped u`, `RSA.incrementalMeaning utts m c o`: a complete utterance closed by the end
-  symbol `none`, and the string meaning of the context `c` followed by the next symbol `o`.
-* `RSA.incrementalSpeaker S r`: the autoregressive sequence model of the word-level speaker `S`.
-
-## Main results
-
-* `RSA.prodMeaning_perm`: the value of an utterance does not depend on the order of its words.
-* `RSA.next_incrementalSpeaker_apply_some`: the incremental speaker chooses each word as the
-  word-level speaker does.
+Goodman and Potts an incomplete string gets [its meaning](##RSA.stringMeaning) from [the complete
+utterances that continue it](##RSA.continuations), the speaker chooses each word, or [the end of
+the utterance](##RSA.stopped), against a listener of the string so far, and the probability of an
+utterance is the product of her choices along it: she is [an autoregressive sequence
+model](##RSA.incrementalSpeaker), who [chooses each word as the word-level speaker
+does](##RSA.next_incrementalSpeaker_apply_some). With graded word meanings the value of an
+utterance is [the product of the values of its words](##RSA.prodMeaning), [whatever their
+order](##RSA.prodMeaning_perm), as in the models of Waldon and Degen and of Schlotterbeck and Wang.
 
 ## References
 
