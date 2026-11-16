@@ -9,7 +9,7 @@ public import Mathlib.Logic.Function.Basic
 public import Mathlib.Order.Basic
 
 /-!
-# Predicates with a property complement
+# Control and raising
 
 On the analysis of Montague, Bach, Dowty and Chierchia the complement of *try*, *persuade* or
 *seem* denotes a property, and the predicate denotes a relation `R : (E → Φ) → X → Φ` between a
@@ -18,10 +18,11 @@ raising are then two answers to how much of the property the relation reads. Giv
 `c : X → E` the property is understood of, the relation is *raising* at `c` when it reads only the
 proposition `P (c x)`, and *controlled* at `c` when it reads that proposition and the arguments
 `x`. A raising relation is controlled, and a controlled one is [exactly a relation to a
-proposition](##PropertyComplement.isControlledAt_iff) with the property applied to `c x`, so an
+proposition](##ArgumentStructure.isControlledAt_iff) with the property applied to `c x`, so an
 analysis on which the complement denotes a proposition describes the controlled relations and no
-others. A raising relation [entails nothing about `c x`](##PropertyComplement.IsRaisingAt.le_of_le)
-that it does not entail of everything.
+others. A raising relation [entails nothing about `c x`](##ArgumentStructure.IsRaisingAt.le_of_le)
+that it does not entail of everything: the argument is not a semantic argument of the relation, as
+no participant of a raising verb fills the slot it raises into (`Diathesis.IsRaising`).
 
 ## Implementation notes
 
@@ -42,7 +43,7 @@ projection. Equality in `Φ` is logical equivalence when propositions are sets o
 
 open Function
 
-namespace PropertyComplement
+namespace ArgumentStructure
 
 variable {E Φ X Y : Type*} {R : (E → Φ) → X → Φ} {c : X → E}
 
@@ -104,4 +105,4 @@ theorem IsRaisingAt.le_of_le [LE Φ] (h : IsRaisingAt R c) {α : E → Φ}
   have : R P x = R (fun _ ↦ P (c x)) y := h (a := (P, x)) (b := (fun _ ↦ P (c x), y)) rfl
   exact this ▸ hα _ y
 
-end PropertyComplement
+end ArgumentStructure

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.PropertyComplement
+public import Linglib.Semantics.ArgumentStructure.Control
 
 /-!
 # Dowty (1985): On Recent Analyses of the Semantics of Control
@@ -40,7 +40,7 @@ arguments from scope, from dummy subjects and from mixed Raising-Equi verbs are 
 
 namespace Dowty1985
 
-open PropertyComplement
+open ArgumentStructure
 
 variable {W N : Type*}
 
