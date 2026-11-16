@@ -21,9 +21,7 @@ event, entails the atelic one and is preferred. *Widen* thus has no telic readin
 
 On every set of positive difference values the measure of change agrees with Hay, Kennedy and
 Levin's difference value, so the two accounts differ only in the values a modifier names: a measure
-phrase requires at least its degree of change here and exactly that degree there. The English
-fragment's degree achievements take the Vendler class that Interpretive Economy gives their base
-scales.
+phrase requires at least its degree of change here and exactly that degree there.
 
 ## Implementation notes
 
@@ -200,26 +198,13 @@ end Modifiers
 
 /-! ### The English degree achievements -/
 
-theorem defaultVendlerClass_eq {α T : Type*} (d : ScalarDimension) (m : α → T → d.Scale)
+theorem defaultAspectualClass_eq {α T : Type*} (d : ScalarDimension) (m : α → T → d.Scale)
     (x : α) (i : T) :
-    d.defaultVendlerClass =
+    d.defaultAspectualClass =
       if (Boundedness.ofOrder (Ici (m x i))).defaultStandard = .maxEndpoint then .accomplishment
       else .activity := by
   simp only [Boundedness.ofOrder_Ici, Boundedness.ofOrder_degreeShape]
   rfl
-
-/-- `daVerbs` lists the fragment's degree achievements. -/
-def daVerbs : List Verb :=
-  [English.Verbs.bend.toVerb, English.Verbs.boil.toVerb,
-   English.Verbs.rust.toVerb, English.Verbs.increase.toVerb,
-   English.Verbs.clean.toVerb, English.Verbs.dry.toVerb, English.Verbs.straighten.toVerb,
-   English.Verbs.flatten.toVerb, English.Verbs.open_.toVerb,
-   English.Verbs.lengthen.toVerb, English.Verbs.widen.toVerb,
-   English.Verbs.cool.toVerb, English.Verbs.warm.toVerb]
-
-theorem da_vendler_classes_agree :
-    ∀ v ∈ daVerbs, v.vendlerClass = v.changeScale.map (·.defaultVendlerClass) := by
-  decide
 
 /-- The adjective–verb pairs of the fragment are *clean*, *dry*, *straight*, *flat* and *open*
 with scales closed above, *bent* with one closed only below, and *long*, *wide*, *cool* and
@@ -238,18 +223,6 @@ def pairs : List (Adjective × Verb) :=
 
 theorem adjective_verb_scales :
     ∀ p ∈ pairs, p.2.changeScale = p.1.boundedness := by
-  decide
-
--- (1), (6)
-theorem inX_iff_hasMax (b : Boundedness) :
-    (inXPrediction b.defaultVendlerClass = .accept ↔ b.HasMax) ∧
-      (forXPrediction b.defaultVendlerClass = .accept ↔ ¬ b.HasMax) := by
-  cases b <;> decide
-
-theorem diagnostics :
-    ∀ v ∈ daVerbs, ∃ b ∈ v.changeScale,
-      (v.vendlerClass.map inXPrediction = some .accept ↔ b.HasMax) ∧
-        (v.vendlerClass.map forXPrediction = some .accept ↔ ¬ b.HasMax) := by
   decide
 
 end KennedyLevin2008

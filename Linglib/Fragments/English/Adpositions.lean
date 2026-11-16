@@ -27,8 +27,8 @@ The central prepositions of English as `Adposition` entries, after the Cambridge
   which extend the spatial ones, the static uses of *off*, *out* and *away*, and the uses with no
   comparative value, such as the passive agent of *by* and the *at* of *laugh at*.
 * *Out of* is *out* with an *of* phrase as its complement, since *out* alone occurs without one.
-* Which interval the measure phrase of *for*, *in* and *ago* measures (Dowty's tests,
-  `Aspect.forXPrediction`) is left to the studies; *in years* is
+* Which interval the measure phrase of *for*, *in* and *ago* measures (Dowty's tests) is left to
+  the studies; *in years* is
   `English.PolarityItems.inYears`, and *before*, *since*, *until* and deadline *by* are
   `English.TemporalConnectives`.
 

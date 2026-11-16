@@ -362,8 +362,8 @@ def phaseTests : List Datum := [Examples.ex_17a, Examples.ex_17b]
 (17b). -/
 theorem phaseTests_necessary :
     (∀ d ∈ phaseTests, d.judgment = .acceptable →
-      (complementPerfectivity d).map Aspect.viewpointPrediction = some .accept) ∧
-    ∃ d ∈ phaseTests, (complementPerfectivity d).map Aspect.viewpointPrediction = some .accept ∧
+      complementPerfectivity d = some .imperfective) ∧
+    ∃ d ∈ phaseTests, complementPerfectivity d = some .imperfective ∧
       d.judgment = .ungrammatical := by
   decide
 

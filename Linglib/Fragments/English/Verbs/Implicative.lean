@@ -33,7 +33,6 @@ def manage : Verb where
   morphs := [.root "manage"]
   levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
-  vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
 
@@ -42,7 +41,6 @@ def fail : Verb where
   morphs := [.root "fail"]
   levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
-  vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .negative, .some .positive⟩
 
@@ -51,7 +49,6 @@ def try_ : Verb where
   morphs := [.root "try"]
   levin := some Levin1993.Index.«try»
   valency := .ofFrame toInfinitive (controller := some 0)
-  vendlerClass := some .activity
   passivizable := false
 
 /-- "persuade" — object control, "persuade X to VP" with X the agent of VP. A psychological
@@ -61,7 +58,6 @@ def persuade : Verb where
   morphs := [.root "persuade"]
   levin := none
   valency := .ofFrame toInfinitive.withObject (controller := some 1)
-  vendlerClass := some .accomplishment
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -79,7 +75,6 @@ def promise : Verb where
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2]),
      (ArgumentFrame.np_np.leaveImplicit 1 (some .def), [0, 2, 1])]
     (controllers := [some 0, some 0])
-  vendlerClass := some .achievement
   opaqueContext := true
   attitude := some (.preferential .positive)
 
@@ -88,7 +83,6 @@ def remember : Verb where
   morphs := [.root "remember"]
   levin := some Levin1993.Index.remember
   valency := .ofFrame toInfinitive (controller := some 0)
-  vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
 
@@ -103,7 +97,6 @@ def forget : Verb where
   pastPart := "forgotten"
   doubling := true
   valency := .ofFrame toInfinitive (controller := some 0)
-  vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .negative, .some .positive⟩
 
@@ -113,7 +106,6 @@ def neglect : Verb where
   morphs := [.root "neglect"]
   levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
-  vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .negative, .some .positive⟩
 
@@ -133,7 +125,6 @@ def seem : Verb where
   levin := none
   valency := .ofLinks [(toInfinitive, [none, some 0]), (experiencerFrame, [none, some 1, some 0])]
     (controls := [some .external, some .external])
-  vendlerClass := some .state
   passivizable := false
   readings := [{ frame := experiencerFrame, attitude := some (.doxastic .doxastic) }]
 
@@ -152,7 +143,6 @@ def dare : Verb where
   morphs := [.root "dare"]
   levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
-  vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
 
@@ -163,7 +153,6 @@ def bother : Verb where
   morphs := [.root "bother"]
   levin := some Levin1993.Index.bother
   valency := .ofFrame toInfinitive (controller := some 0)
-  vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
 
@@ -177,7 +166,6 @@ def hesitate : Verb where
   morphs := [.root "hesitate"]
   levin := some Levin1993.Index.hesitate
   valency := .ofFrame toInfinitive (controller := some 0)
-  vendlerClass := some .activity
   passivizable := false
   implicative := ⟨⊥, .some .positive⟩
 
@@ -187,7 +175,6 @@ def venture : Verb where
   morphs := [.root "venture"]
   levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
-  vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
 
@@ -197,7 +184,6 @@ def condescend : Verb where
   morphs := [.root "condescend"]
   levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
-  vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
 
