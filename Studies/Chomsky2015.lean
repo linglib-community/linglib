@@ -133,7 +133,8 @@ the phase heads `I` holds of are invisible, of the head inheriting its phasehood
 def ViolatesPic (I : LexicalItem.Token → Prop) [DecidablePred I] (t : PlanarSyntacticObject)
     (tok : LexicalItem.Token) : Prop :=
   LinkLeaves .label t tok (sealed (occurrencesWith t IsPhaseHead).toFinset
-    (complementDomain .label t (occurrencesWith t I).toFinset) (Pic1 .label t))
+    (fun h ↦ complementDomain (transferHead .label t (occurrencesWith t I).toFinset h))
+    (Pic1 .label t))
 
 instance (I : LexicalItem.Token → Prop) [DecidablePred I] (t : PlanarSyntacticObject)
     (tok : LexicalItem.Token) : Decidable (ViolatesPic I t tok) :=

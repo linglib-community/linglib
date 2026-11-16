@@ -334,7 +334,7 @@ far, when it lies in no complement of a phase head transferred by then under the
 def TreeAccessible (pic : PlanarSyntacticObject → Schedule) (sp : Spine) (i : ℕ) : Prop :=
   ∀ hd ∈ sp[i]?, ∀ q ∈ occurrences (probeTree sp i hd) subj,
     q ∉ sealed (occurrencesWith (probeTree sp i hd) (· ∈ phaseHeads sp)).toFinset
-      (complementDomain .raising (probeTree sp i hd) ∅) (pic (probeTree sp i hd)) ⊥
+      complementDomain (pic (probeTree sp i hd)) ⊥
 
 instance (pic : PlanarSyntacticObject → Schedule) [∀ t Φ h s, Decidable (pic t Φ h s)]
     (sp : Spine) (i : ℕ) : Decidable (TreeAccessible pic sp i) :=

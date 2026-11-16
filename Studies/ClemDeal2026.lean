@@ -248,7 +248,7 @@ def goalsIn (d : Derivation) (l : Locus) : List Arg :=
   d.externalize?.elim [] fun t ↦
     ((Minimalist.tokenList t.toRoseTree).find? (·.2.item.cat == l.cat)).elim [] fun a ↦
       (Minimalist.cyclicGoals .raising t (·.item.cat = .D)
-        (Minimalist.sealed (phaseSet t) (Minimalist.complementDomain .raising t ∅)
+        (Minimalist.sealed (phaseSet t) Minimalist.complementDomain
           (Minimalist.Pic1 .raising t) a.1.parent) a.1).filterMap argOf
 
 /-- The goals a probe at `l` meets in the clause (30) with its object in position `pos`. -/
@@ -572,7 +572,7 @@ def assigners (a : Alignment.AlignmentType) : CaseAssigners where
 def ruleCase (a : Alignment.AlignmentType) (d : Derivation) (x : Arg) :
     Option (Case × Case.Mechanism) :=
   d.externalize?.bind fun t ↦
-    ((assigners a).assignOn .raising t (Minimalist.complementDomain .raising t ∅) IsPhaseHead
+    ((assigners a).assignOn .raising t Minimalist.complementDomain IsPhaseHead
       (fun _ ↦ .unvalued) [subjD, objD] (tokenOf x)).value?
 
 -- (1), (7a–c) [baker-2015]

@@ -54,14 +54,13 @@ abbrev Schedule := Finset GornAddress → GornAddress → GornAddress → Prop
 
 variable (hd : HeadFunction) (t : PlanarSyntacticObject)
 
-/-- The head whose complement a phase head transfers: the phase head itself, or, where it has
-deleted, the lexical head of its complement, which inherits its phasehood. -/
+/-- The head that transfers for a phase head: the phase head itself, or, where it has deleted, the
+lexical head of its complement, which inherits its phasehood. -/
 def transferHead (deleted : Finset GornAddress) (h : GornAddress) : GornAddress :=
   if h ∈ deleted then lexicalHeadAt hd t (complement h) else h
 
-/-- The complement of the head that transfers, [chomsky-2000]'s transfer domain. -/
-def complementDomain (deleted : Finset GornAddress) (h : GornAddress) : Set GornAddress :=
-  Set.Ici (complement (transferHead hd t deleted h))
+/-- The complement of a phase head, [chomsky-2000]'s transfer domain. -/
+def complementDomain (h : GornAddress) : Set GornAddress := Set.Ici (complement h)
 
 /-- The phase short of its root, transferred whole. -/
 def wholePhaseDomain (h : GornAddress) : Set GornAddress := Set.Ioi (projectionAt hd t h)
@@ -78,9 +77,8 @@ def Pic2 : Schedule := fun Φ h s ↦ ∃ z ∈ Φ, s ≤ z.parent ∧ complemen
 def sealed (Φ : Finset GornAddress) (D : GornAddress → Set GornAddress) (σ : Schedule) : Cut :=
   fun s ↦ {q | ∃ h ∈ Φ, σ Φ h s ∧ q ∈ D h}
 
-instance (deleted : Finset GornAddress) (h : GornAddress) :
-    DecidablePred (· ∈ complementDomain hd t deleted h) :=
-  fun q ↦ decidable_of_iff (complement (transferHead hd t deleted h) ≤ q) Iff.rfl
+instance (h : GornAddress) : DecidablePred (· ∈ complementDomain h) :=
+  fun q ↦ decidable_of_iff (complement h ≤ q) Iff.rfl
 
 instance (h : GornAddress) : DecidablePred (· ∈ wholePhaseDomain hd t h) :=
   fun q ↦ decidable_of_iff (projectionAt hd t h < q) Iff.rfl
@@ -97,10 +95,9 @@ instance (Φ : Finset GornAddress) (D : GornAddress → Set GornAddress) (σ : S
   fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ Φ, _))
 
 variable {hd t} {Φ : Finset GornAddress} {D : GornAddress → Set GornAddress} {σ : Schedule}
-  {deleted : Finset GornAddress} {h s : GornAddress}
+  {h s : GornAddress}
 
-theorem isUpperSet_complementDomain : IsUpperSet (complementDomain hd t deleted h) :=
-  isUpperSet_Ici _
+theorem isUpperSet_complementDomain : IsUpperSet (complementDomain h) := isUpperSet_Ici _
 
 theorem isUpperSet_wholePhaseDomain : IsUpperSet (wholePhaseDomain hd t h) := isUpperSet_Ioi _
 
@@ -136,9 +133,8 @@ theorem sealed_pic2_subset_pic1 : sealed Φ D (Pic2 hd t) s ⊆ sealed Φ D (Pic
 /-- A phase contains the complement of its head, so transferring it whole seals the head and the
 edge besides. -/
 theorem complementDomain_subset_wholePhaseDomain (hp : projectionAt hd t h ≤ h.parent) :
-    complementDomain hd t ∅ h ⊆ wholePhaseDomain hd t h := fun q hq ↦
-  (hp.trans_lt (parent_covBy_complement h).lt).trans_le
-    (by simpa [complementDomain, transferHead] using hq)
+    complementDomain h ⊆ wholePhaseDomain hd t h := fun _ hq ↦
+  (hp.trans_lt (parent_covBy_complement h).lt).trans_le hq
 
 /-! ### What a phase head transfers on its own -/
 
@@ -258,12 +254,12 @@ complement of `h`, sealed at every stage above the phase. -/
 theorem crosses_iff {tok : LexicalItem.Token} {h : GornAddress} (hh : h ∈ t.toRoseTree.validPaths)
     (h0 : h ≠ ⊥) (hproj : projectionAt hd t h ≤ h.parent) :
     Crosses hd t tok h ↔
-      LinkLeaves hd t tok (sealed {h} (complementDomain hd t ∅) (Pic1 hd t)) := by
+      LinkLeaves hd t tok (sealed {h} complementDomain (Pic1 hd t)) := by
   unfold Crosses LinkLeaves
   refine exists_congr fun x ↦ and_congr_right fun hx ↦ ?_
   obtain ⟨q, hq, p, -, -, rfl⟩ := mem_links.1 hx
-  simp only [sealed, Finset.mem_singleton, exists_eq_left, Pic1, complementDomain, transferHead,
-    Finset.notMem_empty, ↓reduceIte, Set.mem_Ici, Set.mem_ofPred_eq]
+  simp only [sealed, Finset.mem_singleton, exists_eq_left, Pic1, complementDomain, Set.mem_Ici,
+    Set.mem_ofPred_eq]
   rw [mem_cCommandDomain_iff_complement_le hh h0 (mem_validPaths_of_mem_chain hq)]
   have hle : ∀ hc : complement h ≤ q, projectionAt hd t h ≤ q := fun hc ↦
     hproj.trans ((parent_covBy_complement h).le.trans hc)
@@ -279,7 +275,7 @@ theorem compToSpec_or_mem_sealed {tok : LexicalItem.Token} {x : GornAddress × G
     {h : GornAddress} (hh : h ∈ t.toRoseTree.validPaths) (h0 : h ≠ ⊥) (hhead : IsHeadPosition t h)
     (hx : x ∈ links hd t tok) (hr : projectionAt hd t x.2 = complement h)
     (hin : ¬ complement h ≤ x.1.parent) :
-    CompToSpec hd t x ∨ x.2 ∈ sealed {h} (complementDomain hd t ∅) (Pic1 hd t) x.1.parent := by
+    CompToSpec hd t x ∨ x.2 ∈ sealed {h} complementDomain (Pic1 hd t) x.1.parent := by
   have hcx : complement h ≤ x.2 := hr ▸ projectionAt_le hd t x.2
   have hlt : x.1.parent < complement h :=
     ((IsLeftLinear.comparable_of_le_common (parent_lt_of_mem_links hx).1.le hcx).resolve_right
@@ -294,7 +290,7 @@ theorem compToSpec_or_mem_sealed {tok : LexicalItem.Token} {x : GornAddress × G
   · exact .inl (hcomp.2 hph)
   · rcases hph.lt_or_eq with hph | hph
     · refine .inr ⟨h, Finset.mem_singleton_self h, hph, ?_⟩
-      simpa [complementDomain, transferHead] using hcx
+      exact hcx
     · exact .inl (hcomp.2 hph.ge)
 
 end Minimalist

@@ -97,13 +97,11 @@ Phase Impenetrability Condition of [chomsky-2000] seals: a phase transferred whe
 complete lies in that phase's complement. -/
 theorem sealed_hybrid_subset_pic1 :
     sealed Φ (wholePhaseDomain hd t) (Hybrid hd t Φ) s ⊆
-      sealed Φ (complementDomain hd t ∅) (Pic1 hd t) s := by
+      sealed Φ complementDomain (Pic1 hd t) s := by
   rintro q ⟨h, hΦ, hσ, hq⟩
   simp only [Hybrid, hΦ, ↓reduceIte] at hσ
   obtain ⟨z, hz, hs, hc⟩ := hσ
-  exact ⟨z, hz, hs, by
-    simpa [complementDomain, transferHead] using
-      hc.trans (show projectionAt hd t h < q from hq).le⟩
+  exact ⟨z, hz, hs, hc.trans (show projectionAt hd t h < q from hq).le⟩
 
 -- the more phases wait, the later each domain is transferred
 theorem hybrid_anti {W' : Finset GornAddress} (hW : W ⊆ W') (hp : Hybrid hd t W' Φ h s) :
@@ -169,7 +167,7 @@ instance (d : Derivation) (D : PlanarSyntacticObject → GornAddress → Set Gor
 
 -- p. 684: the approach keeps what the complement domain derives
 theorem ObeysTransfer.of_pic1 {d : Derivation}
-    (h : ObeysTransfer d (complementDomain .raising · ∅) fun _ ↦ False) :
+    (h : ObeysTransfer d (fun _ ↦ complementDomain) fun _ ↦ False) :
     ObeysTransfer d (wholePhaseDomain .raising) IsPhaseHead := fun t ht y hy hl ↦
   h t ht y hy <| hl.mono fun s ↦ by
     have : occurrencesWith t (fun _ ↦ False) = [] := by simp [occurrencesWith]
@@ -265,7 +263,7 @@ theorem obeysTransfer_iff (r : Finset Landing) :
 
 -- (1), (2a): the Phase Impenetrability Condition allows only movement through every edge
 theorem pic1_iff (r : Finset Landing) :
-    ObeysTransfer (derivation r) (complementDomain .raising · ∅) (fun _ ↦ False) ↔ r = .univ := by
+    ObeysTransfer (derivation r) (fun _ ↦ complementDomain) (fun _ ↦ False) ↔ r = .univ := by
   revert r; decide +kernel
 
 -- (2b): transferred whole as soon as it is complete, vP₁ traps *Mary* at its edge
