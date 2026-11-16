@@ -53,15 +53,6 @@ def BE : CompleteLatticeHom (Quantifier E) (Set E) where
 @[simp] theorem BE_some (A : Set E) : BE (Det.some A) = A :=
   Set.ext fun _ ↦ Set.inter_singleton_nonempty
 
-/-- `Quantifier.map` as a complete lattice homomorphism. -/
-def mapHom {F : Type*} (f : E → F) : CompleteLatticeHom (Quantifier E) (Quantifier F) where
-  toFun := map f
-  map_sInf' _ := funext fun _ ↦ by simp [map]
-  map_sSup' _ := funext fun _ ↦ by simp [map]
-
-@[simp] theorem mapHom_apply {F : Type*} (f : E → F) (Q : Quantifier E) :
-    mapHom f Q = Q.map f := rfl
-
 theorem some_injective : Function.Injective (Det.some : Det E) :=
   Function.LeftInverse.injective BE_some
 
@@ -142,5 +133,37 @@ theorem some_le_iff {Q : Quantifier E} (hQ : Monotone Q) {A : Set E} :
 def gciSomeBE :
     GaloisCoinsertion (fun A ↦ (⟨Det.some A, monotone_some A⟩ : Set E →o Prop)) fun Q ↦ BE Q :=
   GaloisConnection.toGaloisCoinsertion (fun _ Q ↦ some_le_iff Q.monotone) fun A ↦ (BE_some A).le
+
+/-! ### Images -/
+
+section Map
+
+variable {F : Type*} (f : E → F)
+
+/-- `Quantifier.map` as a complete lattice homomorphism. -/
+def mapHom : CompleteLatticeHom (Quantifier E) (Quantifier F) where
+  toFun := map f
+  map_sInf' _ := funext fun _ ↦ by simp [map]
+  map_sSup' _ := funext fun _ ↦ by simp [map]
+
+@[simp] theorem mapHom_apply (Q : Quantifier E) : mapHom f Q = Q.map f := rfl
+
+/-- The image of *some `A`* under a function is *some* of the image of `A`. -/
+theorem map_some (A : Set E) : (Det.some A).map f = Det.some (f '' A) :=
+  funext fun B ↦ propext <| by
+    change (A ∩ f ⁻¹' B).Nonempty ↔ (f '' A ∩ B).Nonempty
+    rw [← Set.image_inter_preimage, Set.image_nonempty]
+
+/-- The image of *every `A`* under a function is *every* of the image of `A`. -/
+theorem map_every (A : Set E) : (every A).map f = every (f '' A) :=
+  funext fun _ ↦ propext Set.image_subset_iff.symm
+
+/-- The image of *no `A`* under a function is *no* of the image of `A`. -/
+theorem map_no (A : Set E) : (no A).map f = no (f '' A) :=
+  funext fun B ↦ propext <| by
+    change A ⊆ f ⁻¹' Bᶜ ↔ f '' A ⊆ Bᶜ
+    exact Set.image_subset_iff.symm
+
+end Map
 
 end Quantifier

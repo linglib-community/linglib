@@ -110,25 +110,6 @@ theorem no_iff_not_some : no A B ↔ ¬ Det.some A B :=
 theorem some_union (A A' : Set α) : Det.some (A ∪ A') = Det.some A ⊔ Det.some A' := by
   funext B; simp [Det.some, Set.union_inter_distrib_right, Set.union_nonempty]
 
-/-- The image of *some `A`* under a function is *some* of the image of `A`. -/
-theorem _root_.Quantifier.map_some {β : Type*} (f : α → β) (A : Set α) :
-    (Det.some A).map f = Det.some (f '' A) :=
-  funext fun B ↦ propext <| by
-    change (A ∩ f ⁻¹' B).Nonempty ↔ (f '' A ∩ B).Nonempty
-    rw [← Set.image_inter_preimage, Set.image_nonempty]
-
-/-- The image of *every `A`* under a function is *every* of the image of `A`. -/
-theorem _root_.Quantifier.map_every {β : Type*} (f : α → β) (A : Set α) :
-    (every A).map f = every (f '' A) :=
-  funext fun _ ↦ propext Set.image_subset_iff.symm
-
-/-- The image of *no `A`* under a function is *no* of the image of `A`. -/
-theorem _root_.Quantifier.map_no {β : Type*} (f : α → β) (A : Set α) :
-    (no A).map f = no (f '' A) :=
-  funext fun B ↦ propext <| by
-    change A ⊆ f ⁻¹' Bᶜ ↔ f '' A ⊆ Bᶜ
-    exact Set.image_subset_iff.symm
-
 /-- *Every* turns a union of restrictors into a meet. -/
 theorem every_union (A A' : Set α) : every (A ∪ A') = every A ⊓ every A' := by
   funext B; simp [every, Set.union_subset_iff]
