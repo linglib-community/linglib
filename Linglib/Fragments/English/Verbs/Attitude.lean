@@ -103,7 +103,6 @@ def believe : Verb where
   valency := .ofLinks
     [(.finiteClause, [some 0, some 1]), (toInfinitive.withObject, [some 0, none, some 1])]
     (controls := [none, some (.complement 0)])
-  aspectualClass := some .state
   scaleDimension := some .confidence
   passivizable := false
   opaqueContext := true
@@ -128,7 +127,6 @@ def doubt : Verb where
   morphs := [.root "doubt"]
   levin := none
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
-  aspectualClass := some .state
   scaleDimension := some .confidence
   scalePolarity := .negative
   opaqueContext := true

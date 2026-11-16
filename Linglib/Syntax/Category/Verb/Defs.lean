@@ -208,9 +208,9 @@ def Verb.standard (v : Verb) : Option PositiveStandard :=
   v.gradability?.map (·.standard)
 
 /-- The scale along which a degree achievement measures change is the scale of a verb that is not
-a state, since a state measures no change. -/
+a verb of attitude, since the scale of *believe* measures its holder's attitude and no change. -/
 def Verb.changeScale (v : Verb) : Option Boundedness :=
-  if v.aspectualClass = some .state then none else v.boundedness
+  if v.attitude.isSome then none else v.boundedness
 
 /-! ### ArgumentFrame accessors
 

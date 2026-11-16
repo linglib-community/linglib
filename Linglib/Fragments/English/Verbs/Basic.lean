@@ -141,7 +141,6 @@ def run : Verb where
      (ArgumentFrame.spatialPP, [0, 2])]
     [some activitySubjectProfile, none, none]
   passivizable := false
-  aspectualClass := some .activity
   direction := some .place
 
 /-- "dance" — intransitive activity -/
@@ -158,7 +157,6 @@ def arrive : Verb where
   valency := .ofFrame ArgumentFrame.intransitive [some achievementSubjectProfile]
   voiceType := some .nonThematic
   passivizable := false
-  aspectualClass := some .achievement
   direction := some .goal
 
 /-- *come*, an unaccusative verb of inherently directed motion like *arrive* (51.1). -/
