@@ -14,10 +14,10 @@ model of tic-tac-toe whose players follow a soft-optimal policy: Pearl's probabi
 sufficiency `suf`, the number `alt` of alternatives open to the causee, and a degree of intention,
 [an exponential tilting](##intention_real_singleton) of the law of the action on the goal that
 [is 1 for an action without alternatives](##intention_eq_one_of_alt). When the causee replies to
-each move independently, the sufficiency of a move for a reply is
-[the policy's probability of that reply](##suf_exchange_pi), for the best players
-[1 over the number of best replies](##suf_exchange_professional). Nadathur and Lauer's categorical
-*make* [entails sufficiency 1](##suf_eq_one_of_make).
+each move independently, the sufficiency of a move is
+[the policy after that move](##suf_exchange_pi), under which an only best reply is
+[more probable than one of two](##softOptimalPolicy_pair_lt_singleton). Nadathur and Lauer's
+categorical *make* [makes the effect certain](##suf_eq_dirac_of_make).
 
 ## Implementation notes
 
@@ -91,7 +91,8 @@ theorem softOptimalPolicy_singleton_self :
     softOptimalPolicy {a} ρ {a} = ρ + (1 - ρ) / Fintype.card A := by
   simp [softOptimalPolicy_apply_singleton_of_mem]
 
--- §2.4: the only best reply against one of two best replies; at `ρ = 0` they do not differ
+/-- A reply that is the only best move is more probable than one of two best moves, for players
+of any skill `ρ ≠ 0`; random players make no difference between the two (§2.4). -/
 theorem softOptimalPolicy_pair_lt_singleton (hab : a ≠ b) (hρ₀ : ρ ≠ 0) (hρ : ρ ≠ ∞) :
     softOptimalPolicy {a, b} ρ {a} < softOptimalPolicy {a} ρ {a} := by
   have : Nonempty A := ⟨a⟩
@@ -171,36 +172,24 @@ section Model
 variable {U V : Type*} {α : V → Type*} [DecidableEq V] [MeasurableSpace U]
   (M : CausalModel U V α) [M.IsAcyclic] [∀ v, Nonempty (α v)]
 
-/-- SUF, Pearl's probability of sufficiency ([pearl-2019]), is the probability, among the
-contexts drawn from `ν` in which the observation `obs` holds, that setting `c := x` makes
-`e = y` (§2.4). -/
+/-- SUF, Pearl's probability of sufficiency ([pearl-2019]), is the law of the value `e` takes
+when `c` is set to `x`, over the contexts drawn from `ν` in which the observation `obs` holds
+(§2.4); `suf M ν obs c x e {y}` is the probability that setting `c := x` makes `e = y`. -/
 noncomputable def suf (ν : Measure U) (obs : ∀ v, Part (α v)) (c : V) (x : α c) (e : V)
-    (y : α e) : ℝ≥0∞ :=
-  ν[{u | M[c ← x].solve u e = y} | M.contexts obs]
+    [MeasurableSpace (α e)] : Measure (α e) :=
+  (ν[|M.contexts obs]).map fun u ↦ M[c ← x].solve u e
 
-variable {M} (ν : Measure U) (c : V) (x : α c) (e : V) (y : α e)
-
-theorem suf_bot [IsProbabilityMeasure ν] :
-    suf M ν ⊥ c x e y = ν {u | M[c ← x].solve u e = y} := by
-  rw [suf, contexts_bot, cond_univ]
-
-open Classical in
-theorem suf_dirac [MeasurableSingletonClass U] (u₀ : U) :
-    suf M (Measure.dirac u₀) ⊥ c x e y = if M[c ← x].solve u₀ e = y then 1 else 0 := by
-  rw [suf_bot, Measure.dirac_apply, Set.indicator_apply]
-  simp only [Set.mem_ofPred_eq, Pi.one_apply]
-
-variable {c x e y}
+variable {M} {c e : V} {x : α c} {y : α e} [MeasurableSpace (α e)]
 
 /-- Nadathur and Lauer's *make* entails maximal SUF. Whenever *make* holds of the empty
-background, SUF is 1 under every distribution over contexts. -/
-theorem suf_eq_one_of_make [IsProbabilityMeasure ν] {u₀ : U}
-    (h : NadathurLauer2020.Make M ⊥ u₀ c x e y) : suf M ν ⊥ c x e y = 1 := by
+background, the effect is certain under every distribution over contexts. -/
+theorem suf_eq_dirac_of_make (ν : Measure U) [IsProbabilityMeasure ν] {u₀ : U}
+    (h : NadathurLauer2020.Make M ⊥ u₀ c x e y) : suf M ν ⊥ c x e = Measure.dirac y := by
   have h' := h.1.2
   rw [Function.update_idem] at h'
-  have hall : {u | M[c ← x].solve u e = y} = Set.univ :=
-    Set.eq_univ_of_forall h'.solve_intervene_singleton_eq
-  rw [suf_bot, hall, measure_univ]
+  have hy : (fun u ↦ M[c ← x].solve u e) = fun _ ↦ y :=
+    funext h'.solve_intervene_singleton_eq
+  rw [suf, contexts_bot, cond_univ, hy, Measure.map_const, measure_univ, one_smul]
 
 end Model
 
@@ -278,51 +267,36 @@ variable [Nonempty X] [Nonempty Y] {x₀ x : X} {y₀ y : Y} {u : X → Y}
   exact congrArg u (solve_intervene_singleton_self (M := exchange x₀) .causer x)
 
 theorem contexts_exchange :
-    (exchange x₀).contexts [.causer ← x₀, .causee ← y₀] = {u : X → Y | u x₀ = y₀} := by
+    (exchange x₀).contexts [.causer ← x₀, .causee ← y₀] = (fun u : X → Y ↦ u x₀) ⁻¹' {y₀} := by
   ext u
   simp only [contexts, Set.mem_ofPred_eq, Part.pi_le_iff]
   refine ⟨fun h ↦ ?_, fun h v ↦ ?_⟩
   · simpa [eq_comm] using h .causee
-  · cases v <;> simp [h]
+  · cases v <;> simp_all
 
 variable [MeasurableSpace Y] [MeasurableSingletonClass Y]
 
 theorem suf_exchange (ν : Measure (X → Y)) [IsFiniteMeasure ν]
-    (h : IndepFun (fun u ↦ u x₀) (fun u ↦ u x) ν) (hc : ν {u | u x₀ = y₀} ≠ 0) :
-    suf (exchange x₀) ν [.causer ← x₀, .causee ← y₀] .causer x .causee y = ν {u | u x = y} := by
-  have hs : MeasurableSet {u : X → Y | u x₀ = y₀} :=
-    show MeasurableSet ((fun u : X → Y ↦ u x₀) ⁻¹' {y₀}) from
-      measurable_pi_apply x₀ (measurableSet_singleton y₀)
-  have hmul : ν ({u | u x₀ = y₀} ∩ {u | u x = y}) = ν {u | u x₀ = y₀} * ν {u | u x = y} :=
-    h.measure_inter_preimage_eq_mul {y₀} {y} (measurableSet_singleton y₀)
-      (measurableSet_singleton y)
+    (h : IndepFun (fun u ↦ u x₀) (fun u ↦ u x) ν) (hc : ν ((fun u ↦ u x₀) ⁻¹' {y₀}) ≠ 0) :
+    suf (exchange x₀) ν [.causer ← x₀, .causee ← y₀] .causer x .causee = ν.map fun u ↦ u x := by
   rw [suf, contexts_exchange]
   simp only [solve_exchange_intervene_causee]
-  rw [cond_apply hs, hmul, ← mul_assoc, ENNReal.inv_mul_cancel hc (measure_ne_top _ _), one_mul]
+  ext t ht
+  rw [Measure.map_apply (measurable_pi_apply x) ht, Measure.map_apply (measurable_pi_apply x) ht,
+    cond_apply (measurable_pi_apply x₀ (measurableSet_singleton y₀)),
+    h.measure_inter_preimage_eq_mul _ _ (measurableSet_singleton y₀) ht, ← mul_assoc,
+    ENNReal.inv_mul_cancel hc (measure_ne_top _ _), one_mul]
 
 /-- When the causee replies to each move by an independent draw from a policy, the SUF of a move
-other than the actual one for a reply is the policy's probability of that reply after the move
-(§2.4). -/
+other than the actual one is the policy after that move (§2.4). -/
 theorem suf_exchange_pi [Fintype X] (π : X → Measure Y) [∀ x, IsProbabilityMeasure (π x)]
     (hx : x ≠ x₀) (hc : π x₀ {y₀} ≠ 0) :
-    suf (exchange x₀) (Measure.pi π) [.causer ← x₀, .causee ← y₀] .causer x .causee y =
-      π x {y} := by
-  have hpi (x : X) (y : Y) : Measure.pi π {u | u x = y} = π x {y} :=
-    (measurePreserving_eval π x).measure_preimage (measurableSet_singleton y).nullMeasurableSet
+    suf (exchange x₀) (Measure.pi π) [.causer ← x₀, .causee ← y₀] .causer x .causee = π x := by
   have hind : iIndepFun (fun (i : X) (u : X → Y) ↦ u i) (Measure.pi π) :=
     iIndepFun_pi (μ := π) (X := fun _ ↦ id) fun _ ↦ aemeasurable_id
-  rw [suf_exchange _ (hind.indepFun hx.symm) (by rwa [hpi]), hpi]
-
-/-- Between players who always pick a best move, the SUF of a move for a best reply to it is 1
-over the number of best replies: 1 when the reply is forced and 1/2 when there are two (§2.4). -/
-theorem suf_exchange_professional [Fintype X] [Finite Y] (best : X → Set Y)
-    (hbest : ∀ x, (best x).Nonempty) (hx : x ≠ x₀) (hy₀ : y₀ ∈ best x₀) (hy : y ∈ best x) :
-    suf (exchange x₀) (Measure.pi fun x ↦ softOptimalPolicy (best x) 1)
-      [.causer ← x₀, .causee ← y₀] .causer x .causee y = ((best x).ncard : ℝ≥0∞)⁻¹ := by
-  have (x : X) := isProbabilityMeasure_uniformOn (best x).toFinite (hbest x)
-  simp_rw [softOptimalPolicy_one]
-  rw [suf_exchange_pi _ hx, uniformOn_apply_singleton_of_mem (best x).toFinite hy]
-  simp [uniformOn_apply_singleton_of_mem (best x₀).toFinite hy₀]
+  rw [suf_exchange _ (hind.indepFun hx.symm), (measurePreserving_eval π x).map_eq]
+  rwa [(measurePreserving_eval π x₀).measure_preimage
+    (measurableSet_singleton y₀).nullMeasurableSet]
 
 end Exchange
 
