@@ -691,7 +691,7 @@ theorem monotone_impossibleSubjObj_env {i : Fin 2} {j : ℕ} (hj : j ≤ 2) :
   · exact fun _ _ _ ↦ le_rfl
   all_goals first
     | exact monotone_subject_right.comp monotone_did₂_fun
-    | exact monotone_subject_left _
+    | exact monotone_subject_left fun x ↦ did₂ x someOne
 
 theorem antitone_impossibleSubjObj_env_zero (k : ℕ) :
     Antitone ((impossibleSubjObj obj subj).env 0 (k + 3)) ∧
@@ -846,7 +846,7 @@ theorem monotone_notSureSubjObj_env {i : Fin 2} {j : ℕ} (hj : j ≤ 2) :
   interval_cases j <;> fin_cases i
   all_goals first
     | exact monotone_subject_right.comp monotone_did₂_fun
-    | exact monotone_subject_left _
+    | exact monotone_subject_left fun x ↦ did₂ x someOne
 
 theorem antitone_notSureSubjObj_env_zero (k : ℕ) :
     Antitone ((notSureSubjObj obj subj).env 0 (k + 3)) ∧
