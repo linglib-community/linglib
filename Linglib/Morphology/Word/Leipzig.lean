@@ -24,8 +24,7 @@ names nothing.
 
 * `Morphology.Feature.labels`: the standard abbreviations of the values of a feature.
 * `Morphology.Features.ofLabels`: the features a list of labels names.
-* `Morphology.Features.ofGloss`, `GlossedWord.features`: the features the labels of a gloss, and
-  of a word of a row's gloss line, name.
+* `GlossedWord.features`: the features the labels of a word of a row's gloss line name.
 
 ## Implementation notes
 
@@ -82,9 +81,6 @@ def ofLabels (ls : List (List Char)) : Features
   | .number => ls.findSome? fun l ↦
       (Feature.labels .number).lookup (l.dropWhile (· ∈ ['1', '2', '3']))
   | f => ls.findSome? ((Feature.labels f).lookup ·)
-
-/-- The features the category labels of the gloss `g` name. -/
-def ofGloss (g : String) : Features := ofLabels (Gloss.labels g)
 
 end Features
 

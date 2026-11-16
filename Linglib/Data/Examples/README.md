@@ -52,6 +52,7 @@ that reads rows imports it beside its data module. Quick key reference:
 | `primaryText` | string | surface form; for a discourse, its utterances joined by single spaces |
 | `discourseSegments` | array of strings | empty `[]` for a single sentence; the utterances of a discourse, in order |
 | `glossedTokens` | array of 2-string arrays | `[[surface, gloss], ...]`. Empty `[]` if no IGT (e.g., English-glossed-as-English) |
+| `glossedWords`, `lgrConformance` | derived, not written | the generator pairs each word of `glossedTokens` with its morphemes and their glosses, and records the example's CLDF `LGR_Conformance` (`scripts/lgr.py`, shared with the CLDF export) |
 | `translation` | string | English translation; empty for an English example |
 | `context` | string | scenario/discourse context where the judgment holds |
 | `judgment` | one of `acceptable, marginal, questionable, unacceptable, ungrammatical, variable` | sentence-level felicity; `variable` is the mark `%`, speakers differing |
@@ -192,6 +193,24 @@ Quick reference:
 - Subscript indices for coreference (`Mary₁ ... her₁`) — not yet
   representable in the schema; `comment` field for now
 
+### Alignment
+
+The generator emits each row's gloss line as `Datum.glossedWords`, modelled on `pyigt`'s
+`GlossedWord` and `GlossedMorpheme`: a word with its gloss and, when the two are segmented alike
+by the same separators (`-`, `=`, and `~` for reduplication), the pairs of a morpheme and its
+gloss. A study reads morphemes and category labels from it without splitting a string in the
+kernel. The generator also records the example's `LGR_Conformance` as the CLDF export derives
+it: `MORPHEME_ALIGNED` when every word is segmented as its gloss is and some word is segmented,
+otherwise `WORD_ALIGNED`.
+
+A word the source prints with a different segmentation than its gloss (`képet` glossed
+`picture-ACC`) is transcribed as printed. It has no morphemes (`GlossedWord.IsValid` fails) but
+keeps its category labels and lexical gloss (`GlossedWord.labels`, `GlossedWord.features`).
+
+Two departures from `pyigt`: a morpheme's form drops only the punctuation of `scripts/lgr.py`,
+so that an apostrophe stays inside a word, and a word that is not valid has no morpheme pairs
+where `pyigt` keeps those before the mismatch.
+
 ## File-format style
 
 Pretty-printed JSON, but **compact `glossedTokens`**: pack 3–4
@@ -243,15 +262,6 @@ aimed at. Known gaps:
   (Bakay et al. 2026, syntactic minimal pairs).
 - **Paradigm clusters** where N sentences only mean something together
   (Reinhart's (11a)–(11d)).
-- **Alignment level of the gloss line.** A word whose surface and gloss segment differently
-  (1,263 of 33,423 glossed words, in 116 files, mostly as the source prints them) is dropped by
-  `Datum.glossedWords` together with its category labels. CLDF records the level of an example
-  as `LGR_Conformance` (`WORD_ALIGNED`, `MORPHEME_ALIGNED`), which the export already derives
-  (`lgr_conformance` in `scripts/export_examples_cldf.py`) and `pyigt` checks before reading
-  morphs. The plan is to have the generator use that one derivation, segment the gloss line and
-  emit the level on the Lean row under CLDF's name, so that a reader of morphs requires
-  `MORPHEME_ALIGNED`, a reader of a word's labels accepts both, and Lean splits no strings in
-  the kernel.
 - **Declared abbreviations.** A gloss element counts as a category label when it has no
   lower-case letter, which misses sources that write `2.sg` or `caus`. The Leipzig rules let a
   work list its own abbreviations; a data file would declare them and the generator would check

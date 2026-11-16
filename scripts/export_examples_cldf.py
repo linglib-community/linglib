@@ -61,6 +61,9 @@ import tempfile
 import urllib.request
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lgr import lgr_conformance  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 JSON_DIR = ROOT / "Linglib" / "Data" / "Examples"
 LANGUAGES = JSON_DIR / "languages.csv"
@@ -130,15 +133,6 @@ def features(row):
     if isinstance(raw, dict):
         return [[k, v] for k, v in raw.items()]
     return [[x["key"], x["value"]] if isinstance(x, dict) else list(x) for x in raw]
-
-
-def lgr_conformance(pairs):
-    if not pairs:
-        return None
-    aligned = all(w.count("-") == g.count("-") and w.count("=") == g.count("=")
-                  for w, g in pairs)
-    segmented = any("-" in w or "=" in w for w, _ in pairs)
-    return "MORPHEME_ALIGNED" if aligned and segmented else "WORD_ALIGNED"
 
 
 def source_ref(ref):

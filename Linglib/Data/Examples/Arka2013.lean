@@ -22,6 +22,8 @@ def ex_3 : Datum :=
     language := "indo1316"
     primaryText := "Dia datang."
     glossedTokens := [("Dia", "3s"), ("datang", "come")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -35,6 +37,8 @@ def ex_4a : Datum :=
     language := "indo1316"
     primaryText := "Dia datang (besok)."
     glossedTokens := [("Dia", "3s"), ("datang", "come"), ("besok", "tomorrow")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩, ⟨['b', 'e', 's', 'o', 'k'], ['t', 'o', 'm', 'o', 'r', 'r', 'o', 'w'], [⟨['b', 'e', 's', 'o', 'k'], ['t', 'o', 'm', 'o', 'r', 'r', 'o', 'w'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -48,6 +52,8 @@ def ex_4b : Datum :=
     language := "indo1316"
     primaryText := "Dia datang (kemarin)."
     glossedTokens := [("Dia", "3s"), ("datang", "come"), ("kemarin", "yesterday")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩, ⟨['k', 'e', 'm', 'a', 'r', 'i', 'n'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], [⟨['k', 'e', 'm', 'a', 'r', 'i', 'n'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -61,6 +67,8 @@ def ex_4c : Datum :=
     language := "indo1316"
     primaryText := "Dia datang (sekarang)."
     glossedTokens := [("Dia", "3s"), ("datang", "come"), ("sekarang", "now")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩, ⟨['s', 'e', 'k', 'a', 'r', 'a', 'n', 'g'], ['n', 'o', 'w'], [⟨['s', 'e', 'k', 'a', 'r', 'a', 'n', 'g'], ['n', 'o', 'w'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -74,6 +82,8 @@ def ex_5a : Datum :=
     language := "indo1316"
     primaryText := "Dia sudah pergi (sekarang)."
     glossedTokens := [("Dia", "3s"), ("sudah", "PERF"), ("pergi", "go"), ("sekarang", "now")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['s', 'u', 'd', 'a', 'h'], ['P', 'E', 'R', 'F'], [⟨['s', 'u', 'd', 'a', 'h'], ['P', 'E', 'R', 'F'], none⟩]⟩, ⟨['p', 'e', 'r', 'g', 'i'], ['g', 'o'], [⟨['p', 'e', 'r', 'g', 'i'], ['g', 'o'], none⟩]⟩, ⟨['s', 'e', 'k', 'a', 'r', 'a', 'n', 'g'], ['n', 'o', 'w'], [⟨['s', 'e', 'k', 'a', 'r', 'a', 'n', 'g'], ['n', 'o', 'w'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -87,6 +97,8 @@ def ex_5b : Datum :=
     language := "indo1316"
     primaryText := "Dia sudah pergi kemarin."
     glossedTokens := [("Dia", "3s"), ("sudah", "PERF"), ("pergi", "go"), ("kemarin", "yesterday")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['s', 'u', 'd', 'a', 'h'], ['P', 'E', 'R', 'F'], [⟨['s', 'u', 'd', 'a', 'h'], ['P', 'E', 'R', 'F'], none⟩]⟩, ⟨['p', 'e', 'r', 'g', 'i'], ['g', 'o'], [⟨['p', 'e', 'r', 'g', 'i'], ['g', 'o'], none⟩]⟩, ⟨['k', 'e', 'm', 'a', 'r', 'i', 'n'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], [⟨['k', 'e', 'm', 'a', 'r', 'i', 'n'], ['y', 'e', 's', 't', 'e', 'r', 'd', 'a', 'y'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -100,6 +112,8 @@ def ex_6a : Datum :=
     language := "indo1316"
     primaryText := "Ali (sedang) me-mukul-i kepala=nya sendiri."
     glossedTokens := [("Ali", "A."), ("sedang", "PROG"), ("me-mukul-i", "AV.hit-I"), ("kepala=nya", "head=3sg.poss"), ("sendiri", "self")]
+    glossedWords := [⟨['A', 'l', 'i'], ['A', '.'], [⟨['A', 'l', 'i'], ['A', '.'], none⟩]⟩, ⟨['s', 'e', 'd', 'a', 'n', 'g'], ['P', 'R', 'O', 'G'], [⟨['s', 'e', 'd', 'a', 'n', 'g'], ['P', 'R', 'O', 'G'], none⟩]⟩, ⟨['m', 'e', '-', 'm', 'u', 'k', 'u', 'l', '-', 'i'], ['A', 'V', '.', 'h', 'i', 't', '-', 'I'], []⟩, ⟨['k', 'e', 'p', 'a', 'l', 'a', '=', 'n', 'y', 'a'], ['h', 'e', 'a', 'd', '=', '3', 's', 'g', '.', 'p', 'o', 's', 's'], [⟨['k', 'e', 'p', 'a', 'l', 'a'], ['h', 'e', 'a', 'd'], none⟩, ⟨['n', 'y', 'a'], ['3', 's', 'g', '.', 'p', 'o', 's', 's'], some '='⟩]⟩, ⟨['s', 'e', 'n', 'd', 'i', 'r', 'i'], ['s', 'e', 'l', 'f'], [⟨['s', 'e', 'n', 'd', 'i', 'r', 'i'], ['s', 'e', 'l', 'f'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -113,6 +127,8 @@ def ex_6b : Datum :=
     language := "indo1316"
     primaryText := "Ali (sedang) me-mukul-mukul kepala=nya sendiri."
     glossedTokens := [("Ali", "Ali"), ("sedang", "PROG"), ("me-mukul-mukul", "AV.hit-RED"), ("kepala=nya", "head=3sg.poss"), ("sendiri", "self")]
+    glossedWords := [⟨['A', 'l', 'i'], ['A', 'l', 'i'], [⟨['A', 'l', 'i'], ['A', 'l', 'i'], none⟩]⟩, ⟨['s', 'e', 'd', 'a', 'n', 'g'], ['P', 'R', 'O', 'G'], [⟨['s', 'e', 'd', 'a', 'n', 'g'], ['P', 'R', 'O', 'G'], none⟩]⟩, ⟨['m', 'e', '-', 'm', 'u', 'k', 'u', 'l', '-', 'm', 'u', 'k', 'u', 'l'], ['A', 'V', '.', 'h', 'i', 't', '-', 'R', 'E', 'D'], []⟩, ⟨['k', 'e', 'p', 'a', 'l', 'a', '=', 'n', 'y', 'a'], ['h', 'e', 'a', 'd', '=', '3', 's', 'g', '.', 'p', 'o', 's', 's'], [⟨['k', 'e', 'p', 'a', 'l', 'a'], ['h', 'e', 'a', 'd'], none⟩, ⟨['n', 'y', 'a'], ['3', 's', 'g', '.', 'p', 'o', 's', 's'], some '='⟩]⟩, ⟨['s', 'e', 'n', 'd', 'i', 'r', 'i'], ['s', 'e', 'l', 'f'], [⟨['s', 'e', 'n', 'd', 'i', 'r', 'i'], ['s', 'e', 'l', 'f'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -126,6 +142,8 @@ def ex_7 : Datum :=
     language := "indo1316"
     primaryText := "Ali tidak masuk-masuk ke rumah."
     glossedTokens := [("Ali", "Ali"), ("tidak", "NEG"), ("masuk-masuk", "enter-RED"), ("ke", "to"), ("rumah", "house")]
+    glossedWords := [⟨['A', 'l', 'i'], ['A', 'l', 'i'], [⟨['A', 'l', 'i'], ['A', 'l', 'i'], none⟩]⟩, ⟨['t', 'i', 'd', 'a', 'k'], ['N', 'E', 'G'], [⟨['t', 'i', 'd', 'a', 'k'], ['N', 'E', 'G'], none⟩]⟩, ⟨['m', 'a', 's', 'u', 'k', '-', 'm', 'a', 's', 'u', 'k'], ['e', 'n', 't', 'e', 'r', '-', 'R', 'E', 'D'], [⟨['m', 'a', 's', 'u', 'k'], ['e', 'n', 't', 'e', 'r'], none⟩, ⟨['m', 'a', 's', 'u', 'k'], ['R', 'E', 'D'], some '-'⟩]⟩, ⟨['k', 'e'], ['t', 'o'], [⟨['k', 'e'], ['t', 'o'], none⟩]⟩, ⟨['r', 'u', 'm', 'a', 'h'], ['h', 'o', 'u', 's', 'e'], [⟨['r', 'u', 'm', 'a', 'h'], ['h', 'o', 'u', 's', 'e'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -139,6 +157,8 @@ def ex_8 : Datum :=
     language := "indo1316"
     primaryText := "Dia makan sambil menonton TV."
     glossedTokens := [("Dia", "3s"), ("makan", "eat"), ("sambil", "while"), ("menonton", "AV.watch"), ("TV", "TV")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['m', 'a', 'k', 'a', 'n'], ['e', 'a', 't'], [⟨['m', 'a', 'k', 'a', 'n'], ['e', 'a', 't'], none⟩]⟩, ⟨['s', 'a', 'm', 'b', 'i', 'l'], ['w', 'h', 'i', 'l', 'e'], [⟨['s', 'a', 'm', 'b', 'i', 'l'], ['w', 'h', 'i', 'l', 'e'], none⟩]⟩, ⟨['m', 'e', 'n', 'o', 'n', 't', 'o', 'n'], ['A', 'V', '.', 'w', 'a', 't', 'c', 'h'], [⟨['m', 'e', 'n', 'o', 'n', 't', 'o', 'n'], ['A', 'V', '.', 'w', 'a', 't', 'c', 'h'], none⟩]⟩, ⟨['T', 'V'], ['T', 'V'], [⟨['T', 'V'], ['T', 'V'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -152,6 +172,8 @@ def ex_10 : Datum :=
     language := "indo1316"
     primaryText := "Mereka (akan) datang."
     glossedTokens := [("Mereka", "3p"), ("akan", "FUT"), ("datang", "come")]
+    glossedWords := [⟨['M', 'e', 'r', 'e', 'k', 'a'], ['3', 'p'], [⟨['M', 'e', 'r', 'e', 'k', 'a'], ['3', 'p'], none⟩]⟩, ⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], [⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -165,6 +187,8 @@ def ex_11a : Datum :=
     language := "indo1316"
     primaryText := "Mereka ingin [datang besok]."
     glossedTokens := [("Mereka", "3p"), ("ingin", "want"), ("datang", "come"), ("besok", "tomorrow")]
+    glossedWords := [⟨['M', 'e', 'r', 'e', 'k', 'a'], ['3', 'p'], [⟨['M', 'e', 'r', 'e', 'k', 'a'], ['3', 'p'], none⟩]⟩, ⟨['i', 'n', 'g', 'i', 'n'], ['w', 'a', 'n', 't'], [⟨['i', 'n', 'g', 'i', 'n'], ['w', 'a', 'n', 't'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩, ⟨['b', 'e', 's', 'o', 'k'], ['t', 'o', 'm', 'o', 'r', 'r', 'o', 'w'], [⟨['b', 'e', 's', 'o', 'k'], ['t', 'o', 'm', 'o', 'r', 'r', 'o', 'w'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := [("Mereka ingin [akan datang besok].", .ungrammatical)]
@@ -178,6 +202,8 @@ def ex_11c : Datum :=
     language := "indo1316"
     primaryText := "Saya tahu [bahwa mereka akan datang]."
     glossedTokens := [("Saya", "1s"), ("tahu", "know"), ("bahwa", "that"), ("mereka", "3p"), ("akan", "FUT"), ("datang", "come")]
+    glossedWords := [⟨['S', 'a', 'y', 'a'], ['1', 's'], [⟨['S', 'a', 'y', 'a'], ['1', 's'], none⟩]⟩, ⟨['t', 'a', 'h', 'u'], ['k', 'n', 'o', 'w'], [⟨['t', 'a', 'h', 'u'], ['k', 'n', 'o', 'w'], none⟩]⟩, ⟨['b', 'a', 'h', 'w', 'a'], ['t', 'h', 'a', 't'], [⟨['b', 'a', 'h', 'w', 'a'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['m', 'e', 'r', 'e', 'k', 'a'], ['3', 'p'], [⟨['m', 'e', 'r', 'e', 'k', 'a'], ['3', 'p'], none⟩]⟩, ⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], [⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -191,6 +217,8 @@ def ex_12a : Datum :=
     language := "indo1316"
     primaryText := "Dia akan makan."
     glossedTokens := [("Dia", "3s"), ("akan", "FUT"), ("makan", "eat")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], [⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], none⟩]⟩, ⟨['m', 'a', 'k', 'a', 'n'], ['e', 'a', 't'], [⟨['m', 'a', 'k', 'a', 'n'], ['e', 'a', 't'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := [("Dia sudah makan.", .acceptable), ("Dia sedang makan.", .acceptable)]
@@ -204,6 +232,8 @@ def ex_12b : Datum :=
     language := "indo1316"
     primaryText := "Saya menyuruh dia [makan]."
     glossedTokens := [("Saya", "1s"), ("menyuruh", "AV.ask"), ("dia", "3s"), ("makan", "eat")]
+    glossedWords := [⟨['S', 'a', 'y', 'a'], ['1', 's'], [⟨['S', 'a', 'y', 'a'], ['1', 's'], none⟩]⟩, ⟨['m', 'e', 'n', 'y', 'u', 'r', 'u', 'h'], ['A', 'V', '.', 'a', 's', 'k'], [⟨['m', 'e', 'n', 'y', 'u', 'r', 'u', 'h'], ['A', 'V', '.', 'a', 's', 'k'], none⟩]⟩, ⟨['d', 'i', 'a'], ['3', 's'], [⟨['d', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['m', 'a', 'k', 'a', 'n'], ['e', 'a', 't'], [⟨['m', 'a', 'k', 'a', 'n'], ['e', 'a', 't'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := [("Saya menyuruh dia [akan makan].", .ungrammatical), ("Saya menyuruh dia [sudah makan].", .ungrammatical), ("Saya menyuruh dia [sedang makan].", .ungrammatical)]
@@ -217,6 +247,8 @@ def ex_13a : Datum :=
     language := "indo1316"
     primaryText := "Orang itu mendorong saya [ _ jatuh]."
     glossedTokens := [("Orang", "person"), ("itu", "that"), ("mendorong", "AV.push"), ("saya", "1s"), ("jatuh", "fall")]
+    glossedWords := [⟨['O', 'r', 'a', 'n', 'g'], ['p', 'e', 'r', 's', 'o', 'n'], [⟨['O', 'r', 'a', 'n', 'g'], ['p', 'e', 'r', 's', 'o', 'n'], none⟩]⟩, ⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], [⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['m', 'e', 'n', 'd', 'o', 'r', 'o', 'n', 'g'], ['A', 'V', '.', 'p', 'u', 's', 'h'], [⟨['m', 'e', 'n', 'd', 'o', 'r', 'o', 'n', 'g'], ['A', 'V', '.', 'p', 'u', 's', 'h'], none⟩]⟩, ⟨['s', 'a', 'y', 'a'], ['1', 's'], [⟨['s', 'a', 'y', 'a'], ['1', 's'], none⟩]⟩, ⟨['j', 'a', 't', 'u', 'h'], ['f', 'a', 'l', 'l'], [⟨['j', 'a', 't', 'u', 'h'], ['f', 'a', 'l', 'l'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := [("Orang itu mendorong saya [ _ akan jatuh].", .ungrammatical), ("Orang itu mendorong saya [ _ sedang jatuh].", .ungrammatical), ("Orang itu mendorong saya [ _ sudah jatuh].", .ungrammatical)]
@@ -230,6 +262,8 @@ def ex_14a : Datum :=
     language := "indo1316"
     primaryText := "Dia datang (sambil) menangis."
     glossedTokens := [("Dia", "3s"), ("datang", "come"), ("sambil", "while"), ("menangis", "AV.cry")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩, ⟨['s', 'a', 'm', 'b', 'i', 'l'], ['w', 'h', 'i', 'l', 'e'], [⟨['s', 'a', 'm', 'b', 'i', 'l'], ['w', 'h', 'i', 'l', 'e'], none⟩]⟩, ⟨['m', 'e', 'n', 'a', 'n', 'g', 'i', 's'], ['A', 'V', '.', 'c', 'r', 'y'], [⟨['m', 'e', 'n', 'a', 'n', 'g', 'i', 's'], ['A', 'V', '.', 'c', 'r', 'y'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := [("Dia datang [(sambil) sedang menangis].", .ungrammatical)]
@@ -243,6 +277,8 @@ def ex_15a : Datum :=
     language := "indo1316"
     primaryText := "Saya belajar [menembak]."
     glossedTokens := [("Saya", "1s"), ("belajar", "study"), ("menembak", "AV.shoot")]
+    glossedWords := [⟨['S', 'a', 'y', 'a'], ['1', 's'], [⟨['S', 'a', 'y', 'a'], ['1', 's'], none⟩]⟩, ⟨['b', 'e', 'l', 'a', 'j', 'a', 'r'], ['s', 't', 'u', 'd', 'y'], [⟨['b', 'e', 'l', 'a', 'j', 'a', 'r'], ['s', 't', 'u', 'd', 'y'], none⟩]⟩, ⟨['m', 'e', 'n', 'e', 'm', 'b', 'a', 'k'], ['A', 'V', '.', 's', 'h', 'o', 'o', 't'], [⟨['m', 'e', 'n', 'e', 'm', 'b', 'a', 'k'], ['A', 'V', '.', 's', 'h', 'o', 'o', 't'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := [("Saya belajar bisa [menembak].", .ungrammatical)]
@@ -256,6 +292,8 @@ def ex_15c : Datum :=
     language := "indo1316"
     primaryText := "Saya belajar agar (bisa) menembak."
     glossedTokens := [("Saya", "1s"), ("belajar", "study"), ("agar", "so.that"), ("bisa", "able"), ("menembak", "AV.shoot")]
+    glossedWords := [⟨['S', 'a', 'y', 'a'], ['1', 's'], [⟨['S', 'a', 'y', 'a'], ['1', 's'], none⟩]⟩, ⟨['b', 'e', 'l', 'a', 'j', 'a', 'r'], ['s', 't', 'u', 'd', 'y'], [⟨['b', 'e', 'l', 'a', 'j', 'a', 'r'], ['s', 't', 'u', 'd', 'y'], none⟩]⟩, ⟨['a', 'g', 'a', 'r'], ['s', 'o', '.', 't', 'h', 'a', 't'], [⟨['a', 'g', 'a', 'r'], ['s', 'o', '.', 't', 'h', 'a', 't'], none⟩]⟩, ⟨['b', 'i', 's', 'a'], ['a', 'b', 'l', 'e'], [⟨['b', 'i', 's', 'a'], ['a', 'b', 'l', 'e'], none⟩]⟩, ⟨['m', 'e', 'n', 'e', 'm', 'b', 'a', 'k'], ['A', 'V', '.', 's', 'h', 'o', 'o', 't'], [⟨['m', 'e', 'n', 'e', 'm', 'b', 'a', 'k'], ['A', 'V', '.', 's', 'h', 'o', 'o', 't'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -270,6 +308,8 @@ def ex_18a : Datum :=
     language := "indo1316"
     primaryText := "...di jalan banyak sapi yang sedang memakan rumput."
     glossedTokens := [("di", "at"), ("jalan", "road"), ("banyak", "plenty"), ("sapi", "cow"), ("yang", "REL"), ("sedang", "PROG"), ("memakan", "AV.eat"), ("rumput", "grass")]
+    glossedWords := [⟨['d', 'i'], ['a', 't'], [⟨['d', 'i'], ['a', 't'], none⟩]⟩, ⟨['j', 'a', 'l', 'a', 'n'], ['r', 'o', 'a', 'd'], [⟨['j', 'a', 'l', 'a', 'n'], ['r', 'o', 'a', 'd'], none⟩]⟩, ⟨['b', 'a', 'n', 'y', 'a', 'k'], ['p', 'l', 'e', 'n', 't', 'y'], [⟨['b', 'a', 'n', 'y', 'a', 'k'], ['p', 'l', 'e', 'n', 't', 'y'], none⟩]⟩, ⟨['s', 'a', 'p', 'i'], ['c', 'o', 'w'], [⟨['s', 'a', 'p', 'i'], ['c', 'o', 'w'], none⟩]⟩, ⟨['y', 'a', 'n', 'g'], ['R', 'E', 'L'], [⟨['y', 'a', 'n', 'g'], ['R', 'E', 'L'], none⟩]⟩, ⟨['s', 'e', 'd', 'a', 'n', 'g'], ['P', 'R', 'O', 'G'], [⟨['s', 'e', 'd', 'a', 'n', 'g'], ['P', 'R', 'O', 'G'], none⟩]⟩, ⟨['m', 'e', 'm', 'a', 'k', 'a', 'n'], ['A', 'V', '.', 'e', 'a', 't'], [⟨['m', 'e', 'm', 'a', 'k', 'a', 'n'], ['A', 'V', '.', 'e', 'a', 't'], none⟩]⟩, ⟨['r', 'u', 'm', 'p', 'u', 't'], ['g', 'r', 'a', 's', 's'], [⟨['r', 'u', 'm', 'p', 'u', 't'], ['g', 'r', 'a', 's', 's'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -297,6 +337,8 @@ def ex_34a : Datum :=
     language := "indo1316"
     primaryText := "'Siapa itu?', tanya=nya."
     glossedTokens := [("Siapa", "who"), ("itu", "that"), ("tanya=nya", "ask=NYA")]
+    glossedWords := [⟨['S', 'i', 'a', 'p', 'a'], ['w', 'h', 'o'], [⟨['S', 'i', 'a', 'p', 'a'], ['w', 'h', 'o'], none⟩]⟩, ⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], [⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['t', 'a', 'n', 'y', 'a', '=', 'n', 'y', 'a'], ['a', 's', 'k', '=', 'N', 'Y', 'A'], [⟨['t', 'a', 'n', 'y', 'a'], ['a', 's', 'k'], none⟩, ⟨['n', 'y', 'a'], ['N', 'Y', 'A'], some '='⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := [("'Siapa itu?' akan tanyanya (nanti).", .ungrammatical)]
@@ -310,6 +352,8 @@ def ex_34b : Datum :=
     language := "indo1316"
     primaryText := "'Siapa itu?', tanya=nya nanti."
     glossedTokens := [("Siapa", "who"), ("itu", "that"), ("tanya=nya", "ask=NYA"), ("nanti", "later")]
+    glossedWords := [⟨['S', 'i', 'a', 'p', 'a'], ['w', 'h', 'o'], [⟨['S', 'i', 'a', 'p', 'a'], ['w', 'h', 'o'], none⟩]⟩, ⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], [⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['t', 'a', 'n', 'y', 'a', '=', 'n', 'y', 'a'], ['a', 's', 'k', '=', 'N', 'Y', 'A'], [⟨['t', 'a', 'n', 'y', 'a'], ['a', 's', 'k'], none⟩, ⟨['n', 'y', 'a'], ['N', 'Y', 'A'], some '='⟩]⟩, ⟨['n', 'a', 'n', 't', 'i'], ['l', 'a', 't', 'e', 'r'], [⟨['n', 'a', 'n', 't', 'i'], ['l', 'a', 't', 'e', 'r'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -323,6 +367,8 @@ def ex_34d : Datum :=
     language := "indo1316"
     primaryText := "'Siapa itu?', dia akan (ber)tanya (nanti)."
     glossedTokens := [("Siapa", "who"), ("itu", "that"), ("dia", "3"), ("akan", "FUT"), ("(ber)tanya", "BER-ask"), ("nanti", "later")]
+    glossedWords := [⟨['S', 'i', 'a', 'p', 'a'], ['w', 'h', 'o'], [⟨['S', 'i', 'a', 'p', 'a'], ['w', 'h', 'o'], none⟩]⟩, ⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], [⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['d', 'i', 'a'], ['3'], [⟨['d', 'i', 'a'], ['3'], none⟩]⟩, ⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], [⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], none⟩]⟩, ⟨['(', 'b', 'e', 'r', ')', 't', 'a', 'n', 'y', 'a'], ['B', 'E', 'R', '-', 'a', 's', 'k'], []⟩, ⟨['n', 'a', 'n', 't', 'i'], ['l', 'a', 't', 'e', 'r'], [⟨['n', 'a', 'n', 't', 'i'], ['l', 'a', 't', 'e', 'r'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -336,6 +382,8 @@ def ex_35a : Datum :=
     language := "indo1316"
     primaryText := "Kapan beli=nya?"
     glossedTokens := [("Kapan", "when"), ("beli=nya", "buy=NYA")]
+    glossedWords := [⟨['K', 'a', 'p', 'a', 'n'], ['w', 'h', 'e', 'n'], [⟨['K', 'a', 'p', 'a', 'n'], ['w', 'h', 'e', 'n'], none⟩]⟩, ⟨['b', 'e', 'l', 'i', '=', 'n', 'y', 'a'], ['b', 'u', 'y', '=', 'N', 'Y', 'A'], [⟨['b', 'e', 'l', 'i'], ['b', 'u', 'y'], none⟩, ⟨['n', 'y', 'a'], ['N', 'Y', 'A'], some '='⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := [("kapan akan beli=nya?", .ungrammatical)]
@@ -349,6 +397,8 @@ def ex_35c : Datum :=
     language := "indo1316"
     primaryText := "Kapan kamu akan beli?"
     glossedTokens := [("Kapan", "when"), ("kamu", "2s"), ("akan", "FUT"), ("beli", "buy")]
+    glossedWords := [⟨['K', 'a', 'p', 'a', 'n'], ['w', 'h', 'e', 'n'], [⟨['K', 'a', 'p', 'a', 'n'], ['w', 'h', 'e', 'n'], none⟩]⟩, ⟨['k', 'a', 'm', 'u'], ['2', 's'], [⟨['k', 'a', 'm', 'u'], ['2', 's'], none⟩]⟩, ⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], [⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], none⟩]⟩, ⟨['b', 'e', 'l', 'i'], ['b', 'u', 'y'], [⟨['b', 'e', 'l', 'i'], ['b', 'u', 'y'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -362,6 +412,8 @@ def ex_36a : Datum :=
     language := "indo1316"
     primaryText := "Kapan lahirnya?"
     glossedTokens := [("Kapan", "when"), ("lahirnya", "birth=3s")]
+    glossedWords := [⟨['K', 'a', 'p', 'a', 'n'], ['w', 'h', 'e', 'n'], [⟨['K', 'a', 'p', 'a', 'n'], ['w', 'h', 'e', 'n'], none⟩]⟩, ⟨['l', 'a', 'h', 'i', 'r', 'n', 'y', 'a'], ['b', 'i', 'r', 't', 'h', '=', '3', 's'], []⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := [("Kapan akan lahirnya?", .ungrammatical)]
@@ -375,6 +427,8 @@ def ex_36c : Datum :=
     language := "indo1316"
     primaryText := "Kapan ia akan lahir?"
     glossedTokens := [("Kapan", "when"), ("ia", "3s"), ("akan", "FUT"), ("lahir", "birth")]
+    glossedWords := [⟨['K', 'a', 'p', 'a', 'n'], ['w', 'h', 'e', 'n'], [⟨['K', 'a', 'p', 'a', 'n'], ['w', 'h', 'e', 'n'], none⟩]⟩, ⟨['i', 'a'], ['3', 's'], [⟨['i', 'a'], ['3', 's'], none⟩]⟩, ⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], [⟨['a', 'k', 'a', 'n'], ['F', 'U', 'T'], none⟩]⟩, ⟨['l', 'a', 'h', 'i', 'r'], ['b', 'i', 'r', 't', 'h'], [⟨['l', 'a', 'h', 'i', 'r'], ['b', 'i', 'r', 't', 'h'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -388,6 +442,8 @@ def ex_37a : Datum :=
     language := "indo1316"
     primaryText := "kamu harus datang."
     glossedTokens := [("kamu", "2"), ("harus", "must"), ("datang", "come")]
+    glossedWords := [⟨['k', 'a', 'm', 'u'], ['2'], [⟨['k', 'a', 'm', 'u'], ['2'], none⟩]⟩, ⟨['h', 'a', 'r', 'u', 's'], ['m', 'u', 's', 't'], [⟨['h', 'a', 'r', 'u', 's'], ['m', 'u', 's', 't'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -401,6 +457,8 @@ def ex_37b : Datum :=
     language := "indo1316"
     primaryText := "harus=nya kamu datang."
     glossedTokens := [("harus=nya", "must=NYA"), ("kamu", "2"), ("datang", "come")]
+    glossedWords := [⟨['h', 'a', 'r', 'u', 's', '=', 'n', 'y', 'a'], ['m', 'u', 's', 't', '=', 'N', 'Y', 'A'], [⟨['h', 'a', 'r', 'u', 's'], ['m', 'u', 's', 't'], none⟩, ⟨['n', 'y', 'a'], ['N', 'Y', 'A'], some '='⟩]⟩, ⟨['k', 'a', 'm', 'u'], ['2'], [⟨['k', 'a', 'm', 'u'], ['2'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -414,6 +472,8 @@ def ex_38a : Datum :=
     language := "indo1316"
     primaryText := "Ia bisa menangis"
     glossedTokens := [("Ia", "she"), ("bisa", "can"), ("menangis", "cry")]
+    glossedWords := [⟨['I', 'a'], ['s', 'h', 'e'], [⟨['I', 'a'], ['s', 'h', 'e'], none⟩]⟩, ⟨['b', 'i', 's', 'a'], ['c', 'a', 'n'], [⟨['b', 'i', 's', 'a'], ['c', 'a', 'n'], none⟩]⟩, ⟨['m', 'e', 'n', 'a', 'n', 'g', 'i', 's'], ['c', 'r', 'y'], [⟨['m', 'e', 'n', 'a', 'n', 'g', 'i', 's'], ['c', 'r', 'y'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -427,6 +487,8 @@ def ex_38b : Datum :=
     language := "indo1316"
     primaryText := "bisa=nya menangis"
     glossedTokens := [("bisa=nya", "can=3s"), ("menangis", "cry")]
+    glossedWords := [⟨['b', 'i', 's', 'a', '=', 'n', 'y', 'a'], ['c', 'a', 'n', '=', '3', 's'], [⟨['b', 'i', 's', 'a'], ['c', 'a', 'n'], none⟩, ⟨['n', 'y', 'a'], ['3', 's'], some '='⟩]⟩, ⟨['m', 'e', 'n', 'a', 'n', 'g', 'i', 's'], ['c', 'r', 'y'], [⟨['m', 'e', 'n', 'a', 'n', 'g', 'i', 's'], ['c', 'r', 'y'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -440,6 +502,8 @@ def ex_39a : Datum :=
     language := "indo1316"
     primaryText := "Ia mau pulang."
     glossedTokens := [("Ia", "3s"), ("mau", "wish"), ("pulang", "go.home")]
+    glossedWords := [⟨['I', 'a'], ['3', 's'], [⟨['I', 'a'], ['3', 's'], none⟩]⟩, ⟨['m', 'a', 'u'], ['w', 'i', 's', 'h'], [⟨['m', 'a', 'u'], ['w', 'i', 's', 'h'], none⟩]⟩, ⟨['p', 'u', 'l', 'a', 'n', 'g'], ['g', 'o', '.', 'h', 'o', 'm', 'e'], [⟨['p', 'u', 'l', 'a', 'n', 'g'], ['g', 'o', '.', 'h', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -453,6 +517,8 @@ def ex_39b : Datum :=
     language := "indo1316"
     primaryText := "mau=nya pulang."
     glossedTokens := [("mau=nya", "wish=DEF"), ("pulang", "go.home")]
+    glossedWords := [⟨['m', 'a', 'u', '=', 'n', 'y', 'a'], ['w', 'i', 's', 'h', '=', 'D', 'E', 'F'], [⟨['m', 'a', 'u'], ['w', 'i', 's', 'h'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩, ⟨['p', 'u', 'l', 'a', 'n', 'g'], ['g', 'o', '.', 'h', 'o', 'm', 'e'], [⟨['p', 'u', 'l', 'a', 'n', 'g'], ['g', 'o', '.', 'h', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -466,6 +532,8 @@ def ex_40a : Datum :=
     language := "indo1316"
     primaryText := "tampak=nya [ada orang datang]"
     glossedTokens := [("tampak=nya", "appear=DEF"), ("ada", "exist"), ("orang", "person"), ("datang", "come")]
+    glossedWords := [⟨['t', 'a', 'm', 'p', 'a', 'k', '=', 'n', 'y', 'a'], ['a', 'p', 'p', 'e', 'a', 'r', '=', 'D', 'E', 'F'], [⟨['t', 'a', 'm', 'p', 'a', 'k'], ['a', 'p', 'p', 'e', 'a', 'r'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩, ⟨['a', 'd', 'a'], ['e', 'x', 'i', 's', 't'], [⟨['a', 'd', 'a'], ['e', 'x', 'i', 's', 't'], none⟩]⟩, ⟨['o', 'r', 'a', 'n', 'g'], ['p', 'e', 'r', 's', 'o', 'n'], [⟨['o', 'r', 'a', 'n', 'g'], ['p', 'e', 'r', 's', 'o', 'n'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := [("sedang tampak=nya [ada orang datang].", .ungrammatical)]
@@ -479,6 +547,8 @@ def ex_41 : Datum :=
     language := "indo1316"
     primaryText := "Tampak ada orang datang"
     glossedTokens := [("Tampak", "appear"), ("ada", "exist"), ("orang", "people"), ("datang", "come")]
+    glossedWords := [⟨['T', 'a', 'm', 'p', 'a', 'k'], ['a', 'p', 'p', 'e', 'a', 'r'], [⟨['T', 'a', 'm', 'p', 'a', 'k'], ['a', 'p', 'p', 'e', 'a', 'r'], none⟩]⟩, ⟨['a', 'd', 'a'], ['e', 'x', 'i', 's', 't'], [⟨['a', 'd', 'a'], ['e', 'x', 'i', 's', 't'], none⟩]⟩, ⟨['o', 'r', 'a', 'n', 'g'], ['p', 'e', 'o', 'p', 'l', 'e'], [⟨['o', 'r', 'a', 'n', 'g'], ['p', 'e', 'o', 'p', 'l', 'e'], none⟩]⟩, ⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], [⟨['d', 'a', 't', 'a', 'n', 'g'], ['c', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -492,6 +562,8 @@ def ex_42a : Datum :=
     language := "indo1316"
     primaryText := "Dia sakit."
     glossedTokens := [("Dia", "3s"), ("sakit", "ill")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['s', 'a', 'k', 'i', 't'], ['i', 'l', 'l'], [⟨['s', 'a', 'k', 'i', 't'], ['i', 'l', 'l'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -505,6 +577,8 @@ def ex_42b : Datum :=
     language := "indo1316"
     primaryText := "Dia sakit kata=nya."
     glossedTokens := [("Dia", "3s"), ("sakit", "ill"), ("kata=nya", "word=DEF")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['s', 'a', 'k', 'i', 't'], ['i', 'l', 'l'], [⟨['s', 'a', 'k', 'i', 't'], ['i', 'l', 'l'], none⟩]⟩, ⟨['k', 'a', 't', 'a', '=', 'n', 'y', 'a'], ['w', 'o', 'r', 'd', '=', 'D', 'E', 'F'], [⟨['k', 'a', 't', 'a'], ['w', 'o', 'r', 'd'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -518,6 +592,8 @@ def ex_43a : Datum :=
     language := "indo1316"
     primaryText := "Kamu pembohong kata=nya"
     glossedTokens := [("Kamu", "2"), ("pembohong", "PEN.lie"), ("kata=nya", "word=DEF")]
+    glossedWords := [⟨['K', 'a', 'm', 'u'], ['2'], [⟨['K', 'a', 'm', 'u'], ['2'], none⟩]⟩, ⟨['p', 'e', 'm', 'b', 'o', 'h', 'o', 'n', 'g'], ['P', 'E', 'N', '.', 'l', 'i', 'e'], [⟨['p', 'e', 'm', 'b', 'o', 'h', 'o', 'n', 'g'], ['P', 'E', 'N', '.', 'l', 'i', 'e'], none⟩]⟩, ⟨['k', 'a', 't', 'a', '=', 'n', 'y', 'a'], ['w', 'o', 'r', 'd', '=', 'D', 'E', 'F'], [⟨['k', 'a', 't', 'a'], ['w', 'o', 'r', 'd'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -531,6 +607,8 @@ def ex_43b : Datum :=
     language := "indo1316"
     primaryText := "Kamu pembohong keluh=nya"
     glossedTokens := [("Kamu", "2"), ("pembohong", "PEN.lie"), ("keluh=nya", "word=3POSS")]
+    glossedWords := [⟨['K', 'a', 'm', 'u'], ['2'], [⟨['K', 'a', 'm', 'u'], ['2'], none⟩]⟩, ⟨['p', 'e', 'm', 'b', 'o', 'h', 'o', 'n', 'g'], ['P', 'E', 'N', '.', 'l', 'i', 'e'], [⟨['p', 'e', 'm', 'b', 'o', 'h', 'o', 'n', 'g'], ['P', 'E', 'N', '.', 'l', 'i', 'e'], none⟩]⟩, ⟨['k', 'e', 'l', 'u', 'h', '=', 'n', 'y', 'a'], ['w', 'o', 'r', 'd', '=', '3', 'P', 'O', 'S', 'S'], [⟨['k', 'e', 'l', 'u', 'h'], ['w', 'o', 'r', 'd'], none⟩, ⟨['n', 'y', 'a'], ['3', 'P', 'O', 'S', 'S'], some '='⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -544,6 +622,8 @@ def ex_44a : Datum :=
     language := "indo1316"
     primaryText := "Dia tidur."
     glossedTokens := [("Dia", "3s"), ("tidur", "sleep")]
+    glossedWords := [⟨['D', 'i', 'a'], ['3', 's'], [⟨['D', 'i', 'a'], ['3', 's'], none⟩]⟩, ⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], [⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := [("Dia adalah tidur.", .ungrammatical)]
@@ -557,6 +637,8 @@ def ex_45a : Datum :=
     language := "indo1316"
     primaryText := "Ali (adalah) guru itu."
     glossedTokens := [("Ali", "Ali"), ("adalah", "be"), ("guru", "teacher"), ("itu", "the")]
+    glossedWords := [⟨['A', 'l', 'i'], ['A', 'l', 'i'], [⟨['A', 'l', 'i'], ['A', 'l', 'i'], none⟩]⟩, ⟨['a', 'd', 'a', 'l', 'a', 'h'], ['b', 'e'], [⟨['a', 'd', 'a', 'l', 'a', 'h'], ['b', 'e'], none⟩]⟩, ⟨['g', 'u', 'r', 'u'], ['t', 'e', 'a', 'c', 'h', 'e', 'r'], [⟨['g', 'u', 'r', 'u'], ['t', 'e', 'a', 'c', 'h', 'e', 'r'], none⟩]⟩, ⟨['i', 't', 'u'], ['t', 'h', 'e'], [⟨['i', 't', 'u'], ['t', 'h', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -583,6 +665,8 @@ def ex_46a : Datum :=
     language := "indo1316"
     primaryText := "[ _ tidur] (adalah) mau=nya"
     glossedTokens := [("tidur", "sleep"), ("adalah", "be"), ("mau=nya", "want=DEF")]
+    glossedWords := [⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], [⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], none⟩]⟩, ⟨['a', 'd', 'a', 'l', 'a', 'h'], ['b', 'e'], [⟨['a', 'd', 'a', 'l', 'a', 'h'], ['b', 'e'], none⟩]⟩, ⟨['m', 'a', 'u', '=', 'n', 'y', 'a'], ['w', 'a', 'n', 't', '=', 'D', 'E', 'F'], [⟨['m', 'a', 'u'], ['w', 'a', 'n', 't'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -596,6 +680,8 @@ def ex_46b : Datum :=
     language := "indo1316"
     primaryText := "Mau=nya (adalah) [ _ tidur]"
     glossedTokens := [("Mau=nya", "want=DEF"), ("adalah", "be"), ("tidur", "sleep")]
+    glossedWords := [⟨['M', 'a', 'u', '=', 'n', 'y', 'a'], ['w', 'a', 'n', 't', '=', 'D', 'E', 'F'], [⟨['M', 'a', 'u'], ['w', 'a', 'n', 't'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩, ⟨['a', 'd', 'a', 'l', 'a', 'h'], ['b', 'e'], [⟨['a', 'd', 'a', 'l', 'a', 'h'], ['b', 'e'], none⟩]⟩, ⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], [⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -609,6 +695,8 @@ def ex_47a : Datum :=
     language := "indo1316"
     primaryText := "Ali bukan guru itu."
     glossedTokens := [("Ali", "Ali"), ("bukan", "NEG"), ("guru", "teacher"), ("itu", "that")]
+    glossedWords := [⟨['A', 'l', 'i'], ['A', 'l', 'i'], [⟨['A', 'l', 'i'], ['A', 'l', 'i'], none⟩]⟩, ⟨['b', 'u', 'k', 'a', 'n'], ['N', 'E', 'G'], [⟨['b', 'u', 'k', 'a', 'n'], ['N', 'E', 'G'], none⟩]⟩, ⟨['g', 'u', 'r', 'u'], ['t', 'e', 'a', 'c', 'h', 'e', 'r'], [⟨['g', 'u', 'r', 'u'], ['t', 'e', 'a', 'c', 'h', 'e', 'r'], none⟩]⟩, ⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], [⟨['i', 't', 'u'], ['t', 'h', 'a', 't'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := [("Ali tidak guru itu.", .ungrammatical)]
@@ -635,6 +723,8 @@ def ex_48a : Datum :=
     language := "indo1316"
     primaryText := "[_ tidur] bukan mau=nya"
     glossedTokens := [("tidur", "sleep"), ("bukan", "NEG"), ("mau=nya", "want=DEF")]
+    glossedWords := [⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], [⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], none⟩]⟩, ⟨['b', 'u', 'k', 'a', 'n'], ['N', 'E', 'G'], [⟨['b', 'u', 'k', 'a', 'n'], ['N', 'E', 'G'], none⟩]⟩, ⟨['m', 'a', 'u', '=', 'n', 'y', 'a'], ['w', 'a', 'n', 't', '=', 'D', 'E', 'F'], [⟨['m', 'a', 'u'], ['w', 'a', 'n', 't'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := [("[_ tidur] tidak mau=nya", .ungrammatical)]
@@ -648,6 +738,8 @@ def ex_48b : Datum :=
     language := "indo1316"
     primaryText := "Mau=nya bukan tidur"
     glossedTokens := [("Mau=nya", "want=DEF"), ("bukan", "NEG"), ("tidur", "sleep")]
+    glossedWords := [⟨['M', 'a', 'u', '=', 'n', 'y', 'a'], ['w', 'a', 'n', 't', '=', 'D', 'E', 'F'], [⟨['M', 'a', 'u'], ['w', 'a', 'n', 't'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩, ⟨['b', 'u', 'k', 'a', 'n'], ['N', 'E', 'G'], [⟨['b', 'u', 'k', 'a', 'n'], ['N', 'E', 'G'], none⟩]⟩, ⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], [⟨['t', 'i', 'd', 'u', 'r'], ['s', 'l', 'e', 'e', 'p'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := [("Mau=nya tidak tidur", .acceptable)]
@@ -661,6 +753,8 @@ def ex_52a : Datum :=
     language := "indo1316"
     primaryText := "[Kamu pembohong] kata=nya"
     glossedTokens := [("Kamu", "2"), ("pembohong", "peN.lie"), ("kata=nya", "word=DEF")]
+    glossedWords := [⟨['K', 'a', 'm', 'u'], ['2'], [⟨['K', 'a', 'm', 'u'], ['2'], none⟩]⟩, ⟨['p', 'e', 'm', 'b', 'o', 'h', 'o', 'n', 'g'], ['p', 'e', 'N', '.', 'l', 'i', 'e'], [⟨['p', 'e', 'm', 'b', 'o', 'h', 'o', 'n', 'g'], ['p', 'e', 'N', '.', 'l', 'i', 'e'], none⟩]⟩, ⟨['k', 'a', 't', 'a', '=', 'n', 'y', 'a'], ['w', 'o', 'r', 'd', '=', 'D', 'E', 'F'], [⟨['k', 'a', 't', 'a'], ['w', 'o', 'r', 'd'], none⟩, ⟨['n', 'y', 'a'], ['D', 'E', 'F'], some '='⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := [("[Kamu pembohong] adalah katanya.", .ungrammatical)]

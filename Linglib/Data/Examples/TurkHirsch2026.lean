@@ -22,6 +22,8 @@ def ex_4 : Datum :=
     language := "nucl1301"
     primaryText := "Ali uyudu=mu?"
     glossedTokens := [("Ali", "Ali[NOM]"), ("uyu-du=mu", "sleep-PST.3SG=FM")]
+    glossedWords := [⟨['A', 'l', 'i'], ['A', 'l', 'i', '[', 'N', 'O', 'M', ']'], [⟨['A', 'l', 'i'], ['A', 'l', 'i', '[', 'N', 'O', 'M', ']'], none⟩]⟩, ⟨['u', 'y', 'u', '-', 'd', 'u', '=', 'm', 'u'], ['s', 'l', 'e', 'e', 'p', '-', 'P', 'S', 'T', '.', '3', 'S', 'G', '=', 'F', 'M'], [⟨['u', 'y', 'u'], ['s', 'l', 'e', 'e', 'p'], none⟩, ⟨['d', 'u'], ['P', 'S', 'T', '.', '3', 'S', 'G'], some '-'⟩, ⟨['m', 'u'], ['F', 'M'], some '='⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -35,6 +37,8 @@ def ex_5 : Datum :=
     language := "nucl1301"
     primaryText := "ALI=mi uyudu?"
     glossedTokens := [("ALI=mi", "Ali[NOM]=FM"), ("uyu-du", "sleep-PST.3SG")]
+    glossedWords := [⟨['A', 'L', 'I', '=', 'm', 'i'], ['A', 'l', 'i', '[', 'N', 'O', 'M', ']', '=', 'F', 'M'], [⟨['A', 'L', 'I'], ['A', 'l', 'i', '[', 'N', 'O', 'M', ']'], none⟩, ⟨['m', 'i'], ['F', 'M'], some '='⟩]⟩, ⟨['u', 'y', 'u', '-', 'd', 'u'], ['s', 'l', 'e', 'e', 'p', '-', 'P', 'S', 'T', '.', '3', 'S', 'G'], [⟨['u', 'y', 'u'], ['s', 'l', 'e', 'e', 'p'], none⟩, ⟨['d', 'u'], ['P', 'S', 'T', '.', '3', 'S', 'G'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -48,6 +52,8 @@ def ex_6a : Datum :=
     language := "nucl1301"
     primaryText := "Hayır."
     glossedTokens := [("Hayır", "no")]
+    glossedWords := [⟨['H', 'a', 'y', 'ı', 'r'], ['n', 'o'], [⟨['H', 'a', 'y', 'ı', 'r'], ['n', 'o'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "Answer to (5)."
     judgment := .acceptable
     alternatives := []
@@ -61,6 +67,8 @@ def ex_6b : Datum :=
     language := "nucl1301"
     primaryText := "Hayır, Veli uyudu."
     glossedTokens := [("Hayır", "no"), ("Veli", "Veli[NOM]"), ("uyu-du", "sleep-PST.3SG")]
+    glossedWords := [⟨['H', 'a', 'y', 'ı', 'r'], ['n', 'o'], [⟨['H', 'a', 'y', 'ı', 'r'], ['n', 'o'], none⟩]⟩, ⟨['V', 'e', 'l', 'i'], ['V', 'e', 'l', 'i', '[', 'N', 'O', 'M', ']'], [⟨['V', 'e', 'l', 'i'], ['V', 'e', 'l', 'i', '[', 'N', 'O', 'M', ']'], none⟩]⟩, ⟨['u', 'y', 'u', '-', 'd', 'u'], ['s', 'l', 'e', 'e', 'p', '-', 'P', 'S', 'T', '.', '3', 'S', 'G'], [⟨['u', 'y', 'u'], ['s', 'l', 'e', 'e', 'p'], none⟩, ⟨['d', 'u'], ['P', 'S', 'T', '.', '3', 'S', 'G'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Answer to (5)."
     judgment := .acceptable
     alternatives := []
@@ -74,6 +82,8 @@ def ex_14 : Datum :=
     language := "nucl1301"
     primaryText := "Yannis Ali uyudu=mu diye meraketti."
     glossedTokens := [("Yannis", "Yannis[NOM]"), ("Ali", "Ali[NOM]"), ("uyu-du=mu", "sleep-PST=FM"), ("diye", "that"), ("meraket-ti", "wonder-PST")]
+    glossedWords := [⟨['Y', 'a', 'n', 'n', 'i', 's'], ['Y', 'a', 'n', 'n', 'i', 's', '[', 'N', 'O', 'M', ']'], [⟨['Y', 'a', 'n', 'n', 'i', 's'], ['Y', 'a', 'n', 'n', 'i', 's', '[', 'N', 'O', 'M', ']'], none⟩]⟩, ⟨['A', 'l', 'i'], ['A', 'l', 'i', '[', 'N', 'O', 'M', ']'], [⟨['A', 'l', 'i'], ['A', 'l', 'i', '[', 'N', 'O', 'M', ']'], none⟩]⟩, ⟨['u', 'y', 'u', '-', 'd', 'u', '=', 'm', 'u'], ['s', 'l', 'e', 'e', 'p', '-', 'P', 'S', 'T', '=', 'F', 'M'], [⟨['u', 'y', 'u'], ['s', 'l', 'e', 'e', 'p'], none⟩, ⟨['d', 'u'], ['P', 'S', 'T'], some '-'⟩, ⟨['m', 'u'], ['F', 'M'], some '='⟩]⟩, ⟨['d', 'i', 'y', 'e'], ['t', 'h', 'a', 't'], [⟨['d', 'i', 'y', 'e'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['m', 'e', 'r', 'a', 'k', 'e', 't', '-', 't', 'i'], ['w', 'o', 'n', 'd', 'e', 'r', '-', 'P', 'S', 'T'], [⟨['m', 'e', 'r', 'a', 'k', 'e', 't'], ['w', 'o', 'n', 'd', 'e', 'r'], none⟩, ⟨['t', 'i'], ['P', 'S', 'T'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -87,6 +97,8 @@ def ex_18 : Datum :=
     language := "nucl1301"
     primaryText := "Yannis Ali uyudu diye=mi meraketti?"
     glossedTokens := [("Yannis", "Yannis[NOM]"), ("Ali", "Ali[NOM]"), ("uyu-du", "sleep-PST"), ("diye=mi", "that=FM"), ("meraket-ti", "wonder-PST")]
+    glossedWords := [⟨['Y', 'a', 'n', 'n', 'i', 's'], ['Y', 'a', 'n', 'n', 'i', 's', '[', 'N', 'O', 'M', ']'], [⟨['Y', 'a', 'n', 'n', 'i', 's'], ['Y', 'a', 'n', 'n', 'i', 's', '[', 'N', 'O', 'M', ']'], none⟩]⟩, ⟨['A', 'l', 'i'], ['A', 'l', 'i', '[', 'N', 'O', 'M', ']'], [⟨['A', 'l', 'i'], ['A', 'l', 'i', '[', 'N', 'O', 'M', ']'], none⟩]⟩, ⟨['u', 'y', 'u', '-', 'd', 'u'], ['s', 'l', 'e', 'e', 'p', '-', 'P', 'S', 'T'], [⟨['u', 'y', 'u'], ['s', 'l', 'e', 'e', 'p'], none⟩, ⟨['d', 'u'], ['P', 'S', 'T'], some '-'⟩]⟩, ⟨['d', 'i', 'y', 'e', '=', 'm', 'i'], ['t', 'h', 'a', 't', '=', 'F', 'M'], [⟨['d', 'i', 'y', 'e'], ['t', 'h', 'a', 't'], none⟩, ⟨['m', 'i'], ['F', 'M'], some '='⟩]⟩, ⟨['m', 'e', 'r', 'a', 'k', 'e', 't', '-', 't', 'i'], ['w', 'o', 'n', 'd', 'e', 'r', '-', 'P', 'S', 'T'], [⟨['m', 'e', 'r', 'a', 'k', 'e', 't'], ['w', 'o', 'n', 'd', 'e', 'r'], none⟩, ⟨['t', 'i'], ['P', 'S', 'T'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -100,6 +112,8 @@ def ex_35a : Datum :=
     language := "nucl1301"
     primaryText := "Evet, Ali uyudu."
     glossedTokens := [("Evet", "yes"), ("Ali", "Ali[NOM]"), ("uyu-du", "sleep-PST.3SG")]
+    glossedWords := [⟨['E', 'v', 'e', 't'], ['y', 'e', 's'], [⟨['E', 'v', 'e', 't'], ['y', 'e', 's'], none⟩]⟩, ⟨['A', 'l', 'i'], ['A', 'l', 'i', '[', 'N', 'O', 'M', ']'], [⟨['A', 'l', 'i'], ['A', 'l', 'i', '[', 'N', 'O', 'M', ']'], none⟩]⟩, ⟨['u', 'y', 'u', '-', 'd', 'u'], ['s', 'l', 'e', 'e', 'p', '-', 'P', 'S', 'T', '.', '3', 'S', 'G'], [⟨['u', 'y', 'u'], ['s', 'l', 'e', 'e', 'p'], none⟩, ⟨['d', 'u'], ['P', 'S', 'T', '.', '3', 'S', 'G'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Answer to (22) at a world where Ali had to sleep and did sleep."
     judgment := .acceptable
     alternatives := []
@@ -113,6 +127,8 @@ def ex_35b : Datum :=
     language := "nucl1301"
     primaryText := "Evet, Ali uyumak zorundaydı ve uyudu."
     glossedTokens := [("Evet", "yes"), ("Ali", "Ali[NOM]"), ("uyu-mak", "sleep-INF"), ("zorunda-ydı", "obligation-PST.3SG"), ("ve", "and"), ("uyu-du", "sleep-PST.3SG")]
+    glossedWords := [⟨['E', 'v', 'e', 't'], ['y', 'e', 's'], [⟨['E', 'v', 'e', 't'], ['y', 'e', 's'], none⟩]⟩, ⟨['A', 'l', 'i'], ['A', 'l', 'i', '[', 'N', 'O', 'M', ']'], [⟨['A', 'l', 'i'], ['A', 'l', 'i', '[', 'N', 'O', 'M', ']'], none⟩]⟩, ⟨['u', 'y', 'u', '-', 'm', 'a', 'k'], ['s', 'l', 'e', 'e', 'p', '-', 'I', 'N', 'F'], [⟨['u', 'y', 'u'], ['s', 'l', 'e', 'e', 'p'], none⟩, ⟨['m', 'a', 'k'], ['I', 'N', 'F'], some '-'⟩]⟩, ⟨['z', 'o', 'r', 'u', 'n', 'd', 'a', '-', 'y', 'd', 'ı'], ['o', 'b', 'l', 'i', 'g', 'a', 't', 'i', 'o', 'n', '-', 'P', 'S', 'T', '.', '3', 'S', 'G'], [⟨['z', 'o', 'r', 'u', 'n', 'd', 'a'], ['o', 'b', 'l', 'i', 'g', 'a', 't', 'i', 'o', 'n'], none⟩, ⟨['y', 'd', 'ı'], ['P', 'S', 'T', '.', '3', 'S', 'G'], some '-'⟩]⟩, ⟨['v', 'e'], ['a', 'n', 'd'], [⟨['v', 'e'], ['a', 'n', 'd'], none⟩]⟩, ⟨['u', 'y', 'u', '-', 'd', 'u'], ['s', 'l', 'e', 'e', 'p', '-', 'P', 'S', 'T', '.', '3', 'S', 'G'], [⟨['u', 'y', 'u'], ['s', 'l', 'e', 'e', 'p'], none⟩, ⟨['d', 'u'], ['P', 'S', 'T', '.', '3', 'S', 'G'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Answer to (22) at a world where Ali had to sleep and did sleep."
     judgment := .unacceptable
     alternatives := []
@@ -126,6 +142,8 @@ def ex_41 : Datum :=
     language := "nucl1301"
     primaryText := "Ali uyumak zorundaydı."
     glossedTokens := [("Ali", "Ali[NOM]"), ("uyu-mak", "sleep-INF"), ("zorunda-y-dı", "obliged-COP-PST.3SG")]
+    glossedWords := [⟨['A', 'l', 'i'], ['A', 'l', 'i', '[', 'N', 'O', 'M', ']'], [⟨['A', 'l', 'i'], ['A', 'l', 'i', '[', 'N', 'O', 'M', ']'], none⟩]⟩, ⟨['u', 'y', 'u', '-', 'm', 'a', 'k'], ['s', 'l', 'e', 'e', 'p', '-', 'I', 'N', 'F'], [⟨['u', 'y', 'u'], ['s', 'l', 'e', 'e', 'p'], none⟩, ⟨['m', 'a', 'k'], ['I', 'N', 'F'], some '-'⟩]⟩, ⟨['z', 'o', 'r', 'u', 'n', 'd', 'a', '-', 'y', '-', 'd', 'ı'], ['o', 'b', 'l', 'i', 'g', 'e', 'd', '-', 'C', 'O', 'P', '-', 'P', 'S', 'T', '.', '3', 'S', 'G'], [⟨['z', 'o', 'r', 'u', 'n', 'd', 'a'], ['o', 'b', 'l', 'i', 'g', 'e', 'd'], none⟩, ⟨['y'], ['C', 'O', 'P'], some '-'⟩, ⟨['d', 'ı'], ['P', 'S', 'T', '.', '3', 'S', 'G'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "(39): Ali injured himself and went to the doctor for instructions; his partner tells us he slept for several hours after the appointment; we ask (22)."
     judgment := .unacceptable
     alternatives := []

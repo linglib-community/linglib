@@ -714,36 +714,37 @@ end BantuStage
 The rows are read off Corbett's glosses: a word's category labels name the gender, class or
 number its form marks, and the lexical gloss of its first morph names the noun it is. -/
 
-/-- The category labels of a gloss, stripped of the brackets around optional material. -/
-def labels (g : String) : List (List Char) := (Gloss.labels g).map Gloss.trim
+/-- The category labels of a word's gloss, stripped of the brackets around optional material. -/
+def labels (g : GlossedWord) : List (List Char) := g.labels.map Gloss.trim
 
 /-- What `table` reads off the first label of a gloss that it lists. -/
-def readLabel {α : Type*} (table : List (List Char × α)) (g : String) : Option α :=
+def readLabel {α : Type*} (table : List (List Char × α)) (g : GlossedWord) : Option α :=
   (labels g).findSome? (List.lookup · table)
 
 /-- A gloss marks a non-singular number, `PL` or the book's `DUAL`. -/
-def Nonsingular (g : String) : Prop := "PL".toList ∈ labels g ∨ "DUAL".toList ∈ labels g
+def Nonsingular (g : GlossedWord) : Prop := "PL".toList ∈ labels g ∨ "DUAL".toList ∈ labels g
 
 instance : DecidablePred Nonsingular := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The number a gloss marks, singular where it marks none. -/
-def number (g : String) : Number :=
+def number (g : GlossedWord) : Number :=
   if "DUAL".toList ∈ labels g then .dual else if "PL".toList ∈ labels g then .plural else .singular
 
 /-- The words of the lexical gloss of a word's first morph: *elder sister* in
 `elder.sister-and`, *door the* in `door.FEM.the`. -/
-def lexicalWords (g : String) : List (List Char) :=
-  ((Gloss.elements ((Gloss.segments g).headD [])).map Gloss.trim).filter
+def lexicalWords (g : GlossedWord) : List (List Char) :=
+  ((Gloss.elements (g.glosses.headD [])).map Gloss.trim).filter
     fun e ↦ !decide (Gloss.IsLabel e)
 
 /-- A gloss names the noun glossed `n` when its lexical words begin with those of `n`. -/
-def Names (n g : String) : Bool := (Gloss.split [' '] n.toList).isPrefixOf (lexicalWords g)
+def Names (n : String) (g : GlossedWord) : Bool :=
+  (Gloss.split [' '] n.toList).isPrefixOf (lexicalWords g)
 
 /-- What `f` reads off each word of a row that glosses a noun of `lex`, with the word's gloss,
 in order. -/
-def glossed {N β : Type*} (gloss : N → String) (lex : List N) (f : N → String → β)
+def glossed {N β : Type*} (gloss : N → String) (lex : List N) (f : N → GlossedWord → β)
     (row : Datum) : List β :=
-  row.glossedTokens.filterMap fun t ↦ (lex.find? fun n ↦ Names (gloss n) t.2).map (f · t.2)
+  row.glossedWords.filterMap fun w ↦ (lex.find? fun n ↦ Names (gloss n) w).map (f · w)
 
 /-! ### The judgments of chapter 8
 
@@ -806,7 +807,7 @@ structure Controller where
   semantic : List (List Char)
 
 /-- The agreement a target's gloss shows with the controller. -/
-def Controller.kind? (c : Controller) (g : String) : Option Kind :=
+def Controller.kind? (c : Controller) (g : GlossedWord) : Option Kind :=
   if (labels g).any c.semantic.contains then some .semantic
   else if (labels g).any c.syntactic.contains then some .syntactic else none
 
@@ -823,7 +824,7 @@ def controllers : List Controller :=
 one nearer the controller first. -/
 def targetPair? (row : Datum) : Option (Kind × Kind) := do
   guard (row.feature? "targets").isSome
-  let gs := row.glossedTokens.map (·.2)
+  let gs := row.glossedWords
   let (c, i) ← gs.zipIdx.findSome? fun (g, i) ↦
     (controllers.find? fun c ↦ Names c.gloss g).map (·, i)
   match gs.zipIdx.filterMap fun (g, j) ↦ (c.kind? g).map (if i ≤ j then j - i else i - j, ·) with
@@ -1151,22 +1152,22 @@ is acceptable exactly when the language's rules select the target's form. -/
 
 /-- The form a coordination's target shows: what `form` reads off the gloss of the last word
 whose form it reads. -/
-def target? {G : Type*} (form : String → Option G) (row : Datum) : Option G :=
-  row.glossedTokens.reverse.findSome? (form ·.2)
+def target? {G : Type*} (form : GlossedWord → Option G) (row : Datum) : Option G :=
+  row.glossedWords.reverse.findSome? form
 
 /-- The form of `table` a target's gloss marks along with a non-singular number. -/
-def pluralForm {G : Type*} (table : List (List Char × G)) (g : String) : Option G :=
+def pluralForm {G : Type*} (table : List (List Char × G)) (g : GlossedWord) : Option G :=
   if Nonsingular g then readLabel table g else none
 
 /-- The conjuncts the labels of a row's glosses mark: the words whose gloss labels a value of
 `table` and no non-singular number. -/
 def labelled {α : Type*} (table : List (List Char × α)) (row : Datum) : List α :=
-  row.glossedTokens.filterMap fun t ↦ if Nonsingular t.2 then none else readLabel table t.2
+  row.glossedWords.filterMap fun w ↦ if Nonsingular w then none else readLabel table w
 
 /-- A coordination of `lang`: at least two conjuncts as `conjuncts` reads them, and the form
 its target shows. -/
 def coordination? {α G : Type*} (lang : Glottocode) (conjuncts : Datum → List α)
-    (form : String → Option G) (row : Datum) : Option (List α × G) :=
+    (form : GlossedWord → Option G) (row : Datum) : Option (List α × G) :=
   if row.language = lang ∧ 2 ≤ (conjuncts row).length then
     (target? form row).map (conjuncts row, ·)
   else none

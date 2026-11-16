@@ -186,6 +186,8 @@ def gs2025_8a : Datum :=
     language := "stan1295"
     primaryText := "Kaufe-Ihr-Auto-Kärtchen"
     glossedTokens := [("Kaufe-Ihr-Auto-Kärtchen", "buy.prs.1sg-2pl.poss-car-card.dim")]
+    glossedWords := [⟨['K', 'a', 'u', 'f', 'e', '-', 'I', 'h', 'r', '-', 'A', 'u', 't', 'o', '-', 'K', 'ä', 'r', 't', 'c', 'h', 'e', 'n'], ['b', 'u', 'y', '.', 'p', 'r', 's', '.', '1', 's', 'g', '-', '2', 'p', 'l', '.', 'p', 'o', 's', 's', '-', 'c', 'a', 'r', '-', 'c', 'a', 'r', 'd', '.', 'd', 'i', 'm'], [⟨['K', 'a', 'u', 'f', 'e'], ['b', 'u', 'y', '.', 'p', 'r', 's', '.', '1', 's', 'g'], none⟩, ⟨['I', 'h', 'r'], ['2', 'p', 'l', '.', 'p', 'o', 's', 's'], some '-'⟩, ⟨['A', 'u', 't', 'o'], ['c', 'a', 'r'], some '-'⟩, ⟨['K', 'ä', 'r', 't', 'c', 'h', 'e', 'n'], ['c', 'a', 'r', 'd', '.', 'd', 'i', 'm'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -199,6 +201,8 @@ def gs2025_15a : Datum :=
     language := "dutc1256"
     primaryText := "lach of ik schiet humor"
     glossedTokens := [("lach", "laugh.imp"), ("of", "or"), ("ik", "1sg"), ("schiet", "shoot.prs.sg"), ("humor", "humor")]
+    glossedWords := [⟨['l', 'a', 'c', 'h'], ['l', 'a', 'u', 'g', 'h', '.', 'i', 'm', 'p'], [⟨['l', 'a', 'c', 'h'], ['l', 'a', 'u', 'g', 'h', '.', 'i', 'm', 'p'], none⟩]⟩, ⟨['o', 'f'], ['o', 'r'], [⟨['o', 'f'], ['o', 'r'], none⟩]⟩, ⟨['i', 'k'], ['1', 's', 'g'], [⟨['i', 'k'], ['1', 's', 'g'], none⟩]⟩, ⟨['s', 'c', 'h', 'i', 'e', 't'], ['s', 'h', 'o', 'o', 't', '.', 'p', 'r', 's', '.', 's', 'g'], [⟨['s', 'c', 'h', 'i', 'e', 't'], ['s', 'h', 'o', 'o', 't', '.', 'p', 'r', 's', '.', 's', 'g'], none⟩]⟩, ⟨['h', 'u', 'm', 'o', 'r'], ['h', 'u', 'm', 'o', 'r'], [⟨['h', 'u', 'm', 'o', 'r'], ['h', 'u', 'm', 'o', 'r'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -212,6 +216,8 @@ def gs2025_15b : Datum :=
     language := "afri1274"
     primaryText := "God is dod theologie"
     glossedTokens := [("God", "god"), ("is", "cop.prs.3sg"), ("dod", "dead"), ("theologie", "theology")]
+    glossedWords := [⟨['G', 'o', 'd'], ['g', 'o', 'd'], [⟨['G', 'o', 'd'], ['g', 'o', 'd'], none⟩]⟩, ⟨['i', 's'], ['c', 'o', 'p', '.', 'p', 'r', 's', '.', '3', 's', 'g'], [⟨['i', 's'], ['c', 'o', 'p', '.', 'p', 'r', 's', '.', '3', 's', 'g'], none⟩]⟩, ⟨['d', 'o', 'd'], ['d', 'e', 'a', 'd'], [⟨['d', 'o', 'd'], ['d', 'e', 'a', 'd'], none⟩]⟩, ⟨['t', 'h', 'e', 'o', 'l', 'o', 'g', 'i', 'e'], ['t', 'h', 'e', 'o', 'l', 'o', 'g', 'y'], [⟨['t', 'h', 'e', 'o', 'l', 'o', 'g', 'i', 'e'], ['t', 'h', 'e', 'o', 'l', 'o', 'g', 'y'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -225,6 +231,8 @@ def gs2025_15c : Datum :=
     language := "nucl1301"
     primaryText := "'iç çamasir-ın-ı göster' oyun-u"
     glossedTokens := [("iç", "internal"), ("çamasir-ın-ı", "laundry-3sg-acc"), ("göster", "show"), ("oyun-u", "game-cm")]
+    glossedWords := [⟨['i', 'ç'], ['i', 'n', 't', 'e', 'r', 'n', 'a', 'l'], [⟨['i', 'ç'], ['i', 'n', 't', 'e', 'r', 'n', 'a', 'l'], none⟩]⟩, ⟨['ç', 'a', 'm', 'a', 's', 'i', 'r', '-', 'ı', 'n', '-', 'ı'], ['l', 'a', 'u', 'n', 'd', 'r', 'y', '-', '3', 's', 'g', '-', 'a', 'c', 'c'], [⟨['ç', 'a', 'm', 'a', 's', 'i', 'r'], ['l', 'a', 'u', 'n', 'd', 'r', 'y'], none⟩, ⟨['ı', 'n'], ['3', 's', 'g'], some '-'⟩, ⟨['ı'], ['a', 'c', 'c'], some '-'⟩]⟩, ⟨['g', 'ö', 's', 't', 'e', 'r'], ['s', 'h', 'o', 'w'], [⟨['g', 'ö', 's', 't', 'e', 'r'], ['s', 'h', 'o', 'w'], none⟩]⟩, ⟨['o', 'y', 'u', 'n', '-', 'u'], ['g', 'a', 'm', 'e', '-', 'c', 'm'], [⟨['o', 'y', 'u', 'n'], ['g', 'a', 'm', 'e'], none⟩, ⟨['u'], ['c', 'm'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -238,6 +246,8 @@ def gs2025_16b : Datum :=
     language := "hebr1245"
     primaryText := "keta ʃel mi=ʃe yodea yodea"
     glossedTokens := [("keta", "section"), ("ʃel", "of"), ("mi=ʃe", "who=sbj"), ("yodea", "know.prs.3.m.sg"), ("yodea", "know.prs.3.m.sg")]
+    glossedWords := [⟨['k', 'e', 't', 'a'], ['s', 'e', 'c', 't', 'i', 'o', 'n'], [⟨['k', 'e', 't', 'a'], ['s', 'e', 'c', 't', 'i', 'o', 'n'], none⟩]⟩, ⟨['ʃ', 'e', 'l'], ['o', 'f'], [⟨['ʃ', 'e', 'l'], ['o', 'f'], none⟩]⟩, ⟨['m', 'i', '=', 'ʃ', 'e'], ['w', 'h', 'o', '=', 's', 'b', 'j'], [⟨['m', 'i'], ['w', 'h', 'o'], none⟩, ⟨['ʃ', 'e'], ['s', 'b', 'j'], some '='⟩]⟩, ⟨['y', 'o', 'd', 'e', 'a'], ['k', 'n', 'o', 'w', '.', 'p', 'r', 's', '.', '3', '.', 'm', '.', 's', 'g'], [⟨['y', 'o', 'd', 'e', 'a'], ['k', 'n', 'o', 'w', '.', 'p', 'r', 's', '.', '3', '.', 'm', '.', 's', 'g'], none⟩]⟩, ⟨['y', 'o', 'd', 'e', 'a'], ['k', 'n', 'o', 'w', '.', 'p', 'r', 's', '.', '3', '.', 'm', '.', 's', 'g'], [⟨['y', 'o', 'd', 'e', 'a'], ['k', 'n', 'o', 'w', '.', 'p', 'r', 's', '.', '3', '.', 'm', '.', 's', 'g'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -251,6 +261,8 @@ def gs2025_17b : Datum :=
     language := "hebr1245"
     primaryText := "ani mitʁageʃet be=ʁama ʃel ani od ʁega boxa kan"
     glossedTokens := [("ani", "1sg"), ("mitʁageʃet", "be.excited.prs.f.sg"), ("be=ʁama", "in=level"), ("ʃel", "of"), ("ani", "I"), ("od", "more"), ("ʁega", "moment"), ("boxa", "cry.prs.f.sg"), ("kan", "here")]
+    glossedWords := [⟨['a', 'n', 'i'], ['1', 's', 'g'], [⟨['a', 'n', 'i'], ['1', 's', 'g'], none⟩]⟩, ⟨['m', 'i', 't', 'ʁ', 'a', 'g', 'e', 'ʃ', 'e', 't'], ['b', 'e', '.', 'e', 'x', 'c', 'i', 't', 'e', 'd', '.', 'p', 'r', 's', '.', 'f', '.', 's', 'g'], [⟨['m', 'i', 't', 'ʁ', 'a', 'g', 'e', 'ʃ', 'e', 't'], ['b', 'e', '.', 'e', 'x', 'c', 'i', 't', 'e', 'd', '.', 'p', 'r', 's', '.', 'f', '.', 's', 'g'], none⟩]⟩, ⟨['b', 'e', '=', 'ʁ', 'a', 'm', 'a'], ['i', 'n', '=', 'l', 'e', 'v', 'e', 'l'], [⟨['b', 'e'], ['i', 'n'], none⟩, ⟨['ʁ', 'a', 'm', 'a'], ['l', 'e', 'v', 'e', 'l'], some '='⟩]⟩, ⟨['ʃ', 'e', 'l'], ['o', 'f'], [⟨['ʃ', 'e', 'l'], ['o', 'f'], none⟩]⟩, ⟨['a', 'n', 'i'], ['I'], [⟨['a', 'n', 'i'], ['I'], none⟩]⟩, ⟨['o', 'd'], ['m', 'o', 'r', 'e'], [⟨['o', 'd'], ['m', 'o', 'r', 'e'], none⟩]⟩, ⟨['ʁ', 'e', 'g', 'a'], ['m', 'o', 'm', 'e', 'n', 't'], [⟨['ʁ', 'e', 'g', 'a'], ['m', 'o', 'm', 'e', 'n', 't'], none⟩]⟩, ⟨['b', 'o', 'x', 'a'], ['c', 'r', 'y', '.', 'p', 'r', 's', '.', 'f', '.', 's', 'g'], [⟨['b', 'o', 'x', 'a'], ['c', 'r', 'y', '.', 'p', 'r', 's', '.', 'f', '.', 's', 'g'], none⟩]⟩, ⟨['k', 'a', 'n'], ['h', 'e', 'r', 'e'], [⟨['k', 'a', 'n'], ['h', 'e', 'r', 'e'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -264,6 +276,8 @@ def gs2025_18b : Datum :=
     language := "braz1246"
     primaryText := "o clima ameno de 'eu te ajudo você me ajuda e está tudo bem'"
     glossedTokens := [("o", "def.m.sg"), ("clima", "climate"), ("ameno", "pleasant"), ("de", "of"), ("eu", "I"), ("te", "you"), ("ajudo", "help.prs.1sg"), ("você", "you"), ("me", "me"), ("ajuda", "help.prs.2sg"), ("e", "and"), ("está", "cop.prs.3sg"), ("tudo", "all"), ("bem", "good")]
+    glossedWords := [⟨['o'], ['d', 'e', 'f', '.', 'm', '.', 's', 'g'], [⟨['o'], ['d', 'e', 'f', '.', 'm', '.', 's', 'g'], none⟩]⟩, ⟨['c', 'l', 'i', 'm', 'a'], ['c', 'l', 'i', 'm', 'a', 't', 'e'], [⟨['c', 'l', 'i', 'm', 'a'], ['c', 'l', 'i', 'm', 'a', 't', 'e'], none⟩]⟩, ⟨['a', 'm', 'e', 'n', 'o'], ['p', 'l', 'e', 'a', 's', 'a', 'n', 't'], [⟨['a', 'm', 'e', 'n', 'o'], ['p', 'l', 'e', 'a', 's', 'a', 'n', 't'], none⟩]⟩, ⟨['d', 'e'], ['o', 'f'], [⟨['d', 'e'], ['o', 'f'], none⟩]⟩, ⟨['e', 'u'], ['I'], [⟨['e', 'u'], ['I'], none⟩]⟩, ⟨['t', 'e'], ['y', 'o', 'u'], [⟨['t', 'e'], ['y', 'o', 'u'], none⟩]⟩, ⟨['a', 'j', 'u', 'd', 'o'], ['h', 'e', 'l', 'p', '.', 'p', 'r', 's', '.', '1', 's', 'g'], [⟨['a', 'j', 'u', 'd', 'o'], ['h', 'e', 'l', 'p', '.', 'p', 'r', 's', '.', '1', 's', 'g'], none⟩]⟩, ⟨['v', 'o', 'c', 'ê'], ['y', 'o', 'u'], [⟨['v', 'o', 'c', 'ê'], ['y', 'o', 'u'], none⟩]⟩, ⟨['m', 'e'], ['m', 'e'], [⟨['m', 'e'], ['m', 'e'], none⟩]⟩, ⟨['a', 'j', 'u', 'd', 'a'], ['h', 'e', 'l', 'p', '.', 'p', 'r', 's', '.', '2', 's', 'g'], [⟨['a', 'j', 'u', 'd', 'a'], ['h', 'e', 'l', 'p', '.', 'p', 'r', 's', '.', '2', 's', 'g'], none⟩]⟩, ⟨['e'], ['a', 'n', 'd'], [⟨['e'], ['a', 'n', 'd'], none⟩]⟩, ⟨['e', 's', 't', 'á'], ['c', 'o', 'p', '.', 'p', 'r', 's', '.', '3', 's', 'g'], [⟨['e', 's', 't', 'á'], ['c', 'o', 'p', '.', 'p', 'r', 's', '.', '3', 's', 'g'], none⟩]⟩, ⟨['t', 'u', 'd', 'o'], ['a', 'l', 'l'], [⟨['t', 'u', 'd', 'o'], ['a', 'l', 'l'], none⟩]⟩, ⟨['b', 'e', 'm'], ['g', 'o', 'o', 'd'], [⟨['b', 'e', 'm'], ['g', 'o', 'o', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     alternatives := []

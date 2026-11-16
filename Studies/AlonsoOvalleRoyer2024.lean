@@ -429,7 +429,7 @@ def clauseOf (row : Datum) : List GlossedWord :=
 
 /-- A word bears a reflex on the verb when its morphs include the reflex's marker. -/
 def Bears (w : GlossedWord) : Reflex Mayan.Host → Prop
-  | .morpheme .verb ms => ∀ m ∈ ms, m.form.toList ∈ w.morphs.map (·.1)
+  | .morpheme .verb ms => ∀ m ∈ ms, m.form.toList ∈ w.morphs
   | _ => False
 
 instance (w : GlossedWord) : DecidablePred (Bears w) := fun x ↦ by
