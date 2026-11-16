@@ -2,7 +2,6 @@ module
 
 public import Mathlib.LinearAlgebra.AffineSpace.AffineMap
 public import Mathlib.Algebra.Order.Ring.Defs
-public import Linglib.Semantics.MeasurementTheory.Difference
 public import Linglib.Semantics.MeasurementTheory.Extensive
 
 import Mathlib.Tactic.Linarith
@@ -199,22 +198,8 @@ quantities, so ratios are meaningful in extensive measurement. -/
 theorem factorEquative_comp_orderAddMonoidHom_iff {M : Type*} [AddCommGroup M] [LinearOrder M]
     [IsOrderedAddMonoid M] (f g : M →+o ℝ) (hf : Injective f) (hg : Injective g) (d : E → M)
     (a b : E) (n : ℝ) : FactorEquative (g ∘ d) a b n ↔ FactorEquative (f ∘ d) a b n := by
-  obtain ⟨u, ⟨c, hc, hu⟩, hgu⟩ := exists_mem_similarity_comp_eq f g hf hg
+  obtain ⟨u, ⟨c, hc, hu⟩, hgu⟩ := exists_mem_similarity_eq_comp f g hf hg
   rw [hgu]
   exact (invariant_similarity_factorEquative a b n u.toOrderEmbedding ⟨c, hc, hu⟩ (f ∘ d)).to_iff
-
-/-- Under two measures of the same differences a differential is carried to the differential
-rescaled by a positive unit, so differentials are meaningful in difference measurement once the
-unit is fixed. -/
-theorem exists_differentialComparative_comp_iff_of_isDifferenceMeasure {V P : Type*}
-    [AddCommGroup V] [LinearOrder V] [IsOrderedAddMonoid V] [AddTorsor V P] {φ ψ : P → ℝ}
-    (hφ : IsDifferenceMeasure φ) (hψ : IsDifferenceMeasure ψ) :
-    ∃ c > 0, ∀ (d : E → P) a b (amount : ℝ),
-      DifferentialComparative (ψ ∘ d) a b (c * amount) ↔
-        DifferentialComparative (φ ∘ d) a b amount := by
-  obtain ⟨u, ⟨c₀, hc₀, b₀, hu⟩, rfl⟩ := exists_mem_positiveAffine_comp_eq hφ hψ
-  obtain ⟨c, hc, h⟩ := exists_differentialComparative_comp_iff (E := E) (u := u.toOrderEmbedding)
-    ⟨c₀, hc₀, b₀, hu⟩
-  exact ⟨c, hc, fun d a b amount ↦ h (φ ∘ d) a b amount⟩
 
 end Meaningful

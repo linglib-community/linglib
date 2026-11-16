@@ -1,9 +1,9 @@
 module
 
-public import Linglib.Semantics.Aggregation.Comparability
 public import Linglib.Semantics.Aggregation.Rules
 public import Linglib.Semantics.Degree.Measurement
 public import Linglib.Semantics.Degree.UniversalScale
+public import Linglib.Semantics.MeasurementTheory.Difference
 public import Linglib.Semantics.MeasurementTheory.Homogeneity
 
 /-!
@@ -149,15 +149,14 @@ theorem differential_cardinalFull {f : Ad → ℝ ↪o ℝ} (hf : f ∈ cardinal
 theorem factor_ratioFull (n : ℝ) : Invariant (ratioFull Ad ℝ) (factor x P y Q n) :=
   (invariant_similarity_factorEquative (x, P) (y, Q) n).uncurry
 
--- pp. 349–350: adjectives measured as the same additive quantities, such as height and width,
--- form a co-ratio scale, so factors across adjectives hold whichever unit measures them
+-- pp. 349–350: height and width share their minimum and are measured in an absolute way, so
+-- they form a co-ratio scale; here they are measures of the same additive quantities, and
+-- factors across them hold whichever unit is chosen
 theorem factor_iff_of_orderAddMonoidHom {M : Type*} [AddCommGroup M] [LinearOrder M]
     [IsOrderedAddMonoid M] (f g : M →+o ℝ) (hf : Injective f) (hg : Injective g)
     (d : X → Ad → M) (n : ℝ) :
-    factor x P y Q n (fun x P ↦ g (d x P)) ↔ factor x P y Q n fun x P ↦ f (d x P) := by
-  obtain ⟨u, hu, h⟩ := exists_mem_ratioFull_smul_eq f g hf hg d
-  rw [h]
-  exact (factor_ratioFull x y P Q n u hu _).to_iff
+    factor x P y Q n (fun x P ↦ g (d x P)) ↔ factor x P y Q n fun x P ↦ f (d x P) :=
+  factorEquative_comp_orderAddMonoidHom_iff f g hf hg (uncurry d) (x, P) (y, Q) n
 
 -- p. 342, note 7: under two measures of the same differences, the differences keep their ratios
 theorem sub_mul_sub_eq_of_isDifferenceMeasure {V D : Type*} [AddCommGroup V] [LinearOrder V]

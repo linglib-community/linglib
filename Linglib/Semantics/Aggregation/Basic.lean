@@ -170,6 +170,13 @@ theorem cardinalFull_subset_ordinalLevel : cardinalFull ι K ⊆ ordinalLevel ι
 
 end Classes
 
+/-- A function of profiles that depends only on each individual's ordering of the objects is
+invariant under ordinal non-comparability. -/
+theorem invariant_ordinal_of_factorsThrough {β : Type*} [LE K] {a : Profile ι α K → β}
+    (h : FactorsThrough a fun v i ↦ (v · i) ⁻¹'o (· ≤ ·)) : Invariant (ordinal ι K) a :=
+  fun f _ v ↦ h (funext fun i ↦ funext₂ fun x y ↦
+    propext (show f i (v x i) ≤ f i (v y i) ↔ v x i ≤ v y i from (f i).map_rel_iff))
+
 /-! ### Conditions on rules -/
 
 section Conditions

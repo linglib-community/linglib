@@ -16,7 +16,7 @@ an ordered group, with no distinguished origin. A [measure](##MeasurementTheory.
 of them is a real-valued map under which one difference is at most another exactly when the measured
 differences are. When the differences are Archimedean [there is
 one](##MeasurementTheory.exists_isDifferenceMeasure), fixed by a unit and an origin. Two measures
-[differ by a positive affine map](##MeasurementTheory.exists_mem_positiveAffine_comp_eq), and [a
+[differ by a positive affine map](##MeasurementTheory.exists_mem_positiveAffine_eq_comp), and [a
 positive affine map carries a measure to a measure](##MeasurementTheory.IsDifferenceMeasure.comp),
 so the positive affine maps are the changes of scale of difference measurement. The measured
 differences themselves [are
@@ -25,9 +25,11 @@ not depend on the measure.
 
 ## Implementation notes
 
-The degrees are a torsor of an ordered additive group, where [krantz-1971] measure a set with a
-weak order on its pairs satisfying sign reversal, weak monotonicity, solvability and an Archimedean
-axiom.
+The degrees are a torsor of an ordered additive group, so every difference can be laid off from
+every degree, and the degrees are unbounded and distinct when their difference is zero.
+[krantz-1971] measure a set with a weak order on its pairs satisfying sign reversal, weak
+monotonicity, an Archimedean axiom, and a solvability axiom that copies a difference only within a
+larger one, which admits bounded structures.
 
 ## TODO
 
@@ -78,11 +80,15 @@ theorem toOrderAddMonoidHom_vsub (h : IsDifferenceMeasure φ) (a b : P) :
   h.sub_eq_sub (by simp)
 
 omit [IsOrderedAddMonoid V] in
+theorem toOrderAddMonoidHom_le_iff (h : IsDifferenceMeasure φ) {v w : V} :
+    h.toOrderAddMonoidHom v ≤ h.toOrderAddMonoidHom w ↔ v ≤ w :=
+  (h _ _ _ _).trans (by simp)
+
+omit [IsOrderedAddMonoid V] in
 theorem toOrderAddMonoidHom_injective (h : IsDifferenceMeasure φ) :
-    Injective h.toOrderAddMonoidHom := by
-  have key (v w : V) : h.toOrderAddMonoidHom v ≤ h.toOrderAddMonoidHom w ↔ v ≤ w :=
-    (h _ _ _ _).trans (by simp)
-  exact fun v w e ↦ le_antisymm ((key v w).1 e.le) ((key w v).1 e.ge)
+    Injective h.toOrderAddMonoidHom :=
+  fun _ _ e ↦ le_antisymm (h.toOrderAddMonoidHom_le_iff.1 e.le)
+    (h.toOrderAddMonoidHom_le_iff.1 e.ge)
 
 /-- Under two measures of the same differences the measured differences are proportional. -/
 theorem exists_pos_forall_sub_eq (hφ : IsDifferenceMeasure φ) (hψ : IsDifferenceMeasure ψ) :
@@ -107,7 +113,7 @@ end IsDifferenceMeasure
 
 /-- Two measures of the same differences differ by a positive affine map. -/
 -- [krantz-1971] Theorem 4.2, p. 151
-theorem exists_mem_positiveAffine_comp_eq {φ ψ : P → ℝ} (hφ : IsDifferenceMeasure φ)
+theorem exists_mem_positiveAffine_eq_comp {φ ψ : P → ℝ} (hφ : IsDifferenceMeasure φ)
     (hψ : IsDifferenceMeasure ψ) : ∃ u ∈ (positiveAffine : Set (ℝ ≃o ℝ)), ψ = u ∘ φ := by
   obtain ⟨c, hc, h⟩ := hφ.exists_pos_forall_sub_eq hψ
   let p := Classical.arbitrary P

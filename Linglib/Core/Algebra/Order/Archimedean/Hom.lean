@@ -2,37 +2,47 @@ module
 
 public import Mathlib.Algebra.Order.Archimedean.Basic
 public import Mathlib.Algebra.Order.Hom.Monoid
-public import Mathlib.Algebra.Order.Archimedean.Real.Basic
+public import Mathlib.Algebra.Order.Field.Basic
 
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 
 /-!
-# Uniqueness of an embedding of an ordered group into the reals
+# Uniqueness of an embedding of an ordered group into an Archimedean field
 
-An Archimedean ordered group embeds in the reals (`Archimedean.embedReal`). An embedding is
-[unique up to a positive factor](##OrderAddMonoidHom.exists_pos_forall_eq_mul): an element's image
-is fixed, relative to that of a positive element, by which rational multiples lie below it.
+An Archimedean ordered group embeds in the reals (`Archimedean.embedReal`). An embedding into an
+Archimedean ordered field is [unique up to a positive
+factor](##OrderAddMonoidHom.exists_pos_forall_eq_mul): an element's image is fixed, relative to
+that of a positive element, by which rational multiples lie below it.
+
+`[UPSTREAM]` candidate for `Mathlib/Algebra/Order/Archimedean/Hom.lean`, beside the uniqueness of
+ordered ring homomorphisms.
+
+## References
+
+* [krantz-1971]
 -/
 
 @[expose] public section
 
 open Function
 
-variable {M : Type*} [AddCommGroup M] [LinearOrder M]
+variable {M K : Type*} [AddCommGroup M] [LinearOrder M] [Field K] [LinearOrder K]
+  [IsStrictOrderedRing K]
 
-private theorem ratCast_lt_div_iff {h : M →+o ℝ} (hh : StrictMono h) {a : M} (ha : 0 < h a)
-    (x : M) (q : ℚ) : (q : ℝ) < h x / h a ↔ q.num • a < (q.den : ℤ) • x := by
-  have hden : (0 : ℝ) < q.den := by exact_mod_cast q.den_pos
+private theorem ratCast_lt_div_iff {h : M →+o K} (hh : StrictMono h) {a : M} (ha : 0 < h a)
+    (x : M) (q : ℚ) : (q : K) < h x / h a ↔ q.num • a < (q.den : ℤ) • x := by
+  have hden : (0 : K) < q.den := by exact_mod_cast q.den_pos
   rw [← hh.lt_iff_lt, map_zsmul, map_zsmul, zsmul_eq_mul, zsmul_eq_mul, Int.cast_natCast,
     lt_div_iff₀ ha, Rat.cast_def, div_mul_eq_mul_div, div_lt_iff₀ hden, mul_comm (h x)]
 
-variable [IsOrderedAddMonoid M]
+variable [IsOrderedAddMonoid M] [Archimedean K]
 
-/-- Two injective ordered-group homomorphisms of an ordered group into the reals differ by a
-positive factor. -/
-theorem OrderAddMonoidHom.exists_pos_forall_eq_mul (f g : M →+o ℝ) (hf : Injective f)
-    (hg : Injective g) : ∃ c : ℝ, 0 < c ∧ ∀ x, g x = c * f x := by
+/-- Two injective ordered-group homomorphisms of an ordered group into an Archimedean ordered
+field differ by a positive factor. -/
+-- [krantz-1971] Theorem 2.5, p. 53
+theorem OrderAddMonoidHom.exists_pos_forall_eq_mul (f g : M →+o K) (hf : Injective f)
+    (hg : Injective g) : ∃ c : K, 0 < c ∧ ∀ x, g x = c * f x := by
   rcases subsingleton_or_nontrivial M with _ | _
   · exact ⟨1, one_pos, fun x ↦ by rw [Subsingleton.elim x 0, map_zero, map_zero, mul_zero]⟩
   obtain ⟨a, ha⟩ := exists_zero_lt (α := M)
