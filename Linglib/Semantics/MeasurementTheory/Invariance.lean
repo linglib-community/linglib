@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Algebra.Group.Action.Pi
 public import Mathlib.Algebra.Order.Ring.Defs
-public import Linglib.Core.Algebra.Order.Group.Action.End
+public import Mathlib.Algebra.Order.Group.Action.End
 
 /-!
 # Invariance under changes of scale

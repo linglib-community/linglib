@@ -162,7 +162,7 @@ theorem factor_cardinalFull_iff {n : ℝ} (hne : (x, P) ≠ (y, Q)) :
         linarith, fun _ ↦ rfl⟩
     have h₂ := (h _ ⟨e, ⟨1, one_pos, 1, he⟩, rfl⟩ v).mpr h₁
     simp only [factor, FactorEquative, uncurry_apply_pair, Pi.smul_apply, Pi.smul_apply',
-      const_apply, OrderEmbedding.smul_def, he, smul_eq_mul, v, and_self, ite_true, hyQ,
+      const_apply, RelEmbedding.smul_def, he, smul_eq_mul, v, and_self, ite_true, hyQ,
       ite_false] at h₂
     linarith
   · rintro rfl _ ⟨u, ⟨a, ha, b, hu⟩, rfl⟩ v
@@ -172,7 +172,7 @@ theorem factor_cardinalFull_iff {n : ℝ} (hne : (x, P) ≠ (y, Q)) :
 theorem differenceComparative_cardinalUnit :
     Invariant (cardinalUnit Ad ℝ) (differenceComparative x y P z w Q) := by
   rintro f ⟨a, ha, b, hf⟩ v
-  simp only [differenceComparative, Pi.smul_apply, Pi.smul_apply', OrderEmbedding.smul_def, hf]
+  simp only [differenceComparative, Pi.smul_apply, Pi.smul_apply', RelEmbedding.smul_def, hf]
   rw [show ∀ s t c : ℝ, a * s + c - (a * t + c) = a * (s - t) from fun _ _ _ ↦ by ring,
     show ∀ s t c : ℝ, a * s + c - (a * t + c) = a * (s - t) from fun _ _ _ ↦ by ring,
     mul_lt_mul_iff_of_pos_left ha]

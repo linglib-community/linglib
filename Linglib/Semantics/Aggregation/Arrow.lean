@@ -82,12 +82,12 @@ theorem iff_of_pattern (hO : Invariant (ordinal ι K) a) (hI : Independent a)
         (abs_pos.2 (sub_ne_zero.2 (Ne.symm h)))
   let f : Profile ι α K → ι → K ↪o K := fun u i ↦ OrderEmbedding.ofStrictMono _ (hmono u i)
   have hx : ∀ u : Profile ι α K, f u • u x = 0 := fun u ↦ funext fun i ↦ by
-    simp only [Pi.smul_apply', OrderEmbedding.smul_def, f, OrderEmbedding.coe_ofStrictMono]
+    simp only [Pi.smul_apply', RelEmbedding.smul_def, f, OrderEmbedding.coe_ofStrictMono]
     split_ifs <;> simp
   have hy : ∀ u : Profile ι α K, f u • u y =
       fun i ↦ if u x i < u y i then 1 else if u y i < u x i then -1 else 0 := fun u ↦
     funext fun i ↦ by
-      simp only [Pi.smul_apply', OrderEmbedding.smul_def, f, OrderEmbedding.coe_ofStrictMono]
+      simp only [Pi.smul_apply', RelEmbedding.smul_def, f, OrderEmbedding.coe_ofStrictMono]
       rcases lt_trichotomy (u x i) (u y i) with hlt | heq | hgt
       · rw [ite_eq_right hlt.ne, ite_eq_left hlt, abs_of_pos (sub_pos.2 hlt),
           div_self (sub_pos.2 hlt).ne']

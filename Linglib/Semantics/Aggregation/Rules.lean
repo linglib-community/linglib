@@ -73,7 +73,7 @@ theorem majority_paretoIndifferent : ParetoIndifferent (majority : Rule ι α K)
 theorem majority_ordinalInvariant : Invariant (ordinal ι K) (majority : Rule ι α K) :=
   invariant_ofRel fun f _ ↦ by
     funext p q
-    simp only [Order.Preimage, Pi.smul_apply', OrderEmbedding.smul_def, OrderEmbedding.le_iff_le]
+    simp only [Order.Preimage, Pi.smul_apply', RelEmbedding.smul_def, OrderEmbedding.le_iff_le]
 
 theorem majority_anonymous : Anonymous (majority : Rule ι α K) :=
   anonymous_ofRel fun σ ↦ funext₂ fun p q ↦ by
@@ -166,7 +166,7 @@ variable [LinearOrder K]
 theorem paretoRule_ordinalInvariant : Invariant (ordinal ι K) (paretoRule : Rule ι α K) :=
   invariant_ofRel fun f _ ↦ by
     funext p q
-    simp only [Order.Preimage, ge_iff_le, Pi.le_def, Pi.smul_apply', OrderEmbedding.smul_def,
+    simp only [Order.Preimage, ge_iff_le, Pi.le_def, Pi.smul_apply', RelEmbedding.smul_def,
       OrderEmbedding.le_iff_le]
 
 variable [Nontrivial ι] [Nontrivial K]
@@ -288,10 +288,10 @@ theorem not_ratioInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠ j
   have hf : f ∈ ratio ι K := mem_ratio.2 fun l ↦ ⟨if l = j then 2 else 1,
     by split_ifs <;> norm_num, fun t ↦ by simp only [f]; split_ifs <;> simp [he]⟩
   have hx : f • v x = Pi.single i (c j) := funext fun l ↦ by
-    simp only [Pi.smul_apply', OrderEmbedding.smul_def, v, f, ite_true, Pi.single_apply]
+    simp only [Pi.smul_apply', RelEmbedding.smul_def, v, f, ite_true, Pi.single_apply]
     split_ifs <;> simp_all
   have hy : f • v y = Pi.single j (2 * c i) := funext fun l ↦ by
-    simp only [Pi.smul_apply', OrderEmbedding.smul_def, v, f, hxy.symm, ite_false, ite_true,
+    simp only [Pi.smul_apply', RelEmbedding.smul_def, v, f, hxy.symm, ite_false, ite_true,
       Pi.single_apply]
     split_ifs <;> simp_all
   have := congrFun (congrFun (h _ hf v) x) y
@@ -459,7 +459,7 @@ theorem cobbDouglas_smul_of_nonneg {f : ι → ℝ ↪o ℝ} (hf : f ∈ ratio �
     (hv : ∀ x i, 0 ≤ v x i) : cobbDouglas c (f • v) = cobbDouglas c v := by
   choose s hs hf using mem_ratio.1 hf
   funext x y
-  simp only [cobbDouglas_apply, Pi.smul_apply, Pi.smul_apply', OrderEmbedding.smul_def, hf,
+  simp only [cobbDouglas_apply, Pi.smul_apply, Pi.smul_apply', RelEmbedding.smul_def, hf,
     Real.mul_rpow (hs _).le (hv _ _), prod_mul_distrib]
   exact propext (mul_le_mul_iff_of_pos_left (prod_pos fun i _ ↦ Real.rpow_pos_of_pos (hs i) _))
 
