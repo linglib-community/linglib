@@ -317,7 +317,7 @@ theorem not_isSUM_only [Nonempty W] {x y : E} (hxy : x ≠ y) :
 -- bought a Civic* does not Strawson-entail *sorry that Robin bought a car* (22c).
 theorem not_isSUM_regret :
     ¬ IsSUM (Desire.BestWorlds.regret (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ)
-      (fun _ ↦ {(· = 1)})) :=
+      (fun _ ↦ {{1}})) :=
   fun h ↦ Desire.BestWorlds.not_isStrawsonUE_regret h.isStrawsonUE
 
 end Table
