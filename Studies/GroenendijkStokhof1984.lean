@@ -321,14 +321,15 @@ theorem whichDeDicto_not_le :
 
 end Men
 
-/-! ### Information and answers -/
+/-! ### Information and answers
+
+The answers compatible with a set of indices, (14) of chapter IV, one set being closer to an
+answer than another, (30), and access to the true answer, (31), are `Setoid.compatible`,
+`Setoid.CloserToAnswer` and `Setoid.GivesAccess`. -/
 
 section Information
 
 variable {J K : Set W} {i : W}
-
-/-- The semantic answers to `Q` compatible with the information `J` (chapter IV, (14)). -/
-def compatible (Q : Setoid W) (J : Set W) : Set (Set W) := {X ∈ Q.classes | (X ∩ J).Nonempty}
 
 /-- The partition that `Q` makes on `J`, whose blocks are the traces on `J` of the compatible
 answers (chapter IV, (15)). -/
@@ -380,36 +381,6 @@ theorem offersTrueAnswer_iff : OffersTrueAnswer Q J i ↔ J ⊆ Q.cell i := by
 theorem offersTrueAnswer_iff_of_mem (hi : i ∈ J) : OffersTrueAnswer Q J i ↔ OffersAnswer Q J := by
   rw [OffersTrueAnswer, Set.insert_eq_of_mem hi]
 
-/-- `J` is closer to an answer to `Q` than `K` when it lies within `K` and fewer semantic answers
-are compatible with it (chapter IV, (30)). -/
-def CloserToAnswer (Q : Setoid W) (J K : Set W) : Prop := J ⊆ K ∧ compatible Q J ⊂ compatible Q K
-
-/-- `J` gives access to the true answer at `i` when the cell of `i` is compatible with it
-(chapter IV, (31)). -/
-def GivesAccess (Q : Setoid W) (J : Set W) (i : W) : Prop := Q.cell i ∈ compatible Q J
-
-theorem givesAccess_iff : GivesAccess Q J i ↔ (Q.cell i ∩ J).Nonempty :=
-  and_iff_right (Q.mem_classes i)
-
-theorem closerToAnswer_iff :
-    CloserToAnswer Q J K ↔ (∀ v ∈ J, v ∈ K) ∧
-      (∀ w, (Q.cell w ∩ J).Nonempty → (Q.cell w ∩ K).Nonempty) ∧
-      ∃ w, (Q.cell w ∩ K).Nonempty ∧ ¬ (Q.cell w ∩ J).Nonempty := by
-  refine and_congr_right fun _ ↦ ?_
-  rw [Set.ssubset_iff_subset_ne]
-  constructor
-  · rintro ⟨hsub, hne⟩
-    refine ⟨fun w hw ↦ (hsub ⟨Q.mem_classes w, hw⟩).2, ?_⟩
-    by_contra h
-    refine hne (hsub.antisymm ?_)
-    rintro X ⟨⟨w, rfl⟩, hX⟩
-    exact ⟨Q.mem_classes w, by_contra fun hn ↦ h ⟨w, hX, hn⟩⟩
-  · rintro ⟨hmono, w, hK, hJ⟩
-    refine ⟨?_, fun heq ↦ hJ ?_⟩
-    · rintro X ⟨⟨u, rfl⟩, hX⟩
-      exact ⟨Q.mem_classes u, hmono u hX⟩
-    · exact (show Q.cell w ∈ compatible Q J from heq ▸ ⟨Q.mem_classes w, hK⟩).2
-
 instance [Fintype W] {s : Set W} [DecidablePred (· ∈ s)] : Decidable s.Nonempty :=
   decidable_of_iff (∃ v, v ∈ s) Iff.rfl
 
@@ -421,7 +392,8 @@ instance [Fintype W] [DecidableRel Q] [DecidablePred (· ∈ J)] : Decidable (Of
 
 instance [Fintype W] [DecidableRel Q] [DecidablePred (· ∈ J)] [DecidablePred (· ∈ K)] :
     Decidable (CloserToAnswer Q J K) :=
-  decidable_of_iff _ closerToAnswer_iff.symm
+  decidable_of_iff ((∀ v, v ∈ J → v ∈ K) ∧
+    ∃ w, (Q.cell w ∩ K).Nonempty ∧ ¬ (Q.cell w ∩ J).Nonempty) closerToAnswer_iff.symm
 
 instance [Fintype W] [DecidableRel Q] [DecidablePred (· ∈ J)] : Decidable (GivesAccess Q J i) :=
   decidable_of_iff _ givesAccess_iff.symm

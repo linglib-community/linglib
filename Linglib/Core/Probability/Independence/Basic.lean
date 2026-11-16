@@ -14,8 +14,9 @@ public import Mathlib.Probability.Independence.Basic
 
 Lemmas on mathlib's `IndepSet` that mathlib does not state: symmetry and complements, the
 independence of null and sure events from every event, the product rule and the
-inclusion-exclusion law on real-valued masses, the conditional probability of one independent
-event given the other, and independence under a uniform measure as an equation between counts.
+inclusion-exclusion law on real-valued masses, independence as conditioning that leaves a
+probability unchanged, independence from a disjoint union, and independence under a uniform
+measure as an equation between counts.
 `[UPSTREAM]` candidates for `Mathlib/Probability/Independence/Basic.lean`.
 -/
 
@@ -70,6 +71,33 @@ theorem IndepSet.cond_apply (h : IndepSet s t μ) (hs : MeasurableSet s) (hs₀ 
 theorem IndepSet.cond_real_apply (h : IndepSet s t μ) (hs : MeasurableSet s) (hs₀ : μ s ≠ 0)
     (hs' : μ s ≠ ∞ := by finiteness) : μ[|s].real t = μ.real t :=
   congrArg ENNReal.toReal (h.cond_apply hs hs₀ hs')
+
+/-- Conditioning on an event of positive mass leaves the probability of another unchanged exactly
+when the two satisfy the product rule. -/
+theorem cond_apply_eq_iff_measure_inter_eq_mul (hs : MeasurableSet s) (hs₀ : μ s ≠ 0)
+    (hs' : μ s ≠ ∞ := by finiteness) : μ[t|s] = μ t ↔ μ (s ∩ t) = μ s * μ t := by
+  rw [ProbabilityTheory.cond_apply hs]
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · rw [← h, ← mul_assoc, ENNReal.mul_inv_cancel hs₀ hs', one_mul]
+  · rw [h, ← mul_assoc, ENNReal.inv_mul_cancel hs₀ hs', one_mul]
+
+/-- Two events are independent exactly when conditioning on the first, if it has positive mass,
+leaves the probability of the second unchanged. -/
+theorem indepSet_iff_cond_apply_eq [IsZeroOrProbabilityMeasure μ] (hs : MeasurableSet s)
+    (ht : MeasurableSet t) : IndepSet s t μ ↔ (μ s ≠ 0 → μ[t|s] = μ t) := by
+  rw [indepSet_iff_measure_inter_eq_mul hs ht μ]
+  refine ⟨fun h hs₀ ↦ (cond_apply_eq_iff_measure_inter_eq_mul hs hs₀).2 h, fun h ↦ ?_⟩
+  rcases eq_or_ne (μ s) 0 with hs₀ | hs₀
+  · rw [measure_mono_null Set.inter_subset_left hs₀, hs₀, zero_mul]
+  · exact (cond_apply_eq_iff_measure_inter_eq_mul hs hs₀).1 (h hs₀)
+
+/-- An event independent of each of two disjoint events is independent of their union. -/
+theorem IndepSet.union_right [IsZeroOrProbabilityMeasure μ] {u : Set Ω} (h₁ : IndepSet s t μ)
+    (h₂ : IndepSet s u μ) (hd : Disjoint t u) (hs : MeasurableSet s) (ht : MeasurableSet t)
+    (hu : MeasurableSet u) : IndepSet s (t ∪ u) μ := by
+  rw [indepSet_iff_measure_inter_eq_mul hs (ht.union hu) μ, Set.inter_union_distrib_left,
+    measure_union (hd.mono Set.inter_subset_right Set.inter_subset_right) (hs.inter hu),
+    measure_union hd hu, h₁.measure_inter_eq_mul, h₂.measure_inter_eq_mul, mul_add]
 
 /-- Under the uniform measure on a finite set `u`, two events are independent when the count of
 their intersection within `u`, scaled by the size of `u`, is the product of their counts. -/

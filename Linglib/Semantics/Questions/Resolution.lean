@@ -19,8 +19,7 @@ mention-all reading, and partially answers it when it decides some alternative
 notions form the quantifier × polarity square of answerhood: resolution (∃, positive),
 `PartiallyAnsweredBy` (∃, either), `CompletelyAnsweredBy` (∀, either). A question is a
 contextual subquestion of another when its complete answers, cut to the context, partially
-answer it (`IsSubquestionOf`), and a move is relevant to a set of questions when some
-alternative of it partially answers one of them (`IsRelevantTo`). A common ground, a filter of
+answer it (`IsSubquestionOf`). A common ground, a filter of
 propositions, decides a question when it entails a complete answer (`DecidedBy`), which on a
 principal filter is resolution.
 
@@ -211,25 +210,6 @@ def decidableCompletelyAnsweredByPolar {p σ : Set W}
     [Decidable (σ ⊆ p)] [Decidable (σ ⊆ pᶜ)] :
     Decidable (CompletelyAnsweredBy (polar p) σ) :=
   decidable_of_iff _ (completelyAnsweredBy_polar_iff hne hnu).symm
-
-/-! ### Relevance to a question set -/
-
-/-- A move with denotation `den` is **relevant** to the questions in
-`qs` when some alternative of `den` partially answers some question in
-`qs` — the assertion clause of [roberts-2012]'s Relevance, existentially
-weakened and extended to a question set (see `Discourse/QUD/Basic.lean`
-for the fidelity discussion). -/
-def IsRelevantTo (den : Question W) (qs : Set (Question W)) : Prop :=
-  ∃ a ∈ alt den, ∃ q ∈ qs, PartiallyAnsweredBy q a
-
-theorem isRelevantTo_polar_iff {p : Set W} {qs : Set (Question W)}
-    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    (polar p).IsRelevantTo qs ↔
-      (∃ q ∈ qs, PartiallyAnsweredBy q p) ∨
-        ∃ q ∈ qs, PartiallyAnsweredBy q pᶜ := by
-  simp only [IsRelevantTo, alt_polar_of_nontrivial hne hnu,
-    Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
-    exists_eq_left]
 
 /-! ### Decision by a common ground -/
 
