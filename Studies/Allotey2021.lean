@@ -50,7 +50,9 @@ tested. The paper tests reference only in the `ni`- and `akɛ`-clauses, so the
 comparison with Landau's calculus is stated for those two. The thesis adopts
 Landau's properties of PRO and does not apply his calculus of tense and agreement
 to Gã; `landau_predicts_control_iff` does, and finds that it fits only if the
-finite clause bears agreement, which the thesis argues Gã lacks.
+finite clause bears agreement, which the thesis argues Gã lacks. This is the
+difficulty [fujii-2012] raises for Japanese, another language whose verbs show
+tense and no agreement (`Studies/Fujii2012.lean`).
 
 ## References
 
@@ -59,6 +61,7 @@ finite clause bears agreement, which the thesis argues Gã lacks.
 * [campbell-2017]
 * [landau-2013]
 * [landau-2004]
+* [fujii-2012]
 * [szabolcsi-2009]
 * [hornstein-1999]
 * [satik-2019]
