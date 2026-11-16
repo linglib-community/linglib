@@ -95,16 +95,10 @@ theorem _root_.DemonstrativeDeterminer.vicinity_mono {dem₁ dem₂ : Demonstrat
 the vicinity of anything. -/
 theorem _root_.DemonstrativeDeterminer.vicinity_union_of_compl
     {dem₁ dem₂ : DemonstrativeDeterminer} (h : dem₂.deixis = dem₁.deixisᶜ) :
-    dem₁.vicinity c χ ∪ dem₂.vicinity c χ = {x | ∃ y, y ~[χ] x} := by
-  ext x
-  simp only [Set.mem_union, DemonstrativeDeterminer.mem_vicinity, h, Finset.mem_compl,
-    Set.mem_ofPred_eq]
-  constructor
-  · rintro (⟨y, -, hy⟩ | ⟨y, -, hy⟩) <;> exact ⟨y, hy⟩
-  · rintro ⟨y, hy⟩
-    by_cases hm : c.participants y ∈ dem₁.deixis
-    · exact .inl ⟨y, hm, hy⟩
-    · exact .inr ⟨y, hm, hy⟩
+    dem₁.vicinity c χ ∪ dem₂.vicinity c χ = χ.cod := by
+  rw [DemonstrativeDeterminer.vicinity, DemonstrativeDeterminer.vicinity, ← SetRel.image_union,
+    ← Set.preimage_union, h, Finset.coe_compl, Set.union_compl_self, Set.preimage_univ,
+    SetRel.image_univ_right]
 
 /-- A demonstrative determiner denotes the referent of the demonstrative description at discourse
 index `d` where the indexed referent `g d` lies in its vicinity, and nothing elsewhere. -/

@@ -47,8 +47,8 @@ cumulative but have identifiable atomic parts (`maa_cumulative_not_divisive`).
   content is the vicinity of a referent whose participants form one of its participant sets, as in
   Harbour's account of spatial deixis: *nâj* covers the sets containing the speaker and *nân* the
   others, so close.to.speaker is the vicinity of a referent including the speaker
-  (`mem_image_naj_iff`) and far.from.speaker the vicinity of one excluding the speaker
-  (`mem_image_nan_iff`). Where she treats far.from.speaker as the opposite of close.to.speaker, the
+  (`mem_vicinity_naj_iff`) and far.from.speaker the vicinity of one excluding the speaker
+  (`mem_vicinity_nan_iff`). Where she treats far.from.speaker as the opposite of close.to.speaker, the
   two vicinities may overlap here, as when the addressee stands by the speaker.
 * Moroney's Lakhota is Schwarz's tentative construal of *kiŋ* as a weak article only. The Lakhota
   fragment also gives *kiŋ* its anaphoric uses, so by the fragment Lakhota is generally marked.
@@ -235,13 +235,13 @@ variable {W E P T : Type} [PartialOrder E] (c : SpeechAct.Context W E P T) (χ :
 situation, and denotes the `P` in its deictic domain, `ιx[P(x) ∧ close.to.speaker(x)]` for
 *nâj*. -/
 noncomputable def demDenotation (R : (ℕ → E) → W → Set E) (g : ℕ → E) (s : W) : Part E :=
-  (Definite.unique R g s).bind fun _ ↦ iota (R g s ∩ χ.image (c.participants ⁻¹' d.deixis))
+  (Definite.unique R g s).bind fun _ ↦ iota (R g s ∩ d.vicinity c χ)
 
 /-- A demonstrative refers to the bare noun's referent when that referent lies in its deictic
 domain. -/
 theorem mem_demDenotation {R : ((ℕ → E) → W → Set E)} {g : ℕ → E} {s : W} {x : E} :
     x ∈ demDenotation c χ d R g s ↔
-      x ∈ Definite.unique R g s ∧ x ∈ χ.image (c.participants ⁻¹' d.deixis) := by
+      x ∈ Definite.unique R g s ∧ x ∈ d.vicinity c χ := by
   simp only [demDenotation, Part.mem_bind_iff, Definite.mem_unique,
     mem_iota]
   constructor
@@ -256,7 +256,7 @@ blocks no definite reading of the bare noun (p. 62). -/
 theorem demDenotation_eq_bare_iff (g : ℕ → E) (s : W) :
     (∀ R : (ℕ → E) → W → Set E, (Definite.unique R g s).Dom →
         demDenotation c χ d R g s = Definite.unique R g s) ↔
-      ∀ x, x ∈ χ.image (c.participants ⁻¹' d.deixis) := by
+      ∀ x, x ∈ d.vicinity c χ := by
   refine ⟨fun h x ↦ ?_, fun h R hR ↦ ?_⟩
   · have hb : x ∈ (Definite.unique fun (_ : ℕ → E) (_ : W) y ↦ y = x) g s :=
       Definite.mem_unique.2 ⟨rfl, fun _ ↦ id⟩
@@ -266,16 +266,16 @@ theorem demDenotation_eq_bare_iff (g : ℕ → E) (s : W) :
     exact Part.eq_some_iff.2 ((mem_demDenotation c χ d).2 ⟨hx, h x⟩)
 
 -- close.to.speaker, (147)
-theorem mem_image_naj_iff {x : E} :
-    x ∈ χ.image (c.participants ⁻¹' Shan.Determiners.naj.deixis) ↔
+theorem mem_vicinity_naj_iff {x : E} :
+    x ∈ Shan.Determiners.naj.vicinity c χ ↔
       ∃ y, c.agent ≤ y ∧ y ~[χ] x := by
-  simp [Shan.Determiners.naj, SetRel.image, Person.participants_mem_participantSets_first]
+  simp [Shan.Determiners.naj, Person.participants_mem_participantSets_first]
 
 -- far.from.speaker, (148)
-theorem mem_image_nan_iff {x : E} :
-    x ∈ χ.image (c.participants ⁻¹' Shan.Determiners.nan.deixis) ↔
+theorem mem_vicinity_nan_iff {x : E} :
+    x ∈ Shan.Determiners.nan.vicinity c χ ↔
       ∃ y, ¬ c.agent ≤ y ∧ y ~[χ] x := by
-  simp [Shan.Determiners.nan, SetRel.image, Person.participants_mem_participantSets_first]
+  simp [Shan.Determiners.nan, Person.participants_mem_participantSets_first]
 
 end Demonstrative
 
