@@ -51,8 +51,8 @@ inductive Categorizer where
 
 /-- A categorizer whose alloseme is zero, which is pruned before interpretation. -/
 def Categorizer.IsZero : Categorizer → Prop
-  | .v a => a = .zero
-  | .n a => a = .zero
+  | .v a => a = 0
+  | .n a => a = 0
 
 instance : DecidablePred Categorizer.IsZero
   | .v _ => inferInstanceAs (Decidable (_ = _))
@@ -81,14 +81,14 @@ inductive Item : Ty Base → Type
   /-- The content alloseme of n. -/
   | content : Item (.evt ⇒ .et)
 
-/-- The item of an alloseme of n; the zero alloseme and those that attach to roots have none. -/
+/-- The item of an alloseme of n; the zero alloseme has none. -/
 def Nominalizer.Alloseme.items : Nominalizer.Alloseme → List (Σ a, Item a)
   | .simpleEvent => [⟨_, .simpleEvent⟩]
   | .state => [⟨_, .state⟩]
   | .entity => [⟨_, .entity⟩]
   | .result => [⟨_, .result⟩]
   | .content => [⟨_, .content⟩]
-  | _ => []
+  | 0 => []
 
 /-- A model for nominalizations: eventualities are entities, some of them states and some
 activities; `theme x e` says that `x` is the theme of `e`, `result x e` that `x` is the result
