@@ -57,7 +57,8 @@ theorem syntacticCon_iff {u v : FreeMonoid α} :
 theorem syntacticCon_iff_leftQuotient {u v : FreeMonoid α} :
     L.syntacticCon u v ↔
       ∀ x, L.leftQuotient (x ++ u.toList) = L.leftQuotient (x ++ v.toList) :=
-  syntacticCon_iff.trans <| forall_congr' fun _ ↦ Set.ext_iff.symm
+  syntacticCon_iff.trans <| forall_congr' fun _ ↦
+    (Set.ext_iff (a := L.leftQuotient _) (b := L.leftQuotient _)).symm
 
 /-- The *syntactic monoid* of `L` is the quotient of `FreeMonoid α` by the syntactic congruence. -/
 abbrev SyntacticMonoid (L : Language α) := (syntacticCon L).Quotient

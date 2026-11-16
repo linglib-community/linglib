@@ -109,8 +109,9 @@ theorem exists_snoc {j : ℕ} (h : L.MonadicMatch v w)
   by_cases ha : a ∈ Set.range v
   · obtain ⟨i, rfl⟩ := ha
     refine ⟨w i, h.snoc (fun _ => h.eq_iff _ _) (h.unaryType_eq i), fun S => ?_⟩
-    rw [sdiff_range_snoc, sdiff_range_snoc, Set.sdiff_singleton_eq_self fun hx => hx.2 ⟨i, rfl⟩,
-      Set.sdiff_singleton_eq_self fun hx => hx.2 ⟨i, rfl⟩]
+    rw [sdiff_range_snoc, sdiff_range_snoc,
+      Set.sdiff_singleton_eq_self (s := L.unaryType ⁻¹' {S} \ Set.range v) fun hx => hx.2 ⟨i, rfl⟩,
+      Set.sdiff_singleton_eq_self (s := L.unaryType ⁻¹' {S} \ Set.range w) fun hx => hx.2 ⟨i, rfl⟩]
     exact min_eq_of_succ (hc S)
   · have haf : a ∈ L.unaryType ⁻¹' {L.unaryType a} \ Set.range v := ⟨rfl, ha⟩
     obtain ⟨b, hbf⟩ : (L.unaryType ⁻¹' {L.unaryType a} \ Set.range w).Nonempty := by
@@ -129,8 +130,10 @@ theorem exists_snoc {j : ℕ} (h : L.MonadicMatch v w)
       rw [← Set.encard_sdiff_singleton_add_one haf,
         ← Set.encard_sdiff_singleton_add_one hbf] at this
       exact min_eq_of_succ_add_one this
-    · rw [Set.sdiff_singleton_eq_self fun hx => hS (hx.1 : _ = S).symm,
-        Set.sdiff_singleton_eq_self fun hx => hS ((hx.1 : _ = S).symm.trans hb)]
+    · rw [Set.sdiff_singleton_eq_self (s := L.unaryType ⁻¹' {S} \ Set.range v) fun hx =>
+          hS (hx.1 : _ = S).symm,
+        Set.sdiff_singleton_eq_self (s := L.unaryType ⁻¹' {S} \ Set.range w) fun hx =>
+          hS ((hx.1 : _ = S).symm.trans hb)]
       exact min_eq_of_succ (hc S)
 
 variable [L.IsMonadic]

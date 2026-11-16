@@ -102,8 +102,9 @@ not. -/
 theorem not_isLowerSet_incl {f g : α → β} {a b : α} (hab : f a = g b) (hb : f b = g b)
     (ha : f a ≠ g a) : ¬ IsLowerSet (incl f g) := by
   intro h
-  have hpair : {a, b} ∈ incl f g := fun x hx ↦ ⟨b, .inr rfl, by rcases hx with rfl | rfl <;> simpa⟩
-  obtain ⟨w, rfl, hax⟩ := h (Set.singleton_subset_iff.2 (.inl rfl)) hpair a rfl
+  have hpair : {a, b} ∈ incl f g := fun x hx ↦
+    ⟨b, Set.mem_insert_of_mem _ rfl, by rcases hx with rfl | rfl <;> simpa⟩
+  obtain ⟨w, rfl, hax⟩ := h (Set.singleton_subset_iff.2 (Set.mem_insert a _)) hpair a rfl
   exact ha hax
 
 /-! ### The first-order atoms -/
