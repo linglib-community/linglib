@@ -99,40 +99,44 @@ def bauen : Verb :=
 
 /-! ### Verbs of Benz's resultatives and nominalizations -/
 
-/-- *hämmern* 'hammer' is an activity. -/
+/-- *hämmern* 'hammer' is a transitive verb. -/
 def haemmern : Verb :=
   { Verb.ofStem (weak "hämmern") with
-    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .activity, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
-/-- *malen* 'paint' is an activity. -/
+/-- *malen* 'paint' is a transitive verb. -/
 def malen : Verb :=
   { Verb.ofStem (weak "malen") with
-    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .activity, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
-/-- *bemalen* 'paint over' is an accomplishment formed on *malen* with the inseparable *be-*. -/
+/-- *bemalen* 'paint over' is formed on *malen* with the inseparable *be-*, and its object
+undergoes a change of state. -/
 def bemalen : Verb :=
   { Verb.ofStem (malen.stem.inseparable "be") with
-    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .accomplishment, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np [none, some accomplishmentObjectProfile],
+    objects := [.acc] }
 
-/-- *küssen* 'kiss' is an activity. -/
+/-- *küssen* 'kiss' is a transitive verb. -/
 def kuessen : Verb :=
   { Verb.ofStem (weak "küssen") with
-    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .activity, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
-/-- *führen* 'lead' is an activity. -/
+/-- *führen* 'lead' is a transitive verb. -/
 def fuehren : Verb :=
   { Verb.ofStem (weak "führen") with
-    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .activity, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
-/-- *einführen* 'introduce' is an accomplishment formed on *führen* with the separable *ein-*. -/
+/-- *einführen* 'introduce' is formed on *führen* with the separable *ein-*, and its object
+undergoes a change of state. -/
 def einfuehren : Verb :=
   { Verb.ofStem (fuehren.stem.separable "ein") with
-    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .accomplishment, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np [none, some accomplishmentObjectProfile],
+    objects := [.acc] }
 
-/-- *rauben* 'rob' is an activity. -/
+/-- *rauben* 'rob' is a transitive verb. -/
 def rauben : Verb :=
   { Verb.ofStem (weak "rauben") with
-    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .activity, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *verkaufen* 'sell' is formed on *kaufen* with the inseparable *ver-*. -/
 def verkaufen : Verb :=
@@ -145,27 +149,26 @@ def rennen : Verb :=
   { Verb.ofStem (strong "rennen" "rennt" "rannte" "gerannt") with
     perfectAuxiliaries := {.be},
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
-      vendlerClass := some .activity,
     direction := some .place }
 
-/-- *brechen* 'break' is an achievement. -/
+/-- *brechen* 'break' is a transitive verb. -/
 def brechen : Verb :=
   { Verb.ofStem (strong "brechen" "bricht" "brach" "gebrochen") with
-    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .achievement, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *zerbrechen* 'break' is a lexical causative formed on *brechen* with the inseparable *zer-*. -/
 def zerbrechen : Verb :=
   { Verb.ofStem (brechen.stem.inseparable "zer") with
     valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
-/-- *frieren* 'freeze' is an unaccusative achievement, *der See ist gefroren* 'the lake has frozen',
-and an impersonal verb, *es hat in der Nacht gefroren* 'there was a frost in the night'
-([durrell-2011] §12.3.2c). -/
+/-- *frieren* 'freeze' expresses a change of state its subject undergoes, *der See ist gefroren*
+'the lake has frozen', and is also an impersonal verb, *es hat in der Nacht gefroren* 'there was
+a frost in the night' ([durrell-2011] §12.3.2c). -/
 def frieren : Verb :=
   { Verb.ofStem (strong "frieren" "friert" "fror" "gefroren") with
     voiceType := some .nonThematic, perfectAuxiliaries := {.be, .have},
-    valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.impersonal, [])],
-    vendlerClass := some .achievement }
+    valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.impersonal, [])]
+      [some {.changeOfState, .causallyAffected}] }
 
 /-- *schießen* 'shoot' is a transitive verb. -/
 def schiessen : Verb :=
@@ -176,15 +179,17 @@ def schiessen : Verb :=
 def schaemen : Verb :=
   { Verb.ofStem (weak "schämen") with valency := .ofFrame ArgumentFrame.intransitive }
 
-/-- *beobachten* 'observe' is an accomplishment with the inseparable *be-*. -/
+/-- *beobachten* 'observe' is formed with the inseparable *be-*. -/
 def beobachten : Verb :=
   { Verb.ofStem ((weak "obachten").inseparable "be") with
-    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .accomplishment, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np,
+    objects := [.acc] }
 
-/-- *verbinden* 'connect' is an accomplishment formed on *binden* with the inseparable *ver-*. -/
+/-- *verbinden* 'connect' is formed on *binden* with the inseparable *ver-*. -/
 def verbinden : Verb :=
   { Verb.ofStem ((strong "binden" "bindet" "band" "gebunden").inseparable "ver") with
-    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .accomplishment, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np,
+    objects := [.acc] }
 
 /-! ### Attitude verbs -/
 
@@ -315,12 +320,14 @@ def zurVerantwortungZiehen : Verb :=
 *dass*-clause. -/
 def beenden : Verb :=
   { Verb.ofStem ((weak "enden").inseparable "be") with
-    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .accomplishment, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np,
+    objects := [.acc] }
 
 /-- *streichen* 'cancel' takes a noun phrase and no *dass*-clause. -/
 def streichen : Verb :=
   { Verb.ofStem (strong "streichen" "streicht" "strich" "gestrichen") with
-    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .accomplishment, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np,
+    objects := [.acc] }
 
 /-- *übereilen* 'rush' is formed on *eilen* with the inseparable *über-*, and takes a noun phrase
 and no *dass*-clause. -/
@@ -332,7 +339,8 @@ def uebereilen : Verb :=
 phrase and no *dass*-clause. -/
 def entwickeln : Verb :=
   { Verb.ofStem ((weak "wickeln").inseparable "ent") with
-    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .accomplishment, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np,
+    objects := [.acc] }
 
 /-- *veranlassen* 'induce' is a weak verb formed with *ver-* on the noun *Anlass* 'occasion', and
 takes a noun phrase or a *dass*-clause. -/
@@ -387,7 +395,6 @@ def laufen : Verb :=
   { Verb.ofStem (strong "laufen" "läuft" "lief" "gelaufen") with
     perfectAuxiliaries := {.be},
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
-      vendlerClass := some .activity,
     direction := some .place }
 
 /-- *ankommen* 'arrive' is formed on *kommen* with the separable *an-*, a verb of motion to a goal:
@@ -395,7 +402,7 @@ def laufen : Verb :=
 def ankommen : Verb :=
   { Verb.ofStem ((strong "kommen" "kommt" "kam" "gekommen").separable "an") with
     perfectAuxiliaries := {.be},
-    valency := .ofFrame ArgumentFrame.intransitive, vendlerClass := some .achievement,
+    valency := .ofFrame ArgumentFrame.intransitive,
     direction := some .goal }
 
 /-- *tanzen* 'dance' names the activity as such, *Ich habe als junger Mann viel getanzt*, and
@@ -405,21 +412,19 @@ def tanzen : Verb :=
   { Verb.ofStem (weak "tanzen") with
     perfectAuxiliaries := {.be, .have},
     valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP]
-      [some activitySubjectProfile, none],
-    vendlerClass := some .activity}
+      [some activitySubjectProfile, none]}
 
 /-- *arbeiten* 'work' denotes a continuous action, *Ich habe gestern lange gearbeitet*. -/
 def arbeiten : Verb :=
   { Verb.ofStem (weak "arbeiten") with
     perfectAuxiliaries := {.have},
-    valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile],
-      vendlerClass := some .activity }
+    valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile] }
 
 /-- *bleiben* 'stay, remain' denotes the continuation of a state, *Wir sind in Dessau geblieben*. -/
 def bleiben : Verb :=
   { Verb.ofStem (strong "bleiben" "bleibt" "blieb" "geblieben") with
     perfectAuxiliaries := {.be},
-    valency := .ofFrame ArgumentFrame.intransitive, vendlerClass := some .state,
+    valency := .ofFrame ArgumentFrame.intransitive,
     phasal := some .continuation }
 
 /-- *liegen* 'lie' denotes a state, *ich habe gelegen* in standard German in Germany, where South
@@ -427,7 +432,7 @@ German commonly has *ich bin gelegen*. -/
 def liegen : Verb :=
   { Verb.ofStem (strong "liegen" "liegt" "lag" "gelegen") with
     perfectAuxiliaries := {.have},
-    valency := .ofFrame ArgumentFrame.intransitive, vendlerClass := some .state }
+    valency := .ofFrame ArgumentFrame.intransitive }
 
 /-- `allVerbs` lists the entries. -/
 def allVerbs : List Verb :=

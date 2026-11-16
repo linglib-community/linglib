@@ -28,7 +28,7 @@ the main clause begins. The formulas [fit the paper's judgments of *while*, *as 
   `Semantics/Tense/RunTimes.lean`, which a state closes under subintervals.
 * The thesis's "non-durative" (p. 25) is the achievement, with the "fast accomplishment" counted
   among achievements here. Its "durative" is `Durative`, a state or an activity, narrower than
-  `VendlerClass.duration`, which an accomplishment shares.
+  `AspectualClass.duration`, which an accomplishment shares.
 * Intervals are closed, so *until* has the final point of (12) and not the alternative of a final
   bound (p. 123), and *A until B* reduces to $\mathrm{tr}(B)$ falling within $J$.
 * The speakers' variants are left out: *before* with $\mathrm{tr}(A) < \mathrm{tr}(B)$ for an
@@ -51,7 +51,7 @@ open Aspect Tense NonemptyInterval
 /-! ### Clauses and reference points -/
 
 /-- A durative is a state or an activity (p. 25). -/
-def Durative (c : VendlerClass) : Prop := c = .state ∨ c = .activity
+def Durative (c : AspectualClass) : Prop := c = .state ∨ c = .activity
 
 instance : DecidablePred Durative := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
@@ -59,7 +59,7 @@ instance : DecidablePred Durative := fun _ ↦ inferInstanceAs (Decidable (_ ∨
 which only an achievement's are moments (pp. 25–26), and whether it is in the perfect. -/
 structure Clause (T : Type*) [LE T] where
   /-- The situation type of the clause. -/
-  vendler : VendlerClass
+  vendler : AspectualClass
   /-- The intervals the clause specifies. -/
   intervals : Set (NonemptyInterval T)
   /-- An interval of the clause is a moment exactly when its class takes no time. -/
@@ -89,53 +89,53 @@ def Context.Outside (ctx : Context T) (s t : T) : Prop := ctx.now < s ∨ t < ct
 
 /-- The reference point `tr` (38) of an interval is its final point if an accomplishment defines
 it, and otherwise its initial point. -/
-def tr : VendlerClass → NonemptyInterval T → T
+def tr : AspectualClass → NonemptyInterval T → T
   | .accomplishment, i => i.snd
   | _, i => i.fst
 
-variable {a b c : VendlerClass} {i J K L : NonemptyInterval T}
+variable {a b c : AspectualClass} {i J K L : NonemptyInterval T}
 
 @[simp] theorem tr_accomplishment : tr .accomplishment i = i.snd := rfl
 
 theorem tr_of_ne (h : c ≠ .accomplishment) : tr c i = i.fst := by
   cases c <;> first | rfl | exact absurd rfl h
 
-theorem fst_le_tr (c : VendlerClass) (i : NonemptyInterval T) : i.fst ≤ tr c i := by
+theorem fst_le_tr (c : AspectualClass) (i : NonemptyInterval T) : i.fst ≤ tr c i := by
   cases c <;> first | exact le_rfl | exact i.fst_le_snd
 
-theorem tr_le_snd (c : VendlerClass) (i : NonemptyInterval T) : tr c i ≤ i.snd := by
+theorem tr_le_snd (c : AspectualClass) (i : NonemptyInterval T) : tr c i ≤ i.snd := by
   cases c <;> first | exact le_rfl | exact i.fst_le_snd
 
 -- A moment could be grouped with duratives or accomplishments, p. 72.
-theorem tr_of_isPoint (h : i.IsPoint) (c : VendlerClass) : tr c i = i.fst := by
+theorem tr_of_isPoint (h : i.IsPoint) (c : AspectualClass) : tr c i = i.fst := by
   cases c <;> first | rfl | exact h.symm
 
 /-! ### The truth conditions -/
 
 /-- The relation of *A before B* (39): the reference point of `A` precedes the start of `B`. -/
-def Before (a : VendlerClass) (J K : NonemptyInterval T) : Prop := tr a J < K.fst
+def Before (a : AspectualClass) (J K : NonemptyInterval T) : Prop := tr a J < K.fst
 
 /-- The relation of *A after B* (128): some subinterval of `J` follows the reference point of
 `B`. -/
-def After (b : VendlerClass) (J K : NonemptyInterval T) : Prop := ∃ J' ≤ J, tr b K < J'.fst
+def After (b : AspectualClass) (J K : NonemptyInterval T) : Prop := ∃ J' ≤ J, tr b K < J'.fst
 
 /-- The relation of *A as soon as B* (136): the start of `A` is immediately after the reference
 point of `B`, with the present moment outside the two. -/
-def AsSoonAs (ctx : Context T) (b : VendlerClass) (J K : NonemptyInterval T) : Prop :=
+def AsSoonAs (ctx : Context T) (b : AspectualClass) (J K : NonemptyInterval T) : Prop :=
   ctx.ImmediatelyAfter J.fst (tr b K) ∧ ctx.Outside (tr b K) J.fst
 
 /-- Two intervals are co-temporal when they share a subinterval that an accomplishment's interval
 coincides with, the condition common to (26iii.a) and (80iii). -/
-def Cotemporal (a b : VendlerClass) (J K : NonemptyInterval T) : Prop :=
+def Cotemporal (a b : AspectualClass) (J K : NonemptyInterval T) : Prop :=
   ∃ I, I ≤ J ∧ I ≤ K ∧ (a = .accomplishment → J = I) ∧ (b = .accomplishment → K = I)
 
 /-- The relation of *A when B* (26): co-temporal if either clause is durative, and otherwise
 successive, with `B` first. -/
-def When (a b : VendlerClass) (J K : NonemptyInterval T) : Prop :=
+def When (a b : AspectualClass) (J K : NonemptyInterval T) : Prop :=
   (Durative a ∨ Durative b → Cotemporal a b J K) ∧ (¬ Durative a ∧ ¬ Durative b → K.snd < J.fst)
 
 /-- The relation of *A while B* (80): co-temporal, with `K` not a moment. -/
-def While (a b : VendlerClass) (J K : NonemptyInterval T) : Prop :=
+def While (a b : AspectualClass) (J K : NonemptyInterval T) : Prop :=
   ¬ K.IsPoint ∧ Cotemporal a b J K
 
 /-- The relation of *A as long as B* (93): neither is a moment and `K` lies within `J`. -/
@@ -143,14 +143,14 @@ def AsLongAs (J K : NonemptyInterval T) : Prop := ¬ J.IsPoint ∧ ¬ K.IsPoint 
 
 /-- The relation of *A until B* (12): `J` is not a moment and a subinterval of it ends at the
 reference point of `B`, with the present moment outside the two. -/
-def Until (ctx : Context T) (b : VendlerClass) (J K : NonemptyInterval T) : Prop :=
+def Until (ctx : Context T) (b : AspectualClass) (J K : NonemptyInterval T) : Prop :=
   ¬ J.IsPoint ∧ ∃ J' ≤ J, J'.snd = tr b K ∧ ctx.Outside J'.fst (tr b K)
 
 /-- The relation of *A since B* (63): an interval `J'` contains or lies within `J`, begins with
 `K` if both clauses are durative and perfect, at the end of `K` if `B` is an accomplishment, and
 otherwise within `K`, and ends at the final point of the context, after the present moment has
 passed its start. -/
-def Since (ctx : Context T) (a b : VendlerClass) (perfect : Prop) (J K : NonemptyInterval T) :
+def Since (ctx : Context T) (a b : AspectualClass) (perfect : Prop) (J K : NonemptyInterval T) :
     Prop :=
   ∃ J', (J' ≤ J ∨ J ≤ J') ∧
     (perfect ∧ Durative a ∧ Durative b → J'.fst = K.fst ∧ J' ≤ J ∧ J' ≤ K) ∧
@@ -286,13 +286,13 @@ end Preorder
 
 section LinearOrder
 
-variable {T : Type*} [LinearOrder T] {a b : VendlerClass} {J K : NonemptyInterval T}
+variable {T : Type*} [LinearOrder T] {a b : AspectualClass} {J K : NonemptyInterval T}
 
 /-! ### Converses and overlap -/
 
 /-- *A before B* and *B after A* are converses exactly when `B` specifies a moment (p. 113). -/
 theorem forall_before_iff_after_iff_isPoint :
-    (∀ (a : VendlerClass) (J : NonemptyInterval T), Before a J K ↔ After a K J) ↔ K.IsPoint := by
+    (∀ (a : AspectualClass) (J : NonemptyInterval T), Before a J K ↔ After a K J) ↔ K.IsPoint := by
   refine ⟨fun h ↦ ?_, fun hK a J ↦ ?_⟩
   · by_contra hK
     have hlt : K.fst < K.snd := K.fst_le_snd.lt_of_ne hK
@@ -332,7 +332,7 @@ theorem not_while_of_isPoint_of_accomplishment (hJ : J.IsPoint) (hK : ¬ K.IsPoi
 
 /-- A pair of classes is admitted by a relation when some clauses of those classes satisfy its
 truth conditions. -/
-def Admits (T : Type*) [LinearOrder T] (r : Connective.Relation) (a b : VendlerClass) : Prop :=
+def Admits (T : Type*) [LinearOrder T] (r : Connective.Relation) (a b : AspectualClass) : Prop :=
   ∃ (ctx : Context T) (A B : Clause T), A.vendler = a ∧ B.vendler = b ∧ Holds ctx r A B
 
 theorem not_isPoint_iff {A : Clause T} (hJ : J ∈ A.intervals) :
@@ -346,7 +346,7 @@ variable {s t : T}
 
 /-- The clause of class `c` specifying the interval `[s, t]` of an event that takes time, for
 `s < t`. -/
-private def Clause.long (hst : s < t) (c : VendlerClass) (hc : c.duration = .durative) :
+private def Clause.long (hst : s < t) (c : AspectualClass) (hc : c.duration = .durative) :
     Clause T where
   vendler := c
   intervals := {⟨(s, t), hst.le⟩}
@@ -356,7 +356,8 @@ private def Clause.long (hst : s < t) (c : VendlerClass) (hc : c.duration = .dur
     exact hst.ne
 
 /-- The clause of class `c` specifying the moment `s`. -/
-private def Clause.moment (s : T) (c : VendlerClass) (hc : c.duration = .punctual) : Clause T where
+private def Clause.moment (s : T) (c : AspectualClass) (hc : c.duration = .punctual) :
+    Clause T where
   vendler := c
   intervals := {pure s}
   isPoint_iff i hi := by
@@ -369,7 +370,7 @@ private def ctxAt (now : T) : Context T := ⟨now, now, fun s t ↦ t < s, id⟩
 
 end Witness
 
-private theorem duration_cases (c : VendlerClass) :
+private theorem duration_cases (c : AspectualClass) :
     c.duration = .durative ∨ c.duration = .punctual := by
   cases c <;> decide
 
@@ -426,7 +427,7 @@ theorem admits_until_iff : Admits T .until_ a b ↔ a.duration = .durative := by
 
 /-- The classes each of these connectives admits, by `admits_while_iff`, `admits_asLongAs_iff` and
 `admits_until_iff`. -/
-def Admitted : Connective.Relation → VendlerClass → VendlerClass → Prop
+def Admitted : Connective.Relation → AspectualClass → AspectualClass → Prop
   | .while_, a, b => b.duration = .durative ∧ ¬ (a.duration = .punctual ∧ b = .accomplishment)
   | .asLongAs, a, b => a.duration = .durative ∧ b.duration = .durative
   | .until_, a, _ => a.duration = .durative
@@ -446,7 +447,7 @@ def connectives : List (String × Connective) :=
     (English.TemporalConnectives.until_.form, English.TemporalConnectives.until_) ]
 
 /-- The situation types the rows name. -/
-def classes : List (String × VendlerClass) :=
+def classes : List (String × AspectualClass) :=
   [("state", .state), ("activity", .activity), ("achievement", .achievement),
     ("accomplishment", .accomplishment)]
 
