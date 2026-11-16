@@ -25,6 +25,12 @@ constraint on indexing fixes the witness set of an indefinite's index, so the de
 witness set and a choice function rather than an index (`forall_expressive_iff`). The paper's
 examples are the rows of `Data.Examples.Chatain2025`.
 
+## TODO
+
+* The constraint on choice-function variation, which bars a choice function from varying with a
+  binder that its witness set is constant in, and the expressivity constraint weakened to match
+  are not formalized: `Expressive` and the two readings quantify over unrestricted families.
+
 ## References
 
 * [chatain-2025]
