@@ -33,8 +33,10 @@ no stronger one.
 ## Main results
 
 * `Person.mem_dom_feature_iff`: a person feature's domain is the pullback of `Person.Bears`.
-* `Person.participants_mem_participantSets_first`, `…_second`, `…_third`: the standard
-  tripartition values denote the referents in their domain and in no stronger one.
+* `Person.dom_eq_preimage_extentClosure`: a person's domain holds the referents whose participants
+  bear every feature its participant sets share.
+* `Person.participants_mem_participantSets_iff`: a referent is of a person of the standard
+  tripartition exactly when the features defined of it are that person's.
 * `Gender.dom_neuter_subset_dom_feminine`: the neuter domain lies inside the feminine one.
 
 ## Implementation notes
@@ -148,28 +150,38 @@ variable {W E P T : Type*} [PartialOrder E] (c : SpeechAct.Context W E P T) (x :
 theorem mem_dom_feature_iff (f : Feature) : x ∈ Feature.dom c f ↔ Bears (c.participants x) f := by
   cases f <;> simp [Feature.dom, Bears, Finset.Nonempty, SpeechAct.Role.exists_role]
 
-/-- The first person denotes the referents in its domain. -/
+/-- The referents whose participants bear every feature of `F` are those in each feature's
+domain. -/
+theorem preimage_participants_lowerPolar (F : Set Feature) :
+    c.participants ⁻¹' lowerPolar Bears F = ⋂ f ∈ F, Feature.dom c f := by
+  ext x; simp [mem_lowerPolar_iff, mem_dom_feature_iff]
+
+/-- The domain of a person holds the referents whose participants bear every feature its own
+participant sets share, the extent closure of those sets. The inclusive is not of this form, its
+features being the exclusive's. -/
+theorem dom_eq_preimage_extentClosure {p : Person} (hp : p ≠ .firstInclusive) :
+    dom c (some p) =
+      c.participants ⁻¹' extentClosure Bears (p.participantSets : Set (Finset SpeechAct.Role)) := by
+  have h : dom c (some p) = p.toFeatures.inf (Feature.dom c) := by
+    cases p <;> first | rfl | exact absurd rfl hp
+  rw [h, show extentClosure Bears (p.participantSets : Set (Finset SpeechAct.Role)) =
+    lowerPolar Bears (upperPolar Bears (p.participantSets : Set (Finset SpeechAct.Role))) from rfl,
+    ← coe_toFeatures, preimage_participants_lowerPolar]
+  ext x; simp [Finset.inf_set_eq_iInter]
+
+/-- A referent is of a person of the standard tripartition exactly when the features defined of
+it are that person's. -/
+theorem participants_mem_participantSets_iff {p : Person} (hp : p.coarsen = p) :
+    c.participants x ∈ p.participantSets ↔ ∀ f, x ∈ Feature.dom c f ↔ f ∈ p.toFeatures := by
+  rw [mem_participantSets_iff hp]
+  simp [Finset.ext_iff, mem_dom_feature_iff]
+
+/-- The first person's participant sets are those of the referents including the agent. -/
 theorem participants_mem_participantSets_first :
-    c.participants x ∈ Person.first.participantSets ↔ x ∈ dom c (some .first) := by
-  simp only [mem_dom_first, participantSets, Finset.mem_insert, Finset.mem_singleton,
-    Finset.ext_iff, SpeechAct.Role.forall_role, SpeechAct.Context.speaker_mem_participants,
-    SpeechAct.Context.addressee_mem_participants]
-  simp; tauto
-
-theorem participants_mem_participantSets_second :
-    c.participants x ∈ Person.second.participantSets ↔
-      x ∈ dom c (some .second) ∧ x ∉ dom c (some .first) := by
-  simp only [mem_dom_second, mem_dom_first, participantSets, Finset.mem_singleton,
-    Finset.ext_iff, SpeechAct.Role.forall_role, SpeechAct.Context.speaker_mem_participants,
-    SpeechAct.Context.addressee_mem_participants]
-  simp; tauto
-
-theorem participants_mem_participantSets_third :
-    c.participants x ∈ Person.third.participantSets ↔ x ∉ dom c (some .second) := by
-  simp only [mem_dom_second, participantSets, Finset.mem_singleton, Finset.ext_iff,
-    SpeechAct.Role.forall_role, SpeechAct.Context.speaker_mem_participants,
-    SpeechAct.Context.addressee_mem_participants]
-  simp
+    c.participants x ∈ Person.first.participantSets ↔ c.agent ≤ x := by
+  rw [participants_mem_participantSets_iff c x rfl]
+  refine ⟨fun h ↦ (h .author).2 (by simp), fun h f ↦ ?_⟩
+  cases f <;> simp [Feature.dom, h]
 
 end Person
 

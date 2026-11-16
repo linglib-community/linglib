@@ -13,7 +13,7 @@ neither, and a measure can further class the vectors from that atom by length, s
 person core that distance contrasts modify. The classes of lengths [partition the region near an
 atom](##distanceClass_partition); Mundari [grades each of its terms, Brazilian Portuguese only its
 non-local term and Satawal only its participant terms](##graded); and without a measure the
-semantics [is Harbour's vicinity semantics](##locates_iff_mem_vicinity). Spanish *ese* [has two readings
+semantics [is Harbour's, at the relation NEAR](##locates_iff_mem_image). Spanish *ese* [has two readings
 that overlap but differ](##ese_readings), as Harbour observes of person- and distance-based medials.
 
 ## Implementation notes
@@ -139,26 +139,13 @@ def DeicticTerm.Locates (t : DeicticTerm) (V : Vectors E D) (y : E) : Prop :=
 instance (t : DeicticTerm) (V : Vectors E D) (y : E) : Decidable (t.Locates V y) :=
   inferInstanceAs (Decidable (∃ a ∈ t.anchors, _))
 
-section Harbour
-
-variable {E' W P T : Type} [PartialOrder E'] (c : SpeechAct.Context W E' P T) (V : Vectors E' D)
-
-/-- Without a measure, a demonstrative locates its referent as in Harbour's semantics, the
-vicinity of an anchor being NEAR its participants' atom, whenever every atom it admits is the
-participants of some referent. -/
-theorem locates_iff_mem_vicinity (dem : DemonstrativeDeterminer) (d : ℕ) (g : ℕ → E')
-    (h : ∀ a ∈ dem.deixis, ∃ x, c.participants x = a) :
-    g d ∈ dem.vicinity c {p | V.Near (c.participants p.1) p.2} ↔
-      (⟨dem.deixis, none⟩ : DeicticTerm).Locates V (g d) := by
-  rw [DemonstrativeDeterminer.mem_vicinity]
-  constructor
-  · rintro ⟨x, hx, hn⟩
-    exact ⟨_, hx, hn, by simp⟩
-  · rintro ⟨a, ha, hn, -⟩
-    obtain ⟨x, rfl⟩ := h a ha
-    exact ⟨x, ha, hn⟩
-
-end Harbour
+/-- Without a measure, a term locates the referents in the image of its anchors under NEAR, so a
+demonstrative's denotation at that relation is Harbour's with the vicinity of an anchor taken as
+NEAR its atom. -/
+theorem locates_iff_mem_image (V : Vectors E D) (δ : Finset (Finset Role)) (x : E) :
+    (⟨δ, none⟩ : DeicticTerm).Locates V x ↔
+      x ∈ SetRel.image {p : Finset Role × E | V.Near p.1 p.2} δ := by
+  simp [DeicticTerm.Locates]
 
 /-! ### The paradigms -/
 
