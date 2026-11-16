@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.Binding.Valuation
 public import Mathlib.Data.Fin.VecNotation
 public import Studies.Landau2004
+public import Linglib.Semantics.ArgumentStructure.Control
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Syntax.Category.Verb.Defs
@@ -15,8 +16,13 @@ status of the selecting predicate, non-attitude complements establishing control
 attitude complements by the binding of a projected coordinate of the embedded context, a second tier
 built over the first. Landau's earlier predicate classes carry the split, the four classes selecting
 untensed complements to the predicative tier and the four selecting tensed ones to the logophoric
-tier ((4), (5)); the summary table of contrasts (80) shows the two tiers separated on every row,
-with obligatory control into an inflected complement realized as the OC-NC generalization (70) over
+tier ((4), (5)). The two tiers read the complement differently: a predicative verb like *begin*
+[reads its property at the controller](##Landau2015.isControlledAt_begin), and a logophoric verb
+[reads it at the author of each of the holder's
+alternatives](##Landau2015.isLogophoricAt_logophoric), which is the obligatory *de se* reading and
+differs from the first where the holder mistakes who that author is. The summary table of
+contrasts (80) shows the two tiers separated on every row, with obligatory control into an
+inflected complement realized as the OC-NC generalization (70) over
 the library's clause classes (`inflectedComplement_realizes_ocnc`); and object control under
 attitude predicates reads *de se* with psychological verbs and *de te* with communicative ones (36).
 The predicate classes are derived from the English fragment's verb entries rather than stored
@@ -74,6 +80,50 @@ theorem isPartial_bind_of_logophoric {Pos Ref : Type*} [Preorder Ref] {val : Pos
     {bind pred : SetRel Pos Pos} (hp : IsSaturating val pred) (h : IsPartial val (bind ○ pred)) :
     IsPartial val bind :=
   h.of_comp hp.exhaustive
+
+/-! ### The two tiers as readings of the complement -/
+
+section Readings
+
+variable {E D Ev W C X : Type*}
+
+/-- (31b): the denotation of *begin*, a predicative control verb. The subject has the property to
+a degree in an event it causes, and in some inertia world has it to a greater degree in an event
+the first begins. -/
+def begin [LT D] (inertia : W → Set W) (initial : Ev → Ev → Prop) (cause : E → Ev → W → Prop)
+    (P : E → D → Ev → W → Prop) (x : E) : D → Ev → W → Prop :=
+  fun d e w ↦ P x d e w ∧ cause x e w ∧
+    ∃ e' w' d', w' ∈ inertia w ∧ initial e e' ∧ d < d' ∧ P x d' e' w'
+
+/-- (55k): the denotation of a logophoric control verb with its complement. Every alternative of
+the attitude holder has the property of its own author. -/
+def logophoric (alternatives : X → Set C) (author : C → E) (P : E → Set C) (x : X) : Prop :=
+  ∀ i ∈ alternatives x, i ∈ P (author i)
+
+/-- Predicative control reads the complement's property at the controller. -/
+theorem isControlledAt_begin [LT D] (inertia : W → Set W) (initial : Ev → Ev → Prop)
+    (cause : E → Ev → W → Prop) :
+    ArgumentStructure.IsControlledAt (begin (D := D) inertia initial cause) id :=
+  ArgumentStructure.isControlledAt_iff.2 ⟨fun φ x d e w ↦ φ d e w ∧ cause x e w ∧
+    ∃ e' w' d', w' ∈ inertia w ∧ initial e e' ∧ d < d' ∧ φ d' e' w', fun _ _ ↦ rfl⟩
+
+/-- Logophoric control reads the complement's property at the author of each alternative. -/
+theorem isLogophoricAt_logophoric (alternatives : X → Set C) (author : C → E) :
+    ArgumentStructure.IsLogophoricAt (logophoric alternatives author) author :=
+  fun P Q x h ↦ by
+    simp only [logophoric]
+    exact propext (forall₂_congr fun i _ ↦ by
+      simpa using Set.ext_iff.1 h i)
+
+-- the amnesiac of §3.4
+/-- A logophoric reading is not a reading at the controller: where an alternative's author is not
+the attitude holder, two properties that agree on the holder are told apart. -/
+example : ¬ ArgumentStructure.IsControlledAt
+    (logophoric (fun _ : Bool ↦ ({()} : Set Unit)) fun _ ↦ false) id := fun h ↦ by
+  have := @h (fun y ↦ {_i | y = true}) (fun _ ↦ Set.univ) true (by ext; simp)
+  simp [logophoric] at this
+
+end Readings
 
 /-! ### Predicate classes ((4), (5)) -/
 
