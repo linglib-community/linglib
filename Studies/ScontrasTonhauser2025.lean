@@ -287,8 +287,7 @@ theorem S1_univ_bel_knowNeg_lt_thinkNeg (hα : 0 < α) {w : World} (hb : w.belie
   have hc' : cost k .knowNeg = 2 * k := ite_eq_left (by decide)
   have hlt : (S1Free α k Finset.univ .belief w).real {.knowNeg} <
       (S1Free α k Finset.univ .belief w).real {.thinkNeg} := by
-    rw [S1Free, speaker_dirac_real_singleton_lt_iff hα.le
-        ⟨.thinkNeg, by rw [L0_univ_bel_thinkNeg hb]; exact one_ne_zero⟩, hc, hc',
+    rw [S1Free, speaker_dirac_real_singleton_lt_iff hα.le, hc, hc',
       ENNReal.mul_lt_mul_iff_left (ENNReal.ofReal_pos.2 (Real.exp_pos _)).ne'
         ENNReal.ofReal_ne_top,
       L0_univ_bel_thinkNeg hb, L0_univ_bel_knowNeg hb, ENNReal.one_rpow, ← ENNReal.one_rpow α]

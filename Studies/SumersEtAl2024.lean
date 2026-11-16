@@ -140,8 +140,8 @@ instance [Nonempty U] : IsMarkovKernel (speaker βS lam cost sem π R) :=
 theorem speaker_real_lt_iff (hβ : 0 < βS) :
     (speaker βS lam cost sem π R w).real {u} < (speaker βS lam cost sem π R w).real {u'} ↔
       combinedUtility lam cost sem π R u w < combinedUtility lam cost sem π R u' w := by
-  rw [speaker, Kernel.softmax_real_singleton_lt_iff (w := w) (fun _ ↦ EReal.coe_ne_top _)
-    ⟨u, EReal.coe_ne_bot _⟩, EReal.coe_lt_coe_iff]
+  rw [speaker, Kernel.softmax_real_singleton_lt_iff (w := w) (fun _ ↦ EReal.coe_ne_top _),
+    EReal.coe_lt_coe_iff]
   exact mul_lt_mul_iff_right₀ hβ
 
 theorem speaker_zero_eq_of_mem (c : ℝ) (hu : w ∈ sem u) (hu' : w ∈ sem u') :

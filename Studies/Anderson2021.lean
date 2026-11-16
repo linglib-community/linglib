@@ -343,9 +343,7 @@ theorem s1_prefers_new :
     (S1 μ .ina).real {.likeIndoors} < (S1 μ .ina).real {.studyScience} := by
   have hn : μ {.nancy} ≠ 0 := (zero_le.trans_lt hlt).ne'
   constructor
-  · rw [speaker_dirac_real_singleton_lt_iff (L := L0 μ) (w := .nancy) zero_le_one
-      ⟨.studyHumanity, L0_apply_singleton_ne_zero (cg := μ) (u := .studyHumanity) (w := .nancy)
-        (by decide) hn⟩]
+  · rw [speaker_dirac_real_singleton_lt_iff (L := L0 μ) (w := .nancy) zero_le_one]
     simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
       ENNReal.ofReal_one, mul_one]
     rw [literalListener_apply_singleton μ semSet (u := .studyHumanity) (by decide),
@@ -356,9 +354,7 @@ theorem s1_prefers_new :
       show sem .studyHumanity = {.nancy, .sally} by decide, Finset.sum_pair (by decide),
       Finset.sum_pair (by decide), ← hik, ← hns, add_comm]
     exact ENNReal.add_lt_add_left (measure_ne_top μ _) hlt
-  · rw [speaker_dirac_real_singleton_lt_iff (L := L0 μ) (w := .ina) zero_le_one
-      ⟨.studyScience, L0_apply_singleton_ne_zero (cg := μ) (u := .studyScience) (w := .ina)
-        (by decide) hi⟩]
+  · rw [speaker_dirac_real_singleton_lt_iff (L := L0 μ) (w := .ina) zero_le_one]
     simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
       ENNReal.ofReal_one, mul_one]
     rw [literalListener_apply_singleton μ semSet (u := .likeIndoors) (by decide),

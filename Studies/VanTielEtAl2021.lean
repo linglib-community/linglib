@@ -194,12 +194,7 @@ theorem speakerPrag_real_lt_of_card_lt (mono : M → Monotonicity) (θ : M → �
   have hwm : 0 < sal m * ((listenerLit (gq mono θ) m).real {t}) ^ α := by
     rw [listenerLit_real_gq mono θ hm]
     exact mul_pos (hsal m) (Real.rpow_pos_of_pos (by positivity) _)
-  have h0 : (∑ m'', ENNReal.ofReal (sal m'' * ((listenerLit (gq mono θ) m'').real {t}) ^ α)) ≠ 0 :=
-    fun h ↦ (ENNReal.ofReal_pos.2 hwm).ne' ((Finset.sum_eq_zero_iff.1 h) m (Finset.mem_univ m))
-  have htop :
-      (∑ m'', ENNReal.ofReal (sal m'' * ((listenerLit (gq mono θ) m'').real {t}) ^ α)) ≠ ∞ :=
-    ENNReal.sum_ne_top.2 fun _ _ ↦ ENNReal.ofReal_ne_top
-  rw [speakerPrag, Kernel.ofWeights_real_singleton_lt_iff _ h0 htop,
+  rw [speakerPrag, Kernel.ofWeights_real_singleton_lt_iff _ fun _ ↦ ENNReal.ofReal_ne_top,
     ENNReal.ofReal_lt_ofReal_iff hwm, listenerLit_real_gq mono θ hm, listenerLit_real_gq mono θ hm',
     ← hs]
   refine mul_lt_mul_of_pos_left (Real.rpow_lt_rpow (by positivity) ?_ hα) (hsal m)
