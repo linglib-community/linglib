@@ -214,7 +214,7 @@ theorem IsWellTyped.admits (hI : I.IsWellTyped) {p : Path Sig}
 
 /-- The relations of an interpretation are decidable when the signature has no relation
 symbols. -/
-instance [IsEmpty Sig.Rel] (ρ : Sig.Rel) : DecidablePred (I.R ρ) := isEmptyElim ρ
+instance [IsEmpty Sig.Rel] (ρ : Sig.Rel) : DecidablePred (· ∈ I.R ρ) := isEmptyElim ρ
 
 end Interpretation
 
